@@ -1,5 +1,9 @@
 -- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+---
+-- [Local table] Language names with their associated lexers.
+-- @type table
+-- @name languages
 local languages = {
   cpp = 'cpp',
   css = 'css',
@@ -16,6 +20,10 @@ local languages = {
 }
 
 local l = languages
+---
+-- [Local table] File extensions with their associated languages.
+-- @type table
+-- @name extensions.
 local extensions = {
   c = l.cpp, cpp = l.cpp, cxx = l.cpp, h = l.cpp,
   css = l.css,
@@ -33,8 +41,18 @@ local extensions = {
 }
 
 ---
+-- [Local table] Shebang words and their associated languages.
+-- @type table
+-- @name shebangs
+local shebangs = {
+  lua = l.lua,
+  ruby = l.ruby
+}
+
+---
 -- [Local] Sets the buffer's lexer language based on a filename.
 -- @param filename The filename used to set the lexer language.
+-- @return boolean indicating if a lexer language was set.
 local function set_lexer_from_filename(filename)
   local lexer
   if filename then
@@ -42,6 +60,22 @@ local function set_lexer_from_filename(filename)
     lexer = extensions[ext]
   end
   buffer:set_lexer_language(lexer or 'container')
+  return lexer
+end
+
+---
+-- [Local] Sets the buffer's lexer language based on a shebang line.
+local function set_lexer_from_sh_bang()
+  local lexer
+  local line = buffer:get_line(0)
+  if line:match('^#!') then
+    line = line:gsub('[\\/]', ' ')
+    for word in line:gmatch('%S+') do
+      lexer = shebangs[word]
+      if lexer then break end
+    end
+    buffer:set_lexer_language(lexer)
+  end
 end
 
 ---
@@ -64,19 +98,22 @@ end
 
 ---
 -- [Local] Performs actions suitable for a new buffer.
--- Sets the lexer language and loads the language module based on the new
--- buffer's filename.
+-- Sets the buffer's lexer language and loads the language module.
 local function handle_new()
   local buffer = buffer
-  set_lexer_from_filename(buffer.filename)
+  if not set_lexer_from_filename(buffer.filename) then
+    set_lexer_from_sh_bang()
+  end
   load_language_module_from_filename(buffer.filename)
 end
 
 ---
 -- [Local] Performs actions suitable for when buffers are switched.
--- Sets the lexer language based on the current buffer's filename.
+-- Sets the buffer's lexer language.
 local function handle_switch()
-  set_lexer_from_filename(buffer.filename)
+  if not set_lexer_from_filename(buffer.filename) then
+    set_lexer_from_sh_bang()
+  end
 end
 
 local handlers = textadept.handlers
