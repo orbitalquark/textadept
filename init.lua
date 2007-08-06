@@ -13,7 +13,7 @@ local textadept = textadept
 if #arg == 0 then
   textadept.io.load_session()
 else
-  local base_dir = arg[0]:match('^.+/')
+  local base_dir = arg[0]:match('^.+/') or ''
   for _, filename in ipairs(arg) do
     textadept.io.open(base_dir..filename)
   end
