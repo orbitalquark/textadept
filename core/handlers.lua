@@ -208,7 +208,8 @@ add_function_to_handler('update_ui',
     if not match_brace(buffer.current_pos) then buffer:brace_bad_light(-1) end
   end)
 
-local docstatusbar_text = "Line: %d/%d Col: %d | Lexer: %s | %s | %s | %s"
+local docstatusbar_text =
+  "Line: %d/%d    Col: %d    Lexer: %s    %s    %s    %s"
 add_function_to_handler('update_ui',
   function() -- sets docstatusbar text
     local buffer = buffer
@@ -280,39 +281,49 @@ add_function_to_handler('quit',
 -- @param command The command to complete.
 function show_completions(command)
   local textadept = textadept
-  local match_buffer, goto
+  local cmpl_buffer, goto
   if buffer.shows_completions then
-    match_buffer = buffer
+    cmpl_buffer = buffer
   else
     for index, buffer in ipairs(textadept.buffers) do
       if buffer.shows_completions then
-        match_buffer = index
+        cmpl_buffer = index
         goto = buffer.doc_pointer ~= textadept.focused_doc_pointer
       elseif buffer.doc_pointer == textadept.focused_doc_pointer then
         textadept.prev_buffer = index
       end
     end
-    if not match_buffer then
-      match_buffer = textadept.new_buffer()
-      match_buffer.shows_completions = true
+    if not cmpl_buffer then
+      cmpl_buffer = textadept.new_buffer()
+      cmpl_buffer.shows_completions = true
     else
-      if goto then view:goto(match_buffer) end
-      match_buffer = textadept.buffers[match_buffer]
+      if goto then view:goto(cmpl_buffer) end
+      cmpl_buffer = textadept.buffers[cmpl_buffer]
     end
   end
-  match_buffer:clear_all()
+  cmpl_buffer:clear_all()
 
-  local substring = command:match('[%w_%.]+$')
-  local path, prefix = (substring or ''):match('^([%w_.]-)%.?([%w_]*)$')
+  local substring = command:match('[%w_.:]+$') or ''
+  local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
   local ret, tbl = pcall(loadstring('return ('..path..')'))
   if not ret then tbl = getfenv(0) end
   if type(tbl) ~= 'table' then return end
+  local cmpls = {}
   for k in pairs(tbl) do
     if type(k) == 'string' and k:match('^'..prefix) then
-      match_buffer:add_text(k..'\n')
+      cmpls[#cmpls + 1] = k
     end
   end
-  match_buffer:set_save_point()
+  if path == 'buffer' then
+    if o == ':' then
+      for f in pairs(textadept.buffer_functions) do cmpls[#cmpls + 1] = f end
+    else
+      for p in pairs(textadept.buffer_properties) do cmpls[#cmpls + 1] = p end
+    end
+  end
+  table.sort(cmpls)
+  for _, cmpl in ipairs(cmpls) do cmpl_buffer:add_text(cmpl..'\n') end
+  cmpl_buffer:set_save_point()
 end
 
 ---
