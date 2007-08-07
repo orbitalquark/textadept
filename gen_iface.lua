@@ -24,6 +24,32 @@ for item in constants:sub(2, -2):gmatch('%b{}') do
   local line = ("  %s = %s,\n"):format(name, value)
   out = out..line
 end
+out = out..[[
+  SCN_STYLENEEDED = 2000,
+  SCN_CHARADDED = 2001,
+  SCN_SAVEPOINTREACHED = 2002,
+  SCN_SAVEPOINTLEFT = 2003,
+  SCN_MODIFYATTEMPTRO = 2004,
+  SCN_KEY = 2005,
+  SCN_DOUBLECLICK =2006,
+  SCN_UPDATEUI = 2007,
+  SCN_MODIFIED = 2008,
+  SCN_MACRORECORD = 2009,
+  SCN_MARGINCLICK = 2010,
+  SCN_NEEDSHOWN = 2011,
+  SCN_PAINTED = 2013,
+  SCN_USERLISTSELECTION = 2014,
+  SCN_URIDROPPED = 2015,
+  SCN_DWELLSTART = 2016,
+  SCN_DWELLEND = 2017,
+  SCN_ZOOM = 2018,
+  SCN_HOTSPOTCLICK = 2019,
+  SCN_HOTSPOTDOUBLECLICK = 2020,
+  SCN_CALLTIPCLICK = 2021,
+  SCN_AUTOCSELECTION = 2022,
+  SCN_INDICATORCLICK = 2023,
+  SCN_INDICATORRELEASE = 2024,
+]]
 out = out..'}\n\n'
 
 out = out..'textadept.buffer_functions = {\n'
@@ -54,6 +80,6 @@ for item in properties:sub(2, -2):gmatch('%b{}') do
 end
 out = out..'}\n'
 
-f = io.open('/usr/share/textadept/lib/iface.lua', 'w')
+f = io.open('/usr/share/textadept/core/iface.lua', 'w')
 f:write(out)
 f:close()
