@@ -42,19 +42,19 @@ void create_ui() {
   gtk_box_pack_start(GTK_BOX(vbox), find, false, false, 5);
   GtkWidget *hboxs = gtk_hbox_new(false, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hboxs, false, false, 0);
-  statusbar = gtk_statusbar_new();
-  gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, "");
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar), false);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar, true, true, 0);
+  docstatusbar = gtk_statusbar_new();
+  gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, "");
+  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(docstatusbar), false);
+  gtk_box_pack_start(GTK_BOX(hboxs), docstatusbar, true, true, 0);
   command_entry = gtk_entry_new();
   signal(command_entry, "activate", c_activated);
   signal(command_entry, "key_press_event", c_keypress);
   g_object_set(G_OBJECT(command_entry), "width-request", 200, NULL);
   gtk_box_pack_start(GTK_BOX(hboxs), command_entry, false, false, 0);
-  docstatusbar = gtk_statusbar_new();
-  gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, "");
-  g_object_set(G_OBJECT(docstatusbar), "width-request", 350, NULL);
-  gtk_box_pack_start(GTK_BOX(hboxs), docstatusbar, false, false, 0);
+  statusbar = gtk_statusbar_new();
+  gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, "");
+  g_object_set(G_OBJECT(statusbar), "width-request", 250, NULL);
+  gtk_box_pack_start(GTK_BOX(hboxs), statusbar, false, false, 0);
   gtk_widget_show_all(window);
   gtk_widget_hide(findbox); // hide initially
   gtk_widget_grab_focus(editor);
