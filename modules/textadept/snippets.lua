@@ -7,11 +7,6 @@
 --     end of a snippet.
 --   SCOPES_ENABLED: Flag indicating whether scopes/styles can be used for
 --     snippets.
---   FILE_IN: Location of the temporary file used as STDIN for regex mirrors.
---   FILE_OUT: Location of the temporary file that will contain output for
---     regex mirrors.
---   REDIRECT: The command line symbol used for redirecting STDOUT to a file.
---   RUBY_CMD: The command that executes the Ruby interpreter.
 --   MARK_SNIPPET_COLOR: The Scintilla color used for the line that marks the
 --     end of the snippet.
 module('_m.textadept.snippets', package.seeall)
