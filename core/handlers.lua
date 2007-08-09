@@ -317,9 +317,13 @@ function show_completions(command)
   end
   if path == 'buffer' then
     if o == ':' then
-      for f in pairs(textadept.buffer_functions) do cmpls[#cmpls + 1] = f end
+      for f in pairs(textadept.buffer_functions) do
+        if f:match('^'..prefix) then cmpls[#cmpls + 1] = f end
+      end
     else
-      for p in pairs(textadept.buffer_properties) do cmpls[#cmpls + 1] = p end
+      for p in pairs(textadept.buffer_properties) do
+        if p:match('^'..prefix) then cmpls[#cmpls + 1] = p end
+      end
     end
   end
   table.sort(cmpls)
