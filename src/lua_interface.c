@@ -605,7 +605,7 @@ LF l_call_scintilla(LS *lua, ScintillaObject *sci, int msg,
     params_needed = 0;
   } else if (p2_type == tSTRINGRESULT) {
     string_return = true;
-    params_needed = 1;
+    params_needed = p1_type == tLENGTH ? 0 : 1;
   }
   if (params_needed > 0) params[0] = l_toscintillaparam(lua, p1_type, arg);
   if (params_needed > 1) params[1] = l_toscintillaparam(lua, p2_type, arg);
