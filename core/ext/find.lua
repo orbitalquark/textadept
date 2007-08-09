@@ -18,29 +18,35 @@ local escapes = {
 -- @param text The text to find.
 -- @param flags Search flags. This is a number mask of 3 flags: match case (2),
 --   whole word (4), and Lua pattern (8) joined with binary AND.
--- @param next Boolean indicating search direction (next is forward).
--- @param wrapped Utility boolean indicating whether the search has wrapped or
---   not for displaying useful statusbar information. This flag is used and set
+-- @param next Flag indicating whether or not the search direction is forward.
+-- @param nowrap Flag indicating whether or not the search won't wrap.
+-- @param wrapped Utility flag indicating whether or not the search has wrapped
+--   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
-function find.find(text, flags, next, wrapped)
+function find.find(text, flags, next, nowrap, wrapped)
   local buffer = buffer
-  local result
+  local increment, result
   text = text:gsub('\\[abfnrtv\\]', escapes)
   find.captures = nil
+  if buffer.current_pos == buffer.anchor then
+    increment = 0
+  elseif not wrapped then
+    increment = next and 1 or -1
+  end
   if flags < 8 then
     if next then
-      buffer:goto_pos(buffer.current_pos + 1)
+      buffer:goto_pos(buffer.current_pos + increment)
       buffer:search_anchor()
       result = buffer:search_next(flags, text)
     else
-      buffer:goto_pos(buffer.anchor - 1)
+      buffer:goto_pos(buffer.anchor - increment)
       buffer:search_anchor()
       result = buffer:search_prev(flags, text)
     end
     if result then buffer:scroll_caret() end
   else -- lua pattern search
     local buffer_text = buffer:get_text(buffer.length)
-    local results = { buffer_text:find(text, buffer.anchor + 1) }
+    local results = { buffer_text:find(text, buffer.anchor + increment) }
     if #results > 0 then
       result = results[1]
       find.captures = { unpack(results, 3) }
@@ -49,7 +55,7 @@ function find.find(text, flags, next, wrapped)
       result = -1
     end
   end
-  if result == -1 and not wrapped then -- wrap the search
+  if result == -1 and not nowrap and not wrapped then -- wrap the search
     local anchor, pos = buffer.anchor, buffer.current_pos
     if next or flags >= 8 then
       buffer:goto_pos(0)
@@ -57,7 +63,7 @@ function find.find(text, flags, next, wrapped)
       buffer:goto_pos(buffer.length)
     end
     textadept.statusbar_text = 'Search wrapped'
-    result = find.find(text, flags, next, true)
+    result = find.find(text, flags, next, true, true)
     if not result then
       textadept.statusbar_text = 'No results found'
       buffer:goto_pos(anchor)
@@ -98,8 +104,9 @@ end
 -- @param flags The number mask identical to the one in 'find'.
 -- @see find.find
 function find.replace_all(ftext, rtext, flags)
+  buffer:goto_pos(0)
   local count = 0
-  while( find.find(ftext, flags, true) ) do
+  while( find.find(ftext, flags, true, true) ) do
     find.replace(rtext)
     count = count + 1
   end
