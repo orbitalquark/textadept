@@ -152,7 +152,8 @@ try_get_cmd3 = function(keys, key_seq)
 end
 
 ---
--- [Local function] Helper function to get commands with the current keychain.
+-- [Local function] Helper function that gets commands associated with the
+-- current keychain.
 -- If the current item in the keychain is part of a chain, throw an error value
 -- of -1. This way, pcall will return false and -1, where the -1 can easily and
 -- efficiently be checked rather than using a string error message.

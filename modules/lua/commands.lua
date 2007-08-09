@@ -15,7 +15,7 @@ local control_structure_patterns = {
 }
 
 ---
--- Try to autocomplete Lua's 'end' keyword for control structures like 'if',
+-- Tries to autocomplete Lua's 'end' keyword for control structures like 'if',
 -- 'while', 'for', etc.
 -- @see control_structure_patterns
 function try_to_autocomplete_end()
@@ -38,8 +38,8 @@ function try_to_autocomplete_end()
 end
 
 ---
--- Determine the Lua file being 'require'd, and search through package.path for
--- that file and open it in Textadept.
+-- Determines the Lua file being 'require'd, searches through package.path for
+-- that file, and opens it in Textadept.
 function goto_required()
   local buffer = buffer
   local line = buffer:get_line( buffer:line_from_position(buffer.current_pos) )

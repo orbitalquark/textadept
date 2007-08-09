@@ -154,7 +154,8 @@ add_function_to_handler('char_added',
   end)
 
 ---
--- [Local] Sets the title of the Textadept window to the buffer's filename.
+-- [Local function] Sets the title of the Textadept window to the buffer's
+-- filename.
 -- @param buffer The currently focused buffer.
 local function set_title(buffer)
   local buffer = buffer
@@ -185,7 +186,7 @@ local _braces = { -- () [] {} <>
 }
 
 ---
--- [Local] Highlights matching/mismatched braces appropriately.
+-- [Local function] Highlights matching/mismatched braces appropriately.
 -- @param current_pos The position to match braces at.
 local function match_brace(current_pos)
   local buffer = buffer
