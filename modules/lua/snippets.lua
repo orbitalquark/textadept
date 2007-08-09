@@ -2,7 +2,7 @@
 
 ---
 -- Snippets for the lua module.
-module('modules.lua.snippets', package.seeall)
+module('_m.lua.snippets', package.seeall)
 
 local snippets = _G.snippets
 

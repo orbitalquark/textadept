@@ -14,7 +14,7 @@
 --   RUBY_CMD: The command that executes the Ruby interpreter.
 --   MARK_SNIPPET_COLOR: The Scintilla color used for the line that marks the
 --     end of the snippet.
-module('modules.textadept.snippets', package.seeall)
+module('_m.textadept.snippets', package.seeall)
 
 -- options
 local MARK_SNIPPET   = 4

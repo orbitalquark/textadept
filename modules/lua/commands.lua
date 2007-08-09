@@ -2,7 +2,7 @@
 
 ---
 -- Commands for the lua module.
-module('modules.lua.commands', package.seeall)
+module('_m.lua.commands', package.seeall)
 
 ---
 -- Patterns for auto 'end' completion for control structures.
@@ -70,7 +70,7 @@ end
 -- Lua-specific key commands.
 local keys = _G.keys
 if type(keys) == 'table' then
-  local m_editing = modules.textadept.editing
+  local m_editing = _m.textadept.editing
   local m_handlers = textadept.handlers
   keys.lua = {
     al = { textadept.io.open, _HOME..'/modules/lua/init.lua' },
@@ -83,7 +83,7 @@ if type(keys) == 'table' then
     ['('] = { function()
       buffer.word_chars =
         '_.:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      m_editing.show_call_tip(modules.lua.api, true)
+      m_editing.show_call_tip(_m.lua.api, true)
       buffer:set_chars_default()
       return false
     end },

@@ -12,7 +12,7 @@
 --   ALT: The string representing the Alt key.
 --   ADD: The string representing used to join together a sequence of Control,
 --     Shift, or Alt modifier keys.
-module('modules.textadept.keys', package.seeall)
+module('_m.textadept.keys', package.seeall)
 
 -- options
 local SCOPES_ENABLED = true

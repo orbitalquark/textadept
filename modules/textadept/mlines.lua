@@ -5,7 +5,7 @@
 -- There are several option variables used:
 --   MARK_MLINE: The integer mark used to identify an MLine marked line.
 --   MARK_MLINE_COLOR: The Scintilla color used for an MLine marked line.
-module('modules.textadept.mlines', package.seeall)
+module('_m.textadept.mlines', package.seeall)
 
 -- options
 local MARK_MLINE = 2

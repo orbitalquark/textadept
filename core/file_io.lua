@@ -51,7 +51,7 @@ function save(buffer)
   if not buffer.filename then return save_as(buffer) end
   local f, err = io.open(buffer.filename, 'w')
   if f then
-    prepare = modules.textadept.editing.prepare_for_save
+    prepare = _m.textadept.editing.prepare_for_save
     if prepare then prepare() end
     local txt, _ = buffer:get_text(buffer.length)
     f:write(txt)

@@ -2,7 +2,7 @@
 
 ---
 -- Defines the key commands used by the Textadept key command manager.
-module('modules.textadept.key_commands', package.seeall)
+module('_m.textadept.key_commands', package.seeall)
 
 --[[
   C:               G                   Q
@@ -63,13 +63,13 @@ keys.csae = { 'line_end_rect_extend',   b }
 keys.csav = { 'page_down_rect_extend',  b }
 keys.csay = { 'page_up_rect_extend',    b }
 
-local m_snippets = modules.textadept.snippets
+local m_snippets = _m.textadept.snippets
 keys.ci   = { m_snippets.insert           }
 keys.csi  = { m_snippets.cancel_current   }
 keys.cai  = { m_snippets.list             }
 keys.ai   = { m_snippets.show_scope       }
 
-local m_editing = modules.textadept.editing
+local m_editing = _m.textadept.editing
 keys.cm    = { m_editing.match_brace              }
 keys.csm   = { m_editing.match_brace, 'select'    }
 keys['c '] = { m_editing.autocomplete_word, '%w_' }
@@ -116,7 +116,7 @@ keys.as = { -- select in...
   g      = { m_editing.grow_selection, 1             },
 }
 
-local m_mlines = modules.textadept.mlines
+local m_mlines = _m.textadept.mlines
 keys.am = {
   a  = { m_mlines.add             },
   sa = { m_mlines.add_multiple    },
