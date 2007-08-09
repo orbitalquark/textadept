@@ -56,7 +56,7 @@ local escape, unescape, remove_escapes, _DEBUG
 function insert(snippet_arg)
   local buffer = buffer
   local orig_pos, new_pos, s_name
-  local selected_text = buffer:get_sel_text()
+  local sel_text = buffer:get_sel_text()
   if not snippet_arg then
     orig_pos = buffer.current_pos buffer:word_left_extend()
     new_pos  = buffer.current_pos
@@ -96,9 +96,12 @@ function insert(snippet_arg)
     _DEBUG('s_text escaped:\n'..s_text)
 
     -- Replace Lua code return.
+    local env = setmetatable( { selected_text = sel_text }, { __index = _G } )
     s_text = s_text:gsub('$(%b())',
       function(s)
-        local ret, val = pcall( loadstring( 'return '..s:sub(2, -2) ) )
+        local f = loadstring( 'return '..s:sub(2, -2) )
+        setfenv(f, env)
+        local ret, val = pcall(f)
         if ret then return val or '' end
         buffer:goto_pos(orig_pos)
         error(val)
@@ -118,7 +121,7 @@ function insert(snippet_arg)
     snippet.index     = 0
     snippet.start_pos = buffer.current_pos
     snippet.cursor    = nil
-    snippet.sel_text  = selected_text
+    snippet.sel_text  = sel_text
 
     -- Make a table of placeholders and tab stops.
     local patt, patt2 = '($%b{})', '^%${(%d+):.*}$'
