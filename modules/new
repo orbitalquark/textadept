@@ -11,7 +11,7 @@ cat > $1/init.lua <<_EOF
 ---
 -- The $1 module.
 -- It provides utilities for editing $2 code.
-module('modules.$1', package.seeall)
+module('_m.$1', package.seeall)
 
 if type(_G.snippets) == 'table' then
 ---
@@ -42,7 +42,7 @@ cat > $1/snippets.lua <<_EOF
 
 ---
 -- Snippets for the $1 module.
-module('modules.$1.snippets', package.seeall)
+module('_m.$1.snippets', package.seeall)
 
 local snippets = _G.snippets
 
@@ -56,7 +56,7 @@ cat > $1/commands.lua <<_EOF
 
 ---
 -- Commands for the $1 module.
-module('modules.$1.commands', package.seeall)
+module('_m.$1.commands', package.seeall)
 
 -- $2-specific key commands.
 local keys = _G.keys

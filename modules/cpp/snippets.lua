@@ -2,7 +2,7 @@
 
 ---
 -- Snippets for the cpp module.
-module('modules.cpp.snippets', package.seeall)
+module('_m.cpp.snippets', package.seeall)
 
 local snippets = _G.snippets
 

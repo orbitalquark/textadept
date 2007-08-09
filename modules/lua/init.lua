@@ -3,7 +3,7 @@
 ---
 -- The lua module.
 -- It provides utilities for editing Lua code.
-module('modules.lua', package.seeall)
+module('_m.lua', package.seeall)
 
 if type(_G.snippets) == 'table' then
 ---

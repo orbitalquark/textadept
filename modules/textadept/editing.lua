@@ -2,7 +2,7 @@
 
 ---
 -- Editing commands for the textadept module.
-module('modules.textadept.editing', package.seeall)
+module('_m.textadept.editing', package.seeall)
 
 ---
 -- [Local table] The kill-ring.

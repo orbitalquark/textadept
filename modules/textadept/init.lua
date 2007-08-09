@@ -3,7 +3,7 @@
 ---
 -- The textadept module.
 -- It provides utilities for editing text in Textadept.
-module('modules.textadept', package.seeall)
+module('_m.textadept', package.seeall)
 
 require 'textadept.editing'
 require 'textadept.keys'

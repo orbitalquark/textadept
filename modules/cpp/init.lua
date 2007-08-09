@@ -3,7 +3,7 @@
 ---
 -- The cpp module.
 -- It provides utilities for editing C/C++ code.
-module('modules.cpp', package.seeall)
+module('_m.cpp', package.seeall)
 
 if type(_G.snippets) == 'table' then
 ---

@@ -92,7 +92,7 @@ local function load_language_module_from_filename(filename)
   if lang then
     local ret, err = pcall(require, lang)
     if ret then
-      modules[lang].set_buffer_properties()
+      _m[lang].set_buffer_properties()
     elseif not ret and not err:match("^module '"..lang.."' not found:") then
       textadept.handlers.error(err)
     end

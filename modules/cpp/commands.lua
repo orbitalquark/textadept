@@ -2,12 +2,12 @@
 
 ---
 -- Commands for the cpp module.
-module('modules.cpp.commands', package.seeall)
+module('_m.cpp.commands', package.seeall)
 
 -- C++-specific key commands.
 local keys = _G.keys
 if type(keys) == 'table' then
-  local m_editing = modules.textadept.editing
+  local m_editing = _m.textadept.editing
   local m_handlers = textadept.handlers
   keys.cpp = {
     al = { textadept.io.open, _HOME..'/modules/cpp/init.lua' },
@@ -20,7 +20,7 @@ if type(keys) == 'table' then
     ['('] = { function()
 --~      buffer.word_chars =
 --~        '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      m_editing.show_call_tip(modules.cpp.api, true)
+      m_editing.show_call_tip(_m.cpp.api, true)
 --~      buffer:set_chars_default()
       return false
     end },
