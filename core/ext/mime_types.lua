@@ -1,8 +1,11 @@
 -- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+--- Handles file-specific settings (based on file extension).
+module('textadept.mime_types', package.seeall)
+
 ---
 -- [Local table] Language names with their associated lexers.
--- @type table
+-- @class table
 -- @name languages
 local languages = {
   cpp = 'cpp',
@@ -22,8 +25,8 @@ local languages = {
 local l = languages
 ---
 -- [Local table] File extensions with their associated languages.
--- @type table
--- @name extensions.
+-- @class table
+-- @name extensions
 local extensions = {
   c = l.cpp, cpp = l.cpp, cxx = l.cpp, h = l.cpp,
   css = l.css,
@@ -42,7 +45,7 @@ local extensions = {
 
 ---
 -- [Local table] Shebang words and their associated languages.
--- @type table
+-- @class table
 -- @name shebangs
 local shebangs = {
   lua = l.lua,
@@ -50,9 +53,9 @@ local shebangs = {
 }
 
 ---
--- [Local] Sets the buffer's lexer language based on a filename.
+-- [Local function] Sets the buffer's lexer language based on a filename.
 -- @param filename The filename used to set the lexer language.
--- @return boolean indicating if a lexer language was set.
+-- @return boolean indicating whether or not a lexer language was set.
 local function set_lexer_from_filename(filename)
   local lexer
   if filename then
@@ -64,7 +67,7 @@ local function set_lexer_from_filename(filename)
 end
 
 ---
--- [Local] Sets the buffer's lexer language based on a shebang line.
+-- [Local function] Sets the buffer's lexer language based on a shebang line.
 local function set_lexer_from_sh_bang()
   local lexer
   local line = buffer:get_line(0)
@@ -79,8 +82,8 @@ local function set_lexer_from_sh_bang()
 end
 
 ---
--- [Local] Loads a language module based on a filename (if it hasn't been
--- loaded already).
+-- [Local function] Loads a language module based on a filename (if it hasn't
+-- been loaded already).
 -- @param filename The filename used to load a language module from.
 local function load_language_module_from_filename(filename)
   if not filename then return end
@@ -97,7 +100,7 @@ local function load_language_module_from_filename(filename)
 end
 
 ---
--- [Local] Performs actions suitable for a new buffer.
+-- [Local function] Performs actions suitable for a new buffer.
 -- Sets the buffer's lexer language and loads the language module.
 local function handle_new()
   local buffer = buffer
@@ -108,7 +111,7 @@ local function handle_new()
 end
 
 ---
--- [Local] Performs actions suitable for when buffers are switched.
+-- [Local function] Performs actions suitable for when buffers are switched.
 -- Sets the buffer's lexer language.
 local function handle_switch()
   if not set_lexer_from_filename(buffer.filename) then

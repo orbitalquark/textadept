@@ -117,10 +117,12 @@ end
 --   function name, and each value is a table of tables. Each of those tables
 --   represents a function. It has 2 indexes: parameters and a description.
 --   This enables call tips for 'overloaded' functions. Even if there is just
---   one function, it must be enclosed in a table.
--- @param start Boolean indicating whether to start a call tip or not. If the
---   user clicks an arrow, you should call show_call_tip again with this value
---   being false to display the next function.
+--   one function, it must be enclosed in a table. You can get an API table
+--   from a file via textadept.io.read_api_file().
+-- @param start Flag indicating whether or not to start a call tip. If the user
+--   clicks an arrow, you should call show_call_tip again with this value being
+--   false to display the next function.
+-- @see textadept.io.read_api_file
 function show_call_tip(api, start)
   local buffer = buffer
   local funcs
@@ -165,7 +167,7 @@ textadept.handlers.add_function_to_handler('call_tip_click',
   end)
 
 ---
--- Comment or uncomments out blocks of code with a given comment string.
+-- Block comments or uncomments code with a given comment string.
 -- @param comment The comment string inserted or removed from the beginning of
 --   each line in the selection.
 function block_comment(comment)
@@ -291,7 +293,7 @@ function smart_paste(action)
 end
 
 ---
--- Selects the current word under the caret and if action indicates, delete it.
+-- Selects the current word under the caret and if action indicates, deletes it.
 -- @param action Optional action to perform with selected word. If 'delete', it
 --   is deleted.
 function current_word(action)
@@ -319,7 +321,7 @@ function transpose_chars()
     buffer:char_right()
   end
   buffer:insert_text( -1, string.char(char) )
-  editor:end_undo_action()
+  buffer:end_undo_action()
   buffer:goto_pos(caret)
 end
 

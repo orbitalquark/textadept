@@ -164,8 +164,8 @@ function insert(snippet_arg)
 end
 
 ---
--- [Local function] Mirror or transform most recently modified field in the
--- current snippet and move on to the next field.
+-- [Local function] Mirrors or transforms the most recently modified field in
+-- the current snippet and moves on to the next field.
 next_snippet_item = function()
   if not snippet.index then return end
   local buffer = buffer
@@ -318,7 +318,7 @@ function cancel_current()
 end
 
 ---
--- List available snippet triggers as an autocompletion list.
+-- Lists available snippet triggers as an autocompletion list.
 -- Global snippets and snippets in the current lexer and scope are used.
 function list()
   local buffer = buffer
@@ -348,7 +348,7 @@ function list()
 end
 
 ---
--- Show the scope/style at the current caret position as a calltip.
+-- Shows the scope/style at the current caret position as a call tip.
 function show_scope()
   if not SCOPES_ENABLED then print('Scopes disabled') return end
   local buffer = buffer
@@ -372,7 +372,7 @@ snippet_text = function()
 end
 
 ---
--- [Local function] Replace escaped snippet characters with their octal
+-- [Local function] Replaces escaped snippet characters with their octal
 -- equivalents.
 escape = function(text)
   return text:gsub('\\([$/}`])',
@@ -380,7 +380,7 @@ escape = function(text)
 end
 
 ---
--- [Local function] Replace octal snippet characters with their escaped
+-- [Local function] Replaces octal snippet characters with their escaped
 -- equivalents.
 unescape = function(text)
   return text:gsub('\\(%d%d%d)',
@@ -388,13 +388,13 @@ unescape = function(text)
 end
 
 ---
--- [Local function] Remove escaping forward-slashes from escaped snippet
+-- [Local function] Removes escaping forward-slashes from escaped snippet
 -- characters.
 -- At this point, they are no longer necessary.
 remove_escapes = function(text) return text:gsub('\\([$/}`])', '%1') end
 
 ---
--- [Local function] When snippets are inserted, match their indentation level
+-- [Local function] When snippets are inserted, matches their indentation level
 -- with their surroundings.
 match_indention = function(ref_line, num_lines)
   if num_lines == 0 then return end
@@ -423,8 +423,7 @@ join_lines = function()
 end
 
 ---
--- [Local function] Called for printing debug text if DEBUG flag
--- is set.
+-- [Local function] Prints debug text if the DEBUG flag is set.
 -- @param text Debug text to print.
 _DEBUG = function(text) if DEBUG then print('---\n'..text) end end
 

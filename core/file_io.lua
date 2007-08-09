@@ -8,7 +8,7 @@ module('textadept.io', package.seeall)
 local handlers = textadept.handlers
 
 ---
--- [Local] Opens a file or goes to its already open buffer.
+-- [Local function] Opens a file or goes to its already open buffer.
 -- @param filename The absolute path to the file to open.
 local function open_helper(filename)
   if not filename then return end
@@ -255,6 +255,7 @@ end
 -- @param word_chars Characters considered to be word characters for
 --   determining the identifier to lookup. Its contents should be in Lua
 --   pattern format suitable for the character class construct.
+-- @return API table.
 -- @usage textadept.io.read_api_file(filename, '%w_')
 function read_api_file(filename, word_chars)
   local api = {}

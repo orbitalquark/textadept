@@ -102,7 +102,7 @@ function matches(entry_text)
 end
 
 ---
--- If not expanding, create the entire tree; otherwise return the child table
+-- If not expanding, creates the entire tree; otherwise returns the child table
 -- of the parent being expanded.
 function get_contents_for(full_path, expanding)
   local ctags_file = full_path[1]:sub(7) -- ignore 'ctags:'
