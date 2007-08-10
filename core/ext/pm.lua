@@ -4,7 +4,9 @@
 -- Browsers loaded by the project manager.
 -- @class table
 -- @name browsers
-local browsers = { 'buffer_browser', 'file_browser', 'ctags_browser' }
+local browsers = {
+  'buffer_browser', 'file_browser', 'ctags_browser', 'macro_browser'
+}
 for _, b in ipairs(browsers) do require('ext/pm.'..b) end
 
 local pm = textadept.pm

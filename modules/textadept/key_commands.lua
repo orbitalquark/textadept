@@ -6,11 +6,11 @@ module('_m.textadept.key_commands', package.seeall)
 
 --[[
   C:               G                   Q
-  A:   A   C       G     J K L M   O   Q R         W X   Z
+  A:   A   C       G     J K L     O   Q R         W X   Z
   CS:      C D     G     J   L         Q R S T U   W
   SA:  A   C D E   G H I J K L M   O   Q R S T     W X   Z
-  CA:  A   C       G H   J K L M   O   Q R S T   V W X Y Z
-  CSA:     C D     G H   J K L M   O   Q R S T U   W X   Z
+  CA:  A   C       G H   J K L     O   Q R S T   V W X Y Z
+  CSA:     C D     G H   J K L     O   Q R S T U   W X   Z
 ]]--
 
 ---
@@ -126,6 +126,10 @@ keys.am = {
   c  = { m_mlines.clear           },
 }
 
+local m_macro = _m.textadept.macros
+keys.cam  = { m_macro.toggle_record }
+keys.csam = { m_macro.play          }
+
 keys.cr   = { textadept.io.open              }
 keys.co   = { 'save', b                      }
 keys.cso  = { 'save_as', b                   }
@@ -161,6 +165,7 @@ keys.ct.ss = { 'split',   v           } -- vertical
 keys.ct.n  = { textadept.new_buffer   }
 keys.ct.b  = { pm_activate, 'buffers' }
 keys.ct.c  = { pm_activate, 'ctags'   }
+keys.ct.m  = { pm_activate, 'macros'  }
 keys.ct.x  = { function() view:unsplit() return true end  }
 keys.ct.sx = { function() while view:unsplit() do end end }
 keys.ct.f  = { function()
