@@ -409,11 +409,13 @@ bool l_pm_get_contents_for(const char *entry_text, bool expanding) {
   return l_call_function(2, 1, true);
 }
 
+void warn(const char *s) { printf("Warning: %s\n", s); }
+
 // table is at stack top
 void l_pm_populate(GtkTreeIter *initial_iter) {
   GtkTreeIter iter, child;
-  if (!lua_istable(lua, -1)) return;
-    //luaL_error(lua, "pm.get_contents_for return not a table.");
+  if (!lua_istable(lua, -1))
+    return warn("pm.get_contents_for return not a table.");
   if (!initial_iter) gtk_tree_store_clear(pm_store);
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
@@ -429,14 +431,13 @@ void l_pm_populate(GtkTreeIter *initial_iter) {
       lua_getfield(lua, -1, "pixbuf");
       if (lua_isstring(lua, -1))
         gtk_tree_store_set(pm_store, &iter, 0, lua_tostring(lua, -1), -1);
-      //else
-        //luaL_error(lua, "pm.populate: pixbuf key must have string value.");
+      else warn("pm.populate: pixbuf key must have string value.");
       lua_pop(lua, 1); // pixbuf
       lua_getfield(lua, -1, "text");
       gtk_tree_store_set(pm_store, &iter, 2, lua_isstring(lua, -1) ?
                          lua_tostring(lua, -1) : lua_tostring(lua, -3));
       lua_pop(lua, 1); // display text
-    } //else luaL_error(lua, "pm.populate: id key must have table value.");
+    } else warn("pm.populate: id key must have table value.");
     lua_pop(lua, 1); // value
   }
   lua_pop(lua, 1); // returned table
@@ -493,7 +494,7 @@ void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback) {
     gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
                    event ? event->button : 0,
                    gdk_event_get_time(reinterpret_cast<GdkEvent*>(event)));
-  } //else luaL_error(lua, "pm.get_context_menu return was not a table.");
+  } else warn("pm.get_context_menu return was not a table.");
 }
 
 // full_path is at stack top
