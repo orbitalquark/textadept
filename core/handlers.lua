@@ -161,7 +161,7 @@ local function set_title(buffer)
   local buffer = buffer
   local filename = buffer.filename or 'Untitled'
   local d = buffer.dirty and ' * ' or ' - '
-  textadept.title = filename:match('[^/]+$')..d..'Textadept'
+  textadept.title = filename:match('[^/]+$')..d..'Textadept ('..filename..')'
 end
 
 add_handler_function('save_point_reached',
