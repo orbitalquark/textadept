@@ -120,7 +120,7 @@ local function handle_switch()
 end
 
 local handlers = textadept.handlers
-handlers.add_function_to_handler('file_opened', handle_new)
-handlers.add_function_to_handler('file_saved_as', handle_new)
-handlers.add_function_to_handler('buffer_switch', handle_switch)
-handlers.add_function_to_handler('view_new', handle_switch)
+handlers.add_handler_function('file_opened', handle_new)
+handlers.add_handler_function('file_saved_as', handle_new)
+handlers.add_handler_function('buffer_switch', handle_switch)
+handlers.add_handler_function('view_new', handle_switch)

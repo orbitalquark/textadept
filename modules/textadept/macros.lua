@@ -38,7 +38,7 @@ local function macro_notification(msg, wParam, lParam)
     textadept.statusbar_text = 'Macro recording'
   end
 end
-textadept.handlers.add_function_to_handler('macro_record', macro_notification)
+textadept.handlers.add_handler_function('macro_record', macro_notification)
 
 ---
 -- Starts recording a macro.

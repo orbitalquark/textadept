@@ -12,7 +12,7 @@ local handlers = textadept.handlers
 -- @param handler The string handler name.
 -- @param f The Lua function to add.
 -- @param index Optional index to insert the handler into.
-function add_function_to_handler(handler, f, index)
+function add_handler_function(handler, f, index)
   local plural = handler..'s'
   if not handlers[plural] then handlers[plural] = {} end
   local funcs = handlers[plural]
@@ -134,7 +134,7 @@ end
 
 -- Default handlers to follow.
 
-add_function_to_handler('char_added',
+add_handler_function('char_added',
   function(char) -- auto-indent on return
     if char ~= '\n' then return end
     local buffer = buffer
@@ -164,13 +164,13 @@ local function set_title(buffer)
   textadept.title = filename:match('[^/]+$')..d..'Textadept'
 end
 
-add_function_to_handler('save_point_reached',
+add_handler_function('save_point_reached',
   function() -- changes Textadept title to show 'clean' buffer
     buffer.dirty = false
     set_title(buffer)
   end)
 
-add_function_to_handler('save_point_left',
+add_handler_function('save_point_left',
   function() -- changes Textadept title to show 'dirty' buffer
     buffer.dirty = true
     set_title(buffer)
@@ -203,7 +203,7 @@ local function match_brace(current_pos)
   return false
 end
 
-add_function_to_handler('update_ui',
+add_handler_function('update_ui',
   function() -- highlights matching braces
     local buffer = buffer
     if not match_brace(buffer.current_pos) then buffer:brace_bad_light(-1) end
@@ -211,7 +211,7 @@ add_function_to_handler('update_ui',
 
 local docstatusbar_text =
   "Line: %d/%d    Col: %d    Lexer: %s    %s    %s    %s"
-add_function_to_handler('update_ui',
+add_handler_function('update_ui',
   function() -- sets docstatusbar text
     local buffer = buffer
     local pos = buffer.current_pos
@@ -225,14 +225,14 @@ add_function_to_handler('update_ui',
       docstatusbar_text:format(line, max, col, lexer, mode, eol, tabs)
   end)
 
-add_function_to_handler('margin_click',
+add_handler_function('margin_click',
   function(margin, modifiers, position) -- toggles folding
     local buffer = buffer
     local line = buffer:line_from_position(position)
     buffer:toggle_fold(line)
   end)
 
-add_function_to_handler('buffer_new',
+add_handler_function('buffer_new',
   function() -- set additional buffer functions
     local buffer, textadept = buffer, textadept
     buffer.save = textadept.io.save
@@ -241,19 +241,19 @@ add_function_to_handler('buffer_new',
     set_title(buffer)
   end)
 
-add_function_to_handler('buffer_switch',
+add_handler_function('buffer_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
     update_ui()
   end)
 
-add_function_to_handler('view_switch',
+add_handler_function('view_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
     update_ui()
   end)
 
-add_function_to_handler('quit',
+add_handler_function('quit',
   function() -- prompts for confirmation if any buffers are dirty; saves session
     local any = false
     local list = 'The following buffers are unsaved:\n\n'

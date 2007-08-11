@@ -230,7 +230,7 @@ function perform_menu_action(menu_item, selected_item)
 
 end
 
-local add_function_to_handler = textadept.handlers.add_function_to_handler
+local add_handler_function = textadept.handlers.add_handler_function
 local function update_view()
   if matches(textadept.pm.entry_text) then
     if buffer.filename then
@@ -240,7 +240,7 @@ local function update_view()
     end
   end
 end
-add_function_to_handler('file_opened', update_view)
-add_function_to_handler('buffer_deleted', update_view)
-add_function_to_handler('buffer_switch', update_view)
-add_function_to_handler('save_point_reached', update_view)
+add_handler_function('file_opened', update_view)
+add_handler_function('buffer_deleted', update_view)
+add_handler_function('buffer_switch', update_view)
+add_handler_function('save_point_reached', update_view)
