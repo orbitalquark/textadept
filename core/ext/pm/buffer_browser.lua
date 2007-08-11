@@ -46,12 +46,12 @@ function perform_menu_action(menu_item, selected_item)
   textadept.pm.activate()
 end
 
-local add_function_to_handler = textadept.handlers.add_function_to_handler
+local add_handler_function = textadept.handlers.add_handler_function
 local function update_view()
   if matches(textadept.pm.entry_text) then textadept.pm.activate() end
 end
-add_function_to_handler('file_opened', update_view)
-add_function_to_handler('buffer_new', update_view)
-add_function_to_handler('buffer_deleted', update_view)
-add_function_to_handler('save_point_reached', update_view)
-add_function_to_handler('save_point_left', update_view)
+add_handler_function('file_opened', update_view)
+add_handler_function('buffer_new', update_view)
+add_handler_function('buffer_deleted', update_view)
+add_handler_function('save_point_reached', update_view)
+add_handler_function('save_point_left', update_view)

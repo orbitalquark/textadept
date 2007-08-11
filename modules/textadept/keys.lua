@@ -127,7 +127,7 @@ function keypress(code, shift, control, alt)
     else return true end
   end
 end
-textadept.handlers.add_function_to_handler('keypress', keypress, 1)
+textadept.handlers.add_handler_function('keypress', keypress, 1)
 
 -- Note the following functions are called inside pcall so error handling or
 -- checking if keys exist etc. is not necessary.
