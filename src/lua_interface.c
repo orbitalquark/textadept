@@ -264,13 +264,14 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
   l_set_buffer_global(sci);
   // Restore this buffer's properties.
   lua_getglobal(lua, "buffer");
-  l_get_buffer_prop("_first_visible_line", -2);
-  SS(sci, SCI_LINESCROLL, 0,
-     SS(sci, SCI_VISIBLEFROMDOCLINE, lua_tointeger(lua, -1)));
-  l_get_buffer_prop("_anchor", -3);
-  l_get_buffer_prop("_current_pos", -4);
+  l_get_buffer_prop("_anchor", -2);
+  l_get_buffer_prop("_current_pos", -3);
   SS(sci, SCI_SETSEL, lua_tointeger(lua, -2), lua_tointeger(lua, -1));
-  lua_pop(lua, 4); // _first_visible_line, _anchor, _current_pos, and buffer
+  l_get_buffer_prop("_first_visible_line", -4);
+  SS(sci, SCI_LINESCROLL, 0,
+     SS(sci, SCI_VISIBLEFROMDOCLINE, lua_tointeger(lua, -1)) -
+     SS(sci, SCI_GETFIRSTVISIBLELINE));
+  lua_pop(lua, 4); // _anchor, _current_pos, _first_visible_line, and buffer
   if (!closing) l_handle_signal("buffer_switch");
   lua_pop(lua, 2); // buffer table and buffers
 }
