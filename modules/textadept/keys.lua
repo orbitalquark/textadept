@@ -21,7 +21,7 @@ local CTRL, SHIFT, ALT, ADD = 'c', 's', 'a', ''
 
 ---
 -- [Local table] Lookup table for key values higher than 255.
--- If a key value given to OnKey is higher than 255, this table is used to
+-- If a key value given to 'keypress' is higher than 255, this table is used to
 -- return a string representation of the key if it exists.
 -- @class table
 -- @name KEYSYMS
@@ -61,14 +61,15 @@ function clear_key_sequence()
 end
 
 ---
--- Handles Textadept keypresses.
--- It is called every time a key is pressed and determines which commands to
--- execute or which new key in a chain to enter based on the current key
--- sequence, lexer, and scope.
--- @return keypress returns what the commands it executes return. If nothing is
---   returned, keypress returns true by default. A true return value will tell
---   Textadept not to handle the key afterwords.
-function keypress(code, shift, control, alt)
+-- [Local function] Handles Textadept keypresses.
+-- It is called every time a key is pressed, and based on lexer and scope,
+-- executes a command.
+-- The command is looked up in the global 'keys' key command table. For a
+-- description of the structure of 'keys', see try_get_cmd.
+-- @return whatever the executed command returns, returns true by default.
+--   A true return value will tell Textadept not to handle the key afterwords.
+-- @see try_get_cmd
+local function keypress(code, shift, control, alt)
   local buffer, textadept = buffer, textadept
   local keys = _G.keys
   local key_seq = ''
@@ -153,7 +154,17 @@ end
 
 ---
 -- [Local function] Helper function that gets commands associated with the
--- current keychain.
+-- current keychain from 'keys'.
+-- Each table key in 'keys' is a key sequence, formed from CTRL, SHIFT, ALT,
+-- ADD, and the key pressed, with an associated table value or table of key
+-- commands. For a table value, the first item can be either a function or a
+-- string (representing a function name). If it is a function, all table items
+-- after it are used as arguments, and the function is called. If the first
+-- item is a string, the next string is checked to be either 'buffer' or 'view'
+-- and the current buffer or view is used as the table with the function name as
+-- a field, indexing a function. The current buffer or view is then used as the
+-- first argument to that function, with all items after the second following as
+-- additional ones. Basically in Lua: {buffer|view}:{first_item}(...)
 -- If the current item in the keychain is part of a chain, throw an error value
 -- of -1. This way, pcall will return false and -1, where the -1 can easily and
 -- efficiently be checked rather than using a string error message.
