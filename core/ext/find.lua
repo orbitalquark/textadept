@@ -81,18 +81,37 @@ end
 -- via scripts.
 -- textadept.find.find is called first, to select any found text. The selected
 -- text is then replaced by the specified replacement text.
--- @param rtext The text to replace found text with. It can contain Lua escape
---   sequences to use text captured by a Lua pattern. (%n where 1 <= n <= 9.)
+-- @param rtext The text to replace found text with. It can contain both Lua
+--   capture items (%n where 1 <= n <= 9) for Lua pattern searches and %()
+--   sequences for embedding Lua code for any search.
 function find.replace(rtext)
   if #buffer:get_sel_text() == 0 then return end
   local buffer = buffer
   buffer:target_from_selection()
+  rtext = rtext:gsub('%%%%', '\\037') -- escape '%%'
   if find.captures then
     for i, v in ipairs(find.captures) do
-      rtext = rtext:gsub('[^%%]?[^%%]?%%'..i, v) -- not entirely correct
+      rtext = rtext:gsub('%%'..i, v)
     end
   end
-  buffer:replace_target( rtext:gsub('\\[abfnrtv\\]', escapes) )
+  local ret, rtext = pcall( rtext.gsub, rtext, '%%(%b())',
+    function(code)
+      local ret, val = pcall( loadstring('return '..code) )
+      if not ret then
+        os.execute('zenity --error --text "'..val:gsub('"', '\\"')..'"')
+        error()
+      end
+      return val
+    end )
+  if ret then
+    rtext = rtext:gsub('\\037', '%%') -- unescape '%'
+    buffer:replace_target( rtext:gsub('\\[abfnrtv\\]', escapes) )
+    buffer:goto_pos(buffer.target_end + 1) -- 'find' text after this replacement
+  else
+    -- Since find is called after replace returns, have it 'find' the current
+    -- text again, rather than the next occurance so the user can fix the error.
+    buffer:goto_pos(buffer.current_pos)
+  end
 end
 
 ---
