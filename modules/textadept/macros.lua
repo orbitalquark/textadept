@@ -38,7 +38,7 @@ local function macro_notification(msg, wParam, lParam)
     textadept.statusbar_text = 'Macro recording'
   end
 end
-textadept.handlers.add_handler_function('macro_record', macro_notification)
+textadept.events.add_handler('macro_record', macro_notification)
 
 ---
 -- Starts recording a macro.
@@ -81,7 +81,7 @@ function stop_recording()
     list[macro_name] = current
     save()
     textadept.statusbar_text = 'Macro saved'
-    textadept.handlers.handle('macro_saved')
+    textadept.events.handle('macro_saved')
   else
     textadept.statusbar_text = 'Macro not saved'
   end
@@ -124,7 +124,7 @@ function delete(macro_name)
   if list[macro_name] then
     list[macro_name] = nil
     save()
-    textadept.handlers.handle('macro_deleted')
+    textadept.events.handle('macro_deleted')
   end
 end
 

@@ -5,7 +5,7 @@
 -- Opens and saves files and sessions and reads API files.
 module('textadept.io', package.seeall)
 
-local handlers = textadept.handlers
+local events = textadept.events
 
 ---
 -- [Local function] Opens a file or goes to its already open buffer.
@@ -24,7 +24,7 @@ local function open_helper(filename)
   end
   buffer.filename = filename
   buffer:set_save_point()
-  handlers.handle('file_opened', filename)
+  events.handle('file_opened', filename)
 end
 
 ---
@@ -58,7 +58,7 @@ function save(buffer)
     f:close()
     buffer:set_save_point()
   else
-    handlers.error(err)
+    events.error(err)
   end
 end
 
@@ -77,7 +77,7 @@ function save_as(buffer, filename)
   if #filename > 0 then
     buffer.filename = filename:sub(1, -2) -- chomp
     buffer:save()
-    handlers.handle('file_saved_as', filename)
+    events.handle('file_saved_as', filename)
   end
 end
 

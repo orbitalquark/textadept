@@ -1,56 +1,111 @@
 -- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
---- Handler module that handles Scintilla and Textadept notifications/events.
-module('textadept.handlers', package.seeall)
+---
+-- Module that handles Scintilla and Textadept notifications/events.
+-- Most of Textadept's functionality comes through handlers. Scintilla
+-- notifications, Textadept's own events, and user-defined events can all be
+-- handled.
+--
+-- @usage
+-- Each event can have multiple handlers, which are simply Lua functions that
+-- are called in the sequence they are added as handler functions. Sometimes it
+-- is useful to have a handler run under a specific condition(s). If this is the
+-- case, place a conditional in the function that returns if it isn't met.
+--
+-- For users creating their own events, one does not have to be explicitly
+-- defined. A handler can simply be added for an event name, and 'handle'd when
+-- necessary.
+--
+-- Scintilla notifications:
+--   char_added
+--     ch: the (integer) character added.
+--   save_point_reached
+--   save_point_left
+--   double_click
+--     position: the position of the beginning of the line clicked.
+--     line: the line clicked.
+--   update_ui
+--   macro_record
+--     message: the SCI_* message.
+--     wParam: wParam in SCI_*.
+--     lParam: lParam in SCI_*.
+--   margin_click
+--     margin: the margin number.
+--     modifiers: mouse modifiers.
+--     position: the position of the beginning of the line at the point clicked.
+--   user_list_selection
+--     wParam: the user list ID.
+--     text: the text of the selected item.
+--   uri_dropped:
+--     text: the URI dropped.
+--   call_tip_click
+--     position: 1 or 2 if the up or down arrow was clicked; 0 otherwise.
+--   auto_c_selection
+--     lParam: the start position of the word being completed.
+--     text: the text of the selected item.
+--
+-- Textadept events:
+--   buffer_new
+--   buffer_deleted
+--   buffer_switch
+--   view_new
+--   view_switch
+--   quit
+--   keypress
+--     code: the key code.
+--     shift: flag indicating whether or not shift is pressed.
+--     control: flag indicating whether or not control is pressed.
+--     alt: flag indicating whether or not alt is pressed.
+module('textadept.events', package.seeall)
 
-local handlers = textadept.handlers
+local events = textadept.events
 
 ---
--- Adds a function to a handler.
--- Every handler has a table of functions associated with it that are run when
--- the handler is called by Textadept.
--- @param handler The string handler name.
+-- Adds a handler function to an event.
+-- @param event The string event name.
 -- @param f The Lua function to add.
 -- @param index Optional index to insert the handler into.
-function add_handler_function(handler, f, index)
-  local plural = handler..'s'
-  if not handlers[plural] then handlers[plural] = {} end
-  local funcs = handlers[plural]
+function add_handler(event, f, index)
+  local plural = event..'s'
+  if not events[plural] then events[plural] = {} end
+  local handlers = events[plural]
   if index then
-    table.insert(funcs, index, f)
+    table.insert(handlers, index, f)
   else
-    funcs[#funcs+ 1] = f
+    handlers[#handlers + 1] = f
   end
 end
 
 ---
--- Calls every function added to a handler in sequence.
--- If true or false is returned by any function, the iteration ceases.
--- @param handler The string handler name.
+-- Calls every handler function added to an event in sequence.
+-- If true or false is returned by any handler, the iteration ceases. Normally
+-- this function is called by the system when necessary, but it can be called
+-- in scripts to handle user-defined events.
+-- @param event The string event name.
 -- @param ... Arguments to the handler.
-function handle(handler, ...)
-  local plural = handler..'s'
-  if not handlers[plural] then return end
-  local funcs = handlers[plural]
-  for _, f in ipairs(funcs) do
+function handle(event, ...)
+  local plural = event..'s'
+  local handlers = events[plural]
+  if not handlers then return end
+  for _, f in ipairs(handlers) do
     local result = f( unpack{...} )
     if result == true or result == false then return result end
   end
 end
 
 ---
--- Reloads handlers.
--- Clears each table of handlers for each handler function and reloads this
--- module to reset to the default handlers.
+-- Reloads event handlers.
+-- Clears each event's table of handlers and reloads this module to reset to the
+-- default handlers.
 function reload()
-  package.loaded['handlers'] = nil
-  for handler in pairs(handlers) do
-    if handlers[handler..'s'] then handlers[handler..'s'] = nil end
+  package.loaded['events'] = nil
+  for handler in pairs(events) do
+    if events[handler..'s'] then events[handler..'s'] = nil end
   end
-  require 'handlers'
+  require 'events'
 end
 
--- Signals.
+-- Textadept events.
 function buffer_new()
   return handle('buffer_new')
 end
@@ -134,7 +189,7 @@ end
 
 -- Default handlers to follow.
 
-add_handler_function('char_added',
+add_handler('char_added',
   function(char) -- auto-indent on return
     if char ~= '\n' then return end
     local buffer = buffer
@@ -172,13 +227,13 @@ local function set_title(buffer)
   textadept.title = filename:match('[^/]+$')..d..'Textadept ('..filename..')'
 end
 
-add_handler_function('save_point_reached',
+add_handler('save_point_reached',
   function() -- changes Textadept title to show 'clean' buffer
     buffer.dirty = false
     set_title(buffer)
   end)
 
-add_handler_function('save_point_left',
+add_handler('save_point_left',
   function() -- changes Textadept title to show 'dirty' buffer
     buffer.dirty = true
     set_title(buffer)
@@ -211,7 +266,7 @@ local function match_brace(current_pos)
   return false
 end
 
-add_handler_function('update_ui',
+add_handler('update_ui',
   function() -- highlights matching braces
     local buffer = buffer
     if not match_brace(buffer.current_pos) then buffer:brace_bad_light(-1) end
@@ -219,7 +274,7 @@ add_handler_function('update_ui',
 
 local docstatusbar_text =
   "Line: %d/%d    Col: %d    Lexer: %s    %s    %s    %s"
-add_handler_function('update_ui',
+add_handler('update_ui',
   function() -- sets docstatusbar text
     local buffer = buffer
     local pos = buffer.current_pos
@@ -233,14 +288,14 @@ add_handler_function('update_ui',
       docstatusbar_text:format(line, max, col, lexer, mode, eol, tabs)
   end)
 
-add_handler_function('margin_click',
+add_handler('margin_click',
   function(margin, modifiers, position) -- toggles folding
     local buffer = buffer
     local line = buffer:line_from_position(position)
     buffer:toggle_fold(line)
   end)
 
-add_handler_function('buffer_new',
+add_handler('buffer_new',
   function() -- set additional buffer functions
     local buffer, textadept = buffer, textadept
     buffer.save = textadept.io.save
@@ -249,19 +304,19 @@ add_handler_function('buffer_new',
     set_title(buffer)
   end)
 
-add_handler_function('buffer_switch',
+add_handler('buffer_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
     update_ui()
   end)
 
-add_handler_function('view_switch',
+add_handler('view_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
     update_ui()
   end)
 
-add_handler_function('quit',
+add_handler('quit',
   function() -- prompts for confirmation if any buffers are dirty; saves session
     local any = false
     local list = 'The following buffers are unsaved:\n\n'

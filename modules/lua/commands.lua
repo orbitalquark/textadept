@@ -71,7 +71,6 @@ end
 local keys = _G.keys
 if type(keys) == 'table' then
   local m_editing = _m.textadept.editing
-  local m_handlers = textadept.handlers
   keys.lua = {
     al = { textadept.io.open, _HOME..'/modules/lua/init.lua' },
     ac = {
