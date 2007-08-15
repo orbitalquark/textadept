@@ -219,7 +219,7 @@ module('buffer')
 --   (Write-only)
 -- @field word_chars The set of characters making up words when moving or
 --   selecting by word. (Write-only)
--- @field wrap_mode Flag indicating whether or not txt is word wrapped.
+-- @field wrap_mode Flag indicating whether or not text is word wrapped.
 -- @field wrap_start_indent The start indent for wrapped lines.
 -- @field wrap_visual_flags The display mode of visual flags for wrapped lines.
 --   0: none, 1: end, 2: start.
@@ -396,7 +396,7 @@ function buffer:add_text(text)
 function buffer:allocate(bytes)
 --- Appends a string to the end of the document without changing the selection.
 function buffer:append_text(text)
---- Returns flag indicating whether or not an autocompletion list is visible.
+--- Returns a flag indicating whether or not an autocompletion list is visible.
 function buffer:auto_c_active()
 --- Removes the autocompletion list from the screen.
 function buffer:auto_c_cancel()
@@ -490,7 +490,7 @@ function buffer:del_line_right()
 function buffer:del_word_left()
 --- Deletes the word to the right of the caret.
 function buffer:del_word_right()
---- Deletes the selection or the caracter before the caret.
+--- Deletes the selection or the character before the caret.
 function buffer:delete_back()
 --- Deletes the selection or the character before the caret. Will not delete the
 -- character before at the start of a lone.
@@ -840,7 +840,7 @@ function buffer:stuttered_page_up_extend()
 function buffer:style_clear_all()
 --- Returns the font name of a given style.
 function buffer:style_get_font(style_num)
---- Resets teh default style to its state at startup.
+--- Resets the default style to its state at startup.
 function buffer:style_reset_default()
 --- Inserts a tab character or indent multiple lines.
 function buffer:tab()
