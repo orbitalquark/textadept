@@ -5,8 +5,10 @@
 GtkWidget *pm_view, *pm_entry, *pm_container;
 GtkTreeStore *pm_store;
 
+static int pm_search_equal_func(GtkTreeModel *model, int col, const char *key,
+                                GtkTreeIter *iter, gpointer);
 static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
-                                      GtkTreeIter *b, gpointer);
+                                     GtkTreeIter *b, gpointer);
 static void pm_entry_activated(GtkWidget *widget, gpointer);
 static bool pm_entry_keypress(GtkWidget *, GdkEventKey *event, gpointer);
 static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter,
@@ -28,9 +30,9 @@ GtkWidget* pm_create_ui() {
 
   pm_store = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
   GtkTreeSortable *sortable = GTK_TREE_SORTABLE(pm_store);
+  gtk_tree_sortable_set_sort_column_id(sortable, 1, GTK_SORT_ASCENDING);
   gtk_tree_sortable_set_sort_func(sortable, 1, pm_sort_iter_compare_func,
                                   GINT_TO_POINTER(1), NULL);
-  gtk_tree_sortable_set_sort_column_id(sortable, 1, GTK_SORT_ASCENDING);
 
   pm_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(pm_store));
   g_object_unref(pm_store);
@@ -38,6 +40,8 @@ GtkWidget* pm_create_ui() {
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(pm_view), false);
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(pm_view), true);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(pm_view), 2);
+  gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(pm_view),
+                                      pm_search_equal_func, NULL, NULL);
 
   GtkTreeViewColumn *column = gtk_tree_view_column_new();
   GtkCellRenderer *renderer;
@@ -130,9 +134,16 @@ void pm_toggle_focus() {
     GTK_WIDGET_HAS_FOCUS(focused_editor) ? pm_entry : focused_editor);
 }
 
-static gint pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
-                                      GtkTreeIter *b, gpointer) {
-  const gchar *a_text, *b_text;
+static int pm_search_equal_func(GtkTreeModel *model, int col, const char *key,
+                                GtkTreeIter *iter, gpointer) {
+  const char *text;
+  gtk_tree_model_get(model, iter, col, &text, -1);
+  return strstr(text, key) == NULL; // false is really a match like strcmp
+}
+
+static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
+                                     GtkTreeIter *b, gpointer) {
+  const char *a_text, *b_text;
   gtk_tree_model_get(model, a, 1, &a_text, -1);
   gtk_tree_model_get(model, b, 1, &b_text, -1);
   if (a_text == NULL && b_text == NULL) return 0;
