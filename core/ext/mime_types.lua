@@ -94,7 +94,7 @@ local function load_language_module_from_filename(filename)
     if ret then
       _m[lang].set_buffer_properties()
     elseif not ret and not err:match("^module '"..lang.."' not found:") then
-      textadept.handlers.error(err)
+      textadept.events.error(err)
     end
   end
 end
@@ -119,8 +119,8 @@ local function handle_switch()
   end
 end
 
-local handlers = textadept.handlers
-handlers.add_handler_function('file_opened', handle_new)
-handlers.add_handler_function('file_saved_as', handle_new)
-handlers.add_handler_function('buffer_switch', handle_switch)
-handlers.add_handler_function('view_new', handle_switch)
+local events = textadept.events
+events.add_handler('file_opened', handle_new)
+events.add_handler('file_saved_as', handle_new)
+events.add_handler('buffer_switch', handle_switch)
+events.add_handler('view_new', handle_switch)

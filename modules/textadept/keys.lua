@@ -159,7 +159,7 @@ local function keypress(code, shift, control, alt)
       local ret, retval = pcall( func, unpack(args) )
       if ret then
         if type(retval) == 'boolean' then return retval end
-      else textadept.handlers.error(retval) end -- error
+      else textadept.events.error(retval) end -- error
     end
     return true
   else
@@ -175,7 +175,7 @@ local function keypress(code, shift, control, alt)
     else return true end
   end
 end
-textadept.handlers.add_handler_function('keypress', keypress, 1)
+textadept.events.add_handler('keypress', keypress, 1)
 
 ---
 -- [Local function] Tries to get a key command based on the lexer and current

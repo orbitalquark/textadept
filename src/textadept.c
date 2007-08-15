@@ -244,7 +244,7 @@ static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   return l_handle_keypress(event->keyval, event);
 }
 
-static bool w_keypress(GtkWidget* , GdkEventKey *event, gpointer) {
+static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   if (event->keyval == 0xff1b && GTK_WIDGET_VISIBLE(findbox)) {
     gtk_widget_hide(findbox);
     gtk_widget_grab_focus(focused_editor);

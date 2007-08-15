@@ -17,5 +17,5 @@ end
 package.path = package.path..';'.._HOME..'/core/?.lua'
 
 require 'iface'
-require 'handlers'
+require 'events'
 require 'file_io'

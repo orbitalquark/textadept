@@ -143,9 +143,9 @@ keys.ap   = { 'goto_buffer', v, -1, false    }
 keys.can  = { textadept.goto_view, 1, false  }
 keys.cap  = { textadept.goto_view, -1, false }
 
-local m_handlers = textadept.handlers
-keys.cab = { m_handlers.handle, 'call_tip_click', 1 }
-keys.caf = { m_handlers.handle, 'call_tip_click', 2 }
+local m_events = textadept.events
+keys.cab = { m_events.handle, 'call_tip_click', 1 }
+keys.caf = { m_events.handle, 'call_tip_click', 2 }
 
 keys.cs     = { textadept.find.focus }
 keys['c\t'] = { textadept.pm.focus   }
@@ -180,7 +180,7 @@ local function toggle_setting(setting)
   elseif type(state) == 'number' then
     buffer[setting] = buffer[setting] == 0 and 1 or 0
   end
-  textadept.handlers.update_ui() -- for updating statusbar
+  textadept.events.update_ui() -- for updating statusbar
 end
 
 keys.ct.v   = {} -- view chain

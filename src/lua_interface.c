@@ -328,7 +328,7 @@ bool l_call_function(int nargs, int retn=0, bool keep_return=false) {
 
 // error message is at stack top
 void l_handle_error(LS *lua, const char *errmsg) {
-  if (focused_editor && l_is_ta_table_function("handlers", "error")) {
+  if (focused_editor && l_is_ta_table_function("events", "error")) {
     l_insert(lua, -1); // shift error message down
     if (errmsg) lua_pushstring(lua, errmsg);
     l_call_function(errmsg ? 2 : 1);
@@ -340,11 +340,11 @@ void l_handle_error(LS *lua, const char *errmsg) {
 }
 
 bool l_handle_signal(const char *s) {
-  return l_is_ta_table_function("handlers", s) ? l_call_function(0, 1) : true;
+  return l_is_ta_table_function("events", s) ? l_call_function(0, 1) : true;
 }
 
 bool l_handle_keypress(int keyval, GdkEventKey *event) {
-  if (!l_is_ta_table_function("handlers", "keypress")) return false;
+  if (!l_is_ta_table_function("events", "keypress")) return false;
   lua_pushinteger(lua, keyval);
   lua_pushboolean(lua, (event->state & GDK_SHIFT_MASK) > 0 ? 1 : 0);
   lua_pushboolean(lua, (event->state & GDK_CONTROL_MASK) > 0 ? 1 : 0);
@@ -353,7 +353,7 @@ bool l_handle_keypress(int keyval, GdkEventKey *event) {
 }
 
 void l_handle_completion(const char *command) {
-  if (!l_is_ta_table_function("handlers",
+  if (!l_is_ta_table_function("events",
       command ? "show_completions" : "hide_completions")) return;
   if (command) lua_pushstring(lua, command);
   l_call_function(command ? 1 : 0);
@@ -363,7 +363,7 @@ void l_handle_completion(const char *command) {
 #define l_scn_str(s, n) { lua_pushstring(lua, s); lua_setfield(lua, -2, n); }
 
 void l_handle_scnnotification(SCNotification *n) {
-  if (!l_is_ta_table_function("handlers", "notification")) return;
+  if (!l_is_ta_table_function("events", "notification")) return;
   lua_newtable(lua);
   l_scn_int(n->nmhdr.code, "code");
   l_scn_int(n->position, "position");

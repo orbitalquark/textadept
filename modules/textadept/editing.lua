@@ -55,7 +55,7 @@ local enclosure = {
   single_tag = { left = '<', right = ' />' }
 }
 
-textadept.handlers.add_handler_function('char_added',
+textadept.events.add_handler('char_added',
   function(c) -- matches characters specified in char_matches
     if char_matches[c] then
       buffer:insert_text( -1, char_matches[c] )
@@ -154,7 +154,7 @@ function show_call_tip(api, start)
   buffer:call_tip_show(current_call_tip.start_pos, call_tip)
 end
 
-textadept.handlers.add_handler_function('call_tip_click',
+textadept.events.add_handler('call_tip_click',
   function(position) -- display the next or previous call tip
     if not buffer:call_tip_active() then return end
     if position == 1 and current_call_tip.num > 1 then
