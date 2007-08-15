@@ -12,6 +12,58 @@
 --   ALT: The string representing the Alt key.
 --   ADD: The string representing used to join together a sequence of Control,
 --     Shift, or Alt modifier keys.
+--
+-- @usage
+-- Keys are defined in the global table 'keys'. Keys in that table are key
+-- sequences, and values are tables of Lua functions and arguments to execute.
+-- The exceptions are language names, style names, and keychains (discussed
+-- later). Language names have table values of either key commands or style keys
+-- with table values of key commands. See /lexers/lexer.lua for some default
+-- style names. Each lexer's 'add_style' function adds additional styles, the
+-- string argument being the style's name. For example:
+--   keys = {
+--     ['ctrl+f'] = { 'char_right', 'buffer' },
+--     ['ctrl+b'] = { 'char_left',  'buffer' },
+--     lua = {
+--       ['ctrl+c'] = { 'add_text', 'buffer', '-- ' },
+--       whitespace = { function() print('whitespace') end }
+--     }
+--   }
+-- Style and lexer insensitive key commands should be placed in the lexer and
+-- keys tables respectively.
+--
+-- When searching for a key command to execute in the keys table, key commands
+-- in the current style have priority, then ones in the current lexer, and
+-- finally the ones in the global table.
+--
+-- As mentioned, key commands are key-value pairs, the key being the key
+-- sequence compiled from the CTRL, SHIFT, ALT, and ADD options (discussed
+-- below) as well as the key pressed and the value being a table of a function
+-- to call and its arguments. For the table, the first item can be either a Lua
+-- function or a string (representing a function name). If it is a function, all
+-- table items after it are used as arguments. If the first item is a string,
+-- the next string is checked to be either 'buffer' or 'view' and the current
+-- buffer or view is used as the table with the function name as a field,
+-- indexing a function. The current buffer or view is then used as the first
+-- argument to that function, with all items after the second following as
+-- additional ones. Basically in Lua: {buffer|view}:{first_item}(...)
+--
+-- As noted previously, key sequences can be compiled differently via the CTRL,
+-- SHIFT, ALT, and ADD options. The first three indicate the text for each
+-- respective modifier key and ADD is the text inserted between modifiers.
+--
+-- Key commands can be chained like in Emacs. Instead of a key sequence having
+-- a table of a function and its arguments, it has a table of key commands (much
+-- like lexer or style specific key commands). My default, the 'escape' key
+-- cancels the current keychain, but it can be redefined by setting the
+-- 'clear_sequence' key in the global keys table. It cannot be chained however.
+--
+-- Keys that have values higher than 255 cannot be represented by a string, but
+-- can have a string representation defined in the KEYSYMS table.
+--
+-- Keep in mind that all Lua functions used in key commands must be defined
+-- BEFORE the key command references it. Therefore the module containing key
+-- commands should be loaded LAST, after all other modules have been loaded.
 module('_m.textadept.keys', package.seeall)
 
 -- options
@@ -55,20 +107,15 @@ local try_get_cmd1, try_get_cmd2, try_get_cmd3, try_get_cmd
 
 ---
 -- Clears the current key sequence.
-function clear_key_sequence()
-  keychain = {}
-  textadept.statusbar_text = ''
-end
+function clear_key_sequence() keychain = {} textadept.statusbar_text = '' end
 
 ---
 -- [Local function] Handles Textadept keypresses.
 -- It is called every time a key is pressed, and based on lexer and scope,
--- executes a command.
--- The command is looked up in the global 'keys' key command table. For a
--- description of the structure of 'keys', see try_get_cmd.
--- @return whatever the executed command returns, returns true by default.
---   A true return value will tell Textadept not to handle the key afterwords.
--- @see try_get_cmd
+-- executes a command. The command is looked up in the global 'keys' key
+-- command table.
+-- @return whatever the executed command returns, true by default. A true
+--   return value will tell Textadept not to handle the key afterwords.
 local function keypress(code, shift, control, alt)
   local buffer, textadept = buffer, textadept
   local keys = _G.keys
@@ -130,9 +177,6 @@ local function keypress(code, shift, control, alt)
 end
 textadept.handlers.add_handler_function('keypress', keypress, 1)
 
--- Note the following functions are called inside pcall so error handling or
--- checking if keys exist etc. is not necessary.
-
 ---
 -- [Local function] Tries to get a key command based on the lexer and current
 -- scope.
@@ -155,16 +199,6 @@ end
 ---
 -- [Local function] Helper function that gets commands associated with the
 -- current keychain from 'keys'.
--- Each table key in 'keys' is a key sequence, formed from CTRL, SHIFT, ALT,
--- ADD, and the key pressed, with an associated table value or table of key
--- commands. For a table value, the first item can be either a function or a
--- string (representing a function name). If it is a function, all table items
--- after it are used as arguments, and the function is called. If the first
--- item is a string, the next string is checked to be either 'buffer' or 'view'
--- and the current buffer or view is used as the table with the function name as
--- a field, indexing a function. The current buffer or view is then used as the
--- first argument to that function, with all items after the second following as
--- additional ones. Basically in Lua: {buffer|view}:{first_item}(...)
 -- If the current item in the keychain is part of a chain, throw an error value
 -- of -1. This way, pcall will return false and -1, where the -1 can easily and
 -- efficiently be checked rather than using a string error message.
