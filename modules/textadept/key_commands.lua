@@ -63,11 +63,11 @@ keys.csae = { 'line_end_rect_extend',   b }
 keys.csav = { 'page_down_rect_extend',  b }
 keys.csay = { 'page_up_rect_extend',    b }
 
-local m_snippets = _m.textadept.snippets
+local m_snippets = _m.textadept.lsnippets
 keys.ci   = { m_snippets.insert           }
 keys.csi  = { m_snippets.cancel_current   }
 keys.cai  = { m_snippets.list             }
-keys.ai   = { m_snippets.show_scope       }
+keys.ai   = { m_snippets.show_style       }
 
 local m_editing = _m.textadept.editing
 keys.cm    = { m_editing.match_brace              }
