@@ -34,17 +34,15 @@ function find.find(text, flags, next, nowrap, wrapped)
     increment = next and 1 or -1
   end
   if flags < 8 then
+    buffer:goto_pos( buffer[next and 'current_pos' or 'anchor'] + increment )
+    buffer:search_anchor()
     if next then
-      buffer:goto_pos(buffer.current_pos + increment)
-      buffer:search_anchor()
       result = buffer:search_next(flags, text)
     else
-      buffer:goto_pos(buffer.anchor - increment)
-      buffer:search_anchor()
       result = buffer:search_prev(flags, text)
     end
     if result then buffer:scroll_caret() end
-  else -- lua pattern search
+  else -- lua pattern search (forward search only)
     local buffer_text = buffer:get_text(buffer.length)
     local results = { buffer_text:find(text, buffer.anchor + increment) }
     if #results > 0 then
