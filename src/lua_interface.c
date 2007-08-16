@@ -236,9 +236,10 @@ unsigned int l_get_docpointer_index(sptr_t doc) {
   return idx;
 }
 
-#define l_set_buffer_prop(k, v) \
+#define l_set_bufferp(k, v) \
   { lua_pushstring(lua, k); lua_pushinteger(lua, v); lua_rawset(lua, -3); }
-#define l_get_buffer_prop(k, i) { lua_pushstring(lua, k); lua_rawget(lua, i); }
+#define l_get_bufferp(k, i) \
+  { lua_pushstring(lua, k); lua_rawget(lua, i < 0 ? i - 1 : i); }
 
 void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
   if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
@@ -256,9 +257,9 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
   sptr_t doc = l_checkdocpointer(lua, -1, "No buffer exists at that index.");
   // Save previous buffer's properties.
   lua_getglobal(lua, "buffer");
-  l_set_buffer_prop("_anchor", SS(sci, SCI_GETANCHOR));
-  l_set_buffer_prop("_current_pos", SS(sci, SCI_GETCURRENTPOS));
-  l_set_buffer_prop("_first_visible_line",
+  l_set_bufferp("_anchor", SS(sci, SCI_GETANCHOR));
+  l_set_bufferp("_current_pos", SS(sci, SCI_GETCURRENTPOS));
+  l_set_bufferp("_first_visible_line",
     SS(sci, SCI_DOCLINEFROMVISIBLE, SS(sci, SCI_GETFIRSTVISIBLELINE)));
   lua_pop(lua, 1); // buffer
   // Change the view.
@@ -266,10 +267,10 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
   l_set_buffer_global(sci);
   // Restore this buffer's properties.
   lua_getglobal(lua, "buffer");
-  l_get_buffer_prop("_anchor", -2);
-  l_get_buffer_prop("_current_pos", -3);
+  l_get_bufferp("_anchor", -1);
+  l_get_bufferp("_current_pos", -2);
   SS(sci, SCI_SETSEL, lua_tointeger(lua, -2), lua_tointeger(lua, -1));
-  l_get_buffer_prop("_first_visible_line", -4);
+  l_get_bufferp("_first_visible_line", -3);
   SS(sci, SCI_LINESCROLL, 0,
      SS(sci, SCI_VISIBLEFROMDOCLINE, lua_tointeger(lua, -1)) -
      SS(sci, SCI_GETFIRSTVISIBLELINE));
