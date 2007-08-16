@@ -43,6 +43,10 @@ LF l_cf_ta_buffer_new(LS *lua),
    l_cf_pm_focus(LS *lua), l_cf_pm_clear(LS *lua), l_cf_pm_activate(LS *lua),
    l_cf_find_focus(LS *lua);
 
+const char
+  *views_dne = "textadept.views doesn't exist or was overridden.",
+  *buffers_dne = "textadept.buffers doesn't exist or was overridden.";
+
 void l_init(int argc, char **argv) {
   lua = lua_open();
   luaL_openlibs(lua);
@@ -112,7 +116,7 @@ static GtkWidget* l_checkview(LS *lua, int narg, const char *errstr=NULL) {
 }
 
 void l_add_scintilla_window(GtkWidget *editor) {
-  if (!l_ta_get(lua, "views")) { lua_pop(lua, 1); return; }
+  if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
   lua_newtable(lua);
   lua_pushlightuserdata(lua, const_cast<GtkWidget*>(editor));
   lua_setfield(lua, -2, "widget_pointer");
@@ -127,16 +131,16 @@ void l_add_scintilla_window(GtkWidget *editor) {
 
 void l_remove_scintilla_window(GtkWidget *editor) {
   lua_newtable(lua);
-  if (l_ta_get(lua, "views")) {
-    lua_pushnil(lua);
-    while (lua_next(lua, -2))
-      editor != l_checkview(lua, -1) ? l_append(lua, -4) : lua_pop(lua, 1);
-  } lua_pop(lua, 1); // views
+  if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
+  lua_pushnil(lua);
+  while (lua_next(lua, -2))
+    editor != l_checkview(lua, -1) ? l_append(lua, -4) : lua_pop(lua, 1);
+  lua_pop(lua, 1); // views
   l_ta_set(lua, "views");
 }
 
 void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
-  if (!l_ta_get(lua, "views")) { lua_pop(lua, 1); return; }
+  if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
   if (!absolute) {
     unsigned int idx = 1;
     lua_pushnil(lua);
@@ -160,15 +164,15 @@ void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
 }
 
 void l_set_view_global(GtkWidget *editor) {
-  if (l_ta_get(lua, "views")) {
-    lua_pushnil(lua);
-    while (lua_next(lua, -2))
-      if (editor == l_checkview(lua, -1)) {
-        lua_setglobal(lua, "view"); // value (view table)
-        lua_pop(lua, 1); // key
-        break;
-      } else lua_pop(lua, 1); // value
-  } lua_pop(lua, 1); // views
+  if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
+  lua_pushnil(lua);
+  while (lua_next(lua, -2))
+    if (editor == l_checkview(lua, -1)) {
+      lua_setglobal(lua, "view"); // value (view table)
+      lua_pop(lua, 1); // key
+      break;
+    } else lua_pop(lua, 1); // value
+  lua_pop(lua, 1); // views
 }
 
 /** Checks for a buffer and returns the doc_pointer associated with it. */
@@ -185,7 +189,7 @@ static sptr_t l_checkdocpointer(LS *lua, int narg, const char *errstr=NULL) {
 }
 
 int l_add_scintilla_buffer(sptr_t doc) {
-  if (!l_ta_get(lua, "buffers")) { lua_pop(lua, 1); return 1; }
+  if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
   lua_newtable(lua);
   lua_pushnumber(lua, doc); lua_setfield(lua, -2, "doc_pointer");
   lua_pushboolean(lua, false); lua_setfield(lua, -2, "dirty");
@@ -201,27 +205,25 @@ int l_add_scintilla_buffer(sptr_t doc) {
 
 void l_remove_scintilla_buffer(sptr_t doc) {
   // Switch documents for all views that show the current document.
-  if (l_ta_get(lua, "views")) {
-    lua_pushnil(lua);
-    while (lua_next(lua, -2)) {
-      GtkWidget *editor = l_checkview(lua, -1);
-      sptr_t that_doc = SS(SCINTILLA(editor), SCI_GETDOCPOINTER);
-      if (that_doc == doc) l_goto_scintilla_buffer(editor, -1, false);
-      lua_pop(lua, 1); // value
-    }
+  if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
+  lua_pushnil(lua);
+  while (lua_next(lua, -2)) {
+    GtkWidget *editor = l_checkview(lua, -1);
+    sptr_t that_doc = SS(SCINTILLA(editor), SCI_GETDOCPOINTER);
+    if (that_doc == doc) l_goto_scintilla_buffer(editor, -1, false);
+    lua_pop(lua, 1); // value
   } lua_pop(lua, 1); // views
-
   lua_newtable(lua);
-  if (l_ta_get(lua, "buffers")) {
-    lua_pushnil(lua);
-    while (lua_next(lua, -2))
-      doc != l_checkdocpointer(lua, -1) ? l_append(lua, -4) : lua_pop(lua, 1);
-  } lua_pop(lua, 1); // buffers
+  if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
+  lua_pushnil(lua);
+  while (lua_next(lua, -2))
+    doc != l_checkdocpointer(lua, -1) ? l_append(lua, -4) : lua_pop(lua, 1);
+  lua_pop(lua, 1); // buffers
   l_ta_set(lua, "buffers");
 }
 
 unsigned int l_get_docpointer_index(sptr_t doc) {
-  if (!l_ta_get(lua, "buffers")) { lua_pop(lua, 1); return 1; }
+  if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
   unsigned int idx = 1;
   lua_pushnil(lua);
   while (lua_next(lua, -2))
@@ -239,7 +241,7 @@ unsigned int l_get_docpointer_index(sptr_t doc) {
 #define l_get_buffer_prop(k, i) { lua_pushstring(lua, k); lua_rawget(lua, i); }
 
 void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
-  if (!l_ta_get(lua, "buffers")) { lua_pop(lua, 1); return; }
+  if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
   ScintillaObject *sci = SCINTILLA(editor);
   if (!absolute) {
     sptr_t doc = SS(sci, SCI_GETDOCPOINTER);
@@ -278,27 +280,26 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
 
 void l_set_buffer_global(ScintillaObject *sci) {
   sptr_t doc = SS(sci, SCI_GETDOCPOINTER);
-  if (l_ta_get(lua, "buffers")) {
-    lua_pushnil(lua);
-    while (lua_next(lua, -2))
-      if (doc == l_checkdocpointer(lua, -1)) {
-        lua_setglobal(lua, "buffer"); // value (buffer table)
-        lua_pop(lua, 1); // key
-        break;
-      } else lua_pop(lua, 1); // value
-  } lua_pop(lua, 1); // buffers
+  if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
+  lua_pushnil(lua);
+  while (lua_next(lua, -2))
+    if (doc == l_checkdocpointer(lua, -1)) {
+      lua_setglobal(lua, "buffer"); // value (buffer table)
+      lua_pop(lua, 1); // key
+      break;
+    } else lua_pop(lua, 1); // value
+  lua_pop(lua, 1); // buffers
 }
 
 void l_close() {
   closing = true;
   while (unsplit_window(focused_editor));
-  if (l_ta_get(lua, "buffers")) {
-    lua_pushnil(lua);
-    while (lua_next(lua, -2)) {
-      sptr_t doc = l_checkdocpointer(lua, -1);
-      remove_scintilla_buffer(doc);
-      lua_pop(lua, 1); // value
-    }
+  if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
+  lua_pushnil(lua);
+  while (lua_next(lua, -2)) {
+    sptr_t doc = l_checkdocpointer(lua, -1);
+    remove_scintilla_buffer(doc);
+    lua_pop(lua, 1); // value
   } lua_pop(lua, 1); // buffers
   gtk_widget_destroy(focused_editor);
   lua_close(lua);
@@ -803,18 +804,19 @@ LF l_find_mt_newindex(LS *lua) {
   return 0;
 }
 
-// Lua CFunctions
+// Lua CFunctions (stack maintenence is unnecessary)
 
 LF l_cf_ta_buffer_new(LS *lua) {
   new_scintilla_buffer(SCINTILLA(focused_editor), true, true);
-  l_ta_get(lua, "buffers"); lua_rawgeti(lua, -1, lua_objlen(lua, -1));
+  if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
+  lua_rawgeti(lua, -1, lua_objlen(lua, -1));
   return 1;
 }
 
 LF l_cf_buffer_delete(LS *lua) {
   l_check_focused_buffer(lua, 1);
   sptr_t doc = l_checkdocpointer(lua, 1);
-  l_ta_get(lua, "buffers");
+  if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
   if (lua_objlen(lua, -1) > 1)
     l_goto_scintilla_buffer(focused_editor, -1, false);
   else
@@ -901,7 +903,7 @@ void l_create_entry(LS *lua, GtkWidget *c1, GtkWidget *c2, bool vertical) {
 }
 
 LF l_cf_ta_get_split_table(LS *lua) {
-  l_ta_get(lua, "views");
+  if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
   if (lua_objlen(lua, -1) > 1) {
     GtkWidget *pane = gtk_widget_get_parent(focused_editor);
     while (GTK_IS_PANED(gtk_widget_get_parent(pane)))
