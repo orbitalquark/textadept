@@ -2,6 +2,7 @@
 
 ---
 -- Defines the key commands used by the Textadept key command manager.
+-- For non-ascii keys, see _m.textadept.keys for string aliases.
 module('_m.textadept.key_commands', package.seeall)
 
 --[[
@@ -23,37 +24,79 @@ local keys = keys
 keys.clear_sequence = 'esc'
 
 local b, v = 'buffer', 'view'
-local textadept = textadept
+local t = textadept
 
-keys.cf  = { 'char_right',        b }
-keys.csf = { 'char_right_extend', b }
-keys.af  = { 'word_right',        b }
-keys.saf = { 'word_right_extend', b }
-keys.cb  = { 'char_left',         b }
-keys.csb = { 'char_left_extend',  b }
-keys.ab  = { 'word_left',         b }
-keys.sab = { 'word_left_extend',  b }
-keys.cn  = { 'line_down',         b }
-keys.csn = { 'line_down_extend',  b }
-keys.cp  = { 'line_up',           b }
-keys.csp = { 'line_up_extend',    b }
-keys.ca  = { 'vc_home',           b }
-keys.csa = { 'home_extend',       b }
-keys.ce  = { 'line_end',          b }
-keys.cse = { 'line_end_extend',   b }
-keys.cv  = { 'page_down',         b }
-keys.csv = { 'page_down_extend',  b }
-keys.av  = { 'para_down',         b }
-keys.sav = { 'para_down_extend',  b }
-keys.cy  = { 'page_up',           b }
-keys.csy = { 'page_up_extend',    b }
-keys.ay  = { 'para_up',           b }
-keys.say = { 'para_up_extend',    b }
-keys.ch  = { 'delete_back',       b }
-keys.ah  = { 'del_word_left',     b }
-keys.cd  = { 'clear',             b }
-keys.ad  = { 'del_word_right',    b }
+keys.ct   = {} -- Textadept command chain
+keys.ct.v = {} -- View chain
 
+-- Standard commands. New, open, save, etc.
+keys.ct.n = { t.new_buffer   }
+keys.cr   = { t.io.open      }
+keys.co   = { 'save', b      }
+keys.cso  = { 'save_as', b   }
+keys.cx   = { 'close', b     }
+keys.csx  = { t.io.close_all }
+keys.cz   = { 'undo', b      }
+keys.csz  = { 'redo', b      }
+keys.cs   = { t.find.focus   } -- find/replace
+
+-- Recent files.
+local RECENT_FILES = 1
+t.events.add_handler('user_list_selection',
+  function(type, text) if type == RECENT_FILES then t.io.open(text) end end)
+keys.ar = { function()
+  local buffer = buffer
+  local list = ''
+  local sep = buffer.auto_c_separator
+  buffer.auto_c_separator = ('|'):byte()
+  for _, filename in ipairs(t.io.recent_files) do
+    list = filename..'|'..list
+  end
+  buffer:user_list_show( RECENT_FILES, list:sub(1, -2) )
+  buffer.auto_c_separator = sep
+end }
+
+-- Buffer/view commands.
+keys.an    = { 'goto_buffer', v, 1, false                 }
+keys.ap    = { 'goto_buffer', v, -1, false                }
+keys.ct.s  = { 'split', v, false                          } -- horizontal
+keys.ct.ss = { 'split', v                                 } -- vertical
+keys.can   = { t.goto_view, 1, false                      }
+keys.cap   = { t.goto_view, -1, false                     }
+keys.san   = { function() view.size = view.size + 10 end  }
+keys.sap   = { function() view.size = view.size - 10 end  }
+keys.ct.x  = { function() view:unsplit() return true end  }
+keys.ct.sx = { function() while view:unsplit() do end end }
+
+-- Movement/selection commands
+keys.cf   = { 'char_right',             b }
+keys.csf  = { 'char_right_extend',      b }
+keys.af   = { 'word_right',             b }
+keys.saf  = { 'word_right_extend',      b }
+keys.cb   = { 'char_left',              b }
+keys.csb  = { 'char_left_extend',       b }
+keys.ab   = { 'word_left',              b }
+keys.sab  = { 'word_left_extend',       b }
+keys.cn   = { 'line_down',              b }
+keys.csn  = { 'line_down_extend',       b }
+keys.cp   = { 'line_up',                b }
+keys.csp  = { 'line_up_extend',         b }
+keys.ca   = { 'vc_home',                b }
+keys.csa  = { 'home_extend',            b }
+keys.ce   = { 'line_end',               b }
+keys.cse  = { 'line_end_extend',        b }
+keys.cv   = { 'page_down',              b }
+keys.csv  = { 'page_down_extend',       b }
+keys.av   = { 'para_down',              b }
+keys.sav  = { 'para_down_extend',       b }
+keys.cy   = { 'page_up',                b }
+keys.csy  = { 'page_up_extend',         b }
+keys.ay   = { 'para_up',                b }
+keys.say  = { 'para_up_extend',         b }
+keys.ch   = { 'delete_back',            b }
+keys.ah   = { 'del_word_left',          b }
+keys.cd   = { 'clear',                  b }
+keys.ad   = { 'del_word_right',         b }
 keys.csaf = { 'char_right_rect_extend', b }
 keys.csab = { 'char_left_rect_extend',  b }
 keys.csan = { 'line_down_rect_extend',  b }
@@ -63,12 +106,14 @@ keys.csae = { 'line_end_rect_extend',   b }
 keys.csav = { 'page_down_rect_extend',  b }
 keys.csay = { 'page_up_rect_extend',    b }
 
+-- Snippets commands.
 local m_snippets = _m.textadept.lsnippets
 keys.ci   = { m_snippets.insert           }
 keys.csi  = { m_snippets.cancel_current   }
 keys.cai  = { m_snippets.list             }
 keys.ai   = { m_snippets.show_style       }
 
+-- Editing commands.
 local m_editing = _m.textadept.editing
 keys.cm    = { m_editing.match_brace              }
 keys.csm   = { m_editing.match_brace, 'select'    }
@@ -114,8 +159,10 @@ keys.as = { -- select in...
   i      = { m_editing.select_indented_block         },
   s      = { m_editing.select_scope                  },
   g      = { m_editing.grow_selection, 1             },
+  a      = { 'select_all', b                         },
 }
 
+-- Multiple lines commands.
 local m_mlines = _m.textadept.mlines
 keys.am = {
   a  = { m_mlines.add             },
@@ -126,70 +173,20 @@ keys.am = {
   c  = { m_mlines.clear           },
 }
 
+-- Macro commands.
 local m_macro = _m.textadept.macros
 keys.cam  = { m_macro.toggle_record }
 keys.csam = { m_macro.play          }
 
-local t_io = textadept.io
-keys.cr   = { t_io.open                      }
-keys.co   = { 'save', b                      }
-keys.cso  = { 'save_as', b                   }
-keys.cx   = { 'close', b                     }
-keys.csx  = { t_io.close_all                 }
-keys.cz   = { 'undo', b                      }
-keys.csz  = { 'redo', b                      }
-keys.as.a = { 'select_all', b                }
-keys.an   = { 'goto_buffer', v, 1, false     }
-keys.ap   = { 'goto_buffer', v, -1, false    }
-keys.can  = { textadept.goto_view, 1, false  }
-keys.cap  = { textadept.goto_view, -1, false }
+-- Project manager commands.
+local function pm_activate(text) t.pm.entry_text = text t.pm.activate() end
+keys['c\t'] = { t.pm.focus             }
+keys.ct.b   = { pm_activate, 'buffers' }
+keys.ct.c   = { pm_activate, 'ctags'   }
+keys.ct.m   = { pm_activate, 'macros'  }
+keys.ct.v.p = { t.pm.toggle_visible    }
 
-local RECENT_FILES = 1
-textadept.events.add_handler('user_list_selection',
-  function(type, text) if type == RECENT_FILES then t_io.open(text) end end)
-
-keys.ar = { function()
-  local buffer = buffer
-  local list = ''
-  local sep = buffer.auto_c_separator
-  buffer.auto_c_separator = ('|'):byte()
-  for _, filename in ipairs(t_io.recent_files) do
-    list = filename..'|'..list
-  end
-  buffer:user_list_show( RECENT_FILES, list:sub(1, -2) )
-  buffer.auto_c_separator = sep
-end }
-
-local m_events = textadept.events
-keys.cab = { m_events.handle, 'call_tip_click', 1 }
-keys.caf = { m_events.handle, 'call_tip_click', 2 }
-
-keys.cs     = { textadept.find.focus }
-keys['c\t'] = { textadept.pm.focus   }
-keys.cc     = { textadept.focus_command }
-
-keys.san   = { function() view.size = view.size + 10 end }
-keys.sap   = { function() view.size = view.size - 10 end }
-
-local function pm_activate(text)
-  textadept.pm.entry_text = text
-  textadept.pm.activate()
-end
-
-keys.ct    = {} -- Textadept command chain
-keys.ct.s  = { 'split',   v, false    } -- horizontal
-keys.ct.ss = { 'split',   v           } -- vertical
-keys.ct.n  = { textadept.new_buffer   }
-keys.ct.b  = { pm_activate, 'buffers' }
-keys.ct.c  = { pm_activate, 'ctags'   }
-keys.ct.m  = { pm_activate, 'macros'  }
-keys.ct.x  = { function() view:unsplit() return true end  }
-keys.ct.sx = { function() while view:unsplit() do end end }
-keys.ct.f  = { function()
-  local buffer = buffer
-  buffer:toggle_fold( buffer:line_from_position(buffer.current_pos) )
-end }
-
+-- Toggle setting commands.
 local function toggle_setting(setting)
   local state = buffer[setting]
   if type(state) == 'boolean' then
@@ -197,13 +194,20 @@ local function toggle_setting(setting)
   elseif type(state) == 'number' then
     buffer[setting] = buffer[setting] == 0 and 1 or 0
   end
-  textadept.events.update_ui() -- for updating statusbar
+  t.events.update_ui() -- for updating statusbar
 end
-
-keys.ct.v   = {} -- view chain
-keys.ct.v.e = { toggle_setting, 'view_eol' }
-keys.ct.v.w = { toggle_setting, 'wrap_mode' }
+keys.ct.v.e = { toggle_setting, 'view_eol'           }
+keys.ct.v.r = { toggle_setting, 'wrap_mode'          }
 keys.ct.v.i = { toggle_setting, 'indentation_guides' }
-keys.ct.v.t = { toggle_setting, 'use_tabs' }
-keys.ct.v[' '] = { toggle_setting, 'view_ws' }
-keys.ct.v.p = { textadept.pm.toggle_visible }
+keys.ct.v.t = { toggle_setting, 'use_tabs'           }
+keys.ct.v.w = { toggle_setting, 'view_ws'            }
+
+-- Miscellaneous commands.
+keys.cc = { t.focus_command }
+local m_events = t.events
+keys.cab  = { m_events.handle, 'call_tip_click', 1 }
+keys.caf  = { m_events.handle, 'call_tip_click', 2 }
+keys.ct.f = { function()
+  local buffer = buffer
+  buffer:toggle_fold( buffer:line_from_position(buffer.current_pos) )
+end }
