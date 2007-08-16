@@ -6,7 +6,7 @@ module('_m.textadept.key_commands', package.seeall)
 
 --[[
   C:               G                   Q
-  A:   A   C       G     J K L     O   Q R         W X   Z
+  A:   A   C       G     J K L     O   Q           W X   Z
   CS:      C D     G     J   L         Q R S T U   W
   SA:  A   C D E   G H I J K L M   O   Q R S T     W X   Z
   CA:  A   C       G H   J K L     O   Q R S T   V W X Y Z
@@ -130,11 +130,12 @@ local m_macro = _m.textadept.macros
 keys.cam  = { m_macro.toggle_record }
 keys.csam = { m_macro.play          }
 
-keys.cr   = { textadept.io.open              }
+local t_io = textadept.io
+keys.cr   = { t_io.open                      }
 keys.co   = { 'save', b                      }
 keys.cso  = { 'save_as', b                   }
 keys.cx   = { 'close', b                     }
-keys.csx  = { textadept.io.close_all         }
+keys.csx  = { t_io.close_all                 }
 keys.cz   = { 'undo', b                      }
 keys.csz  = { 'redo', b                      }
 keys.as.a = { 'select_all', b                }
@@ -142,6 +143,22 @@ keys.an   = { 'goto_buffer', v, 1, false     }
 keys.ap   = { 'goto_buffer', v, -1, false    }
 keys.can  = { textadept.goto_view, 1, false  }
 keys.cap  = { textadept.goto_view, -1, false }
+
+local RECENT_FILES = 1
+textadept.events.add_handler('user_list_selection',
+  function(type, text) if type == RECENT_FILES then t_io.open(text) end end)
+
+keys.ar = { function()
+  local buffer = buffer
+  local list = ''
+  local sep = buffer.auto_c_separator
+  buffer.auto_c_separator = ('|'):byte()
+  for _, filename in ipairs(t_io.recent_files) do
+    list = filename..'|'..list
+  end
+  buffer:user_list_show( RECENT_FILES, list:sub(1, -2) )
+  buffer.auto_c_separator = sep
+end }
 
 local m_events = textadept.events
 keys.cab = { m_events.handle, 'call_tip_click', 1 }

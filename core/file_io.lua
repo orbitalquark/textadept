@@ -3,9 +3,19 @@
 ---
 -- Provides file input/output routines for Textadept.
 -- Opens and saves files and sessions and reads API files.
+--
+-- Events:
+--   file_opened(filename)
+--   file_saved_as(filename)
 module('textadept.io', package.seeall)
 
 local events = textadept.events
+
+---
+-- List of recently opened files.
+-- @class table
+-- @name recent_files
+recent_files = {}
 
 ---
 -- [Local function] Opens a file or goes to its already open buffer.
@@ -25,6 +35,7 @@ local function open_helper(filename)
   buffer.filename = filename
   buffer:set_save_point()
   events.handle('file_opened', filename)
+  recent_files[#recent_files + 1] = filename
 end
 
 ---
