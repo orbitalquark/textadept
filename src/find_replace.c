@@ -97,6 +97,9 @@ static int get_flags() {
   return flags;
 }
 
+/** Find entry key event.
+ *  Enter - Find next or previous.
+ */
 static bool fe_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   // TODO: if incremental, call l_find()
   if (event->keyval == 0xff0d) {
@@ -105,6 +108,9 @@ static bool fe_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   } else return false;
 }
 
+/** Replace entry key event.
+ *  Enter - Find next or previous.
+ */
 static bool re_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   if (event->keyval == 0xff0d) {
     l_find(find_text, get_flags(), true);

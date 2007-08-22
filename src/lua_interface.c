@@ -151,10 +151,8 @@ void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
         break;
       } else lua_pop(lua, 1); // value
     idx += n;
-    if (idx > lua_objlen(lua, -1))
-      idx = 1;
-    else if (idx < 1)
-      idx = lua_objlen(lua, -1);
+    if (idx > lua_objlen(lua, -1)) idx = 1;
+    else if (idx < 1) idx = lua_objlen(lua, -1);
     lua_rawgeti(lua, -1, idx);
   } else lua_rawgeti(lua, -1, n);
   editor = l_checkview(lua, -1, "No view exists at that index.");
@@ -248,20 +246,19 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
     sptr_t doc = SS(sci, SCI_GETDOCPOINTER);
     unsigned int idx = l_get_docpointer_index(doc);
     idx += n;
-    if (idx > lua_objlen(lua, -1))
-      idx = 1;
-    else if (idx < 1)
-      idx = lua_objlen(lua, -1);
+    if (idx > lua_objlen(lua, -1)) idx = 1;
+    else if (idx < 1) idx = lua_objlen(lua, -1);
     lua_rawgeti(lua, -1, idx);
   } else lua_rawgeti(lua, -1, n);
   sptr_t doc = l_checkdocpointer(lua, -1, "No buffer exists at that index.");
   // Save previous buffer's properties.
   lua_getglobal(lua, "buffer");
-  l_set_bufferp("_anchor", SS(sci, SCI_GETANCHOR));
-  l_set_bufferp("_current_pos", SS(sci, SCI_GETCURRENTPOS));
-  l_set_bufferp("_first_visible_line",
-    SS(sci, SCI_DOCLINEFROMVISIBLE, SS(sci, SCI_GETFIRSTVISIBLELINE)));
-  lua_pop(lua, 1); // buffer
+  if (lua_istable(lua, -1)) {
+    l_set_bufferp("_anchor", SS(sci, SCI_GETANCHOR));
+    l_set_bufferp("_current_pos", SS(sci, SCI_GETCURRENTPOS));
+    l_set_bufferp("_first_visible_line",
+      SS(sci, SCI_DOCLINEFROMVISIBLE, SS(sci, SCI_GETFIRSTVISIBLELINE)));
+  } lua_pop(lua, 1); // buffer
   // Change the view.
   SS(sci, SCI_SETDOCPOINTER, 0, doc);
   l_set_buffer_global(sci);
@@ -442,8 +439,7 @@ void l_pm_populate(GtkTreeIter *initial_iter) {
       lua_pop(lua, 1); // display text
     } else warn("pm.populate: id key must have table value.");
     lua_pop(lua, 1); // value
-  }
-  lua_pop(lua, 1); // returned table
+  } lua_pop(lua, 1); // returned table
 }
 
 void l_pm_get_full_path(GtkTreePath *path) {
@@ -486,13 +482,11 @@ void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback) {
         menu_item = gtk_image_menu_item_new_from_stock(label, NULL);
       else if (streq(label, "separator"))
         menu_item = gtk_separator_menu_item_new();
-      else
-        menu_item = gtk_menu_item_new_with_mnemonic(label);
+      else menu_item = gtk_menu_item_new_with_mnemonic(label);
       g_signal_connect(menu_item, "activate", callback, 0);
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
       lua_pop(lua, 1); // value
-    }
-    lua_pop(lua, 1); // returned table
+    } lua_pop(lua, 1); // returned table
     gtk_widget_show_all(menu);
     gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
                    event ? event->button : 0,
@@ -566,8 +560,7 @@ static long l_toscintillaparam(LS *lua, int type, int &arg_idx) {
            (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
   else if (type > tVOID && type < tBOOL)
     return static_cast<long>(luaL_checknumber(lua, arg_idx++));
-  else
-    return 0;
+  else return 0;
 }
 
 static bool l_is_ta_table_key(LS *lua, const char *table, const char *key) {
@@ -716,8 +709,7 @@ LF l_view_mt_index(LS *lua) {
     if (GTK_IS_PANED(gtk_widget_get_parent(editor)))
       lua_pushnumber(lua,
         gtk_paned_get_position(GTK_PANED(gtk_widget_get_parent(editor))));
-    else
-      lua_pushnil(lua);
+    else lua_pushnil(lua);
   } else lua_rawget(lua, 1);
   return 1;
 }
