@@ -12,7 +12,9 @@
 --   MARK_SNIPPET_COLOR: The Scintilla color used for the line
 --     that marks the end of the snippet.
 --
--- @usage
+module('_m.textadept.lsnippets', package.seeall)
+
+-- Usage:
 -- Snippets are defined in the global table 'snippets'. Keys in that table are
 -- snippet trigger words, and values are the snippet's text to insert. The
 -- exceptions are language names and style names. Language names have table
@@ -66,7 +68,6 @@
 --   * Only '`' needs to be escaped in shell code.
 --   * '|'s after the first in transformations do not need to be escaped.
 --   * Only unmatched ')'s need to be escaped. Nested ()s are ignored.
-module('_m.textadept.lsnippets', package.seeall)
 
 local MARK_SNIPPET = 4
 local MARK_SNIPPET_COLOR = 0x4D9999

@@ -13,7 +13,9 @@
 --   ADD: The string representing used to join together a sequence of Control,
 --     Shift, or Alt modifier keys.
 --
--- @usage
+module('_m.textadept.keys', package.seeall)
+
+-- Usage:
 -- Keys are defined in the global table 'keys'. Keys in that table are key
 -- sequences, and values are tables of Lua functions and arguments to execute.
 -- The exceptions are language names, style names, and keychains (discussed
@@ -64,7 +66,6 @@
 -- Keep in mind that all Lua functions used in key commands must be defined
 -- BEFORE the key command references it. Therefore the module containing key
 -- commands should be loaded LAST, after all other modules have been loaded.
-module('_m.textadept.keys', package.seeall)
 
 -- options
 local SCOPES_ENABLED = true

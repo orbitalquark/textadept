@@ -5,8 +5,9 @@
 -- Most of Textadept's functionality comes through handlers. Scintilla
 -- notifications, Textadept's own events, and user-defined events can all be
 -- handled.
---
--- @usage
+module('textadept.events', package.seeall)
+
+-- Usage:
 -- Each event can have multiple handlers, which are simply Lua functions that
 -- are called in the sequence they are added as handler functions. Sometimes it
 -- is useful to have a handler run under a specific condition(s). If this is the
@@ -16,47 +17,49 @@
 -- defined. A handler can simply be added for an event name, and 'handle'd when
 -- necessary.
 --
+-- For reference, events will be shown in 'event(arguments)' format, but in
+-- reality, the event is handled as 'handle(event, arguments)'.
+--
 -- Scintilla notifications:
---   char_added
+--   char_added(ch)
 --     ch: the (integer) character added.
---   save_point_reached
---   save_point_left
---   double_click
+--   save_point_reached()
+--   save_point_left()
+--   double_click(position, line)
 --     position: the position of the beginning of the line clicked.
 --     line: the line clicked.
---   update_ui
---   macro_record
+--   update_ui()
+--   macro_record(message, wParam, lParam)
 --     message: the SCI_* message.
 --     wParam: wParam in SCI_*.
 --     lParam: lParam in SCI_*.
---   margin_click
+--   margin_click(margin, modifiers, position)
 --     margin: the margin number.
 --     modifiers: mouse modifiers.
 --     position: the position of the beginning of the line at the point clicked.
---   user_list_selection
+--   user_list_selection(wParam, text)
 --     wParam: the user list ID.
 --     text: the text of the selected item.
---   uri_dropped:
+--   uri_dropped(text)
 --     text: the URI dropped.
---   call_tip_click
+--   call_tip_click(position)
 --     position: 1 or 2 if the up or down arrow was clicked; 0 otherwise.
---   auto_c_selection
+--   auto_c_selection(lParam, text)
 --     lParam: the start position of the word being completed.
 --     text: the text of the selected item.
 --
 -- Textadept events:
---   buffer_new
---   buffer_deleted
---   buffer_switch
---   view_new
---   view_switch
---   quit
---   keypress
+--   buffer_new()
+--   buffer_deleted()
+--   buffer_switch()
+--   view_new()
+--   view_switch()
+--   quit()
+--   keypress(code, shift, control, alt)
 --     code: the key code.
 --     shift: flag indicating whether or not shift is pressed.
 --     control: flag indicating whether or not control is pressed.
 --     alt: flag indicating whether or not alt is pressed.
-module('textadept.events', package.seeall)
 
 local events = textadept.events
 
