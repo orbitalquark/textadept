@@ -2,6 +2,10 @@
 
 ---
 -- Support for recording, saving, and playing macros for the textadept module.
+--
+-- Events:
+--   macro_saved()
+--   macro_deleted()
 module('_m.textadept.macros', package.seeall)
 
 local MACRO_FILE = _HOME..'/saved_macros'
