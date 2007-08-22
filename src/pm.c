@@ -2,6 +2,8 @@
 
 #include "textadept.h"
 
+#define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
+
 GtkWidget *pm_view, *pm_entry, *pm_container;
 GtkTreeStore *pm_store;
 
@@ -59,20 +61,13 @@ GtkWidget* pm_create_ui() {
   gtk_container_add(GTK_CONTAINER(scrolled), pm_view);
   gtk_box_pack_start(GTK_BOX(pm_container), scrolled, true, true, 0);
 
-  g_signal_connect(G_OBJECT(pm_entry), "activate",
-                   G_CALLBACK(pm_entry_activated), 0);
-  g_signal_connect(G_OBJECT(pm_entry), "key_press_event",
-                   G_CALLBACK(pm_entry_keypress), 0);
-  g_signal_connect(G_OBJECT(pm_view), "row_expanded",
-                   G_CALLBACK(pm_row_expanded), 0);
-  g_signal_connect(G_OBJECT(pm_view), "row_collapsed",
-                   G_CALLBACK(pm_row_collapsed), 0);
-  g_signal_connect(G_OBJECT(pm_view), "row_activated",
-                   G_CALLBACK(pm_row_activated), 0);
-  g_signal_connect(G_OBJECT(pm_view), "button_press_event",
-                   G_CALLBACK(pm_button_press), 0);
-  g_signal_connect(G_OBJECT(pm_view), "popup-menu",
-                   G_CALLBACK(pm_popup_menu), 0);
+  signal(pm_entry, "activate", pm_entry_activated);
+  signal(pm_entry, "key_press_event", pm_entry_keypress);
+  signal(pm_view, "row_expanded", pm_row_expanded);
+  signal(pm_view, "row_collapsed", pm_row_collapsed);
+  signal(pm_view, "row_activated", pm_row_activated);
+  signal(pm_view, "button_press_event", pm_button_press);
+  signal(pm_view, "popup-menu", pm_popup_menu);
   return pm_container;
 }
 
@@ -158,6 +153,9 @@ static void pm_entry_activated(GtkWidget *widget, gpointer) {
   if (l_pm_get_contents_for(entry_text)) l_pm_populate();
 }
 
+/** Project manager entry key events.
+ *  Ctrl+Tab - Refocuses the Scintilla view.
+ */
 static bool pm_entry_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   if (event->keyval == 0xff09 && event->state == GDK_CONTROL_MASK) {
     gtk_widget_grab_focus(focused_editor);

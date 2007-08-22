@@ -87,9 +87,7 @@ void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
   doc = SS(sci, SCI_GETDOCPOINTER);
   if (create) { // create the new document
     doc = SS(sci, SCI_CREATEDOCUMENT);
-    //SS(sci, SCI_SETDOCPOINTER, 0, doc);
-    int index = l_add_scintilla_buffer(doc);
-    l_goto_scintilla_buffer(focused_editor, index);
+    l_goto_scintilla_buffer(focused_editor, l_add_scintilla_buffer(doc));
   } else if (addref) {
     l_add_scintilla_buffer(doc);
     SS(sci, SCI_ADDREFDOCUMENT, 0, doc);
@@ -147,28 +145,27 @@ void remove_scintilla_windows_in_pane(GtkWidget *pane) {
 
 bool unsplit_window(GtkWidget *editor) {
   GtkWidget *pane = gtk_widget_get_parent(editor);
-  if (GTK_IS_PANED(pane)) {
-    GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane));
-    if (other == editor) other = gtk_paned_get_child2(GTK_PANED(pane));
-    g_object_ref(editor); g_object_ref(other);
-    gtk_container_remove(GTK_CONTAINER(pane), editor);
-    gtk_container_remove(GTK_CONTAINER(pane), other);
-    GTK_IS_PANED(other) ? remove_scintilla_windows_in_pane(other)
-                        : remove_scintilla_window(other);
-    GtkWidget *parent = gtk_widget_get_parent(pane);
-    gtk_container_remove(GTK_CONTAINER(parent), pane);
-    if (GTK_IS_PANED(parent))
-      if (!gtk_paned_get_child1(GTK_PANED(parent)))
-        gtk_paned_add1(GTK_PANED(parent), editor);
-      else
-        gtk_paned_add2(GTK_PANED(parent), editor);
+  if (!GTK_IS_PANED(pane)) return false;
+  GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane));
+  if (other == editor) other = gtk_paned_get_child2(GTK_PANED(pane));
+  g_object_ref(editor); g_object_ref(other);
+  gtk_container_remove(GTK_CONTAINER(pane), editor);
+  gtk_container_remove(GTK_CONTAINER(pane), other);
+  GTK_IS_PANED(other) ? remove_scintilla_windows_in_pane(other)
+                      : remove_scintilla_window(other);
+  GtkWidget *parent = gtk_widget_get_parent(pane);
+  gtk_container_remove(GTK_CONTAINER(parent), pane);
+  if (GTK_IS_PANED(parent))
+    if (!gtk_paned_get_child1(GTK_PANED(parent)))
+      gtk_paned_add1(GTK_PANED(parent), editor);
     else
-      gtk_container_add(GTK_CONTAINER(parent), editor);
-    gtk_widget_show_all(parent);
-    gtk_widget_grab_focus(GTK_WIDGET(editor));
-    g_object_unref(editor); g_object_unref(other);
-    return true;
-  } else return false;
+      gtk_paned_add2(GTK_PANED(parent), editor);
+  else
+    gtk_container_add(GTK_CONTAINER(parent), editor);
+  gtk_widget_show_all(parent);
+  gtk_widget_grab_focus(GTK_WIDGET(editor));
+  g_object_unref(editor); g_object_unref(other);
+  return true;
 }
 
 void resize_split(GtkWidget *editor, int pos, bool increment) {
@@ -205,6 +202,15 @@ void c_insert(const char *t) {
   gtk_editable_set_position(GTK_EDITABLE(command_entry), pos);
 }
 
+/** Command entry key events.
+ *  Escape - Hide the completion buffer if it's open.
+ *  Tab - Show completion buffer.
+ *  Alt+B - Insert 'buffer'.
+ *  Alt+F - Insert 'find'.
+ *  Alt+P - Insert 'pm'.
+ *  Alt+T - Insert 'textadept'.
+ *  Alt+V - Insert 'view'.
+ */
 static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
   if (event->state == 0)
     switch(event->keyval) {
@@ -244,6 +250,9 @@ static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   return l_handle_keypress(event->keyval, event);
 }
 
+/** Window key events.
+ *  Escape - hides the search dialog if it's open.
+ */
 static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   if (event->keyval == 0xff1b && GTK_WIDGET_VISIBLE(findbox)) {
     gtk_widget_hide(findbox);
