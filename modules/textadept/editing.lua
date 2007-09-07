@@ -107,7 +107,26 @@ function autocomplete_word(word_chars)
     end
     match_pos = buffer:find(root, 1048580, match_pos + 1)
   end
-  if #c_list_str > 0 then buffer:auto_c_show(#root, c_list_str:sub(1, -2)) end
+  if #c_list_str > 0 then buffer:auto_c_show( #root, c_list_str:sub(1, -2) ) end
+end
+
+---
+-- Pops up an autocompletion list for the current word based on the path to a
+-- dictionary of words.
+-- @param dict Path to a dictionary of words.
+function autocomplete_word_from_dict(dict)
+  local buffer = buffer
+  local start = buffer:word_start_position(buffer.current_pos, true)
+  local root = buffer:text_range(start, buffer.current_pos)
+  if #root == 0 then return end
+  local f = io.open(dict)
+  if not f then return end
+  local c_list_str = ''
+  for line in f:lines() do
+    if line:match('^'..root) then c_list_str = c_list_str..line..' ' end
+  end
+  f:close()
+  if #c_list_str > 0 then buffer:auto_c_show( #root, c_list_str:sub(1, -2) ) end
 end
 
 ---
