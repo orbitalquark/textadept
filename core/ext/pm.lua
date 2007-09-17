@@ -1,9 +1,52 @@
 -- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+-- Usage:
+-- Creating a new browser:
+--   TODO
+--   You can add the new browser to the list of browsers in ext/pm.lua.
+--
+-- Customizing look and feel:
+--   There are no function calls to make that customize the look and feel of the
+--   project manager. Instead you can manipulate it via GTK rc files. The pm
+--   entry and view have widget names of 'textadept-pm-entry' and
+--   'textadept-pm-view' respectively. Resource file documentation can be found
+--   at http://library.gnome.org/devel/gtk/unstable/gtk-Resource-Files.html.
+--   My rc file is something like this:
+--
+--     pixmap_path "/usr/share/icons/Tango/:/home/mitchell/.icons/prog/"
+--
+--     style "textadept-pm-display-style" {
+--        fg[NORMAL]     = "#AAAAAA" # treeview arrows foreground
+--        fg[PRELIGHT]   = "#AAAAAA" # treeview arrows hover foreground
+--        bg[NORMAL]     = "#333333" # entry border background
+--        base[NORMAL]   = "#333333" # entry, treeview background
+--        base[ACTIVE]   = "#444444" # treeview unfocused selection background
+--        base[SELECTED] = "#444444" # entry, treeview selection background
+--        text[NORMAL]   = "#AAAAAA" # entry, treeview text foreground
+--        text[ACTIVE]   = "#AAAAAA" # treeview unfocused selection text
+--        text[SELECTED] = "#DDDDDD" # entry, treeview selection text foreground
+--
+--        stock["gtk-directory"]  = {{ "16x16/places/stock_folder.png", LTR }}
+--        stock["gtk-folder-new"] = {{ "16x16/actions/folder_new.png", LTR }}
+--        stock["prog-class"]     = {{ "class.png", LTR }}
+--        stock["prog-enum"]      = {{ "enum.png", LTR }}
+--        stock["prog-field"]     = {{ "field.png", LTR }}
+--        stock["prog-interface"] = {{ "interface.png", LTR }}
+--        stock["prog-literal"]   = {{ "literal.png", LTR }}
+--        stock["prog-method"]    = {{ "method.png", LTR }}
+--        stock["prog-namespace"] = {{ "namespace.png", LTR }}
+--        stock["prog-reference"] = {{ "reference.png", LTR }}
+--        stock["prog-struct"]    = {{ "struct.png", LTR }}
+--      }
+--
+--      widget "*textadept-pm-entry" style "textadept-pm-display-style"
+--      widget "*textadept-pm-view" style "textadept-pm-display-style"
+
 ---
 -- Browsers loaded by the project manager.
 -- @class table
 -- @name browsers
+-- @usage Add additional browsers to this list.
 local browsers = {
   'buffer_browser', 'file_browser', 'ctags_browser', 'macro_browser'
 }
