@@ -30,7 +30,7 @@ if type(_G.keys) == 'table' then
 end
 
 require '$1.commands'
-require '$2.snippets'
+require '$1.snippets'
 
 function set_buffer_properties()
 
