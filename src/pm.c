@@ -12,7 +12,7 @@ static int pm_search_equal_func(GtkTreeModel *model, int col, const char *key,
 static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
                                      GtkTreeIter *b, gpointer);
 static void pm_entry_activated(GtkWidget *widget, gpointer);
-static bool pm_entry_keypress(GtkWidget *, GdkEventKey *event, gpointer);
+static bool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer);
 static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter,
                             GtkTreePath *path, gpointer);
 static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter,
@@ -62,7 +62,8 @@ GtkWidget* pm_create_ui() {
   gtk_box_pack_start(GTK_BOX(pm_container), scrolled, true, true, 0);
 
   signal(pm_entry, "activate", pm_entry_activated);
-  signal(pm_entry, "key_press_event", pm_entry_keypress);
+  signal(pm_entry, "key_press_event", pm_keypress);
+  signal(pm_view, "key_press_event", pm_keypress);
   signal(pm_view, "row_expanded", pm_row_expanded);
   signal(pm_view, "row_collapsed", pm_row_collapsed);
   signal(pm_view, "row_activated", pm_row_activated);
@@ -153,11 +154,13 @@ static void pm_entry_activated(GtkWidget *widget, gpointer) {
   if (l_pm_get_contents_for(entry_text)) l_pm_populate();
 }
 
-/** Project manager entry key events.
+/** Project manager key events.
  *  Ctrl+Tab - Refocuses the Scintilla view.
+ *  Escape - Refocuses the Scintilla view.
  */
-static bool pm_entry_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
-  if (event->keyval == 0xff09 && event->state == GDK_CONTROL_MASK) {
+static bool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
+  if (event->keyval == 0xff09 && event->state == GDK_CONTROL_MASK ||
+      event->keyval == 0xff1b) {
     gtk_widget_grab_focus(focused_editor);
     return true;
   } else return false;
