@@ -139,6 +139,7 @@ function insert(s_text)
     -- Initialize the new snippet. If one is running, push it onto the stack.
     if snippet.index then snippet_stack[#snippet_stack + 1] = snippet end
     snippet = {}
+    snippet.snapshots = {}
     snippet.start_pos = start or caret
     snippet.prev_sel_text = buffer:get_sel_text()
     snippet.index, snippet.max_index = 0, 0
@@ -182,6 +183,7 @@ function next()
   if not s_text then cancel_current() return end
 
   local index = snippet.index
+  snippet.snapshots[index] = s_text
   if index > 0 then
     buffer:begin_undo_action()
     local caret = math.max(buffer.anchor, buffer.current_pos)
@@ -237,6 +239,22 @@ function next()
     snippet = #snippet_stack > 0 and table.remove(snippet_stack) or {}
   end
   buffer:end_undo_action()
+end
+
+---
+-- Goes back to the previous placeholder or tab stop, reverting changes made to
+-- subsequent ones.
+function prev()
+  if not snippet.index then return end
+  local buffer = buffer
+  local index = snippet.index
+  if index > 1 then
+    local s_start, s_end = snippet_info()
+    local s_text = snippet.snapshots[index - 2]
+    buffer:set_sel(s_start, s_end) buffer:replace_sel(s_text)
+    snippet.index = index - 2
+    next()
+  end
 end
 
 ---
