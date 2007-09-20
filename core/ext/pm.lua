@@ -5,6 +5,12 @@
 --   TODO
 --   You can add the new browser to the list of browsers in ext/pm.lua.
 --
+-- Interactive search:
+--   Typing text into the project manager view begins the interactive search.
+--   If the text matches ANY part of an item in the view (case sensitively), the
+--   item is highlighted and subsequent matches can be navigated to using the
+--   up/down arrow keys.
+--
 -- Customizing look and feel:
 --   There are no function calls to make that customize the look and feel of the
 --   project manager. Instead you can manipulate it via GTK rc files. The pm
