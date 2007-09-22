@@ -109,8 +109,9 @@ keys.csay = { 'page_up_rect_extend',    b }
 -- Snippets commands.
 local m_snippets = _m.textadept.lsnippets
 keys.ci   = { m_snippets.insert           }
-keys.csi  = { m_snippets.cancel_current   }
-keys.cai  = { m_snippets.list             }
+keys.csi  = { m_snippets.prev             }
+keys.cai  = { m_snippets.cancel_current   }
+keys.casi = { m_snippets.list             }
 keys.ai   = { m_snippets.show_style       }
 
 -- Editing commands.
