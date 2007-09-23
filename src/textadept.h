@@ -66,10 +66,9 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute=true);
 void l_set_buffer_global(ScintillaObject *sci);
 
 void l_handle_error(lua_State *lua, const char *errmsg=0);
-bool l_handle_signal(const char *s);
-bool l_handle_signal(const char *s, const char *arg);
+bool l_handle_event(const char *e);
+bool l_handle_event(const char *e, const char *arg);
 bool l_handle_keypress(int keyval, GdkEventKey *event);
-void l_handle_completion(const char *command);
 void l_handle_scnnotification(SCNotification *n);
 
 void l_ta_command(const char *command);

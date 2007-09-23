@@ -159,7 +159,7 @@ void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
   } else lua_rawgeti(lua, -1, n);
   editor = l_checkview(lua, -1, "No view exists at that index.");
   gtk_widget_grab_focus(editor);
-  if (!closing) l_handle_signal("view_switch");
+  if (!closing) l_handle_event("view_switch");
   lua_pop(lua, 2); // view table and views
 }
 
@@ -274,7 +274,7 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
      SS(sci, SCI_VISIBLEFROMDOCLINE, lua_tointeger(lua, -1)) -
      SS(sci, SCI_GETFIRSTVISIBLELINE));
   lua_pop(lua, 4); // _anchor, _current_pos, _first_visible_line, and buffer
-  if (!closing) l_handle_signal("buffer_switch");
+  if (!closing) l_handle_event("buffer_switch");
   lua_pop(lua, 2); // buffer table and buffers
 }
 
@@ -367,11 +367,11 @@ void l_handle_error(LS *lua, const char *errmsg) {
   lua_settop(lua, 0);
 }
 
-bool l_handle_signal(const char *s) {
+bool l_handle_event(const char *s) {
   return l_is_ta_table_function("events", s) ? l_call_function(0, 1) : true;
 }
 
-bool l_handle_signal(const char *s, const char *arg) {
+bool l_handle_event(const char *s, const char *arg) {
   if (!l_is_ta_table_function("events", s)) return false;
   lua_pushstring(lua, arg);
   return l_call_function(1, 1);
@@ -420,7 +420,7 @@ void l_handle_scnnotification(SCNotification *n) {
 void l_ta_command(const char *command) {
   int top = lua_gettop(lua);
   if (luaL_dostring(lua, command) == 0) {
-    l_handle_signal("update_ui");
+    l_handle_event("update_ui");
     lua_settop(lua, top);
   } else l_handle_error(lua, "Error executing command.");
 }
@@ -842,7 +842,7 @@ LF l_cf_buffer_delete(LS *lua) {
   else
     new_scintilla_buffer(SCINTILLA(focused_editor), true, true);
   remove_scintilla_buffer(doc);
-  l_handle_signal("buffer_deleted");
+  l_handle_event("buffer_deleted");
   return 0;
 }
 
@@ -977,7 +977,7 @@ LF l_cf_find_focus(LS *) { find_toggle_focus(); return 0; }
 static void t_menu_activate(GtkWidget *menu_item, gpointer) {
   GtkWidget *label = gtk_bin_get_child(GTK_BIN(menu_item));
   const char *text = gtk_label_get_text(GTK_LABEL(label));
-  l_handle_signal("menu_clicked", text);
+  l_handle_event("menu_clicked", text);
 }
 
 LF l_cf_gtkmenu(LS *lua) {

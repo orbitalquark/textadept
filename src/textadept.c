@@ -78,7 +78,7 @@ GtkWidget* new_scintilla_window(sptr_t buffer_id) {
     new_scintilla_buffer(SCINTILLA(editor), false, false);
   } else new_scintilla_buffer(SCINTILLA(editor), false, true);
   l_set_view_global(editor);
-  l_handle_signal("view_new");
+  l_handle_event("view_new");
   return editor;
 }
 
@@ -105,7 +105,7 @@ void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
   SS(sci, SCI_STYLESETBACK, 32, 0x33 | (0x33 << 8) | (0x33 << 16));
   set_default_buffer_properties(sci);
   l_set_buffer_global(sci);
-  l_handle_signal("buffer_new");
+  l_handle_event("buffer_new");
 }
 
 void remove_scintilla_buffer(sptr_t doc) {
@@ -229,11 +229,11 @@ static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
   if (event->state == 0)
     switch(event->keyval) {
       case 0xff1b:
-        l_handle_signal("hide_completions");
+        l_handle_event("hide_completions");
         gtk_widget_grab_focus(focused_editor);
         return true;
       case 0xff09:
-        l_handle_signal("show_completions",
+        l_handle_event("show_completions",
                         gtk_entry_get_text(GTK_ENTRY(widget)));
         return true;
     }
@@ -277,7 +277,7 @@ static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
 }
 
 static bool w_exit(GtkWidget*, GdkEventAny*, gpointer) {
-  if (!l_handle_signal("quit")) return true;
+  if (!l_handle_event("quit")) return true;
   l_close();
   scintilla_release_resources();
   gtk_main_quit();
