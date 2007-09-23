@@ -5,7 +5,9 @@
 
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
-GtkWidget *window, *statusbar, *docstatusbar, *focused_editor, *command_entry;
+GtkWidget
+  *window, *focused_editor, *command_entry,
+  *menubar, *statusbar, *docstatusbar;
 
 static void c_activated(GtkWidget *widget, gpointer);
 static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer);
@@ -30,8 +32,10 @@ void create_ui() {
   signal(window, "key_press_event", w_keypress);
   GtkWidget *vbox = gtk_vbox_new(false, 0);
   gtk_container_add(GTK_CONTAINER(window), vbox);
+  menubar = gtk_menu_bar_new();
+  gtk_box_pack_start(GTK_BOX(vbox), menubar, false, false, 0);
   GtkWidget *pane = gtk_hpaned_new();
-  gtk_container_add(GTK_CONTAINER(vbox), pane);
+  gtk_box_pack_start(GTK_BOX(vbox), pane, true, true, 0);
   GtkWidget *pm = pm_create_ui();
   gtk_paned_add1(GTK_PANED(pane), pm);
   GtkWidget *hbox = gtk_hbox_new(false, 0);
@@ -56,6 +60,7 @@ void create_ui() {
   g_object_set(G_OBJECT(statusbar), "width-request", 250, NULL);
   gtk_box_pack_start(GTK_BOX(hboxs), statusbar, false, false, 0);
   gtk_widget_show_all(window);
+  gtk_widget_hide(menubar); // hide initially
   gtk_widget_hide(findbox); // hide initially
   gtk_widget_grab_focus(editor);
 }
@@ -172,6 +177,15 @@ void resize_split(GtkWidget *editor, int pos, bool increment) {
   GtkWidget *pane = gtk_widget_get_parent(editor);
   int width = gtk_paned_get_position(GTK_PANED(pane));
   gtk_paned_set_position(GTK_PANED(pane), pos + (increment ? width : 0));
+}
+
+void set_menubar(GtkWidget *new_menubar) {
+  GtkWidget *vbox = gtk_widget_get_parent(menubar);
+  gtk_container_remove(GTK_CONTAINER(vbox), menubar);
+  menubar = new_menubar;
+  gtk_box_pack_start(GTK_BOX(vbox), menubar, false, false, 0);
+  gtk_box_reorder_child(GTK_BOX(vbox), menubar, 0);
+  gtk_widget_show_all(menubar);
 }
 
 void set_statusbar_text(const char *text) {
