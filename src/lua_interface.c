@@ -41,7 +41,8 @@ LF l_cf_ta_buffer_new(LS *lua),
    l_cf_ta_goto_window(LS *lua),
    l_cf_view_goto_buffer(LS *lua),
    l_cf_pm_focus(LS *lua), l_cf_pm_clear(LS *lua), l_cf_pm_activate(LS *lua),
-   l_cf_find_focus(LS *lua);
+   l_cf_find_focus(LS *lua),
+   l_cf_gtkmenu(LS *lua);
 
 const char
   *views_dne = "textadept.views doesn't exist or was overridden.",
@@ -73,6 +74,7 @@ void l_init(int argc, char **argv) {
   l_cfunc(lua, l_cf_ta_goto_window, "goto_view");
   l_cfunc(lua, l_cf_ta_get_split_table, "get_split_table");
   l_cfunc(lua, l_cf_ta_focus_command, "focus_command");
+  l_cfunc(lua, l_cf_gtkmenu, "gtkmenu");
   l_mt(lua, "_textadept_mt", l_ta_mt_index, l_ta_mt_newindex);
   lua_setglobal(lua, "textadept");
   lua_pushstring(lua, textadept_home); lua_setglobal(lua, "_HOME");
@@ -303,6 +305,33 @@ void l_close() {
   lua_close(lua);
 }
 
+GtkWidget* l_create_gtkmenu(LS *lua, GCallback callback, bool submenu=false) {
+  GtkWidget *menu = gtk_menu_new(), *menu_item = 0, *submenu_root = 0;
+  const char *label;
+  lua_getfield(lua, -1, "title");
+  if (!lua_isnil(lua, -1) || submenu) { // title required for submenu
+    label = !lua_isnil(lua, -1) ? lua_tostring(lua, -1) : "notitle";
+    submenu_root = gtk_menu_item_new_with_mnemonic(label);
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(submenu_root), menu);
+  } lua_pop(lua, 1); // title
+  lua_pushnil(lua);
+  while (lua_next(lua, -2)) {
+    if (lua_type(lua, -2) == LUA_TNUMBER && lua_isstring(lua, -1)) {
+      label = lua_tostring(lua, -1);
+      if (g_str_has_prefix(label, "gtk-"))
+        menu_item = gtk_image_menu_item_new_from_stock(label, NULL);
+      else if (streq(label, "separator"))
+        menu_item = gtk_separator_menu_item_new();
+      else menu_item = gtk_menu_item_new_with_mnemonic(label);
+      g_signal_connect(menu_item, "activate", callback, 0);
+      gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+    } else if (lua_istable(lua, -1))
+      gtk_menu_shell_append(GTK_MENU_SHELL(menu),
+                            l_create_gtkmenu(lua, callback, true));
+    lua_pop(lua, 1); // value
+  } return !submenu_root ? menu : submenu_root;
+}
+
 // Notification/signal handlers
 
 bool l_is_ta_table_function(const char *table, const char *function) {
@@ -340,6 +369,12 @@ void l_handle_error(LS *lua, const char *errmsg) {
 
 bool l_handle_signal(const char *s) {
   return l_is_ta_table_function("events", s) ? l_call_function(0, 1) : true;
+}
+
+bool l_handle_signal(const char *s, const char *arg) {
+  if (!l_is_ta_table_function("events", s)) return false;
+  lua_pushstring(lua, arg);
+  return l_call_function(1, 1);
 }
 
 bool l_handle_keypress(int keyval, GdkEventKey *event) {
@@ -473,20 +508,8 @@ void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback) {
     return;
   }
   if (l_call_function(1, 1, true) && lua_istable(lua, -1)) {
-    GtkWidget *menu = gtk_menu_new();
-    lua_pushnil(lua);
-    while (lua_next(lua, -2)) {
-      GtkWidget *menu_item;
-      const char *label = lua_tostring(lua, -1);
-      if (g_str_has_prefix(label, "gtk-"))
-        menu_item = gtk_image_menu_item_new_from_stock(label, NULL);
-      else if (streq(label, "separator"))
-        menu_item = gtk_separator_menu_item_new();
-      else menu_item = gtk_menu_item_new_with_mnemonic(label);
-      g_signal_connect(menu_item, "activate", callback, 0);
-      gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-      lua_pop(lua, 1); // value
-    } lua_pop(lua, 1); // returned table
+    GtkWidget *menu = l_create_gtkmenu(lua, callback);
+    lua_pop(lua, 1); // returned table
     gtk_widget_show_all(menu);
     gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
                    event ? event->button : 0,
@@ -751,7 +774,18 @@ LF l_ta_mt_newindex(LS *lua) {
     set_docstatusbar_text(lua_tostring(lua, 3));
   else if (streq(key, "focused_doc_pointer") || streq(key, "clipboard_text"))
     luaL_error(lua, "'%s' is read-only.", key);
-  else lua_rawset(lua, 1);
+  else if (streq(key, "menubar")) {
+    const char *errmsg = "textadept.menubar must be a table of menus.";
+    if (!lua_istable(lua, 3)) luaL_error(lua, errmsg);
+    GtkWidget *menubar = gtk_menu_bar_new();
+    lua_pushnil(lua);
+    while (lua_next(lua, 3)) {
+      if (!lua_isuserdata(lua, -1)) luaL_error(lua, errmsg);
+      GtkWidget *menu_item = l_togtkwidget(lua, -1);
+      gtk_menu_bar_append(GTK_MENU_BAR(menubar), menu_item);
+      lua_pop(lua, 1); // value
+    } set_menubar(menubar);
+  } else lua_rawset(lua, 1);
   return 0;
 }
 
@@ -946,3 +980,16 @@ LF l_cf_pm_activate(LS *) {
 }
 
 LF l_cf_find_focus(LS *) { find_toggle_focus(); return 0; }
+
+static void t_menu_activate(GtkWidget *menu_item, gpointer) {
+  GtkWidget *label = gtk_bin_get_child(GTK_BIN(menu_item));
+  const char *text = gtk_label_get_text(GTK_LABEL(label));
+  l_handle_signal("menu_clicked", text);
+}
+
+LF l_cf_gtkmenu(LS *lua) {
+  luaL_checktype(lua, 1, LUA_TTABLE);
+  GtkWidget *menu = l_create_gtkmenu(lua, G_CALLBACK(t_menu_activate));
+  lua_pushlightuserdata(lua, const_cast<GtkWidget*>(menu));
+  return 1;
+}

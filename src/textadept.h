@@ -37,6 +37,7 @@ void remove_scintilla_buffer(sptr_t doc);
 void split_window(GtkWidget *editor, bool vertical=true);
 bool unsplit_window(GtkWidget *editor);
 void resize_split(GtkWidget *editor, int pos, bool increment=true);
+void set_menubar(GtkWidget *menubar);
 void set_statusbar_text(const char *text);
 void set_docstatusbar_text(const char *text);
 void command_toggle_focus();
@@ -66,6 +67,7 @@ void l_set_buffer_global(ScintillaObject *sci);
 
 void l_handle_error(lua_State *lua, const char *errmsg=0);
 bool l_handle_signal(const char *s);
+bool l_handle_signal(const char *s, const char *arg);
 bool l_handle_keypress(int keyval, GdkEventKey *event);
 void l_handle_completion(const char *command);
 void l_handle_scnnotification(SCNotification *n);
