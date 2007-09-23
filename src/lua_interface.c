@@ -386,13 +386,6 @@ bool l_handle_keypress(int keyval, GdkEventKey *event) {
   return l_call_function(4, 1);
 }
 
-void l_handle_completion(const char *command) {
-  if (!l_is_ta_table_function("events",
-      command ? "show_completions" : "hide_completions")) return;
-  if (command) lua_pushstring(lua, command);
-  l_call_function(command ? 1 : 0);
-}
-
 #define l_scn_int(i, n) { lua_pushinteger(lua, i); lua_setfield(lua, -2,  n); }
 #define l_scn_str(s, n) { lua_pushstring(lua, s); lua_setfield(lua, -2, n); }
 

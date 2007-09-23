@@ -229,11 +229,12 @@ static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
   if (event->state == 0)
     switch(event->keyval) {
       case 0xff1b:
-        l_handle_completion(NULL);
+        l_handle_signal("hide_completions");
         gtk_widget_grab_focus(focused_editor);
         return true;
       case 0xff09:
-        l_handle_completion(gtk_entry_get_text(GTK_ENTRY(widget)));
+        l_handle_signal("show_completions",
+                        gtk_entry_get_text(GTK_ENTRY(widget)));
         return true;
     }
   else if (event->state == GDK_MOD1_MASK)
