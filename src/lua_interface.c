@@ -39,6 +39,7 @@ LF l_cf_ta_buffer_new(LS *lua),
    l_cf_ta_get_split_table(LS *lua),
    l_cf_ta_focus_command(LS *lua),
    l_cf_ta_goto_window(LS *lua),
+   l_cf_ta_popupmenu(LS *lua),
    l_cf_view_goto_buffer(LS *lua),
    l_cf_pm_focus(LS *lua), l_cf_pm_clear(LS *lua), l_cf_pm_activate(LS *lua),
    l_cf_find_focus(LS *lua),
@@ -75,6 +76,7 @@ void l_init(int argc, char **argv) {
   l_cfunc(lua, l_cf_ta_get_split_table, "get_split_table");
   l_cfunc(lua, l_cf_ta_focus_command, "focus_command");
   l_cfunc(lua, l_cf_gtkmenu, "gtkmenu");
+  l_cfunc(lua, l_cf_ta_popupmenu, "popupmenu");
   l_mt(lua, "_textadept_mt", l_ta_mt_index, l_ta_mt_newindex);
   lua_setglobal(lua, "textadept");
   lua_pushstring(lua, textadept_home); lua_setglobal(lua, "_HOME");
@@ -946,6 +948,14 @@ LF l_cf_goto_(LS *lua, GtkWidget *editor, bool buffer=true) {
 
 LF l_cf_ta_goto_window(LS *lua) {
   return l_cf_goto_(lua, focused_editor, false);
+}
+
+LF l_cf_ta_popupmenu(LS *lua) {
+  if (!lua_isuserdata(lua, 1)) luaL_error(lua, "Menu userdata expected.");
+  GtkWidget *menu = l_togtkwidget(lua, 1);
+  gtk_widget_show_all(menu);
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, NULL);
+  return 0;
 }
 
 // If the indexed view is not currently focused, temporarily focus it so calls
