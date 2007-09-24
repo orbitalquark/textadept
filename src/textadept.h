@@ -27,6 +27,8 @@ extern GtkTreeStore *pm_store;
 extern lua_State *lua;
 static const char *textadept_home = "/usr/share/textadept/";
 
+void warn(const char *s) { printf("Warning: %s\n", s); }
+
 // textadept.c
 void create_ui();
 GtkWidget* new_scintilla_window(sptr_t default_id=NULL);
@@ -70,7 +72,6 @@ bool l_handle_event(const char *e);
 bool l_handle_event(const char *e, const char *arg);
 bool l_handle_keypress(int keyval, GdkEventKey *event);
 void l_handle_scnnotification(SCNotification *n);
-
 void l_ta_command(const char *command);
 
 bool l_pm_get_contents_for(const char *entry_text, bool expanding=false);
