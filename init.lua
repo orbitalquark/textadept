@@ -7,6 +7,7 @@ require 'ext/mime_types'
 local mpath = _HOME..'modules/?.lua;'.._HOME..'/modules/?/init.lua'
 package.path  = package.path..';'..mpath
 
+-- modules to load on startup
 require 'textadept'
 
 local textadept = textadept

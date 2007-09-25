@@ -37,3 +37,9 @@ module('_m')
 -- When assigning key commands to module functions, do not forget to do so AFTER
 -- the function has been defined. Typically key commands are placed at the end
 -- of files, like commands.lua in language-specific modules.
+
+---
+-- This module contains no functions.
+function no_functions()
+
+end
