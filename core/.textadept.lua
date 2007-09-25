@@ -14,12 +14,13 @@ module('textadept')
 -- @field title The title of the Textadept window.
 -- @field focused_doc_pointer The pointer to the document associated with the
 --   buffer of the currently focused view. (Used internally; read-only)
+-- @field menubar A table of GTK menus defining a menubar (write-only).
 -- @field clipboard_text The text on the clipboard (read-only).
 -- @field statusbar_text The text displayed by the statusbar (write-only).
 -- @field docstatusbar_text The text displayed by the doc statusbar
 --   (write-only).
 textadept = { title = nil, focused_doc_pointer = nil, clipboard_text = nil,
-  statusbar_text = nil, docstatusbar_text = nil }
+  menubar = nil, statusbar_text = nil, docstatusbar_text = nil }
 
 ---
 -- A numerically indexed table of open buffers in Textadept.
@@ -58,6 +59,24 @@ function get_split_table() end
 ---
 -- Focuses the command entry.
 function focus_command() end
+
+---
+-- Creates a GTK menu, returning the userdata.
+-- @param menu_table A table defining the menu. It is an ordered list of strings
+--   that are handled as follows:
+--     'gtk-*' - a stock menu item is created based on the GTK stock-id.
+--     'separator' - a menu separator item is created.
+--     Otherwise a regular menu item with a mnemonic is created.
+--  An additional 'title' key can be used to define the menu's title text (if it
+--  is a submenu).
+-- @see popupmenu
+function gtkmenu(menu_table) end
+
+---
+-- Pops up a GTK menu at the cursor.
+-- @param menu The menu userdata returned by gtkmenu.
+-- @see gtkmenu
+function popupmenu(menu)
 
 ---
 -- Checks if the buffer being indexed is the currently focused buffer.
