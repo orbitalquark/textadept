@@ -27,7 +27,7 @@ extern GtkTreeStore *pm_store;
 extern lua_State *lua;
 static const char *textadept_home = "/usr/share/textadept/";
 
-void warn(const char *s) { printf("Warning: %s\n", s); }
+static void warn(const char *s) { printf("Warning: %s\n", s); }
 
 // textadept.c
 void create_ui();
