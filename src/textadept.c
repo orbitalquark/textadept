@@ -14,6 +14,7 @@ static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer);
 static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer);
 static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer);
 static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer);
+static bool w_focus(GtkWidget*, GdkEventFocus *, gpointer);
 static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer);
 static bool w_exit(GtkWidget*, GdkEventAny*, gpointer);
 
@@ -29,6 +30,7 @@ int main(int argc, char **argv) {
 void create_ui() {
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   signal(window, "delete_event", w_exit);
+  signal(window, "focus-in-event", w_focus);
   signal(window, "key_press_event", w_keypress);
   GtkWidget *vbox = gtk_vbox_new(false, 0);
   gtk_container_add(GTK_CONTAINER(window), vbox);
@@ -263,6 +265,12 @@ static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
 
 static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   return l_handle_keypress(event->keyval, event);
+}
+
+static bool w_focus(GtkWidget*, GdkEventFocus*, gpointer) {
+  if (focused_editor && !GTK_WIDGET_HAS_FOCUS(focused_editor))
+    gtk_widget_grab_focus(focused_editor);
+  return false;
 }
 
 /** Window key events.
