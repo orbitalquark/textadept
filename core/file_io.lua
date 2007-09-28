@@ -53,6 +53,24 @@ function open(filenames)
 end
 
 ---
+-- Reloads the file in a given buffer.
+-- @param buffer The buffer to reload. This must be the currently focused
+--   buffer.
+-- @usage buffer:reload()
+function reload(buffer)
+  textadept.check_focused_buffer(buffer)
+  if not buffer.filename then return end
+  local f, err = io.open(buffer.filename)
+  if f then
+    local pos = buffer.current_pos
+    buffer:set_text( f:read('*all') )
+    buffer.current_pos = pos
+    buffer:set_save_point()
+    f:close()
+  end
+end
+
+---
 -- Saves the current buffer to a file.
 -- @param buffer The buffer to save. Its 'filename' property is used as the
 --   path of the file to save to. This must be the currently focused buffer.

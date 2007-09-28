@@ -10,7 +10,7 @@ module('_m.textadept.key_commands', package.seeall)
   A:   A   C       G     J K L     O   Q           W X   Z
   CS:      C D     G     J   L         Q R S T U   W
   SA:  A   C D E   G H I J K L M   O   Q R S T     W X   Z
-  CA:  A   C       G H   J K L     O   Q R S T   V W X Y Z
+  CA:  A   C       G H   J K L     O   Q   S T   V W X Y Z
   CSA:     C D     G H   J K L     O   Q R S T U   W X   Z
 ]]--
 
@@ -32,6 +32,7 @@ keys.ct.v = {} -- View chain
 -- Standard commands. New, open, save, etc.
 keys.ct.n = { t.new_buffer   }
 keys.cr   = { t.io.open      }
+keys.car  = { 'reload', b    }
 keys.co   = { 'save', b      }
 keys.cso  = { 'save_as', b   }
 keys.cx   = { 'close', b     }
