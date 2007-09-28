@@ -306,6 +306,7 @@ add_handler('margin_click',
 add_handler('buffer_new',
   function() -- set additional buffer functions
     local buffer, textadept = buffer, textadept
+    buffer.reload = textadept.io.reload
     buffer.save = textadept.io.save
     buffer.save_as = textadept.io.save_as
     buffer.close = textadept.io.close
