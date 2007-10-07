@@ -85,3 +85,7 @@ function popupmenu(menu)
 -- if the check fails.
 -- @param buffer The buffer in question.
 function check_focused_buffer(buffer) end
+
+---
+-- Prints a message to the error buffer.
+function print(...) end

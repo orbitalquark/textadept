@@ -477,3 +477,5 @@ function error(...)
   end
   pcall( handle_error, unpack{...} ) -- prevent endless loops if this errors
 end
+
+textadept.print = error
