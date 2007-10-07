@@ -2,8 +2,8 @@
 
 ---
 -- Defines the key commands used by the Textadept key command manager.
--- For non-ascii keys, see _m.textadept.keys for string aliases.
-module('_m.textadept.key_commands', package.seeall)
+-- For non-ascii keys, see textadept.keys for string aliases.
+module('textadept.key_commands', package.seeall)
 
 --[[
   C:               G                   Q

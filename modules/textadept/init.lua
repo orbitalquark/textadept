@@ -6,8 +6,6 @@
 module('_m.textadept', package.seeall)
 
 require 'textadept.editing'
-require 'textadept.keys'
 require 'textadept.lsnippets'
 require 'textadept.macros'
 require 'textadept.mlines'
-require 'textadept.key_commands' -- last
