@@ -61,10 +61,9 @@ end
 -- Executes the current file.
 function run()
   local buffer = buffer
-  local out = io.popen('lua "'..buffer.filename..'" 2>&1'):read('*all')
-  buffer = textadept.new_buffer()
-  buffer:set_text('Command output:\n'..out)
-  buffer:set_save_point()
+  local cmd = 'lua "'..buffer.filename..'" 2>&1'
+  local out = io.popen(cmd):read('*all')
+  textadept.print('> '..cmd..'\n'..out)
 end
 
 -- Lua-specific key commands.
