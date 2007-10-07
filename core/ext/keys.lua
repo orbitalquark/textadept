@@ -13,7 +13,7 @@
 --   ADD: The string representing used to join together a sequence of Control,
 --     Shift, or Alt modifier keys.
 --
-module('_m.textadept.keys', package.seeall)
+module('textadept.keys', package.seeall)
 
 -- Usage:
 -- Keys are defined in the global table 'keys'. Keys in that table are key
