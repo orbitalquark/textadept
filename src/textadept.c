@@ -57,7 +57,7 @@ void create_ui() {
   signal(command_entry, "activate", c_activated);
   signal(command_entry, "key_press_event", c_keypress);
   g_object_set(G_OBJECT(command_entry), "width-request", 200, NULL);
-  gtk_box_pack_start(GTK_BOX(hboxs), command_entry, false, false, 0);
+  gtk_box_pack_start(GTK_BOX(hboxs), command_entry, true, true, 0);
   docstatusbar = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, "");
   g_object_set(G_OBJECT(docstatusbar), "width-request", 400, NULL);
@@ -65,6 +65,7 @@ void create_ui() {
   gtk_widget_show_all(window);
   gtk_widget_hide(menubar); // hide initially
   gtk_widget_hide(findbox); // hide initially
+  gtk_widget_hide(command_entry); // hide initially
   gtk_widget_grab_focus(editor);
 }
 
@@ -203,15 +204,22 @@ void set_docstatusbar_text(const char *text) {
 }
 
 void command_toggle_focus() {
-  gtk_widget_grab_focus(
-    GTK_WIDGET_HAS_FOCUS(focused_editor) ? command_entry : focused_editor);
+  if (!GTK_WIDGET_HAS_FOCUS(command_entry)) {
+    gtk_widget_hide(statusbar); gtk_widget_hide(docstatusbar);
+    gtk_widget_show(command_entry);
+    gtk_widget_grab_focus(command_entry);
+  } else {
+    gtk_widget_show(statusbar); gtk_widget_show(docstatusbar);
+    gtk_widget_hide(command_entry);
+    gtk_widget_grab_focus(focused_editor);
+  }
 }
 
 // Notifications/signals
 
 static void c_activated(GtkWidget *widget, gpointer) {
   l_ta_command(gtk_entry_get_text(GTK_ENTRY(widget)));
-  gtk_widget_grab_focus(focused_editor);
+  command_toggle_focus();
 }
 
 void c_insert(const char *t) {
@@ -234,7 +242,7 @@ static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
     switch(event->keyval) {
       case 0xff1b:
         l_handle_event("hide_completions");
-        gtk_widget_grab_focus(focused_editor);
+        command_toggle_focus();
         return true;
       case 0xff09:
         l_handle_event("show_completions",
