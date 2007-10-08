@@ -80,12 +80,12 @@ GtkWidget* find_create_ui() {
 }
 
 void find_toggle_focus() {
-  if (!GTK_WIDGET_HAS_FOCUS(focused_editor)) {
-    gtk_widget_grab_focus(focused_editor);
-    gtk_widget_hide(findbox);
-  } else {
+  if (!GTK_WIDGET_HAS_FOCUS(findbox)) {
     gtk_widget_show(findbox);
     gtk_widget_grab_focus(find_entry);
+  } else {
+    gtk_widget_grab_focus(focused_editor);
+    gtk_widget_hide(findbox);
   }
 }
 
