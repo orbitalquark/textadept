@@ -29,6 +29,7 @@ int main(int argc, char **argv) {
 
 void create_ui() {
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
   signal(window, "delete_event", w_exit);
   signal(window, "focus-in-event", w_focus);
   signal(window, "key_press_event", w_keypress);
@@ -69,6 +70,7 @@ void create_ui() {
 
 GtkWidget* new_scintilla_window(sptr_t buffer_id) {
   GtkWidget *editor = scintilla_new();
+  gtk_widget_set_size_request(editor, 1, 1); // minimum size
   signal(editor, "key_press_event", t_keypress);
   signal(editor, "command", t_command);
   signal(editor, SCINTILLA_NOTIFY, t_notification);
