@@ -54,7 +54,7 @@ void l_init(int argc, char **argv) {
   luaL_openlibs(lua);
   lua_newtable(lua);
   for (int i = 0; i < argc; i++) {
-    lua_pushstring( lua, argv[i] ); lua_rawseti(lua, -2, i);
+    lua_pushstring(lua, argv[i]); lua_rawseti(lua, -2, i);
   }
   lua_setglobal(lua, "arg");
 
