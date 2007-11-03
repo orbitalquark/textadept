@@ -76,7 +76,7 @@ function gtkmenu(menu_table) end
 -- Pops up a GTK menu at the cursor.
 -- @param menu The menu userdata returned by gtkmenu.
 -- @see gtkmenu
-function popupmenu(menu)
+function popupmenu(menu) end
 
 ---
 -- Checks if the buffer being indexed is the currently focused buffer.

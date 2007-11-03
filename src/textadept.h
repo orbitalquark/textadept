@@ -27,6 +27,15 @@ extern GtkTreeStore *pm_store;
 extern lua_State *lua;
 static const char *textadept_home = "/usr/share/textadept/";
 
+static long SS(ScintillaObject *sci, unsigned int msg, unsigned long wParam=0,
+               long lParam=0) {
+  return scintilla_send_message(sci, msg, wParam, lParam);
+}
+static long SSS(ScintillaObject *sci, unsigned int msg, const char *wParam=0,
+                const char *lParam=0) {
+  return scintilla_send_message(sci, msg, reinterpret_cast<long>(wParam),
+                                reinterpret_cast<long>(lParam));
+}
 static void warn(const char *s) { printf("Warning: %s\n", s); }
 
 // textadept.c
@@ -43,16 +52,6 @@ void set_menubar(GtkWidget *menubar);
 void set_statusbar_text(const char *text);
 void set_docstatusbar_text(const char *text);
 void command_toggle_focus();
-
-static long SS(ScintillaObject *sci, unsigned int msg, unsigned long wParam=0,
-               long lParam=0) {
-  return scintilla_send_message(sci, msg, wParam, lParam);
-}
-static long SSS(ScintillaObject *sci, unsigned int msg, const char *wParam=0,
-                const char *lParam=0) {
-  return scintilla_send_message(sci, msg, reinterpret_cast<long>(wParam),
-                                reinterpret_cast<long>(lParam));
-}
 
 // lua_interface.c
 void l_init(int argc, char **argv);
