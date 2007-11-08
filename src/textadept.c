@@ -275,7 +275,10 @@ static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
 }
 
 static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
-  return l_handle_keypress(event->keyval, event);
+  bool shift = event->state & GDK_SHIFT_MASK;
+  bool control = event->state & GDK_CONTROL_MASK;
+  bool alt = event->state & GDK_MOD1_MASK;
+  return l_handle_keypress(event->keyval, shift, control, alt);
 }
 
 static bool w_focus(GtkWidget*, GdkEventFocus*, gpointer) {
