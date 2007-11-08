@@ -27,7 +27,9 @@ GtkWidget* find_create_ui() {
   GtkWidget *flabel = gtk_label_new_with_mnemonic("_Find:");
   GtkWidget *rlabel = gtk_label_new_with_mnemonic("R_eplace:");
   find_entry = gtk_entry_new();
+  gtk_widget_set_name(find_entry, "textadept-find-entry");
   replace_entry = gtk_entry_new();
+  gtk_widget_set_name(replace_entry, "textadept-replace-entry");
   fnext_button = gtk_button_new_with_mnemonic("Find _Next");
   fprev_button = gtk_button_new_with_mnemonic("Find _Prev");
   r_button = gtk_button_new_with_mnemonic("_Replace");

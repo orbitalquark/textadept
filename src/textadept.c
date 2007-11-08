@@ -54,6 +54,7 @@ void create_ui() {
   gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar), false);
   gtk_box_pack_start(GTK_BOX(hboxs), statusbar, true, true, 0);
   command_entry = gtk_entry_new();
+  gtk_widget_set_name(command_entry, "textadept-command-entry");
   signal(command_entry, "activate", c_activated);
   signal(command_entry, "key_press_event", c_keypress);
   g_object_set(G_OBJECT(command_entry), "width-request", 200, NULL);
