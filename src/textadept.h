@@ -69,7 +69,7 @@ void l_set_buffer_global(ScintillaObject *sci);
 void l_handle_error(lua_State *lua, const char *errmsg=0);
 bool l_handle_event(const char *e);
 bool l_handle_event(const char *e, const char *arg);
-bool l_handle_keypress(int keyval, GdkEventKey *event);
+bool l_handle_keypress(int keyval, bool shift, bool control, bool alt);
 void l_handle_scnnotification(SCNotification *n);
 void l_ta_command(const char *command);
 

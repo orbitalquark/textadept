@@ -428,12 +428,12 @@ bool l_handle_event(const char *s, const char *arg) {
   return l_call_function(1, 1);
 }
 
-bool l_handle_keypress(int keyval, GdkEventKey *event) {
+bool l_handle_keypress(int keyval, bool shift, bool control, bool alt) {
   if (!l_is_ta_table_function("events", "keypress")) return false;
   lua_pushinteger(lua, keyval);
-  lua_pushboolean(lua, (event->state & GDK_SHIFT_MASK) > 0 ? 1 : 0);
-  lua_pushboolean(lua, (event->state & GDK_CONTROL_MASK) > 0 ? 1 : 0);
-  lua_pushboolean(lua, (event->state & GDK_MOD1_MASK) > 0 ? 1 : 0);
+  lua_pushboolean(lua, shift);
+  lua_pushboolean(lua, control);
+  lua_pushboolean(lua, alt);
   return l_call_function(4, 1);
 }
 
