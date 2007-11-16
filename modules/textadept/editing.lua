@@ -248,7 +248,7 @@ function prepare_for_save()
     end
     if i < e - 1 then
       buffer.target_start, buffer.target_end = i + 1, e
-      buffer:replace_target()
+      buffer:replace_target('')
     end
   end
   -- Ensure ending newline.
