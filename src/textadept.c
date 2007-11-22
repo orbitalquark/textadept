@@ -223,20 +223,9 @@ static void c_activated(GtkWidget *widget, gpointer) {
   command_toggle_focus();
 }
 
-void c_insert(const char *t) {
-  int pos = gtk_editable_get_position(GTK_EDITABLE(command_entry));
-  gtk_editable_insert_text(GTK_EDITABLE(command_entry), t, strlen(t), &pos);
-  gtk_editable_set_position(GTK_EDITABLE(command_entry), pos);
-}
-
 /** Command entry key events.
  *  Escape - Hide the completion buffer if it's open.
  *  Tab - Show completion buffer.
- *  Alt+B - Insert 'buffer'.
- *  Alt+F - Insert 'find'.
- *  Alt+P - Insert 'pm'.
- *  Alt+T - Insert 'textadept'.
- *  Alt+V - Insert 'view'.
  */
 static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
   if (event->state == 0)
@@ -249,14 +238,6 @@ static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
         l_handle_event("show_completions",
                         gtk_entry_get_text(GTK_ENTRY(widget)));
         return true;
-    }
-  else if (event->state == GDK_MOD1_MASK)
-    switch (event->keyval) {
-      case 0x062: c_insert("buffer"); return true;
-      case 0x066: c_insert("find"); return true;
-      case 0x070: c_insert("pm"); return true;
-      case 0x074: c_insert("textadept"); return true;
-      case 0x076: c_insert("view"); return true;
     }
   return false;
 }
