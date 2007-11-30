@@ -525,6 +525,7 @@ textadept.buffer_functions = {
   del_line_right = {2396, 0, 0, 0},
   del_word_left = {2335, 0, 0, 0},
   del_word_right = {2336, 0, 0, 0},
+  del_word_right_end = {2518, 0, 0, 0},
   delete_back = {2326, 0, 0, 0},
   delete_back_not_line = {2344, 0, 0, 0},
   doc_line_from_visible = {2221, 1, 1, 0},
