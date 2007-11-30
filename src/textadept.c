@@ -219,6 +219,7 @@ void command_toggle_focus() {
 // Notifications/signals
 
 static void c_activated(GtkWidget *widget, gpointer) {
+  l_handle_event("hide_completions");
   l_ta_command(gtk_entry_get_text(GTK_ENTRY(widget)));
   command_toggle_focus();
 }
