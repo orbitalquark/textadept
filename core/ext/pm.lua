@@ -1,10 +1,6 @@
 -- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 -- Usage:
--- Creating a new browser:
---   TODO
---   You can add the new browser to the list of browsers in ext/pm.lua.
---
 -- Interactive search:
 --   Typing text into the project manager view begins the interactive search.
 --   If the text matches ANY part of an item in the view (case sensitively), the
