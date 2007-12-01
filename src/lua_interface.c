@@ -515,7 +515,7 @@ void l_pm_populate(GtkTreeIter *initial_iter) {
       gtk_tree_store_set(pm_store, &iter, 2, lua_isstring(lua, -1) ?
                          lua_tostring(lua, -1) : lua_tostring(lua, -3));
       lua_pop(lua, 1); // display text
-    } else warn("pm.populate: id key must have table value.");
+    } else warn("pm.populate: string id key must have table value.");
     lua_pop(lua, 1); // value
   } lua_pop(lua, 1); // returned table
 }
