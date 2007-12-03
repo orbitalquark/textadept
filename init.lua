@@ -6,7 +6,7 @@ require 'ext/mime_types'
 require 'ext/keys'
 
 local mpath = _HOME..'modules/?.lua;'.._HOME..'/modules/?/init.lua'
-package.path  = package.path..';'..mpath
+package.path  = mpath..';'..package.path
 
 -- modules to load on startup
 require 'textadept'
