@@ -20,8 +20,13 @@ if #arg == 0 then
   textadept.io.load_session()
 else
   local base_dir = arg[0]:match('^.+/') or ''
+  local filepath
   for _, filename in ipairs(arg) do
-    textadept.io.open(base_dir..filename)
+    if not filename:match('^~?/') then
+      textadept.io.open(base_dir..filename)
+    else
+      textadept.io.open(filename)
+    end
   end
   textadept.pm.entry_text = 'buffers'
   textadept.pm.activate()
