@@ -109,6 +109,7 @@ void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
   SS(sci, SCI_STYLESETSIZE, 32, 8);
   SS(sci, SCI_STYLESETFORE, 32, 0xAA | (0xAA << 8) | (0xAA << 16));
   SS(sci, SCI_STYLESETBACK, 32, 0x33 | (0x33 << 8) | (0x33 << 16));
+  SS(sci, SCI_SETSTYLEBITS, 8, 0);
   set_default_buffer_properties(sci);
   l_set_buffer_global(sci);
   l_handle_event("buffer_new");
