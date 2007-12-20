@@ -228,4 +228,4 @@ diff -r 8c3e7e659b6f src/textadept.c
 +  SS(sci, SCI_STYLESETSIZE, 32, 11);
    SS(sci, SCI_STYLESETFORE, 32, 0xAA | (0xAA << 8) | (0xAA << 16));
    SS(sci, SCI_STYLESETBACK, 32, 0x33 | (0x33 << 8) | (0x33 << 16));
-   set_default_buffer_properties(sci);
+   SS(sci, SCI_SETSTYLEBITS, 8, 0);
