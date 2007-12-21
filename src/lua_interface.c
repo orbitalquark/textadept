@@ -100,9 +100,7 @@ bool l_ta_get(LS *lua, const char *k) {
 // value is at stack top
 void l_ta_set(LS *lua, const char *k) {
   lua_getglobal(lua, "textadept");
-  lua_pushstring(lua, k);
-  lua_pushvalue(lua, -3);
-  lua_rawset(lua, -3);
+  lua_pushstring(lua, k); lua_pushvalue(lua, -3); lua_rawset(lua, -3);
   lua_pop(lua, 2); // value and textadept
 }
 
@@ -345,7 +343,6 @@ bool l_call_function(int nargs, int retn=0, bool keep_return=false) {
   return false;
 }
 
-/** Behaves like lua_rawgeti but casts the result to an integer. */
 static int l_rawgeti_int(LS *lua, int index, int n) {
   lua_rawgeti(lua, index, n);
   int ret = static_cast<int>(lua_tointeger(lua, -1));
@@ -353,7 +350,6 @@ static int l_rawgeti_int(LS *lua, int index, int n) {
   return ret;
 }
 
-/** Behaves like lua_rawget but casts the result to a string. */
 static const char* l_rawget_str(LS *lua, int index, const char *k) {
   lua_pushstring(lua, k); lua_rawget(lua, index);
   const char *str = lua_tostring(lua, -1);
@@ -706,10 +702,9 @@ LF l_bufferp_mt_(LS *lua, int n, const char *prop, int arg) {
 }
 
 LF l_buffer_mt_newindex(LS *lua) {
-  if (streq(lua_tostring(lua, 2), "doc_pointer"))
-    return luaL_error(lua, "'doc_pointer' is read-only.");
-  else
-    return l_bufferp_mt_(lua, 2, lua_tostring(lua, 2), 3);
+  return streq(lua_tostring(lua, 2), "doc_pointer")
+    ? luaL_error(lua, "'doc_pointer' is read-only")
+    : l_bufferp_mt_(lua, 2, lua_tostring(lua, 2), 3);
 }
 
 LF l_bufferp_mt_index(LS *lua) {
@@ -989,11 +984,8 @@ LF l_cf_ta_popupmenu(LS *lua) {
 }
 
 LF l_cf_pm_focus(LS *) { pm_toggle_focus(); return 0; }
-
 LF l_cf_pm_clear(LS *) { gtk_tree_store_clear(pm_store); return 0; }
-
 LF l_cf_pm_activate(LS *) {
   g_signal_emit_by_name(G_OBJECT(pm_entry), "activate"); return 0;
 }
-
 LF l_cf_find_focus(LS *) { find_toggle_focus(); return 0; }
