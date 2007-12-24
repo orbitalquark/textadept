@@ -39,7 +39,7 @@ local extensions = {
   php = l.php,
   py = l.python, pyw = l.python,
   rhtml = l.rhtml,
-  rb = l.rb, rbw = l.rb,
+  rb = l.ruby, rbw = l.ruby,
   xml = l.xml, xsl = l.xml, xslt = l.xml
 }
 
