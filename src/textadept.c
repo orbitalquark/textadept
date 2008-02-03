@@ -20,7 +20,7 @@ static bool w_exit(GtkWidget*, GdkEventAny*, gpointer);
 
 int main(int argc, char **argv) {
   gtk_init(&argc, &argv);
-  l_init(argc, argv);
+  l_init(argc, argv, false);
   create_ui();
   l_load_script("init.lua");
   gtk_main();
