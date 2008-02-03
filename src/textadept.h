@@ -54,7 +54,7 @@ void set_docstatusbar_text(const char *text);
 void command_toggle_focus();
 
 // lua_interface.c
-void l_init(int argc, char **argv);
+void l_init(int argc, char **argv, bool reinit);
 void l_close();
 void l_load_script(const char *script_file);
 void l_add_scintilla_window(GtkWidget *editor);

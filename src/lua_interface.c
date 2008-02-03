@@ -23,6 +23,8 @@ static int // parameter/return types
   tVOID = 0, /*tINT = 1,*/ tLENGTH = 2, /*tPOSITION = 3,*/ /*tCOLOUR = 4,*/
   tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 
+static void clear_table(LS *lua, int index);
+
 LF l_buffer_mt_index(LS *lua), l_buffer_mt_newindex(LS *lua),
    l_bufferp_mt_index(LS *lua), l_bufferp_mt_newindex(LS *lua),
    l_view_mt_index(LS *lua), l_view_mt_newindex(LS *lua),
@@ -42,6 +44,7 @@ LF l_cf_ta_buffer_new(LS *lua),
    l_cf_view_goto_buffer(LS *lua),
    l_cf_ta_gtkmenu(LS *lua),
    l_cf_ta_popupmenu(LS *lua),
+   l_cf_ta_reset(LS *lua),
    l_cf_pm_focus(LS *lua), l_cf_pm_clear(LS *lua), l_cf_pm_activate(LS *lua),
    l_cf_find_focus(LS *lua);
 
@@ -49,18 +52,29 @@ const char
   *views_dne = "textadept.views doesn't exist or was overridden.",
   *buffers_dne = "textadept.buffers doesn't exist or was overridden.";
 
-void l_init(int argc, char **argv) {
-  lua = lua_open();
-  luaL_openlibs(lua);
-  lua_newtable(lua);
-  for (int i = 0; i < argc; i++) {
-    lua_pushstring(lua, argv[i]); lua_rawseti(lua, -2, i);
+void l_init(int argc, char **argv, bool reinit) {
+  if (!reinit) {
+    lua = lua_open();
+    lua_newtable(lua);
+    for (int i = 0; i < argc; i++) {
+      lua_pushstring(lua, argv[i]); lua_rawseti(lua, -2, i);
+    }
+    lua_setfield(lua, LUA_REGISTRYINDEX, "arg");
+    lua_newtable(lua); lua_setfield(lua, LUA_REGISTRYINDEX, "buffers");
+    lua_newtable(lua); lua_setfield(lua, LUA_REGISTRYINDEX, "views");
+  } else { // clear package.loaded and _G
+    lua_getglobal(lua, "package"); lua_getfield(lua, -1, "loaded");
+    clear_table(lua, lua_gettop(lua));
+    lua_pop(lua, 2); // package and package.loaded
+    clear_table(lua, LUA_GLOBALSINDEX);
   }
-  lua_setglobal(lua, "arg");
+  luaL_openlibs(lua);
 
   lua_newtable(lua);
-  lua_newtable(lua); lua_setfield(lua, -2, "buffers");
-  lua_newtable(lua); lua_setfield(lua, -2, "views");
+  lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
+  lua_setfield(lua, -2, "buffers");
+  lua_getfield(lua, LUA_REGISTRYINDEX, "views");
+  lua_setfield(lua, -2, "views");
   lua_newtable(lua);
     l_cfunc(lua, l_cf_pm_focus, "focus");
     l_cfunc(lua, l_cf_pm_clear, "clear");
@@ -77,8 +91,11 @@ void l_init(int argc, char **argv) {
   l_cfunc(lua, l_cf_ta_focus_command, "focus_command");
   l_cfunc(lua, l_cf_ta_gtkmenu, "gtkmenu");
   l_cfunc(lua, l_cf_ta_popupmenu, "popupmenu");
+  l_cfunc(lua, l_cf_ta_reset, "reset");
   l_mt(lua, "_textadept_mt", l_ta_mt_index, l_ta_mt_newindex);
   lua_setglobal(lua, "textadept");
+
+  lua_getfield(lua, LUA_REGISTRYINDEX, "arg"); lua_setglobal(lua, "arg");
   lua_pushstring(lua, textadept_home); lua_setglobal(lua, "_HOME");
 
   l_load_script("core/init.lua");
@@ -102,6 +119,13 @@ void l_ta_set(LS *lua, const char *k) {
   lua_getglobal(lua, "textadept");
   lua_pushstring(lua, k); lua_pushvalue(lua, -3); lua_rawset(lua, -3);
   lua_pop(lua, 2); // value and textadept
+}
+
+// value is at stack top
+void l_reg_set(LS *lua, const char *k) {
+  lua_setfield(lua, LUA_REGISTRYINDEX, k);
+  lua_getfield(lua, LUA_REGISTRYINDEX, k);
+  l_ta_set(lua, k);
 }
 
 /** Checks for a view and returns the GtkWidget associated with it. */
@@ -138,7 +162,7 @@ void l_remove_scintilla_window(GtkWidget *editor) {
   while (lua_next(lua, -2))
     editor != l_checkview(lua, -1) ? l_append(lua, -4) : lua_pop(lua, 1);
   lua_pop(lua, 1); // views
-  l_ta_set(lua, "views");
+  l_reg_set(lua, "views");
 }
 
 void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
@@ -219,7 +243,7 @@ void l_remove_scintilla_buffer(sptr_t doc) {
   while (lua_next(lua, -2))
     doc != l_checkdocpointer(lua, -1) ? l_append(lua, -4) : lua_pop(lua, 1);
   lua_pop(lua, 1); // buffers
-  l_ta_set(lua, "buffers");
+  l_reg_set(lua, "buffers");
 }
 
 unsigned int l_get_docpointer_index(sptr_t doc) {
@@ -305,6 +329,15 @@ void l_close() {
 }
 
 // Utility Functions
+
+static void clear_table(LS *lua, int abs_index) {
+  lua_pushnil(lua);
+  while (lua_next(lua, abs_index)) {
+    lua_pop(lua, 1); // value
+    lua_pushnil(lua); lua_rawset(lua, abs_index);
+    lua_pushnil(lua); // get 'new' first key
+  }
+}
 
 static void l_check_focused_buffer(LS *lua, int narg) {
   ScintillaObject *sci = SCINTILLA(focused_editor);
@@ -980,6 +1013,19 @@ LF l_cf_ta_popupmenu(LS *lua) {
   GtkWidget *menu = l_togtkwidget(lua, 1);
   gtk_widget_show_all(menu);
   gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, NULL);
+  return 0;
+}
+
+LF l_cf_ta_reset(LS *lua) {
+  l_handle_event("resetting");
+  lua_getglobal(lua, "buffer"); lua_setfield(lua, LUA_REGISTRYINDEX, "buffer");
+  lua_getglobal(lua, "view"); lua_setfield(lua, LUA_REGISTRYINDEX, "view");
+  l_init(0, NULL, true);
+  lua_pushboolean(lua, true); lua_setglobal(lua, "RESETTING");
+  l_load_script("init.lua");
+  lua_pushnil(lua); lua_setglobal(lua, "RESETTING");
+  lua_getfield(lua, LUA_REGISTRYINDEX, "buffer"); lua_setglobal(lua, "buffer");
+  lua_getfield(lua, LUA_REGISTRYINDEX, "view"); lua_setglobal(lua, "view");
   return 0;
 }
 
