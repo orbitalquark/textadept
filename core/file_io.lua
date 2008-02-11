@@ -46,8 +46,9 @@ end
 function open(filenames)
   if not filenames then
     local directory = '--filename="'..(buffer.filename or '')..'"'
-    filenames = io.popen('zenity --file-selection --multiple '..
-      directory):read('*all')
+    local p = io.popen('zenity --file-selection --multiple '..directory)
+    filenames = p:read('*all')
+    p:close()
   end
   for filename in filenames:gmatch('[^|\n]+') do open_helper(filename) end
 end
@@ -100,8 +101,10 @@ function save_as(buffer, filename)
   textadept.check_focused_buffer(buffer)
   if not filename then
     local directory = '--filename="'..(buffer.filename or '')..'"'
-    filename = io.popen('zenity --file-selection --save '..
-      directory..' --confirm-overwrite'):read('*all')
+    local p = io.popen('zenity --file-selection --save '..directory..
+      ' --confirm-overwrite')
+    filename = p:read('*all')
+    p:close()
   end
   if #filename > 0 then
     buffer.filename = filename:sub(1, -2) -- chomp

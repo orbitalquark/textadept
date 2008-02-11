@@ -12,7 +12,9 @@ end
 
 function get_contents_for(full_path)
   local dirpath = table.concat(full_path, '/')
-  local out = io.popen('ls -1p "'..dirpath..'"'):read('*all')
+  local p = io.popen('ls -1p "'..dirpath..'"')
+  local out = p:read('*all')
+  p:close()
   if #out == 0 then
     error('No such directory: '..dirpath)
     return {}
@@ -49,7 +51,9 @@ function perform_menu_action(menu_item, selected_item)
     textadept.pm.entry_text = filepath
     textadept.pm.activate()
   elseif menu_item == 'File Details' then
-    local out = io.popen('ls -dhl "'..filepath..'"'):read('*all')
+    local p = io.popen('ls -dhl "'..filepath..'"')
+    local out = p:read('*all')
+    p:close()
     local perms, num_dirs, owner, group, size, mod_date =
       out:match('^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+ %S)')
     out = 'File details for:\n'..filepath..'\n'..

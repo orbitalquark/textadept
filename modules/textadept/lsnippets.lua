@@ -134,7 +134,12 @@ function insert(s_text)
     -- Execute Lua and shell code.
     s_text = s_text:gsub('%%(%b())', run_lua_code)
     s_text = s_text:gsub('`([^`]+)`',
-      function(code) return io.popen(code):read('*all'):sub(1, -2) end)
+      function(code)
+        local p = io.popen(code)
+        local out = p:read('*all'):sub(1, -2)
+        p:close()
+        return out
+      end)
 
     -- Initialize the new snippet. If one is running, push it onto the stack.
     if snippet.index then snippet_stack[#snippet_stack + 1] = snippet end

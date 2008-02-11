@@ -219,8 +219,10 @@ end
 function goto_line(line)
   local buffer = buffer
   if not line then
-    line = io.popen('zenity --entry --title "Go To" '..
-      '--text "Line Number:"'):read('*all')
+    local p = io.popen('zenity --entry --title "Go To" '..
+      '--text "Line Number:"')
+    line = p:read('*all')
+    p:close()
     if line == '' then return end
     line = tonumber(line)
   end
@@ -542,7 +544,9 @@ end
 function ruby_exec()
   local buffer = buffer
   local txt = get_sel_or_line()
-  local out = io.popen("ruby 2>&1 <<'_EOF'\n"..txt..'\n_EOF'):read('*all')
+  local p = io.popen("ruby 2>&1 <<'_EOF'\n"..txt..'\n_EOF')
+  local out = p:read('*all')
+  p:close()
   if out:sub(-1) == '\n' then out = out:sub(1, -2) end -- chomp
   buffer:replace_sel(out)
 end
@@ -587,7 +591,9 @@ function reformat_paragraph()
   local buffer = buffer
   if buffer:get_sel_text() == '' then select_paragraph() end
   local txt = buffer:get_sel_text()
-  local out = io.popen("fmt -c -w 80 <<'_EOF'\n"..txt..'\n_EOF'):read('*all')
+  local p = io.popen("fmt -c -w 80 <<'_EOF'\n"..txt..'\n_EOF')
+  local out = p:read('*all')
+  p:close()
   if txt:sub(-1) ~= '\n' and out:sub(-1) == '\n' then out = out:sub(1, -2) end
   buffer:replace_sel(out)
 end

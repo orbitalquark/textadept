@@ -110,7 +110,9 @@ function insert(snippet_arg)
     -- Execute any shell code.
     s_text = s_text:gsub('`(.-)`',
       function(code)
-        local out = io.popen(code):read('*all')
+        local p = io.popen(code)
+        local out = p:read('*all')
+        p:close()
         if out:sub(-1) == '\n' then return out:sub(1, -2) end
       end)
 
@@ -212,8 +214,9 @@ next_snippet_item = function()
         script = script:gsub('replacement', replacement)
         _DEBUG('script:\n'..script)
 
-        local out = io.popen("ruby 2>&1 <<'_EOF'\n"..
-          script..'\n_EOF'):read('*all')
+        local p = io.popen("ruby 2>&1 <<'_EOF'\n"..script..'\n_EOF')
+        local out = p:read('*all')
+        p:close()
         _DEBUG('regex out:\n'..out)
         if out:sub(-1) == '\n' then out = out:sub(1, -2) end -- chomp
         return out
