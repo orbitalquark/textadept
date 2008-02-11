@@ -98,7 +98,7 @@ local container_construct = {
 
 --- Matches 'ctags:[/absolute/path/to/ctags/file]'
 function matches(entry_text)
-  return entry_text:sub(1, 5) == 'ctags' and true or false
+  return entry_text:sub(1, 5) == 'ctags'
 end
 
 ---
