@@ -62,7 +62,9 @@ end
 function run()
   local buffer = buffer
   local cmd = 'lua "'..buffer.filename..'" 2>&1'
-  local out = io.popen(cmd):read('*all')
+  local p = io.popen(cmd)
+  local out = p:read('*all')
+  p:close()
   textadept.print('> '..cmd..'\n'..out)
 end
 

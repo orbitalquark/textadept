@@ -66,8 +66,10 @@ function stop_recording()
   recording = false
   local textadept = textadept
   local bf, bp = textadept.buffer_functions, textadept.buffer_properties
-  local macro_name =
-    io.popen('zenity --entry --text "Macro name:"'):read('*all'):sub(1, -2)
+  local p = io.popen('zenity --entry --text "Macro name:"')
+  local macro_name = p:read('*all'):sub(1, -2)
+  p:close()
+
   if #macro_name > 0 then
     for _, command in ipairs(current) do
       command.type = 'function'
@@ -105,8 +107,10 @@ function play(macro_name)
   if not macro_name then
     local macro_list = ''
     for name in pairs(list) do macro_list = macro_list..name..' ' end
-    macro_name = io.popen('zenity --list --text "Select a Macro" '..
-      '--column Name '..macro_list):read('*all'):sub(1, -2)
+    local p = io.popen('zenity --list --text "Select a Macro" --column Name '..
+      macro_list)
+    macro_name = p:read('*all'):sub(1, -2)
+    p:close()
   end
   local macro = list[macro_name]
   if not macro then return end
