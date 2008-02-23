@@ -66,9 +66,11 @@ function stop_recording()
   recording = false
   local textadept = textadept
   local bf, bp = textadept.buffer_functions, textadept.buffer_properties
-  local p = io.popen('zenity --entry --text "Macro name:"')
-  local macro_name = p:read('*all'):sub(1, -2)
-  p:close()
+  local macro_name = cocoa_dialog( 'standard-inputbox', {
+    title = 'Save Macro',
+    text = 'Macro name:',
+    ['no-newline'] = true
+  } )
 
   if #macro_name > 0 then
     for _, command in ipairs(current) do
@@ -84,7 +86,7 @@ function stop_recording()
         end
       end
     end
-    list[macro_name] = current
+    list[ macro_name:match('[^\n]+') ] = current
     save()
     textadept.statusbar_text = 'Macro saved'
     textadept.events.handle('macro_saved')
@@ -106,11 +108,13 @@ end
 function play(macro_name)
   if not macro_name then
     local macro_list = ''
-    for name in pairs(list) do macro_list = macro_list..name..' ' end
-    local p = io.popen('zenity --list --text "Select a Macro" --column Name '..
-      macro_list)
-    macro_name = p:read('*all'):sub(1, -2)
-    p:close()
+    for name in pairs(list) do macro_list = macro_list..'"'..name..'"'..' ' end
+    macro_name = cocoa_dialog( 'standard-dropdown', {
+      title = 'Select a Macro',
+      text = 'Macro name:',
+      items = macro_list,
+      ['no-newline'] = true
+    } )
   end
   local macro = list[macro_name]
   if not macro then return end

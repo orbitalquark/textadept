@@ -372,11 +372,11 @@ add_handler('quit',
       end
     end
     if any then
-      list = list..'\nQuit without saving?'
-      if os.execute('zenity --question --title Alert '..
-        '--text "'..list..'"') ~= 0 then
-        return false
-      end
+      if tonumber( cocoa_dialog( 'yesno-msgbox', {
+        title = 'Save?',
+        text = 'Save changes before quitting?',
+        ['informative-text'] = list..'\nYou will have to save changes manually.'
+      } ) ) ~= 2 then return false end
     end
     textadept.io.save_session()
     return true

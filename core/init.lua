@@ -14,6 +14,26 @@ function textadept.check_focused_buffer(buffer)
   end
 end
 
+---
+-- Displays a CocoaDialog of a specified type with given arguments returning
+-- the result.
+-- @param kind The CocoaDialog type.
+-- @param ... A table of key, value arguments. Each key is a --key switch with
+--   a "value" value. If value is nil, it is omitted and just the switch is
+--   used.
+-- @return string CocoaDialog result.
+function cocoa_dialog(kind, opts)
+  local args = ''
+  for k, v in pairs(opts) do
+    args = args..' --'..k
+    if type(v) == 'string' then args = args..' "'..v..'"' end
+  end
+  local p = io.popen('CocoaDialog '..kind..args)
+  local out = p:read('*all')
+  p:close()
+  return out
+end
+
 package.path = package.path..';'.._HOME..'/core/?.lua'
 
 require 'iface'

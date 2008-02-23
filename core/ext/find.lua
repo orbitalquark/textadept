@@ -96,7 +96,11 @@ function find.replace(rtext)
     function(code)
       local ret, val = pcall( loadstring('return '..code) )
       if not ret then
-        os.execute('zenity --error --text "'..val:gsub('"', '\\"')..'"')
+        cocoa_dialog( 'msgbox', {
+          title = 'Error',
+          text = 'An error occured:',
+          ['informative-text'] = val:gsub('"', '\\"')
+        } )
         error()
       end
       return val

@@ -219,11 +219,12 @@ end
 function goto_line(line)
   local buffer = buffer
   if not line then
-    local p = io.popen('zenity --entry --title "Go To" '..
-      '--text "Line Number:"')
-    line = p:read('*all')
-    p:close()
-    if line == '' then return end
+    line = cocoa_dialog( 'standard-inputbox', {
+      title = 'Go To',
+      text = 'Line Number:',
+      ['no-newline'] = true
+    } ):match('%d+$')
+    if not line then return end
     line = tonumber(line)
   end
   buffer:ensure_visible_enforce_policy(line - 1)
