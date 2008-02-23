@@ -44,13 +44,13 @@ end
 --   specified, the user is prompted to open files from a dialog.
 -- @usage textadept.io.open(filename)
 function open(filenames)
-  if not filenames then
-    local directory = '--filename="'..(buffer.filename or '')..'"'
-    local p = io.popen('zenity --file-selection --multiple '..directory)
-    filenames = p:read('*all')
-    p:close()
-  end
-  for filename in filenames:gmatch('[^|\n]+') do open_helper(filename) end
+  filenames = filenames or cocoa_dialog( 'fileselect', {
+    title = 'Open',
+    text = 'Select a file(s) to open',
+    ['select-multiple'] = true,
+    ['with-directory'] = (buffer.filename or ''):match('.+/')
+  } )
+  for filename in filenames:gmatch('[^\n]+') do open_helper(filename) end
 end
 
 ---
@@ -100,14 +100,15 @@ end
 function save_as(buffer, filename)
   textadept.check_focused_buffer(buffer)
   if not filename then
-    local directory = '--filename="'..(buffer.filename or '')..'"'
-    local p = io.popen('zenity --file-selection --save '..directory..
-      ' --confirm-overwrite')
-    filename = p:read('*all')
-    p:close()
+    filename = cocoa_dialog( 'filesave', {
+      title = 'Save',
+      ['with-directory'] = buffer.filename:match('.+/'),
+      ['with-file'] = buffer.filename:match('[^/]+$'),
+      ['no-newline'] = true
+    } )
   end
   if #filename > 0 then
-    buffer.filename = filename:sub(1, -2) -- chomp
+    buffer.filename = filename
     buffer:save()
     events.handle('file_saved_as', filename)
   end
@@ -136,10 +137,11 @@ end
 -- @usage buffer:close()
 function close(buffer)
   textadept.check_focused_buffer(buffer)
-  if buffer.dirty and os.execute('zenity --question --title Alert '..
-    '--text "Close without saving?"') ~= 0 then
-    return false
-  end
+  if buffer.dirty and tonumber( cocoa_dialog( 'yesno-msgbox', {
+    title = 'Save?',
+    text = 'Save changes before closing?',
+    ['informative-text'] = 'You will have to save changes manually.'
+  } ) ) ~= 2 then return false end
   buffer:delete()
   return true
 end
