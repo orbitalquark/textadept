@@ -24,12 +24,12 @@ function matches(entry_text)
 --   expanded.
 -- @return table of contents to display. Each entry in the table is a key-value
 --   pair. The key must be a string ID and the value a table. Three key-value
---   pairs are looked for in the table: parent, pixbuf, and text. parent is an
---   optional boolean indicating whether or not the item should be identified as
---   a parent (parents can be expanded so they have the arrow next to them).
---   pixbuf is an optional string specifying a GTK stock icon to be associated
---   with the item. text is a required string that is shown in the project
---   manager; it can have Pango markup. All other items in the table are
+--   pairs are looked for in the table: parent, pixbuf, and display_text. parent
+--   is an optional boolean indicating whether or not the item should be
+--   identified as a parent (parents can be expanded so they have the arrow next
+--   to them). pixbuf is an optional string specifying a GTK stock icon to be
+--   associated with the item. text is a required string that is shown in the
+--   project manager; it can have Pango markup. All other items in the table are
 --   ignored.
 function get_contents_for(full_path, expanding)
 
