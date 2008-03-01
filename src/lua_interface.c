@@ -49,8 +49,8 @@ LF l_cf_ta_buffer_new(LS *lua),
    l_cf_find_focus(LS *lua);
 
 const char
-  *views_dne = "textadept.views doesn't exist or was overridden.",
-  *buffers_dne = "textadept.buffers doesn't exist or was overridden.";
+  *views_dne = "textadept.views doesn't exist or was overwritten.",
+  *buffers_dne = "textadept.buffers doesn't exist or was overwritten.";
 
 void l_init(int argc, char **argv, bool reinit) {
   if (!reinit) {
