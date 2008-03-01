@@ -102,8 +102,8 @@ function save_as(buffer, filename)
   if not filename then
     filename = cocoa_dialog( 'filesave', {
       title = 'Save',
-      ['with-directory'] = buffer.filename:match('.+/'),
-      ['with-file'] = buffer.filename:match('[^/]+$'),
+      ['with-directory'] = (buffer.filename or ''):match('.+/'),
+      ['with-file'] = (buffer.filename or ''):match('[^/]+$'),
       ['no-newline'] = true
     } )
   end
