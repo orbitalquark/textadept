@@ -521,7 +521,7 @@ function select_indented_block()
   while buffer.line_indentation[s - 1] > indent do s = s - 1 end
   while buffer.line_indentation[e + 1] > indent do e = e + 1 end
   s = buffer:position_from_line(s)
-  e = buffer.line_end_extend[e]
+  e = buffer.line_end_position[e]
   buffer:set_sel(s, e)
 end
 
