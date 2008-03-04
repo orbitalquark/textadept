@@ -224,7 +224,7 @@ function goto_line(line)
       text = 'Line Number:',
       ['no-newline'] = true
     } ):match('%d+$')
-    if not line then return end
+    if not line and line > -1 then return end
     line = tonumber(line)
   end
   buffer:ensure_visible_enforce_policy(line - 1)
