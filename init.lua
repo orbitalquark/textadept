@@ -5,7 +5,7 @@ require 'ext/find'
 require 'ext/mime_types'
 require 'ext/keys'
 
-local mpath = _HOME..'modules/?.lua;'.._HOME..'/modules/?/init.lua'
+local mpath = _HOME..'/modules/?.lua;'.._HOME..'/modules/?/init.lua'
 package.path  = mpath..';'..package.path
 
 -- modules to load on startup
