@@ -6,7 +6,7 @@ INCLUDEDIRS=-Iscintilla-st/include
 ifdef DEBUG
 CXXFLAGS=-DDEBUG -g -DGTK -DSCI_LEXER -W -Wall
 else
-CXXFLAGS=-DNDEBUG -0s -DGTK -DSCI_LEXER -W -Wall
+CXXFLAGS=-DNDEBUG -Os -DGTK -DSCI_LEXER -W -Wall
 endif
 LEXEROBJS=$(wildcard scintilla-st/gtk/Lex*.o)
 
