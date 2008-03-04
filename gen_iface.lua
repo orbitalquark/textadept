@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local f = io.open('/usr/share/scite-st/src/scite/src/IFaceTable.cxx')
 local contents = f:read('*all')

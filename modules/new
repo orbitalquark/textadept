@@ -6,7 +6,7 @@
 mkdir $1
 
 cat > $1/init.lua <<_EOF
--- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- The $1 module.
@@ -38,7 +38,7 @@ end
 _EOF
 
 cat > $1/snippets.lua <<_EOF
--- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- Snippets for the $1 module.
@@ -52,7 +52,7 @@ end
 _EOF
 
 cat > $1/commands.lua <<_EOF
--- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- Commands for the $1 module.

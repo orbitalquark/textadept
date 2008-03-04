@@ -1,4 +1,4 @@
--- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- Macro browser for the Textadept project manager.
