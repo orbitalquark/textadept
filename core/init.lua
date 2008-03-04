@@ -34,7 +34,7 @@ function cocoa_dialog(kind, opts)
   return out
 end
 
-package.path = package.path..';'.._HOME..'/core/?.lua'
+package.path = _HOME..'/core/?.lua;'..package.path
 
 require 'iface'
 require 'events'
