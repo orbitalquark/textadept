@@ -372,11 +372,12 @@ add_handler('quit',
       end
     end
     if any then
-      if tonumber( cocoa_dialog( 'yesno-msgbox', {
+      if cocoa_dialog( 'yesno-msgbox', {
         title = 'Save?',
         text = 'Save changes before quitting?',
-        ['informative-text'] = list..'\nYou will have to save changes manually.'
-      } ) ) ~= 2 then return false end
+        ['informative-text'] = list..'\nYou will have to save changes manually.',
+        ['no-newline'] = true
+      } ) ~= '2' then return false end
     end
     textadept.io.save_session()
     return true

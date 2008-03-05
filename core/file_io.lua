@@ -137,11 +137,12 @@ end
 -- @usage buffer:close()
 function close(buffer)
   textadept.check_focused_buffer(buffer)
-  if buffer.dirty and tonumber( cocoa_dialog( 'yesno-msgbox', {
+  if buffer.dirty and cocoa_dialog( 'yesno-msgbox', {
     title = 'Save?',
     text = 'Save changes before closing?',
-    ['informative-text'] = 'You will have to save changes manually.'
-  } ) ) ~= 2 then return false end
+    ['informative-text'] = 'You will have to save changes manually.',
+    ['no-newline'] = true
+  } ) ~= '2' then return false end
   buffer:delete()
   return true
 end
