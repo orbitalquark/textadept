@@ -1,5 +1,13 @@
 -- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+package.path = _HOME..'/core/?.lua;'..package.path
+package.cpath = _HOME..'/core/?.so;'..package.cpath
+
+require 'iface'
+require 'events'
+require 'file_io'
+require 'lua_dialog'
+
 ---
 -- Checks if the buffer being indexed is the currently focused buffer.
 -- This is necessary because any buffer actions are performed in the focused
@@ -23,19 +31,10 @@ end
 --   used.
 -- @return string CocoaDialog result.
 function cocoa_dialog(kind, opts)
-  local args = ''
+  local args = { kind }
   for k, v in pairs(opts) do
-    args = args..' --'..k
-    if type(v) == 'string' then args = args..' "'..v..'"' end
+    args[#args + 1] = '--'..k
+    if type(v) == 'string' then args[#args + 1] = v end
   end
-  local p = io.popen('CocoaDialog '..kind..args)
-  local out = p:read('*all')
-  p:close()
-  return out
+  return lua_dialog.run(args)
 end
-
-package.path = _HOME..'/core/?.lua;'..package.path
-
-require 'iface'
-require 'events'
-require 'file_io'
