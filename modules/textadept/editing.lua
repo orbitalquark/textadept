@@ -223,9 +223,9 @@ function goto_line(line)
       title = 'Go To',
       text = 'Line Number:',
       ['no-newline'] = true
-    } ):match('%d+$')
-    if not line and line > -1 then return end
-    line = tonumber(line)
+    } )
+    if line == '-1' then return end
+    line = tonumber( line:match('%d+$') )
   end
   buffer:ensure_visible_enforce_policy(line - 1)
   buffer:goto_line(line - 1)
