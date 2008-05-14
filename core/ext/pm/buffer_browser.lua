@@ -37,11 +37,14 @@ function perform_menu_action(menu_item, selected_item)
   elseif menu_item == 'Open' then
     textadept.io.open()
   elseif menu_item == 'Save' then
-    textadept.buffers[ tonumber( selected_item[2] ) ]:save()
+    view:goto_buffer( tonumber( selected_item[2] ) )
+    buffer:save()
   elseif menu_item == 'Save As...' then
-    textadept.buffers[ tonumber( selected_item[2] ) ]:save_as()
+    view:goto_buffer( tonumber( selected_item[2] ) )
+    buffer:save_as()
   elseif menu_item == 'Close' then
-    textadept.buffers[ tonumber( selected_item[2] ) ]:close()
+    view:goto_buffer( tonumber( selected_item[2] ) )
+    buffer:close()
   end
   textadept.pm.activate()
 end
