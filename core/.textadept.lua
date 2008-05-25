@@ -89,3 +89,9 @@ function check_focused_buffer(buffer) end
 ---
 -- Prints a message to the error buffer.
 function print(...) end
+
+---
+-- Resets the Lua state by reloading all init scripts.
+-- This is useful for modifying init scripts (such as key_commands.lua) on the
+-- fly without having to restart Textadept.
+function reset() end
