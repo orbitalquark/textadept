@@ -17,6 +17,7 @@ local languages = {
   makefile = 'makefile',
   php = 'php',
   python = 'python',
+  ragel = 'ragel',
   rhtml = 'rhtml',
   ruby = 'ruby',
   xml = 'xml'
@@ -40,6 +41,7 @@ local extensions = {
   py = l.python, pyw = l.python,
   rhtml = l.rhtml,
   rb = l.ruby, rbw = l.ruby,
+  rl = l.ragel,
   xml = l.xml, xsl = l.xml, xslt = l.xml
 }
 
