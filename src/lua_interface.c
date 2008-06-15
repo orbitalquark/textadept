@@ -24,6 +24,7 @@ static int // parameter/return types
   tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 
 static void clear_table(LS *lua, int index);
+static void warn(const char *s) { printf("Warning: %s\n", s); }
 
 LF l_buffer_mt_index(LS *lua), l_buffer_mt_newindex(LS *lua),
    l_bufferp_mt_index(LS *lua), l_bufferp_mt_newindex(LS *lua),
@@ -418,7 +419,7 @@ void l_set_buffer_global(ScintillaObject *sci) {
  */
 void l_close() {
   closing = true;
-  while (unsplit_window(focused_editor));
+  while (unsplit_window(focused_editor)) ;
   if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
@@ -554,7 +555,7 @@ static long l_toscintillaparam(LS *lua, int type, int &arg_idx) {
   else if (type == tBOOL)
     return lua_toboolean(lua, arg_idx++);
   else if (type == tKEYMOD)
-    return static_cast<int>(luaL_checkinteger(lua, arg_idx++)) & 0xFFFF |
+    return (static_cast<int>(luaL_checkinteger(lua, arg_idx++)) & 0xFFFF) |
            ((static_cast<int>(luaL_checkinteger(lua, arg_idx++)) &
            (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
   else if (type > tVOID && type < tBOOL)
@@ -990,8 +991,10 @@ LF l_bufferp_mt_(LS *lua, int n, const char *prop, int arg) {
     int rt_type = n == 1 ? l_rawgeti_int(lua, -1, 3) : tVOID;
     int p1_type = l_rawgeti_int(lua, -1, n == 1 ? 4 : 3);
     int p2_type = n == 2 ? l_rawgeti_int(lua, -1, 4) : tVOID;
-    if (n == 2 && (p2_type != tVOID || p2_type == tVOID && p1_type == tSTRING))
-      p1_type ^= p2_type ^= p1_type ^= p2_type;
+    if (n == 2 &&
+        (p2_type != tVOID || (p2_type == tVOID && p1_type == tSTRING))) {
+      int temp = p1_type; p1_type = p2_type; p2_type = temp; // swap
+    }
     if (msg != 0)
       return l_call_scintilla(lua, sci, msg, p1_type, p2_type, rt_type, arg);
     else luaL_error(lua, "The property '%s' is %s-only.", prop,

@@ -664,7 +664,7 @@ static void pm_entry_activated(GtkWidget *widget, gpointer) {
  *   - Escape - Refocuses the Scintilla view.
  */
 static bool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
-  if (event->keyval == 0xff09 && event->state == GDK_CONTROL_MASK ||
+  if ((event->keyval == 0xff09 && event->state == GDK_CONTROL_MASK) ||
       event->keyval == 0xff1b) {
     gtk_widget_grab_focus(focused_editor);
     return true;
