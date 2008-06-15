@@ -31,12 +31,6 @@ static long SS(ScintillaObject *sci, unsigned int msg, unsigned long wParam=0,
                long lParam=0) {
   return scintilla_send_message(sci, msg, wParam, lParam);
 }
-static long SSS(ScintillaObject *sci, unsigned int msg, const char *wParam=0,
-                const char *lParam=0) {
-  return scintilla_send_message(sci, msg, reinterpret_cast<long>(wParam),
-                                reinterpret_cast<long>(lParam));
-}
-static void warn(const char *s) { printf("Warning: %s\n", s); }
 
 // textadept.c
 void create_ui();

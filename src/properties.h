@@ -5,6 +5,12 @@
 
 #include "textadept.h"
 
+static long SSS(ScintillaObject *sci, unsigned int msg, const char *wParam=0,
+                const char *lParam=0) {
+  return scintilla_send_message(sci, msg, reinterpret_cast<long>(wParam),
+                                reinterpret_cast<long>(lParam));
+}
+
 #define sp(k, v) SSS(sci, SCI_SETPROPERTY, k, v)
 #define color(r, g, b) r | (g << 8) | (b << 16)
 
@@ -13,6 +19,7 @@
  * @param sci The Scintilla window to set default properties for.
  */
 void set_default_editor_properties(ScintillaObject *sci) {
+  sp("textadept.home", textadept_home);
   sp("lexer.lua.home", "/usr/share/textadept/lexers/");
   sp("lexer.lua.script", "/usr/share/textadept/lexers/lexer.lua");
 
