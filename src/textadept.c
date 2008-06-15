@@ -771,18 +771,12 @@ GtkWidget* find_create_ui() {
   //attach(incremental_opt, 5, 6, 0, 1, normal, normal, 5, 0);
   attach(lua_opt, 5, 6, 0, 1, normal, normal, 5, 0);
 
-  g_signal_connect(G_OBJECT(find_entry), "key_press_event",
-                   G_CALLBACK(fe_keypress), 0);
-  g_signal_connect(G_OBJECT(replace_entry), "key_press_event",
-                   G_CALLBACK(re_keypress), 0);
-  g_signal_connect(G_OBJECT(fnext_button), "clicked",
-                   G_CALLBACK(button_clicked), 0);
-  g_signal_connect(G_OBJECT(fprev_button), "clicked",
-                   G_CALLBACK(button_clicked), 0);
-  g_signal_connect(G_OBJECT(r_button), "clicked",
-                   G_CALLBACK(button_clicked), 0);
-  g_signal_connect(G_OBJECT(ra_button), "clicked",
-                   G_CALLBACK(button_clicked), 0);
+  signal(find_entry, "key_press_event", fe_keypress);
+  signal(replace_entry, "key_press_event", re_keypress);
+  signal(fnext_button, "clicked", button_clicked);
+  signal(fprev_button, "clicked", button_clicked);
+  signal(r_button, "clicked", button_clicked);
+  signal(ra_button, "clicked", button_clicked);
 
   GTK_WIDGET_UNSET_FLAGS(fnext_button, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS(fprev_button, GTK_CAN_FOCUS);
