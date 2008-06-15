@@ -18,6 +18,13 @@ static bool w_focus(GtkWidget*, GdkEventFocus *, gpointer);
 static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer);
 static bool w_exit(GtkWidget*, GdkEventAny*, gpointer);
 
+/**
+ * Runs Textadept.
+ * Inits the Lua State, creates the user interface, and loads the core/init.lua
+ * script.
+ * @param argc The number of command line params.
+ * @param argv The array of command line params.
+ */
 int main(int argc, char **argv) {
   gtk_init(&argc, &argv);
   l_init(argc, argv, false);
@@ -27,6 +34,19 @@ int main(int argc, char **argv) {
   return 0;
 }
 
+/**
+ * Creates the user interface.
+ * The UI consists of:
+ *   - A menubar initially hidden and empty. It should be populated by script
+ *     and then shown.
+ *   - A side pane. It contains a treeview for hierarchical data sets, such as
+ *     a file structure for project management.
+ *   - A frame for Scintilla windows.
+ *   - A find text frame initially hidden.
+ *   - A command entry initially hidden. This entry accepts and runs Lua code
+ *     in the current Lua state.
+ *   - Two status bars: one for notifications, the other for document status.
+ */
 void create_ui() {
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
@@ -70,6 +90,18 @@ void create_ui() {
   gtk_widget_grab_focus(editor);
 }
 
+/**
+ * Creates a new Scintilla window.
+ * The Scintilla window is the GTK widget that displays a Scintilla buffer.
+ * The window's default properties are set via 'set_default_editor_properties'.
+ * Generates a 'view_new' event.
+ * @param buffer_id A Scintilla buffer ID to load into the new window. If NULL,
+ *   creates a new Scintilla buffer and loads it into the new window.
+ *   Defaults to NULL.
+ * @return the Scintilla window.
+ * @see set_default_editor_properties
+ * @see l_add_scintilla_window
+ */
 GtkWidget* new_scintilla_window(sptr_t buffer_id) {
   GtkWidget *editor = scintilla_new();
   gtk_widget_set_size_request(editor, 1, 1); // minimum size
@@ -88,11 +120,36 @@ GtkWidget* new_scintilla_window(sptr_t buffer_id) {
   return editor;
 }
 
+/**
+ * Removes a Scintilla window.
+ * @param editor The Scintilla window to remove.
+ * @see l_remove_scintilla_window
+ */
 void remove_scintilla_window(GtkWidget *editor) {
   l_remove_scintilla_window(editor);
   gtk_widget_destroy(editor);
 }
 
+/**
+ * Creates a new Scintilla buffer for a newly created Scintilla window.
+ * The buffer's default properties are set via 'set_default_buffer_properties',
+ * but the default style is set here.
+ * Generates a 'buffer_new' event.
+ * @param sci The ScintillaObject to associate the buffer with.
+ * @param create Flag indicating whether or not to create a buffer. If false,
+ *   the ScintillaObject already has a buffer associated with it (typically
+ *   because new_scintilla_window was passed a non-NULL buffer_id).
+ *   Defaults to true.
+ * @param addref Flag indicating whether or not to add a reference to the buffer
+ *   in the ScintillaObject when create is false. This is necessary for creating
+ *   Scintilla windows in split views. If a buffer appears in two separate
+ *   Scintilla windows, that buffer should have multiple references so when one
+ *   Scintilla window closes, the buffer is not deleted because its reference
+ *   count is not zero.
+ *   Defaults to true.
+ * @see set_default_buffer_properties
+ * @see l_add_scintilla_buffer
+ */
 void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
   sptr_t doc;
   doc = SS(sci, SCI_GETDOCPOINTER);
@@ -115,11 +172,24 @@ void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
   l_handle_event("buffer_new");
 }
 
+/**
+ * Removes the Scintilla buffer from the current Scintilla window.
+ * @param doc The Scintilla buffer ID to remove.
+ * @see l_remove_scintilla_buffer
+ */
 void remove_scintilla_buffer(sptr_t doc) {
   l_remove_scintilla_buffer(doc);
   SS(SCINTILLA(focused_editor), SCI_RELEASEDOCUMENT, 0, doc);
 }
 
+/**
+ * Splits a Scintilla window into two windows separated by a GTK pane.
+ * The buffer in the original pane is also shown in the new pane.
+ * @param editor The Scintilla window to split.
+ * @param vertical Flag indicating whether to split the window vertically or
+ *   horozontally.
+ *   Defaults to true.
+ */
 void split_window(GtkWidget *editor, bool vertical) {
   g_object_ref(editor);
   int first_line = SS(SCINTILLA(editor), SCI_GETFIRSTVISIBLELINE);
@@ -146,6 +216,11 @@ void split_window(GtkWidget *editor, bool vertical) {
   g_object_unref(editor);
 }
 
+/**
+ * For a given GTK pane, remove the Scintilla windows inside it recursively.
+ * @param pane The GTK pane to remove Scintilla windows from.
+ * @see remove_scintilla_window
+ */
 void remove_scintilla_windows_in_pane(GtkWidget *pane) {
   GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane));
   GtkWidget *child2 = gtk_paned_get_child2(GTK_PANED(pane));
@@ -155,6 +230,14 @@ void remove_scintilla_windows_in_pane(GtkWidget *pane) {
                        : remove_scintilla_window(child2);
 }
 
+/**
+ * Unsplits the pane a given Scintilla window is in and keeps that window.
+ * If the pane to discard contains other Scintilla windows, they are removed
+ * recursively.
+ * @param editor The Scintilla window to keep when unsplitting.
+ * @see remove_scintilla_windows_in_pane
+ * @see remove_scintilla_window
+ */
 bool unsplit_window(GtkWidget *editor) {
   GtkWidget *pane = gtk_widget_get_parent(editor);
   if (!GTK_IS_PANED(pane)) return false;
@@ -180,12 +263,27 @@ bool unsplit_window(GtkWidget *editor) {
   return true;
 }
 
+/**
+ * Resizes a GTK pane.
+ * @param editor The Scintilla window (typically the current one) contained in
+ *   the GTK pane to resize.
+ * @param pos The position to resize to.
+ * @param increment Flag indicating whether or not the resizing is incremental.
+ *   If true, pos is added to the current pane position; otherwise the position
+ *   is absolute.
+ *   Defaults to true.
+ */
 void resize_split(GtkWidget *editor, int pos, bool increment) {
   GtkWidget *pane = gtk_widget_get_parent(editor);
   int width = gtk_paned_get_position(GTK_PANED(pane));
   gtk_paned_set_position(GTK_PANED(pane), pos + (increment ? width : 0));
 }
 
+/**
+ * Sets a user-defined GTK menubar and displays it.
+ * @param new_menubar The GTK menubar.
+ * @see l_ta_mt_newindex
+ */
 void set_menubar(GtkWidget *new_menubar) {
   GtkWidget *vbox = gtk_widget_get_parent(menubar);
   gtk_container_remove(GTK_CONTAINER(vbox), menubar);
@@ -195,16 +293,29 @@ void set_menubar(GtkWidget *new_menubar) {
   gtk_widget_show_all(menubar);
 }
 
+/**
+ * Sets the notification statusbar text.
+ * @param text The text to display.
+ */
 void set_statusbar_text(const char *text) {
   gtk_statusbar_pop(GTK_STATUSBAR(statusbar), 0);
   gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, text);
 }
 
+/**
+ * Sets the document status statusbar text.
+ * This is typically set via a Scintilla 'UpdateUI' notification.
+ * @param text The text to display.
+ */
 void set_docstatusbar_text(const char *text) {
   gtk_statusbar_pop(GTK_STATUSBAR(docstatusbar), 0);
   gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, text);
 }
 
+/**
+ * Toggles focus between a Scintilla window and the Lua command entry.
+ * When the entry is visible, the statusbars are temporarily hidden.
+ */
 void command_toggle_focus() {
   if (!GTK_WIDGET_HAS_FOCUS(command_entry)) {
     gtk_widget_hide(statusbar); gtk_widget_hide(docstatusbar);
@@ -219,15 +330,23 @@ void command_toggle_focus() {
 
 // Notifications/signals
 
+/**
+ * Signal for the 'enter' key being pressed in the Lua command entry.
+ * Evaluates the input text as Lua code.
+ * Generates a 'hide_completions' event.
+ */
 static void c_activated(GtkWidget *widget, gpointer) {
   l_handle_event("hide_completions");
   l_ta_command(gtk_entry_get_text(GTK_ENTRY(widget)));
   command_toggle_focus();
 }
 
-/** Command entry key events.
- *  Escape - Hide the completion buffer if it's open.
- *  Tab - Show completion buffer.
+/**
+ * Signal for a keypress inside the Lua command entry.
+ * Currently handled keypresses:
+ *  - Escape - Hide the completion buffer if it is open.
+ *  - Tab - Show completion buffer.
+ * Generates a 'hide_completions' or 'show_completions' event as necessary.
  */
 static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
   if (event->state == 0)
@@ -244,11 +363,18 @@ static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
   return false;
 }
 
+/**
+ * Signal for a Scintilla notification.
+ */
 static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer) {
   SCNotification *n = reinterpret_cast<SCNotification*>(lParam);
   l_handle_scnnotification(n);
 }
 
+/**
+ * Signal for a Scintilla command.
+ * Currently handles SCEN_SETFOCUS.
+ */
 static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
   if (wParam >> 16 == SCEN_SETFOCUS) {
     focused_editor = editor;
@@ -257,6 +383,11 @@ static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
   }
 }
 
+/**
+ * Signal for a Scintilla keypress.
+ * Collects the modifier states as flags and calls Lua to handle the keypress.
+ * @see l_handle_keypress
+ */
 static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   bool shift = event->state & GDK_SHIFT_MASK;
   bool control = event->state & GDK_CONTROL_MASK;
@@ -264,14 +395,19 @@ static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   return l_handle_keypress(event->keyval, shift, control, alt);
 }
 
+/**
+ * Signal for a Textadept window focus change.
+ */
 static bool w_focus(GtkWidget*, GdkEventFocus*, gpointer) {
   if (focused_editor && !GTK_WIDGET_HAS_FOCUS(focused_editor))
     gtk_widget_grab_focus(focused_editor);
   return false;
 }
 
-/** Window key events.
- *  Escape - hides the search dialog if it's open.
+/**
+ * Signal for a Textadept keypress.
+ * Currently handled keypresses:
+ *  - Escape - hides the search frame if it's open.
  */
 static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   if (event->keyval == 0xff1b && GTK_WIDGET_VISIBLE(findbox)) {
@@ -281,6 +417,12 @@ static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   } else return false;
 }
 
+/**
+ * Signal for exiting Textadept.
+ * Closes the Lua State and releases resources.
+ * Generates a 'quit' event.
+ * @see l_close
+ */
 static bool w_exit(GtkWidget*, GdkEventAny*, gpointer) {
   if (!l_handle_event("quit")) return true;
   l_close();

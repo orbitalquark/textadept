@@ -21,6 +21,9 @@ static bool
 
 static void button_clicked(GtkWidget *button, gpointer);
 
+/**
+ * Creates the Find/Replace text frame.
+ */
 GtkWidget* find_create_ui() {
   findbox = gtk_table_new(2, 6, false);
 
@@ -81,6 +84,10 @@ GtkWidget* find_create_ui() {
   return findbox;
 }
 
+/**
+ * Toggles the focus between the Find/Replace frame and the current Scintilla
+ * window.
+ */
 void find_toggle_focus() {
   if (!GTK_WIDGET_HAS_FOCUS(findbox)) {
     gtk_widget_show(findbox);
@@ -91,6 +98,10 @@ void find_toggle_focus() {
   }
 }
 
+/**
+ * Builds the integer flags for a Find/Replace depending on the options that are
+ * checked.
+ */
 static int get_flags() {
   int flags = 0;
   if (toggled(match_case_opt)) flags |= SCFIND_MATCHCASE; // 2
@@ -99,8 +110,10 @@ static int get_flags() {
   return flags;
 }
 
-/** Find entry key event.
- *  Enter - Find next or previous.
+/**
+ * Signal for a Find entry keypress.
+ * Currently handled keypresses:
+ *   - Enter - Find next or previous.
  */
 static bool fe_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   // TODO: if incremental, call l_find()
@@ -110,8 +123,10 @@ static bool fe_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   } else return false;
 }
 
-/** Replace entry key event.
- *  Enter - Find next or previous.
+/**
+ * Signal for a Replace entry keypress.
+ * Currently handled keypresses:
+ *   - Enter - Find next or previous.
  */
 static bool re_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   if (event->keyval == 0xff0d) {
@@ -120,6 +135,10 @@ static bool re_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   } else return false;
 }
 
+/**
+ * Signal for a button click.
+ * Performs the appropriate action depending on the button clicked.
+ */
 static void button_clicked(GtkWidget *button, gpointer) {
   if (button == ra_button)
     l_find_replace_all(find_text, repl_text, get_flags());

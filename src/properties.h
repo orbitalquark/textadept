@@ -8,6 +8,10 @@
 #define sp(k, v) SSS(sci, SCI_SETPROPERTY, k, v)
 #define color(r, g, b) r | (g << 8) | (b << 16)
 
+/**
+ * Sets the default properties for a Scintilla window.
+ * @param sci The Scintilla window to set default properties for.
+ */
 void set_default_editor_properties(ScintillaObject *sci) {
   sp("lexer.lua.home", "/usr/share/textadept/lexers/");
   sp("lexer.lua.script", "/usr/share/textadept/lexers/lexer.lua");
@@ -64,6 +68,11 @@ void set_default_editor_properties(ScintillaObject *sci) {
   SS(sci, SCI_SETCARETSTICKY, 0);
 }
 
+/**
+ * Sets the default properties for a Scintilla document.
+ * @param sci The Scintilla window containing the document to set default
+ *   properties for.
+ */
 void set_default_buffer_properties(ScintillaObject *sci) {
   sp("fold", "1");
   sp("fold.by.indentation", "1");
