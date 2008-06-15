@@ -24,7 +24,7 @@ $(LUAOBJS): lua/*.c
 .c.o:
 	g++ $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c $< -o $@
 textadept:\
-  textadept.o lua_interface.o pm.o find_replace.o \
+  textadept.o lua_interface.o \
   scintilla-st/gtk/LexLPeg.o scintilla-st/bin/scintilla.a \
   $(LUAOBJS)
 	g++ $(GTKLIBS) $(EXPORTLUASYMS) -DGTK $^ -o $@
