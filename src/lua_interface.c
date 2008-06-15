@@ -52,12 +52,21 @@ const char
   *views_dne = "textadept.views doesn't exist or was overwritten.",
   *buffers_dne = "textadept.buffers doesn't exist or was overwritten.";
 
+/**
+ * Inits or re-inits the Lua State.
+ * Populates the state with global variables and functions, then runs the
+ * 'core/init.lua' script.
+ * @param argc The number of command line parameters.
+ * @param argv The array of command line parameters.
+ * @param reinit Flag indicating whether or not to reinitialize the Lua State.
+ */
 void l_init(int argc, char **argv, bool reinit) {
   if (!reinit) {
     lua = lua_open();
     lua_newtable(lua);
     for (int i = 0; i < argc; i++) {
-      lua_pushstring(lua, argv[i]); lua_rawseti(lua, -2, i);
+      lua_pushstring(lua, argv[i]);
+      lua_rawseti(lua, -2, i);
     }
     lua_setfield(lua, LUA_REGISTRYINDEX, "arg");
     lua_newtable(lua); lua_setfield(lua, LUA_REGISTRYINDEX, "buffers");
@@ -101,12 +110,21 @@ void l_init(int argc, char **argv, bool reinit) {
   l_load_script("core/init.lua");
 }
 
+/**
+ * Loads and runs a given Lua script.
+ * @param script_file The path of the Lua script relative to textadept_home.
+ */
 void l_load_script(const char *script_file) {
   char *script = g_strconcat(textadept_home, "/", script_file, NULL);
   if (luaL_dofile(lua, script) != 0) l_handle_error(lua);
   g_free(script);
 }
 
+/**
+ * Retrieves the value of a given key in the global 'textadept' table.
+ * @param lua The Lua State.
+ * @param k The string key to lookup.
+ */
 bool l_ta_get(LS *lua, const char *k) {
   lua_getglobal(lua, "textadept");
   lua_pushstring(lua, k); lua_rawget(lua, -2);
@@ -114,21 +132,40 @@ bool l_ta_get(LS *lua, const char *k) {
   return lua_istable(lua, -1);
 }
 
-// value is at stack top
+/**
+ * Sets the value for a given key in the global 'textadept' table.
+ * The value to set should be at the top of the stack in the Lua State.
+ * @param lua The Lua State.
+ * @param k The string key to set the value of.
+ */
 void l_ta_set(LS *lua, const char *k) {
   lua_getglobal(lua, "textadept");
   lua_pushstring(lua, k); lua_pushvalue(lua, -3); lua_rawset(lua, -3);
   lua_pop(lua, 2); // value and textadept
 }
 
-// value is at stack top
+/**
+ * Sets the value for a given key in the LUA_REGISTRYINDEX and global
+ * 'textadept' table.
+ * The value to set should be at the top of the stack in the Lua State.
+ * @param lua The Lua State.
+ * @param k The string key to set the value of.
+ */
 void l_reg_set(LS *lua, const char *k) {
   lua_setfield(lua, LUA_REGISTRYINDEX, k);
   lua_getfield(lua, LUA_REGISTRYINDEX, k);
   l_ta_set(lua, k);
 }
 
-/** Checks for a view and returns the GtkWidget associated with it. */
+/**
+ * Checks a specified stack element to see if it is a Scintilla window and
+ * returns it as a GtkWidget.
+ * @param lua The Lua State.
+ * @param narg Relative stack index to check for a Scintilla window.
+ * @param errstr Error string to use if the stack element is not a Scintilla
+ *   window.
+ *   Defaults to "View argument expected.".
+ */
 static GtkWidget* l_checkview(LS *lua, int narg, const char *errstr=NULL) {
   if (lua_type(lua, narg) == LUA_TTABLE) {
     lua_pushstring(lua, "widget_pointer");
@@ -141,6 +178,10 @@ static GtkWidget* l_checkview(LS *lua, int narg, const char *errstr=NULL) {
   return editor;
 }
 
+/**
+ * Adds a Scintilla window to the global 'views' table with a metatable.
+ * @param editor The Scintilla window to add.
+ */
 void l_add_scintilla_window(GtkWidget *editor) {
   if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
   lua_newtable(lua);
@@ -155,6 +196,10 @@ void l_add_scintilla_window(GtkWidget *editor) {
   lua_pop(lua, 1); // views
 }
 
+/**
+ * Removes a Scintilla window from the global 'views' table.
+ * @param editor The Scintilla window to remove.
+ */
 void l_remove_scintilla_window(GtkWidget *editor) {
   lua_newtable(lua);
   if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
@@ -165,6 +210,15 @@ void l_remove_scintilla_window(GtkWidget *editor) {
   l_reg_set(lua, "views");
 }
 
+/**
+ * Changes focus a Scintilla window in the global 'views' table.
+ * @param editor The currently focused Scintilla window.
+ * @param n The index of the window in the 'views' table to focus.
+ * @param absolute Flag indicating whether or not the index specified in 'views'
+ *   is absolute. If false, focuses the window relative to the currently focused
+ *   window for the given index.
+ *   Defaults to true.
+ */
 void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
   if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
   if (!absolute) {
@@ -187,6 +241,10 @@ void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
   lua_pop(lua, 2); // view table and views
 }
 
+/**
+ * Sets the global 'view' variable to be the specified Scintilla window.
+ * @param editor The Scintilla window to set 'view' to.
+ */
 void l_set_view_global(GtkWidget *editor) {
   if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
   lua_pushnil(lua);
@@ -199,7 +257,14 @@ void l_set_view_global(GtkWidget *editor) {
   lua_pop(lua, 1); // views
 }
 
-/** Checks for a buffer and returns the doc_pointer associated with it. */
+/**
+ * Checks a specified element to see if it is a buffer table and returns the
+ * Scintilla document pointer associated with it.
+ * @param lua The Lua State.
+ * @param narg Relative stack index to check for a buffer table.
+ * @param errstr Error string to use if the stack element is not a buffer table.
+ *   Defaults to "Buffer argument expected.".
+ */
 static sptr_t l_checkdocpointer(LS *lua, int narg, const char *errstr=NULL) {
   if (lua_type(lua, narg) == LUA_TTABLE) {
     lua_pushstring(lua, "doc_pointer");
@@ -212,6 +277,10 @@ static sptr_t l_checkdocpointer(LS *lua, int narg, const char *errstr=NULL) {
   return doc;
 }
 
+/**
+ * Adds a Scintilla document to the global 'buffers' table with a metatable.
+ * @param doc The Scintilla document to add.
+ */
 int l_add_scintilla_buffer(sptr_t doc) {
   if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
   lua_newtable(lua);
@@ -227,8 +296,13 @@ int l_add_scintilla_buffer(sptr_t doc) {
   return index;
 }
 
+/**
+ * Removes a Scintilla document from the global 'buffers' table.
+ * If any views currently show the document to be removed, change the documents
+ * they show first.
+ * @param doc The Scintilla buffer to remove.
+ */
 void l_remove_scintilla_buffer(sptr_t doc) {
-  // Switch documents for all views that show the current document.
   if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
@@ -246,6 +320,11 @@ void l_remove_scintilla_buffer(sptr_t doc) {
   l_reg_set(lua, "buffers");
 }
 
+/**
+ * Retrieves the index in the global 'buffers' table for a given Scintilla
+ * document.
+ * @param doc The Scintilla document to get the index of.
+ */
 unsigned int l_get_docpointer_index(sptr_t doc) {
   if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
   unsigned int idx = 1;
@@ -264,6 +343,19 @@ unsigned int l_get_docpointer_index(sptr_t doc) {
   { lua_pushstring(lua, k); lua_pushinteger(lua, v); lua_rawset(lua, -3); }
 #define l_get_bufferp(k, i) \
   { lua_pushstring(lua, k); lua_rawget(lua, i < 0 ? i - 1 : i); }
+
+/**
+ * Changes a Scintilla window's document to one in the global 'buffers' table.
+ * Before doing so, it saves the scroll and caret positions in the current
+ * Scintilla document. Then when the new document is shown, its scroll and caret
+ * positions are restored.
+ * @param editor The Scintilla window to change the document of.
+ * @param n The index of the document in 'buffers' to focus.
+ * @param absolute Flag indicating whether or not the index specified in 'views'
+ *   is absolute. If false, focuses the document relative to the currently
+ *   focused document for the given index.
+ *   Defaults to true.
+ */
 void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
   if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
   ScintillaObject *sci = SCINTILLA(editor);
@@ -301,6 +393,11 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
   lua_pop(lua, 2); // buffer table and buffers
 }
 
+/**
+ * Sets the global 'buffer' variable to be the document in the specified
+ * Scintilla object.
+ * @param sci The Scintilla object whose buffer is to be 'buffer'.
+ */
 void l_set_buffer_global(ScintillaObject *sci) {
   sptr_t doc = SS(sci, SCI_GETDOCPOINTER);
   if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
@@ -314,6 +411,11 @@ void l_set_buffer_global(ScintillaObject *sci) {
   lua_pop(lua, 1); // buffers
 }
 
+/**
+ * Closes the Lua State.
+ * Unsplits all Scintilla windows recursively, removes all Scintilla documents,
+ * and deletes the last Scintilla window before closing the state.
+ */
 void l_close() {
   closing = true;
   while (unsplit_window(focused_editor));
@@ -330,6 +432,12 @@ void l_close() {
 
 // Utility Functions
 
+/**
+ * Recurses through a Lua table, setting each of its keys and values to nil,
+ * effectively clearing the table.
+ * @param lua The Lua State.
+ * @param abs_index The absolute stack index of the table to clear.
+ */
 static void clear_table(LS *lua, int abs_index) {
   lua_pushnil(lua);
   while (lua_next(lua, abs_index)) {
@@ -339,6 +447,12 @@ static void clear_table(LS *lua, int abs_index) {
   }
 }
 
+/**
+ * Checks if the Scintilla document of the buffer table at the index specified
+ * is the document of the focused Scintilla window.
+ * @param lua The Lua State.
+ * @param narg The relative stack position of the buffer table.
+ */
 static void l_check_focused_buffer(LS *lua, int narg) {
   ScintillaObject *sci = SCINTILLA(focused_editor);
   sptr_t cur_doc = SS(sci, SCI_GETDOCPOINTER);
@@ -346,6 +460,13 @@ static void l_check_focused_buffer(LS *lua, int narg) {
     luaL_error(lua, "The indexed buffer is not the focused one.");
 }
 
+/**
+ * Checks whether or not a table in the global 'textadept' table has the
+ * specified key and returns true or false.
+ * @param lua The Lua State.
+ * @param table The table in 'textadept' to check for key in.
+ * @param key String key to check for in table.
+ */
 static bool l_is_ta_table_key(LS *lua, const char *table, const char *key) {
   if (l_ta_get(lua, table)) {
     lua_getfield(lua, -1, key);
@@ -356,6 +477,12 @@ static bool l_is_ta_table_key(LS *lua, const char *table, const char *key) {
   return false;
 }
 
+/**
+ * Checks whether or not a table in the global 'textadept' table has the
+ * specified function and returns true or false.
+ * @param table The table in 'textadept' to check for function in.
+ * @param function String function name to check for in table.
+ */
 bool l_is_ta_table_function(const char *table, const char *function) {
   if (l_ta_get(lua, table)) {
     lua_getfield(lua, -1, function);
@@ -366,6 +493,17 @@ bool l_is_ta_table_function(const char *table, const char *function) {
   return false;
 }
 
+/**
+ * Calls a Lua function with a number of arguments and expected return values.
+ * The last argument is at the stack top, and each argument in reverse order is
+ * one element lower on the stack with the Lua function being under the first
+ * argument.
+ * @param nargs The number of arguments to pass to the Lua function to call.
+ * @param retn The number of expected return values. Defaults to 0.
+ * @param keep_return Flag indicating whether or not to keep the return values
+ *   at the top of the stack. If false, discards the return values.
+ *   Defaults to false.
+ */
 bool l_call_function(int nargs, int retn=0, bool keep_return=false) {
   int ret = lua_pcall(lua, nargs, retn, 0);
   if (ret == 0) {
@@ -376,6 +514,12 @@ bool l_call_function(int nargs, int retn=0, bool keep_return=false) {
   return false;
 }
 
+/**
+ * Performs a Lua rawget on a table at a given stack index and returns an int.
+ * @param lua The Lua State.
+ * @param index The relative index of the table to rawget from.
+ * @param n The index in the table to rawget.
+ */
 static int l_rawgeti_int(LS *lua, int index, int n) {
   lua_rawgeti(lua, index, n);
   int ret = static_cast<int>(lua_tointeger(lua, -1));
@@ -383,6 +527,12 @@ static int l_rawgeti_int(LS *lua, int index, int n) {
   return ret;
 }
 
+/**
+ * Performs a Lua rawget on a table at a given stack index and returns a string.
+ * @param lua The Lua State.
+ * @param index The relative index of the table to rawget from.
+ * @param k String key in the table to rawget.
+ */
 static const char* l_rawget_str(LS *lua, int index, const char *k) {
   lua_pushstring(lua, k); lua_rawget(lua, index);
   const char *str = lua_tostring(lua, -1);
@@ -390,7 +540,14 @@ static const char* l_rawget_str(LS *lua, int index, const char *k) {
   return str;
 }
 
-/** Get a long for Scintilla w or l parameter based on type. */
+/**
+ * Convert the stack element at a specified index to a Scintilla w and/or l long
+ * parameter based on type.
+ * @param lua The Lua State.
+ * @param type The Lua type the top stack element is.
+ * @param arg_idx The initial stack index to start converting at. It is
+ *   incremented as parameters are read from the stack.
+ */
 static long l_toscintillaparam(LS *lua, int type, int &arg_idx) {
   if (type == tSTRING)
     return reinterpret_cast<long>(lua_tostring(lua, arg_idx++));
@@ -405,6 +562,14 @@ static long l_toscintillaparam(LS *lua, int type, int &arg_idx) {
   else return 0;
 }
 
+/**
+ * Creates a GtkMenu from a table at the top of the Lua stack.
+ * The table has a key 'title' and a numeric list of subitems.
+ * @param lua The Lua State.
+ * @param callback A GCallback associated with each menu item.
+ * @param submenu Flag indicating whether or not this menu is a submenu.
+ *   Defaults to false.
+ */
 GtkWidget* l_create_gtkmenu(LS *lua, GCallback callback, bool submenu=false) {
   GtkWidget *menu = gtk_menu_new(), *menu_item = 0, *submenu_root = 0;
   const char *label;
@@ -434,7 +599,12 @@ GtkWidget* l_create_gtkmenu(LS *lua, GCallback callback, bool submenu=false) {
 
 // Notification/event handlers
 
-// error message is at stack top
+/**
+ * Handles a Lua error.
+ * The main error message is at the top of the Lua stack.
+ * @param lua The Lua State.
+ * @param errmsg An additional error message to display. Defaults to NULL.
+ */
 void l_handle_error(LS *lua, const char *errmsg) {
   if (focused_editor && l_is_ta_table_function("events", "error")) {
     l_insert(lua, -1); // shift error message down
@@ -447,16 +617,32 @@ void l_handle_error(LS *lua, const char *errmsg) {
   lua_settop(lua, 0);
 }
 
+/**
+ * Handles a Textadept event.
+ * @param s String event name.
+ */
 bool l_handle_event(const char *s) {
   return l_is_ta_table_function("events", s) ? l_call_function(0, 1) : true;
 }
 
+/**
+ * Handles a Textadept event.
+ * @param s String event name.
+ * @param arg String first argument.
+ */
 bool l_handle_event(const char *s, const char *arg) {
   if (!l_is_ta_table_function("events", s)) return false;
   lua_pushstring(lua, arg);
   return l_call_function(1, 1);
 }
 
+/**
+ * Handles a Textadept keypress.
+ * @param keyval The key value of the key pressed.
+ * @param shift Flag indicating whether or not the shift modifier was held.
+ * @param control Flag indicating whether or not the control modifier was held.
+ * @param alt Flag indicating whether or not the alt modifier was held.
+ */
 bool l_handle_keypress(int keyval, bool shift, bool control, bool alt) {
   if (!l_is_ta_table_function("events", "keypress")) return false;
   lua_pushinteger(lua, keyval);
@@ -468,6 +654,11 @@ bool l_handle_keypress(int keyval, bool shift, bool control, bool alt) {
 
 #define l_scn_int(i, n) { lua_pushinteger(lua, i); lua_setfield(lua, -2,  n); }
 #define l_scn_str(s, n) { lua_pushstring(lua, s); lua_setfield(lua, -2, n); }
+
+/**
+ * Handles a Scintilla notification.
+ * @param n The Scintilla notification struct.
+ */
 void l_handle_scnnotification(SCNotification *n) {
   if (!l_is_ta_table_function("events", "notification")) return;
   lua_newtable(lua);
@@ -496,6 +687,10 @@ void l_handle_scnnotification(SCNotification *n) {
   l_call_function(1);
 }
 
+/**
+ * Executes a given command string as Lua code.
+ * @param command Lua code to execute.
+ */
 void l_ta_command(const char *command) {
   int top = lua_gettop(lua);
   if (luaL_dostring(lua, command) == 0) {
@@ -506,7 +701,16 @@ void l_ta_command(const char *command) {
 
 // Project Manager
 
-// full_path is at stack top if entry_text is NULL
+/**
+ * Requests contents for the Project Manager.
+ * @param entry_text The text in the Project Manager Entry. If NULL, the full
+ *   path table is at the top of the Lua stack.
+ * @param expanding Flag indicating whether or not a treenode is being expanded.
+ *   If true, the tree is walked up from the node to top creating a full path
+ *   table at the stack top to be used essentially as entry_text.
+ *   Defaults to false.
+ * @see l_pm_get_full_path
+ */
 bool l_pm_get_contents_for(const char *entry_text, bool expanding) {
   if (!l_is_ta_table_function("pm", "get_contents_for")) return false;
   if (entry_text) {
@@ -518,7 +722,13 @@ bool l_pm_get_contents_for(const char *entry_text, bool expanding) {
   return l_call_function(2, 1, true);
 }
 
-// table is at stack top
+/**
+ * Populates the Project Manager pane with the contents of a Lua table at the
+ * stack top.
+ * @param initial_iter The initial GtkTreeIter. If not NULL, it is a treenode
+ *   being expanded and the contents will be added to that expanding node.
+ *   Defaults to NULL.
+ */
 void l_pm_populate(GtkTreeIter *initial_iter) {
   GtkTreeIter iter, child;
   if (!lua_istable(lua, -1))
@@ -549,8 +759,13 @@ void l_pm_populate(GtkTreeIter *initial_iter) {
   } lua_pop(lua, 1); // returned table
 }
 
+/**
+ * For a Project Manager given node, get the full path to that node.
+ * It leaves a full path table at the top of the Lua stack.
+ * @param path The GtkTreePath of the node.
+ */
 void l_pm_get_full_path(GtkTreePath *path) {
-  lua_newtable(lua); // will be at stack top
+  lua_newtable(lua);
   lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(pm_entry)));
   lua_rawseti(lua, -2, 1);
   if (!path) return;
@@ -566,6 +781,11 @@ void l_pm_get_full_path(GtkTreePath *path) {
   }
 }
 
+/**
+ * Requests and pops up a context menu for the Project Manager.
+ * @param event The mouse button event.
+ * @param callback The GCallback associated with each menu item.
+ */
 void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback) {
   if (!l_is_ta_table_function("pm", "get_context_menu")) return;
   GtkTreeIter iter;
@@ -589,14 +809,22 @@ void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback) {
   } else warn("pm.get_context_menu return was not a table.");
 }
 
-// full_path is at stack top
+/**
+ * Performs an action for an activated item in the Project Manager.
+ * The full path table for the item is at the top of the Lua stack.
+ */
 void l_pm_perform_action() {
   if (!l_is_ta_table_function("pm", "perform_action")) return;
   l_insert(lua, -1); // shift full_path down
   l_call_function(1);
 }
 
-// full_path is at stack top
+/**
+ * Performs a selected menu action from an item's context menu in the Project
+ * Manager.
+ * The full path table for the item is at the top of the Lua stack.
+ * @param menu_item The label text for the menu item clicked.
+ */
 void l_pm_perform_menu_action(const char *menu_item) {
   if (!l_is_ta_table_function("pm", "perform_menu_action")) return;
   l_insert(lua, -1); // shift full_path down
@@ -607,6 +835,13 @@ void l_pm_perform_menu_action(const char *menu_item) {
 
 // Find/Replace
 
+/**
+ * Finds text in the current document.
+ * @param ftext The text to find.
+ * @param flags Integer flags for the find.
+ * @param next Flag indicating whether or not to find next. If false, finds
+ *   previous matches.
+ */
 void l_find(const char *ftext, int flags, bool next) {
   if (!l_is_ta_table_function("find", "find")) return;
   lua_pushstring(lua, ftext);
@@ -615,12 +850,22 @@ void l_find(const char *ftext, int flags, bool next) {
   l_call_function(3);
 }
 
+/**
+ * Replaces text in the current document.
+ * @param rtext The text to replace the found text with.
+ */
 void l_find_replace(const char *rtext) {
   if (!l_is_ta_table_function("find", "replace")) return;
   lua_pushstring(lua, rtext);
   l_call_function(1);
 }
 
+/**
+ * Replaces all found text in the current document.
+ * @param ftext The text to find.
+ * @param rtext The text to replace the found text with.
+ * @param flags Integer flags for the find.
+ */
 void l_find_replace_all(const char *ftext, const char *rtext, int flags) {
   if (!l_is_ta_table_function("find", "replace_all")) return;
   lua_pushstring(lua, ftext);
@@ -631,10 +876,15 @@ void l_find_replace_all(const char *ftext, const char *rtext, int flags) {
 
 // Lua functions (stack maintenence is unnecessary)
 
-/** Calls Scintilla returning appropriate values.
- *  The p1, p2, and rt types are integer types of the w, l, and return
- *  parameters respectively. arg is the Lua stack index where user arguments
- *  begin. The appropriate value(s) are returned to Lua.
+/**
+ * Calls Scintilla with appropriate parameters and returs appropriate values.
+ * @param lua The Lua State.
+ * @param sci The Scintilla object to call.
+ * @param msg The integer message index to call Scintilla with.
+ * @param p1_type The Lua type of p1, the Scintilla w parameter.
+ * @param p2_type The Lua type of p2, the Scintilla l parameter.
+ * @param rt_type The Lua type of the Scintilla return parameter.
+ * @param arg The index on the Lua stack where arguments to Scintilla begin.
  */
 LF l_call_scintilla(LS *lua, ScintillaObject *sci, int msg,
                     int p1_type, int p2_type, int rt_type, int arg) {
@@ -672,6 +922,11 @@ LF l_call_scintilla(LS *lua, ScintillaObject *sci, int msg,
   return lua_gettop(lua) - arg;
 }
 
+/**
+ * Calls a Scintilla buffer function with upvalues from a closure.
+ * @param lua The Lua State.
+ * @see l_buffer_mt_index
+ */
 LF l_call_buffer_function(LS *lua) {
   int sci_idx = lua_upvalueindex(1); // closure from __index
   ScintillaObject *sci =
@@ -684,6 +939,14 @@ LF l_call_buffer_function(LS *lua) {
   return l_call_scintilla(lua, sci, msg, p1_type, p2_type, rt_type, 2);
 }
 
+/**
+ * Metatable index for a buffer table.
+ * If the key is a Scintilla buffer function, push a closure so it can be called
+ * as a function. If the key is a non-indexable buffer property, call Scintilla
+ * to get it. If the key is an indexible buffer property, push a table with a
+ * metatable to access buffer property indices.
+ * @param lua The Lua State.
+ */
 LF l_buffer_mt_index(LS *lua) {
   ScintillaObject *sci = SCINTILLA(focused_editor);
   const char *key = luaL_checkstring(lua, 2);
@@ -710,11 +973,14 @@ LF l_buffer_mt_index(LS *lua) {
   return 1;
 }
 
-/** Helper function for the buffer property metatable.
- *  n indicates a getter or setter (1 or 2) and arg is the Lua stack index
- *  where user arguments begin. For setting buffer properties, it is 3 because
- *  the index is not an argument, but for getting and setting indexed buffer
- *  properties it is 2 because the index is an argument.
+/**
+ * Helper function for the buffer property metatable.
+ * @param lua The Lua State.
+ * @param n 1 for getter property, 2 for setter.
+ * @param prop String property name.
+ * @param arg The index on the Lua stack where arguments to Scintilla begin.
+ *   For setter properties, it is 3 because the index is not an argument. For
+ *   getter and setter properties, it is 2 because the index is an argument.
  */
 LF l_bufferp_mt_(LS *lua, int n, const char *prop, int arg) {
   ScintillaObject *sci = SCINTILLA(focused_editor);
@@ -856,7 +1122,7 @@ LF l_find_mt_newindex(LS *lua) {
   return 0;
 }
 
-// Lua CFunctions
+// Lua CFunctions. For documentation, consult the LuaDoc.
 
 LF l_cf_ta_buffer_new(LS *lua) {
   new_scintilla_buffer(SCINTILLA(focused_editor), true, true);
