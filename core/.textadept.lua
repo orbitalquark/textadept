@@ -57,10 +57,6 @@ function goto_view(n, absolute) end
 function get_split_table() end
 
 ---
--- Focuses the command entry.
-function focus_command() end
-
----
 -- Creates a GTK menu, returning the userdata.
 -- @param menu_table A table defining the menu. It is an ordered list of strings
 --   that are handled as follows:

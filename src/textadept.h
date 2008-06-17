@@ -23,7 +23,8 @@ extern GtkWidget
   *window, *focused_editor, *command_entry,
   *pm_container, *pm_entry, *pm_view,
   *findbox, *find_entry, *replace_entry;
-extern GtkTreeStore *pm_store;
+extern GtkEntryCompletion *command_entry_completion;
+extern GtkTreeStore *cec_store, *pm_store;
 extern lua_State *lua;
 static const char *textadept_home = "/usr/share/textadept/";
 
@@ -45,7 +46,7 @@ void resize_split(GtkWidget *editor, int pos, bool increment=true);
 void set_menubar(GtkWidget *menubar);
 void set_statusbar_text(const char *text);
 void set_docstatusbar_text(const char *text);
-void command_toggle_focus();
+void ce_toggle_focus();
 void set_default_editor_properties(ScintillaObject *sci);
 void set_default_buffer_properties(ScintillaObject *sci);
 
@@ -68,6 +69,9 @@ bool l_handle_event(const char *e, const char *arg);
 bool l_handle_keypress(int keyval, bool shift, bool control, bool alt);
 void l_handle_scnnotification(SCNotification *n);
 void l_ta_command(const char *command);
+
+bool l_cec_get_completions_for(const char *entry_text);
+void l_cec_populate();
 
 bool l_pm_get_contents_for(const char *entry_text, bool expanding=false);
 void l_pm_populate(GtkTreeIter *initial_iter=NULL);

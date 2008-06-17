@@ -207,7 +207,7 @@ keys.ct.v.t = { toggle_setting, 'use_tabs'           }
 keys.ct.v.w = { toggle_setting, 'view_ws'            }
 
 -- Miscellaneous commands.
-keys.cc = { t.focus_command }
+keys.cc = { t.command_entry.focus }
 local m_events = t.events
 keys.cab  = { m_events.handle, 'call_tip_click', 1 }
 keys.caf  = { m_events.handle, 'call_tip_click', 2 }
