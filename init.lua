@@ -2,6 +2,7 @@
 
 require 'ext/pm'
 require 'ext/find'
+require 'ext/command_entry'
 require 'ext/mime_types'
 require 'ext/keys'
 

@@ -8,9 +8,15 @@
 GtkWidget
   *window, *focused_editor, *command_entry,
   *menubar, *statusbar, *docstatusbar;
+GtkEntryCompletion *command_entry_completion;
+GtkTreeStore *cec_store;
 
 static void c_activated(GtkWidget *widget, gpointer);
 static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer);
+static int cec_match_func(GtkEntryCompletion *, const char *, GtkTreeIter *,
+                          gpointer);
+static bool cec_match_selected(GtkEntryCompletion *, GtkTreeModel *model,
+                               GtkTreeIter *iter, gpointer);
 static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer);
 static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer);
 static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer);
@@ -85,36 +91,59 @@ void create_ui() {
   signal(window, "delete_event", w_exit);
   signal(window, "focus-in-event", w_focus);
   signal(window, "key_press_event", w_keypress);
+
   GtkWidget *vbox = gtk_vbox_new(false, 0);
   gtk_container_add(GTK_CONTAINER(window), vbox);
+
   menubar = gtk_menu_bar_new();
   gtk_box_pack_start(GTK_BOX(vbox), menubar, false, false, 0);
+
   GtkWidget *pane = gtk_hpaned_new();
   gtk_box_pack_start(GTK_BOX(vbox), pane, true, true, 0);
+
   GtkWidget *pm = pm_create_ui();
   gtk_paned_add1(GTK_PANED(pane), pm);
+
   GtkWidget *hbox = gtk_hbox_new(false, 0);
   gtk_paned_add2(GTK_PANED(pane), hbox);
+
   GtkWidget *editor = new_scintilla_window();
   gtk_box_pack_start(GTK_BOX(hbox), editor, true, true, 0);
+
   GtkWidget *find = find_create_ui();
   gtk_box_pack_start(GTK_BOX(vbox), find, false, false, 5);
+
   GtkWidget *hboxs = gtk_hbox_new(false, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hboxs, false, false, 0);
+
   statusbar = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, "");
   gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar), false);
   gtk_box_pack_start(GTK_BOX(hboxs), statusbar, true, true, 0);
+
   command_entry = gtk_entry_new();
   gtk_widget_set_name(command_entry, "textadept-command-entry");
   signal(command_entry, "activate", c_activated);
   signal(command_entry, "key_press_event", c_keypress);
   g_object_set(G_OBJECT(command_entry), "width-request", 200, NULL);
   gtk_box_pack_start(GTK_BOX(hboxs), command_entry, true, true, 0);
+
+  command_entry_completion = gtk_entry_completion_new();
+  signal(command_entry_completion, "match-selected", cec_match_selected);
+  gtk_entry_completion_set_match_func(command_entry_completion, cec_match_func,
+                                      NULL, NULL);
+  gtk_entry_completion_set_popup_set_width(command_entry_completion, false);
+  gtk_entry_completion_set_text_column(command_entry_completion, 0);
+  cec_store = gtk_tree_store_new(1, G_TYPE_STRING);
+  gtk_entry_completion_set_model(command_entry_completion,
+                                 GTK_TREE_MODEL(cec_store));
+  gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
+
   docstatusbar = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, "");
   g_object_set(G_OBJECT(docstatusbar), "width-request", 400, NULL);
   gtk_box_pack_start(GTK_BOX(hboxs), docstatusbar, false, false, 0);
+
   gtk_widget_show_all(window);
   gtk_widget_hide(menubar); // hide initially
   gtk_widget_hide(findbox); // hide initially
@@ -348,7 +377,7 @@ void set_docstatusbar_text(const char *text) {
  * Toggles focus between a Scintilla window and the Lua command entry.
  * When the entry is visible, the statusbars are temporarily hidden.
  */
-void command_toggle_focus() {
+void ce_toggle_focus() {
   if (!GTK_WIDGET_HAS_FOCUS(command_entry)) {
     gtk_widget_hide(statusbar); gtk_widget_hide(docstatusbar);
     gtk_widget_show(command_entry);
@@ -368,31 +397,68 @@ void command_toggle_focus() {
  * Generates a 'hide_completions' event.
  */
 static void c_activated(GtkWidget *widget, gpointer) {
-  l_handle_event("hide_completions");
   l_ta_command(gtk_entry_get_text(GTK_ENTRY(widget)));
-  command_toggle_focus();
+  ce_toggle_focus();
 }
 
 /**
  * Signal for a keypress inside the Lua command entry.
  * Currently handled keypresses:
  *  - Escape - Hide the completion buffer if it is open.
- *  - Tab - Show completion buffer.
- * Generates a 'hide_completions' or 'show_completions' event as necessary.
+ *  - Tab - Display possible completions.
  */
 static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
   if (event->state == 0)
     switch(event->keyval) {
       case 0xff1b:
-        l_handle_event("hide_completions");
-        command_toggle_focus();
+        ce_toggle_focus();
         return true;
       case 0xff09:
-        l_handle_event("show_completions",
-                        gtk_entry_get_text(GTK_ENTRY(widget)));
+        if (l_cec_get_completions_for(gtk_entry_get_text(GTK_ENTRY(widget)))) {
+          l_cec_populate();
+          gtk_entry_completion_complete(command_entry_completion);
+        }
         return true;
     }
   return false;
+}
+
+/**
+ * Sets every item in the Command Entry Model to be a match.
+ * For each attempted completion, the Command Entry Model is filled with the
+ * results from a call to Lua to make a list of possible completions. Therefore,
+ * every item in the list is valid.
+ */
+static int cec_match_func(GtkEntryCompletion*, const char*, GtkTreeIter*,
+                          gpointer) {
+  return true;
+}
+
+/**
+ * Enters the requested completion text into the Command Entry.
+ * The last word at the cursor is replaced with the completion. A word consists
+ * of any alphanumeric character or underscore.
+ */
+static bool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
+                               GtkTreeIter *iter, gpointer) {
+  const char *entry_text = gtk_entry_get_text(GTK_ENTRY(command_entry));
+  const char *p = entry_text + strlen(entry_text) - 1;
+  while ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') ||
+         (*p >= '0' && *p <= '9') || *p == '_') {
+    g_signal_emit_by_name(G_OBJECT(command_entry), "move-cursor",
+                          GTK_MOVEMENT_VISUAL_POSITIONS, -1, true, 0);
+    p--;
+  }
+  if (p < entry_text + strlen(entry_text) - 1)
+    g_signal_emit_by_name(G_OBJECT(command_entry), "backspace", 0);
+
+  char *text;
+  gtk_tree_model_get(model, iter, 0, &text, -1);
+  g_signal_emit_by_name(G_OBJECT(command_entry), "insert-at-cursor", text, 0);
+  g_free(text);
+
+  gtk_tree_store_clear(cec_store);
+  return true;
 }
 
 /**

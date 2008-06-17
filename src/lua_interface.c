@@ -31,7 +31,8 @@ LF l_buffer_mt_index(LS *lua), l_buffer_mt_newindex(LS *lua),
    l_view_mt_index(LS *lua), l_view_mt_newindex(LS *lua),
    l_ta_mt_index(LS *lua), l_ta_mt_newindex(LS *lua),
    l_pm_mt_index(LS *lua), l_pm_mt_newindex(LS *lua),
-   l_find_mt_index(LS *lua), l_find_mt_newindex(LS *lua);
+   l_find_mt_index(LS *lua), l_find_mt_newindex(LS *lua),
+   l_ce_mt_index(LS *lua), l_ce_mt_newindex(LS *lua);
 
 LF l_cf_ta_buffer_new(LS *lua),
    l_cf_buffer_delete(LS *lua),
@@ -40,14 +41,14 @@ LF l_cf_ta_buffer_new(LS *lua),
    l_cf_view_focus(LS *lua),
    l_cf_view_split(LS *lua), l_cf_view_unsplit(LS *lua),
    l_cf_ta_get_split_table(LS *lua),
-   l_cf_ta_focus_command(LS *lua),
    l_cf_ta_goto_window(LS *lua),
    l_cf_view_goto_buffer(LS *lua),
    l_cf_ta_gtkmenu(LS *lua),
    l_cf_ta_popupmenu(LS *lua),
    l_cf_ta_reset(LS *lua),
    l_cf_pm_focus(LS *lua), l_cf_pm_clear(LS *lua), l_cf_pm_activate(LS *lua),
-   l_cf_find_focus(LS *lua);
+   l_cf_find_focus(LS *lua),
+   l_cf_ce_focus(LS *lua);
 
 const char
   *views_dne = "textadept.views doesn't exist or was overwritten.",
@@ -95,10 +96,13 @@ void l_init(int argc, char **argv, bool reinit) {
     l_cfunc(lua, l_cf_find_focus, "focus");
     l_mt(lua, "_find_mt", l_find_mt_index, l_find_mt_newindex);
   lua_setfield(lua, -2, "find");
+  lua_newtable(lua);
+    l_cfunc(lua, l_cf_ce_focus, "focus");
+    l_mt(lua, "_ce_mt", l_ce_mt_index, l_ce_mt_newindex);
+  lua_setfield(lua, -2, "command_entry");
   l_cfunc(lua, l_cf_ta_buffer_new, "new_buffer");
   l_cfunc(lua, l_cf_ta_goto_window, "goto_view");
   l_cfunc(lua, l_cf_ta_get_split_table, "get_split_table");
-  l_cfunc(lua, l_cf_ta_focus_command, "focus_command");
   l_cfunc(lua, l_cf_ta_gtkmenu, "gtkmenu");
   l_cfunc(lua, l_cf_ta_popupmenu, "popupmenu");
   l_cfunc(lua, l_cf_ta_reset, "reset");
@@ -700,6 +704,40 @@ void l_ta_command(const char *command) {
   } else l_handle_error(lua, "Error executing command.");
 }
 
+// Command Entry
+
+/**
+ * Requests completions for the Command Entry Completion.
+ * @param entry_text The text in the Command Entry.
+ * @see l_cec_populate
+ */
+bool l_cec_get_completions_for(const char *entry_text) {
+  if (!l_is_ta_table_function("command_entry", "get_completions_for"))
+    return false;
+  lua_pushstring(lua, entry_text);
+  return l_call_function(1, 1, true);
+}
+
+/**
+ * Populates the Command Entry Completion with the contents of a Lua table at
+ * the stack top.
+ * @see l_cec_get_completions_for
+ */
+void l_cec_populate() {
+  GtkTreeIter iter;
+  if (!lua_istable(lua, -1))
+    return warn("command_entry.get_completions_for return not a table.");
+  gtk_tree_store_clear(cec_store);
+  lua_pushnil(lua);
+  while (lua_next(lua, -2)) {
+    if (lua_type(lua, -1) == LUA_TSTRING) {
+      gtk_tree_store_append(cec_store, &iter, NULL);
+      gtk_tree_store_set(cec_store, &iter, 0, lua_tostring(lua, -1), -1);
+    } else warn("command_entry.get_completions_for: string value expected.");
+    lua_pop(lua, 1); // value
+  } lua_pop(lua, 1); // returned table
+}
+
 // Project Manager
 
 /**
@@ -729,6 +767,7 @@ bool l_pm_get_contents_for(const char *entry_text, bool expanding) {
  * @param initial_iter The initial GtkTreeIter. If not NULL, it is a treenode
  *   being expanded and the contents will be added to that expanding node.
  *   Defaults to NULL.
+ * @see l_pm_get_contents_for
  */
 void l_pm_populate(GtkTreeIter *initial_iter) {
   GtkTreeIter iter, child;
@@ -1125,6 +1164,22 @@ LF l_find_mt_newindex(LS *lua) {
   return 0;
 }
 
+LF l_ce_mt_index(LS *lua) {
+  const char *key = lua_tostring(lua, 2);
+  if (streq(key, "entry_text"))
+    lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(command_entry)));
+  else lua_rawget(lua, 1);
+  return 1;
+}
+
+LF l_ce_mt_newindex(LS *lua) {
+  const char *key = lua_tostring(lua, 2);
+  if (streq(key, "entry_text"))
+    gtk_entry_set_text(GTK_ENTRY(command_entry), lua_tostring(lua, 3));
+  else lua_rawset(lua, 1);
+  return 0;
+}
+
 // Lua CFunctions. For documentation, consult the LuaDoc.
 
 LF l_cf_ta_buffer_new(LS *lua) {
@@ -1234,8 +1289,6 @@ LF l_cf_ta_get_split_table(LS *lua) {
   return 1;
 }
 
-LF l_cf_ta_focus_command(LS *) { command_toggle_focus(); return 0; }
-
 LF l_cf_ta_goto_(LS *lua, GtkWidget *editor, bool buffer=true) {
   int n = static_cast<int>(luaL_checkinteger(lua, 1));
   bool absolute = lua_gettop(lua) > 1 ? lua_toboolean(lua, 2) == 1 : true;
@@ -1304,3 +1357,5 @@ LF l_cf_pm_activate(LS *) {
   g_signal_emit_by_name(G_OBJECT(pm_entry), "activate"); return 0;
 }
 LF l_cf_find_focus(LS *) { find_toggle_focus(); return 0; }
+
+LF l_cf_ce_focus(LS *) { ce_toggle_focus(); return 0; }
