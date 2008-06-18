@@ -792,7 +792,7 @@ void l_pm_populate(GtkTreeIter *initial_iter) {
       lua_pop(lua, 1); // pixbuf
       lua_getfield(lua, -1, "text");
       gtk_tree_store_set(pm_store, &iter, 2, lua_isstring(lua, -1) ?
-                         lua_tostring(lua, -1) : lua_tostring(lua, -3));
+                         lua_tostring(lua, -1) : lua_tostring(lua, -3), -1);
       lua_pop(lua, 1); // display text
     } else warn("pm.populate: string id key must have table value.");
     lua_pop(lua, 1); // value
