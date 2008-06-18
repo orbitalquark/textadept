@@ -50,6 +50,17 @@ void ce_toggle_focus();
 void set_default_editor_properties(ScintillaObject *sci);
 void set_default_buffer_properties(ScintillaObject *sci);
 
+GtkWidget* pm_create_ui();
+void pm_toggle_focus();
+void pm_open_parent(GtkTreeIter *iter, GtkTreePath *path);
+void pm_close_parent(GtkTreeIter *iter, GtkTreePath *path);
+void pm_activate_selection();
+void pm_popup_context_menu(GdkEventButton *event, GCallback callback);
+void pm_process_selected_menu_item(GtkWidget *menu_item);
+
+GtkWidget *find_create_ui();
+void find_toggle_focus();
+
 // lua_interface.c
 void l_init(int argc, char **argv, bool reinit);
 void l_close();
@@ -83,18 +94,5 @@ void l_pm_perform_menu_action(const char *menu_item);
 void l_find(const char *ftext, int flags, bool next=true);
 void l_find_replace(const char *rtext);
 void l_find_replace_all(const char *ftext, const char *rtext, int flags);
-
-// pm.c
-GtkWidget* pm_create_ui();
-void pm_toggle_focus();
-void pm_open_parent(GtkTreeIter *iter, GtkTreePath *path);
-void pm_close_parent(GtkTreeIter *iter, GtkTreePath *path);
-void pm_activate_selection();
-void pm_popup_context_menu(GdkEventButton *event, GCallback callback);
-void pm_process_selected_menu_item(GtkWidget *menu_item);
-
-// find_replace.c
-GtkWidget *find_create_ui();
-void find_toggle_focus();
 
 #endif
