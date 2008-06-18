@@ -3,7 +3,7 @@
 # usage:
 # ./new [module_name] [language_name]
 
-mkdir $1
+mkdir $1 || exit
 
 cat > $1/init.lua <<_EOF
 -- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
