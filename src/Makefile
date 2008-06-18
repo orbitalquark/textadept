@@ -21,12 +21,14 @@ all: textadept
 
 $(LUAOBJS): lua/*.c
 	gcc $(INCLUDEDIRS) -DLUA_USE_LINUX $(CXXFLAGS) -c lua/*.c
+lua.a: $(LUAOBJS)
+	ar rc $@ $^
+	touch $@
 .c.o:
 	g++ $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c $< -o $@
 textadept:\
   textadept.o lua_interface.o \
-  scintilla-st/gtk/LexLPeg.o scintilla-st/bin/scintilla.a \
-  $(LUAOBJS)
+  scintilla-st/gtk/LexLPeg.o scintilla-st/bin/scintilla.a lua.a
 	g++ $(GTKLIBS) $(EXPORTLUASYMS) -DGTK $^ -o $@
 clean:
 	rm textadept *.o
