@@ -51,7 +51,7 @@
 -- @usage Add additional browsers to this list.
 local browsers = {
   'buffer_browser', 'file_browser', 'ctags_browser', 'macro_browser',
-  'find_browser'
+  'find_browser', 'modules_browser'
 }
 for _, b in ipairs(browsers) do require('ext/pm.'..b) end
 
