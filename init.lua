@@ -30,7 +30,10 @@ if not RESETTING then
         textadept.io.open(filename)
       end
     end
-    textadept.pm.entry_text = 'buffers'
-    textadept.pm.activate()
+    -- read only the Project Manager session settings
+    if not textadept.io.load_session(nil, true) then
+      textadept.pm.entry_text = 'buffers'
+      textadept.pm.activate()
+    end
   end
 end
