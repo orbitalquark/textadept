@@ -35,7 +35,7 @@ function get_contents_for(full_path)
         pixbuf = 'gtk-directory'
       }
     else
-      dir[entry] = { display_text = entry, pixbuf = '' }
+      dir[entry] = { display_text = entry }
     end
   end
   return dir
