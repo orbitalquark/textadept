@@ -33,6 +33,8 @@ module('_m')
 -- (escaped characters must be used appropriately). The commands.lua script
 -- provides useful functions and key-commands for the module; the snippets.lua
 -- script provides snippets.
+-- Alternatively you can use the 'modules' Project Manager browser to create and
+-- manage modules.
 --
 -- When assigning key commands to module functions, do not forget to do so AFTER
 -- the function has been defined. Typically key commands are placed at the end
