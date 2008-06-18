@@ -1,4 +1,4 @@
--- Copyright 2007 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the
 -- global textadept.pm table.
 
