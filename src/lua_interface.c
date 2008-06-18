@@ -788,7 +788,8 @@ void l_pm_populate(GtkTreeIter *initial_iter) {
       lua_getfield(lua, -1, "pixbuf");
       if (lua_isstring(lua, -1))
         gtk_tree_store_set(pm_store, &iter, 0, lua_tostring(lua, -1), -1);
-      else warn("pm.populate: pixbuf key must have string value.");
+      else if (!lua_isnil(lua, -1))
+        warn("pm.populate: pixbuf key must have string value.");
       lua_pop(lua, 1); // pixbuf
       lua_getfield(lua, -1, "text");
       gtk_tree_store_set(pm_store, &iter, 2, lua_isstring(lua, -1) ?
