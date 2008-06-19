@@ -627,7 +627,7 @@ void l_handle_error(LS *lua, const char *errmsg) {
  * @param s String event name.
  */
 bool l_handle_event(const char *s) {
-  return l_is_ta_table_function("events", s) ? l_call_function(0, 1) : true;
+  return l_is_ta_table_function("events", s) ? l_call_function(0, 1) : false;
 }
 
 /**
