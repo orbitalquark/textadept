@@ -55,6 +55,9 @@ module('textadept.events', package.seeall)
 --   view_new()
 --   view_switch()
 --   quit()
+--     Note: when adding a quit handler, it must be inserted at index 1 because
+--     the default quit handler returns true, which ignores all subsequent
+--     handlers.
 --   keypress(code, shift, control, alt)
 --     code: the key code.
 --     shift: flag indicating whether or not shift is pressed.
