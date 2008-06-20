@@ -86,6 +86,22 @@ int main(int argc, char **argv) {
  *   - Two status bars: one for notifications, the other for document status.
  */
 void create_ui() {
+  GList *icons = NULL;
+  const char *icon_files[] = {
+    "ta_16x16.png", "ta_32x32.png", "ta_48x48.png",
+    "ta_64x64.png", "ta_128x128.png"
+  };
+  for (int i = 0; i < 5; i++) {
+    char *icon_file = g_strconcat(textadept_home, "/core/images/",
+                                  icon_files[i], NULL);
+    GdkPixbuf *pb = gdk_pixbuf_new_from_file(icon_file, NULL);
+    if (pb) icons = g_list_prepend(icons, pb);
+    g_free(icon_file);
+  }
+  gtk_window_set_default_icon_list(icons);
+  g_list_foreach(icons, (GFunc) g_object_unref, NULL);
+  g_list_free(icons);
+
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
   signal(window, "delete_event", w_exit);
