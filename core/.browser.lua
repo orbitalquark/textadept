@@ -3,7 +3,8 @@
 
 ---
 -- A model browser for the Textadept project manager.
--- It can be loaded by adding to the browsers table in core/ext/pm.lua.
+-- It can be loaded by adding to the browsers table in core/ext/pm.lua or by
+-- 'require'ing it elsewhere.
 -- [Dummy file]
 module('textadept.pm.browser')
 
