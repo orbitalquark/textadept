@@ -42,7 +42,7 @@ end
 -- that file, and opens it in Textadept.
 function goto_required()
   local buffer = buffer
-  local line = buffer:get_line( buffer:line_from_position(buffer.current_pos) )
+  local line = buffer:get_cur_line()
   local patterns = { 'require%s*(%b())', 'require%s*(([\'"])[^%2]+%2)' }
   local file
   for _, patt in ipairs(patterns) do
