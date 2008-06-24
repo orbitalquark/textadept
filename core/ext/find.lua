@@ -89,6 +89,7 @@ function find.replace(rtext)
   rtext = rtext:gsub('%%%%', '\\037') -- escape '%%'
   if find.captures then
     for i, v in ipairs(find.captures) do
+      v = v:gsub('%%', '%%%%') -- escape '%' for gsub
       rtext = rtext:gsub('%%'..i, v)
     end
   end
