@@ -215,4 +215,4 @@ keys.ct.f = { function()
   local buffer = buffer
   buffer:toggle_fold( buffer:line_from_position(buffer.current_pos) )
 end }
-keys.f5 = { 'colourise', b, 1, -1 }
+keys.f5 = { 'colourise', b, 0, -1 }
