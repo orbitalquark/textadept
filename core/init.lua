@@ -6,7 +6,6 @@ package.cpath = _HOME..'/core/?.so;'..package.cpath
 require 'iface'
 require 'events'
 require 'file_io'
-require 'lua_dialog'
 
 ---
 -- Checks if the buffer being indexed is the currently focused buffer.
@@ -31,10 +30,13 @@ end
 --   used.
 -- @return string CocoaDialog result.
 function cocoa_dialog(kind, opts)
-  local args = { kind }
+  local args = ''
   for k, v in pairs(opts) do
-    args[#args + 1] = '--'..k
-    if type(v) == 'string' then args[#args + 1] = v end
+    args = args..' --'..k
+    if type(v) == 'string' then args = args..' "'..v..'"' end
   end
-  return lua_dialog.run(args)
+  local p = io.popen(_HOME..'/core/lua_dialog.lua '..kind..args)
+  local out = p:read('*all')
+  p:close()
+  return out
 end
