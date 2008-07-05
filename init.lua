@@ -13,6 +13,7 @@ package.path  = mpath..';'..package.path
 require 'textadept'
 -- end modules
 
+--require 'ext/menu'
 require 'ext/key_commands'
 
 if not RESETTING then
