@@ -224,8 +224,8 @@ function goto_line(line)
       text = 'Line Number:',
       ['no-newline'] = true
     } )
-    if line == '-1' then return end
     line = tonumber( line:match('%d+$') )
+    if not line or line < 0 then return end
   end
   buffer:ensure_visible_enforce_policy(line - 1)
   buffer:goto_line(line - 1)
