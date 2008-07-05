@@ -2,6 +2,7 @@
 
 ---
 -- Provides dynamic menus for Textadept.
+-- This module, like ext/key_commands should be 'require'ed last.
 module('textadept.menu', package.seeall)
 
 local t, gtkmenu = textadept, textadept.gtkmenu
@@ -33,13 +34,6 @@ t.menubar = {
     'gtk-delete',
     'gtk-select-all',
     'separator',
-    { title = '_Kill Ring',
-      '_Cut to line end',
-      'Co_py to line end',
-      '_Paste from ring',
-      'Paste _next from ring',
-      'Paste pre_v from ring',
-    },
     'Match _Brace',
     'Select t_o Brace',
     'Complete _Word',
@@ -49,6 +43,13 @@ t.menubar = {
     '_Move line up',
     'Mo_ve line down',
     'Convert _Indentation',
+    { title = '_Kill Ring',
+      '_Cut to line end',
+      'Co_py to line end',
+      '_Paste from ring',
+      'Paste _next from ring',
+      'Paste pre_v from ring',
+    },
     { title = 'S_election',
       { title = 'E_xecute as...',
         '_Ruby',
@@ -180,11 +181,6 @@ local actions = {
   Paste = { 'paste', b },
   Delete = { 'clear', b },
   ['Select All'] = { 'select_all', b },
-  ['Cut to line end'] = { m_editing.smart_cutcopy },
-  ['Copy to line end'] = { m_editing.smart_cutcopy, 'copy' },
-  ['Paste from ring'] = { m_editing.smart_paste },
-  ['Paste next from ring'] = { m_editing.smart_paste, 'cycle' },
-  ['Paste prev from ring'] = { m_editing.smart_paste, 'reverse' },
   ['Match Brace'] = { m_editing.match_brace },
   ['Select to Brace'] = { m_editing.match_brace, 'select' },
   ['Complete Word'] = { m_editing.autocomplete_word, '%w_' },
@@ -195,8 +191,16 @@ local actions = {
   ['Move line up'] = { m_editing.move_line, 'up' },
   ['Move line down'] = { m_editing.move_line, 'down' },
   ['Convert Indentation'] = { m_editing.convert_indentation },
+  -- Edit -> Kill Ring
+  ['Cut to line end'] = { m_editing.smart_cutcopy },
+  ['Copy to line end'] = { m_editing.smart_cutcopy, 'copy' },
+  ['Paste from ring'] = { m_editing.smart_paste },
+  ['Paste next from ring'] = { m_editing.smart_paste, 'cycle' },
+  ['Paste prev from ring'] = { m_editing.smart_paste, 'reverse' },
+  -- Edit -> Selection -> Execute as...
   Ruby = { m_editing.ruby_exec },
   Lua = { m_editing.lua_exec },
+  -- Edit -> Selection -> Enclose in...
   ['HTML Tag'] = { m_editing.enclose, 'tag' },
   ['HTML Single Tag'] = { m_editing.enclose, 'single_tag' },
   ['Double Quotes'] = { m_editing.enclose, 'dbl_quotes' },
@@ -205,7 +209,9 @@ local actions = {
   Brackets = { m_editing.enclose, 'brackets' },
   Braces = { m_editing.enclose, 'braces' },
   ['Character Sequence'] = { m_editing.enclose, 'chars' },
+  -- Edit -> Selection
   Grow = { m_editing.grow_selection, 1 },
+  -- Edit -> Select In...
   Structure = { m_editing.select_enclosed },
   ['HTML Tag'] = { m_editing.select_enclosed, 'tags' },
   ['Double Quote'] = { m_editing.select_enclosed, 'dbl_quotes' },
@@ -222,11 +228,13 @@ local actions = {
   Find = { t.find.focus },
   ['Jump to'] = { m_editing.goto_line },
   -- Tools
+  -- Tools -> Snippets
   ['Insert Snippet'] = { m_snippets.insert },
   ['Previous Placeholder'] = { m_snippets.prev },
   ['Cancel Snippet'] = { m_snippets.cancel_current },
   ['List Snippets'] = { m_snippets.list },
   ['Show Scope'] = { m_snippets.show_style },
+  -- Tools -> Multiple Line Editing
   ['Add Line'] = { m_mlines.add },
   ['Add Multiple Lines'] = { m_mlines.add_multiple },
   ['Remove Line'] = { m_mlines.remove },
@@ -259,6 +267,7 @@ local actions = {
   ['Show PM Macros'] = { pm_activate, 'macros' },
 }
 
+-- Most of this handling code comes from keys.lua.
 t.events.add_handler('menu_clicked',
   function(menu_item)
     local active_table = actions[menu_item]
