@@ -14,6 +14,7 @@ require 'textadept'
 -- end modules
 
 --require 'ext/menu'
+--require 'ext/key_commands_std'
 require 'ext/key_commands'
 
 if not RESETTING then
