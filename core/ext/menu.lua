@@ -2,7 +2,7 @@
 
 ---
 -- Provides dynamic menus for Textadept.
--- This module, like ext/key_commands should be 'require'ed last.
+-- This module, like ext/key_commands, should be 'require'ed last.
 module('textadept.menu', package.seeall)
 
 local t, gtkmenu = textadept, textadept.gtkmenu
@@ -56,7 +56,7 @@ t.menubar = {
         '_Lua',
       },
       { title = '_Enclose in...',
-        '_HTML Tag',
+        '_HTML Tags',
         'HTML _Single Tag',
         '_Double Quotes',
         '_Single Quotes',
@@ -167,7 +167,7 @@ local actions = {
   Open = { t.io.open },
   Reload = { 'reload', b },
   Save = { 'save', b },
-  ['Save As...'] = { 'save_as', b },
+  ['Save As'] = { 'save_as', b },
   Close = { 'close', b },
   ['Close All'] = { t.io.close_all },
   ['Load Session...'] = { t.io.load_session }, -- TODO: file open dialog prompt
@@ -185,7 +185,7 @@ local actions = {
   ['Select to Brace'] = { m_editing.match_brace, 'select' },
   ['Complete Word'] = { m_editing.autocomplete_word, '%w_' },
   ['Delete Word'] = { m_editing.current_word, 'delete' },
-  ['Transpose Chars'] = { m_editing.transpose_chars },
+  ['Transpose Characters'] = { m_editing.transpose_chars },
   ['Squeeze'] = { m_editing.squeeze },
   ['Join Lines'] = { m_editing.join_lines },
   ['Move line up'] = { m_editing.move_line, 'up' },
@@ -201,7 +201,7 @@ local actions = {
   Ruby = { m_editing.ruby_exec },
   Lua = { m_editing.lua_exec },
   -- Edit -> Selection -> Enclose in...
-  ['HTML Tag'] = { m_editing.enclose, 'tag' },
+  ['HTML Tags'] = { m_editing.enclose, 'tag' },
   ['HTML Single Tag'] = { m_editing.enclose, 'single_tag' },
   ['Double Quotes'] = { m_editing.enclose, 'dbl_quotes' },
   ['Single Quotes'] = { m_editing.enclose, 'sng_quotes' },
@@ -222,7 +222,7 @@ local actions = {
   Word = { m_editing.current_word, 'select' },
   Line = { m_editing.select_line },
   Paragraph = { m_editing.select_paragraph },
-  ['Indented Block'] = { m_editing.select_indeted_block },
+  ['Indented Block'] = { m_editing.select_indented_block },
   Scope = { m_editing.select_scope },
   -- Search
   Find = { t.find.focus },
@@ -251,7 +251,7 @@ local actions = {
   ['Toggle View Whitespace'] = { toggle_setting, 'view_ws' },
   ['Refresh Syntax Highlighting'] = { 'colourise', b, 0, -1 },
   -- Views
-  ['Hext View'] = { t.goto_view, 1, false },
+  ['Next View'] = { t.goto_view, 1, false },
   ['Prev View'] = { t.goto_view, -1, false },
   ['Split Vertical'] = { 'split', v },
   ['Split Horizontal'] = { 'split', v, false },
