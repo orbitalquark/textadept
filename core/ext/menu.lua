@@ -93,6 +93,7 @@ t.menubar = {
   },
   gtkmenu {
     title = '_Tools',
+    'Focus _Command Entry',
     { title = '_Snippets',
       '_Insert Snippet',
       '_Previous Placeholder',
@@ -230,6 +231,7 @@ local actions = {
   Find = { t.find.focus },
   ['Jump to'] = { m_editing.goto_line },
   -- Tools
+  ['Focus Command Entry'] = { t.command_entry.focus },
   -- Tools -> Snippets
   ['Insert Snippet'] = { m_snippets.insert },
   ['Previous Placeholder'] = { m_snippets.prev },
