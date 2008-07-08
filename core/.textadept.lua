@@ -90,4 +90,7 @@ function print(...) end
 -- Resets the Lua state by reloading all init scripts.
 -- This is useful for modifying init scripts (such as key_commands.lua) on the
 -- fly without having to restart Textadept.
+-- A global RESETTING variable is set to true when re-initing the Lua State. Any
+-- scripts that need to differentiate between startup and reset can utilize this
+-- variable.
 function reset() end
