@@ -8,10 +8,10 @@
 module('textadept.find')
 
 -- Usage:
--- In additional to offering standard find and replace, Textadept allows you
--- to find with Lua patterns and replace with Lua captures and even Lua code!
--- Lua captures (%n) are available for a Lua pattern search and embedded Lua
--- code enclosed in %() is always available.
+-- In addition to offering standard find and replace, Textadept allows you to
+-- find with Lua patterns and replace with Lua captures and even Lua code! Lua
+-- captures (%n) are available for a Lua pattern search and embedded Lua code
+-- enclosed in %() is always available.
 
 ---
 -- Textadept's find table.
