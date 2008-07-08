@@ -49,6 +49,7 @@ function goto_required()
     file = line:match(patt)
     if file then break end
   end
+  if not file then return end
   file = file:sub(2, -2):gsub('%.', '/')
   for path in package.path:gmatch('[^;]+') do
     path = path:gsub('?', file)
