@@ -7,11 +7,11 @@
 module('textadept.key_commands_std', package.seeall)
 
 --[[
-  C:     B   D       H   J K L M     P Q R     U
+  C:     B   D       H   J K L         Q R     U
   A:   A B C D E F G H   J K L M N   P Q R S T U V W X Y Z
-  CS:  A B C D   F G H   J K L M N O P Q R   T U V   X Y Z
+  CS:  A B C D   F G H   J K L M N O   Q R   T U V   X Y Z
   SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-  CA:  A B C D E F G H   J K L M N O P Q R S T U V W X Y Z
+  CA:  A B C D E F G H   J K L M N O   Q R S T U V W X Y Z
   CSA: A B C D E F G H   J K L M N O P Q R S T U V W X Y Z
 ]]--
 
@@ -28,7 +28,9 @@ local b, v = 'buffer', 'view'
 local t = textadept
 
 keys.ct   = {} -- Textadept command chain
-keys.ct.v = {} -- View chain
+keys.ct.e = {} -- Enclose in... chain
+keys.ct.s = {} -- Select in... chain
+keys.ct.v = {} -- Buffer view chain
 
 -- File
 keys.cn  = { t.new_buffer   }
@@ -67,51 +69,53 @@ keys['c\n'] = { m_editing.autocomplete_word, '%w_' }
 -- TODO: { m_editing.smart_paste, 'reverse' }
 -- TODO: { m_editing.ruby_exec }
 -- TODO: { m_editing.lua_exec }
--- TODO: { m_editing.enclose, 'tag' }
--- TODO: { m_editing.enclose, 'sigle_tag' }
--- TODO: { m_editing.enclose, 'dbl_quotes' }
--- TODO: { m_editing.enclose, 'sng_quotes' }
--- TODO: { m_editing.enclose, 'parens' }
--- TODO: { m_editing.enclose, 'brackets' }
--- TODO: { m_editing.enclose, 'braces' }
--- TODO: { m_editing.enclose, 'chars' }
--- TODO: { m_editing.grow_selection, 1 }
--- TODO: { m_editing.select_enclosed }
--- TODO: { m_editing.select_enclosed, 'tags' }
--- TODO: { m_editing.select_enclosed, 'dbl_quotes' }
--- TODO: { m_editing.select_enclosed, 'sng_quotes' }
--- TODO: { m_editing.select_enclosed, 'parens' }
--- TODO: { m_editing.select_enclosed, 'brackets' }
--- TODO: { m_editing.select_enclosed, 'braces' }
--- TODO: { m_editing.current_word, 'select' }
--- TODO: { m_editing.select_line }
--- TODO: { m_editing.select_paragraph }
--- TODO: { m_editing.select_indented_block }
--- TODO: { m_editing.select_scope }
+keys.ct.e.t    = { m_editing.enclose, 'tag'                }
+keys.ct.e.st   = { m_editing.enclose, 'single_tag'         }
+keys.ct.e['"'] = { m_editing.enclose, 'dbl_quotes'         }
+keys.ct.e["'"] = { m_editing.enclose, 'sng_quotes'         }
+keys.ct.e['('] = { m_editing.enclose, 'parens'             }
+keys.ct.e['['] = { m_editing.enclose, 'brackets'           }
+keys.ct.e['{'] = { m_editing.enclose, 'braces'             }
+keys.ct.e.c    = { m_editing.enclose, 'chars'              }
+keys.ct.e.g    = { m_editing.grow_selection, 1             }
+keys.ct.s.e    = { m_editing.select_enclosed               }
+keys.ct.s.t    = { m_editing.select_enclosed, 'tags'       }
+keys.ct.s['"'] = { m_editing.select_enclosed, 'dbl_quotes' }
+keys.ct.s["'"] = { m_editing.select_enclosed, 'sng_quotes' }
+keys.ct.s['('] = { m_editing.select_enclosed, 'parens'     }
+keys.ct.s['['] = { m_editing.select_enclosed, 'brackets'   }
+keys.ct.s['{'] = { m_editing.select_enclosed, 'braces'     }
+keys.ct.s.w    = { m_editing.current_word, 'select'        }
+keys.ct.s.l    = { m_editing.select_line                   }
+keys.ct.s.p    = { m_editing.select_paragraph              }
+keys.ct.s.b    = { m_editing.select_indented_block         }
+keys.ct.s.s    = { m_editing.select_scope                  }
 
 -- Search
 keys.cf = { t.find.focus        } -- find/replace
--- TODO: find next
--- TODO: find prev
--- TODO: replace
+-- Find Next is an when find pane is focused.
+-- Find Prev is ap when find pane is focused.
+-- Replace is ar when find pane is focused.
 keys.cg = { m_editing.goto_line }
 
 -- Tools
--- TODO: { t.command_entry.focus }
+keys['f2'] = { t.command_entry.focus }
 -- Snippets
 local m_snippets = _m.textadept.lsnippets
-keys.ci   = { m_snippets.insert           }
-keys.csi  = { m_snippets.prev             }
-keys.cai  = { m_snippets.cancel_current   }
-keys.casi = { m_snippets.list             }
-keys.ai   = { m_snippets.show_style       }
+keys.ci   = { m_snippets.insert         }
+keys.csi  = { m_snippets.prev           }
+keys.cai  = { m_snippets.cancel_current }
+keys.casi = { m_snippets.list           }
+keys.ai   = { m_snippets.show_style     }
 -- Multiple Line Editing
--- TODO: { m_mlines.add }
--- TODO: { m_mlines.add_multiple }
--- TODO: { m_mlines.remove }
--- TODO: { m_mlines.remove_multiple }
--- TODO: { m_mlines.update }
--- TODO: { m_mlines.clear }
+local m_mlines = _m.textadept.mlines
+keys.cm    = {}
+keys.cm.a  = { m_mlines.add             }
+keys.cm.sa = { m_mlines.add_multiple    }
+keys.cm.r  = { m_mlines.remove          }
+keys.cm.sr = { m_mlines.remove_multiple }
+keys.cm.u  = { m_mlines.update          }
+keys.cm.c  = { m_mlines.clear           }
 
 -- Buffers
 keys['c\t']  = { 'goto_buffer', v, 1, false  }
@@ -125,12 +129,12 @@ local function toggle_setting(setting)
   end
   t.events.update_ui() -- for updating statusbar
 end
--- TODO: { toggle_setting, 'view_eol' }
--- TODO: { toggle_setting, 'wrap_mode' }
--- TODO: { toggle_setting, 'indentation_guides' }
--- TODO: { toggle_setting, 'use_tabs' }
--- TODO: { toggle_setting, 'view_ws' }
--- TODO: { 'colourise', b, 0, -1 }
+keys.ct.v.e     = { toggle_setting, 'view_eol'           }
+keys.ct.v.w     = { toggle_setting, 'wrap_mode'          }
+keys.ct.v.i     = { toggle_setting, 'indentation_guides' }
+keys.ct.v['\t'] = { toggle_setting, 'use_tabs'           }
+keys.ct.v[' ']  = { toggle_setting, 'view_ws'            }
+keys['f5']      = { 'colourise', b, 0, -1                }
 
 -- Views
 keys['ca\t']  = { t.goto_view, 1, false                      }
@@ -144,13 +148,18 @@ keys.ct.sw    = { function() while view:unsplit() do end end }
 
 -- Project Manager
 local function pm_activate(text) t.pm.entry_text = text t.pm.activate() end
--- TODO: { t.pm.toggle_visible }
--- TODO: { t.pm.focus }
--- TODO: { pm_activate, 'ctags' }
--- TODO: { pm_activate, 'buffers' }
--- TODO: { pm_activate, 'files' }
+keys.csp = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
+keys.cp  = { function()
+  if t.pm.width == 0 then t.pm.toggle_visible() end
+  t.pm.focus()
+end }
+keys.cap = {
+  c = { pm_activate, 'ctags'   },
+  b = { pm_activate, 'buffers' },
+  f = { pm_activate, '/'       },
 -- TODO: { pm_activate, 'macros' }
--- TODO: { pm_activate, 'modules' }
+  m = { pm_activate, 'modules' },
+}
 
 -- Miscellaneous not in standard menu.
 -- Recent files.

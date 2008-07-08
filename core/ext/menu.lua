@@ -175,7 +175,7 @@ local actions = {
   ['Close All'] = { t.io.close_all },
   ['Load Session...'] = { t.io.load_session }, -- TODO: file open dialog prompt
   ['Save Session...'] = { t.io.save_session }, -- TODO: file save dialog prompt
-  Quit = {}, -- TODO: quit
+  -- TODO: Quit
   -- Edit
   Undo = { 'undo', b },
   Redo = { 'redo', b },
@@ -229,6 +229,9 @@ local actions = {
   Scope = { m_editing.select_scope },
   -- Search
   Find = { t.find.focus },
+  -- TODO: Find Next
+  -- TODO: Find Prev
+  -- TODO: Replace
   ['Jump to'] = { m_editing.goto_line },
   -- Tools
   ['Focus Command Entry'] = { t.command_entry.focus },
