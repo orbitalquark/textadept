@@ -8,19 +8,56 @@ module('textadept.mime_types', package.seeall)
 -- @class table
 -- @name languages
 local languages = {
+  as = 'actionscript',
+  ada = 'ada',
+  antlr = 'antlr',
+  apdl = 'apdl',
+  applescript = 'applescript',
+  asp = 'asp',
+  awk = 'awk',
+  batch = 'batch',
   cpp = 'cpp',
+  csharp = 'csharp',
   css = 'css',
+  d = 'd',
   diff = 'diff',
+  django = 'django',
+  eiffel = 'eiffel',
+  erlang = 'erlang',
+  forth = 'forth',
+  fortran = 'fortran',
+  gettext = 'gettext',
+  gnuplot = 'gnuplot',
+  groovy = 'groovy',
+  haskell = 'haskell',
   html = 'html',
-  javascript = 'javascript',
+  ini = 'ini',
+  io = 'io',
+  java = 'java',
+  js = 'javascript',
+  latex = 'latex',
+  lisp = 'lisp',
   lua = 'lua',
   makefile = 'makefile',
   maxima = 'maxima',
+  mysql = 'mysql',
+  objc = 'objective_c',
+  pascal = 'pascal',
   php = 'php',
+  pike = 'pike',
+  postscript = 'postscript',
+  props = 'props',
   python = 'python',
   ragel = 'ragel',
+  rebol = 'rebol',
   rhtml = 'rhtml',
   ruby = 'ruby',
+  scheme = 'scheme',
+  shell = 'shellscript',
+  smalltalk = 'smalltalk',
+  verilog = 'verilog',
+  vhdl = 'vhdl',
+  vb = 'visualbasic',
   xml = 'xml'
 }
 
@@ -30,21 +67,134 @@ local l = languages
 -- @class table
 -- @name extensions
 local extensions = {
-  c = l.cpp, cpp = l.cpp, cxx = l.cpp, h = l.cpp,
+  -- Actionscript
+  as = l.as,
+  -- Ada
+  ada = l.ada, adb = l.ada, ads = l.ada,
+  -- ANTLR
+  g = l.antlr,
+  -- APDL
+  ans = l.apdl,
+  inp = l.apdl,
+  mac = l.apdl,
+  -- Applescript
+  applescript = l.applescript,
+  -- ASP
+  asa = l.asp, asp = l.asp,
+  -- AWK
+  awk = l.awk,
+  -- Batch
+  bat = l.batch,
+  cmd = l.batch,
+  -- C/C++
+  c = l.cpp, cpp = l.cpp, cxx = l.cpp,
+  h = l.cpp, hh = l.cpp, hpp = l.cpp,
+  -- C#
+  cs = l.csharp,
+  -- CSS
   css = l.css,
-  diff = l.diff, patch = l.diff,
-  html = l.html, htm = l.html, shtml = l.html,
-  iface = l.makefile,
-  js = l.javascript,
+  -- D
+  d = l.d,
+  -- Diff
+  diff = l.diff,
+  patch = l.diff,
+  -- Eiffel
+  e = l.eiffel,
+  -- Erlang
+  erl = l.erlang,
+  -- Forth
+  f = l.forth,
+  -- Fortran
+  ['for'] = l.fortran, fort = l.fortran, f77 = l.fortran, f90 = l.fortran,
+  -- Gettext
+  po = l.gettext, pot = l.gettext,
+  -- GNUPlot
+  dem = l.gnuplot,
+  plt = l.gnuplot,
+  -- Goovy
+  groovy = l.groovy, grv = l.groovy,
+  -- Haskell
+  hs = l.haskell,
+  -- HTML
+  htm = l.html, html = l.html,
+  shtm = l.html, shtml = l.html,
+  -- ini
+  ini = l.ini,
+  reg = l.ini,
+  -- Io
+  io = l.io,
+  -- Java
+  bsh = l.java,
+  java = l.java,
+  -- Javascript
+  js = l.js,
+  -- Latex
+  ltx = l.latex,
+  tex = l.latex,
+  sty = l.latex,
+  -- Lisp
+  el = l.lisp,
+  lisp = l.lisp,
+  lsp = l.lisp,
+  -- Lua
   lua = l.lua,
+  -- Makefile
+  iface = l.makefile,
   mak = l.makefile, makefile = l.makefile, Makefile = l.makefile,
+  -- Maxima
   maxima = l.maxima,
-  php = l.php,
+  -- MySQL
+  sql = l.mysql,
+  -- Objective C
+  m = l.objc,
+  objc = l.objc,
+  -- Pascal
+  dpk = l.pascal, dpr = l.pascal,
+  pas = l.pascal,
+  -- PHP
+  inc = l.php,
+  php = l.php, php3 = l.php, php4 = l.php, phtml = l.php,
+  -- Pike
+  pike = l.pike, pmod = l.pike,
+  -- Postscript
+  eps = l.postscript,
+  ps = l.postscript,
+  -- Properties
+  props = l.props, properties = l.props,
+  -- Python
+  sc = l.python,
   py = l.python, pyw = l.python,
+  -- Rebol
+  r = l.rebol,
+  -- RHTML
   rhtml = l.rhtml,
+  -- Ruby
   rb = l.ruby, rbw = l.ruby,
+  -- Ragel
   rl = l.ragel,
-  xml = l.xml, xsl = l.xml, xslt = l.xml
+  -- Scheme
+  scm = l.scheme,
+  -- Shell
+  bash = l.shell,
+  csh = l.shell,
+  sh = l.shell,
+  -- Smalltalk
+  changes = l.smalltalk,
+  st = l.smalltalk, sources = l.smalltalk,
+  -- Verilog
+  v = l.verilog, ver = l.verilog,
+  -- VHDL
+  vh = l.vhdl, vhd = l.vhdl, vhdl = l.vhdl,
+  -- Visual Basic
+  asa = l.vb,
+  bas = l.vb,
+  cls = l.vb, ctl = l.vb,
+  dob = l.vb, dsm = l.vb, dsr = l.vb,
+  frm = l.vb,
+  pag = l.vb,
+  vb = l.vb, vba = l.vb, vbs = l.vb,
+  -- XML
+  xhtml = l.xml, xml = l.xml, xsd = l.xml, xsl = l.xml, xslt = l.xml
 }
 
 ---
@@ -52,8 +202,12 @@ local extensions = {
 -- @class table
 -- @name shebangs
 local shebangs = {
+  awk = l.awk,
   lua = l.lua,
-  ruby = l.ruby
+  php = l.php,
+  python = l.python,
+  ruby = l.ruby,
+  sh = l.shell,
 }
 
 ---
