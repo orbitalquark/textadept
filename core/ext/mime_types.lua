@@ -16,6 +16,7 @@ local languages = {
   asp = 'asp',
   awk = 'awk',
   batch = 'batch',
+  boo = 'boo',
   cpp = 'cpp',
   csharp = 'csharp',
   css = 'css',
@@ -26,11 +27,13 @@ local languages = {
   erlang = 'erlang',
   forth = 'forth',
   fortran = 'fortran',
+  gap = 'gap',
   gettext = 'gettext',
   gnuplot = 'gnuplot',
   groovy = 'groovy',
   haskell = 'haskell',
   html = 'html',
+  idl = 'idl',
   ini = 'ini',
   io = 'io',
   java = 'java',
@@ -55,6 +58,8 @@ local languages = {
   scheme = 'scheme',
   shell = 'shellscript',
   smalltalk = 'smalltalk',
+  tcl = 'tcl',
+  vala = 'vala',
   verilog = 'verilog',
   vhdl = 'vhdl',
   vb = 'visualbasic',
@@ -86,8 +91,10 @@ local extensions = {
   -- Batch
   bat = l.batch,
   cmd = l.batch,
+  -- Boo
+  boo = l.boo,
   -- C/C++
-  c = l.cpp, cpp = l.cpp, cxx = l.cpp,
+  c = l.cpp, cc = l.cpp, C = l.cpp, cpp = l.cpp, cxx = l.cpp, ['c++'] = l.cpp,
   h = l.cpp, hh = l.cpp, hpp = l.cpp,
   -- C#
   cs = l.csharp,
@@ -99,13 +106,16 @@ local extensions = {
   diff = l.diff,
   patch = l.diff,
   -- Eiffel
-  e = l.eiffel,
+  e = l.eiffel, eif = l.eiffel,
   -- Erlang
   erl = l.erlang,
   -- Forth
-  f = l.forth,
+  f = l.forth, frt = l.forth, fs = l.forth,
   -- Fortran
   ['for'] = l.fortran, fort = l.fortran, f77 = l.fortran, f90 = l.fortran,
+    f95 = l.fortran,
+  -- Gap
+  g = l.gap, gd = l.gap, gi = l.gap, gap = l.gap,
   -- Gettext
   po = l.gettext, pot = l.gettext,
   -- GNUPlot
@@ -118,6 +128,8 @@ local extensions = {
   -- HTML
   htm = l.html, html = l.html,
   shtm = l.html, shtml = l.html,
+  -- IDL
+  idl = l.idl,
   -- ini
   ini = l.ini,
   reg = l.ini,
@@ -129,6 +141,9 @@ local extensions = {
   -- Javascript
   js = l.js,
   -- Latex
+  bbl = l.latex,
+  dtx = l.latex,
+  ins = l.latex,
   ltx = l.latex,
   tex = l.latex,
   sty = l.latex,
@@ -139,6 +154,7 @@ local extensions = {
   -- Lua
   lua = l.lua,
   -- Makefile
+  GNUmakefile = l.makefile,
   iface = l.makefile,
   mak = l.makefile, makefile = l.makefile, Makefile = l.makefile,
   -- Maxima
@@ -150,7 +166,7 @@ local extensions = {
   objc = l.objc,
   -- Pascal
   dpk = l.pascal, dpr = l.pascal,
-  pas = l.pascal,
+  p = l.pascal, pas = l.pascal,
   -- PHP
   inc = l.php,
   php = l.php, php3 = l.php, php4 = l.php, phtml = l.php,
@@ -181,6 +197,10 @@ local extensions = {
   -- Smalltalk
   changes = l.smalltalk,
   st = l.smalltalk, sources = l.smalltalk,
+  -- TCL
+  tcl = l.tcl, tk = l.tk,
+  -- Vala
+  vala = l.vala,
   -- Verilog
   v = l.verilog, ver = l.verilog,
   -- VHDL
