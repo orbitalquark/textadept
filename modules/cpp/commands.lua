@@ -15,7 +15,6 @@ if type(keys) == 'table' then
       buffer:add_text(';')
       buffer:new_line()
     end },
-    cq = { m_editing.block_comment, '//~' },
     ['('] = { function()
       m_editing.show_call_tip(_m.cpp.api, true)
       return false
