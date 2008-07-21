@@ -51,6 +51,7 @@ local languages = {
   postscript = 'postscript',
   props = 'props',
   python = 'python',
+  r = 'r',
   ragel = 'ragel',
   rebol = 'rebol',
   rhtml = 'rhtml',
@@ -180,6 +181,9 @@ local extensions = {
   -- Python
   sc = l.python,
   py = l.python, pyw = l.python,
+  -- R
+  R = l.r, Rout = l.r, Rhistory = l.r, Rt = l.r, ['Rout.save'] = l.r,
+    ['Rout.fail'] = l.r,
   -- Rebol
   r = l.rebol,
   -- RHTML
