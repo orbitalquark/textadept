@@ -79,7 +79,6 @@ if type(keys) == 'table' then
       g = { goto_required }
     },
     ['s\n'] = { try_to_autocomplete_end },
-    cq = { m_editing.block_comment, '--~' },
     cg = { run },
     ['('] = { function()
       buffer.word_chars =

@@ -55,6 +55,19 @@ local enclosure = {
   single_tag = { left = '<', right = ' />' }
 }
 
+---
+-- [Local table] Comment strings for various lexer languages.
+-- Used for the block_comment function.
+-- @class table
+-- @name comment_strings
+-- @see block_comment
+local comment_strings = {
+  cpp = '//~',
+  lua = '--~',
+  python = '#~',
+  ruby = '#~',
+}
+
 textadept.events.add_handler('char_added',
   function(c) -- matches characters specified in char_matches
     if char_matches[c] then
@@ -191,6 +204,10 @@ textadept.events.add_handler('call_tip_click',
 --   each line in the selection.
 function block_comment(comment)
   local buffer = buffer
+  if not comment then
+    comment = comment_strings[ buffer:get_lexer_language() ]
+    if not comment then return end
+  end
   local caret, anchor = buffer.current_pos, buffer.anchor
   if caret < anchor then anchor, caret = caret, anchor end
   local s = buffer:line_from_position(anchor)

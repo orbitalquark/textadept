@@ -7,7 +7,7 @@
 module('textadept.key_commands_std', package.seeall)
 
 --[[
-  C:     B   D       H   J K L         Q R     U
+  C:     B   D       H   J K L           R     U
   A:   A B C D E F G H   J K L M N   P Q R S T U V W X Y Z
   CS:  A B C D   F G H   J K L M N O   Q R   T U V   X Y Z
   SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
@@ -56,6 +56,7 @@ local m_editing = _m.textadept.editing
 keys.ce     = { m_editing.match_brace              }
 keys.cse    = { m_editing.match_brace, 'select'    }
 keys['c\n'] = { m_editing.autocomplete_word, '%w_' }
+keys.cq     = { m_editing.block_comment            }
 -- TODO: { m_editing.current_word, 'delete' }
 -- TODO: { m_editing.transpose_chars }
 -- TODO: { m_editing.squeeze }

@@ -6,7 +6,7 @@
 module('textadept.key_commands', package.seeall)
 
 --[[
-  C:               G                   Q
+  C:               G
   A:   A   C       G     J K L     O   Q           W X   Z
   CS:      C D     G     J   L         Q R S T U   W
   SA:  A   C D E   G H I J K L M   O   Q R S T     W X   Z
@@ -122,6 +122,7 @@ keys.csm   = { m_editing.match_brace, 'select'        }
 keys['c '] = { m_editing.autocomplete_word, '%w_'     }
 keys['a '] = { m_editing.autocomplete_word_from_dict,
                '/usr/share/dict/cracklib-small'       }
+keys.cq    = { m_editing.block_comment                }
 keys.cl    = { m_editing.goto_line                    }
 keys.ck    = { m_editing.smart_cutcopy,               }
 keys.csk   = { m_editing.smart_cutcopy, 'copy'        }
