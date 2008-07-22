@@ -241,7 +241,7 @@ function goto_line(line)
       text = 'Line Number:',
       ['no-newline'] = true
     } )
-    line = tonumber( line:match('%d+$') )
+    line = tonumber( line:match('%-?%d+$') )
     if not line or line < 0 then return end
   end
   buffer:ensure_visible_enforce_policy(line - 1)
