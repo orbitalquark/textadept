@@ -146,6 +146,17 @@ t.menubar = {
     'Show PM _Macros',
     'Show PM Mo_dules',
   },
+  gtkmenu {
+    title = '_Lexers',
+    'actionscript', 'ada', 'antlr', 'apdl', 'applescript', 'asp', 'awk',
+    'batch', 'boo', 'container', 'cpp', 'csharp', 'css', 'd', 'diff', 'django',
+    'eiffel', 'erlang', 'errorlist', 'forth', 'fortran', 'gap', 'gettext',
+    'gnuplot', 'groovy', 'haskell', 'html', 'idl', 'ini', 'io', 'java',
+    'javascript', 'latex', 'lisp', 'lua', 'makefile', 'mysql', 'objective__c',
+    'pascal', 'php', 'pike', 'postscript', 'props', 'python', 'r', 'ragel',
+    'rebol', 'rhtml', 'ruby', 'scheme', 'shellscript', 'smalltalk', 'tcl',
+    'vala', 'verilog', 'vhdl', 'visualbasic', 'xml',
+  },
 }
 
 local b, v = 'buffer', 'view'
@@ -163,6 +174,10 @@ local function toggle_setting(setting)
   end
   t.events.update_ui() -- for updating statusbar
 end
+local function set_lexer_language(lexer)
+  buffer:set_lexer_language(lexer)
+  buffer:colourise(0, -1)
+end
 
 local actions = {
   -- File
@@ -175,7 +190,7 @@ local actions = {
   ['Close All'] = { t.io.close_all },
   ['Load Session...'] = { t.io.load_session }, -- TODO: file open dialog prompt
   ['Save Session...'] = { t.io.save_session }, -- TODO: file save dialog prompt
-  -- TODO: Quit
+  Quit = { }, -- TODO:
   -- Edit
   Undo = { 'undo', b },
   Redo = { 'redo', b },
@@ -229,9 +244,10 @@ local actions = {
   Scope = { m_editing.select_scope },
   -- Search
   Find = { t.find.focus },
-  -- TODO: Find Next
-  -- TODO: Find Prev
-  -- TODO: Replace
+  ['Find Next'] = { }, -- TODO:
+  ['Find Prev'] = { }, -- TODO:
+  Replace = { }, -- TODO:
+  ['Find and Replace'] = { }, -- TODO:
   ['Jump to'] = { m_editing.goto_line },
   -- Tools
   ['Focus Command Entry'] = { t.command_entry.focus },
@@ -279,7 +295,8 @@ local actions = {
 -- Most of this handling code comes from keys.lua.
 t.events.add_handler('menu_clicked',
   function(menu_item)
-    local active_table = actions[menu_item]
+    local active_table = actions[menu_item] or
+      { set_lexer_language, menu_item } -- anything not in actions is a lexer
     local f, args
     if active_table and #active_table > 0 then
       local func = active_table[1]
