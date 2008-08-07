@@ -45,7 +45,9 @@ local languages = {
   maxima = 'maxima',
   mysql = 'mysql',
   objc = 'objective_c',
+  ocaml = 'ocaml',
   pascal = 'pascal',
+  perl = 'perl',
   php = 'php',
   pike = 'pike',
   postscript = 'postscript',
@@ -54,6 +56,7 @@ local languages = {
   r = 'r',
   ragel = 'ragel',
   rebol = 'rebol',
+  rexx = 'rexx',
   rhtml = 'rhtml',
   ruby = 'ruby',
   scheme = 'scheme',
@@ -165,9 +168,14 @@ local extensions = {
   -- Objective C
   m = l.objc,
   objc = l.objc,
+  -- OCAML,
+  ml = l.ocaml, mli = l.ocaml, mll = l.ocaml, mly = l.ocaml,
   -- Pascal
   dpk = l.pascal, dpr = l.pascal,
   p = l.pascal, pas = l.pascal,
+  -- Perl
+  al = l.perl,
+  perl = l.perl, pl = l.perl, pm = l.perl,
   -- PHP
   inc = l.php,
   php = l.php, php3 = l.php, php4 = l.php, phtml = l.php,
@@ -186,6 +194,9 @@ local extensions = {
     ['Rout.fail'] = l.r,
   -- Rebol
   r = l.rebol,
+  -- Rexx
+  orx = l.rexx,
+  rex = l.rexx,
   -- RHTML
   rhtml = l.rhtml,
   -- Ruby
@@ -228,6 +239,7 @@ local extensions = {
 local shebangs = {
   awk = l.awk,
   lua = l.lua,
+  perl = l.perl,
   php = l.php,
   python = l.python,
   ruby = l.ruby,
