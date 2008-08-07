@@ -153,9 +153,9 @@ t.menubar = {
     'eiffel', 'erlang', 'errorlist', 'forth', 'fortran', 'gap', 'gettext',
     'gnuplot', 'groovy', 'haskell', 'html', 'idl', 'ini', 'io', 'java',
     'javascript', 'latex', 'lisp', 'lua', 'makefile', 'mysql', 'objective__c',
-    'pascal', 'php', 'pike', 'postscript', 'props', 'python', 'r', 'ragel',
-    'rebol', 'rhtml', 'ruby', 'scheme', 'shellscript', 'smalltalk', 'tcl',
-    'vala', 'verilog', 'vhdl', 'visualbasic', 'xml',
+    'ocaml', 'pascal', 'perl', 'php', 'pike', 'postscript', 'props', 'python',
+    'r', 'ragel', 'rebol', 'rexx', 'rhtml', 'ruby', 'scheme', 'shellscript',
+    'smalltalk', 'tcl', 'vala', 'verilog', 'vhdl', 'visualbasic', 'xml',
   },
 }
 
