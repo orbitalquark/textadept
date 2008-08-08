@@ -247,6 +247,14 @@ local shebangs = {
 }
 
 ---
+-- [Local table] First-line patterns and their associated languages.
+-- @class table
+-- @name patterns
+local patterns = {
+  ['^%s*<%?xml%s'] = l.xml
+}
+
+---
 -- [Local function] Sets the buffer's lexer language based on a filename.
 -- @param filename The filename used to set the lexer language.
 -- @return boolean indicating whether or not a lexer language was set.
@@ -263,15 +271,28 @@ end
 ---
 -- [Local function] Sets the buffer's lexer language based on a shebang line.
 local function set_lexer_from_sh_bang()
-  local lexer
   local line = buffer:get_line(0)
   if line:match('^#!') then
     line = line:gsub('[\\/]', ' ')
     for word in line:gmatch('%S+') do
-      lexer = shebangs[word]
-      if lexer then break end
+      if shebangs[word] then
+        buffer:set_lexer_language( shebangs[word] )
+        return true
+      end
     end
-    buffer:set_lexer_language(lexer)
+  end
+end
+
+---
+-- [Local function] Sets the buffer's lexer language based on a pattern that
+-- matches its first line.
+local function set_lexer_from_pattern()
+  local line = buffer:get_line(0)
+  for patt, lexer in pairs(patterns) do
+    if line:match(patt) then
+      buffer:set_lexer_language(lexer)
+      return true
+    end
   end
 end
 
@@ -309,7 +330,7 @@ end
 -- Sets the buffer's lexer language.
 local function handle_switch()
   if not set_lexer_from_filename(buffer.filename) then
-    set_lexer_from_sh_bang()
+    if not set_lexer_from_sh_bang() then set_lexer_from_pattern() end
   end
 end
 
