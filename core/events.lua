@@ -426,10 +426,16 @@ function set_default_editor_properties()
   buffer.property['textadept.home'] = _HOME
   buffer.property['lexer.lua.home'] = _HOME..'/lexers/'
   buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
+	--buffer.property['lexer.lua.color.theme'] = 'scite'
+
+	-- lexer
+	buffer.style_bits = 8
+	buffer.lexer = c.SCLEX_LPEG
+	buffer:set_lexer_language('container')
 
   -- caret
   buffer.caret_fore = 11184810 -- 0xAA | 0xAA << 8 | 0xAA << 16
-  buffer.caret_line_visible = true
+--~  buffer.caret_line_visible = true
   buffer.caret_line_back = 4473924 -- 0x44 | 0x44 << 8 | 0x44 << 16
   buffer:set_x_caret_policy(1, 20) -- CARET_SLOP
   buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
@@ -489,20 +495,15 @@ end
 function set_default_buffer_properties()
   local function run()
     local textadept, buffer = textadept, buffer
-    -- default font
-    buffer.style_font[32] = "!Bitstream Vera Sans Mono"
-    buffer.style_size[32] = 8
-    buffer.style_fore[32] = 11184810 -- 0xAA | 0xAA << 8 | 0xAA << 16
-    buffer.style_back[32] = 3355443 -- 0x33 | 0x33 << 8 | 0x33 << 16
-    buffer.style_bits = 8
+
+		-- lexer
+		buffer.style_bits = 8
+		buffer.lexer = textadept.constants.SCLEX_LPEG
+		buffer:set_lexer_language('container')
 
     -- folding
     buffer.property['fold'] = '1'
     buffer.property['fold.by.indentation'] = '1'
-
-    -- lexers
-    buffer.lexer = textadept.constants.SCLEX_LPEG
-    buffer:set_lexer_language('container')
 
     -- tabs and indentation
     buffer.tab_width = 2
