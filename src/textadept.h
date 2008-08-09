@@ -47,8 +47,6 @@ void set_menubar(GtkWidget *menubar);
 void set_statusbar_text(const char *text);
 void set_docstatusbar_text(const char *text);
 void ce_toggle_focus();
-void set_default_editor_properties(ScintillaObject *sci);
-void set_default_buffer_properties(ScintillaObject *sci);
 
 GtkWidget* pm_create_ui();
 void pm_toggle_focus();
