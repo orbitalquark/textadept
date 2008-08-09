@@ -185,7 +185,6 @@ GtkWidget* new_scintilla_window(sptr_t buffer_id) {
   signal(editor, "key_press_event", t_keypress);
   signal(editor, "command", t_command);
   signal(editor, SCINTILLA_NOTIFY, t_notification);
-  set_default_editor_properties(SCINTILLA(editor));
   l_add_scintilla_window(editor);
   gtk_widget_grab_focus(editor); focused_editor = editor;
   if (buffer_id) {
@@ -193,6 +192,7 @@ GtkWidget* new_scintilla_window(sptr_t buffer_id) {
     new_scintilla_buffer(SCINTILLA(editor), false, false);
   } else new_scintilla_buffer(SCINTILLA(editor), false, true);
   l_set_view_global(editor);
+  l_handle_event("set_default_editor_properties");
   l_handle_event("view_new");
   return editor;
 }
@@ -237,15 +237,8 @@ void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
     l_add_scintilla_buffer(doc);
     SS(sci, SCI_ADDREFDOCUMENT, 0, doc);
   }
-  // Setup default styling and properties.
-  SS(sci, SCI_STYLESETFONT, 32,
-     reinterpret_cast<long>("!Bitstream Vera Sans Mono"));
-  SS(sci, SCI_STYLESETSIZE, 32, 8);
-  SS(sci, SCI_STYLESETFORE, 32, 0xAA | (0xAA << 8) | (0xAA << 16));
-  SS(sci, SCI_STYLESETBACK, 32, 0x33 | (0x33 << 8) | (0x33 << 16));
-  SS(sci, SCI_SETSTYLEBITS, 8, 0);
-  set_default_buffer_properties(sci);
   l_set_buffer_global(sci);
+  l_handle_event("set_default_buffer_properties");
   l_handle_event("buffer_new");
 }
 
@@ -375,6 +368,7 @@ void set_menubar(GtkWidget *new_menubar) {
  * @param text The text to display.
  */
 void set_statusbar_text(const char *text) {
+  if (!statusbar) return;
   gtk_statusbar_pop(GTK_STATUSBAR(statusbar), 0);
   gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, text);
 }
@@ -385,6 +379,7 @@ void set_statusbar_text(const char *text) {
  * @param text The text to display.
  */
 void set_docstatusbar_text(const char *text) {
+  if (!docstatusbar) return;
   gtk_statusbar_pop(GTK_STATUSBAR(docstatusbar), 0);
   gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, text);
 }
@@ -543,102 +538,6 @@ static bool w_exit(GtkWidget*, GdkEventAny*, gpointer) {
   scintilla_release_resources();
   gtk_main_quit();
   return false;
-}
-
-// Properties
-
-static long SSS(ScintillaObject *sci, unsigned int msg, const char *wParam=0,
-                const char *lParam=0) {
-  return scintilla_send_message(sci, msg, reinterpret_cast<long>(wParam),
-                                reinterpret_cast<long>(lParam));
-}
-
-#define sp(k, v) SSS(sci, SCI_SETPROPERTY, k, v)
-#define color(r, g, b) r | (g << 8) | (b << 16)
-
-/**
- * Sets the default properties for a Scintilla window.
- * @param sci The Scintilla window to set default properties for.
- */
-void set_default_editor_properties(ScintillaObject *sci) {
-  sp("textadept.home", textadept_home);
-  sp("lexer.lua.home", "/usr/share/textadept/lexers/");
-  sp("lexer.lua.script", "/usr/share/textadept/lexers/lexer.lua");
-
-  // caret
-  SS(sci, SCI_SETCARETFORE, color(0xAA, 0xAA, 0xAA));
-  SS(sci, SCI_SETCARETLINEVISIBLE, true);
-  SS(sci, SCI_SETCARETLINEBACK, color(0x44, 0x44, 0x44));
-  SS(sci, SCI_SETXCARETPOLICY, CARET_SLOP, 20);
-  SS(sci, SCI_SETYCARETPOLICY, CARET_SLOP | CARET_STRICT | CARET_EVEN, 1);
-  SS(sci, SCI_SETCARETSTYLE, 2);
-  SS(sci, SCI_SETCARETPERIOD, 0);
-
-  // selection
-  SS(sci, SCI_SETSELFORE, 1, color(0x33, 0x33, 0x33));
-  SS(sci, SCI_SETSELBACK, 1, color(0x99, 0x99, 0x99));
-
-  SS(sci, SCI_SETBUFFEREDDRAW, 1);
-  SS(sci, SCI_SETTWOPHASEDRAW, 0);
-  SS(sci, SCI_CALLTIPUSESTYLE, 32);
-  SS(sci, SCI_USEPOPUP, 0);
-  SS(sci, SCI_SETFOLDFLAGS, 16);
-  SS(sci, SCI_SETMODEVENTMASK, SC_MOD_CHANGEFOLD);
-
-  SS(sci, SCI_SETMARGINWIDTHN, 0, 4 + 2 * // line number margin
-     SS(sci, SCI_TEXTWIDTH, STYLE_LINENUMBER, reinterpret_cast<long>("9")));
-
-  SS(sci, SCI_SETMARGINWIDTHN, 1, 0); // marker margin invisible
-
-  // fold margin
-  SS(sci, SCI_SETFOLDMARGINCOLOUR, 1, color(0xAA, 0xAA, 0xAA));
-  SS(sci, SCI_SETFOLDMARGINHICOLOUR, 1, color(0xAA, 0xAA, 0xAA));
-  SS(sci, SCI_SETMARGINTYPEN, 2, SC_MARGIN_SYMBOL);
-  SS(sci, SCI_SETMARGINWIDTHN, 2, 10);
-  SS(sci, SCI_SETMARGINMASKN, 2, SC_MASK_FOLDERS);
-  SS(sci, SCI_SETMARGINSENSITIVEN, 2, 1);
-
-  // fold margin markers
-  SS(sci, SCI_MARKERDEFINE, SC_MARKNUM_FOLDEROPEN, SC_MARK_ARROWDOWN);
-	SS(sci, SCI_MARKERSETFORE, SC_MARKNUM_FOLDEROPEN, 0);
-	SS(sci, SCI_MARKERSETBACK, SC_MARKNUM_FOLDEROPEN, 0);
-  SS(sci, SCI_MARKERDEFINE, SC_MARKNUM_FOLDER, SC_MARK_ARROW);
-	SS(sci, SCI_MARKERSETFORE, SC_MARKNUM_FOLDER, 0);
-	SS(sci, SCI_MARKERSETBACK, SC_MARKNUM_FOLDER, 0);
-  SS(sci, SCI_MARKERDEFINE, SC_MARKNUM_FOLDERSUB, SC_MARK_EMPTY);
-  SS(sci, SCI_MARKERDEFINE, SC_MARKNUM_FOLDERTAIL, SC_MARK_EMPTY);
-  SS(sci, SCI_MARKERDEFINE, SC_MARKNUM_FOLDEREND, SC_MARK_EMPTY);
-  SS(sci, SCI_MARKERDEFINE, SC_MARKNUM_FOLDEROPENMID, SC_MARK_EMPTY);
-  SS(sci, SCI_MARKERDEFINE, SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_EMPTY);
-
-  SS(sci, SCI_SETSCROLLWIDTH, 2000);
-  SS(sci, SCI_SETHSCROLLBAR, 1);
-  SS(sci, SCI_SETENDATLASTLINE, 1);
-  SS(sci, SCI_SETCARETSTICKY, 0);
-}
-
-/**
- * Sets the default properties for a Scintilla document.
- * @param sci The Scintilla window containing the document to set default
- *   properties for.
- */
-void set_default_buffer_properties(ScintillaObject *sci) {
-  sp("fold", "1");
-  sp("fold.by.indentation", "1");
-
-  SS(sci, SCI_SETLEXER, SCLEX_LPEG);
-  SS(sci, SCI_SETLEXERLANGUAGE, 0, reinterpret_cast<long>("container"));
-
-  // Tabs and indentation
-  SS(sci, SCI_SETTABWIDTH, 2);
-  SS(sci, SCI_SETUSETABS, 0);
-  SS(sci, SCI_SETINDENT, 2);
-  SS(sci, SCI_SETTABINDENTS, 1);
-  SS(sci, SCI_SETBACKSPACEUNINDENTS, 1);
-  SS(sci, SCI_SETINDENTATIONGUIDES, 1);
-
-  SS(sci, SCI_SETEOLMODE, SC_EOL_LF);
-  SS(sci, SCI_AUTOCSETCHOOSESINGLE, 1);
 }
 
 // Project Manager
