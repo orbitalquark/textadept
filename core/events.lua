@@ -426,16 +426,25 @@ function set_default_editor_properties()
   buffer.property['textadept.home'] = _HOME
   buffer.property['lexer.lua.home'] = _HOME..'/lexers/'
   buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
-	--buffer.property['lexer.lua.color.theme'] = 'scite'
+  --buffer.property['lexer.lua.color.theme'] = 'scite'
 
-	-- lexer
-	buffer.style_bits = 8
-	buffer.lexer = c.SCLEX_LPEG
-	buffer:set_lexer_language('container')
+  -- lexer
+  buffer.style_bits = 8
+  buffer.lexer = c.SCLEX_LPEG
+  buffer:set_lexer_language('container')
+
+  local theme = buffer:get_property_expanded('lexer.lua.color.theme')
+  if theme and theme ~= '' then
+    local ret, errmsg = pcall(dofile, _HOME..'/themes/'..theme..'.lua')
+    if ret then return end
+    io.stderr:write(errmsg)
+  end
+
+  -- Default Theme.
 
   -- caret
   buffer.caret_fore = 11184810 -- 0xAA | 0xAA << 8 | 0xAA << 16
---~  buffer.caret_line_visible = true
+  buffer.caret_line_visible = true
   buffer.caret_line_back = 4473924 -- 0x44 | 0x44 << 8 | 0x44 << 16
   buffer:set_x_caret_policy(1, 20) -- CARET_SLOP
   buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
@@ -496,10 +505,10 @@ function set_default_buffer_properties()
   local function run()
     local textadept, buffer = textadept, buffer
 
-		-- lexer
-		buffer.style_bits = 8
-		buffer.lexer = textadept.constants.SCLEX_LPEG
-		buffer:set_lexer_language('container')
+    -- lexer
+    buffer.style_bits = 8
+    buffer.lexer = textadept.constants.SCLEX_LPEG
+    buffer:set_lexer_language('container')
 
     -- folding
     buffer.property['fold'] = '1'
@@ -507,7 +516,7 @@ function set_default_buffer_properties()
 
     -- tabs and indentation
     buffer.tab_width = 2
-    buffer.use_tabs = true
+    buffer.use_tabs = false
     buffer.indent = 2
     buffer.tab_indents = true
     buffer.back_space_un_indents = true
