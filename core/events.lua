@@ -200,6 +200,116 @@ end
 
 -- Default handlers to follow.
 
+add_handler('view_new',
+  function() -- sets default properties for a Scintilla window
+    local c, buffer = textadept.constants, buffer
+
+    -- properties
+    buffer.property['textadept.home'] = _HOME
+    buffer.property['lexer.lua.home'] = _HOME..'/lexers/'
+    buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
+    --buffer.property['lexer.lua.color.theme'] = 'scite'
+
+    -- lexer
+    buffer.style_bits = 8
+    buffer.lexer = c.SCLEX_LPEG
+    buffer:set_lexer_language('container')
+
+    local theme = buffer:get_property_expanded('lexer.lua.color.theme')
+    if theme and theme ~= '' then
+      local ret, errmsg = pcall(dofile, _HOME..'/themes/'..theme..'.lua')
+      if ret then return end
+      io.stderr:write(errmsg)
+    end
+
+    -- Default Theme.
+
+    -- caret
+    buffer.caret_fore = 11184810 -- 0xAA | 0xAA << 8 | 0xAA << 16
+    buffer.caret_line_visible = true
+    buffer.caret_line_back = 4473924 -- 0x44 | 0x44 << 8 | 0x44 << 16
+    buffer:set_x_caret_policy(1, 20) -- CARET_SLOP
+    buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
+    buffer.caret_style = 2
+    buffer.caret_period = 0
+
+    -- selection
+    buffer:set_sel_fore(1, 3355443) -- 0x33 | 0x33 << 8 | 0x33 << 16
+    buffer:set_sel_back(1, 10066329) -- 0x99 | 0x99 << 8 | 0x99 << 16
+
+    buffer.margin_width_n[0] = 4 + 3 * -- line number margin
+      buffer:text_width(c.STYLE_LINENUMBER, '9')
+
+    buffer.margin_width_n[1] = 0 -- marker margin invisible
+
+    -- fold margin
+    buffer:set_fold_margin_colour(1, 11184810) -- 0xAA | 0xAA << 8 | 0xAA << 16
+    buffer:set_fold_margin_hi_colour(1, 11184810) -- 0xAA | 0xAA << 8 | 0xAA << 16
+    buffer.margin_type_n[2] = c.SC_MARGIN_SYMBOL
+    buffer.margin_width_n[2] = 10
+    buffer.margin_mask_n[2] = c.SC_MASK_FOLDERS
+    buffer.margin_sensitive_n[2] = true
+
+    -- fold margin markers
+    buffer:marker_define(c.SC_MARKNUM_FOLDEROPEN, c.SC_MARK_ARROWDOWN)
+    buffer:marker_set_fore(c.SC_MARKNUM_FOLDEROPEN, 0)
+    buffer:marker_set_back(c.SC_MARKNUM_FOLDEROPEN, 0)
+    buffer:marker_define(c.SC_MARKNUM_FOLDER, c.SC_MARK_ARROW)
+    buffer:marker_set_fore(c.SC_MARKNUM_FOLDER, 0)
+    buffer:marker_set_back(c.SC_MARKNUM_FOLDER, 0)
+    buffer:marker_define(c.SC_MARKNUM_FOLDERSUB, c.SC_MARK_EMPTY)
+    buffer:marker_define(c.SC_MARKNUM_FOLDERTAIL, c.SC_MARK_EMPTY)
+    buffer:marker_define(c.SC_MARKNUM_FOLDEREND, c.SC_MARK_EMPTY)
+    buffer:marker_define(c.SC_MARKNUM_FOLDEROPENMID, c.SC_MARK_EMPTY)
+    buffer:marker_define(c.SC_MARKNUM_FOLDERMIDTAIL, c.SC_MARK_EMPTY)
+
+    -- various
+    buffer.buffered_draw = true
+    buffer.two_phase_draw = false
+    buffer.call_tip_use_style = 32
+    buffer.use_popup = 0
+    buffer:set_fold_flags(16)
+    buffer.mod_event_mask = c.SC_MOD_CHANGEFOLD
+    buffer.scroll_width = 2000
+    buffer.h_scroll_bar = true
+    buffer.end_at_last_line = true
+    buffer.caret_sticky = false
+  end)
+
+add_handler('buffer_new',
+  function() -- sets default properties for a Scintilla document
+    local function run()
+      local textadept, buffer = textadept, buffer
+
+      -- lexer
+      buffer.style_bits = 8
+      buffer.lexer = textadept.constants.SCLEX_LPEG
+      buffer:set_lexer_language('container')
+
+      -- folding
+      buffer.property['fold'] = '1'
+      buffer.property['fold.by.indentation'] = '1'
+
+      -- tabs and indentation
+      buffer.tab_width = 2
+      buffer.use_tabs = false
+      buffer.indent = 2
+      buffer.tab_indents = true
+      buffer.back_space_un_indents = true
+      buffer.indentation_guides = 1
+
+      -- various
+      buffer.eol_mode = textadept.constants.SC_EOL_LF
+      buffer.auto_c_choose_single = true
+    end
+    -- normally when an error occurs, a new buffer is created with the error
+    -- message, but if an error occurs here, this event would be called again
+    -- and again, erroring each time resulting in an infinite loop; print error
+    -- to stderr instead
+    local ret, errmsg = pcall(run)
+    if not ret then io.stderr:write(errmsg) end
+  end)
+
 add_handler('char_added',
   function(char) -- auto-indent on return
     if char ~= '\n' then return end
@@ -415,117 +525,3 @@ function error(...)
 end
 
 textadept.print = error
-
----
--- Sets the default properties for a Scintilla window.
--- Called as an event; no handler available.
-function set_default_editor_properties()
-  local c, buffer = textadept.constants, buffer
-
-  -- properties
-  buffer.property['textadept.home'] = _HOME
-  buffer.property['lexer.lua.home'] = _HOME..'/lexers/'
-  buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
-  --buffer.property['lexer.lua.color.theme'] = 'scite'
-
-  -- lexer
-  buffer.style_bits = 8
-  buffer.lexer = c.SCLEX_LPEG
-  buffer:set_lexer_language('container')
-
-  local theme = buffer:get_property_expanded('lexer.lua.color.theme')
-  if theme and theme ~= '' then
-    local ret, errmsg = pcall(dofile, _HOME..'/themes/'..theme..'.lua')
-    if ret then return end
-    io.stderr:write(errmsg)
-  end
-
-  -- Default Theme.
-
-  -- caret
-  buffer.caret_fore = 11184810 -- 0xAA | 0xAA << 8 | 0xAA << 16
-  buffer.caret_line_visible = true
-  buffer.caret_line_back = 4473924 -- 0x44 | 0x44 << 8 | 0x44 << 16
-  buffer:set_x_caret_policy(1, 20) -- CARET_SLOP
-  buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
-  buffer.caret_style = 2
-  buffer.caret_period = 0
-
-  -- selection
-  buffer:set_sel_fore(1, 3355443) -- 0x33 | 0x33 << 8 | 0x33 << 16
-  buffer:set_sel_back(1, 10066329) -- 0x99 | 0x99 << 8 | 0x99 << 16
-
-  buffer.margin_width_n[0] = 4 + 3 * -- line number margin
-    buffer:text_width(c.STYLE_LINENUMBER, '9')
-
-  buffer.margin_width_n[1] = 0 -- marker margin invisible
-
-  -- fold margin
-  buffer:set_fold_margin_colour(1, 11184810) -- 0xAA | 0xAA << 8 | 0xAA << 16
-  buffer:set_fold_margin_hi_colour(1, 11184810) -- 0xAA | 0xAA << 8 | 0xAA << 16
-  buffer.margin_type_n[2] = c.SC_MARGIN_SYMBOL
-  buffer.margin_width_n[2] = 10
-  buffer.margin_mask_n[2] = c.SC_MASK_FOLDERS
-  buffer.margin_sensitive_n[2] = true
-
-  -- fold margin markers
-  buffer:marker_define(c.SC_MARKNUM_FOLDEROPEN, c.SC_MARK_ARROWDOWN)
-  buffer:marker_set_fore(c.SC_MARKNUM_FOLDEROPEN, 0)
-  buffer:marker_set_back(c.SC_MARKNUM_FOLDEROPEN, 0)
-  buffer:marker_define(c.SC_MARKNUM_FOLDER, c.SC_MARK_ARROW)
-  buffer:marker_set_fore(c.SC_MARKNUM_FOLDER, 0)
-  buffer:marker_set_back(c.SC_MARKNUM_FOLDER, 0)
-  buffer:marker_define(c.SC_MARKNUM_FOLDERSUB, c.SC_MARK_EMPTY)
-  buffer:marker_define(c.SC_MARKNUM_FOLDERTAIL, c.SC_MARK_EMPTY)
-  buffer:marker_define(c.SC_MARKNUM_FOLDEREND, c.SC_MARK_EMPTY)
-  buffer:marker_define(c.SC_MARKNUM_FOLDEROPENMID, c.SC_MARK_EMPTY)
-  buffer:marker_define(c.SC_MARKNUM_FOLDERMIDTAIL, c.SC_MARK_EMPTY)
-
-  -- various
-  buffer.buffered_draw = true
-  buffer.two_phase_draw = false
-  buffer.call_tip_use_style = 32
-  buffer.use_popup = 0
-  buffer:set_fold_flags(16)
-  buffer.mod_event_mask = c.SC_MOD_CHANGEFOLD
-  buffer.scroll_width = 2000
-  buffer.h_scroll_bar = true
-  buffer.end_at_last_line = true
-  buffer.caret_sticky = false
-end
-
----
--- Sets the default properties for a Scintilla document.
--- Called as an event; no handler available.
--- If an error occurs, this is disastrous because the error handler creates a
--- new buffer (to display the message), but this function is called again for
--- that buffer, and an infinite loop ensues. So if an error occurs, catch it
--- and print it to stderr.
-function set_default_buffer_properties()
-  local function run()
-    local textadept, buffer = textadept, buffer
-
-    -- lexer
-    buffer.style_bits = 8
-    buffer.lexer = textadept.constants.SCLEX_LPEG
-    buffer:set_lexer_language('container')
-
-    -- folding
-    buffer.property['fold'] = '1'
-    buffer.property['fold.by.indentation'] = '1'
-
-    -- tabs and indentation
-    buffer.tab_width = 2
-    buffer.use_tabs = false
-    buffer.indent = 2
-    buffer.tab_indents = true
-    buffer.back_space_un_indents = true
-    buffer.indentation_guides = 1
-
-    -- various
-    buffer.eol_mode = textadept.constants.SC_EOL_LF
-    buffer.auto_c_choose_single = true
-  end
-  local ret, errmsg = pcall(run)
-  if not ret then io.stderr:write(errmsg) end
-end
