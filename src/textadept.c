@@ -403,7 +403,6 @@ void ce_toggle_focus() {
 /**
  * Signal for the 'enter' key being pressed in the Lua command entry.
  * Evaluates the input text as Lua code.
- * Generates a 'hide_completions' event.
  */
 static void c_activated(GtkWidget *widget, gpointer) {
   l_ta_command(gtk_entry_get_text(GTK_ENTRY(widget)));
