@@ -192,7 +192,6 @@ GtkWidget* new_scintilla_window(sptr_t buffer_id) {
     new_scintilla_buffer(SCINTILLA(editor), false, false);
   } else new_scintilla_buffer(SCINTILLA(editor), false, true);
   l_set_view_global(editor);
-  l_handle_event("set_default_editor_properties");
   l_handle_event("view_new");
   return editor;
 }
@@ -238,7 +237,6 @@ void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
     SS(sci, SCI_ADDREFDOCUMENT, 0, doc);
   }
   l_set_buffer_global(sci);
-  l_handle_event("set_default_buffer_properties");
   l_handle_event("buffer_new");
 }
 
