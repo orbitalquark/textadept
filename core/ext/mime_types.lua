@@ -43,7 +43,7 @@ local languages = {
   lua = 'lua',
   makefile = 'makefile',
   maxima = 'maxima',
-  mysql = 'mysql',
+  sql = 'sql',
   objc = 'objective_c',
   ocaml = 'ocaml',
   pascal = 'pascal',
@@ -163,8 +163,6 @@ local extensions = {
   mak = l.makefile, makefile = l.makefile, Makefile = l.makefile,
   -- Maxima
   maxima = l.maxima,
-  -- MySQL
-  sql = l.mysql,
   -- Objective C
   m = l.objc,
   objc = l.objc,
@@ -212,6 +210,8 @@ local extensions = {
   -- Smalltalk
   changes = l.smalltalk,
   st = l.smalltalk, sources = l.smalltalk,
+  -- SQL
+  sql = l.sql,
   -- TCL
   tcl = l.tcl, tk = l.tk,
   -- Vala
