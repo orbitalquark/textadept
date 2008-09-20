@@ -111,6 +111,9 @@ void l_init(int argc, char **argv, bool reinit) {
 
   lua_getfield(lua, LUA_REGISTRYINDEX, "arg"); lua_setglobal(lua, "arg");
   lua_pushstring(lua, textadept_home); lua_setglobal(lua, "_HOME");
+#ifdef WIN32
+  lua_pushboolean(lua, 1); lua_setglobal(lua, "WIN32");
+#endif
 
   l_load_script("core/init.lua");
 }

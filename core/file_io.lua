@@ -171,6 +171,7 @@ end
 -- @return true if the session file was opened and read; false otherwise.
 -- @usage textadept.io.load_session(filename)
 function load_session(filename, only_pm)
+  if WIN32 then return end -- TODO:
   local textadept = textadept
   local f = io.open(filename or os.getenv('HOME')..'/.ta_session')
   local current_view, splits = 1, { [0] = {} }
@@ -229,6 +230,7 @@ end
 --   $HOME/.ta_session if not specified.
 -- @usage textadept.io.save_session(filename)
 function save_session(filename)
+  if WIN32 then return end -- TODO:
   local session = ''
   local buffer_line = "buffer: %d %d %d %s\n" -- anchor, cursor, line, filename
   local split_line = "%ssplit%d: %s %d\n" -- level, number, type, size
