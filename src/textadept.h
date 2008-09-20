@@ -26,12 +26,20 @@ extern GtkWidget
 extern GtkEntryCompletion *command_entry_completion;
 extern GtkTreeStore *cec_store, *pm_store;
 extern lua_State *lua;
+#ifndef WIN32
 static const char *textadept_home = "/usr/share/textadept/";
+#else
+static const char *textadept_home = "C:\\Program Files\\textadept";
+#endif
 
 static long SS(ScintillaObject *sci, unsigned int msg, unsigned long wParam=0,
                long lParam=0) {
   return scintilla_send_message(sci, msg, wParam, lParam);
 }
+
+#ifdef WIN32
+#define bool gboolean
+#endif
 
 // textadept.c
 void create_ui();

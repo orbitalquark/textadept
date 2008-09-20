@@ -1,7 +1,11 @@
 -- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 package.path = _HOME..'/core/?.lua;'..package.path
-package.cpath = _HOME..'/core/?.so;'..package.cpath
+if not WIN32 then
+  package.cpath = _HOME..'/core/?.so;'..package.cpath
+else
+  package.cpath = _HOME..'/core/?.dll;'..package.cpath
+end
 
 require 'iface'
 require 'events'

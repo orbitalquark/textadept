@@ -2,6 +2,11 @@
 
 #include "textadept.h"
 
+#ifdef WIN32
+#include "Windows.h"
+#define strcasecmp _stricmp
+#endif
+
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
 // Textadept
@@ -71,6 +76,18 @@ int main(int argc, char **argv) {
   gtk_main();
   return 0;
 }
+
+#ifdef WIN32
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
+  // TODO: lpCmdLine contains command line string, pass to Lua
+  gtk_init(0, NULL);
+  l_init(0, NULL, false);
+  create_ui();
+  l_load_script("init.lua");
+  gtk_main();
+  return 0;
+}
+#endif
 
 /**
  * Creates the user interface.
