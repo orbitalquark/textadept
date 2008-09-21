@@ -7,28 +7,55 @@
 module('textadept.pm.browsers.file', package.seeall)
 
 function matches(entry_text)
-  return entry_text:sub(1, 1) == '/'
+  if not WIN32 then
+    return entry_text:sub(1, 1) == '/'
+  else
+    return entry_text:match('[A-Za-z]:[\\/]')
+  end
 end
 
 function get_contents_for(full_path)
   local dirpath = table.concat(full_path, '/')
-  local p = io.popen('ls -1p "'..dirpath..'"')
-  local out = p:read('*all')
-  p:close()
-  if #out == 0 then
-    error('No such directory: '..dirpath)
-    return {}
-  end
   local dir = {}
-  for entry in out:gmatch('[^\n]+') do
-    if entry:sub(-1, -1) == '/' then
-      local name = entry:sub(1, -2)
+  if not WIN32 then
+    local p = io.popen('ls -1p "'..dirpath..'"')
+    local out = p:read('*all')
+    p:close()
+    if #out == 0 then
+      error('No such directory: '..dirpath)
+      return dir
+    end
+    for entry in out:gmatch('[^\n]+') do
+      if entry:sub(-1, -1) == '/' then
+        local name = entry:sub(1, -2)
+        dir[name] = {
+          parent = true,
+          display_text = name,
+          pixbuf = 'gtk-directory'
+        }
+      else
+        dir[entry] = { display_text = entry }
+      end
+    end
+  else
+    local p = io.popen('dir /A:D /B "'..dirpath..'"')
+    local out = p:read('*all')
+    p:close()
+    if out:match('^File Not Found') then
+      error('No such directory: '..dirpath)
+      return dir
+    end
+    for name in out:gmatch('[^\n]+') do
       dir[name] = {
         parent = true,
         display_text = name,
         pixbuf = 'gtk-directory'
       }
-    else
+    end
+    p = io.popen('dir /A:-D /B "'..dirpath..'"')
+    out = p:read('*all')
+    p:close()
+    for entry in out:gmatch('[^\n]+') do
       dir[entry] = { display_text = entry }
     end
   end
@@ -51,18 +78,20 @@ function perform_menu_action(menu_item, selected_item)
     textadept.pm.entry_text = filepath
     textadept.pm.activate()
   elseif menu_item == 'File Details' then
-    local p = io.popen('ls -dhl "'..filepath..'"')
-    local out = p:read('*all')
-    p:close()
-    local perms, num_dirs, owner, group, size, mod_date =
-      out:match('^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+ %S)')
-    out = 'File details for:\n'..filepath..'\n'..
-          'Perms:\t'..perms..'\n'..
-          '#Dirs:\t'..num_dirs..'\n'..
-          'Owner:\t'..owner..'\n'..
-          'Group:\t'..group..'\n'..
-          'Size:\t'..size..'\n'..
-          'Date:\t'..mod_date
-    text_input(out, nil, false, 250, 250)
+    if not WIN32 then
+      local p = io.popen('ls -dhl "'..filepath..'"')
+      local out = p:read('*all')
+      p:close()
+      local perms, num_dirs, owner, group, size, mod_date =
+        out:match('^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+ %S)')
+      out = 'File details for:\n'..filepath..'\n'..
+            'Perms:\t'..perms..'\n'..
+            '#Dirs:\t'..num_dirs..'\n'..
+            'Owner:\t'..owner..'\n'..
+            'Group:\t'..group..'\n'..
+            'Size:\t'..size..'\n'..
+            'Date:\t'..mod_date
+      text_input(out, nil, false, 250, 250)
+    end
   end
 end

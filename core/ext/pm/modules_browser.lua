@@ -18,23 +18,46 @@ end
 function get_contents_for(full_path)
   full_path = modify_path(full_path)
   local dirpath = table.concat(full_path, '/')
-  local p = io.popen('ls -1p "'..dirpath..'"')
-  local out = p:read('*all')
-  p:close()
-  if #out == 0 then
-    error('No such directory: '..dirpath)
-    return {}
-  end
   local dir = {}
-  for entry in out:gmatch('[^\n]+') do
-    if entry:sub(-1, -1) == '/' then
-      local name = entry:sub(1, -2)
+  if not WIN32 then
+    local p = io.popen('ls -1p "'..dirpath..'"')
+    local out = p:read('*all')
+    p:close()
+    if #out == 0 then
+      error('No such directory: '..dirpath)
+      return dir
+    end
+    for entry in out:gmatch('[^\n]+') do
+      if entry:sub(-1, -1) == '/' then
+        local name = entry:sub(1, -2)
+        dir[name] = {
+          parent = true,
+          display_text = name,
+          pixbuf = 'gtk-directory'
+        }
+      else
+        dir[entry] = { display_text = entry }
+      end
+    end
+  else
+    local p = io.popen('dir /A:D /B "'..dirpath..'"')
+    local out = p:read('*all')
+    p:close()
+    if out:match('^File Not Found') then
+      error('No such directory: '..dirpath)
+      return dir
+    end
+    for name in out:gmatch('[^\n]+') do
       dir[name] = {
         parent = true,
         display_text = name,
         pixbuf = 'gtk-directory'
       }
-    else
+    end
+    p = io.popen('dir /A:-D /B "'..dirpath..'"')
+    out = p:read('*all')
+    p:close()
+    for entry in out:gmatch('[^\n]+') do
       dir[entry] = { display_text = entry }
     end
   end
