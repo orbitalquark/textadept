@@ -124,7 +124,7 @@ void l_init(int argc, char **argv, bool reinit) {
  */
 void l_load_script(const char *script_file) {
   char *script = g_strconcat(textadept_home, "/", script_file, NULL);
-  if (luaL_dofile(lua, script) != 0) l_handle_error(lua);
+  if (luaL_dofile(lua, script) != 0) l_handle_error(lua, NULL);
   g_free(script);
 }
 
@@ -170,11 +170,11 @@ void l_reg_set(LS *lua, const char *k) {
  * returns it as a GtkWidget.
  * @param lua The Lua State.
  * @param narg Relative stack index to check for a Scintilla window.
- * @param errstr Error string to use if the stack element is not a Scintilla
- *   window.
+ * @param errstr Optional error string to use if the stack element is not a
+ *   Scintilla window.
  *   Defaults to "View argument expected.".
  */
-static GtkWidget* l_checkview(LS *lua, int narg, const char *errstr=NULL) {
+static GtkWidget *l_checkview(LS *lua, int narg, const char *errstr=0) {
   if (lua_type(lua, narg) == LUA_TTABLE) {
     lua_pushstring(lua, "widget_pointer");
     lua_rawget(lua, narg > 0 ? narg : narg - 1);
@@ -270,10 +270,11 @@ void l_set_view_global(GtkWidget *editor) {
  * Scintilla document pointer associated with it.
  * @param lua The Lua State.
  * @param narg Relative stack index to check for a buffer table.
- * @param errstr Error string to use if the stack element is not a buffer table.
+ * @param errstr Optional error string to use if the stack element is not a
+ *   buffer table.
  *   Defaults to "Buffer argument expected.".
  */
-static sptr_t l_checkdocpointer(LS *lua, int narg, const char *errstr=NULL) {
+static sptr_t l_checkdocpointer(LS *lua, int narg, const char *errstr=0) {
   if (lua_type(lua, narg) == LUA_TTABLE) {
     lua_pushstring(lua, "doc_pointer");
     lua_rawget(lua, narg > 0 ? narg : narg - 1);
@@ -507,9 +508,9 @@ bool l_is_ta_table_function(const char *table, const char *function) {
  * one element lower on the stack with the Lua function being under the first
  * argument.
  * @param nargs The number of arguments to pass to the Lua function to call.
- * @param retn The number of expected return values. Defaults to 0.
- * @param keep_return Flag indicating whether or not to keep the return values
- *   at the top of the stack. If false, discards the return values.
+ * @param retn Optional number of expected return values. Defaults to 0.
+ * @param keep_return Optoinal flag indicating whether or not to keep the return
+ *   values at the top of the stack. If false, discards the return values.
  *   Defaults to false.
  */
 bool l_call_function(int nargs, int retn=0, bool keep_return=false) {
@@ -518,7 +519,7 @@ bool l_call_function(int nargs, int retn=0, bool keep_return=false) {
     bool result = retn > 0 ? lua_toboolean(lua, -1) == 1 : true;
     if (retn > 0 && !keep_return) lua_pop(lua, retn); // retn
     return result;
-  } else l_handle_error(lua);
+  } else l_handle_error(lua, NULL);
   return false;
 }
 
@@ -541,7 +542,7 @@ static int l_rawgeti_int(LS *lua, int index, int n) {
  * @param index The relative index of the table to rawget from.
  * @param k String key in the table to rawget.
  */
-static const char* l_rawget_str(LS *lua, int index, const char *k) {
+static const char *l_rawget_str(LS *lua, int index, const char *k) {
   lua_pushstring(lua, k); lua_rawget(lua, index);
   const char *str = lua_tostring(lua, -1);
   lua_pop(lua, 1); // string
@@ -578,7 +579,7 @@ static long l_toscintillaparam(LS *lua, int type, int &arg_idx) {
  * @param submenu Flag indicating whether or not this menu is a submenu.
  *   Defaults to false.
  */
-GtkWidget* l_create_gtkmenu(LS *lua, GCallback callback, bool submenu=false) {
+GtkWidget *l_create_gtkmenu(LS *lua, GCallback callback, bool submenu) {
   GtkWidget *menu = gtk_menu_new(), *menu_item = 0, *submenu_root = 0;
   const char *label;
   lua_getfield(lua, -1, "title");
@@ -611,7 +612,7 @@ GtkWidget* l_create_gtkmenu(LS *lua, GCallback callback, bool submenu=false) {
  * Handles a Lua error.
  * The main error message is at the top of the Lua stack.
  * @param lua The Lua State.
- * @param errmsg An additional error message to display. Defaults to NULL.
+ * @param errmsg An additional error message to display.
  */
 void l_handle_error(LS *lua, const char *errmsg) {
   if (focused_editor && l_is_ta_table_function("events", "error")) {
@@ -844,7 +845,7 @@ void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback) {
     return;
   }
   if (l_call_function(1, 1, true) && lua_istable(lua, -1)) {
-    GtkWidget *menu = l_create_gtkmenu(lua, callback);
+    GtkWidget *menu = l_create_gtkmenu(lua, callback, false);
     lua_pop(lua, 1); // returned table
     gtk_widget_show_all(menu);
     gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
@@ -1293,7 +1294,7 @@ LF l_cf_ta_get_split_table(LS *lua) {
   return 1;
 }
 
-LF l_cf_ta_goto_(LS *lua, GtkWidget *editor, bool buffer=true) {
+LF l_cf_ta_goto_(LS *lua, GtkWidget *editor, bool buffer) {
   int n = static_cast<int>(luaL_checkinteger(lua, 1));
   bool absolute = lua_gettop(lua) > 1 ? lua_toboolean(lua, 2) == 1 : true;
   buffer ? l_goto_scintilla_buffer(editor, n, absolute)
@@ -1329,7 +1330,7 @@ static void t_menu_activate(GtkWidget *menu_item, gpointer) {
 
 LF l_cf_ta_gtkmenu(LS *lua) {
   luaL_checktype(lua, 1, LUA_TTABLE);
-  GtkWidget *menu = l_create_gtkmenu(lua, G_CALLBACK(t_menu_activate));
+  GtkWidget *menu = l_create_gtkmenu(lua, G_CALLBACK(t_menu_activate), false);
   lua_pushlightuserdata(lua, const_cast<GtkWidget*>(menu));
   return 1;
 }

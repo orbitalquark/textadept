@@ -7,6 +7,7 @@
 #define strcasecmp _stricmp
 #endif
 
+#define gbool gboolean
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
 // Textadept
@@ -17,17 +18,17 @@ GtkEntryCompletion *command_entry_completion;
 GtkTreeStore *cec_store;
 
 static void c_activated(GtkWidget *widget, gpointer);
-static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer);
+static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer);
 static int cec_match_func(GtkEntryCompletion *, const char *, GtkTreeIter *,
                           gpointer);
-static bool cec_match_selected(GtkEntryCompletion *, GtkTreeModel *model,
-                               GtkTreeIter *iter, gpointer);
+static gbool cec_match_selected(GtkEntryCompletion *, GtkTreeModel *model,
+                                GtkTreeIter *iter, gpointer);
 static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer);
 static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer);
-static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer);
-static bool w_focus(GtkWidget*, GdkEventFocus *, gpointer);
-static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer);
-static bool w_exit(GtkWidget*, GdkEventAny*, gpointer);
+static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer);
+static gbool w_focus(GtkWidget*, GdkEventFocus *, gpointer);
+static gbool w_keypress(GtkWidget*, GdkEventKey *event, gpointer);
+static gbool w_exit(GtkWidget*, GdkEventAny*, gpointer);
 
 // Project Manager
 GtkWidget *pm_view, *pm_entry, *pm_container;
@@ -38,15 +39,15 @@ static int pm_search_equal_func(GtkTreeModel *model, int col, const char *key,
 static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
                                      GtkTreeIter *b, gpointer);
 static void pm_entry_activated(GtkWidget *widget, gpointer);
-static bool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer);
+static gbool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer);
 static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter,
                             GtkTreePath *path, gpointer);
 static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter,
                              GtkTreePath *path, gpointer);
 static void pm_row_activated(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *,
                              gpointer);
-static bool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer);
-static bool pm_popup_menu(GtkWidget *, gpointer);
+static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer);
+static gbool pm_popup_menu(GtkWidget *, gpointer);
 static void pm_menu_activate(GtkWidget *menu_item, gpointer);
 
 // Find/Replace
@@ -57,8 +58,8 @@ GtkAttachOptions
   normal = static_cast<GtkAttachOptions>(GTK_SHRINK | GTK_FILL),
   expand = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
 
-static bool fe_keypress(GtkWidget*, GdkEventKey *event, gpointer);
-static bool re_keypress(GtkWidget*, GdkEventKey *event, gpointer);
+static gbool fe_keypress(GtkWidget*, GdkEventKey *event, gpointer);
+static gbool re_keypress(GtkWidget*, GdkEventKey *event, gpointer);
 static void button_clicked(GtkWidget *button, gpointer);
 
 /**
@@ -82,22 +83,17 @@ char *textadept_home;
 
 /**
  * Runs Textadept in Windows.
- * Sets textadept_home according to the directory the executable is in, inits
- * the Lua state, creates the user interface, and loads the core/init.lua
- * script.
+ * Sets textadept_home according to the directory the executable is in before
+ * calling main.
+ * @see main
  */
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
   char path[260];
   GetModuleFileName(0, path, sizeof(path));
   char *last_slash = strrchr(path, '\\');
   if (last_slash) *last_slash = '\0';
-  textadept_home = static_cast<char *>(path);
-  gtk_init(0, NULL);
-  l_init(0, NULL, false);
-  create_ui();
-  l_load_script("init.lua");
-  gtk_main();
-  return 0;
+  textadept_home = static_cast<char*>(path);
+  return main(0, NULL);
 }
 #endif
 
@@ -137,47 +133,47 @@ void create_ui() {
   signal(window, "focus-in-event", w_focus);
   signal(window, "key_press_event", w_keypress);
 
-  GtkWidget *vbox = gtk_vbox_new(false, 0);
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
   gtk_container_add(GTK_CONTAINER(window), vbox);
 
   menubar = gtk_menu_bar_new();
-  gtk_box_pack_start(GTK_BOX(vbox), menubar, false, false, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
 
   GtkWidget *pane = gtk_hpaned_new();
-  gtk_box_pack_start(GTK_BOX(vbox), pane, true, true, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), pane, TRUE, TRUE, 0);
 
   GtkWidget *pm = pm_create_ui();
   gtk_paned_add1(GTK_PANED(pane), pm);
 
-  GtkWidget *hbox = gtk_hbox_new(false, 0);
+  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
   gtk_paned_add2(GTK_PANED(pane), hbox);
 
-  GtkWidget *editor = new_scintilla_window();
-  gtk_box_pack_start(GTK_BOX(hbox), editor, true, true, 0);
+  GtkWidget *editor = new_scintilla_window(NULL);
+  gtk_box_pack_start(GTK_BOX(hbox), editor, TRUE, TRUE, 0);
 
   GtkWidget *find = find_create_ui();
-  gtk_box_pack_start(GTK_BOX(vbox), find, false, false, 5);
+  gtk_box_pack_start(GTK_BOX(vbox), find, FALSE, FALSE, 5);
 
-  GtkWidget *hboxs = gtk_hbox_new(false, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hboxs, false, false, 0);
+  GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
 
   statusbar = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, "");
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar), false);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar, true, true, 0);
+  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar), FALSE);
+  gtk_box_pack_start(GTK_BOX(hboxs), statusbar, TRUE, TRUE, 0);
 
   command_entry = gtk_entry_new();
   gtk_widget_set_name(command_entry, "textadept-command-entry");
   signal(command_entry, "activate", c_activated);
   signal(command_entry, "key_press_event", c_keypress);
   g_object_set(G_OBJECT(command_entry), "width-request", 200, NULL);
-  gtk_box_pack_start(GTK_BOX(hboxs), command_entry, true, true, 0);
+  gtk_box_pack_start(GTK_BOX(hboxs), command_entry, TRUE, TRUE, 0);
 
   command_entry_completion = gtk_entry_completion_new();
   signal(command_entry_completion, "match-selected", cec_match_selected);
   gtk_entry_completion_set_match_func(command_entry_completion, cec_match_func,
                                       NULL, NULL);
-  gtk_entry_completion_set_popup_set_width(command_entry_completion, false);
+  gtk_entry_completion_set_popup_set_width(command_entry_completion, FALSE);
   gtk_entry_completion_set_text_column(command_entry_completion, 0);
   cec_store = gtk_tree_store_new(1, G_TYPE_STRING);
   gtk_entry_completion_set_model(command_entry_completion,
@@ -187,7 +183,7 @@ void create_ui() {
   docstatusbar = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, "");
   g_object_set(G_OBJECT(docstatusbar), "width-request", 400, NULL);
-  gtk_box_pack_start(GTK_BOX(hboxs), docstatusbar, false, false, 0);
+  gtk_box_pack_start(GTK_BOX(hboxs), docstatusbar, FALSE, FALSE, 0);
 
   gtk_widget_show_all(window);
   gtk_widget_hide(menubar); // hide initially
@@ -208,7 +204,7 @@ void create_ui() {
  * @see set_default_editor_properties
  * @see l_add_scintilla_window
  */
-GtkWidget* new_scintilla_window(sptr_t buffer_id) {
+GtkWidget *new_scintilla_window(sptr_t buffer_id) {
   GtkWidget *editor = scintilla_new();
   gtk_widget_set_size_request(editor, 1, 1); // minimum size
   signal(editor, "key_press_event", t_keypress);
@@ -260,7 +256,7 @@ void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
   doc = SS(sci, SCI_GETDOCPOINTER);
   if (create) { // create the new document
     doc = SS(sci, SCI_CREATEDOCUMENT);
-    l_goto_scintilla_buffer(focused_editor, l_add_scintilla_buffer(doc));
+    l_goto_scintilla_buffer(focused_editor, l_add_scintilla_buffer(doc), true);
   } else if (addref) {
     l_add_scintilla_buffer(doc);
     SS(sci, SCI_ADDREFDOCUMENT, 0, doc);
@@ -385,7 +381,7 @@ void set_menubar(GtkWidget *new_menubar) {
   GtkWidget *vbox = gtk_widget_get_parent(menubar);
   gtk_container_remove(GTK_CONTAINER(vbox), menubar);
   menubar = new_menubar;
-  gtk_box_pack_start(GTK_BOX(vbox), menubar, false, false, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
   gtk_box_reorder_child(GTK_BOX(vbox), menubar, 0);
   gtk_widget_show_all(menubar);
 }
@@ -444,20 +440,20 @@ static void c_activated(GtkWidget *widget, gpointer) {
  *  - Escape - Hide the completion buffer if it is open.
  *  - Tab - Display possible completions.
  */
-static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
+static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
   if (event->state == 0)
     switch(event->keyval) {
       case 0xff1b:
         ce_toggle_focus();
-        return true;
+        return TRUE;
       case 0xff09:
         if (l_cec_get_completions_for(gtk_entry_get_text(GTK_ENTRY(widget)))) {
           l_cec_populate();
           gtk_entry_completion_complete(command_entry_completion);
         }
-        return true;
+        return TRUE;
     }
-  return false;
+  return FALSE;
 }
 
 /**
@@ -468,7 +464,7 @@ static bool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
  */
 static int cec_match_func(GtkEntryCompletion*, const char*, GtkTreeIter*,
                           gpointer) {
-  return true;
+  return 1;
 }
 
 /**
@@ -476,14 +472,14 @@ static int cec_match_func(GtkEntryCompletion*, const char*, GtkTreeIter*,
  * The last word at the cursor is replaced with the completion. A word consists
  * of any alphanumeric character or underscore.
  */
-static bool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
+static gbool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
                                GtkTreeIter *iter, gpointer) {
   const char *entry_text = gtk_entry_get_text(GTK_ENTRY(command_entry));
   const char *p = entry_text + strlen(entry_text) - 1;
   while ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') ||
          (*p >= '0' && *p <= '9') || *p == '_') {
     g_signal_emit_by_name(G_OBJECT(command_entry), "move-cursor",
-                          GTK_MOVEMENT_VISUAL_POSITIONS, -1, true, 0);
+                          GTK_MOVEMENT_VISUAL_POSITIONS, -1, TRUE, 0);
     p--;
   }
   if (p < entry_text + strlen(entry_text) - 1)
@@ -495,7 +491,7 @@ static bool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
   g_free(text);
 
   gtk_tree_store_clear(cec_store);
-  return true;
+  return TRUE;
 }
 
 /**
@@ -523,20 +519,20 @@ static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
  * Collects the modifier states as flags and calls Lua to handle the keypress.
  * @see l_handle_keypress
  */
-static bool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
+static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   bool shift = event->state & GDK_SHIFT_MASK;
   bool control = event->state & GDK_CONTROL_MASK;
   bool alt = event->state & GDK_MOD1_MASK;
-  return l_handle_keypress(event->keyval, shift, control, alt);
+  return l_handle_keypress(event->keyval, shift, control, alt) ? TRUE : FALSE;
 }
 
 /**
  * Signal for a Textadept window focus change.
  */
-static bool w_focus(GtkWidget*, GdkEventFocus*, gpointer) {
+static gbool w_focus(GtkWidget*, GdkEventFocus*, gpointer) {
   if (focused_editor && !GTK_WIDGET_HAS_FOCUS(focused_editor))
     gtk_widget_grab_focus(focused_editor);
-  return false;
+  return FALSE;
 }
 
 /**
@@ -544,12 +540,12 @@ static bool w_focus(GtkWidget*, GdkEventFocus*, gpointer) {
  * Currently handled keypresses:
  *  - Escape - hides the search frame if it's open.
  */
-static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
+static gbool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   if (event->keyval == 0xff1b && GTK_WIDGET_VISIBLE(findbox)) {
     gtk_widget_hide(findbox);
     gtk_widget_grab_focus(focused_editor);
-    return true;
-  } else return false;
+    return TRUE;
+  } else return FALSE;
 }
 
 /**
@@ -558,12 +554,12 @@ static bool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
  * Generates a 'quit' event.
  * @see l_close
  */
-static bool w_exit(GtkWidget*, GdkEventAny*, gpointer) {
-  if (!l_handle_event("quit")) return true;
+static gbool w_exit(GtkWidget*, GdkEventAny*, gpointer) {
+  if (!l_handle_event("quit")) return TRUE;
   l_close();
   scintilla_release_resources();
   gtk_main_quit();
-  return false;
+  return FALSE;
 }
 
 // Project Manager
@@ -574,12 +570,12 @@ static bool w_exit(GtkWidget*, GdkEventAny*, gpointer) {
  * 'textadept-pm-view' respectively for styling via gtkrc. The treeview model
  * consists of a gdk-pixbuf for icons and markup text.
  */
-GtkWidget* pm_create_ui() {
-  pm_container = gtk_vbox_new(false, 1);
+GtkWidget *pm_create_ui() {
+  pm_container = gtk_vbox_new(FALSE, 1);
 
   pm_entry = gtk_entry_new();
   gtk_widget_set_name(pm_entry, "textadept-pm-entry");
-  gtk_box_pack_start(GTK_BOX(pm_container), pm_entry, false, false, 0);
+  gtk_box_pack_start(GTK_BOX(pm_container), pm_entry, FALSE, FALSE, 0);
 
   pm_store = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
   GtkTreeSortable *sortable = GTK_TREE_SORTABLE(pm_store);
@@ -590,8 +586,8 @@ GtkWidget* pm_create_ui() {
   pm_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(pm_store));
   g_object_unref(pm_store);
   gtk_widget_set_name(pm_view, "textadept-pm-view");
-  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(pm_view), false);
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(pm_view), true);
+  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(pm_view), FALSE);
+  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(pm_view), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(pm_view), 2);
   gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(pm_view),
                                       pm_search_equal_func, NULL, NULL);
@@ -610,7 +606,7 @@ GtkWidget* pm_create_ui() {
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled),
                                  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(scrolled), pm_view);
-  gtk_box_pack_start(GTK_BOX(pm_container), scrolled, true, true, 0);
+  gtk_box_pack_start(GTK_BOX(pm_container), scrolled, TRUE, TRUE, 0);
 
   signal(pm_entry, "activate", pm_entry_activated);
   signal(pm_entry, "key_press_event", pm_keypress);
@@ -674,7 +670,7 @@ void pm_activate_selection() {
     if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pm_view), path))
       gtk_tree_view_collapse_row(GTK_TREE_VIEW(pm_view), path);
     else
-      gtk_tree_view_expand_row(GTK_TREE_VIEW(pm_view), path, false);
+      gtk_tree_view_expand_row(GTK_TREE_VIEW(pm_view), path, FALSE);
   else {
     l_pm_get_full_path(path);
     l_pm_perform_action();
@@ -756,7 +752,7 @@ static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
  */
 static void pm_entry_activated(GtkWidget *widget, gpointer) {
   const char *entry_text = gtk_entry_get_text(GTK_ENTRY(widget));
-  if (l_pm_get_contents_for(entry_text)) l_pm_populate();
+  if (l_pm_get_contents_for(entry_text, false)) l_pm_populate(NULL);
 }
 
 /**
@@ -765,12 +761,12 @@ static void pm_entry_activated(GtkWidget *widget, gpointer) {
  *   - Ctrl+Tab - Refocuses the Scintilla view.
  *   - Escape - Refocuses the Scintilla view.
  */
-static bool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
+static gbool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   if ((event->keyval == 0xff09 && event->state == GDK_CONTROL_MASK) ||
       event->keyval == 0xff1b) {
     gtk_widget_grab_focus(focused_editor);
-    return true;
-  } else return false;
+    return TRUE;
+  } else return FALSE;
 }
 
 /**
@@ -805,9 +801,9 @@ static void pm_row_activated(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *,
  * If it is a right-click, popup a context menu for the selected node.
  * @see pm_popup_context_menu
  */
-static bool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
-  if (event->type != GDK_BUTTON_PRESS || event->button != 3) return false;
-  pm_popup_context_menu(event); return true;
+static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
+  if (event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
+  pm_popup_context_menu(event); return TRUE;
 }
 
 /**
@@ -815,8 +811,8 @@ static bool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
  * Typically Shift+F10 activates this event.
  * @see pm_popup_context_menu
  */
-static bool pm_popup_menu(GtkWidget *, gpointer) {
-  pm_popup_context_menu(NULL); return true;
+static gbool pm_popup_menu(GtkWidget *, gpointer) {
+  pm_popup_context_menu(NULL); return TRUE;
 }
 
 /**
@@ -838,8 +834,8 @@ static void pm_menu_activate(GtkWidget *menu_item, gpointer) {
 /**
  * Creates the Find/Replace text frame.
  */
-GtkWidget* find_create_ui() {
-  findbox = gtk_table_new(2, 6, false);
+GtkWidget *find_create_ui() {
+  findbox = gtk_table_new(2, 6, FALSE);
 
   GtkWidget *flabel = gtk_label_new_with_mnemonic("_Find:");
   GtkWidget *rlabel = gtk_label_new_with_mnemonic("R_eplace:");
@@ -858,7 +854,7 @@ GtkWidget* find_create_ui() {
 
   gtk_label_set_mnemonic_widget(GTK_LABEL(flabel), find_entry);
   gtk_label_set_mnemonic_widget(GTK_LABEL(rlabel), replace_entry);
-  //gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lua_opt), true);
+  //gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lua_opt), TRUE);
 
   attach(find_entry, 1, 2, 0, 1, expand, normal, 5, 0);
   attach(replace_entry, 1, 2, 1, 2, expand, normal, 5, 0);
@@ -923,12 +919,12 @@ static int get_flags() {
  * Currently handled keypresses:
  *   - Enter - Find next or previous.
  */
-static bool fe_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
+static gbool fe_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   // TODO: if incremental, call l_find()
   if (event->keyval == 0xff0d) {
     l_find(find_text, get_flags(), true);
-    return true;
-  } else return false;
+    return TRUE;
+  } else return FALSE;
 }
 
 /**
@@ -936,11 +932,11 @@ static bool fe_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
  * Currently handled keypresses:
  *   - Enter - Find next or previous.
  */
-static bool re_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
+static gbool re_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   if (event->keyval == 0xff0d) {
     l_find(find_text, get_flags(), true);
-    return true;
-  } else return false;
+    return TRUE;
+  } else return FALSE;
 }
 
 /**
