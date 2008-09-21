@@ -78,7 +78,14 @@ int main(int argc, char **argv) {
 }
 
 #ifdef WIN32
+char *textadept_home;
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
+  char path[260];
+  GetModuleFileName(0, path, sizeof(path));
+  char *last_slash = strrchr(path, '\\');
+  if (last_slash) *last_slash = '\0';
+  textadept_home = (char *)path;
+
   // TODO: lpCmdLine contains command line string, pass to Lua
   gtk_init(0, NULL);
   l_init(0, NULL, false);

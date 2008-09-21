@@ -29,7 +29,7 @@ extern lua_State *lua;
 #ifndef WIN32
 static const char *textadept_home = "/usr/share/textadept/";
 #else
-static const char *textadept_home = "C:\\Program Files\\textadept";
+extern char *textadept_home;
 #endif
 
 static long SS(ScintillaObject *sci, unsigned int msg, unsigned long wParam=0,
