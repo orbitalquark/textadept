@@ -396,6 +396,20 @@ add_handler('double_click',
     end
   end)
 
+add_handler('uri_dropped',
+  function(uris)
+    for uri in uris:gmatch('[^\r\n\f]+') do
+      if uri:match('^file://') then
+        uri = uri:match('^file://([^\r\n\f]+)')
+        if WIN32 then
+          uri = uri:sub(2, -1) -- ignore leading '/'
+          uri = uri:gsub('%%20', ' ') -- sub back for spaces
+        end
+        textadept.io.open(uri)
+      end
+    end
+  end)
+
 ---
 -- [Local table] A table of (integer) brace characters with their matches.
 -- @class table
