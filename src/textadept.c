@@ -79,14 +79,19 @@ int main(int argc, char **argv) {
 
 #ifdef WIN32
 char *textadept_home;
+
+/**
+ * Runs Textadept in Windows.
+ * Sets textadept_home according to the directory the executable is in, inits
+ * the Lua state, creates the user interface, and loads the core/init.lua
+ * script.
+ */
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
   char path[260];
   GetModuleFileName(0, path, sizeof(path));
   char *last_slash = strrchr(path, '\\');
   if (last_slash) *last_slash = '\0';
-  textadept_home = (char *)path;
-
-  // TODO: lpCmdLine contains command line string, pass to Lua
+  textadept_home = static_cast<char *>(path);
   gtk_init(0, NULL);
   l_init(0, NULL, false);
   create_ui();
