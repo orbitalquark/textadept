@@ -287,7 +287,7 @@ local actions = {
   ['Focus PM'] = { t.pm.focus },
   ['Show PM Ctags'] = { pm_activate, 'ctags' },
   ['Show PM Buffers'] = { pm_activate, 'buffers' },
-  ['Show PM Files'] = { pm_activate, '/' },
+  ['Show PM Files'] = { pm_activate, not WIN32 and '/' or 'C:\\' },
   ['Show PM Macros'] = { pm_activate, 'macros' },
   ['Show PM Modules'] = { pm_activate, 'modules' },
 }
