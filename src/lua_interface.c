@@ -62,7 +62,7 @@ const char
  * @param argv The array of command line parameters.
  * @param reinit Flag indicating whether or not to reinitialize the Lua State.
  */
-void l_init(int argc, char **argv, bool reinit) {
+bool l_init(int argc, char **argv, bool reinit) {
   if (!reinit) {
     lua = lua_open();
     lua_newtable(lua);
@@ -115,17 +115,30 @@ void l_init(int argc, char **argv, bool reinit) {
   lua_pushboolean(lua, 1); lua_setglobal(lua, "WIN32");
 #endif
 
-  l_load_script("core/init.lua");
+  return l_load_script("core/init.lua");
 }
 
 /**
  * Loads and runs a given Lua script.
  * @param script_file The path of the Lua script relative to textadept_home.
  */
-void l_load_script(const char *script_file) {
+bool l_load_script(const char *script_file) {
+  bool retval = true;
   char *script = g_strconcat(textadept_home, "/", script_file, NULL);
-  if (luaL_dofile(lua, script) != 0) l_handle_error(lua, NULL);
+  if (luaL_dofile(lua, script) != 0) {
+    const char *errmsg = lua_tostring(lua, -1);
+    lua_settop(lua, 0);
+#ifndef WIN32
+    GtkWidget *dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
+      GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s\n", errmsg);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+#else
+    MessageBox(0, static_cast<LPCSTR>(errmsg), "Error", 0);
+#endif
+    retval = false;
+  }
   g_free(script);
+  return retval;
 }
 
 /**
