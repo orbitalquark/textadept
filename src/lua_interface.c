@@ -1095,7 +1095,8 @@ LF l_view_mt_newindex(LS *lua) {
   else if (streq(key, "size")) {
     GtkWidget *pane = gtk_widget_get_parent(l_checkview(lua, 1));
     if (GTK_IS_PANED(pane))
-      gtk_paned_set_position(GTK_PANED(pane), lua_tonumber(lua, 3));
+      gtk_paned_set_position(GTK_PANED(pane),
+        static_cast<int>(lua_tonumber(lua, 3)));
   } else lua_rawset(lua, 1);
   return 0;
 }
@@ -1260,7 +1261,8 @@ LF l_cf_view_focus(LS *lua) {
 
 LF l_cf_view_split(LS *lua) {
   GtkWidget *editor = l_checkview(lua, 1);
-  bool vertical = lua_gettop(lua) > 1 ? lua_toboolean(lua, 2) : true;
+  bool vertical = true;
+  if (lua_gettop(lua) > 1) vertical = lua_toboolean(lua, 2) == 1;
   split_window(editor, vertical);
   lua_pushvalue(lua, 1); // old view
   lua_getglobal(lua, "view"); // new view
@@ -1279,13 +1281,13 @@ LF l_cf_view_unsplit(LS *lua) {
 void l_create_entry(LS *lua, GtkWidget *c1, GtkWidget *c2, bool vertical) {
   lua_newtable(lua);
   if (GTK_IS_PANED(c1))
-    l_create_entry(lua, child1(c1), child2(c1), GTK_IS_HPANED(c1));
+    l_create_entry(lua, child1(c1), child2(c1), GTK_IS_HPANED(c1) == 1);
   else
     lua_pushinteger(lua,
       l_get_docpointer_index(SS(SCINTILLA(c1), SCI_GETDOCPOINTER)));
   lua_rawseti(lua, -2, 1);
   if (GTK_IS_PANED(c2))
-    l_create_entry(lua, child1(c2), child2(c2), GTK_IS_HPANED(c2));
+    l_create_entry(lua, child1(c2), child2(c2), GTK_IS_HPANED(c2) == 1);
   else
     lua_pushinteger(lua,
       l_get_docpointer_index(SS(SCINTILLA(c2), SCI_GETDOCPOINTER)));
@@ -1301,7 +1303,7 @@ LF l_cf_ta_get_split_table(LS *lua) {
     GtkWidget *pane = gtk_widget_get_parent(focused_editor);
     while (GTK_IS_PANED(gtk_widget_get_parent(pane)))
       pane = gtk_widget_get_parent(pane);
-    l_create_entry(lua, child1(pane), child2(pane), GTK_IS_HPANED(pane));
+    l_create_entry(lua, child1(pane), child2(pane), GTK_IS_HPANED(pane) == 1);
   } else lua_pushinteger(lua, l_get_docpointer_index(
                          SS(SCINTILLA(focused_editor), SCI_GETDOCPOINTER)));
   return 1;
