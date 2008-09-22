@@ -40,14 +40,16 @@ end
 
 ---
 -- Opens a list of files.
--- @param filenames A '|' separated list of filenames to open. If none
+-- @param filenames A '\n' separated list of filenames to open. If none
 --   specified, the user is prompted to open files from a dialog.
 -- @usage textadept.io.open(filename)
 function open(filenames)
   filenames = filenames or cocoa_dialog( 'fileselect', {
     title = 'Open',
     text = 'Select a file(s) to open',
-    ['select-multiple'] = true,
+    -- in Windows, dialog:get_filenames() is unavailable; only allow single
+    -- selection
+    ['select-multiple'] = not WIN32 or nil,
     ['with-directory'] = (buffer.filename or ''):match('.+/')
   } )
   for filename in filenames:gmatch('[^\n]+') do open_helper(filename) end
