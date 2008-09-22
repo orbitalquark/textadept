@@ -2,11 +2,6 @@
 
 #include "textadept.h"
 
-#ifdef WIN32
-#include "Windows.h"
-#define strcasecmp _stricmp
-#endif
-
 #define gbool gboolean
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
@@ -71,11 +66,13 @@ static void button_clicked(GtkWidget *button, gpointer);
  */
 int main(int argc, char **argv) {
   gtk_init(&argc, &argv);
-  l_init(argc, argv, false);
-  create_ui();
-  l_load_script("init.lua");
-  gtk_main();
-  return 0;
+  if (l_init(argc, argv, false)) {
+    create_ui();
+    l_load_script("init.lua");
+    gtk_main();
+    return 0;
+  } else if (lua) lua_close(lua);
+  return 1;
 }
 
 #ifdef WIN32

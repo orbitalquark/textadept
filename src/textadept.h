@@ -12,6 +12,11 @@
 #include <SciLexer.h>
 #include <ScintillaWidget.h>
 
+#ifdef WIN32
+#include "Windows.h"
+#define strcasecmp _stricmp
+#endif
+
 extern "C" {
 #include <lua.h>
 #include <lualib.h>
@@ -63,9 +68,9 @@ GtkWidget *find_create_ui();
 void find_toggle_focus();
 
 // lua_interface.c
-void l_init(int argc, char **argv, bool reinit);
+bool l_init(int argc, char **argv, bool reinit);
 void l_close();
-void l_load_script(const char *script_file);
+bool l_load_script(const char *script_file);
 void l_add_scintilla_window(GtkWidget *editor);
 void l_remove_scintilla_window(GtkWidget *editor);
 void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute);
