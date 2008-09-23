@@ -354,22 +354,6 @@ bool unsplit_window(GtkWidget *editor) {
 }
 
 /**
- * Resizes a GTK pane.
- * @param editor The Scintilla window (typically the current one) contained in
- *   the GTK pane to resize.
- * @param pos The position to resize to.
- * @param increment Flag indicating whether or not the resizing is incremental.
- *   If true, pos is added to the current pane position; otherwise the position
- *   is absolute.
- *   Defaults to true.
- */
-void resize_split(GtkWidget *editor, int pos, bool increment) {
-  GtkWidget *pane = gtk_widget_get_parent(editor);
-  int width = gtk_paned_get_position(GTK_PANED(pane));
-  gtk_paned_set_position(GTK_PANED(pane), pos + (increment ? width : 0));
-}
-
-/**
  * Sets a user-defined GTK menubar and displays it.
  * @param new_menubar The GTK menubar.
  * @see l_ta_mt_newindex
