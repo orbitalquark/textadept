@@ -196,7 +196,6 @@ void create_ui() {
  * Generates a 'view_new' event.
  * @param buffer_id A Scintilla buffer ID to load into the new window. If NULL,
  *   creates a new Scintilla buffer and loads it into the new window.
- *   Defaults to NULL.
  * @return the Scintilla window.
  * @see set_default_editor_properties
  * @see l_add_scintilla_window
@@ -237,14 +236,12 @@ void remove_scintilla_window(GtkWidget *editor) {
  * @param create Flag indicating whether or not to create a buffer. If false,
  *   the ScintillaObject already has a buffer associated with it (typically
  *   because new_scintilla_window was passed a non-NULL buffer_id).
- *   Defaults to true.
  * @param addref Flag indicating whether or not to add a reference to the buffer
  *   in the ScintillaObject when create is false. This is necessary for creating
  *   Scintilla windows in split views. If a buffer appears in two separate
  *   Scintilla windows, that buffer should have multiple references so when one
  *   Scintilla window closes, the buffer is not deleted because its reference
  *   count is not zero.
- *   Defaults to true.
  * @see set_default_buffer_properties
  * @see l_add_scintilla_buffer
  */
@@ -278,7 +275,6 @@ void remove_scintilla_buffer(sptr_t doc) {
  * @param editor The Scintilla window to split.
  * @param vertical Flag indicating whether to split the window vertically or
  *   horozontally.
- *   Defaults to true.
  */
 void split_window(GtkWidget *editor, bool vertical) {
   g_object_ref(editor);
