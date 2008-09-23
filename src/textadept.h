@@ -51,8 +51,7 @@ void remove_scintilla_buffer(sptr_t doc);
 void split_window(GtkWidget *editor, bool vertical);
 bool unsplit_window(GtkWidget *editor);
 void set_menubar(GtkWidget *menubar);
-void set_statusbar_text(const char *text);
-void set_docstatusbar_text(const char *text);
+void set_statusbar_text(const char *text, bool docbar);
 void ce_toggle_focus();
 
 GtkWidget *pm_create_ui();

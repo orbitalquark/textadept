@@ -1121,9 +1121,9 @@ LF l_ta_mt_newindex(LS *lua) {
   if (streq(key, "title"))
     gtk_window_set_title(GTK_WINDOW(window), lua_tostring(lua, 3));
   else if (streq(key, "statusbar_text"))
-    set_statusbar_text(lua_tostring(lua, 3));
+    set_statusbar_text(lua_tostring(lua, 3), false);
   else if (streq(key, "docstatusbar_text"))
-    set_docstatusbar_text(lua_tostring(lua, 3));
+    set_statusbar_text(lua_tostring(lua, 3), true);
   else if (streq(key, "focused_doc_pointer") || streq(key, "clipboard_text"))
     luaL_error(lua, "'%s' is read-only.", key);
   else if (streq(key, "menubar")) {
