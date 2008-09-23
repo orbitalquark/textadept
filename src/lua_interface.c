@@ -238,7 +238,6 @@ void l_remove_scintilla_window(GtkWidget *editor) {
  * @param absolute Flag indicating whether or not the index specified in 'views'
  *   is absolute. If false, focuses the window relative to the currently focused
  *   window for the given index.
- *   Defaults to true.
  */
 void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
   if (!l_ta_get(lua, "views")) luaL_error(lua, views_dne);
@@ -376,7 +375,6 @@ unsigned int l_get_docpointer_index(sptr_t doc) {
  * @param absolute Flag indicating whether or not the index specified in 'views'
  *   is absolute. If false, focuses the document relative to the currently
  *   focused document for the given index.
- *   Defaults to true.
  */
 void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
   if (!l_ta_get(lua, "buffers")) luaL_error(lua, buffers_dne);
@@ -590,7 +588,6 @@ static long l_toscintillaparam(LS *lua, int type, int &arg_idx) {
  * @param lua The Lua State.
  * @param callback A GCallback associated with each menu item.
  * @param submenu Flag indicating whether or not this menu is a submenu.
- *   Defaults to false.
  */
 GtkWidget *l_create_gtkmenu(LS *lua, GCallback callback, bool submenu) {
   GtkWidget *menu = gtk_menu_new(), *menu_item = 0, *submenu_root = 0;
@@ -756,7 +753,6 @@ void l_cec_populate() {
  * @param expanding Flag indicating whether or not a treenode is being expanded.
  *   If true, the tree is walked up from the node to top creating a full path
  *   table at the stack top to be used essentially as entry_text.
- *   Defaults to false.
  * @see l_pm_get_full_path
  */
 bool l_pm_get_contents_for(const char *entry_text, bool expanding) {
@@ -775,7 +771,6 @@ bool l_pm_get_contents_for(const char *entry_text, bool expanding) {
  * stack top.
  * @param initial_iter The initial GtkTreeIter. If not NULL, it is a treenode
  *   being expanded and the contents will be added to that expanding node.
- *   Defaults to NULL.
  * @see l_pm_get_contents_for
  */
 void l_pm_populate(GtkTreeIter *initial_iter) {
