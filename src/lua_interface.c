@@ -1094,9 +1094,9 @@ LF l_view_mt_newindex(LS *lua) {
     luaL_error(lua, "'%s' is read-only.", key);
   else if (streq(key, "size")) {
     GtkWidget *pane = gtk_widget_get_parent(l_checkview(lua, 1));
-    if (GTK_IS_PANED(pane))
-      gtk_paned_set_position(GTK_PANED(pane),
-        static_cast<int>(lua_tonumber(lua, 3)));
+    int size = static_cast<int>(lua_tonumber(lua, 3));
+    if (size < 0) size = 0;
+    if (GTK_IS_PANED(pane)) gtk_paned_set_position(GTK_PANED(pane), size);
   } else lua_rawset(lua, 1);
   return 0;
 }
