@@ -370,22 +370,14 @@ void set_menubar(GtkWidget *new_menubar) {
 /**
  * Sets the notification statusbar text.
  * @param text The text to display.
+ * @param docbar Flag indicating whether or not the statusbar text is for the
+ *   docstatusbar.
  */
-void set_statusbar_text(const char *text) {
-  if (!statusbar) return;
-  gtk_statusbar_pop(GTK_STATUSBAR(statusbar), 0);
-  gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, text);
-}
-
-/**
- * Sets the document status statusbar text.
- * This is typically set via a Scintilla 'UpdateUI' notification.
- * @param text The text to display.
- */
-void set_docstatusbar_text(const char *text) {
-  if (!docstatusbar) return;
-  gtk_statusbar_pop(GTK_STATUSBAR(docstatusbar), 0);
-  gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, text);
+void set_statusbar_text(const char *text, bool docbar) {
+  GtkWidget *bar = docbar ? docstatusbar : statusbar;
+  if (!bar) return;
+  gtk_statusbar_pop(GTK_STATUSBAR(bar), 0);
+  gtk_statusbar_push(GTK_STATUSBAR(bar), 0, text);
 }
 
 /**
