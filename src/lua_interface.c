@@ -642,20 +642,12 @@ void l_handle_error(LS *lua, const char *errmsg) {
 /**
  * Handles a Textadept event.
  * @param s String event name.
- */
-bool l_handle_event(const char *s) {
-  return l_is_ta_table_function("events", s) ? l_call_function(0, 1) : false;
-}
-
-/**
- * Handles a Textadept event.
- * @param s String event name.
- * @param arg String first argument.
+ * @param arg Optional string argument.
  */
 bool l_handle_event(const char *s, const char *arg) {
   if (!l_is_ta_table_function("events", s)) return false;
-  lua_pushstring(lua, arg);
-  return l_call_function(1, 1);
+  if (arg) lua_pushstring(lua, arg);
+  return l_call_function(arg ? 1 : 0, 1);
 }
 
 /**
