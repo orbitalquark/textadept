@@ -208,16 +208,18 @@ add_handler('view_new',
     buffer.property['textadept.home'] = _HOME
     buffer.property['lexer.lua.home'] = _HOME..'/lexers/'
     buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
-    --buffer.property['lexer.lua.color.theme'] = 'scite'
+    if _THEME and #_THEME > 0 then
+      buffer.property['lexer.lua.color.theme'] = _THEME
+    end
 
     -- lexer
     buffer.style_bits = 8
     buffer.lexer = c.SCLEX_LPEG
     buffer:set_lexer_language('container')
 
-    local theme = buffer:get_property_expanded('lexer.lua.color.theme')
-    if theme and theme ~= '' then
-      local ret, errmsg = pcall(dofile, _HOME..'/themes/'..theme..'.lua')
+    if _THEME and #_THEME > 0 then
+      local ret, errmsg =
+        pcall(dofile, _HOME..'/themes/'.._THEME..'/view.lua')
       if ret then return end
       io.stderr:write(errmsg)
     end
@@ -285,6 +287,15 @@ add_handler('buffer_new',
       buffer.style_bits = 8
       buffer.lexer = textadept.constants.SCLEX_LPEG
       buffer:set_lexer_language('container')
+
+      if _THEME and #_THEME > 0 then
+       local ret, errmsg =
+         pcall(dofile, _HOME..'/themes/'.._THEME..'/buffer.lua')
+        if ret then return end
+        io.stderr:write(errmsg)
+      end
+
+      -- Default theme.
 
       -- folding
       buffer.property['fold'] = '1'
