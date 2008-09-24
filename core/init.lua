@@ -6,6 +6,7 @@ if not WIN32 then
 else
   package.cpath = _HOME..'/core/?.dll;'..package.cpath
 end
+_THEME = ''
 
 require 'iface'
 require 'events'
