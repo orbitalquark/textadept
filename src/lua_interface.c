@@ -1099,6 +1099,12 @@ LF l_ta_mt_index(LS *lua) {
       gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
     if (text) lua_pushstring(lua, text);
     g_free(text);
+  } else if (streq(key, "size")) {
+    lua_newtable(lua);
+    int width, height;
+    gtk_window_get_size(GTK_WINDOW(window), &width, &height);
+    lua_pushnumber(lua, width); lua_rawseti(lua, -2, 1);
+    lua_pushnumber(lua, height); lua_rawseti(lua, -2, 2);
   } else lua_rawget(lua, 1);
   return 1;
 }
@@ -1124,6 +1130,16 @@ LF l_ta_mt_newindex(LS *lua) {
       gtk_menu_bar_append(GTK_MENU_BAR(menubar), menu_item);
       lua_pop(lua, 1); // value
     } set_menubar(menubar);
+  } else if (streq(key, "size")) {
+    const char *errmsg = "textadept.size must be a table ({ width, height }).";
+    if (!lua_istable(lua, 3) || lua_objlen(lua, 3) != 2)
+      luaL_error(lua, errmsg);
+    lua_rawgeti(lua, 3, 1); lua_rawgeti(lua, 3, 2);
+    int width = static_cast<int>(lua_tonumber(lua, -2));
+    int height = static_cast<int>(lua_tonumber(lua, -1));
+    lua_pop(lua, 2); // width, height
+    if (width > 0 && height > 0)
+      gtk_window_resize(GTK_WINDOW(window), width, height);
   } else lua_rawset(lua, 1);
   return 0;
 }
@@ -1364,5 +1380,4 @@ LF l_cf_pm_activate(LS *) {
   g_signal_emit_by_name(G_OBJECT(pm_entry), "activate"); return 0;
 }
 LF l_cf_find_focus(LS *) { find_toggle_focus(); return 0; }
-
 LF l_cf_ce_focus(LS *) { ce_toggle_focus(); return 0; }
