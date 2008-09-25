@@ -174,7 +174,7 @@ end
 -- @usage textadept.io.load_session(filename)
 function load_session(filename, only_pm)
   local textadept = textadept
-  local user_dir = os.getenv(WIN32 and 'USERPROFILE' or 'HOME')
+  local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
   if not user_dir then return end
   local ta_session = user_dir..'/.ta_session'
   local f = io.open(filename or ta_session)
@@ -294,7 +294,7 @@ function save_session(filename)
   local pm = textadept.pm
   session = session..("pm: %d %s\n"):format(pm.width, pm.entry_text)
   -- Write the session.
-  local user_dir = os.getenv(WIN32 and 'USERPROFILE' or 'HOME')
+  local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
   if not user_dir then return end
   local ta_session = user_dir..'/.ta_session'
   local f = io.open(filename or ta_session, 'w')
