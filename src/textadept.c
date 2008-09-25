@@ -467,8 +467,7 @@ static gbool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
  * Signal for a Scintilla notification.
  */
 static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer) {
-  SCNotification *n = reinterpret_cast<SCNotification*>(lParam);
-  l_handle_scnnotification(n);
+  l_handle_scnnotification(reinterpret_cast<SCNotification*>(lParam));
 }
 
 /**

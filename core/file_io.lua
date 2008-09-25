@@ -212,7 +212,10 @@ function load_session(filename, only_pm)
           current_view = tonumber(view_idx) or 1
         end
       end
-      if line:match('^pm:') then
+      if line:match('^size:') then
+        local width, height = line:match('^size: (%d+) (%d+)$')
+        if width and height then textadept.size = { width, height } end
+      elseif line:match('^pm:') then
         local width, text = line:match('^pm: (%d+) (.+)$')
         textadept.pm.width = width or 0
         textadept.pm.entry_text = text or ''
@@ -286,6 +289,8 @@ function save_session(filename)
   end
   session = session..("current_view: %d\n"):format(current_view)
   -- Write out other things.
+  local size = textadept.size
+  session = session..("size: %d %d\n"):format( size[1], size[2] )
   local pm = textadept.pm
   session = session..("pm: %d %s\n"):format(pm.width, pm.entry_text)
   -- Write the session.
