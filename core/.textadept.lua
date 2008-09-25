@@ -19,8 +19,9 @@ module('textadept')
 -- @field statusbar_text The text displayed by the statusbar (write-only).
 -- @field docstatusbar_text The text displayed by the doc statusbar
 --   (write-only).
+-- @field size The size of the Textadept window.
 textadept = { title = nil, focused_doc_pointer = nil, clipboard_text = nil,
-  menubar = nil, statusbar_text = nil, docstatusbar_text = nil }
+  menubar = nil, statusbar_text = nil, docstatusbar_text = nil, size = nil }
 
 ---
 -- A numerically indexed table of open buffers in Textadept.
