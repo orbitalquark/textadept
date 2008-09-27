@@ -228,6 +228,11 @@ function next()
       buffer:set_sel(s, s + #next_item)
     else -- use the first mirror as a placeholder
       s, e = buffer:find('%'..index..'[^(]', 2097152, s_start) -- regexp
+      if not s and not e then
+        -- Scintilla cannot match [\r\n\f] in regexp mode; use '$' instead
+        s, e = buffer:find('%'..index..'$', 2097152, s_start) -- regexp
+        if e then e = e + 1 end
+      end
       if not s then snippet.index = index + 1 return next() end
       buffer:set_sel(s, e - 1) buffer:replace_sel('')
     end
