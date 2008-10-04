@@ -247,7 +247,7 @@ local actions = {
   ['Find Next'] = { }, -- TODO:
   ['Find Prev'] = { }, -- TODO:
   Replace = { }, -- TODO:
-  ['Find and Replace'] = { }, -- TODO:
+  ['Find and Replace'] = { t.find.focus },
   ['Jump to'] = { m_editing.goto_line },
   -- Tools
   ['Focus Command Entry'] = { t.command_entry.focus },
