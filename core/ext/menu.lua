@@ -280,8 +280,12 @@ local actions = {
   ['Split Horizontal'] = { 'split', v, false },
   ['Unsplit'] = { function() view:unsplit() end },
   ['Unsplit All'] = { function() while view:unsplit() do end end },
-  ['Grow View'] = { function() view.size = view.size + 10 end },
-  ['Shrink View'] = { function() view.size = view.size - 10 end },
+  ['Grow View'] = {
+    function() if view.size then view.size = view.size + 10 end end
+  },
+  ['Shrink View'] = {
+    function() if view.size then view.size = view.size - 10 end end
+  },
   -- Project Manager
   ['Toggle PM Visible'] = { t.pm.toggle_visible },
   ['Focus PM'] = { t.pm.focus },
