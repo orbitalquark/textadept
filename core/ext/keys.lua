@@ -69,7 +69,10 @@ module('textadept.keys', package.seeall)
 
 -- options
 local SCOPES_ENABLED = true
-local CTRL, SHIFT, ALT, ADD = 'c', 's', 'a', ''
+local ADD = ''
+local CTRL = 'c'..ADD
+local SHIFT = 's'..ADD
+local ALT = 'a'..ADD
 -- end options
 
 ---
@@ -119,39 +122,40 @@ function clear_key_sequence() keychain = {} textadept.statusbar_text = '' end
 --   return value will tell Textadept not to handle the key afterwords.
 local function keypress(code, shift, control, alt)
   local buffer, textadept = buffer, textadept
+  local string, pcall = string, pcall
   local keys = _G.keys
-  local key_seq = ''
-  if control then key_seq = key_seq..CTRL..ADD end
-  if shift   then key_seq = key_seq..SHIFT..ADD end
-  if alt     then key_seq = key_seq..ALT..ADD end
+  control = control and CTRL or ''
+  shift = shift and SHIFT or ''
+  alt = alt and ALT or ''
+  local key
   --print(code, string.char(code))
   if code < 256 then
-    key_seq = key_seq..string.char(code):lower()
+    key = string.char(code):lower()
   else
     if not KEYSYMS[code] then return end
-    key_seq = key_seq..KEYSYMS[code]
+    key = KEYSYMS[code]
   end
+  local key_seq = string.format('%s%s%s%s', control, shift, alt, key)
 
-  if key_seq == keys.clear_sequence and #keychain > 0 then
+  if #keychain > 0 and key_seq == keys.clear_sequence then
     clear_key_sequence()
     return true
   end
 
   local lexer = buffer:get_lexer_language()
-  local style = buffer.style_at[buffer.current_pos]
-  local scope = buffer:get_style_name(style)
-  --print(key_seq, 'Lexer: '..lexer, 'Scope: '..scope)
-
   keychain[#keychain + 1] = key_seq
   local ret, func, args
   if SCOPES_ENABLED then
-    ret, func, args = pcall(try_get_cmd1, keys, key_seq, lexer, scope)
+    local style = buffer.style_at[buffer.current_pos]
+    local scope = buffer:get_style_name(style)
+    --print(key_seq, 'Lexer: '..lexer, 'Scope: '..scope)
+    ret, func, args = pcall(try_get_cmd1, keys, lexer, scope)
   end
   if not ret and func ~= -1 then
-    ret, func, args = pcall(try_get_cmd2, keys, key_seq, lexer)
+    ret, func, args = pcall(try_get_cmd2, keys, lexer)
   end
   if not ret and func ~= -1 then
-    ret, func, args = pcall(try_get_cmd3, keys, key_seq)
+    ret, func, args = pcall(try_get_cmd3, keys)
   end
 
   if ret then
@@ -181,19 +185,19 @@ textadept.events.add_handler('keypress', keypress, 1)
 ---
 -- [Local function] Tries to get a key command based on the lexer and current
 -- scope.
-try_get_cmd1 = function(keys, key_seq, lexer, scope)
+try_get_cmd1 = function(keys, lexer, scope)
   return try_get_cmd( keys[lexer][scope] )
 end
 
 ---
 -- [Local function] Tries to get a key command based on the lexer.
-try_get_cmd2 = function(keys, key_seq, lexer)
+try_get_cmd2 = function(keys, lexer)
   return try_get_cmd( keys[lexer] )
 end
 
 ---
 -- [Local function] Tries to get a global key command.
-try_get_cmd3 = function(keys, key_seq)
+try_get_cmd3 = function(keys)
   return try_get_cmd(keys)
 end
 
