@@ -75,13 +75,13 @@ int main(int argc, char **argv) {
     char path[260];
     CFURLRef bundle_url = CFBundleCopyBundleURL(bundle);
     CFStringRef bundle_path =
-	  CFURLCopyFileSystemPath(bundle_url, kCFURLPOSIXPathStyle);
-	CFStringGetCString(bundle_path, path, 260, kCFStringEncodingASCII);
+    CFURLCopyFileSystemPath(bundle_url, kCFURLPOSIXPathStyle);
+    CFStringGetCString(bundle_path, path, 260, kCFStringEncodingASCII);
     char *resources_path = g_strconcat(path, "/Contents/Resources/", NULL);
-	textadept_home = static_cast<char*>(resources_path);
-	g_free(path);
-	CFRelease(bundle_url);
-	CFRelease(bundle_path);
+    textadept_home = static_cast<char*>(resources_path);
+    g_free(path);
+    CFRelease(bundle_url);
+    CFRelease(bundle_path);
   } else textadept_home = "";
 #endif
   gtk_init(&argc, &argv);
