@@ -50,21 +50,40 @@ GtkWidget *findbox, *find_entry, *replace_entry;
 GtkWidget *fnext_button, *fprev_button, *r_button, *ra_button;
 GtkWidget *match_case_opt, *whole_word_opt, /**incremental_opt,*/ *lua_opt;
 GtkAttachOptions
-  normal = static_cast<GtkAttachOptions>(GTK_SHRINK | GTK_FILL),
-  expand = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
+  ao_normal = static_cast<GtkAttachOptions>(GTK_SHRINK | GTK_FILL),
+  ao_expand = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
 
 static gbool fe_keypress(GtkWidget*, GdkEventKey *event, gpointer);
 static gbool re_keypress(GtkWidget*, GdkEventKey *event, gpointer);
 static void button_clicked(GtkWidget *button, gpointer);
 
+#if WIN32 || MAC
+char *textadept_home;
+#endif
+
 /**
- * Runs Textadept.
+ * Runs Textadept in Linux or Mac.
  * Inits the Lua State, creates the user interface, and loads the core/init.lua
  * script.
  * @param argc The number of command line params.
  * @param argv The array of command line params.
  */
 int main(int argc, char **argv) {
+#ifdef MAC
+  CFBundleRef bundle = CFBundleGetMainBundle();
+  if (bundle) {
+    char path[260];
+    CFURLRef bundle_url = CFBundleCopyBundleURL(bundle);
+    CFStringRef bundle_path =
+	  CFURLCopyFileSystemPath(bundle_url, kCFURLPOSIXPathStyle);
+	CFStringGetCString(bundle_path, path, 260, kCFStringEncodingASCII);
+    char *resources_path = g_strconcat(path, "/Contents/Resources/", NULL);
+	textadept_home = static_cast<char*>(resources_path);
+	g_free(path);
+	CFRelease(bundle_url);
+	CFRelease(bundle_path);
+  } else textadept_home = "";
+#endif
   gtk_init(&argc, &argv);
   if (l_init(argc, argv, false)) {
     create_ui();
@@ -76,8 +95,6 @@ int main(int argc, char **argv) {
 }
 
 #ifdef WIN32
-char *textadept_home;
-
 /**
  * Runs Textadept in Windows.
  * Sets textadept_home according to the directory the executable is in before
@@ -824,18 +841,18 @@ GtkWidget *find_create_ui() {
   gtk_label_set_mnemonic_widget(GTK_LABEL(rlabel), replace_entry);
   //gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lua_opt), TRUE);
 
-  attach(find_entry, 1, 2, 0, 1, expand, normal, 5, 0);
-  attach(replace_entry, 1, 2, 1, 2, expand, normal, 5, 0);
-  attach(flabel, 0, 1, 0, 1, normal, normal, 5, 0);
-  attach(rlabel, 0, 1, 1, 2, normal, normal, 5, 0);
-  attach(fnext_button, 2, 3, 0, 1, normal, normal, 0, 0);
-  attach(fprev_button, 3, 4, 0, 1, normal, normal, 0, 0);
-  attach(r_button, 2, 3, 1, 2, normal, normal, 0, 0);
-  attach(ra_button, 3, 4, 1, 2, normal, normal, 0, 0);
-  attach(match_case_opt, 4, 5, 0, 1, normal, normal, 5, 0);
-  attach(whole_word_opt, 4, 5, 1, 2, normal, normal, 5, 0);
-  //attach(incremental_opt, 5, 6, 0, 1, normal, normal, 5, 0);
-  attach(lua_opt, 5, 6, 0, 1, normal, normal, 5, 0);
+  attach(find_entry, 1, 2, 0, 1, ao_expand, ao_normal, 5, 0);
+  attach(replace_entry, 1, 2, 1, 2, ao_expand, ao_normal, 5, 0);
+  attach(flabel, 0, 1, 0, 1, ao_normal, ao_normal, 5, 0);
+  attach(rlabel, 0, 1, 1, 2, ao_normal, ao_normal, 5, 0);
+  attach(fnext_button, 2, 3, 0, 1, ao_normal, ao_normal, 0, 0);
+  attach(fprev_button, 3, 4, 0, 1, ao_normal, ao_normal, 0, 0);
+  attach(r_button, 2, 3, 1, 2, ao_normal, ao_normal, 0, 0);
+  attach(ra_button, 3, 4, 1, 2, ao_normal, ao_normal, 0, 0);
+  attach(match_case_opt, 4, 5, 0, 1, ao_normal, ao_normal, 5, 0);
+  attach(whole_word_opt, 4, 5, 1, 2, ao_normal, ao_normal, 5, 0);
+  //attach(incremental_opt, 5, 6, 0, 1, ao_normal, ao_normal, 5, 0);
+  attach(lua_opt, 5, 6, 0, 1, ao_normal, ao_normal, 5, 0);
 
   signal(find_entry, "key_press_event", fe_keypress);
   signal(replace_entry, "key_press_event", re_keypress);

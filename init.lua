@@ -26,10 +26,12 @@ if not RESETTING then
     local base_dir = arg[0]:match('^.+/') or ''
     local filepath
     for _, filename in ipairs(arg) do
-      if not filename:match('^~?/') then
-        textadept.io.open(base_dir..filename)
-      else
-        textadept.io.open(filename)
+      if not MAC or not filename:match('^%-psn_0') then
+        if not filename:match('^~?/') then
+          textadept.io.open(base_dir..filename)
+        else
+          textadept.io.open(filename)
+        end
       end
     end
     -- read only the Project Manager session settings
