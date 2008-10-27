@@ -12,16 +12,20 @@
 #include <SciLexer.h>
 #include <ScintillaWidget.h>
 
-#ifdef WIN32
-#include "Windows.h"
-#define strcasecmp _stricmp
-#endif
-
 extern "C" {
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
 }
+
+#ifdef WIN32
+#include "Windows.h"
+#define strcasecmp _stricmp
+#endif
+
+#ifdef MAC
+#include "CoreFoundation/CoreFoundation.h"
+#endif
 
 // globals
 extern GtkWidget
@@ -31,7 +35,7 @@ extern GtkWidget
 extern GtkEntryCompletion *command_entry_completion;
 extern GtkTreeStore *cec_store, *pm_store;
 extern lua_State *lua;
-#ifndef WIN32
+#if !(WIN32 || MAC)
 static const char *textadept_home = "/usr/share/textadept/";
 #else
 extern char *textadept_home;
@@ -59,7 +63,7 @@ void pm_toggle_focus();
 void pm_open_parent(GtkTreeIter *iter, GtkTreePath *path);
 void pm_close_parent(GtkTreeIter *iter, GtkTreePath *path);
 void pm_activate_selection();
-void pm_popup_context_menu(GdkEventButton *event, GCallback callback);
+void pm_popup_context_menu(GdkEventButton *event);
 void pm_process_selected_menu_item(GtkWidget *menu_item);
 
 GtkWidget *find_create_ui();

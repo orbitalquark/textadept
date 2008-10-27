@@ -11,7 +11,9 @@ _THEME = ''
 require 'iface'
 require 'events'
 require 'file_io'
-require 'lua_dialog'
+if not MAC then
+  require 'lua_dialog'
+end
 
 ---
 -- Checks if the buffer being indexed is the currently focused buffer.
@@ -36,10 +38,23 @@ end
 --   used.
 -- @return string CocoaDialog result.
 function cocoa_dialog(kind, opts)
-  local args = { kind }
+  local args = not MAC and { kind } or ''
   for k, v in pairs(opts) do
-    args[#args + 1] = '--'..k
-    if type(v) == 'string' then args[#args + 1] = v end
+    if not MAC then
+      args[#args + 1] = '--'..k
+      if type(v) == 'string' then args[#args + 1] = v end
+    else
+      args = args..' --'..k
+      if type(v) == 'string' then args = args..' "'..v..'"' end
+    end
   end
-  return lua_dialog.run(args)
+  if not MAC then
+    return lua_dialog.run(args)
+  else
+    local cocoa_dialog = '/CocoaDialog.app/Contents/MacOS/CocoaDialog '
+    local p = io.popen(_HOME..cocoa_dialog..kind..args)
+    local out = p:read('*all')
+    p:close()
+    return out
+  end
 end

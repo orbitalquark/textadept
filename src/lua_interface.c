@@ -114,6 +114,9 @@ bool l_init(int argc, char **argv, bool reinit) {
 #ifdef WIN32
   lua_pushboolean(lua, 1); lua_setglobal(lua, "WIN32");
 #endif
+#ifdef MAC
+  lua_pushboolean(lua, 1); lua_setglobal(lua, "MAC");
+#endif
 
   return l_load_script("core/init.lua");
 }
