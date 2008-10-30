@@ -130,7 +130,16 @@ local function keypress(code, shift, control, alt)
   local key
   --print(code, string.char(code))
   if code < 256 then
-    key = string.char(code):lower()
+    key_seq = key_seq..string.char(code):lower()
+    if MAC and not shift and not control and not alt then
+      local ch = string.char(code)
+      -- work around native GTK-OSX's handling of Alt key
+      if ch:match('[^A-Za-z ]') then
+        buffer:add_text(ch)
+        textadept.events.handle('char_added', ch)
+        return true
+      end
+    end
   else
     if not KEYSYMS[code] then return end
     key = KEYSYMS[code]
