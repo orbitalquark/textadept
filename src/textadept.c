@@ -5,6 +5,10 @@
 #define gbool gboolean
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
+#ifdef MAC
+using namespace Scintilla;
+#endif
+
 // Textadept
 GtkWidget
   *window, *focused_editor, *command_entry,
@@ -24,6 +28,11 @@ static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer);
 static gbool w_focus(GtkWidget*, GdkEventFocus *, gpointer);
 static gbool w_keypress(GtkWidget*, GdkEventKey *event, gpointer);
 static gbool w_exit(GtkWidget*, GdkEventAny*, gpointer);
+#ifdef MAC
+static OSErr w_ae_open(const AppleEvent *event, AppleEvent *, long);
+static OSErr w_ae_quit(const AppleEvent *event, AppleEvent *, long);
+void cfurlref_to_char(CFURLRef url, char *path, int len);
+#endif
 
 // Project Manager
 GtkWidget *pm_view, *pm_entry, *pm_container;
@@ -72,16 +81,13 @@ int main(int argc, char **argv) {
 #ifdef MAC
   CFBundleRef bundle = CFBundleGetMainBundle();
   if (bundle) {
-    char path[260];
+    char *bundle_path = static_cast<char*>(malloc(FILENAME_MAX * sizeof(char)));
     CFURLRef bundle_url = CFBundleCopyBundleURL(bundle);
-    CFStringRef bundle_path =
-    CFURLCopyFileSystemPath(bundle_url, kCFURLPOSIXPathStyle);
-    CFStringGetCString(bundle_path, path, 260, kCFStringEncodingASCII);
-    char *resources_path = g_strconcat(path, "/Contents/Resources/", NULL);
-    textadept_home = static_cast<char*>(resources_path);
-    g_free(path);
-    CFRelease(bundle_url);
-    CFRelease(bundle_path);
+    cfurlref_to_char(bundle_url, bundle_path, FILENAME_MAX);
+    char *res_path = g_strconcat(bundle_path, "/Contents/Resources/", NULL);
+	textadept_home = static_cast<char*>(res_path);
+	g_free(bundle_path);
+	CFRelease(bundle_url);
   } else textadept_home = "";
 #endif
   gtk_init(&argc, &argv);
@@ -102,7 +108,7 @@ int main(int argc, char **argv) {
  * @see main
  */
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
-  char path[260];
+  char path[FILENAME_MAX];
   GetModuleFileName(0, path, sizeof(path));
   char *last_slash = strrchr(path, '\\');
   if (last_slash) *last_slash = '\0';
@@ -146,6 +152,13 @@ void create_ui() {
   signal(window, "delete_event", w_exit);
   signal(window, "focus-in-event", w_focus);
   signal(window, "key_press_event", w_keypress);
+  
+#ifdef MAC
+  AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
+                        NewAEEventHandlerUPP(w_ae_open), 0, false);
+  AEInstallEventHandler(kCoreEventClass, kAEQuitApplication,
+                        NewAEEventHandlerUPP(w_ae_quit), 0, false);
+#endif
 
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
   gtk_container_add(GTK_CONTAINER(window), vbox);
@@ -507,7 +520,11 @@ static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
 static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   bool shift = event->state & GDK_SHIFT_MASK;
   bool control = event->state & GDK_CONTROL_MASK;
+#ifndef MAC
   bool alt = event->state & GDK_MOD1_MASK;
+#else
+  bool alt = event->state & GDK_META_MASK;
+#endif
   return l_handle_keypress(event->keyval, shift, control, alt) ? TRUE : FALSE;
 }
 
@@ -546,6 +563,57 @@ static gbool w_exit(GtkWidget*, GdkEventAny*, gpointer) {
   gtk_main_quit();
   return FALSE;
 }
+
+#ifdef MAC
+/**
+ * Signal for an Open Document AppleEvent.
+ * Generates a 'appleevent_odoc' event for each document sent.
+ * @see l_handle_event
+ */
+static OSErr w_ae_open(const AppleEvent *event, AppleEvent*, long) {
+  AEDescList file_list;
+  if (AEGetParamDesc(event, keyDirectObject, typeAEList, &file_list) == noErr) {
+    long count = 0;
+    AECountItems(&file_list, &count);
+    for (int i = 1; i <= count; i++) {
+      FSRef fsref;
+      char *path = static_cast<char*>(malloc(FILENAME_MAX * sizeof(char)));
+      AEGetNthPtr(
+        &file_list, i, typeFSRef, NULL, NULL, &fsref, sizeof(FSRef), NULL);
+      CFURLRef url = CFURLCreateFromFSRef(kCFAllocatorDefault, &fsref);
+      if (url) {
+        cfurlref_to_char(url, path, FILENAME_MAX);
+        l_handle_event("appleevent_odoc", path);
+        CFRelease(url);
+      }
+      g_free(path);
+    }
+    AEDisposeDesc(&file_list);
+  }
+  return noErr;
+}
+
+/**
+ * Signal for a Quit Application AppleEvent.
+ * Calls the signal for exiting Textadept.
+ * @see w_exit
+ */
+static OSErr w_ae_quit(const AppleEvent *event, AppleEvent*, long) {
+  if (w_exit(NULL, NULL, NULL)) return noErr;
+  return errAEEventNotHandled;
+}
+
+/**
+ * Helper function to convert an Apple CFURLRef to a char*.
+ * @param url The CFURLRef for a file URL.
+ * @return char* containing the filepath in POSIX style.
+ */
+void cfurlref_to_char(CFURLRef url, char *path, int len) {
+  CFStringRef str = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
+  CFStringGetCString(str, path, len, kCFStringEncodingASCII);
+  CFRelease(str);
+}
+#endif
 
 // Project Manager
 

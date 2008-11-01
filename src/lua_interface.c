@@ -16,6 +16,10 @@
     l_cfunc(l, ni, "__newindex"); \
   } lua_setmetatable(l, -2); }
 
+#ifdef MAC
+using namespace Scintilla;
+#endif
+
 LS *lua;
 bool closing = false;
 
@@ -523,7 +527,7 @@ bool l_is_ta_table_function(const char *table, const char *function) {
  * argument.
  * @param nargs The number of arguments to pass to the Lua function to call.
  * @param retn Optional number of expected return values. Defaults to 0.
- * @param keep_return Optoinal flag indicating whether or not to keep the return
+ * @param keep_return Optional flag indicating whether or not to keep the return
  *   values at the top of the stack. If false, discards the return values.
  *   Defaults to false.
  */
@@ -1247,7 +1251,11 @@ LF l_cf_buffer_find(LS *lua) {
 
 LF l_cf_buffer_text_range(LS *lua) {
   l_check_focused_buffer(lua, 1);
+#ifndef MAC
   TextRange tr;
+#else
+  Scintilla::Textrange tr;
+#endif
   tr.chrg.cpMin = luaL_checkinteger(lua, 2);
   tr.chrg.cpMax = luaL_checkinteger(lua, 3);
   char *text = new char[tr.chrg.cpMax - tr.chrg.cpMin + 1];

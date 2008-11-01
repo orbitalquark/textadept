@@ -521,6 +521,11 @@ add_handler('quit',
     return true
   end)
 
+if MAC then
+  function appleevent_odoc(uri) return handle('appleevent_odoc', uri) end
+  add_handler('appleevent_odoc', function(uri) textadept.io.open(uri) end)
+end
+
 ---
 -- Default error handler.
 -- Opens a new buffer (if one hasn't already been opened) for printing errors.
