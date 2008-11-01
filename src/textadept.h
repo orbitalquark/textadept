@@ -3,6 +3,7 @@
 #ifndef TEXTADEPT_H
 #define TEXTADEPT_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
@@ -24,7 +25,8 @@ extern "C" {
 #endif
 
 #ifdef MAC
-#include "CoreFoundation/CoreFoundation.h"
+#include <Carbon/Carbon.h>
+using namespace Scintilla;
 #endif
 
 // globals

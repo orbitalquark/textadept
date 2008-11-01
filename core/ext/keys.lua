@@ -130,7 +130,7 @@ local function keypress(code, shift, control, alt)
   local key
   --print(code, string.char(code))
   if code < 256 then
-    key_seq = key_seq..string.char(code):lower()
+    key = string.char(code):lower()
     if MAC and not shift and not control and not alt then
       local ch = string.char(code)
       -- work around native GTK-OSX's handling of Alt key
