@@ -1254,7 +1254,7 @@ LF l_cf_buffer_text_range(LS *lua) {
 #ifndef MAC
   TextRange tr;
 #else
-  Scintilla::Textrange tr;
+  Scintilla::TextRange tr;
 #endif
   tr.chrg.cpMin = luaL_checkinteger(lua, 2);
   tr.chrg.cpMax = luaL_checkinteger(lua, 3);
