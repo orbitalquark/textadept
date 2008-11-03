@@ -124,9 +124,6 @@ local function keypress(code, shift, control, alt)
   local buffer, textadept = buffer, textadept
   local string, pcall = string, pcall
   local keys = _G.keys
-  control = control and CTRL or ''
-  shift = shift and SHIFT or ''
-  alt = alt and ALT or ''
   local key
   --print(code, string.char(code))
   if code < 256 then
@@ -144,6 +141,9 @@ local function keypress(code, shift, control, alt)
     if not KEYSYMS[code] then return end
     key = KEYSYMS[code]
   end
+  control = control and CTRL or ''
+  shift = shift and SHIFT or ''
+  alt = alt and ALT or ''
   local key_seq = string.format('%s%s%s%s', control, shift, alt, key)
 
   if #keychain > 0 and key_seq == keys.clear_sequence then

@@ -20,18 +20,19 @@ require 'ext/key_commands'
 if not RESETTING then
   -- process command line arguments
   local textadept = textadept
+  if MAC and arg[1] and arg[1]:match('^%-psn_0') then
+    table.remove(arg, 1)
+  end
   if #arg == 0 then
     textadept.io.load_session()
   else
     local base_dir = arg[0]:match('^.+/') or ''
     local filepath
     for _, filename in ipairs(arg) do
-      if not MAC or not filename:match('^%-psn_0') then
-        if not filename:match('^~?/') then
-          textadept.io.open(base_dir..filename)
-        else
-          textadept.io.open(filename)
-        end
+      if not filename:match('^~?/') then
+        textadept.io.open(base_dir..filename)
+      else
+        textadept.io.open(filename)
       end
     end
     -- read only the Project Manager session settings
