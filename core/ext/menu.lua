@@ -88,6 +88,8 @@ t.menubar = {
     'Find _Next',
     'Find _Prev',
     'gtk-find-and-replace',
+    'Replace',
+    'Replace _All',
     'separator',
     'gtk-jump-to',
   },
@@ -244,10 +246,11 @@ local actions = {
   Scope = { m_editing.select_scope },
   -- Search
   Find = { t.find.focus },
-  ['Find Next'] = { }, -- TODO:
-  ['Find Prev'] = { }, -- TODO:
-  Replace = { }, -- TODO:
+  ['Find Next'] = { t.find.call_find_next },
+  ['Find Prev'] = { t.find.call_find_prev },
   ['Find and Replace'] = { t.find.focus },
+  Replace = { t.find.call_replace },
+  ['Replace All'] = { t.find.call_replace_all },
   ['Jump to'] = { m_editing.goto_line },
   -- Tools
   ['Focus Command Entry'] = { t.command_entry.focus },
