@@ -64,3 +64,19 @@ function find.replace(rtext) end
 -- @param flags The number mask identical to the one in 'find'.
 -- @see find.find
 function find.replace_all(ftext, rtext, flags) end
+
+---
+-- Mimicks a press of the 'Find Next' button in the Find box.
+function find.call_find_next() end
+
+---
+-- Mimicks a press of the 'Find Prev' button in the Find box.
+function find.call_find_prev() end
+
+---
+-- Mimicks a press of the 'Replace' button in the Find box.
+function find.call_replace() end
+
+---
+-- Mimicks a press of the 'Replace All' button in the Find box.
+function find.call_replace_all() end

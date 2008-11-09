@@ -52,6 +52,8 @@ LF l_cf_ta_buffer_new(LS *lua),
    l_cf_ta_reset(LS *lua),
    l_cf_pm_focus(LS *lua), l_cf_pm_clear(LS *lua), l_cf_pm_activate(LS *lua),
    l_cf_find_focus(LS *lua),
+   l_cf_call_find_next(LS *lua), l_cf_call_find_prev(LS *lua),
+   l_cf_call_replace(LS *lua), l_cf_call_replace_all(LS *lua),
    l_cf_ce_focus(LS *lua);
 
 const char
@@ -98,6 +100,10 @@ bool l_init(int argc, char **argv, bool reinit) {
   lua_setfield(lua, -2, "pm");
   lua_newtable(lua);
     l_cfunc(lua, l_cf_find_focus, "focus");
+    l_cfunc(lua, l_cf_call_find_next, "call_find_next");
+    l_cfunc(lua, l_cf_call_find_prev, "call_find_prev");
+    l_cfunc(lua, l_cf_call_replace, "call_replace");
+    l_cfunc(lua, l_cf_call_replace_all, "call_replace_all");
     l_mt(lua, "_find_mt", l_find_mt_index, l_find_mt_newindex);
   lua_setfield(lua, -2, "find");
   lua_newtable(lua);
@@ -1385,10 +1391,47 @@ LF l_cf_ta_reset(LS *lua) {
   return 0;
 }
 
-LF l_cf_pm_focus(LS *) { pm_toggle_focus(); return 0; }
-LF l_cf_pm_clear(LS *) { gtk_tree_store_clear(pm_store); return 0; }
-LF l_cf_pm_activate(LS *) {
-  g_signal_emit_by_name(G_OBJECT(pm_entry), "activate"); return 0;
+LF l_cf_pm_focus(LS *) {
+  pm_toggle_focus();
+  return 0;
 }
-LF l_cf_find_focus(LS *) { find_toggle_focus(); return 0; }
-LF l_cf_ce_focus(LS *) { ce_toggle_focus(); return 0; }
+
+LF l_cf_pm_clear(LS *) {
+  gtk_tree_store_clear(pm_store);
+  return 0;
+}
+
+LF l_cf_pm_activate(LS *) {
+  g_signal_emit_by_name(G_OBJECT(pm_entry), "activate");
+  return 0;
+}
+
+LF l_cf_find_focus(LS *) {
+  find_toggle_focus();
+  return 0;
+}
+
+LF l_cf_call_find_next(LS *) {
+  g_signal_emit_by_name(G_OBJECT(fnext_button), "clicked");
+  return 0;
+}
+
+LF l_cf_call_find_prev(LS *) {
+  g_signal_emit_by_name(G_OBJECT(fprev_button), "clicked");
+  return 0;
+}
+
+LF l_cf_call_replace(LS *) {
+  g_signal_emit_by_name(G_OBJECT(r_button), "clicked");
+  return 0;
+}
+
+LF l_cf_call_replace_all(LS *) {
+  g_signal_emit_by_name(G_OBJECT(ra_button), "clicked");
+  return 0;
+}
+
+LF l_cf_ce_focus(LS *) {
+  ce_toggle_focus();
+  return 0;
+}
