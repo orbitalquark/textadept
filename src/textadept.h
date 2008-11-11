@@ -34,7 +34,8 @@ extern GtkWidget
   *window, *focused_editor, *command_entry,
   *pm_container, *pm_entry, *pm_view,
   *findbox, *find_entry, *replace_entry,
-  *fnext_button, *fprev_button, *r_button, *ra_button;
+  *fnext_button, *fprev_button, *r_button, *ra_button,
+  *match_case_opt, *whole_word_opt, /**incremental_opt,*/ *lua_opt;
 extern GtkEntryCompletion *command_entry_completion;
 extern GtkTreeStore *cec_store, *pm_store;
 extern lua_State *lua;
@@ -101,8 +102,8 @@ void l_pm_perform_action();
 void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback);
 void l_pm_perform_menu_action(const char *menu_item);
 
-void l_find(const char *ftext, int flags, bool next);
+void l_find(const char *ftext, bool next);
 void l_find_replace(const char *rtext);
-void l_find_replace_all(const char *ftext, const char *rtext, int flags);
+void l_find_replace_all(const char *ftext, const char *rtext);
 
 #endif

@@ -900,12 +900,11 @@ void l_pm_perform_menu_action(const char *menu_item) {
  * @param next Flag indicating whether or not to find next. If false, finds
  *   previous matches.
  */
-void l_find(const char *ftext, int flags, bool next) {
+void l_find(const char *ftext, bool next) {
   if (!l_is_ta_table_function("find", "find")) return;
   lua_pushstring(lua, ftext);
-  lua_pushinteger(lua, flags);
   lua_pushboolean(lua, next);
-  l_call_function(3);
+  l_call_function(2);
 }
 
 /**
@@ -924,12 +923,11 @@ void l_find_replace(const char *rtext) {
  * @param rtext The text to replace the found text with.
  * @param flags Integer flags for the find.
  */
-void l_find_replace_all(const char *ftext, const char *rtext, int flags) {
+void l_find_replace_all(const char *ftext, const char *rtext) {
   if (!l_is_ta_table_function("find", "replace_all")) return;
   lua_pushstring(lua, ftext);
   lua_pushstring(lua, rtext);
-  lua_pushinteger(lua, flags);
-  l_call_function(3);
+  l_call_function(2);
 }
 
 // Lua functions (stack maintenence is unnecessary)
@@ -1179,22 +1177,36 @@ LF l_pm_mt_newindex(LS *lua) {
   return 0;
 }
 
+#define toggled(w) gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))
 LF l_find_mt_index(LS *lua) {
   const char *key = lua_tostring(lua, 2);
   if (streq(key, "find_entry_text"))
     lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(find_entry)));
   else if (streq(key, "replace_entry_text"))
     lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(replace_entry)));
+  else if (streq(key, "match_case"))
+    lua_pushboolean(lua, toggled(match_case_opt));
+  else if (streq(key, "whole_word"))
+    lua_pushboolean(lua, toggled(whole_word_opt));
+  else if (streq(key, "lua"))
+    lua_pushboolean(lua, toggled(lua_opt));
   else lua_rawget(lua, 1);
   return 1;
 }
 
+#define toggle(w, b) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), b)
 LF l_find_mt_newindex(LS *lua) {
   const char *key = lua_tostring(lua, 2);
   if (streq(key, "find_entry_text"))
     gtk_entry_set_text(GTK_ENTRY(find_entry), lua_tostring(lua, 3));
   else if (streq(key, "replace_entry_text"))
     gtk_entry_set_text(GTK_ENTRY(replace_entry), lua_tostring(lua, 3));
+  else if (streq(key, "match_case"))
+    toggle(match_case_opt, lua_toboolean(lua, -1) ? TRUE : FALSE);
+  else if (streq(key, "whole_word"))
+    toggle(whole_word_opt, lua_toboolean(lua, -1) ? TRUE : FALSE);
+  else if (streq(key, "lua"))
+    toggle(lua_opt, lua_toboolean(lua, -1) ? TRUE : FALSE);
   else lua_rawset(lua, 1);
   return 0;
 }

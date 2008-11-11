@@ -16,14 +16,15 @@ local escapes = {
 -- This is used by the find dialog. It is recommended to use the buffer:find()
 -- function for scripting.
 -- @param text The text to find.
--- @param flags Search flags. This is a number mask of 3 flags: match case (2),
---   whole word (4), and Lua pattern (8) joined with binary AND.
 -- @param next Flag indicating whether or not the search direction is forward.
+-- @param flags Search flags. This is a number mask of 3 flags: match case (2),
+--   whole word (4), and Lua pattern (8) joined with binary OR. If nil, this is
+--   determined based on the checkboxes in the find box.
 -- @param nowrap Flag indicating whether or not the search won't wrap.
 -- @param wrapped Utility flag indicating whether or not the search has wrapped
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
-function find.find(text, flags, next, nowrap, wrapped)
+function find.find(text, next, flags, nowrap, wrapped)
   local buffer = buffer
   local increment, result
   text = text:gsub('\\[abfnrtv\\]', escapes)
@@ -32,6 +33,13 @@ function find.find(text, flags, next, nowrap, wrapped)
     increment = 0
   elseif not wrapped then
     increment = next and 1 or -1
+  end
+  if not flags then
+    local find, c = find, textadept.constants
+    flags = 0
+    if find.match_case then flags = flags + c.SCFIND_MATCHCASE end
+    if find.whole_word then flags = flags + c.SCFIND_WHOLEWORD end
+    if find.lua then flags = flags + 8 end
   end
   if flags < 8 then
     buffer:goto_pos( buffer[next and 'current_pos' or 'anchor'] + increment )
@@ -128,7 +136,7 @@ end
 function find.replace_all(ftext, rtext, flags)
   buffer:goto_pos(0)
   local count = 0
-  while( find.find(ftext, flags, true, true) ) do
+  while( find.find(ftext, true, flags, true) ) do
     find.replace(rtext)
     count = count + 1
   end

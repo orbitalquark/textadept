@@ -62,8 +62,6 @@ GtkAttachOptions
   ao_normal = static_cast<GtkAttachOptions>(GTK_SHRINK | GTK_FILL),
   ao_expand = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
 
-static gbool fe_keypress(GtkWidget*, GdkEventKey *event, gpointer);
-static gbool re_keypress(GtkWidget*, GdkEventKey *event, gpointer);
 static void button_clicked(GtkWidget *button, gpointer);
 
 #if WIN32 || MAC
@@ -882,7 +880,6 @@ static void pm_menu_activate(GtkWidget *menu_item, gpointer) {
   gtk_table_attach(GTK_TABLE(findbox), w, x1, x2, y1, y2, xo, yo, xp, yp)
 #define find_text gtk_entry_get_text(GTK_ENTRY(find_entry))
 #define repl_text gtk_entry_get_text(GTK_ENTRY(replace_entry))
-#define toggled(w) gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))
 
 /**
  * Creates the Find/Replace text frame.
@@ -894,8 +891,10 @@ GtkWidget *find_create_ui() {
   GtkWidget *rlabel = gtk_label_new_with_mnemonic("R_eplace:");
   find_entry = gtk_entry_new();
   gtk_widget_set_name(find_entry, "textadept-find-entry");
+  gtk_entry_set_activates_default(GTK_ENTRY(find_entry), TRUE);
   replace_entry = gtk_entry_new();
   gtk_widget_set_name(replace_entry, "textadept-replace-entry");
+  gtk_entry_set_activates_default(GTK_ENTRY(replace_entry), TRUE);
   fnext_button = gtk_button_new_with_mnemonic("Find _Next");
   fprev_button = gtk_button_new_with_mnemonic("Find _Prev");
   r_button = gtk_button_new_with_mnemonic("_Replace");
@@ -922,13 +921,12 @@ GtkWidget *find_create_ui() {
   //attach(incremental_opt, 5, 6, 0, 1, ao_normal, ao_normal, 5, 0);
   attach(lua_opt, 5, 6, 0, 1, ao_normal, ao_normal, 5, 0);
 
-  signal(find_entry, "key_press_event", fe_keypress);
-  signal(replace_entry, "key_press_event", re_keypress);
   signal(fnext_button, "clicked", button_clicked);
   signal(fprev_button, "clicked", button_clicked);
   signal(r_button, "clicked", button_clicked);
   signal(ra_button, "clicked", button_clicked);
 
+  GTK_WIDGET_SET_FLAGS(fnext_button, GTK_CAN_DEFAULT);
   GTK_WIDGET_UNSET_FLAGS(fnext_button, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS(fprev_button, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS(r_button, GTK_CAN_FOCUS);
@@ -949,47 +947,11 @@ void find_toggle_focus() {
   if (!GTK_WIDGET_HAS_FOCUS(findbox)) {
     gtk_widget_show(findbox);
     gtk_widget_grab_focus(find_entry);
+    gtk_widget_grab_default(fnext_button);
   } else {
     gtk_widget_grab_focus(focused_editor);
     gtk_widget_hide(findbox);
   }
-}
-
-/**
- * Builds the integer flags for a Find/Replace depending on the options that are
- * checked.
- */
-static int get_flags() {
-  int flags = 0;
-  if (toggled(match_case_opt)) flags |= SCFIND_MATCHCASE; // 2
-  if (toggled(whole_word_opt)) flags |= SCFIND_WHOLEWORD; // 4
-  if (toggled(lua_opt)) flags |= 8;
-  return flags;
-}
-
-/**
- * Signal for a Find entry keypress.
- * Currently handled keypresses:
- *   - Enter - Find next or previous.
- */
-static gbool fe_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
-  // TODO: if incremental, call l_find()
-  if (event->keyval == 0xff0d) {
-    l_find(find_text, get_flags(), true);
-    return TRUE;
-  } else return FALSE;
-}
-
-/**
- * Signal for a Replace entry keypress.
- * Currently handled keypresses:
- *   - Enter - Find next or previous.
- */
-static gbool re_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
-  if (event->keyval == 0xff0d) {
-    l_find(find_text, get_flags(), true);
-    return TRUE;
-  } else return FALSE;
 }
 
 /**
@@ -998,9 +960,9 @@ static gbool re_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
  */
 static void button_clicked(GtkWidget *button, gpointer) {
   if (button == ra_button)
-    l_find_replace_all(find_text, repl_text, get_flags());
+    l_find_replace_all(find_text, repl_text);
   else if (button == r_button) {
     l_find_replace(repl_text);
-    l_find(find_text, get_flags(), true);
-  } else l_find(find_text, get_flags(), button == fnext_button);
+    l_find(find_text, true);
+  } else l_find(find_text, button == fnext_button);
 }
