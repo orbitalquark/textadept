@@ -2,7 +2,7 @@
 
 .SUFFIXES: .c .o .h .a
 
-INCLUDEDIRS=-Iscintilla-st/include -Ilua
+INCLUDEDIRS=-Iscintilla-st/include -Ilua/include
 ifdef DEBUG
 CXXFLAGS=-DDEBUG -g -DGTK -DSCI_LEXER -W -Wall
 else
@@ -17,21 +17,25 @@ ARCHDIR=lib32
 else
 ARCHDIR=x86_64
 endif
-LUA51A=../$(ARCHDIR)/src/liblua5.1.a
 GTKSO=../$(ARCHDIR)/core/gtk.so
-LPEGSO=../$(ARCHDIR)/lexers/lpeg.so
+
+LUA_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
+  lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o \
+  ltable.o ltm.o lundump.o lvm.o lzio.o \
+  lauxlib.o lbaselib.o ldblib.o liolib.o lmathlib.o ltablib.o \
+  lstrlib.o loadlib.o loslib.o linit.o \
+  lpeg.o
 
 all: textadept
 
 .c.o:
 	g++ $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c $< -o $@
-liblua5.1.a:
-	cp $(LUA51A) .
+$(LUA_OBJS): lua/src/*.c
+	gcc $(INCLUDEDIRS) -DLUA_USE_POSIX $(CXXTFLAGS) -c lua/src/*.c
 textadept:\
-  textadept.o lua_interface.o \
-  scintilla-st/gtk/LexLPeg.o scintilla-st/bin/scintilla.a liblua5.1.a
+  textadept.o lua_interface.o $(LUA_OBJS) \
+  scintilla-st/gtk/LexLPeg.o scintilla-st/bin/scintilla.a
 	g++ $(GTKLIBS) $(EXPORTLUASYMS) -DGTK $^ -o $@
 	cp $(GTKSO) ../core/
-	cp $(LPEGSO) ../lexers/
 clean:
 	rm textadept *.o
