@@ -591,7 +591,7 @@ static long l_toscintillaparam(LS *lua, int type, int &arg_idx) {
            ((static_cast<int>(luaL_checkinteger(lua, arg_idx++)) &
            (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
   else if (type > tVOID && type < tBOOL)
-    return static_cast<long>(luaL_checknumber(lua, arg_idx++));
+    return luaL_checklong(lua, arg_idx++);
   else return 0;
 }
 
