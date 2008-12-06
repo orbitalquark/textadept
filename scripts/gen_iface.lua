@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 -- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local f = io.open('/usr/share/scite-st/src/scite/src/IFaceTable.cxx')
+local f = io.open('../../scite-tools/branches/scite-st/src/scite/src/IFaceTable.cxx')
 local contents = f:read('*all')
 f:close()
 
@@ -21,8 +21,11 @@ out = out..'textadept.constants = {\n'
 -- {"constant", value}
 for item in constants:sub(2, -2):gmatch('%b{}') do
   local name, value = item:match('^{"(.-)",(.-)}')
-  local line = ("  %s = %s,\n"):format(name, value)
-  out = out..line
+  if not name:match('^IDM_') then
+    if name == 'SC_MASK_FOLDERS' then value = '-33554432' end
+    local line = ("  %s = %s,\n"):format(name, value)
+    out = out..line
+  end
 end
 out = out..[[
   SCN_STYLENEEDED = 2000,
@@ -80,6 +83,6 @@ for item in properties:sub(2, -2):gmatch('%b{}') do
 end
 out = out..'}\n'
 
-f = io.open('/usr/share/textadept/core/iface.lua', 'w')
+f = io.open('../core/iface.lua', 'w')
 f:write(out)
 f:close()
