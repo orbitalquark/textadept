@@ -141,7 +141,7 @@ end
 
 -- Scintilla notifications.
 function char_added(n)
-  return handle( 'char_added', string.char(n.ch) )
+  if n.ch < 256 then return handle( 'char_added', string.char(n.ch) ) end
 end
 function save_point_reached()
   return handle('save_point_reached')
@@ -287,6 +287,9 @@ add_handler('buffer_new',
       buffer.style_bits = 8
       buffer.lexer = textadept.constants.SCLEX_LPEG
       buffer:set_lexer_language('container')
+
+      -- buffer
+      buffer.code_page = textadept.constants.SC_CP_UTF8
 
       if _THEME and #_THEME > 0 then
        local ret, errmsg =
