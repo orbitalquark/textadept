@@ -53,7 +53,7 @@ function cocoa_dialog(kind, opts)
   else
     local cocoa_dialog = '/CocoaDialog.app/Contents/MacOS/CocoaDialog '
     local p = io.popen(_HOME..cocoa_dialog..kind..args)
-    local out = p:read('*all') or ''
+    local out = p:read('*all')
     p:close()
     return out
   end
