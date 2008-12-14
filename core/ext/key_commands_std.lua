@@ -28,9 +28,6 @@ local b, v = 'buffer', 'view'
 local t = textadept
 
 keys.ct   = {} -- Textadept command chain
-keys.ct.e = {} -- Enclose in... chain
-keys.ct.s = {} -- Select in... chain
-keys.ct.v = {} -- Buffer view chain
 
 -- File
 keys.cn  = { t.new_buffer   }
@@ -70,30 +67,34 @@ keys.cq     = { m_editing.block_comment            }
 -- TODO: { m_editing.smart_paste, 'reverse' }
 -- TODO: { m_editing.ruby_exec }
 -- TODO: { m_editing.lua_exec }
-keys.ct.e.t    = { m_editing.enclose, 'tag'                }
-keys.ct.e.st   = { m_editing.enclose, 'single_tag'         }
-keys.ct.e['"'] = { m_editing.enclose, 'dbl_quotes'         }
-keys.ct.e["'"] = { m_editing.enclose, 'sng_quotes'         }
-keys.ct.e['('] = { m_editing.enclose, 'parens'             }
-keys.ct.e['['] = { m_editing.enclose, 'brackets'           }
-keys.ct.e['{'] = { m_editing.enclose, 'braces'             }
-keys.ct.e.c    = { m_editing.enclose, 'chars'              }
-keys.ct.e.g    = { m_editing.grow_selection, 1             }
-keys.ct.s.e    = { m_editing.select_enclosed               }
-keys.ct.s.t    = { m_editing.select_enclosed, 'tags'       }
-keys.ct.s['"'] = { m_editing.select_enclosed, 'dbl_quotes' }
-keys.ct.s["'"] = { m_editing.select_enclosed, 'sng_quotes' }
-keys.ct.s['('] = { m_editing.select_enclosed, 'parens'     }
-keys.ct.s['['] = { m_editing.select_enclosed, 'brackets'   }
-keys.ct.s['{'] = { m_editing.select_enclosed, 'braces'     }
-keys.ct.s.w    = { m_editing.current_word, 'select'        }
-keys.ct.s.l    = { m_editing.select_line                   }
-keys.ct.s.p    = { m_editing.select_paragraph              }
-keys.ct.s.b    = { m_editing.select_indented_block         }
-keys.ct.s.s    = { m_editing.select_scope                  }
+keys.ac = { -- enClose in...
+  t     = { m_editing.enclose, 'tag'        },
+  st    = { m_editing.enclose, 'single_tag' },
+  ['"'] = { m_editing.enclose, 'dbl_quotes' },
+  ["'"] = { m_editing.enclose, 'sng_quotes' },
+  ['('] = { m_editing.enclose, 'parens'     },
+  ['['] = { m_editing.enclose, 'brackets'   },
+  ['{'] = { m_editing.enclose, 'braces'     },
+  c     = { m_editing.enclose, 'chars'      },
+}
+keys.as = { -- select in...
+  e     = { m_editing.select_enclosed               },
+  t     = { m_editing.select_enclosed, 'tags'       },
+  ['"'] = { m_editing.select_enclosed, 'dbl_quotes' },
+  ["'"] = { m_editing.select_enclosed, 'sng_quotes' },
+  ['('] = { m_editing.select_enclosed, 'parens'     },
+  ['['] = { m_editing.select_enclosed, 'brackets'   },
+  ['{'] = { m_editing.select_enclosed, 'braces'     },
+  w     = { m_editing.current_word, 'select'        },
+  l     = { m_editing.select_line                   },
+  p     = { m_editing.select_paragraph              },
+  b     = { m_editing.select_indented_block         },
+  s     = { m_editing.select_scope                  },
+  g     = { m_editing.grow_selection, 1             },
+}
 
 -- Search
-keys.cf = { t.find.focus        } -- find/replace
+keys.cf = { t.find.focus } -- find/replace
 -- Find Next is an when find pane is focused.
 -- Find Prev is ap when find pane is focused.
 -- Replace is ar when find pane is focused.
@@ -120,7 +121,7 @@ keys.cm.c  = { m_mlines.clear           }
 
 -- Buffers
 keys['c\t']  = { 'goto_buffer', v, 1, false  }
-keys['cs\t'] = { 'goto_buffer', v, -1, false }
+keys['ca\t'] = { 'goto_buffer', v, -1, false }
 local function toggle_setting(setting)
   local state = buffer[setting]
   if type(state) == 'boolean' then
@@ -130,22 +131,26 @@ local function toggle_setting(setting)
   end
   t.events.update_ui() -- for updating statusbar
 end
-keys.ct.v.e     = { toggle_setting, 'view_eol'           }
-keys.ct.v.w     = { toggle_setting, 'wrap_mode'          }
-keys.ct.v.i     = { toggle_setting, 'indentation_guides' }
-keys.ct.v['\t'] = { toggle_setting, 'use_tabs'           }
-keys.ct.v[' ']  = { toggle_setting, 'view_ws'            }
-keys['f5']      = { 'colourise', b, 0, -1                }
+keys.ct.v = {
+  e      = { toggle_setting, 'view_eol'           },
+  w      = { toggle_setting, 'wrap_mode'          },
+  i      = { toggle_setting, 'indentation_guides' },
+  ['\t'] = { toggle_setting, 'use_tabs'           },
+  [' ']  = { toggle_setting, 'view_ws'            },
+}
+keys['f5'] = { 'colourise', b, 0, -1 }
 
 -- Views
-keys['ca\t']  = { t.goto_view, 1, false                      }
-keys['csa\t'] = { t.goto_view, -1, false                     }
-keys.ct.ss    = { 'split', v                                 } -- vertical
-keys.ct.s     = { 'split', v, false                          } -- horizontal
-keys.ct.w     = { function() view:unsplit() return true end  }
-keys.ct.sw    = { function() while view:unsplit() do end end }
--- TODO: { function() view.size = view.size + 10 end  }
--- TODO: { function() view.size = view.size - 10 end  }
+keys.cv = {
+  n  = { t.goto_view, 1, false                      },
+  p  = { t.goto_view, -1, false                     },
+  ss = { 'split', v                                 }, -- vertical
+  s  = { 'split', v, false                          }, -- horizontal
+  w  = { function() view:unsplit() return true end  },
+  sw = { function() while view:unsplit() do end end },
+  -- TODO: { function() view.size = view.size + 10 end  }
+  -- TODO: { function() view.size = view.size - 10 end  }
+}
 
 -- Project Manager
 local function pm_activate(text) t.pm.entry_text = text t.pm.activate() end
