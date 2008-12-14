@@ -69,7 +69,7 @@ function find.find(text, next, flags, nowrap, wrapped)
       buffer:goto_pos(buffer.length)
     end
     textadept.statusbar_text = 'Search wrapped'
-    result = find.find(text, flags, next, true, true)
+    result = find.find(text, next, flags, true, true)
     if not result then
       textadept.statusbar_text = 'No results found'
       buffer:goto_pos(anchor)
