@@ -74,9 +74,9 @@ local keys = _G.keys
 if type(keys) == 'table' then
   local m_editing = _m.textadept.editing
   keys.lua = {
-    al = { textadept.io.open, _HOME..'/modules/lua/init.lua' },
-    ac = {
-      g = { goto_required }
+    al = {
+      m = { textadept.io.open, _HOME..'/modules/lua/init.lua' },
+      g = { goto_required },
     },
     ['s\n'] = { try_to_autocomplete_end },
     cg = { run },
