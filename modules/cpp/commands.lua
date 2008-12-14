@@ -9,7 +9,9 @@ local keys = _G.keys
 if type(keys) == 'table' then
   local m_editing = _m.textadept.editing
   keys.cpp = {
-    al = { textadept.io.open, _HOME..'/modules/cpp/init.lua' },
+    al = {
+      m = { textadept.io.open, _HOME..'/modules/cpp/init.lua' },
+    },
     ['s\n'] = { function()
       buffer:line_end()
       buffer:add_text(';')
