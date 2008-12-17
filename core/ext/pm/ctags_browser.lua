@@ -21,11 +21,11 @@ local current_file, current_dir
 --   * The GTK stock-id for the pixbuf to display next to the identifier in the
 --     tree view (pixbuf key).
 --   * The display text used for displaying the identifier in the tree view
---     (display_text key).
+--     (text key).
 --   * Boolean parent value if the identifier is a container.
 --   * The line number or pattern used to goto the identifier.
 -- Note this table is returned by get_contents_for, but only 'pixbuf',
--- 'display_text' and 'parent' fields are read; all others are ignored.
+-- 'text' and 'parent' fields are read; all others are ignored.
 -- @class table
 -- @name tags
 local tags
@@ -169,9 +169,9 @@ function get_contents_for(full_path, expanding)
               -- This identifier belongs to a container, so define the
               -- container if it hasn't been already and place this identifier
               -- in it. Just in case there is no ctag entry for container later
-              -- on, define 'parent' and 'display_text'.
+              -- on, define 'parent' and 'text'.
               if not tags[val] then
-                tags[val] = { parent = true, display_text = val }
+                tags[val] = { parent = true, text = val }
               end
               local parent = tags[val]
               if not parent.children then parent.children = {} end
@@ -179,7 +179,7 @@ function get_contents_for(full_path, expanding)
               entry.set = true
             end
           end
-          entry.display_text = name
+          entry.text = name
           -- The following keys are ignored by caller.
           entry.filepath = filepath:sub(1, 1) == '/' and
             filepath or current_dir..filepath
@@ -213,7 +213,7 @@ function perform_action(selected_item)
       buffer:ensure_visible_enforce_policy(line)
       buffer:goto_line(line)
     else
-      error(item.display_text..' not found.')
+      error(item.text..' not found.')
     end
   elseif item.line_num then
     textadept.io.open(item.filepath)
