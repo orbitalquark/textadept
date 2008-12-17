@@ -154,12 +154,14 @@ end
 -- If any buffer is dirty, the user is prompted to continue. No buffers are
 -- saved automatically. They must be saved manually.
 -- @usage textadept.io.close_all()
+-- @return true if user did not cancel.
 function close_all()
   while #textadept.buffers > 1 do
     view:goto_buffer(#textadept.buffers)
-    if not buffer:close() then return end
+    if not buffer:close() then return false end
   end
   buffer:close() -- the last one
+  return true
 end
 
 ---
