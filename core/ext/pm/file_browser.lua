@@ -30,11 +30,11 @@ function get_contents_for(full_path)
         local name = entry:sub(1, -2)
         dir[name] = {
           parent = true,
-          display_text = name,
+          text = name,
           pixbuf = 'gtk-directory'
         }
       else
-        dir[entry] = { display_text = entry }
+        dir[entry] = { text = entry }
       end
     end
   else
@@ -48,7 +48,7 @@ function get_contents_for(full_path)
     for name in out:gmatch('[^\n]+') do
       dir[name] = {
         parent = true,
-        display_text = name,
+        text = name,
         pixbuf = 'gtk-directory'
       }
     end
@@ -56,7 +56,7 @@ function get_contents_for(full_path)
     out = p:read('*all')
     p:close()
     for entry in out:gmatch('[^\n]+') do
-      dir[entry] = { display_text = entry }
+      dir[entry] = { text = entry }
     end
   end
   return dir
