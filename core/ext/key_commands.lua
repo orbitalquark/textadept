@@ -7,7 +7,7 @@ module('textadept.key_commands', package.seeall)
 
 --[[
   C:               G
-  A:   A   C       G     J K L     O   Q           W X   Z
+  A:   A   C       G     J K L     O               W X   Z
   CS:      C D     G     J   L         Q R S T U   W
   SA:  A   C D E   G H I J K L M   O   Q R S T     W X   Z
   CA:  A   C       G H   J K L     O   Q   S T   V W X Y Z
@@ -37,6 +37,7 @@ keys.co   = { 'save', b      }
 keys.cso  = { 'save_as', b   }
 keys.cx   = { 'close', b     }
 keys.csx  = { t.io.close_all }
+keys.aq   = { t.quit         }
 keys.cz   = { 'undo', b      }
 keys.csz  = { 'redo', b      }
 keys.cs   = { t.find.focus   } -- find/replace

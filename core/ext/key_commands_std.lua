@@ -8,7 +8,7 @@ module('textadept.key_commands_std', package.seeall)
 
 --[[
   C:     B   D       H   J K L           R     U
-  A:   A B C D E F G H   J K L M N   P Q R S T U V W X Y Z
+  A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
   CS:  A B C D   F G H   J K L M N O   Q R   T U V   X Y Z
   SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
   CA:  A B C D E F G H   J K L M N O   Q R S T U V W X Y Z
@@ -39,7 +39,7 @@ keys.cw  = { 'close', b     }
 keys.csw = { t.io.close_all }
 -- TODO: { t.io.load_session } after prompting with open dialog
 -- TODO: { t.io.save_session } after prompting with save dialog
--- TODO: quit
+keys.aq = { t.quit }
 
 -- Edit
 local m_editing = _m.textadept.editing
