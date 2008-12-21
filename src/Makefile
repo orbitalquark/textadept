@@ -24,7 +24,7 @@ LUA_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
   ltable.o ltm.o lundump.o lvm.o lzio.o \
   lauxlib.o lbaselib.o ldblib.o liolib.o lmathlib.o ltablib.o \
   lstrlib.o loadlib.o loslib.o linit.o \
-  lpeg.o
+  lpeg.o lfs.o
 
 all: textadept
 
