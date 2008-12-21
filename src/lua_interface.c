@@ -50,6 +50,7 @@ LF l_cf_ta_buffer_new(LS *lua),
    l_cf_ta_gtkmenu(LS *lua),
    l_cf_ta_popupmenu(LS *lua),
    l_cf_ta_reset(LS *lua),
+   l_cf_ta_quit(LS *lua),
    l_cf_pm_focus(LS *lua), l_cf_pm_clear(LS *lua), l_cf_pm_activate(LS *lua),
    l_cf_find_focus(LS *lua),
    l_cf_call_find_next(LS *lua), l_cf_call_find_prev(LS *lua),
@@ -116,6 +117,7 @@ bool l_init(int argc, char **argv, bool reinit) {
   l_cfunc(lua, l_cf_ta_gtkmenu, "gtkmenu");
   l_cfunc(lua, l_cf_ta_popupmenu, "popupmenu");
   l_cfunc(lua, l_cf_ta_reset, "reset");
+  l_cfunc(lua, l_cf_ta_quit, "quit");
   l_mt(lua, "_textadept_mt", l_ta_mt_index, l_ta_mt_newindex);
   lua_setglobal(lua, "textadept");
 
@@ -1400,6 +1402,15 @@ LF l_cf_ta_reset(LS *lua) {
   lua_pushnil(lua); lua_setglobal(lua, "RESETTING");
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffer"); lua_setglobal(lua, "buffer");
   lua_getfield(lua, LUA_REGISTRYINDEX, "view"); lua_setglobal(lua, "view");
+  return 0;
+}
+
+LF l_cf_ta_quit(LS *) {
+  GdkEventAny event;
+  event.type = GDK_DELETE;
+  event.window = window->window;
+  event.send_event = TRUE;
+  gdk_event_put(reinterpret_cast<GdkEvent*>(&event));
   return 0;
 }
 

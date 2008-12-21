@@ -8,7 +8,7 @@ module('textadept.key_commands_mac', package.seeall)
 
 --[[
   C:                     J   L           R     U   W X   Z
-  A:     B   D E     H   J K L         Q       U
+  A:     B   D E     H   J K L                 U
   CS:      C D     G H I J K L M   O   Q R S T U V W X Y Z
   SA:  A B C D   F   H   J K L M N O   Q R   T U V   X
   CA:  A   C   E   G     J K L M N O   Q R S T U V W X Y Z
@@ -39,7 +39,7 @@ keys.aw  = { 'close', b     }
 keys.saw = { t.io.close_all }
 -- TODO: { t.io.load_session } after prompting with open dialog
 -- TODO: { t.io.save_session } after prompting with save dialog
--- TODO: quit
+keys.aq = { t.quit }
 
 -- Edit
 local m_editing = _m.textadept.editing

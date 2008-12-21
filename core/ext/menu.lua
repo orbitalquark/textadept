@@ -192,7 +192,7 @@ local actions = {
   ['Close All'] = { t.io.close_all },
   ['Load Session...'] = { t.io.load_session }, -- TODO: file open dialog prompt
   ['Save Session...'] = { t.io.save_session }, -- TODO: file save dialog prompt
-  Quit = { }, -- TODO:
+  Quit = { t.quit },
   -- Edit
   Undo = { 'undo', b },
   Redo = { 'redo', b },
