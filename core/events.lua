@@ -234,12 +234,12 @@ add_handler('view_new',
       io.stderr:write(errmsg)
     end
 
-    -- Default Theme.
+    -- Default Theme (Light).
 
     -- caret
-    buffer.caret_fore = 11184810 -- 0xAA | 0xAA << 8 | 0xAA << 16
+    buffer.caret_fore = 3355443 -- 0x33 | 0x33 << 8 | 0x33 << 16
     buffer.caret_line_visible = true
-    buffer.caret_line_back = 4473924 -- 0x44 | 0x44 << 8 | 0x44 << 16
+    buffer.caret_line_back = 14540253 -- 0xDD | 0xDD << 8 | 0xDD << 16
     buffer:set_x_caret_policy(1, 20) -- CARET_SLOP
     buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
     buffer.caret_style = 2
@@ -255,8 +255,8 @@ add_handler('view_new',
     buffer.margin_width_n[1] = 0 -- marker margin invisible
 
     -- fold margin
-    buffer:set_fold_margin_colour(1, 11184810) -- 0xAA | 0xAA << 8 | 0xAA << 16
-    buffer:set_fold_margin_hi_colour(1, 11184810) -- 0xAA | 0xAA << 8 | 0xAA << 16
+    buffer:set_fold_margin_colour(1, 13421772) -- 0xCC | 0xCC << 8 | 0xCC << 16
+    buffer:set_fold_margin_hi_colour(1, 13421772) -- 0xCC | 0xCC << 8 | 0xCC << 16
     buffer.margin_type_n[2] = c.SC_MARGIN_SYMBOL
     buffer.margin_width_n[2] = 10
     buffer.margin_mask_n[2] = c.SC_MASK_FOLDERS
