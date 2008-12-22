@@ -6,6 +6,7 @@
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
 #ifdef MAC
+#include "ige-mac-menu.h"
 using namespace Scintilla;
 #endif
 
@@ -150,7 +151,7 @@ void create_ui() {
   signal(window, "delete_event", w_exit);
   signal(window, "focus-in-event", w_focus);
   signal(window, "key_press_event", w_keypress);
-  
+
 #ifdef MAC
   AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
                         NewAEEventHandlerUPP(w_ae_open), 0, false);
@@ -389,6 +390,10 @@ void set_menubar(GtkWidget *new_menubar) {
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
   gtk_box_reorder_child(GTK_BOX(vbox), menubar, 0);
   gtk_widget_show_all(menubar);
+#ifdef MAC
+  ige_mac_menu_set_menu_bar(GTK_MENU_SHELL(menubar));
+  gtk_widget_hide(menubar);
+#endif
 }
 
 /**
