@@ -1,68 +1,8 @@
-#!/bin/sh
-
-# usage:
-# ./new [module_name] [language_name]
-
-mkdir $1 || exit
-
-cat > $1/init.lua <<_EOF
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
-
----
--- The $1 module.
--- It provides utilities for editing $2 code.
-module('_m.$1', package.seeall)
-
-if type(_G.snippets) == 'table' then
----
--- Container for $2-specific snippets.
--- @class table
--- @name snippets.$1
-  _G.snippets.$1 = {}
-end
-
-if type(_G.keys) == 'table' then
----
--- Container for $2-specific key commands.
--- @class table
--- @name keys.$1
-  _G.keys.$1 = {}
-end
-
-require '$1.commands'
-require '$1.snippets'
-
-function set_buffer_properties()
-
-end
-_EOF
-
-cat > $1/snippets.lua <<_EOF
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
-
----
--- Snippets for the $1 module.
-module('_m.$1.snippets', package.seeall)
-
-local snippets = _G.snippets
-
-if type(snippets) == 'table' then
-  snippets.$1 = {}
-end
-_EOF
-
-cat > $1/commands.lua <<_EOF
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
-
----
--- Commands for the $1 module.
-module('_m.$1.commands', package.seeall)
-
--- $2-specific key commands.
-local keys = _G.keys
-if type(keys) == 'table' then
-  keys.$1 = {
-    al = { textadept.io.open, _HOME..'/modules/$1/init.lua' },
-  }
-end
-_EOF
+To add a new module:
+  1. Open Textadept.
+  2. Enter 'modules' in the project manager entry.
+  3. Right click and select 'New Module'.
+  4. Enter your module's filesystem name.
+     (Typically the language's name in lower case; e.g. ruby)
+  5. Enter your module language's nice name.
+     (Typically regular case; e.g. Ruby)
