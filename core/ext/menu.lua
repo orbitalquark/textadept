@@ -111,6 +111,11 @@ t.menubar = {
       '_Update Multiple Lines',
       '_Finished Editing',
     },
+    { title = 'M_acros',
+      '_Start Recording',
+      'S_top Recording',
+      '_Play Macro'
+    },
   },
   gtkmenu {
     title = '_Buffers',
@@ -165,6 +170,7 @@ local b, v = 'buffer', 'view'
 local m_snippets = _m.textadept.lsnippets
 local m_editing = _m.textadept.editing
 local m_mlines = _m.textadept.mlines
+local m_macros = _m.textadept.macros
 
 local function pm_activate(text) t.pm.entry_text = text t.pm.activate() end
 local function toggle_setting(setting)
@@ -267,6 +273,10 @@ local actions = {
   ['Remove Multiple Lines'] = { m_mlines.remove_multiple },
   ['Update Multiple Lines'] = { m_mlines.update },
   ['Finished Editing'] = { m_mlines.clear },
+  -- Tools -> Macros
+  ['Start Recording'] = { m_macros.start_recording },
+  ['Stop Recording'] = { m_macros.stop_recording },
+  ['Play Macro'] = { m_macros.play },
   -- Buffers
   ['Next Buffer'] = { 'goto_buffer', v, 1, false },
   ['Prev Buffer'] = { 'goto_buffer', v, -1, false },
