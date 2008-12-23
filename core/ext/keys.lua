@@ -217,13 +217,9 @@ end
 -- of -1. This way, pcall will return false and -1, where the -1 can easily and
 -- efficiently be checked rather than using a string error message.
 try_get_cmd = function(active_table)
-  local str_seq = ''
-  for _, key_seq in ipairs(keychain) do
-    str_seq = str_seq..key_seq..' '
-    active_table = active_table[key_seq]
-  end
+  for _, key_seq in ipairs(keychain) do active_table = active_table[key_seq] end
   if #active_table == 0 and next(active_table) then
-    textadept.statusbar_text = 'Keychain: '..str_seq
+    textadept.statusbar_text = 'Keychain: '..table.concat(keychain, ' ')
     error(-1, 0)
   else
     local func = active_table[1]
