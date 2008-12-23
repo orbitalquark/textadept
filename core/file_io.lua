@@ -239,10 +239,10 @@ end
 --   $HOME/.ta_session if not specified.
 -- @usage textadept.io.save_session(filename)
 function save_session(filename)
-  local session = ''
-  local buffer_line = "buffer: %d %d %d %s\n" -- anchor, cursor, line, filename
-  local split_line = "%ssplit%d: %s %d\n" -- level, number, type, size
-  local view_line = "%sview%d: %d\n" -- level, number, doc index
+  local session = {}
+  local buffer_line = "buffer: %d %d %d %s" -- anchor, cursor, line, filename
+  local split_line = "%ssplit%d: %s %d" -- level, number, type, size
+  local view_line = "%sview%d: %d" -- level, number, doc index
   -- Write out opened buffers. (buffer: filename)
   local buffer_indices, offset = {}, 0
   for idx, buffer in ipairs(textadept.buffers) do
@@ -252,7 +252,7 @@ function save_session(filename)
       local current_pos = current and 'current_pos' or '_current_pos'
       local first_visible_line = current and 'first_visible_line' or
         '_first_visible_line'
-      session = session..
+      session[#session + 1] =
         buffer_line:format(buffer[anchor] or 0, buffer[current_pos] or 0,
         buffer[first_visible_line] or 0, buffer.filename)
       buffer_indices[buffer.doc_pointer] = idx - offset
@@ -265,42 +265,42 @@ function save_session(filename)
     local c1, c2 = split[1], split[2]
     local vertical, size = tostring(split.vertical), split.size
     local spaces = (' '):rep(level)
-    session = session..split_line:format(spaces, number, vertical, size)
+    session[#session + 1] = split_line:format(spaces, number, vertical, size)
     spaces = (' '):rep(level + 1)
     if type(c1) == 'table' then
       write_split(c1, level + 1, 1)
     else
-      session = session..view_line:format(spaces, 1, c1)
+      session[#session + 1] = view_line:format(spaces, 1, c1)
     end
     if type(c2) == 'table' then
       write_split(c2, level + 1, 2)
     else
-      session = session..view_line:format(spaces, 2, c2)
+      session[#session + 1] = view_line:format(spaces, 2, c2)
     end
   end
   local splits = textadept.get_split_table()
   if type(splits) == 'table' then
     write_split(splits, 0, 0)
   else
-    session = session..view_line:format('', 1, splits)
+    session[#session + 1] = view_line:format('', 1, splits)
   end
   -- Write out the current focused view.
   local current_view = view
   for idx, view in ipairs(textadept.views) do
     if view == current_view then current_view = idx break end
   end
-  session = session..("current_view: %d\n"):format(current_view)
+  session[#session + 1] = ("current_view: %d"):format(current_view)
   -- Write out other things.
   local size = textadept.size
-  session = session..("size: %d %d\n"):format( size[1], size[2] )
+  session[#session + 1] = ("size: %d %d"):format( size[1], size[2] )
   local pm = textadept.pm
-  session = session..("pm: %d %s\n"):format(pm.width, pm.entry_text)
+  session[#session + 1] = ("pm: %d %s"):format(pm.width, pm.entry_text)
   -- Write the session.
   local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
   if not user_dir then return end
   local ta_session = user_dir..'/.ta_session'
   local f = io.open(filename or ta_session, 'w')
-  if f then f:write(session) f:close() end
+  if f then f:write( table.concat(session, '\n') ) f:close() end
 end
 
 ---
