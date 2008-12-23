@@ -678,8 +678,8 @@ bool l_handle_keypress(int keyval, bool shift, bool control, bool alt) {
   return l_call_function(4, 1);
 }
 
-#define l_scn_int(i, n) { lua_pushinteger(lua, i); lua_setfield(lua, -2,  n); }
-#define l_scn_str(s, n) { lua_pushstring(lua, s); lua_setfield(lua, -2, n); }
+#define l_scn_int(i, n) { lua_pushinteger(lua, i); lua_setfield(lua, idx, n); }
+#define l_scn_str(s, n) { lua_pushstring(lua, s); lua_setfield(lua, idx, n); }
 
 /**
  * Handles a Scintilla notification.
@@ -688,6 +688,7 @@ bool l_handle_keypress(int keyval, bool shift, bool control, bool alt) {
 void l_handle_scnnotification(SCNotification *n) {
   if (!l_is_ta_table_function("events", "notification")) return;
   lua_newtable(lua);
+  int idx = lua_gettop(lua);
   l_scn_int(n->nmhdr.code, "code");
   l_scn_int(n->position, "position");
   l_scn_int(n->ch, "ch");
@@ -698,8 +699,20 @@ void l_handle_scnnotification(SCNotification *n) {
   l_scn_int(n->linesAdded, "lines_added");
   l_scn_int(n->message, "message");
   if (n->nmhdr.code == SCN_MACRORECORD) {
-    l_scn_str(reinterpret_cast<char*>(n->wParam), "wParam");
-    l_scn_str(reinterpret_cast<char*>(n->lParam), "lParam");
+    l_ta_get(lua, "buffer_functions");
+    lua_pushnil(lua);
+    while (lua_next(lua, -2))
+      if (l_rawgeti_int(lua, -1, 1) == n->message) {
+        if (l_rawgeti_int(lua, -1, 3) == tSTRING) {
+          l_scn_str(reinterpret_cast<char*>(n->wParam), "wParam");
+        } else { l_scn_int(static_cast<int>(n->wParam), "wParam"); }
+        if (l_rawgeti_int(lua, -1, 4) == tSTRING) {
+          l_scn_str(reinterpret_cast<char*>(n->lParam), "lParam");
+        } else { l_scn_int(static_cast<int>(n->lParam), "lParam"); }
+        lua_pop(lua, 2); // key and value
+        break;
+      } else lua_pop(lua, 1); // value
+    lua_pop(lua, 1); // textadept.buffer_functions
   } else {
     l_scn_int(static_cast<int>(n->wParam), "wParam");
     l_scn_int(static_cast<int>(n->lParam), "lParam");

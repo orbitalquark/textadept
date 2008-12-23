@@ -14,9 +14,9 @@ local MACRO_FILE = _HOME..'/saved_macros'
 -- The list of available macros.
 -- Each key is the macro name, and the value is a numerically indexed table of
 -- commands. Each command is a table with a structure as follows:
--- { command, wParam, lParam, type = 'function' or 'property' }
--- where command is the buffer function or property name (depending on type)
--- and wParam and lParam are the arguments for it.
+-- { command, wParam, lParam }
+-- where command is the buffer function and wParam and lParam are the arguments
+-- for it.
 -- @class table
 -- @name list
 list = {}
@@ -38,7 +38,7 @@ local recording = false
 -- @param msg The Scintilla message ID.
 local function macro_notification(msg, wParam, lParam)
   if recording then
-    current[#current + 1] = { msg, wParam or '', lParam or '' }
+    current[#current + 1] = { msg, wParam or 0, lParam or 0 }
     textadept.statusbar_text = 'Macro recording'
   end
 end
@@ -57,36 +57,27 @@ end
 ---
 -- Stops recording a macro.
 -- Each command's msg in the recorded macro is changed to the name of the
--- message and the type of the command is changed appropriately (function or
--- property). Then the user is prompted for a macro name and the macro is saved
--- to the current macro list and macro file.
+-- message Then the user is prompted for a macro name and the macro is saved to
+-- the current macro list and macro file.
 function stop_recording()
   if not recording then return end
   buffer:stop_record()
   recording = false
   local textadept = textadept
-  local bf, bp = textadept.buffer_functions, textadept.buffer_properties
-  local macro_name = cocoa_dialog( 'standard-inputbox', {
-    title = 'Save Macro',
-    text = 'Macro name:',
+  local ret, macro_name = cocoa_dialog( 'standard-inputbox', {
+    ['informative-text'] = 'Macro name?',
+    text = 'Macro name',
     ['no-newline'] = true
-  } )
+  } ):match('^(%d)\n([^\n]+)$')
 
-  if #macro_name > 0 then
+  if ret == '1' and macro_name and #macro_name > 0 then
     for _, command in ipairs(current) do
-      command.type = 'function'
       local msg = command[1]
-      for f, t in pairs(bf) do
+      for f, t in pairs(textadept.buffer_functions) do
         if t[1] == msg then command[1] = f break end
       end
-      if type( command[1] ) ~= 'string' then
-        command.type = 'property'
-        for p, t in pairs(bp) do
-          if t[1] == msg or t[2] == msg then command[1] = p break end
-        end
-      end
     end
-    list[ macro_name:match('[^\n]+') ] = current
+    list[macro_name] = current
     save()
     textadept.statusbar_text = 'Macro saved'
     textadept.events.handle('macro_saved')
@@ -109,22 +100,26 @@ function play(macro_name)
   if not macro_name then
     local macro_list = ''
     for name in pairs(list) do macro_list = macro_list..'"'..name..'"'..' ' end
-    macro_name = cocoa_dialog( 'standard-dropdown', {
+    local ret
+    ret, macro_name = cocoa_dialog( 'standard-dropdown', {
       title = 'Select a Macro',
       text = 'Macro name:',
       items = macro_list,
+      ['string-output'] = true,
       ['no-newline'] = true
-    } )
+    } ):match('^([^\n]+)\n([^\n]+)$')
+    if ret == 'Cancel' then return end
   end
   local macro = list[macro_name]
   if not macro then return end
-  local buffer = buffer
+  local buffer, bf = buffer, textadept.buffer_functions
   for _, command in ipairs(macro) do
     local cmd, wParam, lParam = unpack(command)
-    if command.type == 'function' then
-      buffer[cmd](buffer, wParam, lParam)
+    local _, _, p1_type, p2_type  = unpack( bf[cmd] )
+    if p2_type == 7 and p1_type == 0 or p1_type == 2 then -- single string param
+      buffer[cmd](buffer, lParam)
     else
-      buffer[cmd] = #wParam > 0 and wParam or lParam
+      buffer[cmd](buffer, wParam, lParam)
     end
   end
 end
@@ -149,7 +144,12 @@ function save(filename)
   for name, macro in pairs(list) do
     f:write(name, '\n')
     for _, command in ipairs(macro) do
-      f:write( ("%s\t%s\t%s\t%s\n"):format( command.type, unpack(command) ) )
+      local msg, wParam, lParam = unpack(command)
+      if type(lParam) == 'string' then
+        lParam = lParam:gsub( '[\t\n\r\f]',
+          { ['\t'] = '\\t', ['\n'] = '\\n', ['\r'] = '\\r', ['\f'] = '\\f' } )
+      end
+      f:write( ("%s\t%s\t%s\n"):format(msg, wParam, lParam) )
     end
     f:write('\n')
   end
@@ -173,11 +173,15 @@ function load(filename)
         list[name] = current_macro
         name = nil
       else
-        local type, cmd, wParam, lParam =
-          line:match('^([^\t]+)\t([^\t]+)\t?([^\t]*)\t?(.*)$')
-        if type and cmd then
+        local cmd, wParam, lParam = line:match('^([^\t]+)\t([^\t]+)\t(.*)$')
+        if cmd and wParam and lParam then
+          lParam = lParam:gsub( '\\[tnrf]',
+            { ['\\t'] = '\t', ['\\n'] = '\n', ['\\r'] = '\r', ['\\f'] = '\f' } )
+          local num = wParam:match('^-?%d+$')
+          if num then wParam = tonumber(num) end
+          num = lParam:match('^-?%d+$')
+          if num then lParam = tonumber(num) end
           local command = { cmd, wParam, lParam }
-          command.type = type
           current_macro[#current_macro + 1] = command
         end
       end

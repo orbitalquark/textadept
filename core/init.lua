@@ -38,21 +38,24 @@ end
 --   used.
 -- @return string CocoaDialog result.
 function cocoa_dialog(kind, opts)
-  local args = not MAC and { kind } or ''
+  local args = { kind }
   for k, v in pairs(opts) do
-    if not MAC then
-      args[#args + 1] = '--'..k
-      if type(v) == 'string' then args[#args + 1] = v end
-    else
-      args = args..' --'..k
-      if type(v) == 'string' then args = args..' "'..v..'"' end
+    args[#args + 1] = '--'..k
+    if k == 'items' and kind:match('dropdown') then
+      if not MAC then
+        for item in v:gmatch('"(.-)"%s+') do args[#args + 1] = item end
+      else
+        args[#args + 1] = v
+      end
+    elseif type(v) == 'string' then
+      args[#args + 1] = not MAC and v or '"'..v..'"'
     end
   end
   if not MAC then
     return lua_dialog.run(args)
   else
     local cocoa_dialog = '/CocoaDialog.app/Contents/MacOS/CocoaDialog '
-    local p = io.popen(_HOME..cocoa_dialog..kind..args)
+    local p = io.popen( _HOME..cocoa_dialog..table.concat(args, ' ') )
     local out = p:read('*all')
     p:close()
     return out
