@@ -306,8 +306,9 @@ end
 -- @param action If given, specifies whether to cycle through the kill-ring in
 --   normal or reverse order. A value of 'cycle' cycles through normally,
 --   'reverse' in reverse.
+-- @param reindent Flag indicating whether or not to reindent the pasted text.
 -- @see scroll_kill_ring
-function smart_paste(action)
+function smart_paste(action, reindent)
   local buffer = buffer
   local anchor, caret = buffer.anchor, buffer.current_pos
   if caret < anchor then anchor = caret end
@@ -326,6 +327,13 @@ function smart_paste(action)
 
   txt = kill_ring[kill_ring.pos]
   if txt then
+    if reindent then
+      local indent = buffer.line_indentation[
+        buffer:line_from_position(buffer.current_pos) ]
+      local padding = string.rep(buffer.use_tabs and '\t' or ' ',
+        buffer.use_tabs and indent / buffer.tab_width or indent)
+      txt = txt:gsub('\n', '\n'..padding)
+    end
     buffer:replace_sel(txt)
     if action then buffer.anchor = anchor end -- cycle
   end
