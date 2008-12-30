@@ -515,18 +515,19 @@ add_handler('view_switch',
 add_handler('quit',
   function() -- prompts for confirmation if any buffers are dirty; saves session
     local any = false
-    local list = 'The following buffers are unsaved:\n\n'
+    local list = { 'The following buffers are unsaved:\n' }
     for _, buffer in ipairs(textadept.buffers) do
       if buffer.dirty then
-        list = list..(buffer.filename or 'Untitled')..'\n'
+        list[#list + 1] = buffer.filename or 'Untitled'
         any = true
       end
     end
     if any then
+      list[#list + 1] = '\nYou will have to save changes manually.\n'
       if cocoa_dialog( 'yesno-msgbox', {
         title = 'Save?',
         text = 'Save changes before quitting?',
-        ['informative-text'] = list..'\nYou will have to save changes manually.',
+        ['informative-text'] = table.concat(list, '\n'),
         ['no-newline'] = true
       } ) ~= '2' then return false end
     end
