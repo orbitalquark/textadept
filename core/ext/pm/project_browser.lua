@@ -154,7 +154,7 @@ function perform_menu_action(menu_item, selected_item)
           -- If the user is saving to a different folder than was selected,
           -- caution them about unexpected behavior and ask to save in the
           -- project root instead.
-          if dir and file:match('^(.+)/') ~= dir then
+          if dir and file:match('^(.+)[/\\]') ~= dir then
             local ret = cocoa_dialog( 'yesno-msgbox', {
               text = 'Add to Project Root Instead?',
               ['informative-text'] = 'You are adding a new file to a live '..

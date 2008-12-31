@@ -50,7 +50,7 @@ function open(filenames)
     -- in Windows, dialog:get_filenames() is unavailable; only allow single
     -- selection
     ['select-multiple'] = not WIN32 or nil,
-    ['with-directory'] = (buffer.filename or ''):match('.+/')
+    ['with-directory'] = (buffer.filename or ''):match('.+[/\\]')
   } )
   for filename in filenames:gmatch('[^\n]+') do open_helper(filename) end
 end
@@ -104,8 +104,8 @@ function save_as(buffer, filename)
   if not filename then
     filename = cocoa_dialog( 'filesave', {
       title = 'Save',
-      ['with-directory'] = (buffer.filename or ''):match('.+/'),
-      ['with-file'] = (buffer.filename or ''):match('[^/]+$'),
+      ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
+      ['with-file'] = (buffer.filename or ''):match('[^/\\]+$'),
       ['no-newline'] = true
     } )
   end

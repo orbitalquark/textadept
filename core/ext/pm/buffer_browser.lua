@@ -15,7 +15,7 @@ function get_contents_for()
     index = string.format("%02i", index)
     contents[index] = {
       pixbuf = buffer.dirty and 'gtk-edit' or 'gtk-file',
-      text = (buffer.filename or 'Untitled'):match('[^/]+$')
+      text = (buffer.filename or 'Untitled'):match('[^/\\]+$')
     }
   end
   return contents

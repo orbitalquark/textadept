@@ -261,7 +261,7 @@ local patterns = {
 local function set_lexer_from_filename(filename)
   local lexer
   if filename then
-    local ext = filename:match('[^/]+$'):match('[^.]+$')
+    local ext = filename:match('[^/\\]+$'):match('[^.]+$')
     lexer = extensions[ext]
   end
   buffer:set_lexer_language(lexer or 'container')
@@ -302,7 +302,7 @@ end
 -- @param filename The filename used to load a language module from.
 local function load_language_module_from_filename(filename)
   if not filename then return end
-  local ext = filename:match('[^/]+$'):match('[^.]+$')
+  local ext = filename:match('[^/\\]+$'):match('[^.]+$')
   local lang = extensions[ext]
   if lang then
     local ret, err = pcall(require, lang)
