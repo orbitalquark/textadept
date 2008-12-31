@@ -147,6 +147,7 @@ t.menubar = {
     title = '_Project Manager',
     '_Toggle PM Visible',
     '_Focus PM',
+    'Show PM _Project',
     'Show PM _Ctags',
     'Show PM _Buffers',
     'Show PM _Files',
@@ -302,6 +303,7 @@ local actions = {
   -- Project Manager
   ['Toggle PM Visible'] = { t.pm.toggle_visible },
   ['Focus PM'] = { t.pm.focus },
+  ['Show PM Project'] = { pm_activate, 'project' },
   ['Show PM Ctags'] = { pm_activate, 'ctags' },
   ['Show PM Buffers'] = { pm_activate, 'buffers' },
   ['Show PM Files'] = { pm_activate, not WIN32 and '/' or 'C:\\' },
