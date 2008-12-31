@@ -9,7 +9,7 @@
 --     commands.
 --   CTRL: The string representing the Control key.
 --   SHIFT: The string representing the Shift key.
---   ALT: The string representing the Alt key.
+--   ALT: The string representing the Alt key (the Apple key on Mac OSX).
 --   ADD: The string representing used to join together a sequence of Control,
 --     Shift, or Alt modifier keys.
 --
