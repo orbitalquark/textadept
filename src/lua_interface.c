@@ -911,7 +911,6 @@ void l_pm_perform_menu_action(const char *menu_item) {
 /**
  * Finds text in the current document.
  * @param ftext The text to find.
- * @param flags Integer flags for the find.
  * @param next Flag indicating whether or not to find next. If false, finds
  *   previous matches.
  */
@@ -936,7 +935,6 @@ void l_find_replace(const char *rtext) {
  * Replaces all found text in the current document.
  * @param ftext The text to find.
  * @param rtext The text to replace the found text with.
- * @param flags Integer flags for the find.
  */
 void l_find_replace_all(const char *ftext, const char *rtext) {
   if (!l_is_ta_table_function("find", "replace_all")) return;
