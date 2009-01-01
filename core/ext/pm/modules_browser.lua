@@ -1,4 +1,4 @@
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- Modules browser for the Textadept project manager.
@@ -9,7 +9,7 @@ local lfs = require 'lfs'
 local os = require 'os'
 
 local INIT = [[
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- The $1 module.
@@ -41,7 +41,7 @@ end
 ]]
 
 local SNIPPETS = [[
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- Snippets for the $1 module.
@@ -55,7 +55,7 @@ end
 ]]
 
 local COMMANDS = [[
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- Commands for the $1 module.

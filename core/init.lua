@@ -1,4 +1,4 @@
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 package.path = _HOME..'/core/?.lua;'..package.path
 if not WIN32 then

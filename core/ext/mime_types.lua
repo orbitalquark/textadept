@@ -1,4 +1,4 @@
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 --- Handles file-specific settings (based on file extension).
 module('textadept.mime_types', package.seeall)
