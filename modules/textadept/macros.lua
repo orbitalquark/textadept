@@ -1,4 +1,4 @@
--- Copyright 2007-2008 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- Support for recording, saving, and playing macros for the textadept module.
