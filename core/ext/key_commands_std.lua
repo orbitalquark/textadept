@@ -141,7 +141,7 @@ keys.ct.v = {
 keys['f5'] = { 'colourise', b, 0, -1 }
 
 -- Views
-keys.cv = {
+keys.cav = {
   n  = { t.goto_view, 1, false                      },
   p  = { t.goto_view, -1, false                     },
   ss = { 'split', v                                 }, -- vertical
