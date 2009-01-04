@@ -44,9 +44,10 @@ end
 --   specified, the user is prompted to open files from a dialog.
 -- @usage textadept.io.open(filename)
 function open(filenames)
+  local locale = textadept.locale
   filenames = filenames or cocoa_dialog( 'fileselect', {
-    title = 'Open',
-    text = 'Select a file(s) to open',
+    title = locale.IO_OPEN_TITLE,
+    text = locale.IO_OPEN_TEXT,
     -- in Windows, dialog:get_filenames() is unavailable; only allow single
     -- selection
     ['select-multiple'] = not WIN32 or nil,
@@ -103,7 +104,7 @@ function save_as(buffer, filename)
   textadept.check_focused_buffer(buffer)
   if not filename then
     filename = cocoa_dialog( 'filesave', {
-      title = 'Save',
+      title = textadept.locale.IO_SAVE_TITLE,
       ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
       ['with-file'] = (buffer.filename or ''):match('[^/\\]+$'),
       ['no-newline'] = true
@@ -138,11 +139,12 @@ end
 --   buffer.
 -- @usage buffer:close()
 function close(buffer)
+  local locale = textadept.locale
   textadept.check_focused_buffer(buffer)
   if buffer.dirty and cocoa_dialog( 'yesno-msgbox', {
-    title = 'Save?',
-    text = 'Save changes before closing?',
-    ['informative-text'] = 'You will have to save changes manually.',
+    title = locale.IO_CLOSE_TITLE,
+    text = locale.IO_CLOSE_TEXT,
+    ['informative-text'] = locale.IO_CLOSE_MSG,
     ['no-newline'] = true
   } ) ~= '2' then return false end
   buffer:delete()

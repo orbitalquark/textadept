@@ -63,8 +63,9 @@ module('textadept.events', package.seeall)
 --     shift: flag indicating whether or not shift is pressed.
 --     control: flag indicating whether or not control is pressed.
 --     alt: flag indicating whether or not alt is pressed.
---   menu_clicked(menu_item)
+--   menu_clicked(menu_item, menu_id)
 --     menu_item: text of the menu item clicked.
+--     menu_id: the numeric ID of the menu item.
 
 local events = textadept.events
 
@@ -136,7 +137,8 @@ function keypress(code, shift, control, alt)
   return handle('keypress', code, shift, control, alt)
 end
 function menu_clicked(menu_item)
-  return handle('menu_clicked', menu_item)
+  local text, menu_id = menu_item:match('^(.+)|(%d+)$')
+  return handle( 'menu_clicked', text, tonumber(menu_id) )
 end
 
 -- Scintilla notifications.
@@ -366,8 +368,8 @@ add_handler('char_added',
 -- filename.
 -- @param buffer The currently focused buffer.
 local function set_title(buffer)
-  local buffer = buffer
-  local filename = buffer.filename or 'Untitled'
+  local buffer, textadept = buffer, textadept
+  local filename = buffer.filename or textadept.locale.UNTITLED
   local d = buffer.dirty and ' * ' or ' - '
   textadept.title = filename:match('[^/\\]+$')..d..'Textadept ('..filename..')'
 end
@@ -467,20 +469,24 @@ add_handler('update_ui',
     if not match_brace(buffer.current_pos) then buffer:brace_bad_light(-1) end
   end)
 
-local docstatusbar_text =
-  "Line: %d/%d    Col: %d    Lexer: %s    %s    %s    %s"
+local EOLs = {
+  textadept.locale.STATUS_CRLF,
+  textadept.locale.STATUS_CR,
+  textadept.locale.STATUS_LF
+}
 add_handler('update_ui',
   function() -- sets docstatusbar text
-    local buffer = buffer
+    local buffer, locale = buffer, textadept.locale
     local pos = buffer.current_pos
     local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
     local col = buffer.column[pos] + 1
     local lexer = buffer:get_lexer_language()
-    local mode = buffer.overtype and 'OVR' or 'INS'
-    local eol = ( { 'CRLF', 'CR', 'LF' } )[buffer.eol_mode + 1]
-    local tabs = (buffer.use_tabs and 'Tabs:' or 'Spaces:')..buffer.indent
+    local mode = buffer.overtype and locale.STATUS_OVR or locale.STATUS_INS
+    local eol = EOLs[buffer.eol_mode + 1]
+    local tabs = (buffer.use_tabs and locale.STATUS_TABS or
+      locale.STATUS_SPACES)..buffer.indent
     textadept.docstatusbar_text =
-      docstatusbar_text:format(line, max, col, lexer, mode, eol, tabs)
+      locale.DOCSTATUSBAR_TEXT:format(line, max, col, lexer, mode, eol, tabs)
   end)
 
 add_handler('margin_click',
@@ -514,20 +520,21 @@ add_handler('view_switch',
 
 add_handler('quit',
   function() -- prompts for confirmation if any buffers are dirty; saves session
+    local locale = textadept.locale
     local any = false
-    local list = { 'The following buffers are unsaved:\n' }
+    local list = {}
     for _, buffer in ipairs(textadept.buffers) do
       if buffer.dirty then
-        list[#list + 1] = buffer.filename or 'Untitled'
+        list[#list + 1] = buffer.filename or locale.UNTITLED
         any = true
       end
     end
     if any then
-      list[#list + 1] = '\nYou will have to save changes manually.\n'
       if cocoa_dialog( 'yesno-msgbox', {
-        title = 'Save?',
-        text = 'Save changes before quitting?',
-        ['informative-text'] = table.concat(list, '\n'),
+        title = locale.EVENTS_QUIT_TITLE,
+        text = locale.EVENTS_QUIT_TEXT,
+        ['informative-text'] =
+          string.format( locale.EVENTS_QUIT_MSG, table.concat(list, '\n') ),
         ['no-newline'] = true
       } ) ~= '2' then return false end
     end

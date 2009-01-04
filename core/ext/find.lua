@@ -25,7 +25,7 @@ local escapes = {
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
 function find.find(text, next, flags, nowrap, wrapped)
-  local buffer = buffer
+  local buffer, textadept = buffer, textadept
   local increment, result
   text = text:gsub('\\[abfnrtv\\]', escapes)
   find.captures = nil
@@ -68,10 +68,10 @@ function find.find(text, next, flags, nowrap, wrapped)
     else
       buffer:goto_pos(buffer.length)
     end
-    textadept.statusbar_text = 'Search wrapped'
+    textadept.statusbar_text = textadept.locale.FIND_SEARCH_WRAPPED
     result = find.find(text, next, flags, true, true)
     if not result then
-      textadept.statusbar_text = 'No results found'
+      textadept.statusbar_text = textadept.locale.FIND_NO_RESULTS
       buffer:goto_pos(anchor)
     end
     return result
@@ -103,11 +103,12 @@ function find.replace(rtext)
   end
   local ret, rtext = pcall( rtext.gsub, rtext, '%%(%b())',
     function(code)
+      local locale = textadept.locale
       local ret, val = pcall( loadstring('return '..code) )
       if not ret then
         cocoa_dialog( 'msgbox', {
-          title = 'Error',
-          text = 'An error occured:',
+          title = locale.FIND_ERROR_DIALOG_TITLE,
+          text = locale.FIND_ERROR_DIALOG_TEXT,
           ['informative-text'] = val:gsub('"', '\\"')
         } )
         error()
@@ -134,11 +135,13 @@ end
 -- @param flags The number mask identical to the one in 'find'.
 -- @see find.find
 function find.replace_all(ftext, rtext, flags)
+  local textadept = textadept
   buffer:goto_pos(0)
   local count = 0
   while( find.find(ftext, true, flags, true) ) do
     find.replace(rtext)
     count = count + 1
   end
-  textadept.statusbar_text = tostring(count)..' replacement(s) made'
+  textadept.statusbar_text = tostring(count)..' '..
+    textadept.locale.FIND_REPLACEMENTS_MADE
 end

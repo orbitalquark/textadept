@@ -53,7 +53,7 @@ static void pm_row_activated(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *,
                              gpointer);
 static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer);
 static gbool pm_popup_menu(GtkWidget *, gpointer);
-static void pm_menu_activate(GtkWidget *menu_item, gpointer);
+static void pm_menu_activate(GtkWidget *menu_item, gpointer menu_id);
 
 // Find/Replace
 GtkWidget *findbox, *find_entry, *replace_entry;
@@ -746,16 +746,17 @@ void pm_popup_context_menu(GdkEventButton *event) {
 /**
  * Performs a Lua action for a selected Project Manager menu item.
  * @param menu_item The menu item.
+ * @param menu_id The numeric ID for the menu item.
  * @see l_pm_perform_menu_action
  */
-void pm_process_selected_menu_item(GtkWidget *menu_item) {
+void pm_process_selected_menu_item(GtkWidget *menu_item, int menu_id) {
   GtkWidget *label = gtk_bin_get_child(GTK_BIN(menu_item));
   const char *text = gtk_label_get_text(GTK_LABEL(label));
   GtkTreePath *path;
   GtkTreeViewColumn *column;
   gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, &column);
   l_pm_get_full_path(path);
-  l_pm_perform_menu_action(text);
+  l_pm_perform_menu_action(text, menu_id);
 }
 
 /**
@@ -875,8 +876,8 @@ static gbool pm_popup_menu(GtkWidget *, gpointer) {
  * Signal for a selected Project Manager menu item.
  * @see pm_process_selected_menu_item
  */
-static void pm_menu_activate(GtkWidget *menu_item, gpointer) {
-  pm_process_selected_menu_item(menu_item);
+static void pm_menu_activate(GtkWidget *menu_item, gpointer menu_id) {
+  pm_process_selected_menu_item(menu_item, reinterpret_cast<int>(menu_id));
 }
 
 // Find/Replace

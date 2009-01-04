@@ -15,7 +15,7 @@ function get_contents_for()
     index = string.format("%02i", index)
     contents[index] = {
       pixbuf = buffer.dirty and 'gtk-edit' or 'gtk-file',
-      text = (buffer.filename or 'Untitled'):match('[^/\\]+$')
+      text = (buffer.filename or textadept.locale.UNTITLED):match('[^/\\]+$')
     }
   end
   return contents
@@ -27,22 +27,32 @@ function perform_action(selected_item)
   if buffer then view:goto_buffer(index) view:focus() end
 end
 
+local ID = { NEW = 1, OPEN = 2, SAVE = 3, SAVEAS = 4, CLOSE = 5 }
+
 function get_context_menu(selected_item)
-  return { '_New', '_Open', '_Save', 'Save _As...', 'separator', '_Close' }
+  local locale = textadept.locale
+  return {
+    { locale.PM_BROWSER_BUFFER_NEW, ID.NEW },
+    { locale.PM_BROWSER_BUFFER_OPEN, ID.OPEN },
+    { locale.PM_BROWSER_BUFFER_SAVE, ID.SAVE },
+    { locale.PM_BROWSER_BUFFER_SAVEAS, ID.SAVEAS },
+    { 'separator', 0 },
+    { locale.PM_BROWSER_BUFFER_CLOSE, ID.CLOSE },
+  }
 end
 
-function perform_menu_action(menu_item, selected_item)
-  if menu_item == 'New' then
+function perform_menu_action(menu_item, menu_id, selected_item)
+  if menu_id == ID.NEW then
     textadept.new_buffer()
-  elseif menu_item == 'Open' then
+  elseif menu_id == ID.OPEN then
     textadept.io.open()
-  elseif menu_item == 'Save' then
+  elseif menu_id == ID.SAVE then
     view:goto_buffer( tonumber( selected_item[2] ) )
     buffer:save()
-  elseif menu_item == 'Save As...' then
+  elseif menu_id == ID.SAVEAS then
     view:goto_buffer( tonumber( selected_item[2] ) )
     buffer:save_as()
-  elseif menu_item == 'Close' then
+  elseif menu_id == ID.CLOSE then
     view:goto_buffer( tonumber( selected_item[2] ) )
     buffer:close()
   end

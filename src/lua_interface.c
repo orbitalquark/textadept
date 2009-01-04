@@ -615,19 +615,32 @@ GtkWidget *l_create_gtkmenu(LS *lua, GCallback callback, bool submenu) {
   } lua_pop(lua, 1); // title
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
-    if (lua_type(lua, -2) == LUA_TNUMBER && lua_isstring(lua, -1)) {
-      label = lua_tostring(lua, -1);
-      if (g_str_has_prefix(label, "gtk-"))
-        menu_item = gtk_image_menu_item_new_from_stock(label, NULL);
-      else if (streq(label, "separator"))
-        menu_item = gtk_separator_menu_item_new();
-      else menu_item = gtk_menu_item_new_with_mnemonic(label);
-      g_signal_connect(menu_item, "activate", callback, 0);
-      gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-    } else if (lua_istable(lua, -1))
-      gtk_menu_shell_append(GTK_MENU_SHELL(menu),
-                            l_create_gtkmenu(lua, callback, true));
-    lua_pop(lua, 1); // value
+    if (lua_istable(lua, -1)) {
+      lua_getfield(lua, -1, "title");
+      bool is_submenu = !lua_isnil(lua, -1);
+      lua_pop(lua, 1); // title
+      if (is_submenu)
+        gtk_menu_shell_append(GTK_MENU_SHELL(menu),
+                              l_create_gtkmenu(lua, callback, true));
+      else
+        if (lua_objlen(lua, -1) == 2) {
+          lua_rawgeti(lua, -1, 1);
+          lua_rawgeti(lua, -2, 2);
+          label = lua_tostring(lua, -2);
+          int menu_id = static_cast<int>(lua_tonumber(lua, -1));
+          lua_pop(lua, 2); // label and id
+          if (label) {
+            if (g_str_has_prefix(label, "gtk-"))
+              menu_item = gtk_image_menu_item_new_from_stock(label, NULL);
+            else if (streq(label, "separator"))
+              menu_item = gtk_separator_menu_item_new();
+            else menu_item = gtk_menu_item_new_with_mnemonic(label);
+            g_signal_connect(menu_item, "activate", callback,
+                             reinterpret_cast<gpointer>(menu_id));
+            gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+          }
+        } else warn("gtkmenu: { 'menu label', id_number } expected.");
+    } lua_pop(lua, 1); // value
   } return !submenu_root ? menu : submenu_root;
 }
 
@@ -897,13 +910,16 @@ void l_pm_perform_action() {
  * Manager.
  * The full path table for the item is at the top of the Lua stack.
  * @param menu_item The label text for the menu item clicked.
+ * @param menu_id The numeric ID for the menu item.
  */
-void l_pm_perform_menu_action(const char *menu_item) {
+void l_pm_perform_menu_action(const char *menu_item, int menu_id) {
   if (!l_is_ta_table_function("pm", "perform_menu_action")) return;
   l_insert(lua, -1); // shift full_path down
   lua_pushstring(lua, menu_item);
   l_insert(lua, -1); // shift full_path down
-  l_call_function(2);
+  lua_pushnumber(lua, menu_id);
+  l_insert(lua, -1); // shift full_path down
+  l_call_function(3);
 }
 
 // Find/Replace
@@ -1382,10 +1398,14 @@ LF l_cf_view_goto_buffer(LS *lua) {
   return 0;
 }
 
-static void t_menu_activate(GtkWidget *menu_item, gpointer) {
+static void t_menu_activate(GtkWidget *menu_item, gpointer menu_id) {
   GtkWidget *label = gtk_bin_get_child(GTK_BIN(menu_item));
   const char *text = gtk_label_get_text(GTK_LABEL(label));
-  l_handle_event("menu_clicked", text);
+  int id = reinterpret_cast<int>(menu_id);
+  char *param = static_cast<char*>(malloc(sizeof(char) * (strlen(text) + 12)));
+  sprintf(param, "%s|%i\0", text, id);
+  l_handle_event("menu_clicked", param);
+  g_free(param);
 }
 
 LF l_cf_ta_gtkmenu(LS *lua) {

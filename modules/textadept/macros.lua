@@ -39,7 +39,7 @@ local recording = false
 local function macro_notification(msg, wParam, lParam)
   if recording then
     current[#current + 1] = { msg, wParam or 0, lParam or 0 }
-    textadept.statusbar_text = 'Macro recording'
+    textadept.statusbar_text = textadept.locale.M_TEXTADEPT_MACRO_RECORDING
   end
 end
 textadept.events.add_handler('macro_record', macro_notification)
@@ -63,10 +63,10 @@ function stop_recording()
   if not recording then return end
   buffer:stop_record()
   recording = false
-  local textadept = textadept
+  local textadept, locale = textadept, textadept.locale
   local ret, macro_name = cocoa_dialog( 'standard-inputbox', {
-    ['informative-text'] = 'Macro name?',
-    text = 'Macro name',
+    ['informative-text'] = locale.M_TEXTADEPT_MACRO_SAVE_TITLE,
+    text = locale.M_TEXTADEPT_MACRO_SAVE_TEXT,
     ['no-newline'] = true
   } ):match('^(%d)\n([^\n]+)$')
 
@@ -79,10 +79,10 @@ function stop_recording()
     end
     list[macro_name] = current
     save()
-    textadept.statusbar_text = 'Macro saved'
+    textadept.statusbar_text = locale.M_TEXTADEPT_MACRO_SAVED
     textadept.events.handle('macro_saved')
   else
-    textadept.statusbar_text = 'Macro not saved'
+    textadept.statusbar_text = locale.M_TEXTADEPT_MACRO_NOT_SAVED
   end
 end
 
@@ -98,17 +98,20 @@ end
 --   is prompted to choose one from a list of available macros.
 function play(macro_name)
   if not macro_name then
+    local locale = textadept.locale
     local macro_list = ''
     for name in pairs(list) do macro_list = macro_list..'"'..name..'"'..' ' end
-    local ret
-    ret, macro_name = cocoa_dialog( 'standard-dropdown', {
-      title = 'Select a Macro',
-      text = 'Macro name:',
-      items = macro_list,
-      ['string-output'] = true,
-      ['no-newline'] = true
-    } ):match('^([^\n]+)\n([^\n]+)$')
-    if ret == 'Cancel' then return end
+    if #macro_list > 0 then
+      local ret
+      ret, macro_name = cocoa_dialog( 'standard-dropdown', {
+        title = locale.M_TEXTADEPT_MACRO_SELECT_TITLE,
+        text = locale.M_TEXTADEPT_MACRO_SELECT_TEXT,
+        items = macro_list,
+        ['string-output'] = true,
+        ['no-newline'] = true
+      } ):match('^([^\n]+)\n([^\n]+)$')
+      if ret == 'Cancel' then return end
+    end
   end
   local macro = list[macro_name]
   if not macro then return end

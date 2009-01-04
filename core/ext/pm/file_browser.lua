@@ -38,35 +38,36 @@ function perform_action(selected_item)
   view:focus()
 end
 
+local ID = { CHANGE_DIR = 1, FILE_INFO = 2 }
+
 function get_context_menu(selected_item)
-  return { '_Change Directory', 'File _Details' }
+  local locale = textadept.locale
+  return {
+    { 'separator', 0 }, -- make it harder to click 'Change Directory' by mistake
+    { locale.PM_BROWSER_FILE_CD, ID.CHANGE_DIR },
+    { locale.PM_BROWSER_FILE_INFO, ID.FILE_INFO },
+  }
 end
 
-function perform_menu_action(menu_item, selected_item)
+function perform_menu_action(menu_item, menu_id, selected_item)
+  local locale = textadept.locale
   local filepath = table.concat(selected_item, '/')
-  if menu_item == 'Change Directory' then
+  if menu_id == ID.CHANGE_DIR then
     textadept.pm.entry_text = filepath
     textadept.pm.activate()
-  elseif menu_item == 'File Details' then
+  elseif menu_id == ID.FILE_INFO then
     local date_format = '%D %T'
     local attr = lfs.attributes(filepath)
-    local out = string.format( [[
-      Mode:	%s
-      Size:	%s
-      UID:	%s
-      GID:	%s
-      Device:	%s
-      Accessed:	%s
-      Modified:	%s
-      Changed:	%s
-    ]], attr.mode, attr.size, attr.uid, attr.gid, attr.dev,
+    local out = string.format( locale.PM_BROWSER_FILE_DATA,
+      attr.mode, attr.size, attr.uid, attr.gid, attr.dev,
       os.date(date_format, attr.access),
       os.date(date_format, attr.modification),
       os.date(date_format, attr.change) )
     cocoa_dialog( 'textbox', {
-      ['informative-text'] = 'File details for '..filepath,
+      ['informative-text'] =
+        string.format(locale.PM_BROWSER_FILE_INFO_TEXT, filepath),
       text = out,
-      button1 = 'OK',
+      button1 = locale.PM_BROWSER_FILE_INFO_OK,
       editable = false
     } )
   end

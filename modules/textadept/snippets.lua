@@ -355,8 +355,8 @@ function show_scope()
   local buffer = buffer
   local lexer = buffer:get_lexer_language()
   local scope = buffer.style_at[buffer.current_pos]
-  local text = 'Lexer: '..lexer..'\nScope: '..
-    buffer:get_style_name(scope)..' ('..scope..')'
+  local text = string.format(
+    textadept.locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer, style, style_num )
   buffer:call_tip_show(buffer.current_pos, text)
 end
 
