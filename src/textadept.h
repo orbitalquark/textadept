@@ -68,7 +68,7 @@ void pm_open_parent(GtkTreeIter *iter, GtkTreePath *path);
 void pm_close_parent(GtkTreeIter *iter, GtkTreePath *path);
 void pm_activate_selection();
 void pm_popup_context_menu(GdkEventButton *event);
-void pm_process_selected_menu_item(GtkWidget *menu_item);
+void pm_process_selected_menu_item(GtkWidget *menu_item, int menu_id);
 
 GtkWidget *find_create_ui();
 void find_toggle_focus();
@@ -100,7 +100,7 @@ void l_pm_populate(GtkTreeIter *initial_iter);
 void l_pm_get_full_path(GtkTreePath *path);
 void l_pm_perform_action();
 void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback);
-void l_pm_perform_menu_action(const char *menu_item);
+void l_pm_perform_menu_action(const char *menu_item, int menu_id);
 
 void l_find(const char *ftext, bool next);
 void l_find_replace(const char *rtext);

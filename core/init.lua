@@ -9,6 +9,7 @@ end
 _THEME = ''
 
 require 'iface'
+require 'locale'
 require 'events'
 require 'file_io'
 if not MAC then
@@ -22,10 +23,11 @@ end
 -- if the check fails.
 -- @param buffer The buffer in question.
 function textadept.check_focused_buffer(buffer)
+  local locale = textadept.locale
   if type(buffer) ~= 'table' or not buffer.doc_pointer then
-    error('Buffer argument expected.', 2)
+    error(locale.ERR_BUFFER_EXPECTED, 2)
   elseif textadept.focused_doc_pointer ~= buffer.doc_pointer then
-    error('The indexed buffer is not the focused one.', 2)
+    error(locale.ERR_BUFFER_NOT_FOCUSED, 2)
   end
 end
 

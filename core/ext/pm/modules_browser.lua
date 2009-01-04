@@ -104,24 +104,33 @@ function perform_action(selected_item)
   view:focus()
 end
 
+local ID = {
+  NEW = 1, DELETE = 2, CONF_MIME_TYPES = 3, CONF_KEY_COMMANDS = 4, RELOAD = 5
+}
+
 function get_context_menu(selected_item)
+  local locale = textadept.locale
   return {
-    '_New Module', '_Delete Module', 'separator',
-    'Configure _MIME Types', 'Configure _Key Commands', 'separator',
-    '_Reload Modules'
+    { locale.PM_BROWSER_MODULE_NEW, ID.NEW },
+    { locale.PM_BROWSER_MODULE_DELETE, ID.DELETE },
+    { locale.PM_BROWSER_MODULE_CONF_MIME_TYPES, ID.CONF_MIME_TYPES },
+    { locale.PM_BROWSER_MODULE_CONF_KEY_COMMANDS, ID.CONF_KEY_COMMANDS },
+    { 'separator', 0 },
+    { locale.PM_BROWSER_MODULE_RELOAD, ID.RELOAD },
   }
 end
 
-function perform_menu_action(menu_item, selected_item)
-  if menu_item == 'New Module' then
+function perform_menu_action(menu_item, menu_id, selected_item)
+  local locale = textadept.locale
+  if menu_id == ID.NEW then
     local status, module_name = cocoa_dialog( 'standard-inputbox', {
-      ['title'] = 'Module Name',
-      ['informative-text'] = 'Module name:'
+      ['title'] = locale.PM_BROWSER_MODULE_NEW_TITLE,
+      ['informative-text'] = locale.PM_BROWSER_MODULE_NEW_INFO_TEXT
     } ):match('^(%d)%s+([^\n]+)%s+$')
     if status ~= '1' then return end
     local status, lang_name = cocoa_dialog( 'standard-inputbox', {
-      ['title'] = 'Language Name',
-      ['informative-text'] = 'Language name:'
+      ['title'] = locale.PM_BROWSER_MODULE_NEW_LANG_TITLE,
+      ['informative-text'] = locale.PM_BROWSER_MODULE_NEW_LANG_INFO_TEXT
     } ):match('^(%d)%s+([^\n]+)%s+$')
     if status ~= '1' then return end
     local module_dir = _HOME..'/modules/'..module_name
@@ -142,19 +151,19 @@ function perform_menu_action(menu_item, selected_item)
       f:write(out)
       f:close()
     else
-      cocoa_dialog( 'msgbox', {
-        ['text'] = 'Error',
-        ['informative-text'] = 'A module by that name already exists or\n'..
-          'you do not have permission to create the module.'
+      cocoa_dialog( 'ok-msgbox', {
+        ['text'] = locale.PM_BROWSER_MODULE_NEW_ERROR,
+        ['informative-text'] = locale.PM_BROWSER_MODULE_NEW_ERROR_TEXT,
+        ['no-cancel'] = true
       } )
       return
     end
-  elseif menu_item == 'Delete Module' then
+  elseif menu_id == ID.DELETE then
     local module_name = selected_item[2]
     if cocoa_dialog( 'yesno-msgbox', {
-        ['text'] = 'Delete Module?',
-        ['informative-text'] = 'Are you sure you want to permanently delete '..
-          'the "'..module_name..'" module?',
+        ['text'] = locale.PM_BROWSER_MODULE_DELETE_TITLE,
+        ['informative-text'] =
+          string.format( locale.PM_BROWSER_MODULE_DELETE_TEXT, module_name ),
         ['no-cancel'] = true,
         ['no-newline'] = true
       } ) == '1' then
@@ -168,9 +177,9 @@ function perform_menu_action(menu_item, selected_item)
     else
       return
     end
-  elseif menu_item == 'Configure MIME Types' then
+  elseif menu_id == ID.CONF_MIME_TYPES then
     textadept.io.open(_HOME..'/core/ext/mime_types.lua')
-  elseif menu_item == 'Configure Key Commands' then
+  elseif menu_id == ID.CONF_KEY_COMMANDS then
     local textadept = textadept
     if textadept.key_commands then
       textadept.io.open(_HOME..'/core/ext/key_commands.lua')
@@ -179,7 +188,7 @@ function perform_menu_action(menu_item, selected_item)
     elseif textadept.key_commands_mac then
       textadept.io.open(_HOME..'/core/ext/key_commands_mac.lua')
     end
-  elseif menu_item == 'Reload Modules' then
+  elseif menu_id == ID.RELOAD then
     textadept.reset()
   end
   textadept.pm.activate()

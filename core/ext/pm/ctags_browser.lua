@@ -106,6 +106,7 @@ end
 -- of the parent being expanded.
 function get_contents_for(full_path, expanding)
   local ctags_file = full_path[1]:sub(7) -- ignore 'ctags:'
+  local locale = textadept.locale
   local f
   if #ctags_file == 0 then
     tags = {}
@@ -187,9 +188,11 @@ function get_contents_for(full_path, expanding)
           entry.line_num = line_num
           if not entry.set then tags[name] = entry end
         else
-          print('Extension "'..file_ext..'" not recognized.')
+          print( string.format(locale.PM_BROWSER_CTAGS_BAD_EXT, file_ext) )
         end
-      else print('unmatched ctag: '..line) end
+      else
+        print( string.format(locale.PM_BROWSER_CTAGS_UNMATCHED, line) )
+      end
     end
   end
   f:close()
@@ -213,7 +216,8 @@ function perform_action(selected_item)
       buffer:ensure_visible_enforce_policy(line)
       buffer:goto_line(line)
     else
-      error(item.text..' not found.')
+      error(
+        string.format(textadept.locale.PM_BROWSER_CTAGS_NOT_FOUND, item.text) )
     end
   elseif item.line_num then
     textadept.io.open(item.filepath)
@@ -226,7 +230,7 @@ function get_context_menu(selected_item)
 
 end
 
-function perform_menu_action(menu_item, selected_item)
+function perform_menu_action(menu_item, menu_id, selected_item)
 
 end
 

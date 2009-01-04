@@ -318,7 +318,8 @@ function show_style()
   local lexer = buffer:get_lexer_language()
   local style_num = buffer.style_at[buffer.current_pos]
   local style = buffer:get_style_name(style_num)
-  local text = 'Lexer: '..lexer..'\nStyle: '..style..' ('..style_num..')'
+  local text = string.format(
+    textadept.locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer, style, style_num )
   buffer:call_tip_show(buffer.current_pos, text)
 end
 

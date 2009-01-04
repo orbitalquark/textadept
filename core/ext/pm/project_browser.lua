@@ -73,29 +73,36 @@ function perform_action(selected_item)
   view:focus()
 end
 
+local ID = {
+  NEW = 1, OPEN = 2, CLOSE = 3, NEW_FILE = 4, ADD_FILES = 5, NEW_DIR = 6,
+  ADD_DIR = 7, DELETE_FILE = 8, RENAME_FILE = 9
+}
+
 --- Displays the project manager context menu.
 function get_context_menu(selected_item)
+  local locale = textadept.locale
   return {
-    'separator', -- make it harder to click 'New Project' by mistake
-    '_New Project',
-    '_Open Project',
-    '_Close Project',
-    'separator',
-    'Add New File',
-    'Add Existing Files',
-    'Add New Directory',
-    'Add Existing Director_y',
-    '_Delete',
-    '_Rename',
+    { 'separator', 0 }, -- make it harder to click 'New Project' by mistake
+    { locale.PM_BROWSER_PROJECT_NEW, ID.NEW },
+    { locale.PM_BROWSER_PROJECT_OPEN, ID.OPEN },
+    { locale.PM_BROWSER_PROJECT_CLOSE, ID.CLOSE },
+    { 'separator', 0 },
+    { locale.PM_BROWSER_PROJECT_NEW_FILE, ID.NEW_FILE },
+    { locale.PM_BROWSER_PROJECT_ADD_FILES, ID.ADD_FILES },
+    { locale.PM_BROWSER_PROJECT_NEW_DIR, ID.NEW_DIR },
+    { locale.PM_BROWSER_PROJECT_ADD_DIR, ID.ADD_DIR },
+    { locale.PM_BROWSER_PROJECT_DELETE_FILE, ID.DELETE_FILE },
+    { locale.PM_BROWSER_PROJECT_RENAME_FILE, ID.RENAME_FILE },
   }
 end
 
-function perform_menu_action(menu_item, selected_item)
-  if menu_item == 'New Project' then
+function perform_menu_action(menu_item, menu_id, selected_item)
+  local locale = textadept.locale
+  if menu_id == ID.NEW then
     -- Close all open files and prompt the user to save a project file.
     if textadept.io.close_all() then
       local file = cocoa_dialog( 'filesave', {
-        title = 'Save Project',
+        title = locale.PM_BROWSER_PROJECT_NEW_TITLE,
         ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
         ['no-newline'] = true
       } )
@@ -106,11 +113,11 @@ function perform_menu_action(menu_item, selected_item)
       end
     end
 
-  elseif menu_item == 'Open Project' then
+  elseif menu_id == ID.OPEN then
     -- Close all open files and prompt the user for a project file to open.
     if textadept.io.close_all() then
       local file = cocoa_dialog( 'fileselect', {
-        title = 'Open Project',
+        title = locale.PM_BROWSER_PROJECT_OPEN_TITLE,
         ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
         ['no-newline'] = true
       } )
@@ -120,7 +127,7 @@ function perform_menu_action(menu_item, selected_item)
       end
     end
 
-  elseif menu_item == 'Close Project' then
+  elseif menu_id == ID.CLOSE then
     -- Close all open files and clear the project variables.
     if textadept.io.close_all() then
       project_file = nil
@@ -128,12 +135,12 @@ function perform_menu_action(menu_item, selected_item)
       textadept.pm.clear()
     end
 
-  elseif menu_item == 'Add New File' then
+  elseif menu_id == ID.NEW_FILE then
     -- If a project is open, prompts the user to save the new file.
     if project_file then
       local dir = get_live_parent_folder(selected_item)
       local file = cocoa_dialog( 'filesave', {
-        title = 'Save File',
+        title = locale.PM_BROWSER_PROJECT_NEW_FILE_TITLE,
         ['with-directory'] = dir or project_file:match('.+[/\\]'),
         ['no-newline'] = true
       } )
@@ -156,10 +163,9 @@ function perform_menu_action(menu_item, selected_item)
           -- project root instead.
           if dir and file:match('^(.+)[/\\]') ~= dir then
             local ret = cocoa_dialog( 'yesno-msgbox', {
-              text = 'Add to Project Root Instead?',
-              ['informative-text'] = 'You are adding a new file to a live '..
-                'folder which may not show up if the filepaths do not match.'..
-                '\nAdd the file to the project root instead?',
+              text = locale.PM_BROWSER_PROJECT_NEW_FILE_LIVE_FOLDER_TITLE,
+              ['informative-text'] =
+                locale.PM_BROWSER_PROJECT_NEW_FILE_LIVE_FOLDER_TEXT,
               ['no-newline'] = true
             } )
             if ret == '1' then add_file_to(project_root) end
@@ -172,7 +178,7 @@ function perform_menu_action(menu_item, selected_item)
       end
     end
 
-  elseif menu_item == 'Add Existing Files' then
+  elseif menu_id == ID.ADD_FILES then
     -- If a project is open, prompts the user to add existing files.
     -- If the directory the files are being added to is a live folder, the user
     -- is asked to add the files to the project root instead of the live folder
@@ -181,8 +187,8 @@ function perform_menu_action(menu_item, selected_item)
     -- not always apply when live folders are in a project.
     if project_file then
       local files = cocoa_dialog( 'fileselect', {
-        title = 'Select Files',
-        text = 'Select files to add to the project',
+        title = locale.PM_BROWSER_PROJECT_ADD_FILES_TITLE,
+        text = locale.PM_BROWSER_PROJECT_ADD_FILES_TEXT,
         -- in Windows, dialog:get_filenames() is unavailable; only allow single
         -- selection
         ['select-multiple'] = not WIN32 or nil,
@@ -205,17 +211,16 @@ function perform_menu_action(menu_item, selected_item)
           add_files_to(project_folder)
         else
           if cocoa_dialog( 'yesno-msgbox', {
-            text = 'Add to Project Root Instead?',
-            ['informative-text'] = 'You are adding existing files to a live '..
-              'folder which is not possible.\nAdd them to the project root '..
-              'instead?',
+            text = locale.PM_BROWSER_PROJECT_ADD_FILES_LIVE_FOLDER_TITLE,
+            ['informative-text'] =
+              locale.PM_BROWSER_PROJECT_ADD_FILES_LIVE_FOLDER_TEXT,
             ['no-newline'] = true,
           } ) == '1' then add_files_to(project_root) end
         end
       end
     end
 
-  elseif menu_item == 'Add New Directory' then
+  elseif menu_id == ID.NEW_DIR then
     -- If a project is open, prompts the user for a directory name to add.
     -- This only works if the directory the directory is being added to is not a
     -- live directory.
@@ -223,7 +228,7 @@ function perform_menu_action(menu_item, selected_item)
     -- does not always apply when live folders are in a project.
     if project_file then
       local ret, name = cocoa_dialog( 'standard-inputbox', {
-        ['informative-text'] = 'Directory Name?',
+        ['informative-text'] = locale.PM_BROWSER_PROJECT_NEW_DIR_TITLE,
         ['no-newline'] = true
       } ):match('^(%d)\n([^\n]+)$')
       if ret == '1' and name and #name > 0 then
@@ -238,7 +243,7 @@ function perform_menu_action(menu_item, selected_item)
       end
     end
 
-  elseif menu_item == 'Add Existing Directory' then
+  elseif menu_id == ID.ADD_DIR then
     -- If a project is open, prompts the user for an existing directory to add.
     -- If the directory the directory being added to is a live folder, the user
     -- is asked to add the directory to the project root instead of the live
@@ -247,8 +252,8 @@ function perform_menu_action(menu_item, selected_item)
     -- does not always apply when live folders are in a project.
     if project_file then
       local dir = cocoa_dialog( 'fileselect', {
-        title = 'Select Directory',
-        text = 'Select a directory to add to the project',
+        title = locale.PM_BROWSER_PROJECT_ADD_DIR_TITLE,
+        text = locale.PM_BROWSER_PROJECT_ADD_DIR_TEXT,
         ['select-only-directories'] = true,
         ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
         ['no-newline'] = true
@@ -266,17 +271,16 @@ function perform_menu_action(menu_item, selected_item)
           add_directory_to(project_folder)
         else
           if cocoa_dialog( 'yesno-msgbox', {
-            text = 'Add to Project Root Instead?',
-            ['informative-text'] = 'You are adding an existing directory to '..
-              'a live folder which is not possible.\nAdd it to the project '..
-              'root instead?',
+            text = locale.PM_BROWSER_PROJECT_ADD_DIR_LIVE_FOLDER_TITLE,
+            ['informative-text'] =
+              locale.PM_BROWSER_PROJECT_ADD_DIR_LIVE_FOLDER_TEXT,
             ['no-newline'] = true,
           } ) == '1' then add_directory_to(project_root) end
         end
       end
     end
 
-  elseif menu_item == 'Delete' then
+  elseif menu_id == ID.DELETE_FILE then
     -- If a project is open, deletes the file from the project unless it is
     -- contained in a live folder.
     if project_file then
@@ -291,10 +295,9 @@ function perform_menu_action(menu_item, selected_item)
           for i, file in ipairs(project_folder) do
             if file == item then
               local ret = cocoa_dialog( 'yesno-msgbox', {
-                text = 'Keep on Disk?',
-                ['informative-text'] = 'This file will be removed from the '..
-                  'project.\nLeave it on your computer? If not, it will be '..
-                  'permanently deleted.',
+                text = locale.PM_BROWSER_PROJECT_DELETE_FILE_TITLE,
+                ['informative-text'] =
+                  locale.PM_BROWSER_PROJECT_DELETE_FILE_TEXT,
                 ['no-newline'] = true
               } )
               if ret == '2' then os.remove(file) end
@@ -319,10 +322,8 @@ function perform_menu_action(menu_item, selected_item)
         local parent_folder = get_parent_folder(selected_item)
         if item_is_dir and not parent_folder.is_live_folder then
           local ret = cocoa_dialog( 'yesno-msgbox', {
-            text = 'Keep on Disk?',
-            ['informative-text'] = 'This directory will be removed from the '..
-              'project.\nLeave it on your computer? If not, it will be '..
-              'permanently deleted.',
+            text = locale.PM_BROWSER_PROJECT_DELETE_DIR_TITLE,
+            ['informative-text'] = locale.PM_BROWSER_PROJECT_DELETE_DIR_TEXT,
             ['no-newline'] = true
           } )
           if ret == '2' then remove_directory(item) end
@@ -330,15 +331,13 @@ function perform_menu_action(menu_item, selected_item)
           parent_folder[item] = nil
         else
           if cocoa_dialog( 'msgbox', {
-            text = 'Delete Permanently?',
-            ['informative-text'] = 'You have selected a file from a live '..
-              'folder to delete.\nIt will be deleted permanently. Continue?\n'..
-              '(To delete a live folder from the project, select the highest '..
-              'level live folder.)',
+            text = locale.PM_BROWSER_PROJECT_DELETE_LIVE_FILE_TITLE,
+            ['informative-text'] =
+              locale.PM_BROWSER_PROJECT_DELETE_LIVE_FILE_TEXT,
             ['no-newline'] = true,
-            button1 = 'No',
-            button2 = 'Yes',
-            button3 = 'Cancel',
+            button1 = locale.PM_BROWSER_PROJECT_DELETE_LIVE_FILE_BUTTON1,
+            button2 = locale.PM_BROWSER_PROJECT_DELETE_LIVE_FILE_BUTTON2,
+            button3 = locale.PM_BROWSER_PROJECT_DELETE_LIVE_FILE_BUTTON3
           } ) ~= '2' then return end
           if item_is_dir then remove_directory(item) else os.remove(item) end
         end
@@ -347,11 +346,11 @@ function perform_menu_action(menu_item, selected_item)
       refresh_view()
     end
 
-  elseif menu_item == 'Rename' then
+  elseif menu_id == ID.RENAME_FILE then
     -- If a project is open, prompts the user for a new file/directory name.
     if project_file then
       local ret, name = cocoa_dialog( 'standard-inputbox', {
-        ['informative-text'] = 'New Name?',
+        ['informative-text'] = locale.PM_BROWSER_PROJECT_RENAME_FILE_TEXT,
         ['no-newline'] = true
       } ):match('^(%d)\n([^\n]+)$')
       if ret == '1' and name and #name > 0 then

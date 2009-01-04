@@ -183,7 +183,7 @@ local function keypress(code, shift, control, alt)
       local size = #keychain - 1
       clear_key_sequence()
       if size > 0 then -- previously in a chain
-        textadept.statusbar_text = 'Invalid Sequence'
+        textadept.statusbar_text = textadept.locale.KEYS_INVALID
         return true
       end
     else return true end
@@ -217,9 +217,10 @@ end
 -- of -1. This way, pcall will return false and -1, where the -1 can easily and
 -- efficiently be checked rather than using a string error message.
 try_get_cmd = function(active_table)
+  local locale = textadept.locale
   for _, key_seq in ipairs(keychain) do active_table = active_table[key_seq] end
   if #active_table == 0 and next(active_table) then
-    textadept.statusbar_text = 'Keychain: '..table.concat(keychain, ' ')
+    textadept.statusbar_text = locale.KEYCHAIN..table.concat(keychain, ' ')
     error(-1, 0)
   else
     local func = active_table[1]
@@ -233,7 +234,7 @@ try_get_cmd = function(active_table)
         return view[func], { view, unpack(active_table, 3) }
       end
     else
-      error( 'Unknown command: '..tostring(func) )
+      error( locale.KEYS_UNKNOWN_COMMAND..tostring(func) )
     end
   end
 end

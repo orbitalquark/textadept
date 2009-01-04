@@ -59,13 +59,14 @@ function get_split_table() end
 
 ---
 -- Creates a GTK menu, returning the userdata.
--- @param menu_table A table defining the menu. It is an ordered list of strings
---   that are handled as follows:
+-- @param menu_table A table defining the menu. It is an ordered list of tables
+--   with a string menu item and integer menu ID.
+--   The string menu item is handled as follows:
 --     'gtk-*' - a stock menu item is created based on the GTK stock-id.
 --     'separator' - a menu separator item is created.
 --     Otherwise a regular menu item with a mnemonic is created.
---  An additional 'title' key can be used to define the menu's title text (if it
---  is a submenu).
+--   Submenus are just nested menu-structure tables. Their title text is defined
+--   with a 'title' key.
 -- @see popupmenu
 function gtkmenu(menu_table) end
 

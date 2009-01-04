@@ -119,12 +119,13 @@ end
 -- Performs an action based on the selected menu item.
 -- This function is called internally and shouldn't be called by a script.
 -- @param menu_item The label text of the menu item selected.
+-- @param menu_id The numeric ID of the menu item.
 -- @param selected_item Identical to 'full_path' in pm.get_contents_for.
 -- @see pm.get_contents_for
-function pm.perform_menu_action(menu_item, selected_item)
+function pm.perform_menu_action(menu_item, menu_id, selected_item)
   for _, browser in pairs(pm.browsers) do
     if browser.matches( selected_item[1] ) then
-      return browser.perform_menu_action(menu_item, selected_item)
+      return browser.perform_menu_action(menu_item, menu_id, selected_item)
     end
   end
 end

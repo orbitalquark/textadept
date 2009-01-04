@@ -234,11 +234,11 @@ end
 -- Goes to the requested line.
 -- @param line Optional line number to go to.
 function goto_line(line)
-  local buffer = buffer
+  local buffer, locale = buffer, textadept.locale
   if not line then
     line = cocoa_dialog( 'standard-inputbox', {
-      title = 'Go To',
-      text = 'Line Number:',
+      title = locale.M_TEXTADEPT_EDITING_GOTO_TITLE,
+      text = locale.M_TEXTADEPT_EDITING_GOTO_TEXT,
       ['no-newline'] = true
     } )
     line = tonumber( line:match('%-?%d+$') )
