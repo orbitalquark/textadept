@@ -49,7 +49,7 @@ end
 -- Goes to the next bookmark in the current buffer.
 function goto_next()
   local current_line = buffer:line_from_position(buffer.current_pos)
-  local line = buffer:marker_next(current_line, 1)
+  local line = buffer:marker_next(current_line + 1, 1)
   if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
 end
 
@@ -57,6 +57,6 @@ end
 -- Goes to the previous bookmark in the current buffer.
 function goto_prev()
   local current_line = buffer:line_from_position(buffer.current_pos)
-  local line = buffer:marker_previous(current_line, 1)
+  local line = buffer:marker_previous(current_line - 1, 1)
   if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
 end
