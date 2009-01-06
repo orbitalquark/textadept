@@ -44,17 +44,6 @@
 --      widget "*textadept-pm-entry" style "textadept-pm-display-style"
 --      widget "*textadept-pm-view" style "textadept-pm-display-style"
 
----
--- Browsers loaded by the project manager.
--- @class table
--- @name browsers
--- @usage Add additional browsers to this list.
-local browsers = {
-  'buffer_browser', 'file_browser', 'ctags_browser', 'macro_browser',
-  'find_browser', 'modules_browser', 'project_browser'
-}
-for _, b in ipairs(browsers) do require('ext/pm.'..b) end
-
 local pm = textadept.pm
 
 ---

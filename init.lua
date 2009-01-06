@@ -1,22 +1,34 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-require 'ext/pm'
-require 'ext/find'
-require 'ext/command_entry'
-require 'ext/mime_types'
-require 'ext/keys'
-
 local mpath = _HOME..'/modules/?.lua;'.._HOME..'/modules/?/init.lua'
 package.path  = mpath..';'..package.path
 
--- modules to load on startup
-require 'textadept'
--- end modules
+-- Core extension modules to load on startup.
+require 'ext/keys' -- provides key command support
+require 'ext/find' -- provides functionality for find/replace
+require 'ext/command_entry' -- provides tab-completion for the command entry
+require 'ext/mime_types' -- provides support for language detection based on
+                         -- the file; loads its language-specific module if
+                         -- it exists
+require 'ext/pm' -- provides the dynamic browser (side pane) functionality
+require 'ext/pm.buffer_browser'  -- buffer browser
+require 'ext/pm.file_browser'    -- file browser
+require 'ext/pm.project_browser' -- project browser
+require 'ext/pm.modules_browser' -- modules browser
+require 'ext/pm.macro_browser'   -- macro browser
+if not WIN32 then
+  require 'ext/pm.ctags_browser' -- ctags browser
+  require 'ext/pm.find_browser'  -- find browser
+end
 
-require 'ext/menu'
---require 'ext/key_commands_std'
---require 'ext/key_commands_mac'
-require 'ext/key_commands'
+-- Generic modules to load on startup.
+require 'textadept'
+
+-- Core extension modules that must be loaded last.
+require 'ext/menu' -- provides the menu bar
+--require 'ext/key_commands_std' -- key commands for Windows and Linux
+--require 'ext/key_commands_mac' -- key commands for Mac OSX
+require 'ext/key_commands' -- key commands for Mitchell (Nano-Emacs hybrid)
 
 if not RESETTING then
   -- process command line arguments
