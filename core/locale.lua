@@ -270,6 +270,16 @@ MENU_TOOLS_ML_REMOVE_MULTIPLE = 'R_emove Multiple Lines'
 MENU_TOOLS_ML_UPDATE = '_Update Multiple Lines'
 -- _Finish Editing
 MENU_TOOLS_ML_FINISH = '_Finish Editing'
+-- _Bookmark
+MENU_TOOLS_BM_TITLE = '_Bookmark'
+-- _Toggle on Current Line
+MENU_TOOLS_BM_TOGGLE = '_Toggle on Current Line'
+-- _Clear All
+MENU_TOOLS_BM_CLEAR_ALL = '_Clear All'
+-- _Next
+MENU_TOOLS_BM_NEXT = '_Next'
+-- _Previous
+MENU_TOOLS_BM_PREV = '_Previous'
 -- M_acros
 MENU_TOOLS_MACROS_TITLE = 'M_acros'
 -- _Start Recording
