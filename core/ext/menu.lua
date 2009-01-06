@@ -88,6 +88,10 @@ local ID = {
   REMOVE_MULTIPLE_LINES = 410,
   UPDATE_MULTIPLE_LINES = 411,
   FINISH_MULTIPLE_LINES = 412,
+  TOGGLE_BOOKMARK = 416,
+  CLEAR_BOOKMARKS = 417,
+  GOTO_NEXT_BOOKMARK = 418,
+  GOTO_PREV_BOOKMARK = 419,
   START_RECORDING_MACRO = 413,
   STOP_RECORDING_MACRO = 414,
   PLAY_MACRO = 415,
@@ -289,6 +293,12 @@ t.menubar = {
       { l.MENU_TOOLS_ML_UPDATE, ID.UPDATE_MULTIPLE_LINES },
       { l.MENU_TOOLS_ML_FINISH, ID.FINISH_MULTIPLE_LINES },
     },
+    { title = l.MENU_TOOLS_BM_TITLE,
+      { l.MENU_TOOLS_BM_TOGGLE, ID.TOGGLE_BOOKMARK },
+      { l.MENU_TOOLS_BM_CLEAR_ALL, ID.CLEAR_BOOKMARKS },
+      { l.MENU_TOOLS_BM_NEXT, ID.GOTO_NEXT_BOOKMARK },
+      { l.MENU_TOOLS_BM_PREV, ID.GOTO_PREV_BOOKMARK },
+    },
     { title = l.MENU_TOOLS_MACROS_TITLE,
       { l.MENU_TOOLS_MACROS_START, ID.START_RECORDING_MACRO },
       { l.MENU_TOOLS_MACROS_STOP, ID.STOP_RECORDING_MACRO },
@@ -402,6 +412,7 @@ local b, v = 'buffer', 'view'
 local m_snippets = _m.textadept.lsnippets
 local m_editing = _m.textadept.editing
 local m_mlines = _m.textadept.mlines
+local m_bookmarks = _m.textadept.bookmarks
 local m_macros = _m.textadept.macros
 
 local function pm_activate(text) t.pm.entry_text = text t.pm.activate() end
@@ -505,6 +516,11 @@ local actions = {
   [ID.REMOVE_MULTIPLE_LINES] = { m_mlines.remove_multiple },
   [ID.UPDATE_MULTIPLE_LINES] = { m_mlines.update },
   [ID.FINISH_MULTIPLE_LINES] = { m_mlines.clear },
+  -- Tools -> Bookmark
+  [ID.TOGGLE_BOOKMARK] = { m_bookmarks.toggle },
+  [ID.CLEAR_BOOKMARKS] = { m_bookmarks.clear },
+  [ID.GOTO_NEXT_BOOKMARK] = { m_bookmarks.goto_next },
+  [ID.GOTO_PREV_BOOKMARK] = { m_bookmarks.goto_prev },
   -- Tools -> Macros
   [ID.START_RECORDING_MACRO] = { m_macros.start_recording },
   [ID.STOP_RECORDING_MACRO] = { m_macros.stop_recording },
