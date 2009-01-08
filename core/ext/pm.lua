@@ -66,7 +66,7 @@ local pm = textadept.pm
 --   are expanded, this function is called again to get that level of data.
 function pm.get_contents_for(full_path, expanding)
   for _, browser in pairs(pm.browsers) do
-    if browser.matches( full_path[1] ) then
+    if browser.matches(full_path[1]) then
       return browser.get_contents_for(full_path, expanding)
     end
   end
@@ -79,7 +79,7 @@ end
 -- @see pm.get_contents_for
 function pm.perform_action(selected_item)
   for _, browser in pairs(pm.browsers) do
-    if browser.matches( selected_item[1] ) then
+    if browser.matches(selected_item[1]) then
       return browser.perform_action(selected_item)
     end
   end
@@ -98,7 +98,7 @@ end
 -- @see pm.get_contents_for
 function pm.get_context_menu(selected_item)
   for _, browser in pairs(pm.browsers) do
-    if browser.matches( selected_item[1] ) then
+    if browser.matches(selected_item[1]) then
       return browser.get_context_menu(selected_item)
     end
   end
@@ -113,7 +113,7 @@ end
 -- @see pm.get_contents_for
 function pm.perform_menu_action(menu_item, menu_id, selected_item)
   for _, browser in pairs(pm.browsers) do
-    if browser.matches( selected_item[1] ) then
+    if browser.matches(selected_item[1]) then
       return browser.perform_menu_action(menu_item, menu_id, selected_item)
     end
   end

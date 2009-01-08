@@ -276,7 +276,7 @@ local function set_lexer_from_sh_bang()
     line = line:gsub('[\\/]', ' ')
     for word in line:gmatch('%S+') do
       if shebangs[word] then
-        buffer:set_lexer_language( shebangs[word] )
+        buffer:set_lexer_language(shebangs[word])
         return true
       end
     end

@@ -42,7 +42,7 @@ function find.find(text, next, flags, nowrap, wrapped)
     if find.lua then flags = flags + 8 end
   end
   if flags < 8 then
-    buffer:goto_pos( buffer[next and 'current_pos' or 'anchor'] + increment )
+    buffer:goto_pos(buffer[next and 'current_pos' or 'anchor'] + increment)
     buffer:search_anchor()
     if next then
       result = buffer:search_next(flags, text)
@@ -101,23 +101,23 @@ function find.replace(rtext)
       rtext = rtext:gsub('%%'..i, v)
     end
   end
-  local ret, rtext = pcall( rtext.gsub, rtext, '%%(%b())',
+  local ret, rtext = pcall(rtext.gsub, rtext, '%%(%b())',
     function(code)
       local locale = textadept.locale
-      local ret, val = pcall( loadstring('return '..code) )
+      local ret, val = pcall(loadstring('return '..code))
       if not ret then
-        cocoa_dialog( 'msgbox', {
+        cocoa_dialog('msgbox', {
           title = locale.FIND_ERROR_DIALOG_TITLE,
           text = locale.FIND_ERROR_DIALOG_TEXT,
           ['informative-text'] = val:gsub('"', '\\"')
-        } )
+        })
         error()
       end
       return val
-    end )
+    end)
   if ret then
     rtext = rtext:gsub('\\037', '%%') -- unescape '%'
-    buffer:replace_target( rtext:gsub('\\[abfnrtv\\]', escapes) )
+    buffer:replace_target(rtext:gsub('\\[abfnrtv\\]', escapes))
     buffer:goto_pos(buffer.target_end + 1) -- 'find' text after this replacement
   else
     -- Since find is called after replace returns, have it 'find' the current
@@ -138,10 +138,10 @@ function find.replace_all(ftext, rtext, flags)
   local textadept = textadept
   buffer:goto_pos(0)
   local count = 0
-  while( find.find(ftext, true, flags, true) ) do
+  while(find.find(ftext, true, flags, true)) do
     find.replace(rtext)
     count = count + 1
   end
-  textadept.statusbar_text = tostring(count)..' '..
-    textadept.locale.FIND_REPLACEMENTS_MADE
+  textadept.statusbar_text =
+    string.format(textadept.locale.FIND_REPLACEMENTS_MADE, tostring(count))
 end

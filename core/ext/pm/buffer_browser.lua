@@ -23,8 +23,11 @@ end
 
 function perform_action(selected_item)
   local index = selected_item[2]
-  local buffer = textadept.buffers[ tonumber(index) ]
-  if buffer then view:goto_buffer(index) view:focus() end
+  local buffer = textadept.buffers[tonumber(index)]
+  if buffer then
+    view:goto_buffer(index)
+    view:focus()
+  end
 end
 
 local ID = { NEW = 1, OPEN = 2, SAVE = 3, SAVEAS = 4, CLOSE = 5 }
@@ -47,13 +50,13 @@ function perform_menu_action(menu_item, menu_id, selected_item)
   elseif menu_id == ID.OPEN then
     textadept.io.open()
   elseif menu_id == ID.SAVE then
-    view:goto_buffer( tonumber( selected_item[2] ) )
+    view:goto_buffer(tonumber(selected_item[2]))
     buffer:save()
   elseif menu_id == ID.SAVEAS then
-    view:goto_buffer( tonumber( selected_item[2] ) )
+    view:goto_buffer(tonumber(selected_item[2]))
     buffer:save_as()
   elseif menu_id == ID.CLOSE then
-    view:goto_buffer( tonumber( selected_item[2] ) )
+    view:goto_buffer(tonumber(selected_item[2]))
     buffer:close()
   end
   textadept.pm.activate()

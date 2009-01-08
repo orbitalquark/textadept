@@ -105,10 +105,10 @@ end
 function update()
   local buffer = buffer
   local curr_line = buffer:line_from_position(buffer.current_pos)
-  local curr_col  = buffer.column[buffer.current_pos]
+  local curr_col = buffer.column[buffer.current_pos]
   buffer:begin_undo_action()
   if mlines[curr_line] then
-    local s = buffer:find_column( curr_line, mlines[curr_line].start_col )
+    local s = buffer:find_column(curr_line, mlines[curr_line].start_col)
     local e = buffer:find_column(curr_line, curr_col)
     local delta = e - s
     local txt = ''

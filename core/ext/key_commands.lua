@@ -45,18 +45,22 @@ keys.cs   = { t.find.focus   } -- find/replace
 -- Recent files.
 local RECENT_FILES = 1
 t.events.add_handler('user_list_selection',
-  function(type, text) if type == RECENT_FILES then t.io.open(text) end end)
-keys.ar = { function()
-  local buffer = buffer
-  local list = ''
-  local sep = buffer.auto_c_separator
-  buffer.auto_c_separator = ('|'):byte()
-  for _, filename in ipairs(t.io.recent_files) do
-    list = filename..'|'..list
+  function(type, text)
+    if type == RECENT_FILES then t.io.open(text) end
+  end)
+keys.ar = {
+  function()
+    local buffer = buffer
+    local files = {}
+    for _, filename in ipairs(t.io.recent_files) do
+      table.insert(files, 1, filename)
+    end
+    local sep = buffer.auto_c_separator
+    buffer.auto_c_separator = ('|'):byte()
+    buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
+    buffer.auto_c_separator = sep
   end
-  buffer:user_list_show( RECENT_FILES, list:sub(1, -2) )
-  buffer.auto_c_separator = sep
-end }
+}
 
 -- Buffer/view commands.
 keys.an    = { 'goto_buffer', v, 1, false                 }
@@ -185,7 +189,10 @@ keys.cam  = { m_macro.toggle_record }
 keys.csam = { m_macro.play          }
 
 -- Project manager commands.
-local function pm_activate(text) t.pm.entry_text = text t.pm.activate() end
+local function pm_activate(text)
+  t.pm.entry_text = text
+  t.pm.activate()
+end
 keys['c\t'] = { t.pm.focus             }
 keys.ct.b   = { pm_activate, 'buffers' }
 keys.ct.c   = { pm_activate, 'ctags'   }
@@ -213,8 +220,10 @@ keys.cc = { t.command_entry.focus }
 local m_events = t.events
 keys.cab  = { m_events.handle, 'call_tip_click', 1 }
 keys.caf  = { m_events.handle, 'call_tip_click', 2 }
-keys.ct.f = { function()
-  local buffer = buffer
-  buffer:toggle_fold( buffer:line_from_position(buffer.current_pos) )
-end }
+keys.ct.f = {
+  function()
+    local buffer = buffer
+    buffer:toggle_fold(buffer:line_from_position(buffer.current_pos))
+  end
+}
 keys.f5 = { 'colourise', b, 0, -1 }

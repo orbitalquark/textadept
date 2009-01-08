@@ -30,12 +30,11 @@ using namespace Scintilla;
 #endif
 
 // globals
-extern GtkWidget
-  *window, *focused_editor, *command_entry,
-  *pm_container, *pm_entry, *pm_view,
-  *findbox, *find_entry, *replace_entry,
-  *fnext_button, *fprev_button, *r_button, *ra_button,
-  *match_case_opt, *whole_word_opt, /**incremental_opt,*/ *lua_opt;
+extern GtkWidget *window, *focused_editor, *command_entry, *pm_container,
+                 *pm_entry, *pm_view, *findbox, *find_entry, *replace_entry,
+                 *fnext_button, *fprev_button, *r_button, *ra_button,
+                 *match_case_opt, *whole_word_opt, /**incremental_opt,*/
+                 *lua_opt;
 extern GtkEntryCompletion *command_entry_completion;
 extern GtkTreeStore *cec_store, *pm_store;
 extern lua_State *lua;

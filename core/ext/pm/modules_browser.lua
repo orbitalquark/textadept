@@ -123,15 +123,17 @@ end
 function perform_menu_action(menu_item, menu_id, selected_item)
   local locale = textadept.locale
   if menu_id == ID.NEW then
-    local status, module_name = cocoa_dialog( 'standard-inputbox', {
-      ['title'] = locale.PM_BROWSER_MODULE_NEW_TITLE,
-      ['informative-text'] = locale.PM_BROWSER_MODULE_NEW_INFO_TEXT
-    } ):match('^(%d)%s+([^\n]+)%s+$')
+    local status, module_name =
+      cocoa_dialog('standard-inputbox', {
+        ['title'] = locale.PM_BROWSER_MODULE_NEW_TITLE,
+        ['informative-text'] = locale.PM_BROWSER_MODULE_NEW_INFO_TEXT
+      }):match('^(%d)%s+([^\n]+)%s+$')
     if status ~= '1' then return end
-    local status, lang_name = cocoa_dialog( 'standard-inputbox', {
-      ['title'] = locale.PM_BROWSER_MODULE_NEW_LANG_TITLE,
-      ['informative-text'] = locale.PM_BROWSER_MODULE_NEW_LANG_INFO_TEXT
-    } ):match('^(%d)%s+([^\n]+)%s+$')
+    local status, lang_name =
+      cocoa_dialog('standard-inputbox', {
+        ['title'] = locale.PM_BROWSER_MODULE_NEW_LANG_TITLE,
+        ['informative-text'] = locale.PM_BROWSER_MODULE_NEW_LANG_INFO_TEXT
+      }):match('^(%d)%s+([^\n]+)%s+$')
     if status ~= '1' then return end
     local module_dir = _HOME..'/modules/'..module_name
     if lfs.mkdir(module_dir) then
@@ -151,22 +153,22 @@ function perform_menu_action(menu_item, menu_id, selected_item)
       f:write(out)
       f:close()
     else
-      cocoa_dialog( 'ok-msgbox', {
+      cocoa_dialog('ok-msgbox', {
         ['text'] = locale.PM_BROWSER_MODULE_NEW_ERROR,
         ['informative-text'] = locale.PM_BROWSER_MODULE_NEW_ERROR_TEXT,
         ['no-cancel'] = true
-      } )
+      })
       return
     end
   elseif menu_id == ID.DELETE then
     local module_name = selected_item[2]
-    if cocoa_dialog( 'yesno-msgbox', {
+    if cocoa_dialog('yesno-msgbox', {
         ['text'] = locale.PM_BROWSER_MODULE_DELETE_TITLE,
         ['informative-text'] =
-          string.format( locale.PM_BROWSER_MODULE_DELETE_TEXT, module_name ),
+          string.format(locale.PM_BROWSER_MODULE_DELETE_TEXT, module_name),
         ['no-cancel'] = true,
         ['no-newline'] = true
-      } ) == '1' then
+      }) == '1' then
       local function remove_directory(dirpath)
         for name in lfs.dir(dirpath) do
           if not name:match('^%.%.?$') then os.remove(dirpath..'/'..name) end
