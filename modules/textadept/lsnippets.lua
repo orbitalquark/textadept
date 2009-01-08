@@ -108,10 +108,10 @@ function insert(s_text)
   local caret = buffer.current_pos
   local lexer, style, start, s_name
   if not s_text then
-    lexer  = buffer:get_lexer_language()
-    style  = buffer:get_style_name( buffer.style_at[caret] )
+    lexer = buffer:get_lexer_language()
+    style = buffer:get_style_name(buffer.style_at[caret])
     buffer:word_left_extend()
-    start  = buffer.current_pos
+    start = buffer.current_pos
     s_name = buffer:get_sel_text()
   end
   if s_name then
@@ -133,13 +133,14 @@ function insert(s_text)
 
     -- Execute Lua and shell code.
     s_text = s_text:gsub('%%(%b())', run_lua_code)
-    s_text = s_text:gsub('`([^`]+)`',
-      function(code)
-        local p = io.popen(code)
-        local out = p:read('*all'):sub(1, -2)
-        p:close()
-        return out
-      end)
+    s_text =
+      s_text:gsub('`([^`]+)`',
+        function(code)
+          local p = io.popen(code)
+          local out = p:read('*all'):sub(1, -2)
+          p:close()
+          return out
+        end)
 
     -- Initialize the new snippet. If one is running, push it onto the stack.
     if snippet.index then snippet_stack[#snippet_stack + 1] = snippet end
@@ -154,7 +155,8 @@ function insert(s_text)
     end
 
     -- Insert the snippet and set a mark defining the end of it.
-    buffer:replace_sel(s_text) buffer:add_text('\n')
+    buffer:replace_sel(s_text)
+    buffer:add_text('\n')
     local line = buffer:line_from_position(buffer.current_pos)
     snippet.end_marker = buffer:marker_add(line, MARK_SNIPPET)
     buffer:marker_set_back(MARK_SNIPPET, MARK_SNIPPET_COLOR)
@@ -195,23 +197,25 @@ function next()
     local ph_text = buffer:text_range(snippet.ph_pos, caret)
 
     -- Transform mirror.
-    s_text = s_text:gsub('%%'..index..'(%b())',
-      function(mirror)
-        local pattern, replacement = mirror:match('^%(([^|]+)|(.+)%)$')
-        if not pattern and not replacement then return ph_text end
-        return ph_text:gsub( unhandle_escapes(pattern),
-          function(...)
-            local arg = {...}
-            local repl = replacement:gsub('%%(%d)',
-              function(i) return arg[ tonumber(i) ] or '' end)
-            return repl:gsub('#(%b())', run_lua_code)
-          end )
-      end)
+    s_text =
+      s_text:gsub('%%'..index..'(%b())',
+        function(mirror)
+          local pattern, replacement = mirror:match('^%(([^|]+)|(.+)%)$')
+          if not pattern and not replacement then return ph_text end
+          return ph_text:gsub(unhandle_escapes(pattern),
+            function(...)
+              local arg = {...}
+              local repl = replacement:gsub('%%(%d)',
+                function(i) return arg[tonumber(i)] or '' end)
+              return repl:gsub('#(%b())', run_lua_code)
+            end)
+        end)
 
     -- Regular mirror.
     s_text = s_text:gsub('%%'..index, ph_text)
 
-    buffer:set_sel(s_start, s_end) buffer:replace_sel(s_text)
+    buffer:set_sel(s_start, s_end)
+    buffer:replace_sel(s_text)
     s_start, s_end = snippet_info()
     buffer:end_undo_action()
   end
@@ -223,8 +227,9 @@ function next()
     if next_item and not next_item:find('|') then -- placeholder
       s, e = buffer:find('%'..index..next_item, 0, s_start)
       next_item = next_item:gsub('#(%b())', run_lua_code)
-      next_item = unhandle_escapes( next_item:sub(2, -2) )
-      buffer:set_sel(s, e) buffer:replace_sel(next_item)
+      next_item = unhandle_escapes(next_item:sub(2, -2))
+      buffer:set_sel(s, e)
+      buffer:replace_sel(next_item)
       buffer:set_sel(s, s + #next_item)
     else -- use the first mirror as a placeholder
       s, e = buffer:find('%'..index..'[^(]', 2097152, s_start) -- regexp
@@ -234,17 +239,25 @@ function next()
         if e then e = e + 1 end
       end
       if not s then snippet.index = index + 1 return next() end
-      buffer:set_sel(s, e - 1) buffer:replace_sel('')
+      buffer:set_sel(s, e - 1)
+      buffer:replace_sel('')
     end
     snippet.ph_pos = s
     snippet.index = index
   else
-    s_text = unescape( unhandle_escapes( s_text:gsub('%%0', '%%__caret') ) )
-    buffer:set_sel(s_start, s_end) buffer:replace_sel(s_text)
+    s_text = unescape(unhandle_escapes(s_text:gsub('%%0', '%%__caret')))
+    buffer:set_sel(s_start, s_end)
+    buffer:replace_sel(s_text)
     s_start, s_end = snippet_info()
-    if s_end then buffer:goto_pos(s_end + 1) buffer:delete_back() end
+    if s_end then
+      buffer:goto_pos(s_end + 1)
+      buffer:delete_back()
+    end
     local s, e = buffer:find('%__caret', 4, s_start)
-    if s and s <= s_end then buffer:set_sel(s, e) buffer:replace_sel('') end
+    if s and s <= s_end then
+      buffer:set_sel(s, e)
+      buffer:replace_sel('')
+    end
     buffer:marker_delete_handle(snippet.end_marker)
     snippet = #snippet_stack > 0 and table.remove(snippet_stack) or {}
   end
@@ -261,7 +274,8 @@ function prev()
   if index > 1 then
     local s_start, s_end = snippet_info()
     local s_text = snippet.snapshots[index - 2]
-    buffer:set_sel(s_start, s_end) buffer:replace_sel(s_text)
+    buffer:set_sel(s_start, s_end)
+    buffer:replace_sel(s_text)
     snippet.index = index - 2
     next()
   end
@@ -276,9 +290,11 @@ function cancel_current()
   local s_start, s_end = snippet_info()
   buffer:begin_undo_action()
   if s_start and s_end then
-    buffer:set_sel(s_start, s_end) buffer:replace_sel('')
+    buffer:set_sel(s_start, s_end)
+    buffer:replace_sel('')
     s_start, s_end = snippet_info()
-    buffer:goto_pos(s_end + 1) buffer:delete_back()
+    buffer:goto_pos(s_end + 1)
+    buffer:delete_back()
   end
   if snippet.prev_sel_text then buffer:add_text(snippet.prev_sel_text) end
   buffer:end_undo_action()
@@ -291,24 +307,22 @@ end
 -- Global snippets and snippets in the current lexer and style are used.
 function list()
   local buffer = buffer
-  local list, list_str = {}, ''
+  local list = {}
   local function add_snippets(snippets)
     for s_name in pairs(snippets) do list[#list + 1] = s_name end
   end
   local snippets = _G.snippets
   add_snippets(snippets)
   local lexer = buffer:get_lexer_language()
-  local style = buffer:get_style_name( buffer.style_at[buffer.current_pos] )
-  if snippets[lexer] and type( snippets[lexer] ) == 'table' then
-    add_snippets( snippets[lexer] )
-    if snippets[lexer][style] then add_snippets( snippets[lexer][style] ) end
+  local style = buffer:get_style_name(buffer.style_at[buffer.current_pos])
+  if snippets[lexer] and type(snippets[lexer]) == 'table' then
+    add_snippets(snippets[lexer])
+    if snippets[lexer][style] then add_snippets(snippets[lexer][style]) end
   end
   table.sort(list)
-  local sep = string.char(buffer.auto_c_separator)
-  for _, v in ipairs(list) do list_str = list_str..v..sep end
-  list_str = list_str:sub(1, -2)
   local caret = buffer.current_pos
-  buffer:auto_c_show(caret - buffer:word_start_position(caret, true), list_str)
+  buffer:auto_c_show(caret - buffer:word_start_position(caret, true),
+                     table.concat(list, string.char(buffer.auto_c_separator)))
 end
 
 ---
@@ -318,8 +332,9 @@ function show_style()
   local lexer = buffer:get_lexer_language()
   local style_num = buffer.style_at[buffer.current_pos]
   local style = buffer:get_style_name(style_num)
-  local text = string.format(
-    textadept.locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer, style, style_num )
+  local text =
+    string.format(textadept.locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer,
+                  style, style_num)
   buffer:call_tip_show(buffer.current_pos, text)
 end
 
@@ -330,8 +345,9 @@ end
 snippet_info = function()
   local buffer = buffer
   local s = snippet.start_pos
-  local e = buffer:position_from_line(
-    buffer:marker_line_from_handle(snippet.end_marker) ) - 1
+  local e =
+    buffer:position_from_line(
+      buffer:marker_line_from_handle(snippet.end_marker)) - 1
   if e >= s then return s, e, buffer:text_range(s, e) end
 end
 
@@ -339,9 +355,9 @@ end
 -- [Local function] Runs the given Lua code.
 run_lua_code = function(code)
   code = unhandle_escapes(code)
-  local env = setmetatable(
-    { selected_text = buffer:get_sel_text() }, { __index = _G } )
-  local _, val = pcall( setfenv( loadstring('return '..code), env ) )
+  local env =
+    setmetatable({ selected_text = buffer:get_sel_text() }, { __index = _G })
+  local _, val = pcall(setfenv(loadstring('return '..code), env))
   return val or ''
 end
 
@@ -351,7 +367,9 @@ end
 -- '%%' is the escape character used.
 handle_escapes = function(s)
   return s:gsub('%%([%%`%)|#])',
-    function(char) return ("\\%03d"):format( char:byte() ) end)
+    function(char)
+      return ("\\%03d"):format(char:byte())
+    end)
 end
 
 ---
@@ -359,7 +377,9 @@ end
 -- a given string.
 unhandle_escapes = function(s)
   return s:gsub('\\(%d%d%d)',
-    function(value) return '%'..string.char(value) end)
+    function(value)
+      return '%'..string.char(value)
+    end)
 end
 
 ---

@@ -28,7 +28,7 @@ local function open_helper(filename)
   local buffer = textadept.new_buffer()
   local f, err = io.open(filename)
   if f then
-    buffer:set_text( f:read('*all') )
+    buffer:set_text(f:read('*all'))
     buffer:empty_undo_buffer()
     f:close()
   end
@@ -45,14 +45,15 @@ end
 -- @usage textadept.io.open(filename)
 function open(filenames)
   local locale = textadept.locale
-  filenames = filenames or cocoa_dialog( 'fileselect', {
-    title = locale.IO_OPEN_TITLE,
-    text = locale.IO_OPEN_TEXT,
-    -- in Windows, dialog:get_filenames() is unavailable; only allow single
-    -- selection
-    ['select-multiple'] = not WIN32 or nil,
-    ['with-directory'] = (buffer.filename or ''):match('.+[/\\]')
-  } )
+  filenames =
+    filenames or cocoa_dialog('fileselect', {
+      title = locale.IO_OPEN_TITLE,
+      text = locale.IO_OPEN_TEXT,
+      -- in Windows, dialog:get_filenames() is unavailable; only allow single
+      -- selection
+      ['select-multiple'] = not WIN32 or nil,
+      ['with-directory'] = (buffer.filename or ''):match('.+[/\\]')
+    })
   for filename in filenames:gmatch('[^\n]+') do open_helper(filename) end
 end
 
@@ -67,7 +68,7 @@ function reload(buffer)
   local f, err = io.open(buffer.filename)
   if f then
     local pos = buffer.current_pos
-    buffer:set_text( f:read('*all') )
+    buffer:set_text(f:read('*all'))
     buffer.current_pos = pos
     buffer:set_save_point()
     f:close()
@@ -103,12 +104,13 @@ end
 function save_as(buffer, filename)
   textadept.check_focused_buffer(buffer)
   if not filename then
-    filename = cocoa_dialog( 'filesave', {
-      title = textadept.locale.IO_SAVE_TITLE,
-      ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
-      ['with-file'] = (buffer.filename or ''):match('[^/\\]+$'),
-      ['no-newline'] = true
-    } )
+    filename =
+      cocoa_dialog('filesave', {
+        title = textadept.locale.IO_SAVE_TITLE,
+        ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
+        ['with-file'] = (buffer.filename or ''):match('[^/\\]+$'),
+        ['no-newline'] = true
+      })
   end
   if #filename > 0 then
     buffer.filename = filename
@@ -141,12 +143,12 @@ end
 function close(buffer)
   local locale = textadept.locale
   textadept.check_focused_buffer(buffer)
-  if buffer.dirty and cocoa_dialog( 'yesno-msgbox', {
+  if buffer.dirty and cocoa_dialog('yesno-msgbox', {
     title = locale.IO_CLOSE_TITLE,
     text = locale.IO_CLOSE_TEXT,
     ['informative-text'] = locale.IO_CLOSE_MSG,
     ['no-newline'] = true
-  } ) ~= '2' then return false end
+  }) ~= '2' then return false end
   buffer:delete()
   return true
 end
@@ -197,20 +199,19 @@ function load_session(filename, only_pm)
           local buffer = buffer
           buffer._anchor, buffer._current_pos = anchor, current_pos
           buffer._first_visible_line = first_visible_line
-          buffer:line_scroll( 0,
-            buffer:visible_from_doc_line(first_visible_line) )
+          buffer:line_scroll(0,
+            buffer:visible_from_doc_line(first_visible_line))
           buffer:set_sel(anchor, current_pos)
         elseif line:match('^%s*split%d:') then
           local level, num, type, size =
             line:match('^(%s*)split(%d): (%S+) (%d+)')
-          local view =
-            splits[#level] and splits[#level][ tonumber(num) ] or view
+          local view = splits[#level] and splits[#level][tonumber(num)] or view
           splits[#level + 1] = { view:split(type == 'true') }
           splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
         elseif line:match('^%s*view%d:') then
           local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
-          local view = splits[#level][ tonumber(num) ] or view
-          view:goto_buffer( tonumber(buf_idx) )
+          local view = splits[#level][tonumber(num)] or view
+          view:goto_buffer(tonumber(buf_idx))
         elseif line:match('^current_view:') then
           local view_idx, buf_idx = line:match('^current_view: (%d+)')
           current_view = tonumber(view_idx) or 1
@@ -252,11 +253,12 @@ function save_session(filename)
       local current = buffer.doc_pointer == textadept.focused_doc_pointer
       local anchor = current and 'anchor' or '_anchor'
       local current_pos = current and 'current_pos' or '_current_pos'
-      local first_visible_line = current and 'first_visible_line' or
-        '_first_visible_line'
+      local first_visible_line =
+        current and 'first_visible_line' or '_first_visible_line'
       session[#session + 1] =
-        buffer_line:format(buffer[anchor] or 0, buffer[current_pos] or 0,
-        buffer[first_visible_line] or 0, buffer.filename)
+        buffer_line:format(buffer[anchor] or 0,
+                           buffer[current_pos] or 0,
+                           buffer[first_visible_line] or 0, buffer.filename)
       buffer_indices[buffer.doc_pointer] = idx - offset
     else
       offset = offset + 1 -- don't save untitled files in session
@@ -294,7 +296,7 @@ function save_session(filename)
   session[#session + 1] = ("current_view: %d"):format(current_view)
   -- Write out other things.
   local size = textadept.size
-  session[#session + 1] = ("size: %d %d"):format( size[1], size[2] )
+  session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
   local pm = textadept.pm
   session[#session + 1] = ("pm: %d %s"):format(pm.width, pm.entry_text)
   -- Write the session.
@@ -302,7 +304,10 @@ function save_session(filename)
   if not user_dir then return end
   local ta_session = user_dir..'/.ta_session'
   local f = io.open(filename or ta_session, 'w')
-  if f then f:write( table.concat(session, '\n') ) f:close() end
+  if f then
+    f:write(table.concat(session, '\n'))
+    f:close()
+  end
 end
 
 ---
@@ -327,7 +332,7 @@ function read_api_file(filename, word_chars)
         line:match('(['..word_chars..']+)%s*(%b())(.*)$')
       if func and params and desc then
         if not api[func] then api[func] = {} end
-        api[func][ #api[func] + 1 ] = { params, desc }
+        api[func][#api[func] + 1] = { params, desc }
       end
     end
     f:close()

@@ -35,7 +35,7 @@ end
 -- Displays a CocoaDialog of a specified type with given arguments returning
 -- the result.
 -- @param kind The CocoaDialog type.
--- @param ... A table of key, value arguments. Each key is a --key switch with
+-- @param opts A table of key, value arguments. Each key is a --key switch with
 --   a "value" value. If value is nil, it is omitted and just the switch is
 --   used.
 -- @return string CocoaDialog result.
@@ -57,7 +57,7 @@ function cocoa_dialog(kind, opts)
     return lua_dialog.run(args)
   else
     local cocoa_dialog = '/CocoaDialog.app/Contents/MacOS/CocoaDialog '
-    local p = io.popen( _HOME..cocoa_dialog..table.concat(args, ' ') )
+    local p = io.popen(_HOME..cocoa_dialog..table.concat(args, ' '))
     local out = p:read('*all')
     p:close()
     return out

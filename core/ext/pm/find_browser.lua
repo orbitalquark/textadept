@@ -59,7 +59,8 @@ function get_contents_for(full_path, expanding)
     p = io.popen('grep -'..opts..' "'..search_string..'" "'..
                  search_directory..'"')
     for line in p:lines() do
-      local filename, line_num, line_text = line:match('^([^:]+):(%d+):%s-(.+)$')
+      local filename, line_num, line_text =
+        line:match('^([^:]+):(%d+):%s-(.+)$')
       if filename and line_num and line_text then
         if not find_matches[filename] then
           find_matches[filename] = {

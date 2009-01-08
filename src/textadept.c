@@ -10,10 +10,13 @@
 using namespace Scintilla;
 #endif
 
+#if WIN32 || MAC
+char *textadept_home;
+#endif
+
 // Textadept
-GtkWidget
-  *window, *focused_editor, *command_entry,
-  *menubar, *statusbar, *docstatusbar;
+GtkWidget *window, *focused_editor, *command_entry, *menubar, *statusbar,
+          *docstatusbar;
 GtkEntryCompletion *command_entry_completion;
 GtkTreeStore *cec_store;
 
@@ -56,18 +59,14 @@ static gbool pm_popup_menu(GtkWidget *, gpointer);
 static void pm_menu_activate(GtkWidget *menu_item, gpointer menu_id);
 
 // Find/Replace
-GtkWidget *findbox, *find_entry, *replace_entry;
-GtkWidget *fnext_button, *fprev_button, *r_button, *ra_button;
-GtkWidget *match_case_opt, *whole_word_opt, /**incremental_opt,*/ *lua_opt;
+GtkWidget *findbox, *find_entry, *replace_entry, *fnext_button, *fprev_button,
+          *r_button, *ra_button, *match_case_opt, *whole_word_opt,
+          /**incremental_opt,*/ *lua_opt;
 GtkAttachOptions
   ao_normal = static_cast<GtkAttachOptions>(GTK_SHRINK | GTK_FILL),
   ao_expand = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
 
 static void button_clicked(GtkWidget *button, gpointer);
-
-#if WIN32 || MAC
-char *textadept_home;
-#endif
 
 /**
  * Runs Textadept in Linux or Mac.
@@ -84,9 +83,9 @@ int main(int argc, char **argv) {
     CFURLRef bundle_url = CFBundleCopyBundleURL(bundle);
     cfurlref_to_char(bundle_url, bundle_path, FILENAME_MAX);
     char *res_path = g_strconcat(bundle_path, "/Contents/Resources/", NULL);
-	textadept_home = static_cast<char*>(res_path);
-	g_free(bundle_path);
-	CFRelease(bundle_url);
+    textadept_home = static_cast<char*>(res_path);
+    g_free(bundle_path);
+    CFRelease(bundle_url);
   } else textadept_home = "";
 #endif
   gtk_init(&argc, &argv);
@@ -132,18 +131,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
 void create_ui() {
   GList *icons = NULL;
   const char *icon_files[] = {
-    "ta_16x16.png", "ta_32x32.png", "ta_48x48.png",
-    "ta_64x64.png", "ta_128x128.png"
+    "ta_16x16.png", "ta_32x32.png", "ta_48x48.png", "ta_64x64.png",
+    "ta_128x128.png"
   };
   for (int i = 0; i < 5; i++) {
-    char *icon_file = g_strconcat(textadept_home, "/core/images/",
-                                  icon_files[i], NULL);
+    char *icon_file =
+      g_strconcat(textadept_home, "/core/images/", icon_files[i], NULL);
     GdkPixbuf *pb = gdk_pixbuf_new_from_file(icon_file, NULL);
     if (pb) icons = g_list_prepend(icons, pb);
     g_free(icon_file);
   }
   gtk_window_set_default_icon_list(icons);
-  g_list_foreach(icons, (GFunc) g_object_unref, NULL);
+  g_list_foreach(icons, reinterpret_cast<GFunc>(g_object_unref), NULL);
   g_list_free(icons);
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -236,7 +235,8 @@ GtkWidget *new_scintilla_window(sptr_t buffer_id) {
   signal(editor, "command", t_command);
   signal(editor, SCINTILLA_NOTIFY, t_notification);
   l_add_scintilla_window(editor);
-  gtk_widget_grab_focus(editor); focused_editor = editor;
+  gtk_widget_grab_focus(editor);
+  focused_editor = editor;
   if (buffer_id) {
     SS(SCINTILLA(editor), SCI_SETDOCPOINTER, 0, buffer_id);
     new_scintilla_buffer(SCINTILLA(editor), false, false);
@@ -310,8 +310,8 @@ void split_window(GtkWidget *editor, bool vertical) {
   int first_line = SS(SCINTILLA(editor), SCI_GETFIRSTVISIBLELINE);
   int current_pos = SS(SCINTILLA(editor), SCI_GETCURRENTPOS);
   int anchor = SS(SCINTILLA(editor), SCI_GETANCHOR);
-  int middle = (vertical ? editor->allocation.width
-                         : editor->allocation.height) / 2;
+  int middle =
+    (vertical ? editor->allocation.width : editor->allocation.height) / 2;
 
   sptr_t curdoc = SS(SCINTILLA(editor), SCI_GETDOCPOINTER);
   GtkWidget *neweditor = new_scintilla_window(curdoc);
@@ -358,7 +358,8 @@ bool unsplit_window(GtkWidget *editor) {
   if (!GTK_IS_PANED(pane)) return false;
   GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane));
   if (other == editor) other = gtk_paned_get_child2(GTK_PANED(pane));
-  g_object_ref(editor); g_object_ref(other);
+  g_object_ref(editor);
+  g_object_ref(other);
   gtk_container_remove(GTK_CONTAINER(pane), editor);
   gtk_container_remove(GTK_CONTAINER(pane), other);
   GTK_IS_PANED(other) ? remove_scintilla_windows_in_pane(other)
@@ -374,7 +375,8 @@ bool unsplit_window(GtkWidget *editor) {
     gtk_container_add(GTK_CONTAINER(parent), editor);
   gtk_widget_show_all(parent);
   gtk_widget_grab_focus(GTK_WIDGET(editor));
-  g_object_unref(editor); g_object_unref(other);
+  g_object_unref(editor);
+  g_object_unref(other);
   return true;
 }
 
@@ -415,11 +417,13 @@ void set_statusbar_text(const char *text, bool docbar) {
  */
 void ce_toggle_focus() {
   if (!GTK_WIDGET_HAS_FOCUS(command_entry)) {
-    gtk_widget_hide(statusbar); gtk_widget_hide(docstatusbar);
+    gtk_widget_hide(statusbar);
+    gtk_widget_hide(docstatusbar);
     gtk_widget_show(command_entry);
     gtk_widget_grab_focus(command_entry);
   } else {
-    gtk_widget_show(statusbar); gtk_widget_show(docstatusbar);
+    gtk_widget_show(statusbar);
+    gtk_widget_show(docstatusbar);
     gtk_widget_hide(command_entry);
     gtk_widget_grab_focus(focused_editor);
   }
@@ -581,8 +585,8 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent*, long) {
     for (int i = 1; i <= count; i++) {
       FSRef fsref;
       char *path = static_cast<char*>(malloc(FILENAME_MAX * sizeof(char)));
-      AEGetNthPtr(
-        &file_list, i, typeFSRef, NULL, NULL, &fsref, sizeof(FSRef), NULL);
+      AEGetNthPtr(&file_list, i, typeFSRef, NULL, NULL, &fsref, sizeof(FSRef),
+                  NULL);
       CFURLRef url = CFURLCreateFromFSRef(kCFAllocatorDefault, &fsref);
       if (url) {
         cfurlref_to_char(url, path, FILENAME_MAX);
@@ -672,6 +676,7 @@ GtkWidget *pm_create_ui() {
   signal(pm_view, "row_activated", pm_row_activated);
   signal(pm_view, "button_press_event", pm_button_press);
   signal(pm_view, "popup-menu", pm_popup_menu);
+
   return pm_container;
 }
 
@@ -764,8 +769,8 @@ void pm_process_selected_menu_item(GtkWidget *menu_item, int menu_id) {
  * window.
  */
 void pm_toggle_focus() {
-  gtk_widget_grab_focus(
-    GTK_WIDGET_HAS_FOCUS(focused_editor) ? pm_entry : focused_editor);
+  gtk_widget_grab_focus(GTK_WIDGET_HAS_FOCUS(focused_editor) ? pm_entry
+                                                             : focused_editor);
 }
 
 /**
@@ -794,10 +799,14 @@ static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
   const char *a_text, *b_text;
   gtk_tree_model_get(model, a, 1, &a_text, -1);
   gtk_tree_model_get(model, b, 1, &b_text, -1);
-  if (a_text == NULL && b_text == NULL) return 0;
-  else if (a_text == NULL) return -1;
-  else if (b_text == NULL) return 1;
-  else return strcasecmp(a_text, b_text);
+  if (a_text == NULL && b_text == NULL)
+    return 0;
+  else if (a_text == NULL)
+    return -1;
+  else if (b_text == NULL)
+    return 1;
+  else
+    return strcasecmp(a_text, b_text);
 }
 
 // Signals
@@ -860,7 +869,8 @@ static void pm_row_activated(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *,
  */
 static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
   if (event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
-  pm_popup_context_menu(event); return TRUE;
+  pm_popup_context_menu(event);
+  return TRUE;
 }
 
 /**
@@ -869,7 +879,8 @@ static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
  * @see pm_popup_context_menu
  */
 static gbool pm_popup_menu(GtkWidget *, gpointer) {
-  pm_popup_context_menu(NULL); return TRUE;
+  pm_popup_context_menu(NULL);
+  return TRUE;
 }
 
 /**
@@ -884,8 +895,6 @@ static void pm_menu_activate(GtkWidget *menu_item, gpointer menu_id) {
 
 #define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
   gtk_table_attach(GTK_TABLE(findbox), w, x1, x2, y1, y2, xo, yo, xp, yp)
-#define find_text gtk_entry_get_text(GTK_ENTRY(find_entry))
-#define repl_text gtk_entry_get_text(GTK_ENTRY(replace_entry))
 
 /**
  * Creates the Find/Replace text frame.
@@ -965,6 +974,8 @@ void find_toggle_focus() {
  * Performs the appropriate action depending on the button clicked.
  */
 static void button_clicked(GtkWidget *button, gpointer) {
+  const char *find_text = gtk_entry_get_text(GTK_ENTRY(find_entry));
+  const char *repl_text = gtk_entry_get_text(GTK_ENTRY(replace_entry));
   if (button == ra_button)
     l_find_replace_all(find_text, repl_text);
   else if (button == r_button) {

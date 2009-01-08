@@ -59,11 +59,11 @@ function insert(snippet_arg)
   local sel_text = buffer:get_sel_text()
   if not snippet_arg then
     orig_pos = buffer.current_pos buffer:word_left_extend()
-    new_pos  = buffer.current_pos
-    lexer    = buffer:get_lexer_language()
-    style    = buffer.style_at[orig_pos]
-    scope    = buffer:get_style_name(style)
-    s_name   = buffer:get_sel_text()
+    new_pos = buffer.current_pos
+    lexer = buffer:get_lexer_language()
+    style = buffer.style_at[orig_pos]
+    scope = buffer:get_style_name(style)
+    s_name = buffer:get_sel_text()
   else
     if buffer.current_pos > buffer.anchor then
       buffer.current_pos, buffer.anchor = buffer.anchor, buffer.current_pos
@@ -96,10 +96,10 @@ function insert(snippet_arg)
     _DEBUG('s_text escaped:\n'..s_text)
 
     -- Replace Lua code return.
-    local env = setmetatable( { selected_text = sel_text }, { __index = _G } )
+    local env = setmetatable({ selected_text = sel_text }, { __index = _G })
     s_text = s_text:gsub('$(%b())',
       function(s)
-        local f = loadstring( 'return '..s:sub(2, -2) )
+        local f = loadstring('return '..s:sub(2, -2))
         setfenv(f, env)
         local ret, val = pcall(f)
         if ret then return val or '' end
@@ -120,17 +120,17 @@ function insert(snippet_arg)
     if snippet.index then snippet_stack[#snippet_stack + 1] = snippet end
 
     snippet = {}
-    snippet.index     = 0
+    snippet.index = 0
     snippet.start_pos = buffer.current_pos
-    snippet.cursor    = nil
-    snippet.sel_text  = sel_text
+    snippet.cursor = nil
+    snippet.sel_text = sel_text
 
     -- Make a table of placeholders and tab stops.
     local patt, patt2 = '($%b{})', '^%${(%d+):.*}$'
     local s, _, item = s_text:find(patt)
     while item do
       local num = item:match(patt2)
-      if num then snippet[ tonumber(num) ] = unescape(item) end
+      if num then snippet[tonumber(num)] = unescape(item) end
       local i = s + 1
       s, _, item = s_text:find(patt, i)
     end
@@ -154,7 +154,7 @@ function insert(snippet_arg)
       count = count + 1
       i = s_text:find('\n', i + 1)
     until i == nil
-    match_indention( buffer:line_from_position(orig_pos), count )
+    match_indention(buffer:line_from_position(orig_pos), count)
   else
     buffer:goto_pos(orig_pos)
   end
@@ -192,35 +192,36 @@ next_snippet_item = function()
 
     -- Regex mirror.
     patt = '%${'..snippet.index..'/(.-)/(.-)/([iomxneus]*)}'
-    s_text = s_text:gsub(patt,
-      function(pattern, replacement, options)
-        local script = [[
-          li  = %q(last_item)
-          rep = %q(replacement)
-          li  =~ /pattern/options
-          if data = $~
-            rep.gsub!(/\#\{(.+?)\}/) do
-              expr = $1.gsub(/\$(\d\d?)/, 'data[\1]')
-              eval expr
+    s_text =
+      s_text:gsub(patt,
+        function(pattern, replacement, options)
+          local script = [[
+            li  = %q(last_item)
+            rep = %q(replacement)
+            li  =~ /pattern/options
+            if data = $~
+              rep.gsub!(/\#\{(.+?)\}/) do
+                expr = $1.gsub(/\$(\d\d?)/, 'data[\1]')
+                eval expr
+              end
+              puts rep.gsub(/\$(\d\d?)/) { data[$1.to_i] }
             end
-            puts rep.gsub(/\$(\d\d?)/) { data[$1.to_i] }
-          end
-        ]]
-        pattern     = unescape(pattern)
-        replacement = unescape(replacement)
-        script = script:gsub('last_item', last_item)
-        script = script:gsub('pattern', pattern)
-        script = script:gsub('options', options)
-        script = script:gsub('replacement', replacement)
-        _DEBUG('script:\n'..script)
+          ]]
+          pattern     = unescape(pattern)
+          replacement = unescape(replacement)
+          script = script:gsub('last_item', last_item)
+          script = script:gsub('pattern', pattern)
+          script = script:gsub('options', options)
+          script = script:gsub('replacement', replacement)
+          _DEBUG('script:\n'..script)
 
-        local p = io.popen("ruby 2>&1 <<'_EOF'\n"..script..'\n_EOF')
-        local out = p:read('*all')
-        p:close()
-        _DEBUG('regex out:\n'..out)
-        if out:sub(-1) == '\n' then out = out:sub(1, -2) end -- chomp
-        return out
-      end)
+          local p = io.popen("ruby 2>&1 <<'_EOF'\n"..script..'\n_EOF')
+          local out = p:read('*all')
+          p:close()
+          _DEBUG('regex out:\n'..out)
+          if out:sub(-1) == '\n' then out = out:sub(1, -2) end -- chomp
+          return out
+        end)
     _DEBUG('patterns replaced:\n'..s_text)
 
     -- Plain text mirror.
@@ -305,7 +306,8 @@ function cancel_current()
   local s_start, s_end = snippet_text()
   if s_start and s_end then
     buffer:set_sel(s_start, s_end)
-    buffer:replace_sel('') join_lines()
+    buffer:replace_sel('')
+    join_lines()
   end
   if snippet.sel_text then
     buffer:add_text(snippet.sel_text)
@@ -323,7 +325,7 @@ end
 -- Global snippets and snippets in the current lexer and scope are used.
 function list()
   local buffer = buffer
-  local list, list_str = {}, ''
+  local list = {}
 
   local function add_snippets(snippets)
     for s_name in pairs(snippets) do table.insert(list, s_name) end
@@ -335,17 +337,15 @@ function list()
     local lexer = buffer:get_lexer_language()
     local style = buffer.style_at[buffer.current_pos]
     local scope = buffer:get_style_name(style)
-    if snippets[lexer] and type( snippets[lexer] ) == 'table' then
-      add_snippets( snippets[lexer] )
-      if snippets[lexer][scope] then add_snippets( snippets[lexer][scope] ) end
+    if snippets[lexer] and type(snippets[lexer]) == 'table' then
+      add_snippets(snippets[lexer])
+      if snippets[lexer][scope] then add_snippets(snippets[lexer][scope]) end
     end
   end
-
   table.sort(list)
-  local sep = string.char(buffer.auto_c_separator)
-  for _, v in pairs(list) do list_str = list_str..v..sep end
-  list_str = list_str:sub(1, -2) -- chop
-  buffer:auto_c_show(0, list_str)
+
+  buffer:auto_c_show(0,
+                     table.concat(list, string.char(buffer.auto_c_separator)))
 end
 
 ---
@@ -355,8 +355,9 @@ function show_scope()
   local buffer = buffer
   local lexer = buffer:get_lexer_language()
   local scope = buffer.style_at[buffer.current_pos]
-  local text = string.format(
-    textadept.locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer, style, style_num )
+  local text =
+    string.format(textadept.locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer,
+                  style, style_num)
   buffer:call_tip_show(buffer.current_pos, text)
 end
 
@@ -367,8 +368,9 @@ end
 snippet_text = function()
   local buffer = buffer
   local s = snippet.start_pos
-  local e = buffer:position_from_line(
-    buffer:marker_line_from_handle(snippet.end_marker) ) - 1
+  local e =
+    buffer:position_from_line(
+      buffer:marker_line_from_handle(snippet.end_marker) ) - 1
   if e >= s then return s, e, buffer:text_range(s, e) end
 end
 
@@ -377,7 +379,9 @@ end
 -- equivalents.
 escape = function(text)
   return text:gsub('\\([$/}`])',
-    function(char) return ("\\%03d"):format( char:byte() ) end)
+    function(char)
+      return ("\\%03d"):format(char:byte())
+    end)
 end
 
 ---
@@ -385,7 +389,9 @@ end
 -- equivalents.
 unescape = function(text)
   return text:gsub('\\(%d%d%d)',
-    function(value) return '\\'..string.char(value) end)
+    function(value)
+      return '\\'..string.char(value)
+    end)
 end
 
 ---
@@ -416,7 +422,8 @@ end
 -- This is used to remove the empty line containing the end of snippet marker.
 join_lines = function()
   local buffer = buffer
-  buffer:line_down() buffer:vc_home()
+  buffer:line_down()
+  buffer:vc_home()
   if buffer.column[buffer.current_pos] == 0 then buffer:vc_home() end
   buffer:home_extend()
   if #buffer:get_sel_text() > 0 then buffer:delete_back() end

@@ -112,7 +112,7 @@ function get_contents_for(full_path, expanding)
     tags = {}
     current_file = nil
     current_dir = '' -- ctags file will specify absolute paths
-    os.execute( 'ctags -f '..FILE_OUT..' '..(buffer.filename or '') )
+    os.execute('ctags -f '..FILE_OUT..' '..(buffer.filename or ''))
     f = io.open(FILE_OUT)
     if not f then return {} end
   elseif not expanding then
@@ -182,16 +182,16 @@ function get_contents_for(full_path, expanding)
           end
           entry.text = name
           -- The following keys are ignored by caller.
-          entry.filepath = filepath:sub(1, 1) == '/' and
-            filepath or current_dir..filepath
+          entry.filepath =
+            filepath:sub(1, 1) == '/' and filepath or current_dir..filepath
           entry.pattern = pattern
           entry.line_num = line_num
           if not entry.set then tags[name] = entry end
         else
-          print( string.format(locale.PM_BROWSER_CTAGS_BAD_EXT, file_ext) )
+          print(string.format(locale.PM_BROWSER_CTAGS_BAD_EXT, file_ext))
         end
       else
-        print( string.format(locale.PM_BROWSER_CTAGS_UNMATCHED, line) )
+        print(string.format(locale.PM_BROWSER_CTAGS_UNMATCHED, line))
       end
     end
   end
@@ -217,7 +217,7 @@ function perform_action(selected_item)
       buffer:goto_line(line)
     else
       error(
-        string.format(textadept.locale.PM_BROWSER_CTAGS_NOT_FOUND, item.text) )
+        string.format(textadept.locale.PM_BROWSER_CTAGS_NOT_FOUND, item.text))
     end
   elseif item.line_num then
     textadept.io.open(item.filepath)

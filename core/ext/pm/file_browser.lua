@@ -58,17 +58,18 @@ function perform_menu_action(menu_item, menu_id, selected_item)
   elseif menu_id == ID.FILE_INFO then
     local date_format = '%D %T'
     local attr = lfs.attributes(filepath)
-    local out = string.format( locale.PM_BROWSER_FILE_DATA,
-      attr.mode, attr.size, attr.uid, attr.gid, attr.dev,
-      os.date(date_format, attr.access),
-      os.date(date_format, attr.modification),
-      os.date(date_format, attr.change) )
-    cocoa_dialog( 'textbox', {
+    local out =
+      string.format(locale.PM_BROWSER_FILE_DATA,
+                    attr.mode, attr.size, attr.uid, attr.gid, attr.dev,
+                    os.date(date_format, attr.access),
+                    os.date(date_format, attr.modification),
+                    os.date(date_format, attr.change))
+    cocoa_dialog('textbox', {
       ['informative-text'] =
         string.format(locale.PM_BROWSER_FILE_INFO_TEXT, filepath),
       text = out,
       button1 = locale.PM_BROWSER_FILE_INFO_OK,
       editable = false
-    } )
+    })
   end
 end

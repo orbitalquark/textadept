@@ -111,7 +111,10 @@ local try_get_cmd1, try_get_cmd2, try_get_cmd3, try_get_cmd
 
 ---
 -- Clears the current key sequence.
-function clear_key_sequence() keychain = {} textadept.statusbar_text = '' end
+function clear_key_sequence()
+  keychain = {}
+  textadept.statusbar_text = ''
+end
 
 ---
 -- [Local function] Handles Textadept keypresses.
@@ -170,10 +173,12 @@ local function keypress(code, shift, control, alt)
   if ret then
     clear_key_sequence()
     if type(func) == 'function' then
-      local ret, retval = pcall( func, unpack(args) )
+      local ret, retval = pcall(func, unpack(args))
       if ret then
         if type(retval) == 'boolean' then return retval end
-      else textadept.events.error(retval) end -- error
+      else
+        textadept.events.error(retval)
+      end
     end
     return true
   else
@@ -186,7 +191,9 @@ local function keypress(code, shift, control, alt)
         textadept.statusbar_text = textadept.locale.KEYS_INVALID
         return true
       end
-    else return true end
+    else
+      return true
+    end
   end
 end
 textadept.events.add_handler('keypress', keypress, 1)
@@ -195,13 +202,13 @@ textadept.events.add_handler('keypress', keypress, 1)
 -- [Local function] Tries to get a key command based on the lexer and current
 -- scope.
 try_get_cmd1 = function(keys, lexer, scope)
-  return try_get_cmd( keys[lexer][scope] )
+  return try_get_cmd(keys[lexer][scope])
 end
 
 ---
 -- [Local function] Tries to get a key command based on the lexer.
 try_get_cmd2 = function(keys, lexer)
-  return try_get_cmd( keys[lexer] )
+  return try_get_cmd(keys[lexer])
 end
 
 ---
@@ -234,7 +241,7 @@ try_get_cmd = function(active_table)
         return view[func], { view, unpack(active_table, 3) }
       end
     else
-      error( locale.KEYS_UNKNOWN_COMMAND..tostring(func) )
+      error(locale.KEYS_UNKNOWN_COMMAND..tostring(func))
     end
   end
 end

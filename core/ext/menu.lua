@@ -415,7 +415,10 @@ local m_mlines = _m.textadept.mlines
 local m_bookmarks = _m.textadept.bookmarks
 local m_macros = _m.textadept.macros
 
-local function pm_activate(text) t.pm.entry_text = text t.pm.activate() end
+local function pm_activate(text)
+  t.pm.entry_text = text
+  t.pm.activate()
+end
 local function toggle_setting(setting)
   local state = buffer[setting]
   if type(state) == 'boolean' then
@@ -579,10 +582,10 @@ t.events.add_handler('menu_clicked',
         end
       end
       if f and args then
-        local ret, retval = pcall( f, unpack(args) )
+        local ret, retval = pcall(f, unpack(args))
         if not ret then textadept.events.error(retval) end -- error
       else
-        error( l.MENU_UNKNOWN_COMMAND..tostring(func) )
+        error(l.MENU_UNKNOWN_COMMAND..tostring(func))
       end
     end
   end)

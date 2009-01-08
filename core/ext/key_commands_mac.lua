@@ -153,12 +153,17 @@ keys.cv = {
 }
 
 -- Project Manager
-local function pm_activate(text) t.pm.entry_text = text t.pm.activate() end
+local function pm_activate(text)
+  t.pm.entry_text = text
+  t.pm.activate()
+end
 keys.sap = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
-keys.ap  = { function()
-  if t.pm.width == 0 then t.pm.toggle_visible() end
-  t.pm.focus()
-end }
+keys.ap  = {
+  function()
+    if t.pm.width == 0 then t.pm.toggle_visible() end
+    t.pm.focus()
+  end
+}
 keys.cap = {
   c = { pm_activate, 'ctags'   },
   b = { pm_activate, 'buffers' },
@@ -171,18 +176,22 @@ keys.cap = {
 -- Recent files.
 local RECENT_FILES = 1
 t.events.add_handler('user_list_selection',
-  function(type, text) if type == RECENT_FILES then t.io.open(text) end end)
-keys.co = { function()
-  local buffer = buffer
-  local list = ''
-  local sep = buffer.auto_c_separator
-  buffer.auto_c_separator = ('|'):byte()
-  for _, filename in ipairs(t.io.recent_files) do
-    list = filename..'|'..list
+  function(type, text)
+    if type == RECENT_FILES then t.io.open(text) end
+  end)
+keys.co = {
+  function()
+    local buffer = buffer
+    local files = {}
+    for _, filename in ipairs(t.io.recent_files) do
+      table.insert(files, 1, filename)
+    end
+    local sep = buffer.auto_c_separator
+    buffer.auto_c_separator = ('|'):byte()
+    buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
+    buffer.auto_c_separator = sep
   end
-  buffer:user_list_show( RECENT_FILES, list:sub(1, -2) )
-  buffer.auto_c_separator = sep
-end }
+}
 
 -- Movement/selection commands
 keys.cf   = { 'char_right',             b }

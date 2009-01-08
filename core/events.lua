@@ -97,7 +97,7 @@ function handle(event, ...)
   local handlers = events[plural]
   if not handlers then return end
   for _, f in ipairs(handlers) do
-    local result = f( unpack{...} )
+    local result = f(unpack{...})
     if result == true or result == false then return result end
   end
 end
@@ -138,12 +138,12 @@ function keypress(code, shift, control, alt)
 end
 function menu_clicked(menu_item)
   local text, menu_id = menu_item:match('^(.+)|(%d+)$')
-  return handle( 'menu_clicked', text, tonumber(menu_id) )
+  return handle('menu_clicked', text, tonumber(menu_id))
 end
 
 -- Scintilla notifications.
 function char_added(n)
-  if n.ch < 256 then return handle( 'char_added', string.char(n.ch) ) end
+  if n.ch < 256 then return handle('char_added', string.char(n.ch)) end
 end
 function save_point_reached()
   return handle('save_point_reached')
@@ -251,8 +251,8 @@ add_handler('view_new',
     buffer:set_sel_fore(1, 3355443) -- 0x33 | 0x33 << 8 | 0x33 << 16
     buffer:set_sel_back(1, 10066329) -- 0x99 | 0x99 << 8 | 0x99 << 16
 
-    buffer.margin_width_n[0] = 4 + 3 * -- line number margin
-      buffer:text_width(c.STYLE_LINENUMBER, '9')
+    buffer.margin_width_n[0] = -- line number margin
+      4 + 3 * buffer:text_width(c.STYLE_LINENUMBER, '9')
 
     buffer.margin_width_n[1] = 0 -- marker margin invisible
 
@@ -363,6 +363,8 @@ add_handler('char_added',
     end
   end)
 
+local title_text = '%s %s Textadept (%s)'
+
 ---
 -- [Local function] Sets the title of the Textadept window to the buffer's
 -- filename.
@@ -370,8 +372,9 @@ add_handler('char_added',
 local function set_title(buffer)
   local buffer, textadept = buffer, textadept
   local filename = buffer.filename or textadept.locale.UNTITLED
-  local d = buffer.dirty and ' * ' or ' - '
-  textadept.title = filename:match('[^/\\]+$')..d..'Textadept ('..filename..')'
+  local d = buffer.dirty and '*' or '-'
+  textadept.title =
+    string.format(title_text, filename:match('[^/\\]+$'), d, filename)
 end
 
 add_handler('save_point_reached',
@@ -401,8 +404,10 @@ add_handler('save_point_left',
 -- @class table
 -- @name _error_details
 local _error_details = {
-  lua = { pattern = '^lua: ([^:]+):(%d+): (.+)$',
-          filename = 1, line = 2, message = 3 }
+  lua = {
+    pattern = '^lua: ([^:]+):(%d+): (.+)$',
+    filename = 1, line = 2, message = 3
+  }
 }
 
 add_handler('double_click',
@@ -412,8 +417,8 @@ add_handler('double_click',
       for _, error_detail in pairs(_error_details) do
         local captures = { line:match(error_detail.pattern) }
         if #captures > 0 then
-          textadept.io.open( captures[error_detail.filename] )
-          _m.textadept.editing.goto_line( captures[error_detail.line] )
+          textadept.io.open(captures[error_detail.filename])
+          _m.textadept.editing.goto_line(captures[error_detail.line])
           local msg = captures[error_detail.message]
           if msg then buffer:call_tip_show(buffer.current_pos, msg) end
           break
@@ -450,8 +455,8 @@ local _braces = { -- () [] {} <>
 -- @param current_pos The position to match braces at.
 local function match_brace(current_pos)
   local buffer = buffer
-  if _braces[ buffer.char_at[current_pos] ] and
-    buffer:get_style_name( buffer.style_at[current_pos] ) == 'operator' then
+  if _braces[buffer.char_at[current_pos]] and
+    buffer:get_style_name(buffer.style_at[current_pos]) == 'operator' then
     local pos = buffer:brace_match(current_pos)
     if pos ~= -1 then
       buffer:brace_highlight(current_pos, pos)
@@ -530,13 +535,13 @@ add_handler('quit',
       end
     end
     if any then
-      if cocoa_dialog( 'yesno-msgbox', {
+      if cocoa_dialog('yesno-msgbox', {
         title = locale.EVENTS_QUIT_TITLE,
         text = locale.EVENTS_QUIT_TEXT,
         ['informative-text'] =
-          string.format( locale.EVENTS_QUIT_MSG, table.concat(list, '\n') ),
+          string.format(locale.EVENTS_QUIT_MSG, table.concat(list, '\n')),
         ['no-newline'] = true
-      } ) ~= '2' then return false end
+      }) ~= '2' then return false end
     end
     textadept.io.save_session()
     return true
@@ -554,7 +559,7 @@ end
 function error(...)
   local function handle_error(...)
     local textadept = textadept
-    local error_message = table.concat( {...} , '\n' )
+    local error_message = table.concat({...} , '\n')
     local error_buffer
     for index, buffer in ipairs(textadept.buffers) do
       if buffer.shows_errors then
@@ -572,7 +577,7 @@ function error(...)
     error_buffer:append_text(error_message..'\n')
     error_buffer:set_save_point()
   end
-  pcall( handle_error, unpack{...} ) -- prevent endless loops if this errors
+  pcall(handle_error, unpack{...}) -- prevent endless loops if this errors
 end
 
 textadept.print = error

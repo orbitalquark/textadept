@@ -64,11 +64,12 @@ function stop_recording()
   buffer:stop_record()
   recording = false
   local textadept, locale = textadept, textadept.locale
-  local ret, macro_name = cocoa_dialog( 'standard-inputbox', {
-    ['informative-text'] = locale.M_TEXTADEPT_MACRO_SAVE_TITLE,
-    text = locale.M_TEXTADEPT_MACRO_SAVE_TEXT,
-    ['no-newline'] = true
-  } ):match('^(%d)\n([^\n]+)$')
+  local ret, macro_name =
+    cocoa_dialog('standard-inputbox', {
+      ['informative-text'] = locale.M_TEXTADEPT_MACRO_SAVE_TITLE,
+      text = locale.M_TEXTADEPT_MACRO_SAVE_TEXT,
+      ['no-newline'] = true
+    }):match('^(%d)\n([^\n]+)$')
 
   if ret == '1' and macro_name and #macro_name > 0 then
     for _, command in ipairs(current) do
@@ -99,17 +100,18 @@ end
 function play(macro_name)
   if not macro_name then
     local locale = textadept.locale
-    local macro_list = ''
-    for name in pairs(list) do macro_list = macro_list..'"'..name..'"'..' ' end
-    if #macro_list > 0 then
+    local macros = {}
+    for name, _ in pairs(list) do macros[#macros + 1] = name end
+    if #macros > 0 then
       local ret
-      ret, macro_name = cocoa_dialog( 'standard-dropdown', {
-        title = locale.M_TEXTADEPT_MACRO_SELECT_TITLE,
-        text = locale.M_TEXTADEPT_MACRO_SELECT_TEXT,
-        items = macro_list,
-        ['string-output'] = true,
-        ['no-newline'] = true
-      } ):match('^([^\n]+)\n([^\n]+)$')
+      ret, macro_name =
+        cocoa_dialog('standard-dropdown', {
+          title = locale.M_TEXTADEPT_MACRO_SELECT_TITLE,
+          text = locale.M_TEXTADEPT_MACRO_SELECT_TEXT,
+          items = '"'..table.concat(macros, '" "')..'"',
+          ['string-output'] = true,
+          ['no-newline'] = true
+        }):match('^([^\n]+)\n([^\n]+)$')
       if ret == 'Cancel' then return end
     end
   end
@@ -118,7 +120,7 @@ function play(macro_name)
   local buffer, bf = buffer, textadept.buffer_functions
   for _, command in ipairs(macro) do
     local cmd, wParam, lParam = unpack(command)
-    local _, _, p1_type, p2_type  = unpack( bf[cmd] )
+    local _, _, p1_type, p2_type  = unpack(bf[cmd])
     if p2_type == 7 and p1_type == 0 or p1_type == 2 then -- single string param
       buffer[cmd](buffer, lParam)
     else
@@ -143,16 +145,18 @@ end
 -- @param filename The absolute path to the file to save the macros to.
 function save(filename)
   if not filename then filename = MACRO_FILE end
-  local f = assert( io.open(filename, 'w') )
+  local f = assert(io.open(filename, 'w'))
   for name, macro in pairs(list) do
     f:write(name, '\n')
     for _, command in ipairs(macro) do
       local msg, wParam, lParam = unpack(command)
       if type(lParam) == 'string' then
-        lParam = lParam:gsub( '[\t\n\r\f]',
-          { ['\t'] = '\\t', ['\n'] = '\\n', ['\r'] = '\\r', ['\f'] = '\\f' } )
+        lParam =
+          lParam:gsub('[\t\n\r\f]',
+                      { ['\t'] = '\\t', ['\n'] = '\\n', ['\r'] = '\\r',
+                        ['\f'] = '\\f' })
       end
-      f:write( ("%s\t%s\t%s\n"):format(msg, wParam, lParam) )
+      f:write(("%s\t%s\t%s\n"):format(msg, wParam, lParam))
     end
     f:write('\n')
   end
@@ -178,8 +182,10 @@ function load(filename)
       else
         local cmd, wParam, lParam = line:match('^([^\t]+)\t([^\t]+)\t(.*)$')
         if cmd and wParam and lParam then
-          lParam = lParam:gsub( '\\[tnrf]',
-            { ['\\t'] = '\t', ['\\n'] = '\n', ['\\r'] = '\r', ['\\f'] = '\f' } )
+          lParam =
+            lParam:gsub('\\[tnrf]',
+                        { ['\\t'] = '\t', ['\\n'] = '\n', ['\\r'] = '\r',
+                          ['\\f'] = '\f' })
           local num = wParam:match('^-?%d+$')
           if num then wParam = tonumber(num) end
           num = lParam:match('^-?%d+$')

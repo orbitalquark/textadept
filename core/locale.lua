@@ -84,8 +84,8 @@ FIND_NO_RESULTS = 'No results found'
 FIND_ERROR_DIALOG_TITLE = 'Error'
 -- An error occured:
 FIND_ERROR_DIALOG_TEXT = 'An error occured'
--- replacement(s) made
-FIND_REPLACEMENTS_MADE = 'replacement(s) made'
+-- "%d replacement(s) made"
+FIND_REPLACEMENTS_MADE = '%d replacement(s) made'
 
 -- core/ext/keys.lua
 

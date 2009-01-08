@@ -70,9 +70,7 @@ local comment_strings = {
 
 textadept.events.add_handler('char_added',
   function(c) -- matches characters specified in char_matches
-    if char_matches[c] then
-      buffer:insert_text( -1, char_matches[c] )
-    end
+    if char_matches[c] then buffer:insert_text(-1, char_matches[c]) end
   end)
 
 -- local functions
@@ -106,7 +104,7 @@ end
 function autocomplete_word(word_chars)
   local buffer = buffer
   local caret, length = buffer.current_pos, buffer.length
-  local completions, c_list_str = {}, ''
+  local completions, c_list = {}, {}
   local buffer_text = buffer:get_text(length)
   local root = buffer_text:sub(1, caret):match('['..word_chars..']+$')
   if not root or #root == 0 then return end
@@ -115,12 +113,12 @@ function autocomplete_word(word_chars)
     local s, e = buffer_text:find('^['..word_chars..']+', match_pos + 1)
     local match = buffer_text:sub(s, e)
     if not completions[match] and #match > #root then
-      c_list_str = c_list_str..match..' '
+      c_list[#c_list + 1] = match
       completions[match] = true
     end
     match_pos = buffer:find(root, 1048580, match_pos + 1)
   end
-  if #c_list_str > 0 then buffer:auto_c_show( #root, c_list_str:sub(1, -2) ) end
+  if #c_list > 0 then buffer:auto_c_show(#root, table.concat(c_list, ' ')) end
 end
 
 ---
@@ -134,12 +132,12 @@ function autocomplete_word_from_dict(dict)
   if #root == 0 then return end
   local f = io.open(dict)
   if not f then return end
-  local c_list_str = ''
+  local c_list = {}
   for line in f:lines() do
-    if line:match('^'..root) then c_list_str = c_list_str..line..' ' end
+    if line:match('^'..root) then c_list[#c_list + 1] = line end
   end
   f:close()
-  if #c_list_str > 0 then buffer:auto_c_show( #root, c_list_str:sub(1, -2) ) end
+  if #c_list > 0 then buffer:auto_c_show(#root, table.concat(c_list, ' ')) end
 end
 
 ---
@@ -205,7 +203,7 @@ textadept.events.add_handler('call_tip_click',
 function block_comment(comment)
   local buffer = buffer
   if not comment then
-    comment = comment_strings[ buffer:get_lexer_language() ]
+    comment = comment_strings[buffer:get_lexer_language()]
     if not comment then return end
   end
   local caret, anchor = buffer.current_pos, buffer.anchor
@@ -236,12 +234,13 @@ end
 function goto_line(line)
   local buffer, locale = buffer, textadept.locale
   if not line then
-    line = cocoa_dialog( 'standard-inputbox', {
-      title = locale.M_TEXTADEPT_EDITING_GOTO_TITLE,
-      text = locale.M_TEXTADEPT_EDITING_GOTO_TEXT,
-      ['no-newline'] = true
-    } )
-    line = tonumber( line:match('%-?%d+$') )
+    line =
+      cocoa_dialog('standard-inputbox', {
+        title = locale.M_TEXTADEPT_EDITING_GOTO_TITLE,
+        text = locale.M_TEXTADEPT_EDITING_GOTO_TEXT,
+        ['no-newline'] = true
+      })
+    line = tonumber(line:match('%-?%d+$'))
     if not line or line < 0 then return end
   end
   buffer:ensure_visible_enforce_policy(line - 1)
@@ -328,10 +327,12 @@ function smart_paste(action, reindent)
   txt = kill_ring[kill_ring.pos]
   if txt then
     if reindent then
-      local indent = buffer.line_indentation[
-        buffer:line_from_position(buffer.current_pos) ]
-      local padding = string.rep(buffer.use_tabs and '\t' or ' ',
-        buffer.use_tabs and indent / buffer.tab_width or indent)
+      local indent =
+        buffer.line_indentation[
+          buffer:line_from_position(buffer.current_pos)]
+      local padding =
+        string.rep(buffer.use_tabs and '\t' or ' ',
+                   buffer.use_tabs and indent / buffer.tab_width or indent)
       txt = txt:gsub('\n', '\n'..padding)
     end
     buffer:replace_sel(txt)
@@ -367,7 +368,7 @@ function transpose_chars()
   else
     buffer:char_right()
   end
-  buffer:insert_text( -1, string.char(char) )
+  buffer:insert_text(-1, string.char(char))
   buffer:end_undo_action()
   buffer:goto_pos(caret)
 end
@@ -384,7 +385,7 @@ function squeeze(char)
   while buffer.char_at[s] == char do s = s - 1 end
   while buffer.char_at[e] == char do e = e + 1 end
   buffer:set_sel(s + 1, e)
-  buffer:replace_sel( string.char(char) )
+  buffer:replace_sel(string.char(char))
 end
 
 ---
@@ -392,7 +393,10 @@ end
 function join_lines()
   local buffer = buffer
   buffer:begin_undo_action()
-  buffer:line_end() buffer:clear() buffer:add_text(' ') squeeze()
+  buffer:line_end()
+  buffer:clear()
+  buffer:add_text(' ')
+  squeeze()
   buffer:end_undo_action()
 end
 
@@ -471,21 +475,21 @@ function select_enclosed(str)
   local buffer = buffer
   if str then
     buffer:search_anchor()
-    local s = buffer:search_prev( 0, enclosure[str].left )
-    local e = buffer:search_next( 0, enclosure[str].right )
+    local s = buffer:search_prev(0, enclosure[str].left)
+    local e = buffer:search_next(0, enclosure[str].right)
     if s and e then buffer:set_sel(s + 1, e) end
   else
     -- TODO: ignore enclosures in comment scopes?
     s, e = buffer.anchor, buffer.current_pos
     if s > e then s, e = e, s end
-    local char = string.char( buffer.char_at[s - 1] )
+    local char = string.char(buffer.char_at[s - 1])
     if s ~= e and char_matches[char] then
       s, e = s - 2, e + 1 -- don't match the same enclosure
     end
     while s >= 0 do
-      char = string.char( buffer.char_at[s] )
+      char = string.char(buffer.char_at[s])
       if char_matches[char] then
-        local _, e = buffer:find( char_matches[char], 0, e )
+        local _, e = buffer:find(char_matches[char], 0, e)
         if e then buffer:set_sel(s + 1, e - 1) break end
       end
       s = s - 1
@@ -510,7 +514,8 @@ end
 -- Selects the current line.
 function select_line()
   local buffer = buffer
-  buffer:home() buffer:line_end_extend()
+  buffer:home()
+  buffer:line_end_extend()
 end
 
 ---
@@ -657,7 +662,7 @@ get_preceding_number = function()
   local caret = buffer.current_pos
   local char = buffer.char_at[caret - 1]
   local txt = ''
-  while tonumber( string.char(char) ) do
+  while tonumber(string.char(char)) do
     txt = txt..string.char(char)
     caret = caret - 1
     char = buffer.char_at[caret - 1]
