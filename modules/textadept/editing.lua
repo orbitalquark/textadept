@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Editing commands for the textadept module.
 module('_m.textadept.editing', package.seeall)
@@ -232,7 +234,8 @@ end
 -- Goes to the requested line.
 -- @param line Optional line number to go to.
 function goto_line(line)
-  local buffer, locale = buffer, textadept.locale
+  local buffer = buffer
+  local locale = textadept.locale
   if not line then
     line =
       cocoa_dialog('standard-inputbox', {

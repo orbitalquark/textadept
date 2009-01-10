@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 local mpath = _HOME..'/modules/?.lua;'.._HOME..'/modules/?/init.lua'
 package.path  = mpath..';'..package.path
 
@@ -32,7 +34,6 @@ require 'ext/key_commands' -- key commands for Mitchell (Nano-Emacs hybrid)
 
 if not RESETTING then
   -- process command line arguments
-  local textadept = textadept
   if MAC and arg[1] and arg[1]:match('^%-psn_0') then
     table.remove(arg, 1)
   end

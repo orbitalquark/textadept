@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Provides Lua-centric snippets for Textadept.
 -- Snippets are basically pieces of text inserted into a document, but can

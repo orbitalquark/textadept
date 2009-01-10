@@ -1,7 +1,9 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- SciTE editor theme for Textadept.
 
-local buffer, c = buffer, textadept.constants
+local textadept = _G.textadept
+local c = textadept.constants
+local buffer = buffer
 
 buffer.margin_width_n[0] = 4 * buffer:text_width(c.STYLE_LINENUMBER, "9")
 

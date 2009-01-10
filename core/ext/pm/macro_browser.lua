@@ -1,11 +1,11 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Macro browser for the Textadept project manager.
 -- It is enabled with the prefix 'macros' in the project manager entry field.
 module('textadept.pm.browsers.macro', package.seeall)
-
-local textadept = textadept
 
 function matches(entry_text)
   return entry_text:sub(1, 7) == 'macros'
@@ -38,9 +38,8 @@ function perform_menu_action(menu_item, menu_id, selected_item)
   textadept.pm.activate()
 end
 
-local add_handler = textadept.events.add_handler
 local function update_view()
   if matches(textadept.pm.entry_text) then textadept.pm.activate() end
 end
-add_handler('macro_saved', update_view)
-add_handler('macro_deleted', update_view)
+textadept.events.add_handler('macro_saved', update_view)
+textadept.events.add_handler('macro_deleted', update_view)

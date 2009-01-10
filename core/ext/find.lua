@@ -1,5 +1,6 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
 local find = textadept.find
 
 ---
@@ -25,7 +26,7 @@ local escapes = {
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
 function find.find(text, next, flags, nowrap, wrapped)
-  local buffer, textadept = buffer, textadept
+  local buffer = buffer
   local increment, result
   text = text:gsub('\\[abfnrtv\\]', escapes)
   find.captures = nil
@@ -135,7 +136,6 @@ end
 -- @param flags The number mask identical to the one in 'find'.
 -- @see find.find
 function find.replace_all(ftext, rtext, flags)
-  local textadept = textadept
   buffer:goto_pos(0)
   local count = 0
   while(find.find(ftext, true, flags, true)) do

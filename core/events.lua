@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Module that handles Scintilla and Textadept notifications/events.
 -- Most of Textadept's functionality comes through handlers. Scintilla
@@ -204,7 +206,8 @@ end
 
 add_handler('view_new',
   function() -- sets default properties for a Scintilla window
-    local c, buffer = textadept.constants, buffer
+    local buffer = buffer
+    local c = textadept.constants
 
     -- properties
     buffer.property['textadept.home'] = _HOME
@@ -293,7 +296,7 @@ add_handler('view_new',
 add_handler('buffer_new',
   function() -- sets default properties for a Scintilla document
     local function run()
-      local textadept, buffer = textadept, buffer
+      local buffer = buffer
 
       -- lexer
       buffer.style_bits = 8
@@ -370,7 +373,7 @@ local title_text = '%s %s Textadept (%s)'
 -- filename.
 -- @param buffer The currently focused buffer.
 local function set_title(buffer)
-  local buffer, textadept = buffer, textadept
+  local buffer = buffer
   local filename = buffer.filename or textadept.locale.UNTITLED
   local d = buffer.dirty and '*' or '-'
   textadept.title =
@@ -481,7 +484,8 @@ local EOLs = {
 }
 add_handler('update_ui',
   function() -- sets docstatusbar text
-    local buffer, locale = buffer, textadept.locale
+    local buffer = buffer
+    local locale = textadept.locale
     local pos = buffer.current_pos
     local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
     local col = buffer.column[pos] + 1
@@ -503,7 +507,7 @@ add_handler('margin_click',
 
 add_handler('buffer_new',
   function() -- set additional buffer functions
-    local buffer, textadept = buffer, textadept
+    local buffer = buffer
     buffer.reload = textadept.io.reload
     buffer.save = textadept.io.save
     buffer.save_as = textadept.io.save_as
@@ -558,7 +562,6 @@ end
 -- @param ... Error strings.
 function error(...)
   local function handle_error(...)
-    local textadept = textadept
     local error_message = table.concat({...} , '\n')
     local error_buffer
     for index, buffer in ipairs(textadept.buffers) do

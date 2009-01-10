@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 --- Handles file-specific settings (based on file extension).
 module('textadept.mime_types', package.seeall)
 
@@ -334,8 +336,7 @@ local function handle_switch()
   end
 end
 
-local events = textadept.events
-events.add_handler('file_opened', handle_new)
-events.add_handler('file_saved_as', handle_new)
-events.add_handler('buffer_switch', handle_switch)
-events.add_handler('view_new', handle_switch)
+textadept.events.add_handler('file_opened', handle_new)
+textadept.events.add_handler('file_saved_as', handle_new)
+textadept.events.add_handler('buffer_switch', handle_switch)
+textadept.events.add_handler('view_new', handle_switch)
