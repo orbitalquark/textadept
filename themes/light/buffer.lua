@@ -1,7 +1,8 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- Light editor theme for Textadept.
 
-local textadept, buffer = textadept, buffer
+local textadept = _G.textadept
+local buffer = buffer
 
 -- folding
 buffer.property['fold'] = '1'

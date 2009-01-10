@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Buffer browser for the Textadept project manager.
 -- It is enabled with the prefix 'buffers' in the project manager entry field.
@@ -62,12 +64,11 @@ function perform_menu_action(menu_item, menu_id, selected_item)
   textadept.pm.activate()
 end
 
-local add_handler = textadept.events.add_handler
 local function update_view()
   if matches(textadept.pm.entry_text) then textadept.pm.activate() end
 end
-add_handler('file_opened', update_view)
-add_handler('buffer_new', update_view)
-add_handler('buffer_deleted', update_view)
-add_handler('save_point_reached', update_view)
-add_handler('save_point_left', update_view)
+textadept.events.add_handler('file_opened', update_view)
+textadept.events.add_handler('buffer_new', update_view)
+textadept.events.add_handler('buffer_deleted', update_view)
+textadept.events.add_handler('save_point_reached', update_view)
+textadept.events.add_handler('save_point_left', update_view)

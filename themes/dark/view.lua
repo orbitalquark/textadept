@@ -1,7 +1,9 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- Dark editor theme for Textadept.
 
-local c, buffer = textadept.constants, buffer
+local textadept = _G.textadept
+local c = textadept.constants
+local buffer = buffer
 
 -- caret
 buffer.caret_fore = 11184810 -- 0xAA | 0xAA << 8 | 0xAA << 16

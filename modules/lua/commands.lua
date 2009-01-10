@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Commands for the lua module.
 module('_m.lua.commands', package.seeall)
@@ -21,16 +23,18 @@ local control_structure_patterns = {
 function try_to_autocomplete_end()
   local buffer = buffer
   buffer:begin_undo_action()
-  buffer:line_end() buffer:new_line()
+  buffer:line_end()
+  buffer:new_line()
   local line_num = buffer:line_from_position(buffer.current_pos)
   local line = buffer:get_line(line_num - 1)
   for _, patt in ipairs(control_structure_patterns) do
     if line:match(patt) then
       local indent = buffer.line_indentation[line_num - 1]
-      buffer:add_text( patt:match('repeat') and '\nuntil' or '\nend' )
+      buffer:add_text(patt:match('repeat') and '\nuntil' or '\nend')
       buffer.line_indentation[line_num + 1] = indent
       buffer.line_indentation[line_num] = indent + buffer.indent
-      buffer:line_up() buffer:line_end()
+      buffer:line_up()
+      buffer:line_end()
       break
     end
   end
@@ -54,7 +58,11 @@ function goto_required()
   for path in package.path:gmatch('[^;]+') do
     path = path:gsub('?', file)
     local f = io.open(path)
-    if f then f:close() textadept.io.open(path) break end
+    if f then
+      f:close()
+      textadept.io.open(path)
+      break
+    end
   end
 end
 
@@ -80,12 +88,14 @@ if type(keys) == 'table' then
     },
     ['s\n'] = { try_to_autocomplete_end },
     cg = { run },
-    ['('] = { function()
-      buffer.word_chars =
-        '_.:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      m_editing.show_call_tip(_m.lua.api, true)
-      buffer:set_chars_default()
-      return false
-    end },
+    ['('] = {
+      function()
+        buffer.word_chars =
+          '_.:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        m_editing.show_call_tip(_m.lua.api, true)
+        buffer:set_chars_default()
+        return false
+      end
+    },
   }
 end

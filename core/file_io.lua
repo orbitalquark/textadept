@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Provides file input/output routines for Textadept.
 -- Opens and saves files and sessions and reads API files.
@@ -8,8 +10,6 @@
 --   file_opened(filename)
 --   file_saved_as(filename)
 module('textadept.io', package.seeall)
-
-local events = textadept.events
 
 ---
 -- List of recently opened files.
@@ -34,7 +34,7 @@ local function open_helper(filename)
   end
   buffer.filename = filename
   buffer:set_save_point()
-  events.handle('file_opened', filename)
+  textadept.events.handle('file_opened', filename)
   recent_files[#recent_files + 1] = filename
 end
 
@@ -92,7 +92,7 @@ function save(buffer)
     f:close()
     buffer:set_save_point()
   else
-    events.error(err)
+    textadept.events.error(err)
   end
 end
 
@@ -115,7 +115,7 @@ function save_as(buffer, filename)
   if #filename > 0 then
     buffer.filename = filename
     buffer:save()
-    events.handle('file_saved_as', filename)
+    textadept.events.handle('file_saved_as', filename)
   end
 end
 
@@ -179,7 +179,6 @@ end
 -- @return true if the session file was opened and read; false otherwise.
 -- @usage textadept.io.load_session(filename)
 function load_session(filename, only_pm)
-  local textadept = textadept
   local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
   if not user_dir then return end
   local ta_session = user_dir..'/.ta_session'

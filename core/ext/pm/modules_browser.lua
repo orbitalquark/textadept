@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Modules browser for the Textadept project manager.
 -- It is enabled with the prefix 'modules' in the project manager entry field.
@@ -182,7 +184,6 @@ function perform_menu_action(menu_item, menu_id, selected_item)
   elseif menu_id == ID.CONF_MIME_TYPES then
     textadept.io.open(_HOME..'/core/ext/mime_types.lua')
   elseif menu_id == ID.CONF_KEY_COMMANDS then
-    local textadept = textadept
     if textadept.key_commands then
       textadept.io.open(_HOME..'/core/ext/key_commands.lua')
     elseif textadept.key_commands_std then

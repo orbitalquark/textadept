@@ -1,7 +1,9 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- Light editor theme for Textadept.
 
-local c, buffer = textadept.constants, buffer
+local textadept = _G.textadept
+local c = textadept.constants
+local buffer = buffer
 
 -- caret
 buffer.caret_fore = 3355443 -- 0x33 | 0x33 << 8 | 0x33 << 16

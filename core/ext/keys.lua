@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Manages key commands in Textadept.
 -- Default key commands should be defined in a separate file and loaded after
@@ -76,6 +78,23 @@ local ALT = 'a'..ADD
 -- end options
 
 ---
+-- Global container that holds all key commands.
+-- @class table
+-- @name keys
+_G.keys = {}
+
+-- optimize for speed
+local keys = _G.keys
+local string = _G.string
+local string_char = string.char
+local string_format = string.format
+local pcall = _G.pcall
+local ipairs = _G.ipairs
+local next = _G.next
+local type = _G.type
+local unpack = _G.unpack
+
+---
 -- [Local table] Lookup table for key values higher than 255.
 -- If a key value given to 'keypress' is higher than 255, this table is used to
 -- return a string representation of the key if it exists.
@@ -124,15 +143,13 @@ end
 -- @return whatever the executed command returns, true by default. A true
 --   return value will tell Textadept not to handle the key afterwords.
 local function keypress(code, shift, control, alt)
-  local buffer, textadept = buffer, textadept
-  local string, pcall = string, pcall
-  local keys = _G.keys
+  local buffer = buffer
   local key
   --print(code, string.char(code))
   if code < 256 then
-    key = string.char(code):lower()
+    key = string_char(code):lower()
     if MAC and not shift and not control and not alt then
-      local ch = string.char(code)
+      local ch = string_char(code)
       -- work around native GTK-OSX's handling of Alt key
       if ch:match('[^A-Za-z ]') and #keychain == 0 then
         buffer:add_text(ch)
@@ -147,7 +164,7 @@ local function keypress(code, shift, control, alt)
   control = control and CTRL or ''
   shift = shift and SHIFT or ''
   alt = alt and ALT or ''
-  local key_seq = string.format('%s%s%s%s', control, shift, alt, key)
+  local key_seq = string_format('%s%s%s%s', control, shift, alt, key)
 
   if #keychain > 0 and key_seq == keys.clear_sequence then
     clear_key_sequence()
@@ -224,10 +241,10 @@ end
 -- of -1. This way, pcall will return false and -1, where the -1 can easily and
 -- efficiently be checked rather than using a string error message.
 try_get_cmd = function(active_table)
-  local locale = textadept.locale
   for _, key_seq in ipairs(keychain) do active_table = active_table[key_seq] end
   if #active_table == 0 and next(active_table) then
-    textadept.statusbar_text = locale.KEYCHAIN..table.concat(keychain, ' ')
+    textadept.statusbar_text =
+      textadept.locale.KEYCHAIN..table.concat(keychain, ' ')
     error(-1, 0)
   else
     local func = active_table[1]
@@ -241,7 +258,7 @@ try_get_cmd = function(active_table)
         return view[func], { view, unpack(active_table, 3) }
       end
     else
-      error(locale.KEYS_UNKNOWN_COMMAND..tostring(func))
+      error(textadept.locale.KEYS_UNKNOWN_COMMAND..tostring(func))
     end
   end
 end

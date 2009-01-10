@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 package.path = _HOME..'/core/?.lua;'..package.path
 if not WIN32 then
   package.cpath = _HOME..'/core/?.so;'..package.cpath

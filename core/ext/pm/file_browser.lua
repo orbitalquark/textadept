@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- File browser for the Textadept project manager.
 -- It is enabled by providing the absolute path to a directory in the project

@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Defines the key commands used by the Textadept key command manager.
 -- For non-ascii keys, see textadept.keys for string aliases.
@@ -15,12 +17,7 @@ module('textadept.key_commands_mac', package.seeall)
   CSA: A   C D E   G H   J K L M N O P Q R S T U V W X Y Z
 ]]--
 
----
--- Global container that holds all key commands.
--- @class table
--- @name keys
-_G.keys = {}
-local keys = keys
+local keys = _G.keys
 
 keys.clear_sequence = 'aesc'
 

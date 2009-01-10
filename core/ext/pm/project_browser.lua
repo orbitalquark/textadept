@@ -1,5 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Browser template for the Textadept project manager.
 -- It is enabled with the prefix 'project' in the project manager entry field.

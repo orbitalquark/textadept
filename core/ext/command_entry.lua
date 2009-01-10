@@ -1,5 +1,6 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
 local ce = textadept.command_entry
 
 ---
@@ -8,7 +9,6 @@ local ce = textadept.command_entry
 -- @param command The command to complete.
 -- @return sorted table of completions
 function ce.get_completions_for(command)
-  local textadept = textadept
   local substring = command:match('[%w_.:]+$') or ''
   local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
   local ret, tbl = pcall(loadstring('return ('..path..')'))

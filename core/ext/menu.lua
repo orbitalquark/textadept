@@ -1,11 +1,15 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+
 ---
 -- Provides dynamic menus for Textadept.
 -- This module, like ext/key_commands, should be 'require'ed last.
 module('textadept.menu', package.seeall)
 
-local t, gtkmenu, l = textadept, textadept.gtkmenu, textadept.locale
+local t = textadept
+local l = textadept.locale
+local gtkmenu = textadept.gtkmenu
 
 local SEPARATOR = 'separator'
 local ID = {
