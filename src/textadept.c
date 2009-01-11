@@ -87,6 +87,10 @@ int main(int argc, char **argv) {
     g_free(bundle_path);
     CFRelease(bundle_url);
   } else textadept_home = "";
+  // GTK-OSX does not parse ~/.gtkrc-2.0; parse it manually
+  char *user_home = g_strconcat(getenv("HOME"), "/.gtkrc-2.0", NULL);
+  gtk_rc_parse(user_home);
+  g_free(user_home);
 #endif
   gtk_init(&argc, &argv);
   if (l_init(argc, argv, false)) {
