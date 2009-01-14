@@ -248,6 +248,7 @@ function goto_line(line)
   end
   buffer:ensure_visible_enforce_policy(line - 1)
   buffer:goto_line(line - 1)
+  buffer:goto_pos(buffer.current_pos)
 end
 
 ---
