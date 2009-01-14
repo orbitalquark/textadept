@@ -9,9 +9,9 @@ local textadept = _G.textadept
 module('textadept.key_commands_std', package.seeall)
 
 --[[
-  C:     B   D       H   J K L           R     U
+  C:     B   D       H   J K L                 U
   A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
-  CS:  A B C D   F G H   J K L M N O   Q R   T U V   X Y Z
+  CS:  A B C D   F G H   J K L M N O   Q     T U V   X Y Z
   SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
   CA:  A B C D E F G H   J K L M N O   Q R S T U V W X Y Z
   CSA: A B C D E F G H   J K L M N O P Q R S T U V W X Y Z
@@ -99,6 +99,10 @@ keys.cg = { m_editing.goto_line }
 
 -- Tools
 keys['f2'] = { t.command_entry.focus }
+-- Run
+local m_run = _m.textadept.run
+keys.cr  = { m_run.go      }
+keys.csr = { m_run.compile }
 -- Snippets
 local m_snippets = _m.textadept.lsnippets
 keys.ci   = { m_snippets.insert         }

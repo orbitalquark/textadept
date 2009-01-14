@@ -244,6 +244,10 @@ MENU_SEARCH_GOTO_LINE = 'gtk-jump-to'
 MENU_TOOLS_TITLE = '_Tools'
 -- Focus _Command Entry
 MENU_TOOLS_FOCUS_COMMAND_ENTRY = 'Focus _Command Entry'
+-- _Run
+MENU_TOOLS_RUN = '_Run'
+-- _Compile
+MENU_TOOLS_COMPILE = '_Compile'
 -- _Snippets
 MENU_TOOLS_SNIPPETS_TITLE = '_Snippets'
 -- _Insert Snippet
