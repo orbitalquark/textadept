@@ -392,44 +392,6 @@ add_handler('save_point_left',
     set_title(buffer)
   end)
 
----
--- [Local table] A table of error string details.
--- Each entry is a table with the following fields:
---   pattern: the Lua pattern that matches a specific error string.
---   filename: the index of the Lua capture that contains the filename the error
---     occured in.
---   line: the index of the Lua capture that contains the line number the error
---     occured on.
---   message: [Optional] the index of the Lua capture that contains the error's
---     message. A call tip will be displayed if a message was captured.
--- When an error message is double-clicked, the user is taken to the point of
---   error.
--- @class table
--- @name _error_details
-local _error_details = {
-  lua = {
-    pattern = '^lua: ([^:]+):(%d+): (.+)$',
-    filename = 1, line = 2, message = 3
-  }
-}
-
-add_handler('double_click',
-  function(pos, line_num) -- goes to the file and line specified by line's text
-    if buffer.shows_errors then
-      line = buffer:get_line(line_num)
-      for _, error_detail in pairs(_error_details) do
-        local captures = { line:match(error_detail.pattern) }
-        if #captures > 0 then
-          textadept.io.open(captures[error_detail.filename])
-          _m.textadept.editing.goto_line(captures[error_detail.line])
-          local msg = captures[error_detail.message]
-          if msg then buffer:call_tip_show(buffer.current_pos, msg) end
-          break
-        end
-      end
-    end
-  end)
-
 add_handler('uri_dropped',
   function(uris)
     for uri in uris:gmatch('[^\r\n\f]+') do
