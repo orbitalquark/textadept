@@ -66,17 +66,6 @@ function goto_required()
   end
 end
 
----
--- Executes the current file.
-function run()
-  local buffer = buffer
-  local cmd = 'lua "'..buffer.filename..'" 2>&1'
-  local p = io.popen(cmd)
-  local out = p:read('*all')
-  p:close()
-  textadept.print('> '..cmd..'\n'..out)
-end
-
 -- Lua-specific key commands.
 local keys = _G.keys
 if type(keys) == 'table' then
@@ -87,7 +76,6 @@ if type(keys) == 'table' then
       g = { goto_required },
     },
     ['s\n'] = { try_to_autocomplete_end },
-    cg = { run },
     ['('] = {
       function()
         buffer.word_chars =
