@@ -283,7 +283,7 @@ add_handler('view_new',
     -- various
     buffer.buffered_draw = true
     buffer.two_phase_draw = false
-    buffer.call_tip_use_style = 32
+    buffer.call_tip_use_style = 0
     buffer.use_popup = 0
     buffer:set_fold_flags(16)
     buffer.mod_event_mask = c.SC_MOD_CHANGEFOLD
