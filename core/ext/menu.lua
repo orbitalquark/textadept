@@ -81,6 +81,8 @@ local ID = {
   GOTO_LINE = 307,
   -- Tools
   FOCUS_COMMAND_ENTRY = 401,
+  RUN = 420,
+  COMPILE = 421,
   INSERT_SNIPPET = 402,
   PREVIOUS_SNIPPET_PLACEHOLDER = 403,
   CANCEL_SNIPPET = 404,
@@ -282,6 +284,10 @@ t.menubar = {
   gtkmenu {
     title = l.MENU_TOOLS_TITLE,
     { l.MENU_TOOLS_FOCUS_COMMAND_ENTRY, ID.FOCUS_COMMAND_ENTRY },
+    { SEPARATOR, ID.SEPARATOR },
+    { l.MENU_TOOLS_RUN, ID.RUN },
+    { l.MENU_TOOLS_COMPILE, ID.COMPILE },
+    { SEPARATOR, ID.SEPARATOR },
     { title = l.MENU_TOOLS_SNIPPETS_TITLE,
       { l.MENU_TOOLS_SNIPPETS_INSERT, ID.INSERT_SNIPPET },
       { l.MENU_TOOLS_SNIPPETS_PREV_PLACE, ID.PREVIOUS_SNIPPET_PLACEHOLDER },
@@ -418,6 +424,7 @@ local m_editing = _m.textadept.editing
 local m_mlines = _m.textadept.mlines
 local m_bookmarks = _m.textadept.bookmarks
 local m_macros = _m.textadept.macros
+local m_run = _m.textadept.run
 
 local function pm_activate(text)
   t.pm.entry_text = text
@@ -510,6 +517,8 @@ local actions = {
   [ID.GOTO_LINE] = { m_editing.goto_line },
   -- Tools
   [ID.FOCUS_COMMAND_ENTRY] = { t.command_entry.focus },
+  [ID.RUN] = { m_run.go },
+  [ID.COMPILE] = { m_run.compile },
   -- Tools -> Snippets
   [ID.INSERT_SNIPPET] = { m_snippets.insert },
   [ID.PREVIOUS_SNIPPET_PLACEHOLDER] = { m_snippets.prev },

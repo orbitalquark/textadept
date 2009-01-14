@@ -8,9 +8,9 @@ local textadept = _G.textadept
 module('textadept.key_commands', package.seeall)
 
 --[[
-  C:               G
+  C:
   A:   A   C       G     J K L     O               W X   Z
-  CS:      C D     G     J   L         Q R S T U   W
+  CS:      C D           J   L         Q R S T U   W
   SA:  A   C D E   G H I J K L M   O   Q R S T     W X   Z
   CA:  A   C       G H   J K L     O   Q   S T   V W X Y Z
   CSA:     C D     G H   J K L     O   Q R S T U   W X   Z
@@ -184,6 +184,11 @@ keys.am = {
 local m_macro = _m.textadept.macros
 keys.cam  = { m_macro.toggle_record }
 keys.csam = { m_macro.play          }
+
+-- Run command.
+local m_run = _m.textadept.run
+keys.cg = { m_run.go }
+keys.csg = { m_run.compile }
 
 -- Project manager commands.
 local function pm_activate(text)
