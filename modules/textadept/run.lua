@@ -6,7 +6,10 @@ local textadept = _G.textadept
 -- Module for running/executing source files.
 module('_m.textadept.run', package.seeall)
 
---- [Local function] Prints a command to Textadept.
+---
+-- [Local function] Prints a command to Textadept.
+-- @param cmd The OS command executed.
+-- @param output The output from that OS command.
 local function print_command(cmd, output)
   textadept.print('> '..cmd..'\n'..output)
   buffer:goto_pos(buffer.length)
@@ -16,7 +19,7 @@ end
 -- Passes the current file to a specified compiler to run with the given flags
 -- and prints the output to Textadept.
 -- @param compiler The system's compiler for the file.
--- @param flags A string of flags to pass to the interpreter.
+-- @param cflags A string of flags to pass to the interpreter.
 -- @param args Table of arguments key keys as follows:
 --   * filename_noext_with_flag The value of this flag passed to the compiler
 --                              is the filename without its extension.
