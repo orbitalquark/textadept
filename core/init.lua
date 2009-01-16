@@ -34,6 +34,42 @@ function textadept.check_focused_buffer(buffer)
 end
 
 ---
+-- Helper function for printing messages to buffers.
+-- Opens a new buffer (if one hasn't already been opened) for printing messages.
+-- @param buffer_type String type of message buffer.
+-- @param ... Message strings.
+-- @usage textadept._print('shows_errors', error_message)
+-- @usage textadept._print('shows_messages', message)
+function textadept._print(buffer_type, ...)
+  local function safe_print(...)
+    local message = table.concat({...}, '\t')
+    local message_buffer
+    for index, buffer in ipairs(textadept.buffers) do
+      if buffer[buffer_type] then
+        message_buffer = buffer
+        if buffer.doc_pointer ~= textadept.focused_doc_pointer then
+          view:goto_buffer(index)
+        end
+        break
+      end
+    end
+    if not message_buffer then
+      message_buffer = textadept.new_buffer()
+      message_buffer[buffer_type] = true
+    end
+    message_buffer:append_text(message..'\n')
+    message_buffer:set_save_point()
+  end
+  pcall(safe_print, ...) -- prevent endless loops if this errors
+end
+
+---
+-- Prints messages to the Textadept message buffer.
+-- Opens a new buffer (if one hasn't already been opened) for printing messages.
+-- @param ... Message strings.
+function textadept.print(...) textadept._print('shows_messages', ...) end
+
+---
 -- Displays a CocoaDialog of a specified type with given arguments returning
 -- the result.
 -- @param kind The CocoaDialog type.
