@@ -115,7 +115,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
   char *last_slash = strrchr(path, '\\');
   if (last_slash) *last_slash = '\0';
   textadept_home = static_cast<char*>(path);
-  return main(0, NULL);
+  return main(1, &lpCmdLine);
 }
 #endif
 

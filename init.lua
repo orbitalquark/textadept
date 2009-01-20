@@ -33,6 +33,17 @@ require 'ext/menu' -- provides the menu bar
 require 'ext/key_commands' -- key commands for Mitchell (Nano-Emacs hybrid)
 
 if not RESETTING then
+  -- for Windows, create arg table from single command line string (arg[0])
+  if WIN32 and #arg[0] > 0 then
+    local lpeg = require 'lpeg'
+    local P, S, C, Ct = lpeg.P, lpeg.S, lpeg.C, lpeg.Ct
+    space = P(' ')
+    param = P('"') * C((1 - P('"'))^0) * '"' + C((1 - space)^1)
+    cmdline = Ct(param * (space * param)^0)
+    args = lpeg.match(cmdline, arg[0])
+    for _, a in ipairs(args) do arg[#arg + 1] = a end
+  end
+
   -- process command line arguments
   if MAC and arg[1] and arg[1]:match('^%-psn_0') then
     table.remove(arg, 1)
