@@ -90,6 +90,7 @@ local compile_for_ext = {
 -- Compiles the file as specified by its extension in the compile_for_ext table.
 -- @see compile_for_ext
 function compile()
+  if not buffer.filename then return end
   local ext = buffer.filename:match('[^.]+$')
   local action = compile_for_ext[ext]
   if not action then return end
@@ -120,6 +121,7 @@ local go_for_ext = {
 -- Runs/executes the file as specified by its extension in the go_for_ext table.
 -- @see go_for_ext
 function go()
+  if not buffer.filename then return end
   local ext = buffer.filename:match('[^.]+$')
   local action = go_for_ext[ext]
   if not action then return end
@@ -177,7 +179,7 @@ local error_details = {
 -- @param line_num The line double-clicked.
 -- @see error_details
 function goto_error(pos, line_num)
-  if buffer.shows_messages then
+  if buffer.shows_messages or buffer.shows_errors then
     line = buffer:get_line(line_num)
     for _, error_detail in pairs(error_details) do
       local captures = { line:match(error_detail.pattern) }
