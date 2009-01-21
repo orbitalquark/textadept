@@ -28,13 +28,8 @@ module('_m')
 -- set an 'api' variable to textadept.io.read_api_file(path, word_chars)'s
 -- return value. It will be used for displaying calltips and autocomplete lists
 -- by default.
--- To create a new module template, run the /modules/new script with the first
--- argument being the module's name, and the second being the language's name
--- (escaped characters must be used appropriately). The commands.lua script
--- provides useful functions and key-commands for the module; the snippets.lua
--- script provides snippets.
--- Alternatively you can use the 'modules' Project Manager browser to create and
--- manage modules.
+-- You can use the 'modules' Project Manager browser to create and manage
+-- language-specific modules.
 --
 -- When assigning key commands to module functions, do not forget to do so AFTER
 -- the function has been defined. Typically key commands are placed at the end
