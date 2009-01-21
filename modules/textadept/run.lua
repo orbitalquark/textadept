@@ -7,7 +7,7 @@ local textadept = _G.textadept
 module('_m.textadept.run', package.seeall)
 
 ---
--- [Local function] Prints a command to Textadept.
+-- [Local function] Prints a command and its output to Textadept.
 -- @param cmd The OS command executed.
 -- @param output The output from that OS command.
 local function print_command(cmd, output)
