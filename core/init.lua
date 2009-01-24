@@ -9,7 +9,7 @@ else
   package.cpath = _HOME..'/core/?.dll;'..package.cpath
 end
 
-_THEME = ''
+_THEME = 'light'
 local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
 if user_dir then
   local f = io.open(user_dir..'/.ta_theme')

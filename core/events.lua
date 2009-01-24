@@ -215,7 +215,9 @@ add_handler('view_new',
     buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
     if _THEME and #_THEME > 0 then
       if not _THEME:match('[/\\]') then
-        buffer.property['lexer.lua.color.theme'] = _THEME
+        -- use a lexer theme from Textadept's themes, not scintilla-st's
+        buffer.property['lexer.lua.color.theme'] =
+          _HOME..'/themes/'.._THEME..'/lexer.lua'
       else -- _THEME is a folder path
         buffer.property['lexer.lua.color.theme'] = _THEME..'/lexer.lua'
       end
