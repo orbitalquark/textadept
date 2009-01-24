@@ -8,7 +8,17 @@ if not WIN32 then
 else
   package.cpath = _HOME..'/core/?.dll;'..package.cpath
 end
+
 _THEME = ''
+local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
+if user_dir then
+  local f = io.open(user_dir..'/.ta_theme')
+  if f then
+    theme = f:read('*line'):match('[^\r\n]+')
+    f:close()
+    if theme and #theme > 0 then _THEME = theme end
+  end
+end
 
 require 'iface'
 require 'locale'
