@@ -214,7 +214,11 @@ add_handler('view_new',
     buffer.property['lexer.lua.home'] = _HOME..'/lexers/'
     buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
     if _THEME and #_THEME > 0 then
-      buffer.property['lexer.lua.color.theme'] = _THEME
+      if not _THEME:match('[/\\]') then
+        buffer.property['lexer.lua.color.theme'] = _THEME
+      else -- _THEME is a folder path
+        buffer.property['lexer.lua.color.theme'] = _THEME..'/lexer.lua'
+      end
     end
 
     -- lexer
@@ -233,8 +237,12 @@ add_handler('view_new',
     end
 
     if _THEME and #_THEME > 0 then
-      local ret, errmsg =
-        pcall(dofile, _HOME..'/themes/'.._THEME..'/view.lua')
+      local ret, errmsg
+      if not _THEME:match('[/\\]') then
+        ret, errmsg = pcall(dofile, _HOME..'/themes/'.._THEME..'/view.lua')
+      else -- _THEME is a folder path
+        ret, errmsg = pcall(dofile, _THEME..'/view.lua')
+      end
       if ret then return end
       io.stderr:write(errmsg)
     end
@@ -307,13 +315,17 @@ add_handler('buffer_new',
       buffer.code_page = textadept.constants.SC_CP_UTF8
 
       if _THEME and #_THEME > 0 then
-       local ret, errmsg =
-         pcall(dofile, _HOME..'/themes/'.._THEME..'/buffer.lua')
+        local ret, errmsg
+        if not _THEME:match('[/\\]') then
+          ret, errmsg = pcall(dofile, _HOME..'/themes/'.._THEME..'/buffer.lua')
+        else -- _THEME is a folder path
+          ret, errmsg = pcall(dofile, _THEME..'/buffer.lua')
+        end
         if ret then return end
         io.stderr:write(errmsg)
       end
 
-      -- Default theme.
+      -- Default theme (Light).
 
       -- folding
       buffer.property['fold'] = '1'
