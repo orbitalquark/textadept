@@ -411,8 +411,6 @@ PM_BROWSER_FILE_INFO_TEXT = 'File info for "%s"'
 -- OK
 PM_BROWSER_FILE_INFO_OK = 'OK'
 
--- core/ext/pm/find_browser.lua
-
 -- core/ext/pm/macro_browser.lua
 
 -- _Delete
