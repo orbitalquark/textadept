@@ -20,7 +20,6 @@ require 'ext/pm.modules_browser' -- modules browser
 require 'ext/pm.macro_browser'   -- macro browser
 if not WIN32 then
   require 'ext/pm.ctags_browser' -- ctags browser
-  require 'ext/pm.find_browser'  -- find browser
 end
 
 -- Generic modules to load on startup.
