@@ -520,6 +520,7 @@ static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
     focused_editor = editor;
     l_set_view_global(editor);
     l_set_buffer_global(SCINTILLA(editor));
+    l_handle_event("view_switch");
   }
 }
 
