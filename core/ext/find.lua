@@ -18,30 +18,37 @@ local escapes = {
 -- function for scripting.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
--- @param flags Search flags. This is a number mask of 3 flags: match case (2),
---   whole word (4), and Lua pattern (8) joined with binary OR. If nil, this is
---   determined based on the checkboxes in the find box.
+-- @param flags Search flags. This is a number mask of 4 flags: match case (2),
+--   whole word (4), Lua pattern (8), and in files (16) joined with binary OR.
+--   If nil, this is determined based on the checkboxes in the find box.
 -- @param nowrap Flag indicating whether or not the search won't wrap.
 -- @param wrapped Utility flag indicating whether or not the search has wrapped
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
 function find.find(text, next, flags, nowrap, wrapped)
   local buffer = buffer
-  local increment, result
-  text = text:gsub('\\[abfnrtv\\]', escapes)
-  find.captures = nil
+  local locale = textadept.locale
+
+  local increment
   if buffer.current_pos == buffer.anchor then
     increment = 0
   elseif not wrapped then
     increment = next and 1 or -1
   end
+
   if not flags then
     local find, c = find, textadept.constants
     flags = 0
     if find.match_case then flags = flags + c.SCFIND_MATCHCASE end
     if find.whole_word then flags = flags + c.SCFIND_WHOLEWORD end
     if find.lua then flags = flags + 8 end
+    if find.in_files then flags = flags + 16 end
   end
+
+  local result
+  find.captures = nil
+  text = text:gsub('\\[abfnrtv\\]', escapes)
+
   if flags < 8 then
     buffer:goto_pos(buffer[next and 'current_pos' or 'anchor'] + increment)
     buffer:search_anchor()
@@ -51,7 +58,8 @@ function find.find(text, next, flags, nowrap, wrapped)
       result = buffer:search_prev(flags, text)
     end
     if result then buffer:scroll_caret() end
-  else -- lua pattern search (forward search only)
+
+  elseif flags < 16 then -- lua pattern search (forward search only)
     local buffer_text = buffer:get_text(buffer.length)
     local results = { buffer_text:find(text, buffer.anchor + increment) }
     if #results > 0 then
@@ -61,7 +69,56 @@ function find.find(text, next, flags, nowrap, wrapped)
     else
       result = -1
     end
+
+  else -- find in files
+    local dir =
+      cocoa_dialog('fileselect', {
+        title = locale.FIND_IN_FILES_TITLE,
+        text = locale.FIND_IN_FILES_TEXT,
+        ['select-only-directories'] = true,
+        ['with-directory'] = (buffer.filename or ''):match('^.+[/\\]'),
+        ['no-newline'] = true
+      })
+    if #dir > 0 then
+      if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
+      if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
+      local lfs = require 'lfs'
+      local match_case = find.match_case
+      local whole_word = find.whole_word
+      local format = string.format
+      local matches = {}
+      function search_file(file)
+        local line_num = 1
+        for line in io.lines(file) do
+          local optimized_line = line
+          if not match_case then optimized_line = line:lower() end
+          if whole_word then optimized_line = ' '..line..' ' end
+          if string.find(optimized_line, text) then
+            matches[#matches + 1] = format('%s:%s:%s', file, line_num, line)
+          end
+          line_num = line_num + 1
+        end
+      end
+      function search_dir(directory)
+        for file in lfs.dir(directory) do
+          if not file:match('^%.') then
+            local path = directory..'/'..file
+            local type = lfs.attributes(path).mode
+            if type == 'directory' then
+              search_dir(path)
+            elseif type == 'file' then
+              search_file(path)
+            end
+          end
+        end
+      end
+      search_dir(dir)
+      if #matches == 0 then matches[1] = locale.FIND_NO_RESULTS end
+      textadept._print('shows_files_found', table.concat(matches, '\n'))
+    end
+    return
   end
+
   if result == -1 and not nowrap and not wrapped then -- wrap the search
     local anchor, pos = buffer.anchor, buffer.current_pos
     if next or flags >= 8 then
@@ -69,16 +126,17 @@ function find.find(text, next, flags, nowrap, wrapped)
     else
       buffer:goto_pos(buffer.length)
     end
-    textadept.statusbar_text = textadept.locale.FIND_SEARCH_WRAPPED
+    textadept.statusbar_text = locale.FIND_SEARCH_WRAPPED
     result = find.find(text, next, flags, true, true)
     if not result then
-      textadept.statusbar_text = textadept.locale.FIND_NO_RESULTS
+      textadept.statusbar_text = locale.FIND_NO_RESULTS
       buffer:goto_pos(anchor)
     end
     return result
   elseif result ~= -1 and not wrapped then
     textadept.statusbar_text = ''
   end
+
   return result ~= -1
 end
 
@@ -145,3 +203,18 @@ function find.replace_all(ftext, rtext, flags)
   textadept.statusbar_text =
     string.format(textadept.locale.FIND_REPLACEMENTS_MADE, tostring(count))
 end
+
+---
+-- When the user double-clicks a found file, go to the line in the file the text
+-- was found at.
+-- @param pos The position of the caret.
+-- @param line_num The line double-clicked.
+function goto_file(pos, line_num)
+  if buffer.shows_files_found then
+    line = buffer:get_line(line_num)
+    local file, line_num = line:match('^(.+):(%d+):.+$')
+    textadept.io.open(file)
+    _m.textadept.editing.goto_line(line_num)
+  end
+end
+textadept.events.add_handler('double_click', goto_file)

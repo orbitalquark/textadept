@@ -1296,6 +1296,8 @@ static int l_find_mt_index(lua_State *lua) {
     lua_pushboolean(lua, toggled(whole_word_opt));
   else if (streq(key, "lua"))
     lua_pushboolean(lua, toggled(lua_opt));
+  else if (streq(key, "in_files"))
+    lua_pushboolean(lua, toggled(in_files_opt));
   else
     lua_rawget(lua, 1);
   return 1;
@@ -1314,6 +1316,8 @@ static int l_find_mt_newindex(lua_State *lua) {
     toggle(whole_word_opt, lua_toboolean(lua, -1) ? TRUE : FALSE);
   else if (streq(key, "lua"))
     toggle(lua_opt, lua_toboolean(lua, -1) ? TRUE : FALSE);
+  else if (streq(key, "in_files"))
+    toggle(in_files_opt, lua_toboolean(lua, -1) ? TRUE : FALSE);
   else
     lua_rawset(lua, 1);
   return 0;

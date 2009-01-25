@@ -60,8 +60,8 @@ static void pm_menu_activate(GtkWidget *menu_item, gpointer menu_id);
 
 // Find/Replace
 GtkWidget *findbox, *find_entry, *replace_entry, *fnext_button, *fprev_button,
-          *r_button, *ra_button, *match_case_opt, *whole_word_opt,
-          /**incremental_opt,*/ *lua_opt;
+          *r_button, *ra_button, *match_case_opt, *whole_word_opt, *lua_opt,
+          *in_files_opt;
 GtkAttachOptions
   ao_normal = static_cast<GtkAttachOptions>(GTK_SHRINK | GTK_FILL),
   ao_expand = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
@@ -920,8 +920,8 @@ GtkWidget *find_create_ui() {
   ra_button = gtk_button_new_with_mnemonic("Replace _All");
   match_case_opt = gtk_check_button_new_with_mnemonic("_Match case");
   whole_word_opt = gtk_check_button_new_with_mnemonic("_Whole word");
-  //incremental_opt = gtk_check_button_new_with_mnemonic("_Incremental");
   lua_opt = gtk_check_button_new_with_mnemonic("_Lua pattern");
+  in_files_opt = gtk_check_button_new_with_mnemonic("_In Files");
 
   gtk_label_set_mnemonic_widget(GTK_LABEL(flabel), find_entry);
   gtk_label_set_mnemonic_widget(GTK_LABEL(rlabel), replace_entry);
@@ -937,8 +937,8 @@ GtkWidget *find_create_ui() {
   attach(ra_button, 3, 4, 1, 2, ao_normal, ao_normal, 0, 0);
   attach(match_case_opt, 4, 5, 0, 1, ao_normal, ao_normal, 5, 0);
   attach(whole_word_opt, 4, 5, 1, 2, ao_normal, ao_normal, 5, 0);
-  //attach(incremental_opt, 5, 6, 0, 1, ao_normal, ao_normal, 5, 0);
   attach(lua_opt, 5, 6, 0, 1, ao_normal, ao_normal, 5, 0);
+  attach(in_files_opt, 5, 6, 1, 2, ao_normal, ao_normal, 5, 0);
 
   signal(fnext_button, "clicked", button_clicked);
   signal(fprev_button, "clicked", button_clicked);
@@ -952,8 +952,8 @@ GtkWidget *find_create_ui() {
   GTK_WIDGET_UNSET_FLAGS(ra_button, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS(match_case_opt, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS(whole_word_opt, GTK_CAN_FOCUS);
-  //GTK_WIDGET_UNSET_FLAGS(incremental_opt, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS(lua_opt, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS(in_files_opt, GTK_CAN_FOCUS);
 
   return findbox;
 }
