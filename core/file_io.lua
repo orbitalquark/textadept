@@ -68,8 +68,10 @@ function reload(buffer)
   local f, err = io.open(buffer.filename)
   if f then
     local pos = buffer.current_pos
+    local first_visible_line = buffer.first_visible_line
     buffer:set_text(f:read('*all'))
-    buffer.current_pos = pos
+    buffer:line_scroll(0, first_visible_line)
+    buffer:goto_pos(pos)
     buffer:set_save_point()
     f:close()
   end
