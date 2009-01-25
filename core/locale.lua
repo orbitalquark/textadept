@@ -86,6 +86,10 @@ FIND_ERROR_DIALOG_TITLE = 'Error'
 FIND_ERROR_DIALOG_TEXT = 'An error occured'
 -- "%d replacement(s) made"
 FIND_REPLACEMENTS_MADE = '%d replacement(s) made'
+-- Find in Files
+FIND_IN_FILES_TITLE = 'Find in Files'
+-- Select Directory to Search
+FIND_IN_FILES_TEXT = 'Select Directory to Search'
 
 -- core/ext/keys.lua
 

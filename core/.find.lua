@@ -12,6 +12,12 @@ module('textadept.find')
 -- find with Lua patterns and replace with Lua captures and even Lua code! Lua
 -- captures (%n) are available for a Lua pattern search and embedded Lua code
 -- enclosed in %() is always available.
+--
+-- Find in Files will prompt for a directory to recursively search and display
+-- the results in a new buffer. Double-clicking a search result will jump to it
+-- in the file. Replace in Files is not supported. You will have to Find in
+-- Files first, and then 'Replace All' for each file a result is found in.
+-- The 'Match Case', 'Whole Word', and 'Lua pattern' flags still apply.
 
 ---
 -- Textadept's find table.
@@ -35,14 +41,15 @@ local escapes = {}
 -- This is used by the find dialog. It is recommended to use the buffer:find()
 -- function for scripting.
 -- @param text The text to find.
--- @param flags Search flags. This is a number mask of 3 flags: match case (2),
---   whole word (4), and Lua pattern (8) joined with binary AND.
 -- @param next Flag indicating whether or not the search direction is forward.
+-- @param flags Search flags. This is a number mask of 4 flags: match case (2),
+--   whole word (4), Lua pattern (8), and in files (16) joined with binary OR.
+--   If nil, this is determined based on the checkboxes in the find box.
 -- @param nowrap Flag indicating whether or not the search won't wrap.
 -- @param wrapped Utility flag indicating whether or not the search has wrapped
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
-function find.find(text, flags, next, nowrap, wrapped) end
+function find.find(text, next, flags, nowrap, wrapped) end
 
 ---
 -- Replaces found text.
