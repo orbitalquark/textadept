@@ -505,10 +505,26 @@ static gbool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
 }
 
 /**
+ * Helper function for switching the focused view to the given one.
+ * @param editor The Scintilla window to focus.
+ * @see t_notification
+ * @see t_command
+ */
+static void switch_view(GtkWidget *editor) {
+  focused_editor = editor;
+  l_set_view_global(editor);
+  l_set_buffer_global(SCINTILLA(editor));
+  l_handle_event("view_switch");
+}
+
+/**
  * Signal for a Scintilla notification.
  */
-static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer) {
-  l_handle_scnnotification(reinterpret_cast<SCNotification*>(lParam));
+static void t_notification(GtkWidget *editor, gint, gpointer lParam, gpointer) {
+  SCNotification *n = reinterpret_cast<SCNotification*>(lParam);
+  if (focused_editor != editor && n->nmhdr.code == SCN_URIDROPPED)
+    switch_view(editor);
+  l_handle_scnnotification(n);
 }
 
 /**
@@ -516,12 +532,7 @@ static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer) {
  * Currently handles SCEN_SETFOCUS.
  */
 static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
-  if (wParam >> 16 == SCEN_SETFOCUS) {
-    focused_editor = editor;
-    l_set_view_global(editor);
-    l_set_buffer_global(SCINTILLA(editor));
-    l_handle_event("view_switch");
-  }
+  if (wParam >> 16 == SCEN_SETFOCUS) switch_view(editor);
 }
 
 /**
