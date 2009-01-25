@@ -28,7 +28,11 @@ local function open_helper(filename)
   local buffer = textadept.new_buffer()
   local f, err = io.open(filename)
   if f then
-    buffer:set_text(f:read('*all'))
+    local text = f:read('*all')
+    local chunk = #text > 65536 and text:sub(1, 65536) or text
+    if chunk:find('\0') then buffer.code_page = 0 end -- binary file; no UTF-8
+    buffer:add_text(text, #text)
+    buffer:goto_pos(0)
     buffer:empty_undo_buffer()
     f:close()
   end
