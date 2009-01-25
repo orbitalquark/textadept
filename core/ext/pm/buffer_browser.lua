@@ -65,10 +65,21 @@ function perform_menu_action(menu_item, menu_id, selected_item)
 end
 
 local function update_view()
-  if matches(textadept.pm.entry_text) then textadept.pm.activate() end
+  if matches(textadept.pm.entry_text) then
+    textadept.pm.activate()
+    for idx, buf in ipairs(textadept.buffers) do
+      if buf == buffer then
+        textadept.pm.cursor = idx - 1
+        break
+      end
+    end
+  end
 end
 textadept.events.add_handler('file_opened', update_view)
 textadept.events.add_handler('buffer_new', update_view)
 textadept.events.add_handler('buffer_deleted', update_view)
 textadept.events.add_handler('save_point_reached', update_view)
 textadept.events.add_handler('save_point_left', update_view)
+textadept.events.add_handler('buffer_switch', update_view)
+textadept.events.add_handler('view_switch', update_view)
+
