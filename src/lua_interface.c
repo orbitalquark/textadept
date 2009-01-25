@@ -1267,6 +1267,13 @@ static int l_pm_mt_index(lua_State *lua) {
     int pos =
       gtk_paned_get_position(GTK_PANED(gtk_widget_get_parent(pm_container)));
     lua_pushnumber(lua, pos);
+  } else if (streq(key, "cursor")) {
+    GtkTreePath *path = NULL;
+    gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, NULL);
+    if (path) {
+      lua_pushstring(lua, gtk_tree_path_to_string(path));
+      gtk_tree_path_free(path);
+    } else lua_pushnil(lua);
   } else lua_rawget(lua, 1);
   return 1;
 }
@@ -1278,8 +1285,14 @@ static int l_pm_mt_newindex(lua_State *lua) {
   else if (streq(key, "width"))
     gtk_paned_set_position(GTK_PANED(gtk_widget_get_parent(pm_container)),
                            luaL_checkinteger(lua, 3));
-  else
-    lua_rawset(lua, 1);
+  else if (streq(key, "cursor")) {
+    GtkTreePath *path = gtk_tree_path_new_from_string(lua_tostring(lua, 3));
+    if (path) {
+      GtkTreeViewColumn *col =
+        gtk_tree_view_get_column(GTK_TREE_VIEW(pm_view), 0);
+      gtk_tree_view_set_cursor(GTK_TREE_VIEW(pm_view), path, col, FALSE);
+    } else luaL_error(lua, "Bad path given for textadept.pm.cursor.");
+  } else lua_rawset(lua, 1);
   return 0;
 }
 

@@ -13,6 +13,8 @@ module('textadept.pm')
 -- @name textadept.pm
 -- @field entry_text The text in the entry.
 -- @field width The width of the project manager.
+-- @field cursor The cursor in the project manager (string representation of
+--   current GtkTreePath).
 pm = {}
 
 --- Focuses the project manager entry.
