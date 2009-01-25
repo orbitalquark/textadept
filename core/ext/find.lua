@@ -28,6 +28,7 @@ local escapes = {
 function find.find(text, next, flags, nowrap, wrapped)
   local buffer = buffer
   local locale = textadept.locale
+  local first_visible_line = buffer.first_visible_line -- for 'no results found'
 
   local increment
   if buffer.current_pos == buffer.anchor then
@@ -130,6 +131,7 @@ function find.find(text, next, flags, nowrap, wrapped)
     result = find.find(text, next, flags, true, true)
     if not result then
       textadept.statusbar_text = locale.FIND_NO_RESULTS
+      buffer:line_scroll(0, first_visible_line)
       buffer:goto_pos(anchor)
     end
     return result
