@@ -408,14 +408,15 @@ add_handler('save_point_left',
 
 add_handler('uri_dropped',
   function(uris)
+    local lfs = require 'lfs'
     for uri in uris:gmatch('[^\r\n\f]+') do
       if uri:match('^file://') then
         uri = uri:match('^file://([^\r\n\f]+)')
-        if WIN32 then
-          uri = uri:sub(2, -1) -- ignore leading '/'
-          uri = uri:gsub('%%20', ' ') -- sub back for spaces
+        uri = uri:gsub('%%20', ' ') -- sub back for spaces
+        if WIN32 then uri = uri:sub(2, -1) end -- ignore leading '/'
+        if lfs.attributes(uri).mode ~= 'directory' then
+          textadept.io.open(uri)
         end
-        textadept.io.open(uri)
       end
     end
   end)
