@@ -212,6 +212,9 @@ void create_ui() {
   docstatusbar = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, "");
   g_object_set(G_OBJECT(docstatusbar), "width-request", 400, NULL);
+#ifdef MAC
+  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(docstatusbar), FALSE);
+#endif
   gtk_box_pack_start(GTK_BOX(hboxs), docstatusbar, FALSE, FALSE, 0);
 
   gtk_widget_show_all(window);
