@@ -13,6 +13,9 @@ module('textadept.find')
 -- captures (%n) are available for a Lua pattern search and embedded Lua code
 -- enclosed in %() is always available.
 --
+-- If any block of text is selected for 'Replace All', only matches found in
+-- that block are replaced.
+--
 -- Find in Files will prompt for a directory to recursively search and display
 -- the results in a new buffer. Double-clicking a search result will jump to it
 -- in the file. Replace in Files is not supported. You will have to Find in
@@ -49,6 +52,7 @@ local escapes = {}
 -- @param wrapped Utility flag indicating whether or not the search has wrapped
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
+-- @return position of the found text or -1
 function find.find(text, next, flags, nowrap, wrapped) end
 
 ---
@@ -57,15 +61,19 @@ function find.find(text, next, flags, nowrap, wrapped) end
 -- via scripts.
 -- textadept.find.find is called first, to select any found text. The selected
 -- text is then replaced by the specified replacement text.
+-- This function ignores 'Find in Files'.
 -- @param rtext The text to replace found text with. It can contain both Lua
 --   capture items (%n where 1 <= n <= 9) for Lua pattern searches and %()
 --   sequences for embedding Lua code for any search.
+-- @see find.find
 function find.replace(rtext) end
 
 ---
 -- Replaces all found text.
 -- This function is used by the find dialog. It is not recommended to call it
 -- via scripts.
+-- If any text is selected, all found text in that selection is replaced.
+-- This function ignores 'Find in Files'.
 -- @param ftext The text to find.
 -- @param rtext The text to replace found text with.
 -- @param flags The number mask identical to the one in 'find'.
