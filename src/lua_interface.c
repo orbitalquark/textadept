@@ -166,15 +166,11 @@ bool l_load_script(const char *script_file) {
   if (luaL_dofile(lua, script) != 0) {
     const char *errmsg = lua_tostring(lua, -1);
     lua_settop(lua, 0);
-#ifndef WIN32
     GtkWidget *dialog =
       gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
                              GTK_BUTTONS_OK, "%s\n", errmsg);
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
-#else
-    MessageBox(0, static_cast<LPCSTR>(errmsg), "Error", 0);
-#endif
     retval = false;
   }
   g_free(script);
