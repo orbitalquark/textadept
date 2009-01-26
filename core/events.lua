@@ -353,33 +353,6 @@ add_handler('buffer_new',
     if not ret then io.stderr:write(errmsg) end
   end)
 
-add_handler('char_added',
-  function(char) -- auto-indent on return
-    if char ~= '\n' then return end
-    local buffer = buffer
-    local anchor, caret = buffer.anchor, buffer.current_pos
-    local curr_line = buffer:line_from_position(caret)
-    local last_line = curr_line - 1
-    while last_line >= 0 and #buffer:get_line(last_line) == 1 do
-      last_line = last_line - 1
-    end
-    if last_line >= 0 then
-      local indentation = buffer.line_indentation[last_line]
-      local s = buffer.line_indent_position[curr_line]
-      buffer.line_indentation[curr_line] = indentation
-      local e = buffer.line_indent_position[curr_line]
-      local diff = e - s
-      if e > s then -- move selection on
-        if anchor >= s then anchor = anchor + diff end
-        if caret  >= s then caret  = caret  + diff end
-      elseif e < s then -- move selection back
-        if anchor >= e then anchor = anchor >= s and anchor + diff or e end
-        if caret  >= e then caret  = caret  >= s and caret  + diff or e end
-      end
-      buffer:set_sel(anchor, caret)
-    end
-  end)
-
 local title_text = '%s %s Textadept (%s)'
 
 ---
