@@ -98,7 +98,7 @@ void l_pm_populate(GtkTreeIter *initial_iter);
 void l_pm_get_full_path(GtkTreePath *path);
 void l_pm_perform_action();
 void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback);
-void l_pm_perform_menu_action(const char *menu_item, int menu_id);
+void l_pm_perform_menu_action(int menu_id);
 
 void l_find(const char *ftext, bool next);
 void l_find_replace(const char *rtext);

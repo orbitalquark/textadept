@@ -774,13 +774,11 @@ void pm_popup_context_menu(GdkEventButton *event) {
  * @see l_pm_perform_menu_action
  */
 void pm_process_selected_menu_item(GtkWidget *menu_item, int menu_id) {
-  GtkWidget *label = gtk_bin_get_child(GTK_BIN(menu_item));
-  const char *text = gtk_label_get_text(GTK_LABEL(label));
   GtkTreePath *path;
   GtkTreeViewColumn *column;
   gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, &column);
   l_pm_get_full_path(path);
-  l_pm_perform_menu_action(text, menu_id);
+  l_pm_perform_menu_action(menu_id);
 }
 
 /**

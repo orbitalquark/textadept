@@ -122,7 +122,7 @@ function get_context_menu(selected_item)
   }
 end
 
-function perform_menu_action(menu_item, menu_id, selected_item)
+function perform_menu_action(menu_id, selected_item)
   local locale = textadept.locale
   if menu_id == ID.NEW then
     local status, module_name =

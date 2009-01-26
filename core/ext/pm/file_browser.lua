@@ -51,7 +51,7 @@ function get_context_menu(selected_item)
   }
 end
 
-function perform_menu_action(menu_item, menu_id, selected_item)
+function perform_menu_action(menu_id, selected_item)
   local locale = textadept.locale
   local filepath = table.concat(selected_item, '/')
   if menu_id == ID.CHANGE_DIR then

@@ -350,8 +350,6 @@ int l_add_scintilla_buffer(sptr_t doc) {
   lua_newtable(lua);
   lua_pushnumber(lua, doc);
   lua_setfield(lua, -2, "doc_pointer");
-  lua_pushboolean(lua, false);
-  lua_setfield(lua, -2, "dirty");
   l_cfunc(lua, l_cf_buffer_find, "find");
   l_cfunc(lua, l_cf_buffer_text_range, "text_range");
   l_cfunc(lua, l_cf_buffer_delete, "delete");
@@ -969,17 +967,14 @@ void l_pm_perform_action() {
  * Performs a selected menu action from an item's context menu in the Project
  * Manager.
  * The full path table for the item is at the top of the Lua stack.
- * @param menu_item The label text for the menu item clicked.
  * @param menu_id The numeric ID for the menu item.
  */
-void l_pm_perform_menu_action(const char *menu_item, int menu_id) {
+void l_pm_perform_menu_action(int menu_id) {
   if (!l_is_ta_table_function("pm", "perform_menu_action")) return;
-  l_insert(lua, -1); // shift full_path down
-  lua_pushstring(lua, menu_item);
   l_insert(lua, -1); // shift full_path down
   lua_pushnumber(lua, menu_id);
   l_insert(lua, -1); // shift full_path down
-  l_call_function(3);
+  l_call_function(2);
 }
 
 // Find/Replace

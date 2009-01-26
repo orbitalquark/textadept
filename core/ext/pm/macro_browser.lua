@@ -30,7 +30,7 @@ function get_context_menu(selected_item)
   return { { locale.PM_BROWSER_MACRO_DELETE, ID.DELETE } }
 end
 
-function perform_menu_action(menu_item, menu_id, selected_item)
+function perform_menu_action(menu_id, selected_item)
   local m_macros = _m.textadept.macros
   if menu_id == ID.DELETE then
     m_macros.delete(selected_item[2])
