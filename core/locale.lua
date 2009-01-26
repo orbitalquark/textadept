@@ -154,10 +154,6 @@ MENU_EDIT_TRANSPOSE_CHARACTERS = 'Tran_spose Characters'
 MENU_EDIT_SQUEEZE = 'S_queeze'
 -- _Join Lines
 MENU_EDIT_JOIN_LINES = '_Join Lines'
--- _Move Line Up
-MENU_EDIT_MOVE_LINE_UP = '_Move Line Up'
--- Mo_ve Line Down
-MENU_EDIT_MOVE_LINE_DOWN = 'Mo_ve Line Down'
 -- Convert _Indentation
 MENU_EDIT_CONVERT_INDENTATION = 'Convert _Indentation'
 -- _Kill Ring
@@ -174,12 +170,6 @@ MENU_EDIT_KR_PASTE_NEXT_FROM = 'Paste _Next From'
 MENU_EDIT_KR_PASTE_PREV_FROM = 'Paste _Previous From'
 -- S_election
 MENU_EDIT_SEL_TITLE = 'S_election'
--- E_xecute as...
-MENU_EDIT_SEL_EXEC_TITLE = 'E_xecute as...'
--- _Ruby
-MENU_EDIT_SEL_EXEC_AS_RUBY = '_Ruby'
--- _Lua
-MENU_EDIT_SEL_EXEC_AS_LUA = '_Lua'
 -- _Enclose in...
 MENU_EDIT_SEL_ENC_TITLE = '_Enclose in...'
 -- _HTML Tags
