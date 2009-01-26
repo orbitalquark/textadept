@@ -12,7 +12,7 @@ module('textadept.key_commands', package.seeall)
   A:   A   C       G     J K L     O               W X   Z
   CS:      C D           J   L         Q R S T U   W
   SA:  A   C D E   G H I J K L M   O   Q R S T     W X   Z
-  CA:  A   C       G H   J K L     O   Q   S T   V W X Y Z
+  CA:  A   C D E   G H   J K L     O   Q   S T U V W X Y Z
   CSA:     C D     G H   J K L     O   Q R S T U   W X   Z
 ]]--
 
@@ -122,8 +122,6 @@ local m_editing = _m.textadept.editing
 keys.cm    = { m_editing.match_brace                  }
 keys.csm   = { m_editing.match_brace, 'select'        }
 keys['c '] = { m_editing.autocomplete_word, '%w_'     }
-keys['a '] = { m_editing.autocomplete_word_from_dict,
-               '/usr/share/dict/cracklib-small'       }
 keys.cq    = { m_editing.block_comment                }
 keys.cl    = { m_editing.goto_line                    }
 keys.ck    = { m_editing.smart_cutcopy,               }
@@ -135,13 +133,7 @@ keys.cw    = { m_editing.current_word, 'delete'       }
 keys.at    = { m_editing.transpose_chars              }
 keys.csh   = { m_editing.squeeze,                     }
 keys.cj    = { m_editing.join_lines                   }
-keys.cau   = { m_editing.move_line, 'up'              }
-keys.cad   = { m_editing.move_line, 'down'            }
 keys.csai  = { m_editing.convert_indentation          }
-keys.cae   = { -- code execution
-  r = { m_editing.ruby_exec },
-  l = { m_editing.lua_exec  }
-}
 keys.ae = { -- enclose in...
   t      = { m_editing.enclose, 'tag'        },
   st     = { m_editing.enclose, 'single_tag' },

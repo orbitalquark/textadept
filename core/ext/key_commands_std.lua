@@ -54,16 +54,12 @@ keys.cq     = { m_editing.block_comment            }
 -- TODO: { m_editing.current_word, 'delete' }
 -- TODO: { m_editing.transpose_chars }
 -- TODO: { m_editing.squeeze }
--- TODO: { m_editing.move_line, 'up' }
--- TODO: { m_editing.move_line, 'down' }
 -- TODO: { m_editing.convert_indentation }
 -- TODO: { m_editing.smart_cutcopy }
 -- TODO: { m_editing.smart_cutcopy, 'copy' }
 -- TODO: { m_editing.smart_paste }
 -- TODO: { m_editing.smart_paste, 'cycle' }
 -- TODO: { m_editing.smart_paste, 'reverse' }
--- TODO: { m_editing.ruby_exec }
--- TODO: { m_editing.lua_exec }
 keys.ac = { -- enClose in...
   t     = { m_editing.enclose, 'tag'        },
   st    = { m_editing.enclose, 'single_tag' },

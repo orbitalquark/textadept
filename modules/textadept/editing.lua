@@ -151,25 +151,6 @@ function autocomplete_word(word_chars)
 end
 
 ---
--- Pops up an autocompletion list for the current word based on the path to a
--- dictionary of words.
--- @param dict Path to a dictionary of words.
-function autocomplete_word_from_dict(dict)
-  local buffer = buffer
-  local start = buffer:word_start_position(buffer.current_pos, true)
-  local root = buffer:text_range(start, buffer.current_pos)
-  if #root == 0 then return end
-  local f = io.open(dict)
-  if not f then return end
-  local c_list = {}
-  for line in f:lines() do
-    if line:find('^'..root) then c_list[#c_list + 1] = line end
-  end
-  f:close()
-  if #c_list > 0 then buffer:auto_c_show(#root, table.concat(c_list, ' ')) end
-end
-
----
 -- Displays a call tip based on the word to the left of the cursor and a given
 -- API table.
 -- @param api Table of functions call tips can be displayed for. Each key is a
@@ -384,7 +365,7 @@ end
 
 ---
 -- Transposes characters intelligently.
--- If the carat is at the end of the current word, the two characters before
+-- If the caret is at the end of the current word, the two characters before
 -- the caret are transposed. Otherwise the characters to the left and right of
 -- the caret are transposed.
 function transpose_chars()
@@ -427,25 +408,6 @@ function join_lines()
   buffer:clear()
   buffer:add_text(' ')
   squeeze()
-  buffer:end_undo_action()
-end
-
----
--- Moves the current line in the specified direction up or down.
--- @param direction 'up' moves the current line up, 'down' moves it down.
-function move_line(direction)
-  local buffer = buffer
-  local column = buffer.column[buffer.current_pos]
-  buffer:begin_undo_action()
-  if direction == 'up' then
-    buffer:line_transpose()
-    buffer:line_up()
-  elseif direction == 'down' then
-    buffer:line_down()
-    buffer:line_transpose()
-    column = buffer.current_pos + column -- starts at line home
-    buffer:goto_pos(column)
-  end
   buffer:end_undo_action()
 end
 
@@ -600,29 +562,6 @@ function select_scope()
 end
 
 ---
--- Executes the selection or contents of the current line as Ruby code,
--- replacing the text with the output.
-function ruby_exec()
-  local buffer = buffer
-  local txt = get_sel_or_line()
-  local p = io.popen("ruby 2>&1 <<'_EOF'\n"..txt..'\n_EOF')
-  local out = p:read('*all')
-  p:close()
-  if out:sub(-1) == '\n' then out = out:sub(1, -2) end -- chomp
-  buffer:replace_sel(out)
-end
-
----
--- Executes the selection or contents of the current line as Lua code,
--- replacing the text with the output.
-function lua_exec()
-  local buffer = buffer
-  local txt = get_sel_or_line()
-  loadstring(txt)
-  buffer:goto_pos(buffer.current_pos)
-end
-
----
 -- Converts indentation between tabs and spaces.
 function convert_indentation()
   local buffer = buffer
@@ -644,19 +583,6 @@ function convert_indentation()
     end
   end
   buffer:end_undo_action()
-end
-
----
--- Reformats the selected text or current paragraph using the 'fmt' command.
-function reformat_paragraph()
-  local buffer = buffer
-  if buffer:get_sel_text() == '' then select_paragraph() end
-  local txt = buffer:get_sel_text()
-  local p = io.popen("fmt -c -w 80 <<'_EOF'\n"..txt..'\n_EOF')
-  local out = p:read('*all')
-  p:close()
-  if txt:sub(-1) ~= '\n' and out:sub(-1) == '\n' then out = out:sub(1, -2) end
-  buffer:replace_sel(out)
 end
 
 ---
