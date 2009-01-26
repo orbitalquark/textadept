@@ -28,9 +28,9 @@ function try_to_autocomplete_end()
   local line_num = buffer:line_from_position(buffer.current_pos)
   local line = buffer:get_line(line_num - 1)
   for _, patt in ipairs(control_structure_patterns) do
-    if line:match(patt) then
+    if line:find(patt) then
       local indent = buffer.line_indentation[line_num - 1]
-      buffer:add_text(patt:match('repeat') and '\nuntil' or '\nend')
+      buffer:add_text(patt:find('repeat') and '\nuntil' or '\nend')
       buffer.line_indentation[line_num + 1] = indent
       buffer.line_indentation[line_num] = indent + buffer.indent
       buffer:line_up()

@@ -88,7 +88,7 @@ function get_contents_for(full_path)
   local dir = {}
   local dirpath = table.concat(full_path, '/')
   for name in lfs.dir(dirpath) do
-    if not name:match('^%.') then
+    if not name:find('^%.') then
       dir[name] = { text = name }
       if lfs.attributes(dirpath..'/'..name, 'mode') == 'directory' then
         dir[name].parent = true
@@ -173,7 +173,7 @@ function perform_menu_action(menu_item, menu_id, selected_item)
       }) == '1' then
       local function remove_directory(dirpath)
         for name in lfs.dir(dirpath) do
-          if not name:match('^%.%.?$') then os.remove(dirpath..'/'..name) end
+          if not name:find('^%.%.?$') then os.remove(dirpath..'/'..name) end
         end
         lfs.rmdir(dirpath)
       end

@@ -21,7 +21,7 @@ out = out..'textadept.constants = {\n'
 -- {"constant", value}
 for item in constants:sub(2, -2):gmatch('%b{}') do
   local name, value = item:match('^{"(.-)",(.-)}')
-  if not name:match('^IDM_') then
+  if not name:find('^IDM_') then
     if name == 'SC_MASK_FOLDERS' then value = '-33554432' end
     local line = ("  %s = %s,\n"):format(name, value)
     out = out..line

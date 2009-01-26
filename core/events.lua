@@ -214,7 +214,7 @@ add_handler('view_new',
     buffer.property['lexer.lua.home'] = _HOME..'/lexers/'
     buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
     if _THEME and #_THEME > 0 then
-      if not _THEME:match('[/\\]') then
+      if not _THEME:find('[/\\]') then
         -- use a lexer theme from Textadept's themes, not scintilla-st's
         buffer.property['lexer.lua.color.theme'] =
           _HOME..'/themes/'.._THEME..'/lexer.lua'
@@ -240,7 +240,7 @@ add_handler('view_new',
 
     if _THEME and #_THEME > 0 then
       local ret, errmsg
-      if not _THEME:match('[/\\]') then
+      if not _THEME:find('[/\\]') then
         ret, errmsg = pcall(dofile, _HOME..'/themes/'.._THEME..'/view.lua')
       else -- _THEME is a folder path
         ret, errmsg = pcall(dofile, _THEME..'/view.lua')
@@ -318,7 +318,7 @@ add_handler('buffer_new',
 
       if _THEME and #_THEME > 0 then
         local ret, errmsg
-        if not _THEME:match('[/\\]') then
+        if not _THEME:find('[/\\]') then
           ret, errmsg = pcall(dofile, _HOME..'/themes/'.._THEME..'/buffer.lua')
         else -- _THEME is a folder path
           ret, errmsg = pcall(dofile, _THEME..'/buffer.lua')
@@ -410,7 +410,7 @@ add_handler('uri_dropped',
   function(uris)
     local lfs = require 'lfs'
     for uri in uris:gmatch('[^\r\n\f]+') do
-      if uri:match('^file://') then
+      if uri:find('^file://') then
         uri = uri:match('^file://([^\r\n\f]+)')
         uri = uri:gsub('%%20', ' ') -- sub back for spaces
         if WIN32 then uri = uri:sub(2, -1) end -- ignore leading '/'
