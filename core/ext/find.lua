@@ -216,7 +216,8 @@ function goto_file(pos, line_num)
     line = buffer:get_line(line_num)
     local file, line_num = line:match('^(.+):(%d+):.+$')
     textadept.io.open(file)
-    _m.textadept.editing.goto_line(line_num)
+    buffer:ensure_visible_enforce_policy(line_num - 1)
+    buffer:goto_line(line_num - 1)
   end
 end
 textadept.events.add_handler('double_click', goto_file)
