@@ -10,7 +10,7 @@ local textadept = _G.textadept
 module('_m.textadept.bookmarks', package.seeall)
 
 -- options
-local MARK_BOOKMARK = 0
+local MARK_BOOKMARK = 1
 local MARK_BOOKMARK_COLOR = 0xC08040
 -- end options
 
@@ -52,7 +52,7 @@ end
 function goto_next()
   local buffer = buffer
   local current_line = buffer:line_from_position(buffer.current_pos)
-  local line = buffer:marker_next(current_line + 1, 1)
+  local line = buffer:marker_next(current_line + 1, 2^MARK_BOOKMARK)
   if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
 end
 
@@ -61,6 +61,6 @@ end
 function goto_prev()
   local buffer = buffer
   local current_line = buffer:line_from_position(buffer.current_pos)
-  local line = buffer:marker_previous(current_line - 1, 1)
+  local line = buffer:marker_previous(current_line - 1, 2^MARK_BOOKMARK)
   if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
 end
