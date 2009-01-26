@@ -16,18 +16,18 @@ function ce.get_completions_for(command)
   if type(tbl) ~= 'table' then return end
   local cmpls = {}
   for k in pairs(tbl) do
-    if type(k) == 'string' and k:match('^'..prefix) then
+    if type(k) == 'string' and k:find('^'..prefix) then
       cmpls[#cmpls + 1] = k
     end
   end
   if path == 'buffer' then
     if o == ':' then
       for f in pairs(textadept.buffer_functions) do
-        if f:match('^'..prefix) then cmpls[#cmpls + 1] = f end
+        if f:find('^'..prefix) then cmpls[#cmpls + 1] = f end
       end
     else
       for p in pairs(textadept.buffer_properties) do
-        if p:match('^'..prefix) then cmpls[#cmpls + 1] = p end
+        if p:find('^'..prefix) then cmpls[#cmpls + 1] = p end
       end
     end
   end

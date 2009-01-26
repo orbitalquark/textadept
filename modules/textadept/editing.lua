@@ -136,7 +136,7 @@ function autocomplete_word_from_dict(dict)
   if not f then return end
   local c_list = {}
   for line in f:lines() do
-    if line:match('^'..root) then c_list[#c_list + 1] = line end
+    if line:find('^'..root) then c_list[#c_list + 1] = line end
   end
   f:close()
   if #c_list > 0 then buffer:auto_c_show(#root, table.concat(c_list, ' ')) end

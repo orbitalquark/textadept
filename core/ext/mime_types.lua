@@ -274,7 +274,7 @@ end
 -- [Local function] Sets the buffer's lexer language based on a shebang line.
 local function set_lexer_from_sh_bang()
   local line = buffer:get_line(0)
-  if line:match('^#!') then
+  if line:find('^#!') then
     line = line:gsub('[\\/]', ' ')
     for word in line:gmatch('%S+') do
       if shebangs[word] then
@@ -291,7 +291,7 @@ end
 local function set_lexer_from_pattern()
   local line = buffer:get_line(0)
   for patt, lexer in pairs(patterns) do
-    if line:match(patt) then
+    if line:find(patt) then
       buffer:set_lexer_language(lexer)
       return true
     end
@@ -310,7 +310,7 @@ local function load_language_module_from_filename(filename)
     local ret, err = pcall(require, lang)
     if ret then
       _m[lang].set_buffer_properties()
-    elseif not ret and not err:match("^module '"..lang.."' not found:") then
+    elseif not ret and not err:find("^module '"..lang.."' not found:") then
       textadept.events.error(err)
     end
   end

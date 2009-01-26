@@ -102,7 +102,7 @@ function find.find(text, next, flags, nowrap, wrapped)
       end
       function search_dir(directory)
         for file in lfs.dir(directory) do
-          if not file:match('^%.') then
+          if not file:find('^%.') then
             local path = directory..'/'..file
             local type = lfs.attributes(path).mode
             if type == 'directory' then

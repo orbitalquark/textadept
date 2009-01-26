@@ -193,7 +193,7 @@ function load_session(filename, only_pm)
   if f then
     for line in f:lines() do
       if not only_pm then
-        if line:match('^buffer:') then
+        if line:find('^buffer:') then
           local anchor, current_pos, first_visible_line, filename =
             line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
           textadept.io.open(filename or '')
@@ -207,25 +207,25 @@ function load_session(filename, only_pm)
           buffer:line_scroll(0,
             buffer:visible_from_doc_line(first_visible_line))
           buffer:set_sel(anchor, current_pos)
-        elseif line:match('^%s*split%d:') then
+        elseif line:find('^%s*split%d:') then
           local level, num, type, size =
             line:match('^(%s*)split(%d): (%S+) (%d+)')
           local view = splits[#level] and splits[#level][tonumber(num)] or view
           splits[#level + 1] = { view:split(type == 'true') }
           splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
-        elseif line:match('^%s*view%d:') then
+        elseif line:find('^%s*view%d:') then
           local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
           local view = splits[#level][tonumber(num)] or view
           view:goto_buffer(tonumber(buf_idx))
-        elseif line:match('^current_view:') then
+        elseif line:find('^current_view:') then
           local view_idx, buf_idx = line:match('^current_view: (%d+)')
           current_view = tonumber(view_idx) or 1
         end
       end
-      if line:match('^size:') then
+      if line:find('^size:') then
         local width, height = line:match('^size: (%d+) (%d+)$')
         if width and height then textadept.size = { width, height } end
-      elseif line:match('^pm:') then
+      elseif line:find('^pm:') then
         local width, text = line:match('^pm: (%d+) (.+)$')
         textadept.pm.width = width or 0
         textadept.pm.entry_text = text or ''

@@ -91,7 +91,7 @@ function cocoa_dialog(kind, opts)
   local args = { kind }
   for k, v in pairs(opts) do
     args[#args + 1] = '--'..k
-    if k == 'items' and kind:match('dropdown') then
+    if k == 'items' and kind:find('dropdown') then
       if not MAC then
         for item in v:gmatch('"(.-)"%s+') do args[#args + 1] = item end
       else

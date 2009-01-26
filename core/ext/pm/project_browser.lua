@@ -52,7 +52,7 @@ function get_contents_for(full_path)
     else
       local dirpath = full_path[#full_path]
       for name in lfs.dir(dirpath) do
-        if not name:match('^%.') then -- ignore hidden files
+        if not name:find('^%.') then -- ignore hidden files
           local filepath = dirpath..'/'..name
           contents[filepath] = { text = name }
           if lfs.attributes(dirpath..'/'..name, 'mode') == 'directory' then
@@ -322,7 +322,7 @@ function perform_menu_action(menu_item, menu_id, selected_item)
       else
         local function remove_directory(dirpath)
           for name in lfs.dir(dirpath) do
-            if not name:match('^%.%.?$') then os.remove(dirpath..'/'..name) end
+            if not name:find('^%.%.?$') then os.remove(dirpath..'/'..name) end
           end
           lfs.rmdir(dirpath)
         end

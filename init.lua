@@ -44,7 +44,7 @@ if not RESETTING then
   end
 
   -- process command line arguments
-  if MAC and arg[1] and arg[1]:match('^%-psn_0') then
+  if MAC and arg[1] and arg[1]:find('^%-psn_0') then
     table.remove(arg, 1)
   end
   if #arg == 0 then
@@ -53,7 +53,7 @@ if not RESETTING then
     local base_dir = arg[0]:match('^.+/') or ''
     local filepath
     for _, filename in ipairs(arg) do
-      if not filename:match('^~?/') then
+      if not filename:find('^~?/') then
         textadept.io.open(base_dir..filename)
       else
         textadept.io.open(filename)
