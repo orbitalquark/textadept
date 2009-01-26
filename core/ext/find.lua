@@ -179,7 +179,7 @@ function find.replace(rtext)
   if ret then
     rtext = rtext:gsub('\\037', '%%') -- unescape '%'
     buffer:replace_target(rtext:gsub('\\[abfnrtv\\]', escapes))
-    buffer:goto_pos(buffer.target_end + 1) -- 'find' text after this replacement
+    buffer:goto_pos(buffer.target_end) -- 'find' text after this replacement
   else
     -- Since find is called after replace returns, have it 'find' the current
     -- text again, rather than the next occurance so the user can fix the error.
@@ -196,6 +196,7 @@ end
 -- @param flags The number mask identical to the one in 'find'.
 -- @see find.find
 function find.replace_all(ftext, rtext, flags)
+  buffer:begin_undo_action()
   buffer:goto_pos(0)
   local count = 0
   while(find.find(ftext, true, flags, true)) do
@@ -204,6 +205,7 @@ function find.replace_all(ftext, rtext, flags)
   end
   textadept.statusbar_text =
     string.format(textadept.locale.FIND_REPLACEMENTS_MADE, tostring(count))
+  buffer:end_undo_action()
 end
 
 ---
