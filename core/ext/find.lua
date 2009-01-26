@@ -3,6 +3,8 @@
 local textadept = _G.textadept
 local find = textadept.find
 
+local MARK_REPLACEALL_END = 0
+
 ---
 -- [Local table] Text escape sequences with their associated characters.
 -- @class table
@@ -25,6 +27,7 @@ local escapes = {
 -- @param wrapped Utility flag indicating whether or not the search has wrapped
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
+-- @return position of the found text or -1
 function find.find(text, next, flags, nowrap, wrapped)
   local buffer = buffer
   local locale = textadept.locale
@@ -58,7 +61,7 @@ function find.find(text, next, flags, nowrap, wrapped)
     else
       result = buffer:search_prev(flags, text)
     end
-    if result then buffer:scroll_caret() end
+    if result ~= -1 then buffer:scroll_caret() end
 
   elseif flags < 16 then -- lua pattern search (forward search only)
     local buffer_text = buffer:get_text(buffer.length)
@@ -129,7 +132,7 @@ function find.find(text, next, flags, nowrap, wrapped)
     end
     textadept.statusbar_text = locale.FIND_SEARCH_WRAPPED
     result = find.find(text, next, flags, true, true)
-    if not result then
+    if result == -1 then
       textadept.statusbar_text = locale.FIND_NO_RESULTS
       buffer:line_scroll(0, first_visible_line)
       buffer:goto_pos(anchor)
@@ -139,7 +142,7 @@ function find.find(text, next, flags, nowrap, wrapped)
     textadept.statusbar_text = ''
   end
 
-  return result ~= -1
+  return result
 end
 
 ---
@@ -148,11 +151,14 @@ end
 -- via scripts.
 -- textadept.find.find is called first, to select any found text. The selected
 -- text is then replaced by the specified replacement text.
+-- This function ignores 'Find in Files'.
 -- @param rtext The text to replace found text with. It can contain both Lua
 --   capture items (%n where 1 <= n <= 9) for Lua pattern searches and %()
 --   sequences for embedding Lua code for any search.
+-- @see find.find
 function find.replace(rtext)
   if #buffer:get_sel_text() == 0 then return end
+  if find.in_files then find.in_files = false end
   local buffer = buffer
   buffer:target_from_selection()
   rtext = rtext:gsub('%%%%', '\\037') -- escape '%%'
@@ -191,17 +197,45 @@ end
 -- Replaces all found text.
 -- This function is used by the find dialog. It is not recommended to call it
 -- via scripts.
+-- If any text is selected, all found text in that selection is replaced.
+-- This function ignores 'Find in Files'.
 -- @param ftext The text to find.
 -- @param rtext The text to replace found text with.
 -- @param flags The number mask identical to the one in 'find'.
 -- @see find.find
 function find.replace_all(ftext, rtext, flags)
+  local buffer = buffer
+  if find.in_files then find.in_files = false end
   buffer:begin_undo_action()
-  buffer:goto_pos(0)
   local count = 0
-  while(find.find(ftext, true, flags, true)) do
-    find.replace(rtext)
-    count = count + 1
+  if #buffer:get_sel_text() == 0 then
+    buffer:goto_pos(0)
+    while(find.find(ftext, true, flags, true) ~= -1) do
+      find.replace(rtext)
+      count = count + 1
+    end
+  else
+    local anchor, current_pos = buffer.anchor, buffer.current_pos
+    local s, e = anchor, current_pos
+    if s > e then s, e = e, s end
+    buffer:insert_text(e, '\n')
+    local end_marker =
+      buffer:marker_add(buffer:line_from_position(e + 1), MARK_REPLACEALL_END)
+    buffer:goto_pos(s)
+    local pos = find.find(ftext, true, flags, true)
+    while pos ~= -1 and
+          pos < buffer:position_from_line(
+            buffer:marker_line_from_handle(end_marker)) do
+      find.replace(rtext)
+      count = count + 1
+      pos = find.find(ftext, true, flags, true)
+    end
+    e = buffer:position_from_line(buffer:marker_line_from_handle(end_marker))
+    buffer:goto_pos(e)
+    buffer:delete_back() -- delete '\n' added
+    if s == current_pos then anchor = e - 1 else current_pos = e - 1 end
+    buffer:set_sel(anchor, current_pos)
+    buffer:marker_delete_handle(end_marker)
   end
   textadept.statusbar_text =
     string.format(textadept.locale.FIND_REPLACEMENTS_MADE, tostring(count))
