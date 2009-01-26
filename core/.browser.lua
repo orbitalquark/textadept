@@ -18,39 +18,55 @@ module('textadept.pm.browser')
 function matches(entry_text)
 
 ---
--- This function is called for contents to show in the browser.
--- @param full_path An ordered list of parent IDs leading down to the selected
---   child (if expanding); the entry text is at the first index.
--- @param expanding Boolean indicating whether or not a parent is being
---   expanded.
--- @return table of contents to display. Each entry in the table is a key-value
---   pair. The key must be a string ID and the value a table. Three key-value
---   pairs are looked for in the table: parent, pixbuf, and display_text. parent
---   is an optional boolean indicating whether or not the item should be
---   identified as a parent (parents can be expanded so they have the arrow next
---   to them). pixbuf is an optional string specifying a GTK stock icon to be
---   associated with the item. text is a required string that is shown in the
---   project manager; it can have Pango markup. All other items in the table are
---   ignored.
+-- Requests treeview contents from browser that matches pm_entry's text.
+-- This function is called internally and shouldn't be called by a script.
+-- @param full_path A numerically indexed table of treeview item parents. The
+--   first index contains the text of pm_entry. Subsequent indexes contain the
+--   ID's of parents of the child requested for expanding (if any).
+-- @param expanding Optional flag indicating if the contents of a parent are
+--   being requested. Defaults to false.
+-- @return table of tables to for display in the treeview (single level).
+--   Each key in the return table is the treeview item's ID. The table value
+--   has the following recognized fields:
+--     parent - boolean value indicating if this entry can contain children. If
+--       true, an expanding arrow is displayed next to the entry.
+--     pixbuf - a string representing a GTK stock-id whose icon is displayed
+--       next to an entry.
+--     text - the entry's Pango marked-up display text.
+--   Note that only a SINGLE level of data needs to be returned. When parents
+--   are expanded, this function is called again to get that level of data.
 function get_contents_for(full_path, expanding)
 
 ---
--- This function is called when a user selects an item in the browser.
--- @param selected_item An ordered list of parent IDs leading down to the
---   selected child; the entry text is at the first index.
+-- Performs an action based on the selected treeview item.
+-- This function is called internally and shouldn't be called by a script.
+-- @param selected_item Identical to 'full_path' in pm.get_contents_for.
+-- @see pm.get_contents_for
 function perform_action(selected_item)
 
 ---
--- Requests a context menu for the selected item in the browser.
--- @param selected_item An ordered list of parent IDs leading down to the
---   selected child; the entry text is at the first index.
--- @return table used to construct a GTK menu.
--- @see textadept.gtkmenu
+-- Creates a context menu based on the selected treeview item.
+-- This function is called internally and shouldn't be called by a script.
+-- @param selected_item Identical to 'full_path' in pm.get_contents_for.
+-- @return table of menu items.
+--   The return table consists of an ordered list of strings to be used to
+--   construct a context menu. The strings are handled as follows:
+--     'gtk-*' - a stock menu item is created based on the GTK stock-id.
+--     'separator' - a menu separator item is created.
+--     Otherwise a regular menu item with a mnemonic is created.
+-- @see pm.get_contents_for
 function get_context_menu(selected_item)
 
 ---
--- This function is called when a user selects a context menu item.
--- @param menu_item The text of the menu item selected.
--- @param selected_item An ordered list of parent IDs leading down to the
---   selected child; the entry text is at the first index.
+-- Performs an action based on the selected menu item.
+-- This function is called internally and shouldn't be called by a script.
+-- @param menu_id The numeric ID of the menu item.
+-- @param selected_item Identical to 'full_path' in pm.get_contents_for.
+-- @see pm.get_contents_for
 function perform_menu_action(menu_item, selected_item)
+
+---
+-- Toggles the width of the project manager.
+-- If the pm is visible, it's width is saved and then set to 0, effectively
+-- hiding it. If it is hidden, the width is restored.
+function toggle_visible()
