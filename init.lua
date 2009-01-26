@@ -5,6 +5,15 @@ local textadept = _G.textadept
 local mpath = _HOME..'/modules/?.lua;'.._HOME..'/modules/?/init.lua'
 package.path  = mpath..';'..package.path
 
+local loaded_user_modules = false
+local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
+if user_dir then
+  local ret, errmsg = pcall(dofile, user_dir..'/.ta_modules')
+  if not ret and not errmsg:find('No such file') then error(errmsg) end
+  loaded_user_modules = ret
+end
+
+if not loaded_user_modules then
 -- Core extension modules to load on startup.
 require 'ext/keys' -- provides key command support
 require 'ext/find' -- provides functionality for find/replace
@@ -30,6 +39,7 @@ require 'ext/menu' -- provides the menu bar
 --require 'ext/key_commands_std' -- key commands for Windows and Linux
 --require 'ext/key_commands_mac' -- key commands for Mac OSX
 require 'ext/key_commands' -- key commands for Mitchell (Nano-Emacs hybrid)
+end
 
 if not RESETTING then
   -- for Windows, create arg table from single command line string (arg[0])
