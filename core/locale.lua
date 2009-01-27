@@ -325,25 +325,6 @@ MENU_VIEW_GROW = '_Grow'
 -- _Shrink
 MENU_VIEW_SHRINK = '_Shrink'
 
--- _Project Manager
-MENU_PM_TITLE = '_Project Manager'
--- _Toggle Visible
-MENU_PM_TOGGLE_VISIBLE = '_Toggle Visible'
--- _Focus
-MENU_PM_FOCUS = '_Focus'
--- Show _Project
-MENU_PM_PROJECT = 'Show _Project'
--- Show _CTags
-MENU_PM_CTAGS = 'Show _CTags'
--- Show _Buffers
-MENU_PM_BUFFERS = 'Show _Buffers'
--- Show _Files
-MENU_PM_FILES = 'Show _Files'
--- Show _Macros
-MENU_PM_MACROS = 'Show _Macros'
--- Show Mo_dules
-MENU_PM_MODULES = 'Show Mo_dules'
-
 -- _Lexers
 MENU_LEX_TITLE = '_Lexers'
 

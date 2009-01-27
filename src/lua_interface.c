@@ -67,6 +67,7 @@ static int l_cf_ta_buffer_new(lua_State *lua),
            l_cf_pm_focus(lua_State *lua),
            l_cf_pm_clear(lua_State *lua),
            l_cf_pm_activate(lua_State *lua),
+           l_cf_pm_add_browser(lua_State *lua),
            l_cf_find_focus(lua_State *lua),
            l_cf_call_find_next(lua_State *lua),
            l_cf_call_find_prev(lua_State *lua),
@@ -117,6 +118,7 @@ bool l_init(int argc, char **argv, bool reinit) {
     l_cfunc(lua, l_cf_pm_focus, "focus");
     l_cfunc(lua, l_cf_pm_clear, "clear");
     l_cfunc(lua, l_cf_pm_activate, "activate");
+    l_cfunc(lua, l_cf_pm_add_browser, "add_browser");
     l_mt(lua, "_pm_mt", l_pm_mt_index, l_pm_mt_newindex);
   lua_setfield(lua, -2, "pm");
   lua_newtable(lua);
@@ -1554,6 +1556,12 @@ static int l_cf_pm_clear(lua_State *) {
 
 static int l_cf_pm_activate(lua_State *) {
   g_signal_emit_by_name(G_OBJECT(pm_entry), "activate");
+  return 0;
+}
+
+static int l_cf_pm_add_browser(lua_State *lua) {
+  GtkWidget *pm_combo = gtk_widget_get_parent(pm_entry);
+  gtk_combo_box_append_text(GTK_COMBO_BOX(pm_combo), lua_tostring(lua, -1));
   return 0;
 }
 

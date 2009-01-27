@@ -8,6 +8,8 @@ local textadept = _G.textadept
 -- manager entry field.
 module('textadept.pm.browsers.file', package.seeall)
 
+textadept.pm.add_browser(not WIN32 and '/' or 'C:\\')
+
 local lfs = require 'lfs'
 local os = require 'os'
 

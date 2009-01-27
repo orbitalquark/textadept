@@ -588,9 +588,10 @@ void cfurlref_to_char(CFURLRef url, char *path, int len) {
 GtkWidget *pm_create_ui() {
   pm_container = gtk_vbox_new(FALSE, 1);
 
-  pm_entry = gtk_entry_new();
+  GtkWidget *pm_combo = gtk_combo_box_entry_new_text();
+  pm_entry = gtk_bin_get_child(GTK_BIN(pm_combo));
   gtk_widget_set_name(pm_entry, "textadept-pm-entry");
-  gtk_box_pack_start(GTK_BOX(pm_container), pm_entry, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(pm_container), pm_combo, FALSE, FALSE, 0);
 
   pm_store = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
   GtkTreeSortable *sortable = GTK_TREE_SORTABLE(pm_store);

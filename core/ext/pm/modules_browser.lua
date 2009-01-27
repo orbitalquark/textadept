@@ -7,6 +7,8 @@ local textadept = _G.textadept
 -- It is enabled with the prefix 'modules' in the project manager entry field.
 module('textadept.pm.browsers.modules', package.seeall)
 
+textadept.pm.add_browser('modules')
+
 local lfs = require 'lfs'
 local os = require 'os'
 
