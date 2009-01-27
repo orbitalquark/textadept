@@ -65,8 +65,7 @@ module('textadept.events', package.seeall)
 --     shift: flag indicating whether or not shift is pressed.
 --     control: flag indicating whether or not control is pressed.
 --     alt: flag indicating whether or not alt is pressed.
---   menu_clicked(menu_item, menu_id)
---     menu_item: text of the menu item clicked.
+--   menu_clicked(menu_id)
 --     menu_id: the numeric ID of the menu item.
 
 local events = textadept.events
@@ -138,9 +137,8 @@ end
 function keypress(code, shift, control, alt)
   return handle('keypress', code, shift, control, alt)
 end
-function menu_clicked(menu_item)
-  local text, menu_id = menu_item:match('^(.+)|(%d+)$')
-  return handle('menu_clicked', text, tonumber(menu_id))
+function menu_clicked(menu_id_str)
+  return handle('menu_clicked', tonumber(menu_id_str))
 end
 
 -- Scintilla notifications.
