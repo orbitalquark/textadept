@@ -34,7 +34,6 @@ extern GtkWidget *window, *focused_editor, *command_entry, *pm_container,
                  *pm_entry, *pm_view, *findbox, *find_entry, *replace_entry,
                  *fnext_button, *fprev_button, *r_button, *ra_button,
                  *match_case_opt, *whole_word_opt, *lua_opt, *in_files_opt;
-extern GtkListStore *cec_store;
 extern GtkTreeStore *pm_store;
 extern lua_State *lua;
 #if !(WIN32 || MAC)
@@ -91,7 +90,7 @@ void l_handle_scnnotification(SCNotification *n);
 void l_ta_command(const char *command);
 
 bool l_cec_get_completions_for(const char *entry_text);
-void l_cec_populate();
+void l_cec_populate(GtkListStore *store);
 
 bool l_pm_get_contents_for(const char *entry_text, bool expanding);
 void l_pm_populate(GtkTreeIter *initial_iter);
