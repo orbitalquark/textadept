@@ -62,7 +62,7 @@ static void button_clicked(GtkWidget *button, gpointer);
 
 // Command Entry
 GtkWidget *command_entry;
-GtkTreeStore *cec_store;
+GtkListStore *cec_store;
 GtkEntryCompletion *command_entry_completion;
 
 static void c_activated(GtkWidget *widget, gpointer);
@@ -208,7 +208,7 @@ void create_ui() {
                                       NULL, NULL);
   gtk_entry_completion_set_popup_set_width(command_entry_completion, FALSE);
   gtk_entry_completion_set_text_column(command_entry_completion, 0);
-  cec_store = gtk_tree_store_new(1, G_TYPE_STRING);
+  cec_store = gtk_list_store_new(1, G_TYPE_STRING);
   gtk_entry_completion_set_model(command_entry_completion,
                                  GTK_TREE_MODEL(cec_store));
   gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
@@ -1037,6 +1037,6 @@ static gbool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
   g_signal_emit_by_name(G_OBJECT(command_entry), "insert-at-cursor", text, 0);
   g_free(text);
 
-  gtk_tree_store_clear(cec_store);
+  gtk_list_store_clear(cec_store);
   return TRUE;
 }

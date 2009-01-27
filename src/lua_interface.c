@@ -830,12 +830,12 @@ void l_cec_populate() {
   GtkTreeIter iter;
   if (!lua_istable(lua, -1))
     return warn("command_entry.get_completions_for return not a table.");
-  gtk_tree_store_clear(cec_store);
+  gtk_list_store_clear(cec_store);
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
     if (lua_type(lua, -1) == LUA_TSTRING) {
-      gtk_tree_store_append(cec_store, &iter, NULL);
-      gtk_tree_store_set(cec_store, &iter, 0, lua_tostring(lua, -1), -1);
+      gtk_list_store_append(cec_store, &iter);
+      gtk_list_store_set(cec_store, &iter, 0, lua_tostring(lua, -1), -1);
     } else warn("command_entry.get_completions_for: string value expected.");
     lua_pop(lua, 1); // value
   }
