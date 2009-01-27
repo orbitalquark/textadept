@@ -216,9 +216,11 @@ function load_session(filename, only_pm)
         elseif line:find('^%s*view%d:') then
           local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
           local view = splits[#level][tonumber(num)] or view
-          view:goto_buffer(tonumber(buf_idx))
+          buf_idx = tonumber(buf_idx)
+          if buf_idx > #textadept.buffers then buf_idx = #textadept.buffers end
+          view:goto_buffer(buf_idx)
         elseif line:find('^current_view:') then
-          local view_idx, buf_idx = line:match('^current_view: (%d+)')
+          local view_idx = line:match('^current_view: (%d+)')
           current_view = tonumber(view_idx) or 1
         end
       end
@@ -252,7 +254,6 @@ function save_session(filename)
   local split_line = "%ssplit%d: %s %d" -- level, number, type, size
   local view_line = "%sview%d: %d" -- level, number, doc index
   -- Write out opened buffers. (buffer: filename)
-  local buffer_indices, offset = {}, 0
   for idx, buffer in ipairs(textadept.buffers) do
     if buffer.filename then
       local current = buffer.doc_pointer == textadept.focused_doc_pointer
@@ -264,9 +265,6 @@ function save_session(filename)
         buffer_line:format(buffer[anchor] or 0,
                            buffer[current_pos] or 0,
                            buffer[first_visible_line] or 0, buffer.filename)
-      buffer_indices[buffer.doc_pointer] = idx - offset
-    else
-      offset = offset + 1 -- don't save untitled files in session
     end
   end
   -- Write out split views.
