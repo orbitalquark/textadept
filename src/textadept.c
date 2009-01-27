@@ -15,17 +15,8 @@ char *textadept_home;
 #endif
 
 // Textadept
-GtkWidget *window, *focused_editor, *command_entry, *menubar, *statusbar,
-          *docstatusbar;
-GtkEntryCompletion *command_entry_completion;
-GtkTreeStore *cec_store;
+GtkWidget *window, *focused_editor, *menubar, *statusbar, *docstatusbar;
 
-static void c_activated(GtkWidget *widget, gpointer);
-static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer);
-static int cec_match_func(GtkEntryCompletion *, const char *, GtkTreeIter *,
-                          gpointer);
-static gbool cec_match_selected(GtkEntryCompletion *, GtkTreeModel *model,
-                                GtkTreeIter *iter, gpointer);
 static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer);
 static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer);
 static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer);
@@ -67,6 +58,18 @@ GtkAttachOptions
   ao_expand = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
 
 static void button_clicked(GtkWidget *button, gpointer);
+
+// Command Entry
+GtkWidget *command_entry;
+GtkTreeStore *cec_store;
+GtkEntryCompletion *command_entry_completion;
+
+static void c_activated(GtkWidget *widget, gpointer);
+static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer);
+static int cec_match_func(GtkEntryCompletion *, const char *, GtkTreeIter *,
+                          gpointer);
+static gbool cec_match_selected(GtkEntryCompletion *, GtkTreeModel *model,
+                                GtkTreeIter *iter, gpointer);
 
 /**
  * Runs Textadept in Linux or Mac.
@@ -438,75 +441,6 @@ void ce_toggle_focus() {
 }
 
 // Notifications/signals
-
-/**
- * Signal for the 'enter' key being pressed in the Lua command entry.
- * Evaluates the input text as Lua code.
- */
-static void c_activated(GtkWidget *widget, gpointer) {
-  l_ta_command(gtk_entry_get_text(GTK_ENTRY(widget)));
-  ce_toggle_focus();
-}
-
-/**
- * Signal for a keypress inside the Lua command entry.
- * Currently handled keypresses:
- *  - Escape - Hide the completion buffer if it is open.
- *  - Tab - Display possible completions.
- */
-static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
-  if (event->state == 0)
-    switch(event->keyval) {
-      case 0xff1b:
-        ce_toggle_focus();
-        return TRUE;
-      case 0xff09:
-        if (l_cec_get_completions_for(gtk_entry_get_text(GTK_ENTRY(widget)))) {
-          l_cec_populate();
-          gtk_entry_completion_complete(command_entry_completion);
-        }
-        return TRUE;
-    }
-  return FALSE;
-}
-
-/**
- * Sets every item in the Command Entry Model to be a match.
- * For each attempted completion, the Command Entry Model is filled with the
- * results from a call to Lua to make a list of possible completions. Therefore,
- * every item in the list is valid.
- */
-static int cec_match_func(GtkEntryCompletion*, const char*, GtkTreeIter*,
-                          gpointer) {
-  return 1;
-}
-
-/**
- * Enters the requested completion text into the Command Entry.
- * The last word at the cursor is replaced with the completion. A word consists
- * of any alphanumeric character or underscore.
- */
-static gbool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
-                               GtkTreeIter *iter, gpointer) {
-  const char *entry_text = gtk_entry_get_text(GTK_ENTRY(command_entry));
-  const char *p = entry_text + strlen(entry_text) - 1;
-  while ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') ||
-         (*p >= '0' && *p <= '9') || *p == '_') {
-    g_signal_emit_by_name(G_OBJECT(command_entry), "move-cursor",
-                          GTK_MOVEMENT_VISUAL_POSITIONS, -1, TRUE, 0);
-    p--;
-  }
-  if (p < entry_text + strlen(entry_text) - 1)
-    g_signal_emit_by_name(G_OBJECT(command_entry), "backspace", 0);
-
-  char *text;
-  gtk_tree_model_get(model, iter, 0, &text, -1);
-  g_signal_emit_by_name(G_OBJECT(command_entry), "insert-at-cursor", text, 0);
-  g_free(text);
-
-  gtk_tree_store_clear(cec_store);
-  return TRUE;
-}
 
 /**
  * Helper function for switching the focused view to the given one.
@@ -986,6 +920,8 @@ void find_toggle_focus() {
   }
 }
 
+// Signals
+
 /**
  * Signal for a button click.
  * Performs the appropriate action depending on the button clicked.
@@ -999,4 +935,77 @@ static void button_clicked(GtkWidget *button, gpointer) {
     l_find_replace(repl_text);
     l_find(find_text, true);
   } else l_find(find_text, button == fnext_button);
+}
+
+// Command Entry
+
+// Signals
+
+/**
+ * Signal for the 'enter' key being pressed in the Lua command entry.
+ * Evaluates the input text as Lua code.
+ */
+static void c_activated(GtkWidget *widget, gpointer) {
+  l_ta_command(gtk_entry_get_text(GTK_ENTRY(widget)));
+  ce_toggle_focus();
+}
+
+/**
+ * Signal for a keypress inside the Lua command entry.
+ * Currently handled keypresses:
+ *  - Escape - Hide the completion buffer if it is open.
+ *  - Tab - Display possible completions.
+ */
+static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
+  if (event->state == 0)
+    switch(event->keyval) {
+      case 0xff1b:
+        ce_toggle_focus();
+        return TRUE;
+      case 0xff09:
+        if (l_cec_get_completions_for(gtk_entry_get_text(GTK_ENTRY(widget)))) {
+          l_cec_populate();
+          gtk_entry_completion_complete(command_entry_completion);
+        }
+        return TRUE;
+    }
+  return FALSE;
+}
+
+/**
+ * Sets every item in the Command Entry Model to be a match.
+ * For each attempted completion, the Command Entry Model is filled with the
+ * results from a call to Lua to make a list of possible completions. Therefore,
+ * every item in the list is valid.
+ */
+static int cec_match_func(GtkEntryCompletion*, const char*, GtkTreeIter*,
+                          gpointer) {
+  return 1;
+}
+
+/**
+ * Enters the requested completion text into the Command Entry.
+ * The last word at the cursor is replaced with the completion. A word consists
+ * of any alphanumeric character or underscore.
+ */
+static gbool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
+                               GtkTreeIter *iter, gpointer) {
+  const char *entry_text = gtk_entry_get_text(GTK_ENTRY(command_entry));
+  const char *p = entry_text + strlen(entry_text) - 1;
+  while ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') ||
+         (*p >= '0' && *p <= '9') || *p == '_') {
+    g_signal_emit_by_name(G_OBJECT(command_entry), "move-cursor",
+                          GTK_MOVEMENT_VISUAL_POSITIONS, -1, TRUE, 0);
+    p--;
+  }
+  if (p < entry_text + strlen(entry_text) - 1)
+    g_signal_emit_by_name(G_OBJECT(command_entry), "backspace", 0);
+
+  char *text;
+  gtk_tree_model_get(model, iter, 0, &text, -1);
+  g_signal_emit_by_name(G_OBJECT(command_entry), "insert-at-cursor", text, 0);
+  g_free(text);
+
+  gtk_tree_store_clear(cec_store);
+  return TRUE;
 }
