@@ -115,15 +115,6 @@ local ID = {
   UNSPLIT_ALL_VIEWS = 606,
   GROW_VIEW = 607,
   SHRINK_VIEW = 608,
-  -- Project Manager
-  TOGGLE_PM_VISIBLE = 701,
-  FOCUS_PM = 702,
-  SHOW_PM_PROJECT = 703,
-  SHOW_PM_CTAGS = 704,
-  SHOW_PM_BUFFERS = 705,
-  SHOW_PM_FILES = 706,
-  SHOW_PM_MACROS = 707,
-  SHOW_PM_MODULES = 708,
   -- Lexers
   LEXER_ACTIONSCRIPT = 801,
   LEXER_ADA = 802,
@@ -332,17 +323,6 @@ t.menubar = {
     { l.MENU_VIEW_SHRINK, ID.SHRINK_VIEW },
   },
   gtkmenu {
-    title = l.MENU_PM_TITLE,
-    { l.MENU_PM_TOGGLE_VISIBLE, ID.TOGGLE_PM_VISIBLE },
-    { l.MENU_PM_FOCUS, ID.FOCUS_PM },
-    { l.MENU_PM_BUFFERS, ID.SHOW_PM_BUFFERS },
-    { l.MENU_PM_PROJECT, ID.SHOW_PM_PROJECT },
-    { l.MENU_PM_FILES, ID.SHOW_PM_FILES },
-    { l.MENU_PM_CTAGS, ID.SHOW_PM_CTAGS },
-    { l.MENU_PM_MACROS, ID.SHOW_PM_MACROS },
-    { l.MENU_PM_MODULES, ID.SHOW_PM_MODULES },
-  },
-  gtkmenu {
     title = l.MENU_LEX_TITLE,
     { 'actionscript', ID.LEXER_ACTIONSCRIPT },
     { 'ada', ID.LEXER_ADA },
@@ -416,10 +396,6 @@ local m_bookmarks = _m.textadept.bookmarks
 local m_macros = _m.textadept.macros
 local m_run = _m.textadept.run
 
-local function pm_activate(text)
-  t.pm.entry_text = text
-  t.pm.activate()
-end
 local function toggle_setting(setting)
   local state = buffer[setting]
   if type(state) == 'boolean' then
@@ -548,15 +524,6 @@ local actions = {
   [ID.SHRINK_VIEW] = {
     function() if view.size then view.size = view.size - 10 end end
   },
-  -- Project Manager
-  [ID.TOGGLE_PM_VISIBLE] = { t.pm.toggle_visible },
-  [ID.FOCUS_PM] = { t.pm.focus },
-  [ID.SHOW_PM_PROJECT] = { pm_activate, 'project' },
-  [ID.SHOW_PM_CTAGS] = { pm_activate, 'ctags' },
-  [ID.SHOW_PM_BUFFERS] = { pm_activate, 'buffers' },
-  [ID.SHOW_PM_FILES] = { pm_activate, not WIN32 and '/' or 'C:\\' },
-  [ID.SHOW_PM_MACROS] = { pm_activate, 'macros' },
-  [ID.SHOW_PM_MODULES] = { pm_activate, 'modules' },
 }
 
 -- lexers here MUST be in the same order as in the menu

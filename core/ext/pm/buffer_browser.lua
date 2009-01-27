@@ -7,6 +7,8 @@ local textadept = _G.textadept
 -- It is enabled with the prefix 'buffers' in the project manager entry field.
 module('textadept.pm.browsers.buffer', package.seeall)
 
+textadept.pm.add_browser('buffers')
+
 function matches(entry_text)
   return entry_text:sub(1, 7) == 'buffers'
 end

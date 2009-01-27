@@ -9,6 +9,8 @@ local textadept = _G.textadept
 -- is specified, the current file is parsed via ctags and its structure shown.
 module('textadept.pm.browsers.ctags', package.seeall)
 
+textadept.pm.add_browser('ctags')
+
 local FILE_OUT = '/tmp/textadept_output'
 
 ---
