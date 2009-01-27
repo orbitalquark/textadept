@@ -53,6 +53,7 @@ static void pm_menu_activate(GtkWidget *, gpointer menu_id);
 GtkWidget *findbox, *find_entry, *replace_entry, *fnext_button, *fprev_button,
           *r_button, *ra_button, *match_case_opt, *whole_word_opt, *lua_opt,
           *in_files_opt;
+GtkListStore *find_store, *repl_store;
 GtkAttachOptions
   ao_normal = static_cast<GtkAttachOptions>(GTK_SHRINK | GTK_FILL),
   ao_expand = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
@@ -852,13 +853,21 @@ static void pm_menu_activate(GtkWidget *menu_item, gpointer menu_id) {
  */
 GtkWidget *find_create_ui() {
   findbox = gtk_table_new(2, 6, FALSE);
+  find_store = gtk_list_store_new(1, G_TYPE_STRING);
+  repl_store = gtk_list_store_new(1, G_TYPE_STRING);
 
   GtkWidget *flabel = gtk_label_new_with_mnemonic("_Find:");
   GtkWidget *rlabel = gtk_label_new_with_mnemonic("R_eplace:");
-  find_entry = gtk_entry_new();
+  GtkWidget *find_combo =
+    gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(find_store), 0);
+  g_object_unref(find_store);
+  find_entry = gtk_bin_get_child(GTK_BIN(find_combo));
   gtk_widget_set_name(find_entry, "textadept-find-entry");
   gtk_entry_set_activates_default(GTK_ENTRY(find_entry), TRUE);
-  replace_entry = gtk_entry_new();
+  GtkWidget *replace_combo =
+    gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(repl_store), 0);
+  g_object_unref(repl_store);
+  replace_entry = gtk_bin_get_child(GTK_BIN(replace_combo));
   gtk_widget_set_name(replace_entry, "textadept-replace-entry");
   gtk_entry_set_activates_default(GTK_ENTRY(replace_entry), TRUE);
   fnext_button = gtk_button_new_with_mnemonic("Find _Next");
@@ -874,8 +883,8 @@ GtkWidget *find_create_ui() {
   gtk_label_set_mnemonic_widget(GTK_LABEL(rlabel), replace_entry);
   //gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lua_opt), TRUE);
 
-  attach(find_entry, 1, 2, 0, 1, ao_expand, ao_normal, 5, 0);
-  attach(replace_entry, 1, 2, 1, 2, ao_expand, ao_normal, 5, 0);
+  attach(find_combo, 1, 2, 0, 1, ao_expand, ao_normal, 5, 0);
+  attach(replace_combo, 1, 2, 1, 2, ao_expand, ao_normal, 5, 0);
   attach(flabel, 0, 1, 0, 1, ao_normal, ao_normal, 5, 0);
   attach(rlabel, 0, 1, 1, 2, ao_normal, ao_normal, 5, 0);
   attach(fnext_button, 2, 3, 0, 1, ao_normal, ao_normal, 0, 0);
@@ -920,6 +929,24 @@ void find_toggle_focus() {
   }
 }
 
+/**
+ * Adds the given text to the Find/Replace history list if it's not the first
+ * item.
+ * @param text The text to add.
+ * @param store The GtkListStore to add the text to.
+ */
+static void find_add_to_history(const char *text, GtkListStore *store) {
+  char *first_item = NULL;
+  GtkTreeIter iter;
+  if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter))
+    gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &first_item, -1);
+  if (!first_item || strcmp(text, first_item) != 0) {
+    gtk_list_store_prepend(store, &iter);
+    gtk_list_store_set(store, &iter, 0, text, -1);
+    g_free(first_item);
+  }
+}
+
 // Signals
 
 /**
@@ -929,12 +956,16 @@ void find_toggle_focus() {
 static void button_clicked(GtkWidget *button, gpointer) {
   const char *find_text = gtk_entry_get_text(GTK_ENTRY(find_entry));
   const char *repl_text = gtk_entry_get_text(GTK_ENTRY(replace_entry));
-  if (button == ra_button)
-    l_find_replace_all(find_text, repl_text);
-  else if (button == r_button) {
-    l_find_replace(repl_text);
-    l_find(find_text, true);
-  } else l_find(find_text, button == fnext_button);
+  if (button == fnext_button || button == fprev_button) {
+    find_add_to_history(find_text, find_store);
+    l_find(find_text, button == fnext_button);
+  } else {
+    find_add_to_history(repl_text, repl_store);
+    if (button == r_button) {
+      l_find_replace(repl_text);
+      l_find(find_text, true);
+    } else l_find_replace_all(find_text, repl_text);
+  }
 }
 
 // Command Entry
