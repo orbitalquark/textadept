@@ -26,7 +26,7 @@ local function open_helper(filename)
     if filename == buffer.filename then view:goto_buffer(index) return end
   end
   local buffer = textadept.new_buffer()
-  local f, err = io.open(filename)
+  local f, err = io.open(filename, 'rb')
   if f then
     local text = f:read('*all')
     local chunk = #text > 65536 and text:sub(1, 65536) or text
@@ -91,7 +91,7 @@ function save(buffer)
   if not buffer.filename then return save_as(buffer) end
   prepare = _m.textadept.editing.prepare_for_save
   if prepare then prepare() end
-  local f, err = io.open(buffer.filename, 'w')
+  local f, err = io.open(buffer.filename, 'wb')
   if f then
     local txt, _ = buffer:get_text(buffer.length)
     f:write(txt)
