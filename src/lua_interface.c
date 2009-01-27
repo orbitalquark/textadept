@@ -1491,14 +1491,12 @@ static int l_cf_view_goto_buffer(lua_State *lua) {
   return 0;
 }
 
-static void t_menu_activate(GtkWidget *menu_item, gpointer menu_id) {
-  GtkWidget *label = gtk_bin_get_child(GTK_BIN(menu_item));
-  const char *text = gtk_label_get_text(GTK_LABEL(label));
+static void t_menu_activate(GtkWidget *, gpointer menu_id) {
   int id = reinterpret_cast<int>(menu_id);
-  char *param = static_cast<char*>(malloc(sizeof(char) * (strlen(text) + 12)));
-  sprintf(param, "%s|%i\0", text, id);
-  l_handle_event("menu_clicked", param);
-  g_free(param);
+  char *menu_id_str = static_cast<char*>(malloc(sizeof(char) * 12));
+  sprintf(menu_id_str, "%i", id);
+  l_handle_event("menu_clicked", menu_id_str);
+  g_free(menu_id_str);
 }
 
 static int l_cf_ta_gtkmenu(lua_State *lua) {

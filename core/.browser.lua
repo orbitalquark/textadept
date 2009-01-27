@@ -63,7 +63,7 @@ function get_context_menu(selected_item)
 -- @param menu_id The numeric ID of the menu item.
 -- @param selected_item Identical to 'full_path' in pm.get_contents_for.
 -- @see pm.get_contents_for
-function perform_menu_action(menu_item, selected_item)
+function perform_menu_action(menu_id, selected_item)
 
 ---
 -- Toggles the width of the project manager.

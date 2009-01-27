@@ -559,12 +559,24 @@ local actions = {
   [ID.SHOW_PM_MODULES] = { pm_activate, 'modules' },
 }
 
+-- lexers here MUST be in the same order as in the menu
+local lexers = {
+  'actionscript', 'ada', 'antlr', 'apdl', 'applescript', 'asp', 'awk', 'batch',
+  'boo', 'container', 'cpp', 'csharp', 'css', 'd', 'diff', 'django', 'eiffel',
+  'erlang', 'errorlist', 'forth', 'fortran', 'gap', 'gettext', 'gnuplot',
+  'groovy', 'haskell', 'html', 'idl', 'ini', 'io', 'java', 'javascript',
+  'latex', 'lisp', 'lua', 'makefile', 'mysql', 'objective__c', 'ocaml',
+  'pascal', 'perl', 'php', 'pike', 'postscript', 'props', 'python', 'r',
+  'ragel', 'rebol', 'rexx', 'rhtml', 'ruby', 'scheme', 'shellscript',
+  'smalltalk', 'tcl', 'vala', 'verilog', 'vhdl', 'visualbasic', 'xml'
+}
+
 -- Most of this handling code comes from keys.lua.
 t.events.add_handler('menu_clicked',
-  function(menu_item, menu_id)
+  function(menu_id)
     local active_table = actions[menu_id]
     if menu_id >= ID.LEXER_ACTIONSCRIPT and menu_id <= ID.LEXER_XML then
-      active_table = { set_lexer_language, menu_item }
+      active_table = { set_lexer_language, lexers[menu_id - 800] }
     end
     local f, args
     if active_table and #active_table > 0 then
