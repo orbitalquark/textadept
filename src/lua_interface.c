@@ -826,18 +826,19 @@ bool l_cec_get_completions_for(const char *entry_text) {
 /**
  * Populates the Command Entry Completion with the contents of a Lua table at
  * the stack top.
+ * @param store The GtkListStore to populate.
  * @see l_cec_get_completions_for
  */
-void l_cec_populate() {
+void l_cec_populate(GtkListStore *store) {
   GtkTreeIter iter;
   if (!lua_istable(lua, -1))
     return warn("command_entry.get_completions_for return not a table.");
-  gtk_list_store_clear(cec_store);
+  gtk_list_store_clear(store);
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
     if (lua_type(lua, -1) == LUA_TSTRING) {
-      gtk_list_store_append(cec_store, &iter);
-      gtk_list_store_set(cec_store, &iter, 0, lua_tostring(lua, -1), -1);
+      gtk_list_store_append(store, &iter);
+      gtk_list_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
     } else warn("command_entry.get_completions_for: string value expected.");
     lua_pop(lua, 1); // value
   }

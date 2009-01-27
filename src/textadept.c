@@ -996,7 +996,7 @@ static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
         return TRUE;
       case 0xff09:
         if (l_cec_get_completions_for(gtk_entry_get_text(GTK_ENTRY(widget)))) {
-          l_cec_populate();
+          l_cec_populate(cec_store);
           gtk_entry_completion_complete(command_entry_completion);
         }
         return TRUE;
