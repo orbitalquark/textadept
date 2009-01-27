@@ -293,6 +293,7 @@ void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
   }
   l_set_buffer_global(sci);
   l_handle_event("buffer_new");
+  l_handle_event("update_ui"); // update document status
 }
 
 /**
