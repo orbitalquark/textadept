@@ -184,10 +184,17 @@ function goto_error(pos, line_num)
     for _, error_detail in pairs(error_details) do
       local captures = { line:match(error_detail.pattern) }
       if #captures > 0 then
-        textadept.io.open(captures[error_detail.filename])
-        _m.textadept.editing.goto_line(captures[error_detail.line])
-        local msg = captures[error_detail.message]
-        if msg then buffer:call_tip_show(buffer.current_pos, msg) end
+        local lfs = require 'lfs'
+        local filename = captures[error_detail.filename]
+        if lfs.attributes(filename) then
+          textadept.io.open(filename)
+          _m.textadept.editing.goto_line(captures[error_detail.line])
+          local msg = captures[error_detail.message]
+          if msg then buffer:call_tip_show(buffer.current_pos, msg) end
+        else
+          error(string.format(
+            textadept.locale.M_TEXTADEPT_RUN_FILE_DOES_NOT_EXIST, filename))
+        end
         break
       end
     end
