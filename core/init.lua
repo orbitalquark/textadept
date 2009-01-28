@@ -45,7 +45,10 @@ end
 
 ---
 -- Helper function for printing messages to buffers.
--- Opens a new buffer (if one hasn't already been opened) for printing messages.
+-- Splits the view and opens a new buffer for printing messages. If the message
+-- buffer is already open and a view is currently showing it, the message is
+-- printed to that view. Otherwise the view is split, goes to the open message
+-- buffer, and prints to it.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
 -- @usage textadept._print('shows_errors', error_message)
@@ -53,19 +56,30 @@ end
 function textadept._print(buffer_type, ...)
   local function safe_print(...)
     local message = table.concat({...}, '\t')
-    local message_buffer
+    local message_buffer, message_buffer_index
+    local message_view, message_view_index
     for index, buffer in ipairs(textadept.buffers) do
       if buffer[buffer_type] then
-        message_buffer = buffer
-        if buffer.doc_pointer ~= textadept.focused_doc_pointer then
-          view:goto_buffer(index)
+        message_buffer, message_buffer_index = buffer, index
+        for jndex, view in ipairs(textadept.views) do
+          if view.doc_pointer == message_buffer.doc_pointer then
+            message_view, message_view_index = view, jndex
+            break
+          end
         end
         break
       end
     end
-    if not message_buffer then
-      message_buffer = textadept.new_buffer()
-      message_buffer[buffer_type] = true
+    if not message_view then
+      local _, message_view = view:split(false) -- horizontal split
+      if not message_buffer then
+        message_buffer = textadept.new_buffer()
+        message_buffer[buffer_type] = true
+      else
+        message_view:goto_buffer(message_buffer_index, true)
+      end
+    else
+      textadept.goto_view(message_view_index, true)
     end
     message_buffer:append_text(message..'\n')
     message_buffer:set_save_point()
