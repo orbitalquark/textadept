@@ -569,6 +569,10 @@ M_TEXTADEPT_MACRO_SELECT_TEXT = 'Macro name:'
 
 -- modules/textadept/mlines.lua
 
+-- modules/textadept/run.lua
+-- The file "%s" does not exist.
+M_TEXTADEPT_RUN_FILE_DOES_NOT_EXIST = 'The file "%s" does not exist.'
+
 -- modules/textadept/snippets.lua
 
 -- Lexer %s
