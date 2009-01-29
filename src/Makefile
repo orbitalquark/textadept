@@ -31,7 +31,7 @@ all: textadept
 .c.o:
 	g++ $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c $< -o $@
 $(LUA_OBJS): lua/src/*.c
-	gcc $(INCLUDEDIRS) -DLUA_USE_POSIX $(CXXTFLAGS) -c lua/src/*.c
+	gcc $(INCLUDEDIRS) -DLUA_USE_LINUX $(CXXFLAGS) -c lua/src/*.c
 textadept:\
   textadept.o lua_interface.o $(LUA_OBJS) \
   scintilla-st/gtk/LexLPeg.o scintilla-st/bin/scintilla.a
