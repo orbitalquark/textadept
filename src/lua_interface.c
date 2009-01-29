@@ -1495,7 +1495,7 @@ static int l_cf_view_goto_buffer(lua_State *lua) {
 }
 
 static void t_menu_activate(GtkWidget *, gpointer menu_id) {
-  int id = reinterpret_cast<int>(menu_id);
+  int id = GPOINTER_TO_INT(menu_id);
   char *menu_id_str = static_cast<char*>(malloc(sizeof(char) * 12));
   sprintf(menu_id_str, "%i", id);
   l_handle_event("menu_clicked", menu_id_str);

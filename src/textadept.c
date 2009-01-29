@@ -841,7 +841,7 @@ static gbool pm_popup_menu(GtkWidget *, gpointer) {
  * @see pm_process_selected_menu_item
  */
 static void pm_menu_activate(GtkWidget *menu_item, gpointer menu_id) {
-  pm_process_selected_menu_item(menu_item, reinterpret_cast<int>(menu_id));
+  pm_process_selected_menu_item(menu_item, GPOINTER_TO_INT(menu_id));
 }
 
 // Find/Replace
