@@ -15,7 +15,7 @@ module('textadept.pm')
 -- @field width The width of the project manager.
 -- @field cursor The cursor in the project manager (string representation of
 --   current GtkTreePath).
-pm = {}
+pm = { entry_text = nil, width = nil, cursor = nil }
 
 --- Focuses the project manager entry.
 function focus() end
@@ -25,3 +25,9 @@ function clear() end
 
 --- Requests the project manager to get its contents based on its entry text.
 function activate() end
+
+---
+-- Adds a browser prefix to the list of browsers available in the project
+-- manager entry combo box.
+-- @param prefix The text to add.
+function add_browser(prefix) end
