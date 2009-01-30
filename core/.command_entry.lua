@@ -12,7 +12,7 @@ module('textadept.command_entry')
 -- @class table
 -- @name textadept.command_entry
 -- @field entry_text The text in the entry.
-command_entry = {}
+command_entry = { entry_text = nil }
 
 --- Focuses the command entry.
 function focus() end

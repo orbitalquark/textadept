@@ -13,9 +13,11 @@ module('view')
 -- It also represents the structure of any view table in 'views'.
 -- @class table
 -- @name view
+-- @field doc_pointer The pointer to the document associated with this view's
+--   buffer. (Used internally; read-only)
 -- @field size The integer position of the split resizer (if this view is part
 --   of a split view).
-view = { size = nil }
+view = { doc_pointer = nil, size = nil }
 
 ---
 -- Splits the indexed view vertically or horizontally and focuses the new view.

@@ -28,7 +28,18 @@ module('textadept.find')
 -- @name textadept.find
 -- @field find_entry_text The text in the find entry.
 -- @field replace_entry_text The text in the replace entry.
-find = { find_entry_text = nil, replace_entry_text = nil }
+-- @field match_case Flag indicating whether or not case-sensitive search is
+--   performed.
+-- @field whole_word Flag indicating whether or not only whole-word matches are
+--   allowed in searches.
+-- @field lua Flag indicating whether or not the text to find in a search is a
+--   Lua pattern.
+-- @field in_files Flag indicating whether or not to search for the text in a
+--   list of files.
+find = {
+  find_entry_text = nil, replace_entry_text = nil,
+  match_case = nil, whole_word = nil, lua = nil, in_files = nil
+}
 
 --- Displays and focuses the find/replace dialog.
 function focus() end

@@ -506,6 +506,6 @@ end
 
 ---
 -- Default error handler.
--- Opens a new buffer (if one hasn't already been opened) for printing errors.
+-- Prints the errors to an error buffer.
 -- @param ... Error strings.
 function error(...) textadept._print('shows_errors', ...) end
