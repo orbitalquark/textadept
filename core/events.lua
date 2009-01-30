@@ -392,39 +392,6 @@ add_handler('uri_dropped',
     end
   end)
 
----
--- [Local table] A table of (integer) brace characters with their matches.
--- @class table
--- @name _braces
-local _braces = { -- () [] {} <>
-  [40] = 1, [91] = 1, [123] = 1, [60] = 1,
-  [41] = 1, [93] = 1, [125] = 1, [62] = 1,
-}
-
----
--- [Local function] Highlights matching/mismatched braces appropriately.
--- @param current_pos The position to match braces at.
-local function match_brace(current_pos)
-  local buffer = buffer
-  if _braces[buffer.char_at[current_pos]] and
-    buffer:get_style_name(buffer.style_at[current_pos]) == 'operator' then
-    local pos = buffer:brace_match(current_pos)
-    if pos ~= -1 then
-      buffer:brace_highlight(current_pos, pos)
-    else
-      buffer:brace_bad_light(current_pos)
-    end
-    return true
-  end
-  return false
-end
-
-add_handler('update_ui',
-  function() -- highlights matching braces
-    local buffer = buffer
-    if not match_brace(buffer.current_pos) then buffer:brace_bad_light(-1) end
-  end)
-
 local EOLs = {
   textadept.locale.STATUS_CRLF,
   textadept.locale.STATUS_CR,
