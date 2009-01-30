@@ -75,6 +75,23 @@ textadept.events.add_handler('char_added',
     if char_matches[c] then buffer:insert_text(-1, char_matches[c]) end
   end)
 
+textadept.events.add_handler('update_ui',
+  function() -- highlights matching braces
+    local buffer = buffer
+    local current_pos = buffer.current_pos
+    if braces[buffer.char_at[current_pos]] and
+      buffer:get_style_name(buffer.style_at[current_pos]) == 'operator' then
+      local pos = buffer:brace_match(current_pos)
+      if pos ~= -1 then
+        buffer:brace_highlight(current_pos, pos)
+      else
+        buffer:brace_bad_light(current_pos)
+      end
+    else
+      buffer:brace_bad_light(-1)
+    end
+  end)
+
 textadept.events.add_handler('char_added',
   function(char) -- auto-indent on return
     if char ~= '\n' then return end
