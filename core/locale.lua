@@ -303,6 +303,14 @@ MENU_BUF_TOGGLE_INDENT_GUIDES = 'Toggle Show _Indentation Guides'
 MENU_BUF_TOGGLE_TABS = 'Toggle Use _Tabs'
 -- Toggle View White_space
 MENU_BUF_TOGGLE_VIEW_WHITESPACE = 'Toggle View White_space'
+-- EOL Mode
+MENU_BUF_EOL_MODE_TITLE = 'EOL Mode'
+-- CR+LF
+MENU_BUF_EOL_MODE_CRLF = 'CR+LF'
+-- CR
+MENU_BUF_EOL_MODE_CR = 'CR'
+-- LF
+MENU_BUF_EOL_MODE_LF = 'LF'
 -- _Refresh Syntax Highlighting
 MENU_BUF_REFRESH = '_Refresh Syntax Highlighting'
 

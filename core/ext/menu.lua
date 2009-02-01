@@ -105,6 +105,9 @@ local ID = {
   TOGGLE_SHOW_INDENT_GUIDES = 505,
   TOGGLE_USE_TABS = 506,
   TOGGLE_VIEW_WHITESPACE = 507,
+  EOL_MODE_CRLF = 509,
+  EOL_MODE_CR = 510,
+  EOL_MODE_LF = 511,
   REFRESH_SYNTAX_HIGHLIGHTING = 508,
   -- Views
   NEXT_VIEW = 601,
@@ -307,6 +310,12 @@ t.menubar = {
     { l.MENU_BUF_TOGGLE_TABS, ID.TOGGLE_USE_TABS },
     { l.MENU_BUF_TOGGLE_VIEW_WHITESPACE, ID.TOGGLE_VIEW_WHITESPACE },
     { SEPARATOR, ID.SEPARATOR },
+    { title = l.MENU_BUF_EOL_MODE_TITLE,
+      { l.MENU_BUF_EOL_MODE_CRLF, ID.EOL_MODE_CRLF },
+      { l.MENU_BUF_EOL_MODE_CR, ID.EOL_MODE_CR },
+      { l.MENU_BUF_EOL_MODE_LF, ID.EOL_MODE_LF },
+    },
+    { SEPARATOR, ID.SEPARATOR },
     { l.MENU_BUF_REFRESH, ID.REFRESH_SYNTAX_HIGHLIGHTING },
   },
   gtkmenu {
@@ -403,6 +412,11 @@ local function toggle_setting(setting)
   elseif type(state) == 'number' then
     buffer[setting] = buffer[setting] == 0 and 1 or 0
   end
+  t.events.update_ui() -- for updating statusbar
+end
+local function set_eol_mode(mode)
+  buffer.eol_mode = mode
+  buffer:convert_eo_ls(mode)
   t.events.update_ui() -- for updating statusbar
 end
 local function set_lexer_language(lexer)
@@ -510,6 +524,9 @@ local actions = {
   [ID.TOGGLE_SHOW_INDENT_GUIDES] = { toggle_setting, 'indentation_guides' },
   [ID.TOGGLE_USE_TABS] = { toggle_setting, 'use_tabs' },
   [ID.TOGGLE_VIEW_WHITESPACE] = { toggle_setting, 'view_ws' },
+  [ID.EOL_MODE_CRLF] = { set_eol_mode, 0 },
+  [ID.EOL_MODE_CR] = { set_eol_mode, 1 },
+  [ID.EOL_MODE_LF] = { set_eol_mode, 2 },
   [ID.REFRESH_SYNTAX_HIGHLIGHTING] = { 'colourise', b, 0, -1 },
   -- Views
   [ID.NEXT_VIEW] = { t.goto_view, 1, false },
