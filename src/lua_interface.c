@@ -1412,7 +1412,7 @@ static int l_cf_buffer_text_range(lua_State *lua) {
 
 static int l_cf_view_focus(lua_State *lua) {
   GtkWidget *editor = l_checkview(lua, 1);
-  gtk_widget_grab_focus(editor);
+  if (GTK_IS_WIDGET(editor)) gtk_widget_grab_focus(editor);
   return 0;
 }
 
