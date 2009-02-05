@@ -1203,8 +1203,10 @@ static int l_ta_mt_index(lua_State *lua) {
   else if (streq(key, "clipboard_text")) {
     char *text =
       gtk_clipboard_wait_for_text(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
-    if (text) lua_pushstring(lua, text);
-    g_free(text);
+    if (text) {
+      lua_pushstring(lua, text);
+      g_free(text);
+    } else lua_pushstring(lua, "");
   } else if (streq(key, "size")) {
     lua_newtable(lua);
     int width, height;
