@@ -24,12 +24,15 @@ end
 function get_contents_for(full_path)
   local dir = {}
   local dirpath = table.concat(full_path, '/')
-  for name in lfs.dir(dirpath) do
-    if not name:find('^%.') then
-      dir[name] = { text = name }
-      if lfs.attributes(dirpath..'/'..name, 'mode') == 'directory' then
-        dir[name].parent = true
-        dir[name].pixbuf = 'gtk-directory'
+  local path = lfs.attributes(dirpath)
+  if path and path.mode == 'directory' then
+    for name in lfs.dir(dirpath) do
+      if not name:find('^%.') then
+        dir[name] = { text = name }
+        if lfs.attributes(dirpath..'/'..name, 'mode') == 'directory' then
+          dir[name].parent = true
+          dir[name].pixbuf = 'gtk-directory'
+        end
       end
     end
   end

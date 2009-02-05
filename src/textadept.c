@@ -38,6 +38,7 @@ static int pm_search_equal_func(GtkTreeModel *model, int col, const char *key,
 static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
                                      GtkTreeIter *b, gpointer);
 static void pm_entry_activated(GtkWidget *widget, gpointer);
+static void pm_entry_changed(GtkComboBoxEntry *widget, gpointer);
 static gbool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer);
 static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter,
                             GtkTreePath *path, gpointer);
@@ -625,6 +626,7 @@ GtkWidget *pm_create_ui() {
   gtk_box_pack_start(GTK_BOX(pm_container), scrolled, TRUE, TRUE, 0);
 
   signal(pm_entry, "activate", pm_entry_activated);
+  signal(pm_combo, "changed", pm_entry_changed);
   signal(pm_entry, "key_press_event", pm_keypress);
   signal(pm_view, "key_press_event", pm_keypress);
   signal(pm_view, "row_expanded", pm_row_expanded);
@@ -772,6 +774,15 @@ static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
 static void pm_entry_activated(GtkWidget *widget, gpointer) {
   const char *entry_text = gtk_entry_get_text(GTK_ENTRY(widget));
   if (l_pm_get_contents_for(entry_text, false)) l_pm_populate(NULL);
+}
+
+/**
+ * Signal for a change of the text in the Project Manager entry.
+ * Calls pm_entry_activated to populate the treeview.
+ * @see pm_entry_activated
+ */
+static void pm_entry_changed(GtkComboBoxEntry *widget, gpointer) {
+  pm_entry_activated(gtk_bin_get_child(GTK_BIN(widget)), NULL);
 }
 
 /**
