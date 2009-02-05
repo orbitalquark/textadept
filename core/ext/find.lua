@@ -4,6 +4,7 @@ local textadept = _G.textadept
 local find = textadept.find
 
 local MARK_REPLACEALL_END = 0
+local previous_view
 
 ---
 -- [Local table] Text escape sequences with their associated characters.
@@ -91,7 +92,7 @@ function find.find(text, next, flags, nowrap, wrapped)
       local match_case = find.match_case
       local whole_word = find.whole_word
       local format = string.format
-      local matches = {}
+      local matches = { 'Find: '..text }
       function search_file(file)
         local line_num = 1
         for line in io.lines(file) do
@@ -118,7 +119,9 @@ function find.find(text, next, flags, nowrap, wrapped)
         end
       end
       search_dir(dir)
-      if #matches == 0 then matches[1] = locale.FIND_NO_RESULTS end
+      if #matches == 1 then matches[2] = locale.FIND_NO_RESULTS end
+      matches[#matches + 1] = ''
+      previous_view = view
       textadept._print('shows_files_found', table.concat(matches, '\n'))
     end
     return
@@ -252,9 +255,12 @@ function goto_file(pos, line_num)
   if buffer.shows_files_found then
     line = buffer:get_line(line_num)
     local file, line_num = line:match('^(.+):(%d+):.+$')
-    textadept.io.open(file)
-    buffer:ensure_visible_enforce_policy(line_num - 1)
-    buffer:goto_line(line_num - 1)
+    if file and line_num then
+      if previous_view then previous_view:focus() end
+      textadept.io.open(file)
+      buffer:ensure_visible_enforce_policy(line_num - 1)
+      buffer:goto_line(line_num - 1)
+    end
   end
 end
 textadept.events.add_handler('double_click', goto_file)
