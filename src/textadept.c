@@ -506,7 +506,8 @@ static gbool w_focus(GtkWidget*, GdkEventFocus*, gpointer) {
  *  - Escape - hides the search frame if it's open.
  */
 static gbool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
-  if (event->keyval == 0xff1b && GTK_WIDGET_VISIBLE(findbox)) {
+  if (event->keyval == 0xff1b && GTK_WIDGET_VISIBLE(findbox) &&
+      !GTK_WIDGET_HAS_FOCUS(command_entry)) {
     gtk_widget_hide(findbox);
     gtk_widget_grab_focus(focused_editor);
     return TRUE;
