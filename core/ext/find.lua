@@ -85,6 +85,7 @@ function find.find(text, next, flags, nowrap, wrapped)
       })
     if #dir > 0 then
       if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
+      if not find.match_case then text = text:lower() end
       if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
       local lfs = require 'lfs'
       local match_case = find.match_case
