@@ -589,6 +589,7 @@ GtkWidget *pm_create_ui() {
   pm_container = gtk_vbox_new(FALSE, 1);
 
   GtkWidget *pm_combo = gtk_combo_box_entry_new_text();
+  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(pm_combo), FALSE);
   pm_entry = gtk_bin_get_child(GTK_BIN(pm_combo));
   gtk_widget_set_name(pm_entry, "textadept-pm-entry");
   gtk_box_pack_start(GTK_BOX(pm_container), pm_combo, FALSE, FALSE, 0);
@@ -912,6 +913,8 @@ GtkWidget *find_create_ui() {
   signal(r_button, "clicked", button_clicked);
   signal(ra_button, "clicked", button_clicked);
 
+  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(find_combo), FALSE);
+  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(replace_combo), FALSE);
   GTK_WIDGET_SET_FLAGS(fnext_button, GTK_CAN_DEFAULT);
   GTK_WIDGET_UNSET_FLAGS(fnext_button, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS(fprev_button, GTK_CAN_FOCUS);
