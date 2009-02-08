@@ -60,7 +60,6 @@ static int l_buffer_mt_index(lua_State *lua),
 
 static int l_cf_ta_buffer_new(lua_State *lua),
            l_cf_buffer_delete(lua_State *lua),
-           l_cf_buffer_find(lua_State *lua),
            l_cf_buffer_text_range(lua_State *lua),
            l_cf_view_focus(lua_State *lua),
            l_cf_view_split(lua_State *lua),
@@ -316,7 +315,6 @@ int l_add_scintilla_buffer(sptr_t doc) {
   lua_newtable(lua);
   lua_pushnumber(lua, doc);
   lua_setfield(lua, -2, "doc_pointer");
-  l_cfunc(lua, l_cf_buffer_find, "find");
   l_cfunc(lua, l_cf_buffer_text_range, "text_range");
   l_cfunc(lua, l_cf_buffer_delete, "delete");
   l_mt(lua, "_buffer_mt", l_buffer_mt_index, l_buffer_mt_newindex);
@@ -1341,24 +1339,6 @@ static int l_cf_buffer_delete(lua_State *lua) {
   remove_scintilla_buffer(doc);
   l_handle_event("buffer_deleted");
   return 0;
-}
-
-static int l_cf_buffer_find(lua_State *lua) {
-  l_check_focused_buffer(lua, 1);
-  TextToFind ttf = {{0, 0}, 0, {0, 0}};
-  ttf.lpstrText = const_cast<char*>(luaL_checkstring(lua, 2));
-  int args = lua_gettop(lua), flags = 0;
-  if (args > 2) flags = luaL_checkinteger(lua, 3);
-  if (args > 3) ttf.chrg.cpMin = luaL_checkinteger(lua, 4);
-  ttf.chrg.cpMax = (args > 4) ? luaL_checkinteger(lua, 5)
-                              : SS(SCINTILLA(focused_editor), SCI_GETLENGTH);
-  int pos = SS(SCINTILLA(focused_editor), SCI_FINDTEXT, flags,
-               reinterpret_cast<sptr_t>(&ttf));
-  if (pos > -1) {
-    lua_pushinteger(lua, ttf.chrgText.cpMin);
-    lua_pushinteger(lua, ttf.chrgText.cpMax);
-    return 2;
-  } else return 0;
 }
 
 static int l_cf_buffer_text_range(lua_State *lua) {

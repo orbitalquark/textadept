@@ -251,7 +251,12 @@ next_snippet_item = function()
     if s and next_item then
       next_item = unescape(next_item)
       _DEBUG('next_item:\n'..next_item)
-      local s, e = buffer:find(next_item, 0, s_start)
+      local s, e
+      buffer.target_start, buffer.target_end = s_start, buffer.length
+      buffer.search_flags = 0
+      if buffer:search_in_target(next_item) ~= -1 then
+        s, e = buffer.target_start, buffer.target_end
+      end
       if s and e then
         buffer:set_sel(s, e)
         snippet.cursor = s
@@ -283,7 +288,12 @@ next_snippet_item = function()
       join_lines()
     end
 
-    local s, e = buffer:find('$CURSOR', 4, s_start)
+    local s, e
+    buffer.target_start, buffer.target_end = s_start, buffer.length
+    buffer.search_flags = 4
+    if buffer:search_in_target('$CURSOR') ~= -1 then
+      s, e = buffer.target_start, buffer.target_end
+    end
     if s and e then
       buffer:set_sel(s, e)
       buffer:replace_sel('')

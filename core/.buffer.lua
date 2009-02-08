@@ -365,16 +365,6 @@ buffer = {
 }
 
 ---
--- Finds text in the current buffer.
--- The indexed buffer must be the currently focused one.
--- @param text The text to find.
--- @param flags SCI_FIND flags used.
--- @param start_pos The position to start the search.
--- @param end_pos The position to end the search.
--- @return start and end positions in the text or nothing.
-function buffer:find(text, flags, start_pos, end_pos)
-
----
 -- Gets a range of text from the current buffer.
 -- The indexed buffer must be the currently focused one.
 -- @param start_pos The beginning position of the range of text to get.
