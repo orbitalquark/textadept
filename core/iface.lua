@@ -1,4 +1,4 @@
-textadept.constants = {
+local constants = {
   CARETSTYLE_BLOCK = 2,
   CARETSTYLE_INVISIBLE = 0,
   CARETSTYLE_LINE = 1,
@@ -475,8 +475,9 @@ textadept.constants = {
   SCN_INDICATORCLICK = 2023,
   SCN_INDICATORRELEASE = 2024,
 }
+rawset(textadept, 'constants', constants)
 
-textadept.buffer_functions = {
+local buffer_functions = {
   add_ref_document = {2376, 0, 0, 1},
   add_styled_text = {2002, 0, 2, 9},
   add_text = {2001, 0, 2, 7},
@@ -723,8 +724,9 @@ textadept.buffer_functions = {
   zoom_in = {2333, 0, 0, 0},
   zoom_out = {2334, 0, 0, 0},
 }
+rawset(textadept, 'buffer_functions', buffer_functions)
 
-textadept.buffer_properties = {
+local buffer_properties = {
   anchor = {2009, 2026, 3, 0},
   auto_c_auto_hide = {2119, 2118, 5, 0},
   auto_c_cancel_at_start = {2111, 2110, 5, 0},
@@ -861,3 +863,4 @@ textadept.buffer_properties = {
   x_offset = {2398, 2397, 1, 0},
   zoom = {2374, 2373, 1, 0},
 }
+rawset(textadept, 'buffer_properties', buffer_properties)
