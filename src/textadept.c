@@ -955,6 +955,9 @@ static void find_add_to_history(const char *text, GtkListStore *store) {
     gtk_list_store_prepend(store, &iter);
     gtk_list_store_set(store, &iter, 0, text, -1);
     g_free(first_item);
+    int count = 1;
+    while (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter))
+      if (++count > 10) gtk_list_store_remove(store, &iter); // keep 10 items
   }
 }
 
