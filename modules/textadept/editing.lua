@@ -154,15 +154,18 @@ function autocomplete_word(word_chars)
   local buffer_text = buffer:get_text(length)
   local root = buffer_text:sub(1, caret):match('['..word_chars..']+$')
   if not root or #root == 0 then return end
-  local match_pos = buffer:find(root, 1048580) -- word start and match case
-  while match_pos do
+  buffer.target_start, buffer.target_end = 0, buffer.length
+  buffer.search_flags = 1048580 -- word start and match case
+  local match_pos = buffer:search_in_target(root)
+  while match_pos ~= -1 do
     local s, e = buffer_text:find('^['..word_chars..']+', match_pos + 1)
     local match = buffer_text:sub(s, e)
     if not completions[match] and #match > #root then
       c_list[#c_list + 1] = match
       completions[match] = true
     end
-    match_pos = buffer:find(root, 1048580, match_pos + 1)
+    buffer.target_start, buffer.target_end = match_pos + 1, buffer.length
+    match_pos = buffer:search_in_target(root)
   end
   if #c_list > 0 then buffer:auto_c_show(#root, table.concat(c_list, ' ')) end
 end
@@ -498,7 +501,11 @@ function select_enclosed(str)
     while s >= 0 do
       char = string.char(buffer.char_at[s])
       if char_matches[char] then
-        local _, e = buffer:find(char_matches[char], 0, e)
+        buffer.target_start, buffer.target_end = e, buffer.length
+        buffer.search_flags = 0
+        if buffer:search_in_target(char_matches[char]) ~= -1 then
+          e = buffer.target_end
+        end
         if e then buffer:set_sel(s + 1, e - 1) break end
       end
       s = s - 1

@@ -52,8 +52,9 @@ local escapes = {}
 
 ---
 -- Finds and selects text in the current buffer.
--- This is used by the find dialog. It is recommended to use the buffer:find()
--- function for scripting.
+-- This is used by the find dialog. It is recommended to use the
+-- buffer:search_in_target() or buffer:search_next() and buffer:search_prev()
+-- functions for scripting.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
 -- @param flags Search flags. This is a number mask of 4 flags: match case (2),

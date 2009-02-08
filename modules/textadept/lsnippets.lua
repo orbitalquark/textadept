@@ -227,17 +227,29 @@ function next()
   if index <= snippet.max_index then
     local s, e, next_item = s_text:find('%%'..index..'(%b())')
     if next_item and not next_item:find('|') then -- placeholder
-      s, e = buffer:find('%'..index..next_item, 0, s_start)
+      buffer.target_start, buffer.target_end = s_start, buffer.length
+      buffer.search_flags = 0
+      s = buffer:search_in_target('%'..index..next_item)
+      e = buffer.target_end
       next_item = next_item:gsub('#(%b())', run_lua_code)
       next_item = unhandle_escapes(next_item:sub(2, -2))
       buffer:set_sel(s, e)
       buffer:replace_sel(next_item)
       buffer:set_sel(s, s + #next_item)
     else -- use the first mirror as a placeholder
-      s, e = buffer:find('%'..index..'[^(]', 2097152, s_start) -- regexp
+      s, e = nil, nil
+      buffer.target_start, buffer.target_end = s_start, buffer.length
+      buffer.search_flags = 2097152 -- regexp
+      if buffer:search_in_target('%'..index..'[^(]') ~= -1 then
+        s, e = buffer.target_start, buffer.target_end
+      end
       if not s and not e then
+        s, e = nil, nil
         -- Scintilla cannot match [\r\n\f] in regexp mode; use '$' instead
-        s, e = buffer:find('%'..index..'$', 2097152, s_start) -- regexp
+        buffer.target_start, buffer.target_end = s_start, buffer.length
+        if buffer:search_in_target('%'..index..'$') ~= -1 then
+          s, e = buffer.target_start, buffer.target_end
+        end
         if e then e = e + 1 end
       end
       if not s then snippet.index = index + 1 return next() end
@@ -255,7 +267,12 @@ function next()
       buffer:goto_pos(s_end + 1)
       buffer:delete_back()
     end
-    local s, e = buffer:find('%__caret', 4, s_start)
+    buffer.target_start, buffer.target_end = s_start, buffer.length
+    buffer.search_flags = 4
+    local s, e
+    if buffer:search_in_target('%__caret') ~= -1 then
+      s, e = buffer.target_start, buffer.target_end
+    end
     if s and s <= s_end then
       buffer:set_sel(s, e)
       buffer:replace_sel('')
