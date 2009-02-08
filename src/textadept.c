@@ -562,7 +562,7 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent*, long) {
  * @see w_exit
  */
 static OSErr w_ae_quit(const AppleEvent *event, AppleEvent*, long) {
-  return w_exit(NULL, NULL, NULL) ? noErr : errAEEventNotHandled;
+  return w_exit(NULL, NULL, NULL) ? (OSErr) noErr : errAEEventNotHandled;
 }
 
 /**
