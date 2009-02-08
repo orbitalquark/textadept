@@ -28,6 +28,8 @@ if not MAC then
   require 'lua_dialog'
 end
 
+rawset = nil -- do not allow modifications which could compromise stability
+
 ---
 -- Checks if the buffer being indexed is the currently focused buffer.
 -- This is necessary because any buffer actions are performed in the focused

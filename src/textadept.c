@@ -379,13 +379,12 @@ bool unsplit_window(GtkWidget *editor) {
                       : remove_scintilla_window(other);
   GtkWidget *parent = gtk_widget_get_parent(pane);
   gtk_container_remove(GTK_CONTAINER(parent), pane);
-  if (GTK_IS_PANED(parent))
+  if (GTK_IS_PANED(parent)) {
     if (!gtk_paned_get_child1(GTK_PANED(parent)))
       gtk_paned_add1(GTK_PANED(parent), editor);
     else
       gtk_paned_add2(GTK_PANED(parent), editor);
-  else
-    gtk_container_add(GTK_CONTAINER(parent), editor);
+  } else gtk_container_add(GTK_CONTAINER(parent), editor);
   gtk_widget_show_all(parent);
   gtk_widget_grab_focus(GTK_WIDGET(editor));
   g_object_unref(editor);
@@ -450,7 +449,7 @@ void ce_toggle_focus() {
  * @see t_notification
  * @see t_command
  */
-static void switch_view(GtkWidget *editor) {
+static void switch_to_view(GtkWidget *editor) {
   focused_editor = editor;
   l_set_view_global(editor);
   l_set_buffer_global(SCINTILLA(editor));
@@ -463,7 +462,7 @@ static void switch_view(GtkWidget *editor) {
 static void t_notification(GtkWidget *editor, gint, gpointer lParam, gpointer) {
   SCNotification *n = reinterpret_cast<SCNotification*>(lParam);
   if (focused_editor != editor && n->nmhdr.code == SCN_URIDROPPED)
-    switch_view(editor);
+    switch_to_view(editor);
   l_handle_scnnotification(n);
 }
 
@@ -472,7 +471,7 @@ static void t_notification(GtkWidget *editor, gint, gpointer lParam, gpointer) {
  * Currently handles SCEN_SETFOCUS.
  */
 static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
-  if (wParam >> 16 == SCEN_SETFOCUS) switch_view(editor);
+  if (wParam >> 16 == SCEN_SETFOCUS) switch_to_view(editor);
 }
 
 /**
@@ -563,8 +562,7 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent*, long) {
  * @see w_exit
  */
 static OSErr w_ae_quit(const AppleEvent *event, AppleEvent*, long) {
-  if (w_exit(NULL, NULL, NULL)) return noErr;
-  return errAEEventNotHandled;
+  return w_exit(NULL, NULL, NULL) ? noErr : errAEEventNotHandled;
 }
 
 /**
