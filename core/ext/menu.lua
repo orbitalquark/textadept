@@ -542,6 +542,7 @@ local actions = {
     function() if view.size then view.size = view.size - 10 end end
   },
 }
+if MAC then actions[ID.PASTE] = { m_editing.smart_paste } end -- fix paste issue
 
 -- lexers here MUST be in the same order as in the menu
 local lexers = {
