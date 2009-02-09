@@ -973,6 +973,7 @@ static void find_add_to_history(const char *text, GtkListStore *store) {
 static void button_clicked(GtkWidget *button, gpointer) {
   const char *find_text = gtk_entry_get_text(GTK_ENTRY(find_entry));
   const char *repl_text = gtk_entry_get_text(GTK_ENTRY(replace_entry));
+  if (strlen(find_text) == 0) return;
   if (button == fnext_button || button == fprev_button) {
     find_add_to_history(find_text, find_store);
     l_find(find_text, button == fnext_button);
