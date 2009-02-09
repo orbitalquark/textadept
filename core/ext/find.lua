@@ -31,6 +31,7 @@ local escapes = {
 --   internally, and should not be set otherwise.
 -- @return position of the found text or -1
 function find.find(text, next, flags, nowrap, wrapped)
+  if #text == 0 then return end
   local buffer = buffer
   local locale = textadept.locale
   local first_visible_line = buffer.first_visible_line -- for 'no results found'
@@ -209,6 +210,7 @@ end
 -- @param flags The number mask identical to the one in 'find'.
 -- @see find.find
 function find.replace_all(ftext, rtext, flags)
+  if #ftext == 0 then return end
   local buffer = buffer
   if find.in_files then find.in_files = false end
   buffer:begin_undo_action()
