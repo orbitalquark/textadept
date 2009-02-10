@@ -53,15 +53,15 @@ end
 -- buffer, and prints to it.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
--- @usage textadept._print('shows_errors', error_message)
--- @usage textadept._print('shows_messages', message)
+-- @usage textadept._print(textadept.locale.ERROR_BUFFER, error_message)
+-- @usage textadept._print(textadept.locale.MESSAGE_BUFFER, message)
 function textadept._print(buffer_type, ...)
   local function safe_print(...)
     local message = table.concat({...}, '\t')
     local message_buffer, message_buffer_index
     local message_view, message_view_index
     for index, buffer in ipairs(textadept.buffers) do
-      if buffer[buffer_type] then
+      if buffer._type == buffer_type then
         message_buffer, message_buffer_index = buffer, index
         for jndex, view in ipairs(textadept.views) do
           if view.doc_pointer == message_buffer.doc_pointer then
@@ -76,7 +76,7 @@ function textadept._print(buffer_type, ...)
       local _, message_view = view:split(false) -- horizontal split
       if not message_buffer then
         message_buffer = textadept.new_buffer()
-        message_buffer[buffer_type] = true
+        message_buffer._type = buffer_type
       else
         message_view:goto_buffer(message_buffer_index, true)
       end
@@ -93,7 +93,9 @@ end
 -- Prints messages to the Textadept message buffer.
 -- Opens a new buffer (if one hasn't already been opened) for printing messages.
 -- @param ... Message strings.
-function textadept.print(...) textadept._print('shows_messages', ...) end
+function textadept.print(...)
+  textadept._print(textadept.locale.MESSAGE_BUFFER, ...)
+end
 
 ---
 -- Displays a CocoaDialog of a specified type with given arguments returning

@@ -16,10 +16,12 @@ end
 function get_contents_for()
   local contents = {}
   for index, buffer in ipairs(textadept.buffers) do
+    local filename =
+      buffer.filename or buffer._type or textadept.locale.UNTITLED
     index = string.format("%02i", index)
     contents[index] = {
       pixbuf = buffer.dirty and 'gtk-edit' or 'gtk-file',
-      text = (buffer.filename or textadept.locale.UNTITLED):match('[^/\\]+$')
+      text = filename:match('[^/\\]+$')
     }
   end
   return contents
