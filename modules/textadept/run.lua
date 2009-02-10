@@ -179,7 +179,8 @@ local error_details = {
 -- @param line_num The line double-clicked.
 -- @see error_details
 function goto_error(pos, line_num)
-  if buffer.shows_messages or buffer.shows_errors then
+  local locale = textadept.locale
+  if buffer._type == locale.MESSAGE_BUFFER or buffer._type == 'error_buffer' then
     line = buffer:get_line(line_num)
     for _, error_detail in pairs(error_details) do
       local captures = { line:match(error_detail.pattern) }

@@ -100,6 +100,7 @@ function save(buffer)
   else
     textadept.events.error(err)
   end
+  if buffer._type then buffer._type = nil end
 end
 
 ---

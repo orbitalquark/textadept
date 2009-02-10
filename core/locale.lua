@@ -15,6 +15,8 @@ module('textadept.locale', package.seeall)
 
 -- Untitled
 UNTITLED = 'Untitled'
+-- [Message Buffer]
+MESSAGE_BUFFER = '[Message Buffer]'
 -- OVR
 STATUS_OVR = 'OVR'
 -- INS
@@ -47,6 +49,8 @@ The following buffers are unsaved:
 
 You will have to save changes manually.
 ]]
+-- [Error Buffer]
+ERROR_BUFFER = '[Error Buffer]'
 
 -- core/file_io.lua
 
@@ -90,6 +94,8 @@ FIND_REPLACEMENTS_MADE = '%d replacement(s) made'
 FIND_IN_FILES_TITLE = 'Find in Files'
 -- Select Directory to Search
 FIND_IN_FILES_TEXT = 'Select Directory to Search'
+-- [Files Found Buffer]
+FIND_FILES_FOUND_BUFFER = '[Files Found Buffer]'
 
 -- core/ext/keys.lua
 

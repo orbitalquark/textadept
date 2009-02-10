@@ -359,7 +359,7 @@ local title_text = '%s %s Textadept (%s)'
 -- @param buffer The currently focused buffer.
 local function set_title(buffer)
   local buffer = buffer
-  local filename = buffer.filename or textadept.locale.UNTITLED
+  local filename = buffer.filename or buffer._type or textadept.locale.UNTITLED
   local d = buffer.dirty and '*' or '-'
   textadept.title =
     string.format(title_text, filename:match('[^/\\]+$'), d, filename)
@@ -475,4 +475,4 @@ end
 -- Default error handler.
 -- Prints the errors to an error buffer.
 -- @param ... Error strings.
-function error(...) textadept._print('shows_errors', ...) end
+function error(...) textadept._print(textadept.locale.ERROR_BUFFER, ...) end

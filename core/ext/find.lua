@@ -124,7 +124,8 @@ function find.find(text, next, flags, nowrap, wrapped)
       if #matches == 1 then matches[2] = locale.FIND_NO_RESULTS end
       matches[#matches + 1] = ''
       previous_view = view
-      textadept._print('shows_files_found', table.concat(matches, '\n'))
+      textadept._print(locale.FIND_FILES_FOUND_BUFFER,
+                       table.concat(matches, '\n'))
     end
     return
   end
@@ -255,7 +256,7 @@ end
 -- @param pos The position of the caret.
 -- @param line_num The line double-clicked.
 function goto_file(pos, line_num)
-  if buffer.shows_files_found then
+  if buffer._type == textadept.locale.FIND_FILES_FOUND_BUFFER then
     line = buffer:get_line(line_num)
     local file, line_num = line:match('^(.+):(%d+):.+$')
     if file and line_num then
