@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Provides dynamic menus for Textadept.
@@ -8,7 +9,7 @@ local textadept = _G.textadept
 module('textadept.menu', package.seeall)
 
 local t = textadept
-local l = textadept.locale
+local l = locale
 local gtkmenu = textadept.gtkmenu
 
 local SEPARATOR = 'separator'

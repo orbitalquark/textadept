@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 local find = textadept.find
 
 local MARK_REPLACEALL_END = 0
@@ -33,7 +34,6 @@ local escapes = {
 function find.find(text, next, flags, nowrap, wrapped)
   if #text == 0 then return end
   local buffer = buffer
-  local locale = textadept.locale
   local first_visible_line = buffer.first_visible_line -- for 'no results found'
 
   local increment
@@ -177,7 +177,6 @@ function find.replace(rtext)
   end
   local ret, rtext = pcall(rtext.gsub, rtext, '%%(%b())',
     function(code)
-      local locale = textadept.locale
       local ret, val = pcall(loadstring('return '..code))
       if not ret then
         cocoa_dialog('msgbox', {
@@ -246,7 +245,7 @@ function find.replace_all(ftext, rtext, flags)
     buffer:marker_delete_handle(end_marker)
   end
   textadept.statusbar_text =
-    string.format(textadept.locale.FIND_REPLACEMENTS_MADE, tostring(count))
+    string.format(locale.FIND_REPLACEMENTS_MADE, tostring(count))
   buffer:end_undo_action()
 end
 
@@ -256,7 +255,7 @@ end
 -- @param pos The position of the caret.
 -- @param line_num The line double-clicked.
 function goto_file(pos, line_num)
-  if buffer._type == textadept.locale.FIND_FILES_FOUND_BUFFER then
+  if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
     line = buffer:get_line(line_num)
     local file, line_num = line:match('^(.+):(%d+):.+$')
     if file and line_num then

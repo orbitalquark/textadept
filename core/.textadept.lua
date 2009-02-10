@@ -108,8 +108,8 @@ function check_focused_buffer(buffer) end
 -- buffer, and prints to it.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
--- @usage textadept._print(textadept.locale.ERROR_BUFFER, error_message)
--- @usage textadept._print(textadept.locale.MESSAGE_BUFFER, message)
+-- @usage textadept._print(locale.ERROR_BUFFER, error_message)
+-- @usage textadept._print(locale.MESSAGE_BUFFER, message)
 function _print(buffer_type, ...)
 
 ---

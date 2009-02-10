@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Buffer browser for the Textadept project manager.
@@ -16,12 +17,11 @@ end
 function get_contents_for()
   local contents = {}
   for index, buffer in ipairs(textadept.buffers) do
-    local filename =
-      buffer.filename or buffer._type or textadept.locale.UNTITLED
     index = string.format("%02i", index)
     contents[index] = {
       pixbuf = buffer.dirty and 'gtk-edit' or 'gtk-file',
-      text = filename:match('[^/\\]+$')
+      text =
+        (buffer.filename or buffer._type or locale.UNTITLED):match('[^/\\]+$')
     }
   end
   return contents
@@ -39,7 +39,6 @@ end
 local ID = { NEW = 1, OPEN = 2, SAVE = 3, SAVEAS = 4, CLOSE = 5 }
 
 function get_context_menu(selected_item)
-  local locale = textadept.locale
   return {
     { locale.PM_BROWSER_BUFFER_NEW, ID.NEW },
     { locale.PM_BROWSER_BUFFER_OPEN, ID.OPEN },

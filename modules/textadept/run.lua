@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Module for running/executing source files.
@@ -179,8 +180,8 @@ local error_details = {
 -- @param line_num The line double-clicked.
 -- @see error_details
 function goto_error(pos, line_num)
-  local locale = textadept.locale
-  if buffer._type == locale.MESSAGE_BUFFER or buffer._type == 'error_buffer' then
+  local type = buffer._type
+  if type == locale.MESSAGE_BUFFER or type == locale.ERROR_BUFFER then
     line = buffer:get_line(line_num)
     for _, error_detail in pairs(error_details) do
       local captures = { line:match(error_detail.pattern) }
@@ -194,7 +195,7 @@ function goto_error(pos, line_num)
           if msg then buffer:call_tip_show(buffer.current_pos, msg) end
         else
           error(string.format(
-            textadept.locale.M_TEXTADEPT_RUN_FILE_DOES_NOT_EXIST, filename))
+            locale.M_TEXTADEPT_RUN_FILE_DOES_NOT_EXIST, filename))
         end
         break
       end

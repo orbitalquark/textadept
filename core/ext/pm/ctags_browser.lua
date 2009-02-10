@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- CTags Browser for the Textadept project manager.
@@ -110,7 +111,6 @@ end
 -- of the parent being expanded.
 function get_contents_for(full_path, expanding)
   local ctags_file = full_path[1]:sub(7) -- ignore 'ctags:'
-  local locale = textadept.locale
   local f
   if #ctags_file == 0 then
     tags = {}
@@ -221,7 +221,7 @@ function perform_action(selected_item)
       buffer:goto_line(line)
     else
       error(
-        string.format(textadept.locale.PM_BROWSER_CTAGS_NOT_FOUND, item.text))
+        string.format(locale.PM_BROWSER_CTAGS_NOT_FOUND, item.text))
     end
   elseif item.line_num then
     textadept.io.open(item.filepath)

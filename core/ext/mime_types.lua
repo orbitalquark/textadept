@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 --- Handles file-specific settings (based on file extension).
 module('textadept.mime_types', package.seeall)
