@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Macro browser for the Textadept project manager.
@@ -28,7 +29,6 @@ end
 local ID = { DELETE = 1 }
 
 function get_context_menu(selected_item)
-  local locale = textadept.locale
   return { { locale.PM_BROWSER_MACRO_DELETE, ID.DELETE } }
 end
 

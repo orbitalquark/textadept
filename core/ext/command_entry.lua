@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 local ce = textadept.command_entry
 
 ---

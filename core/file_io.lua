@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Provides file input/output routines for Textadept.
@@ -48,7 +49,6 @@ end
 --   specified, the user is prompted to open files from a dialog.
 -- @usage textadept.io.open(filename)
 function open(filenames)
-  local locale = textadept.locale
   filenames =
     filenames or cocoa_dialog('fileselect', {
       title = locale.IO_OPEN_TITLE,
@@ -113,7 +113,7 @@ function save_as(buffer, filename)
   if not filename then
     filename =
       cocoa_dialog('filesave', {
-        title = textadept.locale.IO_SAVE_TITLE,
+        title = locale.IO_SAVE_TITLE,
         ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
         ['with-file'] = (buffer.filename or ''):match('[^/\\]+$'),
         ['no-newline'] = true
@@ -148,7 +148,6 @@ end
 --   buffer.
 -- @usage buffer:close()
 function close(buffer)
-  local locale = textadept.locale
   textadept.check_focused_buffer(buffer)
   if buffer.dirty and cocoa_dialog('yesno-msgbox', {
     title = locale.IO_CLOSE_TITLE,

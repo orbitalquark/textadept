@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Support for recording, saving, and playing macros for the textadept module.
@@ -41,7 +42,7 @@ local recording = false
 local function macro_notification(msg, wParam, lParam)
   if recording then
     current[#current + 1] = { msg, wParam or 0, lParam or 0 }
-    textadept.statusbar_text = textadept.locale.M_TEXTADEPT_MACRO_RECORDING
+    textadept.statusbar_text = locale.M_TEXTADEPT_MACRO_RECORDING
   end
 end
 textadept.events.add_handler('macro_record', macro_notification)
@@ -65,7 +66,6 @@ function stop_recording()
   if not recording then return end
   buffer:stop_record()
   recording = false
-  local locale = textadept.locale
   local ret, macro_name =
     cocoa_dialog('standard-inputbox', {
       ['informative-text'] = locale.M_TEXTADEPT_MACRO_SAVE_TITLE,
@@ -101,7 +101,6 @@ end
 --   is prompted to choose one from a list of available macros.
 function play(macro_name)
   if not macro_name then
-    local locale = textadept.locale
     local macros = {}
     for name, _ in pairs(list) do macros[#macros + 1] = name end
     if #macros > 0 then

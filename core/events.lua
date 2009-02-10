@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Module that handles Scintilla and Textadept notifications/events.
@@ -359,7 +360,7 @@ local title_text = '%s %s Textadept (%s)'
 -- @param buffer The currently focused buffer.
 local function set_title(buffer)
   local buffer = buffer
-  local filename = buffer.filename or buffer._type or textadept.locale.UNTITLED
+  local filename = buffer.filename or buffer._type or locale.UNTITLED
   local d = buffer.dirty and '*' or '-'
   textadept.title =
     string.format(title_text, filename:match('[^/\\]+$'), d, filename)
@@ -393,14 +394,13 @@ add_handler('uri_dropped',
   end)
 
 local EOLs = {
-  textadept.locale.STATUS_CRLF,
-  textadept.locale.STATUS_CR,
-  textadept.locale.STATUS_LF
+  locale.STATUS_CRLF,
+  locale.STATUS_CR,
+  locale.STATUS_LF
 }
 add_handler('update_ui',
   function() -- sets docstatusbar text
     local buffer = buffer
-    local locale = textadept.locale
     local pos = buffer.current_pos
     local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
     local col = buffer.column[pos] + 1
@@ -444,12 +444,11 @@ add_handler('view_switch',
 
 add_handler('quit',
   function() -- prompts for confirmation if any buffers are dirty; saves session
-    local locale = textadept.locale
     local any = false
     local list = {}
     for _, buffer in ipairs(textadept.buffers) do
       if buffer.dirty then
-        list[#list + 1] = buffer.filename or locale.UNTITLED
+        list[#list + 1] = buffer.filename or buffer._type or locale.UNTITLED
         any = true
       end
     end
@@ -475,4 +474,4 @@ end
 -- Default error handler.
 -- Prints the errors to an error buffer.
 -- @param ... Error strings.
-function error(...) textadept._print(textadept.locale.ERROR_BUFFER, ...) end
+function error(...) textadept._print(locale.ERROR_BUFFER, ...) end

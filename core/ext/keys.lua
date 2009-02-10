@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Manages key commands in Textadept.
@@ -205,7 +206,7 @@ local function keypress(code, shift, control, alt)
       local size = #keychain - 1
       clear_key_sequence()
       if size > 0 then -- previously in a chain
-        textadept.statusbar_text = textadept.locale.KEYS_INVALID
+        textadept.statusbar_text = locale.KEYS_INVALID
         return true
       end
     else
@@ -243,8 +244,7 @@ end
 try_get_cmd = function(active_table)
   for _, key_seq in ipairs(keychain) do active_table = active_table[key_seq] end
   if #active_table == 0 and next(active_table) then
-    textadept.statusbar_text =
-      textadept.locale.KEYCHAIN..table.concat(keychain, ' ')
+    textadept.statusbar_text = locale.KEYCHAIN..table.concat(keychain, ' ')
     error(-1, 0)
   else
     local func = active_table[1]
@@ -258,7 +258,7 @@ try_get_cmd = function(active_table)
         return view[func], { view, unpack(active_table, 3) }
       end
     else
-      error(textadept.locale.KEYS_UNKNOWN_COMMAND..tostring(func))
+      error(locale.KEYS_UNKNOWN_COMMAND..tostring(func))
     end
   end
 end

@@ -7,7 +7,7 @@
 -- languages.
 -- However, you must convert any UTF-16, UTF-32, etc. to UTF-8 manually as the
 -- \U+xxxx format cannot be represented in Lua.
-module('textadept.locale', package.seeall)
+module('locale', package.seeall)
 
 -- init.lua
 

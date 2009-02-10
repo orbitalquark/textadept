@@ -37,7 +37,6 @@ rawset = nil -- do not allow modifications which could compromise stability
 -- if the check fails.
 -- @param buffer The buffer in question.
 function textadept.check_focused_buffer(buffer)
-  local locale = textadept.locale
   if type(buffer) ~= 'table' or not buffer.doc_pointer then
     error(locale.ERR_BUFFER_EXPECTED, 2)
   elseif textadept.focused_doc_pointer ~= buffer.doc_pointer then
@@ -53,8 +52,8 @@ end
 -- buffer, and prints to it.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
--- @usage textadept._print(textadept.locale.ERROR_BUFFER, error_message)
--- @usage textadept._print(textadept.locale.MESSAGE_BUFFER, message)
+-- @usage textadept._print(locale.ERROR_BUFFER, error_message)
+-- @usage textadept._print(locale.MESSAGE_BUFFER, message)
 function textadept._print(buffer_type, ...)
   local function safe_print(...)
     local message = table.concat({...}, '\t')
@@ -93,9 +92,7 @@ end
 -- Prints messages to the Textadept message buffer.
 -- Opens a new buffer (if one hasn't already been opened) for printing messages.
 -- @param ... Message strings.
-function textadept.print(...)
-  textadept._print(textadept.locale.MESSAGE_BUFFER, ...)
-end
+function textadept.print(...) textadept._print(locale.MESSAGE_BUFFER, ...) end
 
 ---
 -- Displays a CocoaDialog of a specified type with given arguments returning

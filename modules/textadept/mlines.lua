@@ -1,5 +1,8 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local textadept = _G.textadept
+local locale = _G.locale
+
 ---
 -- Multiple line editing for the textadept module.
 -- There are several option variables used:

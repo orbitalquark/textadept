@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Modules browser for the Textadept project manager.
@@ -113,7 +114,6 @@ local ID = {
 }
 
 function get_context_menu(selected_item)
-  local locale = textadept.locale
   return {
     { locale.PM_BROWSER_MODULE_NEW, ID.NEW },
     { locale.PM_BROWSER_MODULE_DELETE, ID.DELETE },
@@ -125,7 +125,6 @@ function get_context_menu(selected_item)
 end
 
 function perform_menu_action(menu_id, selected_item)
-  local locale = textadept.locale
   if menu_id == ID.NEW then
     local status, module_name =
       cocoa_dialog('standard-inputbox', {

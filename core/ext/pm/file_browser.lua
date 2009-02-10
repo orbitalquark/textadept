@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- File browser for the Textadept project manager.
@@ -48,7 +49,6 @@ end
 local ID = { CHANGE_DIR = 1, FILE_INFO = 2 }
 
 function get_context_menu(selected_item)
-  local locale = textadept.locale
   return {
     { 'separator', 0 }, -- make it harder to click 'Change Directory' by mistake
     { locale.PM_BROWSER_FILE_CD, ID.CHANGE_DIR },
@@ -57,7 +57,6 @@ function get_context_menu(selected_item)
 end
 
 function perform_menu_action(menu_id, selected_item)
-  local locale = textadept.locale
   local filepath = table.concat(selected_item, '/')
   if menu_id == ID.CHANGE_DIR then
     textadept.pm.entry_text = filepath

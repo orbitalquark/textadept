@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Provides Textmate-like snippets for the textadept module.
@@ -368,8 +369,8 @@ function show_scope()
   local lexer = buffer:get_lexer_language()
   local scope = buffer.style_at[buffer.current_pos]
   local text =
-    string.format(textadept.locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer,
-                  style, style_num)
+    string.format(locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer, style,
+                  style_num)
   buffer:call_tip_show(buffer.current_pos, text)
 end
 

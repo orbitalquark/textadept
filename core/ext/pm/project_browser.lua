@@ -1,6 +1,7 @@
 -- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local textadept = _G.textadept
+local locale = _G.locale
 
 ---
 -- Browser template for the Textadept project manager.
@@ -84,7 +85,6 @@ local ID = {
 
 --- Displays the project manager context menu.
 function get_context_menu(selected_item)
-  local locale = textadept.locale
   return {
     { 'separator', 0 }, -- make it harder to click 'New Project' by mistake
     { locale.PM_BROWSER_PROJECT_NEW, ID.NEW },
@@ -101,7 +101,6 @@ function get_context_menu(selected_item)
 end
 
 function perform_menu_action(menu_id, selected_item)
-  local locale = textadept.locale
   if menu_id == ID.NEW then
     -- Close all open files and prompt the user to save a project file.
     if textadept.io.close_all() then
