@@ -11,8 +11,6 @@ buffer.caret_line_visible = true
 buffer.caret_line_back = 4473924 -- 0x44 | 0x44 << 8 | 0x44 << 16
 buffer:set_x_caret_policy(1, 20) -- CARET_SLOP
 buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
-buffer.caret_style = 2
-buffer.caret_period = 0
 
 -- selection
 buffer:set_sel_fore(1, 3355443) -- 0x33 | 0x33 << 8 | 0x33 << 16
