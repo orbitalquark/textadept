@@ -6,219 +6,395 @@ local locale = _G.locale
 ---
 -- Defines the key commands used by the Textadept key command manager.
 -- For non-ascii keys, see textadept.keys for string aliases.
+-- This set of key commands is pretty standard among other text editors.
 module('textadept.key_commands', package.seeall)
 
---[[
-  C:
-  A:   A   C       G     J K L     O               W X   Z
-  CS:      C D           J   L         Q R S T U   W
-  SA:  A   C D E   G H I J K L M   O   Q R S T     W X   Z
-  CA:  A   C D E   G H   J K L     O   Q   S T U V W X Y Z
-  CSA:     C D     G H   J K L     O   Q R S T U   W X   Z
-]]--
+-- Windows and Linux key commands are listed in the first block.
+-- Mac OSX key commands are listed in the second block.
 
 local keys = _G.keys
-
-keys.clear_sequence = 'esc'
-
 local b, v = 'buffer', 'view'
 local t = textadept
 
-keys.ct   = {} -- Textadept command chain
-keys.ct.v = {} -- View chain
+if not MAC then
+  -- Windows and Linux key commands.
 
--- Standard commands. New, open, save, etc.
-keys.ct.n = { t.new_buffer   }
-keys.cr   = { t.io.open      }
-keys.car  = { 'reload', b    }
-keys.co   = { 'save', b      }
-keys.cso  = { 'save_as', b   }
-keys.cx   = { 'close', b     }
-keys.csx  = { t.io.close_all }
-keys.aq   = { t.quit         }
-keys.cz   = { 'undo', b      }
-keys.csz  = { 'redo', b      }
-keys.cs   = { t.find.focus   } -- find/replace
+  --[[
+    C:     B   D       H   J K L                 U
+    A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
+    CS:  A B C D   F G H   J K L M N O   Q     T U V   X Y Z
+    SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+    CA:  A B C D E F G H   J K L M N O   Q R S T U V W X Y Z
+    CSA: A B C D E F G H   J K L M N O P Q R S T U V W X Y Z
+  ]]--
 
--- Recent files.
-local RECENT_FILES = 1
-t.events.add_handler('user_list_selection',
-  function(type, text)
-    if type == RECENT_FILES then t.io.open(text) end
-  end)
-keys.ar = {
-  function()
-    local buffer = buffer
-    local files = {}
-    for _, filename in ipairs(t.io.recent_files) do
-      table.insert(files, 1, filename)
+  keys.clear_sequence = 'esc'
+
+  keys.ct = {} -- Textadept command chain
+
+  -- File
+  keys.cn  = { t.new_buffer   }
+  keys.co  = { t.io.open      }
+  -- TODO: { 'reload', b }
+  keys.cs  = { 'save', b      }
+  keys.css = { 'save_as', b   }
+  keys.cw  = { 'close', b     }
+  keys.csw = { t.io.close_all }
+  -- TODO: { t.io.load_session } after prompting with open dialog
+  -- TODO: { t.io.save_session } after prompting with save dialog
+  keys.aq = { t.quit }
+
+  -- Edit
+  local m_editing = _m.textadept.editing
+  -- Undo is cz.
+  -- Redo is cy.
+  -- Cut is cx.
+  -- Copy is cc.
+  -- Paste is cv.
+  -- Delete is delete.
+  -- Select All is ca.
+  keys.ce     = { m_editing.match_brace              }
+  keys.cse    = { m_editing.match_brace, 'select'    }
+  keys['c\n'] = { m_editing.autocomplete_word, '%w_' }
+  keys.cq     = { m_editing.block_comment            }
+  -- TODO: { m_editing.current_word, 'delete' }
+  -- TODO: { m_editing.transpose_chars }
+  -- TODO: { m_editing.squeeze }
+  -- TODO: { m_editing.convert_indentation }
+  -- TODO: { m_editing.smart_cutcopy }
+  -- TODO: { m_editing.smart_cutcopy, 'copy' }
+  -- TODO: { m_editing.smart_paste }
+  -- TODO: { m_editing.smart_paste, 'cycle' }
+  -- TODO: { m_editing.smart_paste, 'reverse' }
+  keys.ac = { -- enClose in...
+    t     = { m_editing.enclose, 'tag'        },
+    st    = { m_editing.enclose, 'single_tag' },
+    ['"'] = { m_editing.enclose, 'dbl_quotes' },
+    ["'"] = { m_editing.enclose, 'sng_quotes' },
+    ['('] = { m_editing.enclose, 'parens'     },
+    ['['] = { m_editing.enclose, 'brackets'   },
+    ['{'] = { m_editing.enclose, 'braces'     },
+    c     = { m_editing.enclose, 'chars'      },
+  }
+  keys.as = { -- select in...
+    e     = { m_editing.select_enclosed               },
+    t     = { m_editing.select_enclosed, 'tags'       },
+    ['"'] = { m_editing.select_enclosed, 'dbl_quotes' },
+    ["'"] = { m_editing.select_enclosed, 'sng_quotes' },
+    ['('] = { m_editing.select_enclosed, 'parens'     },
+    ['['] = { m_editing.select_enclosed, 'brackets'   },
+    ['{'] = { m_editing.select_enclosed, 'braces'     },
+    w     = { m_editing.current_word, 'select'        },
+    l     = { m_editing.select_line                   },
+    p     = { m_editing.select_paragraph              },
+    b     = { m_editing.select_indented_block         },
+    s     = { m_editing.select_scope                  },
+    g     = { m_editing.grow_selection, 1             },
+  }
+
+  -- Search
+  keys.cf = { t.find.focus } -- find/replace
+  -- Find Next is an when find pane is focused.
+  -- Find Prev is ap when find pane is focused.
+  -- Replace is ar when find pane is focused.
+  keys.cg = { m_editing.goto_line }
+
+  -- Tools
+  keys['f2'] = { t.command_entry.focus }
+  -- Run
+  local m_run = _m.textadept.run
+  keys.cr  = { m_run.go      }
+  keys.csr = { m_run.compile }
+  -- Snippets
+  local m_snippets = _m.textadept.lsnippets
+  keys.ci   = { m_snippets.insert         }
+  keys.csi  = { m_snippets.prev           }
+  keys.cai  = { m_snippets.cancel_current }
+  keys.casi = { m_snippets.list           }
+  keys.ai   = { m_snippets.show_style     }
+  -- Multiple Line Editing
+  local m_mlines = _m.textadept.mlines
+  keys.cm    = {}
+  keys.cm.a  = { m_mlines.add             }
+  keys.cm.sa = { m_mlines.add_multiple    }
+  keys.cm.r  = { m_mlines.remove          }
+  keys.cm.sr = { m_mlines.remove_multiple }
+  keys.cm.u  = { m_mlines.update          }
+  keys.cm.c  = { m_mlines.clear           }
+
+  -- Buffers
+  keys['c\t']  = { 'goto_buffer', v, 1, false  }
+  keys['ca\t'] = { 'goto_buffer', v, -1, false }
+  local function toggle_setting(setting)
+    local state = buffer[setting]
+    if type(state) == 'boolean' then
+      buffer[setting] = not state
+    elseif type(state) == 'number' then
+      buffer[setting] = buffer[setting] == 0 and 1 or 0
     end
-    local sep = buffer.auto_c_separator
-    buffer.auto_c_separator = ('|'):byte()
-    buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
-    buffer.auto_c_separator = sep
+    t.events.update_ui() -- for updating statusbar
   end
-}
+  keys.ct.v = {
+    e      = { toggle_setting, 'view_eol'           },
+    w      = { toggle_setting, 'wrap_mode'          },
+    i      = { toggle_setting, 'indentation_guides' },
+    ['\t'] = { toggle_setting, 'use_tabs'           },
+    [' ']  = { toggle_setting, 'view_ws'            },
+  }
+  keys['f5'] = { 'colourise', b, 0, -1 }
 
--- Buffer/view commands.
-keys.an    = { 'goto_buffer', v, 1, false                 }
-keys.ap    = { 'goto_buffer', v, -1, false                }
-keys.ct.s  = { 'split', v, false                          } -- horizontal
-keys.ct.ss = { 'split', v                                 } -- vertical
-keys.can   = { t.goto_view, 1, false                      }
-keys.cap   = { t.goto_view, -1, false                     }
-keys.san   = { function() view.size = view.size + 10 end  }
-keys.sap   = { function() view.size = view.size - 10 end  }
-keys.ct.x  = { function() view:unsplit() return true end  }
-keys.ct.sx = { function() while view:unsplit() do end end }
+  -- Views
+  keys.cav = {
+    n  = { t.goto_view, 1, false                      },
+    p  = { t.goto_view, -1, false                     },
+    ss = { 'split', v                                 }, -- vertical
+    s  = { 'split', v, false                          }, -- horizontal
+    w  = { function() view:unsplit() return true end  },
+    sw = { function() while view:unsplit() do end end },
+    -- TODO: { function() view.size = view.size + 10 end  }
+    -- TODO: { function() view.size = view.size - 10 end  }
+  }
 
--- Movement/selection commands
-keys.cf   = { 'char_right',             b }
-keys.csf  = { 'char_right_extend',      b }
-keys.af   = { 'word_right',             b }
-keys.saf  = { 'word_right_extend',      b }
-keys.cb   = { 'char_left',              b }
-keys.csb  = { 'char_left_extend',       b }
-keys.ab   = { 'word_left',              b }
-keys.sab  = { 'word_left_extend',       b }
-keys.cn   = { 'line_down',              b }
-keys.csn  = { 'line_down_extend',       b }
-keys.cp   = { 'line_up',                b }
-keys.csp  = { 'line_up_extend',         b }
-keys.ca   = { 'vc_home',                b }
-keys.csa  = { 'home_extend',            b }
-keys.ce   = { 'line_end',               b }
-keys.cse  = { 'line_end_extend',        b }
-keys.cv   = { 'page_down',              b }
-keys.csv  = { 'page_down_extend',       b }
-keys.av   = { 'para_down',              b }
-keys.sav  = { 'para_down_extend',       b }
-keys.cy   = { 'page_up',                b }
-keys.csy  = { 'page_up_extend',         b }
-keys.ay   = { 'para_up',                b }
-keys.say  = { 'para_up_extend',         b }
-keys.ch   = { 'delete_back',            b }
-keys.ah   = { 'del_word_left',          b }
-keys.cd   = { 'clear',                  b }
-keys.ad   = { 'del_word_right',         b }
-keys.csaf = { 'char_right_rect_extend', b }
-keys.csab = { 'char_left_rect_extend',  b }
-keys.csan = { 'line_down_rect_extend',  b }
-keys.csap = { 'line_up_rect_extend',    b }
-keys.csaa = { 'vc_home_rect_extend',    b }
-keys.csae = { 'line_end_rect_extend',   b }
-keys.csav = { 'page_down_rect_extend',  b }
-keys.csay = { 'page_up_rect_extend',    b }
+  -- Project Manager
+  local function pm_activate(text)
+    t.pm.entry_text = text
+    t.pm.activate()
+  end
+  keys.csp = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
+  keys.cp  = {
+    function()
+      if t.pm.width == 0 then t.pm.toggle_visible() end
+      t.pm.focus()
+    end
+  }
+  keys.cap = {
+    c = { pm_activate, 'ctags'   },
+    b = { pm_activate, 'buffers' },
+    f = { pm_activate, '/'       },
+  -- TODO: { pm_activate, 'macros' }
+    m = { pm_activate, 'modules' },
+  }
 
--- Snippets commands.
-local m_snippets = _m.textadept.lsnippets
-keys.ci   = { m_snippets.insert           }
-keys.csi  = { m_snippets.prev             }
-keys.cai  = { m_snippets.cancel_current   }
-keys.casi = { m_snippets.list             }
-keys.ai   = { m_snippets.show_style       }
+  -- Miscellaneous not in standard menu.
+  -- Recent files.
+  local RECENT_FILES = 1
+  t.events.add_handler('user_list_selection',
+    function(type, text)
+      if type == RECENT_FILES then t.io.open(text) end
+    end)
+  keys.ao = {
+    function()
+      local buffer = buffer
+      local files = {}
+      for _, filename in ipairs(t.io.recent_files) do
+        table.insert(files, 1, filename)
+      end
+      local sep = buffer.auto_c_separator
+      buffer.auto_c_separator = ('|'):byte()
+      buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
+      buffer.auto_c_separator = sep
+    end
+  }
 
--- Editing commands.
-local m_editing = _m.textadept.editing
-keys.cm    = { m_editing.match_brace                  }
-keys.csm   = { m_editing.match_brace, 'select'        }
-keys['c '] = { m_editing.autocomplete_word, '%w_'     }
-keys.cq    = { m_editing.block_comment                }
-keys.cl    = { m_editing.goto_line                    }
-keys.ck    = { m_editing.smart_cutcopy,               }
-keys.csk   = { m_editing.smart_cutcopy, 'copy'        }
-keys.cu    = { m_editing.smart_paste,                 }
-keys.au    = { m_editing.smart_paste, 'cycle'         }
-keys.sau   = { m_editing.smart_paste, 'reverse'       }
-keys.cw    = { m_editing.current_word, 'delete'       }
-keys.at    = { m_editing.transpose_chars              }
-keys.csh   = { m_editing.squeeze,                     }
-keys.cj    = { m_editing.join_lines                   }
-keys.csai  = { m_editing.convert_indentation          }
-keys.ae = { -- enclose in...
-  t      = { m_editing.enclose, 'tag'        },
-  st     = { m_editing.enclose, 'single_tag' },
-  ['s"'] = { m_editing.enclose, 'dbl_quotes' },
-  ["'"]  = { m_editing.enclose, 'sng_quotes' },
-  ['(']  = { m_editing.enclose, 'parens'     },
-  ['[']  = { m_editing.enclose, 'brackets'   },
-  ['{']  = { m_editing.enclose, 'braces'     },
-  c      = { m_editing.enclose, 'chars'      },
-}
-keys.as = { -- select in...
-  e      = { m_editing.select_enclosed               },
-  t      = { m_editing.select_enclosed, 'tags'       },
-  ['s"'] = { m_editing.select_enclosed, 'dbl_quotes' },
-  ["'"]  = { m_editing.select_enclosed, 'sng_quotes' },
-  ['(']  = { m_editing.select_enclosed, 'parens'     },
-  ['[']  = { m_editing.select_enclosed, 'brackets'   },
-  ['{']  = { m_editing.select_enclosed, 'braces'     },
-  w      = { m_editing.current_word,    'select'     },
-  l      = { m_editing.select_line                   },
-  p      = { m_editing.select_paragraph              },
-  i      = { m_editing.select_indented_block         },
-  s      = { m_editing.select_scope                  },
-  g      = { m_editing.grow_selection, 1             },
-  a      = { 'select_all', b                         },
-}
+else
+  -- Mac OSX key commands
 
--- Multiple lines commands.
-local m_mlines = _m.textadept.mlines
-keys.am = {
-  a  = { m_mlines.add             },
-  sa = { m_mlines.add_multiple    },
-  r  = { m_mlines.remove          },
-  sr = { m_mlines.remove_multiple },
-  u  = { m_mlines.update          },
-  c  = { m_mlines.clear           },
-}
+  --[[
+    C:                     J   L                 U   W X   Z
+    A:     B   D E     H   J K L                 U
+    CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
+    SA:  A B C D   F   H   J K L M N O   Q R   T U V   X
+    CA:  A   C   E   G     J K L M N O   Q R S T U V W X Y Z
+    CSA: A   C D E   G H   J K L M N O P Q R S T U V W X Y Z
+  ]]--
 
--- Macro commands.
-local m_macro = _m.textadept.macros
-keys.cam  = { m_macro.toggle_record }
-keys.csam = { m_macro.play          }
+  keys.clear_sequence = 'aesc'
 
--- Run command.
-local m_run = _m.textadept.run
-keys.cg = { m_run.go }
-keys.csg = { m_run.compile }
+  keys.at = {} -- Textadept command chain
 
--- Project manager commands.
-local function pm_activate(text)
-  t.pm.entry_text = text
-  t.pm.activate()
+  -- File
+  keys.an  = { t.new_buffer   }
+  keys.ao  = { t.io.open      }
+  -- TODO: { 'reload', b }
+  keys.as  = { 'save', b      }
+  keys.sas = { 'save_as', b   }
+  keys.aw  = { 'close', b     }
+  keys.saw = { t.io.close_all }
+  -- TODO: { t.io.load_session } after prompting with open dialog
+  -- TODO: { t.io.save_session } after prompting with save dialog
+  keys.aq = { t.quit }
+
+  -- Edit
+  local m_editing = _m.textadept.editing
+  keys.az  = { 'undo', b                       }
+  keys.saz = { 'redo', b                       }
+  keys.ax  = { 'cut', b                        }
+  keys.ac  = { m_editing.smart_cutcopy, 'copy' }
+  keys.av  = { m_editing.smart_paste           }
+  -- Delete is delete.
+  keys.aa  = { 'select_all', b }
+  keys.cm  = { m_editing.match_brace              }
+  keys.sae = { m_editing.match_brace, 'select'    }
+  keys.esc = { m_editing.autocomplete_word, '%w_' }
+  keys.cq  = { m_editing.block_comment            }
+  -- TODO: { m_editing.current_word, 'delete' }
+  keys.ct = { m_editing.transpose_chars }
+  -- TODO: { m_editing.squeeze }
+  -- TODO: { m_editing.convert_indentation }
+  keys.ck = { m_editing.smart_cutcopy }
+  -- TODO: { m_editing.smart_cutcopy, 'copy' }
+  keys.cy  = { m_editing.smart_paste            }
+  keys.ay  = { m_editing.smart_paste, 'cycle'   }
+  keys.say = { m_editing.smart_paste, 'reverse' }
+  keys.cc = { -- enClose in...
+    t     = { m_editing.enclose, 'tag'        },
+    st    = { m_editing.enclose, 'single_tag' },
+    ['"'] = { m_editing.enclose, 'dbl_quotes' },
+    ["'"] = { m_editing.enclose, 'sng_quotes' },
+    ['('] = { m_editing.enclose, 'parens'     },
+    ['['] = { m_editing.enclose, 'brackets'   },
+    ['{'] = { m_editing.enclose, 'braces'     },
+    c     = { m_editing.enclose, 'chars'      },
+  }
+  keys.cs = { -- select in...
+    e     = { m_editing.select_enclosed               },
+    t     = { m_editing.select_enclosed, 'tags'       },
+    ['"'] = { m_editing.select_enclosed, 'dbl_quotes' },
+    ["'"] = { m_editing.select_enclosed, 'sng_quotes' },
+    ['('] = { m_editing.select_enclosed, 'parens'     },
+    ['['] = { m_editing.select_enclosed, 'brackets'   },
+    ['{'] = { m_editing.select_enclosed, 'braces'     },
+    w     = { m_editing.current_word, 'select'        },
+    l     = { m_editing.select_line                   },
+    p     = { m_editing.select_paragraph              },
+    b     = { m_editing.select_indented_block         },
+    s     = { m_editing.select_scope                  },
+    g     = { m_editing.grow_selection, 1             },
+  }
+
+  -- Search
+  keys.af  = { t.find.focus          } -- find/replace
+  keys.ag  = { t.find.call_find_next }
+  keys.sag = { t.find.call_find_prev }
+  keys.ar  = { t.find.call_replace   }
+  keys.cg  = { m_editing.goto_line   }
+
+  -- Tools
+  keys['f2'] = { t.command_entry.focus }
+  -- Run
+  local m_run = _m.textadept.run
+  keys.cr  = { m_run.go      }
+  keys.csr = { m_run.compile }
+  -- Snippets
+  local m_snippets = _m.textadept.lsnippets
+  keys.ai   = { m_snippets.insert         }
+  keys.sai  = { m_snippets.prev           }
+  keys.cai  = { m_snippets.cancel_current }
+  keys.casi = { m_snippets.list           }
+  keys.ci   = { m_snippets.show_style     }
+  -- Multiple Line Editing
+  local m_mlines = _m.textadept.mlines
+  keys.am    = {}
+  keys.am.a  = { m_mlines.add             }
+  keys.am.sa = { m_mlines.add_multiple    }
+  keys.am.r  = { m_mlines.remove          }
+  keys.am.sr = { m_mlines.remove_multiple }
+  keys.am.u  = { m_mlines.update          }
+  keys.am.c  = { m_mlines.clear           }
+
+  -- Buffers
+  keys['c\t']  = { 'goto_buffer', v, 1, false  }
+  keys['ca\t'] = { 'goto_buffer', v, -1, false }
+  local function toggle_setting(setting)
+    local state = buffer[setting]
+    if type(state) == 'boolean' then
+      buffer[setting] = not state
+    elseif type(state) == 'number' then
+      buffer[setting] = buffer[setting] == 0 and 1 or 0
+    end
+    t.events.update_ui() -- for updating statusbar
+  end
+  keys.at.v = {
+    e      = { toggle_setting, 'view_eol'           },
+    w      = { toggle_setting, 'wrap_mode'          },
+    i      = { toggle_setting, 'indentation_guides' },
+    ['\t'] = { toggle_setting, 'use_tabs'           },
+    [' ']  = { toggle_setting, 'view_ws'            },
+  }
+  keys['f5'] = { 'colourise', b, 0, -1 }
+
+  -- Views
+  keys.cv = {
+    n  = { t.goto_view, 1, false                      },
+    p  = { t.goto_view, -1, false                     },
+    ss = { 'split', v                                 }, -- vertical
+    s  = { 'split', v, false                          }, -- horizontal
+    w  = { function() view:unsplit() return true end  },
+    sw = { function() while view:unsplit() do end end },
+    -- TODO: { function() view.size = view.size + 10 end  }
+    -- TODO: { function() view.size = view.size - 10 end  }
+  }
+
+  -- Project Manager
+  local function pm_activate(text)
+    t.pm.entry_text = text
+    t.pm.activate()
+  end
+  keys.sap = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
+  keys.ap  = {
+    function()
+      if t.pm.width == 0 then t.pm.toggle_visible() end
+      t.pm.focus()
+    end
+  }
+  keys.cap = {
+    c = { pm_activate, 'ctags'   },
+    b = { pm_activate, 'buffers' },
+    f = { pm_activate, '/'       },
+  -- TODO: { pm_activate, 'macros' }
+    m = { pm_activate, 'modules' },
+  }
+
+  -- Miscellaneous not in standard menu.
+  -- Recent files.
+  local RECENT_FILES = 1
+  t.events.add_handler('user_list_selection',
+    function(type, text)
+      if type == RECENT_FILES then t.io.open(text) end
+    end)
+  keys.co = {
+    function()
+      local buffer = buffer
+      local files = {}
+      for _, filename in ipairs(t.io.recent_files) do
+        table.insert(files, 1, filename)
+      end
+      local sep = buffer.auto_c_separator
+      buffer.auto_c_separator = ('|'):byte()
+      buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
+      buffer.auto_c_separator = sep
+    end
+  }
+
+  -- Movement/selection commands
+  keys.cf   = { 'char_right',        b }
+  keys.csf  = { 'char_right_extend', b }
+  keys.caf  = { 'word_right',        b }
+  keys.csaf = { 'word_right_extend', b }
+  keys.cb   = { 'char_left',         b }
+  keys.csb  = { 'char_left_extend',  b }
+  keys.cab  = { 'word_left',         b }
+  keys.csab = { 'word_left_extend',  b }
+  keys.cn   = { 'line_down',         b }
+  keys.csn  = { 'line_down_extend',  b }
+  keys.cp   = { 'line_up',           b }
+  keys.csp  = { 'line_up_extend',    b }
+  keys.ca   = { 'vc_home',           b }
+  keys.csa  = { 'home_extend',       b }
+  keys.ce   = { 'line_end',          b }
+  keys.cse  = { 'line_end_extend',   b }
+  keys.ch   = { 'delete_back',       b }
+  keys.cah  = { 'del_word_left',     b }
+  keys.cd   = { 'clear',             b }
+  keys.cad  = { 'del_word_right',    b }
 end
-keys['c\t'] = { t.pm.focus             }
-keys.ct.b   = { pm_activate, 'buffers' }
-keys.ct.c   = { pm_activate, 'ctags'   }
-keys.ct.m   = { pm_activate, 'macros'  }
-keys.ct.v.p = { t.pm.toggle_visible    }
-
--- Toggle setting commands.
-local function toggle_setting(setting)
-  local state = buffer[setting]
-  if type(state) == 'boolean' then
-    buffer[setting] = not state
-  elseif type(state) == 'number' then
-    buffer[setting] = buffer[setting] == 0 and 1 or 0
-  end
-  t.events.update_ui() -- for updating statusbar
-end
-keys.ct.v.e = { toggle_setting, 'view_eol'           }
-keys.ct.v.r = { toggle_setting, 'wrap_mode'          }
-keys.ct.v.i = { toggle_setting, 'indentation_guides' }
-keys.ct.v.t = { toggle_setting, 'use_tabs'           }
-keys.ct.v.w = { toggle_setting, 'view_ws'            }
-
--- Miscellaneous commands.
-keys.cc = { t.command_entry.focus }
-local m_events = t.events
-keys.cab  = { m_events.handle, 'call_tip_click', 1 }
-keys.caf  = { m_events.handle, 'call_tip_click', 2 }
-keys.ct.f = {
-  function()
-    local buffer = buffer
-    buffer:toggle_fold(buffer:line_from_position(buffer.current_pos))
-  end
-}
-keys.f5 = { 'colourise', b, 0, -1 }

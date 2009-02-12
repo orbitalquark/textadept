@@ -187,10 +187,6 @@ function perform_menu_action(menu_id, selected_item)
   elseif menu_id == ID.CONF_KEY_COMMANDS then
     if textadept.key_commands then
       textadept.io.open(_HOME..'/core/ext/key_commands.lua')
-    elseif textadept.key_commands_std then
-      textadept.io.open(_HOME..'/core/ext/key_commands_std.lua')
-    elseif textadept.key_commands_mac then
-      textadept.io.open(_HOME..'/core/ext/key_commands_mac.lua')
     end
   elseif menu_id == ID.RELOAD then
     textadept.reset()
