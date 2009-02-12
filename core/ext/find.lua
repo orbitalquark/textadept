@@ -123,7 +123,9 @@ function find.find(text, next, flags, nowrap, wrapped)
       search_dir(dir)
       if #matches == 1 then matches[2] = locale.FIND_NO_RESULTS end
       matches[#matches + 1] = ''
-      previous_view = view
+      if buffer._type ~= locale.FIND_FILES_FOUND_BUFFER then
+        previous_view = view
+      end
       textadept._print(locale.FIND_FILES_FOUND_BUFFER,
                        table.concat(matches, '\n'))
     end
@@ -259,7 +261,23 @@ function goto_file(pos, line_num)
     line = buffer:get_line(line_num)
     local file, line_num = line:match('^(.+):(%d+):.+$')
     if file and line_num then
-      if previous_view then previous_view:focus() end
+      if #textadept.views == 1 then
+        _, previous_view = view:split(false) -- horizontal
+      else
+        local clicked_view = view
+        if previous_view then previous_view:focus() end
+        if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
+          -- there are at least two find in files views; find one of those views
+          -- that the file was not selected from and focus it
+          for _, v in ipairs(textadept.views) do
+            if v ~= clicked_view then
+              previous_view = v
+              v:focus()
+              break
+            end
+          end
+        end
+      end
       textadept.io.open(file)
       buffer:ensure_visible_enforce_policy(line_num - 1)
       buffer:goto_line(line_num - 1)
