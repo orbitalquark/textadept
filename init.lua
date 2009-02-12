@@ -36,9 +36,7 @@ require 'textadept'
 
 -- Core extension modules that must be loaded last.
 require 'ext/menu' -- provides the menu bar
---require 'ext/key_commands_std' -- key commands for Windows and Linux
---require 'ext/key_commands_mac' -- key commands for Mac OSX
-require 'ext/key_commands' -- key commands for Mitchell (Nano-Emacs hybrid)
+require 'ext/key_commands' -- key commands
 end
 
 if not RESETTING then
