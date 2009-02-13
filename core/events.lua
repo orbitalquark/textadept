@@ -466,8 +466,9 @@ add_handler('quit',
   end)
 
 if MAC then
-  function appleevent_odoc(uri) return handle('appleevent_odoc', uri) end
-  add_handler('appleevent_odoc', function(uri) textadept.io.open(uri) end)
+  function appleevent_odoc(uri)
+    return handle('uri_dropped', 'file://'..uri)
+  end
 end
 
 ---
