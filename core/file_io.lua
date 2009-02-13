@@ -26,16 +26,20 @@ local function open_helper(filename)
   for index, buffer in ipairs(textadept.buffers) do
     if filename == buffer.filename then view:goto_buffer(index) return end
   end
-  local buffer = textadept.new_buffer()
-  local f, err = io.open(filename, 'rb')
+  local text
+  local f = io.open(filename, 'rb')
   if f then
-    local text = f:read('*all')
+    text = f:read('*all')
+    f:close()
+    if not text then return end -- filename exists, but can't read it
+  end
+  local buffer = textadept.new_buffer()
+  if text then
     local chunk = #text > 65536 and text:sub(1, 65536) or text
     if chunk:find('\0') then buffer.code_page = 0 end -- binary file; no UTF-8
     buffer:add_text(text, #text)
     buffer:goto_pos(0)
     buffer:empty_undo_buffer()
-    f:close()
   end
   buffer.filename = filename
   buffer:set_save_point()
