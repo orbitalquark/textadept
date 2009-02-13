@@ -79,3 +79,21 @@ function perform_menu_action(menu_id, selected_item)
     })
   end
 end
+
+-- load the dropped directory (if any) into the file browser; events.lua's
+-- "uri_dropped" handler already opens dropped files
+textadept.events.add_handler('uri_dropped',
+  function(uris)
+    for uri in uris:gmatch('[^\r\n\f]+') do
+      if uri:find('^file://') then
+        uri = uri:match('^file://([^\r\n\f]+)')
+        uri = uri:gsub('%%20', ' ') -- sub back for spaces
+        if WIN32 then uri = uri:sub(2, -1) end -- ignore leading '/'
+        if lfs.attributes(uri).mode == 'directory' then
+          textadept.pm.entry_text = uri
+          textadept.pm.activate()
+          return
+        end
+      end
+    end
+  end)
