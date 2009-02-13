@@ -20,9 +20,9 @@ if not MAC then
   -- Windows and Linux key commands.
 
   --[[
-    C:     B   D       H   J K L                 U
+    C:     B   D       H I J K L                 U
     A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
-    CS:  A B C D   F G H   J K L M N O   Q     T U V   X Y Z
+    CS:  A B C D   F G H I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
     CA:  A B C D E F G H   J K L M N O   Q R S T U V W X Y Z
     CSA: A B C D E F G H   J K L M N O P Q R S T U V W X Y Z
@@ -107,11 +107,11 @@ if not MAC then
   keys.csr = { m_run.compile }
   -- Snippets
   local m_snippets = _m.textadept.lsnippets
-  keys.ci   = { m_snippets.insert         }
-  keys.csi  = { m_snippets.prev           }
-  keys.cai  = { m_snippets.cancel_current }
-  keys.casi = { m_snippets.list           }
-  keys.ai   = { m_snippets.show_style     }
+  keys['\t']  = { m_snippets.insert         }
+  keys['s\t'] = { m_snippets.prev           }
+  keys.cai    = { m_snippets.cancel_current }
+  keys.casi   = { m_snippets.list           }
+  keys.ai     = { m_snippets.show_style     }
   -- Multiple Line Editing
   local m_mlines = _m.textadept.mlines
   keys.cm    = {}
@@ -201,9 +201,9 @@ else
 
   --[[
     C:                     J   L                 U   W X   Z
-    A:     B   D E     H   J K L                 U
+    A:     B   D E     H I J K L                 U
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
-    SA:  A B C D   F   H   J K L M N O   Q R   T U V   X
+    SA:  A B C D   F   H I J K L M N O   Q R   T U V   X
     CA:  A   C   E   G     J K L M N O   Q R S T U V W X Y Z
     CSA: A   C D E   G H   J K L M N O P Q R S T U V W X Y Z
   ]]--
@@ -287,11 +287,11 @@ else
   keys.csr = { m_run.compile }
   -- Snippets
   local m_snippets = _m.textadept.lsnippets
-  keys.ai   = { m_snippets.insert         }
-  keys.sai  = { m_snippets.prev           }
-  keys.cai  = { m_snippets.cancel_current }
-  keys.casi = { m_snippets.list           }
-  keys.ci   = { m_snippets.show_style     }
+  keys['\t']  = { m_snippets.insert         }
+  keys['s\t'] = { m_snippets.prev           }
+  keys.cai    = { m_snippets.cancel_current }
+  keys.casi   = { m_snippets.list           }
+  keys.ci     = { m_snippets.show_style     }
   -- Multiple Line Editing
   local m_mlines = _m.textadept.mlines
   keys.am    = {}

@@ -106,9 +106,10 @@ local snippet_info, run_lua_code, handle_escapes, unhandle_escapes, unescape
 -- The text inserted has escape sequences handled.
 -- @param s_text Optional snippet to expand. If none is specified, the snippet
 --   is determined from the trigger word (left of the caret), lexer, and style.
+-- @return false if no snippet was expanded; true otherwise.
 function insert(s_text)
   local buffer = buffer
-  local caret = buffer.current_pos
+  local anchor, caret = buffer.anchor, buffer.current_pos
   local lexer, style, start, s_name
   if not s_text then
     lexer = buffer:get_lexer_language()
@@ -127,7 +128,7 @@ function insert(s_text)
     ret, s_text = pcall(try_get_snippet, lexer, style, s_name)
     if not ret then ret, s_text = pcall(try_get_snippet, lexer, s_name) end
     if not ret then ret, s_text = pcall(try_get_snippet, s_name) end
-    if not ret then buffer:goto_pos(caret) end -- restore caret
+    if not ret then buffer:set_sel(anchor, caret) end -- restore caret
   end
 
   if s_text then
@@ -166,7 +167,8 @@ function insert(s_text)
 
     -- Indent all lines inserted.
     buffer.current_pos = snippet.start_pos
-    local count = 0 for _ in s_text:gmatch('\n') do count = count + 1 end
+    local count = 0
+    for _ in s_text:gmatch('\n') do count = count + 1 end
     if count > 0 then
       local ref_line = buffer:line_from_position(start)
       local isize, ibase = buffer.indent, buffer.line_indentation[ref_line]
@@ -179,18 +181,22 @@ function insert(s_text)
     buffer:end_undo_action()
   end
 
-  next()
+  return next() ~= false
 end
 
 ---
 -- If previously at a placeholder or tab stop, attempts to mirror and/or
 -- transform the entered text at all appropriate mirrors before moving on to
 -- the next placeholder or tab stop.
+-- @return false if no snippet was expanded; nil otherwise
 function next()
-  if not snippet.index then return end
+  if not snippet.index then return false end -- no snippet was expanded
   local buffer = buffer
   local s_start, s_end, s_text = snippet_info()
-  if not s_text then cancel_current() return end
+  if not s_text then
+    cancel_current()
+    return
+  end
 
   local index = snippet.index
   snippet.snapshots[index] = s_text
@@ -253,7 +259,11 @@ function next()
         end
         if e then e = e + 1 end
       end
-      if not s then snippet.index = index + 1 return next() end
+      if not s then
+        snippet.index = index + 1
+        next()
+        return
+      end
       buffer:set_sel(s, e - 1)
       buffer:replace_sel('')
     end
@@ -287,8 +297,9 @@ end
 ---
 -- Goes back to the previous placeholder or tab stop, reverting changes made to
 -- subsequent ones.
+-- @return false if no snippet is active; nil otherwise
 function prev()
-  if not snippet.index then return end
+  if not snippet.index then return false end -- no snippet active
   local buffer = buffer
   local index = snippet.index
   if index > 1 then
@@ -298,6 +309,8 @@ function prev()
     buffer:replace_sel(s_text)
     snippet.index = index - 2
     next()
+  else
+    cancel_current()
   end
 end
 

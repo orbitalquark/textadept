@@ -102,6 +102,7 @@ local unpack = _G.unpack
 -- @class table
 -- @name KEYSYMS
 local KEYSYMS = { -- from <gdk/gdkkeysyms.h>
+  [65056] = '\t', -- backtab; will be 'shift'ed
   [65288] = '\b',
   [65289] = '\t',
   [65293] = '\n',
