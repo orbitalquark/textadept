@@ -179,7 +179,7 @@ function perform_menu_action(menu_id, selected_item)
             if ret == '3' then return end
           end
         end
-        local f = io.open(file, 'w')
+        local f = io.open(file, 'wb')
         f:write('')
         f:close()
         update_project()
@@ -412,7 +412,7 @@ end
 -- Sets the local 'project_file' and 'project' fields appropriately.
 -- @param file The project file.
 load_project = function(file)
-  local f = io.open(file)
+  local f = io.open(file, 'rb')
   project_root = loadstring('return '..f:read('*all'))()
   f:close()
   project_file = file
@@ -436,7 +436,7 @@ update_project = function()
       end
     end
   end
-  local f = io.open(project_file, 'w')
+  local f = io.open(project_file, 'wb')
   f:write('{\n')
   write_folder(project_root, f)
   f:write('}')

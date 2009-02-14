@@ -55,11 +55,10 @@ function goto_required()
   end
   if not file then return end
   file = file:sub(2, -2):gsub('%.', '/')
+  local lfs = require 'lfs'
   for path in package.path:gmatch('[^;]+') do
     path = path:gsub('?', file)
-    local f = io.open(path)
-    if f then
-      f:close()
+    if lfs.attributes(file) then
       textadept.io.open(path)
       break
     end

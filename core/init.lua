@@ -12,7 +12,7 @@ end
 _THEME = 'light'
 local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
 if user_dir then
-  local f = io.open(user_dir..'/.ta_theme')
+  local f = io.open(user_dir..'/.ta_theme', 'rb')
   if f then
     theme = f:read('*line'):match('[^\r\n]+')
     f:close()

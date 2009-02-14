@@ -147,7 +147,7 @@ end
 -- @param filename The absolute path to the file to save the macros to.
 function save(filename)
   if not filename then filename = MACRO_FILE end
-  local f = assert(io.open(filename, 'w'))
+  local f = assert(io.open(filename, 'wb'))
   for name, macro in pairs(list) do
     f:write(name, '\n')
     for _, command in ipairs(macro) do
@@ -170,7 +170,7 @@ end
 -- @param filename The absolute path to the file to load the macros from.
 function load(filename)
   if not filename then filename = MACRO_FILE end
-  local f = io.open(filename)
+  local f = io.open(filename, 'rb')
   if not f then return end
   local name, current_macro
   for line in f:lines() do

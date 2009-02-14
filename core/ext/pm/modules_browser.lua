@@ -141,17 +141,17 @@ function perform_menu_action(menu_id, selected_item)
     local module_dir = _HOME..'/modules/'..module_name
     if lfs.mkdir(module_dir) then
       -- write init.lua from template
-      local f = io.open(module_dir..'/init.lua', 'w')
+      local f = io.open(module_dir..'/init.lua', 'wb')
       local out = INIT:gsub('$1', module_name):gsub('$2', lang_name)
       f:write(out)
       f:close()
       -- write snippets.lua from template
-      f = io.open(module_dir..'/snippets.lua', 'w')
+      f = io.open(module_dir..'/snippets.lua', 'wb')
       out = SNIPPETS:gsub('$1', module_name):gsub('$2', lang_name)
       f:write(out)
       f:close()
       -- write commands.lua from template
-      f = io.open(module_dir..'/commands.lua', 'w')
+      f = io.open(module_dir..'/commands.lua', 'wb')
       out = COMMANDS:gsub('$1', module_name):gsub('$2', lang_name)
       f:write(out)
       f:close()
