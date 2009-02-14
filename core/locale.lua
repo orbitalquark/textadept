@@ -66,6 +66,18 @@ IO_CLOSE_TITLE = 'Save?'
 IO_CLOSE_TEXT = 'Save changes before closing?'
 -- You will have to save changes manually.
 IO_CLOSE_MSG = 'You will have to save changes manually.'
+-- Reload?
+IO_RELOAD_TITLE = 'Reload?'
+-- Reload modified file?
+IO_RELOAD_TEXT = 'Reload modified file?'
+-- '%s'
+-- has been modified outside of Textadept.
+-- Reload it to reflect the newest version?
+IO_RELOAD_MSG = [[
+'%s'
+has been modified outside of Textadept.
+Reload it to reflect the newest version?
+]]
 
 -- core/iface.lua
 
