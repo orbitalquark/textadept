@@ -76,7 +76,7 @@ end
 function reload(buffer)
   textadept.check_focused_buffer(buffer)
   if not buffer.filename then return end
-  local f, err = io.open(buffer.filename)
+  local f, err = io.open(buffer.filename, 'rb')
   if f then
     local pos = buffer.current_pos
     local first_visible_line = buffer.first_visible_line
@@ -196,7 +196,7 @@ function load_session(filename, only_pm)
   local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
   if not user_dir then return end
   local ta_session = user_dir..'/.ta_session'
-  local f = io.open(filename or ta_session)
+  local f = io.open(filename or ta_session, 'rb')
   local current_view, splits = 1, { [0] = {} }
   if f then
     for line in f:lines() do
@@ -204,7 +204,7 @@ function load_session(filename, only_pm)
         if line:find('^buffer:') then
           local anchor, current_pos, first_visible_line, filename =
             line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
-          textadept.io.open(filename or '')
+          textadept.io.open(filename or '', 'rb')
           -- Restore saved buffer selection and view.
           local anchor = tonumber(anchor) or 0
           local current_pos = tonumber(current_pos) or 0
@@ -314,7 +314,7 @@ function save_session(filename)
   local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
   if not user_dir then return end
   local ta_session = user_dir..'/.ta_session'
-  local f = io.open(filename or ta_session, 'w')
+  local f = io.open(filename or ta_session, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
     f:close()
@@ -336,7 +336,7 @@ end
 -- @usage textadept.io.read_api_file(filename, '%w_')
 function read_api_file(filename, word_chars)
   local api = {}
-  local f = io.open(filename)
+  local f = io.open(filename, 'rb')
   if f then
     for line in f:lines() do
       local func, params, desc =

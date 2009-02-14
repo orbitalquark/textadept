@@ -117,13 +117,13 @@ function get_contents_for(full_path, expanding)
     current_file = nil
     current_dir = '' -- ctags file will specify absolute paths
     os.execute('ctags -f '..FILE_OUT..' '..(buffer.filename or ''))
-    f = io.open(FILE_OUT)
+    f = io.open(FILE_OUT, 'rb')
     if not f then return {} end
   elseif not expanding then
     tags = {}
     current_file = ctags_file
     current_dir = ctags_file:match('^.+/') -- ctags file dirname
-    f = io.open(ctags_file)
+    f = io.open(ctags_file, 'rb')
     if not f then return {} end
   else
     local parent = tags
