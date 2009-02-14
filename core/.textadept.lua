@@ -15,6 +15,7 @@ module('textadept')
 -- @field focused_doc_pointer The pointer to the document associated with the
 --   buffer of the currently focused view. (Used internally; read-only)
 -- @field menubar A table of GTK menus defining a menubar (write-only).
+-- @field context_menu A GTK menu defining the editor's context menu.
 -- @field clipboard_text The text on the clipboard (read-only).
 -- @field statusbar_text The text displayed by the statusbar (write-only).
 -- @field docstatusbar_text The text displayed by the doc statusbar
@@ -22,7 +23,7 @@ module('textadept')
 -- @field size The size of the Textadept window ({ width, height}).
 textadept = {
   title = nil, focused_doc_pointer = nil, clipboard_text = nil, menubar = nil,
-  statusbar_text = nil, docstatusbar_text = nil, size = nil
+  context_menu = nil, statusbar_text = nil, docstatusbar_text = nil, size = nil
 }
 
 ---

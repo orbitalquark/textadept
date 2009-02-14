@@ -20,6 +20,7 @@ GtkWidget *window, *focused_editor, *menubar, *statusbar, *docstatusbar;
 static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer);
 static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer);
 static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer);
+static gbool t_buttonpress(GtkWidget*, GdkEventButton *event, gpointer);
 static gbool w_focus(GtkWidget*, GdkEventFocus *, gpointer);
 static gbool w_keypress(GtkWidget*, GdkEventKey *event, gpointer);
 static gbool w_exit(GtkWidget*, GdkEventAny*, gpointer);
@@ -243,7 +244,9 @@ void create_ui() {
 GtkWidget *new_scintilla_window(sptr_t buffer_id) {
   GtkWidget *editor = scintilla_new();
   gtk_widget_set_size_request(editor, 1, 1); // minimum size
+  SS(SCINTILLA(editor), SCI_USEPOPUP, 0, 0);
   signal(editor, "key_press_event", t_keypress);
+  signal(editor, "button_press_event", t_buttonpress);
   signal(editor, "command", t_command);
   signal(editor, SCINTILLA_NOTIFY, t_notification);
   l_add_scintilla_window(editor);
@@ -488,6 +491,17 @@ static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
   bool alt = event->state & GDK_META_MASK;
 #endif
   return l_handle_keypress(event->keyval, shift, control, alt) ? TRUE : FALSE;
+}
+
+/**
+ * Signal for a Scintilla mouse click.
+ * If it is a right-click, popup a context menu.
+ * @see l_ta_popup_context_menu
+ */
+static gbool t_buttonpress(GtkWidget*, GdkEventButton *event, gpointer) {
+  if (event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
+  l_ta_popup_context_menu(event);
+  return TRUE;
 }
 
 /**

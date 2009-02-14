@@ -88,6 +88,7 @@ bool l_handle_event(const char *e, const char *arg=NULL);
 bool l_handle_keypress(int keyval, bool shift, bool control, bool alt);
 void l_handle_scnnotification(SCNotification *n);
 void l_ta_command(const char *command);
+void l_ta_popup_context_menu(GdkEventButton *event);
 
 bool l_cec_get_completions_for(const char *entry_text);
 void l_cec_populate(GtkListStore *store);

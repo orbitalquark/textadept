@@ -585,3 +585,15 @@ t.events.add_handler('menu_clicked',
       end
     end
   end)
+
+t.context_menu = gtkmenu {
+  { l.MENU_EDIT_UNDO, ID.UNDO },
+  { l.MENU_EDIT_REDO, ID.REDO },
+  { SEPARATOR, ID.SEPARATOR },
+  { l.MENU_EDIT_CUT, ID.CUT },
+  { l.MENU_EDIT_COPY, ID.COPY },
+  { l.MENU_EDIT_PASTE, ID.PASTE },
+  { l.MENU_EDIT_DELETE, ID.DELETE },
+  { SEPARATOR, ID.SEPARATOR },
+  { l.MENU_EDIT_SELECT_ALL, ID.SELECT_ALL }
+}
