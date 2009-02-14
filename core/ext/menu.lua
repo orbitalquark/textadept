@@ -423,6 +423,7 @@ end
 local function set_lexer_language(lexer)
   buffer:set_lexer_language(lexer)
   buffer:colourise(0, -1)
+  textadept.events.update_ui() -- for updating statusbar
 end
 
 local actions = {
