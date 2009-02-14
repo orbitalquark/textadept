@@ -1272,9 +1272,19 @@ static int l_pm_mt_newindex(lua_State *lua) {
   else if (streq(key, "cursor")) {
     GtkTreePath *path = gtk_tree_path_new_from_string(lua_tostring(lua, 3));
     luaL_argcheck(lua, path, 3, "bad path");
+    int *indices = gtk_tree_path_get_indices(path);
+    GtkTreePath *ipath = gtk_tree_path_new_from_indices(indices[0], -1);
+    for (int i = 1; i < gtk_tree_path_get_depth(path); i++)
+      if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pm_view), ipath) ||
+          gtk_tree_view_expand_row(GTK_TREE_VIEW(pm_view), ipath, FALSE))
+        gtk_tree_path_append_index(ipath, indices[i]);
+      else
+        break;
     GtkTreeViewColumn *col =
       gtk_tree_view_get_column(GTK_TREE_VIEW(pm_view), 0);
-    gtk_tree_view_set_cursor(GTK_TREE_VIEW(pm_view), path, col, FALSE);
+    gtk_tree_view_set_cursor(GTK_TREE_VIEW(pm_view), ipath, col, FALSE);
+    gtk_tree_path_free(ipath);
+    gtk_tree_path_free(path);
   } else lua_rawset(lua, 1);
   return 0;
 }
