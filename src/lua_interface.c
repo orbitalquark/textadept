@@ -748,6 +748,26 @@ void l_handle_scnnotification(SCNotification *n) {
 }
 
 /**
+ * Requests and pops up a context menu for the Scintilla view.
+ * @param event The mouse button event.
+ */
+void l_ta_popup_context_menu(GdkEventButton *event) {
+  lua_getglobal(lua, "textadept");
+  if (lua_istable(lua, -1)) {
+    lua_getfield(lua, -1, "context_menu");
+    if (lua_isuserdata(lua, -1)) {
+      GtkWidget *menu = l_togtkwidget(lua, -1);
+      gtk_widget_show_all(menu);
+      gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+                     event ? event->button : 0,
+                     gdk_event_get_time(reinterpret_cast<GdkEvent*>(event)));
+    } else if (!lua_isnil(lua, -1))
+      warn("textadept.context_menu is not a gtkmenu.");
+    lua_pop(lua, 1); // textadept.context_menu
+  } else lua_pop(lua, 1);
+}
+
+/**
  * Executes a given command string as Lua code.
  * @param command Lua code to execute.
  */
