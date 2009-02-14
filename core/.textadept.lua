@@ -69,14 +69,7 @@ function get_split_table() end
 --     Otherwise a regular menu item with a mnemonic is created.
 --   Submenus are just nested menu-structure tables. Their title text is defined
 --   with a 'title' key.
--- @see popupmenu
 function gtkmenu(menu_table) end
-
----
--- Pops up a GTK menu at the cursor.
--- @param menu The menu userdata returned by gtkmenu.
--- @see gtkmenu
-function popupmenu(menu) end
 
 ---
 -- Resets the Lua state by reloading all init scripts.
