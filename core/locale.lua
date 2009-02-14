@@ -399,6 +399,8 @@ Changed:	%s
 PM_BROWSER_FILE_INFO_TEXT = 'File info for "%s"'
 -- OK
 PM_BROWSER_FILE_INFO_OK = 'OK'
+-- Show Dot Files
+PM_BROWSER_FILE_SHOW_DOT_FILES = 'Show _Dot Files'
 
 -- core/ext/pm/macro_browser.lua
 
