@@ -68,7 +68,6 @@ static int l_cf_ta_buffer_new(lua_State *lua),
            l_cf_ta_goto_window(lua_State *lua),
            l_cf_view_goto_buffer(lua_State *lua),
            l_cf_ta_gtkmenu(lua_State *lua),
-           l_cf_ta_popupmenu(lua_State *lua),
            l_cf_ta_reset(lua_State *lua),
            l_cf_ta_quit(lua_State *lua),
            l_cf_pm_focus(lua_State *lua),
@@ -136,7 +135,6 @@ bool l_init(int argc, char **argv, bool reinit) {
   l_cfunc(lua, l_cf_ta_goto_window, "goto_view");
   l_cfunc(lua, l_cf_ta_get_split_table, "get_split_table");
   l_cfunc(lua, l_cf_ta_gtkmenu, "gtkmenu");
-  l_cfunc(lua, l_cf_ta_popupmenu, "popupmenu");
   l_cfunc(lua, l_cf_ta_reset, "reset");
   l_cfunc(lua, l_cf_ta_quit, "quit");
   l_mt(lua, "_textadept_mt", l_ta_mt_index, l_ta_mt_newindex);
@@ -459,7 +457,7 @@ void l_set_buffer_global(ScintillaObject *sci) {
  */
 void l_close() {
   closing = true;
-  while (unsplit_window(focused_editor));
+  while (unsplit_window(focused_editor)) ; // need space to fix compiler warning
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
@@ -1459,14 +1457,6 @@ static int l_cf_ta_gtkmenu(lua_State *lua) {
   GtkWidget *menu = l_create_gtkmenu(lua, G_CALLBACK(t_menu_activate), false);
   lua_pushlightuserdata(lua, const_cast<GtkWidget*>(menu));
   return 1;
-}
-
-static int l_cf_ta_popupmenu(lua_State *lua) {
-  luaL_argcheck(lua, lua_isuserdata(lua, 1), 1, "gtkmenu expected");
-  GtkWidget *menu = l_togtkwidget(lua, 1);
-  gtk_widget_show_all(menu);
-  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, NULL);
-  return 0;
 }
 
 static int l_cf_ta_reset(lua_State *lua) {
