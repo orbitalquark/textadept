@@ -14,6 +14,8 @@ textadept.pm.add_browser(not WIN32 and '/' or 'C:\\')
 local lfs = require 'lfs'
 local os = require 'os'
 
+show_dot_files = false
+
 function matches(entry_text)
   if not WIN32 then
     return entry_text:sub(1, 1) == '/'
@@ -26,9 +28,10 @@ function get_contents_for(full_path)
   local dir = {}
   local dirpath = table.concat(full_path, '/')
   local path = lfs.attributes(dirpath)
+  local invalid_file = show_dot_files and '^%.%.?$' or '^%.'
   if path and path.mode == 'directory' then
     for name in lfs.dir(dirpath) do
-      if not name:find('^%.') then
+      if not name:find(invalid_file) then
         dir[name] = { text = name }
         if lfs.attributes(dirpath..'/'..name, 'mode') == 'directory' then
           dir[name].parent = true
@@ -46,13 +49,14 @@ function perform_action(selected_item)
   view:focus()
 end
 
-local ID = { CHANGE_DIR = 1, FILE_INFO = 2 }
+local ID = { CHANGE_DIR = 1, FILE_INFO = 2, SHOW_DOT_FILES = 3 }
 
 function get_context_menu(selected_item)
   return {
     { 'separator', 0 }, -- make it harder to click 'Change Directory' by mistake
     { locale.PM_BROWSER_FILE_CD, ID.CHANGE_DIR },
     { locale.PM_BROWSER_FILE_INFO, ID.FILE_INFO },
+    { locale.PM_BROWSER_FILE_SHOW_DOT_FILES, ID.SHOW_DOT_FILES },
   }
 end
 
@@ -77,6 +81,9 @@ function perform_menu_action(menu_id, selected_item)
       button1 = locale.PM_BROWSER_FILE_INFO_OK,
       editable = false
     })
+  elseif menu_id == ID.SHOW_DOT_FILES then
+    show_dot_files = not show_dot_files
+    textadept.pm.activate()
   end
 end
 
