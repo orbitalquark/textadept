@@ -12,6 +12,8 @@ local locale = _G.locale
 --   file_saved_as(filename)
 module('textadept.io', package.seeall)
 
+local lfs = require 'lfs'
+
 ---
 -- List of recently opened files.
 -- @class table
@@ -40,6 +42,7 @@ local function open_helper(filename)
     buffer:add_text(text, #text)
     buffer:goto_pos(0)
     buffer:empty_undo_buffer()
+    buffer.modification_time = lfs.attributes(filename).modification
   end
   buffer.filename = filename
   buffer:set_save_point()
@@ -101,6 +104,7 @@ function save(buffer)
     f:write(txt)
     f:close()
     buffer:set_save_point()
+    buffer.modification_time = lfs.attributes(buffer.filename).modification
   else
     textadept.events.error(err)
   end
@@ -346,3 +350,29 @@ function read_api_file(filename, word_chars)
   end
   return api
 end
+
+---
+-- [Local function] Prompts the user to reload the current file if it has been
+-- modified outside of Textadept.
+local function update_modified_file()
+  local filename = buffer.filename
+  if filename then
+    local attributes = lfs.attributes(filename)
+    if not attributes then return end
+    if buffer.modification_time < attributes.modification then
+      if cocoa_dialog('yesno-msgbox', {
+        title = locale.IO_RELOAD_TITLE,
+        text = locale.IO_RELOAD_TEXT,
+        ['informative-text'] = string.format(locale.IO_RELOAD_MSG, filename),
+        ['no-cancel'] = true,
+        ['no-newline'] = true
+      }) == '1' then
+        buffer:reload()
+      else
+        buffer.modification_time = attributes.modification
+      end
+    end
+  end
+end
+textadept.events.add_handler('buffer_switch', update_modified_file)
+textadept.events.add_handler('view_switch', update_modified_file)
