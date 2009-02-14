@@ -767,53 +767,6 @@ void l_ta_popup_context_menu(GdkEventButton *event) {
   } else lua_pop(lua, 1);
 }
 
-/**
- * Executes a given command string as Lua code.
- * @param command Lua code to execute.
- */
-void l_ta_command(const char *command) {
-  int top = lua_gettop(lua);
-  if (luaL_dostring(lua, command) == 0) {
-    l_handle_event("update_ui");
-    lua_settop(lua, top);
-  } else l_handle_error(lua, "Error executing command.");
-}
-
-// Command Entry
-
-/**
- * Requests completions for the Command Entry Completion.
- * @param entry_text The text in the Command Entry.
- * @see l_cec_populate
- */
-bool l_cec_get_completions_for(const char *entry_text) {
-  if (!l_ista2function("command_entry", "get_completions_for")) return false;
-  lua_pushstring(lua, entry_text);
-  return l_call_function(1, 1, true);
-}
-
-/**
- * Populates the Command Entry Completion with the contents of a Lua table at
- * the stack top.
- * @param store The GtkListStore to populate.
- * @see l_cec_get_completions_for
- */
-void l_cec_populate(GtkListStore *store) {
-  GtkTreeIter iter;
-  if (!lua_istable(lua, -1))
-    return warn("command_entry.get_completions_for return not a table.");
-  gtk_list_store_clear(store);
-  lua_pushnil(lua);
-  while (lua_next(lua, -2)) {
-    if (lua_type(lua, -1) == LUA_TSTRING) {
-      gtk_list_store_append(store, &iter);
-      gtk_list_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
-    } else warn("command_entry.get_completions_for: string value expected.");
-    lua_pop(lua, 1); // value
-  }
-  lua_pop(lua, 1); // returned table
-}
-
 // Project Manager
 
 /**
@@ -984,6 +937,53 @@ void l_find_replace_all(const char *ftext, const char *rtext) {
   lua_pushstring(lua, ftext);
   lua_pushstring(lua, rtext);
   l_call_function(2);
+}
+
+// Command Entry
+
+/**
+ * Executes a given command string as Lua code.
+ * @param command Lua code to execute.
+ */
+void l_ce_command(const char *command) {
+  int top = lua_gettop(lua);
+  if (luaL_dostring(lua, command) == 0) {
+    l_handle_event("update_ui");
+    lua_settop(lua, top);
+  } else l_handle_error(lua, "Error executing command.");
+}
+
+/**
+ * Requests completions for the Command Entry Completion.
+ * @param entry_text The text in the Command Entry.
+ * @see l_cec_populate
+ */
+bool l_cec_get_completions_for(const char *entry_text) {
+  if (!l_ista2function("command_entry", "get_completions_for")) return false;
+  lua_pushstring(lua, entry_text);
+  return l_call_function(1, 1, true);
+}
+
+/**
+ * Populates the Command Entry Completion with the contents of a Lua table at
+ * the stack top.
+ * @param store The GtkListStore to populate.
+ * @see l_cec_get_completions_for
+ */
+void l_cec_populate(GtkListStore *store) {
+  GtkTreeIter iter;
+  if (!lua_istable(lua, -1))
+    return warn("command_entry.get_completions_for return not a table.");
+  gtk_list_store_clear(store);
+  lua_pushnil(lua);
+  while (lua_next(lua, -2)) {
+    if (lua_type(lua, -1) == LUA_TSTRING) {
+      gtk_list_store_append(store, &iter);
+      gtk_list_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
+    } else warn("command_entry.get_completions_for: string value expected.");
+    lua_pop(lua, 1); // value
+  }
+  lua_pop(lua, 1); // returned table
 }
 
 // Lua functions (stack maintenence is unnecessary)

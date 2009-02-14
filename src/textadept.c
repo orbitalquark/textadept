@@ -17,13 +17,13 @@ char *textadept_home;
 // Textadept
 GtkWidget *window, *focused_editor, *menubar, *statusbar, *docstatusbar;
 
-static void t_notification(GtkWidget*, gint, gpointer lParam, gpointer);
-static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer);
-static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer);
-static gbool t_buttonpress(GtkWidget*, GdkEventButton *event, gpointer);
-static gbool w_focus(GtkWidget*, GdkEventFocus *, gpointer);
-static gbool w_keypress(GtkWidget*, GdkEventKey *event, gpointer);
-static gbool w_exit(GtkWidget*, GdkEventAny*, gpointer);
+static void s_notification(GtkWidget *, gint, gpointer lParam, gpointer);
+static void s_command(GtkWidget *editor, gint wParam, gpointer, gpointer);
+static gbool s_keypress(GtkWidget *, GdkEventKey *event, gpointer);
+static gbool s_buttonpress(GtkWidget *, GdkEventButton *event, gpointer);
+static gbool w_focus(GtkWidget *, GdkEventFocus *, gpointer);
+static gbool w_keypress(GtkWidget *, GdkEventKey *event, gpointer);
+static gbool w_exit(GtkWidget *, GdkEventAny *, gpointer);
 #ifdef MAC
 static OSErr w_ae_open(const AppleEvent *event, AppleEvent *, long);
 static OSErr w_ae_quit(const AppleEvent *event, AppleEvent *, long);
@@ -43,8 +43,8 @@ static void pm_entry_changed(GtkComboBoxEntry *widget, gpointer);
 static gbool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer);
 static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter,
                             GtkTreePath *path, gpointer);
-static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter,
-                             GtkTreePath *path, gpointer);
+static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
+                             gpointer);
 static void pm_row_activated(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *,
                              gpointer);
 static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer);
@@ -245,10 +245,10 @@ GtkWidget *new_scintilla_window(sptr_t buffer_id) {
   GtkWidget *editor = scintilla_new();
   gtk_widget_set_size_request(editor, 1, 1); // minimum size
   SS(SCINTILLA(editor), SCI_USEPOPUP, 0, 0);
-  signal(editor, "key_press_event", t_keypress);
-  signal(editor, "button_press_event", t_buttonpress);
-  signal(editor, "command", t_command);
-  signal(editor, SCINTILLA_NOTIFY, t_notification);
+  signal(editor, SCINTILLA_NOTIFY, s_notification);
+  signal(editor, "command", s_command);
+  signal(editor, "key_press_event", s_keypress);
+  signal(editor, "button_press_event", s_buttonpress);
   l_add_scintilla_window(editor);
   gtk_widget_grab_focus(editor);
   focused_editor = editor;
@@ -426,31 +426,13 @@ void set_statusbar_text(const char *text, bool docbar) {
   gtk_statusbar_push(GTK_STATUSBAR(bar), 0, text);
 }
 
-/**
- * Toggles focus between a Scintilla window and the Lua command entry.
- * When the entry is visible, the statusbars are temporarily hidden.
- */
-void ce_toggle_focus() {
-  if (!GTK_WIDGET_HAS_FOCUS(command_entry)) {
-    gtk_widget_hide(statusbar);
-    gtk_widget_hide(docstatusbar);
-    gtk_widget_show(command_entry);
-    gtk_widget_grab_focus(command_entry);
-  } else {
-    gtk_widget_show(statusbar);
-    gtk_widget_show(docstatusbar);
-    gtk_widget_hide(command_entry);
-    gtk_widget_grab_focus(focused_editor);
-  }
-}
-
 // Notifications/signals
 
 /**
  * Helper function for switching the focused view to the given one.
  * @param editor The Scintilla window to focus.
- * @see t_notification
- * @see t_command
+ * @see s_notification
+ * @see s_command
  */
 static void switch_to_view(GtkWidget *editor) {
   focused_editor = editor;
@@ -462,7 +444,7 @@ static void switch_to_view(GtkWidget *editor) {
 /**
  * Signal for a Scintilla notification.
  */
-static void t_notification(GtkWidget *editor, gint, gpointer lParam, gpointer) {
+static void s_notification(GtkWidget *editor, gint, gpointer lParam, gpointer) {
   SCNotification *n = reinterpret_cast<SCNotification*>(lParam);
   if (focused_editor != editor && n->nmhdr.code == SCN_URIDROPPED)
     switch_to_view(editor);
@@ -473,7 +455,7 @@ static void t_notification(GtkWidget *editor, gint, gpointer lParam, gpointer) {
  * Signal for a Scintilla command.
  * Currently handles SCEN_SETFOCUS.
  */
-static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
+static void s_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
   if (wParam >> 16 == SCEN_SETFOCUS) switch_to_view(editor);
 }
 
@@ -482,7 +464,7 @@ static void t_command(GtkWidget *editor, gint wParam, gpointer, gpointer) {
  * Collects the modifier states as flags and calls Lua to handle the keypress.
  * @see l_handle_keypress
  */
-static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
+static gbool s_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   bool shift = event->state & GDK_SHIFT_MASK;
   bool control = event->state & GDK_CONTROL_MASK;
 #ifndef MAC
@@ -498,7 +480,7 @@ static gbool t_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
  * If it is a right-click, popup a context menu.
  * @see l_ta_popup_context_menu
  */
-static gbool t_buttonpress(GtkWidget*, GdkEventButton *event, gpointer) {
+static gbool s_buttonpress(GtkWidget *, GdkEventButton *event, gpointer) {
   if (event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
   l_ta_popup_context_menu(event);
   return TRUE;
@@ -507,7 +489,7 @@ static gbool t_buttonpress(GtkWidget*, GdkEventButton *event, gpointer) {
 /**
  * Signal for a Textadept window focus change.
  */
-static gbool w_focus(GtkWidget*, GdkEventFocus*, gpointer) {
+static gbool w_focus(GtkWidget *, GdkEventFocus *, gpointer) {
   if (focused_editor && !GTK_WIDGET_HAS_FOCUS(focused_editor))
     gtk_widget_grab_focus(focused_editor);
   return FALSE;
@@ -518,7 +500,7 @@ static gbool w_focus(GtkWidget*, GdkEventFocus*, gpointer) {
  * Currently handled keypresses:
  *  - Escape - hides the search frame if it's open.
  */
-static gbool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
+static gbool w_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
   if (event->keyval == 0xff1b && GTK_WIDGET_VISIBLE(findbox) &&
       !GTK_WIDGET_HAS_FOCUS(command_entry)) {
     gtk_widget_hide(findbox);
@@ -533,7 +515,7 @@ static gbool w_keypress(GtkWidget*, GdkEventKey *event, gpointer) {
  * Generates a 'quit' event.
  * @see l_close
  */
-static gbool w_exit(GtkWidget*, GdkEventAny*, gpointer) {
+static gbool w_exit(GtkWidget *, GdkEventAny *, gpointer) {
   if (!l_handle_event("quit")) return TRUE;
   l_close();
   scintilla_release_resources();
@@ -547,7 +529,7 @@ static gbool w_exit(GtkWidget*, GdkEventAny*, gpointer) {
  * Generates a 'appleevent_odoc' event for each document sent.
  * @see l_handle_event
  */
-static OSErr w_ae_open(const AppleEvent *event, AppleEvent*, long) {
+static OSErr w_ae_open(const AppleEvent *event, AppleEvent *, long) {
   AEDescList file_list;
   if (AEGetParamDesc(event, keyDirectObject, typeAEList, &file_list) == noErr) {
     long count = 0;
@@ -575,7 +557,7 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent*, long) {
  * Calls the signal for exiting Textadept.
  * @see w_exit
  */
-static OSErr w_ae_quit(const AppleEvent *event, AppleEvent*, long) {
+static OSErr w_ae_quit(const AppleEvent *event, AppleEvent *, long) {
   return w_exit(NULL, NULL, NULL) ? (OSErr) noErr : errAEEventNotHandled;
 }
 
@@ -653,93 +635,12 @@ GtkWidget *pm_create_ui() {
 }
 
 /**
- * Requests contents for a Project Manager parent node being opened.
- * Since parents have a dummy child by default just to indicate they are indeed
- * parents, that dummy child is removed now.
- * @param iter The parent GtkTreeIter.
- * @param path The parent GtkTreePath.
- * @see l_pm_get_contents_for
- */
-void pm_open_parent(GtkTreeIter *iter, GtkTreePath *path) {
-  l_pm_get_full_path(path);
-  if (l_pm_get_contents_for(NULL, true)) l_pm_populate(iter);
-  GtkTreeIter child;
-  char *filename;
-  gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(pm_store), &child, iter, 0);
-  gtk_tree_model_get(GTK_TREE_MODEL(pm_store), &child, 1, &filename, -1);
-  if (strcmp(reinterpret_cast<const char*>(filename), "\0dummy") == 0)
-    gtk_tree_store_remove(pm_store, &child);
-  g_free(filename);
-}
-
-/**
- * Removes all Project Manager children from a parent node being closed.
- * It does add a dummy child by default to indicate the parent is indeed a
- * parent. It will be removed when the parent is opened.
- * @param iter The parent GtkTreeIter.
- */
-void pm_close_parent(GtkTreeIter *iter, GtkTreePath *) {
-  GtkTreeIter child;
-  gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(pm_store), &child, iter, 0);
-  while (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(pm_store), iter))
-    gtk_tree_store_remove(pm_store, &child);
-  gtk_tree_store_append(pm_store, &child, iter);
-  gtk_tree_store_set(pm_store, &child, 1, "\0dummy", -1);
-}
-
-/**
- * Performs the appropriate action on a selected Project Manager node.
- * If the node is a collapsed parent, it is expanded; otherwise the parent is
- * collapsed. If the node is not a parent at all, a Lua action is performed.
- * @see l_pm_perform_action
- */
-void pm_activate_selection() {
-  GtkTreeIter iter;
-  GtkTreePath *path;
-  GtkTreeViewColumn *column;
-  gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, &column);
-  gtk_tree_model_get_iter(GTK_TREE_MODEL(pm_store), &iter, path);
-  if (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(pm_store), &iter))
-    if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pm_view), path))
-      gtk_tree_view_collapse_row(GTK_TREE_VIEW(pm_view), path);
-    else
-      gtk_tree_view_expand_row(GTK_TREE_VIEW(pm_view), path, FALSE);
-  else {
-    l_pm_get_full_path(path);
-    l_pm_perform_action();
-  }
-  gtk_tree_path_free(path);
-}
-
-/**
- * Pops up a context menu for the selected Project Manager node.
- * @param event The mouse button event.
- * @see l_pm_popup_context_menu
- */
-void pm_popup_context_menu(GdkEventButton *event) {
-  l_pm_popup_context_menu(event, G_CALLBACK(pm_menu_activate));
-}
-
-/**
- * Performs a Lua action for a selected Project Manager menu item.
- * @param menu_id The numeric ID for the menu item.
- * @see l_pm_perform_menu_action
- */
-void pm_process_selected_menu_item(GtkWidget *, int menu_id) {
-  GtkTreePath *path;
-  GtkTreeViewColumn *column;
-  gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, &column);
-  l_pm_get_full_path(path);
-  l_pm_perform_menu_action(menu_id);
-}
-
-/**
  * Toggles the focus between the Project Manager and the current Scintilla
  * window.
  */
 void pm_toggle_focus() {
-  gtk_widget_grab_focus(GTK_WIDGET_HAS_FOCUS(focused_editor) ? pm_entry
-                                                             : focused_editor);
+  gtk_widget_grab_focus(
+    GTK_WIDGET_HAS_FOCUS(focused_editor) ? pm_entry : focused_editor);
 }
 
 /**
@@ -815,58 +716,99 @@ static gbool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
 
 /**
  * Signal for a Project Manager parent expansion.
- * @see pm_open_parent
+ * Requests contents for a Project Manager parent node being opened.
+ * Since parents have a dummy child by default just to indicate they are indeed
+ * parents, that dummy child is removed now.
+ * @see l_pm_get_contents_for
  */
 static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter,
                             GtkTreePath *path, gpointer) {
-  pm_open_parent(iter, path);
+  l_pm_get_full_path(path);
+  if (l_pm_get_contents_for(NULL, true)) l_pm_populate(iter);
+  GtkTreeIter child;
+  char *filename;
+  gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(pm_store), &child, iter, 0);
+  gtk_tree_model_get(GTK_TREE_MODEL(pm_store), &child, 1, &filename, -1);
+  if (strcmp(reinterpret_cast<const char*>(filename), "\0dummy") == 0)
+    gtk_tree_store_remove(pm_store, &child);
+  g_free(filename);
 }
 
 /**
  * Signal for a Project Manager parent collapse.
- * @see pm_close_parent
+ * Removes all Project Manager children from a parent node being closed.
+ * It does add a dummy child by default to indicate the parent is indeed a
+ * parent. It will be removed when the parent is opened.
  */
-static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter,
-                             GtkTreePath *path, gpointer) {
-  pm_close_parent(iter, path);
+static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
+                             gpointer) {
+  GtkTreeIter child;
+  gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(pm_store), &child, iter, 0);
+  while (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(pm_store), iter))
+    gtk_tree_store_remove(pm_store, &child);
+  gtk_tree_store_append(pm_store, &child, iter);
+  gtk_tree_store_set(pm_store, &child, 1, "\0dummy", -1);
 }
 
 /**
  * Signal for the activation of a Project Manager node.
- * @see pm_activate_selection
+ * Performs the appropriate action on a selected Project Manager node.
+ * If the node is a collapsed parent, it is expanded; otherwise the parent is
+ * collapsed. If the node is not a parent at all, a Lua action is performed.
+ * @see l_pm_perform_action
  */
 static void pm_row_activated(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *,
                              gpointer) {
-  pm_activate_selection();
+  GtkTreeIter iter;
+  GtkTreePath *path;
+  GtkTreeViewColumn *column;
+  gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, &column);
+  gtk_tree_model_get_iter(GTK_TREE_MODEL(pm_store), &iter, path);
+  if (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(pm_store), &iter))
+    if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pm_view), path))
+      gtk_tree_view_collapse_row(GTK_TREE_VIEW(pm_view), path);
+    else
+      gtk_tree_view_expand_row(GTK_TREE_VIEW(pm_view), path, FALSE);
+  else {
+    l_pm_get_full_path(path);
+    l_pm_perform_action();
+  }
+  gtk_tree_path_free(path);
 }
 
 /**
  * Signal for a Project Manager mouse click.
  * If it is a right-click, popup a context menu for the selected node.
- * @see pm_popup_context_menu
+ * @see l_pm_popup_context_menu
  */
 static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
   if (event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
-  pm_popup_context_menu(event);
+  l_pm_popup_context_menu(event, G_CALLBACK(pm_menu_activate));
   return TRUE;
 }
 
 /**
  * Signal for popping up a Project Manager context menu.
  * Typically Shift+F10 activates this event.
- * @see pm_popup_context_menu
+ * @see l_pm_popup_context_menu
  */
 static gbool pm_popup_menu(GtkWidget *, gpointer) {
-  pm_popup_context_menu(NULL);
+  l_pm_popup_context_menu(NULL, G_CALLBACK(pm_menu_activate));
   return TRUE;
 }
 
 /**
  * Signal for a selected Project Manager menu item.
- * @see pm_process_selected_menu_item
+ * Performs a Lua action for a selected Project Manager menu item.
+ * @param menu_id The numeric ID for the menu item.
+ * @see l_pm_perform_menu_action
  */
-static void pm_menu_activate(GtkWidget *menu_item, gpointer menu_id) {
-  pm_process_selected_menu_item(menu_item, GPOINTER_TO_INT(menu_id));
+static void pm_menu_activate(GtkWidget *, gpointer menu_id) {
+  GtkTreePath *path;
+  GtkTreeViewColumn *column;
+  gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, &column);
+  l_pm_get_full_path(path);
+  l_pm_perform_menu_action(GPOINTER_TO_INT(menu_id));
 }
 
 // Find/Replace
@@ -887,12 +829,14 @@ GtkWidget *find_create_ui() {
   GtkWidget *find_combo =
     gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(find_store), 0);
   g_object_unref(find_store);
+  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(find_combo), FALSE);
   find_entry = gtk_bin_get_child(GTK_BIN(find_combo));
   gtk_widget_set_name(find_entry, "textadept-find-entry");
   gtk_entry_set_activates_default(GTK_ENTRY(find_entry), TRUE);
   GtkWidget *replace_combo =
     gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(repl_store), 0);
   g_object_unref(repl_store);
+  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(replace_combo), FALSE);
   replace_entry = gtk_bin_get_child(GTK_BIN(replace_combo));
   gtk_widget_set_name(replace_entry, "textadept-replace-entry");
   gtk_entry_set_activates_default(GTK_ENTRY(replace_entry), TRUE);
@@ -927,8 +871,6 @@ GtkWidget *find_create_ui() {
   signal(r_button, "clicked", button_clicked);
   signal(ra_button, "clicked", button_clicked);
 
-  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(find_combo), FALSE);
-  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(replace_combo), FALSE);
   GTK_WIDGET_SET_FLAGS(fnext_button, GTK_CAN_DEFAULT);
   GTK_WIDGET_UNSET_FLAGS(fnext_button, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS(fprev_button, GTK_CAN_FOCUS);
@@ -1002,6 +944,24 @@ static void button_clicked(GtkWidget *button, gpointer) {
 
 // Command Entry
 
+/**
+ * Toggles focus between a Scintilla window and the Lua command entry.
+ * When the entry is visible, the statusbars are temporarily hidden.
+ */
+void ce_toggle_focus() {
+  if (!GTK_WIDGET_HAS_FOCUS(command_entry)) {
+    gtk_widget_hide(statusbar);
+    gtk_widget_hide(docstatusbar);
+    gtk_widget_show(command_entry);
+    gtk_widget_grab_focus(command_entry);
+  } else {
+    gtk_widget_show(statusbar);
+    gtk_widget_show(docstatusbar);
+    gtk_widget_hide(command_entry);
+    gtk_widget_grab_focus(focused_editor);
+  }
+}
+
 // Signals
 
 /**
@@ -1009,7 +969,7 @@ static void button_clicked(GtkWidget *button, gpointer) {
  * Evaluates the input text as Lua code.
  */
 static void c_activated(GtkWidget *widget, gpointer) {
-  l_ta_command(gtk_entry_get_text(GTK_ENTRY(widget)));
+  l_ce_command(gtk_entry_get_text(GTK_ENTRY(widget)));
   ce_toggle_focus();
 }
 
@@ -1041,7 +1001,7 @@ static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
  * results from a call to Lua to make a list of possible completions. Therefore,
  * every item in the list is valid.
  */
-static int cec_match_func(GtkEntryCompletion*, const char*, GtkTreeIter*,
+static int cec_match_func(GtkEntryCompletion *, const char *, GtkTreeIter *,
                           gpointer) {
   return 1;
 }
@@ -1051,7 +1011,7 @@ static int cec_match_func(GtkEntryCompletion*, const char*, GtkTreeIter*,
  * The last word at the cursor is replaced with the completion. A word consists
  * of any alphanumeric character or underscore.
  */
-static gbool cec_match_selected(GtkEntryCompletion*, GtkTreeModel *model,
+static gbool cec_match_selected(GtkEntryCompletion *, GtkTreeModel *model,
                                GtkTreeIter *iter, gpointer) {
   const char *entry_text = gtk_entry_get_text(GTK_ENTRY(command_entry));
   const char *p = entry_text + strlen(entry_text) - 1;

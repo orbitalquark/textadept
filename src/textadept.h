@@ -57,18 +57,14 @@ void split_window(GtkWidget *editor, bool vertical);
 bool unsplit_window(GtkWidget *editor);
 void set_menubar(GtkWidget *menubar);
 void set_statusbar_text(const char *text, bool docbar);
-void ce_toggle_focus();
 
 GtkWidget *pm_create_ui();
 void pm_toggle_focus();
-void pm_open_parent(GtkTreeIter *iter, GtkTreePath *path);
-void pm_close_parent(GtkTreeIter *iter, GtkTreePath *path);
-void pm_activate_selection();
-void pm_popup_context_menu(GdkEventButton *event);
-void pm_process_selected_menu_item(GtkWidget *menu_item, int menu_id);
 
 GtkWidget *find_create_ui();
 void find_toggle_focus();
+
+void ce_toggle_focus();
 
 // lua_interface.c
 bool l_init(int argc, char **argv, bool reinit);
@@ -87,11 +83,7 @@ void l_handle_error(lua_State *lua, const char *errmsg);
 bool l_handle_event(const char *e, const char *arg=NULL);
 bool l_handle_keypress(int keyval, bool shift, bool control, bool alt);
 void l_handle_scnnotification(SCNotification *n);
-void l_ta_command(const char *command);
 void l_ta_popup_context_menu(GdkEventButton *event);
-
-bool l_cec_get_completions_for(const char *entry_text);
-void l_cec_populate(GtkListStore *store);
 
 bool l_pm_get_contents_for(const char *entry_text, bool expanding);
 void l_pm_populate(GtkTreeIter *initial_iter);
@@ -103,5 +95,9 @@ void l_pm_perform_menu_action(int menu_id);
 void l_find(const char *ftext, bool next);
 void l_find_replace(const char *rtext);
 void l_find_replace_all(const char *ftext, const char *rtext);
+
+void l_ce_command(const char *command);
+bool l_cec_get_completions_for(const char *entry_text);
+void l_cec_populate(GtkListStore *store);
 
 #endif
