@@ -160,6 +160,7 @@ bool l_init(int argc, char **argv, bool reinit) {
     lua_pop(lua, 1); // textadept
     return true;
   }
+  lua_close(lua);
   return false;
 }
 
@@ -527,7 +528,7 @@ bool l_call_function(int nargs, int retn=0, bool keep_return=false) {
     bool result = (retn > 0) ? lua_toboolean(lua, -1) == 1 : true;
     if (retn > 0 && !keep_return) lua_pop(lua, retn); // retn
     return result;
-  } else l_handle_error(lua, NULL);
+  } else l_handle_error(NULL);
   return false;
 }
 
@@ -602,7 +603,7 @@ GtkWidget *l_create_gtkmenu(lua_State *lua, GCallback callback, bool submenu) {
                              reinterpret_cast<gpointer>(menu_id));
             gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
           }
-        } else warn("gtkmenu: { 'menu label', id_number } expected.");
+        } else warn("gtkmenu: { 'menu label', id_number } expected");
     }
     lua_pop(lua, 1); // value
   }
@@ -654,7 +655,7 @@ static void l_check_focused_buffer(lua_State *lua, int narg) {
  * @param lua The Lua State.
  * @param extramsg An additional error message to display.
  */
-void l_handle_error(lua_State *lua, const char *extramsg) {
+void l_handle_error(const char *extramsg) {
   if (focused_editor && l_ista2function("events", "error")) {
     l_insert(lua, -1); // shift error message down
     if (extramsg) lua_pushstring(lua, extramsg);
@@ -762,7 +763,7 @@ void l_ta_popup_context_menu(GdkEventButton *event) {
                      event ? event->button : 0,
                      gdk_event_get_time(reinterpret_cast<GdkEvent*>(event)));
     } else if (!lua_isnil(lua, -1))
-      warn("textadept.context_menu is not a gtkmenu.");
+      warn("textadept.context_menu: gtkmenu expected");
     lua_pop(lua, 1); // textadept.context_menu
   } else lua_pop(lua, 1);
 }
@@ -774,10 +775,11 @@ void l_ta_popup_context_menu(GdkEventButton *event) {
  * treeview path.
  * The first table item is the PM Entry text, the next items are parents of the
  * given node in descending order, and the last item is the given node itself.
+ * @param store The GtkTreeStore of the PM view.
  * @param path The GtkTreePath of the node. If NULL, only the PM Entry text is
  *   contained in the resulting table.
  */
-void l_pushpathtable(GtkTreePath *path) {
+void l_pushpathtable(GtkTreeStore *store, GtkTreePath *path) {
   lua_newtable(lua);
   lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(pm_entry)));
   lua_rawseti(lua, -2, 1);
@@ -785,8 +787,8 @@ void l_pushpathtable(GtkTreePath *path) {
   GtkTreeIter iter;
   while (gtk_tree_path_get_depth(path) > 0) {
     char *item = 0;
-    gtk_tree_model_get_iter(GTK_TREE_MODEL(pm_store), &iter, path);
-    gtk_tree_model_get(GTK_TREE_MODEL(pm_store), &iter, 1, &item, -1);
+    gtk_tree_model_get_iter(GTK_TREE_MODEL(store), &iter, path);
+    gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 1, &item, -1);
     lua_pushstring(lua, item);
     lua_rawseti(lua, -2, gtk_tree_path_get_depth(path) + 1);
     g_free(item);
@@ -796,49 +798,50 @@ void l_pushpathtable(GtkTreePath *path) {
 
 /**
  * Requests and adds contents to the Project Manager view.
+ * @param store The GtkTreeStore of the PM view.
  * @param initial_iter An initial GtkTreeIter. If NULL, contents will be added
  *   to the treeview root. Otherwise they will be added to this parent node.
  */
-void l_pm_view_fill(GtkTreeIter *initial_iter) {
+void l_pm_view_fill(GtkTreeStore *store, GtkTreeIter *initial_iter) {
   if (!l_ista2function("pm", "get_contents_for")) return;
   if (initial_iter) {
     GtkTreePath *path =
-      gtk_tree_model_get_path(GTK_TREE_MODEL(pm_store), initial_iter);
-    l_pushpathtable(path);
+      gtk_tree_model_get_path(GTK_TREE_MODEL(store), initial_iter);
+    l_pushpathtable(store, path);
     gtk_tree_path_free(path);
-  } else l_pushpathtable(NULL);
+  } else l_pushpathtable(store, NULL);
   lua_pushboolean(lua, initial_iter != NULL);
   l_call_function(2, 1, true);
   if (!lua_istable(lua, -1)) {
-    if (!lua_isnil(lua, -1)) warn("pm.get_contents_for: return not a table.");
+    if (!lua_isnil(lua, -1)) warn("pm.get_contents_for: table expected");
     lua_pop(lua, 1); // non-table return
     return;
   }
 
-  GtkTreeIter iter, child;
-  if (!initial_iter) gtk_tree_store_clear(pm_store);
+  if (!initial_iter) gtk_tree_store_clear(store);
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
     if (lua_istable(lua, -1) && lua_type(lua, -2) == LUA_TSTRING) {
-      gtk_tree_store_append(pm_store, &iter, initial_iter);
-      gtk_tree_store_set(pm_store, &iter, 1, lua_tostring(lua, -2), -1);
+      GtkTreeIter iter, child;
+      gtk_tree_store_append(store, &iter, initial_iter);
+      gtk_tree_store_set(store, &iter, 1, lua_tostring(lua, -2), -1);
       lua_getfield(lua, -1, "parent");
       if (lua_toboolean(lua, -1)) {
-        gtk_tree_store_append(pm_store, &child, &iter);
-        gtk_tree_store_set(pm_store, &child, 1, "\0dummy", -1);
+        gtk_tree_store_append(store, &child, &iter);
+        gtk_tree_store_set(store, &child, 1, "\0dummy", -1);
       }
       lua_pop(lua, 1); // parent
       lua_getfield(lua, -1, "pixbuf");
       if (lua_isstring(lua, -1))
-        gtk_tree_store_set(pm_store, &iter, 0, lua_tostring(lua, -1), -1);
+        gtk_tree_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
       else if (!lua_isnil(lua, -1))
-        warn("pm.populate: pixbuf key must have string value.");
+        warn("pm.fill: non-string pixbuf key ignored");
       lua_pop(lua, 1); // pixbuf
       lua_getfield(lua, -1, "text");
-      gtk_tree_store_set(pm_store, &iter, 2, lua_isstring(lua, -1) ?
+      gtk_tree_store_set(store, &iter, 2, lua_isstring(lua, -1) ?
                          lua_tostring(lua, -1) : lua_tostring(lua, -3), -1);
       lua_pop(lua, 1); // display text
-    } else warn("pm.populate: string id key must have table value.");
+    } else warn("pm.fill: string id key must have table value");
     lua_pop(lua, 1); // value
   }
   lua_pop(lua, 1); // returned table
@@ -848,14 +851,15 @@ void l_pm_view_fill(GtkTreeIter *initial_iter) {
 
 /**
  * Requests and pops up a context menu for a selected Project Manager item.
+ * @param store The GtkTreeStore of the PM view.
  * @param path The GtkTreePath of the item.
  * @param event The mouse button event.
  * @param callback The GCallback associated with each menu item.
  */
-void l_pm_popup_context_menu(GtkTreePath *path, GdkEventButton *event,
-                             GCallback callback) {
+void l_pm_popup_context_menu(GtkTreeStore *store, GtkTreePath *path,
+                             GdkEventButton *event, GCallback callback) {
   if (!l_ista2function("pm", "get_context_menu")) return;
-  l_pushpathtable(path);
+  l_pushpathtable(store, path);
   l_call_function(1, 1, true);
   if (lua_istable(lua, -1)) {
     GtkWidget *menu = l_create_gtkmenu(lua, callback, false);
@@ -863,29 +867,31 @@ void l_pm_popup_context_menu(GtkTreePath *path, GdkEventButton *event,
     gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
                    event ? event->button : 0,
                    gdk_event_get_time(reinterpret_cast<GdkEvent*>(event)));
-  } else warn("pm.get_context_menu: return was not a table.");
+  } else warn("pm.get_context_menu: table expected");
   lua_pop(lua, 1); // returned value
 }
 
 /**
  * Performs an action for the selected Project Manager item.
+ * @param store The GtkTreeStore of the PM view.
  * @param path The GtkTreePath of the item.
  */
-void l_pm_perform_action(GtkTreePath *path) {
+void l_pm_perform_action(GtkTreeStore *store, GtkTreePath *path) {
   if (!l_ista2function("pm", "perform_action")) return;
-  l_pushpathtable(path);
+  l_pushpathtable(store, path);
   l_call_function(1);
 }
 
 /**
  * Performs a selected menu action from a Project Manager item's context menu.
+ * @param store The GtkTreeStore of the PM view.
  * @param path The GtkTreePath of the item.
- * @param menu_id The numeric ID for the menu item.
+ * @param id The numeric ID for the menu item.
  */
-void l_pm_perform_menu_action(GtkTreePath *path, int menu_id) {
+void l_pm_perform_menu_action(GtkTreeStore *store, GtkTreePath *path, int id) {
   if (!l_ista2function("pm", "perform_menu_action")) return;
-  lua_pushnumber(lua, menu_id);
-  l_pushpathtable(path);
+  lua_pushnumber(lua, id);
+  l_pushpathtable(store, path);
   l_call_function(2);
 }
 
@@ -937,37 +943,31 @@ void l_ce_command(const char *command) {
   if (luaL_dostring(lua, command) == 0) {
     l_handle_event("update_ui");
     lua_settop(lua, top);
-  } else l_handle_error(lua, "Error executing command.");
+  } else l_handle_error("Error executing command");
 }
 
 /**
- * Requests completions for the Command Entry Completion.
- * @param entry_text The text in the Command Entry.
- * @see l_cec_populate
- */
-bool l_cec_get_completions_for(const char *entry_text) {
-  if (!l_ista2function("command_entry", "get_completions_for")) return false;
-  lua_pushstring(lua, entry_text);
-  return l_call_function(1, 1, true);
-}
-
-/**
- * Populates the Command Entry Completion with the contents of a Lua table at
- * the stack top.
+ * Requests and adds completions for the Command Entry Completion.
  * @param store The GtkListStore to populate.
- * @see l_cec_get_completions_for
  */
-void l_cec_populate(GtkListStore *store) {
-  GtkTreeIter iter;
-  if (!lua_istable(lua, -1))
-    return warn("command_entry.get_completions_for return not a table.");
+void l_cec_fill(GtkListStore *store) {
+  if (!l_ista2function("command_entry", "get_completions_for")) return;
+  lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(command_entry)));
+  l_call_function(1, 1, true);
+  if (!lua_istable(lua, -1)) {
+    if (!lua_isnil(lua, -1)) warn("ce.get_completions_for: table expected");
+    lua_pop(lua, 1); // non-table return
+    return;
+  }
+
   gtk_list_store_clear(store);
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
     if (lua_type(lua, -1) == LUA_TSTRING) {
+      GtkTreeIter iter;
       gtk_list_store_append(store, &iter);
       gtk_list_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
-    } else warn("command_entry.get_completions_for: string value expected.");
+    } else warn("ce.get_completions_for: non-string value ignored");
     lua_pop(lua, 1); // value
   }
   lua_pop(lua, 1); // returned table
@@ -1117,8 +1117,8 @@ static int l_bufferp_mt_(lua_State *lua, int n, const char *prop, int arg) {
       p1_type = p2_type;
       p2_type = temp;
     }
-    luaL_argcheck(lua, msg != 0, arg, (n == 1) ? "write-only property"
-                                               : "read-only property");
+    luaL_argcheck(lua, msg != 0, arg,
+                  (n == 1) ? "write-only property" : "read-only property");
     return l_call_scintilla(lua, sci, msg, p1_type, p2_type, rt_type, arg);
   } else lua_pop(lua, 1); // non-table
 
@@ -1377,6 +1377,7 @@ static int l_cf_buffer_text_range(lua_State *lua) {
 
 static int l_cf_view_focus(lua_State *lua) {
   GtkWidget *editor = l_checkview(lua, 1);
+  // editor might be an old reference; GTK_IS_WIDGET checks for a valid widget
   if (GTK_IS_WIDGET(editor)) gtk_widget_grab_focus(editor);
   return 0;
 }
@@ -1461,10 +1462,10 @@ static int l_cf_view_goto_buffer(lua_State *lua) {
   return 0;
 }
 
-static void t_menu_activate(GtkWidget *, gpointer menu_id) {
-  int id = GPOINTER_TO_INT(menu_id);
+static void t_menu_activate(GtkWidget *, gpointer id) {
+  int menu_id = GPOINTER_TO_INT(id);
   char *menu_id_str = static_cast<char*>(malloc(sizeof(char) * 12));
-  sprintf(menu_id_str, "%i", id);
+  sprintf(menu_id_str, "%i", menu_id);
   l_handle_event("menu_clicked", menu_id_str);
   g_free(menu_id_str);
 }
@@ -1504,7 +1505,8 @@ static int l_cf_pm_focus(lua_State *) {
 }
 
 static int l_cf_pm_clear(lua_State *) {
-  gtk_tree_store_clear(pm_store);
+  gtk_tree_store_clear(
+    GTK_TREE_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view))));
   return 0;
 }
 

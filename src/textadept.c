@@ -7,6 +7,8 @@
 
 #ifdef MAC
 #include "ige-mac-menu.h"
+#define CFURL_TO_STR(u) \
+  CFStringGetCStringPtr(CFURLCopyFileSystemPath(u, kCFURLPOSIXPathStyle), 0)
 using namespace Scintilla;
 #endif
 
@@ -27,11 +29,11 @@ static gbool w_exit(GtkWidget *, GdkEventAny *, gpointer);
 #ifdef MAC
 static OSErr w_ae_open(const AppleEvent *event, AppleEvent *, long);
 static OSErr w_ae_quit(const AppleEvent *event, AppleEvent *, long);
-void cfurlref_to_char(CFURLRef url, char *path, int len);
 #endif
 
 // Project Manager
 GtkWidget *pm_view, *pm_entry, *pm_container;
+GtkWidget *pm_create_ui();
 GtkTreeStore *pm_store;
 
 static int pm_search_equal_func(GtkTreeModel *model, int col, const char *key,
@@ -45,39 +47,37 @@ static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
                             gpointer);
 static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
                              gpointer);
-static void pm_row_activated(GtkTreeView *, GtkTreePath *path,
+static void pm_row_activated(GtkTreeView *view, GtkTreePath *path,
                              GtkTreeViewColumn *, gpointer);
-static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer);
+static gbool pm_buttonpress(GtkTreeView *, GdkEventButton *event, gpointer);
 static gbool pm_popup_menu(GtkWidget *, gpointer);
-static void pm_menu_activate(GtkWidget *, gpointer menu_id);
+static void pm_menu_activate(GtkWidget *, gpointer id);
 
 // Find/Replace
 GtkWidget *findbox, *find_entry, *replace_entry, *fnext_button, *fprev_button,
           *r_button, *ra_button, *match_case_opt, *whole_word_opt, *lua_opt,
           *in_files_opt;
+GtkWidget *find_create_ui();
 GtkListStore *find_store, *repl_store;
-GtkAttachOptions
-  ao_normal = static_cast<GtkAttachOptions>(GTK_SHRINK | GTK_FILL),
-  ao_expand = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
 
-static void button_clicked(GtkWidget *button, gpointer);
+static void find_button_clicked(GtkWidget *button, gpointer);
 
 // Command Entry
 GtkWidget *command_entry;
 GtkListStore *cec_store;
 GtkEntryCompletion *command_entry_completion;
 
-static void c_activated(GtkWidget *widget, gpointer);
-static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer);
 static int cec_match_func(GtkEntryCompletion *, const char *, GtkTreeIter *,
                           gpointer);
 static gbool cec_match_selected(GtkEntryCompletion *, GtkTreeModel *model,
                                 GtkTreeIter *iter, gpointer);
+static void c_activated(GtkWidget *widget, gpointer);
+static gbool c_keypress(GtkWidget *, GdkEventKey *event, gpointer);
 
 /**
  * Runs Textadept in Linux or Mac.
- * Inits the Lua State, creates the user interface, and loads the core/init.lua
- * script.
+ * Inits the Lua State, creates the user interface, loads the core/init.lua
+ * script, and also loads init.lua.
  * @param argc The number of command line params.
  * @param argv The array of command line params.
  */
@@ -85,13 +85,9 @@ int main(int argc, char **argv) {
 #ifdef MAC
   CFBundleRef bundle = CFBundleGetMainBundle();
   if (bundle) {
-    char *bundle_path = static_cast<char*>(malloc(FILENAME_MAX * sizeof(char)));
-    CFURLRef bundle_url = CFBundleCopyBundleURL(bundle);
-    cfurlref_to_char(bundle_url, bundle_path, FILENAME_MAX);
+    const char *bundle_path = CFURL_TO_STR(CFBundleCopyBundleURL(bundle));
     char *res_path = g_strconcat(bundle_path, "/Contents/Resources/", NULL);
     textadept_home = static_cast<char*>(res_path);
-    g_free(bundle_path);
-    CFRelease(bundle_url);
   } else textadept_home = "";
   // GTK-OSX does not parse ~/.gtkrc-2.0; parse it manually
   char *user_home = g_strconcat(getenv("HOME"), "/.gtkrc-2.0", NULL);
@@ -99,13 +95,11 @@ int main(int argc, char **argv) {
   g_free(user_home);
 #endif
   gtk_init(&argc, &argv);
-  if (l_init(argc, argv, false)) {
-    create_ui();
-    l_load_script("init.lua");
-    gtk_main();
-    return 0;
-  } else if (lua) lua_close(lua);
-  return 1;
+  if (!l_init(argc, argv, false)) return 1;
+  create_ui();
+  l_load_script("init.lua");
+  gtk_main();
+  return 0;
 }
 
 #ifdef WIN32
@@ -139,27 +133,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
  *   - Two status bars: one for notifications, the other for document status.
  */
 void create_ui() {
-  GList *icons = NULL;
-  const char *icon_files[] = {
-    "ta_16x16.png", "ta_32x32.png", "ta_48x48.png", "ta_64x64.png",
-    "ta_128x128.png"
-  };
+  GList *icon_list = NULL;
+  const char *icons[] = { "16x16", "32x32", "48x48", "64x64", "128x128" };
   for (int i = 0; i < 5; i++) {
     char *icon_file =
-      g_strconcat(textadept_home, "/core/images/", icon_files[i], NULL);
+      g_strconcat(textadept_home, "/core/images/ta_", icons[i], ".png", NULL);
     GdkPixbuf *pb = gdk_pixbuf_new_from_file(icon_file, NULL);
-    if (pb) icons = g_list_prepend(icons, pb);
+    if (pb) icon_list = g_list_prepend(icon_list, pb);
     g_free(icon_file);
   }
-  gtk_window_set_default_icon_list(icons);
-  g_list_foreach(icons, reinterpret_cast<GFunc>(g_object_unref), NULL);
-  g_list_free(icons);
+  gtk_window_set_default_icon_list(icon_list);
+  g_list_foreach(icon_list, reinterpret_cast<GFunc>(g_object_unref), NULL);
+  g_list_free(icon_list);
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
-  signal(window, "delete_event", w_exit);
+  signal(window, "delete-event", w_exit);
   signal(window, "focus-in-event", w_focus);
-  signal(window, "key_press_event", w_keypress);
+  signal(window, "key-press-event", w_keypress);
 
 #ifdef MAC
   AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
@@ -200,7 +191,7 @@ void create_ui() {
   command_entry = gtk_entry_new();
   gtk_widget_set_name(command_entry, "textadept-command-entry");
   signal(command_entry, "activate", c_activated);
-  signal(command_entry, "key_press_event", c_keypress);
+  signal(command_entry, "key-press-event", c_keypress);
   g_object_set(G_OBJECT(command_entry), "width-request", 200, NULL);
   gtk_box_pack_start(GTK_BOX(hboxs), command_entry, TRUE, TRUE, 0);
 
@@ -247,8 +238,8 @@ GtkWidget *new_scintilla_window(sptr_t buffer_id) {
   SS(SCINTILLA(editor), SCI_USEPOPUP, 0, 0);
   signal(editor, SCINTILLA_NOTIFY, s_notification);
   signal(editor, "command", s_command);
-  signal(editor, "key_press_event", s_keypress);
-  signal(editor, "button_press_event", s_buttonpress);
+  signal(editor, "key-press-event", s_keypress);
+  signal(editor, "button-press-event", s_buttonpress);
   l_add_scintilla_window(editor);
   gtk_widget_grab_focus(editor);
   focused_editor = editor;
@@ -421,7 +412,7 @@ void set_menubar(GtkWidget *new_menubar) {
  */
 void set_statusbar_text(const char *text, bool docbar) {
   GtkWidget *bar = docbar ? docstatusbar : statusbar;
-  if (!bar) return;
+  if (!bar) return; // this is sometimes called before a bar is available
   gtk_statusbar_pop(GTK_STATUSBAR(bar), 0);
   gtk_statusbar_push(GTK_STATUSBAR(bar), 0, text);
 }
@@ -536,16 +527,13 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent *, long) {
     AECountItems(&file_list, &count);
     for (int i = 1; i <= count; i++) {
       FSRef fsref;
-      char *path = static_cast<char*>(malloc(FILENAME_MAX * sizeof(char)));
       AEGetNthPtr(&file_list, i, typeFSRef, NULL, NULL, &fsref, sizeof(FSRef),
                   NULL);
       CFURLRef url = CFURLCreateFromFSRef(kCFAllocatorDefault, &fsref);
       if (url) {
-        cfurlref_to_char(url, path, FILENAME_MAX);
-        l_handle_event("appleevent_odoc", path);
+        l_handle_event("appleevent_odoc", CFURL_TO_STR(url));
         CFRelease(url);
       }
-      g_free(path);
     }
     AEDisposeDesc(&file_list);
   }
@@ -559,17 +547,6 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent *, long) {
  */
 static OSErr w_ae_quit(const AppleEvent *event, AppleEvent *, long) {
   return w_exit(NULL, NULL, NULL) ? (OSErr) noErr : errAEEventNotHandled;
-}
-
-/**
- * Helper function to convert an Apple CFURLRef to a char*.
- * @param url The CFURLRef for a file URL.
- * @return char* containing the filepath in POSIX style.
- */
-void cfurlref_to_char(CFURLRef url, char *path, int len) {
-  CFStringRef str = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
-  CFStringGetCString(str, path, len, kCFStringEncodingASCII);
-  CFRelease(str);
 }
 #endif
 
@@ -623,12 +600,12 @@ GtkWidget *pm_create_ui() {
 
   signal(pm_entry, "activate", pm_entry_activated);
   signal(pm_combo, "changed", pm_entry_changed);
-  signal(pm_entry, "key_press_event", pm_keypress);
-  signal(pm_view, "key_press_event", pm_keypress);
-  signal(pm_view, "row_expanded", pm_row_expanded);
-  signal(pm_view, "row_collapsed", pm_row_collapsed);
-  signal(pm_view, "row_activated", pm_row_activated);
-  signal(pm_view, "button_press_event", pm_button_press);
+  signal(pm_entry, "key-press-event", pm_keypress);
+  signal(pm_view, "key-press-event", pm_keypress);
+  signal(pm_view, "row-expanded", pm_row_expanded);
+  signal(pm_view, "row-collapsed", pm_row_collapsed);
+  signal(pm_view, "row-activated", pm_row_activated);
+  signal(pm_view, "button-press-event", pm_buttonpress);
   signal(pm_view, "popup-menu", pm_popup_menu);
 
   return pm_container;
@@ -687,7 +664,7 @@ static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
  * @see l_pm_view_fill
  */
 static void pm_entry_activated(GtkWidget *, gpointer) {
-  l_pm_view_fill(NULL);
+  l_pm_view_fill(pm_store, NULL);
 }
 
 /**
@@ -696,18 +673,16 @@ static void pm_entry_activated(GtkWidget *, gpointer) {
  * @see l_pm_view_fill
  */
 static void pm_entry_changed(GtkComboBoxEntry *, gpointer) {
-  l_pm_view_fill(NULL);
+  l_pm_view_fill(pm_store, NULL);
 }
 
 /**
  * Signal for a Project Manager keypress.
  * Currently handled keypresses:
- *   - Ctrl+Tab - Refocuses the Scintilla view.
  *   - Escape - Refocuses the Scintilla view.
  */
 static gbool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
-  if ((event->keyval == 0xff09 && event->state == GDK_CONTROL_MASK) ||
-      event->keyval == 0xff1b) {
+  if (event->keyval == 0xff1b) {
     gtk_widget_grab_focus(focused_editor);
     return TRUE;
   } else return FALSE;
@@ -722,7 +697,7 @@ static gbool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
  */
 static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
                             gpointer) {
-  l_pm_view_fill(iter);
+  l_pm_view_fill(pm_store, iter);
   GtkTreeIter child;
   char *item;
   gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(pm_store), &child, iter, 0);
@@ -755,16 +730,11 @@ static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
  * collapsed. If the node is not a parent at all, a Lua action is performed.
  * @see l_pm_perform_action
  */
-static void pm_row_activated(GtkTreeView *, GtkTreePath *path,
+static void pm_row_activated(GtkTreeView *view, GtkTreePath *path,
                              GtkTreeViewColumn *, gpointer) {
-  GtkTreeIter iter;
-  gtk_tree_model_get_iter(GTK_TREE_MODEL(pm_store), &iter, path);
-  if (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(pm_store), &iter)) {
-    if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pm_view), path))
-      gtk_tree_view_collapse_row(GTK_TREE_VIEW(pm_view), path);
-    else
-      gtk_tree_view_expand_row(GTK_TREE_VIEW(pm_view), path, FALSE);
-  } else l_pm_perform_action(path);
+  if (!gtk_tree_view_expand_row(view, path, FALSE))
+    if (!gtk_tree_view_collapse_row(view, path))
+      l_pm_perform_action(pm_store, path);
 }
 
 /**
@@ -786,10 +756,10 @@ static GtkTreePath *pm_view_get_selection_path() {
  * If it is a right-click, popup a context menu for the selected item.
  * @see l_pm_popup_context_menu
  */
-static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
+static gbool pm_buttonpress(GtkTreeView *, GdkEventButton *event, gpointer) {
   if (event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
   GtkTreePath *path = pm_view_get_selection_path();
-  l_pm_popup_context_menu(path, event, G_CALLBACK(pm_menu_activate));
+  l_pm_popup_context_menu(pm_store, path, event, G_CALLBACK(pm_menu_activate));
   if (path) gtk_tree_path_free(path);
   return TRUE;
 }
@@ -801,7 +771,7 @@ static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
  */
 static gbool pm_popup_menu(GtkWidget *, gpointer) {
   GtkTreePath *path = pm_view_get_selection_path();
-  l_pm_popup_context_menu(path, NULL, G_CALLBACK(pm_menu_activate));
+  l_pm_popup_context_menu(pm_store, path, NULL, G_CALLBACK(pm_menu_activate));
   if (path) gtk_tree_path_free(path);
   return TRUE;
 }
@@ -809,12 +779,12 @@ static gbool pm_popup_menu(GtkWidget *, gpointer) {
 /**
  * Signal for a selected Project Manager menu item.
  * Performs a Lua action for a selected menu item.
- * @param menu_id The numeric ID for the menu item.
+ * @param id The numeric ID for the menu item.
  * @see l_pm_perform_menu_action
  */
-static void pm_menu_activate(GtkWidget *, gpointer menu_id) {
+static void pm_menu_activate(GtkWidget *, gpointer id) {
   GtkTreePath *path = pm_view_get_selection_path();
-  l_pm_perform_menu_action(path, GPOINTER_TO_INT(menu_id));
+  l_pm_perform_menu_action(pm_store, path, GPOINTER_TO_INT(id));
   if (path) gtk_tree_path_free(path);
 }
 
@@ -822,6 +792,8 @@ static void pm_menu_activate(GtkWidget *, gpointer menu_id) {
 
 #define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
   gtk_table_attach(GTK_TABLE(findbox), w, x1, x2, y1, y2, xo, yo, xp, yp)
+#define ao_expand static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL)
+#define ao_normal static_cast<GtkAttachOptions>(GTK_SHRINK | GTK_FILL)
 
 /**
  * Creates the Find/Replace text frame.
@@ -858,7 +830,6 @@ GtkWidget *find_create_ui() {
 
   gtk_label_set_mnemonic_widget(GTK_LABEL(flabel), find_entry);
   gtk_label_set_mnemonic_widget(GTK_LABEL(rlabel), replace_entry);
-  //gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lua_opt), TRUE);
 
   attach(find_combo, 1, 2, 0, 1, ao_expand, ao_normal, 5, 0);
   attach(replace_combo, 1, 2, 1, 2, ao_expand, ao_normal, 5, 0);
@@ -873,10 +844,10 @@ GtkWidget *find_create_ui() {
   attach(lua_opt, 5, 6, 0, 1, ao_normal, ao_normal, 5, 0);
   attach(in_files_opt, 5, 6, 1, 2, ao_normal, ao_normal, 5, 0);
 
-  signal(fnext_button, "clicked", button_clicked);
-  signal(fprev_button, "clicked", button_clicked);
-  signal(r_button, "clicked", button_clicked);
-  signal(ra_button, "clicked", button_clicked);
+  signal(fnext_button, "clicked", find_button_clicked);
+  signal(fprev_button, "clicked", find_button_clicked);
+  signal(r_button, "clicked", find_button_clicked);
+  signal(ra_button, "clicked", find_button_clicked);
 
   GTK_WIDGET_SET_FLAGS(fnext_button, GTK_CAN_DEFAULT);
   GTK_WIDGET_UNSET_FLAGS(fnext_button, GTK_CAN_FOCUS);
@@ -930,10 +901,10 @@ static void find_add_to_history(const char *text, GtkListStore *store) {
 // Signals
 
 /**
- * Signal for a button click.
+ * Signal for a Find frame button click.
  * Performs the appropriate action depending on the button clicked.
  */
-static void button_clicked(GtkWidget *button, gpointer) {
+static void find_button_clicked(GtkWidget *button, gpointer) {
   const char *find_text = gtk_entry_get_text(GTK_ENTRY(find_entry));
   const char *repl_text = gtk_entry_get_text(GTK_ENTRY(replace_entry));
   if (strlen(find_text) == 0) return;
@@ -967,39 +938,6 @@ void ce_toggle_focus() {
     gtk_widget_hide(command_entry);
     gtk_widget_grab_focus(focused_editor);
   }
-}
-
-// Signals
-
-/**
- * Signal for the 'enter' key being pressed in the Lua command entry.
- * Evaluates the input text as Lua code.
- */
-static void c_activated(GtkWidget *widget, gpointer) {
-  l_ce_command(gtk_entry_get_text(GTK_ENTRY(widget)));
-  ce_toggle_focus();
-}
-
-/**
- * Signal for a keypress inside the Lua command entry.
- * Currently handled keypresses:
- *  - Escape - Hide the completion buffer if it is open.
- *  - Tab - Display possible completions.
- */
-static gbool c_keypress(GtkWidget *widget, GdkEventKey *event, gpointer) {
-  if (event->state == 0)
-    switch(event->keyval) {
-      case 0xff1b:
-        ce_toggle_focus();
-        return TRUE;
-      case 0xff09:
-        if (l_cec_get_completions_for(gtk_entry_get_text(GTK_ENTRY(widget)))) {
-          l_cec_populate(cec_store);
-          gtk_entry_completion_complete(command_entry_completion);
-        }
-        return TRUE;
-    }
-  return FALSE;
 }
 
 /**
@@ -1038,4 +976,35 @@ static gbool cec_match_selected(GtkEntryCompletion *, GtkTreeModel *model,
 
   gtk_list_store_clear(cec_store);
   return TRUE;
+}
+
+// Signals
+
+/**
+ * Signal for the 'enter' key being pressed in the Lua command entry.
+ * Evaluates the input text as Lua code.
+ */
+static void c_activated(GtkWidget *widget, gpointer) {
+  l_ce_command(gtk_entry_get_text(GTK_ENTRY(widget)));
+  ce_toggle_focus();
+}
+
+/**
+ * Signal for a keypress inside the Lua command entry.
+ * Currently handled keypresses:
+ *  - Escape - Hide the completion buffer if it is open.
+ *  - Tab - Display possible completions.
+ */
+static gbool c_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
+  if (event->state == 0)
+    switch(event->keyval) {
+      case 0xff1b:
+        ce_toggle_focus();
+        return TRUE;
+      case 0xff09:
+        l_cec_fill(cec_store);
+        gtk_entry_completion_complete(command_entry_completion);
+        return TRUE;
+    }
+  return FALSE;
 }
