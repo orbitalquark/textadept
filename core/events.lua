@@ -68,6 +68,7 @@ module('textadept.events', package.seeall)
 --     alt: flag indicating whether or not alt is pressed.
 --   menu_clicked(menu_id)
 --     menu_id: the numeric ID of the menu item.
+--   pm_view_filled()
 
 local events = textadept.events
 
@@ -140,6 +141,9 @@ function keypress(code, shift, control, alt)
 end
 function menu_clicked(menu_id_str)
   return handle('menu_clicked', tonumber(menu_id_str))
+end
+function pm_view_filled()
+  return handle('pm_view_filled')
 end
 
 -- Scintilla notifications.
