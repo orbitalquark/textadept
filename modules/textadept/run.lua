@@ -8,83 +8,40 @@ local locale = _G.locale
 module('_m.textadept.run', package.seeall)
 
 ---
--- [Local function] Prints a command and its output to Textadept.
--- @param cmd The OS command executed.
--- @param output The output from that OS command.
-local function print_command(cmd, output)
-  textadept.print('> '..cmd..'\n'..output)
+-- Executes the command line parameter and prints the output to Textadept.
+-- @param command The command line string.
+--   It can have the following macros:
+--     * %(filepath) The full path of the current file.
+--     * %(filedir) The current file's directory path.
+--     * %(filename) The name of the file including extension.
+--     * %(filename_noext) The name of the file excluding extension.
+function execute(command)
+  local filepath = buffer.filename
+  local filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
+  local filename_noext = filename:match('^(.+)%.')
+  command = command:gsub('%%%b()', {
+    ['%(filepath)'] = filepath,
+    ['%(filedir)'] = filedir,
+    ['%(filename)'] = filename,
+    ['%(filename_noext)'] = filename_noext,
+  })
+  local chdir = string.format('cd "%s";\n', filedir)
+  local p = io.popen(chdir..command..' 2>&1')
+  local out = p:read('*all')
+  p:close()
+  textadept.print('> '..command..'\n'..out)
   buffer:goto_pos(buffer.length)
 end
 
 ---
--- Passes the current file to a specified compiler to run with the given flags
--- and prints the output to Textadept.
--- @param compiler The system's compiler for the file.
--- @param cflags A string of flags to pass to the interpreter.
--- @param args Table of arguments key keys as follows:
---   * filename_noext_with_flag The value of this flag passed to the compiler
---                              is the filename without its extension.
-function compiler(compiler, cflags, args)
-  if type(cflags) ~= 'string' then cflags = '' end
-  if not args then args = {} end
-  local file = buffer.filename
-  if args.filename_noext_with_flag then
-    local filename_noext = file:match('^(.+)%.')
-    local flag = args.filename_noext_with_flag
-    cflags = string.format('%s %s"%s"', cflags, flag, filename_noext)
-  end
-  local command = string.format('%s %s "%s" 2>&1', compiler, cflags, file)
-  local p = io.popen(command)
-  local out = p:read('*all')
-  p:close()
-  print_command(command, out)
-end
-
----
--- Passes the current file to a specified interpreter to run with the given
--- flags and prints the output to Textadept.
--- @param interpreter The system's interpreter for the file.
--- @param flags A string of flags to pass to the interpreter.
--- @param args Table of arguments with keys as follows:
---   * noext Do not include the filename's extension when passing to the
---           interpreter.
---   * nopath Do not include the full filepath, only the file's name.
---   * nopath_path_with_flag Same as nopath, but use the path as the value of
---                           a flag passed to the interpreter.
-function interpreter(interpreter, flags, args)
-  if type(flags) ~= 'string' then flags = '' end
-  if not args then args = {} end
-  local file = buffer.filename
-  if args.noext then file = file:match('^(.+)%.') end
-  if args.nopath then file = file:match('[^/\\]+$') end
-  if args.nopath_path_with_flag then
-    local path = file:match('^.+/')
-    local flag = args.nopath_path_with_flag
-    flags = string.format('%s %s"%s"', flags, flag, path)
-    file = file:match('[^/\\]+$')
-  end
-  local command = string.format('%s %s "%s" 2>&1', interpreter, flags, file)
-  local p = io.popen(command)
-  local out = p:read('*all')
-  p:close()
-  print_command(command, out)
-end
-
--- TODO: makefile
--- TODO: etc.
-
----
 -- [Local table] File extensions and their associated 'compile' actions.
--- Each key is a file extension whose value is a table with the compile function
--- and parameters given as an ordered list.
+-- Each key is a file extension whose value is a command line string to execute.
 -- @class table
 -- @name compile_for_ext
 local compile_for_ext = {
-  c = { compiler, 'gcc', '-pedantic -Os',
-        { filename_noext_with_flag = '-o ' } },
-  cpp = { compiler, 'g++', '-pedantic -Os',
-          { filename_noext_with_flag = '-o ' } },
-  java = { compiler, 'javac' },
+  c = 'gcc -pedantic -Os -o "%(filename_noext)" %(filename)',
+  cpp = 'g++ -pedantic -Os -o "%(filename_noext)" %(filename)',
+  java = 'javac "%(filename)"'
 }
 
 ---
@@ -92,30 +49,24 @@ local compile_for_ext = {
 -- @see compile_for_ext
 function compile()
   if not buffer.filename then return end
-  local ext = buffer.filename:match('[^.]+$')
-  local action = compile_for_ext[ext]
-  if not action then return end
-  local f, args = action[1], { unpack(action) }
-  table.remove(args, 1) -- function
-  f(unpack(args))
+  local action = compile_for_ext[buffer.filename:match('[^.]+$')]
+  if action then execute(action) end
 end
 
 ---
 -- [Local table] File extensions and their associated 'go' actions.
--- Each key is a file extension whose value is a table with the run function
--- and parameters given as an ordered list.
+-- Each key is a file extension whose value is a command line string to execute.
 -- @class table
 -- @name go_for_ext
 local go_for_ext = {
-  c = { interpreter, '', '', { noext = true } },
-  cpp = { interpreter, '', '', { noext = true } },
-  java = { interpreter, 'java', '',
-           { noext = true, nopath_path_with_flag = '-cp '  } },
-  lua = { interpreter, 'lua' },
-  pl = { interpreter, 'perl' },
-  php = { interpreter, 'php', '-f' },
-  py = { interpreter, 'python' },
-  rb = { interpreter, 'ruby' },
+  c = '%(filedir)%(filename_noext)',
+  cpp = '%(filedir)%(filename_noext)',
+  java = 'java %(filename_noext)',
+  lua = 'lua %(filename)',
+  pl = 'perl %(filename)',
+  php = 'php -f %(filename)',
+  py = 'python %(filename)',
+  rb = 'ruby %(filename)',
 }
 
 ---
@@ -123,12 +74,8 @@ local go_for_ext = {
 -- @see go_for_ext
 function go()
   if not buffer.filename then return end
-  local ext = buffer.filename:match('[^.]+$')
-  local action = go_for_ext[ext]
-  if not action then return end
-  local f, args = action[1], { unpack(action) }
-  table.remove(args, 1) -- function
-  f(unpack(args))
+  local action = go_for_ext[buffer.filename:match('[^.]+$')]
+  if action then execute(action) end
 end
 
 ---
