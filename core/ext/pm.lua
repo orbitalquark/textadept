@@ -46,6 +46,10 @@
 
 local pm = textadept.pm
 
+-- For restoring browser cursors
+local browser_cursors = {}
+local last_browser = nil
+
 ---
 -- Requests treeview contents from browser that matches pm_entry's text.
 -- This function is called internally and shouldn't be called by a script.
@@ -67,6 +71,13 @@ local pm = textadept.pm
 function pm.get_contents_for(full_path, expanding)
   for _, browser in pairs(pm.browsers) do
     if browser.matches(full_path[1]) then
+      if last_browser and last_browser ~= pm.entry_text then
+        -- Switching browsers, save the current one's cursor.
+        -- Don't reset last_browser here though, we still need to detect the
+        -- switch when the 'pm_view_filled' event is called so as to restore
+        -- the cursor to the new browser.
+        browser_cursors[last_browser] = pm.cursor
+      end
       return browser.get_contents_for(full_path, expanding)
     end
   end
@@ -130,3 +141,12 @@ function pm.toggle_visible()
     pm.width = pm.prev_width or 150
   end
 end
+
+textadept.events.add_handler('pm_view_filled',
+  function() -- tries to restore the cursor for a previous browser
+    if last_browser ~= pm.entry_text then
+      last_browser = pm.entry_text
+      local previous_cursor = browser_cursors[pm.entry_text]
+      if previous_cursor then pm.cursor = previous_cursor end
+    end
+  end)

@@ -810,8 +810,9 @@ void l_pm_view_fill(GtkTreeIter *initial_iter) {
   lua_pushboolean(lua, initial_iter != NULL);
   l_call_function(2, 1, true);
   if (!lua_istable(lua, -1)) {
+    if (!lua_isnil(lua, -1)) warn("pm.get_contents_for: return not a table.");
     lua_pop(lua, 1); // non-table return
-    return warn("pm.get_contents_for: return not a table.");
+    return;
   }
 
   GtkTreeIter iter, child;
@@ -841,6 +842,8 @@ void l_pm_view_fill(GtkTreeIter *initial_iter) {
     lua_pop(lua, 1); // value
   }
   lua_pop(lua, 1); // returned table
+
+  l_handle_event("pm_view_filled");
 }
 
 /**
