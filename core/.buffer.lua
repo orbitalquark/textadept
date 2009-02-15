@@ -532,7 +532,7 @@ function buffer:get_line(line)
 --- Returns the position of the end of the selection at the given line or -1.
 function buffer:get_line_sel_end_position(line)
 --- Returns the position of the start of the selection at the given line or -1.
-function buffer:get_line_sel_start_position()
+function buffer:get_line_sel_start_position(line)
 --- Returns the value of a property.
 function buffer:get_property(property)
 --- Returns the value of a property with "$()" variable replacement.
