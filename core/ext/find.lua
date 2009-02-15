@@ -54,7 +54,6 @@ function find.find(text, next, flags, nowrap, wrapped)
 
   local result
   find.captures = nil
-  text = text:gsub('\\[abfnrtv\\]', escapes)
 
   if flags < 8 then
     buffer:goto_pos(buffer[next and 'current_pos' or 'anchor'] + increment)
@@ -67,6 +66,7 @@ function find.find(text, next, flags, nowrap, wrapped)
     if result ~= -1 then buffer:scroll_caret() end
 
   elseif flags < 16 then -- lua pattern search (forward search only)
+    text = text:gsub('\\[abfnrtv\\]', escapes)
     local buffer_text = buffer:get_text(buffer.length)
     local results = { buffer_text:find(text, buffer.anchor + increment) }
     if #results > 0 then
