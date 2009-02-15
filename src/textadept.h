@@ -85,12 +85,11 @@ bool l_handle_keypress(int keyval, bool shift, bool control, bool alt);
 void l_handle_scnnotification(SCNotification *n);
 void l_ta_popup_context_menu(GdkEventButton *event);
 
-bool l_pm_get_contents_for(const char *entry_text, bool expanding);
-void l_pm_populate(GtkTreeIter *initial_iter);
-void l_pm_get_full_path(GtkTreePath *path);
-void l_pm_perform_action();
-void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback);
-void l_pm_perform_menu_action(int menu_id);
+void l_pm_view_fill(GtkTreeIter *initial_iter);
+void l_pm_perform_action(GtkTreePath *path);
+void l_pm_popup_context_menu(GtkTreePath *path, GdkEventButton *event,
+                             GCallback callback);
+void l_pm_perform_menu_action(GtkTreePath *path, int menu_id);
 
 void l_find(const char *ftext, bool next);
 void l_find_replace(const char *rtext);
