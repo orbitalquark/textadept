@@ -770,36 +770,51 @@ void l_ta_popup_context_menu(GdkEventButton *event) {
 // Project Manager
 
 /**
- * Requests contents for the Project Manager.
- * @param entry_text The text in the Project Manager Entry. If NULL, the full
- *   path table is at the top of the Lua stack.
- * @param expanding Flag indicating whether or not a treenode is being expanded.
- *   If true, the tree is walked up from the node to top creating a full path
- *   table at the stack top to be used essentially as entry_text.
- * @see l_pm_get_full_path
+ * Creates and pushes a Lua table of parent nodes for the given Project Manager
+ * treeview path.
+ * The first table item is the PM Entry text, the next items are parents of the
+ * given node in descending order, and the last item is the given node itself.
+ * @param path The GtkTreePath of the node. If NULL, only the PM Entry text is
+ *   contained in the resulting table.
  */
-bool l_pm_get_contents_for(const char *entry_text, bool expanding) {
-  if (!l_ista2function("pm", "get_contents_for")) return false;
-  if (entry_text) {
-    lua_newtable(lua);
-    lua_pushstring(lua, entry_text);
-    lua_rawseti(lua, -2, 1);
-  } else l_insert(lua, -1); // shift full_path down
-  lua_pushboolean(lua, expanding);
-  return l_call_function(2, 1, true);
+void l_pushpathtable(GtkTreePath *path) {
+  lua_newtable(lua);
+  lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(pm_entry)));
+  lua_rawseti(lua, -2, 1);
+  if (!path) return;
+  GtkTreeIter iter;
+  while (gtk_tree_path_get_depth(path) > 0) {
+    char *item = 0;
+    gtk_tree_model_get_iter(GTK_TREE_MODEL(pm_store), &iter, path);
+    gtk_tree_model_get(GTK_TREE_MODEL(pm_store), &iter, 1, &item, -1);
+    lua_pushstring(lua, item);
+    lua_rawseti(lua, -2, gtk_tree_path_get_depth(path) + 1);
+    g_free(item);
+    gtk_tree_path_up(path);
+  }
 }
 
 /**
- * Populates the Project Manager pane with the contents of a Lua table at the
- * stack top.
- * @param initial_iter The initial GtkTreeIter. If not NULL, it is a treenode
- *   being expanded and the contents will be added to that expanding node.
- * @see l_pm_get_contents_for
+ * Requests and adds contents to the Project Manager view.
+ * @param initial_iter An initial GtkTreeIter. If NULL, contents will be added
+ *   to the treeview root. Otherwise they will be added to this parent node.
  */
-void l_pm_populate(GtkTreeIter *initial_iter) {
+void l_pm_view_fill(GtkTreeIter *initial_iter) {
+  if (!l_ista2function("pm", "get_contents_for")) return;
+  if (initial_iter) {
+    GtkTreePath *path =
+      gtk_tree_model_get_path(GTK_TREE_MODEL(pm_store), initial_iter);
+    l_pushpathtable(path);
+    gtk_tree_path_free(path);
+  } else l_pushpathtable(NULL);
+  lua_pushboolean(lua, initial_iter != NULL);
+  l_call_function(2, 1, true);
+  if (!lua_istable(lua, -1)) {
+    lua_pop(lua, 1); // non-table return
+    return warn("pm.get_contents_for: return not a table.");
+  }
+
   GtkTreeIter iter, child;
-  if (!lua_istable(lua, -1))
-    return warn("pm.get_contents_for return not a table.");
   if (!initial_iter) gtk_tree_store_clear(pm_store);
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
@@ -829,76 +844,45 @@ void l_pm_populate(GtkTreeIter *initial_iter) {
 }
 
 /**
- * For a Project Manager given node, get the full path to that node.
- * It leaves a full path table at the top of the Lua stack.
- * @param path The GtkTreePath of the node.
- */
-void l_pm_get_full_path(GtkTreePath *path) {
-  lua_newtable(lua);
-  lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(pm_entry)));
-  lua_rawseti(lua, -2, 1);
-  if (!path) return;
-  GtkTreeIter iter;
-  char *filename;
-  while (gtk_tree_path_get_depth(path) > 0) {
-    gtk_tree_model_get_iter(GTK_TREE_MODEL(pm_store), &iter, path);
-    gtk_tree_model_get(GTK_TREE_MODEL(pm_store), &iter, 1, &filename, -1);
-    lua_pushstring(lua, filename);
-    lua_rawseti(lua, -2, gtk_tree_path_get_depth(path) + 1);
-    g_free(filename);
-    gtk_tree_path_up(path);
-  }
-}
-
-/**
- * Requests and pops up a context menu for the Project Manager.
+ * Requests and pops up a context menu for a selected Project Manager item.
+ * @param path The GtkTreePath of the item.
  * @param event The mouse button event.
  * @param callback The GCallback associated with each menu item.
  */
-void l_pm_popup_context_menu(GdkEventButton *event, GCallback callback) {
+void l_pm_popup_context_menu(GtkTreePath *path, GdkEventButton *event,
+                             GCallback callback) {
   if (!l_ista2function("pm", "get_context_menu")) return;
-  GtkTreeIter iter;
-  GtkTreePath *path = 0;
-  GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(pm_view));
-  if (gtk_tree_selection_get_selected(sel, NULL, &iter))
-    path = gtk_tree_model_get_path(GTK_TREE_MODEL(pm_store), &iter);
-  l_pm_get_full_path(path);
-  if (path) gtk_tree_path_free(path);
-  if (lua_objlen(lua, -1) == 0) {
-    lua_pop(lua, 2); // function and full_path
-    return;
-  }
-  if (l_call_function(1, 1, true) && lua_istable(lua, -1)) {
+  l_pushpathtable(path);
+  l_call_function(1, 1, true);
+  if (lua_istable(lua, -1)) {
     GtkWidget *menu = l_create_gtkmenu(lua, callback, false);
-    lua_pop(lua, 1); // returned table
     gtk_widget_show_all(menu);
     gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
                    event ? event->button : 0,
                    gdk_event_get_time(reinterpret_cast<GdkEvent*>(event)));
-  } else warn("pm.get_context_menu return was not a table.");
+  } else warn("pm.get_context_menu: return was not a table.");
+  lua_pop(lua, 1); // returned value
 }
 
 /**
- * Performs an action for an activated item in the Project Manager.
- * The full path table for the item is at the top of the Lua stack.
+ * Performs an action for the selected Project Manager item.
+ * @param path The GtkTreePath of the item.
  */
-void l_pm_perform_action() {
+void l_pm_perform_action(GtkTreePath *path) {
   if (!l_ista2function("pm", "perform_action")) return;
-  l_insert(lua, -1); // shift full_path down
+  l_pushpathtable(path);
   l_call_function(1);
 }
 
 /**
- * Performs a selected menu action from an item's context menu in the Project
- * Manager.
- * The full path table for the item is at the top of the Lua stack.
+ * Performs a selected menu action from a Project Manager item's context menu.
+ * @param path The GtkTreePath of the item.
  * @param menu_id The numeric ID for the menu item.
  */
-void l_pm_perform_menu_action(int menu_id) {
+void l_pm_perform_menu_action(GtkTreePath *path, int menu_id) {
   if (!l_ista2function("pm", "perform_menu_action")) return;
-  l_insert(lua, -1); // shift full_path down
   lua_pushnumber(lua, menu_id);
-  l_insert(lua, -1); // shift full_path down
+  l_pushpathtable(path);
   l_call_function(2);
 }
 

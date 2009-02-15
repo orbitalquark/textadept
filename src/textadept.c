@@ -38,15 +38,15 @@ static int pm_search_equal_func(GtkTreeModel *model, int col, const char *key,
                                 GtkTreeIter *iter, gpointer);
 static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
                                      GtkTreeIter *b, gpointer);
-static void pm_entry_activated(GtkWidget *widget, gpointer);
-static void pm_entry_changed(GtkComboBoxEntry *widget, gpointer);
+static void pm_entry_activated(GtkWidget *, gpointer);
+static void pm_entry_changed(GtkComboBoxEntry *, gpointer);
 static gbool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer);
-static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter,
-                            GtkTreePath *path, gpointer);
+static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
+                            gpointer);
 static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
                              gpointer);
-static void pm_row_activated(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *,
-                             gpointer);
+static void pm_row_activated(GtkTreeView *, GtkTreePath *path,
+                             GtkTreeViewColumn *, gpointer);
 static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer);
 static gbool pm_popup_menu(GtkWidget *, gpointer);
 static void pm_menu_activate(GtkWidget *, gpointer menu_id);
@@ -683,21 +683,20 @@ static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
 
 /**
  * Signal for the activation of the Project Manager entry.
- * Requests contents for the treeview.
- * @see l_pm_get_contents_for
+ * Requests contents for the Project Manager.
+ * @see l_pm_view_fill
  */
-static void pm_entry_activated(GtkWidget *widget, gpointer) {
-  const char *entry_text = gtk_entry_get_text(GTK_ENTRY(widget));
-  if (l_pm_get_contents_for(entry_text, false)) l_pm_populate(NULL);
+static void pm_entry_activated(GtkWidget *, gpointer) {
+  l_pm_view_fill(NULL);
 }
 
 /**
  * Signal for a change of the text in the Project Manager entry.
- * Calls pm_entry_activated to populate the treeview.
- * @see pm_entry_activated
+ * Requests contents for the Project Manager.
+ * @see l_pm_view_fill
  */
-static void pm_entry_changed(GtkComboBoxEntry *widget, gpointer) {
-  pm_entry_activated(gtk_bin_get_child(GTK_BIN(widget)), NULL);
+static void pm_entry_changed(GtkComboBoxEntry *, gpointer) {
+  l_pm_view_fill(NULL);
 }
 
 /**
@@ -717,28 +716,27 @@ static gbool pm_keypress(GtkWidget *, GdkEventKey *event, gpointer) {
 /**
  * Signal for a Project Manager parent expansion.
  * Requests contents for a Project Manager parent node being opened.
- * Since parents have a dummy child by default just to indicate they are indeed
- * parents, that dummy child is removed now.
- * @see l_pm_get_contents_for
+ * Since a parent is given a dummy child by default in order to indicate that
+ * it is a parent, that dummy child is removed.
+ * @see l_pm_view_fill
  */
-static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter,
-                            GtkTreePath *path, gpointer) {
-  l_pm_get_full_path(path);
-  if (l_pm_get_contents_for(NULL, true)) l_pm_populate(iter);
+static void pm_row_expanded(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
+                            gpointer) {
+  l_pm_view_fill(iter);
   GtkTreeIter child;
-  char *filename;
+  char *item;
   gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(pm_store), &child, iter, 0);
-  gtk_tree_model_get(GTK_TREE_MODEL(pm_store), &child, 1, &filename, -1);
-  if (strcmp(reinterpret_cast<const char*>(filename), "\0dummy") == 0)
+  gtk_tree_model_get(GTK_TREE_MODEL(pm_store), &child, 1, &item, -1);
+  if (strcmp(reinterpret_cast<const char*>(item), "\0dummy") == 0)
     gtk_tree_store_remove(pm_store, &child);
-  g_free(filename);
+  g_free(item);
 }
 
 /**
  * Signal for a Project Manager parent collapse.
  * Removes all Project Manager children from a parent node being closed.
- * It does add a dummy child by default to indicate the parent is indeed a
- * parent. It will be removed when the parent is opened.
+ * Re-adds a dummy child to indicate this parent is still a parent. It will be
+ * removed when the parent is re-opened.
  */
 static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
                              gpointer) {
@@ -757,33 +755,42 @@ static void pm_row_collapsed(GtkTreeView *, GtkTreeIter *iter, GtkTreePath *,
  * collapsed. If the node is not a parent at all, a Lua action is performed.
  * @see l_pm_perform_action
  */
-static void pm_row_activated(GtkTreeView *, GtkTreePath *, GtkTreeViewColumn *,
-                             gpointer) {
+static void pm_row_activated(GtkTreeView *, GtkTreePath *path,
+                             GtkTreeViewColumn *, gpointer) {
   GtkTreeIter iter;
-  GtkTreePath *path;
-  GtkTreeViewColumn *column;
-  gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, &column);
   gtk_tree_model_get_iter(GTK_TREE_MODEL(pm_store), &iter, path);
-  if (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(pm_store), &iter))
+  if (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(pm_store), &iter)) {
     if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pm_view), path))
       gtk_tree_view_collapse_row(GTK_TREE_VIEW(pm_view), path);
     else
       gtk_tree_view_expand_row(GTK_TREE_VIEW(pm_view), path, FALSE);
-  else {
-    l_pm_get_full_path(path);
-    l_pm_perform_action();
-  }
-  gtk_tree_path_free(path);
+  } else l_pm_perform_action(path);
+}
+
+/**
+ * Helper function to return the path of the selected Project Manager view item
+ * (if any).
+ * The returned GtkTreePath must be freed if it is not NULL.
+ */
+static GtkTreePath *pm_view_get_selection_path() {
+  GtkTreeIter iter;
+  GtkTreePath *path = 0;
+  GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(pm_view));
+  if (gtk_tree_selection_get_selected(sel, NULL, &iter))
+    path = gtk_tree_model_get_path(GTK_TREE_MODEL(pm_store), &iter);
+  return path;
 }
 
 /**
  * Signal for a Project Manager mouse click.
- * If it is a right-click, popup a context menu for the selected node.
+ * If it is a right-click, popup a context menu for the selected item.
  * @see l_pm_popup_context_menu
  */
 static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
   if (event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
-  l_pm_popup_context_menu(event, G_CALLBACK(pm_menu_activate));
+  GtkTreePath *path = pm_view_get_selection_path();
+  l_pm_popup_context_menu(path, event, G_CALLBACK(pm_menu_activate));
+  if (path) gtk_tree_path_free(path);
   return TRUE;
 }
 
@@ -793,22 +800,22 @@ static gbool pm_button_press(GtkTreeView *, GdkEventButton *event, gpointer) {
  * @see l_pm_popup_context_menu
  */
 static gbool pm_popup_menu(GtkWidget *, gpointer) {
-  l_pm_popup_context_menu(NULL, G_CALLBACK(pm_menu_activate));
+  GtkTreePath *path = pm_view_get_selection_path();
+  l_pm_popup_context_menu(path, NULL, G_CALLBACK(pm_menu_activate));
+  if (path) gtk_tree_path_free(path);
   return TRUE;
 }
 
 /**
  * Signal for a selected Project Manager menu item.
- * Performs a Lua action for a selected Project Manager menu item.
+ * Performs a Lua action for a selected menu item.
  * @param menu_id The numeric ID for the menu item.
  * @see l_pm_perform_menu_action
  */
 static void pm_menu_activate(GtkWidget *, gpointer menu_id) {
-  GtkTreePath *path;
-  GtkTreeViewColumn *column;
-  gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, &column);
-  l_pm_get_full_path(path);
-  l_pm_perform_menu_action(GPOINTER_TO_INT(menu_id));
+  GtkTreePath *path = pm_view_get_selection_path();
+  l_pm_perform_menu_action(path, GPOINTER_TO_INT(menu_id));
+  if (path) gtk_tree_path_free(path);
 }
 
 // Find/Replace
