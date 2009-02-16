@@ -77,7 +77,6 @@ if not MAC then
     c     = { m_editing.enclose, 'chars'      },
   }
   keys.as = { -- select in...
-    e     = { m_editing.select_enclosed               },
     t     = { m_editing.select_enclosed, 'tags'       },
     ['"'] = { m_editing.select_enclosed, 'dbl_quotes' },
     ["'"] = { m_editing.select_enclosed, 'sng_quotes' },

@@ -490,26 +490,6 @@ function select_enclosed(str)
     local s = buffer:search_prev(0, enclosure[str].left)
     local e = buffer:search_next(0, enclosure[str].right)
     if s and e then buffer:set_sel(s + 1, e) end
-  else
-    -- TODO: ignore enclosures in comment scopes?
-    s, e = buffer.anchor, buffer.current_pos
-    if s > e then s, e = e, s end
-    local char = string.char(buffer.char_at[s - 1])
-    if s ~= e and char_matches[char] then
-      s, e = s - 2, e + 1 -- don't match the same enclosure
-    end
-    while s >= 0 do
-      char = string.char(buffer.char_at[s])
-      if char_matches[char] then
-        buffer.target_start, buffer.target_end = e, buffer.length
-        buffer.search_flags = 0
-        if buffer:search_in_target(char_matches[char]) ~= -1 then
-          e = buffer.target_end
-        end
-        if e then buffer:set_sel(s + 1, e - 1) break end
-      end
-      s = s - 1
-    end
   end
 end
 
