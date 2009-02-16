@@ -210,8 +210,6 @@ MENU_EDIT_SEL_ENC_CHAR_SEQ = '_Character Sequence'
 MENU_EDIT_SEL_GROW = '_Grow'
 -- Select i_n...
 MENU_EDIT_SEL_IN_TITLE = 'Select i_n...'
--- S_tructure
-MENU_EDIT_SEL_IN_STRUCTURE = 'S_tructure'
 -- _HTML Tag
 MENU_EDIT_SEL_IN_HTML_TAG = '_HTML Tag'
 -- _Double Quote

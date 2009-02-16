@@ -56,7 +56,6 @@ local ID = {
   ENCLOSE_IN_BRACES = 230,
   ENCLOSE_IN_CHARACTER_SEQUENCE = 231,
   GROW_SELECTION = 232,
-  SELECT_IN_STRUCTURE = 233,
   SELECT_IN_HTML_TAG = 234,
   SELECT_IN_DOUBLE_QUOTE = 235,
   SELECT_IN_SINGLE_QUOTE = 236,
@@ -241,7 +240,6 @@ t.menubar = {
       { l.MENU_EDIT_SEL_GROW, ID.GROW_SELECTION },
     },
     { title = l.MENU_EDIT_SEL_IN_TITLE,
-      { l.MENU_EDIT_SEL_IN_STRUCTURE, ID.SELECT_IN_STRUCTURE },
       { l.MENU_EDIT_SEL_IN_HTML_TAG, ID.SELECT_IN_HTML_TAG },
       { l.MENU_EDIT_SEL_IN_DOUBLE_QUOTE, ID.SELECT_IN_DOUBLE_QUOTE },
       { l.MENU_EDIT_SEL_IN_SINGLE_QUOTE, ID.SELECT_IN_SINGLE_QUOTE },
@@ -472,7 +470,6 @@ local actions = {
   -- Edit -> Selection
   [ID.GROW_SELECTION] = { m_editing.grow_selection, 1 },
   -- Edit -> Select In...
-  [ID.SELECT_IN_STRUCTURE] = { m_editing.select_enclosed },
   [ID.SELECT_IN_HTML_TAG] = { m_editing.select_enclosed, 'tags' },
   [ID.SELECT_IN_DOUBLE_QUOTE] = { m_editing.select_enclosed, 'dbl_quotes' },
   [ID.SELECT_IN_SINGLE_QUOTE] = { m_editing.select_enclosed, 'sng_quotes' },
@@ -587,6 +584,7 @@ t.events.add_handler('menu_clicked',
     end
   end)
 
+-- Right-click context menu.
 t.context_menu = gtkmenu {
   { l.MENU_EDIT_UNDO, ID.UNDO },
   { l.MENU_EDIT_REDO, ID.REDO },
