@@ -4,7 +4,8 @@ local textadept = _G.textadept
 local locale = _G.locale
 local find = textadept.find
 
-local MARK_REPLACEALL_END = 0
+local MARK_FIND = 0
+local MARK_FIND_COLOR = 0x4D9999
 local previous_view
 
 ---
@@ -229,7 +230,7 @@ function find.replace_all(ftext, rtext, flags)
     if s > e then s, e = e, s end
     buffer:insert_text(e, '\n')
     local end_marker =
-      buffer:marker_add(buffer:line_from_position(e + 1), MARK_REPLACEALL_END)
+      buffer:marker_add(buffer:line_from_position(e + 1), MARK_FIND)
     buffer:goto_pos(s)
     local pos = find.find(ftext, true, flags, true)
     while pos ~= -1 and
@@ -259,8 +260,12 @@ end
 function goto_file(pos, line_num)
   if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
     line = buffer:get_line(line_num)
-    local file, line_num = line:match('^(.+):(%d+):.+$')
-    if file and line_num then
+    local file, file_line_num = line:match('^(.+):(%d+):.+$')
+    if file and file_line_num then
+      buffer:marker_delete_all(MARK_FIND)
+      buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR)
+      buffer:marker_add(line_num, MARK_FIND)
+      buffer:goto_pos(buffer.current_pos)
       if #textadept.views == 1 then
         _, previous_view = view:split(false) -- horizontal
       else
@@ -279,8 +284,8 @@ function goto_file(pos, line_num)
         end
       end
       textadept.io.open(file)
-      buffer:ensure_visible_enforce_policy(line_num - 1)
-      buffer:goto_line(line_num - 1)
+      buffer:ensure_visible_enforce_policy(file_line_num - 1)
+      buffer:goto_line(file_line_num - 1)
     end
   end
 end
