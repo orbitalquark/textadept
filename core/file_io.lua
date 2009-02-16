@@ -77,15 +77,14 @@ function reload(buffer)
   textadept.check_focused_buffer(buffer)
   if not buffer.filename then return end
   local f, err = io.open(buffer.filename, 'rb')
-  if f then
-    local pos = buffer.current_pos
-    local first_visible_line = buffer.first_visible_line
-    buffer:set_text(f:read('*all'))
-    buffer:line_scroll(0, first_visible_line)
-    buffer:goto_pos(pos)
-    buffer:set_save_point()
-    f:close()
-  end
+  if not f then return end
+  local pos = buffer.current_pos
+  local first_visible_line = buffer.first_visible_line
+  buffer:set_text(f:read('*all'))
+  buffer:line_scroll(0, first_visible_line)
+  buffer:goto_pos(pos)
+  buffer:set_save_point()
+  f:close()
 end
 
 ---
@@ -198,55 +197,53 @@ function load_session(filename, only_pm)
   local ta_session = user_dir..'/.ta_session'
   local f = io.open(filename or ta_session, 'rb')
   local current_view, splits = 1, { [0] = {} }
-  if f then
-    for line in f:lines() do
-      if not only_pm then
-        if line:find('^buffer:') then
-          local anchor, current_pos, first_visible_line, filename =
-            line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
-          textadept.io.open(filename or '', 'rb')
-          -- Restore saved buffer selection and view.
-          local anchor = tonumber(anchor) or 0
-          local current_pos = tonumber(current_pos) or 0
-          local first_visible_line = tonumber(first_visible_line) or 0
-          local buffer = buffer
-          buffer._anchor, buffer._current_pos = anchor, current_pos
-          buffer._first_visible_line = first_visible_line
-          buffer:line_scroll(0,
-            buffer:visible_from_doc_line(first_visible_line))
-          buffer:set_sel(anchor, current_pos)
-        elseif line:find('^%s*split%d:') then
-          local level, num, type, size =
-            line:match('^(%s*)split(%d): (%S+) (%d+)')
-          local view = splits[#level] and splits[#level][tonumber(num)] or view
-          splits[#level + 1] = { view:split(type == 'true') }
-          splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
-        elseif line:find('^%s*view%d:') then
-          local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
-          local view = splits[#level][tonumber(num)] or view
-          buf_idx = tonumber(buf_idx)
-          if buf_idx > #textadept.buffers then buf_idx = #textadept.buffers end
-          view:goto_buffer(buf_idx)
-        elseif line:find('^current_view:') then
-          local view_idx = line:match('^current_view: (%d+)')
-          current_view = tonumber(view_idx) or 1
-        end
-      end
-      if line:find('^size:') then
-        local width, height = line:match('^size: (%d+) (%d+)$')
-        if width and height then textadept.size = { width, height } end
-      elseif line:find('^pm:') then
-        local width, text = line:match('^pm: (%d+) (.+)$')
-        textadept.pm.width = width or 0
-        textadept.pm.entry_text = text or ''
-        textadept.pm.activate()
+  if not f then return false end
+  for line in f:lines() do
+    if not only_pm then
+      if line:find('^buffer:') then
+        local anchor, current_pos, first_visible_line, filename =
+          line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
+        textadept.io.open(filename or '', 'rb')
+        -- Restore saved buffer selection and view.
+        local anchor = tonumber(anchor) or 0
+        local current_pos = tonumber(current_pos) or 0
+        local first_visible_line = tonumber(first_visible_line) or 0
+        local buffer = buffer
+        buffer._anchor, buffer._current_pos = anchor, current_pos
+        buffer._first_visible_line = first_visible_line
+        buffer:line_scroll(0,
+          buffer:visible_from_doc_line(first_visible_line))
+        buffer:set_sel(anchor, current_pos)
+      elseif line:find('^%s*split%d:') then
+        local level, num, type, size =
+          line:match('^(%s*)split(%d): (%S+) (%d+)')
+        local view = splits[#level] and splits[#level][tonumber(num)] or view
+        splits[#level + 1] = { view:split(type == 'true') }
+        splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
+      elseif line:find('^%s*view%d:') then
+        local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
+        local view = splits[#level][tonumber(num)] or view
+        buf_idx = tonumber(buf_idx)
+        if buf_idx > #textadept.buffers then buf_idx = #textadept.buffers end
+        view:goto_buffer(buf_idx)
+      elseif line:find('^current_view:') then
+        local view_idx = line:match('^current_view: (%d+)')
+        current_view = tonumber(view_idx) or 1
       end
     end
-    f:close()
-    textadept.views[current_view]:focus()
-    return true
+    if line:find('^size:') then
+      local width, height = line:match('^size: (%d+) (%d+)$')
+      if width and height then textadept.size = { width, height } end
+    elseif line:find('^pm:') then
+      local width, text = line:match('^pm: (%d+) (.+)$')
+      textadept.pm.width = width or 0
+      textadept.pm.entry_text = text or ''
+      textadept.pm.activate()
+    end
   end
-  return false
+  f:close()
+  textadept.views[current_view]:focus()
+  return true
 end
 
 ---
@@ -270,8 +267,7 @@ function save_session(filename)
       local first_visible_line =
         current and 'first_visible_line' or '_first_visible_line'
       session[#session + 1] =
-        buffer_line:format(buffer[anchor] or 0,
-                           buffer[current_pos] or 0,
+        buffer_line:format(buffer[anchor] or 0, buffer[current_pos] or 0,
                            buffer[first_visible_line] or 0, buffer.filename)
     end
   end
@@ -337,17 +333,16 @@ end
 function read_api_file(filename, word_chars)
   local api = {}
   local f = io.open(filename, 'rb')
-  if f then
-    for line in f:lines() do
-      local func, params, desc =
-        line:match('(['..word_chars..']+)%s*(%b())(.*)$')
-      if func and params and desc then
-        if not api[func] then api[func] = {} end
-        api[func][#api[func] + 1] = { params, desc }
-      end
+  if not f then return api end
+  for line in f:lines() do
+    local func, params, desc =
+      line:match('(['..word_chars..']+)%s*(%b())(.*)$')
+    if func and params and desc then
+      if not api[func] then api[func] = {} end
+      api[func][#api[func] + 1] = { params, desc }
     end
-    f:close()
   end
+  f:close()
   return api
 end
 
@@ -355,22 +350,21 @@ end
 -- [Local function] Prompts the user to reload the current file if it has been
 -- modified outside of Textadept.
 local function update_modified_file()
+  if not buffer.filename then return end
   local filename = buffer.filename
-  if filename then
-    local attributes = lfs.attributes(filename)
-    if not attributes then return end
-    if buffer.modification_time < attributes.modification then
-      if cocoa_dialog('yesno-msgbox', {
-        title = locale.IO_RELOAD_TITLE,
-        text = locale.IO_RELOAD_TEXT,
-        ['informative-text'] = string.format(locale.IO_RELOAD_MSG, filename),
-        ['no-cancel'] = true,
-        ['no-newline'] = true
-      }) == '1' then
-        buffer:reload()
-      else
-        buffer.modification_time = attributes.modification
-      end
+  local attributes = lfs.attributes(filename)
+  if not attributes then return end
+  if buffer.modification_time < attributes.modification then
+    if cocoa_dialog('yesno-msgbox', {
+      title = locale.IO_RELOAD_TITLE,
+      text = locale.IO_RELOAD_TEXT,
+      ['informative-text'] = string.format(locale.IO_RELOAD_MSG, filename),
+      ['no-cancel'] = true,
+      ['no-newline'] = true
+    }) == '1' then
+      buffer:reload()
+    else
+      buffer.modification_time = attributes.modification
     end
   end
 end

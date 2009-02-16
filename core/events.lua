@@ -105,47 +105,6 @@ function handle(event, ...)
   end
 end
 
----
--- Reloads event handlers.
--- Clears each event's table of handlers and reloads this module to reset to the
--- default handlers.
-function reload()
-  package.loaded['events'] = nil
-  for handler in pairs(events) do
-    if events[handler..'s'] then events[handler..'s'] = nil end
-  end
-  require 'events'
-end
-
--- Textadept events.
-function buffer_new()
-  return handle('buffer_new')
-end
-function buffer_deleted()
-  return handle('buffer_deleted')
-end
-function buffer_switch()
-  return handle('buffer_switch')
-end
-function view_new()
-  return handle('view_new')
-end
-function view_switch()
-  return handle('view_switch')
-end
-function quit()
-  return handle('quit')
-end
-function keypress(code, shift, control, alt)
-  return handle('keypress', code, shift, control, alt)
-end
-function menu_clicked(menu_id_str)
-  return handle('menu_clicked', tonumber(menu_id_str))
-end
-function pm_view_filled()
-  return handle('pm_view_filled')
-end
-
 -- Scintilla notifications.
 function char_added(n)
   if n.ch < 256 then return handle('char_added', string.char(n.ch)) end
@@ -203,6 +162,35 @@ local scnnotifications = {
 function notification(n)
   local f = scnnotifications[n.code]
   if f then f(n) end
+end
+
+-- Textadept events.
+function buffer_new()
+  return handle('buffer_new')
+end
+function buffer_deleted()
+  return handle('buffer_deleted')
+end
+function buffer_switch()
+  return handle('buffer_switch')
+end
+function view_new()
+  return handle('view_new')
+end
+function view_switch()
+  return handle('view_switch')
+end
+function quit()
+  return handle('quit')
+end
+function keypress(code, shift, control, alt)
+  return handle('keypress', code, shift, control, alt)
+end
+function menu_clicked(menu_id_str)
+  return handle('menu_clicked', tonumber(menu_id_str))
+end
+function pm_view_filled()
+  return handle('pm_view_filled')
 end
 
 -- Default handlers to follow.

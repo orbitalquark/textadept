@@ -347,13 +347,16 @@ function smart_paste(action, reindent)
 
   -- If text was copied to the clipboard from other apps, insert it into the
   -- kill-ring so it can be pasted (thanks to Nathan Robinson).
-  local clip_txt, found = textadept.clipboard_text, false
-  if clip_txt ~= '' then
+  if #textadept.clipboard_text > 0 then
+    local clipboard_text, found = textadept.clipboard_text, false
     for _, ring_txt in ipairs(kill_ring) do
-      if clip_txt == ring_txt then found = true break end
+      if clipboard_text == ring_txt then
+        found = true
+        break
+      end
     end
+    if not found then insert_into_kill_ring(clipboard_text) end
   end
-  if not found then insert_into_kill_ring(clip_txt) end
 
   txt = kill_ring[kill_ring.pos]
   if txt then
@@ -595,8 +598,7 @@ end
 -- @see smart_cutcopy
 insert_into_kill_ring = function(txt)
   table.insert(kill_ring, 1, txt)
-  local maxn = kill_ring.maxn
-  if #kill_ring > maxn then kill_ring[maxn + 1] = nil end
+  if #kill_ring > kill_ring.maxn then kill_ring[kill_ring.maxn + 1] = nil end
 end
 
 ---

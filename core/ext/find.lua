@@ -4,6 +4,8 @@ local textadept = _G.textadept
 local locale = _G.locale
 local find = textadept.find
 
+local lfs = require 'lfs'
+
 local MARK_FIND = 0
 local MARK_FIND_COLOR = 0x4D9999
 local previous_view
@@ -91,7 +93,6 @@ function find.find(text, next, flags, nowrap, wrapped)
       if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
       if not find.match_case then text = text:lower() end
       if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
-      local lfs = require 'lfs'
       local match_case = find.match_case
       local whole_word = find.whole_word
       local format = string.format
@@ -214,8 +215,8 @@ end
 -- @see find.find
 function find.replace_all(ftext, rtext, flags)
   if #ftext == 0 then return end
-  local buffer = buffer
   if find.in_files then find.in_files = false end
+  local buffer = buffer
   buffer:begin_undo_action()
   local count = 0
   if #buffer:get_sel_text() == 0 then
