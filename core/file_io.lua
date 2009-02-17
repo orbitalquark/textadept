@@ -203,7 +203,12 @@ function load_session(filename, only_pm)
       if line:find('^buffer:') then
         local anchor, current_pos, first_visible_line, filename =
           line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
-        textadept.io.open(filename or '', 'rb')
+        if not filename:find('^%[.+%]$') then
+          textadept.io.open(filename or '', 'rb')
+        else
+          textadept.new_buffer()
+          buffer._type = filename
+        end
         -- Restore saved buffer selection and view.
         local anchor = tonumber(anchor) or 0
         local current_pos = tonumber(current_pos) or 0
@@ -260,7 +265,8 @@ function save_session(filename)
   local view_line = "%sview%d: %d" -- level, number, doc index
   -- Write out opened buffers. (buffer: filename)
   for idx, buffer in ipairs(textadept.buffers) do
-    if buffer.filename then
+    local filename = buffer.filename or buffer._type
+    if filename then
       local current = buffer.doc_pointer == textadept.focused_doc_pointer
       local anchor = current and 'anchor' or '_anchor'
       local current_pos = current and 'current_pos' or '_current_pos'
@@ -268,7 +274,7 @@ function save_session(filename)
         current and 'first_visible_line' or '_first_visible_line'
       session[#session + 1] =
         buffer_line:format(buffer[anchor] or 0, buffer[current_pos] or 0,
-                           buffer[first_visible_line] or 0, buffer.filename)
+                           buffer[first_visible_line] or 0, filename)
     end
   end
   -- Write out split views.
