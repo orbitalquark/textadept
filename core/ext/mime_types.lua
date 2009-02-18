@@ -40,6 +40,7 @@ if f then
       end
     end
   end
+  f:close()
 end
 
 ---
