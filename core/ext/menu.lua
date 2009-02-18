@@ -118,72 +118,12 @@ local ID = {
   UNSPLIT_ALL_VIEWS = 606,
   GROW_VIEW = 607,
   SHRINK_VIEW = 608,
-  -- Lexers
-  LEXER_ACTIONSCRIPT = 801,
-  LEXER_ADA = 802,
-  LEXER_ANTLR = 803,
-  LEXER_APDL = 804,
-  LEXER_APPLESCRIPT = 805,
-  LEXER_ASP = 806,
-  LEXER_AWK = 807,
-  LEXER_BATCH = 808,
-  LEXER_BOO = 809,
-  LEXER_CONTAINER = 810,
-  LEXER_CPP = 811,
-  LEXER_CSHARP = 812,
-  LEXER_CSS = 813,
-  LEXER_D = 814,
-  LEXER_DIFF = 815,
-  LEXER_DJANGO = 816,
-  LEXER_EIFFEL = 817,
-  LEXER_ERLANG = 818,
-  LEXER_ERRORLIST = 819,
-  LEXER_FORTH = 820,
-  LEXER_FORTRAN = 821,
-  LEXER_GAP = 822,
-  LEXER_GETTEXT = 823,
-  LEXER_GNUPLOT = 824,
-  LEXER_GROOVY = 825,
-  LEXER_HASKELL = 826,
-  LEXER_HTML = 827,
-  LEXER_IDL = 828,
-  LEXER_INI = 829,
-  LEXER_IO = 830,
-  LEXER_JAVA = 831,
-  LEXER_JAVASCRIPT = 832,
-  LEXER_LATEX = 833,
-  LEXER_LISP = 834,
-  LEXER_LUA = 835,
-  LEXER_MAKEFILE = 836,
-  LEXER_MYSQL = 837,
-  LEXER_OBJECTIVEC = 838,
-  LEXER_OCAML = 839,
-  LEXER_PASCAL = 840,
-  LEXER_PERL = 841,
-  LEXER_PHP = 842,
-  LEXER_PIKE = 843,
-  LEXER_POSTSCRIPT = 844,
-  LEXER_PROPS = 845,
-  LEXER_PYTHON = 846,
-  LEXER_R = 847,
-  LEXER_RAGEL = 848,
-  LEXER_REBOL = 849,
-  LEXER_REXX = 850,
-  LEXER_RHTML = 851,
-  LEXER_RUBY = 852,
-  LEXER_SCHEME = 853,
-  LEXER_SHELLSCRIPT = 854,
-  LEXER_SMALLTALK = 855,
-  LEXER_TCL = 856,
-  LEXER_VALA = 857,
-  LEXER_VERILOG = 858,
-  LEXER_VHDL = 859,
-  LEXER_VISUALBASIC = 860,
-  LEXER_XML = 861
+  -- Lexers (will be generated dynamically)
+  LEXER_START = 801,
 }
 
 
-t.menubar = {
+local menubar = {
   gtkmenu {
     title = l.MENU_FILE_TITLE,
     { l.MENU_FILE_NEW, ID.NEW },
@@ -330,71 +270,17 @@ t.menubar = {
     { l.MENU_VIEW_GROW, ID.GROW_VIEW },
     { l.MENU_VIEW_SHRINK, ID.SHRINK_VIEW },
   },
-  gtkmenu {
-    title = l.MENU_LEX_TITLE,
-    { 'actionscript', ID.LEXER_ACTIONSCRIPT },
-    { 'ada', ID.LEXER_ADA },
-    { 'antlr', ID.LEXER_ANTLR },
-    { 'apdl', ID.LEXER_APDL },
-    { 'applescript', ID.LEXER_APPLESCRIPT },
-    { 'asp', ID.LEXER_ASP },
-    { 'awk', ID.LEXER_AWK },
-    { 'batch', ID.LEXER_BATCH },
-    { 'boo', ID.LEXER_BOO },
-    { 'container', ID.LEXER_CONTAINER },
-    { 'cpp', ID.LEXER_CPP },
-    { 'csharp', ID.LEXER_CSHARP },
-    { 'css', ID.LEXER_CSS },
-    { 'd', ID.LEXER_D },
-    { 'diff', ID.LEXER_DIFF },
-    { 'django', ID.LEXER_DJANGO },
-    { 'eiffel', ID.LEXER_EIFFEL },
-    { 'erlang', ID.LEXER_ERLANG },
-    { 'errorlist', ID.LEXER_ERRORLIST },
-    { 'forth', ID.LEXER_FORTH },
-    { 'fortran', ID.LEXER_FORTRAN },
-    { 'gap', ID.LEXER_GAP },
-    { 'gettext', ID.LEXER_GETTEXT },
-    { 'gnuplot', ID.LEXER_GNUPLOT },
-    { 'groovy', ID.LEXER_GROOVY },
-    { 'haskell', ID.LEXER_HASKELL },
-    { 'html', ID.LEXER_HTML },
-    { 'idl', ID.LEXER_IDL },
-    { 'ini', ID.LEXER_INI },
-    { 'io', ID.LEXER_IO },
-    { 'java', ID.LEXER_JAVA },
-    { 'javascript', ID.LEXER_JAVASCRIPT },
-    { 'latex', ID.LEXER_LATEX },
-    { 'lisp', ID.LEXER_LISP },
-    { 'lua', ID.LEXER_LUA },
-    { 'makefile', ID.LEXER_MAKEFILE },
-    { 'mysql', ID.LEXER_MYSQL },
-    { 'objective__c', ID.LEXER_OBJECTIVEC },
-    { 'ocaml', ID.LEXER_OCAML },
-    { 'pascal', ID.LEXER_PASCAL },
-    { 'perl', ID.LEXER_PERL },
-    { 'php', ID.LEXER_PHP },
-    { 'pike', ID.LEXER_PIKE },
-    { 'postscript', ID.LEXER_POSTSCRIPT },
-    { 'props', ID.LEXER_PROPS },
-    { 'python', ID.LEXER_PYTHON },
-    { 'r', ID.LEXER_R },
-    { 'ragel', ID.LEXER_RAGEL },
-    { 'rebol', ID.LEXER_REBOL },
-    { 'rexx', ID.LEXER_REXX },
-    { 'rhtml', ID.LEXER_RHTML },
-    { 'ruby', ID.LEXER_RUBY },
-    { 'scheme', ID.LEXER_SCHEME },
-    { 'shellscript', ID.LEXER_SHELLSCRIPT },
-    { 'smalltalk', ID.LEXER_SMALLTALK },
-    { 'tcl', ID.LEXER_TCL },
-    { 'vala', ID.LEXER_VALA },
-    { 'verilog', ID.LEXER_VERILOG },
-    { 'vhdl', ID.LEXER_VHDL },
-    { 'visualbasic', ID.LEXER_VISUALBASIC },
-    { 'xml', ID.LEXER_XML },
-  },
 }
+local lexer_menu = { title = l.MENU_LEX_TITLE }
+local lfs = require 'lfs'
+for lexer in lfs.dir(_HOME..'/lexers/') do
+  if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
+    lexer_menu[#lexer_menu + 1] =
+      { lexer:match('^(.+)%.lua$'), ID.LEXER_START + #lexer_menu }
+  end
+end
+menubar[#menubar + 1] = gtkmenu(lexer_menu)
+t.menubar = menubar
 
 local b, v = 'buffer', 'view'
 local m_snippets = _m.textadept.lsnippets
@@ -543,24 +429,13 @@ local actions = {
 }
 if MAC then actions[ID.PASTE] = { m_editing.smart_paste } end -- fix paste issue
 
--- lexers here MUST be in the same order as in the menu
-local lexers = {
-  'actionscript', 'ada', 'antlr', 'apdl', 'applescript', 'asp', 'awk', 'batch',
-  'boo', 'container', 'cpp', 'csharp', 'css', 'd', 'diff', 'django', 'eiffel',
-  'erlang', 'errorlist', 'forth', 'fortran', 'gap', 'gettext', 'gnuplot',
-  'groovy', 'haskell', 'html', 'idl', 'ini', 'io', 'java', 'javascript',
-  'latex', 'lisp', 'lua', 'makefile', 'mysql', 'objective__c', 'ocaml',
-  'pascal', 'perl', 'php', 'pike', 'postscript', 'props', 'python', 'r',
-  'ragel', 'rebol', 'rexx', 'rhtml', 'ruby', 'scheme', 'shellscript',
-  'smalltalk', 'tcl', 'vala', 'verilog', 'vhdl', 'visualbasic', 'xml'
-}
-
 -- Most of this handling code comes from keys.lua.
 t.events.add_handler('menu_clicked',
   function(menu_id)
     local active_table = actions[menu_id]
-    if menu_id >= ID.LEXER_ACTIONSCRIPT and menu_id <= ID.LEXER_XML then
-      active_table = { set_lexer_language, lexers[menu_id - 800] }
+    if menu_id >= ID.LEXER_START and menu_id < ID.LEXER_START + 99 then
+      active_table =
+        { set_lexer_language, lexer_menu[menu_id - ID.LEXER_START + 1][1] }
     end
     local f, args
     if active_table and #active_table > 0 then
