@@ -61,7 +61,7 @@ function get_context_menu(selected_item)
 end
 
 function perform_menu_action(menu_id, selected_item)
-  local filepath = table.concat(selected_item, '/')
+  local filepath = table.concat(selected_item, '/'):gsub('[/\\]+', '/')
   if menu_id == ID.CHANGE_DIR then
     textadept.pm.entry_text = filepath
     textadept.pm.activate()
