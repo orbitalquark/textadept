@@ -29,7 +29,6 @@ local mlines_most_recent
 -- column position of the caret in the mlines table.
 function add()
   local buffer = buffer
-  buffer:marker_set_back(MARK_MLINE, MARK_MLINE_COLOR)
   local column = buffer.column[buffer.current_pos]
   local line = buffer:line_from_position(buffer.current_pos)
   local new_marker = buffer:marker_add(line, MARK_MLINE)
@@ -137,3 +136,7 @@ function update()
   end
   buffer:end_undo_action()
 end
+
+buffer:marker_set_back(MARK_MLINE, MARK_MLINE_COLOR)
+textadept.events.add_handler('view_new',
+  function() buffer:marker_set_back(MARK_MLINE, MARK_MLINE_COLOR) end)
