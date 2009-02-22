@@ -109,7 +109,7 @@ if not MAC then
   keys['\t']  = { m_snippets.insert         }
   keys['s\t'] = { m_snippets.prev           }
   keys.cai    = { m_snippets.cancel_current }
-  keys.casi   = { m_snippets.list           }
+  keys.csai   = { m_snippets.list           }
   keys.ai     = { m_snippets.show_style     }
   -- Multiple Line Editing
   local m_mlines = _m.textadept.mlines
