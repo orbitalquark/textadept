@@ -19,7 +19,6 @@ local MARK_BOOKMARK_COLOR = 0xC08040
 -- Adds a bookmark to the current line.
 function add()
   local buffer = buffer
-  buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR)
   local line = buffer:line_from_position(buffer.current_pos)
   buffer:marker_add(line, MARK_BOOKMARK)
 end
@@ -70,3 +69,7 @@ function goto_prev()
   end
   if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
 end
+
+buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR)
+textadept.events.add_handler('view_new',
+  function() buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end)
