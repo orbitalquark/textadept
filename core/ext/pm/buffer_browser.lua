@@ -8,7 +8,7 @@ local locale = _G.locale
 -- It is enabled with the prefix 'buffers' in the project manager entry field.
 module('textadept.pm.browsers.buffer', package.seeall)
 
-textadept.pm.add_browser('buffers')
+if not RESETTING then textadept.pm.add_browser('buffers') end
 
 function matches(entry_text)
   return entry_text:sub(1, 7) == 'buffers'

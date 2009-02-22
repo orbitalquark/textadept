@@ -9,7 +9,7 @@ local locale = _G.locale
 -- manager entry field.
 module('textadept.pm.browsers.file', package.seeall)
 
-textadept.pm.add_browser(not WIN32 and '/' or 'C:\\')
+if not RESETTING then textadept.pm.add_browser(not WIN32 and '/' or 'C:\\') end
 
 local lfs = require 'lfs'
 local os = require 'os'
