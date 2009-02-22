@@ -84,6 +84,7 @@ function reload(buffer)
   buffer:line_scroll(0, first_visible_line)
   buffer:goto_pos(pos)
   buffer:set_save_point()
+  buffer.modification_time = lfs.attributes(buffer.filename).modification
   f:close()
 end
 
