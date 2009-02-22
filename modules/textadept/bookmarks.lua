@@ -38,7 +38,8 @@ function toggle()
   local buffer = buffer
   local line = buffer:line_from_position(buffer.current_pos)
   local markers = buffer:marker_get(line) -- bit mask
-  if markers % 2 == 0 then add() else remove() end -- first bit is set?
+  local bit = 2^MARK_BOOKMARK
+  if markers % (bit + bit) < bit then add() else remove() end
 end
 
 ---
@@ -54,6 +55,7 @@ function goto_next()
   local buffer = buffer
   local current_line = buffer:line_from_position(buffer.current_pos)
   local line = buffer:marker_next(current_line + 1, 2^MARK_BOOKMARK)
+  if line == -1 then line = buffer:marker_next(0, 2^MARK_BOOKMARK) end
   if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
 end
 
@@ -63,5 +65,8 @@ function goto_prev()
   local buffer = buffer
   local current_line = buffer:line_from_position(buffer.current_pos)
   local line = buffer:marker_previous(current_line - 1, 2^MARK_BOOKMARK)
+  if line == -1 then
+    line = buffer:marker_previous(buffer.line_count, 2^MARK_BOOKMARK)
+  end
   if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
 end
