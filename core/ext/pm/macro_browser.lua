@@ -8,7 +8,7 @@ local locale = _G.locale
 -- It is enabled with the prefix 'macros' in the project manager entry field.
 module('textadept.pm.browsers.macro', package.seeall)
 
-textadept.pm.add_browser('macros')
+if not RESETTING then textadept.pm.add_browser('macros') end
 
 function matches(entry_text)
   return entry_text:sub(1, 7) == 'macros'

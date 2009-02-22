@@ -8,7 +8,7 @@ local locale = _G.locale
 -- It is enabled with the prefix 'project' in the project manager entry field.
 module('textadept.pm.browsers.project', package.seeall)
 
-textadept.pm.add_browser('project')
+if not RESETTING then textadept.pm.add_browser('project') end
 
 local lfs = require 'lfs'
 local os = require 'os'

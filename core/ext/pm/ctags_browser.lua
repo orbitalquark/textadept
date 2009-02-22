@@ -10,7 +10,7 @@ local locale = _G.locale
 -- is specified, the current file is parsed via ctags and its structure shown.
 module('textadept.pm.browsers.ctags', package.seeall)
 
-textadept.pm.add_browser('ctags')
+if not RESETTING then textadept.pm.add_browser('ctags') end
 
 local FILE_OUT = '/tmp/textadept_output'
 
