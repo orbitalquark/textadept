@@ -116,7 +116,7 @@ function get_contents_for(full_path, expanding)
     tags = {}
     current_file = nil
     current_dir = '' -- ctags file will specify absolute paths
-    os.execute('ctags -f '..FILE_OUT..' '..(buffer.filename or ''))
+    os.execute('ctags -f "'..FILE_OUT..'" '..(buffer.filename or ''))
     f = io.open(FILE_OUT, 'rb')
     if not f then return {} end
   elseif not expanding then
