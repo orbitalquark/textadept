@@ -70,6 +70,6 @@ function goto_prev()
   if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
 end
 
-buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR)
+if buffer then buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end
 textadept.events.add_handler('view_new',
   function() buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end)

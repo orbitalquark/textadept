@@ -137,6 +137,6 @@ function update()
   buffer:end_undo_action()
 end
 
-buffer:marker_set_back(MARK_MLINE, MARK_MLINE_COLOR)
+if buffer then buffer:marker_set_back(MARK_MLINE, MARK_MLINE_COLOR) end
 textadept.events.add_handler('view_new',
   function() buffer:marker_set_back(MARK_MLINE, MARK_MLINE_COLOR) end)
