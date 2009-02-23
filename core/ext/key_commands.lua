@@ -22,7 +22,7 @@ if not MAC then
   --[[
     C:     B   D       H I J K L                 U
     A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
-    CS:  A B C D   F G H I J K L M N O   Q     T U V   X Y Z
+    CS:  A B C D     G H I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
     CA:  A B C D E F G H   J K L M N O   Q R S T U V W X Y Z
     CSA: A B C D E F G H   J K L M N O P Q R S T U V W X Y Z
@@ -96,6 +96,9 @@ if not MAC then
   -- Find Next is an when find pane is focused.
   -- Find Prev is ap when find pane is focused.
   -- Replace is ar when find pane is focused.
+  -- Find in Files is ai when find pane is focused.
+  -- TODO: { t.find.goto_file_in_list, true  }
+  -- TODO: { t.find.goto_file_in_list, false }
   keys.cg = { m_editing.goto_line }
 
   -- Tools
@@ -202,9 +205,9 @@ else
     C:                     J   L                 U   W X   Z
     A:     B   D E     H I J K L                 U
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
-    SA:  A B C D   F   H I J K L M N O   Q R   T U V   X
-    CA:  A   C   E   G     J K L M N O   Q R S T U V W X Y Z
-    CSA: A   C D E   G H   J K L M N O P Q R S T U V W X Y Z
+    SA:  A B C D       H I J K L M N O   Q R   T U V   X
+    CA:  A   C   E         J K L M N O   Q R S T U V W X Y Z
+    CSA: A   C D E     H   J K L M N O P Q R S T U V W X Y Z
   ]]--
 
   keys.clear_sequence = 'aesc'
@@ -276,7 +279,15 @@ else
   keys.ag  = { t.find.call_find_next }
   keys.sag = { t.find.call_find_prev }
   keys.ar  = { t.find.call_replace   }
-  keys.cg  = { m_editing.goto_line   }
+  keys.saf = {
+    function()
+      t.find.in_files = true
+      t.find.focus()
+    end
+  }
+  keys.cag  = { t.find.goto_file_in_list, true  }
+  keys.csag = { t.find.goto_file_in_list, false }
+  keys.cg   = { m_editing.goto_line             }
 
   -- Tools
   keys['f2'] = { t.command_entry.focus }
