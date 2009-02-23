@@ -26,8 +26,12 @@ recent_files = {}
 local function open_helper(filename)
   if not filename then return end
   for index, buffer in ipairs(textadept.buffers) do
-    if filename == buffer.filename then view:goto_buffer(index) return end
+    if filename == buffer.filename then
+      view:goto_buffer(index)
+      return
+    end
   end
+
   local text
   local f = io.open(filename, 'rb')
   if f then
@@ -47,6 +51,13 @@ local function open_helper(filename)
   buffer.filename = filename
   buffer:set_save_point()
   textadept.events.handle('file_opened', filename)
+
+  for index, file in ipairs(recent_files) do
+    if file == filename then
+      table.remove(recent_files, index)
+      break
+    end
+  end
   recent_files[#recent_files + 1] = filename
 end
 
