@@ -74,6 +74,9 @@ local ID = {
   FIND_AND_REPLACE = 304,
   REPLACE = 305,
   REPLACE_ALL = 306,
+  FIND_IN_FILES = 308,
+  GOTO_NEXT_FILE_FOUND = 309,
+  GOTO_PREV_FILE_FOUND = 310,
   GOTO_LINE = 307,
   -- Tools
   FOCUS_COMMAND_ENTRY = 401,
@@ -201,6 +204,10 @@ local menubar = {
     { l.MENU_SEARCH_FIND_AND_REPLACE, ID.FIND_AND_REPLACE },
     { l.MENU_SEARCH_REPLACE, ID.REPLACE },
     { l.MENU_SEARCH_REPLACE_ALL, ID.REPLACE_ALL },
+    { SEPARATOR, ID.SEPARATOR },
+    { l.MENU_SEARCH_FIND_IN_FILES, ID.FIND_IN_FILES },
+    { l.MENU_SEARCH_GOTO_NEXT_FILE_FOUND, ID.GOTO_NEXT_FILE_FOUND },
+    { l.MENU_SEARCH_GOTO_PREV_FILE_FOUND, ID.GOTO_PREV_FILE_FOUND },
     { SEPARATOR, ID.SEPARATOR },
     { l.MENU_SEARCH_GOTO_LINE, ID.GOTO_LINE },
   },
@@ -374,6 +381,14 @@ local actions = {
   [ID.FIND_AND_REPLACE] = { t.find.focus },
   [ID.REPLACE] = { t.find.call_replace },
   [ID.REPLACE_ALL] = { t.find.call_replace_all },
+  [ID.FIND_IN_FILES] = {
+    function()
+      t.find.in_files = true
+      t.find.focus()
+    end
+  },
+  [ID.GOTO_NEXT_FILE_FOUND] = { t.find.goto_file_in_list, true },
+  [ID.GOTO_PREV_FILE_FOUND] = { t.find.goto_file_in_list, false },
   [ID.GOTO_LINE] = { m_editing.goto_line },
   -- Tools
   [ID.FOCUS_COMMAND_ENTRY] = { t.command_entry.focus },

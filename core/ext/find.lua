@@ -254,11 +254,11 @@ function find.replace_all(ftext, rtext, flags)
 end
 
 ---
--- When the user double-clicks a found file, go to the line in the file the text
--- was found at.
+-- [Local function] When the user double-clicks a found file, go to the line in
+-- the file the text was found at.
 -- @param pos The position of the caret.
 -- @param line_num The line double-clicked.
-function goto_file(pos, line_num)
+local function goto_file(pos, line_num)
   if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
     line = buffer:get_line(line_num)
     local file, file_line_num = line:match('^(.+):(%d+):.+$')
@@ -291,3 +291,36 @@ function goto_file(pos, line_num)
   end
 end
 textadept.events.add_handler('double_click', goto_file)
+
+---
+-- [Local function] Goes to the next or previous file found relative to the file
+-- on the current line.
+-- @param next Flag indicating whether or not to go to the next file.
+function find.goto_file_in_list(next)
+  local orig_view = view
+  for _, buffer in ipairs(textadept.buffers) do
+    if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
+      for _, view in ipairs(textadept.views) do
+        if view.doc_pointer == buffer.doc_pointer then
+          view:focus()
+          local orig_line = buffer:line_from_position(buffer.current_pos)
+          local line = orig_line
+          while true do
+            line = line + (next and 1 or -1)
+            if line > buffer.line_count - 1 then line = 0 end
+            if line < 0 then line = buffer.line_count - 1 end
+            if line == orig_line then -- prevent infinite loops
+              orig_view:focus()
+              return
+            end
+            if buffer:get_line(line):match('^(.+):(%d+):.+$') then
+              buffer:goto_line(line)
+              goto_file(buffer.current_pos, line)
+              return
+            end
+          end
+        end
+      end
+    end
+  end
+end
