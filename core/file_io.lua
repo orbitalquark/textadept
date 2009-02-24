@@ -41,8 +41,17 @@ local function open_helper(filename)
   end
   local buffer = textadept.new_buffer()
   if text then
+    -- Check for binary file. If it is one, it's not UTF-8
     local chunk = #text > 65536 and text:sub(1, 65536) or text
-    if chunk:find('\0') then buffer.code_page = 0 end -- binary file; no UTF-8
+    if chunk:find('\0') then buffer.code_page = 0 end
+    -- Tries to set the buffer's EOL mode appropriately based on the file.
+    local c = textadept.constants
+    local s, e = text:find('\r\n?')
+    if s and e then
+      buffer.eol_mode = (s == e and c.SC_EOL_CR or c.SC_EOL_CRLF)
+    else
+      buffer.eol_mode = c.SC_EOL_LF
+    end
     buffer:add_text(text, #text)
     buffer:goto_pos(0)
     buffer:empty_undo_buffer()
