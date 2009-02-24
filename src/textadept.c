@@ -437,7 +437,8 @@ static void switch_to_view(GtkWidget *editor) {
  */
 static void s_notification(GtkWidget *editor, gint, gpointer lParam, gpointer) {
   SCNotification *n = reinterpret_cast<SCNotification*>(lParam);
-  if (focused_editor != editor && n->nmhdr.code == SCN_URIDROPPED)
+  if (focused_editor != editor &&
+      (n->nmhdr.code == SCN_URIDROPPED || n->nmhdr.code == SCN_SAVEPOINTLEFT))
     switch_to_view(editor);
   l_handle_scnnotification(n);
 }
