@@ -25,10 +25,12 @@ function execute(command)
     ['%(filename)'] = filename,
     ['%(filename_noext)'] = filename_noext,
   })
-  local chdir = string.format('cd "%s";\n', filedir)
-  local p = io.popen(chdir..command..' 2>&1')
+  local current_dir = lfs.currentdir()
+  lfs.chdir(filedir)
+  local p = io.popen(command..' 2>&1')
   local out = p:read('*all')
   p:close()
+  lfs.chdir(current_dir)
   textadept.print('> '..command..'\n'..out)
   buffer:goto_pos(buffer.length)
 end
