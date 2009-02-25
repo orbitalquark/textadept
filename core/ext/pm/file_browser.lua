@@ -97,9 +97,9 @@ textadept.events.add_handler('uri_dropped',
         uri = uri:gsub('%%20', ' ') -- sub back for spaces
         if WIN32 then uri = uri:sub(2, -1) end -- ignore leading '/'
         if lfs.attributes(uri).mode == 'directory' then
+          textadept.pm.add_browser(uri)
           textadept.pm.entry_text = uri
           textadept.pm.activate()
-          return
         end
       end
     end
