@@ -100,7 +100,7 @@ local ID = {
   START_RECORDING_MACRO = 413,
   STOP_RECORDING_MACRO = 414,
   PLAY_MACRO = 415,
-  -- Buffers
+  -- Buffer
   NEXT_BUFFER = 501,
   PREV_BUFFER = 502,
   TOGGLE_VIEW_EOL = 503,
@@ -111,8 +111,13 @@ local ID = {
   EOL_MODE_CRLF = 509,
   EOL_MODE_CR = 510,
   EOL_MODE_LF = 511,
+  ENCODING_UTF8 = 512,
+  ENCODING_ASCII = 513,
+  ENCODING_ISO88591 = 514,
+  ENCODING_MACROMAN = 515,
+  ENCODING_UTF16 = 516,
   REFRESH_SYNTAX_HIGHLIGHTING = 508,
-  -- Views
+  -- View
   NEXT_VIEW = 601,
   PREV_VIEW = 602,
   SPLIT_VIEW_VERTICAL = 603,
@@ -261,6 +266,13 @@ local menubar = {
       { l.MENU_BUF_EOL_MODE_CR, ID.EOL_MODE_CR },
       { l.MENU_BUF_EOL_MODE_LF, ID.EOL_MODE_LF },
     },
+    { title = l.MENU_BUF_ENCODING_TITLE,
+      { l.MENU_BUF_ENCODING_UTF8, ID.ENCODING_UTF8 },
+      { l.MENU_BUF_ENCODING_ASCII, ID.ENCODING_ASCII },
+      { l.MENU_BUF_ENCODING_ISO88591, ID.ENCODING_ISO88591 },
+      { l.MENU_BUF_ENCODING_MACROMAN, ID.ENCODING_MACROMAN },
+      { l.MENU_BUF_ENCODING_UTF16, ID.ENCODING_UTF16 },
+    },
     { SEPARATOR, ID.SEPARATOR },
     { l.MENU_BUF_REFRESH, ID.REFRESH_SYNTAX_HIGHLIGHTING },
   },
@@ -297,6 +309,10 @@ local m_bookmarks = _m.textadept.bookmarks
 local m_macros = _m.textadept.macros
 local m_run = _m.textadept.run
 
+local function set_encoding(encoding)
+  buffer:set_encoding(encoding)
+  t.events.update_ui() -- for updating statusbar
+end
 local function toggle_setting(setting)
   local state = buffer[setting]
   if type(state) == 'boolean' then
@@ -314,7 +330,7 @@ end
 local function set_lexer_language(lexer)
   buffer:set_lexer_language(lexer)
   buffer:colourise(0, -1)
-  textadept.events.update_ui() -- for updating statusbar
+  t.events.update_ui() -- for updating statusbar
 end
 
 local actions = {
@@ -416,7 +432,7 @@ local actions = {
   [ID.START_RECORDING_MACRO] = { m_macros.start_recording },
   [ID.STOP_RECORDING_MACRO] = { m_macros.stop_recording },
   [ID.PLAY_MACRO] = { m_macros.play },
-  -- Buffers
+  -- Buffer
   [ID.NEXT_BUFFER] = { 'goto_buffer', v, 1, false },
   [ID.PREV_BUFFER] = { 'goto_buffer', v, -1, false },
   [ID.TOGGLE_VIEW_EOL] = { toggle_setting, 'view_eol' },
@@ -427,8 +443,13 @@ local actions = {
   [ID.EOL_MODE_CRLF] = { set_eol_mode, 0 },
   [ID.EOL_MODE_CR] = { set_eol_mode, 1 },
   [ID.EOL_MODE_LF] = { set_eol_mode, 2 },
+  [ID.ENCODING_UTF8] = { set_encoding, 'UTF-8' },
+  [ID.ENCODING_ASCII] = { set_encoding, 'ASCII' },
+  [ID.ENCODING_ISO88591] = { set_encoding, 'ISO-8859-1' },
+  [ID.ENCODING_MACROMAN] = { set_encoding, 'MacRoman' },
+  [ID.ENCODING_UTF16] = { set_encoding, 'UTF-16LE' },
   [ID.REFRESH_SYNTAX_HIGHLIGHTING] = { 'colourise', b, 0, -1 },
-  -- Views
+  -- View
   [ID.NEXT_VIEW] = { t.goto_view, 1, false },
   [ID.PREV_VIEW] = { t.goto_view, -1, false },
   [ID.SPLIT_VIEW_VERTICAL] = { 'split', v },

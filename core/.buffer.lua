@@ -19,6 +19,9 @@ module('buffer')
 --   since it was last saved.
 -- @field filename The absolute path to the file associated with this buffer.
 --   It is encoded in UTF-8. Use 'textadept.iconv()' for charset conversions.
+-- @field encoding The encoding of the file on the hard disk. It will be nil if
+--   the file is a binary file.
+-- @field encoding_bom The byte-order mark of the file encoding (if any).
 -- @field anchor The position of the opposite end of the selection to the
 --    caret.
 -- @field auto_c_auto_hide Flag indicating whether or not autocompletion is
@@ -229,7 +232,8 @@ module('buffer')
 -- @field x_offset The horizontal scroll position.
 -- @field zoom The zoom level added to all font sizes. +: magnify, -: reduce.
 buffer = {
-  doc_pointer = nil, dirty = nil, filename = nil
+  doc_pointer = nil, dirty = nil, filename = nil,
+  encoding = nil, encoding_bom = nil,
   anchor = nil,
   auto_c_auto_hide = nil,
   auto_c_cancel_at_start = nil,
@@ -374,10 +378,9 @@ function buffer:text_range(start_pos, end_pos)
 
 ---
 -- Deletes the current buffer.
--- The indexed buffer must be the currently focused one.
--- WARNING: this function buffer:should NOT be called via scripts.
--- textadept.io provides a close() function buffer:for buffers to prompt for
--- confirmation if necessary while this function buffer:does not.
+-- The indexed buffer must be the currently focused one. WARNING: this function
+-- should NOT be called via scripts. textadept.io provides a close() function
+-- for buffers to prompt for confirmation if necessary; this function does not.
 -- Activates the 'buffer_deleted' signal.
 function buffer:delete()
 

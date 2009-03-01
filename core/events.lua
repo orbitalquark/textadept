@@ -399,12 +399,12 @@ add_handler('update_ui',
     local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
     local col = buffer.column[pos] + 1
     local lexer = buffer:get_lexer_language()
-    local mode = buffer.overtype and locale.STATUS_OVR or locale.STATUS_INS
     local eol = EOLs[buffer.eol_mode + 1]
     local tabs = (buffer.use_tabs and locale.STATUS_TABS or
       locale.STATUS_SPACES)..buffer.indent
+    local enc = buffer.encoding or ''
     textadept.docstatusbar_text =
-      locale.DOCSTATUSBAR_TEXT:format(line, max, col, lexer, mode, eol, tabs)
+      locale.DOCSTATUSBAR_TEXT:format(line, max, col, lexer, eol, tabs, enc)
   end)
 
 add_handler('margin_click',
@@ -418,9 +418,11 @@ add_handler('buffer_new',
   function() -- set additional buffer functions
     local buffer = buffer
     buffer.reload = textadept.io.reload
+    buffer.set_encoding = textadept.io.set_encoding
     buffer.save = textadept.io.save
     buffer.save_as = textadept.io.save_as
     buffer.close = textadept.io.close
+    buffer.encoding = 'UTF-8'
     set_title(buffer)
   end)
 
