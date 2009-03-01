@@ -24,7 +24,6 @@ require 'ext/mime_types' -- provides support for language detection based on
 require 'ext/pm' -- provides the dynamic browser (side pane) functionality
 require 'ext/pm.buffer_browser'  -- buffer browser
 require 'ext/pm.file_browser'    -- file browser
-require 'ext/pm.project_browser' -- project browser
 require 'ext/pm.modules_browser' -- modules browser
 require 'ext/pm.macro_browser'   -- macro browser
 if not WIN32 then
