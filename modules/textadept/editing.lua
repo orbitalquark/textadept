@@ -152,7 +152,7 @@ function autocomplete_word(word_chars)
   local buffer = buffer
   local caret, length = buffer.current_pos, buffer.length
   local completions, c_list = {}, {}
-  local buffer_text = buffer:get_text(length)
+  local buffer_text = buffer:text_range(0, length)
   local root = buffer_text:sub(1, caret):match('['..word_chars..']+$')
   if not root or #root == 0 then return end
   buffer.target_start, buffer.target_end = 0, buffer.length
