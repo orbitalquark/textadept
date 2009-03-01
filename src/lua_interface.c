@@ -997,6 +997,7 @@ static int l_call_scintilla(lua_State *lua, ScintillaObject *sci, int msg,
   long params[2] = {0, 0};
   int params_needed = 2;
   bool string_return = false;
+  int len = 0;
   char *return_string = 0;
 
   // Set the w and l parameters appropriately for Scintilla.
@@ -1011,7 +1012,7 @@ static int l_call_scintilla(lua_State *lua, ScintillaObject *sci, int msg,
   if (params_needed > 0) params[0] = l_toscintillaparam(lua, p1_type, arg);
   if (params_needed > 1) params[1] = l_toscintillaparam(lua, p2_type, arg);
   if (string_return) { // if a string return, create a buffer for it
-    int len = SS(sci, msg, params[0], 0);
+    len = SS(sci, msg, params[0], 0);
     if (p1_type == tLENGTH) params[0] = len;
     return_string = reinterpret_cast<char*>(malloc(sizeof(char) * len + 1));
     return_string[len] = '\0';
@@ -1021,7 +1022,7 @@ static int l_call_scintilla(lua_State *lua, ScintillaObject *sci, int msg,
   // Send the message to Scintilla and return the appropriate values.
   int result = SS(sci, msg, params[0], params[1]);
   arg = lua_gettop(lua);
-  if (string_return) lua_pushstring(lua, return_string);
+  if (string_return) lua_pushlstring(lua, return_string, len);
   if (rt_type == tBOOL) lua_pushboolean(lua, result);
   if (rt_type > tVOID && rt_type < tBOOL) lua_pushnumber(lua, result);
   g_free(return_string);
@@ -1376,7 +1377,7 @@ static int l_cf_buffer_text_range(lua_State *lua) {
   tr.lpstrText = text;
   SS(SCINTILLA(focused_editor), SCI_GETTEXTRANGE, 0,
      reinterpret_cast<long>(&tr));
-  lua_pushstring(lua, text);
+  lua_pushlstring(lua, text, length);
   g_free(text);
   return 1;
 }
@@ -1484,12 +1485,13 @@ static int l_cf_ta_gtkmenu(lua_State *lua) {
 }
 
 static int l_cf_ta_iconv(lua_State *lua) {
-  const char *text = luaL_checkstring(lua, 1);
+  size_t text_len = 0, conv_len = 0;
+  const char *text = luaL_checklstring(lua, 1, &text_len);
   const char *to = luaL_checkstring(lua, 2);
   const char *from = luaL_checkstring(lua, 3);
-  char *converted = g_convert(text, -1, to, from, NULL, NULL, NULL);
+  char *converted = g_convert(text, text_len, to, from, NULL, &conv_len, NULL);
   if (converted) {
-    lua_pushstring(lua, const_cast<char*>(converted));
+    lua_pushlstring(lua, const_cast<char*>(converted), conv_len);
     g_free(converted);
   } else luaL_error(lua, "Conversion failed");
   return 1;
