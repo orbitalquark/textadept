@@ -1016,6 +1016,8 @@ static int l_call_scintilla(lua_State *lua, ScintillaObject *sci, int msg,
     if (p1_type == tLENGTH) params[0] = len;
     return_string = reinterpret_cast<char*>(malloc(sizeof(char) * len + 1));
     return_string[len] = '\0';
+    if (msg == SCI_GETTEXT || msg == SCI_GETSELTEXT || msg == SCI_GETCURLINE)
+      len--; // Scintilla appends '\0' for these messages; compensate
     params[1] = reinterpret_cast<long>(return_string);
   }
 
