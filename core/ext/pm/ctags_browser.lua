@@ -211,7 +211,7 @@ function perform_action(selected_item)
     if item.children then item = item.children end
   end
   if item.pattern then
-    local buffer_text = buffer:get_text(buffer.length)
+    local buffer_text = buffer:text_range(0, buffer.length)
     local search_text = item.pattern:gsub('\\/', '/')
     local s = buffer_text:find(search_text, 1, true)
     if s then
