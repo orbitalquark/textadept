@@ -169,7 +169,7 @@ function set_encoding(buffer, encoding)
   local iconv = textadept.iconv
   local pos = buffer.current_pos
   local first_visible_line = buffer.first_visible_line
-  local text = buffer:text_range(0, buffer.length)
+  local text = buffer:get_text(buffer.length)
   text = iconv(text, buffer.encoding, 'UTF-8')
   text = iconv(text, encoding, buffer.encoding)
   text = iconv(text, 'UTF-8', encoding)
@@ -189,7 +189,7 @@ function save(buffer)
   textadept.check_focused_buffer(buffer)
   if not buffer.filename then return save_as(buffer) end
   textadept.events.handle('file_before_save', buffer.filename)
-  local text = buffer:text_range(0, buffer.length)
+  local text = buffer:get_text(buffer.length)
   if buffer.encoding then
     local bom = buffer.encoding_bom or ''
     text = bom..textadept.iconv(text, buffer.encoding, 'UTF-8')
