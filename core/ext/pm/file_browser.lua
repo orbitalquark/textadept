@@ -25,17 +25,19 @@ function matches(entry_text)
 end
 
 function get_contents_for(full_path)
+  local iconv = textadept.iconv
   local dir = {}
-  local dirpath = table.concat(full_path, '/')
+  local dirpath = iconv(table.concat(full_path, '/'), _CHARSET, 'UTF-8')
   local path = lfs.attributes(dirpath)
-  local invalid_file = show_dot_files and '^%.%.?$' or '^%.'
   if path and path.mode == 'directory' then
-    for name in lfs.dir(dirpath) do
-      if not name:find(invalid_file) then
-        dir[name] = { text = name }
-        if lfs.attributes(dirpath..'/'..name, 'mode') == 'directory' then
-          dir[name].parent = true
-          dir[name].pixbuf = 'gtk-directory'
+    local invalid_file = show_dot_files and '^%.%.?$' or '^%.'
+    for filename in lfs.dir(dirpath) do
+      if not filename:find(invalid_file) then
+        local utf8_filename = iconv(filename, 'UTF-8', _CHARSET)
+        dir[utf8_filename] = { text = utf8_filename }
+        if lfs.attributes(dirpath..'/'..filename, 'mode') == 'directory' then
+          dir[utf8_filename].parent = true
+          dir[utf8_filename].pixbuf = 'gtk-directory'
         end
       end
     end
@@ -44,8 +46,8 @@ function get_contents_for(full_path)
 end
 
 function perform_action(selected_item)
-  local filepath = table.concat(selected_item, '/')
-  textadept.io.open(filepath)
+  local utf8_filepath = table.concat(selected_item, '/')
+  textadept.io.open(utf8_filepath)
   view:focus()
 end
 
@@ -61,9 +63,10 @@ function get_context_menu(selected_item)
 end
 
 function perform_menu_action(menu_id, selected_item)
-  local filepath = table.concat(selected_item, '/'):gsub('[/\\]+', '/')
+  local utf8_filepath = table.concat(selected_item, '/'):gsub('[/\\]+', '/')
+  local filepath = textadept.iconv(utf8_filepath, _CHARSET, 'UTF-8')
   if menu_id == ID.CHANGE_DIR then
-    textadept.pm.entry_text = filepath
+    textadept.pm.entry_text = utf8_filepath
     textadept.pm.activate()
   elseif menu_id == ID.FILE_INFO then
     local date_format = '%D %T'
@@ -76,7 +79,7 @@ function perform_menu_action(menu_id, selected_item)
                     os.date(date_format, attr.change))
     cocoa_dialog('textbox', {
       ['informative-text'] =
-        string.format(locale.PM_BROWSER_FILE_INFO_TEXT, filepath),
+        string.format(locale.PM_BROWSER_FILE_INFO_TEXT, utf8_filepath),
       text = out,
       button1 = locale.PM_BROWSER_FILE_INFO_OK,
       editable = false
@@ -90,15 +93,18 @@ end
 -- load the dropped directory (if any) into the file browser; events.lua's
 -- "uri_dropped" handler already opens dropped files
 textadept.events.add_handler('uri_dropped',
-  function(uris)
-    for uri in uris:gmatch('[^\r\n\f]+') do
-      if uri:find('^file://') then
-        uri = uri:match('^file://([^\r\n\f]+)')
-        uri = uri:gsub('%%20', ' ') -- sub back for spaces
-        if WIN32 then uri = uri:sub(2, -1) end -- ignore leading '/'
+  function(utf8_uris)
+    local lfs = require 'lfs'
+    for utf8_uri in utf8_uris:gmatch('[^\r\n\f]+') do
+      if utf8_uri:find('^file://') then
+        utf8_uri = utf8_uri:match('^file://([^\r\n\f]+)')
+        utf8_uri = utf8_uri:gsub('%%(%x%x)',
+          function(hex) return string.char(tonumber(hex, 16)) end)
+        if WIN32 then utf8_uri = utf8_uri:sub(2, -1) end -- ignore leading '/'
+        local uri = textadept.iconv(utf8_uri, _CHARSET, 'UTF-8')
         if lfs.attributes(uri).mode == 'directory' then
-          textadept.pm.add_browser(uri)
-          textadept.pm.entry_text = uri
+          textadept.pm.add_browser(utf8_uri)
+          textadept.pm.entry_text = utf8_uri
           textadept.pm.activate()
         end
       end

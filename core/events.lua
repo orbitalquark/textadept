@@ -371,15 +371,17 @@ add_handler('save_point_left',
   end)
 
 add_handler('uri_dropped',
-  function(uris)
+  function(utf8_uris)
     local lfs = require 'lfs'
-    for uri in uris:gmatch('[^\r\n\f]+') do
-      if uri:find('^file://') then
-        uri = uri:match('^file://([^\r\n\f]+)')
-        uri = uri:gsub('%%20', ' ') -- sub back for spaces
-        if WIN32 then uri = uri:sub(2, -1) end -- ignore leading '/'
+    for utf8_uri in utf8_uris:gmatch('[^\r\n\f]+') do
+      if utf8_uri:find('^file://') then
+        utf8_uri = utf8_uri:match('^file://([^\r\n\f]+)')
+        utf8_uri = utf8_uri:gsub('%%(%x%x)',
+          function(hex) return string.char(tonumber(hex, 16)) end)
+        if WIN32 then utf8_uri = utf8_uri:sub(2, -1) end -- ignore leading '/'
+        local uri = textadept.iconv(utf8_uri, _CHARSET, 'UTF-8')
         if lfs.attributes(uri).mode ~= 'directory' then
-          textadept.io.open(uri)
+          textadept.io.open(utf8_uri)
         end
       end
     end

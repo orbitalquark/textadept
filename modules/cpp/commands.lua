@@ -12,7 +12,9 @@ if type(keys) == 'table' then
   local m_editing = _m.textadept.editing
   keys.cpp = {
     al = {
-      m = { textadept.io.open, _HOME..'/modules/cpp/init.lua' },
+      m = { textadept.io.open,
+            textadept.iconv(_HOME..'/modules/cpp/init.lua',
+                            'UTF-8', _CHARSET) },
     },
     ['s\n'] = { function()
       buffer:line_end()

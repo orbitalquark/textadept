@@ -49,7 +49,7 @@ if type(snippets) == 'table' then
     lrsi = 'lua_rawseti(%1(lua), %2(-2), %3(1));',
     lr = 'lua_register(%1(lua), %2(fname), %3(cfunction));',
     lsf = 'lua_setfield(%1(lua), %2(-2), %3(field));',
-    lsg = 'lua_setglobal(%1(lua), %2(-2), %3(global));',
+    lsg = 'lua_setglobal(%1(lua), %2(global));',
     lst = 'lua_settable(%1(lua), %2(-3));',
     ltb = 'lua_toboolean(%1(lua), %2(-1))',
     ltcf = 'lua_tocfunction(%1(lua), %2(-1))',

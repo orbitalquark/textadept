@@ -18,6 +18,7 @@ module('buffer')
 -- @field dirty Flag indicating whether or not the buffer has been modified
 --   since it was last saved.
 -- @field filename The absolute path to the file associated with this buffer.
+--   It is encoded in UTF-8. Use 'textadept.iconv()' for charset conversions.
 -- @field anchor The position of the opposite end of the selection to the
 --    caret.
 -- @field auto_c_auto_hide Flag indicating whether or not autocompletion is
