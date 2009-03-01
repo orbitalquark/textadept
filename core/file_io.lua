@@ -9,6 +9,7 @@ local locale = _G.locale
 --
 -- Events:
 --   file_opened(filename)
+--   file_before_save(filename)
 --   file_saved_as(filename)
 module('textadept.io', package.seeall)
 
@@ -187,8 +188,7 @@ end
 function save(buffer)
   textadept.check_focused_buffer(buffer)
   if not buffer.filename then return save_as(buffer) end
-  prepare = _m.textadept.editing.prepare_for_save
-  if prepare then prepare() end
+  textadept.events.handle('file_before_save', buffer.filename)
   local text = buffer:text_range(0, buffer.length)
   if buffer.encoding then
     local bom = buffer.encoding_bom or ''
