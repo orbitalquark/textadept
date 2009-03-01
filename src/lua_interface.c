@@ -68,6 +68,7 @@ static int l_cf_ta_buffer_new(lua_State *lua),
            l_cf_ta_goto_window(lua_State *lua),
            l_cf_view_goto_buffer(lua_State *lua),
            l_cf_ta_gtkmenu(lua_State *lua),
+           l_cf_ta_iconv(lua_State *lua),
            l_cf_ta_reset(lua_State *lua),
            l_cf_ta_quit(lua_State *lua),
            l_cf_pm_focus(lua_State *lua),
@@ -135,6 +136,7 @@ bool l_init(int argc, char **argv, bool reinit) {
   l_cfunc(lua, l_cf_ta_goto_window, "goto_view");
   l_cfunc(lua, l_cf_ta_get_split_table, "get_split_table");
   l_cfunc(lua, l_cf_ta_gtkmenu, "gtkmenu");
+  l_cfunc(lua, l_cf_ta_iconv, "iconv");
   l_cfunc(lua, l_cf_ta_reset, "reset");
   l_cfunc(lua, l_cf_ta_quit, "quit");
   l_mt(lua, "_textadept_mt", l_ta_mt_index, l_ta_mt_newindex);
@@ -151,6 +153,10 @@ bool l_init(int argc, char **argv, bool reinit) {
   lua_pushboolean(lua, 1);
   lua_setglobal(lua, "MAC");
 #endif
+  const char *charset = 0;
+  g_get_charset(&charset);
+  lua_pushstring(lua, charset);
+  lua_setglobal(lua, "_CHARSET");
 
   if (l_load_script("core/init.lua")) {
     lua_getglobal(lua, "textadept");
@@ -1474,6 +1480,18 @@ static int l_cf_ta_gtkmenu(lua_State *lua) {
   luaL_checktype(lua, 1, LUA_TTABLE);
   GtkWidget *menu = l_create_gtkmenu(lua, G_CALLBACK(t_menu_activate), false);
   lua_pushlightuserdata(lua, const_cast<GtkWidget*>(menu));
+  return 1;
+}
+
+static int l_cf_ta_iconv(lua_State *lua) {
+  const char *text = luaL_checkstring(lua, 1);
+  const char *to = luaL_checkstring(lua, 2);
+  const char *from = luaL_checkstring(lua, 3);
+  char *converted = g_convert(text, -1, to, from, NULL, NULL, NULL);
+  if (converted) {
+    lua_pushstring(lua, const_cast<char*>(converted));
+    g_free(converted);
+  } else luaL_error(lua, "Conversion failed");
   return 1;
 }
 

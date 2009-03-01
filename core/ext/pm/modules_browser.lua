@@ -71,7 +71,9 @@ local keys = _G.keys
 if type(keys) == 'table' then
   keys.$1 = {
     al = {
-      m = { textadept.io.open, _HOME..'/modules/$1/init.lua' },
+      m = { textadept.io.open,
+            textadept.iconv(_HOME..'/modules/$1/init.lua',
+                            'UTF-8', _CHARSET) },
     },
   }
 end
@@ -82,20 +84,22 @@ function matches(entry_text)
 end
 
 local function modify_path(path)
-  path[1] = _HOME..'/modules'
+  path[1] = textadept.iconv(_HOME..'/modules', 'UTF-8', _CHARSET)
   return path
 end
 
 function get_contents_for(full_path)
   full_path = modify_path(full_path)
+  local iconv = textadept.iconv
   local dir = {}
-  local dirpath = table.concat(full_path, '/')
-  for name in lfs.dir(dirpath) do
-    if not name:find('^%.') then
-      dir[name] = { text = name }
-      if lfs.attributes(dirpath..'/'..name, 'mode') == 'directory' then
-        dir[name].parent = true
-        dir[name].pixbuf = 'gtk-directory'
+  local dirpath = iconv(table.concat(full_path, '/'), _CHARSET, 'UTF-8')
+  for filename in lfs.dir(dirpath) do
+    if not filename:find('^%.') then
+      local utf8_filename = iconv(filename, 'UTF-8', _CHARSET)
+      dir[utf8_filename] = { text = utf8_filename }
+      if lfs.attributes(dirpath..'/'..filename, 'mode') == 'directory' then
+        dir[utf8_filename].parent = true
+        dir[utf8_filename].pixbuf = 'gtk-directory'
       end
     end
   end
@@ -104,8 +108,8 @@ end
 
 function perform_action(selected_item)
   selected_item = modify_path(selected_item)
-  local filepath = table.concat(selected_item, '/')
-  textadept.io.open(filepath)
+  local utf8_filepath = table.concat(selected_item, '/')
+  textadept.io.open(utf8_filepath)
   view:focus()
 end
 
@@ -183,10 +187,12 @@ function perform_menu_action(menu_id, selected_item)
       return
     end
   elseif menu_id == ID.CONF_MIME_TYPES then
-    textadept.io.open(_HOME..'/core/ext/mime_types.lua')
+    textadept.io.open(
+      textadept.iconv(_HOME..'/core/ext/mime_types.lua', 'UTF-8', _CHARSET))
   elseif menu_id == ID.CONF_KEY_COMMANDS then
     if textadept.key_commands then
-      textadept.io.open(_HOME..'/core/ext/key_commands.lua')
+      textadept.io.open(
+        textadept.iconv(_HOME..'/core/ext/key_commands.lua', 'UTF-8', _CHARSET))
     end
   elseif menu_id == ID.RELOAD then
     textadept.reset()

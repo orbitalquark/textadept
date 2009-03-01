@@ -16,11 +16,11 @@ module('_m.textadept.run', package.seeall)
 --     * %(filename) The name of the file including extension.
 --     * %(filename_noext) The name of the file excluding extension.
 function execute(command)
-  local filepath = buffer.filename
+  local filepath = textadept.iconv(buffer.filename, _CHARSET, 'UTF-8')
   local filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
   local filename_noext = filename:match('^(.+)%.')
   command = command:gsub('%%%b()', {
-    ['%(filepath)'] = filepath,
+    ['%(filepath)'] = filepath, _CHARSET, 'UTF-8',
     ['%(filedir)'] = filedir,
     ['%(filename)'] = filename,
     ['%(filename_noext)'] = filename_noext,
@@ -31,7 +31,7 @@ function execute(command)
   local out = p:read('*all')
   p:close()
   lfs.chdir(current_dir)
-  textadept.print('> '..command..'\n'..out)
+  textadept.print(textadept.iconv('> '..command..'\n'..out, 'UTF-8', _CHARSET))
   buffer:goto_pos(buffer.length)
 end
 
@@ -136,15 +136,16 @@ function goto_error(pos, line_num)
       local captures = { line:match(error_detail.pattern) }
       if #captures > 0 then
         local lfs = require 'lfs'
-        local filename = captures[error_detail.filename]
+        local utf8_filename = captures[error_detail.filename]
+        local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
         if lfs.attributes(filename) then
-          textadept.io.open(filename)
+          textadept.io.open(utf8_filename)
           _m.textadept.editing.goto_line(captures[error_detail.line])
           local msg = captures[error_detail.message]
           if msg then buffer:call_tip_show(buffer.current_pos, msg) end
         else
           error(string.format(
-            locale.M_TEXTADEPT_RUN_FILE_DOES_NOT_EXIST, filename))
+            locale.M_TEXTADEPT_RUN_FILE_DOES_NOT_EXIST, utf8_filename))
         end
         break
       end

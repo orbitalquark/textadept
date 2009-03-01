@@ -81,7 +81,7 @@ function find.find(text, next, flags, nowrap, wrapped)
     end
 
   else -- find in files
-    local dir =
+    local utf8_dir =
       cocoa_dialog('fileselect', {
         title = locale.FIND_IN_FILES_TITLE,
         text = locale.FIND_IN_FILES_TEXT,
@@ -89,12 +89,13 @@ function find.find(text, next, flags, nowrap, wrapped)
         ['with-directory'] = (buffer.filename or ''):match('^.+[/\\]'),
         ['no-newline'] = true
       })
-    if #dir > 0 then
+    if #utf8_dir > 0 then
       if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
       if not find.match_case then text = text:lower() end
       if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
       local match_case = find.match_case
       local whole_word = find.whole_word
+      local iconv = textadept.iconv
       local format = string.format
       local matches = { 'Find: '..text }
       function search_file(file)
@@ -104,6 +105,7 @@ function find.find(text, next, flags, nowrap, wrapped)
           if not match_case then optimized_line = line:lower() end
           if whole_word then optimized_line = ' '..line..' ' end
           if string.find(optimized_line, text) then
+            file = iconv(file, 'UTF-8', _CHARSET)
             matches[#matches + 1] = format('%s:%s:%s', file, line_num, line)
           end
           line_num = line_num + 1
@@ -122,6 +124,7 @@ function find.find(text, next, flags, nowrap, wrapped)
           end
         end
       end
+      local dir = iconv(utf8_dir, _CHARSET, 'UTF-8')
       search_dir(dir)
       if #matches == 1 then matches[2] = locale.FIND_NO_RESULTS end
       matches[#matches + 1] = ''
@@ -293,7 +296,7 @@ end
 textadept.events.add_handler('double_click', goto_file)
 
 ---
--- [Local function] Goes to the next or previous file found relative to the file
+-- Goes to the next or previous file found relative to the file
 -- on the current line.
 -- @param next Flag indicating whether or not to go to the next file.
 function find.goto_file_in_list(next)

@@ -22,17 +22,19 @@ recent_files = {}
 
 ---
 -- [Local function] Opens a file or goes to its already open buffer.
--- @param filename The absolute path to the file to open.
-local function open_helper(filename)
-  if not filename then return end
+-- @param utf8_filename The absolute path to the file to open. Must be UTF-8
+--   encoded.
+local function open_helper(utf8_filename)
+  if not utf8_filename then return end
   for index, buffer in ipairs(textadept.buffers) do
-    if filename == buffer.filename then
+    if utf8_filename == buffer.filename then
       view:goto_buffer(index)
       return
     end
   end
 
   local text
+  local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
   local f = io.open(filename, 'rb')
   if f then
     text = f:read('*all')
@@ -57,27 +59,28 @@ local function open_helper(filename)
     buffer:empty_undo_buffer()
     buffer.modification_time = lfs.attributes(filename).modification
   end
-  buffer.filename = filename
+  buffer.filename = utf8_filename
   buffer:set_save_point()
-  textadept.events.handle('file_opened', filename)
+  textadept.events.handle('file_opened', utf8_filename)
 
   for index, file in ipairs(recent_files) do
-    if file == filename then
+    if file == utf8_filename then
       table.remove(recent_files, index)
       break
     end
   end
-  recent_files[#recent_files + 1] = filename
+  recent_files[#recent_files + 1] = utf8_filename
 end
 
 ---
 -- Opens a list of files.
--- @param filenames A '\n' separated list of filenames to open. If none
---   specified, the user is prompted to open files from a dialog.
--- @usage textadept.io.open(filename)
-function open(filenames)
-  filenames =
-    filenames or cocoa_dialog('fileselect', {
+-- @param utf8_filenames A '\n' separated list of filenames to open. If none
+--   specified, the user is prompted to open files from a dialog. These paths
+--   must be encoded in UTF-8.
+-- @usage textadept.io.open(utf8_encoded_filename)
+function open(utf8_filenames)
+  utf8_filenames =
+    utf8_filenames or cocoa_dialog('fileselect', {
       title = locale.IO_OPEN_TITLE,
       text = locale.IO_OPEN_TEXT,
       -- in Windows, dialog:get_filenames() is unavailable; only allow single
@@ -85,7 +88,7 @@ function open(filenames)
       ['select-multiple'] = not WIN32 or nil,
       ['with-directory'] = (buffer.filename or ''):match('.+[/\\]')
     })
-  for filename in filenames:gmatch('[^\n]+') do open_helper(filename) end
+  for filename in utf8_filenames:gmatch('[^\n]+') do open_helper(filename) end
 end
 
 ---
@@ -96,7 +99,9 @@ end
 function reload(buffer)
   textadept.check_focused_buffer(buffer)
   if not buffer.filename then return end
-  local f, err = io.open(buffer.filename, 'rb')
+  local utf8_filename = buffer.filename
+  local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
+  local f = io.open(filename, 'rb')
   if not f then return end
   local pos = buffer.current_pos
   local first_visible_line = buffer.first_visible_line
@@ -104,7 +109,7 @@ function reload(buffer)
   buffer:line_scroll(0, first_visible_line)
   buffer:goto_pos(pos)
   buffer:set_save_point()
-  buffer.modification_time = lfs.attributes(buffer.filename).modification
+  buffer.modification_time = lfs.attributes(filename).modification
   f:close()
 end
 
@@ -118,13 +123,15 @@ function save(buffer)
   if not buffer.filename then return save_as(buffer) end
   prepare = _m.textadept.editing.prepare_for_save
   if prepare then prepare() end
-  local f, err = io.open(buffer.filename, 'wb')
+  local utf8_filename = buffer.filename
+  local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
+  local f, err = io.open(filename, 'wb')
   if f then
     local txt, _ = buffer:get_text(buffer.length)
     f:write(txt)
     f:close()
     buffer:set_save_point()
-    buffer.modification_time = lfs.attributes(buffer.filename).modification
+    buffer.modification_time = lfs.attributes(filename).modification
   else
     textadept.events.error(err)
   end
@@ -134,12 +141,13 @@ end
 ---
 -- Saves the current buffer to a file different than its filename property.
 -- @param buffer The buffer to save. This must be the currently focused buffer.
--- @filename The new filepath to save the buffer to.
+-- @param utf8_filename The new filepath to save the buffer to. Must be UTF-8
+--   encoded.
 -- @usage buffer:save_as(filename)
-function save_as(buffer, filename)
+function save_as(buffer, utf8_filename)
   textadept.check_focused_buffer(buffer)
-  if not filename then
-    filename =
+  if not utf8_filename then
+    utf8_filename =
       cocoa_dialog('filesave', {
         title = locale.IO_SAVE_TITLE,
         ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
@@ -147,10 +155,10 @@ function save_as(buffer, filename)
         ['no-newline'] = true
       })
   end
-  if #filename > 0 then
-    buffer.filename = filename
+  if #utf8_filename > 0 then
+    buffer.filename = utf8_filename
     buffer:save()
-    textadept.events.handle('file_saved_as', filename)
+    textadept.events.handle('file_saved_as', utf8_filename)
   end
 end
 
@@ -378,14 +386,15 @@ end
 -- modified outside of Textadept.
 local function update_modified_file()
   if not buffer.filename then return end
-  local filename = buffer.filename
+  local utf8_filename = buffer.filename
+  local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
   local attributes = lfs.attributes(filename)
   if not attributes then return end
   if buffer.modification_time < attributes.modification then
     if cocoa_dialog('yesno-msgbox', {
       title = locale.IO_RELOAD_TITLE,
       text = locale.IO_RELOAD_TEXT,
-      ['informative-text'] = string.format(locale.IO_RELOAD_MSG, filename),
+      ['informative-text'] = string.format(locale.IO_RELOAD_MSG, utf8_filename),
       ['no-cancel'] = true,
       ['no-newline'] = true
     }) == '1' then
