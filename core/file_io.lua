@@ -21,6 +21,41 @@ local lfs = require 'lfs'
 recent_files = {}
 
 ---
+-- List of byte-order marks (BOMs).
+-- @class table
+-- @name boms
+boms = {
+  ['UTF-16BE'] = string.char(254, 255),
+  ['UTF-16LE'] = string.char(255, 254),
+  ['UTF-32BE'] = string.char(0, 0, 254, 255),
+  ['UTF-32LE'] = string.char(255, 254, 0, 0)
+}
+
+---
+-- [Local function] Attempt to detect the encoding of the given text.
+-- @param text Text to determine encoding from.
+-- @return encoding string for textadept.iconv(), byte-order mark (BOM) string
+--   or nil. If encoding string is nil, the text belongs to a binary file.
+local function detect_encoding(text)
+  local b1, b2, b3, b4 = string.byte(text, 1, 4)
+  if b1 == 239 and b2 == 187 and b3 == 191 then
+    return 'UTF-8', string.char(239, 187, 191)
+  elseif b1 == 254 and b2 == 255 then
+    return 'UTF-16BE', boms[encoding]
+  elseif b1 == 255 and b2 == 254 then
+    return 'UTF-16LE', boms[encoding]
+  elseif b1 == 0 and b2 == 0 and b3 == 254 and b4 == 255 then
+    return 'UTF-32BE', boms[encoding]
+  elseif b1 == 255 and b2 == 254 and b3 == 0 and b4 == 0 then
+    return 'UTF-32LE', boms[encoding]
+  else
+    local chunk = #text > 65536 and text:sub(1, 65536) or text
+    if chunk:find('\0') then return nil end -- binary file
+  end
+  return 'UTF-8'
+end
+
+---
 -- [Local function] Opens a file or goes to its already open buffer.
 -- @param utf8_filename The absolute path to the file to open. Must be UTF-8
 --   encoded.
@@ -43,11 +78,14 @@ local function open_helper(utf8_filename)
   end
   local buffer = textadept.new_buffer()
   if text then
-    -- Check for binary file. If it is one, it's not UTF-8
-    local chunk = #text > 65536 and text:sub(1, 65536) or text
-    if chunk:find('\0') then buffer.code_page = 0 end
-    -- Tries to set the buffer's EOL mode appropriately based on the file.
     local c = textadept.constants
+    -- Tries to detect character encoding and convert text from it to UTF-8.
+    local encoding, encoding_bom = detect_encoding(text)
+    if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
+    if encoding then text = textadept.iconv(text, 'UTF-8', encoding) end
+    buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
+    buffer.code_page = encoding and c.SC_CP_UTF8 or 0
+    -- Tries to set the buffer's EOL mode appropriately based on the file.
     local s, e = text:find('\r\n?')
     if s and e then
       buffer.eol_mode = (s == e and c.SC_EOL_CR or c.SC_EOL_CRLF)
@@ -99,18 +137,46 @@ end
 function reload(buffer)
   textadept.check_focused_buffer(buffer)
   if not buffer.filename then return end
-  local utf8_filename = buffer.filename
-  local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
-  local f = io.open(filename, 'rb')
-  if not f then return end
   local pos = buffer.current_pos
   local first_visible_line = buffer.first_visible_line
-  buffer:set_text(f:read('*all'))
+  local filename = textadept.iconv(buffer.filename, _CHARSET, 'UTF-8')
+  local f, err = io.open(filename, 'rb')
+  if not f then return end
+  local text = f:read('*all')
+  f:close()
+  local encoding, encoding_bom = buffer.encoding, buffer.encoding_bom
+  if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
+  if encoding then text = textadept.iconv(text, 'UTF-8', encoding) end
+  buffer:clear_all()
+  buffer:add_text(text, #text)
   buffer:line_scroll(0, first_visible_line)
   buffer:goto_pos(pos)
   buffer:set_save_point()
   buffer.modification_time = lfs.attributes(filename).modification
-  f:close()
+end
+
+---
+-- Sets the encoding for the buffer, converting its contents in the process.
+-- @param buffer The buffer to set the encoding for. It must be the currently
+--   focused buffer.
+-- @param encoding The encoding to set. Valid encodings are ones that GTK's
+--   g_convert() function accepts (typically GNU iconv's encodings).
+-- @usage buffer:set_encoding('ASCII')
+function set_encoding(buffer, encoding)
+  textadept.check_focused_buffer(buffer)
+  if not buffer.encoding then error('Cannot change binary file encoding') end
+  local iconv = textadept.iconv
+  local pos = buffer.current_pos
+  local first_visible_line = buffer.first_visible_line
+  local text = buffer:text_range(0, buffer.length)
+  text = iconv(text, buffer.encoding, 'UTF-8')
+  text = iconv(text, encoding, buffer.encoding)
+  text = iconv(text, 'UTF-8', encoding)
+  buffer:clear_all()
+  buffer:add_text(text, #text)
+  buffer:line_scroll(0, first_visible_line)
+  buffer:goto_pos(pos)
+  buffer.encoding, buffer.encoding_bom = encoding, boms[encoding]
 end
 
 ---
@@ -123,12 +189,15 @@ function save(buffer)
   if not buffer.filename then return save_as(buffer) end
   prepare = _m.textadept.editing.prepare_for_save
   if prepare then prepare() end
-  local utf8_filename = buffer.filename
-  local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
+  local text = buffer:text_range(0, buffer.length)
+  if buffer.encoding then
+    local bom = buffer.encoding_bom or ''
+    text = bom..textadept.iconv(text, buffer.encoding, 'UTF-8')
+  end
+  local filename = textadept.iconv(buffer.filename, _CHARSET, 'UTF-8')
   local f, err = io.open(filename, 'wb')
   if f then
-    local txt, _ = buffer:get_text(buffer.length)
-    f:write(txt)
+    f:write(text)
     f:close()
     buffer:set_save_point()
     buffer.modification_time = lfs.attributes(filename).modification
