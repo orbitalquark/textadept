@@ -7,7 +7,7 @@ local locale = _G.locale
 -- Provides file input/output routines for Textadept.
 -- Opens and saves files and sessions and reads API files.
 --
--- Events:
+-- Events (all filenames are encoded in UTF-8):
 --   file_opened(filename)
 --   file_before_save(filename)
 --   file_saved_as(filename)
@@ -237,9 +237,9 @@ end
 function save_all()
   local current_buffer = buffer
   local current_index
-  for idx, buffer in ipairs(textadept.buffers) do
-    view:goto_buffer(idx)
-    if buffer == current_buffer then current_index = idx end
+  for index, buffer in ipairs(textadept.buffers) do
+    view:goto_buffer(index)
+    if buffer == current_buffer then current_index = index end
     if buffer.filename and buffer.dirty then buffer:save() end
   end
   view:goto_buffer(current_index)
@@ -294,8 +294,8 @@ function load_session(filename, only_pm)
   if not user_dir then return end
   local ta_session = user_dir..'/.ta_session'
   local f = io.open(filename or ta_session, 'rb')
-  local current_view, splits = 1, { [0] = {} }
   if not f then return false end
+  local current_view, splits = 1, { [0] = {} }
   for line in f:lines() do
     if not only_pm then
       if line:find('^buffer:') then
@@ -361,8 +361,8 @@ function save_session(filename)
   local buffer_line = "buffer: %d %d %d %s" -- anchor, cursor, line, filename
   local split_line = "%ssplit%d: %s %d" -- level, number, type, size
   local view_line = "%sview%d: %d" -- level, number, doc index
-  -- Write out opened buffers. (buffer: filename)
-  for idx, buffer in ipairs(textadept.buffers) do
+  -- Write out opened buffers.
+  for _, buffer in ipairs(textadept.buffers) do
     local filename = buffer.filename or buffer._type
     if filename then
       local current = buffer.doc_pointer == textadept.focused_doc_pointer
@@ -401,8 +401,11 @@ function save_session(filename)
   end
   -- Write out the current focused view.
   local current_view = view
-  for idx, view in ipairs(textadept.views) do
-    if view == current_view then current_view = idx break end
+  for index, view in ipairs(textadept.views) do
+    if view == current_view then
+      current_view = index
+      break
+    end
   end
   session[#session + 1] = ("current_view: %d"):format(current_view)
   -- Write out other things.

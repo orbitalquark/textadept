@@ -94,6 +94,7 @@ local ipairs = _G.ipairs
 local next = _G.next
 local type = _G.type
 local unpack = _G.unpack
+local MAC = _G.MAC
 
 ---
 -- [Local table] Lookup table for key values higher than 255.
