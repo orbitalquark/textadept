@@ -17,5 +17,4 @@ buffer.back_space_un_indents = true
 buffer.indentation_guides = 1
 
 -- various
-buffer.eol_mode = textadept.constants.SC_EOL_LF
 buffer.auto_c_choose_single = true
