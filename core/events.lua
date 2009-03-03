@@ -205,13 +205,9 @@ add_handler('view_new',
     buffer.property['lexer.lua.home'] = _HOME..'/lexers/'
     buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
     if _THEME and #_THEME > 0 then
-      if not _THEME:find('[/\\]') then
-        -- use a lexer theme from Textadept's themes, not scintilla-st's
-        buffer.property['lexer.lua.color.theme'] =
-          _HOME..'/themes/'.._THEME..'/lexer.lua'
-      else -- _THEME is a folder path
-        buffer.property['lexer.lua.color.theme'] = _THEME..'/lexer.lua'
-      end
+      local tfile = _THEME..'/lexer.lua'
+      if not _THEME:find('[/\\]') then tfile = _HOME..'/themes/'..tfile end
+      buffer.property['lexer.lua.color.theme'] = tfile
     end
 
     -- lexer
@@ -230,12 +226,9 @@ add_handler('view_new',
     end
 
     if _THEME and #_THEME > 0 then
-      local ret, errmsg
-      if not _THEME:find('[/\\]') then
-        ret, errmsg = pcall(dofile, _HOME..'/themes/'.._THEME..'/view.lua')
-      else -- _THEME is a folder path
-        ret, errmsg = pcall(dofile, _THEME..'/view.lua')
-      end
+      local vfile = _THEME..'/view.lua'
+      if not _THEME:find('[/\\]') then vfile = _HOME..'/themes/'..vfile end
+      local ret, errmsg = pcall(dofile, vfile)
       if ret then return end
       io.stderr:write(errmsg)
     end
@@ -248,8 +241,6 @@ add_handler('view_new',
     buffer.caret_line_back = 14540253 -- 0xDD | 0xDD << 8 | 0xDD << 16
     buffer:set_x_caret_policy(1, 20) -- CARET_SLOP
     buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
-    buffer.caret_style = 2
-    buffer.caret_period = 0
 
     -- selection
     buffer:set_sel_fore(1, 3355443) -- 0x33 | 0x33 << 8 | 0x33 << 16
@@ -282,16 +273,9 @@ add_handler('view_new',
     buffer:marker_define(c.SC_MARKNUM_FOLDERMIDTAIL, c.SC_MARK_EMPTY)
 
     -- various
-    buffer.buffered_draw = true
-    buffer.two_phase_draw = false
     buffer.call_tip_use_style = 0
-    buffer.use_popup = 0
     buffer:set_fold_flags(16)
     buffer.mod_event_mask = c.SC_MOD_CHANGEFOLD
-    buffer.scroll_width = 2000
-    buffer.h_scroll_bar = true
-    buffer.end_at_last_line = true
-    buffer.caret_sticky = false
   end)
 
 add_handler('buffer_new',
@@ -308,12 +292,9 @@ add_handler('buffer_new',
       buffer.code_page = textadept.constants.SC_CP_UTF8
 
       if _THEME and #_THEME > 0 then
-        local ret, errmsg
-        if not _THEME:find('[/\\]') then
-          ret, errmsg = pcall(dofile, _HOME..'/themes/'.._THEME..'/buffer.lua')
-        else -- _THEME is a folder path
-          ret, errmsg = pcall(dofile, _THEME..'/buffer.lua')
-        end
+        local bfile = _THEME..'/buffer.lua'
+        if not _THEME:find('[/\\]') then bfile = _HOME..'/themes/'..bfile end
+        local ret, errmsg = pcall(dofile, bfile)
         if ret then return end
         io.stderr:write(errmsg)
       end
@@ -333,7 +314,6 @@ add_handler('buffer_new',
       buffer.indentation_guides = 1
 
       -- various
-      buffer.eol_mode = textadept.constants.SC_EOL_LF
       buffer.auto_c_choose_single = true
     end
     -- normally when an error occurs, a new buffer is created with the error
@@ -462,9 +442,7 @@ add_handler('quit',
   end)
 
 if MAC then
-  function appleevent_odoc(uri)
-    return handle('uri_dropped', 'file://'..uri)
-  end
+  function appleevent_odoc(uri) return handle('uri_dropped', 'file://'..uri) end
 end
 
 ---
