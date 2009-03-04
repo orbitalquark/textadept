@@ -73,6 +73,15 @@ function get_split_table() end
 function gtkmenu(menu_table) end
 
 ---
+-- Converts a string from one character set to another using iconv().
+-- Valid character sets are ones GLib's g_convert() accepts, typically GNU
+-- iconv's character sets.
+-- @param text The text to convert.
+-- @param to The character set to convert to.
+-- @param from The character set to convert from.
+function iconv(text, to, from)
+
+---
 -- Resets the Lua state by reloading all init scripts.
 -- Language-specific modules for opened files are NOT reloaded. Re-opening the
 -- files that use them will reload those modules.
