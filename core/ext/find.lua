@@ -327,3 +327,7 @@ function find.goto_file_in_list(next)
     end
   end
 end
+
+if buffer then buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end
+textadept.events.add_handler('view_new',
+  function() buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end)
