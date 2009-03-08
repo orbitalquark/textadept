@@ -46,9 +46,11 @@
 
 local pm = textadept.pm
 
+local current_browser = nil
+
 -- For restoring browser cursors
+local last_browser_text = nil
 local browser_cursors = {}
-local last_browser = nil
 
 ---
 -- Requests treeview contents from browser that matches pm_entry's text.
@@ -71,12 +73,13 @@ local last_browser = nil
 function pm.get_contents_for(full_path, expanding)
   for _, browser in pairs(pm.browsers) do
     if browser.matches(full_path[1]) then
-      if last_browser and last_browser ~= pm.entry_text then
+      current_browser = browser
+      if last_browser_text and last_browser_text ~= pm.entry_text then
         -- Switching browsers, save the current one's cursor.
-        -- Don't reset last_browser here though, we still need to detect the
-        -- switch when the 'pm_view_filled' event is called so as to restore
+        -- Don't reset last_browser_text here though, we still need to detect
+        -- the switch when the 'pm_view_filled' event is called so as to restore
         -- the cursor to the new browser.
-        browser_cursors[last_browser] = pm.cursor
+        browser_cursors[last_browser_text] = pm.cursor
       end
       return browser.get_contents_for(full_path, expanding)
     end
@@ -89,11 +92,7 @@ end
 -- @param selected_item Identical to 'full_path' in pm.get_contents_for.
 -- @see pm.get_contents_for
 function pm.perform_action(selected_item)
-  for _, browser in pairs(pm.browsers) do
-    if browser.matches(selected_item[1]) then
-      return browser.perform_action(selected_item)
-    end
-  end
+  current_browser.perform_action(selected_item)
 end
 
 ---
@@ -108,11 +107,7 @@ end
 --     Otherwise a regular menu item with a mnemonic is created.
 -- @see pm.get_contents_for
 function pm.get_context_menu(selected_item)
-  for _, browser in pairs(pm.browsers) do
-    if browser.matches(selected_item[1]) then
-      return browser.get_context_menu(selected_item)
-    end
-  end
+  return current_browser.get_context_menu(selected_item)
 end
 
 ---
@@ -122,11 +117,7 @@ end
 -- @param selected_item Identical to 'full_path' in pm.get_contents_for.
 -- @see pm.get_contents_for
 function pm.perform_menu_action(menu_id, selected_item)
-  for _, browser in pairs(pm.browsers) do
-    if browser.matches(selected_item[1]) then
-      return browser.perform_menu_action(menu_id, selected_item)
-    end
-  end
+  current_browser.perform_menu_action(menu_id, selected_item)
 end
 
 ---
@@ -144,8 +135,8 @@ end
 
 textadept.events.add_handler('pm_view_filled',
   function() -- tries to restore the cursor for a previous browser
-    if last_browser ~= pm.entry_text then
-      last_browser = pm.entry_text
+    if last_browser_text ~= pm.entry_text then
+      last_browser_text = pm.entry_text
       local previous_cursor = browser_cursors[pm.entry_text]
       if previous_cursor then pm.cursor = previous_cursor end
     end
