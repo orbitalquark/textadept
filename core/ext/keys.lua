@@ -154,7 +154,7 @@ local function keypress(code, shift, control, alt)
     if MAC and not shift and not control and not alt then
       local ch = string_char(code)
       -- work around native GTK-OSX's handling of Alt key
-      if ch:find('[^A-Za-z ]') and #keychain == 0 then
+      if ch:find('[%p%d]') and #keychain == 0 then
         if buffer.anchor ~= buffer.current_pos then buffer:delete_back() end
         buffer:add_text(ch)
         textadept.events.handle('char_added', ch)
