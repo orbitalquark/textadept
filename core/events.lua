@@ -32,10 +32,6 @@ module('textadept.events', package.seeall)
 --     position: the position of the beginning of the line clicked.
 --     line: the line clicked.
 --   update_ui()
---   macro_record(message, wParam, lParam)
---     message: the SCI_* message.
---     wParam: wParam in SCI_*.
---     lParam: lParam in SCI_*.
 --   margin_click(margin, modifiers, position)
 --     margin: the margin number.
 --     modifiers: mouse modifiers.
@@ -121,9 +117,6 @@ end
 function update_ui()
   return handle('update_ui')
 end
-function macro_record(n)
-  return handle('macro_record', n.message, n.wParam, n.lParam)
-end
 function margin_click(n)
   return handle('margin_click', n.margin, n.modifiers, n.position)
 end
@@ -148,7 +141,6 @@ local scnnotifications = {
   [c.SCN_SAVEPOINTLEFT] = save_point_left,
   [c.SCN_DOUBLECLICK] = double_click,
   [c.SCN_UPDATEUI] = update_ui,
-  [c.SCN_MACRORECORD] = macro_record,
   [c.SCN_MARGINCLICK] = margin_click,
   [c.SCN_USERLISTSELECTION] = user_list_selection,
   [c.SCN_URIDROPPED] = uri_dropped,
