@@ -173,7 +173,6 @@ if not MAC then
     c = { pm_activate, 'ctags'   },
     b = { pm_activate, 'buffers' },
     f = { pm_activate, '/'       },
-  -- TODO: { pm_activate, 'macros' }
     m = { pm_activate, 'modules' },
   }
 
@@ -361,7 +360,6 @@ else
     c = { pm_activate, 'ctags'   },
     b = { pm_activate, 'buffers' },
     f = { pm_activate, '/'       },
-  -- TODO: { pm_activate, 'macros' }
     m = { pm_activate, 'modules' },
   }
 

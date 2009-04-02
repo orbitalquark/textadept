@@ -726,25 +726,8 @@ void l_handle_scnnotification(SCNotification *n) {
   l_pushscninteger(n->length, "length");
   l_pushscninteger(n->linesAdded, "lines_added");
   l_pushscninteger(n->message, "message");
-  if (n->nmhdr.code == SCN_MACRORECORD) {
-    lua_getfield(lua, LUA_REGISTRYINDEX, "buffer_functions");
-    lua_pushnil(lua);
-    while (lua_next(lua, -2))
-      if (l_rawgeti_int(lua, -1, 1) == n->message) {
-        if (l_rawgeti_int(lua, -1, 3) == tSTRING) {
-          l_pushscnstring(reinterpret_cast<char*>(n->wParam), "wParam");
-        } else l_pushscninteger(static_cast<int>(n->wParam), "wParam");
-        if (l_rawgeti_int(lua, -1, 4) == tSTRING) {
-          l_pushscnstring(reinterpret_cast<char*>(n->lParam), "lParam");
-        } else l_pushscninteger(static_cast<int>(n->lParam), "lParam");
-        lua_pop(lua, 2); // key and value
-        break;
-      } else lua_pop(lua, 1); // value
-    lua_pop(lua, 1); // ta_buffer_functions
-  } else {
-    l_pushscninteger(static_cast<int>(n->wParam), "wParam");
-    l_pushscninteger(static_cast<int>(n->lParam), "lParam");
-  }
+  l_pushscninteger(static_cast<int>(n->wParam), "wParam");
+  l_pushscninteger(static_cast<int>(n->lParam), "lParam");
   l_pushscninteger(n->line, "line");
   l_pushscninteger(n->foldLevelNow, "fold_level_now");
   l_pushscninteger(n->foldLevelPrev, "fold_level_prev");

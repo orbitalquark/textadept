@@ -97,9 +97,6 @@ local ID = {
   CLEAR_BOOKMARKS = 417,
   GOTO_NEXT_BOOKMARK = 418,
   GOTO_PREV_BOOKMARK = 419,
-  START_RECORDING_MACRO = 413,
-  STOP_RECORDING_MACRO = 414,
-  PLAY_MACRO = 415,
   -- Buffer
   NEXT_BUFFER = 501,
   PREV_BUFFER = 502,
@@ -244,11 +241,6 @@ local menubar = {
       { l.MENU_TOOLS_BM_NEXT, ID.GOTO_NEXT_BOOKMARK },
       { l.MENU_TOOLS_BM_PREV, ID.GOTO_PREV_BOOKMARK },
     },
-    { title = l.MENU_TOOLS_MACROS_TITLE,
-      { l.MENU_TOOLS_MACROS_START, ID.START_RECORDING_MACRO },
-      { l.MENU_TOOLS_MACROS_STOP, ID.STOP_RECORDING_MACRO },
-      { l.MENU_TOOLS_MACROS_PLAY, ID.PLAY_MACRO },
-    },
   },
   gtkmenu {
     title = l.MENU_BUF_TITLE,
@@ -306,7 +298,6 @@ local m_snippets = _m.textadept.lsnippets
 local m_editing = _m.textadept.editing
 local m_mlines = _m.textadept.mlines
 local m_bookmarks = _m.textadept.bookmarks
-local m_macros = _m.textadept.macros
 local m_run = _m.textadept.run
 
 local function set_encoding(encoding)
@@ -428,10 +419,6 @@ local actions = {
   [ID.CLEAR_BOOKMARKS] = { m_bookmarks.clear },
   [ID.GOTO_NEXT_BOOKMARK] = { m_bookmarks.goto_next },
   [ID.GOTO_PREV_BOOKMARK] = { m_bookmarks.goto_prev },
-  -- Tools -> Macros
-  [ID.START_RECORDING_MACRO] = { m_macros.start_recording },
-  [ID.STOP_RECORDING_MACRO] = { m_macros.stop_recording },
-  [ID.PLAY_MACRO] = { m_macros.play },
   -- Buffer
   [ID.NEXT_BUFFER] = { 'goto_buffer', v, 1, false },
   [ID.PREV_BUFFER] = { 'goto_buffer', v, -1, false },
