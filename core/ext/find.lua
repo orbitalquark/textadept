@@ -186,10 +186,11 @@ function find.replace(rtext)
     function(code)
       local ret, val = pcall(loadstring('return '..code))
       if not ret then
-        cocoa_dialog('msgbox', {
+        cocoa_dialog('ok-msgbox', {
           title = locale.FIND_ERROR_DIALOG_TITLE,
           text = locale.FIND_ERROR_DIALOG_TEXT,
-          ['informative-text'] = val:gsub('"', '\\"')
+          ['informative-text'] = val:gsub('"', '\\"'),
+          ['no-cancel'] = true
         })
         error()
       end
