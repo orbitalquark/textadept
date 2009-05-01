@@ -37,6 +37,4 @@ module('_m')
 
 ---
 -- This module contains no functions.
-function no_functions()
-
-end
+function no_functions() end
