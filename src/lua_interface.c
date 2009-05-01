@@ -498,7 +498,6 @@ static void clear_table(lua_State *lua, int abs_index) {
 /**
  * Returns whether or not the value of the key of the given table in the global
  * 'textadept' table is a function.
- * @param lua The Lua State.
  * @param table The table in 'textadept' to check for key in.
  * @param key String key to check for in table.
  */
@@ -658,7 +657,6 @@ static void l_check_focused_buffer(lua_State *lua, int narg) {
 /**
  * Handles a Lua error.
  * The main error message is at the top of the Lua stack.
- * @param lua The Lua State.
  * @param extramsg An additional error message to display.
  */
 void l_handle_error(const char *extramsg) {
