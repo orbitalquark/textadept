@@ -30,12 +30,7 @@ end
 
 rawset = nil -- do not allow modifications which could compromise stability
 
----
--- Checks if the buffer being indexed is the currently focused buffer.
--- This is necessary because any buffer actions are performed in the focused
--- views' buffer, which may not be the buffer being indexed. Throws an error
--- if the check fails.
--- @param buffer The buffer in question.
+-- LuaDoc is in core/.textadept.lua.
 function textadept.check_focused_buffer(buffer)
   if type(buffer) ~= 'table' or not buffer.doc_pointer then
     error(locale.ERR_BUFFER_EXPECTED, 2)
@@ -44,16 +39,7 @@ function textadept.check_focused_buffer(buffer)
   end
 end
 
----
--- Helper function for printing messages to buffers.
--- Splits the view and opens a new buffer for printing messages. If the message
--- buffer is already open and a view is currently showing it, the message is
--- printed to that view. Otherwise the view is split, goes to the open message
--- buffer, and prints to it.
--- @param buffer_type String type of message buffer.
--- @param ... Message strings.
--- @usage textadept._print(locale.ERROR_BUFFER, error_message)
--- @usage textadept._print(locale.MESSAGE_BUFFER, message)
+-- LuaDoc is in core/.textadept.lua.
 function textadept._print(buffer_type, ...)
   local function safe_print(...)
     local message = table.concat({...}, '\t')
@@ -88,20 +74,10 @@ function textadept._print(buffer_type, ...)
   pcall(safe_print, ...) -- prevent endless loops if this errors
 end
 
----
--- Prints messages to the Textadept message buffer.
--- Opens a new buffer (if one hasn't already been opened) for printing messages.
--- @param ... Message strings.
+-- LuaDoc is in core/.textadept.lua.
 function textadept.print(...) textadept._print(locale.MESSAGE_BUFFER, ...) end
 
----
--- Displays a CocoaDialog of a specified type with given arguments returning
--- the result.
--- @param kind The CocoaDialog type.
--- @param opts A table of key, value arguments. Each key is a --key switch with
---   a "value" value. If value is nil, it is omitted and just the switch is
---   used.
--- @return string CocoaDialog result.
+-- LuaDoc is in core/.textadept.lua.
 function cocoa_dialog(kind, opts)
   local args = { kind }
   for k, v in pairs(opts) do

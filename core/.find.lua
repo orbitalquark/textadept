@@ -107,3 +107,9 @@ function find.call_replace() end
 ---
 -- Mimicks a press of the 'Replace All' button in the Find box.
 function find.call_replace_all() end
+
+---
+-- Goes to the next or previous file found relative to the file
+-- on the current line.
+-- @param next Flag indicating whether or not to go to the next file.
+function find.goto_file_in_list(next) end

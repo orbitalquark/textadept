@@ -10,30 +10,13 @@ local MARK_FIND = 0
 local MARK_FIND_COLOR = 0x4D9999
 local previous_view
 
----
--- [Local table] Text escape sequences with their associated characters.
--- @class table
--- @name escapes
+-- LuaDoc is in core/.find.lua.
 local escapes = {
   ['\\a'] = '\a', ['\\b'] = '\b', ['\\f'] = '\f', ['\\n'] = '\n',
   ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
 }
 
----
--- Finds and selects text in the current buffer.
--- This is used by the find dialog. It is recommended to use the
--- buffer:search_in_target() or buffer:search_next() and buffer:search_prev()
--- functions for scripting.
--- @param text The text to find.
--- @param next Flag indicating whether or not the search direction is forward.
--- @param flags Search flags. This is a number mask of 4 flags: match case (2),
---   whole word (4), Lua pattern (8), and in files (16) joined with binary OR.
---   If nil, this is determined based on the checkboxes in the find box.
--- @param nowrap Flag indicating whether or not the search won't wrap.
--- @param wrapped Utility flag indicating whether or not the search has wrapped
---   for displaying useful statusbar information. This flag is used and set
---   internally, and should not be set otherwise.
--- @return position of the found text or -1
+-- LuaDoc is in core/.find.lua.
 function find.find(text, next, flags, nowrap, wrapped)
   if #text == 0 then return end
   local buffer = buffer
@@ -159,17 +142,7 @@ function find.find(text, next, flags, nowrap, wrapped)
   return result
 end
 
----
--- Replaces found text.
--- This function is used by the find dialog. It is not recommended to call it
--- via scripts.
--- textadept.find.find is called first, to select any found text. The selected
--- text is then replaced by the specified replacement text.
--- This function ignores 'Find in Files'.
--- @param rtext The text to replace found text with. It can contain both Lua
---   capture items (%n where 1 <= n <= 9) for Lua pattern searches and %()
---   sequences for embedding Lua code for any search.
--- @see find.find
+-- LuaDoc is in core/.find.lua.
 function find.replace(rtext)
   if #buffer:get_sel_text() == 0 then return end
   if find.in_files then find.in_files = false end
@@ -207,16 +180,7 @@ function find.replace(rtext)
   end
 end
 
----
--- Replaces all found text.
--- This function is used by the find dialog. It is not recommended to call it
--- via scripts.
--- If any text is selected, all found text in that selection is replaced.
--- This function ignores 'Find in Files'.
--- @param ftext The text to find.
--- @param rtext The text to replace found text with.
--- @param flags The number mask identical to the one in 'find'.
--- @see find.find
+-- LuaDoc is in core/.find.lua.
 function find.replace_all(ftext, rtext, flags)
   if #ftext == 0 then return end
   if find.in_files then find.in_files = false end
@@ -296,10 +260,7 @@ local function goto_file(pos, line_num)
 end
 textadept.events.add_handler('double_click', goto_file)
 
----
--- Goes to the next or previous file found relative to the file
--- on the current line.
--- @param next Flag indicating whether or not to go to the next file.
+-- LuaDoc is in core/.find.lua.
 function find.goto_file_in_list(next)
   local orig_view = view
   for _, buffer in ipairs(textadept.buffers) do

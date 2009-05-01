@@ -4,11 +4,7 @@ local textadept = _G.textadept
 local locale = _G.locale
 local ce = textadept.command_entry
 
----
--- Gets completions for the current command_entry text.
--- This function is called internally and shouldn't be called by script.
--- @param command The command to complete.
--- @return sorted table of completions
+-- LuaDoc is in core/.command_entry.lua
 function ce.get_completions_for(command)
   local substring = command:match('[%w_.:]+$') or ''
   local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
