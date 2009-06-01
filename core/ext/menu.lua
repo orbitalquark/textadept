@@ -282,13 +282,17 @@ local menubar = {
     { l.MENU_VIEW_SHRINK, ID.SHRINK_VIEW },
   },
 }
+local lexers = {}
 local lexer_menu = { title = l.MENU_LEX_TITLE }
 local lfs = require 'lfs'
 for lexer in lfs.dir(_HOME..'/lexers/') do
   if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
-    lexer_menu[#lexer_menu + 1] =
-      { lexer:match('^(.+)%.lua$'), ID.LEXER_START + #lexer_menu }
+    lexers[#lexers + 1] = lexer:match('^(.+)%.lua$')
   end
+end
+table.sort(lexers)
+for _, lexer in ipairs(lexers) do
+  lexer_menu[#lexer_menu + 1] = { lexer, ID.LEXER_START + #lexer_menu }
 end
 menubar[#menubar + 1] = gtkmenu(lexer_menu)
 t.menubar = menubar
