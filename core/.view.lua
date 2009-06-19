@@ -32,7 +32,7 @@ function view:unsplit() end
 
 ---
 -- Goes to the specified buffer in the indexed view.
--- Activates the 'buffer_switch' signal.
+-- Activates the 'buffer_*_switch' signals.
 -- @param n A relative or absolute buffer index.
 -- @param absolute Flag indicating if n is an absolute index or not.
 function view:goto_buffer(n, absolute) end

@@ -50,9 +50,11 @@ module('textadept.events', package.seeall)
 -- Textadept events:
 --   buffer_new()
 --   buffer_deleted()
---   buffer_switch()
+--   buffer_before_switch()
+--   buffer_after_switch()
 --   view_new()
---   view_switch()
+--   view_before_switch()
+--   view_after_switch()
 --   quit()
 --     Note: when adding a quit handler, it must be inserted at index 1 because
 --     the default quit handler returns true, which ignores all subsequent
@@ -163,14 +165,20 @@ end
 function buffer_deleted()
   return handle('buffer_deleted')
 end
-function buffer_switch()
-  return handle('buffer_switch')
+function buffer_before_switch()
+  return handle('buffer_before_switch')
+end
+function buffer_after_switch()
+  return handle('buffer_after_switch')
 end
 function view_new()
   return handle('view_new')
 end
-function view_switch()
-  return handle('view_switch')
+function view_before_switch()
+  return handle('view_before_switch')
+end
+function view_after_switch()
+  return handle('view_after_switch')
 end
 function quit()
   return handle('quit')
@@ -398,13 +406,46 @@ add_handler('buffer_new',
     set_title(buffer)
   end)
 
-add_handler('buffer_switch',
+add_handler('buffer_before_switch',
+  function() -- save buffer properties
+    local buffer = buffer
+    -- Save view state.
+    buffer._anchor = buffer.anchor
+    buffer._current_pos = buffer.current_pos
+    buffer._first_visible_line = buffer.first_visible_line
+    -- Save fold state.
+    buffer._folds = {}
+    local folds = buffer._folds
+    local level, expanded = buffer.fold_level, buffer.fold_expanded
+    local header_flag = textadept.constants.SC_FOLDLEVELHEADERFLAG
+    local test = 2 * header_flag
+    for i = 0, buffer.line_count do
+      if level[i] % test >= header_flag and not expanded[i] then
+        folds[#folds + 1] = i
+      end
+    end
+  end)
+
+add_handler('buffer_after_switch',
+  function() -- restore buffer properties
+    local buffer = buffer
+    if not buffer._folds then return end
+    -- Restore fold state.
+    for _, i in ipairs(buffer._folds) do buffer:toggle_fold(i) end
+    -- Restore view state.
+    buffer:set_sel(buffer._anchor, buffer._current_pos)
+    buffer:line_scroll(0,
+      buffer:visible_from_doc_line(buffer._first_visible_line) -
+        buffer.first_visible_line)
+  end)
+
+add_handler('buffer_after_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
     update_ui()
   end)
 
-add_handler('view_switch',
+add_handler('view_after_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
     update_ui()

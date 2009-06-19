@@ -476,5 +476,5 @@ local function update_modified_file()
     end
   end
 end
-textadept.events.add_handler('buffer_switch', update_modified_file)
-textadept.events.add_handler('view_switch', update_modified_file)
+textadept.events.add_handler('buffer_after_switch', update_modified_file)
+textadept.events.add_handler('view_after_switch', update_modified_file)

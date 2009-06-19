@@ -46,7 +46,7 @@ function new_buffer() end
 
 ---
 -- Goes to the specified view.
--- Activates the 'view_switch' signal.
+-- Activates the 'view_*_switch' signal.
 -- @param n A relative or absolute view index.
 -- @param absolute Flag indicating if n is an absolute index or not.
 function goto_view(n, absolute) end
