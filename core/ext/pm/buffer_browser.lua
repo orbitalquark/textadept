@@ -75,8 +75,8 @@ textadept.events.add_handler('buffer_new', update_view)
 textadept.events.add_handler('buffer_deleted', update_view)
 textadept.events.add_handler('save_point_reached', update_view)
 textadept.events.add_handler('save_point_left', update_view)
-textadept.events.add_handler('buffer_switch', update_view)
-textadept.events.add_handler('view_switch', update_view)
+textadept.events.add_handler('buffer_after_switch', update_view)
+textadept.events.add_handler('view_after_switch', update_view)
 
 local function set_cursor()
   if matches(textadept.pm.entry_text) then

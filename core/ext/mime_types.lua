@@ -93,5 +93,5 @@ end
 
 textadept.events.add_handler('file_opened', handle_new)
 textadept.events.add_handler('file_saved_as', handle_new)
-textadept.events.add_handler('buffer_switch', set_lexer)
+textadept.events.add_handler('buffer_after_switch', set_lexer)
 textadept.events.add_handler('view_new', set_lexer)

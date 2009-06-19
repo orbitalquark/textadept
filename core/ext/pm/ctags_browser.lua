@@ -249,5 +249,5 @@ local function update_view()
 end
 textadept.events.add_handler('file_opened', update_view)
 textadept.events.add_handler('buffer_deleted', update_view)
-textadept.events.add_handler('buffer_switch', update_view)
+textadept.events.add_handler('buffer_after_switch', update_view)
 textadept.events.add_handler('save_point_reached', update_view)

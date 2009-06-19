@@ -426,10 +426,11 @@ void set_statusbar_text(const char *text, bool docbar) {
  * @see s_command
  */
 static void switch_to_view(GtkWidget *editor) {
+  l_handle_event("view_before_switch");
   focused_editor = editor;
   l_set_view_global(editor);
   l_set_buffer_global(SCINTILLA(editor));
-  l_handle_event("view_switch");
+  l_handle_event("view_after_switch");
 }
 
 /**

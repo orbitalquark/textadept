@@ -272,8 +272,9 @@ void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
     lua_rawgeti(lua, -1, n);
   }
   editor = l_checkview(lua, -1);
+  if (!closing) l_handle_event("view_before_switch");
   gtk_widget_grab_focus(editor);
-  if (!closing) l_handle_event("view_switch");
+  if (!closing) l_handle_event("view_after_switch");
   lua_pop(lua, 2); // view table and views
 }
 
@@ -413,29 +414,10 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
     lua_rawgeti(lua, -1, n);
   }
   sptr_t doc = l_checkdocpointer(lua, -1);
-  // Save previous buffer's properties.
-  lua_getglobal(lua, "buffer");
-  if (lua_istable(lua, -1)) {
-    l_set_bufferp("_anchor", SS(sci, SCI_GETANCHOR));
-    l_set_bufferp("_current_pos", SS(sci, SCI_GETCURRENTPOS));
-    l_set_bufferp("_first_visible_line", SS(sci, SCI_DOCLINEFROMVISIBLE,
-                                            SS(sci, SCI_GETFIRSTVISIBLELINE)));
-  }
-  lua_pop(lua, 1); // buffer
-  // Change the view.
+  if (!closing) l_handle_event("buffer_before_switch");
   SS(sci, SCI_SETDOCPOINTER, 0, doc);
   l_set_buffer_global(sci);
-  // Restore this buffer's properties.
-  lua_getglobal(lua, "buffer");
-  l_get_bufferp("_anchor", -1);
-  l_get_bufferp("_current_pos", -2);
-  SS(sci, SCI_SETSEL, lua_tointeger(lua, -2), lua_tointeger(lua, -1));
-  l_get_bufferp("_first_visible_line", -3);
-  SS(sci, SCI_LINESCROLL, 0,
-     SS(sci, SCI_VISIBLEFROMDOCLINE, lua_tointeger(lua, -1)) -
-       SS(sci, SCI_GETFIRSTVISIBLELINE));
-  lua_pop(lua, 4); // _anchor, _current_pos, _first_visible_line, and buffer
-  if (!closing) l_handle_event("buffer_switch");
+  if (!closing) l_handle_event("buffer_after_switch");
   lua_pop(lua, 2); // buffer table and buffers
 }
 
