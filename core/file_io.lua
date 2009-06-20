@@ -35,8 +35,9 @@ boms = {
 ---
 -- [Local function] Attempt to detect the encoding of the given text.
 -- @param text Text to determine encoding from.
--- @return encoding string for textadept.iconv(), byte-order mark (BOM) string
---   or nil. If encoding string is nil, the text belongs to a binary file.
+-- @return encoding string for textadept.iconv() (unless 'binary', indicating a
+--   binary file), byte-order mark (BOM) string or nil. If encoding string is
+--   nil, no encoding has been detected.
 local function detect_encoding(text)
   local b1, b2, b3, b4 = string.byte(text, 1, 4)
   if b1 == 239 and b2 == 187 and b3 == 191 then
@@ -51,10 +52,21 @@ local function detect_encoding(text)
     return 'UTF-32LE', boms[encoding]
   else
     local chunk = #text > 65536 and text:sub(1, 65536) or text
-    if chunk:find('\0') then return nil end -- binary file
+    if chunk:find('\0') then return 'binary' end -- binary file
   end
-  return 'UTF-8'
+  return nil
 end
+
+---
+-- [Local table] List of encodings to try to decode files as after UTF-8.
+-- @class table
+-- @name try_encodings
+local try_encodings = {
+  'UTF-8',
+  'ASCII',
+  'ISO-8859-1',
+  'MacRoman'
+}
 
 ---
 -- [Local function] Opens a file or goes to its already open buffer.
@@ -82,8 +94,25 @@ local function open_helper(utf8_filename)
     local c = textadept.constants
     -- Tries to detect character encoding and convert text from it to UTF-8.
     local encoding, encoding_bom = detect_encoding(text)
-    if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
-    if encoding then text = textadept.iconv(text, 'UTF-8', encoding) end
+    if encoding ~= 'binary' then
+      if encoding then
+        if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
+        text = textadept.iconv(text, 'UTF-8', encoding)
+      else
+        -- Try list of encodings.
+        for _, try_encoding in ipairs(try_encodings) do
+          local ret, conv = pcall(textadept.iconv, text, 'UTF-8', try_encoding)
+          if ret then
+            encoding = try_encoding
+            text = conv
+            break
+          end
+        end
+        if not encoding then error(locale.IO_ICONV_ERROR) end
+      end
+    else
+      encoding = nil
+    end
     buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
     buffer.code_page = encoding and c.SC_CP_UTF8 or 0
     -- Tries to set the buffer's EOL mode appropriately based on the file.
