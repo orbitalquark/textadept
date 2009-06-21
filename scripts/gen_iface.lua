@@ -17,7 +17,7 @@ local types = {
   findtext = 11, formatrange = 12
 }
 
-out = out..'textadept.constants = {\n'
+out = out..'local constants = {\n'
 -- {"constant", value}
 for item in constants:sub(2, -2):gmatch('%b{}') do
   local name, value = item:match('^{"(.-)",(.-)}')
@@ -53,9 +53,9 @@ out = out..[[
   SCN_INDICATORCLICK = 2023,
   SCN_INDICATORRELEASE = 2024,
 ]]
-out = out..'}\n\n'
+out = out..'}\nrawset(textadept, \'constants\', constants)\n\n'
 
-out = out..'textadept.buffer_functions = {\n'
+out = out..'local buffer_functions = {\n'
 -- {"function", msg_id, iface_*, {iface_*, iface_*}}
 for item in functions:sub(2, -2):gmatch('%b{}') do
   local name, msg_id, rt_type, p1_type, p2_type =
@@ -67,9 +67,9 @@ for item in functions:sub(2, -2):gmatch('%b{}') do
     name, msg_id, types[rt_type], types[p1_type], types[p2_type])
   out = out..line
 end
-out = out..'}\n\n'
+out = out..'}\nrawset(textadept, \'buffer_functions\', buffer_functions)\n\n'
 
-out = out..'textadept.buffer_properties = {\n'
+out = out..'local buffer_properties = {\n'
 -- {"property", get_id, set_id, rt_type, p1_type}
 for item in properties:sub(2, -2):gmatch('%b{}') do
   local name, get_id, set_id, rt_type, p1_type =
@@ -81,7 +81,7 @@ for item in properties:sub(2, -2):gmatch('%b{}') do
     name, get_id, set_id, types[rt_type], types[p1_type])
   out = out..line
 end
-out = out..'}\n'
+out = out..'}\nrawset(textadept, \'buffer_properties\', buffer_properties)\n'
 
 f = io.open('../core/iface.lua', 'w')
 f:write(out)
