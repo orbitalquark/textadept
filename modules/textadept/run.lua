@@ -37,7 +37,8 @@ end
 
 ---
 -- [Local table] File extensions and their associated 'compile' actions.
--- Each key is a file extension whose value is a command line string to execute.
+-- Each key is a file extension whose value is a either a command line string to
+-- execute or a function returning one.
 -- @class table
 -- @name compile_for_ext
 local compile_for_ext = {
@@ -52,18 +53,30 @@ local compile_for_ext = {
 function compile()
   if not buffer.filename then return end
   local action = compile_for_ext[buffer.filename:match('[^.]+$')]
-  if action then execute(action) end
+  if action then execute(type(action) == 'function' and action() or action) end
 end
 
 ---
 -- [Local table] File extensions and their associated 'go' actions.
--- Each key is a file extension whose value is a command line string to execute.
+-- Each key is a file extension whose value is either a command line string to
+-- execute or a function returning one.
 -- @class table
 -- @name go_for_ext
 local go_for_ext = {
   c = '%(filedir)%(filename_noext)',
   cpp = '%(filedir)%(filename_noext)',
-  java = 'java %(filename_noext)',
+  java = function()
+      local buffer = buffer
+      local package = buffer:get_text():match('package%s+([^;]+)')
+      if package then
+        local classpath = ''
+        for dot in package:gmatch('%.') do classpath = classpath..'../' end
+        return 'java -cp '..(WIN32 and '%CLASSPATH%:' or '$CLASSPATH:')..
+          classpath..'../ '..package..'.%(filename_noext)'
+      else
+        return 'java %(filename_noext)'
+      end
+    end,
   lua = 'lua %(filename)',
   pl = 'perl %(filename)',
   php = 'php -f %(filename)',
@@ -77,7 +90,7 @@ local go_for_ext = {
 function go()
   if not buffer.filename then return end
   local action = go_for_ext[buffer.filename:match('[^.]+$')]
-  if action then execute(action) end
+  if action then execute(type(action) == 'function' and action() or action) end
 end
 
 ---
