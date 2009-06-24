@@ -67,11 +67,15 @@ local go_for_ext = {
   cpp = '%(filedir)%(filename_noext)',
   java = function()
       local buffer = buffer
-      local package = buffer:get_text():match('package%s+([^;]+)')
+      local text = buffer:get_text()
+      local s, e, package
+      repeat
+        s, e, package = text:find('package%s+([^;]+)', e or 1)
+      until not s or buffer:get_style_name(buffer.style_at[s]) ~= 'comment'
       if package then
         local classpath = ''
         for dot in package:gmatch('%.') do classpath = classpath..'../' end
-        return 'java -cp '..(WIN32 and '%CLASSPATH%:' or '$CLASSPATH:')..
+        return 'java -cp '..(WIN32 and '%CLASSPATH%;' or '$CLASSPATH:')..
           classpath..'../ '..package..'.%(filename_noext)'
       else
         return 'java %(filename_noext)'
