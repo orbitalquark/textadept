@@ -403,7 +403,7 @@ local actions = {
   [ID.GOTO_LINE] = { m_editing.goto_line },
   -- Tools
   [ID.FOCUS_COMMAND_ENTRY] = { t.command_entry.focus },
-  [ID.RUN] = { m_run.go },
+  [ID.RUN] = { m_run.run },
   [ID.COMPILE] = { m_run.compile },
   -- Tools -> Snippets
   [ID.INSERT_SNIPPET] = { m_snippets.insert },
