@@ -367,10 +367,11 @@ function load_session(filename, only_pm)
       local width, height = line:match('^size: (%d+) (%d+)$')
       if width and height then textadept.size = { width, height } end
     elseif line:find('^pm:') then
-      local width, text = line:match('^pm: (%d+) (.+)$')
+      local width, cursor, text = line:match('^pm: (%d+) ([%d:]+) (.+)$')
       textadept.pm.width = width or 0
       textadept.pm.entry_text = text or ''
       textadept.pm.activate()
+      if cursor then textadept.pm.cursor = cursor end
     end
   end
   f:close()
@@ -441,7 +442,8 @@ function save_session(filename)
   local size = textadept.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
   local pm = textadept.pm
-  session[#session + 1] = ("pm: %d %s"):format(pm.width, pm.entry_text)
+  session[#session + 1] =
+    ("pm: %d %s %s"):format(pm.width, pm.cursor or '0', pm.entry_text)
   -- Write the session.
   local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
   if not user_dir then return end
