@@ -7,22 +7,22 @@ local locale = _G.locale
 module('textadept.mime_types', package.seeall)
 
 ---
--- [Local table] File extensions with their associated lexers.
+-- File extensions with their associated lexers.
 -- @class table
 -- @name extensions
-local extensions = {}
+extensions = {}
 
 ---
--- [Local table] Shebang words and their associated lexers.
+-- Shebang words and their associated lexers.
 -- @class table
 -- @name shebangs
-local shebangs = {}
+shebangs = {}
 
 ---
--- [Local table] First-line patterns and their associated lexers.
+-- First-line patterns and their associated lexers.
 -- @class table
 -- @name patterns
-local patterns = {}
+patterns = {}
 
 -- Load mime-types from mime_types.conf
 local f = io.open(_HOME..'/core/ext/mime_types.conf', 'rb')
