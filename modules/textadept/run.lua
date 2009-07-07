@@ -36,33 +36,34 @@ function execute(command)
 end
 
 ---
--- [Local table] File extensions and their associated 'compile' actions.
+-- File extensions and their associated 'compile' actions.
 -- Each key is a file extension whose value is a either a command line string to
 -- execute or a function returning one.
 -- @class table
--- @name compile_for_ext
-local compile_for_ext = {
+-- @name compile_commands
+compile_commands = {
   c = 'gcc -pedantic -Os -o "%(filename_noext)" %(filename)',
   cpp = 'g++ -pedantic -Os -o "%(filename_noext)" %(filename)',
   java = 'javac "%(filename)"'
 }
 
 ---
--- Compiles the file as specified by its extension in the compile_for_ext table.
--- @see compile_for_ext
+-- Compiles the file as specified by its extension in the compile_commands
+-- table.
+-- @see compile_commands
 function compile()
   if not buffer.filename then return end
-  local action = compile_for_ext[buffer.filename:match('[^.]+$')]
+  local action = compile_commands[buffer.filename:match('[^.]+$')]
   if action then execute(type(action) == 'function' and action() or action) end
 end
 
 ---
--- [Local table] File extensions and their associated 'go' actions.
+-- File extensions and their associated 'go' actions.
 -- Each key is a file extension whose value is either a command line string to
 -- execute or a function returning one.
 -- @class table
--- @name go_for_ext
-local go_for_ext = {
+-- @name run_commands
+run_commands = {
   c = '%(filedir)%(filename_noext)',
   cpp = '%(filedir)%(filename_noext)',
   java = function()
@@ -89,11 +90,12 @@ local go_for_ext = {
 }
 
 ---
--- Runs/executes the file as specified by its extension in the go_for_ext table.
--- @see go_for_ext
-function go()
+-- Runs/executes the file as specified by its extension in the run_commands
+-- table.
+-- @see run_commands
+function run()
   if not buffer.filename then return end
-  local action = go_for_ext[buffer.filename:match('[^.]+$')]
+  local action = run_commands[buffer.filename:match('[^.]+$')]
   if action then execute(type(action) == 'function' and action() or action) end
 end
 
