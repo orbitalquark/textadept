@@ -10,6 +10,8 @@ else
 end
 
 _USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept/'
+local lfs = require 'lfs'
+if not lfs.attributes(_USERHOME) then lfs.mkdir(_USERHOME) end
 
 _LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers/'
 
