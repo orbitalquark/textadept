@@ -125,6 +125,9 @@ local ID = {
   SHRINK_VIEW = 608,
   -- Lexers (will be generated dynamically)
   LEXER_START = 801,
+  -- Help
+  MANUAL = 901,
+  LUADOC = 902,
 }
 
 
@@ -281,6 +284,12 @@ local menubar = {
     { l.MENU_VIEW_GROW, ID.GROW_VIEW },
     { l.MENU_VIEW_SHRINK, ID.SHRINK_VIEW },
   },
+  -- Lexer menu inserted here
+  gtkmenu {
+    title = l.MENU_HELP_TITLE,
+    { l.MENU_HELP_MANUAL, ID.MANUAL },
+    { l.MENU_HELP_LUADOC, ID.LUADOC },
+  },
 }
 local lexers = {}
 local lexer_menu = { title = l.MENU_LEX_TITLE }
@@ -294,7 +303,7 @@ table.sort(lexers)
 for _, lexer in ipairs(lexers) do
   lexer_menu[#lexer_menu + 1] = { lexer, ID.LEXER_START + #lexer_menu }
 end
-menubar[#menubar + 1] = gtkmenu(lexer_menu)
+table.insert(menubar, #menubar, gtkmenu(lexer_menu)) -- before 'Help'
 t.menubar = menubar
 
 local b, v = 'buffer', 'view'
@@ -326,6 +335,18 @@ local function set_lexer_language(lexer)
   buffer:set_lexer_language(lexer)
   buffer:colourise(0, -1)
   t.events.update_ui() -- for updating statusbar
+end
+local function open_webpage(url)
+  local cmd
+  if not WIN32 then
+    cmd =
+      string.format('"%s" "file://%s"', not MAC and 'firefox' or 'open', url)
+  else
+    cmd =
+      string.format('"%s" %s',
+                    'c:/program files/internet explorer/iexplore.exe', url)
+  end
+  if os.execute(cmd) ~= 0 then error(l.MENU_BROWSER_ERROR) end
 end
 
 local actions = {
@@ -453,6 +474,9 @@ local actions = {
   [ID.SHRINK_VIEW] = {
     function() if view.size then view.size = view.size - 10 end end
   },
+  -- Help
+  [ID.MANUAL] = { open_webpage, _HOME..'/doc/manual.html' },
+  [ID.LUADOC] = { open_webpage, _HOME..'/doc/index.html' },
 }
 if MAC then actions[ID.PASTE] = { m_editing.smart_paste } end -- fix paste issue
 
