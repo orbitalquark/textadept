@@ -5,16 +5,20 @@
 #define gbool gboolean
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
-#ifdef MAC
+#if !(WIN32 || MAC)
+#include <unistd.h>
+#elif WIN32
+#include "Windows.h"
+#define strcasecmp _stricmp
+#else
+#include <Carbon/Carbon.h>
 #include "ige-mac-menu.h"
 #define CFURL_TO_STR(u) \
   CFStringGetCStringPtr(CFURLCopyFileSystemPath(u, kCFURLPOSIXPathStyle), 0)
 using namespace Scintilla;
 #endif
 
-#if WIN32 || MAC
 char *textadept_home;
-#endif
 
 // Textadept
 GtkWidget *window, *focused_editor, *menubar, *statusbar, *docstatusbar;
@@ -82,13 +86,18 @@ static gbool c_keypress(GtkWidget *, GdkEventKey *event, gpointer);
  * @param argv The array of command line params.
  */
 int main(int argc, char **argv) {
-#ifdef MAC
+#if !(WIN32 || MAC)
+  textadept_home = static_cast<char*>(malloc(FILENAME_MAX));
+  sprintf(textadept_home, "/proc/%i/exe", getpid());
+  readlink(textadept_home, textadept_home, FILENAME_MAX);
+  char *last_slash = strrchr(textadept_home, '/');
+  if (last_slash) *last_slash = '\0';
+#elif MAC
   CFBundleRef bundle = CFBundleGetMainBundle();
   if (bundle) {
     const char *bundle_path = CFURL_TO_STR(CFBundleCopyBundleURL(bundle));
-    char *res_path = g_strconcat(bundle_path, "/Contents/Resources/", NULL);
-    textadept_home = static_cast<char*>(res_path);
-  } else textadept_home = "";
+    textadept_home = g_strconcat(bundle_path, "/Contents/Resources/", NULL);
+  } else textadept_home = static_cast<char*>(calloc(1, 1));
   // GTK-OSX does not parse ~/.gtkrc-2.0; parse it manually
   char *user_home = g_strconcat(getenv("HOME"), "/.gtkrc-2.0", NULL);
   gtk_rc_parse(user_home);
@@ -99,22 +108,20 @@ int main(int argc, char **argv) {
   create_ui();
   l_load_script("init.lua");
   gtk_main();
+  free(textadept_home);
   return 0;
 }
 
 #ifdef WIN32
 /**
  * Runs Textadept in Windows.
- * Sets textadept_home according to the directory the executable is in before
- * calling main.
  * @see main
  */
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
-  char path[FILENAME_MAX];
-  GetModuleFileName(0, path, sizeof(path));
-  char *last_slash = strrchr(path, '\\');
+  textadept_home = static_cast<char*>(malloc(FILENAME_MAX));
+  GetModuleFileName(0, textadept_home, FILENAME_MAX);
+  char *last_slash = strrchr(textadept_home, '\\');
   if (last_slash) *last_slash = '\0';
-  textadept_home = static_cast<char*>(path);
   return main(1, &lpCmdLine);
 }
 #endif
@@ -229,7 +236,6 @@ void create_ui() {
  * @param buffer_id A Scintilla buffer ID to load into the new window. If NULL,
  *   creates a new Scintilla buffer and loads it into the new window.
  * @return the Scintilla window.
- * @see set_default_editor_properties
  * @see l_add_scintilla_window
  */
 GtkWidget *new_scintilla_window(sptr_t buffer_id) {
@@ -277,7 +283,6 @@ void remove_scintilla_window(GtkWidget *editor) {
  *   Scintilla windows, that buffer should have multiple references so when one
  *   Scintilla window closes, the buffer is not deleted because its reference
  *   count is not zero.
- * @see set_default_buffer_properties
  * @see l_add_scintilla_buffer
  */
 void new_scintilla_buffer(ScintillaObject *sci, bool create, bool addref) {
