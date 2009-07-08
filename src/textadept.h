@@ -19,13 +19,7 @@ extern "C" {
 #include <lauxlib.h>
 }
 
-#ifdef WIN32
-#include "Windows.h"
-#define strcasecmp _stricmp
-#endif
-
 #ifdef MAC
-#include <Carbon/Carbon.h>
 using namespace Scintilla;
 #endif
 
@@ -34,11 +28,7 @@ extern GtkWidget *window, *focused_editor, *command_entry, *pm_container,
                  *pm_entry, *pm_view, *findbox, *find_entry, *replace_entry,
                  *fnext_button, *fprev_button, *r_button, *ra_button,
                  *match_case_opt, *whole_word_opt, *lua_opt, *in_files_opt;
-#if !(WIN32 || MAC)
-static const char *textadept_home = "/usr/share/textadept/";
-#else
 extern char *textadept_home;
-#endif
 
 static long SS(ScintillaObject *sci, unsigned int msg, unsigned long wParam=0,
                long lParam=0) {

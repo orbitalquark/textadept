@@ -36,6 +36,7 @@ textadept:\
   textadept.o lua_interface.o $(LUA_OBJS) \
   scintilla-st/gtk/LexLPeg.o scintilla-st/bin/scintilla.a
 	g++ $(GTKLIBS) $(EXPORTLUASYMS) -DGTK $^ -o $@
+	mv textadept ../
 	cp $(GTKSO) ../core/
 clean:
-	rm textadept *.o
+	rm ../textadept *.o
