@@ -313,15 +313,13 @@ end
 -- Textadept restores split views, opened buffers, cursor information, and
 -- project manager details.
 -- @param filename The absolute path to the session file to load. Defaults to
---   $HOME/.ta_session if not specified.
+--   $HOME/.textadept/session if not specified.
 -- @param only_pm Flag indicating whether or not to load only the Project
 --   Manager session settings. Defaults to false.
 -- @return true if the session file was opened and read; false otherwise.
 -- @usage textadept.io.load_session(filename)
 function load_session(filename, only_pm)
-  local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
-  if not user_dir then return end
-  local ta_session = user_dir..'/.ta_session'
+  local ta_session = _USERHOME..'/session'
   local f = io.open(filename or ta_session, 'rb')
   if not f then return false end
   local current_view, splits = 1, { [0] = {} }
@@ -384,7 +382,7 @@ end
 -- Saves split views, opened buffers, cursor information, and project manager
 -- details.
 -- @param filename The absolute path to the session file to save. Defaults to
---   $HOME/.ta_session if not specified.
+--   $HOME/.textadept/session if not specified.
 -- @usage textadept.io.save_session(filename)
 function save_session(filename)
   local session = {}
@@ -445,9 +443,7 @@ function save_session(filename)
   session[#session + 1] =
     ("pm: %d %s %s"):format(pm.width, pm.cursor or '0', pm.entry_text)
   -- Write the session.
-  local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
-  if not user_dir then return end
-  local ta_session = user_dir..'/.ta_session'
+  local ta_session = _USERHOME..'/session'
   local f = io.open(filename or ta_session, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
