@@ -1,9 +1,12 @@
 // Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 #include "textadept.h"
-#if WIN32
-#include <Windows.h>
-#elif MAC
+#if !(WIN32 || MAC)
+#include <unistd.h>
+#elif WIN32
+#include "Windows.h"
+#define strcasecmp _stricmp
+#else
 #include <Carbon/Carbon.h>
 #include "ige-mac-menu.h"
 #define CFURL_TO_STR(u) \

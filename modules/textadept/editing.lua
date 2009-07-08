@@ -266,11 +266,10 @@ function goto_line(line)
   local buffer = buffer
   if not line then
     line =
-      cocoa_dialog('standard-inputbox', {
-        title = locale.M_TEXTADEPT_EDITING_GOTO_TITLE,
-        text = locale.M_TEXTADEPT_EDITING_GOTO_TEXT,
-        ['no-newline'] = true
-      })
+      textadept.dialog('standard-inputbox',
+                       '--title', locale.M_TEXTADEPT_EDITING_GOTO_TITLE,
+                       '--text', locale.M_TEXTADEPT_EDITING_GOTO_TEXT,
+                       '--no-newline')
     line = tonumber(line:match('%-?%d+$'))
     if not line or line < 0 then return end
   end

@@ -79,13 +79,13 @@ local function find_(text, next, flags, nowrap, wrapped)
 
   else -- find in files
     local utf8_dir =
-      cocoa_dialog('fileselect', {
-        title = locale.FIND_IN_FILES_TITLE,
-        text = locale.FIND_IN_FILES_TEXT,
-        ['select-only-directories'] = true,
-        ['with-directory'] = (buffer.filename or ''):match('^.+[/\\]'),
-        ['no-newline'] = true
-      })
+      textadept.dialog('fileselect',
+                       '--title', locale.FIND_IN_FILES_TITLE,
+                       '--text', locale.FIND_IN_FILES_TEXT,
+                       '--select-only-directories',
+                       '--with-directory',
+                         (buffer.filename or ''):match('^.+[/\\]') or '',
+                       '--no-newline')
     if #utf8_dir > 0 then
       if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
       if not find.match_case then text = text:lower() end
@@ -182,12 +182,11 @@ local function replace(rtext)
     function(code)
       local ret, val = pcall(loadstring('return '..code))
       if not ret then
-        cocoa_dialog('ok-msgbox', {
-          title = locale.FIND_ERROR_DIALOG_TITLE,
-          text = locale.FIND_ERROR_DIALOG_TEXT,
-          ['informative-text'] = val:gsub('"', '\\"'),
-          ['no-cancel'] = true
-        })
+        textadept.dialog('ok-msgbox',
+                         '--title', locale.FIND_ERROR_DIALOG_TITLE,
+                         '--text', locale.FIND_ERROR_DIALOG_TEXT,
+                         '--informative-text', val:gsub('"', '\\"'),
+                         '--no-cancel')
         error()
       end
       return val

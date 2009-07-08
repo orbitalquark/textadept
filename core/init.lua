@@ -27,9 +27,6 @@ require 'iface'
 require 'locale'
 require 'events'
 require 'file_io'
-if not MAC then
-  require 'lua_dialog'
-end
 
 rawset = nil -- do not allow modifications which could compromise stability
 
@@ -79,29 +76,3 @@ end
 
 -- LuaDoc is in core/.textadept.lua.
 function textadept.print(...) textadept._print(locale.MESSAGE_BUFFER, ...) end
-
--- LuaDoc is in core/.textadept.lua.
-function cocoa_dialog(kind, opts)
-  local args = { kind }
-  for k, v in pairs(opts) do
-    args[#args + 1] = '--'..k
-    if k == 'items' and kind:find('dropdown') then
-      if not MAC then
-        for item in v:gmatch('"(.-)"%s+') do args[#args + 1] = item end
-      else
-        args[#args + 1] = v
-      end
-    elseif type(v) == 'string' then
-      args[#args + 1] = not MAC and v or '"'..v..'"'
-    end
-  end
-  if not MAC then
-    return lua_dialog.run(args)
-  else
-    local cocoa_dialog = '/CocoaDialog.app/Contents/MacOS/CocoaDialog '
-    local p = io.popen(_HOME..cocoa_dialog..table.concat(args, ' '))
-    local out = p:read('*all')
-    p:close()
-    return out
-  end
-end

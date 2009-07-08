@@ -64,6 +64,7 @@ static int l_cf_buffer_delete(lua_State *lua),
            l_cf_view_split(lua_State *lua),
            l_cf_view_unsplit(lua_State *lua),
            l_cf_ta_buffer_new(lua_State *lua),
+           l_cf_ta_dialog(lua_State *lua),
            l_cf_ta_get_split_table(lua_State *lua),
            l_cf_ta_goto_window(lua_State *lua),
            l_cf_view_goto_buffer(lua_State *lua),
@@ -138,6 +139,7 @@ bool l_init(int argc, char **argv, bool reinit) {
     l_cfunc(lua, l_cf_ce_show_completions, "show_completions");
     l_mt(lua, "_ce_mt", l_ce_mt_index, l_ce_mt_newindex);
   lua_setfield(lua, -2, "command_entry");
+  l_cfunc(lua, l_cf_ta_dialog, "dialog");
   l_cfunc(lua, l_cf_ta_get_split_table, "get_split_table");
   l_cfunc(lua, l_cf_ta_goto_window, "goto_view");
   l_cfunc(lua, l_cf_ta_gtkmenu, "gtkmenu");
@@ -1277,6 +1279,18 @@ static int l_cf_view_goto_buffer(lua_State *lua) {
     gtk_widget_grab_focus(orig_focused_editor);
   }
   return 0;
+}
+
+static int l_cf_ta_dialog(lua_State *lua) {
+  enum GCDialogs type = gcocoadialog_type(luaL_checkstring(lua, 1));
+  int argc = lua_gettop(lua) - 1;
+  const char **argv = static_cast<const char**>(malloc(argc * sizeof(char *)));
+  for (int i = 0; i < argc; i++) argv[i] = luaL_checkstring(lua, i + 2);
+  char *out = gcocoadialog(type, argc, argv);
+  lua_pushstring(lua, out);
+  free(out);
+  free(argv);
+  return 1;
 }
 
 static int l_cf_ta_goto_window(lua_State *lua) {

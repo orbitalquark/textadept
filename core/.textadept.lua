@@ -119,14 +119,10 @@ function _print(buffer_type, ...)
 -- Prints messages to the Textadept message buffer.
 -- Opens a new buffer (if one hasn't already been opened) for printing messages.
 -- @param ... Message strings.
-function textadept.print(...) end
+function print(...) end
 
 ---
--- Displays a CocoaDialog of a specified type with given arguments returning
--- the result.
--- @param kind The CocoaDialog type.
--- @param opts A table of key, value arguments. Each key is a --key switch with
---   a "value" value. If value is nil, it is omitted and just the switch is
---   used.
+-- Displays a CocoaDialog of a specified type with the given string arguments.
+-- Each argument is like a string in Lua's 'arg' table.
 -- @return string CocoaDialog result.
-function cocoa_dialog(kind, opts)
+function dialog(kind, ...)
