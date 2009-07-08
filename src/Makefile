@@ -2,7 +2,7 @@
 
 .SUFFIXES: .c .o .h .a
 
-INCLUDEDIRS=-Iscintilla-st/include -Ilua/include
+INCLUDEDIRS=-Iscintilla-st/include -Ilua/include -Igcocoadialog
 ifdef DEBUG
 CXXFLAGS=-DDEBUG -g -DGTK -DSCI_LEXER -W -Wall -Wno-sign-compare
 else
@@ -32,8 +32,10 @@ all: textadept
 	g++ $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c $< -o $@
 $(LUA_OBJS): lua/src/*.c
 	gcc $(INCLUDEDIRS) -DLUA_USE_LINUX $(CXXFLAGS) -c lua/src/*.c
+gcocoadialog.o: gcocoadialog/gcocoadialog.c
+	gcc $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c gcocoadialog/gcocoadialog.c
 textadept:\
-  textadept.o lua_interface.o $(LUA_OBJS) \
+  textadept.o lua_interface.o $(LUA_OBJS) gcocoadialog.o \
   scintilla-st/gtk/LexLPeg.o scintilla-st/bin/scintilla.a
 	g++ $(GTKLIBS) $(EXPORTLUASYMS) -DGTK $^ -o $@
 	mv textadept ../

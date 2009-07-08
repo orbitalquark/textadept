@@ -85,6 +85,7 @@ module('textadept.events', package.seeall)
 --   pm_menu_clicked(menu_id, selected_item)
 --     menu_id: the numeric ID for the menu item.
 --     selected_item: identical to 'full_path' for 'pm_contents_request' event.
+--   pm_view_filled()
 --   find(text, next)
 --     text: the text to find.
 --     next: flag indicating whether or not the search direction is forward.
@@ -458,14 +459,15 @@ add_handler('quit',
         any = true
       end
     end
-    if any then
-      if cocoa_dialog('yesno-msgbox', {
-        title = locale.EVENTS_QUIT_TITLE,
-        text = locale.EVENTS_QUIT_TEXT,
-        ['informative-text'] =
-          string.format(locale.EVENTS_QUIT_MSG, table.concat(list, '\n')),
-        ['no-newline'] = true
-      }) ~= '2' then return false end
+    if any and
+       textadept.dialog('yesno-msgbox',
+                        '--title', locale.EVENTS_QUIT_TITLE,
+                        '--text', locale.EVENTS_QUIT_TEXT,
+                        '--informative-text',
+                          string.format(locale.EVENTS_QUIT_MSG,
+                                        table.concat(list, '\n')),
+                        '--no-newline') ~= '2' then
+      return false
     end
     return true
   end)

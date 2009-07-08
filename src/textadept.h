@@ -15,6 +15,7 @@
 #include <ScintillaWidget.h>
 
 extern "C" {
+#include <gcocoadialog.h>
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>

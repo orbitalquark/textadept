@@ -77,13 +77,12 @@ function perform_menu_action(menu_id, selected_item)
                     os.date(date_format, attr.access),
                     os.date(date_format, attr.modification),
                     os.date(date_format, attr.change))
-    cocoa_dialog('textbox', {
-      ['informative-text'] =
-        string.format(locale.PM_BROWSER_FILE_INFO_TEXT, utf8_filepath),
-      text = out,
-      button1 = locale.PM_BROWSER_FILE_INFO_OK,
-      editable = false
-    })
+    textadept.dialog('textbox',
+                     '--informative-text',
+                       string.format(locale.PM_BROWSER_FILE_INFO_TEXT,
+                                     utf8_filepath),
+                     '--text', out,
+                     '--button1', locale.PM_BROWSER_FILE_INFO_OK)
   elseif menu_id == ID.SHOW_DOT_FILES then
     show_dot_files = not show_dot_files
     textadept.pm.activate()

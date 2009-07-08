@@ -148,14 +148,13 @@ end
 -- @usage textadept.io.open(utf8_encoded_filename)
 function open(utf8_filenames)
   utf8_filenames =
-    utf8_filenames or cocoa_dialog('fileselect', {
-      title = locale.IO_OPEN_TITLE,
-      text = locale.IO_OPEN_TEXT,
-      -- in Windows, dialog:get_filenames() is unavailable; only allow single
-      -- selection
-      ['select-multiple'] = not WIN32 or nil,
-      ['with-directory'] = (buffer.filename or ''):match('.+[/\\]')
-    })
+    utf8_filenames or
+      textadept.dialog('fileselect',
+                       '--title', locale.IO_OPEN_TITLE,
+                       '--text', locale.IO_OPEN_TEXT,
+                       '--select-multiple',
+                       '--with-directory',
+                         (buffer.filename or ''):match('.+[/\\]') or '')
   for filename in utf8_filenames:gmatch('[^\n]+') do open_helper(filename) end
 end
 
@@ -246,12 +245,13 @@ function save_as(buffer, utf8_filename)
   textadept.check_focused_buffer(buffer)
   if not utf8_filename then
     utf8_filename =
-      cocoa_dialog('filesave', {
-        title = locale.IO_SAVE_TITLE,
-        ['with-directory'] = (buffer.filename or ''):match('.+[/\\]'),
-        ['with-file'] = (buffer.filename or ''):match('[^/\\]+$'),
-        ['no-newline'] = true
-      })
+      textadept.dialog('filesave',
+                       '--title', locale.IO_SAVE_TITLE,
+                       '--with-directory',
+                         (buffer.filename or ''):match('.+[/\\]') or '',
+                       '--with-file',
+                         (buffer.filename or ''):match('[^/\\]+$') or '',
+                       '--no-newline')
   end
   if #utf8_filename > 0 then
     buffer.filename = utf8_filename
@@ -283,12 +283,14 @@ end
 -- @usage buffer:close()
 function close(buffer)
   textadept.check_focused_buffer(buffer)
-  if buffer.dirty and cocoa_dialog('yesno-msgbox', {
-    title = locale.IO_CLOSE_TITLE,
-    text = locale.IO_CLOSE_TEXT,
-    ['informative-text'] = locale.IO_CLOSE_MSG,
-    ['no-newline'] = true
-  }) ~= '2' then return false end
+  if buffer.dirty and
+     textadept.dialog('yesno-msgbox',
+                      '--title', locale.IO_CLOSE_TITLE,
+                      '--text', locale.IO_CLOSE_TEXT,
+                      '--informative-text', locale.IO_CLOSE_MSG,
+                      '--no-newline') ~= '2' then
+    return false
+  end
   buffer:delete()
   return true
 end
@@ -347,13 +349,13 @@ local function update_modified_file()
   local attributes = lfs.attributes(filename)
   if not attributes then return end
   if buffer.modification_time < attributes.modification then
-    if cocoa_dialog('yesno-msgbox', {
-      title = locale.IO_RELOAD_TITLE,
-      text = locale.IO_RELOAD_TEXT,
-      ['informative-text'] = string.format(locale.IO_RELOAD_MSG, utf8_filename),
-      ['no-cancel'] = true,
-      ['no-newline'] = true
-    }) == '1' then
+    if textadept.dialog('yesno-msgbox',
+                        '--title', locale.IO_RELOAD_TITLE,
+                        '--text', locale.IO_RELOAD_TEXT,
+                        '--informative-text',
+                          string.format(locale.IO_RELOAD_MSG, utf8_filename),
+                        '--no-cancel',
+                        '--no-newline') == '1' then
       buffer:reload()
     else
       buffer.modification_time = attributes.modification
