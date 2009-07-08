@@ -58,12 +58,12 @@ static int l_buffer_mt_index(lua_State *lua),
            l_ce_mt_index(lua_State *lua),
            l_ce_mt_newindex(lua_State *lua);
 
-static int l_cf_ta_buffer_new(lua_State *lua),
-           l_cf_buffer_delete(lua_State *lua),
+static int l_cf_buffer_delete(lua_State *lua),
            l_cf_buffer_text_range(lua_State *lua),
            l_cf_view_focus(lua_State *lua),
            l_cf_view_split(lua_State *lua),
            l_cf_view_unsplit(lua_State *lua),
+           l_cf_ta_buffer_new(lua_State *lua),
            l_cf_ta_get_split_table(lua_State *lua),
            l_cf_ta_goto_window(lua_State *lua),
            l_cf_view_goto_buffer(lua_State *lua),
@@ -71,16 +71,19 @@ static int l_cf_ta_buffer_new(lua_State *lua),
            l_cf_ta_iconv(lua_State *lua),
            l_cf_ta_reset(lua_State *lua),
            l_cf_ta_quit(lua_State *lua),
-           l_cf_pm_focus(lua_State *lua),
-           l_cf_pm_clear(lua_State *lua),
            l_cf_pm_activate(lua_State *lua),
            l_cf_pm_add_browser(lua_State *lua),
+           l_cf_pm_clear(lua_State *lua),
+           l_cf_pm_fill(lua_State *lua),
+           l_cf_pm_focus(lua_State *lua),
+           l_cf_pm_show_context_menu(lua_State *lua),
            l_cf_find_focus(lua_State *lua),
-           l_cf_call_find_next(lua_State *lua),
-           l_cf_call_find_prev(lua_State *lua),
-           l_cf_call_replace(lua_State *lua),
-           l_cf_call_replace_all(lua_State *lua),
-           l_cf_ce_focus(lua_State *lua);
+           l_cf_find_next(lua_State *lua),
+           l_cf_find_prev(lua_State *lua),
+           l_cf_find_replace(lua_State *lua),
+           l_cf_find_replace_all(lua_State *lua),
+           l_cf_ce_focus(lua_State *lua),
+           l_cf_ce_show_completions(lua_State *lua);
 
 /**
  * Inits or re-inits the Lua State.
@@ -114,31 +117,34 @@ bool l_init(int argc, char **argv, bool reinit) {
 
   lua_newtable(lua);
   lua_newtable(lua);
-    l_cfunc(lua, l_cf_pm_focus, "focus");
-    l_cfunc(lua, l_cf_pm_clear, "clear");
     l_cfunc(lua, l_cf_pm_activate, "activate");
     l_cfunc(lua, l_cf_pm_add_browser, "add_browser");
+    l_cfunc(lua, l_cf_pm_clear, "clear");
+    l_cfunc(lua, l_cf_pm_fill, "fill");
+    l_cfunc(lua, l_cf_pm_focus, "focus");
+    l_cfunc(lua, l_cf_pm_show_context_menu, "show_context_menu");
     l_mt(lua, "_pm_mt", l_pm_mt_index, l_pm_mt_newindex);
   lua_setfield(lua, -2, "pm");
   lua_newtable(lua);
+    l_cfunc(lua, l_cf_find_next, "find_next");
+    l_cfunc(lua, l_cf_find_prev, "find_prev");
     l_cfunc(lua, l_cf_find_focus, "focus");
-    l_cfunc(lua, l_cf_call_find_next, "call_find_next");
-    l_cfunc(lua, l_cf_call_find_prev, "call_find_prev");
-    l_cfunc(lua, l_cf_call_replace, "call_replace");
-    l_cfunc(lua, l_cf_call_replace_all, "call_replace_all");
+    l_cfunc(lua, l_cf_find_replace, "replace");
+    l_cfunc(lua, l_cf_find_replace_all, "replace_all");
     l_mt(lua, "_find_mt", l_find_mt_index, l_find_mt_newindex);
   lua_setfield(lua, -2, "find");
   lua_newtable(lua);
     l_cfunc(lua, l_cf_ce_focus, "focus");
+    l_cfunc(lua, l_cf_ce_show_completions, "show_completions");
     l_mt(lua, "_ce_mt", l_ce_mt_index, l_ce_mt_newindex);
   lua_setfield(lua, -2, "command_entry");
-  l_cfunc(lua, l_cf_ta_buffer_new, "new_buffer");
-  l_cfunc(lua, l_cf_ta_goto_window, "goto_view");
   l_cfunc(lua, l_cf_ta_get_split_table, "get_split_table");
+  l_cfunc(lua, l_cf_ta_goto_window, "goto_view");
   l_cfunc(lua, l_cf_ta_gtkmenu, "gtkmenu");
   l_cfunc(lua, l_cf_ta_iconv, "iconv");
-  l_cfunc(lua, l_cf_ta_reset, "reset");
+  l_cfunc(lua, l_cf_ta_buffer_new, "new_buffer");
   l_cfunc(lua, l_cf_ta_quit, "quit");
+  l_cfunc(lua, l_cf_ta_reset, "reset");
   l_mt(lua, "_textadept_mt", l_ta_mt_index, l_ta_mt_newindex);
   lua_setglobal(lua, "textadept");
 
@@ -272,9 +278,9 @@ void l_goto_scintilla_window(GtkWidget *editor, int n, bool absolute) {
     lua_rawgeti(lua, -1, n);
   }
   editor = l_checkview(lua, -1);
-  if (!closing) l_handle_event("view_before_switch");
+  if (!closing) l_handle_event("view_before_switch", -1);
   gtk_widget_grab_focus(editor);
-  if (!closing) l_handle_event("view_after_switch");
+  if (!closing) l_handle_event("view_after_switch", -1);
   lua_pop(lua, 2); // view table and views
 }
 
@@ -374,16 +380,6 @@ unsigned int l_get_docpointer_index(sptr_t doc) {
   return idx;
 }
 
-#define l_set_bufferp(k, v) { \
-  lua_pushstring(lua, k); \
-  lua_pushinteger(lua, v); \
-  lua_rawset(lua, -3); \
-}
-#define l_get_bufferp(k, i) { \
-  lua_pushstring(lua, k); \
-  lua_rawget(lua, (i < 0) ? i - 1 : i); \
-}
-
 /**
  * Changes a Scintilla window's document to one in the global 'buffers' table.
  * Before doing so, it saves the scroll and caret positions in the current
@@ -414,10 +410,10 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute) {
     lua_rawgeti(lua, -1, n);
   }
   sptr_t doc = l_checkdocpointer(lua, -1);
-  if (!closing) l_handle_event("buffer_before_switch");
+  if (!closing) l_handle_event("buffer_before_switch", -1);
   SS(sci, SCI_SETDOCPOINTER, 0, doc);
   l_set_buffer_global(sci);
-  if (!closing) l_handle_event("buffer_after_switch");
+  if (!closing) l_handle_event("buffer_after_switch", -1);
   lua_pop(lua, 2); // buffer table and buffers
 }
 
@@ -509,13 +505,19 @@ bool l_ista2function(const char *table, const char *key) {
  *   values at the top of the stack. If false, discards the return values.
  *   Defaults to false.
  */
-bool l_call_function(int nargs, int retn=0, bool keep_return=false) {
+static bool l_call_function(int nargs, int retn=0, bool keep_return=false) {
   int ret = lua_pcall(lua, nargs, retn, 0);
   if (ret == 0) {
     bool result = (retn > 0) ? lua_toboolean(lua, -1) == 1 : true;
     if (retn > 0 && !keep_return) lua_pop(lua, retn); // retn
     return result;
-  } else l_handle_error(NULL);
+  } else {
+    if (focused_editor)
+      l_handle_event("error", LUA_TSTRING, lua_tostring(lua, -1), -1);
+    else
+      printf("Lua Error: %s\n", lua_tostring(lua, -1));
+    lua_settop(lua, 0);
+  }
   return false;
 }
 
@@ -637,47 +639,48 @@ static void l_check_focused_buffer(lua_State *lua, int narg) {
 // Notification/event handlers
 
 /**
- * Handles a Lua error.
- * The main error message is at the top of the Lua stack.
- * @param extramsg An additional error message to display.
- */
-void l_handle_error(const char *extramsg) {
-  if (focused_editor && l_ista2function("events", "error")) {
-    l_insert(lua, -1); // shift error message down
-    if (extramsg) lua_pushstring(lua, extramsg);
-    l_call_function(extramsg ? 2 : 1);
-  } else {
-    printf("Lua Error: %s\n", lua_tostring(lua, -1));
-    if (extramsg) printf("%s\n", extramsg);
-  }
-  lua_settop(lua, 0);
-}
-
-/**
  * Handles a Textadept event.
  * @param s String event name.
- * @param arg Optional string argument.
+ * @param ... Optional arguments to pass to the handler. The variable argument
+ *   list should contain Lua types followed by the data of that type to pass.
+ *   The list is terminated by a -1.
  */
-bool l_handle_event(const char *s, const char *arg) {
-  if (!l_ista2function("events", s)) return false;
-  if (arg) lua_pushstring(lua, arg);
-  return l_call_function(arg ? 1 : 0, 1);
-}
-
-/**
- * Handles a Textadept keypress.
- * @param keyval The key value of the key pressed.
- * @param shift Flag indicating whether or not the shift modifier was held.
- * @param control Flag indicating whether or not the control modifier was held.
- * @param alt Flag indicating whether or not the alt modifier was held.
- */
-bool l_handle_keypress(int keyval, bool shift, bool control, bool alt) {
-  if (!l_ista2function("events", "keypress")) return false;
-  lua_pushinteger(lua, keyval);
-  lua_pushboolean(lua, shift);
-  lua_pushboolean(lua, control);
-  lua_pushboolean(lua, alt);
-  return l_call_function(4, 1);
+bool l_handle_event(const char *s, ...) {
+  if (!l_ista2function("events", "handle")) return false;
+  lua_pushstring(lua, s);
+  int n = 1;
+  va_list ap;
+  va_start(ap, s);
+  int type = va_arg(ap, int);
+  while (type != -1) {
+    void *arg = va_arg(ap, void*);
+    switch(type) {
+    case LUA_TNIL:
+      lua_pushnil(lua);
+      break;
+    case LUA_TBOOLEAN:
+      lua_pushboolean(lua, reinterpret_cast<long>(arg));
+      break;
+    case LUA_TNUMBER:
+      lua_pushinteger(lua, reinterpret_cast<long>(arg));
+      break;
+    case LUA_TSTRING:
+      lua_pushstring(lua, reinterpret_cast<char*>(arg));
+      break;
+    case LUA_TLIGHTUSERDATA:
+    case LUA_TTABLE: {
+      long ref = reinterpret_cast<long>(arg);
+      lua_rawgeti(lua, LUA_REGISTRYINDEX, ref);
+      luaL_unref(lua, LUA_REGISTRYINDEX, ref);
+      break;
+    } default:
+      warn("events.handle: ignored invalid argument type");
+    }
+    n++;
+    type = va_arg(ap, int);
+  }
+  va_end(ap);
+  return l_call_function(n, 1);
 }
 
 #define l_pushscninteger(i, n) { \
@@ -740,206 +743,52 @@ void l_ta_popup_context_menu(GdkEventButton *event) {
 // Project Manager
 
 /**
- * Creates and pushes a Lua table of parent nodes for the given Project Manager
- * treeview path.
+ * Creates a Lua table of parent nodes for the given Project Manager treeview
+ * path and returns a reference to it.
  * The first table item is the PM Entry text, the next items are parents of the
  * given node in descending order, and the last item is the given node itself.
+ * The reference can be retrieved using lua_rawgeti.
  * @param store The GtkTreeStore of the PM view.
  * @param path The GtkTreePath of the node. If NULL, only the PM Entry text is
  *   contained in the resulting table.
+ * @return int reference to the created table in LUA_REGISTRYINDEX.
  */
-void l_pushpathtable(GtkTreeStore *store, GtkTreePath *path) {
+int l_pm_pathtableref(GtkTreeStore *store, GtkTreePath *path) {
   lua_newtable(lua);
   lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(pm_entry)));
   lua_rawseti(lua, -2, 1);
-  if (!path) return;
-  GtkTreeIter iter;
-  while (gtk_tree_path_get_depth(path) > 0) {
-    char *item = 0;
-    gtk_tree_model_get_iter(GTK_TREE_MODEL(store), &iter, path);
-    gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 1, &item, -1);
-    lua_pushstring(lua, item);
-    lua_rawseti(lua, -2, gtk_tree_path_get_depth(path) + 1);
-    g_free(item);
-    gtk_tree_path_up(path);
+  if (path) {
+    GtkTreeIter iter;
+    while (gtk_tree_path_get_depth(path) > 0) {
+      char *item = 0;
+      gtk_tree_model_get_iter(GTK_TREE_MODEL(store), &iter, path);
+      gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 1, &item, -1);
+      lua_pushstring(lua, item);
+      lua_rawseti(lua, -2, gtk_tree_path_get_depth(path) + 1);
+      g_free(item);
+      gtk_tree_path_up(path);
+    }
   }
+  return luaL_ref(lua, LUA_REGISTRYINDEX);
 }
 
 /**
- * Requests and adds contents to the Project Manager view.
- * @param store The GtkTreeStore of the PM view.
- * @param initial_iter An initial GtkTreeIter. If NULL, contents will be added
- *   to the treeview root. Otherwise they will be added to this parent node.
- */
-void l_pm_view_fill(GtkTreeStore *store, GtkTreeIter *initial_iter) {
-  if (!l_ista2function("pm", "get_contents_for")) return;
-  if (initial_iter) {
-    GtkTreePath *path =
-      gtk_tree_model_get_path(GTK_TREE_MODEL(store), initial_iter);
-    l_pushpathtable(store, path);
-    gtk_tree_path_free(path);
-  } else l_pushpathtable(store, NULL);
-  lua_pushboolean(lua, initial_iter != NULL);
-  l_call_function(2, 1, true);
-  if (!lua_istable(lua, -1)) {
-    if (!lua_isnil(lua, -1)) warn("pm.get_contents_for: table expected");
-    lua_pop(lua, 1); // non-table return
-    return;
-  }
-
-  if (!initial_iter) gtk_tree_store_clear(store);
-  lua_pushnil(lua);
-  while (lua_next(lua, -2)) {
-    if (lua_istable(lua, -1) && lua_type(lua, -2) == LUA_TSTRING) {
-      GtkTreeIter iter, child;
-      gtk_tree_store_append(store, &iter, initial_iter);
-      gtk_tree_store_set(store, &iter, 1, lua_tostring(lua, -2), -1);
-      lua_getfield(lua, -1, "parent");
-      if (lua_toboolean(lua, -1)) {
-        gtk_tree_store_append(store, &child, &iter);
-        gtk_tree_store_set(store, &child, 1, "\0dummy", -1);
-      }
-      lua_pop(lua, 1); // parent
-      lua_getfield(lua, -1, "pixbuf");
-      if (lua_isstring(lua, -1))
-        gtk_tree_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
-      else if (!lua_isnil(lua, -1))
-        warn("pm.fill: non-string pixbuf key ignored");
-      lua_pop(lua, 1); // pixbuf
-      lua_getfield(lua, -1, "text");
-      gtk_tree_store_set(store, &iter, 2, lua_isstring(lua, -1) ?
-                         lua_tostring(lua, -1) : lua_tostring(lua, -3), -1);
-      lua_pop(lua, 1); // display text
-    } else warn("pm.fill: string id key must have table value");
-    lua_pop(lua, 1); // value
-  }
-  lua_pop(lua, 1); // returned table
-
-  l_handle_event("pm_view_filled");
-}
-
-/**
- * Requests and pops up a context menu for a selected Project Manager item.
- * @param store The GtkTreeStore of the PM view.
- * @param path The GtkTreePath of the item.
+ * Requests a popup context menu for a selected Project Manager item.
  * @param event The mouse button event.
- * @param callback The GCallback associated with each menu item.
  */
-void l_pm_popup_context_menu(GtkTreeStore *store, GtkTreePath *path,
-                             GdkEventButton *event, GCallback callback) {
-  if (!l_ista2function("pm", "get_context_menu")) return;
-  l_pushpathtable(store, path);
-  l_call_function(1, 1, true);
-  if (lua_istable(lua, -1)) {
-    GtkWidget *menu = l_create_gtkmenu(lua, callback, false);
-    gtk_widget_show_all(menu);
-    gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
-                   event ? event->button : 0,
-                   gdk_event_get_time(reinterpret_cast<GdkEvent*>(event)));
-  } else warn("pm.get_context_menu: table expected");
-  lua_pop(lua, 1); // returned value
-}
-
-/**
- * Performs an action for the selected Project Manager item.
- * @param store The GtkTreeStore of the PM view.
- * @param path The GtkTreePath of the item.
- */
-void l_pm_perform_action(GtkTreeStore *store, GtkTreePath *path) {
-  if (!l_ista2function("pm", "perform_action")) return;
-  l_pushpathtable(store, path);
-  l_call_function(1);
-}
-
-/**
- * Performs a selected menu action from a Project Manager item's context menu.
- * @param store The GtkTreeStore of the PM view.
- * @param path The GtkTreePath of the item.
- * @param id The numeric ID for the menu item.
- */
-void l_pm_perform_menu_action(GtkTreeStore *store, GtkTreePath *path, int id) {
-  if (!l_ista2function("pm", "perform_menu_action")) return;
-  lua_pushnumber(lua, id);
-  l_pushpathtable(store, path);
-  l_call_function(2);
-}
-
-// Find/Replace
-
-/**
- * Finds text in the current document.
- * @param ftext The text to find.
- * @param next Flag indicating whether or not to find next. If false, finds
- *   previous matches.
- */
-void l_find(const char *ftext, bool next) {
-  if (!l_ista2function("find", "find")) return;
-  lua_pushstring(lua, ftext);
-  lua_pushboolean(lua, next);
-  l_call_function(2);
-}
-
-/**
- * Replaces text in the current document.
- * @param rtext The text to replace the found text with.
- */
-void l_find_replace(const char *rtext) {
-  if (!l_ista2function("find", "replace")) return;
-  lua_pushstring(lua, rtext);
-  l_call_function(1);
-}
-
-/**
- * Replaces all found text in the current document.
- * @param ftext The text to find.
- * @param rtext The text to replace the found text with.
- */
-void l_find_replace_all(const char *ftext, const char *rtext) {
-  if (!l_ista2function("find", "replace_all")) return;
-  lua_pushstring(lua, ftext);
-  lua_pushstring(lua, rtext);
-  l_call_function(2);
-}
-
-// Command Entry
-
-/**
- * Executes a given command string as Lua code.
- * @param command Lua code to execute.
- */
-void l_ce_command(const char *command) {
-  int top = lua_gettop(lua);
-  if (luaL_dostring(lua, command) == 0) {
-    l_handle_event("update_ui");
-    lua_settop(lua, top);
-  } else l_handle_error("Error executing command");
-}
-
-/**
- * Requests and adds completions for the Command Entry Completion.
- * @param store The GtkListStore to populate.
- */
-void l_cec_fill(GtkListStore *store) {
-  if (!l_ista2function("command_entry", "get_completions_for")) return;
-  lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(command_entry)));
-  l_call_function(1, 1, true);
-  if (!lua_istable(lua, -1)) {
-    if (!lua_isnil(lua, -1)) warn("ce.get_completions_for: table expected");
-    lua_pop(lua, 1); // non-table return
-    return;
-  }
-
-  gtk_list_store_clear(store);
-  lua_pushnil(lua);
-  while (lua_next(lua, -2)) {
-    if (lua_type(lua, -1) == LUA_TSTRING) {
-      GtkTreeIter iter;
-      gtk_list_store_append(store, &iter);
-      gtk_list_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
-    } else warn("ce.get_completions_for: non-string value ignored");
-    lua_pop(lua, 1); // value
-  }
-  lua_pop(lua, 1); // returned table
+void l_pm_popup_context_menu(GdkEventButton *event) {
+  GtkTreePath *path = NULL;
+  GtkTreeIter iter;
+  GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(pm_view));
+  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view));
+  if (gtk_tree_selection_get_selected(sel, NULL, &iter))
+    path = gtk_tree_model_get_path(model, &iter);
+  lua_pushlightuserdata(lua, const_cast<GdkEventButton*>(event));
+  int ref = luaL_ref(lua, LUA_REGISTRYINDEX);
+  l_handle_event("pm_context_menu_request", LUA_TTABLE,
+                 l_pm_pathtableref(GTK_TREE_STORE(model), path),
+                 LUA_TLIGHTUSERDATA, ref, -1);
+  if (path) gtk_tree_path_free(path);
 }
 
 // Lua functions (stack maintenence is unnecessary)
@@ -1308,13 +1157,6 @@ static int l_ce_mt_newindex(lua_State *lua) {
 
 // Lua CFunctions. For documentation, consult the LuaDoc.
 
-static int l_cf_ta_buffer_new(lua_State *lua) {
-  new_scintilla_buffer(SCINTILLA(focused_editor), true, true);
-  lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
-  lua_rawgeti(lua, -1, lua_objlen(lua, -1));
-  return 1;
-}
-
 static int l_cf_buffer_delete(lua_State *lua) {
   l_check_focused_buffer(lua, 1);
   sptr_t doc = l_checkdocpointer(lua, 1);
@@ -1324,8 +1166,15 @@ static int l_cf_buffer_delete(lua_State *lua) {
   else
     new_scintilla_buffer(SCINTILLA(focused_editor), true, true);
   remove_scintilla_buffer(doc);
-  l_handle_event("buffer_deleted");
+  l_handle_event("buffer_deleted", -1);
   return 0;
+}
+
+static int l_cf_ta_buffer_new(lua_State *lua) {
+  new_scintilla_buffer(SCINTILLA(focused_editor), true, true);
+  lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
+  lua_rawgeti(lua, -1, lua_objlen(lua, -1));
+  return 1;
 }
 
 static int l_cf_buffer_text_range(lua_State *lua) {
@@ -1414,10 +1263,6 @@ static int l_cf_ta_goto_(lua_State *lua, GtkWidget *editor, bool buffer) {
   return 0;
 }
 
-static int l_cf_ta_goto_window(lua_State *lua) {
-  return l_cf_ta_goto_(lua, focused_editor, false);
-}
-
 // If the indexed view is not currently focused, temporarily focus it so calls
 // to handlers will not throw 'indexed buffer is not the focused one' error.
 static int l_cf_view_goto_buffer(lua_State *lua) {
@@ -1434,12 +1279,12 @@ static int l_cf_view_goto_buffer(lua_State *lua) {
   return 0;
 }
 
+static int l_cf_ta_goto_window(lua_State *lua) {
+  return l_cf_ta_goto_(lua, focused_editor, false);
+}
+
 static void t_menu_activate(GtkWidget *, gpointer id) {
-  int menu_id = GPOINTER_TO_INT(id);
-  char *menu_id_str = static_cast<char*>(malloc(sizeof(char) * 12));
-  sprintf(menu_id_str, "%i", menu_id);
-  l_handle_event("menu_clicked", menu_id_str);
-  g_free(menu_id_str);
+  l_handle_event("menu_clicked", LUA_TNUMBER, GPOINTER_TO_INT(id), -1);
 }
 
 static int l_cf_ta_gtkmenu(lua_State *lua) {
@@ -1462,19 +1307,6 @@ static int l_cf_ta_iconv(lua_State *lua) {
   return 1;
 }
 
-static int l_cf_ta_reset(lua_State *lua) {
-  l_handle_event("resetting");
-  l_init(0, NULL, true);
-  lua_pushboolean(lua, true);
-  lua_setglobal(lua, "RESETTING");
-  l_load_script("init.lua");
-  lua_pushnil(lua);
-  lua_setglobal(lua, "RESETTING");
-  l_set_view_global(focused_editor);
-  l_set_buffer_global(SCINTILLA(focused_editor));
-  return 0;
-}
-
 static int l_cf_ta_quit(lua_State *) {
   GdkEventAny event;
   event.type = GDK_DELETE;
@@ -1484,14 +1316,16 @@ static int l_cf_ta_quit(lua_State *) {
   return 0;
 }
 
-static int l_cf_pm_focus(lua_State *) {
-  pm_toggle_focus();
-  return 0;
-}
-
-static int l_cf_pm_clear(lua_State *) {
-  gtk_tree_store_clear(
-    GTK_TREE_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view))));
+static int l_cf_ta_reset(lua_State *lua) {
+  l_handle_event("resetting", -1);
+  l_init(0, NULL, true);
+  lua_pushboolean(lua, true);
+  lua_setglobal(lua, "RESETTING");
+  l_load_script("init.lua");
+  lua_pushnil(lua);
+  lua_setglobal(lua, "RESETTING");
+  l_set_view_global(focused_editor);
+  l_set_buffer_global(SCINTILLA(focused_editor));
   return 0;
 }
 
@@ -1506,32 +1340,138 @@ static int l_cf_pm_add_browser(lua_State *lua) {
   return 0;
 }
 
+static int l_cf_pm_clear(lua_State *) {
+  gtk_tree_store_clear(
+    GTK_TREE_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view))));
+  return 0;
+}
+
+static int l_cf_pm_fill(lua_State *lua) {
+  luaL_checktype(lua, 1, LUA_TTABLE);
+  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view));
+  GtkTreeStore *store = GTK_TREE_STORE(model);
+  GtkTreeIter initial_iter, *initial_iter_p = NULL;
+  if (lua_gettop(lua) > 1 && lua_type(lua, 2) == LUA_TSTRING &&
+      gtk_tree_model_get_iter_from_string(model, &initial_iter,
+                                          lua_tostring(lua, 2)))
+    initial_iter_p = &initial_iter;
+  if (!initial_iter_p) gtk_tree_store_clear(store);
+  GtkTreeIter iter, child;
+  lua_pushnil(lua);
+  while (lua_next(lua, 1)) {
+    if (lua_istable(lua, -1) && lua_type(lua, -2) == LUA_TSTRING) {
+      gtk_tree_store_append(store, &iter, initial_iter_p);
+      gtk_tree_store_set(store, &iter, 1, lua_tostring(lua, -2), -1);
+      lua_getfield(lua, -1, "parent");
+      if (lua_toboolean(lua, -1)) {
+        gtk_tree_store_append(store, &child, &iter);
+        gtk_tree_store_set(store, &child, 1, "\0dummy", -1);
+      }
+      lua_pop(lua, 1); // parent
+      lua_getfield(lua, -1, "pixbuf");
+      if (lua_isstring(lua, -1))
+        gtk_tree_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
+      else if (!lua_isnil(lua, -1))
+        warn("pm.fill: non-string pixbuf key ignored");
+      lua_pop(lua, 1); // pixbuf
+      lua_getfield(lua, -1, "text");
+      gtk_tree_store_set(store, &iter, 2, lua_isstring(lua, -1) ?
+                         lua_tostring(lua, -1) : lua_tostring(lua, -3), -1);
+      lua_pop(lua, 1); // display text
+    } else warn("pm.fill: string id key must have table value");
+    lua_pop(lua, 1); // value
+  }
+  if (initial_iter_p) {
+    char *item;
+    gtk_tree_model_iter_nth_child(model, &child, initial_iter_p, 0);
+    gtk_tree_model_get(model, &child, 1, &item, -1);
+    if (strcmp(reinterpret_cast<const char*>(item), "\0dummy") == 0)
+      gtk_tree_store_remove(store, &child);
+    g_free(item);
+  }
+  return 0;
+}
+
+static void pm_menu_activate(GtkWidget *, gpointer id) {
+  GtkTreePath *path = NULL;
+  GtkTreeIter iter;
+  GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(pm_view));
+  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view));
+  if (gtk_tree_selection_get_selected(sel, NULL, &iter))
+    path = gtk_tree_model_get_path(model, &iter);
+  l_handle_event("pm_menu_clicked", LUA_TNUMBER, GPOINTER_TO_INT(id),
+                 LUA_TTABLE, l_pm_pathtableref(GTK_TREE_STORE(model), path),
+                 -1);
+  if (path) gtk_tree_path_free(path);
+}
+
+static int l_cf_pm_show_context_menu(lua_State *lua) {
+  GdkEventButton *event = NULL;
+  if (lua_gettop(lua) > 1) {
+    if (lua_isuserdata(lua, 2))
+      event = reinterpret_cast<GdkEventButton*>(lua_touserdata(lua, 2));
+    lua_pop(lua, 1); // userdata
+  }
+  luaL_checktype(lua, 1, LUA_TTABLE);
+  GtkWidget *menu = l_create_gtkmenu(lua, G_CALLBACK(pm_menu_activate), false);
+  gtk_widget_show_all(menu);
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+                 event ? event->button : 0,
+                 gdk_event_get_time(reinterpret_cast<GdkEvent*>(event)));
+  return 0;
+}
+
+static int l_cf_pm_focus(lua_State *) {
+  pm_toggle_focus();
+  return 0;
+}
+
 static int l_cf_find_focus(lua_State *) {
   find_toggle_focus();
   return 0;
 }
 
-static int l_cf_call_find_next(lua_State *) {
+static int l_cf_find_next(lua_State *) {
   g_signal_emit_by_name(G_OBJECT(fnext_button), "clicked");
   return 0;
 }
 
-static int l_cf_call_find_prev(lua_State *) {
+static int l_cf_find_prev(lua_State *) {
   g_signal_emit_by_name(G_OBJECT(fprev_button), "clicked");
   return 0;
 }
 
-static int l_cf_call_replace(lua_State *) {
+static int l_cf_find_replace(lua_State *) {
   g_signal_emit_by_name(G_OBJECT(r_button), "clicked");
   return 0;
 }
 
-static int l_cf_call_replace_all(lua_State *) {
+static int l_cf_find_replace_all(lua_State *) {
   g_signal_emit_by_name(G_OBJECT(ra_button), "clicked");
   return 0;
 }
 
 static int l_cf_ce_focus(lua_State *) {
   ce_toggle_focus();
+  return 0;
+}
+
+static int l_cf_ce_show_completions(lua_State *lua) {
+  luaL_checktype(lua, 1, LUA_TTABLE);
+  GtkEntryCompletion *completion =
+    gtk_entry_get_completion(GTK_ENTRY(command_entry));
+  GtkListStore *store =
+    GTK_LIST_STORE(gtk_entry_completion_get_model(completion));
+  gtk_list_store_clear(store);
+  lua_pushnil(lua);
+  while (lua_next(lua, 1)) {
+    if (lua_type(lua, -1) == LUA_TSTRING) {
+      GtkTreeIter iter;
+      gtk_list_store_append(store, &iter);
+      gtk_list_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
+    } else warn("command_entry.show_completions: non-string value ignored");
+    lua_pop(lua, 1); // value
+  }
+  gtk_entry_completion_complete(completion);
   return 0;
 }

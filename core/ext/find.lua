@@ -10,14 +10,28 @@ local MARK_FIND = 0
 local MARK_FIND_COLOR = 0x4D9999
 local previous_view
 
--- LuaDoc is in core/.find.lua.
+---
+-- [Local table] Text escape sequences with their associated characters.
+-- @class table
+-- @name escapes
 local escapes = {
   ['\\a'] = '\a', ['\\b'] = '\b', ['\\f'] = '\f', ['\\n'] = '\n',
   ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
 }
 
--- LuaDoc is in core/.find.lua.
-function find.find(text, next, flags, nowrap, wrapped)
+---
+-- [Local function] Finds and selects text in the current buffer.
+-- @param text The text to find.
+-- @param next Flag indicating whether or not the search direction is forward.
+-- @param flags Search flags. This is a number mask of 4 flags: match case (2),
+--   whole word (4), Lua pattern (8), and in files (16) joined with binary OR.
+--   If nil, this is determined based on the checkboxes in the find box.
+-- @param nowrap Flag indicating whether or not the search won't wrap.
+-- @param wrapped Utility flag indicating whether or not the search has wrapped
+--   for displaying useful statusbar information. This flag is used and set
+--   internally, and should not be set otherwise.
+-- @return position of the found text or -1
+local function find_(text, next, flags, nowrap, wrapped)
   if #text == 0 then return end
   local buffer = buffer
   local first_visible_line = buffer.first_visible_line -- for 'no results found'
@@ -128,7 +142,7 @@ function find.find(text, next, flags, nowrap, wrapped)
       buffer:goto_pos(buffer.length)
     end
     textadept.statusbar_text = locale.FIND_SEARCH_WRAPPED
-    result = find.find(text, next, flags, true, true)
+    result = find_(text, next, flags, true, true)
     if result == -1 then
       textadept.statusbar_text = locale.FIND_NO_RESULTS
       buffer:line_scroll(0, first_visible_line)
@@ -141,9 +155,18 @@ function find.find(text, next, flags, nowrap, wrapped)
 
   return result
 end
+textadept.events.add_handler('find', find_)
 
--- LuaDoc is in core/.find.lua.
-function find.replace(rtext)
+---
+-- [Local function] Replaces found text.
+-- 'find_' is called first, to select any found text. The selected text is then
+-- replaced by the specified replacement text.
+-- This function ignores 'Find in Files'.
+-- @param rtext The text to replace found text with. It can contain both Lua
+--   capture items (%n where 1 <= n <= 9) for Lua pattern searches and %()
+--   sequences for embedding Lua code for any search.
+-- @see find
+local function replace(rtext)
   if #buffer:get_sel_text() == 0 then return end
   if find.in_files then find.in_files = false end
   local buffer = buffer
@@ -179,9 +202,17 @@ function find.replace(rtext)
     buffer:goto_pos(buffer.current_pos)
   end
 end
+textadept.events.add_handler('replace', replace)
 
--- LuaDoc is in core/.find.lua.
-function find.replace_all(ftext, rtext, flags)
+---
+-- [Local function] Replaces all found text.
+-- If any text is selected, all found text in that selection is replaced.
+-- This function ignores 'Find in Files'.
+-- @param ftext The text to find.
+-- @param rtext The text to replace found text with.
+-- @param flags The number mask identical to the one in 'find'.
+-- @see find
+local function replace_all(ftext, rtext, flags)
   if #ftext == 0 then return end
   if find.in_files then find.in_files = false end
   local buffer = buffer
@@ -189,8 +220,8 @@ function find.replace_all(ftext, rtext, flags)
   local count = 0
   if #buffer:get_sel_text() == 0 then
     buffer:goto_pos(0)
-    while(find.find(ftext, true, flags, true) ~= -1) do
-      find.replace(rtext)
+    while(find_(ftext, true, flags, true) ~= -1) do
+      replace(rtext)
       count = count + 1
     end
   else
@@ -201,13 +232,13 @@ function find.replace_all(ftext, rtext, flags)
     local end_marker =
       buffer:marker_add(buffer:line_from_position(e + 1), MARK_FIND)
     buffer:goto_pos(s)
-    local pos = find.find(ftext, true, flags, true)
+    local pos = find_(ftext, true, flags, true)
     while pos ~= -1 and
           pos < buffer:position_from_line(
             buffer:marker_line_from_handle(end_marker)) do
-      find.replace(rtext)
+      replace(rtext)
       count = count + 1
-      pos = find.find(ftext, true, flags, true)
+      pos = find_(ftext, true, flags, true)
     end
     e = buffer:position_from_line(buffer:marker_line_from_handle(end_marker))
     buffer:goto_pos(e)
@@ -220,6 +251,7 @@ function find.replace_all(ftext, rtext, flags)
     string.format(locale.FIND_REPLACEMENTS_MADE, tostring(count))
   buffer:end_undo_action()
 end
+textadept.events.add_handler('replace_all', replace_all)
 
 ---
 -- [Local function] When the user double-clicks a found file, go to the line in

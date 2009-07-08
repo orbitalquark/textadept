@@ -16,10 +16,3 @@ command_entry = { entry_text = nil }
 
 --- Focuses the command entry.
 function focus() end
-
----
--- Gets completions for the current command_entry text.
--- This function is called internally and shouldn't be called by script.
--- @param command The command to complete.
--- @return sorted table of completions
-function get_completions_for(command) end
