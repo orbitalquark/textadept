@@ -7,9 +7,8 @@ package.path  = mpath..';'..package.path
 
 local loaded_user_modules = false
 local user_init = _USERHOME..'/init.lua'
-local f = io.open(user_init)
-if f then
-  f:close()
+local lfs = require 'lfs'
+if lfs.attributes(user_init) then
   local ret, errmsg = pcall(dofile, user_init)
   if not ret then error(errmsg) end
   loaded_user_modules = ret
