@@ -4,9 +4,9 @@
 
 INCLUDEDIRS=-Iscintilla-st/include -Ilua/include
 ifdef DEBUG
-CXXFLAGS=-DDEBUG -g -DGTK -DSCI_LEXER -W -Wall
+CXXFLAGS=-DDEBUG -g -DGTK -DSCI_LEXER -W -Wall -Wno-sign-compare
 else
-CXXFLAGS=-DNDEBUG -O -DGTK -DSCI_LEXER -W -Wall
+CXXFLAGS=-DNDEBUG -O -DGTK -DSCI_LEXER -W -Wall -Wno-sign-compare
 endif
 GTKFLAGS=$(shell pkg-config --cflags gtk+-2.0)
 GTKLIBS=$(shell pkg-config --libs gtk+-2.0 gthread-2.0)

@@ -3,6 +3,7 @@
 #ifndef TEXTADEPT_H
 #define TEXTADEPT_H
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,23 +63,11 @@ void l_remove_scintilla_buffer(sptr_t doc);
 void l_goto_scintilla_buffer(GtkWidget *editor, int n, bool absolute);
 void l_set_buffer_global(ScintillaObject *sci);
 
-void l_handle_error(const char *errmsg);
-bool l_handle_event(const char *e, const char *arg=NULL);
-bool l_handle_keypress(int keyval, bool shift, bool control, bool alt);
+bool l_handle_event(const char *e, ...);
 void l_handle_scnnotification(SCNotification *n);
 void l_ta_popup_context_menu(GdkEventButton *event);
 
-void l_pm_view_fill(GtkTreeStore *store, GtkTreeIter *initial_iter);
-void l_pm_perform_action(GtkTreeStore *store, GtkTreePath *path);
-void l_pm_popup_context_menu(GtkTreeStore *store, GtkTreePath *path,
-                             GdkEventButton *event, GCallback callback);
-void l_pm_perform_menu_action(GtkTreeStore *store, GtkTreePath *path, int id);
-
-void l_find(const char *ftext, bool next);
-void l_find_replace(const char *rtext);
-void l_find_replace_all(const char *ftext, const char *rtext);
-
-void l_ce_command(const char *command);
-void l_cec_fill(GtkListStore *store);
+int l_pm_pathtableref(GtkTreeStore *store, GtkTreePath *path);
+void l_pm_popup_context_menu(GdkEventButton *event);
 
 #endif

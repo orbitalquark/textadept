@@ -84,8 +84,10 @@ function matches(entry_text)
 end
 
 local function modify_path(path)
-  path[1] = textadept.iconv(_HOME..'/modules', 'UTF-8', _CHARSET)
-  return path
+  local new_path = {}
+  for _, v in ipairs(path) do new_path[#new_path + 1] = v end
+  new_path[1] = textadept.iconv(_HOME..'/modules', 'UTF-8', _CHARSET)
+  return new_path
 end
 
 function get_contents_for(full_path)

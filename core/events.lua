@@ -71,7 +71,35 @@ module('textadept.events', package.seeall)
 --     alt: flag indicating whether or not alt is pressed.
 --   menu_clicked(menu_id)
 --     menu_id: the numeric ID of the menu item.
---   pm_view_filled()
+--   pm_contents_request(full_path, expanding)
+--     full_path: a numerically indexed table of treeview item parents. The
+--       first index contains the text of pm_entry. Subsequent indexes contain
+--       the ID's of parents of the child requested for expanding (if any).
+--     expanding: indicates if the contents of a parent are being requested.
+--   pm_item_selected(selected_item, gdkevent)
+--     selected_item: identical to 'full_path' for 'pm_contents_request' event.
+--     gdkevent: the GDK event associated with the request. It must be passed to
+--       pm.show_context_menu()
+--   pm_context_menu_request(selected_item)
+--     selected_item: identical to 'full_path' for 'pm_contents_request' event.
+--   pm_menu_clicked(menu_id, selected_item)
+--     menu_id: the numeric ID for the menu item.
+--     selected_item: identical to 'full_path' for 'pm_contents_request' event.
+--   find(text, next)
+--     text: the text to find.
+--     next: flag indicating whether or not the search direction is forward.
+--   replace(text)
+--     text: the text to replace the current selection with. It can contain both
+--     Lua capture items (%n where 1 <= n <= 9) for Lua pattern searches and %()
+--     sequences for embedding Lua code for any search.
+--   replace_all(find_text, repl_text)
+--     find_text: the text to find.
+--     repl_text: the text to replace found text with.
+--   find_keypress(code)
+--     code: the key code.
+--   command_entry_completions_request()
+--   command_entry_keypress(code)
+--     code: the key code.
 
 local events = textadept.events
 
@@ -161,41 +189,6 @@ local scnnotifications = {
 function notification(n)
   local f = scnnotifications[n.code]
   if f then f(n) end
-end
-
--- Textadept events.
-function buffer_new()
-  return handle('buffer_new')
-end
-function buffer_deleted()
-  return handle('buffer_deleted')
-end
-function buffer_before_switch()
-  return handle('buffer_before_switch')
-end
-function buffer_after_switch()
-  return handle('buffer_after_switch')
-end
-function view_new()
-  return handle('view_new')
-end
-function view_before_switch()
-  return handle('view_before_switch')
-end
-function view_after_switch()
-  return handle('view_after_switch')
-end
-function quit()
-  return handle('quit')
-end
-function keypress(code, shift, control, alt)
-  return handle('keypress', code, shift, control, alt)
-end
-function menu_clicked(menu_id_str)
-  return handle('menu_clicked', tonumber(menu_id_str))
-end
-function pm_view_filled()
-  return handle('pm_view_filled')
 end
 
 -- Default handlers to follow.
@@ -478,11 +471,9 @@ add_handler('quit',
   end)
 
 if MAC then
-  function appleevent_odoc(uri) return handle('uri_dropped', 'file://'..uri) end
+  add_handler('appleevent_odoc',
+    function(uri) return handle('uri_dropped', 'file://'..uri) end)
 end
 
----
--- Default error handler.
--- Prints the errors to an error buffer.
--- @param ... Error strings.
-function error(...) textadept._print(locale.ERROR_BUFFER, ...) end
+add_handler('error',
+  function(...) textadept._print(locale.ERROR_BUFFER, ...) end)
