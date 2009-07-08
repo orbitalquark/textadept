@@ -9,15 +9,16 @@ else
   package.cpath = _HOME..'/core/?.dll;'..package.cpath
 end
 
+_USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept/'
+
+_LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers/'
+
 _THEME = 'light'
-local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
-if user_dir then
-  local f = io.open(user_dir..'/.ta_theme', 'rb')
-  if f then
-    theme = f:read('*line'):match('[^\r\n]+')
-    f:close()
-    if theme and #theme > 0 then _THEME = theme end
-  end
+local f = io.open(_USERHOME..'/theme', 'rb')
+if f then
+  theme = f:read('*line'):match('[^\r\n]+')
+  f:close()
+  if theme and #theme > 0 then _THEME = theme end
 end
 
 require 'iface'

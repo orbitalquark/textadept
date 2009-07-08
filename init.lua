@@ -6,16 +6,13 @@ local mpath = _HOME..'/modules/?.lua;'.._HOME..'/modules/?/init.lua'
 package.path  = mpath..';'..package.path
 
 local loaded_user_modules = false
-local user_dir = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')
-if user_dir then
-  local ta_modules = user_dir..'/.ta_modules'
-  local f = io.open(ta_modules)
-  if f then
-    f:close()
-    local ret, errmsg = pcall(dofile, ta_modules)
-    if not ret then error(errmsg) end
-    loaded_user_modules = ret
-  end
+local user_init = _USERHOME..'/init.lua'
+local f = io.open(user_init)
+if f then
+  f:close()
+  local ret, errmsg = pcall(dofile, user_init)
+  if not ret then error(errmsg) end
+  loaded_user_modules = ret
 end
 
 if not loaded_user_modules then

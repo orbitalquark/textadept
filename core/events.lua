@@ -202,7 +202,7 @@ add_handler('view_new',
 
     -- properties
     buffer.property['textadept.home'] = _HOME
-    buffer.property['lexer.lua.home'] = _HOME..'/lexers/'
+    buffer.property['lexer.lua.home'] = _LEXERPATH
     buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
     if _THEME and #_THEME > 0 then
       local tfile = _THEME..'/lexer.lua'
