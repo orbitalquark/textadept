@@ -374,6 +374,7 @@ function load_session(filename, only_pm)
   end
   f:close()
   textadept.views[current_view]:focus()
+  textadept.session_file = filename or ta_session
   return true
 end
 
@@ -382,7 +383,8 @@ end
 -- Saves split views, opened buffers, cursor information, and project manager
 -- details.
 -- @param filename The absolute path to the session file to save. Defaults to
---   $HOME/.textadept/session if not specified.
+--   either the current session file or $HOME/.textadept/session if not
+--   specified.
 -- @usage textadept.io.save_session(filename)
 function save_session(filename)
   local session = {}
@@ -444,7 +446,7 @@ function save_session(filename)
     ("pm: %d %s %s"):format(pm.width, pm.cursor or '0', pm.entry_text)
   -- Write the session.
   local ta_session = _USERHOME..'/session'
-  local f = io.open(filename or ta_session, 'wb')
+  local f = io.open(filename or textadept.session_file or ta_session, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
     f:close()
