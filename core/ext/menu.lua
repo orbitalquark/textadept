@@ -358,8 +358,34 @@ local actions = {
   [ID.SAVEAS] = { 'save_as', b },
   [ID.CLOSE] = { 'close', b },
   [ID.CLOSE_ALL] = { t.io.close_all },
-  [ID.LOAD_SESSION] = { t.io.load_session }, -- TODO: file open dialog prompt
-  [ID.SAVE_SESSION] = { t.io.save_session }, -- TODO: file save dialog prompt
+  [ID.LOAD_SESSION] = {
+    function()
+      local utf8_filename =
+        cocoa_dialog('fileselect', {
+          title = l.MENU_LOAD_SESSION_TITLE,
+          ['with-directory'] = (textadept.session_file or ''):match('.+[/\\]'),
+          ['with-file'] = (textadept.session_file or ''):match('[^/\\]+$'),
+          ['no-newline'] = true
+        })
+      if #utf8_filename > 0 then
+        t.io.load_session(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
+      end
+    end
+  },
+  [ID.SAVE_SESSION] = {
+    function()
+      local utf8_filename =
+        cocoa_dialog('filesave', {
+          title = l.MENU_SAVE_SESSION_TITLE,
+          ['with-directory'] = (textadept.session_file or ''):match('.+[/\\]'),
+          ['with-file'] = (textadept.session_file or ''):match('[^/\\]+$'),
+          ['no-newline'] = true
+        })
+      if #utf8_filename > 0 then
+        t.io.save_session(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
+      end
+    end
+  },
   [ID.QUIT] = { t.quit },
   -- Edit
   [ID.UNDO] = { 'undo', b },
