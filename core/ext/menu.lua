@@ -361,28 +361,30 @@ local actions = {
   [ID.LOAD_SESSION] = {
     function()
       local utf8_filename =
-        cocoa_dialog('fileselect', {
-          title = l.MENU_LOAD_SESSION_TITLE,
-          ['with-directory'] = (textadept.session_file or ''):match('.+[/\\]'),
-          ['with-file'] = (textadept.session_file or ''):match('[^/\\]+$'),
-          ['no-newline'] = true
-        })
+        t.dialog('fileselect',
+                 '--title', l.MENU_LOAD_SESSION_TITLE,
+                 '--with-directory',
+                   (textadept.session_file or ''):match('.+[/\\]') or '',
+                 '--with-file',
+                   (textadept.session_file or ''):match('[^/\\]+$') or '',
+                  '--no-newline')
       if #utf8_filename > 0 then
-        _m.textadept.session.load(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
+        t.io.load_session(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
       end
     end
   },
   [ID.SAVE_SESSION] = {
     function()
       local utf8_filename =
-        cocoa_dialog('filesave', {
-          title = l.MENU_SAVE_SESSION_TITLE,
-          ['with-directory'] = (textadept.session_file or ''):match('.+[/\\]'),
-          ['with-file'] = (textadept.session_file or ''):match('[^/\\]+$'),
-          ['no-newline'] = true
-        })
+        t.dialog('filesave',
+                 '--title', l.MENU_SAVE_SESSION_TITLE,
+                 '--with-directory',
+                   (textadept.session_file or ''):match('.+[/\\]') or '',
+                 '--with-file',
+                   (textadept.session_file or ''):match('[^/\\]+$') or '',
+                 '--no-newline')
       if #utf8_filename > 0 then
-        _m.textadept.session.save(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
+        t.io.save_session(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
       end
     end
   },
