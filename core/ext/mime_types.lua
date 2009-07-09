@@ -44,9 +44,26 @@ if f then
 end
 
 ---
--- [Local function] Sets the buffer's lexer based on filename, shebang words, or
--- first line pattern.
-local function set_lexer()
+-- [Local function] Replacement for buffer:set_lexer_language().
+-- Sets a buffer._lexer field so it can be restored without querying the 
+-- mime-types tables. Also if the user manually sets the lexer, it should be
+-- restored.
+-- @param buffer The buffer to set the lexer language of.
+-- @param lang The string language to set.
+local function set_lexer_language(buffer, lang)
+  buffer._lexer = lang
+  buffer:set_lexer_language_(lang)
+end
+textadept.events.add_handler('buffer_new',
+  function()
+    buffer.set_lexer_language_ = buffer.set_lexer_language
+    buffer.set_lexer_language = set_lexer_language
+  end)
+
+---
+-- [Local function] Performs actions suitable for a new buffer.
+-- Sets the buffer's lexer language and loads the language module.
+local function handle_new()
   local lexer
   if buffer.filename then
     lexer = extensions[buffer.filename:match('[^/\\.]+$')]
@@ -55,10 +72,8 @@ local function set_lexer()
     local line = buffer:get_line(0)
     if line:find('^#!') then
       for word in line:gsub('[/\\]', ' '):gmatch('%S+') do
-        if shebangs[word] then
-          lexer = shebangs[word]
-          break
-        end
+        lexer = shebangs[word]
+        if lexer then break end
       end
     end
     if not lexer then
@@ -71,13 +86,6 @@ local function set_lexer()
     end
   end
   buffer:set_lexer_language(lexer or 'container')
-end
-
----
--- [Local function] Performs actions suitable for a new buffer.
--- Sets the buffer's lexer language and loads the language module.
-local function handle_new()
-  set_lexer()
   if buffer.filename then
     local lang = extensions[buffer.filename:match('[^/\\.]+$')]
     if lang then
@@ -91,7 +99,14 @@ local function handle_new()
   end
 end
 
+---
+-- [Local function] Sets the buffer's lexer based on filename, shebang words, or
+-- first line pattern.
+local function restore_lexer()
+  buffer:set_lexer_language(buffer._lexer or 'container')
+end
+
 textadept.events.add_handler('file_opened', handle_new)
 textadept.events.add_handler('file_saved_as', handle_new)
-textadept.events.add_handler('buffer_after_switch', set_lexer)
-textadept.events.add_handler('view_new', set_lexer)
+textadept.events.add_handler('buffer_after_switch', restore_lexer)
+textadept.events.add_handler('view_new', restore_lexer)
