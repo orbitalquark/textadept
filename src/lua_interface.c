@@ -1282,7 +1282,7 @@ static int l_cf_view_goto_buffer(lua_State *lua) {
 }
 
 static int l_cf_ta_dialog(lua_State *lua) {
-  enum GCDialogs type = gcocoadialog_type(luaL_checkstring(lua, 1));
+  GCDialogType type = gcocoadialog_type(luaL_checkstring(lua, 1));
   int argc = lua_gettop(lua) - 1;
   const char **argv = static_cast<const char**>(malloc(argc * sizeof(char *)));
   for (int i = 0; i < argc; i++) argv[i] = luaL_checkstring(lua, i + 2);
