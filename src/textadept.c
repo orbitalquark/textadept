@@ -644,12 +644,18 @@ static int pm_search_equal_func(GtkTreeModel *model, int col, const char *key,
  */
 static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
                                      GtkTreeIter *b, gpointer) {
-  char *a_text, *b_text, *p;
+  char *a_text, *b_text;
   gtk_tree_model_get(model, a, 1, &a_text, -1);
   gtk_tree_model_get(model, b, 1, &b_text, -1);
-  if (a_text) for (p = a_text; *p != '\0'; p++) *p = g_ascii_tolower(*p);
-  if (b_text) for (p = b_text; *p != '\0'; p++) *p = g_ascii_tolower(*p);
-  int retval = g_strcmp0(a_text, b_text);
+  int retval;
+  if (a_text == NULL && b_text == NULL)
+    retval = 0;
+  else if (a_text == NULL)
+    retval = -1;
+  else if (b_text == NULL)
+    retval = 1;
+  else
+    retval = strcasecmp(a_text, b_text);
   g_free(a_text);
   g_free(b_text);
   return retval;
