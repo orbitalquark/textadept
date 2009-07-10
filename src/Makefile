@@ -4,9 +4,9 @@
 
 INCLUDEDIRS=-Iscintilla-st/include -Ilua/include -Igcocoadialog
 ifdef DEBUG
-CXXFLAGS=-DDEBUG -g -DGTK -DSCI_LEXER -W -Wall -Wno-sign-compare
+CXXFLAGS=-DDEBUG -g -DGTK -DSCI_LEXER -W -Wall
 else
-CXXFLAGS=-DNDEBUG -O -DGTK -DSCI_LEXER -W -Wall -Wno-sign-compare
+CXXFLAGS=-DNDEBUG -O -DGTK -DSCI_LEXER -W -Wall -Wno-sign-compare -Wno-unused
 endif
 GTKFLAGS=$(shell pkg-config --cflags gtk+-2.0)
 GTKLIBS=$(shell pkg-config --libs gtk+-2.0 gthread-2.0)
@@ -22,11 +22,11 @@ LUA_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
 all: textadept
 
 .c.o:
-	g++ $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c $< -o $@
+	gcc $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c $< -o $@
 $(LUA_OBJS): lua/src/*.c
-	gcc $(INCLUDEDIRS) -DLUA_USE_LINUX $(CXXFLAGS) -c lua/src/*.c
+	gcc $(INCLUDEDIRS) -DLUA_USE_LINUX -c lua/src/*.c
 gcocoadialog.o: gcocoadialog/gcocoadialog.c
-	gcc $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c gcocoadialog/gcocoadialog.c
+	gcc $(GTKFLAGS) $(INCLUDEDIRS) -c gcocoadialog/gcocoadialog.c
 textadept:\
   textadept.o lua_interface.o $(LUA_OBJS) gcocoadialog.o \
   scintilla-st/gtk/LexLPeg.o scintilla-st/bin/scintilla.a
