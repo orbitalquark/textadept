@@ -45,18 +45,20 @@ end
 
 ---
 -- [Local function] Replacement for buffer:set_lexer_language().
--- Sets a buffer._lexer field so it can be restored without querying the
+-- Sets a buffer._lexer field so it can be restored without querying the 
 -- mime-types tables. Also if the user manually sets the lexer, it should be
 -- restored.
 -- @param buffer The buffer to set the lexer language of.
 -- @param lang The string language to set.
--- @usage buffer:set_lexer('language_name')
-local function set_lexer(buffer, lang)
+local function set_lexer_language(buffer, lang)
   buffer._lexer = lang
-  buffer:set_lexer_language(lang)
+  buffer:set_lexer_language_(lang)
 end
 textadept.events.add_handler('buffer_new',
-  function() buffer.set_lexer = set_lexer end)
+  function()
+    buffer.set_lexer_language_ = buffer.set_lexer_language
+    buffer.set_lexer_language = set_lexer_language
+  end)
 
 ---
 -- [Local function] Performs actions suitable for a new buffer.
@@ -83,7 +85,7 @@ local function handle_new()
       end
     end
   end
-  buffer:set_lexer(lexer or 'container')
+  buffer:set_lexer_language(lexer or 'container')
   if buffer.filename then
     local lang = extensions[buffer.filename:match('[^/\\.]+$')]
     if lang then
