@@ -1,16 +1,9 @@
 // Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 #include "textadept.h"
-
-#define gbool gboolean
-#define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
-
-#if !(WIN32 || MAC)
-#include <unistd.h>
-#elif WIN32
-#include "Windows.h"
-#define strcasecmp _stricmp
-#else
+#if WIN32
+#include <Windows.h>
+#elif MAC
 #include <Carbon/Carbon.h>
 #include "ige-mac-menu.h"
 #define CFURL_TO_STR(u) \
@@ -18,10 +11,12 @@
 using namespace Scintilla;
 #endif
 
-char *textadept_home;
+#define gbool gboolean
+#define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
 // Textadept
 GtkWidget *window, *focused_editor, *menubar, *statusbar, *docstatusbar;
+char *textadept_home;
 
 static void s_notification(GtkWidget *, gint, gpointer lParam, gpointer);
 static void s_command(GtkWidget *editor, gint wParam, gpointer, gpointer);
@@ -87,11 +82,7 @@ static gbool c_keypress(GtkWidget *, GdkEventKey *event, gpointer);
  */
 int main(int argc, char **argv) {
 #if !(WIN32 || MAC)
-  textadept_home = static_cast<char*>(malloc(FILENAME_MAX));
-  sprintf(textadept_home, "/proc/%i/exe", getpid());
-  readlink(textadept_home, textadept_home, FILENAME_MAX);
-  char *last_slash = strrchr(textadept_home, '/');
-  if (last_slash) *last_slash = '\0';
+  textadept_home = g_file_read_link("/proc/self/exe", NULL);
 #elif MAC
   CFBundleRef bundle = CFBundleGetMainBundle();
   if (bundle) {
@@ -103,6 +94,8 @@ int main(int argc, char **argv) {
   gtk_rc_parse(user_home);
   g_free(user_home);
 #endif
+  char *last_slash = strrchr(textadept_home, G_DIR_SEPARATOR);
+  if (last_slash) *last_slash = '\0';
   gtk_init(&argc, &argv);
   if (!l_init(argc, argv, false)) return 1;
   create_ui();
@@ -120,8 +113,6 @@ int main(int argc, char **argv) {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
   textadept_home = static_cast<char*>(malloc(FILENAME_MAX));
   GetModuleFileName(0, textadept_home, FILENAME_MAX);
-  char *last_slash = strrchr(textadept_home, '\\');
-  if (last_slash) *last_slash = '\0';
   return main(1, &lpCmdLine);
 }
 #endif
@@ -650,17 +641,15 @@ static int pm_search_equal_func(GtkTreeModel *model, int col, const char *key,
  */
 static int pm_sort_iter_compare_func(GtkTreeModel *model, GtkTreeIter *a,
                                      GtkTreeIter *b, gpointer) {
-  const char *a_text, *b_text;
+  char *a_text, *b_text, *p;
   gtk_tree_model_get(model, a, 1, &a_text, -1);
   gtk_tree_model_get(model, b, 1, &b_text, -1);
-  if (a_text == NULL && b_text == NULL)
-    return 0;
-  else if (a_text == NULL)
-    return -1;
-  else if (b_text == NULL)
-    return 1;
-  else
-    return strcasecmp(a_text, b_text);
+  if (a_text) for (p = a_text; *p != '\0'; p++) *p = g_ascii_tolower(*p);
+  if (b_text) for (p = b_text; *p != '\0'; p++) *p = g_ascii_tolower(*p);
+  int retval = g_strcmp0(a_text, b_text);
+  g_free(a_text);
+  g_free(b_text);
+  return retval;
 }
 
 // Signals
