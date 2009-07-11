@@ -331,8 +331,8 @@ local function set_eol_mode(mode)
   buffer:convert_eo_ls(mode)
   t.events.update_ui() -- for updating statusbar
 end
-local function set_lexer_language(lexer)
-  buffer:set_lexer_language(lexer)
+local function set_lexer(lexer)
+  buffer:set_lexer(lexer)
   buffer:colourise(0, -1)
   t.events.update_ui() -- for updating statusbar
 end
@@ -512,7 +512,7 @@ t.events.add_handler('menu_clicked',
     local active_table = actions[menu_id]
     if menu_id >= ID.LEXER_START and menu_id < ID.LEXER_START + 99 then
       active_table =
-        { set_lexer_language, lexer_menu[menu_id - ID.LEXER_START + 1][1] }
+        { set_lexer, lexer_menu[menu_id - ID.LEXER_START + 1][1] }
     end
     local f, args
     if active_table and #active_table > 0 then
