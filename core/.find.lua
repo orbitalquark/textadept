@@ -21,6 +21,14 @@ module('textadept.find')
 -- in the file. Replace in Files is not supported. You will have to Find in
 -- Files first, and then 'Replace All' for each file a result is found in.
 -- The 'Match Case', 'Whole Word', and 'Lua pattern' flags still apply.
+--
+-- Customizing look and feel:
+--   Like the project manager, there are no function calls to make that
+--   customize the look and feel of the find dialog. Instead you can manipulate
+--   it via GTK rc files. The find and replace entries widget names of
+--   'textadept-find-entry' and 'textadept-replace-entry' respectively.
+--   Resource file documentation can be found at
+--   http://library.gnome.org/devel/gtk/unstable/gtk-Resource-Files.html.
 
 ---
 -- Textadept's find table.
