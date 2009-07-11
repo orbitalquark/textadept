@@ -1244,12 +1244,11 @@ static int l_cf_view_goto_buffer(lua_State *lua) {
 static int l_cf_ta_dialog(lua_State *lua) {
   GCDialogType type = gcocoadialog_type(luaL_checkstring(lua, 1));
   int i, argc = lua_gettop(lua) - 1;
-  const char **argv = malloc(argc * sizeof(char *));
+  const char *argv[argc];
   for (i = 0; i < argc; i++) argv[i] = luaL_checkstring(lua, i + 2);
   char *out = gcocoadialog(type, argc, argv);
   lua_pushstring(lua, out);
   free(out);
-  free(argv);
   return 1;
 }
 

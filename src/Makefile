@@ -22,7 +22,7 @@ LUA_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
 all: textadept
 
 .c.o:
-	gcc $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c $< -o $@
+	gcc -std=c99 $(GTKFLAGS) $(INCLUDEDIRS) $(CXXFLAGS) -c $< -o $@
 $(LUA_OBJS): lua/src/*.c
 	gcc $(INCLUDEDIRS) -DLUA_USE_LINUX -c lua/src/*.c
 gcocoadialog.o: gcocoadialog/gcocoadialog.c
