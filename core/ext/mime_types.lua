@@ -50,15 +50,12 @@ end
 -- restored.
 -- @param buffer The buffer to set the lexer language of.
 -- @param lang The string language to set.
-local function set_lexer_language(buffer, lang)
+local function set_lexer(buffer, lang)
   buffer._lexer = lang
-  buffer:set_lexer_language_(lang)
+  buffer:set_lexer_language(lang)
 end
 textadept.events.add_handler('buffer_new',
-  function()
-    buffer.set_lexer_language_ = buffer.set_lexer_language
-    buffer.set_lexer_language = set_lexer_language
-  end)
+  function() buffer.set_lexer = set_lexer end)
 
 ---
 -- [Local function] Performs actions suitable for a new buffer.
@@ -85,7 +82,7 @@ local function handle_new()
       end
     end
   end
-  buffer:set_lexer_language(lexer or 'container')
+  buffer:set_lexer(lexer or 'container')
   if buffer.filename then
     local lang = extensions[buffer.filename:match('[^/\\.]+$')]
     if lang then
