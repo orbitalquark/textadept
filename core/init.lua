@@ -3,11 +3,6 @@
 local textadept = _G.textadept
 
 package.path = _HOME..'/core/?.lua;'..package.path
-if not WIN32 then
-  package.cpath = _HOME..'/core/?.so;'..package.cpath
-else
-  package.cpath = _HOME..'/core/?.dll;'..package.cpath
-end
 
 _USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept/'
 local lfs = require 'lfs'
