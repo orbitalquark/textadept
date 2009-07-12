@@ -456,7 +456,7 @@ add_handler('view_after_switch',
   end)
 
 add_handler('quit',
-  function() -- prompts for confirmation if any buffers are dirty; saves session
+  function() -- prompts for confirmation if any buffers are dirty
     local any = false
     local list = {}
     for _, buffer in ipairs(textadept.buffers) do
@@ -474,7 +474,6 @@ add_handler('quit',
         ['no-newline'] = true
       }) ~= '2' then return false end
     end
-    textadept.io.save_session()
     return true
   end)
 
