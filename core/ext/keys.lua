@@ -157,7 +157,7 @@ local function keypress(code, shift, control, alt)
       if ch:find('[%p%d]') and #keychain == 0 then
         if buffer.anchor ~= buffer.current_pos then buffer:delete_back() end
         buffer:add_text(ch)
-        textadept.events.handle('char_added', ch)
+        textadept.events.handle('char_added', code)
         return true
       end
     end

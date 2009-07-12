@@ -110,7 +110,7 @@ end
 
 -- Scintilla notifications.
 function char_added(n)
-  if n.ch < 256 then return handle('char_added', string.char(n.ch)) end
+  return handle('char_added', n.ch)
 end
 function save_point_reached()
   return handle('save_point_reached')
