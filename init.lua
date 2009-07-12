@@ -54,7 +54,7 @@ if not RESETTING then
     table.remove(arg, 1)
   end
   if #arg == 0 then
-    textadept.io.load_session()
+    _m.textadept.session.load()
   else
     local base_dir = arg[0]:match('^.+/') or ''
     for _, filename in ipairs(arg) do
@@ -62,7 +62,7 @@ if not RESETTING then
       textadept.io.open(filename)
     end
     -- read only the Project Manager session settings
-    if not textadept.io.load_session(nil, true) then
+    if not _m.textadept.session.load(nil, true) then
       textadept.pm.entry_text = 'buffers'
       textadept.pm.activate()
     end

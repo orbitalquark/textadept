@@ -33,6 +33,7 @@ if not MAC then
   keys.ct = {} -- Textadept command chain
 
   -- File
+  local m_session = _m.textadept.session
   keys.cn  = { t.new_buffer   }
   keys.co  = { t.io.open      }
   -- TODO: { 'reload', b }
@@ -40,8 +41,8 @@ if not MAC then
   keys.css = { 'save_as', b   }
   keys.cw  = { 'close', b     }
   keys.csw = { t.io.close_all }
-  -- TODO: { t.io.load_session } after prompting with open dialog
-  -- TODO: { t.io.save_session } after prompting with save dialog
+  -- TODO: { m_session.load } after prompting with open dialog
+  -- TODO: { m_session.save } after prompting with save dialog
   keys.aq = { t.quit }
 
   -- Edit
@@ -214,6 +215,7 @@ else
   keys.at = {} -- Textadept command chain
 
   -- File
+  local m_session = _m.textadept.session
   keys.an  = { t.new_buffer   }
   keys.ao  = { t.io.open      }
   -- TODO: { 'reload', b }
@@ -221,8 +223,8 @@ else
   keys.sas = { 'save_as', b   }
   keys.aw  = { 'close', b     }
   keys.saw = { t.io.close_all }
-  -- TODO: { t.io.load_session } after prompting with open dialog
-  -- TODO: { t.io.save_session } after prompting with save dialog
+  -- TODO: { m_session.load } after prompting with open dialog
+  -- TODO: { m_session.save } after prompting with save dialog
   keys.aq = { t.quit }
 
   -- Edit
