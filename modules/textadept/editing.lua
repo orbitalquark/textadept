@@ -20,8 +20,8 @@ local kill_ring = { pos = 1, maxn = 10 }
 -- @class table
 -- @name char_matches
 local char_matches = {
-  ['('] = ')', ['['] = ']', ['{'] = '}',
-  ["'"] = "'", ['"'] = '"'
+  [40] = ')', [91] = ']', [123] = '}',
+  [39] = "'", [34] = '"'
 }
 
 ---
@@ -95,7 +95,7 @@ textadept.events.add_handler('update_ui',
 
 textadept.events.add_handler('char_added',
   function(char) -- auto-indent on return
-    if char ~= '\n' then return end
+    if char ~= 10 then return end
     local buffer = buffer
     local anchor, caret = buffer.anchor, buffer.current_pos
     local curr_line = buffer:line_from_position(caret)
@@ -483,7 +483,6 @@ end
 -- Selects text in a specified enclosure.
 -- @param str The enclosure type in enclosure.
 -- @see enclosure
--- @see char_matches
 function select_enclosed(str)
   if not str then return end
   local buffer = buffer
