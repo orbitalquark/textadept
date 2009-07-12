@@ -19,10 +19,6 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
-#ifdef MAC
-using namespace Scintilla;
-#endif
-
 // globals
 extern GtkWidget *window, *focused_editor, *command_entry, *pm_container,
                  *pm_entry, *pm_view, *findbox, *find_entry, *replace_entry,

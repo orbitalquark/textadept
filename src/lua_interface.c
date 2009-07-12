@@ -26,10 +26,6 @@
   lua_setmetatable(l, -2); \
 }
 
-#ifdef MAC
-using namespace Scintilla;
-#endif
-
 lua_State *lua;
 int closing = FALSE;
 
@@ -1142,11 +1138,7 @@ static int l_cf_ta_buffer_new(lua_State *lua) {
 
 static int l_cf_buffer_text_range(lua_State *lua) {
   l_check_focused_buffer(lua, 1);
-#ifndef MAC
-  struct TextRange tr;
-#else
-  Scintilla::TextRange tr;
-#endif
+  struct Sci_TextRange tr;
   tr.chrg.cpMin = luaL_checkinteger(lua, 2);
   tr.chrg.cpMax = luaL_checkinteger(lua, 3);
   int length = tr.chrg.cpMax - tr.chrg.cpMin;
