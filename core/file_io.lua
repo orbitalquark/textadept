@@ -331,7 +331,7 @@ function load_session(filename, only_pm)
         local anchor, current_pos, first_visible_line, filename =
           line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
         if not filename:find('^%[.+%]$') then
-          textadept.io.open(filename or '', 'rb')
+          textadept.io.open(filename or '')
         else
           textadept.new_buffer()
           buffer._type = filename
