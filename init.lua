@@ -42,10 +42,9 @@ if not RESETTING then
   -- for Windows, create arg table from single command line string (arg[0])
   if WIN32 and #arg[0] > 0 then
     local lpeg = require 'lpeg'
-    local P, S, C, Ct = lpeg.P, lpeg.S, lpeg.C, lpeg.Ct
-    space = P(' ')
-    param = P('"') * C((1 - P('"'))^0) * '"' + C((1 - space)^1)
-    cmdline = Ct(param * (space * param)^0)
+    local P, C = lpeg.P, lpeg.C
+    param = P('"') * C((1 - P('"'))^0) * '"' + C((1 - P(' '))^1)
+    cmdline = lpeg.Ct(param * (P(' ') * param)^0)
     args = lpeg.match(cmdline, arg[0])
     for _, a in ipairs(args) do arg[#arg + 1] = a end
   end
@@ -58,13 +57,9 @@ if not RESETTING then
     textadept.io.load_session()
   else
     local base_dir = arg[0]:match('^.+/') or ''
-    local filepath
     for _, filename in ipairs(arg) do
-      if not filename:find('^~?/') then
-        textadept.io.open(base_dir..filename)
-      else
-        textadept.io.open(filename)
-      end
+      if not filename:find('^~?/') then filename = base_dir..filename end
+      textadept.io.open(filename)
     end
     -- read only the Project Manager session settings
     if not textadept.io.load_session(nil, true) then

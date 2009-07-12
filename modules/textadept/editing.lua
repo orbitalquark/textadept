@@ -363,8 +363,7 @@ function smart_paste(action, reindent)
   if txt then
     if reindent then
       local indent =
-        buffer.line_indentation[
-          buffer:line_from_position(buffer.current_pos)]
+        buffer.line_indentation[buffer:line_from_position(buffer.current_pos)]
       local padding =
         string.rep(buffer.use_tabs and '\t' or ' ',
                    buffer.use_tabs and indent / buffer.tab_width or indent)
@@ -482,19 +481,16 @@ end
 
 ---
 -- Selects text in a specified enclosure.
--- @param str The enclosure type in enclosure. If str is not specified,
---   matching character pairs defined in char_matches are searched for from the
---   caret outwards.
+-- @param str The enclosure type in enclosure.
 -- @see enclosure
 -- @see char_matches
 function select_enclosed(str)
+  if not str then return end
   local buffer = buffer
-  if str then
-    buffer:search_anchor()
-    local s = buffer:search_prev(0, enclosure[str].left)
-    local e = buffer:search_next(0, enclosure[str].right)
-    if s and e then buffer:set_sel(s + 1, e) end
-  end
+  buffer:search_anchor()
+  local s = buffer:search_prev(0, enclosure[str].left)
+  local e = buffer:search_next(0, enclosure[str].right)
+  if s and e then buffer:set_sel(s + 1, e) end
 end
 
 ---

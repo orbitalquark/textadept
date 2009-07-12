@@ -91,7 +91,6 @@ local function open_helper(utf8_filename)
   end
   local buffer = textadept.new_buffer()
   if text then
-    local c = textadept.constants
     -- Tries to detect character encoding and convert text from it to UTF-8.
     local encoding, encoding_bom = detect_encoding(text)
     if encoding ~= 'binary' then
@@ -113,6 +112,7 @@ local function open_helper(utf8_filename)
     else
       encoding = nil
     end
+    local c = textadept.constants
     buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
     buffer.code_page = encoding and c.SC_CP_UTF8 or 0
     -- Tries to set the buffer's EOL mode appropriately based on the file.
@@ -329,7 +329,7 @@ function load_session(filename, only_pm)
         local anchor, current_pos, first_visible_line, filename =
           line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
         if not filename:find('^%[.+%]$') then
-          textadept.io.open(filename or '', 'rb')
+          textadept.io.open(filename or '')
         else
           textadept.new_buffer()
           buffer._type = filename
