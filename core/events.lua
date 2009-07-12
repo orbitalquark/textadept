@@ -16,9 +16,14 @@ module('textadept.events', package.seeall)
 -- is useful to have a handler run under a specific condition(s). If this is the
 -- case, place a conditional in the function that returns if it isn't met.
 --
--- For users creating their own events, one does not have to be explicitly
--- defined. A handler can simply be added for an event name, and 'handle'd when
--- necessary.
+-- If a handler returns either true or false explicitly, all subsequent handlers
+-- are not called. This is useful for something like a 'keypress' event where if
+-- the key is handled, true should be returned so as to not propagate the event.
+--
+-- Events need not be declared. A handler can simply be added for an event name,
+-- and 'handle'd when necessary. As an example, you can create a handler for a
+-- custom 'my_event' and call "textadept.events.handle('my_event')" to envoke
+-- it.
 --
 -- For reference, events will be shown in 'event(arguments)' format, but in
 -- reality, the event is handled as 'handle(event, arguments)'.
@@ -324,8 +329,6 @@ add_handler('buffer_new',
     if not ret then io.stderr:write(errmsg) end
   end)
 
-local title_text = '%s %s Textadept (%s)'
-
 ---
 -- [Local function] Sets the title of the Textadept window to the buffer's
 -- filename.
@@ -333,9 +336,10 @@ local title_text = '%s %s Textadept (%s)'
 local function set_title(buffer)
   local buffer = buffer
   local filename = buffer.filename or buffer._type or locale.UNTITLED
-  local d = buffer.dirty and '*' or '-'
+  local dirty = buffer.dirty and '*' or '-'
   textadept.title =
-    string.format(title_text, filename:match('[^/\\]+$'), d, filename)
+    string.format('%s %s Textadept (%s)', filename:match('[^/\\]+$'), dirty,
+                  filename)
 end
 
 add_handler('save_point_reached',
