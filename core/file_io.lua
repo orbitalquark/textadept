@@ -151,7 +151,6 @@ function open(utf8_filenames)
     utf8_filenames or
       textadept.dialog('fileselect',
                        '--title', locale.IO_OPEN_TITLE,
-                       '--text', locale.IO_OPEN_TEXT,
                        '--select-multiple',
                        '--with-directory',
                          (buffer.filename or ''):match('.+[/\\]') or '')

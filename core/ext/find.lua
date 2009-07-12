@@ -81,7 +81,6 @@ local function find_(text, next, flags, nowrap, wrapped)
     local utf8_dir =
       textadept.dialog('fileselect',
                        '--title', locale.FIND_IN_FILES_TITLE,
-                       '--text', locale.FIND_IN_FILES_TEXT,
                        '--select-only-directories',
                        '--with-directory',
                          (buffer.filename or ''):match('^.+[/\\]') or '',
