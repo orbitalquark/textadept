@@ -8,7 +8,6 @@
 #include "ige-mac-menu.h"
 #define CFURL_TO_STR(u) \
   CFStringGetCStringPtr(CFURLCopyFileSystemPath(u, kCFURLPOSIXPathStyle), 0)
-using namespace Scintilla;
 #endif
 
 #define gbool gboolean
