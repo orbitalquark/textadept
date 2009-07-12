@@ -137,51 +137,19 @@ function handle(event, ...)
   end
 end
 
--- Scintilla notifications.
-function char_added(n)
-  return handle('char_added', n.ch)
-end
-function save_point_reached()
-  return handle('save_point_reached')
-end
-function save_point_left()
-  return handle('save_point_left')
-end
-function double_click(n)
-  return handle('double_click', n.position, n.line)
-end
-function update_ui()
-  return handle('update_ui')
-end
-function margin_click(n)
-  return handle('margin_click', n.margin, n.modifiers, n.position)
-end
-function user_list_selection(n)
-  return handle('user_list_selection', n.wParam, n.text)
-end
-function uri_dropped(n)
-  return handle('uri_dropped', n.text)
-end
-function call_tip_click(n)
-  return handle('call_tip_click', n.position)
-end
-function auto_c_selection(n)
-  return handle('auto_c_selection', n.lParam, n.text)
-end
-
 --- Map of Scintilla notifications to their handlers.
 local c = textadept.constants
 local scnnotifications = {
-  [c.SCN_CHARADDED] = char_added,
-  [c.SCN_SAVEPOINTREACHED] = save_point_reached,
-  [c.SCN_SAVEPOINTLEFT] = save_point_left,
-  [c.SCN_DOUBLECLICK] = double_click,
-  [c.SCN_UPDATEUI] = update_ui,
-  [c.SCN_MARGINCLICK] = margin_click,
-  [c.SCN_USERLISTSELECTION] = user_list_selection,
-  [c.SCN_URIDROPPED] = uri_dropped,
-  [c.SCN_CALLTIPCLICK] = call_tip_click,
-  [c.SCN_AUTOCSELECTION] = auto_c_selection
+  [c.SCN_CHARADDED] = { 'char_added', 'ch' },
+  [c.SCN_SAVEPOINTREACHED] = { 'save_point_reached' },
+  [c.SCN_SAVEPOINTLEFT] = { 'save_point_left' },
+  [c.SCN_DOUBLECLICK] = { 'double_click', 'position', 'line' },
+  [c.SCN_UPDATEUI] = { 'update_ui' },
+  [c.SCN_MARGINCLICK] = { 'margin_click', 'margin', 'modifiers', 'position' },
+  [c.SCN_USERLISTSELECTION] = { 'user_list_selection', 'wParam', 'text' },
+  [c.SCN_URIDROPPED] = { 'uri_dropped', 'text' },
+  [c.SCN_CALLTIPCLICK] = { 'call_tip_click', 'position' },
+  [c.SCN_AUTOCSELECTION] = { 'auto_c_selection', 'lParam', 'text' }
 }
 
 ---
@@ -189,7 +157,11 @@ local scnnotifications = {
 -- @param n The Scintilla notification structure as a Lua table.
 function notification(n)
   local f = scnnotifications[n.code]
-  if f then f(n) end
+  if f then
+    local args = { unpack(f, 2) }
+    for k, v in ipairs(args) do args[k] = n[v] end
+    return handle(f[1], unpack(args))
+  end
 end
 
 -- Default handlers to follow.
@@ -440,13 +412,13 @@ add_handler('buffer_after_switch',
 add_handler('buffer_after_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
-    update_ui()
+    handle('update_ui')
   end)
 
 add_handler('view_after_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
-    update_ui()
+    handle('update_ui')
   end)
 
 add_handler('quit',
