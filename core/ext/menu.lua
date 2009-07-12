@@ -369,7 +369,7 @@ local actions = {
                    (textadept.session_file or ''):match('[^/\\]+$') or '',
                   '--no-newline')
       if #utf8_filename > 0 then
-        t.io.load_session(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
+        _m.textadept.session.load(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
       end
     end
   },
@@ -384,7 +384,7 @@ local actions = {
                    (textadept.session_file or ''):match('[^/\\]+$') or '',
                  '--no-newline')
       if #utf8_filename > 0 then
-        t.io.save_session(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
+        _m.textadept.session.save(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
       end
     end
   },
