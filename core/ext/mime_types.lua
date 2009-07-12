@@ -45,11 +45,12 @@ end
 
 ---
 -- [Local function] Replacement for buffer:set_lexer_language().
--- Sets a buffer._lexer field so it can be restored without querying the 
+-- Sets a buffer._lexer field so it can be restored without querying the
 -- mime-types tables. Also if the user manually sets the lexer, it should be
 -- restored.
 -- @param buffer The buffer to set the lexer language of.
 -- @param lang The string language to set.
+-- @usage buffer:set_lexer('language_name')
 local function set_lexer(buffer, lang)
   buffer._lexer = lang
   buffer:set_lexer_language(lang)
