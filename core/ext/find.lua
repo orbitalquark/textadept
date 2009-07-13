@@ -157,6 +157,55 @@ end
 textadept.events.add_handler('find', find_)
 
 ---
+-- [Local function] Finds and selects text incrementally in the current buffer
+-- from a start point.
+-- Flags other than SCFIND_MATCHCASE are ignored.
+-- @param text The text to find.
+local function find_incremental(text)
+  local c = textadept.constants
+  local flags = find.match_case and c.SCFIND_MATCHCASE or 0
+  --if find.lua then flags = flags + 8 end
+  buffer:goto_pos(find.incremental_start or 0)
+  find_(text, true, flags)
+end
+
+---
+-- Begins an incremental find using the Lua command entry.
+-- Lua command functionality will be unavailable until the search is finished
+-- (pressing 'Escape' by default).
+function find.find_incremental()
+  find.incremental = true
+  find.incremental_start = buffer.current_pos
+  textadept.command_entry.entry_text = ''
+  textadept.command_entry.focus()
+end
+
+textadept.events.add_handler('command_entry_keypress',
+  function(code)
+    if find.incremental then
+      if code == 0xff1b then -- escape
+        find.incremental = nil
+      elseif code < 256 or code == 0xff08 then -- character or backspace
+        local text = textadept.command_entry.entry_text
+        if code == 0xff08 then
+          find_incremental(text:sub(1, -2))
+        else
+          find_incremental(text..string.char(code))
+        end
+      end
+    end
+  end, 1) -- place before command_entry.lua's handler (if necessary)
+
+textadept.events.add_handler('command_entry_command',
+  function(text) -- 'find next' for incremental search
+    if find.incremental then
+      find.incremental_start = buffer.current_pos + 1
+      find_incremental(text)
+      return true
+    end
+  end, 1) -- place before command_entry.lua's handler (if necessary)
+
+---
 -- [Local function] Replaces found text.
 -- 'find_' is called first, to select any found text. The selected text is then
 -- replaced by the specified replacement text.
