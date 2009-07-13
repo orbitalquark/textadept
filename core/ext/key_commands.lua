@@ -97,6 +97,7 @@ if not MAC then
   -- Find Next is an when find pane is focused.
   -- Find Prev is ap when find pane is focused.
   -- Replace is ar when find pane is focused.
+  keys.csf = { t.find.find_incremental }
   -- Find in Files is ai when find pane is focused.
   -- TODO: { t.find.goto_file_in_list, true  }
   -- TODO: { t.find.goto_file_in_list, false }
@@ -203,7 +204,7 @@ else
 
   --[[
     C:                     J   L                 U   W X   Z
-    A:     B   D E     H I J K L                 U
+    A:     B   D E     H   J K L                 U
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
     SA:  A B C D       H I J K L M N O   Q R   T U V   X
     CA:  A   C   E         J K L M N O   Q R S T U V W X Y Z
@@ -276,10 +277,11 @@ else
   }
 
   -- Search
-  keys.af  = { t.find.focus          } -- find/replace
-  keys.ag  = { t.find.call_find_next }
-  keys.sag = { t.find.call_find_prev }
-  keys.ar  = { t.find.call_replace   }
+  keys.af  = { t.find.focus            } -- find/replace
+  keys.ag  = { t.find.call_find_next   }
+  keys.sag = { t.find.call_find_prev   }
+  keys.ar  = { t.find.call_replace     }
+  keys.ai  = { f.find.find_incremental }
   keys.saf = {
     function()
       t.find.in_files = true

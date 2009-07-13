@@ -58,7 +58,6 @@ GtkWidget *find_create_ui();
 GtkListStore *find_store, *repl_store;
 
 static void find_button_clicked(GtkWidget *, gpointer);
-static gbool find_entry_keypress(GtkWidget *, GdkEventKey *, gpointer);
 
 // Command Entry
 GtkWidget *command_entry;
@@ -811,7 +810,6 @@ GtkWidget *find_create_ui() {
   attach(lua_opt, 5, 6, 0, 1, ao_normal, ao_normal, 5, 0);
   attach(in_files_opt, 5, 6, 1, 2, ao_normal, ao_normal, 5, 0);
 
-  signal(find_entry, "key-press-event", find_entry_keypress);
   signal(fnext_button, "clicked", find_button_clicked);
   signal(fprev_button, "clicked", find_button_clicked);
   signal(r_button, "clicked", find_button_clicked);
@@ -891,14 +889,6 @@ static void find_button_clicked(GtkWidget *button, gpointer udata) {
   }
 }
 
-/**
- * Signal for a Find entry keypress.
- */
-static gbool find_entry_keypress(GtkWidget *entry, GdkEventKey *event,
-                                 gpointer udata) {
-  return l_handle_event("find_keypress", LUA_TNUMBER, event->keyval, -1);
-}
-
 // Command Entry
 
 /**
@@ -965,7 +955,6 @@ static gbool cec_match_selected(GtkEntryCompletion *entry, GtkTreeModel *model,
 static void c_activated(GtkWidget *entry, gpointer udata) {
   l_handle_event("command_entry_command", LUA_TSTRING,
                  gtk_entry_get_text(GTK_ENTRY(entry)), -1);
-  ce_toggle_focus();
 }
 
 /**

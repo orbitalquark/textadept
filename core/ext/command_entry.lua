@@ -7,6 +7,7 @@ textadept.events.add_handler('command_entry_command',
   function(command) -- execute a Lua command
     local f, err = loadstring(command)
     if err then error(err) end
+    textadept.command_entry.focus() -- toggle focus to hide
     f()
   end)
 

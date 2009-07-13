@@ -75,6 +75,7 @@ local ID = {
   REPLACE = 305,
   REPLACE_ALL = 306,
   FIND_IN_FILES = 308,
+  FIND_INCREMENTAL = 311,
   GOTO_NEXT_FILE_FOUND = 309,
   GOTO_PREV_FILE_FOUND = 310,
   GOTO_LINE = 307,
@@ -209,6 +210,7 @@ local menubar = {
     { l.MENU_SEARCH_FIND_AND_REPLACE, ID.FIND_AND_REPLACE },
     { l.MENU_SEARCH_REPLACE, ID.REPLACE },
     { l.MENU_SEARCH_REPLACE_ALL, ID.REPLACE_ALL },
+    { l.MENU_SEARCH_FIND_INCREMENTAL, ID.FIND_INCREMENTAL },
     { SEPARATOR, ID.SEPARATOR },
     { l.MENU_SEARCH_FIND_IN_FILES, ID.FIND_IN_FILES },
     { l.MENU_SEARCH_GOTO_NEXT_FILE_FOUND, ID.GOTO_NEXT_FILE_FOUND },
@@ -441,6 +443,7 @@ local actions = {
   [ID.FIND_AND_REPLACE] = { t.find.focus },
   [ID.REPLACE] = { t.find.call_replace },
   [ID.REPLACE_ALL] = { t.find.call_replace_all },
+  [ID.FIND_INCREMENTAL] = { t.find.find_incremental },
   [ID.FIND_IN_FILES] = {
     function()
       t.find.in_files = true
