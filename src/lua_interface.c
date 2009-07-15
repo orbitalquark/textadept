@@ -73,8 +73,7 @@ int l_init(int argc, char **argv, int reinit) {
   if (!reinit) {
     lua = lua_open();
     lua_newtable(lua);
-    int i;
-    for (i = 0; i < argc; i++) {
+    for (int i = 0; i < argc; i++) {
       lua_pushstring(lua, argv[i]);
       lua_rawseti(lua, -2, i);
     }
@@ -1040,8 +1039,7 @@ static int l_pm_mt_newindex(lua_State *lua) {
     luaL_argcheck(lua, path, 3, "bad path");
     int *indices = gtk_tree_path_get_indices(path);
     GtkTreePath *ipath = gtk_tree_path_new_from_indices(indices[0], -1);
-    int i;
-    for (i = 1; i < gtk_tree_path_get_depth(path); i++)
+    for (int i = 1; i < gtk_tree_path_get_depth(path); i++)
       if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pm_view), ipath) ||
           gtk_tree_view_expand_row(GTK_TREE_VIEW(pm_view), ipath, FALSE))
         gtk_tree_path_append_index(ipath, indices[i]);
@@ -1235,9 +1233,9 @@ static int l_cf_view_goto_buffer(lua_State *lua) {
 
 static int l_cf_ta_dialog(lua_State *lua) {
   GCDialogType type = gcocoadialog_type(luaL_checkstring(lua, 1));
-  int i, argc = lua_gettop(lua) - 1;
+  int argc = lua_gettop(lua) - 1;
   const char *argv[argc];
-  for (i = 0; i < argc; i++) argv[i] = luaL_checkstring(lua, i + 2);
+  for (int i = 0; i < argc; i++) argv[i] = luaL_checkstring(lua, i + 2);
   char *out = gcocoadialog(type, argc, argv);
   lua_pushstring(lua, out);
   free(out);
