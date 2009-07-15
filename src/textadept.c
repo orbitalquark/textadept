@@ -132,8 +132,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 void create_ui() {
   GList *icon_list = NULL;
   const char *icons[] = { "16x16", "32x32", "48x48", "64x64", "128x128" };
-  int i;
-  for (i = 0; i < 5; i++) {
+  for (int i = 0; i < 5; i++) {
     char *icon_file =
       g_strconcat(textadept_home, "/core/images/ta_", icons[i], ".png", NULL);
     GdkPixbuf *pb = gdk_pixbuf_new_from_file(icon_file, NULL);
@@ -526,8 +525,7 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent *, long) {
   if (AEGetParamDesc(event, keyDirectObject, typeAEList, &file_list) == noErr) {
     long count = 0;
     AECountItems(&file_list, &count);
-    int i;
-    for (i = 1; i <= count; i++) {
+    for (int i = 1; i <= count; i++) {
       FSRef fsref;
       AEGetNthPtr(&file_list, i, typeFSRef, NULL, NULL, &fsref, sizeof(FSRef),
                   NULL);
