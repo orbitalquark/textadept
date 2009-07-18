@@ -198,7 +198,7 @@ local function keypress(code, shift, control, alt)
       if ret then
         if type(retval) == 'boolean' then return retval end
       else
-        textadept.events.error(retval)
+        error(retval)
       end
     end
     return true

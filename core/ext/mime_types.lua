@@ -91,7 +91,7 @@ local function handle_new()
       if ret then
         _m[lang].set_buffer_properties()
       elseif not ret and not err:find("^module '"..lang.."' not found:") then
-        textadept.events.error(err)
+        error(err)
       end
     end
   end

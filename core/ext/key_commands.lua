@@ -136,7 +136,7 @@ if not MAC then
     elseif type(state) == 'number' then
       buffer[setting] = buffer[setting] == 0 and 1 or 0
     end
-    t.events.update_ui() -- for updating statusbar
+    t.events.handle('update_ui') -- for updating statusbar
   end
   keys.ct.v = {
     e      = { toggle_setting, 'view_eol'           },
@@ -325,7 +325,7 @@ else
     elseif type(state) == 'number' then
       buffer[setting] = buffer[setting] == 0 and 1 or 0
     end
-    t.events.update_ui() -- for updating statusbar
+    t.events.handle('update_ui') -- for updating statusbar
   end
   keys.at.v = {
     e      = { toggle_setting, 'view_eol'           },
