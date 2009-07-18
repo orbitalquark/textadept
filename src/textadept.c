@@ -1,8 +1,9 @@
 // Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 #include "textadept.h"
-#if WIN32
-#include <Windows.h>
+#if __WIN32__
+#include <windows.h>
+#define main main_
 #elif MAC
 #include <Carbon/Carbon.h>
 #include "ige-mac-menu.h"
@@ -24,7 +25,7 @@ static gbool s_buttonpress(GtkWidget *, GdkEventButton *, gpointer);
 static gbool w_focus(GtkWidget *, GdkEventFocus *, gpointer);
 static gbool w_keypress(GtkWidget *, GdkEventKey *, gpointer);
 static gbool w_exit(GtkWidget *, GdkEventAny *, gpointer);
-#ifdef MAC
+#if MAC
 static OSErr w_ae_open(const AppleEvent *, AppleEvent *, long);
 static OSErr w_ae_quit(const AppleEvent *, AppleEvent *, long);
 #endif
@@ -79,7 +80,7 @@ static gbool c_keypress(GtkWidget *, GdkEventKey *, gpointer);
  * @param argv The array of command line params.
  */
 int main(int argc, char **argv) {
-#if !(WIN32 || MAC)
+#if !(__WIN32__ || MAC)
   textadept_home = g_file_read_link("/proc/self/exe", NULL);
 #elif MAC
   CFBundleRef bundle = CFBundleGetMainBundle();
@@ -103,7 +104,7 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-#ifdef WIN32
+#if __WIN32__
 /**
  * Runs Textadept in Windows.
  * @see main
@@ -149,7 +150,7 @@ void create_ui() {
   signal(window, "focus-in-event", w_focus);
   signal(window, "key-press-event", w_keypress);
 
-#ifdef MAC
+#if MAC
   AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
                         NewAEEventHandlerUPP(w_ae_open), 0, FALSE);
   AEInstallEventHandler(kCoreEventClass, kAEQuitApplication,
@@ -206,7 +207,7 @@ void create_ui() {
   docstatusbar = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, "");
   g_object_set(G_OBJECT(docstatusbar), "width-request", 400, NULL);
-#ifdef MAC
+#if MAC
   gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(docstatusbar), FALSE);
 #endif
   gtk_box_pack_start(GTK_BOX(hboxs), docstatusbar, FALSE, FALSE, 0);
@@ -393,7 +394,7 @@ void set_menubar(GtkWidget *new_menubar) {
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
   gtk_box_reorder_child(GTK_BOX(vbox), menubar, 0);
   gtk_widget_show_all(menubar);
-#ifdef MAC
+#if MAC
   ige_mac_menu_set_menu_bar(GTK_MENU_SHELL(menubar));
   gtk_widget_hide(menubar);
 #endif
@@ -458,7 +459,7 @@ static gbool s_keypress(GtkWidget *editor, GdkEventKey *event, gpointer udata) {
                         LUA_TNUMBER, event->keyval,
                         LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
                         LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK,
-#ifndef MAC
+#if MAC
                         LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
 #else
                         LUA_TBOOLEAN, event->state & GDK_META_MASK,
@@ -515,7 +516,7 @@ static gbool w_exit(GtkWidget *window, GdkEventAny *event, gpointer udata) {
   return FALSE;
 }
 
-#ifdef MAC
+#if MAC
 /**
  * Signal for an Open Document AppleEvent.
  * Generates a 'appleevent_odoc' event for each document sent.

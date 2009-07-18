@@ -129,7 +129,7 @@ int l_init(int argc, char **argv, int reinit) {
   lua_setglobal(lua, "arg");
   lua_pushstring(lua, textadept_home);
   lua_setglobal(lua, "_HOME");
-#if WIN32
+#if __WIN32__
   lua_pushboolean(lua, 1);
   lua_setglobal(lua, "WIN32");
 #elif MAC
