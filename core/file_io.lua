@@ -229,7 +229,7 @@ function save(buffer)
     buffer:set_save_point()
     buffer.modification_time = lfs.attributes(filename).modification
   else
-    textadept.events.error(err)
+    error(err)
   end
   if buffer._type then buffer._type = nil end
 end

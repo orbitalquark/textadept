@@ -317,7 +317,7 @@ local m_run = _m.textadept.run
 
 local function set_encoding(encoding)
   buffer:set_encoding(encoding)
-  t.events.update_ui() -- for updating statusbar
+  t.events.handle('update_ui') -- for updating statusbar
 end
 local function toggle_setting(setting)
   local state = buffer[setting]
@@ -326,17 +326,17 @@ local function toggle_setting(setting)
   elseif type(state) == 'number' then
     buffer[setting] = buffer[setting] == 0 and 1 or 0
   end
-  t.events.update_ui() -- for updating statusbar
+  t.events.handle('update_ui') -- for updating statusbar
 end
 local function set_eol_mode(mode)
   buffer.eol_mode = mode
   buffer:convert_eo_ls(mode)
-  t.events.update_ui() -- for updating statusbar
+  t.events.handle('update_ui') -- for updating statusbar
 end
 local function set_lexer(lexer)
   buffer:set_lexer(lexer)
   buffer:colourise(0, -1)
-  t.events.update_ui() -- for updating statusbar
+  t.events.handle('update_ui') -- for updating statusbar
 end
 local function open_webpage(url)
   local cmd
@@ -534,7 +534,7 @@ t.events.add_handler('menu_clicked',
       end
       if f and args then
         local ret, retval = pcall(f, unpack(args))
-        if not ret then textadept.events.error(retval) end -- error
+        if not ret then error(retval) end
       else
         error(l.MENU_UNKNOWN_COMMAND..tostring(func))
       end
