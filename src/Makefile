@@ -89,3 +89,34 @@ $(TEXTADEPT_RC): textadept.rc
 	$(WINDRES) $^ $@
 clean:
 	rm ../$(TEXTADEPT) *.o
+
+# Package (Note: pass 'VERSION=[release version]' to 'make')
+
+ifndef WIN32
+ZIP = tar czf
+PACKAGE = textadept_$(value VERSION).tgz
+UNZIP = tar xzf
+else
+ZIP = zip -r
+PACKAGE = textadept_$(value VERSION).win32.zip
+UNZIP = unzip
+endif
+SRCPACKAGE = textadept.src.zip
+
+RELEASEDIR = textadept_$(value VERSION)
+release: ../$(TEXTADEPT)
+	hg archive $(RELEASEDIR)
+	rm $(RELEASEDIR)/.hg*
+	sh -c 'cd ../ && ./update_doc'
+	cp -r ../doc $(RELEASEDIR)
+	svn export http://scite-tools.googlecode.com/svn/branches/scite-st/lexers \
+	  $(RELEASEDIR)/lexers
+	cp ../$(TEXTADEPT) $(RELEASEDIR)
+	$(ZIP) $(PACKAGE) $(RELEASEDIR)
+	rm -r $(RELEASEDIR)
+source: $(PACKAGE)
+	$(UNZIP) $(PACKAGE)
+	cp -r lua scintilla-st gcocoadialog $(RELEASEDIR)/src/
+	rm $(RELEASEDIR)/$(TEXTADEPT)
+	zip -r $(SRCPACKAGE) $(RELEASEDIR)
+	rm -r $(RELEASEDIR)
