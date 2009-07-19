@@ -7,45 +7,30 @@ local locale = _G.locale
 -- Editing commands for the textadept module.
 module('_m.textadept.editing', package.seeall)
 
----
--- [Local table] The kill-ring.
--- @class table
--- @name kill_ring
+-- The kill-ring.
 -- @field maxn The maximum size of the kill-ring.
 local kill_ring = { pos = 1, maxn = 10 }
 
----
--- [Local table] Character matching.
+-- Character matching.
 -- Used for auto-matching parentheses, brackets, braces, and quotes.
--- @class table
--- @name char_matches
 local char_matches = {
   [40] = ')', [91] = ']', [123] = '}',
   [39] = "'", [34] = '"'
 }
 
----
--- [Local table] Brace characters.
+-- Brace characters.
 -- Used for going to matching brace positions.
--- @class table
--- @name braces
 local braces = { -- () [] {} <>
   [40] = 1, [91] = 1, [123] = 1, [60] = 1,
   [41] = 1, [93] = 1, [125] = 1, [62] = 1,
 }
 
----
--- [Local table] The current call tip.
+-- The current call tip.
 -- Used for displaying call tips.
--- @class table
--- @name current_call_tip
 local current_call_tip = {}
 
----
--- [Local table] Enclosures for enclosing or selecting ranges of text.
+-- Enclosures for enclosing or selecting ranges of text.
 -- Note chars and tag enclosures are generated at runtime.
--- @class table
--- @name enclosure
 local enclosure = {
   dbl_quotes = { left = '"', right = '"' },
   sng_quotes = { left = "'", right = "'" },
@@ -58,11 +43,8 @@ local enclosure = {
   single_tag = { left = '<', right = ' />' }
 }
 
----
--- [Local table] Comment strings for various lexer languages.
+-- Comment strings for various lexer languages.
 -- Used for the block_comment function.
--- @class table
--- @name comment_strings
 -- @see block_comment
 local comment_strings = {
   cpp = '//~',
@@ -587,8 +569,7 @@ function convert_indentation()
   buffer:end_undo_action()
 end
 
----
--- [Local function] Inserts text into kill_ring.
+-- Inserts text into kill_ring.
 -- If it grows larger than maxn, the oldest inserted text is replaced.
 -- @see smart_cutcopy
 insert_into_kill_ring = function(txt)
@@ -596,8 +577,7 @@ insert_into_kill_ring = function(txt)
   if #kill_ring > kill_ring.maxn then kill_ring[kill_ring.maxn + 1] = nil end
 end
 
----
--- [Local function] Scrolls kill_ring in the specified direction.
+-- Scrolls kill_ring in the specified direction.
 -- @param direction The direction to scroll: 'forward' (default) or 'reverse'.
 -- @see smart_paste
 scroll_kill_ring = function(direction)
@@ -610,8 +590,7 @@ scroll_kill_ring = function(direction)
   end
 end
 
----
--- [Local function] Returns the number to the left of the caret.
+-- Returns the number to the left of the caret.
 -- This is used for the enclose function.
 -- @see enclose
 get_preceding_number = function()
@@ -627,9 +606,7 @@ get_preceding_number = function()
   return tonumber(txt) or 1, #txt
 end
 
----
--- [Local function] Returns the current selection or the contents of the
--- current line.
+-- Returns the current selection or the contents of the current line.
 get_sel_or_line = function()
   local buffer = buffer
   if buffer:get_sel_text() == '' then select_line() end

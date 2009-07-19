@@ -32,8 +32,7 @@ boms = {
   ['UTF-32LE'] = string.char(255, 254, 0, 0)
 }
 
----
--- [Local function] Attempt to detect the encoding of the given text.
+-- Attempt to detect the encoding of the given text.
 -- @param text Text to determine encoding from.
 -- @return encoding string for textadept.iconv() (unless 'binary', indicating a
 --   binary file), byte-order mark (BOM) string or nil. If encoding string is
@@ -57,10 +56,7 @@ local function detect_encoding(text)
   return nil
 end
 
----
--- [Local table] List of encodings to try to decode files as after UTF-8.
--- @class table
--- @name try_encodings
+-- List of encodings to try to decode files as after UTF-8.
 local try_encodings = {
   'UTF-8',
   'ASCII',
@@ -68,8 +64,7 @@ local try_encodings = {
   'MacRoman'
 }
 
----
--- [Local function] Opens a file or goes to its already open buffer.
+-- Opens a file or goes to its already open buffer.
 -- @param utf8_filename The absolute path to the file to open. Must be UTF-8
 --   encoded.
 local function open_helper(utf8_filename)
@@ -338,9 +333,8 @@ function read_api_file(filename, word_chars)
   return api
 end
 
----
--- [Local function] Prompts the user to reload the current file if it has been
--- modified outside of Textadept.
+-- Prompts the user to reload the current file if it has been modified outside
+-- of Textadept.
 local function update_modified_file()
   if not buffer.filename then return end
   local utf8_filename = buffer.filename

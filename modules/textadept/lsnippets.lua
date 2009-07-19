@@ -86,16 +86,10 @@ _G.snippets.path = "%((buffer.filename or ''):match('^.+/'))"
 _G.snippets.tab  = "%%%1(1)(%2(default))"
 _G.snippets.key  = "['%1'] = { %2(func)%3(, %4(arg)) }"
 
----
--- [Local table] The current snippet.
--- @class table
--- @name snippet
+-- The current snippet.
 local snippet = {}
 
----
--- [Local table] The stack of currently running snippets.
--- @class table
--- @name snippet_stack
+-- The stack of currently running snippets.
 local snippet_stack = {}
 
 -- Local functions.
@@ -371,9 +365,8 @@ function show_style()
   buffer:call_tip_show(buffer.current_pos, text)
 end
 
----
--- [Local function] Gets the start position, end position, and text of the
--- currently running snippet.
+-- Gets the start position, end position, and text of the currently running
+-- snippet.
 -- @return start pos, end pos, and snippet text.
 snippet_info = function()
   local buffer = buffer
@@ -384,8 +377,7 @@ snippet_info = function()
   if e >= s then return s, e, buffer:text_range(s, e) end
 end
 
----
--- [Local function] Runs the given Lua code.
+-- Runs the given Lua code.
 run_lua_code = function(code)
   code = unhandle_escapes(code)
   local env =
@@ -394,9 +386,7 @@ run_lua_code = function(code)
   return val or ''
 end
 
----
--- [Local function] Replaces escaped characters with their octal equivalents in
--- a given string.
+-- Replaces escaped characters with their octal equivalents in a given string.
 -- '%%' is the escape character used.
 handle_escapes = function(s)
   return s:gsub('%%([%%`%)|#])',
@@ -405,9 +395,7 @@ handle_escapes = function(s)
     end)
 end
 
----
--- [Local function] Replaces octal characters with their escaped equivalents in
--- a given string.
+-- Replaces octal characters with their escaped equivalents in a given string.
 unhandle_escapes = function(s)
   return s:gsub('\\(%d%d%d)',
     function(value)
@@ -415,8 +403,6 @@ unhandle_escapes = function(s)
     end)
 end
 
----
--- [Local function] Replaces escaped characters with the actual characters in a
--- given string.
+-- Replaces escaped characters with the actual characters in a given string.
 -- This is used when escape sequences are no longer needed.
 unescape = function(s) return s:gsub('%%([%%`%)|#])', '%1') end
