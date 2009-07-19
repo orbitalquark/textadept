@@ -459,7 +459,7 @@ static gbool s_keypress(GtkWidget *editor, GdkEventKey *event, gpointer udata) {
                         LUA_TNUMBER, event->keyval,
                         LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
                         LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK,
-#if MAC
+#if !MAC
                         LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
 #else
                         LUA_TBOOLEAN, event->state & GDK_META_MASK,
