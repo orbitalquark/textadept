@@ -295,9 +295,7 @@ add_handler('buffer_new',
     if not ret then io.stderr:write(errmsg) end
   end)
 
----
--- [Local function] Sets the title of the Textadept window to the buffer's
--- filename.
+-- Sets the title of the Textadept window to the buffer's filename.
 -- @param buffer The currently focused buffer.
 local function set_title(buffer)
   local buffer = buffer

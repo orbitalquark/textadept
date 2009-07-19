@@ -81,7 +81,7 @@ local ALT = 'a'..ADD
 ---
 -- Global container that holds all key commands.
 -- @class table
--- @name keys
+-- @name _G.keys
 _G.keys = {}
 
 -- optimize for speed
@@ -96,12 +96,9 @@ local type = _G.type
 local unpack = _G.unpack
 local MAC = _G.MAC
 
----
--- [Local table] Lookup table for key values higher than 255.
+-- Lookup table for key values higher than 255.
 -- If a key value given to 'keypress' is higher than 255, this table is used to
 -- return a string representation of the key if it exists.
--- @class table
--- @name KEYSYMS
 local KEYSYMS = { -- from <gdk/gdkkeysyms.h>
   [65056] = '\t', -- backtab; will be 'shift'ed
   [65288] = '\b',
@@ -123,9 +120,7 @@ local KEYSYMS = { -- from <gdk/gdkkeysyms.h>
   [65478] = 'f9', [65479] = 'f10', [65480] = 'f11', [65481] = 'f12',
 }
 
---- [Local table] The current key sequence.
--- @class table
--- @name keychain
+-- The current key sequence.
 local keychain = {}
 
 -- local functions
@@ -138,8 +133,7 @@ function clear_key_sequence()
   textadept.statusbar_text = ''
 end
 
----
--- [Local function] Handles Textadept keypresses.
+-- Handles Textadept keypresses.
 -- It is called every time a key is pressed, and based on lexer and scope,
 -- executes a command. The command is looked up in the global 'keys' key
 -- command table.
@@ -219,28 +213,23 @@ local function keypress(code, shift, control, alt)
 end
 textadept.events.add_handler('keypress', keypress, 1)
 
----
--- [Local function] Tries to get a key command based on the lexer and current
--- scope.
+-- Tries to get a key command based on the lexer and current scope.
 try_get_cmd1 = function(keys, lexer, scope)
   return try_get_cmd(keys[lexer][scope])
 end
 
----
--- [Local function] Tries to get a key command based on the lexer.
+-- Tries to get a key command based on the lexer.
 try_get_cmd2 = function(keys, lexer)
   return try_get_cmd(keys[lexer])
 end
 
----
--- [Local function] Tries to get a global key command.
+-- Tries to get a global key command.
 try_get_cmd3 = function(keys)
   return try_get_cmd(keys)
 end
 
----
--- [Local function] Helper function that gets commands associated with the
--- current keychain from 'keys'.
+-- Helper function that gets commands associated with the current keychain from
+-- 'keys'.
 -- If the current item in the keychain is part of a chain, throw an error value
 -- of -1. This way, pcall will return false and -1, where the -1 can easily and
 -- efficiently be checked rather than using a string error message.

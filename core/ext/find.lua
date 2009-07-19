@@ -10,17 +10,13 @@ local MARK_FIND = 0
 local MARK_FIND_COLOR = 0x4D9999
 local previous_view
 
----
--- [Local table] Text escape sequences with their associated characters.
--- @class table
--- @name escapes
+-- Text escape sequences with their associated characters.
 local escapes = {
   ['\\a'] = '\a', ['\\b'] = '\b', ['\\f'] = '\f', ['\\n'] = '\n',
   ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
 }
 
----
--- [Local function] Finds and selects text in the current buffer.
+-- Finds and selects text in the current buffer.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
 -- @param flags Search flags. This is a number mask of 4 flags: match case (2),
@@ -156,9 +152,8 @@ local function find_(text, next, flags, nowrap, wrapped)
 end
 textadept.events.add_handler('find', find_)
 
----
--- [Local function] Finds and selects text incrementally in the current buffer
--- from a start point.
+-- Finds and selects text incrementally in the current buffer from a start
+-- point.
 -- Flags other than SCFIND_MATCHCASE are ignored.
 -- @param text The text to find.
 local function find_incremental(text)
@@ -205,8 +200,7 @@ textadept.events.add_handler('command_entry_command',
     end
   end, 1) -- place before command_entry.lua's handler (if necessary)
 
----
--- [Local function] Replaces found text.
+-- Replaces found text.
 -- 'find_' is called first, to select any found text. The selected text is then
 -- replaced by the specified replacement text.
 -- This function ignores 'Find in Files'.
@@ -251,8 +245,7 @@ local function replace(rtext)
 end
 textadept.events.add_handler('replace', replace)
 
----
--- [Local function] Replaces all found text.
+-- Replaces all found text.
 -- If any text is selected, all found text in that selection is replaced.
 -- This function ignores 'Find in Files'.
 -- @param ftext The text to find.
@@ -300,9 +293,8 @@ local function replace_all(ftext, rtext, flags)
 end
 textadept.events.add_handler('replace_all', replace_all)
 
----
--- [Local function] When the user double-clicks a found file, go to the line in
--- the file the text was found at.
+-- When the user double-clicks a found file, go to the line in the file the text
+-- was found at.
 -- @param pos The position of the caret.
 -- @param line_num The line double-clicked.
 local function goto_file(pos, line_num)

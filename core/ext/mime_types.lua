@@ -44,7 +44,7 @@ if f then
 end
 
 ---
--- [Local function] Replacement for buffer:set_lexer_language().
+-- Replacement for buffer:set_lexer_language().
 -- Sets a buffer._lexer field so it can be restored without querying the
 -- mime-types tables. Also if the user manually sets the lexer, it should be
 -- restored.
@@ -58,8 +58,7 @@ end
 textadept.events.add_handler('buffer_new',
   function() buffer.set_lexer = set_lexer end)
 
----
--- [Local function] Performs actions suitable for a new buffer.
+-- Performs actions suitable for a new buffer.
 -- Sets the buffer's lexer language and loads the language module.
 local function handle_new()
   local lexer
@@ -97,8 +96,7 @@ local function handle_new()
   end
 end
 
----
--- [Local function] Sets the buffer's lexer based on filename, shebang words, or
+-- Sets the buffer's lexer based on filename, shebang words, or
 -- first line pattern.
 local function restore_lexer()
   buffer:set_lexer_language(buffer._lexer or 'container')
