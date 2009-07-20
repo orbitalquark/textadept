@@ -281,7 +281,7 @@ else
   keys.ag  = { t.find.call_find_next   }
   keys.sag = { t.find.call_find_prev   }
   keys.ar  = { t.find.call_replace     }
-  keys.ai  = { f.find.find_incremental }
+  keys.ai  = { t.find.find_incremental }
   keys.saf = {
     function()
       t.find.in_files = true
