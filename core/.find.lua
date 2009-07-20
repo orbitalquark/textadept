@@ -72,4 +72,10 @@ function replace_all() end
 -- Goes to the next or previous file found relative to the file
 -- on the current line.
 -- @param next Flag indicating whether or not to go to the next file.
-function find.goto_file_in_list(next) end
+function goto_file_in_list(next) end
+
+---
+-- Begins an incremental find using the Lua command entry.
+-- Lua command functionality will be unavailable until the search is finished
+-- (pressing 'Escape' by default).
+function incremental() end
