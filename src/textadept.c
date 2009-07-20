@@ -521,7 +521,7 @@ static gbool w_exit(GtkWidget *window, GdkEventAny *event, gpointer udata) {
  * Signal for an Open Document AppleEvent.
  * Generates a 'appleevent_odoc' event for each document sent.
  */
-static OSErr w_ae_open(const AppleEvent *event, AppleEvent *, long) {
+static OSErr w_ae_open(const AppleEvent *event, AppleEvent *reply, long ref) {
   AEDescList file_list;
   if (AEGetParamDesc(event, keyDirectObject, typeAEList, &file_list) == noErr) {
     long count = 0;
@@ -546,7 +546,7 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent *, long) {
  * Calls the signal for exiting Textadept.
  * @see w_exit
  */
-static OSErr w_ae_quit(const AppleEvent *event, AppleEvent *, long) {
+static OSErr w_ae_quit(const AppleEvent *event, AppleEvent *reply, long ref) {
   return w_exit(NULL, NULL, NULL) ? (OSErr) noErr : errAEEventNotHandled;
 }
 #endif
