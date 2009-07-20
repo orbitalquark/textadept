@@ -164,10 +164,7 @@ local function find_incremental(text)
   find_(text, true, flags)
 end
 
----
--- Begins an incremental find using the Lua command entry.
--- Lua command functionality will be unavailable until the search is finished
--- (pressing 'Escape' by default).
+-- LuaDoc is in core/.find.lua.
 function find.find_incremental()
   find.incremental = true
   find.incremental_start = buffer.current_pos
