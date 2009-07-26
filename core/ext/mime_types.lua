@@ -109,17 +109,16 @@ end
 local function set_lexer(buffer, lang)
   buffer._lexer = lang
   buffer:set_lexer_language(lang)
-  if buffer.filename then
-    local ret, err = pcall(require, lang)
-    if ret then
-      _m[lang].set_buffer_properties()
-    elseif not ret and not err:find("^module '"..lang.."' not found:") then
-      error(err)
-    end
+  local ret, err = pcall(require, lang)
+  if ret then
+    _m[lang].set_buffer_properties()
+  elseif not ret and not err:find("^module '"..lang.."' not found:") then
+    error(err)
   end
 end
 textadept.events.add_handler('buffer_new',
   function() buffer.set_lexer = set_lexer end)
+buffer.set_lexer = set_lexer -- Scintilla's first buffer doesn't have this
 
 -- Performs actions suitable for a new buffer.
 -- Sets the buffer's lexer language and loads the language module.
