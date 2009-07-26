@@ -4,36 +4,64 @@
 
 ---
 -- A table of loaded modules.
--- [Dummy file]
 module('_m')
 
--- Usage:
--- Modules utilize the Lua 5.1 package model.
+-- Markdown:
+-- ## Overview
 --
--- There are two kinds of modules: generic and language-specific. Both are just
--- single directories full of Lua scripts and maybe additional files. Each
--- module has an init.lua script that loads all of the functionality provided by
--- the module.
+-- Modules utilize the Lua 5.1 package model. It is recommended to put all
+-- modules in the `modules/` Textadept directory. A module consists of a single
+-- directory with an `init.lua` script to load any additional Lua files
+-- (typically in the same location). Essentially there are two classes of
+-- modules: generic and language-specific.
 --
--- Generic modules are loaded on startup (/init.lua) and available all the time.
+-- ## Generic Modules
 --
--- Language-specific modules are loaded when a file with a specific extension is
--- opened or saved and available to that kind of file only. Adding or modifying
--- a language is done in /core/ext/mime_types.lua. Add your language and its
--- associated lexer to the languages table, the language's file extension and
--- associated language to the extensions table, and optionally shebang words
--- with their associated language to the shebangs table.
--- Each module contains the init.lua script, and typically a commands.lua and
--- snippets.lua script. Sometimes .api files can be used by a module. To do so,
--- set an 'api' variable to textadept.io.read_api_file(path, word_chars)'s
--- return value. It will be used for displaying calltips and autocomplete lists
--- by default.
--- You can use the 'modules' Project Manager browser to create and manage
--- language-specific modules.
+-- This class of modules is usually available globally for programming in all
+-- languages. An example is the [`_m.textadept`][m_textadept] module which adds
+-- a wide variety of text editing capabilities to Textadept.
 --
--- When assigning key commands to module functions, do not forget to do so AFTER
--- the function has been defined. Typically key commands are placed at the end
--- of files, like commands.lua in language-specific modules.
+-- [m_textadept]: ../modules/_m.textadept.html
+--
+-- ## Language-specific Modules
+--
+-- Each module of this class of modules is named after a language lexer in
+-- `lexers/` and is usually available only for editing code in that particular
+-- programming language. Examples are the [`_m.cpp`][m_cpp] and
+-- [`_m.lua`][m_lua] modules which provide special editing features for the
+-- C/C++ and Lua languages respectively.
+--
+-- [m_cpp]: ../modules/_m.cpp.html
+-- [m_lua]: ../modules/_m.lua.html
+--
+-- Note: While language-specific modules can only be used by files of that
+-- language, they persist in Textadept's Lua state. Because of this, it is not
+-- recommended to set global functions or variables and depend on them, as they
+-- may be inadvertantly overwritten. Keep these inside the module.
+--
+-- ## Loading Modules
+--
+-- Generic modules can be loaded using `require`:
+--
+--     require 'module_name'
+--
+-- Language-specific modules are automatically loaded when a file of that
+-- language is loaded or a buffer's lexer is set to that language.
+--
+-- ## Managing Modules
+--
+-- Modules are easy to create and edit in the filesystem, but you can use the
+-- `modules` PM browser to create Language-specific modules from a generic
+-- template, or manage all available modules.
+--
+-- ## Modules and Key Commands
+--
+-- When assigning [key commands][key_commands] to module functions, do not
+-- forget to do so AFTER the function has been defined. Typically key commands
+-- are placed at the end of files, like `commands.lua` in language-specific
+-- modules.
+--
+-- [key_commands]: ../modules/textadept.keys.html
 
 ---
 -- This module contains no functions.

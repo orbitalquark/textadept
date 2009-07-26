@@ -5,11 +5,16 @@ local locale = _G.locale
 
 ---
 -- Session support for the textadept module.
--- There are several option variables used:
---   DEFAULT_SESSION: The path to the default session file.
 module('_m.textadept.session', package.seeall)
 
-local DEFAULT_SESSION = _USERHOME..'/session'
+-- Markdown:
+-- ## Settings
+--
+-- * `DEFAULT_SESSION`: The path to the default session file.
+
+-- settings
+DEFAULT_SESSION = _USERHOME..'/session'
+-- end settings
 
 ---
 -- Loads a Textadept session file.

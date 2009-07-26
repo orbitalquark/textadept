@@ -5,21 +5,25 @@ local locale = _G.locale
 
 ---
 -- Multiple line editing for the textadept module.
--- There are several option variables used:
---   MARK_MLINE: The integer mark used to identify an MLine marked line.
---   MARK_MLINE_COLOR: The Scintilla color used for an MLine marked line.
 module('_m.textadept.mlines', package.seeall)
 
--- options
-local MARK_MLINE = 2
-local MARK_MLINE_COLOR = 0x4D994D
--- end options
+-- Markdown:
+-- ## Settings
+--
+-- * `MARK_MLINE`: The unique integer mark used to identify an MLine marked
+--   line.
+-- * `MARK_MLINE_COLOR`: The [Scintilla color][scintilla_color] used for an
+--   MLine marked line.
+--
+-- [scintilla_color]: http://scintilla.org/ScintillaDoc.html#colour
 
----
--- [Local table] Contains all MLine marked lines with the column index to edit
--- with respect to for each specific line.
--- @class table
--- @name mlines
+-- settings
+MARK_MLINE = 2
+MARK_MLINE_COLOR = 0x4D994D
+-- end settings
+
+-- Contains all MLine marked lines with the column index to edit with respect to
+-- for each specific line.
 local mlines = {}
 
 local mlines_most_recent

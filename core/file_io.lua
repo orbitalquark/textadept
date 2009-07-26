@@ -5,13 +5,55 @@ local locale = _G.locale
 
 ---
 -- Provides file input/output routines for Textadept.
--- Opens and saves files and reads API files.
---
--- Events (all filenames are encoded in UTF-8):
---   file_opened(filename)
---   file_before_save(filename)
---   file_saved_as(filename)
 module('textadept.io', package.seeall)
+
+-- Markdown:
+-- ## Overview
+--
+-- Textadept represents all characters and strings internally as UTF-8. You will
+-- not notice any difference for working with files containing ASCII text since
+-- UTF-8 is compatible with it. Problems may arise for files with more exotic
+-- encodings that may not be detected properly, if at all. When opening a file,
+-- the list of encodings tried before throwing a `conversion failed` error is in
+-- `core/file_io.lua`'s [`try_encodings`](#try_encodings). Textadept respects the
+-- detected encoding when saving the file.
+--
+-- New files are saved as UTF-8 by default.
+--
+-- ## Converting Filenames to and from UTF-8
+--
+-- If your filesystem does not use UTF-8 encoded filenames, conversions to and
+-- from that encoding will be necessary. When opening and saving files through
+-- dialogs, Textadept takes care of these conversions for you, but if you need
+-- to do them manually, use [`textadept.iconv()`][textadept_iconv] along with
+-- `_CHARSET`, your filesystem's detected encoding.
+--
+-- Example:
+--
+--     textadept.events.add_handler('file_opened',
+--       function(utf8_filename)
+--         local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
+--         local f = io.open(filename, 'rb')
+--         -- process file
+--         f:close()
+--       end)
+--
+-- [textadept_iconv]: ../modules/textadept.html#iconv
+--
+-- ## Events
+--
+-- The following is a list of all File I/O events generated in
+-- `event_name(arguments)` format:
+--
+-- * **file\_opened** (filename) <br />
+--   Called when a file has been opened in a new buffer.
+--       - filename: the filename encoded in UTF-8.
+-- * **file\_before\_save** (filename) <br />
+--   Called right before a file is saved to disk.
+--       - filename: the filename encoded in UTF-8.
+-- * **file\_saved_as** (filename) <br />
+--   Called when a file is saved under another filename.
+--       - filename: the other filename encoded in UTF-8.
 
 local lfs = require 'lfs'
 
@@ -56,8 +98,11 @@ local function detect_encoding(text)
   return nil
 end
 
+---
 -- List of encodings to try to decode files as after UTF-8.
-local try_encodings = {
+-- @class table
+-- @name try_encodings
+try_encodings = {
   'UTF-8',
   'ASCII',
   'ISO-8859-1',

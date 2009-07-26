@@ -5,9 +5,96 @@ local locale = _G.locale
 
 ---
 -- Defines the key commands used by the Textadept key command manager.
--- For non-ascii keys, see textadept.keys for string aliases.
 -- This set of key commands is pretty standard among other text editors.
 module('textadept.key_commands', package.seeall)
+
+-- Markdown:
+-- ## Overview
+--
+-- Key commands are defined in the global table `keys`. Each key-value pair in
+-- `keys` consists of either:
+--
+-- * A string representing a key command and an associated action table.
+-- * A string language name and its associated `keys`-like table.
+-- * A string style name and its associated `keys`-like table.
+-- * A string representing a key command and its associated `keys`-like table.
+--   (This is a keychain sequence.)
+--
+-- A key command string is built from a combination of the `CTRL`, `SHIFT`,
+-- `ALT`, and `ADD` constants as well as the pressed key itself. The value of
+-- `ADD` is inserted between each of `CTRL`, `SHIFT`, `ALT`, and the key.
+-- For example:
+--
+--     -- keys.lua:
+--     CTRL = 'Ctrl'
+--     SHIFT = 'Shift'
+--     ALT = 'Alt'
+--     ADD = '+'
+--     -- pressing control, shift, alt and 'a' yields: 'Ctrl+Shift+Alt+a'
+--
+-- For key values less than 255, Lua's [`string.char()`][string_char] is used to
+-- determine the key's string representation. Otherwise, the `KEYSYMS` lookup
+-- table in [`textadept.keys`][textadept_keys] is used.
+--
+-- [string_char]: http://www.lua.org/manual/5.1/manual.html#pdf-string.char
+-- [textadept_keys]: ../modules/textadept.keys.html
+--
+-- An action table is a table consisting of either:
+--
+-- * A Lua function followed by a list of arguments to pass to that function.
+-- * A string representing a [buffer][buffer] or [view][view] function followed
+--   by its respective `'buffer'` or `'view'` string and then any arguments to
+--   pass to the resulting function.
+--
+--       `buffer.`_`function`_ by itself cannot be used because at the time of
+--       evaluation, `buffer.`_`function`_ would apply only to the current
+--       buffer, not for all buffers. By using this string reference system, the
+--       correct `buffer.`_`function`_ will be evaluated every time. The same
+--       applies to `view`.
+--
+-- [buffer]: ../modules/buffer.html
+-- [view]: ../modules/view.html
+--
+-- Language names are the names of the lexer files in `lexers/` such as `cpp`
+-- and `lua`. Style names are different lexer styles, most of which are in
+-- `lexers/lexer.lua`; examples are `whitespace`, `comment`, and `string`.
+--
+-- Key commands can be chained like in Emacs using keychain sequences. By
+-- default, the `Esc` key cancels the current keychain, but it can be redefined
+-- by setting the `keys.clear_sequence` field. Naturally, the clear sequence
+-- cannot be chained.
+--
+-- ## Key Command Precedence
+--
+-- When searching for a key command to execute in the `keys` table, key commands
+-- in the current style have priority, followed by the  ones in the current lexer,
+-- and finally the ones in the global table.
+--
+-- ## Example
+--
+--     keys = {
+--       ['ctrl+f'] = { 'char_right', 'buffer' },
+--       ['ctrl+b'] = { 'char_left',  'buffer' },
+--       lua = {
+--         ['ctrl+c'] = { 'add_text', 'buffer', '-- ' },
+--         whitespace = {
+--           ['ctrl+f'] = { function() print('whitespace') end }
+--         }
+--       }
+--     }
+--
+-- The first two key commands are global and call `buffer:char_right()` and
+-- `buffer:char_left()` respectively. The last two commands apply only in the
+-- Lua lexer with the very last one only being available in Lua's `whitespace`
+-- style. If `ctrl+f` is pressed when the current style is `whitespace` in the
+-- `lua` lexer, the global key command with the same shortcut is overriden and
+-- `whitespace` is printed to standard out.
+--
+-- ## Problems
+--
+-- All Lua functions must be defined BEFORE they are reference in key commands.
+-- Therefore, any module containing key commands should be loaded after all
+-- other modules, whose functions are being referenced, have been loaded.
 
 -- Windows and Linux key commands are listed in the first block.
 -- Mac OSX key commands are listed in the second block.
@@ -15,6 +102,12 @@ module('textadept.key_commands', package.seeall)
 local keys = _G.keys
 local b, v = 'buffer', 'view'
 local t = textadept
+
+-- CTRL = 'c'
+-- SHIFT = 's'
+-- ALT = 'a'
+-- ADD = ''
+-- Control, Shift, Alt, and 'a' = 'csaa'
 
 if not MAC then
   -- Windows and Linux key commands.
@@ -410,3 +503,8 @@ else
   keys.cd   = { 'clear',             b }
   keys.cad  = { 'del_word_right',    b }
 end
+
+---
+-- This module has no functions.
+function no_functions() end
+no_functions = nil -- undefine

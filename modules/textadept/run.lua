@@ -20,7 +20,7 @@ function execute(command)
   local filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
   local filename_noext = filename:match('^(.+)%.')
   command = command:gsub('%%%b()', {
-    ['%(filepath)'] = filepath, _CHARSET, 'UTF-8',
+    ['%(filepath)'] = filepath,
     ['%(filedir)'] = filedir,
     ['%(filename)'] = filename,
     ['%(filename_noext)'] = filename_noext,

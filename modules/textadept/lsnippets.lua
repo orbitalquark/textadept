@@ -5,80 +5,130 @@ local locale = _G.locale
 
 ---
 -- Provides Lua-centric snippets for Textadept.
--- Snippets are basically pieces of text inserted into a document, but can
--- execute code, contain placeholders a user can enter in dynamic text for, and
--- make transformations on that text. This is much more powerful than standard
--- text templating.
--- There are several option variables used:
---   MARK_SNIPPET: The integer mark used to identify the line that marks the
---     end of a snippet.
---   MARK_SNIPPET_COLOR: The Scintilla color used for the line
---     that marks the end of the snippet.
---
 module('_m.textadept.lsnippets', package.seeall)
 
--- Usage:
--- Snippets are defined in the global table 'snippets'. Keys in that table are
--- snippet trigger words, and values are the snippet's text to insert. The
--- exceptions are language names and style names. Language names have table
--- values of either snippets or style keys with table values of snippets.
--- See /lexers/lexer.lua for some default style names. Each lexer's 'add_style'
--- function adds additional styles, the string argument being the style's name.
--- For example:
---   snippets = {
---     file = '%(buffer.filename)',
---     lua = {
---       f = 'function %1(name)(%2(args))\n  %0\nend',
---       string = { [string-specific snippets here] }
+-- Markdown:
+-- ## Settings
+--
+-- * `MARK_SNIPPET`: The unique integer mark used to identify the line that
+--    marks the end of a snippet.
+-- * `MARK_SNIPPET_COLOR`: The [Scintilla color][scintilla_color] used for the
+--   line that marks the end of the snippet.
+--
+-- [scintilla_color]: http://scintilla.org/ScintillaDoc.html#colour
+--
+-- ## Overview
+--
+-- Snippets are basically pieces of text inserted into a document, but can
+-- execute code, contain placeholders you can enter dynamic text for, and
+-- perform transformations on that text. This is much more powerful than
+-- standard text templating.
+--
+-- Snippets are defined in the global table `snippets`. Each key-value pair in
+-- `snippets` consist of either:
+--
+-- * A string snippet trigger word and its expanded text.
+-- * A string language name and its associated `snippets`-like table.
+-- * A string style name and its associated `snippets`-like table.
+--
+-- Language names are the names of the lexer files in `lexers/` such as `cpp`
+-- and `lua`. Style names are different lexer styles, most of which are in
+-- `lexers/lexer.lua`; examples are `whitespace`, `comment`, and `string`.
+--
+-- ## Snippet Precedence
+--
+-- When searching for a snippet to expand in the `snippets` table, snippets in
+-- the current style have priority, followed by the ones in the current lexer,
+-- and finally the ones in the global table.
+--
+-- ## Snippet Syntax
+--
+-- A snippet to insert may contain any of the following:
+--
+-- #### Plain Text
+--
+-- Any plain text characters may be used with the exception of `%` and &#96;.
+-- These are special characters and must be "escaped" by prefixing one with a
+-- `%`. As an example, `%%` inserts a single `%` in the snippet.
+--
+-- #### Lua and Shell Code
+--
+--     %(lua_code)
+--     `shell_code`
+--
+-- The code is executed the moment the snippet is inserted.
+--
+-- For Lua code, the global Lua state is available as well as a `selected_text`
+-- variable (containing the current selection in the buffer) for convenience.
+-- Only the return value of the code execution is inserted, not standard out.
+-- Therefore any `print()` statements are meaningless.
+--
+-- Shell code is run via Lua's [`io.popen()`][io_popen].
+--
+-- [io_popen]: http://www.lua.org/manual/5.1/manual.html#pdf-io.popen
+--
+-- #### Tab Stops and Mirrors
+--
+--     %num
+--
+-- These are visited in numeric order (1, 2, 3, etc.) with %0 being the final
+-- position of the caret, or the end of the snippet if %0 is not specified. If
+-- there is a placeholder (described below) with the specified `num`, its text
+-- is mirrored here.
+--
+-- #### Placeholders
+--
+--     %num(text)
+--
+-- These are also visited in numeric order, but have precedence over tab stops,
+-- and insert the specified `text` at the current position upon entry. `text`
+-- can contain Lua code executed at run-time:
+--
+--     %num(#(lua_code))
+--
+-- The global Lua state is available as well as a `selected_text` variable
+-- (containing the current selection in the buffer) for convenience.
+--
+-- `#`'s will have to be escaped with `%` for plain text. Any mis-matched `)`'s
+-- must also be escaped, but balanced `()`'s need not be.
+--
+-- #### Transformations
+--
+--     %num(pattern|replacement)
+--
+-- These act like mirrors, but transform the text that would be inserted using
+-- a given [Lua pattern][lua_pattern] and replacement. Like in placeholders,
+-- `replacement` can contain Lua code executed at run-time as well as the
+-- standard Lua capture sequences: `%n` where 1 <= `n` <= 9.
+--
+-- [lua_pattern]: http://www.lua.org/manual/5.1/manual.html#5.4.1
+--
+-- Any `|`'s after the first one do not need to be escaped.
+--
+-- ## Example
+--
+--     snippets = {
+--       file = '%(buffer.filename)',
+--       lua = {
+--         f = 'function %1(name)(%2(args))\n  %0\nend',
+--         string = { [string-specific snippets here] }
+--       }
 --     }
---   }
--- Style and lexer insensitive snippets should be placed in the lexer and
--- snippets tables respectively.
 --
--- When searching for a snippet to expand in the snippets table, snippets in the
--- current style have priority, then the ones in the current lexer, and finally
--- the ones in the global table.
---
--- As mentioned, snippets are key-value pairs, the key being the trigger word
--- and the value being the snippet text: ['trigger'] = 'text'.
--- Snippet text however can contain more than just text.
---
--- Insert-time Lua and shell code: %(lua_code), `shell_code`
---   The code is executed the moment the snippet is inserted. For Lua code, the
---   result of the code execution is inserted, so print statements are useless.
---   All global variables and a 'selected_text' variable are available.
---
--- Tab stops/Mirrors: %num
---   These are visited in numeric order with %0 being the final position of the
---   caret, the end of the snippet if not specified. If there is a placeholder
---   (described below) with the specified num, its text is mirrored here.
---
--- Placeholders: %num(text)
---   These are also visited in numeric order, having precedence over tab stops,
---   and inserting the specified text. If no placeholder is available, the tab
---   stop is visited instead. The specified text can contain Lua code executed
---   at run-time: #(lua_code).
---
--- Transformations: %num(pattern|replacement)
---   These act like mirrors, but transform the text that would be inserted using
---   a given Lua pattern and replacement. The replacement can contain Lua code
---   executed at run-time: #(lua_code), as well as the standard Lua capture
---   sequences: %n where 1 <= n <= 9.
---   See the Lua documentation for using patterns and replacements.
---
--- To escape any of the special characters '%', '`', ')', '|', or '#', prepend
--- the standard Lua escape character '%'. Note:
---   * Only '`' needs to be escaped in shell code.
---   * '|'s after the first in transformations do not need to be escaped.
---   * Only unmatched ')'s need to be escaped. Nested ()s are ignored.
+-- The first snippet is global and runs the Lua code to determine the current
+-- buffer's filename and inserts it. The other snippets apply only in the `lua`
+-- lexer. Any snippets in the `string` table are available only when the current
+-- style is `string` in the `lua` lexer.
 
-local MARK_SNIPPET = 4
-local MARK_SNIPPET_COLOR = 0x4D9999
+-- settings
+MARK_SNIPPET = 4
+MARK_SNIPPET_COLOR = 0x4D9999
+-- end settings
 
 ---
 -- Global container that holds all snippet definitions.
 -- @class table
--- @name snippets
+-- @name _G.snippets
 _G.snippets = {}
 
 _G.snippets.file = "%(buffer.filename)"

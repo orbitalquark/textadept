@@ -5,15 +5,22 @@ local locale = _G.locale
 
 ---
 -- Bookmarks for the textadept module.
--- There are several option variables used:
---   MARK_BOOKMARK: The integer mark used to identify a bookmarked line.
---   MARK_BOOKMARK_COLOR: The Scintilla color used for a bookmarked line.
 module('_m.textadept.bookmarks', package.seeall)
 
--- options
-local MARK_BOOKMARK = 1
-local MARK_BOOKMARK_COLOR = 0xC08040
--- end options
+-- Markdown:
+-- ## Settings
+--
+-- * `MARK_BOOKMARK`: The unique integer mark used to identify a bookmarked
+--    line.
+-- * `MARK_BOOKMARK_COLOR`: The [Scintilla color][scintilla_color] used for a
+--    bookmarked line.
+--
+-- [scintilla_color]: http://scintilla.org/ScintillaDoc.html#colour
+
+-- settings
+MARK_BOOKMARK = 1
+MARK_BOOKMARK_COLOR = 0xC08040
+-- end settings
 
 ---
 -- Adds a bookmark to the current line.

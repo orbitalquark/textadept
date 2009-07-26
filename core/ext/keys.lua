@@ -7,76 +7,27 @@ local locale = _G.locale
 -- Manages key commands in Textadept.
 -- Default key commands should be defined in a separate file and loaded after
 -- all modules.
--- There are several option variables used:
---   SCOPES_ENABLED: Flag indicating whether scopes/styles can be used for key
---     commands.
---   CTRL: The string representing the Control key.
---   SHIFT: The string representing the Shift key.
---   ALT: The string representing the Alt key (the Apple key on Mac OSX).
---   ADD: The string representing used to join together a sequence of Control,
---     Shift, or Alt modifier keys.
---
 module('textadept.keys', package.seeall)
 
--- Usage:
--- Keys are defined in the global table 'keys'. Keys in that table are key
--- sequences, and values are tables of Lua functions and arguments to execute.
--- The exceptions are language names, style names, and keychains (discussed
--- later). Language names have table values of either key commands or style keys
--- with table values of key commands. See /lexers/lexer.lua for some default
--- style names. Each lexer's 'add_style' function adds additional styles, the
--- string argument being the style's name. For example:
---   keys = {
---     ['ctrl+f'] = { 'char_right', 'buffer' },
---     ['ctrl+b'] = { 'char_left',  'buffer' },
---     lua = {
---       ['ctrl+c'] = { 'add_text', 'buffer', '-- ' },
---       whitespace = { function() print('whitespace') end }
---     }
---   }
--- Style and lexer insensitive key commands should be placed in the lexer and
--- keys tables respectively.
+-- Markdown:
+-- ## Settings
 --
--- When searching for a key command to execute in the keys table, key commands
--- in the current style have priority, then ones in the current lexer, and
--- finally the ones in the global table.
+-- * `SCOPES_ENABLED`: Flag indicating whether scopes/styles can be used for key
+--   commands.
+-- * `CTRL`: The string representing the Control key.
+-- * `SHIFT`: The string representing the Shift key.
+-- * `ALT`: The string representing the Alt key (the Apple key on Mac OSX).
+-- * `ADD`: The string representing used to join together a sequence of Control,
+--   Shift, or Alt modifier keys.
 --
--- As mentioned, key commands are key-value pairs, the key being the key
--- sequence compiled from the CTRL, SHIFT, ALT, and ADD options (discussed
--- below) as well as the key pressed and the value being a table of a function
--- to call and its arguments. For the table, the first item can be either a Lua
--- function or a string (representing a function name). If it is a function, all
--- table items after it are used as arguments. If the first item is a string,
--- the next string is checked to be either 'buffer' or 'view' and the current
--- buffer or view is used as the table with the function name as a field,
--- indexing a function. The current buffer or view is then used as the first
--- argument to that function, with all items after the second following as
--- additional ones. Basically in Lua: {buffer|view}:{first_item}(...)
---
--- As noted previously, key sequences can be compiled differently via the CTRL,
--- SHIFT, ALT, and ADD options. The first three indicate the text for each
--- respective modifier key and ADD is the text inserted between modifiers.
---
--- Key commands can be chained like in Emacs. Instead of a key sequence having
--- a table of a function and its arguments, it has a table of key commands (much
--- like lexer or style specific key commands). My default, the 'escape' key
--- cancels the current keychain, but it can be redefined by setting the
--- 'clear_sequence' key in the global keys table. It cannot be chained however.
---
--- Keys that have values higher than 255 cannot be represented by a string, but
--- can have a string representation defined in the KEYSYMS table.
---
--- Keep in mind that all Lua functions used in key commands must be defined
--- BEFORE the key command references it. Therefore the module containing key
--- commands should be loaded LAST, after all other modules have been loaded.
 
--- options
+-- settings
 local SCOPES_ENABLED = true
 local ADD = ''
 local CTRL = 'c'..ADD
 local SHIFT = 's'..ADD
 local ALT = 'a'..ADD
--- end options
+-- end settings
 
 ---
 -- Global container that holds all key commands.
