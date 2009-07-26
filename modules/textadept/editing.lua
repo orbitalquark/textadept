@@ -7,6 +7,25 @@ local locale = _G.locale
 -- Editing commands for the textadept module.
 module('_m.textadept.editing', package.seeall)
 
+-- Markdown:
+-- ## Settings
+--
+-- * `AUTOPAIR`: Flag indicating whether or not when an opening `(`, `[`, `[`,
+--   `"`, or `'` is typed, its closing complement character is automatically
+--   inserted.
+-- * `HIGHLIGHT_BRACES`: Flag indicating whether or not when the caret is over a
+--   brace character (any of the following: `()[]{}<>`), its matching complement
+--   brace is highlighted.
+-- * `AUTOINDENT`: Flag indicating whether or not when the enter key is pressed,
+--   the inserted line has is indented to match the level of indentation of the
+--   previous line.
+
+-- settings
+AUTOPAIR = true
+HIGHLIGHT_BRACES = true
+AUTOINDENT = true
+-- end settings
+
 -- The kill-ring.
 -- @field maxn The maximum size of the kill-ring.
 local kill_ring = { pos = 1, maxn = 10 }
@@ -53,11 +72,14 @@ local comment_strings = {
   ruby = '#~',
 }
 
+if AUTOPAIR then
 textadept.events.add_handler('char_added',
   function(c) -- matches characters specified in char_matches
     if char_matches[c] then buffer:insert_text(-1, char_matches[c]) end
   end)
+end
 
+if HIGHLIGHT_BRACES then
 textadept.events.add_handler('update_ui',
   function() -- highlights matching braces
     local buffer = buffer
@@ -74,7 +96,9 @@ textadept.events.add_handler('update_ui',
       buffer:brace_bad_light(-1)
     end
   end)
+end
 
+if AUTOINDENT then
 textadept.events.add_handler('char_added',
   function(char) -- auto-indent on return
     if char ~= 10 then return end
@@ -101,6 +125,7 @@ textadept.events.add_handler('char_added',
       buffer:set_sel(anchor, caret)
     end
   end)
+end
 
 -- local functions
 local insert_into_kill_ring, scroll_kill_ring

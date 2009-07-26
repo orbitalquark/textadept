@@ -3,9 +3,6 @@
 
 ---
 -- A model browser for the Textadept project manager.
--- It can be loaded by adding to the browsers table in core/ext/pm.lua or by
--- 'require'ing it elsewhere.
--- [Dummy file]
 module('textadept.pm.browser')
 
 ---
@@ -40,8 +37,8 @@ function get_contents_for(full_path, expanding)
 ---
 -- Performs an action based on the selected treeview item.
 -- This function is called internally and shouldn't be called by a script.
--- @param selected_item Identical to 'full_path' in pm.get_contents_for.
--- @see pm.get_contents_for
+-- @param selected_item Identical to 'full_path' in get_contents_for.
+-- @see get_contents_for
 function perform_action(selected_item)
 
 ---
@@ -54,15 +51,14 @@ function perform_action(selected_item)
 --     'gtk-*' - a stock menu item is created based on the GTK stock-id.
 --     'separator' - a menu separator item is created.
 --     Otherwise a regular menu item with a mnemonic is created.
--- @see pm.get_contents_for
 function get_context_menu(selected_item)
 
 ---
 -- Performs an action based on the selected menu item.
 -- This function is called internally and shouldn't be called by a script.
 -- @param menu_id The numeric ID of the menu item.
--- @param selected_item Identical to 'full_path' in pm.get_contents_for.
--- @see pm.get_contents_for
+-- @param selected_item Identical to 'full_path' in get_contents_for.
+-- @see get_contents_for
 function perform_menu_action(menu_id, selected_item)
 
 ---

@@ -4,26 +4,40 @@
 
 ---
 -- Textadept's project manager.
--- [Dummy file]
 module('textadept.pm')
 
--- Usage:
--- Interactive search:
---   Typing text into the project manager view begins the interactive search.
---   If the text matches ANY part of an item in the view (case sensitively), the
---   item is highlighted and subsequent matches can be navigated to using the
---   up/down arrow keys.
+-- Markdown:
+-- ## Fields
 --
--- Customizing look and feel:
---   There are no function calls to make that customize the look and feel of the
---   project manager. Instead you can manipulate it via GTK rc files. The pm
---   entry and view have widget names of 'textadept-pm-entry' and
---   'textadept-pm-view' respectively. Resource file documentation can be found
---   at http://library.gnome.org/devel/gtk/unstable/gtk-Resource-Files.html.
---   My rc file is something like this:
+-- * `entry_text`: The text in the entry.
+-- * `width`: The width of the project manager.
+-- * `cursor`: The cursor in the project manager (string representation of
+--   current `GtkTreePath`).
+--
+-- ## Overview
+--
+-- The PM uses different [browsers][browsers] to display heirarchical data.
+--
+-- [browsers]: ../modules/textadept.pm.browser.html
+--
+-- ## Interactive Search
+--
+-- Typing text into the project manager view begins the interactive search.
+-- If the text matches ANY part of an item in the view (case sensitively), the
+-- item is highlighted and subsequent matches can be navigated to using the
+-- up/down arrow keys.
+--
+-- ## Customizing Look and Feel
+--
+-- There is no way to theme the dialog from within Textadept. Instead you can
+-- use [GTK Resource files][gtkrc]. The pm entry and view have widget names of
+-- `textadept-pm-entry` and `textadept-pm-view` respectively.
+--
+-- [gtkrc]: http://library.gnome.org/devel/gtk/unstable/gtk-Resource-Files.html.
+--
+-- My RC file looks something like this:
 --
 --     pixmap_path "/usr/share/icons/Tango/:/home/mitchell/.icons/prog/"
---
 --     style "textadept-pm-display-style" {
 --        fg[NORMAL]     = "#AAAAAA" # treeview arrows foreground
 --        fg[PRELIGHT]   = "#AAAAAA" # treeview arrows hover foreground
@@ -34,7 +48,6 @@ module('textadept.pm')
 --        text[NORMAL]   = "#AAAAAA" # entry, treeview text foreground
 --        text[ACTIVE]   = "#AAAAAA" # treeview unfocused selection text
 --        text[SELECTED] = "#DDDDDD" # entry, treeview selection text foreground
---
 --        stock["gtk-directory"]  = {{ "16x16/places/stock_folder.png", LTR }}
 --        stock["gtk-folder-new"] = {{ "16x16/actions/folder_new.png", LTR }}
 --        stock["prog-class"]     = {{ "class.png", LTR }}
@@ -47,19 +60,8 @@ module('textadept.pm')
 --        stock["prog-reference"] = {{ "reference.png", LTR }}
 --        stock["prog-struct"]    = {{ "struct.png", LTR }}
 --      }
---
 --      widget "*textadept-pm-entry" style "textadept-pm-display-style"
 --      widget "*textadept-pm-view" style "textadept-pm-display-style"
-
----
--- Textadept's project manager table.
--- @class table
--- @name textadept.pm
--- @field entry_text The text in the entry.
--- @field width The width of the project manager.
--- @field cursor The cursor in the project manager (string representation of
---   current GtkTreePath).
-pm = { entry_text = nil, width = nil, cursor = nil }
 
 --- Requests the project manager to get its contents based on its entry text.
 function activate() end

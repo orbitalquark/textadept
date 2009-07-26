@@ -4,27 +4,23 @@
 
 ---
 -- The core textadept table.
--- [Dummy file]
 module('textadept')
 
----
--- The core textadept table.
--- @class table
--- @name textadept
--- @field title The title of the Textadept window.
--- @field focused_doc_pointer The pointer to the document associated with the
---   buffer of the currently focused view. (Used internally; read-only)
--- @field menubar A table of GTK menus defining a menubar (write-only).
--- @field context_menu A GTK menu defining the editor's context menu.
--- @field clipboard_text The text on the clipboard (read-only).
--- @field statusbar_text The text displayed by the statusbar (write-only).
--- @field docstatusbar_text The text displayed by the doc statusbar
---   (write-only).
--- @field size The size of the Textadept window ({ width, height}).
-textadept = {
-  title = nil, focused_doc_pointer = nil, clipboard_text = nil, menubar = nil,
-  context_menu = nil, statusbar_text = nil, docstatusbar_text = nil, size = nil
-}
+-- Markdown:
+-- ## Fields
+--
+-- * `title`: The title of the Textadept window.
+-- * `focused_doc_pointer`: The pointer to the document associated with the
+--   buffer of the currently focused view. (Used internally; read-only.)
+-- * `menubar`: A table of GTK menus defining a menubar (write-only).
+-- * `context_menu`: A GTK menu defining the editor's context menu.
+-- * `clipboard_text`: The text on the clipboard (read-only).
+-- * `statusbar_text`: The text displayed by the statusbar (write-only).
+-- * `docstatusbar_text`: The text displayed by the doc statusbar (write-only).
+-- * `size`: The size of the Textadept window (`{ width, height}`).
+-- * `constants`: Table containing Scintilla constants.
+-- * `buffer_functions`: Table containing Scintilla functions.
+-- * `buffer_properties`: Table containing Scintilla set/get functions.
 
 ---
 -- A numerically indexed table of open buffers in Textadept.

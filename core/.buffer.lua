@@ -5,369 +5,267 @@
 ---
 -- The current buffer in the currently focused view.
 -- It also represents the structure of any buffer table in 'buffers'.
--- [Dummy file]
 module('buffer')
 
----
--- The current buffer in the currently focused view.
--- It also represents the structure of any buffer table in 'buffers'.
--- @class table
--- @name buffer
--- @field doc_pointer The pointer to the document associated with this buffer.
+-- Markdown:
+-- ## Fields
+--
+-- * `doc_pointer`: The pointer to the document associated with this buffer.
 --   (Used internally; read-only)
--- @field dirty Flag indicating whether or not the buffer has been modified
---   since it was last saved.
--- @field filename The absolute path to the file associated with this buffer.
---   It is encoded in UTF-8. Use 'textadept.iconv()' for charset conversions.
--- @field encoding The encoding of the file on the hard disk. It will be nil if
+-- * `dirty`: Flag indicating whether or not the buffer has been modified since
+--   it was last saved.
+-- * `filename`: The absolute path to the file associated with this buffer. It
+--   is encoded in UTF-8. Use [`textadept.iconv()`][textadept_iconv] for
+--   charset conversions.
+-- * `encoding`: The encoding of the file on the hard disk. It will be nil if
 --   the file is a binary file.
--- @field encoding_bom The byte-order mark of the file encoding (if any).
--- @field anchor The position of the opposite end of the selection to the
---    caret.
--- @field auto_c_auto_hide Flag indicating whether or not autocompletion is
---   hidden automatically when nothing matches.
--- @field auto_c_cancel_at_start Flag indicating whether or not autocompletion
+-- * `encoding_bom`: The byte-order mark of the file encoding (if any).
+-- * `anchor`: The position of the opposite end of the selection to the caret.
+-- * `auto_c_auto_hide`: Flag indicating whether or not autocompletion is hidden
+--   automatically when nothing matches.
+-- * `auto_c_cancel_at_start`: Flag indicating whether or not autocompletion
 --   should be cancelled if the user backspaces to a position before where it
 --   was created.
--- @field auto_c_choose_single Flag indicating whether or not a single item in
+-- * `auto_c_choose_single`: Flag indicating whether or not a single item in
 --   autocompletion should be chosen automatically.
--- @field auto_c_drop_rest_of_word Flag indicating whether or not autocompletion
+-- * `auto_c_drop_rest_of_word`: Flag indicating whether or not autocompletion
 --   deletes any word characters after the inserted text upon completion.
--- @field auto_c_fill_ups A string of characters that when typed will cause the
+-- * `auto_c_fill_ups`: A string of characters that when typed will cause the
 --   autocompletion to choose the selected item.
--- @field auto_c_ignore_case Flag indicating whether or not case is significant
+-- * `auto_c_ignore_case`: Flag indicating whether or not case is significant
 --   when performing autocompletion searches.
--- @field auto_c_max_height The maximum height in rows of autocompletion and
---   user lists. Default is 5.
--- @field auto_c_max_width The maximum width in characters of autocompletion and
+-- * `auto_c_max_height`: The maximum height in rows of autocompletion and user
+--   lists. Default is 5.
+-- * `auto_c_max_width`: The maximum width in characters of autocompletion and
 --   user lists.
--- @field auto_c_type_separator The (integer) type separator character in the
+-- * `auto_c_type_separator`: The (integer) type separator character in the
 --   string setting up an autocompletion list.
--- @field back_space_un_indents Flag indicating whether or not a backspace press
+-- * `back_space_un_indents`: Flag indicating whether or not a backspace press
 --   when the caret is within indentation unindents.
--- @field buffered_draw Flag indicating whether or not text is drawn into a
---   buffer first or directly onto the screen.
--- @field call_tip_back The background color for the call tip. (Write-only)
--- @field call_tip_fore The foreground color for the call tip. (Write-only)
--- @field call_tip_fore_hlt The foreground color for the highlighted part of the
---   call tip.
--- @field call_tip_use_style Call tip tab size in pixels. (Enables
---   STYLE_CALLTIP)
--- @field caret_fore The foreground color of the caret.
--- @field caret_line_back The color of the background of the line containing the
---   caret.
--- @field caret_line_back_alpha The background alpha of the caret line.
--- @field caret_line_visible Flag indicating whether or not the background of
---   the line containing the caret is a different color.
--- @field caret_period The time in milliseconds that the caret is on and off. 0
---   is a steady on.
--- @field caret_sticky Flag indicating whether or not the caret preferred x
---   position can only be changed by explicit movement commands.
--- @field caret_style The style of the caret to be drawn. 0: invisible, 1: line,
---   2: block.
--- @field caret_width The width of the insert mode caret in pixels.
--- @field char_at The character byte at given index position. (Read-only)
--- @field code_page The code page used to interpret the bytes of the document as
---   characters.
--- @field column The column number of an index position, taking tab width into
---   account.
--- @field control_char_symbol The character used to display control characters.
---   (< 32 uses that control character)
--- @field current_pos The position of the caret.
--- @field cursor The cursor type. -1: normal, 4: wait.
--- @field direct_function buffer:The pointer to a function buffer:that processes messages for
---   this Scintilla. (Read-only)
--- @field direct_pointer The pointer value to use as the first function buffer:argument
---   when calling the function buffer:returned by direct_function.
--- @field eol_mode The end of line mode. 0: CRLF, 1: CR, 2: LF.
--- @field edge_colour The color used in edge indication.
--- @field edge_column The column number which text should be kept within.
--- @field edge_mode The edge highlight mode. 0: none, 1: line, 2: background.
--- @field end_at_last_line Flag indicating whether or not the maximum scroll
---   position has the last line at the bottom of the view. Default is true.
--- @field end_styled The position of the last correctly styled character.
---   (Read-only)
--- @field first_visible_line The display line at the top of the display.
---   (Read-only)
--- @field focus The internal focus flag.
--- @field fold_expanded Flag indicating whether or not an indexed (header) line
---   has been expanded.
--- @field fold_level The fold level of an indexed line. 0x400: base, 0x1000:
---   white, 0x2000: header, 0x4000: box header, 0x8000: box footer, 0x10000:
---   contracted, 0x20000: unindent, 0x0FFF: number mask.
--- @field fold_parent The parent line of indexed (child) line. (Read-only)
--- @field h_scroll_bar Flag indicating whether or not the horizontal scroll bar
---   is visible.
--- @field highlight_guide The highlighted indentation guide column.
--- @field hotspot_active_underline Flag indicating whether or not active
---   hotspots are underlined.
--- @field hotspot_single_line Flag indicating whether or not hotspots are
---   limited to a single line so hotspots on two lines don't merge.
--- @field indent The indentation size.
--- @field indentation_guides Flag indicating whether or not indentation
---   guides are visible.
--- @field indic_fore The foreground color of an indexed indicator.
--- @field indic_style The style of an indexed indicator. 0: plain, 1: squiggle
---   2: TT, 3: diagonal, 4: strike, 5: hidden, 6: box, 7: roundbox.
--- @field indic_under Flag indicating whether or not an indexed indicator is
---   drawn over text. Default is true.
--- @field indicator_current The indicator used for indicator_fill_range and
---   indicator_clear_range.
--- @field indicator_value The value used for indicator_fill_range.
--- @field key_words Unused.
--- @field layout_cache The degree of caching of layout information.
--- @field length The number of characters in the document. (Read-only).
--- @field lexer The lexxing language of the document.
--- @field line_count The number of lines in the document (>= 1). (Read-only).
--- @field line_end_position The position after the last visible character on
---   an index line. (Read-only)
--- @field line_indent_position The position before the first non-indentation
---   character on an indexed line. (Read-only)
--- @field line_indentation The number of columns an indexed line is indented.
--- @field line_state Extra styling information of an indexed line.
--- @field line_visible Flag indicating whether or not the indexed line is
---   visible. (Read-only)
--- @field lines_on_screen The number of lines completely visible. (Read-only)
--- @field margin_left The size in pixels of the left margin.
--- @field margin_mask_n The marker mask of an indexed margin.
--- @field margin_right The size in pixels of the right margin.
--- @field margin_sensitive_n Flag indicating whether or not the indexed margin
---   is sensitive to mouse clicks.
--- @field margin_type_n The type of an indexed margin. 0: symbolic, 1: numeric.
--- @field margin_width_n The width of an indexed margin in pixels.
--- @field max_line_state The last line number that has a line state.
---   (Read-only).
--- @field mod_event_mask Mask of modification events sent to the container.
--- @field modify Flag indicating whether or not the document is different from
---   when it was last saved.
--- @field mouse_down_captures Flag indicating whether or not the mouse is
---   captured when its button is pressed.
--- @field mouse_dwell_time The time in milliseconds the mouse must sit still to
---   generate a mouse dwell event.
--- @field overtype Flag indicating whether or not overtype mode is active.
--- @field paste_convert_endings Flag indicating whether or not line endings are
---   converted when pasting text.
--- @field position_cache The number of entries in the position cache.
--- @field print_colour_mode The print color mode. 0: normal, 1: invert the light
---   value of each style, 2: force black on white, 3: force background to be
---   white, 4: only default background is forced to be white.
--- @field print_magnification The print magnification added to the point size.
--- @field print_wrap_mode Wrap mode. 0: none, 1: word.
--- @field property The (string) value for a given (string) key index.
--- @field property_int The (integer) value for a given (string) key index.
---   (Read-only)
--- @field read_only Flag indicating whether or not the document is read-only.
--- @field scroll_width The document width assumed for scrolling.
--- @field scroll_width_tracking Flag indicating whether or not the maximum width
---   line displayed is used to set the scroll width.
--- @field search_flags The search flags used by search_in_target.
--- @field sel_alpha The alpha of the selection.
--- @field sel_eol_filled Flag indicating whether or not the selection end of
---   line is filled.
--- @field selection_end The position that ends the selection. (current_pos)
--- @field selection_is_rectangle Flag indicating whether or not the selection is
---   rectangular. (Read-only)
--- @field selection_mode The mode of the current selection. 0: stream, 1:
---   rectangle, 2: lines.
--- @field selection_start The position that starts the selection. (anchor)
--- @field status error status. 0: OK.
--- @field style_at The style byte at the index position. (Read-only)
--- @field style_back The background color of an indexed style.
--- @field style_bits The number of bits in style bytes.
--- @field style_bits_needed The number of bits the current lexer needs for
---   styling. (Read-only)
--- @field style_bold Flag indicating whether or not the indexed style is bold.
--- @field style_case The case of an indexed style. 0: mixed, 1: upper, 2: lower.
--- @field style_changeable Flag indicating whether or not the indexed style is
---   changeable.
--- @field style_character_set The character set of the font in the indexed
---   style.
--- @field style_eol_filled Flag indicating whether or not the indexed style's
---   end of line is filled.
--- @field style_font The font of the indexed style.
--- @field style_fore The foreground color of the indexed style.
--- @field style_hot_spot Flag indicating whether or not the indexed style is a
---   hotspot.
--- @field style_italic Flag indicating whether or not the indexed style is
---   italic.
--- @field style_size The font size of the indexed style.
--- @field style_underline Flag indicating whether or not the indexed style is
---   underlined.
--- @field style_visible Flag indicating whether or not the indexed style is
---   visible.
--- @field tab_indents Flag indicating whether or not a tab press when the caret
---   is within indentation indents.
--- @field tab_width The visible size of a tab in multiples of the width of a
---   space character.
--- @field target_end The position that ends the target which is used for
---   updating the document without affecting the scroll position.
--- @field target_start The position that starts the target which is used for
---   updating the document without affecting the scroll position.
--- @field text_length The number of characters in the document. (Read-only)
--- @field two_phase_draw Flag indicating whether or not drawing is performed in
---   two phases: background and then foreground.
--- @field undo_collection Flag indicating whether or not an undo history is
---   being collected.
--- @field use_palette Flag indicating whether or not Scintilla uses the env's
---   palette calls to display more colors.
--- @field use_tabs Flag indicating whether or not indentation uses tabs and
---   spaces or just spaces.
--- @field v_scroll_bar Flag indicating whether or not the vertical scroll bar is
---   visible.
--- @field view_eol Flag indicating whether or not end of line characters are
---   visible.
--- @field view_ws Flag indicating whether or not whitespace characters are
---   visible.
--- @field whitespace_chars The set of characters making up whitespace when
---   moving or selecting by word. Should be called after setting word_chars.
+-- * `buffered_draw`: Flag indicating whether or not text is drawn into a buffer
+--   first or directly onto the screen.
+-- * `call_tip_back`: The background [color][color] for the call tip.
 --   (Write-only)
--- @field word_chars The set of characters making up words when moving or
+-- * `call_tip_fore`: The foreground [color][color] for the call tip.
+--   (Write-only)
+-- * `call_tip_fore_hlt`: The foreground [color][color] for the highlighted part
+--   of the call tip.
+-- * `call_tip_use_style`: Call tip tab size in pixels. (Enables
+--   `STYLE_CALLTIP`.)
+-- * `caret_fore`: The foreground [color][color] of the caret.
+-- * `caret_line_back`: The [color][color] of the background of the line
+--   containing the caret.
+-- * `caret_line_back_alpha`: The background alpha of the caret line.
+-- * `caret_line_visible`: Flag indicating whether or not the background of the
+--   line containing the caret is a different color.
+-- * `caret_period`: The time in milliseconds that the caret is on and off. 0 is
+--   a steady on.
+-- * `caret_sticky`: Flag indicating whether or not the caret preferred x
+--   position can only be changed by explicit movement commands.
+-- * `caret_style`: The style of the caret to be drawn.<br />
+--       * 0: invisible
+--       * 1: line
+--       * 2: block
+-- * `caret_width`: The width of the insert mode caret in pixels.
+-- * `char_at`: The character byte at given index position. (Read-only)
+-- * `code_page`: The code page used to interpret the bytes of the document as
+--   characters.
+-- * `column`: The column number of an index position, taking tab width into
+--   account.
+-- * `control_char_symbol`: The character used to display control characters.
+--   (< 32 uses that control character)
+-- * `current_pos`: The position of the caret.
+-- * `cursor`: The cursor type.<br />
+--       * -1: normal
+--       * 4: wait.
+-- * `direct_function`: The pointer to a function that processes messages for
+--   this Scintilla. (Read-only)
+-- * `direct_pointer`: The pointer value to use as the first function argument
+--   when calling the function returned by direct_function.
+-- * `eol_mode`: The end of line mode.<br />
+--       * 0: `CRLF`
+--       * 1: `CR`
+--       * 2: `LF`
+-- * `edge_colour`: The [color][color] used in edge indication.
+-- * `edge_column`: The column number which text should be kept within.
+-- * `edge_mode`: The edge highlight mode.<br />
+--       * 0: None
+--       * 1: Line
+--       * 2: Background
+-- * `end_at_last_line`: Flag indicating whether or not the maximum scroll
+--   position has the last line at the bottom of the view. Default is true.
+-- * `end_styled`: The position of the last correctly styled character.
+--   (Read-only)
+-- * `first_visible_line`: The display line at the top of the display.
+--   (Read-only)
+-- * `focus`: The internal focus flag.
+-- * `fold_expanded`: Flag indicating whether or not an indexed (header) line
+--   has been expanded.
+-- * `fold_level`: The fold level of an indexed line.<br />
+--       * 0x400: Base
+--       * 0x1000: White
+--       * 0x2000: Header
+--       * 0x0FFF: Number mask
+-- * `fold_parent`: The parent line of indexed (child) line. (Read-only)
+-- * `h_scroll_bar`: Flag indicating whether or not the horizontal scroll bar is
+--   visible.
+-- * `highlight_guide`: The highlighted indentation guide column.
+-- * `hotspot_active_underline`: Flag indicating whether or not active hotspots
+--   are underlined.
+-- * `hotspot_single_line`: Flag indicating whether or not hotspots are limited
+--   to a single line so hotspots on two lines do not merge.
+-- * `indent`: The indentation size.
+-- * `indentation_guides`: Flag indicating whether or not indentation guides are
+--   visible.
+-- * `indic_fore`: The foreground [color][color] of an indexed indicator.
+-- * `indic_style`: The style of an indexed indicator.<br />
+--       * 0: Plain
+--       * 1: Squiggle
+--       * 2: TT
+--       * 3: Diagonal
+--       * 4: Strike
+--       * 5: Hidden
+--       * 6: Box
+--       * 7: Roundbox.
+-- * `indic_under`: Flag indicating whether or not an indexed indicator is drawn
+--   over text. Default is `true`.
+-- * `indicator_current`: The indicator used for `indicator_fill_range` and
+--   `indicator_clear_range`.
+-- * `indicator_value`: The value used for `indicator_fill_range`.
+-- * `key_words`: Unused.
+-- * `layout_cache`: The degree of caching of layout information.
+-- * `length`: The number of characters in the document. (Read-only).
+-- * `lexer`: The (integer) lexing language of the document.
+-- * `line_count`: The number of lines in the document (>= 1). (Read-only).
+-- * `line_end_position`: The position after the last visible character on an
+--   index line. (Read-only)
+-- * `line_indent_position`: The position before the first non-indentation
+--   character on an indexed line. (Read-only)
+-- * `line_indentation`: The number of columns an indexed line is indented.
+-- * `line_state`: Extra styling information of an indexed line.
+-- * `line_visible`: Flag indicating whether or not the indexed line is visible.
+--   (Read-only)
+-- * `lines_on_screen`: The number of lines completely visible. (Read-only)
+-- * `margin_left`: The size in pixels of the left margin.
+-- * `margin_mask_n`: The marker mask of an indexed margin.
+-- * `margin_right`: The size in pixels of the right margin.
+-- * `margin_sensitive_n`: Flag indicating whether or not the indexed margin is
+--   sensitive to mouse clicks.
+-- * `margin_type_n`: The type of an indexed margin.<br />
+--       * 0: Symbolic
+--       * 1: Numeric
+-- * `margin_width_n`: The width of an indexed margin in pixels.
+-- * `max_line_state`: The last line number that has a line state. (Read-only).
+-- * `mod_event_mask`: Mask of modification events sent to the container.
+-- * `modify`: Flag indicating whether or not the document is different from
+--   when it was last saved.
+-- * `mouse_down_captures`: Flag indicating whether or not the mouse is
+--   captured when its button is pressed.
+-- * `mouse_dwell_time`: The time in milliseconds the mouse must sit still to
+--   generate a mouse dwell event.
+-- * `overtype`: Flag indicating whether or not overtype mode is active.
+-- * `paste_convert_endings`: Flag indicating whether or not line endings are
+--   converted when pasting text.
+-- * `position_cache`: The number of entries in the position cache.
+-- * `print_colour_mode`: The print color mode.<br />
+--       * 0: Normal
+--       * 1: Invert the light value of each style
+--       * 2: Force black on white
+--       * 3: Force background to be white
+--       * 4: Only default background is forced to be white
+-- * `print_magnification`: The print magnification added to the point size.
+-- * `print_wrap_mode`: Wrap mode.<br />
+--       * 0: None
+--       * 1: Word
+-- * `property`: The (string) value for a given (string) key index.
+-- * `property_int`: The (integer) value for a given (string) key index.
+--   (Read-only)
+-- * `read_only`: Flag indicating whether or not the document is read-only.
+-- * `scroll_width`: The document width assumed for scrolling.
+-- * `scroll_width_tracking`: Flag indicating whether or not the maximum width
+--   line displayed is used to set the scroll width.
+-- * `search_flags`: The search flags used by `search_in_target`.
+-- * `sel_alpha`: The alpha of the selection.
+-- * `sel_eol_filled`: Flag indicating whether or not the selection end of line
+--   is filled.
+-- * `selection_end`: The position that ends the selection. (current_pos)
+-- * `selection_is_rectangle`: Flag indicating whether or not the selection is
+--   rectangular. (Read-only)
+-- * `selection_mode`: The mode of the current selection.<br />
+--       * 0: Stream
+--       * 1: Rectangle
+--       * 2: Lines
+-- * `selection_start`: The position that starts the selection. (anchor)
+-- * `status`: error status. 0: OK.
+-- * `style_at`: The style byte at the index position. (Read-only)
+-- * `style_back`: The background [color][color] of an indexed style.
+-- * `style_bits`: The number of bits in style bytes.
+-- * `style_bits_needed`: The number of bits the current lexer needs for
+--   styling. (Read-only)
+-- * `style_bold`: Flag indicating whether or not the indexed style is bold.
+-- * `style_case`: The case of an indexed style.<br />
+--       * 0: Mixed
+--       * 1: Upper
+--       * 2: Lower
+-- * `style_changeable`: Flag indicating whether or not the indexed style is
+--   changeable.
+-- * `style_character_set`: The character set of the font in the indexed style.
+-- * `style_eol_filled`: Flag indicating whether or not the indexed style's end
+--   of line is filled.
+-- * `style_font`: The font of the indexed style.
+-- * `style_fore`: The foreground [color][color] of the indexed style.
+-- * `style_hot_spot`: Flag indicating whether or not the indexed style is a
+--   hotspot.
+-- * `style_italic`: Flag indicating whether or not the indexed style is italic.
+-- * `style_size`: The font size of the indexed style.
+-- * `style_underline`: Flag indicating whether or not the indexed style is
+--   underlined.
+-- * `style_visible`: Flag indicating whether or not the indexed style is
+--   visible.
+-- * `tab_indents`: Flag indicating whether or not a tab press when the caret
+--   is within indentation indents.
+-- * `tab_width`: The visible size of a tab in multiples of the width of a space
+--   character.
+-- * `target_end`: The position that ends the target which is used for updating
+--   the document without affecting the scroll position.
+-- * `target_start`: The position that starts the target which is used for
+--   updating the document without affecting the scroll position.
+-- * `text_length`: The number of characters in the document. (Read-only)
+-- * `two_phase_draw`: Flag indicating whether or not drawing is performed in
+--   two phases: background and then foreground.
+-- * `undo_collection`: Flag indicating whether or not an undo history is being
+--   collected.
+-- * `use_palette`: Flag indicating whether or not Scintilla uses the env's
+--   palette calls to display more colors.
+-- * `use_tabs`: Flag indicating whether or not indentation uses tabs and spaces
+--   or just spaces.
+-- * `v_scroll_bar`: Flag indicating whether or not the vertical scroll bar is
+--   visible.
+-- * `view_eol`: Flag indicating whether or not end of line characters are
+--   visible.
+-- * `view_ws`: Flag indicating whether or not whitespace characters are visible.
+-- * `whitespace_chars`: The set of characters making up whitespace when moving
+--   or selecting by word. Should be called after setting word_chars.
+--   (Write-only)
+-- * `word_chars`: The set of characters making up words when moving or
 --   selecting by word. (Write-only)
--- @field wrap_mode Flag indicating whether or not text is word wrapped.
--- @field wrap_start_indent The start indent for wrapped lines.
--- @field wrap_visual_flags The display mode of visual flags for wrapped lines.
---   0: none, 1: end, 2: start.
--- @field wrap_visual_flags_location The location of visual flags for wrapped
---   lines. 0: default, 1: end by text, 2: start by text.
--- @field x_offset The horizontal scroll position.
--- @field zoom The zoom level added to all font sizes. +: magnify, -: reduce.
-buffer = {
-  doc_pointer = nil, dirty = nil, filename = nil,
-  encoding = nil, encoding_bom = nil,
-  anchor = nil,
-  auto_c_auto_hide = nil,
-  auto_c_cancel_at_start = nil,
-  auto_c_choose_single = nil,
-  auto_c_drop_rest_of_word = nil,
-  auto_c_fill_ups = nil,
-  auto_c_ignore_case = nil,
-  auto_c_max_height = nil,
-  auto_c_max_width = nil,
-  auto_c_separator = nil,
-  auto_c_type_separator = nil,
-  back_space_un_indents = nil,
-  buffered_draw = nil,
-  call_tip_back = nil,
-  call_tip_fore = nil,
-  call_tip_fore_hlt = nil,
-  call_tip_use_style = nil,
-  caret_fore = nil,
-  caret_line_back = nil,
-  caret_line_back_alpha = nil,
-  caret_line_visible = nil,
-  caret_period = nil,
-  caret_sticky = nil,
-  caret_style = nil,
-  caret_width = nil,
-  char_at = nil,
-  code_page = nil,
-  column = nil,
-  control_char_symbol = nil,
-  current_pos = nil,
-  cursor = nil,
-  direct_function buffer:= nil,
-  direct_pointer = nil,
-  doc_pointer = nil,
-  eol_mode = nil,
-  edge_colour = nil,
-  edge_column = nil,
-  edge_mode = nil,
-  end_at_last_line = nil,
-  end_styled = nil,
-  first_visible_line = nil,
-  focus = nil,
-  fold_expanded = nil,
-  fold_level = nil,
-  fold_parent = nil,
-  h_scroll_bar = nil,
-  highlight_guide = nil,
-  hotspot_active_underline = nil,
-  hotspot_single_line = nil,
-  indent = nil,
-  indentation_guides = nil,
-  indic_fore = nil,
-  indic_style = nil,
-  indic_under = nil,
-  indicator_current = nil,
-  indicator_value = nil,
-  key_words = nil,
-  layout_cache = nil,
-  length = nil,
-  lexer = nil,
-  line_count = nil,
-  line_end_position = nil,
-  line_indent_position = nil,
-  line_indentation = nil,
-  line_state = nil,
-  line_visible = nil,
-  lines_on_screen = nil,
-  margin_left = nil,
-  margin_mask_n = nil,
-  margin_right = nil,
-  margin_sensitive_n = nil,
-  margin_type_n = nil,
-  margin_width_n = nil,
-  max_line_state = nil,
-  mod_event_mask = nil,
-  modify = nil,
-  mouse_down_captures = nil,
-  mouse_dwell_time = nil,
-  overtype = nil,
-  paste_convert_endings = nil,
-  position_cache = nil,
-  print_colour_mode = nil,
-  print_magnification = nil,
-  print_wrap_mode = nil,
-  property = nil,
-  property_int = nil,
-  read_only = nil,
-  scroll_width = nil,
-  scroll_width_tracking = nil,
-  search_flags = nil,
-  sel_alpha = nil,
-  sel_eol_filled = nil,
-  selection_end = nil,
-  selection_is_rectangle = nil,
-  selection_mode = nil,
-  selection_start = nil,
-  status = nil,
-  style_at = nil,
-  style_back = nil,
-  style_bits = nil,
-  style_bits_needed = nil,
-  style_bold = nil,
-  style_case = nil,
-  style_changeable = nil,
-  style_character_set = nil,
-  style_eol_filled = nil,
-  style_font = nil,
-  style_fore = nil,
-  style_hot_spot = nil,
-  style_italic = nil,
-  style_size = nil,
-  style_underline = nil,
-  style_visible = nil,
-  tab_indents = nil,
-  tab_width = nil,
-  target_end = nil,
-  target_start = nil,
-  text_length = nil,
-  two_phase_draw = nil,
-  undo_collection = nil,
-  use_palette = nil,
-  use_tabs = nil,
-  v_scroll_bar = nil,
-  view_eol = nil,
-  view_ws = nil,
-  whitespace_chars = nil,
-  word_chars = nil,
-  wrap_mode = nil,
-  wrap_start_indent = nil,
-  wrap_visual_flags = nil,
-  wrap_visual_flags_location = nil,
-  x_offset = nil,
-  zoom = nil,
-}
+-- * `wrap_mode`: Flag indicating whether or not text is word wrapped.
+-- * `wrap_start_indent`: The start indent for wrapped lines.
+-- * `wrap_visual_flags`: The display mode of visual flags for wrapped lines.
+--   <br />
+--       * 0: None
+--       * 1: End
+--       * 2: Start
+-- * `wrap_visual_flags_location`: The location of visual flags for wrapped
+--   lines.<br />
+--       * 0: Default
+--       * 1: End by text
+--       * 2: Start by text
+-- * `x_offset`: The horizontal scroll position.
+-- * `zoom`: The zoom level added to all font sizes. +: magnify, -: reduce.
+--
+-- [textadept_iconv]: ../modules/textadept.html#iconv
+-- [color]: http://scintilla.org/ScintillaDoc.html#colour
 
 ---
 -- Gets a range of text from the current buffer.
@@ -463,7 +361,7 @@ function buffer:clear_all_cmd_keys()
 function buffer:clear_document_style()
 --- Clears all the registered XPM images.
 function buffer:clear_registered_images()
---- Colorizes a segment of the document using the current lexxing language.
+--- Colorizes a segment of the document using the current lexing language.
 function buffer:colourise(start_pos, end_pos)
 --- Converts all line endings in the document to one mode.
 -- @param mode The line ending mode. 0: CRLF, 1: CR, 2: LF.
@@ -529,7 +427,7 @@ function buffer:get_hotspot_active_back()
 function buffer:get_hotspot_active_fore()
 --- Returns the last child line of a header line.
 function buffer:get_last_child(header_line, level)
---- Returns the name of the lexxing language used by the document.
+--- Returns the name of the lexing language used by the document.
 function buffer:get_lexer_language()
 --- Returns the contents of a line.
 function buffer:get_line(line)
@@ -918,3 +816,19 @@ function buffer:wrap_count(line)
 function buffer:zoom_in()
 --- Makes the displayed text smaller by decreasing the font sizes by 1 point.
 function buffer:zoom_out()
+
+---
+-- @see textadept.io.reload
+function buffer:reload()
+---
+-- @see textadept.io.set_encoding
+function buffer:set_encoding()
+---
+-- @see textadept.io.save
+function buffer:save()
+---
+-- @see textadept.io.save_as
+function buffer:save_as()
+---
+-- @see textadept.io.close
+function buffer:close()
