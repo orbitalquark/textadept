@@ -90,33 +90,43 @@ $(TEXTADEPT_RC): textadept.rc
 clean:
 	rm ../$(TEXTADEPT) *.o
 
-# Package (Note: pass 'VERSION=[release version]' to 'make')
+# Package (only for Linux x86_64)
+# Pass 'VERSION=[release version]' to 'make'.
 
-ifndef WIN32
-ZIP = tar czf
-PACKAGE = textadept_$(value VERSION).tgz
-UNZIP = tar xzf
-else
-ZIP = zip -r
-PACKAGE = textadept_$(value VERSION).win32.zip
-UNZIP = unzip
-endif
-SRCPACKAGE = textadept.src.zip
+TEXTADEPT32 = $(TEXTADEPT)32
+TEXTADEPT64 = $(TEXTADEPT)
+TEXTADEPTWIN32 = $(TEXTADEPT).exe
+RELEASEDIR32 = textadept_$(value VERSION)
+RELEASEDIR64 = $(RELEASEDIR32).x86_64
+RELEASEDIRWIN32 = $(RELEASEDIR32).win32
+PACKAGE32 = ../releases/$(RELEASEDIR32).tgz
+PACKAGE64 = ../releases/$(RELEASEDIR64).tgz
+PACKAGEWIN32 = ../releases/$(RELEASEDIRWIN32).zip
+SRCPACKAGE = ../releases/$(RELEASEDIR32).src.zip
 
-RELEASEDIR = textadept_$(value VERSION)
-release: ../$(TEXTADEPT)
-	hg archive $(RELEASEDIR)
-	rm $(RELEASEDIR)/.hg*
-	sh -c 'cd ../ && ./update_doc'
-	cp -r ../doc $(RELEASEDIR)
+release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32)
+	hg archive $(RELEASEDIR32)
+	rm $(RELEASEDIR32)/.hg*
+	sh -c 'cd ../scripts && ./update_doc'
+	cp -r ../doc $(RELEASEDIR32)
 	svn export http://scite-tools.googlecode.com/svn/branches/scite-st/lexers \
-	  $(RELEASEDIR)/lexers
-	cp ../$(TEXTADEPT) $(RELEASEDIR)
-	$(ZIP) $(PACKAGE) $(RELEASEDIR)
-	rm -r $(RELEASEDIR)
-source: $(PACKAGE)
-	$(UNZIP) $(PACKAGE)
-	cp -r lua scintilla-st gcocoadialog $(RELEASEDIR)/src/
-	rm $(RELEASEDIR)/$(TEXTADEPT)
-	zip -r $(SRCPACKAGE) $(RELEASEDIR)
-	rm -r $(RELEASEDIR)
+	  $(RELEASEDIR32)/lexers
+	# Linux x64_64
+	cp -r $(RELEASEDIR32) $(RELEASEDIR64)
+	cp ../$(TEXTADEPT64) $(RELEASEDIR64)
+	tar czf $(PACKAGE64) $(RELEASEDIR64)
+	rm -r $(RELEASEDIR64)
+	# Win32
+	cp -r $(RELEASEDIR32) $(RELEASEDIRWIN32)
+	cp ../$(TEXTADEPTWIN32) $(RELEASEDIRWIN32)
+	zip -r $(PACKAGEWIN32) $(RELEASEDIRWIN32)
+	rm -r $(RELEASEDIRWIN32)
+	# Linux 32-bit
+	cp ../$(TEXTADEPT32) $(RELEASEDIR32)/$(TEXTADEPT)
+	tar czf $(PACKAGE32) $(RELEASEDIR32)
+	# Source
+	rm $(RELEASEDIR32)/$(TEXTADEPT)
+	cp -r lua scintilla-st gcocoadialog $(RELEASEDIR32)/src/
+	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
+	# Done
+	rm -r $(RELEASEDIR32)
