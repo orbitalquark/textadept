@@ -2,22 +2,24 @@
 
 # Manual
 
-* [Introduction](manual/1_Introduction.html)
-* [Installation](manual/2_Installation.html)
-* [Compiling](manual/3_Compiling.html)
-* [User Interface](manual/4_UserInterface.html)
-* [Folder Structure](manual/5_FolderStructure.html)
-* [Startup](manual/6_Startup.html)
-* [Lua Interface](manual/7_LuaInterface.html)
+* [Introduction](1_Introduction.html)
+* [Installation](2_Installation.html)
+* [Compiling](3_Compiling.html)
+* [User Interface](4_UserInterface.html)
+* [Folder Structure](5_FolderStructure.html)
+* [Startup](6_Startup.html)
+* [Lua Interface](7_LuaInterface.html)
 
 # Links
 
 * [Caladbolg.net](http://caladbolg.net)
-* [LuaDoc](index.html)
+* [LuaDoc](../index.html)
 * [Download](http://code.google.com/p/textadept/downloads/list)
 * [Mailing List](http://groups.google.com/group/textadept)
 * [Mercurial Repository](http://code.google.com/p/textadept/source/browse)
 * [Wiki](http://caladbolg.net/textadeptwiki)
+* [Bug Tracker](http://code.google.com/p/textadept/issues/list)
+* [Ohloh](http://ohloh.net/projects/textadept)
 
 # Donate
 

@@ -506,7 +506,7 @@ local actions = {
     function() if view.size then view.size = view.size - 10 end end
   },
   -- Help
-  [ID.MANUAL] = { open_webpage, _HOME..'/doc/manual.html' },
+  [ID.MANUAL] = { open_webpage, _HOME..'/doc/manual/1_Introduction.html' },
   [ID.LUADOC] = { open_webpage, _HOME..'/doc/index.html' },
 }
 if MAC then actions[ID.PASTE] = { m_editing.smart_paste } end -- fix paste issue
