@@ -277,6 +277,9 @@ function next()
   index = index + 1
   if index <= snippet.max_index then
     local s, e, next_item = s_text:find('%%'..index..'(%b())')
+    while next_item and next_item:find('|') do -- ignore transformation mirrors
+      s, e, next_item = s_text:find('%%'..index..'(%b())', e)
+    end
     if next_item and not next_item:find('|') then -- placeholder
       buffer.target_start, buffer.target_end = s_start, buffer.length
       buffer.search_flags = 0
