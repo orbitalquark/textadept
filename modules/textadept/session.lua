@@ -72,7 +72,7 @@ function load(filename, only_pm)
       local width, height = line:match('^size: (%d+) (%d+)$')
       if width and height then textadept.size = { width, height } end
     elseif line:find('^pm:') then
-      local width, cursor, text = line:match('^pm: (%d+) ([%d:]+) (.+)$')
+      local width, cursor, text = line:match('^pm: (%d+) ([%d:]+) (.*)$')
       textadept.pm.width = width or 0
       textadept.pm.entry_text = text or ''
       textadept.pm.activate()
