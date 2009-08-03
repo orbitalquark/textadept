@@ -4,7 +4,7 @@ local textadept = _G.textadept
 local locale = _G.locale
 
 ---
--- Provides Lua-centric snippets for Textadept.
+-- Provides Lua-style snippets for Textadept.
 module('_m.textadept.lsnippets', package.seeall)
 
 -- Markdown:
@@ -142,8 +142,160 @@ local snippet = {}
 -- The stack of currently running snippets.
 local snippet_stack = {}
 
--- Local functions.
-local snippet_info, run_lua_code, handle_escapes, unhandle_escapes, unescape
+-- Replaces escaped characters with their octal equivalents in a given string.
+-- @param s The string to handle escapes in.
+-- @return string with escapes handled.
+local function handle_escapes(s)
+  local byte = string.byte
+  return s:gsub('%%([%%`%)|#])',
+    function(char) ("\\%03d"):format(byte(char)) end)
+end
+
+-- Replaces octal characters with their escaped equivalents in a given string.
+-- @param s The string to unhandle escapes in.
+-- @return string with escapes unhandled.
+local function unhandle_escapes(s)
+  local char = string.char
+  return s:gsub('\\(%d%d%d)', function(byte) return '%'..char(byte) end)
+end
+
+-- Replaces escaped characters with the actual characters in a given string.
+-- This is used when escape sequences are no longer needed.
+-- @param s The string to unescape escapes in.
+-- @return string with escapes unescaped.
+local function unescape(s) return s:gsub('%%([%%`%)|#])', '%1') end
+
+-- Gets the start position, end position, and text of the currently running
+-- snippet.
+-- @return start pos, end pos, and snippet text.
+local function snippet_info()
+  local buffer = buffer
+  local s = snippet.start_pos
+  local e =
+    buffer:position_from_line(
+      buffer:marker_line_from_handle(snippet.end_marker)) - 1
+  if e >= s then return s, e, buffer:text_range(s, e) end
+end
+
+-- Runs the given Lua code.
+-- @param code The Lua code to run.
+-- @return string result from the code run.
+local function run_lua_code(code)
+  code = unhandle_escapes(code)
+  local env =
+    setmetatable({ selected_text = buffer:get_sel_text() }, { __index = _G })
+  local _, val = pcall(setfenv(loadstring('return '..code), env))
+  return val or ''
+end
+
+-- If previously at a placeholder or tab stop, attempts to mirror and/or
+-- transform the entered text at all appropriate mirrors before moving on to
+-- the next placeholder or tab stop.
+-- @return false if no snippet was expanded; nil otherwise
+local function next_tab_stop()
+  local buffer = buffer
+  local s_start, s_end, s_text = snippet_info()
+  if not s_text then
+    cancel_current()
+    return
+  end
+
+  local index = snippet.index
+  snippet.snapshots[index] = s_text
+  if index > 0 then
+    buffer:begin_undo_action()
+    local caret = math.max(buffer.anchor, buffer.current_pos)
+    local ph_text = buffer:text_range(snippet.ph_pos, caret)
+
+    -- Transform mirror.
+    s_text =
+      s_text:gsub('%%'..index..'(%b())',
+        function(mirror)
+          local pattern, replacement = mirror:match('^%(([^|]+)|(.+)%)$')
+          if not pattern and not replacement then return ph_text end
+          return ph_text:gsub(unhandle_escapes(pattern),
+            function(...)
+              local arg = {...}
+              local repl = replacement:gsub('%%(%d+)',
+                function(i) return arg[tonumber(i)] or '' end)
+              return repl:gsub('#(%b())', run_lua_code)
+            end)
+        end)
+
+    -- Regular mirror.
+    s_text = s_text:gsub('()%%'..index,
+      function(pos)
+        for mirror, e in s_text:gmatch('%%%d+(%b())()') do
+          local s = mirror:find('|')
+          if s and pos > s and pos < e then return nil end -- inside transform
+        end
+        return ph_text
+      end)
+
+    buffer:set_sel(s_start, s_end)
+    buffer:replace_sel(s_text)
+    s_start, s_end = snippet_info()
+    buffer:end_undo_action()
+  end
+
+  buffer:begin_undo_action()
+  index = index + 1
+  if index <= snippet.max_index then
+    -- Find the next tab stop.
+    local s, e, next_item
+    repeat -- ignore replacement mirrors
+      s, e, next_item = s_text:find('%%'..index..'(%b())', e)
+    until not s or next_item and not next_item:find('|')
+    if next_item then -- placeholder
+      buffer.target_start, buffer.target_end = s_start, buffer.length
+      buffer.search_flags = 0
+      buffer:search_in_target('%'..index..next_item)
+      next_item = next_item:gsub('#(%b())', run_lua_code)
+      next_item = unhandle_escapes(next_item:sub(2, -2))
+      buffer:replace_target(next_item)
+      buffer:set_sel(buffer.target_start, buffer.target_start + #next_item)
+      snippet.ph_pos = buffer.target_start
+    else
+      repeat -- ignore placeholders
+        local found = true
+        s, e = (s_text..' '):find('%%'..index..'[^(]', e)
+        if not s then
+          snippet.index = index + 1
+          next_tab_stop()
+          return
+        end
+        for p_s, p_e in s_text:gmatch('%%%d+()%b()()') do
+          if s > p_s and s < p_e then
+            found = false
+            break
+          end
+        end
+      until found
+      buffer:set_sel(s_start + s - 1, s_start + e - 1)
+      buffer:replace_sel('') -- replace_target() doesn't place caret
+      snippet.ph_pos = s_start + s - 1
+    end
+    snippet.index = index
+  else
+    -- Finished. Find '%0' and place the caret there.
+    s_text = unescape(unhandle_escapes(s_text))
+    buffer:set_sel(s_start, s_end)
+    buffer:replace_sel(s_text)
+    s_start, s_end = snippet_info()
+    if s_end then
+      buffer:goto_pos(s_end + 1)
+      buffer:delete_back()
+    end
+    local s, e = s_text:find('%%0')
+    if s and e then
+      buffer:set_sel(s_start + s - 1, s_start + e)
+      buffer:replace_sel('')
+    end
+    buffer:marker_delete_handle(snippet.end_marker)
+    snippet = #snippet_stack > 0 and table.remove(snippet_stack) or {}
+  end
+  buffer:end_undo_action()
+end
 
 ---
 -- Begins expansion of a snippet.
@@ -225,120 +377,7 @@ function insert(s_text)
     buffer:end_undo_action()
   end
 
-  return next() ~= false
-end
-
----
--- If previously at a placeholder or tab stop, attempts to mirror and/or
--- transform the entered text at all appropriate mirrors before moving on to
--- the next placeholder or tab stop.
--- @return false if no snippet was expanded; nil otherwise
-function next()
-  if not snippet.index then return false end -- no snippet was expanded
-  local buffer = buffer
-  local s_start, s_end, s_text = snippet_info()
-  if not s_text then
-    cancel_current()
-    return
-  end
-
-  local index = snippet.index
-  snippet.snapshots[index] = s_text
-  if index > 0 then
-    buffer:begin_undo_action()
-    local caret = math.max(buffer.anchor, buffer.current_pos)
-    local ph_text = buffer:text_range(snippet.ph_pos, caret)
-
-    -- Transform mirror.
-    s_text =
-      s_text:gsub('%%'..index..'(%b())',
-        function(mirror)
-          local pattern, replacement = mirror:match('^%(([^|]+)|(.+)%)$')
-          if not pattern and not replacement then return ph_text end
-          return ph_text:gsub(unhandle_escapes(pattern),
-            function(...)
-              local arg = {...}
-              local repl = replacement:gsub('%%(%d)',
-                function(i) return arg[tonumber(i)] or '' end)
-              return repl:gsub('#(%b())', run_lua_code)
-            end)
-        end)
-
-    -- Regular mirror.
-    s_text = s_text:gsub('%%'..index, ph_text)
-
-    buffer:set_sel(s_start, s_end)
-    buffer:replace_sel(s_text)
-    s_start, s_end = snippet_info()
-    buffer:end_undo_action()
-  end
-
-  buffer:begin_undo_action()
-  index = index + 1
-  if index <= snippet.max_index then
-    local s, e, next_item = s_text:find('%%'..index..'(%b())')
-    while next_item and next_item:find('|') do -- ignore transformation mirrors
-      s, e, next_item = s_text:find('%%'..index..'(%b())', e)
-    end
-    if next_item and not next_item:find('|') then -- placeholder
-      buffer.target_start, buffer.target_end = s_start, buffer.length
-      buffer.search_flags = 0
-      s = buffer:search_in_target('%'..index..next_item)
-      e = buffer.target_end
-      next_item = next_item:gsub('#(%b())', run_lua_code)
-      next_item = unhandle_escapes(next_item:sub(2, -2))
-      buffer:set_sel(s, e)
-      buffer:replace_sel(next_item)
-      buffer:set_sel(s, s + #next_item)
-    else -- use the first mirror as a placeholder
-      s, e = nil, nil
-      buffer.target_start, buffer.target_end = s_start, buffer.length
-      buffer.search_flags = 2097152 -- regexp
-      if buffer:search_in_target('%'..index..'[^(]') ~= -1 then
-        s, e = buffer.target_start, buffer.target_end
-      end
-      if not s and not e then
-        s, e = nil, nil
-        -- Scintilla cannot match [\r\n\f] in regexp mode; use '$' instead
-        buffer.target_start, buffer.target_end = s_start, buffer.length
-        if buffer:search_in_target('%'..index..'$') ~= -1 then
-          s, e = buffer.target_start, buffer.target_end
-        end
-        if e then e = e + 1 end
-      end
-      if not s then
-        snippet.index = index + 1
-        next()
-        return
-      end
-      buffer:set_sel(s, e - 1)
-      buffer:replace_sel('')
-    end
-    snippet.ph_pos = s
-    snippet.index = index
-  else
-    s_text = unescape(unhandle_escapes(s_text:gsub('%%0', '%%__caret')))
-    buffer:set_sel(s_start, s_end)
-    buffer:replace_sel(s_text)
-    s_start, s_end = snippet_info()
-    if s_end then
-      buffer:goto_pos(s_end + 1)
-      buffer:delete_back()
-    end
-    buffer.target_start, buffer.target_end = s_start, buffer.length
-    buffer.search_flags = 4
-    local s, e
-    if buffer:search_in_target('%__caret') ~= -1 then
-      s, e = buffer.target_start, buffer.target_end
-    end
-    if s and s <= s_end then
-      buffer:set_sel(s, e)
-      buffer:replace_sel('')
-    end
-    buffer:marker_delete_handle(snippet.end_marker)
-    snippet = #snippet_stack > 0 and table.remove(snippet_stack) or {}
-  end
-  buffer:end_undo_action()
+  return next_tab_stop() ~= false
 end
 
 ---
@@ -355,7 +394,7 @@ function prev()
     buffer:set_sel(s_start, s_end)
     buffer:replace_sel(s_text)
     snippet.index = index - 2
-    next()
+    next_tab_stop()
   else
     cancel_current()
   end
