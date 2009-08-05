@@ -140,13 +140,13 @@ if not MAC then
 
   -- Edit
   local m_editing = _m.textadept.editing
-  -- Undo is cz.
-  -- Redo is cy.
-  -- Cut is cx.
-  -- Copy is cc.
-  -- Paste is cv.
+  keys.cz = { 'undo', b       }
+  keys.cy = { 'redo', b       }
+  keys.cx = { 'cut', b        }
+  keys.cc = { 'copy', b       }
+  keys.cv = { 'paste', b      }
   -- Delete is delete.
-  -- Select All is ca.
+  keys.ca = { 'select_all', b }
   keys.ce     = { m_editing.match_brace              }
   keys.cse    = { m_editing.match_brace, 'select'    }
   keys['c\n'] = { m_editing.autocomplete_word, '%w_' }
@@ -221,7 +221,7 @@ if not MAC then
 
   -- Buffers
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
-  keys['ca\t'] = { 'goto_buffer', v, -1, false }
+  keys['cs\t'] = { 'goto_buffer', v, -1, false }
   local function toggle_setting(setting)
     local state = buffer[setting]
     if type(state) == 'boolean' then
@@ -410,7 +410,7 @@ else
 
   -- Buffers
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
-  keys['ca\t'] = { 'goto_buffer', v, -1, false }
+  keys['cs\t'] = { 'goto_buffer', v, -1, false }
   local function toggle_setting(setting)
     local state = buffer[setting]
     if type(state) == 'boolean' then
