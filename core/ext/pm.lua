@@ -31,7 +31,8 @@ textadept.events.add_handler('pm_item_selected',
 
 textadept.events.add_handler('pm_context_menu_request',
   function(selected_item, event)
-    pm.show_context_menu(current_browser.get_context_menu(selected_item), event)
+    local menu = current_browser.get_context_menu(selected_item)
+    if menu then pm.show_context_menu(menu, event) end
   end)
 
 textadept.events.add_handler('pm_menu_clicked',
