@@ -193,6 +193,7 @@ end
 -- the next placeholder or tab stop.
 -- @return false if no snippet was expanded; nil otherwise
 local function next_tab_stop()
+  if not snippet.index then return false end -- no snippet active
   local buffer = buffer
   local s_start, s_end, s_text = snippet_info()
   if not s_text then
