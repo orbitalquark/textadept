@@ -118,7 +118,8 @@ local function set_lexer(buffer, lang)
 end
 textadept.events.add_handler('buffer_new',
   function() buffer.set_lexer = set_lexer end)
-buffer.set_lexer = set_lexer -- Scintilla's first buffer doesn't have this
+-- Scintilla's first buffer doesn't have this
+if not RESETTING then buffer.set_lexer = set_lexer end
 
 -- Performs actions suitable for a new buffer.
 -- Sets the buffer's lexer language and loads the language module.
