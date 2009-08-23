@@ -14,15 +14,11 @@ local lfs = require 'lfs'
 local os = require 'os'
 
 local INIT = [[
--- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
-
----
 -- The $1 module.
 -- It provides utilities for editing $2 code.
 module('_m.$1', package.seeall)
 
 if type(_G.snippets) == 'table' then
----
 -- Container for $2-specific snippets.
 -- @class table
 -- @name snippets.$1
@@ -30,7 +26,6 @@ if type(_G.snippets) == 'table' then
 end
 
 if type(_G.keys) == 'table' then
----
 -- Container for $2-specific key commands.
 -- @class table
 -- @name keys.$1
@@ -46,9 +41,6 @@ end
 ]]
 
 local SNIPPETS = [[
--- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
-
----
 -- Snippets for the $1 module.
 module('_m.$1.snippets', package.seeall)
 
@@ -60,9 +52,6 @@ end
 ]]
 
 local COMMANDS = [[
--- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
-
----
 -- Commands for the $1 module.
 module('_m.$1.commands', package.seeall)
 
@@ -72,7 +61,7 @@ if type(keys) == 'table' then
   keys.$1 = {
     al = {
       m = { textadept.io.open,
-            textadept.iconv(_HOME..'/modules/$1/init.lua',
+      textadept.iconv(_USERHOME..'/modules/$1/init.lua'''''),
                             'UTF-8', _CHARSET) },
     },
   }
@@ -83,25 +72,41 @@ function matches(entry_text)
   return entry_text:sub(1, 7) == 'modules'
 end
 
-local function modify_path(path)
-  local new_path = {}
-  for _, v in ipairs(path) do new_path[#new_path + 1] = v end
-  new_path[1] = textadept.iconv(_HOME..'/modules', 'UTF-8', _CHARSET)
-  return new_path
-end
-
 function get_contents_for(full_path)
-  full_path = modify_path(full_path)
-  local iconv = textadept.iconv
   local dir = {}
-  local dirpath = iconv(table.concat(full_path, '/'), _CHARSET, 'UTF-8')
-  for filename in lfs.dir(dirpath) do
-    if not filename:find('^%.') then
-      local utf8_filename = iconv(filename, 'UTF-8', _CHARSET)
-      dir[utf8_filename] = { text = utf8_filename }
-      if lfs.attributes(dirpath..'/'..filename, 'mode') == 'directory' then
-        dir[utf8_filename].parent = true
-        dir[utf8_filename].pixbuf = 'gtk-directory'
+  local iconv = textadept.iconv
+  if #full_path == 1 and full_path[1] == 'modules' then
+    -- toplevel modules
+    local dirpaths = {
+      iconv(_USERHOME..'/modules', _CHARSET, 'UTF-8'),
+      iconv(_HOME..'/modules', _CHARSET, 'UTF-8')
+    }
+    for _, dirpath in ipairs(dirpaths) do
+      if lfs.attributes(dirpath) then
+        for filename in lfs.dir(dirpath) do
+          local filepath = dirpath..'/'..filename
+          if lfs.attributes(filepath, 'mode') == 'directory' and
+             not filename:find('^%.') then
+            dir[filepath] = {
+              parent = true,
+              pixbuf = 'gtk-directory',
+              text = iconv(filename, 'UTF-8', _CHARSET)
+            }
+          end
+        end
+      end
+    end
+  else
+    -- expanding a module
+    local dirpath = iconv(full_path[#full_path], _CHARSET, 'UTF-8')
+    for filename in lfs.dir(dirpath) do
+      if not filename:find('^%.') then
+        local filepath = dirpath..'/'..filename
+        dir[filepath] = { text = iconv(filename, 'UTF-8', _CHARSET) }
+        if lfs.attributes(filepath, 'mode') == 'directory' then
+          dir[filepath].parent = true
+          dir[filepath].pixbuf = 'gtk-directory'
+        end
       end
     end
   end
@@ -109,9 +114,8 @@ function get_contents_for(full_path)
 end
 
 function perform_action(selected_item)
-  selected_item = modify_path(selected_item)
-  local utf8_filepath = table.concat(selected_item, '/')
-  textadept.io.open(utf8_filepath)
+  local filepath = selected_item[#selected_item]
+  textadept.io.open(filepath)
   view:focus()
 end
 
@@ -146,7 +150,8 @@ function perform_menu_action(menu_id, selected_item)
                          locale.PM_BROWSER_MODULE_NEW_LANG_INFO_TEXT
                        ):match('^(%d)%s+([^\n]+)%s+$')
     if status ~= '1' then return end
-    local module_dir = _HOME..'/modules/'..module_name
+    lfs.mkdir(_USERHOME..'/modules')
+    local module_dir = _USERHOME..'/modules/'..module_name
     if lfs.mkdir(module_dir) then
       -- write init.lua from template
       local f = io.open(module_dir..'/init.lua', 'wb')
@@ -172,12 +177,12 @@ function perform_menu_action(menu_id, selected_item)
       return
     end
   elseif menu_id == ID.DELETE then
-    local module_name = selected_item[2]
+    local dirpath = selected_item[2]
     if textadept.dialog('yesno-msgbox',
                         '--text', locale.PM_BROWSER_MODULE_DELETE_TITLE,
                         '--informative-text',
                           string.format(locale.PM_BROWSER_MODULE_DELETE_TEXT,
-                                        module_name),
+                                        dirpath:match('[^/\\]+$')),
                         '--no-cancel',
                         '--no-newline') == '1' then
       local function remove_directory(dirpath)
@@ -186,7 +191,7 @@ function perform_menu_action(menu_id, selected_item)
         end
         lfs.rmdir(dirpath)
       end
-      remove_directory(_HOME..'/modules/'..module_name)
+      remove_directory(dirpath)
     else
       return
     end
