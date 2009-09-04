@@ -32,6 +32,7 @@ style_preproc     = style { fore = colors.yellow             }
 style_tag         = style { fore = colors.teal               }
 style_type        = style { fore = colors.blue               }
 style_variable    = style { fore = colors.black              }
+style_whitespace  = style {                                  }
 style_identifier  = style_nothing
 
 -- Default styles.

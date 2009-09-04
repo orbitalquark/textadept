@@ -39,6 +39,7 @@ style_preproc    = style { fore = colors.red                      }
 style_tag        = style { fore = colors.teal,   bold      = true }
 style_type       = style { fore = colors.green                    }
 style_variable   = style { fore = colors.red                      }
+style_whitespace = style {                                        }
 style_embedded   = style_tag..{ back = color('DD', 'DD', 'DD')    }
 style_identifier = style_nothing
 
