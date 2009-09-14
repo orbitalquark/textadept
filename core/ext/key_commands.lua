@@ -187,6 +187,7 @@ if not MAC then
 
   -- Search
   keys.cf = { t.find.focus } -- find/replace
+  keys['f3'] = { t.find.find_next }
   -- Find Next is an when find pane is focused.
   -- Find Prev is ap when find pane is focused.
   -- Replace is ar when find pane is focused.
@@ -371,9 +372,9 @@ else
 
   -- Search
   keys.af  = { t.find.focus            } -- find/replace
-  keys.ag  = { t.find.call_find_next   }
-  keys.sag = { t.find.call_find_prev   }
-  keys.ar  = { t.find.call_replace     }
+  keys.ag  = { t.find.find_next   }
+  keys.sag = { t.find.find_prev   }
+  keys.ar  = { t.find.replace     }
   keys.ai  = { t.find.find_incremental }
   keys.saf = {
     function()
