@@ -75,7 +75,7 @@ function gtkmenu(menu_table) end
 -- @param text The text to convert.
 -- @param to The character set to convert to.
 -- @param from The character set to convert from.
-function iconv(text, to, from)
+function iconv(text, to, from) end
 
 ---
 -- Resets the Lua state by reloading all init scripts.
@@ -109,7 +109,7 @@ function check_focused_buffer(buffer) end
 -- @param ... Message strings.
 -- @usage textadept._print(locale.ERROR_BUFFER, error_message)
 -- @usage textadept._print(locale.MESSAGE_BUFFER, message)
-function _print(buffer_type, ...)
+function _print(buffer_type, ...) end
 
 ---
 -- Prints messages to the Textadept message buffer.
@@ -121,4 +121,4 @@ function print(...) end
 -- Displays a CocoaDialog of a specified type with the given string arguments.
 -- Each argument is like a string in Lua's 'arg' table.
 -- @return string CocoaDialog result.
-function dialog(kind, ...)
+function dialog(kind, ...) end
