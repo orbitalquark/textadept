@@ -28,7 +28,9 @@ DEFAULT_SESSION = _USERHOME..'/session'
 -- @usage _m.textadept.session.load(filename)
 function load(filename, only_pm)
   local f = io.open(filename or DEFAULT_SESSION, 'rb')
-  if not f or not textadept.io.close_all() then return false end
+  if not only_pm and not f then
+    if not textadept.io.close_all() then return false end
+  end
   local current_view, splits = 1, { [0] = {} }
   for line in f:lines() do
     if not only_pm then
