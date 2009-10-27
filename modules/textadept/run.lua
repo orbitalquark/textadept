@@ -17,7 +17,12 @@ module('_m.textadept.run', package.seeall)
 --     * %(filename_noext) The name of the file excluding extension.
 function execute(command)
   local filepath = textadept.iconv(buffer.filename, _CHARSET, 'UTF-8')
-  local filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
+  local filedir, filename
+  if filepath:find('[/\\]') then
+    filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
+  else
+    filedir, filename = '', filepath
+  end
   local filename_noext = filename:match('^(.+)%.')
   command = command:gsub('%%%b()', {
     ['%(filepath)'] = filepath,
