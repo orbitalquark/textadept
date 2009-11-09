@@ -242,9 +242,7 @@ add_handler('view_new',
     buffer.property['lexer.lua.home'] = _LEXERPATH
     buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
     if _THEME and #_THEME > 0 then
-      local tfile = _THEME..'/lexer.lua'
-      if not _THEME:find('[/\\]') then tfile = _HOME..'/themes/'..tfile end
-      buffer.property['lexer.lua.color.theme'] = tfile
+      buffer.property['lexer.lua.color.theme'] = _THEME..'/lexer.lua'
     end
 
     -- lexer
@@ -261,9 +259,7 @@ add_handler('view_new',
     buffer:clear_cmd_key(string.byte('A'), c.SCMOD_CTRL)
 
     if _THEME and #_THEME > 0 then
-      local vfile = _THEME..'/view.lua'
-      if not _THEME:find('[/\\]') then vfile = _HOME..'/themes/'..vfile end
-      local ret, errmsg = pcall(dofile, vfile)
+      local ret, errmsg = pcall(dofile, _THEME..'/view.lua')
       if ret then return end
       io.stderr:write(errmsg)
     end
@@ -327,9 +323,7 @@ add_handler('buffer_new',
       buffer.code_page = textadept.constants.SC_CP_UTF8
 
       if _THEME and #_THEME > 0 then
-        local bfile = _THEME..'/buffer.lua'
-        if not _THEME:find('[/\\]') then bfile = _HOME..'/themes/'..bfile end
-        local ret, errmsg = pcall(dofile, bfile)
+        local ret, errmsg = pcall(dofile, _THEME..'/buffer.lua')
         if ret then return end
         io.stderr:write(errmsg)
       end
