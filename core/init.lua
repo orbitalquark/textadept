@@ -17,6 +17,13 @@ if f then
   f:close()
   if theme and #theme > 0 then _THEME = theme end
 end
+theme = _THEME
+if not theme:find('[/\\]') then
+  _THEME = _HOME..'/themes/'..theme
+  if not lfs.attributes(_THEME) then
+    _THEME = _USERHOME..'/themes/'..theme
+  end
+end
 
 require 'iface'
 require 'locale'
