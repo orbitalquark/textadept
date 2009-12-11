@@ -31,6 +31,7 @@ function load(filename, only_pm)
   if not only_pm and not f then
     if not textadept.io.close_all() then return false end
   end
+  if not f then return false end
   local current_view, splits = 1, { [0] = {} }
   for line in f:lines() do
     if not only_pm then
