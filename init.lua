@@ -56,11 +56,21 @@ if not RESETTING then
   if #arg == 0 then
     _m.textadept.session.load()
   else
+    -- process command line switches
+    for i, switch in ipairs(arg) do
+      if switch == '-ns' or switch == '--no-session' then
+        _m.textadept.session.SAVE_ON_QUIT = false
+        table.remove(arg, i)
+      end
+    end
+
+    -- open files
     local base_dir = arg[0]:match('^.+/') or ''
     for _, filename in ipairs(arg) do
       if not filename:find('^~?/') then filename = base_dir..filename end
       textadept.io.open(filename)
     end
+
     -- read only the Project Manager session settings
     if not _m.textadept.session.load(nil, true) then
       textadept.pm.entry_text = 'buffers'
