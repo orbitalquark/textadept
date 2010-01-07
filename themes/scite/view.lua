@@ -1,4 +1,4 @@
--- Copyright 2007-2009 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- SciTE editor theme for Textadept.
 
 local textadept = _G.textadept
