@@ -150,6 +150,7 @@ if not MAC then
   keys.ce     = { m_editing.match_brace              }
   keys.cse    = { m_editing.match_brace, 'select'    }
   keys['c\n'] = { m_editing.autocomplete_word, '%w_' }
+  keys['c\n\r'] = { m_editing.autocomplete_word, '%w_' } -- win32
   keys.cq     = { m_editing.block_comment            }
   -- TODO: { m_editing.current_word, 'delete' }
   -- TODO: { m_editing.transpose_chars }
