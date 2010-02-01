@@ -107,7 +107,8 @@ local t = textadept
 -- SHIFT = 's'
 -- ALT = 'a'
 -- ADD = ''
--- Control, Shift, Alt, and 'a' = 'csaa'
+-- Control, Shift, Alt, and 'a' = 'caA'
+-- Control, Shift, Alt, and '\t' = 'csa\t'
 
 if not MAC then
   -- Windows and Linux key commands.
@@ -131,9 +132,9 @@ if not MAC then
   keys.co  = { t.io.open      }
   -- TODO: { 'reload', b }
   keys.cs  = { 'save', b      }
-  keys.css = { 'save_as', b   }
+  keys.cS  = { 'save_as', b   }
   keys.cw  = { 'close', b     }
-  keys.csw = { t.io.close_all }
+  keys.cW  = { t.io.close_all }
   -- TODO: { m_session.load } after prompting with open dialog
   -- TODO: { m_session.save } after prompting with save dialog
   keys.aq = { t.quit }
@@ -148,7 +149,7 @@ if not MAC then
   -- Delete is delete.
   keys.ca = { 'select_all', b }
   keys.ce     = { m_editing.match_brace              }
-  keys.cse    = { m_editing.match_brace, 'select'    }
+  keys.cE     = { m_editing.match_brace, 'select'    }
   keys['c\n'] = { m_editing.autocomplete_word, '%w_' }
   keys['c\n\r'] = { m_editing.autocomplete_word, '%w_' } -- win32
   keys.cq     = { m_editing.block_comment            }
@@ -162,23 +163,23 @@ if not MAC then
   -- TODO: { m_editing.smart_paste, 'cycle' }
   -- TODO: { m_editing.smart_paste, 'reverse' }
   keys.ac = { -- enClose in...
-    t      = { m_editing.enclose, 'tag'        },
-    st     = { m_editing.enclose, 'single_tag' },
-    ['s"'] = { m_editing.enclose, 'dbl_quotes' },
-    ["'"]  = { m_editing.enclose, 'sng_quotes' },
-    ['s('] = { m_editing.enclose, 'parens'     },
-    ['[']  = { m_editing.enclose, 'brackets'   },
-    ['s{'] = { m_editing.enclose, 'braces'     },
-    c      = { m_editing.enclose, 'chars'      },
+    t     = { m_editing.enclose, 'tag'        },
+    T     = { m_editing.enclose, 'single_tag' },
+    ['"'] = { m_editing.enclose, 'dbl_quotes' },
+    ["'"] = { m_editing.enclose, 'sng_quotes' },
+    ['('] = { m_editing.enclose, 'parens'     },
+    ['['] = { m_editing.enclose, 'brackets'   },
+    ['{'] = { m_editing.enclose, 'braces'     },
+    c     = { m_editing.enclose, 'chars'      },
   }
   keys.as = { -- select in...
-    t      = { m_editing.select_enclosed, 'tags'       },
-    ['s"'] = { m_editing.select_enclosed, 'dbl_quotes' },
-    ["'"]  = { m_editing.select_enclosed, 'sng_quotes' },
-    ['s('] = { m_editing.select_enclosed, 'parens'     },
-    ['[']  = { m_editing.select_enclosed, 'brackets'   },
-    ['s{'] = { m_editing.select_enclosed, 'braces'     },
-    w      = { m_editing.current_word, 'select'        },
+    t     = { m_editing.select_enclosed, 'tags'       },
+    ['"'] = { m_editing.select_enclosed, 'dbl_quotes' },
+    ["'"] = { m_editing.select_enclosed, 'sng_quotes' },
+    ['('] = { m_editing.select_enclosed, 'parens'     },
+    ['['] = { m_editing.select_enclosed, 'brackets'   },
+    ['{'] = { m_editing.select_enclosed, 'braces'     },
+    w     = { m_editing.current_word, 'select'        },
     l      = { m_editing.select_line                   },
     p      = { m_editing.select_paragraph              },
     b      = { m_editing.select_indented_block         },
@@ -192,7 +193,7 @@ if not MAC then
   -- Find Next is an when find pane is focused.
   -- Find Prev is ap when find pane is focused.
   -- Replace is ar when find pane is focused.
-  keys.csf = { t.find.find_incremental }
+  keys.cF = { t.find.find_incremental }
   -- Find in Files is ai when find pane is focused.
   -- TODO: { t.find.goto_file_in_list, true  }
   -- TODO: { t.find.goto_file_in_list, false }
@@ -202,24 +203,24 @@ if not MAC then
   keys['f2'] = { t.command_entry.focus }
   -- Run
   local m_run = _m.textadept.run
-  keys.cr  = { m_run.go      }
-  keys.csr = { m_run.compile }
+  keys.cr = { m_run.go      }
+  keys.cR = { m_run.compile }
   -- Snippets
   local m_snippets = _m.textadept.lsnippets
   keys['\t']  = { m_snippets.insert         }
   keys['s\t'] = { m_snippets.prev           }
   keys.cai    = { m_snippets.cancel_current }
-  keys.csai   = { m_snippets.list           }
+  keys.caI    = { m_snippets.list           }
   keys.ai     = { m_snippets.show_style     }
   -- Multiple Line Editing
   local m_mlines = _m.textadept.mlines
-  keys.cm    = {}
-  keys.cm.a  = { m_mlines.add             }
-  keys.cm.sa = { m_mlines.add_multiple    }
-  keys.cm.r  = { m_mlines.remove          }
-  keys.cm.sr = { m_mlines.remove_multiple }
-  keys.cm.u  = { m_mlines.update          }
-  keys.cm.c  = { m_mlines.clear           }
+  keys.cm   = {}
+  keys.cm.a = { m_mlines.add             }
+  keys.cm.A = { m_mlines.add_multiple    }
+  keys.cm.r = { m_mlines.remove          }
+  keys.cm.R = { m_mlines.remove_multiple }
+  keys.cm.u = { m_mlines.update          }
+  keys.cm.c = { m_mlines.clear           }
 
   -- Buffers
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
@@ -244,12 +245,12 @@ if not MAC then
 
   -- Views
   keys.cav = {
-    n  = { t.goto_view, 1, false                      },
-    p  = { t.goto_view, -1, false                     },
-    ss = { 'split', v                                 }, -- vertical
-    s  = { 'split', v, false                          }, -- horizontal
-    w  = { function() view:unsplit() return true end  },
-    sw = { function() while view:unsplit() do end end },
+    n = { t.goto_view, 1, false                      },
+    p = { t.goto_view, -1, false                     },
+    S = { 'split', v                                 }, -- vertical
+    s = { 'split', v, false                          }, -- horizontal
+    w = { function() view:unsplit() return true end  },
+    W = { function() while view:unsplit() do end end },
     -- TODO: { function() view.size = view.size + 10 end  }
     -- TODO: { function() view.size = view.size - 10 end  }
   }
@@ -259,8 +260,8 @@ if not MAC then
     t.pm.entry_text = text
     t.pm.activate()
   end
-  keys.csp = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
-  keys.cp  = {
+  keys.cP = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
+  keys.cp = {
     function()
       if t.pm.width == 0 then t.pm.toggle_visible() end
       t.pm.focus()
@@ -312,13 +313,13 @@ else
 
   -- File
   local m_session = _m.textadept.session
-  keys.an  = { t.new_buffer   }
-  keys.ao  = { t.io.open      }
+  keys.an = { t.new_buffer   }
+  keys.ao = { t.io.open      }
   -- TODO: { 'reload', b }
-  keys.as  = { 'save', b      }
-  keys.sas = { 'save_as', b   }
-  keys.aw  = { 'close', b     }
-  keys.saw = { t.io.close_all }
+  keys.as = { 'save', b      }
+  keys.aS = { 'save_as', b   }
+  keys.aw = { 'close', b     }
+  keys.aW = { t.io.close_all }
   -- TODO: { m_session.load } after prompting with open dialog
   -- TODO: { m_session.save } after prompting with save dialog
   keys.aq = { t.quit }
@@ -326,14 +327,14 @@ else
   -- Edit
   local m_editing = _m.textadept.editing
   keys.az  = { 'undo', b                       }
-  keys.saz = { 'redo', b                       }
+  keys.aZ  = { 'redo', b                       }
   keys.ax  = { 'cut', b                        }
   keys.ac  = { m_editing.smart_cutcopy, 'copy' }
   keys.av  = { m_editing.smart_paste           }
   -- Delete is delete.
   keys.aa  = { 'select_all', b }
   keys.cm  = { m_editing.match_brace              }
-  keys.sae = { m_editing.match_brace, 'select'    }
+  keys.aE  = { m_editing.match_brace, 'select'    }
   keys.esc = { m_editing.autocomplete_word, '%w_' }
   keys.cq  = { m_editing.block_comment            }
   -- TODO: { m_editing.current_word, 'delete' }
@@ -342,73 +343,73 @@ else
   -- TODO: { m_editing.convert_indentation }
   keys.ck = { m_editing.smart_cutcopy }
   -- TODO: { m_editing.smart_cutcopy, 'copy' }
-  keys.cy  = { m_editing.smart_paste            }
-  keys.ay  = { m_editing.smart_paste, 'cycle'   }
-  keys.say = { m_editing.smart_paste, 'reverse' }
+  keys.cy = { m_editing.smart_paste            }
+  keys.ay = { m_editing.smart_paste, 'cycle'   }
+  keys.aY = { m_editing.smart_paste, 'reverse' }
   keys.cc = { -- enClose in...
-    t      = { m_editing.enclose, 'tag'        },
-    st     = { m_editing.enclose, 'single_tag' },
-    ['s"'] = { m_editing.enclose, 'dbl_quotes' },
-    ["'"]  = { m_editing.enclose, 'sng_quotes' },
-    ['s('] = { m_editing.enclose, 'parens'     },
-    ['[']  = { m_editing.enclose, 'brackets'   },
-    ['s{'] = { m_editing.enclose, 'braces'     },
-    c      = { m_editing.enclose, 'chars'      },
+    t     = { m_editing.enclose, 'tag'        },
+    T     = { m_editing.enclose, 'single_tag' },
+    ['"'] = { m_editing.enclose, 'dbl_quotes' },
+    ["'"] = { m_editing.enclose, 'sng_quotes' },
+    ['('] = { m_editing.enclose, 'parens'     },
+    ['['] = { m_editing.enclose, 'brackets'   },
+    ['{'] = { m_editing.enclose, 'braces'     },
+    c     = { m_editing.enclose, 'chars'      },
   }
   keys.cs = { -- select in...
-    e      = { m_editing.select_enclosed               },
-    t      = { m_editing.select_enclosed, 'tags'       },
-    ['s"'] = { m_editing.select_enclosed, 'dbl_quotes' },
-    ["'"]  = { m_editing.select_enclosed, 'sng_quotes' },
-    ['s('] = { m_editing.select_enclosed, 'parens'     },
-    ['[']  = { m_editing.select_enclosed, 'brackets'   },
-    ['s{'] = { m_editing.select_enclosed, 'braces'     },
-    w      = { m_editing.current_word, 'select'        },
-    l      = { m_editing.select_line                   },
-    p      = { m_editing.select_paragraph              },
-    b      = { m_editing.select_indented_block         },
-    s      = { m_editing.select_scope                  },
-    g      = { m_editing.grow_selection, 1             },
+    e     = { m_editing.select_enclosed               },
+    t     = { m_editing.select_enclosed, 'tags'       },
+    ['"'] = { m_editing.select_enclosed, 'dbl_quotes' },
+    ["'"] = { m_editing.select_enclosed, 'sng_quotes' },
+    ['('] = { m_editing.select_enclosed, 'parens'     },
+    ['['] = { m_editing.select_enclosed, 'brackets'   },
+    ['{'] = { m_editing.select_enclosed, 'braces'     },
+    w     = { m_editing.current_word, 'select'        },
+    l     = { m_editing.select_line                   },
+    p     = { m_editing.select_paragraph              },
+    b     = { m_editing.select_indented_block         },
+    s     = { m_editing.select_scope                  },
+    g     = { m_editing.grow_selection, 1             },
   }
 
   -- Search
-  keys.af  = { t.find.focus            } -- find/replace
-  keys.ag  = { t.find.find_next   }
-  keys.sag = { t.find.find_prev   }
-  keys.ar  = { t.find.replace     }
-  keys.ai  = { t.find.find_incremental }
-  keys.saf = {
+  keys.af = { t.find.focus            } -- find/replace
+  keys.ag = { t.find.find_next   }
+  keys.aG = { t.find.find_prev   }
+  keys.ar = { t.find.replace     }
+  keys.ai = { t.find.find_incremental }
+  keys.aF = {
     function()
       t.find.in_files = true
       t.find.focus()
     end
   }
-  keys.cag  = { t.find.goto_file_in_list, true  }
-  keys.csag = { t.find.goto_file_in_list, false }
-  keys.cg   = { m_editing.goto_line             }
+  keys.cag = { t.find.goto_file_in_list, true  }
+  keys.caG = { t.find.goto_file_in_list, false }
+  keys.cg  = { m_editing.goto_line             }
 
   -- Tools
   keys['f2'] = { t.command_entry.focus }
   -- Run
   local m_run = _m.textadept.run
-  keys.cr  = { m_run.run     }
-  keys.csr = { m_run.compile }
+  keys.cr = { m_run.run     }
+  keys.cR = { m_run.compile }
   -- Snippets
   local m_snippets = _m.textadept.lsnippets
   keys['\t']  = { m_snippets.insert         }
   keys['s\t'] = { m_snippets.prev           }
   keys.cai    = { m_snippets.cancel_current }
-  keys.casi   = { m_snippets.list           }
+  keys.caI    = { m_snippets.list           }
   keys.ci     = { m_snippets.show_style     }
   -- Multiple Line Editing
   local m_mlines = _m.textadept.mlines
-  keys.am    = {}
-  keys.am.a  = { m_mlines.add             }
-  keys.am.sa = { m_mlines.add_multiple    }
-  keys.am.r  = { m_mlines.remove          }
-  keys.am.sr = { m_mlines.remove_multiple }
-  keys.am.u  = { m_mlines.update          }
-  keys.am.c  = { m_mlines.clear           }
+  keys.am   = {}
+  keys.am.a = { m_mlines.add             }
+  keys.am.A = { m_mlines.add_multiple    }
+  keys.am.r = { m_mlines.remove          }
+  keys.am.R = { m_mlines.remove_multiple }
+  keys.am.u = { m_mlines.update          }
+  keys.am.c = { m_mlines.clear           }
 
   -- Buffers
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
@@ -433,12 +434,12 @@ else
 
   -- Views
   keys.cv = {
-    n  = { t.goto_view, 1, false                      },
-    p  = { t.goto_view, -1, false                     },
-    ss = { 'split', v                                 }, -- vertical
-    s  = { 'split', v, false                          }, -- horizontal
-    w  = { function() view:unsplit() return true end  },
-    sw = { function() while view:unsplit() do end end },
+    n = { t.goto_view, 1, false                      },
+    p = { t.goto_view, -1, false                     },
+    S = { 'split', v                                 }, -- vertical
+    s = { 'split', v, false                          }, -- horizontal
+    w = { function() view:unsplit() return true end  },
+    W = { function() while view:unsplit() do end end },
     -- TODO: { function() view.size = view.size + 10 end  }
     -- TODO: { function() view.size = view.size - 10 end  }
   }
@@ -448,8 +449,8 @@ else
     t.pm.entry_text = text
     t.pm.activate()
   end
-  keys.sap = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
-  keys.ap  = {
+  keys.aP = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
+  keys.ap = {
     function()
       if t.pm.width == 0 then t.pm.toggle_visible() end
       t.pm.focus()
@@ -484,26 +485,26 @@ else
   }
 
   -- Movement/selection commands
-  keys.cf   = { 'char_right',        b }
-  keys.csf  = { 'char_right_extend', b }
-  keys.caf  = { 'word_right',        b }
-  keys.csaf = { 'word_right_extend', b }
-  keys.cb   = { 'char_left',         b }
-  keys.csb  = { 'char_left_extend',  b }
-  keys.cab  = { 'word_left',         b }
-  keys.csab = { 'word_left_extend',  b }
-  keys.cn   = { 'line_down',         b }
-  keys.csn  = { 'line_down_extend',  b }
-  keys.cp   = { 'line_up',           b }
-  keys.csp  = { 'line_up_extend',    b }
-  keys.ca   = { 'vc_home',           b }
-  keys.csa  = { 'home_extend',       b }
-  keys.ce   = { 'line_end',          b }
-  keys.cse  = { 'line_end_extend',   b }
-  keys.ch   = { 'delete_back',       b }
-  keys.cah  = { 'del_word_left',     b }
-  keys.cd   = { 'clear',             b }
-  keys.cad  = { 'del_word_right',    b }
+  keys.cf  = { 'char_right',        b }
+  keys.cF  = { 'char_right_extend', b }
+  keys.caf = { 'word_right',        b }
+  keys.caF = { 'word_right_extend', b }
+  keys.cb  = { 'char_left',         b }
+  keys.cB  = { 'char_left_extend',  b }
+  keys.cab = { 'word_left',         b }
+  keys.caB = { 'word_left_extend',  b }
+  keys.cn  = { 'line_down',         b }
+  keys.cN  = { 'line_down_extend',  b }
+  keys.cp  = { 'line_up',           b }
+  keys.cP  = { 'line_up_extend',    b }
+  keys.ca  = { 'vc_home',           b }
+  keys.cA  = { 'home_extend',       b }
+  keys.ce  = { 'line_end',          b }
+  keys.cE  = { 'line_end_extend',   b }
+  keys.ch  = { 'delete_back',       b }
+  keys.cah = { 'del_word_left',     b }
+  keys.cd  = { 'clear',             b }
+  keys.cad = { 'del_word_right',    b }
 end
 
 ---

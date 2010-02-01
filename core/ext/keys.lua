@@ -95,7 +95,8 @@ local function keypress(code, shift, control, alt)
   local key
   --print(code, string.char(code))
   if code < 256 then
-    key = string_char(code):lower()
+    key = string_char(code)
+    shift = false -- for printable characters, key is upper case
     if MAC and not shift and not control and not alt then
       local ch = string_char(code)
       -- work around native GTK-OSX's handling of Alt key
