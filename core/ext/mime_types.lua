@@ -158,3 +158,5 @@ textadept.events.add_handler('file_opened', handle_new)
 textadept.events.add_handler('file_saved_as', handle_new)
 textadept.events.add_handler('buffer_after_switch', restore_lexer)
 textadept.events.add_handler('view_new', restore_lexer)
+textadept.events.add_handler('reset_after',
+  function() buffer:set_lexer(buffer._lexer) end)
