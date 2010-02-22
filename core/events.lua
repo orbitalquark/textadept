@@ -92,6 +92,12 @@ module('textadept.events', package.seeall)
 --   Called right before another [view][view] is switched to.
 -- * **view\_after\_switch** ()<br />
 --   Called right after [view][view] was switched to.
+-- * **reset\_before()**<br />
+--   Called before resetting the Lua state during a call to
+--   [`textadept.reset()`][textadept_reset].
+-- * **reset\_after()**<br />
+--   Called after resetting the Lua state during a call to
+--   [`textadept.reset()`][textadept_reset].
 -- * **quit** ()<br />
 --   Called when quitting Textadept.<br />
 --   Note: Any quit handlers added must be inserted at index 1 because the
@@ -150,6 +156,7 @@ module('textadept.events', package.seeall)
 --
 -- [buffer]: ../modules/buffer.html
 -- [view]: ../modules/view.html
+-- [textadept_reset]: ../modules/textadept.html#reset
 -- [textadept_gtkmenu]: ../modules/textadept.html#gtkmenu
 -- [PM]: ../modules/textadept.pm.html
 -- [pm_show_menu]: ../modules/textadept.pm.html#show_context_menu
