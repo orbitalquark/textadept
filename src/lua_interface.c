@@ -1280,7 +1280,7 @@ static int l_cf_ta_quit(lua_State *lua) {
 }
 
 static int l_cf_ta_reset(lua_State *lua) {
-  l_handle_event("resetting", -1);
+  l_handle_event("reset_before", -1);
   l_init(0, NULL, TRUE);
   lua_pushboolean(lua, TRUE);
   lua_setglobal(lua, "RESETTING");
@@ -1289,6 +1289,7 @@ static int l_cf_ta_reset(lua_State *lua) {
   lua_setglobal(lua, "RESETTING");
   l_set_view_global(focused_editor);
   l_set_buffer_global(focused_editor);
+  l_handle_event("reset_after", -1);
   return 0;
 }
 
