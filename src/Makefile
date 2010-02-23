@@ -30,7 +30,7 @@ DEBUG_FLAG = -DNDEBUG
 else
 DEBUG_FLAG = -DDEBUG -g
 endif
-INCLUDEDIRS = -Iscintilla-st/include -Ilua/include -Igcocoadialog
+INCLUDEDIRS = -Iscintillua/include -Ilua/include -Igcocoadialog
 
 # Textadept
 
@@ -54,14 +54,15 @@ GCOCOADIALOG = gcocoadialog.o
 # Scintilla
 
 SCI_CXXFLAGS = $(DEBUG_FLAG) -pedantic -Os $(PLAT_FLAGS) -DSCI_LEXER \
-  $(SCI_THREAD_FLAG) $(INCLUDEDIRS) -Iscintilla-st/src -Iscintilla-st/gtk \
+  $(SCI_THREAD_FLAG) $(INCLUDEDIRS) -Iscintillua/src -Iscintillua/gtk \
   -Wall -Wno-missing-braces -Wno-char-subscripts
 
 SCINTILLA_OBJS = AutoComplete.o CallTip.o CellBuffer.o CharClassify.o \
   ContractionState.o Decoration.o Document.o DocumentAccessor.o Editor.o \
   ExternalLexer.o Indicator.o KeyMap.o KeyWords.o LexLPeg.o LineMarker.o \
   PerLine.o PositionCache.o PropSet.o RESearch.o RunStyles.o ScintillaBase.o \
-  Style.o StyleContext.o UniConversion.o ViewStyle.o WindowAccessor.o XPM.o \
+  Selection.o Style.o StyleContext.o UniConversion.o ViewStyle.o \
+  WindowAccessor.o XPM.o \
   PlatGTK.o ScintillaGTK.o
 SCINTILLA_MARSHALLER = scintilla-marshal.o
 
@@ -69,9 +70,9 @@ SCINTILLA_MARSHALLER = scintilla-marshal.o
 
 all: $(TEXTADEPT)
 
-$(SCINTILLA_OBJS): scintilla-st/gtk/*.cxx scintilla-st/src/*.cxx
+$(SCINTILLA_OBJS): scintillua/gtk/*.cxx scintillua/src/*.cxx
 	$(CPP) $(SCI_CXXFLAGS) $(GTKFLAGS) -c $^
-$(SCINTILLA_MARSHALLER): scintilla-st/gtk/scintilla-marshal.c
+$(SCINTILLA_MARSHALLER): scintillua/gtk/scintilla-marshal.c
 	$(CC) $(SCI_CXXFLAGS) $(GTKFLAGS) -w -c $^
 $(TEXTADEPT_OBJS): *.c
 	$(CC) $(CFLAGS) $(GTKFLAGS) -c $^
@@ -109,8 +110,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32)
 	rm $(RELEASEDIR32)/.hg*
 	sh -c 'cd ../scripts && ./update_doc'
 	cp -r ../doc $(RELEASEDIR32)
-	svn export http://scite-tools.googlecode.com/svn/branches/scite-st/lexers \
-	  $(RELEASEDIR32)/lexers
+	hg clone http://scintillua.googlecode.com/hg/lexers $(RELEASEDIR32)/lexers
 	# Linux x64_64
 	cp -r $(RELEASEDIR32) $(RELEASEDIR64)
 	cp ../$(TEXTADEPT64) $(RELEASEDIR64)
@@ -126,7 +126,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32)
 	tar czf $(PACKAGE32) $(RELEASEDIR32)
 	# Source
 	rm $(RELEASEDIR32)/$(TEXTADEPT)
-	cp -r lua scintilla-st gcocoadialog $(RELEASEDIR32)/src/
+	cp -r lua scintillua gcocoadialog $(RELEASEDIR32)/src/
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
 	# Done
 	rm -r $(RELEASEDIR32)
