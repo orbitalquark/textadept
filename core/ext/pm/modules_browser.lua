@@ -61,7 +61,7 @@ if type(keys) == 'table' then
   keys.$1 = {
     al = {
       m = { textadept.io.open,
-            textadept.iconv(_USERHOME..'/modules/$1/init.lua'),
+            textadept.iconv(_USERHOME..'/modules/$1/init.lua',
                             'UTF-8', _CHARSET) },
     },
   }
