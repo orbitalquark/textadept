@@ -10,8 +10,8 @@ module('_m')
 -- ## Overview
 --
 -- Modules utilize the Lua 5.1 package model. It is recommended to put all
--- modules in the `modules/` Textadept directory. A module consists of a single
--- directory with an `init.lua` script to load any additional Lua files
+-- modules in your `~/.textadept/modules/` directory. A module consists of a
+-- single directory with an `init.lua` script to load any additional Lua files
 -- (typically in the same location). Essentially there are two classes of
 -- modules: generic and language-specific.
 --
