@@ -2,8 +2,14 @@
 
 local textadept = _G.textadept
 
-local mpath = _HOME..'/modules/?.lua;'.._HOME..'/modules/?/init.lua'
-package.path  = mpath..';'..package.path
+local paths = {
+  _HOME..'/modules/?.lua',
+  _HOME..'/modules/?/init.lua',  
+  _USERHOME..'/modules/?.lua',
+  _USERHOME..'/modules/?/init.lua',
+  package.path
+}
+package.path = table.concat(paths, ';')
 
 local loaded_user_modules = false
 local user_init = _USERHOME..'/init.lua'
