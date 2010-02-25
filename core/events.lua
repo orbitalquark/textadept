@@ -495,12 +495,13 @@ add_handler('quit',
       end
     end
     if any and
-       textadept.dialog('yesno-msgbox',
+       textadept.dialog('msgbox',
                         '--title', locale.EVENTS_QUIT_TITLE,
                         '--text', locale.EVENTS_QUIT_TEXT,
                         '--informative-text',
-                          string.format(locale.EVENTS_QUIT_MSG,
-                                        table.concat(list, '\n')),
+                          string.format('%s', table.concat(list, '\n')),
+                        '--button1', 'gtk-cancel',
+                        '--button2', locale.EVENTS_QUIT_BUTTON2,
                         '--no-newline') ~= '2' then
       return false
     end

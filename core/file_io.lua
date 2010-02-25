@@ -323,10 +323,14 @@ end
 function close(buffer)
   textadept.check_focused_buffer(buffer)
   if buffer.dirty and
-     textadept.dialog('yesno-msgbox',
+     textadept.dialog('msgbox',
                       '--title', locale.IO_CLOSE_TITLE,
                       '--text', locale.IO_CLOSE_TEXT,
-                      '--informative-text', locale.IO_CLOSE_MSG,
+                      '--informative-text',
+                        string.format('%s', (buffer.filename or
+                                      buffer._type or locale.UNTITLED)),
+                      '--button1', 'gtk-cancel',
+                      '--button2', locale.IO_CLOSE_BUTTON2,
                       '--no-newline') ~= '2' then
     return false
   end
