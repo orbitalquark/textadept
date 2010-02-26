@@ -127,6 +127,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32)
 	# Source
 	rm $(RELEASEDIR32)/$(TEXTADEPT)
 	cp -r lua scintillua gcocoadialog $(RELEASEDIR32)/src/
+	cp -r ../xcode $(RELEASEDIR32)/
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
 	# Done
 	rm -r $(RELEASEDIR32)
