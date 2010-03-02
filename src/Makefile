@@ -114,7 +114,9 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	rm $(RELEASEDIR32)/.hg*
 	sh -c 'cd ../scripts && ./update_doc'
 	cp -r ../doc $(RELEASEDIR32)
-	hg clone http://scintillua.googlecode.com/hg/lexers $(RELEASEDIR32)/lexers
+	hg clone http://scintillua.googlecode.com/hg/ tmp
+	mv tmp/lexers $(RELEASEDIR32)
+	rm -r tmp $(RELEASEDIR32/lexers/.hg*
 	# Linux x64_64
 	cp -r $(RELEASEDIR32) $(RELEASEDIR64)
 	cp ../$(TEXTADEPT64) $(RELEASEDIR64)
