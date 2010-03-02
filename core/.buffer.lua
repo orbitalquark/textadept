@@ -20,6 +20,16 @@ module('buffer')
 -- * `encoding`: The encoding of the file on the hard disk. It will be nil if
 --   the file is a binary file.
 -- * `encoding_bom`: The byte-order mark of the file encoding (if any).
+-- * `additional_caret_fore`: The foreground color of additional carets.
+-- * `additional_carets_blink`: The rate in milliseconds at which additional
+--   carets blink.
+-- * `additional_carets_visible`: Flag indicating whether or not additional
+--   carets are visible.
+-- * `additional_sel_alpha`: The alpha of additional selections.
+-- * `additional_sel_back`: The background color of additional selections.
+-- * `additional_sel_fore`: The foreground color of additional selections.
+-- * `additional_selection_typing`: Flag indicating whether or not typing,
+--   backspace, or delete works with multiple selections simultaneously.
 -- * `anchor`: The position of the opposite end of the selection to the caret.
 -- * `auto_c_auto_hide`: Flag indicating whether or not autocompletion is hidden
 --   automatically when nothing matches.
@@ -97,7 +107,6 @@ module('buffer')
 -- * `end_styled`: The position of the last correctly styled character.
 --   (Read-only)
 -- * `first_visible_line`: The display line at the top of the display.
---   (Read-only)
 -- * `focus`: The internal focus flag.
 -- * `fold_expanded`: Flag indicating whether or not an indexed (header) line
 --   has been expanded.
@@ -107,6 +116,11 @@ module('buffer')
 --       * 0x2000: Header
 --       * 0x0FFF: Number mask
 -- * `fold_parent`: The parent line of indexed (child) line. (Read-only)
+-- * `font_quality`: The font quality (antialiasing method). (Windows only)<br />
+--       * 0: Default
+--       * 1: Non-antialiased
+--       * 2: Antialiased
+--       * 3: LCD Optimized
 -- * `h_scroll_bar`: Flag indicating whether or not the horizontal scroll bar is
 --   visible.
 -- * `highlight_guide`: The highlighted indentation guide column.
@@ -146,6 +160,7 @@ module('buffer')
 -- * `line_visible`: Flag indicating whether or not the indexed line is visible.
 --   (Read-only)
 -- * `lines_on_screen`: The number of lines completely visible. (Read-only)
+-- * `main_selection`: The main selection.
 -- * `margin_left`: The size in pixels of the left margin.
 -- * `margin_mask_n`: The marker mask of an indexed margin.
 -- * `margin_right`: The size in pixels of the right margin.
@@ -163,6 +178,8 @@ module('buffer')
 --   captured when its button is pressed.
 -- * `mouse_dwell_time`: The time in milliseconds the mouse must sit still to
 --   generate a mouse dwell event.
+-- * `multiple_selection`: Flag indicating whether or not to enable multiple
+--   selection.
 -- * `overtype`: Flag indicating whether or not overtype mode is active.
 -- * `paste_convert_endings`: Flag indicating whether or not line endings are
 --   converted when pasting text.
@@ -181,6 +198,20 @@ module('buffer')
 -- * `property_int`: The (integer) value for a given (string) key index.
 --   (Read-only)
 -- * `read_only`: Flag indicating whether or not the document is read-only.
+-- * `rectangular_selection_anchor`: The position of the rectangular selection
+--   anchor.
+-- * `rectangular_selection_anchor_virtual_space`: The amount of virtual space
+--   for the rectangular selection anchor.
+-- * `rectangular_selection_caret`: The position of the rectangular selection
+--   caret.
+-- * `rectangular_selection_caret_virtual_space`: The amount of virtual space
+--   for the rectangular selection caret.
+-- * `rectangular_selection_modifier`: The key used to indicate that a
+--   rectangular selection should be created when combined with a mouse drag.
+--   <br />
+--       * 2: Control
+--       * 4: Alt
+--       * 8: Super (Win)
 -- * `scroll_width`: The document width assumed for scrolling.
 -- * `scroll_width_tracking`: Flag indicating whether or not the maximum width
 --   line displayed is used to set the scroll width.
@@ -195,7 +226,16 @@ module('buffer')
 --       * 0: Stream
 --       * 1: Rectangle
 --       * 2: Lines
+-- * `selection_n_anchor`: The position of the anchor for an existing selection.
+-- * `selection_n_anchor_virtual_space`: The amount of virtual space for the
+--   anchor for an existing selection.
+-- * `selection_n_caret`: The position of the caret for an existing selection.
+-- * `selection_n_caret_virtual_space`: The amount of virtual space for the
+--   anchor for an existing selection.
+-- * `selection_n_end`: The end position of an existing selection.
+-- * `selection_n_start`: The start position of an existing selection.
 -- * `selection_start`: The position that starts the selection. (anchor)
+-- * `selections`: The number of selections currently active. (Read-only)
 -- * `status`: error status. 0: OK.
 -- * `style_at`: The style byte at the index position. (Read-only)
 -- * `style_back`: The background [color][color] of an indexed style.
@@ -244,9 +284,14 @@ module('buffer')
 -- * `view_eol`: Flag indicating whether or not end of line characters are
 --   visible.
 -- * `view_ws`: Flag indicating whether or not whitespace characters are visible.
+-- * `virtual_space_options`: Options for enabling virtual space. <br />
+--       * 0: Disabled.
+--       * 1: Enabled only for rectangular selection.
+--       * 2: Enabled.
 -- * `whitespace_chars`: The set of characters making up whitespace when moving
 --   or selecting by word. Should be called after setting word_chars.
 --   (Write-only)
+-- * `whitespace_size`: The size of the dots used for marking space characters.
 -- * `word_chars`: The set of characters making up words when moving or
 --   selecting by word. (Write-only)
 -- * `wrap_mode`: Flag indicating whether or not text is word wrapped.
@@ -282,6 +327,9 @@ function buffer:text_range(start_pos, end_pos)
 -- Activates the 'buffer_deleted' signal.
 function buffer:delete()
 
+--- Adds a new selection from anchor to caret as the main selection. All other
+-- selections are retained as additional selections.
+function buffer:add_selection(caret, anchor)
 --- Adds text to the document at the current position.
 function buffer:add_text(text)
 --- Enlarges the document to a particular size of text bytes
@@ -296,6 +344,8 @@ function buffer:auto_c_cancel()
 function buffer:auto_c_complete()
 --- Returns the currently selected item position in the autocompletion list.
 function buffer:auto_c_get_current()
+--- Returns the currently selected text in the autocompletion list.
+function buffer:auto_c_get_current_text()
 --- Returns the position of the caret when the autocompletion list was shown.
 function buffer:auto_c_pos_start()
 --- Selects the item in the autocompletion list that starts with a string.
@@ -361,6 +411,8 @@ function buffer:clear_all_cmd_keys()
 function buffer:clear_document_style()
 --- Clears all the registered XPM images.
 function buffer:clear_registered_images()
+--- Clears all selections.
+function buffer:clear_selections()
 --- Colorizes a segment of the document using the current lexing language.
 function buffer:colourise(start_pos, end_pos)
 --- Converts all line endings in the document to one mode.
@@ -638,6 +690,8 @@ function buffer:replace_target(text)
 -- Looks for \d where d is 1-9 and replaces it with the strings captured by a
 -- previous RE search.
 function buffer:replace_target_re(text)
+--- Makes the next selection the main selection.
+function buffer:rotate_selection()
 --- Ensures the caret is visible.
 function buffer:scroll_caret()
 --- Sets the current caret position to be the search anchor.
@@ -687,6 +741,8 @@ function buffer:set_sel(start_pos, end_pos)
 function buffer:set_sel_back(use_setting, color)
 --- Sets the foreground color of the selection and whether to use this setting.
 function buffer:set_sel_fore(use_setting, color)
+--- Set a single selection from anchor to caret as the only selection.
+function buffer:set_selection(caret, anchor)
 --- Changes the style from the current styling position for a length of
 -- characters to a style and move the current styling position to after this
 -- newly styled segment.
@@ -734,6 +790,8 @@ function buffer:style_clear_all()
 function buffer:style_get_font(style_num)
 --- Resets the default style to its state at startup.
 function buffer:style_reset_default()
+--- Moves the caret to the opposite end of the main selection.
+function buffer:swap_main_anchor_caret()
 --- Inserts a tab character or indent multiple lines.
 function buffer:tab()
 --- Returns the target converted to utf8.
