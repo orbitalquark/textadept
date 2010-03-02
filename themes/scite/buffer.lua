@@ -18,3 +18,4 @@ buffer.indentation_guides = 1
 
 -- various
 buffer.auto_c_choose_single = true
+buffer.additional_selection_typing = true

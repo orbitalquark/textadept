@@ -232,14 +232,6 @@ local menubar = {
       { l.MENU_TOOLS_SNIPPETS_LIST, ID.LIST_SNIPPETS },
       { l.MENU_TOOLS_SNIPPETS_SHOW_SCOPE, ID.SHOW_SCOPE },
     },
-    { title = l.MENU_TOOLS_ML_TITLE,
-      { l.MENU_TOOLS_ML_ADD, ID.ADD_MULTIPLE_LINE },
-      { l.MENU_TOOLS_ML_ADD_MULTIPLE, ID.ADD_MULTIPLE_LINES },
-      { l.MENU_TOOLS_ML_REMOVE, ID.REMOVE_MULTIPLE_LINE },
-      { l.MENU_TOOLS_ML_REMOVE_MULTIPLE, ID.REMOVE_MULTIPLE_LINES },
-      { l.MENU_TOOLS_ML_UPDATE, ID.UPDATE_MULTIPLE_LINES },
-      { l.MENU_TOOLS_ML_FINISH, ID.FINISH_MULTIPLE_LINES },
-    },
     { title = l.MENU_TOOLS_BM_TITLE,
       { l.MENU_TOOLS_BM_TOGGLE, ID.TOGGLE_BOOKMARK },
       { l.MENU_TOOLS_BM_CLEAR_ALL, ID.CLEAR_BOOKMARKS },
@@ -311,7 +303,6 @@ t.menubar = menubar
 local b, v = 'buffer', 'view'
 local m_snippets = _m.textadept.lsnippets
 local m_editing = _m.textadept.editing
-local m_mlines = _m.textadept.mlines
 local m_bookmarks = _m.textadept.bookmarks
 local m_run = _m.textadept.run
 
@@ -463,13 +454,6 @@ local actions = {
   [ID.CANCEL_SNIPPET] = { m_snippets.cancel_current },
   [ID.LIST_SNIPPETS] = { m_snippets.list },
   [ID.SHOW_SCOPE] = { m_snippets.show_style },
-  -- Tools -> Multiple Line Editing
-  [ID.ADD_MULTIPLE_LINE] = { m_mlines.add },
-  [ID.ADD_MULTIPLE_LINES] = { m_mlines.add_multiple },
-  [ID.REMOVE_MULTIPLE_LINE] = { m_mlines.remove },
-  [ID.REMOVE_MULTIPLE_LINES] = { m_mlines.remove_multiple },
-  [ID.UPDATE_MULTIPLE_LINES] = { m_mlines.update },
-  [ID.FINISH_MULTIPLE_LINES] = { m_mlines.clear },
   -- Tools -> Bookmark
   [ID.TOGGLE_BOOKMARK] = { m_bookmarks.toggle },
   [ID.CLEAR_BOOKMARKS] = { m_bookmarks.clear },

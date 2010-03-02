@@ -114,7 +114,7 @@ if not MAC then
   -- Windows and Linux key commands.
 
   --[[
-    C:     B   D       H I J K L                 U
+    C:     B   D       H I J K L M               U
     A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
     CS:  A B C D     G H I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
@@ -212,15 +212,6 @@ if not MAC then
   keys.cai    = { m_snippets.cancel_current }
   keys.caI    = { m_snippets.list           }
   keys.ai     = { m_snippets.show_style     }
-  -- Multiple Line Editing
-  local m_mlines = _m.textadept.mlines
-  keys.cm   = {}
-  keys.cm.a = { m_mlines.add             }
-  keys.cm.A = { m_mlines.add_multiple    }
-  keys.cm.r = { m_mlines.remove          }
-  keys.cm.R = { m_mlines.remove_multiple }
-  keys.cm.u = { m_mlines.update          }
-  keys.cm.c = { m_mlines.clear           }
 
   -- Buffers
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
@@ -299,7 +290,7 @@ else
   -- Mac OSX key commands
 
   --[[
-    C:                     J   L                 U   W X   Z
+    C:                     J   L M               U   W X   Z
     A:     B   D E     H   J K L                 U
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
     SA:  A B C D       H I J K L M N O   Q R   T U V   X
@@ -401,15 +392,6 @@ else
   keys.cai    = { m_snippets.cancel_current }
   keys.caI    = { m_snippets.list           }
   keys.ci     = { m_snippets.show_style     }
-  -- Multiple Line Editing
-  local m_mlines = _m.textadept.mlines
-  keys.am   = {}
-  keys.am.a = { m_mlines.add             }
-  keys.am.A = { m_mlines.add_multiple    }
-  keys.am.r = { m_mlines.remove          }
-  keys.am.R = { m_mlines.remove_multiple }
-  keys.am.u = { m_mlines.update          }
-  keys.am.c = { m_mlines.clear           }
 
   -- Buffers
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
