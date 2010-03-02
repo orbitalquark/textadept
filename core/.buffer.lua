@@ -31,6 +31,16 @@ module('buffer')
 -- * `additional_selection_typing`: Flag indicating whether or not typing,
 --   backspace, or delete works with multiple selections simultaneously.
 -- * `anchor`: The position of the opposite end of the selection to the caret.
+-- * `annotation_lines`: The number of lines annotating the indexed line.
+--   (Read-only)
+-- * `annotation_style`: The style of the annotated text at the indexed line.
+-- * `annotation_style_offset`: The style number offset for annotations. This is
+--   used to keep lexer and margin styles separate from annotation styles.
+-- * `annotation_visible`: The annotation display mode. <br />
+--       * 0: Annotations are not displayed.
+--       * 1: Annotations are drawn left justified with no adornment.
+--       * 2: Annotations are indented to match the text and are surrounded by a
+--            box.
 -- * `auto_c_auto_hide`: Flag indicating whether or not autocompletion is hidden
 --   automatically when nothing matches.
 -- * `auto_c_cancel_at_start`: Flag indicating whether or not autocompletion
@@ -78,6 +88,8 @@ module('buffer')
 --       * 2: block
 -- * `caret_width`: The width of the insert mode caret in pixels.
 -- * `char_at`: The character byte at given index position. (Read-only)
+-- * `character_pointer`: The pointer to the first character in the document.
+--   (Read-only)
 -- * `code_page`: The code page used to interpret the bytes of the document as
 --   characters.
 -- * `column`: The column number of an index position, taking tab width into
@@ -106,6 +118,8 @@ module('buffer')
 --   position has the last line at the bottom of the view. Default is true.
 -- * `end_styled`: The position of the last correctly styled character.
 --   (Read-only)
+-- * `extra_ascent`: The extra space above lines.
+-- * `extra_descent`: The extra space below lines.
 -- * `first_visible_line`: The display line at the top of the display.
 -- * `focus`: The internal focus flag.
 -- * `fold_expanded`: Flag indicating whether or not an indexed (header) line
@@ -131,6 +145,8 @@ module('buffer')
 -- * `indent`: The indentation size.
 -- * `indentation_guides`: Flag indicating whether or not indentation guides are
 --   visible.
+-- * `indic_alpha`: The alpha transparency of an indexed indicator. This value
+--   ranges from 0 (transparent) to 100 (opaque).
 -- * `indic_fore`: The foreground [color][color] of an indexed indicator.
 -- * `indic_style`: The style of an indexed indicator.<br />
 --       * 0: Plain
@@ -147,6 +163,8 @@ module('buffer')
 --   `indicator_clear_range`.
 -- * `indicator_value`: The value used for `indicator_fill_range`.
 -- * `key_words`: Unused.
+-- * `keys_unicode`: Flag indicating whether or not to treat character keys as
+--   unicode.
 -- * `layout_cache`: The degree of caching of layout information.
 -- * `length`: The number of characters in the document. (Read-only).
 -- * `lexer`: The (integer) lexing language of the document.
@@ -166,6 +184,9 @@ module('buffer')
 -- * `margin_right`: The size in pixels of the right margin.
 -- * `margin_sensitive_n`: Flag indicating whether or not the indexed margin is
 --   sensitive to mouse clicks.
+-- * `margin_style`: The style of the margin text at the indexed line.
+-- * `margin_style_offset`: The style number offset for margin text. This is
+--   used to keep lexer and annotation styles separate from margin styles.
 -- * `margin_type_n`: The type of an indexed margin.<br />
 --       * 0: Symbolic
 --       * 1: Numeric
@@ -291,6 +312,12 @@ module('buffer')
 -- * `whitespace_chars`: The set of characters making up whitespace when moving
 --   or selecting by word. Should be called after setting word_chars.
 --   (Write-only)
+-- * `wrap_indent_mode`: The modes of wrapped sublines. <br />
+--       * 0: Wrapped sublines aligned to left of window plus amount set by
+--         `buffer.wrap_start_indent`.
+--       * 1: Wrapped sublines are aligned to first subline indent.
+--       * 2: Wrapped sublines are aligned to first subline indent plus one more
+--         level of indentation.
 -- * `whitespace_size`: The size of the dots used for marking space characters.
 -- * `word_chars`: The set of characters making up words when moving or
 --   selecting by word. (Write-only)
@@ -332,8 +359,20 @@ function buffer:delete()
 function buffer:add_selection(caret, anchor)
 --- Adds text to the document at the current position.
 function buffer:add_text(text)
+--- Adds an action to the undo stack.
+function buffer:add_undo_action(token, flags)
 --- Enlarges the document to a particular size of text bytes
 function buffer:allocate(bytes)
+--- Clears all lines of annotations.
+function buffer:annotation_clear_all()
+--- Returns the styles of the annotation for the given line.
+function buffer:annotation_get_styles(line)
+--- Returns the annotation text for the given line.
+function buffer:annotation_get_text(line)
+--- Sets the styled annotation text for the given line.
+function buffer:annotation_set_styles(line, styles)
+--- Sets the annotation text for the given line.
+function buffer:annotation_set_text(line, text)
 --- Appends a string to the end of the document without changing the selection.
 function buffer:append_text(text)
 --- Returns a flag indicating whether or not an autocompletion list is visible.
@@ -393,6 +432,11 @@ function buffer:char_left()
 function buffer:char_left_extend()
 --- Moves the caret left one character, extending the rectangular selection.
 function buffer:char_left_rect_extend()
+--- Finds the closest character to a point.
+function buffer:char_position_from_point(x, y)
+--- Finds the closest character to a point, but returns -1 if the given point is
+-- outside the window or not close to any characters.
+function buffer:char_position_from_point_close(x, y)
 --- Moves the caret right one character.
 function buffer:char_right()
 --- Moves the caret right one character, extending the selection.
@@ -420,6 +464,8 @@ function buffer:colourise(start_pos, end_pos)
 function buffer:convert_eo_ls(mode)
 --- Copies the selection to the clipboard.
 function buffer:copy()
+--- Copies the selection to the clipboard or the current line.
+function buffer:copy_allow_line()
 --- Copies a range of text to the clipboard.
 function buffer:copy_range(start_pos, end_pos)
 --- Copies argument text to the clipboard.
@@ -434,6 +480,8 @@ function buffer:del_line_right()
 function buffer:del_word_left()
 --- Deletes the word to the right of the caret.
 function buffer:del_word_right()
+--- Deletes the word to the right of the caret to its end.
+function buffer:del_word_right_end()
 --- Deletes the selection or the character before the caret.
 function buffer:delete_back()
 --- Deletes the selection or the character before the caret. Will not delete the
@@ -601,6 +649,16 @@ function buffer:lines_split(pixel_width)
 function buffer:load_lexer_library(path)
 --- Transforms the selection to lower case.
 function buffer:lower_case()
+--- Returns the styled margin text for the given line.
+function buffer:margin_get_styles(line)
+--- Returns the margin text for the given line.
+function buffer:margin_get_text(line)
+--- Sets the styled margin text for the given line.
+function buffer:margin_set_styles(line, styles)
+--- Sets the margin text for the given line.
+function buffer:margin_set_text(line, text)
+--- Clears all margin text.
+function buffer:margin_text_clear_all()
 --- Adds a marker to a line, returning an ID which can be used to find or delete
 -- the marker.
 function buffer:marker_add(line, marker_num)
@@ -632,6 +690,8 @@ function buffer:marker_set_alpha(marker_num, alpha)
 function buffer:marker_set_back(marker_num, color)
 --- Sets the foreground color used for a particular marker number.
 function buffer:marker_set_fore(marker_num, color)
+--- Returns the symbol defined for the given marker_number.
+function buffer:marker_symbol_defined(marker_number)
 --- Moves the caret inside the current view if it's not there already.
 function buffer:move_caret_inside_view()
 --- Inserts a new line depending on EOL mode.
