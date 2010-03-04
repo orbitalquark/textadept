@@ -75,7 +75,9 @@ local comment_strings = {
 if AUTOPAIR then
 textadept.events.add_handler('char_added',
   function(c) -- matches characters specified in char_matches
-    if char_matches[c] then buffer:insert_text(-1, char_matches[c]) end
+    if char_matches[c] and buffer.selections == 1 then
+      buffer:insert_text(-1, char_matches[c])
+    end
   end)
 end
 
