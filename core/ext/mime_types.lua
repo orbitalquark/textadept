@@ -23,9 +23,10 @@ module('textadept.mime_types', package.seeall)
 --
 -- [lexer]: ../modules/lexer.html
 --
--- ## Configuration File
+-- ## Configuration Files
 --
--- `core/ext/mime_types.conf` is the configuration file for mime-type detection.
+-- Built-in mime-types are located in `core/ext/mime_types.conf`. You can
+-- override or add to them in your `~/.textadept/mime_types.conf`.
 --
 -- #### Detection by File Extension
 --
@@ -79,22 +80,29 @@ shebangs = {}
 patterns = {}
 
 -- Load mime-types from mime_types.conf
+local mime_types
 local f = io.open(_HOME..'/core/ext/mime_types.conf', 'rb')
 if f then
-  for line in f:lines() do
-    if not line:find('^%s*%%') then
-      if line:find('^%s*[^#/]') then -- extension definition
-        local ext, lexer_name = line:match('^%s*(.+)%s+(%S+)$')
-        if ext and lexer_name then extensions[ext] = lexer_name end
-      else -- shebang or pattern
-        local ch, text, lexer_name = line:match('^%s*([#/])(.+)%s+(%S+)$')
-        if ch and text and lexer_name then
-          (ch == '#' and shebangs or patterns)[text] = lexer_name
-        end
+  mime_types = f:read('*all')
+  f:close()
+end
+f = io.open(_USERHOME..'/mime_types.conf', 'rb')
+if f then
+  mime_types = mime_types..'\n'..f:read('*all')
+  f:close()
+end
+for line in mime_types:gmatch('[^\r\n]+') do
+  if not line:find('^%s*%%') then
+    if line:find('^%s*[^#/]') then -- extension definition
+      local ext, lexer_name = line:match('^%s*(.+)%s+(%S+)$')
+      if ext and lexer_name then extensions[ext] = lexer_name end
+    else -- shebang or pattern
+      local ch, text, lexer_name = line:match('^%s*([#/])(.+)%s+(%S+)$')
+      if ch and text and lexer_name then
+        (ch == '#' and shebangs or patterns)[text] = lexer_name
       end
     end
   end
-  f:close()
 end
 
 --
