@@ -20,8 +20,8 @@
 #include <lauxlib.h>
 
 // globals
-extern GtkWidget *window, *focused_editor, *command_entry, *pm_container,
-                 *pm_entry, *pm_view, *findbox, *find_entry, *replace_entry,
+extern GtkWidget *window, *focused_editor, *command_entry,
+                 *findbox, *find_entry, *replace_entry,
                  *fnext_button, *fprev_button, *r_button, *ra_button,
                  *match_case_opt, *whole_word_opt, *lua_opt, *in_files_opt;
 extern char *textadept_home;
@@ -38,7 +38,6 @@ void split_window(GtkWidget *, int);
 int unsplit_window(GtkWidget *);
 void set_menubar(GtkWidget *);
 void set_statusbar_text(const char *, int);
-void pm_toggle_focus();
 void find_toggle_focus();
 void ce_toggle_focus();
 
@@ -58,8 +57,5 @@ void l_set_buffer_global(GtkWidget *);
 int l_handle_event(const char *, ...);
 void l_handle_scnnotification(struct SCNotification *);
 void l_ta_popup_context_menu(GdkEventButton *);
-
-int l_pm_pathtableref(GtkTreeStore *, GtkTreePath *);
-void l_pm_popup_context_menu(GdkEventButton *);
 
 #endif

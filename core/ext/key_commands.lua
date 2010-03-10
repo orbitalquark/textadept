@@ -246,25 +246,6 @@ if not MAC then
     -- TODO: { function() view.size = view.size - 10 end  }
   }
 
-  -- Project Manager
-  local function pm_activate(text)
-    t.pm.entry_text = text
-    t.pm.activate()
-  end
-  keys.cP = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
-  keys.cp = {
-    function()
-      if t.pm.width == 0 then t.pm.toggle_visible() end
-      t.pm.focus()
-    end
-  }
-  keys.cap = {
-    c = { pm_activate, 'ctags'   },
-    b = { pm_activate, 'buffers' },
-    f = { pm_activate, '/'       },
-    m = { pm_activate, 'modules' },
-  }
-
   -- Miscellaneous not in standard menu.
   -- Recent files.
   local RECENT_FILES = 1
@@ -424,25 +405,6 @@ else
     W = { function() while view:unsplit() do end end },
     -- TODO: { function() view.size = view.size + 10 end  }
     -- TODO: { function() view.size = view.size - 10 end  }
-  }
-
-  -- Project Manager
-  local function pm_activate(text)
-    t.pm.entry_text = text
-    t.pm.activate()
-  end
-  keys.aP = { function() if t.pm.width > 0 then t.pm.toggle_visible() end end }
-  keys.ap = {
-    function()
-      if t.pm.width == 0 then t.pm.toggle_visible() end
-      t.pm.focus()
-    end
-  }
-  keys.cap = {
-    c = { pm_activate, 'ctags'   },
-    b = { pm_activate, 'buffers' },
-    f = { pm_activate, '/'       },
-    m = { pm_activate, 'modules' },
   }
 
   -- Miscellaneous not in standard menu.
