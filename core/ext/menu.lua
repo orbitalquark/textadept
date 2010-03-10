@@ -296,9 +296,11 @@ for lexer in lfs.dir(_HOME..'/lexers/') do
     lexers_found[lexer:match('^(.+)%.lua$')] = true
   end
 end
-for lexer in lfs.dir(_USERHOME..'/lexers/') do
-  if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
-    lexers_found[lexer:match('^(.+)%.lua$')] = true
+if lfs.attributes(_USERHOME..'/lexers/') then
+  for lexer in lfs.dir(_USERHOME..'/lexers/') do
+    if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
+      lexers_found[lexer:match('^(.+)%.lua$')] = true
+    end
   end
 end
 for lexer in pairs(lexers_found) do lexers[#lexers + 1] = lexer end
