@@ -42,7 +42,6 @@ static int l_buffer_mt_index(lua_State *), l_buffer_mt_newindex(lua_State *),
            l_bufferp_mt_index(lua_State *), l_bufferp_mt_newindex(lua_State *),
            l_view_mt_index(lua_State *), l_view_mt_newindex(lua_State *),
            l_ta_mt_index(lua_State *), l_ta_mt_newindex(lua_State *),
-           l_pm_mt_index(lua_State *), l_pm_mt_newindex(lua_State *),
            l_find_mt_index(lua_State *), l_find_mt_newindex(lua_State *),
            l_ce_mt_index(lua_State *), l_ce_mt_newindex(lua_State *);
 
@@ -53,9 +52,6 @@ static int l_cf_buffer_delete(lua_State *), l_cf_buffer_text_range(lua_State *),
            l_cf_ta_goto_window(lua_State *), l_cf_view_goto_buffer(lua_State *),
            l_cf_ta_gtkmenu(lua_State *), l_cf_ta_iconv(lua_State *),
            l_cf_ta_reset(lua_State *), l_cf_ta_quit(lua_State *),
-           l_cf_pm_activate(lua_State *), l_cf_pm_add_browser(lua_State *),
-           l_cf_pm_clear(lua_State *), l_cf_pm_fill(lua_State *),
-           l_cf_pm_focus(lua_State *), l_cf_pm_show_context_menu(lua_State *),
            l_cf_find_focus(lua_State *), l_cf_find_next(lua_State *),
            l_cf_find_prev(lua_State *), l_cf_find_replace(lua_State *),
            l_cf_find_replace_all(lua_State *), l_cf_ce_focus(lua_State *),
@@ -92,15 +88,6 @@ int l_init(int argc, char **argv, int reinit) {
   luaL_openlibs(lua);
 
   lua_newtable(lua);
-  lua_newtable(lua);
-    l_cfunc(lua, l_cf_pm_activate, "activate");
-    l_cfunc(lua, l_cf_pm_add_browser, "add_browser");
-    l_cfunc(lua, l_cf_pm_clear, "clear");
-    l_cfunc(lua, l_cf_pm_fill, "fill");
-    l_cfunc(lua, l_cf_pm_focus, "focus");
-    l_cfunc(lua, l_cf_pm_show_context_menu, "show_context_menu");
-    l_mt(lua, "_pm_mt", l_pm_mt_index, l_pm_mt_newindex);
-  lua_setfield(lua, -2, "pm");
   lua_newtable(lua);
     l_cfunc(lua, l_cf_find_next, "find_next");
     l_cfunc(lua, l_cf_find_prev, "find_prev");
@@ -701,57 +688,6 @@ void l_ta_popup_context_menu(GdkEventButton *event) {
   } else lua_pop(lua, 1);
 }
 
-// Project Manager
-
-/**
- * Creates a Lua table of parent nodes for the given Project Manager treeview
- * path and returns a reference to it.
- * The first table item is the PM Entry text, the next items are parents of the
- * given node in descending order, and the last item is the given node itself.
- * The reference can be retrieved using lua_rawgeti.
- * @param store The GtkTreeStore of the PM view.
- * @param path The GtkTreePath of the node. If NULL, only the PM Entry text is
- *   contained in the resulting table.
- * @return int reference to the created table in LUA_REGISTRYINDEX.
- */
-int l_pm_pathtableref(GtkTreeStore *store, GtkTreePath *path) {
-  lua_newtable(lua);
-  lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(pm_entry)));
-  lua_rawseti(lua, -2, 1);
-  if (path) {
-    GtkTreeIter iter;
-    while (gtk_tree_path_get_depth(path) > 0) {
-      char *item = 0;
-      gtk_tree_model_get_iter(GTK_TREE_MODEL(store), &iter, path);
-      gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 1, &item, -1);
-      lua_pushstring(lua, item);
-      lua_rawseti(lua, -2, gtk_tree_path_get_depth(path) + 1);
-      g_free(item);
-      gtk_tree_path_up(path);
-    }
-  }
-  return luaL_ref(lua, LUA_REGISTRYINDEX);
-}
-
-/**
- * Requests a popup context menu for a selected Project Manager item.
- * @param event The mouse button event.
- */
-void l_pm_popup_context_menu(GdkEventButton *event) {
-  GtkTreePath *path = NULL;
-  GtkTreeIter iter;
-  GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(pm_view));
-  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view));
-  if (gtk_tree_selection_get_selected(sel, NULL, &iter))
-    path = gtk_tree_model_get_path(model, &iter);
-  lua_pushlightuserdata(lua, (GdkEventButton *)event);
-  int ref = luaL_ref(lua, LUA_REGISTRYINDEX);
-  l_handle_event("pm_context_menu_request", LUA_TTABLE,
-                 l_pm_pathtableref(GTK_TREE_STORE(model), path),
-                 LUA_TLIGHTUSERDATA, ref, -1);
-  if (path) gtk_tree_path_free(path);
-}
-
 // Lua functions (stack maintenence is unnecessary)
 
 /**
@@ -1006,54 +942,6 @@ static int l_ta_mt_newindex(lua_State *lua) {
   return 0;
 }
 
-static int l_pm_mt_index(lua_State *lua) {
-  const char *key = lua_tostring(lua, 2);
-  if (streq(key, "entry_text"))
-    lua_pushstring(lua, gtk_entry_get_text(GTK_ENTRY(pm_entry)));
-  else if (streq(key, "width")) {
-    int pos =
-      gtk_paned_get_position(GTK_PANED(gtk_widget_get_parent(pm_container)));
-    lua_pushinteger(lua, pos);
-  } else if (streq(key, "cursor")) {
-    GtkTreePath *path = NULL;
-    gtk_tree_view_get_cursor(GTK_TREE_VIEW(pm_view), &path, NULL);
-    if (path) {
-      char *path_str = gtk_tree_path_to_string(path);
-      lua_pushstring(lua, path_str);
-      g_free(path_str);
-      gtk_tree_path_free(path);
-    } else lua_pushnil(lua);
-  } else lua_rawget(lua, 1);
-  return 1;
-}
-
-static int l_pm_mt_newindex(lua_State *lua) {
-  const char *key = lua_tostring(lua, 2);
-  if (streq(key, "entry_text"))
-    gtk_entry_set_text(GTK_ENTRY(pm_entry), lua_tostring(lua, 3));
-  else if (streq(key, "width"))
-    gtk_paned_set_position(GTK_PANED(gtk_widget_get_parent(pm_container)),
-                           luaL_checkinteger(lua, 3));
-  else if (streq(key, "cursor")) {
-    GtkTreePath *path = gtk_tree_path_new_from_string(lua_tostring(lua, 3));
-    luaL_argcheck(lua, path, 3, "bad path");
-    int *indices = gtk_tree_path_get_indices(path);
-    GtkTreePath *ipath = gtk_tree_path_new_from_indices(indices[0], -1);
-    for (int i = 1; i < gtk_tree_path_get_depth(path); i++)
-      if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pm_view), ipath) ||
-          gtk_tree_view_expand_row(GTK_TREE_VIEW(pm_view), ipath, FALSE))
-        gtk_tree_path_append_index(ipath, indices[i]);
-      else
-        break;
-    GtkTreeViewColumn *col =
-      gtk_tree_view_get_column(GTK_TREE_VIEW(pm_view), 0);
-    gtk_tree_view_set_cursor(GTK_TREE_VIEW(pm_view), ipath, col, FALSE);
-    gtk_tree_path_free(ipath);
-    gtk_tree_path_free(path);
-  } else lua_rawset(lua, 1);
-  return 0;
-}
-
 #define toggled(w) gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))
 static int l_find_mt_index(lua_State *lua) {
   const char *key = lua_tostring(lua, 2);
@@ -1290,103 +1178,6 @@ static int l_cf_ta_reset(lua_State *lua) {
   l_set_view_global(focused_editor);
   l_set_buffer_global(focused_editor);
   l_handle_event("reset_after", -1);
-  return 0;
-}
-
-static int l_cf_pm_activate(lua_State *lua) {
-  g_signal_emit_by_name(G_OBJECT(pm_entry), "activate");
-  return 0;
-}
-
-static int l_cf_pm_add_browser(lua_State *lua) {
-  GtkWidget *pm_combo = gtk_widget_get_parent(pm_entry);
-  gtk_combo_box_append_text(GTK_COMBO_BOX(pm_combo), lua_tostring(lua, -1));
-  return 0;
-}
-
-static int l_cf_pm_clear(lua_State *lua) {
-  gtk_tree_store_clear(
-    GTK_TREE_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view))));
-  return 0;
-}
-
-static int l_cf_pm_fill(lua_State *lua) {
-  luaL_checktype(lua, 1, LUA_TTABLE);
-  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view));
-  GtkTreeStore *store = GTK_TREE_STORE(model);
-  GtkTreeIter initial_iter, *initial_iter_p = NULL;
-  if (lua_gettop(lua) > 1 && lua_type(lua, 2) == LUA_TSTRING &&
-      gtk_tree_model_get_iter_from_string(model, &initial_iter,
-                                          lua_tostring(lua, 2)))
-    initial_iter_p = &initial_iter;
-  if (!initial_iter_p) gtk_tree_store_clear(store);
-  GtkTreeIter iter, child;
-  lua_pushnil(lua);
-  while (lua_next(lua, 1)) {
-    if (lua_istable(lua, -1) && lua_type(lua, -2) == LUA_TSTRING) {
-      gtk_tree_store_append(store, &iter, initial_iter_p);
-      gtk_tree_store_set(store, &iter, 1, lua_tostring(lua, -2), -1);
-      lua_getfield(lua, -1, "parent");
-      if (lua_toboolean(lua, -1)) {
-        gtk_tree_store_append(store, &child, &iter);
-        gtk_tree_store_set(store, &child, 1, "\0dummy", -1);
-      }
-      lua_pop(lua, 1); // parent
-      lua_getfield(lua, -1, "pixbuf");
-      if (lua_isstring(lua, -1))
-        gtk_tree_store_set(store, &iter, 0, lua_tostring(lua, -1), -1);
-      else if (!lua_isnil(lua, -1))
-        warn("pm.fill: non-string pixbuf key ignored");
-      lua_pop(lua, 1); // pixbuf
-      lua_getfield(lua, -1, "text");
-      gtk_tree_store_set(store, &iter, 2, lua_isstring(lua, -1) ?
-                         lua_tostring(lua, -1) : lua_tostring(lua, -3), -1);
-      lua_pop(lua, 1); // display text
-    } else warn("pm.fill: string id key must have table value");
-    lua_pop(lua, 1); // value
-  }
-  if (initial_iter_p) {
-    char *item;
-    gtk_tree_model_iter_nth_child(model, &child, initial_iter_p, 0);
-    gtk_tree_model_get(model, &child, 1, &item, -1);
-    if (strcmp((const char *)item, "\0dummy") == 0)
-      gtk_tree_store_remove(store, &child);
-    g_free(item);
-  }
-  return 0;
-}
-
-static void pm_menu_activate(GtkWidget *menu, gpointer id) {
-  GtkTreePath *path = NULL;
-  GtkTreeIter iter;
-  GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(pm_view));
-  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(pm_view));
-  if (gtk_tree_selection_get_selected(sel, NULL, &iter))
-    path = gtk_tree_model_get_path(model, &iter);
-  l_handle_event("pm_menu_clicked", LUA_TNUMBER, GPOINTER_TO_INT(id),
-                 LUA_TTABLE, l_pm_pathtableref(GTK_TREE_STORE(model), path),
-                 -1);
-  if (path) gtk_tree_path_free(path);
-}
-
-static int l_cf_pm_show_context_menu(lua_State *lua) {
-  GdkEventButton *event = NULL;
-  if (lua_gettop(lua) > 1) {
-    if (lua_isuserdata(lua, 2))
-      event = (GdkEventButton *)lua_touserdata(lua, 2);
-    lua_pop(lua, 1); // userdata
-  }
-  luaL_checktype(lua, 1, LUA_TTABLE);
-  GtkWidget *menu = l_create_gtkmenu(lua, G_CALLBACK(pm_menu_activate), FALSE);
-  gtk_widget_show_all(menu);
-  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
-                 event ? event->button : 0,
-                 gdk_event_get_time((GdkEvent *)event));
-  return 0;
-}
-
-static int l_cf_pm_focus(lua_State *lua) {
-  pm_toggle_focus();
   return 0;
 }
 

@@ -26,64 +26,54 @@ SAVE_ON_QUIT = true
 -- project manager details.
 -- @param filename The absolute path to the session file to load. Defaults to
 --   DEFAULT_SESSION if not specified.
--- @param only_pm Flag indicating whether or not to load only the Project
---   Manager session settings. Defaults to false.
 -- @return true if the session file was opened and read; false otherwise.
 -- @usage _m.textadept.session.load(filename)
-function load(filename, only_pm)
+function load(filename)
   local f = io.open(filename or DEFAULT_SESSION, 'rb')
-  if not only_pm and not f then
+  if not f then
     if not textadept.io.close_all() then return false end
   end
   if not f then return false end
   local current_view, splits = 1, { [0] = {} }
   for line in f:lines() do
-    if not only_pm then
-      if line:find('^buffer:') then
-        local anchor, current_pos, first_visible_line, filename =
-          line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
-        if not filename:find('^%[.+%]$') then
-          textadept.io.open(filename or '')
-        else
-          textadept.new_buffer()
-          buffer._type = filename
-        end
-        -- Restore saved buffer selection and view.
-        local anchor = tonumber(anchor) or 0
-        local current_pos = tonumber(current_pos) or 0
-        local first_visible_line = tonumber(first_visible_line) or 0
-        local buffer = buffer
-        buffer._anchor, buffer._current_pos = anchor, current_pos
-        buffer._first_visible_line = first_visible_line
-        buffer:line_scroll(0,
-          buffer:visible_from_doc_line(first_visible_line))
-        buffer:set_sel(anchor, current_pos)
-      elseif line:find('^%s*split%d:') then
-        local level, num, type, size =
-          line:match('^(%s*)split(%d): (%S+) (%d+)')
-        local view = splits[#level] and splits[#level][tonumber(num)] or view
-        splits[#level + 1] = { view:split(type == 'true') }
-        splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
-      elseif line:find('^%s*view%d:') then
-        local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
-        local view = splits[#level][tonumber(num)] or view
-        buf_idx = tonumber(buf_idx)
-        if buf_idx > #textadept.buffers then buf_idx = #textadept.buffers end
-        view:goto_buffer(buf_idx)
-      elseif line:find('^current_view:') then
-        local view_idx = line:match('^current_view: (%d+)')
-        current_view = tonumber(view_idx) or 1
+    if line:find('^buffer:') then
+      local anchor, current_pos, first_visible_line, filename =
+        line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
+      if not filename:find('^%[.+%]$') then
+        textadept.io.open(filename or '')
+      else
+        textadept.new_buffer()
+        buffer._type = filename
       end
+      -- Restore saved buffer selection and view.
+      local anchor = tonumber(anchor) or 0
+      local current_pos = tonumber(current_pos) or 0
+      local first_visible_line = tonumber(first_visible_line) or 0
+      local buffer = buffer
+      buffer._anchor, buffer._current_pos = anchor, current_pos
+      buffer._first_visible_line = first_visible_line
+      buffer:line_scroll(0,
+        buffer:visible_from_doc_line(first_visible_line))
+      buffer:set_sel(anchor, current_pos)
+    elseif line:find('^%s*split%d:') then
+      local level, num, type, size =
+        line:match('^(%s*)split(%d): (%S+) (%d+)')
+      local view = splits[#level] and splits[#level][tonumber(num)] or view
+      splits[#level + 1] = { view:split(type == 'true') }
+      splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
+    elseif line:find('^%s*view%d:') then
+      local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
+      local view = splits[#level][tonumber(num)] or view
+      buf_idx = tonumber(buf_idx)
+      if buf_idx > #textadept.buffers then buf_idx = #textadept.buffers end
+      view:goto_buffer(buf_idx)
+    elseif line:find('^current_view:') then
+      local view_idx = line:match('^current_view: (%d+)')
+      current_view = tonumber(view_idx) or 1
     end
     if line:find('^size:') then
       local width, height = line:match('^size: (%d+) (%d+)$')
       if width and height then textadept.size = { width, height } end
-    elseif line:find('^pm:') then
-      local width, cursor, text = line:match('^pm: (%d+) ([%d:]+) (.*)$')
-      textadept.pm.width = width or 0
-      textadept.pm.entry_text = text or ''
-      textadept.pm.activate()
-      if cursor then textadept.pm.cursor = cursor end
     end
   end
   f:close()
@@ -154,9 +144,6 @@ function save(filename)
   -- Write out other things.
   local size = textadept.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
-  local pm = textadept.pm
-  session[#session + 1] =
-    ("pm: %d %s %s"):format(pm.width, pm.cursor or '0', pm.entry_text)
   -- Write the session.
   local f = io.open(filename or textadept.session_file or DEFAULT_SESSION, 'wb')
   if f then

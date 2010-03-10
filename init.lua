@@ -28,13 +28,6 @@ require 'ext/command_entry' -- provides tab-completion for the command entry
 require 'ext/mime_types' -- provides support for language detection based on
                          -- the file; loads its language-specific module if
                          -- it exists
-require 'ext/pm' -- provides the dynamic browser (side pane) functionality
-require 'ext/pm.buffer_browser'  -- buffer browser
-require 'ext/pm.file_browser'    -- file browser
-require 'ext/pm.modules_browser' -- modules browser
-if not WIN32 then
-  require 'ext/pm.ctags_browser' -- ctags browser
-end
 
 -- Generic modules to load on startup.
 require 'textadept'
@@ -75,12 +68,6 @@ if not RESETTING then
     for _, filename in ipairs(arg) do
       if not filename:find('^~?/') then filename = base_dir..filename end
       textadept.io.open(filename)
-    end
-
-    -- read only the Project Manager session settings
-    if not _m.textadept.session.load(nil, true) then
-      textadept.pm.entry_text = 'buffers'
-      textadept.pm.activate()
     end
   end
 end
