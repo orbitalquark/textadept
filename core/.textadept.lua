@@ -118,6 +118,11 @@ function _print(buffer_type, ...) end
 function print(...) end
 
 ---
+-- Displays a dialog with a list of buffers to switch to and switches to the
+-- selected one, if any.
+function switch_buffer() end
+
+---
 -- Displays a CocoaDialog of a specified type with the given string arguments.
 -- Each argument is like a string in Lua's 'arg' table.
 -- @return string CocoaDialog result.

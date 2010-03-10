@@ -114,7 +114,7 @@ if not MAC then
   -- Windows and Linux key commands.
 
   --[[
-    C:     B   D       H I J K L M               U
+    C:         D       H I J K L M               U
     A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
     CS:  A B C D     G H I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
@@ -214,6 +214,7 @@ if not MAC then
   keys.ai     = { m_snippets.show_style     }
 
   -- Buffers
+  keys.cb      = { t.switch_buffer             }
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
   keys['cs\t'] = { 'goto_buffer', v, -1, false }
   local function toggle_setting(setting)
@@ -272,7 +273,7 @@ else
 
   --[[
     C:                     J   L M               U   W X   Z
-    A:     B   D E     H   J K L                 U
+    A:         D E     H   J K L                 U
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
     SA:  A B C D       H I J K L M N O   Q R   T U V   X
     CA:  A   C   E         J K L M N O   Q R S T U V W X Y Z
@@ -375,6 +376,7 @@ else
   keys.ci     = { m_snippets.show_style     }
 
   -- Buffers
+  keys.ab      = { t.switch_buffer             }
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
   keys['cs\t'] = { 'goto_buffer', v, -1, false }
   local function toggle_setting(setting)

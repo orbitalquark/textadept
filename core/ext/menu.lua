@@ -115,6 +115,7 @@ local ID = {
   ENCODING_MACROMAN = 515,
   ENCODING_UTF16 = 516,
   REFRESH_SYNTAX_HIGHLIGHTING = 508,
+  SWITCH_BUFFER = 517,
   -- View
   NEXT_VIEW = 601,
   PREV_VIEW = 602,
@@ -243,6 +244,7 @@ local menubar = {
     title = l.MENU_BUF_TITLE,
     { l.MENU_BUF_NEXT, ID.NEXT_BUFFER },
     { l.MENU_BUF_PREV, ID.PREV_BUFFER },
+    { l.MENU_BUF_SWITCH, ID.SWITCH_BUFFER },
     { SEPARATOR, ID.SEPARATOR },
     { l.MENU_BUF_TOGGLE_VIEW_EOL, ID.TOGGLE_VIEW_EOL },
     { l.MENU_BUF_TOGGLE_WRAP, ID.TOGGLE_WRAP_MODE },
@@ -476,6 +478,7 @@ local actions = {
   [ID.ENCODING_MACROMAN] = { set_encoding, 'MacRoman' },
   [ID.ENCODING_UTF16] = { set_encoding, 'UTF-16LE' },
   [ID.REFRESH_SYNTAX_HIGHLIGHTING] = { 'colourise', b, 0, -1 },
+  [ID.SWITCH_BUFFER] = { t.switch_buffer },
   -- View
   [ID.NEXT_VIEW] = { t.goto_view, 1, false },
   [ID.PREV_VIEW] = { t.goto_view, -1, false },

@@ -78,3 +78,24 @@ end
 
 -- LuaDoc is in core/.textadept.lua.
 function textadept.print(...) textadept._print(locale.MESSAGE_BUFFER, ...) end
+
+-- LuaDoc is in core/.textadept.lua.
+function textadept.switch_buffer()
+  local items = {}
+  for _, buffer in ipairs(textadept.buffers) do
+    local filename = buffer.filename or buffer._type or locale.UNTITLED
+    local dirty = buffer.dirty and '*' or ''
+    items[#items + 1] = dirty..filename:match('[^/\\]+$')
+    items[#items + 1] = filename
+  end
+  local out =
+    textadept.dialog('filteredlist',
+                     '--title', locale.SWITCH_BUFFERS,
+                     '--button1', 'gtk-ok',
+                     '--button2', 'gtk-cancel',
+                     '--no-newline',
+                     '--columns', 'Name', 'File',
+                     '--items', unpack(items))
+  local i = tonumber(out:match('%-?%d+$'))
+  if i and i >= 0 then view:goto_buffer(i + 1, true) end
+end
