@@ -203,7 +203,7 @@ if not MAC then
   keys['f2'] = { t.command_entry.focus }
   -- Run
   local m_run = _m.textadept.run
-  keys.cr = { m_run.go      }
+  keys.cr = { m_run.run      }
   keys.cR = { m_run.compile }
   -- Snippets
   local m_snippets = _m.textadept.lsnippets
