@@ -220,7 +220,7 @@ local function next_tab_stop()
               local repl = replacement:gsub('%%(%d+)',
                 function(i) return arg[tonumber(i)] or '' end)
               return repl:gsub('#(%b())', run_lua_code)
-            end)
+            end, 1)
         end)
 
     -- Regular mirror.
