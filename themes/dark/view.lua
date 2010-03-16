@@ -42,6 +42,10 @@ buffer:marker_define(c.SC_MARKNUM_FOLDEREND, c.SC_MARK_EMPTY)
 buffer:marker_define(c.SC_MARKNUM_FOLDEROPENMID, c.SC_MARK_EMPTY)
 buffer:marker_define(c.SC_MARKNUM_FOLDERMIDTAIL, c.SC_MARK_EMPTY)
 
+-- annotations
+buffer.annotation_visible = 2
+buffer.annotation_style_offset = 512
+
 -- various
 buffer.call_tip_use_style = 0
 buffer:set_fold_flags(16)
