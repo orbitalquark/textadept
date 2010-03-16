@@ -146,9 +146,8 @@ local snippet_stack = {}
 -- @param s The string to handle escapes in.
 -- @return string with escapes handled.
 local function handle_escapes(s)
-  local byte = string.byte
   return s:gsub('%%([%%`%)|#])',
-    function(char) ("\\%03d"):format(byte(char)) end)
+    function(char) return ("\\%03d"):format(char:byte()) end)
 end
 
 -- Replaces octal characters with their escaped equivalents in a given string.
@@ -457,45 +456,3 @@ function show_style()
                   style_num)
   buffer:call_tip_show(buffer.current_pos, text)
 end
-
--- Gets the start position, end position, and text of the currently running
--- snippet.
--- @return start pos, end pos, and snippet text.
-snippet_info = function()
-  local buffer = buffer
-  local s = snippet.start_pos
-  local e =
-    buffer:position_from_line(
-      buffer:marker_line_from_handle(snippet.end_marker)) - 1
-  if e >= s then return s, e, buffer:text_range(s, e) end
-end
-
--- Runs the given Lua code.
-run_lua_code = function(code)
-  code = unhandle_escapes(code)
-  local env =
-    setmetatable({ selected_text = buffer:get_sel_text() }, { __index = _G })
-  local _, val = pcall(setfenv(loadstring('return '..code), env))
-  return val or ''
-end
-
--- Replaces escaped characters with their octal equivalents in a given string.
--- '%%' is the escape character used.
-handle_escapes = function(s)
-  return s:gsub('%%([%%`%)|#])',
-    function(char)
-      return ("\\%03d"):format(char:byte())
-    end)
-end
-
--- Replaces octal characters with their escaped equivalents in a given string.
-unhandle_escapes = function(s)
-  return s:gsub('\\(%d%d%d)',
-    function(value)
-      return '%'..string.char(value)
-    end)
-end
-
--- Replaces escaped characters with the actual characters in a given string.
--- This is used when escape sequences are no longer needed.
-unescape = function(s) return s:gsub('%%([%%`%)|#])', '%1') end
