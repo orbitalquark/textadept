@@ -231,13 +231,15 @@ add_handler('view_new',
     buffer.lexer = c.SCLEX_LPEG
     buffer:set_lexer_language('container')
 
-    -- allow redefinitions of these key commands
-    buffer:clear_cmd_key(string.byte('Z'), c.SCMOD_CTRL)
-    buffer:clear_cmd_key(string.byte('Y'), c.SCMOD_CTRL)
-    buffer:clear_cmd_key(string.byte('X'), c.SCMOD_CTRL)
-    buffer:clear_cmd_key(string.byte('C'), c.SCMOD_CTRL)
-    buffer:clear_cmd_key(string.byte('V'), c.SCMOD_CTRL)
-    buffer:clear_cmd_key(string.byte('A'), c.SCMOD_CTRL)
+    -- allow redefinitions of these Scintilla key commands
+    local ctrl_keys = { 'Z', 'Y', 'X', 'C', 'V', 'A', 'D' }
+    local ctrl_shift_keys = { '[', ']', '/', '\\', 'L', 'T', 'U' }
+    for _, key in ipairs(ctrl_keys) do
+      buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL)
+    end
+    for _, key in ipairs(ctrl_shift_keys) do
+      buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL + c.SCMOD_SHIFT)
+    end
 
     if _THEME and #_THEME > 0 then
       local ret, errmsg = pcall(dofile, _THEME..'/view.lua')
