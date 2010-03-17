@@ -32,10 +32,6 @@ Worried that your existing shell scripts for transforming text in other editors
 will not be compatible with Lua or Textadept? No need to be. You can tell Lua to
 run them in your shell.
 
-Wish that you could add a feature to another editor's document/file browser/etc.
-side pane? Textadept allows you to create as many different kinds of browsers
-for heirarchical data as you want.
-
 These are just some of Textadept's strengths. Textadept is not about
 constraining the user to a certain set of features while allowing minimal
 custimization and/or extensibility. Textadept is about allowing that

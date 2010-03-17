@@ -13,8 +13,8 @@ Lua to C interface, event structure, file input/output, and localization.
 
 Core extension Lua modules are in `core/ext/`. These are optional and not
 required, but are stored in `core/` because they could be considered "core
-functionality". They are responsible for PM functionality and features like
-find/replace and the handling of key commands, menus, and file types.
+functionality". They are responsible for features like find/replace and the
+handling of key commands, menus, and file types.
 
 ## Lexers
 

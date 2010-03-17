@@ -1,8 +1,0 @@
-To add a new module:
-  1. Open Textadept.
-  2. Enter 'modules' in the project manager entry.
-  3. Right click and select 'New Module'.
-  4. Enter your module's filesystem name.
-     (Typically the language's name in lower case; e.g. ruby)
-  5. Enter your module language's nice name.
-     (Typically regular case; e.g. Ruby)
