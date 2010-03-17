@@ -30,7 +30,7 @@ module('textadept.key_commands', package.seeall)
 --     SHIFT = 'Shift'
 --     ALT = 'Alt'
 --     ADD = '+'
---     -- pressing control, shift, alt and 'a' yields: 'Ctrl+Shift+Alt+a'
+--     -- pressing control, shift, alt and 'a' yields: 'Ctrl+Shift+Alt+A'
 --
 -- For key values less than 255, Lua's [`string.char()`][string_char] is used to
 -- determine the key's string representation. Otherwise, the `KEYSYMS` lookup
@@ -95,6 +95,34 @@ module('textadept.key_commands', package.seeall)
 -- All Lua functions must be defined BEFORE they are reference in key commands.
 -- Therefore, any module containing key commands should be loaded after all
 -- other modules, whose functions are being referenced, have been loaded.
+--
+-- ## Configuration
+--
+-- It is not recommended to edit Textadept's `core/ext/key_commands.lua`.
+-- Instead you have options:
+--
+--   1. Copy it to your `~/.textadept/` directory, make your changes, and
+--      `require` it in your `~/.textadept/init.lua`.
+--
+--   2. `require 'ext/key_commands'` in `~/.textadept/init.lua` and redefine the
+--      keys through the `_G.keys` table. For example:
+--
+--          -- ~/.textadept/init.lua
+--          require 'ext/keys'
+--          require 'ext/find'
+--          require 'ext/command_entry'
+--          require 'ext/mime_types'
+--
+--          require 'textadept'
+--
+--          require 'ext/menu'
+--          require 'ext/key_commands'
+--
+--          keys.cd = { 'clear', 'buffer' } -- delete char under caret
+--          keys.aq = nil -- do not quit Textadept with Alt+Q
+--          -- etc.
+--
+--   3. The same as 2, but redefine the keys in a separate file you `require`.
 
 -- Windows and Linux key commands are listed in the first block.
 -- Mac OSX key commands are listed in the second block.
