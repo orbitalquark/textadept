@@ -1,22 +1,14 @@
 # User Interface
 
 Textadept's user interface was designed to be simple. It consists of an optional
-menubar, left-hand side pane, editor view, and initially hidden dialogs for
-find/replace and command entry. Below are brief descriptions of these features.
-More in-depth discussion about each of them is provided later in the manual.
+menubar, editor view, and initially hidden dialogs for find/replace and command
+entry. Below are brief descriptions of these features. More in-depth discussion
+about each of them is provided later in the manual.
 
 ## Menubar
 
 The completely customizable (and optional!) menubar typically provides access to
 all of Textadept's features.
-
-## Side Pane
-
-From the beginning, the side pane has been called the Project Manager, or PM.
-This is a deceptive name though, as it can hold any hierarchical, treeview-based
-data structure, not just a list of files in a project. By default, Textadept can
-show opened buffers, a filesystem, and a list of Lua modules. (These can be seen
-in `core/ext/pm/`.) If you choose, you can resize and/or hide the PM.
 
 ## Editor View
 

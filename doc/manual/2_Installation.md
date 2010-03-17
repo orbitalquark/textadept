@@ -3,8 +3,8 @@
 ## Requirements
 
 In its bid for minimalism, Textadept also needs very little to run. In fact, the
-only thing it needs is [GTK+ 2.0][GTK2]. It has it's own version of Lua compiled
-in.
+only thing it needs is [GTK+ 2.0][GTK2] >= 2.16. Textadept has it's own version
+of Lua compiled in.
 
 #### Linux
 
