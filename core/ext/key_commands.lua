@@ -98,31 +98,10 @@ module('textadept.key_commands', package.seeall)
 --
 -- ## Configuration
 --
--- It is not recommended to edit Textadept's `core/ext/key_commands.lua`.
--- Instead you have options:
---
---   1. Copy it to your `~/.textadept/` directory, make your changes, and
---      `require` it in your `~/.textadept/init.lua`.
---
---   2. `require 'ext/key_commands'` in `~/.textadept/init.lua` and redefine the
---      keys through the `_G.keys` table. For example:
---
---          -- ~/.textadept/init.lua
---          require 'ext/keys'
---          require 'ext/find'
---          require 'ext/command_entry'
---          require 'ext/mime_types'
---
---          require 'textadept'
---
---          require 'ext/menu'
---          require 'ext/key_commands'
---
---          keys.cd = { 'clear', 'buffer' } -- delete char under caret
---          keys.aq = nil -- do not quit Textadept with Alt+Q
---          -- etc.
---
---   3. The same as 2, but redefine the keys in a separate file you `require`.
+-- It is not recommended to edit Textadept's `core/ext/key_commands.lua`. You
+-- can either override or add to default key commands in your
+-- `~/.textadept/key_commands.lua` or `require` a separate module in your
+-- `~/.textadept/init.lua` instead of `ext/key_commands`.
 
 -- Windows and Linux key commands are listed in the first block.
 -- Mac OSX key commands are listed in the second block.
@@ -479,6 +458,13 @@ else
   keys.cah = { 'del_word_left',     b }
   keys.cd  = { 'clear',             b }
   keys.cad = { 'del_word_right',    b }
+end
+
+-- Load user key commands.
+local lfs = require 'lfs'
+if lfs.attributes(_USERHOME..'/key_commands.lua') then
+  local ret, errmsg = pcall(dofile, _USERHOME..'/key_commands.lua')
+  if not ret then textadept.print(errmsg) end
 end
 
 ---
