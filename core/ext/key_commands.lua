@@ -121,7 +121,7 @@ if not MAC then
   -- Windows and Linux key commands.
 
   --[[
-    C:         D       H I J K L M               U
+    C:         D       H I J K   M               U
     A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
     CS:  A B C D     G H I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
@@ -240,7 +240,8 @@ if not MAC then
     ['\t'] = { toggle_setting, 'use_tabs'           },
     [' ']  = { toggle_setting, 'view_ws'            },
   }
-  keys['f5'] = { 'colourise', b, 0, -1 }
+  keys.cl    = { t.mime_types.select_lexer }
+  keys['f5'] = { 'colourise', b, 0, -1     }
 
   -- Views
   keys.cav = {
@@ -402,7 +403,8 @@ else
     ['\t'] = { toggle_setting, 'use_tabs'           },
     [' ']  = { toggle_setting, 'view_ws'            },
   }
-  keys['f5'] = { 'colourise', b, 0, -1 }
+  keys.cl    = { t.mime_types.select_lexer }
+  keys['f5'] = { 'colourise', b, 0, -1     }
 
   -- Views
   keys.cv = {
