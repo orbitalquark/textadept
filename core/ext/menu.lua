@@ -287,25 +287,8 @@ local menubar = {
     { l.MENU_HELP_LUADOC, ID.LUADOC },
   },
 }
-local lexers_found = {}
-local lexers = {}
 local lexer_menu = { title = l.MENU_LEX_TITLE }
-local lfs = require 'lfs'
-for lexer in lfs.dir(_HOME..'/lexers/') do
-  if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
-    lexers_found[lexer:match('^(.+)%.lua$')] = true
-  end
-end
-if lfs.attributes(_USERHOME..'/lexers/') then
-  for lexer in lfs.dir(_USERHOME..'/lexers/') do
-    if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
-      lexers_found[lexer:match('^(.+)%.lua$')] = true
-    end
-  end
-end
-for lexer in pairs(lexers_found) do lexers[#lexers + 1] = lexer end
-table.sort(lexers)
-for _, lexer in ipairs(lexers) do
+for _, lexer in ipairs(textadept.mime_types.lexers) do
   lexer_menu[#lexer_menu + 1] = { lexer, ID.LEXER_START + #lexer_menu }
 end
 table.insert(menubar, #menubar, gtkmenu(lexer_menu)) -- before 'Help'

@@ -105,6 +105,31 @@ for line in mime_types:gmatch('[^\r\n]+') do
   end
 end
 
+---
+-- List of detected lexers.
+-- Lexers are read from `lexers/` and `~/.textadept/lexers/`.
+-- @class table
+-- @name lexers
+lexers = {}
+
+-- Generate lexer list
+local lexers_found = {}
+local lfs = require 'lfs'
+for lexer in lfs.dir(_HOME..'/lexers/') do
+  if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
+    lexers_found[lexer:match('^(.+)%.lua$')] = true
+  end
+end
+if lfs.attributes(_USERHOME..'/lexers/') then
+  for lexer in lfs.dir(_USERHOME..'/lexers/') do
+    if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
+      lexers_found[lexer:match('^(.+)%.lua$')] = true
+    end
+  end
+end
+for lexer in pairs(lexers_found) do lexers[#lexers + 1] = lexer end
+table.sort(lexers)
+
 --
 -- Replacement for buffer:set_lexer_language().
 -- Sets a buffer._lexer field so it can be restored without querying the
@@ -123,6 +148,7 @@ local function set_lexer(buffer, lang)
   elseif not ret and not err:find("^module '"..lang.."' not found:") then
     error(err)
   end
+  buffer:colourise(0, -1)
 end
 textadept.events.add_handler('buffer_new',
   function() buffer.set_lexer = set_lexer end)
@@ -168,3 +194,20 @@ textadept.events.add_handler('buffer_after_switch', restore_lexer)
 textadept.events.add_handler('view_new', restore_lexer)
 textadept.events.add_handler('reset_after',
   function() buffer:set_lexer(buffer._lexer) end)
+
+---
+-- Prompts the user to select a lexer from a filtered list for the current
+-- buffer.
+function select_lexer()
+  local out =
+    textadept.dialog('filteredlist',
+                     '--title', locale.MT_SELECT_LEXER,
+                     '--button1', 'gtk-ok',
+                     '--button2', 'gtk-cancel',
+                     '--no-newline',
+                     '--string-output',
+                     '--columns', 'Name',
+                     '--items', unpack(lexers))
+  local response, lexer = out:match('([^\n]+)\n([^\n]+)$')
+  if response and response ~= 'gtk-cancel' then buffer:set_lexer(lexer) end
+end
