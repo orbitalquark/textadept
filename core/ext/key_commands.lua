@@ -254,6 +254,7 @@ if not MAC then
     -- TODO: { function() view.size = view.size + 10 end  }
     -- TODO: { function() view.size = view.size - 10 end  }
   }
+  keys.c0 = { function() buffer.zoom = 0 end }
 
   -- Miscellaneous not in standard menu.
   -- Recent files.
@@ -417,6 +418,7 @@ else
     -- TODO: { function() view.size = view.size + 10 end  }
     -- TODO: { function() view.size = view.size - 10 end  }
   }
+  keys.c0 = { function() buffer.zoom = 0 end }
 
   -- Miscellaneous not in standard menu.
   -- Recent files.
