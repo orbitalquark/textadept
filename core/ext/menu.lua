@@ -325,15 +325,14 @@ local function set_lexer(lexer)
 end
 local function open_webpage(url)
   local cmd
-  if not WIN32 then
-    cmd =
-      string.format('"%s" "file://%s"', not MAC and 'firefox' or 'open', url)
+  if WIN32 then
+    cmd = string.format('start "" "%s"', url)
+    local p = io.popen(cmd)
+    if not p then error(l.MENU_BROWSER_ERROR..url) else p:close() end
   else
-    cmd =
-      string.format('"%s" %s',
-                    'c:/program files/internet explorer/iexplore.exe', url)
+    cmd = string.format(MAC and 'open "file://%s"' or 'xdg-open "%s"', url)
+    if os.execute(cmd) ~= 0 then error(l.MENU_BROWSER_ERROR..url) end
   end
-  if os.execute(cmd) ~= 0 then error(l.MENU_BROWSER_ERROR) end
 end
 
 local actions = {
