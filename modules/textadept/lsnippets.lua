@@ -456,3 +456,5 @@ function show_style()
                   style_num)
   buffer:call_tip_show(buffer.current_pos, text)
 end
+
+textadept.user_dofile('snippets.lua') -- load user snippets

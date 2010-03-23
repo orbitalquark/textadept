@@ -127,3 +127,9 @@ function switch_buffer() end
 -- Each argument is like a string in Lua's 'arg' table.
 -- @return string CocoaDialog result.
 function dialog(kind, ...) end
+
+---
+-- Calls 'dofile' on the given filename in the user's Textadept directory.
+-- This is typically used for loading user files like key commands or snippets.
+-- @param filename The name of the file (not path).
+function user_dofile(filename) end
