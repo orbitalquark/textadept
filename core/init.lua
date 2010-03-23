@@ -99,3 +99,11 @@ function textadept.switch_buffer()
   local i = tonumber(out:match('%-?%d+$'))
   if i and i >= 0 then view:goto_buffer(i + 1, true) end
 end
+
+-- LuaDoc is in core/.textadept.lua.
+function textadept.user_dofile(filename)
+  if lfs.attributes(_USERHOME..'/'..filename) then
+    local ret, errmsg = pcall(dofile, _USERHOME..'/'..filename)
+    if not ret then textadept.print(errmsg) end
+  end
+end

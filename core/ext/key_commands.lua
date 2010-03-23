@@ -462,12 +462,7 @@ else
   keys.cad = { 'del_word_right',    b }
 end
 
--- Load user key commands.
-local lfs = require 'lfs'
-if lfs.attributes(_USERHOME..'/key_commands.lua') then
-  local ret, errmsg = pcall(dofile, _USERHOME..'/key_commands.lua')
-  if not ret then textadept.print(errmsg) end
-end
+textadept.user_dofile('key_commands.lua') -- load user key commands
 
 ---
 -- This module has no functions.
