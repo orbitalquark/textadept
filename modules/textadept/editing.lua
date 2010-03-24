@@ -79,6 +79,20 @@ textadept.events.add_handler('char_added',
     end
   end)
 
+textadept.events.add_handler('keypress',
+  function(code, shift, control, alt)
+    -- Backspace (from <gdk/gdkkeysyms.h>)
+    if AUTOPAIR and code == 0xff08 and buffer.selections == 1 then
+      local buffer = buffer
+      local current_pos = buffer.current_pos
+      local c = buffer.char_at[current_pos - 1]
+      if char_matches[c] and
+        buffer.char_at[current_pos] == string.byte(char_matches[c]) then
+        buffer:clear()
+      end
+    end
+  end)
+
 textadept.events.add_handler('update_ui',
   function() -- highlights matching braces
     local buffer = buffer
