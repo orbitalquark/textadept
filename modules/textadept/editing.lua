@@ -72,21 +72,18 @@ local comment_strings = {
   ruby = '#~',
 }
 
-if AUTOPAIR then
 textadept.events.add_handler('char_added',
   function(c) -- matches characters specified in char_matches
-    if char_matches[c] and buffer.selections == 1 then
+    if AUTOPAIR and char_matches[c] and buffer.selections == 1 then
       buffer:insert_text(-1, char_matches[c])
     end
   end)
-end
 
-if HIGHLIGHT_BRACES then
 textadept.events.add_handler('update_ui',
   function() -- highlights matching braces
     local buffer = buffer
     local current_pos = buffer.current_pos
-    if braces[buffer.char_at[current_pos]] and
+    if HIGHLIGHT_BRACES and braces[buffer.char_at[current_pos]] and
       buffer:get_style_name(buffer.style_at[current_pos]) == 'operator' then
       local pos = buffer:brace_match(current_pos)
       if pos ~= -1 then
@@ -98,12 +95,10 @@ textadept.events.add_handler('update_ui',
       buffer:brace_bad_light(-1)
     end
   end)
-end
 
-if AUTOINDENT then
 textadept.events.add_handler('char_added',
   function(char) -- auto-indent on return
-    if char ~= 10 then return end
+    if not AUTOINDENT or char ~= 10 then return end
     local buffer = buffer
     local anchor, caret = buffer.anchor, buffer.current_pos
     local curr_line = buffer:line_from_position(caret)
@@ -127,7 +122,6 @@ textadept.events.add_handler('char_added',
       buffer:set_sel(anchor, caret)
     end
   end)
-end
 
 -- local functions
 local insert_into_kill_ring, scroll_kill_ring
