@@ -20,6 +20,8 @@ DEFAULT_SESSION = _USERHOME..'/session'
 SAVE_ON_QUIT = true
 -- end settings
 
+local lfs = require 'lfs'
+
 ---
 -- Loads a Textadept session file.
 -- Textadept restores split views, opened buffers, cursor information, and
@@ -29,6 +31,7 @@ SAVE_ON_QUIT = true
 -- @return true if the session file was opened and read; false otherwise.
 -- @usage _m.textadept.session.load(filename)
 function load(filename)
+  local not_found = {}
   local f = io.open(filename or DEFAULT_SESSION, 'rb')
   if not f then
     if not textadept.io.close_all() then return false end
@@ -40,7 +43,11 @@ function load(filename)
       local anchor, current_pos, first_visible_line, filename =
         line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
       if not filename:find('^%[.+%]$') then
-        textadept.io.open(filename or '')
+        if lfs.attributes(filename) then
+          textadept.io.open(filename)
+        else
+          not_found[#not_found + 1] = filename
+        end
       else
         textadept.new_buffer()
         buffer._type = filename
@@ -79,6 +86,13 @@ function load(filename)
   f:close()
   textadept.views[current_view]:focus()
   textadept.session_file = filename or DEFAULT_SESSION
+  if #not_found > 0 then
+    textadept.dialog('msgbox',
+                    '--title', locale.M_SESSION_FILES_NOT_FOUND_TITLE,
+                    '--text', locale.M_SESSION_FILES_NOT_FOUND_TEXT,
+                    '--informative-text',
+                      string.format('%s', table.concat(not_found, '\n')))
+  end
   return true
 end
 
