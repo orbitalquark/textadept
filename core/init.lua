@@ -105,5 +105,7 @@ function textadept.user_dofile(filename)
   if lfs.attributes(_USERHOME..'/'..filename) then
     local ret, errmsg = pcall(dofile, _USERHOME..'/'..filename)
     if not ret then textadept.print(errmsg) end
+    return ret
   end
+  return false
 end

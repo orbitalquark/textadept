@@ -131,5 +131,7 @@ function dialog(kind, ...) end
 ---
 -- Calls 'dofile' on the given filename in the user's Textadept directory.
 -- This is typically used for loading user files like key commands or snippets.
+-- Errors are printed to the Textadept message buffer.
 -- @param filename The name of the file (not path).
+-- @return true if successful; false otherwise.
 function user_dofile(filename) end
