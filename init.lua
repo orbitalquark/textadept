@@ -4,23 +4,14 @@ local textadept = _G.textadept
 
 local paths = {
   _HOME..'/modules/?.lua',
-  _HOME..'/modules/?/init.lua',  
+  _HOME..'/modules/?/init.lua',
   _USERHOME..'/modules/?.lua',
   _USERHOME..'/modules/?/init.lua',
   package.path
 }
 package.path = table.concat(paths, ';')
 
-local loaded_user_modules = false
-local user_init = _USERHOME..'/init.lua'
-local lfs = require 'lfs'
-if lfs.attributes(user_init) then
-  local ret, errmsg = pcall(dofile, user_init)
-  if not ret then error(errmsg) end
-  loaded_user_modules = ret
-end
-
-if not loaded_user_modules then
+if not textadept.user_dofile('init.lua') then
 -- Core extension modules to load on startup.
 require 'ext/keys' -- provides key command support
 require 'ext/find' -- provides functionality for find/replace
