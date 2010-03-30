@@ -130,6 +130,7 @@ local ID = {
   -- Help
   MANUAL = 901,
   LUADOC = 902,
+  ABOUT = 903,
 }
 
 
@@ -285,6 +286,8 @@ local menubar = {
     title = l.MENU_HELP_TITLE,
     { l.MENU_HELP_MANUAL, ID.MANUAL },
     { l.MENU_HELP_LUADOC, ID.LUADOC },
+    { SEPARATOR, ID.SEPARATOR },
+    { l.MENU_HELP_ABOUT, ID.ABOUT },
   },
 }
 local lexer_menu = { title = l.MENU_LEX_TITLE }
@@ -486,6 +489,10 @@ local actions = {
   -- Help
   [ID.MANUAL] = { open_webpage, _HOME..'/doc/manual/1_Introduction.html' },
   [ID.LUADOC] = { open_webpage, _HOME..'/doc/index.html' },
+  [ID.ABOUT] = {
+    t.dialog, 'ok-msgbox', '--title', 'Textadept', '--informative-text',
+              _RELEASE, '--no-cancel'
+  },
 }
 if MAC then actions[ID.PASTE] = { m_editing.smart_paste } end -- fix paste issue
 
