@@ -330,7 +330,7 @@ local function open_webpage(url)
     local p = io.popen(cmd)
     if not p then error(l.MENU_BROWSER_ERROR..url) else p:close() end
   else
-    cmd = string.format(MAC and 'open "file://%s"' or 'xdg-open "%s"', url)
+    cmd = string.format(MAC and 'open "file://%s"' or 'xdg-open "%s" &', url)
     if os.execute(cmd) ~= 0 then error(l.MENU_BROWSER_ERROR..url) end
   end
 end
