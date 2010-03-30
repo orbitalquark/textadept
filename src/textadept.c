@@ -101,8 +101,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
  * The UI consists of:
  *   - A menubar initially hidden and empty. It should be populated by script
  *     and then shown.
- *   - A side pane. It contains a treeview for hierarchical data sets, such as
- *     a file structure for project management.
  *   - A frame for Scintilla windows.
  *   - A find text frame initially hidden.
  *   - A command entry initially hidden. This entry accepts and runs Lua code

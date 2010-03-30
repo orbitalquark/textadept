@@ -14,14 +14,20 @@ date than a manual like this could ever be.
 The following global variables not mentioned in the LuaDoc are available in
 Textadept's Lua state:
 
-* `arg`: Table containing the command line arguments passed to Textadept.
 * `_HOME`: Path to the directory containing Textadept.
-* `WIN32`: If Textadept is running on Windows, this flag is `true`.
+* `_LEXERPATH`: Paths to lexers, formatted like [`package.path`][package_path].
+* `_RELEASE`: The Textadept release version.
+* `_THEME`: The [theme][theme] file to use.
+* `_USERHOME`: Path to the user's `~/.textadept/`.
 * `MAC`: If Textadept is running on Mac OSX, this flag is `true`.
 * `_CHARSET`: The character set encoding of the filesystem. This is used in
   [File I/O][file_io].
 * `RESETTING`: If [`textadept.reset()`][textadept_reset] has been called, this
   flag is `true` while the Lua state is being re-initialized.
+* `WIN32`: If Textadept is running on Windows, this flag is `true`.
+* `arg`: Table containing the command line arguments passed to Textadept.
 
+[package_path]: http://www.lua.org/manual/5.1/manual.html#pdf-package.path
+[theme]: 6_Startup.html
 [file_io]: ../modules/textadept.io.html
 [textadept_reset]: ../modules/textadept.html#reset
