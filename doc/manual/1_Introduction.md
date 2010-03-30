@@ -52,29 +52,37 @@ join us on IRC via [freenode.net][freenode] in `#textadept`.
 
 <div style="float: left;">
 Main window.<br />
-<a href="http://caladbolg.net/images/textadept/window.png"><img src="http://caladbolg.net/images/textadept/window_t.png" alt="Main" /></a>
+<a href="http://caladbolg.net/images/textadept/main.png"><img src="http://caladbolg.net/images/textadept/main_t.png" alt="Main" /></a>
 </div>
 <div style="float: left; margin-left: 50px;">
 Open Buffers.<br />
 <a href="http://caladbolg.net/images/textadept/buffers.png"><img src="http://caladbolg.net/images/textadept/buffers_t.png" alt="Buffers" /></a>
 </div>
 <div style="margin-left: 400px;">
-Lua Commands.<br />
-<a href="http://caladbolg.net/images/textadept/command.png"><img src="http://caladbolg.net/images/textadept/command_t.png" alt="Command" /></a>
+Switching Buffers.<br />
+<a href="http://caladbolg.net/images/textadept/buffersfilter.png"><img src="http://caladbolg.net/images/textadept/buffersfilter_t.png" alt="Switch Buffers" /></a>
 </div>
 <div style="float: left;">
-Project Manager.<br />
-<a href="http://caladbolg.net/images/textadept/project.png"><img src="http://caladbolg.net/images/textadept/project_t.png" alt="PM" /></a>
+Multiple Languages.<br />
+<a href="http://caladbolg.net/images/textadept/languages.png"><img src="http://caladbolg.net/images/textadept/languages_t.png" alt="Multiple Languages" /></a>
 </div>
 <div style="margin-left: 200px;">
-Extras.<br />
-<a href="http://caladbolg.net/images/textadept/extra.png"><img src="http://caladbolg.net/images/textadept/extra_t.png" alt="Extras" /></a>
+Lua Commands.<br />
+<a href="http://caladbolg.net/images/textadept/lua_commands.png"><img src="http://caladbolg.net/images/textadept/lua_commands_t.png" alt="Lua Command" /></a>
 </div>
 <div style="float: left;">
+Linux OS.<br />
+<a href="http://caladbolg.net/images/textadept/linux.png"><img src="http://caladbolg.net/images/textadept/linux_t.png" alt="Linux" /></a>
+</div>
+<div style="float: left; margin-left: 50px;">
 Windows OS.<br />
 <a href="http://caladbolg.net/images/textadept/win32.png"><img src="http://caladbolg.net/images/textadept/win32_t.png" alt="Win32" /></a>
 </div>
-<div style="margin-left: 200px;">
-Linux OS.<br />
-<a href="http://caladbolg.net/images/textadept/linux.png"><img src="http://caladbolg.net/images/textadept/linux_t.png" alt="Linux" /></a>
+<div style="margin-left: 400px;">
+Mac OSX.<br />
+<a href="http://caladbolg.net/images/textadept/macosx.png"><img src="http://caladbolg.net/images/textadept/macosx_t.png" alt="Mac OSX" /></a>
+</div>
+<div>
+Extras.<br />
+<a href="http://caladbolg.net/images/textadept/extras.png"><img src="http://caladbolg.net/images/textadept/extras_t.png" alt="Extras" /></a>
 </div>
