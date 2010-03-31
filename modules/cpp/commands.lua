@@ -21,9 +21,5 @@ if type(keys) == 'table' then
       buffer:add_text(';')
       buffer:new_line()
     end },
-    ['('] = { function()
-      m_editing.show_call_tip(_m.cpp.api, true)
-      return false
-    end },
   }
 end
