@@ -25,9 +25,31 @@ path to its directory instead. Any errors are printed to standard out.
 ## Post-Core (`init.lua`)
 
 After loading the core modules, Textadept begins loading additional modules.
-It first checks for a `~/.textadept/init.lua` user module. If the module is
-found, it is run and skips loading the default modules specified in `init.lua`.
-Otherwise a mixture of core extension and generic modules are loaded.
+It first checks for your `~/.textadept/init.lua`. If the file does not exist,
+all default modules listed in `init.lua` are loaded.
+
+Your `~/.textadept/init.lua` is a great place to specify what modules you want
+to use. They can be Textadept's default ones, or ones that you create. As an
+example:
+
+    -- ~/.textadept/init.lua
+    require 'ext/keys'
+    require 'ext/find'
+    -- require 'ext/command_entry' -- do not load Lua command entry
+    require 'ext/mime_types'
+    -- require 'ext/menu' -- do not load the menubar
+    require 'ext/key_commands'
+
+    require 'textadept' -- bookmarks, editing, snippets, etc.
+
+    -- my modules in ~/.textadept/modules
+    require 'foo'
+    require 'bar'
+
+Please note Textadept does NOT load your `~/.textadept/init.lua`'s modules in
+addition to its own. This defeats the purpose of maximum extensibility. If your
+`init.lua` exists, Textadept assumes that file tells it exactly what to load.
+If you have an empty `init.lua`, no modules are loaded.
 
 After loading the additional modules, Textadept parses command line arguments,
 or if none are specified, reloads the last saved session.
