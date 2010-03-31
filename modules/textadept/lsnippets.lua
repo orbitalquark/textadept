@@ -275,6 +275,19 @@ local function next_tab_stop()
       buffer:replace_sel('') -- replace_target() doesn't place caret
       snippet.ph_pos = s_start + s - 1
     end
+    -- Place additional carets at mirrors.
+    local _, _, text = snippet_info()
+    text = text:gsub('(%%%d+%b())',
+      function(mirror)
+        -- Lua code in replacement mirrors may contain '%' sequences; do not
+        -- treat as mirrors
+        if mirror:find('|') then return string.rep('_', #mirror) end
+      end)
+    for s, e in text:gmatch('()%%'..index..'()[^(]') do
+      buffer:add_selection(s_start + s - 1, s_start + e - 1)
+    end
+    buffer.main_selection = 0 -- original placeholder/mirror
+    -- Done.
     snippet.index = index
   else
     -- Finished. Find '%0' and place the caret there.
