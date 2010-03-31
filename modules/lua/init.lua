@@ -27,5 +27,3 @@ require 'lua.snippets'
 function set_buffer_properties()
 
 end
-
-api = textadept.io.read_api_file(_HOME..'/modules/lua/api', '%w_.:')

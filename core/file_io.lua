@@ -353,35 +353,6 @@ function close_all()
   return true
 end
 
----
--- Reads an API file.
--- Each non-empty line in the API file is structured as follows:
---   identifier (parameters) description
--- Whitespace is optional, but can used for formatting. In description, '\\n'
--- will be interpreted as a newline (\n) character. 'Overloaded' identifiers
--- are handled appropriately.
--- @param filename The absolute path to the API file to read.
--- @param word_chars Characters considered to be word characters for
---   determining the identifier to lookup. Its contents should be in Lua
---   pattern format suitable for the character class construct.
--- @return API table.
--- @usage textadept.io.read_api_file(filename, '%w_')
-function read_api_file(filename, word_chars)
-  local api = {}
-  local f = io.open(filename, 'rb')
-  if not f then return api end
-  for line in f:lines() do
-    local func, params, desc =
-      line:match('(['..word_chars..']+)%s*(%b())(.*)$')
-    if func and params and desc then
-      if not api[func] then api[func] = {} end
-      api[func][#api[func] + 1] = { params, desc }
-    end
-  end
-  f:close()
-  return api
-end
-
 -- Prompts the user to reload the current file if it has been modified outside
 -- of Textadept.
 local function update_modified_file()

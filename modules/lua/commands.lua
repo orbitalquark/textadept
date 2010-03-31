@@ -77,14 +77,5 @@ if type(keys) == 'table' then
       g = { goto_required },
     },
     ['s\n'] = { try_to_autocomplete_end },
-    ['('] = {
-      function()
-        buffer.word_chars =
-          '_.:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        m_editing.show_call_tip(_m.lua.api, true)
-        buffer:set_chars_default()
-        return false
-      end
-    },
   }
 end
