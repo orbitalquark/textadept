@@ -97,11 +97,12 @@ clean:
 TEXTADEPT32 = $(TEXTADEPT)32
 TEXTADEPT64 = $(TEXTADEPT)
 TEXTADEPTWIN32 = $(TEXTADEPT).exe
-TEXTADEPTMAC = $(TEXTADEPT).app
+TEXTADEPTMAC = $(TEXTADEPT).osx
 RELEASEDIR32 = textadept_$(value VERSION)
 RELEASEDIR64 = $(RELEASEDIR32).x86_64
 RELEASEDIRWIN32 = $(RELEASEDIR32).win32
 RELEASEDIRMAC = $(RELEASEDIR32).osx
+TEXTADEPTAPP = $(RELEASEDIRMAC)/$(TEXTADEPT).app
 PACKAGE32 = ../releases/$(RELEASEDIR32).tgz
 PACKAGE64 = ../releases/$(RELEASEDIR64).tgz
 PACKAGEWIN32 = ../releases/$(RELEASEDIRWIN32).zip
@@ -116,7 +117,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	cp -r ../doc $(RELEASEDIR32)
 	hg clone http://scintillua.googlecode.com/hg/ tmp
 	mv tmp/lexers $(RELEASEDIR32)
-	rm -r tmp $(RELEASEDIR32/lexers/.hg*
+	rm -r tmp
 	# Linux x64_64
 	cp -r $(RELEASEDIR32) $(RELEASEDIR64)
 	cp ../$(TEXTADEPT64) $(RELEASEDIR64)
@@ -132,7 +133,13 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	tar czf $(PACKAGE32) $(RELEASEDIR32)
 	# Mac OSX
 	mkdir $(RELEASEDIRMAC)
-	cp -r ../$(TEXTADEPTMAC) $(RELEASEDIRMAC)
+	mkdir -p $(TEXTADEPTAPP)/Contents/{MacOS,Resources}
+	cp ../xcode/{Info.plist,PkgInfo} $(TEXTADEPTAPP)/Contents
+	cp -r ../xcode/English.lproj $(TEXTADEPTAPP)/Contents/Resources
+	cp -r $(RELEASEDIR32)/* $(TEXTADEPTAPP)/Contents/Resources
+	mv $(TEXTADEPTAPP)/Contents/Resources/core/images/textadept.icns \
+		$(TEXTADEPTAPP)/Contents/Resources/
+	cp ../$(TEXTADEPTMAC) $(TEXTADEPTAPP)/Contents/MacOS
 	cp ../xcode/README.txt $(RELEASEDIRMAC)
 	zip -r $(PACKAGEMAC) $(RELEASEDIRMAC)
 	rm -r $(RELEASEDIRMAC)
