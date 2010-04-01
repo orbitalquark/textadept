@@ -139,7 +139,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	cp -r $(RELEASEDIR32)/* $(TEXTADEPTAPP)/Contents/Resources
 	mv $(TEXTADEPTAPP)/Contents/Resources/core/images/textadept.icns \
 		$(TEXTADEPTAPP)/Contents/Resources/
-	cp ../$(TEXTADEPTMAC) $(TEXTADEPTAPP)/Contents/MacOS
+	cp ../$(TEXTADEPTMAC) $(TEXTADEPTAPP)/Contents/MacOS/$(TEXTADEPT)
 	cp ../xcode/README.txt $(RELEASEDIRMAC)
 	zip -r $(PACKAGEMAC) $(RELEASEDIRMAC)
 	rm -r $(RELEASEDIRMAC)
