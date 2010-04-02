@@ -7,7 +7,11 @@ CC = gcc
 CPP = g++
 PKG_CONFIG = pkg-config
 PKG_CONFIG_PATH = $PKG_CONFIG_PATH
+ifndef BSD
 PLAT_FLAGS = -DGTK
+else
+PLAT_FLAGS = -DGTK -D__BSD__
+endif
 SCI_THREAD_FLAG =
 LUA_CFLAGS = -DLUA_USE_LINUX
 TEXTADEPT = textadept

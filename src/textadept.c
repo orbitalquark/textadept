@@ -9,6 +9,9 @@
 #include "ige-mac-menu.h"
 #define CFURL_TO_STR(u) \
   CFStringGetCStringPtr(CFURLCopyFileSystemPath(u, kCFURLPOSIXPathStyle), 0)
+#elif __BSD__
+#include <sys/types.h>
+#include <sys/sysctl.h>
 #endif
 
 #define gbool gboolean
@@ -59,7 +62,7 @@ static gbool c_keypress(GtkWidget *, GdkEventKey *, gpointer);
  * @param argv The array of command line params.
  */
 int main(int argc, char **argv) {
-#if !(__WIN32__ || MAC)
+#if !(__WIN32__ || MAC || __BSD__)
   textadept_home = g_file_read_link("/proc/self/exe", NULL);
 #elif MAC
   CFBundleRef bundle = CFBundleGetMainBundle();
@@ -71,6 +74,11 @@ int main(int argc, char **argv) {
   char *user_home = g_strconcat(getenv("HOME"), "/.gtkrc-2.0", NULL);
   gtk_rc_parse(user_home);
   g_free(user_home);
+#elif __BSD__
+  textadept_home = malloc(FILENAME_MAX);
+  int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
+  size_t cb = FILENAME_MAX;
+  sysctl(mib, 4, textadept_home, &cb, NULL, 0);
 #endif
   char *last_slash = strrchr(textadept_home, G_DIR_SEPARATOR);
   if (last_slash) *last_slash = '\0';
