@@ -362,7 +362,9 @@ function insert(s_text)
     snippet.start_pos = start or caret
     snippet.prev_sel_text = buffer:get_sel_text()
     snippet.index, snippet.max_index = 0, 0
-    for i in s_text:gmatch('%%(%d+)') do
+    for i in s_text:gsub('(%%%d+)%b()', '%1'):gmatch('%%(%d+)') do
+      -- placeholders may contain Lua code that has %n sequences that mess up
+      -- this calculation; the above gsub accounts for this
       i = tonumber(i)
       if i > snippet.max_index then snippet.max_index = i end
     end
