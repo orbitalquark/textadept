@@ -13,7 +13,7 @@ its number of features, Textadept breaks that trend, aiming to stay minimalist
 and fast, but at the same time being ridiculously extensible. At its core lies
 less than 2000 lines of C code, and that's how it always will be. While other
 editors rely on feature bloat, recordable macros to speed up workflow, and shell
-scripts to quickly transform text. Textadept takes it to the extreme: it gives
+scripts to quickly transform text, Textadept takes it to the extreme: it gives
 you complete control over the entire application using the embedded [Lua][Lua]
 language. Lua is nearly as fast as C, and has a very small footprint. In fact,
 most of Textadept is written in Lua. Its incredibly fast startup time and

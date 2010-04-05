@@ -210,7 +210,7 @@ if not MAC then
   keys['f2'] = { t.command_entry.focus }
   -- Run
   local m_run = _m.textadept.run
-  keys.cr = { m_run.run      }
+  keys.cr = { m_run.run     }
   keys.cR = { m_run.compile }
   -- Snippets
   local m_snippets = _m.textadept.lsnippets
@@ -281,7 +281,7 @@ else
   -- Mac OSX key commands
 
   --[[
-    C:                     J   L M               U   W X   Z
+    C:                     J     M               U   W X   Z
     A:         D E     H   J K L                 U
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
     SA:  A B C D       H I J K L M N O   Q R   T U V   X
@@ -355,7 +355,7 @@ else
   }
 
   -- Search
-  keys.af = { t.find.focus            } -- find/replace
+  keys.af = { t.find.focus       } -- find/replace
   keys.ag = { t.find.find_next   }
   keys.aG = { t.find.find_prev   }
   keys.ar = { t.find.replace     }

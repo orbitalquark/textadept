@@ -337,7 +337,6 @@ add_handler('update_ui',
 
 add_handler('margin_click',
   function(margin, modifiers, position) -- toggles folding
-    local buffer = buffer
     local line = buffer:line_from_position(position)
     buffer:toggle_fold(line)
   end)

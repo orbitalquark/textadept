@@ -167,4 +167,4 @@ function save(filename)
 end
 
 textadept.events.add_handler('quit',
-                             function() if SAVE_ON_QUIT then save() end end, 1)
+  function() if SAVE_ON_QUIT then save() end end, 1)
