@@ -166,9 +166,6 @@ if not MAC then
   -- TODO: { m_editing.convert_indentation }
   -- TODO: { m_editing.smart_cutcopy }
   -- TODO: { m_editing.smart_cutcopy, 'copy' }
-  -- TODO: { m_editing.smart_paste }
-  -- TODO: { m_editing.smart_paste, 'cycle' }
-  -- TODO: { m_editing.smart_paste, 'reverse' }
   keys.ac = { -- enClose in...
     t     = { m_editing.enclose, 'tag'        },
     T     = { m_editing.enclose, 'single_tag' },
@@ -282,9 +279,9 @@ else
 
   --[[
     C:                     J     M               U   W X   Z
-    A:         D E     H   J K L                 U
+    A:         D E     H   J K L                 U       Y
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
-    SA:  A B C D       H I J K L M N O   Q R   T U V   X
+    SA:  A B C D       H I J K L M N O   Q R   T U V   X Y
     CA:  A   C   E         J K L M N O   Q R S T U V W X Y Z
     CSA: A   C D E     H   J K L M N O P Q R S T U V W X Y Z
   ]]--
@@ -308,11 +305,11 @@ else
 
   -- Edit
   local m_editing = _m.textadept.editing
-  keys.az  = { 'undo', b                       }
-  keys.aZ  = { 'redo', b                       }
-  keys.ax  = { 'cut', b                        }
-  keys.ac  = { m_editing.smart_cutcopy, 'copy' }
-  keys.av  = { m_editing.smart_paste           }
+  keys.az  = { 'undo', b  }
+  keys.aZ  = { 'redo', b  }
+  keys.ax  = { 'cut', b   }
+  keys.ac  = { 'copy', b  }
+  keys.av  = { 'paste', b }
   -- Delete is delete.
   keys.aa  = { 'select_all', b }
   keys.cm  = { m_editing.match_brace              }
@@ -325,9 +322,7 @@ else
   -- TODO: { m_editing.convert_indentation }
   keys.ck = { m_editing.smart_cutcopy }
   -- TODO: { m_editing.smart_cutcopy, 'copy' }
-  keys.cy = { m_editing.smart_paste            }
-  keys.ay = { m_editing.smart_paste, 'cycle'   }
-  keys.aY = { m_editing.smart_paste, 'reverse' }
+  keys.cy = { 'paste', b }
   keys.cc = { -- enClose in...
     t     = { m_editing.enclose, 'tag'        },
     T     = { m_editing.enclose, 'single_tag' },
