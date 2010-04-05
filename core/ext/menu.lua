@@ -42,11 +42,6 @@ local ID = {
   SQUEEZE = 213,
   JOIN_LINES = 245,
   CONVERT_INDENTATION = 216,
-  CUT_TO_LINE_END = 217,
-  COPY_TO_LINE_END = 218,
-  PASTE_FROM_RING = 219,
-  PASTE_NEXT_FROM_RING = 220,
-  PASTE_PREV_FROM_RING = 221,
   ENCLOSE_IN_HTML_TAGS = 224,
   ENCLOSE_IN_HTML_SINGLE_TAG = 225,
   ENCLOSE_IN_DOUBLE_QUOTES = 226,
@@ -170,13 +165,6 @@ local menubar = {
     { l.MENU_EDIT_SQUEEZE, ID.SQUEEZE },
     { l.MENU_EDIT_JOIN_LINES, ID.JOIN_LINES },
     { l.MENU_EDIT_CONVERT_INDENTATION, ID.CONVERT_INDENTATION },
-    { title = l.MENU_EDIT_KR_TITLE,
-      { l.MENU_EDIT_KR_CUT_TO_LINE_END, ID.CUT_TO_LINE_END },
-      { l.MENU_EDIT_KR_COPY_TO_LINE_END, ID.COPY_TO_LINE_END },
-      { l.MENU_EDIT_KR_PASTE_FROM, ID.PASTE_FROM_RING },
-      { l.MENU_EDIT_KR_PASTE_NEXT_FROM, ID.PASTE_NEXT_FROM_RING },
-      { l.MENU_EDIT_KR_PASTE_PREV_FROM, ID.PASTE_PREV_FROM_RING },
-    },
     { title = l.MENU_EDIT_SEL_TITLE,
       { title = l.MENU_EDIT_SEL_ENC_TITLE,
         { l.MENU_EDIT_SEL_ENC_HTML_TAGS, ID.ENCLOSE_IN_HTML_TAGS },
@@ -394,12 +382,6 @@ local actions = {
   [ID.SQUEEZE] = { m_editing.squeeze },
   [ID.JOIN_LINES] = { m_editing.join_lines },
   [ID.CONVERT_INDENTATION] = { m_editing.convert_indentation },
-  -- Edit -> Kill Ring
-  [ID.CUT_TO_LINE_END] = { m_editing.smart_cutcopy },
-  [ID.COPY_TO_LINE_END] = { m_editing.smart_cutcopy, 'copy' },
-  [ID.PASTE_FROM_RING] = { m_editing.smart_paste },
-  [ID.PASTE_NEXT_FROM_RING] = { m_editing.smart_paste, 'cycle' },
-  [ID.PASTE_PREV_FROM_RING] = { m_editing.smart_paste, 'reverse' },
   -- Edit -> Selection -> Enclose in...
   [ID.ENCLOSE_IN_HTML_TAGS] = { m_editing.enclose, 'tag' },
   [ID.ENCLOSE_IN_HTML_SINGLE_TAG] = { m_editing.enclose, 'single_tag' },
@@ -494,7 +476,6 @@ local actions = {
               _RELEASE, '--no-cancel'
   },
 }
-if MAC then actions[ID.PASTE] = { m_editing.smart_paste } end -- fix paste issue
 
 -- Most of this handling code comes from keys.lua.
 t.events.add_handler('menu_clicked',

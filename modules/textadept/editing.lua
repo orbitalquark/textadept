@@ -26,10 +26,6 @@ HIGHLIGHT_BRACES = true
 AUTOINDENT = true
 -- end settings
 
--- The kill-ring.
--- @field maxn The maximum size of the kill-ring.
-local kill_ring = { pos = 1, maxn = 10 }
-
 -- Character matching.
 -- Used for auto-matching parentheses, brackets, braces, and quotes.
 local char_matches = {
@@ -137,7 +133,6 @@ textadept.events.add_handler('char_added',
   end)
 
 -- local functions
-local insert_into_kill_ring, scroll_kill_ring
 local get_preceding_number
 
 ---
@@ -275,62 +270,15 @@ textadept.events.add_handler('file_before_save', prepare_for_save)
 ---
 -- Cuts or copies text ranges intelligently. (Behaves like Emacs.)
 -- If no text is selected, all text from the cursor to the end of the line is
--- cut or copied as indicated by action and pushed onto the kill-ring. If there
--- is text selected, it is cut or copied and pushed onto the kill-ring.
+-- cut or copied as indicated by action. If there is text selected, it is cut or
+-- copied.
 -- @param copy If false, the text is cut. Otherwise it is copied.
--- @see insert_into_kill_ring
 function smart_cutcopy(copy)
   local buffer = buffer
   local txt = buffer:get_sel_text()
   if #txt == 0 then buffer:line_end_extend() end
   txt = buffer:get_sel_text()
-  insert_into_kill_ring(txt)
-  kill_ring.pos = 1
   if copy then buffer:copy() else buffer:cut() end
-end
-
----
--- Retrieves the top item off the kill-ring and pastes it.
--- If an action is specified, the text is kept selected for scrolling through
--- the kill-ring.
--- @param action If given, specifies whether to cycle through the kill-ring in
---   normal or reverse order. A value of 'cycle' cycles through normally,
---   'reverse' in reverse.
--- @param reindent Flag indicating whether or not to reindent the pasted text.
--- @see scroll_kill_ring
-function smart_paste(action, reindent)
-  local buffer = buffer
-  local anchor, caret = buffer.anchor, buffer.current_pos
-  if caret < anchor then anchor = caret end
-  local txt = buffer:get_sel_text()
-  if txt == kill_ring[kill_ring.pos] then scroll_kill_ring(action) end
-
-  -- If text was copied to the clipboard from other apps, insert it into the
-  -- kill-ring so it can be pasted (thanks to Nathan Robinson).
-  if #textadept.clipboard_text > 0 then
-    local clipboard_text, found = textadept.clipboard_text, false
-    for _, ring_txt in ipairs(kill_ring) do
-      if clipboard_text == ring_txt then
-        found = true
-        break
-      end
-    end
-    if not found then insert_into_kill_ring(clipboard_text) end
-  end
-
-  txt = kill_ring[kill_ring.pos]
-  if txt then
-    if reindent then
-      local indent =
-        buffer.line_indentation[buffer:line_from_position(buffer.current_pos)]
-      local padding =
-        string.rep(buffer.use_tabs and '\t' or ' ',
-                   buffer.use_tabs and indent / buffer.tab_width or indent)
-      txt = txt:gsub('\n', '\n'..padding)
-    end
-    buffer:replace_sel(txt)
-    if action then buffer.anchor = anchor end -- cycle
-  end
 end
 
 ---
@@ -545,27 +493,6 @@ function convert_indentation()
     end
   end
   buffer:end_undo_action()
-end
-
--- Inserts text into kill_ring.
--- If it grows larger than maxn, the oldest inserted text is replaced.
--- @see smart_cutcopy
-insert_into_kill_ring = function(txt)
-  table.insert(kill_ring, 1, txt)
-  if #kill_ring > kill_ring.maxn then kill_ring[kill_ring.maxn + 1] = nil end
-end
-
--- Scrolls kill_ring in the specified direction.
--- @param direction The direction to scroll: 'forward' (default) or 'reverse'.
--- @see smart_paste
-scroll_kill_ring = function(direction)
-  if direction == 'reverse' then
-    kill_ring.pos = kill_ring.pos - 1
-    if kill_ring.pos < 1 then kill_ring.pos = #kill_ring end
-  else
-    kill_ring.pos = kill_ring.pos + 1
-    if kill_ring.pos > #kill_ring then kill_ring.pos = 1 end
-  end
 end
 
 -- Returns the number to the left of the caret.
