@@ -80,8 +80,7 @@ textadept.events.add_handler('char_added',
   end)
 
 textadept.events.add_handler('keypress',
-  function(code, shift, control, alt)
-    -- Backspace (from <gdk/gdkkeysyms.h>)
+  function(code, shift, control, alt) -- removes matched chars on backspace
     if AUTOPAIR and code == 0xff08 and buffer.selections == 1 then
       local buffer = buffer
       local current_pos = buffer.current_pos
@@ -139,7 +138,7 @@ textadept.events.add_handler('char_added',
 
 -- local functions
 local insert_into_kill_ring, scroll_kill_ring
-local get_preceding_number, get_sel_or_line
+local get_preceding_number
 
 ---
 -- Goes to a matching brace position, selecting the text inside if specified.
@@ -583,11 +582,4 @@ get_preceding_number = function()
     char = buffer.char_at[caret - 1]
   end
   return tonumber(txt) or 1, #txt
-end
-
--- Returns the current selection or the contents of the current line.
-get_sel_or_line = function()
-  local buffer = buffer
-  if buffer:get_sel_text() == '' then select_line() end
-  return buffer:get_sel_text()
 end

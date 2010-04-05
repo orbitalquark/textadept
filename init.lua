@@ -33,16 +33,13 @@ if not RESETTING then
   if WIN32 and #arg[0] > 0 then
     local lpeg = require 'lpeg'
     local P, C = lpeg.P, lpeg.C
-    param = P('"') * C((1 - P('"'))^0) * '"' + C((1 - P(' '))^1)
-    cmdline = lpeg.Ct(param * (P(' ') * param)^0)
-    args = lpeg.match(cmdline, arg[0])
+    local param = P('"') * C((1 - P('"'))^0) * '"' + C((1 - P(' '))^1)
+    local args = lpeg.match(lpeg.Ct(param * (P(' ') * param)^0), arg[0])
     for _, a in ipairs(args) do arg[#arg + 1] = a end
   end
 
   -- process command line arguments
-  if MAC and arg[1] and arg[1]:find('^%-psn_0') then
-    table.remove(arg, 1)
-  end
+  if MAC and arg[1] and arg[1]:find('^%-psn_0') then table.remove(arg, 1) end
   if #arg == 0 then
     _m.textadept.session.load()
   else
@@ -55,10 +52,6 @@ if not RESETTING then
     end
 
     -- open files
-    local base_dir = arg[0]:match('^.+/') or ''
-    for _, filename in ipairs(arg) do
-      if not filename:find('^~?/') then filename = base_dir..filename end
-      textadept.io.open(filename)
-    end
+    for _, filename in ipairs(arg) do textadept.io.open(filename) end
   end
 end
