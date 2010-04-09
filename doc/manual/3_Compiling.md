@@ -8,7 +8,7 @@ The requirements for building Textadept are not quite so minimal.
 
 Linux systems will need the GTK+ development libraries. Your package manager
 should allow you to install them. For Debian-based distributions, the package is
-typically called `gtk2.0-dev`. Otherwise, compile and install it from the
+typically called `libgtk2.0-dev`. Otherwise, compile and install it from the
 [GTK+ website][GTK-Linux]. Additionally you will need the [GNU C compiler][GCC]
 (`gcc`) and [GNU Make][Make] (`make`). Both should be available for your Linux
 distribution through its package manager.
