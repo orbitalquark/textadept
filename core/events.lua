@@ -398,6 +398,15 @@ add_handler('view_after_switch',
     handle('update_ui')
   end)
 
+textadept.events.add_handler('buffer_new',
+  function() -- close initial 'Untitled' buffer
+    local b = textadept.buffers[1]
+    if #textadept.buffers == 2 and not (b.filename or b._type or b.dirty) then
+      view:goto_buffer(1, true)
+      buffer:close()
+    end
+  end)
+
 add_handler('quit',
   function() -- prompts for confirmation if any buffers are dirty
     local any = false
