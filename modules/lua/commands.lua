@@ -6,6 +6,15 @@ local textadept = _G.textadept
 -- Commands for the lua module.
 module('_m.lua.commands', package.seeall)
 
+local run = _m.textadept.run
+if run then
+  run.run_command.lua = 'lua %(filename)'
+  run.error_detail.lua = {
+    pattern = '^lua: (.-):(%d+): (.+)$',
+    filename = 1, line = 2, message = 3
+  }
+end
+
 ---
 -- Patterns for auto 'end' completion for control structures.
 -- @class table
