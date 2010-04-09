@@ -5,6 +5,9 @@ local locale = _G.locale
 
 ---
 -- Module for running/executing source files.
+-- Typically, language-specific modules populate the 'compile_command',
+-- 'run_command', and 'error_detail' tables for a particular language's file
+-- extension.
 module('_m.textadept.run', package.seeall)
 
 ---
@@ -44,21 +47,18 @@ end
 -- File extensions and their associated 'compile' actions.
 -- Each key is a file extension whose value is a either a command line string to
 -- execute or a function returning one.
+-- This table is typically populated by language-specific modules.
 -- @class table
--- @name compile_commands
-compile_commands = {
-  c = 'gcc -pedantic -Os -o "%(filename_noext)" %(filename)',
-  cpp = 'g++ -pedantic -Os -o "%(filename_noext)" %(filename)',
-  java = 'javac "%(filename)"'
-}
+-- @name compile_command
+compile_command = {}
 
 ---
--- Compiles the file as specified by its extension in the compile_commands
+-- Compiles the file as specified by its extension in the compile_command
 -- table.
--- @see compile_commands
+-- @see compile_command
 function compile()
   if not buffer.filename then return end
-  local action = compile_commands[buffer.filename:match('[^.]+$')]
+  local action = compile_command[buffer.filename:match('[^.]+$')]
   if action then execute(type(action) == 'function' and action() or action) end
 end
 
@@ -66,46 +66,23 @@ end
 -- File extensions and their associated 'go' actions.
 -- Each key is a file extension whose value is either a command line string to
 -- execute or a function returning one.
+-- This table is typically populated by language-specific modules.
 -- @class table
--- @name run_commands
-run_commands = {
-  c = '%(filedir)%(filename_noext)',
-  cpp = '%(filedir)%(filename_noext)',
-  java = function()
-      local buffer = buffer
-      local text = buffer:get_text()
-      local s, e, package
-      repeat
-        s, e, package = text:find('package%s+([^;]+)', e or 1)
-      until not s or buffer:get_style_name(buffer.style_at[s]) ~= 'comment'
-      if package then
-        local classpath = ''
-        for dot in package:gmatch('%.') do classpath = classpath..'../' end
-        return 'java -cp '..(WIN32 and '%CLASSPATH%;' or '$CLASSPATH:')..
-          classpath..'../ '..package..'.%(filename_noext)'
-      else
-        return 'java %(filename_noext)'
-      end
-    end,
-  lua = 'lua %(filename)',
-  pl = 'perl %(filename)',
-  php = 'php -f %(filename)',
-  py = 'python %(filename)',
-  rb = 'ruby %(filename)',
-}
+-- @name run_command
+run_command = {}
 
 ---
--- Runs/executes the file as specified by its extension in the run_commands
+-- Runs/executes the file as specified by its extension in the run_command
 -- table.
--- @see run_commands
+-- @see run_command
 function run()
   if not buffer.filename then return end
-  local action = run_commands[buffer.filename:match('[^.]+$')]
+  local action = run_command[buffer.filename:match('[^.]+$')]
   if action then execute(type(action) == 'function' and action() or action) end
 end
 
 ---
--- [Local table] A table of error string details.
+-- A table of error string details.
 -- Each entry is a table with the following fields:
 --   pattern: the Lua pattern that matches a specific error string.
 --   filename: the index of the Lua capture that contains the filename the error
@@ -116,47 +93,22 @@ end
 --     message. A call tip will be displayed if a message was captured.
 -- When an error message is double-clicked, the user is taken to the point of
 --   error.
+-- This table is usually populated by language-specific modules.
 -- @class table
--- @name error_details
-local error_details = {
-  -- c, c++, and java errors and warnings have the same format as ruby ones
-  lua = {
-    pattern = '^lua: (.-):(%d+): (.+)$',
-    filename = 1, line = 2, message = 3
-  },
-  perl = {
-    pattern = '^(.+) at (.-) line (%d+)',
-    message = 1, filename = 2, line = 3
-  },
-  php_error = {
-    pattern = '^Parse error: (.+) in (.-) on line (%d+)',
-    message = 1, filename = 2, line = 3
-  },
-  php_warning = {
-    pattern = '^Warning: (.+) in (.-) on line (%d+)',
-    message = 1, filename = 2, line = 3
-  },
-  python = {
-    pattern = '^%s*File "([^"]+)", line (%d+)',
-    filename = 1, line = 2
-  },
-  ruby = {
-    pattern = '^(.-):(%d+): (.+)$',
-    filename = 1, line = 2, message = 3
-  },
-}
+-- @name error_detail
+error_detail = {}
 
 ---
 -- When the user double-clicks an error message, go to the line in the file
 -- the error occured at and display a calltip with the error message.
 -- @param pos The position of the caret.
 -- @param line_num The line double-clicked.
--- @see error_details
+-- @see error_detail
 function goto_error(pos, line_num)
   local type = buffer._type
   if type == locale.MESSAGE_BUFFER or type == locale.ERROR_BUFFER then
     line = buffer:get_line(line_num)
-    for _, error_detail in pairs(error_details) do
+    for _, error_detail in pairs(error_detail) do
       local captures = { line:match(error_detail.pattern) }
       if #captures > 0 then
         local lfs = require 'lfs'
