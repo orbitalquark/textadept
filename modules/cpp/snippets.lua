@@ -13,8 +13,8 @@ if type(snippets) == 'table' then
     cc = 'const_cast<%1>(%2(%(selected_text)))',
 
     -- Lua snippets
-    lf = 'static int %1(function)(lua_State *%2(lua)) {\n  %0\n  return 0;\n}',
-    lff = 'LF %1(function)(lua_State *%2(lua)) {\n  %0\n  return 0;\n}',
+    lf = 'static int %1(function)(lua_State *%2(lua)) {\n\t%0\n\treturn 0;\n}',
+    lff = 'LF %1(function)(lua_State *%2(lua)) {\n\t%0\n\treturn 0;\n}',
     ls = 'lua_State',
     lgf = 'lua_getfield(%1(lua), %2(-1), %3(field));',
     lgg = 'lua_getglobal(%1(lua), %2(global));',
