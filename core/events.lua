@@ -218,14 +218,6 @@ add_handler('view_new',
     local buffer = buffer
     local c = textadept.constants
 
-    -- properties
-    buffer.property['textadept.home'] = _HOME
-    buffer.property['lexer.lua.home'] = _LEXERPATH
-    buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
-    if _THEME and #_THEME > 0 then
-      buffer.property['lexer.lua.color.theme'] = _THEME..'/lexer.lua'
-    end
-
     -- lexer
     buffer.style_bits = 8
     buffer:set_lexer_language('container')
@@ -251,6 +243,14 @@ add_handler('buffer_new',
   function() -- sets default properties for a Scintilla document
     local function run()
       local buffer = buffer
+
+      -- properties
+      buffer.property['textadept.home'] = _HOME
+      buffer.property['lexer.lua.home'] = _LEXERPATH
+      buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
+      if _THEME and #_THEME > 0 then
+        buffer.property['lexer.lua.color.theme'] = _THEME..'/lexer.lua'
+      end
 
       -- lexer
       buffer.style_bits = 8
