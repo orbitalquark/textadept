@@ -344,6 +344,11 @@ function insert(s_text)
     buffer:begin_undo_action()
     s_text = handle_escapes(s_text)
 
+    -- Take into account tab settings.
+    if not buffer.use_tabs then
+      s_text = s_text:gsub('\t', string.rep(' ', buffer.tab_width))
+    end
+
     -- Execute Lua and shell code.
     s_text = s_text:gsub('%%(%b())', run_lua_code)
     s_text =
