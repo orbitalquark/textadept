@@ -58,7 +58,7 @@ function goto_required()
   local lfs = require 'lfs'
   for path in package.path:gmatch('[^;]+') do
     path = path:gsub('?', file)
-    if lfs.attributes(file) then
+    if lfs.attributes(path) then
       textadept.io.open(textadept.iconv(path, 'UTF-8', _CHARSET))
       break
     end
