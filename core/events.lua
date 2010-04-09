@@ -228,7 +228,6 @@ add_handler('view_new',
 
     -- lexer
     buffer.style_bits = 8
-    buffer.lexer = c.SCLEX_LPEG
     buffer:set_lexer_language('container')
 
     -- allow redefinitions of these Scintilla key commands
@@ -255,7 +254,6 @@ add_handler('buffer_new',
 
       -- lexer
       buffer.style_bits = 8
-      buffer.lexer = textadept.constants.SCLEX_LPEG
       buffer:set_lexer_language('container')
 
       -- buffer
