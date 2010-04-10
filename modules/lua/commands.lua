@@ -6,14 +6,15 @@ local textadept = _G.textadept
 -- Commands for the lua module.
 module('_m.lua.commands', package.seeall)
 
-local run = _m.textadept.run
-if run then
-  run.run_command.lua = 'lua %(filename)'
-  run.error_detail.lua = {
-    pattern = '^lua: (.-):(%d+): (.+)$',
-    filename = 1, line = 2, message = 3
-  }
-end
+local m_editing, m_run = _m.textadept.editing, _m.textadept.run
+-- Comment string tables use lexer names.
+m_editing.comment_string.lua = '--'
+-- Compile and Run command tables use file extensions.
+m_run.run_command.lua = 'lua %(filename)'
+m_run.error_detail.lua = {
+  pattern = '^lua: (.-):(%d+): (.+)$',
+  filename = 1, line = 2, message = 3
+}
 
 ---
 -- Patterns for auto 'end' completion for control structures.
@@ -77,7 +78,6 @@ end
 -- Lua-specific key commands.
 local keys = _G.keys
 if type(keys) == 'table' then
-  local m_editing = _m.textadept.editing
   keys.lua = {
     al = {
       m = { textadept.io.open,
