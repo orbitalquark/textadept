@@ -26,6 +26,14 @@ HIGHLIGHT_BRACES = true
 AUTOINDENT = true
 -- end settings
 
+-- Comment strings for various lexer languages.
+-- Used for the block_comment function.
+-- This table is typically populated by language-specific modules.
+-- @class table
+-- @name comment_string
+-- @see block_comment
+comment_string = {}
+
 -- Character matching.
 -- Used for auto-matching parentheses, brackets, braces, and quotes.
 local char_matches = {
@@ -56,16 +64,6 @@ local enclosure = {
   tags       = { left = '>', right = '<' },
   tag        = { left = ' ', right = ' ' },
   single_tag = { left = '<', right = ' />' }
-}
-
--- Comment strings for various lexer languages.
--- Used for the block_comment function.
--- @see block_comment
-local comment_strings = {
-  cpp = '//~',
-  lua = '--~',
-  python = '#~',
-  ruby = '#~',
 }
 
 textadept.events.add_handler('char_added',
@@ -189,7 +187,7 @@ end
 function block_comment(comment)
   local buffer = buffer
   if not comment then
-    comment = comment_strings[buffer:get_lexer_language()]
+    comment = comment_string[buffer:get_lexer_language()]
     if not comment then return end
   end
   local caret, anchor = buffer.current_pos, buffer.anchor
