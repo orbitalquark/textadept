@@ -51,6 +51,7 @@ function load(filename)
       else
         textadept.new_buffer()
         buffer._type = filename
+        textadept.events.handle('file_opened', filename)
       end
       -- Restore saved buffer selection and view.
       local anchor = tonumber(anchor) or 0

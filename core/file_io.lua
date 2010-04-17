@@ -377,3 +377,12 @@ local function update_modified_file()
 end
 textadept.events.add_handler('buffer_after_switch', update_modified_file)
 textadept.events.add_handler('view_after_switch', update_modified_file)
+
+textadept.events.add_handler('file_opened',
+  function(utf8_filename) -- close initial 'Untitled' buffer
+    local b = textadept.buffers[1]
+    if #textadept.buffers == 2 and not (b.filename or b._type or b.dirty) then
+      view:goto_buffer(1, true)
+      buffer:close()
+    end
+  end)
