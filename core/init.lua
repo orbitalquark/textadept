@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-_RELEASE = "Textadept 2.2 beta"
+_RELEASE = "Textadept 2.2 beta 2"
 
 local textadept = _G.textadept
 
