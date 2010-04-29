@@ -32,7 +32,7 @@ endif
 ifndef DEBUG
 DEBUG_FLAG = -DNDEBUG
 else
-DEBUG_FLAG = -DDEBUG -g
+DEBUG_FLAG = -DDEBUG -DTRACE -g
 endif
 INCLUDEDIRS = -Iscintillua/include -Ilua/include -Igcocoadialog
 
