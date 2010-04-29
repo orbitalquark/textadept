@@ -26,6 +26,7 @@ HIGHLIGHT_BRACES = true
 AUTOINDENT = true
 -- end settings
 
+---
 -- Comment strings for various lexer languages.
 -- Used for the block_comment function.
 -- This table is typically populated by language-specific modules.
@@ -33,6 +34,26 @@ AUTOINDENT = true
 -- @name comment_string
 -- @see block_comment
 comment_string = {}
+
+---
+-- Enclosures for enclosing or selecting ranges of text.
+-- Note chars and tag enclosures are generated at runtime.
+-- You can add entries to the table in language-specific modules and use the
+-- 'enclose' function in key commands.
+-- @class table
+-- @name enclosure
+-- @see enclose
+enclosure = {
+  dbl_quotes = { left = '"', right = '"' },
+  sng_quotes = { left = "'", right = "'" },
+  parens     = { left = '(', right = ')' },
+  brackets   = { left = '[', right = ']' },
+  braces     = { left = '{', right = '}' },
+  chars      = { left = ' ', right = ' ' },
+  tags       = { left = '>', right = '<' },
+  tag        = { left = ' ', right = ' ' },
+  single_tag = { left = '<', right = ' />' }
+}
 
 -- Character matching.
 -- Used for auto-matching parentheses, brackets, braces, and quotes.
@@ -51,20 +72,6 @@ local braces = { -- () [] {} <>
 -- The current call tip.
 -- Used for displaying call tips.
 local current_call_tip = {}
-
--- Enclosures for enclosing or selecting ranges of text.
--- Note chars and tag enclosures are generated at runtime.
-local enclosure = {
-  dbl_quotes = { left = '"', right = '"' },
-  sng_quotes = { left = "'", right = "'" },
-  parens     = { left = '(', right = ')' },
-  brackets   = { left = '[', right = ']' },
-  braces     = { left = '{', right = '}' },
-  chars      = { left = ' ', right = ' ' },
-  tags       = { left = '>', right = '<' },
-  tag        = { left = ' ', right = ' ' },
-  single_tag = { left = '<', right = ' />' }
-}
 
 textadept.events.add_handler('char_added',
   function(c) -- matches characters specified in char_matches
