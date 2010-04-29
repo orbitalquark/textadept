@@ -115,9 +115,9 @@ SRCPACKAGE = ../releases/$(RELEASEDIR32).src.zip
 
 release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
   ../$(TEXTADEPTMAC)
+	sh -c 'cd ../scripts && ./update_doc'
 	hg archive $(RELEASEDIR32)
 	rm $(RELEASEDIR32)/.hg*
-	sh -c 'cd ../scripts && ./update_doc'
 	cp -r ../doc $(RELEASEDIR32)
 	hg clone http://scintillua.googlecode.com/hg/ tmp
 	mv tmp/lexers $(RELEASEDIR32)
