@@ -58,6 +58,7 @@ compile_command = {}
 -- @see compile_command
 function compile()
   if not buffer.filename then return end
+  buffer:save()
   local action = compile_command[buffer.filename:match('[^.]+$')]
   if action then execute(type(action) == 'function' and action() or action) end
 end
@@ -77,6 +78,7 @@ run_command = {}
 -- @see run_command
 function run()
   if not buffer.filename then return end
+  buffer:save()
   local action = run_command[buffer.filename:match('[^.]+$')]
   if action then execute(type(action) == 'function' and action() or action) end
 end
