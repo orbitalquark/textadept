@@ -3,10 +3,11 @@
 local textadept = _G.textadept
 
 local paths = {
-  _HOME..'/modules/?.lua',
-  _HOME..'/modules/?/init.lua',
+  _USERHOME..'/?.lua',
   _USERHOME..'/modules/?.lua',
   _USERHOME..'/modules/?/init.lua',
+  _HOME..'/modules/?.lua',
+  _HOME..'/modules/?/init.lua',
   package.path
 }
 package.path = table.concat(paths, ';')
