@@ -35,12 +35,13 @@ example:
     -- ~/.textadept/init.lua
     require 'ext/keys'
     require 'ext/find'
-    -- require 'ext/command_entry' -- do not load Lua command entry
+    require 'ext/command_entry'
     require 'ext/mime_types'
-    -- require 'ext/menu' -- do not load the menubar
-    require 'ext/key_commands'
 
     require 'textadept' -- bookmarks, editing, snippets, etc.
+
+    -- require 'ext/menu' -- do not load the menubar
+    require 'ext/key_commands'
 
     -- my modules in ~/.textadept/modules
     require 'foo'
