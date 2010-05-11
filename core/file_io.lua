@@ -114,6 +114,7 @@ try_encodings = {
 --   encoded.
 local function open_helper(utf8_filename)
   if not utf8_filename then return end
+  utf8_filename = utf8_filename:gsub('^file://', '')
   for index, buffer in ipairs(textadept.buffers) do
     if utf8_filename == buffer.filename then
       view:goto_buffer(index)
