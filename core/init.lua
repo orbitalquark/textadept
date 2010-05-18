@@ -64,6 +64,7 @@ function textadept._print(buffer_type, ...)
       if not message_buffer then
         message_buffer = textadept.new_buffer()
         message_buffer._type = buffer_type
+        textadept.events.handle('file_opened')
       else
         message_view:goto_buffer(message_buffer_index, true)
       end
