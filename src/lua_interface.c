@@ -1027,7 +1027,7 @@ static int l_cf_buffer_text_range(lua_State *lua) {
   struct Sci_TextRange tr;
   tr.chrg.cpMin = luaL_checkinteger(lua, 2);
   tr.chrg.cpMax = luaL_checkinteger(lua, 3);
-  luaL_argcheck(lua, tr.chrg.cpMin < tr.chrg.cpMax, 3, "start > end");
+  luaL_argcheck(lua, tr.chrg.cpMin <= tr.chrg.cpMax, 3, "start > end");
   int length = tr.chrg.cpMax - tr.chrg.cpMin;
   char *text = malloc(length + 1);
   tr.lpstrText = text;
