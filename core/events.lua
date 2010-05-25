@@ -423,6 +423,14 @@ add_handler('quit',
 if MAC then
   add_handler('appleevent_odoc',
     function(uri) return handle('uri_dropped', 'file://'..uri) end)
+
+  textadept.events.add_handler('buffer_new',
+    function()
+      buffer.paste = function()
+        local clipboard_text = textadept.clipboard_text
+        if #clipboard_text > 0 then buffer:replace_sel(clipboard_text) end
+      end
+    end)
 end
 
 add_handler('error',
