@@ -47,10 +47,13 @@ local type = _G.type
 local unpack = _G.unpack
 local MAC = _G.MAC
 
+---
 -- Lookup table for key values higher than 255.
 -- If a key value given to 'keypress' is higher than 255, this table is used to
 -- return a string representation of the key if it exists.
-local KEYSYMS = { -- from <gdk/gdkkeysyms.h>
+-- @class table
+-- @name KEYSYMS
+KEYSYMS = { -- from <gdk/gdkkeysyms.h>
   [65056] = '\t', -- backtab; will be 'shift'ed
   [65288] = '\b',
   [65289] = '\t',

@@ -14,10 +14,11 @@ textadept.events.add_handler('command_entry_command',
 textadept.events.add_handler('command_entry_keypress',
   function(code)
     local ce = textadept.command_entry
-    if code == 0xff1b then -- escape
+    local KEYSYMS = textadept.keys.KEYSYMS
+    if KEYSYMS[code] == 'esc' then
       ce.focus() -- toggle focus to hide
       return true
-    elseif code == 0xff09 then -- tab
+    elseif KEYSYMS[code] == '\t' then
       local substring = ce.entry_text:match('[%w_.:]+$') or ''
       local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
       local ret, tbl = pcall(loadstring('return ('..path..')'))
