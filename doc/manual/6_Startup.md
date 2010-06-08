@@ -19,8 +19,8 @@ default the `'light'` theme is used. A `'scite'` theme is provided for users
 accustomed to SciTE.
 
 To use a different theme, create a `~/.textadept/theme` file containing the
-name of the built-in theme you would like. If you have a custom theme, use the
-path to its directory instead. Any errors are printed to standard out.
+name of the theme you would like. If you have a custom theme, place it in your
+`~/.textadept/themes/` directory. Any errors are printed to standard out.
 
 ## Post-Core (`init.lua`)
 
