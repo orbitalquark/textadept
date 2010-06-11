@@ -7,6 +7,7 @@ module('_m.textadept', package.seeall)
 
 require 'textadept.bookmarks'
 require 'textadept.editing'
-require 'textadept.snippets'
+require 'textadept.mime_types'
 require 'textadept.run'
 require 'textadept.session'
+require 'textadept.snippets'

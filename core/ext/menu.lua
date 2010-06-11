@@ -277,7 +277,7 @@ local menubar = {
   },
 }
 local lexer_menu = { title = l.MENU_LEX_TITLE }
-for _, lexer in ipairs(textadept.mime_types.lexers) do
+for _, lexer in ipairs(_m.textadept.mime_types.lexers) do
   lexer_menu[#lexer_menu + 1] = { lexer, ID.LEXER_START + #lexer_menu }
 end
 table.insert(menubar, #menubar, gtkmenu(lexer_menu)) -- before 'Help'

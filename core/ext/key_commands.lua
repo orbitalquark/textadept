@@ -261,7 +261,7 @@ if not MAC then
     ['\t'] = { toggle_setting, 'use_tabs'           },
     [' ']  = { toggle_setting, 'view_ws'            },
   }
-  keys.cl    = { t.mime_types.select_lexer }
+  keys.cl    = { _m.textadept.mime_types.select_lexer }
   keys['f5'] = { 'colourise', b, 0, -1     }
 
   -- Views
@@ -423,7 +423,7 @@ else
     ['\t'] = { toggle_setting, 'use_tabs'           },
     [' ']  = { toggle_setting, 'view_ws'            },
   }
-  keys.cl    = { t.mime_types.select_lexer }
+  keys.cl    = { _m.textadept.mime_types.select_lexer }
   keys['f5'] = { 'colourise', b, 0, -1     }
 
   -- Views
