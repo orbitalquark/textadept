@@ -6,7 +6,7 @@ local events = _G.events
 ---
 -- Manages and defines key commands in Textadept.
 -- This set of key commands is pretty standard among other text editors.
-module('keys', package.seeall)
+module('_m.textadept.keys', package.seeall)
 
 -- Markdown:
 -- ## Overview
@@ -124,7 +124,7 @@ local SHIFT = 's'..ADD
 local ALT = 'a'..ADD
 -- end settings
 
-local keys = keys
+local keys = _M
 local b, v = 'buffer', 'view'
 local gui = gui
 

@@ -11,16 +11,7 @@ local paths = {
 package.path = table.concat(paths, ';')
 
 if not user_dofile('init.lua') then
--- Core extension modules to load on startup.
-require 'ext/find' -- provides functionality for find/replace
-require 'ext/command_entry' -- provides tab-completion for the command entry
-
--- Generic modules to load on startup.
 require 'textadept'
-
--- Core extension modules that must be loaded last.
-require 'ext/menu' -- provides the menu bar
-require 'ext/key_commands' -- provides key command support
 end
 
 if not RESETTING then
