@@ -234,7 +234,7 @@ if not MAC then
   keys.cr = { m_run.run     }
   keys.cR = { m_run.compile }
   -- Snippets
-  local m_snippets = _m.textadept.lsnippets
+  local m_snippets = _m.textadept.snippets
   keys['\t']  = { m_snippets.insert         }
   keys['s\t'] = { m_snippets.prev           }
   keys.cai    = { m_snippets.cancel_current }
@@ -396,7 +396,7 @@ else
   keys.cr = { m_run.run     }
   keys.cR = { m_run.compile }
   -- Snippets
-  local m_snippets = _m.textadept.lsnippets
+  local m_snippets = _m.textadept.snippets
   keys['\t']  = { m_snippets.insert         }
   keys['s\t'] = { m_snippets.prev           }
   keys.cai    = { m_snippets.cancel_current }
