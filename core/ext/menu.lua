@@ -284,7 +284,7 @@ table.insert(menubar, #menubar, gtkmenu(lexer_menu)) -- before 'Help'
 t.menubar = menubar
 
 local b, v = 'buffer', 'view'
-local m_snippets = _m.textadept.lsnippets
+local m_snippets = _m.textadept.snippets
 local m_editing = _m.textadept.editing
 local m_bookmarks = _m.textadept.bookmarks
 local m_run = _m.textadept.run

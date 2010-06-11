@@ -5,7 +5,7 @@ local locale = _G.locale
 
 ---
 -- Provides Lua-style snippets for Textadept.
-module('_m.textadept.lsnippets', package.seeall)
+module('_m.textadept.snippets', package.seeall)
 
 -- Markdown:
 -- ## Settings
