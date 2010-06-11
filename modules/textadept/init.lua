@@ -16,4 +16,4 @@ require 'textadept.snippets'
 
 -- These need to be loaded last.
 require 'textadept.menu'
-require 'textadept.key_commands'
+require 'textadept.keys'
