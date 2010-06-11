@@ -307,7 +307,7 @@ add_handler('uri_dropped',
         if WIN32 then utf8_uri = utf8_uri:sub(2, -1) end -- ignore leading '/'
         local uri = textadept.iconv(utf8_uri, _CHARSET, 'UTF-8')
         if lfs.attributes(uri).mode ~= 'directory' then
-          textadept.io.open(utf8_uri)
+          io.open_file(utf8_uri)
         end
       end
     end
@@ -339,17 +339,7 @@ add_handler('margin_click',
     buffer:toggle_fold(line)
   end)
 
-add_handler('buffer_new',
-  function() -- set additional buffer functions
-    local buffer = buffer
-    buffer.reload = textadept.io.reload
-    buffer.set_encoding = textadept.io.set_encoding
-    buffer.save = textadept.io.save
-    buffer.save_as = textadept.io.save_as
-    buffer.close = textadept.io.close
-    buffer.encoding = 'UTF-8'
-    set_title(buffer)
-  end)
+add_handler('buffer_new', function() set_title(buffer) end)
 
 add_handler('buffer_before_switch',
   function() -- save buffer properties

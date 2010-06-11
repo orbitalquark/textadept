@@ -29,5 +29,5 @@ Textadept's Lua state:
 
 [package_path]: http://www.lua.org/manual/5.1/manual.html#pdf-package.path
 [theme]: 6_Startup.html
-[file_io]: ../modules/textadept.io.html
+[file_io]: ../modules/io.html
 [textadept_reset]: ../modules/textadept.html#reset

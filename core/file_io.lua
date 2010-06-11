@@ -4,8 +4,8 @@ local textadept = _G.textadept
 local locale = _G.locale
 
 ---
--- Provides file input/output routines for Textadept.
-module('textadept.io', package.seeall)
+-- Extends Lua's io package to provide file input/output routines for Textadept.
+module('io', package.seeall)
 
 -- Markdown:
 -- ## Overview
@@ -186,8 +186,8 @@ end
 -- @param utf8_filenames A '\n' separated list of filenames to open. If none
 --   specified, the user is prompted to open files from a dialog. These paths
 --   must be encoded in UTF-8.
--- @usage textadept.io.open(utf8_encoded_filename)
-function open(utf8_filenames)
+-- @usage io.open_file(utf8_encoded_filename)
+function open_file(utf8_filenames)
   utf8_filenames =
     utf8_filenames or
       textadept.dialog('fileselect',
@@ -198,12 +198,8 @@ function open(utf8_filenames)
   for filename in utf8_filenames:gmatch('[^\n]+') do open_helper(filename) end
 end
 
----
--- Reloads the file in a given buffer.
--- @param buffer The buffer to reload. This must be the currently focused
---   buffer.
--- @usage buffer:reload()
-function reload(buffer)
+-- LuaDoc is in core/.buffer.lua.
+local function reload(buffer)
   textadept.check_focused_buffer(buffer)
   if not buffer.filename then return end
   local pos = buffer.current_pos
@@ -224,14 +220,8 @@ function reload(buffer)
   buffer.modification_time = lfs.attributes(filename).modification
 end
 
----
--- Sets the encoding for the buffer, converting its contents in the process.
--- @param buffer The buffer to set the encoding for. It must be the currently
---   focused buffer.
--- @param encoding The encoding to set. Valid encodings are ones that GTK's
---   g_convert() function accepts (typically GNU iconv's encodings).
--- @usage buffer:set_encoding('ASCII')
-function set_encoding(buffer, encoding)
+-- LuaDoc is in core/.buffer.lua.
+local function set_encoding(buffer, encoding)
   textadept.check_focused_buffer(buffer)
   if not buffer.encoding then error('Cannot change binary file encoding') end
   local iconv = textadept.iconv
@@ -248,12 +238,8 @@ function set_encoding(buffer, encoding)
   buffer.encoding, buffer.encoding_bom = encoding, boms[encoding]
 end
 
----
--- Saves the current buffer to a file.
--- @param buffer The buffer to save. Its 'filename' property is used as the
---   path of the file to save to. This must be the currently focused buffer.
--- @usage buffer:save()
-function save(buffer)
+-- LuaDoc is in core/.buffer.lua.
+local function save(buffer)
   textadept.check_focused_buffer(buffer)
   if not buffer.filename then return save_as(buffer) end
   textadept.events.handle('file_before_save', buffer.filename)
@@ -275,13 +261,8 @@ function save(buffer)
   if buffer._type then buffer._type = nil end
 end
 
----
--- Saves the current buffer to a file different than its filename property.
--- @param buffer The buffer to save. This must be the currently focused buffer.
--- @param utf8_filename The new filepath to save the buffer to. Must be UTF-8
---   encoded.
--- @usage buffer:save_as(filename)
-function save_as(buffer, utf8_filename)
+-- LuaDoc is in core/.buffer.lua.
+local function save_as(buffer, utf8_filename)
   textadept.check_focused_buffer(buffer)
   if not utf8_filename then
     utf8_filename =
@@ -302,7 +283,7 @@ end
 
 ---
 -- Saves all dirty buffers to their respective files.
--- @usage textadept.io.save_all()
+-- @usage io.save_all()
 function save_all()
   local current_buffer = buffer
   local current_index
@@ -314,14 +295,8 @@ function save_all()
   view:goto_buffer(current_index)
 end
 
----
--- Closes the current buffer.
--- If the buffer is dirty, the user is prompted to continue. The buffer is not
--- saved automatically. It must be done manually.
--- @param buffer The buffer to close. This must be the currently focused
---   buffer.
--- @usage buffer:close()
-function close(buffer)
+-- LuaDoc is in core/.buffer.lua.
+local function close(buffer)
   textadept.check_focused_buffer(buffer)
   if buffer.dirty and
      textadept.dialog('msgbox',
@@ -343,7 +318,7 @@ end
 -- Closes all open buffers.
 -- If any buffer is dirty, the user is prompted to continue. No buffers are
 -- saved automatically. They must be saved manually.
--- @usage textadept.io.close_all()
+-- @usage io.close_all()
 -- @return true if user did not cancel.
 function close_all()
   while #textadept.buffers > 1 do
@@ -378,6 +353,17 @@ local function update_modified_file()
 end
 textadept.events.add_handler('buffer_after_switch', update_modified_file)
 textadept.events.add_handler('view_after_switch', update_modified_file)
+
+textadept.events.add_handler('buffer_new',
+  function() -- set additional buffer functions
+    local buffer = buffer
+    buffer.reload = reload
+    buffer.set_encoding = set_encoding
+    buffer.save = save
+    buffer.save_as = save_as
+    buffer.close = close
+    buffer.encoding = 'UTF-8'
+  end)
 
 textadept.events.add_handler('file_opened',
   function(utf8_filename) -- close initial 'Untitled' buffer

@@ -349,9 +349,9 @@ function buffer:text_range(start_pos, end_pos)
 ---
 -- Deletes the current buffer.
 -- The indexed buffer must be the currently focused one. WARNING: this function
--- should NOT be called via scripts. textadept.io provides a close() function
--- for buffers to prompt for confirmation if necessary; this function does not.
--- Activates the 'buffer_deleted' signal.
+-- should NOT be called via scripts. io provides a close() function for buffers
+-- to prompt for confirmation if necessary; this function does not. Activates
+-- the 'buffer_deleted' signal.
 function buffer:delete()
 
 --- Adds a new selection from anchor to caret as the main selection. All other
@@ -935,18 +935,23 @@ function buffer:zoom_in()
 --- Makes the displayed text smaller by decreasing the font sizes by 1 point.
 function buffer:zoom_out()
 
----
--- @see textadept.io.reload
+--- Reloads the file in a given buffer.
 function buffer:reload()
 ---
--- @see textadept.io.set_encoding
+-- Sets the encoding for the buffer, converting its contents in the process.
+-- @param encoding The encoding to set. Valid encodings are ones that GTK's
+--   g_convert() function accepts (typically GNU iconv's encodings).
+-- @usage buffer:set_encoding('ASCII')
 function buffer:set_encoding()
----
--- @see textadept.io.save
+--- Saves the current buffer to a file.
 function buffer:save()
 ---
--- @see textadept.io.save_as
+-- Saves the current buffer to a file different than its filename property.
+-- @param utf8_filename The new filepath to save the buffer to. Must be UTF-8
+--   encoded.
 function buffer:save_as()
 ---
--- @see textadept.io.close
+-- Closes the current buffer.
+-- If the buffer is dirty, the user is prompted to continue. The buffer is not
+-- saved automatically. It must be done manually.
 function buffer:close()

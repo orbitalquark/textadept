@@ -32,9 +32,9 @@ local lfs = require 'lfs'
 -- @usage _m.textadept.session.load(filename)
 function load(filename)
   local not_found = {}
-  local f = io.open(filename or DEFAULT_SESSION, 'rb')
+  local f = io.open_file(filename or DEFAULT_SESSION, 'rb')
   if not f then
-    if not textadept.io.close_all() then return false end
+    if not io.close_all() then return false end
   end
   if not f then return false end
   local current_view, splits = 1, { [0] = {} }
@@ -44,7 +44,7 @@ function load(filename)
         line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
       if not filename:find('^%[.+%]$') then
         if lfs.attributes(filename) then
-          textadept.io.open(filename)
+          io.open_file(filename)
         else
           not_found[#not_found + 1] = filename
         end
@@ -160,7 +160,8 @@ function save(filename)
   local size = textadept.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
   -- Write the session.
-  local f = io.open(filename or textadept.session_file or DEFAULT_SESSION, 'wb')
+  local f =
+    io.open_file(filename or textadept.session_file or DEFAULT_SESSION, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
     f:close()

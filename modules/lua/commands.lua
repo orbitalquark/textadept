@@ -69,7 +69,7 @@ function goto_required()
   for path in package.path:gmatch('[^;]+') do
     path = path:gsub('?', file)
     if lfs.attributes(path) then
-      textadept.io.open(textadept.iconv(path, 'UTF-8', _CHARSET))
+      io.open_file(textadept.iconv(path, 'UTF-8', _CHARSET))
       break
     end
   end
@@ -80,7 +80,7 @@ local keys = _G.keys
 if type(keys) == 'table' then
   keys.lua = {
     al = {
-      m = { textadept.io.open,
+      m = { io.open_file,
             textadept.iconv(_HOME..'/modules/lua/init.lua',
                             'UTF-8', _CHARSET) },
       g = { goto_required },
