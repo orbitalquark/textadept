@@ -5,7 +5,7 @@ local locale = _G.locale
 
 ---
 -- Textadept's core event structure and handlers.
-module('textadept.events', package.seeall)
+module('events', package.seeall)
 
 -- Markdown:
 -- ## Overview
@@ -143,10 +143,10 @@ module('textadept.events', package.seeall)
 --       textadept.print(message)
 --     end
 --
---     textadept.events.add_handler('my_event', my_event_handler)
---     textadept.events.handle('my_event', 'my message')
+--     events.connect('my_event', my_event_handler)
+--     events.emit('my_event', 'my message')
 
-local events = textadept.events
+local events = events
 
 ---
 -- Adds a handler function to an event.
@@ -154,7 +154,7 @@ local events = textadept.events
 --   anywhere.
 -- @param f The Lua function to add.
 -- @param index Optional index to insert the handler into.
-function add_handler(event, f, index)
+function connect(event, f, index)
   local plural = event..'s'
   if not events[plural] then events[plural] = {} end
   local handlers = events[plural]
@@ -173,7 +173,7 @@ end
 -- @param event The string event name.
 -- @param ... Arguments passed to the handler.
 -- @return true or false if any handler explicitly returned such; nil otherwise.
-function handle(event, ...)
+function emit(event, ...)
   local plural = event..'s'
   local handlers = events[plural]
   if not handlers then return end
@@ -182,6 +182,9 @@ function handle(event, ...)
     if result == true or result == false then return result end
   end
 end
+
+local connect = connect
+local emit = emit
 
 --- Map of Scintilla notifications to their handlers.
 local c = textadept.constants
@@ -207,13 +210,13 @@ function notification(n)
   if f then
     local args = { unpack(f, 2) }
     for k, v in ipairs(args) do args[k] = n[v] end
-    return handle(f[1], unpack(args))
+    return emit(f[1], unpack(args))
   end
 end
 
 -- Default handlers to follow.
 
-add_handler('view_new',
+connect('view_new',
   function() -- sets default properties for a Scintilla window
     local buffer = buffer
     local c = textadept.constants
@@ -239,7 +242,7 @@ add_handler('view_new',
     end
   end)
 
-add_handler('buffer_new',
+connect('buffer_new',
   function() -- sets default properties for a Scintilla document
     local function run()
       local buffer = buffer
@@ -284,19 +287,19 @@ local function set_title(buffer)
                   filename)
 end
 
-add_handler('save_point_reached',
+connect('save_point_reached',
   function() -- changes Textadept title to show 'clean' buffer
     buffer.dirty = false
     set_title(buffer)
   end)
 
-add_handler('save_point_left',
+connect('save_point_left',
   function() -- changes Textadept title to show 'dirty' buffer
     buffer.dirty = true
     set_title(buffer)
   end)
 
-add_handler('uri_dropped',
+connect('uri_dropped',
   function(utf8_uris)
     local lfs = require 'lfs'
     for utf8_uri in utf8_uris:gmatch('[^\r\n\f]+') do
@@ -318,7 +321,7 @@ local EOLs = {
   locale.STATUS_CR,
   locale.STATUS_LF
 }
-add_handler('update_ui',
+connect('update_ui',
   function() -- sets docstatusbar text
     local buffer = buffer
     local pos = buffer.current_pos
@@ -333,15 +336,15 @@ add_handler('update_ui',
       locale.DOCSTATUSBAR_TEXT:format(line, max, col, lexer, eol, tabs, enc)
   end)
 
-add_handler('margin_click',
+connect('margin_click',
   function(margin, modifiers, position) -- toggles folding
     local line = buffer:line_from_position(position)
     buffer:toggle_fold(line)
   end)
 
-add_handler('buffer_new', function() set_title(buffer) end)
+connect('buffer_new', function() set_title(buffer) end)
 
-add_handler('buffer_before_switch',
+connect('buffer_before_switch',
   function() -- save buffer properties
     local buffer = buffer
     -- Save view state.
@@ -361,7 +364,7 @@ add_handler('buffer_before_switch',
     end
   end)
 
-add_handler('buffer_after_switch',
+connect('buffer_after_switch',
   function() -- restore buffer properties
     local buffer = buffer
     if not buffer._folds then return end
@@ -374,19 +377,19 @@ add_handler('buffer_after_switch',
         buffer.first_visible_line)
   end)
 
-add_handler('buffer_after_switch',
+connect('buffer_after_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
-    handle('update_ui')
+    emit('update_ui')
   end)
 
-add_handler('view_after_switch',
+connect('view_after_switch',
   function() -- updates titlebar and statusbar
     set_title(buffer)
-    handle('update_ui')
+    emit('update_ui')
   end)
 
-add_handler('quit',
+connect('quit',
   function() -- prompts for confirmation if any buffers are dirty
     local any = false
     local list = {}
@@ -411,10 +414,10 @@ add_handler('quit',
   end)
 
 if MAC then
-  add_handler('appleevent_odoc',
-    function(uri) return handle('uri_dropped', 'file://'..uri) end)
+  connect('appleevent_odoc',
+    function(uri) return emit('uri_dropped', 'file://'..uri) end)
 
-  textadept.events.add_handler('buffer_new',
+  connect('buffer_new',
     function()
       buffer.paste = function()
         local clipboard_text = textadept.clipboard_text
@@ -423,5 +426,4 @@ if MAC then
     end)
 end
 
-add_handler('error',
-  function(...) textadept._print(locale.ERROR_BUFFER, ...) end)
+connect('error', function(...) textadept._print(locale.ERROR_BUFFER, ...) end)

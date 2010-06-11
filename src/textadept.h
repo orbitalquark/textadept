@@ -54,8 +54,8 @@ void l_remove_scintilla_buffer(sptr_t);
 void l_goto_scintilla_buffer(GtkWidget *, int, int);
 void l_set_buffer_global(GtkWidget *);
 
-int l_handle_event(const char *, ...);
-void l_handle_scnnotification(struct SCNotification *);
+int l_emit_event(const char *, ...);
+void l_emit_scnnotification(struct SCNotification *);
 void l_ta_popup_context_menu(GdkEventButton *);
 
 #endif

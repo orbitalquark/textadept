@@ -78,5 +78,5 @@ function goto_prev()
 end
 
 if buffer then buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end
-textadept.events.add_handler('view_new',
+events.connect('view_new',
   function() buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end)

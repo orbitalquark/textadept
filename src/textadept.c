@@ -224,7 +224,7 @@ GtkWidget *new_scintilla_window(sptr_t buffer_id) {
     new_scintilla_buffer(editor, FALSE, FALSE);
   } else new_scintilla_buffer(editor, FALSE, TRUE);
   l_set_view_global(editor);
-  l_handle_event("view_new", -1);
+  l_emit_event("view_new", -1);
   return editor;
 }
 
@@ -266,8 +266,8 @@ void new_scintilla_buffer(GtkWidget *editor, int create, int addref) {
     SS(editor, SCI_ADDREFDOCUMENT, 0, doc);
   }
   l_set_buffer_global(editor);
-  l_handle_event("buffer_new", -1);
-  l_handle_event("update_ui", -1); // update document status
+  l_emit_event("buffer_new", -1);
+  l_emit_event("update_ui", -1); // update document status
 }
 
 /**
@@ -401,11 +401,11 @@ void set_statusbar_text(const char *text, int docbar) {
  * @see s_command
  */
 static void switch_to_view(GtkWidget *editor) {
-  l_handle_event("view_before_switch", -1);
+  l_emit_event("view_before_switch", -1);
   focused_editor = editor;
   l_set_view_global(editor);
   l_set_buffer_global(editor);
-  l_handle_event("view_after_switch", -1);
+  l_emit_event("view_after_switch", -1);
 }
 
 /**
@@ -417,7 +417,7 @@ static void s_notification(GtkWidget *editor, gint wParam, gpointer lParam,
   if (focused_editor != editor &&
       (n->nmhdr.code == SCN_URIDROPPED || n->nmhdr.code == SCN_SAVEPOINTLEFT))
     switch_to_view(editor);
-  l_handle_scnnotification(n);
+  l_emit_scnnotification(n);
 }
 
 /**
@@ -434,16 +434,16 @@ static void s_command(GtkWidget *editor, gint wParam, gpointer lParam,
  * Collects the modifier states as flags and calls Lua to handle the keypress.
  */
 static gbool s_keypress(GtkWidget *editor, GdkEventKey *event, gpointer udata) {
-  return l_handle_event("keypress",
-                        LUA_TNUMBER, event->keyval,
-                        LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
-                        LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK,
+  return l_emit_event("keypress",
+                      LUA_TNUMBER, event->keyval,
+                      LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
+                      LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK,
 #if !MAC
-                        LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
+                      LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
 #else
-                        LUA_TBOOLEAN, event->state & GDK_META_MASK,
+                      LUA_TBOOLEAN, event->state & GDK_META_MASK,
 #endif
-                        -1) ? TRUE : FALSE;
+                      -1) ? TRUE : FALSE;
 }
 
 /**
@@ -488,7 +488,7 @@ static gbool w_keypress(GtkWidget *window, GdkEventKey *event, gpointer udata) {
  * @see l_close
  */
 static gbool w_exit(GtkWidget *window, GdkEventAny *event, gpointer udata) {
-  if (!l_handle_event("quit", -1)) return TRUE;
+  if (!l_emit_event("quit", -1)) return TRUE;
   l_close();
   scintilla_release_resources();
   gtk_main_quit();
@@ -511,7 +511,7 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent *reply, long ref) {
                   NULL);
       CFURLRef url = CFURLCreateFromFSRef(kCFAllocatorDefault, &fsref);
       if (url) {
-        l_handle_event("appleevent_odoc", LUA_TSTRING, CFURL_TO_STR(url), -1);
+        l_emit_event("appleevent_odoc", LUA_TSTRING, CFURL_TO_STR(url), -1);
         CFRelease(url);
       }
     }
@@ -652,16 +652,16 @@ static void find_button_clicked(GtkWidget *button, gpointer udata) {
   if (strlen(find_text) == 0) return;
   if (button == fnext_button || button == fprev_button) {
     find_add_to_history(find_text, find_store);
-    l_handle_event("find", LUA_TSTRING, find_text, LUA_TBOOLEAN,
-                   button == fnext_button, -1);
+    l_emit_event("find", LUA_TSTRING, find_text, LUA_TBOOLEAN,
+                 button == fnext_button, -1);
   } else {
     find_add_to_history(repl_text, repl_store);
     if (button == r_button) {
-      l_handle_event("replace", LUA_TSTRING, repl_text, -1);
-      l_handle_event("find", LUA_TSTRING, find_text, LUA_TBOOLEAN, 1, -1);
+      l_emit_event("replace", LUA_TSTRING, repl_text, -1);
+      l_emit_event("find", LUA_TSTRING, find_text, LUA_TBOOLEAN, 1, -1);
     } else
-      l_handle_event("replace_all", LUA_TSTRING, find_text, LUA_TSTRING,
-                     repl_text, -1);
+      l_emit_event("replace_all", LUA_TSTRING, find_text, LUA_TSTRING,
+                   repl_text, -1);
   }
 }
 
@@ -729,14 +729,13 @@ static gbool cec_match_selected(GtkEntryCompletion *entry, GtkTreeModel *model,
  * Signal for the 'enter' key being pressed in the Command Entry.
  */
 static void c_activated(GtkWidget *entry, gpointer udata) {
-  l_handle_event("command_entry_command", LUA_TSTRING,
-                 gtk_entry_get_text(GTK_ENTRY(entry)), -1);
+  l_emit_event("command_entry_command", LUA_TSTRING,
+               gtk_entry_get_text(GTK_ENTRY(entry)), -1);
 }
 
 /**
  * Signal for a keypress inside the Command Entry.
  */
 static gbool c_keypress(GtkWidget *entry, GdkEventKey *event, gpointer udata) {
-  return l_handle_event("command_entry_keypress", LUA_TNUMBER, event->keyval,
-                        -1);
+  return l_emit_event("command_entry_keypress", LUA_TNUMBER, event->keyval, -1);
 }

@@ -3,7 +3,7 @@
 local textadept = _G.textadept
 local locale = _G.locale
 
-textadept.events.add_handler('command_entry_command',
+events.connect('command_entry_command',
   function(command) -- execute a Lua command
     local f, err = loadstring(command)
     if err then error(err) end
@@ -11,10 +11,10 @@ textadept.events.add_handler('command_entry_command',
     f()
   end)
 
-textadept.events.add_handler('command_entry_keypress',
+events.connect('command_entry_keypress',
   function(code)
     local ce = textadept.command_entry
-    local KEYSYMS = textadept.keys.KEYSYMS
+    local KEYSYMS = keys.KEYSYMS
     if KEYSYMS[code] == 'esc' then
       ce.focus() -- toggle focus to hide
       return true

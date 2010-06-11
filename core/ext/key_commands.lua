@@ -2,6 +2,7 @@
 
 local textadept = _G.textadept
 local locale = _G.locale
+local events = _G.events
 
 ---
 -- Manages and defines key commands in Textadept.
@@ -246,7 +247,7 @@ if not MAC then
     elseif type(state) == 'number' then
       buffer[setting] = buffer[setting] == 0 and 1 or 0
     end
-    t.events.handle('update_ui') -- for updating statusbar
+    events.emit('update_ui') -- for updating statusbar
   end
   keys.ct.v = {
     e      = { toggle_setting, 'view_eol'           },
@@ -274,7 +275,7 @@ if not MAC then
   -- Miscellaneous not in standard menu.
   -- Recent files.
   local RECENT_FILES = 1
-  t.events.add_handler('user_list_selection',
+  events.connect('user_list_selection',
     function(type, text)
       if type == RECENT_FILES then io.open_file(text) end
     end)
@@ -408,7 +409,7 @@ else
     elseif type(state) == 'number' then
       buffer[setting] = buffer[setting] == 0 and 1 or 0
     end
-    t.events.handle('update_ui') -- for updating statusbar
+    events.emit('update_ui') -- for updating statusbar
   end
   keys.at.v = {
     e      = { toggle_setting, 'view_eol'           },
@@ -436,7 +437,7 @@ else
   -- Miscellaneous not in standard menu.
   -- Recent files.
   local RECENT_FILES = 1
-  t.events.add_handler('user_list_selection',
+  events.connect('user_list_selection',
     function(type, text)
       if type == RECENT_FILES then io.open_file(text) end
     end)
@@ -589,7 +590,7 @@ local function keypress(code, shift, control, alt)
       if ch:find('[%p%d]') and #keychain == 0 then
         if buffer.anchor ~= buffer.current_pos then buffer:delete_back() end
         buffer:add_text(ch)
-        textadept.events.handle('char_added', code)
+        events.emit('char_added', code)
         return true
       end
     end
@@ -649,4 +650,4 @@ local function keypress(code, shift, control, alt)
     end
   end
 end
-textadept.events.add_handler('keypress', keypress, 1)
+events.connect('keypress', keypress, 1)

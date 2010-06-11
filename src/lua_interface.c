@@ -241,9 +241,9 @@ void l_goto_scintilla_window(GtkWidget *editor, int n, int absolute) {
     lua_rawgeti(lua, -1, n);
   }
   editor = l_checkview(lua, -1);
-  if (!closing) l_handle_event("view_before_switch", -1);
+  if (!closing) l_emit_event("view_before_switch", -1);
   gtk_widget_grab_focus(editor);
-  if (!closing) l_handle_event("view_after_switch", -1);
+  if (!closing) l_emit_event("view_after_switch", -1);
   lua_pop(lua, 2); // view table and views
 }
 
@@ -372,10 +372,10 @@ void l_goto_scintilla_buffer(GtkWidget *editor, int n, int absolute) {
     lua_rawgeti(lua, -1, n);
   }
   sptr_t doc = l_checkdocpointer(lua, -1);
-  if (!closing) l_handle_event("buffer_before_switch", -1);
+  if (!closing) l_emit_event("buffer_before_switch", -1);
   SS(editor, SCI_SETDOCPOINTER, 0, doc);
   l_set_buffer_global(editor);
-  if (!closing) l_handle_event("buffer_after_switch", -1);
+  if (!closing) l_emit_event("buffer_after_switch", -1);
   lua_pop(lua, 2); // buffer table and buffers
 }
 
@@ -436,23 +436,19 @@ static void clear_table(lua_State *lua, int abs_index) {
 }
 
 /**
- * Returns whether or not the value of the key of the given table in the global
- * 'textadept' table is a function.
- * @param table The table in 'textadept' to check for key in.
+ * Returns whether or not the value of the key of the given global table is a
+ * function.
+ * @param table The table to check for key in.
  * @param key String key to check for in table.
  */
-int l_ista2function(const char *table, const char *key) {
-  lua_getglobal(lua, "textadept");
+int l_is2function(const char *table, const char *key) {
+  lua_getglobal(lua, table);
   if (lua_istable(lua, -1)) {
-    lua_getfield(lua, -1, table);
-    lua_remove(lua, -2); // textadept
-    if (lua_istable(lua, -1)) {
-      lua_getfield(lua, -1, key);
-      lua_remove(lua, -2); // table
-      if (lua_isfunction(lua, -1)) return TRUE;
-      lua_pop(lua, 1); // non-function
-    } else lua_pop(lua, 1); // non-table
-  } else lua_pop(lua, 1); // textadept
+    lua_getfield(lua, -1, key);
+    lua_remove(lua, -2); // table
+    if (lua_isfunction(lua, -1)) return TRUE;
+    lua_pop(lua, 1); // non-function
+  } else lua_pop(lua, 1); // non-table
   return FALSE;
 }
 
@@ -475,7 +471,7 @@ static int l_call_function(int nargs, int retn, int keep_return) {
     return result;
   } else {
     if (focused_editor)
-      l_handle_event("error", LUA_TSTRING, lua_tostring(lua, -1), -1);
+      l_emit_event("error", LUA_TSTRING, lua_tostring(lua, -1), -1);
     else
       printf("Lua Error: %s\n", lua_tostring(lua, -1));
     lua_settop(lua, 0);
@@ -606,8 +602,8 @@ static void l_check_focused_buffer(lua_State *lua, int narg) {
  *   list should contain Lua types followed by the data of that type to pass.
  *   The list is terminated by a -1.
  */
-int l_handle_event(const char *s, ...) {
-  if (!l_ista2function("events", "handle")) return FALSE;
+int l_emit_event(const char *s, ...) {
+  if (!l_is2function("events", "emit")) return FALSE;
   lua_pushstring(lua, s);
   int n = 1;
   va_list ap;
@@ -627,7 +623,7 @@ int l_handle_event(const char *s, ...) {
       long ref = (long)arg;
       lua_rawgeti(lua, LUA_REGISTRYINDEX, ref);
       luaL_unref(lua, LUA_REGISTRYINDEX, ref);
-    } else warn("events.handle: ignored invalid argument type");
+    } else warn("events.emit: ignored invalid argument type");
     n++;
     type = va_arg(ap, int);
   }
@@ -644,8 +640,8 @@ int l_handle_event(const char *s, ...) {
  * Handles a Scintilla notification.
  * @param n The Scintilla notification struct.
  */
-void l_handle_scnnotification(struct SCNotification *n) {
-  if (!l_ista2function("events", "notification")) return;
+void l_emit_scnnotification(struct SCNotification *n) {
+  if (!l_is2function("events", "notification")) return;
   lua_newtable(lua);
   l_pushscninteger(n->nmhdr.code, "code");
   l_pushscninteger(n->position, "position");
@@ -1011,7 +1007,7 @@ static int l_cf_buffer_delete(lua_State *lua) {
   else
     new_scintilla_buffer(focused_editor, TRUE, TRUE);
   remove_scintilla_buffer(doc);
-  l_handle_event("buffer_deleted", -1);
+  l_emit_event("buffer_deleted", -1);
   return 0;
 }
 
@@ -1136,7 +1132,7 @@ static int l_cf_ta_goto_window(lua_State *lua) {
 }
 
 static void t_menu_activate(GtkWidget *menu, gpointer id) {
-  l_handle_event("menu_clicked", LUA_TNUMBER, GPOINTER_TO_INT(id), -1);
+  l_emit_event("menu_clicked", LUA_TNUMBER, GPOINTER_TO_INT(id), -1);
 }
 
 static int l_cf_ta_gtkmenu(lua_State *lua) {
@@ -1169,7 +1165,7 @@ static int l_cf_ta_quit(lua_State *lua) {
 }
 
 static int l_cf_ta_reset(lua_State *lua) {
-  l_handle_event("reset_before", -1);
+  l_emit_event("reset_before", -1);
   l_init(0, NULL, TRUE);
   lua_pushboolean(lua, TRUE);
   lua_setglobal(lua, "RESETTING");
@@ -1178,7 +1174,7 @@ static int l_cf_ta_reset(lua_State *lua) {
   lua_setglobal(lua, "RESETTING");
   l_set_view_global(focused_editor);
   l_set_buffer_global(focused_editor);
-  l_handle_event("reset_after", -1);
+  l_emit_event("reset_after", -1);
   return 0;
 }
 
