@@ -14,7 +14,6 @@ package.path = table.concat(paths, ';')
 
 if not textadept.user_dofile('init.lua') then
 -- Core extension modules to load on startup.
-require 'ext/keys' -- provides key command support
 require 'ext/find' -- provides functionality for find/replace
 require 'ext/command_entry' -- provides tab-completion for the command entry
 require 'ext/mime_types' -- provides support for language detection based on
@@ -26,7 +25,7 @@ require 'textadept'
 
 -- Core extension modules that must be loaded last.
 require 'ext/menu' -- provides the menu bar
-require 'ext/key_commands' -- key commands
+require 'ext/key_commands' -- provides key command support
 end
 
 if not RESETTING then
