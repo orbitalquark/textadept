@@ -6,7 +6,7 @@ local locale = _G.locale
 ---
 -- Manages and defines key commands in Textadept.
 -- This set of key commands is pretty standard among other text editors.
-module('textadept.key_commands', package.seeall)
+module('keys', package.seeall)
 
 -- Markdown:
 -- ## Overview
@@ -124,13 +124,7 @@ local SHIFT = 's'..ADD
 local ALT = 'a'..ADD
 -- end settings
 
----
--- Global container that holds all key commands.
--- @class table
--- @name _G.keys
-_G.keys = {}
-
-local keys = _G.keys
+local keys = keys
 local b, v = 'buffer', 'view'
 local t = textadept
 
