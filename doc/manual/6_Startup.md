@@ -53,7 +53,7 @@ example:
 
     -- These need to be loaded last.
     --require 'textadept.menu'
-    require 'textadept.key_commands'
+    require 'textadept.keys'
 
 Please note Textadept does NOT load your `~/.textadept/init.lua`'s modules in
 addition to its own. This defeats the purpose of maximum extensibility. If your
