@@ -15,8 +15,8 @@ module('buffer')
 -- * `dirty`: Flag indicating whether or not the buffer has been modified since
 --   it was last saved.
 -- * `filename`: The absolute path to the file associated with this buffer. It
---   is encoded in UTF-8. Use [`textadept.iconv()`][textadept_iconv] for
---   charset conversions.
+--   is encoded in UTF-8. Use [`string.iconv()`][string_iconv] for charset
+--   conversions.
 -- * `encoding`: The encoding of the file on the hard disk. It will be nil if
 --   the file is a binary file.
 -- * `encoding_bom`: The byte-order mark of the file encoding (if any).
@@ -336,7 +336,7 @@ module('buffer')
 -- * `x_offset`: The horizontal scroll position.
 -- * `zoom`: The zoom level added to all font sizes. +: magnify, -: reduce.
 --
--- [textadept_iconv]: ../modules/textadept.html#iconv
+-- [string_iconv]: ../modules/string.html#iconv
 -- [color]: http://scintilla.org/ScintillaDoc.html#colour
 
 ---

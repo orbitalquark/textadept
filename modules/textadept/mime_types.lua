@@ -1,6 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 local events = _G.events
 
@@ -26,8 +25,8 @@ module('_m.textadept.mime_types', package.seeall)
 --
 -- ## Configuration Files
 --
--- Built-in mime-types are located in `core/ext/mime_types.conf`. You can
--- override or add to them in your `~/.textadept/mime_types.conf`.
+-- Built-in mime-types are located in `modules/textadept/mime_types.conf`. You
+-- can override or add to them in your `~/.textadept/mime_types.conf`.
 --
 -- #### Detection by File Extension
 --
@@ -253,14 +252,14 @@ events.connect('reset_after', function() buffer:set_lexer(buffer._lexer) end)
 -- buffer.
 function select_lexer()
   local out =
-    textadept.dialog('filteredlist',
-                     '--title', locale.MT_SELECT_LEXER,
-                     '--button1', 'gtk-ok',
-                     '--button2', 'gtk-cancel',
-                     '--no-newline',
-                     '--string-output',
-                     '--columns', 'Name',
-                     '--items', unpack(lexers))
+    gui.dialog('filteredlist',
+               '--title', locale.MT_SELECT_LEXER,
+               '--button1', 'gtk-ok',
+               '--button2', 'gtk-cancel',
+               '--no-newline',
+               '--string-output',
+               '--columns', 'Name',
+               '--items', unpack(lexers))
   local response, lexer = out:match('([^\n]+)\n([^\n]+)$')
   if response and response ~= 'gtk-cancel' then buffer:set_lexer(lexer) end
 end

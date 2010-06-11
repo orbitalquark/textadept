@@ -1,6 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 
 ---
@@ -93,11 +92,9 @@ module('events', package.seeall)
 -- * **view\_after\_switch** ()<br />
 --   Called right after [view][view] was switched to.
 -- * **reset\_before()**<br />
---   Called before resetting the Lua state during a call to
---   [`textadept.reset()`][textadept_reset].
+--   Called before resetting the Lua state during a call to [`reset()`][reset].
 -- * **reset\_after()**<br />
---   Called after resetting the Lua state during a call to
---   [`textadept.reset()`][textadept_reset].
+--   Called after resetting the Lua state during a call to [`reset()`][reset].
 -- * **quit** ()<br />
 --   Called when quitting Textadept.<br />
 --   Note: Any quit handlers added must be inserted at index 1 because the
@@ -114,7 +111,7 @@ module('events', package.seeall)
 -- * **menu\_clicked** (menu\_id)<br />
 --   Called when a menu item is selected.
 --       - menu\_id: the numeric ID of the menu item set in
---         [`textadept.gtkmenu()`][textadept_gtkmenu].
+--         [`gui.gtkmenu()`][gui_gtkmenu].
 -- * **find** (text, next)<br />
 --   Called when attempting to finding text via the Find dialog box.
 --       - text: the text to search for.
@@ -132,15 +129,15 @@ module('events', package.seeall)
 --
 -- [buffer]: ../modules/buffer.html
 -- [view]: ../modules/view.html
--- [textadept_reset]: ../modules/textadept.html#reset
--- [textadept_gtkmenu]: ../modules/textadept.html#gtkmenu
+-- [reset]: ../modules/_G.html#reset
+-- [gui_gtkmenu]: ../modules/gui.html#gtkmenu
 --
 -- ## Example
 --
 -- The following Lua code generates and handles a custom `my_event` event:
 --
 --     function my_event_handler(message)
---       textadept.print(message)
+--       gui.print(message)
 --     end
 --
 --     events.connect('my_event', my_event_handler)
@@ -187,7 +184,7 @@ local connect = connect
 local emit = emit
 
 --- Map of Scintilla notifications to their handlers.
-local c = textadept.constants
+local c = _SCINTILLA.constants
 local scnnotifications = {
   [c.SCN_CHARADDED] = { 'char_added', 'ch' },
   [c.SCN_SAVEPOINTREACHED] = { 'save_point_reached' },
@@ -219,7 +216,7 @@ end
 connect('view_new',
   function() -- sets default properties for a Scintilla window
     local buffer = buffer
-    local c = textadept.constants
+    local c = _SCINTILLA.constants
 
     -- lexer
     buffer.style_bits = 8
@@ -260,7 +257,7 @@ connect('buffer_new',
       buffer:set_lexer_language('container')
 
       -- buffer
-      buffer.code_page = textadept.constants.SC_CP_UTF8
+      buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
 
       if _THEME and #_THEME > 0 then
         local ret, errmsg = pcall(dofile, _THEME..'/buffer.lua')
@@ -282,7 +279,7 @@ local function set_title(buffer)
   local buffer = buffer
   local filename = buffer.filename or buffer._type or locale.UNTITLED
   local dirty = buffer.dirty and '*' or '-'
-  textadept.title =
+  gui.title =
     string.format('%s %s Textadept (%s)', filename:match('[^/\\]+$'), dirty,
                   filename)
 end
@@ -308,7 +305,7 @@ connect('uri_dropped',
         utf8_uri = utf8_uri:gsub('%%(%x%x)',
           function(hex) return string.char(tonumber(hex, 16)) end)
         if WIN32 then utf8_uri = utf8_uri:sub(2, -1) end -- ignore leading '/'
-        local uri = textadept.iconv(utf8_uri, _CHARSET, 'UTF-8')
+        local uri = utf8_uri:iconv(_CHARSET, 'UTF-8')
         if lfs.attributes(uri).mode ~= 'directory' then
           io.open_file(utf8_uri)
         end
@@ -332,7 +329,7 @@ connect('update_ui',
     local tabs = (buffer.use_tabs and locale.STATUS_TABS or
       locale.STATUS_SPACES)..buffer.indent
     local enc = buffer.encoding or ''
-    textadept.docstatusbar_text =
+    gui.docstatusbar_text =
       locale.DOCSTATUSBAR_TEXT:format(line, max, col, lexer, eol, tabs, enc)
   end)
 
@@ -355,7 +352,7 @@ connect('buffer_before_switch',
     buffer._folds = {}
     local folds = buffer._folds
     local level, expanded = buffer.fold_level, buffer.fold_expanded
-    local header_flag = textadept.constants.SC_FOLDLEVELHEADERFLAG
+    local header_flag = _SCINTILLA.constants.SC_FOLDLEVELHEADERFLAG
     local test = 2 * header_flag
     for i = 0, buffer.line_count do
       if level[i] % test >= header_flag and not expanded[i] then
@@ -393,21 +390,21 @@ connect('quit',
   function() -- prompts for confirmation if any buffers are dirty
     local any = false
     local list = {}
-    for _, buffer in ipairs(textadept.buffers) do
+    for _, buffer in ipairs(_BUFFERS) do
       if buffer.dirty then
         list[#list + 1] = buffer.filename or buffer._type or locale.UNTITLED
         any = true
       end
     end
     if any and
-       textadept.dialog('msgbox',
-                        '--title', locale.EVENTS_QUIT_TITLE,
-                        '--text', locale.EVENTS_QUIT_TEXT,
-                        '--informative-text',
-                          string.format('%s', table.concat(list, '\n')),
-                        '--button1', 'gtk-cancel',
-                        '--button2', locale.EVENTS_QUIT_BUTTON2,
-                        '--no-newline') ~= '2' then
+       gui.dialog('msgbox',
+                  '--title', locale.EVENTS_QUIT_TITLE,
+                  '--text', locale.EVENTS_QUIT_TEXT,
+                  '--informative-text',
+                    string.format('%s', table.concat(list, '\n')),
+                  '--button1', 'gtk-cancel',
+                  '--button2', locale.EVENTS_QUIT_BUTTON2,
+                  '--no-newline') ~= '2' then
       return false
     end
     return true
@@ -420,10 +417,10 @@ if MAC then
   connect('buffer_new',
     function()
       buffer.paste = function()
-        local clipboard_text = textadept.clipboard_text
+        local clipboard_text = gui.clipboard_text
         if #clipboard_text > 0 then buffer:replace_sel(clipboard_text) end
       end
     end)
 end
 
-connect('error', function(...) textadept._print(locale.ERROR_BUFFER, ...) end)
+connect('error', function(...) gui._print(locale.ERROR_BUFFER, ...) end)

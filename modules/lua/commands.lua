@@ -1,7 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
-
 ---
 -- Commands for the lua module.
 module('_m.lua.commands', package.seeall)
@@ -69,7 +67,7 @@ function goto_required()
   for path in package.path:gmatch('[^;]+') do
     path = path:gsub('?', file)
     if lfs.attributes(path) then
-      io.open_file(textadept.iconv(path, 'UTF-8', _CHARSET))
+      io.open_file(path:iconv('UTF-8', _CHARSET))
       break
     end
   end
@@ -81,8 +79,7 @@ if type(keys) == 'table' then
   keys.lua = {
     al = {
       m = { io.open_file,
-            textadept.iconv(_HOME..'/modules/lua/init.lua',
-                            'UTF-8', _CHARSET) },
+            (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET) },
       g = { goto_required },
     },
     ['s\n'] = { try_to_autocomplete_end },

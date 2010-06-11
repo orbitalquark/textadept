@@ -9,7 +9,15 @@ local constants = contents:match('ifaceConstants%[%] = (%b{})')
 local functions = contents:match('ifaceFunctions%[%] = (%b{})')
 local properties = contents:match('ifaceProperties%[%] = (%b{})')
 
-local out = ''
+local out = [[
+-- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+
+---
+-- Scintilla constants, functions, and properties.
+-- Do not modify anything in this module. Doing so will result in instability.
+module('_SCINTILLA', package.seeall)
+
+]]
 
 local types = {
   void = 0, int = 1, length = 2, position = 3, colour = 4, bool = 5,
@@ -17,7 +25,13 @@ local types = {
   findtext = 11, formatrange = 12
 }
 
-out = out..'local constants = {\n'
+out = out..[[
+---
+-- Scintilla constants.
+-- @class table
+-- @name constants
+constants = {
+]]
 -- {"constant", value}
 for item in constants:sub(2, -2):gmatch('%b{}') do
   local name, value = item:match('^{"(.-)",(.-)}')
@@ -53,9 +67,15 @@ out = out..[[
   SCN_INDICATORCLICK = 2023,
   SCN_INDICATORRELEASE = 2024,
 ]]
-out = out..'}\nrawset(textadept, \'constants\', constants)\n\n'
+out = out..'}\n\n'
 
-out = out..'local buffer_functions = {\n'
+out = out..[[
+---
+-- Scintilla functions.
+-- @class table
+-- @name functions
+functions = {
+]]
 -- {"function", msg_id, iface_*, {iface_*, iface_*}}
 for item in functions:sub(2, -2):gmatch('%b{}') do
   local name, msg_id, rt_type, p1_type, p2_type =
@@ -67,9 +87,15 @@ for item in functions:sub(2, -2):gmatch('%b{}') do
     name, msg_id, types[rt_type], types[p1_type], types[p2_type])
   out = out..line
 end
-out = out..'}\nrawset(textadept, \'buffer_functions\', buffer_functions)\n\n'
+out = out..'}\n\n'
 
-out = out..'local buffer_properties = {\n'
+out = out..[[
+---
+-- Scintilla properties.
+-- @class table
+-- @name properties
+properties = {
+]]
 -- {"property", get_id, set_id, rt_type, p1_type}
 for item in properties:sub(2, -2):gmatch('%b{}') do
   local name, get_id, set_id, rt_type, p1_type =
@@ -81,7 +107,7 @@ for item in properties:sub(2, -2):gmatch('%b{}') do
     name, get_id, set_id, types[rt_type], types[p1_type])
   out = out..line
 end
-out = out..'}\nrawset(textadept, \'buffer_properties\', buffer_properties)\n'
+out = out..'}\n'
 
 f = io.open('../core/iface.lua', 'w')
 f:write(out)

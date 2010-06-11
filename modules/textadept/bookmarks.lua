@@ -1,6 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 
 ---

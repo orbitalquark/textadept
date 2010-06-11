@@ -1,10 +1,10 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the
--- global textadept.command_entry table.
+-- global gui.command_entry table.
 
 ---
 -- Textadept's Command entry.
-module('textadept.command_entry')
+module('gui.command_entry')
 
 -- Markdown:
 -- ## Fields
@@ -22,11 +22,11 @@ module('textadept.command_entry')
 -- `Tab` key to display a list of available completions. Use the arrow keys to
 -- make a selection and press `Enter` to insert it.
 --
--- Note: Use [`textadept.print()`][textadept_print] instead of the global
--- `print()` function. The former prints to a new buffer, the latter to standard
--- out (`STDOUT`).
+-- Note: Use [`gui.print()`][gui_print] instead of the global `print()`
+-- function. The former prints to a new buffer, the latter to standard out
+-- (`STDOUT`).
 --
--- [textadept_print]: ../modules/textadept.html#print
+-- [gui_print]: ../modules/gui.html#print
 --
 -- ## Extending
 --
@@ -34,7 +34,7 @@ module('textadept.command_entry')
 -- example of this is [incremental search][inc_search]. See `core/ext/find.lua`
 -- for the implementation.
 --
--- [inc_search]: ../modules/textadept.find.html#incremental
+-- [inc_search]: ../modules/gui.find.html#incremental
 
 --- Focuses the command entry.
 function focus() end
