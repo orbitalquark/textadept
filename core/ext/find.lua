@@ -2,6 +2,7 @@
 
 local textadept = _G.textadept
 local locale = _G.locale
+local events = _G.events
 local find = textadept.find
 
 local lfs = require 'lfs'
@@ -150,7 +151,7 @@ local function find_(text, next, flags, nowrap, wrapped)
 
   return result
 end
-textadept.events.add_handler('find', find_)
+events.connect('find', find_)
 
 -- Finds and selects text incrementally in the current buffer from a start
 -- point.
@@ -172,7 +173,7 @@ function find.find_incremental()
   textadept.command_entry.focus()
 end
 
-textadept.events.add_handler('command_entry_keypress',
+events.connect('command_entry_keypress',
   function(code)
     if find.incremental then
       if code == 0xff1b then -- escape
@@ -188,7 +189,7 @@ textadept.events.add_handler('command_entry_keypress',
     end
   end, 1) -- place before command_entry.lua's handler (if necessary)
 
-textadept.events.add_handler('command_entry_command',
+events.connect('command_entry_command',
   function(text) -- 'find next' for incremental search
     if find.incremental then
       find.incremental_start = buffer.current_pos + 1
@@ -240,7 +241,7 @@ local function replace(rtext)
     buffer:goto_pos(buffer.current_pos)
   end
 end
-textadept.events.add_handler('replace', replace)
+events.connect('replace', replace)
 
 -- Replaces all found text.
 -- If any text is selected, all found text in that selection is replaced.
@@ -288,7 +289,7 @@ local function replace_all(ftext, rtext, flags)
     string.format(locale.FIND_REPLACEMENTS_MADE, tostring(count))
   buffer:end_undo_action()
 end
-textadept.events.add_handler('replace_all', replace_all)
+events.connect('replace_all', replace_all)
 
 -- When the user double-clicks a found file, go to the line in the file the text
 -- was found at.
@@ -326,7 +327,7 @@ local function goto_file(pos, line_num)
     end
   end
 end
-textadept.events.add_handler('double_click', goto_file)
+events.connect('double_click', goto_file)
 
 -- LuaDoc is in core/.find.lua.
 function find.goto_file_in_list(next)
@@ -359,5 +360,5 @@ function find.goto_file_in_list(next)
 end
 
 if buffer then buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end
-textadept.events.add_handler('view_new',
+events.connect('view_new',
   function() buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end)

@@ -51,7 +51,7 @@ function load(filename)
       else
         textadept.new_buffer()
         buffer._type = filename
-        textadept.events.handle('file_opened', filename)
+        events.handle('file_opened', filename)
       end
       -- Restore saved buffer selection and view.
       local anchor = tonumber(anchor) or 0
@@ -168,5 +168,4 @@ function save(filename)
   end
 end
 
-textadept.events.add_handler('quit',
-  function() if SAVE_ON_QUIT then save() end end, 1)
+events.connect('quit', function() if SAVE_ON_QUIT then save() end end, 1)

@@ -2,6 +2,7 @@
 
 local textadept = _G.textadept
 local locale = _G.locale
+local events = _G.events
 
 ---
 -- Extends Lua's io package to provide file input/output routines for Textadept.
@@ -30,7 +31,7 @@ module('io', package.seeall)
 --
 -- Example:
 --
---     textadept.events.add_handler('file_opened',
+--     events.connect('file_opened',
 --       function(utf8_filename)
 --         local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
 --         local f = io.open(filename, 'rb')
@@ -170,7 +171,7 @@ local function open_helper(utf8_filename)
   end
   buffer.filename = utf8_filename
   buffer:set_save_point()
-  textadept.events.handle('file_opened', utf8_filename)
+  events.emit('file_opened', utf8_filename)
 
   for index, file in ipairs(recent_files) do
     if file == utf8_filename then
@@ -242,7 +243,7 @@ end
 local function save(buffer)
   textadept.check_focused_buffer(buffer)
   if not buffer.filename then return buffer:save_as() end
-  textadept.events.handle('file_before_save', buffer.filename)
+  events.emit('file_before_save', buffer.filename)
   local text = buffer:get_text(buffer.length)
   if buffer.encoding then
     local bom = buffer.encoding_bom or ''
@@ -277,7 +278,7 @@ local function save_as(buffer, utf8_filename)
   if #utf8_filename > 0 then
     buffer.filename = utf8_filename
     buffer:save()
-    textadept.events.handle('file_saved_as', utf8_filename)
+    events.emit('file_saved_as', utf8_filename)
   end
 end
 
@@ -351,10 +352,10 @@ local function update_modified_file()
     end
   end
 end
-textadept.events.add_handler('buffer_after_switch', update_modified_file)
-textadept.events.add_handler('view_after_switch', update_modified_file)
+events.connect('buffer_after_switch', update_modified_file)
+events.connect('view_after_switch', update_modified_file)
 
-textadept.events.add_handler('buffer_new',
+events.connect('buffer_new',
   function() -- set additional buffer functions
     local buffer = buffer
     buffer.reload = reload
@@ -365,7 +366,7 @@ textadept.events.add_handler('buffer_new',
     buffer.encoding = 'UTF-8'
   end)
 
-textadept.events.add_handler('file_opened',
+events.connect('file_opened',
   function(utf8_filename) -- close initial 'Untitled' buffer
     local b = textadept.buffers[1]
     if #textadept.buffers == 2 and not (b.filename or b._type or b.dirty) then

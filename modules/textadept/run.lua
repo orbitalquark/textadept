@@ -130,4 +130,4 @@ function goto_error(pos, line_num)
     end
   end
 end
-textadept.events.add_handler('double_click', goto_error)
+events.connect('double_click', goto_error)

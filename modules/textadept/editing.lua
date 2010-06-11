@@ -2,6 +2,7 @@
 
 local textadept = _G.textadept
 local locale = _G.locale
+local events = _G.events
 
 ---
 -- Editing commands for the textadept module.
@@ -73,14 +74,14 @@ local braces = { -- () [] {} <>
 -- Used for displaying call tips.
 local current_call_tip = {}
 
-textadept.events.add_handler('char_added',
+events.connect('char_added',
   function(c) -- matches characters specified in char_matches
     if AUTOPAIR and char_matches[c] and buffer.selections == 1 then
       buffer:insert_text(-1, char_matches[c])
     end
   end)
 
-textadept.events.add_handler('keypress',
+events.connect('keypress',
   function(code, shift, control, alt) -- removes matched chars on backspace
     if AUTOPAIR and code == 0xff08 and buffer.selections == 1 then
       local buffer = buffer
@@ -93,7 +94,7 @@ textadept.events.add_handler('keypress',
     end
   end)
 
-textadept.events.add_handler('update_ui',
+events.connect('update_ui',
   function() -- highlights matching braces
     local buffer = buffer
     local current_pos = buffer.current_pos
@@ -110,7 +111,7 @@ textadept.events.add_handler('update_ui',
     end
   end)
 
-textadept.events.add_handler('char_added',
+events.connect('char_added',
   function(char) -- auto-indent on return
     if not AUTOINDENT or char ~= 10 then return end
     local buffer = buffer
@@ -270,7 +271,7 @@ function prepare_for_save()
   buffer:convert_eo_ls(buffer.eol_mode)
   buffer:end_undo_action()
 end
-textadept.events.add_handler('file_before_save', prepare_for_save)
+events.connect('file_before_save', prepare_for_save)
 
 ---
 -- Cuts or copies text ranges intelligently. (Behaves like Emacs.)

@@ -2,6 +2,7 @@
 
 local textadept = _G.textadept
 local locale = _G.locale
+local events = _G.events
 
 ---
 -- Handles file-specific settings.
@@ -204,8 +205,7 @@ local function set_lexer(buffer, lang)
   end
   buffer:colourise(0, -1)
 end
-textadept.events.add_handler('buffer_new',
-  function() buffer.set_lexer = set_lexer end)
+events.connect('buffer_new', function() buffer.set_lexer = set_lexer end)
 -- Scintilla's first buffer doesn't have this
 if not RESETTING then buffer.set_lexer = set_lexer end
 
@@ -242,12 +242,11 @@ local function restore_lexer()
   buffer:set_lexer_language(buffer._lexer or 'container')
 end
 
-textadept.events.add_handler('file_opened', handle_new)
-textadept.events.add_handler('file_saved_as', handle_new)
-textadept.events.add_handler('buffer_after_switch', restore_lexer)
-textadept.events.add_handler('view_new', restore_lexer)
-textadept.events.add_handler('reset_after',
-  function() buffer:set_lexer(buffer._lexer) end)
+events.connect('file_opened', handle_new)
+events.connect('file_saved_as', handle_new)
+events.connect('buffer_after_switch', restore_lexer)
+events.connect('view_new', restore_lexer)
+events.connect('reset_after', function() buffer:set_lexer(buffer._lexer) end)
 
 ---
 -- Prompts the user to select a lexer from a filtered list for the current

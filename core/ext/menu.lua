@@ -2,6 +2,7 @@
 
 local textadept = _G.textadept
 local locale = _G.locale
+local events = _G.events
 
 ---
 -- Provides dynamic menus for Textadept.
@@ -291,7 +292,7 @@ local m_run = _m.textadept.run
 
 local function set_encoding(encoding)
   buffer:set_encoding(encoding)
-  t.events.handle('update_ui') -- for updating statusbar
+  events.emit('update_ui') -- for updating statusbar
 end
 local function toggle_setting(setting)
   local state = buffer[setting]
@@ -300,17 +301,17 @@ local function toggle_setting(setting)
   elseif type(state) == 'number' then
     buffer[setting] = buffer[setting] == 0 and 1 or 0
   end
-  t.events.handle('update_ui') -- for updating statusbar
+  events.emit('update_ui') -- for updating statusbar
 end
 local function set_eol_mode(mode)
   buffer.eol_mode = mode
   buffer:convert_eo_ls(mode)
-  t.events.handle('update_ui') -- for updating statusbar
+  events.emit('update_ui') -- for updating statusbar
 end
 local function set_lexer(lexer)
   buffer:set_lexer(lexer)
   buffer:colourise(0, -1)
-  t.events.handle('update_ui') -- for updating statusbar
+  events.emit('update_ui') -- for updating statusbar
 end
 local function open_webpage(url)
   local cmd
@@ -475,7 +476,7 @@ local actions = {
 }
 
 -- Most of this handling code comes from keys.lua.
-t.events.add_handler('menu_clicked',
+events.connect('menu_clicked',
   function(menu_id)
     local active_table = actions[menu_id]
     if menu_id >= ID.LEXER_START and menu_id < ID.LEXER_START + 99 then
