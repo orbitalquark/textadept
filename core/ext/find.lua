@@ -1,9 +1,8 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 local events = _G.events
-local find = textadept.find
+local find = gui.find
 
 local lfs = require 'lfs'
 
@@ -41,7 +40,7 @@ local function find_(text, next, flags, nowrap, wrapped)
   end
 
   if not flags then
-    local find, c = find, textadept.constants
+    local find, c = find, _SCINTILLA.constants
     flags = 0
     if find.match_case then flags = flags + c.SCFIND_MATCHCASE end
     if find.whole_word then flags = flags + c.SCFIND_WHOLEWORD end
@@ -76,19 +75,18 @@ local function find_(text, next, flags, nowrap, wrapped)
 
   else -- find in files
     local utf8_dir =
-      textadept.dialog('fileselect',
-                       '--title', locale.FIND_IN_FILES_TITLE,
-                       '--select-only-directories',
-                       '--with-directory',
-                         (buffer.filename or ''):match('^.+[/\\]') or '',
-                       '--no-newline')
+      gui.dialog('fileselect',
+                 '--title', locale.FIND_IN_FILES_TITLE,
+                 '--select-only-directories',
+                 '--with-directory',
+                   (buffer.filename or ''):match('^.+[/\\]') or '',
+                 '--no-newline')
     if #utf8_dir > 0 then
       if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
       if not find.match_case then text = text:lower() end
       if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
       local match_case = find.match_case
       local whole_word = find.whole_word
-      local iconv = textadept.iconv
       local format = string.format
       local matches = { 'Find: '..text }
       function search_file(file)
@@ -98,7 +96,7 @@ local function find_(text, next, flags, nowrap, wrapped)
           if not match_case then optimized_line = line:lower() end
           if whole_word then optimized_line = ' '..line..' ' end
           if string.find(optimized_line, text) then
-            file = iconv(file, 'UTF-8', _CHARSET)
+            file = file:iconv('UTF-8', _CHARSET)
             matches[#matches + 1] = format('%s:%s:%s', file, line_num, line)
           end
           line_num = line_num + 1
@@ -117,15 +115,14 @@ local function find_(text, next, flags, nowrap, wrapped)
           end
         end
       end
-      local dir = iconv(utf8_dir, _CHARSET, 'UTF-8')
+      local dir = utf8_dir:iconv(_CHARSET, 'UTF-8')
       search_dir(dir)
       if #matches == 1 then matches[2] = locale.FIND_NO_RESULTS end
       matches[#matches + 1] = ''
       if buffer._type ~= locale.FIND_FILES_FOUND_BUFFER then
         previous_view = view
       end
-      textadept._print(locale.FIND_FILES_FOUND_BUFFER,
-                       table.concat(matches, '\n'))
+      gui._print(locale.FIND_FILES_FOUND_BUFFER, table.concat(matches, '\n'))
     end
     return
   end
@@ -137,16 +134,16 @@ local function find_(text, next, flags, nowrap, wrapped)
     else
       buffer:goto_pos(buffer.length)
     end
-    textadept.statusbar_text = locale.FIND_SEARCH_WRAPPED
+    gui.statusbar_text = locale.FIND_SEARCH_WRAPPED
     result = find_(text, next, flags, true, true)
     if result == -1 then
-      textadept.statusbar_text = locale.FIND_NO_RESULTS
+      gui.statusbar_text = locale.FIND_NO_RESULTS
       buffer:line_scroll(0, first_visible_line)
       buffer:goto_pos(anchor)
     end
     return result
   elseif result ~= -1 and not wrapped then
-    textadept.statusbar_text = ''
+    gui.statusbar_text = ''
   end
 
   return result
@@ -158,7 +155,7 @@ events.connect('find', find_)
 -- Flags other than SCFIND_MATCHCASE are ignored.
 -- @param text The text to find.
 local function find_incremental(text)
-  local c = textadept.constants
+  local c = _SCINTILLA.constants
   local flags = find.match_case and c.SCFIND_MATCHCASE or 0
   --if find.lua then flags = flags + 8 end
   buffer:goto_pos(find.incremental_start or 0)
@@ -169,8 +166,8 @@ end
 function find.find_incremental()
   find.incremental = true
   find.incremental_start = buffer.current_pos
-  textadept.command_entry.entry_text = ''
-  textadept.command_entry.focus()
+  gui.command_entry.entry_text = ''
+  gui.command_entry.focus()
 end
 
 events.connect('command_entry_keypress',
@@ -179,7 +176,7 @@ events.connect('command_entry_keypress',
       if code == 0xff1b then -- escape
         find.incremental = nil
       elseif code < 256 or code == 0xff08 then -- character or backspace
-        local text = textadept.command_entry.entry_text
+        local text = gui.command_entry.entry_text
         if code == 0xff08 then
           find_incremental(text:sub(1, -2))
         else
@@ -222,11 +219,11 @@ local function replace(rtext)
     function(code)
       local ret, val = pcall(loadstring('return '..code))
       if not ret then
-        textadept.dialog('ok-msgbox',
-                         '--title', locale.FIND_ERROR_DIALOG_TITLE,
-                         '--text', locale.FIND_ERROR_DIALOG_TEXT,
-                         '--informative-text', val:gsub('"', '\\"'),
-                         '--no-cancel')
+        gui.dialog('ok-msgbox',
+                   '--title', locale.FIND_ERROR_DIALOG_TITLE,
+                   '--text', locale.FIND_ERROR_DIALOG_TEXT,
+                   '--informative-text', val:gsub('"', '\\"'),
+                   '--no-cancel')
         error()
       end
       return val
@@ -285,7 +282,7 @@ local function replace_all(ftext, rtext, flags)
     buffer:set_sel(anchor, current_pos)
     buffer:marker_delete_handle(end_marker)
   end
-  textadept.statusbar_text =
+  gui.statusbar_text =
     string.format(locale.FIND_REPLACEMENTS_MADE, tostring(count))
   buffer:end_undo_action()
 end
@@ -304,7 +301,7 @@ local function goto_file(pos, line_num)
       buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR)
       buffer:marker_add(line_num, MARK_FIND)
       buffer:goto_pos(buffer.current_pos)
-      if #textadept.views == 1 then
+      if #_VIEWS == 1 then
         _, previous_view = view:split(false) -- horizontal
       else
         local clicked_view = view
@@ -312,7 +309,7 @@ local function goto_file(pos, line_num)
         if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
           -- there are at least two find in files views; find one of those views
           -- that the file was not selected from and focus it
-          for _, v in ipairs(textadept.views) do
+          for _, v in ipairs(_VIEWS) do
             if v ~= clicked_view then
               previous_view = v
               v:focus()
@@ -332,9 +329,9 @@ events.connect('double_click', goto_file)
 -- LuaDoc is in core/.find.lua.
 function find.goto_file_in_list(next)
   local orig_view = view
-  for _, buffer in ipairs(textadept.buffers) do
+  for _, buffer in ipairs(_BUFFERS) do
     if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
-      for _, view in ipairs(textadept.views) do
+      for _, view in ipairs(_VIEWS) do
         if view.doc_pointer == buffer.doc_pointer then
           view:focus()
           local orig_line = buffer:line_from_position(buffer.current_pos)

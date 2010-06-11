@@ -449,12 +449,12 @@ static gbool s_keypress(GtkWidget *editor, GdkEventKey *event, gpointer udata) {
 /**
  * Signal for a Scintilla mouse click.
  * If it is a right-click, popup a context menu.
- * @see l_ta_popup_context_menu
+ * @see l_gui_popup_context_menu
  */
 static gbool s_buttonpress(GtkWidget *editor, GdkEventButton *event,
                            gpointer udata) {
   if (event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
-  l_ta_popup_context_menu(event);
+  l_gui_popup_context_menu(event);
   return TRUE;
 }
 

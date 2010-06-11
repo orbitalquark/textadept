@@ -1,6 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 local events = _G.events
 
@@ -227,10 +226,10 @@ function goto_line(line)
   local buffer = buffer
   if not line then
     line =
-      textadept.dialog('standard-inputbox',
-                       '--title', locale.M_TEXTADEPT_EDITING_GOTO_TITLE,
-                       '--text', locale.M_TEXTADEPT_EDITING_GOTO_TEXT,
-                       '--no-newline')
+      gui.dialog('standard-inputbox',
+                 '--title', locale.M_TEXTADEPT_EDITING_GOTO_TITLE,
+                 '--text', locale.M_TEXTADEPT_EDITING_GOTO_TEXT,
+                 '--no-newline')
     line = tonumber(line:match('%-?%d+$'))
     if not line or line < 0 then return end
   end

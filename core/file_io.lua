@@ -1,6 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 local events = _G.events
 
@@ -26,20 +25,20 @@ module('io', package.seeall)
 -- If your filesystem does not use UTF-8 encoded filenames, conversions to and
 -- from that encoding will be necessary. When opening and saving files through
 -- dialogs, Textadept takes care of these conversions for you, but if you need
--- to do them manually, use [`textadept.iconv()`][textadept_iconv] along with
+-- to do them manually, use [`string.iconv()`][string_iconv] along with
 -- `_CHARSET`, your filesystem's detected encoding.
 --
 -- Example:
 --
 --     events.connect('file_opened',
 --       function(utf8_filename)
---         local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
+--         local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
 --         local f = io.open(filename, 'rb')
 --         -- process file
 --         f:close()
 --       end)
 --
--- [textadept_iconv]: ../modules/textadept.html#iconv
+-- [string_iconv]: ../modules/string.html#iconv
 --
 -- ## Events
 --
@@ -77,7 +76,7 @@ boms = {
 
 -- Attempt to detect the encoding of the given text.
 -- @param text Text to determine encoding from.
--- @return encoding string for textadept.iconv() (unless 'binary', indicating a
+-- @return encoding string for string.iconv() (unless 'binary', indicating a
 --   binary file), byte-order mark (BOM) string or nil. If encoding string is
 --   nil, no encoding has been detected.
 local function detect_encoding(text)
@@ -116,7 +115,7 @@ try_encodings = {
 local function open_helper(utf8_filename)
   if not utf8_filename then return end
   utf8_filename = utf8_filename:gsub('^file://', '')
-  for index, buffer in ipairs(textadept.buffers) do
+  for index, buffer in ipairs(_BUFFERS) do
     if utf8_filename == buffer.filename then
       view:goto_buffer(index)
       return
@@ -124,25 +123,25 @@ local function open_helper(utf8_filename)
   end
 
   local text
-  local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
+  local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
   local f = io.open(filename, 'rb')
   if f then
     text = f:read('*all')
     f:close()
     if not text then return end -- filename exists, but can't read it
   end
-  local buffer = textadept.new_buffer()
+  local buffer = new_buffer()
   if text then
     -- Tries to detect character encoding and convert text from it to UTF-8.
     local encoding, encoding_bom = detect_encoding(text)
     if encoding ~= 'binary' then
       if encoding then
         if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
-        text = textadept.iconv(text, 'UTF-8', encoding)
+        text = text:iconv('UTF-8', encoding)
       else
         -- Try list of encodings.
         for _, try_encoding in ipairs(try_encodings) do
-          local ret, conv = pcall(textadept.iconv, text, 'UTF-8', try_encoding)
+          local ret, conv = pcall(string.iconv, text, 'UTF-8', try_encoding)
           if ret then
             encoding = try_encoding
             text = conv
@@ -154,7 +153,7 @@ local function open_helper(utf8_filename)
     else
       encoding = nil
     end
-    local c = textadept.constants
+    local c = _SCINTILLA.constants
     buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
     buffer.code_page = encoding and c.SC_CP_UTF8 or 0
     -- Tries to set the buffer's EOL mode appropriately based on the file.
@@ -191,28 +190,28 @@ end
 function open_file(utf8_filenames)
   utf8_filenames =
     utf8_filenames or
-      textadept.dialog('fileselect',
-                       '--title', locale.IO_OPEN_TITLE,
-                       '--select-multiple',
-                       '--with-directory',
-                         (buffer.filename or ''):match('.+[/\\]') or '')
+      gui.dialog('fileselect',
+                 '--title', locale.IO_OPEN_TITLE,
+                 '--select-multiple',
+                 '--with-directory',
+                   (buffer.filename or ''):match('.+[/\\]') or '')
   for filename in utf8_filenames:gmatch('[^\n]+') do open_helper(filename) end
 end
 
 -- LuaDoc is in core/.buffer.lua.
 local function reload(buffer)
-  textadept.check_focused_buffer(buffer)
+  gui.check_focused_buffer(buffer)
   if not buffer.filename then return end
   local pos = buffer.current_pos
   local first_visible_line = buffer.first_visible_line
-  local filename = textadept.iconv(buffer.filename, _CHARSET, 'UTF-8')
+  local filename = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local f, err = io.open(filename, 'rb')
   if not f then return end
   local text = f:read('*all')
   f:close()
   local encoding, encoding_bom = buffer.encoding, buffer.encoding_bom
   if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
-  if encoding then text = textadept.iconv(text, 'UTF-8', encoding) end
+  if encoding then text = text:iconv('UTF-8', encoding) end
   buffer:clear_all()
   buffer:add_text(text, #text)
   buffer:line_scroll(0, first_visible_line)
@@ -223,15 +222,14 @@ end
 
 -- LuaDoc is in core/.buffer.lua.
 local function set_encoding(buffer, encoding)
-  textadept.check_focused_buffer(buffer)
+  gui.check_focused_buffer(buffer)
   if not buffer.encoding then error('Cannot change binary file encoding') end
-  local iconv = textadept.iconv
   local pos = buffer.current_pos
   local first_visible_line = buffer.first_visible_line
   local text = buffer:get_text(buffer.length)
-  text = iconv(text, buffer.encoding, 'UTF-8')
-  text = iconv(text, encoding, buffer.encoding)
-  text = iconv(text, 'UTF-8', encoding)
+  text = text:iconv(buffer.encoding, 'UTF-8')
+  text = text:iconv(encoding, buffer.encoding)
+  text = text:iconv('UTF-8', encoding)
   buffer:clear_all()
   buffer:add_text(text, #text)
   buffer:line_scroll(0, first_visible_line)
@@ -241,15 +239,15 @@ end
 
 -- LuaDoc is in core/.buffer.lua.
 local function save(buffer)
-  textadept.check_focused_buffer(buffer)
+  gui.check_focused_buffer(buffer)
   if not buffer.filename then return buffer:save_as() end
   events.emit('file_before_save', buffer.filename)
   local text = buffer:get_text(buffer.length)
   if buffer.encoding then
     local bom = buffer.encoding_bom or ''
-    text = bom..textadept.iconv(text, buffer.encoding, 'UTF-8')
+    text = bom..text:iconv(buffer.encoding, 'UTF-8')
   end
-  local filename = textadept.iconv(buffer.filename, _CHARSET, 'UTF-8')
+  local filename = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local f, err = io.open(filename, 'wb')
   if f then
     f:write(text)
@@ -264,16 +262,16 @@ end
 
 -- LuaDoc is in core/.buffer.lua.
 local function save_as(buffer, utf8_filename)
-  textadept.check_focused_buffer(buffer)
+  gui.check_focused_buffer(buffer)
   if not utf8_filename then
     utf8_filename =
-      textadept.dialog('filesave',
-                       '--title', locale.IO_SAVE_TITLE,
-                       '--with-directory',
-                         (buffer.filename or ''):match('.+[/\\]') or '',
-                       '--with-file',
-                         (buffer.filename or ''):match('[^/\\]+$') or '',
-                       '--no-newline')
+      gui.dialog('filesave',
+                 '--title', locale.IO_SAVE_TITLE,
+                 '--with-directory',
+                   (buffer.filename or ''):match('.+[/\\]') or '',
+                 '--with-file',
+                   (buffer.filename or ''):match('[^/\\]+$') or '',
+                 '--no-newline')
   end
   if #utf8_filename > 0 then
     buffer.filename = utf8_filename
@@ -288,7 +286,7 @@ end
 function save_all()
   local current_buffer = buffer
   local current_index
-  for index, buffer in ipairs(textadept.buffers) do
+  for index, buffer in ipairs(_BUFFERS) do
     view:goto_buffer(index)
     if buffer == current_buffer then current_index = index end
     if buffer.filename and buffer.dirty then buffer:save() end
@@ -298,17 +296,17 @@ end
 
 -- LuaDoc is in core/.buffer.lua.
 local function close(buffer)
-  textadept.check_focused_buffer(buffer)
+  gui.check_focused_buffer(buffer)
   if buffer.dirty and
-     textadept.dialog('msgbox',
-                      '--title', locale.IO_CLOSE_TITLE,
-                      '--text', locale.IO_CLOSE_TEXT,
-                      '--informative-text',
-                        string.format('%s', (buffer.filename or
-                                      buffer._type or locale.UNTITLED)),
-                      '--button1', 'gtk-cancel',
-                      '--button2', locale.IO_CLOSE_BUTTON2,
-                      '--no-newline') ~= '2' then
+     gui.dialog('msgbox',
+                '--title', locale.IO_CLOSE_TITLE,
+                '--text', locale.IO_CLOSE_TEXT,
+                '--informative-text',
+                  string.format('%s', (buffer.filename or
+                                buffer._type or locale.UNTITLED)),
+                '--button1', 'gtk-cancel',
+                '--button2', locale.IO_CLOSE_BUTTON2,
+                '--no-newline') ~= '2' then
     return false
   end
   buffer:delete()
@@ -322,8 +320,8 @@ end
 -- @usage io.close_all()
 -- @return true if user did not cancel.
 function close_all()
-  while #textadept.buffers > 1 do
-    view:goto_buffer(#textadept.buffers)
+  while #_BUFFERS > 1 do
+    view:goto_buffer(#_BUFFERS)
     if not buffer:close() then return false end
   end
   buffer:close() -- the last one
@@ -335,17 +333,17 @@ end
 local function update_modified_file()
   if not buffer.filename then return end
   local utf8_filename = buffer.filename
-  local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
+  local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
   local attributes = lfs.attributes(filename)
   if not attributes then return end
   if buffer.modification_time < attributes.modification then
-    if textadept.dialog('yesno-msgbox',
-                        '--title', locale.IO_RELOAD_TITLE,
-                        '--text', locale.IO_RELOAD_TEXT,
-                        '--informative-text',
-                          string.format(locale.IO_RELOAD_MSG, utf8_filename),
-                        '--no-cancel',
-                        '--no-newline') == '1' then
+    if gui.dialog('yesno-msgbox',
+                  '--title', locale.IO_RELOAD_TITLE,
+                  '--text', locale.IO_RELOAD_TEXT,
+                  '--informative-text',
+                    string.format(locale.IO_RELOAD_MSG, utf8_filename),
+                  '--no-cancel',
+                  '--no-newline') == '1' then
       buffer:reload()
     else
       buffer.modification_time = attributes.modification
@@ -368,8 +366,8 @@ events.connect('buffer_new',
 
 events.connect('file_opened',
   function(utf8_filename) -- close initial 'Untitled' buffer
-    local b = textadept.buffers[1]
-    if #textadept.buffers == 2 and not (b.filename or b._type or b.dirty) then
+    local b = _BUFFERS[1]
+    if #_BUFFERS == 2 and not (b.filename or b._type or b.dirty) then
       view:goto_buffer(1, true)
       buffer:close()
     end

@@ -1,10 +1,9 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the
--- global textadept table.
+-- global gui table.
 
----
--- The core textadept table.
-module('textadept')
+--- The core gui table.
+module('gui')
 
 -- Markdown:
 -- ## Fields
@@ -18,27 +17,6 @@ module('textadept')
 -- * `statusbar_text`: The text displayed by the statusbar (write-only).
 -- * `docstatusbar_text`: The text displayed by the doc statusbar (write-only).
 -- * `size`: The size of the Textadept window (`{ width, height}`).
--- * `constants`: Table containing Scintilla constants.
--- * `buffer_functions`: Table containing Scintilla functions.
--- * `buffer_properties`: Table containing Scintilla set/get functions.
-
----
--- A numerically indexed table of open buffers in Textadept.
--- @class table
--- @name buffers
-buffers = {}
-
----
--- A numerically indexed table of views in Textadept.
--- @class table
--- @name views
-views = {}
-
----
--- Creates a new buffer.
--- Activates the 'buffer_new' signal.
--- @return the new buffer.
-function new_buffer() end
 
 ---
 -- Goes to the specified view.
@@ -69,29 +47,6 @@ function get_split_table() end
 function gtkmenu(menu_table) end
 
 ---
--- Converts a string from one character set to another using iconv().
--- Valid character sets are ones GLib's g_convert() accepts, typically GNU
--- iconv's character sets.
--- @param text The text to convert.
--- @param to The character set to convert to.
--- @param from The character set to convert from.
-function iconv(text, to, from) end
-
----
--- Resets the Lua state by reloading all init scripts.
--- Language-specific modules for opened files are NOT reloaded. Re-opening the
--- files that use them will reload those modules.
--- This function is useful for modifying init scripts (such as key_commands.lua)
--- on the fly without having to restart Textadept.
--- A global RESETTING variable is set to true when re-initing the Lua State. Any
--- scripts that need to differentiate between startup and reset can utilize this
--- variable.
-function reset() end
-
---- Quits Textadept.
-function quit() end
-
----
 -- Checks if the buffer being indexed is the currently focused buffer.
 -- This is necessary because any buffer actions are performed in the focused
 -- views' buffer, which may not be the buffer being indexed. Throws an error
@@ -107,8 +62,8 @@ function check_focused_buffer(buffer) end
 -- buffer, and prints to it.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
--- @usage textadept._print(locale.ERROR_BUFFER, error_message)
--- @usage textadept._print(locale.MESSAGE_BUFFER, message)
+-- @usage gui._print(locale.ERROR_BUFFER, error_message)
+-- @usage gui._print(locale.MESSAGE_BUFFER, message)
 function _print(buffer_type, ...) end
 
 ---
@@ -127,11 +82,3 @@ function switch_buffer() end
 -- Each argument is like a string in Lua's 'arg' table.
 -- @return string CocoaDialog result.
 function dialog(kind, ...) end
-
----
--- Calls 'dofile' on the given filename in the user's Textadept directory.
--- This is typically used for loading user files like key commands or snippets.
--- Errors are printed to the Textadept message buffer.
--- @param filename The name of the file (not path).
--- @return true if successful; false otherwise.
-function user_dofile(filename) end

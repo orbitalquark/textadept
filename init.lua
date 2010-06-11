@@ -1,7 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
-
 local paths = {
   _USERHOME..'/?.lua',
   _USERHOME..'/modules/?.lua',
@@ -12,7 +10,7 @@ local paths = {
 }
 package.path = table.concat(paths, ';')
 
-if not textadept.user_dofile('init.lua') then
+if not user_dofile('init.lua') then
 -- Core extension modules to load on startup.
 require 'ext/find' -- provides functionality for find/replace
 require 'ext/command_entry' -- provides tab-completion for the command entry

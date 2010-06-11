@@ -1,6 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 
 ---
@@ -477,4 +476,4 @@ function show_style()
   buffer:call_tip_show(buffer.current_pos, text)
 end
 
-textadept.user_dofile('snippets.lua') -- load user snippets
+user_dofile('snippets.lua') -- load user snippets

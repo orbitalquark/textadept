@@ -56,6 +56,6 @@ void l_set_buffer_global(GtkWidget *);
 
 int l_emit_event(const char *, ...);
 void l_emit_scnnotification(struct SCNotification *);
-void l_ta_popup_context_menu(GdkEventButton *);
+void l_gui_popup_context_menu(GdkEventButton *);
 
 #endif

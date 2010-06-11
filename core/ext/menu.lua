@@ -1,17 +1,16 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 local events = _G.events
 
 ---
 -- Provides dynamic menus for Textadept.
 -- This module, like ext/key_commands, should be 'require'ed last.
-module('textadept.menu', package.seeall)
+module('menu', package.seeall)
 
-local t = textadept
+local gui = gui
 local l = locale
-local gtkmenu = textadept.gtkmenu
+local gtkmenu = gui.gtkmenu
 
 local SEPARATOR = 'separator'
 local ID = {
@@ -282,7 +281,7 @@ for _, lexer in ipairs(_m.textadept.mime_types.lexers) do
   lexer_menu[#lexer_menu + 1] = { lexer, ID.LEXER_START + #lexer_menu }
 end
 table.insert(menubar, #menubar, gtkmenu(lexer_menu)) -- before 'Help'
-t.menubar = menubar
+gui.menubar = menubar
 
 local b, v = 'buffer', 'view'
 local m_snippets = _m.textadept.snippets
@@ -327,7 +326,7 @@ end
 
 local actions = {
   -- File
-  [ID.NEW] = { t.new_buffer },
+  [ID.NEW] = { new_buffer },
   [ID.OPEN] = { io.open_file },
   [ID.RELOAD] = { 'reload', b },
   [ID.SAVE] = { 'save', b },
@@ -337,34 +336,34 @@ local actions = {
   [ID.LOAD_SESSION] = {
     function()
       local utf8_filename =
-        t.dialog('fileselect',
-                 '--title', l.MENU_LOAD_SESSION_TITLE,
-                 '--with-directory',
-                   (textadept.session_file or ''):match('.+[/\\]') or '',
-                 '--with-file',
-                   (textadept.session_file or ''):match('[^/\\]+$') or '',
-                  '--no-newline')
+        gui.dialog('fileselect',
+                   '--title', l.MENU_LOAD_SESSION_TITLE,
+                   '--with-directory',
+                     (_SESSIONFILE or ''):match('.+[/\\]') or '',
+                   '--with-file',
+                     (_SESSIONFILE or ''):match('[^/\\]+$') or '',
+                    '--no-newline')
       if #utf8_filename > 0 then
-        _m.textadept.session.load(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
+        _m.textadept.session.load(utf8_filename:iconv(_CHARSET, 'UTF-8'))
       end
     end
   },
   [ID.SAVE_SESSION] = {
     function()
       local utf8_filename =
-        t.dialog('filesave',
-                 '--title', l.MENU_SAVE_SESSION_TITLE,
-                 '--with-directory',
-                   (textadept.session_file or ''):match('.+[/\\]') or '',
-                 '--with-file',
-                   (textadept.session_file or ''):match('[^/\\]+$') or '',
-                 '--no-newline')
+        gui.dialog('filesave',
+                   '--title', l.MENU_SAVE_SESSION_TITLE,
+                   '--with-directory',
+                     (_SESSIONFILE or ''):match('.+[/\\]') or '',
+                   '--with-file',
+                     (_SESSIONFILE or ''):match('[^/\\]+$') or '',
+                   '--no-newline')
       if #utf8_filename > 0 then
-        _m.textadept.session.save(t.iconv(utf8_filename, _CHARSET, 'UTF-8'))
+        _m.textadept.session.save(utf8_filename:iconv(_CHARSET, 'UTF-8'))
       end
     end
   },
-  [ID.QUIT] = { t.quit },
+  [ID.QUIT] = { quit },
   -- Edit
   [ID.UNDO] = { 'undo', b },
   [ID.REDO] = { 'redo', b },
@@ -405,23 +404,23 @@ local actions = {
   [ID.SELECT_IN_INDENTED_BLOCK] = { m_editing.select_indented_block },
   [ID.SELECT_IN_SCOPE] = { m_editing.select_scope },
   -- Tools
-  [ID.FIND] = { t.find.focus },
-  [ID.FIND_NEXT] = { t.find.call_find_next },
-  [ID.FIND_PREV] = { t.find.call_find_prev },
-  [ID.FIND_AND_REPLACE] = { t.find.focus },
-  [ID.REPLACE] = { t.find.call_replace },
-  [ID.REPLACE_ALL] = { t.find.call_replace_all },
-  [ID.FIND_INCREMENTAL] = { t.find.find_incremental },
+  [ID.FIND] = { gui.find.focus },
+  [ID.FIND_NEXT] = { gui.find.call_find_next },
+  [ID.FIND_PREV] = { gui.find.call_find_prev },
+  [ID.FIND_AND_REPLACE] = { gui.find.focus },
+  [ID.REPLACE] = { gui.find.call_replace },
+  [ID.REPLACE_ALL] = { gui.find.call_replace_all },
+  [ID.FIND_INCREMENTAL] = { gui.find.find_incremental },
   [ID.FIND_IN_FILES] = {
     function()
-      t.find.in_files = true
-      t.find.focus()
+      gui.find.in_files = true
+      gui.find.focus()
     end
   },
-  [ID.GOTO_NEXT_FILE_FOUND] = { t.find.goto_file_in_list, true },
-  [ID.GOTO_PREV_FILE_FOUND] = { t.find.goto_file_in_list, false },
+  [ID.GOTO_NEXT_FILE_FOUND] = { gui.find.goto_file_in_list, true },
+  [ID.GOTO_PREV_FILE_FOUND] = { gui.find.goto_file_in_list, false },
   [ID.GOTO_LINE] = { m_editing.goto_line },
-  [ID.FOCUS_COMMAND_ENTRY] = { t.command_entry.focus },
+  [ID.FOCUS_COMMAND_ENTRY] = { gui.command_entry.focus },
   [ID.RUN] = { m_run.run },
   [ID.COMPILE] = { m_run.compile },
   -- Tools -> Snippets
@@ -452,10 +451,10 @@ local actions = {
   [ID.ENCODING_MACROMAN] = { set_encoding, 'MacRoman' },
   [ID.ENCODING_UTF16] = { set_encoding, 'UTF-16LE' },
   [ID.REFRESH_SYNTAX_HIGHLIGHTING] = { 'colourise', b, 0, -1 },
-  [ID.SWITCH_BUFFER] = { t.switch_buffer },
+  [ID.SWITCH_BUFFER] = { gui.switch_buffer },
   -- View
-  [ID.NEXT_VIEW] = { t.goto_view, 1, false },
-  [ID.PREV_VIEW] = { t.goto_view, -1, false },
+  [ID.NEXT_VIEW] = { gui.goto_view, 1, false },
+  [ID.PREV_VIEW] = { gui.goto_view, -1, false },
   [ID.SPLIT_VIEW_VERTICAL] = { 'split', v },
   [ID.SPLIT_VIEW_HORIZONTAL] = { 'split', v, false },
   [ID.UNSPLIT_VIEW] = { function() view:unsplit() end },
@@ -470,8 +469,8 @@ local actions = {
   [ID.MANUAL] = { open_webpage, _HOME..'/doc/manual/1_Introduction.html' },
   [ID.LUADOC] = { open_webpage, _HOME..'/doc/index.html' },
   [ID.ABOUT] = {
-    t.dialog, 'ok-msgbox', '--title', 'Textadept', '--informative-text',
-              _RELEASE, '--no-cancel'
+    gui.dialog, 'ok-msgbox', '--title', 'Textadept', '--informative-text',
+                _RELEASE, '--no-cancel'
   },
 }
 
@@ -506,7 +505,7 @@ events.connect('menu_clicked',
   end)
 
 -- Right-click context menu.
-t.context_menu = gtkmenu {
+gui.context_menu = gtkmenu {
   { l.MENU_EDIT_UNDO, ID.UNDO },
   { l.MENU_EDIT_REDO, ID.REDO },
   { SEPARATOR, ID.SEPARATOR },

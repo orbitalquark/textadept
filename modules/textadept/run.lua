@@ -1,6 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 
 ---
@@ -19,7 +18,7 @@ module('_m.textadept.run', package.seeall)
 --     * %(filename) The name of the file including extension.
 --     * %(filename_noext) The name of the file excluding extension.
 function execute(command)
-  local filepath = textadept.iconv(buffer.filename, _CHARSET, 'UTF-8')
+  local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local filedir, filename
   if filepath:find('[/\\]') then
     filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
@@ -39,7 +38,7 @@ function execute(command)
   local out = p:read('*all')
   p:close()
   lfs.chdir(current_dir)
-  textadept.print(textadept.iconv('> '..command..'\n'..out, 'UTF-8', _CHARSET))
+  gui.print(('> '..command..'\n'..out):iconv('UTF-8', _CHARSET))
   buffer:goto_pos(buffer.length)
 end
 
@@ -115,7 +114,7 @@ function goto_error(pos, line_num)
       if #captures > 0 then
         local lfs = require 'lfs'
         local utf8_filename = captures[error_detail.filename]
-        local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
+        local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
         if lfs.attributes(filename) then
           io.open_file(utf8_filename)
           _m.textadept.editing.goto_line(captures[error_detail.line])

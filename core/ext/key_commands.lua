@@ -1,6 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 local events = _G.events
 
@@ -34,11 +33,11 @@ module('keys', package.seeall)
 --     -- pressing control, shift, alt and 'a' yields: 'Ctrl+Shift+Alt+A'
 --
 -- For key values less than 255, Lua's [`string.char()`][string_char] is used to
--- determine the key's string representation. Otherwise, the `KEYSYMS` lookup
--- table in [`textadept.keys`][textadept_keys] is used.
+-- determine the key's string representation. Otherwise, the
+-- [`KEYSYMS`][keysyms] lookup table is used.
 --
 -- [string_char]: http://www.lua.org/manual/5.1/manual.html#pdf-string.char
--- [textadept_keys]: ../modules/textadept.keys.html
+-- [keysyms]: ../modules/keys.html#KEYSYMS
 --
 -- An action table is a table consisting of either:
 --
@@ -127,7 +126,7 @@ local ALT = 'a'..ADD
 
 local keys = keys
 local b, v = 'buffer', 'view'
-local t = textadept
+local gui = gui
 
 -- CTRL = 'c'
 -- SHIFT = 's'
@@ -154,16 +153,16 @@ if not MAC then
 
   -- File
   local m_session = _m.textadept.session
-  keys.cn  = { t.new_buffer   }
-  keys.co  = { io.open_file   }
+  keys.cn  = { new_buffer   }
+  keys.co  = { io.open_file }
   -- TODO: { 'reload', b }
-  keys.cs  = { 'save', b      }
-  keys.cS  = { 'save_as', b   }
-  keys.cw  = { 'close', b     }
+  keys.cs  = { 'save', b    }
+  keys.cS  = { 'save_as', b }
+  keys.cw  = { 'close', b   }
   keys.cW  = { io.close_all }
   -- TODO: { m_session.load } after prompting with open dialog
   -- TODO: { m_session.save } after prompting with save dialog
-  keys.aq = { t.quit }
+  keys.aq = { quit }
 
   -- Edit
   local m_editing = _m.textadept.editing
@@ -211,19 +210,19 @@ if not MAC then
   }
 
   -- Search
-  keys.cf = { t.find.focus } -- find/replace
-  keys['f3'] = { t.find.find_next }
+  keys.cf = { gui.find.focus } -- find/replace
+  keys['f3'] = { gui.find.find_next }
   -- Find Next is an when find pane is focused.
   -- Find Prev is ap when find pane is focused.
   -- Replace is ar when find pane is focused.
-  keys.cF = { t.find.find_incremental }
+  keys.cF = { gui.find.find_incremental }
   -- Find in Files is ai when find pane is focused.
-  -- TODO: { t.find.goto_file_in_list, true  }
-  -- TODO: { t.find.goto_file_in_list, false }
+  -- TODO: { gui.find.goto_file_in_list, true  }
+  -- TODO: { gui.find.goto_file_in_list, false }
   keys.cg = { m_editing.goto_line }
 
   -- Tools
-  keys['f2'] = { t.command_entry.focus }
+  keys['f2'] = { gui.command_entry.focus }
   -- Run
   local m_run = _m.textadept.run
   keys.cr = { m_run.run     }
@@ -237,7 +236,7 @@ if not MAC then
   keys.ai     = { m_snippets.show_style     }
 
   -- Buffers
-  keys.cb      = { t.switch_buffer             }
+  keys.cb      = { gui.switch_buffer           }
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
   keys['cs\t'] = { 'goto_buffer', v, -1, false }
   local function toggle_setting(setting)
@@ -261,8 +260,8 @@ if not MAC then
 
   -- Views
   keys.cav = {
-    n = { t.goto_view, 1, false                      },
-    p = { t.goto_view, -1, false                     },
+    n = { gui.goto_view, 1, false                    },
+    p = { gui.goto_view, -1, false                   },
     S = { 'split', v                                 }, -- vertical
     s = { 'split', v, false                          }, -- horizontal
     w = { function() view:unsplit() return true end  },
@@ -311,16 +310,16 @@ else
 
   -- File
   local m_session = _m.textadept.session
-  keys.an = { t.new_buffer   }
-  keys.ao = { io.open_file   }
+  keys.an = { new_buffer   }
+  keys.ao = { io.open_file }
   -- TODO: { 'reload', b }
-  keys.as = { 'save', b      }
-  keys.aS = { 'save_as', b   }
-  keys.aw = { 'close', b     }
+  keys.as = { 'save', b    }
+  keys.aS = { 'save_as', b }
+  keys.aw = { 'close', b   }
   keys.aW = { io.close_all }
   -- TODO: { m_session.load } after prompting with open dialog
   -- TODO: { m_session.save } after prompting with save dialog
-  keys.aq = { t.quit }
+  keys.aq = { quit }
 
   -- Edit
   local m_editing = _m.textadept.editing
@@ -369,23 +368,23 @@ else
   }
 
   -- Search
-  keys.af = { t.find.focus       } -- find/replace
-  keys.ag = { t.find.find_next   }
-  keys.aG = { t.find.find_prev   }
-  keys.ar = { t.find.replace     }
-  keys.ai = { t.find.find_incremental }
+  keys.af = { gui.find.focus       } -- find/replace
+  keys.ag = { gui.find.find_next   }
+  keys.aG = { gui.find.find_prev   }
+  keys.ar = { gui.find.replace     }
+  keys.ai = { gui.find.find_incremental }
   keys.aF = {
     function()
-      t.find.in_files = true
-      t.find.focus()
+      gui.find.in_files = true
+      gui.find.focus()
     end
   }
-  keys.cag = { t.find.goto_file_in_list, true  }
-  keys.caG = { t.find.goto_file_in_list, false }
+  keys.cag = { gui.find.goto_file_in_list, true  }
+  keys.caG = { gui.find.goto_file_in_list, false }
   keys.cg  = { m_editing.goto_line             }
 
   -- Tools
-  keys['f2'] = { t.command_entry.focus }
+  keys['f2'] = { gui.command_entry.focus }
   -- Run
   local m_run = _m.textadept.run
   keys.cr = { m_run.run     }
@@ -399,7 +398,7 @@ else
   keys.ci     = { m_snippets.show_style     }
 
   -- Buffers
-  keys.ab      = { t.switch_buffer             }
+  keys.ab      = { gui.switch_buffer           }
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
   keys['cs\t'] = { 'goto_buffer', v, -1, false }
   local function toggle_setting(setting)
@@ -423,8 +422,8 @@ else
 
   -- Views
   keys.cv = {
-    n = { t.goto_view, 1, false                      },
-    p = { t.goto_view, -1, false                     },
+    n = { gui.goto_view, 1, false                    },
+    p = { gui.goto_view, -1, false                   },
     S = { 'split', v                                 }, -- vertical
     s = { 'split', v, false                          }, -- horizontal
     w = { function() view:unsplit() return true end  },
@@ -478,7 +477,7 @@ else
   keys.cad = { 'del_word_right',    b }
 end
 
-textadept.user_dofile('key_commands.lua') -- load user key commands
+user_dofile('key_commands.lua') -- load user key commands
 
 -- Do not edit below this line.
 
@@ -526,7 +525,7 @@ local keychain = {}
 -- Clears the current key sequence.
 local function clear_key_sequence()
   keychain = {}
-  textadept.statusbar_text = ''
+  gui.statusbar_text = ''
 end
 
 -- Helper function that gets commands associated with the current keychain from
@@ -537,7 +536,7 @@ end
 local function try_get_cmd(active_table)
   for _, key_seq in ipairs(keychain) do active_table = active_table[key_seq] end
   if #active_table == 0 and next(active_table) then
-    textadept.statusbar_text = locale.KEYCHAIN..table.concat(keychain, ' ')
+    gui.statusbar_text = locale.KEYCHAIN..table.concat(keychain, ' ')
     error(-1, 0)
   else
     local func = active_table[1]
@@ -642,7 +641,7 @@ local function keypress(code, shift, control, alt)
       local size = #keychain - 1
       clear_key_sequence()
       if size > 0 then -- previously in a chain
-        textadept.statusbar_text = locale.KEYS_INVALID
+        gui.statusbar_text = locale.KEYS_INVALID
         return true
       end
     else

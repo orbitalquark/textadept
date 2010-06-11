@@ -1,7 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
-
 ---
 -- Commands for the cpp module.
 module('_m.cpp.commands', package.seeall)
@@ -27,8 +25,7 @@ if type(keys) == 'table' then
   keys.cpp = {
     al = {
       m = { io.open_file,
-            textadept.iconv(_HOME..'/modules/cpp/init.lua',
-                            'UTF-8', _CHARSET) },
+            (_HOME..'/modules/cpp/init.lua'):iconv('UTF-8', _CHARSET) },
     },
     ['s\n'] = { function()
       buffer:line_end()

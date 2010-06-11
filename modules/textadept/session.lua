@@ -1,6 +1,5 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local textadept = _G.textadept
 local locale = _G.locale
 
 ---
@@ -49,7 +48,7 @@ function load(filename)
           not_found[#not_found + 1] = filename
         end
       else
-        textadept.new_buffer()
+        new_buffer()
         buffer._type = filename
         events.handle('file_opened', filename)
       end
@@ -73,7 +72,7 @@ function load(filename)
       local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
       local view = splits[#level][tonumber(num)] or view
       buf_idx = tonumber(buf_idx)
-      if buf_idx > #textadept.buffers then buf_idx = #textadept.buffers end
+      if buf_idx > #_BUFFERS then buf_idx = #_BUFFERS end
       view:goto_buffer(buf_idx)
     elseif line:find('^current_view:') then
       local view_idx = line:match('^current_view: (%d+)')
@@ -81,18 +80,18 @@ function load(filename)
     end
     if line:find('^size:') then
       local width, height = line:match('^size: (%d+) (%d+)$')
-      if width and height then textadept.size = { width, height } end
+      if width and height then gui.size = { width, height } end
     end
   end
   f:close()
-  textadept.views[current_view]:focus()
-  textadept.session_file = filename or DEFAULT_SESSION
+  _VIEWS[current_view]:focus()
+  _SESSIONFILE = filename or DEFAULT_SESSION
   if #not_found > 0 then
-    textadept.dialog('msgbox',
-                    '--title', locale.M_SESSION_FILES_NOT_FOUND_TITLE,
-                    '--text', locale.M_SESSION_FILES_NOT_FOUND_TEXT,
-                    '--informative-text',
-                      string.format('%s', table.concat(not_found, '\n')))
+    gui.dialog('msgbox',
+               '--title', locale.M_SESSION_FILES_NOT_FOUND_TITLE,
+               '--text', locale.M_SESSION_FILES_NOT_FOUND_TEXT,
+               '--informative-text',
+                 string.format('%s', table.concat(not_found, '\n')))
   end
   return true
 end
@@ -110,10 +109,10 @@ function save(filename)
   local split_line = "%ssplit%d: %s %d" -- level, number, type, size
   local view_line = "%sview%d: %d" -- level, number, doc index
   -- Write out opened buffers.
-  for _, buffer in ipairs(textadept.buffers) do
+  for _, buffer in ipairs(_BUFFERS) do
     local filename = buffer.filename or buffer._type
     if filename then
-      local current = buffer.doc_pointer == textadept.focused_doc_pointer
+      local current = buffer.doc_pointer == gui.focused_doc_pointer
       local anchor = current and 'anchor' or '_anchor'
       local current_pos = current and 'current_pos' or '_current_pos'
       local first_visible_line =
@@ -141,7 +140,7 @@ function save(filename)
       session[#session + 1] = view_line:format(spaces, 2, c2)
     end
   end
-  local splits = textadept.get_split_table()
+  local splits = gui.get_split_table()
   if type(splits) == 'table' then
     write_split(splits, 0, 0)
   else
@@ -149,7 +148,7 @@ function save(filename)
   end
   -- Write out the current focused view.
   local current_view = view
-  for index, view in ipairs(textadept.views) do
+  for index, view in ipairs(_VIEWS) do
     if view == current_view then
       current_view = index
       break
@@ -157,11 +156,11 @@ function save(filename)
   end
   session[#session + 1] = ("current_view: %d"):format(current_view)
   -- Write out other things.
-  local size = textadept.size
+  local size = gui.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
   -- Write the session.
   local f =
-    io.open_file(filename or textadept.session_file or DEFAULT_SESSION, 'wb')
+    io.open_file(filename or _SESSIONFILE or DEFAULT_SESSION, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
     f:close()

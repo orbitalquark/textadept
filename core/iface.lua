@@ -1,4 +1,15 @@
-local constants = {
+-- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+
+---
+-- Scintilla constants, functions, and properties.
+-- Do not modify anything in this module. Doing so will result in instability.
+module('_SCINTILLA', package.seeall)
+
+---
+-- Scintilla constants.
+-- @class table
+-- @name constants
+constants = {
   ANNOTATION_BOXED = 2,
   ANNOTATION_HIDDEN = 0,
   ANNOTATION_STANDARD = 1,
@@ -562,9 +573,12 @@ local constants = {
   SCN_INDICATORCLICK = 2023,
   SCN_INDICATORRELEASE = 2024,
 }
-rawset(textadept, 'constants', constants)
 
-local buffer_functions = {
+---
+-- Scintilla functions.
+-- @class table
+-- @name functions
+functions = {
   add_ref_document = {2376, 0, 0, 1},
   add_selection = {2573, 1, 1, 1},
   add_styled_text = {2002, 0, 2, 9},
@@ -831,9 +845,12 @@ local buffer_functions = {
   zoom_in = {2333, 0, 0, 0},
   zoom_out = {2334, 0, 0, 0},
 }
-rawset(textadept, 'buffer_functions', buffer_functions)
 
-local buffer_properties = {
+---
+-- Scintilla properties.
+-- @class table
+-- @name properties
+properties = {
   additional_caret_fore = {2605, 2604, 4, 0},
   additional_carets_blink = {2568, 2567, 5, 0},
   additional_carets_visible = {2609, 2608, 5, 0},
@@ -1004,4 +1021,3 @@ local buffer_properties = {
   x_offset = {2398, 2397, 1, 0},
   zoom = {2374, 2373, 1, 0},
 }
-rawset(textadept, 'buffer_properties', buffer_properties)

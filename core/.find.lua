@@ -1,10 +1,10 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the
--- global textadept.find table.
+-- global gui.find table.
 
 ---
 -- Textadept's integrated find/replace dialog.
-module('textadept.find')
+module('gui.find')
 
 -- Markdown:
 -- ## Fields
