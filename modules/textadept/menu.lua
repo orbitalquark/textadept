@@ -6,7 +6,7 @@ local events = _G.events
 ---
 -- Provides dynamic menus for Textadept.
 -- This module, like ext/key_commands, should be 'require'ed last.
-module('menu', package.seeall)
+module('_m.textadept.menu', package.seeall)
 
 local gui = gui
 local l = locale

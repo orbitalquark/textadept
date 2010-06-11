@@ -32,20 +32,28 @@ Your `~/.textadept/init.lua` is a great place to specify what modules you want
 to use. They can be Textadept's default ones, or ones that you create. As an
 example:
 
-    -- ~/.textadept/init.lua
-    require 'ext/keys'
-    require 'ext/find'
-    require 'ext/command_entry'
-    require 'ext/mime_types'
+    -- In ~/.textadept/init.lua
 
-    require 'textadept' -- bookmarks, editing, snippets, etc.
-
-    -- require 'ext/menu' -- do not load the menubar
-    require 'ext/key_commands'
-
-    -- my modules in ~/.textadept/modules
+    -- Load my modules in '~/.textadept/modules'.
     require 'foo'
     require 'bar'
+
+    -- Do not load all of textadept's modules.
+    --require 'textadept'
+
+    -- Instead, load a subset of them from 'modules/textadept/init.lua'.
+    --require 'textadept.bookmarks'
+    --require 'textadept.command_entry'
+    require 'textadept.editing'
+    require 'textadept.find'
+    require 'textadept.mime_types'
+    --require 'textadept.run'
+    require 'textadept.session'
+    require 'textadept.snippets'
+
+    -- These need to be loaded last.
+    --require 'textadept.menu'
+    require 'textadept.key_commands'
 
 Please note Textadept does NOT load your `~/.textadept/init.lua`'s modules in
 addition to its own. This defeats the purpose of maximum extensibility. If your
