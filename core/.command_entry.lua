@@ -31,8 +31,8 @@ module('gui.command_entry')
 -- ## Extending
 --
 -- You can extend the command entry to do more than enter Lua commands. An
--- example of this is [incremental search][inc_search]. See `core/ext/find.lua`
--- for the implementation.
+-- example of this is [incremental search][inc_search]. See
+-- `modules/textadept/find.lua` for the implementation.
 --
 -- [inc_search]: ../modules/gui.find.html#incremental
 

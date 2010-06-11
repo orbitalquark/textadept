@@ -108,10 +108,10 @@ module('_m.textadept.keys', package.seeall)
 --
 -- ## Configuration
 --
--- It is not recommended to edit Textadept's `core/ext/key_commands.lua`. You
+-- It is not recommended to edit Textadept's `modules/textadept/keys.lua`. You
 -- can either override or add to default key commands in your
--- `~/.textadept/key_commands.lua` or `require` a separate module in your
--- `~/.textadept/init.lua` instead of `ext/key_commands`.
+-- `~/.textadept/keys.lua` or `require` a separate module in your
+-- `~/.textadept/init.lua` instead of `modules/textadept/keys`.
 
 -- Windows and Linux key commands are listed in the first block.
 -- Mac OSX key commands are listed in the second block.
@@ -477,7 +477,7 @@ else
   keys.cad = { 'del_word_right',    b }
 end
 
-user_dofile('key_commands.lua') -- load user key commands
+user_dofile('keys.lua') -- load user key commands
 
 -- Do not edit below this line.
 
