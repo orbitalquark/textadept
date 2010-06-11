@@ -117,7 +117,7 @@ function goto_error(pos, line_num)
         local utf8_filename = captures[error_detail.filename]
         local filename = textadept.iconv(utf8_filename, _CHARSET, 'UTF-8')
         if lfs.attributes(filename) then
-          textadept.io.open(utf8_filename)
+          io.open_file(utf8_filename)
           _m.textadept.editing.goto_line(captures[error_detail.line])
           local msg = captures[error_detail.message]
           if msg then buffer:call_tip_show(buffer.current_pos, msg) end

@@ -136,12 +136,12 @@ if not MAC then
   -- File
   local m_session = _m.textadept.session
   keys.cn  = { t.new_buffer   }
-  keys.co  = { t.io.open      }
+  keys.co  = { io.open_file   }
   -- TODO: { 'reload', b }
   keys.cs  = { 'save', b      }
   keys.cS  = { 'save_as', b   }
   keys.cw  = { 'close', b     }
-  keys.cW  = { t.io.close_all }
+  keys.cW  = { io.close_all }
   -- TODO: { m_session.load } after prompting with open dialog
   -- TODO: { m_session.save } after prompting with save dialog
   keys.aq = { t.quit }
@@ -258,13 +258,13 @@ if not MAC then
   local RECENT_FILES = 1
   t.events.add_handler('user_list_selection',
     function(type, text)
-      if type == RECENT_FILES then t.io.open(text) end
+      if type == RECENT_FILES then io.open_file(text) end
     end)
   keys.ao = {
     function()
       local buffer = buffer
       local files = {}
-      for _, filename in ipairs(t.io.recent_files) do
+      for _, filename in ipairs(io.recent_files) do
         table.insert(files, 1, filename)
       end
       local sep = buffer.auto_c_separator
@@ -293,12 +293,12 @@ else
   -- File
   local m_session = _m.textadept.session
   keys.an = { t.new_buffer   }
-  keys.ao = { t.io.open      }
+  keys.ao = { io.open_file   }
   -- TODO: { 'reload', b }
   keys.as = { 'save', b      }
   keys.aS = { 'save_as', b   }
   keys.aw = { 'close', b     }
-  keys.aW = { t.io.close_all }
+  keys.aW = { io.close_all }
   -- TODO: { m_session.load } after prompting with open dialog
   -- TODO: { m_session.save } after prompting with save dialog
   keys.aq = { t.quit }
@@ -420,13 +420,13 @@ else
   local RECENT_FILES = 1
   t.events.add_handler('user_list_selection',
     function(type, text)
-      if type == RECENT_FILES then t.io.open(text) end
+      if type == RECENT_FILES then io.open_file(text) end
     end)
   keys.co = {
     function()
       local buffer = buffer
       local files = {}
-      for _, filename in ipairs(t.io.recent_files) do
+      for _, filename in ipairs(io.recent_files) do
         table.insert(files, 1, filename)
       end
       local sep = buffer.auto_c_separator

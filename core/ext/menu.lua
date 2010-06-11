@@ -327,12 +327,12 @@ end
 local actions = {
   -- File
   [ID.NEW] = { t.new_buffer },
-  [ID.OPEN] = { t.io.open },
+  [ID.OPEN] = { io.open_file },
   [ID.RELOAD] = { 'reload', b },
   [ID.SAVE] = { 'save', b },
   [ID.SAVEAS] = { 'save_as', b },
   [ID.CLOSE] = { 'close', b },
-  [ID.CLOSE_ALL] = { t.io.close_all },
+  [ID.CLOSE_ALL] = { io.close_all },
   [ID.LOAD_SESSION] = {
     function()
       local utf8_filename =

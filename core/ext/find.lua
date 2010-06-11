@@ -320,7 +320,7 @@ local function goto_file(pos, line_num)
           end
         end
       end
-      textadept.io.open(file)
+      io.open_file(file)
       buffer:ensure_visible_enforce_policy(file_line_num - 1)
       buffer:goto_line(file_line_num - 1)
     end

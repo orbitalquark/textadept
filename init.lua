@@ -53,6 +53,6 @@ if not RESETTING then
     end
 
     -- open files
-    for _, filename in ipairs(arg) do textadept.io.open(filename) end
+    for _, filename in ipairs(arg) do io.open_file(filename) end
   end
 end

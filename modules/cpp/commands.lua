@@ -26,7 +26,7 @@ local keys = _G.keys
 if type(keys) == 'table' then
   keys.cpp = {
     al = {
-      m = { textadept.io.open,
+      m = { io.open_file,
             textadept.iconv(_HOME..'/modules/cpp/init.lua',
                             'UTF-8', _CHARSET) },
     },
