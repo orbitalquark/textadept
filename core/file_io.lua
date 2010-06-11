@@ -241,7 +241,7 @@ end
 -- LuaDoc is in core/.buffer.lua.
 local function save(buffer)
   textadept.check_focused_buffer(buffer)
-  if not buffer.filename then return save_as(buffer) end
+  if not buffer.filename then return buffer:save_as() end
   textadept.events.handle('file_before_save', buffer.filename)
   local text = buffer:get_text(buffer.length)
   if buffer.encoding then
