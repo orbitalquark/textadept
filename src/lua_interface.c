@@ -213,7 +213,9 @@ void l_remove_scintilla_window(GtkWidget *editor) {
   while (lua_next(lua, -2))
     (editor != l_checkview(lua, -1)) ? l_append(lua, -4) : lua_pop(lua, 1);
   lua_pop(lua, 1); // views
+  lua_pushvalue(lua, -1);
   lua_setfield(lua, LUA_REGISTRYINDEX, "views");
+  lua_setglobal(lua, "_VIEWS");
 }
 
 /**
@@ -328,7 +330,9 @@ void l_remove_scintilla_buffer(sptr_t doc) {
   while (lua_next(lua, -2))
     (doc != l_checkdocpointer(lua, -1)) ? l_append(lua, -4) : lua_pop(lua, 1);
   lua_pop(lua, 1); // buffers
+  lua_pushvalue(lua, -1);
   lua_setfield(lua, LUA_REGISTRYINDEX, "buffers");
+  lua_setglobal(lua, "_BUFFERS");
 }
 
 /**
