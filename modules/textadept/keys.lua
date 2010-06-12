@@ -229,11 +229,11 @@ if not MAC then
   keys.cR = { m_run.compile }
   -- Snippets
   local m_snippets = _m.textadept.snippets
-  keys['\t']  = { m_snippets.insert         }
-  keys['s\t'] = { m_snippets.prev           }
-  keys.cai    = { m_snippets.cancel_current }
-  keys.caI    = { m_snippets.list           }
-  keys.ai     = { m_snippets.show_style     }
+  keys['\t']  = { m_snippets._insert         }
+  keys['s\t'] = { m_snippets._prev           }
+  keys.cai    = { m_snippets._cancel_current }
+  keys.caI    = { m_snippets._list           }
+  keys.ai     = { m_snippets._show_style     }
 
   -- Buffers
   keys.cb      = { gui.switch_buffer           }
@@ -391,11 +391,11 @@ else
   keys.cR = { m_run.compile }
   -- Snippets
   local m_snippets = _m.textadept.snippets
-  keys['\t']  = { m_snippets.insert         }
-  keys['s\t'] = { m_snippets.prev           }
-  keys.cai    = { m_snippets.cancel_current }
-  keys.caI    = { m_snippets.list           }
-  keys.ci     = { m_snippets.show_style     }
+  keys['\t']  = { m_snippets._insert         }
+  keys['s\t'] = { m_snippets._prev           }
+  keys.cai    = { m_snippets._cancel_current }
+  keys.caI    = { m_snippets._list           }
+  keys.ci     = { m_snippets._show_style     }
 
   -- Buffers
   keys.ab      = { gui.switch_buffer           }
@@ -476,6 +476,12 @@ else
   keys.cd  = { 'clear',             b }
   keys.cad = { 'del_word_right',    b }
 end
+
+---
+-- Provides access to key commands from _G.
+-- @class table
+-- @name _G.keys
+_G.keys = _M
 
 user_dofile('keys.lua') -- load user key commands
 
