@@ -124,16 +124,10 @@ MARK_SNIPPET = 4
 MARK_SNIPPET_COLOR = 0x4D9999
 -- end settings
 
----
--- Global container that holds all snippet definitions.
--- @class table
--- @name _G.snippets
-_G.snippets = {}
-
-_G.snippets.file = "%(buffer.filename)"
-_G.snippets.path = "%((buffer.filename or ''):match('^.+/'))"
-_G.snippets.tab  = "%%%1(1)(%2(default))"
-_G.snippets.key  = "['%1'] = { %2(func)%3(, %4(arg)) }"
+file = "%(buffer.filename)"
+path = "%((buffer.filename or ''):match('^.+/'))"
+tab  = "%%%1(1)(%2(default))"
+key  = "['%1'] = { %2(func)%3(, %4(arg)) }"
 
 -- The current snippet.
 local snippet = {}
@@ -195,7 +189,7 @@ local function next_tab_stop()
   local buffer = buffer
   local s_start, s_end, s_text = snippet_info()
   if not s_text then
-    cancel_current()
+    _cancel_current()
     return
   end
 
@@ -315,7 +309,7 @@ end
 -- @param s_text Optional snippet to expand. If none is specified, the snippet
 --   is determined from the trigger word (left of the caret), lexer, and style.
 -- @return false if no snippet was expanded; true otherwise.
-function insert(s_text)
+function _insert(s_text)
   local buffer = buffer
   local anchor, caret = buffer.anchor, buffer.current_pos
   local lexer, style, start, s_name
@@ -403,7 +397,7 @@ end
 -- Goes back to the previous placeholder or tab stop, reverting changes made to
 -- subsequent ones.
 -- @return false if no snippet is active; nil otherwise
-function prev()
+function _prev()
   if not snippet.index then return false end -- no snippet active
   local buffer = buffer
   local index = snippet.index
@@ -415,14 +409,14 @@ function prev()
     snippet.index = index - 2
     next_tab_stop()
   else
-    cancel_current()
+    _cancel_current()
   end
 end
 
 ---
 -- Cancels the active snippet, reverting to the state before its activation,
 -- and restores the previous running snippet (if any).
-function cancel_current()
+function _cancel_current()
   if not snippet.index then return end
   local buffer = buffer
   local s_start, s_end = snippet_info()
@@ -443,7 +437,7 @@ end
 ---
 -- Lists available snippets in an autocompletion list.
 -- Global snippets and snippets in the current lexer and style are used.
-function list()
+function _list()
   local buffer = buffer
   local list = {}
   local function add_snippets(snippets)
@@ -465,7 +459,7 @@ end
 
 ---
 -- Shows the style at the current caret position in a call tip.
-function show_style()
+function _show_style()
   local buffer = buffer
   local lexer = buffer:get_lexer_language()
   local style_num = buffer.style_at[buffer.current_pos]
@@ -475,5 +469,11 @@ function show_style()
                   style_num)
   buffer:call_tip_show(buffer.current_pos, text)
 end
+
+---
+-- Provides access to snippets from _G.
+-- @class table
+-- @name _G.snippets
+_G.snippets = _M
 
 user_dofile('snippets.lua') -- load user snippets
