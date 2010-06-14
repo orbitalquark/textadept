@@ -7,6 +7,14 @@ package.path = _HOME..'/core/?.lua;'..package.path
 _USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'
 local lfs = require 'lfs'
 if not lfs.attributes(_USERHOME) then lfs.mkdir(_USERHOME) end
+if not lfs.attributes(_USERHOME..'/init.lua') then
+  local f = io.open(_USERHOME..'/init.lua', 'w')
+  if f then
+    f:write("-- 'require' your modules here\n\n")
+    f:write("require 'textadept' -- should be 'require'd last\n")
+    f:close()
+  end
+end
 
 _LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers'
 
