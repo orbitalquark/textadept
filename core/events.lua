@@ -151,6 +151,8 @@ local events = events
 --   anywhere.
 -- @param f The Lua function to add.
 -- @param index Optional index to insert the handler into.
+-- @return Index of handler.
+-- @see disconnect
 function connect(event, f, index)
   local plural = event..'s'
   if not events[plural] then events[plural] = {} end
@@ -160,6 +162,19 @@ function connect(event, f, index)
   else
     handlers[#handlers + 1] = f
   end
+  return index or #handlers
+end
+
+---
+-- Disconnects a handler function from an event.
+-- @param event The string event name.
+-- @param index Index of the handler (returned by events.connect).
+-- @see connect
+function disconnect(event, index)
+  local plural = event..'s'
+  if not events[plural] then return end
+  local handlers = events[plural]
+  table.remove(handlers, index)
 end
 
 ---
