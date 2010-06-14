@@ -10,9 +10,7 @@ local paths = {
 }
 package.path = table.concat(paths, ';')
 
-if not user_dofile('init.lua') then
-require 'textadept'
-end
+if not user_dofile('init.lua') then require 'textadept' end
 
 if not RESETTING then
   -- for Windows, create arg table from single command line string (arg[0])
