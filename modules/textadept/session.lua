@@ -31,7 +31,7 @@ local lfs = require 'lfs'
 -- @usage _m.textadept.session.load(filename)
 function load(filename)
   local not_found = {}
-  local f = io.open_file(filename or DEFAULT_SESSION, 'rb')
+  local f = io.open(filename or DEFAULT_SESSION, 'rb')
   if not f then
     if not io.close_all() then return false end
   end
@@ -160,7 +160,7 @@ function save(filename)
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
   -- Write the session.
   local f =
-    io.open_file(filename or _SESSIONFILE or DEFAULT_SESSION, 'wb')
+    io.open(filename or _SESSIONFILE or DEFAULT_SESSION, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
     f:close()
