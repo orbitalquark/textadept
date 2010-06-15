@@ -475,5 +475,3 @@ end
 -- @class table
 -- @name _G.snippets
 _G.snippets = _M
-
-user_dofile('snippets.lua') -- load user snippets
