@@ -34,10 +34,6 @@ example:
 
     -- In ~/.textadept/init.lua
 
-    -- Load my modules in '~/.textadept/modules'.
-    require 'foo'
-    require 'bar'
-
     -- Do not load all of textadept's modules.
     --require 'textadept'
 

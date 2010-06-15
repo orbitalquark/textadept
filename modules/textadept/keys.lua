@@ -108,10 +108,9 @@ module('_m.textadept.keys', package.seeall)
 --
 -- ## Configuration
 --
--- It is not recommended to edit Textadept's `modules/textadept/keys.lua`. You
--- can either override or add to default key commands in your
--- `~/.textadept/keys.lua` or `require` a separate module in your
--- `~/.textadept/init.lua` instead of `modules/textadept/keys`.
+-- It is not recommended to edit Textadept's `modules/textadept/keys.lua`.
+-- Instead you can modify `_G.keys` from within your `~/.textadept/init.lua` or
+-- from a file `require`d by your `init.lua`.
 
 -- Windows and Linux key commands are listed in the first block.
 -- Mac OSX key commands are listed in the second block.
@@ -482,8 +481,6 @@ end
 -- @class table
 -- @name _G.keys
 _G.keys = _M
-
-user_dofile('keys.lua') -- load user key commands
 
 -- Do not edit below this line.
 

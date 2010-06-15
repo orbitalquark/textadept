@@ -10,8 +10,7 @@ if not lfs.attributes(_USERHOME) then lfs.mkdir(_USERHOME) end
 if not lfs.attributes(_USERHOME..'/init.lua') then
   local f = io.open(_USERHOME..'/init.lua', 'w')
   if f then
-    f:write("-- 'require' your modules here\n\n")
-    f:write("require 'textadept' -- should be 'require'd last\n")
+    f:write("require 'textadept'\n")
     f:close()
   end
 end
