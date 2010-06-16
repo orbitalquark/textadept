@@ -19,7 +19,7 @@ if not RESETTING then
     local P, C = lpeg.P, lpeg.C
     local param = P('"') * C((1 - P('"'))^0) * '"' + C((1 - P(' '))^1)
     local args = lpeg.match(lpeg.Ct(param * (P(' ') * param)^0), arg[0])
-    for _, a in ipairs(args) do arg[#arg + 1] = a end
+    for i = 1, #args do arg[#arg + 1] = args[i] end
   end
 
   -- process command line arguments
@@ -28,7 +28,8 @@ if not RESETTING then
     _m.textadept.session.load()
   else
     -- process command line switches
-    for i, switch in ipairs(arg) do
+    for i = 1, #arg do
+      local switch = arg[i]
       if switch == '-ns' or switch == '--no-session' then
         _m.textadept.session.SAVE_ON_QUIT = false
         table.remove(arg, i)
@@ -36,6 +37,6 @@ if not RESETTING then
     end
 
     -- open files
-    for _, filename in ipairs(arg) do io.open_file(filename) end
+    for i = 1, #arg do io.open_file(arg[i]) end
   end
 end

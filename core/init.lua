@@ -26,8 +26,8 @@ if f then
 end
 if not _THEME:find('[/\\]') then
   local theme = _THEME
-  _THEME = _HOME..'/themes/'..theme
-  if not lfs.attributes(_THEME) then _THEME = _USERHOME..'/themes/'..theme end
+  _THEME = _USERHOME..'/themes/'..theme
+  if not lfs.attributes(_THEME) then _THEME = _HOME..'/themes/'..theme end
 end
 
 require 'iface'
@@ -35,8 +35,6 @@ require 'locale'
 require 'events'
 require 'file_io'
 require 'gui'
-
-rawset = nil -- do not allow modifications which could compromise stability
 
 -- LuaDoc is in core/._G.lua.
 function _G.user_dofile(filename)

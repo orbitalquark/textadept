@@ -61,12 +61,12 @@ function gui.switch_buffer()
   end
   local out =
     gui.dialog('filteredlist',
-                     '--title', locale.SWITCH_BUFFERS,
-                     '--button1', 'gtk-ok',
-                     '--button2', 'gtk-cancel',
-                     '--no-newline',
-                     '--columns', 'Name', 'File',
-                     '--items', unpack(items))
+               '--title', locale.SWITCH_BUFFERS,
+               '--button1', 'gtk-ok',
+               '--button2', 'gtk-cancel',
+               '--no-newline',
+               '--columns', 'Name', 'File',
+               '--items', unpack(items))
   local i = tonumber(out:match('%-?%d+$'))
   if i and i >= 0 then view:goto_buffer(i + 1, true) end
 end

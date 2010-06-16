@@ -50,7 +50,7 @@ function load(filename)
       else
         new_buffer()
         buffer._type = filename
-        events.handle('file_opened', filename)
+        events.emit('file_opened', filename)
       end
       -- Restore saved buffer selection and view.
       local anchor = tonumber(anchor) or 0
@@ -148,9 +148,9 @@ function save(filename)
   end
   -- Write out the current focused view.
   local current_view = view
-  for index, view in ipairs(_VIEWS) do
-    if view == current_view then
-      current_view = index
+  for i = 1, #_VIEWS do
+    if _VIEWS[i] == current_view then
+      current_view = i
       break
     end
   end

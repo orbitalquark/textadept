@@ -44,13 +44,13 @@ static void find_button_clicked(GtkWidget *, gpointer);
 
 // Command Entry
 GtkWidget *command_entry;
-GtkListStore *cec_store;
+GtkListStore *cc_store;
 GtkEntryCompletion *command_entry_completion;
 
-static int cec_match_func(GtkEntryCompletion *, const char *, GtkTreeIter *,
-                          gpointer);
-static gbool cec_match_selected(GtkEntryCompletion *, GtkTreeModel *,
-                                GtkTreeIter *, gpointer);
+static int cc_match_func(GtkEntryCompletion *, const char *, GtkTreeIter *,
+                         gpointer);
+static gbool cc_match_selected(GtkEntryCompletion *, GtkTreeModel *,
+                               GtkTreeIter *, gpointer);
 static void c_activated(GtkWidget *, gpointer);
 static gbool c_keypress(GtkWidget *, GdkEventKey *, gpointer);
 
@@ -169,18 +169,17 @@ void create_ui() {
   gtk_widget_set_name(command_entry, "textadept-command-entry");
   signal(command_entry, "activate", c_activated);
   signal(command_entry, "key-press-event", c_keypress);
-  g_object_set(G_OBJECT(command_entry), "width-request", 200, NULL);
   gtk_box_pack_start(GTK_BOX(hboxs), command_entry, TRUE, TRUE, 0);
 
   command_entry_completion = gtk_entry_completion_new();
-  signal(command_entry_completion, "match-selected", cec_match_selected);
-  gtk_entry_completion_set_match_func(command_entry_completion, cec_match_func,
+  signal(command_entry_completion, "match-selected", cc_match_selected);
+  gtk_entry_completion_set_match_func(command_entry_completion, cc_match_func,
                                       NULL, NULL);
   gtk_entry_completion_set_popup_set_width(command_entry_completion, FALSE);
   gtk_entry_completion_set_text_column(command_entry_completion, 0);
-  cec_store = gtk_list_store_new(1, G_TYPE_STRING);
+  cc_store = gtk_list_store_new(1, G_TYPE_STRING);
   gtk_entry_completion_set_model(command_entry_completion,
-                                 GTK_TREE_MODEL(cec_store));
+                                 GTK_TREE_MODEL(cc_store));
   gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
 
   docstatusbar = gtk_statusbar_new();
@@ -201,7 +200,6 @@ void create_ui() {
 /**
  * Creates a new Scintilla window.
  * The Scintilla window is the GTK widget that displays a Scintilla buffer.
- * The window's default properties are set via 'set_default_editor_properties'.
  * Generates a 'view_new' event.
  * @param buffer_id A Scintilla buffer ID to load into the new window. If NULL,
  *   creates a new Scintilla buffer and loads it into the new window.
@@ -240,8 +238,6 @@ void remove_scintilla_window(GtkWidget *editor) {
 
 /**
  * Creates a new Scintilla buffer for a newly created Scintilla window.
- * The buffer's default properties are set via 'set_default_buffer_properties',
- * but the default style is set here.
  * Generates a 'buffer_new' event.
  * @param editor The Scintilla window to associate the buffer with.
  * @param create Flag indicating whether or not to create a buffer. If FALSE,
@@ -364,7 +360,7 @@ int unsplit_window(GtkWidget *editor) {
 /**
  * Sets a user-defined GTK menubar and displays it.
  * @param new_menubar The GTK menubar.
- * @see l_ta_mt_newindex
+ * @see l_gui_mt_newindex
  */
 void set_menubar(GtkWidget *new_menubar) {
   GtkWidget *vbox = gtk_widget_get_parent(menubar);
@@ -691,8 +687,8 @@ void ce_toggle_focus() {
  * results from a call to Lua to make a list of possible completions. Therefore,
  * every item in the list is valid.
  */
-static int cec_match_func(GtkEntryCompletion *entry, const char *key,
-                          GtkTreeIter *iter, gpointer udata) {
+static int cc_match_func(GtkEntryCompletion *entry, const char *key,
+                         GtkTreeIter *iter, gpointer udata) {
   return 1;
 }
 
@@ -701,7 +697,7 @@ static int cec_match_func(GtkEntryCompletion *entry, const char *key,
  * The last word at the cursor is replaced with the completion. A word consists
  * of any alphanumeric character or underscore.
  */
-static gbool cec_match_selected(GtkEntryCompletion *entry, GtkTreeModel *model,
+static gbool cc_match_selected(GtkEntryCompletion *entry, GtkTreeModel *model,
                                GtkTreeIter *iter, gpointer udata) {
   const char *entry_text = gtk_entry_get_text(GTK_ENTRY(command_entry));
   const char *p = entry_text + strlen(entry_text) - 1;
@@ -719,7 +715,7 @@ static gbool cec_match_selected(GtkEntryCompletion *entry, GtkTreeModel *model,
   g_signal_emit_by_name(G_OBJECT(command_entry), "insert-at-cursor", text, 0);
   g_free(text);
 
-  gtk_list_store_clear(cec_store);
+  gtk_list_store_clear(cc_store);
   return TRUE;
 }
 

@@ -143,8 +143,6 @@ module('events', package.seeall)
 --     events.connect('my_event', my_event_handler)
 --     events.emit('my_event', 'my message')
 
-local events = events
-
 ---
 -- Adds a handler function to an event.
 -- @param event The string event name. It is arbitrary and need not be defined
@@ -155,8 +153,8 @@ local events = events
 -- @see disconnect
 function connect(event, f, index)
   local plural = event..'s'
-  if not events[plural] then events[plural] = {} end
-  local handlers = events[plural]
+  if not _M[plural] then _M[plural] = {} end
+  local handlers = _M[plural]
   if index then
     table.insert(handlers, index, f)
   else
@@ -187,7 +185,7 @@ end
 -- @return true or false if any handler explicitly returned such; nil otherwise.
 function emit(event, ...)
   local plural = event..'s'
-  local handlers = events[plural]
+  local handlers = _M[plural]
   if not handlers then return end
   for _, f in ipairs(handlers) do
     local result = f(unpack{...})
@@ -430,7 +428,7 @@ if MAC then
     function(uri) return emit('uri_dropped', 'file://'..uri) end)
 
   connect('buffer_new',
-    function()
+    function() -- GTK-OSX has clipboard problems
       buffer.paste = function()
         local clipboard_text = gui.clipboard_text
         if #clipboard_text > 0 then buffer:replace_sel(clipboard_text) end
