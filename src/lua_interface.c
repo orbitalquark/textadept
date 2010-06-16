@@ -31,9 +31,7 @@ static int tVOID = 0, /*tINT = 1,*/ tLENGTH = 2, /*tPOSITION = 3,*/
            tSTRINGRESULT = 8;
 
 static void clear_table(lua_State *lua, int index);
-static void warn(const char *s) {
-  printf("Warning: %s\n", s);
-}
+static void warn(const char *s) { printf("Warning: %s\n", s); }
 
 static int l_buffer_mt_index(lua_State *), l_buffer_mt_newindex(lua_State *),
            l_bufferp_mt_index(lua_State *), l_bufferp_mt_newindex(lua_State *),
@@ -85,24 +83,24 @@ int l_init(int argc, char **argv, int reinit) {
   luaL_openlibs(lua);
 
   lua_newtable(lua);
-  lua_newtable(lua);
-    l_cfunc(lua, l_cf_find_next, "find_next");
-    l_cfunc(lua, l_cf_find_prev, "find_prev");
-    l_cfunc(lua, l_cf_find_focus, "focus");
-    l_cfunc(lua, l_cf_find_replace, "replace");
-    l_cfunc(lua, l_cf_find_replace_all, "replace_all");
-    l_mt(lua, "_find_mt", l_find_mt_index, l_find_mt_newindex);
-  lua_setfield(lua, -2, "find");
-  lua_newtable(lua);
-    l_cfunc(lua, l_cf_ce_focus, "focus");
-    l_cfunc(lua, l_cf_ce_show_completions, "show_completions");
-    l_mt(lua, "_ce_mt", l_ce_mt_index, l_ce_mt_newindex);
-  lua_setfield(lua, -2, "command_entry");
-  l_cfunc(lua, l_cf_gui_dialog, "dialog");
-  l_cfunc(lua, l_cf_gui_get_split_table, "get_split_table");
-  l_cfunc(lua, l_cf_gui_goto_view, "goto_view");
-  l_cfunc(lua, l_cf_gui_gtkmenu, "gtkmenu");
-  l_mt(lua, "_gui_mt", l_gui_mt_index, l_gui_mt_newindex);
+    lua_newtable(lua);
+      l_cfunc(lua, l_cf_find_next, "find_next");
+      l_cfunc(lua, l_cf_find_prev, "find_prev");
+      l_cfunc(lua, l_cf_find_focus, "focus");
+      l_cfunc(lua, l_cf_find_replace, "replace");
+      l_cfunc(lua, l_cf_find_replace_all, "replace_all");
+      l_mt(lua, "_find_mt", l_find_mt_index, l_find_mt_newindex);
+    lua_setfield(lua, -2, "find");
+    lua_newtable(lua);
+      l_cfunc(lua, l_cf_ce_focus, "focus");
+      l_cfunc(lua, l_cf_ce_show_completions, "show_completions");
+      l_mt(lua, "_ce_mt", l_ce_mt_index, l_ce_mt_newindex);
+    lua_setfield(lua, -2, "command_entry");
+    l_cfunc(lua, l_cf_gui_dialog, "dialog");
+    l_cfunc(lua, l_cf_gui_get_split_table, "get_split_table");
+    l_cfunc(lua, l_cf_gui_goto_view, "goto_view");
+    l_cfunc(lua, l_cf_gui_gtkmenu, "gtkmenu");
+    l_mt(lua, "_gui_mt", l_gui_mt_index, l_gui_mt_newindex);
   lua_setglobal(lua, "gui");
 
   lua_getglobal(lua, "_G");
@@ -185,46 +183,46 @@ static GtkWidget *l_checkview(lua_State *lua, int narg) {
 }
 
 /**
- * Adds a Scintilla window to the global 'views' table with a metatable.
+ * Adds a Scintilla window to the global '_VIEWS' table with a metatable.
  * @param editor The Scintilla window to add.
  */
 void l_add_scintilla_window(GtkWidget *editor) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
   lua_newtable(lua);
-  lua_pushlightuserdata(lua, (GtkWidget *)editor);
-  lua_setfield(lua, -2, "widget_pointer");
-  l_cfunc(lua, l_cf_view_split, "split");
-  l_cfunc(lua, l_cf_view_unsplit, "unsplit");
-  l_cfunc(lua, l_cf_view_goto_buffer, "goto_buffer");
-  l_cfunc(lua, l_cf_view_focus, "focus");
-  l_mt(lua, "_view_mt", l_view_mt_index, l_view_mt_newindex);
+    lua_pushlightuserdata(lua, (GtkWidget *)editor);
+    lua_setfield(lua, -2, "widget_pointer");
+    l_cfunc(lua, l_cf_view_focus, "focus");
+    l_cfunc(lua, l_cf_view_goto_buffer, "goto_buffer");
+    l_cfunc(lua, l_cf_view_split, "split");
+    l_cfunc(lua, l_cf_view_unsplit, "unsplit");
+    l_mt(lua, "_view_mt", l_view_mt_index, l_view_mt_newindex);
   l_append(lua, -2); // pops table
   lua_pop(lua, 1); // views
 }
 
 /**
- * Removes a Scintilla window from the global 'views' table.
+ * Removes a Scintilla window from the global '_VIEWS' table.
  * @param editor The Scintilla window to remove.
  */
 void l_remove_scintilla_window(GtkWidget *editor) {
   lua_newtable(lua);
-  lua_getfield(lua, LUA_REGISTRYINDEX, "views");
-  lua_pushnil(lua);
-  while (lua_next(lua, -2))
-    (editor != l_checkview(lua, -1)) ? l_append(lua, -4) : lua_pop(lua, 1);
-  lua_pop(lua, 1); // views
+    lua_getfield(lua, LUA_REGISTRYINDEX, "views");
+    lua_pushnil(lua);
+    while (lua_next(lua, -2))
+      (editor != l_checkview(lua, -1)) ? l_append(lua, -4) : lua_pop(lua, 1);
+    lua_pop(lua, 1); // views
   lua_pushvalue(lua, -1);
   lua_setfield(lua, LUA_REGISTRYINDEX, "views");
   lua_setglobal(lua, "_VIEWS");
 }
 
 /**
- * Changes focus a Scintilla window in the global 'views' table.
+ * Changes focus a Scintilla window in the global '_VIEWS' table.
  * @param editor The currently focused Scintilla window.
- * @param n The index of the window in the 'views' table to focus.
- * @param absolute Flag indicating whether or not the index specified in 'views'
- *   is absolute. If FALSE, focuses the window relative to the currently focused
- *   window for the given index.
+ * @param n The index of the window in the '_VIEWS' table to focus.
+ * @param absolute Flag indicating whether or not the index specified in
+ *   '_VIEWS' is absolute. If FALSE, focuses the window relative to the
+ *   currently focused window for the given index.
  *   Throws an error if the view does not exist.
  */
 void l_goto_scintilla_window(GtkWidget *editor, int n, int absolute) {
@@ -290,18 +288,18 @@ static sptr_t l_checkdocpointer(lua_State *lua, int narg) {
 }
 
 /**
- * Adds a Scintilla document to the global 'buffers' table with a metatable.
+ * Adds a Scintilla document to the global '_BUFFERS' table with a metatable.
  * @param doc The Scintilla document to add.
  * @return integer index of the new buffer in _BUFFERS.
  */
 int l_add_scintilla_buffer(sptr_t doc) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   lua_newtable(lua);
-  lua_pushinteger(lua, doc);
-  lua_setfield(lua, -2, "doc_pointer");
-  l_cfunc(lua, l_cf_buffer_text_range, "text_range");
-  l_cfunc(lua, l_cf_buffer_delete, "delete");
-  l_mt(lua, "_buffer_mt", l_buffer_mt_index, l_buffer_mt_newindex);
+    lua_pushinteger(lua, doc);
+    lua_setfield(lua, -2, "doc_pointer");
+    l_cfunc(lua, l_cf_buffer_delete, "delete");
+    l_cfunc(lua, l_cf_buffer_text_range, "text_range");
+    l_mt(lua, "_buffer_mt", l_buffer_mt_index, l_buffer_mt_newindex);
   l_append(lua, -2); // pops table
   int index = lua_objlen(lua, -1);
   lua_pop(lua, 1); // buffers
@@ -309,7 +307,7 @@ int l_add_scintilla_buffer(sptr_t doc) {
 }
 
 /**
- * Removes a Scintilla document from the global 'buffers' table.
+ * Removes a Scintilla document from the global '_BUFFERS' table.
  * If any views currently show the document to be removed, change the documents
  * they show first.
  * @param doc The Scintilla buffer to remove.
@@ -325,18 +323,18 @@ void l_remove_scintilla_buffer(sptr_t doc) {
   }
   lua_pop(lua, 1); // views
   lua_newtable(lua);
-  lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
-  lua_pushnil(lua);
-  while (lua_next(lua, -2))
-    (doc != l_checkdocpointer(lua, -1)) ? l_append(lua, -4) : lua_pop(lua, 1);
-  lua_pop(lua, 1); // buffers
+    lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
+    lua_pushnil(lua);
+    while (lua_next(lua, -2))
+      (doc != l_checkdocpointer(lua, -1)) ? l_append(lua, -4) : lua_pop(lua, 1);
+    lua_pop(lua, 1); // buffers
   lua_pushvalue(lua, -1);
   lua_setfield(lua, LUA_REGISTRYINDEX, "buffers");
   lua_setglobal(lua, "_BUFFERS");
 }
 
 /**
- * Retrieves the index in the global 'buffers' table for a given Scintilla
+ * Retrieves the index in the global '_BUFFERS' table for a given Scintilla
  * document.
  * @param doc The Scintilla document to get the index of.
  */
@@ -355,15 +353,15 @@ unsigned int l_get_docpointer_index(sptr_t doc) {
 }
 
 /**
- * Changes a Scintilla window's document to one in the global 'buffers' table.
+ * Changes a Scintilla window's document to one in the global '_BUFFERS' table.
  * Before doing so, it saves the scroll and caret positions in the current
  * Scintilla document. Then when the new document is shown, its scroll and caret
  * positions are restored.
  * @param editor The Scintilla window to change the document of.
- * @param n The index of the document in 'buffers' to focus.
- * @param absolute Flag indicating whether or not the index specified in 'views'
- *   is absolute. If FALSE, focuses the document relative to the currently
- *   focused document for the given index.
+ * @param n The index of the document in '_BUFFERS' to focus.
+ * @param absolute Flag indicating whether or not the index specified in
+ *   '_BUFFERS' is absolute. If FALSE, focuses the document relative to the
+ *   currently focused document for the given index.
  *   Throws an error if the buffer does not exist.
  */
 void l_goto_scintilla_buffer(GtkWidget *editor, int n, int absolute) {

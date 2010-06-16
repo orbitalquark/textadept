@@ -489,7 +489,6 @@ local string = _G.string
 local string_char = string.char
 local string_format = string.format
 local pcall = _G.pcall
-local ipairs = _G.ipairs
 local next = _G.next
 local type = _G.type
 local unpack = _G.unpack
@@ -537,7 +536,7 @@ end
 -- of -1. This way, pcall will return false and -1, where the -1 can easily and
 -- efficiently be checked rather than using a string error message.
 local function try_get_cmd(active_table)
-  for _, key_seq in ipairs(keychain) do active_table = active_table[key_seq] end
+  for i = 1, #keychain do active_table = active_table[keychain[i]] end
   if #active_table == 0 and next(active_table) then
     gui.statusbar_text = locale.KEYCHAIN..table.concat(keychain, ' ')
     error(-1, 0)

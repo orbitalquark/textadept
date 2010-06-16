@@ -321,7 +321,7 @@ end
 
 ---
 -- Reduces multiple characters occurances to just one.
--- If char is not given, the character to be squeezed is the one under the
+-- If char is not given, the character to be squeezed is the one behind the
 -- caret.
 -- @param char The character (integer) to be used for squeezing.
 function squeeze(char)
