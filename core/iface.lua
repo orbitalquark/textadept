@@ -580,6 +580,7 @@ constants = {
 
 ---
 -- Scintilla functions.
+-- These are buffer functions.
 -- @class table
 -- @name functions
 functions = {
@@ -853,6 +854,7 @@ functions = {
 
 ---
 -- Scintilla properties.
+-- These are buffer fields.
 -- @class table
 -- @name properties
 properties = {

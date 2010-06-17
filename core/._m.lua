@@ -55,7 +55,7 @@ module('_m')
 -- are placed at the end of files, like `commands.lua` in language-specific
 -- modules.
 --
--- [key_commands]: ../modules/keys.html
+-- [key_commands]: ../modules/_m.textadept.keys.html
 
 ---
 -- This module contains no functions.
