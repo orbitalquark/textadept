@@ -12,31 +12,4 @@ package.path = table.concat(paths, ';')
 
 if not user_dofile('init.lua') then require 'textadept' end
 
-if not RESETTING then
-  -- for Windows, create arg table from single command line string (arg[0])
-  if WIN32 and #arg[0] > 0 then
-    local lpeg = require 'lpeg'
-    local P, C = lpeg.P, lpeg.C
-    local param = P('"') * C((1 - P('"'))^0) * '"' + C((1 - P(' '))^1)
-    local args = lpeg.match(lpeg.Ct(param * (P(' ') * param)^0), arg[0])
-    for i = 1, #args do arg[#arg + 1] = args[i] end
-  end
-
-  -- process command line arguments
-  if MAC and arg[1] and arg[1]:find('^%-psn_0') then table.remove(arg, 1) end
-  if #arg == 0 then
-    _m.textadept.session.load()
-  else
-    -- process command line switches
-    for i = 1, #arg do
-      local switch = arg[i]
-      if switch == '-ns' or switch == '--no-session' then
-        _m.textadept.session.SAVE_ON_QUIT = false
-        table.remove(arg, i)
-      end
-    end
-
-    -- open files
-    for i = 1, #arg do io.open_file(arg[i]) end
-  end
-end
+if not RESETTING then args.process() end

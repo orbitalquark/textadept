@@ -4,16 +4,12 @@ _RELEASE = "Textadept 2.2"
 
 package.path = _HOME..'/core/?.lua;'..package.path
 
-_USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'
-local lfs = require 'lfs'
-if not lfs.attributes(_USERHOME) then lfs.mkdir(_USERHOME) end
-if not lfs.attributes(_USERHOME..'/init.lua') then
-  local f = io.open(_USERHOME..'/init.lua', 'w')
-  if f then
-    f:write("require 'textadept'\n")
-    f:close()
-  end
-end
+require 'iface'
+require 'args'
+require 'locale'
+require 'events'
+require 'file_io'
+require 'gui'
 
 _LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers'
 
@@ -29,12 +25,6 @@ if not _THEME:find('[/\\]') then
   _THEME = _USERHOME..'/themes/'..theme
   if not lfs.attributes(_THEME) then _THEME = _HOME..'/themes/'..theme end
 end
-
-require 'iface'
-require 'locale'
-require 'events'
-require 'file_io'
-require 'gui'
 
 -- LuaDoc is in core/._G.lua.
 function _G.user_dofile(filename)
