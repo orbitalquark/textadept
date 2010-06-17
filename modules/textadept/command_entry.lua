@@ -1,12 +1,35 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Modified by Jay Gould.
 
 local locale = _G.locale
+
+local env = setmetatable({}, {
+  __index = function(t, k)
+    local f = buffer[k]
+    if f and type(f) == 'function' then
+      f = function(...) buffer[k](buffer, ...) end
+    elseif f == nil then
+      f = view[k] or gui[k] or _G[k]
+    end
+    return f
+  end,
+  __newindex = function(t, k, v)
+    for _, t2 in ipairs{ buffer, view, gui } do
+      if t2[k] ~= nil then
+        t2[k] = v
+        return
+      end
+    end
+    rawset(t, k, v)
+  end,
+})
 
 events.connect('command_entry_command',
   function(command) -- execute a Lua command
     local f, err = loadstring(command)
     if err then error(err) end
     gui.command_entry.focus() -- toggle focus to hide
+    setfenv(f, env)
     f()
   end)
 
@@ -20,23 +43,40 @@ events.connect('command_entry_keypress',
     elseif KEYSYMS[code] == '\t' then
       local substring = ce.entry_text:match('[%w_.:]+$') or ''
       local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
-      local ret, tbl = pcall(loadstring('return ('..path..')'))
-      if not ret then tbl = getfenv(0) end
-      if type(tbl) ~= 'table' then return end
+      local f, err = loadstring('return ('..path..')')
+      if type(f) == "function" then setfenv(f, env) end
+      local ret, tbl = pcall(f)
       local cmpls = {}
-      for k in pairs(tbl) do
-        if type(k) == 'string' and k:find('^'..prefix) then
-          cmpls[#cmpls + 1] = k
-        end
-      end
-      if path == 'buffer' then
-        if o == ':' then
-          for f in pairs(_SCINTILLA.functions) do
-            if f:find('^'..prefix) then cmpls[#cmpls + 1] = f end
+      if not ret then -- shorthand notation
+        for _, t in ipairs{ buffer, view, gui, _G } do
+          for k in pairs(t) do
+            if type(k) == 'string' and k:find('^'..prefix) then
+              cmpls[#cmpls + 1] = k
+            end
           end
-        else
-          for p in pairs(_SCINTILLA.properties) do
-            if p:find('^'..prefix) then cmpls[#cmpls + 1] = p end
+        end
+        for f in pairs(_SCINTILLA.functions) do
+          if f:find('^'..prefix) then cmpls[#cmpls + 1] = f end
+        end
+        for p in pairs(_SCINTILLA.properties) do
+          if p:find('^'..prefix) then cmpls[#cmpls + 1] = p end
+        end
+      else
+        if type(tbl) ~= 'table' then return end
+        for k in pairs(tbl) do
+          if type(k) == 'string' and k:find('^'..prefix) then
+            cmpls[#cmpls + 1] = k
+          end
+        end
+        if path == 'buffer' then
+          if o == ':' then
+            for f in pairs(_SCINTILLA.functions) do
+              if f:find('^'..prefix) then cmpls[#cmpls + 1] = f end
+            end
+          else
+            for p in pairs(_SCINTILLA.properties) do
+              if p:find('^'..prefix) then cmpls[#cmpls + 1] = p end
+            end
           end
         end
       end

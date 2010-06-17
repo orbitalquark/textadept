@@ -22,9 +22,11 @@ module('gui.command_entry')
 -- `Tab` key to display a list of available completions. Use the arrow keys to
 -- make a selection and press `Enter` to insert it.
 --
--- Note: Use [`gui.print()`][gui_print] instead of the global `print()`
--- function. The former prints to a new buffer, the latter to standard out
--- (`STDOUT`).
+-- Abbreviated commands for the `buffer`, `view` and `gui` are available. So
+-- `buffer:append_text('textadept')` can be shortened to
+-- `append_text('textadept')`. Please note `print()` calls
+-- [`gui.print()`][gui_print] and not Lua's `print()`. The latter can be
+-- accessed with `_G.print()`.
 --
 -- [gui_print]: ../modules/gui.html#print
 --
