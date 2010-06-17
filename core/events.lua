@@ -189,7 +189,7 @@ function emit(event, ...)
   if not handlers then return end
   for _, f in ipairs(handlers) do
     local result = f(unpack{...})
-    if result == true or result == false then return result end
+    if type(result) == 'boolean' then return result end
   end
 end
 

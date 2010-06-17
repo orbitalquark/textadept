@@ -11,7 +11,7 @@ module('_m.textadept.session', package.seeall)
 --
 -- * `DEFAULT_SESSION`: The path to the default session file.
 -- * `SAVE_ON_QUIT`: Save the session when quitting. Defaults to true and can be
---   disabled by passing the command line switch '-ns' or '--no-session' to
+--   disabled by passing the command line switch '-n' or '--no-session' to
 --   Textadept.
 
 -- settings
@@ -95,6 +95,7 @@ function load(filename)
   end
   return true
 end
+events.connect('arg_none', load) -- load session when no args are present
 
 ---
 -- Saves a Textadept session to a file.
@@ -168,3 +169,7 @@ function save(filename)
 end
 
 events.connect('quit', function() if SAVE_ON_QUIT then save() end end, 1)
+
+local function no_session() SAVE_ON_QUIT = false end
+args.register('-n', '--nosession', 0, no_session, 'No session functionality')
+
