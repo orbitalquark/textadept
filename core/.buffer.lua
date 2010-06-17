@@ -199,6 +199,8 @@ module('buffer')
 --   captured when its button is pressed.
 -- * `mouse_dwell_time`: The time in milliseconds the mouse must sit still to
 --   generate a mouse dwell event.
+-- * `multi_paste`: Flag indicating whether or not pasted text goes into each
+--   multiple selection.
 -- * `multiple_selection`: Flag indicating whether or not to enable multiple
 --   selection.
 -- * `overtype`: Flag indicating whether or not overtype mode is active.
@@ -543,6 +545,8 @@ function buffer:get_property_expanded()
 function buffer:get_sel_text()
 --- Returns the name of the style associated with a style number.
 function buffer:get_style_name(style_num)
+--- Returns the text matched by a tagged expression in a regexp search.
+function buffer:get_tag(tag_num)
 --- Returns all text in the document and its length.
 function buffer:get_text()
 --- Sets the caret to the start of a line and ensure it is visible.

@@ -55,8 +55,8 @@ function new_buffer() end
 -- Resets the Lua state by reloading all init scripts.
 -- Language-specific modules for opened files are NOT reloaded. Re-opening the
 -- files that use them will reload those modules.
--- This function is useful for modifying init scripts (such as key_commands.lua)
--- on the fly without having to restart Textadept.
+-- This function is useful for modifying init scripts (such as keys.lua) on the
+-- fly without having to restart Textadept.
 -- A global RESETTING variable is set to true when re-initing the Lua State. Any
 -- scripts that need to differentiate between startup and reset can utilize this
 -- variable.

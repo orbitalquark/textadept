@@ -37,7 +37,7 @@ module('_m.textadept.keys', package.seeall)
 -- [`KEYSYMS`][keysyms] lookup table is used.
 --
 -- [string_char]: http://www.lua.org/manual/5.1/manual.html#pdf-string.char
--- [keysyms]: ../modules/keys.html#KEYSYMS
+-- [keysyms]: ../modules/_m.textadept.keys.html#KEYSYMS
 --
 -- An action table is a table consisting of either:
 --
