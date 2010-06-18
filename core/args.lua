@@ -29,10 +29,7 @@ end
 -- Generates an 'arg_none' event when no args are present.
 -- @see register
 function process()
-  if #arg == 0 then
-    events.emit('arg_none')
-    return
-  end
+  local no_args = true
   local i = 1
   while i <= #arg do
     local switch = switches[arg[i]]
@@ -44,9 +41,11 @@ function process()
       i = i + n
     else
       io.open_file(arg[i])
+      no_args = false
     end
     i = i + 1
   end
+  if no_args then events.emit('arg_none') end
 end
 
 local function show_help()
@@ -80,8 +79,7 @@ if MAC and arg[1] and arg[1]:find('^%-psn_0') then table.remove(arg, 1) end
 local userhome = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'
 for i = 1, #arg do
   if (arg[i] == '-u' or arg[i] == '--userhome') and arg[i + 1] then
-    userhome = table.remove(arg, i + 1)
-    table.remove(arg, i)
+    userhome = arg[i + 1]
     break
   end
 end
