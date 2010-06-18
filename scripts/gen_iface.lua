@@ -40,7 +40,6 @@ for item in constants:sub(2, -2):gmatch('%b{}') do
     out = out..line
   end
 end
-
 out = out..string.gsub([[
 SCN_STYLENEEDED = 2000,
 SCN_CHARADDED = 2001,
