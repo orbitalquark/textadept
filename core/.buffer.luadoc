@@ -199,8 +199,9 @@ module('buffer')
 --   captured when its button is pressed.
 -- * `mouse_dwell_time`: The time in milliseconds the mouse must sit still to
 --   generate a mouse dwell event.
--- * `multi_paste`: Flag indicating whether or not pasted text goes into each
---   multiple selection.
+-- * `multi_paste`: How to paste text into multiple selections.
+--       * 0: Just the main selection.
+--       * 1: Each selection.
 -- * `multiple_selection`: Flag indicating whether or not to enable multiple
 --   selection.
 -- * `overtype`: Flag indicating whether or not overtype mode is active.
