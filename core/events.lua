@@ -399,6 +399,8 @@ connect('view_after_switch',
     emit('update_ui')
   end)
 
+connect('reset_after', function() gui.statusbar_text = 'Lua reset' end)
+
 connect('quit',
   function() -- prompts for confirmation if any buffers are dirty
     local any = false
