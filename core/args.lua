@@ -56,7 +56,7 @@ local function show_help()
   end
   table.sort(help)
   gui.dialog('textbox',
-             '--informative-text', 'Command line parameters',
+             '--title', 'Command line parameters',
              '--text', table.concat(help, '\n'),
              '--button1', 'gtk-ok')
   events.emit('arg_none')
