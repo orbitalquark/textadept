@@ -11,7 +11,7 @@ module('_m.textadept.session', package.seeall)
 --
 -- * `DEFAULT_SESSION`: The path to the default session file.
 -- * `SAVE_ON_QUIT`: Save the session when quitting. Defaults to true and can be
---   disabled by passing the command line switch '-n' or '--no-session' to
+--   disabled by passing the command line switch '-n' or '--nosession' to
 --   Textadept.
 
 -- settings
