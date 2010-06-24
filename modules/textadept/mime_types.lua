@@ -245,6 +245,7 @@ events.connect('file_opened', handle_new)
 events.connect('file_saved_as', handle_new)
 events.connect('buffer_after_switch', restore_lexer)
 events.connect('view_new', restore_lexer)
+events.connect('view_after_switch', restore_lexer) -- only useful after reset
 events.connect('reset_after',
   function() buffer:set_lexer(buffer._lexer or 'container') end)
 
