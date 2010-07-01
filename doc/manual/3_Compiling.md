@@ -4,7 +4,7 @@
 
 The requirements for building Textadept are not quite so minimal.
 
-#### Linux
+#### Linux & BSD
 
 Linux systems will need the GTK+ development libraries. Your package manager
 should allow you to install them. For Debian-based distributions, the package is
@@ -44,11 +44,13 @@ Download the `textadept_x.x.src.zip`, regardless of what platform you are on.
 
 ## Compiling
 
-#### Linux
+#### Linux & BSD
 
 For Linux systems, simply run `make` in the `src/` directory. The `textadept`
 executable will be created in the root directory. You can make a symlink from
 it to `/usr/bin/` or elsewhere in your `PATH`.
+
+BSD users please run `make BSD=1`.
 
 #### Mac OSX
 
