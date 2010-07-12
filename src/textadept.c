@@ -7,8 +7,6 @@
 #elif MAC
 #include <Carbon/Carbon.h>
 #include "ige-mac-menu.h"
-#define CFURL_TO_STR(u) \
-  CFStringGetCStringPtr(CFURLCopyFileSystemPath(u, kCFURLPOSIXPathStyle), 0)
 #elif __BSD__
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -65,10 +63,13 @@ int main(int argc, char **argv) {
 #if !(__WIN32__ || MAC || __BSD__)
   textadept_home = g_file_read_link("/proc/self/exe", NULL);
 #elif MAC
-  CFBundleRef bundle = CFBundleGetMainBundle();
+  CFURLRef bundle = CFBundleCopyBundleURL(CFBundleGetMainBundle());
   if (bundle) {
-    const char *bundle_path = CFURL_TO_STR(CFBundleCopyBundleURL(bundle));
-    textadept_home = g_strconcat(bundle_path, "/Contents/Resources/", NULL);
+    CFStringRef path = CFURLCopyFileSystemPath(bundle, kCFURLPOSIXPathStyle);
+    const char *p = CFStringGetCStringPtr(path, kCFStringEncodingMacRoman);
+    textadept_home = g_strconcat(p, "/Contents/Resources/", NULL);
+    CFRelease(path);
+    CFRelease(bundle);
   } else textadept_home = calloc(1, 1);
   // GTK-OSX does not parse ~/.gtkrc-2.0; parse it manually
   char *user_home = g_strconcat(getenv("HOME"), "/.gtkrc-2.0", NULL);
@@ -507,7 +508,10 @@ static OSErr w_ae_open(const AppleEvent *event, AppleEvent *reply, long ref) {
                   NULL);
       CFURLRef url = CFURLCreateFromFSRef(kCFAllocatorDefault, &fsref);
       if (url) {
-        l_emit_event("appleevent_odoc", LUA_TSTRING, CFURL_TO_STR(url), -1);
+        CFStringRef path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
+        const char *p = CFStringGetCStringPtr(path, kCFStringEncodingMacRoman);
+        l_emit_event("appleevent_odoc", LUA_TSTRING, p, -1);
+        CFRelease(path);
         CFRelease(url);
       }
     }
