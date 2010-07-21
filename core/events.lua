@@ -317,7 +317,10 @@ connect('uri_dropped',
         utf8_uri = utf8_uri:match('^file://([^\r\n\f]+)')
         utf8_uri = utf8_uri:gsub('%%(%x%x)',
           function(hex) return string.char(tonumber(hex, 16)) end)
-        if WIN32 then utf8_uri = utf8_uri:sub(2, -1) end -- ignore leading '/'
+        if WIN32 then
+          utf8_uri = utf8_uri:sub(2, -1) -- ignore leading '/'
+          utf8_uri = utf8_uri:gsub('/', '\\')
+        end
         local uri = utf8_uri:iconv(_CHARSET, 'UTF-8')
         if lfs.attributes(uri).mode ~= 'directory' then
           io.open_file(utf8_uri)
