@@ -97,7 +97,7 @@ module('_m.textadept.keys', package.seeall)
 -- `buffer:char_left()` respectively. The last two commands apply only in the
 -- Lua lexer with the very last one only being available in Lua's `whitespace`
 -- style. If `ctrl+f` is pressed when the current style is `whitespace` in the
--- `lua` lexer, the global key command with the same shortcut is overriden and
+-- `lua` lexer, the global key command with the same shortcut is overridden and
 -- `whitespace` is printed to standard out.
 --
 -- ## Problems
@@ -482,9 +482,11 @@ end
 -- @name _G.keys
 _G.keys = _M
 
--- Do not edit below this line.
+--------------------------------------------------------------------------------
+------------------------- Do not edit below this line. -------------------------
+--------------------------------------------------------------------------------
 
--- optimize for speed
+-- Optimize for speed.
 local string = _G.string
 local string_char = string.char
 local string_format = string.format
@@ -530,47 +532,52 @@ local function clear_key_sequence()
   gui.statusbar_text = ''
 end
 
--- Helper function that gets commands associated with the current keychain from
--- 'keys'.
--- If the current item in the keychain is part of a chain, throw an error value
--- of -1. This way, pcall will return false and -1, where the -1 can easily and
--- efficiently be checked rather than using a string error message.
-local function try_get_cmd(active_table)
-  for i = 1, #keychain do active_table = active_table[keychain[i]] end
-  if #active_table == 0 and next(active_table) then
+-- Return codes for run_key_command().
+local INVALID = -1
+local PROPAGATE = 0
+local CHAIN = 1
+local HALT = 2
+
+-- Runs a key command associated with the current keychain.
+-- @param lexer Optional lexer name for lexer-specific commands.
+-- @param scope Optional scope name for scope-specific commands.
+-- @return INVALID, PROPAGATE, CHAIN, or HALT.
+local function run_key_command(lexer, scope)
+  local key = keys
+  if lexer and type(key) == 'table' and key[lexer] then key = key[lexer] end
+  if scope and type(key) == 'table' and key[scope] then key = key[scope] end
+  if type(key) ~= 'table' then return INVALID end
+
+  for i = 1, #keychain do
+    key = key[keychain[i]]
+    if type(key) ~= 'table' then return INVALID end
+  end
+  if #key == 0 and next(key) then
     gui.statusbar_text = locale.KEYCHAIN..table.concat(keychain, ' ')
-    error(-1, 0)
-  else
-    local func = active_table[1]
-    if type(func) == 'function' then
-      return func, { unpack(active_table, 2) }
-    elseif type(func) == 'string' then
-      local object = active_table[2]
-      if object == 'buffer' then
-        return buffer[func], { buffer, unpack(active_table, 3) }
-      elseif object == 'view' then
-        return view[func], { view, unpack(active_table, 3) }
-      end
-    else
-      error(locale.KEYS_UNKNOWN_COMMAND..tostring(func))
+    return CHAIN
+  end
+
+  local f, args = key[1], { unpack(key, 2) }
+  if type(key[1]) == 'string' then
+    if key[2] == 'buffer' then
+      f, args = buffer[f], { buffer, unpack(key, 3) }
+    elseif key[2] == 'view' then
+      f, args = view[f], { view, unpack(key, 3) }
     end
   end
+
+  if type(f) ~= 'function' then
+    error(locale.KEYS_UNKNOWN_COMMAND..tostring(f))
+  end
+  return f(unpack(args)) == false and PROPAGATE or HALT
 end
 
--- Tries to get a key command based on the lexer and current scope.
-local function try_get_cmd1(keys, lexer, scope)
-  return try_get_cmd(keys[lexer][scope])
-end
-
--- Tries to get a key command based on the lexer.
-local function try_get_cmd2(keys, lexer)
-  return try_get_cmd(keys[lexer])
-end
-
--- Tries to get a global key command.
-local function try_get_cmd3(keys)
-  return try_get_cmd(keys)
-end
+-- Key command order for lexer and scope args passed to run_key_command().
+local order = {
+  { true, true }, -- lexer and scope-specific commands
+  { true, false }, -- lexer-specific commands
+  { false, false } -- general commands
+}
 
 -- Handles Textadept keypresses.
 -- It is called every time a key is pressed, and based on lexer and scope,
@@ -608,47 +615,27 @@ local function keypress(code, shift, control, alt)
     clear_key_sequence()
     return true
   end
-
-  local lexer = buffer:get_lexer_language()
   keychain[#keychain + 1] = key_seq
-  local ret, func, args
-  if SCOPES_ENABLED then
-    local style = buffer.style_at[buffer.current_pos]
-    local scope = buffer:get_style_name(style)
-    --print(key_seq, 'Lexer: '..lexer, 'Scope: '..scope)
-    ret, func, args = pcall(try_get_cmd1, keys, lexer, scope)
-  end
-  if not ret and func ~= -1 then
-    ret, func, args = pcall(try_get_cmd2, keys, lexer)
-  end
-  if not ret and func ~= -1 then
-    ret, func, args = pcall(try_get_cmd3, keys)
-  end
 
-  if ret then
-    clear_key_sequence()
-    if type(func) == 'function' then
-      local ret, retval = pcall(func, unpack(args))
-      if ret then
-        if type(retval) == 'boolean' then return retval end
-      else
-        error(retval)
-      end
-    end
-    return true
-  else
-    -- Clear key sequence because it's not part of a chain.
-    -- (try_get_cmd throws error number -1.)
-    if func ~= -1 then
-      local size = #keychain - 1
-      clear_key_sequence()
-      if size > 0 then -- previously in a chain
-        gui.statusbar_text = locale.KEYS_INVALID
-        return true
-      end
-    else
+  local lexer, scope = buffer:get_lexer_language(), nil
+  if SCOPES_ENABLED then
+    scope = buffer:get_style_name(buffer.style_at[buffer.current_pos])
+  end
+  local success, status
+  for i = SCOPES_ENABLED and 1 or 2, #order do
+    status = run_key_command(order[i][1] and lexer, order[i][2] and scope)
+    if status > 0 then -- CHAIN or HALT
+      if status == HALT then clear_key_sequence() end
       return true
     end
+    success = success or status ~= -1
   end
+  local size = #keychain - 1
+  clear_key_sequence()
+  if not success and size > 0 then -- INVALID keychain sequence
+    gui.statusbar_text = locale.KEYS_INVALID
+    return true
+  end
+  -- PROPAGATE otherwise.
 end
 events.connect('keypress', keypress, 1)
