@@ -314,7 +314,7 @@ function _insert(s_text)
   local anchor, caret = buffer.anchor, buffer.current_pos
   local lexer, style, start, s_name
   if not s_text then
-    lexer = buffer:get_lexer_language()
+    lexer = buffer:get_lexer()
     style = buffer:get_style_name(buffer.style_at[caret])
     buffer:word_left_extend()
     start = buffer.current_pos
@@ -445,7 +445,7 @@ function _list()
   end
   local snippets = _G.snippets
   add_snippets(snippets)
-  local lexer = buffer:get_lexer_language()
+  local lexer = buffer:get_lexer()
   local style = buffer:get_style_name(buffer.style_at[buffer.current_pos])
   if snippets[lexer] and type(snippets[lexer]) == 'table' then
     add_snippets(snippets[lexer])
@@ -461,7 +461,7 @@ end
 -- Shows the style at the current caret position in a call tip.
 function _show_style()
   local buffer = buffer
-  local lexer = buffer:get_lexer_language()
+  local lexer = buffer:get_lexer()
   local style_num = buffer.style_at[buffer.current_pos]
   local style = buffer:get_style_name(style_num)
   local text =
