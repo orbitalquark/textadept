@@ -59,14 +59,17 @@ GCOCOADIALOG = gcocoadialog.o
 
 SCI_CXXFLAGS = $(DEBUG_FLAG) -pedantic -Os $(PLAT_FLAGS) -DSCI_LEXER \
   $(SCI_THREAD_FLAG) $(INCLUDEDIRS) -Iscintillua/src -Iscintillua/gtk \
-  -Wall -Wno-missing-braces -Wno-char-subscripts
+  -Iscintillua/lexlib \
+  -Wall -Wno-missing-braces -Wno-char-subscripts -Wno-long-long
 
-SCINTILLA_OBJS = AutoComplete.o CallTip.o CellBuffer.o CharClassify.o \
-  ContractionState.o Decoration.o Document.o DocumentAccessor.o Editor.o \
-  ExternalLexer.o Indicator.o KeyMap.o KeyWords.o LexLPeg.o LineMarker.o \
-  PerLine.o PositionCache.o PropSet.o RESearch.o RunStyles.o ScintillaBase.o \
-  Selection.o Style.o StyleContext.o UniConversion.o ViewStyle.o \
-  WindowAccessor.o XPM.o \
+SCINTILLA_OBJS = AutoComplete.o CallTip.o Catalogue.o CellBuffer.o \
+  CharClassify.o ContractionState.o Decoration.o Document.o Editor.o \
+  ExternalLexer.o Indicator.o KeyMap.o LineMarker.o  PerLine.o \
+  PositionCache.o RESearch.o RunStyles.o ScintillaBase.o Selection.o \
+  Style.o UniConversion.o ViewStyle.o XPM.o \
+  Accessor.o CharacterSet.o LexerBase.o LexerModule.o LexerNoExceptions.o \
+  LexerSimple.o PropSetSimple.o StyleContext.o WordList.o \
+  LexLPeg.o \
   PlatGTK.o ScintillaGTK.o
 SCINTILLA_MARSHALLER = scintilla-marshal.o
 
@@ -74,7 +77,8 @@ SCINTILLA_MARSHALLER = scintilla-marshal.o
 
 all: $(TEXTADEPT)
 
-$(SCINTILLA_OBJS): scintillua/gtk/*.cxx scintillua/src/*.cxx
+$(SCINTILLA_OBJS): scintillua/gtk/*.cxx scintillua/src/*.cxx \
+  scintillua/lexlib/*.cxx scintillua/lexers/LexLPeg.cxx
 	$(CPP) $(SCI_CXXFLAGS) $(GTKFLAGS) -c $^
 $(SCINTILLA_MARSHALLER): scintillua/gtk/scintilla-marshal.c
 	$(CC) $(SCI_CXXFLAGS) $(GTKFLAGS) -w -c $^

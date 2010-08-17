@@ -544,8 +544,6 @@ function buffer:get_property(property)
 function buffer:get_property_expanded()
 --- Returns the selected text.
 function buffer:get_sel_text()
---- Returns the name of the style associated with a style number.
-function buffer:get_style_name(style_num)
 --- Returns the text matched by a tagged expression in a regexp search.
 function buffer:get_tag(tag_num)
 --- Returns all text in the document and its length.
@@ -960,3 +958,24 @@ function buffer:save_as()
 -- If the buffer is dirty, the user is prompted to continue. The buffer is not
 -- saved automatically. It must be done manually.
 function buffer:close()
+
+---
+-- Replacement for buffer:set_lexer_language().
+-- Sets a buffer._lexer field so it can be restored without querying the
+-- mime-types tables. Also if the user manually sets the lexer, it should be
+-- restored.
+-- Loads the language-specific module if it exists.
+-- @param buffer The buffer to set the lexer language of.
+-- @param lang The string language to set.
+-- @usage buffer:set_lexer('language_name')
+function buffer:set_lexer(lang)
+---
+-- Replacement for buffer:get_lexer_language().
+-- @param buffer The buffer to get the lexer langugae of.
+function buffer:get_lexer()
+---
+-- Returns the name of the style associated with a style number.
+-- @param buffer The buffer to get the style name of.
+-- @param style_num A style number in the range 0 <= style_num < 256.
+-- @see buffer.style_at
+function buffer:get_style_name(style_num)

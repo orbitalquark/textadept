@@ -194,7 +194,7 @@ end
 function block_comment(comment)
   local buffer = buffer
   if not comment then
-    comment = comment_string[buffer:get_lexer_language()]
+    comment = comment_string[buffer:get_lexer()]
     if not comment then return end
   end
   local caret, anchor = buffer.current_pos, buffer.anchor

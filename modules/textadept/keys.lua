@@ -617,7 +617,7 @@ local function keypress(code, shift, control, alt)
   end
   keychain[#keychain + 1] = key_seq
 
-  local lexer, scope = buffer:get_lexer_language(), nil
+  local lexer, scope = buffer:get_lexer(), nil
   if SCOPES_ENABLED then
     scope = buffer:get_style_name(buffer.style_at[buffer.current_pos])
   end

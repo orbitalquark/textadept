@@ -231,10 +231,6 @@ connect('view_new',
     local buffer = buffer
     local c = _SCINTILLA.constants
 
-    -- lexer
-    buffer.style_bits = 8
-    buffer:set_lexer_language('container')
-
     -- allow redefinitions of these Scintilla key commands
     local ctrl_keys = { 'Z', 'Y', 'X', 'C', 'V', 'A', 'D' }
     local ctrl_shift_keys = { '[', ']', '/', '\\', 'L', 'T', 'U' }
@@ -257,6 +253,10 @@ connect('buffer_new',
     local function run()
       local buffer = buffer
 
+      -- lexer
+      buffer:set_lexer_language('container')
+      buffer.style_bits = 8
+
       -- properties
       buffer.property['textadept.home'] = _HOME
       buffer.property['lexer.lua.home'] = _LEXERPATH
@@ -264,10 +264,6 @@ connect('buffer_new',
       if _THEME and #_THEME > 0 then
         buffer.property['lexer.lua.color.theme'] = _THEME..'/lexer.lua'
       end
-
-      -- lexer
-      buffer.style_bits = 8
-      buffer:set_lexer_language('container')
 
       -- buffer
       buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
@@ -340,7 +336,7 @@ connect('update_ui',
     local pos = buffer.current_pos
     local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
     local col = buffer.column[pos] + 1
-    local lexer = buffer:get_lexer_language()
+    local lexer = buffer:private_lexer_call(-1)
     local eol = EOLs[buffer.eol_mode + 1]
     local tabs = (buffer.use_tabs and locale.STATUS_TABS or
       locale.STATUS_SPACES)..buffer.indent

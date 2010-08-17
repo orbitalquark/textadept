@@ -204,9 +204,33 @@ local function set_lexer(buffer, lang)
   end
   buffer:colourise(0, -1)
 end
-events.connect('buffer_new', function() buffer.set_lexer = set_lexer end)
--- Scintilla's first buffer doesn't have this
-if not RESETTING then buffer.set_lexer = set_lexer end
+
+--
+-- Replacement for buffer:get_lexer_language().
+-- @param buffer The buffer to get the lexer langugae of.
+local function get_lexer(buffer)
+  return buffer:private_lexer_call(-1)
+end
+
+--
+-- Returns the name of the style associated with a style number.
+-- @param buffer The buffer to get the style name of.
+-- @param style_num A style number in the range 0 <= style_num < 256.
+-- @see buffer.style_at
+local function get_style_name(buffer, style_num)
+  if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
+  return buffer:private_lexer_call(style_num)
+end
+
+events.connect('buffer_new', function()
+  buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
+  buffer.get_style_name = get_style_name
+end)
+-- Scintilla's first buffer doesn't have these
+if not RESETTING then
+  buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
+  buffer.get_style_name = get_style_name
+end
 
 -- Performs actions suitable for a new buffer.
 -- Sets the buffer's lexer language and loads the language module.
