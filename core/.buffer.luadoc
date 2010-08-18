@@ -971,7 +971,7 @@ function buffer:close()
 function buffer:set_lexer(lang)
 ---
 -- Replacement for buffer:get_lexer_language().
--- @param buffer The buffer to get the lexer langugae of.
+-- @param buffer The buffer to get the lexer language of.
 function buffer:get_lexer()
 ---
 -- Returns the name of the style associated with a style number.
