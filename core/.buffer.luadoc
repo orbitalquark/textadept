@@ -429,6 +429,9 @@ function buffer:can_redo()
 function buffer:can_undo()
 --- Cancels any modes such as call tip or autocompletion list display.
 function buffer:cancel()
+--- Indicate that the internal state of a lexer has changed over a range and
+-- therefore there may be a need to redraw.
+function buffer:change_lexer_state(start_pos, end_pos)
 --- Moves the caret left one character.
 function buffer:char_left()
 --- Moves the caret left one character, extending the selection.
@@ -490,6 +493,11 @@ function buffer:delete_back()
 --- Deletes the selection or the character before the caret. Will not delete the
 -- character before at the start of a lone.
 function buffer:delete_back_not_line()
+--- Retrieve a '\n' separated list of descriptions of the keyword sets
+-- understood by the current lexer.
+function buffer:describe_key_word_sets()
+--- Describe a property.
+function buffer:describe_property(name)
 --- Returns the document line of a display line taking hidden lines into
 -- account.
 function buffer:doc_line_from_visible()
@@ -726,6 +734,8 @@ function buffer:para_up_extend()
 --- Pastes the contents of the clipboard into the document replacing the
 -- selection.
 function buffer:paste()
+--- For private communication between an application and a known lexer.
+function buffer:private_lexer_call(operation)
 --- Returns the x value of the point in the window where a position is shown.
 function buffer:point_x_from_position(pos)
 --- Returns the y value of the point in the window where a position is shown.
@@ -741,6 +751,11 @@ function buffer:position_from_point(x, y)
 --- Returns the position from a point within the window, but return -1 if not
 -- close to text.
 function buffer:position_from_point_close(x, y)
+--- Retrieve a '\n' separated list of properties understood by the current
+-- lexer.
+function buffer:property_names()
+--- Retrieve the type of a property.
+function buffer:property_type(name)
 --- Redoes the next action in the undo history.
 function buffer:redo()
 --- Registers and XPM image for use in autocompletion lists.
