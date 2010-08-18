@@ -207,7 +207,7 @@ end
 
 --
 -- Replacement for buffer:get_lexer_language().
--- @param buffer The buffer to get the lexer langugae of.
+-- @param buffer The buffer to get the lexer language of.
 local function get_lexer(buffer)
   return buffer:private_lexer_call(-1)
 end
