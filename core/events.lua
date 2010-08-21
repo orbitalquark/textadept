@@ -330,13 +330,14 @@ local EOLs = {
   locale.STATUS_CR,
   locale.STATUS_LF
 }
+local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 connect('update_ui',
   function() -- sets docstatusbar text
     local buffer = buffer
     local pos = buffer.current_pos
     local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
     local col = buffer.column[pos] + 1
-    local lexer = buffer:private_lexer_call(-1)
+    local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
     local eol = EOLs[buffer.eol_mode + 1]
     local tabs = (buffer.use_tabs and locale.STATUS_TABS or
       locale.STATUS_SPACES)..buffer.indent

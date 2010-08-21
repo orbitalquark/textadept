@@ -205,11 +205,12 @@ local function set_lexer(buffer, lang)
   buffer:colourise(0, -1)
 end
 
+local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 --
 -- Replacement for buffer:get_lexer_language().
 -- @param buffer The buffer to get the lexer language of.
 local function get_lexer(buffer)
-  return buffer:private_lexer_call(-1)
+  return buffer:private_lexer_call(GETLEXERLANGUAGE)
 end
 
 --
