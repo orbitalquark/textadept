@@ -1,0 +1,50 @@
+--- Closes file, or the default output file.
+function close([file])
+--- Flushes the default output file.
+function flush()
+---
+-- Opens file in text mode, sets as default input file, or returns current
+-- default input file.
+function input([file])
+--- Open file in read mode, returns iterator function to return lines, nil ends.
+function lines([filename])
+--- Opens file in specified mode "[rawb+]", returns handle or nil.
+function open(filename [, mode])
+---
+-- Opens file in text mode, sets as default output file, or returns current
+-- default output file.
+function output([file])
+--- Reads file according to given formats, returns read values or nil.
+function read(format1, ...)
+-- * `stderr`: File descriptor for STDERR.
+-- * `stdin`: File descriptor for STDIN.
+-- * `stdout`: File descriptor for STDOUT.
+--- Returns a handle for a temporary file, opened in update mode.
+function tmpfile()
+---
+-- Returns "file" if obj is an open file handle, "close file" if closed, or nil
+-- if not a file handle.
+function type(obj)
+--- Writes strings or numbers to file.
+function write(value1, ...)
+
+---
+-- Opens a list of files.
+-- @param utf8_filenames A '\n' separated list of filenames to open. If none
+--   specified, the user is prompted to open files from a dialog. These paths
+--   must be encoded in UTF-8.
+-- @usage io.open_file(utf8_encoded_filename)
+function open_file(utf8_filenames)
+
+---
+-- Saves all dirty buffers to their respective files.
+-- @usage io.save_all()
+function save_all()
+
+---
+-- Closes all open buffers.
+-- If any buffer is dirty, the user is prompted to continue. No buffers are
+-- saved automatically. They must be saved manually.
+-- @usage io.close_all()
+-- @return true if user did not cancel.
+function close_all()

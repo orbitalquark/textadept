@@ -1,0 +1,24 @@
+--- Returns CPU time used by program in seconds.
+function clock()
+--- Returns a string or table containing date and time, "*t" returns a table.
+function date([format [, time]])
+--- Returns number of seconds from time t1 to time t2.
+function difftime(t2, t1)
+--- Executes command using C function system, returns status code.
+function execute(command)
+--- Terminates host program with optional code, default is success code.
+function exit([code])
+--- Returns value of environment variable varname. nil if not defined.
+function getenv(varname)
+--- Deletes file with given name, nil if fails.
+function remove(filename)
+--- Renames file oldname to newname, nil if fails.
+function rename(oldname, newname)
+--- Set current locale of program, returns name of new locate or nil.
+function setlocale(locale [, category])
+--- Returns current time(usually seconds) or time as represented by table.
+function time([table])
+---
+-- Returns a string with a filename for a temporary file(dangerous! tmpfile is
+-- better).
+function tmpname()

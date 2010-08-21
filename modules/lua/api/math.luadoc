@@ -1,0 +1,48 @@
+--- Returns absolute value of v.
+function abs(v)
+--- Returns arc cosine value of v in radians.
+function acos(v)
+--- Returns arc sine value of v in radians.
+function asin(v)
+--- Returns arc tangent value of v in radians.
+function atan(v)
+--- Returns arc tangent value of v1/v2 in radians.
+function atan2(v1, v2)
+--- Returns smallest integer >= v.
+function ceil(v)
+--- Returns cosine value of angle rad.
+function cos(rad)
+--- Returns angle in degrees of radians rad.
+function deg(rad)
+--- Returns e^v.
+function exp(v)
+--- Returns largest integer <= v.
+function floor(v)
+--- Returns mantissa [0.5,1) and exponent values of v.
+function frexp(v)
+--- Returns v1*2^v2.
+function ldexp(v1, v2)
+--- Returns natural logarithm of v.
+function log(v)
+--- Returns logarithm 10 of v.
+function log10(v)
+--- Returns maximum in a list of one or more values.
+function max(v1, ...)
+--- Returns minimum in a list of one or more values.
+function min(v1, ...)
+--- Returns remainder of v1/v2 which is v1 - iV2 for some integer i.
+function mod(v1, v2)
+--- Returns v1 raised to the power of v2.
+function pow(v1, v2)
+--- Returns angle in radians of degrees deg.
+function rad(deg)
+--- Returns random real [0,1), integer [1,n] or real [1,u](with n=1).
+function random([n [, u]])
+--- Sets seed for pseudo-random number generator.
+function randomseed(seed)
+--- Returns sine value of angle rad .
+function sin(rad)
+--- Returns square root of v.
+function sqrt(v)
+--- Returns tangent value of angle rad.
+function tan(rad)

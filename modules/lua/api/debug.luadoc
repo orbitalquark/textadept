@@ -1,0 +1,18 @@
+--- Enters interactive debug mode, line with only "cont" terminates.
+function debug()
+--- Returns current hook function, hook mask, hook count.
+function gethook()
+--- Returns table with information about a function.
+function getinfo(function [, what])
+--- Returns name and value of local variable with index local at stack level.
+function getlocal(level, local)
+--- Returns name and value of upvalue with index up of function func.
+function getupvalue(func, up)
+--- Sets given function as a hook, mask="[crl]".
+function sethook(hook, mask [, count])
+--- Sets local variable with index local at stack level with value.
+function setlocal(level, local, value)
+--- Sets upvalue with index up of function func with value.
+function setupvalue(func, up, value)
+--- Returns a string with a traceback of the call stack.
+function traceback([message])

@@ -1,0 +1,33 @@
+--- Returns numerical code, nil if index out of range, default i=1.
+function byte(s [, i])
+--- Returns a string built from 0 or more integers.
+function char(i1, i2, ...)
+--- Returns binary representation of function, used with loadstring.
+function dump(function)
+--- Matches pattern in s, returns start,end indices, else nil.
+function find(s, pattern [, init [, plain]])
+--- Returns formatted string, printf-style.
+function format(formatstring, e1, e2, ...)
+--- Returns iterator function that returns next captures from pattern pat on s.
+function gfind(s, pat)
+--- Returns copy of s with pat replaced by repl, and substitutions made.
+function gsub(s, pat, repl [, n])
+--- Returns string length.
+function len(s)
+--- Returns string with letters in lower case.
+function lower(s)
+--- Returns string with n copies of string s.
+function rep(s, n)
+--- Returns substring from index i to j of s, default j=-1(string length).
+function sub(s, i [, j])
+--- Returns string with letters in upper case.
+function upper(s)
+
+---
+-- Converts a string from one character set to another using iconv().
+-- Valid character sets are ones GLib's g_convert() accepts, typically GNU
+-- iconv's character sets.
+-- @param text The text to convert.
+-- @param to The character set to convert to.
+-- @param from The character set to convert from.
+function iconv(text, to, from) end
