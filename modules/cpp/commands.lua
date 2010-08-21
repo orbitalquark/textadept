@@ -4,6 +4,12 @@
 -- Commands for the cpp module.
 module('_m.cpp.commands', package.seeall)
 
+-- Markdown:
+-- ## Key Commands
+--
+-- + `Alt+l, m`: Open this module for editing.
+-- + `Shift+Return`: Add ';' to line end and insert newline.
+
 local m_editing, m_run = _m.textadept.editing, _m.textadept.run
 -- Comment string tables use lexer names.
 m_editing.comment_string.cpp = '//'
@@ -34,3 +40,7 @@ if type(keys) == 'table' then
     end },
   }
 end
+
+---
+-- This module contains no functions.
+function no_functions() end no_functions = nil
