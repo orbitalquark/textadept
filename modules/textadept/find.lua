@@ -64,7 +64,7 @@ local function find_(text, next, flags, nowrap, wrapped)
   elseif flags < 16 then -- lua pattern search (forward search only)
     text = text:gsub('\\[abfnrtv\\]', escapes)
     local buffer_text = buffer:get_text(buffer.length)
-    local results = { buffer_text:find(text, buffer.anchor + increment) }
+    local results = { buffer_text:find(text, buffer.anchor + increment + 1) }
     if #results > 0 then
       result = results[1]
       find.captures = { unpack(results, 3) }
