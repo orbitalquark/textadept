@@ -184,6 +184,8 @@ end
 for lexer in pairs(lexers_found) do lexers[#lexers + 1] = lexer end
 table.sort(lexers)
 
+local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
+local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
 --
 -- Replacement for buffer:set_lexer_language().
 -- Sets a buffer._lexer field so it can be restored without querying the
@@ -195,7 +197,8 @@ table.sort(lexers)
 -- @usage buffer:set_lexer('language_name')
 local function set_lexer(buffer, lang)
   buffer._lexer = lang
-  buffer:set_lexer_language(lang)
+  buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
+  buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
   local ret, err = pcall(require, lang)
   if ret then
     _m[lang].set_buffer_properties()
@@ -263,7 +266,8 @@ end
 -- Sets the buffer's lexer based on filename, shebang words, or
 -- first line pattern.
 local function restore_lexer()
-  buffer:set_lexer_language(buffer._lexer or 'container')
+  buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
+  buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'container')
 end
 
 events.connect('file_opened', handle_new)
