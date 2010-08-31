@@ -69,19 +69,21 @@ SCINTILLA_OBJS = AutoComplete.o CallTip.o Catalogue.o CellBuffer.o \
   Style.o UniConversion.o ViewStyle.o XPM.o \
   Accessor.o CharacterSet.o LexerBase.o LexerModule.o LexerNoExceptions.o \
   LexerSimple.o PropSetSimple.o StyleContext.o WordList.o \
-  LexLPeg.o \
   PlatGTK.o ScintillaGTK.o
 SCINTILLA_MARSHALLER = scintilla-marshal.o
+SCINTILLA_LEXER = LexLPeg.o
 
 # Build
 
 all: $(TEXTADEPT)
 
 $(SCINTILLA_OBJS): scintillua/gtk/*.cxx scintillua/src/*.cxx \
-  scintillua/lexlib/*.cxx scintillua/lexers/LexLPeg.cxx
+  scintillua/lexlib/*.cxx
 	$(CPP) $(SCI_CXXFLAGS) $(GTKFLAGS) -c $^
 $(SCINTILLA_MARSHALLER): scintillua/gtk/scintilla-marshal.c
 	$(CC) $(SCI_CXXFLAGS) $(GTKFLAGS) -w -c $^
+$(SCINTILLA_LEXER): LexLPeg.cxx
+	$(CPP) $(SCI_CXXFLAGS) $(GTKFLAGS) $(LUA_CFLAGS) -DLPEG_LEXER -DNO_SCITE -c $^
 $(TEXTADEPT_OBJS): *.c
 	$(CC) $(CFLAGS) $(GTKFLAGS) -c $^
 $(LUA_OBJS): lua/src/*.c
@@ -89,7 +91,7 @@ $(LUA_OBJS): lua/src/*.c
 $(GCOCOADIALOG): gcocoadialog/gcocoadialog.c
 	$(CC) $(GTKFLAGS) $(INCLUDEDIRS) -c $^
 $(TEXTADEPT):\
-  $(SCINTILLA_OBJS) $(SCINTILLA_MARSHALLER) \
+  $(SCINTILLA_OBJS) $(SCINTILLA_MARSHALLER) $(SCINTILLA_LEXER) \
   $(TEXTADEPT_OBJS) $(LUA_OBJS) $(GCOCOADIALOG) \
   $(TEXTADEPT_RC)
 	$(CPP) $(EXPORTLUASYMS) -o $@ $^ $(GTKLIBS)

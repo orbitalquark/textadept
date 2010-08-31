@@ -248,13 +248,19 @@ connect('view_new',
     end
   end)
 
+local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
+local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
+local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
 connect('buffer_new',
   function() -- sets default properties for a Scintilla document
     local function run()
       local buffer = buffer
 
       -- lexer
-      buffer:set_lexer_language('container')
+      buffer:set_lexer_language('llpeg')
+      buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
+      buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
+      buffer:private_lexer_call(SETLEXERLANGUAGE, 'container')
       buffer.style_bits = 8
 
       -- properties

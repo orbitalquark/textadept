@@ -34,13 +34,18 @@ constants = {]]
 -- {"constant", value}
 for item in constants:sub(2, -2):gmatch('%b{}') do
   local name, value = item:match('^{"(.-)",(.-)}')
-  if not name:find('^IDM_') then
+  if not name:find('^IDM_') and not name:find('^SCE_') and
+     not name:find('^SCLEX_') then
     if name == 'SC_MASK_FOLDERS' then value = '-33554432' end
     local line = (" %s = %s,"):format(name, value)
     out = out..line
   end
 end
 out = out..string.gsub([[
+SCLEX_CONTAINER = 0,
+SCLEX_NULL = 1,
+SCLEX_LPEG = 999,
+SCLEX_AUTOMATIC = 1000,
 SCN_STYLENEEDED = 2000,
 SCN_CHARADDED = 2001,
 SCN_SAVEPOINTREACHED = 2002,

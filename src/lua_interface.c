@@ -26,7 +26,7 @@
 lua_State *lua;
 int closing = FALSE;
 
-static int tVOID = 0, /*tINT = 1,*/ tLENGTH = 2, /*tPOSITION = 3,*/
+static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3,*/
            /*tCOLOUR = 4,*/ tBOOL = 5, tKEYMOD = 6, tSTRING = 7,
            tSTRINGRESULT = 8;
 
@@ -710,6 +710,15 @@ static int l_call_scintilla(lua_State *lua, GtkWidget *editor, int msg,
   long params[2] = {0, 0};
   int params_needed = 2, len = 0, string_return = FALSE;
   char *return_string = 0;
+
+  // SCI_PRIVATELEXERCALL iface has p1_type int, p2_type int. Change p2_type
+  // appropriately. See LPeg lexer API for more info.
+  if (msg == SCI_PRIVATELEXERCALL) {
+    p2_type = tSTRINGRESULT;
+    int c = luaL_checklong(lua, arg);
+    if (c == SCI_GETDIRECTFUNCTION || c == SCI_SETDOCPOINTER) p2_type = tINT;
+    else if (c == SCI_SETLEXERLANGUAGE) p2_type = tSTRING;
+  }
 
   // Set the w and l parameters appropriately for Scintilla.
   if (p1_type == tLENGTH && p2_type == tSTRING) {
