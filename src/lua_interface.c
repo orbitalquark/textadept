@@ -579,11 +579,11 @@ static long l_toscintillaparam(lua_State *lua, int type, int *arg_idx) {
     return (long)lua_tostring(lua, (*arg_idx)++);
   else if (type == tBOOL)
     return lua_toboolean(lua, (*arg_idx)++);
-  else if (type == tKEYMOD)
-    return (luaL_checkinteger(lua, (*arg_idx)++) & 0xFFFF) |
-           ((luaL_checkinteger(lua, (*arg_idx)++) &
-           (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
-  else if (type > tVOID && type < tBOOL)
+  else if (type == tKEYMOD) {
+    int key = luaL_checkinteger(lua, (*arg_idx)++) & 0xFFFF;
+    return key | ((luaL_checkinteger(lua, (*arg_idx)++) &
+                 (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
+  } else if (type > tVOID && type < tBOOL)
     return luaL_checklong(lua, (*arg_idx)++);
   else
     return 0;
