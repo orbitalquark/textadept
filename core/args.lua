@@ -3,9 +3,8 @@
 --- Processes command line arguments for Textadept.
 module('args', package.seeall)
 
----
--- [Local table] Contains registered command line switches.
--- @type table
+-- Contains registered command line switches.
+-- @class table
 -- @name switches
 local switches = {}
 
