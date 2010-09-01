@@ -34,7 +34,7 @@ DEBUG_FLAG = -DNDEBUG
 else
 DEBUG_FLAG = -DDEBUG -DTRACE -g
 endif
-INCLUDEDIRS = -Iscintillua/include -Ilua/include -Igcocoadialog
+INCLUDEDIRS = -Iscintilla/include -Ilua/include -Igcocoadialog
 
 # Textadept
 
@@ -58,8 +58,8 @@ GCOCOADIALOG = gcocoadialog.o
 # Scintilla
 
 SCI_CXXFLAGS = $(DEBUG_FLAG) -pedantic -Os $(PLAT_FLAGS) -DSCI_LEXER \
-  $(SCI_THREAD_FLAG) $(INCLUDEDIRS) -Iscintillua/src -Iscintillua/gtk \
-  -Iscintillua/lexlib \
+  $(SCI_THREAD_FLAG) $(INCLUDEDIRS) -Iscintilla/src -Iscintilla/gtk \
+  -Iscintilla/lexlib \
   -Wall -Wno-missing-braces -Wno-char-subscripts -Wno-long-long
 
 SCINTILLA_OBJS = AutoComplete.o CallTip.o Catalogue.o CellBuffer.o \
@@ -77,10 +77,10 @@ SCINTILLA_LEXER = LexLPeg.o
 
 all: $(TEXTADEPT)
 
-$(SCINTILLA_OBJS): scintillua/gtk/*.cxx scintillua/src/*.cxx \
-  scintillua/lexlib/*.cxx
+$(SCINTILLA_OBJS): scintilla/gtk/*.cxx scintilla/src/*.cxx \
+  scintilla/lexlib/*.cxx
 	$(CPP) $(SCI_CXXFLAGS) $(GTKFLAGS) -c $^
-$(SCINTILLA_MARSHALLER): scintillua/gtk/scintilla-marshal.c
+$(SCINTILLA_MARSHALLER): scintilla/gtk/scintilla-marshal.c
 	$(CC) $(SCI_CXXFLAGS) $(GTKFLAGS) -w -c $^
 $(SCINTILLA_LEXER): LexLPeg.cxx
 	$(CPP) $(SCI_CXXFLAGS) $(GTKFLAGS) $(LUA_CFLAGS) -DLPEG_LEXER -DNO_SCITE -c $^
@@ -155,8 +155,8 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	rm -r $(RELEASEDIRMAC)
 	# Source
 	rm $(RELEASEDIR32)/$(TEXTADEPT)
-	cp -r lua scintillua gcocoadialog $(RELEASEDIR32)/src/
-	rm -r $(RELEASEDIR32)/src/scintillua/.hg
+	cp -r lua scintilla gcocoadialog $(RELEASEDIR32)/src/
+	rm -r $(RELEASEDIR32)/src/scintilla/.hg
 	cp -r ../xcode $(RELEASEDIR32)/
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
 	# Done
