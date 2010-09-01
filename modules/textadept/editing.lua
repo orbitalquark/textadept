@@ -184,7 +184,10 @@ function autocomplete_word(word_chars)
     buffer.target_start, buffer.target_end = match_pos + 1, buffer.length
     match_pos = buffer:search_in_target(root)
   end
-  if #c_list > 0 then buffer:auto_c_show(#root, table.concat(c_list, ' ')) end
+  if #c_list > 0 then
+    buffer:auto_c_show(#root, table.concat(c_list, ' '))
+    return true
+  end
 end
 
 ---
