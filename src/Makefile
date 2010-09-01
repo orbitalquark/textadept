@@ -156,7 +156,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	rm -r $(RELEASEDIRMAC)
 	# Source
 	rm $(RELEASEDIR32)/$(TEXTADEPT)
-	cp -r lua scintilla gcocoadialog $(RELEASEDIR32)/src/
+	cp -rL lua scintilla gcocoadialog LexLPeg.cxx $(RELEASEDIR32)/src/
 	rm -r $(RELEASEDIR32)/src/scintilla/.hg
 	cp -r ../xcode $(RELEASEDIR32)/
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
