@@ -232,8 +232,10 @@ connect('view_new',
     local c = _SCINTILLA.constants
 
     -- allow redefinitions of these Scintilla key commands
-    local ctrl_keys = { 'Z', 'Y', 'X', 'C', 'V', 'A', 'D' }
-    local ctrl_shift_keys = { '[', ']', '/', '\\', 'L', 'T', 'U' }
+    local ctrl_keys = {
+      '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
+    }
+    local ctrl_shift_keys = { 'L', 'T', 'U' }
     for _, key in ipairs(ctrl_keys) do
       buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL)
     end
