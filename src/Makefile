@@ -16,6 +16,7 @@ SCI_THREAD_FLAG =
 LUA_CFLAGS = -DLUA_USE_LINUX
 TEXTADEPT = textadept
 TEXTADEPT_RC =
+EXPORTLUASYMS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
 else
 CC = i486-mingw32-gcc -mms-bitfields
 CPP = i486-mingw32-g++ -mms-bitfields -mwindows
@@ -26,6 +27,7 @@ SCI_THREAD_FLAG = -DG_THREADS_IMPL_NONE
 LUA_CFLAGS = -D_WIN32 -DWIN32
 TEXTADEPT = textadept.exe
 TEXTADEPT_RC = textadept_rc.o
+EXPORTLUASYMS = -Wl,--retain-symbols-file -Wl,lua.sym
 WINDRES = i486-mingw32-windres
 endif
 
@@ -44,7 +46,6 @@ GTKFLAGS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --cflags gtk+-2.0)
 GTKLIBS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --libs gtk+-2.0 gthread-2.0)
-EXPORTLUASYMS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
 
 TEXTADEPT_OBJS = textadept.o lua_interface.o
 LUA_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o \
