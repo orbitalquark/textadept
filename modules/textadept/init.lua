@@ -12,6 +12,7 @@ require 'textadept.find'
 require 'textadept.mime_types'
 require 'textadept.run'
 require 'textadept.session'
+require 'textadept.snapopen'
 require 'textadept.snippets'
 
 -- These need to be loaded last.
