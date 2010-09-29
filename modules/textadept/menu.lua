@@ -425,11 +425,11 @@ local actions = {
   [ID.RUN] = { m_run.run },
   [ID.COMPILE] = { m_run.compile },
   -- Tools -> Snippets
-  [ID.INSERT_SNIPPET] = { m_snippets.insert },
-  [ID.PREVIOUS_SNIPPET_PLACEHOLDER] = { m_snippets.prev },
-  [ID.CANCEL_SNIPPET] = { m_snippets.cancel_current },
-  [ID.LIST_SNIPPETS] = { m_snippets.list },
-  [ID.SHOW_SCOPE] = { m_snippets.show_style },
+  [ID.INSERT_SNIPPET] = { m_snippets._insert },
+  [ID.PREVIOUS_SNIPPET_PLACEHOLDER] = { m_snippets._prev },
+  [ID.CANCEL_SNIPPET] = { m_snippets._cancel_current },
+  [ID.LIST_SNIPPETS] = { m_snippets._list },
+  [ID.SHOW_SCOPE] = { m_snippets._show_style },
   -- Tools -> Bookmark
   [ID.TOGGLE_BOOKMARK] = { m_bookmarks.toggle },
   [ID.CLEAR_BOOKMARKS] = { m_bookmarks.clear },
