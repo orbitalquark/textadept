@@ -92,6 +92,9 @@ local ID = {
   CLEAR_BOOKMARKS = 417,
   GOTO_NEXT_BOOKMARK = 418,
   GOTO_PREV_BOOKMARK = 419,
+  SNAPOPEN_USERHOME = 420,
+  SNAPOPEN_HOME = 421,
+  SNAPOPEN_CURRENTDIR = 422,
   -- Buffer
   NEXT_BUFFER = 501,
   PREV_BUFFER = 502,
@@ -226,6 +229,11 @@ local menubar = {
       { l.MENU_TOOLS_BM_NEXT, ID.GOTO_NEXT_BOOKMARK },
       { l.MENU_TOOLS_BM_PREV, ID.GOTO_PREV_BOOKMARK },
     },
+    { title = l.MENU_TOOLS_SNAPOPEN_TITLE,
+      { l.MENU_TOOLS_SNAPOPEN_USERHOME, ID.SNAPOPEN_USERHOME },
+      { l.MENU_TOOLS_SNAPOPEN_HOME, ID.SNAPOPEN_HOME },
+      { l.MENU_TOOLS_SNAPOPEN_CURRENTDIR, ID.SNAPOPEN_CURRENTDIR },
+    },
   },
   gtkmenu {
     title = l.MENU_BUF_TITLE,
@@ -288,6 +296,7 @@ local b, v = 'buffer', 'view'
 local m_snippets = _m.textadept.snippets
 local m_editing = _m.textadept.editing
 local m_bookmarks = _m.textadept.bookmarks
+local m_snapopen = _m.textadept.snapopen
 local m_run = _m.textadept.run
 
 local function set_encoding(encoding)
@@ -435,6 +444,16 @@ local actions = {
   [ID.CLEAR_BOOKMARKS] = { m_bookmarks.clear },
   [ID.GOTO_NEXT_BOOKMARK] = { m_bookmarks.goto_next },
   [ID.GOTO_PREV_BOOKMARK] = { m_bookmarks.goto_prev },
+  -- Tools -> Snapopen
+  [ID.SNAPOPEN_USERHOME] = { m_snapopen.open, _USERHOME },
+  [ID.SNAPOPEN_HOME] = { m_snapopen.open, _HOME },
+  [ID.SNAPOPEN_CURRENTDIR] = {
+    function()
+      if buffer.filename then
+        m_snapopen.open(buffer.filename:match('^.+[/\\]'))
+      end
+    end
+  },
   -- Buffer
   [ID.NEXT_BUFFER] = { 'goto_buffer', v, 1, false },
   [ID.PREV_BUFFER] = { 'goto_buffer', v, -1, false },
