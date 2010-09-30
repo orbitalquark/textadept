@@ -259,7 +259,7 @@ connect('buffer_new',
       local buffer = buffer
 
       -- lexer
-      buffer:set_lexer_language('llpeg')
+      buffer:set_lexer_language('lpeg')
       buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
       buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
       buffer:private_lexer_call(SETLEXERLANGUAGE, 'container')
@@ -267,10 +267,10 @@ connect('buffer_new',
 
       -- properties
       buffer.property['textadept.home'] = _HOME
-      buffer.property['lexer.lua.home'] = _LEXERPATH
-      buffer.property['lexer.lua.script'] = _HOME..'/lexers/lexer.lua'
+      buffer.property['lexer.lpeg.home'] = _LEXERPATH
+      buffer.property['lexer.lpeg.script'] = _HOME..'/lexers/lexer.lua'
       if _THEME and #_THEME > 0 then
-        buffer.property['lexer.lua.color.theme'] = _THEME..'/lexer.lua'
+        buffer.property['lexer.lpeg.color.theme'] = _THEME..'/lexer.lua'
       end
 
       -- buffer
