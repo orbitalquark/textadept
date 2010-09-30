@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-_RELEASE = "Textadept 3.2"
+_RELEASE = "Textadept 3.3"
 
 package.path = _HOME..'/core/?.lua;'..package.path
 
