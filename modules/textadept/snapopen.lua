@@ -6,7 +6,7 @@ local locale = _G.locale
 -- Snapopen for the textadept module.
 module('_m.textadept.snapopen', package.seeall)
 
--- Markdown
+-- Markdown:
 -- ## Settings
 --
 -- * `PATHS`: Table of default paths to search.
@@ -88,7 +88,7 @@ end
 -- @usage _m.textadept.snapopen.open()
 -- @usage _m.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)
 -- @usage _m.textadept.snapopen.open(nil, '!%.lua$')
--- @usage _m.textadept.snapopen.open(nil, { folders = { '.hg' } })
+-- @usage _m.textadept.snapopen.open(nil, { folders = { '%.hg' } })
 function open(paths, filter, exclusive)
   if not paths then paths = {} end
   if type(paths) == 'string' then paths = { paths } end
