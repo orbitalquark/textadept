@@ -62,7 +62,7 @@ end
 -- @param depth The current depth of nested folders.
 -- @param filter The filter table.
 local function add_directory(dir, list, depth, filter)
-  local string_match, string_gsub = string.match, string.gsub
+  local string_match, string_gsub, MAX = string.match, string.gsub, MAX
   for file in lfs.dir(dir) do
     if not string_match(file, '^%.%.?$') then
       file = dir..(not WIN32 and '/' or '\\')..file
