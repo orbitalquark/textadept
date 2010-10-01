@@ -11,6 +11,7 @@ module('_m.textadept.snapopen', package.seeall)
 --
 -- * `PATHS`: Table of default paths to search.
 -- * `DEPTH`: Maximum directory depth to search (defaults to 4).
+-- * `MAX`: Maximum number of files to list (defaults to 1000).
 --
 -- ## Examples
 --
@@ -32,6 +33,7 @@ module('_m.textadept.snapopen', package.seeall)
 -- settings
 PATHS = {}
 DEPTH = 4
+MAX = 1000
 -- end settings
 
 local lfs = require 'lfs'
@@ -69,6 +71,7 @@ local function add_directory(dir, list, depth, filter)
           add_directory(file, list, depth + 1, filter)
         end
       elseif not exclude(file, filter) then
+        if #list >= MAX then return end
         list[#list + 1] = string_gsub(file, '^%.[/\\]', '')
       end
     end
@@ -99,6 +102,12 @@ function open(paths, filter, exclusive)
   end
   local list = {}
   for _, path in ipairs(paths) do add_directory(path, list, 1, filter) end
+  if #list >= MAX then
+    gui.dialog('ok-msgbox',
+               '--title', locale.M_SNAPOPEN_LIMIT_EXCEEDED_TITLE,
+               '--informative-text',
+                 string.format(locale.M_SNAPOPEN_LIMIT_EXCEEDED_TEXT, MAX, MAX))
+  end
   local out =
     gui.dialog('filteredlist',
                '--title', locale.IO_OPEN_TITLE,
