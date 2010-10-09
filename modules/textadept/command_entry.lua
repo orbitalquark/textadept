@@ -31,6 +31,7 @@ events.connect('command_entry_command',
     gui.command_entry.focus() -- toggle focus to hide
     setfenv(f, env)
     f()
+    events.emit('update_ui')
   end)
 
 events.connect('command_entry_keypress',
