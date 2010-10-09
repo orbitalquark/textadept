@@ -450,7 +450,7 @@ local actions = {
   [ID.SNAPOPEN_CURRENTDIR] = {
     function()
       if buffer.filename then
-        m_snapopen.open(buffer.filename:match('^.+[/\\]'))
+        m_snapopen.open(buffer.filename:match('^(.+)[/\\]'))
       end
     end
   },
