@@ -15,13 +15,13 @@ module('_m.textadept.snapopen', package.seeall)
 --
 -- ## Examples
 --
---     local snapopen = _m.textadept.snapopen
+--     local snapopen = _m.textadept.snapopen.open
 --
 --     -- Show all files in PATHS.
 --     snapopen()
 --
 --     -- Show all files in the current file's directory.
---     snapopen(buffer.filename:match('^.+[/\\]'), nil, true)
+--     snapopen(buffer.filename:match('^(.+)[/\\]'), nil, true)
 --
 --     -- Show all Lua files in PATHS.
 --     snapopen(nil, '!%.lua$')
