@@ -290,7 +290,7 @@ function select_lexer()
                '--no-newline',
                '--string-output',
                '--columns', 'Name',
-               '--items', unpack(lexers))
+               '--items', lexers)
   local response, lexer = out:match('([^\n]+)\n([^\n]+)$')
   if response and response ~= 'gtk-cancel' then buffer:set_lexer(lexer) end
 end

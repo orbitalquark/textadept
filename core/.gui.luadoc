@@ -79,6 +79,8 @@ function switch_buffer() end
 
 ---
 -- Displays a CocoaDialog of a specified type with the given string arguments.
--- Each argument is like a string in Lua's 'arg' table.
+-- Each argument is like a string in Lua's 'arg' table. Tables of strings are
+-- allowed as arguments and are expanded in place. This is useful for
+-- filteredlist dialogs with many items.
 -- @return string CocoaDialog result.
 function dialog(kind, ...) end
