@@ -115,7 +115,7 @@ function open(paths, filter, exclusive)
                '--button2', 'gtk-cancel',
                '--no-newline',
                '--columns', 'File',
-               '--items', unpack(list))
+               '--items', list)
   local response, index = out:match('^(%d+)[\r\n]+(%d+)')
   if response == '1' then io.open_file(list[tonumber(index) + 1]) end
 end

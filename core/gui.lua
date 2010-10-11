@@ -66,7 +66,7 @@ function gui.switch_buffer()
                '--button2', 'gtk-cancel',
                '--no-newline',
                '--columns', 'Name', 'File',
-               '--items', unpack(items))
+               '--items', items)
   local i = tonumber(out:match('%-?%d+$'))
   if i and i >= 0 then view:goto_buffer(i + 1, true) end
 end
