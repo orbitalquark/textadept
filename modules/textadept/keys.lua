@@ -625,7 +625,15 @@ local function keypress(code, shift, control, alt)
   for i = SCOPES_ENABLED and 1 or 2, #order do
     status = run_key_command(order[i][1] and lexer, order[i][2] and scope)
     if status > 0 then -- CHAIN or HALT
-      if status == HALT then clear_key_sequence() end
+      if status == HALT then
+        -- Clear the key sequence, but keep any status messages from the key
+        -- command itself.
+        keychain = {}
+        if not (gui.statusbar_text == locale.INVALID or
+                gui.statusbar_text:find('^'..locale.KEYCHAIN)) then
+          gui.statusbar_text = ''
+        end
+      end
       return true
     end
     success = success or status ~= -1
