@@ -10,18 +10,18 @@ module('_m.textadept.snapopen', package.seeall)
 -- ## Settings
 --
 -- * `PATHS`: Table of default paths to search.
--- * `DEPTH`: Maximum directory depth to search (defaults to 4).
+-- * `DEFAULT_DEPTH`: Maximum directory depth to search (defaults to 4).
 -- * `MAX`: Maximum number of files to list (defaults to 1000).
 --
 -- ## Examples
 --
---     local snapopen = _m.textadept.snapopen.open
+--     local snapopen = _m.textadept.snapopen
 --
 --     -- Show all files in PATHS.
 --     snapopen()
 --
 --     -- Show all files in the current file's directory.
---     snapopen(buffer.filename:match('^(.+)[/\\]'), nil, true)
+--     snapopen(buffer.filename:match('^.+[/\\]'), nil, true)
 --
 --     -- Show all Lua files in PATHS.
 --     snapopen(nil, '!%.lua$')
@@ -32,11 +32,12 @@ module('_m.textadept.snapopen', package.seeall)
 
 -- settings
 PATHS = {}
-DEPTH = 4
+DEFAULT_DEPTH = 4
 MAX = 1000
 -- end settings
 
 local lfs = require 'lfs'
+local DEPTH = DEFAULT_DEPTH
 
 -- Determines whether or not the given file matches the given filter.
 -- @param file The filename.
@@ -88,11 +89,13 @@ end
 --   a table assigned to a 'folders' key in the filter table.
 -- @param exclusive Flag indicating whether or not to exclude PATHS in the
 --   search. Defaults to false.
+-- @param depth Number of directories to recurse into for finding files.
+--   Defaults to DEFAULT_DEPTH.
 -- @usage _m.textadept.snapopen.open()
 -- @usage _m.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)
 -- @usage _m.textadept.snapopen.open(nil, '!%.lua$')
 -- @usage _m.textadept.snapopen.open(nil, { folders = { '%.hg' } })
-function open(paths, filter, exclusive)
+function open(paths, filter, exclusive, depth)
   if not paths then paths = {} end
   if type(paths) == 'string' then paths = { paths } end
   if not filter then filter = {} end
@@ -100,6 +103,7 @@ function open(paths, filter, exclusive)
   if not exclusive then
     for _, path in ipairs(PATHS) do paths[#paths + 1] = path end
   end
+  DEPTH = depth or DEFAULT_DEPTH
   local list = {}
   for _, path in ipairs(paths) do add_directory(path, list, 1, filter) end
   if #list >= MAX then
