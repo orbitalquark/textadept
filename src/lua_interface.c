@@ -155,9 +155,9 @@ int l_load_script(const char *script_file) {
   if (!retval) {
     const char *errmsg = lua_tostring(lua, -1);
     lua_settop(lua, 0);
-    GtkWidget *dialog =
-      gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
-                             GTK_BUTTONS_OK, "%s\n", errmsg);
+    GtkWidget *dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
+                                               GTK_MESSAGE_ERROR,
+                                               GTK_BUTTONS_OK, "%s\n", errmsg);
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
   }
@@ -871,8 +871,8 @@ static int l_view_mt_index(lua_State *lua) {
   else if (streq(key, "size")) {
     GtkWidget *editor = l_checkview(lua, 1);
     if (GTK_IS_PANED(gtk_widget_get_parent(editor))) {
-      int pos =
-        gtk_paned_get_position(GTK_PANED(gtk_widget_get_parent(editor)));
+      int pos = gtk_paned_get_position(
+                GTK_PANED(gtk_widget_get_parent(editor)));
       lua_pushinteger(lua, pos);
     } else lua_pushnil(lua);
   } else lua_rawget(lua, 1);
@@ -897,8 +897,8 @@ static int l_gui_mt_index(lua_State *lua) {
   else if (streq(key, "focused_doc_pointer"))
     lua_pushinteger(lua, SS(focused_editor, SCI_GETDOCPOINTER, 0, 0));
   else if (streq(key, "clipboard_text")) {
-    char *text =
-      gtk_clipboard_wait_for_text(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
+    char *text = gtk_clipboard_wait_for_text(
+                 gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
     if (text) {
       lua_pushstring(lua, text);
       g_free(text);
@@ -1232,10 +1232,10 @@ static int l_cf_ce_focus(lua_State *lua) {
 
 static int l_cf_ce_show_completions(lua_State *lua) {
   luaL_checktype(lua, 1, LUA_TTABLE);
-  GtkEntryCompletion *completion =
-    gtk_entry_get_completion(GTK_ENTRY(command_entry));
-  GtkListStore *store =
-    GTK_LIST_STORE(gtk_entry_completion_get_model(completion));
+  GtkEntryCompletion *completion = gtk_entry_get_completion(
+                                   GTK_ENTRY(command_entry));
+  GtkListStore *store = GTK_LIST_STORE(
+                        gtk_entry_completion_get_model(completion));
   gtk_list_store_clear(store);
   lua_pushnil(lua);
   while (lua_next(lua, 1)) {

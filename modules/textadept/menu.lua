@@ -345,14 +345,14 @@ local actions = {
   [ID.CLOSE_ALL] = { io.close_all },
   [ID.LOAD_SESSION] = {
     function()
-      local utf8_filename =
-        gui.dialog('fileselect',
-                   '--title', l.MENU_LOAD_SESSION_TITLE,
-                   '--with-directory',
-                     (_SESSIONFILE or ''):match('.+[/\\]') or '',
-                   '--with-file',
-                     (_SESSIONFILE or ''):match('[^/\\]+$') or '',
-                    '--no-newline')
+      local session_file = _SESSIONFILE or ''
+      local utf8_filename = gui.dialog('fileselect',
+                                       '--title', l.MENU_LOAD_SESSION_TITLE,
+                                       '--with-directory',
+                                       session_file:match('.+[/\\]') or '',
+                                       '--with-file',
+                                       session_file:match('[^/\\]+$') or '',
+                                       '--no-newline')
       if #utf8_filename > 0 then
         _m.textadept.session.load(utf8_filename:iconv(_CHARSET, 'UTF-8'))
       end
@@ -360,14 +360,14 @@ local actions = {
   },
   [ID.SAVE_SESSION] = {
     function()
-      local utf8_filename =
-        gui.dialog('filesave',
-                   '--title', l.MENU_SAVE_SESSION_TITLE,
-                   '--with-directory',
-                     (_SESSIONFILE or ''):match('.+[/\\]') or '',
-                   '--with-file',
-                     (_SESSIONFILE or ''):match('[^/\\]+$') or '',
-                   '--no-newline')
+      local session_file = _SESSIONFILE or ''
+      local utf8_filename = gui.dialog('filesave',
+                                       '--title', l.MENU_SAVE_SESSION_TITLE,
+                                       '--with-directory',
+                                       session_file:match('.+[/\\]') or '',
+                                       '--with-file',
+                                       session_file:match('[^/\\]+$') or '',
+                                       '--no-newline')
       if #utf8_filename > 0 then
         _m.textadept.session.save(utf8_filename:iconv(_CHARSET, 'UTF-8'))
       end
@@ -499,8 +499,7 @@ events.connect('menu_clicked',
   function(menu_id)
     local active_table = actions[menu_id]
     if menu_id >= ID.LEXER_START and menu_id < ID.LEXER_START + 99 then
-      active_table =
-        { set_lexer, lexer_menu[menu_id - ID.LEXER_START + 1][1] }
+      active_table = { set_lexer, lexer_menu[menu_id - ID.LEXER_START + 1][1] }
     end
     local f, args
     if active_table and #active_table > 0 then

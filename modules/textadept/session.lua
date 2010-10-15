@@ -91,7 +91,7 @@ function load(filename)
                '--title', locale.M_SESSION_FILES_NOT_FOUND_TITLE,
                '--text', locale.M_SESSION_FILES_NOT_FOUND_TEXT,
                '--informative-text',
-                 string.format('%s', table.concat(not_found, '\n')))
+               string.format('%s', table.concat(not_found, '\n')))
   end
   return true
 end
@@ -117,11 +117,11 @@ function save(filename)
       local current = buffer.doc_pointer == gui.focused_doc_pointer
       local anchor = current and 'anchor' or '_anchor'
       local current_pos = current and 'current_pos' or '_current_pos'
-      local first_visible_line =
-        current and 'first_visible_line' or '_first_visible_line'
-      session[#session + 1] =
-        buffer_line:format(buffer[anchor] or 0, buffer[current_pos] or 0,
-                           buffer[first_visible_line] or 0, filename)
+      local top_line = current and 'first_visible_line' or '_first_visible_line'
+      session[#session + 1] = buffer_line:format(buffer[anchor] or 0,
+                                                 buffer[current_pos] or 0,
+                                                 buffer[top_line] or 0,
+                                                 filename)
     end
   end
   -- Write out split views.
@@ -161,8 +161,7 @@ function save(filename)
   local size = gui.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
   -- Write the session.
-  local f =
-    io.open(filename or _SESSIONFILE or DEFAULT_SESSION, 'wb')
+  local f = io.open(filename or _SESSIONFILE or DEFAULT_SESSION, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
     f:close()
