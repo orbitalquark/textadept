@@ -138,7 +138,7 @@ if not MAC then
   -- Windows and Linux key commands.
 
   --[[
-    C:         D       H I J K   M               U
+    C:         D         I J K   M               U
     A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
     CS:  A B C D     G H I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
@@ -178,6 +178,7 @@ if not MAC then
   keys['c\n\r'] = { m_editing.autocomplete_word, '%w_' } -- win32
   keys.cq     = { m_editing.block_comment            }
   -- TODO: { m_editing.current_word, 'delete' }
+  keys.ch = { m_editing.highlight_word }
   -- TODO: { m_editing.transpose_chars }
   -- TODO: { m_editing.convert_indentation }
   keys.ac = { -- enClose in...
@@ -296,7 +297,7 @@ else
     A:         D E     H   J K L                 U       Y
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
     SA:  A B C D       H I J K L M N O   Q R   T U V   X Y
-    CA:  A   C   E         J K L M N O   Q R S T U V W X Y Z
+    CA:  A   C   E         J K L M N O   Q R S   U V W X Y Z
     CSA: A   C D E     H   J K L M N O P Q R S T U V W X Y Z
   ]]--
 
@@ -331,6 +332,7 @@ else
   keys.esc = { m_editing.autocomplete_word, '%w_' }
   keys.cq  = { m_editing.block_comment            }
   -- TODO: { m_editing.current_word, 'delete' }
+  keys.cat = { m_editing.highlight_word }
   keys.ct = { m_editing.transpose_chars }
   -- TODO: { m_editing.convert_indentation }
   keys.cc = { -- enClose in...

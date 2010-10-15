@@ -22,13 +22,14 @@ module('_m.textadept.editing', package.seeall)
 -- * `SAVE_STRIPS_WS`: Flag indicating whether or not to strip trailing
 --   whitespace on file save.
 -- * `MARK_HIGHLIGHT`: The unique integer mark used to identify a line
---    containing a highlighted word.
+--   containing a highlighted word.
 -- * `MARK_HIGHLIGHT_BACK`: The [Scintilla color][scintilla_color] used for a
---    line containing a highlighted word.
+--   line containing a highlighted word.
 -- * `INDIC_HIGHLIGHT`: The unique integer indicator for highlighted words.
--- * `INDIC_HIGHLIGHT_BACK`: The [Scintilla color][scintilla_color] used for a
---    highlighted word.
--- * `INDIC_HIGHLIGHT_ALPHA`: The transparency used for a highlighted word.
+-- * `INDIC_HIGHLIGHT_BACK`: The [Scintilla color][scintilla_color] used for an
+--   indicator for a highlighted word.
+-- * `INDIC_HIGHLIGHT_ALPHA`: The transparency used for an indicator for a
+--   highlighted word.
 
 -- settings
 AUTOPAIR = true
@@ -503,16 +504,19 @@ function convert_indentation()
   buffer:end_undo_action()
 end
 
--- Clears highlighted words.
+-- Clears highlighted word indicators and markers.
 local function clear_highlighted_words()
   local buffer = buffer
   buffer:marker_delete_all(MARK_HIGHLIGHT)
   buffer.indicator_current = INDIC_HIGHLIGHT
   buffer:indicator_clear_range(0, buffer.length)
 end
+events.connect('keypress',
+  function(c) if c == 0xff1b then clear_highlighted_words() end end) -- Esc
 
 ---
--- Highlights all occurances of the word under the caret.
+-- Highlights all occurances of the word under the caret and adds markers to the
+-- lines they are on.
 function highlight_word()
   clear_highlighted_words()
   local buffer = buffer
@@ -537,10 +541,7 @@ function highlight_word()
   buffer:set_sel(s, e)
 end
 
-events.connect('keypress',
-  function(c) if c == 0xff1b then clear_highlighted_words() end end) -- Esc
-
--- Sets view properties for highlighted words.
+-- Sets view properties for highlighted word indicators and markers.
 local function set_highlight_properties()
   local buffer = buffer
   buffer:marker_set_back(MARK_HIGHLIGHT, MARK_HIGHLIGHT_BACK)
