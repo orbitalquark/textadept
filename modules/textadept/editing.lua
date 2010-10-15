@@ -21,12 +21,25 @@ module('_m.textadept.editing', package.seeall)
 --   previous line.
 -- * `SAVE_STRIPS_WS`: Flag indicating whether or not to strip trailing
 --   whitespace on file save.
+-- * `MARK_HIGHLIGHT`: The unique integer mark used to identify a line
+--    containing a highlighted word.
+-- * `MARK_HIGHLIGHT_BACK`: The [Scintilla color][scintilla_color] used for a
+--    line containing a highlighted word.
+-- * `INDIC_HIGHLIGHT`: The unique integer indicator for highlighted words.
+-- * `INDIC_HIGHLIGHT_BACK`: The [Scintilla color][scintilla_color] used for a
+--    highlighted word.
+-- * `INDIC_HIGHLIGHT_ALPHA`: The transparency used for a highlighted word.
 
 -- settings
 AUTOPAIR = true
 HIGHLIGHT_BRACES = true
 AUTOINDENT = true
 SAVE_STRIPS_WS = true
+MARK_HIGHLIGHT = 2
+MARK_HIGHLIGHT_BACK = 0xEEEEEE
+INDIC_HIGHLIGHT = 8 -- INDIC_CONTAINER
+INDIC_HIGHLIGHT_BACK = 0xC08040
+INDIC_HIGHLIGHT_ALPHA = 40
 -- end settings
 
 ---
@@ -490,18 +503,50 @@ function convert_indentation()
   buffer:end_undo_action()
 end
 
--- Returns the number to the left of the caret.
--- This is used for the enclose function.
--- @see enclose
-get_preceding_number = function()
+-- Clears highlighted words.
+local function clear_highlighted_words()
   local buffer = buffer
-  local caret = buffer.current_pos
-  local char = buffer.char_at[caret - 1]
-  local txt = ''
-  while tonumber(string.char(char)) do
-    txt = txt..string.char(char)
-    caret = caret - 1
-    char = buffer.char_at[caret - 1]
-  end
-  return tonumber(txt) or 1, #txt
+  buffer:marker_delete_all(MARK_HIGHLIGHT)
+  buffer.indicator_current = INDIC_HIGHLIGHT
+  buffer:indicator_clear_range(0, buffer.length)
 end
+
+---
+-- Highlights all occurances of the word under the caret.
+function highlight_word()
+  clear_highlighted_words()
+  local buffer = buffer
+  local s, e = buffer.anchor, buffer.current_pos
+  if s == e then
+    s, e = buffer:word_start_position(s), buffer:word_end_position(s)
+  end
+  local word = buffer:text_range(s, e)
+  if word == '' then return end
+  buffer.search_flags = _SCINTILLA.constants.SCFIND_WHOLEWORD +
+                        _SCINTILLA.constants.SCFIND_MATCHCASE
+  buffer.target_start = 0
+  buffer.target_end = buffer.length
+  while buffer:search_in_target(word) > 0 do
+    local len = buffer.target_end - buffer.target_start
+    buffer:marker_add(buffer:line_from_position(buffer.target_start),
+                      MARK_HIGHLIGHT)
+    buffer:indicator_fill_range(buffer.target_start, len)
+    buffer.target_start = buffer.target_end
+    buffer.target_end = buffer.length
+  end
+  buffer:set_sel(s, e)
+end
+
+events.connect('keypress',
+  function(c) if c == 0xff1b then clear_highlighted_words() end end) -- Esc
+
+-- Sets view properties for highlighted words.
+local function set_highlight_properties()
+  local buffer = buffer
+  buffer:marker_set_back(MARK_HIGHLIGHT, MARK_HIGHLIGHT_BACK)
+  buffer.indic_fore[INDIC_HIGHLIGHT] = INDIC_HIGHLIGHT_BACK
+  buffer.indic_style[INDIC_HIGHLIGHT] = _SCINTILLA.constants.INDIC_ROUNDBOX
+  buffer.indic_alpha[INDIC_HIGHLIGHT] = INDIC_HIGHLIGHT_ALPHA
+end
+if buffer then set_highlight_properties() end
+events.connect('view_new', set_highlight_properties)
