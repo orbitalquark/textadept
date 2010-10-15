@@ -25,6 +25,7 @@
 
 lua_State *lua;
 int closing = FALSE;
+const char *statusbar_text = 0;
 
 static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
            tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
@@ -895,6 +896,8 @@ static int l_gui_mt_index(lua_State *lua) {
     lua_pushstring(lua, gtk_window_get_title(GTK_WINDOW(window)));
   else if (streq(key, "focused_doc_pointer"))
     lua_pushinteger(lua, SS(focused_editor, SCI_GETDOCPOINTER, 0, 0));
+  else if (streq(key, "statusbar_text"))
+    lua_pushstring(lua, statusbar_text);
   else if (streq(key, "clipboard_text")) {
     char *text = gtk_clipboard_wait_for_text(
                  gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
@@ -918,13 +921,14 @@ static int l_gui_mt_newindex(lua_State *lua) {
   const char *key = lua_tostring(lua, 2);
   if (streq(key, "title"))
     gtk_window_set_title(GTK_WINDOW(window), lua_tostring(lua, 3));
-  else if (streq(key, "statusbar_text"))
-    set_statusbar_text(lua_tostring(lua, 3), 0);
-  else if (streq(key, "docstatusbar_text"))
-    set_statusbar_text(lua_tostring(lua, 3), 1);
   else if (streq(key, "focused_doc_pointer") || streq(key, "clipboard_text"))
     luaL_argerror(lua, 3, "read-only property");
-  else if (streq(key, "menubar")) {
+  else if (streq(key, "docstatusbar_text"))
+    set_statusbar_text(lua_tostring(lua, 3), 1);
+  else if (streq(key, "statusbar_text")) {
+    statusbar_text = lua_tostring(lua, 3);
+    set_statusbar_text(statusbar_text, 0);
+  } else if (streq(key, "menubar")) {
     luaL_argcheck(lua, lua_istable(lua, 3), 3, "table of menus expected");
     GtkWidget *menubar = gtk_menu_bar_new();
     lua_pushnil(lua);
