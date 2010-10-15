@@ -19,11 +19,14 @@ module('_m.textadept.editing', package.seeall)
 -- * `AUTOINDENT`: Flag indicating whether or not when the enter key is pressed,
 --   the inserted line has is indented to match the level of indentation of the
 --   previous line.
+-- * `SAVE_STRIPS_WS`: Flag indicating whether or not to strip trailing
+--   whitespace on file save.
 
 -- settings
 AUTOPAIR = true
 HIGHLIGHT_BRACES = true
 AUTOINDENT = true
+SAVE_STRIPS_WS = true
 -- end settings
 
 ---
@@ -96,8 +99,9 @@ events.connect('keypress',
 events.connect('update_ui',
   function() -- highlights matching braces
     local buffer = buffer
+    if not HIGHLIGHT_BRACES then return end
     local current_pos = buffer.current_pos
-    if HIGHLIGHT_BRACES and braces[buffer.char_at[current_pos]] and
+    if braces[buffer.char_at[current_pos]] and
       buffer:get_style_name(buffer.style_at[current_pos]) == 'operator' then
       local pos = buffer:brace_match(current_pos)
       if pos ~= -1 then
@@ -245,6 +249,7 @@ end
 -- converts non-consistent EOLs.
 function prepare_for_save()
   local buffer = buffer
+  if not SAVE_STRIPS_WS then return end
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
   local lines = buffer.line_count
@@ -273,20 +278,6 @@ function prepare_for_save()
   buffer:end_undo_action()
 end
 events.connect('file_before_save', prepare_for_save)
-
----
--- Cuts or copies text ranges intelligently. (Behaves like Emacs.)
--- If no text is selected, all text from the cursor to the end of the line is
--- cut or copied as indicated by action. If there is text selected, it is cut or
--- copied.
--- @param copy If false, the text is cut. Otherwise it is copied.
-function smart_cutcopy(copy)
-  local buffer = buffer
-  local txt = buffer:get_sel_text()
-  if #txt == 0 then buffer:line_end_extend() end
-  txt = buffer:get_sel_text()
-  if copy then buffer:copy() else buffer:cut() end
-end
 
 ---
 -- Selects the current word under the caret and if action indicates, deletes it.
@@ -322,30 +313,14 @@ function transpose_chars()
 end
 
 ---
--- Reduces multiple characters occurances to just one.
--- If char is not given, the character to be squeezed is the one behind the
--- caret.
--- @param char The character (integer) to be used for squeezing.
-function squeeze(char)
-  local buffer = buffer
-  if not char then char = buffer.char_at[buffer.current_pos - 1] end
-  local s, e = buffer.current_pos - 1, buffer.current_pos - 1
-  while buffer.char_at[s] == char do s = s - 1 end
-  while buffer.char_at[e] == char do e = e + 1 end
-  buffer:set_sel(s + 1, e)
-  buffer:replace_sel(string.char(char))
-end
-
----
 -- Joins the current line with the line below, eliminating whitespace.
 function join_lines()
   local buffer = buffer
-  buffer:begin_undo_action()
   buffer:line_end()
-  buffer:clear()
-  buffer:add_text(' ')
-  squeeze()
-  buffer:end_undo_action()
+  local line = buffer:line_from_position(buffer.current_pos)
+  buffer.target_start = buffer.current_pos
+  buffer.target_end = buffer:position_from_line(line + 1)
+  buffer:lines_join()
 end
 
 ---
@@ -454,7 +429,7 @@ function select_indented_block()
     if buffer.line_indentation[s - 1] == indent and
       buffer.line_indentation[e + 1] == indent then
       s, e = s - 1, e + 1
-      indent = indent + buffer.indent -- don't run while loops
+      indent = indent + buffer.indent -- do not run while loops
     end
   end
   while buffer.line_indentation[s - 1] > indent do s = s - 1 end

@@ -179,10 +179,7 @@ if not MAC then
   keys.cq     = { m_editing.block_comment            }
   -- TODO: { m_editing.current_word, 'delete' }
   -- TODO: { m_editing.transpose_chars }
-  -- TODO: { m_editing.squeeze }
   -- TODO: { m_editing.convert_indentation }
-  -- TODO: { m_editing.smart_cutcopy }
-  -- TODO: { m_editing.smart_cutcopy, 'copy' }
   keys.ac = { -- enClose in...
     t     = { m_editing.enclose, 'tag'        },
     T     = { m_editing.enclose, 'single_tag' },
@@ -335,11 +332,7 @@ else
   keys.cq  = { m_editing.block_comment            }
   -- TODO: { m_editing.current_word, 'delete' }
   keys.ct = { m_editing.transpose_chars }
-  -- TODO: { m_editing.squeeze }
   -- TODO: { m_editing.convert_indentation }
-  keys.ck = { m_editing.smart_cutcopy }
-  -- TODO: { m_editing.smart_cutcopy, 'copy' }
-  keys.cy = { 'paste', b }
   keys.cc = { -- enClose in...
     t     = { m_editing.enclose, 'tag'        },
     T     = { m_editing.enclose, 'single_tag' },
@@ -474,6 +467,13 @@ else
   keys.cah = { 'del_word_left',     b }
   keys.cd  = { 'clear',             b }
   keys.cad = { 'del_word_right',    b }
+  keys.ck = {
+    function()
+      buffer:line_end_extend()
+      buffer:cut()
+    end
+  }
+  keys.cy = { 'paste', b }
 end
 
 ---
