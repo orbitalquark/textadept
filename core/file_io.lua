@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 local events = _G.events
 
 ---
@@ -148,7 +148,7 @@ local function open_helper(utf8_filename)
             break
           end
         end
-        if not encoding then error(locale.IO_ICONV_ERROR) end
+        if not encoding then error(L('Encoding conversion failed.')) end
       end
     else
       encoding = nil
@@ -190,7 +190,7 @@ end
 function open_file(utf8_filenames)
   utf8_filenames = utf8_filenames or
                    gui.dialog('fileselect',
-                              '--title', locale.IO_OPEN_TITLE,
+                              '--title', L('Open'),
                               '--select-multiple',
                               '--with-directory',
                               (buffer.filename or ''):match('.+[/\\]') or '')
@@ -264,7 +264,7 @@ local function save_as(buffer, utf8_filename)
   gui.check_focused_buffer(buffer)
   if not utf8_filename then
     utf8_filename = gui.dialog('filesave',
-                               '--title', locale.IO_SAVE_TITLE,
+                               '--title', L('Save'),
                                '--with-directory',
                                (buffer.filename or ''):match('.+[/\\]') or '',
                                '--with-file',
@@ -297,13 +297,13 @@ local function close(buffer)
   gui.check_focused_buffer(buffer)
   if buffer.dirty and
      gui.dialog('msgbox',
-                '--title', locale.IO_CLOSE_TITLE,
-                '--text', locale.IO_CLOSE_TEXT,
+                '--title', L('Close without saving?'),
+                '--text', L('There are unsaved changes in'),
                 '--informative-text',
                 string.format('%s', (buffer.filename or
-                              buffer._type or locale.UNTITLED)),
+                              buffer._type or L('Untitled'))),
                 '--button1', 'gtk-cancel',
-                '--button2', locale.IO_CLOSE_BUTTON2,
+                '--button2', L('Close _without saving'),
                 '--no-newline') ~= '2' then
     return false
   end
@@ -336,10 +336,11 @@ local function update_modified_file()
   if not attributes then return end
   if buffer.modification_time < attributes.modification then
     if gui.dialog('yesno-msgbox',
-                  '--title', locale.IO_RELOAD_TITLE,
-                  '--text', locale.IO_RELOAD_TEXT,
+                  '--title', L('Reload?'),
+                  '--text', L('Reload modified file?'),
                   '--informative-text',
-                  string.format(locale.IO_RELOAD_MSG, utf8_filename),
+                  string.format('"%s"\n%s', utf8_filename,
+                                L('has been modified. Reload it?')),
                   '--no-cancel',
                   '--no-newline') == '1' then
       buffer:reload()

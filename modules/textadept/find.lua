@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 local events = _G.events
 local find = gui.find
 
@@ -75,7 +75,7 @@ local function find_(text, next, flags, nowrap, wrapped)
 
   else -- find in files
     local utf8_dir = gui.dialog('fileselect',
-                                '--title', locale.FIND_IN_FILES_TITLE,
+                                '--title', L('Find in Files'),
                                 '--select-only-directories',
                                 '--with-directory',
                                 (buffer.filename or ''):match('^.+[/\\]') or '',
@@ -116,12 +116,10 @@ local function find_(text, next, flags, nowrap, wrapped)
       end
       local dir = utf8_dir:iconv(_CHARSET, 'UTF-8')
       search_dir(dir)
-      if #matches == 1 then matches[2] = locale.FIND_NO_RESULTS end
+      if #matches == 1 then matches[2] = L('No results found') end
       matches[#matches + 1] = ''
-      if buffer._type ~= locale.FIND_FILES_FOUND_BUFFER then
-        previous_view = view
-      end
-      gui._print(locale.FIND_FILES_FOUND_BUFFER, table.concat(matches, '\n'))
+      if buffer._type ~= L('[Files Found Buffer]') then previous_view = view end
+      gui._print(L('[Files Found Buffer]'), table.concat(matches, '\n'))
     end
     return
   end
@@ -133,10 +131,10 @@ local function find_(text, next, flags, nowrap, wrapped)
     else
       buffer:goto_pos(buffer.length)
     end
-    gui.statusbar_text = locale.FIND_SEARCH_WRAPPED
+    gui.statusbar_text = L('Search wrapped')
     result = find_(text, next, flags, true, true)
     if result == -1 then
-      gui.statusbar_text = locale.FIND_NO_RESULTS
+      gui.statusbar_text = L('No results found')
       buffer:line_scroll(0, first_visible_line)
       buffer:goto_pos(anchor)
     end
@@ -219,8 +217,8 @@ local function replace(rtext)
       local ret, val = pcall(loadstring('return '..code))
       if not ret then
         gui.dialog('ok-msgbox',
-                   '--title', locale.FIND_ERROR_DIALOG_TITLE,
-                   '--text', locale.FIND_ERROR_DIALOG_TEXT,
+                   '--title', L('Error'),
+                   '--text', L('An error occured:'),
                    '--informative-text', val:gsub('"', '\\"'),
                    '--no-cancel')
         error()
@@ -269,7 +267,7 @@ local function replace_all(ftext, rtext, flags)
     local pos = find_(ftext, true, flags, true)
     while pos ~= -1 and
           pos < buffer:position_from_line(
-            buffer:marker_line_from_handle(end_marker)) do
+                       buffer:marker_line_from_handle(end_marker)) do
       replace(rtext)
       count = count + 1
       pos = find_(ftext, true, flags, true)
@@ -281,8 +279,8 @@ local function replace_all(ftext, rtext, flags)
     buffer:set_sel(anchor, current_pos)
     buffer:marker_delete_handle(end_marker)
   end
-  gui.statusbar_text = string.format(locale.FIND_REPLACEMENTS_MADE,
-                                     tostring(count))
+  gui.statusbar_text = string.format("%d %s", tostring(count),
+                                     L('replacement(s) made'))
   buffer:end_undo_action()
 end
 events.connect('replace_all', replace_all)
@@ -292,7 +290,7 @@ events.connect('replace_all', replace_all)
 -- @param pos The position of the caret.
 -- @param line_num The line double-clicked.
 local function goto_file(pos, line_num)
-  if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
+  if buffer._type == L('[Files Found Buffer]') then
     line = buffer:get_line(line_num)
     local file, file_line_num = line:match('^(.+):(%d+):.+$')
     if file and file_line_num then
@@ -305,7 +303,7 @@ local function goto_file(pos, line_num)
       else
         local clicked_view = view
         if previous_view then previous_view:focus() end
-        if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
+        if buffer._type == L('[Files Found Buffer]') then
           -- there are at least two find in files views; find one of those views
           -- that the file was not selected from and focus it
           for _, v in ipairs(_VIEWS) do
@@ -329,7 +327,7 @@ events.connect('double_click', goto_file)
 function find.goto_file_in_list(next)
   local orig_view = view
   for _, buffer in ipairs(_BUFFERS) do
-    if buffer._type == locale.FIND_FILES_FOUND_BUFFER then
+    if buffer._type == L('[Files Found Buffer]') then
       for _, view in ipairs(_VIEWS) do
         if view.doc_pointer == buffer.doc_pointer then
           view:focus()

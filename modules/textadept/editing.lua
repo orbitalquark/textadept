@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 local events = _G.events
 
 ---
@@ -141,9 +141,6 @@ events.connect('char_added',
     end
   end)
 
--- local functions
-local get_preceding_number
-
 ---
 -- Goes to a matching brace position, selecting the text inside if specified.
 -- @param select If true, selects the text between matching braces.
@@ -233,8 +230,8 @@ function goto_line(line)
   local buffer = buffer
   if not line then
     line = gui.dialog('standard-inputbox',
-                      '--title', locale.M_TEXTADEPT_EDITING_GOTO_TITLE,
-                      '--text', locale.M_TEXTADEPT_EDITING_GOTO_TEXT,
+                      '--title', L('Go To'),
+                      '--text', L('Line Number:'),
                       '--no-newline')
     line = tonumber(line:match('%-?%d+$'))
     if not line or line < 0 then return end
@@ -321,6 +318,22 @@ function join_lines()
   buffer.target_start = buffer.current_pos
   buffer.target_end = buffer:position_from_line(line + 1)
   buffer:lines_join()
+end
+
+-- Returns the number to the left of the caret.
+-- This is used for the enclose function.
+-- @see enclose
+local function get_preceding_number()
+  local buffer = buffer
+  local caret = buffer.current_pos
+  local char = buffer.char_at[caret - 1]
+  local txt = ''
+  while tonumber(string.char(char)) do
+    txt = txt..string.char(char)
+    caret = caret - 1
+    char = buffer.char_at[caret - 1]
+  end
+  return tonumber(txt) or 1, #txt
 end
 
 ---

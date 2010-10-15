@@ -1,13 +1,14 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local L = _G.locale.localize
 local gui = _G.gui
 
 -- LuaDoc is in core/.gui.lua.
 function gui.check_focused_buffer(buffer)
   if type(buffer) ~= 'table' or not buffer.doc_pointer then
-    error(locale.ERR_BUFFER_EXPECTED, 2)
+    error(L('Buffer argument expected.'), 2)
   elseif gui.focused_doc_pointer ~= buffer.doc_pointer then
-    error(locale.ERR_BUFFER_NOT_FOCUSED, 2)
+    error(L('The indexed buffer is not the focused one.'), 2)
   end
 end
 
@@ -48,19 +49,19 @@ function gui._print(buffer_type, ...)
 end
 
 -- LuaDoc is in core/.gui.lua.
-function gui.print(...) gui._print(locale.MESSAGE_BUFFER, ...) end
+function gui.print(...) gui._print(L('[Message Buffer]'), ...) end
 
 -- LuaDoc is in core/.gui.lua.
 function gui.switch_buffer()
   local items = {}
   for _, buffer in ipairs(_BUFFERS) do
-    local filename = buffer.filename or buffer._type or locale.UNTITLED
+    local filename = buffer.filename or buffer._type or L('Untitled')
     local dirty = buffer.dirty and '*' or ''
     items[#items + 1] = dirty..filename:match('[^/\\]+$')
     items[#items + 1] = filename
   end
   local response = gui.dialog('filteredlist',
-                              '--title', locale.SWITCH_BUFFERS,
+                              '--title', L('Switch Buffers'),
                               '--button1', 'gtk-ok',
                               '--button2', 'gtk-cancel',
                               '--no-newline',

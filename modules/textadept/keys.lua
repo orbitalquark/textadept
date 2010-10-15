@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 local events = _G.events
 
 ---
@@ -553,7 +553,7 @@ local function run_key_command(lexer, scope)
     if type(key) ~= 'table' then return INVALID end
   end
   if #key == 0 and next(key) then
-    gui.statusbar_text = locale.KEYCHAIN..table.concat(keychain, ' ')
+    gui.statusbar_text = L('Keychain:')..' '..table.concat(keychain, ' ')
     return CHAIN
   end
 
@@ -567,7 +567,7 @@ local function run_key_command(lexer, scope)
   end
 
   if type(f) ~= 'function' then
-    error(locale.KEYS_UNKNOWN_COMMAND..tostring(f))
+    error(L('Unknown command:')..tostring(f))
   end
   return f(unpack(args)) == false and PROPAGATE or HALT
 end
@@ -629,8 +629,8 @@ local function keypress(code, shift, control, alt)
         -- Clear the key sequence, but keep any status messages from the key
         -- command itself.
         keychain = {}
-        if not (gui.statusbar_text == locale.INVALID or
-                gui.statusbar_text:find('^'..locale.KEYCHAIN)) then
+        if not (gui.statusbar_text == L('Invalid sequence') or
+                gui.statusbar_text:find('^'..L('Keychain:'))) then
           gui.statusbar_text = ''
         end
       end
@@ -641,7 +641,7 @@ local function keypress(code, shift, control, alt)
   local size = #keychain - 1
   clear_key_sequence()
   if not success and size > 0 then -- INVALID keychain sequence
-    gui.statusbar_text = locale.KEYS_INVALID
+    gui.statusbar_text = L('Invalid sequence')
     return true
   end
   -- PROPAGATE otherwise.
