@@ -296,9 +296,8 @@ local function set_title(buffer)
   local buffer = buffer
   local filename = buffer.filename or buffer._type or locale.UNTITLED
   local dirty = buffer.dirty and '*' or '-'
-  gui.title =
-    string.format('%s %s Textadept (%s)', filename:match('[^/\\]+$'), dirty,
-                  filename)
+  gui.title = string.format('%s %s Textadept (%s)', filename:match('[^/\\]+$'),
+                            dirty, filename)
 end
 
 connect('save_point_reached',
@@ -350,8 +349,9 @@ connect('update_ui',
     local tabs = (buffer.use_tabs and locale.STATUS_TABS or
       locale.STATUS_SPACES)..buffer.indent
     local enc = buffer.encoding or ''
-    gui.docstatusbar_text =
-      locale.DOCSTATUSBAR_TEXT:format(line, max, col, lexer, eol, tabs, enc)
+    gui.docstatusbar_text = locale.DOCSTATUSBAR_TEXT:format(line, max, col,
+                                                            lexer, eol, tabs,
+                                                            enc)
   end)
 
 connect('margin_click',
@@ -424,7 +424,7 @@ connect('quit',
                   '--title', locale.EVENTS_QUIT_TITLE,
                   '--text', locale.EVENTS_QUIT_TEXT,
                   '--informative-text',
-                    string.format('%s', table.concat(list, '\n')),
+                  string.format('%s', table.concat(list, '\n')),
                   '--button1', 'gtk-cancel',
                   '--button2', locale.EVENTS_QUIT_BUTTON2,
                   '--no-newline') ~= '2' then

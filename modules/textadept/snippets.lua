@@ -163,9 +163,8 @@ local function unescape(s) return s:gsub('%%([%%`%)|#])', '%1') end
 local function snippet_info()
   local buffer = buffer
   local s = snippet.start_pos
-  local e =
-    buffer:position_from_line(
-      buffer:marker_line_from_handle(snippet.end_marker)) - 1
+  local e = buffer:position_from_line(
+                   buffer:marker_line_from_handle(snippet.end_marker)) - 1
   if e >= s then return s, e, buffer:text_range(s, e) end
 end
 
@@ -174,8 +173,8 @@ end
 -- @return string result from the code run.
 local function run_lua_code(code)
   code = unhandle_escapes(code)
-  local env =
-    setmetatable({ selected_text = buffer:get_sel_text() }, { __index = _G })
+  local env = setmetatable({ selected_text = buffer:get_sel_text() },
+                           { __index = _G })
   local _, val = pcall(setfenv(loadstring('return '..code), env))
   return val or ''
 end
@@ -201,29 +200,29 @@ local function next_tab_stop()
     local ph_text = buffer:text_range(snippet.ph_pos, caret)
 
     -- Transform mirror.
-    s_text =
-      s_text:gsub('%%'..index..'(%b())',
-        function(mirror)
-          local pattern, replacement = mirror:match('^%(([^|]+)|(.+)%)$')
-          if not pattern and not replacement then return ph_text end
-          return ph_text:gsub(unhandle_escapes(pattern),
-            function(...)
-              local arg = {...}
-              local repl = replacement:gsub('%%(%d+)',
-                function(i) return arg[tonumber(i)] or '' end)
-              return repl:gsub('#(%b())', run_lua_code)
-            end, 1)
-        end)
+    local function transform_mirror(mirror)
+      local pattern, replacement = mirror:match('^%(([^|]+)|(.+)%)$')
+      if not pattern and not replacement then return ph_text end
+      return ph_text:gsub(unhandle_escapes(pattern),
+                          function(...)
+                            local arg = {...}
+                            local repl = replacement:gsub('%%(%d+)',
+                              function(i) return arg[tonumber(i)] or '' end)
+                            return repl:gsub('#(%b())', run_lua_code)
+                          end, 1)
+    end
+    s_text = s_text:gsub('%%'..index..'(%b())', transform_mirror)
 
     -- Regular mirror.
     s_text = s_text:gsub('()%%'..index,
-      function(pos)
-        for mirror, e in s_text:gmatch('%%%d+(%b())()') do
-          local s = mirror:find('|')
-          if s and pos > s and pos < e then return nil end -- inside transform
-        end
-        return ph_text
-      end)
+                         function(pos)
+                           for mirror, e in s_text:gmatch('%%%d+(%b())()') do
+                             local s = mirror:find('|')
+                             -- If inside transform, do not do anything.
+                             if s and pos > s and pos < e then return nil end
+                           end
+                           return ph_text
+                         end)
 
     buffer:set_sel(s_start, s_end)
     buffer:replace_sel(s_text)
@@ -344,14 +343,13 @@ function _insert(s_text)
 
     -- Execute Lua and shell code.
     s_text = s_text:gsub('%%(%b())', run_lua_code)
-    s_text =
-      s_text:gsub('`([^`]+)`',
-        function(code)
-          local p = io.popen(code)
-          local out = p:read('*all'):sub(1, -2)
-          p:close()
-          return out
-        end)
+    s_text = s_text:gsub('`([^`]+)`',
+                         function(code)
+                           local p = io.popen(code)
+                           local out = p:read('*all'):sub(1, -2)
+                           p:close()
+                           return out
+                         end)
 
     -- Initialize the new snippet. If one is running, push it onto the stack.
     if snippet.index then snippet_stack[#snippet_stack + 1] = snippet end
@@ -464,9 +462,8 @@ function _show_style()
   local lexer = buffer:get_lexer()
   local style_num = buffer.style_at[buffer.current_pos]
   local style = buffer:get_style_name(style_num)
-  local text =
-    string.format(locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer, style,
-                  style_num)
+  local text = string.format(locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer,
+                             style, style_num)
   buffer:call_tip_show(buffer.current_pos, text)
 end
 

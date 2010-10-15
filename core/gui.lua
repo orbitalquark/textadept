@@ -59,14 +59,13 @@ function gui.switch_buffer()
     items[#items + 1] = dirty..filename:match('[^/\\]+$')
     items[#items + 1] = filename
   end
-  local response =
-    gui.dialog('filteredlist',
-               '--title', locale.SWITCH_BUFFERS,
-               '--button1', 'gtk-ok',
-               '--button2', 'gtk-cancel',
-               '--no-newline',
-               '--columns', 'Name', 'File',
-               '--items', items)
+  local response = gui.dialog('filteredlist',
+                              '--title', locale.SWITCH_BUFFERS,
+                              '--button1', 'gtk-ok',
+                              '--button2', 'gtk-cancel',
+                              '--no-newline',
+                              '--columns', 'Name', 'File',
+                              '--items', items)
   local ok, i = response:match('(%-?%d+)\n(%d+)$')
   if ok and ok ~= '2' then view:goto_buffer(tonumber(i) + 1, true) end
 end

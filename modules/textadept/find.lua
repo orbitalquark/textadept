@@ -74,13 +74,12 @@ local function find_(text, next, flags, nowrap, wrapped)
     end
 
   else -- find in files
-    local utf8_dir =
-      gui.dialog('fileselect',
-                 '--title', locale.FIND_IN_FILES_TITLE,
-                 '--select-only-directories',
-                 '--with-directory',
-                   (buffer.filename or ''):match('^.+[/\\]') or '',
-                 '--no-newline')
+    local utf8_dir = gui.dialog('fileselect',
+                                '--title', locale.FIND_IN_FILES_TITLE,
+                                '--select-only-directories',
+                                '--with-directory',
+                                (buffer.filename or ''):match('^.+[/\\]') or '',
+                                '--no-newline')
     if #utf8_dir > 0 then
       if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
       if not find.match_case then text = text:lower() end
@@ -264,8 +263,8 @@ local function replace_all(ftext, rtext, flags)
     local s, e = anchor, current_pos
     if s > e then s, e = e, s end
     buffer:insert_text(e, '\n')
-    local end_marker =
-      buffer:marker_add(buffer:line_from_position(e + 1), MARK_FIND)
+    local end_marker = buffer:marker_add(buffer:line_from_position(e + 1),
+                                         MARK_FIND)
     buffer:goto_pos(s)
     local pos = find_(ftext, true, flags, true)
     while pos ~= -1 and
@@ -282,8 +281,8 @@ local function replace_all(ftext, rtext, flags)
     buffer:set_sel(anchor, current_pos)
     buffer:marker_delete_handle(end_marker)
   end
-  gui.statusbar_text =
-    string.format(locale.FIND_REPLACEMENTS_MADE, tostring(count))
+  gui.statusbar_text = string.format(locale.FIND_REPLACEMENTS_MADE,
+                                     tostring(count))
   buffer:end_undo_action()
 end
 events.connect('replace_all', replace_all)

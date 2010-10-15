@@ -120,8 +120,8 @@ void create_ui() {
   GList *icon_list = NULL;
   const char *icons[] = { "16x16", "32x32", "48x48", "64x64", "128x128" };
   for (int i = 0; i < 5; i++) {
-    char *icon_file =
-      g_strconcat(textadept_home, "/core/images/ta_", icons[i], ".png", NULL);
+    char *icon_file = g_strconcat(textadept_home, "/core/images/ta_", icons[i],
+                                  ".png", NULL);
     GdkPixbuf *pb = gdk_pixbuf_new_from_file(icon_file, NULL);
     if (pb) icon_list = g_list_prepend(icon_list, pb);
     g_free(icon_file);
@@ -289,8 +289,8 @@ void split_window(GtkWidget *editor, int vertical) {
   int first_line = SS(editor, SCI_GETFIRSTVISIBLELINE, 0, 0);
   int current_pos = SS(editor, SCI_GETCURRENTPOS, 0, 0);
   int anchor = SS(editor, SCI_GETANCHOR, 0, 0);
-  int middle =
-    (vertical ? editor->allocation.width : editor->allocation.height) / 2;
+  int middle = (vertical ? editor->allocation.width
+                         : editor->allocation.height) / 2;
 
   sptr_t curdoc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
   GtkWidget *neweditor = new_scintilla_window(curdoc);
@@ -547,15 +547,15 @@ GtkWidget *find_create_ui() {
 
   GtkWidget *flabel = gtk_label_new_with_mnemonic("_Find:");
   GtkWidget *rlabel = gtk_label_new_with_mnemonic("R_eplace:");
-  GtkWidget *find_combo =
-    gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(find_store), 0);
+  GtkWidget *find_combo = gtk_combo_box_entry_new_with_model(
+                          GTK_TREE_MODEL(find_store), 0);
   g_object_unref(find_store);
   gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(find_combo), FALSE);
   find_entry = gtk_bin_get_child(GTK_BIN(find_combo));
   gtk_widget_set_name(find_entry, "textadept-find-entry");
   gtk_entry_set_activates_default(GTK_ENTRY(find_entry), TRUE);
-  GtkWidget *replace_combo =
-    gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(repl_store), 0);
+  GtkWidget *replace_combo = gtk_combo_box_entry_new_with_model(
+                             GTK_TREE_MODEL(repl_store), 0);
   g_object_unref(repl_store);
   gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(replace_combo), FALSE);
   replace_entry = gtk_bin_get_child(GTK_BIN(replace_combo));

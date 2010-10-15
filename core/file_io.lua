@@ -188,13 +188,12 @@ end
 --   must be encoded in UTF-8.
 -- @usage io.open_file(utf8_encoded_filename)
 function open_file(utf8_filenames)
-  utf8_filenames =
-    utf8_filenames or
-      gui.dialog('fileselect',
-                 '--title', locale.IO_OPEN_TITLE,
-                 '--select-multiple',
-                 '--with-directory',
-                   (buffer.filename or ''):match('.+[/\\]') or '')
+  utf8_filenames = utf8_filenames or
+                   gui.dialog('fileselect',
+                              '--title', locale.IO_OPEN_TITLE,
+                              '--select-multiple',
+                              '--with-directory',
+                              (buffer.filename or ''):match('.+[/\\]') or '')
   for filename in utf8_filenames:gmatch('[^\n]+') do open_helper(filename) end
 end
 
@@ -264,14 +263,13 @@ end
 local function save_as(buffer, utf8_filename)
   gui.check_focused_buffer(buffer)
   if not utf8_filename then
-    utf8_filename =
-      gui.dialog('filesave',
-                 '--title', locale.IO_SAVE_TITLE,
-                 '--with-directory',
-                   (buffer.filename or ''):match('.+[/\\]') or '',
-                 '--with-file',
-                   (buffer.filename or ''):match('[^/\\]+$') or '',
-                 '--no-newline')
+    utf8_filename = gui.dialog('filesave',
+                               '--title', locale.IO_SAVE_TITLE,
+                               '--with-directory',
+                               (buffer.filename or ''):match('.+[/\\]') or '',
+                               '--with-file',
+                               (buffer.filename or ''):match('[^/\\]+$') or '',
+                               '--no-newline')
   end
   if #utf8_filename > 0 then
     buffer.filename = utf8_filename
@@ -302,8 +300,8 @@ local function close(buffer)
                 '--title', locale.IO_CLOSE_TITLE,
                 '--text', locale.IO_CLOSE_TEXT,
                 '--informative-text',
-                  string.format('%s', (buffer.filename or
-                                buffer._type or locale.UNTITLED)),
+                string.format('%s', (buffer.filename or
+                              buffer._type or locale.UNTITLED)),
                 '--button1', 'gtk-cancel',
                 '--button2', locale.IO_CLOSE_BUTTON2,
                 '--no-newline') ~= '2' then
@@ -341,7 +339,7 @@ local function update_modified_file()
                   '--title', locale.IO_RELOAD_TITLE,
                   '--text', locale.IO_RELOAD_TEXT,
                   '--informative-text',
-                    string.format(locale.IO_RELOAD_MSG, utf8_filename),
+                  string.format(locale.IO_RELOAD_MSG, utf8_filename),
                   '--no-cancel',
                   '--no-newline') == '1' then
       buffer:reload()

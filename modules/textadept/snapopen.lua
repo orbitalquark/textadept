@@ -15,13 +15,13 @@ module('_m.textadept.snapopen', package.seeall)
 --
 -- ## Examples
 --
---     local snapopen = _m.textadept.snapopen
+--     local snapopen = _m.textadept.snapopen.open
 --
 --     -- Show all files in PATHS.
 --     snapopen()
 --
 --     -- Show all files in the current file's directory.
---     snapopen(buffer.filename:match('^.+[/\\]'), nil, true)
+--     snapopen(buffer.filename:match('^(.+)[/\\]'), nil, true)
 --
 --     -- Show all Lua files in PATHS.
 --     snapopen(nil, '!%.lua$')
@@ -110,16 +110,15 @@ function open(paths, filter, exclusive, depth)
     gui.dialog('ok-msgbox',
                '--title', locale.M_SNAPOPEN_LIMIT_EXCEEDED_TITLE,
                '--informative-text',
-                 string.format(locale.M_SNAPOPEN_LIMIT_EXCEEDED_TEXT, MAX, MAX))
+               string.format(locale.M_SNAPOPEN_LIMIT_EXCEEDED_TEXT, MAX, MAX))
   end
-  local out =
-    gui.dialog('filteredlist',
-               '--title', locale.IO_OPEN_TITLE,
-               '--button1', 'gtk-ok',
-               '--button2', 'gtk-cancel',
-               '--no-newline',
-               '--columns', 'File',
-               '--items', list)
+  local out = gui.dialog('filteredlist',
+                         '--title', locale.IO_OPEN_TITLE,
+                         '--button1', 'gtk-ok',
+                         '--button2', 'gtk-cancel',
+                         '--no-newline',
+                         '--columns', 'File',
+                         '--items', list)
   local response, index = out:match('^(%d+)[\r\n]+(%d+)')
   if response == '1' then io.open_file(list[tonumber(index) + 1]) end
 end
