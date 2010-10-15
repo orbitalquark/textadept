@@ -39,7 +39,6 @@ local ID = {
   COMPLETE_WORD = 210,
   DELETE_WORD = 211,
   TRANSPOSE_CHARACTERS = 212,
-  SQUEEZE = 213,
   JOIN_LINES = 245,
   CONVERT_INDENTATION = 216,
   ENCLOSE_IN_HTML_TAGS = 224,
@@ -164,7 +163,6 @@ local menubar = {
     { l.MENU_EDIT_COMPLETE_WORD, ID.COMPLETE_WORD },
     { l.MENU_EDIT_DELETE_WORD, ID.DELETE_WORD },
     { l.MENU_EDIT_TRANSPOSE_CHARACTERS, ID.TRANSPOSE_CHARACTERS },
-    { l.MENU_EDIT_SQUEEZE, ID.SQUEEZE },
     { l.MENU_EDIT_JOIN_LINES, ID.JOIN_LINES },
     { l.MENU_EDIT_CONVERT_INDENTATION, ID.CONVERT_INDENTATION },
     { title = l.MENU_EDIT_SEL_TITLE,
@@ -387,7 +385,6 @@ local actions = {
   [ID.COMPLETE_WORD] = { m_editing.autocomplete_word, '%w_' },
   [ID.DELETE_WORD] = { m_editing.current_word, 'delete' },
   [ID.TRANSPOSE_CHARACTERS] = { m_editing.transpose_chars },
-  [ID.SQUEEZE] = { m_editing.squeeze },
   [ID.JOIN_LINES] = { m_editing.join_lines },
   [ID.CONVERT_INDENTATION] = { m_editing.convert_indentation },
   -- Edit -> Selection -> Enclose in...
