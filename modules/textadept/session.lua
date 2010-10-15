@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 
 ---
 -- Session support for the textadept module.
@@ -88,8 +88,8 @@ function load(filename)
   _SESSIONFILE = filename or DEFAULT_SESSION
   if #not_found > 0 then
     gui.dialog('msgbox',
-               '--title', locale.M_SESSION_FILES_NOT_FOUND_TITLE,
-               '--text', locale.M_SESSION_FILES_NOT_FOUND_TEXT,
+               '--title', L('Session Files Not Found'),
+               '--text', L('The following session files were not found'),
                '--informative-text',
                string.format('%s', table.concat(not_found, '\n')))
   end

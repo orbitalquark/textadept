@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 
 ---
 -- Textadept's core event structure and handlers.
@@ -294,7 +294,7 @@ connect('buffer_new',
 -- @param buffer The currently focused buffer.
 local function set_title(buffer)
   local buffer = buffer
-  local filename = buffer.filename or buffer._type or locale.UNTITLED
+  local filename = buffer.filename or buffer._type or L('Untitled')
   local dirty = buffer.dirty and '*' or '-'
   gui.title = string.format('%s %s Textadept (%s)', filename:match('[^/\\]+$'),
                             dirty, filename)
@@ -332,11 +332,8 @@ connect('uri_dropped',
     end
   end)
 
-local EOLs = {
-  locale.STATUS_CRLF,
-  locale.STATUS_CR,
-  locale.STATUS_LF
-}
+local string_format = string.format
+local EOLs = { L('CRLF'), L('CR'), L('LF') }
 local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 connect('update_ui',
   function() -- sets docstatusbar text
@@ -346,12 +343,12 @@ connect('update_ui',
     local col = buffer.column[pos] + 1
     local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
     local eol = EOLs[buffer.eol_mode + 1]
-    local tabs = (buffer.use_tabs and locale.STATUS_TABS or
-      locale.STATUS_SPACES)..buffer.indent
+    local tabs = string_format('%s %d', buffer.use_tabs and L('Tabs:') or
+                               L('Spaces:'), buffer.indent)
     local enc = buffer.encoding or ''
-    gui.docstatusbar_text = locale.DOCSTATUSBAR_TEXT:format(line, max, col,
-                                                            lexer, eol, tabs,
-                                                            enc)
+    gui.docstatusbar_text =
+      string_format('%s %d/%d    %s %d    %s    %s    %s    %s', L('Line:'),
+                    line, max, L('Col:'), col, lexer, eol, tabs, enc)
   end)
 
 connect('margin_click',
@@ -415,18 +412,18 @@ connect('quit',
     local list = {}
     for _, buffer in ipairs(_BUFFERS) do
       if buffer.dirty then
-        list[#list + 1] = buffer.filename or buffer._type or locale.UNTITLED
+        list[#list + 1] = buffer.filename or buffer._type or L('Untitled')
         any = true
       end
     end
     if any and
        gui.dialog('msgbox',
-                  '--title', locale.EVENTS_QUIT_TITLE,
-                  '--text', locale.EVENTS_QUIT_TEXT,
+                  '--title', L('Quit without saving?'),
+                  '--text', L('The following buffers are unsaved:'),
                   '--informative-text',
                   string.format('%s', table.concat(list, '\n')),
                   '--button1', 'gtk-cancel',
-                  '--button2', locale.EVENTS_QUIT_BUTTON2,
+                  '--button2', L('Quit _without saving'),
                   '--no-newline') ~= '2' then
       return false
     end
@@ -446,4 +443,4 @@ if MAC then
     end)
 end
 
-connect('error', function(...) gui._print(locale.ERROR_BUFFER, ...) end)
+connect('error', function(...) gui._print(L('[Error Buffer]'), ...) end)

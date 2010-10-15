@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 
 ---
 -- Snapopen for the textadept module.
@@ -108,12 +108,14 @@ function open(paths, filter, exclusive, depth)
   for _, path in ipairs(paths) do add_directory(path, list, 1, filter) end
   if #list >= MAX then
     gui.dialog('ok-msgbox',
-               '--title', locale.M_SNAPOPEN_LIMIT_EXCEEDED_TITLE,
+               '--title', L('File Limit Exceeded'),
                '--informative-text',
-               string.format(locale.M_SNAPOPEN_LIMIT_EXCEEDED_TEXT, MAX, MAX))
+               string.format('%d %s %d', MAX,
+                             L('files or more were found. Showing the first'),
+                             MAX))
   end
   local out = gui.dialog('filteredlist',
-                         '--title', locale.IO_OPEN_TITLE,
+                         '--title', L('Open'),
                          '--button1', 'gtk-ok',
                          '--button2', 'gtk-cancel',
                          '--no-newline',

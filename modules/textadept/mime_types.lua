@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 local events = _G.events
 
 ---
@@ -283,7 +283,7 @@ events.connect('reset_after',
 -- buffer.
 function select_lexer()
   local out = gui.dialog('filteredlist',
-                         '--title', locale.MT_SELECT_LEXER,
+                         '--title', L('Select Lexer'),
                          '--button1', 'gtk-ok',
                          '--button2', 'gtk-cancel',
                          '--no-newline',

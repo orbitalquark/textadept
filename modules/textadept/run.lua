@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 
 ---
 -- Module for running/executing source files.
@@ -107,7 +107,7 @@ error_detail = {}
 -- @see error_detail
 function goto_error(pos, line_num)
   local type = buffer._type
-  if type == locale.MESSAGE_BUFFER or type == locale.ERROR_BUFFER then
+  if type == L('[Message Buffer]') or type == L('[Error Buffer]') then
     line = buffer:get_line(line_num)
     for _, error_detail in pairs(error_detail) do
       local captures = { line:match(error_detail.pattern) }
@@ -121,8 +121,7 @@ function goto_error(pos, line_num)
           local msg = captures[error_detail.message]
           if msg then buffer:call_tip_show(buffer.current_pos, msg) end
         else
-          error(string.format(
-            locale.M_TEXTADEPT_RUN_FILE_DOES_NOT_EXIST, utf8_filename))
+          error(string.format('"%s" %s', L('does not exist'), utf8_filename))
         end
         break
       end

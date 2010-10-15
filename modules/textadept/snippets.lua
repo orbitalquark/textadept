@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 
 ---
 -- Provides Lua-style snippets for Textadept.
@@ -462,7 +462,7 @@ function _show_style()
   local lexer = buffer:get_lexer()
   local style_num = buffer.style_at[buffer.current_pos]
   local style = buffer:get_style_name(style_num)
-  local text = string.format(locale.M_TEXTADEPT_SNIPPETS_SHOW_STYLE, lexer,
+  local text = string.format("%s %s\n%s %s (%d)", L('Lexer'), lexer, L('Style'),
                              style, style_num)
   buffer:call_tip_show(buffer.current_pos, text)
 end

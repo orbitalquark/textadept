@@ -62,8 +62,8 @@ function check_focused_buffer(buffer) end
 -- buffer, and prints to it.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
--- @usage gui._print(locale.ERROR_BUFFER, error_message)
--- @usage gui._print(locale.MESSAGE_BUFFER, message)
+-- @usage gui._print(L('[Error Buffer]'), error_message)
+-- @usage gui._print(L('[Message Buffer]'), message)
 function _print(buffer_type, ...) end
 
 ---
