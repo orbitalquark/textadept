@@ -7,6 +7,7 @@
 #elif MAC
 #include <Carbon/Carbon.h>
 #include "ige-mac-menu.h"
+#define GDK_MOD1_MASK GDK_META_MASK
 #elif __BSD__
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -16,7 +17,7 @@
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
 // Textadept
-GtkWidget *window, *focused_editor, *menubar, *statusbar, *docstatusbar;
+GtkWidget *window, *focused_editor, *menubar, *statusbar[2];
 char *textadept_home;
 
 static void s_notification(GtkWidget *, gint, gpointer, gpointer);
@@ -161,10 +162,10 @@ void create_ui() {
   GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
 
-  statusbar = gtk_statusbar_new();
-  gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, "");
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar), FALSE);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar, TRUE, TRUE, 0);
+  statusbar[0] = gtk_statusbar_new();
+  gtk_statusbar_push(GTK_STATUSBAR(statusbar[0]), 0, "");
+  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar[0]), FALSE);
+  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[0], TRUE, TRUE, 0);
 
   command_entry = gtk_entry_new();
   gtk_widget_set_name(command_entry, "textadept-command-entry");
@@ -183,13 +184,13 @@ void create_ui() {
                                  GTK_TREE_MODEL(cc_store));
   gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
 
-  docstatusbar = gtk_statusbar_new();
-  gtk_statusbar_push(GTK_STATUSBAR(docstatusbar), 0, "");
-  g_object_set(G_OBJECT(docstatusbar), "width-request", 400, NULL);
+  statusbar[1] = gtk_statusbar_new();
+  gtk_statusbar_push(GTK_STATUSBAR(statusbar[1]), 0, "");
+  g_object_set(G_OBJECT(statusbar[1]), "width-request", 400, NULL);
 #if MAC
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(docstatusbar), FALSE);
+  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar[1]), FALSE);
 #endif
-  gtk_box_pack_start(GTK_BOX(hboxs), docstatusbar, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[1], FALSE, FALSE, 0);
 
   gtk_widget_show_all(window);
   gtk_widget_hide(menubar); // hide initially
@@ -379,14 +380,12 @@ void set_menubar(GtkWidget *new_menubar) {
 /**
  * Sets the notification statusbar text.
  * @param text The text to display.
- * @param docbar Flag indicating whether or not the statusbar text is for the
- *   docstatusbar.
+ * @param bar Statusbar. 0 for statusbar, 1 for docstatusbar.
  */
-void set_statusbar_text(const char *text, int docbar) {
-  GtkWidget *bar = docbar ? docstatusbar : statusbar;
-  if (!bar) return; // this is sometimes called before a bar is available
-  gtk_statusbar_pop(GTK_STATUSBAR(bar), 0);
-  gtk_statusbar_push(GTK_STATUSBAR(bar), 0, text);
+void set_statusbar_text(const char *text, int bar) {
+  if (!statusbar[0] || !statusbar[1]) return; // unavailable on startup
+  gtk_statusbar_pop(GTK_STATUSBAR(statusbar[bar]), 0);
+  gtk_statusbar_push(GTK_STATUSBAR(statusbar[bar]), 0, text);
 }
 
 // Notifications/signals
@@ -435,11 +434,7 @@ static gbool s_keypress(GtkWidget *editor, GdkEventKey *event, gpointer udata) {
                       LUA_TNUMBER, event->keyval,
                       LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
                       LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK,
-#if !MAC
                       LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
-#else
-                      LUA_TBOOLEAN, event->state & GDK_META_MASK,
-#endif
                       -1) ? TRUE : FALSE;
 }
 
@@ -673,13 +668,13 @@ static void find_button_clicked(GtkWidget *button, gpointer udata) {
  */
 void ce_toggle_focus() {
   if (!GTK_WIDGET_HAS_FOCUS(command_entry)) {
-    gtk_widget_hide(statusbar);
-    gtk_widget_hide(docstatusbar);
+    gtk_widget_hide(statusbar[0]);
+    gtk_widget_hide(statusbar[1]);
     gtk_widget_show(command_entry);
     gtk_widget_grab_focus(command_entry);
   } else {
-    gtk_widget_show(statusbar);
-    gtk_widget_show(docstatusbar);
+    gtk_widget_show(statusbar[0]);
+    gtk_widget_show(statusbar[1]);
     gtk_widget_hide(command_entry);
     gtk_widget_grab_focus(focused_editor);
   }

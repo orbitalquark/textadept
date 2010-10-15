@@ -26,9 +26,8 @@
 lua_State *lua;
 int closing = FALSE;
 
-static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3,*/
-           /*tCOLOUR = 4,*/ tBOOL = 5, tKEYMOD = 6, tSTRING = 7,
-           tSTRINGRESULT = 8;
+static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
+           tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 
 static void clear_table(lua_State *lua, int index);
 static void warn(const char *s) { printf("Warning: %s\n", s); }
@@ -656,20 +655,20 @@ void l_emit_scnnotification(struct SCNotification *n) {
   l_pushscninteger(n->position, "position");
   l_pushscninteger(n->ch, "ch");
   l_pushscninteger(n->modifiers, "modifiers");
-  l_pushscninteger(n->modificationType, "modification_type");
+  //l_pushscninteger(n->modificationType, "modification_type");
   lua_pushstring(lua, n->text);
   lua_setfield(lua, -2, "text");
-  l_pushscninteger(n->length, "length");
-  l_pushscninteger(n->linesAdded, "lines_added");
-  l_pushscninteger(n->message, "message");
+  //l_pushscninteger(n->length, "length");
+  //l_pushscninteger(n->linesAdded, "lines_added");
+  //l_pushscninteger(n->message, "message");
   l_pushscninteger(n->wParam, "wParam");
   l_pushscninteger(n->lParam, "lParam");
   l_pushscninteger(n->line, "line");
-  l_pushscninteger(n->foldLevelNow, "fold_level_now");
-  l_pushscninteger(n->foldLevelPrev, "fold_level_prev");
+  //l_pushscninteger(n->foldLevelNow, "fold_level_now");
+  //l_pushscninteger(n->foldLevelPrev, "fold_level_prev");
   l_pushscninteger(n->margin, "margin");
-  l_pushscninteger(n->x, "x");
-  l_pushscninteger(n->y, "y");
+  //l_pushscninteger(n->x, "x");
+  //l_pushscninteger(n->y, "y");
   l_call_function(1, 0, FALSE);
 }
 
@@ -920,9 +919,9 @@ static int l_gui_mt_newindex(lua_State *lua) {
   if (streq(key, "title"))
     gtk_window_set_title(GTK_WINDOW(window), lua_tostring(lua, 3));
   else if (streq(key, "statusbar_text"))
-    set_statusbar_text(lua_tostring(lua, 3), FALSE);
+    set_statusbar_text(lua_tostring(lua, 3), 0);
   else if (streq(key, "docstatusbar_text"))
-    set_statusbar_text(lua_tostring(lua, 3), TRUE);
+    set_statusbar_text(lua_tostring(lua, 3), 1);
   else if (streq(key, "focused_doc_pointer") || streq(key, "clipboard_text"))
     luaL_argerror(lua, 3, "read-only property");
   else if (streq(key, "menubar")) {
@@ -939,11 +938,8 @@ static int l_gui_mt_newindex(lua_State *lua) {
   } else if (streq(key, "size")) {
     luaL_argcheck(lua, lua_istable(lua, 3) && lua_objlen(lua, 3) == 2, 3,
                   "{ width, height } table expected");
-    lua_rawgeti(lua, 3, 1);
-    lua_rawgeti(lua, 3, 2);
-    int width = lua_tointeger(lua, -2);
-    int height = lua_tointeger(lua, -1);
-    lua_pop(lua, 2); // width, height
+    int width = l_rawgeti_int(lua, 3, 1);
+    int height = l_rawgeti_int(lua, 3, 2);
     if (width > 0 && height > 0)
       gtk_window_resize(GTK_WINDOW(window), width, height);
   } else lua_rawset(lua, 1);
