@@ -3,6 +3,7 @@
 _RELEASE = "Textadept 3.3"
 
 package.path = _HOME..'/core/?.lua;'..package.path
+os.setlocale('C', 'collate')
 
 require 'iface'
 require 'args'
