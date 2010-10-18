@@ -576,7 +576,7 @@ GtkWidget *l_create_gtkmenu(lua_State *lua, GCallback callback, int submenu) {
  */
 static long l_toscintillaparam(lua_State *lua, int type, int *arg_idx) {
   if (type == tSTRING)
-    return (long)lua_tostring(lua, (*arg_idx)++);
+    return (long)luaL_checkstring(lua, (*arg_idx)++);
   else if (type == tBOOL)
     return lua_toboolean(lua, (*arg_idx)++);
   else if (type == tKEYMOD) {
@@ -723,7 +723,7 @@ static int l_call_scintilla(lua_State *lua, GtkWidget *editor, int msg,
   // Set the w and l parameters appropriately for Scintilla.
   if (p1_type == tLENGTH && p2_type == tSTRING) {
     params[0] = (long)lua_strlen(lua, arg);
-    params[1] = (long)lua_tostring(lua, arg);
+    params[1] = (long)luaL_checkstring(lua, arg);
     params_needed = 0;
   } else if (p2_type == tSTRINGRESULT) {
     string_return = TRUE;
