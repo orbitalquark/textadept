@@ -58,6 +58,8 @@ module('buffer')
 --   lists. Default is 5.
 -- * `auto_c_max_width`: The maximum width in characters of autocompletion and
 --   user lists.
+-- * `auto_c_separator`: The (integer) separator character in the string
+--   setting up an autocompletion list.
 -- * `auto_c_type_separator`: The (integer) type separator character in the
 --   string setting up an autocompletion list.
 -- * `back_space_un_indents`: Flag indicating whether or not a backspace press
