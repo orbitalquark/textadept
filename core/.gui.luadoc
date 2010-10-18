@@ -14,7 +14,7 @@ module('gui')
 -- * `menubar`: A table of GTK menus defining a menubar (write-only).
 -- * `context_menu`: A GTK menu defining the editor's context menu.
 -- * `clipboard_text`: The text on the clipboard (read-only).
--- * `statusbar_text`: The text displayed by the statusbar (write-only).
+-- * `statusbar_text`: The text displayed by the statusbar.
 -- * `docstatusbar_text`: The text displayed by the doc statusbar (write-only).
 -- * `size`: The size of the Textadept window (`{ width, height}`).
 
