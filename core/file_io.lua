@@ -115,6 +115,7 @@ try_encodings = {
 local function open_helper(utf8_filename)
   if not utf8_filename then return end
   utf8_filename = utf8_filename:gsub('^file://', '')
+  if WIN32 then utf8_filename = utf8_filename:gsub('/', '\\') end
   for index, buffer in ipairs(_BUFFERS) do
     if utf8_filename == buffer.filename then
       view:goto_buffer(index)
