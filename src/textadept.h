@@ -58,4 +58,8 @@ int l_emit_event(const char *, ...);
 void l_emit_scnnotification(struct SCNotification *);
 void l_gui_popup_context_menu(GdkEventButton *);
 
+// Extra Lua libraries.
+LUALIB_API int (luaopen_lpeg) (lua_State *L);
+LUALIB_API int (luaopen_lfs) (lua_State *L);
+
 #endif
