@@ -5,6 +5,11 @@
 #define streq(s1, s2) strcmp(s1, s2) == 0
 #define l_insert(l, i) lua_insert(l, (i < 0) ? lua_gettop(l) + i : i)
 #define l_append(l, i) lua_rawseti(l, i, lua_objlen(l, i) + 1)
+#define l_openlib(l, n, f) { \
+  lua_pushcfunction(l, f); \
+  lua_pushstring(l, n); \
+  lua_call(l, 1, 0); \
+}
 #define l_cfunc(l, f, k) { \
   lua_pushcfunction(l, f); \
   lua_setfield(l, -2, k); \
@@ -81,6 +86,8 @@ int l_init(int argc, char **argv, int reinit) {
     clear_table(lua, LUA_GLOBALSINDEX);
   }
   luaL_openlibs(lua);
+  l_openlib(lua, "lpeg", luaopen_lpeg);
+  l_openlib(lua, "lfs", luaopen_lfs);
 
   lua_newtable(lua);
     lua_newtable(lua);
