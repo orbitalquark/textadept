@@ -57,7 +57,8 @@ function new_buffer() end
 -- false return value stops repetition.
 -- @param interval The interval in seconds to call the function after.
 -- @param f The function to call.
-function timeout(interval, f) end
+-- @param ... Additional arguments to pass to f.
+function timeout(interval, f, ...) end
 
 ---
 -- Resets the Lua state by reloading all init scripts.
