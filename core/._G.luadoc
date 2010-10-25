@@ -52,6 +52,14 @@ _VIEWS = {}
 function new_buffer() end
 
 ---
+-- Calls a given function after an interval of time.
+-- To repeatedly call the function, return true inside the function. A nil or
+-- false return value stops repetition.
+-- @param interval The interval in seconds to call the function after.
+-- @param f The function to call.
+function timeout(interval, f) end
+
+---
 -- Resets the Lua state by reloading all init scripts.
 -- Language-specific modules for opened files are NOT reloaded. Re-opening the
 -- files that use them will reload those modules.

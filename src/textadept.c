@@ -132,7 +132,7 @@ static int l_cf_buffer_delete(lua_State *), l_cf_buffer_text_range(lua_State *),
            l_cf_find_focus(lua_State *), l_cf_find_next(lua_State *),
            l_cf_find_prev(lua_State *), l_cf_find_replace(lua_State *),
            l_cf_find_replace_all(lua_State *), l_cf_ce_focus(lua_State *),
-           l_cf_ce_show_completions(lua_State *);
+           l_cf_ce_show_completions(lua_State *), l_cf_timeout(lua_State *);
 
 /******************************************************************************/
 /******************************* GUI Interface ********************************/
@@ -901,6 +901,7 @@ int l_init(int argc, char **argv, int reinit) {
   l_cfunc(lua, l_cf_buffer_new, "new_buffer");
   l_cfunc(lua, l_cf_quit, "quit");
   l_cfunc(lua, l_cf_reset, "reset");
+  l_cfunc(lua, l_cf_timeout, "timeout");
   lua_pop(lua, 1); // _G
 
   lua_getglobal(lua, "string");
@@ -2018,6 +2019,36 @@ static int l_cf_reset(lua_State *lua) {
   l_set_view_global(focused_editor);
   l_set_buffer_global(focused_editor);
   l_emit_event("reset_after", -1);
+  return 0;
+}
+
+static gbool emit_timeout(gpointer data) {
+  int *refs = (int *)data;
+  lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[0]); // function
+  int nargs = 0, funcindex = lua_gettop(lua), repeat = TRUE;
+  while (refs[++nargs]) lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[nargs]);
+  l_call_function(nargs - 1, 1, TRUE);
+  if (lua_toboolean(lua, -1) == 0 || lua_isnil(lua, -1)) {
+    while (--nargs >= 0) luaL_unref(lua, LUA_REGISTRYINDEX, refs[nargs]);
+    repeat = FALSE;
+  }
+  lua_pop(lua, 1); // boolean or nil
+  return repeat;
+}
+
+static int l_cf_timeout(lua_State *lua) {
+  int timeout = luaL_checkinteger(lua, 1);
+  luaL_argcheck(lua, timeout > 0, 1, "timeout must be > 0");
+  luaL_argcheck(lua, lua_isfunction(lua, 2), 2, "function expected");
+  int n = lua_gettop(lua);
+  int *refs = (int *)calloc(n, sizeof(int));
+  lua_pushvalue(lua, 2);
+  refs[0] = luaL_ref(lua, LUA_REGISTRYINDEX);
+  for (int i = 3; i <= n; i++) {
+    lua_pushvalue(lua, i);
+    refs[i - 2] = luaL_ref(lua, LUA_REGISTRYINDEX);
+  }
+  g_timeout_add_seconds(timeout, emit_timeout, (gpointer)refs);
   return 0;
 }
 
