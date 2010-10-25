@@ -687,9 +687,7 @@ void ce_toggle_focus() {
  * every item in the list is valid.
  */
 static int cc_match_func(GtkEntryCompletion *entry, const char *key,
-                         GtkTreeIter *iter, gpointer udata) {
-  return 1;
-}
+                         GtkTreeIter *iter, gpointer udata) { return 1; }
 
 /**
  * Enters the requested completion text into the Command Entry.
