@@ -64,6 +64,7 @@ static int l_cf_buffer_delete(lua_State *), l_cf_buffer_text_range(lua_State *),
  * @param argc The number of command line parameters.
  * @param argv The array of command line parameters.
  * @param reinit Flag indicating whether or not to reinitialize the Lua State.
+ * @return TRUE on success, FALSE on failure.
  */
 int l_init(int argc, char **argv, int reinit) {
   if (!reinit) {
@@ -155,6 +156,7 @@ int l_init(int argc, char **argv, int reinit) {
 /**
  * Loads and runs a given Lua script.
  * @param script_file The path of the Lua script relative to textadept_home.
+ * @return TRUE on success, FALSE otherwise.
  */
 int l_load_script(const char *script_file) {
   char *script = g_strconcat(textadept_home, "/", script_file, NULL);
@@ -178,6 +180,7 @@ int l_load_script(const char *script_file) {
  * Throws an error if the check is not satisfied.
  * @param lua The Lua State.
  * @param narg Relative stack index to check for a Scintilla window.
+ * @return GtkWidget Scintilla view.
  */
 static GtkWidget *l_checkview(lua_State *lua, int narg) {
   luaL_argcheck(lua, lua_istable(lua, narg), narg, "View expected");
@@ -344,6 +347,7 @@ void l_remove_scintilla_buffer(sptr_t doc) {
  * Retrieves the index in the global '_BUFFERS' table for a given Scintilla
  * document.
  * @param doc The Scintilla document to get the index of.
+ * @return int buffer index.
  */
 unsigned int l_get_docpointer_index(sptr_t doc) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
@@ -456,6 +460,7 @@ static void clear_table(lua_State *lua, int abs_index) {
  * function.
  * @param table The table to check for key in.
  * @param key String key to check for in table.
+ * @return TRUE for function, FALSE otherwise.
  */
 int l_is2function(const char *table, const char *key) {
   lua_getglobal(lua, table);
@@ -478,6 +483,8 @@ int l_is2function(const char *table, const char *key) {
  * @param keep_return Optional flag indicating whether or not to keep the return
  *   values at the top of the stack. If FALSE, discards the return values.
  *   Defaults to FALSE.
+ * @return FALSE if an error occured or the function returns false explicitly;
+ *   TRUE otherwise.
  */
 static int l_call_function(int nargs, int retn, int keep_return) {
   int ret = lua_pcall(lua, nargs, retn, 0);
@@ -500,6 +507,7 @@ static int l_call_function(int nargs, int retn, int keep_return) {
  * @param lua The Lua State.
  * @param index The relative index of the table to rawget from.
  * @param n The index in the table to rawget.
+ * @return int result of lua_rawgeti().
  */
 static int l_rawgeti_int(lua_State *lua, int index, int n) {
   lua_rawgeti(lua, index, n);
@@ -513,6 +521,7 @@ static int l_rawgeti_int(lua_State *lua, int index, int n) {
  * @param lua The Lua State.
  * @param index The relative index of the table to rawget from.
  * @param k String key in the table to rawget.
+ * @return string result of lua_rawget().
  */
 static const char *l_rawget_str(lua_State *lua, int index, const char *k) {
   lua_pushstring(lua, k);
@@ -528,6 +537,7 @@ static const char *l_rawget_str(lua_State *lua, int index, const char *k) {
  * @param lua The Lua State.
  * @param callback A GCallback associated with each menu item.
  * @param submenu Flag indicating whether or not this menu is a submenu.
+ * @return GtkWidget menu.
  */
 GtkWidget *l_create_gtkmenu(lua_State *lua, GCallback callback, int submenu) {
   GtkWidget *menu = gtk_menu_new(), *menu_item = 0, *submenu_root = 0;
@@ -580,6 +590,7 @@ GtkWidget *l_create_gtkmenu(lua_State *lua, GCallback callback, int submenu) {
  * @param type The Lua type the top stack element is.
  * @param arg_idx The initial stack index to start converting at. It is
  *   incremented as parameters are read from the stack.
+ * @return long for Scintilla.
  */
 static long l_toscintillaparam(lua_State *lua, int type, int *arg_idx) {
   if (type == tSTRING)
@@ -617,6 +628,7 @@ static void l_check_focused_buffer(lua_State *lua, int narg) {
  * @param ... Optional arguments to pass to the handler. The variable argument
  *   list should contain Lua types followed by the data of that type to pass.
  *   The list is terminated by a -1.
+ * @return FALSE on error or if event returns false explicitly; TRUE otherwise.
  */
 int l_emit_event(const char *s, ...) {
   if (!l_is2function("events", "emit")) return FALSE;
@@ -1212,25 +1224,14 @@ static int l_cf_find_focus(lua_State *lua) {
   return 0;
 }
 
-static int l_cf_find_next(lua_State *lua) {
-  g_signal_emit_by_name(G_OBJECT(fnext_button), "clicked");
-  return 0;
+#define emit(o, s) { \
+  g_signal_emit_by_name(G_OBJECT(o), s); \
+  return 0; \
 }
-
-static int l_cf_find_prev(lua_State *lua) {
-  g_signal_emit_by_name(G_OBJECT(fprev_button), "clicked");
-  return 0;
-}
-
-static int l_cf_find_replace(lua_State *lua) {
-  g_signal_emit_by_name(G_OBJECT(r_button), "clicked");
-  return 0;
-}
-
-static int l_cf_find_replace_all(lua_State *lua) {
-  g_signal_emit_by_name(G_OBJECT(ra_button), "clicked");
-  return 0;
-}
+static int l_cf_find_next(lua_State *lua) { emit(fnext_button, "clicked") }
+static int l_cf_find_prev(lua_State *lua) { emit(fprev_button, "clicked") }
+static int l_cf_find_replace(lua_State *lua) { emit(r_button, "clicked") }
+static int l_cf_find_replace_all(lua_State *lua) { emit(ra_button, "clicked") }
 
 static int l_cf_ce_focus(lua_State *lua) {
   ce_toggle_focus();
