@@ -47,7 +47,7 @@ GTKFLAGS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
 GTKLIBS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --libs gtk+-2.0 gthread-2.0)
 
-TEXTADEPT_OBJS = textadept.o lua_interface.o
+TEXTADEPT_OBJS = textadept.o
 LUA_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o \
   lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o ltm.o lundump.o \
   lvm.o lzio.o \
