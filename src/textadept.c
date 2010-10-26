@@ -2025,7 +2025,7 @@ static int l_cf_reset(lua_State *lua) {
 static gbool emit_timeout(gpointer data) {
   int *refs = (int *)data;
   lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[0]); // function
-  int nargs = 0, funcindex = lua_gettop(lua), repeat = TRUE;
+  int nargs = 0, repeat = TRUE;
   while (refs[++nargs]) lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[nargs]);
   l_call_function(nargs - 1, 1, TRUE);
   if (lua_toboolean(lua, -1) == 0 || lua_isnil(lua, -1)) {
