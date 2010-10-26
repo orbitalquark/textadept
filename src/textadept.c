@@ -1961,7 +1961,7 @@ static int l_cf_gui_dialog(lua_State *lua) {
       int len = lua_objlen(lua, j);
       for (k = 1; k <= len; k++) {
         lua_rawgeti(lua, j, k);
-        argv[i++] = luaL_checkstring(lua, j + 1);
+        argv[i++] = luaL_checkstring(lua, -1);
         lua_pop(lua, 1);
       }
     } else argv[i++] = luaL_checkstring(lua, j);
