@@ -33,7 +33,7 @@ function find.find_in_files(utf8_dir)
     if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
     local match_case = find.match_case
     local whole_word = find.whole_word
-    local format = string.format
+    local string_find, format = string.find, string.format
     local matches = { 'Find: '..text }
     function search_file(file)
       local line_num = 1
@@ -41,7 +41,7 @@ function find.find_in_files(utf8_dir)
         local optimized_line = line
         if not match_case then optimized_line = line:lower() end
         if whole_word then optimized_line = ' '..line..' ' end
-        if string.find(optimized_line, text) then
+        if string_find(optimized_line, text) then
           file = file:iconv('UTF-8', _CHARSET)
           matches[#matches + 1] = format('%s:%s:%s', file, line_num, line)
         end
