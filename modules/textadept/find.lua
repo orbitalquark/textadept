@@ -16,6 +16,60 @@ local escapes = {
   ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
 }
 
+-- LuaDoc is in core/.find.luadoc
+function find.find_in_files(utf8_dir)
+  if not utf8_dir then
+    utf8_dir = gui.dialog('fileselect',
+                          '--title', L('Find in Files'),
+                          '--select-only-directories',
+                          '--with-directory',
+                          (buffer.filename or ''):match('^.+[/\\]') or '',
+                          '--no-newline')
+  end
+  local text = find.find_entry_text
+  if #utf8_dir > 0 then
+    if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
+    if not find.match_case then text = text:lower() end
+    if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
+    local match_case = find.match_case
+    local whole_word = find.whole_word
+    local format = string.format
+    local matches = { 'Find: '..text }
+    function search_file(file)
+      local line_num = 1
+      for line in io.lines(file) do
+        local optimized_line = line
+        if not match_case then optimized_line = line:lower() end
+        if whole_word then optimized_line = ' '..line..' ' end
+        if string.find(optimized_line, text) then
+          file = file:iconv('UTF-8', _CHARSET)
+          matches[#matches + 1] = format('%s:%s:%s', file, line_num, line)
+        end
+        line_num = line_num + 1
+      end
+    end
+    function search_dir(directory)
+      for file in lfs.dir(directory) do
+        if not file:find('^%.%.?$') then -- ignore . and ..
+          local path = directory..'/'..file
+          local type = lfs.attributes(path).mode
+          if type == 'directory' then
+            search_dir(path)
+          elseif type == 'file' then
+            search_file(path)
+          end
+        end
+      end
+    end
+    local dir = utf8_dir:iconv(_CHARSET, 'UTF-8')
+    search_dir(dir)
+    if #matches == 1 then matches[2] = L('No results found') end
+    matches[#matches + 1] = ''
+    if buffer._type ~= L('[Files Found Buffer]') then previous_view = view end
+    gui._print(L('[Files Found Buffer]'), table.concat(matches, '\n'))
+  end
+end
+
 -- Finds and selects text in the current buffer.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
@@ -74,53 +128,7 @@ local function find_(text, next, flags, nowrap, wrapped)
     end
 
   else -- find in files
-    local utf8_dir = gui.dialog('fileselect',
-                                '--title', L('Find in Files'),
-                                '--select-only-directories',
-                                '--with-directory',
-                                (buffer.filename or ''):match('^.+[/\\]') or '',
-                                '--no-newline')
-    if #utf8_dir > 0 then
-      if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
-      if not find.match_case then text = text:lower() end
-      if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
-      local match_case = find.match_case
-      local whole_word = find.whole_word
-      local format = string.format
-      local matches = { 'Find: '..text }
-      function search_file(file)
-        local line_num = 1
-        for line in io.lines(file) do
-          local optimized_line = line
-          if not match_case then optimized_line = line:lower() end
-          if whole_word then optimized_line = ' '..line..' ' end
-          if string.find(optimized_line, text) then
-            file = file:iconv('UTF-8', _CHARSET)
-            matches[#matches + 1] = format('%s:%s:%s', file, line_num, line)
-          end
-          line_num = line_num + 1
-        end
-      end
-      function search_dir(directory)
-        for file in lfs.dir(directory) do
-          if not file:find('^%.%.?$') then -- ignore . and ..
-            local path = directory..'/'..file
-            local type = lfs.attributes(path).mode
-            if type == 'directory' then
-              search_dir(path)
-            elseif type == 'file' then
-              search_file(path)
-            end
-          end
-        end
-      end
-      local dir = utf8_dir:iconv(_CHARSET, 'UTF-8')
-      search_dir(dir)
-      if #matches == 1 then matches[2] = L('No results found') end
-      matches[#matches + 1] = ''
-      if buffer._type ~= L('[Files Found Buffer]') then previous_view = view end
-      gui._print(L('[Files Found Buffer]'), table.concat(matches, '\n'))
-    end
+    find_in_files()
     return
   end
 
