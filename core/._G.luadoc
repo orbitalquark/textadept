@@ -19,7 +19,7 @@ module('_G')
 -- * `RESETTING`: If [`reset()`][reset] has been called,
 --   this flag is `true` while the Lua state is being re-initialized.
 -- * `WIN32`: If Textadept is running on Windows, this flag is `true`.
--- * `MAC`: If Textadept is running on Mac OSX, this flag is `true`.
+-- * `OSX`: If Textadept is running on Mac OSX, this flag is `true`.
 --
 -- [package_path]: http://www.lua.org/manual/5.1/manual.html#pdf-package.path
 -- [theme]: ../manual/6_Startup.html

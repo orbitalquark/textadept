@@ -329,7 +329,7 @@ local function open_webpage(url)
     local p = io.popen(cmd)
     if not p then error(L('Error loading webpage:')..url) end
   else
-    cmd = string.format(MAC and 'open "file://%s"' or 'xdg-open "%s" &', url)
+    cmd = string.format(OSX and 'open "file://%s"' or 'xdg-open "%s" &', url)
     if os.execute(cmd) ~= 0 then error(L('Error loading webpage:')..url) end
   end
 end

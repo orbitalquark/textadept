@@ -72,7 +72,7 @@ if WIN32 and #arg[0] > 0 then
 end
 
 -- For Mac, remove junk parameter if necessary.
-if MAC and arg[1] and arg[1]:find('^%-psn_0') then table.remove(arg, 1) end
+if OSX and arg[1] and arg[1]:find('^%-psn_0') then table.remove(arg, 1) end
 
 -- Set _G._USERHOME.
 local userhome = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'

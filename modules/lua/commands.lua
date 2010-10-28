@@ -248,7 +248,7 @@ if type(keys) == 'table' then
       g = { goto_required },
     },
     ['s\n'] = { try_to_autocomplete_end },
-    [not MAC and 'c\n' or 'esc'] = { function() -- complete API
+    [not OSX and 'c\n' or 'esc'] = { function() -- complete API
       local part = prev_word('[%w_]', buffer.current_pos)
       local pos = buffer.current_pos - #part - 1
       if pos > 0 then
