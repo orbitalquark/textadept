@@ -121,7 +121,7 @@ function goto_error(pos, line_num)
           local msg = captures[error_detail.message]
           if msg then buffer:call_tip_show(buffer.current_pos, msg) end
         else
-          error(string.format('"%s" %s', L('does not exist'), utf8_filename))
+          error(string.format('"%s" %s', utf8_filename, L('does not exist'))
         end
         break
       end
