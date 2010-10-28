@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-_RELEASE = "Textadept 3.3"
+_RELEASE = "Textadept 3.4"
 
 package.path = _HOME..'/core/?.lua;'..package.path
 os.setlocale('C', 'collate')
