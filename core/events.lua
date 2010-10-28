@@ -369,13 +369,10 @@ connect('buffer_before_switch',
     -- Save fold state.
     buffer._folds = {}
     local folds = buffer._folds
-    local level, expanded = buffer.fold_level, buffer.fold_expanded
-    local header_flag = _SCINTILLA.constants.SC_FOLDLEVELHEADERFLAG
-    local test = 2 * header_flag
-    for i = 0, buffer.line_count do
-      if level[i] % test >= header_flag and not expanded[i] then
-        folds[#folds + 1] = i
-      end
+    local i = buffer:contracted_fold_next(0)
+    while i >= 0 do
+      folds[#folds + 1] = i
+      i = buffer:contracted_fold_next(i + 1)
     end
   end)
 
