@@ -125,11 +125,13 @@ local function open_helper(utf8_filename)
 
   local text
   local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
-  local f = io.open(filename, 'rb')
+  local f, err = io.open(filename, 'rb')
   if f then
     text = f:read('*all')
     f:close()
     if not text then return end -- filename exists, but can't read it
+  else
+    error(err)
   end
   local buffer = new_buffer()
   if text then
@@ -206,7 +208,7 @@ local function reload(buffer)
   local first_visible_line = buffer.first_visible_line
   local filename = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local f, err = io.open(filename, 'rb')
-  if not f then return end
+  if not f then error(err) end
   local text = f:read('*all')
   f:close()
   local encoding, encoding_bom = buffer.encoding, buffer.encoding_bom
@@ -223,7 +225,7 @@ end
 -- LuaDoc is in core/.buffer.lua.
 local function set_encoding(buffer, encoding)
   gui.check_focused_buffer(buffer)
-  if not buffer.encoding then error('Cannot change binary file encoding') end
+  if not buffer.encoding then error(L('Cannot change binary file encoding')) end
   local pos = buffer.current_pos
   local first_visible_line = buffer.first_visible_line
   local text = buffer:get_text(buffer.length)
