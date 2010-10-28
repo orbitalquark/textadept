@@ -334,7 +334,7 @@ local function update_modified_file()
   local utf8_filename = buffer.filename
   local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
   local attributes = lfs.attributes(filename)
-  if not attributes then return end
+  if not attributes or not buffer.modification_time then return end
   if buffer.modification_time < attributes.modification then
     if gui.dialog('yesno-msgbox',
                   '--title', L('Reload?'),
