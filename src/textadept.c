@@ -19,7 +19,7 @@
 #if __WIN32__
 #include <windows.h>
 #define main main_
-#elif MAC
+#elif __OSX__
 #include <Carbon/Carbon.h>
 #include "ige-mac-menu.h"
 #define GDK_MOD1_MASK GDK_META_MASK
@@ -65,7 +65,7 @@ static gbool s_buttonpress(GtkWidget *, GdkEventButton *, gpointer);
 static gbool w_focus(GtkWidget *, GdkEventFocus *, gpointer);
 static gbool w_keypress(GtkWidget *, GdkEventKey *, gpointer);
 static gbool w_exit(GtkWidget *, GdkEventAny *, gpointer);
-#if MAC
+#if __OSX__
 static OSErr w_ae_open(const AppleEvent *, AppleEvent *, long);
 static OSErr w_ae_quit(const AppleEvent *, AppleEvent *, long);
 #endif
@@ -146,9 +146,9 @@ static int l_cf_buffer_delete(lua_State *), l_cf_buffer_text_range(lua_State *),
  * @param argv The array of command line params.
  */
 int main(int argc, char **argv) {
-#if !(__WIN32__ || MAC || __BSD__)
+#if !(__WIN32__ || __OSX__ || __BSD__)
   textadept_home = g_file_read_link("/proc/self/exe", NULL);
-#elif MAC
+#elif __OSX__
   CFURLRef bundle = CFBundleCopyBundleURL(CFBundleGetMainBundle());
   if (bundle) {
     CFStringRef path = CFURLCopyFileSystemPath(bundle, kCFURLPOSIXPathStyle);
@@ -222,7 +222,7 @@ void create_ui() {
   signal(window, "focus-in-event", w_focus);
   signal(window, "key-press-event", w_keypress);
 
-#if MAC
+#if __OSX__
   AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
                         NewAEEventHandlerUPP(w_ae_open), 0, FALSE);
   AEInstallEventHandler(kCoreEventClass, kAEQuitApplication,
@@ -272,7 +272,7 @@ void create_ui() {
   statusbar[1] = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(statusbar[1]), 0, "");
   g_object_set(G_OBJECT(statusbar[1]), "width-request", 400, NULL);
-#if MAC
+#if __OSX__
   gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar[1]), FALSE);
 #endif
   gtk_box_pack_start(GTK_BOX(hboxs), statusbar[1], FALSE, FALSE, 0);
@@ -456,7 +456,7 @@ void set_menubar(GtkWidget *new_menubar) {
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
   gtk_box_reorder_child(GTK_BOX(vbox), menubar, 0);
   gtk_widget_show_all(menubar);
-#if MAC
+#if __OSX__
   ige_mac_menu_set_menu_bar(GTK_MENU_SHELL(menubar));
   gtk_widget_hide(menubar);
 #endif
@@ -574,7 +574,7 @@ static gbool w_exit(GtkWidget *window, GdkEventAny *event, gpointer udata) {
   return FALSE;
 }
 
-#if MAC
+#if __OSX__
 /**
  * Signal for an Open Document AppleEvent.
  * Generates a 'appleevent_odoc' event for each document sent.
@@ -919,9 +919,9 @@ int l_init(int argc, char **argv, int reinit) {
 #if __WIN32__
   lua_pushboolean(lua, 1);
   lua_setglobal(lua, "WIN32");
-#elif MAC
+#elif __OSX__
   lua_pushboolean(lua, 1);
-  lua_setglobal(lua, "MAC");
+  lua_setglobal(lua, "OSX");
 #endif
   const char *charset = 0;
   g_get_charset(&charset);

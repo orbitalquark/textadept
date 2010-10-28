@@ -134,7 +134,7 @@ local gui = gui
 -- Control, Shift, Alt, and 'a' = 'caA'
 -- Control, Shift, Alt, and '\t' = 'csa\t'
 
-if not MAC then
+if not OSX then
   -- Windows and Linux key commands.
 
   --[[
@@ -496,7 +496,7 @@ local pcall = _G.pcall
 local next = _G.next
 local type = _G.type
 local unpack = _G.unpack
-local MAC = _G.MAC
+local OSX = _G.OSX
 
 ---
 -- Lookup table for key values higher than 255.
@@ -594,7 +594,7 @@ local function keypress(code, shift, control, alt)
   if code < 256 then
     key = string_char(code)
     shift = false -- for printable characters, key is upper case
-    if MAC and not shift and not control and not alt then
+    if OSX and not shift and not control and not alt then
       local ch = string_char(code)
       -- work around native GTK-OSX's handling of Alt key
       if ch:find('[%p%d]') and #keychain == 0 then

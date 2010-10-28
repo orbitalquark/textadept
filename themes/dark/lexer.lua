@@ -41,7 +41,7 @@ local font_face = '!Bitstream Vera Sans Mono'
 local font_size = 10
 if WIN32 then
   font_face = '!Courier New'
-elseif MAC then
+elseif OSX then
   font_face = '!Monaco'
   font_size = 12
 end

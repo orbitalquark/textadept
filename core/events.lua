@@ -427,7 +427,7 @@ connect('quit',
     return true
   end)
 
-if MAC then
+if OSX then
   connect('appleevent_odoc',
     function(uri) return emit('uri_dropped', 'file://'..uri) end)
 
