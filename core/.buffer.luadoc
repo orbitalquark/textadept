@@ -467,6 +467,9 @@ function buffer:clear_registered_images()
 function buffer:clear_selections()
 --- Colorizes a segment of the document using the current lexing language.
 function buffer:colourise(start_pos, end_pos)
+--- Returns the first line in a contracted fold state starting from line_start
+-- or -1 when the end of the file is reached.
+function buffer:contracted_fold_next(line_start)
 --- Converts all line endings in the document to one mode.
 -- @param mode The line ending mode. 0: CRLF, 1: CR, 2: LF.
 function buffer:convert_eo_ls(mode)
@@ -912,6 +915,8 @@ function buffer:vc_home_wrap()
 -- and then the document line, extending the selection. (If wrap mode is
 -- enabled)
 function buffer:vc_home_wrap_extend()
+--- Centers the caret on the screen.
+function buffer:vertical_centre_caret()
 --- Returns the display line of a document line taking hidden lines into
 -- account.
 function buffer:visible_from_doc_line(line)
