@@ -9,8 +9,7 @@ module('_m.lua.commands', package.seeall)
 --
 -- + `Alt+l, m`: Open this module for editing.
 -- + `Alt+l, g`: Goto file being 'require'd on the current line.
--- + `Shift+Return`: Try to autocomplete an `if`, `for`, etc. statement with
---   `end`.
+-- + `Return`: Try to autocomplete an `if`, `for`, etc. statement with `end`.
 -- + `.`: When to the right of a known identifier, show an autocompletion list
 --   of fields.
 -- + `:`: When to the right of a known identifier, show an autocompletion list
