@@ -92,23 +92,23 @@ local control_structure_patterns = {
 -- @see control_structure_patterns
 function try_to_autocomplete_end()
   local buffer = buffer
-  buffer:begin_undo_action()
-  buffer:line_end()
-  buffer:new_line()
   local line_num = buffer:line_from_position(buffer.current_pos)
-  local line = buffer:get_line(line_num - 1)
+  local line = buffer:get_line(line_num)
   for _, patt in ipairs(control_structure_patterns) do
     if line:find(patt) then
-      local indent = buffer.line_indentation[line_num - 1]
-      buffer:add_text(patt:find('repeat') and '\nuntil' or '\nend')
-      buffer.line_indentation[line_num + 1] = indent
-      buffer.line_indentation[line_num] = indent + buffer.indent
+      local indent = buffer.line_indentation[line_num]
+      buffer:begin_undo_action()
+      buffer:new_line()
+      buffer:new_line()
+      buffer:add_text(patt:find('repeat') and 'until' or 'end')
+      buffer.line_indentation[line_num + 1] = indent + buffer.indent
       buffer:line_up()
       buffer:line_end()
-      break
+      buffer:end_undo_action()
+      return true
     end
   end
-  buffer:end_undo_action()
+  return false
 end
 
 ---
@@ -134,6 +134,25 @@ function goto_required()
     end
   end
 end
+
+events.connect('file_before_save',
+  function() -- show syntax errors as annotations
+    if buffer:get_lexer() == 'lua' then
+      buffer:annotation_clear_all()
+      local text = buffer:get_text()
+      local _, err = loadstring(text)
+      if err then
+        local line, msg = err:match('^.-:(%d+):%s*(.+)$')
+        line = tonumber(line)
+        if line then
+          buffer.annotation_visible = 2
+          buffer:annotation_set_text(line - 1, msg)
+          buffer.annotation_style[line - 1] = 8 -- error style number
+          buffer:goto_line(line - 1)
+        end
+      end
+    end
+  end)
 
 ---
 -- LuaDoc to load API from.
@@ -247,7 +266,7 @@ if type(keys) == 'table' then
             (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET) },
       g = { goto_required },
     },
-    ['s\n'] = { try_to_autocomplete_end },
+    ['\n'] = { try_to_autocomplete_end },
     [not OSX and 'c\n' or 'esc'] = { function() -- complete API
       local part = prev_word('[%w_]', buffer.current_pos)
       local pos = buffer.current_pos - #part - 1
