@@ -77,8 +77,8 @@ module('_m.textadept.keys', package.seeall)
 -- ## Key Command Precedence
 --
 -- When searching for a key command to execute in the `keys` table, key commands
--- in the current style have priority, followed by the  ones in the current lexer,
--- and finally the ones in the global table.
+-- in the current style have priority, followed by the  ones in the current
+-- lexer, and finally the ones in the global table.
 --
 -- ## Example
 --

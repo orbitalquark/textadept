@@ -24,7 +24,7 @@ module('_m.lua.commands', package.seeall)
 --
 -- #### Syntax
 --
--- Fields are recognized as Lua line comments of the form ``-- * `field_name` ``.
+-- Fields are recognized as Lua comments of the form ``-- * `field_name` ``.
 -- Functions are recognized as Lua functions of the form `function func(args)`
 -- or `function namespace:func(args)`. `.`-completion shows autocompletion for
 -- both fields and functions using the first function syntax. `:`-completion
