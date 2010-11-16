@@ -34,7 +34,7 @@ The latter you will have to download manually.
 [GCC]: http://gcc.gnu.org
 [Make]: http://www.gnu.org/software/make/
 [XCode]: http://developer.apple.com/TOOLS/xcode/
-[GTK-OSX-Latest]: http://people.imendio.com/richard/stuff/Gtk-Framework-2.14.3-2-test1.dmg
+[GTK-OSX-Latest]: http://code.google.com/p/textadept/downloads/detail?name=Gtk-Framework-2.14.3-2-test1.dmg
 [GTK-Win32]: http://www.gtk.org/download-windows.html
 [MinGW]: http://mingw.org
 
