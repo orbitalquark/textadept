@@ -26,7 +26,7 @@ Windows systems need the [GTK+ 2.0 Runtime][GTK-Runtime] installed.
 [GTK2]: http://gtk.org
 [GTK-Linux]: http://www.gtk.org/download-linux.html
 [GTK-OSX]: http://gtk-osx.org
-[GTK-OSX-Latest]: http://people.imendio.com/richard/stuff/Gtk-Framework-2.14.3-2-test1.dmg
+[GTK-OSX-Latest]: http://code.google.com/p/textadept/downloads/detail?name=Gtk-Framework-2.14.3-2-test1.dmg
 [GTK-Runtime]: http://sourceforge.net/projects/gtk-win/
 
 ## Download
