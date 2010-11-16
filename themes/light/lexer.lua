@@ -52,15 +52,15 @@ elseif OSX then
   font_face = '!Monaco'
   font_size = 12
 end
-style_default = style{
+style_default = style {
   font = font_face,
   size = font_size,
   fore = colors.black,
   back = colors.white
 }
 style_line_number = style { fore = colors.black, back = colors.grey }
-style_bracelight  = style { fore = color('66', '99', 'FF'), bold = true }
-style_bracebad    = style { fore = color('FF', '66', '99'), bold = true }
+style_bracelight = style { fore = color('66', '99', 'FF'), bold = true }
+style_bracebad = style { fore = color('FF', '66', '99'), bold = true }
 style_controlchar = style_nothing
 style_indentguide = style { fore = colors.grey, back = colors.white }
-style_calltip     = style { fore = colors.black, back = color('DD', 'DD', 'DD') }
+style_calltip = style { fore = colors.black, back = color('DD', 'DD', 'DD') }

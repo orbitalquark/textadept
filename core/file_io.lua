@@ -15,8 +15,8 @@ module('io', package.seeall)
 -- UTF-8 is compatible with it. Problems may arise for files with more exotic
 -- encodings that may not be detected properly, if at all. When opening a file,
 -- the list of encodings tried before throwing a `conversion failed` error is in
--- `core/file_io.lua`'s [`try_encodings`](#try_encodings). Textadept respects the
--- detected encoding when saving the file.
+-- `core/file_io.lua`'s [`try_encodings`](#try_encodings). Textadept respects
+-- the detected encoding when saving the file.
 --
 -- New files are saved as UTF-8 by default.
 --
