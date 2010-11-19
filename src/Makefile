@@ -2,7 +2,7 @@
 
 .SUFFIXES: .c .o .h .a .cxx
 
-ifndef WIN32
+# Linux (default)
 CC = gcc
 CPP = g++
 PKG_CONFIG = pkg-config
@@ -17,7 +17,10 @@ LUA_CFLAGS = -DLUA_USE_LINUX
 TEXTADEPT = textadept
 TEXTADEPT_RC =
 EXPORTLUASYMS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
-else
+WINDRES =
+
+# Win32 (WIN32=1)
+ifdef WIN32
 CC = i486-mingw32-gcc -mms-bitfields
 CPP = i486-mingw32-g++ -mms-bitfields -mwindows
 PKG_CONFIG = pkg-config --define-variable=prefix=win32gtk
@@ -29,6 +32,23 @@ TEXTADEPT = textadept.exe
 TEXTADEPT_RC = textadept_rc.o
 EXPORTLUASYMS = -Wl,--retain-symbols-file -Wl,lua.sym
 WINDRES = i486-mingw32-windres
+endif
+
+# Mac OSX (OSX=1)
+ifdef OSX
+CC = gcc -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
+  -isysroot /Developer/SDKs/MacOSX10.5.sdk
+CPP = g++ -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
+  -isysroot /Developer/SDKs/MacOSX10.5.sdk
+PKG_CONFIG = gtkosx/bin/pkg-config --define-variable=prefix=gtkosx
+PKG_CONFIG_PATH = $(shell pwd)/gtkosx/lib/pkgconfig
+PLAT_FLAGS = -DGTK -D__OSX__
+SCI_THREAD_FLAG =
+LUA_CFLAGS = -DLUA_USE_MACOSX
+TEXTADEPT = textadept.osx
+TEXTADEPT_RC =
+EXPORTLUASYMS = -rdynamic
+WINDRES =
 endif
 
 ifndef DEBUG
@@ -46,6 +66,9 @@ GTKFLAGS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --cflags gtk+-2.0)
 GTKLIBS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --libs gtk+-2.0 gthread-2.0)
+ifdef OSX
+GTKLIBS += -framework Carbon -framework Cocoa -ligemacintegration
+endif
 
 TEXTADEPT_OBJS = textadept.o
 LUA_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o \
@@ -144,21 +167,17 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	tar czf $(PACKAGE32) $(RELEASEDIR32)
 	# Mac OSX
 	mkdir $(RELEASEDIRMAC)
-	mkdir -p $(TEXTADEPTAPP)/Contents/{MacOS,Resources}
-	cp ../xcode/{Info.plist,PkgInfo} $(TEXTADEPTAPP)/Contents
-	cp -r ../xcode/English.lproj $(TEXTADEPTAPP)/Contents/Resources
-	cp -r $(RELEASEDIR32)/* $(TEXTADEPTAPP)/Contents/Resources
+	cp -r ../osxapp $(TEXTADEPTAPP)
+	cp -r $(RELEASEDIR32)/* $(TEXTADEPTAPP)/Contents/Resources/
 	mv $(TEXTADEPTAPP)/Contents/Resources/core/images/textadept.icns \
 		$(TEXTADEPTAPP)/Contents/Resources/
-	cp ../$(TEXTADEPTMAC) $(TEXTADEPTAPP)/Contents/MacOS/$(TEXTADEPT)
-	cp ../xcode/README.txt $(RELEASEDIRMAC)
+	cp ../$(TEXTADEPTMAC) $(TEXTADEPTAPP)/Contents/MacOS/
 	zip -r $(PACKAGEMAC) $(RELEASEDIRMAC)
 	rm -r $(RELEASEDIRMAC)
 	# Source
 	rm $(RELEASEDIR32)/$(TEXTADEPT)
 	cp -rL lua scintilla gcocoadialog LexLPeg.cxx $(RELEASEDIR32)/src/
 	rm -r $(RELEASEDIR32)/src/scintilla/.hg
-	cp -r ../xcode $(RELEASEDIR32)/
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
 	# Done
 	rm -r $(RELEASEDIR32)
