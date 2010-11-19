@@ -13,10 +13,9 @@ typically called `libgtk2.0-dev`. Otherwise, compile and install it from the
 (`gcc`) and [GNU Make][Make] (`make`). Both should be available for your Linux
 distribution through its package manager.
 
-#### Mac OSX
-
-[XCode][XCode] is needed for Mac OSX as well as the
-[GTK-OSX Framework][GTK-OSX-Latest].
+[GTK-Linux]: http://www.gtk.org/download-linux.html
+[GCC]: http://gcc.gnu.org
+[Make]: http://www.gnu.org/software/make/
 
 #### Windows
 
@@ -30,13 +29,18 @@ so, in addition to the GTK+ development libraries mentioned above, you will need
 along with win_iconv. The former should be available from your package manager.
 The latter you will have to download manually.
 
-[GTK-Linux]: http://www.gtk.org/download-linux.html
-[GCC]: http://gcc.gnu.org
-[Make]: http://www.gnu.org/software/make/
-[XCode]: http://developer.apple.com/TOOLS/xcode/
-[GTK-OSX-Latest]: http://code.google.com/p/textadept/downloads/detail?name=Gtk-Framework-2.14.3-2-test1.dmg
 [GTK-Win32]: http://www.gtk.org/download-windows.html
 [MinGW]: http://mingw.org
+
+#### Mac OSX
+
+[XCode][XCode] is needed for Mac OSX as well as [jhbuild][GTK-OSX]. After
+building `meta-gtk-osx-bootstrap` and `meta-gtk-osx-core`, you will need to
+build `meta-gtk-osx-themes`. Note that the entire compiling process can easily
+take 30 minutes or more and ultimately consume nearly 1GB of disk space.
+
+[XCode]: http://developer.apple.com/TOOLS/xcode/
+[GTK-OSX]: http://sourceforge.net/apps/trac/gtk-osx/wiki/Build
 
 ## Download
 
@@ -52,14 +56,6 @@ it to `/usr/bin/` or elsewhere in your `PATH`.
 
 BSD users please run `make BSD=1`.
 
-#### Mac OSX
-
-In Mac OSX, open `xcode/textadept.xcodeproj` in XCode, change the active build
-configuration combo box from `Debug` to `Release` (if necessary), click `Build`,
-and copy the resulting `xcode/build/Release/textadept.app` to your user or
-system `Applications` folder.
-
-
 #### Windows (Cross-Compiling from Linux)
 
 When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
@@ -69,6 +65,17 @@ part of the filename. Finally, modify the `CC`, `CPP`, and `WINDRES` variables
 in the `WIN32` block of `src/Makefile` to match your MinGW installation and run
 `make WIN32=1` to build `../textadept.exe`.
 
+#### Mac OSX
+
+After using `jhbuild`, GTK is in `~/gtk` so make a symlink from `~/gtk/inst` to
+`src/gtkosx` in Textadept. Then run `make OSX=1` to build `../textadept.osx`. At
+this point it is recommended to build a new `textadept.app` from an existing
+one. Download the most recent app and replace `Contents/MacOS/textadept.osx`,
+all `.dylib` files in `Contents/Resources/lib`, and all `.so` files in
+`Contents/Resources/lib/gtk-2.0/[version]/{engines,immodules,loaders}` with your
+own versions in `src/gtkosx/lib`. If you wish, you may also replace the files
+in `Contents/Resources/{etc,share}`, but these rarely change.
+
 ## Problems
 
 #### Mac OSX
@@ -77,12 +84,9 @@ In Mac OSX, if the build fails because of a
 
     `redefinition of 'struct Sci_TextRange'`
 
-error, you will need to open `src/scintilla-st/include/Scintilla.h` and comment
+error, you will need to open `src/scintilla/include/Scintilla.h` and comment
 out the following lines (put `//` at the start of the line):
 
     #define CharacterRange Sci_CharacterRange
     #define TextRange Sci_TextRange
     #define TextToFind Sci_TextToFind
-
-`src/scintilla-st/src/LexLPeg.cxx` may need to have `TextRange tr` changed to
-`Sci_TextRange tr` as well.

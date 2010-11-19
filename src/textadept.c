@@ -21,8 +21,7 @@
 #define main main_
 #elif __OSX__
 #include <Carbon/Carbon.h>
-#include "ige-mac-menu.h"
-#define GDK_MOD1_MASK GDK_META_MASK
+#include "igemacintegration/ige-mac-menu.h"
 #elif __BSD__
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -157,10 +156,6 @@ int main(int argc, char **argv) {
     CFRelease(path);
     CFRelease(bundle);
   } else textadept_home = calloc(1, 1);
-  // GTK-OSX does not parse ~/.gtkrc-2.0; parse it manually
-  char *user_home = g_strconcat(getenv("HOME"), "/.gtkrc-2.0", NULL);
-  gtk_rc_parse(user_home);
-  g_free(user_home);
 #elif __BSD__
   textadept_home = malloc(FILENAME_MAX);
   int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };

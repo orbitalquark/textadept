@@ -71,9 +71,6 @@ if WIN32 and #arg[0] > 0 then
   for i = 1, #params do arg[#arg + 1] = params[i] end
 end
 
--- For Mac, remove junk parameter if necessary.
-if OSX and arg[1] and arg[1]:find('^%-psn_0') then table.remove(arg, 1) end
-
 -- Set _G._USERHOME.
 local userhome = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'
 for i = 1, #arg do
