@@ -42,7 +42,7 @@ module('io', package.seeall)
 --
 -- ## Events
 --
--- The following is a list of all File I/O events generated in
+-- The following is a list of all file I/O events generated in
 -- `event_name(arguments)` format:
 --
 -- * **file\_opened** (filename) <br />
@@ -54,8 +54,6 @@ module('io', package.seeall)
 -- * **file\_saved_as** (filename) <br />
 --   Called when a file is saved under another filename.
 --       - filename: the other filename encoded in UTF-8.
-
-local lfs = require 'lfs'
 
 ---
 -- List of recently opened files.
@@ -84,13 +82,13 @@ local function detect_encoding(text)
   if b1 == 239 and b2 == 187 and b3 == 191 then
     return 'UTF-8', string.char(239, 187, 191)
   elseif b1 == 254 and b2 == 255 then
-    return 'UTF-16BE', boms[encoding]
+    return 'UTF-16BE', boms['UTF-16BE']
   elseif b1 == 255 and b2 == 254 then
-    return 'UTF-16LE', boms[encoding]
+    return 'UTF-16LE', boms['UTF-16LE']
   elseif b1 == 0 and b2 == 0 and b3 == 254 and b4 == 255 then
-    return 'UTF-32BE', boms[encoding]
+    return 'UTF-32BE', boms['UTF-32BE']
   elseif b1 == 255 and b2 == 254 and b3 == 0 and b4 == 0 then
-    return 'UTF-32LE', boms[encoding]
+    return 'UTF-32LE', boms['UTF-32LE']
   else
     local chunk = #text > 65536 and text:sub(1, 65536) or text
     if chunk:find('\0') then return 'binary' end -- binary file
@@ -116,9 +114,9 @@ local function open_helper(utf8_filename)
   if not utf8_filename then return end
   utf8_filename = utf8_filename:gsub('^file://', '')
   if WIN32 then utf8_filename = utf8_filename:gsub('/', '\\') end
-  for index, buffer in ipairs(_BUFFERS) do
+  for i, buffer in ipairs(_BUFFERS) do
     if utf8_filename == buffer.filename then
-      view:goto_buffer(index)
+      view:goto_buffer(i)
       return
     end
   end
@@ -126,58 +124,54 @@ local function open_helper(utf8_filename)
   local text
   local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
   local f, err = io.open(filename, 'rb')
-  if f then
-    text = f:read('*all')
-    f:close()
-    if not text then return end -- filename exists, but can't read it
-  else
-    error(err)
-  end
+  if not f then error(err) end
+  text = f:read('*all')
+  f:close()
+  if not text then return end -- filename exists, but can't read it
   local buffer = new_buffer()
-  if text then
-    -- Tries to detect character encoding and convert text from it to UTF-8.
-    local encoding, encoding_bom = detect_encoding(text)
-    if encoding ~= 'binary' then
-      if encoding then
-        if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
-        text = text:iconv('UTF-8', encoding)
-      else
-        -- Try list of encodings.
-        for _, try_encoding in ipairs(try_encodings) do
-          local ret, conv = pcall(string.iconv, text, 'UTF-8', try_encoding)
-          if ret then
-            encoding = try_encoding
-            text = conv
-            break
-          end
+  -- Tries to detect character encoding and convert text from it to UTF-8.
+  local encoding, encoding_bom = detect_encoding(text)
+  if encoding ~= 'binary' then
+    if encoding then
+      if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
+      text = text:iconv('UTF-8', encoding)
+    else
+      -- Try list of encodings.
+      for _, try_encoding in ipairs(try_encodings) do
+        local ret, conv = pcall(string.iconv, text, 'UTF-8', try_encoding)
+        if ret then
+          encoding = try_encoding
+          text = conv
+          break
         end
-        if not encoding then error(L('Encoding conversion failed.')) end
       end
-    else
-      encoding = nil
+      if not encoding then error(L('Encoding conversion failed.')) end
     end
-    local c = _SCINTILLA.constants
-    buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
-    buffer.code_page = encoding and c.SC_CP_UTF8 or 0
-    -- Tries to set the buffer's EOL mode appropriately based on the file.
-    local s, e = text:find('\r\n?')
-    if s and e then
-      buffer.eol_mode = (s == e and c.SC_EOL_CR or c.SC_EOL_CRLF)
-    else
-      buffer.eol_mode = c.SC_EOL_LF
-    end
-    buffer:add_text(text, #text)
-    buffer:goto_pos(0)
-    buffer:empty_undo_buffer()
-    buffer.modification_time = lfs.attributes(filename).modification
+  else
+    encoding = nil
   end
+  local c = _SCINTILLA.constants
+  buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
+  buffer.code_page = encoding and c.SC_CP_UTF8 or 0
+  -- Tries to set the buffer's EOL mode appropriately based on the file.
+  local s, e = text:find('\r\n?')
+  if s and e then
+    buffer.eol_mode = (s == e and c.SC_EOL_CR or c.SC_EOL_CRLF)
+  else
+    buffer.eol_mode = c.SC_EOL_LF
+  end
+  buffer:add_text(text, #text)
+  buffer:goto_pos(0)
+  buffer:empty_undo_buffer()
+  buffer.modification_time = lfs.attributes(filename).modification
   buffer.filename = utf8_filename
   buffer:set_save_point()
   events.emit('file_opened', utf8_filename)
 
-  for index, file in ipairs(recent_files) do
+  -- Add file to recent files list, eliminating duplicates.
+  for i, file in ipairs(recent_files) do
     if file == utf8_filename then
-      table.remove(recent_files, index)
+      table.remove(recent_files, i)
       break
     end
   end
@@ -200,7 +194,7 @@ function open_file(utf8_filenames)
   for filename in utf8_filenames:gmatch('[^\n]+') do open_helper(filename) end
 end
 
--- LuaDoc is in core/.buffer.lua.
+-- LuaDoc is in core/.buffer.luadoc.
 local function reload(buffer)
   gui.check_focused_buffer(buffer)
   if not buffer.filename then return end
@@ -222,7 +216,7 @@ local function reload(buffer)
   buffer.modification_time = lfs.attributes(filename).modification
 end
 
--- LuaDoc is in core/.buffer.lua.
+-- LuaDoc is in core/.buffer.luadoc.
 local function set_encoding(buffer, encoding)
   gui.check_focused_buffer(buffer)
   if not buffer.encoding then error(L('Cannot change binary file encoding')) end
@@ -239,7 +233,7 @@ local function set_encoding(buffer, encoding)
   buffer.encoding, buffer.encoding_bom = encoding, boms[encoding]
 end
 
--- LuaDoc is in core/.buffer.lua.
+-- LuaDoc is in core/.buffer.luadoc.
 local function save(buffer)
   gui.check_focused_buffer(buffer)
   if not buffer.filename then return buffer:save_as() end
@@ -251,18 +245,15 @@ local function save(buffer)
   end
   local filename = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local f, err = io.open(filename, 'wb')
-  if f then
-    f:write(text)
-    f:close()
-    buffer:set_save_point()
-    buffer.modification_time = lfs.attributes(filename).modification
-  else
-    error(err)
-  end
+  if not f then error(err) end
+  f:write(text)
+  f:close()
+  buffer:set_save_point()
+  buffer.modification_time = lfs.attributes(filename).modification
   if buffer._type then buffer._type = nil end
 end
 
--- LuaDoc is in core/.buffer.lua.
+-- LuaDoc is in core/.buffer.luadoc.
 local function save_as(buffer, utf8_filename)
   gui.check_focused_buffer(buffer)
   if not utf8_filename then
@@ -287,15 +278,15 @@ end
 function save_all()
   local current_buffer = buffer
   local current_index
-  for index, buffer in ipairs(_BUFFERS) do
-    view:goto_buffer(index)
-    if buffer == current_buffer then current_index = index end
+  for i, buffer in ipairs(_BUFFERS) do
+    view:goto_buffer(i)
+    if buffer == current_buffer then current_index = i end
     if buffer.filename and buffer.dirty then buffer:save() end
   end
   view:goto_buffer(current_index)
 end
 
--- LuaDoc is in core/.buffer.lua.
+-- LuaDoc is in core/.buffer.luadoc.
 local function close(buffer)
   gui.check_focused_buffer(buffer)
   if buffer.dirty and
@@ -325,8 +316,7 @@ function close_all()
     view:goto_buffer(#_BUFFERS)
     if not buffer:close() then return false end
   end
-  buffer:close() -- the last one
-  return true
+  return buffer:close() -- the last one
 end
 
 -- Prompts the user to reload the current file if it has been modified outside
@@ -338,6 +328,7 @@ local function update_modified_file()
   local attributes = lfs.attributes(filename)
   if not attributes or not buffer.modification_time then return end
   if buffer.modification_time < attributes.modification then
+    buffer.modification_time = attributes.modification
     if gui.dialog('yesno-msgbox',
                   '--title', L('Reload?'),
                   '--text', L('Reload modified file?'),
@@ -347,8 +338,6 @@ local function update_modified_file()
                   '--no-cancel',
                   '--no-newline') == '1' then
       buffer:reload()
-    else
-      buffer.modification_time = attributes.modification
     end
   end
 end

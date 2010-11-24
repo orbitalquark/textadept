@@ -19,8 +19,6 @@ DEFAULT_SESSION = _USERHOME..'/session'
 SAVE_ON_QUIT = true
 -- end settings
 
-local lfs = require 'lfs'
-
 ---
 -- Loads a Textadept session file.
 -- Textadept restores split views, opened buffers, cursor information, and
@@ -33,16 +31,17 @@ function load(filename)
   local not_found = {}
   local f = io.open(filename or DEFAULT_SESSION, 'rb')
   if not f then
-    if not io.close_all() then return false end
+    io.close_all()
+    return false
   end
-  if not f then return false end
   local current_view, splits = 1, { [0] = {} }
+  local lfs_attributes = lfs.attributes
   for line in f:lines() do
     if line:find('^buffer:') then
       local anchor, current_pos, first_visible_line, filename =
         line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
       if not filename:find('^%[.+%]$') then
-        if lfs.attributes(filename) then
+        if lfs_attributes(filename) then
           io.open_file(filename)
         else
           not_found[#not_found + 1] = filename
@@ -77,8 +76,7 @@ function load(filename)
     elseif line:find('^current_view:') then
       local view_idx = line:match('^current_view: (%d+)')
       current_view = tonumber(view_idx) or 1
-    end
-    if line:find('^size:') then
+    elseif line:find('^size:') then
       local width, height = line:match('^size: (%d+) (%d+)$')
       if width and height then gui.size = { width, height } end
     end

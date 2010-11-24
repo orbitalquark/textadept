@@ -27,12 +27,12 @@ if not _THEME:find('[/\\]') then
   if not lfs.attributes(_THEME) then _THEME = _HOME..'/themes/'..theme end
 end
 
--- LuaDoc is in core/._G.lua.
+-- LuaDoc is in core/._G.luadoc.
 function _G.user_dofile(filename)
   if lfs.attributes(_USERHOME..'/'..filename) then
-    local ret, errmsg = pcall(dofile, _USERHOME..'/'..filename)
-    if not ret then gui.print(errmsg) end
-    return ret
+    local ok, err = pcall(dofile, _USERHOME..'/'..filename)
+    if not ok then gui.print(err) end
+    return ok
   end
   return false
 end

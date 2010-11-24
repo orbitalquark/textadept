@@ -36,7 +36,7 @@ DEFAULT_DEPTH = 4
 MAX = 1000
 -- end settings
 
-local lfs = require 'lfs'
+local lfs_dir, lfs_attributes = lfs.dir, lfs.attributes
 local DEPTH = DEFAULT_DEPTH
 
 -- Determines whether or not the given file matches the given filter.
@@ -64,10 +64,10 @@ end
 -- @param filter The filter table.
 local function add_directory(dir, list, depth, filter)
   local string_match, string_gsub, MAX = string.match, string.gsub, MAX
-  for file in lfs.dir(dir) do
+  for file in lfs_dir(dir) do
     if not string_match(file, '^%.%.?$') then
       file = dir..(not WIN32 and '/' or '\\')..file
-      if lfs.attributes(file).mode == 'directory' then
+      if lfs_attributes(file).mode == 'directory' then
         if not exclude(file, filter.folders) and depth < DEPTH then
           add_directory(file, list, depth + 1, filter)
         end

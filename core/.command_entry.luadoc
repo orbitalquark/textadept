@@ -37,6 +37,18 @@ module('gui.command_entry')
 -- `modules/textadept/find.lua` for the implementation.
 --
 -- [inc_search]: ../modules/gui.find.html#incremental
+--
+-- ## Events
+--
+-- The following is a list of all command entry events generated in
+-- `event_name(arguments)` format:
+--
+-- * **command\_entry\_command** (command)<br />
+--   Called when a command is entered into the Command Entry.
+--       - command: the string command.
+-- * **command\_entry\_keypress** (code)<br />
+--   Called when a key is pressed in the Command Entry.
+--       - code: the key code (according to `<gdk/gdkkeysyms.h>`).
 
 --- Focuses the command entry.
 function focus() end

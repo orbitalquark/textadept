@@ -49,10 +49,7 @@ end
 
 ---
 -- Clears all bookmarks in the current buffer.
-function clear()
-  local buffer = buffer
-  buffer:marker_delete_all(MARK_BOOKMARK)
-end
+function clear() buffer:marker_delete_all(MARK_BOOKMARK) end
 
 ---
 -- Goes to the next bookmark in the current buffer.

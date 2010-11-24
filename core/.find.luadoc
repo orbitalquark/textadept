@@ -47,6 +47,23 @@ module('gui.find')
 -- names of `textadept-find-entry` and `textadept-replace-entry` respectively.
 --
 -- [gtkrc]: http://library.gnome.org/devel/gtk/unstable/gtk-Resource-Files.html.
+--
+-- ## Events
+--
+-- The following is a list of all find events generated in
+-- `event_name(arguments)` format:
+--
+-- * **find** (text, next)<br />
+--   Called when attempting to finding text via the Find dialog box.
+--       - text: the text to search for.
+--       - next: flat indicating whether or not the search direction is forward.
+-- * **replace** (text)<br />
+--   Called when the found text is selected and asked to be replaced.
+--       - text: the text to replace the selected text with.
+-- * **replace\_all** (find\_text, repl\_text)<br />
+--   Called when all occurances of found text are to be replaced.
+--       - find\_text: the text to search for.
+--       - repl\_text: the text to replace found text with.
 
 --- Displays and focuses the find/replace dialog.
 function focus() end

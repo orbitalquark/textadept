@@ -114,7 +114,6 @@ lexers = {}
 
 -- Generate lexer list
 local lexers_found = {}
-local lfs = require 'lfs'
 for lexer in lfs.dir(_HOME..'/lexers/') do
   if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
     lexers_found[lexer:match('^(.+)%.lua$')] = true

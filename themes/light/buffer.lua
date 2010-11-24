@@ -3,11 +3,11 @@
 
 local buffer = buffer
 
--- folding
+-- Folding.
 buffer.property['fold'] = '1'
 buffer.property['fold.by.indentation'] = '1'
 
--- tabs and indentation
+-- Tabs and indentation.
 buffer.tab_width = 2
 buffer.use_tabs = false
 buffer.indent = 2
@@ -15,6 +15,6 @@ buffer.tab_indents = true
 buffer.back_space_un_indents = true
 buffer.indentation_guides = 1
 
--- various
+-- Various.
 buffer.auto_c_choose_single = true
 buffer.additional_selection_typing = true

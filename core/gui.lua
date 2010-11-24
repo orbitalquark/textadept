@@ -3,7 +3,7 @@
 local L = _G.locale.localize
 local gui = _G.gui
 
--- LuaDoc is in core/.gui.lua.
+-- LuaDoc is in core/.gui.luadoc.
 function gui.check_focused_buffer(buffer)
   if type(buffer) ~= 'table' or not buffer.doc_pointer then
     error(L('Buffer argument expected.'), 2)
@@ -12,18 +12,17 @@ function gui.check_focused_buffer(buffer)
   end
 end
 
--- LuaDoc is in core/.gui.lua.
+-- LuaDoc is in core/.gui.luadoc.
 function gui._print(buffer_type, ...)
   local function safe_print(...)
-    local message = table.concat({...}, '\t')
     local message_buffer, message_buffer_index
     local message_view, message_view_index
-    for index, buffer in ipairs(_BUFFERS) do
+    for i, buffer in ipairs(_BUFFERS) do
       if buffer._type == buffer_type then
-        message_buffer, message_buffer_index = buffer, index
-        for jndex, view in ipairs(_VIEWS) do
+        message_buffer, message_buffer_index = buffer, i
+        for j, view in ipairs(_VIEWS) do
           if view.doc_pointer == message_buffer.doc_pointer then
-            message_view, message_view_index = view, jndex
+            message_view, message_view_index = view, j
             break
           end
         end
@@ -42,16 +41,17 @@ function gui._print(buffer_type, ...)
     else
       gui.goto_view(message_view_index, true)
     end
-    message_buffer:append_text(message..'\n')
+    message_buffer:append_text(table.concat({...}, '\t'))
+    message_buffer:append_text('\n')
     message_buffer:set_save_point()
   end
-  pcall(safe_print, ...) -- prevent endless loops if this errors
+  pcall(safe_print, ...) -- prevent endless loops on error
 end
 
--- LuaDoc is in core/.gui.lua.
+-- LuaDoc is in core/.gui.luadoc.
 function gui.print(...) gui._print(L('[Message Buffer]'), ...) end
 
--- LuaDoc is in core/.gui.lua.
+-- LuaDoc is in core/.gui.luadoc.
 function gui.switch_buffer()
   local items = {}
   for _, buffer in ipairs(_BUFFERS) do
@@ -68,5 +68,5 @@ function gui.switch_buffer()
                               '--columns', 'Name', 'File',
                               '--items', items)
   local ok, i = response:match('(%-?%d+)\n(%d+)$')
-  if ok and ok ~= '2' then view:goto_buffer(tonumber(i) + 1, true) end
+  if ok == '1' then view:goto_buffer(tonumber(i) + 1, true) end
 end

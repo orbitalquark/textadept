@@ -1950,7 +1950,7 @@ static int l_cf_gui_dialog(lua_State *lua) {
   int i, j, k, n = lua_gettop(lua) - 1, argc = n;
   for (i = 2; i < n + 2; i++)
     if (lua_type(lua, i) == LUA_TTABLE) argc += lua_objlen(lua, i) - 1;
-  const char *argv[argc];
+  const char **argv = malloc(argc * sizeof(const char *));
   for (i = 0, j = 2; j < n + 2; j++)
     if (lua_type(lua, j) == LUA_TTABLE) {
       int len = lua_objlen(lua, j);
@@ -1963,6 +1963,7 @@ static int l_cf_gui_dialog(lua_State *lua) {
   char *out = gcocoadialog(type, argc, argv);
   lua_pushstring(lua, out);
   free(out);
+  free(argv);
   return 1;
 }
 

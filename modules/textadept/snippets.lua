@@ -34,6 +34,9 @@ module('_m.textadept.snippets', package.seeall)
 -- and `lua`. Style names are different lexer styles, most of which are in
 -- `lexers/lexer.lua`; examples are `whitespace`, `comment`, and `string`.
 --
+-- Snippet text should contain spaces instead of tabs since Textadept
+-- automatically converts spaces to tabs depending on the current settings.
+--
 -- ## Snippet Precedence
 --
 -- When searching for a snippet to expand in the `snippets` table, snippets in

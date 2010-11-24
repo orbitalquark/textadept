@@ -87,18 +87,18 @@ module('_m.textadept.keys', package.seeall)
 --       ['ctrl+b'] = { 'char_left',  'buffer' },
 --       lua = {
 --         ['ctrl+c'] = { 'add_text', 'buffer', '-- ' },
---         whitespace = {
---           ['ctrl+f'] = { function() print('whitespace') end }
+--         comment = {
+--           ['ctrl+f'] = { function() print('comment') end }
 --         }
 --       }
 --     }
 --
 -- The first two key commands are global and call `buffer:char_right()` and
 -- `buffer:char_left()` respectively. The last two commands apply only in the
--- Lua lexer with the very last one only being available in Lua's `whitespace`
--- style. If `ctrl+f` is pressed when the current style is `whitespace` in the
+-- Lua lexer with the very last one only being available in Lua's `comment`
+-- style. If `ctrl+f` is pressed when the current style is `comment` in the
 -- `lua` lexer, the global key command with the same shortcut is overridden and
--- `whitespace` is printed to standard out.
+-- `comment` is printed to standard out.
 --
 -- ## Problems
 --
@@ -114,6 +114,20 @@ module('_m.textadept.keys', package.seeall)
 
 -- Windows and Linux key commands are listed in the first block.
 -- Mac OSX key commands are listed in the second block.
+--
+-- ## Events
+--
+-- The following is a list of all key events generated in
+-- `event_name(arguments)` format:
+--
+-- * **keypress** (code, shift, control, alt)<br />
+--   Called when a key is pressed.
+--       - code: the key code (according to `<gdk/gdkkeysyms.h>`).
+--       - shift: flag indicating whether or not the Shift key is pressed.
+--       - control: flag indicating whether or not the Control key is pressed.
+--       - alt: flag indicating whether or not the Alt/Apple key is pressed.
+--   <br />
+--   Note: The Alt-Option key in Mac OSX is not available.
 
 -- settings
 local SCOPES_ENABLED = true
@@ -126,6 +140,46 @@ local ALT = 'a'..ADD
 local keys = _M
 local b, v = 'buffer', 'view'
 local gui = gui
+
+-- Utility functions used by both layouts.
+local function enclose_in_tag()
+  m_editing.enclose('<', '>')
+  local buffer = buffer
+  local pos = buffer.current_pos
+  while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
+  buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
+end
+local function any_char_mt(f)
+  return setmetatable({['\0'] = {}}, {
+                        __index = function(t, k)
+                          if #k == 1 then return { f, k, k } end
+                        end })
+end
+local function toggle_setting(setting)
+  local state = buffer[setting]
+  if type(state) == 'boolean' then
+    buffer[setting] = not state
+  elseif type(state) == 'number' then
+    buffer[setting] = buffer[setting] == 0 and 1 or 0
+  end
+  events.emit('update_ui') -- for updating statusbar
+end
+local RECENT_FILES = 1
+events.connect('user_list_selection',
+  function(type, text)
+    if type == RECENT_FILES then io.open_file(text) end
+  end)
+local function show_recent_file_list()
+  local buffer = buffer
+  local files = {}
+  for _, filename in ipairs(io.recent_files) do
+    table.insert(files, 1, filename)
+  end
+  local sep = buffer.auto_c_separator
+  buffer.auto_c_separator = ('|'):byte()
+  buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
+  buffer.auto_c_separator = sep
+end
 
 -- CTRL = 'c'
 -- SHIFT = 's'
@@ -172,38 +226,39 @@ if not OSX then
   keys.cv = { 'paste', b      }
   -- Delete is delete.
   keys.ca = { 'select_all', b }
-  keys.ce     = { m_editing.match_brace              }
-  keys.cE     = { m_editing.match_brace, 'select'    }
-  keys['c\n'] = { m_editing.autocomplete_word, '%w_' }
+  keys.ce       = { m_editing.match_brace              }
+  keys.cE       = { m_editing.match_brace, 'select'    }
+  keys['c\n']   = { m_editing.autocomplete_word, '%w_' }
   keys['c\n\r'] = { m_editing.autocomplete_word, '%w_' } -- win32
-  keys.cq     = { m_editing.block_comment            }
+  keys.cq       = { m_editing.block_comment            }
   -- TODO: { m_editing.current_word, 'delete' }
   keys.ch = { m_editing.highlight_word }
   -- TODO: { m_editing.transpose_chars }
   -- TODO: { m_editing.convert_indentation }
   keys.ac = { -- enClose in...
-    t     = { m_editing.enclose, 'tag'        },
-    T     = { m_editing.enclose, 'single_tag' },
-    ['"'] = { m_editing.enclose, 'dbl_quotes' },
-    ["'"] = { m_editing.enclose, 'sng_quotes' },
-    ['('] = { m_editing.enclose, 'parens'     },
-    ['['] = { m_editing.enclose, 'brackets'   },
-    ['{'] = { m_editing.enclose, 'braces'     },
-    c     = { m_editing.enclose, 'chars'      },
+    t     = { enclose_in_tag },
+    T     = { m_editing.enclose, '<', ' />' },
+    ['"'] = { m_editing.enclose, '"', '"'   },
+    ["'"] = { m_editing.enclose, "'", "'"   },
+    ['('] = { m_editing.enclose, '(', ')'   },
+    ['['] = { m_editing.enclose, '[', ']'   },
+    ['{'] = { m_editing.enclose, '{', '}'   },
+    c     = any_char_mt(m_editing.enclose),
   }
   keys.as = { -- select in...
-    t     = { m_editing.select_enclosed, 'tags'       },
-    ['"'] = { m_editing.select_enclosed, 'dbl_quotes' },
-    ["'"] = { m_editing.select_enclosed, 'sng_quotes' },
-    ['('] = { m_editing.select_enclosed, 'parens'     },
-    ['['] = { m_editing.select_enclosed, 'brackets'   },
-    ['{'] = { m_editing.select_enclosed, 'braces'     },
-    w     = { m_editing.current_word, 'select'        },
-    l      = { m_editing.select_line                   },
-    p      = { m_editing.select_paragraph              },
-    b      = { m_editing.select_indented_block         },
-    s      = { m_editing.select_scope                  },
-    g      = { m_editing.grow_selection, 1             },
+    t     = { m_editing.select_enclosed, '>', '<' },
+    ['"'] = { m_editing.select_enclosed, '"', '"' },
+    ["'"] = { m_editing.select_enclosed, "'", "'" },
+    ['('] = { m_editing.select_enclosed, '(', ')' },
+    ['['] = { m_editing.select_enclosed, '[', ']' },
+    ['{'] = { m_editing.select_enclosed, '{', '}' },
+    w     = { m_editing.current_word, 'select'    },
+    l     = { m_editing.select_line               },
+    p     = { m_editing.select_paragraph          },
+    b     = { m_editing.select_indented_block     },
+    s     = { m_editing.select_scope              },
+    g     = { m_editing.grow_selection, 1         },
+    c     = any_char_mt(m_editing.select_enclosed),
   }
 
   -- Search
@@ -236,15 +291,6 @@ if not OSX then
   keys.cb      = { gui.switch_buffer           }
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
   keys['cs\t'] = { 'goto_buffer', v, -1, false }
-  local function toggle_setting(setting)
-    local state = buffer[setting]
-    if type(state) == 'boolean' then
-      buffer[setting] = not state
-    elseif type(state) == 'number' then
-      buffer[setting] = buffer[setting] == 0 and 1 or 0
-    end
-    events.emit('update_ui') -- for updating statusbar
-  end
   keys.ct.v = {
     e      = { toggle_setting, 'view_eol'           },
     w      = { toggle_setting, 'wrap_mode'          },
@@ -269,25 +315,7 @@ if not OSX then
   keys.c0 = { function() buffer.zoom = 0 end }
 
   -- Miscellaneous not in standard menu.
-  -- Recent files.
-  local RECENT_FILES = 1
-  events.connect('user_list_selection',
-    function(type, text)
-      if type == RECENT_FILES then io.open_file(text) end
-    end)
-  keys.ao = {
-    function()
-      local buffer = buffer
-      local files = {}
-      for _, filename in ipairs(io.recent_files) do
-        table.insert(files, 1, filename)
-      end
-      local sep = buffer.auto_c_separator
-      buffer.auto_c_separator = ('|'):byte()
-      buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
-      buffer.auto_c_separator = sep
-    end
-  }
+  keys.ao = { show_recent_file_list }
 
 else
   -- Mac OSX key commands
@@ -336,36 +364,36 @@ else
   keys.ct = { m_editing.transpose_chars }
   -- TODO: { m_editing.convert_indentation }
   keys.cc = { -- enClose in...
-    t     = { m_editing.enclose, 'tag'        },
-    T     = { m_editing.enclose, 'single_tag' },
-    ['"'] = { m_editing.enclose, 'dbl_quotes' },
-    ["'"] = { m_editing.enclose, 'sng_quotes' },
-    ['('] = { m_editing.enclose, 'parens'     },
-    ['['] = { m_editing.enclose, 'brackets'   },
-    ['{'] = { m_editing.enclose, 'braces'     },
-    c     = { m_editing.enclose, 'chars'      },
+    t     = { enclose_in_tag },
+    T     = { m_editing.enclose, '<', ' />' },
+    ['"'] = { m_editing.enclose, '"', '"'   },
+    ["'"] = { m_editing.enclose, "'", "'"   },
+    ['('] = { m_editing.enclose, '(', ')'   },
+    ['['] = { m_editing.enclose, '[', ']'   },
+    ['{'] = { m_editing.enclose, '{', '}'   },
+    c     = any_char_mt(m_editing.enclose),
   }
   keys.cs = { -- select in...
-    e     = { m_editing.select_enclosed               },
-    t     = { m_editing.select_enclosed, 'tags'       },
-    ['"'] = { m_editing.select_enclosed, 'dbl_quotes' },
-    ["'"] = { m_editing.select_enclosed, 'sng_quotes' },
-    ['('] = { m_editing.select_enclosed, 'parens'     },
-    ['['] = { m_editing.select_enclosed, 'brackets'   },
-    ['{'] = { m_editing.select_enclosed, 'braces'     },
-    w     = { m_editing.current_word, 'select'        },
-    l     = { m_editing.select_line                   },
-    p     = { m_editing.select_paragraph              },
-    b     = { m_editing.select_indented_block         },
-    s     = { m_editing.select_scope                  },
-    g     = { m_editing.grow_selection, 1             },
+    t     = { m_editing.select_enclosed, '>', '<' },
+    ['"'] = { m_editing.select_enclosed, '"', '"' },
+    ["'"] = { m_editing.select_enclosed, "'", "'" },
+    ['('] = { m_editing.select_enclosed, '(', ')' },
+    ['['] = { m_editing.select_enclosed, '[', ']' },
+    ['{'] = { m_editing.select_enclosed, '{', '}' },
+    w     = { m_editing.current_word, 'select'    },
+    l     = { m_editing.select_line               },
+    p     = { m_editing.select_paragraph          },
+    b     = { m_editing.select_indented_block     },
+    s     = { m_editing.select_scope              },
+    g     = { m_editing.grow_selection, 1         },
+    c     = any_char_mt(m_editing.select_enclosed),
   }
 
   -- Search
-  keys.af = { gui.find.focus       } -- find/replace
-  keys.ag = { gui.find.find_next   }
-  keys.aG = { gui.find.find_prev   }
-  keys.ar = { gui.find.replace     }
+  keys.af = { gui.find.focus     } -- find/replace
+  keys.ag = { gui.find.find_next }
+  keys.aG = { gui.find.find_prev }
+  keys.ar = { gui.find.replace   }
   keys.ai = { gui.find.find_incremental }
   keys.aF = {
     function()
@@ -375,7 +403,7 @@ else
   }
   keys.cag = { gui.find.goto_file_in_list, true  }
   keys.caG = { gui.find.goto_file_in_list, false }
-  keys.cg  = { m_editing.goto_line             }
+  keys.cg  = { m_editing.goto_line               }
 
   -- Tools
   keys['f2'] = { gui.command_entry.focus }
@@ -395,15 +423,6 @@ else
   keys.ab      = { gui.switch_buffer           }
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
   keys['cs\t'] = { 'goto_buffer', v, -1, false }
-  local function toggle_setting(setting)
-    local state = buffer[setting]
-    if type(state) == 'boolean' then
-      buffer[setting] = not state
-    elseif type(state) == 'number' then
-      buffer[setting] = buffer[setting] == 0 and 1 or 0
-    end
-    events.emit('update_ui') -- for updating statusbar
-  end
   keys.at.v = {
     e      = { toggle_setting, 'view_eol'           },
     w      = { toggle_setting, 'wrap_mode'          },
@@ -428,25 +447,7 @@ else
   keys.c0 = { function() buffer.zoom = 0 end }
 
   -- Miscellaneous not in standard menu.
-  -- Recent files.
-  local RECENT_FILES = 1
-  events.connect('user_list_selection',
-    function(type, text)
-      if type == RECENT_FILES then io.open_file(text) end
-    end)
-  keys.co = {
-    function()
-      local buffer = buffer
-      local files = {}
-      for _, filename in ipairs(io.recent_files) do
-        table.insert(files, 1, filename)
-      end
-      local sep = buffer.auto_c_separator
-      buffer.auto_c_separator = ('|'):byte()
-      buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
-      buffer.auto_c_separator = sep
-    end
-  }
+  keys.co = { show_recent_file_list }
 
   -- Movement/selection commands
   keys.cf  = { 'char_right',        b }
@@ -469,7 +470,7 @@ else
   keys.cah = { 'del_word_left',     b }
   keys.cd  = { 'clear',             b }
   keys.cad = { 'del_word_right',    b }
-  keys.ck = {
+  keys.ck  = {
     function()
       buffer:line_end_extend()
       buffer:cut()
@@ -568,9 +569,7 @@ local function run_key_command(lexer, scope)
     end
   end
 
-  if type(f) ~= 'function' then
-    error(L('Unknown command:')..tostring(f))
-  end
+  if type(f) ~= 'function' then error(L('Unknown command:')..tostring(f)) end
   return f(unpack(args)) == false and PROPAGATE or HALT
 end
 
@@ -594,19 +593,9 @@ local function keypress(code, shift, control, alt)
   if code < 256 then
     key = string_char(code)
     shift = false -- for printable characters, key is upper case
-    if OSX and not shift and not control and not alt then
-      local ch = string_char(code)
-      -- work around native GTK-OSX's handling of Alt key
-      if ch:find('[%p%d]') and #keychain == 0 then
-        if buffer.anchor ~= buffer.current_pos then buffer:delete_back() end
-        buffer:add_text(ch)
-        events.emit('char_added', code)
-        return true
-      end
-    end
   else
-    if not KEYSYMS[code] then return end
     key = KEYSYMS[code]
+    if not key then return end
   end
   control = control and CTRL or ''
   shift = shift and SHIFT or ''

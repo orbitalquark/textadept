@@ -52,28 +52,10 @@ INDIC_HIGHLIGHT_ALPHA = 100
 -- @see block_comment
 comment_string = {}
 
----
--- Enclosures for enclosing or selecting ranges of text.
--- Note chars and tag enclosures are generated at runtime.
--- You can add entries to the table in language-specific modules and use the
--- 'enclose' function in key commands.
--- @class table
--- @name enclosure
--- @see enclose
-enclosure = {
-  dbl_quotes = { left = '"', right = '"' },
-  sng_quotes = { left = "'", right = "'" },
-  parens     = { left = '(', right = ')' },
-  brackets   = { left = '[', right = ']' },
-  braces     = { left = '{', right = '}' },
-  chars      = { left = ' ', right = ' ' },
-  tags       = { left = '>', right = '<' },
-  tag        = { left = ' ', right = ' ' },
-  single_tag = { left = '<', right = ' />' }
-}
-
 -- Character matching.
 -- Used for auto-matching parentheses, brackets, braces, and quotes.
+-- @class table
+-- @name char_matches
 local char_matches = {
   [40] = ')', [91] = ']', [123] = '}',
   [39] = "'", [34] = '"'
@@ -81,6 +63,8 @@ local char_matches = {
 
 -- Brace characters.
 -- Used for going to matching brace positions.
+-- @class table
+-- @name braces
 local braces = { -- () [] {} <>
   [40] = 1, [91] = 1, [123] = 1, [60] = 1,
   [41] = 1, [93] = 1, [125] = 1, [62] = 1,
@@ -88,6 +72,8 @@ local braces = { -- () [] {} <>
 
 -- The current call tip.
 -- Used for displaying call tips.
+-- @class table
+-- @name current_call_tip
 local current_call_tip = {}
 
 events.connect('char_added',
@@ -99,21 +85,20 @@ events.connect('char_added',
 
 events.connect('keypress',
   function(code, shift, control, alt) -- removes matched chars on backspace
-    if AUTOPAIR and code == 0xff08 and buffer.selections == 1 then
-      local buffer = buffer
-      local current_pos = buffer.current_pos
-      local c = buffer.char_at[current_pos - 1]
-      if char_matches[c] and
-        buffer.char_at[current_pos] == string.byte(char_matches[c]) then
-        buffer:clear()
-      end
+    if not AUTOPAIR or code ~= 0xff08 or buffer.selections ~= 1 then return end
+    local buffer = buffer
+    local current_pos = buffer.current_pos
+    local c = buffer.char_at[current_pos - 1]
+    if char_matches[c] and
+      buffer.char_at[current_pos] == string.byte(char_matches[c]) then
+      buffer:clear()
     end
   end)
 
 events.connect('update_ui',
   function() -- highlights matching braces
-    local buffer = buffer
     if not HIGHLIGHT_BRACES then return end
+    local buffer = buffer
     local current_pos = buffer.current_pos
     if braces[buffer.char_at[current_pos]] and
       buffer:get_style_name(buffer.style_at[current_pos]) == 'operator' then
@@ -133,16 +118,14 @@ events.connect('char_added',
     if not AUTOINDENT or char ~= 10 then return end
     local buffer = buffer
     local anchor, caret = buffer.anchor, buffer.current_pos
-    local curr_line = buffer:line_from_position(caret)
-    local last_line = curr_line - 1
-    while last_line >= 0 and #buffer:get_line(last_line) == 1 do
-      last_line = last_line - 1
-    end
-    if last_line >= 0 then
-      local indentation = buffer.line_indentation[last_line]
-      local s = buffer.line_indent_position[curr_line]
-      buffer.line_indentation[curr_line] = indentation
-      local e = buffer.line_indent_position[curr_line]
+    local line = buffer:line_from_position(caret)
+    local pline = line - 1
+    while pline >= 0 and #buffer:get_line(pline) == 1 do pline = pline - 1 end
+    if pline >= 0 then
+      local indentation = buffer.line_indentation[pline]
+      local s = buffer.line_indent_position[line]
+      buffer.line_indentation[line] = indentation
+      local e = buffer.line_indent_position[line]
       local diff = e - s
       if e > s then -- move selection on
         if anchor >= s then anchor = anchor + diff end
@@ -179,6 +162,7 @@ end
 -- Pops up an autocompletion list for the current word based on other words in
 -- the document.
 -- @param word_chars String of chars considered to be part of words.
+-- @return true if there were completions to show; false otherwise.
 function autocomplete_word(word_chars)
   local buffer = buffer
   local caret, length = buffer.current_pos, buffer.length
@@ -241,7 +225,6 @@ end
 -- Goes to the requested line.
 -- @param line Optional line number to go to.
 function goto_line(line)
-  local buffer = buffer
   if not line then
     line = gui.dialog('standard-inputbox',
                       '--title', L('Go To'),
@@ -259,8 +242,8 @@ end
 -- Strips trailing whitespace off of every line, ensures an ending newline, and
 -- converts non-consistent EOLs.
 function prepare_for_save()
-  local buffer = buffer
   if not SAVE_STRIPS_WS then return end
+  local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
   local lines = buffer.line_count
@@ -304,27 +287,21 @@ end
 
 ---
 -- Transposes characters intelligently.
--- If the caret is at the end of the current word, the two characters before
--- the caret are transposed. Otherwise the characters to the left and right of
--- the caret are transposed.
+-- If the caret is at the end of a line, the two characters before the caret are
+-- transposed. Otherwise, the characters to the left and right are.
 function transpose_chars()
   local buffer = buffer
   buffer:begin_undo_action()
-  local caret = buffer.current_pos
-  local char = buffer.char_at[caret - 1]
+  local pos = buffer.current_pos
+  local c1, c2 = buffer.char_at[pos - 1], buffer.char_at[pos]
   buffer:delete_back()
-  if caret > buffer.length or buffer.char_at[caret - 1] == 32 then
-    buffer:char_left()
-  else
-    buffer:char_right()
-  end
-  buffer:insert_text(-1, string.char(char))
+  buffer:insert_text((c2 == 10 or c2 == 13) and pos - 2 or pos, string.char(c1))
   buffer:end_undo_action()
-  buffer:goto_pos(caret)
+  buffer:goto_pos(pos)
 end
 
 ---
--- Joins the current line with the line below, eliminating whitespace.
+-- Joins the current line with the line below.
 function join_lines()
   local buffer = buffer
   buffer:line_end()
@@ -334,77 +311,33 @@ function join_lines()
   buffer:lines_join()
 end
 
--- Returns the number to the left of the caret.
--- This is used for the enclose function.
--- @see enclose
-local function get_preceding_number()
-  local buffer = buffer
-  local caret = buffer.current_pos
-  local char = buffer.char_at[caret - 1]
-  local txt = ''
-  while tonumber(string.char(char)) do
-    txt = txt..string.char(char)
-    caret = caret - 1
-    char = buffer.char_at[caret - 1]
-  end
-  return tonumber(txt) or 1, #txt
-end
-
 ---
--- Encloses text in an enclosure set.
+-- Encloses text within a given pair of strings.
 -- If text is selected, it is enclosed. Otherwise, the previous word is
--- enclosed. The n previous words can be enclosed by appending n (a number) to
--- the end of the last word. When enclosing with a character, append the
--- character to the end of the word(s). To enclose previous word(s) with n
--- characters, append n (a number) to the end of character set.
--- Examples:
---   enclose this2 -> 'enclose this' (enclose in sng_quotes)
---   enclose this2**2 -> **enclose this**
--- @param str The enclosure type in enclosure.
--- @see enclosure
--- @see get_preceding_number
-function enclose(str)
+-- enclosed.
+-- @param left The left part of the enclosure.
+-- @param right The right part of the enclosure.
+function enclose(left, right)
   local buffer = buffer
   buffer:begin_undo_action()
   local txt = buffer:get_sel_text()
-  if txt == '' then
-    if str == 'chars' then
-      local num_chars, len_num_chars = get_preceding_number()
-      for i = 1, len_num_chars do buffer:delete_back() end
-      for i = 1, num_chars do buffer:char_left_extend() end
-      enclosure[str].left  = buffer:get_sel_text()
-      enclosure[str].right = enclosure[str].left
-      buffer:delete_back()
-    end
-    local num_words, len_num_chars = get_preceding_number()
-    for i = 1, len_num_chars do buffer:delete_back() end
-    for i = 1, num_words do buffer:word_left_extend() end
+  if #txt == 0 then
+    buffer:word_left_extend()
     txt = buffer:get_sel_text()
   end
-  local len = 0
-  if str == 'tag' then
-    enclosure[str].left  = '<'..txt..'>'
-    enclosure[str].right = '</'..txt..'>'
-    len = #txt + 3
-    txt = ''
-  end
-  local left  = enclosure[str].left
-  local right = enclosure[str].right
   buffer:replace_sel(left..txt..right)
-  if str == 'tag' then buffer:goto_pos(buffer.current_pos - len) end
   buffer:end_undo_action()
 end
 
 ---
--- Selects text in a specified enclosure.
--- @param str The enclosure type in enclosure.
--- @see enclosure
-function select_enclosed(str)
-  if not str then return end
+-- Selects text between a given pair of strings.
+-- @param left The left part of the enclosure.
+-- @param right The right part of the enclosure.
+function select_enclosed(left, right)
   local buffer = buffer
   buffer:search_anchor()
-  local s = buffer:search_prev(0, enclosure[str].left)
-  local e = buffer:search_next(0, enclosure[str].right)
+  local s = buffer:search_prev(0, left)
+  local e = buffer:search_next(0, right)
   if s and e then buffer:set_sel(s + 1, e) end
 end
 
@@ -424,7 +357,6 @@ end
 ---
 -- Selects the current line.
 function select_line()
-  local buffer = buffer
   buffer:home()
   buffer:line_end_extend()
 end
@@ -433,7 +365,6 @@ end
 -- Selects the current paragraph.
 -- Paragraphs are delimited by two or more consecutive newlines.
 function select_paragraph()
-  local buffer = buffer
   buffer:para_up()
   buffer:para_down_extend()
 end
@@ -467,7 +398,7 @@ function select_indented_block()
 end
 
 ---
--- Selects all text with the same scope/style as under the caret.
+-- Selects all text with the same style as under the caret.
 function select_scope()
   local buffer = buffer
   local start_pos = buffer.current_pos
