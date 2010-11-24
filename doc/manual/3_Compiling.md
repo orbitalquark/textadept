@@ -21,13 +21,12 @@ distribution through its package manager.
 
 Compiling Textadept on Windows is no longer supported. If you wish to do so
 however, you will need a C compiler that supports the C99 standard (Microsoft's
-does not) and the [GTK+ for Windows bundle][GTK-Win32] and win_iconv libraries.
+does not) and the [GTK+ for Windows bundle][GTK-Win32] (2.16 is recommended).
 
 The preferred way to compile for Windows is cross-compiling from Linux. To do
-so, in addition to the GTK+ development libraries mentioned above, you will need
-[MinGW][MinGW] with the Windows header files and the Windows [bundle][GTK-Win32]
-along with win_iconv. The former should be available from your package manager.
-The latter you will have to download manually.
+so, in addition to the GTK bundle mentioned above, you will need [MinGW][MinGW]
+with the Windows header files. They should be available from your package
+manager.
 
 [GTK-Win32]: http://www.gtk.org/download-windows.html
 [MinGW]: http://mingw.org
@@ -59,11 +58,9 @@ BSD users please run `make BSD=1`.
 #### Windows (Cross-Compiling from Linux)
 
 When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
-into a new `src/win32gtk` directory. Then rename all the
-`src/win32gtk/lib/*.dll.a` files to `src/win32/gtk/lib/*.a`, removing the `.dll`
-part of the filename. Finally, modify the `CC`, `CPP`, and `WINDRES` variables
-in the `WIN32` block of `src/Makefile` to match your MinGW installation and run
-`make WIN32=1` to build `../textadept.exe`.
+into a new `src/win32gtk` directory. Then modify the `CC`, `CPP`, and `WINDRES`
+variables in the `WIN32` block of `src/Makefile` to match your MinGW
+installation and run `make WIN32=1` to build `../textadept.exe`.
 
 #### Mac OSX
 
