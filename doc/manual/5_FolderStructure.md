@@ -32,3 +32,8 @@ In Linux and Mac OSX, your home directory is the location specified by the
 `HOME` environment variable (typically `/home/username` and `/Users/username`
 respectively). In Windows, it is the `USERPROFILE` environment variable. This
 directory will be denoted as `~/.textadept` from now on in the manual.
+
+## GTK
+
+The `etc/`, `lib/`, and `share/` directories are used by GTK and only appear in
+the Win32 and Mac OSX packages.

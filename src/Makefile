@@ -160,6 +160,9 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	# Win32
 	cp -r $(RELEASEDIR32) $(RELEASEDIRWIN32)
 	cp ../$(TEXTADEPTWIN32) $(RELEASEDIRWIN32)
+	cp win32gtk/bin/*.dll $(RELEASEDIRWIN32)
+	cp -r win32gtk/{etc,lib,share} $(RELEASEDIRWIN32)
+	rm -r $(RELEASEDIRWIN32)/lib/{*.a,glib-2.0,gtk-2.0/include,pkgconfig}
 	zip -r $(PACKAGEWIN32) $(RELEASEDIRWIN32)
 	rm -r $(RELEASEDIRWIN32)
 	# Linux 32-bit
