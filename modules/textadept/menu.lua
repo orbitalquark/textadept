@@ -36,12 +36,12 @@ local function set_encoding(encoding)
   buffer:set_encoding(encoding)
   events.emit('update_ui') -- for updating statusbar
 end
-local function toggle_setting(setting)
+local function toggle_setting(setting, i)
   local state = buffer[setting]
   if type(state) == 'boolean' then
     buffer[setting] = not state
   elseif type(state) == 'number' then
-    buffer[setting] = buffer[setting] == 0 and 1 or 0
+    buffer[setting] = buffer[setting] == 0 and (i or 1) or 0
   end
   events.emit('update_ui') -- for updating statusbar
 end
@@ -230,6 +230,8 @@ menubar = {
       { toggle_setting, 'indentation_guides' } },
     { L('Toggle Use _Tabs'), { toggle_setting, 'use_tabs' } },
     { L('Toggle View White_space'), { toggle_setting, 'view_ws' } },
+    { L('Toggle _Virtual Space'),
+      { toggle_setting, 'virtual_space_options', 2} },
     { SEPARATOR },
     { title = L('EOL Mode'),
       { L('CRLF'), { set_eol_mode, 0 } },

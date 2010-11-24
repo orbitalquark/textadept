@@ -155,12 +155,12 @@ local function any_char_mt(f)
                           if #k == 1 then return { f, k, k } end
                         end })
 end
-local function toggle_setting(setting)
+local function toggle_setting(setting, i)
   local state = buffer[setting]
   if type(state) == 'boolean' then
     buffer[setting] = not state
   elseif type(state) == 'number' then
-    buffer[setting] = buffer[setting] == 0 and 1 or 0
+    buffer[setting] = buffer[setting] == 0 and (i or 1) or 0
   end
   events.emit('update_ui') -- for updating statusbar
 end
@@ -292,11 +292,12 @@ if not OSX then
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
   keys['cs\t'] = { 'goto_buffer', v, -1, false }
   keys.ct.v = {
-    e      = { toggle_setting, 'view_eol'           },
-    w      = { toggle_setting, 'wrap_mode'          },
-    i      = { toggle_setting, 'indentation_guides' },
-    ['\t'] = { toggle_setting, 'use_tabs'           },
-    [' ']  = { toggle_setting, 'view_ws'            },
+    e      = { toggle_setting, 'view_eol'                 },
+    w      = { toggle_setting, 'wrap_mode'                },
+    i      = { toggle_setting, 'indentation_guides'       },
+    ['\t'] = { toggle_setting, 'use_tabs'                 },
+    [' ']  = { toggle_setting, 'view_ws'                  },
+    v      = { toggle_setting, 'virtual_space_options', 2 },
   }
   keys.cl    = { _m.textadept.mime_types.select_lexer }
   keys['f5'] = { 'colourise', b, 0, -1     }
@@ -424,11 +425,12 @@ else
   keys['c\t']  = { 'goto_buffer', v, 1, false  }
   keys['cs\t'] = { 'goto_buffer', v, -1, false }
   keys.at.v = {
-    e      = { toggle_setting, 'view_eol'           },
-    w      = { toggle_setting, 'wrap_mode'          },
-    i      = { toggle_setting, 'indentation_guides' },
-    ['\t'] = { toggle_setting, 'use_tabs'           },
-    [' ']  = { toggle_setting, 'view_ws'            },
+    e      = { toggle_setting, 'view_eol'                 },
+    w      = { toggle_setting, 'wrap_mode'                },
+    i      = { toggle_setting, 'indentation_guides'       },
+    ['\t'] = { toggle_setting, 'use_tabs'                 },
+    [' ']  = { toggle_setting, 'view_ws'                  },
+    v      = { toggle_setting, 'virtual_space_options', 2 },
   }
   keys.cl    = { _m.textadept.mime_types.select_lexer }
   keys['f5'] = { 'colourise', b, 0, -1     }
