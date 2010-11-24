@@ -74,7 +74,7 @@ module('events', package.seeall)
 --
 -- [buffer_user_list_show]: ../modules/buffer.html#buffer:user_list_show
 --
--- The following is a list of all Textadept events generated in
+-- The following is a list of gui events generated in
 -- `event_name(arguments)` format:
 --
 -- * **buffer\_new** ()<br />
@@ -91,46 +91,25 @@ module('events', package.seeall)
 --   Called right before another [view][view] is switched to.
 -- * **view\_after\_switch** ()<br />
 --   Called right after [view][view] was switched to.
--- * **reset\_before()**<br />
+-- * **reset\_before** ()<br />
 --   Called before resetting the Lua state during a call to [`reset()`][reset].
--- * **reset\_after()**<br />
+-- * **reset\_after** ()<br />
 --   Called after resetting the Lua state during a call to [`reset()`][reset].
 -- * **quit** ()<br />
 --   Called when quitting Textadept.<br />
 --   Note: Any quit handlers added must be inserted at index 1 because the
 --   default quit handler in `core/events.lua` returns `true`, which ignores all
 --   subsequent handlers.
--- * **keypress** (code, shift, control, alt)<br />
---   Called when a key is pressed.
---       - code: the key code (according to `<gdk/gdkkeysyms.h>`).
---       - shift: flag indicating whether or not the Shift key is pressed.
---       - control: flag indicating whether or not the Control key is pressed.
---       - alt: flag indicating whether or not the Alt/Apple key is pressed.
---   <br />
---   Note: The Alt-Option key in Mac OSX is not available.
--- * **menu\_clicked** (menu\_id)<br />
---   Called when a menu item is selected.
---       - menu\_id: the numeric ID of the menu item set in
---         [`gui.gtkmenu()`][gui_gtkmenu].
--- * **find** (text, next)<br />
---   Called when attempting to finding text via the Find dialog box.
---       - text: the text to search for.
---       - next: flat indicating whether or not the search direction is forward.
--- * **replace** (text)<br />
---   Called when the found text is selected and asked to be replaced.
---       - text: the text to replace the selected text with.
--- * **replace\_all** (find\_text, repl\_text)<br />
---   Called when all occurances of found text are to be replaced.
---       - find\_text: the text to search for.
---       - repl\_text: the text to replace found text with.
--- * **command\_entry\_keypress** (code)<br />
---   Called when a key is pressed in the Command Entry.
---       - code: the key code (according to `<gdk/gdkkeysyms.h>`).
+-- * **error** (text)<br />
+--   Called when an error occurs in the C code.
+--       - text: The error text.
+-- * **appleevent\_odoc** (uri)<br />
+--   Called when Mac OSX instructs Textadept to open a document.
+--       - uri: The URI to open.
 --
 -- [buffer]: ../modules/buffer.html
 -- [view]: ../modules/view.html
 -- [reset]: ../modules/_G.html#reset
--- [gui_gtkmenu]: ../modules/gui.html#gtkmenu
 --
 -- ## Example
 --
@@ -231,7 +210,7 @@ connect('view_new',
     local buffer = buffer
     local c = _SCINTILLA.constants
 
-    -- allow redefinitions of these Scintilla key commands
+    -- Allow redefinitions of these Scintilla key commands.
     local ctrl_keys = {
       '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
     }
@@ -244,9 +223,9 @@ connect('view_new',
     end
 
     if _THEME and #_THEME > 0 then
-      local ret, errmsg = pcall(dofile, _THEME..'/view.lua')
-      if ret then return end
-      io.stderr:write(errmsg)
+      local ok, err = pcall(dofile, _THEME..'/view.lua')
+      if ok then return end
+      io.stderr:write(err)
     end
   end)
 
@@ -258,14 +237,14 @@ connect('buffer_new',
     local function run()
       local buffer = buffer
 
-      -- lexer
+      -- Lexer.
       buffer:set_lexer_language('lpeg')
       buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
       buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
       buffer:private_lexer_call(SETLEXERLANGUAGE, 'container')
       buffer.style_bits = 8
 
-      -- properties
+      -- Properties.
       buffer.property['textadept.home'] = _HOME
       buffer.property['lexer.lpeg.home'] = _LEXERPATH
       buffer.property['lexer.lpeg.script'] = _HOME..'/lexers/lexer.lua'
@@ -273,21 +252,21 @@ connect('buffer_new',
         buffer.property['lexer.lpeg.color.theme'] = _THEME..'/lexer.lua'
       end
 
-      -- buffer
+      -- Buffer.
       buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
 
       if _THEME and #_THEME > 0 then
-        local ret, errmsg = pcall(dofile, _THEME..'/buffer.lua')
-        if ret then return end
-        io.stderr:write(errmsg)
+        local ok, err = pcall(dofile, _THEME..'/buffer.lua')
+        if ok then return end
+        io.stderr:write(err)
       end
     end
-    -- normally when an error occurs, a new buffer is created with the error
+    -- Normally when an error occurs, a new buffer is created with the error
     -- message, but if an error occurs here, this event would be called again
     -- and again, erroring each time resulting in an infinite loop; print error
-    -- to stderr instead
-    local ret, errmsg = pcall(run)
-    if not ret then io.stderr:write(errmsg) end
+    -- to stderr instead.
+    local ok, err = pcall(run)
+    if not ok then io.stderr:write(err) end
   end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
@@ -313,17 +292,13 @@ connect('save_point_left',
   end)
 
 connect('uri_dropped',
-  function(utf8_uris)
-    local lfs = require 'lfs'
-    for utf8_uri in utf8_uris:gmatch('[^\r\n\f]+') do
+  function(utf8_uris) -- open uri(s)
+    for utf8_uri in utf8_uris:gmatch('[^\r\n]+') do
       if utf8_uri:find('^file://') then
-        utf8_uri = utf8_uri:match('^file://([^\r\n\f]+)')
+        utf8_uri = utf8_uri:match('^file://([^\r\n]+)')
         utf8_uri = utf8_uri:gsub('%%(%x%x)',
           function(hex) return string.char(tonumber(hex, 16)) end)
-        if WIN32 then
-          utf8_uri = utf8_uri:sub(2, -1) -- ignore leading '/'
-          utf8_uri = utf8_uri:gsub('/', '\\')
-        end
+        if WIN32 then utf8_uri = utf8_uri:sub(2, -1) end -- ignore leading '/'
         local uri = utf8_uri:iconv(_CHARSET, 'UTF-8')
         if lfs.attributes(uri).mode ~= 'directory' then
           io.open_file(utf8_uri)
@@ -353,8 +328,7 @@ connect('update_ui',
 
 connect('margin_click',
   function(margin, modifiers, position) -- toggles folding
-    local line = buffer:line_from_position(position)
-    buffer:toggle_fold(line)
+    buffer:toggle_fold(buffer:line_from_position(position))
   end)
 
 connect('buffer_new', function() set_title(buffer) end)
@@ -405,15 +379,13 @@ connect('reset_after', function() gui.statusbar_text = 'Lua reset' end)
 
 connect('quit',
   function() -- prompts for confirmation if any buffers are dirty
-    local any = false
     local list = {}
     for _, buffer in ipairs(_BUFFERS) do
       if buffer.dirty then
         list[#list + 1] = buffer.filename or buffer._type or L('Untitled')
-        any = true
       end
     end
-    if any and
+    if #list > 0 and
        gui.dialog('msgbox',
                   '--title', L('Quit without saving?'),
                   '--text', L('The following buffers are unsaved:'),

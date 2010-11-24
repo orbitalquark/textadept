@@ -4,19 +4,19 @@ local L = _G.locale.localize
 local events = _G.events
 local find = gui.find
 
-local lfs = require 'lfs'
-
 local MARK_FIND = 0
 local MARK_FIND_COLOR = 0x4D9999
 local previous_view
 
 -- Text escape sequences with their associated characters.
+-- @class table
+-- @name escapes
 local escapes = {
   ['\\a'] = '\a', ['\\b'] = '\b', ['\\f'] = '\f', ['\\n'] = '\n',
   ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
 }
 
--- LuaDoc is in core/.find.luadoc
+-- LuaDoc is in core/.find.luadoc.
 function find.find_in_files(utf8_dir)
   if not utf8_dir then
     utf8_dir = gui.dialog('fileselect',
@@ -26,13 +26,12 @@ function find.find_in_files(utf8_dir)
                           (buffer.filename or ''):match('^.+[/\\]') or '',
                           '--no-newline')
   end
-  local text = find.find_entry_text
   if #utf8_dir > 0 then
+    local text = find.find_entry_text
     if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
     if not find.match_case then text = text:lower() end
     if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
-    local match_case = find.match_case
-    local whole_word = find.whole_word
+    local match_case, whole_word = find.match_case, find.whole_word
     local string_find, format = string.find, string.format
     local matches = { 'Find: '..text }
     function search_file(file)
@@ -48,11 +47,12 @@ function find.find_in_files(utf8_dir)
         line_num = line_num + 1
       end
     end
+    local lfs_dir, lfs_attributes = lfs.dir, lfs.attributes
     function search_dir(directory)
-      for file in lfs.dir(directory) do
+      for file in lfs_dir(directory) do
         if not file:find('^%.%.?$') then -- ignore . and ..
           local path = directory..'/'..file
-          local type = lfs.attributes(path).mode
+          local type = lfs_attributes(path).mode
           if type == 'directory' then
             search_dir(path)
           elseif type == 'file' then
@@ -108,11 +108,7 @@ local function find_(text, next, flags, nowrap, wrapped)
   if flags < 8 then
     buffer:goto_pos(buffer[next and 'current_pos' or 'anchor'] + increment)
     buffer:search_anchor()
-    if next then
-      result = buffer:search_next(flags, text)
-    else
-      result = buffer:search_prev(flags, text)
-    end
+    result = buffer['search_'..(next and 'next' or 'prev')](buffer, flags, text)
     if result ~= -1 then buffer:scroll_caret() end
 
   elseif flags < 16 then -- lua pattern search (forward search only)
@@ -128,17 +124,13 @@ local function find_(text, next, flags, nowrap, wrapped)
     end
 
   else -- find in files
-    find_in_files()
+    find.find_in_files()
     return
   end
 
   if result == -1 and not nowrap and not wrapped then -- wrap the search
     local anchor, pos = buffer.anchor, buffer.current_pos
-    if next or flags >= 8 then
-      buffer:goto_pos(0)
-    else
-      buffer:goto_pos(buffer.length)
-    end
+    buffer:goto_pos((next or flags >= 8) and 0 or buffer.length)
     gui.statusbar_text = L('Search wrapped')
     result = find_(text, next, flags, true, true)
     if result == -1 then
@@ -162,12 +154,11 @@ events.connect('find', find_)
 local function find_incremental(text)
   local c = _SCINTILLA.constants
   local flags = find.match_case and c.SCFIND_MATCHCASE or 0
-  --if find.lua then flags = flags + 8 end
   buffer:goto_pos(find.incremental_start or 0)
   find_(text, true, flags)
 end
 
--- LuaDoc is in core/.find.lua.
+-- LuaDoc is in core/.find.luadoc.
 function find.find_incremental()
   find.incremental = true
   find.incremental_start = buffer.current_pos
@@ -220,10 +211,10 @@ local function replace(rtext)
       rtext = rtext:gsub('%%'..i, v)
     end
   end
-  local ret, rtext = pcall(rtext.gsub, rtext, '%%(%b())',
+  local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())',
     function(code)
-      local ret, val = pcall(loadstring('return '..code))
-      if not ret then
+      local ok, val = pcall(loadstring('return '..code))
+      if not ok then
         gui.dialog('ok-msgbox',
                    '--title', L('Error'),
                    '--text', L('An error occured:'),
@@ -233,7 +224,7 @@ local function replace(rtext)
       end
       return val
     end)
-  if ret then
+  if ok then
     rtext = rtext:gsub('\\037', '%%') -- unescape '%'
     buffer:replace_target(rtext:gsub('\\[abfnrtv\\]', escapes))
     buffer:goto_pos(buffer.target_end) -- 'find' text after this replacement
@@ -287,8 +278,7 @@ local function replace_all(ftext, rtext, flags)
     buffer:set_sel(anchor, current_pos)
     buffer:marker_delete_handle(end_marker)
   end
-  gui.statusbar_text = string.format("%d %s", tostring(count),
-                                     L('replacement(s) made'))
+  gui.statusbar_text = string.format("%d %s", count, L('replacement(s) made'))
   buffer:end_undo_action()
 end
 events.connect('replace_all', replace_all)
@@ -312,8 +302,8 @@ local function goto_file(pos, line_num)
         local clicked_view = view
         if previous_view then previous_view:focus() end
         if buffer._type == L('[Files Found Buffer]') then
-          -- there are at least two find in files views; find one of those views
-          -- that the file was not selected from and focus it
+          -- There are at least two find in files views; find one of those views
+          -- that the file was not selected from and focus it.
           for _, v in ipairs(_VIEWS) do
             if v ~= clicked_view then
               previous_view = v
@@ -331,7 +321,7 @@ local function goto_file(pos, line_num)
 end
 events.connect('double_click', goto_file)
 
--- LuaDoc is in core/.find.lua.
+-- LuaDoc is in core/.find.luadoc.
 function find.goto_file_in_list(next)
   local orig_view = view
   for _, buffer in ipairs(_BUFFERS) do

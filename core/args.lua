@@ -3,6 +3,18 @@
 --- Processes command line arguments for Textadept.
 module('args', package.seeall)
 
+-- Markdown:
+--
+-- ## Events
+--
+-- The following is a list of all arg events generated in
+-- `event_name(arguments)` format:
+--
+-- * **arg\_none** ()<br />
+--   Called when no command line args have been passed to Textadept on init.
+
+local arg = arg
+
 -- Contains registered command line switches.
 -- @class table
 -- @name switches
@@ -17,8 +29,7 @@ local switches = {}
 -- @param description Description of the switch.
 function register(switch1, switch2, narg, f, description)
   local t = { f, narg, description }
-  switches[switch1] = t
-  switches[switch2] = t
+  switches[switch1], switches[switch2] = t, t
 end
 
 ---
@@ -47,6 +58,7 @@ function process()
   if no_args then events.emit('arg_none') end
 end
 
+-- Shows all registered command line switches in a help dialog.
 local function show_help()
   local line = "%s [%d args] -- %s"
   local help = {}
@@ -64,7 +76,6 @@ register('-h', '--help', 0, show_help, 'Displays this')
 
 -- For Windows, create arg table from single command line string (arg[0]).
 if WIN32 and #arg[0] > 0 then
-  local lpeg = require 'lpeg'
   local P, C = lpeg.P, lpeg.C
   local param = P('"') * C((1 - P('"'))^0) * '"' + C((1 - P(' '))^1)
   local params = lpeg.match(lpeg.Ct(param * (P(' ')^1 * param)^0), arg[0])
@@ -79,7 +90,6 @@ for i = 1, #arg do
     break
   end
 end
-local lfs = require 'lfs'
 if not lfs.attributes(userhome) then lfs.mkdir(userhome) end
 if not lfs.attributes(userhome..'/init.lua') then
   local f = io.open(userhome..'/init.lua', 'w')

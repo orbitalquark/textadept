@@ -34,6 +34,11 @@ module('_m')
 -- [m_cpp]: ../modules/_m.cpp.html
 -- [m_lua]: ../modules/_m.lua.html
 --
+-- For language modules that have a `set_buffer_properties` function, that
+-- function is called each time a file with that language is opened. This is
+-- useful for setting `buffer.use_tabs`, `buffer.tab_width`, etc. for different
+-- languages.
+--
 -- Note: While language-specific modules can only be used by files of that
 -- language, they persist in Textadept's Lua state. Because of this, it is not
 -- recommended to set global functions or variables and depend on them, as they

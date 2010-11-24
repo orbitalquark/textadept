@@ -65,7 +65,7 @@ CFLAGS = -std=c99 $(DEBUG_FLAG) -O $(PLAT_FLAGS) $(INCLUDEDIRS) -W -Wall \
 GTKFLAGS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --cflags gtk+-2.0)
 GTKLIBS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
-  --libs gtk+-2.0 gthread-2.0)
+  --libs gtk+-2.0)
 ifdef OSX
 GTKLIBS += -framework Carbon -framework Cocoa -ligemacintegration
 endif

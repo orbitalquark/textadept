@@ -3,6 +3,9 @@
 
 local locale = _G.locale
 
+-- Environment for abbreviated commands.
+-- @class table
+-- @name env
 local env = setmetatable({}, {
   __index = function(t, k)
     local f = buffer[k]
@@ -46,37 +49,38 @@ events.connect('command_entry_keypress',
       local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
       local f, err = loadstring('return ('..path..')')
       if type(f) == "function" then setfenv(f, env) end
-      local ret, tbl = pcall(f)
+      local ok, tbl = pcall(f)
       local cmpls = {}
-      if not ret then -- shorthand notation
+      prefix = '^'..prefix
+      if not ok then -- shorthand notation
         for _, t in ipairs{ buffer, view, gui, _G } do
           for k in pairs(t) do
-            if type(k) == 'string' and k:find('^'..prefix) then
+            if type(k) == 'string' and k:find(prefix) then
               cmpls[#cmpls + 1] = k
             end
           end
         end
         for f in pairs(_SCINTILLA.functions) do
-          if f:find('^'..prefix) then cmpls[#cmpls + 1] = f end
+          if f:find(prefix) then cmpls[#cmpls + 1] = f end
         end
         for p in pairs(_SCINTILLA.properties) do
-          if p:find('^'..prefix) then cmpls[#cmpls + 1] = p end
+          if p:find(prefix) then cmpls[#cmpls + 1] = p end
         end
       else
         if type(tbl) ~= 'table' then return end
         for k in pairs(tbl) do
-          if type(k) == 'string' and k:find('^'..prefix) then
+          if type(k) == 'string' and k:find(prefix) then
             cmpls[#cmpls + 1] = k
           end
         end
         if path == 'buffer' then
           if o == ':' then
             for f in pairs(_SCINTILLA.functions) do
-              if f:find('^'..prefix) then cmpls[#cmpls + 1] = f end
+              if f:find(prefix) then cmpls[#cmpls + 1] = f end
             end
           else
             for p in pairs(_SCINTILLA.properties) do
-              if p:find('^'..prefix) then cmpls[#cmpls + 1] = p end
+              if p:find(prefix) then cmpls[#cmpls + 1] = p end
             end
           end
         end

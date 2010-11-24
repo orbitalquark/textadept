@@ -19,11 +19,9 @@ module('_m.textadept.run', package.seeall)
 --     * %(filename_noext) The name of the file excluding extension.
 function execute(command)
   local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
-  local filedir, filename
+  local filedir, filename = '', filepath
   if filepath:find('[/\\]') then
     filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
-  else
-    filedir, filename = '', filepath
   end
   local filename_noext = filename:match('^(.+)%.')
   command = command:gsub('%%%b()', {
@@ -42,6 +40,15 @@ function execute(command)
   buffer:goto_pos(buffer.length)
 end
 
+-- Executes a compile or run command.
+-- @param cmd_table Either compile_command or run_command
+local function command(cmd_table)
+  if not buffer.filename then return end
+  buffer:save()
+  local action = cmd_table[buffer.filename:match('[^.]+$')]
+  if action then execute(type(action) == 'function' and action() or action) end
+end
+
 ---
 -- File extensions and their associated 'compile' actions.
 -- Each key is a file extension whose value is a either a command line string to
@@ -55,12 +62,7 @@ compile_command = {}
 -- Compiles the file as specified by its extension in the compile_command
 -- table.
 -- @see compile_command
-function compile()
-  if not buffer.filename then return end
-  buffer:save()
-  local action = compile_command[buffer.filename:match('[^.]+$')]
-  if action then execute(type(action) == 'function' and action() or action) end
-end
+function compile() command(compile_command) end
 
 ---
 -- File extensions and their associated 'go' actions.
@@ -75,12 +77,7 @@ run_command = {}
 -- Runs/executes the file as specified by its extension in the run_command
 -- table.
 -- @see run_command
-function run()
-  if not buffer.filename then return end
-  buffer:save()
-  local action = run_command[buffer.filename:match('[^.]+$')]
-  if action then execute(type(action) == 'function' and action() or action) end
-end
+function run() command(run_command) end
 
 ---
 -- A table of error string details.
@@ -112,7 +109,6 @@ function goto_error(pos, line_num)
     for _, error_detail in pairs(error_detail) do
       local captures = { line:match(error_detail.pattern) }
       if #captures > 0 then
-        local lfs = require 'lfs'
         local utf8_filename = captures[error_detail.filename]
         local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
         if lfs.attributes(filename) then

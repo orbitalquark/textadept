@@ -10,6 +10,20 @@ local gui = _G.gui
 -- This module, like _m.textadept.keys, should be 'require'ed last.
 module('_m.textadept.menu', package.seeall)
 
+-- Markdown:
+--
+-- ## Events
+--
+-- The following is a list of all menu events generated in
+-- `event_name(arguments)` format:
+--
+-- * **menu\_clicked** (menu\_id)<br />
+--   Called when a menu item is selected.
+--       - menu\_id: the numeric ID of the menu item set in
+--         [`gui.gtkmenu()`][gui_gtkmenu].
+--
+-- [gui_gtkmenu]: ../modules/gui.html#gtkmenu
+
 local SEPARATOR = 'separator'
 local b, v = 'buffer', 'view'
 local m_snippets = _m.textadept.snippets
@@ -121,24 +135,32 @@ menubar = {
     { L('Convert _Indentation'), { m_editing.convert_indentation } },
     { title = L('S_election'),
       { title = L('_Enclose in...'),
-        { L('_HTML Tags'), { m_editing.enclose, 'tag' } },
-        { L('HTML Single _Tag'), { m_editing.enclose, 'single_tag' } },
-        { L('_Double Quotes'), { m_editing.enclose, 'dbl_quotes' } },
-        { L('_Single Quotes'), { m_editing.enclose, 'sng_quotes' } },
-        { L('_Parentheses'), { m_editing.enclose, 'parens' } },
-        { L('_Brackets'), { m_editing.enclose, 'brackets' } },
-        { L('B_races'), { m_editing.enclose, 'braces' } },
-        { L('_Character Sequence'), { m_editing.enclose, 'chars' } },
+        { L('_HTML Tags'), {
+          function()
+            m_editing.enclose('<', '>')
+            local buffer = buffer
+            local pos = buffer.current_pos
+            while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
+            buffer:insert_text(-1,
+                               '</'..buffer:text_range(pos, buffer.current_pos))
+          end
+        } },
+        { L('HTML Single _Tag'), { m_editing.enclose, '<', ' />' } },
+        { L('_Double Quotes'), { m_editing.enclose, '"', '"' } },
+        { L('_Single Quotes'), { m_editing.enclose, "'", "'" } },
+        { L('_Parentheses'), { m_editing.enclose, '(', ')' } },
+        { L('_Brackets'), { m_editing.enclose, '[', ']' } },
+        { L('B_races'), { m_editing.enclose, '{', '}' } },
       },
       { L('_Grow'), { m_editing.grow_selection, 1 } },
     },
     { title = L('Select i_n...'),
-      { L('_HTML Tag'), { m_editing.select_enclosed, 'tags' } },
-      { L('_Double Quote'), { m_editing.select_enclosed, 'dbl_quotes' } },
-      { L('_Single Quote'), { m_editing.select_enclosed, 'sng_quotes' } },
-      { L('_Parenthesis'), { m_editing.select_enclosed, 'parens' } },
-      { L('_Bracket'), { m_editing.select_enclosed, 'brackets' } },
-      { L('B_race'), { m_editing.select_enclosed, 'braces' } },
+      { L('_HTML Tag'), { m_editing.select_enclosed, '>', '<' } },
+      { L('_Double Quote'), { m_editing.select_enclosed, '"', '"' } },
+      { L('_Single Quote'), { m_editing.select_enclosed, "'", "'" } },
+      { L('_Parenthesis'), { m_editing.select_enclosed, '(', ')' } },
+      { L('_Bracket'), { m_editing.select_enclosed, '[', ']' } },
+      { L('B_race'), { m_editing.select_enclosed, '{', '}' } },
       { L('_Word'), { m_editing.current_word, 'select' } },
       { L('_Line'), { m_editing.select_line } },
       { L('Para_graph'), { m_editing.select_paragraph } },

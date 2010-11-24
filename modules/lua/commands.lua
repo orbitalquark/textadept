@@ -124,7 +124,6 @@ function goto_required()
   end
   if not file then return end
   file = file:sub(2, -2):gsub('%.', '/')
-  local lfs = require 'lfs'
   for path in package.path:gmatch('[^;]+') do
     path = path:gsub('?', file)
     if lfs.attributes(path) then
@@ -137,6 +136,7 @@ end
 events.connect('file_before_save',
   function() -- show syntax errors as annotations
     if buffer:get_lexer() == 'lua' then
+      local buffer = buffer
       buffer:annotation_clear_all()
       local text = buffer:get_text()
       local _, err = loadstring(text)
@@ -169,7 +169,7 @@ local api_files = {
   ['view'] = _HOME..'/core/.view.luadoc',
 }
 -- Add API for loaded textadept modules.
-for p, _ in pairs(package.loaded) do
+for p in pairs(package.loaded) do
   if p:find('^_m%.textadept%.') then
     api_files[p] = _HOME..'/modules/textadept/'..p:match('[^%.]+$')..'.lua'
   end
@@ -181,11 +181,9 @@ for _, m in ipairs(lua) do
 end
 api_files[''] = _HOME..'/modules/lua/api/_G.luadoc'
 
-local lfs = require 'lfs'
-
 -- Load API.
 local apis = {}
-local current_doc = ''
+local current_doc = {}
 local f_args = {}
 for word, api_file in pairs(api_files) do
   if lfs.attributes(api_file) then
@@ -204,16 +202,17 @@ for word, api_file in pairs(api_files) do
         local funcs = apis[word].funcs
         funcs[#funcs + 1] = n..'?1'
         if f and #current_doc > 0 then
-          f = f..current_doc
-          current_doc = ''
+          table.insert(current_doc, 1, f)
+          f = table.concat(current_doc, '\n')
+          current_doc = {}
         end
         local c = line:find(':') and ':' or '.'
         if word == '' then c = '' end
         f_args[word..c..n] = f
       elseif line:match('^%-%-%-? (.+)$') then
-        current_doc = current_doc..'\n'..line:match('^%-%-%-? (.+)$')
+        current_doc[#current_doc + 1] = line:match('^%-%-%-? (.+)$')
       elseif #current_doc > 0 then
-        current_doc = ''
+        current_doc = {}
       end
     end
     table.sort(apis[word].fields)
@@ -229,6 +228,7 @@ local v_xpm = '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars
 -- @param pos Optional position to start from.
 -- @return word.
 local function prev_word(patt, pos)
+  local buffer = buffer
   local e = pos or buffer.current_pos - 1
   local s = e - 1
   while s >= 0 and string.char(buffer.char_at[s]):find(patt) do s = s - 1 end
@@ -240,6 +240,7 @@ end
 -- @param completions Table of completions.
 -- @see buffer:auto_c_show.
 local function auto_c_show(len, completions)
+  local buffer = buffer
   buffer:clear_registered_images()
   buffer:register_image(1, f_xpm)
   buffer:register_image(2, v_xpm)
@@ -267,6 +268,7 @@ if type(keys) == 'table' then
     },
     ['\n'] = { try_to_autocomplete_end },
     [not OSX and 'c\n' or 'esc'] = { function() -- complete API
+      local buffer = buffer
       local part = prev_word('[%w_]', buffer.current_pos)
       local pos = buffer.current_pos - #part - 1
       if pos > 0 then
