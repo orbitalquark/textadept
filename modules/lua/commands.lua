@@ -139,6 +139,7 @@ events.connect('file_before_save',
       local buffer = buffer
       buffer:annotation_clear_all()
       local text = buffer:get_text()
+      text = text:gsub('^#![^\n]+', '') -- ignore shebang line
       local _, err = loadstring(text)
       if err then
         local line, msg = err:match('^.-:(%d+):%s*(.+)$')
