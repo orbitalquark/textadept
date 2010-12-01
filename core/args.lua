@@ -4,7 +4,6 @@
 module('args', package.seeall)
 
 -- Markdown:
---
 -- ## Events
 --
 -- The following is a list of all arg events generated in

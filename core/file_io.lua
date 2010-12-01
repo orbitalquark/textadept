@@ -8,18 +8,6 @@ local events = _G.events
 module('io', package.seeall)
 
 -- Markdown:
--- ## Overview
---
--- Textadept represents all characters and strings internally as UTF-8. You will
--- not notice any difference for working with files containing ASCII text since
--- UTF-8 is compatible with it. Problems may arise for files with more exotic
--- encodings that may not be detected properly, if at all. When opening a file,
--- the list of encodings tried before throwing a `conversion failed` error is in
--- `core/file_io.lua`'s [`try_encodings`](#try_encodings). Textadept respects
--- the detected encoding when saving the file.
---
--- New files are saved as UTF-8 by default.
---
 -- ## Converting Filenames to and from UTF-8
 --
 -- If your filesystem does not use UTF-8 encoded filenames, conversions to and

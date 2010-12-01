@@ -9,59 +9,75 @@ module('_m')
 -- Markdown:
 -- ## Overview
 --
--- Modules utilize the Lua 5.1 package model. It is recommended to put all
--- modules in your `~/.textadept/modules/` directory. A module consists of a
--- single directory with an `init.lua` script to load any additional Lua files
--- (typically in the same location). Essentially there are two classes of
--- modules: generic and language-specific.
---
--- ## Generic Modules
---
--- This class of modules is usually available globally for programming in all
--- languages. An example is the [`_m.textadept`][m_textadept] module which adds
--- a wide variety of text editing capabilities to Textadept.
---
--- [m_textadept]: ../modules/_m.textadept.html
---
--- ## Language-specific Modules
---
--- Each module of this class of modules is named after a language lexer in
--- `lexers/` and is usually available only for editing code in that particular
--- programming language. Examples are the [`_m.cpp`][m_cpp] and
--- [`_m.lua`][m_lua] modules which provide special editing features for the
--- C/C++ and Lua languages respectively.
---
--- [m_cpp]: ../modules/_m.cpp.html
--- [m_lua]: ../modules/_m.lua.html
---
--- For language modules that have a `set_buffer_properties` function, that
--- function is called each time a file with that language is opened. This is
--- useful for setting `buffer.use_tabs`, `buffer.tab_width`, etc. for different
--- languages.
---
--- Note: While language-specific modules can only be used by files of that
+-- Note that while language-specific modules can only be used by files of that
 -- language, they persist in Textadept's Lua state. Because of this, it is not
 -- recommended to set global functions or variables and depend on them, as they
 -- may be inadvertantly overwritten. Keep these inside the module.
 --
--- ## Loading Modules
+-- ## Structure
 --
--- Generic modules can be loaded using `require`:
+-- Each module should have an `init.lua` that `require`s all submodules it
+-- needs. For an example, see `modules/textadept/init.lua`.
 --
---     require 'module_name'
+-- ## Recommended Features for Language-Specific Modules
 --
--- Language-specific modules are automatically loaded when a file of that
--- language is loaded or a buffer's lexer is set to that language.
+-- #### Snippets
+--
+-- [Snippets](../modules/_m.textadept.snippets.html) for common code constructs.
+--
+-- #### Commands
+--
+-- ##### Run
+--
+-- If the code can be run by an interpreter or other executable, create a [run
+-- command](../modules/_m.textadept.run.html#run_command) for it as well as an
+-- [error format](../modules/_m.textadept.run.html#error_detail) for the ability
+-- to jump to the position in a file where the error occured.
+--
+-- For example:
+--
+--     _m.textadept.run.run_command.lua = 'lua %(filename)'
+--
+-- ##### Compile
+--
+-- If the code can be compiled by an executable, create a [compile
+-- command](../modules/_m.textadept.run.html#compile_command) for it.
+--
+-- For example:
+--
+--     _m.textadept.run.compile_command.lua = 'luac %(filename)'
+--
+-- ##### Block Comment
+--
+-- Create a [comment
+-- prefix](../modules/_m.textadept.editing.html#comment_string) for it so code
+-- can be easily commented and uncommented.
+--
+-- For example:
+--
+--     _m.textadept.editing.comment_string.lua = '--'
+--
+-- #### Buffer Properties
+--
+-- Add a `set_buffer_properties` function with default buffer properties for
+-- code like tab and indentation settings.
+--
+-- For example:
+--
+--     function set_buffer_properties()
+--       local buffer = buffer
+--       buffer.use_tabs = false
+--       buffer.tab_width = 2
+--       buffer.indent = 2
+--     end
 --
 -- ## Modules and Key Commands
 --
--- When assigning [key commands][key_commands] to module functions, do not
--- forget to do so AFTER the function has been defined. Typically key commands
--- are placed at the end of files, like `commands.lua` in language-specific
--- modules.
---
--- [key_commands]: ../modules/_m.textadept.keys.html
+-- When assigning [key commands](../modules/_m.textadept.keys.html) to module
+-- functions, do not forget to do so AFTER the function has been defined.
+-- Typically key commands are placed at the end of files, like `init.lua` in
+-- the `textadept` module.
 
 ---
 -- This module contains no functions.
-function no_functions() end
+function no_functions() end no_functions = nil

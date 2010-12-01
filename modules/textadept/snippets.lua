@@ -7,15 +7,6 @@ local L = _G.locale.localize
 module('_m.textadept.snippets', package.seeall)
 
 -- Markdown:
--- ## Settings
---
--- * `MARK_SNIPPET`: The unique integer mark used to identify the line that
---    marks the end of a snippet.
--- * `MARK_SNIPPET_COLOR`: The [Scintilla color][scintilla_color] used for the
---   line that marks the end of the snippet.
---
--- [scintilla_color]: http://scintilla.org/ScintillaDoc.html#colour
---
 -- ## Overview
 --
 -- Snippets are basically pieces of text inserted into a document, but can
@@ -36,6 +27,15 @@ module('_m.textadept.snippets', package.seeall)
 --
 -- Snippet text should contain spaces instead of tabs since Textadept
 -- automatically converts spaces to tabs depending on the current settings.
+--
+-- ## Settings
+--
+-- * `MARK_SNIPPET`: The unique integer mark used to identify the line that
+--    marks the end of a snippet.
+-- * `MARK_SNIPPET_COLOR`: The [Scintilla color][scintilla_color] used for the
+--   line that marks the end of the snippet.
+--
+-- [scintilla_color]: http://scintilla.org/ScintillaDoc.html#colour
 --
 -- ## Snippet Precedence
 --
@@ -99,12 +99,9 @@ module('_m.textadept.snippets', package.seeall)
 --     %num(pattern|replacement)
 --
 -- These act like mirrors, but transform the text that would be inserted using
--- a given [Lua pattern][lua_pattern] and replacement. Like in placeholders,
--- `replacement` can contain Lua code executed at run-time as well as the
--- standard Lua capture sequences: `%n` where 1 <= `n` <= 9.
---
--- [lua_pattern]: http://www.lua.org/manual/5.1/manual.html#5.4.1
---
+-- a given [Lua pattern](../manual/14_Appendix.html#lua_patterns) and
+-- replacement. Like in placeholders, `replacement` can contain Lua code
+-- executed at run-time as well as the standard Lua capture (`%n`) sequences.
 -- Any `|`'s after the first one do not need to be escaped.
 --
 -- ## Example
