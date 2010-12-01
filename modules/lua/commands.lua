@@ -9,7 +9,8 @@ module('_m.lua.commands', package.seeall)
 --
 -- + `Alt+l, m`: Open this module for editing.
 -- + `Alt+l, g`: Goto file being 'require'd on the current line.
--- + `Return`: Try to autocomplete an `if`, `for`, etc. statement with `end`.
+-- + `Shift+Return`: Try to autocomplete an `if`, `for`, etc. statement with
+--   `end`.
 -- + `.`: When to the right of a known identifier, show an autocompletion list
 --   of fields.
 -- + `:`: When to the right of a known identifier, show an autocompletion list
@@ -267,7 +268,7 @@ if type(keys) == 'table' then
             (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET) },
       g = { goto_required },
     },
-    ['\n'] = { try_to_autocomplete_end },
+    ['s\n'] = { try_to_autocomplete_end },
     [not OSX and 'c\n' or 'esc'] = { function() -- complete API
       local buffer = buffer
       local part = prev_word('[%w_]', buffer.current_pos)
