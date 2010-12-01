@@ -21,9 +21,9 @@ the buffer browser.
 ![Buffer Browser](images/bufferbrowser.png)
 
 The buffer browser shows you a list of currently open buffers, the most recent
-towards the bottom. Typing part of any filename filters the list. You can also
-just use the arrow keys. Pressing `Enter` or clicking `OK` switches to the
-selected buffer.
+towards the bottom. Typing part of any filename filters the list. Spaces are
+wildcards. You can also just use the arrow keys. Pressing `Enter` or clicking
+`OK` switches to the selected buffer.
 
 ![Buffer Browser Filtered](images/bufferbrowserfiltered.png)
 
