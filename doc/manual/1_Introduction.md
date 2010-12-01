@@ -58,3 +58,12 @@ customization and extensibility from the start; the features come after that.
   `Ctrl+N, N` vs. `Ctrl+N, Shift+N`. In the first key chain, `Control` and `N`
   are pressed followed by `N` with no modifiers. The second has `Control` and
   `N` pressed followed by `Shift` and `N`.
+
+## Features at a Glance
+
+* Self-contained executable - no installation necessary.
+* Entirely keyboard driven.
+* Unlimited split views.
+* Support for over 70 programming languages.
+* Powerful snippets and key commands.
+* Unparalleled extensibility.
