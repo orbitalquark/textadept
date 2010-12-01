@@ -5,15 +5,6 @@
 module('locale', package.seeall)
 
 -- Markdown:
--- ## Overview
---
--- All Textadept messages displayed are located in `core/locale.conf`. To change
--- the language, simply put a similar file containing the translated messages in
--- your `~/.textadept/` folder. See `core/locale.conf` for more information.
---
--- Feel free to translate Textadept and send your modified `locale.conf` files
--- to me. I will put them up on the site where they can be accessed.
---
 -- ## Fields
 --
 -- Each message ID in `core/locale.conf` is accessible as a field in this

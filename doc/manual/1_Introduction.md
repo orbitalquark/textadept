@@ -2,18 +2,23 @@
 
 ## Overview
 
-Textadept is a text editor for programmers.
+<div style="float: right; margin: 0 0 1em 1em;">
+  <img src="images/textadept.png" alt="Textadept" />
+</div>
+
+Textadept is a cross-platform text editor for programmers.
 
 In a world where code bloat is commonplace and application speed is second to
 its number of features, Textadept breaks that trend, aiming to stay minimalist
 and fast, but at the same time being ridiculously extensible. At its core lies
-less than 2000 lines of C code, and that's how it always will be. While other
+less than 2000 lines of C code, and that is how it always will be. While other
 editors rely on numerous plugins for a wide range of functionality, recordable
 macros to speed up workflow, and shell scripts to quickly transform text,
 Textadept takes it to the extreme: it gives you complete control over the entire
-application using the embedded [Lua][Lua] language. Lua is nearly as fast as C,
-and has a very small footprint. In fact, most of Textadept is written in Lua.
-Its incredibly fast startup time and operation attest to Lua's worthiness.
+application using the embedded [Lua](http://lua.org) language. Lua is one of the
+fastest scripting languages available and has a very small footprint. In fact,
+most of Textadept is written in Lua. The application's incredibly fast startup
+time and operation attest to Lua's worthiness.
 
 Tired of all those features you never use in other editors? With Textadept you
 can disable or remove anything you dislike or do not need. Wish you had an
@@ -31,54 +36,25 @@ run them in your shell.
 These are just some of Textadept's strengths. Textadept is not about
 constraining the user to a certain set of features while allowing minimal
 custimization and/or extensibility. Textadept is about allowing that
-customization and extensibility from the get-go; the features come after that.
+customization and extensibility from the start; the features come after that.
 
-[Lua]: http://lua.org
+<div style="float: left; margin: 0 3em 1em 0;">
+  <img src="images/splitviews.png" alt="Split Views" />
+</div>
 
-## Help
+## Manual Notation
 
-Textadept has a [mailing list][mailing_list] and a [wiki][wiki]. You can also
-join us on IRC via [freenode.net][freenode] in `#textadept`.
-
-[mailing_list]: http://groups.google.com/group/textadept
-[wiki]: http://caladbolg.net/textadeptwiki
-[freenode]: http://freenode.net
-
-## Screenshots
-
-<div style="float: left;">
-Main window.<br />
-<a href="http://caladbolg.net/images/textadept/main.png"><img src="http://caladbolg.net/images/textadept/main_t.png" alt="Main" /></a>
-</div>
-<div style="float: left; margin-left: 50px;">
-Open Buffers.<br />
-<a href="http://caladbolg.net/images/textadept/buffers.png"><img src="http://caladbolg.net/images/textadept/buffers_t.png" alt="Buffers" /></a>
-</div>
-<div style="margin-left: 400px;">
-Switching Buffers.<br />
-<a href="http://caladbolg.net/images/textadept/buffersfilter.png"><img src="http://caladbolg.net/images/textadept/buffersfilter_t.png" alt="Switch Buffers" /></a>
-</div>
-<div style="float: left;">
-Multiple Languages.<br />
-<a href="http://caladbolg.net/images/textadept/languages.png"><img src="http://caladbolg.net/images/textadept/languages_t.png" alt="Multiple Languages" /></a>
-</div>
-<div style="margin-left: 200px;">
-Lua Commands.<br />
-<a href="http://caladbolg.net/images/textadept/lua_commands.png"><img src="http://caladbolg.net/images/textadept/lua_commands_t.png" alt="Lua Command" /></a>
-</div>
-<div style="float: left;">
-Linux OS.<br />
-<a href="http://caladbolg.net/images/textadept/linux.png"><img src="http://caladbolg.net/images/textadept/linux_t.png" alt="Linux" /></a>
-</div>
-<div style="float: left; margin-left: 50px;">
-Windows OS.<br />
-<a href="http://caladbolg.net/images/textadept/win32.png"><img src="http://caladbolg.net/images/textadept/win32_t.png" alt="Win32" /></a>
-</div>
-<div style="margin-left: 400px;">
-Mac OSX.<br />
-<a href="http://caladbolg.net/images/textadept/macosx.png"><img src="http://caladbolg.net/images/textadept/macosx_t.png" alt="Mac OSX" /></a>
-</div>
-<div>
-Extras.<br />
-<a href="http://caladbolg.net/images/textadept/extras.png"><img src="http://caladbolg.net/images/textadept/extras_t.png" alt="Extras" /></a>
-</div>
+* `~/` is denoted as the user's home directory. On Windows machines this is the
+  value of the `USERHOME` environment variable (typically `C:\Users\<username>\`
+  or `C:\Documents and Settings\<username>\`). On Linux and Mac OSX machines it
+  is the value of `HOME` (typically `/home/<username>/` and `/Users/<username>/`
+  respectively).
+* Any relative directory paths, i.e. paths that do not begin with `/` or `C:\`,
+  are relative to the location of Textadept.
+* Key combinations are not case-sensitive. `Ctrl+N` means the `N` key is pressed
+  with only the `Control` key being held down, not the `Shift` key.
+  `Ctrl+Shift+N` means the `N` key is pressed with both `Control` and `Shift`
+  keys being held down. The same notation is applicable to key chains:
+  `Ctrl+N, N` vs. `Ctrl+N, Shift+N`. In the first key chain, `Control` and `N`
+  are pressed followed by `N` with no modifiers. The second has `Control` and
+  `N` pressed followed by `Shift` and `N`.

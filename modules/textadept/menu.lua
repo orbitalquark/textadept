@@ -11,7 +11,6 @@ local gui = _G.gui
 module('_m.textadept.menu', package.seeall)
 
 -- Markdown:
---
 -- ## Events
 --
 -- The following is a list of all menu events generated in

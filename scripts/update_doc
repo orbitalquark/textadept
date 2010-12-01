@@ -105,7 +105,13 @@ for mdfile in p:lines() do
   html = html:gsub('%%sidebar%%', sidebar_md:read('*all'))
   sidebar_md:close()
   local content_md = io.popen('../doc/Markdown.pl '..mdfile)
-  html = html:gsub('%%content%%', content_md:read('*all'))
+  local md = content_md:read('*all'):gsub('%%', '%%%%')
+  md = md:gsub('(<h%d>)([^<]+)(</h%d>)',
+               function(s, text, e)
+                 return string.format('%s<a name="%s"></a>%s%s', s,
+                                      text:gsub(' ', '_'):lower(), text, e)
+               end)
+  html = html:gsub('%%content%%', md)
   content_md:close()
 
   local f = io.open(htmlfile, 'w')
