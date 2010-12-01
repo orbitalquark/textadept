@@ -39,6 +39,9 @@ module('io', package.seeall)
 -- * **file\_before\_save** (filename) <br />
 --   Called right before a file is saved to disk.
 --       - filename: the filename encoded in UTF-8.
+-- * **file\_after\_save** (filename) <br />
+--   Called right after a file is saved to disk.
+--       - filename: the filename encoded in UTF-8.
 -- * **file\_saved_as** (filename) <br />
 --   Called when a file is saved under another filename.
 --       - filename: the other filename encoded in UTF-8.
@@ -239,6 +242,7 @@ local function save(buffer)
   buffer:set_save_point()
   buffer.modification_time = lfs.attributes(filename).modification
   if buffer._type then buffer._type = nil end
+  events.emit('file_after_save', buffer.filename)
 end
 
 -- LuaDoc is in core/.buffer.luadoc.

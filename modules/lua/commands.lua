@@ -133,7 +133,7 @@ function goto_required()
   end
 end
 
-events.connect('file_before_save',
+events.connect('file_after_save',
   function() -- show syntax errors as annotations
     if buffer:get_lexer() == 'lua' then
       local buffer = buffer
