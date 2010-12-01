@@ -1,6 +1,10 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- Light lexer theme for Textadept.
 
+-- Please note this theme is in a separate Lua state than Textadept's main one.
+-- This means the global variables like 'buffer', 'view', and 'gui' are not
+-- available here. Only the variables in the 'lexer' module are.
+
 module('lexer', package.seeall)
 
 colors = {
