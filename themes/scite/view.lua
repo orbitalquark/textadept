@@ -9,6 +9,7 @@ buffer.multiple_selection = true
 buffer.additional_selection_typing = true
 --buffer.multi_paste = 1
 --buffer.virtual_space_options = 3
+if not WIN32 and not OSX then buffer.rectangular_selection_modifier = 8 end
 --buffer.additional_sel_alpha =
 --buffer.additional_sel_fore =
 --buffer.additional_sel_back =
