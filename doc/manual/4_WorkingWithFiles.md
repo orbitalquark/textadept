@@ -59,7 +59,7 @@ A quicker, though slightly more limited alternative to the standard
 `File -> Open` dialog is snapopen. It behaves like the buffer browser, but
 displays a list of files to open, including files in subdirectories. You can
 snapopen the current file's directory from the `Tools -> Snapopen -> Current
-Directory` menu. Snapopen is pretty limited from the menu, but more versitile
+Directory` menu. Snapopen is pretty limited from the menu, but more versatile
 in scripts. See its [LuaDoc](../modules/_m.textadept.snapopen.html).
 
 ![Snapopen](images/snapopen.png)

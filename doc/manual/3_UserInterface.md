@@ -28,7 +28,7 @@ minimizing distractions.
 
 ## Command Entry
 
-The versitile command entry functions as both a place to execute Lua commands
+The versatile command entry functions as both a place to execute Lua commands
 with the internal Lua state and find text incrementally. You can extend it to do
 even more if you would like. Like the find/replace dialog, the command entry
 pops in and out as you wish.

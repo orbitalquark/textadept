@@ -130,9 +130,9 @@ If no text is selected, the word to the left of the caret is enclosed.
 
 ## Word Highlight
 
-All occurances of a given word are highlighted by putting the caret over the
+All occurrences of a given word are highlighted by putting the caret over the
 word and pressing `Ctrl+H` (`Ctrl+Apple+T` on Mac OSX). This is useful to show
-occurances of a variable name in source code.
+occurrences of a variable name in source code.
 
 ![Word Highlight](images/wordhighlight.png)
 

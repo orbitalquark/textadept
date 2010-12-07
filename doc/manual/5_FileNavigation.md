@@ -20,7 +20,7 @@ in Mac OSX) moves the caret to that matching brace.
 
 ## Mac OSX
 
-Textadept supports the keybindings you are accustomed to for nagivagating text
+Textadept supports the keybindings you are accustomed to for navigating text
 fields in Mac OSX.
 
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>

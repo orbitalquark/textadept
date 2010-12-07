@@ -35,7 +35,7 @@ run them in your shell.
 
 These are just some of Textadept's strengths. Textadept is not about
 constraining the user to a certain set of features while allowing minimal
-custimization and/or extensibility. Textadept is about allowing that
+customization and/or extensibility. Textadept is about allowing that
 customization and extensibility from the start; the features come after that.
 
 <div style="float: left; margin: 0 3em 1em 0;">

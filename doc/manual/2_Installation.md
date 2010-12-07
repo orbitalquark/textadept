@@ -39,7 +39,7 @@ Select the appropriate package for your platform.
 ## Installation
 
 Textadept was designed to be as easy as possible to install by any user. You do
-not need to have administrator privilages.
+not need to have administrator privileges.
 
 #### Linux
 
