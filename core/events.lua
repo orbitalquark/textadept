@@ -154,6 +154,8 @@ function disconnect(event, index)
   table.remove(handlers, index)
 end
 
+local error_emitted = false
+
 ---
 -- Calls all handlers for the given event in sequence (effectively "generating"
 -- the event).
@@ -167,7 +169,16 @@ function emit(event, ...)
   local handlers = _M[plural]
   if not handlers then return end
   for _, f in ipairs(handlers) do
-    local result = f(unpack{...})
+    local ok, result = pcall(f, unpack{...})
+    if not ok then
+      if not error_emitted then
+        error_emitted = true
+        emit('error', result)
+        error_emitted = false
+      else
+        io.stderr:write(result)
+      end
+    end
     if type(result) == 'boolean' then return result end
   end
 end
