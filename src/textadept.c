@@ -54,8 +54,8 @@ GtkWidget *window, *focused_editor, *menubar, *statusbar[2];
 char *textadept_home;
 
 void create_ui();
-GtkWidget *new_scintilla_window(sptr_t);
-void new_scintilla_buffer(GtkWidget *, int, int);
+GtkWidget *new_view(sptr_t);
+void new_buffer(GtkWidget *, int, int);
 
 static void s_notification(GtkWidget *, gint, gpointer, gpointer);
 static void s_command(GtkWidget *, gint, gpointer, gpointer);
@@ -100,12 +100,12 @@ static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
 int l_init(int, char **, int);
 void l_close();
 int l_load_script(const char *);
-void l_add_scintilla_window(GtkWidget *);
-void l_remove_scintilla_window(GtkWidget *);
+void l_add_view(GtkWidget *);
+void l_remove_view(GtkWidget *);
 void l_set_view_global(GtkWidget *);
-int  l_add_scintilla_buffer(sptr_t);
-void l_remove_scintilla_buffer(sptr_t);
-void l_goto_scintilla_buffer(GtkWidget *, int, int);
+int  l_add_buffer(sptr_t);
+void l_remove_buffer(sptr_t);
+void l_goto_buffer(GtkWidget *, int, int);
 void l_set_buffer_global(GtkWidget *);
 int l_emit_event(const char *, ...);
 void l_emit_scnnotification(struct SCNotification *);
@@ -191,7 +191,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
  * The UI consists of:
  *   - A menubar initially hidden and empty. It should be populated by script
  *     and then shown.
- *   - A frame for Scintilla windows.
+ *   - A frame for Scintilla views.
  *   - A find text frame initially hidden.
  *   - A command entry initially hidden. This entry accepts and runs Lua code
  *     in the current Lua state.
@@ -233,7 +233,7 @@ void create_ui() {
   GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
-  GtkWidget *editor = new_scintilla_window(0);
+  GtkWidget *editor = new_view(0);
   gtk_box_pack_start(GTK_BOX(hbox), editor, TRUE, TRUE, 0);
 
   GtkWidget *find = find_create_ui();
@@ -280,15 +280,15 @@ void create_ui() {
 }
 
 /**
- * Creates a new Scintilla window.
- * The Scintilla window is the GTK widget that displays a Scintilla buffer.
+ * Creates a new Scintilla view.
+ * The Scintilla view is the GTK widget that displays a Scintilla buffer.
  * Generates a 'view_new' event.
  * @param buffer_id A Scintilla buffer ID to load into the new window. If NULL,
  *   creates a new Scintilla buffer and loads it into the new window.
- * @return the Scintilla window.
- * @see l_add_scintilla_window
+ * @return the Scintilla view.
+ * @see l_add_view
  */
-GtkWidget *new_scintilla_window(sptr_t buffer_id) {
+GtkWidget *new_view(sptr_t buffer_id) {
   GtkWidget *editor = scintilla_new();
   gtk_widget_set_size_request(editor, 1, 1); // minimum size
   SS(editor, SCI_USEPOPUP, 0, 0);
@@ -296,51 +296,51 @@ GtkWidget *new_scintilla_window(sptr_t buffer_id) {
   signal(editor, "command", s_command);
   signal(editor, "key-press-event", s_keypress);
   signal(editor, "button-press-event", s_buttonpress);
-  l_add_scintilla_window(editor);
+  l_add_view(editor);
   gtk_widget_grab_focus(editor);
   focused_editor = editor;
   if (buffer_id) {
     SS(editor, SCI_SETDOCPOINTER, 0, buffer_id);
-    new_scintilla_buffer(editor, FALSE, FALSE);
-  } else new_scintilla_buffer(editor, FALSE, TRUE);
+    new_buffer(editor, FALSE, FALSE);
+  } else new_buffer(editor, FALSE, TRUE);
   l_set_view_global(editor);
   l_emit_event("view_new", -1);
   return editor;
 }
 
 /**
- * Removes a Scintilla window.
- * @param editor The Scintilla window to remove.
- * @see l_remove_scintilla_window
+ * Removes a Scintilla view.
+ * @param editor The Scintilla view to remove.
+ * @see l_remove_view
  */
-void remove_scintilla_window(GtkWidget *editor) {
-  l_remove_scintilla_window(editor);
+void remove_view(GtkWidget *editor) {
+  l_remove_view(editor);
   gtk_widget_destroy(editor);
 }
 
 /**
- * Creates a new Scintilla buffer for a newly created Scintilla window.
+ * Creates a new Scintilla buffer for a newly created Scintilla view.
  * Generates a 'buffer_new' event.
- * @param editor The Scintilla window to associate the buffer with.
+ * @param editor The Scintilla view to associate the buffer with.
  * @param create Flag indicating whether or not to create a buffer. If FALSE,
- *   the Scintilla window already has a buffer associated with it (typically
- *   because new_scintilla_window was passed a non-NULL buffer_id).
+ *   the Scintilla view already has a buffer associated with it (typically
+ *   because new_view was passed a non-NULL buffer_id).
  * @param addref Flag indicating whether or not to add a reference to the buffer
- *   in the Scintilla window when create is FALSE. This is necessary for
- *   creating Scintilla windows in split views. If a buffer appears in two
- *   separate Scintilla windows, that buffer should have multiple references so
- *   when one Scintilla window closes, the buffer is not deleted because its
- *   reference count is not zero.
- * @see l_add_scintilla_buffer
+ *   in the Scintilla view when create is FALSE. This is necessary for creating
+ *   Scintilla views in split views. If a buffer appears in two separate
+ *   Scintilla views, that buffer should have multiple references so when one
+ *   Scintilla view closes, the buffer is not deleted because its reference
+ *   count is not zero.
+ * @see l_add_buffer
  */
-void new_scintilla_buffer(GtkWidget *editor, int create, int addref) {
+void new_buffer(GtkWidget *editor, int create, int addref) {
   sptr_t doc;
   doc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
   if (create) { // create the new document
     doc = SS(editor, SCI_CREATEDOCUMENT, 0, 0);
-    l_goto_scintilla_buffer(focused_editor, l_add_scintilla_buffer(doc), TRUE);
+    l_goto_buffer(focused_editor, l_add_buffer(doc), TRUE);
   } else if (addref) {
-    l_add_scintilla_buffer(doc);
+    l_add_buffer(doc);
     SS(editor, SCI_ADDREFDOCUMENT, 0, doc);
   }
   l_set_buffer_global(editor);
@@ -349,23 +349,23 @@ void new_scintilla_buffer(GtkWidget *editor, int create, int addref) {
 }
 
 /**
- * Removes the Scintilla buffer from the current Scintilla window.
+ * Removes the Scintilla buffer from the current Scintilla view.
  * @param doc The Scintilla buffer ID to remove.
- * @see l_remove_scintilla_buffer
+ * @see l_remove_buffer
  */
-void remove_scintilla_buffer(sptr_t doc) {
-  l_remove_scintilla_buffer(doc);
+void remove_buffer(sptr_t doc) {
+  l_remove_buffer(doc);
   SS(focused_editor, SCI_RELEASEDOCUMENT, 0, doc);
 }
 
 /**
- * Splits a Scintilla window into two windows separated by a GTK pane.
+ * Splits a Scintilla view into two windows separated by a GTK pane.
  * The buffer in the original pane is also shown in the new pane.
- * @param editor The Scintilla window to split.
+ * @param editor The Scintilla view to split.
  * @param vertical Flag indicating whether to split the window vertically or
  *   horozontally.
  */
-void split_window(GtkWidget *editor, int vertical) {
+void split_view(GtkWidget *editor, int vertical) {
   g_object_ref(editor);
   int first_line = SS(editor, SCI_GETFIRSTVISIBLELINE, 0, 0);
   int current_pos = SS(editor, SCI_GETCURRENTPOS, 0, 0);
@@ -374,7 +374,7 @@ void split_window(GtkWidget *editor, int vertical) {
                          : editor->allocation.height) / 2;
 
   sptr_t curdoc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
-  GtkWidget *neweditor = new_scintilla_window(curdoc);
+  GtkWidget *neweditor = new_view(curdoc);
   GtkWidget *parent = gtk_widget_get_parent(editor);
   gtk_container_remove(GTK_CONTAINER(parent), editor);
   GtkWidget *pane = vertical ? gtk_hpaned_new() : gtk_vpaned_new();
@@ -392,28 +392,26 @@ void split_window(GtkWidget *editor, int vertical) {
 }
 
 /**
- * For a given GTK pane, remove the Scintilla windows inside it recursively.
- * @param pane The GTK pane to remove Scintilla windows from.
- * @see remove_scintilla_window
+ * For a given GTK pane, remove the Scintilla views inside it recursively.
+ * @param pane The GTK pane to remove Scintilla views from.
+ * @see remove_view
  */
-void remove_scintilla_windows_in_pane(GtkWidget *pane) {
+void remove_views_in_pane(GtkWidget *pane) {
   GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane));
   GtkWidget *child2 = gtk_paned_get_child2(GTK_PANED(pane));
-  GTK_IS_PANED(child1) ? remove_scintilla_windows_in_pane(child1)
-                       : remove_scintilla_window(child1);
-  GTK_IS_PANED(child2) ? remove_scintilla_windows_in_pane(child2)
-                       : remove_scintilla_window(child2);
+  GTK_IS_PANED(child1) ? remove_views_in_pane(child1) : remove_view(child1);
+  GTK_IS_PANED(child2) ? remove_views_in_pane(child2) : remove_view(child2);
 }
 
 /**
- * Unsplits the pane a given Scintilla window is in and keeps that window.
- * If the pane to discard contains other Scintilla windows, they are removed
+ * Unsplits the pane a given Scintilla view is in and keeps that window.
+ * If the pane to discard contains other Scintilla views, they are removed
  * recursively.
- * @param editor The Scintilla window to keep when unsplitting.
- * @see remove_scintilla_windows_in_pane
- * @see remove_scintilla_window
+ * @param editor The Scintilla view to keep when unsplitting.
+ * @see remove_views_in_pane
+ * @see remove_view
  */
-int unsplit_window(GtkWidget *editor) {
+int unsplit_view(GtkWidget *editor) {
   GtkWidget *pane = gtk_widget_get_parent(editor);
   if (!GTK_IS_PANED(pane)) return FALSE;
   GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane));
@@ -422,8 +420,7 @@ int unsplit_window(GtkWidget *editor) {
   g_object_ref(other);
   gtk_container_remove(GTK_CONTAINER(pane), editor);
   gtk_container_remove(GTK_CONTAINER(pane), other);
-  GTK_IS_PANED(other) ? remove_scintilla_windows_in_pane(other)
-                      : remove_scintilla_window(other);
+  GTK_IS_PANED(other) ? remove_views_in_pane(other) : remove_view(other);
   GtkWidget *parent = gtk_widget_get_parent(pane);
   gtk_container_remove(GTK_CONTAINER(parent), pane);
   if (GTK_IS_PANED(parent)) {
@@ -474,7 +471,7 @@ void set_statusbar_text(const char *text, int bar) {
 
 /**
  * Helper function for switching the focused view to the given one.
- * @param editor The Scintilla window to focus.
+ * @param editor The Scintilla view to focus.
  * @see s_notification
  * @see s_command
  */
@@ -751,7 +748,7 @@ static void find_button_clicked(GtkWidget *button, gpointer udata) {
 /******************************************************************************/
 
 /**
- * Toggles focus between a Scintilla window and the Command Entry.
+ * Toggles focus between a Scintilla view and the Command Entry.
  * When the entry is visible, the statusbars are temporarily hidden.
  */
 void ce_toggle_focus() {
@@ -957,11 +954,11 @@ int l_load_script(const char *script_file) {
 }
 
 /**
- * Checks a specified stack element to see if it is a Scintilla window and
- * returns it as a GtkWidget.
+ * Checks a specified stack element to see if it is a Scintilla view and returns
+ * it as a GtkWidget.
  * Throws an error if the check is not satisfied.
  * @param lua The Lua State.
- * @param narg Relative stack index to check for a Scintilla window.
+ * @param narg Relative stack index to check for a Scintilla view.
  * @return GtkWidget Scintilla view.
  */
 static GtkWidget *l_checkview(lua_State *lua, int narg) {
@@ -975,10 +972,10 @@ static GtkWidget *l_checkview(lua_State *lua, int narg) {
 }
 
 /**
- * Adds a Scintilla window to the global '_VIEWS' table with a metatable.
- * @param editor The Scintilla window to add.
+ * Adds a Scintilla view to the global '_VIEWS' table with a metatable.
+ * @param editor The Scintilla view to add.
  */
-void l_add_scintilla_window(GtkWidget *editor) {
+void l_add_view(GtkWidget *editor) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
   lua_newtable(lua);
     lua_pushlightuserdata(lua, (GtkWidget *)editor);
@@ -993,10 +990,10 @@ void l_add_scintilla_window(GtkWidget *editor) {
 }
 
 /**
- * Removes a Scintilla window from the global '_VIEWS' table.
- * @param editor The Scintilla window to remove.
+ * Removes a Scintilla view from the global '_VIEWS' table.
+ * @param editor The Scintilla view to remove.
  */
-void l_remove_scintilla_window(GtkWidget *editor) {
+void l_remove_view(GtkWidget *editor) {
   lua_newtable(lua);
     lua_getfield(lua, LUA_REGISTRYINDEX, "views");
     lua_pushnil(lua);
@@ -1009,15 +1006,15 @@ void l_remove_scintilla_window(GtkWidget *editor) {
 }
 
 /**
- * Changes focus a Scintilla window in the global '_VIEWS' table.
- * @param editor The currently focused Scintilla window.
+ * Changes focus a Scintilla view in the global '_VIEWS' table.
+ * @param editor The currently focused Scintilla view.
  * @param n The index of the window in the '_VIEWS' table to focus.
  * @param absolute Flag indicating whether or not the index specified in
  *   '_VIEWS' is absolute. If FALSE, focuses the window relative to the
  *   currently focused window for the given index.
  *   Throws an error if the view does not exist.
  */
-void l_goto_scintilla_window(GtkWidget *editor, int n, int absolute) {
+void l_goto_view(GtkWidget *editor, int n, int absolute) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
   if (!absolute) {
     unsigned int idx = 1;
@@ -1047,8 +1044,8 @@ void l_goto_scintilla_window(GtkWidget *editor, int n, int absolute) {
 }
 
 /**
- * Sets the global 'view' variable to be the specified Scintilla window.
- * @param editor The Scintilla window to set 'view' to.
+ * Sets the global 'view' variable to be the specified Scintilla view.
+ * @param editor The Scintilla view to set 'view' to.
  */
 void l_set_view_global(GtkWidget *editor) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
@@ -1084,7 +1081,7 @@ static sptr_t l_checkdocpointer(lua_State *lua, int narg) {
  * @param doc The Scintilla document to add.
  * @return integer index of the new buffer in _BUFFERS.
  */
-int l_add_scintilla_buffer(sptr_t doc) {
+int l_add_buffer(sptr_t doc) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   lua_newtable(lua);
     lua_pushinteger(lua, doc);
@@ -1104,13 +1101,13 @@ int l_add_scintilla_buffer(sptr_t doc) {
  * they show first.
  * @param doc The Scintilla buffer to remove.
  */
-void l_remove_scintilla_buffer(sptr_t doc) {
+void l_remove_buffer(sptr_t doc) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
     GtkWidget *editor = l_checkview(lua, -1);
     sptr_t that_doc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
-    if (that_doc == doc) l_goto_scintilla_buffer(editor, -1, FALSE);
+    if (that_doc == doc) l_goto_buffer(editor, -1, FALSE);
     lua_pop(lua, 1); // value
   }
   lua_pop(lua, 1); // views
@@ -1146,18 +1143,18 @@ unsigned int l_get_docpointer_index(sptr_t doc) {
 }
 
 /**
- * Changes a Scintilla window's document to one in the global '_BUFFERS' table.
+ * Changes a Scintilla view's document to one in the global '_BUFFERS' table.
  * Before doing so, it saves the scroll and caret positions in the current
  * Scintilla document. Then when the new document is shown, its scroll and caret
  * positions are restored.
- * @param editor The Scintilla window to change the document of.
+ * @param editor The Scintilla view to change the document of.
  * @param n The index of the document in '_BUFFERS' to focus.
  * @param absolute Flag indicating whether or not the index specified in
  *   '_BUFFERS' is absolute. If FALSE, focuses the document relative to the
  *   currently focused document for the given index.
  *   Throws an error if the buffer does not exist.
  */
-void l_goto_scintilla_buffer(GtkWidget *editor, int n, int absolute) {
+void l_goto_buffer(GtkWidget *editor, int n, int absolute) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   if (!absolute) {
     sptr_t doc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
@@ -1201,17 +1198,17 @@ void l_set_buffer_global(GtkWidget *editor) {
 
 /**
  * Closes the Lua State.
- * Unsplits all Scintilla windows recursively, removes all Scintilla documents,
- * and deletes the last Scintilla window before closing the state.
+ * Unsplits all Scintilla views recursively, removes all Scintilla documents,
+ * and deletes the last Scintilla view before closing the state.
  */
 void l_close() {
   closing = TRUE;
-  while (unsplit_window(focused_editor)) ; // need space to fix compiler warning
+  while (unsplit_view(focused_editor)) ; // need space to fix compiler warning
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
     sptr_t doc = l_checkdocpointer(lua, -1);
-    remove_scintilla_buffer(doc);
+    remove_buffer(doc);
     lua_pop(lua, 1); // value
   }
   lua_pop(lua, 1); // buffers
@@ -1399,7 +1396,7 @@ static long l_toscintillaparam(lua_State *lua, int type, int *arg_idx) {
 
 /**
  * Checks if the Scintilla document of the buffer table at the index specified
- * is the document of the focused Scintilla window.
+ * is the document of the focused Scintilla view.
  * Throws an error if the check is not satisfied.
  * @param lua The Lua State.
  * @param narg The relative stack position of the buffer table.
@@ -1512,7 +1509,7 @@ void l_gui_popup_context_menu(GdkEventButton *event) {
 /**
  * Calls Scintilla with appropriate parameters and returs appropriate values.
  * @param lua The Lua State.
- * @param editor The Scintilla window to call.
+ * @param editor The Scintilla view to call.
  * @param msg The integer message index to call Scintilla with.
  * @param p1_type The Lua type of p1, the Scintilla w parameter.
  * @param p2_type The Lua type of p2, the Scintilla l parameter.
@@ -1832,16 +1829,16 @@ static int l_cf_buffer_delete(lua_State *lua) {
   sptr_t doc = l_checkdocpointer(lua, 1);
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   if (lua_objlen(lua, -1) > 1)
-    l_goto_scintilla_buffer(focused_editor, -1, FALSE);
+    l_goto_buffer(focused_editor, -1, FALSE);
   else
-    new_scintilla_buffer(focused_editor, TRUE, TRUE);
-  remove_scintilla_buffer(doc);
+    new_buffer(focused_editor, TRUE, TRUE);
+  remove_buffer(doc);
   l_emit_event("buffer_deleted", -1);
   return 0;
 }
 
 static int l_cf_buffer_new(lua_State *lua) {
-  new_scintilla_buffer(focused_editor, TRUE, TRUE);
+  new_buffer(focused_editor, TRUE, TRUE);
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   lua_rawgeti(lua, -1, lua_objlen(lua, -1));
   return 1;
@@ -1873,7 +1870,7 @@ static int l_cf_view_split(lua_State *lua) {
   GtkWidget *editor = l_checkview(lua, 1);
   int vertical = TRUE;
   if (lua_gettop(lua) > 1) vertical = lua_toboolean(lua, 2) == 1;
-  split_window(editor, vertical);
+  split_view(editor, vertical);
   lua_pushvalue(lua, 1); // old view
   lua_getglobal(lua, "view"); // new view
   return 2;
@@ -1881,7 +1878,7 @@ static int l_cf_view_split(lua_State *lua) {
 
 static int l_cf_view_unsplit(lua_State *lua) {
   GtkWidget *editor = l_checkview(lua, 1);
-  lua_pushboolean(lua, unsplit_window(editor));
+  lua_pushboolean(lua, unsplit_view(editor));
   return 1;
 }
 
@@ -1923,9 +1920,8 @@ static int l_cf_gui_get_split_table(lua_State *lua) {
 
 static int l_cf_gui_goto_(lua_State *lua, GtkWidget *editor, int buffer) {
   int n = luaL_checkinteger(lua, 1);
-  int absolute = (lua_gettop(lua) > 1) ? lua_toboolean(lua, 2) == 1 : TRUE;
-  buffer ? l_goto_scintilla_buffer(editor, n, absolute)
-         : l_goto_scintilla_window(editor, n, absolute);
+  int abs = (lua_gettop(lua) > 1) ? lua_toboolean(lua, 2) == 1 : TRUE;
+  buffer ? l_goto_buffer(editor, n, abs) : l_goto_view(editor, n, abs);
   return 0;
 }
 
