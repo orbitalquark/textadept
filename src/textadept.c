@@ -338,6 +338,7 @@ void new_buffer(GtkWidget *editor, int create, int addref) {
   doc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
   if (create) { // create the new document
     doc = SS(editor, SCI_CREATEDOCUMENT, 0, 0);
+    l_emit_event("buffer_before_switch", -1);
     l_goto_buffer(focused_editor, l_add_buffer(doc), TRUE);
   } else if (addref) {
     l_add_buffer(doc);
@@ -1171,10 +1172,8 @@ void l_goto_buffer(GtkWidget *editor, int n, int absolute) {
     lua_rawgeti(lua, -1, n);
   }
   sptr_t doc = l_checkdocpointer(lua, -1);
-  if (!closing) l_emit_event("buffer_before_switch", -1);
   SS(editor, SCI_SETDOCPOINTER, 0, doc);
   l_set_buffer_global(editor);
-  if (!closing) l_emit_event("buffer_after_switch", -1);
   lua_pop(lua, 2); // buffer table and buffers
 }
 
@@ -1834,6 +1833,7 @@ static int l_cf_buffer_delete(lua_State *lua) {
     new_buffer(focused_editor, TRUE, TRUE);
   remove_buffer(doc);
   l_emit_event("buffer_deleted", -1);
+  l_emit_event("buffer_after_switch", -1);
   return 0;
 }
 
@@ -1933,7 +1933,9 @@ static int l_cf_view_goto_buffer(lua_State *lua) {
   GtkWidget *orig_focused_editor = focused_editor;
   if (switch_focus) SS(editor, SCI_SETFOCUS, TRUE, 0);
   lua_remove(lua, 1); // view table
+  l_emit_event("buffer_before_switch", -1);
   l_cf_gui_goto_(lua, editor, TRUE);
+  l_emit_event("buffer_after_switch", -1);
   if (switch_focus) {
     SS(editor, SCI_SETFOCUS, FALSE, 0);
     gtk_widget_grab_focus(orig_focused_editor);
