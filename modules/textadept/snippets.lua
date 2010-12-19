@@ -196,7 +196,7 @@ local function next_tab_stop()
   snippet.snapshots[index] = s_text
   if index > 0 then
     buffer:begin_undo_action()
-    local caret = math.max(buffer.anchor, buffer.current_pos)
+    local caret = buffer.selection_end
     local ph_text = buffer:text_range(snippet.ph_pos, caret)
 
     -- Transform mirror.

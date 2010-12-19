@@ -256,9 +256,8 @@ local function replace_all(ftext, rtext, flags)
       count = count + 1
     end
   else
-    local anchor, current_pos = buffer.anchor, buffer.current_pos
+    local anchor, current_pos = buffer.selection_start, buffer.selection_end
     local s, e = anchor, current_pos
-    if s > e then s, e = e, s end
     buffer:insert_text(e, '\n')
     local end_marker = buffer:marker_add(buffer:line_from_position(e + 1),
                                          MARK_FIND)

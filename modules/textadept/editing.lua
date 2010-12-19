@@ -199,8 +199,7 @@ function block_comment(comment)
     comment = comment_string[buffer:get_lexer()]
     if not comment then return end
   end
-  local caret, anchor = buffer.current_pos, buffer.anchor
-  if caret < anchor then anchor, caret = caret, anchor end
+  local anchor, caret = buffer.selection_start, buffer.selection_end
   local s = buffer:line_from_position(anchor)
   local e = buffer:line_from_position(caret)
   local mlines = s ~= e
@@ -378,9 +377,8 @@ end
 -- selected.
 function select_indented_block()
   local buffer = buffer
-  local s = buffer:line_from_position(buffer.anchor)
-  local e = buffer:line_from_position(buffer.current_pos)
-  if s > e then s, e = e, s end
+  local s = buffer:line_from_position(buffer.selection_start)
+  local e = buffer:line_from_position(buffer.selection_end)
   local indent = buffer.line_indentation[s] - buffer.indent
   if indent < 0 then return end
   if buffer:get_sel_text() ~= '' then
@@ -451,7 +449,7 @@ events.connect('keypress',
 function highlight_word()
   clear_highlighted_words()
   local buffer = buffer
-  local s, e = buffer.anchor, buffer.current_pos
+  local s, e = buffer.selection_start, buffer.selection_end
   if s == e then
     s, e = buffer:word_start_position(s), buffer:word_end_position(s)
   end
