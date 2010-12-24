@@ -68,6 +68,7 @@
   <tr><td>F2</td><td>F2</td><td>Focus Lua command entry</td></tr>
   <tr><td>Ctrl+R</td><td>Ctrl+R</td><td>Run file</td></tr>
   <tr><td>Ctrl+Shift+R</td><td>Ctrl+Shift+R</td><td>Compile file</td></tr>
+  <tr><td>Alt+R</td><td>Ctrl+Alt+R</td><td>Filter through shell command</td></tr>
   <tr><td>Tab</td><td>Tab</td><td>Expand snippet or next placeholder or indent text</td></tr>
   <tr><td>Shift+Tab</td><td>Shift+Tab</td><td>Previous snippet placeholder or dedent text</td></tr>
   <tr><td>Ctrl+Alt+I</td><td>Ctrl+Apple+I</td><td>Cancel current snippet</td></tr>

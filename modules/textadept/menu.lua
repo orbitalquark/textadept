@@ -192,6 +192,7 @@ menubar = {
     { SEPARATOR },
     { L('_Run'), { m_run.run } },
     { L('_Compile'), { m_run.compile } },
+    { L('Fi_lter Through'), { _m.textadept.filter_through.filter_through } },
     { SEPARATOR },
     { title = L('_Snippets'),
       { L('_Insert'), { m_snippets._insert } },

@@ -30,6 +30,23 @@ example of this is [incremental
 search](../modules/gui.find.html#find_incremental). See
 `modules/textadept/find.lua` for the implementation.
 
+## Shell Commands and Filtering Text
+
+Sometimes it is easier to use an existing shell command to manipulate text
+instead of using the command entry. An example would be sorting all text in a
+buffer (or a selection). You could do the following from the command entry:
+
+    ls={}; for l in buffer:get_text():gmatch('[^\n]+') do ls[#ls+1]=l end;
+    table.sort(ls); buffer:set_text(table.concat(ls, '\n'))
+
+A simpler way would be to press `Alt+R` (`Ctrl+Apple+R` on Mac OSX), enter the
+shell command `sort`, and hit `Enter`.
+
+For shell commands, if text is selected, all text on the lines containing the
+selection is used as the standard input (stdin) to the command. Otherwise the
+entire buffer is used. Either the selected text or buffer is replaced with the
+standard output (stdout) of the command.
+
 ## File Encoding
 
 Textadept represents all characters and strings internally as UTF-8. You will
