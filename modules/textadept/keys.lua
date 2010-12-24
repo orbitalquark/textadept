@@ -184,7 +184,7 @@ if not OSX then
 
   --[[
     C:         D         I J K   M               U
-    A:   A B C D E F G H   J K L M N   P   R S T U V W X Y Z
+    A:   A B C D E F G H   J K L M N   P     S T U V W X Y Z
     CS:  A B C D     G H I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
     CA:  A B C D E F G H   J K L M N O   Q R S T U V W X Y Z
@@ -270,6 +270,7 @@ if not OSX then
   local m_run = _m.textadept.run
   keys.cr = { m_run.run     }
   keys.cR = { m_run.compile }
+  keys.ar = { _m.textadept.filter_through.filter_through }
   -- Snippets
   local m_snippets = _m.textadept.snippets
   keys['\t']  = { m_snippets._insert         }
@@ -317,7 +318,7 @@ else
     A:         D E     H   J K L                 U       Y
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
     SA:  A B C D       H I J K L M N O   Q R   T U V   X Y
-    CA:  A   C   E         J K L M N O   Q R S   U V W X Y Z
+    CA:  A   C   E         J K L M N O   Q   S   U V W X Y Z
     CSA: A   C D E     H   J K L M N O P Q R S T U V W X Y Z
   ]]--
 
@@ -403,6 +404,7 @@ else
   local m_run = _m.textadept.run
   keys.cr = { m_run.run     }
   keys.cR = { m_run.compile }
+  keys.car = { _m.textadept.filter_through.filter_through }
   -- Snippets
   local m_snippets = _m.textadept.snippets
   keys['\t']  = { m_snippets._insert         }

@@ -30,8 +30,8 @@ surprised to find you can write the same commands in Lua, from moving the caret
 to replacing text, performing searches, and much more!
 
 Worried that your existing shell scripts for transforming text in other editors
-will not be compatible with Lua or Textadept? No need to be. You can tell Lua to
-run them in your shell.
+will not be compatible with Lua or Textadept? No need to be. You can run those
+scripts from within the editor or Lua.
 
 These are just some of Textadept's strengths. Textadept is not about
 constraining the user to a certain set of features while allowing minimal
