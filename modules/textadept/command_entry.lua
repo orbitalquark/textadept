@@ -1,7 +1,7 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- Modified by Jay Gould.
 
-local locale = _G.locale
+local L = _G.locale.localize
 
 -- Environment for abbreviated commands.
 -- @class table

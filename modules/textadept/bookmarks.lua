@@ -1,6 +1,6 @@
 -- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local locale = _G.locale
+local L = _G.locale.localize
 
 ---
 -- Bookmarks for the textadept module.
