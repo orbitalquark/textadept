@@ -11,6 +11,7 @@ require 'locale'
 require 'events'
 require 'file_io'
 require 'gui'
+require 'keys'
 
 _LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers'
 
