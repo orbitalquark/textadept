@@ -168,12 +168,13 @@ end
 
 events.connect('command_entry_keypress',
   function(code)
+    local K = _G.keys.KEYSYMS
     if find.incremental then
-      if code == 0xff1b then -- escape
+      if K[code] == 'esc' then
         find.incremental = nil
-      elseif code < 256 or code == 0xff08 then -- character or backspace
+      elseif code < 256 or K[code] == '\b' then
         local text = gui.command_entry.entry_text
-        if code == 0xff08 then
+        if K[code] == '\b' then
           find_incremental(text:sub(1, -2))
         else
           find_incremental(text..string.char(code))

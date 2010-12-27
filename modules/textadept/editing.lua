@@ -2,6 +2,7 @@
 
 local L = _G.locale.localize
 local events = _G.events
+local K = keys.KEYSYMS
 
 ---
 -- Editing commands for the textadept module.
@@ -85,7 +86,7 @@ events.connect('char_added',
 
 events.connect('keypress',
   function(code, shift, control, alt) -- removes matched chars on backspace
-    if not AUTOPAIR or code ~= 0xff08 or buffer.selections ~= 1 then return end
+    if not AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
     local buffer = buffer
     local current_pos = buffer.current_pos
     local c = buffer.char_at[current_pos - 1]
@@ -441,7 +442,7 @@ local function clear_highlighted_words()
   buffer:indicator_clear_range(0, buffer.length)
 end
 events.connect('keypress',
-  function(c) if c == 0xff1b then clear_highlighted_words() end end) -- Esc
+  function(c) if K[c] == 'esc' then clear_highlighted_words() end end)
 
 ---
 -- Highlights all occurances of the word under the caret and adds markers to the
