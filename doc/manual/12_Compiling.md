@@ -2,18 +2,19 @@
 
 ## Requirements
 
-Unfortunately, the requirements for building Textadept are not as minimal as
-running it.
+Unfortunately, the requirements for building Textadept are not quite as minimal
+as running it.
 
 #### Linux and BSD
 
 Linux systems need the GTK+ development libraries. Your package manager should
-allow you to install them. For Debian-based distributions, the package is
-typically called `libgtk2.0-dev`. Otherwise, compile and install it from the
-[GTK+ website](http://www.gtk.org/download-linux.html). Additionally you will
-need the [GNU C compiler](http://gcc.gnu.org) (`gcc`) and
+allow you to install them. For Debian-based distributions like Ubuntu, the
+package is typically called `libgtk2.0-dev`. Otherwise, compile and install GTK
+from the [GTK+ website](http://www.gtk.org/download-linux.html). Additionally
+you will need the [GNU C compiler](http://gcc.gnu.org) (`gcc`) and
 [GNU Make](http://www.gnu.org/software/make/) (`make`). Both should be available
-for your Linux distribution through its package manager.
+for your Linux distribution through its package manager. For example, Ubuntu
+includes these tools in the `build-essential` package.
 
 #### Windows
 
@@ -35,11 +36,10 @@ building `meta-gtk-osx-bootstrap` and `meta-gtk-osx-core`, you need to build
 `meta-gtk-osx-themes`. Note that the entire compiling process can easily take
 30 minutes or more and ultimately consume nearly 1GB of disk space.
 
-## Download
-
-Download the `textadept_x.x.src.zip`, regardless of what platform you are on.
-
 ## Compiling
+
+Make sure you downloaded the `textadept_x.x.src.zip` (regardless of what
+platform you are on) and not a platform-specific binary package.
 
 #### Linux and BSD
 
