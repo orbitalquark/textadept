@@ -27,6 +27,7 @@ with
     require 'textadept.command_entry'
     require 'textadept.editing'
     require 'textadept.find'
+    require 'textadept.filter_through'
     require 'textadept.mime_types'
     require 'textadept.run'
     require 'textadept.session'
