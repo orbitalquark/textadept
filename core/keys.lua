@@ -257,8 +257,8 @@ local function keypress(code, shift, control, alt)
         -- Clear the key sequence, but keep any status messages from the key
         -- command itself.
         keychain = {}
-        if gui.statusbar_text == L('Invalid sequence') or
-           gui.statusbar_text:find('^'..L('Keychain:')) then
+        local text = gui.statusbar_text or ''
+        if text == L('Invalid sequence') or text:find('^'..L('Keychain:')) then
           gui.statusbar_text = ''
         end
       end
