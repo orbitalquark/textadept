@@ -42,10 +42,16 @@ buffer (or a selection). You could do the following from the command entry:
 A simpler way would be to press `Alt+R` (`Ctrl+Apple+R` on Mac OSX), enter the
 shell command `sort`, and hit `Enter`.
 
-For shell commands, if text is selected, all text on the lines containing the
-selection is used as the standard input (stdin) to the command. Otherwise the
-entire buffer is used. Either the selected text or buffer is replaced with the
-standard output (stdout) of the command.
+The standard input (stdin) for shell commands is determined as follows:
+
+* If text is selected and spans multiple lines, all text on the lines containing
+  the selection is used. However, if the end of the selection is at the
+  beginning of a line, only the EOL (end of line) characters from the previous
+  line are included as input. The rest of the line is excluded.
+* If text is selected and spans a single line, only the selected text is used.
+* If no text is selected, the entire buffer is used.
+
+The input text is replaced with the standard output (stdout) of the command.
 
 ## File Encoding
 

@@ -12,13 +12,17 @@ local filter_through_active = false
 
 ---
 -- Prompts for a Linux, Mac OSX, or Windows shell command to filter text
--- through. If text is selected, all text on the lines containing the selection
--- is used as the standard input (stdin) to the command. Otherwise the entire
--- buffer is used. Either the selected text or buffer is replaced with the
--- standard output (stdout) of the command.
+-- through.
+-- The standard input (stdin) for shell commands is determined as follows: (1)
+-- If text is selected and spans multiple lines, all text on the lines
+-- containing the selection is used. However, if the end of the selection is at
+-- the beginning of a line, only the EOL (end of line) characters from the
+-- previous line are included as input. The rest of the line is excluded. (2) If
+-- text is selected and spans a single line, only the selected text is used. (3)
+-- If no text is selected, the entire buffer is used.
+-- The input text is replaced with the standard output (stdout) of the command.
 function filter_through()
   filter_through_active = true
-  gui.command_entry.entry_text = ''
   gui.command_entry.focus()
 end
 
@@ -36,11 +40,12 @@ events.connect('command_entry_command',
       local s, e = buffer.selection_start, buffer.selection_end
       local input
       if s ~= e then -- use selected lines as input
-        s = buffer:position_from_line(buffer:line_from_position(s))
-        if buffer.column[e] > 0 then
-          e = buffer:position_from_line(buffer:line_from_position(e) + 1)
+        local i, j = buffer:line_from_position(s), buffer:line_from_position(e)
+        if i < j then
+          s = buffer:position_from_line(i)
+          if buffer.column[e] > 0 then e = buffer:position_from_line(j + 1) end
         end
-        input = buffer:get_sel_text()
+        input = buffer:text_range(s, e)
       else -- use whole buffer as input
         input = buffer:get_text()
       end
