@@ -176,6 +176,8 @@ connect('uri_dropped',
       end
     end
   end)
+connect('appleevent_odoc',
+  function(uri) return events.emit('uri_dropped', 'file://'..uri) end)
 
 local string_format = string.format
 local EOLs = { L('CRLF'), L('CR'), L('LF') }
@@ -268,18 +270,5 @@ connect('quit',
     end
     return true
   end)
-
-if OSX then
-  connect('appleevent_odoc',
-    function(uri) return events.emit('uri_dropped', 'file://'..uri) end)
-
-  connect('buffer_new',
-    function() -- GTK-OSX has clipboard problems
-      buffer.paste = function()
-        local clipboard_text = gui.clipboard_text
-        if #clipboard_text > 0 then buffer:replace_sel(clipboard_text) end
-      end
-    end)
-end
 
 connect('error', function(...) gui._print(L('[Error Buffer]'), ...) end)
