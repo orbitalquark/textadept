@@ -93,7 +93,7 @@ static gbool c_keypress(GtkWidget *, GdkEventKey *, gpointer);
 // Lua
 lua_State *lua;
 int closing = FALSE;
-const char *statusbar_text = "";
+char *statusbar_text = 0;
 static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
            tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 
@@ -1736,7 +1736,8 @@ static int l_gui_mt_newindex(lua_State *lua) {
   else if (streq(key, "docstatusbar_text"))
     set_statusbar_text(lua_tostring(lua, 3), 1);
   else if (streq(key, "statusbar_text")) {
-    statusbar_text = !lua_isnil(lua, 3) ? lua_tostring(lua, 3) : "";
+    g_free(statusbar_text);
+    statusbar_text = g_strdup(!lua_isnil(lua, 3) ? lua_tostring(lua, 3) : "");
     set_statusbar_text(statusbar_text, 0);
   } else if (streq(key, "menubar")) {
     luaL_argcheck(lua, lua_istable(lua, 3), 3, "table of menus expected");
