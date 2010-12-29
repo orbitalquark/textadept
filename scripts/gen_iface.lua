@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local f = io.open('../../scite-latest/scite/src/IFaceTable.cxx')
 local contents = f:read('*all')
@@ -10,7 +10,7 @@ local functions = contents:match('ifaceFunctions%[%] = (%b{})')
 local properties = contents:match('ifaceProperties%[%] = (%b{})')
 
 local out = [[
--- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- Scintilla constants, functions, and properties.

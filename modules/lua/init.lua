@@ -1,4 +1,4 @@
--- Copyright 2007-2010 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 ---
 -- The lua module.
