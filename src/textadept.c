@@ -301,7 +301,7 @@ GtkWidget *new_view(sptr_t buffer_id) {
   focused_editor = editor;
   if (buffer_id) {
     SS(editor, SCI_SETDOCPOINTER, 0, buffer_id);
-    new_buffer(editor, FALSE, FALSE);
+    l_set_buffer_global(editor);
   } else new_buffer(editor, FALSE, TRUE);
   l_set_view_global(editor);
   l_emit_event("view_new", -1);
@@ -346,7 +346,6 @@ void new_buffer(GtkWidget *editor, int create, int addref) {
   }
   l_set_buffer_global(editor);
   l_emit_event("buffer_new", -1);
-  l_emit_event("update_ui", -1); // update document status
 }
 
 /**
