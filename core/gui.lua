@@ -96,7 +96,7 @@ connect('view_new',
       io.stderr:write(err)
     end
   end)
-connect('view_new', events.emit('update_ui')) -- update document status
+connect('view_new', function() events.emit('update_ui') end)
 
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
@@ -137,7 +137,7 @@ connect('buffer_new',
     local ok, err = pcall(run)
     if not ok then io.stderr:write(err) end
   end)
-connect('buffer_new', events.emit('update_ui')) -- update document status
+connect('buffer_new', function() events.emit('update_ui') end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
 -- @param buffer The currently focused buffer.
