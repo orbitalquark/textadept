@@ -1551,7 +1551,7 @@ static int l_call_scintilla(lua_State *lua, GtkWidget *editor, int msg,
   }
 
   // Send the message to Scintilla and return the appropriate values.
-  int result = SS(editor, msg, params[0], params[1]);
+  sptr_t result = SS(editor, msg, params[0], params[1]);
   arg = lua_gettop(lua);
   if (string_return) lua_pushlstring(lua, return_string, len);
   if (rt_type == tBOOL) lua_pushboolean(lua, result);
