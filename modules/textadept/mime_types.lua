@@ -102,6 +102,7 @@ local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
 -- @param lang The string language to set.
 -- @usage buffer:set_lexer('language_name')
 local function set_lexer(buffer, lang)
+  gui.check_focused_buffer(buffer)
   buffer._lexer = lang
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
@@ -119,6 +120,7 @@ local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 -- Replacement for buffer:get_lexer_language().
 -- @param buffer The buffer to get the lexer language of.
 local function get_lexer(buffer)
+  gui.check_focused_buffer(buffer)
   return buffer:private_lexer_call(GETLEXERLANGUAGE)
 end
 
@@ -128,6 +130,7 @@ end
 -- @param style_num A style number in the range 0 <= style_num < 256.
 -- @see buffer.style_at
 local function get_style_name(buffer, style_num)
+  gui.check_focused_buffer(buffer)
   if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
   return buffer:private_lexer_call(style_num)
 end
@@ -176,13 +179,13 @@ local function restore_lexer()
   buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'container')
 end
 
-events.connect('file_opened', handle_new)
-events.connect('file_saved_as', handle_new)
-events.connect('buffer_after_switch', restore_lexer)
-events.connect('view_new', restore_lexer)
-events.connect('view_after_switch', restore_lexer) -- only useful after reset
-events.connect('reset_after',
-  function() buffer:set_lexer(buffer._lexer or 'container') end)
+local connect = events.connect
+connect('file_opened', handle_new)
+connect('file_saved_as', handle_new)
+connect('buffer_after_switch', restore_lexer)
+connect('view_new', restore_lexer, 1)
+connect('reset_after',
+        function() buffer:set_lexer(buffer._lexer or 'container') end)
 
 ---
 -- Prompts the user to select a lexer from a filtered list for the current

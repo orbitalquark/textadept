@@ -8,7 +8,7 @@ function gui.check_focused_buffer(buffer)
   if type(buffer) ~= 'table' or not buffer.doc_pointer then
     error(L('Buffer argument expected.'), 2)
   elseif gui.focused_doc_pointer ~= buffer.doc_pointer then
-    error(L('The indexed buffer is not the focused one.'), 2)
+    error(L('This buffer is not the current one.'), 2)
   end
 end
 
