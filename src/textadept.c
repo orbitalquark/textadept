@@ -1402,7 +1402,7 @@ static long l_toscintillaparam(lua_State *lua, int type, int *arg_idx) {
 static void l_check_focused_buffer(lua_State *lua, int narg) {
   sptr_t cur_doc = SS(focused_editor, SCI_GETDOCPOINTER, 0, 0);
   luaL_argcheck(lua, cur_doc == l_checkdocpointer(lua, narg), 1,
-                "the indexed Buffer is not the focused one");
+                "this buffer is not the current one");
 }
 
 /******************************************************************************/
@@ -1572,6 +1572,7 @@ static int l_call_buffer_function(lua_State *lua) {
   int rt_type = l_rawgeti_int(lua, buffer_func_table_idx, 2);
   int p1_type = l_rawgeti_int(lua, buffer_func_table_idx, 3);
   int p2_type = l_rawgeti_int(lua, buffer_func_table_idx, 4);
+  l_check_focused_buffer(lua, 1);
   return l_call_scintilla(lua, editor, msg, p1_type, p2_type, rt_type, 2);
 }
 
@@ -1590,7 +1591,6 @@ static int l_buffer_mt_index(lua_State *lua) {
   lua_getfield(lua, -1, key);
   lua_remove(lua, -2); // buffer functions
   if (lua_istable(lua, -1)) {
-    l_check_focused_buffer(lua, 1);
     // Of the form { msg, rt_type, p1_type, p2_type }
     lua_pushlightuserdata(lua, (GtkWidget *)focused_editor);
     lua_insert(lua, lua_gettop(lua) - 1); // shift buffer functions down
