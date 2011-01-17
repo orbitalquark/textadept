@@ -21,6 +21,7 @@ if type(_G.keys) == 'table' then
   _G.keys.cpp = {}
 end
 
+require 'cpp.adeptsense'
 require 'cpp.commands'
 require 'cpp.snippets'
 

@@ -26,6 +26,7 @@ m_run.error_detail.c = {
 }
 
 -- C++-specific key commands.
+local cppsense = _m.cpp.adeptsense.sense
 local keys = _G.keys
 if type(keys) == 'table' then
   keys.cpp = {
@@ -37,6 +38,13 @@ if type(keys) == 'table' then
       buffer:line_end()
       buffer:add_text(';')
       buffer:new_line()
+    end },
+    [not OSX and 'c\n' or 'esc'] = { cppsense.complete, cppsense },
+    ['\t'] = { function()
+      if string.char(buffer.char_at[buffer.current_pos - 1]) ~= '(' then
+        return false
+      end
+      return cppsense:show_apidoc()
     end },
   }
 end

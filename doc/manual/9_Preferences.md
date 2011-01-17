@@ -23,6 +23,7 @@ menu, replace
 
 with
 
+    require 'textadept.adeptsense'
     require 'textadept.bookmarks'
     require 'textadept.command_entry'
     require 'textadept.editing'

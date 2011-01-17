@@ -1,24 +1,9 @@
 #!/usr/bin/lua
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
--- Rename *.lua.doc to *.lua so LuaDoc detects them.
-local lfs = require 'lfs'
-for file in lfs.dir('../core') do
-  if file:match('^%..-%.luadoc$') then
-    os.rename('../core/'..file, '../core/'..file:match('^%..-%.lua'))
-  end
-end
-
 -- Generate LuaDoc.
 os.execute('rm -rf ../doc/modules/')
 os.execute('cd ../; luadoc -d doc/ --nofiles modules/ core/ lexers/lexer.lua')
-
--- Revert to *.lua.doc
-for file in lfs.dir('../core') do
-  if file:match('^%..-%.lua$') then
-    os.rename('../core/'..file, '../core/'..file..'doc')
-  end
-end
 
 -- Insert Markdown in modules into LuaDoc.
 local p = io.popen('grep -r "\\-\\- Markdown:" ../*')
@@ -120,5 +105,13 @@ for mdfile in p:lines() do
 end
 p:close()
 
+-- Modify default CSS.
 os.execute("sed -i 's/pre.example/pre, pre.example/;' ../doc/luadoc.css")
+
+-- Generate Doxygen documentation.
 os.execute('cd ../; doxygen Doxyfile')
+
+-- Create Lua adeptsense for textadept.
+os.execute(table.concat{ 'luadoc -d ../modules/lua -doclet adeptsensedoc ',
+                         '../modules ../core ../lexers/lexer.lua' })
+os.execute('sed -i -e "s/class:lexer/class:l/g;" ../modules/lua/tags')

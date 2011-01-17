@@ -1,0 +1,1028 @@
+_G	_	0;"	m	
+new_buffer	_	0;"	f	class:_G
+new_buffer	_	0;"	f	
+quit	_	0;"	f	class:_G
+quit	_	0;"	f	
+reset	_	0;"	f	class:_G
+reset	_	0;"	f	
+timeout	_	0;"	f	class:_G
+timeout	_	0;"	f	
+user_dofile	_	0;"	f	class:_G
+user_dofile	_	0;"	f	
+assert	_	0;"	f	class:_G
+assert	_	0;"	f	
+collectgarbage	_	0;"	f	class:_G
+collectgarbage	_	0;"	f	
+dofile	_	0;"	f	class:_G
+dofile	_	0;"	f	
+error	_	0;"	f	class:_G
+error	_	0;"	f	
+close	_	0;"	f	class:_G
+close	_	0;"	f	
+flush	_	0;"	f	class:_G
+flush	_	0;"	f	
+lines	_	0;"	f	class:_G
+lines	_	0;"	f	
+read	_	0;"	f	class:_G
+read	_	0;"	f	
+seek	_	0;"	f	class:_G
+seek	_	0;"	f	
+setvbuf	_	0;"	f	class:_G
+setvbuf	_	0;"	f	
+write	_	0;"	f	class:_G
+write	_	0;"	f	
+getfenv	_	0;"	f	class:_G
+getfenv	_	0;"	f	
+getmetatable	_	0;"	f	class:_G
+getmetatable	_	0;"	f	
+ipairs	_	0;"	f	class:_G
+ipairs	_	0;"	f	
+load	_	0;"	f	class:_G
+load	_	0;"	f	
+loadfile	_	0;"	f	class:_G
+loadfile	_	0;"	f	
+loadstring	_	0;"	f	class:_G
+loadstring	_	0;"	f	
+module	_	0;"	f	class:_G
+module	_	0;"	f	
+next	_	0;"	f	class:_G
+next	_	0;"	f	
+pairs	_	0;"	f	class:_G
+pairs	_	0;"	f	
+pcall	_	0;"	f	class:_G
+pcall	_	0;"	f	
+print	_	0;"	f	class:_G
+print	_	0;"	f	
+rawequal	_	0;"	f	class:_G
+rawequal	_	0;"	f	
+rawget	_	0;"	f	class:_G
+rawget	_	0;"	f	
+rawset	_	0;"	f	class:_G
+rawset	_	0;"	f	
+require	_	0;"	f	class:_G
+require	_	0;"	f	
+select	_	0;"	f	class:_G
+select	_	0;"	f	
+setfenv	_	0;"	f	class:_G
+setfenv	_	0;"	f	
+setmetatable	_	0;"	f	class:_G
+setmetatable	_	0;"	f	
+tonumber	_	0;"	f	class:_G
+tonumber	_	0;"	f	
+tostring	_	0;"	f	class:_G
+tostring	_	0;"	f	
+type	_	0;"	f	class:_G
+type	_	0;"	f	
+unpack	_	0;"	f	class:_G
+unpack	_	0;"	f	
+xpcall	_	0;"	f	class:_G
+xpcall	_	0;"	f	
+_BUFFERS	_	0;"	t	class:_G
+_BUFFERS	_	0;"	t	
+_VIEWS	_	0;"	t	class:_G
+_VIEWS	_	0;"	t	
+arg	_	0;"	t	class:_G
+arg	_	0;"	t	
+_HOME	_	0;"	F	class:_G
+_HOME	_	0;"	F	
+_LEXERPATH	_	0;"	F	class:_G
+_LEXERPATH	_	0;"	F	
+_RELEASE	_	0;"	F	class:_G
+_RELEASE	_	0;"	F	
+_THEME	_	0;"	F	class:_G
+_THEME	_	0;"	F	
+_USERHOME	_	0;"	F	class:_G
+_USERHOME	_	0;"	F	
+_CHARSET	_	0;"	F	class:_G
+_CHARSET	_	0;"	F	
+RESETTING	_	0;"	F	class:_G
+RESETTING	_	0;"	F	
+WIN32	_	0;"	F	class:_G
+WIN32	_	0;"	F	
+OSX	_	0;"	F	class:_G
+OSX	_	0;"	F	
+_G	_	0;"	F	class:_G
+_G	_	0;"	F	
+_VERSION	_	0;"	F	class:_G
+_VERSION	_	0;"	F	
+_SCINTILLA	_	0;"	m	
+_SCINTILLA	_	0;"	t	class:_G
+_SCINTILLA	_	0;"	t	
+constants	_	0;"	t	class:_SCINTILLA
+functions	_	0;"	t	class:_SCINTILLA
+properties	_	0;"	t	class:_SCINTILLA
+_m	_	0;"	m	
+_m	_	0;"	t	class:_G
+_m	_	0;"	t	
+_m.cpp	_	0;"	m	
+cpp	_	0;"	t	class:_m
+keys.cpp	_	0;"	t	class:_m.cpp
+snippets.cpp	_	0;"	t	class:_m.cpp
+_m.cpp.adeptsense	_	0;"	m	
+adeptsense	_	0;"	t	class:_m.cpp
+_m.cpp.commands	_	0;"	m	
+commands	_	0;"	t	class:_m.cpp
+_m.cpp.snippets	_	0;"	m	
+snippets	_	0;"	t	class:_m.cpp
+_m.lua	_	0;"	m	
+lua	_	0;"	t	class:_m
+keys.lua	_	0;"	t	class:_m.lua
+snippets.lua	_	0;"	t	class:_m.lua
+_m.lua.adeptsense	_	0;"	m	
+adeptsense	_	0;"	t	class:_m.lua
+_m.lua.commands	_	0;"	m	
+commands	_	0;"	t	class:_m.lua
+goto_required	_	0;"	f	class:_m.lua.commands
+try_to_autocomplete_end	_	0;"	f	class:_m.lua.commands
+control_structure_patterns	_	0;"	t	class:_m.lua.commands
+_m.lua.snippets	_	0;"	m	
+snippets	_	0;"	t	class:_m.lua
+_m.textadept	_	0;"	m	
+textadept	_	0;"	t	class:_m
+_m.textadept.adeptsense	_	0;"	m	
+adeptsense	_	0;"	t	class:_m.textadept
+add_trigger	_	0;"	f	class:_m.textadept.adeptsense
+clear	_	0;"	f	class:_m.textadept.adeptsense
+complete	_	0;"	f	class:_m.textadept.adeptsense
+get_apidoc	_	0;"	f	class:_m.textadept.adeptsense
+get_class	_	0;"	f	class:_m.textadept.adeptsense
+get_completions	_	0;"	f	class:_m.textadept.adeptsense
+get_symbol	_	0;"	f	class:_m.textadept.adeptsense
+goto_ctag	_	0;"	f	class:_m.textadept.adeptsense
+handle_clear	_	0;"	f	class:_m.textadept.adeptsense
+handle_ctag	_	0;"	f	class:_m.textadept.adeptsense
+load_ctags	_	0;"	f	class:_m.textadept.adeptsense
+new	_	0;"	f	class:_m.textadept.adeptsense
+show_apidoc	_	0;"	f	class:_m.textadept.adeptsense
+api_files	_	0;"	t	class:_m.textadept.adeptsense
+class_list	_	0;"	t	class:_m.textadept.adeptsense
+completions	_	0;"	t	class:_m.textadept.adeptsense
+ctags_kinds	_	0;"	t	class:_m.textadept.adeptsense
+locations	_	0;"	t	class:_m.textadept.adeptsense
+syntax	_	0;"	t	class:_m.textadept.adeptsense
+_m.textadept.bookmarks	_	0;"	m	
+bookmarks	_	0;"	t	class:_m.textadept
+add	_	0;"	f	class:_m.textadept.bookmarks
+clear	_	0;"	f	class:_m.textadept.bookmarks
+goto_next	_	0;"	f	class:_m.textadept.bookmarks
+goto_prev	_	0;"	f	class:_m.textadept.bookmarks
+remove	_	0;"	f	class:_m.textadept.bookmarks
+toggle	_	0;"	f	class:_m.textadept.bookmarks
+MARK_BOOKMARK	_	0;"	F	class:_m.textadept.bookmarks
+MARK_BOOKMARK_COLOR	_	0;"	F	class:_m.textadept.bookmarks
+_m.textadept.editing	_	0;"	m	
+editing	_	0;"	t	class:_m.textadept
+autocomplete_word	_	0;"	f	class:_m.textadept.editing
+block_comment	_	0;"	f	class:_m.textadept.editing
+convert_indentation	_	0;"	f	class:_m.textadept.editing
+current_word	_	0;"	f	class:_m.textadept.editing
+enclose	_	0;"	f	class:_m.textadept.editing
+goto_line	_	0;"	f	class:_m.textadept.editing
+grow_selection	_	0;"	f	class:_m.textadept.editing
+highlight_word	_	0;"	f	class:_m.textadept.editing
+join_lines	_	0;"	f	class:_m.textadept.editing
+match_brace	_	0;"	f	class:_m.textadept.editing
+prepare_for_save	_	0;"	f	class:_m.textadept.editing
+select_enclosed	_	0;"	f	class:_m.textadept.editing
+select_indented_block	_	0;"	f	class:_m.textadept.editing
+select_line	_	0;"	f	class:_m.textadept.editing
+select_paragraph	_	0;"	f	class:_m.textadept.editing
+select_scope	_	0;"	f	class:_m.textadept.editing
+transpose_chars	_	0;"	f	class:_m.textadept.editing
+comment_string	_	0;"	t	class:_m.textadept.editing
+AUTOPAIR	_	0;"	F	class:_m.textadept.editing
+HIGHLIGHT_BRACES	_	0;"	F	class:_m.textadept.editing
+AUTOINDENT	_	0;"	F	class:_m.textadept.editing
+SAVE_STRIPS_WS	_	0;"	F	class:_m.textadept.editing
+MARK_HIGHLIGHT	_	0;"	F	class:_m.textadept.editing
+MARK_HIGHLIGHT_BACK	_	0;"	F	class:_m.textadept.editing
+INDIC_HIGHLIGHT	_	0;"	F	class:_m.textadept.editing
+INDIC_HIGHLIGHT_BACK	_	0;"	F	class:_m.textadept.editing
+INDIC_HIGHLIGHT_ALPHA	_	0;"	F	class:_m.textadept.editing
+_m.textadept.filter_through	_	0;"	m	
+filter_through	_	0;"	t	class:_m.textadept
+filter_through	_	0;"	f	class:_m.textadept.filter_through
+_m.textadept.keys	_	0;"	m	
+keys	_	0;"	t	class:_m.textadept
+_m.textadept.menu	_	0;"	m	
+menu	_	0;"	t	class:_m.textadept
+set_contextmenu	_	0;"	f	class:_m.textadept.menu
+set_menubar	_	0;"	f	class:_m.textadept.menu
+context_menu	_	0;"	t	class:_m.textadept.menu
+menubar	_	0;"	t	class:_m.textadept.menu
+_m.textadept.mime_types	_	0;"	m	
+mime_types	_	0;"	t	class:_m.textadept
+select_lexer	_	0;"	f	class:_m.textadept.mime_types
+extensions	_	0;"	t	class:_m.textadept.mime_types
+lexers	_	0;"	t	class:_m.textadept.mime_types
+patterns	_	0;"	t	class:_m.textadept.mime_types
+shebangs	_	0;"	t	class:_m.textadept.mime_types
+_m.textadept.run	_	0;"	m	
+run	_	0;"	t	class:_m.textadept
+compile	_	0;"	f	class:_m.textadept.run
+execute	_	0;"	f	class:_m.textadept.run
+goto_error	_	0;"	f	class:_m.textadept.run
+run	_	0;"	f	class:_m.textadept.run
+compile_command	_	0;"	t	class:_m.textadept.run
+error_detail	_	0;"	t	class:_m.textadept.run
+run_command	_	0;"	t	class:_m.textadept.run
+_m.textadept.session	_	0;"	m	
+session	_	0;"	t	class:_m.textadept
+load	_	0;"	f	class:_m.textadept.session
+save	_	0;"	f	class:_m.textadept.session
+DEFAULT_SESSION	_	0;"	F	class:_m.textadept.session
+SAVE_ON_QUIT	_	0;"	F	class:_m.textadept.session
+_m.textadept.snapopen	_	0;"	m	
+snapopen	_	0;"	t	class:_m.textadept
+open	_	0;"	f	class:_m.textadept.snapopen
+PATHS	_	0;"	F	class:_m.textadept.snapopen
+DEFAULT_DEPTH	_	0;"	F	class:_m.textadept.snapopen
+MAX	_	0;"	F	class:_m.textadept.snapopen
+_m.textadept.snippets	_	0;"	m	
+snippets	_	0;"	t	class:_m.textadept
+_cancel_current	_	0;"	f	class:_m.textadept.snippets
+_insert	_	0;"	f	class:_m.textadept.snippets
+_list	_	0;"	f	class:_m.textadept.snippets
+_prev	_	0;"	f	class:_m.textadept.snippets
+_show_style	_	0;"	f	class:_m.textadept.snippets
+_G.snippets	_	0;"	t	class:_m.textadept.snippets
+MARK_SNIPPET	_	0;"	F	class:_m.textadept.snippets
+MARK_SNIPPET_COLOR	_	0;"	F	class:_m.textadept.snippets
+args	_	0;"	m	
+args	_	0;"	t	class:_G
+args	_	0;"	t	
+process	_	0;"	f	class:args
+register	_	0;"	f	class:args
+buffer	_	0;"	m	
+buffer	_	0;"	t	class:_G
+buffer	_	0;"	t	
+add_selection	_	0;"	f	class:buffer
+add_text	_	0;"	f	class:buffer
+add_undo_action	_	0;"	f	class:buffer
+allocate	_	0;"	f	class:buffer
+annotation_clear_all	_	0;"	f	class:buffer
+annotation_get_styles	_	0;"	f	class:buffer
+annotation_get_text	_	0;"	f	class:buffer
+annotation_set_styles	_	0;"	f	class:buffer
+annotation_set_text	_	0;"	f	class:buffer
+append_text	_	0;"	f	class:buffer
+auto_c_active	_	0;"	f	class:buffer
+auto_c_cancel	_	0;"	f	class:buffer
+auto_c_complete	_	0;"	f	class:buffer
+auto_c_get_current	_	0;"	f	class:buffer
+auto_c_get_current_text	_	0;"	f	class:buffer
+auto_c_pos_start	_	0;"	f	class:buffer
+auto_c_select	_	0;"	f	class:buffer
+auto_c_show	_	0;"	f	class:buffer
+auto_c_stops	_	0;"	f	class:buffer
+back_tab	_	0;"	f	class:buffer
+begin_undo_action	_	0;"	f	class:buffer
+brace_bad_light	_	0;"	f	class:buffer
+brace_highlight	_	0;"	f	class:buffer
+brace_match	_	0;"	f	class:buffer
+call_tip_active	_	0;"	f	class:buffer
+call_tip_cancel	_	0;"	f	class:buffer
+call_tip_pos_start	_	0;"	f	class:buffer
+call_tip_set_hlt	_	0;"	f	class:buffer
+call_tip_show	_	0;"	f	class:buffer
+can_paste	_	0;"	f	class:buffer
+can_redo	_	0;"	f	class:buffer
+can_undo	_	0;"	f	class:buffer
+cancel	_	0;"	f	class:buffer
+change_lexer_state	_	0;"	f	class:buffer
+char_left	_	0;"	f	class:buffer
+char_left_extend	_	0;"	f	class:buffer
+char_left_rect_extend	_	0;"	f	class:buffer
+char_position_from_point	_	0;"	f	class:buffer
+char_position_from_point_close	_	0;"	f	class:buffer
+char_right	_	0;"	f	class:buffer
+char_right_extend	_	0;"	f	class:buffer
+char_right_rect_extend	_	0;"	f	class:buffer
+choose_caret_x	_	0;"	f	class:buffer
+clear	_	0;"	f	class:buffer
+clear_all	_	0;"	f	class:buffer
+clear_all_cmd_keys	_	0;"	f	class:buffer
+clear_document_style	_	0;"	f	class:buffer
+clear_registered_images	_	0;"	f	class:buffer
+clear_selections	_	0;"	f	class:buffer
+close	_	0;"	f	class:buffer
+colourise	_	0;"	f	class:buffer
+contracted_fold_next	_	0;"	f	class:buffer
+convert_eo_ls	_	0;"	f	class:buffer
+copy	_	0;"	f	class:buffer
+copy_allow_line	_	0;"	f	class:buffer
+copy_range	_	0;"	f	class:buffer
+copy_text	_	0;"	f	class:buffer
+cut	_	0;"	f	class:buffer
+del_line_left	_	0;"	f	class:buffer
+del_line_right	_	0;"	f	class:buffer
+del_word_left	_	0;"	f	class:buffer
+del_word_right	_	0;"	f	class:buffer
+del_word_right_end	_	0;"	f	class:buffer
+delete	_	0;"	f	class:buffer
+delete_back	_	0;"	f	class:buffer
+delete_back_not_line	_	0;"	f	class:buffer
+describe_key_word_sets	_	0;"	f	class:buffer
+describe_property	_	0;"	f	class:buffer
+doc_line_from_visible	_	0;"	f	class:buffer
+document_end	_	0;"	f	class:buffer
+document_end_extend	_	0;"	f	class:buffer
+document_start	_	0;"	f	class:buffer
+document_start_extend	_	0;"	f	class:buffer
+edit_toggle_overtype	_	0;"	f	class:buffer
+empty_undo_buffer	_	0;"	f	class:buffer
+encoded_from_utf8	_	0;"	f	class:buffer
+end_undo_action	_	0;"	f	class:buffer
+ensure_visible	_	0;"	f	class:buffer
+ensure_visible_enforce_policy	_	0;"	f	class:buffer
+find_column	_	0;"	f	class:buffer
+form_feed	_	0;"	f	class:buffer
+get_cur_line	_	0;"	f	class:buffer
+get_hotspot_active_back	_	0;"	f	class:buffer
+get_hotspot_active_fore	_	0;"	f	class:buffer
+get_last_child	_	0;"	f	class:buffer
+get_lexer	_	0;"	f	class:buffer
+get_lexer_language	_	0;"	f	class:buffer
+get_line	_	0;"	f	class:buffer
+get_line_sel_end_position	_	0;"	f	class:buffer
+get_line_sel_start_position	_	0;"	f	class:buffer
+get_property	_	0;"	f	class:buffer
+get_property_expanded	_	0;"	f	class:buffer
+get_sel_text	_	0;"	f	class:buffer
+get_style_name	_	0;"	f	class:buffer
+get_tag	_	0;"	f	class:buffer
+get_text	_	0;"	f	class:buffer
+goto_line	_	0;"	f	class:buffer
+goto_pos	_	0;"	f	class:buffer
+grab_focus	_	0;"	f	class:buffer
+hide_lines	_	0;"	f	class:buffer
+hide_selection	_	0;"	f	class:buffer
+home	_	0;"	f	class:buffer
+home_display	_	0;"	f	class:buffer
+home_display_extend	_	0;"	f	class:buffer
+home_extend	_	0;"	f	class:buffer
+home_rect_extend	_	0;"	f	class:buffer
+home_wrap	_	0;"	f	class:buffer
+home_wrap_extend	_	0;"	f	class:buffer
+indicator_all_on_for	_	0;"	f	class:buffer
+indicator_clear_range	_	0;"	f	class:buffer
+indicator_end	_	0;"	f	class:buffer
+indicator_fill_range	_	0;"	f	class:buffer
+indicator_start	_	0;"	f	class:buffer
+indicator_value_at	_	0;"	f	class:buffer
+insert_text	_	0;"	f	class:buffer
+line_copy	_	0;"	f	class:buffer
+line_cut	_	0;"	f	class:buffer
+line_delete	_	0;"	f	class:buffer
+line_down	_	0;"	f	class:buffer
+line_down_extend	_	0;"	f	class:buffer
+line_down_rect_extend	_	0;"	f	class:buffer
+line_duplicate	_	0;"	f	class:buffer
+line_end	_	0;"	f	class:buffer
+line_end_display	_	0;"	f	class:buffer
+line_end_display_extend	_	0;"	f	class:buffer
+line_end_extend	_	0;"	f	class:buffer
+line_end_rect_extend	_	0;"	f	class:buffer
+line_end_wrap	_	0;"	f	class:buffer
+line_end_wrap_extend	_	0;"	f	class:buffer
+line_from_position	_	0;"	f	class:buffer
+line_length	_	0;"	f	class:buffer
+line_scroll	_	0;"	f	class:buffer
+line_scroll_down	_	0;"	f	class:buffer
+line_scroll_up	_	0;"	f	class:buffer
+line_transpose	_	0;"	f	class:buffer
+line_up	_	0;"	f	class:buffer
+line_up_extend	_	0;"	f	class:buffer
+line_up_rect_extend	_	0;"	f	class:buffer
+lines_join	_	0;"	f	class:buffer
+lines_split	_	0;"	f	class:buffer
+load_lexer_library	_	0;"	f	class:buffer
+lower_case	_	0;"	f	class:buffer
+margin_get_styles	_	0;"	f	class:buffer
+margin_get_text	_	0;"	f	class:buffer
+margin_set_styles	_	0;"	f	class:buffer
+margin_set_text	_	0;"	f	class:buffer
+margin_text_clear_all	_	0;"	f	class:buffer
+marker_add	_	0;"	f	class:buffer
+marker_add_set	_	0;"	f	class:buffer
+marker_define	_	0;"	f	class:buffer
+marker_define_pixmap	_	0;"	f	class:buffer
+marker_delete	_	0;"	f	class:buffer
+marker_delete_all	_	0;"	f	class:buffer
+marker_delete_handle	_	0;"	f	class:buffer
+marker_get	_	0;"	f	class:buffer
+marker_line_from_handle	_	0;"	f	class:buffer
+marker_next	_	0;"	f	class:buffer
+marker_previous	_	0;"	f	class:buffer
+marker_set_alpha	_	0;"	f	class:buffer
+marker_set_back	_	0;"	f	class:buffer
+marker_set_fore	_	0;"	f	class:buffer
+marker_symbol_defined	_	0;"	f	class:buffer
+move_caret_inside_view	_	0;"	f	class:buffer
+new_line	_	0;"	f	class:buffer
+null	_	0;"	f	class:buffer
+page_down	_	0;"	f	class:buffer
+page_down_extend	_	0;"	f	class:buffer
+page_down_rect_extend	_	0;"	f	class:buffer
+page_up	_	0;"	f	class:buffer
+page_up_extend	_	0;"	f	class:buffer
+page_up_rect_extend	_	0;"	f	class:buffer
+para_down	_	0;"	f	class:buffer
+para_down_extend	_	0;"	f	class:buffer
+para_up	_	0;"	f	class:buffer
+para_up_extend	_	0;"	f	class:buffer
+paste	_	0;"	f	class:buffer
+point_x_from_position	_	0;"	f	class:buffer
+point_y_from_position	_	0;"	f	class:buffer
+position_after	_	0;"	f	class:buffer
+position_before	_	0;"	f	class:buffer
+position_from_line	_	0;"	f	class:buffer
+position_from_point	_	0;"	f	class:buffer
+position_from_point_close	_	0;"	f	class:buffer
+private_lexer_call	_	0;"	f	class:buffer
+property_names	_	0;"	f	class:buffer
+property_type	_	0;"	f	class:buffer
+redo	_	0;"	f	class:buffer
+register_image	_	0;"	f	class:buffer
+reload	_	0;"	f	class:buffer
+replace_sel	_	0;"	f	class:buffer
+replace_target	_	0;"	f	class:buffer
+replace_target_re	_	0;"	f	class:buffer
+rotate_selection	_	0;"	f	class:buffer
+save	_	0;"	f	class:buffer
+save_as	_	0;"	f	class:buffer
+scroll_caret	_	0;"	f	class:buffer
+search_anchor	_	0;"	f	class:buffer
+search_in_target	_	0;"	f	class:buffer
+search_next	_	0;"	f	class:buffer
+search_prev	_	0;"	f	class:buffer
+select_all	_	0;"	f	class:buffer
+selection_duplicate	_	0;"	f	class:buffer
+set_chars_default	_	0;"	f	class:buffer
+set_encoding	_	0;"	f	class:buffer
+set_fold_flags	_	0;"	f	class:buffer
+set_fold_margin_colour	_	0;"	f	class:buffer
+set_fold_margin_hi_colour	_	0;"	f	class:buffer
+set_hotspot_active_back	_	0;"	f	class:buffer
+set_hotspot_active_fore	_	0;"	f	class:buffer
+set_length_for_encode	_	0;"	f	class:buffer
+set_lexer	_	0;"	f	class:buffer
+set_lexer_language	_	0;"	f	class:buffer
+set_save_point	_	0;"	f	class:buffer
+set_sel	_	0;"	f	class:buffer
+set_sel_back	_	0;"	f	class:buffer
+set_sel_fore	_	0;"	f	class:buffer
+set_selection	_	0;"	f	class:buffer
+set_styling	_	0;"	f	class:buffer
+set_styling_ex	_	0;"	f	class:buffer
+set_text	_	0;"	f	class:buffer
+set_visible_policy	_	0;"	f	class:buffer
+set_whitespace_back	_	0;"	f	class:buffer
+set_whitespace_fore	_	0;"	f	class:buffer
+set_x_caret_policy	_	0;"	f	class:buffer
+set_y_caret_policy	_	0;"	f	class:buffer
+show_lines	_	0;"	f	class:buffer
+start_record	_	0;"	f	class:buffer
+start_styling	_	0;"	f	class:buffer
+stop_record	_	0;"	f	class:buffer
+stuttered_page_down	_	0;"	f	class:buffer
+stuttered_page_down_extend	_	0;"	f	class:buffer
+stuttered_page_up	_	0;"	f	class:buffer
+stuttered_page_up_extend	_	0;"	f	class:buffer
+style_clear_all	_	0;"	f	class:buffer
+style_get_font	_	0;"	f	class:buffer
+style_reset_default	_	0;"	f	class:buffer
+swap_main_anchor_caret	_	0;"	f	class:buffer
+tab	_	0;"	f	class:buffer
+target_as_utf8	_	0;"	f	class:buffer
+target_from_selection	_	0;"	f	class:buffer
+text_height	_	0;"	f	class:buffer
+text_range	_	0;"	f	class:buffer
+text_width	_	0;"	f	class:buffer
+toggle_caret_sticky	_	0;"	f	class:buffer
+toggle_fold	_	0;"	f	class:buffer
+undo	_	0;"	f	class:buffer
+upper_case	_	0;"	f	class:buffer
+use_pop_up	_	0;"	f	class:buffer
+user_list_show	_	0;"	f	class:buffer
+vc_home	_	0;"	f	class:buffer
+vc_home_extend	_	0;"	f	class:buffer
+vc_home_rect_extend	_	0;"	f	class:buffer
+vc_home_wrap	_	0;"	f	class:buffer
+vc_home_wrap_extend	_	0;"	f	class:buffer
+vertical_centre_caret	_	0;"	f	class:buffer
+visible_from_doc_line	_	0;"	f	class:buffer
+word_end_position	_	0;"	f	class:buffer
+word_left	_	0;"	f	class:buffer
+word_left_end	_	0;"	f	class:buffer
+word_left_end_extend	_	0;"	f	class:buffer
+word_left_extend	_	0;"	f	class:buffer
+word_part_left	_	0;"	f	class:buffer
+word_part_left_extend	_	0;"	f	class:buffer
+word_part_right	_	0;"	f	class:buffer
+word_part_right_extend	_	0;"	f	class:buffer
+word_right	_	0;"	f	class:buffer
+word_right_end	_	0;"	f	class:buffer
+word_right_end_extend	_	0;"	f	class:buffer
+word_right_extend	_	0;"	f	class:buffer
+word_start_position	_	0;"	f	class:buffer
+wrap_count	_	0;"	f	class:buffer
+zoom_in	_	0;"	f	class:buffer
+zoom_out	_	0;"	f	class:buffer
+doc_pointer	_	0;"	F	class:buffer
+dirty	_	0;"	F	class:buffer
+filename	_	0;"	F	class:buffer
+encoding	_	0;"	F	class:buffer
+encoding_bom	_	0;"	F	class:buffer
+additional_caret_fore	_	0;"	F	class:buffer
+additional_carets_blink	_	0;"	F	class:buffer
+additional_carets_visible	_	0;"	F	class:buffer
+additional_sel_alpha	_	0;"	F	class:buffer
+additional_sel_back	_	0;"	F	class:buffer
+additional_sel_fore	_	0;"	F	class:buffer
+additional_selection_typing	_	0;"	F	class:buffer
+anchor	_	0;"	F	class:buffer
+annotation_lines	_	0;"	F	class:buffer
+annotation_style	_	0;"	F	class:buffer
+annotation_style_offset	_	0;"	F	class:buffer
+annotation_visible	_	0;"	F	class:buffer
+auto_c_auto_hide	_	0;"	F	class:buffer
+auto_c_cancel_at_start	_	0;"	F	class:buffer
+auto_c_choose_single	_	0;"	F	class:buffer
+auto_c_drop_rest_of_word	_	0;"	F	class:buffer
+auto_c_fill_ups	_	0;"	F	class:buffer
+auto_c_ignore_case	_	0;"	F	class:buffer
+auto_c_max_height	_	0;"	F	class:buffer
+auto_c_max_width	_	0;"	F	class:buffer
+auto_c_separator	_	0;"	F	class:buffer
+auto_c_type_separator	_	0;"	F	class:buffer
+back_space_un_indents	_	0;"	F	class:buffer
+buffered_draw	_	0;"	F	class:buffer
+call_tip_back	_	0;"	F	class:buffer
+call_tip_fore	_	0;"	F	class:buffer
+call_tip_fore_hlt	_	0;"	F	class:buffer
+call_tip_use_style	_	0;"	F	class:buffer
+caret_fore	_	0;"	F	class:buffer
+caret_line_back	_	0;"	F	class:buffer
+caret_line_back_alpha	_	0;"	F	class:buffer
+caret_line_visible	_	0;"	F	class:buffer
+caret_period	_	0;"	F	class:buffer
+caret_sticky	_	0;"	F	class:buffer
+caret_style	_	0;"	F	class:buffer
+caret_width	_	0;"	F	class:buffer
+char_at	_	0;"	F	class:buffer
+character_pointer	_	0;"	F	class:buffer
+code_page	_	0;"	F	class:buffer
+column	_	0;"	F	class:buffer
+control_char_symbol	_	0;"	F	class:buffer
+current_pos	_	0;"	F	class:buffer
+cursor	_	0;"	F	class:buffer
+direct_function	_	0;"	F	class:buffer
+direct_pointer	_	0;"	F	class:buffer
+eol_mode	_	0;"	F	class:buffer
+edge_colour	_	0;"	F	class:buffer
+edge_column	_	0;"	F	class:buffer
+edge_mode	_	0;"	F	class:buffer
+end_at_last_line	_	0;"	F	class:buffer
+end_styled	_	0;"	F	class:buffer
+extra_ascent	_	0;"	F	class:buffer
+extra_descent	_	0;"	F	class:buffer
+first_visible_line	_	0;"	F	class:buffer
+focus	_	0;"	F	class:buffer
+fold_expanded	_	0;"	F	class:buffer
+fold_level	_	0;"	F	class:buffer
+fold_parent	_	0;"	F	class:buffer
+font_quality	_	0;"	F	class:buffer
+h_scroll_bar	_	0;"	F	class:buffer
+highlight_guide	_	0;"	F	class:buffer
+hotspot_active_underline	_	0;"	F	class:buffer
+hotspot_single_line	_	0;"	F	class:buffer
+indent	_	0;"	F	class:buffer
+indentation_guides	_	0;"	F	class:buffer
+indic_alpha	_	0;"	F	class:buffer
+indic_fore	_	0;"	F	class:buffer
+indic_style	_	0;"	F	class:buffer
+indic_under	_	0;"	F	class:buffer
+indicator_current	_	0;"	F	class:buffer
+indicator_value	_	0;"	F	class:buffer
+key_words	_	0;"	F	class:buffer
+keys_unicode	_	0;"	F	class:buffer
+layout_cache	_	0;"	F	class:buffer
+length	_	0;"	F	class:buffer
+lexer	_	0;"	F	class:buffer
+line_count	_	0;"	F	class:buffer
+line_end_position	_	0;"	F	class:buffer
+line_indent_position	_	0;"	F	class:buffer
+line_indentation	_	0;"	F	class:buffer
+line_state	_	0;"	F	class:buffer
+line_visible	_	0;"	F	class:buffer
+lines_on_screen	_	0;"	F	class:buffer
+main_selection	_	0;"	F	class:buffer
+margin_left	_	0;"	F	class:buffer
+margin_mask_n	_	0;"	F	class:buffer
+margin_right	_	0;"	F	class:buffer
+margin_sensitive_n	_	0;"	F	class:buffer
+margin_style	_	0;"	F	class:buffer
+margin_style_offset	_	0;"	F	class:buffer
+margin_type_n	_	0;"	F	class:buffer
+margin_width_n	_	0;"	F	class:buffer
+max_line_state	_	0;"	F	class:buffer
+mod_event_mask	_	0;"	F	class:buffer
+modify	_	0;"	F	class:buffer
+mouse_down_captures	_	0;"	F	class:buffer
+mouse_dwell_time	_	0;"	F	class:buffer
+multi_paste	_	0;"	F	class:buffer
+multiple_selection	_	0;"	F	class:buffer
+overtype	_	0;"	F	class:buffer
+paste_convert_endings	_	0;"	F	class:buffer
+position_cache	_	0;"	F	class:buffer
+print_colour_mode	_	0;"	F	class:buffer
+print_magnification	_	0;"	F	class:buffer
+print_wrap_mode	_	0;"	F	class:buffer
+property	_	0;"	F	class:buffer
+property_int	_	0;"	F	class:buffer
+read_only	_	0;"	F	class:buffer
+rectangular_selection_anchor	_	0;"	F	class:buffer
+rectangular_selection_anchor_virtual_space	_	0;"	F	class:buffer
+rectangular_selection_caret	_	0;"	F	class:buffer
+rectangular_selection_caret_virtual_space	_	0;"	F	class:buffer
+rectangular_selection_modifier	_	0;"	F	class:buffer
+scroll_width	_	0;"	F	class:buffer
+scroll_width_tracking	_	0;"	F	class:buffer
+search_flags	_	0;"	F	class:buffer
+sel_alpha	_	0;"	F	class:buffer
+sel_eol_filled	_	0;"	F	class:buffer
+selection_end	_	0;"	F	class:buffer
+selection_is_rectangle	_	0;"	F	class:buffer
+selection_mode	_	0;"	F	class:buffer
+selection_n_anchor	_	0;"	F	class:buffer
+selection_n_anchor_virtual_space	_	0;"	F	class:buffer
+selection_n_caret	_	0;"	F	class:buffer
+selection_n_caret_virtual_space	_	0;"	F	class:buffer
+selection_n_end	_	0;"	F	class:buffer
+selection_n_start	_	0;"	F	class:buffer
+selection_start	_	0;"	F	class:buffer
+selections	_	0;"	F	class:buffer
+status	_	0;"	F	class:buffer
+style_at	_	0;"	F	class:buffer
+style_back	_	0;"	F	class:buffer
+style_bits	_	0;"	F	class:buffer
+style_bits_needed	_	0;"	F	class:buffer
+style_bold	_	0;"	F	class:buffer
+style_case	_	0;"	F	class:buffer
+style_changeable	_	0;"	F	class:buffer
+style_character_set	_	0;"	F	class:buffer
+style_eol_filled	_	0;"	F	class:buffer
+style_font	_	0;"	F	class:buffer
+style_fore	_	0;"	F	class:buffer
+style_hot_spot	_	0;"	F	class:buffer
+style_italic	_	0;"	F	class:buffer
+style_size	_	0;"	F	class:buffer
+style_underline	_	0;"	F	class:buffer
+style_visible	_	0;"	F	class:buffer
+tab_indents	_	0;"	F	class:buffer
+tab_width	_	0;"	F	class:buffer
+target_end	_	0;"	F	class:buffer
+target_start	_	0;"	F	class:buffer
+text_length	_	0;"	F	class:buffer
+two_phase_draw	_	0;"	F	class:buffer
+undo_collection	_	0;"	F	class:buffer
+use_palette	_	0;"	F	class:buffer
+use_tabs	_	0;"	F	class:buffer
+v_scroll_bar	_	0;"	F	class:buffer
+view_eol	_	0;"	F	class:buffer
+view_ws	_	0;"	F	class:buffer
+virtual_space_options	_	0;"	F	class:buffer
+whitespace_chars	_	0;"	F	class:buffer
+wrap_indent_mode	_	0;"	F	class:buffer
+whitespace_size	_	0;"	F	class:buffer
+word_chars	_	0;"	F	class:buffer
+wrap_mode	_	0;"	F	class:buffer
+wrap_start_indent	_	0;"	F	class:buffer
+wrap_visual_flags	_	0;"	F	class:buffer
+wrap_visual_flags_location	_	0;"	F	class:buffer
+x_offset	_	0;"	F	class:buffer
+zoom	_	0;"	F	class:buffer
+events	_	0;"	m	
+events	_	0;"	t	class:_G
+events	_	0;"	t	
+connect	_	0;"	f	class:events
+disconnect	_	0;"	f	class:events
+emit	_	0;"	f	class:events
+notification	_	0;"	f	class:events
+gui	_	0;"	m	
+gui	_	0;"	t	class:_G
+gui	_	0;"	t	
+_print	_	0;"	f	class:gui
+check_focused_buffer	_	0;"	f	class:gui
+dialog	_	0;"	f	class:gui
+get_split_table	_	0;"	f	class:gui
+goto_view	_	0;"	f	class:gui
+gtkmenu	_	0;"	f	class:gui
+print	_	0;"	f	class:gui
+switch_buffer	_	0;"	f	class:gui
+title	_	0;"	F	class:gui
+focused_doc_pointer	_	0;"	F	class:gui
+menubar	_	0;"	F	class:gui
+context_menu	_	0;"	F	class:gui
+clipboard_text	_	0;"	F	class:gui
+statusbar_text	_	0;"	F	class:gui
+docstatusbar_text	_	0;"	F	class:gui
+size	_	0;"	F	class:gui
+gui.command_entry	_	0;"	m	
+command_entry	_	0;"	t	class:gui
+focus	_	0;"	f	class:gui.command_entry
+entry_text	_	0;"	F	class:gui.command_entry
+gui.find	_	0;"	m	
+find	_	0;"	t	class:gui
+find_in_files	_	0;"	f	class:gui.find
+find_incremental	_	0;"	f	class:gui.find
+find_next	_	0;"	f	class:gui.find
+find_prev	_	0;"	f	class:gui.find
+focus	_	0;"	f	class:gui.find
+goto_file_in_list	_	0;"	f	class:gui.find
+replace	_	0;"	f	class:gui.find
+replace_all	_	0;"	f	class:gui.find
+find_entry_text	_	0;"	F	class:gui.find
+replace_entry_text	_	0;"	F	class:gui.find
+match_case	_	0;"	F	class:gui.find
+whole_word	_	0;"	F	class:gui.find
+lua	_	0;"	F	class:gui.find
+in_files	_	0;"	F	class:gui.find
+io	_	0;"	m	
+io	_	0;"	t	class:_G
+io	_	0;"	t	
+close_all	_	0;"	f	class:io
+open_file	_	0;"	f	class:io
+save_all	_	0;"	f	class:io
+close	_	0;"	f	class:io
+flush	_	0;"	f	class:io
+input	_	0;"	f	class:io
+lines	_	0;"	f	class:io
+open	_	0;"	f	class:io
+output	_	0;"	f	class:io
+popen	_	0;"	f	class:io
+read	_	0;"	f	class:io
+tmpfile	_	0;"	f	class:io
+type	_	0;"	f	class:io
+write	_	0;"	f	class:io
+boms	_	0;"	t	class:io
+recent_files	_	0;"	t	class:io
+try_encodings	_	0;"	t	class:io
+keys	_	0;"	m	
+keys	_	0;"	t	class:_G
+keys	_	0;"	t	
+KEYSYMS	_	0;"	t	class:keys
+SCOPES_ENABLED	_	0;"	F	class:keys
+CTRL	_	0;"	F	class:keys
+SHIFT	_	0;"	F	class:keys
+ALT	_	0;"	F	class:keys
+ADD	_	0;"	F	class:keys
+lexer	_	0;"	m	
+lexer	_	0;"	t	class:_G
+lexer	_	0;"	t	
+color	_	0;"	f	class:l
+delimited_range	_	0;"	f	class:l
+embed_lexer	_	0;"	f	class:l
+fold	_	0;"	f	class:l
+get_fold_level	_	0;"	f	class:l
+get_indent_amount	_	0;"	f	class:l
+get_property	_	0;"	f	class:l
+get_style_at	_	0;"	f	class:l
+lex	_	0;"	f	class:l
+load	_	0;"	f	class:l
+nested_pair	_	0;"	f	class:l
+starts_line	_	0;"	f	class:l
+style	_	0;"	f	class:l
+token	_	0;"	f	class:l
+word_match	_	0;"	f	class:l
+_EMBEDDEDRULES	_	0;"	t	class:l
+_RULES	_	0;"	t	class:l
+DEFAULT	_	0;"	F	class:l
+WHITESPACE	_	0;"	F	class:l
+COMMENT	_	0;"	F	class:l
+STRING	_	0;"	F	class:l
+NUMBER	_	0;"	F	class:l
+KEYWORD	_	0;"	F	class:l
+IDENTIFIER	_	0;"	F	class:l
+OPERATOR	_	0;"	F	class:l
+ERROR	_	0;"	F	class:l
+PREPROCESSOR	_	0;"	F	class:l
+CONSTANT	_	0;"	F	class:l
+VARIABLE	_	0;"	F	class:l
+FUNCTION	_	0;"	F	class:l
+CLASS	_	0;"	F	class:l
+TYPE	_	0;"	F	class:l
+any	_	0;"	F	class:l
+ascii	_	0;"	F	class:l
+extend	_	0;"	F	class:l
+alpha	_	0;"	F	class:l
+digit	_	0;"	F	class:l
+alnum	_	0;"	F	class:l
+lower	_	0;"	F	class:l
+upper	_	0;"	F	class:l
+xdigit	_	0;"	F	class:l
+cntrl	_	0;"	F	class:l
+graph	_	0;"	F	class:l
+print	_	0;"	F	class:l
+punct	_	0;"	F	class:l
+space	_	0;"	F	class:l
+newline	_	0;"	F	class:l
+nonnewline	_	0;"	F	class:l
+nonnewline_esc	_	0;"	F	class:l
+dec_num	_	0;"	F	class:l
+hex_num	_	0;"	F	class:l
+oct_num	_	0;"	F	class:l
+integer	_	0;"	F	class:l
+float	_	0;"	F	class:l
+word	_	0;"	F	class:l
+style_nothing	_	0;"	F	class:l
+style_char	_	0;"	F	class:l
+style_class	_	0;"	F	class:l
+style_comment	_	0;"	F	class:l
+style_constant	_	0;"	F	class:l
+style_definition	_	0;"	F	class:l
+style_error	_	0;"	F	class:l
+style_function	_	0;"	F	class:l
+style_keyword	_	0;"	F	class:l
+style_number	_	0;"	F	class:l
+style_operator	_	0;"	F	class:l
+style_string	_	0;"	F	class:l
+style_preproc	_	0;"	F	class:l
+style_tag	_	0;"	F	class:l
+style_type	_	0;"	F	class:l
+style_variable	_	0;"	F	class:l
+style_embedded	_	0;"	F	class:l
+style_identifier	_	0;"	F	class:l
+green	_	0;"	F	class:l
+blue	_	0;"	F	class:l
+red	_	0;"	F	class:l
+yellow	_	0;"	F	class:l
+teal	_	0;"	F	class:l
+white	_	0;"	F	class:l
+black	_	0;"	F	class:l
+grey	_	0;"	F	class:l
+purple	_	0;"	F	class:l
+orange	_	0;"	F	class:l
+SC_FOLDLEVELBASE	_	0;"	F	class:l
+SC_FOLDLEVELWHITEFLAG	_	0;"	F	class:l
+SC_FOLDLEVELHEADERFLAG	_	0;"	F	class:l
+SC_FOLDLEVELNUMBERMASK	_	0;"	F	class:l
+locale	_	0;"	m	
+locale	_	0;"	t	class:_G
+locale	_	0;"	t	
+localize	_	0;"	f	class:locale
+string	_	0;"	m	
+string	_	0;"	t	class:_G
+string	_	0;"	t	
+iconv	_	0;"	f	class:string
+byte	_	0;"	f	class:string
+char	_	0;"	f	class:string
+dump	_	0;"	f	class:string
+find	_	0;"	f	class:string
+format	_	0;"	f	class:string
+gmatch	_	0;"	f	class:string
+gsub	_	0;"	f	class:string
+len	_	0;"	f	class:string
+lower	_	0;"	f	class:string
+match	_	0;"	f	class:string
+rep	_	0;"	f	class:string
+reverse	_	0;"	f	class:string
+sub	_	0;"	f	class:string
+upper	_	0;"	f	class:string
+view	_	0;"	m	
+view	_	0;"	t	class:_G
+view	_	0;"	t	
+focus	_	0;"	f	class:view
+goto_buffer	_	0;"	f	class:view
+split	_	0;"	f	class:view
+unsplit	_	0;"	f	class:view
+doc_pointer	_	0;"	F	class:view
+size	_	0;"	F	class:view
+coroutine	_	0;"	m	
+coroutine	_	0;"	t	class:_G
+coroutine	_	0;"	t	
+create	_	0;"	f	class:coroutine
+resume	_	0;"	f	class:coroutine
+running	_	0;"	f	class:coroutine
+status	_	0;"	f	class:coroutine
+wrap	_	0;"	f	class:coroutine
+yield	_	0;"	f	class:coroutine
+debug	_	0;"	m	
+debug	_	0;"	t	class:_G
+debug	_	0;"	t	
+debug	_	0;"	f	class:debug
+getfenv	_	0;"	f	class:debug
+gethook	_	0;"	f	class:debug
+getinfo	_	0;"	f	class:debug
+getlocal	_	0;"	f	class:debug
+getmetatable	_	0;"	f	class:debug
+getregistry	_	0;"	f	class:debug
+getupvalue	_	0;"	f	class:debug
+setfenv	_	0;"	f	class:debug
+sethook	_	0;"	f	class:debug
+setlocal	_	0;"	f	class:debug
+setmetatable	_	0;"	f	class:debug
+setupvalue	_	0;"	f	class:debug
+lfs	_	0;"	m	
+lfs	_	0;"	t	class:_G
+lfs	_	0;"	t	
+attributes	_	0;"	f	class:lfs
+chdir	_	0;"	f	class:lfs
+currentdir	_	0;"	f	class:lfs
+dir	_	0;"	f	class:lfs
+lock	_	0;"	f	class:lfs
+lock_dir	_	0;"	f	class:lfs
+mkdir	_	0;"	f	class:lfs
+rmdir	_	0;"	f	class:lfs
+setmode	_	0;"	f	class:lfs
+symlinkattributes	_	0;"	f	class:lfs
+touch	_	0;"	f	class:lfs
+unlock	_	0;"	f	class:lfs
+lpeg	_	0;"	m	
+lpeg	_	0;"	t	class:_G
+lpeg	_	0;"	t	
+C	_	0;"	f	class:lpeg
+Carg	_	0;"	f	class:lpeg
+Cb	_	0;"	f	class:lpeg
+Cc	_	0;"	f	class:lpeg
+Cf	_	0;"	f	class:lpeg
+Cg	_	0;"	f	class:lpeg
+Cmt	_	0;"	f	class:lpeg
+Cp	_	0;"	f	class:lpeg
+Cs	_	0;"	f	class:lpeg
+Ct	_	0;"	f	class:lpeg
+P	_	0;"	f	class:lpeg
+R	_	0;"	f	class:lpeg
+S	_	0;"	f	class:lpeg
+V	_	0;"	f	class:lpeg
+locale	_	0;"	f	class:lpeg
+match	_	0;"	f	class:lpeg
+setmaxstack	_	0;"	f	class:lpeg
+type	_	0;"	f	class:lpeg
+version	_	0;"	f	class:lpeg
+math	_	0;"	m	
+math	_	0;"	t	class:_G
+math	_	0;"	t	
+abs	_	0;"	f	class:math
+acos	_	0;"	f	class:math
+asin	_	0;"	f	class:math
+atan	_	0;"	f	class:math
+atan2	_	0;"	f	class:math
+ceil	_	0;"	f	class:math
+cos	_	0;"	f	class:math
+cosh	_	0;"	f	class:math
+deg	_	0;"	f	class:math
+exp	_	0;"	f	class:math
+floor	_	0;"	f	class:math
+fmod	_	0;"	f	class:math
+frexp	_	0;"	f	class:math
+ldexp	_	0;"	f	class:math
+log	_	0;"	f	class:math
+log10	_	0;"	f	class:math
+max	_	0;"	f	class:math
+min	_	0;"	f	class:math
+modf	_	0;"	f	class:math
+pow	_	0;"	f	class:math
+rad	_	0;"	f	class:math
+random	_	0;"	f	class:math
+randomseed	_	0;"	f	class:math
+sin	_	0;"	f	class:math
+sinh	_	0;"	f	class:math
+sqrt	_	0;"	f	class:math
+tan	_	0;"	f	class:math
+tanh	_	0;"	f	class:math
+HUGE_VAL	_	0;"	F	class:math
+pi	_	0;"	F	class:math
+os	_	0;"	m	
+os	_	0;"	t	class:_G
+os	_	0;"	t	
+clock	_	0;"	f	class:os
+date	_	0;"	f	class:os
+difftime	_	0;"	f	class:os
+execute	_	0;"	f	class:os
+exit	_	0;"	f	class:os
+getenv	_	0;"	f	class:os
+remove	_	0;"	f	class:os
+rename	_	0;"	f	class:os
+setlocale	_	0;"	f	class:os
+time	_	0;"	f	class:os
+tmpname	_	0;"	f	class:os
+package	_	0;"	m	
+package	_	0;"	t	class:_G
+package	_	0;"	t	
+loadlib	_	0;"	f	class:package
+seeall	_	0;"	f	class:package
+cpath	_	0;"	F	class:package
+loaded	_	0;"	F	class:package
+loaders	_	0;"	F	class:package
+path	_	0;"	F	class:package
+preload	_	0;"	F	class:package
+table	_	0;"	m	
+table	_	0;"	t	class:_G
+table	_	0;"	t	
+concat	_	0;"	f	class:table
+insert	_	0;"	f	class:table
+maxn	_	0;"	f	class:table
+remove	_	0;"	f	class:table
+sort	_	0;"	f	class:table
