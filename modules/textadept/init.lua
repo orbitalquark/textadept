@@ -5,6 +5,7 @@
 -- It provides utilities for editing text in Textadept.
 module('_m.textadept', package.seeall)
 
+require 'textadept.adeptsense'
 require 'textadept.bookmarks'
 require 'textadept.command_entry'
 require 'textadept.editing'

@@ -21,6 +21,7 @@ if type(_G.keys) == 'table' then
   _G.keys.lua = {}
 end
 
+require 'lua.adeptsense'
 require 'lua.commands'
 require 'lua.snippets'
 
