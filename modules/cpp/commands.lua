@@ -7,7 +7,11 @@ module('_m.cpp.commands', package.seeall)
 -- Markdown:
 -- ## Key Commands
 --
--- + `Alt+l, m`: Open this module for editing.
+-- + `Alt+L, M`: Open this module for editing.
+-- + `Ctrl+I`: (Windows and Linux) Autocomplete symbol.
+-- + `~`: (Mac OSX) Autocomplete symbol.
+-- + `Tab`: When the caret is to the right of a `(` in a known function call,
+--   show a calltip with documentation for the function.
 -- + `Shift+Return`: Add ';' to line end and insert newline.
 
 local m_editing, m_run = _m.textadept.editing, _m.textadept.run
@@ -39,7 +43,7 @@ if type(keys) == 'table' then
       buffer:add_text(';')
       buffer:new_line()
     end },
-    [not OSX and 'c\n' or 'esc'] = { cppsense.complete, cppsense },
+    [not OSX and 'ci' or '~'] = { cppsense.complete, cppsense },
     ['\t'] = { function()
       if string.char(buffer.char_at[buffer.current_pos - 1]) ~= '(' then
         return false
