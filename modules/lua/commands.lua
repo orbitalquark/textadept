@@ -7,14 +7,16 @@ module('_m.lua.commands', package.seeall)
 -- Markdown:
 -- ## Key Commands
 --
--- + `Alt+l, m`: Open this module for editing.
--- + `Alt+l, g`: Goto file being 'require'd on the current line.
+-- + `Alt+L, M`: Open this module for editing.
+-- + `Alt+L, G`: Goto file being 'require'd on the current line.
 -- + `Shift+Return`: Try to autocomplete an `if`, `for`, etc. statement with
 --   `end`.
--- + `.`: When to the right of a known identifier, show an autocompletion list
---   of fields.
--- + `:`: When to the right of a known identifier, show an autocompletion list
---   of functions.
+-- + `.`: When to the right of a known symbol, show an autocompletion list of
+--   fields and functions.
+-- + `:`: When to the right of a known symbol, show an autocompletion list of
+--   functions only.
+-- + `Ctrl+I`: (Windows and Linux) Autocomplete symbol.
+-- + `~`: (Mac OSX) Autocomplete symbol.
 -- + `Tab`: When the caret is to the right of a `(` in a known function call,
 --   show a calltip with documentation for the function.
 
@@ -118,7 +120,7 @@ if type(keys) == 'table' then
       g = { goto_required },
     },
     ['s\n'] = { try_to_autocomplete_end },
-    [not OSX and 'c\n' or 'esc'] = { function()
+    [not OSX and 'ci' or '~'] = { function()
       local line, pos = buffer:get_cur_line()
       local symbol = line:sub(1, pos):match(luasense.syntax.symbol_chars..'*$')
       return luasense:complete(false, symbol:find(':'))
