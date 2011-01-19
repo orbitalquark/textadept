@@ -44,6 +44,10 @@ local function toggle_setting(setting, i)
   end
   events.emit('update_ui') -- for updating statusbar
 end
+local function set_indentation(i)
+  buffer.indent, buffer.tab_width = i, i
+  events.emit('update_ui') -- for updating statusbar
+end
 local function set_eol_mode(mode)
   buffer.eol_mode = mode
   buffer:convert_eo_ls(mode)
@@ -222,23 +226,29 @@ menubar = {
   { title = L('_Buffer'),
     { L('_Next Buffer'), { 'goto_buffer', v, 1, false } },
     { L('_Previous Buffer'), { 'goto_buffer', v, -1, false } },
-    { L('Swit_ch Buffer'), { gui.switch_buffer } },
+    { L('Switch _Buffer'), { gui.switch_buffer } },
     { SEPARATOR, SEPARATOR },
     { L('Toggle View _EOL'), { toggle_setting, 'view_eol' } },
     { L('Toggle _Wrap Mode'), { toggle_setting, 'wrap_mode' } },
-    { L('Toggle Show _Indentation Guides'),
+    { L('Toggle Show Indentation _Guides'),
       { toggle_setting, 'indentation_guides' } },
     { L('Toggle Use _Tabs'), { toggle_setting, 'use_tabs' } },
     { L('Toggle View White_space'), { toggle_setting, 'view_ws' } },
     { L('Toggle _Virtual Space'),
       { toggle_setting, 'virtual_space_options', 2} },
     { SEPARATOR },
-    { title = L('EOL Mode'),
+    { title = L('_Indentation'),
+      { '2', { set_indentation, 2 } },
+      { '3', { set_indentation, 3 } },
+      { '4', { set_indentation, 4 } },
+      { '8', { set_indentation, 8 } },
+    },
+    { title = L('EOL _Mode'),
       { L('CRLF'), { set_eol_mode, 0 } },
       { L('CR'), { set_eol_mode, 1 } },
       { L('LF'), { set_eol_mode, 2 } },
     },
-    { title = L('Encoding'),
+    { title = L('En_coding'),
       { L('UTF-8'), { set_encoding, 'UTF-8' } },
       { L('ASCII'), { set_encoding, 'ASCII' } },
       { L('ISO-8859-1'), { set_encoding, 'ISO-8859-1' } },
