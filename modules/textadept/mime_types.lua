@@ -21,6 +21,17 @@ module('_m.textadept.mime_types', package.seeall)
 --       - lang: The string language to set.
 --
 -- [buffer_set_lexer_language]: buffer.html#buffer:set_lexer_language
+--
+-- ## Events
+--
+-- The following is a list of all mime-type events generated in
+-- `event_name(arguments)` format:
+--
+-- * **language\_module\_loaded** (lang)<br />
+--   Called when a language-specific module is loaded. This is useful for
+--   overriding its key commands since they are not available when Textadept
+--   starts.
+--     - lang: The language lexer name.
 
 ---
 -- File extensions with their associated lexers.
@@ -109,6 +120,7 @@ local function set_lexer(buffer, lang)
   local ret, err = pcall(require, lang)
   if ret then
     _m[lang].set_buffer_properties()
+    events.emit('language_module_loaded', lang)
   elseif not ret and not err:find("^module '"..lang.."' not found:") then
     error(err)
   end
