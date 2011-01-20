@@ -313,29 +313,20 @@ function goto_ctag(sense, k, title)
   if kind == 'functions' or kind == 'fields' then
     table.insert(columns, 2, 'Class')
   end
-  local out = gui.dialog('filteredlist',
-                         '--title', title,
-                         '--button1', 'gtk-ok',
-                         '--button2', 'gtk-cancel',
-                         '--no-newline',
-                         '--string-output',
-                         '--output-column', '3',
-                         '--columns', columns,
-                         '--items', items)
-  local response, location = out:match('([^\n]+)\n([^\n]+)$')
-  if response and response ~= 'gtk-cancel' then
-    local path, line = location:match('^([^:]+):(.+)$')
-    io.open_file(path)
-    if not tonumber(line) then
-      -- /^ ... $/
-      buffer.target_start, buffer.target_end = 0, buffer.length
-      buffer.search_flags = _SCINTILLA.constants.SCFIND_REGEXP
-      if buffer:search_in_target(line:sub(2, -2)) >= 0 then
-        buffer:goto_pos(buffer.target_start)
-      end
-    else
-      _m.textadept.editing.goto_line(tonumber(line))
+  local location = gui.filteredlist(title, columns, items, false,
+                                    '--output-column', '3')
+  if not location then return end
+  local path, line = location:match('^([^:]+):(.+)$')
+  io.open_file(path)
+  if not tonumber(line) then
+    -- /^ ... $/
+    buffer.target_start, buffer.target_end = 0, buffer.length
+    buffer.search_flags = _SCINTILLA.constants.SCFIND_REGEXP
+    if buffer:search_in_target(line:sub(2, -2)) >= 0 then
+      buffer:goto_pos(buffer.target_start)
     end
+  else
+    _m.textadept.editing.goto_line(tonumber(line))
   end
 end
 

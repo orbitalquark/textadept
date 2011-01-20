@@ -114,13 +114,6 @@ function open(paths, filter, exclusive, depth)
                              L('files or more were found. Showing the first'),
                              MAX))
   end
-  local out = gui.dialog('filteredlist',
-                         '--title', L('Open'),
-                         '--button1', 'gtk-ok',
-                         '--button2', 'gtk-cancel',
-                         '--no-newline',
-                         '--columns', 'File',
-                         '--items', list)
-  local response, index = out:match('^(%d+)[\r\n]+(%d+)')
-  if response == '1' then io.open_file(list[tonumber(index) + 1]) end
+  local i = gui.filteredlist(L('Open'), 'File', list, true)
+  if i then io.open_file(list[i + 1]) end
 end
