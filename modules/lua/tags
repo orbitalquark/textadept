@@ -164,6 +164,7 @@ _m.textadept.bookmarks	_	0;"	m
 bookmarks	_	0;"	t	class:_m.textadept
 add	_	0;"	f	class:_m.textadept.bookmarks
 clear	_	0;"	f	class:_m.textadept.bookmarks
+goto	_	0;"	f	class:_m.textadept.bookmarks
 goto_next	_	0;"	f	class:_m.textadept.bookmarks
 goto_prev	_	0;"	f	class:_m.textadept.bookmarks
 remove	_	0;"	f	class:_m.textadept.bookmarks

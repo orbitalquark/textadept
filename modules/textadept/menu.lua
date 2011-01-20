@@ -210,6 +210,7 @@ menubar = {
       { L('_Clear All'), { m_bookmarks.clear } },
       { L('_Next'), { m_bookmarks.goto_next } },
       { L('_Previous'), { m_bookmarks.goto_prev } },
+      { L('_Goto Bookmark...'), { m_bookmarks.goto } },
     },
     { title = L('Snap_open'),
       { L('_User Home'), { m_snapopen.open, _USERHOME } },

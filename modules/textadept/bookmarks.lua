@@ -73,6 +73,21 @@ function goto_prev()
   if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
 end
 
+---
+-- Goes to selected bookmark from a filtered list.
+function goto()
+  local buffer = buffer
+  local markers, line = {}, buffer:marker_next(0, 2^MARK_BOOKMARK)
+  if line == -1 then return end
+  repeat
+    local text = buffer:get_line(line):sub(1, -2) -- chop \n
+    markers[#markers + 1] = table.concat({ line + 1, text }, ': ')
+    line = buffer:marker_next(line + 1, 2^MARK_BOOKMARK)
+  until line < 0
+  local line = gui.filteredlist(L('Select Bookmark'), 'Bookmark', markers)
+  if line then _m.textadept.editing.goto_line(tonumber(line:match('^%d+'))) end
+end
+
 if buffer then buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end
 events.connect('view_new',
   function() buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end)
