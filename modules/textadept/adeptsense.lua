@@ -238,7 +238,7 @@ function load_ctags(sense, tag_file, nolocations)
       if kind == 'functions' or kind == 'fields' then
         -- Update completions.
         -- If no class structure is found, the global namespace is used.
-        for _, key in ipairs{ 'class', 'interface', 'struct', '' } do
+        for _, key in ipairs{ 'class', 'interface', 'struct', 'union', '' } do
           local class = (#key == 0) and '' or ext_fields:match(key..':(%S+)')
           if class then
             if not completions[class] then
@@ -304,13 +304,13 @@ function goto_ctag(sense, k, title)
   local kind = sense.ctags_kinds[k]
   for k, v in pairs(sense.locations[k]) do
     items[#items + 1] = k:match('[^#]+$') -- symbol name
-    if kind == 'function' or kind == 'fields' then
+    if kind == 'functions' or kind == 'fields' then
       items[#items + 1] = k:match('^[^#]+') -- class name
     end
     items[#items + 1] = v[1]..':'..v[2]
   end
   local columns = { 'Name', 'Location' }
-  if kind == 'function' or kind == 'field' then
+  if kind == 'functions' or kind == 'fields' then
     table.insert(columns, 2, 'Class')
   end
   local out = gui.dialog('filteredlist',
@@ -324,7 +324,7 @@ function goto_ctag(sense, k, title)
                          '--items', items)
   local response, location = out:match('([^\n]+)\n([^\n]+)$')
   if response and response ~= 'gtk-cancel' then
-    local path, line = location:match('^(.+):(.+)$')
+    local path, line = location:match('^([^:]+):(.+)$')
     io.open_file(path)
     if not tonumber(line) then
       -- /^ ... $/
