@@ -203,14 +203,6 @@ connect('reset_after',
 -- Prompts the user to select a lexer from a filtered list for the current
 -- buffer.
 function select_lexer()
-  local out = gui.dialog('filteredlist',
-                         '--title', L('Select Lexer'),
-                         '--button1', 'gtk-ok',
-                         '--button2', 'gtk-cancel',
-                         '--no-newline',
-                         '--string-output',
-                         '--columns', 'Name',
-                         '--items', lexers)
-  local response, lexer = out:match('([^\n]+)\n([^\n]+)$')
-  if response and response ~= 'gtk-cancel' then buffer:set_lexer(lexer) end
+  local lexer = gui.filteredlist(L('Select Lexer'), 'Name', lexers)
+  if lexer then buffer:set_lexer(lexer) end
 end

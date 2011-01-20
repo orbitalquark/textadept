@@ -52,23 +52,34 @@ end
 function gui.print(...) gui._print(L('[Message Buffer]'), ...) end
 
 -- LuaDoc is in core/.gui.luadoc.
+function gui.filteredlist(title, columns, items, int_return, ...)
+  local out = gui.dialog('filteredlist',
+                         '--title', title,
+                         '--button1', 'gtk-ok',
+                         '--button2', 'gtk-cancel',
+                         '--no-newline',
+                         int_return and '' or '--string-output',
+                         '--columns', columns,
+                         '--items', items,
+                         unpack{...})
+  local patt = int_return and '(%-?%d+)\n(%d+)$' or '([^\n]+)\n([^\n]+)$'
+  local response, value = out:match(patt)
+  if response == (int_return and '1' or 'gtk-ok') then
+    return not int_return and value or tonumber(value)
+  end
+end
+
+-- LuaDoc is in core/.gui.luadoc.
 function gui.switch_buffer()
-  local items = {}
+  local columns, items = { 'Name', 'File' }, {}
   for _, buffer in ipairs(_BUFFERS) do
     local filename = buffer.filename or buffer._type or L('Untitled')
     local dirty = buffer.dirty and '*' or ''
     items[#items + 1] = dirty..filename:match('[^/\\]+$')
     items[#items + 1] = filename
   end
-  local response = gui.dialog('filteredlist',
-                              '--title', L('Switch Buffers'),
-                              '--button1', 'gtk-ok',
-                              '--button2', 'gtk-cancel',
-                              '--no-newline',
-                              '--columns', 'Name', 'File',
-                              '--items', items)
-  local ok, i = response:match('(%-?%d+)\n(%d+)$')
-  if ok == '1' then view:goto_buffer(tonumber(i) + 1, true) end
+  local i = gui.filteredlist(L('Switch Buffers'), columns, items, true)
+  if i then view:goto_buffer(i + 1, true) end
 end
 
 local connect = _G.events.connect

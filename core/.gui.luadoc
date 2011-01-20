@@ -84,3 +84,18 @@ function switch_buffer() end
 -- filteredlist dialogs with many items.
 -- @return string CocoaDialog result.
 function dialog(kind, ...) end
+
+---
+-- Shortcut function for gui.dialog('filtered_list', ...) with 'Ok' and 'Cancel'
+-- buttons.
+-- @param title The title for the filteredlist dialog.
+-- @param columns A column name or list of column names.
+-- @param items An item or list of items.
+-- @param int_return If true, returns the integer index of the selected item in
+--   the filteredlist. Defaults to false which returns the string item.
+-- @param ... Additional parameters to pass to gui.dialog().
+-- @return Either a string or integer on success; nil otherwise.
+-- @usage gui.filteredlist('Title', 'Foo', { 'Bar', 'Baz' })
+-- @usage gui.filteredlist('Title', { 'Foo', 'Bar' }, { 'a', 'b', 'c', 'd' },
+--                         false, '--output-column', '2')
+function filteredlist(title, columns, items, int_return, ...) end

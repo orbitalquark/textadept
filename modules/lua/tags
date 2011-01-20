@@ -716,6 +716,7 @@ gui	_	0;"	t
 _print	_	0;"	f	class:gui
 check_focused_buffer	_	0;"	f	class:gui
 dialog	_	0;"	f	class:gui
+filteredlist	_	0;"	f	class:gui
 get_split_table	_	0;"	f	class:gui
 goto_view	_	0;"	f	class:gui
 gtkmenu	_	0;"	f	class:gui
