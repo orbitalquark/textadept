@@ -54,6 +54,7 @@ new _m.textadept.adeptsense.new(lang)\nCreates a new adeptsense for the given le
 show_apidoc _m.textadept.adeptsense.show_apidoc(sense)\nShows a calltip with API documentation for the symbol behind the caret.\n@param The adeptsense returned by adeptsense.new().\n@return true on success or false.\n@see get_symbol\n@see get_apidoc\n
 add _m.textadept.bookmarks.add()\nAdds a bookmark to the current line.\n
 clear _m.textadept.bookmarks.clear()\nClears all bookmarks in the current buffer.\n
+goto _m.textadept.bookmarks.goto()\nGoes to selected bookmark from a filtered list.\n
 goto_next _m.textadept.bookmarks.goto_next()\nGoes to the next bookmark in the current buffer.\n
 goto_prev _m.textadept.bookmarks.goto_prev()\nGoes to the previous bookmark in the current buffer.\n
 remove _m.textadept.bookmarks.remove()\nClears the bookmark at the current line.\n
