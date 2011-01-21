@@ -201,13 +201,13 @@ function show_apidoc(sense)
     apidocs[i] = doc
   end
   buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos or 1])
-  local event_id = events.connect('call_tip_click',
-    function(position) -- cycle through calltips
-      apidocs.pos = apidocs.pos + (position == 1 and -1 or 1)
-      if apidocs.pos > #apidocs then apidocs.pos = 1 end
-      if apidocs.pos < 1 then apidocs.pos = #apidocs end
-      buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos])
-    end)
+  -- Cycle through calltips.
+  local event_id = events.connect('call_tip_click', function(position)
+    apidocs.pos = apidocs.pos + (position == 1 and -1 or 1)
+    if apidocs.pos > #apidocs then apidocs.pos = 1 end
+    if apidocs.pos < 1 then apidocs.pos = #apidocs end
+    buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos])
+  end)
   _G.timeout(1, function()
     if buffer:call_tip_active() then return true end
     events.disconnect('call_tip_click', event_id)

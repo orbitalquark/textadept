@@ -366,32 +366,30 @@ set_menubar(menubar)
 set_contextmenu(context_menu)
 
 -- Most of this handling code comes from keys.lua.
-events.connect('menu_clicked',
-  function(menu_id)
-    local active_table
-    if menu_id > 1000 then
-      active_table = context_actions[menu_id - 1000]
+events.connect('menu_clicked', function(menu_id)
+  local active_table
+  if menu_id > 1000 then
+    active_table = context_actions[menu_id - 1000]
+  else
+    active_table = menu_actions[menu_id]
+  end
+  local f, args
+  if active_table and #active_table > 0 then
+    local func = active_table[1]
+    if type(func) == 'function' then
+      f, args = func, { unpack(active_table, 2) }
+    elseif type(func) == 'string' then
+      local object = active_table[2]
+      if object == 'buffer' or object == 'view' then
+        local v = _G[object]
+        f, args = v[func], { v, unpack(active_table, 3) }
+      end
+    end
+    if f and args then
+      local ret, retval = pcall(f, unpack(args))
+      if not ret then error(retval) end
     else
-      active_table = menu_actions[menu_id]
+      error(L('Unknown command:')..' '..tostring(func))
     end
-    local f, args
-    if active_table and #active_table > 0 then
-      local func = active_table[1]
-      if type(func) == 'function' then
-        f, args = func, { unpack(active_table, 2) }
-      elseif type(func) == 'string' then
-        local object = active_table[2]
-        if object == 'buffer' then
-          f, args = buffer[func], { buffer, unpack(active_table, 3) }
-        elseif object == 'view' then
-          f, args = view[func], { view, unpack(active_table, 3) }
-        end
-      end
-      if f and args then
-        local ret, retval = pcall(f, unpack(args))
-        if not ret then error(retval) end
-      else
-        error(L('Unknown command:')..' '..tostring(func))
-      end
-    end
-  end)
+  end
+end)

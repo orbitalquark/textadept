@@ -93,8 +93,8 @@ function load(filename)
   end
   return true
 end
-events.connect('arg_none', -- load session when no args are present
-  function() if SAVE_ON_QUIT then load() end end)
+-- Load session when no args are present.
+events.connect('arg_none', function() if SAVE_ON_QUIT then load() end end)
 
 ---
 -- Saves a Textadept session to a file.

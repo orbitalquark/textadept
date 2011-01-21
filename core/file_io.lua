@@ -92,10 +92,7 @@ end
 -- @class table
 -- @name try_encodings
 try_encodings = {
-  'UTF-8',
-  'ASCII',
-  'ISO-8859-1',
-  'MacRoman'
+  'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'
 }
 
 -- Opens a file or goes to its already open buffer.
@@ -118,7 +115,7 @@ local function open_helper(utf8_filename)
   if not f then error(err) end
   text = f:read('*all')
   f:close()
-  if not text then return end -- filename exists, but can't read it
+  if not text then return end -- filename exists, but cannot read it
   local buffer = new_buffer()
   -- Tries to detect character encoding and convert text from it to UTF-8.
   local encoding, encoding_bom = detect_encoding(text)
@@ -171,9 +168,8 @@ end
 
 ---
 -- Opens a list of files.
--- @param utf8_filenames A '\n' separated list of filenames to open. If none
---   specified, the user is prompted to open files from a dialog. These paths
---   must be encoded in UTF-8.
+-- @param utf8_filenames A '\n' separated list of UTF-8-encoded filenames to
+--   open. If nil, the user is prompted with a fileselect dialog.
 -- @usage io.open_file(utf8_encoded_filename)
 function open_file(utf8_filenames)
   utf8_filenames = utf8_filenames or
@@ -189,8 +185,7 @@ end
 local function reload(buffer)
   gui.check_focused_buffer(buffer)
   if not buffer.filename then return end
-  local pos = buffer.current_pos
-  local first_visible_line = buffer.first_visible_line
+  local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local filename = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local f, err = io.open(filename, 'rb')
   if not f then error(err) end
@@ -211,8 +206,7 @@ end
 local function set_encoding(buffer, encoding)
   gui.check_focused_buffer(buffer)
   if not buffer.encoding then error(L('Cannot change binary file encoding')) end
-  local pos = buffer.current_pos
-  local first_visible_line = buffer.first_visible_line
+  local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local text = buffer:get_text(buffer.length)
   text = text:iconv(buffer.encoding, 'UTF-8')
   text = text:iconv(encoding, buffer.encoding)
@@ -268,8 +262,7 @@ end
 -- Saves all dirty buffers to their respective files.
 -- @usage io.save_all()
 function save_all()
-  local current_buffer = buffer
-  local current_index
+  local current_buffer, current_index = buffer, 1
   for i, buffer in ipairs(_BUFFERS) do
     view:goto_buffer(i)
     if buffer == current_buffer then current_index = i end
@@ -315,6 +308,7 @@ end
 -- of Textadept.
 local function update_modified_file()
   if not buffer.filename then return end
+  local buffer = buffer
   local utf8_filename = buffer.filename
   local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
   local attributes = lfs.attributes(filename)
@@ -336,22 +330,22 @@ end
 events.connect('buffer_after_switch', update_modified_file)
 events.connect('view_after_switch', update_modified_file)
 
-events.connect('buffer_new',
-  function() -- set additional buffer functions
-    local buffer = buffer
-    buffer.reload = reload
-    buffer.set_encoding = set_encoding
-    buffer.save = save
-    buffer.save_as = save_as
-    buffer.close = close
-    buffer.encoding = 'UTF-8'
-  end)
+-- Set additional buffer functions.
+events.connect('buffer_new', function()
+  local buffer = buffer
+  buffer.reload = reload
+  buffer.set_encoding = set_encoding
+  buffer.save = save
+  buffer.save_as = save_as
+  buffer.close = close
+  buffer.encoding = 'UTF-8'
+end)
 
-events.connect('file_opened',
-  function(utf8_filename) -- close initial 'Untitled' buffer
-    local b = _BUFFERS[1]
-    if #_BUFFERS == 2 and not (b.filename or b._type or b.dirty) then
-      view:goto_buffer(1, true)
-      buffer:close()
-    end
-  end)
+-- Close initial 'Untitled' buffer.
+events.connect('file_opened', function(utf8_filename)
+  local b = _BUFFERS[1]
+  if #_BUFFERS == 2 and not (b.filename or b._type or b.dirty) then
+    view:goto_buffer(1, true)
+    buffer:close()
+  end
+end)

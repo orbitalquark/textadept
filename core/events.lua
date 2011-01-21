@@ -122,6 +122,8 @@ module('events', package.seeall)
 --     events.connect('my_event', my_event_handler)
 --     events.emit('my_event', 'my message')
 
+local handlers = {}
+
 ---
 -- Adds a handler function to an event.
 -- @param event The string event name. It is arbitrary and need not be defined
@@ -131,15 +133,10 @@ module('events', package.seeall)
 -- @return Index of handler.
 -- @see disconnect
 function connect(event, f, index)
-  local plural = event..'s'
-  if not _M[plural] then _M[plural] = {} end
-  local handlers = _M[plural]
-  if index then
-    table.insert(handlers, index, f)
-  else
-    handlers[#handlers + 1] = f
-  end
-  return index or #handlers
+  if not handlers[event] then handlers[event] = {} end
+  local h = handlers[event]
+  if index then table.insert(h, index, f) else h[#h + 1] = f end
+  return index or #h
 end
 
 ---
@@ -148,10 +145,8 @@ end
 -- @param index Index of the handler (returned by events.connect).
 -- @see connect
 function disconnect(event, index)
-  local plural = event..'s'
-  if not events[plural] then return end
-  local handlers = events[plural]
-  table.remove(handlers, index)
+  if not handlers[event] then return end
+  table.remove(handlers[event], index)
 end
 
 local error_emitted = false
@@ -165,10 +160,9 @@ local error_emitted = false
 -- @param ... Arguments passed to the handler.
 -- @return true or false if any handler explicitly returned such; nil otherwise.
 function emit(event, ...)
-  local plural = event..'s'
-  local handlers = _M[plural]
-  if not handlers then return end
-  for _, f in ipairs(handlers) do
+  local h = handlers[event]
+  if not h then return end
+  for _, f in ipairs(h) do
     local ok, result = pcall(f, unpack{...})
     if not ok then
       if not error_emitted then
@@ -204,9 +198,8 @@ local scnnotifications = {
 -- @return true or false if any handler explicitly returned such; nil otherwise.
 function notification(n)
   local f = scnnotifications[n.code]
-  if f then
-    local args = { unpack(f, 2) }
-    for k, v in ipairs(args) do args[k] = n[v] end
-    return emit(f[1], unpack(args))
-  end
+  if not f then return end
+  local args = { unpack(f, 2) }
+  for i, v in ipairs(args) do args[i] = n[v] end
+  return emit(f[1], unpack(args))
 end

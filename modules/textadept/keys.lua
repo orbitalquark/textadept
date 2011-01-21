@@ -36,9 +36,7 @@ local function toggle_setting(setting, i)
 end
 local RECENT_FILES = 1
 events.connect('user_list_selection',
-  function(type, text)
-    if type == RECENT_FILES then io.open_file(text) end
-  end)
+  function(type, text) if type == RECENT_FILES then io.open_file(text) end end)
 local function show_recent_file_list()
   local buffer = buffer
   local files = {}
