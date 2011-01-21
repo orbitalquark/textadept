@@ -151,7 +151,7 @@ events.connect('buffer_new', function()
   buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
   buffer.get_style_name = get_style_name
 end)
--- Scintilla's first buffer doesn't have these
+-- Scintilla's first buffer doesn't have these.
 if not RESETTING then
   buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
   buffer.get_style_name = get_style_name

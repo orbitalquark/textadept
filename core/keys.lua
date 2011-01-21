@@ -134,7 +134,6 @@ local pcall = _G.pcall
 local next = _G.next
 local type = _G.type
 local unpack = _G.unpack
-local OSX = _G.OSX
 
 ---
 -- Lookup table for key values higher than 255.
@@ -198,12 +197,9 @@ local function run_key_command(lexer, scope)
   end
 
   local f, args = key[1], { unpack(key, 2) }
-  if type(key[1]) == 'string' then
-    if key[2] == 'buffer' then
-      f, args = buffer[f], { buffer, unpack(key, 3) }
-    elseif key[2] == 'view' then
-      f, args = view[f], { view, unpack(key, 3) }
-    end
+  if type(key[1]) == 'string' and (key[2] == 'buffer' or key[2] == 'view') then
+    local v = _G[key[2]]
+    f, args = v[f], { v, unpack(key, 3) }
   end
 
   if type(f) ~= 'function' then error(L('Unknown command:')..tostring(f)) end

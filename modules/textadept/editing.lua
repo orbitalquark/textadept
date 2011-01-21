@@ -58,8 +58,7 @@ comment_string = {}
 -- @class table
 -- @name char_matches
 local char_matches = {
-  [40] = ')', [91] = ']', [123] = '}',
-  [39] = "'", [34] = '"'
+  [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'
 }
 
 -- Brace characters.
@@ -77,67 +76,67 @@ local braces = { -- () [] {} <>
 -- @name current_call_tip
 local current_call_tip = {}
 
-events.connect('char_added',
-  function(c) -- matches characters specified in char_matches
-    if AUTOPAIR and char_matches[c] and buffer.selections == 1 then
-      buffer:insert_text(-1, char_matches[c])
-    end
-  end)
+-- Matches characters specified in char_matches.
+events.connect('char_added', function(c)
+  if AUTOPAIR and char_matches[c] and buffer.selections == 1 then
+    buffer:insert_text(-1, char_matches[c])
+  end
+end)
 
-events.connect('keypress',
-  function(code, shift, control, alt) -- removes matched chars on backspace
-    if not AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
-    local buffer = buffer
-    local current_pos = buffer.current_pos
-    local c = buffer.char_at[current_pos - 1]
-    if char_matches[c] and
-      buffer.char_at[current_pos] == string.byte(char_matches[c]) then
-      buffer:clear()
-    end
-  end)
+-- Removes matched chars on backspace.
+events.connect('keypress', function(code, shift, control, alt)
+  if not AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
+  local buffer = buffer
+  local current_pos = buffer.current_pos
+  local c = buffer.char_at[current_pos - 1]
+  if char_matches[c] and
+    buffer.char_at[current_pos] == string.byte(char_matches[c]) then
+    buffer:clear()
+  end
+end)
 
-events.connect('update_ui',
-  function() -- highlights matching braces
-    if not HIGHLIGHT_BRACES then return end
-    local buffer = buffer
-    local current_pos = buffer.current_pos
-    if braces[buffer.char_at[current_pos]] and
-      buffer:get_style_name(buffer.style_at[current_pos]) == 'operator' then
-      local pos = buffer:brace_match(current_pos)
-      if pos ~= -1 then
-        buffer:brace_highlight(current_pos, pos)
-      else
-        buffer:brace_bad_light(current_pos)
-      end
+-- Highlights matching braces.
+events.connect('update_ui', function()
+  if not HIGHLIGHT_BRACES then return end
+  local buffer = buffer
+  local current_pos = buffer.current_pos
+  if braces[buffer.char_at[current_pos]] and
+    buffer:get_style_name(buffer.style_at[current_pos]) == 'operator' then
+    local pos = buffer:brace_match(current_pos)
+    if pos ~= -1 then
+      buffer:brace_highlight(current_pos, pos)
     else
-      buffer:brace_bad_light(-1)
+      buffer:brace_bad_light(current_pos)
     end
-  end)
+  else
+    buffer:brace_bad_light(-1)
+  end
+end)
 
-events.connect('char_added',
-  function(char) -- auto-indent on return
-    if not AUTOINDENT or char ~= 10 then return end
-    local buffer = buffer
-    local anchor, caret = buffer.anchor, buffer.current_pos
-    local line = buffer:line_from_position(caret)
-    local pline = line - 1
-    while pline >= 0 and #buffer:get_line(pline) == 1 do pline = pline - 1 end
-    if pline >= 0 then
-      local indentation = buffer.line_indentation[pline]
-      local s = buffer.line_indent_position[line]
-      buffer.line_indentation[line] = indentation
-      local e = buffer.line_indent_position[line]
-      local diff = e - s
-      if e > s then -- move selection on
-        if anchor >= s then anchor = anchor + diff end
-        if caret  >= s then caret  = caret  + diff end
-      elseif e < s then -- move selection back
-        if anchor >= e then anchor = anchor >= s and anchor + diff or e end
-        if caret  >= e then caret  = caret  >= s and caret  + diff or e end
-      end
-      buffer:set_sel(anchor, caret)
+-- Auto-indent on return.
+events.connect('char_added', function(char)
+  if not AUTOINDENT or char ~= 10 then return end
+  local buffer = buffer
+  local anchor, caret = buffer.anchor, buffer.current_pos
+  local line = buffer:line_from_position(caret)
+  local pline = line - 1
+  while pline >= 0 and #buffer:get_line(pline) == 1 do pline = pline - 1 end
+  if pline >= 0 then
+    local indentation = buffer.line_indentation[pline]
+    local s = buffer.line_indent_position[line]
+    buffer.line_indentation[line] = indentation
+    local e = buffer.line_indent_position[line]
+    local diff = e - s
+    if e > s then -- move selection on
+      if anchor >= s then anchor = anchor + diff end
+      if caret  >= s then caret  = caret  + diff end
+    elseif e < s then -- move selection back
+      if anchor >= e then anchor = anchor >= s and anchor + diff or e end
+      if caret  >= e then caret  = caret  >= s and caret  + diff or e end
     end
-  end)
+    buffer:set_sel(anchor, caret)
+  end
+end)
 
 ---
 -- Goes to a matching brace position, selecting the text inside if specified.
@@ -226,12 +225,11 @@ end
 -- @param line Optional line number to go to.
 function goto_line(line)
   if not line then
-    line = gui.dialog('standard-inputbox',
-                      '--title', L('Go To'),
-                      '--text', L('Line Number:'),
-                      '--no-newline')
-    line = tonumber(line:match('%-?%d+$'))
-    if not line or line < 0 then return end
+    line = tonumber(gui.dialog('standard-inputbox',
+                               '--title', L('Go To'),
+                               '--text', L('Line Number:'),
+                               '--no-newline'):match('%-?%d+$'))
+    if not line then return end
   end
   buffer:ensure_visible_enforce_policy(line - 1)
   buffer:goto_line(line - 1)
@@ -264,7 +262,7 @@ function prepare_for_save()
   -- Ensure ending newline.
   local e = buffer:position_from_line(lines)
   if lines == 1 or
-    lines > 1 and e > buffer:position_from_line(lines - 1) then
+     lines > 1 and e > buffer:position_from_line(lines - 1) then
     buffer:insert_text(e, '\n')
   end
   -- Convert non-consistent EOLs
@@ -384,15 +382,14 @@ function select_indented_block()
   if indent < 0 then return end
   if buffer:get_sel_text() ~= '' then
     if buffer.line_indentation[s - 1] == indent and
-      buffer.line_indentation[e + 1] == indent then
+       buffer.line_indentation[e + 1] == indent then
       s, e = s - 1, e + 1
       indent = indent + buffer.indent -- do not run while loops
     end
   end
   while buffer.line_indentation[s - 1] > indent do s = s - 1 end
   while buffer.line_indentation[e + 1] > indent do e = e + 1 end
-  s = buffer:position_from_line(s)
-  e = buffer.line_end_position[e]
+  s, e = buffer:position_from_line(s), buffer.line_end_position[e]
   buffer:set_sel(s, e)
 end
 
@@ -426,8 +423,7 @@ function convert_indentation()
       new_indentation = (' '):rep(indent)
     end
     if current_indentation ~= new_indentation then
-      buffer.target_start = s
-      buffer.target_end = indent_pos
+      buffer.target_start, buffer.target_end = s, indent_pos
       buffer:replace_target(new_indentation)
     end
   end

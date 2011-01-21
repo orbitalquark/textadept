@@ -140,7 +140,7 @@ local snippet_stack = {}
 -- @return string with escapes handled.
 local function handle_escapes(s)
   return s:gsub('%%([%%`%)|#])',
-    function(char) return ("\\%03d"):format(char:byte()) end)
+                function(char) return ("\\%03d"):format(char:byte()) end)
 end
 
 -- Replaces octal characters with their escaped equivalents in a given string.
@@ -203,26 +203,25 @@ local function next_tab_stop()
     local function transform_mirror(mirror)
       local pattern, replacement = mirror:match('^%(([^|]+)|(.+)%)$')
       if not pattern and not replacement then return ph_text end
-      return ph_text:gsub(unhandle_escapes(pattern),
-                          function(...)
-                            local arg = {...}
-                            local repl = replacement:gsub('%%(%d+)',
-                              function(i) return arg[tonumber(i)] or '' end)
-                            return repl:gsub('#(%b())', run_lua_code)
-                          end, 1)
+      return ph_text:gsub(unhandle_escapes(pattern), function(...)
+        local arg = {...}
+        local repl = replacement:gsub('%%(%d+)', function(i)
+          return arg[tonumber(i)] or ''
+        end)
+        return repl:gsub('#(%b())', run_lua_code)
+      end, 1)
     end
     s_text = s_text:gsub('%%'..index..'(%b())', transform_mirror)
 
     -- Regular mirror.
-    s_text = s_text:gsub('()%%'..index,
-                         function(pos)
-                           for mirror, e in s_text:gmatch('%%%d+(%b())()') do
-                             local s = mirror:find('|')
-                             -- If inside transform, do not do anything.
-                             if s and pos > s and pos < e then return nil end
-                           end
-                           return ph_text
-                         end)
+    s_text = s_text:gsub('()%%'..index, function(pos)
+      for mirror, e in s_text:gmatch('%%%d+(%b())()') do
+        local s = mirror:find('|')
+        -- If inside transform, do not do anything.
+        if s and pos > s and pos < e then return nil end
+      end
+      return ph_text
+    end)
 
     buffer:set_sel(s_start, s_end)
     buffer:replace_sel(s_text)
@@ -269,14 +268,13 @@ local function next_tab_stop()
     end
     -- Place additional carets at mirrors.
     local _, _, text = snippet_info()
-    text = text:gsub('(%%%d+%b())',
-                     function(mirror)
-                       -- Lua code in replacement mirrors may contain '%'
-                       -- sequences; do not treat as mirrors
-                       if mirror:find('|') then
-                         return string.rep('_', #mirror)
-                       end
-                     end)
+    text = text:gsub('(%%%d+%b())', function(mirror)
+      -- Lua code in replacement mirrors may contain '%'
+      -- sequences; do not treat as mirrors
+      if mirror:find('|') then
+        return string.rep('_', #mirror)
+      end
+    end)
     for s, e in text:gmatch('()%%'..index..'()[^(]') do
       buffer:add_selection(s_start + s - 1, s_start + e - 1)
     end
@@ -345,13 +343,12 @@ function _insert(s_text)
 
     -- Execute Lua and shell code.
     s_text = s_text:gsub('%%(%b())', run_lua_code)
-    s_text = s_text:gsub('`([^`]+)`',
-                         function(code)
-                           local p = io.popen(code)
-                           local out = p:read('*all'):sub(1, -2)
-                           p:close()
-                           return out
-                         end)
+    s_text = s_text:gsub('`([^`]+)`', function(code)
+      local p = io.popen(code)
+      local out = p:read('*all'):sub(1, -2)
+      p:close()
+      return out
+    end)
 
     -- Initialize the new snippet. If one is running, push it onto the stack.
     if snippet.index then snippet_stack[#snippet_stack + 1] = snippet end

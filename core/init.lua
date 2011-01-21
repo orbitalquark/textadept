@@ -30,10 +30,8 @@ end
 
 -- LuaDoc is in core/._G.luadoc.
 function _G.user_dofile(filename)
-  if lfs.attributes(_USERHOME..'/'..filename) then
-    local ok, err = pcall(dofile, _USERHOME..'/'..filename)
-    if not ok then gui.print(err) end
-    return ok
-  end
-  return false
+  if not lfs.attributes(_USERHOME..'/'..filename) then return false end
+  local ok, err = pcall(dofile, _USERHOME..'/'..filename)
+  if not ok then gui.print(err) end
+  return ok
 end

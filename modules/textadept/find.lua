@@ -166,31 +166,30 @@ function find.find_incremental()
   gui.command_entry.focus()
 end
 
-events.connect('command_entry_keypress',
-  function(code)
-    local K = _G.keys.KEYSYMS
-    if find.incremental then
-      if K[code] == 'esc' then
-        find.incremental = nil
-      elseif code < 256 or K[code] == '\b' then
-        local text = gui.command_entry.entry_text
-        if K[code] == '\b' then
-          find_incremental(text:sub(1, -2))
-        else
-          find_incremental(text..string.char(code))
-        end
+events.connect('command_entry_keypress', function(code)
+  local K = _G.keys.KEYSYMS
+  if find.incremental then
+    if K[code] == 'esc' then
+      find.incremental = nil
+    elseif code < 256 or K[code] == '\b' then
+      local text = gui.command_entry.entry_text
+      if K[code] == '\b' then
+        find_incremental(text:sub(1, -2))
+      else
+        find_incremental(text..string.char(code))
       end
     end
-  end, 1) -- place before command_entry.lua's handler (if necessary)
+  end
+end, 1) -- place before command_entry.lua's handler (if necessary)
 
-events.connect('command_entry_command',
-  function(text) -- 'find next' for incremental search
-    if find.incremental then
-      find.incremental_start = buffer.current_pos + 1
-      find_incremental(text)
-      return true
-    end
-  end, 1) -- place before command_entry.lua's handler (if necessary)
+-- 'Find next' for incremental search.
+events.connect('command_entry_command', function(text)
+  if find.incremental then
+    find.incremental_start = buffer.current_pos + 1
+    find_incremental(text)
+    return true
+  end
+end, 1) -- place before command_entry.lua's handler (if necessary)
 
 -- Replaces found text.
 -- 'find_' is called first, to select any found text. The selected text is then
@@ -212,19 +211,18 @@ local function replace(rtext)
       rtext = rtext:gsub('%%'..i, v)
     end
   end
-  local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())',
-    function(code)
-      local ok, val = pcall(loadstring('return '..code))
-      if not ok then
-        gui.dialog('ok-msgbox',
-                   '--title', L('Error'),
-                   '--text', L('An error occured:'),
-                   '--informative-text', val:gsub('"', '\\"'),
-                   '--no-cancel')
-        error()
-      end
-      return val
-    end)
+  local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', function(code)
+    local ok, val = pcall(loadstring('return '..code))
+    if not ok then
+      gui.dialog('ok-msgbox',
+                 '--title', L('Error'),
+                 '--text', L('An error occured:'),
+                 '--informative-text', val:gsub('"', '\\"'),
+                 '--no-cancel')
+      error()
+    end
+    return val
+  end)
   if ok then
     rtext = rtext:gsub('\\037', '%%') -- unescape '%'
     buffer:replace_target(rtext:gsub('\\[abfnrtv\\]', escapes))
