@@ -229,7 +229,7 @@ function goto_line(line)
                                '--title', L('Go To'),
                                '--text', L('Line Number:'),
                                '--no-newline'):match('%-?%d+$'))
-    if not line then return end
+    if not line or line < 0 then return end
   end
   buffer:ensure_visible_enforce_policy(line - 1)
   buffer:goto_line(line - 1)
