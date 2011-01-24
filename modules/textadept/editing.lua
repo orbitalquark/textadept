@@ -46,28 +46,37 @@ INDIC_HIGHLIGHT_ALPHA = 100
 
 ---
 -- Comment strings for various lexer languages.
--- Used for the block_comment function.
--- This table is typically populated by language-specific modules.
+-- Used for the block_comment() function. Keys are lexer language names and
+-- values are the line comment delimiters for the language. This table is
+-- typically populated by language-specific modules.
 -- @class table
 -- @name comment_string
 -- @see block_comment
 comment_string = {}
 
--- Character matching.
--- Used for auto-matching parentheses, brackets, braces, and quotes.
+---
+-- Auto-matched characters.
+-- Used for auto-matching parentheses, brackets, braces, quotes, etc. Keys are
+-- lexer language names and values are tables of character match pairs. This
+-- table can be populated by language-specific modules.
 -- @class table
 -- @name char_matches
-local char_matches = {
+-- @usage _m.textadept.editing.char_matches.hypertext = { ..., [60] = '>' }
+char_matches = {
   [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'
 }
 
--- Brace characters.
--- Used for going to matching brace positions.
+---
+-- Highlighted brace characters.
+-- Keys are lexer language names and values are tables of characters that count
+-- as brace characters. This table can be populated by language-specific
+-- modules.
 -- @class table
 -- @name braces
-local braces = { -- () [] {} <>
-  [40] = 1, [91] = 1, [123] = 1, [60] = 1,
-  [41] = 1, [93] = 1, [125] = 1, [62] = 1,
+-- @usage _m.textadept.editing.braces.hypertext = { ..., [60] = 1, [62] = 1 }
+braces = { -- () [] {}
+  [40] = 1, [91] = 1, [123] = 1,
+  [41] = 1, [93] = 1, [125] = 1,
 }
 
 -- The current call tip.
@@ -78,21 +87,20 @@ local current_call_tip = {}
 
 -- Matches characters specified in char_matches.
 events.connect('char_added', function(c)
-  if AUTOPAIR and char_matches[c] and buffer.selections == 1 then
-    buffer:insert_text(-1, char_matches[c])
-  end
+  if not AUTOPAIR then return end
+  local buffer = buffer
+  local match = (char_matches[buffer:get_lexer()] or char_matches)[c]
+  if match and buffer.selections == 1 then buffer:insert_text(-1, match) end
 end)
 
 -- Removes matched chars on backspace.
 events.connect('keypress', function(code, shift, control, alt)
   if not AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
   local buffer = buffer
-  local current_pos = buffer.current_pos
-  local c = buffer.char_at[current_pos - 1]
-  if char_matches[c] and
-    buffer.char_at[current_pos] == string.byte(char_matches[c]) then
-    buffer:clear()
-  end
+  local pos = buffer.current_pos
+  local c = buffer.char_at[pos - 1]
+  local match = (char_matches[buffer:get_lexer()] or char_matches)[c]
+  if match and buffer.char_at[pos] == string.byte(match) then buffer:clear() end
 end)
 
 -- Highlights matching braces.
@@ -100,8 +108,7 @@ events.connect('update_ui', function()
   if not HIGHLIGHT_BRACES then return end
   local buffer = buffer
   local current_pos = buffer.current_pos
-  if braces[buffer.char_at[current_pos]] and
-    buffer:get_style_name(buffer.style_at[current_pos]) == 'operator' then
+  if (braces[buffer:get_lexer()] or braces)[buffer.char_at[current_pos]] then
     local pos = buffer:brace_match(current_pos)
     if pos ~= -1 then
       buffer:brace_highlight(current_pos, pos)
