@@ -19,9 +19,14 @@ module('gui.command_entry')
 -- * **command\_entry\_command** (command)<br />
 --   Called when a command is entered into the Command Entry.
 --       - command: the string command.
--- * **command\_entry\_keypress** (code)<br />
+-- * **command\_entry\_keypress** (code, shift, control, alt)<br />
 --   Called when a key is pressed in the Command Entry.
 --       - code: the key code (according to `<gdk/gdkkeysyms.h>`).
+--       - shift: flag indicating whether or not the Shift key is pressed.
+--       - control: flag indicating whether or not the Control key is pressed.
+--       - alt: flag indicating whether or not the Alt/Apple key is pressed.
+--   <br />
+--   Note: The Alt-Option key in Mac OSX is not available.
 
 --- Focuses the command entry.
 function focus() end
