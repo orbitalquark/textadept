@@ -36,6 +36,11 @@
   lua_pushcfunction(l, f); \
   lua_setfield(l, -2, k); \
 }
+#define l_emit_event_key(name, event) \
+  l_emit_event(name, LUA_TNUMBER, event->keyval, LUA_TBOOLEAN, \
+               event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, \
+               event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN, \
+               event->state & GDK_MOD1_MASK, -1)
 #define l_mt(l, k, i, ni) { \
   if (luaL_newmetatable(l, k)) { \
     l_cfunc(l, i, "__index"); \
@@ -509,12 +514,7 @@ static void s_command(GtkWidget *editor, gint wParam, gpointer lParam,
  * Collects the modifier states as flags and calls Lua to handle the keypress.
  */
 static gbool s_keypress(GtkWidget *editor, GdkEventKey *event, gpointer udata) {
-  return l_emit_event("keypress",
-                      LUA_TNUMBER, event->keyval,
-                      LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
-                      LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK,
-                      LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
-                      -1) ? TRUE : FALSE;
+  return l_emit_event_key("keypress", event) ? TRUE : FALSE;
 }
 
 /**
@@ -817,7 +817,7 @@ static void c_activated(GtkWidget *entry, gpointer udata) {
  * Signal for a keypress inside the Command Entry.
  */
 static gbool c_keypress(GtkWidget *entry, GdkEventKey *event, gpointer udata) {
-  return l_emit_event("command_entry_keypress", LUA_TNUMBER, event->keyval, -1);
+  return l_emit_event_key("command_entry_keypress", event);
 }
 
 /******************************************************************************/
