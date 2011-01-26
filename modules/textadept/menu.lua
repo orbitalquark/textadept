@@ -228,7 +228,7 @@ menubar = {
     { L('_Next Buffer'), { 'goto_buffer', v, 1, false } },
     { L('_Previous Buffer'), { 'goto_buffer', v, -1, false } },
     { L('Switch _Buffer'), { gui.switch_buffer } },
-    { SEPARATOR, SEPARATOR },
+    { SEPARATOR },
     { L('Toggle View _EOL'), { toggle_setting, 'view_eol' } },
     { L('Toggle _Wrap Mode'), { toggle_setting, 'wrap_mode' } },
     { L('Toggle Show Indentation _Guides'),

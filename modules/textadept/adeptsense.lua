@@ -170,7 +170,7 @@ function get_apidoc(sense, symbol)
   -- Try to display the type-correct apidoc by getting the entity the function
   -- is being called on and attempting to determine its type. Otherwise, fall
   -- back to the entity itself. In order for this to work, the first line in the
-  -- apidoc must start with the entiry (e.g. Class.function).
+  -- apidoc must start with the entity (e.g. Class.function).
   local class = sense.completions[entity] or sense:get_class(entity)
   if type(class) ~= 'string' then class = entity end -- fall back to entity
   for i, apidoc in ipairs(apidocs) do
