@@ -28,7 +28,8 @@ suggestion. Press `Return` to complete the selected word.
 
 Textadept has the capability to autocomplete symbols for programming languages
 and display API documentation. Lua is of course supported extremely well and
-C/C++ has basic support with the help of [ctags](http://ctags.sf.net).
+C/C++ has basic support with the help of [ctags](http://ctags.sf.net). Symbol
+completion is available by pressing `Ctrl+I` (`~` on Mac OSX).
 
 ![Adeptsense Lua](images/adeptsense_lua.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
