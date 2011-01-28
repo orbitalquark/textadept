@@ -5,6 +5,10 @@ LuaDoc is available for many Textadept objects as well as Lua's standard
 libraries. See the [lua module documentation](../modules/_m.lua.commands.html)
 for more information.
 
+![Adeptsense ta](images/adeptsense_ta.png)
+&nbsp;&nbsp;&nbsp;&nbsp;
+![Adeptsense tadoc](images/adeptsense_tadoc.png)
+
 ## LuaDoc and Examples
 
 Textadept's API is heavily documented. The [LuaDoc](../index.html) is the

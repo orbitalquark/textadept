@@ -390,7 +390,7 @@ goto_file_in_list gui.find.goto_file_in_list(next)\nGoes to the next or previous
 replace gui.find.replace()\nMimicks a press of the 'Replace' button in the Find box.\n
 replace_all gui.find.replace_all()\nMimicks a press of the 'Replace All' button in the Find box.\n
 close_all io.close_all()\nCloses all open buffers. If any buffer is dirty, the user is prompted to\ncontinue. No buffers are saved automatically. They must be saved manually.\n@usage io.close_all()\n@return true if user did not cancel.\n
-open_file io.open_file(utf8_filenames)\nOpens a list of files.\n@param A '\\n' separated list of filenames to open. If none specified, the user\nis prompted to open files from a dialog. These paths must be encoded in UTF-8.\n@usage io.open_file(utf8_encoded_filename)\n
+open_file io.open_file(utf8_filenames)\nOpens a list of files.\n@param A '\\n' separated list of UTF-8-encoded filenames to open. If nil,\nthe user is prompted with a fileselect dialog.\n@usage io.open_file(utf8_encoded_filename)\n
 save_all io.save_all()\nSaves all dirty buffers to their respective files.\n@usage io.save_all()\n
 close io.close([file])\nEquivalent to `file:close()`. Without a `file`, closes the default output file.\n
 flush io.flush()\nEquivalent to `file:flush` over the default output file.\n
