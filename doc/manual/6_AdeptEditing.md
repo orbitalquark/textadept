@@ -24,6 +24,21 @@ suggestion. Press `Return` to complete the selected word.
 
 ![Word Completion](images/wordcompletion.png)
 
+## Adeptsense
+
+Textadept has the capability to autocomplete symbols for programming languages
+and display API documentation. Lua is of course supported extremely well and
+C/C++ has basic support with the help of [ctags](http://ctags.sf.net).
+
+![Adeptsense Lua](images/adeptsense_lua.png)
+&nbsp;&nbsp;&nbsp;&nbsp;
+![Adeptsense Lua String](images/adeptsense_string.png)
+
+![Adeptsense Doc](images/adeptsense_doc.png)
+
+For more information on adding adeptsense support for another language, see
+the [LuaDoc](../modules/_m.textadept.adeptsense.html).
+
 ## Find and Replace
 
 `Ctrl+F` (`Apple+F` on Mac OSX) brings up the Find/Replace dialog. In addition

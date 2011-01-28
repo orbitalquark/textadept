@@ -190,6 +190,8 @@ select_line	_	0;"	f	class:_m.textadept.editing
 select_paragraph	_	0;"	f	class:_m.textadept.editing
 select_scope	_	0;"	f	class:_m.textadept.editing
 transpose_chars	_	0;"	f	class:_m.textadept.editing
+braces	_	0;"	t	class:_m.textadept.editing
+char_matches	_	0;"	t	class:_m.textadept.editing
 comment_string	_	0;"	t	class:_m.textadept.editing
 AUTOPAIR	_	0;"	F	class:_m.textadept.editing
 HIGHLIGHT_BRACES	_	0;"	F	class:_m.textadept.editing
