@@ -316,7 +316,7 @@ function goto_ctag(sense, k, title)
   local location = gui.filteredlist(title, columns, items, false,
                                     '--output-column', '3')
   if not location then return end
-  local path, line = location:match('^([^:]+):(.+)$')
+  local path, line = location:match('^(%a?:?[^:]+):(.+)$')
   io.open_file(path)
   if not tonumber(line) then
     -- /^ ... $/
