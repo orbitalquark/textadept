@@ -181,6 +181,7 @@ module('buffer')
 --   (Read-only)
 -- * `lines_on_screen`: The number of lines completely visible. (Read-only)
 -- * `main_selection`: The main selection.
+-- * `margin_cursor_n`: The cursor shown when the mouse is inside a margin.
 -- * `margin_left`: The size in pixels of the left margin.
 -- * `margin_mask_n`: The marker mask of an indexed margin.
 -- * `margin_right`: The size in pixels of the right margin.
