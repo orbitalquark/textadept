@@ -130,10 +130,11 @@ local ALT = 'a'..ADD
 local string = _G.string
 local string_char = string.char
 local string_format = string.format
-local pcall = _G.pcall
+local xpcall = _G.xpcall
 local next = _G.next
 local type = _G.type
 local unpack = _G.unpack
+local error = function(e) events.emit('error', e) end
 
 ---
 -- Lookup table for key values higher than 255.
@@ -202,8 +203,8 @@ local function run_key_command(lexer, scope)
     f, args = v[f], { v, unpack(key, 3) }
   end
 
-  if type(f) ~= 'function' then error(L('Unknown command:')..tostring(f)) end
-  return f(unpack(args)) == false and PROPAGATE or HALT
+  local _, ret = xpcall(function() return f(unpack(args)) end, error)
+  return ret == false and PROPAGATE or HALT
 end
 
 -- Key command order for lexer and scope args passed to run_key_command().
