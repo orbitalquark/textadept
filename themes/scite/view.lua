@@ -52,7 +52,7 @@ buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
 --buffer.caret_sticky = 1
 
 -- Line Number Margin.
-buffer.margin_width_n[0] = 4 * buffer:text_width(c.STYLE_LINENUMBER, "9")
+buffer.margin_width_n[0] = 4 + 4 * buffer:text_width(c.STYLE_LINENUMBER, "9")
 
 -- Marker Margin.
 --buffer.margin_width_n[1] = 0

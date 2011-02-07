@@ -52,8 +52,7 @@ buffer.caret_line_back = 4473924 -- 0x44 | 0x44 << 8 | 0x44 << 16
 --buffer.caret_sticky = 1
 
 -- Line Number Margin.
-buffer.margin_width_n[0] = 4 + 3 *
-  buffer:text_width(c.STYLE_LINENUMBER, '9')
+buffer.margin_width_n[0] = 4 + 4 * buffer:text_width(c.STYLE_LINENUMBER, '9')
 
 -- Marker Margin.
 buffer.margin_width_n[1] = 0 -- marker margin invisible
