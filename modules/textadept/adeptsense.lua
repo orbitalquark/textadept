@@ -18,7 +18,7 @@ local v_xpm = '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars
 function get_symbol(sense)
   local line, p = buffer:get_cur_line()
   local symbol, part =
-    line:sub(1, p):match('('..sense.syntax.symbol_chars..'+)[^%w_]+([%w_]*)$')
+    line:sub(1, p):match('('..sense.syntax.symbol_chars..'-)[^%w_]+([%w_]*)$')
   if not symbol then part = line:sub(1, p):match('([%w_]*)$') end
   return symbol or '', part or ''
 end
