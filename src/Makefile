@@ -180,6 +180,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	# Source
 	rm $(RELEASEDIR32)/$(TEXTADEPT)
 	cp -rL lua scintilla gcocoadialog LexLPeg.cxx $(RELEASEDIR32)/src/
+	cp -r ../scripts $(RELEASEDIR32)/
 	rm -r $(RELEASEDIR32)/src/scintilla/.hg
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
 	# Done
