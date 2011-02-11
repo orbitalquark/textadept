@@ -160,6 +160,8 @@ completions	_	0;"	t	class:_m.textadept.adeptsense
 ctags_kinds	_	0;"	t	class:_m.textadept.adeptsense
 locations	_	0;"	t	class:_m.textadept.adeptsense
 syntax	_	0;"	t	class:_m.textadept.adeptsense
+FUNCTIONS	_	0;"	F	class:_m.textadept.adeptsense
+FIELDS	_	0;"	F	class:_m.textadept.adeptsense
 _m.textadept.bookmarks	_	0;"	m	
 bookmarks	_	0;"	t	class:_m.textadept
 add	_	0;"	f	class:_m.textadept.bookmarks
@@ -621,6 +623,7 @@ line_state	_	0;"	F	class:buffer
 line_visible	_	0;"	F	class:buffer
 lines_on_screen	_	0;"	F	class:buffer
 main_selection	_	0;"	F	class:buffer
+margin_cursor_n	_	0;"	F	class:buffer
 margin_left	_	0;"	F	class:buffer
 margin_mask_n	_	0;"	F	class:buffer
 margin_right	_	0;"	F	class:buffer
@@ -773,6 +776,9 @@ write	_	0;"	f	class:io
 boms	_	0;"	t	class:io
 recent_files	_	0;"	t	class:io
 try_encodings	_	0;"	t	class:io
+stderr	_	0;"	F	class:io
+stdin	_	0;"	F	class:io
+stdout	_	0;"	F	class:io
 keys	_	0;"	m	
 keys	_	0;"	t	class:_G
 keys	_	0;"	t	

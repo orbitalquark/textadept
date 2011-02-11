@@ -8,6 +8,10 @@ module('_m.cpp.commands', package.seeall)
 -- ## Key Commands
 --
 -- + `Alt+L, M`: Open this module for editing.
+-- + `.`: When to the right of a known symbol, show an autocompletion list of
+--   fields and functions.
+-- + `->`: When to the right of a known symbol, show an autocompletion list of
+--   fields and functions.
 -- + `Ctrl+I`: (Windows and Linux) Autocomplete symbol.
 -- + `~`: (Mac OSX) Autocomplete symbol.
 -- + `Tab`: When the caret is to the right of a `(` in a known function call,

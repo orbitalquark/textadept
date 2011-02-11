@@ -801,6 +801,10 @@ function io.popen(prog [, mode]) end
 -- Equivalent to `io.input():read`.
 function io.read(···) end
 
+-- * `io.stderr`: Standard error.
+-- * `io.stdin`: Standard in.
+-- * `io.stdout`: Standard out.
+
 ---
 -- Returns a handle for a temporary file. This file is opened in update
 -- mode and it is automatically removed when the program ends.
