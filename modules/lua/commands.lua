@@ -69,7 +69,6 @@ end
 -- Determines the Lua file being 'require'd, searches through package.path for
 -- that file, and opens it in Textadept.
 function goto_required()
-  local buffer = buffer
   local line = buffer:get_cur_line()
   local patterns = { 'require%s*(%b())', 'require%s*(([\'"])[^%2]+%2)' }
   local file
