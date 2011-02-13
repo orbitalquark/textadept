@@ -43,15 +43,16 @@ function get_class(sense, symbol)
   local buffer = buffer
   local self = sense.syntax.self
   local class_def = sense.syntax.class
+  local class_list = sense.class_list
   local symbol_chars = sense.syntax.symbol_chars
   local type_declarations = sense.syntax.type_declarations
   local class
   for i = buffer:line_from_position(buffer.current_pos), 0, -1 do
     local s, e
-    if symbol == self then
+    if symbol == self or symbol == '' then
       -- Determine classname from the class declaration.
       s, e, class = buffer:get_line(i):find(class_def..'%s+([%w_]+)')
-      if class and not sense.class_list[class] then class = nil end
+      if class and not class_list[class] then class = nil end
     else
       -- Search for a type declaration.
       local line = buffer:get_line(i)
@@ -86,9 +87,25 @@ function get_completions(sense, symbol, only_fields, only_functions)
   local compls = sense.completions
   local class = compls[symbol] and symbol or sense:get_class(symbol)
   if not compls[class] then return nil end
+
+  -- If there is no symbol, try to determine the context class. If one exists,
+  -- display its completions in addition to global completions.
+  local include_globals = false
+  if symbol == '' then
+    local context_class = sense:get_class(symbol)
+    if context_class and compls[context_class] then
+      class = context_class
+      include_globals = compls[''] ~= nil
+    end
+  end
+
+  -- Create list of completions.
   local c = {}
   if not only_fields then
     for _, v in ipairs(compls[class].functions) do c[#c + 1] = v end
+    if include_globals then
+      for _, v in ipairs(compls[''].functions) do c[#c + 1] = v end
+    end
   end
   if not only_functions then
     for _, v in ipairs(compls[class].fields) do c[#c + 1] = v end
@@ -103,7 +120,11 @@ function get_completions(sense, symbol, only_fields, only_functions)
       end
     end
   end
+
+  -- Remove duplicates.
   table.sort(c)
+  local table_remove = table.remove
+  for i = #c, 2, -1 do if c[i] == c[i - 1] then table_remove(c, i) end end
   return c
 end
 
