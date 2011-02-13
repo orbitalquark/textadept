@@ -2,7 +2,8 @@
 
 ---
 -- Adeptsense for the lua module.
--- User tags are loaded from _USERHOME/modules/lua/tags.
+-- User tags are loaded from _USERHOME/modules/lua/tags and user apis are loaded
+-- from _USERHOME/modules/lua/api.
 module('_m.lua.adeptsense', package.seeall)
 
 sense = _m.textadept.adeptsense.new('lua')
@@ -21,7 +22,10 @@ sense.ctags_kinds = {
 }
 sense:load_ctags(_HOME..'/modules/lua/tags', true)
 
--- Load user tags
+-- Load user tags and apidoc.
 if lfs.attributes(_USERHOME..'/modules/lua/tags') then
   sense:load_ctags(_USERHOME..'/modules/lua/tags')
+end
+if lfs.attributes(_USERHOME..'/modules/lua/api') then
+  sense.api_files[#sense.api_files + 1] = _USERHOME..'/modules/lua/api'
 end
