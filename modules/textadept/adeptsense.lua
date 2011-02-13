@@ -109,6 +109,9 @@ function get_completions(sense, symbol, only_fields, only_functions)
   end
   if not only_functions then
     for _, v in ipairs(compls[class].fields) do c[#c + 1] = v end
+    if include_globals then
+      for _, v in ipairs(compls[''].fields) do c[#c + 1] = v end
+    end
   end
   for _, inherited in ipairs(sense.class_list[class] or {}) do
     if compls[inherited] then
