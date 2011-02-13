@@ -2,7 +2,8 @@
 
 ---
 -- Adeptsense for the cpp module.
--- User tags are loaded from _USERHOME/modules/cpp/tags.
+-- User tags are loaded from _USERHOME/modules/cpp/tags and user apis are loaded
+-- from _USERHOME/modules/cpp/api.
 module('_m.cpp.adeptsense', package.seeall)
 
 sense = _m.textadept.adeptsense.new('cpp')
@@ -22,7 +23,10 @@ sense.syntax.type_declarations = {
 sense:add_trigger('.')
 sense:add_trigger('->')
 
--- Load user tags
+-- Load user tags and apidoc.
 if lfs.attributes(_USERHOME..'/modules/cpp/tags') then
   sense:load_ctags(_USERHOME..'/modules/cpp/tags')
+end
+if lfs.attributes(_USERHOME..'/modules/cpp/api') then
+  sense.api_files[#sense.api_files + 1] = _USERHOME..'/modules/cpp/api'
 end
