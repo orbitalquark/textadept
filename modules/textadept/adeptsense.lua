@@ -220,7 +220,7 @@ function show_apidoc(sense)
   local apidocs = sense:get_apidoc(symbol)
   if not apidocs then return false end
   for i, doc in ipairs(apidocs) do
-    doc = doc:gsub('\\\\', '%%esc%%'):gsub('\\n', '\n'):gsub('%%esc%%', '\\')
+    doc = doc:gsub('([^\\])\\n', '%1\n'):gsub('\\\\n', '\\n')
     if #apidocs > 1 then
       if not doc:find('\n') then doc = doc..'\n' end
       doc = '\001'..doc:gsub('\n', '\n\002', 1)
