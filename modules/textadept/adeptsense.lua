@@ -32,9 +32,9 @@ end
 ---
 -- Returns the class name for a given symbol.
 -- If the symbol is sense.syntax.self and a class definition using the
--- sense.syntax.class keyword is found, that class is returned. Otherwise the
--- buffer is searched backwards for a type declaration of the symbol according
--- to the patterns in sense.syntax.type_declarations.
+-- sense.syntax.class_definition keyword is found, that class is returned.
+-- Otherwise the buffer is searched backwards for a type declaration of the
+-- symbol according to the patterns in sense.syntax.type_declarations.
 -- @param sense The adeptsense returned by adeptsense.new().
 -- @param symbol The symbol to get the class of.
 -- @return class or nil
@@ -42,8 +42,8 @@ end
 function get_class(sense, symbol)
   local buffer = buffer
   local self = sense.syntax.self
-  local class_def = sense.syntax.class
-  local class_list = sense.class_list
+  local class_definition = sense.syntax.class_definition
+  local completions = sense.completions
   local symbol_chars = sense.syntax.symbol_chars
   local type_declarations = sense.syntax.type_declarations
   local class
@@ -51,8 +51,8 @@ function get_class(sense, symbol)
     local s, e
     if symbol == self or symbol == '' then
       -- Determine classname from the class declaration.
-      s, e, class = buffer:get_line(i):find(class_def..'%s+([%w_]+)')
-      if class and not class_list[class] then class = nil end
+      s, e, class = buffer:get_line(i):find(class_definition)
+      if class and not completions[class] then class = nil end
     else
       -- Search for a type declaration.
       local line = buffer:get_line(i)
@@ -463,7 +463,9 @@ api_files = {},
 ---
 -- Contains syntax-specific values for the language.
 -- @field self The language's syntax-equivalent of 'self'. Default is 'self'.
--- @field class The language's class definition keyword. Default is 'class'.
+-- @field class_definition A Lua pattern representing the language's class
+--   definition syntax. The first capture returned must be the class name.
+--   Defaults to 'class%s+([%w_]+)'.
 -- @field symbol_chars A Lua pattern of characters allowed in a symbol,
 --   including member operators. Default is '[%w_%.]'.
 -- @field type_declarations A list of Lua patterns used for determining the
@@ -474,7 +476,7 @@ api_files = {},
 -- @see get_class
 syntax = {
   self = 'self',
-  class = 'class',
+  class_definition = 'class%s+([%w_]+)',
   symbol_chars = '[%w_%.]',
   type_declarations = {
     '(%u[%w_%.]+)%s+%_', -- Foo bar
