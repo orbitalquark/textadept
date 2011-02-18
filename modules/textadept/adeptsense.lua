@@ -46,20 +46,34 @@ function get_class(sense, symbol)
   local completions = sense.completions
   local symbol_chars = sense.syntax.symbol_chars
   local type_declarations = sense.syntax.type_declarations
-  local class
+  local type_assignments = sense.syntax.type_assignments
+  local assignment_patt = symbol..'%s*=%s*([^\r\n]+)'
+  local class, assignment
   for i = buffer:line_from_position(buffer.current_pos), 0, -1 do
     local s, e
     if symbol == self or symbol == '' then
-      -- Determine classname from the class declaration.
+      -- Determine type from the class declaration.
       s, e, class = buffer:get_line(i):find(class_definition)
       if class and not completions[class] then class = nil end
     else
-      -- Search for a type declaration.
+      -- Search for a type declaration or type assignment.
       local line = buffer:get_line(i)
       if line:find(symbol) then
         for _, patt in ipairs(type_declarations) do
           s, e, class = line:find(patt:gsub('%%_', symbol))
           if class then break end
+        end
+        s, e, assignment = line:find(assignment_patt)
+        if assignment then
+          for patt, type in pairs(type_assignments) do
+            local captures = { assignment:match(patt) }
+            if #captures > 0 then
+              class = type:gsub('%%(%d+)', function(n)
+                return captures[tonumber(n)]
+              end)
+            end
+            if class then break end
+          end
         end
       end
     end
@@ -469,8 +483,13 @@ api_files = {},
 -- @field symbol_chars A Lua pattern of characters allowed in a symbol,
 --   including member operators. Default is '[%w_%.]'.
 -- @field type_declarations A list of Lua patterns used for determining the
---   class of a symbol. The first capture returned must be the class name. Use
---   '%_' to match the symbol. Defaults to '(%u[%w_%.]+)%s+%_'.
+--   class type of a symbol. The first capture returned must be the class name. 
+--   Use '%_' to match the symbol. Defaults to '(%u[%w_%.]+)%s+%_'.
+-- @field type_assignments A map of Lua patterns to class types for variable
+--   assignments. This is typically used for dynamically typed languages. For
+--   example, `sense.type_assignments['^"'] = 'string'`  would recognize string 
+--   assignments in Lua so the `foo` in `foo = "bar"` would be recognized as 
+--   type `string`. The class type value can contain pattern captures.
 -- @class table
 -- @name syntax
 -- @see get_class
@@ -480,7 +499,8 @@ syntax = {
   symbol_chars = '[%w_%.]',
   type_declarations = {
     '(%u[%w_%.]+)%s+%_', -- Foo bar
-  }
+  },
+  type_assignments = {}
 },
 
     super = setmetatable({}, { __index = _M })
