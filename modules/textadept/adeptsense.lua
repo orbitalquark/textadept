@@ -5,6 +5,313 @@
 module('_m.textadept.adeptsense', package.seeall)
 
 -- Markdown:
+-- ## Overview
+--
+-- Adeptsense is a form of autocompletion for programming. It has the means to
+-- supply a list of potential completions for classes, member functions and
+-- fields, packages, etc. Adeptsense can also display documentation for such
+-- entities in the form of a calltip. This document provides the information
+-- necessary in order to write a new Adeptsense for a language. For illustrative
+-- purposes, an Adeptsense for Lua will be created. More advanced techniques
+-- are covered later.
+--
+-- ## Creating an Adeptsense
+--
+-- Adeptsenses exist per-language and are typically defined in a
+-- [language-specific module](../manual/7_Modules.html#language_specific).
+-- First check to see if the module for your language has an Adeptsense. If not,
+-- you will need to create one. The language modules included with Textadept
+-- have Adeptsenses so they can be used for reference. If your language is
+-- similar to any of those languages, you can copy and modify the existing
+-- language's Adeptsense, saving some time and effort.
+--
+-- #### Terminology
+--
+-- Not all languages have "classes", "functions", and "fields" in the full sense
+-- of the word. Normally classes are referred to as objects in Object Oriented
+-- Programming (OOP), functions are class or instance methods a class can have,
+-- and fields are class or instance properties. For example an "Apple" class may
+-- have a "color" field and an "eat" function. To Adeptsense, the term "class"
+-- is simply a container for "function" and "field" completions. "functions" and
+-- "fields" are only distinguished by an icon in the completion list.
+--
+-- For Lua, consider modules and tables as "classes", functions as "functions",
+-- and module/table keys as "fields".
+--
+-- #### Introduction
+--
+-- In the language-specific module, create an Adeptsense module.
+--
+--     $> # from either _HOME or _USERHOME:
+--     $> cd modules/lua/
+--     $> textadept adeptsense.lua
+--
+-- The Adeptsense should look like the following:
+--
+--     --- Adeptsense for the lua module.
+--     module('_m.lua.adeptsense', package.seeall)
+--     sense = _m.textadept.adeptsense.new('lua')
+--
+-- Where 'lua' is replaced by your language's name.
+--
+-- Then edit the module's `init.lua` to include the Adeptsense.
+--
+--     $> textadept init.lua
+--
+--     require 'lua.adeptsense' -- add this line
+--     require 'lua.commands'
+--     require 'lua.snippets'
+--
+-- #### Syntax Options
+--
+-- The syntax of different languages varies so the Adeptsense must be configured
+-- for your language in order to function properly. See the [`syntax`](#syntax)
+-- table documentation for all options.
+--
+-- ##### syntax.self
+--
+-- The first syntax option is `syntax.self`. While Lua has a `self` identifier,
+-- it is not used in the usual sense for a class instance so it will just be
+-- ignored.
+--
+-- ##### syntax.class_definition
+--
+-- Next is `syntax.class_definition`. Lua does not really have the "class"
+-- concept most OOP programmers are used to, but modules do behave somewhat like
+-- classes.
+--
+--     sense.syntax.class_definition = 'module%s*%(?%s*[\'"]([%w_%.]+)'
+--
+-- The "class"'s name is the identifier in quotes.
+--
+-- ##### syntax.symbol_chars
+--
+-- In addition to the usual `[%w_%.]` symbol characters, Lua also allows symbols
+-- to contain a `:`.
+--
+--     sense.syntax.symbol_chars = '[%w_.:]'
+--
+-- ##### syntax.type_declarations
+--
+-- Since Lua has no type declarations (e.g. `int x` in C), the
+-- `syntax.type_declarations` table should be empty:
+--
+--     sense.syntax.type_declarations = {}
+--
+-- ##### syntax.type_assignments
+--
+-- Sometimes a type can be inferred by the right side of a variable assignment.
+-- In the Lua code `local foo = 'bar'`, the variable `foo` has type `string`.
+-- Similarly, in `local foo = _m.textadept.adeptsense`, `foo` has type
+-- `_m.textadept.adeptsense`.
+--
+--     sense.syntax.type_assignments = {
+--       ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
+--       ['^([%w_%.]+)'] = '%1' -- foo = _m.textadept.adeptsense
+--     }
+--
+-- Note the `^` in the pattern. The beginning of the right hand side of the
+-- assignment should be matched, otherwise `local foo = bar('baz')` could infer
+-- an incorrect type.
+--
+-- #### Completion Lists
+--
+-- The [`completions`](#completions) table contains the completion lists for
+-- all classes. Each table entry key is the class's name and the value is a
+-- table of `functions` and `fields` lists. The general form is:
+--
+--     sense.completions = {
+--       ['class1'] = {
+--         functions = { 'fun1', 'fun2', ...},
+--         fields = = { 'f1', 'f2', ... }
+--       },
+--       ['class2'] = ...,
+--       ...
+--     }
+--
+-- Obviously manually creating completion lists would be incredibly
+-- time-consuming so there is a shortcut method.
+--
+-- ##### Ctags
+--
+-- Adeptsense recognizes the output from [Ctags](http://ctags.sourceforge.net/)
+-- and can populate the `completions` table from it with a little bit of help.
+-- Ctags has a list of "kinds" for every language. You can see them by running
+-- `ctags --list-kinds` in your shell. Since Adeptsense only cares about
+-- classes, functions, and fields, you need to let it know which kind of tag is
+-- which. Unfortunately, Lua support in Ctags is not good at all. Instead,
+-- Textadept has a utility to generate a fake set of tags that is more useful.
+-- This utility (`scripts/adeptsensedoc.lua`) is found in the source release.
+-- Functions are tagged `'f'` and should be recognized as such; table keys are
+-- tagged `'t'` and should be recognized as fields; module fields, `'F'`, should
+-- be fields; and modules, `'m'`, should be classes:
+--
+--     sense.ctags_kinds = {
+--       f = 'functions',
+--       F = 'fields',
+--       m = 'classes',
+--       t = 'fields',
+--     }
+--
+-- To load a default set of Ctags, use [`load_ctags()`](#load_ctags).
+--
+--     sense:load_ctags(_HOME..'/modules/lua/tags', true)
+--
+-- Textadept comes with a set of Ctags for its Lua API.
+--
+-- #### API Documentation
+--
+-- Adeptsense can show API documentation for symbols from files specified in its
+-- [`api_files`](#api_files) table. See the previous link for documentation on
+-- how the API file should be structured.
+--
+--     sense.api_files = { _HOME..'/modules/lua/api' }
+--
+-- #### Triggers
+--
+-- Triggers are characters or character sequences that trigger an autocompletion
+-- list to be displayed. Lua has two characters that can do so: `.` and `:`. The
+-- `.` should autocomplete both fields and functions while `:` should
+-- autocomplete only functions. This is specified using
+-- [`add_trigger()`](#add_trigger).
+--
+--     sense:add_trigger('.')
+--     sense:add_trigger(':', false, true)
+--
+-- #### User-Settings
+--
+-- Finally, you should allow the users of your Adeptsense to supply their own
+-- Ctags and API files in addition to any default ones you loaded or specified
+-- earlier:
+--
+--     -- Load user tags and apidoc.
+--     if lfs.attributes(_USERHOME..'/modules/lua/tags') then
+--       sense:load_ctags(_USERHOME..'/modules/lua/tags')
+--     end
+--     if lfs.attributes(_USERHOME..'/modules/lua/api') then
+--       sense.api_files[#sense.api_files + 1] = _USERHOME..'/modules/lua/api'
+--     end
+--
+-- #### Summary
+--
+-- The above method of setting syntax options, ctags kinds, and trigger
+-- characters for an Adeptsense is sufficient for most static and some dynamic
+-- languages. The rest of this document is devoted to more complex techniques.
+--
+-- #### Overriding Adeptsense Functions
+--
+-- Sometimes Adeptsense's default behavior is not sufficient. Maybe the
+-- `type_declarations` and `type_assignments` tables used by the
+-- [`get_class()`](#get_class) function are not granular enough. Maybe some
+-- symbols can contain more than just the `syntax.symbol_chars` used by
+-- [`get_symbol()`](#get_symbol). Adeptsense allows these functions to be
+-- overridden.
+--
+--     function sense:get_class(symbol)
+--       if condition then
+--         return self.super.get_class(self, symbol) -- default behavior
+--       else
+--         -- different behavior
+--       end
+--     end
+--
+-- The default adeptsense functions are called by using the `self.super`
+-- reference.
+--
+-- ##### Examples for Ruby
+--
+-- In Ruby, everything is an object -- even numbers. Since numbers do not have
+-- a type declaration, the [`get_class()`](#get_class) function should return
+-- `Integer` or `Float` if the symbol is a number.
+--
+--     function sense:get_class(symbol)
+--       local class = self.super.get_class(self, symbol)
+--       if class then return class end
+--       -- Integers and Floats.
+--       if tonumber(symbol:match('^%d+%.?%d*$')) then
+--         return symbol:find('%.') and 'Float' or 'Integer'
+--       end
+--       return nil
+--     end
+--
+-- Note that there is no plus or minus prefix in the pattern. This is because
+-- `+` or `-` characters are not a part of `syntax.symbol_chars` so a symbol
+-- will not contain either of them.
+--
+-- Like numbers, the syntax for constructing strings, arrays, hashes, and the
+-- like should also be considered as symbols. `[foo].` should show a completion
+-- list with array instance methods:
+--
+--     function sense:get_symbol()
+--       local line, p = buffer:get_cur_line()
+--       if line:sub(1, p):match('%[.-%]%s*%.$') then return 'Array', '' end
+--       return self.super.get_symbol(self)
+--     end
+--
+-- The Ruby module Adeptsense has a more complicated version of this function
+-- that handles strings, hashes, symbols, and regexps as well. Please refer to
+-- it for more information.
+--
+-- ##### Examples for Java
+--
+-- Autocomplete of Java `import` statements is something nice to have. Ctags
+-- produces a tag for packages so it is rather straightforward to build an
+-- import completion list.
+--
+-- Since Adeptsense ignores any tags not mapped to `classes`, `functions`, or
+-- `fields` in [`ctags_kinds`](#ctags_kinds), it passes an unknown tag to the
+-- [`handle_ctag()`](#handle_ctag) function. In this case, package (`p`) tags
+-- are need to be handled.
+--
+--     function sense:handle_ctag(tag_name, file_name, ex_cmd, ext_fields)
+--       if ext_fields:sub(1, 1) ~= 'p' then return end -- not a package
+--       if not self.imports then self.imports = {} end
+--       local import = self.imports
+--       for package in tag_name:gmatch('[^.]+') do
+--         if not import[package] then import[package] = {} end
+--         import = import[package]
+--       end
+--       import[#import + 1] = file_name:match('([^/\\]-)%.java$')
+--     end
+--
+-- Now that we have a list of import completions, it should be activated by the
+-- normal trigger (`.`), but only on a line that contains an `import` statement.
+-- The [`get_completions`](#get_completions) function needs to be overridden to
+-- use the `import` table's completions when necessary.
+--
+--     function sense:get_completions(symbol, only_fields, only_funs)
+--       if not buffer:get_cur_line():find('^%s*import') then
+--         return self.super.get_completions(self, symbol, only_fields, only_funs)
+--       end
+--       if symbol == 'import' then symbol = '' end -- top-level import
+--       local c = {}
+--       local import = self.imports or {}
+--       for package in symbol:gmatch('[^%.]+') do
+--         if not import[package] then return nil end
+--         import = import[package]
+--       end
+--       for k, v in pairs(import) do
+--         c[#c + 1] = type(v) == 'table' and k..'?1' or v..'?2'
+--       end
+--       table.sort(c)
+--       return c
+--     end
+--
+-- Note that `'?1'` and `'?2'` are appended to each completion entry. These tell
+-- Adeptsense which icon to display in the autocompletion list. If no icon
+-- information is given, no icon is displayed. `1` is for fields and `2` is for
+-- functions. In this case, the icons are used only to distinguish between a
+-- parent package and a package with no children since parents have an
+-- additional list of completions.
+--
+-- Finally since an `imports` table was created, it should be cleared when the
+-- Adeptsense is cleared to free up memory. When this happens,
+-- [`handle_clear()`](#handle_clear) is called.
+--
+--     function sense:handle_clear()
+--       self.imports = {}
+--     end
+--
 -- ## Settings
 --
 -- * `FUNCTIONS`: XPM image for adeptsense functions.
