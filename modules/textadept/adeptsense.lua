@@ -312,6 +312,13 @@ module('_m.textadept.adeptsense', package.seeall)
 --       self.imports = {}
 --     end
 --
+-- #### Other Adeptsense Settings
+--
+-- * `always_show_globals`: A flag indicating whether or not to include globals
+--   in the list of completions offered. Globals are classes, functions, and
+--   fields that do not belong to another class. They are contained in
+--   completions['']. Defaults to true.
+--
 -- ## Settings
 --
 -- * `FUNCTIONS`: XPM image for adeptsense functions.
@@ -418,7 +425,7 @@ function get_completions(sense, symbol, only_fields, only_functions)
     local context_class = sense:get_class(symbol)
     if context_class and compls[context_class] then
       class = context_class
-      include_globals = compls[''] ~= nil
+      include_globals = sense.always_show_globals and compls[''] ~= nil
     end
   end
 
@@ -733,6 +740,7 @@ function new(lang)
   sense = setmetatable({
     lexer = lang,
     events = {},
+    always_show_globals = true,
 
 ---
 -- Contains a map of ctags kinds to adeptsense kinds.
