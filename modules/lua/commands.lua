@@ -97,7 +97,6 @@ events.connect('file_after_save',
       local _, err = loadstring(text)
       if err then
         local line, msg = err:match('^.-:(%d+):%s*(.+)$')
-        line = tonumber(line)
         if line then
           buffer.annotation_visible = 2
           buffer:annotation_set_text(line - 1, msg)
