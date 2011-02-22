@@ -10,9 +10,8 @@ sense = _m.textadept.adeptsense.new('lua')
 sense.syntax.class_definition = 'module%s*%(?%s*[\'"]([%w_%.]+)'
 sense.syntax.symbol_chars = '[%w_%.:]'
 sense.syntax.type_declarations = {}
-sense.syntax.type_assignments = { 
-  ["^'"] = 'string', -- foo = 'bar'
-  ['^"'] = 'string', -- foo = "bar"
+sense.syntax.type_assignments = {
+  ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
   ['^([%w_%.]+)'] = '%1' -- foo = _m.textadept.adeptsense
 }
 sense.api_files = { _HOME..'/modules/lua/api' }
@@ -23,7 +22,7 @@ sense:add_trigger(':', false, true)
 sense.ctags_kinds = {
   f = 'functions',
   F = 'fields',
-  m = 'modules',
+  m = 'classes',
   t = 'fields',
 }
 sense:load_ctags(_HOME..'/modules/lua/tags', true)
