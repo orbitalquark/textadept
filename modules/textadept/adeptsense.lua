@@ -279,9 +279,9 @@ module('_m.textadept.adeptsense', package.seeall)
 -- The [`get_completions`](#get_completions) function needs to be overridden to
 -- use the `import` table's completions when necessary.
 --
---     function sense:get_completions(symbol, only_fields, only_funs)
+--     function sense:get_completions(symbol, ofields, ofunctions)
 --       if not buffer:get_cur_line():find('^%s*import') then
---         return self.super.get_completions(self, symbol, only_fields, only_funs)
+--         return self.super.get_completions(self, symbol, ofields, ofunctions)
 --       end
 --       if symbol == 'import' then symbol = '' end -- top-level import
 --       local c = {}
@@ -404,6 +404,36 @@ function get_class(sense, symbol)
   return class
 end
 
+-- Adds an inherited class's completions to the given completion list.
+-- @param sense The adeptsense returned by adeptsense.new().
+-- @param class The name of the class to add inherited completions from.
+-- @param only_fields If true, adds only fields to the completion list; defaults
+--   to false.
+-- @param only_funcs If true, adds only functions to the completion list;
+--   defaults to false.
+-- @param c The completion list to add completions to.
+-- @param added Table that keeps track of what inherited classes have been
+--   added. This prevents stack overflow errors. Should be {} on the initial
+--   call to add_inherited().
+local function add_inherited(sense, class, only_fields, only_funcs, c, added)
+  local inherited_classes = sense.inherited_classes[class]
+  if not inherited_classes or added[class] then return end
+  local completions = sense.completions
+  for _, inherited_class in ipairs(inherited_classes) do
+    local inherited_completions = completions[inherited_class]
+    if inherited_completions then
+      if not only_fields then
+        for _, v in ipairs(inherited_completions.functions) do c[#c + 1] = v end
+      end
+      if not only_funcs then
+        for _, v in ipairs(inherited_completions.fields) do c[#c + 1] = v end
+      end
+    end
+    added[class] = true
+    add_inherited(sense, inherited_class, only_fields, only_funcs, c, added)
+  end
+end
+
 ---
 -- Returns a list of completions for the given symbol.
 -- @param sense The adeptsense returned by adeptsense.new().
@@ -443,16 +473,7 @@ function get_completions(sense, symbol, only_fields, only_functions)
       for _, v in ipairs(compls[''].fields) do c[#c + 1] = v end
     end
   end
-  for _, inherited in ipairs(sense.class_list[class] or {}) do
-    if compls[inherited] then
-      if not only_fields then
-        for _, v in ipairs(compls[inherited].functions) do c[#c + 1] = v end
-      end
-      if not only_functions then
-        for _, v in ipairs(compls[inherited].fields) do c[#c + 1] = v end
-      end
-    end
-  end
+  add_inherited(sense, class, only_fields, only_functions, c, {})
 
   -- Remove duplicates.
   table.sort(c)
@@ -588,7 +609,7 @@ function load_ctags(sense, tag_file, nolocations)
   local ctags_kinds = sense.ctags_kinds
   local completions = sense.completions
   local locations = sense.locations
-  local class_list = sense.class_list
+  local inherited_classes = sense.inherited_classes
   local ctags_fmt = '^(%S+)\t([^\t]+)\t(.-);"\t(.*)$'
   for line in io.lines(tag_file) do
     local tag_name, file_name, ex_cmd, ext_fields = line:match(ctags_fmt)
@@ -619,9 +640,9 @@ function load_ctags(sense, tag_file, nolocations)
         local inherits = ext_fields:match('inherits:(%S+)')
         if not inherits then inherits = ext_fields:match('struct:(%S+)') end
         if inherits then
-          class_list[tag_name] = {}
+          inherited_classes[tag_name] = {}
           for class in inherits:gmatch('[^,]+') do
-            local t = class_list[tag_name]
+            local t = inherited_classes[tag_name]
             t[#t + 1] = class
             -- Even though this class inherits fields and functions from others,
             -- an empty completions table needs to be added to it so
@@ -707,7 +728,7 @@ function handle_ctag(sense, tag_name, file_name, ex_cmd, ext_fields) end
 -- different project.
 -- @param sense The adeptsense returned by adeptsense.new().
 function clear(sense)
-  sense.class_list = {}
+  sense.inherited_classes = {}
   sense.completions = {}
   sense.locations = {}
   sense:handle_clear()
@@ -761,8 +782,8 @@ ctags_kinds = {},
 ---
 -- Contains a map of classes and a list of their inherited classes.
 -- @class table
--- @name class_list
-class_list = {},
+-- @name inherited_classes
+inherited_classes = {},
 
 ---
 -- Contains lists of possible completions for known symbols.
