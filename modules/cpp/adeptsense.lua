@@ -18,7 +18,7 @@ sense.ctags_kinds = {
   t = 'classes'
 }
 sense.syntax.type_declarations = {
-  '(%u[%w_%.]+)[%s%*]+%_', -- Foo bar, Foo *bar, Foo* bar, etc.
+  '(%u[%w_%.]+)[%s%*&]+%_[^%w_]', -- Foo bar, Foo *bar, Foo* bar, Foo &bar, etc.
 }
 sense:add_trigger('.')
 sense:add_trigger('->')
