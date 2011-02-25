@@ -542,7 +542,7 @@ function get_apidoc(sense, symbol, raw)
   local entity, func = symbol:match('^(.-)[^%w_]*([%w_]+)$')
   if raw then entity, func = '', symbol end
   local c = func:sub(1, 1) -- for quick comparison
-  local patt = '^'..func..'%s+(.+)$'
+  local patt = '^'..func:gsub('([%.%-])', '%%%1')..'%s+(.+)$'
   for _, file in ipairs(sense.api_files) do
     if lfs.attributes(file) then
       for line in io.lines(file) do
