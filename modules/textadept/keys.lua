@@ -60,9 +60,9 @@ if not OSX then
   -- Windows and Linux key commands.
 
   --[[
-    C:         D         I J K   M               U
+    C:         D           J K   M               U
     A:   A B C D E F G H   J K L M N   P     S T U V W X Y Z
-    CS:  A B C D     G H I J K L M N O   Q     T U V   X Y Z
+    CS:  A B C D     G   I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
     CA:  A B C D E F G H   J K L M N O   Q R S T U V W X Y Z
     CSA: A B C D E F G H   J K L M N O P Q R S T U V W X Y Z
@@ -100,7 +100,7 @@ if not OSX then
   keys['c\n\r'] = { m_editing.autocomplete_word, '%w_' } -- win32
   keys.cq       = { m_editing.block_comment            }
   -- TODO: { m_editing.current_word, 'delete' }
-  keys.ch = { m_editing.highlight_word }
+  keys.csh = { m_editing.highlight_word }
   -- TODO: { m_editing.transpose_chars }
   -- TODO: { m_editing.convert_indentation }
   keys.ac = { -- enClose in...
@@ -338,7 +338,7 @@ else
   keys.cA  = { 'home_extend',       b }
   keys.ce  = { 'line_end',          b }
   keys.cE  = { 'line_end_extend',   b }
-  keys.ch  = { 'delete_back',       b }
+  --keys.ch  = { 'delete_back',       b }
   keys.cah = { 'del_word_left',     b }
   keys.cd  = { 'clear',             b }
   keys.cad = { 'del_word_right',    b }
