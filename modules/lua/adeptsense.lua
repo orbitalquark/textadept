@@ -12,7 +12,7 @@ sense.syntax.symbol_chars = '[%w_%.:]'
 sense.syntax.type_declarations = {}
 sense.syntax.type_assignments = {
   ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
-  ['^([%w_%.]+)'] = '%1' -- foo = _m.textadept.adeptsense
+  ['^([%w_%.]+)%s*$'] = '%1' -- foo = _m.textadept.adeptsense
 }
 sense.api_files = { _HOME..'/modules/lua/api' }
 sense:add_trigger('.')
