@@ -533,11 +533,14 @@ end
 -- the 'pos' key in the returned list.
 -- @param sense The adeptsense returned by adeptsense.new().
 -- @param symbol The symbol to get apidocs for.
+-- @param raw Flag indicating whether or not to lookup the raw symbol as opposed
+--   to parsing it for class information. Defaults to false.
 -- @return apidoc_list or nil
-function get_apidoc(sense, symbol)
+function get_apidoc(sense, symbol, raw)
   if not symbol then return nil end
   local apidocs = { pos = 1}
   local entity, func = symbol:match('^(.-)[^%w_]*([%w_]+)$')
+  if raw then entity, func = '', symbol end
   local c = func:sub(1, 1) -- for quick comparison
   local patt = '^'..func..'%s+(.+)$'
   for _, file in ipairs(sense.api_files) do
