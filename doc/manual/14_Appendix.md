@@ -27,9 +27,10 @@
   <tr><td>Ctrl+Shift+E</td><td>Apple+Shift+E</td><td>Select to matching brace</td></tr>
   <tr><td>Ctrl+Return</td><td>Escape</td><td>Autocomplete word in file</td></tr>
   <tr><td>Ctrl+I</td><td>~</td><td>Autocomplete symbol for supported languages</td></tr>
+  <tr><td>Ctrl+H</td><td>Ctrl+H</td><td>Show symbol apidoc for supported languages</td></tr>
   <tr><td>Ctrl+Q</td><td>Ctrl+Q</td><td>Block comment/uncomment</td></tr>
   <tr><td>None</td><td>None</td><td>Delete word</td></tr>
-  <tr><td>Ctrl+H</td><td>Ctrl+Apple+T</td><td>Highlight word occurances</td></tr>
+  <tr><td>Ctrl+Shift+H</td><td>Ctrl+Apple+T</td><td>Highlight word occurances</td></tr>
   <tr><td>None</td><td>Ctrl+T</td><td>Transpose characters</td></tr>
   <tr><td>None</td><td>None</td><td>Convert indentation</td></tr>
   <tr><td>None</td><td>Ctrl+K</td><td>Cut to end of line</td></tr>
