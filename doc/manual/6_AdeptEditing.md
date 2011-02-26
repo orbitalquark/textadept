@@ -29,7 +29,8 @@ suggestion. Press `Return` to complete the selected word.
 Textadept has the capability to autocomplete symbols for programming languages
 and display API documentation. Lua is of course supported extremely well and
 C/C++ has basic support with the help of [ctags](http://ctags.sf.net). Symbol
-completion is available by pressing `Ctrl+I` (`~` on Mac OSX).
+completion is available by pressing `Ctrl+I` (`~` on Mac OSX). Documentation for
+symbols is available with `Ctrl+H`.
 
 ![Adeptsense Lua](images/adeptsense_lua.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -147,8 +148,8 @@ If no text is selected, the word to the left of the caret is enclosed.
 ## Word Highlight
 
 All occurrences of a given word are highlighted by putting the caret over the
-word and pressing `Ctrl+H` (`Ctrl+Apple+T` on Mac OSX). This is useful to show
-occurrences of a variable name in source code.
+word and pressing `Ctrl+Shift+H` (`Ctrl+Apple+T` on Mac OSX). This is useful to
+show occurrences of a variable name in source code.
 
 ![Word Highlight](images/wordhighlight.png)
 

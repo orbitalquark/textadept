@@ -41,8 +41,14 @@ and colors.
 #### Buffer
 
 `buffer.lua` contains buffer-specific properties like indentation size and
-whether or not to use tabs. See the [LuaDoc](../modules/buffer.html) for
-documentation on the properties.
+whether or not to use tabs. For example, to set the default tab size to 4 and
+use tabs:
+
+    buffer.tab_width = 4
+    buffer.use_tabs = true
+    buffer.indent = 4
+
+See the [LuaDoc](../modules/buffer.html) for documentation on the properties.
 
 #### View
 
