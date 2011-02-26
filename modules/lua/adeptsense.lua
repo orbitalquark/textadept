@@ -27,6 +27,17 @@ sense.ctags_kinds = {
 }
 sense:load_ctags(_HOME..'/modules/lua/tags', true)
 
+---
+-- Shows an autocompletion list for the symbol behind the caret.
+-- @param only_fields If true, returns list of only fields; defaults to false.
+-- @param only_functions If true, returns list of only functions; defaults to
+--   false.
+function sense:complete(only_fields, only_functions)
+  local line, pos = buffer:get_cur_line()
+  local symbol = line:sub(1, pos):match(self.syntax.symbol_chars..'*$')
+  return self.super.complete(self, false, symbol:find(':'))
+end
+
 -- Load user tags and apidoc.
 if lfs.attributes(_USERHOME..'/modules/lua/tags') then
   sense:load_ctags(_USERHOME..'/modules/lua/tags')

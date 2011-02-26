@@ -17,8 +17,8 @@ module('_m.lua.commands', package.seeall)
 --   functions only.
 -- + `Ctrl+I`: (Windows and Linux) Autocomplete symbol.
 -- + `~`: (Mac OSX) Autocomplete symbol.
--- + `Tab`: When the caret is to the right of a `(` in a known function call,
---   show a calltip with documentation for the function.
+-- + `Ctrl+H`: Show documentation for the selected symbol or the symbol under
+--   the caret.
 
 local m_editing, m_run = _m.textadept.editing, _m.textadept.run
 -- Comment string tables use lexer names.
@@ -118,16 +118,7 @@ if type(keys) == 'table' then
       g = { goto_required },
     },
     ['s\n'] = { try_to_autocomplete_end },
-    [not OSX and 'ci' or '~'] = { function()
-      local line, pos = buffer:get_cur_line()
-      local symbol = line:sub(1, pos):match(luasense.syntax.symbol_chars..'*$')
-      return luasense:complete(false, symbol:find(':'))
-    end },
-    ['\t'] = { function()
-      if string.char(buffer.char_at[buffer.current_pos - 1]) ~= '(' then
-        return false
-      end
-      return luasense:show_apidoc()
-    end },
+    [not OSX and 'ci' or '~'] = { luasense.complete, luasense },
+    ch = { luasense.show_apidoc, luasense },
   }
 end
