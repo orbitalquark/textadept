@@ -132,7 +132,19 @@ menubar = {
     { L('Select t_o Brace'), { m_editing.match_brace, 'select' } },
     { L('Complete _Word'), { m_editing.autocomplete_word, '%w_' } },
     { L('De_lete Word'), { m_editing.current_word, 'delete' } },
-    { L('_Highlight Word'), { m_editing.highlight_word } },
+    { L('Hi_ghlight Word'), { m_editing.highlight_word } },
+    { L('Complete S_ymbol'), {
+      function()
+        local m = _m[buffer:get_lexer()]
+        if m and m.adeptsense then m.adeptsense.sense:complete() end
+      end
+    } },
+    { L('S_how Documentation'), {
+      function()
+        local m = _m[buffer:get_lexer()]
+        if m and m.adeptsense then m.adeptsense.sense:show_apidoc() end
+      end
+    } },
     { L('Tran_spose Characters'), { m_editing.transpose_chars } },
     { L('_Join Lines'), { m_editing.join_lines } },
     { L('Convert _Indentation'), { m_editing.convert_indentation } },
