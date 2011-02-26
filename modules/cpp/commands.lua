@@ -14,8 +14,8 @@ module('_m.cpp.commands', package.seeall)
 --   fields and functions.
 -- + `Ctrl+I`: (Windows and Linux) Autocomplete symbol.
 -- + `~`: (Mac OSX) Autocomplete symbol.
--- + `Tab`: When the caret is to the right of a `(` in a known function call,
---   show a calltip with documentation for the function.
+-- + `Ctrl+H`: Show documentation for the selected symbol or the symbol under
+--   the caret.
 -- + `Shift+Return`: Add ';' to line end and insert newline.
 
 local m_editing, m_run = _m.textadept.editing, _m.textadept.run
@@ -48,12 +48,7 @@ if type(keys) == 'table' then
       buffer:new_line()
     end },
     [not OSX and 'ci' or '~'] = { cppsense.complete, cppsense },
-    ['\t'] = { function()
-      if string.char(buffer.char_at[buffer.current_pos - 1]) ~= '(' then
-        return false
-      end
-      return cppsense:show_apidoc()
-    end },
+    ch = { cppsense.show_apidoc, cppsense },
   }
 end
 
