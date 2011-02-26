@@ -317,7 +317,12 @@ module('_m.textadept.adeptsense', package.seeall)
 -- * `always_show_globals`: A flag indicating whether or not to include globals
 --   in the list of completions offered. Globals are classes, functions, and
 --   fields that do not belong to another class. They are contained in
---   completions['']. Defaults to true.
+--   `completions['']`. Defaults to true.
+-- * `full_symbol_api`: A flag indicating whether or not the sense's api files
+--   contain full symbols. When full symbols are present, documentation for
+--   inherited functions and fields will be unavailable. See
+--   [`api_files`](#api_files) for more information. Defaults to false.
+
 --
 -- ## Settings
 --
@@ -533,14 +538,13 @@ end
 -- the 'pos' key in the returned list.
 -- @param sense The adeptsense returned by adeptsense.new().
 -- @param symbol The symbol to get apidocs for.
--- @param raw Flag indicating whether or not to lookup the raw symbol as opposed
---   to parsing it for class information. Defaults to false.
 -- @return apidoc_list or nil
-function get_apidoc(sense, symbol, raw)
+function get_apidoc(sense, symbol)
   if not symbol then return nil end
-  local apidocs = { pos = 1}
+  local apidocs = { pos = 1 }
   local entity, func = symbol:match('^(.-)[^%w_]*([%w_]+)$')
-  if raw then entity, func = '', symbol end
+  if sense.full_symbol_api then entity, func = '', symbol end
+  if not func then return nil end
   local c = func:sub(1, 1) -- for quick comparison
   local patt = '^'..func:gsub('([%.%-])', '%%%1')..'%s+(.+)$'
   for _, file in ipairs(sense.api_files) do
@@ -573,7 +577,19 @@ end
 -- @see get_symbol
 -- @see get_apidoc
 function show_apidoc(sense)
-  local symbol = sense:get_symbol()
+  local buffer = buffer
+  local symbol
+  local s, e = buffer.selection_start, buffer.selection_end
+  if s == e then
+    buffer:goto_pos(buffer:word_end_position(s, true))
+    local line, p = buffer:get_cur_line()
+    line = line:sub(1, p)
+    symbol = line:match('('..sense.syntax.symbol_chars..'+)%s*%([^)]*$') or
+             line:match('('..sense.syntax.symbol_chars..'+)%s*$') or ''
+    buffer:goto_pos(e)
+  else
+    symbol = buffer:text_range(s, e)
+  end
   local apidocs = sense:get_apidoc(symbol)
   if not apidocs then return false end
   for i, doc in ipairs(apidocs) do
@@ -765,6 +781,7 @@ function new(lang)
     lexer = lang,
     events = {},
     always_show_globals = true,
+    full_symbol_api = false,
 
 ---
 -- Contains a map of ctags kinds to adeptsense kinds.
@@ -807,10 +824,17 @@ locations = {},
 
 ---
 -- Contains a list of api files used by show_apidoc().
--- Each line in the api file contains a symbol followed by a space character and
--- then the symbol's documentation. It is recommended to put the symbol's full
--- signature (e.g. Class.function(arg1, arg2, ...)) on the first line. Newlines
--- are represented with '\n'. A '\' before '\n' escapes the newline.
+-- Each line in the api file contains a symbol name (not the full symbol)
+-- followed by a space character and then the symbol's documentation. Since
+-- there may be many duplicate symbol names, it is recommended to put the full
+-- symbol and arguments, if any, on the first line. (e.g. Class.function(arg1,
+-- arg2, ...)). This allows the correct documentation to be shown based on the
+-- current context. If instead the line starts with a full symbol, ensure the
+-- language's Adeptsense has the `full_symbol_api` flag set to true. The
+-- disadvantage to having full symbols in api files is that the documentation
+-- for inherited functions and fields will not be found and shown.
+-- In the documentation, newlines are represented with '\n'. A '\' before '\n'
+-- escapes the newline.
 -- @class table
 -- @name api_files
 api_files = {},
