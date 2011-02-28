@@ -40,27 +40,16 @@ module('_m.textadept.adeptsense', package.seeall)
 --
 -- #### Introduction
 --
--- In the language-specific module, create an Adeptsense module.
+-- Open the language-specific module for editing and create a new instance of an
+-- Adeptsense.
 --
 --     $> # from either _HOME or _USERHOME:
 --     $> cd modules/lua/
---     $> textadept adeptsense.lua
+--     $> textadept init.lua
 --
--- The Adeptsense should look like the following:
---
---     --- Adeptsense for the lua module.
---     module('_m.lua.adeptsense', package.seeall)
 --     sense = _m.textadept.adeptsense.new('lua')
 --
 -- Where 'lua' is replaced by your language's name.
---
--- Then edit the module's `init.lua` to include the Adeptsense.
---
---     $> textadept init.lua
---
---     require 'lua.adeptsense' -- add this line
---     require 'lua.commands'
---     require 'lua.snippets'
 --
 -- #### Syntax Options
 --
@@ -261,7 +250,7 @@ module('_m.textadept.adeptsense', package.seeall)
 -- Since Adeptsense ignores any tags not mapped to `classes`, `functions`, or
 -- `fields` in [`ctags_kinds`](#ctags_kinds), it passes an unknown tag to the
 -- [`handle_ctag()`](#handle_ctag) function. In this case, package (`p`) tags
--- are need to be handled.
+-- need to be handled.
 --
 --     function sense:handle_ctag(tag_name, file_name, ex_cmd, ext_fields)
 --       if ext_fields:sub(1, 1) ~= 'p' then return end -- not a package
