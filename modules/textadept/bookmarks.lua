@@ -85,7 +85,7 @@ function goto()
     line = buffer:marker_next(line + 1, 2^MARK_BOOKMARK)
   until line < 0
   local line = gui.filteredlist(L('Select Bookmark'), 'Bookmark', markers)
-  if line then _m.textadept.editing.goto_line(tonumber(line:match('^%d+'))) end
+  if line then _m.textadept.editing.goto_line(line:match('^%d+')) end
 end
 
 if buffer then buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end
