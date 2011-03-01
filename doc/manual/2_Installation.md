@@ -55,7 +55,15 @@ since the versions of software installed vary widely from distribution to
 distribution. Because the Linux version of Textadept uses the version of GTK
 installed on your system, an error like: `error while loading shared  libraries:
 <lib>: cannot open shared object file: No such file or directory` may occur when
-trying to run the program. If this happens, do not be alarmed, the solution is
+trying to run the program.
+
+The most common occurance of this error is for the `libpng12` library on 64-bit
+(x86\_64) Debian and Debian-based Linux distributions like Ubuntu because
+`libpng12` has not been replaced in favor of the newer `libpng14`. If you are
+experiencing this error, simply rename `textadept.lpng12` to `textadept`. The
+former has been compiled to use `libpng12`.
+
+If the above situation did not apply to you, do not be alarmed. The solution is
 actually quite painless even though it requires recompiling Textadept. See the
 [compiling](12_Compiling.html) page for more information.
 
