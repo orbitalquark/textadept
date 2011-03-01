@@ -156,6 +156,9 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	hg clone http://scintillua.googlecode.com/hg/ tmp
 	mv tmp/lexers $(RELEASEDIR32)
 	rm -r tmp
+	hg clone http://modules.textadept.googlecode.com/hg tmp
+	mv tmp/* $(RELEASEDIR32)/modules
+	rm -r tmp
 	# Linux x64_64
 	cp -r $(RELEASEDIR32) $(RELEASEDIR64)
 	cp ../$(TEXTADEPT64) $(RELEASEDIR64)
@@ -185,7 +188,6 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	# Source
 	rm $(RELEASEDIR32)/$(TEXTADEPT)
 	cp -rL lua scintilla gcocoadialog LexLPeg.cxx $(RELEASEDIR32)/src/
-	cp -r ../scripts $(RELEASEDIR32)/
 	rm -r $(RELEASEDIR32)/src/scintilla/.hg
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
 	# Done
