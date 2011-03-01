@@ -1,6 +1,8 @@
 #!/usr/bin/lua
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+-- This script generates the _SCINTILLA table from SciTE's Lua Interface tables.
+
 local f = io.open('../../scite-latest/scite/src/IFaceTable.cxx')
 local contents = f:read('*all')
 f:close()
