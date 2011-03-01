@@ -66,6 +66,9 @@ GTKFLAGS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --cflags gtk+-2.0)
 GTKLIBS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --libs gtk+-2.0)
+ifdef LIBPNG12
+GTKLIBS := $(shell sed -e 's/lpng14/lpng12/;' <<< "$(GTKLIBS)")
+endif
 ifdef OSX
 GTKLIBS += -framework Carbon -framework Cocoa -ligemacintegration
 endif
@@ -130,6 +133,7 @@ clean:
 
 TEXTADEPT32 = $(TEXTADEPT)32
 TEXTADEPT64 = $(TEXTADEPT)
+TEXTADEPT64LPNG12 = $(TEXTADEPT).lpng12
 TEXTADEPTWIN32 = $(TEXTADEPT).exe
 TEXTADEPTMAC = $(TEXTADEPT).osx
 RELEASEDIR32 = textadept_$(value VERSION)
@@ -144,7 +148,7 @@ PACKAGEMAC = ../releases/$(RELEASEDIRMAC).zip
 SRCPACKAGE = ../releases/$(RELEASEDIR32).src.zip
 
 release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
-  ../$(TEXTADEPTMAC)
+  ../$(TEXTADEPTMAC) ../$(TEXTADEPTLPNG12)
 	sh -c 'cd ../scripts && ./update_doc'
 	hg archive $(RELEASEDIR32)
 	rm $(RELEASEDIR32)/.hg*
@@ -155,6 +159,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	# Linux x64_64
 	cp -r $(RELEASEDIR32) $(RELEASEDIR64)
 	cp ../$(TEXTADEPT64) $(RELEASEDIR64)
+	cp ../$(TEXTADEPT64LPNG12) $(RELEASEDIR64)
 	tar czf $(PACKAGE64) $(RELEASEDIR64)
 	rm -r $(RELEASEDIR64)
 	# Win32
