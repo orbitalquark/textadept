@@ -73,6 +73,10 @@ module('_m.textadept.adeptsense', package.seeall)
 --
 -- The "class"'s name is the identifier in quotes.
 --
+-- ##### syntax.word_chars
+--
+-- Lua words already consist of the default `%w_` so no changes are necessary.
+--
 -- ##### syntax.symbol_chars
 --
 -- In addition to the usual `[%w_%.]` symbol characters, Lua also allows symbols
@@ -307,10 +311,6 @@ module('_m.textadept.adeptsense', package.seeall)
 --   in the list of completions offered. Globals are classes, functions, and
 --   fields that do not belong to another class. They are contained in
 --   `completions['']`. Defaults to true.
--- * `full_symbol_api`: A flag indicating whether or not the sense's api files
---   contain full symbols. When full symbols are present, documentation for
---   inherited functions and fields will be unavailable. See
---   [`api_files`](#api_files) for more information. Defaults to false.
 
 --
 -- ## Settings
@@ -331,9 +331,12 @@ FIELDS = '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars-per-
 -- @return symbol or '', part or ''.
 function get_symbol(sense)
   local line, p = buffer:get_cur_line()
-  local symbol, part =
-    line:sub(1, p):match('('..sense.syntax.symbol_chars..'-)[^%w_]+([%w_]*)$')
-  if not symbol then part = line:sub(1, p):match('([%w_]*)$') end
+  local symbol_chars = sense.syntax.symbol_chars
+  local word_chars = sense.syntax.word_chars
+  local patt = string.format('(%s-)[^%s]+([%s]*)$', symbol_chars, word_chars,
+                             word_chars)
+  local symbol, part = line:sub(1, p):match(patt)
+  if not symbol then part = line:sub(1, p):match('(['..word_chars..']*)$') end
   return symbol or '', part or ''
 end
 
@@ -531,8 +534,9 @@ end
 function get_apidoc(sense, symbol)
   if not symbol then return nil end
   local apidocs = { pos = 1 }
-  local entity, func = symbol:match('^(.-)[^%w_]*([%w_]+)$')
-  if sense.full_symbol_api then entity, func = '', symbol end
+  local word_chars = sense.syntax.word_chars
+  local patt = string.format('^(.-)[^%s]*([%s]+)$', word_chars, word_chars)
+  local entity, func = symbol:match(patt)
   if not func then return nil end
   local c = func:sub(1, 1) -- for quick comparison
   local patt = '^'..func:gsub('([%.%-])', '%%%1')..'%s+(.+)$'
@@ -551,7 +555,7 @@ function get_apidoc(sense, symbol)
   local class = sense.completions[entity] or sense:get_class(entity)
   if type(class) ~= 'string' then class = entity end -- fall back to entity
   for i, apidoc in ipairs(apidocs) do
-    if apidoc:match('^[%w_]+') == class then
+    if apidoc:match('^['..word_chars..']+') == class then
       apidocs.pos = i
       break
     end
@@ -770,7 +774,6 @@ function new(lang)
     lexer = lang,
     events = {},
     always_show_globals = true,
-    full_symbol_api = false,
 
 ---
 -- Contains a map of ctags kinds to adeptsense kinds.
@@ -818,12 +821,8 @@ locations = {},
 -- there may be many duplicate symbol names, it is recommended to put the full
 -- symbol and arguments, if any, on the first line. (e.g. Class.function(arg1,
 -- arg2, ...)). This allows the correct documentation to be shown based on the
--- current context. If instead the line starts with a full symbol, ensure the
--- language's Adeptsense has the `full_symbol_api` flag set to true. The
--- disadvantage to having full symbols in api files is that the documentation
--- for inherited functions and fields will not be found and shown.
--- In the documentation, newlines are represented with '\n'. A '\' before '\n'
--- escapes the newline.
+-- current context. In the documentation, newlines are represented with '\n'. A
+-- '\' before '\n' escapes the newline.
 -- @class table
 -- @name api_files
 api_files = {},
@@ -834,8 +833,11 @@ api_files = {},
 -- @field class_definition A Lua pattern representing the language's class
 --   definition syntax. The first capture returned must be the class name.
 --   Defaults to 'class%s+([%w_]+)'.
+-- @field word_chars A Lua pattern of characters allowed in a word. Default is
+--   '%w_'.
 -- @field symbol_chars A Lua pattern of characters allowed in a symbol,
---   including member operators. Default is '[%w_%.]'.
+--   including member operators. The pattern should be a character set. Default
+--   is '[%w_%.]'.
 -- @field type_declarations A list of Lua patterns used for determining the
 --   class type of a symbol. The first capture returned must be the class name.
 --   Use '%_' to match the symbol. Defaults to '(%u[%w_%.]+)%s+%_'.
@@ -850,6 +852,7 @@ api_files = {},
 syntax = {
   self = 'self',
   class_definition = 'class%s+([%w_]+)',
+  word_chars = '%w_',
   symbol_chars = '[%w_%.]',
   type_declarations = {
     '(%u[%w_%.]+)%s+%_', -- Foo bar
