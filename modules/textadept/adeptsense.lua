@@ -331,12 +331,10 @@ FIELDS = '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars-per-
 -- @return symbol or '', part or ''.
 function get_symbol(sense)
   local line, p = buffer:get_cur_line()
-  local symbol_chars = sense.syntax.symbol_chars
-  local word_chars = sense.syntax.word_chars
-  local patt = string.format('(%s-)[^%s]+([%s]*)$', symbol_chars, word_chars,
-                             word_chars)
+  local s_chars, w_chars = sense.syntax.symbol_chars, sense.syntax.word_chars
+  local patt = string.format('(%s-)[^%s]+([%s]*)$', s_chars, w_chars, w_chars)
   local symbol, part = line:sub(1, p):match(patt)
-  if not symbol then part = line:sub(1, p):match('(['..word_chars..']*)$') end
+  if not symbol then part = line:sub(1, p):match('(['..w_chars..']*)$') end
   return symbol or '', part or ''
 end
 
@@ -539,7 +537,7 @@ function get_apidoc(sense, symbol)
   local entity, func = symbol:match(patt)
   if not func then return nil end
   local c = func:sub(1, 1) -- for quick comparison
-  local patt = '^'..func:gsub('([%.%-])', '%%%1')..'%s+(.+)$'
+  local patt = '^'..func:gsub('([%.%-%?])', '%%%1')..'%s+(.+)$'
   for _, file in ipairs(sense.api_files) do
     if lfs.attributes(file) then
       for line in io.lines(file) do
