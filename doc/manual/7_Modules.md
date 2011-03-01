@@ -77,7 +77,10 @@ if you prefer something else.
 
 ## Getting Modules
 
-For now, user-created modules are obtained from the
+The most up-to-date versions of Textadept's language modules can be found in
+the [modules
+repository](http://code.google.com/p/textadept/source/browse/?repo=modules).
+User-created modules are also available from the
 [wiki](http://caladbolg.net/textadeptwiki).
 
 ## Installing Modules
