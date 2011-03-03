@@ -553,6 +553,7 @@ function get_apidoc(sense, symbol)
   -- back to the entity itself. In order for this to work, the first line in the
   -- apidoc must start with the entity (e.g. Class.function).
   local class = sense.completions[entity] or sense:get_class(entity)
+  if entity == '' then class = sense:get_class(entity) end
   if type(class) ~= 'string' then class = entity end -- fall back to entity
   for i, apidoc in ipairs(apidocs) do
     if apidoc:sub(1, #class) == class then
