@@ -555,7 +555,7 @@ function get_apidoc(sense, symbol)
   local class = sense.completions[entity] or sense:get_class(entity)
   if type(class) ~= 'string' then class = entity end -- fall back to entity
   for i, apidoc in ipairs(apidocs) do
-    if apidoc:match('^['..word_chars..']+') == class then
+    if apidoc:sub(1, #class) == class then
       apidocs.pos = i
       break
     end
