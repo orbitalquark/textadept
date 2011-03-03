@@ -82,7 +82,7 @@ module('_m.textadept.adeptsense', package.seeall)
 -- In addition to the usual `[%w_%.]` symbol characters, Lua also allows symbols
 -- to contain a `:`.
 --
---     sense.syntax.symbol_chars = '[%w_.:]'
+--     sense.syntax.symbol_chars = '[%w_%.:]'
 --
 -- ##### syntax.type_declarations
 --
@@ -133,11 +133,11 @@ module('_m.textadept.adeptsense', package.seeall)
 -- `ctags --list-kinds` in your shell. Since Adeptsense only cares about
 -- classes, functions, and fields, you need to let it know which kind of tag is
 -- which. Unfortunately, Lua support in Ctags is not good at all. Instead,
--- Textadept has a utility to generate a fake set of tags that is more useful.
--- This utility (`scripts/adeptsensedoc.lua`) is found in the source release.
--- Functions are tagged `'f'` and should be recognized as such; table keys are
--- tagged `'t'` and should be recognized as fields; module fields, `'F'`, should
--- be fields; and modules, `'m'`, should be classes:
+-- Textadept has a utility (`scripts/adeptsensedoc.lua`) to generate a fake set
+-- of tags that is more useful. Functions are tagged `'f'` and should be
+-- recognized as such; table keys are tagged `'t'` and should be recognized as
+-- fields; module fields, `'F'`, should be fields; and modules, `'m'`, should be
+-- classes:
 --
 --     sense.ctags_kinds = {
 --       f = 'functions',
@@ -357,13 +357,15 @@ function get_class(sense, symbol)
   local type_declarations = sense.syntax.type_declarations
   local type_assignments = sense.syntax.type_assignments
   local assignment_patt = symbol..'%s*=%s*([^\r\n]+)'
-  local class, assignment
+  local class, superclass, assignment
   for i = buffer:line_from_position(buffer.current_pos), 0, -1 do
     local s, e
     if symbol == self or symbol == '' then
       -- Determine type from the class declaration.
-      s, e, class = buffer:get_line(i):find(class_definition)
-      if class and not completions[class] then class = nil end
+      s, e, class, superclass = buffer:get_line(i):find(class_definition)
+      if class and not completions[class] then
+        class = completions[superclass] and superclass or nil
+      end
     else
       -- Search for a type declaration or type assignment.
       local line = buffer:get_line(i)
@@ -458,13 +460,13 @@ function get_completions(sense, symbol, only_fields, only_functions)
   local c = {}
   if not only_fields then
     for _, v in ipairs(compls[class].functions) do c[#c + 1] = v end
-    if include_globals then
+    if include_globals and class ~= '' then
       for _, v in ipairs(compls[''].functions) do c[#c + 1] = v end
     end
   end
   if not only_functions then
     for _, v in ipairs(compls[class].fields) do c[#c + 1] = v end
-    if include_globals then
+    if include_globals and class ~= '' then
       for _, v in ipairs(compls[''].fields) do c[#c + 1] = v end
     end
   end
@@ -829,8 +831,13 @@ api_files = {},
 -- Contains syntax-specific values for the language.
 -- @field self The language's syntax-equivalent of 'self'. Default is 'self'.
 -- @field class_definition A Lua pattern representing the language's class
---   definition syntax. The first capture returned must be the class name.
---   Defaults to 'class%s+([%w_]+)'.
+--   definition syntax. The first capture returned must be the class name. A
+--   second, optional capture contains the class' superclass (if any). If no
+--   completions are found for the class name, completions for the superclass
+--   are shown (if any). Completions will not be shown for both a class and
+--   superclass unless defined in a previously loaded ctags file. Also, multiple
+--   superclasses cannot be recognized by this pattern; use a ctags file
+--   instead. Defaults to 'class%s+([%w_]+)'.
 -- @field word_chars A Lua pattern of characters allowed in a word. Default is
 --   '%w_'.
 -- @field symbol_chars A Lua pattern of characters allowed in a symbol,
