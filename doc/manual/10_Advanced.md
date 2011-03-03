@@ -4,8 +4,8 @@
 
 Access to the Lua state is available through the command entry. Press `F2` to
 access it. It is useful for debugging, inspecting, and entering buffer or view
-commands. If you try cause instability in Textadept's Lua state, you might very
-well succeed so be careful. For more information, see the
+commands. If you try to cause instability in Textadept's Lua state, you might
+very well succeed so be careful. For more information, see the
 [scripting](11_Scripting.html) page.
 
 Abbreviated commands for the `buffer`, `view` and `gui` are available. So
