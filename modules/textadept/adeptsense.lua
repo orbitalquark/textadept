@@ -415,6 +415,7 @@ end
 local function add_inherited(sense, class, only_fields, only_funcs, c, added)
   local inherited_classes = sense.inherited_classes[class]
   if not inherited_classes or added[class] then return end
+  _G.print(class, inherited_classes)
   local completions = sense.completions
   for _, inherited_class in ipairs(inherited_classes) do
     local inherited_completions = completions[inherited_class]
@@ -472,10 +473,12 @@ function get_completions(sense, symbol, only_fields, only_functions)
   end
   add_inherited(sense, class, only_fields, only_functions, c, {})
 
-  -- Remove duplicates.
+  -- Remove duplicates and non-toplevel classes (if necessary).
   table.sort(c)
-  local table_remove = table.remove
-  for i = #c, 2, -1 do if c[i] == c[i - 1] then table_remove(c, i) end end
+  local table_remove, nw_char = table.remove, '[^'..sense.syntax.word_chars..']'
+  for i = #c, 2, -1 do
+    if c[i] == c[i - 1] or c[i]:find(nw_char) then table_remove(c, i) end
+  end
   return c
 end
 
