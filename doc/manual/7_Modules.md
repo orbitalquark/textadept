@@ -72,15 +72,13 @@ Pressing `Ctrl+Q` comments or uncomments the code on the selected lines.
 #### Buffer Properties
 
 Sometimes language-specific modules set default buffer properties like tabs and
-indentation size. See the module's Lua code for these settings and change them
-if you prefer something else.
+indentation size. See the module's Lua code for these settings. If you wish to
+change them or use different settings, see the
+[Customizing Modules](#customizing_modules) section below.
 
 ## Getting Modules
 
-The most up-to-date versions of Textadept's language modules can be found in
-the [modules
-repository](http://code.google.com/p/textadept/source/browse/?repo=modules).
-User-created modules are also available from the
+For now, user-created modules are obtained from the
 [wiki](http://caladbolg.net/textadeptwiki).
 
 ## Installing Modules
@@ -94,3 +92,39 @@ that comes with Textadept.
 ## Developing Modules
 
 See the [LuaDoc](../modules/_m.html) for modules.
+
+## Customizing Modules
+
+It is never recommended to modify the default modules that come with Textadept,
+even if you just want to change the buffer settings for a language-specific
+module or add a few more snippets. Instead you have two options: load your own
+module instead of the default one or load your custom module code after the
+default module loads. To load your own module, simply place it appropriately in
+`~/.textadept/modules/`. To load your module code after the default module
+loads, create a `post_init.lua` Lua script in the appropriate
+`~/.textadept/modules/` sub-folder. Please note that for generic modules, only
+the first option applies. Either option applies for language-specific modules.
+
+Suppose you wanted to completely change the menubar structure. You would first
+create a new `menu.lua` and then put it in `~/.textadept/modules/textadept/`.
+Now when Textadept looks for `menu.lua`, it will load yours instead of its own.
+Similarly, if you copy the default Lua language-specific module (`modules/lua`)
+to `~/.textadept/modules/` and make custom changes, that module is loaded for
+editing Lua code instead of the default module.
+
+If you keep a modified copy of language-specific modules, you will likely want
+to update them with each new Textadept release. Instead of potentially wasting
+time merging your changes, you can load custom code independent of the module in
+a `post_init.lua` file. For example, instead of copying the `lua` module and
+changing its `set_buffer_properties()` function to use tabs, you can do this
+from `post_init.lua`:
+
+    module('_m.lua', package.seeall)
+
+    function set_buffer_properties()
+      buffer.use_tabs = true
+    end
+
+Similarly, you can use `post_init.lua` to change the compile/run commands, load
+more [Adeptsense tags](../modules/_m.textadept.adeptsense.html#load_ctags), and
+add additional key commands and snippets.

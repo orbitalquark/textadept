@@ -119,11 +119,12 @@ local function set_lexer(buffer, lang)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
   local ret, err = pcall(require, lang)
   if ret then
+    ret, err = pcall(require, lang..'.post_init')
     _m[lang].set_buffer_properties()
     events.emit('language_module_loaded', lang)
-  elseif not ret and not err:find("^module '"..lang.."' not found:") then
-    error(err)
   end
+  local module_not_found = "^module '"..lang.."[^\']*' not found:"
+  if not ret and not err:find(module_not_found) then error(err) end
   buffer:colourise(0, -1)
 end
 
