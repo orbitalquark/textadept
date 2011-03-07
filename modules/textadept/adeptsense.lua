@@ -415,7 +415,6 @@ end
 local function add_inherited(sense, class, only_fields, only_funcs, c, added)
   local inherited_classes = sense.inherited_classes[class]
   if not inherited_classes or added[class] then return end
-  _G.print(class, inherited_classes)
   local completions = sense.completions
   for _, inherited_class in ipairs(inherited_classes) do
     local inherited_completions = completions[inherited_class]
@@ -663,7 +662,9 @@ function load_ctags(sense, tag_file, nolocations)
             -- Even though this class inherits fields and functions from others,
             -- an empty completions table needs to be added to it so
             -- get_completions() does not return prematurely.
-            completions[tag_name] = { fields = {}, functions = {} }
+            if not completions[tag_name] then
+              completions[tag_name] = { fields = {}, functions = {} }
+            end
           end
         end
         -- Update completions.
