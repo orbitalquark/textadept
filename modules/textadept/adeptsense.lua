@@ -331,10 +331,10 @@ FIELDS = '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars-per-
 -- @return symbol or '', part or ''.
 function get_symbol(sense)
   local line, p = buffer:get_cur_line()
-  local s_chars, w_chars = sense.syntax.symbol_chars, sense.syntax.word_chars
-  local patt = string.format('(%s-)[^%s]+([%s]*)$', s_chars, w_chars, w_chars)
+  local sc, wc = sense.syntax.symbol_chars, sense.syntax.word_chars
+  local patt = string.format('(%s-)[^%s%%s]+([%s]*)$', sc, wc, wc)
   local symbol, part = line:sub(1, p):match(patt)
-  if not symbol then part = line:sub(1, p):match('(['..w_chars..']*)$') end
+  if not symbol then part = line:sub(1, p):match('(['..wc..']*)$') end
   return symbol or '', part or ''
 end
 
@@ -474,9 +474,9 @@ function get_completions(sense, symbol, only_fields, only_functions)
 
   -- Remove duplicates and non-toplevel classes (if necessary).
   table.sort(c)
-  local table_remove, nw_char = table.remove, '[^'..sense.syntax.word_chars..']'
+  local table_remove, nwc = table.remove, '[^'..sense.syntax.word_chars..'%?]'
   for i = #c, 2, -1 do
-    if c[i] == c[i - 1] or c[i]:find(nw_char) then table_remove(c, i) end
+    if c[i] == c[i - 1] or c[i]:find(nwc) then table_remove(c, i) end
   end
   return c
 end
