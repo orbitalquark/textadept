@@ -162,25 +162,23 @@ end
 -- Sets the buffer's lexer language and loads the language module.
 local function handle_new()
   local lexer
-  if buffer.filename then
-    lexer = extensions[buffer.filename:match('[^/\\.]+$')]
+  local line = buffer:get_line(0)
+  if line:find('^#!') then
+    for word in line:gsub('[/\\]', ' '):gmatch('%S+') do
+      lexer = shebangs[word]
+      if lexer then break end
+    end
   end
   if not lexer then
-    local line = buffer:get_line(0)
-    if line:find('^#!') then
-      for word in line:gsub('[/\\]', ' '):gmatch('%S+') do
-        lexer = shebangs[word]
-        if lexer then break end
+    for patt, lex in pairs(patterns) do
+      if line:find(patt) then
+        lexer = lex
+        break
       end
     end
-    if not lexer then
-      for patt, lex in pairs(patterns) do
-        if line:find(patt) then
-          lexer = lex
-          break
-        end
-      end
-    end
+  end
+  if not lexer and buffer.filename then
+    lexer = extensions[buffer.filename:match('[^/\\.]+$')]
   end
   buffer:set_lexer(lexer or 'container')
 end
