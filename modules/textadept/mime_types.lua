@@ -101,6 +101,24 @@ end
 for lexer in pairs(lexers_found) do lexers[#lexers + 1] = lexer end
 table.sort(lexers)
 
+--
+-- Returns the name of the style associated with a style number.
+-- @param buffer The buffer to get the style name of.
+-- @param style_num A style number in the range 0 <= style_num < 256.
+-- @see buffer.style_at
+local function get_style_name(buffer, style_num)
+  gui.check_focused_buffer(buffer)
+  if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
+  return buffer:private_lexer_call(style_num)
+end
+
+-- Contains the whitespace styles for lexers.
+-- These whitespace styles are used to determine the lexer at the current caret
+-- position since the styles have the name '[lang]_whitespace'.
+-- @class table
+-- @name ws_styles
+local ws_styles = {}
+
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
 --
@@ -126,26 +144,31 @@ local function set_lexer(buffer, lang)
   local module_not_found = "^module '"..lang.."[^\']*' not found:"
   if not ret and not err:find(module_not_found) then error(err) end
   buffer:colourise(0, -1)
+  if ws_styles[lang] then return end
+
+  -- Create the ws_styles[lexer] lookup table for get_lexer().
+  local ws, find = {}, string.find
+  for i = 0, 255 do
+    ws[i] = find(get_style_name(buffer, i), 'whitespace') and true or false
+  end
+  ws_styles[lang] = ws
 end
 
 local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 --
 -- Replacement for buffer:get_lexer_language().
+-- Returns the lexer at the current caret position. This lexer can be different
+-- from the lexer passed to buffer:set_lexer().
 -- @param buffer The buffer to get the lexer language of.
-local function get_lexer(buffer)
+-- @param parent If true, returns the lexer passed to buffer:set_lexer().
+--   Defaults to false.
+local function get_lexer(buffer, parent)
   gui.check_focused_buffer(buffer)
-  return buffer:private_lexer_call(GETLEXERLANGUAGE)
-end
-
---
--- Returns the name of the style associated with a style number.
--- @param buffer The buffer to get the style name of.
--- @param style_num A style number in the range 0 <= style_num < 256.
--- @see buffer.style_at
-local function get_style_name(buffer, style_num)
-  gui.check_focused_buffer(buffer)
-  if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
-  return buffer:private_lexer_call(style_num)
+  local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
+  if parent then return lexer end
+  local i, ws, style_at = buffer.current_pos, ws_styles[lexer], buffer.style_at
+  while i > 0 and not ws[style_at[i]] do i = i - 1 end
+  return get_style_name(buffer, style_at[i]):match('^(.+)_whitespace$') or lexer
 end
 
 events.connect('buffer_new', function()
