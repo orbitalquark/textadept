@@ -157,15 +157,14 @@ end
 local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 --
 -- Replacement for buffer:get_lexer_language().
--- Returns the lexer at the current caret position. This lexer can be different
--- from the lexer passed to buffer:set_lexer().
 -- @param buffer The buffer to get the lexer language of.
--- @param parent If true, returns the lexer passed to buffer:set_lexer().
+-- @param current If true, returns the lexer at the current caret position. This
+--   lexer can be different from the lexer passed to buffer:set_lexer().
 --   Defaults to false.
-local function get_lexer(buffer, parent)
+local function get_lexer(buffer, current)
   gui.check_focused_buffer(buffer)
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
-  if parent then return lexer end
+  if not current then return lexer end
   local i, ws, style_at = buffer.current_pos, ws_styles[lexer], buffer.style_at
   while i > 0 and not ws[style_at[i]] do i = i - 1 end
   return get_style_name(buffer, style_at[i]):match('^(.+)_whitespace$') or lexer
