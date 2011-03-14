@@ -518,7 +518,7 @@ function add_trigger(sense, c, only_fields, only_functions)
   if #c > 2 then return end -- TODO: warn
   local c1, c2 = c:match('.$'):byte(), #c > 1 and c:sub(1, 1):byte()
   local i = events.connect('char_added', function(char)
-    if char == c1 and buffer:get_lexer() == sense.lexer then
+    if char == c1 and buffer:get_lexer(true) == sense.lexer then
       if c2 and buffer.char_at[buffer.current_pos - 2] ~= c2 then return end
       sense:complete(only_fields, only_functions)
     end
