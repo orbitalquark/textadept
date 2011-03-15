@@ -52,7 +52,8 @@ sense.syntax.type_declarations = {}
 sense.syntax.type_assignments = {
   ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
   ['^([%w_%.]+)%s*$'] = '%1', -- foo = _m.textadept.adeptsense
-  ['^(_m%.textadept%.adeptsense)%.new'] = '%1'
+  ['^(_m%.textadept%.adeptsense)%.new'] = '%1',
+  ['require%s*%(?%s*(["\'])([%w_%.]+)%1%)?'] = '%2'
 }
 sense.api_files = { _HOME..'/modules/lua/api' }
 sense:add_trigger('.')
