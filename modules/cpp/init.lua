@@ -59,8 +59,10 @@ sense.ctags_kinds = {
   s = 'classes',
   t = 'classes'
 }
+sense:load_ctags(_HOME..'/modules/cpp/tags', true)
+sense.api_files = { _HOME..'/modules/cpp/api' }
 sense.syntax.type_declarations = {
-  '(%u[%w_%.]+)[%s%*&]+%_[^%w_]', -- Foo bar, Foo *bar, Foo* bar, Foo &bar, etc.
+  '([%w_%.]+)[%s%*&]+%_[^%w_]', -- Foo bar, Foo *bar, Foo* bar, Foo &bar, etc.
 }
 sense:add_trigger('.')
 sense:add_trigger('->')

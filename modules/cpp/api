@@ -1,0 +1,290 @@
+assert assert(int expression) [void]\nMacro used for internal error detection. (Ignored if NDEBUG is defined where \n<assert.h> is included.) If `expression` equals zero, message printed on stderr\nand abort called to terminate execution. Source filename and line number in\nmessage are from preprocessor macros __FILE__ and __LINE__.
+
+isalnum isalnum(int c) [int]\nisalpha(c) or isdigit(c)
+isalpha isalpha(int c) [int]\nisupper(c) or islower(c)
+iscntrl iscntrl(int c) [int]\nis control character. In ASCII, control characters are 0x00 (NUL) to 0x1F (US),\nand 0x7F (DEL)
+isdigit isdigit(int c) [int]\nis decimal digit
+isgraph isgraph(int c) [int]\nis printing character other than space
+islower islower(int c) [int]\nis lower-case letter
+isprint isprint(int c) [int]\nis printing character (including space). In ASCII, printing characters are 0x20\n(' ') to 0x7E ('~')
+ispunct ispunct(int c) [int]\nis printing character other than space, letter, digit
+isspace isspace(int c) [int]\nis space, formfeed, newline, carriage return, tab, vertical tab
+isupper isupper(int c) [int]\nis upper-case letter
+isxdigit isxdigit(int c) [int]\nis hexadecimal digit
+tolower tolower(int c) [int]\nreturn lower-case equivalent
+toupper toupper(int c) [int]\nreturn upper-case equivalent
+
+errno errno\nobject to which certain library functions assign specific positive values on\nerror
+EDOM EDOM\ncode used for domain errors
+ERANGE ERANGE\ncode used for range errors
+
+FLT_RADIX FLT_RADIX\nradix of floating-point representations
+FLT_ROUNDS FLT_ROUNDS\nfloating-point rounding mode
+
+FLT_DIG FLT_DIG\nprecision of float (in decimal digits)
+DBL_DIG DBL_DIG\nprecision of double (in decimal digits)
+LDBL_DIG LDBL_DIG\nprecision of long double (in decimal digits)
+
+FLT_EPSILON FLT_EPSILON\nsmallest float number x such that 1.0 + x != 1.0
+DBL_EPSILON DBL_EPSILON\nsmallest double number x such that 1.0 + x != 1.0
+LDBL_EPSILON LDBL_EPSILON\nsmallest long double number x such that 1.0 + x != 1.0
+
+FLT_MANT_DIG FLT_MANT_DIG\nnumber of float digits, base FLT_RADIX, in mantissa
+DBL_MANT_DIG DBL_MANT_DIG\nnumber of double digits, base FLT_RADIX, in mantissa
+LDBL_MANT_DIG LDBL_MANT_DIG\nnumber of long double digits, base FLT_RADIX, in mantissa
+
+FLT_MAX FLT_MAX\nmaximum float number
+DBL_MAX DBL_MAX\nmaximum double number
+LDBL_MAX LDBL_MAX\nmaximum long double number
+
+FLT_MAX_EXP FLT_MAX_EXP\nlargest positive integer exponent to which FLT_RADIX can be raised and remain\nrepresentable
+DBL_MAX_EXP DBL_MAX_EXP\nlargest positive integer exponent to which FLT_RADIX can be raised and remain\nrepresentable
+LDBL_MAX_EXP LDBL_MAX_EXP\nlargest positive integer exponent to which FLT_RADIX can be raised and remain\nrepresentable
+
+FLT_MIN FLT_MIN\nminimum normalised float number
+DBL_MIN DBL_MIN\nminimum normalised double number
+LDBL_MIN LDBL_MIN\nminimum normalised long double number
+
+FLT_MIN_EXP FLT_MIN_EXP\nsmallest negative integer exponent to which FLT_RADIX can be raised and remain\nrepresentable
+DBL_MIN_EXP DBL_MIN_EXP\nsmallest negative integer exponent to which FLT_RADIX can be raised and remain\nrepresentable
+LDBL_MIN_EXP LDBL_MIN_EXP\nsmallest negative integer exponent to which FLT_RADIX can be raised and remain\nrepresentable
+
+CHAR_BIT CHAR_BIT\nnumber of bits in a char
+CHAR_MAX CHAR_MAX\nmaximum value of type char
+CHAR_MIN CHAR_MIN\nminimum value of type char
+SCHAR_MAX SCHAR_MAX\nmaximum value of type signed char
+SCHAR_MIN SCHAR_MIN\nminimum value of type signed char
+UCHAR_MAX UCHAR_MAX\nmaximum value of type unsigned char
+SHRT_MAX SHRT_MAX\nmaximum value of type short
+SHRT_MIN SHRT_MIN\nminimum value of type short
+USHRT_MAX USHRT_MAX\nmaximum value of type unsigned short
+INT_MAX INT_MAX\nmaximum value of type int
+INT_MIN INT_MIN\nminimum value of type int
+UINT_MAX UINT_MAX\nmaximum value of type unsigned int
+LONG_MAX LONG_MAX\nmaximum value of type long
+LONG_MIN LONG_MIN\nminimum value of type long
+ULONG_MAX ULONG_MAX\nmaximum value of type unsigned long
+
+lconv lconv [struct]\nDescribes formatting of monetary and other numeric values\nImplementations may change field order and include additional fields. Standard C\nLibrary functions use only `decimal_point`.
+decimal_point lconv.decimal_point [char*]\ndecimal point for non-monetary values
+grouping lconv.grouping [char*]\nsizes of digit groups for non-monetary values
+thousands_sep lconv.thousands_sep [char*]\nseparator for digit groups for non-monetary values (left of "decimal point")
+currency_symbol lconv.currency_symbol [char*]\ncurrency symbol
+int_curr_symbol lconv.int_curr_symbol [char*]\ninternational currency symbol
+mon_decimal_point lconv.mon_decimal_point [char*]\ndecimal point for monetary values
+mon_grouping lconv.mon_grouping [char*]\nsizes of digit groups for monetary values
+mon_thousands_sep lconv.mon_thousands_sep [char*]\nseparator for digit groups for monetary values (left of "decimal point")
+negative_sign lconv.negative_sign [char*]\nnegative sign for monetary values
+positive_sign lconv.positive_sign [char*]\npositive sign for monetary values
+frac_digits lconv.frac_digits [char]\nnumber of digits to be displayed to right of "decimal point" for monetary values
+int_frac_digits lconv.int_frac_digits [char]\nnumber of digits to be displayed to right of "decimal point" for international\nmonetary values
+n_cs_precedes lconv.n_cs_precedes [char]\nwhether currency symbol precedes (1) or follows (0) negative monetary values
+n_sep_by_space lconv.n_sep_by_space [char]\nwhether currency symbol is (1) or is not (0) separated by space from negative\nmonetary values
+n_sign_posn lconv.n_sign_posn [char]\nformat for negative monetary values:\n0: parentheses surround quantity and currency symbol\n  1: sign precedes quantity and currency symbol\n  2: sign follows quantity and currency symbol\n  3: sign immediately precedes currency symbol\n  4: sign immediately follows currency symbol
+p_cs_precedes lconv.p_cs_precedes [char]\nwhether currency symbol precedes (1) or follows (0) positive monetary values
+p_sep_by_space lconv.p_sep_by_space [char]\nwhether currency symbol is (1) or is not (0) separated by space from\nnon-negative monetary values
+p_sign_posn lconv.p_sign_posn [char]\nformat for non-negative monetary values, with values as for n_sign_posn
+
+localeconv localeconv(void) [lconv*]\nreturns pointer to formatting information for current locale
+setlocale setlocale(int category, const char* locale) [char*]\nSets components of locale according to specified `category` and `locale`.\nReturns string describing new locale or null on error. (Implementations are\npermitted to define values of `category` additional to those describe here.)
+LC_ALL LC_ALL\ncategory argument for all categories
+LC_NUMERIC LC_NUMERIC\ncategory for numeric formatting information
+LC_MONETARY LC_MONETARY\ncategory for monetary formatting information
+LC_COLLATE LC_COLLATE\ncategory for information affecting collating functions
+LC_CTYPE LC_CTYPE\ncategory for information affecting character class tests functions
+LC_TIME LC_TIME\ncategory for information affecting time conversions functions
+NULL NULL\nnull pointer constant
+
+HUGE_VAL HUGE_VAL\nmagnitude returned (with correct sign) on overflow error
+exp exp(double x) [double]\nexponential of `x`
+log log(double x) [double]\nnatural logarithm of `x`
+log10 log10(double x) [double]\nbase-10 logarithm of `x`
+pow pow(double x, double y) [double]\n`x` raised to power `y`
+sqrt sqrt(double x) [double]\nsquare root of `x`
+ceil ceil(double x) [double]\nsmallest integer not less than `x`
+floor floor(double x) [double]\nlargest integer not greater than `x`
+fabs fabs(double x) [double]\nabsolute value of `x`
+ldexp ldexp(double x, int n) [double]\n`x` times 2 to the power `n`
+frexp frexp(double x, int* exp) [double]\nif `x` non-zero, returns value, with absolute value in interval [1/2, 1), and\nassigns to `*exp` integer such that product of return value and 2 raised to the\npower `*exp` equals `x`; if `x` zero, both return value and `*exp` are zero
+modf modf(double x, double* ip) [double]\nreturns fractional part and assigns to `*ip` integral part of `x`, both with\nsame sign as `x`
+fmod fmod(double x, double y) [double]\nif `y` non-zero, floating-point remainder of `x`/`y`, with same sign as `x`; if\n`y` zero, result is implementation-defined
+sin sin(double x) [double]\nsine of `x`
+cos cos(double x) [double]\ncosine of `x`
+tan tan(double x) [double]\ntangent of `x`
+asin asin(double x) [double]\narc-sine of `x`
+acos acos(double x) [double]\narc-cosine of `x`
+atan atan(double x) [double]\narc-tangent of `x`
+atan2 atan2(double y, double x) [double]\narc-tangent of `y`/`x`
+sinh sinh(double x) [double]\nhyperbolic sine of `x`
+cosh cosh(double x) [double]\nhyperbolic cosine of `x`
+tanh tanh(double x) [double]\nhyperbolic tangent of `x`
+
+jmp_buf jmp_buf\ntype of object holding context information
+setjmp setjmp(jmp_buf env) [int]\nSaves context information in `env` and returns zero. Subsequent call to longjmp\nwith same `env` returns non-zero.
+longjmp longjmp(jmp_buf env, int val) [void]\nRestores context saved by most recent call to setjmp with specified `env`.\nExecution resumes as a second return from setjmp, with returned value `val` if\nspecified value non-zero, or 1 otherwise.
+
+SIGABRT SIGABRT\nabnormal termination
+SIGFPE SIGFPE\narithmetic error
+SIGILL SIGILL\ninvalid execution
+SIGINT SIGINT\n(asynchronous) interactive attention
+SIGSEGV SIGSEGV\nillegal storage access
+SIGTERM SIGTERM\n(asynchronous) termination request
+SIG_DFL SIG_DFL\nspecifies default signal handling
+SIG_ERR SIG_ERR\nsignal return value indicating error
+SIG_IGN SIG_IGN\nspecifies that signal should be ignored
+raise raise(int sig) [int]\nSends signal sig. Returns zero on success.
+
+va_list va_list\ntype of object holding context information
+va_start va_start(va_list ap, lastarg) [void]\nInitialisation macro which must be called once before any unnamed argument is\naccessed. Stores context information in `ap`. `lastarg` is the last named\nparameter of the function.
+va_arg va_arg(va_list ap, type) [type]\nYields value of the type (`type`) and value of the next unnamed argument.
+va_end va_end(va_list ap) [void]\nTermination macro which must be called once after argument processing and before\nexit from function.
+
+NULL NULL\nNull pointer constant.
+offsetof offsetof(stype, m)\nOffset (in bytes) of member m from start of structure type `stype`.
+ptrdiff_t ptrdiff_t\nType for objects declared to store result of subtracting pointers.
+size_t size_t\nType for objects declared to store result of sizeof operator.
+
+BUFSIZ BUFSIZ\nSize of buffer used by setbuf.
+EOF EOF\nValue used to indicate end-of-stream or to report an error.
+FILENAME_MAX FILENAME_MAX\nMaximum length required for array of characters to hold a filename.
+FOPEN_MAX FOPEN_MAX\nMaximum number of files which may be open simultaneously.
+L_tmpnam L_tmpnam\nNumber of characters required for temporary filename generated by tmpnam.
+NULL NULL\nNull pointer constant.
+SEEK_CUR SEEK_CUR\nValue for origin argument to fseek specifying current file position.
+SEEK_END SEEK_END\nValue for origin argument to fseek specifying end of file.
+SEEK_SET SEEK_SET\nValue for origin argument to fseek specifying beginning of file.
+TMP_MAX TMP_MAX\nMinimum number of unique filenames generated by calls to tmpnam.
+_IOFBF _IOFBF\nValue for mode argument to setvbuf specifying full buffering.
+_IOLBF _IOLBF\nValue for mode argument to setvbuf specifying line buffering.
+_IONBF _IONBF\nValue for mode argument to setvbuf specifying no buffering.
+stdin stdin\nFile pointer for standard input stream. Automatically opened when program\nexecution begins.
+stdout stdout\nFile pointer for standard output stream. Automatically opened when program\nexecution begins.
+stderr stderr\nFile pointer for standard error stream. Automatically opened when program\nexecution begins.
+FILE FILE\nType of object holding information necessary to control a stream.
+fpos_t fpos_t\nType for objects declared to store file position information.
+size_t size_t\nType for objects declared to store result of sizeof operator.
+fopen fopen(const char* filename, const char* mode) [FILE*]\nOpens file named `filename` and returns a stream, or NULL on failure. `mode` may\nbe one of the following for text files:\n  "r": text reading\n  "w": text writing\n  "a": text append\n  "r+": text update (reading and writing)\n  "w+": text update, discarding previous content (if any)\n  "a+": text append, reading, and writing at end\nor one of those strings with b included (after the first character), for\nbinary files.
+freopen freopen(const char* filename, const char* mode, FILE* stream) [FILE*]\nCloses file associated with `stream`, then opens file `filename` with specified\nmode and associates it with `stream`. Returns `stream` or NULL on error.
+fflush fflush(FILE* stream) [int]\nFlushes stream `stream` and returns zero on success or EOF on error. Effect\nundefined for input stream. fflush(NULL) flushes all output streams.
+fclose fclose(FILE* stream) [int]\nCloses stream `stream` (after flushing, if output stream). Returns EOF on error,\nzero otherwise.
+remove remove(const char* filename) [int]\nRemoves specified file. Returns non-zero on failure.
+rename rename(const char* oldname, const char* newname) [int]\nChanges name of file `oldname` to `newname`. Returns non-zero on failure.
+tmpfile tmpfile() [FILE*]\nCreates temporary file (mode "wb+") which will be removed when closed or on\nnormal program termination. Returns stream or NULL on failure.
+tmpnam tmpnam(char s[L_tmpnam]) [char*]\nAssigns to `s` (if `s` non-null) and returns unique name for a temporary file.\nUnique name is returned for each of the first TMP_MAX invocations.
+setvbuf setvbuf(FILE* stream, char* buf, int mode, size_t size) [int]\nControls buffering for stream `stream`. mode is _IOFBF for full buffering,\n_IOLBF for line buffering, _IONBF for no buffering. Non-null `buf` specifies\nbuffer of size `size` to be used; otherwise, a buffer is allocated. Returns\nnon-zero on error. Call must be before any other operation on stream.
+setbuf setbuf(FILE* stream, char* buf) [void]\nControls buffering for stream `stream`. For null `buf`, turns off buffering,\notherwise equivalent to `(void)setvbuf(stream, buf, _IOFBF, BUFSIZ)`.
+fprintf fprintf(FILE* stream, const char* format, ...) [int]\nConverts (according to format `format`) and writes output to stream `stream`.\nNumber of characters written, or negative value on error, is returned.\nConversion specifications consist of:\n  * %\n  * (optional) flag:\n    -: left adjust\n    +: always sign\n    space: space if no sign\n    0: zero pad\n    #: Alternate form: for conversion character o, first digit will be zero, for\n       [xX], prefix 0x or 0X to non-zero value, for [eEfgG], always decimal\n       point, for [gG] trailing zeros not removed.\n  * (optional) minimum width: if specified as *, value taken from next argument\n    (which must be int).\n  * (optional) . (separating width from precision):\n  * (optional) precision: for conversion character s, maximum characters to be\n    printed from the string, for [eEf], digits after decimal point, for [gG],\n    significant digits, for an integer, minimum number of digits to be printed.\n    If specified as *, value taken from next argument (which must be int).\n  * (optional) length modifier:\n    h: short or unsigned short\n    l: long or unsigned long\n    L: long double\n  * conversion character:\n    d,i: int argument, printed in signed decimal notation\n    o: int argument, printed in unsigned octal notation\n    x,X: int argument, printed in unsigned hexadecimal notation\n    u: int argument, printed in unsigned decimal notation\n    c: int argument, printed as single character\n    s: char* argument\n    f: double argument, printed with format [-]mmm.ddd\n    e,E: double argument, printed with format [-]m.dddddd(e|E)(+|-)xx\n    g,G: double argument\n    p: void* argument, printed as pointer\n    n: int* argument : the number of characters written to this point is written\n       into argument\n    %: no argument; prints %
+printf printf(const char* format, ...) [int]\nprintf(f, ...) is equivalent to fprintf(stdout, f, ...)
+sprintf sprintf(char* s, const char* format, ...) [int]\nLike fprintf, but output written into string `s`, which *must be large enough to\nhold the output*, rather than to a stream. Output is NUL-terminated. Returns\nlength (excluding the terminating NUL).
+vfprintf vfprintf(FILE* stream, const char* format, va_list arg) [int]\nEquivalent to fprintf with variable argument list replaced by `arg`, which must\nhave been initialised by the va_start macro (and may have been used in calls to\nva_arg).
+vprintf vprintf(const char* format, va_list arg) [int]\nEquivalent to printf with variable argument list replaced by `arg`, which must\nhave been initialised by the va_start macro (and may have been used in calls to\nva_arg).
+vsprintf vsprintf(char* s, const char* format, va_list arg) [int]\nEquivalent to sprintf with variable argument list replaced by `arg`, which must\nhave been initialised by the va_start macro (and may have been used in calls to\nva_arg).
+fscanf fscanf(FILE* stream, const char* format, ...) [int]\nPerforms formatted input conversion, reading from stream `stream` according to\nformat `format`. The function returns when `format` is fully processed. Returns\nnumber of items converted and assigned, or EOF if end-of-file or error occurs\nbefore any conversion. Each of the arguments following format *must be a\npointer*. Format string may contain:\n  * blanks and tabs, which are ignored\n  * ordinary characters, which are expected to match next non-white-space of\n    input\n  * conversion specifications, consisting of:\n    * %\n    * (optional) assignment suppression character "*"\n    * (optional) maximum field width\n    * (optional) target width indicator:\n      h: argument is pointer to short rather than int\n      l: argument is pointer to long rather than int, or double rather than\n         float\n      L: argument is pointer to long double rather than float\n    * conversion character:\n      d: decimal integer; int* parameter required\n      i: integer; int* parameter required; decimal, octal or hex\n      o: octal integer; int* parameter required\n      u: unsigned decimal integer; unsigned int* parameter required\n      x: hexadecimal integer; int* parameter required\n      c: characters; char* parameter required; white-space is not skipped, and\n         NUL-termination is not performed\n      s: string of non-white-space; char* parameter required; string is\n         NUL-terminated\n      e,f,g: floating-point number; float* parameter required\n      p: pointer value; void* parameter required\n      n: chars read so far; int* parameter required\n      [...]: longest non-empty string from specified set; char* parameter\n             required; string is NUL-terminated\n      [^...]: longest non-empty string not from specified set; char* parameter\n              required; string is NUL-terminated\n      %: literal %; no assignment
+scanf scanf(const char* format, ...) [int]\nscanf(f, ...) is equivalent to fscanf(stdin, f, ...)
+sscanf sscanf(char* s, const char* format, ...) [int]\nLike fscanf, but input read from string `s`.
+fgetc fgetc(FILE* stream) [int]\nReturns next character from (input) stream `stream`, or EOF on end-of-file or\nerror.
+fgets fgets(char* s, int n, FILE* stream) [char*]\nCopies characters from (input) stream `stream` to `s`, stopping when `n`-1\ncharacters copied, newline copied, end-of-file reached or error occurs. If no\nerror, `s` is NUL-terminated. Returns NULL on end-of-file or error, `s`\notherwise.
+fputc fputc(int c, FILE* stream) [int]\nWrites `c`, to stream `stream`. Returns `c`, or EOF on error.
+fputs fputs(const char* s, FILE* stream) [char*]\nWrites `s`, to (output) stream `stream`. Returns non-negative on success or EOF\non error.
+getc getc(FILE* stream) [int]\nEquivalent to fgetc except that it may be a macro.
+getchar getchar(void) [int]\nEquivalent to getc(stdin).
+gets gets(char* s) [char*]\nCopies characters from stdin into `s` until newline encountered, end-of-file\nreached, or error occurs. Does not copy newline. NUL-terminates `s`. Returns\n`s`, or NULL on end-of-file or error. *Should not be used because of the\npotential for buffer overflow.*
+putc putc(int c, FILE* stream) [int]\nEquivalent to fputc except that it may be a macro.
+putchar putchar(int c) [int]\nputchar(c) is equivalent to putc(c, stdout).
+puts puts(const char* s) [int]\nWrites `s` (excluding terminating NUL) and a newline to stdout. Returns\nnon-negative on success, EOF on error.
+ungetc ungetc(int c, FILE* stream) [int]\nPushes `c` (which must not be EOF), onto (input) stream `stream` such that it\nwill be returned by the next read. Only one character of pushback is guaranteed\n(for each stream). Returns `c`, or EOF on error.
+fread fread(void* ptr, size_t size, size_t nobj, FILE* stream) [size_t]\nReads (at most) `nobj` objects of size `size` from stream `stream` into `ptr`\nand returns number of objects read. (feof and ferror can be used to check\nstatus.)
+fwrite fwrite(const void* ptr, size_t size, size_t nobj, FILE* stream) [size_t]\nWrites to stream `stream`, `nobj` objects of size `size` from array `ptr`.\nReturns number of objects written.
+fseek fseek(FILE* stream, long offset, int origin) [int]\nSets file position for stream `stream` and clears end-of-file indicator. For a\nbinary stream, file position is set to `offset` bytes from the position\nindicated by `origin`: beginning of file for SEEK_SET, current position for\nSEEK_CUR, or end of file for SEEK_END. Behaviour is similar for a text stream,\nbut `offset` must be zero or, for SEEK_SET only, a value returned by ftell.\nReturns non-zero on error.
+ftell ftell(FILE* stream) [long]\nReturns current file position for stream `stream`, or -1 on error.
+rewind rewind(FILE* stream) [void]\nEquivalent to fseek(stream, 0L, SEEK_SET); clearerr(stream).
+fgetpos fgetpos(FILE* stream, fpos_t* ptr) [int]\nStores current file position for stream `stream` in `*ptr`. Returns non-zero on\nerror.
+fsetpos fsetpos(FILE* stream, const fpos_t* ptr) [int]\nSets current position of stream `stream` to `*ptr`. Returns non-zero on error.
+clearerr clearerr(FILE* stream) [void]\nClears end-of-file and error indicators for stream `stream`.
+feof feof(FILE* stream) [int]\nReturns non-zero if end-of-file indicator is set for stream `stream`.
+ferror ferror(FILE* stream) [int]\nReturns non-zero if error indicator is set for stream `stream`.
+perror perror(const char* s) [void]\nPrints `s` (if non-null) and strerror(errno) to standard error as would:\n  fprintf(stderr, "%s: %s\n", (s != NULL ? s : ""), strerror(errno))
+
+EXIT_FAILURE EXIT_FAILURE\nValue for status argument to exit indicating failure.
+EXIT_SUCCESS EXIT_SUCCESS\nValue for status argument to exit indicating success.
+RAND_MAX RAND_MAX\nMaximum value returned by rand().
+NULL NULL\nNull pointer constant.
+div_t div_t\nReturn type of div().
+quot div_t.quot [int]\nquotient
+rem div_t.rem [int]\nremainder
+ldiv_t ldiv_t\nReturn type of ldiv().
+qout ldiv_t.quot [long]\nquotient
+rem ldiv_t.rem [long]\nremainder
+size_t size_t\nType for objects declared to store result of sizeof operator.
+abs abs(int n) [int]
+labs labs(long n) [long]\nReturns absolute value of `n`.
+div div(int num, int denom) [div_t]
+ldiv ldiv(long num, long denom) [ldiv_t]\nReturns quotient and remainder of `num`/`denom`.
+atof atof(const char* s) [double]\nEquivalent to strtod(s, (char**)NULL) except that errno is not necessarily set\non conversion error.
+atoi atoi(const char* s) [int]\nEquivalent to (int)strtol(s, (char**)NULL, 10) except that errno is not\nnecessarily set on conversion error.
+atol atol(const char* s) [long]\nEquivalent to strtol(s, (char**)NULL, 10) except that errno is not necessarily\nset on conversion error.
+strtod strtod(const char* s, char** endp) [double]\nConverts initial characters (ignoring leading white space) of `s` to type\ndouble. If `endp` non-null, stores pointer to unconverted suffix in `*endp`. On\noverflow, sets errno to ERANGE and returns HUGE_VAL with the appropriate sign;\non underflow, sets errno to ERANGE and returns zero; otherwise returns converted\nvalue.
+strtol strtol(const char* s, char** endp, int base) [long]\nConverts initial characters (ignoring leading white space) of `s` to type long.\nIf `endp` non-null, stores pointer to unconverted suffix in `*endp`. If base\nbetween 2 and 36, that base used for conversion; if zero, leading (after any\nsign) 0X or 0x implies hexadecimal, leading 0 (after any sign) implies octal,\notherwise decimal assumed. Leading 0X or 0x permitted for base hexadecimal. On\noverflow, sets errno to ERANGE and returns LONG_MAX or LONG_MIN (as appropriate\nfor sign); otherwise returns converted value.
+strtoul strtoul(const char* s, char** endp, int base) [unsigned long]\nAs for strtol except result is unsigned long and value on overflow is ULONG_MAX.
+calloc calloc(size_t nobj, size_t size) [void*]\nReturns pointer to _zero-initialised_ newly-allocated space for an array of\n`nobj` objects each of size `size`, or NULL on error.
+malloc malloc(size_t size) [void*]\nReturns pointer to _uninitialised_ newly-allocated space for an object of size\n`size`, or NULL on error.
+realloc realloc(void* p, size_t size) [void*]\nReturns pointer to newly-allocated space for an object of size `size`,\ninitialised, to minimum of old and new sizes, to existing contents of `p` (if\nnon-null), or NULL on error. On success, old object deallocated, otherwise\nunchanged.
+free free(void* p) [void]\nIf `p` non-null, deallocates space to which it points.
+abort abort() [void]\nTerminates program abnormally, by calling raise(SIGABRT).
+exit exit(int status) [void]\nTerminates program normally. Functions installed using atexit are called (in\nreverse order to that in which installed), open files are flushed, open streams\nare closed and control is returned to environment. `status` is returned to\nenvironment in implementation-dependent manner. Zero or EXIT_SUCCESS indicates\nsuccessful termination and EXIT_FAILURE indicates unsuccessful termination.\nImplementations may define other values.
+atexit atexit(void (*fcm)(void)) [int]\nRegisters `fcn` to be called when program terminates normally (or when main\nreturns). Returns non-zero on failure.
+system system(const char* s) [int]\nIf `s` is not NULL, passes `s` to environment for execution, and returns \nreported by command processor; if `s` is NULL, non-zero returned if environment\nhas a command processor.
+getenv getenv(const char* name) [char*]\nReturns string associated with name `name` from implementation's environment, or\nNULL if no such string exists.
+bsearch bsearch(const void* key, const void* base, size_t n, size_t size, int (*cmp)(const void* keyval, const void* datum)) [void*]\nSearches ordered array `base` (of `n` objects each of size `size`) for item\nmatching key according to comparison function `cmp`. `cmp` must return negative\nvalue if first argument is less than second, zero if equal and positive if\ngreater. Items of `base` are assumed to be in ascending order (according to\n`cmp`). Returns a pointer to an item matching `key`, or NULL if none found.
+qsort qsort(void* base, size_t n, size_t size, int (*cmp)(const void*, const void*)) [void]\nArranges into ascending order array `base` (of `n` objects each of size `size`)\naccording to comparison function `cmp`. `cmp` must return negative value if\nfirst argument is less than second, zero if equal and positive if greater.
+rand rand(void) [int]\nReturns pseudo-random number in range 0 to RAND_MAX.
+srand srand(unsigned int seed) [void]\nUses seed as seed for new sequence of pseudo-random numbers. Initial seed is 1.
+
+NULL NULL\nNull pointer constant.
+size_t size_t\nType for objects declared to store result of sizeof operator.
+strcpy strcpy(char* s, const char* ct) [char*]\nCopies `ct` to `s` including terminating NUL and returns `s`.
+strncpy strncpy(char* s, const char* ct, size_t n) [char*]\nCopies at most `n` characters of `ct` to `s`. Pads with NUL characters if `ct`\nis of length less than `n`. *Note that this may leave `s` without\nNUL-termination.* Return `s`.
+strcat strcat(char* s, const char* ct) [char*]\nConcatenate `ct` to `s` and return `s`.
+strncat strncat(char* s, const char* ct, size_t n) [char*]\nConcatenate at most `n` characters of `ct` to `s`. NUL-terminates `s` and return it.
+strcmp strcmp(const char* cs, const char* ct) [int]\nCompares `cs` with `ct`, returning negative value if `cs`<`ct`, zero if\n`cs`==`ct`, positive value if `cs`>`ct`.
+strncmp strncmp(const char* cs, const char* ct, size_t n) [int]\nCompares at most (the first) `n` characters of `cs` and `ct`, returning negative\nvalue if `cs`<`ct`, zero if `cs`==`ct`, positive value if `cs`>`ct`.
+strcoll strcoll(const char* cs, const char* ct) [int]\nCompares `cs` with `ct` according to locale, returning negative value if\n`cs`<`ct`, zero if `cs`==`ct`, positive value if `cs`>`ct`.
+strchr strchr(const char* cs, int c) [char*]\nReturns pointer to first occurrence of `c` in `cs`, or NULL if not found.
+strrchr strrchr(const char* cs, int c) [char*]\nReturns pointer to last occurrence of `c` in `cs`, or NULL if not found.
+strspn strspn(const char* cs, const char* ct) [size_t]\nReturns length of prefix of `cs` which consists of characters which are in `ct`.
+strcspn strcspn(const char* cs, const char* ct) [size_t]\nReturns length of prefix of `cs` which consists of characters which are not in\n`ct`.
+strpbrk strpbrk(const char* cs, const char* ct) [char*]\nReturns pointer to first occurrence in `cs` of any character of `ct`, or NULL if\nnone is found.
+strstr strstr(const char* cs, const char* ct) [char*]\nReturns pointer to first occurrence of `ct` within `cs`, or NULL if none is\nfound.
+strlen strlen(const char* cs) [size_t]\nReturns length of `cs`.
+strerror strerror(int n) [char*]\nReturns pointer to implementation-defined message string corresponding with\nerror `n`.
+strtok strtok(char* s, const char* t) [char*]\nSearches `s` for next token delimited by any character from `ct`. Non-NULL `s`\nindicates the first call of a sequence. If a token is found, it is\nNUL-terminated and returned, otherwise NULL is returned. `ct` need not be\nidentical for each call in a sequence.
+strxfrm strxfrm(char* s, const char* ct, size_t n) [size_t]\nStores in `s` no more than `n` characters (including terminating NUL) of a\nstring produced from `ct` according to a locale-specific transformation. Returns\nlength of entire transformed string.
+memcpy memcpy(void* s, const void* ct, size_t n) [void*]\nCopies `n` characters from `ct` to `s` and returns `s`. *`s` may be corrupted if\nobjects overlap.*
+memmove memmove(void* s, const void* ct, size_t n) [void*]\nCopies `n` characters from `ct` to `s` and returns `s`. *`s` will not be\ncorrupted if objects overlap.*
+memcmp memcmp(const void* cs, const void* ct, size_t n) [int]\nCompares at most (the first) `n` characters of `cs` and `ct`, returning negative\nvalue if `cs`<`ct`, zero if `cs`==`ct`, positive value if `cs`>`ct`.
+memchr memchr(const void* cs, int c, size_t n) [void*]\nReturns pointer to first occurrence of `c` in first `n` characters of `cs`, or\nNULL if not found.
+memset memset(void* s, int c, size_t n) [void*]\nReplaces each of the first `n` characters of `s` by `c` and returns `s`.
+
+CLOCKS_PER_SEC CLOCKS_PER_SEC\nThe number of clock_t units per second.
+NULL NULL\nNull pointer constant.
+clock_t clock_t\nAn arithmetic type elapsed processor representing time.
+time_t time_t\nAn arithmetic type representing calendar time.
+tm tm [struct]\nRepresents the components of calendar time\nImplementations may change field order and include additional fields.
+tm_set tm.tm_sec [int]\nseconds after the minute
+tm_min tm.tm_min [int]\nminutes after the hour
+tm_hour tm.tm_hour [int]\nhours since midnight
+tm_mday tm.tm_mday [int]\nday of the month
+tm_mon tm.tm_mon [int]\nmonths *since* January
+tm_year tm.tm_year [int]\nyears since 1900
+tm_wday tm.tm_wday [int]\ndays since Sunday
+tm_yday tm.tm_yday [int]\ndays since January 1
+tm_isdst tm.tm_isdst [int]\nDaylight Saving Time flag : is positive if DST is in effect, zero if not in\neffect, negative if information not known.
+clock clock(void) [clock_t]\nReturns elapsed processor time used by program or -1 if not available.
+time time(time_t* tp) [time_t]\nReturns current calendar time or -1 if not available. If `tp` is non-NULL,\nreturn value is also assigned to `*tp`.
+difftime difftime(time_t time2, time_t time1) [double]\nReturns the difference in seconds between `time2` and `time1`.
+mktime mktime(struct tm* tp) [time_t]\nIf necessary, adjusts fields of `*tp` to fall withing normal ranges. Returns the\ncorresponding calendar time, or -1 if it cannot be represented.
+asctime asctime(const struct tm* tp) [char*]\nReturns the given time as a string of the form:\n  Sun Jan 3 13:08:42 1988\n\0
+ctime ctime(const time_t* tp) [char*]\nReturns string equivalent to calendar time `tp` converted to local time.\nEquivalent to: asctime(localtime(tp))
+gmtime gmtime(const time_t* tp) [struct tm*]\nReturns calendar time `*tp` converted to Coordinated Universal Time, or NULL if\nnot available.
+localtime localtime(const time_t* tp) [struct tm*]\nReturns calendar time `*tp` converted into local time.
+strftime strftime(char* s, size_t smax, const char* fmt, const struct tm* tp) [size_t]\nFormats `*tp` into `s` according to `fmt`. Places no more than `smax` characters\ninto `s`, and returns number of characters produced (excluding terminating NUL),\nor 0 if greater than `smax`. Formatting conversions (`%c`) are:\n  A: name of weekday\n  a: abbreviated name of weekday\n  B: name of month\n  b: abbreviated name of month\n  c: local date and time representation\n  d: day of month [01-31]\n  H: hour (24-hour clock) [00-23]\n  I: hour (12-hour clock) [01-12]\n  j: day of year [001-366]\n  M: minute [00-59]\n  m: month [01-12]\n  p: local equivalent of "AM" or "PM"\n  S: second [00-61]\n  U: week number of year (Sunday as 1st day of week) [00-53]\n  W: week number of year (Monday as 1st day of week) [00-53]\n  w: weekday (Sunday as 0) [0-6]\n  X: local time representation\n  x: local date representation\n  Y: year with century\n  y: year without century [00-99]\n  Z: name (if any) of time zone\n  %: %\nLocal time may differ from calendar time because of time zone.
