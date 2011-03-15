@@ -1,0 +1,268 @@
+assert	_	0;"	f
+isalnum	_	0;"	f
+isalpha	_	0;"	f
+iscontrl	_	0;"	f
+isdigit	_	0;"	f
+isgraph	_	0;"	f
+islower	_	0;"	f
+isprint	_	0;"	f
+ispunct	_	0;"	f
+isspace	_	0;"	f
+isupper	_	0;"	f
+isxdigit	_	0;"	f
+tolower	_	0;"	f
+toupper	_	0;"	f
+errno	_	0;"	m
+EDOM	_	0;"	m
+ERANGE	_	0;"	m
+FLT_RADIX	_	0;"	m
+FLT_ROUNDS	_	0;"	m
+FLT_DIG	_	0;"	m
+DBL_DIG	_	0;"	m
+LDBL_DIG	_	0;"	m
+FLT_EPSILON	_	0;"	m
+DBL_EPSILON	_	0;"	m
+LDBL_EPSILON	_	0;"	m
+FLT_MANT_DIG	_	0;"	m
+DBL_MANT_DIG	_	0;"	m
+LDBL_MANT_DIG	_	0;"	m
+FLT_MAX	_	0;"	m
+DBL_MAX	_	0;"	m
+LDBL_MAX	_	0;"	m
+FLT_MAX_EXP	_	0;"	m
+DBL_MAX_EXP	_	0;"	m
+LDBL_MAX_EXP	_	0;"	m
+FLT_MIN	_	0;"	m
+DBL_MIN	_	0;"	m
+LDBL_MIN	_	0;"	m
+FLT_MIN_EXP	_	0;"	m
+DBL_MIN_EXP	_	0;"	m
+LDBL_MIN_EXP	_	0;"	m
+CHAR_BIT	_	0;"	m
+CHAR_MAX	_	0;"	m
+CHAR_MIN	_	0;"	m
+SCHAR_MAX	_	0;"	m
+SCHAR_MIN	_	0;"	m
+UCHAR_MAX	_	0;"	m
+SHRT_MAX	_	0;"	m
+SHRT_MIN	_	0;"	m
+USHRT_MAX	_	0;"	m
+INT_MAX	_	0;"	m
+INT_MIN	_	0;"	m
+UINT_MAX	_	0;"	m
+LONG_MAX	_	0;"	m
+LONG_MIN	_	0;"	m
+ULONG_MAX	_	0;"	m
+lconv	_	0;"	s
+decimal_point	_	0;"	m	class:lconv
+grouping	_	0;"	m	class:lconv
+thousands_sep	_	0;"	m	class:lconv
+currency_symbol	_	0;"	m	class:lconv
+int_curr_symbol	_	0;"	m	class:lconv
+mon_decimal_point	_	0;"	m	class:lconv
+mon_grouping	_	0;"	m	class:lconv
+mon_thousands_sep	_	0;"	m	class:lconv
+negative_sign	_	0;"	m	class:lconv
+positive_sign	_	0;"	m	class:lconv
+frac_digits	_	0;"	m	class:lconv
+int_frac_digits	_	0;"	m	class:lconv
+n_cs_precedes	_	0;"	m	class:lconv
+n_sep_by_space	_	0;"	m	class:lconv
+n_sign_posn	_	0;"	m	class:lconv
+p_cs_precedes	_	0;"	m	class:lconv
+p_sep_by_space	_	0;"	m	class:lconv
+p_sign_posn	_	0;"	m	class:lconv
+localeconv	_	0;"	f
+setlocale	_	0;"	f
+LC_ALL	_	0;"	m
+LC_NUMERIC	_	0;"	m
+LC_MONETARY	_	0;"	m
+LC_COLLATE	_	0;"	m
+LC_CTYPE	_	0;"	m
+LC_TIME	_	0;"	m
+NULL	_	0;"	m
+HUGE_VAL	_	0;"	m
+exp	_	0;"	f
+log	_	0;"	f
+log10	_	0;"	f
+pow	_	0;"	f
+sqrt	_	0;"	f
+ceil	_	0;"	f
+floor	_	0;"	f
+fabs	_	0;"	f
+ldexp	_	0;"	f
+frexp	_	0;"	f
+modf	_	0;"	f
+fmod	_	0;"	f
+sin	_	0;"	f
+cos	_	0;"	f
+tan	_	0;"	f
+asin	_	0;"	f
+acos	_	0;"	f
+atan	_	0;"	f
+atan2	_	0;"	f
+sinh	_	0;"	f
+cosh	_	0;"	f
+tanh	_	0;"	f
+jmp_buf	_	0;"	f
+setjmp	_	0;"	f
+longjmp	_	0;"	f
+SIGABRT	_	0;"	m
+SIGFPE	_	0;"	m
+SIGILL	_	0;"	m
+SIGINT	_	0;"	m
+SIGSEGV	_	0;"	m
+SIGTERM	_	0;"	m
+SIG_DFL	_	0;"	m
+SIG_ERR	_	0;"	m
+SIG_IGN	_	0;"	m
+raise	_	0;"	f
+va_list	_	0;"	m
+va_start	_	0;"	f
+va_arg	_	0;"	f
+va_end	_	0;"	f
+NULL	_	0;"	m
+offsetof	_	0;"	f
+ptrdiff_t	_	0;"	t
+size_t	_	0;"	t
+BUFSIZ	_	0;"	m
+EOF	_	0;"	m
+FILENAME_MA	_	0;"	mX
+FOPEN_MAX	_	0;"	m
+L_tmpnam	_	0;"	m
+NULL	_	0;"	m
+SEEK_CUR	_	0;"	m
+SEEK_END	_	0;"	m
+SEEK_SET	_	0;"	m
+TMP_MAX	_	0;"	m
+_IOFBF	_	0;"	m
+_IOLBF	_	0;"	m
+_IONBF	_	0;"	m
+stdin	_	0;"	m
+stdout	_	0;"	m
+stderr	_	0;"	m
+FILE	_	0;"	t
+fpos_t	_	0;"	t
+size_t	_	0;"	t
+fopen	_	0;"	f
+freopen	_	0;"	f
+fflush	_	0;"	f
+fclose	_	0;"	f
+remove	_	0;"	f
+rename	_	0;"	f
+tmpfile	_	0;"	f
+tmpnam	_	0;"	f
+setvbuf	_	0;"	f
+setbuf	_	0;"	f
+fprintf	_	0;"	f
+printf	_	0;"	f
+sprintf	_	0;"	f
+vfprintf	_	0;"	f
+vprintf	_	0;"	f
+vsprintf	_	0;"	f
+fscanf	_	0;"	f
+scanf	_	0;"	f
+sscanf	_	0;"	f
+fgetc	_	0;"	f
+fgets	_	0;"	f
+fputc	_	0;"	f
+fputs	_	0;"	f
+getc	_	0;"	f
+getchar	_	0;"	f
+gets	_	0;"	f
+putc	_	0;"	f
+putchar	_	0;"	f
+puts	_	0;"	f
+ungetc	_	0;"	f
+fread	_	0;"	f
+fwrite	_	0;"	f
+fseek	_	0;"	f
+ftell	_	0;"	f
+rewind	_	0;"	f
+fgetpos	_	0;"	f
+fsetpos	_	0;"	f
+clearerr	_	0;"	f
+feof	_	0;"	f
+ferror	_	0;"	f
+perror	_	0;"	f
+EXIT_FAILURE	_	0;"	m
+EXIT_SUCCESS	_	0;"	m
+RAND_MAX	_	0;"	m
+NULL	_	0;"	m
+div_t	_	0;"	s
+quot	_	0;"	m	class:div_t
+rem	_	0;"	m	class:div_t
+ldiv_t	_	0;"	s
+qout	_	0;"	m	class:ldiv_t
+rem	_	0;"	m	class:ldiv_t
+size_t	_	0;"	t
+abs	_	0;"	f
+labs	_	0;"	f
+div	_	0;"	f
+ldiv	_	0;"	f
+atof	_	0;"	f
+atoi	_	0;"	f
+atol	_	0;"	f
+strtod	_	0;"	f
+strtol	_	0;"	f
+strtoul	_	0;"	f
+calloc	_	0;"	f
+malloc	_	0;"	f
+realloc	_	0;"	f
+free	_	0;"	f
+abort	_	0;"	f
+exit	_	0;"	f
+atexit	_	0;"	f
+system	_	0;"	f
+getenv	_	0;"	f
+bsearch	_	0;"	f
+qsort	_	0;"	f
+rand	_	0;"	f
+srand	_	0;"	f
+NULL	_	0;"	m
+size_t	_	0;"	t
+strcpy	_	0;"	f
+strncpy	_	0;"	f
+strcat	_	0;"	f
+strncat	_	0;"	f
+strcmp	_	0;"	f
+strncmp	_	0;"	f
+strcoll	_	0;"	f
+strchr	_	0;"	f
+strrchr	_	0;"	f
+strspn	_	0;"	f
+strcspn	_	0;"	f
+strpbrk	_	0;"	f
+strstr	_	0;"	f
+strlen	_	0;"	f
+strerror	_	0;"	f
+strtok	_	0;"	f
+strxfrm	_	0;"	f
+memcpy	_	0;"	f
+memmove	_	0;"	f
+memcmp	_	0;"	f
+memchr	_	0;"	f
+memset	_	0;"	f
+CLOCKS_PER_SEC	_	0;"	m
+NULL	_	0;"	m
+clock_t	_	0;"	t
+time_t	_	0;"	t
+tm	_	0;"	s
+tm_set	_	0;"	m	class:tm
+tm_min	_	0;"	m	class:tm
+tm_hour	_	0;"	m	class:tm
+tm_mday	_	0;"	m	class:tm
+tm_mon	_	0;"	m	class:tm
+tm_year	_	0;"	m	class:tm
+tm_wday	_	0;"	m	class:tm
+tm_yday	_	0;"	m	class:tm
+tm_isdst	_	0;"	m	class:tm
+clock	_	0;"	f
+time	_	0;"	f
+difftime	_	0;"	f
+mktime	_	0;"	f
+asctime	_	0;"	f
+ctime	_	0;"	f
+gmtime	_	0;"	f
+localtime	_	0;"	f
+strftime	_	0;"	f
