@@ -176,12 +176,13 @@ function autocomplete_word(word_chars)
   local completions, c_list = {}, {}
   local buffer_text = buffer:get_text(buffer.length)
   local root = buffer_text:sub(1, caret):match('['..word_chars..']+$')
-  if not root or #root == 0 then return end
+  if not root or root == '' then return end
+  local patt = '^['..word_chars..']+'
   buffer.target_start, buffer.target_end = 0, buffer.length
   buffer.search_flags = 1048580 -- word start and match case
   local match_pos = buffer:search_in_target(root)
   while match_pos ~= -1 do
-    local s, e = buffer_text:find('^['..word_chars..']+', match_pos + 1)
+    local s, e = buffer_text:find(patt, match_pos + 1)
     local match = buffer_text:sub(s, e)
     if not completions[match] and #match > #root then
       c_list[#c_list + 1] = match
@@ -251,15 +252,17 @@ function prepare_for_save()
   local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
+  local line_end_position = buffer.line_end_position
+  local char_at = buffer.char_at
   local lines = buffer.line_count
   for line = 0, lines - 1 do
     local s = buffer:position_from_line(line)
-    local e = buffer.line_end_position[line]
+    local e = line_end_position[line]
     local i = e - 1
-    local c = buffer.char_at[i]
+    local c = char_at[i]
     while i >= s and c == 9 or c == 32 do
       i = i - 1
-      c = buffer.char_at[i]
+      c = char_at[i]
     end
     if i < e - 1 then
       buffer.target_start, buffer.target_end = i + 1, e
@@ -326,7 +329,7 @@ function enclose(left, right)
   local buffer = buffer
   buffer:begin_undo_action()
   local txt = buffer:get_sel_text()
-  if #txt == 0 then
+  if txt == '' then
     buffer:word_left_extend()
     txt = buffer:get_sel_text()
   end
@@ -418,11 +421,13 @@ end
 -- Converts indentation between tabs and spaces.
 function convert_indentation()
   local buffer = buffer
+  local line_indentation = buffer.line_indentation
+  local line_indent_position = buffer.line_indent_position
   buffer:begin_undo_action()
   for line = 0, buffer.line_count do
     local s = buffer:position_from_line(line)
-    local indent = buffer.line_indentation[line]
-    local indent_pos = buffer.line_indent_position[line]
+    local indent = line_indentation[line]
+    local indent_pos = line_indent_position[line]
     current_indentation = buffer:text_range(s, indent_pos)
     if buffer.use_tabs then
       new_indentation = ('\t'):rep(indent / buffer.tab_width)

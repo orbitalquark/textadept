@@ -147,9 +147,9 @@ local function set_lexer(buffer, lang)
   if ws_styles[lang] then return end
 
   -- Create the ws_styles[lexer] lookup table for get_lexer().
-  local ws, find = {}, string.find
+  local ws = {}
   for i = 0, 255 do
-    ws[i] = find(get_style_name(buffer, i), 'whitespace') and true or false
+    ws[i] = buffer:private_lexer_call(i):find('whitespace') ~= nil
   end
   ws_styles[lang] = ws
 end

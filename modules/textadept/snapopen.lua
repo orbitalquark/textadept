@@ -69,7 +69,7 @@ local function add_directory(utf8_dir, list, depth, filter)
   for file in lfs_dir(dir) do
     if not string_match(file, '^%.%.?$') then
       file = dir..(not WIN32 and '/' or '\\')..file
-      if lfs_attributes(file).mode == 'directory' then
+      if lfs_attributes(file, 'mode') == 'directory' then
         if not exclude(file, filter.folders) and depth < DEPTH then
           add_directory(file, list, depth + 1, filter)
         end

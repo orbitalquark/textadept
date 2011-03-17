@@ -379,9 +379,10 @@ function _insert(s_text)
       local ref_line = buffer:line_from_position(start)
       local isize, ibase = buffer.indent, buffer.line_indentation[ref_line]
       local inum = ibase / isize -- number of indents needed to match
+      local line_indentation = buffer.line_indentation
       for i = 1, count do
-        local linei = buffer.line_indentation[ref_line + i]
-        buffer.line_indentation[ref_line + i] = linei + isize * inum
+        local linei = line_indentation[ref_line + i]
+        line_indentation[ref_line + i] = linei + isize * inum
       end
     end
     buffer:end_undo_action()
