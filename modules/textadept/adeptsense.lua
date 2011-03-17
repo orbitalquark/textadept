@@ -635,7 +635,7 @@ function load_ctags(sense, tag_file, nolocations)
         -- Update completions.
         -- If no class structure is found, the global namespace is used.
         for _, key in ipairs{ 'class', 'interface', 'struct', 'union', '' } do
-          local class = (#key == 0) and '' or ext_fields:match(key..':(%S+)')
+          local class = (key == '') and '' or ext_fields:match(key..':(%S+)')
           if class then
             if not completions[class] then
               completions[class] = { fields = {}, functions = {} }

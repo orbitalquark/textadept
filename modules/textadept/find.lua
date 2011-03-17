@@ -3,6 +3,7 @@
 local L = _G.locale.localize
 local events = _G.events
 local find = gui.find
+local c = _SCINTILLA.constants
 
 local MARK_FIND = 0
 local MARK_FIND_COLOR = 0x4D9999
@@ -32,7 +33,6 @@ function find.find_in_files(utf8_dir)
     if not find.match_case then text = text:lower() end
     if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
     local match_case, whole_word = find.match_case, find.whole_word
-    local string_find, format = string.find, string.format
     local matches = { 'Find: '..text }
     function search_file(file)
       local line_num = 1
@@ -40,9 +40,9 @@ function find.find_in_files(utf8_dir)
         local optimized_line = line
         if not match_case then optimized_line = line:lower() end
         if whole_word then optimized_line = ' '..line..' ' end
-        if string_find(optimized_line, text) then
+        if optimized_line:find(text) then
           file = file:iconv('UTF-8', _CHARSET)
-          matches[#matches + 1] = format('%s:%s:%s', file, line_num, line)
+          matches[#matches + 1] = ('%s:%s:%s'):format(file, line_num, line)
         end
         line_num = line_num + 1
       end
@@ -52,7 +52,7 @@ function find.find_in_files(utf8_dir)
       for file in lfs_dir(directory) do
         if not file:find('^%.%.?$') then -- ignore . and ..
           local path = directory..'/'..file
-          local type = lfs_attributes(path).mode
+          local type = lfs_attributes(path, 'mode')
           if type == 'directory' then
             search_dir(path)
           elseif type == 'file' then
@@ -82,7 +82,7 @@ end
 --   internally, and should not be set otherwise.
 -- @return position of the found text or -1
 local function find_(text, next, flags, nowrap, wrapped)
-  if #text == 0 then return end
+  if text == '' then return end
   local buffer = buffer
   local first_visible_line = buffer.first_visible_line -- for 'no results found'
 
@@ -94,7 +94,6 @@ local function find_(text, next, flags, nowrap, wrapped)
   end
 
   if not flags then
-    local find, c = find, _SCINTILLA.constants
     flags = 0
     if find.match_case then flags = flags + c.SCFIND_MATCHCASE end
     if find.whole_word then flags = flags + c.SCFIND_WHOLEWORD end
@@ -152,7 +151,6 @@ events.connect('find', find_)
 -- Flags other than SCFIND_MATCHCASE are ignored.
 -- @param text The text to find.
 local function find_incremental(text)
-  local c = _SCINTILLA.constants
   local flags = find.match_case and c.SCFIND_MATCHCASE or 0
   buffer:goto_pos(find.incremental_start or 0)
   find_(text, true, flags)
@@ -191,6 +189,26 @@ events.connect('command_entry_command', function(text)
   end
 end, 1) -- place before command_entry.lua's handler (if necessary)
 
+-- Optimize for speed.
+local loadstring = _G.loadstring
+local pcall = _G.pcall
+
+-- Runs the given code.
+-- This function is passed to string.gsub() in the replace() function.
+-- @param code The code to run.
+local function run(code)
+  local ok, val = pcall(loadstring('return '..code))
+  if not ok then
+    gui.dialog('ok-msgbox',
+               '--title', L('Error'),
+               '--text', L('An error occured:'),
+               '--informative-text', val:gsub('"', '\\"'),
+               '--no-cancel')
+    error()
+  end
+  return val
+end
+
 -- Replaces found text.
 -- 'find_' is called first, to select any found text. The selected text is then
 -- replaced by the specified replacement text.
@@ -200,29 +218,19 @@ end, 1) -- place before command_entry.lua's handler (if necessary)
 --   sequences for embedding Lua code for any search.
 -- @see find
 local function replace(rtext)
-  if #buffer:get_sel_text() == 0 then return end
+  if buffer:get_sel_text() == '' then return end
   if find.in_files then find.in_files = false end
   local buffer = buffer
   buffer:target_from_selection()
   rtext = rtext:gsub('%%%%', '\\037') -- escape '%%'
-  if find.captures then
-    for i, v in ipairs(find.captures) do
-      v = v:gsub('%%', '%%%%') -- escape '%' for gsub
+  local captures = find.captures
+  if captures then
+    for i = 1, #captures do
+      local v = captures[i]:gsub('%%', '%%%%') -- escape '%' for gsub
       rtext = rtext:gsub('%%'..i, v)
     end
   end
-  local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', function(code)
-    local ok, val = pcall(loadstring('return '..code))
-    if not ok then
-      gui.dialog('ok-msgbox',
-                 '--title', L('Error'),
-                 '--text', L('An error occured:'),
-                 '--informative-text', val:gsub('"', '\\"'),
-                 '--no-cancel')
-      error()
-    end
-    return val
-  end)
+  local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', run)
   if ok then
     rtext = rtext:gsub('\\037', '%%') -- unescape '%'
     buffer:replace_target(rtext:gsub('\\[abfnrtv\\]', escapes))
@@ -276,7 +284,7 @@ local function replace_all(ftext, rtext, flags)
     buffer:set_sel(anchor, current_pos)
     buffer:marker_delete_handle(end_marker)
   end
-  gui.statusbar_text = string.format("%d %s", count, L('replacement(s) made'))
+  gui.statusbar_text = ("%d %s"):format(count, L('replacement(s) made'))
   buffer:end_undo_action()
 end
 events.connect('replace_all', replace_all)

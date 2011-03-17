@@ -162,8 +162,9 @@ local error_emitted = false
 function emit(event, ...)
   local h = handlers[event]
   if not h then return end
-  for _, f in ipairs(h) do
-    local ok, result = pcall(f, unpack{...})
+  local pcall, unpack, type = _G.pcall, _G.unpack, _G.type
+  for i = 1, #h do
+    local ok, result = pcall(h[i], unpack{...})
     if not ok then
       if not error_emitted then
         error_emitted = true
@@ -199,7 +200,7 @@ local scnnotifications = {
 function notification(n)
   local f = scnnotifications[n.code]
   if not f then return end
-  local args = { unpack(f, 2) }
-  for i, v in ipairs(args) do args[i] = n[v] end
+  local args = {}
+  for i = 2, #f do args[i - 1] = n[f[i]] end
   return emit(f[1], unpack(args))
 end

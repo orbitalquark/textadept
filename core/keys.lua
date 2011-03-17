@@ -129,7 +129,6 @@ local ALT = 'a'..ADD
 -- Optimize for speed.
 local string = _G.string
 local string_char = string.char
-local string_format = string.format
 local xpcall = _G.xpcall
 local next = _G.next
 local type = _G.type
@@ -168,7 +167,7 @@ local keychain = {}
 
 -- Clears the current key sequence.
 local function clear_key_sequence()
-  keychain = {}
+  if #keychain > 0 then keychain = {} end
   gui.statusbar_text = ''
 end
 
@@ -234,7 +233,7 @@ local function keypress(code, shift, control, alt)
   control = control and CTRL or ''
   shift = shift and SHIFT or ''
   alt = alt and ALT or ''
-  local key_seq = string_format('%s%s%s%s', control, shift, alt, key)
+  local key_seq = control..shift..alt..key
 
   if #keychain > 0 and key_seq == keys.clear_sequence then
     clear_key_sequence()

@@ -332,10 +332,10 @@ local function read_menu_table(menu)
   gtkmenu.title = menu.title
   for _, menuitem in ipairs(menu) do
     if menuitem.title then
-      table.insert(gtkmenu, read_menu_table(menuitem))
+      gtkmenu[#gtkmenu + 1] = read_menu_table(menuitem)
     else
       local menu_id = #menu_actions + 1
-      table.insert(gtkmenu, { menuitem[1], menu_id })
+      gtkmenu[#gtkmenu + 1] = { menuitem[1], menu_id }
       if menuitem[2] then menu_actions[menu_id] = menuitem[2] end
     end
   end
@@ -353,8 +353,8 @@ end
 function set_menubar(menubar)
   menu_actions = {}
   local _menubar = {}
-  for _, menu in ipairs(menubar) do
-    _menubar[#_menubar + 1] = gui.gtkmenu(read_menu_table(menu))
+  for i = 1, #menubar do
+    _menubar[#_menubar + 1] = gui.gtkmenu(read_menu_table(menubar[i]))
   end
   gui.menubar = _menubar
 end
@@ -368,7 +368,7 @@ function set_contextmenu(menu_table)
   context_actions = {}
   local context_menu = {}
   for menu_id, menuitem in ipairs(menu_table) do
-    table.insert(context_menu, { menuitem[1], menu_id + 1000 })
+    context_menu[#context_menu + 1] = { menuitem[1], menu_id + 1000 }
     if menuitem[2] then context_actions[menu_id] = menuitem[2] end
   end
   gui.context_menu = gui.gtkmenu(context_menu)
