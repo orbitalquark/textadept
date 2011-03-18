@@ -172,7 +172,7 @@ end
 -- @param code The Lua code to run.
 -- @return string result from the code run.
 local function run_lua_code(code)
-  code = unhandle_escapes(code)
+  code = unescape(unhandle_escapes(code))
   local env = setmetatable({ selected_text = buffer:get_sel_text() },
                            { __index = _G })
   local _, val = pcall(setfenv(loadstring('return '..code), env))
@@ -203,8 +203,10 @@ local function next_tab_stop()
     local function transform_mirror(mirror)
       local pattern, replacement = mirror:match('^%(([^|]+)|(.+)%)$')
       if not pattern and not replacement then return ph_text end
-      return ph_text:gsub(unhandle_escapes(pattern), function(...)
+      pattern = unescape(unhandle_escapes(pattern))
+      return ph_text:gsub(pattern, function(...)
         local arg = {...}
+        replacement = unescape(unhandle_escapes(replacement))
         local repl = replacement:gsub('%%(%d+)', function(i)
           return arg[tonumber(i)] or ''
         end)
@@ -357,9 +359,8 @@ function _insert(s_text)
     snippet.start_pos = start or caret
     snippet.prev_sel_text = buffer:get_sel_text()
     snippet.index, snippet.max_index = 0, 0
-    for i in s_text:gsub('(%%%d+)%b()', '%1'):gmatch('%%(%d+)') do
-      -- placeholders may contain Lua code that has %n sequences that mess up
-      -- this calculation; the above gsub accounts for this
+    _G.print(s_text)
+    for i in s_text:gmatch('%%(%d+)') do
       i = tonumber(i)
       if i > snippet.max_index then snippet.max_index = i end
     end
