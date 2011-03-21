@@ -147,10 +147,23 @@ _G.keys.lua	_	0;"	t	class:_m.lua
 _G.snippets.lua	_	0;"	t	class:_m.lua
 control_structure_patterns	_	0;"	t	class:_m.lua
 sense	_	0;"	F	class:_m.lua
+_m.rails	_	0;"	m	
+rails	_	0;"	t	class:_m
+load_project	_	0;"	f	class:_m.rails
+_G.keys.rails	_	0;"	t	class:_m.rails
+_G.snippets.rails	_	0;"	t	class:_m.rails
+sense	_	0;"	F	class:_m.rails
+singular	_	0;"	F	class:_m.rails
+_m.rhtml	_	0;"	m	
+rhtml	_	0;"	t	class:_m
+_G.keys.rhtml	_	0;"	t	class:_m.rhtml
+_G.snippets.rhtml	_	0;"	t	class:_m.rhtml
+sense	_	0;"	F	class:_m.rhtml
 _m.ruby	_	0;"	m	
 ruby	_	0;"	t	class:_m
 goto_required	_	0;"	f	class:_m.ruby
 set_buffer_properties	_	0;"	f	class:_m.ruby
+toggle_block	_	0;"	f	class:_m.ruby
 try_to_autocomplete_end	_	0;"	f	class:_m.ruby
 _G.keys.ruby	_	0;"	t	class:_m.ruby
 _G.snippets.ruby	_	0;"	t	class:_m.ruby

@@ -37,16 +37,38 @@ tostring _G.tostring(e)\nReceives an argument of any type and converts it to a s
 type _G.type(v)\nReturns the type of its only argument, coded as a string. The possible results\nof this function are " `nil`" (a string, not the value nil), "`number`",\n"`string`", "`boolean`", "`table`", "`function`", "`thread`", and "`userdata`".\n
 unpack _G.unpack(list [, i [, j]])\nReturns the elements from the given table. This function is equivalent to\nreturn list[i], list[i+1], ···, list[j] except that the above code can\nbe written only for a fixed number of elements. By default, `i` is 1 and\n`j` is the length of the list, as defined by the length operator (see §2.5.5).\n
 xpcall _G.xpcall(f, err)\nThis function is similar to `pcall`, except that you can set a new error\nhandler. `xpcall` calls function `f` in protected mode, using `err` as the\nerror handler. Any error inside `f` is not propagated; instead, `xpcall`\ncatches the error, calls the `err` function with the original error object,\nand returns a status code. Its first result is the status code (a boolean),\nwhich is true if the call succeeds without errors. In this case, `xpcall`\nalso returns all results from the call, after this first result. In case of\nany error, `xpcall` returns false plus the result from `err`.\n
+_HOME _G._HOME\nPath to the directory containing Textadept.\n
+_LEXERPATH _G._LEXERPATH\nPaths to lexers, formatted like `package.path`.\n
+_RELEASE _G._RELEASE\nThe Textadept release version.\n
+_THEME _G._THEME\nThe theme file to use.\n
+_USERHOME _G._USERHOME\nPath to the user's `~/.textadept/`.\n
+_CHARSET _G._CHARSET\nThe character set encoding of the filesystem. This is used in File I/O.\n
+RESETTING _G.RESETTING\nIf `reset()` has been called, this flag is `true` while the Lua state is\nbeing re-initialized.\n
+WIN32 _G.WIN32\nIf Textadept is running on Windows, this flag is `true`.\n
+OSX _G.OSX\nIf Textadept is running on Mac OSX, this flag is `true`.\n
+_G _G._G\nA global variable (not a function) that holds the global environment\n(that is, `_G._G = _G`). Lua itself does not use this variable; changing\nits value does not affect any environment, nor vice-versa. (Use `setfenv`\nto change environments.)\n
+_VERSION _G._VERSION\nA global variable (not a function) that holds a string containing the current\ninterpreter version. The current contents of this variable is "`Lua 5.1`".\n
 set_buffer_properties _m.cpp.set_buffer_properties()\nSets default buffer properties for C/C++ files.\n
+sense _m.cpp.sense\nThe C/C++ Adeptsense.\n
 set_buffer_properties _m.css.set_buffer_properties()\nSets default buffer properties for CSS files.\n
+sense _m.css.sense\nThe CSS Adeptsense.\n
 set_buffer_properties _m.hypertext.set_buffer_properties()\nSets default buffer properties for HTML files.\n
+sense _m.hypertext.sense\nThe HTML Adeptsense.\n
 set_buffer_properties _m.java.set_buffer_properties()\nSets default buffer properties for Java files.\n
+sense _m.java.sense\nThe Java Adeptsense.\n
 goto_required _m.lua.goto_required()\nDetermines the Lua file being 'require'd, searches through package.path for\nthat file, and opens it in Textadept.\n
 set_buffer_properties _m.lua.set_buffer_properties()\nSets default buffer properties for Lua files.\n
 try_to_autocomplete_end _m.lua.try_to_autocomplete_end()\nTries to autocomplete Lua's 'end' keyword for control structures like 'if',\n'while', 'for', etc.\n@see control_structure_patterns\n
+sense _m.lua.sense\nThe Lua Adeptsense.\n
+load_project _m.rails.load_project(utf8_dir)\nSets _G.keys.al.o to snapopen a Rails project. If not directory is provided,\nthe user is prompted for one.\n@param The UTF-8 Rails project directory.\n
+sense _m.rails.sense\nThe Rails Adeptsense.\n
+singular _m.rails.singular\nA map of plural controller names to their singulars. Add key-value pairs to\nthis if singularize() is incorrectly converting your plural controller name\nto its singular model name.\n
+sense _m.rhtml.sense\nThe RHTML Adeptsense.\n
 goto_required _m.ruby.goto_required()\nDetermine the Ruby file being 'require'd, and search through the RUBYPATH\nfor that file and open it in Textadept.\n
 set_buffer_properties _m.ruby.set_buffer_properties()\nSets default buffer properties for Ruby files.\n
+toggle_block _m.ruby.toggle_block()\nToggles between { ... } and do ... end Ruby blocks. If the caret is inside\na { ... } single-line block, that block is converted to a multiple-line do\n.. end block. If the caret is on a line that contains single-line do ... end\nblock, that block is converted to a single-line { ... } block. If the caret\nis inside a multiple-line do ... end block, that block is converted to a\nsingle-line { ... } block with all newlines replaced by a space. Indentation\nis important. The 'do' and 'end' keywords must be on lines with the same\nlevel of indentation to toggle correctly\n
 try_to_autocomplete_end _m.ruby.try_to_autocomplete_end()\nTries to autocomplete Ruby's 'end' keyword for control structures like 'if',\n'while', 'for', etc.\n@see control_structure_patterns\n
+sense _m.ruby.sense\nThe Ruby Adeptsense.\n
 add_trigger _m.textadept.adeptsense.add_trigger(sense, c, only_fields, only_functions)\nSets the trigger for autocompletion.\n@param The adeptsense returned by adeptsense.new().\n@param The character(s) that triggers the autocompletion. You can have up\nto two characters.\n@param If true, this trigger only completes fields. Defaults to false.\n@param If true, this trigger only completes functions. Defaults to false.\n@usage sense:add_trigger('.')\n@usage sense:add_trigger(':', false, true) -- only functions\n@usage sense:add_trigger('->')\n
 clear _m.textadept.adeptsense.clear(sense)\nClears an adeptsense. This is necessary for loading a new ctags file or\ncompletions from a different project.\n@param The adeptsense returned by adeptsense.new().\n
 complete _m.textadept.adeptsense.complete(sense, only_fields, only_functions)\nShows an autocompletion list for the symbol behind the caret.\n@param The adeptsense returned by adeptsense.new().\n@param If true, returns list of only fields; defaults to false.\n@param If true, returns list of only functions; defaults to false.\n@return true on success or false.\n@see get_symbol\n@see get_completions\n
@@ -60,6 +82,9 @@ handle_ctag _m.textadept.adeptsense.handle_ctag(sense, tag_name, file_name, ex_c
 load_ctags _m.textadept.adeptsense.load_ctags(sense, tag_file, nolocations)\nLoads the given ctags file for autocompletion. It is recommended to pass '-n'\nto ctags in order to use line numbers instead of text patterns to locate\ntags. This will greatly reduce memory usage for a large number of symbols\nif nolocations is not true.\n@param The adeptsense returned by adeptsense.new().\n@param The path of the ctags file to load.\n@param If true, does not store the locations of the tags for use by\ngoto_ctag(). Defaults to false.\n
 new _m.textadept.adeptsense.new(lang)\nCreates a new adeptsense for the given lexer language. Only one sense can\nexist per language.\n@param The lexer language to create an adeptsense for.\n@usage local lua_sense = _m.textadept.adeptsense.new('lua')\n@return adeptsense.\n
 show_apidoc _m.textadept.adeptsense.show_apidoc(sense)\nShows a calltip with API documentation for the symbol behind the caret.\n@param The adeptsense returned by adeptsense.new().\n@return true on success or false.\n@see get_symbol\n@see get_apidoc\n
+always_show_globals _m.textadept.adeptsense.always_show_globals\nA flag indicating whether or not to include globals in the list of completions\noffered. Globals are classes, functions, and fields that do not belong to\nanother class. They are contained in `completions['']`. Defaults to true.\n
+FUNCTIONS _m.textadept.adeptsense.FUNCTIONS\nXPM image for adeptsense functions.\n
+FIELDS _m.textadept.adeptsense.FIELDS\nXPM image for adeptsense fields.\n
 add _m.textadept.bookmarks.add()\nAdds a bookmark to the current line.\n
 clear _m.textadept.bookmarks.clear()\nClears all bookmarks in the current buffer.\n
 goto _m.textadept.bookmarks.goto()\nGoes to selected bookmark from a filtered list.\n
@@ -67,6 +92,8 @@ goto_next _m.textadept.bookmarks.goto_next()\nGoes to the next bookmark in the c
 goto_prev _m.textadept.bookmarks.goto_prev()\nGoes to the previous bookmark in the current buffer.\n
 remove _m.textadept.bookmarks.remove()\nClears the bookmark at the current line.\n
 toggle _m.textadept.bookmarks.toggle()\nToggles a bookmark on the current line.\n
+MARK_BOOKMARK _m.textadept.bookmarks.MARK_BOOKMARK\nThe unique integer mark used to identify a bookmarked\n line.\n\n
+MARK_BOOKMARK_COLOR _m.textadept.bookmarks.MARK_BOOKMARK_COLOR\nThe Scintilla color used for a\n bookmarked line.\n\n
 autocomplete_word _m.textadept.editing.autocomplete_word(word_chars)\nPops up an autocompletion list for the current word based on other words in\nthe document.\n@param String of chars considered to be part of words.\n@return true if there were completions to show; false otherwise.\n
 block_comment _m.textadept.editing.block_comment(comment)\nBlock comments or uncomments code with a given comment string.\n@param The comment string inserted or removed from the beginning of each\nline in the selection.\n
 convert_indentation _m.textadept.editing.convert_indentation()\nConverts indentation between tabs and spaces.\n
@@ -84,6 +111,15 @@ select_line _m.textadept.editing.select_line()\nSelects the current line.\n
 select_paragraph _m.textadept.editing.select_paragraph()\nSelects the current paragraph. Paragraphs are delimited by two or more\nconsecutive newlines.\n
 select_scope _m.textadept.editing.select_scope()\nSelects all text with the same style as under the caret.\n
 transpose_chars _m.textadept.editing.transpose_chars()\nTransposes characters intelligently. If the caret is at the end of a line,\nthe two characters before the caret are transposed. Otherwise, the characters\nto the left and right are.\n
+AUTOPAIR _m.textadept.editing.AUTOPAIR\nFlag indicating whether or not when an opening `(`, `[`, `[`, `"`, or `'`\nis typed, its closing complement character is automatically inserted.\n
+HIGHLIGHT_BRACES _m.textadept.editing.HIGHLIGHT_BRACES\nFlag indicating whether or not when the caret is over a brace character (any\nof the following: `()[]{}<>`), its matching complement brace is highlighted.\n
+AUTOINDENT _m.textadept.editing.AUTOINDENT\nFlag indicating whether or not when the enter key is pressed, the inserted\nline has is indented to match the level of indentation of the previous line.\n
+SAVE_STRIPS_WS _m.textadept.editing.SAVE_STRIPS_WS\nFlag indicating whether or not to strip trailing whitespace on file save.\n
+MARK_HIGHLIGHT _m.textadept.editing.MARK_HIGHLIGHT\nThe unique integer mark used to identify a line containing a highlighted word.\n
+MARK_HIGHLIGHT_BACK _m.textadept.editing.MARK_HIGHLIGHT_BACK\nThe Scintilla color used for a line containing a highlighted word.\n
+INDIC_HIGHLIGHT _m.textadept.editing.INDIC_HIGHLIGHT\nThe unique integer indicator for highlighted words.\n
+INDIC_HIGHLIGHT_BACK _m.textadept.editing.INDIC_HIGHLIGHT_BACK\nThe Scintilla color used for an indicator for a highlighted word.\n
+INDIC_HIGHLIGHT_ALPHA _m.textadept.editing.INDIC_HIGHLIGHT_ALPHA\nThe transparency used for an indicator for a highlighted word.\n
 filter_through _m.textadept.filter_through.filter_through()\nPrompts for a Linux, Mac OSX, or Windows shell command to filter text\nthrough. The standard input (stdin) for shell commands is determined as\nfollows: (1) If text is selected and spans multiple lines, all text on the\nlines containing the selection is used. However, if the end of the selection\nis at the beginning of a line, only the EOL (end of line) characters from the\nprevious line are included as input. The rest of the line is excluded. (2) If\ntext is selected and spans a single line, only the selected text is used. (3)\nIf no text is selected, the entire buffer is used. The input text is replaced\nwith the standard output (stdout) of the command.\n
 set_contextmenu _m.textadept.menu.set_contextmenu(menu_table)\nSets gui.context_menu from the given menu table.\n@param The menu table to create the context menu from. Each table entry is\neither a submenu or menu text and an action table.\n@see set_menubar\n
 set_menubar _m.textadept.menu.set_menubar(menubar)\nSets gui.menubar from the given table of menus.\n@param The table of menus to create the menubar from. Each table entry\nis another table that corresponds to a particular menu. A menu can have a\n'title' key with string value. Each menu item is either a submenu (another\nmenu table) or a table consisting of two items: string menu text and an action\ntable just like `_G.keys`'s action table. If the menu text is 'separator',\na menu separator is created and no action table is required.\n
@@ -94,12 +130,19 @@ goto_error _m.textadept.run.goto_error(pos, line_num)\nWhen the user double-clic
 run _m.textadept.run.run()\nRuns/executes the file as specified by its extension in the run_command table.\n@see run_command\n
 load _m.textadept.session.load(filename)\nLoads a Textadept session file. Textadept restores split views, opened buffers,\ncursor information, and project manager details.\n@param The absolute path to the session file to load. Defaults to\nDEFAULT_SESSION if not specified.\n@usage _m.textadept.session.load(filename)\n@return true if the session file was opened and read; false otherwise.\n
 save _m.textadept.session.save(filename)\nSaves a Textadept session to a file. Saves split views, opened buffers,\ncursor information, and project manager details.\n@param The absolute path to the session file to save. Defaults to either\nthe current session file or DEFAULT_SESSION if not specified.\n@usage _m.textadept.session.save(filename)\n
-open _m.textadept.snapopen.open(paths, filter, exclusive, depth)\nQuickly open a file in set of directories.\n@param A string directory path or table of directory paths to search.\n@param A filter for files and folders to exclude. The filter may be a string\nor table. Each filter is a Lua pattern. Any files matching a filter are\nexcluded. Prefix a pattern with '!' to exclude any files that do not match\nthe filter. Directories can be excluded by adding filters to a table assigned\nto a 'folders' key in the filter table.\n@param Flag indicating whether or not to exclude PATHS in the search. Defaults\nto false.\n@param Number of directories to recurse into for finding files. Defaults\nto DEFAULT_DEPTH.\n@usage _m.textadept.snapopen.open()\n@usage _m.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)\n@usage _m.textadept.snapopen.open(nil, '!%.lua$')\n@usage _m.textadept.snapopen.open(nil, { folders = { '%.hg' } })\n
+DEFAULT_SESSION _m.textadept.session.DEFAULT_SESSION\nThe path to the default session file.\n
+SAVE_ON_QUIT _m.textadept.session.SAVE_ON_QUIT\nSave the session when quitting. Defaults to true and can be disabled by\npassing the command line switch '-n' or '--nosession' to Textadept.\n
+open _m.textadept.snapopen.open(utf8_paths, filter, exclusive, depth)\nQuickly open a file in set of directories.\n@param A UTF-8 string directory path or table of UTF-8 directory paths\nto search.\n@param A filter for files and folders to exclude. The filter may be a string\nor table. Each filter is a Lua pattern. Any files matching a filter are\nexcluded. Prefix a pattern with '!' to exclude any files that do not match\nthe filter. Directories can be excluded by adding filters to a table assigned\nto a 'folders' key in the filter table. All strings should be UTF-8 encoded.\n@param Flag indicating whether or not to exclude PATHS in the search. Defaults\nto false.\n@param Number of directories to recurse into for finding files. Defaults\nto DEFAULT_DEPTH.\n@usage _m.textadept.snapopen.open()\n@usage _m.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)\n@usage _m.textadept.snapopen.open(nil, '!%.lua$')\n@usage _m.textadept.snapopen.open(nil, { folders = { '%.hg' } })\n
+PATHS _m.textadept.snapopen.PATHS\nTable of default UTF-8 paths to search.\n
+DEFAULT_DEPTH _m.textadept.snapopen.DEFAULT_DEPTH\nMaximum directory depth to search (defaults to 4).\n
+MAX _m.textadept.snapopen.MAX\nMaximum number of files to list (defaults to 1000).\n
 _cancel_current _m.textadept.snippets._cancel_current()\nCancels the active snippet, reverting to the state before its activation,\nand restores the previous running snippet (if any).\n
 _insert _m.textadept.snippets._insert(s_text)\nBegins expansion of a snippet. The text inserted has escape sequences handled.\n@param Optional snippet to expand. If none is specified, the snippet is\ndetermined from the trigger word (left of the caret), lexer, and style.\n@return false if no snippet was expanded; true otherwise.\n
 _list _m.textadept.snippets._list()\nLists available snippets in an autocompletion list. Global snippets and\nsnippets in the current lexer and style are used.\n
 _prev _m.textadept.snippets._prev()\nGoes back to the previous placeholder or tab stop, reverting changes made\nto subsequent ones.\n@return false if no snippet is active; nil otherwise\n
 _show_style _m.textadept.snippets._show_style()\nShows the style at the current caret position in a call tip.\n
+MARK_SNIPPET _m.textadept.snippets.MARK_SNIPPET\nThe unique integer mark used to identify the line that\n marks the end of a snippet.\n\n
+MARK_SNIPPET_COLOR _m.textadept.snippets.MARK_SNIPPET_COLOR\nThe Scintilla color used for the line that marks the end of the snippet.\n
 process args.process()\nProcesses command line arguments. Add command line switches with\nargs.register(). Any unrecognized arguments are treated as filepaths and\nopened. Generates an 'arg_none' event when no args are present.\n@see register\n
 register args.register(switch1, switch2, narg, f, description)\nRegisters a command line switch.\n@param String switch (short version).\n@param String switch (long version).\n@param The number of expected parameters for the switch.\n@param The Lua function to run when the switch is tripped.\n@param Description of the switch.\n
 add_selection buffer.add_selection(buffer, caret, anchor)\nAdds a new selection from anchor to caret as the main selection. All other\nselections are retained as additional selections.\n
@@ -375,6 +418,181 @@ word_start_position buffer.word_start_position(buffer, pos, only_word_chars)\nRe
 wrap_count buffer.wrap_count(buffer, line)\nReturns the number of display lines needed to wrap a document line.\n
 zoom_in buffer.zoom_in(buffer)\nMagnifies the displayed text by increasing the font sizes by 1 point.\n
 zoom_out buffer.zoom_out(buffer)\nMakes the displayed text smaller by decreasing the font sizes by 1 point.\n
+doc_pointer buffer.doc_pointer\nThe pointer to the document associated with this buffer. (Used internally;\nread-only)\n
+dirty buffer.dirty\nFlag indicating whether or not the buffer has been modified since it was\nlast saved.\n
+filename buffer.filename\nThe absolute path to the file associated with this buffer. It is encoded in\nUTF-8. Use `string.iconv()` for charset conversions.\n
+encoding buffer.encoding\nThe encoding of the file on the hard disk. It will be nil if the file is a\nbinary file.\n
+encoding_bom buffer.encoding_bom\nThe byte-order mark of the file encoding (if any).\n
+additional_caret_fore buffer.additional_caret_fore\nThe foreground color of additional carets.\n
+additional_carets_blink buffer.additional_carets_blink\nThe rate in milliseconds at which additional carets blink.\n
+additional_carets_visible buffer.additional_carets_visible\nFlag indicating whether or not additional carets are visible.\n
+additional_sel_alpha buffer.additional_sel_alpha\nThe alpha of additional selections.\n
+additional_sel_back buffer.additional_sel_back\nThe background color of additional selections.\n
+additional_sel_fore buffer.additional_sel_fore\nThe foreground color of additional selections.\n
+additional_selection_typing buffer.additional_selection_typing\nFlag indicating whether or not typing, backspace, or delete works with\nmultiple selections simultaneously.\n
+anchor buffer.anchor\nThe position of the opposite end of the selection to the caret.\n
+annotation_lines buffer.annotation_lines\nThe number of lines annotating the indexed line. (Read-only)\n
+annotation_style buffer.annotation_style\nThe style of the annotated text at the indexed line.\n
+annotation_style_offset buffer.annotation_style_offset\nThe style number offset for annotations. This is used to keep lexer and\nmargin styles separate from annotation styles.\n
+annotation_visible buffer.annotation_visible\nThe annotation display mode.\n    * 0: Annotations are not displayed.\n    * 1: Annotations are drawn left justified with no adornment.\n    * 2: Annotations are indented to match the text and are surrounded by a\n         box.\n\n
+auto_c_auto_hide buffer.auto_c_auto_hide\nFlag indicating whether or not autocompletion is hidden automatically when\nnothing matches.\n
+auto_c_cancel_at_start buffer.auto_c_cancel_at_start\nFlag indicating whether or not autocompletion should be cancelled if the\nuser backspaces to a position before where it was created.\n
+auto_c_choose_single buffer.auto_c_choose_single\nFlag indicating whether or not a single item in autocompletion should be\nchosen automatically.\n
+auto_c_drop_rest_of_word buffer.auto_c_drop_rest_of_word\nFlag indicating whether or not autocompletion deletes any word characters\nafter the inserted text upon completion.\n
+auto_c_fill_ups buffer.auto_c_fill_ups\nA string of characters that when typed will cause the autocompletion to\nchoose the selected item.\n
+auto_c_ignore_case buffer.auto_c_ignore_case\nFlag indicating whether or not case is significant when performing\nautocompletion searches.\n
+auto_c_max_height buffer.auto_c_max_height\nThe maximum height in rows of autocompletion and user lists. Default is 5.\n
+auto_c_max_width buffer.auto_c_max_width\nThe maximum width in characters of autocompletion and user lists.\n
+auto_c_separator buffer.auto_c_separator\nThe (integer) separator character in the string setting up an autocompletion\nlist.\n
+auto_c_type_separator buffer.auto_c_type_separator\nThe (integer) type separator character in the string setting up an\nautocompletion list.\n
+back_space_un_indents buffer.back_space_un_indents\nFlag indicating whether or not a backspace press when the caret is within\nindentation unindents.\n
+buffered_draw buffer.buffered_draw\nFlag indicating whether or not text is drawn into a buffer first or directly\nonto the screen.\n
+call_tip_back buffer.call_tip_back\nThe background color for the call tip. (Write-only)\n
+call_tip_fore buffer.call_tip_fore\nThe foreground color for the call tip. (Write-only)\n
+call_tip_fore_hlt buffer.call_tip_fore_hlt\nThe foreground color for the highlighted part of the call tip.\n
+call_tip_use_style buffer.call_tip_use_style\nCall tip tab size in pixels. (Enables `STYLE_CALLTIP`.)\n
+caret_fore buffer.caret_fore\nThe foreground color of the caret.\n
+caret_line_back buffer.caret_line_back\nThe color of the background of the line containing the caret.\n
+caret_line_back_alpha buffer.caret_line_back_alpha\nThe background alpha of the caret line.\n
+caret_line_visible buffer.caret_line_visible\nFlag indicating whether or not the background of the line containing the\ncaret is a different color.\n
+caret_period buffer.caret_period\nThe time in milliseconds that the caret is on and off. 0 is a steady on.\n
+caret_sticky buffer.caret_sticky\nFlag indicating whether or not the caret preferred x position can only be\nchanged by explicit movement commands.\n
+caret_style buffer.caret_style\nThe style of the caret to be drawn.\n    * 0: invisible\n    * 1: line\n    * 2: block\n\n
+caret_width buffer.caret_width\nThe width of the insert mode caret in pixels.\n
+char_at buffer.char_at\nThe character byte at given index position. (Read-only)\n
+character_pointer buffer.character_pointer\nThe pointer to the first character in the document. (Read-only)\n
+code_page buffer.code_page\nThe code page used to interpret the bytes of the document as characters.\n
+column buffer.column\nThe column number of an index position, taking tab width into account.\n
+control_char_symbol buffer.control_char_symbol\nThe character used to display control characters. (< 32 uses that control\ncharacter)\n
+current_pos buffer.current_pos\nThe position of the caret.\n
+cursor buffer.cursor\nThe cursor type.\n    * -1: normal\n    * 4: wait.\n\n
+direct_function buffer.direct_function\nThe pointer to a function that processes messages for this\nScintilla. (Read-only)\n
+direct_pointer buffer.direct_pointer\nThe pointer value to use as the first function argument when calling the\nfunction returned by direct_function.\n
+eol_mode buffer.eol_mode\nThe end of line mode.\n    * 0: `CRLF`\n    * 1: `CR`\n    * 2: `LF`\n\n
+edge_colour buffer.edge_colour\nThe color used in edge indication.\n
+edge_column buffer.edge_column\nThe column number which text should be kept within.\n
+edge_mode buffer.edge_mode\nThe edge highlight mode.\n    * 0: None\n    * 1: Line\n    * 2: Background\n\n
+end_at_last_line buffer.end_at_last_line\nFlag indicating whether or not the maximum scroll position has the last line\nat the bottom of the view. Default is true.\n
+end_styled buffer.end_styled\nThe position of the last correctly styled character. (Read-only)\n
+extra_ascent buffer.extra_ascent\nThe extra space above lines.\n
+extra_descent buffer.extra_descent\nThe extra space below lines.\n
+first_visible_line buffer.first_visible_line\nThe display line at the top of the display.\n
+focus buffer.focus\nThe internal focus flag.\n
+fold_expanded buffer.fold_expanded\nFlag indicating whether or not an indexed (header) line has been expanded.\n
+fold_level buffer.fold_level\nThe fold level of an indexed line.\n    * 0x400: Base\n    * 0x1000: White\n    * 0x2000: Header\n    * 0x0FFF: Number mask\n\n
+fold_parent buffer.fold_parent\nThe parent line of indexed (child) line. (Read-only)\n
+font_quality buffer.font_quality\nThe font quality (antialiasing method). (Windows only)\n    * 0: Default\n    * 1: Non-antialiased\n    * 2: Antialiased\n    * 3: LCD Optimized\n\n
+h_scroll_bar buffer.h_scroll_bar\nFlag indicating whether or not the horizontal scroll bar is visible.\n
+highlight_guide buffer.highlight_guide\nThe highlighted indentation guide column.\n
+hotspot_active_underline buffer.hotspot_active_underline\nFlag indicating whether or not active hotspots are underlined.\n
+hotspot_single_line buffer.hotspot_single_line\nFlag indicating whether or not hotspots are limited to a single line so\nhotspots on two lines do not merge.\n
+indent buffer.indent\nThe indentation size.\n
+indentation_guides buffer.indentation_guides\nFlag indicating whether or not indentation guides are visible.\n
+indic_alpha buffer.indic_alpha\nThe alpha transparency of an indexed indicator. This value ranges from 0\n(transparent) to 100 (opaque).\n
+indic_fore buffer.indic_fore\nThe foreground color of an indexed indicator.\n
+indic_style buffer.indic_style\nThe style of an indexed indicator.\n    * 0: Plain\n    * 1: Squiggle\n    * 2: TT\n    * 3: Diagonal\n    * 4: Strike\n    * 5: Hidden\n    * 6: Box\n    * 7: Roundbox.\n\n
+indic_under buffer.indic_under\nFlag indicating whether or not an indexed indicator is drawn over text. Default\nis `true`.\n
+indicator_current buffer.indicator_current\nThe indicator used for `indicator_fill_range` and `indicator_clear_range`.\n
+indicator_value buffer.indicator_value\nThe value used for `indicator_fill_range`.\n
+key_words buffer.key_words\nUnused.\n
+keys_unicode buffer.keys_unicode\nFlag indicating whether or not to treat character keys as unicode.\n
+layout_cache buffer.layout_cache\nThe degree of caching of layout information.\n
+length buffer.length\nThe number of characters in the document. (Read-only).\n
+lexer buffer.lexer\nThe (integer) lexing language of the document.\n
+line_count buffer.line_count\nThe number of lines in the document (>= 1). (Read-only).\n
+line_end_position buffer.line_end_position\nThe position after the last visible character on an index line. (Read-only)\n
+line_indent_position buffer.line_indent_position\nThe position before the first non-indentation character on an indexed\nline. (Read-only)\n
+line_indentation buffer.line_indentation\nThe number of columns an indexed line is indented.\n
+line_state buffer.line_state\nExtra styling information of an indexed line.\n
+line_visible buffer.line_visible\nFlag indicating whether or not the indexed line is visible. (Read-only)\n
+lines_on_screen buffer.lines_on_screen\nThe number of lines completely visible. (Read-only)\n
+main_selection buffer.main_selection\nThe main selection.\n
+margin_cursor_n buffer.margin_cursor_n\nThe cursor shown when the mouse is inside a margin.\n
+margin_left buffer.margin_left\nThe size in pixels of the left margin.\n
+margin_mask_n buffer.margin_mask_n\nThe marker mask of an indexed margin.\n
+margin_right buffer.margin_right\nThe size in pixels of the right margin.\n
+margin_sensitive_n buffer.margin_sensitive_n\nFlag indicating whether or not the indexed margin is sensitive to mouse clicks.\n
+margin_style buffer.margin_style\nThe style of the margin text at the indexed line.\n
+margin_style_offset buffer.margin_style_offset\nThe style number offset for margin text. This is used to keep lexer and\nannotation styles separate from margin styles.\n
+margin_type_n buffer.margin_type_n\nThe type of an indexed margin.\n    * 0: Symbolic\n    * 1: Numeric\n\n
+margin_width_n buffer.margin_width_n\nThe width of an indexed margin in pixels.\n
+max_line_state buffer.max_line_state\nThe last line number that has a line state. (Read-only).\n
+mod_event_mask buffer.mod_event_mask\nMask of modification events sent to the container.\n
+modify buffer.modify\nFlag indicating whether or not the document is different from when it was\nlast saved.\n
+mouse_down_captures buffer.mouse_down_captures\nFlag indicating whether or not the mouse is captured when its button is\npressed.\n
+mouse_dwell_time buffer.mouse_dwell_time\nThe time in milliseconds the mouse must sit still to generate a mouse\ndwell event.\n
+multi_paste buffer.multi_paste\nHow to paste text into multiple selections.\n    * 0: Just the main selection.\n    * 1: Each selection.\n\n
+multiple_selection buffer.multiple_selection\nFlag indicating whether or not to enable multiple selection.\n
+overtype buffer.overtype\nFlag indicating whether or not overtype mode is active.\n
+paste_convert_endings buffer.paste_convert_endings\nFlag indicating whether or not line endings are converted when pasting text.\n
+position_cache buffer.position_cache\nThe number of entries in the position cache.\n
+print_colour_mode buffer.print_colour_mode\nThe print color mode.\n    * 0: Normal\n    * 1: Invert the light value of each style\n    * 2: Force black on white\n    * 3: Force background to be white\n    * 4: Only default background is forced to be white\n\n
+print_magnification buffer.print_magnification\nThe print magnification added to the point size.\n
+print_wrap_mode buffer.print_wrap_mode\nWrap mode.\n    * 0: None\n    * 1: Word\n\n
+property buffer.property\nThe (string) value for a given (string) key index.\n
+property_int buffer.property_int\nThe (integer) value for a given (string) key index. (Read-only)\n
+read_only buffer.read_only\nFlag indicating whether or not the document is read-only.\n
+rectangular_selection_anchor buffer.rectangular_selection_anchor\nThe position of the rectangular selection anchor.\n
+rectangular_selection_anchor_virtual_space buffer.rectangular_selection_anchor_virtual_space\nThe amount of virtual space for the rectangular selection anchor.\n
+rectangular_selection_caret buffer.rectangular_selection_caret\nThe position of the rectangular selection caret.\n
+rectangular_selection_caret_virtual_space buffer.rectangular_selection_caret_virtual_space\nThe amount of virtual space for the rectangular selection caret.\n
+rectangular_selection_modifier buffer.rectangular_selection_modifier\nThe key used to indicate that a rectangular selection should be created when\ncombined with a mouse drag.\n    * 2: Control\n    * 4: Alt\n    * 8: Super (Win)\n\n
+scroll_width buffer.scroll_width\nThe document width assumed for scrolling.\n
+scroll_width_tracking buffer.scroll_width_tracking\nFlag indicating whether or not the maximum width line displayed is used to\nset the scroll width.\n
+search_flags buffer.search_flags\nThe search flags used by `search_in_target`.\n
+sel_alpha buffer.sel_alpha\nThe alpha of the selection.\n
+sel_eol_filled buffer.sel_eol_filled\nFlag indicating whether or not the selection end of line is filled.\n
+selection_end buffer.selection_end\nThe position that ends the selection. (current_pos)\n
+selection_is_rectangle buffer.selection_is_rectangle\nFlag indicating whether or not the selection is rectangular. (Read-only)\n
+selection_mode buffer.selection_mode\nThe mode of the current selection.\n    * 0: Stream\n    * 1: Rectangle\n    * 2: Lines\n\n
+selection_n_anchor buffer.selection_n_anchor\nThe position of the anchor for an existing selection.\n
+selection_n_anchor_virtual_space buffer.selection_n_anchor_virtual_space\nThe amount of virtual space for the anchor for an existing selection.\n
+selection_n_caret buffer.selection_n_caret\nThe position of the caret for an existing selection.\n
+selection_n_caret_virtual_space buffer.selection_n_caret_virtual_space\nThe amount of virtual space for the anchor for an existing selection.\n
+selection_n_end buffer.selection_n_end\nThe end position of an existing selection.\n
+selection_n_start buffer.selection_n_start\nThe start position of an existing selection.\n
+selection_start buffer.selection_start\nThe position that starts the selection. (anchor)\n
+selections buffer.selections\nThe number of selections currently active. (Read-only)\n
+status buffer.status\nerror status. 0: OK.\n
+style_at buffer.style_at\nThe style byte at the index position. (Read-only)\n
+style_back buffer.style_back\nThe background color of an indexed style.\n
+style_bits buffer.style_bits\nThe number of bits in style bytes.\n
+style_bits_needed buffer.style_bits_needed\nThe number of bits the current lexer needs for styling. (Read-only)\n
+style_bold buffer.style_bold\nFlag indicating whether or not the indexed style is bold.\n
+style_case buffer.style_case\nThe case of an indexed style.\n    * 0: Mixed\n    * 1: Upper\n    * 2: Lower\n\n
+style_changeable buffer.style_changeable\nFlag indicating whether or not the indexed style is changeable.\n
+style_character_set buffer.style_character_set\nThe character set of the font in the indexed style.\n
+style_eol_filled buffer.style_eol_filled\nFlag indicating whether or not the indexed style's end of line is filled.\n
+style_font buffer.style_font\nThe font of the indexed style.\n
+style_fore buffer.style_fore\nThe foreground color of the indexed style.\n
+style_hot_spot buffer.style_hot_spot\nFlag indicating whether or not the indexed style is a hotspot.\n
+style_italic buffer.style_italic\nFlag indicating whether or not the indexed style is italic.\n
+style_size buffer.style_size\nThe font size of the indexed style.\n
+style_underline buffer.style_underline\nFlag indicating whether or not the indexed style is underlined.\n
+style_visible buffer.style_visible\nFlag indicating whether or not the indexed style is visible.\n
+tab_indents buffer.tab_indents\nFlag indicating whether or not a tab press when the caret is within indentation\nindents.\n
+tab_width buffer.tab_width\nThe visible size of a tab in multiples of the width of a space character.\n
+target_end buffer.target_end\nThe position that ends the target which is used for updating the document\nwithout affecting the scroll position.\n
+target_start buffer.target_start\nThe position that starts the target which is used for updating the document\nwithout affecting the scroll position.\n
+text_length buffer.text_length\nThe number of characters in the document. (Read-only)\n
+two_phase_draw buffer.two_phase_draw\nFlag indicating whether or not drawing is performed in two phases: background\nand then foreground.\n
+undo_collection buffer.undo_collection\nFlag indicating whether or not an undo history is being collected.\n
+use_palette buffer.use_palette\nFlag indicating whether or not Scintilla uses the env's palette calls to\ndisplay more colors.\n
+use_tabs buffer.use_tabs\nFlag indicating whether or not indentation uses tabs and spaces or just spaces.\n
+v_scroll_bar buffer.v_scroll_bar\nFlag indicating whether or not the vertical scroll bar is visible.\n
+view_eol buffer.view_eol\nFlag indicating whether or not end of line characters are visible.\n
+view_ws buffer.view_ws\nFlag indicating whether or not whitespace characters are visible.\n
+virtual_space_options buffer.virtual_space_options\nOptions for enabling virtual space.\n    * 0: Disabled.\n    * 1: Enabled only for rectangular selection.\n    * 2: Enabled.\n\n
+whitespace_chars buffer.whitespace_chars\nThe set of characters making up whitespace when moving or selecting by\nword. Should be called after setting word_chars. (Write-only)\n
+wrap_indent_mode buffer.wrap_indent_mode\nThe modes of wrapped sublines.\n    * 0: Wrapped sublines aligned to left of window plus amount set by\n      `buffer.wrap_start_indent`.\n    * 1: Wrapped sublines are aligned to first subline indent.\n    * 2: Wrapped sublines are aligned to first subline indent plus one more\n      level of indentation.\n\n
+whitespace_size buffer.whitespace_size\nThe size of the dots used for marking space characters.\n
+word_chars buffer.word_chars\nThe set of characters making up words when moving or selecting by\nword. (Write-only)\n
+wrap_mode buffer.wrap_mode\nFlag indicating whether or not text is word wrapped.\n
+wrap_start_indent buffer.wrap_start_indent\nThe start indent for wrapped lines.\n
+wrap_visual_flags buffer.wrap_visual_flags\nThe display mode of visual flags for wrapped lines.\n    * 0: None\n    * 1: End\n    * 2: Start\n\n
+wrap_visual_flags_location buffer.wrap_visual_flags_location\nThe location of visual flags for wrapped lines.\n    * 0: Default\n    * 1: End by text\n    * 2: Start by text\n\n
+x_offset buffer.x_offset\nThe horizontal scroll position.\n
+zoom buffer.zoom\nThe zoom level added to all font sizes. +: magnify, -: reduce.\n
 connect events.connect(event, f, index)\nAdds a handler function to an event.\n@param The string event name. It is arbitrary and need not be defined anywhere.\n@param The Lua function to add.\n@param Optional index to insert the handler into.\n@return Index of handler.\n@see disconnect\n
 disconnect events.disconnect(event, index)\nDisconnects a handler function from an event.\n@param The string event name.\n@param Index of the handler (returned by events.connect).\n@see connect\n
 emit events.emit(event, ...)\nCalls all handlers for the given event in sequence (effectively "generating"\nthe event). If true or false is explicitly returned by any handler, the\nevent is not propagated any further; iteration ceases.\n@param The string event name.\n@param Arguments passed to the handler.\n@return true or false if any handler explicitly returned such; nil otherwise.\n
@@ -388,7 +606,16 @@ goto_view gui.goto_view(n, absolute)\nGoes to the specified view. Activates the 
 gtkmenu gui.gtkmenu(menu_table)\nCreates a GTK menu, returning the userdata.\n@param A table defining the menu. It is an ordered list of tables with a string\nmenu item and integer menu ID. The string menu item is handled as follows:\n'gtk-*' - a stock menu item is created based on the GTK stock-id. 'separator'\n- a menu separator item is created. Otherwise a regular menu item with a\nmnemonic is created. Submenus are just nested menu-structure tables. Their\ntitle text is defined with a 'title' key.\n
 print gui.print(...)\nPrints messages to the Textadept message buffer. Opens a new buffer (if one\nhasn't already been opened) for printing messages.\n@param Message strings.\n
 switch_buffer gui.switch_buffer()\nDisplays a dialog with a list of buffers to switch to and switches to the\nselected one, if any.\n
+title gui.title\nThe title of the Textadept window.\n
+focused_doc_pointer gui.focused_doc_pointer\nThe pointer to the document associated with the buffer of the currently\nfocused view. (Used internally; read-only.)\n
+menubar gui.menubar\nA table of GTK menus defining a menubar (write-only).\n
+context_menu gui.context_menu\nA GTK menu defining the editor's context menu.\n
+clipboard_text gui.clipboard_text\nThe text on the clipboard (read-only).\n
+statusbar_text gui.statusbar_text\nThe text displayed by the statusbar.\n
+docstatusbar_text gui.docstatusbar_text\nThe text displayed by the doc statusbar (write-only).\n
+size gui.size\nThe size of the Textadept window (`{ width, height}`).\n
 focus gui.command_entry.focus()\nFocuses the command entry.\n
+entry_text gui.command_entry.entry_text\nThe text in the entry.\n
 find_in_files gui.find.find_in_files(utf8_dir)\nPerforms a find in files with the given directory. Use the gui.find fields\nto set the text to find and find options.\n@param UTF-8 encoded directory name. If none is provided, the user is prompted\nfor one.\n
 find_incremental gui.find.find_incremental()\nBegins an incremental find using the Lua command entry. Lua command\nfunctionality will be unavailable until the search is finished (pressing\n'Escape' by default).\n
 find_next gui.find.find_next()\nMimicks a press of the 'Find Next' button in the Find box.\n
@@ -397,6 +624,12 @@ focus gui.find.focus()\nDisplays and focuses the find/replace dialog.\n
 goto_file_in_list gui.find.goto_file_in_list(next)\nGoes to the next or previous file found relative to the file on the current\nline.\n@param Flag indicating whether or not to go to the next file.\n
 replace gui.find.replace()\nMimicks a press of the 'Replace' button in the Find box.\n
 replace_all gui.find.replace_all()\nMimicks a press of the 'Replace All' button in the Find box.\n
+find_entry_text gui.find.find_entry_text\nThe text in the find entry.\n
+replace_entry_text gui.find.replace_entry_text\nThe text in the replace entry.\n
+match_case gui.find.match_case\nFlag indicating whether or not case-sensitive search is performed.\n
+whole_word gui.find.whole_word\nFlag indicating whether or not only whole-word matches are allowed in searches.\n
+lua gui.find.lua\nFlag indicating whether or not the text to find in a search is a Lua pattern.\n
+in_files gui.find.in_files\nFlag indicating whether or not to search for the text in a list of files.\n
 close_all io.close_all()\nCloses all open buffers. If any buffer is dirty, the user is prompted to\ncontinue. No buffers are saved automatically. They must be saved manually.\n@usage io.close_all()\n@return true if user did not cancel.\n
 open_file io.open_file(utf8_filenames)\nOpens a list of files.\n@param A '\\n' separated list of UTF-8-encoded filenames to open. If nil,\nthe user is prompted with a fileselect dialog.\n@usage io.open_file(utf8_encoded_filename)\n
 save_all io.save_all()\nSaves all dirty buffers to their respective files.\n@usage io.save_all()\n
@@ -411,6 +644,14 @@ read io.read(···)\nEquivalent to `io.input():read`.\n
 tmpfile io.tmpfile()\nReturns a handle for a temporary file. This file is opened in update mode\nand it is automatically removed when the program ends.\n
 type io.type(obj)\nChecks whether `obj` is a valid file handle. Returns the string `"file"`\nif `obj` is an open file handle, `"closed file"` if `obj` is a closed file\nhandle, or nil if `obj` is not a file handle.\n
 write io.write(···)\nEquivalent to `io.output():write`.\n
+stderr io.stderr\nStandard error.\n
+stdin io.stdin\nStandard in.\n
+stdout io.stdout\nStandard out.\n
+SCOPES_ENABLED keys.SCOPES_ENABLED\nFlag indicating whether scopes/styles can be used for key commands.\n
+CTRL keys.CTRL\nThe string representing the Control key.\n
+SHIFT keys.SHIFT\nThe string representing the Shift key.\n
+ALT keys.ALT\nThe string representing the Alt key (the Apple key on Mac OSX).\n
+ADD keys.ADD\nThe string representing used to join together a sequence of Control, Shift,\nor Alt modifier keys.\n
 color lexer.color(r, g, b)\nCreates a Scintilla color.\n@param The string red component of the hexadecimal color.\n@param The string green component of the color.\n@param The string blue component of the color.\n@usage local red = color('FF', '00', '00')\n
 delimited_range lexer.delimited_range(chars, escape, end_optional, balanced, forbidden)\nCreates an LPeg pattern that matches a range of characters delimitted by a\nspecific character(s). This can be used to match a string, parenthesis, etc.\n@param The character(s) that bound the matched range.\n@param Optional escape character. This parameter may be omitted, nil, or\nthe empty string.\n@param Optional flag indicating whether or not an ending delimiter is\noptional or not. If true, the range begun by the start delimiter matches\nuntil an end delimiter or the end of the input is reached.\n@param Optional flag indicating whether or not a balanced range is matched,\nlike `%b` in Lua's `string.find`. This flag only applies if `chars` consists\nof two different characters (e.g. '()').\n@param Optional string of characters forbidden in a delimited range. Each\ncharacter is part of the set.\n@usage local sq_str_noescapes = delimited_range("'")\n@usage local sq_str_escapes = delimited_range("'", '\\', true)\n@usage local unbalanced_parens = delimited_range('()', '\\', true)\n@usage local balanced_parens = delimited_range('()', '\\', true, true)\n
 embed_lexer lexer.embed_lexer(parent, child, start_rule, end_rule)\nEmbeds a child lexer language in a parent one.\n@param The parent lexer.\n@param The child lexer.\n@param The token that signals the beginning of the embedded lexer.\n@param The token that signals the end of the embedded lexer.\n@usage embed_lexer(_M, css, css_start_rule, css_end_rule)\n@usage embed_lexer(html, _M, php_start_rule, php_end_rule)\n@usage embed_lexer(html, ruby, ruby_start_rule, rule_end_rule)\n
@@ -426,6 +667,76 @@ starts_line lexer.starts_line(patt)\nCreates an LPeg pattern from a given patter
 style lexer.style(style_table)\nCreates a Scintilla style from a table of style properties.\n@param A table of style properties. Style properties available: font         =\n[string] size         = [integer] bold         = [boolean] italic       =\n[boolean] underline    = [boolean] fore         = [integer]* back         =\n[integer]* eolfilled    = [boolean] characterset = ? case         = [integer]\nvisible      = [boolean] changeable   = [boolean] hotspot      = [boolean]\n* Use the value returned by `color()`.\n@usage local bold_italic = style { bold = true, italic = true }\n@see color\n
 token lexer.token(name, patt)\nCreates an LPeg capture table index with the name and position of the token.\n@param The name of token. If this name is not in `l.tokens` then you will\nhave to specify a style for it in `lexer._tokenstyles`.\n@param The LPeg pattern associated with the token.\n@usage local ws = token(l.WHITESPACE, l.space^1)\n@usage php_start_rule = token('php_tag', '<?' * ('php' * l.space)^-1)\n
 word_match lexer.word_match(words, word_chars, case_insensitive)\nCreates an LPeg pattern that matches a set of words.\n@param A table of words.\n@param Optional string of additional characters considered to be part of a\nword (default is `%w_`).\n@param Optional boolean flag indicating whether the word match is\ncase-insensitive.\n@usage local keyword = token(l.KEYWORD, word_match { 'foo', 'bar', 'baz' })\n@usage local keyword = token(l.KEYWORD, word_match({ 'foo-bar', 'foo-baz',\n'bar-foo', 'bar-baz', 'baz-foo', 'baz-bar' }, '-', true))\n
+DEFAULT lexer.DEFAULT\n\n
+WHITESPACE lexer.WHITESPACE\n\n
+COMMENT lexer.COMMENT\n\n
+STRING lexer.STRING\n\n
+NUMBER lexer.NUMBER\n\n
+KEYWORD lexer.KEYWORD\n\n
+IDENTIFIER lexer.IDENTIFIER\n\n
+OPERATOR lexer.OPERATOR\n\n
+ERROR lexer.ERROR\n\n
+PREPROCESSOR lexer.PREPROCESSOR\n\n
+CONSTANT lexer.CONSTANT\n\n
+VARIABLE lexer.VARIABLE\n\n
+FUNCTION lexer.FUNCTION\n\n
+CLASS lexer.CLASS\n\n
+TYPE lexer.TYPE\n\n
+any lexer.any\nMatches any single character.\n
+ascii lexer.ascii\nMatches any ASCII character (`0`..`127`).\n
+extend lexer.extend\nMatches any ASCII extended character (`0`..`255`).\n
+alpha lexer.alpha\nMatches any alphabetic character (`A-Z`, `a-z`).\n
+digit lexer.digit\nMatches any digit (`0-9`).\n
+alnum lexer.alnum\nMatches any alphanumeric character (`A-Z`, `a-z`, `0-9`).\n
+lower lexer.lower\nMatches any lowercase character (`a-z`).\n
+upper lexer.upper\nMatches any uppercase character (`A-Z`).\n
+xdigit lexer.xdigit\nMatches any hexadecimal digit (`0-9`, `A-F`, `a-f`).\n
+cntrl lexer.cntrl\nMatches any control character (`0`..`31`).\n
+graph lexer.graph\nMatches any graphical character (`!` to `~`).\n
+print lexer.print\nMatches any printable character (space to `~`).\n
+punct lexer.punct\nMatches any punctuation character not alphanumeric (`!` to `/`, `:` to `@`,\n`[` to `'`, `{` to `~`).\n
+space lexer.space\nMatches any whitespace character (`\t`, `\v`, `\f`, `\\n`, `\r`, space).\n
+newline lexer.newline\nMatches any newline characters.\n
+nonnewline lexer.nonnewline\nMatches any non-newline character.\n
+nonnewline_esc lexer.nonnewline_esc\nMatches any non-newline character excluding newlines escaped with `\\`.\n
+dec_num lexer.dec_num\nMatches a decimal number.\n
+hex_num lexer.hex_num\nMatches a hexadecimal number.\n
+oct_num lexer.oct_num\nMatches an octal number.\n
+integer lexer.integer\nMatches a decimal, hexadecimal, or octal number.\n
+float lexer.float\nMatches a floating point number.\n
+word lexer.word\nMatches a typical word starting with a letter or underscore and then any\nalphanumeric or underscore characters.\n
+style_nothing lexer.style_nothing\nTypically used for whitespace.\n
+style_char lexer.style_char\nTypically used for character literals.\n
+style_class lexer.style_class\nTypically used for class definitions.\n
+style_comment lexer.style_comment\nTypically used for code comments.\n
+style_constant lexer.style_constant\nTypically used for constants.\n
+style_definition lexer.style_definition\nTypically used for definitions.\n
+style_error lexer.style_error\nTypically used for erroneous syntax.\n
+style_function lexer.style_function\nTypically used for function definitions.\n
+style_keyword lexer.style_keyword\nTypically used for language keywords.\n
+style_number lexer.style_number\nTypically used for numbers.\n
+style_operator lexer.style_operator\nTypically used for operators.\n
+style_string lexer.style_string\nTypically used for strings.\n
+style_preproc lexer.style_preproc\nTypically used for preprocessor statements.\n
+style_tag lexer.style_tag\nTypically used for markup tags.\n
+style_type lexer.style_type\nTypically used for static types.\n
+style_variable lexer.style_variable\nTypically used for variables.\n
+style_embedded lexer.style_embedded\nTypically used for embedded code.\n
+style_identifier lexer.style_identifier\nTypically used for identifier words.\n
+green lexer.green\n\n
+blue lexer.blue\n\n
+red lexer.red\n\n
+yellow lexer.yellow\n\n
+teal lexer.teal\n\n
+white lexer.white\n\n
+black lexer.black\n\n
+grey lexer.grey\n\n
+purple lexer.purple\n\n
+orange lexer.orange\n\n
+SC_FOLDLEVELBASE lexer.SC_FOLDLEVELBASE\nThe initial (root) fold level.\n
+SC_FOLDLEVELWHITEFLAG lexer.SC_FOLDLEVELWHITEFLAG\nFlag indicating that the line is blank.\n
+SC_FOLDLEVELHEADERFLAG lexer.SC_FOLDLEVELHEADERFLAG\nFlag indicating the line is fold point.\n
+SC_FOLDLEVELNUMBERMASK lexer.SC_FOLDLEVELNUMBERMASK\nFlag used with `SCI_GETFOLDLEVEL(line)` to get the fold level of a line.\n
 localize locale.localize(id)\nLocalizes the given string.\n@param String to localize.\n
 iconv string.iconv(text, to, from)\nConverts a string from one character set to another using iconv(). Valid\ncharacter sets are ones GLib's g_convert() accepts, typically GNU iconv's\ncharacter sets.\n@param The text to convert.\n@param The character set to convert to.\n@param The character set to convert from.\n
 byte string.byte(s [, i [, j]])\nReturns the internal numerical codes of the characters `s[i]`, `s[i+1]`,\n···, `s[j]`. The default value for `i` is 1; the default value for `j` is\n`i`. Note that numerical codes are not necessarily portable across platforms.\n
@@ -446,6 +757,8 @@ focus view:focus()\nFocuses the indexed view if it hasn't been already.\n
 goto_buffer view:goto_buffer(n, absolute)\nGoes to the specified buffer in the indexed view. Activates the\n'buffer_*_switch' signals.\n@param A relative or absolute buffer index.\n@param Flag indicating if n is an absolute index or not.\n
 split view:split(vertical)\nSplits the indexed view vertically or horizontally and focuses the new view.\n@param Flag indicating a vertical split. False for horizontal.\n@return old view and new view tables.\n
 unsplit view:unsplit()\nUnsplits the indexed view if possible.\n@return boolean if the view was unsplit or not.\n
+doc_pointer view.doc_pointer\nThe pointer to the document associated with this view's buffer. (Used\ninternally; read-only)\n
+size view.size\nThe integer position of the split resizer (if this view is part of a split\nview).\n
 create coroutine.create(f)\nCreates a new coroutine, with body `f`. `f` must be a Lua function. Returns\nthis new coroutine, an object with type `"thread"`.\n
 resume coroutine.resume(co [, val1, ···])\nStarts or continues the execution of coroutine `co`. The first time you resume\na coroutine, it starts running its body. The values `val1`, ··· are passed\nas the arguments to the body function. If the coroutine has yielded, `resume`\nrestarts it; the values `val1`, ··· are passed as the results from the\nyield. If the coroutine runs without any errors, `resume` returns true plus\nany values passed to `yield` (if the coroutine yields) or any values returned\nby the body function (if the coroutine terminates). If there is any error,\n`resume` returns false plus the error message.\n
 running coroutine.running()\nReturns the running coroutine, or nil when called by the main thread.\n
@@ -524,6 +837,8 @@ sinh math.sinh(x)\nReturns the hyperbolic sine of `x`.\n
 sqrt math.sqrt(x)\nReturns the square root of `x`. (You can also use the expression `x^0.5`\nto compute this value.)\n
 tan math.tan(x)\nReturns the tangent of `x` (assumed to be in radians).\n
 tanh math.tanh(x)\nReturns the hyperbolic tangent of `x`.\n
+HUGE_VAL math.HUGE_VAL\nThe value `HUGE_VAL`, a value larger than or equal to any other numerical\nvalue.\n
+pi math.pi\nThe value of *pi*.\n
 clock os.clock()\nReturns an approximation of the amount in seconds of CPU time used by the\nprogram.\n
 date os.date([format [, time]])\nReturns a string or a table containing date and time, formatted according to\nthe given string `format`. If the `time` argument is present, this is the\ntime to be formatted (see the `os.time` function for a description of this\nvalue). Otherwise, `date` formats the current time. If `format` starts with\n'`!`', then the date is formatted in Coordinated Universal Time. After\nthis optional character, if `format` is the string "`*t`", then `date`\nreturns a table with the following fields: `year` (four digits), `month`\n(1--12), `day` (1--31), `hour` (0--23), `min` (0--59), `sec` (0--61), `wday`\n(weekday, Sunday is 1), `yday` (day of the year), and `isdst` (daylight\nsaving flag, a boolean). If `format` is not "`*t`", then `date` returns the\ndate as a string, formatted according to the same rules as the C function\n`strftime`. When called without arguments, `date` returns a reasonable date\nand time representation that depends on the host system and on the current\nlocale (that is, `os.date()` is equivalent to `os.date("%c")`).\n
 difftime os.difftime(t2, t1)\nReturns the number of seconds from time `t1` to time `t2`. In POSIX, Windows,\nand some other systems, this value is exactly `t2`*-*`t1`.\n
@@ -537,6 +852,11 @@ time os.time([table])\nReturns the current time when called without arguments, o
 tmpname os.tmpname()\nReturns a string with a file name that can be used for a temporary file. The\nfile must be explicitly opened before its use and explicitly removed when\nno longer needed. On some systems (POSIX), this function also creates a file\nwith that name, to avoid security risks. (Someone else might create the file\nwith wrong permissions in the time between getting the name and creating\nthe file.) You still have to open the file to use it and to remove it (even\nif you do not use it). When possible, you may prefer to use `io.tmpfile`,\nwhich automatically removes the file when the program ends.\n
 loadlib package.loadlib(libname, funcname)\nDynamically links the host program with the C library `libname`. Inside this\nlibrary, looks for a function `funcname` and returns this function as a C\nfunction. (So, `funcname` must follow the protocol (see `lua_CFunction`)). This\nis a low-level function. It completely bypasses the package and module\nsystem. Unlike `require`, it does not perform any path searching and does\nnot automatically adds extensions. `libname` must be the complete file name\nof the C library, including if necessary a path and extension. `funcname`\nmust be the exact name exported by the C library (which may depend on the C\ncompiler and linker used). This function is not supported by ANSI C. As such,\nit is only available on some platforms (Windows, Linux, Mac OS X, Solaris,\nBSD, plus other Unix systems that support the `dlfcn` standard).\n
 seeall package.seeall(module)\nSets a metatable for `module` with its `__index` field referring to the\nglobal environment, so that this module inherits values from the global\nenvironment. To be used as an option to function `module`.\n
+cpath package.cpath\nThe path used by `require` to search for a C loader. Lua initializes the C path\n`package.cpath` in the same way it initializes the Lua path `package.path`,\nusing the environment variable `LUA_CPATH` or a default path defined in\n`luaconf.h`.\n
+loaded package.loaded\nA table used by `require` to control which modules are already loaded. When\nyou require a module `modname` and `package.loaded[modname]` is not false,\n`require` simply returns the value stored there.\n
+loaders package.loaders\nA table used by `require` to control how to load modules. Each entry in\nthis table is a *searcher function*. When looking for a module, `require`\ncalls each of these searchers in ascending order, with the module name\n(the argument given to `require`) as its sole parameter. The function can\nreturn another function (the module *loader*) or a string explaining why it\ndid not find that module (or nil if it has nothing to say). Lua initializes\nthis table with four functions. The first searcher simply looks for a loader\nin the `package.preload` table. The second searcher looks for a loader as a\nLua library, using the path stored at `package.path`. A path is a sequence\nof *templates* separated by semicolons. For each template, the searcher will\nchange each interrogation mark in the template by `filename`, which is the\nmodule name with each dot replaced by a "directory separator" (such as "`/`"\nin Unix); then it will try to open the resulting file name. So, for instance,\nif the Lua path is the string\n  "./?.lua;./?.lc;/usr/local/?/init.lua"\nthe search for a Lua file for module `foo` will try to open the files\n`./foo.lua`, `./foo.lc`, and `/usr/local/foo/init.lua`, in that order. The\nthird searcher looks for a loader as a C library, using the path given by\nthe variable `package.cpath`. For instance, if the C path is the string\n  "./?.so;./?.dll;/usr/local/?/init.so"\nthe searcher for module `foo` will try to open the files `./foo.so`,\n`./foo.dll`, and `/usr/local/foo/init.so`, in that order. Once it finds\na C library, this searcher first uses a dynamic link facility to link the\napplication with the library. Then it tries to find a C function inside the\nlibrary to be used as the loader. The name of this C function is the string\n"`luaopen_`" concatenated with a copy of the module name where each dot is\nreplaced by an underscore. Moreover, if the module name has a hyphen, its\nprefix up to (and including) the first hyphen is removed. For instance, if the\nmodule name is `a.v1-b.c`, the function name will be `luaopen_b_c`. The fourth\nsearcher tries an *all-in-one loader*. It searches the C path for a library\nfor the root name of the given module. For instance, when requiring `a.b.c`,\nit will search for a C library for `a`. If found, it looks into it for an open\nfunction for the submodule; in our example, that would be `luaopen_a_b_c`. With\nthis facility, a package can pack several C submodules into one single library,\nwith each submodule keeping its original open function.\n
+path package.path\nThe path used by `require` to search for a Lua loader. At start-up,\nLua initializes this variable with the value of the environment variable\n`LUA_PATH` or with a default path defined in `luaconf.h`, if the environment\nvariable is not defined. Any "`;;`" in the value of the environment variable\nis replaced by the default path.\n
+preload package.preload\nA table to store loaders for specific modules (see `require`).\n
 concat table.concat(table [, sep [, i [, j]]])\nGiven an array where all elements are strings or numbers, returns\n`table[i]..sep..table[i+1] ··· sep..table[j]`. The default value for `sep`\nis the empty string, the default for `i` is 1, and the default for `j` is\nthe length of the table. If `i` is greater than `j`, returns the empty string.\n
 insert table.insert(table, [pos, ] value)\nInserts element `value` at position `pos` in `table`, shifting up other\nelements to open space, if necessary. The default value for `pos` is\n`n+1`, where `n` is the length of the table (see §2.5.5), so that a call\n`table.insert(t,x)` inserts `x` at the end of table `t`.\n
 maxn table.maxn(table)\nReturns the largest positive numerical index of the given table, or zero if\nthe table has no positive numerical indices. (To do its job this function\ndoes a linear traversal of the whole table.)\n
