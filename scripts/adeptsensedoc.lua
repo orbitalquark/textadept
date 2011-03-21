@@ -5,7 +5,10 @@
 -- This module is used by LuaDoc to create an adeptsense for Lua with a fake
 -- ctags file and an api file.
 -- Since LuaDoc does not recognize module fields, this doclet parses the Lua
--- files for comments of the form "-- * `field_name`" to generate a field tag.
+-- modules for comments of the form "-- * `field_name`" to generate a field tag
+-- and apidoc. Multiple line comments for fields must be indented flush with
+-- `field_name` (3 spaces). Indenting more than this preserves formatting in the
+-- apidoc.
 -- @usage luadoc -d [output_path] -doclet path/to/adeptsensedoc [file(s)]
 module('adeptsensedoc', package.seeall)
 
@@ -25,19 +28,20 @@ local function write_tag(file, name, k, ext_fields)
   file[#file + 1] = string_format(CTAGS_FMT, name, k, ext_fields)
 end
 
--- Writes a function apidoc.
+-- Writes a function or field apidoc.
 -- @param file The file to write to.
 -- @param m The LuaDoc module object.
 -- @param f The LuaDoc function object.
-local function write_function_apidoc(file, m, f)
-  -- Function name.
+local function write_apidoc(file, m, f)
+  -- Function or field name.
   local name = f.name
   if not name:find('[%.:]') then name = m.name..'.'..name end
-  -- Block documentation for the function.
+  -- Block documentation for the function or field.
   local doc = { 'fmt -s -w 80 <<"EOF"' }
   -- Function arguments.
-  doc[#doc + 1] = name..'('..table.concat(f.param, ', ')..')'
-  -- Function description.
+  local args = f.param and '('..table.concat(f.param, ', ')..')' or ''
+  doc[#doc + 1] = name..args
+  -- Function or field description.
   doc[#doc + 1] = f.description:gsub('\\n', '\\\\n')
   -- Function parameters (@param).
   if f.param then
@@ -98,22 +102,53 @@ function start(doc)
     end
   end
 
-  -- Parse out module fields (-- * `FIELD`) and insert them into their LuaDoc
-  -- modules.
+  -- Parse out module fields (-- * `FIELD`: doc) and insert them into the
+  -- module's LuaDoc.
   for _, file in ipairs(doc.files) do
-    local p = io.popen('grep -r "^-- \\* \\`" '..file)
-    local output = p:read('*all')
-    p:close()
-    for line in output:gmatch('[^\n]+') do
-      local field = line:match('^%-%- %* `([^`]+)`')
-      p = io.popen('grep "^module" '..file)
-      local module = (p:read('*l') or ''):match("module%('([^']+)'")
-      p:close()
-      if not module then module = field:match('^[^%.]+') end -- lua.luadoc
-      local module = modules[module]
-      if not module.fields then module.fields = {} end
-      module.fields[#module.fields + 1] = field:match('[^%.]+$')
+    local module, field, docs
+    -- Adds the field to its module's LuaDoc.
+    local function add_field()
+      local doc = table.concat(docs, ' ')
+      doc = doc:gsub('\n ', '\n'):gsub('<br />', '')
+      doc = doc:gsub('%[([^%]]+)%]%b[]', '%1'):gsub('%[([^%]]+)%]%b()', '%1')
+      field.description = doc
+      local m = modules[field.module]
+      if not m.fields then m.fields = {} end
+      m.fields[#m.fields + 1] = field.name
+      m.fields[field.name] = field
+      field = nil
     end
+    local f = io.open(file, 'rb')
+    for line in f:lines() do
+      if not field and line:find('^module%(') then
+        -- Get the module's name to add the parsed fields to.
+        module = line:match("^module%('([^']+)'")
+      elseif line:find('^%-%- %* `') then
+        -- New field; if another field was parsed right before this one, add
+        -- the former field to its module's LuaDoc.
+        if field then add_field() end
+        field, docs = {}, {}
+        local name, doc = line:match('^%-%- %* `([^`]+)`([^\r\n]*)')
+        field.module = module or name:match('^[^%.]+')
+        field.name = name:match('[^%.]+$')
+        if doc ~= '' then doc = doc:sub(3) end -- ignore ': ' at beginning
+        docs[#docs + 1] = doc
+      elseif field and line:find('^%-%-%s+([^\r\n]+)') then
+        -- Add this additional documentation to the current field being
+        -- parsed. If the doc is indented more than usual, preserve the
+        -- formatting by adding a newline to the previous doc line.
+        local doc, indent = line:match('^%-%-%s%s%s((%s*)[^\r\n]+)')
+        if #indent > 0 and docs[#docs]:sub(-1) ~= '\n' then
+          docs[#docs] = docs[#docs]..'\n'
+        end
+        docs[#docs + 1] = #indent > 0 and doc..'\n' or doc
+      elseif field and
+             (line:find('^%-%-[\r\n]*$') or line:find('^[\r\n]*$')) then
+        -- End of field documentation. Add it to its module's LuaDoc.
+        add_field()
+      end
+    end
+    f:close()
   end
 
   -- Process LuaDoc and write the ctags and api file.
@@ -138,7 +173,7 @@ function start(doc)
         local func = f:match('[^%.:]+$')
         write_tag(ctags, func, 'f', 'class:'..module)
         if module == '_G' then write_tag(ctags, func, 'f', '') end -- global
-        write_function_apidoc(apidoc, m, m.functions[f])
+        write_apidoc(apidoc, m, m.functions[f])
       end
     end
     -- Tag the tables.
@@ -150,6 +185,7 @@ function start(doc)
     for _, f in ipairs(m.fields or {}) do
       write_tag(ctags, f, 'F', 'class:'..module)
       if module == '_G' then write_tag(ctags, f, 'F', '') end -- global
+      write_apidoc(apidoc, m, m.fields[f])
     end
   end
   local f = io.open(options.output_dir..'/tags', 'w')
