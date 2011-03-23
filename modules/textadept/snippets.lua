@@ -9,24 +9,22 @@ module('_m.textadept.snippets', package.seeall)
 -- Markdown:
 -- ## Overview
 --
--- Snippets are basically pieces of text inserted into a document, but can
--- execute code, contain placeholders you can enter dynamic text for, and
--- perform transformations on that text. This is much more powerful than
--- standard text templating.
+-- Snippets are dynamic pieces of text inserted into a document that contain
+-- placeholders for further input, mirror or transform that input, and execute
+-- code.
 --
 -- Snippets are defined in the global table `snippets`. Each key-value pair in
--- `snippets` consist of either:
+-- `snippets` consists of either:
 --
 -- * A string snippet trigger word and its expanded text.
--- * A string language name and its associated `snippets`-like table.
--- * A string style name and its associated `snippets`-like table.
+-- * A string lexer language name and its associated `snippets`-like table.
 --
 -- Language names are the names of the lexer files in `lexers/` such as `cpp`
--- and `lua`. Style names are different lexer styles, most of which are in
--- `lexers/lexer.lua`; examples are `whitespace`, `comment`, and `string`.
+-- and `lua`.
 --
--- Snippet text should contain spaces instead of tabs since Textadept
--- automatically converts spaces to tabs depending on the current settings.
+-- By default, the `Tab` key expands a snippet and tabs through placeholders and
+-- tab stops while `Shift+Tab` tabs backwards through them. Snippets can also be
+-- expanded inside one another.
 --
 -- ## Settings
 --
@@ -40,8 +38,7 @@ module('_m.textadept.snippets', package.seeall)
 -- ## Snippet Precedence
 --
 -- When searching for a snippet to expand in the `snippets` table, snippets in
--- the current style have priority, followed by the ones in the current lexer,
--- and finally the ones in the global table.
+-- the current lexer have priority, followed by the ones in the global table.
 --
 -- ## Snippet Syntax
 --
@@ -49,424 +46,412 @@ module('_m.textadept.snippets', package.seeall)
 --
 -- #### Plain Text
 --
--- Any plain text characters may be used with the exception of `%` and &#96;.
--- These are special characters and must be "escaped" by prefixing one with a
--- `%`. As an example, `%%` inserts a single `%` in the snippet.
---
--- #### Lua and Shell Code
---
---     %(lua_code)
---     `shell_code`
---
--- The code is executed the moment the snippet is inserted.
---
--- For Lua code, the global Lua state is available as well as a `selected_text`
--- variable (containing the current selection in the buffer) for convenience.
--- Only the return value of the code execution is inserted, not standard out.
--- Therefore any `print()` statements are meaningless.
---
--- Shell code is run via Lua's [`io.popen()`][io_popen].
---
--- [io_popen]: http://www.lua.org/manual/5.1/manual.html#pdf-io.popen
---
--- #### Tab Stops and Mirrors
---
---     %num
---
--- These are visited in numeric order (1, 2, 3, etc.) with %0 being the final
--- position of the caret, or the end of the snippet if %0 is not specified. If
--- there is a placeholder (described below) with the specified `num`, its text
--- is mirrored here.
+-- Any plain text characters may be used with the exception of `%` followed
+-- immediately by a digit (`0`-`9`), `(`, `)`, `>`, or `]` character. These are
+-- "escape sequences" for the more complicated features of snippets. If you want
+-- to use `%` followed by one of the before-mentioned characters, prepend
+-- another `%` to the first `%`. For example, `%%>` in the snippet inserts a
+-- literal `%>` into the document.
 --
 -- #### Placeholders
 --
---     %num(text)
+-- Textadept's snippets provide a number of different placeholders. The simplest
+-- ones are of the form
 --
--- These are also visited in numeric order, but have precedence over tab stops,
--- and insert the specified `text` at the current position upon entry. `text`
--- can contain Lua code executed at run-time:
+--     %num
 --
---     %num(#(lua_code))
+-- where `num` is a number. Placeholders are visited in numeric order (1, 2, 3,
+-- etc.) with the `Tab` key after the snippet is inserted and can be used to
+-- enter in additional text. When no more placeholders are left, the caret is
+-- placed at either the end of the snippet or the `%0` placeholder if it exists.
 --
--- The global Lua state is available as well as a `selected_text` variable
--- (containing the current selection in the buffer) for convenience.
+-- A placeholder can specify default text. It is of the form
 --
--- `#`'s will have to be escaped with `%` for plain text. Any mis-matched `)`'s
--- must also be escaped, but balanced `()`'s need not be.
+--     %num(default text)
 --
--- #### Transformations
+-- where, again, `num` is a number. These kinds of placeholders take precedence
+-- over the simpler placeholders described above. If a snippet contains more
+-- than one placeholder with the same `num`, the one containing default text is
+-- visited first and the others become _mirrors_. Mirrors simply mirror the text
+-- typed into the current placeholder.
 --
---     %num(pattern|replacement)
+-- The last kind of placeholder executes either Lua or Shell code.
 --
--- These act like mirrors, but transform the text that would be inserted using
--- a given [Lua pattern](../manual/14_Appendix.html#lua_patterns) and
--- replacement. Like in placeholders, `replacement` can contain Lua code
--- executed at run-time as well as the standard Lua capture (`%n`) sequences.
--- Any `|`'s after the first one do not need to be escaped.
+--     %<lua_code>
+--     %num<lua_code>
+--     %[shell_code]
+--     %num[shell_code]
+--
+-- For placeholders that omit `num`, their code is executed the moment the
+-- snippet is inserted. Otherwise the code is executed as placeholders are
+-- visited.
+--
+-- For Lua code, the global Lua state is available as well as a `selected_text`
+-- variable (containing the current selection in the buffer). After execution,
+-- the placeholder contains the return value of the code that was run.
+--
+-- Shell code is executed using Lua's [`io.popen()`][io_popen] which reads from
+-- the process' standard output (STDOUT). After execution, the placeholder will
+-- contain the STDOUT of the process.
+--
+-- [io_popen]: http://www.lua.org/manual/5.1/manual.html#pdf-io.popen
+--
+-- These kinds of placeholders can be used to transform mirrored text. For
+-- example, `%2<([[%1]]):gsub('^.', function(c) return c:upper() end)>` will
+-- capitalize a mirrored `%1` placeholder.
+--
+-- ##### Important Note
+--
+-- It is very important that any `%`, `(`, `)`, `>`, or `]` characters
+-- **within** placeholders be escaped with a `%` as necessary. Otherwise,
+-- unexpected results will occur. `%`s only need to be escaped if they are
+-- proceeded by a digit, `(`s and `)`s only need to be escaped inside default
+-- text placeholders **if and only if** there is no matching parenthesis (thus,
+-- nested parenthesis do not need to be escaped), `]`s only need to be escaped
+-- inside Shell code placeholders, and `>`s only need to be escaped inside Lua
+-- code placeholders.
 --
 -- ## Example
 --
---     snippets = {
---       file = '%(buffer.filename)',
---       lua = {
---         f = 'function %1(name)(%2(args))\n  %0\nend',
---         string = { [string-specific snippets here] }
---       }
+--     _G.snippets.snippet = '_G.snippets.%1 = \'%0\''
+--     _G.snippets.file = '%<buffer.filename>'
+--     _G.snippets.lua = {
+--       f = 'function %1(name)(%2(args))\n  %0\nend'
 --     }
 --
--- The first snippet is global and runs the Lua code to determine the current
--- buffer's filename and inserts it. The other snippets apply only in the `lua`
--- lexer. Any snippets in the `string` table are available only when the current
--- style is `string` in the `lua` lexer.
+-- The first two snippets are global. The first is quite simple to understand.
+-- The second runs Lua code to determine the current buffer's filename and
+-- inserts it. The last snippet expands only when editing Lua code.
 
 -- settings
 MARK_SNIPPET = 4
 MARK_SNIPPET_COLOR = 0x4D9999
 -- end settings
 
-file = "%(buffer.filename)"
-path = "%((buffer.filename or ''):match('^.+/'))"
-tab  = "%%%1(1)(%2(default))"
-key  = "['%1'] = { %2(func)%3(, %4(arg)) }"
-
--- The current snippet.
-local snippet = {}
-
 -- The stack of currently running snippets.
 local snippet_stack = {}
 
--- Replaces escaped characters with their octal equivalents in a given string.
--- @param s The string to handle escapes in.
--- @return string with escapes handled.
-local function handle_escapes(s)
-  return s:gsub('%%([%%`%)|#])',
-                function(char) return ("\\%03d"):format(char:byte()) end)
-end
+-- Contains newline sequences for buffer.eol_mode.
+-- This table is used by new_snippet().
+-- @class table
+-- @name newlines
+local newlines = { [0] = '\r\n', '\r', '\n' }
 
--- Replaces octal characters with their escaped equivalents in a given string.
--- @param s The string to unhandle escapes in.
--- @return string with escapes unhandled.
-local function unhandle_escapes(s)
-  local char = string.char
-  return s:gsub('\\(%d%d%d)', function(byte) return '%'..char(byte) end)
-end
-
--- Replaces escaped characters with the actual characters in a given string.
--- This is used when escape sequences are no longer needed.
--- @param s The string to unescape escapes in.
--- @return string with escapes unescaped.
-local function unescape(s) return s:gsub('%%([%%`%)|#])', '%1') end
-
--- Gets the start position, end position, and text of the currently running
--- snippet.
--- @return start pos, end pos, and snippet text.
-local function snippet_info()
+-- Inserts a new snippet.
+-- @param text The new snippet to insert.
+-- @param replace_word Flag indicating whether or not a trigger word was used.
+--   If true, removes it. Defaults to false.
+local function new_snippet(text, replace_word)
   local buffer = buffer
-  local s = snippet.start_pos
-  local e = buffer:position_from_line(
-                   buffer:marker_line_from_handle(snippet.end_marker)) - 1
-  if e >= s then return s, e, buffer:text_range(s, e) end
-end
+  local start_position = buffer.current_pos
+  local original_sel_text = buffer:get_sel_text()
+  local newline = newlines[buffer.eol_mode]
 
--- Runs the given Lua code.
--- @param code The Lua code to run.
--- @return string result from the code run.
-local function run_lua_code(code)
-  code = unescape(unhandle_escapes(code))
-  local env = setmetatable({ selected_text = buffer:get_sel_text() },
-                           { __index = _G })
-  local _, val = pcall(setfenv(loadstring('return '..code), env))
-  return val or ''
-end
-
--- If previously at a placeholder or tab stop, attempts to mirror and/or
--- transform the entered text at all appropriate mirrors before moving on to
--- the next placeholder or tab stop.
--- @return false if no snippet was expanded; nil otherwise
-local function next_tab_stop()
-  if not snippet.index then return false end -- no snippet active
-  local buffer = buffer
-  local s_start, s_end, s_text = snippet_info()
-  if not s_text then
-    _cancel_current()
-    return
-  end
-
-  local index = snippet.index
-  snippet.snapshots[index] = s_text
-  if index > 0 then
-    buffer:begin_undo_action()
-    local caret = buffer.selection_end
-    local ph_text = buffer:text_range(snippet.ph_pos, caret)
-
-    -- Transform mirror.
-    local function transform_mirror(mirror)
-      local pattern, replacement = mirror:match('^%(([^|]+)|(.+)%)$')
-      if not pattern and not replacement then return ph_text end
-      pattern = unescape(unhandle_escapes(pattern))
-      return ph_text:gsub(pattern, function(...)
-        local arg = {...}
-        replacement = unescape(unhandle_escapes(replacement))
-        local repl = replacement:gsub('%%(%d+)', function(i)
-          return arg[tonumber(i)] or ''
-        end)
-        return repl:gsub('#(%b())', run_lua_code)
-      end, 1)
-    end
-    s_text = s_text:gsub('%%'..index..'(%b())', transform_mirror)
-
-    -- Regular mirror.
-    s_text = s_text:gsub('()%%'..index, function(pos)
-      for mirror, e in s_text:gmatch('%%%d+(%b())()') do
-        local s = mirror:find('|')
-        -- If inside transform, do not do anything.
-        if s and pos > s and pos < e then return nil end
-      end
-      return ph_text
+  -- Convert and match indentation.
+  local lines = {}
+  local indent = { [true] = '\t', [false] = (' '):rep(buffer.tab_width) }
+  local use_tabs = buffer.use_tabs
+  for line in (text..newline):gmatch('([^\r\n]*)'..newline) do
+    lines[#lines + 1] = line:gsub('^(%s*)', function(indentation)
+      return indentation:gsub(indent[not use_tabs], indent[use_tabs])
     end)
-
-    buffer:set_sel(s_start, s_end)
-    buffer:replace_sel(s_text)
-    s_start, s_end = snippet_info()
-    buffer:end_undo_action()
   end
+  if #lines > 1 then
+    -- Match indentation on all lines after the first.
+    local indent_size = #buffer:get_cur_line():match('^%s*')
+    if not use_tabs then indent_size = indent_size / buffer.indent end
+    local additional_indent = indent[use_tabs]:rep(indent_size)
+    for i = 2, #lines do lines[i] = additional_indent..lines[i] end
+  end
+  text = table.concat(lines, newline)
 
+  -- Insert the snippet and its mark into the buffer.
   buffer:begin_undo_action()
-  index = index + 1
-  if index <= snippet.max_index then
-    -- Find the next tab stop.
-    local s, e, next_item
-    repeat -- ignore replacement mirrors
-      s, e, next_item = s_text:find('%%'..index..'(%b())', e)
-    until not s or next_item and not next_item:find('|')
-    if next_item then -- placeholder
-      buffer.target_start, buffer.target_end = s_start, buffer.length
-      buffer.search_flags = 0
-      buffer:search_in_target('%'..index..next_item)
-      next_item = next_item:gsub('#(%b())', run_lua_code)
-      next_item = unhandle_escapes(next_item:sub(2, -2))
-      buffer:replace_target(next_item)
-      buffer:set_sel(buffer.target_start, buffer.target_start + #next_item)
-      snippet.ph_pos = buffer.target_start
-    else
-      repeat -- ignore placeholders
-        local found = true
-        s, e = (s_text..' '):find('%%'..index..'[^(]', e)
-        if not s then
-          snippet.index = index + 1
-          next_tab_stop()
-          return
-        end
-        for p_s, p_e in s_text:gmatch('%%%d+()%b()()') do
-          if s > p_s and s < p_e then
-            found = false
-            break
-          end
-        end
-      until found
-      buffer:set_sel(s_start + s - 1, s_start + e - 1)
-      buffer:replace_sel('') -- replace_target() doesn't place caret
-      snippet.ph_pos = s_start + s - 1
-    end
-    -- Place additional carets at mirrors.
-    local _, _, text = snippet_info()
-    text = text:gsub('(%%%d+%b())', function(mirror)
-      -- Lua code in replacement mirrors may contain '%'
-      -- sequences; do not treat as mirrors
-      if mirror:find('|') then
-        return string.rep('_', #mirror)
-      end
-    end)
-    for s, e in text:gmatch('()%%'..index..'()[^(]') do
-      buffer:add_selection(s_start + s - 1, s_start + e - 1)
-    end
-    buffer.main_selection = 0 -- original placeholder/mirror
-    -- Done.
-    snippet.index = index
-  else
-    -- Finished. Find '%0' and place the caret there.
-    s_text = unescape(unhandle_escapes(s_text))
-    buffer:set_sel(s_start, s_end)
-    buffer:replace_sel(s_text)
-    s_start, s_end = snippet_info()
-    if s_end then
-      buffer:goto_pos(s_end + 1)
-      buffer:delete_back()
-    end
-    local s, e = s_text:find('%%0')
-    if s and e then
-      buffer:set_sel(s_start + s - 1, s_start + e)
-      buffer:replace_sel('')
-    end
-    buffer:marker_delete_handle(snippet.end_marker)
-    snippet = #snippet_stack > 0 and table.remove(snippet_stack) or {}
+  if replace_word then
+    buffer.target_start = buffer:word_start_position(start_position)
+    buffer.target_end = start_position
+    buffer:replace_target('')
   end
+  buffer:replace_sel(text..newline)
+  local line = buffer:line_from_position(buffer.current_pos)
+  local end_marker = buffer:marker_add(line, MARK_SNIPPET)
   buffer:end_undo_action()
+
+  -- Set the snippet object metatable, add it to the snippet stack, and return
+  -- the snippet object.
+  local snippet = setmetatable({
+    start_position = start_position,
+    end_marker = end_marker,
+    original_sel_text = original_sel_text,
+    snapshots = {}
+  }, { __index = _snippet_mt })
+  snippet_stack[#snippet_stack + 1] = snippet
+  return snippet
 end
 
 ---
--- Begins expansion of a snippet.
--- The text inserted has escape sequences handled.
--- @param s_text Optional snippet to expand. If none is specified, the snippet
---   is determined from the trigger word (left of the caret), lexer, and style.
+-- Inserts a snippet.
+-- @param text Optional snippet text. If none is specified, the snippet text
+--   is determined from the trigger and lexer.
 -- @return false if no snippet was expanded; true otherwise.
-function _insert(s_text)
+function _insert(text)
   local buffer = buffer
-  local anchor, caret = buffer.anchor, buffer.current_pos
-  local lexer, style, start, s_name
-  if not s_text then
-    lexer = buffer:get_lexer()
-    style = buffer:get_style_name(buffer.style_at[caret])
-    buffer:word_left_extend()
-    start = buffer.current_pos
-    s_name = buffer:get_sel_text()
+  local from_trigger = text == nil
+  if not text then
+    local current_pos = buffer.current_pos
+    local lexer = buffer:get_lexer()
+    local trigger = buffer:text_range(buffer:word_start_position(current_pos),
+                                      current_pos)
+    local snip = _G.snippets
+    text = snip[trigger]
+    if type(snip) == 'table' and snip[lexer] then snip = snip[lexer] end
+    text = snip[trigger] or text
   end
-  if s_name then
-    local function try_get_snippet(...)
-      local table = _G.snippets
-      for _, idx in ipairs{...} do table = table[idx] end
-      return type(table) == 'string' and table or error()
-    end
-    local ret
-    ret, s_text = pcall(try_get_snippet, lexer, style, s_name)
-    if not ret then ret, s_text = pcall(try_get_snippet, lexer, s_name) end
-    if not ret then ret, s_text = pcall(try_get_snippet, s_name) end
-    if not ret then buffer:set_sel(anchor, caret) end -- restore caret
+  local snippet = snippet_stack[#snippet_stack]
+  if text and type(text) == 'string' then
+    snippet = new_snippet(text, from_trigger)
+    snippet:execute_code('') -- execute shell and Lua code
   end
-
-  if s_text then
-    buffer:begin_undo_action()
-    s_text = handle_escapes(s_text)
-
-    -- Take into account tab settings.
-    if not buffer.use_tabs then
-      s_text = s_text:gsub('\t', string.rep(' ', buffer.tab_width))
-    end
-
-    -- Execute Lua and shell code.
-    s_text = s_text:gsub('%%(%b())', run_lua_code)
-    s_text = s_text:gsub('`([^`]+)`', function(code)
-      local p = io.popen(code)
-      local out = p:read('*all'):sub(1, -2)
-      p:close()
-      return out
-    end)
-
-    -- Initialize the new snippet. If one is running, push it onto the stack.
-    if snippet.index then snippet_stack[#snippet_stack + 1] = snippet end
-    snippet = {}
-    snippet.snapshots = {}
-    snippet.start_pos = start or caret
-    snippet.prev_sel_text = buffer:get_sel_text()
-    snippet.index, snippet.max_index = 0, 0
-    _G.print(s_text)
-    for i in s_text:gmatch('%%(%d+)') do
-      i = tonumber(i)
-      if i > snippet.max_index then snippet.max_index = i end
-    end
-
-    -- Insert the snippet and set a mark defining the end of it.
-    buffer:replace_sel(s_text)
-    buffer:add_text('\n')
-    local line = buffer:line_from_position(buffer.current_pos)
-    snippet.end_marker = buffer:marker_add(line, MARK_SNIPPET)
-    buffer:marker_set_back(MARK_SNIPPET, MARK_SNIPPET_COLOR)
-
-    -- Indent all lines inserted.
-    buffer.current_pos = snippet.start_pos
-    local count = 0
-    for _ in s_text:gmatch('\n') do count = count + 1 end
-    if count > 0 then
-      local ref_line = buffer:line_from_position(start)
-      local isize, ibase = buffer.indent, buffer.line_indentation[ref_line]
-      local inum = ibase / isize -- number of indents needed to match
-      local line_indentation = buffer.line_indentation
-      for i = 1, count do
-        local linei = line_indentation[ref_line + i]
-        line_indentation[ref_line + i] = linei + isize * inum
-      end
-    end
-    buffer:end_undo_action()
-  end
-
-  return next_tab_stop() ~= false
+  if not snippet then return false end
+  snippet:next()
 end
 
 ---
--- Goes back to the previous placeholder or tab stop, reverting changes made to
--- subsequent ones.
--- @return false if no snippet is active; nil otherwise
-function _prev()
-  if not snippet.index then return false end -- no snippet active
-  local buffer = buffer
-  local index = snippet.index
-  if index > 1 then
-    local s_start, s_end = snippet_info()
-    local s_text = snippet.snapshots[index - 2]
-    buffer:set_sel(s_start, s_end)
-    buffer:replace_sel(s_text)
-    snippet.index = index - 2
-    next_tab_stop()
-  else
-    _cancel_current()
-  end
+-- Goes back to the previous placeholder or tab stop, reverting any changes from
+-- the current placeholder or tab stop.
+-- @return false if no snippet is active; nil otherwise.
+function _previous()
+  if #snippet_stack == 0 then return false end
+  snippet_stack[#snippet_stack]:prev()
 end
 
 ---
--- Cancels the active snippet, reverting to the state before its activation,
--- and restores the previous running snippet (if any).
+-- Cancels the active snippet, reverting to the state before its activation, and
+-- restores the previously running snippet (if any).
 function _cancel_current()
-  if not snippet.index then return end
-  local buffer = buffer
-  local s_start, s_end = snippet_info()
-  buffer:begin_undo_action()
-  if s_start and s_end then
-    buffer:set_sel(s_start, s_end)
-    buffer:replace_sel('')
-    s_start, s_end = snippet_info()
-    buffer:goto_pos(s_end + 1)
-    buffer:delete_back()
-  end
-  if snippet.prev_sel_text then buffer:add_text(snippet.prev_sel_text) end
-  buffer:end_undo_action()
-  buffer:marker_delete_handle(snippet.end_marker)
-  snippet = #snippet_stack > 0 and table.remove(snippet_stack) or {}
+  if #snippet_stack == 0 then snippet_stack[#snippet_stack]:cancel() end
 end
 
 ---
--- Lists available snippets in an autocompletion list.
--- Global snippets and snippets in the current lexer and style are used.
-function _list()
-  local buffer = buffer
+-- Prompts the user to select a snippet to insert from a filtered list dialog.
+-- Global snippets and snippets in the current lexer are shown.
+function _select()
   local list = {}
-  local function add_snippets(snippets)
-    for s_name in pairs(snippets) do list[#list + 1] = s_name end
+  local table_concat, type = table.concat, type
+  for trigger, text in pairs(_G.snippets) do
+    if type(text) == 'string' and
+       trigger ~= '_NAME' and trigger ~= '_PACKAGE' then
+      list[#list + 1] = table_concat({trigger, 'global', text }, '\0')
+    end
   end
-  local snippets = _G.snippets
-  add_snippets(snippets)
   local lexer = buffer:get_lexer()
-  local style = buffer:get_style_name(buffer.style_at[buffer.current_pos])
-  if snippets[lexer] and type(snippets[lexer]) == 'table' then
-    add_snippets(snippets[lexer])
-    if snippets[lexer][style] then add_snippets(snippets[lexer][style]) end
+  for trigger, text in pairs(_G.snippets[lexer] or {}) do
+    if type(text) == 'string' then
+      list[#list + 1] = concat({trigger, lexer, text }, '\0')
+    end
   end
   table.sort(list)
-  local caret = buffer.current_pos
-  buffer:auto_c_show(caret - buffer:word_start_position(caret, true),
-                     table.concat(list, string.char(buffer.auto_c_separator)))
+  local s = {}
+  for i = 1, #list do
+    s[#s + 1], s[#s + 2], s[#s + 3] = list[i]:match('^(%Z+)%z(%Z+)%z(%Z+)$')
+  end
+  local i = gui.filteredlist(L('Select Snippet'),
+                             { ('Trigger'), L('Scope'), L('Snippet Text') },
+                             s, true, '--output-column', '2')
+  if i then _insert(s[(i + 1) * 3]) end
 end
 
----
--- Shows the style at the current caret position in a call tip.
-function _show_style()
-  local buffer = buffer
-  local lexer = buffer:get_lexer()
-  local style_num = buffer.style_at[buffer.current_pos]
-  local style = buffer:get_style_name(style_num)
-  local text = string.format("%s %s\n%s %s (%d)", L('Lexer'), lexer, L('Style'),
-                             style, style_num)
-  buffer:call_tip_show(buffer.current_pos, text)
-end
+-- Table of escape sequences.
+-- @class table
+-- @name escapes
+local escapes = {
+  ['%%'] = '\027\027', ['\027\027'] = '%%',
+  ['%('] = '\027\017', ['\027\017'] = '%(',
+  ['%)'] = '\027\018', ['\027\018'] = '%)',
+  ['%>'] = '\027\019', ['\027\019'] = '%>',
+  ['%]'] = '\027\020', ['\027\020'] = '%]'
+}
+
+-- Metatable for a snippet object.
+-- @class table
+-- @name _snippet_mt
+_snippet_mt = {
+  -- Gets a snippet's end position in the Scintilla buffer.
+  -- @param snippet The snippet returned by new_snippet().
+  get_end_position = function(snippet)
+    return buffer:position_from_line(
+                  buffer:marker_line_from_handle(snippet.end_marker)) - 1
+  end,
+
+  -- Gets the text for a snippet.
+  -- @param snippet The snippet returned by new_snippet().
+  get_text = function(snippet)
+    return buffer:text_range(snippet.start_position, snippet:get_end_position())
+  end,
+
+  -- Sets the text for a snippet.
+  -- This text will be displayed immediately in the Scintilla buffer.
+  -- @param snippet The snippet returned by new_snippet().
+  -- @param text The snippet's text.
+  set_text = function(snippet, text)
+    local buffer = buffer
+    buffer.target_start = snippet.start_position
+    buffer.target_end = snippet:get_end_position()
+    buffer:replace_target(text)
+  end,
+
+  -- Returns the escaped form of the snippet's text.
+  -- @param snippet The snippet returned by new_snippet().
+  -- @see escapes
+  get_escaped_text = function(snippet)
+    return snippet:get_text():gsub('%%[%%%(%)>%]]', escapes)
+  end,
+
+  -- Returns the unescaped form of the given text.
+  -- This does the opposite of get_escaped_text() by default. The behaviour is
+  -- slightly different when the 'complete' parameter is true.
+  -- @param text Text to unescape.
+  -- @param complete Flag indicating whether or not to also remove the extra
+  --   escape character '%'. Defaults to false.
+  unescape_text = function(text, complete)
+    text = text:gsub('\027.', escapes)
+    return complete and text:gsub('%%([%%%(%)>%]])', '%1') or text
+  end,
+
+  -- Executes code in the snippet for the given index.
+  -- @param snippet The snippet returned by new_snippet().
+  -- @param index Execute code with this index.
+  execute_code = function(snippet, index)
+    local escaped_text = snippet:get_escaped_text()
+    -- Lua code.
+    escaped_text = escaped_text:gsub('%%'..index..'<([^>]*)>', function(code)
+      local env = setmetatable({ selected_text = snippet.original_sel_text },
+                               { __index = _G })
+      local f, errmsg = loadstring('return '..snippet.unescape_text(code, true))
+      if not f then return errmsg end
+      local _, result = pcall(setfenv(f, env))
+      return result or ''
+    end)
+    -- Shell code.
+    escaped_text = escaped_text:gsub('%%'..index..'%[([^%]]*)%]', function(code)
+      local p = io.popen(snippet.unescape_text(code, true))
+      local result = p:read('*all'):sub(1, -2) -- chop '\n'
+      p:close()
+      return result
+    end)
+    snippet:set_text(snippet.unescape_text(escaped_text))
+  end,
+
+  -- Goes to the next placeholder or tab stop in a snippet.
+  -- @param snippet The snippet returned by new_snippet().
+  next = function(snippet)
+    local buffer = buffer
+
+    -- If the snippet was just initialized, determine how many tab stops it has.
+    if not snippet.index then
+      snippet.index, snippet.max_index = 0, 0
+      for i in snippet:get_escaped_text():gmatch('%%(%d+)') do
+        i = tonumber(i)
+        if i > snippet.max_index then snippet.max_index = i end
+      end
+    end
+
+    local index, start_position = snippet.index, snippet.start_position
+    snippet.snapshots[index] = snippet:get_text()
+
+    index = index + 1
+    if index <= snippet.max_index then
+      -- Execute shell and Lua code.
+      snippet:execute_code(index)
+      local escaped_text = snippet:get_escaped_text()..' '
+
+      -- Find the next tab stop or placeholder that is not a replacement mirror.
+      local s, e, placeholder, _
+      repeat
+        s, _, placeholder, e = escaped_text:find('%%'..index..'(%b())()', e)
+      until not s or placeholder
+      if placeholder then placeholder = placeholder:sub(2, -2) end
+      if not placeholder then
+        -- Tab stop.
+        s, _, e = escaped_text:find('%%'..index..'()[^(]')
+        if not s then
+          snippet.index = index
+          snippet:next()
+          return
+        end
+        placeholder = ''
+      end
+      s, e = start_position + s - 1, start_position + e - 1
+      buffer:set_sel(s, e)
+      buffer:replace_sel(snippet.unescape_text(placeholder))
+      if placeholder ~= '' then buffer:set_sel(s, s + #placeholder) end
+
+      -- Add additional carets at mirrors.
+      escaped_text = snippet:get_escaped_text()..' '
+      offset = 0
+      for s, e in escaped_text:gmatch('()%%'..index..'()[^(]') do
+        buffer.target_start = start_position + s - 1 + offset
+        buffer.target_end = start_position + e - 1 + offset
+        buffer:replace_target(placeholder)
+        offset = offset + (#placeholder - (e - s))
+        buffer:add_selection(buffer.target_start, buffer.target_end)
+      end
+      buffer.main_selection = 0
+
+      -- Done.
+      snippet.index = index
+    else
+      -- Finished.
+      snippet:finish()
+    end
+  end,
+
+  -- Goes to the previous placeholder or tab stop in a snippet.
+  -- @param snippet The snippet returned by new_snippet().
+  prev = function(snippet)
+    if snippet.index > 1 then
+      snippet:set_text(snippet.snapshots[snippet.index - 2])
+      snippet.index = snippet.index - 2
+      snippet:next()
+    else
+      snippet:cancel()
+    end
+  end,
+
+  -- Cancels a snippet.
+  -- @param snippet The snippet returned by new_snippet().
+  cancel = function(snippet)
+    local buffer = buffer
+    buffer:set_sel(snippet.start_position, snippet:get_end_position() + 1)
+    buffer:replace_sel(snippet.original_sel_text or '')
+    buffer:marker_delete_handle(snippet.end_marker)
+    snippet_stack[#snippet_stack] = nil
+  end,
+
+  -- Finishes a snippet by going to its '%0' tab stop and cleaning up.
+  -- @param snippet The snippet returned by new_snippet().
+  finish = function(snippet)
+    local buffer = buffer
+    snippet:set_text(snippet.unescape_text(snippet:get_text(), true))
+    local s, e = snippet:get_text():find('%%0')
+    if s and e then
+      s, e = snippet.start_position + s - 1, snippet.start_position + e
+      buffer:set_sel(s, e)
+      buffer:replace_sel('')
+    else
+      buffer:goto_pos(snippet:get_end_position())
+    end
+    e = snippet:get_end_position()
+    buffer.target_start, buffer.target_end = e, e + 1
+    buffer:replace_target('')
+    buffer:marker_delete_handle(snippet.end_marker)
+    snippet_stack[#snippet_stack] = nil
+  end,
+}
+
+if buffer then buffer:marker_set_back(MARK_SNIPPET, MARK_SNIPPET_COLOR) end
+events.connect('view_new',
+  function() buffer:marker_set_back(MARK_SNIPPET, MARK_SNIPPET_COLOR) end)
 
 ---
 -- Provides access to snippets from _G.

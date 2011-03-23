@@ -56,6 +56,7 @@
   <tr><td>Alt+S, G</td><td>Ctrl+S, G</td><td>Grow selection by a character on each end</td></tr>
   <tr><td>Alt+S, C, &lt;char&gt;</td><td>Ctrl+S, C, &lt;char&gt;</td><td>Select between characters</td></tr>
   <tr><td>Insert</td><td>Insert</td><td>Toggle overtype</td></tr>
+  <tr><td>Ctrl+Alt+Shift+I</td><td>Ctrl+Apple+Shift+I</td><td>Show style</td></tr>
   <tr><td colspan='3'><strong>Search</strong></td></tr>
   <tr><td>Ctrl+F</td><td>Apple+F</td><td>Find</td></tr>
   <tr><td>F3</td><td>Apple+G</td><td>Find next</td></tr>
@@ -72,10 +73,9 @@
   <tr><td>Ctrl+Shift+R</td><td>Ctrl+Shift+R</td><td>Compile file</td></tr>
   <tr><td>Alt+R</td><td>Ctrl+Apple+R</td><td>Filter through shell command</td></tr>
   <tr><td>Tab</td><td>Tab</td><td>Expand snippet or next placeholder or indent text</td></tr>
+  <tr><td>Alt+I</td><td>Ctrl+I</td><td>Select snippet to insert</td></tr>
   <tr><td>Shift+Tab</td><td>Shift+Tab</td><td>Previous snippet placeholder or dedent text</td></tr>
   <tr><td>Ctrl+Alt+I</td><td>Ctrl+Apple+I</td><td>Cancel current snippet</td></tr>
-  <tr><td>Ctrl+Alt+Shift+I</td><td>Ctrl+Apple+Shift+I</td><td>List snippets available</td></tr>
-  <tr><td>Alt+I</td><td>Ctrl+I</td><td>Show style</td></tr>
   <tr><td colspan='3'><strong>Buffers</strong></td></tr>
   <tr><td>Ctrl+B</td><td>Apple+B</td><td>Switch buffers</td></tr>
   <tr><td>Ctrl+Tab</td><td>Ctrl+Tab</td><td>Next buffer</td></tr>
