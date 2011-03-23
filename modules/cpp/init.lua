@@ -103,9 +103,9 @@ _G.keys.cpp = {
 -- @name _G.snippets.cpp
 if type(_G.snippets) == 'table' then
   _G.snippets.cpp = {
-    rc = 'reinterpret_cast<%1>(%2(%(selected_text)))',
-    sc = 'static_cast<%1>(%2(%(selected_text)))',
-    cc = 'const_cast<%1>(%2(%(selected_text)))',
+    rc = 'reinterpret_cast<%1>(%2(%<selected_text>))',
+    sc = 'static_cast<%1>(%2(%<selected_text>))',
+    cc = 'const_cast<%1>(%2(%<selected_text>))',
 
     -- Lua snippets
     lf = 'static int %1(function)(lua_State *%2(lua)) {\n\t%0\n\treturn 0;\n}',
