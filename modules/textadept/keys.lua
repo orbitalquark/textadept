@@ -48,6 +48,14 @@ local function show_recent_file_list()
   buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
   buffer.auto_c_separator = sep
 end
+local function show_style()
+  local buffer = buffer
+  local style = buffer.style_at[buffer.current_pos]
+  local text = string.format("%s %s\n%s %s (%d)", L('Lexer'),
+                             buffer:get_lexer(), L('Style'),
+                             buffer:get_style_name(style), style)
+  buffer:call_tip_show(buffer.current_pos, text)
+end
 
 -- CTRL = 'c'
 -- SHIFT = 's'
@@ -61,10 +69,10 @@ if not OSX then
 
   --[[
     C:         D           J K   M               U
-    A:   A B C D E F G H   J K L M N   P     S T U V W X Y Z
+    A:   A B   D E F G H   J K L M N   P       T U V W X Y Z
     CS:  A B C D     G   I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-    CA:  A B C D E F G H   J K L M N O   Q R S T U V W X Y Z
+    CA:  A B C D E F G H   J K L M N O   Q R S T U   W X Y Z
     CSA: A B C D E F G H   J K L M N O P Q R S T U V W X Y Z
   ]]--
 
@@ -151,10 +159,9 @@ if not OSX then
   -- Snippets
   local m_snippets = _m.textadept.snippets
   keys['\t']  = { m_snippets._insert         }
-  keys['s\t'] = { m_snippets._prev           }
+  keys['s\t'] = { m_snippets._previous       }
   keys.cai    = { m_snippets._cancel_current }
-  keys.caI    = { m_snippets._list           }
-  keys.ai     = { m_snippets._show_style     }
+  keys.ai     = { m_snippets._select         }
 
   -- Buffers
   keys.cb      = { gui.switch_buffer           }
@@ -185,7 +192,8 @@ if not OSX then
   keys.c0 = { function() buffer.zoom = 0 end }
 
   -- Miscellaneous not in standard menu.
-  keys.ao = { show_recent_file_list }
+  keys.ao  = { show_recent_file_list }
+  keys.caI = { show_style            }
 
 else
   -- Mac OSX key commands
@@ -285,10 +293,9 @@ else
   -- Snippets
   local m_snippets = _m.textadept.snippets
   keys['\t']  = { m_snippets._insert         }
-  keys['s\t'] = { m_snippets._prev           }
+  keys['s\t'] = { m_snippets._previous       }
   keys.cai    = { m_snippets._cancel_current }
-  keys.caI    = { m_snippets._list           }
-  keys.ci     = { m_snippets._show_style     }
+  keys.ci     = { m_snippets._select         }
 
   -- Buffers
   keys.ab      = { gui.switch_buffer           }
@@ -319,7 +326,8 @@ else
   keys.c0 = { function() buffer.zoom = 0 end }
 
   -- Miscellaneous not in standard menu.
-  keys.co = { show_recent_file_list }
+  keys.co  = { show_recent_file_list }
+  keys.caI = { show_style            }
 
   -- Movement/selection commands
   keys.cf  = { 'char_right',        b }

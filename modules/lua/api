@@ -136,11 +136,10 @@ open _m.textadept.snapopen.open(utf8_paths, filter, exclusive, depth)\nQuickly o
 PATHS _m.textadept.snapopen.PATHS\nTable of default UTF-8 paths to search.\n
 DEFAULT_DEPTH _m.textadept.snapopen.DEFAULT_DEPTH\nMaximum directory depth to search (defaults to 4).\n
 MAX _m.textadept.snapopen.MAX\nMaximum number of files to list (defaults to 1000).\n
-_cancel_current _m.textadept.snippets._cancel_current()\nCancels the active snippet, reverting to the state before its activation,\nand restores the previous running snippet (if any).\n
-_insert _m.textadept.snippets._insert(s_text)\nBegins expansion of a snippet. The text inserted has escape sequences handled.\n@param Optional snippet to expand. If none is specified, the snippet is\ndetermined from the trigger word (left of the caret), lexer, and style.\n@return false if no snippet was expanded; true otherwise.\n
-_list _m.textadept.snippets._list()\nLists available snippets in an autocompletion list. Global snippets and\nsnippets in the current lexer and style are used.\n
-_prev _m.textadept.snippets._prev()\nGoes back to the previous placeholder or tab stop, reverting changes made\nto subsequent ones.\n@return false if no snippet is active; nil otherwise\n
-_show_style _m.textadept.snippets._show_style()\nShows the style at the current caret position in a call tip.\n
+_cancel_current _m.textadept.snippets._cancel_current()\nCancels the active snippet, reverting to the state before its activation,\nand restores the previously running snippet (if any).\n
+_insert _m.textadept.snippets._insert(text)\nInserts a snippet.\n@param Optional snippet text. If none is specified, the snippet text is\ndetermined from the trigger and lexer.\n@return false if no snippet was expanded; true otherwise.\n
+_previous _m.textadept.snippets._previous()\nGoes back to the previous placeholder or tab stop, reverting any changes\nfrom the current placeholder or tab stop.\n@return false if no snippet is active; nil otherwise.\n
+_select _m.textadept.snippets._select()\nPrompts the user to select a snippet to insert from a filtered list\ndialog. Global snippets and snippets in the current lexer are shown.\n
 MARK_SNIPPET _m.textadept.snippets.MARK_SNIPPET\nThe unique integer mark used to identify the line that\n marks the end of a snippet.\n\n
 MARK_SNIPPET_COLOR _m.textadept.snippets.MARK_SNIPPET_COLOR\nThe Scintilla color used for the line that marks the end of the snippet.\n
 process args.process()\nProcesses command line arguments. Add command line switches with\nargs.register(). Any unrecognized arguments are treated as filepaths and\nopened. Generates an 'arg_none' event when no args are present.\n@see register\n

@@ -280,9 +280,8 @@ _m.textadept.snippets	_	0;"	m
 snippets	_	0;"	t	class:_m.textadept
 _cancel_current	_	0;"	f	class:_m.textadept.snippets
 _insert	_	0;"	f	class:_m.textadept.snippets
-_list	_	0;"	f	class:_m.textadept.snippets
-_prev	_	0;"	f	class:_m.textadept.snippets
-_show_style	_	0;"	f	class:_m.textadept.snippets
+_previous	_	0;"	f	class:_m.textadept.snippets
+_select	_	0;"	f	class:_m.textadept.snippets
 _G.snippets	_	0;"	t	class:_m.textadept.snippets
 MARK_SNIPPET	_	0;"	F	class:_m.textadept.snippets
 MARK_SNIPPET_COLOR	_	0;"	F	class:_m.textadept.snippets

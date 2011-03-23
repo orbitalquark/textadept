@@ -58,9 +58,9 @@ module('keys', package.seeall)
 -- `lexers/lexer.lua`; examples are `whitespace`, `comment`, and `string`.
 --
 -- Key commands can be chained like in Emacs using keychain sequences. By
--- default, the `Esc` key cancels the current keychain, but it can be redefined
--- by setting the `keys.clear_sequence` field. Naturally, the clear sequence
--- cannot be chained.
+-- default, the `Esc` key (`Apple+Esc` on Mac OSX) cancels the current keychain,
+-- but it can be redefined by setting the `keys.clear_sequence` field.
+-- Naturally, the clear sequence cannot be chained.
 --
 -- ## Settings
 --
