@@ -191,7 +191,7 @@ if type(_G.snippets) == 'table' then
     l = "local %1(expr)%2( = %3(value))",
     p = "print(%0)",
     f = "function %1(name)(%2(args))\n\t%0\nend",
-    ['for'] = "for i=%1(1), %2(10)%3(, -1) do\n\t%0\nend",
+    ['for'] = "for i = %1(1), %2(10)%3(, -1) do\n\t%0\nend",
     fori = "for %1(i), %2(val) in ipairs(%3(table)) do\n\t%0\nend",
     forp = "for %1(k), %2(v) in pairs(%3(table)) do\n\t%0\nend",
   }
