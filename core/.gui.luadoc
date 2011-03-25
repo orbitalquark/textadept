@@ -92,7 +92,8 @@ function dialog(kind, ...) end
 -- @param columns A column name or list of column names.
 -- @param items An item or list of items.
 -- @param int_return If true, returns the integer index of the selected item in
---   the filteredlist. Defaults to false which returns the string item.
+--   the filteredlist. Defaults to false, which returns the string item. Not
+--   compatible with a '--select-multiple' filteredlist.
 -- @param ... Additional parameters to pass to gui.dialog().
 -- @return Either a string or integer on success; nil otherwise.
 -- @usage gui.filteredlist('Title', 'Foo', { 'Bar', 'Baz' })
