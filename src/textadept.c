@@ -1566,8 +1566,8 @@ static int l_call_scintilla(lua_State *lua, GtkWidget *editor, int msg,
  * @see l_buffer_mt_index
  */
 static int l_call_buffer_function(lua_State *lua) {
-  GtkWidget *editor = l_togtkwidget(lua, lua_upvalueindex(1));
-  int buffer_func_table_idx = lua_upvalueindex(2);
+  GtkWidget *editor = focused_editor;
+  int buffer_func_table_idx = lua_upvalueindex(1);
   int msg = l_rawgeti_int(lua, buffer_func_table_idx, 1);
   int rt_type = l_rawgeti_int(lua, buffer_func_table_idx, 2);
   int p1_type = l_rawgeti_int(lua, buffer_func_table_idx, 3);
@@ -1592,9 +1592,7 @@ static int l_buffer_mt_index(lua_State *lua) {
   lua_remove(lua, -2); // buffer functions
   if (lua_istable(lua, -1)) {
     // Of the form { msg, rt_type, p1_type, p2_type }
-    lua_pushlightuserdata(lua, (GtkWidget *)focused_editor);
-    lua_insert(lua, lua_gettop(lua) - 1); // shift buffer functions down
-    lua_pushcclosure(lua, l_call_buffer_function, 2);
+    lua_pushcclosure(lua, l_call_buffer_function, 1);
     return 1;
   } else lua_pop(lua, 1); // non-table
 

@@ -8,8 +8,8 @@ local L = _G.locale.localize
 module('_m.textadept.keys', package.seeall)
 
 local keys = _G.keys
-local b, v = 'buffer', 'view'
-local gui = gui
+local _buffer, _view = buffer, view
+local gui, m_textadept = gui, _m.textadept
 
 -- Utility functions used by both layouts.
 local function enclose_in_tag()
@@ -68,9 +68,9 @@ if not OSX then
   -- Windows and Linux key commands.
 
   --[[
-    C:         D           J K   M               U
+    C:         D           J K   M             T U
     A:   A B   D E F G H   J K L M N   P       T U V W X Y Z
-    CS:  A B C D     G   I J K L M N O   Q     T U V   X Y Z
+    CS:  A   C D     G   I J K L M N O   Q     T U V   X Y Z
     SA:  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
     CA:  A B C D E F G H   J K L M N O   Q R S T U   W X Y Z
     CSA: A B C D E F G H   J K L M N O P Q R S T U V W X Y Z
@@ -81,280 +81,267 @@ if not OSX then
   keys.ct = {} -- Textadept command chain
 
   -- File
-  local m_session = _m.textadept.session
-  keys.cn  = { new_buffer   }
-  keys.co  = { io.open_file }
-  -- TODO: { 'reload', b }
-  keys.cs  = { 'save', b    }
-  keys.cS  = { 'save_as', b }
-  keys.cw  = { 'close', b   }
-  keys.cW  = { io.close_all }
-  -- TODO: { m_session.load } after prompting with open dialog
-  -- TODO: { m_session.save } after prompting with save dialog
-  keys.aq = { quit }
+  keys.cn = new_buffer
+  keys.co = io.open_file
+  -- TODO: { _buffer.reload, _buffer }
+  keys.cs = { _buffer.save, _buffer }
+  keys.cS = { _buffer.save_as, _buffer }
+  keys.cw = { _buffer.close, _buffer }
+  keys.cW = io.close_all
+  -- TODO: m_textadept.session.load after prompting with open dialog
+  -- TODO: m_textadept.session.save after prompting with save dialog
+  keys.aq = quit
 
   -- Edit
-  local m_editing = _m.textadept.editing
-  keys.cz = { 'undo', b       }
-  keys.cy = { 'redo', b       }
-  keys.cx = { 'cut', b        }
-  keys.cc = { 'copy', b       }
-  keys.cv = { 'paste', b      }
+  local m_editing = m_textadept.editing
+  keys.cz = { _buffer.undo, _buffer }
+  keys.cy = { _buffer.redo, _buffer }
+  keys.cx = { _buffer.cut, _buffer }
+  keys.cc = { _buffer.copy, _buffer }
+  keys.cv = { _buffer.paste, _buffer }
   -- Delete is delete.
-  keys.ca = { 'select_all', b }
-  keys.ce       = { m_editing.match_brace              }
-  keys.cE       = { m_editing.match_brace, 'select'    }
-  keys['c\n']   = { m_editing.autocomplete_word, '%w_' }
+  keys.ca = { _buffer.select_all, _buffer }
+  keys.ce = m_editing.match_brace
+  keys.cE = { m_editing.match_brace, 'select' }
+  keys['c\n'] = { m_editing.autocomplete_word, '%w_' }
   keys['c\n\r'] = { m_editing.autocomplete_word, '%w_' } -- win32
-  keys.cq       = { m_editing.block_comment            }
+  keys.cq = m_editing.block_comment
   -- TODO: { m_editing.current_word, 'delete' }
-  keys.csh = { m_editing.highlight_word }
-  -- TODO: { m_editing.transpose_chars }
-  -- TODO: { m_editing.convert_indentation }
+  keys.csh = m_editing.highlight_word
+  -- TODO: m_editing.transpose_chars
+  -- TODO: m_editing.convert_indentation
   keys.ac = { -- enClose in...
-    t     = { enclose_in_tag },
-    T     = { m_editing.enclose, '<', ' />' },
-    ['"'] = { m_editing.enclose, '"', '"'   },
-    ["'"] = { m_editing.enclose, "'", "'"   },
-    ['('] = { m_editing.enclose, '(', ')'   },
-    ['['] = { m_editing.enclose, '[', ']'   },
-    ['{'] = { m_editing.enclose, '{', '}'   },
+    t = enclose_in_tag,
+    T = { m_editing.enclose, '<', ' />' },
+    ['"'] = { m_editing.enclose, '"', '"' },
+    ["'"] = { m_editing.enclose, "'", "'" },
+    ['('] = { m_editing.enclose, '(', ')' },
+    ['['] = { m_editing.enclose, '[', ']' },
+    ['{'] = { m_editing.enclose, '{', '}' },
     c     = any_char_mt(m_editing.enclose),
   }
   keys.as = { -- select in...
-    t     = { m_editing.select_enclosed, '>', '<' },
+    t  = { m_editing.select_enclosed, '>', '<' },
     ['"'] = { m_editing.select_enclosed, '"', '"' },
     ["'"] = { m_editing.select_enclosed, "'", "'" },
     ['('] = { m_editing.select_enclosed, '(', ')' },
     ['['] = { m_editing.select_enclosed, '[', ']' },
     ['{'] = { m_editing.select_enclosed, '{', '}' },
-    w     = { m_editing.current_word, 'select'    },
-    l     = { m_editing.select_line               },
-    p     = { m_editing.select_paragraph          },
-    b     = { m_editing.select_indented_block     },
-    s     = { m_editing.select_scope              },
-    g     = { m_editing.grow_selection, 1         },
-    c     = any_char_mt(m_editing.select_enclosed),
+    w = { m_editing.current_word, 'select' },
+    l = m_editing.select_line,
+    p = m_editing.select_paragraph,
+    b = m_editing.select_indented_block,
+    s = m_editing.select_scope,
+    g = { m_editing.grow_selection, 1 },
+    c = any_char_mt(m_editing.select_enclosed),
   }
 
   -- Search
-  keys.cf = { gui.find.focus } -- find/replace
-  keys['f3'] = { gui.find.find_next }
+  keys.cf = gui.find.focus -- find/replace
+  keys['f3'] = gui.find.find_next
   -- Find Next is an when find pane is focused.
   -- Find Prev is ap when find pane is focused.
   -- Replace is ar when find pane is focused.
-  keys.cF = { gui.find.find_incremental }
+  keys.cF = gui.find.find_incremental
   -- Find in Files is ai when find pane is focused.
-  -- TODO: { gui.find.goto_file_in_list, true  }
+  -- TODO: { gui.find.goto_file_in_list, true }
   -- TODO: { gui.find.goto_file_in_list, false }
-  keys.cg = { m_editing.goto_line }
+  keys.cg = m_editing.goto_line
 
   -- Tools
-  keys['f2'] = { gui.command_entry.focus }
+  keys['f2'] = gui.command_entry.focus
   -- Run
-  local m_run = _m.textadept.run
-  keys.cr = { m_run.run     }
-  keys.cR = { m_run.compile }
-  keys.ar = { _m.textadept.filter_through.filter_through }
+  keys.cr = m_textadept.run.run
+  keys.cR = m_textadept.run.compile
+  keys.ar = m_textadept.filter_through.filter_through
   -- Snippets
-  local m_snippets = _m.textadept.snippets
-  keys['\t']  = { m_snippets._insert         }
-  keys['s\t'] = { m_snippets._previous       }
-  keys.cai    = { m_snippets._cancel_current }
-  keys.ai     = { m_snippets._select         }
+  keys['\t'] = m_textadept.snippets._insert
+  keys['s\t'] = m_textadept.snippets._previous
+  keys.cai = m_textadept.snippets._cancel_current
+  keys.ai = m_textadept.snippets._select
 
   -- Buffers
-  keys.cb      = { gui.switch_buffer           }
-  keys['c\t']  = { 'goto_buffer', v, 1, false  }
-  keys['cs\t'] = { 'goto_buffer', v, -1, false }
-  keys.ct.v = {
-    e      = { toggle_setting, 'view_eol'                 },
-    w      = { toggle_setting, 'wrap_mode'                },
-    i      = { toggle_setting, 'indentation_guides'       },
-    ['\t'] = { toggle_setting, 'use_tabs'                 },
-    [' ']  = { toggle_setting, 'view_ws'                  },
-    v      = { toggle_setting, 'virtual_space_options', 2 },
+  keys.cb = gui.switch_buffer
+  keys['c\t'] = { _view.goto_buffer, _view, 1, false  }
+  keys['cs\t'] = { _view.goto_buffer, _view, -1, false }
+  keys.cB = {
+    e = { toggle_setting, 'view_eol' },
+    w = { toggle_setting, 'wrap_mode' },
+    i = { toggle_setting, 'indentation_guides' },
+    ['\t'] = { toggle_setting, 'use_tabs' },
+    [' '] = { toggle_setting, 'view_ws' },
+    v = { toggle_setting, 'virtual_space_options', 2 },
   }
-  keys.cl    = { _m.textadept.mime_types.select_lexer }
-  keys['f5'] = { 'colourise', b, 0, -1     }
+  keys.cl = m_textadept.mime_types.select_lexer
+  keys['f5'] = { _buffer.colourise, _buffer, 0, -1 }
 
   -- Views
   keys.cav = {
-    n = { gui.goto_view, 1, false                    },
-    p = { gui.goto_view, -1, false                   },
-    S = { 'split', v                                 }, -- vertical
-    s = { 'split', v, false                          }, -- horizontal
-    w = { function() view:unsplit() return true end  },
-    W = { function() while view:unsplit() do end end },
-    -- TODO: { function() view.size = view.size + 10 end  }
-    -- TODO: { function() view.size = view.size - 10 end  }
+    n = { gui.goto_view, 1, false },
+    p = { gui.goto_view, -1, false },
+    S = { _view.split, _view }, -- vertical
+    s = { _view.split, _view, false }, -- horizontal
+    w = function() view:unsplit() return true end,
+    W = function() while view:unsplit() do end end,
+    -- TODO: function() view.size = view.size + 10 end
+    -- TODO: function() view.size = view.size - 10 end
   }
-  keys.c0 = { function() buffer.zoom = 0 end }
+  keys.c0 = function() buffer.zoom = 0 end
 
   -- Miscellaneous not in standard menu.
-  keys.ao  = { show_recent_file_list }
-  keys.caI = { show_style            }
+  keys.ao = show_recent_file_list
+  keys.caI = show_style
 
 else
   -- Mac OSX key commands
 
   --[[
     C:                     J     M               U   W X   Z
-    A:         D E     H   J K L                 U       Y
+    A:         D E     H   J K L               T U       Y
     CS:      C D     G H I J K L M   O   Q   S T U V W X Y Z
-    SA:  A B C D       H I J K L M N O   Q R   T U V   X Y
+    SA:  A   C D       H I J K L M N O   Q R   T U V   X Y
     CA:  A   C   E         J K L M N O   Q   S   U V W X Y Z
     CSA: A   C D E     H   J K L M N O P Q R S T U V W X Y Z
   ]]--
 
   keys.clear_sequence = 'aesc'
 
-  keys.at = {} -- Textadept command chain
-
   -- File
-  local m_session = _m.textadept.session
-  keys.an = { new_buffer   }
-  keys.ao = { io.open_file }
-  -- TODO: { 'reload', b }
-  keys.as = { 'save', b    }
-  keys.aS = { 'save_as', b }
-  keys.aw = { 'close', b   }
+  keys.an = new_buffer
+  keys.ao = io.open_file
+  -- TODO: { _buffer.reload, _buffer }
+  keys.as = { _buffer.save, _buffer }
+  keys.aS = { _buffer.save_as, _buffer }
+  keys.aw = { _buffer.close, _buffer }
   keys.aW = { io.close_all }
-  -- TODO: { m_session.load } after prompting with open dialog
-  -- TODO: { m_session.save } after prompting with save dialog
-  keys.aq = { quit }
+  -- TODO: m_textadept.session.load after prompting with open dialog
+  -- TODO: m_textadept.session.save after prompting with save dialog
+  keys.aq = quit
 
   -- Edit
-  local m_editing = _m.textadept.editing
-  keys.az  = { 'undo', b  }
-  keys.aZ  = { 'redo', b  }
-  keys.ax  = { 'cut', b   }
-  keys.ac  = { 'copy', b  }
-  keys.av  = { 'paste', b }
+  local m_editing = m_textadept.editing
+  keys.az = { _buffer.undo, _buffer }
+  keys.aZ = { _buffer.redo, _buffer }
+  keys.ax = { _buffer.cut, _buffer }
+  keys.ac = { _buffer.copy, _buffer }
+  keys.av = { _buffer.paste, _buffer }
   -- Delete is delete.
-  keys.aa  = { 'select_all', b }
-  keys.cm  = { m_editing.match_brace              }
-  keys.aE  = { m_editing.match_brace, 'select'    }
+  keys.aa  = { _buffer.select_all, _buffer }
+  keys.cm  = m_editing.match_brace
+  keys.aE  = { m_editing.match_brace, 'select' }
   keys.esc = { m_editing.autocomplete_word, '%w_' }
-  keys.cq  = { m_editing.block_comment            }
+  keys.cq  = m_editing.block_comment
   -- TODO: { m_editing.current_word, 'delete' }
-  keys.cat = { m_editing.highlight_word }
-  keys.ct = { m_editing.transpose_chars }
-  -- TODO: { m_editing.convert_indentation }
+  keys.cat = m_editing.highlight_word
+  keys.ct = m_editing.transpose_chars
+  -- TODO: m_editing.convert_indentation
   keys.cc = { -- enClose in...
-    t     = { enclose_in_tag },
-    T     = { m_editing.enclose, '<', ' />' },
-    ['"'] = { m_editing.enclose, '"', '"'   },
-    ["'"] = { m_editing.enclose, "'", "'"   },
-    ['('] = { m_editing.enclose, '(', ')'   },
-    ['['] = { m_editing.enclose, '[', ']'   },
-    ['{'] = { m_editing.enclose, '{', '}'   },
-    c     = any_char_mt(m_editing.enclose),
+    t = enclose_in_tag,
+    T = { m_editing.enclose, '<', ' />' },
+    ['"'] = { m_editing.enclose, '"', '"' },
+    ["'"] = { m_editing.enclose, "'", "'" },
+    ['('] = { m_editing.enclose, '(', ')' },
+    ['['] = { m_editing.enclose, '[', ']' },
+    ['{'] = { m_editing.enclose, '{', '}' },
+    c = any_char_mt(m_editing.enclose),
   }
   keys.cs = { -- select in...
-    t     = { m_editing.select_enclosed, '>', '<' },
+    t = { m_editing.select_enclosed, '>', '<' },
     ['"'] = { m_editing.select_enclosed, '"', '"' },
     ["'"] = { m_editing.select_enclosed, "'", "'" },
     ['('] = { m_editing.select_enclosed, '(', ')' },
     ['['] = { m_editing.select_enclosed, '[', ']' },
     ['{'] = { m_editing.select_enclosed, '{', '}' },
-    w     = { m_editing.current_word, 'select'    },
-    l     = { m_editing.select_line               },
-    p     = { m_editing.select_paragraph          },
-    b     = { m_editing.select_indented_block     },
-    s     = { m_editing.select_scope              },
-    g     = { m_editing.grow_selection, 1         },
-    c     = any_char_mt(m_editing.select_enclosed),
+    w = { m_editing.current_word, 'select' },
+    l = m_editing.select_line,
+    p = m_editing.select_paragraph,
+    b = m_editing.select_indented_block,
+    s = m_editing.select_scope,
+    g = { m_editing.grow_selection, 1 },
+    c = any_char_mt(m_editing.select_enclosed),
   }
 
   -- Search
-  keys.af = { gui.find.focus     } -- find/replace
-  keys.ag = { gui.find.find_next }
-  keys.aG = { gui.find.find_prev }
-  keys.ar = { gui.find.replace   }
-  keys.ai = { gui.find.find_incremental }
-  keys.aF = {
-    function()
-      gui.find.in_files = true
-      gui.find.focus()
-    end
-  }
-  keys.cag = { gui.find.goto_file_in_list, true  }
+  keys.af = gui.find.focus -- find/replace
+  keys.ag = gui.find.find_next
+  keys.aG = gui.find.find_prev
+  keys.ar = gui.find.replace
+  keys.ai = gui.find.find_incremental
+  keys.aF = function()
+    gui.find.in_files = true
+    gui.find.focus()
+  end
+  keys.cag = { gui.find.goto_file_in_list, true }
   keys.caG = { gui.find.goto_file_in_list, false }
-  keys.cg  = { m_editing.goto_line               }
+  keys.cg  = m_editing.goto_line
 
   -- Tools
-  keys['f2'] = { gui.command_entry.focus }
+  keys['f2'] = gui.command_entry.focus
   -- Run
-  local m_run = _m.textadept.run
-  keys.cr = { m_run.run     }
-  keys.cR = { m_run.compile }
-  keys.car = { _m.textadept.filter_through.filter_through }
+  keys.cr = { m_textadept.run.run }
+  keys.cR = { m_textadept.run.compile }
+  keys.car = { m_textadept.filter_through.filter_through }
   -- Snippets
-  local m_snippets = _m.textadept.snippets
-  keys['\t']  = { m_snippets._insert         }
-  keys['s\t'] = { m_snippets._previous       }
-  keys.cai    = { m_snippets._cancel_current }
-  keys.ci     = { m_snippets._select         }
+  keys['\t'] = m_textadept.snippets._insert
+  keys['s\t'] = m_textadept.snippets._previous
+  keys.cai = m_textadept.snippets._cancel_current
+  keys.ci = m_textadept.snippets._select
 
   -- Buffers
-  keys.ab      = { gui.switch_buffer           }
-  keys['c\t']  = { 'goto_buffer', v, 1, false  }
-  keys['cs\t'] = { 'goto_buffer', v, -1, false }
-  keys.at.v = {
-    e      = { toggle_setting, 'view_eol'                 },
-    w      = { toggle_setting, 'wrap_mode'                },
-    i      = { toggle_setting, 'indentation_guides'       },
-    ['\t'] = { toggle_setting, 'use_tabs'                 },
-    [' ']  = { toggle_setting, 'view_ws'                  },
-    v      = { toggle_setting, 'virtual_space_options', 2 },
+  keys.ab = gui.switch_buffer
+  keys['c\t'] = { _view.goto_buffer, _view, 1, false }
+  keys['cs\t'] = { _view.goto_buffer, _view, -1, false }
+  keys.aB = {
+    e = { toggle_setting, 'view_eol' },
+    w = { toggle_setting, 'wrap_mode' },
+    i = { toggle_setting, 'indentation_guides' },
+    ['\t'] = { toggle_setting, 'use_tabs' },
+    [' '] = { toggle_setting, 'view_ws' },
+    v = { toggle_setting, 'virtual_space_options', 2 },
   }
-  keys.cl    = { _m.textadept.mime_types.select_lexer }
-  keys['f5'] = { 'colourise', b, 0, -1     }
+  keys.cl = m_textadept.mime_types.select_lexer
+  keys['f5'] = { _buffer.colourise, _buffer, 0, -1 }
 
   -- Views
   keys.cv = {
-    n = { gui.goto_view, 1, false                    },
-    p = { gui.goto_view, -1, false                   },
-    S = { 'split', v                                 }, -- vertical
-    s = { 'split', v, false                          }, -- horizontal
-    w = { function() view:unsplit() return true end  },
-    W = { function() while view:unsplit() do end end },
-    -- TODO: { function() view.size = view.size + 10 end  }
-    -- TODO: { function() view.size = view.size - 10 end  }
+    n = { gui.goto_view, 1, false },
+    p = { gui.goto_view, -1, false },
+    S = { _view.split, _view }, -- vertical
+    s = { _view.split, _view, false }, -- horizontal
+    w = function() view:unsplit() return true end,
+    W = function() while view:unsplit() do end end,
+    -- TODO: function() view.size = view.size + 10 end
+    -- TODO: function() view.size = view.size - 10 end
   }
-  keys.c0 = { function() buffer.zoom = 0 end }
+  keys.c0 = function() buffer.zoom = 0 end
 
   -- Miscellaneous not in standard menu.
-  keys.co  = { show_recent_file_list }
-  keys.caI = { show_style            }
+  keys.co = show_recent_file_list
+  keys.caI = show_style
 
   -- Movement/selection commands
-  keys.cf  = { 'char_right',        b }
-  keys.cF  = { 'char_right_extend', b }
-  keys.caf = { 'word_right',        b }
-  keys.caF = { 'word_right_extend', b }
-  keys.cb  = { 'char_left',         b }
-  keys.cB  = { 'char_left_extend',  b }
-  keys.cab = { 'word_left',         b }
-  keys.caB = { 'word_left_extend',  b }
-  keys.cn  = { 'line_down',         b }
-  keys.cN  = { 'line_down_extend',  b }
-  keys.cp  = { 'line_up',           b }
-  keys.cP  = { 'line_up_extend',    b }
-  keys.ca  = { 'vc_home',           b }
-  keys.cA  = { 'home_extend',       b }
-  keys.ce  = { 'line_end',          b }
-  keys.cE  = { 'line_end_extend',   b }
-  --keys.ch  = { 'delete_back',       b }
-  keys.cah = { 'del_word_left',     b }
-  keys.cd  = { 'clear',             b }
-  keys.cad = { 'del_word_right',    b }
-  keys.ck  = {
-    function()
-      buffer:line_end_extend()
-      buffer:cut()
-    end
-  }
-  keys.cy = { 'paste', b }
+  keys.cf = { _buffer.char_right, _buffer }
+  keys.cF = { _buffer.char_right_extend, _buffer }
+  keys.caf = { _buffer.word_right, _buffer }
+  keys.caF = { _buffer.word_right_extend, _buffer }
+  keys.cb = { _buffer.char_left, _buffer }
+  keys.cB = { _buffer.char_left_extend, _buffer }
+  keys.cab = { _buffer.word_left, _buffer }
+  keys.caB = { _buffer.word_left_extend, _buffer }
+  keys.cn = { _buffer.line_down, _buffer }
+  keys.cN = { _buffer.line_down_extend, _buffer }
+  keys.cp = { _buffer.line_up, _buffer }
+  keys.cP = { _buffer.line_up_extend, _buffer }
+  keys.ca = { _buffer.vc_home, _buffer }
+  keys.cA = { _buffer.home_extend, _buffer }
+  keys.ce = { _buffer.line_end, _buffer }
+  keys.cE = { _buffer.line_end_extend, _buffer }
+  keys.cah = { _buffer.del_word_left, _buffer }
+  keys.cd = { _buffer.clear, _buffer }
+  keys.cad = { _buffer.del_word_right, _buffer }
+  keys.ck = function()
+    buffer:line_end_extend()
+    buffer:cut()
+  end
+  keys.cy = { _buffer.paste, _buffer }
 end
