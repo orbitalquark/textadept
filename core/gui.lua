@@ -65,7 +65,7 @@ function gui.filteredlist(title, columns, items, int_return, ...)
                          '--columns', columns,
                          '--items', items,
                          ...)
-  local patt = int_return and '(%-?%d+)\n(%d+)$' or '([^\n]+)\n([^\n]+)$'
+  local patt = int_return and '^(%-?%d+)\n(%d+)$' or '^([^\n]+)\n(.+)$'
   local response, value = out:match(patt)
   if response == (int_return and '1' or 'gtk-ok') then
     return not int_return and value or tonumber(value)

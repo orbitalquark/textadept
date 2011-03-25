@@ -118,6 +118,7 @@ function open(utf8_paths, filter, exclusive, depth)
                              L('files or more were found. Showing the first'),
                              MAX))
   end
-  local i = gui.filteredlist(L('Open'), 'File', list, true)
-  if i then io.open_file(list[i + 1]) end
+  local utf8_filenames = gui.filteredlist(L('Open'), L('File'), list, false,
+                                          '--select-multiple') or ''
+  for filename in utf8_filenames:gmatch('[^\n]+') do io.open_file(filename) end
 end
