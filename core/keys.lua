@@ -12,11 +12,13 @@ module('keys', package.seeall)
 -- Key commands are defined in the global table `keys`. Each key-value pair in
 -- `keys` consists of either:
 --
--- * A string representing a key command and an associated action table.
+-- * A string representing a key command and an associated function or table.
 -- * A string language name and its associated `keys`-like table.
--- * A string style name and its associated `keys`-like table.
 -- * A string representing a key command and its associated `keys`-like table.
 --   (This is a keychain sequence.)
+--
+-- Language names are the names of the lexer files in `lexers/` such as `cpp`
+-- and `lua`.
 --
 -- A key command string is built from a combination of the `CTRL`, `SHIFT`,
 -- `ALT`, and `ADD` constants as well as the pressed key itself. The value of
@@ -32,30 +34,15 @@ module('keys', package.seeall)
 --
 -- For key values less than 255, Lua's [`string.char()`][string_char] is used to
 -- determine the key's string representation. Otherwise, the
--- [`KEYSYMS`][keysyms] lookup table is used.
+-- [`KEYSYMS`](../modules/_m.textadept.keys.html#KEYSYMS) lookup table is used.
 --
 -- [string_char]: http://www.lua.org/manual/5.1/manual.html#pdf-string.char
--- [keysyms]: ../modules/_m.textadept.keys.html#KEYSYMS
 --
--- An action table is a table consisting of either:
---
--- * A Lua function followed by a list of arguments to pass to that function.
--- * A string representing a [buffer][buffer] or [view][view] function followed
---   by its respective `'buffer'` or `'view'` string and then any arguments to
---   pass to the resulting function.
---
---       `buffer.`_`function`_ by itself cannot be used because at the time of
---       evaluation, `buffer.`_`function`_ would apply only to the current
---       buffer, not for all buffers. By using this string reference system, the
---       correct `buffer.`_`function`_ will be evaluated every time. The same
---       applies to `view`.
---
--- [buffer]: ../modules/buffer.html
--- [view]: ../modules/view.html
---
--- Language names are the names of the lexer files in `lexers/` such as `cpp`
--- and `lua`. Style names are different lexer styles, most of which are in
--- `lexers/lexer.lua`; examples are `whitespace`, `comment`, and `string`.
+-- Normally, Lua functions are assigned to key commands, but those functions are
+-- called without any arguments. In order to pass arguments to a function,
+-- assign a table to the key command. This table contains the function followed
+-- by its arguments in order. Any [buffer](../modules/buffer.html) or
+-- [view](../modules/view.html) references are handled correctly at runtime.
 --
 -- Key commands can be chained like in Emacs using keychain sequences. By
 -- default, the `Esc` key (`Apple+Esc` on Mac OSX) cancels the current keychain,
@@ -64,8 +51,6 @@ module('keys', package.seeall)
 --
 -- ## Settings
 --
--- * `SCOPES_ENABLED`: Flag indicating whether scopes/styles can be used for key
---   commands.
 -- * `CTRL`: The string representing the Control key.
 -- * `SHIFT`: The string representing the Shift key.
 -- * `ALT`: The string representing the Alt key (the Apple key on Mac OSX).
@@ -75,8 +60,7 @@ module('keys', package.seeall)
 -- ## Key Command Precedence
 --
 -- When searching for a key command to execute in the `keys` table, key commands
--- in the current style have priority, followed by the  ones in the current
--- lexer, and finally the ones in the global table.
+-- in the current lexer have priority, followed by the ones in the global table.
 --
 -- ## Example
 --
@@ -84,19 +68,14 @@ module('keys', package.seeall)
 --       ['ctrl+f'] = { 'char_right', 'buffer' },
 --       ['ctrl+b'] = { 'char_left',  'buffer' },
 --       lua = {
---         ['ctrl+c'] = { 'add_text', 'buffer', '-- ' },
---         comment = {
---           ['ctrl+f'] = { function() print('comment') end }
---         }
+--         ['ctrl+f'] = { 'add_text', 'buffer', 'function' },
 --       }
 --     }
 --
 -- The first two key commands are global and call `buffer:char_right()` and
--- `buffer:char_left()` respectively. The last two commands apply only in the
--- Lua lexer with the very last one only being available in Lua's `comment`
--- style. If `ctrl+f` is pressed when the current style is `comment` in the
--- `lua` lexer, the global key command with the same shortcut is overridden and
--- `comment` is printed to standard out.
+-- `buffer:char_left()` respectively. The last command applies only in the Lua
+-- lexer. If `ctrl+f` is pressed in a Lua file, the global key command with the
+-- same shortcut is overridden and `function` is added to the buffer.
 --
 -- ## Problems
 --
@@ -119,7 +98,6 @@ module('keys', package.seeall)
 --   Note: The Alt-Option key in Mac OSX is not available.
 
 -- settings
-local SCOPES_ENABLED = true
 local ADD = ''
 local CTRL = 'c'..ADD
 local SHIFT = 's'..ADD
@@ -133,6 +111,8 @@ local xpcall = _G.xpcall
 local next = _G.next
 local type = _G.type
 local unpack = _G.unpack
+local no_args = {}
+local getmetatable = getmetatable
 local error = function(e) events.emit('error', e) end
 
 ---
@@ -179,44 +159,45 @@ local HALT = 2
 
 -- Runs a key command associated with the current keychain.
 -- @param lexer Optional lexer name for lexer-specific commands.
--- @param scope Optional scope name for scope-specific commands.
 -- @return INVALID, PROPAGATE, CHAIN, or HALT.
-local function run_key_command(lexer, scope)
-  local key = keys
-  if lexer and type(key) == 'table' and key[lexer] then key = key[lexer] end
-  if scope and type(key) == 'table' and key[scope] then key = key[scope] end
+local function run_key_command(lexer)
+  local key, key_type = keys, type(keys)
+  if lexer and key_type == 'table' and key[lexer] then key = key[lexer] end
   if type(key) ~= 'table' then return INVALID end
 
-  for i = 1, #keychain do
-    key = key[keychain[i]]
+  key = key[keychain[1]]
+  for i = 2, #keychain do
     if type(key) ~= 'table' then return INVALID end
+    key = key[keychain[i]]
   end
-  if #key == 0 and next(key) then
+  key_type = type(key)
+
+  if key_type ~= 'function' and key_type ~= 'table' then return INVALID end
+  if key_type == 'table' and #key == 0 and next(key) then
     gui.statusbar_text = L('Keychain:')..' '..table.concat(keychain, ' ')
     return CHAIN
   end
 
-  local f, args = key[1], { unpack(key, 2) }
-  if type(key[1]) == 'string' and (key[2] == 'buffer' or key[2] == 'view') then
-    local v = _G[key[2]]
-    f, args = v[f], { v, unpack(key, 3) }
+  local f, args = key_type == 'function' and key or key[1], no_args
+  if key_type == 'table' then
+    args = key
+    -- If the argument is a view or buffer, use the current one instead.
+    if type(args[2]) == 'table' then
+      local mt, buffer, view = getmetatable(args[2]), buffer, view
+      if mt == getmetatable(buffer) then
+        args[2] = buffer
+      elseif mt == getmetatable(view) then
+        args[2] = view
+      end
+    end
   end
-
-  local _, ret = xpcall(function() return f(unpack(args)) end, error)
+  local _, ret = xpcall(function() return f(unpack(args, 2)) end, error)
   return ret == false and PROPAGATE or HALT
 end
 
--- Key command order for lexer and scope args passed to run_key_command().
-local order = {
-  { true, true }, -- lexer and scope-specific commands
-  { true, false }, -- lexer-specific commands
-  { false, false } -- general commands
-}
-
 -- Handles Textadept keypresses.
--- It is called every time a key is pressed, and based on lexer and scope,
--- executes a command. The command is looked up in the global 'keys' key
--- command table.
+-- It is called every time a key is pressed, and based on lexer, executes a
+-- command. The command is looked up in the global 'keys' key command table.
 -- @return whatever the executed command returns, true by default. A true
 --   return value will tell Textadept not to handle the key afterwords.
 local function keypress(code, shift, control, alt)
@@ -241,13 +222,9 @@ local function keypress(code, shift, control, alt)
   end
   keychain[#keychain + 1] = key_seq
 
-  local lexer, scope = buffer:get_lexer(), nil
-  if SCOPES_ENABLED then
-    scope = buffer:get_style_name(buffer.style_at[buffer.current_pos])
-  end
-  local success, status
-  for i = SCOPES_ENABLED and 1 or 2, #order do
-    status = run_key_command(order[i][1] and lexer, order[i][2] and scope)
+  local success
+  for i = 1, 2 do
+    local status = run_key_command(i == 1 and buffer:get_lexer())
     if status > 0 then -- CHAIN or HALT
       if status == HALT then
         -- Clear the key sequence, but keep any status messages from the key
