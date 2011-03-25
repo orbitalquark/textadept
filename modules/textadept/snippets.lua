@@ -28,12 +28,8 @@ module('_m.textadept.snippets', package.seeall)
 --
 -- ## Settings
 --
--- * `MARK_SNIPPET`: The unique integer mark used to identify the line that
---    marks the end of a snippet.
--- * `MARK_SNIPPET_COLOR`: The [Scintilla color][scintilla_color] used for the
---   line that marks the end of the snippet.
---
--- [scintilla_color]: http://scintilla.org/ScintillaDoc.html#colour
+-- * `INDIC_SNIPPET`: The unique integer indicator used to mark the end of a
+--   snippet.
 --
 -- ## Snippet Precedence
 --
@@ -124,8 +120,7 @@ module('_m.textadept.snippets', package.seeall)
 -- inserts it. The last snippet expands only when editing Lua code.
 
 -- settings
-MARK_SNIPPET = 4
-MARK_SNIPPET_COLOR = 0x4D9999
+INDIC_SNIPPET = 9
 -- end settings
 
 -- The stack of currently running snippets.
@@ -171,9 +166,9 @@ local function new_snippet(text, trigger)
   buffer:target_from_selection()
   if trigger then buffer.target_start = buffer.current_pos - #trigger end
   snippet.start_position = buffer.target_start
-  buffer:replace_target(text..newlines[buffer.eol_mode])
-  local line = buffer:line_from_position(buffer.target_end)
-  snippet.end_marker = buffer:marker_add(line, MARK_SNIPPET)
+  buffer:replace_target(text..' ')
+  buffer.indicator_current = INDIC_SNIPPET
+  buffer:indicator_fill_range(buffer.target_end - 1, 1)
 
   snippet:execute_code('')
   return snippet
@@ -264,12 +259,8 @@ local escapes = {
 _snippet_mt = {
   -- Gets a snippet's end position in the Scintilla buffer.
   -- @param snippet The snippet returned by new_snippet().
-  -- @param include_mark Flag indicating whether or not to include the snippet's
-  --   mark. Defaults to false.
-  get_end_position = function(snippet, include_mark)
-    local line = buffer:marker_line_from_handle(snippet.end_marker)
-    local offset = include_mark and 0 or #newlines[buffer.eol_mode]
-    return buffer:position_from_line(line) - offset
+  get_end_position = function(snippet)
+    return buffer:indicator_end(INDIC_SNIPPET, snippet.start_position + 1)
   end,
 
   -- Gets the text for a snippet.
@@ -398,9 +389,10 @@ _snippet_mt = {
   -- @param snippet The snippet returned by new_snippet().
   cancel = function(snippet)
     local buffer = buffer
-    buffer:set_sel(snippet.start_position, snippet:get_end_position(true))
+    buffer:set_sel(snippet.start_position, snippet:get_end_position())
     buffer:replace_sel(snippet.trigger or snippet.original_sel_text)
-    buffer:marker_delete_handle(snippet.end_marker)
+    buffer.indicator_current = INDIC_SNIPPET
+    buffer:indicator_clear_range(snippet:get_end_position(), 1)
     snippet_stack[#snippet_stack] = nil
   end,
 
@@ -416,17 +408,16 @@ _snippet_mt = {
     else
       buffer:goto_pos(snippet:get_end_position())
     end
-    s, e = snippet:get_end_position(), snippet:get_end_position(true)
-    buffer.target_start, buffer.target_end = s, e
-    buffer:replace_target('')
-    buffer:marker_delete_handle(snippet.end_marker)
+    buffer.indicator_current = INDIC_SNIPPET
+    buffer:indicator_clear_range(snippet:get_end_position(), 1)
     snippet_stack[#snippet_stack] = nil
   end,
 }
 
-if buffer then buffer:marker_set_back(MARK_SNIPPET, MARK_SNIPPET_COLOR) end
+local INDIC_HIDDEN = _SCINTILLA.constants.INDIC_HIDDEN
+if buffer then buffer.indic_style[INDIC_SNIPPET] = INDIC_HIDDEN end
 events.connect('view_new',
-  function() buffer:marker_set_back(MARK_SNIPPET, MARK_SNIPPET_COLOR) end)
+  function() buffer.indic_style[INDIC_SNIPPET] = INDIC_HIDDEN end)
 
 ---
 -- Provides access to snippets from _G.
