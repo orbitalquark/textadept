@@ -355,6 +355,7 @@ function get_class(sense, symbol)
   local completions = sense.completions
   local symbol_chars = sense.syntax.symbol_chars
   local type_declarations = sense.syntax.type_declarations
+  local exclude = sense.syntax.type_declarations_exclude
   local type_assignments = sense.syntax.type_assignments
   local assignment_patt = symbol..'%s*=%s*([^\r\n]+)'
   local class, superclass, assignment
@@ -372,6 +373,7 @@ function get_class(sense, symbol)
       if line:find(symbol) then
         for _, patt in ipairs(type_declarations) do
           s, e, class = line:find(patt:gsub('%%_', symbol))
+          if class and exclude[class] then class = nil end
           if class then break end
         end
         if not class then
@@ -851,6 +853,10 @@ api_files = {},
 -- @field type_declarations A list of Lua patterns used for determining the
 --   class type of a symbol. The first capture returned must be the class name.
 --   Use '%_' to match the symbol. Defaults to '(%u[%w_%.]+)%s+%_'.
+-- @field type_declarations_exclude A table of types to exclude, even if they
+--   match a type_declaration pattern. Each excluded type is a table key and has
+--   a true boolean value. For example, { Foo = true } excludes any type whose
+--   name is 'Foo'. Defaults to being empty.
 -- @field type_assignments A map of Lua patterns to class types for variable
 --   assignments. This is typically used for dynamically typed languages. For
 --   example, `sense.type_assignments['^"'] = 'string'`  would recognize string
@@ -867,6 +873,7 @@ syntax = {
   type_declarations = {
     '(%u[%w_%.]+)%s+%_', -- Foo bar
   },
+  type_declarations_exclude = {},
   type_assignments = {}
 },
 
