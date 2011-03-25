@@ -60,7 +60,7 @@ sense.ctags_kinds = {
   t = 'classes'
 }
 sense:load_ctags(_HOME..'/modules/cpp/tags', true)
-sense.api_files = { _HOME..'/modules/cpp/api' }
+sense.api_files = { _HOME..'/modules/cpp/api', _HOME..'/modules/cpp/lua_api' }
 sense.syntax.type_declarations = {
   '([%w_%.]+)[%s%*&]+%_[^%w_]', -- Foo bar, Foo *bar, Foo* bar, Foo &bar, etc.
 }
