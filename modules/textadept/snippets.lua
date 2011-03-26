@@ -101,11 +101,11 @@ module('_m.textadept.snippets', package.seeall)
 -- It is very important that any `%`, `(`, `)`, `>`, or `]` characters
 -- **within** placeholders be escaped with a `%` as necessary. Otherwise,
 -- unexpected results will occur. `%`s only need to be escaped if they are
--- proceeded by a digit, `(`s and `)`s only need to be escaped inside default
--- text placeholders **if and only if** there is no matching parenthesis (thus,
--- nested parenthesis do not need to be escaped), `]`s only need to be escaped
--- inside Shell code placeholders, and `>`s only need to be escaped inside Lua
--- code placeholders.
+-- proceeded by a digit, `(`s and `)`s only need to be escaped directly after a
+-- %num sequence or inside default text placeholders **if and only if** there is
+-- no matching parenthesis (thus, nested parentheses do not need to be escaped),
+-- `]`s only need to be escaped inside Shell code placeholders, and `>`s only
+-- need to be escaped inside Lua code placeholders.
 --
 -- ## Example
 --
