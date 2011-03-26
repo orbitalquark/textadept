@@ -116,7 +116,7 @@ module('_m.textadept.adeptsense', package.seeall)
 --     sense.completions = {
 --       ['class1'] = {
 --         functions = { 'fun1', 'fun2', ...},
---         fields = = { 'f1', 'f2', ... }
+--         fields = { 'f1', 'f2', ... }
 --       },
 --       ['class2'] = ...,
 --       ...
