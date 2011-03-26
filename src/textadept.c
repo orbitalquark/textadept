@@ -2005,11 +2005,11 @@ static int l_cf_reset(lua_State *lua) {
   l_init(0, NULL, TRUE);
   lua_pushboolean(lua, TRUE);
   lua_setglobal(lua, "RESETTING");
+  l_set_view_global(focused_editor);
+  l_set_buffer_global(focused_editor);
   l_load_script("init.lua");
   lua_pushnil(lua);
   lua_setglobal(lua, "RESETTING");
-  l_set_view_global(focused_editor);
-  l_set_buffer_global(focused_editor);
   l_emit_event("reset_after", -1);
   return 0;
 }
