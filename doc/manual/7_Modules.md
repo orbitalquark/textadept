@@ -78,16 +78,24 @@ change them or use different settings, see the
 
 ## Getting Modules
 
+The officially supported language modules are hosted on
+[Bitbucket](https://bitbucket.org/mitchell) and come with Textadept by default.
+To upgrade to the most recent version of a module, you can either use
+[Mercurial](http://mercurial.selenic.com) or download a zipped version from the
+module's repository homepage. If you have access to Textadept's `_HOME`, you
+can overwrite the existing module. Otherwise, place it in your `_USERHOME` and
+replace all instances of `_HOME` with `_USERHOME` in the module's `init.lua`.
+
 For now, user-created modules are obtained from the
 [wiki](http://caladbolg.net/textadeptwiki).
 
 ## Installing Modules
 
-It is recommended to put all modules in your `~/.textadept/modules/` directory
-so they will not be overwritten when you update Textadept. Modules in that
-directory override any modules in Textadept's `modules/` directory. This means
-that if you have your own `lua` module, it will be loaded instead of the one
-that comes with Textadept.
+It is recommended to put all custom or user-created modules in your
+`~/.textadept/modules/` directory so they will not be overwritten when you
+update Textadept. Also, modules in that directory override any modules in
+Textadept's  `modules/` directory. This means that if you have your own `lua`
+module, it will be loaded instead of the one that comes with Textadept.
 
 ## Developing Modules
 
