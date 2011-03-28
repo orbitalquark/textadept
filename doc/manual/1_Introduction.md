@@ -66,4 +66,5 @@ customization and extensibility from the start; the features come after that.
 * Unlimited split views.
 * Support for over 70 programming languages.
 * Powerful snippets and key commands.
+* Code autocompletion and API lookup.
 * Unparalleled extensibility.
