@@ -80,12 +80,12 @@
   <tr><td>Ctrl+B</td><td>Apple+B</td><td>Switch buffers</td></tr>
   <tr><td>Ctrl+Tab</td><td>Ctrl+Tab</td><td>Next buffer</td></tr>
   <tr><td>Ctrl+Shift+Tab</td><td>Ctrl+Shift+Tab</td><td>Prev buffer</td></tr>
-  <tr><td>Ctrl+T, V, E</td><td>Apple+T, V, E</td><td>Toggle show end of line</td></tr>
-  <tr><td>Ctrl+T, V, W</td><td>Apple+T, V, W</td><td>Toggle show whitespace</td></tr>
-  <tr><td>Ctrl+T, V, I</td><td>Apple+T, V, I</td><td>Toggle show indentation guides</td></tr>
-  <tr><td>Ctrl+T, V, Tab</td><td>Apple+T, V, Tab</td><td>Toggle use tabs or spaces</td></tr>
-  <tr><td>Ctrl+T, V, Space</td><td>Apple+T, V, Space</td><td>Toggle show whitespace</td></tr>
-  <tr><td>Ctrl+T, V, V</td><td>Apple+T, V, V</td><td>Toggle use virtual space</td></tr>
+  <tr><td>Ctrl+Shift+B, E</td><td>Apple+Shift+B, E</td><td>Toggle show end of line</td></tr>
+  <tr><td>Ctrl+Shift+B, W</td><td>Apple+Shift+B, W</td><td>Toggle show whitespace</td></tr>
+  <tr><td>Ctrl+Shift+B, I</td><td>Apple+Shift+B, I</td><td>Toggle show indentation guides</td></tr>
+  <tr><td>Ctrl+Shift+B, Tab</td><td>Apple+Shift+B, Tab</td><td>Toggle use tabs or spaces</td></tr>
+  <tr><td>Ctrl+Shift+B, Space</td><td>Apple+Shift+B, Space</td><td>Toggle show whitespace</td></tr>
+  <tr><td>Ctrl+Shift+B, V</td><td>Apple+Shift+B, V</td><td>Toggle use virtual space</td></tr>
   <tr><td>Ctrl+L</td><td>Ctrl+L</td><td>Select lexer</td></tr>
   <tr><td>F5</td><td>F5</td><td>Refresh syntax highlighting</td></tr>
   <tr><td colspan='3'><strong>Split Views</strong></td></tr>
