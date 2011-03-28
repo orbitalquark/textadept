@@ -81,10 +81,11 @@ change them or use different settings, see the
 The officially supported language modules are hosted on
 [Bitbucket](https://bitbucket.org/mitchell) and come with Textadept by default.
 To upgrade to the most recent version of a module, you can either use
-[Mercurial](http://mercurial.selenic.com) or download a zipped version from the
-module's repository homepage. If you have access to Textadept's `_HOME`, you
-can overwrite the existing module. Otherwise, place it in your `_USERHOME` and
-replace all instances of `_HOME` with `_USERHOME` in the module's `init.lua`.
+[Mercurial](http://mercurial.selenic.com) (run `hg pull` and then `hg update` on
+or from within the module) or download a zipped version from the module's
+repository homepage and overwrite the existing one. If you do not have access to
+`_HOME`, place the updated module in your `_USERHOME` and replace all instances
+of `_HOME` with `_USERHOME` in the module's `init.lua`.
 
 For now, user-created modules are obtained from the
 [wiki](http://caladbolg.net/textadeptwiki).
