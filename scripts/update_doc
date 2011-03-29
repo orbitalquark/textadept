@@ -1,116 +1,144 @@
 #!/usr/bin/lua
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
--- Generate LuaDoc.
-os.execute('rm -rf ../doc/modules/')
-os.execute('cd ../; luadoc -d doc/ --nofiles modules/ core/ lexers/lexer.lua')
+local all = false
+if #arg == 0 then all = true end
 
--- Insert Markdown in modules into LuaDoc.
-local p = io.popen('grep -r "\\-\\- Markdown:" ../*')
-for file in p:lines() do
-  local module
+local luadoc = all
+local manual = all
+local doxygen = all
+local adeptsense = all
 
-  -- Open the Lua file and extract the Markdown lines.
-  local f = io.open(file:match('^[^:]+'))
-  local markdown, flag = {}, false
-  for line in f:lines() do
-    if flag and line:match('^%-%-') then
-      local match = line:match('^%-%- ([^\n]+)')
-      markdown[#markdown + 1] = match or ''
-    elseif flag then -- markdown ended
-      break
-    elseif line:match('^%-%- Markdown:') then
-      flag = true
-    elseif line:match('^module') then
-      module = line:match("^module%('([^']+)")
-    end
+for _, doctype in ipairs(arg) do
+  if doctype == 'luadoc' then
+    luadoc = true
+  elseif doctype == 'manual' then
+    manual = true
+  elseif doctype == 'doxygen' then
+    doxygen = true
+  elseif doctype == 'adeptsense' then
+    adeptsense = true
   end
-  f:close()
-
-  -- Convert the Markdown into HTML.
-  markdown = table.concat(markdown, '\n')
-  f = io.open('tmp', 'w')
-  f:write(markdown)
-  f:close()
-  f = io.popen('perl ../doc/Markdown.pl tmp')
-  markdown = f:read('*all')
-  f:close()
-  os.execute('rm tmp')
-
-  -- Insert the Marked down HTML in the LuaDoc HTML file.
-  local filename = '../doc/modules/'..module..'.html'
-  f = io.open(filename)
-  local contents = f:read('*all')
-  f:close()
-  local s = contents:find('<h2>Functions</h2>')
-  if not s then s = contents:find('<h2>Tables</h2>') end
-  contents = contents:sub(1, s - 1)..markdown..contents:sub(s)
-  f = io.open(filename, 'w')
-  f:write(contents)
-  f:close()
 end
-p:close()
+
+-- Generate LuaDoc.
+if luadoc then
+  os.execute('rm -rf ../doc/modules/')
+  os.execute('cd ../; luadoc -d doc/ --nofiles modules/ core/ lexers/lexer.lua')
+
+  -- Insert Markdown in modules into LuaDoc.
+  local p = io.popen('grep -r "\\-\\- Markdown:" ../*')
+  for file in p:lines() do
+    local module
+
+    -- Open the Lua file and extract the Markdown lines.
+    local f = io.open(file:match('^[^:]+'))
+    local markdown, flag = {}, false
+    for line in f:lines() do
+      if flag and line:match('^%-%-') then
+        local match = line:match('^%-%- ([^\n]+)')
+        markdown[#markdown + 1] = match or ''
+      elseif flag then -- markdown ended
+        break
+      elseif line:match('^%-%- Markdown:') then
+        flag = true
+      elseif line:match('^module') then
+        module = line:match("^module%('([^']+)")
+      end
+    end
+    f:close()
+
+    -- Convert the Markdown into HTML.
+    markdown = table.concat(markdown, '\n')
+    f = io.open('tmp', 'w')
+    f:write(markdown)
+    f:close()
+    f = io.popen('perl ../doc/Markdown.pl tmp')
+    markdown = f:read('*all')
+    f:close()
+    os.execute('rm tmp')
+
+    -- Insert the Marked down HTML in the LuaDoc HTML file.
+    local filename = '../doc/modules/'..module..'.html'
+    f = io.open(filename)
+    local contents = f:read('*all')
+    f:close()
+    local s = contents:find('<h2>Functions</h2>')
+    if not s then s = contents:find('<h2>Tables</h2>') end
+    contents = contents:sub(1, s - 1)..markdown..contents:sub(s)
+    f = io.open(filename, 'w')
+    f:write(contents)
+    f:close()
+  end
+  p:close()
+
+  -- Modify default CSS.
+  os.execute("sed -i 's/pre.example/pre, pre.example/;' ../doc/luadoc.css")
+end
 
 -- Generate the Manual.
-p = io.popen('ls -1 ../doc/manual/*.md')
-for mdfile in p:lines() do
-  local htmlfile = mdfile:match('^(.+).md$')..'.html'
-  html = [[
-    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-    <html>
-    <head>
-        <title>Textadept Manual</title>
-        <link rel="stylesheet" href="luadoc.css" type="text/css" />
-    </head>
+if manual then
+  p = io.popen('ls -1 ../doc/manual/*.md')
+  for mdfile in p:lines() do
+    local htmlfile = mdfile:match('^(.+).md$')..'.html'
+    html = [[
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+      <html>
+      <head>
+          <title>Textadept Manual</title>
+          <link rel="stylesheet" href="luadoc.css" type="text/css" />
+      </head>
 
-    <body>
-    <div id="container">
-    <div id="main">
-    <div id="navigation">
+      <body>
+      <div id="container">
+      <div id="main">
+      <div id="navigation">
 
-      %sidebar%
+        %sidebar%
 
-    </div>
-    <div id="content">
+      </div>
+      <div id="content">
 
-      %content%
+        %content%
 
-    </div>
-    </div>
-    <div id="about">
-      <p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
-    </div>
-    </div>
-    </body>
-    </html>
-  ]]
+      </div>
+      </div>
+      <div id="about">
+        <p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+      </div>
+      </div>
+      </body>
+      </html>
+    ]]
 
-  local sidebar_md = io.popen('../doc/Markdown.pl ../doc/sidebar.md')
-  html = html:gsub('%%sidebar%%', sidebar_md:read('*all'))
-  sidebar_md:close()
-  local content_md = io.popen('../doc/Markdown.pl '..mdfile)
-  local md = content_md:read('*all'):gsub('%%', '%%%%')
-  md = md:gsub('(<h%d>)([^<]+)(</h%d>)',
-               function(s, text, e)
-                 return string.format('%s<a name="%s"></a>%s%s', s,
-                                      text:gsub(' ', '_'):lower(), text, e)
-               end)
-  html = html:gsub('%%content%%', md)
-  content_md:close()
+    local sidebar_md = io.popen('../doc/Markdown.pl ../doc/sidebar.md')
+    html = html:gsub('%%sidebar%%', sidebar_md:read('*all'))
+    sidebar_md:close()
+    local content_md = io.popen('../doc/Markdown.pl '..mdfile)
+    local md = content_md:read('*all'):gsub('%%', '%%%%')
+    md = md:gsub('(<h%d>)([^<]+)(</h%d>)',
+                 function(s, text, e)
+                   return string.format('%s<a name="%s"></a>%s%s', s,
+                                        text:gsub(' ', '_'):lower(), text, e)
+                 end)
+    html = html:gsub('%%content%%', md)
+    content_md:close()
 
-  local f = io.open(htmlfile, 'w')
-  f:write(html)
-  f:close()
+    local f = io.open(htmlfile, 'w')
+    f:write(html)
+    f:close()
+  end
+  p:close()
 end
-p:close()
-
--- Modify default CSS.
-os.execute("sed -i 's/pre.example/pre, pre.example/;' ../doc/luadoc.css")
 
 -- Generate Doxygen documentation.
-os.execute('cd ../; doxygen Doxyfile')
+if doxygen then
+  os.execute('cd ../; doxygen Doxyfile')
+end
 
 -- Create Lua adeptsense for textadept.
-os.execute(table.concat{ 'luadoc -d ../modules/lua -doclet adeptsensedoc ',
-                         '../modules ../core ../lexers/lexer.lua' })
+if adeptsense then
+  os.execute(table.concat{ 'luadoc -d ../modules/lua -doclet adeptsensedoc ',
+                           '../modules ../core ../lexers/lexer.lua' })
+end
