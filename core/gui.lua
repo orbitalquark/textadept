@@ -44,8 +44,11 @@ function gui._print(buffer_type, ...)
         gui.goto_view(message_view_index, true)
       end
     end
-    buffer:append_text(table.concat({...}, '\t'))
+    local args, n = {...}, select('#', ...)
+    for i = 1, n do args[i] = tostring(args[i]) end
+    buffer:append_text(table.concat(args, '\t'))
     buffer:append_text('\n')
+    buffer:goto_pos(buffer.length)
     buffer:set_save_point()
   end
   pcall(safe_print, ...) -- prevent endless loops on error

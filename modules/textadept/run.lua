@@ -37,7 +37,6 @@ function execute(command)
   p:close()
   lfs.chdir(current_dir)
   gui.print(('> '..command..'\n'..out):iconv('UTF-8', _CHARSET))
-  buffer:goto_pos(buffer.length)
 end
 
 -- Executes a compile or run command.
