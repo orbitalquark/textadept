@@ -266,7 +266,9 @@ _snippet_mt = {
   -- Gets the text for a snippet.
   -- @param snippet The snippet returned by new_snippet().
   get_text = function(snippet)
-    return buffer:text_range(snippet.start_position, snippet:get_end_position())
+    local s, e = snippet.start_position, snippet:get_end_position()
+    local ok, text = pcall(buffer.text_range, buffer, s, e)
+    return ok and text or ''
   end,
 
   -- Sets the text for a snippet.
@@ -409,7 +411,10 @@ _snippet_mt = {
       buffer:goto_pos(snippet:get_end_position())
     end
     buffer.indicator_current = INDIC_SNIPPET
-    buffer:indicator_clear_range(snippet:get_end_position(), 1)
+    e = snippet:get_end_position()
+    buffer:indicator_clear_range(e, 1)
+    buffer.target_start, buffer.target_end = e, e + 1
+    buffer:replace_target('') -- clear initial padding space
     snippet_stack[#snippet_stack] = nil
   end,
 }
