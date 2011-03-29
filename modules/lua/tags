@@ -283,8 +283,7 @@ _insert	_	0;"	f	class:_m.textadept.snippets
 _previous	_	0;"	f	class:_m.textadept.snippets
 _select	_	0;"	f	class:_m.textadept.snippets
 _G.snippets	_	0;"	t	class:_m.textadept.snippets
-MARK_SNIPPET	_	0;"	F	class:_m.textadept.snippets
-MARK_SNIPPET_COLOR	_	0;"	F	class:_m.textadept.snippets
+INDIC_SNIPPET	_	0;"	F	class:_m.textadept.snippets
 args	_	0;"	m	
 args	_	0;"	t	class:_G
 args	_	0;"	t	
@@ -815,7 +814,6 @@ keys	_	0;"	m
 keys	_	0;"	t	class:_G
 keys	_	0;"	t	
 KEYSYMS	_	0;"	t	class:keys
-SCOPES_ENABLED	_	0;"	F	class:keys
 CTRL	_	0;"	F	class:keys
 SHIFT	_	0;"	F	class:keys
 ALT	_	0;"	F	class:keys
