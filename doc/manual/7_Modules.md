@@ -79,8 +79,8 @@ change them or use different settings, see the
 ## Getting Modules
 
 The officially supported language modules are hosted on
-[Bitbucket](https://bitbucket.org/mitchell) and come with Textadept by default.
-To upgrade to the most recent version of a module, you can either use
+[Bitbucket](https://bitbucket.org/mitchell) and are available as a separate
+download. To upgrade to the most recent version of a module, you can either use
 [Mercurial](http://mercurial.selenic.com) (run `hg pull` and then `hg update` on
 or from within the module) or download a zipped version from the module's
 repository homepage and overwrite the existing one. If you do not have access to

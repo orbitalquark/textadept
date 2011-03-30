@@ -146,6 +146,9 @@ PACKAGE64 = ../releases/$(RELEASEDIR64).tgz
 PACKAGEWIN32 = ../releases/$(RELEASEDIRWIN32).zip
 PACKAGEMAC = ../releases/$(RELEASEDIRMAC).zip
 SRCPACKAGE = ../releases/$(RELEASEDIR32).src.zip
+MODULES = css hypertext java rails rhtml ruby
+MODULESDIR = $(RELEASEDIR32)/modules
+MODULESPKG = ../releases/$(RELEASEDIR32).modules.zip
 
 release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
   ../$(TEXTADEPTMAC) ../$(TEXTADEPTLPNG12)
@@ -155,9 +158,6 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	cp -r ../doc $(RELEASEDIR32)
 	hg clone http://scintillua.googlecode.com/hg/ tmp
 	mv tmp/lexers $(RELEASEDIR32)
-	rm -r tmp
-	hg clone http://modules.textadept.googlecode.com/hg tmp
-	mv tmp/* $(RELEASEDIR32)/modules
 	rm -r tmp
 	# Linux x64_64
 	cp -r $(RELEASEDIR32) $(RELEASEDIR64)
@@ -190,5 +190,14 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	cp -rL lua scintilla gcocoadialog LexLPeg.cxx $(RELEASEDIR32)/src/
 	rm -r $(RELEASEDIR32)/src/scintilla/.hg
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
+	rm -r $(RELEASEDIR32)
+	# Modules
+	mkdir -p $(MODULESDIR)
+	for module in $(MODULES); \
+	do \
+		hg clone https://bitbucket.org/mitchell/$$module $(MODULESDIR)/$$module; \
+	done
+	zip -r $(MODULESPKG) $(MODULESDIR)
+	rm -r $(MODULESDIR)
 	# Done
 	rm -r $(RELEASEDIR32)
