@@ -91,6 +91,10 @@ module('_m.textadept.adeptsense', package.seeall)
 --
 --     sense.syntax.type_declarations = {}
 --
+-- ##### syntax.type_declarations_exclude
+--
+-- Since Lua has no type declarations, no changes are necessary.
+--
 -- ##### syntax.type_assignments
 --
 -- Sometimes a type can be inferred by the right side of a variable assignment.
