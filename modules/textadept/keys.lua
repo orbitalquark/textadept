@@ -107,7 +107,7 @@ if not OSX then
   keys['c\n\r'] = { m_editing.autocomplete_word, '%w_' } -- win32
   keys.cq = m_editing.block_comment
   -- TODO: { m_editing.current_word, 'delete' }
-  keys.csh = m_editing.highlight_word
+  keys.cH = m_editing.highlight_word
   -- TODO: m_editing.transpose_chars
   -- TODO: m_editing.convert_indentation
   keys.ac = { -- enClose in...
