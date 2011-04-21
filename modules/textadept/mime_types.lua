@@ -166,7 +166,7 @@ local function get_lexer(buffer, current)
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
   if not current then return lexer end
   local i, ws, style_at = buffer.current_pos, ws_styles[lexer], buffer.style_at
-  while i > 0 and not ws[style_at[i]] do i = i - 1 end
+  if ws then while i > 0 and not ws[style_at[i]] do i = i - 1 end end
   return get_style_name(buffer, style_at[i]):match('^(.+)_whitespace$') or lexer
 end
 
