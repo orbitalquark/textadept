@@ -19,7 +19,7 @@ module('_m.lua', package.seeall)
 -- + `:`: When to the right of a known symbol, show an autocompletion list of
 --   functions only.
 -- + `Ctrl+I`: (Windows and Linux) Autocomplete symbol.
--- + `~`: (Mac OSX) Autocomplete symbol.
+-- + `Ctrl+Esc`: (Mac OSX) Autocomplete symbol.
 -- + `Ctrl+H`: Show documentation for the selected symbol or the symbol under
 --   the caret.
 --
@@ -176,7 +176,7 @@ _G.keys.lua = {
     g = { goto_required },
   },
   ['s\n'] = { try_to_autocomplete_end },
-  [not OSX and 'ci' or '~'] = { sense.complete, sense },
+  [not OSX and 'ci' or 'cesc'] = { sense.complete, sense },
   ch = { sense.show_apidoc, sense },
 }
 
