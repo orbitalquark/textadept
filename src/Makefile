@@ -146,7 +146,7 @@ PACKAGE64 = ../releases/$(RELEASEDIR64).tgz
 PACKAGEWIN32 = ../releases/$(RELEASEDIRWIN32).zip
 PACKAGEMAC = ../releases/$(RELEASEDIRMAC).zip
 SRCPACKAGE = ../releases/$(RELEASEDIR32).src.zip
-MODULES = css hypertext java rails rhtml ruby
+MODULES = css hypertext java rails rhtml ruby php
 MODULESDIR = $(RELEASEDIR32)/modules
 MODULESPKG = ../releases/$(RELEASEDIR32).modules.zip
 
