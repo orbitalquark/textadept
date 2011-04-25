@@ -26,7 +26,7 @@
   <tr><td>Ctrl+E</td><td>Ctrl+M</td><td>Go to matching brace</td></tr>
   <tr><td>Ctrl+Shift+E</td><td>Apple+Shift+E</td><td>Select to matching brace</td></tr>
   <tr><td>Ctrl+Return</td><td>Escape</td><td>Autocomplete word in file</td></tr>
-  <tr><td>Ctrl+I</td><td>~</td><td>Autocomplete symbol for supported languages</td></tr>
+  <tr><td>Ctrl+I</td><td>Ctrl+Escape</td><td>Autocomplete symbol for supported languages</td></tr>
   <tr><td>Ctrl+H</td><td>Ctrl+H</td><td>Show symbol apidoc for supported languages</td></tr>
   <tr><td>Ctrl+Q</td><td>Ctrl+Q</td><td>Block comment/uncomment</td></tr>
   <tr><td>None</td><td>None</td><td>Delete word</td></tr>

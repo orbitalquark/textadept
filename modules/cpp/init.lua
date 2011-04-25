@@ -16,7 +16,7 @@ module('_m.cpp', package.seeall)
 -- + `->`: When to the right of a known symbol, show an autocompletion list of
 --   fields and functions.
 -- + `Ctrl+I`: (Windows and Linux) Autocomplete symbol.
--- + `~`: (Mac OSX) Autocomplete symbol.
+-- + `Ctrl+Esc`: (Mac OSX) Autocomplete symbol.
 -- + `Ctrl+H`: Show documentation for the selected symbol or the symbol under
 --   the caret.
 -- + `Shift+Return`: Add ';' to line end and insert newline.
@@ -91,7 +91,7 @@ _G.keys.cpp = {
     buffer:add_text(';')
     buffer:new_line()
   end },
-  [not OSX and 'ci' or '~'] = { sense.complete, sense },
+  [not OSX and 'ci' or 'cesc'] = { sense.complete, sense },
   ch = { sense.show_apidoc, sense },
 }
 
