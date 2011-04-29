@@ -112,12 +112,15 @@ module('_m.textadept.snippets', package.seeall)
 --     _G.snippets.snippet = '_G.snippets.%1 = \'%0\''
 --     _G.snippets.file = '%<buffer.filename>'
 --     _G.snippets.lua = {
---       f = 'function %1(name)(%2(args))\n  %0\nend'
+--       f = 'function %1(name)(%2(args))\n\t%0\nend'
 --     }
 --
 -- The first two snippets are global. The first is quite simple to understand.
 -- The second runs Lua code to determine the current buffer's filename and
 -- inserts it. The last snippet expands only when editing Lua code.
+--
+-- It is recommended to use tab characters instead of spaces like in the last
+-- example. Tabs will be converted to spaces as necessary.
 
 -- settings
 INDIC_SNIPPET = 9
