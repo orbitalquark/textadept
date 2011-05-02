@@ -60,6 +60,9 @@ goto_required _m.lua.goto_required()\nDetermines the Lua file being 'require'd, 
 set_buffer_properties _m.lua.set_buffer_properties()\nSets default buffer properties for Lua files.\n
 try_to_autocomplete_end _m.lua.try_to_autocomplete_end()\nTries to autocomplete Lua's 'end' keyword for control structures like 'if',\n'while', 'for', etc.\n@see control_structure_patterns\n
 sense _m.lua.sense\nThe Lua Adeptsense.\n
+goto_required _m.php.goto_required()\nDetermines the PHP file being 'require'd or 'include'd, and opens it in\nTextadept.\n
+set_buffer_properties _m.php.set_buffer_properties()\nSets default buffer properties for PHP files.\n
+sense _m.php.sense\nThe PHP Adeptsense.\n
 load_project _m.rails.load_project(utf8_dir)\nSets _G.keys.al.o to snapopen a Rails project. If not directory is provided,\nthe user is prompted for one.\n@param The UTF-8 Rails project directory.\n
 sense _m.rails.sense\nThe Rails Adeptsense.\n
 singular _m.rails.singular\nA map of plural controller names to their singulars. Add key-value pairs to\nthis if singularize() is incorrectly converting your plural controller name\nto its singular model name.\n
