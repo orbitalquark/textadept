@@ -78,8 +78,6 @@ if not OSX then
 
   keys.clear_sequence = 'esc'
 
-  keys.ct = {} -- Textadept command chain
-
   -- File
   keys.cn = new_buffer
   keys.co = io.open_file
