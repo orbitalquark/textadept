@@ -122,7 +122,13 @@ module('events', package.seeall)
 --     events.connect('my_event', my_event_handler)
 --     events.emit('my_event', 'my message')
 
-local handlers = {}
+---
+-- A table of event names and a table of functions connected to them.
+-- @class table
+-- @name handlers
+handlers = {}
+
+local handlers = handlers
 
 ---
 -- Adds a handler function to an event.
