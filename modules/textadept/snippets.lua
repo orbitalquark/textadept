@@ -263,7 +263,9 @@ _snippet_mt = {
   -- Gets a snippet's end position in the Scintilla buffer.
   -- @param snippet The snippet returned by new_snippet().
   get_end_position = function(snippet)
-    return buffer:indicator_end(INDIC_SNIPPET, snippet.start_position + 1)
+    local e = buffer:indicator_end(INDIC_SNIPPET, snippet.start_position + 1)
+    if e == 0 then e = snippet.start_position end
+    return e
   end,
 
   -- Gets the text for a snippet.
