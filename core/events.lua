@@ -71,7 +71,28 @@ module('events', package.seeall)
 --   Called when the user has selected an item in an autocompletion list.
 --       - lParam: the start position of the word being completed.
 --       - text: the text of the selection.
---
+-- * **indicator\_click** (position, modifiers)<br />
+--   Called when the user clicks on an indicator.
+--       - position: the position in the buffer that the user clicked
+--       - modifiers: the appropriate combination of `SCI_SHIFT`, `SCI_CTRL`,
+--         and `SCI_ALT` to indicate the keys that were held down at the time of
+--         the indicator click.
+-- * **indicator\_release** (position)<br />
+--   Called when the user releases the mouse button after clicking on an indicator
+--       - position: the position in the buffer that the user clicked
+-- * **hotspot\_click** (position, modifiers)<br />
+--   Called when the user clicks on a hotspot
+--       - position: the position in the buffer that the user clicked
+--       - modifiers: the appropriate combination of `SCI_SHIFT`, `SCI_CTRL`,
+--         and `SCI_ALT` to indicate the keys that were held down at the time of
+--         the hotspot click.
+-- * **hotspot\_double\_click** (position, modifiers)<br />
+--   Called when the user double-clicks on a hotspot
+--       - position: the position in the buffer that the user double-clicked
+--       - modifiers: the appropriate combination of `SCI_SHIFT`, `SCI_CTRL`,
+--         and `SCI_ALT` to indicate the keys that were held down at the time of
+--         the hotspot double-click.
+
 -- [buffer_user_list_show]: ../modules/buffer.html#buffer:user_list_show
 --
 -- The following is a list of gui events generated in
@@ -196,7 +217,11 @@ local scnnotifications = {
   [c.SCN_USERLISTSELECTION] = { 'user_list_selection', 'wParam', 'text' },
   [c.SCN_URIDROPPED] = { 'uri_dropped', 'text' },
   [c.SCN_CALLTIPCLICK] = { 'call_tip_click', 'position' },
-  [c.SCN_AUTOCSELECTION] = { 'auto_c_selection', 'lParam', 'text' }
+  [c.SCN_AUTOCSELECTION] = { 'auto_c_selection', 'lParam', 'text' },
+  [c.SCN_INDICATORCLICK] = { 'indicator_click', 'position', 'modifiers' },
+  [c.SCN_INDICATORRELEASE] = { 'indicator_release', 'position' },
+  [c.SCN_HOTSPOTCLICK] = { 'hotspot_click', 'position', 'modifiers' },
+  [c.SCN_HOTSPOTDOUBLECLICK] = { 'hotspot_double_click', 'position', 'modifiers' },
 }
 
 ---
