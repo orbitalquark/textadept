@@ -36,6 +36,12 @@ was required. Newer versions are all-inclusive and do not require anything.
 Download Textadept from the [project page](http://textadept.googlecode.com/).
 Select the appropriate package for your platform.
 
+You can also download an official set of
+[language-specific modules](7_Modules.html#language_specific), but this is
+optional. The list of language modules in the package is contained
+[here](https://bitbucket.org/mitchell). Textadept includes C/C++ and Lua
+language modules by default.
+
 ## Installation
 
 Textadept was designed to be as easy as possible to install by any user. You do
@@ -47,6 +53,10 @@ Unpack the archive anywhere. Run Textadept by running
 `/path/to/textadept_VERSION/textadept` from the terminal. You can also create a
 symlink to the executable in your `PATH` (e.g. `/usr/bin`) or make a GNOME, KDE,
 XFCE, etc. button or menu launcher.
+
+If you downloaded the set of language-specific modules, unpack it where you
+unpacked the Textadept archive. The modules will be contained in
+`/path/to/textadept_VERSION/modules/`.
 
 ##### Problems
 
@@ -73,11 +83,19 @@ Unpack the archive and move `textadept.app` to your user or system
 `Applications` directory like any other Mac OSX application. Run Textadept by
 double-clicking `textadept.app`.
 
+If you downloaded the set of language-specific modules, unpack it, right-click
+`textadept.app`, select `Show Package Contents`, navigate to
+`Contents/Resources/modules`, and copy the unpacked modules there.
+
 #### Windows
 
 Unpack the archive anywhere. Run Textadept by double-clicking `textadept.exe`.
 You can also create shortcuts to the executable in your Start Menu, Quick Launch
 toolbar, Desktop, etc.
+
+If you downloaded the set of language-specific modules, unpack it where you
+unpacked the Textadept archive. The modules will be contained in
+`textadept_VERSION\modules\`.
 
 ![Linux](images/linux.png)
 &nbsp;&nbsp;
