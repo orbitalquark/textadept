@@ -64,7 +64,7 @@ customization and extensibility from the start; the features come after that.
 * Self-contained executable - no installation necessary.
 * Entirely keyboard driven.
 * Unlimited split views.
-* Support for over 70 programming languages.
+* Support for over 80 programming languages.
 * Powerful snippets and key commands.
 * Code autocompletion and API lookup.
 * Unparalleled extensibility.
