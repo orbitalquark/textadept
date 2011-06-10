@@ -754,6 +754,7 @@ connect	_	0;"	f	class:events
 disconnect	_	0;"	f	class:events
 emit	_	0;"	f	class:events
 notification	_	0;"	f	class:events
+handlers	_	0;"	t	class:events
 gui	_	0;"	m	
 gui	_	0;"	t	class:_G
 gui	_	0;"	t	
