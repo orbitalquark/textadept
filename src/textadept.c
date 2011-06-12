@@ -50,6 +50,26 @@
 }
 #define l_togtkwidget(l, i) (GtkWidget *)lua_touserdata(l, i)
 
+// Defines for different GTK versions.
+#if !(GTK_CHECK_VERSION(2,18,0) || GTK_CHECK_VERSION(3,0,0))
+#define gtk_widget_set_can_default(w,_) GTK_WIDGET_SET_FLAGS(w, GTK_CAN_DEFAULT)
+#define gtk_widget_set_can_focus(w,_) GTK_WIDGET_UNSET_FLAGS(w, GTK_CAN_FOCUS)
+#define gtk_widget_get_allocation(e, a) { \
+  (a)->width = e->allocation.width; \
+  (a)->height = e->allocation.height; \
+}
+#define gtk_widget_has_focus GTK_WIDGET_HAS_FOCUS
+#define gtk_widget_get_visible GTK_WIDGET_VISIBLE
+#define gtk_widget_get_window(w) w->window
+#endif
+#if GTK_CHECK_VERSION(3,0,0)
+#define gtk_statusbar_set_has_resize_grip(_,__)
+#define gtk_combo_box_entry_new_with_model(m,_) \
+  gtk_combo_box_new_with_model_and_entry(m)
+#define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
+#define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
+#endif
+
 /******************************************************************************/
 /***************************** Forward Declarations ***************************/
 /******************************************************************************/
@@ -375,8 +395,9 @@ void split_view(GtkWidget *editor, int vertical) {
   int first_line = SS(editor, SCI_GETFIRSTVISIBLELINE, 0, 0);
   int current_pos = SS(editor, SCI_GETCURRENTPOS, 0, 0);
   int anchor = SS(editor, SCI_GETANCHOR, 0, 0);
-  int middle = (vertical ? editor->allocation.width
-                         : editor->allocation.height) / 2;
+  GtkAllocation allocation;
+  gtk_widget_get_allocation(editor, &allocation);
+  int middle = (vertical ? allocation.width : allocation.height) / 2;
 
   sptr_t curdoc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
   GtkWidget *neweditor = new_view(curdoc);
@@ -533,7 +554,7 @@ static gbool s_buttonpress(GtkWidget *editor, GdkEventButton *event,
  * Signal for a Textadept window focus change.
  */
 static gbool w_focus(GtkWidget *window, GdkEventFocus *event, gpointer udata) {
-  if (focused_editor && !GTK_WIDGET_HAS_FOCUS(focused_editor))
+  if (focused_editor && !gtk_widget_has_focus(focused_editor))
     gtk_widget_grab_focus(focused_editor);
   return FALSE;
 }
@@ -544,8 +565,8 @@ static gbool w_focus(GtkWidget *window, GdkEventFocus *event, gpointer udata) {
  *  - Escape - hides the search frame if it's open.
  */
 static gbool w_keypress(GtkWidget *window, GdkEventKey *event, gpointer udata) {
-  if (event->keyval == 0xff1b && GTK_WIDGET_VISIBLE(findbox) &&
-      !GTK_WIDGET_HAS_FOCUS(command_entry)) {
+  if (event->keyval == 0xff1b && gtk_widget_get_visible(findbox) &&
+      !gtk_widget_has_focus(command_entry)) {
     gtk_widget_hide(findbox);
     gtk_widget_grab_focus(focused_editor);
     return TRUE;
@@ -625,6 +646,7 @@ GtkWidget *find_create_ui() {
   GtkWidget *rlabel = gtk_label_new_with_mnemonic("R_eplace:");
   GtkWidget *find_combo = gtk_combo_box_entry_new_with_model(
                           GTK_TREE_MODEL(find_store), 0);
+  gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(find_combo), 0);
   g_object_unref(find_store);
   gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(find_combo), FALSE);
   find_entry = gtk_bin_get_child(GTK_BIN(find_combo));
@@ -632,6 +654,7 @@ GtkWidget *find_create_ui() {
   gtk_entry_set_activates_default(GTK_ENTRY(find_entry), TRUE);
   GtkWidget *replace_combo = gtk_combo_box_entry_new_with_model(
                              GTK_TREE_MODEL(repl_store), 0);
+  gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(replace_combo), 0);
   g_object_unref(repl_store);
   gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(replace_combo), FALSE);
   replace_entry = gtk_bin_get_child(GTK_BIN(replace_combo));
@@ -667,15 +690,15 @@ GtkWidget *find_create_ui() {
   signal(r_button, "clicked", find_button_clicked);
   signal(ra_button, "clicked", find_button_clicked);
 
-  GTK_WIDGET_SET_FLAGS(fnext_button, GTK_CAN_DEFAULT);
-  GTK_WIDGET_UNSET_FLAGS(fnext_button, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS(fprev_button, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS(r_button, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS(ra_button, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS(match_case_opt, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS(whole_word_opt, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS(lua_opt, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS(in_files_opt, GTK_CAN_FOCUS);
+  gtk_widget_set_can_default(fnext_button, TRUE);
+  gtk_widget_set_can_focus(fnext_button, FALSE);
+  gtk_widget_set_can_focus(fprev_button, FALSE);
+  gtk_widget_set_can_focus(r_button, FALSE);
+  gtk_widget_set_can_focus(ra_button, FALSE);
+  gtk_widget_set_can_focus(match_case_opt, FALSE);
+  gtk_widget_set_can_focus(whole_word_opt, FALSE);
+  gtk_widget_set_can_focus(lua_opt, FALSE);
+  gtk_widget_set_can_focus(in_files_opt, FALSE);
 
   return findbox;
 }
@@ -685,7 +708,7 @@ GtkWidget *find_create_ui() {
  * window.
  */
 void find_toggle_focus() {
-  if (!GTK_WIDGET_HAS_FOCUS(findbox)) {
+  if (!gtk_widget_has_focus(findbox)) {
     gtk_widget_show(findbox);
     gtk_widget_grab_focus(find_entry);
     gtk_widget_grab_default(fnext_button);
@@ -752,7 +775,7 @@ static void find_button_clicked(GtkWidget *button, gpointer udata) {
  * When the entry is visible, the statusbars are temporarily hidden.
  */
 void ce_toggle_focus() {
-  if (!GTK_WIDGET_HAS_FOCUS(command_entry)) {
+  if (!gtk_widget_has_focus(command_entry)) {
     gtk_widget_hide(statusbar[0]);
     gtk_widget_hide(statusbar[1]);
     gtk_widget_show(command_entry);
@@ -783,8 +806,7 @@ static gbool cc_match_selected(GtkEntryCompletion *entry, GtkTreeModel *model,
                                GtkTreeIter *iter, gpointer udata) {
   const char *entry_text = gtk_entry_get_text(GTK_ENTRY(command_entry));
   const char *p = entry_text + strlen(entry_text) - 1;
-  while ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') ||
-         (*p >= '0' && *p <= '9') || *p == '_') {
+  while (g_ascii_isalnum(*p) || *p == '_') {
     g_signal_emit_by_name(G_OBJECT(command_entry), "move-cursor",
                           GTK_MOVEMENT_VISUAL_POSITIONS, -1, TRUE, 0);
     p--;
@@ -1525,8 +1547,10 @@ static int l_call_scintilla(lua_State *lua, GtkWidget *editor, int msg,
   if (msg == SCI_PRIVATELEXERCALL) {
     p2_type = tSTRINGRESULT;
     int c = luaL_checklong(lua, arg);
-    if (c == SCI_GETDIRECTFUNCTION || c == SCI_SETDOCPOINTER) p2_type = tINT;
-    else if (c == SCI_SETLEXERLANGUAGE) p2_type = tSTRING;
+    if (c == SCI_GETDIRECTFUNCTION || c == SCI_SETDOCPOINTER)
+      p2_type = tINT;
+    else if (c == SCI_SETLEXERLANGUAGE)
+      p2_type = tSTRING;
   }
 
   // Set the w and l parameters appropriately for Scintilla.
@@ -1743,7 +1767,7 @@ static int l_gui_mt_newindex(lua_State *lua) {
     while (lua_next(lua, 3)) {
       luaL_argcheck(lua, lua_isuserdata(lua, -1), 3, "table of menus expected");
       GtkWidget *menu_item = l_togtkwidget(lua, -1);
-      gtk_menu_bar_append(GTK_MENU_BAR(menubar), menu_item);
+      gtk_menu_shell_append(GTK_MENU_SHELL(menubar), menu_item);
       lua_pop(lua, 1); // value
     }
     set_menubar(menubar);
@@ -1994,7 +2018,7 @@ static int l_cf_string_iconv(lua_State *lua) {
 static int l_cf_quit(lua_State *lua) {
   GdkEventAny event;
   event.type = GDK_DELETE;
-  event.window = window->window;
+  event.window = gtk_widget_get_window(window);
   event.send_event = TRUE;
   gdk_event_put((GdkEvent *)(&event));
   return 0;
