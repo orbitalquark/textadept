@@ -58,14 +58,20 @@ DEBUG_FLAG = -DDEBUG -DTRACE -g
 endif
 INCLUDEDIRS = -Iscintilla/include -Ilua/include -Igcocoadialog
 
+ifdef GTK3
+GTKVERSION = gtk+-3.0
+else
+GTKVERSION = gtk+-2.0
+endif
+
 # Textadept
 
 CFLAGS = -std=c99 $(DEBUG_FLAG) -O $(PLAT_FLAGS) $(INCLUDEDIRS) -W -Wall \
   -Wno-sign-compare -Wno-unused
 GTKFLAGS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
-  --cflags gtk+-2.0)
+  --cflags $(GTKVERSION))
 GTKLIBS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
-  --libs gtk+-2.0)
+  --libs $(GTKVERSION))
 ifdef LIBPNG12
 GTKLIBS := $(shell sed -e 's/lpng14/lpng12/;' <<< "$(GTKLIBS)")
 endif
