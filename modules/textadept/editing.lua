@@ -22,11 +22,8 @@ module('_m.textadept.editing', package.seeall)
 --   previous line.
 -- * `SAVE_STRIPS_WS`: Flag indicating whether or not to strip trailing
 --   whitespace on file save.
--- * `MARK_HIGHLIGHT`: The unique integer mark used to identify a line
---   containing a highlighted word.
 -- * `MARK_HIGHLIGHT_BACK`: The [Scintilla color][scintilla_color] used for a
 --   line containing a highlighted word.
--- * `INDIC_HIGHLIGHT`: The unique integer indicator for highlighted words.
 -- * `INDIC_HIGHLIGHT_BACK`: The [Scintilla color][scintilla_color] used for an
 --   indicator for a highlighted word.
 -- * `INDIC_HIGHLIGHT_ALPHA`: The transparency used for an indicator for a
@@ -37,9 +34,7 @@ AUTOPAIR = true
 HIGHLIGHT_BRACES = true
 AUTOINDENT = true
 SAVE_STRIPS_WS = true
-MARK_HIGHLIGHT = 2
 MARK_HIGHLIGHT_BACK = buffer and buffer.caret_line_back or 0xEEEEEE
-INDIC_HIGHLIGHT = 8 -- INDIC_CONTAINER
 INDIC_HIGHLIGHT_BACK = 0x4080C0
 INDIC_HIGHLIGHT_ALPHA = 100
 -- end settings
@@ -441,6 +436,9 @@ function convert_indentation()
   end
   buffer:end_undo_action()
 end
+
+local MARK_HIGHLIGHT = _SCINTILLA.next_marker_number()
+local INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 -- Clears highlighted word indicators and markers.
 local function clear_highlighted_words()

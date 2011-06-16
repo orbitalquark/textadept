@@ -22,3 +22,38 @@ functions = { add_ref_document = {2376, 0, 0, 1}, add_selection = {2573, 1, 1, 1
 -- @class table
 -- @name properties
 properties = { additional_caret_fore = {2605, 2604, 4, 0}, additional_carets_blink = {2568, 2567, 5, 0}, additional_carets_visible = {2609, 2608, 5, 0}, additional_sel_alpha = {2603, 2602, 1, 0}, additional_sel_back = {0, 2601, 4, 0}, additional_sel_fore = {0, 2600, 4, 0}, additional_selection_typing = {2566, 2565, 5, 0}, anchor = {2009, 2026, 3, 0}, annotation_lines = {2546, 0, 1, 1}, annotation_style = {2543, 2542, 1, 1}, annotation_style_offset = {2551, 2550, 1, 0}, annotation_visible = {2549, 2548, 1, 0}, auto_c_auto_hide = {2119, 2118, 5, 0}, auto_c_cancel_at_start = {2111, 2110, 5, 0}, auto_c_choose_single = {2114, 2113, 5, 0}, auto_c_drop_rest_of_word = {2271, 2270, 5, 0}, auto_c_fill_ups = {0, 2112, 7, 0}, auto_c_ignore_case = {2116, 2115, 5, 0}, auto_c_max_height = {2211, 2210, 1, 0}, auto_c_max_width = {2209, 2208, 1, 0}, auto_c_separator = {2107, 2106, 1, 0}, auto_c_type_separator = {2285, 2286, 1, 0}, back_space_un_indents = {2263, 2262, 5, 0}, buffered_draw = {2034, 2035, 5, 0}, call_tip_back = {0, 2205, 4, 0}, call_tip_fore = {0, 2206, 4, 0}, call_tip_fore_hlt = {0, 2207, 4, 0}, call_tip_use_style = {0, 2212, 1, 0}, caret_fore = {2138, 2069, 4, 0}, caret_line_back = {2097, 2098, 4, 0}, caret_line_back_alpha = {2471, 2470, 1, 0}, caret_line_visible = {2095, 2096, 5, 0}, caret_period = {2075, 2076, 1, 0}, caret_sticky = {2457, 2458, 1, 0}, caret_style = {2513, 2512, 1, 0}, caret_width = {2189, 2188, 1, 0}, char_at = {2007, 0, 1, 3}, character_pointer = {2520, 0, 1, 0}, code_page = {2137, 2037, 1, 0}, column = {2129, 0, 1, 3}, control_char_symbol = {2389, 2388, 1, 0}, current_pos = {2008, 2141, 3, 0}, cursor = {2387, 2386, 1, 0}, direct_function = {2184, 0, 1, 0}, direct_pointer = {2185, 0, 1, 0}, doc_pointer = {2357, 2358, 1, 0}, eol_mode = {2030, 2031, 1, 0}, edge_colour = {2364, 2365, 4, 0}, edge_column = {2360, 2361, 1, 0}, edge_mode = {2362, 2363, 1, 0}, end_at_last_line = {2278, 2277, 5, 0}, end_styled = {2028, 0, 3, 0}, extra_ascent = {2526, 2525, 1, 0}, extra_descent = {2528, 2527, 1, 0}, first_visible_line = {2152, 2613, 1, 0}, focus = {2381, 2380, 5, 0}, fold_expanded = {2230, 2229, 5, 1}, fold_level = {2223, 2222, 1, 1}, fold_parent = {2225, 0, 1, 1}, font_quality = {2612, 2611, 1, 0}, h_scroll_bar = {2131, 2130, 5, 0}, highlight_guide = {2135, 2134, 1, 0}, hotspot_active_underline = {2496, 2412, 5, 0}, hotspot_single_line = {2497, 2421, 5, 0}, indent = {2123, 2122, 1, 0}, indentation_guides = {2133, 2132, 1, 0}, indic_alpha = {2524, 2523, 1, 1}, indic_fore = {2083, 2082, 4, 1}, indic_outline_alpha = {2559, 2558, 1, 1}, indic_style = {2081, 2080, 1, 1}, indic_under = {2511, 2510, 5, 1}, indicator_current = {2501, 2500, 1, 0}, indicator_value = {2503, 2502, 1, 0}, key_words = {0, 4005, 7, 1}, keys_unicode = {2522, 2521, 5, 0}, layout_cache = {2273, 2272, 1, 0}, length = {2006, 0, 1, 0}, lexer = {4002, 4001, 1, 0}, line_count = {2154, 0, 1, 0}, line_end_position = {2136, 0, 1, 1}, line_indent_position = {2128, 0, 3, 1}, line_indentation = {2127, 2126, 1, 1}, line_state = {2093, 2092, 1, 1}, line_visible = {2228, 0, 5, 1}, lines_on_screen = {2370, 0, 1, 0}, main_selection = {2575, 2574, 1, 0}, margin_cursor_n = {2249, 2248, 1, 1}, margin_left = {2156, 2155, 1, 0}, margin_mask_n = {2245, 2244, 1, 1}, margin_right = {2158, 2157, 1, 0}, margin_sensitive_n = {2247, 2246, 5, 1}, margin_style = {2533, 2532, 1, 1}, margin_style_offset = {2538, 2537, 1, 0}, margin_type_n = {2241, 2240, 1, 1}, margin_width_n = {2243, 2242, 1, 1}, max_line_state = {2094, 0, 1, 0}, mod_event_mask = {2378, 2359, 1, 0}, modify = {2159, 0, 5, 0}, mouse_down_captures = {2385, 2384, 5, 0}, mouse_dwell_time = {2265, 2264, 1, 0}, multi_paste = {2615, 2614, 1, 0}, multiple_selection = {2564, 2563, 5, 0}, overtype = {2187, 2186, 5, 0}, paste_convert_endings = {2468, 2467, 5, 0}, position_cache = {2515, 2514, 1, 0}, print_colour_mode = {2149, 2148, 1, 0}, print_magnification = {2147, 2146, 1, 0}, print_wrap_mode = {2407, 2406, 1, 0}, property = {0, 4004, 7, 7}, property_int = {4010, 0, 1, 7}, read_only = {2140, 2171, 5, 0}, rectangular_selection_anchor = {2591, 2590, 3, 0}, rectangular_selection_anchor_virtual_space = {2595, 2594, 1, 0}, rectangular_selection_caret = {2589, 2588, 3, 0}, rectangular_selection_caret_virtual_space = {2593, 2592, 1, 0}, rectangular_selection_modifier = {2599, 2598, 1, 0}, scroll_width = {2275, 2274, 1, 0}, scroll_width_tracking = {2517, 2516, 5, 0}, search_flags = {2199, 2198, 1, 0}, sel_alpha = {2477, 2478, 1, 0}, sel_eol_filled = {2479, 2480, 5, 0}, selection_end = {2145, 2144, 3, 0}, selection_is_rectangle = {2372, 0, 5, 0}, selection_mode = {2423, 2422, 1, 0}, selection_n_anchor = {2579, 2578, 3, 1}, selection_n_anchor_virtual_space = {2583, 2582, 1, 1}, selection_n_caret = {2577, 2576, 3, 1}, selection_n_caret_virtual_space = {2581, 2580, 1, 1}, selection_n_end = {2587, 2586, 3, 1}, selection_n_start = {2585, 2584, 3, 1}, selection_start = {2143, 2142, 3, 0}, selections = {2570, 0, 1, 0}, status = {2383, 2382, 1, 0}, style_at = {2010, 0, 1, 3}, style_back = {2482, 2052, 4, 1}, style_bits = {2091, 2090, 1, 0}, style_bits_needed = {4011, 0, 1, 0}, style_bold = {2483, 2053, 5, 1}, style_case = {2489, 2060, 1, 1}, style_changeable = {2492, 2099, 5, 1}, style_character_set = {2490, 2066, 1, 1}, style_eol_filled = {2487, 2057, 5, 1}, style_font = {0, 2056, 7, 1}, style_fore = {2481, 2051, 4, 1}, style_hot_spot = {2493, 2409, 5, 1}, style_italic = {2484, 2054, 5, 1}, style_size = {2485, 2055, 1, 1}, style_underline = {2488, 2059, 5, 1}, style_visible = {2491, 2074, 5, 1}, tab_indents = {2261, 2260, 5, 0}, tab_width = {2121, 2036, 1, 0}, target_end = {2193, 2192, 3, 0}, target_start = {2191, 2190, 3, 0}, text_length = {2183, 0, 1, 0}, two_phase_draw = {2283, 2284, 5, 0}, undo_collection = {2019, 2012, 5, 0}, use_palette = {2139, 2039, 5, 0}, use_tabs = {2125, 2124, 5, 0}, v_scroll_bar = {2281, 2280, 5, 0}, view_eol = {2355, 2356, 5, 0}, view_ws = {2020, 2021, 1, 0}, virtual_space_options = {2597, 2596, 1, 0}, whitespace_chars = {0, 2443, 7, 0}, whitespace_size = {2087, 2086, 1, 0}, word_chars = {0, 2077, 7, 0}, wrap_indent_mode = {2473, 2472, 1, 0}, wrap_mode = {2269, 2268, 1, 0}, wrap_start_indent = {2465, 2464, 1, 0}, wrap_visual_flags = {2461, 2460, 1, 0}, wrap_visual_flags_location = {2463, 2462, 1, 0}, x_offset = {2398, 2397, 1, 0}, zoom = {2374, 2373, 1, 0}, }
+
+local marker_number, indic_number, list_type = -1, 7, 0
+
+---
+-- Returns a unique marker number.
+-- Use this function for custom markers in order to prevent clashes with
+-- identifiers of other custom markers.
+-- @usage local marknum = _SCINTILLA.next_marker_number()
+-- @see buffer.marker_define
+function next_marker_number()
+  marker_number = marker_number + 1
+  return marker_number
+end
+
+---
+-- Returns a unique indicator number.
+-- Use this function for custom indicators in order to prevent clashes with
+-- identifiers of other custom indicators.
+-- @usage local indic_num = _SCINTILLA.next_indic_number()
+function next_indic_number()
+  indic_number = indic_number + 1
+  return indic_number
+end
+
+---
+-- Returns a unique user list type.
+-- Use this function for custom user lists in order to prevent clashes with
+-- type identifiers of other custom user lists.
+-- @usage local list_type = _SCINTILLA.next_user_list_type()
+-- @see buffer.user_list_show
+function next_user_list_type()
+  list_type = list_type + 1
+  return list_type
+end
+

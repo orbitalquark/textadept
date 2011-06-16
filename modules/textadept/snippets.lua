@@ -26,11 +26,6 @@ module('_m.textadept.snippets', package.seeall)
 -- while `Shift+Tab` tabs backwards through them. Snippets can also be expanded
 -- inside one another.
 --
--- ## Settings
---
--- * `INDIC_SNIPPET`: The unique integer indicator used to mark the end of a
---   snippet.
---
 -- ## Snippet Precedence
 --
 -- When searching for a snippet to expand in the `snippets` table, snippets in
@@ -122,10 +117,6 @@ module('_m.textadept.snippets', package.seeall)
 -- It is recommended to use tab characters instead of spaces like in the last
 -- example. Tabs will be converted to spaces as necessary.
 
--- settings
-INDIC_SNIPPET = 9
--- end settings
-
 -- The stack of currently running snippets.
 local snippet_stack = {}
 
@@ -134,6 +125,8 @@ local snippet_stack = {}
 -- @class table
 -- @name newlines
 local newlines = { [0] = '\r\n', '\r', '\n' }
+
+local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
 
 -- Inserts a new snippet.
 -- @param text The new snippet to insert.
