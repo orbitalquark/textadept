@@ -9,17 +9,16 @@ module('_m.textadept.bookmarks', package.seeall)
 -- Markdown:
 -- ## Settings
 --
--- * `MARK_BOOKMARK`: The unique integer mark used to identify a bookmarked
---    line.
 -- * `MARK_BOOKMARK_COLOR`: The [Scintilla color][scintilla_color] used for a
 --    bookmarked line.
 --
 -- [scintilla_color]: http://scintilla.org/ScintillaDoc.html#colour
 
 -- settings
-MARK_BOOKMARK = 1
 MARK_BOOKMARK_COLOR = 0xC08040
 -- end settings
+
+local MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 
 ---
 -- Adds a bookmark to the current line.

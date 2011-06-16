@@ -5,7 +5,7 @@ local events = _G.events
 local find = gui.find
 local c = _SCINTILLA.constants
 
-local MARK_FIND = 0
+local MARK_FIND = _SCINTILLA.next_marker_number()
 local MARK_FIND_COLOR = 0x4D9999
 local previous_view
 

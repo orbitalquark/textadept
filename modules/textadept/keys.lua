@@ -34,7 +34,7 @@ local function toggle_setting(setting, i)
   end
   events.emit('update_ui') -- for updating statusbar
 end
-local RECENT_FILES = 1
+local RECENT_FILES = _SCINTILLA.next_user_list_type()
 events.connect('user_list_selection',
   function(type, text) if type == RECENT_FILES then io.open_file(text) end end)
 local function show_recent_file_list()
