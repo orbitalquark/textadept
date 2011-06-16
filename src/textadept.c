@@ -500,13 +500,14 @@ void set_statusbar_text(const char *text, int bar) {
  * @param editor The Scintilla view to focus.
  * @see s_notification
  * @see s_command
+ * @see l_goto_view
  */
 static void switch_to_view(GtkWidget *editor) {
-  l_emit_event("view_before_switch", -1);
+  if (!closing) l_emit_event("view_before_switch", -1);
   focused_editor = editor;
   l_set_view_global(editor);
   l_set_buffer_global(editor);
-  l_emit_event("view_after_switch", -1);
+  if (!closing) l_emit_event("view_after_switch", -1);
 }
 
 /**
@@ -1059,9 +1060,10 @@ void l_goto_view(GtkWidget *editor, int n, int absolute) {
     lua_rawgeti(lua, -1, n);
   }
   editor = l_checkview(lua, -1);
-  if (!closing) l_emit_event("view_before_switch", -1);
   gtk_widget_grab_focus(editor);
-  if (!closing) l_emit_event("view_after_switch", -1);
+  // gui.dialog() interferes with focus so gtk_widget_grab_focus() does not
+  // always work. If this is the case, ensure switch_to_view() is called.
+  if (!gtk_widget_has_focus(editor)) switch_to_view(editor);
   lua_pop(lua, 2); // view table and views
 }
 
