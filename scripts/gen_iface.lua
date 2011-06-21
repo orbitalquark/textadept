@@ -112,6 +112,43 @@ for item in properties:sub(2, -2):gmatch('%b{}') do
 end
 out = out..' }\n'
 
+out = out..[[
+
+local marker_number, indic_number, list_type = -1, 7, 0
+
+---
+-- Returns a unique marker number.
+-- Use this function for custom markers in order to prevent clashes with
+-- identifiers of other custom markers.
+-- @usage local marknum = _SCINTILLA.next_marker_number()
+-- @see buffer.marker_define
+function next_marker_number()
+  marker_number = marker_number + 1
+  return marker_number
+end
+
+---
+-- Returns a unique indicator number.
+-- Use this function for custom indicators in order to prevent clashes with
+-- identifiers of other custom indicators.
+-- @usage local indic_num = _SCINTILLA.next_indic_number()
+function next_indic_number()
+  indic_number = indic_number + 1
+  return indic_number
+end
+
+---
+-- Returns a unique user list type.
+-- Use this function for custom user lists in order to prevent clashes with
+-- type identifiers of other custom user lists.
+-- @usage local list_type = _SCINTILLA.next_user_list_type()
+-- @see buffer.user_list_show
+function next_user_list_type()
+  list_type = list_type + 1
+  return list_type
+end
+]]
+
 f = io.open('../core/iface.lua', 'w')
 f:write(out)
 f:close()
