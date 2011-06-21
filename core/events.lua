@@ -39,8 +39,11 @@ module('events', package.seeall)
 --   Called when a save point is entered.
 -- * **save\_point\_left** ()<br />
 --   Called when a save point is left.
--- * **double\_click** (position, line)<br />
+-- * **double\_click** (modifiers, position, line)<br />
 --   Called when the mouse button is double-clicked.
+--       - modifiers: the appropriate combination of `SCI_SHIFT`, `SCI_CTRL`,
+--         and `SCI_ALT` to indicate the keys that were held down at the time of
+--         the double click.
 --       - position: the text position the click occured at.
 --       - line: the line number the click occured at.
 -- * **update\_ui** ()<br />
@@ -54,11 +57,12 @@ module('events', package.seeall)
 --         the margin click.
 --       - position: The position of the start of the line in the buffer that
 --         corresponds to the margin click.
--- * **user\_list\_selection** (wParam, text)<br />
+-- * **user\_list\_selection** (wParam, text, position)<br />
 --   Called when the user has selected an item in a user list.
 --       - wParam: the list_type parameter from
 --         [`buffer:user_list_show()`][buffer_user_list_show].
 --       - text: the text of the selection.
+--       - position: the position the list was displayed at.
 -- * **uri\_dropped** (text)<br />
 --   Called when the user has dragged a URI such as a file name or web address
 --   into Textadept.
@@ -67,10 +71,11 @@ module('events', package.seeall)
 --   Called when the user clicks on a calltip.
 --       - position: 1 if the click is in an up arrow, 2 if in a down arrow, and
 --         0 if elsewhere.
--- * **auto\_c\_selection** (lParam, text)<br />
+-- * **auto\_c\_selection** (lParam, text, position)<br />
 --   Called when the user has selected an item in an autocompletion list.
 --       - lParam: the start position of the word being completed.
 --       - text: the text of the selection.
+--       - position: the position the list was displayed at.
 -- * **indicator\_click** (position, modifiers)<br />
 --   Called when the user clicks on an indicator.
 --       - position: the position in the buffer that the user clicked
@@ -211,17 +216,21 @@ local scnnotifications = {
   [c.SCN_CHARADDED] = { 'char_added', 'ch' },
   [c.SCN_SAVEPOINTREACHED] = { 'save_point_reached' },
   [c.SCN_SAVEPOINTLEFT] = { 'save_point_left' },
-  [c.SCN_DOUBLECLICK] = { 'double_click', 'position', 'line' },
+  [c.SCN_DOUBLECLICK] = { 'double_click', 'modifiers', 'position', 'line' },
   [c.SCN_UPDATEUI] = { 'update_ui' },
   [c.SCN_MARGINCLICK] = { 'margin_click', 'margin', 'modifiers', 'position' },
-  [c.SCN_USERLISTSELECTION] = { 'user_list_selection', 'wParam', 'text' },
+  [c.SCN_USERLISTSELECTION] = {
+    'user_list_selection', 'wParam', 'text', 'position'
+  },
   [c.SCN_URIDROPPED] = { 'uri_dropped', 'text' },
   [c.SCN_CALLTIPCLICK] = { 'call_tip_click', 'position' },
   [c.SCN_AUTOCSELECTION] = { 'auto_c_selection', 'lParam', 'text' },
   [c.SCN_INDICATORCLICK] = { 'indicator_click', 'position', 'modifiers' },
   [c.SCN_INDICATORRELEASE] = { 'indicator_release', 'position' },
   [c.SCN_HOTSPOTCLICK] = { 'hotspot_click', 'position', 'modifiers' },
-  [c.SCN_HOTSPOTDOUBLECLICK] = { 'hotspot_double_click', 'position', 'modifiers' },
+  [c.SCN_HOTSPOTDOUBLECLICK] = {
+    'hotspot_double_click', 'position', 'modifiers'
+  },
 }
 
 ---

@@ -144,12 +144,15 @@ module('buffer')
 --   are underlined.
 -- * `hotspot_single_line`: Flag indicating whether or not hotspots are limited
 --   to a single line so hotspots on two lines do not merge.
+-- * `identifier`: the identifier reported as idFrom in notification messages.
 -- * `indent`: The indentation size.
 -- * `indentation_guides`: Flag indicating whether or not indentation guides are
 --   visible.
 -- * `indic_alpha`: The alpha transparency of an indexed indicator. This value
---   ranges from 0 (transparent) to 100 (opaque).
+--   ranges from 0 (transparent) to 255 (opaque).
 -- * `indic_fore`: The foreground [color][color] of an indexed indicator.
+-- * `indic_outline_alpha`: The alpha transparency for the outline color of an
+--   indexed indicator. This value ranges from 0 (transparent) to 255 (opaque).
 -- * `indic_style`: The style of an indexed indicator.<br />
 --       * 0: Plain
 --       * 1: Squiggle
@@ -184,6 +187,10 @@ module('buffer')
 -- * `margin_cursor_n`: The cursor shown when the mouse is inside a margin.
 -- * `margin_left`: The size in pixels of the left margin.
 -- * `margin_mask_n`: The marker mask of an indexed margin.
+-- * `margin_options`: A bit mask of margin options.<br />
+--       * 0: None (default).
+--       * 1: Select the sub line of the wrapped line when clicking in the
+--            margin instead of selecting the entire wrapped line.
 -- * `margin_right`: The size in pixels of the right margin.
 -- * `margin_sensitive_n`: Flag indicating whether or not the indexed margin is
 --   sensitive to mouse clicks.
@@ -408,8 +415,14 @@ function buffer.back_tab(buffer) end
 function buffer.begin_undo_action(buffer) end
 --- Highlights the character at a position indicating there's no matching brace.
 function buffer.brace_bad_light(buffer, pos) end
+--- Use specified indicator to highlight non matching brace instead of changing
+-- its style.
+function buffer.brace_bad_light_indicator(buffer, use_indicator, indic_num) end
 --- Highlights the characters at two positions as matching braces.
 function buffer.brace_highlight(buffer, pos1, pos2) end
+--- Use specified indicator to highlight matching braces instead of changing
+-- their style.
+function buffer.brace_highlight_indicator(buffer, use_indicator, indic_num) end
 --- Returns the position of a matching brace at a position or -1.
 function buffer.brace_match(buffer, pos) end
 --- Returns a flag indicating whether or not a call tip is active.
@@ -691,6 +704,9 @@ function buffer.marker_delete(buffer, line, marker_num) end
 function buffer.marker_delete_all(buffer, marker_num) end
 --- Deletes a marker.
 function buffer.marker_delete_handle(buffer, handle) end
+--- Enable/disable highlight for current folding block (smallest one that
+-- contains the caret).
+function buffer.marker_enable_highlight(buffer, enabled) end
 --- Gets a bit mask of all the markers set on a line.
 function buffer.marker_get(buffer, line) end
 --- Returns the line number at which a particular marker is located.
@@ -705,12 +721,21 @@ function buffer.marker_previous(buffer, start_line, marker_mask) end
 function buffer.marker_set_alpha(buffer, marker_num, alpha) end
 --- Sets the background color used for a particular marker number.
 function buffer.marker_set_back(buffer, marker_num, color) end
+--- Set the background colour used for a particular marker number when its
+-- folding block is selected.
+function buffer.marker_set_back_selected(buffer, marker_num, color) end
 --- Sets the foreground color used for a particular marker number.
 function buffer.marker_set_fore(buffer, marker_num, color) end
 --- Returns the symbol defined for the given marker_number.
 function buffer.marker_symbol_defined(buffer, marker_number) end
 --- Moves the caret inside the current view if it's not there already.
 function buffer.move_caret_inside_view(buffer) end
+--- Move the selected lines down one line, shifting the line below before the
+-- selection.
+function buffer.move_selected_lines_down(buffer) end
+--- Move the selected lines up one line, shifting the line above after the
+-- selection.
+function buffer.move_selected_lines_up(buffer) end
 --- Inserts a new line depending on EOL mode.
 function buffer.new_line(buffer) end
 --- Null operation
@@ -799,6 +824,8 @@ function buffer.selection_duplicate(buffer) end
 --- Resets the set of characters for whitespace and word characters to the
 -- defaults.
 function buffer.set_chars_default(buffer) end
+--- Set the caret to a position, while removing any existing selection.
+function buffer.set_empty_selection(pos) end
 --- Sets some style options for folding.
 -- @param flags Mask of fold flags. 0x0002: line before expanded, 0x0004: line
 --   before contracted, 0x0008: line after expanded, 0x0010: line after
