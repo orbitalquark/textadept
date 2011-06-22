@@ -67,36 +67,44 @@ module('events', package.seeall)
 --   Called when the user has dragged a URI such as a file name or web address
 --   into Textadept.
 --       - text: URI text.
--- * **call\_tip\_click** (position)<br />
---   Called when the user clicks on a calltip.
---       - position: 1 if the click is in an up arrow, 2 if in a down arrow, and
---         0 if elsewhere.
--- * **auto\_c\_selection** (lParam, text, position)<br />
---   Called when the user has selected an item in an autocompletion list.
---       - lParam: the start position of the word being completed.
---       - text: the text of the selection.
---       - position: the position the list was displayed at.
--- * **indicator\_click** (position, modifiers)<br />
---   Called when the user clicks on an indicator.
---       - position: the position in the buffer that the user clicked
---       - modifiers: the appropriate combination of `SCI_SHIFT`, `SCI_CTRL`,
---         and `SCI_ALT` to indicate the keys that were held down at the time of
---         the indicator click.
--- * **indicator\_release** (position)<br />
---   Called when the user releases the mouse button after clicking on an indicator
---       - position: the position in the buffer that the user clicked
 -- * **hotspot\_click** (position, modifiers)<br />
---   Called when the user clicks on a hotspot
+--   Called when the user clicks on a hotspot.
 --       - position: the position in the buffer that the user clicked
 --       - modifiers: the appropriate combination of `SCI_SHIFT`, `SCI_CTRL`,
 --         and `SCI_ALT` to indicate the keys that were held down at the time of
 --         the hotspot click.
 -- * **hotspot\_double\_click** (position, modifiers)<br />
---   Called when the user double-clicks on a hotspot
+--   Called when the user double-clicks on a hotspot.
 --       - position: the position in the buffer that the user double-clicked
 --       - modifiers: the appropriate combination of `SCI_SHIFT`, `SCI_CTRL`,
 --         and `SCI_ALT` to indicate the keys that were held down at the time of
 --         the hotspot double-click.
+-- * **call\_tip\_click** (position)<br />
+--   Called when the user clicks on a calltip.
+--       - position: 1 if the click is in an up arrow, 2 if in a down arrow, and
+--         0 if elsewhere.
+-- * **auto\_c\_selection** (text, position)<br />
+--   Called when the user has selected an item in an autocompletion list.
+--       - text: the text of the selection.
+--       - position: the start position of the word being completed.
+-- * **indicator\_click** (position, modifiers)<br />
+--   Called when the user clicks on an indicator.
+--       - position: the position in the buffer that the user clicked.
+--       - modifiers: the appropriate combination of `SCI_SHIFT`, `SCI_CTRL`,
+--         and `SCI_ALT` to indicate the keys that were held down at the time of
+--         the indicator click.
+-- * **indicator\_release** (position)<br />
+--   Called when the user releases the mouse button after clicking on an
+--   indicator.
+--       - position: the position in the buffer that the user clicked.
+-- * **auto\_c\_cancelled** ()<br />
+--   Called when the user has cancelled the autocompletion list.
+-- * **auto\_c\_char\_deleted** ()<br />
+--   Called when the user deleted a character while the autocompletion list was
+--   active.
+-- * **hotspot\_release\_click** (position)<br />
+--   Called when the user releases the mouse button after clicking on a hotspot.
+--       - position: the position in the buffer that the user clicked.
 
 -- [buffer_user_list_show]: ../modules/buffer.html#buffer:user_list_show
 --
@@ -223,14 +231,17 @@ local scnnotifications = {
     'user_list_selection', 'wParam', 'text', 'position'
   },
   [c.SCN_URIDROPPED] = { 'uri_dropped', 'text' },
-  [c.SCN_CALLTIPCLICK] = { 'call_tip_click', 'position' },
-  [c.SCN_AUTOCSELECTION] = { 'auto_c_selection', 'lParam', 'text' },
-  [c.SCN_INDICATORCLICK] = { 'indicator_click', 'position', 'modifiers' },
-  [c.SCN_INDICATORRELEASE] = { 'indicator_release', 'position' },
   [c.SCN_HOTSPOTCLICK] = { 'hotspot_click', 'position', 'modifiers' },
   [c.SCN_HOTSPOTDOUBLECLICK] = {
     'hotspot_double_click', 'position', 'modifiers'
   },
+  [c.SCN_CALLTIPCLICK] = { 'call_tip_click', 'position' },
+  [c.SCN_AUTOCSELECTION] = { 'auto_c_selection', 'text', 'position' },
+  [c.SCN_INDICATORCLICK] = { 'indicator_click', 'position', 'modifiers' },
+  [c.SCN_INDICATORRELEASE] = { 'indicator_release', 'position' },
+  [c.SCN_AUTOCCANCELLED] = { 'auto_c_cancelled' },
+  [c.SCN_AUTOCCHARDELETED] = { 'auto_c_char_deleted' },
+  [c.SCN_HOTSPOTRELEASECLICK] = { 'hotspot_release_click', 'position' },
 }
 
 ---
