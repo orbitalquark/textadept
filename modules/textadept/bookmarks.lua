@@ -9,10 +9,8 @@ module('_m.textadept.bookmarks', package.seeall)
 -- Markdown:
 -- ## Settings
 --
--- * `MARK_BOOKMARK_COLOR`: The [Scintilla color][scintilla_color] used for a
---    bookmarked line.
---
--- [scintilla_color]: http://scintilla.org/ScintillaDoc.html#colour
+-- * `MARK_BOOKMARK_COLOR` [number]: The color used for a bookmarked line in
+--   0xBBGGRR format.
 
 -- settings
 MARK_BOOKMARK_COLOR = 0xC08040

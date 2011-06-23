@@ -9,9 +9,10 @@ module('_m.textadept.snapopen', package.seeall)
 -- Markdown:
 -- ## Settings
 --
--- * `PATHS`: Table of default UTF-8 paths to search.
--- * `DEFAULT_DEPTH`: Maximum directory depth to search (defaults to 4).
--- * `MAX`: Maximum number of files to list (defaults to 1000).
+-- * `PATHS` [table]: Table of default UTF-8 paths to search.
+-- * `DEFAULT_DEPTH` [number]: Maximum directory depth to search. The default
+--   value is 4.
+-- * `MAX` [number]: Maximum number of files to list. The default value is 1000.
 --
 -- ## Examples
 --
