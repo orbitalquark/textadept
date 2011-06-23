@@ -38,13 +38,13 @@ buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
 --buffer.view_eol = true
 
 -- Caret and Selection Styles.
-buffer:set_sel_fore(1, 3355443) -- 0x33 | 0x33 << 8 | 0x33 << 16
-buffer:set_sel_back(1, 10066329) -- 0x99 | 0x99 << 8 | 0x99 << 16
+buffer:set_sel_fore(1, 0x333333)
+buffer:set_sel_back(1, 0x999999)
 --buffer.sel_alpha =
 --buffer.sel_eol_filled = true
-buffer.caret_fore = 11184810 -- 0xAA | 0xAA << 8 | 0xAA << 16
+buffer.caret_fore = 0xAAAAAA
 buffer.caret_line_visible = true
-buffer.caret_line_back = 4473924 -- 0x44 | 0x44 << 8 | 0x44 << 16
+buffer.caret_line_back = 0x444444
 --buffer.caret_line_back_alpha =
 --buffer.caret_period = 0
 --buffer.caret_style = 2
@@ -64,8 +64,8 @@ buffer.margin_mask_n[2] = c.SC_MASK_FOLDERS
 buffer.margin_sensitive_n[2] = true
 --buffer.margin_left =
 --buffer.margin_right =
-buffer:set_fold_margin_colour(1, 11184810) -- 0xAA | 0xAA << 8 | 0xAA << 16
-buffer:set_fold_margin_hi_colour(1, 11184810) -- 0xAA | 0xAA << 8 | 0xAA << 16
+buffer:set_fold_margin_colour(1, 0xAAAAAA)
+buffer:set_fold_margin_hi_colour(1, 0xAAAAAA)
 
 -- Annotations.
 buffer.annotation_visible = 2
@@ -113,7 +113,7 @@ buffer:set_fold_flags(16)
 -- Long Lines.
 --buffer.edge_mode = 1
 --buffer.edge_column = 80
---buffer.edge_colour = 11184810 -- 0xAA | 0xAA << 8 | 0xAA << 16
+--buffer.edge_colour = 0xAAAAAA
 
 -- Notifications.
 buffer.mod_event_mask = c.SC_MOD_CHANGEFOLD
