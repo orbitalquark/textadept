@@ -8,7 +8,7 @@ local iface = f:read('*all')
 f:close()
 
 local string_format = string.format
-local constants, functions, properties = {}, {}, {}
+local constants, fielddoc, functions, properties = {}, {}, {}, {}
 local types = {
   void = 0, int = 1, length = 2, position = 3, colour = 4, bool = 5,
   keymod = 6, string = 7, stringresult = 8, cells = 9, textrange = 10,
@@ -24,7 +24,7 @@ f:write [[
 ---
 -- Scintilla constants, functions, and properties.
 -- Do not modify anything in this module. Doing so will result in instability.
-module('_SCINTILLA', package.seeall)
+module('_SCINTILLA')
 
 ]]
 
@@ -35,6 +35,7 @@ for item in iface:match('Constants%[%] = (%b{})'):sub(2, -2):gmatch('%b{}') do
      not name:find('^SCLEX_') then
     if name == 'SC_MASK_FOLDERS' then value = '-33554432' end
     constants[#constants + 1] = string_format('%s=%s', name, value)
+    fielddoc[#fielddoc + 1] = string_format('-- @field %s %d', name, value)
   end
 end
 
@@ -70,6 +71,7 @@ local events = {
 }
 for event, value in pairs(events) do
   constants[#constants + 1] = string_format('%s=%d', event, value)
+  fielddoc[#fielddoc + 1] = string_format('-- @field %s %d', event, value)
 end
 -- Lexers added to constants.
 local lexers = {
@@ -80,6 +82,7 @@ local lexers = {
 }
 for lexer, value in pairs(lexers) do
   constants[#constants + 1] = string_format('%s=%d', lexer, value)
+  fielddoc[#fielddoc + 1] = string_format('-- @field %s %d', lexer, value)
 end
 
 -- Write constants.
@@ -88,7 +91,9 @@ f:write [[
 -- Scintilla constants.
 -- @class table
 -- @name constants
-constants = {]]
+]]
+f:write(table.concat(fielddoc, '\n'))
+f:write('\nconstants = {')
 f:write(table.concat(constants, ','))
 f:write('}\n\n')
 
