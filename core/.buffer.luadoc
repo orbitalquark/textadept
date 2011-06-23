@@ -10,347 +10,2297 @@ module('buffer')
 -- Markdown:
 -- ## Fields
 --
--- * `doc_pointer`: The pointer to the document associated with this buffer.
---   (Used internally; read-only)
--- * `dirty`: Flag indicating whether or not the buffer has been modified since
---   it was last saved.
--- * `filename`: The absolute path to the file associated with this buffer. It
---   is encoded in UTF-8. Use [`string.iconv()`][string_iconv] for charset
---   conversions.
+-- * `additional_caret_fore` [number]: The foreground color of additional carets
+--   in 0xBBGGRR format.
+-- * `additional_carets_blink` [bool]: Whether additional carets will blink.
+-- * `additional_carets_visible` [bool]: Whether additional carets are visible.
+-- * `additional_sel_alpha` [number]: The alpha of additional selections.
+--   Alpha ranges from 0 (transparent) to 255 (opaque) or 256 for no alpha.
+-- * `additional_sel_back` [number]: The background color of additional
+--   selections in 0xBBGGRR format. `buffer:set_sel_back(true, ...)` must have
+--   been called previously for this to have an effect.
+-- * `additional_sel_fore` [number]: The foreground color of additional
+--   selections in 0xBBGGRR format. `buffer:set_sel_fore(true, ...)` must have
+--   been called previously for this to have an effect.
+-- * `additional_selection_typing` [bool]: Whether typing can be performed into
+--   multiple selections.
+-- * `anchor` [number]: The position of the opposite end of the selection to the
+--   caret.
+-- * `annotation_lines` [table]: Table of the number of annotation lines for
+--   lines starting from zero. (Read-only)
+-- * `annotation_style` [table]: Table of style numbers for annotations for
+--   lines starting at zero.
+-- * `annotation_style_offset` [number]: The start of the range of style numbers
+--   used for annotations. Annotation styles may be completely separated from
+--   standard text styles by setting a style offset. For example, setting this
+--   to 512 would allow the annotation styles to be numbered from 512 upto 767
+--   so they do not overlap styles set by lexers (or margins if margins offset
+--   is 256). Each style number set with `buffer.annotation_style` has the
+--   offset added before looking up the style.
+-- * `annotation_visible` [number]: The visibility of annotations.<br />
+--       * `_SCINTILLA.constants.ANNOTATION_HIDDEN` (0): Annotations are not
+--         displayed.
+--       * `_SCINTILLA.constants.ANNOTATION_STANDARD` (1): Annotations are drawn
+--         left justified with no adornment.
+--       * `_SCINTILLA.constants.ANNOTATION_BOXED` (2): Annotations are indented
+--         to match the text and are surrounded by a box.
+-- * `auto_c_auto_hide` [bool]: Whether or not autocompletion is hidden
+--   automatically when nothing matches. By default, the list is cancelled if
+--   there are no viable matches (the user has typed characters that no longer
+--   match a list entry).
+-- * `auto_c_cancel_at_start` [bool]: Whether auto-completion is cancelled by
+--   backspacing to a position before where the box was created. If `false`, the
+--   list is not cancelled until the caret moves before the first character of
+--   the word being completed.
+--   should be cancelled if the user backspaces to a position before where it
+--   was created.
+-- * `auto_c_choose_single` [bool]: Whether a single item auto-completion list
+--   automatically choose the item. The default is to display the list even if
+--   there is only a single item.
+-- * `auto_c_drop_rest_of_word` [bool]: Whether or not autocompletion deletes
+--   any word characters after the inserted text upon completion. The default is
+--   `false`.
+-- * `auto_c_fill_ups` [string]: A set of characters that when typed will cause
+--   the autocompletion to choose the selected item. By default, no fillup
+--   characters are set. (Write-only)
+-- * `auto_c_ignore_case` [bool]: Whether case is significant when performing
+--   auto-completion searches. By default, matching of characters to list
+--   members is case sensitive.
+-- * `auto_c_max_height` [number]: The maximum height, in rows, of
+--   auto-completion and user lists. The default is 5 rows.
+-- * `auto_c_max_width` [number]: The maximum width, in characters, of
+--   auto-completion and user lists. Set to 0 to autosize to fit longest item,
+--   which is the default.
+-- * `auto_c_separator` [number]: The auto-completion list separator character
+--   byte. The default is the space character.
+-- * `auto_c_type_separator` [number]: The auto-completion list type-separator
+--   character byte. The default is '?'. Autocompletion list items may display
+--   an image as well as text. Each image is first registered with an integer
+--   type. Then this integer is included in the text of the list separated by a
+--   '?' from the text.
+-- * `back_space_un_indents` [bool]: Whether a backspace pressed when caret is
+--   within indentation unindents.
+-- * `buffered_draw` [bool]: Whether drawing is buffered. If drawing is buffered
+--   then each line of text is drawn into a bitmap buffer before drawing it to
+--   the screen to avoid flicker. The default is for drawing to be buffered.
+--   first or directly onto the screen.
+-- * `call_tip_back` [number]: The background color for the call tip in 0xBBGGRR
+--   format. (Write-only)
+-- * `call_tip_fore` [number]: The foreground color for the call tip in 0xBBGGRR
+--   format. (Write-only)
+-- * `call_tip_fore_hlt` [number]: The foreground color for the highlighted part
+--   of the call tip in 0xBBGGRR format. (Write-only)
+-- * `call_tip_use_style` [number]: Enable use of
+--   `_SCINTILLA.constants.STYLE_CALLTIP` and set call tip tab size in pixels.
+--   If the tab size is less than 1, Tab characters are not treated specially.
+-- * `caret_fore` [number]: The foreground color of the caret in 0xBBGGRR
+--   format.
+-- * `caret_line_back` [number]: The color of the background of the line
+--   containing the caret in 0xBBGGRR format.
+-- * `caret_line_back_alpha` [number]: The background alpha of the caret line.
+--   Alpha ranges from 0 (transparent) to 255 (opaque) or 256 for no alpha.
+-- * `caret_line_visible` [bool]: Whether the background of the line containing
+--   the caret is in a different color.
+-- * `caret_period` [number]: The time in milliseconds that the caret is on and
+--   off. Setting the period to 0 stops the caret blinking. The default value is
+--   500 milliseconds.
+-- * `caret_sticky` [number]: The caret preferred x position changing when the
+--   user types.<br />
+--       * `_SCINTILLA.constants.SC_CARETSTICKY_OFF` (0): All text changes (and
+--         all caret position changes) will remember the caret's new horizontal
+--         position when moving to different lines. This is the default.
+--       * `_SCINTILLA.constants.SC_CARETSTICKY_ON` (1): The only thing which
+--         will cause the editor to remember the horizontal caret position is
+--         moving the caret with mouse or keyboard (left/right arrow keys,
+--         home/end keys, etc).
+--       * `_SCINTILLA.constants.SC_CARETSTICKY_WHITESPACE` (2): The caret acts
+--         like sticky off except under one special case; when space or tab
+--         characters are inserted. (Including pasting *only space/tabs* --
+--         undo, redo, etc. do not exhibit this behavior..).
+-- * `caret_style` [number]: The style of the caret to be drawn.<br />
+--       * `_SCINTILLA.constants.CARETSTYLE_INVISIBLE` (0): Not draw the caret
+--         at all.
+--       * `_SCINTILLA.constants.CARETSTYLE_LINE` (1): A line caret. This is the
+--         default value.
+--       * `_SCINTILLA.constants.CARETSTYLE_BLOCK` (2): A block caret.
+-- * `caret_width` [number]: The width of the insert mode caret in pixels. Can
+--   be 0, 1, 2 or 3 pixels. The default width is 1 pixel. This setting only
+--   affects the width of the cursor when the cursor style is set to line caret
+--   mode, it does not affect the width for a block caret.
+-- * `char_at` [table]: Table of character bytes at positions in the document
+--   starting at zero. (Read-only)
+-- * `code_page` [number]: The code page used to interpret the bytes of the
+--   document as characters. The `_SCINTILLA.constants.SC_CP_UTF8` value can be
+--   used to enter Unicode mode.
+-- * `column` [table]: Table of column numbers, taking tab widths into account,
+--   for positions starting from zero. (Read-only)
+-- * `control_char_symbol` [number]: The way control characters are displayed.
+--   If less than 32, keep the rounded rectangle as ASCII mnemonics. Otherwise,
+--   use the given character byte. The default value is 0.
+-- * `current_pos` [number]: The position of the caret. When setting, the caret
+--   is not scrolled into view.
+-- * `cursor` [number]: The cursor type.<br />
+--       * `_SCINTILLA.constants.SC_CURSORNORMAL` (-1): The normal cursor is
+--         displayed.
+--       * `_SCINTILLA.constants.SC_CURSORWAIT` (4): The wait cursor is
+--         displayed when the mouse is over the view.
+-- * `direct_function` [number]: A pointer to a function that processes messages
+--   for this view. (Read-only)
+-- * `direct_pointer` [number]: A pointer value to use as the first argument
+--   when calling the function returned by direct_function. (Read-only)
+-- * `dirty` [bool]: Flag indicating whether or not the buffer has been modified
+--   since it was last saved.
+-- * `doc_pointer` [number]: A pointer to the document object. (Read-only)
+-- * `eol_mode` [number]: The current end of line mode.<br />
+--       * `_SCINTILLA.constants.SC_EOL_CRLF` (0): `CRLF`.
+--       * `_SCINTILLA.constants.SC_EOL_CR` (1): `CR`.
+--       * `_SCINTILLA.constants.SC_EOL_LF` (2): `LF`.
+-- * `edge_colour` [number]: The color used in edge indication in 0xBBGGRR
+--   format.
+-- * `edge_column` [number]: The column number which text should be kept within.
+-- * `edge_mode` [number]: The edge highlight mode.<br />
+--       * `_SCINTILLA.constants.EDGE_NONE` (0): Long lines are not marked. This
+--         is the default state.
+--       * `_SCINTILLA.constants.EDGE_LINE` (1): A vertical line is drawn at the
+--         column number set by `buffer.edge_column`.
+--       * `_SCINTILLA.constants.EDGE_BACKGROUND` (2): The background color of
+--         characters after the column limit is changed to the color set by
+--         `buffer.edge_colour`.
 -- * `encoding`: The encoding of the file on the hard disk. It will be nil if
 --   the file is a binary file.
 -- * `encoding_bom`: The byte-order mark of the file encoding (if any).
--- * `additional_caret_fore`: The foreground color of additional carets.
--- * `additional_carets_blink`: The rate in milliseconds at which additional
---   carets blink.
--- * `additional_carets_visible`: Flag indicating whether or not additional
---   carets are visible.
--- * `additional_sel_alpha`: The alpha of additional selections.
--- * `additional_sel_back`: The background color of additional selections.
--- * `additional_sel_fore`: The foreground color of additional selections.
--- * `additional_selection_typing`: Flag indicating whether or not typing,
---   backspace, or delete works with multiple selections simultaneously.
--- * `anchor`: The position of the opposite end of the selection to the caret.
--- * `annotation_lines`: The number of lines annotating the indexed line.
+-- * `end_at_last_line` [bool]: Whether the maximum scroll position has the last
+--   line at the bottom of the view. If `false`, allows scrolling one page below
+--   the last line. The default value is `true`.
+-- * `end_styled` [number]: The position of the last correctly styled character.
 --   (Read-only)
--- * `annotation_style`: The style of the annotated text at the indexed line.
--- * `annotation_style_offset`: The style number offset for annotations. This is
---   used to keep lexer and margin styles separate from annotation styles.
--- * `annotation_visible`: The annotation display mode. <br />
---       * 0: Annotations are not displayed.
---       * 1: Annotations are drawn left justified with no adornment.
---       * 2: Annotations are indented to match the text and are surrounded by a
---            box.
--- * `auto_c_auto_hide`: Flag indicating whether or not autocompletion is hidden
---   automatically when nothing matches.
--- * `auto_c_cancel_at_start`: Flag indicating whether or not autocompletion
---   should be cancelled if the user backspaces to a position before where it
---   was created.
--- * `auto_c_choose_single`: Flag indicating whether or not a single item in
---   autocompletion should be chosen automatically.
--- * `auto_c_drop_rest_of_word`: Flag indicating whether or not autocompletion
---   deletes any word characters after the inserted text upon completion.
--- * `auto_c_fill_ups`: A string of characters that when typed will cause the
---   autocompletion to choose the selected item.
--- * `auto_c_ignore_case`: Flag indicating whether or not case is significant
---   when performing autocompletion searches.
--- * `auto_c_max_height`: The maximum height in rows of autocompletion and user
---   lists. Default is 5.
--- * `auto_c_max_width`: The maximum width in characters of autocompletion and
---   user lists.
--- * `auto_c_separator`: The (integer) separator character in the string
---   setting up an autocompletion list.
--- * `auto_c_type_separator`: The (integer) type separator character in the
---   string setting up an autocompletion list.
--- * `back_space_un_indents`: Flag indicating whether or not a backspace press
---   when the caret is within indentation unindents.
--- * `buffered_draw`: Flag indicating whether or not text is drawn into a buffer
---   first or directly onto the screen.
--- * `call_tip_back`: The background [color][color] for the call tip.
---   (Write-only)
--- * `call_tip_fore`: The foreground [color][color] for the call tip.
---   (Write-only)
--- * `call_tip_fore_hlt`: The foreground [color][color] for the highlighted part
---   of the call tip.
--- * `call_tip_use_style`: Call tip tab size in pixels. (Enables
---   `STYLE_CALLTIP`.)
--- * `caret_fore`: The foreground [color][color] of the caret.
--- * `caret_line_back`: The [color][color] of the background of the line
---   containing the caret.
--- * `caret_line_back_alpha`: The background alpha of the caret line.
--- * `caret_line_visible`: Flag indicating whether or not the background of the
---   line containing the caret is a different color.
--- * `caret_period`: The time in milliseconds that the caret is on and off. 0 is
---   a steady on.
--- * `caret_sticky`: Flag indicating whether or not the caret preferred x
---   position can only be changed by explicit movement commands.
--- * `caret_style`: The style of the caret to be drawn.<br />
---       * 0: invisible
---       * 1: line
---       * 2: block
--- * `caret_width`: The width of the insert mode caret in pixels.
--- * `char_at`: The character byte at given index position. (Read-only)
--- * `character_pointer`: The pointer to the first character in the document.
+-- * `extra_ascent` [number]: The extra ascent, the maximum that any style
+--   extends above the baseline, added to each line.
+-- * `extra_descent` [number]: The extra descent, the maximum that any style
+--   extends below the baseline, added to each line.
+-- * `filename`: The absolute path to the file associated with this buffer. It
+--   is encoded in UTF-8. Use [`string.iconv()`][string_iconv] for charset
+--   conversions.
+-- * `first_visible_line` [number]: The display line at the top of the display.
+-- * `focus` [bool]: The internal focus flag.
+-- * `fold_expanded` [bool]: Expanded state of a header line.
+-- * `fold_level` [table]: Table of fold levels for lines starting from zero.
+--   Fold levels encodes an integer level along witth flags indicating whether
+--   the line is a header and whether it is effectively white space.
+--  <br />
+--       * `_SCINTILLA.constants.SC_FOLDLEVELBASE` (0x400): Initial fold level.
+--       * `_SCINTILLA.constants.SC_FOLDLEVELWHITEFLAG` (0x1000): Indicates that
+--         the line is blank.
+--       * `_SCINTILLA.constants.SC_FOLDLEVELHEADERFLAG` (0x2000): Indicates
+--         that the line is a header (fold point).
+-- * `fold_parent` [table]: Table of parent line numbers for child lines
+--   starting from zero. -1 means no line was found. (Read-only)
+-- * `font_quality` [number]: The quality level for text. (Windows only)<br />
+--       * `_SCINTILLA.constants.SC_EFF_QUALITY_DEFAULt` (0).
+--       * `_SCINTILLA.constants.SC_EFF_QUALITY_NON_ANTIALIASED` (1).
+--       * `_SCINTILLA.constants.SC_EFF_QUALITY_ANTIALIASED` (2).
+--       * `_SCINTILLA.constants.SC_EFF_QUALITY_LCD_OPTIMIZED` (3).
+-- * `h_scroll_bar` [bool]: Whether the horizontal scroll bar is visible. Set to
+--   `false` to never see it and `true` to enable it again. The default state is
+--   to display it when needed.
+-- * `highlight_guide` [number]: The highlighted indentation guide column. Set
+--   to 0 to cancel this highlight.
+-- * `hotspot_active_underline` [bool]: Whether active hotspots are underlined.
+-- * `hotspot_single_line` [bool]: Whether hotspots are limited to single line
+--   so hotspots on two lines don't merge.
+-- * `indent` [number]: Ihe number of spaces used for one level of indentation.
+--   For a width of 0, the indent size is the same as the tab size.
+-- * `indentation_guides` [number]: Indentation guides appearance.
+--   Indentation guides are dotted vertical lines that appear within indentation
+--   white space every indent size columns.
+--       * `_SCINTILLA.constants.SC_IV_NONE` (0): No indentation guides are
+--         shown.
+--       * `_SCINTILLA.constants.SC_IV_REAL` (1): Indentation guides are shown
+--         inside real indentation white space.
+--       * `_SCINTILLA.constants.SC_IV_LOOKFORWARD` (2): Indentation guides are
+--         shown beyond the actual indentation up to the level of the next
+--         non-empty line. If the previous non-empty line was a fold header then
+--         indentation guides are shown for one more level of indent than that
+--         line. This setting is good for Python.
+--       * `_SCINTILLA.constants.SC_IV_LOOKBOTH` (3): Indentation guides are
+--         shown beyond the actual indentation up to the level of the next
+--         non-empty line or previous non-empty line whichever is the greater.
+--         This setting is good for most languages.
+-- * `indic_alpha` [table]: Table of alpha transparency values ranging from 0
+--   (transparent) to 255 (opaque) or 256 (no alpha) for indicators from 0 to
+--   31. Used for drawing the fill color of the `INDIC_ROUNDBOX` and
+--   `INDIC_STRAIGHTBOX` rectangle.
+-- * `indic_fore` [table]: Table of foreground colors in 0xBBGGRR format for
+--   indicators from zero to 31.
+-- * `indic_outline_alpha` [table]: Table of alpha transparency values ranging
+--   from 0 (transparent) to 255 (opaque) or 256 (no alpha) for indicators from
+--   0 to 31. Used for drawing the outline color of the `INDIC_ROUNDBOX` and
+--   `INDIC_STRAIGHTBOX` rectangle.
+-- * `indic_style` [table]: Table of styles for indicators from zero to 31.
+--  <br />
+--       * `_SCINTILLA.constants.INDIC_PLAIN` (0): Underlined with a single,
+--         straight line.
+--       * `_SCINTILLA.constants.INDIC_SQUIGGLE` (1): A squiggly underline.
+--         Requires 3 pixels of descender space.
+--       * `_SCINTILLA.constants.INDIC_TT` (2): A line of small T shapes.
+--       * `_SCINTILLA.constants.INDIC_DIAGONAL` (3): Diagonal hatching.
+--       * `_SCINTILLA.constants.INDIC_STRIKE` (4): Strike out.
+--       * `_SCINTILLA.constants.INDIC_HIDDEN` (5): An indicator with no visual
+--         effect.
+--       * `_SCINTILLA.constants.INDIC_BOX` (6): A rectangle around the text.
+--       * `_SCINTILLA.constants.INDIC_ROUNDBOX` (7): A rectangle with rounded
+--         corners around the text using translucent drawing with the interior
+--         usually more transparent than the border. Use `buffer.indic_alpha`
+--         and `buffer.indic_outline_alpha` to control the alpha transparency
+--         values. The default alpha values are 30 for fill color and 50 for
+--         outline color.
+--       * `_SCINTILLA.constants.INDIC_STRAIGHTBOX` (8): A rectangle around the
+--         text using translucent drawing with the interior usually more
+--         transparent than the border. You can use `buffer.indic_alpha` and
+--         `buffer.indic_outline_alpha` to control the alpha transparency
+--         values. The default alpha values are 30 for fill color and 50 for
+--         outline color.
+--       * `_SCINTILLA.constants.INDIC_DASH` (9): A dashed underline.
+--       * `_SCINTILLA.constants.INDIC_DOTS` (10): A dotted underline.
+--       * `_SCINTILLA.constants.INDIC_SQUIGGLELOW` (11): Similar to
+--         `INDIC_SQUIGGLE` but only using 2 vertical pixels so will fit under
+--         small fonts.
+-- * `indic_under` [table]: Table of booleans for drawing under text or over
+--   (default) for indicators from zero to 31.
+-- * `indicator_current` [number]: The indicator in the range of 0 to 31 used
+--   for `buffer:indicator_fill_range()` and `buffer:indicator_clear_range()`.
+-- * `indicator_value` [number]: The indicator value used for
+--   `buffer:indicator_fill_range()`. Currently all values are drawn the same.
+-- * `keys_unicode` [bool]: Interpret keyboard input as Unicode.
+-- * `layout_cache` [number]: The degree of caching of layout information.
+--  <br />
+--       * `_SCINTILLA.constants.SC_CACHE_NONE` (0): No lines are cached.
+--       * `_SCINTILLA.constants.SC_CACHE_CARET` (1): The line containing the
+--         text caret. This is the default.
+--       * `_SCINTILLA.constants.SC_CACHE_PAGE` (2): Visible lines plus the line
+--         containing the caret.
+--       * `_SCINTILLA.constants.SC_CACHE_DOCUMENT` (3): All lines in the
+--         document.
+-- * `length` [number]: The number of bytes in the document.
 --   (Read-only)
--- * `code_page`: The code page used to interpret the bytes of the document as
---   characters.
--- * `column`: The column number of an index position, taking tab width into
---   account.
--- * `control_char_symbol`: The character used to display control characters.
---   (< 32 uses that control character)
--- * `current_pos`: The position of the caret.
--- * `cursor`: The cursor type.<br />
---       * -1: normal
---       * 4: wait.
--- * `direct_function`: The pointer to a function that processes messages for
---   this Scintilla. (Read-only)
--- * `direct_pointer`: The pointer value to use as the first function argument
---   when calling the function returned by direct_function.
--- * `eol_mode`: The end of line mode.<br />
---       * 0: `CRLF`
---       * 1: `CR`
---       * 2: `LF`
--- * `edge_colour`: The [color][color] used in edge indication.
--- * `edge_column`: The column number which text should be kept within.
--- * `edge_mode`: The edge highlight mode.<br />
---       * 0: None
---       * 1: Line
---       * 2: Background
--- * `end_at_last_line`: Flag indicating whether or not the maximum scroll
---   position has the last line at the bottom of the view. Default is true.
--- * `end_styled`: The position of the last correctly styled character.
+-- * `lexer` [number]: The lexing language of the document.
+-- * `line_count` [number]: The number of lines in the document. There is always
+--   at least one. (Read-only)
+-- * `line_end_position` [table]: Table of positions after the last visible
+--   characters on a line for lines starting from zero. (Read-only)
+-- * `line_indent_position` [table]: Table of positions before the first non
+--   indentation character on a line for lines starting from zero. (Read-only)
+-- * `line_indentation` [table]: Table of line indentation amounts for lines
+--   starting from zero. The indentation is measured in character columns, which
+--   correspond to the width of space characters.
+-- * `line_state` [table]: Table of extra styling information for lines starting
+--   from zero. As well as the 8 bits of lexical state stored for each character
+--   there is also an integer stored for each line. This can be used for longer
+--   lived parse states.
+-- * `line_visible` [bool]: Is a line visible? (Read-only)
+-- * `lines_on_screen` [number]: The number of lines completely visible.
 --   (Read-only)
--- * `extra_ascent`: The extra space above lines.
--- * `extra_descent`: The extra space below lines.
--- * `first_visible_line`: The display line at the top of the display.
--- * `focus`: The internal focus flag.
--- * `fold_expanded`: Flag indicating whether or not an indexed (header) line
---   has been expanded.
--- * `fold_level`: The fold level of an indexed line.<br />
---       * 0x400: Base
---       * 0x1000: White
---       * 0x2000: Header
---       * 0x0FFF: Number mask
--- * `fold_parent`: The parent line of indexed (child) line. (Read-only)
--- * `font_quality`: The font quality (antialiasing method). (Windows only)<br />
---       * 0: Default
---       * 1: Non-antialiased
---       * 2: Antialiased
---       * 3: LCD Optimized
--- * `h_scroll_bar`: Flag indicating whether or not the horizontal scroll bar is
---   visible.
--- * `highlight_guide`: The highlighted indentation guide column.
--- * `hotspot_active_underline`: Flag indicating whether or not active hotspots
---   are underlined.
--- * `hotspot_single_line`: Flag indicating whether or not hotspots are limited
---   to a single line so hotspots on two lines do not merge.
--- * `identifier`: the identifier reported as idFrom in notification messages.
--- * `indent`: The indentation size.
--- * `indentation_guides`: Flag indicating whether or not indentation guides are
---   visible.
--- * `indic_alpha`: The alpha transparency of an indexed indicator. This value
---   ranges from 0 (transparent) to 255 (opaque).
--- * `indic_fore`: The foreground [color][color] of an indexed indicator.
--- * `indic_outline_alpha`: The alpha transparency for the outline color of an
---   indexed indicator. This value ranges from 0 (transparent) to 255 (opaque).
--- * `indic_style`: The style of an indexed indicator.<br />
---       * 0: Plain
---       * 1: Squiggle
---       * 2: TT
---       * 3: Diagonal
---       * 4: Strike
---       * 5: Hidden
---       * 6: Box
---       * 7: Roundbox.
--- * `indic_under`: Flag indicating whether or not an indexed indicator is drawn
---   over text. Default is `true`.
--- * `indicator_current`: The indicator used for `indicator_fill_range` and
---   `indicator_clear_range`.
--- * `indicator_value`: The value used for `indicator_fill_range`.
--- * `key_words`: Unused.
--- * `keys_unicode`: Flag indicating whether or not to treat character keys as
---   unicode.
--- * `layout_cache`: The degree of caching of layout information.
--- * `length`: The number of characters in the document. (Read-only).
--- * `lexer`: The (integer) lexing language of the document.
--- * `line_count`: The number of lines in the document (>= 1). (Read-only).
--- * `line_end_position`: The position after the last visible character on an
---   index line. (Read-only)
--- * `line_indent_position`: The position before the first non-indentation
---   character on an indexed line. (Read-only)
--- * `line_indentation`: The number of columns an indexed line is indented.
--- * `line_state`: Extra styling information of an indexed line.
--- * `line_visible`: Flag indicating whether or not the indexed line is visible.
+-- * `main_selection` [number]: The main selection. The main selection may be
+--   displayed in different colors or with a differently styled caret. Only an
+--   already existing selection can be made main.
+-- * `margin_cursor_n` [table]: Table of cursors shown for margins from zero to
+--   four. A reversed arrow cursor is normally shown over all margins.
+--       * `_SCINTILLA.constants.SC_CURSORARROW`: Normal arrow.
+--       * `_SCINTILLA.constants.SC_CURSORREVERSEARROW`: Reversed arrow.
+-- * `margin_left` [number]: The size in pixels of the left margin. The default
+--   is to one pixel.
+-- * `margin_mask_n` [table]: Table of marker masks for margins from zero to
+--   four. A mask determines which markers are displayed in a margin.
+-- * `margin_options` [number]: A bit mask of margin options.<br />
+--       * `_SCINTILLA.constants.SC_MARGINOPTION_NONE` (0): None (default).
+--       * `_SCINTILLA.constants.SC_MARGINOPTION_SUBLINESELECT` (1): Controls
+--         how wrapped lines are selected when clicking on margin in front of
+--         them. If set, only sub line of wrapped line is selected, otherwise
+--         whole wrapped line is selected.
+-- * `margin_right` [number]: The size in pixels of the right margin. The
+--   default is to one pixel.
+-- * `margin_sensitive_n` [table]: Table of mouse click sensitivity booleans for
+--   margins from zero to four. A click in a sensitive margin emits a
+--   `margin_click` event. By default, all margins are insensitive.
+-- * `margin_style` [table]: Table of style numbers for text margin lines
+--   starting from zero.
+-- * `margin_style_offset` [number]: The start of the range of style numbers
+--   used for margin text. Margin styles may be completely separated from
+--   standard text styles by setting a style offset. For example, setting this
+--   to 256 would allow the margin styles to be numbered from 256 upto 511 so
+--   they do not overlap styles set by lexers. Each style number set with
+--   `buffer.margin_style` has the offset added before looking up the style.
+-- * `margin_type_n` [table]: Table of margin types for margins from zero to
+--   four.<br />
+--       * `_SCINTILLA.constants.SC_MARGIN_SYMBOL` (0): A symbol margin.
+--       * `_SCINTILLA.constants.SC_MARGIN_NUMBER` (1): A line number margin.
+--       * `_SCINTILLA.constants.SC_MARGIN_BACK` (2): A symbol margin that sets
+--         its background color to match the default text background color.
+--       * `_SCINTILLA.constants.SC_MARGIN_FORE` (3): A symbol margin that sets
+--         its background color to match the default text foreground color.
+--       * `_SCINTILLA.constants.SC_MARGIN_TEXT` (4): A text margin.
+--       * `_SCINTILLA.constants.SC_MARGIN_RTEXT` (5): A right justified text
+--         margin.
+-- * `margin_width_n` [table]: Table of margin widths expressed in pixes for
+--   margins from zero to four.
+-- * `max_line_state` [number]: The last line number that has line state.
 --   (Read-only)
--- * `lines_on_screen`: The number of lines completely visible. (Read-only)
--- * `main_selection`: The main selection.
--- * `margin_cursor_n`: The cursor shown when the mouse is inside a margin.
--- * `margin_left`: The size in pixels of the left margin.
--- * `margin_mask_n`: The marker mask of an indexed margin.
--- * `margin_options`: A bit mask of margin options.<br />
---       * 0: None (default).
---       * 1: Select the sub line of the wrapped line when clicking in the
---            margin instead of selecting the entire wrapped line.
--- * `margin_right`: The size in pixels of the right margin.
--- * `margin_sensitive_n`: Flag indicating whether or not the indexed margin is
---   sensitive to mouse clicks.
--- * `margin_style`: The style of the margin text at the indexed line.
--- * `margin_style_offset`: The style number offset for margin text. This is
---   used to keep lexer and annotation styles separate from margin styles.
--- * `margin_type_n`: The type of an indexed margin.<br />
---       * 0: Symbolic
---       * 1: Numeric
--- * `margin_width_n`: The width of an indexed margin in pixels.
--- * `max_line_state`: The last line number that has a line state. (Read-only).
--- * `mod_event_mask`: Mask of modification events sent to the container.
--- * `modify`: Flag indicating whether or not the document is different from
---   when it was last saved.
--- * `mouse_down_captures`: Flag indicating whether or not the mouse is
---   captured when its button is pressed.
--- * `mouse_dwell_time`: The time in milliseconds the mouse must sit still to
---   generate a mouse dwell event.
--- * `multi_paste`: How to paste text into multiple selections.
---       * 0: Just the main selection.
---       * 1: Each selection.
--- * `multiple_selection`: Flag indicating whether or not to enable multiple
+-- * `modify` [bool]: Whether the document is different from when it was last
+--   saved.
+-- * `mouse_down_captures` [bool]: Whether the mouse is captured when its button
+--   is pressed.
+-- * `mouse_dwell_time` [number]: The time the mouse must sit still to generate
+--   a mouse dwell event. If set to `_SCINTILLA.constants.SC_TIME_FOREVER`, the
+--   default, no dwell events are generated.
+-- * `multi_paste` [bool]: The effect of pasting when there are multiple
+--   selections.<br />
+--       * `_SCINTILLA.constants.SC_MULTIPASTE_ONCE` (0): Pasted text can go
+--         into just the main selection (default).
+--       * `_SCINTILLA.constants.SC_MULTIPASTE_EACH` (1): Pasted text can go
+--         into each selection.
+-- * `multiple_selection` [bool]: Whether multiple selections can be made. When
+--   multiple selection is disabled, it is not possible to select multiple
+--   ranges by holding down the Ctrl key while dragging with the mouse.
+-- * `overtype` [bool]: Overtype mode.
+-- * `position_cache` [number]: The number of entries in the position cache. The
+--   position cache stores position information for short runs of text so that
+--   their layout can be determined more quickly if the run recurs.
+-- * `print_colour_mode` [number]: The print color mode.<br />
+--       * `_SCINTILLA.constants.SC_PRINT_NORMAL` (0): Print using the current
+--         screen colors. This is the default.
+--       * `_SCINTILLA.constants.SC_PRINT_INVERTLIGHT` (1): If you use a dark
+--         screen background this saves ink by inverting the light value of all
+--         colors and printing on a white background.
+--       * `_SCINTILLA.constants.SC_PRINT_BLACKONWHITE` (2): Print all text as
+--         black on a white background.
+--       * `_SCINTILLA.constants.SC_PRINT_COLOURONWHITE` (3): Everything prints
+--         in its own color on a white background.
+--       * `_SCINTILLA.constants.SC_PRINT_COLOURONWHITEDEFAULTBG` (4):
+--         Everything prints in its own color on a white background except that
+--         line numbers use their own background color.
+-- * `print_magnification` [number]: The print magnification added to the point
+--   size of each style for printing.
+-- * `print_wrap_mode` [number]: Printing line wrap mode.<br />
+--       * `_SCINTILLA.constants.SC_WRAP_NONE` (0): Each line of text generates
+--         one line of output and the line is truncated if it is too long to fit
+--         into the print area.
+--       * `_SCINTILLA.constants.SC_WRAP_WORD` (1): Wraps printed output so that
+--         all characters fit into the print rectangle. Tries to wrap only
+--         between words as indicated by white space or style changes although
+--         if a word is longer than a line, it will be wrapped before the line
+--         end. This is the default.
+--       * `_SCINTILLA.constants.SC_WRAP_CHAR` (2).
+-- * `property` [table]: Table of keyword:value string pairs used by a lexer for
+--   some optional features. (Write-only)
+-- * `property_int` [table]: Interprets `buffer.property[keyword]` as an integer
+--   if found or returns 0. (Read-only)
+-- * `read_only` [bool]: Read-only mode.
+-- * `rectangular_selection_anchor` [number]: The position of the anchor of the
+--   rectangular selection.
+-- * `rectangular_selection_anchor_virtual_space` [number]: The amount of
+--   virtual space for the anchor of the rectangular selection.
+-- * `rectangular_selection_caret` [number]: The position of the caret of the
+--   rectangular selection.
+-- * `rectangular_selection_caret_virtual_space` [number]: The amount of virtual
+--   space for the caret of the rectangular selection.
+-- * `rectangular_selection_modifier` [number]: The modifier key used to
+--   indicate that a rectangular selection should be created when combined with
+--   a mouse drag.<br />
+--       * `_SCINTILLA.constants.SCMOD_CTRL` (2): Control key (default).
+--       * `_SCINTILLA.constants.SCMOD_ALT` (4): Alt key.
+--       * `_SCINTILLA.constants.SCMOD_SUPER` (8): Left Windows key on a Windows
+--         keyboard or the Command key on a Mac.
+-- * `scroll_width` [number]: The document width assumed for scrolling. For
+--   performance, the view does not measure the display width of the document to
+--   determine the properties of the horizontal scroll bar. Instead, an assumed
+--   width is used. The default value is 2000. To ensure the width of the
+--   currently visible lines can be scrolled use `buffer.scroll_width_tracking`.
+-- * `scroll_width_tracking` [bool]: Whether the maximum width line displayed is
+--   used to set scroll width.
+-- * `search_flags` [number]: The search flags used by
+--   `buffer:search_in_target()`.
+--       * `_SCINTILLA.constants.SCFIND_WHOLEWORD` (2): A match only occurs with
+--         text that matches the case of the search string.
+--       * `_SCINTILLA.constants.SCFIND_MATCHCASE` (4): A match only occurs if
+--         the characters before and after are not word characters.
+--       * `_SCINTILLA.constants.SCFIND_WORDSTART` (0x00100000): A match only
+--         occurs if the character before is not a word character.
+--       * `_SCINTILLA.constants.SCFIND_REGEXP` (0x00200000): The search string
+--         should be interpreted as a regular expression.
+--       * `_SCINTILLA.constants.SCFIND_POSIX` (0x00400000): Treat regular
+--         expression in a more POSIX compatible manner by interpreting bare `(`
+--        and `)` for tagged sections rather than `\(` and `\)`.
+-- * `sel_alpha` [number]: The alpha of the selection, between 0 (transparent)
+--   and 255 (opaque), or 256 for no alpha.
+-- * `sel_eol_filled` [bool]: The selection end of line fill. The selection can
+--   be drawn up to the right hand border by setting this property.
+-- * `selection_end` [number]: The position that ends the selection - this
+--   becomes the current position. This does not make the caret visible.
+-- * `selection_is_rectangle` [bool]: Is the selection rectangular? The
+--   alternative is the more common stream selection. (Read-only)
+-- * `selection_mode` [number]: The mode of the current selection.<br />
+--       * `_SCINTILLA.constants.SC_SEL_STREAM` (0): Stream.
+--       * `_SCINTILLA.constants.SC_SEL_RECTANGLE` (1): Rectangle.
+--       * `_SCINTILLA.constants.SC_SEL_LINES` (2): Lines.
+--       * `_SCINTILLA.constants.SC_SEL_THIN` (3): Thin rectangular.
+-- * `selection_n_anchor` [table]: Table of anchor positions for existing
+--   selections starting from zero, the main selection.
+-- * `selection_n_anchor_virtual_space` [table]: Table of the amount of virtual
+--   space for anchors for existing selections starting from zero, the main
 --   selection.
--- * `overtype`: Flag indicating whether or not overtype mode is active.
--- * `paste_convert_endings`: Flag indicating whether or not line endings are
---   converted when pasting text.
--- * `position_cache`: The number of entries in the position cache.
--- * `print_colour_mode`: The print color mode.<br />
---       * 0: Normal
---       * 1: Invert the light value of each style
---       * 2: Force black on white
---       * 3: Force background to be white
---       * 4: Only default background is forced to be white
--- * `print_magnification`: The print magnification added to the point size.
--- * `print_wrap_mode`: Wrap mode.<br />
---       * 0: None
---       * 1: Word
--- * `property`: The (string) value for a given (string) key index.
--- * `property_int`: The (integer) value for a given (string) key index.
+-- * `selection_n_caret` [table]: Table of caret positions for existing
+--   selections starting from zero, the main selection.
+-- * `selection_n_caret_virtual_space` [table]: Table of the amount of virtual
+--   space for carets for existing selections starting from zero, the main
+--   selection.
+-- * `selection_n_end` [table]:  Table of positions that end selections for
+--   existing selections starting from zero, the main selection.
+-- * `selection_n_start` [table]: Table of positions that start selections for
+--   existing selections starting from zero, the main selection.
+-- * `selection_start` [number]: The position that starts the selection - this
+--   becomes the anchor. This does not make the caret visible.
+-- * `selections` [number]: The number of selections currently active.
 --   (Read-only)
--- * `read_only`: Flag indicating whether or not the document is read-only.
--- * `rectangular_selection_anchor`: The position of the rectangular selection
---   anchor.
--- * `rectangular_selection_anchor_virtual_space`: The amount of virtual space
---   for the rectangular selection anchor.
--- * `rectangular_selection_caret`: The position of the rectangular selection
---   caret.
--- * `rectangular_selection_caret_virtual_space`: The amount of virtual space
---   for the rectangular selection caret.
--- * `rectangular_selection_modifier`: The key used to indicate that a
---   rectangular selection should be created when combined with a mouse drag.
---   <br />
---       * 2: Control
---       * 4: Alt
---       * 8: Super (Win)
--- * `scroll_width`: The document width assumed for scrolling.
--- * `scroll_width_tracking`: Flag indicating whether or not the maximum width
---   line displayed is used to set the scroll width.
--- * `search_flags`: The search flags used by `search_in_target`.
--- * `sel_alpha`: The alpha of the selection.
--- * `sel_eol_filled`: Flag indicating whether or not the selection end of line
---   is filled.
--- * `selection_end`: The position that ends the selection. (current_pos)
--- * `selection_is_rectangle`: Flag indicating whether or not the selection is
---   rectangular. (Read-only)
--- * `selection_mode`: The mode of the current selection.<br />
---       * 0: Stream
---       * 1: Rectangle
---       * 2: Lines
--- * `selection_n_anchor`: The position of the anchor for an existing selection.
--- * `selection_n_anchor_virtual_space`: The amount of virtual space for the
---   anchor for an existing selection.
--- * `selection_n_caret`: The position of the caret for an existing selection.
--- * `selection_n_caret_virtual_space`: The amount of virtual space for the
---   anchor for an existing selection.
--- * `selection_n_end`: The end position of an existing selection.
--- * `selection_n_start`: The start position of an existing selection.
--- * `selection_start`: The position that starts the selection. (anchor)
--- * `selections`: The number of selections currently active. (Read-only)
--- * `status`: error status. 0: OK.
--- * `style_at`: The style byte at the index position. (Read-only)
--- * `style_back`: The background [color][color] of an indexed style.
--- * `style_bits`: The number of bits in style bytes.
--- * `style_bits_needed`: The number of bits the current lexer needs for
---   styling. (Read-only)
--- * `style_bold`: Flag indicating whether or not the indexed style is bold.
--- * `style_case`: The case of an indexed style.<br />
---       * 0: Mixed
---       * 1: Upper
---       * 2: Lower
--- * `style_changeable`: Flag indicating whether or not the indexed style is
---   changeable.
--- * `style_character_set`: The character set of the font in the indexed style.
--- * `style_eol_filled`: Flag indicating whether or not the indexed style's end
+-- * `status` [number]: The error status.<br />
+--       * `_SCINTILLA.constants.SC_STATUS_OK` (0): No failures.
+--       * `_SCINTILLA.constants.SC_STATUS_FAILURE` (1): Generic failure.
+--       * `_SCINTILLA.constants.SC_STATUS_BADALLOC` (2): Memory is exhausted.
+-- * `style_at` [table]: Table of style bytes at positions in the document
+--   starting at zero. (Read-only)
+-- * `style_back` [table]: Table of background colors in 0xBBGGRR format for
+--   styles from zero to 255.
+-- * `style_bits` [number]: The number of bits in style bytes used to hold the
+--   lexical state.
+-- * `style_bits_needed` [number]: The number of bits the current lexer needs
+--   for styling. (Read-only)
+-- * `style_bold` [table]: Table of booleans for bold styles from zero to 255.
+-- * `style_case` [table]: Table of cases for styles from zero to 255.<br />
+--       * `_SCINTILLA.constants.SC_CASE_MIXED` (0): Normal, mixed case.
+--       * `_SCINTILLA.constants.SC_CASE_UPPER` (1): Upper case.
+--       * `_SCINTILLA.constants.SC_CASE_LOWER` (2): Lower case.
+-- * `style_changeable` [table]: Table of booleans for changeable styles from
+--   zero to 255. The default setting is `true`.
+-- * `style_character_set` [table]: Table of character sets for styles from zero
+--   to 255.
+-- * `style_eol_filled` [table]: Table of booleans for end of line filled styles
+--   from zero to 255.
 --   of line is filled.
--- * `style_font`: The font of the indexed style.
--- * `style_fore`: The foreground [color][color] of the indexed style.
--- * `style_hot_spot`: Flag indicating whether or not the indexed style is a
---   hotspot.
--- * `style_italic`: Flag indicating whether or not the indexed style is italic.
--- * `style_size`: The font size of the indexed style.
--- * `style_underline`: Flag indicating whether or not the indexed style is
---   underlined.
--- * `style_visible`: Flag indicating whether or not the indexed style is
---   visible.
--- * `tab_indents`: Flag indicating whether or not a tab press when the caret
---   is within indentation indents.
--- * `tab_width`: The visible size of a tab in multiples of the width of a space
---   character.
--- * `target_end`: The position that ends the target which is used for updating
---   the document without affecting the scroll position.
--- * `target_start`: The position that starts the target which is used for
---   updating the document without affecting the scroll position.
--- * `text_length`: The number of characters in the document. (Read-only)
--- * `two_phase_draw`: Flag indicating whether or not drawing is performed in
---   two phases: background and then foreground.
--- * `undo_collection`: Flag indicating whether or not an undo history is being
---   collected.
--- * `use_palette`: Flag indicating whether or not Scintilla uses the env's
---   palette calls to display more colors.
--- * `use_tabs`: Flag indicating whether or not indentation uses tabs and spaces
---   or just spaces.
--- * `v_scroll_bar`: Flag indicating whether or not the vertical scroll bar is
---   visible.
--- * `view_eol`: Flag indicating whether or not end of line characters are
---   visible.
--- * `view_ws`: Flag indicating whether or not whitespace characters are visible.
--- * `virtual_space_options`: Options for enabling virtual space. <br />
---       * 0: Disabled.
---       * 1: Enabled only for rectangular selection.
---       * 2: Enabled.
--- * `whitespace_chars`: The set of characters making up whitespace when moving
---   or selecting by word. Should be called after setting word_chars.
+-- * `style_font` [table]: Table of font faces for styles from zero to 255.
+-- * `style_fore` [table]: Table of foreground colors in 0xBBGGRR format for
+--   styles from zero to 255.
+-- * `style_hot_spot` [table]: Table of boolean hotspot styles from zero to 255.
+-- * `style_italic` [table]: Table of booleans for italic styles from zero to
+--   255.
+-- * `style_size` [table]: Table of font sizes for styles from zero to 255.
+-- * `style_underline` [table]: Table of booleans for underlined styles from
+--   zero to 255.
+-- * `style_visible` [table]: Table of booleans for visible styles from zero to
+--   255.
+-- * `tab_indents` [bool]: Whether a tab pressed when caret is within
+--   indentation indents.
+-- * `tab_width` [number]: The visible size of a tab as a multiple of the width
+--   of a space character. The default tab width is 8 characters.
+-- * `target_end` [number]: The position that ends the target which is used for
+--   updating the document without affecting the scroll position. The target
+--   is also set by a successful `buffer:search_in_target()`.
+-- * `target_start` [number]: The position that starts the target which is used
+--   for updating the document without affecting the scroll position. The target
+--   is also set by a successful `buffer:search_in_target()`.
+-- * `text_length` [number]: The number of characters in the document.
+--   (Read-only)
+-- * `two_phase_draw` [bool]: Two phase drawing mode. When `true`, drawing is
+--   performed in two phases, first the background and then the foreground. This
+--   avoids chopping off characters that overlap the next run. The default is
+--   for drawing to be two phase.
+-- * `undo_collection` [bool]: Whether to collect undo information. When
+--   stopping collection, use `buffer:empty_undo_buffer()` to avoid the undo
+--   buffer being unsynchronized with the data in the buffer.
+-- * `use_tabs` [bool]: Whether tabs will be used in indentation. The default is
+--   `true`. `false` will only use space characters.
+-- * `v_scroll_bar` [bool]: Whether the vertical scroll bar is visible. Set to
+--   `false` to never see it and `true` to enable it again. The default state is
+--   to display it when required.
+-- * `view_eol` [bool]: Whether the end of line characters are visible.
+--   Normally, the end of line characters are hidden.
+-- * `view_ws` [number]: The visibility of white space characters.<br />
+--       * `_SCINTILLA.constants.SCWS_INVISIBLE` (0): The normal display mode
+--         with white space displayed as an empty background color.
+--       * `_SCINTILLA.constants.SCWS_VISIBLEALWAYS` (1): White space characters
+--         are drawn as dots and arrows.
+--       * `_SCINTILLA.constants.SCWS_VISIBLEAFTERINDENT` (2): White space used
+--         for indentation is displayed normally but after the first visible
+--         character, it is shown as dots and arrows.
+-- * `virtual_space_options` [number]: Virtual space options.<br />
+--       * `_SCINTILLA.constants.SCVS_NONE` (0): Disables all use of virtual
+--         space (default).
+--       * `_SCINTILLA.constants.SCVS_RECTANGULARSELECTION` (1): Enabled only
+--         for rectangular selections.
+--       * `_SCINTILLA.constants.SCVS_USERACCESSIBLE` (2): Enabled.
+-- * `whitespace_chars` [string]: The set of characters making up whitespace for
+--   when moving or selecting by word. Use after setting `buffer.word_chars`.
 --   (Write-only)
--- * `wrap_indent_mode`: The modes of wrapped sublines. <br />
---       * 0: Wrapped sublines aligned to left of window plus amount set by
+-- * `wrap_indent_mode` [number]: How wrapped sublines are placed. Default is
+--   fixed.<br />
+--       * `_SCINTILLA.constants.SC_WRAP_INDENT_FIXED` (0): Wrapped sublines
+--         aligned to left of window plus amount set by
 --         `buffer.wrap_start_indent`.
---       * 1: Wrapped sublines are aligned to first subline indent.
---       * 2: Wrapped sublines are aligned to first subline indent plus one more
---         level of indentation.
--- * `whitespace_size`: The size of the dots used for marking space characters.
--- * `word_chars`: The set of characters making up words when moving or
+--       * `_SCINTILLA.constants.SC_WRAP_INDENT_SAME` (1): Wrapped sublines are
+--         aligned to first subline indent.
+--       * `_SCINTILLA.constants.SC_WRAP_INDENT_INDENT` (2): Wrapped sublines
+--         are aligned to first subline indent plus one more level of
+--         indentation.
+-- * `whitespace_size` [number]: The size of the dots used to mark space
+--   characters.
+-- * `word_chars` [string]: The set of characters making up words when moving or
 --   selecting by word. (Write-only)
--- * `wrap_mode`: Flag indicating whether or not text is word wrapped.
--- * `wrap_start_indent`: The start indent for wrapped lines.
--- * `wrap_visual_flags`: The display mode of visual flags for wrapped lines.
---   <br />
---       * 0: None
---       * 1: End
---       * 2: Start
--- * `wrap_visual_flags_location`: The location of visual flags for wrapped
+-- * `wrap_mode` [number]: Text word wrap mode.<br />
+--       * `_SCINTILLA.constants.SC_WRAP_NONE` (0): Disable line wrapping.
+--       * `_SCINTILLA.constants.SC_WRAP_WORD` (1): Enable wrapping on word
+--         boundaries.
+--       * `_SCINTILLA.constants.SC_WRAP_CHAR` (2): Enable wrapping between any
+--         characters.
+-- * `wrap_start_indent` [number]: The start indent for wrapped lines.
+-- * `wrap_visual_flags` [number]: The display mode of visual flags for wrapped
 --   lines.<br />
---       * 0: Default
---       * 1: End by text
---       * 2: Start by text
--- * `x_offset`: The horizontal scroll position.
--- * `zoom`: The zoom level added to all font sizes. +: magnify, -: reduce.
+--       * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_NONE` (0): No visual flags.
+--       * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_END` (1): Visual flag at end
+--         of subline of a wrapped line.
+--       * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_START` (2): Visual flag at
+--         begin of subline of a wrapped line. Subline is indented by at least 1
+--         to make room for the flag.
+-- * `wrap_visual_flags_location` [number]: The location of visual flags for
+--   wrapped lines.<br />
+--       * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_DEFAULT` (0): Visual flags
+--         drawn near border.
+--       * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_END_BY_TEXT` (1): Visual
+--         flag at end of subline drawn near text.
+--       * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_START_BY_TEXT` (2): Visual
+--         flag at beginning of subline drawn near text.
+-- * `x_offset` [number]: The horizontal scroll position. A value of 0 is the
+--   normal position with the first text column visible at the left of the view.
+-- * `zoom` [number]: The number of points added to the size of all fonts. It
+--   may be positive to magnify or negative to reduce.
 --
 -- [string_iconv]: ../modules/string.html#iconv
--- [color]: http://scintilla.org/ScintillaDoc.html#colour
+
+---
+-- Add a selection from anchor to caret as the main selection.
+-- Retainings all other selections as additional selections. Since there is
+-- always at least one selection, to set a list of selections, the first
+-- selection should be added with `buffer:set_selection()` and later selections
+-- added with this function.
+-- @param buffer The focused buffer.
+-- @param caret The caret.
+-- @param anchor The anchor.
+function buffer.add_selection(buffer, caret, anchor) end
+
+---
+-- Add text to the document at current position.
+-- The current position is set at the end of the inserted text, but it is not
+-- scrolled into view.
+-- @param buffer The focused buffer.
+-- @param text The text to add.
+function buffer.add_text(buffer, text) end
+
+---
+-- Enlarge the document to a particular size of text bytes.
+-- The document will not be made smaller than its current contents.
+-- @param buffer The focused buffer.
+-- @param bytes
+function buffer.allocate(buffer, bytes) end
+
+---
+-- Clear the annotations from all lines.
+-- @param buffer The focused buffer.
+function buffer.annotation_clear_all(buffer) end
+
+---
+-- Get the annotation text for a line.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @return string
+function buffer.annotation_get_text(buffer, line) end
+
+---
+-- Set the annotation text for a line.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @param text The text.
+function buffer.annotation_set_text(buffer, line, text) end
+
+---
+-- Append a string to the end of the document without changing the selection.
+-- The current selection is not changed and the new text is not scrolled into
+-- view.
+-- @param buffer The focused buffer.
+-- @param text The text.
+function buffer.append_text(buffer, text) end
+
+---
+-- Is there an auto-completion list visible?
+-- @param buffer
+-- @return bool
+function buffer.auto_c_active(buffer) end
+
+---
+-- Remove the auto-completion list from the screen.
+-- A set of characters that will cancel autocompletion can be specified with
+-- buffer:auto_c_stops().
+-- @param buffer The focused buffer.
+function buffer.auto_c_cancel(buffer) end
+
+---
+-- User has selected an item so remove the list and insert the selection.
+-- This has the same effect as the tab key.
+-- @param buffer The focused buffer.
+function buffer.auto_c_complete(buffer) end
+
+---
+-- Get currently selected item position in the auto-completion list.
+-- @param buffer The focused buffer.
+-- @return number
+function buffer.auto_c_get_current(buffer) end
+
+---
+-- Get currently selected item text in the auto-completion list.
+-- @param buffer The focused buffer.
+-- @return string
+function buffer.auto_c_get_current_text(buffer) end
+
+---
+-- Retrieve the position of the caret when the auto-completion list was
+-- displayed.
+-- @param buffer The focused buffer.
+-- @return number
+function buffer.auto_c_pos_start(buffer) end
+
+---
+-- Select the item in the auto-completion list that starts with a string.
+-- By default, comparisons are case sensitive, but this can change with
+-- buffer.auto_c_ignore_case.
+-- @param buffer The focused buffer.
+-- @param string
+function buffer.auto_c_select(buffer, string) end
+
+---
+-- Display an auto-completion list.
+-- @param len_entered The number of characters before the caret used to provide
+--   the context.
+-- @param item_list List of words separated by separator characters (initially
+--   spaces). The list of words should be in sorted order.
+function buffer.auto_c_show(buffer, len_entered, item_list) end
+
+---
+-- Define a set of characters that when typed cancel the auto-completion list.
+-- @param buffer The focused buffer.
+-- @param chars String list of characters. This list is empty by default.
+function buffer.auto_c_stops(buffer, chars) end
+
+---
+-- Dedent the selected lines.
+-- @param buffer The focused buffer.
+function buffer.back_tab(buffer) end
+
+---
+-- Start a sequence of actions that is undone and redone as a unit.
+-- May be nested.
+-- @param buffer The focused buffer.
+function buffer.begin_undo_action(buffer) end
+
+---
+-- Highlight the character at a position indicating there is no matching brace.
+-- @param buffer The focused buffer.
+-- @param pos The position or -1 to remove the highlight.
+function buffer.brace_bad_light(buffer, pos) end
+
+---
+-- Use specified indicator to highlight non matching brace instead of changing
+-- its style.
+-- @param buffer The focused buffer.
+-- @param use_indicator Use an indicator.
+-- @param indic_num The indicator number.
+function buffer.brace_bad_light_indicator(buffer, use_indicator, indic_num) end
+
+---
+-- Highlight the characters at two positions.
+-- If indent guides are enabled, the indent that corresponds with the brace can
+-- be highlighted by locating the column with `buffer.column` and highlight the
+-- indent with `buffer.highlight_guide`.
+-- @param buffer The focused buffer.
+-- @param pos1 The first position.
+-- @param pos2 The second position.
+function buffer.brace_highlight(buffer, pos1, pos2) end
+
+---
+-- Use specified indicator to highlight matching braces instead of changing
+-- their style.
+-- @param buffer The focused buffer.
+-- @param use_indicator Use an indicator.
+-- @param indic_num The indicator number.
+function buffer.brace_highlight_indicator(buffer, use_indicator, indic_num) end
+
+---
+-- Find the position of a matching brace or -1 if no match.
+-- The brace characters handled are '(', ')', '[', ']', '{', '}', '<', and '>'.
+-- The search is forwards from an opening brace and backwards from a closing
+-- brace. A match only occurs if the style of the matching brace is the same as
+-- the starting brace or the matching brace is beyond the end of styling. Nested
+-- braces are handled correctly.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+-- @return number.
+function buffer.brace_match(buffer, pos) end
+
+---
+-- Is there an active call tip?
+-- @param buffer The focused buffer.
+-- @return bool
+function buffer.call_tip_active(buffer) end
+
+---
+-- Remove the call tip from the screen.
+-- Call tips are also removed if any keyboard commands that are not compatible
+-- with editing the argument list of a function are used.
+-- @param buffer The focused buffer.
+function buffer.call_tip_cancel(buffer) end
+
+---
+-- Retrieve the position where the caret was before displaying the call tip.
+-- @param buffer The focused buffer.
+-- @return number
+function buffer.call_tip_pos_start(buffer) end
+
+---
+-- Highlights a segment of a call tip.
+-- @param buffer The focused buffer.
+-- @param start_pos The start position.
+-- @param end_pos The end position.
+function buffer.call_tip_set_hlt(buffer, start_pos, end_pos) end
+
+---
+-- Show a call tip containing a definition near position pos.
+-- The call tip text is aligned to start 1 line below this character unless up
+-- and/or down arrows have been included in the call tip text in which case the
+-- tip is aligned to the right-hand edge of the rightmost arrow. The assumption
+-- is that the text starts with something like "\001 1 of 3 \002".
+-- @param buffer The focused buffer.
+-- @param pos The position.
+-- @param text The text.
+function buffer.call_tip_show(buffer, pos, text) end
+
+---
+-- Will a paste succeed?
+-- @param buffer The focused buffer.
+-- @return bool
+function buffer.can_paste(buffer) end
+
+---
+-- Are there any redoable actions in the undo history?
+-- @param buffer The focused buffer.
+-- @return bool
+function buffer.can_redo(buffer) end
+
+---
+-- Are there any undoable actions in the undo history?
+-- @param buffer The focused buffer.
+-- @return bool
+function buffer.can_undo(buffer) end
+
+---
+-- Cancel any modes such as call tip or auto-completion list display.
+-- @param buffer The focused buffer.
+function buffer.cancel(buffer) end
+
+---
+-- Indicate that the internal state of a lexer has changed over a range and
+-- therefore there may be a need to redraw.
+-- @param buffer The focused buffer.
+-- @param start_pos The start position.
+-- @param end_pos The end position.
+function buffer.change_lexer_state(buffer, start_pos, end_pos) end
+
+---
+-- Move caret left one character.
+-- @param buffer The focused buffer.
+function buffer.char_left(buffer) end
+
+---
+-- Move caret left one character extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.char_left_extend(buffer) end
+
+---
+-- Move caret left one character, extending rectangular selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.char_left_rect_extend(buffer) end
+
+---
+-- Find the position of a character from a point within the window.
+-- @param buffer The focused buffer.
+-- @param x
+-- @param y
+-- @return number
+function buffer.char_position_from_point(buffer, x, y) end
+
+---
+-- Find the position of a character from a point within the window.
+-- Return -1 if not close to text.
+-- @param buffer The focused buffer.
+-- @param x
+-- @param y
+-- @return number
+function buffer.char_position_from_point_close(buffer, x, y) end
+
+---
+-- Move caret right one character.
+-- @param buffer The focused buffer.
+function buffer.char_right(buffer) end
+
+---
+-- Move caret right one character extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.char_right_extend(buffer) end
+
+---
+-- Move caret right one character, extending rectangular selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.char_right_rect_extend(buffer) end
+
+---
+-- Set the last x chosen value to be the caret x position.
+-- The view remembers the x value of the last position horizontally moved to
+-- explicitly by the user and this value is then used when moving vertically
+-- such as by using the up and down keys. This function sets the current x
+-- position of the caret as the remembered value.
+-- @param buffer The focused buffer.
+function buffer.choose_caret_x(buffer) end
+
+---
+-- Clear the selection.
+-- @param buffer The focused buffer.
+function buffer.clear(buffer) end
+
+---
+-- Delete all text in the document.
+-- @param buffer The focused buffer.
+function buffer.clear_all(buffer) end
+
+---
+-- Drop all key mappings.
+-- @param buffer The focused buffer.
+function buffer.clear_all_cmd_keys(buffer) end
+
+---
+-- Set all style bytes to 0, remove all folding information.
+-- @param buffer The focused buffer.
+function buffer.clear_document_style(buffer) end
+
+---
+-- Clear all the registered XPM images.
+-- @param buffer The focused buffer.
+function buffer.clear_registered_images(buffer) end
+
+---
+-- Clear selections to a single empty stream selection.
+-- @param buffer The focused buffer.
+function buffer.clear_selections(buffer) end
+
+---
+-- colorise a segment of the document using the current lexing language.
+-- @param buffer The focused buffer.
+-- @param start_pos The start position.
+-- @param end_pos The end position or -1 to style from start_pos to the end of
+--   the document.
+function buffer.colourise(buffer, start_pos, end_pos) end
+
+---
+-- Find the next line at or after line_start that is a contracted fold header
+-- line.
+-- Return -1 when no more lines.
+-- @param buffer The focused buffer.
+-- @param line_start The start line number.
+-- @return number
+function buffer.contracted_fold_next(buffer, line_start) end
+
+---
+-- Converts all line endings in the document to one mode.
+-- @param buffer The focused buffer.
+-- @param mode The line ending mode. Valid values are:
+--   _SCINTILLA.constants.SC_EOL_CRLF (0),
+--   _SCINTILLA.constants.SC_EOL_CR (1), or
+--   _SCINTILLA.constants.SC_EOL_LF (2).
+function buffer.convert_eo_ls(buffer, mode) end
+
+---
+-- Copy the selection to the clipboard.
+-- @param buffer The buffer
+function buffer.copy(buffer) end
+
+---
+-- Copy the selection, if selection empty copy the line with the caret.
+-- @param buffer The focused buffer.
+function buffer.copy_allow_line(buffer) end
+
+---
+-- Copy a range of text to the clipboard. Positions are clipped into the
+-- document.
+-- @param buffer The focused buffer.
+-- @param start_pos The start position.
+-- @param end_pos The end position.
+function buffer.copy_range(buffer, start_pos, end_pos) end
+
+---
+-- Copy argument text to the clipboard.
+-- @param buffer The focused buffer.
+-- @param text The text.
+function buffer.copy_text(buffer, text) end
+
+---
+-- Cut the selection to the clipboard.
+-- @param buffer The focused buffer.
+function buffer.cut(buffer) end
+
+---
+-- Delete back from the current position to the start of the line.
+-- @param buffer The focused buffer.
+function buffer.del_line_left(buffer) end
+
+---
+-- Delete forwards from the current position to the end of the line.
+-- @param buffer The focused buffer.
+function buffer.del_line_right(buffer) end
+
+---
+-- Delete the word to the left of the caret.
+-- @param buffer The focused buffer.
+function buffer.del_word_left(buffer) end
+
+---
+-- Delete the word to the right of the caret.
+-- @param buffer The focused buffer.
+function buffer.del_word_right(buffer) end
+
+---
+-- Delete the word to the right of the caret, but not the trailing non-word
+-- characters.
+-- @param buffer The focused buffer.
+function buffer.del_word_right_end(buffer) end
+
+---
+-- Delete the selection or if no selection, the character before the caret.
+-- @param buffer The focused buffer.
+function buffer.delete_back(buffer) end
+
+---
+-- Delete the selection or if no selection, the character before the caret.
+-- Will not delete the character before at the start of a line.
+function buffer.delete_back_not_line(buffer) end
+
+---
+-- Find the document line of a display line taking hidden lines into account.
+-- @param buffer The focused buffer.
+-- @return number
+function buffer.doc_line_from_visible(buffer) end
+
+---
+-- Move caret to last position in document.
+-- @param buffer The focused buffer.
+function buffer.document_end(buffer) end
+
+---
+-- Move caret to last position in document extending selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.document_end_extend(buffer) end
+
+---
+-- Move caret to first position in document.
+-- @param buffer The focused buffer.
+function buffer.document_start(buffer) end
+
+---
+-- Move caret to first position in document extending selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.document_start_extend(buffer) end
+
+---
+-- Switch from insert to overtype mode or the reverse.
+-- @param buffer The focused buffer.
+function buffer.edit_toggle_overtype(buffer) end
+
+---
+-- Delete the undo history.
+-- It also sets the save point to the start of the undo buffer, so the document
+-- will appear to be unmodified.
+-- @param buffer The focused buffer.
+function buffer.empty_undo_buffer(buffer) end
+
+---
+-- Translates a UTF8 string into the document encoding.
+-- Return the length of the result in bytes. On error return 0.
+-- @param buffer The focused buffer.
+-- @param string The string.
+-- @return number
+function buffer.encoded_from_utf8(buffer, string) end
+
+---
+-- End a sequence of actions that is undone and redone as a unit.
+-- @param buffer The focused buffer.
+function buffer.end_undo_action(buffer) end
+
+---
+-- Ensure a particular line is visible by expanding any header line hiding it.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+function buffer.ensure_visible(buffer, line) end
+
+---
+-- Ensure a particular line is visible by expanding any header line hiding it.
+-- Use the currently set visibility policy to determine which range to display.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+function buffer.ensure_visible_enforce_policy(buffer, line) end
+
+---
+-- Find the position of a column on a line taking into account tabs and
+-- multi-byte characters.
+-- If beyond end of line, return line end position.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @param column The column number.
+function buffer.find_column(buffer, line, column) end
+
+---
+-- Insert a Form Feed character.
+-- @param buffer The focused buffer.
+function buffer.form_feed(buffer) end
+
+---
+-- Retrieve the text of the line containing the caret.
+-- Also returns the index of the caret on the line.
+-- @param buffer The focused buffer.
+-- @return string, number
+function buffer.get_cur_line(buffer) end
+
+---
+-- Get the back color for active hotspots in 0xBBGGRR format.
+-- @param buffer The focused buffer.
+-- @return number
+function buffer.get_hotspot_active_back(buffer) end
+
+---
+-- Get the fore color for active hotspots.
+-- @param buffer The focused buffer.
+-- @return number
+function buffer.get_hotspot_active_fore(buffer) end
+
+---
+-- Find the last child line of a header line.
+-- @param buffer The focused buffer.
+-- @param header_line The line number of a header line.
+-- @param level The level or -1 for the level of header_line.
+function buffer.get_last_child(buffer, header_line, level) end
+
+---
+-- Retrieve the name of the lexer.
+-- @param buffer The focused buffer.
+function buffer.get_lexer_language(buffer) end
+
+---
+-- Retrieve the contents of a line.
+-- Also returns the length of the line.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @return string, number
+function buffer.get_line(buffer, line) end
+
+---
+-- Retrieve the position of the end of the selection at the given line (-1 if no
+-- selection on this line).
+-- @param buffer The focused buffer.
+-- @param line The line number.
+function buffer.get_line_sel_end_position(buffer, line) end
+
+---
+-- Retrieve the position of the start of the selection at the given line (-1 if
+-- no selection on this line).
+-- @param buffer The focused buffer.
+-- @param line The line number.
+function buffer.get_line_sel_start_position(buffer, line) end
+
+---
+-- Retrieve a "property" value previously set with `buffer.property`.
+-- @param buffer The focused buffer.
+-- @param key Keyword.
+-- @return string
+function buffer.get_property(buffer, key) end
+
+---
+-- Retrieve a "property" value previously set with `buffer.property`, with "$()"
+-- variable replacement on returned buffer.
+-- @param buffer The focused buffer.
+-- @param key Keyword.
+-- @return string
+function buffer.get_property_expanded(buffer, key) end
+
+---
+-- Retrieve the selected text.
+-- Also returns the length of the text.
+-- @param buffer The focused buffer.
+-- @return string, number
+function buffer.get_sel_text(buffer) end
+
+---
+-- Retrieve the value of a tag from a regular expression search.
+-- @param buffer The focused buffer.
+-- @param tag_num The tag number.
+-- @return string
+function buffer.get_tag(buffer, tag_num) end
+
+---
+-- Retrieve all the text in the document.
+-- Also returns number of characters retrieved.
+-- @param buffer The focused buffer.
+function buffer.get_text(buffer) end
+
+---
+-- Set caret to start of a line and ensure it is visible.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+function buffer.goto_line(buffer, line) end
+
+---
+-- Set caret to a position and ensure it is visible.
+-- The anchor position is set the same as the current position.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+function buffer.goto_pos(buffer, pos) end
+
+---
+-- Set the focus to this view.
+-- @param buffer The focused buffer.
+function buffer.grab_focus(buffer) end
+
+---
+-- Make a range of lines invisible.
+-- This has no effect on fold levels or fold flags. start_line can not be
+-- hidden.
+-- @param buffer The focused buffer.
+-- @param start_line The start line.
+-- @param end_line The end line.
+function buffer.hide_lines(buffer, start_line, end_line) end
+
+---
+-- Draw the selection in normal style or with selection highlighted.
+-- @param buffer The focused buffer.
+-- @param normal Draw normal selection.
+function buffer.hide_selection(buffer, normal) end
+
+---
+-- Move caret to first position on line.
+-- @param buffer The focused buffer.
+function buffer.home(buffer) end
+
+---
+-- Move caret to first position on display line.
+-- @param buffer The focused buffer.
+function buffer.home_display(buffer) end
+
+---
+-- Move caret to first position on display line extending selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.home_display_extend(buffer) end
+
+---
+-- Move caret to first position on line extending selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.home_extend(buffer) end
+
+---
+-- Move caret to first position on line, extending rectangular selection to new
+-- caret position.
+-- @param buffer The focused buffer.
+function buffer.home_rect_extend(buffer) end
+
+---
+-- Move caret to the start of the display line when word-wrap is enabled.
+-- If already there, go to the start of the document line.
+-- @param buffer The focused buffer.
+function buffer.home_wrap(buffer) end
+
+---
+-- Like `buffer:home_wrap()` but extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.home_wrap_extend(buffer) end
+
+---
+-- Retrieve a bitmap value representing which indicators are non-zero at a
+-- position.
+-- Bit 0 is set if indicator 0 is present, bit 1 for indicator 1 and so on.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+-- @return number
+function buffer.indicator_all_on_for(buffer, pos) end
+
+---
+-- Turn a indicator off over a range.
+-- @param buffer The focused buffer.
+-- @param pos The start position.
+-- @param clear_length The length.
+function buffer.indicator_clear_range(buffer, pos, clear_length) end
+
+---
+-- Find the position where a particular indicator ends.
+-- @param buffer The focused buffer.
+-- @param indicator An indicator number in the range of 0 to 31.
+-- @param pos The position of the indicator.
+function buffer.indicator_end(buffer, indicator, pos) end
+
+---
+-- Turn a indicator on over a range.
+-- This function fills with the current indicator value.
+-- @param buffer The focused buffer.
+-- @param pos the start position.
+-- @param fill_length The length.
+function buffer.indicator_fill_range(buffer, pos, fill_length) end
+
+---
+-- Find the position where a particular indicator starts.
+-- @param buffer The focused buffer.
+-- @param indicator An indicator number in the range of 0 to 31.
+-- @param pos The position of the indicator.
+function buffer.indicator_start(buffer, indicator, pos) end
+
+---
+-- Retrieve the value of a particular indicator at a position.
+-- Currently all values are drawn the same.
+-- @param buffer The focused buffer.
+-- @param indicator The indicator number in the range of 0 to 31.
+-- @param pos The position.
+-- @return number
+function buffer.indicator_value_at(buffer, indicator, pos) end
+
+---
+-- Insert string at a position.
+-- If the current position is after the insertion point then it is moved along
+-- with its surrounding text but no scrolling is performed.
+-- @param buffer The focused buffer.
+-- @param pos The position to insert text at or -1 for the current position.
+-- @param text The text to insert.
+function buffer.insert_text(buffer, pos, text) end
+
+---
+-- Copy the line containing the caret.
+-- @param buffer The focused buffer.
+function buffer.line_copy(buffer) end
+
+---
+-- Cut the line containing the caret.
+-- @param buffer The focused buffer.
+function buffer.line_cut(buffer) end
+
+---
+-- Delete the line containing the caret.
+-- @param buffer The focused buffer.
+function buffer.line_delete(buffer) end
+
+---
+-- Move caret down one line.
+-- @param buffer The focused buffer.
+function buffer.line_down(buffer) end
+
+---
+-- Move caret down one line extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.line_down_extend(buffer) end
+
+---
+-- Move caret down one line, extending rectangular selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.line_down_rect_extend(buffer) end
+
+---
+-- Duplicate the current line.
+-- @param buffer The focused buffer.
+function buffer.line_duplicate(buffer) end
+
+---
+-- Move caret to last position on line.
+-- @param buffer The focused buffer.
+function buffer.line_end(buffer) end
+
+---
+-- Move caret to last position on display line.
+-- @param buffer The focused buffer.
+function buffer.line_end_display(buffer) end
+
+---
+-- Move caret to last position on display line extending selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.line_end_display_extend(buffer) end
+
+---
+-- Move caret to last position on line extending selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.line_end_extend(buffer) end
+
+---
+-- Move caret to last position on line, extending rectangular selection to new
+-- caret position.
+-- @param buffer The focused buffer.
+function buffer.line_end_rect_extend(buffer) end
+
+---
+-- Move caret to the end of the display line when word-wrap is enabled.
+-- If already there, go to the end of the document line.
+-- @param buffer The focused buffer.
+function buffer.line_end_wrap(buffer) end
+
+---
+-- Like `buffer:line_end_wrap()` but extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.line_end_wrap_extend(buffer) end
+
+---
+-- Retrieve the line containing a position.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+-- @return number
+function buffer.line_from_position(buffer, pos) end
+
+---
+-- Returns how many characters are on a line, including end of line characters.
+-- To get the length of the line not including any end of line characters, use
+-- `buffer.line_end_position[line] - buffer:position_from_line(line)`.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @return number
+function buffer.line_length(buffer, line) end
+
+---
+-- Scroll horizontally and vertically.
+-- @param buffer The focused buffer.
+-- @param columns The number of columns to scroll horizontally.
+-- @param lines The number of lines to scroll vertically.
+function buffer.line_scroll(buffer, columns, lines) end
+
+---
+-- Scroll the document down, keeping the caret visible.
+-- @param buffer The focused buffer.
+function buffer.line_scroll_down(buffer) end
+
+---
+-- Scroll the document up, keeping the caret visible.
+-- @param buffer The focused buffer.
+function buffer.line_scroll_up(buffer) end
+
+---
+-- Switch the current line with the previous.
+-- @param buffer The focused buffer.
+function buffer.line_transpose(buffer) end
+
+---
+-- Move caret up one line.
+-- @param buffer The focused buffer.
+function buffer.line_up(buffer) end
+
+---
+-- Move caret up one line extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.line_up_extend(buffer) end
+
+---
+-- Move caret up one line, extending rectangular selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.line_up_rect_extend(buffer) end
+
+---
+-- Join the lines in the target.
+-- Where this would lead to no space between words, an extra space is inserted.
+-- @param buffer The focused buffer.
+function buffer.lines_join(buffer) end
+
+---
+-- Split the lines in the target into lines that are less wide than pixel_width
+-- where possible.
+-- @param buffer The focused buffer.
+-- @param pixel_width The pixel width. When 0, the width of the view is used.
+function buffer.lines_split(buffer, pixel_width) end
+
+---
+-- Transform the selection to lower case.
+-- @param buffer The focused buffer.
+function buffer.lower_case(buffer) end
+
+---
+-- Get the text in the text margin for a line.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @return string
+function buffer.margin_get_text(buffer, line) end
+
+---
+-- Set the text in the text margin for a line.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @param text The text.
+function buffer.margin_set_text(buffer, line, text) end
+
+---
+-- Clear the margin text on all lines.
+-- @param buffer The focused buffer.
+function buffer.margin_text_clear_all(buffer) end
+
+---
+-- Add a marker to a line, returning an ID which can be used to find or delete
+-- the marker.
+-- Returns -1 if this fails (illegal line number, out of memory).
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @param marker_num A marker number in the range of 0 to 31.
+-- @return number
+function buffer.marker_add(buffer, line, marker_num) end
+
+---
+-- Add a set of markers to a line.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @param marker_mask A mask of markers to set. Set bit 0 to set marker 0, bit
+--   1 for marker 1 and so on.
+function buffer.marker_add_set(buffer, line, marker_mask) end
+
+---
+-- Set the symbol used for a particular marker number.
+-- @param buffer The focused buffer.
+-- @param marker_num A marker number in the range of 0 to 31.
+-- @param marker_symbol A marker symbol: _SCINTILLA.constants.SC_MARK_*.
+function buffer.marker_define(buffer, marker_num, marker_symbol) end
+
+---
+-- Define a marker from a pixmap.
+-- @param buffer The focused buffer.
+-- @param marker_num A marker number in the range of 0 to 31.
+-- @param pixmap Null-terminated pixmap data.
+function buffer.marker_define_pixmap(buffer, marker_num, pixmap) end
+
+---
+-- Delete a marker from a line.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @param marker_num A marker number in the range of 0 to 31 or -1 to delete all
+--   markers from the line.
+function buffer.marker_delete(buffer, line, marker_num) end
+
+---
+-- Delete all markers with a particular number from all lines.
+-- @param buffer The focused buffer.
+-- @param marker_num A marker number in the range of 0 to 31 or -1 to delete all
+--   markers from all lines.
+function buffer.marker_delete_all(buffer, marker_num) end
+
+---
+-- Delete a marker.
+-- @param buffer The focused buffer.
+-- @param handle The identifier of a marker returned by buffer:marker_add().
+function buffer.marker_delete_handle(buffer, handle) end
+
+---
+-- Enable/disable highlight for current folding block (smallest one that
+-- contains the caret)
+-- @param buffer The focused buffer.
+-- @param enabled
+function buffer.marker_enable_highlight(buffer, enabled) end
+
+---
+-- Get a bit mask of all the markers set on a line.
+-- Bit 0 is set if marker 0 is present, bit 1 for marker 1 and so on.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @return number.
+function buffer.marker_get(buffer, line) end
+
+---
+-- Retrieve the line number at which a particular marker is located.
+-- Returns -1 if it not found.
+-- @param buffer The focused buffer.
+-- @param handle The identifier of a marker returned by buffer:marker_add().
+-- @return number
+function buffer.marker_line_from_handle(buffer, handle) end
+
+---
+-- Find the next line at or after start_line that includes a marker in mask.
+-- Return -1 when no more lines.
+-- @param buffer The focused buffer.
+-- @param start_line The start line.
+-- @param marker_mask A mask of markers to find. Set bit 0 to find marker 0, bit
+--   1 for marker 1 and so on.
+-- @return number
+function buffer.marker_next(buffer, start_line, marker_mask) end
+
+---
+-- Find the previous line before lineStart that includes a marker in mask.
+-- @param buffer The focused buffer.
+-- @param start_line The start line.
+-- @param marker_mask A mask of markers to find. Set bit 0 to find marker 0, bit
+--   1 for marker 1 and so on.
+-- @return number
+function buffer.marker_previous(buffer, start_line, marker_mask) end
+
+---
+-- Set the alpha used for a marker that is drawn in the text area, not the
+-- margin.
+-- @param buffer The focused buffer.
+-- @param marker_num A marker number in the range of 0 to 31.
+-- @param alpha An alpha value between 0 (transparent) and 255 (opaque), or 256
+--   for no alpha.
+function buffer.marker_set_alpha(buffer, marker_num, alpha) end
+
+---
+-- Set the background color used for a particular marker number.
+-- @param buffer The focused buffer.
+-- @param marker_num A marker number in the range of 0 to 31.
+-- @param color A color in 0xBBGGRR format.
+function buffer.marker_set_back(buffer, marker_num, color) end
+
+---
+-- Set the background color used for a particular marker number when its
+-- folding block is selected.
+-- @param buffer The focused buffer.
+-- @param marker_num A marker number in the range of 0 to 31.
+-- @param color A color in 0xBBGGRR format. The default color is #FF0000.
+function buffer.marker_set_back_selected(buffer, marker_num, color) end
+
+---
+-- Set the foreground color used for a particular marker number.
+-- @param buffer The focused buffer.
+-- @param marker_num A marker number in the range of 0 to 31.
+-- @param color A color in 0xBBGGRR format.
+function buffer.marker_set_fore(buffer, marker_num, color) end
+
+---
+-- Return the symbol defined for marker_num with `buffer:marker_define()`.
+-- @param buffer The focused buffer.
+-- @param marker_num A marker number in the range of 0 to 31.
+-- @return number
+function buffer.marker_symbol_defined(buffer, marker_num) end
+
+---
+-- Move the caret inside current view if it's not there already.
+-- Any selection is lost.
+-- @param buffer The focused buffer.
+function buffer.move_caret_inside_view(buffer) end
+
+---
+-- Move the selected lines down one line, shifting the line below before the
+-- selection.
+-- The selection will be automatically extended to the beginning of the
+-- selection's first line and the end of the seletion's last line. If nothing
+-- was selected, the line the cursor is currently at will be selected.
+-- @param buffer The focused buffer.
+function buffer.move_selected_lines_down(buffer) end
+
+---
+-- Move the selected lines up one line, shifting the line above after the
+-- selection.
+-- The selection will be automatically extended to the beginning of the
+-- selection's first line and the end of the seletion's last line. If nothing
+-- was selected, the line the cursor is currently at will be selected.
+-- @param buffer The focused buffer.
+function buffer.move_selected_lines_up(buffer) end
+
+---
+-- Insert a new line, may use a CRLF, CR or LF depending on EOL mode.
+-- @param buffer The focused buffer.
+function buffer.new_line(buffer) end
+
+---
+-- Move caret one page down.
+-- @param buffer The focused buffer.
+function buffer.page_down(buffer) end
+
+---
+-- Move caret one page down extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.page_down_extend(buffer) end
+
+---
+-- Move caret one page down, extending rectangular selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.page_down_rect_extend(buffer) end
+
+---
+-- Move caret one page up.
+-- @param buffer The focused buffer.
+function buffer.page_up(buffer) end
+
+---
+-- Move caret one page up extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.page_up_extend(buffer) end
+
+---
+-- Move caret one page up, extending rectangular selection to new caret
+-- position.
+-- @param buffer The focused buffer.
+function buffer.page_up_rect_extend(buffer) end
+
+---
+-- Move caret one paragraph down (delimited by empty lines).
+-- @param buffer The focused buffer.
+function buffer.para_down(buffer) end
+
+---
+-- Move caret one paragraph down (delimited by empty lines) extending selection
+-- to new caret position.
+-- @param buffer The focused buffer.
+function buffer.para_down_extend(buffer) end
+
+---
+-- Move caret one paragraph up (delimited by empty lines).
+-- @param buffer The focused buffer.
+function buffer.para_up(buffer) end
+
+---
+-- Move caret one paragraph up (delimited by empty lines) extending selection to
+-- new caret position.
+-- @param buffer The focused buffer.
+function buffer.para_up_extend(buffer) end
+
+---
+-- Paste the contents of the clipboard into the document replacing the
+-- selection.
+-- @param buffer The focused buffer.
+function buffer.paste(buffer) end
+
+---
+-- For private communication between an application and a known lexer.
+-- @param buffer The focused buffer.
+-- @param operation An operation number.
+-- @param data Number data.
+function buffer.private_lexer_call(buffer, operation, data) end
+
+---
+-- Retrieve the x value of the point in the window where a position is
+-- displayed.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+-- @return number
+function buffer.point_x_from_position(buffer, pos) end
+
+---
+-- Retrieve the y value of the point in the window where a position is
+-- displayed.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+-- @return number
+function buffer.point_y_from_position(buffer, pos) end
+
+---
+-- Given a valid document position, return the next position taking code page
+-- into account. Maximum value returned is the last position in the document.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+function buffer.position_after(buffer, pos) end
+
+---
+-- Given a valid document position, return the previous position taking code
+-- page into account. Returns 0 if passed 0.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+-- @return number
+function buffer.position_before(buffer, pos) end
+
+---
+-- Retrieve the position at the start of a line.
+-- If line is greater than the lines in the document, returns -1.
+-- @param buffer The focused buffer.
+-- @param line The line.
+-- @return number
+function buffer.position_from_line(buffer, line) end
+
+---
+-- Find the position from a point within the window.
+-- @param buffer The focused buffer.
+-- @param x
+-- @param y
+-- @return number
+function buffer.position_from_point(buffer, x, y) end
+
+---
+-- Returns the position from a point within the window, but return -1 if not
+-- close to text.
+-- @param buffer The focused buffer.
+-- @param x
+-- @param y
+-- @return number
+function buffer.position_from_point_close(buffer, x, y) end
+
+---
+-- Redoes the next action on the undo history.
+-- @param buffer The focused buffer.
+function buffer.redo(buffer) end
+
+---
+-- Register an XPM image for use in autocompletion lists.
+-- @param buffer The focused buffer.
+-- @param type Integer type to register the image with.
+-- @param xpm_data XPM data as is described for buffer:marker_define_pixmap().
+function buffer.register_image(buffer, type, xpm_data) end
+
+---
+-- Replace the selected text with the argument text.
+-- The caret is positioned after the inserted text and the caret is scrolled
+-- into view.
+-- @param buffer The focused buffer.
+-- @param text The text.
+function buffer.replace_sel(buffer, text) end
+
+---
+-- Replace the target text with the argument text.
+-- After replacement, the target range refers to the replacement text.
+-- Returns the length of the replacement text.
+-- @param buffer The focused buffer.
+-- @param text The text (can contain NULs).
+-- @return number
+function buffer.replace_target(buffer, text) end
+
+---
+-- Replace the target text with the argument text after \d processing.
+-- Looks for \d where d is between 1 and 9 and replaces these with the strings
+-- matched in the last search operation which were surrounded by \( and \).
+-- Returns the length of the replacement text including any change caused by
+-- processing the \d patterns.
+-- @param buffer The focused buffer.
+-- @param text The text (can contain NULs).
+-- @return number
+function buffer.replace_target_re(buffer, text) end
+
+---
+-- Set the main selection to the next selection.
+-- @param buffer The focused buffer.
+function buffer.rotate_selection(buffer) end
+
+---
+-- Ensure the caret is visible.
+-- @param buffer The focused buffer.
+function buffer.scroll_caret(buffer) end
+
+---
+-- Sets the current caret position to be the search anchor.
+-- Always call this before calling either of `buffer:search_next()` or
+-- `buffer:search_prev()`.
+-- @param buffer The focused buffer.
+function buffer.search_anchor(buffer) end
+
+---
+-- Search for a counted string in the target and set the target to the found
+-- range.
+-- Returns length of range or -1 for failure in which case target is not moved.
+-- @param buffer The focused buffer.
+-- @param text The text (can contain NULs).
+-- @return number
+function buffer.search_in_target(buffer, text) end
+
+---
+-- Find some text starting at the search anchor.
+-- The return value is -1 if nothing is found, otherwise the return value is the
+-- start position of the matching text. The selection is updated to show the
+-- matched text, but is not scrolled into view.
+-- @param buffer The focused buffer.
+-- @param flags Search flags. See `buffer.search_flags`.
+-- @param text The text.
+-- @return number
+function buffer.search_next(buffer, flags, text) end
+
+---
+-- Find some text starting at the search anchor and moving backwards.
+-- The return value is -1 if nothing is found, otherwise the return value is the
+-- start position of the matching text. The selection is updated to show the
+-- matched text, but is not scrolled into view.
+-- @param buffer The focused buffer.
+-- @param flags Search flags. See `buffer.search_flags`.
+-- @param text The text.
+-- @return number
+function buffer.search_prev(buffer, flags, text) end
+
+---
+-- Select all the text in the document.
+-- The current position is not scrolled into view.
+-- @param buffer The focused buffer.
+function buffer.select_all(buffer) end
+
+---
+-- Duplicate the selection.
+-- If selection empty duplicate the line containing the caret.
+-- @param buffer The focused buffer.
+function buffer.selection_duplicate(buffer) end
+
+---
+-- Reset the set of characters for whitespace and word characters to the
+-- defaults.
+-- This sets whitespace to space, tab and other characters with codes less than
+-- 0x20, with word characters set to alphanumeric and '_'.
+-- @param buffer The focused buffer.
+function buffer.set_chars_default(buffer) end
+
+---
+-- Set caret to a position, while removing any existing selection.
+-- The caret is not scrolled into view.
+-- @param buffer The buffer
+-- @param pos The position to move to.
+function buffer.set_empty_selection(buffer, pos) end
+
+---
+-- Set some style options for folding.
+-- @param buffer The focused buffer.
+-- @param flags Mask of fold flags. Flags available are
+--   `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_EXPANDED` (2): Draw above if
+--   expanded; `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_CONTRACTED` (4):
+--   Draw above if not expanded;
+--   `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_EXPANDED` (8): Draw below if
+--   expanded; `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_CONTRACTED` (16):
+--   Draw below if not expanded
+function buffer.set_fold_flags(buffer, flags) end
+
+---
+-- Set the colors used as a chequerboard pattern in the fold margin.
+-- @param buffer The focused buffer.
+-- @param use_setting Enable color change.
+-- @param color A color in 0xBBGGRR format.
+function buffer.set_fold_margin_colour(buffer, use_setting, color) end
+
+---
+-- Set the colors used as a chequerboard pattern in the fold margin.
+-- @param buffer The focused buffer.
+-- @param use_setting Enable color change.
+-- @param color A color in 0xBBGGRR format.
+function buffer.set_fold_margin_hi_colour(buffer, use_setting, color) end
+
+---
+-- Set a back color for active hotspots.
+-- @param buffer The focused buffer.
+-- @param use_setting Enable the color change.
+-- @param color A color in 0xBBGGRR format.
+function buffer.set_hotspot_active_back(buffer, use_setting, color) end
+
+---
+-- Set a fore color for active hotspots.
+-- @param buffer The focused buffer.
+-- @param use_setting Enable the color change.
+-- @param color A color in 0xBBGGRR format.
+function buffer.set_hotspot_active_fore(buffer, use_setting, color) end
+
+---
+-- Set the length of the utf8 argument for calling `buffer:encoded_from_utf8()`.
+-- @param buffer The focused buffer.
+-- @param bytes Bytes or -1 for measuring to first nul.
+function buffer.set_length_for_encode(buffer, bytes) end
+
+---
+-- Set the lexing language of the document based on string name.
+-- @param buffer The focused buffer.
+-- @param language_name The language name.
+function buffer.set_lexer_language(buffer, language_name) end
+
+---
+-- Remember the current position in the undo history as the position at which
+-- the document was saved.
+-- @param buffer The focused buffer.
+function buffer.set_save_point(buffer) end
+
+---
+-- Select a range of text.
+-- The caret is scrolled into view after this operation.
+-- @param buffer The focused buffer.
+-- @param start_pos Start position. If negative, it means the end of the
+--   document.
+-- @param end_pos End position. If negative, it means remove any selection (i.e.
+--   set the anchor to the same position as current_pos).
+function buffer.set_sel(buffer, start_pos, end_pos) end
+
+---
+-- Set the background color of the main and additional selections and whether to
+-- use this setting.
+-- @param buffer The focused buffer.
+-- @param use_setting Enable color change.
+-- @param color A color in 0xBBGGRR format.
+function buffer.set_sel_back(buffer, use_setting, color) end
+
+---
+-- Set the foreground color of the main and additional selections and whether
+-- to use this setting.
+-- @param buffer The focused buffer.
+-- @param use_setting Enable color change.
+-- @param color A color in 0xBBGGRR format.
+function buffer.set_sel_fore(buffer, use_setting, color) end
+
+---
+-- Set a simple selection from anchor to caret.
+-- @param buffer The focused buffer.
+-- @param caret The caret.
+-- @param anchor The anchor.
+function buffer.set_selection(buffer, caret, anchor) end
+
+---
+-- Change style from current styling position for length characters to a style
+-- and move the current styling position to after this newly styled segment.
+-- @param buffer The focused buffer.
+-- @param length The length to style.
+-- @param style The style number to set.
+function buffer.set_styling(buffer, length, style) end
+
+---
+-- Replace the contents of the document with the argument text.
+-- @param buffer The focused buffer.
+-- @param text The text.
+function buffer.set_text(buffer, text) end
+
+---
+-- Set the way the display area is determined when a particular line is to be
+-- moved to by `buffer:goto_line()`, etc.
+-- It is similar in operation to `buffer:set_y_caret_policy()`.
+-- @param buffer The focused buffer.
+-- @param visible_policy A combination of `_SCINTILLA.constants.VISIBLE_SLOP`,
+--   (0x01) and `_SCINTILLA.constants.VISIBLE_STRICT` (0x04).
+-- @param visible_slop The slop value.
+function buffer.set_visible_policy(buffer, visible_policy, visible_slop) end
+
+---
+-- Set the background color of all whitespace and whether to use this setting.
+-- @param buffer The focused buffer.
+-- @param use_setting Enable color change.
+-- @param color A color in 0xBBGGRR format.
+function buffer.set_whitespace_back(buffer, use_setting, color) end
+
+---
+-- Set the foreground color of all whitespace and whether to use this setting.
+-- @param buffer The focused buffer.
+-- @param use_setting Enable color change.
+-- @param color A color in 0xBBGGRR format.
+function buffer.set_whitespace_fore(buffer, use_setting, color) end
+
+---
+-- Set the way the caret is kept visible when going sideway.
+-- The exclusion zone is given in pixels.
+-- @param buffer The focused buffer.
+-- @param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`
+--   (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),
+--   `_SCINTILLA.constants.CARET_JUMPS` (0x10), and
+--   `_SCINTILLA.constants.CARET_EVEN` (0x08).
+-- @param caret_slop A slop value.
+function buffer.set_x_caret_policy(buffer, caret_policy, caret_slop) end
+
+---
+-- Set the way the line the caret is on is kept visible.
+-- @param buffer The focused buffer.
+-- @param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`
+--   (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),
+--   `_SCINTILLA.constants.CARET_JUMPS` (0x10), and
+--   `_SCINTILLA.constants.CARET_EVEN` (0x08).
+-- @param caret_slop A slop value.
+function buffer.set_y_caret_policy(buffer, caret_policy, caret_slop) end
+
+---
+-- Make a range of lines visible.
+-- This has no effect on fold levels or fold flags. start_line can not be
+-- hidden.
+-- @param buffer The focused buffer.
+-- @param start_line The start line.
+-- @param end_line The end line.
+function buffer.show_lines(buffer, start_line, end_line) end
+
+---
+-- Start notifying the container of all key presses and commands.
+-- @param buffer The focused buffer.
+function buffer.start_record(buffer) end
+
+---
+-- Set the current styling position to pos and the styling mask to mask.
+-- The styling mask can be used to protect some bits in each styling byte from
+-- modification.
+-- @param buffer The focused buffer.
+-- @param position The styling position.
+-- @param mask The bit mask of the style bytes that can be set.
+function buffer.start_styling(buffer, position, mask) end
+
+---
+-- Stop notifying the container of all key presses and commands.
+-- @param buffer The focused buffer.
+function buffer.stop_record(buffer) end
+
+---
+-- Move caret to bottom of page, or one page down if already at bottom of page.
+-- @param buffer The focused buffer.
+function buffer.stuttered_page_down(buffer) end
+
+---
+-- Move caret to bottom of page, or one page down if already at bottom of page,
+-- extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.stuttered_page_down_extend(buffer) end
+
+---
+-- Move caret to top of page, or one page up if already at top of page.
+-- @param buffer The focused buffer.
+function buffer.stuttered_page_up(buffer) end
+
+---
+-- Move caret to top of page, or one page up if already at top of page,
+-- extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.stuttered_page_up_extend(buffer) end
+
+---
+-- Clear all the styles and make equivalent to the global default style.
+-- @param buffer The focused buffer.
+function buffer.style_clear_all(buffer) end
+
+---
+-- Returns the font name of a given style.
+-- @param buffer The focused buffer.
+-- @param style_num The style number.
+-- @return string
+function buffer.style_get_font(buffer, style_num) end
+
+---
+-- Reset the default style to its state at startup.
+-- @param buffer The focused buffer.
+function buffer.style_reset_default(buffer) end
+
+---
+-- Swap that caret and anchor of the main selection.
+-- @param buffer The focused buffer.
+function buffer.swap_main_anchor_caret(buffer) end
+
+---
+-- If selection is empty or all on one line replace the selection with a tab
+-- character, or if more than one line selected, indent the lines.
+-- @param buffer The focused buffer.
+function buffer.tab(buffer) end
+
+---
+-- Returns the target converted to UTF8.
+-- @param buffer The focused buffer.
+function buffer.target_as_utf8(buffer) end
+
+---
+-- Make the target range start and end be the same as the selection range start
+-- and end.
+-- @param buffer The focused buffer.
+function buffer.target_from_selection(buffer) end
+
+---
+-- Retrieve the height of a particular line of text in pixels.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @return number
+function buffer.text_height(buffer, line) end
+
+---
+-- Measure the pixel width of some text in a particular style.
+-- Does not handle tab or control characters.
+-- @param buffer The focused buffer.
+-- @param style_num The style number.
+-- @param text The text.
+-- @return number
+function buffer.text_width(buffer, style_num, text) end
+
+---
+-- Switch between sticky and non-sticky: meant to be bound to a key.
+-- See `buffer.caret_sticky`.
+-- @param buffer The focused buffer.
+function buffer.toggle_caret_sticky(buffer) end
+
+---
+-- Switch a header line between expanded and contracted.
+-- @param buffer The focused buffer.
+function buffer.toggle_fold(buffer) end
+
+---
+-- Undo one action in the undo history.
+-- @param buffer The focused buffer.
+function buffer.undo(buffer) end
+
+---
+-- Transform the selection to upper case.
+-- @param buffer The focused buffer.
+function buffer.upper_case(buffer) end
+
+---
+-- Sets whether a pop up menu is displayed automatically when the user presses
+-- the wrong mouse button.
+-- @param buffer The focused buffer.
+-- @param allow_popup Allow popup menu.
+function buffer.use_pop_up(buffer, allow_popup) end
+
+---
+-- Display a list of strings and send notification when user chooses one.
+-- @param buffer The focused buffer.
+-- @param list_type A list identifier number greater than zero.
+-- @param item_list List of words separated by separator characters (initially
+--   spaces).
+function buffer.user_list_show(buffer, list_type, item_list) end
+
+---
+-- Move caret to before first visible character on line.
+-- If already there move to first character on line.
+-- @param buffer The focused buffer.
+function buffer.vc_home(buffer) end
+
+---
+-- Like `buffer:vc_home()` but extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.vc_home_extend(buffer) end
+
+---
+-- Move caret to before first visible character on line.
+-- If already there move to first character on line. In either case, extend
+-- rectangular selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.vc_home_rect_extend(buffer) end
+
+---
+-- Move caret to before first visible character on display line when word-wrap
+-- is enabled.
+-- If already there, go to first character on display line.
+-- @param buffer The focused buffer.
+function buffer.vc_home_wrap(buffer) end
+
+---
+-- Like `buffer:vc_home_wrap()` but extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.vc_home_wrap_extend(buffer) end
+
+---
+-- Center current line in window.
+-- @param buffer The focused buffer.
+function buffer.vertical_centre_caret(buffer) end
+
+---
+-- Find the display line of a document line taking hidden lines into account.
+-- If there is folding and line is outside the range of lines in the document,
+-- the return value is -1.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @return number
+function buffer.visible_from_doc_line(buffer, line) end
+
+---
+-- Get position of end of word.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+-- @param only_word_chars If `true`, stops searching at the first non-word
+--   character in the search direction. Otherwise, the first character in the
+--   search direction sets the type of the search as word or non-word and the
+--   search stops at the first non-matching character. Searches are also
+--   terminated by the start or end of the document.
+function buffer.word_end_position(buffer, pos, only_word_chars) end
+
+---
+-- Move caret left one word.
+-- @param buffer The focused buffer.
+function buffer.word_left(buffer) end
+
+---
+-- Move caret left one word, position cursor at end of word.
+-- @param buffer The focused buffer.
+function buffer.word_left_end(buffer) end
+
+---
+-- Move caret left one word, position cursor at end of word, extending selection
+-- to new caret position.
+-- @param buffer The focused buffer.
+function buffer.word_left_end_extend(buffer) end
+
+---
+-- Move caret left one word extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.word_left_extend(buffer) end
+
+---
+-- Move to the previous change in capitalisation or underscores.
+-- @param buffer The focused buffer.
+function buffer.word_part_left(buffer) end
+
+---
+-- Move to the previous change in capitalisation or underscores extending
+-- selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.word_part_left_extend(buffer) end
+
+---
+-- Move to the next change in capitalisation or underscores.
+-- @param buffer The focused buffer.
+function buffer.word_part_right(buffer) end
+
+---
+-- Move to the next change in capitalisation or underscores extending selection
+-- to new caret position.
+-- @param buffer The focused buffer.
+function buffer.word_part_right_extend(buffer) end
+
+---
+-- Move caret right one word.
+-- @param buffer The focused buffer.
+function buffer.word_right(buffer) end
+
+---
+-- Move caret right one word, position cursor at end of word.
+-- @param buffer The focused buffer.
+function buffer.word_right_end(buffer) end
+
+---
+-- Move caret right one word, position cursor at end of word, extending
+-- selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.word_right_end_extend(buffer) end
+
+---
+-- Move caret right one word extending selection to new caret position.
+-- @param buffer The focused buffer.
+function buffer.word_right_extend(buffer) end
+
+---
+-- Get position of start of word.
+-- @param buffer The focused buffer.
+-- @param pos The position.
+-- @param only_word_chars If `true`, stops searching at the first non-word
+--   character in the search direction. Otherwise, the first character in the
+--   search direction sets the type of the search as word or non-word and the
+--   search stops at the first non-matching character. Searches are also
+--   terminated by the start or end of the document.
+function buffer.word_start_position(buffer, pos, only_word_chars) end
+
+---
+-- Returns the number of display lines needed to wrap a document line.
+-- @param buffer The focused buffer.
+-- @param line The line number.
+-- @return number
+function buffer.wrap_count(buffer, line) end
+
+---
+-- Magnify the displayed text by increasing the sizes by 1 point if the current
+-- zoom factor is less than 20 points.
+-- @param buffer The focused buffer.
+function buffer.zoom_in(buffer) end
+
+---
+-- Make the displayed text smaller by decreasing the sizes by 1 point if the
+-- current zoom factor is greater than -10 points.
+-- @param buffer The focused buffer.
+function buffer.zoom_out(buffer) end
+
+-- External functions.
 
 ---
 -- Gets a range of text from the current buffer.
@@ -367,629 +2317,11 @@ function buffer.text_range(buffer, start_pos, end_pos) end
 -- @param buffer The focused buffer.
 function buffer.delete(buffer) end
 
---- Adds a new selection from anchor to caret as the main selection. All other
--- selections are retained as additional selections.
-function buffer.add_selection(buffer, caret, anchor) end
---- Adds text to the document at the current position.
-function buffer.add_text(buffer, text) end
---- Adds an action to the undo stack.
-function buffer.add_undo_action(buffer, token, flags) end
---- Enlarges the document to a particular size of text bytes
-function buffer.allocate(buffer, bytes) end
---- Clears all lines of annotations.
-function buffer.annotation_clear_all(buffer) end
---- Returns the styles of the annotation for the given line.
-function buffer.annotation_get_styles(buffer, line) end
---- Returns the annotation text for the given line.
-function buffer.annotation_get_text(buffer, line) end
---- Sets the styled annotation text for the given line.
-function buffer.annotation_set_styles(buffer, line, styles) end
---- Sets the annotation text for the given line.
-function buffer.annotation_set_text(buffer, line, text) end
---- Appends a string to the end of the document without changing the selection.
-function buffer.append_text(buffer, text) end
---- Returns a flag indicating whether or not an autocompletion list is visible.
-function buffer.auto_c_active(buffer) end
---- Removes the autocompletion list from the screen.
-function buffer.auto_c_cancel(buffer) end
---- Item selected; removes the list and insert the selection.
-function buffer.auto_c_complete(buffer) end
---- Returns the currently selected item position in the autocompletion list.
-function buffer.auto_c_get_current(buffer) end
---- Returns the currently selected text in the autocompletion list.
-function buffer.auto_c_get_current_text(buffer) end
---- Returns the position of the caret when the autocompletion list was shown.
-function buffer.auto_c_pos_start(buffer) end
---- Selects the item in the autocompletion list that starts with a string.
-function buffer.auto_c_select(buffer, string) end
---- Displays an autocompletion list.
--- @param len_entered The number of characters before the caret used to provide
---   the context.
--- @param item_list String if completion items separated by spaces.
-function buffer.auto_c_show(buffer, len_entered, item_list) end
---- Defines a set of characters that why typed cancel the autocompletion list.
-function buffer.auto_c_stops(buffer, chars) end
---- Dedents selected lines.
-function buffer.back_tab(buffer) end
---- Starts a sequence of actions that are undone/redone as a unit.
-function buffer.begin_undo_action(buffer) end
---- Highlights the character at a position indicating there's no matching brace.
-function buffer.brace_bad_light(buffer, pos) end
---- Use specified indicator to highlight non matching brace instead of changing
--- its style.
-function buffer.brace_bad_light_indicator(buffer, use_indicator, indic_num) end
---- Highlights the characters at two positions as matching braces.
-function buffer.brace_highlight(buffer, pos1, pos2) end
---- Use specified indicator to highlight matching braces instead of changing
--- their style.
-function buffer.brace_highlight_indicator(buffer, use_indicator, indic_num) end
---- Returns the position of a matching brace at a position or -1.
-function buffer.brace_match(buffer, pos) end
---- Returns a flag indicating whether or not a call tip is active.
-function buffer.call_tip_active(buffer) end
---- Removes the call tip from the screen.
-function buffer.call_tip_cancel(buffer) end
---- Returns the position where the caret was before showing the call tip.
-function buffer.call_tip_pos_start(buffer) end
---- Highlights a segment of a call tip.
-function buffer.call_tip_set_hlt(buffer, start_pos, end_pos) end
---- Shows a call tip containing text at or near a position.
-function buffer.call_tip_show(buffer, pos, text) end
---- Returns a flag indicating whether or not a paste will succeed.
-function buffer.can_paste(buffer) end
---- Returns a flag indicating whether or not there are redoable actions in the
--- undo history.
-function buffer.can_redo(buffer) end
---- Returns a flag indicating whether or not there are redoable actions in the
--- undo history.
-function buffer.can_undo(buffer) end
---- Cancels any modes such as call tip or autocompletion list display.
-function buffer.cancel(buffer) end
---- Indicate that the internal state of a lexer has changed over a range and
--- therefore there may be a need to redraw.
-function buffer.change_lexer_state(buffer, start_pos, end_pos) end
---- Moves the caret left one character.
-function buffer.char_left(buffer) end
---- Moves the caret left one character, extending the selection.
-function buffer.char_left_extend(buffer) end
---- Moves the caret left one character, extending the rectangular selection.
-function buffer.char_left_rect_extend(buffer) end
---- Finds the closest character to a point.
-function buffer.char_position_from_point(buffer, x, y) end
---- Finds the closest character to a point, but returns -1 if the given point is
--- outside the window or not close to any characters.
-function buffer.char_position_from_point_close(buffer, x, y) end
---- Moves the caret right one character.
-function buffer.char_right(buffer) end
---- Moves the caret right one character, extending the selection.
-function buffer.char_right_extend(buffer) end
---- Moves the caret right one character, extending the rectangular selection.
-function buffer.char_right_rect_extend(buffer) end
---- Sets the last x chosen value to be the caret x position.
-function buffer.choose_caret_x(buffer) end
---- Clears the selection.
-function buffer.clear(buffer) end
---- Deletes all text in the document.
-function buffer.clear_all(buffer) end
---- Drops all key mappings.
-function buffer.clear_all_cmd_keys(buffer) end
---- Sets all style bytes to 0, remove all folding information.
-function buffer.clear_document_style(buffer) end
---- Clears all the registered XPM images.
-function buffer.clear_registered_images(buffer) end
---- Clears all selections.
-function buffer.clear_selections(buffer) end
---- Colorizes a segment of the document using the current lexing language.
-function buffer.colourise(buffer, start_pos, end_pos) end
---- Returns the first line in a contracted fold state starting from line_start
--- or -1 when the end of the file is reached.
-function buffer.contracted_fold_next(buffer, line_start) end
---- Converts all line endings in the document to one mode.
--- @param mode The line ending mode. 0: CRLF, 1: CR, 2: LF.
-function buffer.convert_eo_ls(buffer, mode) end
---- Copies the selection to the clipboard.
-function buffer.copy(buffer) end
---- Copies the selection to the clipboard or the current line.
-function buffer.copy_allow_line(buffer) end
---- Copies a range of text to the clipboard.
-function buffer.copy_range(buffer, start_pos, end_pos) end
---- Copies argument text to the clipboard.
-function buffer.copy_text(buffer, text) end
---- Cuts the selection to the clipboard.
-function buffer.cut(buffer) end
---- Deletes back from the current position to the start of the line.
-function buffer.del_line_left(buffer) end
---- Deletes forwards from the current position to the end of the line.
-function buffer.del_line_right(buffer) end
---- Deletes the word to the left of the caret.
-function buffer.del_word_left(buffer) end
---- Deletes the word to the right of the caret.
-function buffer.del_word_right(buffer) end
---- Deletes the word to the right of the caret to its end.
-function buffer.del_word_right_end(buffer) end
---- Deletes the selection or the character before the caret.
-function buffer.delete_back(buffer) end
---- Deletes the selection or the character before the caret. Will not delete the
--- character before at the start of a lone.
-function buffer.delete_back_not_line(buffer) end
---- Retrieve a '\n' separated list of descriptions of the keyword sets
--- understood by the current lexer.
-function buffer.describe_key_word_sets(buffer) end
---- Describe a property.
-function buffer.describe_property(buffer, name) end
---- Returns the document line of a display line taking hidden lines into
--- account.
-function buffer.doc_line_from_visible(buffer) end
---- Moves the caret to the last position in the document.
-function buffer.document_end(buffer) end
---- Moves the caret to the last position in the document, extending the
--- selection.
-function buffer.document_end_extend(buffer) end
---- Moves the caret to the first position in the document.
-function buffer.document_start(buffer) end
---- Moves the caret to the first position in the document, extending the
--- selection.
-function buffer.document_start_extend(buffer) end
---- Switches from insert to overtype mode or the reverse.
-function buffer.edit_toggle_overtype(buffer) end
---- Deletes the undo history.
-function buffer.empty_undo_buffer(buffer) end
---- Translates a UTF8 string into the document encoding and returns its length.
-function buffer.encoded_from_utf8(buffer, string) end
---- Ends a sequence of actions that is undone/redone as a unit.
-function buffer.end_undo_action(buffer) end
---- Ensures a particular line is visible by expanding any header line hiding it.
-function buffer.ensure_visible(buffer, line) end
---- Ensures a particular line is visible by expanding any header line hiding it.
--- Uses the currently set visible policy to determine which range to display.
-function buffer.ensure_visible_enforce_policy(buffer, line) end
---- Returns the position of the column on a line taking into account tabs and
--- multi-byte characters or the line end position.
-function buffer.find_column(buffer, line, column) end
---- Inserts a form feed character.
-function buffer.form_feed(buffer) end
---- Returns the text of the line containing the caret and the index of the caret
--- on the line.
-function buffer.get_cur_line(buffer) end
---- Returns the background color for active hotspots.
-function buffer.get_hotspot_active_back(buffer) end
---- Returns the foreground color for active hotspots.
-function buffer.get_hotspot_active_fore(buffer) end
---- Returns the last child line of a header line.
-function buffer.get_last_child(buffer, header_line, level) end
---- Returns the name of the lexing language used by the document.
-function buffer.get_lexer_language(buffer) end
---- Returns the contents of a line.
-function buffer.get_line(buffer, line) end
---- Returns the position of the end of the selection at the given line or -1.
-function buffer.get_line_sel_end_position(buffer, line) end
---- Returns the position of the start of the selection at the given line or -1.
-function buffer.get_line_sel_start_position(buffer, line) end
---- Returns the value of a property.
-function buffer.get_property(buffer, property) end
---- Returns the value of a property with "$()" variable replacement.
-function buffer.get_property_expanded(buffer) end
---- Returns the selected text.
-function buffer.get_sel_text(buffer) end
---- Returns the text matched by a tagged expression in a regexp search.
-function buffer.get_tag(buffer, tag_num) end
---- Returns all text in the document and its length.
-function buffer.get_text(buffer) end
---- Sets the caret to the start of a line and ensure it is visible.
-function buffer.goto_line(buffer, line) end
---- Sets the caret to a position and ensure it is visible.
-function buffer.goto_pos(buffer, pos) end
---- Sets the focus to this Scintilla widget.
-function buffer.grab_focus(buffer) end
---- Makes a range of lines invisible.
-function buffer.hide_lines(buffer, start_line, end_line) end
---- Draws the selection in normal style or with the selection highlighted.
-function buffer.hide_selection(buffer, normal) end
---- Moves the caret to the first position on the current line.
-function buffer.home(buffer) end
---- Moves the caret to the first position on the display line.
-function buffer.home_display(buffer) end
---- Moves the caret to the first position on the display line, extending the
--- selection.
-function buffer.home_display_extend(buffer) end
---- Moves the caret to the first position on the current line, extending the
--- selection.
-function buffer.home_extend(buffer) end
---- Moves the caret to the first position on the current line, extending the
--- rectangular selection.
-function buffer.home_rect_extend(buffer) end
---- Moves the caret to the start of the current display line and then the
--- document line. (If word wrap is enabled)
-function buffer.home_wrap(buffer) end
---- Moves the caret to the start of the current display line and then the
--- document line, extending the selection. (If word wrap is enabled)
-function buffer.home_wrap_extend(buffer) end
---- Returns a flag indicating whether or not any indicators are present at the
--- specified position.
-function buffer.indicator_all_on_for(buffer, pos) end
---- Turns an indicator off over a range.
-function buffer.indicator_clear_range(buffer, pos, clear_length) end
---- Returns the position where a particular indicator ends.
-function buffer.indicator_end(buffer, indicator, pos) end
---- Turns an indicator on over a range.
-function buffer.indicator_fill_range(buffer, pos, fill_length) end
---- Returns the position where a particular indicator starts.
-function buffer.indicator_start(buffer, indicator, pos) end
---- Returns the value of a particular indicator at the specified position.
-function buffer.indicator_value_at(buffer, indicator, pos) end
---- Inserts text at a position. -1 is the document's length.
-function buffer.insert_text(buffer, pos, text) end
---- Copies the line containing the caret.
-function buffer.line_copy(buffer) end
---- Cuts the line containing the caret.
-function buffer.line_cut(buffer) end
---- Deletes the line containing the caret.
-function buffer.line_delete(buffer) end
---- Moves the caret down one line.
-function buffer.line_down(buffer) end
---- Moves the caret down one line, extending the selection.
-function buffer.line_down_extend(buffer) end
---- Moves the caret down one line, extending the rectangular selection.
-function buffer.line_down_rect_extend(buffer) end
---- Duplicates the current line.
-function buffer.line_duplicate(buffer) end
---- Moves the caret to the last position on the current line.
-function buffer.line_end(buffer) end
---- Moves the caret to the last position on the display line.
-function buffer.line_end_display(buffer) end
---- Moves the caret to the last position on the display line, extending the
--- selection.
-function buffer.line_end_display_extend(buffer) end
---- Moves the caret to the last position on the current line, extending the
--- selection.
-function buffer.line_end_extend(buffer) end
---- Moves the caret to the last position on the current line, extending the
--- rectangular selection.
-function buffer.line_end_rect_extend(buffer) end
---- Moves the caret to the last position on the current display line and then
--- the document line. (If wrap mode is enabled)
-function buffer.line_end_wrap(buffer) end
---- Moves the caret to the last position on the current display line and then
--- the document line, extending the selection. (If wrap mode is enabled)
-function buffer.line_end_wrap_extend(buffer) end
---- Returns the line containing the position.
-function buffer.line_from_position(buffer, pos) end
---- Returns the length of the specified line including EOL characters.
-function buffer.line_length(buffer, line) end
---- Scrolls horizontally and vertically the number of columns and lines.
-function buffer.line_scroll(buffer, columns, lines) end
---- Scrolls the document down, keeping the caret visible.
-function buffer.line_scroll_down(buffer) end
---- Scrolls the document up, keeping the caret visible.
-function buffer.line_scroll_up(buffer) end
---- Switches the current line with the previous.
-function buffer.line_transpose(buffer) end
---- Moves the caret up one line.
-function buffer.line_up(buffer) end
---- Moves the caret up one line, extending the selection.
-function buffer.line_up_extend(buffer) end
---- Moves the caret up one line, extending the rectangular selection.
-function buffer.line_up_rect_extend(buffer) end
---- Joins the lines in the target.
-function buffer.lines_join(buffer) end
---- Splits lines in the target into lines that are less wide that pixel_width
--- where possible.
-function buffer.lines_split(buffer, pixel_width) end
---- Loads a lexer library (dll/so)
-function buffer.load_lexer_library(buffer, path) end
---- Transforms the selection to lower case.
-function buffer.lower_case(buffer) end
---- Returns the styled margin text for the given line.
-function buffer.margin_get_styles(buffer, line) end
---- Returns the margin text for the given line.
-function buffer.margin_get_text(buffer, line) end
---- Sets the styled margin text for the given line.
-function buffer.margin_set_styles(buffer, line, styles) end
---- Sets the margin text for the given line.
-function buffer.margin_set_text(buffer, line, text) end
---- Clears all margin text.
-function buffer.margin_text_clear_all(buffer) end
---- Adds a marker to a line, returning an ID which can be used to find or delete
--- the marker.
-function buffer.marker_add(buffer, line, marker_num) end
---- Adds a set of markers to a line.
-function buffer.marker_add_set(buffer, line, set) end
---- Sets the symbol used for a particular marker number.
-function buffer.marker_define(buffer, marker_num, marker_symbol) end
---- Defines a marker from a pixmap.
-function buffer.marker_define_pixmap(buffer, marker_num, pixmap) end
---- Deletes a marker from a line.
-function buffer.marker_delete(buffer, line, marker_num) end
---- Deletes all markers with a particular number from all lines.
-function buffer.marker_delete_all(buffer, marker_num) end
---- Deletes a marker.
-function buffer.marker_delete_handle(buffer, handle) end
---- Enable/disable highlight for current folding block (smallest one that
--- contains the caret).
-function buffer.marker_enable_highlight(buffer, enabled) end
---- Gets a bit mask of all the markers set on a line.
-function buffer.marker_get(buffer, line) end
---- Returns the line number at which a particular marker is located.
-function buffer.marker_line_from_handle(buffer, handle) end
---- Finds the next line after start_line that includes a marker in marker_mask.
-function buffer.marker_next(buffer, start_line, marker_mask) end
---- Finds the previous line after start_line that includes a marker in
--- marker_mask.
-function buffer.marker_previous(buffer, start_line, marker_mask) end
---- Sets the alpha used for a marker that is drawn in the text area, not the
--- margin.
-function buffer.marker_set_alpha(buffer, marker_num, alpha) end
---- Sets the background color used for a particular marker number.
-function buffer.marker_set_back(buffer, marker_num, color) end
---- Set the background colour used for a particular marker number when its
--- folding block is selected.
-function buffer.marker_set_back_selected(buffer, marker_num, color) end
---- Sets the foreground color used for a particular marker number.
-function buffer.marker_set_fore(buffer, marker_num, color) end
---- Returns the symbol defined for the given marker_number.
-function buffer.marker_symbol_defined(buffer, marker_number) end
---- Moves the caret inside the current view if it's not there already.
-function buffer.move_caret_inside_view(buffer) end
---- Move the selected lines down one line, shifting the line below before the
--- selection.
-function buffer.move_selected_lines_down(buffer) end
---- Move the selected lines up one line, shifting the line above after the
--- selection.
-function buffer.move_selected_lines_up(buffer) end
---- Inserts a new line depending on EOL mode.
-function buffer.new_line(buffer) end
---- Null operation
-function buffer.null(buffer) end
---- Moves the caret one page down.
-function buffer.page_down(buffer) end
---- Moves the caret one page down, extending the selection.
-function buffer.page_down_extend(buffer) end
---- Moves the caret one page down, extending the rectangular selection.
-function buffer.page_down_rect_extend(buffer) end
---- Moves the caret one page up.
-function buffer.page_up(buffer) end
---- Moves the caret one page up, extending the selection.
-function buffer.page_up_extend(buffer) end
---- Moves the caret one page up, extending the rectangular selection.
-function buffer.page_up_rect_extend(buffer) end
---- Moves the caret one paragraph down (delimited by empty lines).
-function buffer.para_down(buffer) end
---- Moves the caret one paragraph down (delimited by empty lines), extending the
--- selection.
-function buffer.para_down_extend(buffer) end
---- Moves the caret one paragraph up (delimited by empty lines).
-function buffer.para_up(buffer) end
---- Moves the caret one paragraph up (delimited by empty lines), extending the
--- selection.
-function buffer.para_up_extend(buffer) end
---- Pastes the contents of the clipboard into the document replacing the
--- selection.
-function buffer.paste(buffer) end
---- For private communication between an application and a known lexer.
-function buffer.private_lexer_call(buffer, operation) end
---- Returns the x value of the point in the window where a position is shown.
-function buffer.point_x_from_position(buffer, pos) end
---- Returns the y value of the point in the window where a position is shown.
-function buffer.point_y_from_position(buffer, pos) end
---- Returns the next position in the document taking code page into account.
-function buffer.position_after(buffer, pos) end
---- Returns the previous position in the document taking code page into account.
-function buffer.position_before(buffer, pos) end
---- Returns the position at the start of the specified line.
-function buffer.position_from_line(buffer, line) end
---- Returns the position from a point within the window.
-function buffer.position_from_point(buffer, x, y) end
---- Returns the position from a point within the window, but return -1 if not
--- close to text.
-function buffer.position_from_point_close(buffer, x, y) end
---- Retrieve a '\n' separated list of properties understood by the current
--- lexer.
-function buffer.property_names(buffer) end
---- Retrieve the type of a property.
-function buffer.property_type(buffer, name) end
---- Redoes the next action in the undo history.
-function buffer.redo(buffer) end
---- Registers and XPM image for use in autocompletion lists.
-function buffer.register_image(buffer, type, xmp_data) end
---- Replaces the selected text with the argument text.
-function buffer.replace_sel(buffer, text) end
---- Replaces the target text with the argument text.
-function buffer.replace_target(buffer, text) end
---- Replaces the target text with the argument text after \d processing.
--- Looks for \d where d is 1-9 and replaces it with the strings captured by a
--- previous RE search.
-function buffer.replace_target_re(buffer, text) end
---- Makes the next selection the main selection.
-function buffer.rotate_selection(buffer) end
---- Ensures the caret is visible.
-function buffer.scroll_caret(buffer) end
---- Sets the current caret position to be the search anchor.
-function buffer.search_anchor(buffer) end
---- Searches for a string in the target and sets the target to the found range,
--- returning the length of the range or -1.
-function buffer.search_in_target(buffer, text) end
---- Finds some text starting at the search anchor. (Does not scroll selection)
--- @param flags Mask of search flags. 2: whole word, 4: match case, 0x00100000:
---   word start, 0x00200000 regexp, 0x00400000: posix.
-function buffer.search_next(buffer, flags, text) end
---- Finds some text starting at the search anchor and moving backwards. (Does
--- not scroll the selection)
--- @param flags Mask of search flags. 2: whole word, 4: match case, 0x00100000:
---   word start, 0x00200000 regexp, 0x00400000: posix.
-function buffer.search_prev(buffer, flags, text) end
---- Selects all the text in the document.
-function buffer.select_all(buffer) end
---- Duplicates the selection or the line containing the caret.
-function buffer.selection_duplicate(buffer) end
---- Resets the set of characters for whitespace and word characters to the
--- defaults.
-function buffer.set_chars_default(buffer) end
---- Set the caret to a position, while removing any existing selection.
-function buffer.set_empty_selection(pos) end
---- Sets some style options for folding.
--- @param flags Mask of fold flags. 0x0002: line before expanded, 0x0004: line
---   before contracted, 0x0008: line after expanded, 0x0010: line after
---   contracted, 0x0040: level numbers, 0x0001: box.
-function buffer.set_fold_flags(buffer, flags) end
---- Sets the background color used as a checkerboard pattern in the fold margin.
-function buffer.set_fold_margin_colour(buffer, use_setting, color) end
---- Sets the foreground color used as a checkerboard pattern in the fold margin.
-function buffer.set_fold_margin_hi_colour(buffer, use_setting, color) end
---- Sets a background color for active hotspots.
-function buffer.set_hotspot_active_back(buffer, use_setting, color) end
---- Sets a foreground color for active hotspots.
-function buffer.set_hotspot_active_fore(buffer, use_setting, color) end
---- Sets the length of the utf8 argument for calling encoded_from_utf8.
-function buffer.set_length_for_encode(buffer, bytes) end
---- Sets the lexer language to the specified name.
-function buffer.set_lexer_language(buffer, language_name) end
---- Remembers the current position in the undo history as the position at which
--- the document was saved.
-function buffer.set_save_point(buffer) end
---- Selects a range of text.
-function buffer.set_sel(buffer, start_pos, end_pos) end
---- Sets the background color of the selection and whether to use this setting.
-function buffer.set_sel_back(buffer, use_setting, color) end
---- Sets the foreground color of the selection and whether to use this setting.
-function buffer.set_sel_fore(buffer, use_setting, color) end
---- Set a single selection from anchor to caret as the only selection.
-function buffer.set_selection(buffer, caret, anchor) end
---- Changes the style from the current styling position for a length of
--- characters to a style and move the current styling position to after this
--- newly styled segment.
-function buffer.set_styling(buffer, length, style) end
---- Sets the styles for a segment of the document.
-function buffer.set_styling_ex(buffer, length, styles) end
---- Replaces the contents of the document with the argument text.
-function buffer.set_text(buffer, text) end
---- Sets the way the display area is determined when a particular line is to be
--- moved to by find, find_next, goto_line, etc.
--- @param visible_policy 0x01: slop, 0x04: strict.
--- @param visible_slop 0x01: slop, 0x04: strict.
-function buffer.set_visible_policy(buffer, visible_policy, visible_slop) end
---- Sets the background color of all whitespace and whether to use this setting.
-function buffer.set_whitespace_back(buffer, use_setting, color) end
---- Sets the foreground color of all whitespace and whether to use this setting.
-function buffer.set_whitespace_fore(buffer, use_setting, color) end
---- Sets the way the caret is kept visible when going side-ways.
--- @param caret_policy 0x01: slop, 0x04: strict, 0x10: jumps, 0x08: even.
-function buffer.set_x_caret_policy(buffer, caret_policy, caret_slop) end
---- Sets the way the line the caret is visible on is kept visible.
--- @param caret_policy 0x01: slop, 0x04: strict, 0x10: jumps, 0x08: even.
-function buffer.set_y_caret_policy(buffer, caret_policy, caret_slop) end
---- Makes a range of lines visible.
-function buffer.show_lines(buffer, start_line, end_line) end
---- Starts notifying the container of all key presses and commands.
-function buffer.start_record(buffer) end
---- Sets the current styling position to pos and the styling mask to mask.
-function buffer.start_styling(buffer, position, mask) end
---- Stops notifying the container of all key presses and commands.
-function buffer.stop_record(buffer) end
---- Moves caret to the bottom of the page, or one page down if already there.
-function buffer.stuttered_page_down(buffer) end
---- Moves caret to the bottom of the page, or one page down if already there,
--- extending the selection.
-function buffer.stuttered_page_down_extend(buffer) end
---- Moves caret to the top of the page, or one page up if already there.
-function buffer.stuttered_page_up(buffer) end
---- Moves caret to the top of the page, or one page up if already there,
--- extending the selection.
-function buffer.stuttered_page_up_extend(buffer) end
---- Resets all styles to the global default style.
-function buffer.style_clear_all(buffer) end
---- Returns the font name of a given style.
-function buffer.style_get_font(buffer, style_num) end
---- Resets the default style to its state at startup.
-function buffer.style_reset_default(buffer) end
---- Moves the caret to the opposite end of the main selection.
-function buffer.swap_main_anchor_caret(buffer) end
---- Inserts a tab character or indent multiple lines.
-function buffer.tab(buffer) end
---- Returns the target converted to utf8.
-function buffer.target_as_utf8(buffer) end
---- Makes the target range the same as the selection range.
-function buffer.target_from_selection(buffer) end
---- Returns the height of a particular line of text in pixels.
-function buffer.text_height(buffer, line) end
---- Returns the pixel width of some text in a particular style.
-function buffer.text_width(buffer, style_num, text) end
---- Switches the caret between sticky and non-sticky.
-function buffer.toggle_caret_sticky(buffer) end
---- Switches a header line between expanded and contracted.
-function buffer.toggle_fold(buffer) end
---- Undoes one action in the undo history.
-function buffer.undo(buffer) end
---- Transforms the selection to upper case.
-function buffer.upper_case(buffer) end
---- Sets whether a pop up menu is displayed automatically when the user presses
--- the right mouse button.
-function buffer.use_pop_up(buffer, allow_popup) end
---- Displays a list of strings and sends a notification when one is chosen.
-function buffer.user_list_show(buffer, list_type, item_list_string) end
---- Moves the caret to before the first visible character on the current line
--- or the first character on the line if already there.
-function buffer.vc_home(buffer) end
---- Moves the caret to before the first visible character on the current line
--- or the first character on the line if already there, extending the selection.
-function buffer.vc_home_extend(buffer) end
---- Moves the caret to before the first visible character on the current line
--- or the first character on the line if already there, extending the
--- rectangular selection.
-function buffer.vc_home_rect_extend(buffer) end
---- Moves the caret to the first visible character on the current display line
--- and then the document line. (If wrap mode is enabled)
-function buffer.vc_home_wrap(buffer) end
---- Moves the caret to the first visible character on the current display line
--- and then the document line, extending the selection. (If wrap mode is
--- enabled)
-function buffer.vc_home_wrap_extend(buffer) end
---- Centers the caret on the screen.
-function buffer.vertical_centre_caret(buffer) end
---- Returns the display line of a document line taking hidden lines into
--- account.
-function buffer.visible_from_doc_line(buffer, line) end
---- Returns the position of the end of a word.
-function buffer.word_end_position(buffer, pos, only_word_chars) end
---- Moves the caret left one word.
-function buffer.word_left(buffer) end
---- Moves the caret left one word, positioning the caret at the end of the word.
-function buffer.word_left_end(buffer) end
---- Moves the caret left one word, positioning the caret at the end of the word,
--- extending the selection.
-function buffer.word_left_end_extend(buffer) end
---- Moves the caret left one word, extending the selection.
-function buffer.word_left_extend(buffer) end
---- Moves the caret to the previous change in capitalization or underscore.
-function buffer.word_part_left(buffer) end
---- Moves the caret to the previous change in capitalization or underscore,
--- extending the selection.
-function buffer.word_part_left_extend(buffer) end
---- Moves the caret to the next change in capitalization or underscore.
-function buffer.word_part_right(buffer) end
---- Moves the caret to the next change in capitalization or underscore,
--- extending the selection.
-function buffer.word_part_right_extend(buffer) end
---- Moves the caret right one word.
-function buffer.word_right(buffer) end
---- Moves the caret right one word, positioning the caret at the end of the
--- word.
-function buffer.word_right_end(buffer) end
---- Moves the caret right one word, positioning the caret at the end of the
--- word, extending the selection.
-function buffer.word_right_end_extend(buffer) end
---- Moves the caret right one word, extending the selection.
-function buffer.word_right_extend(buffer) end
---- Returns the position of a start of a word.
-function buffer.word_start_position(buffer, pos, only_word_chars) end
---- Returns the number of display lines needed to wrap a document line.
-function buffer.wrap_count(buffer, line) end
---- Magnifies the displayed text by increasing the font sizes by 1 point.
-function buffer.zoom_in(buffer) end
---- Makes the displayed text smaller by decreasing the font sizes by 1 point.
-function buffer.zoom_out(buffer) end
-
---- Reloads the file in a given buffer.
+---
+-- Reloads the file in a given buffer.
+-- @param buffer The focused buffer.
 function buffer.reload(buffer) end
+
 ---
 -- Sets the encoding for the buffer, converting its contents in the process.
 -- @param buffer The focused buffer.
@@ -997,15 +2329,19 @@ function buffer.reload(buffer) end
 --   g_convert() function accepts (typically GNU iconv's encodings).
 -- @usage buffer.set_encoding(buffer, 'ASCII')
 function buffer.set_encoding(buffer) end
---- Saves the current buffer to a file.
+
+---
+-- Saves the current buffer to a file.
 -- @param buffer The focused buffer.
 function buffer.save(buffer) end
+
 ---
 -- Saves the current buffer to a file different than its filename property.
 -- @param buffer The focused buffer.
 -- @param utf8_filename The new filepath to save the buffer to. Must be UTF-8
 --   encoded.
 function buffer.save_as(buffer) end
+
 ---
 -- Closes the current buffer.
 -- @param buffer The focused buffer.
@@ -1014,7 +2350,7 @@ function buffer.save_as(buffer) end
 function buffer.close(buffer) end
 
 ---
--- Replacement for buffer.set_lexer_language(buffer, ).
+-- Replacement for buffer.set_lexer_language(buffer).
 -- Sets a buffer._lexer field so it can be restored without querying the
 -- mime-types tables. Also if the user manually sets the lexer, it should be
 -- restored.
@@ -1023,8 +2359,9 @@ function buffer.close(buffer) end
 -- @param lang The string language to set.
 -- @usage buffer.set_lexer(buffer, 'language_name')
 function buffer.set_lexer(buffer, lang) end
+
 ---
--- Replacement for buffer.get_lexer_language(buffer, ).
+-- Replacement for buffer.get_lexer_language(buffer).
 -- @param buffer The focused buffer.
 function buffer.get_lexer(buffer) end
 ---
@@ -1033,3 +2370,34 @@ function buffer.get_lexer(buffer) end
 -- @param style_num A style number in the range 0 <= style_num < 256.
 -- @see buffer.style_at
 function buffer.get_style_name(buffer, style_num) end
+
+-- Unused Fields.
+--   * use_palette
+--   * mod_event_mask
+--   * paste_convert_endings
+--   * character_pointer
+--   * identifier
+--   * key_words
+
+-- Unused Functions.
+--   * add_styled_text
+--   * get_styled_text
+--   * assign_cmd_key
+--   * clear_cmd_key
+--   * set_styling_ex
+--   * find_text
+--   * format_range
+--   * null
+--   * create_document
+--   * add_ref_document
+--   * release_document
+--   * margin_set_styles
+--   * margin_get_styles
+--   * annotation_set_styles
+--   * annotation_get_styles
+--   * add_undo_action
+--   * load_lexer_library
+--   * property_names
+--   * property_type
+--   * describe_property
+--   * describe_key_word_sets
