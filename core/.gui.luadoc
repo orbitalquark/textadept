@@ -8,15 +8,16 @@ module('gui')
 -- Markdown:
 -- ## Fields
 --
--- * `title`: The title of the Textadept window.
--- * `focused_doc_pointer`: The pointer to the document associated with the
---   buffer of the currently focused view. (Used internally; read-only.)
--- * `menubar`: A table of GTK menus defining a menubar (write-only).
+-- * `title` [string]: The title of the Textadept window.
+-- * `focused_doc_pointer` [number]: The pointer to the document associated with
+--   the buffer of the currently focused view. (Read-only)
+-- * `menubar` [table]: A table of GTK menus defining a menubar. (Write-only)
 -- * `context_menu`: A GTK menu defining the editor's context menu.
--- * `clipboard_text`: The text on the clipboard (read-only).
--- * `statusbar_text`: The text displayed by the statusbar.
--- * `docstatusbar_text`: The text displayed by the doc statusbar (write-only).
--- * `size`: The size of the Textadept window (`{ width, height}`).
+-- * `clipboard_text` [string]: The text on the clipboard. (Read-only)
+-- * `statusbar_text` [string]: The text displayed by the statusbar.
+-- * `docstatusbar_text` [string]: The text displayed by the doc statusbar.
+--   (Write-only)
+-- * `size` [table]: The size of the Textadept window (`{ width, height }`).
 
 ---
 -- Goes to the specified view.

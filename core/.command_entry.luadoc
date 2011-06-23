@@ -9,7 +9,7 @@ module('gui.command_entry')
 -- Markdown:
 -- ## Fields
 --
--- * `entry_text`: The text in the entry.
+-- * `entry_text` [string]: The text in the entry.
 --
 -- ## Events
 --

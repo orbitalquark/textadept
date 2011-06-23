@@ -11,23 +11,21 @@ module('_m.textadept.editing', package.seeall)
 -- Markdown:
 -- ## Settings
 --
--- * `AUTOPAIR`: Flag indicating whether or not when an opening `(`, `[`, `[`,
---   `"`, or `'` is typed, its closing complement character is automatically
---   inserted.
--- * `HIGHLIGHT_BRACES`: Flag indicating whether or not when the caret is over a
---   brace character (any of the following: `()[]{}<>`), its matching complement
---   brace is highlighted.
--- * `AUTOINDENT`: Flag indicating whether or not when the enter key is pressed,
---   the inserted line has is indented to match the level of indentation of the
---   previous line.
--- * `SAVE_STRIPS_WS`: Flag indicating whether or not to strip trailing
---   whitespace on file save.
--- * `MARK_HIGHLIGHT_BACK`: The [Scintilla color][scintilla_color] used for a
---   line containing a highlighted word.
--- * `INDIC_HIGHLIGHT_BACK`: The [Scintilla color][scintilla_color] used for an
---   indicator for a highlighted word.
--- * `INDIC_HIGHLIGHT_ALPHA`: The transparency used for an indicator for a
---   highlighted word.
+-- * `AUTOPAIR` [bool]: Opening `(`, `[`, `[`, `"`, or `'` characters are
+--   automatically closed. The default value is `true`.
+-- * `HIGHLIGHT_BRACES` [bool]: Highlight matching '()[]{}<>' characters. The
+--   default value is `true`.
+-- * `AUTOINDENT` [bool]: Match the indentation level of the previous line when
+--   pressing the Enter key. The default value is `true`.
+-- * `SAVE_STRIPS_WS` [bool]: Strip trailing whitespace on file save. The
+--   default value is `true`.
+-- * `MARK_HIGHLIGHT_BACK` [number]: The background color used for a line
+--   containing a highlighted word in 0xBBGGRR format.
+-- * `INDIC_HIGHLIGHT_BACK` [number]: The color used for an indicator for a
+--   highlighted word in 0xBBGGRR format.
+-- * `INDIC_HIGHLIGHT_ALPHA` [number]: The alpha transparency value between 0
+--   (transparent) and 255 (opaque) used for an indicator for a highlighted
+--   word. The default value is 100.
 
 -- settings
 AUTOPAIR = true

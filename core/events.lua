@@ -105,7 +105,7 @@ module('events', package.seeall)
 -- * **hotspot\_release\_click** (position)<br />
 --   Called when the user releases the mouse button after clicking on a hotspot.
 --       - position: the position in the buffer that the user clicked.
-
+--
 -- [buffer_user_list_show]: ../modules/buffer.html#buffer:user_list_show
 --
 -- The following is a list of gui events generated in

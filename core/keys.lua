@@ -51,11 +51,12 @@ module('keys', package.seeall)
 --
 -- ## Settings
 --
--- * `CTRL`: The string representing the Control key.
--- * `SHIFT`: The string representing the Shift key.
--- * `ALT`: The string representing the Alt key (the Apple key on Mac OSX).
--- * `ADD`: The string representing used to join together a sequence of Control,
---   Shift, or Alt modifier keys.
+-- * `CTRL` [string]: The string representing the Control key.
+-- * `SHIFT` [string]: The string representing the Shift key.
+-- * `ALT` [string]: The string representing the Alt key (the Apple key on Mac
+--   OSX).
+-- * `ADD` [string]: The string representing used to join together a sequence of
+--   Control, Shift, or Alt modifier keys.
 --
 -- ## Key Command Precedence
 --

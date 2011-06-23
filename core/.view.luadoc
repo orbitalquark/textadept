@@ -10,9 +10,9 @@ module('view')
 -- Markdown:
 -- ## Fields
 --
--- * `doc_pointer`: The pointer to the document associated with this view's
---   buffer. (Used internally; read-only)
--- * `size`: The integer position of the split resizer (if this view is part of
+-- * `doc_pointer` [number]: The pointer to the document associated with this
+--   view's buffer. (Read-only)
+-- * `size` [number]: The position of the split resizer (if this view is part of
 --   a split view).
 
 ---

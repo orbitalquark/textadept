@@ -9,10 +9,10 @@ module('_m.textadept.session', package.seeall)
 -- Markdown:
 -- ## Settings
 --
--- * `DEFAULT_SESSION`: The path to the default session file.
--- * `SAVE_ON_QUIT`: Save the session when quitting. Defaults to true and can be
---   disabled by passing the command line switch '-n' or '--nosession' to
---   Textadept.
+-- * `DEFAULT_SESSION` [string]: The path to the default session file.
+-- * `SAVE_ON_QUIT` [bool]: Save the session when quitting. The default value is
+--   `true` and can be disabled by passing the command line switch '-n' or
+--   '--nosession' to Textadept.
 
 -- settings
 DEFAULT_SESSION = _USERHOME..'/session'

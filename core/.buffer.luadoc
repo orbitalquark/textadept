@@ -166,9 +166,9 @@ module('buffer')
 --       * `_SCINTILLA.constants.EDGE_BACKGROUND` (2): The background color of
 --         characters after the column limit is changed to the color set by
 --         `buffer.edge_colour`.
--- * `encoding`: The encoding of the file on the hard disk. It will be nil if
---   the file is a binary file.
--- * `encoding_bom`: The byte-order mark of the file encoding (if any).
+-- * `encoding` [string or nil]: The encoding of the file on the hard disk. It
+--   will be nil if the file is a binary file.
+-- * `encoding_bom` [string]: The byte-order mark of the file encoding (if any).
 -- * `end_at_last_line` [bool]: Whether the maximum scroll position has the last
 --   line at the bottom of the view. If `false`, allows scrolling one page below
 --   the last line. The default value is `true`.
@@ -178,16 +178,15 @@ module('buffer')
 --   extends above the baseline, added to each line.
 -- * `extra_descent` [number]: The extra descent, the maximum that any style
 --   extends below the baseline, added to each line.
--- * `filename`: The absolute path to the file associated with this buffer. It
---   is encoded in UTF-8. Use [`string.iconv()`][string_iconv] for charset
---   conversions.
+-- * `filename` [string]: The absolute path to the file associated with this
+--   buffer. It is encoded in UTF-8. Use [`string.iconv()`][string_iconv] for
+--   charset conversions.
 -- * `first_visible_line` [number]: The display line at the top of the display.
 -- * `focus` [bool]: The internal focus flag.
 -- * `fold_expanded` [bool]: Expanded state of a header line.
 -- * `fold_level` [table]: Table of fold levels for lines starting from zero.
 --   Fold levels encodes an integer level along witth flags indicating whether
---   the line is a header and whether it is effectively white space.
---  <br />
+--   the line is a header and whether it is effectively white space.<br />
 --       * `_SCINTILLA.constants.SC_FOLDLEVELBASE` (0x400): Initial fold level.
 --       * `_SCINTILLA.constants.SC_FOLDLEVELWHITEFLAG` (0x1000): Indicates that
 --         the line is blank.
@@ -237,7 +236,7 @@ module('buffer')
 --   0 to 31. Used for drawing the outline color of the `INDIC_ROUNDBOX` and
 --   `INDIC_STRAIGHTBOX` rectangle.
 -- * `indic_style` [table]: Table of styles for indicators from zero to 31.
---  <br />
+--   <br />
 --       * `_SCINTILLA.constants.INDIC_PLAIN` (0): Underlined with a single,
 --         straight line.
 --       * `_SCINTILLA.constants.INDIC_SQUIGGLE` (1): A squiggly underline.
@@ -272,8 +271,7 @@ module('buffer')
 -- * `indicator_value` [number]: The indicator value used for
 --   `buffer:indicator_fill_range()`. Currently all values are drawn the same.
 -- * `keys_unicode` [bool]: Interpret keyboard input as Unicode.
--- * `layout_cache` [number]: The degree of caching of layout information.
---  <br />
+-- * `layout_cache` [number]: The degree of caching of layout information.<br />
 --       * `_SCINTILLA.constants.SC_CACHE_NONE` (0): No lines are cached.
 --       * `_SCINTILLA.constants.SC_CACHE_CARET` (1): The line containing the
 --         text caret. This is the default.
