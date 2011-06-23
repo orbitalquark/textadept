@@ -31,43 +31,46 @@ end
 -- Writes a function or field apidoc.
 -- @param file The file to write to.
 -- @param m The LuaDoc module object.
--- @param f The LuaDoc function object.
-local function write_apidoc(file, m, f)
+-- @param b The LuaDoc block object.
+local function write_apidoc(file, m, b)
   -- Function or field name.
-  local name = f.name
+  local name = b.name
   if not name:find('[%.:]') then name = m.name..'.'..name end
   -- Block documentation for the function or field.
   local doc = { 'fmt -s -w 80 <<"EOF"' }
   -- Function arguments or field type.
-  local args = f.param and '('..table.concat(f.param, ', ')..')' or ''
-  local ftype = f.type or ''
-  doc[#doc + 1] = name..args..ftype
+  local header = name
+  if b.class == 'function' then
+    header = header..(b.param and '('..table.concat(b.param, ', ')..')' or '')
+  end
+  if b.modifier then header = header..' '..b.modifier end
+  doc[#doc + 1] = header
   -- Function or field description.
-  doc[#doc + 1] = f.description:gsub('\\n', '\\\\n')
+  doc[#doc + 1] = b.description:gsub('\\n', '\\\\n')
   -- Function parameters (@param).
-  if f.param then
-    for _, p in ipairs(f.param) do
-      if f.param[p] and #f.param[p] > 0 then
-        doc[#doc + 1] = '@param '..p..' '..f.param[p]:gsub('\\n', '\\\\n')
+  if b.class == 'function' and b.param then
+    for _, p in ipairs(b.param) do
+      if b.param[p] and #b.param[p] > 0 then
+        doc[#doc + 1] = '@param '..p..' '..b.param[p]:gsub('\\n', '\\\\n')
       end
     end
   end
   -- Function usage (@usage).
-  if f.usage then
-    if type(f.usage) == 'string' then
-      doc[#doc + 1] = '@usage '..f.usage
+  if b.class == 'function' and b.usage then
+    if type(b.usage) == 'string' then
+      doc[#doc + 1] = '@usage '..b.usage
     else
-      for _, u in ipairs(f.usage) do doc[#doc + 1] = '@usage '..u end
+      for _, u in ipairs(b.usage) do doc[#doc + 1] = '@usage '..u end
     end
   end
   -- Function returns (@return).
-  if f.ret then doc[#doc + 1] = '@return '..f.ret end
+  if b.class == 'function' and b.ret then doc[#doc + 1] = '@return '..b.ret end
   -- See also (@see).
-  if f.see then
-    if type(f.see) == 'string' then
-      doc[#doc + 1] = '@see '..f.see
+  if b.see then
+    if type(b.see) == 'string' then
+      doc[#doc + 1] = '@see '..b.see
     else
-      for _, s in ipairs(f.see) do doc[#doc + 1] = '@see '..s end
+      for _, s in ipairs(b.see) do doc[#doc + 1] = '@see '..s end
     end
   end
   -- Format the block documentation.
@@ -98,6 +101,7 @@ function start(doc)
         modules[module] = { name = module, functions = {} }
       end
       local module = modules[module]
+      module.description = 'Lua '..module.name..' module.'
       module.functions[#module.functions + 1] = f.name
       module.functions[f.name] = f
     end
@@ -133,7 +137,7 @@ function start(doc)
         field.module = module or name:match('^[^%.]+')
         field.name = name:match('[^%.]+$')
         if doc ~= '' then
-          field.type, doc = doc:match('^([^:]*):?%s*(.*)$')
+          field.modifier, doc = doc:match('^%s*([^:]*):?%s*(.*)$')
         end
         docs[#docs + 1] = doc
       elseif field and line:find('^%-%-%s+[^\r\n]+') then
@@ -159,7 +163,7 @@ function start(doc)
   for _, m in ipairs(modules) do
     m = modules[m]
     local module = m.name
-    -- Tag the module.
+    -- Tag the module and write the apidoc.
     write_tag(ctags, module, 'm', '')
     if module:find('%.') then
       -- Tag the last part of the module as a table of the first part.
@@ -170,6 +174,8 @@ function start(doc)
       write_tag(ctags, module, 't', 'class:_G')
       write_tag(ctags, module, 't', '')
     end
+    m.modifier = '[module]'
+    write_apidoc(apidoc, { name = '_G' }, m)
     -- Tag the functions and write the apidoc.
     for _, f in ipairs(m.functions) do
       if not f:find('no_functions') then -- ignore placeholders
@@ -179,16 +185,26 @@ function start(doc)
         write_apidoc(apidoc, m, m.functions[f])
       end
     end
-    -- Tag the tables.
+    -- Tag the tables and write the apidoc.
     for _, t in ipairs(m.tables or {}) do
+      local table = m.tables[t]
+      local module = module -- define locally so any modification stays local
+      if t:find('^_G%.') then module, t = t:match('^(.-)%.([^%.]+)$') end
       write_tag(ctags, t, 't', 'class:'..module)
-      if module == '_G' then write_tag(ctags, t, 't', '') end -- global
+      -- If the table is global, add another tag that strips out the _G.
+      if module == '_G' then
+        write_tag(ctags, t, 't', '')
+      elseif module:find('^_G') then
+        write_tag(ctags, t, 't', 'class:'..module:match('^_G%.(.+)$'))
+      end
+      table.modifier = '[table]'
+      write_apidoc(apidoc, m, table)
       -- Tag the fields of the tables.
-      for _, f in ipairs(m.tables[t].field or {}) do
-        local table, doc = module..'.'..t, m.tables[t].field[f]
-        write_tag(ctags, f, 'F', 'class:'..table)
-        write_apidoc(apidoc, { name = table },
-                     { name = f, module = t, description = doc })
+      t = module..'.'..t
+      for _, f in ipairs(table.field or {}) do
+        write_tag(ctags, f, 'F', 'class:'..t)
+        write_apidoc(apidoc, { name = t },
+                     { name = f, description = table.field[f] })
       end
     end
     -- Tag the fields.
