@@ -716,54 +716,70 @@ _m	_	0;"	t
 _m.cpp	_	0;"	m	
 cpp	_	0;"	t	class:_m
 set_buffer_properties	_	0;"	f	class:_m.cpp
-_G.keys.cpp	_	0;"	t	class:_m.cpp
-_G.snippets.cpp	_	0;"	t	class:_m.cpp
+cpp	_	0;"	t	class:_G.keys
+cpp	_	0;"	t	class:keys
+cpp	_	0;"	t	class:_G.snippets
+cpp	_	0;"	t	class:snippets
 sense	_	0;"	F	class:_m.cpp
 _m.css	_	0;"	m	
 css	_	0;"	t	class:_m
 set_buffer_properties	_	0;"	f	class:_m.css
-_G.keys.css	_	0;"	t	class:_m.css
-_G.snippets.css	_	0;"	t	class:_m.css
+css	_	0;"	t	class:_G.keys
+css	_	0;"	t	class:keys
+css	_	0;"	t	class:_G.snippets
+css	_	0;"	t	class:snippets
 sense	_	0;"	F	class:_m.css
 _m.hypertext	_	0;"	m	
 hypertext	_	0;"	t	class:_m
 set_buffer_properties	_	0;"	f	class:_m.hypertext
-_G.keys.hypertext	_	0;"	t	class:_m.hypertext
-_G.snippets.hypertext	_	0;"	t	class:_m.hypertext
+hypertext	_	0;"	t	class:_G.keys
+hypertext	_	0;"	t	class:keys
+hypertext	_	0;"	t	class:_G.snippets
+hypertext	_	0;"	t	class:snippets
 sense	_	0;"	F	class:_m.hypertext
 _m.java	_	0;"	m	
 java	_	0;"	t	class:_m
 set_buffer_properties	_	0;"	f	class:_m.java
-_G.keys.java	_	0;"	t	class:_m.java
-_G.snippets.java	_	0;"	t	class:_m.java
+java	_	0;"	t	class:_G.keys
+java	_	0;"	t	class:keys
+java	_	0;"	t	class:_G.snippets
+java	_	0;"	t	class:snippets
 sense	_	0;"	F	class:_m.java
 _m.lua	_	0;"	m	
 lua	_	0;"	t	class:_m
 goto_required	_	0;"	f	class:_m.lua
 set_buffer_properties	_	0;"	f	class:_m.lua
 try_to_autocomplete_end	_	0;"	f	class:_m.lua
-_G.keys.lua	_	0;"	t	class:_m.lua
-_G.snippets.lua	_	0;"	t	class:_m.lua
+lua	_	0;"	t	class:_G.keys
+lua	_	0;"	t	class:keys
+lua	_	0;"	t	class:_G.snippets
+lua	_	0;"	t	class:snippets
 control_structure_patterns	_	0;"	t	class:_m.lua
 sense	_	0;"	F	class:_m.lua
 _m.php	_	0;"	m	
 php	_	0;"	t	class:_m
 goto_required	_	0;"	f	class:_m.php
 set_buffer_properties	_	0;"	f	class:_m.php
-_G.keys.php	_	0;"	t	class:_m.php
-_G.snippets.php	_	0;"	t	class:_m.php
+php	_	0;"	t	class:_G.keys
+php	_	0;"	t	class:keys
+php	_	0;"	t	class:_G.snippets
+php	_	0;"	t	class:snippets
 sense	_	0;"	F	class:_m.php
 _m.rails	_	0;"	m	
 rails	_	0;"	t	class:_m
 load_project	_	0;"	f	class:_m.rails
-_G.keys.rails	_	0;"	t	class:_m.rails
-_G.snippets.rails	_	0;"	t	class:_m.rails
+rails	_	0;"	t	class:_G.keys
+rails	_	0;"	t	class:keys
+rails	_	0;"	t	class:_G.snippets
+rails	_	0;"	t	class:snippets
 sense	_	0;"	F	class:_m.rails
 singular	_	0;"	F	class:_m.rails
 _m.rhtml	_	0;"	m	
 rhtml	_	0;"	t	class:_m
-_G.keys.rhtml	_	0;"	t	class:_m.rhtml
-_G.snippets.rhtml	_	0;"	t	class:_m.rhtml
+rhtml	_	0;"	t	class:_G.keys
+rhtml	_	0;"	t	class:keys
+rhtml	_	0;"	t	class:_G.snippets
+rhtml	_	0;"	t	class:snippets
 sense	_	0;"	F	class:_m.rhtml
 _m.ruby	_	0;"	m	
 ruby	_	0;"	t	class:_m
@@ -771,8 +787,10 @@ goto_required	_	0;"	f	class:_m.ruby
 set_buffer_properties	_	0;"	f	class:_m.ruby
 toggle_block	_	0;"	f	class:_m.ruby
 try_to_autocomplete_end	_	0;"	f	class:_m.ruby
-_G.keys.ruby	_	0;"	t	class:_m.ruby
-_G.snippets.ruby	_	0;"	t	class:_m.ruby
+ruby	_	0;"	t	class:_G.keys
+ruby	_	0;"	t	class:keys
+ruby	_	0;"	t	class:_G.snippets
+ruby	_	0;"	t	class:snippets
 control_structure_patterns	_	0;"	t	class:_m.ruby
 sense	_	0;"	F	class:_m.ruby
 _m.textadept	_	0;"	m	
@@ -892,7 +910,8 @@ _cancel_current	_	0;"	f	class:_m.textadept.snippets
 _insert	_	0;"	f	class:_m.textadept.snippets
 _previous	_	0;"	f	class:_m.textadept.snippets
 _select	_	0;"	f	class:_m.textadept.snippets
-_G.snippets	_	0;"	t	class:_m.textadept.snippets
+snippets	_	0;"	t	class:_G
+snippets	_	0;"	t	
 args	_	0;"	m	
 args	_	0;"	t	class:_G
 args	_	0;"	t	
