@@ -38,16 +38,17 @@ local function write_apidoc(file, m, f)
   if not name:find('[%.:]') then name = m.name..'.'..name end
   -- Block documentation for the function or field.
   local doc = { 'fmt -s -w 80 <<"EOF"' }
-  -- Function arguments.
+  -- Function arguments or field type.
   local args = f.param and '('..table.concat(f.param, ', ')..')' or ''
-  doc[#doc + 1] = name..args
+  local ftype = f.type or ''
+  doc[#doc + 1] = name..args..ftype
   -- Function or field description.
   doc[#doc + 1] = f.description:gsub('\\n', '\\\\n')
   -- Function parameters (@param).
   if f.param then
     for _, p in ipairs(f.param) do
       if f.param[p] and #f.param[p] > 0 then
-        doc[#doc + 1] = '@param '..f.param[p]:gsub('\\n', '\\\\n')
+        doc[#doc + 1] = '@param '..p..' '..f.param[p]:gsub('\\n', '\\\\n')
       end
     end
   end
@@ -131,9 +132,11 @@ function start(doc)
         local name, doc = line:match('^%-%- %* `([^`]+)`([^\r\n]*)')
         field.module = module or name:match('^[^%.]+')
         field.name = name:match('[^%.]+$')
-        if doc ~= '' then doc = doc:sub(3) end -- ignore ': ' at beginning
+        if doc ~= '' then
+          field.type, doc = doc:match('^([^:]*):?%s*(.*)$')
+        end
         docs[#docs + 1] = doc
-      elseif field and line:find('^%-%-%s+([^\r\n]+)') then
+      elseif field and line:find('^%-%-%s+[^\r\n]+') then
         -- Add this additional documentation to the current field being
         -- parsed. If the doc is indented more than usual, preserve the
         -- formatting by adding a newline to the previous doc line.
@@ -180,6 +183,13 @@ function start(doc)
     for _, t in ipairs(m.tables or {}) do
       write_tag(ctags, t, 't', 'class:'..module)
       if module == '_G' then write_tag(ctags, t, 't', '') end -- global
+      -- Tag the fields of the tables.
+      for _, f in ipairs(m.tables[t].field or {}) do
+        local table, doc = module..'.'..t, m.tables[t].field[f]
+        write_tag(ctags, f, 'F', 'class:'..table)
+        write_apidoc(apidoc, { name = table },
+                     { name = f, module = t, description = doc })
+      end
     end
     -- Tag the fields.
     for _, f in ipairs(m.fields or {}) do
