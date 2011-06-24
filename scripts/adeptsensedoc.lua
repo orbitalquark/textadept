@@ -118,6 +118,13 @@ function start(doc)
       doc = doc:gsub('%[([^%]]+)%]%b[]', '%1'):gsub('%[([^%]]+)%]%b()', '%1')
       field.description = doc
       local m = modules[field.module]
+      if not m then
+        local name = field.module
+        _G.print("Module '"..name.."' does not exist. Faking...")
+        m = { name = name, functions = {}, fake = true }
+        modules[#modules + 1] = name
+        modules[name] = m
+      end
       if not m.fields then m.fields = {} end
       m.fields[#m.fields + 1] = field.name
       m.fields[field.name] = field
@@ -164,19 +171,21 @@ function start(doc)
   for _, m in ipairs(modules) do
     m = modules[m]
     local module = m.name
-    -- Tag the module and write the apidoc.
-    write_tag(ctags, module, 'm', '')
-    if module:find('%.') then
-      -- Tag the last part of the module as a table of the first part.
-      local parent, child = module:match('^(.-)%.([^%.]+)$')
-      write_tag(ctags, child, 't', 'class:'..parent)
-    elseif module ~= '_G' then
-      -- Tag the module as a global table.
-      write_tag(ctags, module, 't', 'class:_G')
-      write_tag(ctags, module, 't', '')
+    if not m.fake then
+      -- Tag the module and write the apidoc.
+      write_tag(ctags, module, 'm', '')
+      if module:find('%.') then
+        -- Tag the last part of the module as a table of the first part.
+        local parent, child = module:match('^(.-)%.([^%.]+)$')
+        write_tag(ctags, child, 't', 'class:'..parent)
+      elseif module ~= '_G' then
+        -- Tag the module as a global table.
+        write_tag(ctags, module, 't', 'class:_G')
+        write_tag(ctags, module, 't', '')
+      end
+      m.modifier = '[module]'
+      write_apidoc(apidoc, { name = '_G' }, m)
     end
-    m.modifier = '[module]'
-    write_apidoc(apidoc, { name = '_G' }, m)
     -- Tag the functions and write the apidoc.
     for _, f in ipairs(m.functions) do
       if not f:find('no_functions') then -- ignore placeholders
@@ -215,6 +224,8 @@ function start(doc)
       write_apidoc(apidoc, m, m.fields[f])
     end
   end
+  table.sort(ctags)
+  table.sort(apidoc)
   local f = io.open(options.output_dir..'/tags', 'w')
   f:write(table.concat(ctags, '\n'))
   f:close()
