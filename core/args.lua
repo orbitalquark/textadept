@@ -56,9 +56,9 @@ end
 
 -- Shows all registered command line switches in a help dialog.
 local function show_help()
-  _G.print('Usage: textadept [args] [filenames]')
+  print('Usage: textadept [args] [filenames]')
   local line = "  %s [%d args]: %s"
-  for k, v in pairs(switches) do _G.print(line:format(k, unpack(v, 2))) end
+  for k, v in pairs(switches) do print(line:format(k, unpack(v, 2))) end
   os.exit()
 end
 register('-h', '--help', 0, show_help, 'Displays this')

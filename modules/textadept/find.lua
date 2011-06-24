@@ -1,7 +1,7 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = _G.locale.localize
-local events = _G.events
+local L = locale.localize
+local events = events
 local find = gui.find
 local c = _SCINTILLA.constants
 
@@ -165,7 +165,7 @@ function find.find_incremental()
 end
 
 events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
-  local K = _G.keys.KEYSYMS
+  local K = keys.KEYSYMS
   if find.incremental then
     if K[code] == 'esc' then
       find.incremental = nil
@@ -190,8 +190,8 @@ events.connect(events.COMMAND_ENTRY_COMMAND, function(text)
 end, 1) -- place before command_entry.lua's handler (if necessary)
 
 -- Optimize for speed.
-local loadstring = _G.loadstring
-local pcall = _G.pcall
+local loadstring = loadstring
+local pcall = pcall
 
 -- Runs the given code.
 -- This function is passed to string.gsub() in the replace() function.

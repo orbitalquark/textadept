@@ -610,7 +610,7 @@ function show_apidoc(sense)
     if apidocs.pos < 1 then apidocs.pos = #apidocs end
     buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos])
   end)
-  _G.timeout(1, function()
+  timeout(1, function()
     if pcall(buffer.call_tip_active, buffer) then return true end
     events.disconnect(events.CALL_TIP_CLICK, event_id)
   end)

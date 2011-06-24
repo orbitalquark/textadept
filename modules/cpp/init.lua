@@ -81,7 +81,7 @@ end
 -- Container for C/C++-specific key commands.
 -- @class table
 -- @name _G.keys.cpp
-_G.keys.cpp = {
+keys.cpp = {
   al = {
     m = { io.open_file,
           (_HOME..'/modules/cpp/init.lua'):iconv('UTF-8', _CHARSET) },
@@ -101,8 +101,8 @@ _G.keys.cpp = {
 -- Container for C/C++-specific snippets.
 -- @class table
 -- @name _G.snippets.cpp
-if type(_G.snippets) == 'table' then
-  _G.snippets.cpp = {
+if type(snippets) == 'table' then
+  snippets.cpp = {
     rc = 'reinterpret_cast<%1>(%2(%<selected_text>))',
     sc = 'static_cast<%1>(%2(%<selected_text>))',
     cc = 'const_cast<%1>(%2(%<selected_text>))',

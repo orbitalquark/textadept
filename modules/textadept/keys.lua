@@ -1,13 +1,13 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = _G.locale.localize
+local L = locale.localize
 
 ---
 -- Defines key commands for Textadept.
 -- This set of key commands is pretty standard among other text editors.
 module('_m.textadept.keys', package.seeall)
 
-local keys = _G.keys
+local keys = keys
 local _buffer, _view = buffer, view
 local gui, m_textadept = gui, _m.textadept
 

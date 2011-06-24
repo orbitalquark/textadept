@@ -1,7 +1,7 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = _G.locale.localize
-local events = _G.events
+local L = locale.localize
+local events = events
 
 ---
 -- Filter-Through for the textadept module.

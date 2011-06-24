@@ -170,7 +170,7 @@ events.connect(events.FILE_AFTER_SAVE,
 -- Container for Lua-specific key commands.
 -- @class table
 -- @name _G.keys.lua
-_G.keys.lua = {
+keys.lua = {
   al = {
     m = { io.open_file,
           (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET) },
@@ -183,12 +183,12 @@ _G.keys.lua = {
 
 -- Snippets.
 
-if type(_G.snippets) == 'table' then
+if type(snippets) == 'table' then
 ---
 -- Container for Lua-specific snippets.
 -- @class table
 -- @name _G.snippets.lua
-  _G.snippets.lua = {
+  snippets.lua = {
     l = "local %1(expr)%2( = %3(value))",
     p = "print(%0)",
     f = "function %1(name)(%2(args))\n\t%0\nend",
