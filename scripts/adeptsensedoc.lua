@@ -95,10 +95,12 @@ function start(doc)
   if lua_luadoc then
     for _, f in ipairs(lua_luadoc.functions) do
       f = lua_luadoc.functions[f]
-      local module = f.name:match('^([^%.]+)%.') or '_G'
+      local module = f.name:match('^([^%.:]+)[%.:]') or '_G'
       if not modules[module] then
         modules[#modules + 1] = module
         modules[module] = { name = module, functions = {} }
+        -- For functions like file:read(), 'file' is not a module; fake it.
+        if f.name:find(':') then modules[module].fake = true end
       end
       local module = modules[module]
       module.description = 'Lua '..module.name..' module.'
