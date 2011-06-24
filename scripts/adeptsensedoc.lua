@@ -134,7 +134,7 @@ function start(doc)
         if field then add_field() end
         field, docs = {}, {}
         local name, doc = line:match('^%-%- %* `([^`]+)`([^\r\n]*)')
-        field.module = name:match('^_G%.([%w_]+)%.') or module or
+        field.module = name:match('^_G%.(.-)%.[^%.]+$') or module or
                        name:match('^[^%.]+')
         field.name = name:match('[^%.]+$')
         if doc ~= '' then
