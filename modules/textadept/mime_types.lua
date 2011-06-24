@@ -22,16 +22,15 @@ module('_m.textadept.mime_types', package.seeall)
 --
 -- [buffer_set_lexer_language]: buffer.html#buffer:set_lexer_language
 --
--- ## Events
+-- ## Mime-type Events
 --
--- The following is a list of all mime-type events generated in
--- `event_name(arguments)` format:
---
--- * **language\_module\_loaded** (lang)<br />
---   Called when a language-specific module is loaded. This is useful for
---   overriding its key commands since they are not available when Textadept
---   starts.
---     - lang: The language lexer name.
+-- * `_G.events.LANGUAGE_MODULE_LOADED`: Called when loading a language-specific
+--   module. This is useful for overriding its key commands since they are not
+--   available when Textadept starts. Arguments:<br />
+--       * `lang`: The language lexer name.
+
+-- Events.
+events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
 
 ---
 -- File extensions with their associated lexers.
@@ -139,7 +138,7 @@ local function set_lexer(buffer, lang)
   if ret then
     ret, err = pcall(require, lang..'.post_init')
     _m[lang].set_buffer_properties()
-    events.emit('language_module_loaded', lang)
+    events.emit(events.LANGUAGE_MODULE_LOADED, lang)
   end
   local module_not_found = "^module '"..lang.."[^\']*' not found:"
   if not ret and not err:find(module_not_found) then error(err) end
@@ -170,7 +169,7 @@ local function get_lexer(buffer, current)
   return get_style_name(buffer, style_at[i]):match('^(.+)_whitespace$') or lexer
 end
 
-events.connect('buffer_new', function()
+events.connect(events.BUFFER_NEW, function()
   buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
   buffer.get_style_name = get_style_name
 end, 1)
@@ -213,11 +212,11 @@ local function restore_lexer()
 end
 
 local connect = events.connect
-connect('file_opened', handle_new)
-connect('file_saved_as', handle_new)
-connect('buffer_after_switch', restore_lexer)
-connect('view_new', restore_lexer, 1)
-connect('reset_after',
+connect(events.FILE_OPENED, handle_new)
+connect(events.FILE_SAVED_AS, handle_new)
+connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
+connect(events.VIEW_NEW, restore_lexer, 1)
+connect(events.RESET_AFTER,
         function() buffer:set_lexer(buffer._lexer or 'container') end)
 
 ---

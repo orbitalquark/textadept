@@ -2,6 +2,7 @@
 -- Modified by Jay Gould.
 
 local L = _G.locale.localize
+local events = _G.events
 
 -- Environment for abbreviated commands.
 -- @class table
@@ -28,16 +29,16 @@ local env = setmetatable({}, {
 })
 
 -- Execute a Lua command.
-events.connect('command_entry_command', function(command)
+events.connect(events.COMMAND_ENTRY_COMMAND, function(command)
   local f, err = loadstring(command)
   if err then error(err) end
   gui.command_entry.focus() -- toggle focus to hide
   setfenv(f, env)
   f()
-  events.emit('update_ui')
+  events.emit(events.UPDATE_UI)
 end)
 
-events.connect('command_entry_keypress', function(code)
+events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   local ce = gui.command_entry
   local KEYSYMS = keys.KEYSYMS
   if KEYSYMS[code] == 'esc' then

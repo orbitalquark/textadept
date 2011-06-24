@@ -1,6 +1,7 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local L = _G.locale.localize
+local events = _G.events
 
 ---
 -- Filter-Through for the textadept module.
@@ -26,14 +27,14 @@ function filter_through()
   gui.command_entry.focus()
 end
 
-events.connect('command_entry_keypress', function(code)
+events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   if filter_through_active and code == 0xff1b then -- escape
     filter_through_active = false
   end
 end, 1) -- place before command_entry.lua's handler (if necessary)
 
 -- Filter through.
-events.connect('command_entry_command', function(text)
+events.connect(events.COMMAND_ENTRY_COMMAND, function(text)
   if filter_through_active then
     local buffer = buffer
     local s, e = buffer.selection_start, buffer.selection_end

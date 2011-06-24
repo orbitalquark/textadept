@@ -144,7 +144,7 @@ local function find_(text, next, flags, nowrap, wrapped)
 
   return result
 end
-events.connect('find', find_)
+events.connect(events.FIND, find_)
 
 -- Finds and selects text incrementally in the current buffer from a start
 -- point.
@@ -164,7 +164,7 @@ function find.find_incremental()
   gui.command_entry.focus()
 end
 
-events.connect('command_entry_keypress', function(code)
+events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   local K = _G.keys.KEYSYMS
   if find.incremental then
     if K[code] == 'esc' then
@@ -181,7 +181,7 @@ events.connect('command_entry_keypress', function(code)
 end, 1) -- place before command_entry.lua's handler (if necessary)
 
 -- 'Find next' for incremental search.
-events.connect('command_entry_command', function(text)
+events.connect(events.COMMAND_ENTRY_COMMAND, function(text)
   if find.incremental then
     find.incremental_start = buffer.current_pos + 1
     find_incremental(text)
@@ -241,7 +241,7 @@ local function replace(rtext)
     buffer:goto_pos(buffer.current_pos)
   end
 end
-events.connect('replace', replace)
+events.connect(events.REPLACE, replace)
 
 -- Replaces all found text.
 -- If any text is selected, all found text in that selection is replaced.
@@ -287,7 +287,7 @@ local function replace_all(ftext, rtext, flags)
   gui.statusbar_text = ("%d %s"):format(count, L('replacement(s) made'))
   buffer:end_undo_action()
 end
-events.connect('replace_all', replace_all)
+events.connect(events.REPLACE_ALL, replace_all)
 
 -- When the user double-clicks a found file, go to the line in the file the text
 -- was found at.
@@ -325,7 +325,7 @@ local function goto_file(pos, line_num)
     end
   end
 end
-events.connect('double_click', goto_file)
+events.connect(events.DOUBLE_CLICK, goto_file)
 
 -- LuaDoc is in core/.find.luadoc.
 function find.goto_file_in_list(next)
@@ -358,5 +358,5 @@ function find.goto_file_in_list(next)
 end
 
 if buffer then buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end
-events.connect('view_new',
+events.connect(events.VIEW_NEW,
   function() buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end)

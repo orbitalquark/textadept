@@ -419,7 +419,7 @@ _snippet_mt = {
 
 local INDIC_HIDDEN = _SCINTILLA.constants.INDIC_HIDDEN
 if buffer then buffer.indic_style[INDIC_SNIPPET] = INDIC_HIDDEN end
-events.connect('view_new',
+events.connect(events.VIEW_NEW,
   function() buffer.indic_style[INDIC_SNIPPET] = INDIC_HIDDEN end)
 
 ---

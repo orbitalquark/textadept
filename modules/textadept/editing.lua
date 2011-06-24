@@ -79,7 +79,7 @@ braces = { -- () [] {}
 local current_call_tip = {}
 
 -- Matches characters specified in char_matches.
-events.connect('char_added', function(c)
+events.connect(events.CHAR_ADDED, function(c)
   if not AUTOPAIR then return end
   local buffer = buffer
   local match = (char_matches[buffer:get_lexer()] or char_matches)[c]
@@ -87,7 +87,7 @@ events.connect('char_added', function(c)
 end)
 
 -- Removes matched chars on backspace.
-events.connect('keypress', function(code, shift, control, alt)
+events.connect(events.KEYPRESS, function(code, shift, control, alt)
   if not AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
   local buffer = buffer
   local pos = buffer.current_pos
@@ -97,7 +97,7 @@ events.connect('keypress', function(code, shift, control, alt)
 end)
 
 -- Highlights matching braces.
-events.connect('update_ui', function()
+events.connect(events.UPDATE_UI, function()
   if not HIGHLIGHT_BRACES then return end
   local buffer = buffer
   local current_pos = buffer.current_pos
@@ -114,7 +114,7 @@ events.connect('update_ui', function()
 end)
 
 -- Auto-indent on return.
-events.connect('char_added', function(char)
+events.connect(events.CHAR_ADDED, function(char)
   if not AUTOINDENT or char ~= 10 then return end
   local buffer = buffer
   local anchor, caret = buffer.anchor, buffer.current_pos
@@ -272,7 +272,7 @@ function prepare_for_save()
   buffer:convert_eo_ls(buffer.eol_mode)
   buffer:end_undo_action()
 end
-events.connect('file_before_save', prepare_for_save)
+events.connect(events.FILE_BEFORE_SAVE, prepare_for_save)
 
 ---
 -- Selects the current word under the caret and if action indicates, deletes it.
@@ -445,7 +445,7 @@ local function clear_highlighted_words()
   buffer.indicator_current = INDIC_HIGHLIGHT
   buffer:indicator_clear_range(0, buffer.length)
 end
-events.connect('keypress',
+events.connect(events.KEYPRESS,
   function(c) if K[c] == 'esc' then clear_highlighted_words() end end)
 
 ---
@@ -484,4 +484,4 @@ local function set_highlight_properties()
   buffer.indic_alpha[INDIC_HIGHLIGHT] = INDIC_HIGHLIGHT_ALPHA
 end
 if buffer then set_highlight_properties() end
-events.connect('view_new', set_highlight_properties)
+events.connect(events.VIEW_NEW, set_highlight_properties)
