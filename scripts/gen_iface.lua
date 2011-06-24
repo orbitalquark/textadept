@@ -14,6 +14,7 @@ local types = {
   keymod = 6, string = 7, stringresult = 8, cells = 9, textrange = 10,
   findtext = 11, formatrange = 12
 }
+local s = '_G._SCINTILLA.constants'
 
 f = io.open('../core/iface.lua', 'w')
 
@@ -35,7 +36,7 @@ for item in iface:match('Constants%[%] = (%b{})'):sub(2, -2):gmatch('%b{}') do
      not name:find('^SCLEX_') then
     if name == 'SC_MASK_FOLDERS' then value = '-33554432' end
     constants[#constants + 1] = string_format('%s=%s', name, value)
-    fielddoc[#fielddoc + 1] = string_format('-- @field %s %d', name, value)
+    fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s`: %d', s, name, value)
   end
 end
 
@@ -71,7 +72,7 @@ local events = {
 }
 for event, value in pairs(events) do
   constants[#constants + 1] = string_format('%s=%d', event, value)
-  fielddoc[#fielddoc + 1] = string_format('-- @field %s %d', event, value)
+  fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s`: %d', s, event, value)
 end
 -- Lexers added to constants.
 local lexers = {
@@ -82,7 +83,7 @@ local lexers = {
 }
 for lexer, value in pairs(lexers) do
   constants[#constants + 1] = string_format('%s=%d', lexer, value)
-  fielddoc[#fielddoc + 1] = string_format('-- @field %s %d', lexer, value)
+  fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s`: %d', s, lexer, value)
 end
 
 -- Write constants.
@@ -91,9 +92,7 @@ f:write [[
 -- Scintilla constants.
 -- @class table
 -- @name constants
-]]
-f:write(table.concat(fielddoc, '\n'))
-f:write('\nconstants = {')
+constants = {]]
 f:write(table.concat(constants, ','))
 f:write('}\n\n')
 
@@ -178,4 +177,15 @@ function next_user_list_type()
 end
 ]]
 
+f:close()
+
+f = io.open('../core/._SCINTILLA.luadoc', 'w')
+f:write [[
+-- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- This is a DUMMY FILE used for making Adeptsense for built-in constants in the
+-- global _SCINTILLA.constants table.
+
+]]
+f:write(table.concat(fielddoc, '\n'))
+f:write('\n')
 f:close()
