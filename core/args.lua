@@ -6,7 +6,7 @@ module('args', package.seeall)
 -- Markdown:
 -- ## Arg Events
 --
--- * `'arg_none'`: Called when no command line arguments are passed to Textadept
+-- + `'arg_none'`: Called when no command line arguments are passed to Textadept
 --   on init.
 
 local arg = arg
