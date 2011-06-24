@@ -36,7 +36,7 @@ function gui._print(buffer_type, ...)
         if not message_buffer then
           message_buffer = new_buffer()
           message_buffer._type = buffer_type
-          events.emit('file_opened')
+          events.emit(events.FILE_OPENED)
         else
           message_view:goto_buffer(message_buffer_index, true)
         end
@@ -90,7 +90,7 @@ end
 local connect = _G.events.connect
 
 -- Sets default properties for a Scintilla window.
-connect('view_new', function()
+connect(events.VIEW_NEW, function()
   local buffer = buffer
   local c = _SCINTILLA.constants
 
@@ -111,13 +111,13 @@ connect('view_new', function()
     if not ok then io.stderr:write(err) end
   end
 end)
-connect('view_new', function() events.emit('update_ui') end)
+connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
 -- Sets default properties for a Scintilla document.
-connect('buffer_new', function()
+connect(events.BUFFER_NEW, function()
   local function run()
     local buffer = buffer
 
@@ -151,7 +151,7 @@ connect('buffer_new', function()
   local ok, err = pcall(run)
   if not ok then io.stderr:write(err) end
 end)
-connect('buffer_new', function() events.emit('update_ui') end)
+connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
 -- @param buffer The currently focused buffer.
@@ -162,19 +162,19 @@ local function set_title(buffer)
 end
 
 -- Changes Textadept title to show 'clean' buffer.
-connect('save_point_reached', function()
+connect(events.SAVE_POINT_REACHED, function()
   buffer.dirty = false
   set_title(buffer)
 end)
 
 -- Changes Textadept title to show 'dirty' buffer.
-connect('save_point_left', function()
+connect(events.SAVE_POINT_LEFT, function()
   buffer.dirty = true
   set_title(buffer)
 end)
 
 -- Open uri(s).
-connect('uri_dropped', function(utf8_uris)
+connect(events.URI_DROPPED, function(utf8_uris)
   for utf8_uri in utf8_uris:gmatch('[^\r\n]+') do
     if utf8_uri:find('^file://') then
       utf8_uri = utf8_uri:match('^file://([^\r\n]+)')
@@ -187,14 +187,14 @@ connect('uri_dropped', function(utf8_uris)
     end
   end
 end)
-connect('appleevent_odoc',
-        function(uri) return events.emit('uri_dropped', 'file://'..uri) end)
+connect(events.APPLEEVENT_ODOC,
+  function(uri) return events.emit(events.URI_DROPPED, 'file://'..uri) end)
 
 local string_format = string.format
 local EOLs = { L('CRLF'), L('CR'), L('LF') }
 local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 -- Sets docstatusbar text.
-connect('update_ui', function()
+connect(events.UPDATE_UI, function()
   local buffer = buffer
   local pos = buffer.current_pos
   local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
@@ -210,14 +210,14 @@ connect('update_ui', function()
 end)
 
 -- Toggles folding.
-connect('margin_click', function(margin, modifiers, position)
+connect(events.MARGIN_CLICK, function(margin, position, modifiers)
   buffer:toggle_fold(buffer:line_from_position(position))
 end)
 
-connect('buffer_new', function() set_title(buffer) end)
+connect(events.BUFFER_NEW, function() set_title(buffer) end)
 
 -- Save buffer properties.
-connect('buffer_before_switch', function()
+connect(events.BUFFER_BEFORE_SWITCH, function()
   local buffer = buffer
   -- Save view state.
   buffer._anchor = buffer.anchor
@@ -234,7 +234,7 @@ connect('buffer_before_switch', function()
 end)
 
 -- Restore buffer properties.
-connect('buffer_after_switch', function()
+connect(events.BUFFER_AFTER_SWITCH, function()
   local buffer = buffer
   if not buffer._folds then return end
   -- Restore fold state.
@@ -247,21 +247,21 @@ connect('buffer_after_switch', function()
 end)
 
 -- Updates titlebar and statusbar.
-connect('buffer_after_switch', function()
+connect(events.BUFFER_AFTER_SWITCH, function()
   set_title(buffer)
-  events.emit('update_ui')
+  events.emit(events.UPDATE_UI)
 end)
 
 -- Updates titlebar and statusbar.
-connect('view_after_switch', function()
+connect(events.VIEW_AFTER_SWITCH, function()
   set_title(buffer)
-  events.emit('update_ui')
+  events.emit(events.UPDATE_UI)
 end)
 
-connect('reset_after', function() gui.statusbar_text = 'Lua reset' end)
+connect(events.RESET_AFTER, function() gui.statusbar_text = 'Lua reset' end)
 
 -- Prompts for confirmation if any buffers are dirty.
-connect('quit', function()
+connect(events.QUIT, function()
   local list = {}
   for _, buffer in ipairs(_BUFFERS) do
     if buffer.dirty then
@@ -282,4 +282,4 @@ connect('quit', function()
   return true
 end)
 
-connect('error', function(...) gui._print(L('[Error Buffer]'), ...) end)
+connect(events.ERROR, function(...) gui._print(L('[Error Buffer]'), ...) end)

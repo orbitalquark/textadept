@@ -10,26 +10,13 @@ local gui = _G.gui
 -- This module, like _m.textadept.keys, should be 'require'ed last.
 module('_m.textadept.menu', package.seeall)
 
--- Markdown:
--- ## Events
---
--- The following is a list of all menu events generated in
--- `event_name(arguments)` format:
---
--- * **menu\_clicked** (menu\_id)<br />
---   Called when a menu item is selected.
---       - menu\_id: the numeric ID of the menu item set in
---         [`gui.gtkmenu()`][gui_gtkmenu].
---
--- [gui_gtkmenu]: ../modules/gui.html#gtkmenu
-
 local _buffer, _view = buffer, view
 local m_textadept, m_editing = _m.textadept, _m.textadept.editing
 local SEPARATOR = { 'separator' }
 
 local function set_encoding(encoding)
   buffer:set_encoding(encoding)
-  events.emit('update_ui') -- for updating statusbar
+  events.emit(events.UPDATE_UI) -- for updating statusbar
 end
 local function toggle_setting(setting, i)
   local state = buffer[setting]
@@ -38,21 +25,21 @@ local function toggle_setting(setting, i)
   elseif type(state) == 'number' then
     buffer[setting] = buffer[setting] == 0 and (i or 1) or 0
   end
-  events.emit('update_ui') -- for updating statusbar
+  events.emit(events.UPDATE_UI) -- for updating statusbar
 end
 local function set_indentation(i)
   buffer.indent, buffer.tab_width = i, i
-  events.emit('update_ui') -- for updating statusbar
+  events.emit(events.UPDATE_UI) -- for updating statusbar
 end
 local function set_eol_mode(mode)
   buffer.eol_mode = mode
   buffer:convert_eo_ls(mode)
-  events.emit('update_ui') -- for updating statusbar
+  events.emit(events.UPDATE_UI) -- for updating statusbar
 end
 local function set_lexer(lexer)
   buffer:set_lexer(lexer)
   buffer:colourise(0, -1)
-  events.emit('update_ui') -- for updating statusbar
+  events.emit(events.UPDATE_UI) -- for updating statusbar
 end
 local function open_webpage(url)
   local cmd
@@ -361,7 +348,7 @@ set_contextmenu(context_menu)
 
 -- Most of this handling code comes from keys.lua.
 local no_args = {}
-events.connect('menu_clicked', function(menu_id)
+events.connect(events.MENU_CLICKED, function(menu_id)
   local action, action_type
   if menu_id > 1000 then
     action = context_actions[menu_id - 1000]

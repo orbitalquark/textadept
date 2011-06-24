@@ -523,7 +523,7 @@ end
 function add_trigger(sense, c, only_fields, only_functions)
   if #c > 2 then return end -- TODO: warn
   local c1, c2 = c:match('.$'):byte(), #c > 1 and c:sub(1, 1):byte()
-  local i = events.connect('char_added', function(char)
+  local i = events.connect(events.CHAR_ADDED, function(char)
     if char == c1 and buffer:get_lexer(true) == sense.lexer then
       if c2 and buffer.char_at[buffer.current_pos - 2] ~= c2 then return end
       sense:complete(only_fields, only_functions)
@@ -604,7 +604,7 @@ function show_apidoc(sense)
   end
   buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos or 1])
   -- Cycle through calltips.
-  local event_id = events.connect('call_tip_click', function(position)
+  local event_id = events.connect(events.CALL_TIP_CLICK, function(position)
     apidocs.pos = apidocs.pos + (position == 1 and -1 or 1)
     if apidocs.pos > #apidocs then apidocs.pos = 1 end
     if apidocs.pos < 1 then apidocs.pos = #apidocs end
@@ -612,7 +612,7 @@ function show_apidoc(sense)
   end)
   _G.timeout(1, function()
     if pcall(buffer.call_tip_active, buffer) then return true end
-    events.disconnect('call_tip_click', event_id)
+    events.disconnect(events.CALL_TIP_CLICK, event_id)
   end)
   return true
 end
@@ -776,7 +776,9 @@ function new(lang)
   if sense then
     sense.ctags_kinds = {}
     sense.api_files = {}
-    for _, i in ipairs(sense.events) do events.disconnect('char_added', i) end
+    for _, i in ipairs(sense.events) do
+      events.disconnect(events.CHAR_ADDED, i)
+    end
     sense.events = {}
     sense:clear()
   end

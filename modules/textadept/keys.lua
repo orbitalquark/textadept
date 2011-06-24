@@ -32,10 +32,10 @@ local function toggle_setting(setting, i)
   elseif type(state) == 'number' then
     buffer[setting] = buffer[setting] == 0 and (i or 1) or 0
   end
-  events.emit('update_ui') -- for updating statusbar
+  events.emit(events.UPDATE_UI) -- for updating statusbar
 end
 local RECENT_FILES = _SCINTILLA.next_user_list_type()
-events.connect('user_list_selection',
+events.connect(events.USER_LIST_SELECTION,
   function(type, text) if type == RECENT_FILES then io.open_file(text) end end)
 local function show_recent_file_list()
   local buffer = buffer

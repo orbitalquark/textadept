@@ -83,20 +83,6 @@ module('keys', package.seeall)
 -- All Lua functions must be defined BEFORE they are reference in key commands.
 -- Therefore, any module containing key commands should be loaded after all
 -- other modules, whose functions are being referenced, have been loaded.
---
--- ## Events
---
--- The following is a list of all key events generated in
--- `event_name(arguments)` format:
---
--- * **keypress** (code, shift, control, alt)<br />
---   Called when a key is pressed.
---       - code: the key code (according to `<gdk/gdkkeysyms.h>`).
---       - shift: flag indicating whether or not the Shift key is pressed.
---       - control: flag indicating whether or not the Control key is pressed.
---       - alt: flag indicating whether or not the Alt/Apple key is pressed.
---   <br />
---   Note: The Alt-Option key in Mac OSX is not available.
 
 -- settings
 local ADD = ''
@@ -114,7 +100,7 @@ local type = _G.type
 local unpack = _G.unpack
 local no_args = {}
 local getmetatable = getmetatable
-local error = function(e) events.emit('error', e) end
+local error = function(e) events.emit(events.ERROR, e) end
 
 ---
 -- Lookup table for key values higher than 255.
@@ -248,4 +234,4 @@ local function keypress(code, shift, control, alt)
   end
   -- PROPAGATE otherwise.
 end
-events.connect('keypress', keypress, 1)
+events.connect(events.KEYPRESS, keypress, 1)

@@ -18,7 +18,7 @@ module('io', package.seeall)
 --
 -- Example:
 --
---     events.connect('file_opened',
+--     events.connect(events.FILE_OPENED,
 --       function(utf8_filename)
 --         local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
 --         local f = io.open(filename, 'rb')
@@ -28,23 +28,26 @@ module('io', package.seeall)
 --
 -- [string_iconv]: ../modules/string.html#iconv
 --
--- ## Events
+-- ## File Events
 --
--- The following is a list of all file I/O events generated in
--- `event_name(arguments)` format:
---
--- * **file\_opened** (filename) <br />
---   Called when a file has been opened in a new buffer.
---       - filename: the filename encoded in UTF-8.
--- * **file\_before\_save** (filename) <br />
---   Called right before a file is saved to disk.
---       - filename: the filename encoded in UTF-8.
--- * **file\_after\_save** (filename) <br />
---   Called right after a file is saved to disk.
---       - filename: the filename encoded in UTF-8.
--- * **file\_saved_as** (filename) <br />
---   Called when a file is saved under another filename.
---       - filename: the other filename encoded in UTF-8.
+-- * `_G.events.FILE_OPENED`: Called when a file is opened in a new buffer.
+--   Arguments:<br />
+--       * `filename`: The filename encoded in UTF-8.
+-- * `_G.events.FILE_BEFORE_SAVE`: Called right before a file is saved to disk.
+--   Arguments:<br />
+--       * `filename`: The filename encoded in UTF-8.
+-- * `_G.events.FILE_AFTER_SAVE`: Called right after a file is saved to disk.
+--   Arguments:<br />
+--       * `filename`: The filename encoded in UTF-8.
+-- * `_G.events.FILE_SAVED_AS`: Called when a file is saved under a different
+--   filename. Arguments:<br />
+--       * `filename`: The filename encoded in UTF-8.
+
+-- Events.
+events.FILE_OPENED = 'file_opened'
+events.FILE_BEFORE_SAVE = 'file_before_save'
+events.FILE_AFTER_SAVE = 'file_after_save'
+events.FILE_SAVED_AS = 'file_saved_as'
 
 ---
 -- List of recently opened files.
@@ -154,7 +157,7 @@ local function open_helper(utf8_filename)
   buffer.modification_time = lfs.attributes(filename).modification
   buffer.filename = utf8_filename
   buffer:set_save_point()
-  events.emit('file_opened', utf8_filename)
+  events.emit(events.FILE_OPENED, utf8_filename)
 
   -- Add file to recent files list, eliminating duplicates.
   for i, file in ipairs(recent_files) do
@@ -222,7 +225,7 @@ end
 local function save(buffer)
   gui.check_focused_buffer(buffer)
   if not buffer.filename then return buffer:save_as() end
-  events.emit('file_before_save', buffer.filename)
+  events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
   local text = buffer:get_text(buffer.length)
   if buffer.encoding then
     local bom = buffer.encoding_bom or ''
@@ -236,7 +239,7 @@ local function save(buffer)
   buffer:set_save_point()
   buffer.modification_time = lfs.attributes(filename).modification
   if buffer._type then buffer._type = nil end
-  events.emit('file_after_save', buffer.filename)
+  events.emit(events.FILE_AFTER_SAVE, buffer.filename)
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
@@ -254,7 +257,7 @@ local function save_as(buffer, utf8_filename)
   if #utf8_filename > 0 then
     buffer.filename = utf8_filename
     buffer:save()
-    events.emit('file_saved_as', utf8_filename)
+    events.emit(events.FILE_SAVED_AS, utf8_filename)
   end
 end
 
@@ -327,11 +330,11 @@ local function update_modified_file()
     end
   end
 end
-events.connect('buffer_after_switch', update_modified_file)
-events.connect('view_after_switch', update_modified_file)
+events.connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
+events.connect(events.VIEW_AFTER_SWITCH, update_modified_file)
 
 -- Set additional buffer functions.
-events.connect('buffer_new', function()
+events.connect(events.BUFFER_NEW, function()
   local buffer = buffer
   buffer.reload = reload
   buffer.set_encoding = set_encoding
@@ -342,7 +345,7 @@ events.connect('buffer_new', function()
 end)
 
 -- Close initial 'Untitled' buffer.
-events.connect('file_opened', function(utf8_filename)
+events.connect(events.FILE_OPENED, function(utf8_filename)
   local b = _BUFFERS[1]
   if #_BUFFERS == 2 and not (b.filename or b._type or b.dirty) then
     view:goto_buffer(1, true)

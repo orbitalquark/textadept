@@ -49,7 +49,7 @@ function load(filename)
       else
         new_buffer()
         buffer._type = filename
-        events.emit('file_opened', filename)
+        events.emit(events.FILE_OPENED, filename)
       end
       -- Restore saved buffer selection and view.
       local anchor = tonumber(anchor) or 0
@@ -166,7 +166,7 @@ function save(filename)
   end
 end
 
-events.connect('quit', function() if SAVE_ON_QUIT then save() end end, 1)
+events.connect(events.QUIT, function() if SAVE_ON_QUIT then save() end end, 1)
 
 local function no_session() SAVE_ON_QUIT = false end
 args.register('-n', '--nosession', 0, no_session, 'No session functionality')

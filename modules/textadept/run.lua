@@ -123,4 +123,4 @@ function goto_error(pos, line_num)
     end
   end
 end
-events.connect('double_click', goto_error)
+events.connect(events.DOUBLE_CLICK, goto_error)

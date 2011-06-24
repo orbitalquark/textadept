@@ -4,13 +4,10 @@
 module('args', package.seeall)
 
 -- Markdown:
--- ## Events
+-- ## Arg Events
 --
--- The following is a list of all arg events generated in
--- `event_name(arguments)` format:
---
--- * **arg\_none** ()<br />
---   Called when no command line args have been passed to Textadept on init.
+-- * `'arg_none'`: Called when no command line arguments are passed to Textadept
+--   on init.
 
 local arg = arg
 
