@@ -1,6 +1,7 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local L = _G.locale.localize
+local events = _G.events
 
 ---
 -- Module for running/executing source files.
@@ -8,6 +9,28 @@ local L = _G.locale.localize
 -- 'run_command', and 'error_detail' tables for a particular language's file
 -- extension.
 module('_m.textadept.run', package.seeall)
+
+-- Markdown:
+-- ## Run Events
+--
+-- * `_G.events.COMPILE_OUTPUT`: Called after a compile command is executed.
+--   When connecting to this event (typically from a language-specific module),
+--   connect with an index of 1 and return `true` if the event was handled and
+--   you want to override the default handler that prints the output to a new
+--   view.<br />
+--       * `lexer`: The lexer language.
+--       * `output`: The output from the command.
+-- * `_G.events.RUN_OUTPUT`: Called after a run command is executed. When
+--   connecting to this event (typically from a language-specific module),
+--   connect with an index of 1 and return `true` if the event was handled and
+--   you want to override the default handler that prints the output to a new
+--   view.<br />
+--       * `lexer`: The lexer language.
+--       * `output`: The output from the command.
+
+-- Events.
+events.COMPILE_OUTPUT = 'compile_output'
+events.RUN_OUTPUT = 'run_output'
 
 ---
 -- Executes the command line parameter and prints the output to Textadept.
@@ -36,7 +59,7 @@ function execute(command)
   local out = p:read('*all')
   p:close()
   lfs.chdir(current_dir)
-  gui.print(('> '..command..'\n'..out):iconv('UTF-8', _CHARSET))
+  return ('> '..command..'\n'..out):iconv('UTF-8', _CHARSET)
 end
 
 -- Executes a compile or run command.
@@ -45,7 +68,9 @@ local function command(cmd_table)
   if not buffer.filename then return end
   buffer:save()
   local action = cmd_table[buffer.filename:match('[^.]+$')]
-  if action then execute(type(action) == 'function' and action() or action) end
+  if action then
+    return execute(type(action) == 'function' and action() or action)
+  end
 end
 
 ---
@@ -61,7 +86,12 @@ compile_command = {}
 -- Compiles the file as specified by its extension in the compile_command
 -- table.
 -- @see compile_command
-function compile() command(compile_command) end
+function compile()
+  events.emit(events.COMPILE_OUTPUT, buffer:get_lexer(),
+              command(compile_command))
+end
+events.connect(events.COMPILE_OUTPUT,
+               function(lexer, output) gui.print(output) end)
 
 ---
 -- File extensions and their associated 'go' actions.
@@ -76,7 +106,11 @@ run_command = {}
 -- Runs/executes the file as specified by its extension in the run_command
 -- table.
 -- @see run_command
-function run() command(run_command) end
+function run()
+  events.emit(events.RUN_OUTPUT, buffer:get_lexer(), command(run_command))
+end
+events.connect(events.RUN_OUTPUT,
+               function(lexer, output) gui.print(output) end)
 
 ---
 -- A table of error string details.
