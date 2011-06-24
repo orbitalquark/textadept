@@ -69,6 +69,11 @@ sense.ctags_kinds = {
 }
 sense:load_ctags(_HOME..'/modules/lua/tags', true)
 
+-- Strips '_G' from symbols since it's implied.
+function sense:get_class(symbol)
+  return self.super.get_class(self, symbol:gsub('_G%.?', ''))
+end
+
 -- Shows an autocompletion list for the symbol behind the caret.
 -- If the symbol contains a ':', only display functions. Otherwise, display
 -- both functions and fields.

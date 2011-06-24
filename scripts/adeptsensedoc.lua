@@ -182,7 +182,6 @@ function start(doc)
         write_tag(ctags, child, 't', 'class:'..parent)
       elseif module ~= '_G' then
         -- Tag the module as a global table.
-        write_tag(ctags, module, 't', 'class:_G')
         write_tag(ctags, module, 't', '')
       end
       m.modifier = '[module]'
@@ -192,8 +191,8 @@ function start(doc)
     for _, f in ipairs(m.functions) do
       if not f:find('no_functions') then -- ignore placeholders
         local func = f:match('[^%.:]+$')
-        write_tag(ctags, func, 'f', 'class:'..module)
-        if module == '_G' then write_tag(ctags, func, 'f', '') end -- global
+        local ext_fields = module == '_G' and '' or 'class:'..module
+        write_tag(ctags, func, 'f', ext_fields)
         write_apidoc(apidoc, m, m.functions[f])
       end
     end
@@ -201,14 +200,10 @@ function start(doc)
     for _, t in ipairs(m.tables or {}) do
       local table = m.tables[t]
       local module = module -- define locally so any modification stays local
-      if t:find('^_G%.') then module, t = t:match('^(.-)%.([^%.]+)$') end
-      write_tag(ctags, t, 't', 'class:'..module)
-      -- If the table is global, add another tag that strips out the _G.
-      if module == '_G' then
-        write_tag(ctags, t, 't', '')
-      elseif module:find('^_G') then
-        write_tag(ctags, t, 't', 'class:'..module:match('^_G%.(.+)$'))
-      end
+      if t:find('^_G%.') then module, t = t:match('^_G%.(.-)%.?([^%.]+)$') end
+      if not module then _G.print(table.name) end
+      local ext_fields = module == '_G' and '' or 'class:'..module
+      write_tag(ctags, t, 't', ext_fields)
       table.modifier = '[table]'
       write_apidoc(apidoc, m, table)
       -- Tag the fields of the tables.
@@ -221,8 +216,8 @@ function start(doc)
     end
     -- Tag the fields.
     for _, f in ipairs(m.fields or {}) do
-      write_tag(ctags, f, 'F', 'class:'..module)
-      if module == '_G' then write_tag(ctags, f, 'F', '') end -- global
+      local ext_fields = module == '_G' and '' or 'class:'..module
+      write_tag(ctags, f, 'F', ext_fields)
       write_apidoc(apidoc, m, m.fields[f])
     end
   end
