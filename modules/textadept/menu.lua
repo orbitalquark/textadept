@@ -1,9 +1,9 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- Modified by Robert Gieseke.
 
-local L = _G.locale.localize
-local events = _G.events
-local gui = _G.gui
+local L = locale.localize
+local events = events
+local gui = gui
 
 ---
 -- Provides dynamic menus for Textadept.
@@ -317,7 +317,7 @@ end
 --   entry is another table that corresponds to a particular menu. A menu can
 --   have a 'title' key with string value. Each menu item is either a submenu
 --   (another menu table) or a table consisting of two items: string menu text
---   and an action table just like `_G.keys`'s action table. If the menu text is
+--   and an action table just like `keys`'s action table. If the menu text is
 --   'separator', a menu separator is created and no action table is required.
 function set_menubar(menubar)
   menu_actions = {}

@@ -1,6 +1,6 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = _G.locale.localize
+local L = locale.localize
 
 ---
 -- Textadept's core event structure and handlers.
@@ -132,9 +132,9 @@ module('events', package.seeall)
 --       * `find_text`: The text to search for.
 --       * `repl_text`: The text to replace found text with.
 -- * `RESET_AFTER`: Called after resetting the Lua state. This is triggered by
---   `_G.reset()`.
+--   `reset()`.
 -- * `RESET_BEFORE`: Called before resetting the Lua state. This is triggered by
---   `_G.reset()`.
+--   `reset()`.
 -- * `SAVE_POINT_LEFT`: Called when a save point is left.
 -- * `SAVE_POINT_REACHED`: Called when a save point is entered.
 -- * `UPDATE_UI`: Called when either the text or styling of the buffer has
@@ -211,7 +211,7 @@ function emit(event, ...)
   if not event then error(L('Undefined event name')) end
   local h = handlers[event]
   if not h then return end
-  local pcall, unpack, type = _G.pcall, _G.unpack, _G.type
+  local pcall, unpack, type = pcall, unpack, type
   for i = 1, #h do
     local ok, result = pcall(h[i], unpack{...})
     if not ok then

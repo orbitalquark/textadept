@@ -1,6 +1,6 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = _G.locale.localize
+local L = locale.localize
 
 ---
 -- Manages key commands in Textadept.
@@ -92,12 +92,12 @@ local ALT = 'a'..ADD
 -- end settings
 
 -- Optimize for speed.
-local string = _G.string
+local string = string
 local string_char = string.char
-local xpcall = _G.xpcall
-local next = _G.next
-local type = _G.type
-local unpack = _G.unpack
+local xpcall = xpcall
+local next = next
+local type = type
+local unpack = unpack
 local no_args = {}
 local getmetatable = getmetatable
 local error = function(e) events.emit(events.ERROR, e) end

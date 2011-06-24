@@ -1,6 +1,6 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = _G.locale.localize
+local L = locale.localize
 
 ---
 -- Session support for the textadept module.

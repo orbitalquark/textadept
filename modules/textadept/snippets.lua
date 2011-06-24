@@ -1,6 +1,6 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = _G.locale.localize
+local L = locale.localize
 
 ---
 -- Provides Lua-style snippets for Textadept.
@@ -104,9 +104,9 @@ module('_m.textadept.snippets', package.seeall)
 --
 -- ## Example
 --
---     _G.snippets.snippet = '_G.snippets.%1 = \'%0\''
---     _G.snippets.file = '%<buffer.filename>'
---     _G.snippets.lua = {
+--     snippets.snippet = 'snippets.%1 = \'%0\''
+--     snippets.file = '%<buffer.filename>'
+--     snippets.lua = {
 --       f = 'function %1(name)(%2(args))\n\t%0\nend'
 --     }
 --
@@ -182,7 +182,7 @@ function _insert(text)
     local lexer = buffer:get_lexer()
     trigger = buffer:text_range(buffer:word_start_position(buffer.current_pos),
                                 buffer.current_pos)
-    local snip = _G.snippets
+    local snip = snippets
     text = snip[trigger]
     if type(snip) == 'table' and snip[lexer] then snip = snip[lexer] end
     text = snip[trigger] or text
@@ -215,14 +215,14 @@ end
 function _select()
   local list = {}
   local table_concat, type = table.concat, type
-  for trigger, text in pairs(_G.snippets) do
+  for trigger, text in pairs(snippets) do
     if type(text) == 'string' and
        trigger ~= '_NAME' and trigger ~= '_PACKAGE' then
       list[#list + 1] = table_concat({trigger, 'global', text }, '\0')
     end
   end
   local lexer = buffer:get_lexer()
-  for trigger, text in pairs(_G.snippets[lexer] or {}) do
+  for trigger, text in pairs(snippets[lexer] or {}) do
     if type(text) == 'string' then
       list[#list + 1] = table_concat({trigger, lexer, text }, '\0')
     end

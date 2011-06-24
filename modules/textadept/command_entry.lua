@@ -1,8 +1,8 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- Modified by Jay Gould.
 
-local L = _G.locale.localize
-local events = _G.events
+local L = locale.localize
+local events = events
 
 -- Environment for abbreviated commands.
 -- @class table

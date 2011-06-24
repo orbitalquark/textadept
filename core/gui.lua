@@ -1,7 +1,7 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = _G.locale.localize
-local gui = _G.gui
+local L = locale.localize
+local gui = gui
 
 -- LuaDoc is in core/.gui.luadoc.
 function gui.check_focused_buffer(buffer)
@@ -87,7 +87,7 @@ function gui.switch_buffer()
   if i then view:goto_buffer(i + 1, true) end
 end
 
-local connect = _G.events.connect
+local connect = events.connect
 
 -- Sets default properties for a Scintilla window.
 connect(events.VIEW_NEW, function()
