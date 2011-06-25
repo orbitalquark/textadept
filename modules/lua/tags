@@ -999,6 +999,7 @@ focused_doc_pointer	_	0;"	F	class:gui
 fold	_	0;"	f	class:lexer
 fold_expanded	_	0;"	F	class:buffer
 fold_level	_	0;"	F	class:buffer
+fold_line_comments	_	0;"	f	class:lexer
 fold_parent	_	0;"	F	class:buffer
 font_quality	_	0;"	F	class:buffer
 form_feed	_	0;"	f	class:buffer
