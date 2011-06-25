@@ -6,6 +6,7 @@ local buffer = buffer
 -- Folding.
 buffer.property['fold'] = '1'
 buffer.property['fold.by.indentation'] = '1'
+buffer.property['fold.line.comments'] = '0'
 
 -- Tabs and Indentation.
 buffer.tab_width = 2
