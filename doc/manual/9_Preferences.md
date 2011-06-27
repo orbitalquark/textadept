@@ -65,10 +65,10 @@ more information, see the [scripting](11_Scripting.html) page.
 
 ##### Snippets
 
-You can add global snippets to `_G.snippets` such as:
+You can add global snippets to `snippets` such as:
 
-    _G.snippets['file'] = '%<buffer.filename>'
-    _G.snippets['path'] = "%<(buffer.filename or ''):match('^.+[/\\]')>"
+    snippets['file'] = '%<buffer.filename>'
+    snippets['path'] = "%<(buffer.filename or ''):match('^.+[/\\]')>"
 
 So typing `file` or `path` and then pressing `Tab` will insert the snippet.
 
@@ -76,12 +76,12 @@ So typing `file` or `path` and then pressing `Tab` will insert the snippet.
 
 It is not recommended to edit Textadept's `modules/textadept/keys.lua` for
 changing the key bindings since your changes could be overwritten when updating
-Textadept. Instead, modify `_G.keys` from within your `~/.textadept/init.lua` or
+Textadept. Instead, modify `keys` from within your `~/.textadept/init.lua` or
 from a file loaded by `~/.textadept/init.lua`. For example maybe you want
 `Alt+N` to create a new buffer instead of `Ctrl+N`:
 
-    _G.keys.an = new_buffer
-    _G.keys.cn = nil
+    keys.an = new_buffer
+    keys.cn = nil
 
 ## Locale
 
