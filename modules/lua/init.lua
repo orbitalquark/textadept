@@ -70,12 +70,11 @@ sense.ctags_kinds = {
 sense:load_ctags(_HOME..'/modules/lua/tags', true)
 
 -- Strips '_G' from symbols since it's implied.
-function sense:get_class(symbol)
-  if symbol:find('^_G') then
-    symbol = symbol:gsub('_G%.?', '')
-    if symbol == '' then return '' end
-  end
-  return self.super.get_class(self, symbol)
+function sense:get_symbol()
+  local symbol, part = self.super.get_symbol(self)
+  if symbol:find('^_G') then symbol = symbol:gsub('_G%.?', '') end
+  if part == '_G' then part = '' end
+  return symbol, part
 end
 
 -- Shows an autocompletion list for the symbol behind the caret.
