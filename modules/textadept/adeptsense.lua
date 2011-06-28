@@ -586,8 +586,8 @@ function show_apidoc(sense)
     buffer:goto_pos(buffer:word_end_position(s, true))
     local line, p = buffer:get_cur_line()
     line = line:sub(1, p)
-    symbol = line:match('('..sense.syntax.symbol_chars..'+)%s*%([^)]*$') or
-             line:match('('..sense.syntax.symbol_chars..'+)%s*$') or ''
+    symbol = line:match('('..sense.syntax.symbol_chars..'+)%s*$') or
+             line:match('('..sense.syntax.symbol_chars..'+)%s*%([^()]*$') or ''
     buffer:goto_pos(e)
   else
     symbol = buffer:text_range(s, e)
