@@ -22,7 +22,7 @@ WINDRES =
 # Win32 (WIN32=1)
 ifdef WIN32
 CC = i486-mingw32-gcc -mms-bitfields
-CPP = i486-mingw32-g++ -mms-bitfields -mwindows
+CPP = i486-mingw32-g++ -mms-bitfields -mwindows -static-libgcc -static-libstdc++
 PKG_CONFIG = pkg-config --define-variable=prefix=win32gtk
 PKG_CONFIG_PATH = $(shell pwd)/win32gtk/lib/pkgconfig
 PLAT_FLAGS = -DGTK -D__WIN32__
