@@ -97,7 +97,7 @@ static OSErr w_ae_quit(const AppleEvent *, AppleEvent *, long);
 // Find/Replace
 GtkWidget *findbox, *find_entry, *replace_entry, *fnext_button, *fprev_button,
           *r_button, *ra_button, *match_case_opt, *whole_word_opt, *lua_opt,
-          *in_files_opt;
+          *in_files_opt, *flabel, *rlabel;
 GtkWidget *find_create_ui();
 GtkListStore *find_store, *repl_store;
 
@@ -643,8 +643,8 @@ GtkWidget *find_create_ui() {
   find_store = gtk_list_store_new(1, G_TYPE_STRING);
   repl_store = gtk_list_store_new(1, G_TYPE_STRING);
 
-  GtkWidget *flabel = gtk_label_new_with_mnemonic("_Find:");
-  GtkWidget *rlabel = gtk_label_new_with_mnemonic("R_eplace:");
+  flabel = gtk_label_new_with_mnemonic("_Find:");
+  rlabel = gtk_label_new_with_mnemonic("R_eplace:");
   GtkWidget *find_combo = gtk_combo_box_entry_new_with_model(
                           GTK_TREE_MODEL(find_store), 0);
   gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(find_combo), 0);
@@ -668,7 +668,7 @@ GtkWidget *find_create_ui() {
   match_case_opt = gtk_check_button_new_with_mnemonic("_Match case");
   whole_word_opt = gtk_check_button_new_with_mnemonic("_Whole word");
   lua_opt = gtk_check_button_new_with_mnemonic("_Lua pattern");
-  in_files_opt = gtk_check_button_new_with_mnemonic("_In Files");
+  in_files_opt = gtk_check_button_new_with_mnemonic("_In files");
 
   gtk_label_set_mnemonic_widget(GTK_LABEL(flabel), find_entry);
   gtk_label_set_mnemonic_widget(GTK_LABEL(rlabel), replace_entry);
@@ -1819,6 +1819,26 @@ static int l_find_mt_newindex(lua_State *lua) {
     toggle(lua_opt, lua_toboolean(lua, -1) ? TRUE : FALSE);
   else if (streq(key, "in_files"))
     toggle(in_files_opt, lua_toboolean(lua, -1) ? TRUE : FALSE);
+  else if (streq(key, "find_label_text"))
+    gtk_label_set_text_with_mnemonic(GTK_LABEL(flabel), lua_tostring(lua, 3));
+  else if (streq(key, "replace_label_text"))
+    gtk_label_set_text_with_mnemonic(GTK_LABEL(rlabel), lua_tostring(lua, 3));
+  else if (streq(key, "find_next_button_text"))
+    gtk_button_set_label(GTK_BUTTON(fnext_button), lua_tostring(lua, 3));
+  else if (streq(key, "find_prev_button_text"))
+    gtk_button_set_label(GTK_BUTTON(fprev_button), lua_tostring(lua, 3));
+  else if (streq(key, "replace_button_text"))
+    gtk_button_set_label(GTK_BUTTON(r_button), lua_tostring(lua, 3));
+  else if (streq(key, "replace_all_button_text"))
+    gtk_button_set_label(GTK_BUTTON(ra_button), lua_tostring(lua, 3));
+  else if (streq(key, "match_case_label_text"))
+    gtk_button_set_label(GTK_BUTTON(match_case_opt), lua_tostring(lua, 3));
+  else if (streq(key, "whole_word_label_text"))
+    gtk_button_set_label(GTK_BUTTON(whole_word_opt), lua_tostring(lua, 3));
+  else if (streq(key, "lua_pattern_label_text"))
+    gtk_button_set_label(GTK_BUTTON(lua_opt), lua_tostring(lua, 3));
+  else if (streq(key, "in_files_label_text"))
+    gtk_button_set_label(GTK_BUTTON(in_files_opt), lua_tostring(lua, 3));
   else
     lua_rawset(lua, 1);
   return 0;
