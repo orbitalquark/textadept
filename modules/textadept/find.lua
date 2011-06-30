@@ -5,6 +5,17 @@ local events = events
 local find = gui.find
 local c = _SCINTILLA.constants
 
+find.find_label_text = L('_Find:')
+find.replace_label_text = L('R_eplace:')
+find.find_next_button_text = L('Find _Next')
+find.find_prev_button_text = L('Find _Prev')
+find.replace_button_text = L('_Replace')
+find.replace_all_button_text = L('Replace _All')
+find.match_case_label_text = L('_Match case')
+find.whole_word_label_text = L('_Whole word')
+find.lua_pattern_label_text = L('_Lua pattern')
+find.in_files_label_text = L('_In files')
+
 local MARK_FIND = _SCINTILLA.next_marker_number()
 local MARK_FIND_COLOR = 0x4D9999
 local previous_view
