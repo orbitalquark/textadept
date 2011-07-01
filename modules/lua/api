@@ -773,9 +773,9 @@ autocomplete_word _m.textadept.editing.autocomplete_word(word_chars)\nPops up an
 back_space_un_indents buffer.back_space_un_indents [bool]\nWhether a backspace pressed when caret is within indentation unindents.\n
 back_tab buffer.back_tab(buffer)\nDedent the selected lines.\n@param buffer The focused buffer.\n
 begin_undo_action buffer.begin_undo_action(buffer)\nStart a sequence of actions that is undone and redone as a unit. May be nested.\n@param buffer The focused buffer.\n
-black lexer.black\n\n
+black lexer.colors.black\nBlack.\n
 block_comment _m.textadept.editing.block_comment(comment)\nBlock comments or uncomments code with a given comment string.\n@param comment The comment string inserted or removed from the beginning of\neach line in the selection.\n
-blue lexer.blue\n\n
+blue lexer.colors.blue\nBlue.\n
 boms io.boms [table]\nList of byte-order marks (BOMs).\n
 bookmarks _m.textadept.bookmarks [module]\nBookmarks for the textadept module.\n
 brace_bad_light buffer.brace_bad_light(buffer, pos)\nHighlight the character at a position indicating there is no matching brace.\n@param buffer The focused buffer.\n@param pos The position or -1 to remove the highlight.\n
@@ -843,6 +843,7 @@ cntrl lexer.cntrl\nMatches any control character (`0`..`31`).\n
 code_page buffer.code_page [number]\nThe code page used to interpret the bytes of the document as characters. The\n`_SCINTILLA.constants.SC_CP_UTF8` value can be used to enter Unicode mode.\n
 collectgarbage _G.collectgarbage(opt [, arg])\nThis function is a generic interface to the garbage collector. It performs\ndifferent functions according to its first argument, `opt`: "stop": stops the\ngarbage collector. "restart": restarts the garbage collector. "collect":\nperforms a full garbage-collection cycle. "count": returns the total\nmemory in use by Lua (in Kbytes). "step": performs a garbage-collection\nstep. The step "size" is controlled by `arg` (larger values mean more\nsteps) in a non-specified way. If you want to control the step size you\nmust experimentally tune the value of `arg`. Returns true if the step\nfinished a collection cycle. "setpause": sets `arg` as the new value for\nthe *pause* of the collector (see §2.10). Returns the previous value for\n*pause*. "setstepmul": sets `arg` as the new value for the *step multiplier*\nof the collector (see §2.10). Returns the previous value for *step*.\n
 color lexer.color(r, g, b)\nCreates a Scintilla color.\n@param r The string red component of the hexadecimal color.\n@param g The string green component of the color.\n@param b The string blue component of the color.\n@usage local red = color('FF', '00', '00')\n
+colors lexer.colors [table]\nTable of common colors for a theme. This table should be redefined in\neach theme.\n
 colourise buffer.colourise(buffer, start_pos, end_pos)\ncolorise a segment of the document using the current lexing language.\n@param buffer The focused buffer.\n@param start_pos The start position.\n@param end_pos The end position or -1 to style from start_pos to the end of\nthe document.\n
 column buffer.column [table]\nTable of column numbers, taking tab widths into account, for positions\nstarting from zero. (Read-only)\n
 command_entry gui.command_entry [module]\nTextadept's Command entry.\n
@@ -955,8 +956,11 @@ find_column buffer.find_column(buffer, line, column)\nFind the position of a col
 find_entry_text gui.find.find_entry_text [string]\nThe text in the find entry.\n
 find_in_files gui.find.find_in_files(utf8_dir)\nPerforms a find in files with the given directory. Use the gui.find fields\nto set the text to find and find options.\n@param utf8_dir UTF-8 encoded directory name. If none is provided, the user\nis prompted for one.\n
 find_incremental gui.find.find_incremental()\nBegins an incremental find using the Lua command entry. Lua command\nfunctionality will be unavailable until the search is finished (pressing\n'Escape' by default).\n
+find_label_text gui.find.find_label_text [string]\nThe text of the 'Find' label. This is primarily used for\nlocalization. (Write-only)\n
 find_next gui.find.find_next()\nMimicks a press of the 'Find Next' button in the Find box.\n
+find_next_button_text gui.find.find_next_button_text [string]\nThe text of the 'Find Next' button. This is primarily used for\nlocalization. (Write-only)\n
 find_prev gui.find.find_prev()\nMimicks a press of the 'Find Prev' button in the Find box.\n
+find_prev_button_text gui.find.find_prev_button_text [string]\nThe text of the 'Find Prev' button. This is primarily used for\nlocalization. (Write-only)\n
 first_visible_line buffer.first_visible_line [number]\nThe display line at the top of the display.\n
 float lexer.float\nMatches a floating point number.\n
 floor math.floor(x)\nReturns the largest integer smaller than or equal to `x`.\n
@@ -1029,8 +1033,8 @@ goto_required _m.ruby.goto_required()\nDetermine the Ruby file being 'require'd,
 goto_view gui.goto_view(n, absolute)\nGoes to the specified view. Activates the 'view_*_switch' signal.\n@param n A relative or absolute view index.\n@param absolute Flag indicating if n is an absolute index or not.\n
 grab_focus buffer.grab_focus(buffer)\nSet the focus to this view.\n@param buffer The focused buffer.\n
 graph lexer.graph\nMatches any graphical character (`!` to `~`).\n
-green lexer.green\n\n
-grey lexer.grey\n\n
+green lexer.colors.green\nGreen.\n
+grey lexer.colors.grey\nGrey.\n
 grow_selection _m.textadept.editing.grow_selection(amount)\nGrows the selection by a character amount on either end.\n@param amount The amount to grow the selection on either end.\n
 gsub string.gsub(s, pattern, repl [, n])\nReturns a copy of `s` in which all (or the first `n`, if given) occurrences\nof the `pattern` have been replaced by a replacement string specified by\n`repl`, which can be a string, a table, or a function. `gsub` also returns,\nas its second value, the total number of matches that occurred. If `repl`\nis a string, then its value is used for replacement. The character `%`\nworks as an escape character: any sequence in `repl` of the form `%n`, with\n*n* between 1 and 9, stands for the value of the *n*-th captured substring\n(see below). The sequence `%0` stands for the whole match. The sequence `%%`\nstands for a single `%`. If `repl` is a table, then the table is queried for\nevery match, using the first capture as the key; if the pattern specifies no\ncaptures, then the whole match is used as the key. If `repl` is a function,\nthen this function is called every time a match occurs, with all captured\nsubstrings passed as arguments, in order; if the pattern specifies no\ncaptures, then the whole match is passed as a sole argument. If the value\nreturned by the table query or by the function call is a string or a number,\nthen it is used as the replacement string; otherwise, if it is false or nil,\nthen there is no replacement (that is, the original match is kept in the\nstring). Here are some examples: x = string.gsub("hello world", "(%w+)",\n"%1 %1") --> x="hello hello world world" x = string.gsub("hello world", "%w+",\n"%0 %0", 1) --> x="hello hello world" x = string.gsub("hello world from Lua",\n"(%w+)%s*(%w+)", "%2 %1") --> x="world hello Lua from" x = string.gsub("home =\n$HOME, user = $USER", "%$(%w+)", os.getenv) --> x="home = /home/roberto, user =\nroberto" x = string.gsub("4+5 = $return 4+5$", "%$(.-)%$", function (s) return\nloadstring(s)() end) --> x="4+5 = 9" local t = {name="lua", version="5.1"}\nx = string.gsub("$name-$version.tar.gz", "%$(%w+)", t) --> x="lua-5.1.tar.gz"\n
 gtkmenu gui.gtkmenu(menu_table)\nCreates a GTK menu, returning the userdata.\n@param menu_table A table defining the menu. It is an ordered list of\ntables with a string menu item and integer menu ID. The string menu item is\nhandled as follows: 'gtk-*' - a stock menu item is created based on the GTK\nstock-id. 'separator' - a menu separator item is created. Otherwise a regular\nmenu item with a mnemonic is created. Submenus are just nested menu-structure\ntables. Their title text is defined with a 'title' key.\n
@@ -1058,6 +1062,7 @@ hypertext _G.snippets.hypertext [table]\nContainer for HTML-specific snippets.\n
 hypertext _m.hypertext [module]\nThe hypertext module. It provides utilities for editing HTML code. User tags\nare loaded from _USERHOME/modules/hypertext/tags and user apis are loaded\nfrom _USERHOME/modules/hypertext/api.\n
 iconv string.iconv(text, to, from)\nConverts a string from one character set to another using iconv(). Valid\ncharacter sets are ones GLib's g_convert() accepts, typically GNU iconv's\ncharacter sets.\n@param text The text to convert.\n@param to The character set to convert to.\n@param from The character set to convert from.\n
 in_files gui.find.in_files [bool]\nSearch for the text in a list of files.\n
+in_files_label_text gui.find.in_files_label_text [string]\nThe text of the 'In files' label. This is primarily used for\nlocalization. (Write-only)\n
 indent buffer.indent [number]\nIhe number of spaces used for one level of indentation. For a width of 0,\nthe indent size is the same as the tab size.\n
 indentation_guides buffer.indentation_guides [number]\nIndentation guides appearance. Indentation guides are dotted vertical lines\nthat appear within indentation white space every indent size columns.\n    * `_SCINTILLA.constants.SC_IV_NONE` (0): No indentation guides are\n      shown.\n    * `_SCINTILLA.constants.SC_IV_REAL` (1): Indentation guides are shown\n      inside real indentation white space.\n    * `_SCINTILLA.constants.SC_IV_LOOKFORWARD` (2): Indentation guides are\n      shown beyond the actual indentation up to the level of the next\n      non-empty line. If the previous non-empty line was a fold header then\n      indentation guides are shown for one more level of indent than that\n      line. This setting is good for Python.\n    * `_SCINTILLA.constants.SC_IV_LOOKBOTH` (3): Indentation guides are\n      shown beyond the actual indentation up to the level of the next\n      non-empty line or previous non-empty line whichever is the greater.\n      This setting is good for most languages.\n\n
 indic_alpha buffer.indic_alpha [table]\nTable of alpha transparency values ranging from 0 (transparent) to 255\n(opaque) or 256 (no alpha) for indicators from 0 to 31. Used for drawing\nthe fill color of the `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX` rectangle.\n
@@ -1156,6 +1161,7 @@ lua _G.keys.lua [table]\nContainer for Lua-specific key commands.\n
 lua _G.snippets.lua [table]\nContainer for Lua-specific snippets.\n
 lua _m.lua [module]\nThe lua module. It provides utilities for editing Lua code. User tags\nare loaded from _USERHOME/modules/lua/tags and user apis are loaded from\n_USERHOME/modules/lua/api.\n
 lua gui.find.lua [bool]\nThe search text is interpreted as a Lua pattern.\n
+lua_pattern_label_text gui.find.lua_pattern_label_text [string]\nThe text of the 'Lua pattern' label. This is primarily used for\nlocalization. (Write-only)\n
 main_selection buffer.main_selection [number]\nThe main selection. The main selection may be displayed in different colors\nor with a differently styled caret. Only an already existing selection can\nbe made main.\n
 margin_cursor_n buffer.margin_cursor_n [table]\nTable of cursors shown for margins from zero to four. A reversed arrow cursor\nis normally shown over all margins.\n    * `_SCINTILLA.constants.SC_CURSORARROW`: Normal arrow.\n    * `_SCINTILLA.constants.SC_CURSORREVERSEARROW`: Reversed arrow.\n\n
 margin_get_text buffer.margin_get_text(buffer, line)\nGet the text in the text margin for a line.\n@param buffer The focused buffer.\n@param line The line number.\n@return string\n
@@ -1191,6 +1197,7 @@ match lpeg.match(pattern, subject [, init])\nThe matching function. It attempts 
 match string.match(s, pattern [, init])\nLooks for the first *match* of `pattern` in the string `s`. If it finds one,\nthen `match` returns the captures from the pattern; otherwise it returns\nnil. If `pattern` specifies no captures, then the whole match is returned. A\nthird, optional numerical argument `init` specifies where to start the search;\nits default value is 1 and can be negative.\n
 match_brace _m.textadept.editing.match_brace(select)\nGoes to a matching brace position, selecting the text inside if specified.\n@param select If true, selects the text between matching braces.\n
 match_case gui.find.match_case [bool]\nSearches are case-sensitive.\n
+match_case_label_text gui.find.match_case_label_text [string]\nThe text of the 'Match case' label. This is primarily used for\nlocalization. (Write-only)\n
 math _G.math [module]\nLua math module.\n
 max math.max(x, ···)\nReturns the maximum value among its arguments.\n
 max_line_state buffer.max_line_state [number]\nThe last line number that has line state. (Read-only)\n
@@ -1227,7 +1234,7 @@ oct_num lexer.oct_num\nMatches an octal number.\n
 open _m.textadept.snapopen.open(utf8_paths, filter, exclusive, depth)\nQuickly open a file in set of directories.\n@param utf8_paths A UTF-8 string directory path or table of UTF-8 directory\npaths to search.\n@param filter A filter for files and folders to exclude. The filter may be\na string or table. Each filter is a Lua pattern. Any files matching a filter\nare excluded. Prefix a pattern with '!' to exclude any files that do not match\nthe filter. Directories can be excluded by adding filters to a table assigned\nto a 'folders' key in the filter table. All strings should be UTF-8 encoded.\n@param exclusive Flag indicating whether or not to exclude PATHS in the\nsearch. Defaults to false.\n@param depth Number of directories to recurse into for finding files. Defaults\nto DEFAULT_DEPTH.\n@usage _m.textadept.snapopen.open()\n@usage _m.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)\n@usage _m.textadept.snapopen.open(nil, '!%.lua$')\n@usage _m.textadept.snapopen.open(nil, { folders = { '%.hg' } })\n
 open io.open(filename [, mode])\nThis function opens a file, in the mode specified in the string `mode`. It\nreturns a new file handle, or, in case of errors, nil plus an error\nmessage. The `mode` string can be any of the following: "r": read mode (the\ndefault); "w": write mode; "a": append mode; "r+": update mode, all previous\ndata is preserved; "w+": update mode, all previous data is erased; "a+":\nappend update mode, previous data is preserved, writing is only allowed at\nthe end of file. The `mode` string can also have a '`b`' at the end, which\nis needed in some systems to open the file in binary mode. This string is\nexactly what is used in the standard C function `fopen`.\n
 open_file io.open_file(utf8_filenames)\nOpens a list of files.\n@param utf8_filenames A '\\n' separated list of UTF-8-encoded filenames to\nopen. If nil, the user is prompted with a fileselect dialog.\n@usage io.open_file(utf8_encoded_filename)\n
-orange lexer.orange\n\n
+orange lexer.colors.orange\nOrange.\n
 os _G.os [module]\nLua os module.\n
 output io.output([file])\nSimilar to `io.input`, but operates over the default output file.\n
 overtype buffer.overtype [bool]\nOvertype mode.\n
@@ -1275,7 +1282,7 @@ properties _SCINTILLA.properties [table]\nScintilla properties.\n
 property buffer.property [table]\nTable of keyword:value string pairs used by a lexer for some optional\nfeatures. (Write-only)\n
 property_int buffer.property_int [table]\nInterprets `buffer.property[keyword]` as an integer if found or returns\n0. (Read-only)\n
 punct lexer.punct\nMatches any punctuation character not alphanumeric (`!` to `/`, `:` to `@`,\n`[` to `'`, `{` to `~`).\n
-purple lexer.purple\n\n
+purple lexer.colors.purple\nPurple.\n
 quit _G.quit()\nQuits Textadept.\n
 rad math.rad(x)\nReturns the angle `x` (given in degrees) in radians.\n
 rails _G.keys.rails [table]\nContainer for Rails-specific key commands.\n
@@ -1295,7 +1302,7 @@ rectangular_selection_anchor_virtual_space buffer.rectangular_selection_anchor_v
 rectangular_selection_caret buffer.rectangular_selection_caret [number]\nThe position of the caret of the rectangular selection.\n
 rectangular_selection_caret_virtual_space buffer.rectangular_selection_caret_virtual_space [number]\nThe amount of virtual space for the caret of the rectangular selection.\n
 rectangular_selection_modifier buffer.rectangular_selection_modifier [number]\nThe modifier key used to indicate that a rectangular selection should be\ncreated when combined with a mouse drag.\n    * `_SCINTILLA.constants.SCMOD_CTRL` (2): Control key (default).\n    * `_SCINTILLA.constants.SCMOD_ALT` (4): Alt key.\n    * `_SCINTILLA.constants.SCMOD_SUPER` (8): Left Windows key on a Windows\n      keyboard or the Command key on a Mac.\n\n
-red lexer.red\n\n
+red lexer.colors.red\nRed.\n
 redo buffer.redo(buffer)\nRedoes the next action on the undo history.\n@param buffer The focused buffer.\n
 register args.register(switch1, switch2, narg, f, description)\nRegisters a command line switch.\n@param switch1 String switch (short version).\n@param switch2 String switch (long version).\n@param narg The number of expected parameters for the switch.\n@param f The Lua function to run when the switch is tripped.\n@param description Description of the switch.\n
 register_image buffer.register_image(buffer, type, xpm_data)\nRegister an XPM image for use in autocompletion lists.\n@param buffer The focused buffer.\n@param type Integer type to register the image with.\n@param xpm_data XPM data as is described for buffer:marker_define_pixmap().\n
@@ -1307,7 +1314,10 @@ rename os.rename(oldname, newname)\nRenames file or directory named `oldname` to
 rep string.rep(s, n)\nReturns a string that is the concatenation of `n` copies of the string `s`.\n
 replace gui.find.replace()\nMimicks a press of the 'Replace' button in the Find box.\n
 replace_all gui.find.replace_all()\nMimicks a press of the 'Replace All' button in the Find box.\n
+replace_all_button_text gui.find.replace_all_button_text [string]\nThe text of the 'Replace All' button. This is primarily used for\nlocalization. (Write-only)\n
+replace_button_text gui.find.replace_button_text [string]\nThe text of the 'Replace' button. This is primarily used for\nlocalization. (Write-only)\n
 replace_entry_text gui.find.replace_entry_text [string]\nThe text in the replace entry.\n
+replace_label_text gui.find.replace_label_text [string]\nThe text of the 'Replace' label. This is primarily used for\nlocalization. (Write-only)\n
 replace_sel buffer.replace_sel(buffer, text)\nReplace the selected text with the argument text. The caret is positioned\nafter the inserted text and the caret is scrolled into view.\n@param buffer The focused buffer.\n@param text The text.\n
 replace_target buffer.replace_target(buffer, text)\nReplace the target text with the argument text. After replacement, the\ntarget range refers to the replacement text. Returns the length of the\nreplacement text.\n@param buffer The focused buffer.\n@param text The text (can contain NULs).\n@return number\n
 replace_target_re buffer.replace_target_re(buffer, text)\nReplace the target text with the argument text after \d processing. Looks for\n\d where d is between 1 and 9 and replaces these with the strings matched in\nthe last search operation which were surrounded by \( and \). Returns the\nlength of the replacement text including any change caused by processing\nthe \d patterns.\n@param buffer The focused buffer.\n@param text The text (can contain NULs).\n@return number\n
@@ -1501,7 +1511,7 @@ target_as_utf8 buffer.target_as_utf8(buffer)\nReturns the target converted to UT
 target_end buffer.target_end [number]\nThe position that ends the target which is used for updating the document\nwithout affecting the scroll position. The target is also set by a successful\n`buffer:search_in_target()`.\n
 target_from_selection buffer.target_from_selection(buffer)\nMake the target range start and end be the same as the selection range start\nand end.\n@param buffer The focused buffer.\n
 target_start buffer.target_start [number]\nThe position that starts the target which is used for updating the document\nwithout affecting the scroll position. The target is also set by a successful\n`buffer:search_in_target()`.\n
-teal lexer.teal\n\n
+teal lexer.colors.teal\nTeal.\n
 text_height buffer.text_height(buffer, line)\nRetrieve the height of a particular line of text in pixels.\n@param buffer The focused buffer.\n@param line The line number.\n@return number\n
 text_length buffer.text_length [number]\nThe number of characters in the document. (Read-only)\n
 text_range buffer.text_range(buffer, start_pos, end_pos)\nGets a range of text from the current buffer.\n@param buffer The currently focused buffer.\n@param start_pos The beginning position of the range of text to get.\n@param end_pos The end position of the range of text to get.\n
@@ -1556,10 +1566,11 @@ view_eol buffer.view_eol [bool]\nWhether the end of line characters are visible.
 view_ws buffer.view_ws [number]\nThe visibility of white space characters.\n    * `_SCINTILLA.constants.SCWS_INVISIBLE` (0): The normal display mode\n      with white space displayed as an empty background color.\n    * `_SCINTILLA.constants.SCWS_VISIBLEALWAYS` (1): White space characters\n      are drawn as dots and arrows.\n    * `_SCINTILLA.constants.SCWS_VISIBLEAFTERINDENT` (2): White space used\n      for indentation is displayed normally but after the first visible\n      character, it is shown as dots and arrows.\n\n
 virtual_space_options buffer.virtual_space_options [number]\nVirtual space options.\n    * `_SCINTILLA.constants.SCVS_NONE` (0): Disables all use of virtual\n      space (default).\n    * `_SCINTILLA.constants.SCVS_RECTANGULARSELECTION` (1): Enabled only\n      for rectangular selections.\n    * `_SCINTILLA.constants.SCVS_USERACCESSIBLE` (2): Enabled.\n\n
 visible_from_doc_line buffer.visible_from_doc_line(buffer, line)\nFind the display line of a document line taking hidden lines into account. If\nthere is folding and line is outside the range of lines in the document,\nthe return value is -1.\n@param buffer The focused buffer.\n@param line The line number.\n@return number\n
-white lexer.white\n\n
+white lexer.colors.white\nWhite.\n
 whitespace_chars buffer.whitespace_chars [string]\nThe set of characters making up whitespace for when moving or selecting by\nword. Use after setting `buffer.word_chars`. (Write-only)\n
 whitespace_size buffer.whitespace_size [number]\nThe size of the dots used to mark space characters.\n
 whole_word gui.find.whole_word [bool]\nOnly whole-word matches are allowed in searches.\n
+whole_word_label_text gui.find.whole_word_label_text [string]\nThe text of the 'Whole word' label. This is primarily used for\nlocalization. (Write-only)\n
 word lexer.word\nMatches a typical word starting with a letter or underscore and then any\nalphanumeric or underscore characters.\n
 word_chars _m.textadept.adeptsense.syntax.word_chars\nA Lua pattern of characters allowed in a word. Default is '%w_'.\n
 word_chars buffer.word_chars [string]\nThe set of characters making up words when moving or selecting by\nword. (Write-only)\n
@@ -1590,7 +1601,7 @@ write io.write(···)\nEquivalent to `io.output():write`.\n
 x_offset buffer.x_offset [number]\nThe horizontal scroll position. A value of 0 is the normal position with\nthe first text column visible at the left of the view.\n
 xdigit lexer.xdigit\nMatches any hexadecimal digit (`0-9`, `A-F`, `a-f`).\n
 xpcall _G.xpcall(f, err)\nThis function is similar to `pcall`, except that you can set a new error\nhandler. `xpcall` calls function `f` in protected mode, using `err` as the\nerror handler. Any error inside `f` is not propagated; instead, `xpcall`\ncatches the error, calls the `err` function with the original error object,\nand returns a status code. Its first result is the status code (a boolean),\nwhich is true if the call succeeds without errors. In this case, `xpcall`\nalso returns all results from the call, after this first result. In case of\nany error, `xpcall` returns false plus the result from `err`.\n
-yellow lexer.yellow\n\n
+yellow lexer.colors.yellow\nYellow.\n
 yield coroutine.yield(···)\nSuspends the execution of the calling coroutine. The coroutine cannot be\nrunning a C function, a metamethod, or an iterator. Any arguments to `yield`\nare passed as extra results to `resume`.\n
 zoom buffer.zoom [number]\nThe number of points added to the size of all fonts. It may be positive to\nmagnify or negative to reduce.\n
 zoom_in buffer.zoom_in(buffer)\nMagnify the displayed text by increasing the sizes by 1 point if the current\nzoom factor is less than 20 points.\n@param buffer The focused buffer.\n

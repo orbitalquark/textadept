@@ -797,9 +797,9 @@ autocomplete_word	_	0;"	f	class:_m.textadept.editing
 back_space_un_indents	_	0;"	F	class:buffer
 back_tab	_	0;"	f	class:buffer
 begin_undo_action	_	0;"	f	class:buffer
-black	_	0;"	F	class:lexer
+black	_	0;"	F	class:lexer.colors
 block_comment	_	0;"	f	class:_m.textadept.editing
-blue	_	0;"	F	class:lexer
+blue	_	0;"	F	class:lexer.colors
 boms	_	0;"	t	class:io
 bookmarks	_	0;"	t	class:_m.textadept
 brace_bad_light	_	0;"	f	class:buffer
@@ -868,6 +868,7 @@ cntrl	_	0;"	F	class:lexer
 code_page	_	0;"	F	class:buffer
 collectgarbage	_	0;"	f	
 color	_	0;"	f	class:lexer
+colors	_	0;"	t	class:lexer
 colourise	_	0;"	f	class:buffer
 column	_	0;"	F	class:buffer
 command_entry	_	0;"	t	class:gui
@@ -983,8 +984,11 @@ find_column	_	0;"	f	class:buffer
 find_entry_text	_	0;"	F	class:gui.find
 find_in_files	_	0;"	f	class:gui.find
 find_incremental	_	0;"	f	class:gui.find
+find_label_text	_	0;"	F	class:gui.find
 find_next	_	0;"	f	class:gui.find
+find_next_button_text	_	0;"	F	class:gui.find
 find_prev	_	0;"	f	class:gui.find
+find_prev_button_text	_	0;"	F	class:gui.find
 first_visible_line	_	0;"	F	class:buffer
 float	_	0;"	F	class:lexer
 floor	_	0;"	f	class:math
@@ -1057,8 +1061,8 @@ goto_required	_	0;"	f	class:_m.ruby
 goto_view	_	0;"	f	class:gui
 grab_focus	_	0;"	f	class:buffer
 graph	_	0;"	F	class:lexer
-green	_	0;"	F	class:lexer
-grey	_	0;"	F	class:lexer
+green	_	0;"	F	class:lexer.colors
+grey	_	0;"	F	class:lexer.colors
 grow_selection	_	0;"	f	class:_m.textadept.editing
 gsub	_	0;"	f	class:string
 gtkmenu	_	0;"	f	class:gui
@@ -1089,6 +1093,7 @@ hypertext	_	0;"	t	class:keys
 hypertext	_	0;"	t	class:snippets
 iconv	_	0;"	f	class:string
 in_files	_	0;"	F	class:gui.find
+in_files_label_text	_	0;"	F	class:gui.find
 indent	_	0;"	F	class:buffer
 indentation_guides	_	0;"	F	class:buffer
 indic_alpha	_	0;"	F	class:buffer
@@ -1193,6 +1198,7 @@ lua	_	0;"	F	class:gui.find
 lua	_	0;"	t	class:_m
 lua	_	0;"	t	class:keys
 lua	_	0;"	t	class:snippets
+lua_pattern_label_text	_	0;"	F	class:gui.find
 main_selection	_	0;"	F	class:buffer
 margin_cursor_n	_	0;"	F	class:buffer
 margin_get_text	_	0;"	f	class:buffer
@@ -1228,6 +1234,7 @@ match	_	0;"	f	class:lpeg
 match	_	0;"	f	class:string
 match_brace	_	0;"	f	class:_m.textadept.editing
 match_case	_	0;"	F	class:gui.find
+match_case_label_text	_	0;"	F	class:gui.find
 math	_	0;"	m	
 math	_	0;"	t	
 max	_	0;"	f	class:math
@@ -1265,7 +1272,7 @@ oct_num	_	0;"	F	class:lexer
 open	_	0;"	f	class:_m.textadept.snapopen
 open	_	0;"	f	class:io
 open_file	_	0;"	f	class:io
-orange	_	0;"	F	class:lexer
+orange	_	0;"	F	class:lexer.colors
 os	_	0;"	m	
 os	_	0;"	t	
 output	_	0;"	f	class:io
@@ -1315,7 +1322,7 @@ properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
 property_int	_	0;"	F	class:buffer
 punct	_	0;"	F	class:lexer
-purple	_	0;"	F	class:lexer
+purple	_	0;"	F	class:lexer.colors
 quit	_	0;"	f	
 rad	_	0;"	f	class:math
 rails	_	0;"	t	class:_m
@@ -1335,7 +1342,7 @@ rectangular_selection_anchor_virtual_space	_	0;"	F	class:buffer
 rectangular_selection_caret	_	0;"	F	class:buffer
 rectangular_selection_caret_virtual_space	_	0;"	F	class:buffer
 rectangular_selection_modifier	_	0;"	F	class:buffer
-red	_	0;"	F	class:lexer
+red	_	0;"	F	class:lexer.colors
 redo	_	0;"	f	class:buffer
 register	_	0;"	f	class:args
 register_image	_	0;"	f	class:buffer
@@ -1347,7 +1354,10 @@ rename	_	0;"	f	class:os
 rep	_	0;"	f	class:string
 replace	_	0;"	f	class:gui.find
 replace_all	_	0;"	f	class:gui.find
+replace_all_button_text	_	0;"	F	class:gui.find
+replace_button_text	_	0;"	F	class:gui.find
 replace_entry_text	_	0;"	F	class:gui.find
+replace_label_text	_	0;"	F	class:gui.find
 replace_sel	_	0;"	f	class:buffer
 replace_target	_	0;"	f	class:buffer
 replace_target_re	_	0;"	f	class:buffer
@@ -1543,7 +1553,7 @@ target_as_utf8	_	0;"	f	class:buffer
 target_end	_	0;"	F	class:buffer
 target_from_selection	_	0;"	f	class:buffer
 target_start	_	0;"	F	class:buffer
-teal	_	0;"	F	class:lexer
+teal	_	0;"	F	class:lexer.colors
 text_height	_	0;"	f	class:buffer
 text_length	_	0;"	F	class:buffer
 text_range	_	0;"	f	class:buffer
@@ -1599,10 +1609,11 @@ view_eol	_	0;"	F	class:buffer
 view_ws	_	0;"	F	class:buffer
 virtual_space_options	_	0;"	F	class:buffer
 visible_from_doc_line	_	0;"	f	class:buffer
-white	_	0;"	F	class:lexer
+white	_	0;"	F	class:lexer.colors
 whitespace_chars	_	0;"	F	class:buffer
 whitespace_size	_	0;"	F	class:buffer
 whole_word	_	0;"	F	class:gui.find
+whole_word_label_text	_	0;"	F	class:gui.find
 word	_	0;"	F	class:lexer
 word_chars	_	0;"	F	class:_m.textadept.adeptsense.syntax
 word_chars	_	0;"	F	class:buffer
@@ -1633,7 +1644,7 @@ write	_	0;"	f	class:io
 x_offset	_	0;"	F	class:buffer
 xdigit	_	0;"	F	class:lexer
 xpcall	_	0;"	f	
-yellow	_	0;"	F	class:lexer
+yellow	_	0;"	F	class:lexer.colors
 yield	_	0;"	f	class:coroutine
 zoom	_	0;"	F	class:buffer
 zoom_in	_	0;"	f	class:buffer
