@@ -75,7 +75,7 @@ buffer.annotation_visible = 2
 --buffer.two_phase_draw = false
 
 -- Indentation Guides.
-buffer.indentation_guides = 1
+buffer.indentation_guides = 3
 
 -- Fold Margin Markers.
 buffer:marker_define(c.SC_MARKNUM_FOLDEROPEN, c.SC_MARK_ARROWDOWN)
