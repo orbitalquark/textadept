@@ -40,7 +40,8 @@
   l_emit_event(name, LUA_TNUMBER, event->keyval, LUA_TBOOLEAN, \
                event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, \
                event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN, \
-               event->state & GDK_MOD1_MASK, -1)
+               event->state & GDK_MOD1_MASK, LUA_TBOOLEAN, \
+               event->state & GDK_MOD5_MASK, -1)
 #define l_mt(l, k, i, ni) { \
   if (luaL_newmetatable(l, k)) { \
     l_cfunc(l, i, "__index"); \

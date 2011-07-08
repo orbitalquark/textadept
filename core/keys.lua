@@ -21,14 +21,15 @@ module('keys', package.seeall)
 -- and `lua`.
 --
 -- A key command string is built from a combination of the `CTRL`, `SHIFT`,
--- `ALT`, and `ADD` constants as well as the pressed key itself. The value of
--- `ADD` is inserted between each of `CTRL`, `SHIFT`, `ALT`, and the key.
--- For example:
+-- `ALT`, `OPTION`, and `ADD` constants as well as the pressed key itself. The
+-- value of `ADD` is inserted between each of `CTRL`, `SHIFT`, `ALT`, `OPTION`,
+-- and the key. For example:
 --
 --     -- keys.lua:
 --     CTRL = 'Ctrl'
 --     SHIFT = 'Shift'
 --     ALT = 'Alt'
+--     OPTION = 'Option'
 --     ADD = '+'
 --     -- pressing control, shift, alt and 'a' yields: 'Ctrl+Shift+Alt+A'
 --
@@ -55,6 +56,7 @@ module('keys', package.seeall)
 -- * `SHIFT` [string]: The string representing the Shift key.
 -- * `ALT` [string]: The string representing the Alt key (the Apple key on Mac
 --   OSX).
+-- * `OPTION` [string]: The string representing the Alt/Option key on Mac OSX.
 -- * `ADD` [string]: The string representing used to join together a sequence of
 --   Control, Shift, or Alt modifier keys.
 --
@@ -89,6 +91,7 @@ local ADD = ''
 local CTRL = 'c'..ADD
 local SHIFT = 's'..ADD
 local ALT = 'a'..ADD
+local OPTION = 'o'..ADD
 -- end settings
 
 -- Optimize for speed.
@@ -185,9 +188,16 @@ end
 -- Handles Textadept keypresses.
 -- It is called every time a key is pressed, and based on lexer, executes a
 -- command. The command is looked up in the global 'keys' key command table.
+-- @param code The keycode.
+-- @param shift Flag indicating whether or not the shift modifier is pressed.
+-- @param control Flag indicating whether or not the control modifier is
+--   pressed.
+-- @param alt Flag indicating whether or not the alt/apple modifier is pressed.
+-- @param option Flag indicating whether the alt/option key is pressed. (Only
+--   on Mac OSX.)
 -- @return whatever the executed command returns, true by default. A true
 --   return value will tell Textadept not to handle the key afterwords.
-local function keypress(code, shift, control, alt)
+local function keypress(code, shift, control, alt, option)
   local buffer = buffer
   local key
   --print(code, string.char(code))
@@ -201,7 +211,8 @@ local function keypress(code, shift, control, alt)
   control = control and CTRL or ''
   shift = shift and SHIFT or ''
   alt = alt and ALT or ''
-  local key_seq = control..shift..alt..key
+  option = option and OPTION or ''
+  local key_seq = control..shift..alt..option..key
 
   if #keychain > 0 and key_seq == keys.clear_sequence then
     clear_key_sequence()
