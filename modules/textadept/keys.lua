@@ -34,20 +34,6 @@ local function toggle_setting(setting, i)
   end
   events.emit(events.UPDATE_UI) -- for updating statusbar
 end
-local RECENT_FILES = _SCINTILLA.next_user_list_type()
-events.connect(events.USER_LIST_SELECTION,
-  function(type, text) if type == RECENT_FILES then io.open_file(text) end end)
-local function show_recent_file_list()
-  local buffer = buffer
-  local files = {}
-  for _, filename in ipairs(io.recent_files) do
-    table.insert(files, 1, filename)
-  end
-  local sep = buffer.auto_c_separator
-  buffer.auto_c_separator = ('|'):byte()
-  buffer:user_list_show(RECENT_FILES, table.concat(files, '|'))
-  buffer.auto_c_separator = sep
-end
 local function show_style()
   local buffer = buffer
   local style = buffer.style_at[buffer.current_pos]
@@ -187,7 +173,7 @@ if not OSX then
   keys.c0 = function() buffer.zoom = 0 end
 
   -- Miscellaneous not in standard menu.
-  keys.ao = show_recent_file_list
+  keys.ao = io.open_recent_file
   keys.caI = show_style
 
 else
@@ -314,7 +300,7 @@ else
   keys.c0 = function() buffer.zoom = 0 end
 
   -- Miscellaneous not in standard menu.
-  keys.co = show_recent_file_list
+  keys.co = io.open_recent_file
   keys.caI = show_style
 
   -- Movement/selection commands

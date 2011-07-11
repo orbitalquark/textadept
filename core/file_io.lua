@@ -51,6 +51,7 @@ events.FILE_SAVED_AS = 'file_saved_as'
 
 ---
 -- List of recently opened files.
+-- The most recent are towards the top.
 -- @class table
 -- @name recent_files
 recent_files = {}
@@ -101,7 +102,7 @@ try_encodings = {
 -- Opens a file or goes to its already open buffer.
 -- @param utf8_filename The absolute path to the file to open. Must be UTF-8
 --   encoded.
-local function open_helper(utf8_filename)
+local function _open(utf8_filename)
   if not utf8_filename then return end
   utf8_filename = utf8_filename:gsub('^file://', '')
   if WIN32 then utf8_filename = utf8_filename:gsub('/', '\\') end
@@ -166,7 +167,7 @@ local function open_helper(utf8_filename)
       break
     end
   end
-  recent_files[#recent_files + 1] = utf8_filename
+  table.insert(recent_files, 1, utf8_filename)
 end
 
 ---
@@ -181,7 +182,7 @@ function open_file(utf8_filenames)
                               '--select-multiple',
                               '--with-directory',
                               (buffer.filename or ''):match('.+[/\\]') or '')
-  for filename in utf8_filenames:gmatch('[^\n]+') do open_helper(filename) end
+  for filename in utf8_filenames:gmatch('[^\n]+') do _open(filename) end
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
@@ -352,3 +353,10 @@ events.connect(events.FILE_OPENED, function(utf8_filename)
     buffer:close()
   end
 end)
+
+---
+-- Prompts the user to open a recently opened file.
+function open_recent_file()
+  local i = gui.filteredlist(L('Open'), L('File'), recent_files, true)
+  if i then open_file(recent_files[i + 1]) end
+end
