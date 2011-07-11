@@ -13,7 +13,7 @@ local gui, m_textadept = gui, _m.textadept
 
 -- Utility functions used by both layouts.
 local function enclose_in_tag()
-  m_editing.enclose('<', '>')
+  m_textadept.editing.enclose('<', '>')
   local buffer = buffer
   local pos = buffer.current_pos
   while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
