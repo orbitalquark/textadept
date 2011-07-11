@@ -67,10 +67,10 @@ if not OSX then
   -- File
   keys.cn = new_buffer
   keys.co = io.open_file
-  -- TODO: { _buffer.reload, _buffer }
-  keys.cs = { _buffer.save, _buffer }
-  keys.cS = { _buffer.save_as, _buffer }
-  keys.cw = { _buffer.close, _buffer }
+  -- TODO: _buffer.reload
+  keys.cs = _buffer.save
+  keys.cS = _buffer.save_as
+  keys.cw = _buffer.close
   keys.cW = io.close_all
   -- TODO: m_textadept.session.load after prompting with open dialog
   -- TODO: m_textadept.session.save after prompting with save dialog
@@ -78,13 +78,13 @@ if not OSX then
 
   -- Edit
   local m_editing = m_textadept.editing
-  keys.cz = { _buffer.undo, _buffer }
-  keys.cy = { _buffer.redo, _buffer }
-  keys.cx = { _buffer.cut, _buffer }
-  keys.cc = { _buffer.copy, _buffer }
-  keys.cv = { _buffer.paste, _buffer }
+  keys.cz = _buffer.undo
+  keys.cy = _buffer.redo
+  keys.cx = _buffer.cut
+  keys.cc = _buffer.copy
+  keys.cv = _buffer.paste
   -- Delete is delete.
-  keys.ca = { _buffer.select_all, _buffer }
+  keys.ca = _buffer.select_all
   keys.ce = m_editing.match_brace
   keys.cE = { m_editing.match_brace, 'select' }
   keys['c\n'] = { m_editing.autocomplete_word, '%w_' }
@@ -193,10 +193,10 @@ else
   -- File
   keys.an = new_buffer
   keys.ao = io.open_file
-  -- TODO: { _buffer.reload, _buffer }
-  keys.as = { _buffer.save, _buffer }
-  keys.aS = { _buffer.save_as, _buffer }
-  keys.aw = { _buffer.close, _buffer }
+  -- TODO: _buffer.reload
+  keys.as = _buffer.save
+  keys.aS = _buffer.save_as
+  keys.aw = _buffer.close
   keys.aW = { io.close_all }
   -- TODO: m_textadept.session.load after prompting with open dialog
   -- TODO: m_textadept.session.save after prompting with save dialog
@@ -204,13 +204,13 @@ else
 
   -- Edit
   local m_editing = m_textadept.editing
-  keys.az = { _buffer.undo, _buffer }
-  keys.aZ = { _buffer.redo, _buffer }
-  keys.ax = { _buffer.cut, _buffer }
-  keys.ac = { _buffer.copy, _buffer }
-  keys.av = { _buffer.paste, _buffer }
+  keys.az = _buffer.undo
+  keys.aZ = _buffer.redo
+  keys.ax = _buffer.cut
+  keys.ac = _buffer.copy
+  keys.av = _buffer.paste
   -- Delete is delete.
-  keys.aa  = { _buffer.select_all, _buffer }
+  keys.aa  = _buffer.select_all
   keys.cm  = m_editing.match_brace
   keys.aE  = { m_editing.match_brace, 'select' }
   keys.esc = { m_editing.autocomplete_word, '%w_' }
@@ -304,28 +304,28 @@ else
   keys.caI = show_style
 
   -- Movement/selection commands
-  keys.cf = { _buffer.char_right, _buffer }
-  keys.cF = { _buffer.char_right_extend, _buffer }
-  keys.caf = { _buffer.word_right, _buffer }
-  keys.caF = { _buffer.word_right_extend, _buffer }
-  keys.cb = { _buffer.char_left, _buffer }
-  keys.cB = { _buffer.char_left_extend, _buffer }
-  keys.cab = { _buffer.word_left, _buffer }
-  keys.caB = { _buffer.word_left_extend, _buffer }
-  keys.cn = { _buffer.line_down, _buffer }
-  keys.cN = { _buffer.line_down_extend, _buffer }
-  keys.cp = { _buffer.line_up, _buffer }
-  keys.cP = { _buffer.line_up_extend, _buffer }
-  keys.ca = { _buffer.vc_home, _buffer }
-  keys.cA = { _buffer.home_extend, _buffer }
-  keys.ce = { _buffer.line_end, _buffer }
-  keys.cE = { _buffer.line_end_extend, _buffer }
-  keys.cah = { _buffer.del_word_left, _buffer }
-  keys.cd = { _buffer.clear, _buffer }
-  keys.cad = { _buffer.del_word_right, _buffer }
+  keys.cf = _buffer.char_right
+  keys.cF = _buffer.char_right_extend
+  keys.caf = _buffer.word_right
+  keys.caF = _buffer.word_right_extend
+  keys.cb = _buffer.char_left
+  keys.cB = _buffer.char_left_extend
+  keys.cab = _buffer.word_left
+  keys.caB = _buffer.word_left_extend
+  keys.cn = _buffer.line_down
+  keys.cN = _buffer.line_down_extend
+  keys.cp = _buffer.line_up
+  keys.cP = _buffer.line_up_extend
+  keys.ca = _buffer.vc_home
+  keys.cA = _buffer.home_extend
+  keys.ce = _buffer.line_end
+  keys.cE = _buffer.line_end_extend
+  keys.cah = _buffer.del_word_left
+  keys.cd = _buffer.clear
+  keys.cad = _buffer.del_word_right
   keys.ck = function()
     buffer:line_end_extend()
     buffer:cut()
   end
-  keys.cy = { _buffer.paste, _buffer }
+  keys.cy = _buffer.paste
 end

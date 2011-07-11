@@ -187,6 +187,7 @@ end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function reload(buffer)
+  if not buffer then buffer = _G.buffer end
   gui.check_focused_buffer(buffer)
   if not buffer.filename then return end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
@@ -224,6 +225,7 @@ end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function save(buffer)
+  if not buffer then buffer = _G.buffer end
   gui.check_focused_buffer(buffer)
   if not buffer.filename then return buffer:save_as() end
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
@@ -245,6 +247,7 @@ end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function save_as(buffer, utf8_filename)
+  if not buffer and not utf8_filename then buffer = _G.buffer end
   gui.check_focused_buffer(buffer)
   if not utf8_filename then
     utf8_filename = gui.dialog('filesave',
@@ -277,6 +280,7 @@ end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function close(buffer)
+  if not buffer then buffer = _G.buffer end
   gui.check_focused_buffer(buffer)
   if buffer.dirty and
      gui.dialog('msgbox',
