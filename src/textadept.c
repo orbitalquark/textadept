@@ -1599,8 +1599,12 @@ static int l_call_buffer_function(lua_State *lua) {
   int rt_type = l_rawgeti_int(lua, buffer_func_table_idx, 2);
   int p1_type = l_rawgeti_int(lua, buffer_func_table_idx, 3);
   int p2_type = l_rawgeti_int(lua, buffer_func_table_idx, 4);
-  l_check_focused_buffer(lua, 1);
-  return l_call_scintilla(lua, editor, msg, p1_type, p2_type, rt_type, 2);
+  int arg = 1;
+  if (lua_type(lua, 1) == LUA_TTABLE) {
+    l_check_focused_buffer(lua, 1);
+    arg = 2;
+  }
+  return l_call_scintilla(lua, editor, msg, p1_type, p2_type, rt_type, arg);
 }
 
 /**

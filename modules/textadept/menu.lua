@@ -62,11 +62,11 @@ menubar = {
     { L('gtk-new'), new_buffer },
     { L('gtk-open'), io.open_file },
     { L('Open Recent...'), io.open_recent_file },
-    { L('Reload'), { _buffer.reload, _buffer } },
-    { L('gtk-save'), { _buffer.save, _buffer } },
-    { L('gtk-save-as'), { _buffer.save_as, _buffer } },
+    { L('Reload'), _buffer.reload },
+    { L('gtk-save'), _buffer.save },
+    { L('gtk-save-as'), _buffer.save_as },
     SEPARATOR,
-    { L('gtk-close'), { _buffer.close, _buffer } },
+    { L('gtk-close'), _buffer.close },
     { L('Close All'), io.close_all },
     SEPARATOR,
     { L('Load Session...'), function()
@@ -99,15 +99,15 @@ menubar = {
     { L('gtk-quit'), quit },
   },
   { title = L('Edit'),
-    { L('gtk-undo'), { _buffer.undo, _buffer } },
-    { L('gtk-redo'), { _buffer.redo, _buffer } },
+    { L('gtk-undo'), _buffer.undo },
+    { L('gtk-redo'), _buffer.redo },
     SEPARATOR,
-    { L('gtk-cut'), { _buffer.cut, _buffer } },
-    { L('gtk-copy'), { _buffer.copy, _buffer } },
-    { L('gtk-paste'), { _buffer.paste, _buffer } },
-    { L('Duplicate'), { _buffer.line_duplicate, _buffer } },
-    { L('gtk-delete'), { _buffer.clear, _buffer } },
-    { L('gtk-select-all'), { _buffer.select_all, _buffer } },
+    { L('gtk-cut'), _buffer.cut },
+    { L('gtk-copy'), _buffer.copy },
+    { L('gtk-paste'), _buffer.paste },
+    { L('Duplicate'), _buffer.line_duplicate },
+    { L('gtk-delete'), _buffer.clear },
+    { L('gtk-select-all'), _buffer.select_all },
     SEPARATOR,
     { L('Match Brace'), m_editing.match_brace },
     { L('Select to Brace'), { m_editing.match_brace, 'select' } },
@@ -285,15 +285,15 @@ table.insert(menubar, #menubar, lexer_menu) -- before 'Help'
 -- @class table
 -- @name context_menu
 context_menu = {
-  { L('gtk-undo'), { _buffer.undo, _buffer } },
-  { L('gtk-redo'), { _buffer.redo, _buffer } },
+  { L('gtk-undo'), _buffer.undo },
+  { L('gtk-redo'), _buffer.redo },
   SEPARATOR,
-  { L('gtk-cut'), { _buffer.cut, _buffer } },
-  { L('gtk-copy'), { _buffer.copy, _buffer } },
-  { L('gtk-paste'), { _buffer.paste, _buffer } },
-  { L('gtk-delete'), { _buffer.clear, _buffer } },
+  { L('gtk-cut'), _buffer.cut },
+  { L('gtk-copy'), _buffer.copy },
+  { L('gtk-paste'), _buffer.paste },
+  { L('gtk-delete'), _buffer.clear },
   SEPARATOR,
-  { L('gtk-select-all'), { _buffer.select_all, _buffer } }
+  { L('gtk-select-all'), _buffer.select_all }
 }
 
 local menu_actions = {}
