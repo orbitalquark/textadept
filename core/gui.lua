@@ -77,7 +77,7 @@ end
 
 -- LuaDoc is in core/.gui.luadoc.
 function gui.switch_buffer()
-  local columns, items = { 'Name', 'File' }, {}
+  local columns, items = { L('Name'), L('File') }, {}
   for _, buffer in ipairs(_BUFFERS) do
     local filename = buffer.filename or buffer._type or L('Untitled')
     items[#items + 1] = (buffer.dirty and '*' or '')..filename:match('[^/\\]+$')
