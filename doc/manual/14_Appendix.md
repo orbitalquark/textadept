@@ -73,6 +73,7 @@ Ctrl+J                   |⌘J  |Jump to line
 
 **Tools**                       |||
 Ctrl+E          |⌘E     |Command entry
+Ctrl+Shift+E    |⌘⇧E    |Select command
 Ctrl+Alt+R      |^R     |Run
 Ctrl+Alt+Shift+R|^⇧R    |Compile
 Ctrl+&#124;     |⌘&#124;|Filter text through
@@ -113,8 +114,8 @@ F5                            |F5    |Refresh syntax highlighting
 **View**                        |||
 Ctrl+Alt+Tab             |^⇥       |Next view
 Ctrl+Alt+Shift+Tab       |^⇧⇥      |Previous view
-Ctrl+Alt+Shift+S         |^⇧S      |Split vertical
-Ctrl+Alt+S               |^S       |Split horizontal
+Ctrl+Alt+Shift+S         |^⇧S      |Split view vertical
+Ctrl+Alt+S               |^S       |Split view horizontal
 Ctrl+Alt+W               |^W       |Unsplit view
 Ctrl+Alt+Shift+W         |^⇧W      |Unsplit all views
 Ctrl+Alt++<br/>Ctrl+Alt+=|^+<br/>^=|Grow view
