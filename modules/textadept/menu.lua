@@ -159,6 +159,9 @@ menubar = {
     menuitem('Join Lines', m_editing.join_lines),
     menuitem('Convert Indentation', m_editing.convert_indentation),
     { title = L('Selection'),
+      menuitem('Upper Case Selection', _buffer.upper_case),
+      menuitem('Lower Case Selection', _buffer.lower_case),
+      SEPARATOR,
       menuitem('Enclose as XML Tags', function()
         m_editing.enclose('<', '>')
         local buffer = buffer
