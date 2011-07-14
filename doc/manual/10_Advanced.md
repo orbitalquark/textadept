@@ -30,6 +30,15 @@ example of this is [incremental
 search](../modules/gui.find.html#find_incremental). See
 `modules/textadept/find.lua` for the implementation.
 
+## Command Selection
+
+If you did not disable the menu in your [preferences](9_Preferences.html), then
+pressing `Ctrl+Shift+E` (`⌘⇧E` on Mac OSX) brings up the command selection
+dialog. Typing part of any command filters the list with spaces being wildcards.
+This is an easy way to run commands without navigating the menus, using the
+mouse, or remembering key commands. It is also useful for looking up particular
+key commands quickly.
+
 ## Shell Commands and Filtering Text
 
 Sometimes it is easier to use an existing shell command to manipulate text
