@@ -70,18 +70,29 @@ You can add global snippets to `snippets` such as:
     snippets['file'] = '%<buffer.filename>'
     snippets['path'] = "%<(buffer.filename or ''):match('^.+[/\\]')>"
 
-So typing `file` or `path` and then pressing `Tab` will insert the snippet.
+So typing `file` or `path` and then pressing `Tab` (`⇥` on Mac OSX) will insert
+the snippet.
 
 ##### Key Commands
 
-It is not recommended to edit Textadept's `modules/textadept/keys.lua` for
-changing the key bindings since your changes could be overwritten when updating
-Textadept. Instead, modify `keys` from within your `~/.textadept/init.lua` or
-from a file loaded by `~/.textadept/init.lua`. For example maybe you want
+The default set of key commands is located in `modules/textadept/keys.conf`
+(`modules/textadept/keys.osx.conf` on Mac OSX) and is loaded by the
+`_m.textadept.menu` module. It is not recommended to edit Textadept's
+`keys.conf` or `keys.osx.conf` for changing the key bindings since your changes
+could be overwritten when updating Textadept. Instead, make a copy in your
+`~/.textadept/modules/textadept/` folder and modify that.
+
+You can also modify key commands from within your your `~/.textadept/init.lua`
+or from a file loaded by `~/.textadept/init.lua`. For example maybe you want
 `Alt+N` to create a new buffer instead of `Ctrl+N`:
 
     keys.an = new_buffer
     keys.cn = nil
+
+If you choose to exclude loading the menu like in the example above, you will
+have to specify your own set of key commands! I happen to do this and keep a
+copy of `~/.textadept/modules/textadept/keys.lua` that is loaded by my
+`~/.textadept/init.lua`.
 
 ## Locale
 

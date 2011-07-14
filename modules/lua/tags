@@ -24,6 +24,7 @@ CARET_SLOP	_	0;"	F	class:_SCINTILLA.constants
 CARET_STRICT	_	0;"	F	class:_SCINTILLA.constants
 CHAR_ADDED	_	0;"	F	class:events
 CLASS	_	0;"	F	class:lexer
+CLEAR	_	0;"	F	class:keys
 COMMAND_ENTRY_COMMAND	_	0;"	F	class:events
 COMMAND_ENTRY_KEYPRESS	_	0;"	F	class:events
 COMMENT	_	0;"	F	class:lexer
@@ -90,12 +91,14 @@ KEYSYMS	_	0;"	t	class:keys
 KEYWORD	_	0;"	F	class:lexer
 KEYWORDSET_MAX	_	0;"	F	class:_SCINTILLA.constants
 LANGUAGE_MODULE_LOADED	_	0;"	F	class:events
+LANGUAGE_MODULE_PREFIX	_	0;"	F	class:keys
 MARGIN_CLICK	_	0;"	F	class:events
 MARKER_MAX	_	0;"	F	class:_SCINTILLA.constants
 MARK_BOOKMARK_COLOR	_	0;"	F	class:_m.textadept.bookmarks
 MARK_HIGHLIGHT_BACK	_	0;"	F	class:_m.textadept.editing
 MAX	_	0;"	F	class:_m.textadept.snapopen
 MENU_CLICKED	_	0;"	F	class:events
+META	_	0;"	F	class:keys
 NUMBER	_	0;"	F	class:lexer
 OPERATOR	_	0;"	F	class:lexer
 OSX	_	0;"	F	
@@ -1015,6 +1018,7 @@ get_class	_	0;"	f	class:_m.textadept.adeptsense
 get_completions	_	0;"	f	class:_m.textadept.adeptsense
 get_cur_line	_	0;"	f	class:buffer
 get_fold_level	_	0;"	f	class:lexer
+get_gdk_key	_	0;"	f	class:keys
 get_hotspot_active_back	_	0;"	f	class:buffer
 get_hotspot_active_fore	_	0;"	f	class:buffer
 get_indent_amount	_	0;"	f	class:lexer
@@ -1272,6 +1276,7 @@ oct_num	_	0;"	F	class:lexer
 open	_	0;"	f	class:_m.textadept.snapopen
 open	_	0;"	f	class:io
 open_file	_	0;"	f	class:io
+open_recent_file	_	0;"	f	class:io
 orange	_	0;"	F	class:lexer.colors
 os	_	0;"	m	
 os	_	0;"	t	
@@ -1400,7 +1405,7 @@ select_indented_block	_	0;"	f	class:_m.textadept.editing
 select_lexer	_	0;"	f	class:_m.textadept.mime_types
 select_line	_	0;"	f	class:_m.textadept.editing
 select_paragraph	_	0;"	f	class:_m.textadept.editing
-select_scope	_	0;"	f	class:_m.textadept.editing
+select_style	_	0;"	f	class:_m.textadept.editing
 selection_duplicate	_	0;"	f	class:buffer
 selection_end	_	0;"	F	class:buffer
 selection_is_rectangle	_	0;"	F	class:buffer

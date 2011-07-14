@@ -40,11 +40,10 @@ end)
 
 events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   local ce = gui.command_entry
-  local KEYSYMS = keys.KEYSYMS
-  if KEYSYMS[code] == 'esc' then
+  if keys.KEYSYMS[code] == 'esc' then
     ce.focus() -- toggle focus to hide
     return true
-  elseif KEYSYMS[code] == '\t' then
+  elseif keys.KEYSYMS[code] == '\t' then
     local substring = ce.entry_text:match('[%w_.:]+$') or ''
     local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
     local f, err = loadstring('return ('..path..')')

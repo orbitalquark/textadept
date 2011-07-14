@@ -11,8 +11,8 @@ More in-depth discussion about some of them is provided later in the manual.
 
 ## Menubar
 
-The completely customizable (and optional!) menubar typically provides access to
-all of Textadept's features.
+The completely customizable (and optional!) menubar provides access to all of
+Textadept's features.
 
 ## Editor View
 

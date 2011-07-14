@@ -10,18 +10,14 @@ module('_m.lua', package.seeall)
 -- Markdown:
 -- ## Key Commands
 --
--- + `Alt+L, M`: Open this module for editing.
--- + `Alt+L, G`: Goto file being 'require'd on the current line.
--- + `Shift+Return`: Try to autocomplete an `if`, `for`, etc. statement with
---   `end`.
+-- + `Ctrl+L, M` (`⌘L, M` on Mac OSX): Open this module for editing.
+-- + `Ctrl+L, G` (`⌘L, G`): Goto file being 'require'd on the current line.
+-- + `Shift+Return` (`⇧↩`): Try to autocomplete an `if`, `for`, etc. statement
+--   with `end`.
 -- + `.`: When to the right of a known symbol, show an autocompletion list of
 --   fields and functions.
 -- + `:`: When to the right of a known symbol, show an autocompletion list of
 --   functions only.
--- + `Ctrl+I`: (Windows and Linux) Autocomplete symbol.
--- + `Ctrl+Esc`: (Mac OSX) Autocomplete symbol.
--- + `Ctrl+H`: Show documentation for the selected symbol or the symbol under
---   the caret.
 --
 -- ## Fields
 --
@@ -179,14 +175,12 @@ events.connect(events.FILE_AFTER_SAVE,
 -- @class table
 -- @name _G.keys.lua
 keys.lua = {
-  al = {
+  [keys.LANGUAGE_MODULE_PREFIX] = {
     m = { io.open_file,
           (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET) },
-    g = { goto_required },
+    g = goto_required,
   },
-  ['s\n'] = { try_to_autocomplete_end },
-  [not OSX and 'ci' or 'cesc'] = { sense.complete, sense },
-  ch = { sense.show_apidoc, sense },
+  ['s\n'] = try_to_autocomplete_end,
 }
 
 -- Snippets.

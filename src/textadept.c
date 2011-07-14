@@ -22,6 +22,9 @@
 #elif __OSX__
 #include <Carbon/Carbon.h>
 #include "igemacintegration/ige-mac-menu.h"
+#define GDK_CONTROL_MASK 1 << 3 // Command key (GDK_MOD1_MASK)
+#define GDK_MOD1_MASK 1 << 7 // Alt/option key (GDK_MOD5_MASK)
+#define GDK_MOD5_MASK 1 << 2 // Control key (GDK_CONTROL_MASK)
 #elif __BSD__
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -77,6 +80,7 @@
 
 // Window
 GtkWidget *window, *focused_editor, *menubar, *statusbar[2];
+GtkAccelGroup *accel = 0;
 char *textadept_home;
 
 void create_ui();
@@ -242,6 +246,7 @@ void create_ui() {
   signal(window, "delete-event", w_exit);
   signal(window, "focus-in-event", w_focus);
   signal(window, "key-press-event", w_keypress);
+  accel = gtk_accel_group_new();
 
 #if __OSX__
   AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
@@ -1369,12 +1374,16 @@ GtkWidget *l_create_gtkmenu(lua_State *lua, GCallback callback, int submenu) {
         gtk_menu_shell_append(GTK_MENU_SHELL(menu),
                               l_create_gtkmenu(lua, callback, TRUE));
       else
-        if (lua_objlen(lua, -1) == 2) {
+        if (lua_objlen(lua, -1) == 2 || lua_objlen(lua, -1) == 4) {
           lua_rawgeti(lua, -1, 1);
           lua_rawgeti(lua, -2, 2);
           label = lua_tostring(lua, -2);
           int menu_id = lua_tointeger(lua, -1);
-          lua_pop(lua, 2); // label and id
+          lua_rawgeti(lua, -3, 3);
+          lua_rawgeti(lua, -4, 4);
+          int key = !lua_isnil(lua, -2) ? lua_tointeger(lua, -2) : 0;
+          int modifiers = !lua_isnil(lua, -1) ? lua_tointeger(lua, -1) : 0;
+          lua_pop(lua, 4); // label, id, key, and modifiers
           if (label) {
             if (g_str_has_prefix(label, "gtk-"))
               menu_item = gtk_image_menu_item_new_from_stock(label, NULL);
@@ -1382,11 +1391,14 @@ GtkWidget *l_create_gtkmenu(lua_State *lua, GCallback callback, int submenu) {
               menu_item = gtk_separator_menu_item_new();
             else
               menu_item = gtk_menu_item_new_with_mnemonic(label);
+            if (key || modifiers)
+                gtk_widget_add_accelerator(menu_item, "activate", accel, key,
+                                           modifiers, GTK_ACCEL_VISIBLE);
             g_signal_connect(menu_item, "activate", callback,
                              GINT_TO_POINTER(menu_id));
             gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
           }
-        } else warn("gtkmenu: { 'menu label', id_number } expected");
+        } else warn("gtkmenu: { 'label', id_num [, keycode, mods] } expected");
     }
     lua_pop(lua, 1); // value
   }

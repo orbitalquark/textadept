@@ -10,16 +10,12 @@ module('_m.cpp', package.seeall)
 -- Markdown:
 -- ## Key Commands
 --
--- + `Alt+L, M`: Open this module for editing.
+-- + `Ctrl+L, M` (`⌘L, M` on Mac OSX): Open this module for editing.
 -- + `.`: When to the right of a known symbol, show an autocompletion list of
 --   fields and functions.
 -- + `->`: When to the right of a known symbol, show an autocompletion list of
 --   fields and functions.
--- + `Ctrl+I`: (Windows and Linux) Autocomplete symbol.
--- + `Ctrl+Esc`: (Mac OSX) Autocomplete symbol.
--- + `Ctrl+H`: Show documentation for the selected symbol or the symbol under
---   the caret.
--- + `Shift+Return`: Add ';' to line end and insert newline.
+-- + `Shift+Return` (`⇧↩`): Add ';' to line end and insert newline.
 --
 -- ## Fields
 --
@@ -82,17 +78,15 @@ end
 -- @class table
 -- @name _G.keys.cpp
 keys.cpp = {
-  al = {
+  [keys.LANGUAGE_MODULE_PREFIX] = {
     m = { io.open_file,
           (_HOME..'/modules/cpp/init.lua'):iconv('UTF-8', _CHARSET) },
   },
-  ['s\n'] = { function()
+  ['s\n'] = function()
     buffer:line_end()
     buffer:add_text(';')
     buffer:new_line()
-  end },
-  [not OSX and 'ci' or 'cesc'] = { sense.complete, sense },
-  ch = { sense.show_apidoc, sense },
+  end,
 }
 
 -- Snippets.
