@@ -55,7 +55,7 @@ whitespace stripping on save, your `~/.textadept/init.lua` might look like:
     require 'textadept'
 
     _m.textadept.editing.AUTOPAIR = false
-    _m.textadept.editing.SAVE_STRIPS_WS = false
+    _m.textadept.editing.STRIP_WHITESPACE_ON_SAVE = false
 
 #### Other
 
