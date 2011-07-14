@@ -17,8 +17,8 @@ module('_m.textadept.editing', package.seeall)
 --   default value is `true`.
 -- * `AUTOINDENT` [bool]: Match the indentation level of the previous line when
 --   pressing the Enter key. The default value is `true`.
--- * `SAVE_STRIPS_WS` [bool]: Strip trailing whitespace on file save. The
---   default value is `true`.
+-- * `STRIP_WHITESPACE_ON_SAVE` [bool]: Strip trailing whitespace on file save.
+--   The default value is `true`.
 -- * `MARK_HIGHLIGHT_BACK` [number]: The background color used for a line
 --   containing a highlighted word in 0xBBGGRR format.
 -- * `INDIC_HIGHLIGHT_BACK` [number]: The color used for an indicator for a
@@ -31,7 +31,7 @@ module('_m.textadept.editing', package.seeall)
 AUTOPAIR = true
 HIGHLIGHT_BRACES = true
 AUTOINDENT = true
-SAVE_STRIPS_WS = true
+STRIP_WHITESPACE_ON_SAVE = true
 MARK_HIGHLIGHT_BACK = buffer and buffer.caret_line_back or 0xEEEEEE
 INDIC_HIGHLIGHT_BACK = 0x4080C0
 INDIC_HIGHLIGHT_ALPHA = 100
@@ -241,7 +241,7 @@ end
 -- Strips trailing whitespace off of every line, ensures an ending newline, and
 -- converts non-consistent EOLs.
 function prepare_for_save()
-  if not SAVE_STRIPS_WS then return end
+  if not STRIP_WHITESPACE_ON_SAVE then return end
   local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
