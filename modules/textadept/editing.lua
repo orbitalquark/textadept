@@ -87,7 +87,7 @@ events.connect(events.CHAR_ADDED, function(c)
 end)
 
 -- Removes matched chars on backspace.
-events.connect(events.KEYPRESS, function(code, shift, control, alt)
+events.connect(events.KEYPRESS, function(code)
   if not AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
   local buffer = buffer
   local pos = buffer.current_pos
@@ -398,7 +398,7 @@ end
 
 ---
 -- Selects all text with the same style as under the caret.
-function select_scope()
+function select_style()
   local buffer = buffer
   local start_pos, length = buffer.current_pos, buffer.length
   local base_style, style_at = buffer.style_at[start_pos], buffer.style_at
@@ -446,7 +446,7 @@ local function clear_highlighted_words()
   buffer:indicator_clear_range(0, buffer.length)
 end
 events.connect(events.KEYPRESS,
-  function(c) if K[c] == 'esc' then clear_highlighted_words() end end)
+  function(code) if K[code] == 'esc' then clear_highlighted_words() end end)
 
 ---
 -- Highlights all occurances of the word under the caret and adds markers to the

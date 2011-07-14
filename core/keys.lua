@@ -20,18 +20,18 @@ module('keys', package.seeall)
 -- Language names are the names of the lexer files in `lexers/` such as `cpp`
 -- and `lua`.
 --
--- A key command string is built from a combination of the `CTRL`, `SHIFT`,
--- `ALT`, `OPTION`, and `ADD` constants as well as the pressed key itself. The
--- value of `ADD` is inserted between each of `CTRL`, `SHIFT`, `ALT`, `OPTION`,
+-- A key command string is built from a combination of the `CTRL`, `ALT`,
+-- `META`, `SHIFT`, and `ADD` constants as well as the pressed key itself. The
+-- value of `ADD` is inserted between each of `CTRL`, `ALT`, `META`, `SHIFT`,
 -- and the key. For example:
 --
 --     -- keys.lua:
 --     CTRL = 'Ctrl'
---     SHIFT = 'Shift'
 --     ALT = 'Alt'
---     OPTION = 'Option'
+--     SHIFT = 'Shift'
+--     META = 'Meta'
 --     ADD = '+'
---     -- pressing control, shift, alt and 'a' yields: 'Ctrl+Shift+Alt+A'
+--     -- pressing control, alt, shift, and 'a' yields: 'Ctrl+Alt+Shift+A'
 --
 -- For key values less than 255, Lua's [`string.char()`][string_char] is used to
 -- determine the key's string representation. Otherwise, the
@@ -47,18 +47,25 @@ module('keys', package.seeall)
 --
 -- Key commands can be chained like in Emacs using keychain sequences. By
 -- default, the `Esc` key (`Apple+Esc` on Mac OSX) cancels the current keychain,
--- but it can be redefined by setting the `keys.clear_sequence` field.
--- Naturally, the clear sequence cannot be chained.
+-- but it can be redefined by setting the `keys.CLEAR` field. Naturally, the
+-- clear sequence cannot be chained.
 --
 -- ## Settings
 --
--- * `CTRL` [string]: The string representing the Control key.
--- * `SHIFT` [string]: The string representing the Shift key.
--- * `ALT` [string]: The string representing the Alt key (the Apple key on Mac
---   OSX).
--- * `OPTION` [string]: The string representing the Alt/Option key on Mac OSX.
+-- * `CTRL` [string]: The string representing the Control/Command key. The
+--   default is 'c'.
+-- * `ALT` [string]: The string representing the Alt/option key. The default is
+--   'a'
+-- * `META` [string]: The string representing the Control key on Mac OSX. The
+--   default is 'm'.
+-- * `SHIFT` [string]: The string representing the Shift key. The default is
+--   's'.
 -- * `ADD` [string]: The string representing used to join together a sequence of
---   Control, Shift, or Alt modifier keys.
+--   Control, Alt, Meta, or Shift modifier keys. The default is ''.
+-- * `CLEAR` [string]: The string representing the key sequence that clears the
+--   current keychain. The default is 'esc' (Escape).
+-- * `LANGUAGE_MODULE_PREFIX` [string]: The starting key command of the keychain
+--   reserved for language-specific modules. Defaults to Ctrl/Cmd+L.
 --
 -- ## Key Command Precedence
 --
@@ -68,10 +75,10 @@ module('keys', package.seeall)
 -- ## Example
 --
 --     keys = {
---       ['ctrl+f'] = { 'char_right', 'buffer' },
---       ['ctrl+b'] = { 'char_left',  'buffer' },
+--       ['ctrl+f'] = buffer.char_right
+--       ['ctrl+b'] = buffer.char_left,
 --       lua = {
---         ['ctrl+f'] = { 'add_text', 'buffer', 'function' },
+--         ['ctrl+f'] = { buffer.add_text, buffer, 'function' },
 --       }
 --     }
 --
@@ -89,13 +96,16 @@ module('keys', package.seeall)
 -- settings
 local ADD = ''
 local CTRL = 'c'..ADD
-local SHIFT = 's'..ADD
 local ALT = 'a'..ADD
-local OPTION = 'o'..ADD
+local META = 'm'..ADD
+local SHIFT = 's'..ADD
+CLEAR = 'esc'
+LANGUAGE_MODULE_PREFIX = CTRL..'l'
 -- end settings
 
 -- Optimize for speed.
 local string = string
+local string_byte = string.byte
 local string_char = string.char
 local xpcall = xpcall
 local next = next
@@ -112,25 +122,49 @@ local error = function(e) events.emit(events.ERROR, e) end
 -- @class table
 -- @name KEYSYMS
 KEYSYMS = { -- from <gdk/gdkkeysyms.h>
-  [65056] = '\t', -- backtab; will be 'shift'ed
-  [65288] = '\b',
-  [65289] = '\t',
-  [65293] = '\n',
-  [65307] = 'esc',
-  [65535] = 'del',
-  [65360] = 'home',
-  [65361] = 'left',
-  [65362] = 'up',
-  [65363] = 'right',
-  [65364] = 'down',
-  [65365] = 'pup',
-  [65366] = 'pdown',
-  [65367] = 'end',
-  [65379] = 'ins',
-  [65470] = 'f1', [65471] = 'f2',  [65472] = 'f3',  [65473] = 'f4',
-  [65474] = 'f5', [65475] = 'f6',  [65476] = 'f7',  [65477] = 'f8',
-  [65478] = 'f9', [65479] = 'f10', [65480] = 'f11', [65481] = 'f12',
+  [0xFE20] = '\t', -- backtab; will be 'shift'ed
+  [0xFF08] = '\b',
+  [0xFF09] = '\t',
+  [0xFF0D] = '\n',
+  [0xFF1B] = 'esc',
+  [0xFFFF] = 'del',
+  [0xFF50] = 'home',
+  [0xFF51] = 'left',
+  [0xFF52] = 'up',
+  [0xFF53] = 'right',
+  [0xFF54] = 'down',
+  [0xFF55] = 'pgup',
+  [0xFF56] = 'pgdn',
+  [0xFF57] = 'end',
+  [0xFF63] = 'ins',
+  [0xFFBE] = 'f1', [0xFFBF] = 'f2',  [0xFFC0] = 'f3',  [0xFFC1] = 'f4',
+  [0xFFC2] = 'f5', [0xFFC3] = 'f6',  [0xFFC4] = 'f7',  [0xFFC5] = 'f8',
+  [0xFFC6] = 'f9', [0xFFC7] = 'f10', [0xFFC8] = 'f11', [0xFFC9] = 'f12',
 }
+
+---
+-- Returns the GDK integer keycode and modifier mask for a key sequence.
+-- This is used internally for creating menu accelerators.
+-- @param key_seq The string key sequence.
+-- @return keycode and modifier mask
+function get_gdk_key(key_seq)
+  if not key_seq then return nil end
+  local mods, key = key_seq:match('^([cams]*)(.+)$')
+  if not mods or not key then return nil end
+  local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
+                    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
+                    (mods:find('m') and 128 or 0)
+  local byte = string_byte(key)
+  if #key > 1 or byte < 32 then
+    for i, s in pairs(KEYSYMS) do
+      if s == key and i ~= 0xFE20 then
+        byte = i
+        break
+      end
+    end
+  end
+  return byte, modifiers
+end
 
 -- The current key sequence.
 local keychain = {}
@@ -189,18 +223,15 @@ end
 -- It is called every time a key is pressed, and based on lexer, executes a
 -- command. The command is looked up in the global 'keys' key command table.
 -- @param code The keycode.
--- @param shift Flag indicating whether or not the shift modifier is pressed.
--- @param control Flag indicating whether or not the control modifier is
---   pressed.
--- @param alt Flag indicating whether or not the alt/apple modifier is pressed.
--- @param option Flag indicating whether the alt/option key is pressed. (Only
---   on Mac OSX.)
--- @return whatever the executed command returns, true by default. A true
---   return value will tell Textadept not to handle the key afterwords.
-local function keypress(code, shift, control, alt, option)
+-- @param shift Whether or not the Shift modifier is pressed.
+-- @param control Whether or not the Control/Command modifier is pressed.
+-- @param alt Whether or not the Alt/option modifier is pressed.
+-- @param meta Whether or not the Control modifier on Mac OSX is pressed.
+-- @return true to stop handling the key; nil otherwise.
+local function keypress(code, shift, control, alt, meta)
   local buffer = buffer
   local key
-  --print(code, string.char(code))
+  --print(code, keys.KEYSYMS[ch], shift, control, alt, meta)
   if code < 256 then
     key = string_char(code)
     shift = false -- for printable characters, key is upper case
@@ -209,12 +240,13 @@ local function keypress(code, shift, control, alt, option)
     if not key then return end
   end
   control = control and CTRL or ''
-  shift = shift and SHIFT or ''
   alt = alt and ALT or ''
-  option = option and OPTION or ''
-  local key_seq = control..shift..alt..option..key
+  meta = meta and META or ''
+  shift = shift and SHIFT or ''
+  local key_seq = control..alt..meta..shift..key
+  --print(key_seq)
 
-  if #keychain > 0 and key_seq == keys.clear_sequence then
+  if #keychain > 0 and key_seq == keys.CLEAR then
     clear_key_sequence()
     return true
   end

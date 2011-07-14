@@ -37,13 +37,13 @@ is loaded or a buffer's lexer is set to that language.
 #### Snippets
 
 Most language-specific modules have a set of
-[snippets](../modules/_m.textadept.snippets.html). Press `Ctrl+Alt+Shift+I`
-(`Ctrl+Apple+Shift+I` on Mac OSX) for a list of available snippets or see the
-module's Lua code. To insert a snippet, type its trigger followed by the `Tab`
-key. Subsequent presses of `Tab` causes the caret to enter tab stops in
-sequential order, `Shift+Tab` goes back to the previous tab stop, and
-`Ctrl+Alt+I` (`Ctrl+Apple+I` on Mac OSX) cancels the current snippet. Snippets
-can be nested (inserted from within another snippet).
+[snippets](../modules/_m.textadept.snippets.html). Press `Ctrl+K` (`⌥⇥` on Mac
+OSX) for a list of available snippets or see the module's Lua code. To insert a
+snippet, type its trigger followed by the `Tab` (`⇥`) key. Subsequent presses of
+`Tab` (`⇥`) causes the caret to enter tab stops in sequential order, `Shift+Tab`
+(`⇧⇥`) goes back to the previous tab stop, and `Ctrl+Shift+K` (`⌥⇧⇥` on Mac OSX)
+cancels the current snippet. Snippets can be nested (inserted from within
+another snippet).
 
 ![Snippet](images/snippet.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -53,21 +53,23 @@ can be nested (inserted from within another snippet).
 
 Most language-specific modules have a set of [key
 commands](../modules/_m.textadept.keys.html). See the module's Lua code for
-which key commands are available.
+which key commands are available. They are typically stored in the `Ctrl+L`
+(`⌘L` on Mac OSX) key prefix.
 
 ##### Run
 
 Most language-specific modules have a command that runs the code in the current
-file. Pressing `Ctrl+R` runs that command.
+file. Pressing `Ctrl+Alt+R` (`^R` on Mac OSX) runs that command.
 
 ##### Compile
 
 Most language-specific modules have a command that compiles the code in the
-current file. Pressing `Ctrl+Shift+R` runs that command.
+current file. Pressing `Ctrl+Alt+Shift+R` (`^⇧R` on Mac OSX) runs that command.
 
 ##### Block Comments
 
-Pressing `Ctrl+Q` comments or uncomments the code on the selected lines.
+Pressing `Ctrl+/` (`⌘/` on Mac OSX) comments or uncomments the code on the
+selected lines.
 
 #### Buffer Properties
 

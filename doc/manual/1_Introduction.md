@@ -58,6 +58,11 @@ customization and extensibility from the start; the features come after that.
   `Ctrl+N, N` vs. `Ctrl+N, Shift+N`. In the first key chain, `Control` and `N`
   are pressed followed by `N` with no modifiers. The second has `Control` and
   `N` pressed followed by `Shift` and `N`.
+* When mentioning key commands, the Mac OSX equivalent will often be shown in
+  parenthesis. It may be tempting to assume that some Windows/Linux keys map to
+  Mac OSX's (e.g `Ctrl` to `⌘`), but this is not always the case. Please do not
+  view the key equivalents as translations of one another, but rather as
+  separate entities. This will minimize confusion.
 
 ## Features at a Glance
 

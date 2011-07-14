@@ -176,13 +176,12 @@ function find.find_incremental()
 end
 
 events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
-  local K = keys.KEYSYMS
   if find.incremental then
-    if K[code] == 'esc' then
+    if keys.KEYSYMS[code] == 'esc' then
       find.incremental = nil
-    elseif code < 256 or K[code] == '\b' then
+    elseif code < 256 or keys.KEYSYMS[code] == '\b' then
       local text = gui.command_entry.entry_text
-      if K[code] == '\b' then
+      if keys.KEYSYMS[code] == '\b' then
         find_incremental(text:sub(1, -2))
       else
         find_incremental(text..string.char(code))

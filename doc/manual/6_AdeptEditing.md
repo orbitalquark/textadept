@@ -11,16 +11,16 @@ modified in your [preferences](9_Preferences.html#key_commands).
 Usually, quote (`'`, `"`) and brace (`(`, `[`, `{`) characters go together in
 pairs. By default, Textadept automatically inserts the complement character when
 the first is typed. Similarly, the complement is deleted when you press
-`Backspace` over the first. See the
+`Backspace` (`⌫`) over the first. See the
 [preferences](9_Preferences.html#module_settings) page if you would like to
 disable this.
 
 ## Word Completion
 
 Textadept provides buffer-based word completion. Start typing a word, press
-`Ctrl+Return` (`Esc` on Mac OSX), and a list of suggested completions based on
+`Ctrl+Return` (`^⎋` on Mac OSX), and a list of suggested completions based on
 words in the current document is provided. Continuing to type changes the
-suggestion. Press `Return` to complete the selected word.
+suggestion. Press `Return` (`↩`) to complete the selected word.
 
 ![Word Completion](images/wordcompletion.png)
 
@@ -30,8 +30,8 @@ Textadept has the capability to autocomplete symbols for programming languages
 and display API documentation. Lua is of course supported extremely well and
 other languages have basic support with the help of
 [ctags](http://ctags.sf.net). Symbol completion is available by pressing
-`Ctrl+I` (`Ctrl+Esc` on Mac OSX). Documentation for symbols is available with
-`Ctrl+H`.
+`Ctrl+Space` (`⌥⎋` on Mac OSX). Documentation for symbols is available with
+`Ctrl+H` (`^H`).
 
 ![Adeptsense Lua](images/adeptsense_lua.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -44,28 +44,36 @@ the [LuaDoc](../modules/_m.textadept.adeptsense.html).
 
 ## Find and Replace
 
-`Ctrl+F` (`Apple+F` on Mac OSX) brings up the Find/Replace dialog. In addition
-to offering the usual find and replace, Textadept allows you to find with [Lua
+`Ctrl+F` (`⌘F` on Mac OSX) brings up the Find/Replace dialog. In addition to
+offering the usual find and replace, Textadept allows you to find with [Lua
 patterns](14_Appendix.html#lua_patterns) and replace with Lua captures and even
 Lua code! For example: replacing all `(%w+)` with `%(string.upper('%1'))`
 capitalizes all words in the buffer. Lua captures (`%n`) are only available from
 a Lua pattern search, but embedded Lua code enclosed in `%()` is always allowed.
 
+Note the `Ctrl+G`, `Ctrl+Shift+G`, `Ctrl+R`, `Ctrl+Shift+R` key commands for
+find next, find previous, replace, and replace all (`⌘G`, `⌘⇧G`, `⌘R`, `⌘⇧R`
+respectively on Mac OSX) only work when the Find/Replace dialog is hidden. When
+it is visible, use the button mnemonics: `Alt+N`, `Alt+P`, `Alt+R`, and `Alt+A`
+(`⌘N`, `⌘P`, `⌘R`, `⌘A`) for English locale.
+
 #### Find in Files
 
-Find in Files (`Apple+Shift+F` on Mac OSX) will prompt for a directory to
-search. The results are displayed in a new buffer. Double-clicking a search
-result jumps to it in the file. Replace in Files is not supported. You will have
-to `Find in Files` first, and then `Replace All` for each file a result is found
-in. The `Match Case`, `Whole Word`, and `Lua pattern` flags still apply.
+`Ctrl+Shift+F` brings up Find in Files (`⌘⇧F` on Mac OSX) and will prompt for a
+directory to search. The results are displayed in a new buffer. Double-clicking
+a search result jumps to it in the file. You can also use the `Ctrl+Alt+G` and
+`Ctrl+Alt+Shift+G` (`⌘⌥G` and `⌘⌥⇧G` on Mac OSX) key commands. Replace in Files
+is not supported. You will have to `Find in Files` first, and then `Replace All`
+for each file a result is found in. The `Match Case`, `Whole Word`, and
+`Lua pattern` flags still apply.
 
 ![Find in Files](images/findinfiles.png)
 
 #### Find Incremental
 
-You can start an incremental search by pressing `Ctrl+Shift+F` (`Apple+I` on Mac
-OSX). Incremental search searches the buffer as you type. Only the `Match Case`
-option is recognized.
+You can start an incremental search by pressing `Ctrl+Alt+F` (`⌘⌥F` on Mac OSX).
+Incremental search searches the buffer as you type. Only the `Match Case` option
+is recognized.
 
 #### Replace in Selection
 
@@ -78,8 +86,8 @@ then `Replace All`.
 #### Increase or Decrease Indent Level
 
 The amount of indentation for a selected set of lines is increased by pressing
-`Tab` and decreased by pressing `Shift+Tab`. Using these key sequences when no
-selection is present does not have the same effect.
+`Tab` (`⇥`) and decreased by pressing `Shift+Tab` (`⇧⇥`). Using these key
+sequences when no selection is present does not have the same effect.
 
 #### Change Indent Size
 
@@ -91,9 +99,9 @@ Textadept shows what it is using for indentation in the document statusbar.
 
 #### Using Tabs Instead of Spaces
 
-You can use tabs instead of the default spaces by pressing `Ctrl+T, V, Tab`
-(Apple+T, V, Tab on Mac OSX) or using the `Buffer -> Toggle Use Tabs` menu.
-Textadept shows what it is using for indentation in the document statusbar.
+You can use tabs instead of the default spaces by pressing `Ctrl+Alt+Shift+T`
+(`^⇧T` on Mac OSX) or using the `Buffer -> Toggle Use Tabs` menu. Textadept
+shows what it is using for indentation in the document statusbar.
 
 The default option is usually set by a [language-specific
 module](7_Modules.html#buffer_properties) or the [theme](8_Themes.html#buffer).
@@ -108,8 +116,8 @@ all tabs are converted to spaces.
 
 #### Rectangular Selection
 
-Holding `Alt+Shift` (`Apple+Shift` on Mac OSX) and pressing the arrow keys
-enables rectangular selections to be made. Start typing to type on each line.
+Holding `Alt+Shift` (`⌥⇧` on Mac OSX) and pressing the arrow keys enables
+rectangular selections to be made. Start typing to type on each line.
 
 ![Rectangular Selection](images/rectangularselection.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -121,36 +129,28 @@ Clicking the mouse at a point in the buffer while holding `Control` places an
 additional caret at that point. Clicking and dragging while holding `Control`
 creates multiple selections. Start typing to enter text at each selection.
 
+This is currently unavailable on Mac OSX.
+
 #### Selecting Entities
 
-Textadept allows you to select many different entities from the caret. `Alt+S`
-(`Ctrl+S` on Mac OSX) is the key prefix to entity selection. Typing `'`, `"`,
-`(`, `[`, or `{` selects all text between the matching delimiters. Typing `W`,
-`L`, `P`, `B`, or `S` (without holding `Shift`) selects the current word, line,
-paragraph, indented block, or style respectively. Typing `T` selects the text
-between `>` and `<`, useful for selecting within HTML tags. Typing `G` grows the
-current selection by one character to each side, so `Alt+S, "` followed by
-`Alt+S, G` selects an entire `""` sequence instead of just the text in-between
-quotes. Finally, typing `C` followed by any other character selects all text
-between a pair of those characters. `Alt+S, C, "` is identical to `Alt+S, "`.
+Textadept allows you to select many different entities from the caret. For
+example, `Ctrl+"` (`^"` on Mac OSX) selects all characters in a `""` sequence.
+Typing `Ctrl++` (`^+`) as a follow-up selects the double-quotes too. See the
+`Edit -> Select In...` menu for available entities and their key commands.
 
 ## Enclosing Text
 
 As a complement to selecting entities, you can enclose text as entities. The
-key prefix is `Alt+C` (`Ctrl+C` on Mac OSX). Typing `'`, `"`, `(`, `[`, or `{`
-encloses the text in the appropriate character pair. Typing `T` (without holding
-`Shift`) creates an opening and closing HTML tag while `Shift+T` creates a
-single HTML tag. Finally, typing `C` followed by any other character encloses
-the text between a pair of those characters. `Alt+C, C, "` is identical to
-`Alt+C, "`.
+`Edit -> Selection -> Enclose In...` menu contains all available entities and
+their key commands.
 
 If no text is selected, the word to the left of the caret is enclosed.
 
 ## Word Highlight
 
 All occurrences of a given word are highlighted by putting the caret over the
-word and pressing `Ctrl+Shift+H` (`Ctrl+Apple+T` on Mac OSX). This is useful to
-show occurrences of a variable name in source code.
+word and pressing `Ctrl+Shift+H` (`⌘⇧H` on Mac OSX). This is useful to show
+occurrences of a variable name in source code.
 
 ![Word Highlight](images/wordhighlight.png)
 
@@ -158,9 +158,9 @@ show occurrences of a variable name in source code.
 
 #### Virtual Space
 
-Virtual space (freehand) mode is enabled and disabled with `Ctrl+T, V, V`
-(`Apple+T, V, V` in Mac OSX). When enabled, caret movement is not restricted by
-line endings.
+Virtual space (freehand) mode is enabled and disabled with `Ctrl+Alt+Shift+V`
+(`^⇧V` in Mac OSX). When enabled, caret movement is not restricted by line
+endings.
 
 #### Overwrite
 

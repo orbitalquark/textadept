@@ -2,11 +2,11 @@
 
 ## Command Entry
 
-Access to the Lua state is available through the command entry. Press `F2` to
-access it. It is useful for debugging, inspecting, and entering buffer or view
-commands. If you try to cause instability in Textadept's Lua state, you might
-very well succeed so be careful. For more information, see the
-[scripting](11_Scripting.html) page.
+Access to the Lua state is available through the command entry. Press `Ctrl+E`
+(`⌘E` on Mac OSX) to access it. It is useful for debugging, inspecting, and
+entering buffer or view commands. If you try to cause instability in Textadept's
+Lua state, you might very well succeed so be careful. For more information, see
+the [scripting](11_Scripting.html) page.
 
 Abbreviated commands for the `buffer`, `view` and `gui` are available. So
 `buffer:append_text('foo')` can be shortened to `append_text('foo')`. `print()`
@@ -18,8 +18,8 @@ Lua's `print()`.
 #### Tab Completion
 
 Tab-completion for functions, variables, tables, etc. is available. Press the
-`Tab` key to display a list of available completions. Use the arrow keys to make
-a selection and press `Enter` to insert it.
+`Tab` (`⇥`) key to display a list of available completions. Use the arrow keys
+to make a selection and press `Enter` (`↩`) to insert it.
 
 ![Command Completion](images/commandentrycompletion.png)
 
@@ -39,8 +39,8 @@ buffer (or a selection). You could do the following from the command entry:
     ls={}; for l in buffer:get_text():gmatch('[^\n]+') do ls[#ls+1]=l end;
     table.sort(ls); buffer:set_text(table.concat(ls, '\n'))
 
-A simpler way would be to press `Alt+R` (`Ctrl+Apple+R` on Mac OSX), enter the
-shell command `sort`, and hit `Enter`.
+A simpler way would be to press `Ctrl+|` (`⌘|` on Mac OSX), enter the shell
+command `sort`, and hit `Enter` (`↩`).
 
 The standard input (stdin) for shell commands is determined as follows:
 

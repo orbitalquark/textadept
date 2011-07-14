@@ -64,9 +64,9 @@ module('events', package.seeall)
 --   Entry.<br />
 --       * `code`: The key code.
 --       * `shift`: The Shift key is held down.
---       * `ctrl`: The Control key is held down.
---       * `alt`: The Alt/Apple key is held down.
---       * `option`: The Alt/Option key on Mac OSX is held down.
+--       * `ctrl`: The Control/Command key is held down.
+--       * `alt`: The Alt/option key is held down.
+--       * `meta`: The Control key on Mac OSX is held down.
 -- * `DOUBLE_CLICK`: Called when the mouse button is double-clicked.<br />
 --       * `position`: The text position of the double click.
 --       * `line`: The line of the double click.
@@ -113,9 +113,9 @@ module('events', package.seeall)
 -- * `KEYPRESS`: Called when a key is pressed.<br />
 --       * `code`: The key code.
 --       * `shift`: The Shift key is held down.
---       * `ctrl`: The Control key is held down.
---       * `alt`: The Alt/Apple key is held down.
---       * `option`: The Alt/Option key on Mac OSX is held down.
+--       * `ctrl`: The Control/Command key is held down.
+--       * `alt`: The Alt/option key is held down.
+--       * `meta`: The Control key on Mac OSX is held down.
 -- * `MARGIN_CLICK`: Called when the mouse is clicked inside a margin.<br />
 --       * `margin`: The margin number that was clicked.
 --       * `position`: The position of the start of the line in the buffer that

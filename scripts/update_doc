@@ -53,7 +53,7 @@ if luadoc then
     f = io.open('tmp', 'w')
     f:write(markdown)
     f:close()
-    f = io.popen('perl ../doc/Markdown.pl tmp')
+    f = io.popen('perl ../doc/MultiMarkdown.pl tmp')
     markdown = f:read('*all')
     f:close()
     os.execute('rm tmp')
@@ -112,10 +112,10 @@ if manual then
       </html>
     ]]
 
-    local sidebar_md = io.popen('../doc/Markdown.pl ../doc/sidebar.md')
+    local sidebar_md = io.popen('../doc/MultiMarkdown.pl ../doc/sidebar.md')
     html = html:gsub('%%sidebar%%', sidebar_md:read('*all'))
     sidebar_md:close()
-    local content_md = io.popen('../doc/Markdown.pl '..mdfile)
+    local content_md = io.popen('../doc/MultiMarkdown.pl '..mdfile)
     local md = content_md:read('*all'):gsub('%%', '%%%%')
     md = md:gsub('(<h%d>)([^<]+)(</h%d>)',
                  function(s, text, e)

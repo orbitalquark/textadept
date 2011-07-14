@@ -28,7 +28,7 @@ function filter_through()
 end
 
 events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
-  if filter_through_active and code == 0xff1b then -- escape
+  if filter_through_active and keys.KEYSYMS[code] == 'esc' then
     filter_through_active = false
   end
 end, 1) -- place before command_entry.lua's handler (if necessary)

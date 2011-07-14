@@ -1,5 +1,5 @@
-ADD keys.ADD [string]\nThe string representing used to join together a sequence of Control, Shift,\nor Alt modifier keys.\n
-ALT keys.ALT [string]\nThe string representing the Alt key (the Apple key on Mac OSX).\n
+ADD keys.ADD [string]\nThe string representing used to join together a sequence of Control, Alt,\nMeta, or Shift modifier keys. The default is ''.\n
+ALT keys.ALT [string]\nThe string representing the Alt/option key. The default is 'a'\n
 ANNOTATION_BOXED _SCINTILLA.constants.ANNOTATION_BOXED\n2\n
 ANNOTATION_HIDDEN _SCINTILLA.constants.ANNOTATION_HIDDEN\n0\n
 ANNOTATION_STANDARD _SCINTILLA.constants.ANNOTATION_STANDARD\n1\n
@@ -24,12 +24,13 @@ CARET_SLOP _SCINTILLA.constants.CARET_SLOP\n1\n
 CARET_STRICT _SCINTILLA.constants.CARET_STRICT\n4\n
 CHAR_ADDED events.CHAR_ADDED\nCalled when an ordinary text character is added to the buffer.\n    * `ch`: The text character byte.\n\n
 CLASS lexer.CLASS\n\n
+CLEAR keys.CLEAR [string]\nThe string representing the key sequence that clears the current keychain. The\ndefault is 'esc' (Escape).\n
 COMMAND_ENTRY_COMMAND events.COMMAND_ENTRY_COMMAND\nCalled when a command is entered into the Command Entry.\n    * `command`: The command text.\n\n
-COMMAND_ENTRY_KEYPRESS events.COMMAND_ENTRY_KEYPRESS\nCalled when a key is pressed in the Command Entry.\n    * `code`: The key code.\n    * `shift`: The Shift key is held down.\n    * `ctrl`: The Control key is held down.\n    * `alt`: The Alt/Apple key is held down.\n\n
+COMMAND_ENTRY_KEYPRESS events.COMMAND_ENTRY_KEYPRESS\nCalled when a key is pressed in the Command Entry.\n    * `code`: The key code.\n    * `shift`: The Shift key is held down.\n    * `ctrl`: The Control/Command key is held down.\n    * `alt`: The Alt/option key is held down.\n    * `meta`: The Control key on Mac OSX is held down.\n\n
 COMMENT lexer.COMMENT\n\n
 COMPILE_OUTPUT events.COMPILE_OUTPUT\nCalled after a compile command is executed. When connecting to this event\n(typically from a language-specific module), connect with an index of 1 and\nreturn `true` if the event was handled and you want to override the default\nhandler that prints the output to a new view.\n    * `lexer`: The lexer language.\n    * `output`: The output from the command.\n\n
 CONSTANT lexer.CONSTANT\n\n
-CTRL keys.CTRL [string]\nThe string representing the Control key.\n
+CTRL keys.CTRL [string]\nThe string representing the Control/Command key. The default is 'c'.\n
 Carg lpeg.Carg(n)\nCreates an argument capture. This pattern matches the empty string and produces\nthe value given as the nth extra argument given in the call to lpeg.match.\n
 Cb lpeg.Cb(name)\nCreates a back capture. This pattern matches the empty string and produces the\nvalues produced by the most recent group capture named name. Most recent means\nthe last complete outermost group capture with the given name. A Complete\ncapture means that the entire pattern corresponding to the capture has\nmatched. An Outermost capture means that the capture is not inside another\ncomplete capture.\n
 Cc lpeg.Cc([value, ...])\nCreates a constant capture. This pattern matches the empty string and produces\nall given values as its captured values.\n
@@ -85,17 +86,19 @@ INDIC_STRAIGHTBOX _SCINTILLA.constants.INDIC_STRAIGHTBOX\n8\n
 INDIC_STRIKE _SCINTILLA.constants.INDIC_STRIKE\n4\n
 INDIC_TT _SCINTILLA.constants.INDIC_TT\n2\n
 INVALID_POSITION _SCINTILLA.constants.INVALID_POSITION\n-1\n
-KEYPRESS events.KEYPRESS\nCalled when a key is pressed.\n    * `code`: The key code.\n    * `shift`: The Shift key is held down.\n    * `ctrl`: The Control key is held down.\n    * `alt`: The Alt/Apple key is held down.\n\n
+KEYPRESS events.KEYPRESS\nCalled when a key is pressed.\n    * `code`: The key code.\n    * `shift`: The Shift key is held down.\n    * `ctrl`: The Control/Command key is held down.\n    * `alt`: The Alt/option key is held down.\n    * `meta`: The Control key on Mac OSX is held down.\n\n
 KEYSYMS keys.KEYSYMS [table]\nLookup table for key values higher than 255. If a key value given to 'keypress'\nis higher than 255, this table is used to return a string representation of\nthe key if it exists.\n
 KEYWORD lexer.KEYWORD\n\n
 KEYWORDSET_MAX _SCINTILLA.constants.KEYWORDSET_MAX\n8\n
 LANGUAGE_MODULE_LOADED events.LANGUAGE_MODULE_LOADED\nCalled when loading a language-specific module. This is useful for overriding\nits key commands since they are not available when Textadept starts. Arguments:\n    * `lang`: The language lexer name.\n\n
+LANGUAGE_MODULE_PREFIX keys.LANGUAGE_MODULE_PREFIX [string]\nThe starting key command of the keychain reserved for language-specific\nmodules. Defaults to Ctrl/Cmd+L.\n
 MARGIN_CLICK events.MARGIN_CLICK\nCalled when the mouse is clicked inside a margin.\n    * `margin`: The margin number that was clicked.\n    * `position`: The position of the start of the line in the buffer that\n      corresponds to the margin click.\n    * `modifiers`: The appropriate combination of\n      `_SCINTILLA.constants.SCI_SHIFT`, `_SCINTILLA.constants.SCI_CTRL`,\n      and `_SCINTILLA.constants.SCI_ALT` to indicate the keys that were\n      held down at the time of the margin click.\n\n
 MARKER_MAX _SCINTILLA.constants.MARKER_MAX\n31\n
 MARK_BOOKMARK_COLOR _m.textadept.bookmarks.MARK_BOOKMARK_COLOR [number]\nThe color used for a bookmarked line in 0xBBGGRR format.\n
 MARK_HIGHLIGHT_BACK _m.textadept.editing.MARK_HIGHLIGHT_BACK [number]\nThe background color used for a line containing a highlighted word in\n0xBBGGRR format.\n
 MAX _m.textadept.snapopen.MAX [number]\nMaximum number of files to list. The default value is 1000.\n
 MENU_CLICKED events.MENU_CLICKED\nCalled when a menu item is selected.\n    * `menu_id`: The numeric ID of the menu item set in `gui.gtkmenu()`.\n\n
+META keys.META [string]\nThe string representing the Control key on Mac OSX. The default is 'm'.\n
 NUMBER lexer.NUMBER\n\n
 OPERATOR lexer.OPERATOR\n\n
 OSX _G.OSX [bool]\nIf Textadept is running on Mac OSX, this flag is `true`.\n
@@ -668,7 +671,7 @@ SC_WRAPVISUALFLAG_START _SCINTILLA.constants.SC_WRAPVISUALFLAG_START\n2\n
 SC_WRAP_CHAR _SCINTILLA.constants.SC_WRAP_CHAR\n2\n
 SC_WRAP_NONE _SCINTILLA.constants.SC_WRAP_NONE\n0\n
 SC_WRAP_WORD _SCINTILLA.constants.SC_WRAP_WORD\n1\n
-SHIFT keys.SHIFT [string]\nThe string representing the Shift key.\n
+SHIFT keys.SHIFT [string]\nThe string representing the Shift key. The default is 's'.\n
 STRING lexer.STRING\n\n
 STYLE_BRACEBAD _SCINTILLA.constants.STYLE_BRACEBAD\n35\n
 STYLE_BRACELIGHT _SCINTILLA.constants.STYLE_BRACELIGHT\n34\n
@@ -987,6 +990,7 @@ get_class _m.textadept.adeptsense.get_class(sense, symbol)\nReturns the class na
 get_completions _m.textadept.adeptsense.get_completions(sense, symbol, only_fields,\nonly_functions)\nReturns a list of completions for the given symbol.\n@param sense The adeptsense returned by adeptsense.new().\n@param symbol The symbol to get completions for.\n@param only_fields If true, returns list of only fields; defaults to false.\n@param only_functions If true, returns list of only functions; defaults\nto false.\n@return completion_list or nil\n
 get_cur_line buffer.get_cur_line(buffer)\nRetrieve the text of the line containing the caret. Also returns the index\nof the caret on the line.\n@param buffer The focused buffer.\n@return string, number\n
 get_fold_level lexer.get_fold_level(line, line_number)\nReturns the fold level for a given line. This level already has\n`SC_FOLDLEVELBASE` added to it, so you do not need to add it yourself.\n@param line_number The line number to get the fold level of.\n
+get_gdk_key keys.get_gdk_key(key_seq)\nReturns the GDK integer keycode and modifier mask for a key sequence. This\nis used internally for creating menu accelerators.\n@param key_seq The string key sequence.\n@return keycode and modifier mask\n
 get_hotspot_active_back buffer.get_hotspot_active_back(buffer)\nGet the back color for active hotspots in 0xBBGGRR format.\n@param buffer The focused buffer.\n@return number\n
 get_hotspot_active_fore buffer.get_hotspot_active_fore(buffer)\nGet the fore color for active hotspots.\n@param buffer The focused buffer.\n@return number\n
 get_indent_amount lexer.get_indent_amount(line)\nReturns the indent amount of text for a given line.\n@param line The line number to get the indent amount of.\n
@@ -1090,7 +1094,7 @@ java _G.snippets.java [table]\nContainer for Java-specific snippets.\n
 java _m.java [module]\nThe java module. It provides utilities for editing Java code. User tags\nare loaded from _USERHOME/modules/java/tags and user apis are loaded from\n_USERHOME/modules/java/api.\n
 join_lines _m.textadept.editing.join_lines()\nJoins the current line with the line below.\n
 keys _G.keys [module]\nManages key commands in Textadept.\n
-keys _m.textadept.keys [module]\nDefines key commands for Textadept. This set of key commands is pretty\nstandard among other text editors.\n
+keys _m.textadept.keys [module]\nDefines additional key commands for Textadept. The primary key commands\nare loaded from _USERHOME/keys.conf, _HOME/modules/textadept/keys.conf,\n_USERHOME/keys.osx.conf, or _HOME/modules/textadept/keys.osx.conf depending\non the platform by _m.textadept.menu. This module, like _m.textadept.menu,\nshould be 'require'ed last.\n
 keys_unicode buffer.keys_unicode [bool]\nInterpret keyboard input as Unicode.\n
 layout_cache buffer.layout_cache [number]\nThe degree of caching of layout information.\n    * `_SCINTILLA.constants.SC_CACHE_NONE` (0): No lines are cached.\n    * `_SCINTILLA.constants.SC_CACHE_CARET` (1): The line containing the\n      text caret. This is the default.\n    * `_SCINTILLA.constants.SC_CACHE_PAGE` (2): Visible lines plus the line\n      containing the caret.\n    * `_SCINTILLA.constants.SC_CACHE_DOCUMENT` (3): All lines in the\n      document.\n\n
 ldexp math.ldexp(m, e)\nReturns *m2^e* (`e` should be an integer).\n
@@ -1202,7 +1206,7 @@ math _G.math [module]\nLua math module.\n
 max math.max(x, ···)\nReturns the maximum value among its arguments.\n
 max_line_state buffer.max_line_state [number]\nThe last line number that has line state. (Read-only)\n
 maxn table.maxn(table)\nReturns the largest positive numerical index of the given table, or zero if\nthe table has no positive numerical indices. (To do its job this function\ndoes a linear traversal of the whole table.)\n
-menu _m.textadept.menu [module]\nProvides dynamic menus for Textadept. This module, like _m.textadept.keys,\nshould be 'require'ed last.\n
+menu _m.textadept.menu [module]\nProvides dynamic menus for Textadept. It also loads key commands\nfrom _USERHOME/keys.conf, _HOME/modules/textadept/keys.conf,\n_USERHOME/keys.osx.conf, or _HOME/modules/textadept/keys.osx.conf depending on\nthe platform. This module, like _m.textadept.keys, should be 'require'ed last.\n
 menubar _m.textadept.menu.menubar [table]\nContains the main menubar.\n
 menubar gui.menubar [table]\nA table of GTK menus defining a menubar. (Write-only)\n
 mime_types _m.textadept.mime_types [module]\nHandles file-specific settings.\n
@@ -1234,6 +1238,7 @@ oct_num lexer.oct_num\nMatches an octal number.\n
 open _m.textadept.snapopen.open(utf8_paths, filter, exclusive, depth)\nQuickly open a file in set of directories.\n@param utf8_paths A UTF-8 string directory path or table of UTF-8 directory\npaths to search.\n@param filter A filter for files and folders to exclude. The filter may be\na string or table. Each filter is a Lua pattern. Any files matching a filter\nare excluded. Prefix a pattern with '!' to exclude any files that do not match\nthe filter. Directories can be excluded by adding filters to a table assigned\nto a 'folders' key in the filter table. All strings should be UTF-8 encoded.\n@param exclusive Flag indicating whether or not to exclude PATHS in the\nsearch. Defaults to false.\n@param depth Number of directories to recurse into for finding files. Defaults\nto DEFAULT_DEPTH.\n@usage _m.textadept.snapopen.open()\n@usage _m.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)\n@usage _m.textadept.snapopen.open(nil, '!%.lua$')\n@usage _m.textadept.snapopen.open(nil, { folders = { '%.hg' } })\n
 open io.open(filename [, mode])\nThis function opens a file, in the mode specified in the string `mode`. It\nreturns a new file handle, or, in case of errors, nil plus an error\nmessage. The `mode` string can be any of the following: "r": read mode (the\ndefault); "w": write mode; "a": append mode; "r+": update mode, all previous\ndata is preserved; "w+": update mode, all previous data is erased; "a+":\nappend update mode, previous data is preserved, writing is only allowed at\nthe end of file. The `mode` string can also have a '`b`' at the end, which\nis needed in some systems to open the file in binary mode. This string is\nexactly what is used in the standard C function `fopen`.\n
 open_file io.open_file(utf8_filenames)\nOpens a list of files.\n@param utf8_filenames A '\\n' separated list of UTF-8-encoded filenames to\nopen. If nil, the user is prompted with a fileselect dialog.\n@usage io.open_file(utf8_encoded_filename)\n
+open_recent_file io.open_recent_file()\nPrompts the user to open a recently opened file.\n
 orange lexer.colors.orange\nOrange.\n
 os _G.os [module]\nLua os module.\n
 output io.output([file])\nSimilar to `io.input`, but operates over the default output file.\n
@@ -1296,7 +1301,7 @@ rawset _G.rawset(table, index, value)\nSets the real value of `table[index]` to 
 read file:read(···)\nReads the file `file`, according to the given formats, which specify what\nto read. For each format, the function returns a string (or a number)\nwith the characters read, or nil if it cannot read data with the specified\nformat. When called without formats, it uses a default format that reads the\nentire next line (see below). The available formats are "*n": reads a number;\nthis is the only format that returns a number instead of a string. "*a":\nreads the whole file, starting at the current position. On end of file,\nit returns the empty string. "*l": reads the next line (skipping the end of\nline), returning nil on end of file. This is the default format. *number*:\nreads a string with up to this number of characters, returning nil on end\nof file. If number is zero, it reads nothing and returns an empty string,\nor nil on end of file.\n
 read io.read(···)\nEquivalent to `io.input():read`.\n
 read_only buffer.read_only [bool]\nRead-only mode.\n
-recent_files io.recent_files [table]\nList of recently opened files.\n
+recent_files io.recent_files [table]\nList of recently opened files. The most recent are towards the top.\n
 rectangular_selection_anchor buffer.rectangular_selection_anchor [number]\nThe position of the anchor of the rectangular selection.\n
 rectangular_selection_anchor_virtual_space buffer.rectangular_selection_anchor_virtual_space [number]\nThe amount of virtual space for the anchor of the rectangular selection.\n
 rectangular_selection_caret buffer.rectangular_selection_caret [number]\nThe position of the caret of the rectangular selection.\n
@@ -1360,7 +1365,7 @@ select_indented_block _m.textadept.editing.select_indented_block()\nSelects inde
 select_lexer _m.textadept.mime_types.select_lexer()\nPrompts the user to select a lexer from a filtered list for the current buffer.\n
 select_line _m.textadept.editing.select_line()\nSelects the current line.\n
 select_paragraph _m.textadept.editing.select_paragraph()\nSelects the current paragraph. Paragraphs are delimited by two or more\nconsecutive newlines.\n
-select_scope _m.textadept.editing.select_scope()\nSelects all text with the same style as under the caret.\n
+select_style _m.textadept.editing.select_style()\nSelects all text with the same style as under the caret.\n
 selection_duplicate buffer.selection_duplicate(buffer)\nDuplicate the selection. If selection empty duplicate the line containing\nthe caret.\n@param buffer The focused buffer.\n
 selection_end buffer.selection_end [number]\nThe position that ends the selection - this becomes the current position. This\ndoes not make the caret visible.\n
 selection_is_rectangle buffer.selection_is_rectangle [bool]\nIs the selection rectangular? The alternative is the more common stream\nselection. (Read-only)\n

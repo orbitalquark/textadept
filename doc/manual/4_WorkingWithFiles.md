@@ -10,13 +10,13 @@ question of where to place the bar (above, below, or to one side) and how many
 to have (one for each split view or a single one under the menubar).
 
 You can see which buffer is active by looking at Textadept's titlebar. Pressing
-`Ctrl+Tab` cycles to the next buffer and `Ctrl+Shift+Tab` cycles to the previous
-one.
+`Ctrl+Tab` (``^` `` on Mac OSX) cycles to the next buffer and `Ctrl+Shift+Tab`
+(`^~`) cycles to the previous one.
 
 ## Buffer Browser
 
-To move quickly between buffers, press `Ctrl+B` (`Apple+B` on Mac OSX) to open
-the buffer browser.
+To move quickly between buffers, press `Ctrl+B` (`⌘B` on Mac OSX) to open the
+buffer browser.
 
 ![Buffer Browser](images/bufferbrowser.png)
 
@@ -30,17 +30,17 @@ wildcards. You can also just use the arrow keys. Pressing `Enter` or clicking
 ## Split Views
 
 Textadept allows you to split the editor window as many times as you like either
-horizontally or vertically. `Ctrl+Alt+V, Shift+S` splits vertically
-(side-by-side) and `Ctrl+Alt+V, S` splits horizontally (`Ctrl+V, Shift+S` and
-`Ctrl+V, S` respectively on Mac OSX). You can resize the splitter bar by
-clicking and dragging with the mouse. The same file can be worked with in
-multiple split views.
+horizontally or vertically. `Ctrl+Alt+Shift+S` splits vertically (side-by-side)
+and `Ctrl+Alt+S` splits horizontally (`^⇧S` and `^S` respectively on Mac OSX).
+You can resize the splitter bar by clicking and dragging with the mouse or
+using `Ctrl+Alt++` and `Ctrl+Alt+-` (`^+` and `^-`). The same file can be worked
+with in multiple split views.
 
-Pressing `Ctrl+Alt+V, N` (`Ctrl+V, N` on Mac OSX) goes to the next view and
-`Ctrl+Alt+V, P` goes to the previous one.
+Pressing `Ctrl+Alt+Tab` (`^⇥` on Mac OSX) goes to the next view and
+`Ctrl+Alt+Shift+Tab` (`^⇧⇥`) goes to the previous one.
 
-To unsplit a view, enter the view to keep open and press `Ctrl+Alt+V, W`
-(`Ctrl+V, W` on Mac OSX). To unsplit all views, use `Ctrl+Alt+V, Shift+W`.
+To unsplit a view, enter the view to keep open and press `Ctrl+Alt+W` (`^W` on
+Mac OSX). To unsplit all views, use `Ctrl+Alt+Shift+W` (`^⇧W`).
 
 ## Sessions
 
@@ -58,8 +58,10 @@ scroll positions in each buffer, and Textadept's window size.
 A quicker, though slightly more limited alternative to the standard
 `File -> Open` dialog is snapopen. It behaves like the buffer browser, but
 displays a list of files to open, including files in subdirectories. You can
-snapopen the current file's directory from the `Tools -> Snapopen -> Current
-Directory` menu. Snapopen is pretty limited from the menu, but more versatile
-in scripts. See its [LuaDoc](../modules/_m.textadept.snapopen.html).
+snapopen the current file's directory with `Ctrl+Alt+Shift+O` (`⌘⌥⇧O` on Mac
+OSX) or from the `Tools -> Snapopen -> Current Directory` menu. Snapopen is
+pretty limited from the menu, but more versatile in scripts. See its
+[LuaDoc](../modules/_m.textadept.snapopen.html). `Ctrl+U` (`⌘U`) snaps open
+`~/.textadept/` and `Ctrl+Alt+U` (`⌘⌥U`) snaps open Textadept's home directory.
 
 ![Snapopen](images/snapopen.png)
