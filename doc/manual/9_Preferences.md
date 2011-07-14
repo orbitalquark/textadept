@@ -80,7 +80,7 @@ The default set of key commands is located in `modules/textadept/keys.conf`
 `_m.textadept.menu` module. It is not recommended to edit Textadept's
 `keys.conf` or `keys.osx.conf` for changing the key bindings since your changes
 could be overwritten when updating Textadept. Instead, make a copy in your
-`~/.textadept/modules/textadept/` folder and modify that.
+`~/.textadept/` folder and modify that.
 
 You can also modify key commands from within your your `~/.textadept/init.lua`
 or from a file loaded by `~/.textadept/init.lua`. For example maybe you want
