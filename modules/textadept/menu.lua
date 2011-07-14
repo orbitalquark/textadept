@@ -78,23 +78,30 @@ local function open_webpage(url)
   end
 end
 
+-- Creates a menuitem readable by read_menu_table().
+-- @param label The label that will be localized.
+-- @param f The function or table.
+local function menuitem(label, f)
+  return { L(label), f, K[L(label):gsub('_([^_])', '%1')] }
+end
+
 ---
 -- Contains the main menubar.
 -- @class table
 -- @name menubar
 menubar = {
   { title = L('File'),
-    { L('gtk-new'), new_buffer, K['gtk-new'] },
-    { L('gtk-open'), io.open_file, K['gtk-open'] },
-    { L('Open Recent...'), io.open_recent_file, K['Open Recent...'] },
-    { L('Reload'), _buffer.reload, K['Reload'] },
-    { L('gtk-save'), _buffer.save, K['gtk-save'] },
-    { L('gtk-save-as'), _buffer.save_as, K['gtk-save-as'] },
+    menuitem('gtk-new', new_buffer),
+    menuitem('gtk-open', io.open_file),
+    menuitem('Open Recent...', io.open_recent_file),
+    menuitem('Reload', _buffer.reload),
+    menuitem('gtk-save', _buffer.save),
+    menuitem('gtk-save-as', _buffer.save_as),
     SEPARATOR,
-    { L('gtk-close'), _buffer.close, K['gtk-close'] },
-    { L('Close All'), io.close_all, K['Close All'] },
+    menuitem('gtk-close', _buffer.close),
+    menuitem('Close All', io.close_all),
     SEPARATOR,
-    { L('Load Session...'), function()
+    menuitem('Load Session...', function()
       local session_file = _SESSIONFILE or ''
       local utf8_filename = gui.dialog('fileselect',
                                        '--title', L('Load Session'),
@@ -106,8 +113,8 @@ menubar = {
       if #utf8_filename > 0 then
         _m.textadept.session.load(utf8_filename:iconv(_CHARSET, 'UTF-8'))
       end
-    end, K['Load Session...'] },
-    { L('Save Session...'), function()
+    end),
+    menuitem('Save Session...', function()
       local session_file = _SESSIONFILE or ''
       local utf8_filename = gui.dialog('filesave',
                                        '--title', L('Save Session'),
@@ -119,231 +126,195 @@ menubar = {
       if #utf8_filename > 0 then
         _m.textadept.session.save(utf8_filename:iconv(_CHARSET, 'UTF-8'))
       end
-    end, K['Save Session...'] },
+    end),
     SEPARATOR,
-    { L('gtk-quit'), quit, K['gtk-quit'] },
+    menuitem('gtk-quit', quit),
   },
   { title = L('Edit'),
-    { L('gtk-undo'), _buffer.undo, K['gtk-undo'] },
-    { L('gtk-redo'), _buffer.redo, K['gtk-redo'] },
+    menuitem('gtk-undo', _buffer.undo),
+    menuitem('gtk-redo', _buffer.redo),
     SEPARATOR,
-    { L('gtk-cut'), _buffer.cut, K['gtk-cut'] },
-    { L('gtk-copy'), _buffer.copy, K['gtk-copy'] },
-    { L('gtk-paste'), _buffer.paste, K['gtk-paste'] },
-    { L('Duplicate'), _buffer.line_duplicate, K['Duplicate'] },
-    { L('gtk-delete'), _buffer.clear, K['gtk-delete'] },
-    { L('gtk-select-all'), _buffer.select_all, K['gtk-select-all'] },
+    menuitem('gtk-cut', _buffer.cut),
+    menuitem('gtk-copy', _buffer.copy),
+    menuitem('gtk-paste', _buffer.paste),
+    menuitem('Duplicate Line', _buffer.line_duplicate),
+    menuitem('gtk-delete', _buffer.clear),
+    menuitem('gtk-select-all', _buffer.select_all),
     SEPARATOR,
-    { L('Match Brace'), m_editing.match_brace, K['Match Brace'] },
-    { L('Select to Brace'), { m_editing.match_brace, 'select' },
-      K['Select to Brace'] },
-    { L('Complete Word'), { m_editing.autocomplete_word, '%w_' },
-      K['Complete Word'] },
-    { L('Delete Word'), { m_editing.current_word, 'delete' },
-      K['Delete Word'] },
-    { L('Highlight Word'), m_editing.highlight_word, K['Highlight Word'] },
-    { L('Complete Symbol'), function()
+    menuitem('Match Brace', m_editing.match_brace),
+    menuitem('Select to Brace', { m_editing.match_brace, 'select' }),
+    menuitem('Complete Word', { m_editing.autocomplete_word, '%w_' }),
+    menuitem('Delete Word', { m_editing.current_word, 'delete' }),
+    menuitem('Highlight Word', m_editing.highlight_word),
+    menuitem('Complete Symbol', function()
       local m = _m[buffer:get_lexer()]
       if m and m.sense then m.sense:complete() end
-    end, K['Complete Symbol'] },
-    { L('Show Documentation'), function()
+    end),
+    menuitem('Show Documentation', function()
       local m = _m[buffer:get_lexer()]
       if m and m.sense then m.sense:show_apidoc() end
-    end, K['Show Documentation'] },
-    { L('Toggle Block Comment'), m_editing.block_comment,
-      K['Toggle Block Comment'] },
-    { L('Transpose Characters'), m_editing.transpose_chars,
-      K['Transpose Characters'] },
-    { L('Join Lines'), m_editing.join_lines, K['Join Lines'] },
-    { L('Convert Indentation'), m_editing.convert_indentation,
-      K['Convert Indentation'] },
+    end),
+    menuitem('Toggle Block Comment', m_editing.block_comment),
+    menuitem('Transpose Characters', m_editing.transpose_chars),
+    menuitem('Join Lines', m_editing.join_lines),
+    menuitem('Convert Indentation', m_editing.convert_indentation),
     { title = L('Selection'),
-      { title = L('Enclose in...'),
-        { L('HTML Tags'), function()
-          m_editing.enclose('<', '>')
-          local buffer = buffer
-          local pos = buffer.current_pos
-          while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
-          buffer:insert_text(-1,
-                             '</'..buffer:text_range(pos, buffer.current_pos))
-        end, K['HTML Tags'] },
-        { L('HTML Single Tag'), { m_editing.enclose, '<', ' />' },
-          K['HTML Single Tag'] },
-        { L('Double Quotes'), { m_editing.enclose, '"', '"' },
-          K['Double Quotes'] },
-        { L('Single Quotes'), { m_editing.enclose, "'", "'" },
-          K['Single Quotes'] },
-        { L('Parentheses'), { m_editing.enclose, '(', ')' }, K['Parentheses'] },
-        { L('Brackets'), { m_editing.enclose, '[', ']' }, K['Brackets'] },
-        { L('Braces'), { m_editing.enclose, '{', '}' }, K['Braces'] },
-      },
-      { L('Grow Selection'), { m_editing.grow_selection, 1 },
-        K['Grow Selection'] },
-      { L('Shrink Selection'), { m_editing.grow_selection, -1 },
-        K['Shrink Selection'] },
+      menuitem('Enclose as XML Tags', function()
+        m_editing.enclose('<', '>')
+        local buffer = buffer
+        local pos = buffer.current_pos
+        while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
+        buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
+      end),
+      menuitem('Enclose as Single XML Tag', { m_editing.enclose, '<', ' />' }),
+      menuitem('Enclose in Double Quotes', { m_editing.enclose, '"', '"' }),
+      menuitem('Enclose in Single Quotes', { m_editing.enclose, "'", "'" }),
+      menuitem('Enclose in Parentheses', { m_editing.enclose, '(', ')' }),
+      menuitem('Enclose in Brackets', { m_editing.enclose, '[', ']' }),
+      menuitem('Enclose in Braces', { m_editing.enclose, '{', '}' }),
+      SEPARATOR,
+      menuitem('Grow Selection', { m_editing.grow_selection, 1 }),
+      menuitem('Shrink Selection', { m_editing.grow_selection, -1 }),
     },
-    { title = L('Select in...'),
-      { L('Between Tags'), { m_editing.select_enclosed, '>', '<' },
-        K['Between Tags'] },
-      { L('HTML Tag'), { m_editing.select_enclosed, '<', '>' },
-        K['HTML Tag'] },
-      { L('Double Quote'), { m_editing.select_enclosed, '"', '"' },
-        K['Double Quote'] },
-      { L('Single Quote'), { m_editing.select_enclosed, "'", "'" },
-        K['Single Quote'] },
-      { L('Parenthesis'), { m_editing.select_enclosed, '(', ')' },
-        K['Parenthesis'] },
-      { L('Bracket'), { m_editing.select_enclosed, '[', ']' }, K['Bracket'] },
-      { L('Brace'), { m_editing.select_enclosed, '{', '}' }, K['Brace'] },
-      { L('Word'), { m_editing.current_word, 'select' }, K['Word'] },
-      { L('Line'), m_editing.select_line, K['Line'] },
-      { L('Paragraph'), m_editing.select_paragraph, K['Paragraph'] },
-      { L('Indented Block'), m_editing.select_indented_block,
-        K['Indented Block'] },
-      { L('Style'), m_editing.select_style, K['Style'] },
+    { title = L('Select'),
+      menuitem('Select between XML Tags',
+               { m_editing.select_enclosed, '>', '<' }),
+      menuitem('Select in XML Tag', { m_editing.select_enclosed, '<', '>' }),
+      menuitem('Select in Double Quotes',
+               { m_editing.select_enclosed, '"', '"' }),
+      menuitem('Select in Single Quotes',
+               { m_editing.select_enclosed, "'", "'" }),
+      menuitem('Select in Parentheses',
+               { m_editing.select_enclosed, '(', ')' }),
+      menuitem('Select in Brackets', { m_editing.select_enclosed, '[', ']' }),
+      menuitem('Select in Braces', { m_editing.select_enclosed, '{', '}' }),
+      menuitem('Select Word', { m_editing.current_word, 'select' }),
+      menuitem('Select Line', m_editing.select_line),
+      menuitem('Select Paragraph', m_editing.select_paragraph),
+      menuitem('Select Indented Block', m_editing.select_indented_block),
+      menuitem('Select Style', m_editing.select_style),
     },
   },
   { title = L('Search'),
-    { L('gtk-find'), gui.find.focus, K['gtk-find'] },
-    { L('Find Next'), gui.find.find_next, K['Find Next'] },
-    { L('Find Previous'), gui.find.find_prev, K['Find Previous'] },
-    { L('Replace'), gui.find.replace, K['Replace'] },
-    { L('Replace All'), gui.find.replace_all, K['Replace All'] },
-    { L('Find Incremental'), gui.find.find_incremental, K['Find Incremental'] },
+    menuitem('gtk-find', gui.find.focus),
+    menuitem('Find Next', gui.find.find_next),
+    menuitem('Find Previous', gui.find.find_prev),
+    menuitem('Replace', gui.find.replace),
+    menuitem('Replace All', gui.find.replace_all),
+    menuitem('Find Incremental', gui.find.find_incremental),
     SEPARATOR,
-    { L('Find in Files'), function()
+    menuitem('Find in Files', function()
       gui.find.in_files = true
       gui.find.focus()
-    end, K['Find in Files'] },
-    { L('Goto Next File Found'), { gui.find.goto_file_in_list, true },
-      K['Goto Next File Found'] },
-    { L('Goto Previous File Found'), { gui.find.goto_file_in_list, false },
-      K['Goto Previous File Found'] },
+    end),
+    menuitem('Goto Next File Found', { gui.find.goto_file_in_list, true }),
+    menuitem('Goto Previous File Found', { gui.find.goto_file_in_list, false }),
     SEPARATOR,
-    { L('gtk-jump-to'), m_editing.goto_line, K['gtk-jump-to'] },
+    menuitem('gtk-jump-to', m_editing.goto_line),
   },
   { title = L('Tools'),
-    { L('Command Entry'), gui.command_entry.focus, K['Command Entry'] },
+    menuitem('Command Entry', gui.command_entry.focus),
+    menuitem('Select Command', function() _M.select_command() end),
     SEPARATOR,
-    { L('Run'), m_textadept.run.run, K['Run'] },
-    { L('Compile'), m_textadept.run.compile, K['Compile'] },
-    { L('Filter Through'), _m.textadept.filter_through.filter_through,
-      K['Filter Through'] },
+    menuitem('Run', m_textadept.run.run),
+    menuitem('Compile', m_textadept.run.compile),
+    menuitem('Filter Through', _m.textadept.filter_through.filter_through),
     SEPARATOR,
     { title = L('Snippets'),
-      { L('Expand'), m_textadept.snippets._insert, K['Expand'] },
-      { L('Insert...'), m_textadept.snippets._select, K['Insert...'] },
-      { L('Previous Placeholder'), m_textadept.snippets._previous,
-        K['Previous Placeholder'] },
-      { L('Cancel'), m_textadept.snippets._cancel_current, K['Cancel'] },
+      menuitem('Insert Snippet...', m_textadept.snippets._select),
+      menuitem('Expand Snippet/Next Placeholder', m_textadept.snippets._insert),
+      menuitem('Previous Snippet Placeholder', m_textadept.snippets._previous),
+      menuitem('Cancel Snippet', m_textadept.snippets._cancel_current),
     },
     { title = L('Bookmark'),
-      { L('Toggle on Current Line'), m_textadept.bookmarks.toggle,
-        K['Toggle on Current Line'] },
-      { L('Clear All'), m_textadept.bookmarks.clear, K['Clear All'] },
-      { L('Next'), m_textadept.bookmarks.goto_next, K['Next'] },
-      { L('Previous'), m_textadept.bookmarks.goto_prev, K['Previous'] },
-      { L('Goto Bookmark...'), m_textadept.bookmarks.goto,
-        K['Goto Bookmark...'] },
+      menuitem('Toggle Bookmark', m_textadept.bookmarks.toggle),
+      menuitem('Clear Bookmarks', m_textadept.bookmarks.clear),
+      menuitem('Next Bookmark', m_textadept.bookmarks.goto_next),
+      menuitem('Previous Bookmark', m_textadept.bookmarks.goto_prev),
+      menuitem('Goto Bookmark...', m_textadept.bookmarks.goto),
     },
     { title = L('Snapopen'),
-      { L('User Home'), { m_textadept.snapopen.open, _USERHOME },
-        K['User Home'] },
-      { L('Textadept Home'), { m_textadept.snapopen.open, _HOME },
-        K['Textadept Home'] },
-      { L('Current Directory'), function()
+      menuitem('Snapopen User Home', { m_textadept.snapopen.open, _USERHOME }),
+      menuitem('Snapopen Textadept Home', { m_textadept.snapopen.open, _HOME }),
+      menuitem('Snapopen Current Directory', function()
         if buffer.filename then
-          m_textadept.snapopen.open(buffer.filename:match('^(.+)[/\\]'))
+          m_textadept.snapopen.open(buffer.filename:match('^(.+)[/\]'))
         end
-      end, K['Current Directory'] },
+      end),
     },
     SEPARATOR,
-    { L('Show Style'), function()
+    menuitem('Show Style', function()
       local buffer = buffer
       local style = buffer.style_at[buffer.current_pos]
       local text = string.format("%s %s\n%s %s (%d)", L('Lexer'),
                                  buffer:get_lexer(), L('Style'),
                                  buffer:get_style_name(style), style)
       buffer:call_tip_show(buffer.current_pos, text)
-    end , K['Show Style'] },
+    end),
   },
   { title = L('Buffer'),
-    { L('Next Buffer'), { _view.goto_buffer, _view, 1, false },
-      K['Next Buffer'] },
-    { L('Previous Buffer'), { _view.goto_buffer, _view, -1, false },
-      K['Previous Buffer'] },
-    { L('Switch Buffer'), gui.switch_buffer, K['Switch Buffer'] },
+    menuitem('Next Buffer', { _view.goto_buffer, _view, 1, false }),
+    menuitem('Previous Buffer', { _view.goto_buffer, _view, -1, false }),
+    menuitem('Switch Buffer', gui.switch_buffer),
     SEPARATOR,
-    { L('Toggle View EOL'), { toggle_setting, 'view_eol' },
-      K['Toggle View EOL'] },
-    { L('Toggle Wrap Mode'), { toggle_setting, 'wrap_mode' },
-      K['Toggle Wrap Mode'] },
-    { L('Toggle Show Indent Guides'),
-      { toggle_setting, 'indentation_guides' },
-      K['Toggle Show Indent Guides'] },
-    { L('Toggle Use Tabs'), { toggle_setting, 'use_tabs' },
-      K['Toggle Use Tabs'] },
-    { L('Toggle View Whitespace'), { toggle_setting, 'view_ws' },
-      K['Toggle View Whitespace'] },
-    { L('Toggle Virtual Space'),
-      { toggle_setting, 'virtual_space_options', 2 },
-      K['Toggle Virtual Space'] },
+    menuitem('Toggle View EOL', { toggle_setting, 'view_eol' }),
+    menuitem('Toggle Wrap Mode', { toggle_setting, 'wrap_mode' }),
+    menuitem('Toggle Show Indent Guides',
+             { toggle_setting, 'indentation_guides' }),
+    menuitem('Toggle Use Tabs', { toggle_setting, 'use_tabs' }),
+    menuitem('Toggle View Whitespace', { toggle_setting, 'view_ws' }),
+    menuitem('Toggle Virtual Space',
+             { toggle_setting, 'virtual_space_options', 2 }),
     SEPARATOR,
     { title = L('Indentation'),
-      { '2', { set_indentation, 2 } },
-      { '3', { set_indentation, 3 } },
-      { '4', { set_indentation, 4 } },
-      { '8', { set_indentation, 8 } },
+      menuitem('Tab width: 2', { set_indentation, 2 }),
+      menuitem('Tab width: 3', { set_indentation, 3 }),
+      menuitem('Tab width: 4', { set_indentation, 4 }),
+      menuitem('Tab width: 8', { set_indentation, 8 }),
     },
     { title = L('EOL Mode'),
-      { L('CRLF'), { set_eol_mode, 0 }, K['CRLF'] },
-      { L('CR'), { set_eol_mode, 1 }, K['CR'] },
-      { L('LF'), { set_eol_mode, 2 }, K['LF'] },
+      menuitem('CRLF', { set_eol_mode, 0 }),
+      menuitem('CR', { set_eol_mode, 1 }),
+      menuitem('LF', { set_eol_mode, 2 }),
     },
     { title = L('Encoding'),
-      { L('UTF-8'), { set_encoding, 'UTF-8' }, K['UTF-8'] },
-      { L('ASCII'), { set_encoding, 'ASCII' }, K['ASCII'] },
-      { L('ISO-8859-1'), { set_encoding, 'ISO-8859-1' }, K['ISO-8859-1'] },
-      { L('MacRoman'), { set_encoding, 'MacRoman' }, K['MacRoman'] },
-      { L('UTF-16'), { set_encoding, 'UTF-16LE' }, K['UTF-16'] },
+      menuitem('UTF-8 Encoding', { set_encoding, 'UTF-8' }),
+      menuitem('ASCII Encoding', { set_encoding, 'ASCII' }),
+      menuitem('ISO-8859-1 Encoding', { set_encoding, 'ISO-8859-1' }),
+      menuitem('MacRoman Encoding', { set_encoding, 'MacRoman' }),
+      menuitem('UTF-16 Encoding', { set_encoding, 'UTF-16LE' }),
     },
     SEPARATOR,
-    { L('Select Lexer...'), m_textadept.mime_types.select_lexer,
-      K['Select Lexer...'] },
-    { L('Refresh Syntax Highlighting'),
-      { _buffer.colourise, _buffer, 0, -1 }, K['Refresh Syntax Highlighting'] },
+    menuitem('Select Lexer...', m_textadept.mime_types.select_lexer),
+    menuitem('Refresh Syntax Highlighting',
+             { _buffer.colourise, _buffer, 0, -1 }),
   },
   { title = L('View'),
-    { L('Next View'), { gui.goto_view, 1, false }, K['Next View'] },
-    { L('Previous View'), { gui.goto_view, -1, false }, K['Previous View'] },
+    menuitem('Next View', { gui.goto_view, 1, false }),
+    menuitem('Previous View', { gui.goto_view, -1, false }),
     SEPARATOR,
-    { L('Split Vertical'), { _view.split, _view }, K['Split Vertical'] },
-    { L('Split Horizontal'), { _view.split, _view, false },
-      K['Split Horizontal'] },
-    { L('Unsplit'), function() view:unsplit() end, K['Unsplit'] },
-    { L('Unsplit All'), function() while view:unsplit() do end end,
-      K['Unsplit All'] },
+    menuitem('Split View Vertical', { _view.split, _view }),
+    menuitem('Split View Horizontal', { _view.split, _view, false }),
+    menuitem('Unsplit View', function() view:unsplit() end),
+    menuitem('Unsplit All Views', function() while view:unsplit() do end end),
     SEPARATOR,
-    { L('Grow View'),
-      function() if view.size then view.size = view.size + 10 end end,
-      K['Grow View'] },
-    { L('Shrink View'),
-      function() if view.size then view.size = view.size - 10 end end,
-      K['Shrink View'] },
+    menuitem('Grow View',
+             function() if view.size then view.size = view.size + 10 end end),
+    menuitem('Shrink View',
+             function() if view.size then view.size = view.size - 10 end end),
     SEPARATOR,
-    { L('Zoom In'), _buffer.zoom_in, K['Zoom In'] },
-    { L('Zoom Out'), _buffer.zoom_out, K['Zoom Out'] },
-    { L('Reset Zoom'), function() buffer.zoom = 0 end, K['Reset Zoom'] },
+    menuitem('Zoom In', _buffer.zoom_in),
+    menuitem('Zoom Out', _buffer.zoom_out),
+    menuitem('Reset Zoom', function() buffer.zoom = 0 end),
   },
   -- Lexer menu inserted here
   { title = L('Help'),
-    { L('Manual'),
-      { open_webpage, _HOME..'/doc/manual/1_Introduction.html' }, K['Manual'] },
-    { L('LuaDoc'), { open_webpage, _HOME..'/doc/index.html' }, K['LuaDoc'] },
+    menuitem('Show Manual',
+             { open_webpage, _HOME..'/doc/manual/1_Introduction.html' }),
+    menuitem('Show LuaDoc', { open_webpage, _HOME..'/doc/index.html' }),
     SEPARATOR,
-    { L('gtk-about'),
-      { gui.dialog, 'ok-msgbox', '--title', 'Textadept', '--informative-text',
-        _RELEASE, '--no-cancel' }, K['gtk-about'] },
+    menuitem('gtk-about', { gui.dialog, 'ok-msgbox', '--title', 'Textadept',
+                            '--informative-text', _RELEASE, '--no-cancel' }),
   },
 }
 local lexer_menu = { title = L('Lexers') }
@@ -433,8 +404,6 @@ end
 set_menubar(menubar)
 set_contextmenu(context_menu)
 
--- Most of this handling code comes from keys.lua.
-local no_args = {}
 events.connect(events.MENU_CLICKED, function(menu_id)
   local action, action_type
   if menu_id > 1000 then
@@ -446,19 +415,44 @@ events.connect(events.MENU_CLICKED, function(menu_id)
   if action_type ~= 'function' and action_type ~= 'table' then
     error(L('Unknown command:')..' '..tostring(action))
   end
+  keys.run_command(action, action_type)
+end)
 
-  local f, args = action_type == 'function' and action or action[1], no_args
-  if action_type == 'table' then
-    args = action
-    -- If the argument is a view or buffer, use the current one instead.
-    if type(args[2]) == 'table' then
-      local mt, buffer, view = getmetatable(args[2]), buffer, view
-      if mt == getmetatable(buffer) then
-        args[2] = buffer
-      elseif mt == getmetatable(view) then
-        args[2] = view
-      end
+local items, commands
+local columns = { L('Command'), L('Key Command') }
+
+-- Builds the item and commands tables for the filteredlist dialog.
+-- @param menu The menu to read from.
+-- @param title The title of the menu.
+-- @param items The current list of items.
+-- @param commands The current list of commands.
+local function build_command_tables(menu, title, items, commands)
+  for _, menuitem in ipairs(menu) do
+    if menuitem.title then
+      build_command_tables(menuitem, menuitem.title, items, commands)
+    elseif menuitem[1] ~= 'separator' then
+      local label, f, key_commands = menuitem[1], menuitem[2], menuitem[3]
+      if title then label = title..': '..label end
+      items[#items + 1] = label:gsub('_([^_])', '%1'):gsub('^gtk%-', '')
+      items[#items + 1] = key_commands and key_commands[1] or ''
+      commands[#commands + 1] = f
     end
   end
-  f(unpack(args, 2))
-end)
+end
+
+---
+-- Prompts the user with a filteredlist to run menu commands.
+function select_command()
+  local i = gui.filteredlist(L('Run Command'), columns, items, true)
+  if i then keys.run_command(commands[i + 1], type(commands[i + 1])) end
+end
+
+---
+-- Rebuilds the tables used by select_command().
+-- This should be called every time set_menubar() is called.
+function rebuild_command_tables()
+  items, commands = {}, {}
+  build_command_tables(menubar, nil, items, commands)
+end
+
+rebuild_command_tables()

@@ -52,15 +52,15 @@ module('keys', package.seeall)
 --
 -- ## Settings
 --
--- * `CTRL` [string]: The string representing the Control/Command key. The
+-- + `CTRL` [string]: The string representing the Control/Command key. The
 --   default is 'c'.
--- * `ALT` [string]: The string representing the Alt/option key. The default is
+-- + `ALT` [string]: The string representing the Alt/option key. The default is
 --   'a'
--- * `META` [string]: The string representing the Control key on Mac OSX. The
+-- + `META` [string]: The string representing the Control key on Mac OSX. The
 --   default is 'm'.
--- * `SHIFT` [string]: The string representing the Shift key. The default is
+-- + `SHIFT` [string]: The string representing the Shift key. The default is
 --   's'.
--- * `ADD` [string]: The string representing used to join together a sequence of
+-- + `ADD` [string]: The string representing used to join together a sequence of
 --   Control, Alt, Meta, or Shift modifier keys. The default is ''.
 -- * `CLEAR` [string]: The string representing the key sequence that clears the
 --   current keychain. The default is 'esc' (Escape).
@@ -142,30 +142,6 @@ KEYSYMS = { -- from <gdk/gdkkeysyms.h>
   [0xFFC6] = 'f9', [0xFFC7] = 'f10', [0xFFC8] = 'f11', [0xFFC9] = 'f12',
 }
 
----
--- Returns the GDK integer keycode and modifier mask for a key sequence.
--- This is used internally for creating menu accelerators.
--- @param key_seq The string key sequence.
--- @return keycode and modifier mask
-function get_gdk_key(key_seq)
-  if not key_seq then return nil end
-  local mods, key = key_seq:match('^([cams]*)(.+)$')
-  if not mods or not key then return nil end
-  local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
-                    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
-                    (mods:find('m') and 128 or 0)
-  local byte = string_byte(key)
-  if #key > 1 or byte < 32 then
-    for i, s in pairs(KEYSYMS) do
-      if s == key and i ~= 0xFE20 then
-        byte = i
-        break
-      end
-    end
-  end
-  return byte, modifiers
-end
-
 -- The current key sequence.
 local keychain = {}
 
@@ -174,6 +150,30 @@ local function clear_key_sequence()
   if #keychain > 0 then keychain = {} end
   gui.statusbar_text = ''
 end
+
+-- Runs a given command.
+-- This is also used by menu.lua.
+-- @param command A function or table as described above.
+-- @param command_type The type() of command.
+-- @return the value the command returns.
+local function run_command(command, command_type)
+  local f, args = command_type == 'function' and command or command[1], no_args
+  if command_type == 'table' then
+    args = command
+    -- If the argument is a view or buffer, use the current one instead.
+    if type(args[2]) == 'table' then
+      local mt, buffer, view = getmetatable(args[2]), buffer, view
+      if mt == getmetatable(buffer) then
+        args[2] = buffer
+      elseif mt == getmetatable(view) then
+        args[2] = view
+      end
+    end
+  end
+  local _, ret = xpcall(function() return f(unpack(args, 2)) end, error)
+  return ret
+end
+_M.run_command = run_command -- export for menu.lua without creating LuaDoc
 
 -- Return codes for run_key_command().
 local INVALID = -1
@@ -202,21 +202,7 @@ local function run_key_command(lexer)
     return CHAIN
   end
 
-  local f, args = key_type == 'function' and key or key[1], no_args
-  if key_type == 'table' then
-    args = key
-    -- If the argument is a view or buffer, use the current one instead.
-    if type(args[2]) == 'table' then
-      local mt, buffer, view = getmetatable(args[2]), buffer, view
-      if mt == getmetatable(buffer) then
-        args[2] = buffer
-      elseif mt == getmetatable(view) then
-        args[2] = view
-      end
-    end
-  end
-  local _, ret = xpcall(function() return f(unpack(args, 2)) end, error)
-  return ret == false and PROPAGATE or HALT
+  return run_command(key, key_type) == false and PROPAGATE or HALT
 end
 
 -- Handles Textadept keypresses.
@@ -278,3 +264,27 @@ local function keypress(code, shift, control, alt, meta)
   -- PROPAGATE otherwise.
 end
 events.connect(events.KEYPRESS, keypress, 1)
+
+-- Returns the GDK integer keycode and modifier mask for a key sequence.
+-- This is used for creating menu accelerators.
+-- @param key_seq The string key sequence.
+-- @return keycode and modifier mask
+local function get_gdk_key(key_seq)
+  if not key_seq then return nil end
+  local mods, key = key_seq:match('^([cams]*)(.+)$')
+  if not mods or not key then return nil end
+  local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
+                    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
+                    (mods:find('m') and 128 or 0)
+  local byte = string_byte(key)
+  if #key > 1 or byte < 32 then
+    for i, s in pairs(KEYSYMS) do
+      if s == key and i ~= 0xFE20 then
+        byte = i
+        break
+      end
+    end
+  end
+  return byte, modifiers
+end
+_M.get_gdk_key = get_gdk_key -- export for menu.lua without generating LuaDoc
