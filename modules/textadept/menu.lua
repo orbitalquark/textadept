@@ -170,8 +170,8 @@ menubar = {
         buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
       end),
       menuitem('Enclose as Single XML Tag', { m_editing.enclose, '<', ' />' }),
-      menuitem('Enclose in Double Quotes', { m_editing.enclose, '"', '"' }),
       menuitem('Enclose in Single Quotes', { m_editing.enclose, "'", "'" }),
+      menuitem('Enclose in Double Quotes', { m_editing.enclose, '"', '"' }),
       menuitem('Enclose in Parentheses', { m_editing.enclose, '(', ')' }),
       menuitem('Enclose in Brackets', { m_editing.enclose, '[', ']' }),
       menuitem('Enclose in Braces', { m_editing.enclose, '{', '}' }),
