@@ -2122,7 +2122,8 @@ function buffer.toggle_caret_sticky(buffer) end
 ---
 -- Switch a header line between expanded and contracted.
 -- @param buffer The focused buffer.
-function buffer.toggle_fold(buffer) end
+-- @param line The line number.
+function buffer.toggle_fold(buffer, line) end
 
 ---
 -- Undo one action in the undo history.
