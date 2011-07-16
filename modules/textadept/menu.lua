@@ -146,14 +146,6 @@ menubar = {
     menuitem('Complete Word', { m_editing.autocomplete_word, '%w_' }),
     menuitem('Delete Word', { m_editing.current_word, 'delete' }),
     menuitem('Highlight Word', m_editing.highlight_word),
-    menuitem('Complete Symbol', function()
-      local m = _m[buffer:get_lexer()]
-      if m and m.sense then m.sense:complete() end
-    end),
-    menuitem('Show Documentation', function()
-      local m = _m[buffer:get_lexer()]
-      if m and m.sense then m.sense:show_apidoc() end
-    end),
     menuitem('Toggle Block Comment', m_editing.block_comment),
     menuitem('Transpose Characters', m_editing.transpose_chars),
     menuitem('Join Lines', m_editing.join_lines),
@@ -226,6 +218,16 @@ menubar = {
     menuitem('Compile', m_textadept.run.compile),
     menuitem('Filter Through', _m.textadept.filter_through.filter_through),
     SEPARATOR,
+    { title = L('Adeptsense'),
+      menuitem('Complete Symbol', function()
+        local m = _m[buffer:get_lexer()]
+        if m and m.sense then m.sense:complete() end
+      end),
+      menuitem('Show Documentation', function()
+        local m = _m[buffer:get_lexer()]
+        if m and m.sense then m.sense:show_apidoc() end
+      end),
+    },
     { title = L('Snippets'),
       menuitem('Insert Snippet...', m_textadept.snippets._select),
       menuitem('Expand Snippet/Next Placeholder', m_textadept.snippets._insert),
