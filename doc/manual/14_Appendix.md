@@ -27,25 +27,13 @@ Ctrl+D                  |⌘D       |Duplicate line
 Del                     |⌦<br/>^D |Delete
 Ctrl+A                  |⌘A       |Select all
 Ctrl+M                  |^M       |Match brace
-Ctrl+Shift+M            |^⇧M      |Select to brace
 Ctrl+Enter              |^⎋       |Complete word
 None                    |None     |Delete word
 Ctrl+Shift+H            |⌘⇧H      |Highlight word
-Ctrl+Space              |⌥⎋       |Complete symbol
-Ctrl+H                  |^H       |Show documentation
 Ctrl+/                  |^/       |Toggle block comment
 Ctrl+T                  |^T       |Transpose characters
 Ctrl+Shift+J            |^J       |Join lines
-None                    |None     |Convert indentation
-Alt+<                   |^<       |Enclose in XML tags
-Alt+>                   |^>       |Enclose in single XML tag
-Alt+"                   |^"       |Enclose in double quotes
-Alt+'                   |^'       |Enclose in single quotes
-Alt+(                   |^(       |Enclose in parentheses
-Alt+[                   |^[       |Enclose in brackets
-Alt+{                   |^{       |Enclose in braces
-Ctrl++                  |⌘+       |Grow selection by 1 on either side
-Ctrl+\_                 |⌘\_      |Shrink selection by 1 on either side
+Ctrl+Shift+M            |^⇧M      |Select to matching brace
 Ctrl+<                  |⌘<       |Select between XML tags
 Ctrl+>                  |⌘>       |Select in XML tag
 Ctrl+"                  |⌘"       |Select in double quotes
@@ -58,6 +46,19 @@ Ctrl+Shift+L            |⌘⇧L      |Select line
 Ctrl+Shift+P            |⌘⇧P      |Select paragraph
 Ctrl+Shift+I            |⌘⇧I      |Select indented block
 None                    |None     |Select style
+None                    |None     |Upper case selection
+None                    |None     |Lower case selection
+Alt+<                   |^<       |Enclose as XML tags
+Alt+>                   |^>       |Enclose as single XML tag
+Alt+"                   |^"       |Enclose in double quotes
+Alt+'                   |^'       |Enclose in single quotes
+Alt+(                   |^(       |Enclose in parentheses
+Alt+[                   |^[       |Enclose in brackets
+Alt+{                   |^{       |Enclose in braces
+Ctrl++                  |⌘+       |Grow selection by 1 on either side
+Ctrl+\_                 |⌘\_      |Shrink selection by 1 on either side
+Ctrl+Shift+Up           |^⇧⇡      |Move selected lines up
+Ctrl+Shift+Down         |^⇧⇣      |Move selected lines down
 
 **Search**                      |||
 Ctrl+F                   |⌘F  |Find
@@ -77,6 +78,8 @@ Ctrl+Shift+E    |⌘⇧E    |Select command
 Ctrl+Alt+R      |^R     |Run
 Ctrl+Alt+Shift+R|^⇧R    |Compile
 Ctrl+&#124;     |⌘&#124;|Filter text through
+Ctrl+Space      |⌥⎋     |Complete symbol
+Ctrl+H          |^H     |Show documentation
 Tab             |⇥      |Expand snippet or next placeholder
 Ctrl+K          |⌥⇥     |Insert snippet...
 Shift+Tab       |⇧⇥     |Previous snippet placeholder
@@ -94,13 +97,13 @@ Ctrl+I          |⌘I     |Show style
 **Buffer**                      |||
 Ctrl+Tab<br/>Ctrl+PageDown    |^\`   |Next buffer
 Ctrl+Shift+Tab<br/>Ctrl+PageUp|^~    |Previous buffer
-Ctrl+B                        |⌘B    |Switch buffer
-Ctrl+Alt+Enter                |^↩    |Toggle view EOL
-Ctrl+Alt+\\                   |^\\   |Toggle wrap mode
-Ctrl+Alt+Shift+I              |^⇧I   |Toggle show indent guides
+Ctrl+B                        |⌘B    |Switch to buffer...
+None                          |None  |Tab width: 2
+None                          |None  |Tab width: 3
+None                          |None  |Tab width: 4
+None                          |None  |Tab width: 8
 Ctrl+Alt+Shift+T              |^⇧T   |Toggle use tabs
-Ctrl+Alt+Space                |^Space|Toggle view whitespace
-Ctrl+Alt+Shift+V              |^⇧V   |Toggle virtual space
+None                          |None  |Convert indentation
 None                          |None  |`CRLF` EOL mode
 None                          |None  |`CR` EOL mode
 None                          |None  |`LF` EOL mode
@@ -120,6 +123,12 @@ Ctrl+Alt+W               |^W       |Unsplit view
 Ctrl+Alt+Shift+W         |^⇧W      |Unsplit all views
 Ctrl+Alt++<br/>Ctrl+Alt+=|^+<br/>^=|Grow view
 Ctrl+Alt+-               |^-       |Shrink view
+None                     |None     |Toggle current fold
+Ctrl+Alt+Enter           |^↩       |Toggle view EOL
+Ctrl+Alt+\\              |^\\      |Toggle wrap mode
+Ctrl+Alt+Shift+I         |^⇧I      |Toggle show indent guides
+Ctrl+Alt+Space           |^Space   |Toggle view whitespace
+Ctrl+Alt+Shift+V         |^⇧V      |Toggle virtual space
 Ctrl+=                   |⌘=       |Zoom in
 Ctrl+-                   |⌘-       |Zoom out
 Ctrl+0                   |⌘0       |Reset zoom
