@@ -28,7 +28,7 @@ Del                     |⌦<br/>^D |Delete
 Ctrl+A                  |⌘A       |Select all
 Ctrl+M                  |^M       |Match brace
 Ctrl+Enter              |^⎋       |Complete word
-None                    |None     |Delete word
+Alt+Del                 |^⌦       |Delete word
 Ctrl+Shift+H            |⌘⇧H      |Highlight word
 Ctrl+/                  |^/       |Toggle block comment
 Ctrl+T                  |^T       |Transpose characters
@@ -41,13 +41,13 @@ Ctrl+'                  |⌘'       |Select in single quotes
 Ctrl+(                  |⌘(       |Select in parentheses
 Ctrl+[                  |⌘[       |Select in brackets
 Ctrl+{                  |⌘{       |Select in braces
-None                    |None     |Select word
+Ctrl+Shift+D            |⌘⇧D      |Select word
 Ctrl+Shift+L            |⌘⇧L      |Select line
 Ctrl+Shift+P            |⌘⇧P      |Select paragraph
 Ctrl+Shift+I            |⌘⇧I      |Select indented block
-None                    |None     |Select style
-None                    |None     |Upper case selection
-None                    |None     |Lower case selection
+Ctrl+Y                  |⌘⇧Y      |Select style
+Ctrl+Alt+U              |^U       |Upper case selection
+Ctrl+Alt+Shift+U        |^⇧U      |Lower case selection
 Alt+<                   |^<       |Enclose as XML tags
 Alt+>                   |^>       |Enclose as single XML tag
 Alt+"                   |^"       |Enclose in double quotes
@@ -90,7 +90,7 @@ F2              |F2     |Next bookark
 Shift+F2        |⇧F2    |Previous bookmark
 Alt+F2          |⌥F2    |Goto bookmark...
 Ctrl+U          |⌘U     |Snapopen `_USERHOME`
-Ctrl+Alt+U      |⌘⌥U    |Snapopen `_HOME`
+None            |None   |Snapopen `_HOME`
 Ctrl+Alt+Shift+O|⌘⌥⇧O   |Snapopen current directory
 Ctrl+I          |⌘I     |Show style
 
@@ -103,7 +103,7 @@ None                          |None  |Tab width: 3
 None                          |None  |Tab width: 4
 None                          |None  |Tab width: 8
 Ctrl+Alt+Shift+T              |^⇧T   |Toggle use tabs
-None                          |None  |Convert indentation
+Ctrl+Alt+I                    |^I    |Convert indentation
 None                          |None  |`CRLF` EOL mode
 None                          |None  |`CR` EOL mode
 None                          |None  |`LF` EOL mode
