@@ -298,6 +298,11 @@ menubar = {
     menuitem('Shrink View',
              function() if view.size then view.size = view.size - 10 end end),
     SEPARATOR,
+    menuitem('Toggle Current Fold', function()
+      local buffer = buffer
+      buffer:toggle_fold(buffer:line_from_position(buffer.current_pos))
+    end),
+    SEPARATOR,
     menuitem('Toggle View EOL', { toggle_setting, 'view_eol' }),
     menuitem('Toggle Wrap Mode', { toggle_setting, 'wrap_mode' }),
     menuitem('Toggle Show Indent Guides',
