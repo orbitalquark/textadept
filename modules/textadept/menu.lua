@@ -61,11 +61,6 @@ local function set_eol_mode(mode)
   buffer:convert_eo_ls(mode)
   events.emit(events.UPDATE_UI) -- for updating statusbar
 end
-local function set_lexer(lexer)
-  buffer:set_lexer(lexer)
-  buffer:colourise(0, -1)
-  events.emit(events.UPDATE_UI) -- for updating statusbar
-end
 local function open_webpage(url)
   local cmd
   if WIN32 then
@@ -315,7 +310,6 @@ menubar = {
     menuitem('Zoom Out', _buffer.zoom_out),
     menuitem('Reset Zoom', function() buffer.zoom = 0 end),
   },
-  -- Lexer menu inserted here
   { title = L('Help'),
     menuitem('Show Manual',
              { open_webpage, _HOME..'/doc/manual/1_Introduction.html' }),
@@ -325,11 +319,6 @@ menubar = {
                             '--informative-text', _RELEASE, '--no-cancel' }),
   },
 }
-local lexer_menu = { title = L('Lexers') }
-for _, lexer in ipairs(_m.textadept.mime_types.lexers) do
-  lexer_menu[#lexer_menu + 1] = { lexer:gsub('_', '__'), { set_lexer, lexer } }
-end
-table.insert(menubar, #menubar, lexer_menu) -- before 'Help'
 
 ---
 -- Contains the right-click context menu.
