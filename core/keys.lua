@@ -227,7 +227,7 @@ local function keypress(code, shift, control, alt, meta)
   end
   control = control and CTRL or ''
   alt = alt and ALT or ''
-  meta = meta and META or ''
+  meta = meta and OSX and META or ''
   shift = shift and SHIFT or ''
   local key_seq = control..alt..meta..shift..key
   --print(key_seq)
