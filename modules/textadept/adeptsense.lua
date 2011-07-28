@@ -91,7 +91,7 @@ module('_m.textadept.adeptsense', package.seeall)
 --
 --     sense.syntax.type_declarations = {}
 --
--- ##### syntax.type_declarations_exclude
+-- ##### syntax.type\_declarations\_exclude
 --
 -- Since Lua has no type declarations, no changes are necessary.
 --
