@@ -166,6 +166,34 @@ function save(filename)
   end
 end
 
+---
+-- Prompts the user for a Textadept session to load.
+function prompt_load()
+  local session_file = _SESSIONFILE or ''
+  local utf8_filename = gui.dialog('fileselect',
+                                   '--title', L('Load Session'),
+                                   '--with-directory',
+                                   session_file:match('.+[/\\]') or '',
+                                   '--with-file',
+                                   session_file:match('[^/\\]+$') or '',
+                                   '--no-newline')
+  if #utf8_filename > 0 then load(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
+end
+
+---
+-- Prompts the user to save the current Textadept session to a file.
+function prompt_save()
+  local session_file = _SESSIONFILE or ''
+  local utf8_filename = gui.dialog('filesave',
+                                   '--title', L('Save Session'),
+                                   '--with-directory',
+                                   session_file:match('.+[/\\]') or '',
+                                   '--with-file',
+                                   session_file:match('[^/\\]+$') or '',
+                                   '--no-newline')
+  if #utf8_filename > 0 then save(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
+end
+
 events.connect(events.QUIT, function() if SAVE_ON_QUIT then save() end end, 1)
 
 local function no_session() SAVE_ON_QUIT = false end

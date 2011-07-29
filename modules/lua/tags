@@ -878,6 +878,7 @@ comment_string	_	0;"	t	class:_m.textadept.editing
 compile	_	0;"	f	class:_m.textadept.run
 compile_command	_	0;"	t	class:_m.textadept.run
 complete	_	0;"	f	class:_m.textadept.adeptsense
+complete_symbol	_	0;"	f	class:_m.textadept.adeptsense
 completions	_	0;"	t	class:_m.textadept.adeptsense
 concat	_	0;"	f	class:table
 connect	_	0;"	f	class:events
@@ -1322,6 +1323,8 @@ print_magnification	_	0;"	F	class:buffer
 print_wrap_mode	_	0;"	F	class:buffer
 private_lexer_call	_	0;"	f	class:buffer
 process	_	0;"	f	class:args
+prompt_load	_	0;"	f	class:_m.textadept.session
+prompt_save	_	0;"	f	class:_m.textadept.session
 properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
 property_int	_	0;"	F	class:buffer
@@ -1480,6 +1483,7 @@ setupvalue	_	0;"	f	class:debug
 setvbuf	_	0;"	f	class:file
 shebangs	_	0;"	t	class:_m.textadept.mime_types
 show_apidoc	_	0;"	f	class:_m.textadept.adeptsense
+show_documentation	_	0;"	f	class:_m.textadept.adeptsense
 show_lines	_	0;"	f	class:buffer
 sin	_	0;"	f	class:math
 singular	_	0;"	F	class:_m.rails

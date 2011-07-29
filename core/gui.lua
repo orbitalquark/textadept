@@ -98,7 +98,7 @@ connect(events.VIEW_NEW, function()
   local ctrl_keys = {
     '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
   }
-  local ctrl_shift_keys = { 'L', 'T', 'U' }
+  local ctrl_shift_keys = { 'L', 'T', 'U', 'Z' }
   for _, key in ipairs(ctrl_keys) do
     buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL)
   end

@@ -75,34 +75,15 @@ the snippet.
 
 ##### Key Commands
 
-The default set of key commands is located in `modules/textadept/keys.conf`
-(`modules/textadept/keys.osx.conf` on Mac OSX) and is loaded by the
-`_m.textadept.menu` module. It is not recommended to edit Textadept's
-`keys.conf` or `keys.osx.conf` for changing the key bindings since your changes
-could be overwritten when updating Textadept. Instead, make a copy in your
-`~/.textadept/` folder and modify that.
+It is not recommended to edit Textadept's `modules/textadept/keys.lua` for
+changing the key bindings since your changes could be overwritten when updating
+Textadept. Instead, modify `keys` from within your `~/.textadept/init.lua` or
+from a file loaded by `~/.textadept/init.lua`. For example maybe you want
+`Ctrl+Shift+N` (`⌘⇧N` on Mac OSX) to create a new buffer instead of `Ctrl+N`
+(`⌘N`):
 
-Key commands need to be defined manually for keychains or custom functions. You
-can do this in your `~/.textadept/init.lua` or from a file loaded by
-`~/.textadept/init.lua`. For example maybe you want `Ctrl+Shift+A, N` (`⌘⇧A, N`
-on Mac OSX) to create a new buffer instead of `Ctrl+N` (`⌘N`):
-
-    keys.cA = {}
-    keys.cA.n = new_buffer
+    keys.cN = new_buffer
     keys.cn = nil
-
-Earlier versions of Textadept manually defined all key commands in
-`modules/textadept/keys.lua` (`keys.cn = new_buffer`, `keys.co = io.open_file`,
-etc.). Now the `menu` module does this automatically by reading the keys in the
-`keys.conf` or `keys.osx.conf` files mentioned earlier. Of course you can still
-use Lua to define commands as demonstrated above. In fact, if you choose to
-exclude loading the menu like in an earlier example above, you will have to
-specify your own set of key commands! (I happen to do this and keep a copy of
-`~/.textadept/modules/textadept/keys.lua` that is loaded by my
-`~/.textadept/init.lua`.) Please note that key commands are _not_ handled by the
-menu; they are still handled as they always have been. Therefore the keys shown
-in the menu could differ from the actual set of key commands if you use Lua to
-redefine them. Menu keys are shown purely for cosmetic, not functional reasons.
 
 ## Locale
 
