@@ -77,7 +77,8 @@ end
 -- @param label The label that will be localized.
 -- @param f The function or table.
 local function menuitem(label, f)
-  return { L(label), f, K[L(label):gsub('_([^_])', '%1')] }
+  return { L(label), f,
+           K[L(label):gsub('_([^_])', '%1')] or K[label:gsub('_([^_])', '%1')] }
 end
 
 ---
