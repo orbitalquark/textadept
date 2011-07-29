@@ -18,5 +18,5 @@ require 'textadept.snapopen'
 require 'textadept.snippets'
 
 -- These need to be loaded last.
-require 'textadept.menu'
 require 'textadept.keys'
+require 'textadept.menu'

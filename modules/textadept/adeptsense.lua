@@ -889,3 +889,21 @@ syntax = {
   senses[lang] = sense
   return sense
 end
+
+---
+-- Completes the symbol at the current position based on the current lexer's
+-- Adeptsense.
+-- This should be called by key commands and menus instead of `complete`.
+function complete_symbol()
+  local m = _m[buffer:get_lexer()]
+  if m and m.sense then m.sense:complete() end
+end
+
+---
+-- Shows API documentation for the symbol at the current position based on the
+-- current lexer's Adeptsense.
+-- This should be called by key commands and menus instead of `show_apidoc`.
+function show_documentation()
+  local m = _m[buffer:get_lexer()]
+  if m and m.sense then m.sense:show_apidoc() end
+end

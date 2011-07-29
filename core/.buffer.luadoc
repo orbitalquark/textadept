@@ -2408,6 +2408,7 @@ function buffer.set_lexer(buffer, lang) end
 -- Replacement for buffer.get_lexer_language(buffer).
 -- @param buffer The focused buffer.
 function buffer.get_lexer(buffer) end
+
 ---
 -- Returns the name of the style associated with a style number.
 -- @param buffer The focused buffer.
