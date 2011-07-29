@@ -1,5 +1,3 @@
-ADD	_	0;"	F	class:keys
-ALT	_	0;"	F	class:keys
 ANNOTATION_BOXED	_	0;"	F	class:_SCINTILLA.constants
 ANNOTATION_HIDDEN	_	0;"	F	class:_SCINTILLA.constants
 ANNOTATION_STANDARD	_	0;"	F	class:_SCINTILLA.constants
@@ -30,7 +28,6 @@ COMMAND_ENTRY_KEYPRESS	_	0;"	F	class:events
 COMMENT	_	0;"	F	class:lexer
 COMPILE_OUTPUT	_	0;"	F	class:events
 CONSTANT	_	0;"	F	class:lexer
-CTRL	_	0;"	F	class:keys
 Carg	_	0;"	f	class:lpeg
 Cb	_	0;"	f	class:lpeg
 Cc	_	0;"	f	class:lpeg
@@ -73,6 +70,7 @@ INDIC_BOX	_	0;"	F	class:_SCINTILLA.constants
 INDIC_CONTAINER	_	0;"	F	class:_SCINTILLA.constants
 INDIC_DASH	_	0;"	F	class:_SCINTILLA.constants
 INDIC_DIAGONAL	_	0;"	F	class:_SCINTILLA.constants
+INDIC_DOTBOX	_	0;"	F	class:_SCINTILLA.constants
 INDIC_DOTS	_	0;"	F	class:_SCINTILLA.constants
 INDIC_HIDDEN	_	0;"	F	class:_SCINTILLA.constants
 INDIC_HIGHLIGHT_ALPHA	_	0;"	F	class:_m.textadept.editing
@@ -98,7 +96,6 @@ MARK_BOOKMARK_COLOR	_	0;"	F	class:_m.textadept.bookmarks
 MARK_HIGHLIGHT_BACK	_	0;"	F	class:_m.textadept.editing
 MAX	_	0;"	F	class:_m.textadept.snapopen
 MENU_CLICKED	_	0;"	F	class:events
-META	_	0;"	F	class:keys
 NUMBER	_	0;"	F	class:lexer
 OPERATOR	_	0;"	F	class:lexer
 OSX	_	0;"	F	
@@ -117,7 +114,6 @@ S	_	0;"	f	class:lpeg
 SAVE_ON_QUIT	_	0;"	F	class:_m.textadept.session
 SAVE_POINT_LEFT	_	0;"	F	class:events
 SAVE_POINT_REACHED	_	0;"	F	class:events
-SAVE_STRIPS_WS	_	0;"	F	class:_m.textadept.editing
 SCEN_CHANGE	_	0;"	F	class:_SCINTILLA.constants
 SCEN_KILLFOCUS	_	0;"	F	class:_SCINTILLA.constants
 SCEN_SETFOCUS	_	0;"	F	class:_SCINTILLA.constants
@@ -301,6 +297,8 @@ SCI_MARGINGETSTYLEOFFSET	_	0;"	F	class:_SCINTILLA.constants
 SCI_MARGINSETSTYLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_MARGINSETSTYLEOFFSET	_	0;"	F	class:_SCINTILLA.constants
 SCI_OPTIONAL_START	_	0;"	F	class:_SCINTILLA.constants
+SCI_RGBAIMAGESETHEIGHT	_	0;"	F	class:_SCINTILLA.constants
+SCI_RGBAIMAGESETWIDTH	_	0;"	F	class:_SCINTILLA.constants
 SCI_SELECTIONISRECTANGLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETADDITIONALCARETFORE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETADDITIONALCARETSBLINK	_	0;"	F	class:_SCINTILLA.constants
@@ -609,6 +607,7 @@ SC_MARK_LEFTRECT	_	0;"	F	class:_SCINTILLA.constants
 SC_MARK_MINUS	_	0;"	F	class:_SCINTILLA.constants
 SC_MARK_PIXMAP	_	0;"	F	class:_SCINTILLA.constants
 SC_MARK_PLUS	_	0;"	F	class:_SCINTILLA.constants
+SC_MARK_RGBAIMAGE	_	0;"	F	class:_SCINTILLA.constants
 SC_MARK_ROUNDRECT	_	0;"	F	class:_SCINTILLA.constants
 SC_MARK_SHORTARROW	_	0;"	F	class:_SCINTILLA.constants
 SC_MARK_SMALLRECT	_	0;"	F	class:_SCINTILLA.constants
@@ -671,8 +670,8 @@ SC_WRAPVISUALFLAG_START	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAP_CHAR	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAP_NONE	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAP_WORD	_	0;"	F	class:_SCINTILLA.constants
-SHIFT	_	0;"	F	class:keys
 STRING	_	0;"	F	class:lexer
+STRIP_WHITESPACE_ON_SAVE	_	0;"	F	class:_m.textadept.editing
 STYLE_BRACEBAD	_	0;"	F	class:_SCINTILLA.constants
 STYLE_BRACELIGHT	_	0;"	F	class:_SCINTILLA.constants
 STYLE_CALLTIP	_	0;"	F	class:_SCINTILLA.constants
@@ -1018,7 +1017,6 @@ get_class	_	0;"	f	class:_m.textadept.adeptsense
 get_completions	_	0;"	f	class:_m.textadept.adeptsense
 get_cur_line	_	0;"	f	class:buffer
 get_fold_level	_	0;"	f	class:lexer
-get_gdk_key	_	0;"	f	class:keys
 get_hotspot_active_back	_	0;"	f	class:buffer
 get_hotspot_active_fore	_	0;"	f	class:buffer
 get_indent_amount	_	0;"	f	class:lexer
@@ -1221,6 +1219,7 @@ marker_add	_	0;"	f	class:buffer
 marker_add_set	_	0;"	f	class:buffer
 marker_define	_	0;"	f	class:buffer
 marker_define_pixmap	_	0;"	f	class:buffer
+marker_define_rgba_image	_	0;"	f	class:buffer
 marker_delete	_	0;"	f	class:buffer
 marker_delete_all	_	0;"	f	class:buffer
 marker_delete_handle	_	0;"	f	class:buffer
@@ -1341,6 +1340,7 @@ rawset	_	0;"	f
 read	_	0;"	f	class:file
 read	_	0;"	f	class:io
 read_only	_	0;"	F	class:buffer
+rebuild_command_tables	_	0;"	f	class:_m.textadept.menu
 recent_files	_	0;"	t	class:io
 rectangular_selection_anchor	_	0;"	F	class:buffer
 rectangular_selection_anchor_virtual_space	_	0;"	F	class:buffer
@@ -1351,6 +1351,7 @@ red	_	0;"	F	class:lexer.colors
 redo	_	0;"	f	class:buffer
 register	_	0;"	f	class:args
 register_image	_	0;"	f	class:buffer
+register_rgba_image	_	0;"	f	class:buffer
 reload	_	0;"	f	class:buffer
 remove	_	0;"	f	class:_m.textadept.bookmarks
 remove	_	0;"	f	class:os
@@ -1370,6 +1371,8 @@ require	_	0;"	f
 reset	_	0;"	f	
 resume	_	0;"	f	class:coroutine
 reverse	_	0;"	f	class:string
+rgba_image_height	_	0;"	F	class:buffer
+rgba_image_width	_	0;"	F	class:buffer
 rhtml	_	0;"	t	class:_m
 rhtml	_	0;"	t	class:keys
 rhtml	_	0;"	t	class:snippets
@@ -1387,6 +1390,8 @@ save	_	0;"	f	class:buffer
 save_all	_	0;"	f	class:io
 save_as	_	0;"	f	class:buffer
 scroll_caret	_	0;"	f	class:buffer
+scroll_to_end	_	0;"	f	class:buffer
+scroll_to_start	_	0;"	f	class:buffer
 scroll_width	_	0;"	F	class:buffer
 scroll_width_tracking	_	0;"	F	class:buffer
 search_anchor	_	0;"	f	class:buffer
@@ -1400,6 +1405,7 @@ sel_alpha	_	0;"	F	class:buffer
 sel_eol_filled	_	0;"	F	class:buffer
 select	_	0;"	f	
 select_all	_	0;"	f	class:buffer
+select_command	_	0;"	f	class:_m.textadept.menu
 select_enclosed	_	0;"	f	class:_m.textadept.editing
 select_indented_block	_	0;"	f	class:_m.textadept.editing
 select_lexer	_	0;"	f	class:_m.textadept.mime_types
