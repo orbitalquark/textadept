@@ -1,5 +1,3 @@
-ADD keys.ADD [string]\nThe string representing used to join together a sequence of Control, Alt,\nMeta, or Shift modifier keys. The default is ''.\n
-ALT keys.ALT [string]\nThe string representing the Alt/option key. The default is 'a'\n
 ANNOTATION_BOXED _SCINTILLA.constants.ANNOTATION_BOXED\n2\n
 ANNOTATION_HIDDEN _SCINTILLA.constants.ANNOTATION_HIDDEN\n0\n
 ANNOTATION_STANDARD _SCINTILLA.constants.ANNOTATION_STANDARD\n1\n
@@ -30,7 +28,6 @@ COMMAND_ENTRY_KEYPRESS events.COMMAND_ENTRY_KEYPRESS\nCalled when a key is press
 COMMENT lexer.COMMENT\n\n
 COMPILE_OUTPUT events.COMPILE_OUTPUT\nCalled after a compile command is executed. When connecting to this event\n(typically from a language-specific module), connect with an index of 1 and\nreturn `true` if the event was handled and you want to override the default\nhandler that prints the output to a new view.\n    * `lexer`: The lexer language.\n    * `output`: The output from the command.\n\n
 CONSTANT lexer.CONSTANT\n\n
-CTRL keys.CTRL [string]\nThe string representing the Control/Command key. The default is 'c'.\n
 Carg lpeg.Carg(n)\nCreates an argument capture. This pattern matches the empty string and produces\nthe value given as the nth extra argument given in the call to lpeg.match.\n
 Cb lpeg.Cb(name)\nCreates a back capture. This pattern matches the empty string and produces the\nvalues produced by the most recent group capture named name. Most recent means\nthe last complete outermost group capture with the given name. A Complete\ncapture means that the entire pattern corresponding to the capture has\nmatched. An Outermost capture means that the capture is not inside another\ncomplete capture.\n
 Cc lpeg.Cc([value, ...])\nCreates a constant capture. This pattern matches the empty string and produces\nall given values as its captured values.\n
@@ -73,6 +70,7 @@ INDIC_BOX _SCINTILLA.constants.INDIC_BOX\n6\n
 INDIC_CONTAINER _SCINTILLA.constants.INDIC_CONTAINER\n8\n
 INDIC_DASH _SCINTILLA.constants.INDIC_DASH\n9\n
 INDIC_DIAGONAL _SCINTILLA.constants.INDIC_DIAGONAL\n3\n
+INDIC_DOTBOX _SCINTILLA.constants.INDIC_DOTBOX\n12\n
 INDIC_DOTS _SCINTILLA.constants.INDIC_DOTS\n10\n
 INDIC_HIDDEN _SCINTILLA.constants.INDIC_HIDDEN\n5\n
 INDIC_HIGHLIGHT_ALPHA _m.textadept.editing.INDIC_HIGHLIGHT_ALPHA [number]\nThe alpha transparency value between 0 (transparent) and 255 (opaque) used\nfor an indicator for a highlighted word. The default value is 100.\n
@@ -98,7 +96,6 @@ MARK_BOOKMARK_COLOR _m.textadept.bookmarks.MARK_BOOKMARK_COLOR [number]\nThe col
 MARK_HIGHLIGHT_BACK _m.textadept.editing.MARK_HIGHLIGHT_BACK [number]\nThe background color used for a line containing a highlighted word in\n0xBBGGRR format.\n
 MAX _m.textadept.snapopen.MAX [number]\nMaximum number of files to list. The default value is 1000.\n
 MENU_CLICKED events.MENU_CLICKED\nCalled when a menu item is selected.\n    * `menu_id`: The numeric ID of the menu item set in `gui.gtkmenu()`.\n\n
-META keys.META [string]\nThe string representing the Control key on Mac OSX. The default is 'm'.\n
 NUMBER lexer.NUMBER\n\n
 OPERATOR lexer.OPERATOR\n\n
 OSX _G.OSX [bool]\nIf Textadept is running on Mac OSX, this flag is `true`.\n
@@ -117,7 +114,6 @@ S lpeg.S(string)\nReturns a pattern that matches any single character that appea
 SAVE_ON_QUIT _m.textadept.session.SAVE_ON_QUIT [bool]\nSave the session when quitting. The default value is `true` and can be\ndisabled by passing the command line switch '-n' or '--nosession' to Textadept.\n
 SAVE_POINT_LEFT events.SAVE_POINT_LEFT\nCalled when a save point is left.\n
 SAVE_POINT_REACHED events.SAVE_POINT_REACHED\nCalled when a save point is entered.\n
-SAVE_STRIPS_WS _m.textadept.editing.SAVE_STRIPS_WS [bool]\nStrip trailing whitespace on file save. The default value is `true`.\n
 SCEN_CHANGE _SCINTILLA.constants.SCEN_CHANGE\n768\n
 SCEN_KILLFOCUS _SCINTILLA.constants.SCEN_KILLFOCUS\n256\n
 SCEN_SETFOCUS _SCINTILLA.constants.SCEN_SETFOCUS\n512\n
@@ -301,6 +297,8 @@ SCI_MARGINGETSTYLEOFFSET _SCINTILLA.constants.SCI_MARGINGETSTYLEOFFSET\n2538\n
 SCI_MARGINSETSTYLE _SCINTILLA.constants.SCI_MARGINSETSTYLE\n2532\n
 SCI_MARGINSETSTYLEOFFSET _SCINTILLA.constants.SCI_MARGINSETSTYLEOFFSET\n2537\n
 SCI_OPTIONAL_START _SCINTILLA.constants.SCI_OPTIONAL_START\n3000\n
+SCI_RGBAIMAGESETHEIGHT _SCINTILLA.constants.SCI_RGBAIMAGESETHEIGHT\n2625\n
+SCI_RGBAIMAGESETWIDTH _SCINTILLA.constants.SCI_RGBAIMAGESETWIDTH\n2624\n
 SCI_SELECTIONISRECTANGLE _SCINTILLA.constants.SCI_SELECTIONISRECTANGLE\n2372\n
 SCI_SETADDITIONALCARETFORE _SCINTILLA.constants.SCI_SETADDITIONALCARETFORE\n2604\n
 SCI_SETADDITIONALCARETSBLINK _SCINTILLA.constants.SCI_SETADDITIONALCARETSBLINK\n2567\n
@@ -609,6 +607,7 @@ SC_MARK_LEFTRECT _SCINTILLA.constants.SC_MARK_LEFTRECT\n27\n
 SC_MARK_MINUS _SCINTILLA.constants.SC_MARK_MINUS\n7\n
 SC_MARK_PIXMAP _SCINTILLA.constants.SC_MARK_PIXMAP\n25\n
 SC_MARK_PLUS _SCINTILLA.constants.SC_MARK_PLUS\n8\n
+SC_MARK_RGBAIMAGE _SCINTILLA.constants.SC_MARK_RGBAIMAGE\n30\n
 SC_MARK_ROUNDRECT _SCINTILLA.constants.SC_MARK_ROUNDRECT\n1\n
 SC_MARK_SHORTARROW _SCINTILLA.constants.SC_MARK_SHORTARROW\n4\n
 SC_MARK_SMALLRECT _SCINTILLA.constants.SC_MARK_SMALLRECT\n3\n
@@ -671,8 +670,8 @@ SC_WRAPVISUALFLAG_START _SCINTILLA.constants.SC_WRAPVISUALFLAG_START\n2\n
 SC_WRAP_CHAR _SCINTILLA.constants.SC_WRAP_CHAR\n2\n
 SC_WRAP_NONE _SCINTILLA.constants.SC_WRAP_NONE\n0\n
 SC_WRAP_WORD _SCINTILLA.constants.SC_WRAP_WORD\n1\n
-SHIFT keys.SHIFT [string]\nThe string representing the Shift key. The default is 's'.\n
 STRING lexer.STRING\n\n
+STRIP_WHITESPACE_ON_SAVE _m.textadept.editing.STRIP_WHITESPACE_ON_SAVE [bool]\nStrip trailing whitespace on file save. The default value is `true`.\n
 STYLE_BRACEBAD _SCINTILLA.constants.STYLE_BRACEBAD\n35\n
 STYLE_BRACELIGHT _SCINTILLA.constants.STYLE_BRACELIGHT\n34\n
 STYLE_CALLTIP _SCINTILLA.constants.STYLE_CALLTIP\n38\n
@@ -990,7 +989,6 @@ get_class _m.textadept.adeptsense.get_class(sense, symbol)\nReturns the class na
 get_completions _m.textadept.adeptsense.get_completions(sense, symbol, only_fields,\nonly_functions)\nReturns a list of completions for the given symbol.\n@param sense The adeptsense returned by adeptsense.new().\n@param symbol The symbol to get completions for.\n@param only_fields If true, returns list of only fields; defaults to false.\n@param only_functions If true, returns list of only functions; defaults\nto false.\n@return completion_list or nil\n
 get_cur_line buffer.get_cur_line(buffer)\nRetrieve the text of the line containing the caret. Also returns the index\nof the caret on the line.\n@param buffer The focused buffer.\n@return string, number\n
 get_fold_level lexer.get_fold_level(line, line_number)\nReturns the fold level for a given line. This level already has\n`SC_FOLDLEVELBASE` added to it, so you do not need to add it yourself.\n@param line_number The line number to get the fold level of.\n
-get_gdk_key keys.get_gdk_key(key_seq)\nReturns the GDK integer keycode and modifier mask for a key sequence. This\nis used internally for creating menu accelerators.\n@param key_seq The string key sequence.\n@return keycode and modifier mask\n
 get_hotspot_active_back buffer.get_hotspot_active_back(buffer)\nGet the back color for active hotspots in 0xBBGGRR format.\n@param buffer The focused buffer.\n@return number\n
 get_hotspot_active_fore buffer.get_hotspot_active_fore(buffer)\nGet the fore color for active hotspots.\n@param buffer The focused buffer.\n@return number\n
 get_indent_amount lexer.get_indent_amount(line)\nReturns the indent amount of text for a given line.\n@param line The line number to get the indent amount of.\n
@@ -1072,7 +1070,7 @@ indentation_guides buffer.indentation_guides [number]\nIndentation guides appear
 indic_alpha buffer.indic_alpha [table]\nTable of alpha transparency values ranging from 0 (transparent) to 255\n(opaque) or 256 (no alpha) for indicators from 0 to 31. Used for drawing\nthe fill color of the `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX` rectangle.\n
 indic_fore buffer.indic_fore [table]\nTable of foreground colors in 0xBBGGRR format for indicators from zero to 31.\n
 indic_outline_alpha buffer.indic_outline_alpha [table]\nTable of alpha transparency values ranging from 0 (transparent) to 255\n(opaque) or 256 (no alpha) for indicators from 0 to 31. Used for drawing\nthe outline color of the `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX` rectangle.\n
-indic_style buffer.indic_style [table]\nTable of styles for indicators from zero to 31.\n    * `_SCINTILLA.constants.INDIC_PLAIN` (0): Underlined with a single,\n      straight line.\n    * `_SCINTILLA.constants.INDIC_SQUIGGLE` (1): A squiggly underline.\n      Requires 3 pixels of descender space.\n    * `_SCINTILLA.constants.INDIC_TT` (2): A line of small T shapes.\n    * `_SCINTILLA.constants.INDIC_DIAGONAL` (3): Diagonal hatching.\n    * `_SCINTILLA.constants.INDIC_STRIKE` (4): Strike out.\n    * `_SCINTILLA.constants.INDIC_HIDDEN` (5): An indicator with no visual\n      effect.\n    * `_SCINTILLA.constants.INDIC_BOX` (6): A rectangle around the text.\n    * `_SCINTILLA.constants.INDIC_ROUNDBOX` (7): A rectangle with rounded\n      corners around the text using translucent drawing with the interior\n      usually more transparent than the border. Use `buffer.indic_alpha`\n      and `buffer.indic_outline_alpha` to control the alpha transparency\n      values. The default alpha values are 30 for fill color and 50 for\n      outline color.\n    * `_SCINTILLA.constants.INDIC_STRAIGHTBOX` (8): A rectangle around the\n      text using translucent drawing with the interior usually more\n      transparent than the border. You can use `buffer.indic_alpha` and\n      `buffer.indic_outline_alpha` to control the alpha transparency\n      values. The default alpha values are 30 for fill color and 50 for\n      outline color.\n    * `_SCINTILLA.constants.INDIC_DASH` (9): A dashed underline.\n    * `_SCINTILLA.constants.INDIC_DOTS` (10): A dotted underline.\n    * `_SCINTILLA.constants.INDIC_SQUIGGLELOW` (11): Similar to\n      `INDIC_SQUIGGLE` but only using 2 vertical pixels so will fit under\n      small fonts.\n\n
+indic_style buffer.indic_style [table]\nTable of styles for indicators from zero to 31.\n    * `_SCINTILLA.constants.INDIC_PLAIN` (0): Underlined with a single,\n      straight line.\n    * `_SCINTILLA.constants.INDIC_SQUIGGLE` (1): A squiggly underline.\n      Requires 3 pixels of descender space.\n    * `_SCINTILLA.constants.INDIC_TT` (2): A line of small T shapes.\n    * `_SCINTILLA.constants.INDIC_DIAGONAL` (3): Diagonal hatching.\n    * `_SCINTILLA.constants.INDIC_STRIKE` (4): Strike out.\n    * `_SCINTILLA.constants.INDIC_HIDDEN` (5): An indicator with no visual\n      effect.\n    * `_SCINTILLA.constants.INDIC_BOX` (6): A rectangle around the text.\n    * `_SCINTILLA.constants.INDIC_ROUNDBOX` (7): A rectangle with rounded\n      corners around the text using translucent drawing with the interior\n      usually more transparent than the border. Use `buffer.indic_alpha`\n      and `buffer.indic_outline_alpha` to control the alpha transparency\n      values. The default alpha values are 30 for fill color and 50 for\n      outline color.\n    * `_SCINTILLA.constants.INDIC_STRAIGHTBOX` (8): A rectangle around the\n      text using translucent drawing with the interior usually more\n      transparent than the border. You can use `buffer.indic_alpha` and\n      `buffer.indic_outline_alpha` to control the alpha transparency\n      values. The default alpha values are 30 for fill color and 50 for\n      outline color.\n    * `_SCINTILLA.constants.INDIC_DASH` (9): A dashed underline.\n    * `_SCINTILLA.constants.INDIC_DOTS` (10): A dotted underline.\n    * `_SCINTILLA.constants.INDIC_SQUIGGLELOW` (11): Similar to\n      `INDIC_SQUIGGLE` but only using 2 vertical pixels so will fit under\n      small fonts.\n    * `_SCINTILLA.constants.INDIC_DOTBOX` (12): A dotted rectangle around\n      the text using translucent drawing. Translucency alternates between\n      the alpha and outline alpha settings with the top-left pixel using\n      the alpha setting. `buffer.indic_alpha` and\n      `buffer.indic_outline_alpha` control the alpha transparency values.\n      The default values are 30 for alpha and 50 for outline alpha. To\n      avoid excessive memory allocation the maximum width of a dotted box\n      is 4000 pixels.\n\n
 indic_under buffer.indic_under [table]\nTable of booleans for drawing under text or over (default) for indicators\nfrom zero to 31.\n
 indicator_all_on_for buffer.indicator_all_on_for(buffer, pos)\nRetrieve a bitmap value representing which indicators are non-zero at a\nposition. Bit 0 is set if indicator 0 is present, bit 1 for indicator 1 and\nso on.\n@param buffer The focused buffer.\n@param pos The position.\n@return number\n
 indicator_clear_range buffer.indicator_clear_range(buffer, pos, clear_length)\nTurn a indicator off over a range.\n@param buffer The focused buffer.\n@param pos The start position.\n@param clear_length The length.\n
@@ -1184,6 +1182,7 @@ marker_add buffer.marker_add(buffer, line, marker_num)\nAdd a marker to a line, 
 marker_add_set buffer.marker_add_set(buffer, line, marker_mask)\nAdd a set of markers to a line.\n@param buffer The focused buffer.\n@param line The line number.\n@param marker_mask A mask of markers to set. Set bit 0 to set marker 0,\nbit 1 for marker 1 and so on.\n
 marker_define buffer.marker_define(buffer, marker_num, marker_symbol)\nSet the symbol used for a particular marker number.\n@param buffer The focused buffer.\n@param marker_num A marker number in the range of 0 to 31.\n@param marker_symbol A marker symbol: _SCINTILLA.constants.SC_MARK_*.\n
 marker_define_pixmap buffer.marker_define_pixmap(buffer, marker_num, pixmap)\nDefine a marker from a pixmap.\n@param buffer The focused buffer.\n@param marker_num A marker number in the range of 0 to 31.\n@param pixmap Null-terminated pixmap data.\n
+marker_define_rgba_image buffer.marker_define_rgba_image(buffer, marker_num, pixels)\nDefine a marker from RGBA data. It has the width and height from\n`buffer.rgba_image_width` and `buffer.rgba_image_height`.\n@param buffer The focused buffer.\n@param marker_num A marker number in the range of 0 to 31.\n@param pixels A sequence of 4 byte pixel values starting with the pixels\nfor the top line, with the leftmost pixel first, then continuing with the\npixels for subsequent lines. There is no gap between lines for alignment\nreasons. Each pixel consists of, in order, a red byte, a green byte, a blue\nbyte and an alpha byte. The colour bytes are not premultiplied by the alpha\nvalue. That is, a fully red pixel that is 25% opaque will be [FF, 00, 00, 3F].\n
 marker_delete buffer.marker_delete(buffer, line, marker_num)\nDelete a marker from a line.\n@param buffer The focused buffer.\n@param line The line number.\n@param marker_num A marker number in the range of 0 to 31 or -1 to delete\nall markers from the line.\n
 marker_delete_all buffer.marker_delete_all(buffer, marker_num)\nDelete all markers with a particular number from all lines.\n@param buffer The focused buffer.\n@param marker_num A marker number in the range of 0 to 31 or -1 to delete\nall markers from all lines.\n
 marker_delete_handle buffer.marker_delete_handle(buffer, handle)\nDelete a marker.\n@param buffer The focused buffer.\n@param handle The identifier of a marker returned by buffer:marker_add().\n
@@ -1301,6 +1300,7 @@ rawset _G.rawset(table, index, value)\nSets the real value of `table[index]` to 
 read file:read(···)\nReads the file `file`, according to the given formats, which specify what\nto read. For each format, the function returns a string (or a number)\nwith the characters read, or nil if it cannot read data with the specified\nformat. When called without formats, it uses a default format that reads the\nentire next line (see below). The available formats are "*n": reads a number;\nthis is the only format that returns a number instead of a string. "*a":\nreads the whole file, starting at the current position. On end of file,\nit returns the empty string. "*l": reads the next line (skipping the end of\nline), returning nil on end of file. This is the default format. *number*:\nreads a string with up to this number of characters, returning nil on end\nof file. If number is zero, it reads nothing and returns an empty string,\nor nil on end of file.\n
 read io.read(···)\nEquivalent to `io.input():read`.\n
 read_only buffer.read_only [bool]\nRead-only mode.\n
+rebuild_command_tables _m.textadept.menu.rebuild_command_tables()\nRebuilds the tables used by select_command(). This should be called every\ntime set_menubar() is called.\n
 recent_files io.recent_files [table]\nList of recently opened files. The most recent are towards the top.\n
 rectangular_selection_anchor buffer.rectangular_selection_anchor [number]\nThe position of the anchor of the rectangular selection.\n
 rectangular_selection_anchor_virtual_space buffer.rectangular_selection_anchor_virtual_space [number]\nThe amount of virtual space for the anchor of the rectangular selection.\n
@@ -1311,6 +1311,7 @@ red lexer.colors.red\nRed.\n
 redo buffer.redo(buffer)\nRedoes the next action on the undo history.\n@param buffer The focused buffer.\n
 register args.register(switch1, switch2, narg, f, description)\nRegisters a command line switch.\n@param switch1 String switch (short version).\n@param switch2 String switch (long version).\n@param narg The number of expected parameters for the switch.\n@param f The Lua function to run when the switch is tripped.\n@param description Description of the switch.\n
 register_image buffer.register_image(buffer, type, xpm_data)\nRegister an XPM image for use in autocompletion lists.\n@param buffer The focused buffer.\n@param type Integer type to register the image with.\n@param xpm_data XPM data as is described for buffer:marker_define_pixmap().\n
+register_rgba_image buffer.register_rgba_image(buffer, type, pixels)\nRegister an RGBA image for use in autocompletion lists. It has the width\nand height from `buffer.rgba_image_width` and `buffer.rgba_image_height`.\n@param buffer The focused buffer.\n@param type Integer type to register the image with.\n@param pixels RGBA data as is described for buffer:marker_define_rgba_image().\n
 reload buffer.reload(buffer)\nReloads the file in a given buffer.\n@param buffer The focused buffer.\n
 remove _m.textadept.bookmarks.remove()\nClears the bookmark at the current line.\n
 remove os.remove(filename)\nDeletes the file or directory with the given name. Directories must be\nempty to be removed. If this function fails, it returns nil, plus a string\ndescribing the error.\n
@@ -1330,6 +1331,8 @@ require _G.require(modname)\nLoads the given module. The function starts by look
 reset _G.reset()\nResets the Lua state by reloading all init scripts. Language-specific modules\nfor opened files are NOT reloaded. Re-opening the files that use them will\nreload those modules. This function is useful for modifying init scripts\n(such as keys.lua) on the fly without having to restart Textadept. A global\nRESETTING variable is set to true when re-initing the Lua State. Any scripts\nthat need to differentiate between startup and reset can utilize this variable.\n
 resume coroutine.resume(co [, val1, ···])\nStarts or continues the execution of coroutine `co`. The first time you resume\na coroutine, it starts running its body. The values `val1`, ··· are passed\nas the arguments to the body function. If the coroutine has yielded, `resume`\nrestarts it; the values `val1`, ··· are passed as the results from the\nyield. If the coroutine runs without any errors, `resume` returns true plus\nany values passed to `yield` (if the coroutine yields) or any values returned\nby the body function (if the coroutine terminates). If there is any error,\n`resume` returns false plus the error message.\n
 reverse string.reverse(s)\nReturns a string that is the string `s` reversed.\n
+rgba_image_height buffer.rgba_image_height [number]\nThe height for future RGBA image data.\n
+rgba_image_width buffer.rgba_image_width [number]\nThe width for future RGBA image data.\n
 rhtml _G.keys.rhtml [table]\nContainer for RHTML-specific key commands.\n
 rhtml _G.snippets.rhtml [table]\nContainer for RHTML-specific snippets.\n
 rhtml _m.rhtml [module]\nThe RHTML module. It provides utilities for editing RHTML. User tags are\nloaded from _USERHOME/modules/rhtml/tags and user apis are loaded from\n_USERHOME/modules/rhtml/api.\n
@@ -1347,6 +1350,8 @@ save buffer.save(buffer)\nSaves the current buffer to a file.\n@param buffer The
 save_all io.save_all()\nSaves all dirty buffers to their respective files.\n@usage io.save_all()\n
 save_as buffer.save_as(buffer, utf8_filename)\nSaves the current buffer to a file different than its filename property.\n@param buffer The focused buffer.\n@param utf8_filename The new filepath to save the buffer to. Must be UTF-8\nencoded.\n
 scroll_caret buffer.scroll_caret(buffer)\nEnsure the caret is visible.\n@param buffer The focused buffer.\n
+scroll_to_end buffer.scroll_to_end(buffer)\nScroll to end of document.\n@param buffer The focused buffer.\n
+scroll_to_start buffer.scroll_to_start(buffer)\nScroll to start of document.\n@param buffer The focused buffer.\n
 scroll_width buffer.scroll_width [number]\nThe document width assumed for scrolling. For performance, the view does not\nmeasure the display width of the document to determine the properties of the\nhorizontal scroll bar. Instead, an assumed width is used. The default value\nis 2000. To ensure the width of the currently visible lines can be scrolled\nuse `buffer.scroll_width_tracking`.\n
 scroll_width_tracking buffer.scroll_width_tracking [bool]\nWhether the maximum width line displayed is used to set scroll width.\n
 search_anchor buffer.search_anchor(buffer)\nSets the current caret position to be the search anchor. Always call this\nbefore calling either of `buffer:search_next()` or `buffer:search_prev()`.\n@param buffer The focused buffer.\n
@@ -1360,6 +1365,7 @@ sel_alpha buffer.sel_alpha [number]\nThe alpha of the selection, between 0 (tran
 sel_eol_filled buffer.sel_eol_filled [bool]\nThe selection end of line fill. The selection can be drawn up to the right\nhand border by setting this property.\n
 select _G.select(index, ···)\nIf `index` is a number, returns all arguments after argument number\n`index`. Otherwise, `index` must be the string `"#"`, and `select` returns\nthe total number of extra arguments it received.\n
 select_all buffer.select_all(buffer)\nSelect all the text in the document. The current position is not scrolled\ninto view.\n@param buffer The focused buffer.\n
+select_command _m.textadept.menu.select_command()\nPrompts the user with a filteredlist to run menu commands.\n
 select_enclosed _m.textadept.editing.select_enclosed(left, right)\nSelects text between a given pair of strings.\n@param left The left part of the enclosure.\n@param right The right part of the enclosure.\n
 select_indented_block _m.textadept.editing.select_indented_block()\nSelects indented blocks intelligently. If no block of text is selected, all\ntext with the current level of indentation is selected. If a block of text is\nselected and the lines to the top and bottom of it are one indentation level\nlower, they are added to the selection. In all other cases, the behavior is\nthe same as if no text is selected.\n
 select_lexer _m.textadept.mime_types.select_lexer()\nPrompts the user to select a lexer from a filtered list for the current buffer.\n
@@ -1397,7 +1403,7 @@ set_buffer_properties _m.lua.set_buffer_properties()\nSets default buffer proper
 set_buffer_properties _m.php.set_buffer_properties()\nSets default buffer properties for PHP files.\n
 set_buffer_properties _m.ruby.set_buffer_properties()\nSets default buffer properties for Ruby files.\n
 set_chars_default buffer.set_chars_default(buffer)\nReset the set of characters for whitespace and word characters to the\ndefaults. This sets whitespace to space, tab and other characters with codes\nless than 0x20, with word characters set to alphanumeric and '_'.\n@param buffer The focused buffer.\n
-set_contextmenu _m.textadept.menu.set_contextmenu(menu_table)\nSets gui.context_menu from the given menu table.\n@param menu_table The menu table to create the context menu from. Each table\nentry is either a submenu or menu text and an action table.\n@see set_menubar\n
+set_contextmenu _m.textadept.menu.set_contextmenu(menu_table)\nSets gui.context_menu from the given menu table.\n@param menu_table The menu table to create the context menu from. Each table\nentry is either a submenu or menu text and a function or action table.\n@see set_menubar\n
 set_empty_selection buffer.set_empty_selection(buffer, pos)\nSet caret to a position, while removing any existing selection. The caret\nis not scrolled into view.\n@param buffer The buffer\n@param pos The position to move to.\n
 set_encoding buffer.set_encoding(buffer, encoding)\nSets the encoding for the buffer, converting its contents in the process.\n@param buffer The focused buffer.\n@param encoding The encoding to set. Valid encodings are ones that GTK's\ng_convert() function accepts (typically GNU iconv's encodings).\n@usage buffer.set_encoding(buffer, 'ASCII')\n
 set_fold_flags buffer.set_fold_flags(buffer, flags)\nSet some style options for folding.\n@param buffer The focused buffer.\n@param flags Mask of fold flags. Flags available are\n`_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_EXPANDED` (2): Draw above if\nexpanded; `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_CONTRACTED`\n(4): Draw above if not expanded;\n`_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_EXPANDED` (8): Draw below if\nexpanded; `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_CONTRACTED` (16):\nDraw below if not expanded\n
@@ -1408,7 +1414,7 @@ set_hotspot_active_fore buffer.set_hotspot_active_fore(buffer, use_setting, colo
 set_length_for_encode buffer.set_length_for_encode(buffer, bytes)\nSet the length of the utf8 argument for calling `buffer:encoded_from_utf8()`.\n@param buffer The focused buffer.\n@param bytes Bytes or -1 for measuring to first nul.\n
 set_lexer buffer.set_lexer(buffer, lang)\nReplacement for buffer.set_lexer_language(buffer). Sets a buffer._lexer field\nso it can be restored without querying the mime-types tables. Also if the user\nmanually sets the lexer, it should be restored. Loads the language-specific\nmodule if it exists.\n@param buffer The focused buffer.\n@param lang The string language to set.\n@usage buffer.set_lexer(buffer, 'language_name')\n
 set_lexer_language buffer.set_lexer_language(buffer, language_name)\nSet the lexing language of the document based on string name.\n@param buffer The focused buffer.\n@param language_name The language name.\n
-set_menubar _m.textadept.menu.set_menubar(menubar)\nSets gui.menubar from the given table of menus.\n@param menubar The table of menus to create the menubar from. Each table\nentry is another table that corresponds to a particular menu. A menu can\nhave a 'title' key with string value. Each menu item is either a submenu\n(another menu table) or a table consisting of two items: string menu text\nand an action table just like `keys`'s action table. If the menu text is\n'separator', a menu separator is created and no action table is required.\n
+set_menubar _m.textadept.menu.set_menubar(menubar)\nSets gui.menubar from the given table of menus.\n@param menubar The table of menus to create the menubar from. Each table\nentry is another table that corresponds to a particular menu. A menu can\nhave a 'title' key with string value. Each menu item is either a submenu\n(another menu table) or a table consisting of two items: string menu text\nand a function or action table just like in `keys`. The table can optionally\ncontain 2 more number values: a GDK keycode and modifier mask for setting\na menu accelerator. If the menu text is 'separator', a menu separator is\ncreated and no action table is required.\n@see keys.get_gdk_key\n
 set_save_point buffer.set_save_point(buffer)\nRemember the current position in the undo history as the position at which\nthe document was saved.\n@param buffer The focused buffer.\n
 set_sel buffer.set_sel(buffer, start_pos, end_pos)\nSelect a range of text. The caret is scrolled into view after this operation.\n@param buffer The focused buffer.\n@param start_pos Start position. If negative, it means the end of the document.\n@param end_pos End position. If negative, it means remove any selection\n(i.e. set the anchor to the same position as current_pos).\n
 set_sel_back buffer.set_sel_back(buffer, use_setting, color)\nSet the background color of the main and additional selections and whether\nto use this setting.\n@param buffer The focused buffer.\n@param use_setting Enable color change.\n@param color A color in 0xBBGGRR format.\n
@@ -1530,7 +1536,7 @@ tmpname os.tmpname()\nReturns a string with a file name that can be used for a t
 toggle _m.textadept.bookmarks.toggle()\nToggles a bookmark on the current line.\n
 toggle_block _m.ruby.toggle_block()\nToggles between { ... } and do ... end Ruby blocks. If the caret is inside\na { ... } single-line block, that block is converted to a multiple-line do\n.. end block. If the caret is on a line that contains single-line do ... end\nblock, that block is converted to a single-line { ... } block. If the caret\nis inside a multiple-line do ... end block, that block is converted to a\nsingle-line { ... } block with all newlines replaced by a space. Indentation\nis important. The 'do' and 'end' keywords must be on lines with the same\nlevel of indentation to toggle correctly\n
 toggle_caret_sticky buffer.toggle_caret_sticky(buffer)\nSwitch between sticky and non-sticky: meant to be bound to a key. See\n`buffer.caret_sticky`.\n@param buffer The focused buffer.\n
-toggle_fold buffer.toggle_fold(buffer)\nSwitch a header line between expanded and contracted.\n@param buffer The focused buffer.\n
+toggle_fold buffer.toggle_fold(buffer, line)\nSwitch a header line between expanded and contracted.\n@param buffer The focused buffer.\n@param line The line number.\n
 token lexer.token(name, patt)\nCreates an LPeg capture table index with the name and position of the token.\n@param name The name of token. If this name is not in `l.tokens` then you\nwill have to specify a style for it in `lexer._tokenstyles`.\n@param patt The LPeg pattern associated with the token.\n@usage local ws = token(l.WHITESPACE, l.space^1)\n@usage php_start_rule = token('php_tag', '<?' * ('php' * l.space)^-1)\n
 tonumber _G.tonumber(e [, base])\nTries to convert its argument to a number. If the argument is already a number\nor a string convertible to a number, then `tonumber` returns this number;\notherwise, it returns nil. An optional argument specifies the base to interpret\nthe numeral. The base may be any integer between 2 and 36, inclusive. In bases\nabove 10, the letter '`A`' (in either upper or lower case) represents 10,\n'`B`' represents 11, and so forth, with '`Z`' representing 35. In base 10\n(the default), the number can have a decimal part, as well as an optional\nexponent part (see §2.1). In other bases, only unsigned integers are accepted.\n
 tostring _G.tostring(e)\nReceives an argument of any type and converts it to a string in a\nreasonable format. For complete control of how numbers are converted, use\n`string.format`. If the metatable of `e` has a `"__tostring"` field, then\n`tostring` calls the corresponding value with `e` as argument, and uses the\nresult of the call as its result.\n

@@ -264,6 +264,14 @@ module('buffer')
 --       * `_SCINTILLA.constants.INDIC_SQUIGGLELOW` (11): Similar to
 --         `INDIC_SQUIGGLE` but only using 2 vertical pixels so will fit under
 --         small fonts.
+--       * `_SCINTILLA.constants.INDIC_DOTBOX` (12): A dotted rectangle around
+--         the text using translucent drawing. Translucency alternates between
+--         the alpha and outline alpha settings with the top-left pixel using
+--         the alpha setting. `buffer.indic_alpha` and
+--         `buffer.indic_outline_alpha` control the alpha transparency values.
+--         The default values are 30 for alpha and 50 for outline alpha. To
+--         avoid excessive memory allocation the maximum width of a dotted box
+--         is 4000 pixels.
 -- * `indic_under` [table]: Table of booleans for drawing under text or over
 --   (default) for indicators from zero to 31.
 -- * `indicator_current` [number]: The indicator in the range of 0 to 31 used
@@ -408,6 +416,8 @@ module('buffer')
 --       * `_SCINTILLA.constants.SCMOD_ALT` (4): Alt key.
 --       * `_SCINTILLA.constants.SCMOD_SUPER` (8): Left Windows key on a Windows
 --         keyboard or the Command key on a Mac.
+-- * `rgba_image_height` [number]: The height for future RGBA image data.
+-- * `rgba_image_width` [number]: The width for future RGBA image data.
 -- * `scroll_width` [number]: The document width assumed for scrolling. For
 --   performance, the view does not measure the display width of the document to
 --   determine the properties of the horizontal scroll bar. Instead, an assumed
@@ -1491,6 +1501,21 @@ function buffer.marker_define(buffer, marker_num, marker_symbol) end
 function buffer.marker_define_pixmap(buffer, marker_num, pixmap) end
 
 ---
+-- Define a marker from RGBA data.
+-- It has the width and height from `buffer.rgba_image_width` and
+-- `buffer.rgba_image_height`.
+-- @param buffer The focused buffer.
+-- @param marker_num A marker number in the range of 0 to 31.
+-- @param pixels A sequence of 4 byte pixel values starting with the pixels for
+--   the top line, with the leftmost pixel first, then continuing with the
+--   pixels for subsequent lines. There is no gap between lines for alignment
+--   reasons. Each pixel consists of, in order, a red byte, a green byte, a blue
+--   byte and an alpha byte. The colour bytes are not premultiplied by the alpha
+--   value. That is, a fully red pixel that is 25% opaque will be [FF, 00, 00,
+--   3F].
+function buffer.marker_define_rgba_image(buffer, marker_num, pixels) end
+
+---
 -- Delete a marker from a line.
 -- @param buffer The focused buffer.
 -- @param line The line number.
@@ -1756,6 +1781,16 @@ function buffer.redo(buffer) end
 function buffer.register_image(buffer, type, xpm_data) end
 
 ---
+-- Register an RGBA image for use in autocompletion lists.
+-- It has the width and height from `buffer.rgba_image_width` and
+-- `buffer.rgba_image_height`.
+-- @param buffer The focused buffer.
+-- @param type Integer type to register the image with.
+-- @param pixels RGBA data as is described for
+--   buffer:marker_define_rgba_image().
+function buffer.register_rgba_image(buffer, type, pixels) end
+
+---
 -- Replace the selected text with the argument text.
 -- The caret is positioned after the inserted text and the caret is scrolled
 -- into view.
@@ -1792,6 +1827,16 @@ function buffer.rotate_selection(buffer) end
 -- Ensure the caret is visible.
 -- @param buffer The focused buffer.
 function buffer.scroll_caret(buffer) end
+
+---
+-- Scroll to end of document.
+-- @param buffer The focused buffer.
+function buffer.scroll_to_end(buffer) end
+
+---
+-- Scroll to start of document.
+-- @param buffer The focused buffer.
+function buffer.scroll_to_start(buffer) end
 
 ---
 -- Sets the current caret position to be the search anchor.
