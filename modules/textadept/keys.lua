@@ -16,7 +16,7 @@ local c, OSX = _SCINTILLA.constants, OSX
 -- Utility functions.
 utils = {
   enclose_as_xml_tags = function()
-    enclose('<', '>')
+    m_editing.enclose('<', '>')
     local buffer = buffer
     local pos = buffer.current_pos
     while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
@@ -94,6 +94,7 @@ local function constantize_menu_buffer_functions()
   for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 end
 events.connect(events.BUFFER_NEW, constantize_menu_buffer_functions)
+-- Scintilla's first buffer doesn't have this.
 if not RESETTING then constantize_menu_buffer_functions() end
 
 --[[
@@ -190,9 +191,9 @@ keys[not OSX and 'csdown' or 'msdown'] = _buffer.move_selected_lines_down
 -- Search.
 keys.cf = gui.find.focus
 keys.cg = gui.find.find_next
-if not OSX then keys.f3 = gui.find.find_next end
+if not OSX then keys.f3 = keys.cg end
 keys.cG = gui.find.find_prev
-if not OSX then keys.sf3 = gui.find.find_prev end
+if not OSX then keys.sf3 = keys.cG end
 keys.cr = gui.find.replace
 keys.cR = gui.find.replace_all
 keys.caf = gui.find.find_incremental
@@ -229,9 +230,7 @@ keys.ci = utils.show_style
 
 -- Buffer.
 keys[not OSX and 'c\t' or 'm`'] = { _view.goto_buffer, _view, 1, false }
-if not OSX then keys.cpgdn = keys['c\t'] end
 keys[not OSX and 'cs\t' or 'm~'] = { _view.goto_buffer, _view, -1, false }
-if not OSX then keys.cpgup = keys['cs\t'] end
 keys.cb = gui.switch_buffer
 -- Indentation.
 -- TODO: { utils.set_indentation, 2 }
@@ -267,9 +266,11 @@ keys[not OSX and 'ca-' or 'm-'] = { utils.shrink, 10 }
 keys[not OSX and 'ca\n' or 'm\n'] = { utils.toggle_property, 'view_eol' }
 if not OSX then keys['ca\n\r'] = keys['ca\n'] end
 keys[not OSX and 'ca\\' or 'm\\'] = { utils.toggle_property, 'wrap_mode' }
-keys[not OSX and 'caI' or 'mI'] = { utils.toggle_property, 'indentation_guides' }
+keys[not OSX and 'caI' or 'mI'] =
+  { utils.toggle_property, 'indentation_guides' }
 keys[not OSX and 'ca ' or 'm '] = { utils.toggle_property, 'view_ws' }
-keys[not OSX and 'caV' or 'mV'] = { utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE }
+keys[not OSX and 'caV' or 'mV'] =
+  { utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE }
 keys['c='] = _buffer.zoom_in
 keys['c-'] = _buffer.zoom_out
 keys.c0 = utils.reset_zoom

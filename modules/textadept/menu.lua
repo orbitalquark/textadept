@@ -13,7 +13,7 @@ module('_m.textadept.menu', package.seeall)
 local _buffer, _view = buffer, view
 local m_textadept, m_editing = _m.textadept, _m.textadept.editing
 local c, SEPARATOR = _SCINTILLA.constants, { 'separator' }
-local utils = _m.textadept.keys.utils
+local utils = m_textadept.keys.utils
 
 -- Get a string uniquely identifying a key command.
 -- This is used to match menu items with key commands to show the key shortcut.
@@ -209,8 +209,9 @@ menubar = {
       { utils.open_webpage, _HOME..'/doc/manual/1_Introduction.html' } },
     { L('Show LuaDoc'), { utils.open_webpage, _HOME..'/doc/index.html' } },
     SEPARATOR,
-    { L('gtk-about'), { gui.dialog, 'ok-msgbox', '--title', 'Textadept',
-                        '--informative-text', _RELEASE, '--no-cancel' } },
+    { L('gtk-about'),
+      { gui.dialog, 'ok-msgbox', '--title', 'Textadept', '--informative-text',
+        _RELEASE, '--no-cancel' } },
   },
 }
 
@@ -245,8 +246,7 @@ local function read_menu_table(menu)
     if menuitem.title then
       gtkmenu[#gtkmenu + 1] = read_menu_table(menuitem)
     else
-      local label, f = menuitem[1], menuitem[2]
-      local menu_id = #menu_actions + 1
+      local label, f, menu_id = menuitem[1], menuitem[2], #menu_actions + 1
       local key, mods = keys.get_gdk_key(key_shortcuts[get_id(f)])
       gtkmenu[#gtkmenu + 1] = { label, menu_id, key, mods }
       if f then menu_actions[menu_id] = f end
