@@ -29,7 +29,7 @@ Ctrl+A                  |⌘A       |Select all
 Ctrl+M                  |^M       |Match brace
 Ctrl+Enter              |^⎋       |Complete word
 Alt+Del                 |^⌦       |Delete word
-Ctrl+Shift+H            |⌘⇧H      |Highlight word
+Ctrl+Alt+Shift+H        |⌘⇧H      |Highlight word
 Ctrl+/                  |^/       |Toggle block comment
 Ctrl+T                  |^T       |Transpose characters
 Ctrl+Shift+J            |^J       |Join lines
@@ -95,24 +95,24 @@ Ctrl+Alt+Shift+O|⌘⌥⇧O   |Snapopen current directory
 Ctrl+I          |⌘I     |Show style
 
 **Buffer**                      |||
-Ctrl+Tab<br/>Ctrl+PageDown    |^\`   |Next buffer
-Ctrl+Shift+Tab<br/>Ctrl+PageUp|^~    |Previous buffer
-Ctrl+B                        |⌘B    |Switch to buffer...
-None                          |None  |Tab width: 2
-None                          |None  |Tab width: 3
-None                          |None  |Tab width: 4
-None                          |None  |Tab width: 8
-Ctrl+Alt+Shift+T              |^⇧T   |Toggle use tabs
-Ctrl+Alt+I                    |^I    |Convert indentation
-None                          |None  |`CRLF` EOL mode
-None                          |None  |`CR` EOL mode
-None                          |None  |`LF` EOL mode
-None                          |None  |`UTF-8` encoding
-None                          |None  |`ASCII` encoding
-None                          |None  |`ISO-8859-1` encoding
-None                          |None  |`UTF-16` encoding
-Ctrl+Alt+L                    |⌘⌥L   |Select lexer...
-F5                            |F5    |Refresh syntax highlighting
+Ctrl+Tab        |^\`   |Next buffer
+Ctrl+Shift+Tab  |^~    |Previous buffer
+Ctrl+B          |⌘B    |Switch to buffer...
+None            |None  |Tab width: 2
+None            |None  |Tab width: 3
+None            |None  |Tab width: 4
+None            |None  |Tab width: 8
+Ctrl+Alt+Shift+T|^⇧T   |Toggle use tabs
+Ctrl+Alt+I      |^I    |Convert indentation
+None            |None  |`CRLF` EOL mode
+None            |None  |`CR` EOL mode
+None            |None  |`LF` EOL mode
+None            |None  |`UTF-8` encoding
+None            |None  |`ASCII` encoding
+None            |None  |`ISO-8859-1` encoding
+None            |None  |`UTF-16` encoding
+Ctrl+Alt+L      |⌘⌥L   |Select lexer...
+F5              |F5    |Refresh syntax highlighting
 
 **View**                        |||
 Ctrl+Alt+Tab             |^⇥       |Next view
@@ -141,11 +141,11 @@ None    |None|About
 **Movement**                    |||
 Down                         |⇣<br/>^N    |Line down
 Shift+Down                   |⇧⇣<br/>^⇧N  |Line down extend selection
-Ctrl+Down                    |⌘↘          |Scroll line down
+Ctrl+Down                    |^⇣          |Scroll line down
 Alt+Shift+Down               |⌥⇧⇣         |Line down extend rect. selection
 Up                           |⇡<br/>^P    |Line up
 Shift+Up                     |⇧⇡<br/>^⇧P  |Line up extend selection
-Ctrl+Up                      |⌘↖          |Scroll line up
+Ctrl+Up                      |^⇡          |Scroll line up
 Alt+Shift+Up                 |⌥⇧⇡         |Line up extend rect. selection
 Left                         |⇠<br/>^B    |Char left
 Shift+Left                   |⇧⇠<br/>^⇧B  |Char left extend selection
@@ -159,13 +159,13 @@ Ctrl+Shift+Right             |^⇧⇢<br/>^⌥⇧F|Word right extend selection
 Alt+Shift+Right              |⌥⇧⇢         |Char right extend rect. selection
 Home                         |⌘⇠<br/>^A   |Line start
 Shift+Home                   |⌘⇧⇠<br/>^⇧A |Line start extend selection
-Ctrl+Home                    |⌘⇡<br/>↖    |Document start
-Ctrl+Shift+Home              |⌘⇧⇡<br/>⇧↖  |Document start extend selection
+Ctrl+Home                    |⌘⇡<br/>⌘↖   |Document start
+Ctrl+Shift+Home              |⌘⇧⇡<br/>⌘⇧↖ |Document start extend selection
 Alt+Shift+Home               |⌥⇧↖         |Line start extend rect. selection
 End                          |⌘⇢<br/>^E   |Line end
 Shift+End                    |⌘⇧⇢<br/>^⇧E |Line end extend selection
-Ctrl+End                     |⌘⇣<br/>↘    |Document end
-Ctrl+Shift+End               |⌘⇧⇣<br/>⇧↘  |Document end extend selection
+Ctrl+End                     |⌘⇣<br/>⌘↘   |Document end
+Ctrl+Shift+End               |⌘⇧⇣<br/>⌘⇧↘ |Document end extend selection
 Alt+Shift+End                |⌥⇧↘         |Line end extend rect. selection
 PageUp                       |⇞           |Page up
 Shift+PageUp                 |⇧⇞          |Page up extend selection
@@ -173,16 +173,20 @@ Alt+Shift+PageUp             |⌥⇧⇞         |Page up extend rect. selection
 PageDown                     |⇟           |Page down
 Shift+PageDown               |⇧⇟          |Page down extend selection
 Alt+Shift+PageDown           |⌥⇧⇟         |Page down extend rect. selection
-Ctrl+Del                     |⌥⌦          |Delete word right
-Ctrl+Shift+Del               |⌘⌦          |Delete line right
+Ctrl+Del                     |⌘⌦          |Delete word right
+Ctrl+Shift+Del               |⌘⇧⌦         |Delete line right
 Ins                          |Ins         |Toggle overtype
 Backspace<br/>Shift+Backspace|⌫<br/>⇧⌫    |Delete back
-Ctrl+Backspace               |⌥⌫          |Delete word left
-Ctrl+Shift+Backspace         |⌘⌫          |Delete line left
+Ctrl+Backspace               |⌘⌫          |Delete word left
+Ctrl+Shift+Backspace         |⌘⇧⌫         |Delete line left
 Tab                          |⇥           |Insert tab or indent
 Shift+Tab                    |⇧⇥          |Dedent
 None                         |^K          |Cut to line end
 None                         |^L          |Center line vertically
+
+**Other**                    |||
+Ctrl+Shift+U, xxxx, Enter|None|Input Unicode character U-xxxx.
+
 
 ## Lua Patterns
 
