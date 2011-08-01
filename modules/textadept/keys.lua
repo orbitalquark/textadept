@@ -196,8 +196,13 @@ keys.cG = gui.find.find_prev
 if not OSX then keys.sf3 = keys.cG end
 keys.cr = gui.find.replace
 keys.cR = gui.find.replace_all
+-- Find Next is an when find pane is focused.
+-- Find Prev is ap when find pane is focused.
+-- Replace is ar when find pane is focused.
+-- Replace All is aa when find pane is focused.
 keys.caf = gui.find.find_incremental
 keys.cF = utils.find_in_files
+-- Find in Files is ai when find pane is focused.
 keys.cag = { gui.find.goto_file_in_list, true }
 keys.caG = { gui.find.goto_file_in_list, false }
 keys.cj = m_editing.goto_line
