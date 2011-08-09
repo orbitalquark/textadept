@@ -127,7 +127,7 @@ $(TEXTADEPT):\
   $(SCINTILLA_OBJS) $(SCINTILLA_MARSHALLER) $(SCINTILLA_LEXER) \
   $(TEXTADEPT_OBJS) $(LUA_OBJS) $(GCOCOADIALOG) \
   $(TEXTADEPT_RC)
-	$(CPP) $(EXPORTLUASYMS) -o $@ $^ $(GTKLIBS)
+	$(CPP) $(EXPORTLUASYMS) -o $@ $^ $(GTKLIBS) -ldl
 	mv $(TEXTADEPT) ../
 $(TEXTADEPT_RC): textadept.rc
 	$(WINDRES) $^ $@
@@ -202,7 +202,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	for module in $(MODULES); \
 	do \
 		hg clone /home/mitchell/code/textadept/modules/$$module \
-	  $(MODULESDIR)/$$module; \
+		$(MODULESDIR)/$$module; \
 	done
 	zip -r $(MODULESPKG) $(MODULESDIR)
 	rm -r $(MODULESDIR)
