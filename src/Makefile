@@ -201,7 +201,8 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	mkdir -p $(MODULESDIR)
 	for module in $(MODULES); \
 	do \
-		hg clone https://bitbucket.org/mitchell/$$module $(MODULESDIR)/$$module; \
+		hg clone /home/mitchell/code/textadept/modules/$$module \
+	  $(MODULESDIR)/$$module; \
 	done
 	zip -r $(MODULESPKG) $(MODULESDIR)
 	rm -r $(MODULESDIR)
