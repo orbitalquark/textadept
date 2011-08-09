@@ -13,10 +13,13 @@ module('_m.textadept.session', package.seeall)
 -- * `SAVE_ON_QUIT` [bool]: Save the session when quitting. The default value is
 --   `true` and can be disabled by passing the command line switch '-n' or
 --   '--nosession' to Textadept.
+-- * `MAX_RECENT_FILES` [number]: The maximum number of files from the recent
+--   files list to save to the session. The default is 10.
 
 -- settings
 DEFAULT_SESSION = _USERHOME..'/session'
 SAVE_ON_QUIT = true
+MAX_RECENT_FILES = 10
 -- end settings
 
 ---
@@ -79,6 +82,13 @@ function load(filename)
     elseif line:find('^size:') then
       local width, height = line:match('^size: (%d+) (%d+)$')
       if width and height then gui.size = { width, height } end
+    elseif line:find('^recent:') then
+      local filename = line:match('^recent: (.+)$')
+      local recent = io.recent_files
+      for i, file in ipairs(recent) do
+        if filename == file then break end
+        if i == #recent then recent[#recent + 1] = filename end
+      end
     end
   end
   f:close()
@@ -157,6 +167,10 @@ function save(filename)
   -- Write out other things.
   local size = gui.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
+  for i, filename in ipairs(io.recent_files) do
+    if i > MAX_RECENT_FILES then break end
+    session[#session + 1] = ("recent: %s"):format(filename)
+  end
   -- Write the session.
   local f = io.open(filename or DEFAULT_SESSION, 'wb')
   if f then
