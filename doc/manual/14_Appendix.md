@@ -64,8 +64,8 @@ Ctrl+Shift+Down         |^⇧⇣      |Move selected lines down
 Ctrl+F                   |⌘F  |Find
 Ctrl+G<br/>F3            |⌘G  |Find next
 Ctrl+Shift+G<br/>Shift+F3|⌘⇧G |Find previous
-Ctrl+R                   |⌘R  |Replace
-Ctrl+Shift+R             |⌘⇧R |Replace all
+Ctrl+Alt+R               |^R  |Replace
+Ctrl+Alt+Shift+R         |^⇧R |Replace all
 Ctrl+Alt+F               |⌘⌥F |Find incremental
 Ctrl+Shift+F             |⌘⇧F |Find in files
 Ctrl+Alt+G               |⌘⌥G |Goto next file found
@@ -75,8 +75,8 @@ Ctrl+J                   |⌘J  |Jump to line
 **Tools**                       |||
 Ctrl+E          |⌘E     |Command entry
 Ctrl+Shift+E    |⌘⇧E    |Select command
-Ctrl+Alt+R      |^R     |Run
-Ctrl+Alt+Shift+R|^⇧R    |Compile
+Ctrl+R          |⌘R     |Run
+Ctrl+Shift+R    |⌘⇧R    |Compile
 Ctrl+&#124;     |⌘&#124;|Filter text through
 Ctrl+Space      |⌥⎋     |Complete symbol
 Ctrl+H          |^H     |Show documentation

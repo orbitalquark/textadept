@@ -116,9 +116,9 @@ if not RESETTING then constantize_menu_buffer_functions() end
   Mac OSX menu key commands.
 
   Unassigned keys (~ denotes keys reserved by the operating system):
-  c:   A B C        ~    JkK  ~M N  p  ~    tT U V   Xy       ) ] }  *    ~~\n~~
-  ca: aAbBcC~DeE F  ~HiIjJkK L~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=  \n~~
-  m:      cC D    gG H  J K L    oO  qQ         v   xXyYzZ_   ) ] }  *  /
+  m:   A B C        ~    JkK  ~M N  p  ~    tT U V   Xy       ) ] }  *    ~~\n~~
+  ma: aAbBcC~DeE F  ~HiIjJkK L~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=  \n~~
+  c:      cC D    gG H  J K L    oO  qQ         v   xXyYzZ_   ) ] }  *  /
 
   CTRL = 'c' (Command ⌘)
   ALT = 'a' (Alt/option ⌥)
@@ -194,8 +194,8 @@ keys.cg = gui.find.find_next
 if not OSX then keys.f3 = keys.cg end
 keys.cG = gui.find.find_prev
 if not OSX then keys.sf3 = keys.cG end
-keys.cr = gui.find.replace
-keys.cR = gui.find.replace_all
+keys[not OSX and 'car' or 'mr'] = gui.find.replace
+keys[not OSX and 'caR' or 'mR'] = gui.find.replace_all
 -- Find Next is an when find pane is focused.
 -- Find Prev is ap when find pane is focused.
 -- Replace is ar when find pane is focused.
@@ -210,8 +210,8 @@ keys.cj = m_editing.goto_line
 -- Tools.
 keys.ce = gui.command_entry.focus
 keys.cE = utils.select_command
-keys[not OSX and 'car' or 'mr'] = m_textadept.run.run
-keys[not OSX and 'caR' or 'mR'] = m_textadept.run.compile
+keys.cr = m_textadept.run.run
+keys.cR = m_textadept.run.compile
 keys['c|'] = m_textadept.filter_through.filter_through
 -- Adeptsense.
 keys[not OSX and 'c ' or 'aesc'] = m_textadept.adeptsense.complete_symbol

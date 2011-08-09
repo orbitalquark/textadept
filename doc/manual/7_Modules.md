@@ -59,12 +59,12 @@ which key commands are available. They are typically stored in the `Ctrl+L`
 ##### Run
 
 Most language-specific modules have a command that runs the code in the current
-file. Pressing `Ctrl+Alt+R` (`^R` on Mac OSX) runs that command.
+file. Pressing `Ctrl+R` (`⌘R` on Mac OSX) runs that command.
 
 ##### Compile
 
 Most language-specific modules have a command that compiles the code in the
-current file. Pressing `Ctrl+Alt+Shift+R` (`^⇧R` on Mac OSX) runs that command.
+current file. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX) runs that command.
 
 ##### Block Comments
 
