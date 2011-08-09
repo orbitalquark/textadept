@@ -504,7 +504,14 @@ function complete(sense, only_fields, only_functions)
   buffer:clear_registered_images()
   buffer:register_image(1, FIELDS)
   buffer:register_image(2, FUNCTIONS)
-  buffer:auto_c_show(#part, table.concat(completions, ' '))
+  if not buffer.auto_c_choose_single or #completions ~= 1 then
+    buffer:auto_c_show(#part, table.concat(completions, ' '))
+  else
+    -- Scintilla does not emit AUTO_C_SELECTION in this case. This is necessary
+    -- for autocompletion with multiple selections.
+    events.emit(events.AUTO_C_SELECTION, completions[1]:sub(#part + 1),
+                buffer.current_pos)
+  end
   return true
 end
 

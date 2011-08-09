@@ -138,6 +138,23 @@ events.connect(events.CHAR_ADDED, function(char)
   end
 end)
 
+-- Autocomplete multiple selections.
+events.connect(events.AUTO_C_SELECTION, function(text, position)
+  local buffer = buffer
+  local caret = buffer.selection_n_caret[buffer.main_selection]
+  if position ~= caret then text = text:sub(caret - position + 1) end
+  buffer:begin_undo_action()
+  for i = 0, buffer.selections - 1 do
+    buffer.target_start = buffer.selection_n_anchor[i]
+    buffer.target_end = buffer.selection_n_caret[i]
+    buffer:replace_target(text)
+    buffer.selection_n_anchor[i] = buffer.selection_n_anchor[i] + #text
+    buffer.selection_n_caret[i] = buffer.selection_n_caret[i] + #text
+  end
+  buffer:end_undo_action()
+  buffer:auto_c_cancel() -- tell Scintilla not to handle autocompletion normally
+end)
+
 ---
 -- Goes to a matching brace position, selecting the text inside if specified.
 -- @param select If true, selects the text between matching braces.
@@ -172,7 +189,8 @@ function autocomplete_word(word_chars)
   if not root or root == '' then return end
   local patt = '^['..word_chars..']+'
   buffer.target_start, buffer.target_end = 0, buffer.length
-  buffer.search_flags = 1048580 -- word start and match case
+  buffer.search_flags = _SCINTILLA.constants.SCFIND_WORDSTART +
+                        _SCINTILLA.constants.SCFIND_MATCHCASE
   local match_pos = buffer:search_in_target(root)
   while match_pos ~= -1 do
     local s, e = buffer_text:find(patt, match_pos + 1)
@@ -185,7 +203,13 @@ function autocomplete_word(word_chars)
     match_pos = buffer:search_in_target(root)
   end
   if #c_list > 0 then
-    buffer:auto_c_show(#root, table.concat(c_list, ' '))
+    if not buffer.auto_c_choose_single or #c_list ~= 1 then
+      buffer:auto_c_show(#root, table.concat(c_list, ' '))
+    else
+      -- Scintilla does not emit AUTO_C_SELECTION in this case. This is
+      -- necessary for autocompletion with multiple selections.
+      events.emit(events.AUTO_C_SELECTION, c_list[1]:sub(#root + 1), caret)
+    end
     return true
   end
 end
