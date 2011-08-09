@@ -52,11 +52,11 @@ module('keys', package.seeall)
 --
 -- ## Settings
 --
--- + `CTRL` [string]: The string representing the Control/Command key. The
---   default is 'c'.
+-- + `CTRL` [string]: The string representing the Control key. The default is
+--   'c'.
 -- + `ALT` [string]: The string representing the Alt/option key. The default is
 --   'a'
--- + `META` [string]: The string representing the Control key on Mac OSX. The
+-- + `META` [string]: The string representing the Command key on Mac OSX. The
 --   default is 'm'.
 -- + `SHIFT` [string]: The string representing the Shift key. The default is
 --   's'.
@@ -104,9 +104,9 @@ LANGUAGE_MODULE_PREFIX = CTRL..'l'
 -- end settings
 
 -- Optimize for speed.
+local OSX = OSX
 local string = string
-local string_byte = string.byte
-local string_char = string.char
+local string_byte, string_char = string.byte, string.char
 local xpcall = xpcall
 local next = next
 local type = type
@@ -129,12 +129,9 @@ KEYSYMS = { -- from <gdk/gdkkeysyms.h>
   [0xFF1B] = 'esc',
   [0xFFFF] = 'del',
   [0xFF50] = 'home',
-  [0xFF51] = 'left',
-  [0xFF52] = 'up',
-  [0xFF53] = 'right',
-  [0xFF54] = 'down',
-  [0xFF55] = 'pgup',
-  [0xFF56] = 'pgdn',
+  [0xFF51] = 'left',  [0xFF52] = 'up',
+  [0xFF53] = 'right', [0xFF54] = 'down',
+  [0xFF55] = 'pgup',  [0xFF56] = 'pgdn',
   [0xFF57] = 'end',
   [0xFF63] = 'ins',
   [0xFFBE] = 'f1', [0xFFBF] = 'f2',  [0xFFC0] = 'f3',  [0xFFC1] = 'f4',
@@ -210,9 +207,9 @@ end
 -- command. The command is looked up in the global 'keys' key command table.
 -- @param code The keycode.
 -- @param shift Whether or not the Shift modifier is pressed.
--- @param control Whether or not the Control/Command modifier is pressed.
+-- @param control Whether or not the Control modifier is pressed.
 -- @param alt Whether or not the Alt/option modifier is pressed.
--- @param meta Whether or not the Control modifier on Mac OSX is pressed.
+-- @param meta Whether or not the Command modifier on Mac OSX is pressed.
 -- @return true to stop handling the key; nil otherwise.
 local function keypress(code, shift, control, alt, meta)
   local buffer = buffer
@@ -274,8 +271,8 @@ local function get_gdk_key(key_seq)
   local mods, key = key_seq:match('^([cams]*)(.+)$')
   if not mods or not key then return nil end
   local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
-                    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
-                    (mods:find('m') and 128 or 0)
+                    (mods:find('c') and (not OSX and 4 or 128) or 0) +
+                    (mods:find('a') and 8 or 0) + (mods:find('m') and 4 or 0)
   local byte = string_byte(key)
   if #key > 1 or byte < 32 then
     for i, s in pairs(KEYSYMS) do

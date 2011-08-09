@@ -22,9 +22,8 @@
 #elif __OSX__
 #include <Carbon/Carbon.h>
 #include "igemacintegration/ige-mac-menu.h"
-#define GDK_CONTROL_MASK 1 << 3 // Command key (GDK_MOD1_MASK)
-#define GDK_MOD1_MASK 1 << 7 // Alt/option key (GDK_MOD5_MASK)
-#define GDK_MOD5_MASK 1 << 2 // Control key (GDK_CONTROL_MASK)
+#define GDK_MOD1_MASK 1 << 7 // Alt/option key (1 << 7 == GDK_MOD5_MASK)
+#define GDK_MOD5_MASK 1 << 3 // Command key (1 << 3 == GDK_MOD1_MASK)
 #elif __BSD__
 #include <sys/types.h>
 #include <sys/sysctl.h>

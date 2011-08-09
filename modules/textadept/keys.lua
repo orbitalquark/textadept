@@ -120,130 +120,130 @@ if not RESETTING then constantize_menu_buffer_functions() end
   ma: aAbBcC~DeE F  ~HiIjJkK L~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=  \n~~
   c:      cC D    gG H  J K L    oO  qQ         v   xXyYzZ_   ) ] }  *  /
 
-  CTRL = 'c' (Command ⌘)
+  CTRL = 'c' (Control ^)
   ALT = 'a' (Alt/option ⌥)
-  META = 'm' (Control ^)
+  META = 'm' (Command ⌘)
   SHIFT = 's' (Shift ⇧)
   ADD = ''
-  Command, Alt, Shift, and 'a' = 'caA'
-  Command, Alt, Shift, and '\t' = 'cas\t'
+  Command, Option, Shift, and 'a' = 'amA'
+  Command, Option, Shift, and '\t' = 'ams\t'
 ]]--
 
 -- File.
-keys.cn = new_buffer
-keys.co = io.open_file
-keys.cao = io.open_recent_file
-keys.cO = _buffer.reload
-keys.cs = _buffer.save
-keys.cS = _buffer.save_as
-keys.cw = _buffer.close
-keys.cW = io.close_all
+keys[not OSX and 'cn' or 'mn'] = new_buffer
+keys[not OSX and 'co' or 'mo'] = io.open_file
+keys[not OSX and 'cao' or 'mao'] = io.open_recent_file
+keys[not OSX and 'cO' or 'mO'] = _buffer.reload
+keys[not OSX and 'cs' or 'ms'] = _buffer.save
+keys[not OSX and 'cS' or 'mS'] = _buffer.save_as
+keys[not OSX and 'cw' or 'mw'] = _buffer.close
+keys[not OSX and 'cW' or 'mW'] = io.close_all
 -- TODO: m_textadept.sessions.prompt_load
 -- TODO: m_textadept.sessions.prompt_save
-keys[not OSX and 'aq' or 'cq'] = quit
+keys[not OSX and 'aq' or 'mq'] = quit
 
 -- Edit.
-keys.cz = _buffer.undo
+keys[not OSX and 'cz' or 'mz'] = _buffer.undo
 if not OSX then keys.cy = _buffer.redo end
-keys.cZ = _buffer.redo
-keys.cx = _buffer.cut
-keys.cc = _buffer.copy
-keys.cv = _buffer.paste
-keys.cd = _buffer.line_duplicate
+keys[not OSX and 'cZ' or 'mZ'] = _buffer.redo
+keys[not OSX and 'cx' or 'mx'] = _buffer.cut
+keys[not OSX and 'cc' or 'mc'] = _buffer.copy
+keys[not OSX and 'cv' or 'mv'] = _buffer.paste
+keys[not OSX and 'cd' or 'md'] = _buffer.line_duplicate
 keys.del = _buffer.clear
-keys.ca = _buffer.select_all
-keys[not OSX and 'cm' or 'mm'] = m_editing.match_brace
-keys[not OSX and 'c\n' or 'mesc'] = { m_editing.autocomplete_word, '%w_' }
-keys[not OSX and 'adel' or 'mdel'] = { m_editing.current_word, 'delete' }
-keys[not OSX and 'caH' or 'cH'] = m_editing.highlight_word
-keys['c/'] = m_editing.block_comment
-keys[not OSX and 'ct' or 'mt'] = m_editing.transpose_chars
-keys[not OSX and 'cJ' or 'mj'] = m_editing.join_lines
+keys[not OSX and 'ca' or 'ma'] = _buffer.select_all
+keys.cm = m_editing.match_brace
+keys[not OSX and 'c\n' or 'cesc'] = { m_editing.autocomplete_word, '%w_' }
+keys[not OSX and 'adel' or 'cdel'] = { m_editing.current_word, 'delete' }
+keys[not OSX and 'caH' or 'mH'] = m_editing.highlight_word
+keys[not OSX and 'c/' or 'm/'] = m_editing.block_comment
+keys.ct = m_editing.transpose_chars
+keys[not OSX and 'cJ' or 'cj'] = m_editing.join_lines
 -- Select.
-keys[not OSX and 'cM' or 'mM'] = { m_editing.match_brace, 'select' }
-keys['c<'] = { m_editing.select_enclosed, '>', '<' }
-keys['c>'] = { m_editing.select_enclosed, '<', '>' }
-keys["c'"] = { m_editing.select_enclosed, "'", "'" }
-keys['c"'] = { m_editing.select_enclosed, '"', '"' }
-keys['c('] = { m_editing.select_enclosed, '(', ')' }
-keys['c['] = { m_editing.select_enclosed, '[', ']' }
-keys['c{'] = { m_editing.select_enclosed, '{', '}' }
-keys.cD = { m_editing.current_word, 'select' }
-keys.cL = m_editing.select_line
-keys.cP = m_editing.select_paragraph
-keys.cI = m_editing.select_indented_block
-keys.cY = m_editing.select_style
+keys.cM = { m_editing.match_brace, 'select' }
+keys[not OSX and 'c<' or 'm<'] = { m_editing.select_enclosed, '>', '<' }
+keys[not OSX and 'c>' or 'm>'] = { m_editing.select_enclosed, '<', '>' }
+keys[not OSX and "c'" or "m'"] = { m_editing.select_enclosed, "'", "'" }
+keys[not OSX and 'c"' or 'm"'] = { m_editing.select_enclosed, '"', '"' }
+keys[not OSX and 'c(' or 'm('] = { m_editing.select_enclosed, '(', ')' }
+keys[not OSX and 'c[' or 'm['] = { m_editing.select_enclosed, '[', ']' }
+keys[not OSX and 'c{' or 'm{'] = { m_editing.select_enclosed, '{', '}' }
+keys[not OSX and 'cD' or 'mD'] = { m_editing.current_word, 'select' }
+keys[not OSX and 'cL' or 'mL'] = m_editing.select_line
+keys[not OSX and 'cP' or 'mP'] = m_editing.select_paragraph
+keys[not OSX and 'cI' or 'mI'] = m_editing.select_indented_block
+keys[not OSX and 'cY' or 'mY'] = m_editing.select_style
 -- Selection.
-keys[not OSX and 'cau' or 'mu'] = _buffer.upper_case
-keys[not OSX and 'caU' or 'mU'] = _buffer.lower_case
-keys[not OSX and 'a<' or 'm<'] = utils.enclose_as_xml_tags
-keys[not OSX and 'a>' or 'm>'] = { m_editing.enclose, '<', ' />' }
-keys[not OSX and "a'" or "m'"] = { m_editing.enclose, "'", "'" }
-keys[not OSX and 'a"' or 'm"'] = { m_editing.enclose, '"', '"' }
-keys[not OSX and 'a(' or 'm('] = { m_editing.enclose, '(', ')' }
-keys[not OSX and 'a[' or 'm['] = { m_editing.enclose, '[', ']' }
-keys[not OSX and 'a{' or 'm{'] = { m_editing.enclose, '{', '}' }
-keys['c+'] = { m_editing.grow_selection, 1 }
-keys['c_'] = { m_editing.grow_selection, -1 }
-keys[not OSX and 'csup' or 'msup'] = _buffer.move_selected_lines_up
-keys[not OSX and 'csdown' or 'msdown'] = _buffer.move_selected_lines_down
+keys[not OSX and 'cau' or 'cu'] = _buffer.upper_case
+keys[not OSX and 'caU' or 'cU'] = _buffer.lower_case
+keys[not OSX and 'a<' or 'c<'] = utils.enclose_as_xml_tags
+keys[not OSX and 'a>' or 'c>'] = { m_editing.enclose, '<', ' />' }
+keys[not OSX and "a'" or "c'"] = { m_editing.enclose, "'", "'" }
+keys[not OSX and 'a"' or 'c"'] = { m_editing.enclose, '"', '"' }
+keys[not OSX and 'a(' or 'c('] = { m_editing.enclose, '(', ')' }
+keys[not OSX and 'a[' or 'c['] = { m_editing.enclose, '[', ']' }
+keys[not OSX and 'a{' or 'c{'] = { m_editing.enclose, '{', '}' }
+keys[not OSX and 'c+' or 'm+'] = { m_editing.grow_selection, 1 }
+keys[not OSX and 'c_' or 'm_'] = { m_editing.grow_selection, -1 }
+keys.csup = _buffer.move_selected_lines_up
+keys.csdown = _buffer.move_selected_lines_down
 
 -- Search.
-keys.cf = gui.find.focus
-keys.cg = gui.find.find_next
+keys[not OSX and 'cf' or 'mf'] = gui.find.focus
+keys[not OSX and 'cg' or 'mg'] = gui.find.find_next
 if not OSX then keys.f3 = keys.cg end
-keys.cG = gui.find.find_prev
+keys[not OSX and 'cG' or 'mG'] = gui.find.find_prev
 if not OSX then keys.sf3 = keys.cG end
-keys[not OSX and 'car' or 'mr'] = gui.find.replace
-keys[not OSX and 'caR' or 'mR'] = gui.find.replace_all
+keys[not OSX and 'car' or 'cr'] = gui.find.replace
+keys[not OSX and 'caR' or 'cR'] = gui.find.replace_all
 -- Find Next is an when find pane is focused.
 -- Find Prev is ap when find pane is focused.
 -- Replace is ar when find pane is focused.
 -- Replace All is aa when find pane is focused.
-keys.caf = gui.find.find_incremental
-keys.cF = utils.find_in_files
+keys[not OSX and 'caf' or 'maf'] = gui.find.find_incremental
+keys[not OSX and 'cF' or 'mF'] = utils.find_in_files
 -- Find in Files is ai when find pane is focused.
-keys.cag = { gui.find.goto_file_in_list, true }
-keys.caG = { gui.find.goto_file_in_list, false }
-keys.cj = m_editing.goto_line
+keys[not OSX and 'cag' or 'mag'] = { gui.find.goto_file_in_list, true }
+keys[not OSX and 'caG' or 'maG'] = { gui.find.goto_file_in_list, false }
+keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
 -- Tools.
-keys.ce = gui.command_entry.focus
-keys.cE = utils.select_command
-keys.cr = m_textadept.run.run
-keys.cR = m_textadept.run.compile
-keys['c|'] = m_textadept.filter_through.filter_through
+keys[not OSX and 'ce' or 'me'] = gui.command_entry.focus
+keys[not OSX and 'cE' or 'mE'] = utils.select_command
+keys[not OSX and 'cr' or 'mr'] = m_textadept.run.run
+keys[not OSX and 'cR' or 'mR'] = m_textadept.run.compile
+keys[not OSX and 'c|' or 'm|'] = m_textadept.filter_through.filter_through
 -- Adeptsense.
 keys[not OSX and 'c ' or 'aesc'] = m_textadept.adeptsense.complete_symbol
-keys[not OSX and 'ch' or 'mh'] = m_textadept.adeptsense.show_documentation
+keys.ch = m_textadept.adeptsense.show_documentation
 -- Snippets.
 keys[not OSX and 'ck' or 'a\t'] = m_textadept.snippets._select
 keys['\t'] = m_textadept.snippets._insert
 keys['s\t'] = m_textadept.snippets._previous
 keys[not OSX and 'cK' or 'as\t'] = m_textadept.snippets._cancel_current
 -- Bookmark.
-keys.cf2 = m_textadept.bookmarks.toggle
-keys.csf2 = m_textadept.bookmarks.clear
+keys[not OSX and 'cf2' or 'mf2'] = m_textadept.bookmarks.toggle
+keys[not OSX and 'csf2' or 'msf2'] = m_textadept.bookmarks.clear
 keys.f2 = m_textadept.bookmarks.goto_next
 keys.sf2 = m_textadept.bookmarks.goto_prev
 keys.af2 = m_textadept.bookmarks.goto
 -- Snapopen.
-keys.cu = { m_textadept.snapopen.open, _USERHOME }
+keys[not OSX and 'cu' or 'mu'] = { m_textadept.snapopen.open, _USERHOME }
 -- TODO: { m_textadept.snapopen.open, _HOME }
-keys.caO = utils.snapopen_filedir
-keys.ci = utils.show_style
+keys[not OSX and 'caO' or 'maO'] = utils.snapopen_filedir
+keys[not OSX and 'ci' or 'mi'] = utils.show_style
 
 -- Buffer.
-keys[not OSX and 'c\t' or 'm`'] = { _view.goto_buffer, _view, 1, false }
-keys[not OSX and 'cs\t' or 'm~'] = { _view.goto_buffer, _view, -1, false }
-keys.cb = gui.switch_buffer
+keys[not OSX and 'c\t' or 'c`'] = { _view.goto_buffer, _view, 1, false }
+keys[not OSX and 'cs\t' or 'c~'] = { _view.goto_buffer, _view, -1, false }
+keys[not OSX and 'cb' or 'mb'] = gui.switch_buffer
 -- Indentation.
 -- TODO: { utils.set_indentation, 2 }
 -- TODO: { utils.set_indentation, 3 }
 -- TODO: { utils.set_indentation, 4 }
 -- TODO: { utils.set_indentation, 8 }
-keys[not OSX and 'caT' or 'mT'] = { utils.toggle_property, 'use_tabs' }
-keys[not OSX and 'cai' or 'mi'] = m_editing.convert_indentation
+keys[not OSX and 'caT' or 'cT'] = { utils.toggle_property, 'use_tabs' }
+keys[not OSX and 'cai' or 'ci'] = m_editing.convert_indentation
 -- EOL Mode.
 -- TODO: { utils.set_eol_mode, c.SC_EOL_CRLF }
 -- TODO: { utils.set_eol_mode, c.SC_EOL_CR }
@@ -254,31 +254,31 @@ keys[not OSX and 'cai' or 'mi'] = m_editing.convert_indentation
 -- TODO: { utils.set_encoding, 'ISO-8859-1' }
 -- TODO: { utils.set_encoding, 'MacRoman' }
 -- TODO: { utils.set_encoding, 'UTF-16LE' }
-keys.cal = m_textadept.mime_types.select_lexer
+keys[not OSX and 'cal' or 'mal'] = m_textadept.mime_types.select_lexer
 keys.f5 = { _buffer.colourise, _buffer, 0, -1 }
 
 -- View.
-keys[not OSX and 'ca\t' or 'm\t'] = { gui.goto_view, 1, false }
-keys[not OSX and 'cas\t' or 'ms\t'] = { gui.goto_view, -1, false }
-keys[not OSX and 'caS' or 'mS'] = { _view.split, _view }
-keys[not OSX and 'cas' or 'ms'] = { _view.split, _view, false }
-keys[not OSX and 'caw' or 'mw'] = { _view.unsplit, _view }
-keys[not OSX and 'caW' or 'mW'] = utils.unsplit_all
-keys[not OSX and 'ca+' or 'm+'] = { utils.grow, 10 }
-keys[not OSX and 'ca=' or 'm='] = { utils.grow, 10 }
-keys[not OSX and 'ca-' or 'm-'] = { utils.shrink, 10 }
+keys[not OSX and 'ca\t' or 'c\t'] = { gui.goto_view, 1, false }
+keys[not OSX and 'cas\t' or 'cs\t'] = { gui.goto_view, -1, false }
+keys[not OSX and 'caS' or 'cS'] = { _view.split, _view }
+keys[not OSX and 'cas' or 'cs'] = { _view.split, _view, false }
+keys[not OSX and 'caw' or 'cw'] = { _view.unsplit, _view }
+keys[not OSX and 'caW' or 'cW'] = utils.unsplit_all
+keys[not OSX and 'ca+' or 'c+'] = { utils.grow, 10 }
+keys[not OSX and 'ca=' or 'c='] = { utils.grow, 10 }
+keys[not OSX and 'ca-' or 'c-'] = { utils.shrink, 10 }
 -- TODO: utils.toggle_current_fold
-keys[not OSX and 'ca\n' or 'm\n'] = { utils.toggle_property, 'view_eol' }
+keys[not OSX and 'ca\n' or 'c\n'] = { utils.toggle_property, 'view_eol' }
 if not OSX then keys['ca\n\r'] = keys['ca\n'] end
-keys[not OSX and 'ca\\' or 'm\\'] = { utils.toggle_property, 'wrap_mode' }
-keys[not OSX and 'caI' or 'mI'] =
+keys[not OSX and 'ca\\' or 'c\\'] = { utils.toggle_property, 'wrap_mode' }
+keys[not OSX and 'caI' or 'cI'] =
   { utils.toggle_property, 'indentation_guides' }
-keys[not OSX and 'ca ' or 'm '] = { utils.toggle_property, 'view_ws' }
-keys[not OSX and 'caV' or 'mV'] =
+keys[not OSX and 'ca ' or 'c '] = { utils.toggle_property, 'view_ws' }
+keys[not OSX and 'caV' or 'cV'] =
   { utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE }
-keys['c='] = _buffer.zoom_in
-keys['c-'] = _buffer.zoom_out
-keys.c0 = utils.reset_zoom
+keys[not OSX and 'c=' or 'm='] = _buffer.zoom_in
+keys[not OSX and 'c-' or 'm-'] = _buffer.zoom_out
+keys[not OSX and 'c0' or 'm0'] = utils.reset_zoom
 
 -- Help.
 keys.f1 = { utils.open_webpage, _HOME..'/doc/manual/1_Introduction.html' }
@@ -288,26 +288,26 @@ keys.sf1 = { utils.open_webpage, _HOME..'/doc/index.html' }
 
 -- Movement commands.
 if OSX then
-  keys.mk = function()
+  keys.ck = function()
     buffer:line_end_extend()
     buffer:cut()
   end
-  keys.mf = _buffer.char_right
-  keys.mF = _buffer.char_right_extend
-  keys.amf = _buffer.word_right
-  keys.amF = _buffer.word_right_extend
-  keys.mb = _buffer.char_left
-  keys.mB = _buffer.char_left_extend
-  keys.amb = _buffer.word_left
-  keys.amB = _buffer.word_left_extend
-  keys.mn = _buffer.line_down
-  keys.mN = _buffer.line_down_extend
-  keys.mp = _buffer.line_up
-  keys.mP = _buffer.line_up_extend
-  keys.ma = _buffer.vc_home
-  keys.mA = _buffer.vc_home_extend
-  keys.me = _buffer.line_end
-  keys.mE = _buffer.line_end_extend
-  keys.md = _buffer.clear
-  keys.ml = _buffer.vertical_centre_caret
+  keys.cf = _buffer.char_right
+  keys.cF = _buffer.char_right_extend
+  keys.caf = _buffer.word_right
+  keys.caF = _buffer.word_right_extend
+  keys.cb = _buffer.char_left
+  keys.cB = _buffer.char_left_extend
+  keys.cab = _buffer.word_left
+  keys.caB = _buffer.word_left_extend
+  keys.cn = _buffer.line_down
+  keys.cN = _buffer.line_down_extend
+  keys.cp = _buffer.line_up
+  keys.cP = _buffer.line_up_extend
+  keys.ca = _buffer.vc_home
+  keys.cA = _buffer.vc_home_extend
+  keys.ce = _buffer.line_end
+  keys.cE = _buffer.line_end_extend
+  keys.cd = _buffer.clear
+  keys.cl = _buffer.vertical_centre_caret
 end
