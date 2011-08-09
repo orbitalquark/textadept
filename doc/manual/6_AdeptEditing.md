@@ -51,8 +51,8 @@ Lua code! For example: replacing all `(%w+)` with `%(string.upper('%1'))`
 capitalizes all words in the buffer. Lua captures (`%n`) are only available from
 a Lua pattern search, but embedded Lua code enclosed in `%()` is always allowed.
 
-Note the `Ctrl+G`, `Ctrl+Shift+G`, `Ctrl+R`, `Ctrl+Shift+R` key commands for
-find next, find previous, replace, and replace all (`⌘G`, `⌘⇧G`, `⌘R`, `⌘⇧R`
+Note the `Ctrl+G`, `Ctrl+Shift+G`, `Ctrl+Alt+R`, `Ctrl+Alt+Shift+R` key commands
+for find next, find previous, replace, and replace all (`⌘G`, `⌘⇧G`, `^R`, `^⇧R`
 respectively on Mac OSX) only work when the Find/Replace dialog is hidden. When
 it is visible, use the button mnemonics: `Alt+N`, `Alt+P`, `Alt+R`, and `Alt+A`
 (`⌘N`, `⌘P`, `⌘R`, `⌘A`) for English locale.
