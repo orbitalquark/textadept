@@ -83,7 +83,6 @@ function load(filename)
   end
   f:close()
   _VIEWS[current_view]:focus()
-  _SESSIONFILE = filename or DEFAULT_SESSION
   if #not_found > 0 then
     gui.dialog('msgbox',
                '--title', L('Session Files Not Found'),
@@ -159,7 +158,7 @@ function save(filename)
   local size = gui.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
   -- Write the session.
-  local f = io.open(filename or _SESSIONFILE or DEFAULT_SESSION, 'wb')
+  local f = io.open(filename or DEFAULT_SESSION, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
     f:close()
@@ -169,13 +168,12 @@ end
 ---
 -- Prompts the user for a Textadept session to load.
 function prompt_load()
-  local session_file = _SESSIONFILE or ''
   local utf8_filename = gui.dialog('fileselect',
                                    '--title', L('Load Session'),
                                    '--with-directory',
-                                   session_file:match('.+[/\\]') or '',
+                                   DEFAULT_SESSION:match('.+[/\\]') or '',
                                    '--with-file',
-                                   session_file:match('[^/\\]+$') or '',
+                                   DEFAULT_SESSION:match('[^/\\]+$') or '',
                                    '--no-newline')
   if #utf8_filename > 0 then load(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
 end
@@ -183,13 +181,12 @@ end
 ---
 -- Prompts the user to save the current Textadept session to a file.
 function prompt_save()
-  local session_file = _SESSIONFILE or ''
   local utf8_filename = gui.dialog('filesave',
                                    '--title', L('Save Session'),
                                    '--with-directory',
-                                   session_file:match('.+[/\\]') or '',
+                                   DEFAULT_SESSION:match('.+[/\\]') or '',
                                    '--with-file',
-                                   session_file:match('[^/\\]+$') or '',
+                                   DEFAULT_SESSION:match('[^/\\]+$') or '',
                                    '--no-newline')
   if #utf8_filename > 0 then save(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
 end
