@@ -103,7 +103,7 @@ if not RESETTING then constantize_menu_buffer_functions() end
   Unassigned keys (~ denotes keys reserved by the operating system):
   c:   A B C         H           N  p qQ     T ~ V   X Y      ) ] }  *      \n
   a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpP QrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=~~\n\s
-  ca: aAbBcCdDeE F  h   jJkK LmMnN  pPqQ    t   v   xXy zZ_"'()[]{}<>*  /
+  ca: aAbBcCdDeE F  h   jJkK LmM N   PqQ    t   v   xXy zZ_"'()[]{}<>*  / ~~
 
   CTRL = 'c' (Control ^)
   ALT = 'a' (Alt)
@@ -258,8 +258,8 @@ keys[not OSX and 'cal' or 'mal'] = m_textadept.mime_types.select_lexer
 keys.f5 = { _buffer.colourise, _buffer, 0, -1 }
 
 -- View.
-keys[not OSX and 'ca\t' or 'c\t'] = { gui.goto_view, 1, false }
-keys[not OSX and 'cas\t' or 'cs\t'] = { gui.goto_view, -1, false }
+keys[not OSX and 'can' or 'c\t'] = { gui.goto_view, 1, false }
+keys[not OSX and 'cap' or 'cs\t'] = { gui.goto_view, -1, false }
 keys[not OSX and 'caS' or 'cS'] = { _view.split, _view }
 keys[not OSX and 'cas' or 'cs'] = { _view.split, _view, false }
 keys[not OSX and 'caw' or 'cw'] = { _view.unsplit, _view }
