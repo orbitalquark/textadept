@@ -316,9 +316,10 @@ end
 -- transposed. Otherwise, the characters to the left and right are.
 function transpose_chars()
   local buffer = buffer
-  buffer:begin_undo_action()
   local pos = buffer.current_pos
+  if pos == buffer.length then return end
   local c1, c2 = buffer.char_at[pos - 1], buffer.char_at[pos]
+  buffer:begin_undo_action()
   buffer:delete_back()
   buffer:insert_text((c2 == 10 or c2 == 13) and pos - 2 or pos, string.char(c1))
   buffer:end_undo_action()
