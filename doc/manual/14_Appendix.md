@@ -95,8 +95,8 @@ Ctrl+Alt+Shift+O|⌘⌥⇧O   |Snapopen current directory
 Ctrl+I          |⌘I     |Show style
 
 **Buffer**                      |||
-Ctrl+Tab        |^\`   |Next buffer
-Ctrl+Shift+Tab  |^~    |Previous buffer
+Ctrl+Tab        |^⇥    |Next buffer
+Ctrl+Shift+Tab  |^⇧⇥   |Previous buffer
 Ctrl+B          |⌘B    |Switch to buffer...
 None            |None  |Tab width: 2
 None            |None  |Tab width: 3
@@ -115,8 +115,8 @@ Ctrl+Alt+L      |⌘⌥L   |Select lexer...
 F5              |F5    |Refresh syntax highlighting
 
 **View**                        |||
-Ctrl+Alt+Tab             |^⇥       |Next view
-Ctrl+Alt+Shift+Tab       |^⇧⇥      |Previous view
+Ctrl+Alt+N               |^⌥⇥      |Next view
+Ctrl+Alt+P               |^⌥⇧⇥     |Previous view
 Ctrl+Alt+Shift+S         |^⇧S      |Split view vertical
 Ctrl+Alt+S               |^S       |Split view horizontal
 Ctrl+Alt+W               |^W       |Unsplit view
