@@ -18,6 +18,7 @@ TEXTADEPT = textadept
 TEXTADEPT_RC =
 EXPORTLUASYMS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
 WINDRES =
+LDL = -ldl
 
 # Win32 (WIN32=1)
 ifdef WIN32
@@ -32,6 +33,7 @@ TEXTADEPT = textadept.exe
 TEXTADEPT_RC = textadept_rc.o
 EXPORTLUASYMS = -Wl,--retain-symbols-file -Wl,lua.sym
 WINDRES = i486-mingw32-windres
+LDL =
 endif
 
 # Mac OSX (OSX=1)
@@ -49,6 +51,7 @@ TEXTADEPT = textadept.osx
 TEXTADEPT_RC =
 EXPORTLUASYMS = -rdynamic
 WINDRES =
+LDL =
 endif
 
 ifndef DEBUG
@@ -127,7 +130,7 @@ $(TEXTADEPT):\
   $(SCINTILLA_OBJS) $(SCINTILLA_MARSHALLER) $(SCINTILLA_LEXER) \
   $(TEXTADEPT_OBJS) $(LUA_OBJS) $(GCOCOADIALOG) \
   $(TEXTADEPT_RC)
-	$(CPP) $(EXPORTLUASYMS) -o $@ $^ $(GTKLIBS) -ldl
+	$(CPP) $(EXPORTLUASYMS) -o $@ $^ $(GTKLIBS) $(LDL)
 	mv $(TEXTADEPT) ../
 $(TEXTADEPT_RC): textadept.rc
 	$(WINDRES) $^ $@
