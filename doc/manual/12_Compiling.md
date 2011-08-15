@@ -10,7 +10,7 @@ as running it.
 Linux systems need the GTK+ development libraries. Your package manager should
 allow you to install them. For Debian-based distributions like Ubuntu, the
 package is typically called `libgtk2.0-dev`. Otherwise, compile and install GTK
-from the [GTK+ website](http://www.gtk.org/download-linux.html). Additionally
+from the [GTK+ website](http://www.gtk.org/download/linux.html). Additionally
 you will need the [GNU C compiler](http://gcc.gnu.org) (`gcc`) and
 [GNU Make](http://www.gnu.org/software/make/) (`make`). Both should be available
 for your Linux distribution through its package manager. For example, Ubuntu
@@ -20,8 +20,8 @@ includes these tools in the `build-essential` package.
 
 Compiling Textadept on Windows is no longer supported. If you wish to do so
 however, you need a C compiler that supports the C99 standard (Microsoft's does
-not) and the [GTK+ for Windows bundle](http://www.gtk.org/download-windows.html)
-(2.16 is recommended).
+not) and the [GTK+ for Windows bundle](http://www.gtk.org/download/win32.html)
+(2.22 is recommended).
 
 The preferred way to compile for Windows is cross-compiling from Linux. To do
 so, in addition to the GTK bundle mentioned above, you need
