@@ -95,6 +95,7 @@ MARKER_MAX _SCINTILLA.constants.MARKER_MAX\n31\n
 MARK_BOOKMARK_COLOR _m.textadept.bookmarks.MARK_BOOKMARK_COLOR [number]\nThe color used for a bookmarked line in 0xBBGGRR format.\n
 MARK_HIGHLIGHT_BACK _m.textadept.editing.MARK_HIGHLIGHT_BACK [number]\nThe background color used for a line containing a highlighted word in\n0xBBGGRR format.\n
 MAX _m.textadept.snapopen.MAX [number]\nMaximum number of files to list. The default value is 1000.\n
+MAX_RECENT_FILES _m.textadept.session.MAX_RECENT_FILES [number]\nThe maximum number of files from the recent files list to save to the\nsession. The default is 10.\n
 MENU_CLICKED events.MENU_CLICKED\nCalled when a menu item is selected.\n    * `menu_id`: The numeric ID of the menu item set in `gui.gtkmenu()`.\n\n
 NUMBER lexer.NUMBER\n\n
 OPERATOR lexer.OPERATOR\n\n
@@ -1453,7 +1454,7 @@ size view.size [number]\nThe position of the split resizer (if this view is part
 snapopen _m.textadept.snapopen [module]\nSnapopen for the textadept module.\n
 snippets _G.snippets [table]\nProvides access to snippets from _G.\n
 snippets _m.textadept.snippets [module]\nProvides Lua-style snippets for Textadept.\n
-sort table.sort(table [, comp])\nSorts table elements in a given order, *in-place*, from `table[1]` to\n`table[n]`, where `n` is the length of the table. If `comp` is given, then it\nmust be a function that receives two table elements, and returns true when\nthe first is less than the second (so that `not comp(a[i+1],a[i])` will be\ntrue after the sort). If `comp` is not given, then the standard Lua operator\n``io.lines`, this function does not close the file when the loop ends.)\n
+sort table.sort(table [, comp])\nSorts table elements in a given order, *in-place*, from `table[1]` to\n`table[n]`, where `n` is the length of the table. If `comp` is given, then it\nmust be a function that receives two table elements, and returns true when the\nfirst is less than the second (so that `not comp(a[i+1],a[i])` will be true\nafter the sort). If `comp` is not given, then the standard Lua operator `<`\nis used instead. The sort algorithm is not stable; that is, elements considered\nequal by the given order may have their relative positions changed by the sort.\n
 space lexer.space\nMatches any whitespace character (`\t`, `\v`, `\f`, `\\n`, `\r`, space).\n
 split view:split(vertical)\nSplits the indexed view vertically or horizontally and focuses the new view.\n@param vertical Flag indicating a vertical split. False for horizontal.\n@return old view and new view tables.\n
 sqrt math.sqrt(x)\nReturns the square root of `x`. (You can also use the expression `x^0.5`\nto compute this value.)\n

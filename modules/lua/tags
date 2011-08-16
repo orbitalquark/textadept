@@ -95,6 +95,7 @@ MARKER_MAX	_	0;"	F	class:_SCINTILLA.constants
 MARK_BOOKMARK_COLOR	_	0;"	F	class:_m.textadept.bookmarks
 MARK_HIGHLIGHT_BACK	_	0;"	F	class:_m.textadept.editing
 MAX	_	0;"	F	class:_m.textadept.snapopen
+MAX_RECENT_FILES	_	0;"	F	class:_m.textadept.session
 MENU_CLICKED	_	0;"	F	class:events
 NUMBER	_	0;"	F	class:lexer
 OPERATOR	_	0;"	F	class:lexer
