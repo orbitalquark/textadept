@@ -202,6 +202,7 @@ function autocomplete_word(word_chars)
     buffer.target_start, buffer.target_end = match_pos + 1, buffer.length
     match_pos = buffer:search_in_target(root)
   end
+  table.sort(c_list)
   if #c_list > 0 then
     if not buffer.auto_c_choose_single or #c_list ~= 1 then
       buffer:auto_c_show(#root, table.concat(c_list, ' '))
