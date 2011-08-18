@@ -189,8 +189,11 @@ function autocomplete_word(word_chars)
   if not root or root == '' then return end
   local patt = '^['..word_chars..']+'
   buffer.target_start, buffer.target_end = 0, buffer.length
-  buffer.search_flags = _SCINTILLA.constants.SCFIND_WORDSTART +
-                        _SCINTILLA.constants.SCFIND_MATCHCASE
+  buffer.search_flags = _SCINTILLA.constants.SCFIND_WORDSTART
+  if not buffer.auto_c_ignore_case then
+    buffer.search_flags = buffer.search_flags +
+                          _SCINTILLA.constants.SCFIND_MATCHCASE
+  end
   local match_pos = buffer:search_in_target(root)
   while match_pos ~= -1 do
     local s, e = buffer_text:find(patt, match_pos + 1)
@@ -202,7 +205,11 @@ function autocomplete_word(word_chars)
     buffer.target_start, buffer.target_end = match_pos + 1, buffer.length
     match_pos = buffer:search_in_target(root)
   end
-  table.sort(c_list)
+  if not buffer.auto_c_ignore_case then
+    table.sort(c_list)
+  else
+    table.sort(c_list, function(a, b) return a:upper() < b:upper() end)
+  end
   if #c_list > 0 then
     if not buffer.auto_c_choose_single or #c_list ~= 1 then
       buffer:auto_c_show(#root, table.concat(c_list, ' '))
