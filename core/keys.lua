@@ -100,7 +100,7 @@ local ALT = 'a'..ADD
 local META = 'm'..ADD
 local SHIFT = 's'..ADD
 CLEAR = 'esc'
-LANGUAGE_MODULE_PREFIX = CTRL..'l'
+LANGUAGE_MODULE_PREFIX = (not OSX and CTRL or META)..'l'
 -- end settings
 
 -- Optimize for speed.
