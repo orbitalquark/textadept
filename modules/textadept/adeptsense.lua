@@ -479,7 +479,11 @@ function get_completions(sense, symbol, only_fields, only_functions)
   add_inherited(sense, class, only_fields, only_functions, c, {})
 
   -- Remove duplicates and non-toplevel classes (if necessary).
-  table.sort(c)
+  if not buffer.auto_c_ignore_case then
+    table.sort(c)
+  else
+    table.sort(c, function(a, b) return a:upper() < b:upper() end)
+  end
   local table_remove, nwc = table.remove, '[^'..sense.syntax.word_chars..'%?]'
   for i = #c, 2, -1 do
     if c[i] == c[i - 1] or c[i]:find(nwc) then table_remove(c, i) end
