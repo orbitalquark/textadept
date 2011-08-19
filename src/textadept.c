@@ -521,10 +521,15 @@ static void switch_to_view(GtkWidget *editor) {
 static void s_notification(GtkWidget *editor, gint wParam, gpointer lParam,
                            gpointer udata) {
   struct SCNotification *n = (struct SCNotification *)lParam;
-  if (focused_editor != editor &&
-      (n->nmhdr.code == SCN_URIDROPPED || n->nmhdr.code == SCN_SAVEPOINTLEFT))
+  if (focused_editor == editor || n->nmhdr.code == SCN_URIDROPPED) {
+    if (focused_editor != editor) switch_to_view(editor);
+    l_emit_scnnotification(n);
+  } else if (n->nmhdr.code == SCN_SAVEPOINTLEFT) {
+    GtkWidget *prev = focused_editor;
     switch_to_view(editor);
-  l_emit_scnnotification(n);
+    l_emit_scnnotification(n);
+    switch_to_view(prev); // do not let a split view steal focus
+  }
 }
 
 /**
