@@ -272,6 +272,7 @@ module('buffer')
 --         The default values are 30 for alpha and 50 for outline alpha. To
 --         avoid excessive memory allocation the maximum width of a dotted box
 --         is 4000 pixels.
+--       * Use `_SCINTILLA.next_indic_number()` for custom indicators.
 -- * `indic_under` [table]: Table of booleans for drawing under text or over
 --   (default) for indicators from zero to 31.
 -- * `indicator_current` [number]: The indicator in the range of 0 to 31 used
@@ -1491,6 +1492,7 @@ function buffer.marker_add_set(buffer, line, marker_mask) end
 -- @param buffer The focused buffer.
 -- @param marker_num A marker number in the range of 0 to 31.
 -- @param marker_symbol A marker symbol: _SCINTILLA.constants.SC_MARK_*.
+-- @see _SCINTILLA.next_marker_number
 function buffer.marker_define(buffer, marker_num, marker_symbol) end
 
 ---
@@ -2193,6 +2195,7 @@ function buffer.use_pop_up(buffer, allow_popup) end
 -- @param list_type A list identifier number greater than zero.
 -- @param item_list List of words separated by separator characters (initially
 --   spaces).
+-- @see _SCINTILLA.next_user_list_type
 function buffer.user_list_show(buffer, list_type, item_list) end
 
 ---
