@@ -101,9 +101,9 @@ if not RESETTING then constantize_menu_buffer_functions() end
   Windows and Linux menu key commands.
 
   Unassigned keys (~ denotes keys reserved by the operating system):
-  c:   A B C         H           N  p qQ     T ~ V   X Y      ) ] }  *      \n
+  c:   A B C         H              p qQ     T ~ V   X        ) ] }  *      \n
   a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpP QrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=~~\n\s
-  ca: aAbBcCdDeE F  h   jJkK LmM N   PqQ    t   v   xXy zZ_"'()[]{}<>*  / ~~
+  ca: aAbBcCdDeE F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  / ~~  \s
 
   CTRL = 'c' (Control ^)
   ALT = 'a' (Alt)
@@ -116,9 +116,9 @@ if not RESETTING then constantize_menu_buffer_functions() end
   Mac OSX menu key commands.
 
   Unassigned keys (~ denotes keys reserved by the operating system):
-  m:   A B C        ~    JkK  ~M N  p  ~    tT U V   Xy       ) ] }  *    ~~\n~~
-  ma: aAbBcC~DeE F  ~HiIjJkK L~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=  \n~~
-  c:      cC D    gG H  J K L    oO  qQ         v   xXyYzZ_   ) ] }  *  /
+  m:   A B C        ~    JkK  ~M    p  ~    tT U V   Xy       ) ] }  *    ~~\n~~
+  ma: aAbBcC~DeE F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=  \n~~
+  c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /     \s
 
   CTRL = 'c' (Control ^)
   ALT = 'a' (Alt/option ⌥)
@@ -169,7 +169,7 @@ keys[not OSX and 'c(' or 'm('] = { m_editing.select_enclosed, '(', ')' }
 keys[not OSX and 'c[' or 'm['] = { m_editing.select_enclosed, '[', ']' }
 keys[not OSX and 'c{' or 'm{'] = { m_editing.select_enclosed, '{', '}' }
 keys[not OSX and 'cD' or 'mD'] = { m_editing.current_word, 'select' }
-keys[not OSX and 'cL' or 'mL'] = m_editing.select_line
+keys[not OSX and 'cN' or 'mN'] = m_editing.select_line
 keys[not OSX and 'cP' or 'mP'] = m_editing.select_paragraph
 keys[not OSX and 'cI' or 'mI'] = m_editing.select_indented_block
 keys[not OSX and 'cY' or 'mY'] = m_editing.select_style
@@ -254,14 +254,15 @@ keys[not OSX and 'cai' or 'ci'] = m_editing.convert_indentation
 -- TODO: { utils.set_encoding, 'ISO-8859-1' }
 -- TODO: { utils.set_encoding, 'MacRoman' }
 -- TODO: { utils.set_encoding, 'UTF-16LE' }
-keys[not OSX and 'cal' or 'mal'] = m_textadept.mime_types.select_lexer
+keys[not OSX and 'cL' or 'mL'] = m_textadept.mime_types.select_lexer
 keys.f5 = { _buffer.colourise, _buffer, 0, -1 }
 
 -- View.
 keys[not OSX and 'can' or 'ca\t'] = { gui.goto_view, 1, false }
 keys[not OSX and 'cap' or 'cas\t'] = { gui.goto_view, -1, false }
-keys[not OSX and 'caS' or 'cS'] = { _view.split, _view }
 keys[not OSX and 'cas' or 'cs'] = { _view.split, _view, false }
+if not OSX then keys.cah = keys.cas end
+keys[not OSX and 'cav' or 'cv'] = { _view.split, _view }
 keys[not OSX and 'caw' or 'cw'] = { _view.unsplit, _view }
 keys[not OSX and 'caW' or 'cW'] = utils.unsplit_all
 keys[not OSX and 'ca+' or 'c+'] = { utils.grow, 10 }
@@ -273,7 +274,7 @@ if not OSX then keys['ca\n\r'] = keys['ca\n'] end
 keys[not OSX and 'ca\\' or 'c\\'] = { utils.toggle_property, 'wrap_mode' }
 keys[not OSX and 'caI' or 'cI'] =
   { utils.toggle_property, 'indentation_guides' }
-keys[not OSX and 'ca ' or 'c '] = { utils.toggle_property, 'view_ws' }
+keys[not OSX and 'caS' or 'cS'] = { utils.toggle_property, 'view_ws' }
 keys[not OSX and 'caV' or 'cV'] =
   { utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE }
 keys[not OSX and 'c=' or 'm='] = _buffer.zoom_in
