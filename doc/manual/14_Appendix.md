@@ -42,7 +42,7 @@ Ctrl+(                  |⌘(       |Select in parentheses
 Ctrl+[                  |⌘[       |Select in brackets
 Ctrl+{                  |⌘{       |Select in braces
 Ctrl+Shift+D            |⌘⇧D      |Select word
-Ctrl+Shift+L            |⌘⇧L      |Select line
+Ctrl+Shift+N            |⌘⇧N      |Select line
 Ctrl+Shift+P            |⌘⇧P      |Select paragraph
 Ctrl+Shift+I            |⌘⇧I      |Select indented block
 Ctrl+Y                  |⌘⇧Y      |Select style
@@ -111,14 +111,14 @@ None            |None  |`UTF-8` encoding
 None            |None  |`ASCII` encoding
 None            |None  |`ISO-8859-1` encoding
 None            |None  |`UTF-16` encoding
-Ctrl+Alt+L      |⌘⌥L   |Select lexer...
+Ctrl+Shift+L    |⌘⇧L   |Select lexer...
 F5              |F5    |Refresh syntax highlighting
 
 **View**                        |||
 Ctrl+Alt+N               |^⌥⇥      |Next view
 Ctrl+Alt+P               |^⌥⇧⇥     |Previous view
-Ctrl+Alt+Shift+S         |^⇧S      |Split view vertical
-Ctrl+Alt+S               |^S       |Split view horizontal
+Ctrl+Alt+S<br/>Ctrl+Alt+H|^S       |Split view horizontal
+Ctrl+Alt+V               |^V       |Split view vertical
 Ctrl+Alt+W               |^W       |Unsplit view
 Ctrl+Alt+Shift+W         |^⇧W      |Unsplit all views
 Ctrl+Alt++<br/>Ctrl+Alt+=|^+<br/>^=|Grow view
@@ -127,7 +127,7 @@ None                     |None     |Toggle current fold
 Ctrl+Alt+Enter           |^↩       |Toggle view EOL
 Ctrl+Alt+\\              |^\\      |Toggle wrap mode
 Ctrl+Alt+Shift+I         |^⇧I      |Toggle show indent guides
-Ctrl+Alt+Space           |^Space   |Toggle view whitespace
+Ctrl+Alt+Shift+S         |^⇧S      |Toggle view whitespace
 Ctrl+Alt+Shift+V         |^⇧V      |Toggle virtual space
 Ctrl+=                   |⌘=       |Zoom in
 Ctrl+-                   |⌘-       |Zoom out
