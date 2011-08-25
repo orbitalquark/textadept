@@ -87,6 +87,16 @@ If you downloaded the set of language-specific modules, unpack it, right-click
 `textadept.app`, select `Show Package Contents`, navigate to
 `Contents/Resources/modules`, and copy the unpacked modules there.
 
+##### Environment Variables
+
+By default, GUI apps like Textadept do not utilize environment variables such as
+`PATH` from your shell profile. Therefore, any [modules](7_Modules.md) that use
+programs contained in `PATH` (e.g. the progams in `/usr/local/bin/`) for run and
+compile commands will not be found. The solution is to follow the instructions
+[here](http://developer.apple.com/library/mac/#qa/qa1067/_index.html) to export
+whichever environment variables you need. At the very least, set `PATH` to be
+`$PATH`. You will have to logout and log back in for the changes to take effect.
+
 #### Windows
 
 Unpack the archive anywhere. Run Textadept by double-clicking `textadept.exe`.
