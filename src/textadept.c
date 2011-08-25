@@ -269,19 +269,11 @@ void create_ui() {
   GtkWidget *find = find_create_ui();
   gtk_box_pack_start(GTK_BOX(vbox), find, FALSE, FALSE, 5);
 
-  GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
-
-  statusbar[0] = gtk_statusbar_new();
-  gtk_statusbar_push(GTK_STATUSBAR(statusbar[0]), 0, "");
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar[0]), FALSE);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[0], TRUE, TRUE, 0);
-
   command_entry = gtk_entry_new();
   gtk_widget_set_name(command_entry, "textadept-command-entry");
   signal(command_entry, "activate", c_activated);
   signal(command_entry, "key-press-event", c_keypress);
-  gtk_box_pack_start(GTK_BOX(hboxs), command_entry, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
 
   command_entry_completion = gtk_entry_completion_new();
   signal(command_entry_completion, "match-selected", cc_match_selected);
@@ -293,6 +285,14 @@ void create_ui() {
   gtk_entry_completion_set_model(command_entry_completion,
                                  GTK_TREE_MODEL(cc_store));
   gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
+
+  GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
+
+  statusbar[0] = gtk_statusbar_new();
+  gtk_statusbar_push(GTK_STATUSBAR(statusbar[0]), 0, "");
+  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar[0]), FALSE);
+  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[0], TRUE, TRUE, 0);
 
   statusbar[1] = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(statusbar[1]), 0, "");
@@ -787,13 +787,9 @@ static void find_button_clicked(GtkWidget *button, gpointer udata) {
  */
 void ce_toggle_focus() {
   if (!gtk_widget_has_focus(command_entry)) {
-    gtk_widget_hide(statusbar[0]);
-    gtk_widget_hide(statusbar[1]);
     gtk_widget_show(command_entry);
     gtk_widget_grab_focus(command_entry);
   } else {
-    gtk_widget_show(statusbar[0]);
-    gtk_widget_show(statusbar[1]);
     gtk_widget_hide(command_entry);
     gtk_widget_grab_focus(focused_editor);
   }
