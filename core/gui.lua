@@ -120,6 +120,7 @@ local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
 connect(events.BUFFER_NEW, function()
   local function run()
     local buffer = buffer
+    local c = _SCINTILLA.constants
 
     -- Lexer.
     buffer:set_lexer_language('lpeg')
@@ -137,7 +138,8 @@ connect(events.BUFFER_NEW, function()
     end
 
     -- Buffer.
-    buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
+    buffer.code_page = c.SC_CP_UTF8
+    buffer.eol_mode = not WIN32 and c.SC_EOL_LF or c.SC_EOL_CRLF
 
     if _THEME and #_THEME > 0 then
       local ok, err = pcall(dofile, _THEME..'/buffer.lua')
