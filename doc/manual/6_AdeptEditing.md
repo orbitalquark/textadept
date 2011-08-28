@@ -62,7 +62,7 @@ it is visible, use the button mnemonics: `Alt+N`, `Alt+P`, `Alt+R`, and `Alt+A`
 `Ctrl+Shift+F` brings up Find in Files (`⌘⇧F` on Mac OSX) and will prompt for a
 directory to search. The results are displayed in a new buffer. Double-clicking
 a search result jumps to it in the file. You can also use the `Ctrl+Alt+G` and
-`Ctrl+Alt+Shift+G` (`⌘⌥G` and `⌘⌥⇧G` on Mac OSX) key commands. Replace in Files
+`Ctrl+Alt+Shift+G` (`^⌘G` and `^⌘⇧G` on Mac OSX) key commands. Replace in Files
 is not supported. You will have to `Find in Files` first, and then `Replace All`
 for each file a result is found in. The `Match Case`, `Whole Word`, and
 `Lua pattern` flags still apply.
@@ -71,7 +71,7 @@ for each file a result is found in. The `Match Case`, `Whole Word`, and
 
 #### Find Incremental
 
-You can start an incremental search by pressing `Ctrl+Alt+F` (`⌘⌥F` on Mac OSX).
+You can start an incremental search by pressing `Ctrl+Alt+F` (`^⌘F` on Mac OSX).
 Incremental search searches the buffer as you type. Only the `Match Case` option
 is recognized.
 

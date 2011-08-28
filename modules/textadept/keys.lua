@@ -117,8 +117,8 @@ if not RESETTING then constantize_menu_buffer_functions() end
 
   Unassigned keys (~ denotes keys reserved by the operating system):
   m:   A B C        ~    JkK  ~M    p  ~    tT U V   Xy       ) ] }  *    ~~\n~~
-  ma: aAbBcC~DeE F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=  \n~~
   c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /     \s
+  cm: aAbBcC~DeE F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n~~
 
   CTRL = 'c' (Control ^)
   ALT = 'a' (Alt/option ⌥)
@@ -132,7 +132,7 @@ if not RESETTING then constantize_menu_buffer_functions() end
 -- File.
 keys[not OSX and 'cn' or 'mn'] = new_buffer
 keys[not OSX and 'co' or 'mo'] = io.open_file
-keys[not OSX and 'cao' or 'mao'] = io.open_recent_file
+keys[not OSX and 'cao' or 'cmo'] = io.open_recent_file
 keys[not OSX and 'cO' or 'mO'] = _buffer.reload
 keys[not OSX and 'cs' or 'ms'] = _buffer.save
 keys[not OSX and 'cS' or 'mS'] = _buffer.save_as
@@ -200,11 +200,11 @@ keys[not OSX and 'caR' or 'cR'] = gui.find.replace_all
 -- Find Prev is ap when find pane is focused.
 -- Replace is ar when find pane is focused.
 -- Replace All is aa when find pane is focused.
-keys[not OSX and 'caf' or 'maf'] = gui.find.find_incremental
+keys[not OSX and 'caf' or 'cmf'] = gui.find.find_incremental
 keys[not OSX and 'cF' or 'mF'] = utils.find_in_files
 -- Find in Files is ai when find pane is focused.
-keys[not OSX and 'cag' or 'mag'] = { gui.find.goto_file_in_list, true }
-keys[not OSX and 'caG' or 'maG'] = { gui.find.goto_file_in_list, false }
+keys[not OSX and 'cag' or 'cmg'] = { gui.find.goto_file_in_list, true }
+keys[not OSX and 'caG' or 'cmG'] = { gui.find.goto_file_in_list, false }
 keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
 -- Tools.
@@ -230,7 +230,7 @@ keys.af2 = m_textadept.bookmarks.goto
 -- Snapopen.
 keys[not OSX and 'cu' or 'mu'] = { m_textadept.snapopen.open, _USERHOME }
 -- TODO: { m_textadept.snapopen.open, _HOME }
-keys[not OSX and 'caO' or 'maO'] = utils.snapopen_filedir
+keys[not OSX and 'caO' or 'cmO'] = utils.snapopen_filedir
 keys[not OSX and 'ci' or 'mi'] = utils.show_style
 
 -- Buffer.
@@ -295,12 +295,12 @@ if OSX then
   end
   keys.cf = _buffer.char_right
   keys.cF = _buffer.char_right_extend
-  keys.caf = _buffer.word_right
-  keys.caF = _buffer.word_right_extend
+  keys.cmf = _buffer.word_right
+  keys.cmF = _buffer.word_right_extend
   keys.cb = _buffer.char_left
   keys.cB = _buffer.char_left_extend
-  keys.cab = _buffer.word_left
-  keys.caB = _buffer.word_left_extend
+  keys.cmb = _buffer.word_left
+  keys.cmB = _buffer.word_left_extend
   keys.cn = _buffer.line_down
   keys.cN = _buffer.line_down_extend
   keys.cp = _buffer.line_up

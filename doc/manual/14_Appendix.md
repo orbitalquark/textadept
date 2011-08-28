@@ -7,7 +7,7 @@ Linux / Win32 | Mac OSX | Command |
 **File**                        |||
 Ctrl+N      |⌘N  |New file
 Ctrl+O      |⌘O  |Open file
-Ctrl+Alt+O  |⌘⌥O |Open recent file...
+Ctrl+Alt+O  |^⌘O |Open recent file...
 Ctrl+Shift+O|⌘⇧O |Reload file
 Ctrl+S      |⌘S  |Save file
 Ctrl+Shift+S|⌘⇧S |Save file as..
@@ -66,10 +66,10 @@ Ctrl+G<br/>F3            |⌘G  |Find next
 Ctrl+Shift+G<br/>Shift+F3|⌘⇧G |Find previous
 Ctrl+Alt+R               |^R  |Replace
 Ctrl+Alt+Shift+R         |^⇧R |Replace all
-Ctrl+Alt+F               |⌘⌥F |Find incremental
+Ctrl+Alt+F               |^⌘F |Find incremental
 Ctrl+Shift+F             |⌘⇧F |Find in files
-Ctrl+Alt+G               |⌘⌥G |Goto next file found
-Ctrl+Alt+Shift+G         |⌘⌥⇧G|Goto previous file found
+Ctrl+Alt+G               |^⌘G |Goto next file found
+Ctrl+Alt+Shift+G         |^⌘⇧G|Goto previous file found
 Ctrl+J                   |⌘J  |Jump to line
 
 **Tools**                       |||
@@ -91,7 +91,7 @@ Shift+F2        |⇧F2    |Previous bookmark
 Alt+F2          |⌥F2    |Goto bookmark...
 Ctrl+U          |⌘U     |Snapopen `_USERHOME`
 None            |None   |Snapopen `_HOME`
-Ctrl+Alt+Shift+O|⌘⌥⇧O   |Snapopen current directory
+Ctrl+Alt+Shift+O|^⌘⇧O   |Snapopen current directory
 Ctrl+I          |⌘I     |Show style
 
 **Buffer**                      |||
@@ -149,13 +149,13 @@ Ctrl+Up                      |^⇡          |Scroll line up
 Alt+Shift+Up                 |⌥⇧⇡         |Line up extend rect. selection
 Left                         |⇠<br/>^B    |Char left
 Shift+Left                   |⇧⇠<br/>^⇧B  |Char left extend selection
-Ctrl+Left                    |^⇠<br/>^⌥B  |Word left
-Ctrl+Shift+Left              |^⇧⇠<br/>^⌥⇧B|Word left extend selection
+Ctrl+Left                    |^⇠<br/>^⌘B  |Word left
+Ctrl+Shift+Left              |^⇧⇠<br/>^⌘⇧B|Word left extend selection
 Alt+Shift+Left               |⌥⇧⇠         |Char left extend rect. selection
 Right                        |⇢<br/>^F    |Char right
 Shift+Right                  |⇧⇢<br/>^⇧F  |Char right extend selection
-Ctrl+Right                   |^⇢<br/>^⌥F  |Word right
-Ctrl+Shift+Right             |^⇧⇢<br/>^⌥⇧F|Word right extend selection
+Ctrl+Right                   |^⇢<br/>^⌘F  |Word right
+Ctrl+Shift+Right             |^⇧⇢<br/>^⌘⇧F|Word right extend selection
 Alt+Shift+Right              |⌥⇧⇢         |Char right extend rect. selection
 Home                         |⌘⇠<br/>^A   |Line start
 Shift+Home                   |⌘⇧⇠<br/>^⇧A |Line start extend selection
