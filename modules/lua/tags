@@ -1588,6 +1588,7 @@ token	_	0;"	f	class:lexer
 tonumber	_	0;"	f	
 tostring	_	0;"	f	
 touch	_	0;"	f	class:lfs
+traceback	_	0;"	f	class:debug
 transpose_chars	_	0;"	f	class:_m.textadept.editing
 try_encodings	_	0;"	t	class:io
 try_to_autocomplete_end	_	0;"	f	class:_m.lua

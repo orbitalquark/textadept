@@ -1076,6 +1076,13 @@ function debug.setmetatable(object, table) end
 -- with the given index. Otherwise, it returns the name of the upvalue.
 function debug.setupvalue(func, up, value) end
 
+---
+-- Returns a string with a traceback of the call stack. An optional `message`
+-- string is appended at the beginning of the traceback. An optional `level`
+-- number tells at which level to start the traceback (default is 1, the
+-- function calling `traceback`).
+function debug.traceback([thread,] [message] [,level]) end
+
 -- External libraries.
 
 -- LPeg.
