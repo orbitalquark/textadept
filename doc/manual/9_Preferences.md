@@ -79,10 +79,9 @@ It is not recommended to edit Textadept's `modules/textadept/keys.lua` for
 changing the key bindings since your changes could be overwritten when updating
 Textadept. Instead, modify `keys` from within your `~/.textadept/init.lua` or
 from a file loaded by `~/.textadept/init.lua`. For example maybe you want
-`Ctrl+Shift+N` (`⌘⇧N` on Mac OSX) to create a new buffer instead of `Ctrl+N`
-(`⌘N`):
+`Ctrl+Shift+C` to create a new buffer instead of `Ctrl+N`:
 
-    keys.cN = new_buffer
+    keys.cC = new_buffer
     keys.cn = nil
 
 ## Locale
@@ -90,10 +89,10 @@ from a file loaded by `~/.textadept/init.lua`. For example maybe you want
 Most messages displayed by Textadept are localized. `core/locale.conf` contains
 these messages. By default, Textadept is localized in English. To use a
 different language, put a translated version of `core/locale.conf` in your
-`~/.textadept/` folder.
+`~/.textadept/` folder. Translations are located in `core/locales/`.
 
 Feel free to translate Textadept and send your modified `locale.conf` files
-to me. I will make them available to other users.
+to me. I will include them in future releases.
 
 ## Mime Types
 
