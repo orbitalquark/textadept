@@ -87,6 +87,7 @@ if manual then
       <html>
       <head>
           <title>Textadept Manual</title>
+          <meta charset="utf-8" />
           <link rel="stylesheet" href="luadoc.css" type="text/css" />
       </head>
 
