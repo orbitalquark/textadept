@@ -75,6 +75,18 @@ module('events', package.seeall)
 --         `_SCINTILLA.constants.SCMOD_CTRL`,
 --         `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --         `_SCINTILLA.constants.SCMOD_META`.
+-- * `DWELL_END`: Called after a `DWELL_START` and the mouse is moved or other
+--   activity such as key press indicates the dwell is over.<br />
+--       * `position`: The nearest position in the document to the position
+--         where the mouse pointer was lingering.
+--       * `x`: Where the pointer lingered.
+--       * `y`: Where the pointer lingered.
+-- * `DWELL_START`: Called when the user keeps the mouse in one position for the
+--   dwell period (see `_SCINTILLA.constants.SCI_SETMOUSEDWELLTIME`).<br />
+--       * `position`: The nearest position in the document to the position
+--         where the mouse pointer was lingering.
+--       * `x`: Where the pointer lingered.
+--       * `y`: Where the pointer lingered.
 -- * `ERROR`: Called when an error occurs.<br />
 --       * `text`: The error text.
 -- * `FIND`: Called when finding text via the Find dialog box.<br />
@@ -242,6 +254,8 @@ local scnnotifications = {
     'user_list_selection', 'wParam', 'text', 'position'
   },
   [c.SCN_URIDROPPED] = { 'uri_dropped', 'text' },
+  [c.SCN_DWELLSTART] = { 'dwell_start', 'position', 'x', 'y' },
+  [c.SCN_DWELLEND] = { 'dwell_end', 'position', 'x', 'y' },
   [c.SCN_HOTSPOTCLICK] = { 'hotspot_click', 'position', 'modifiers' },
   [c.SCN_HOTSPOTDOUBLECLICK] = {
     'hotspot_double_click', 'position', 'modifiers'

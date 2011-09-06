@@ -1511,8 +1511,8 @@ void l_emit_scnnotification(struct SCNotification *n) {
   //l_pushscninteger(n->foldLevelNow, "fold_level_now");
   //l_pushscninteger(n->foldLevelPrev, "fold_level_prev");
   l_pushscninteger(n->margin, "margin");
-  //l_pushscninteger(n->x, "x");
-  //l_pushscninteger(n->y, "y");
+  l_pushscninteger(n->x, "x");
+  l_pushscninteger(n->y, "y");
   l_call_function(1, 0, FALSE);
 }
 
