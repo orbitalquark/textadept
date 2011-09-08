@@ -640,7 +640,7 @@ function math.fmod(x, y) end
 -- absolute value of `m` is in the range *[0.5, 1)* (or zero when `x` is zero).
 function math.frexp(x) end
 
--- * `math.HUGE_VAL`: The value `HUGE_VAL`, a value larger than or equal to any
+-- * `math.huge`: The value `HUGE_VAL`, a value larger than or equal to any
 --   other numerical value.
 
 ---
