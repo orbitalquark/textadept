@@ -212,8 +212,8 @@ connect(events.UPDATE_UI, function()
 end)
 
 -- Toggles folding.
-connect(events.MARGIN_CLICK, function(margin, position, modifiers)
-  buffer:toggle_fold(buffer:line_from_position(position))
+connect(events.MARGIN_CLICK, function(margin, pos, modifiers)
+  if margin == 2 then buffer:toggle_fold(buffer:line_from_position(pos)) end
 end)
 
 connect(events.BUFFER_NEW, function() set_title(buffer) end)
