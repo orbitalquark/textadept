@@ -622,7 +622,8 @@ function show_apidoc(sense)
     buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos])
   end)
   timeout(1, function()
-    if pcall(buffer.call_tip_active, buffer) then return true end
+    local ok, active = pcall(buffer.call_tip_active, buffer)
+    if ok and active then return true end
     events.disconnect(events.CALL_TIP_CLICK, event_id)
   end)
   return true
@@ -785,12 +786,12 @@ function handle_clear(sense) end
 function new(lang)
   local sense = senses[lang]
   if sense then
-    sense.ctags_kinds = {}
-    sense.api_files = {}
+    sense.ctags_kinds = nil
+    sense.api_files = nil
     for _, i in ipairs(sense.events) do
       events.disconnect(events.CHAR_ADDED, i)
     end
-    sense.events = {}
+    sense.events = nil
     sense:clear()
   end
 
