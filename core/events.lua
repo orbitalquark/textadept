@@ -243,7 +243,7 @@ end
 
 --- Map of Scintilla notifications to their handlers.
 local c = _SCINTILLA.constants
-local scnnotifications = {
+local scnotifications = {
   [c.SCN_CHARADDED] = { 'char_added', 'ch' },
   [c.SCN_SAVEPOINTREACHED] = { 'save_point_reached' },
   [c.SCN_SAVEPOINTLEFT] = { 'save_point_left' },
@@ -269,20 +269,17 @@ local scnnotifications = {
   [c.SCN_HOTSPOTRELEASECLICK] = { 'hotspot_release_click', 'position' },
 }
 
----
 -- Handles Scintilla notifications.
--- @param n The Scintilla notification structure as a Lua table.
--- @return true or false if any handler explicitly returned such; nil otherwise.
-function notification(n)
-  local f = scnnotifications[n.code]
+connect('SCN', function(n)
+  local f = scnotifications[n.code]
   if not f then return end
   local args = {}
   for i = 2, #f do args[i - 1] = n[f[i]] end
   return emit(f[1], unpack(args))
-end
+end)
 
 -- Set event constants.
-for _, n in pairs(scnnotifications) do _M[n[1]:upper()] = n[1] end
+for _, n in pairs(scnotifications) do _M[n[1]:upper()] = n[1] end
 local ta_events = {
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
   'buffer_deleted', 'buffer_new', 'command_entry_command',

@@ -137,7 +137,7 @@ void l_remove_buffer(sptr_t);
 void l_goto_buffer(GtkWidget *, int, int);
 void l_set_buffer_global(GtkWidget *);
 int l_emit_event(const char *, ...);
-void l_emit_scnnotification(struct SCNotification *);
+void l_emit_scnotification(struct SCNotification *);
 void l_gui_popup_context_menu(GdkEventButton *);
 // Extra Lua libraries.
 LUALIB_API int (luaopen_lpeg) (lua_State *L);
@@ -523,11 +523,11 @@ static void s_notification(GtkWidget *view, gint wParam, gpointer lParam,
   struct SCNotification *n = (struct SCNotification *)lParam;
   if (focused_view == view || n->nmhdr.code == SCN_URIDROPPED) {
     if (focused_view != view) switch_to_view(view);
-    l_emit_scnnotification(n);
+    l_emit_scnotification(n);
   } else if (n->nmhdr.code == SCN_SAVEPOINTLEFT) {
     GtkWidget *prev = focused_view;
     switch_to_view(view);
-    l_emit_scnnotification(n);
+    l_emit_scnotification(n);
     switch_to_view(prev); // do not let a split view steal focus
   }
 }
@@ -1271,24 +1271,6 @@ static void clear_table(lua_State *lua, int abs_index) {
 static void warn(const char *s) { printf("Warning: %s\n", s); }
 
 /**
- * Returns whether or not the value of the key of the given global table is a
- * function.
- * @param table The table to check for key in.
- * @param key String key to check for in table.
- * @return TRUE for function, FALSE otherwise.
- */
-int l_is2function(const char *table, const char *key) {
-  lua_getglobal(lua, table);
-  if (lua_istable(lua, -1)) {
-    lua_getfield(lua, -1, key);
-    lua_remove(lua, -2); // table
-    if (lua_isfunction(lua, -1)) return TRUE;
-    lua_pop(lua, 1); // non-function
-  } else lua_pop(lua, 1); // non-table
-  return FALSE;
-}
-
-/**
  * Calls a Lua function with a number of arguments and expected return values.
  * The last argument is at the stack top, and each argument in reverse order is
  * one element lower on the stack with the Lua function being under the first
@@ -1455,32 +1437,39 @@ static void l_check_focused_buffer(lua_State *lua, int narg) {
  * @return FALSE on error or if event returns false explicitly; TRUE otherwise.
  */
 int l_emit_event(const char *s, ...) {
-  if (!l_is2function("events", "emit")) return FALSE;
-  lua_pushstring(lua, s);
-  int n = 1;
-  va_list ap;
-  va_start(ap, s);
-  int type = va_arg(ap, int);
-  while (type != -1) {
-    void *arg = va_arg(ap, void*);
-    if (type == LUA_TNIL)
-      lua_pushnil(lua);
-    else if (type == LUA_TBOOLEAN)
-      lua_pushboolean(lua, (long)arg);
-    else if (type == LUA_TNUMBER)
-      lua_pushinteger(lua, (long)arg);
-    else if (type == LUA_TSTRING)
-      lua_pushstring(lua, (char *)arg);
-    else if (type == LUA_TLIGHTUSERDATA || type == LUA_TTABLE) {
-      long ref = (long)arg;
-      lua_rawgeti(lua, LUA_REGISTRYINDEX, ref);
-      luaL_unref(lua, LUA_REGISTRYINDEX, ref);
-    } else warn("events.emit: ignored invalid argument type");
-    n++;
-    type = va_arg(ap, int);
-  }
-  va_end(ap);
-  return l_call_function(n, 1, FALSE);
+  lua_getglobal(lua, "events");
+  if (lua_istable(lua, -1)) {
+    lua_getfield(lua, -1, "emit");
+    lua_remove(lua, -2); // events table
+    if (lua_isfunction(lua, -1)) {
+      lua_pushstring(lua, s);
+      int n = 1;
+      va_list ap;
+      va_start(ap, s);
+      int type = va_arg(ap, int);
+      while (type != -1) {
+        void *arg = va_arg(ap, void*);
+        if (type == LUA_TNIL)
+          lua_pushnil(lua);
+        else if (type == LUA_TBOOLEAN)
+          lua_pushboolean(lua, (long)arg);
+        else if (type == LUA_TNUMBER)
+          lua_pushinteger(lua, (long)arg);
+        else if (type == LUA_TSTRING)
+          lua_pushstring(lua, (char *)arg);
+        else if (type == LUA_TLIGHTUSERDATA || type == LUA_TTABLE) {
+          long ref = (long)arg;
+          lua_rawgeti(lua, LUA_REGISTRYINDEX, ref);
+          luaL_unref(lua, LUA_REGISTRYINDEX, ref);
+        } else warn("events.emit: ignored invalid argument type");
+        n++;
+        type = va_arg(ap, int);
+      }
+      va_end(ap);
+      return l_call_function(n, 1, FALSE);
+    } else lua_pop(lua, 1); // non-function
+  } else lua_pop(lua, 1); // non-table
+  return FALSE;
 }
 
 #define l_pushscninteger(i, n) { \
@@ -1492,8 +1481,7 @@ int l_emit_event(const char *s, ...) {
  * Handles a Scintilla notification.
  * @param n The Scintilla notification struct.
  */
-void l_emit_scnnotification(struct SCNotification *n) {
-  if (!l_is2function("events", "notification")) return;
+void l_emit_scnotification(struct SCNotification *n) {
   lua_newtable(lua);
   l_pushscninteger(n->nmhdr.code, "code");
   l_pushscninteger(n->position, "position");
@@ -1513,7 +1501,7 @@ void l_emit_scnnotification(struct SCNotification *n) {
   l_pushscninteger(n->margin, "margin");
   l_pushscninteger(n->x, "x");
   l_pushscninteger(n->y, "y");
-  l_call_function(1, 0, FALSE);
+  l_emit_event("SCN", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
 }
 
 /**
