@@ -30,7 +30,7 @@
 #endif
 
 #define gbool gboolean
-#define SS(editor, m, w, l) scintilla_send_message(SCINTILLA(editor), m, w, l)
+#define SS(view, m, w, l) scintilla_send_message(SCINTILLA(view), m, w, l)
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 #define streq(s1, s2) strcmp(s1, s2) == 0
 #define l_append(l, i) lua_rawseti(l, i, lua_objlen(l, i) + 1)
@@ -78,7 +78,7 @@
 /******************************************************************************/
 
 // Window
-GtkWidget *window, *focused_editor, *menubar, *statusbar[2];
+GtkWidget *window, *focused_view, *menubar, *statusbar[2];
 GtkAccelGroup *accel = 0;
 char *textadept_home;
 
@@ -263,8 +263,8 @@ void create_ui() {
   GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
-  GtkWidget *editor = new_view(0);
-  gtk_box_pack_start(GTK_BOX(hbox), editor, TRUE, TRUE, 0);
+  GtkWidget *view = new_view(0);
+  gtk_box_pack_start(GTK_BOX(hbox), view, TRUE, TRUE, 0);
 
   GtkWidget *find = find_create_ui();
   gtk_box_pack_start(GTK_BOX(vbox), find, FALSE, FALSE, 5);
@@ -306,7 +306,7 @@ void create_ui() {
   gtk_widget_hide(menubar); // hide initially
   gtk_widget_hide(findbox); // hide initially
   gtk_widget_hide(command_entry); // hide initially
-  gtk_widget_grab_focus(editor);
+  gtk_widget_grab_focus(view);
 }
 
 /**
@@ -319,39 +319,39 @@ void create_ui() {
  * @see l_add_view
  */
 GtkWidget *new_view(sptr_t buffer_id) {
-  GtkWidget *editor = scintilla_new();
-  gtk_widget_set_size_request(editor, 1, 1); // minimum size
-  SS(editor, SCI_USEPOPUP, 0, 0);
-  signal(editor, SCINTILLA_NOTIFY, s_notification);
-  signal(editor, "command", s_command);
-  signal(editor, "key-press-event", s_keypress);
-  signal(editor, "button-press-event", s_buttonpress);
-  l_add_view(editor);
-  gtk_widget_grab_focus(editor);
-  focused_editor = editor;
+  GtkWidget *view = scintilla_new();
+  gtk_widget_set_size_request(view, 1, 1); // minimum size
+  SS(view, SCI_USEPOPUP, 0, 0);
+  signal(view, SCINTILLA_NOTIFY, s_notification);
+  signal(view, "command", s_command);
+  signal(view, "key-press-event", s_keypress);
+  signal(view, "button-press-event", s_buttonpress);
+  l_add_view(view);
+  gtk_widget_grab_focus(view);
+  focused_view = view;
   if (buffer_id) {
-    SS(editor, SCI_SETDOCPOINTER, 0, buffer_id);
-    l_set_buffer_global(editor);
-  } else new_buffer(editor, FALSE, TRUE);
-  l_set_view_global(editor);
+    SS(view, SCI_SETDOCPOINTER, 0, buffer_id);
+    l_set_buffer_global(view);
+  } else new_buffer(view, FALSE, TRUE);
+  l_set_view_global(view);
   l_emit_event("view_new", -1);
-  return editor;
+  return view;
 }
 
 /**
  * Removes a Scintilla view.
- * @param editor The Scintilla view to remove.
+ * @param view The Scintilla view to remove.
  * @see l_remove_view
  */
-void remove_view(GtkWidget *editor) {
-  l_remove_view(editor);
-  gtk_widget_destroy(editor);
+void remove_view(GtkWidget *view) {
+  l_remove_view(view);
+  gtk_widget_destroy(view);
 }
 
 /**
  * Creates a new Scintilla buffer for a newly created Scintilla view.
  * Generates a 'buffer_new' event.
- * @param editor The Scintilla view to associate the buffer with.
+ * @param view The Scintilla view to associate the buffer with.
  * @param create Flag indicating whether or not to create a buffer. If FALSE,
  *   the Scintilla view already has a buffer associated with it (typically
  *   because new_view was passed a non-NULL buffer_id).
@@ -363,18 +363,18 @@ void remove_view(GtkWidget *editor) {
  *   count is not zero.
  * @see l_add_buffer
  */
-void new_buffer(GtkWidget *editor, int create, int addref) {
+void new_buffer(GtkWidget *view, int create, int addref) {
   sptr_t doc;
-  doc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
+  doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   if (create) { // create the new document
-    doc = SS(editor, SCI_CREATEDOCUMENT, 0, 0);
+    doc = SS(view, SCI_CREATEDOCUMENT, 0, 0);
     l_emit_event("buffer_before_switch", -1);
-    l_goto_buffer(focused_editor, l_add_buffer(doc), TRUE);
+    l_goto_buffer(focused_view, l_add_buffer(doc), TRUE);
   } else if (addref) {
     l_add_buffer(doc);
-    SS(editor, SCI_ADDREFDOCUMENT, 0, doc);
+    SS(view, SCI_ADDREFDOCUMENT, 0, doc);
   }
-  l_set_buffer_global(editor);
+  l_set_buffer_global(view);
   l_emit_event("buffer_new", -1);
 }
 
@@ -385,41 +385,41 @@ void new_buffer(GtkWidget *editor, int create, int addref) {
  */
 void remove_buffer(sptr_t doc) {
   l_remove_buffer(doc);
-  SS(focused_editor, SCI_RELEASEDOCUMENT, 0, doc);
+  SS(focused_view, SCI_RELEASEDOCUMENT, 0, doc);
 }
 
 /**
  * Splits a Scintilla view into two windows separated by a GTK pane.
  * The buffer in the original pane is also shown in the new pane.
- * @param editor The Scintilla view to split.
+ * @param view The Scintilla view to split.
  * @param vertical Flag indicating whether to split the window vertically or
  *   horozontally.
  */
-void split_view(GtkWidget *editor, int vertical) {
-  g_object_ref(editor);
-  int first_line = SS(editor, SCI_GETFIRSTVISIBLELINE, 0, 0);
-  int current_pos = SS(editor, SCI_GETCURRENTPOS, 0, 0);
-  int anchor = SS(editor, SCI_GETANCHOR, 0, 0);
+void split_view(GtkWidget *view, int vertical) {
+  g_object_ref(view);
+  int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0);
+  int current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0);
+  int anchor = SS(view, SCI_GETANCHOR, 0, 0);
   GtkAllocation allocation;
-  gtk_widget_get_allocation(editor, &allocation);
+  gtk_widget_get_allocation(view, &allocation);
   int middle = (vertical ? allocation.width : allocation.height) / 2;
 
-  sptr_t curdoc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
-  GtkWidget *neweditor = new_view(curdoc);
-  GtkWidget *parent = gtk_widget_get_parent(editor);
-  gtk_container_remove(GTK_CONTAINER(parent), editor);
+  sptr_t curdoc = SS(view, SCI_GETDOCPOINTER, 0, 0);
+  GtkWidget *newview = new_view(curdoc);
+  GtkWidget *parent = gtk_widget_get_parent(view);
+  gtk_container_remove(GTK_CONTAINER(parent), view);
   GtkWidget *pane = vertical ? gtk_hpaned_new() : gtk_vpaned_new();
-  gtk_paned_add1(GTK_PANED(pane), editor);
-  gtk_paned_add2(GTK_PANED(pane), neweditor);
+  gtk_paned_add1(GTK_PANED(pane), view);
+  gtk_paned_add2(GTK_PANED(pane), newview);
   gtk_container_add(GTK_CONTAINER(parent), pane);
   gtk_paned_set_position(GTK_PANED(pane), middle);
   gtk_widget_show_all(pane);
-  gtk_widget_grab_focus(neweditor);
+  gtk_widget_grab_focus(newview);
 
-  SS(neweditor, SCI_SETSEL, anchor, current_pos);
-  int new_first_line = SS(neweditor, SCI_GETFIRSTVISIBLELINE, 0, 0);
-  SS(neweditor, SCI_LINESCROLL, first_line - new_first_line, 0);
-  g_object_unref(editor);
+  SS(newview, SCI_SETSEL, anchor, current_pos);
+  int new_first_line = SS(newview, SCI_GETFIRSTVISIBLELINE, 0, 0);
+  SS(newview, SCI_LINESCROLL, first_line - new_first_line, 0);
+  g_object_unref(view);
 }
 
 /**
@@ -438,31 +438,31 @@ void remove_views_in_pane(GtkWidget *pane) {
  * Unsplits the pane a given Scintilla view is in and keeps that window.
  * If the pane to discard contains other Scintilla views, they are removed
  * recursively.
- * @param editor The Scintilla view to keep when unsplitting.
+ * @param view The Scintilla view to keep when unsplitting.
  * @see remove_views_in_pane
  * @see remove_view
  */
-int unsplit_view(GtkWidget *editor) {
-  GtkWidget *pane = gtk_widget_get_parent(editor);
+int unsplit_view(GtkWidget *view) {
+  GtkWidget *pane = gtk_widget_get_parent(view);
   if (!GTK_IS_PANED(pane)) return FALSE;
   GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane));
-  if (other == editor) other = gtk_paned_get_child2(GTK_PANED(pane));
-  g_object_ref(editor);
+  if (other == view) other = gtk_paned_get_child2(GTK_PANED(pane));
+  g_object_ref(view);
   g_object_ref(other);
-  gtk_container_remove(GTK_CONTAINER(pane), editor);
+  gtk_container_remove(GTK_CONTAINER(pane), view);
   gtk_container_remove(GTK_CONTAINER(pane), other);
   GTK_IS_PANED(other) ? remove_views_in_pane(other) : remove_view(other);
   GtkWidget *parent = gtk_widget_get_parent(pane);
   gtk_container_remove(GTK_CONTAINER(parent), pane);
   if (GTK_IS_PANED(parent)) {
     if (!gtk_paned_get_child1(GTK_PANED(parent)))
-      gtk_paned_add1(GTK_PANED(parent), editor);
+      gtk_paned_add1(GTK_PANED(parent), view);
     else
-      gtk_paned_add2(GTK_PANED(parent), editor);
-  } else gtk_container_add(GTK_CONTAINER(parent), editor);
+      gtk_paned_add2(GTK_PANED(parent), view);
+  } else gtk_container_add(GTK_CONTAINER(parent), view);
   gtk_widget_show_all(parent);
-  gtk_widget_grab_focus(GTK_WIDGET(editor));
-  g_object_unref(editor);
+  gtk_widget_grab_focus(GTK_WIDGET(view));
+  g_object_unref(view);
   g_object_unref(other);
   return TRUE;
 }
@@ -502,31 +502,31 @@ void set_statusbar_text(const char *text, int bar) {
 
 /**
  * Helper function for switching the focused view to the given one.
- * @param editor The Scintilla view to focus.
+ * @param view The Scintilla view to focus.
  * @see s_notification
  * @see s_command
  * @see l_goto_view
  */
-static void switch_to_view(GtkWidget *editor) {
+static void switch_to_view(GtkWidget *view) {
   if (!closing) l_emit_event("view_before_switch", -1);
-  focused_editor = editor;
-  l_set_view_global(editor);
-  l_set_buffer_global(editor);
+  focused_view = view;
+  l_set_view_global(view);
+  l_set_buffer_global(view);
   if (!closing) l_emit_event("view_after_switch", -1);
 }
 
 /**
  * Signal for a Scintilla notification.
  */
-static void s_notification(GtkWidget *editor, gint wParam, gpointer lParam,
+static void s_notification(GtkWidget *view, gint wParam, gpointer lParam,
                            gpointer udata) {
   struct SCNotification *n = (struct SCNotification *)lParam;
-  if (focused_editor == editor || n->nmhdr.code == SCN_URIDROPPED) {
-    if (focused_editor != editor) switch_to_view(editor);
+  if (focused_view == view || n->nmhdr.code == SCN_URIDROPPED) {
+    if (focused_view != view) switch_to_view(view);
     l_emit_scnnotification(n);
   } else if (n->nmhdr.code == SCN_SAVEPOINTLEFT) {
-    GtkWidget *prev = focused_editor;
-    switch_to_view(editor);
+    GtkWidget *prev = focused_view;
+    switch_to_view(view);
     l_emit_scnnotification(n);
     switch_to_view(prev); // do not let a split view steal focus
   }
@@ -536,16 +536,16 @@ static void s_notification(GtkWidget *editor, gint wParam, gpointer lParam,
  * Signal for a Scintilla command.
  * Currently handles SCEN_SETFOCUS.
  */
-static void s_command(GtkWidget *editor, gint wParam, gpointer lParam,
+static void s_command(GtkWidget *view, gint wParam, gpointer lParam,
                       gpointer udata) {
-  if (wParam >> 16 == SCEN_SETFOCUS) switch_to_view(editor);
+  if (wParam >> 16 == SCEN_SETFOCUS) switch_to_view(view);
 }
 
 /**
  * Signal for a Scintilla keypress.
  * Collects the modifier states as flags and calls Lua to handle the keypress.
  */
-static gbool s_keypress(GtkWidget *editor, GdkEventKey *event, gpointer udata) {
+static gbool s_keypress(GtkWidget *view, GdkEventKey *event, gpointer udata) {
   return l_emit_event_key("keypress", event) ? TRUE : FALSE;
 }
 
@@ -554,7 +554,7 @@ static gbool s_keypress(GtkWidget *editor, GdkEventKey *event, gpointer udata) {
  * If it is a right-click, popup a context menu.
  * @see l_gui_popup_context_menu
  */
-static gbool s_buttonpress(GtkWidget *editor, GdkEventButton *event,
+static gbool s_buttonpress(GtkWidget *view, GdkEventButton *event,
                            gpointer udata) {
   if (event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
   l_gui_popup_context_menu(event);
@@ -565,8 +565,8 @@ static gbool s_buttonpress(GtkWidget *editor, GdkEventButton *event,
  * Signal for a Textadept window focus change.
  */
 static gbool w_focus(GtkWidget *window, GdkEventFocus *event, gpointer udata) {
-  if (focused_editor && !gtk_widget_has_focus(focused_editor))
-    gtk_widget_grab_focus(focused_editor);
+  if (focused_view && !gtk_widget_has_focus(focused_view))
+    gtk_widget_grab_focus(focused_view);
   return FALSE;
 }
 
@@ -579,7 +579,7 @@ static gbool w_keypress(GtkWidget *window, GdkEventKey *event, gpointer udata) {
   if (event->keyval == 0xff1b && gtk_widget_get_visible(findbox) &&
       !gtk_widget_has_focus(command_entry)) {
     gtk_widget_hide(findbox);
-    gtk_widget_grab_focus(focused_editor);
+    gtk_widget_grab_focus(focused_view);
     return TRUE;
   } else return FALSE;
 }
@@ -724,7 +724,7 @@ void find_toggle_focus() {
     gtk_widget_grab_focus(find_entry);
     gtk_widget_grab_default(fnext_button);
   } else {
-    gtk_widget_grab_focus(focused_editor);
+    gtk_widget_grab_focus(focused_view);
     gtk_widget_hide(findbox);
   }
 }
@@ -791,7 +791,7 @@ void ce_toggle_focus() {
     gtk_widget_grab_focus(command_entry);
   } else {
     gtk_widget_hide(command_entry);
-    gtk_widget_grab_focus(focused_editor);
+    gtk_widget_grab_focus(focused_view);
   }
 }
 
@@ -995,19 +995,19 @@ static GtkWidget *l_checkview(lua_State *lua, int narg) {
   lua_pushstring(lua, "widget_pointer");
   lua_rawget(lua, (narg > 0) ? narg : narg - 1);
   luaL_argcheck(lua, lua_islightuserdata(lua, -1), narg, "View expected");
-  GtkWidget *editor = l_togtkwidget(lua, -1);
+  GtkWidget *view = l_togtkwidget(lua, -1);
   lua_pop(lua, 1); // widget_pointer
-  return editor;
+  return view;
 }
 
 /**
  * Adds a Scintilla view to the global '_VIEWS' table with a metatable.
- * @param editor The Scintilla view to add.
+ * @param view The Scintilla view to add.
  */
-void l_add_view(GtkWidget *editor) {
+void l_add_view(GtkWidget *view) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
   lua_newtable(lua);
-    lua_pushlightuserdata(lua, (GtkWidget *)editor);
+    lua_pushlightuserdata(lua, (GtkWidget *)view);
     lua_setfield(lua, -2, "widget_pointer");
     l_cfunc(lua, l_cf_view_focus, "focus");
     l_cfunc(lua, l_cf_view_goto_buffer, "goto_buffer");
@@ -1020,14 +1020,14 @@ void l_add_view(GtkWidget *editor) {
 
 /**
  * Removes a Scintilla view from the global '_VIEWS' table.
- * @param editor The Scintilla view to remove.
+ * @param view The Scintilla view to remove.
  */
-void l_remove_view(GtkWidget *editor) {
+void l_remove_view(GtkWidget *view) {
   lua_newtable(lua);
     lua_getfield(lua, LUA_REGISTRYINDEX, "views");
     lua_pushnil(lua);
     while (lua_next(lua, -2))
-      (editor != l_checkview(lua, -1)) ? l_append(lua, -4) : lua_pop(lua, 1);
+      (view != l_checkview(lua, -1)) ? l_append(lua, -4) : lua_pop(lua, 1);
     lua_pop(lua, 1); // views
   lua_pushvalue(lua, -1);
   lua_setfield(lua, LUA_REGISTRYINDEX, "views");
@@ -1036,20 +1036,20 @@ void l_remove_view(GtkWidget *editor) {
 
 /**
  * Changes focus a Scintilla view in the global '_VIEWS' table.
- * @param editor The currently focused Scintilla view.
+ * @param view The currently focused Scintilla view.
  * @param n The index of the window in the '_VIEWS' table to focus.
  * @param absolute Flag indicating whether or not the index specified in
  *   '_VIEWS' is absolute. If FALSE, focuses the window relative to the
  *   currently focused window for the given index.
  *   Throws an error if the view does not exist.
  */
-void l_goto_view(GtkWidget *editor, int n, int absolute) {
+void l_goto_view(GtkWidget *view, int n, int absolute) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
   if (!absolute) {
     unsigned int idx = 1;
     lua_pushnil(lua);
     while (lua_next(lua, -2))
-      if (editor == l_checkview(lua, -1)) {
+      if (view == l_checkview(lua, -1)) {
         idx = lua_tointeger(lua, -2);
         lua_pop(lua, 2); // key and value
         break;
@@ -1065,23 +1065,23 @@ void l_goto_view(GtkWidget *editor, int n, int absolute) {
                   "no View exists at that index");
     lua_rawgeti(lua, -1, n);
   }
-  editor = l_checkview(lua, -1);
-  gtk_widget_grab_focus(editor);
+  view = l_checkview(lua, -1);
+  gtk_widget_grab_focus(view);
   // gui.dialog() interferes with focus so gtk_widget_grab_focus() does not
   // always work. If this is the case, ensure switch_to_view() is called.
-  if (!gtk_widget_has_focus(editor)) switch_to_view(editor);
+  if (!gtk_widget_has_focus(view)) switch_to_view(view);
   lua_pop(lua, 2); // view table and views
 }
 
 /**
  * Sets the global 'view' variable to be the specified Scintilla view.
- * @param editor The Scintilla view to set 'view' to.
+ * @param view The Scintilla view to set 'view' to.
  */
-void l_set_view_global(GtkWidget *editor) {
+void l_set_view_global(GtkWidget *view) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
   lua_pushnil(lua);
   while (lua_next(lua, -2))
-    if (editor == l_checkview(lua, -1)) {
+    if (view == l_checkview(lua, -1)) {
       lua_setglobal(lua, "view"); // value (view table)
       lua_pop(lua, 1); // key
       break;
@@ -1135,9 +1135,9 @@ void l_remove_buffer(sptr_t doc) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
-    GtkWidget *editor = l_checkview(lua, -1);
-    sptr_t that_doc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
-    if (that_doc == doc) l_goto_buffer(editor, -1, FALSE);
+    GtkWidget *view = l_checkview(lua, -1);
+    sptr_t that_doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
+    if (that_doc == doc) l_goto_buffer(view, -1, FALSE);
     lua_pop(lua, 1); // value
   }
   lua_pop(lua, 1); // views
@@ -1177,17 +1177,17 @@ unsigned int l_get_docpointer_index(sptr_t doc) {
  * Before doing so, it saves the scroll and caret positions in the current
  * Scintilla document. Then when the new document is shown, its scroll and caret
  * positions are restored.
- * @param editor The Scintilla view to change the document of.
+ * @param view The Scintilla view to change the document of.
  * @param n The index of the document in '_BUFFERS' to focus.
  * @param absolute Flag indicating whether or not the index specified in
  *   '_BUFFERS' is absolute. If FALSE, focuses the document relative to the
  *   currently focused document for the given index.
  *   Throws an error if the buffer does not exist.
  */
-void l_goto_buffer(GtkWidget *editor, int n, int absolute) {
+void l_goto_buffer(GtkWidget *view, int n, int absolute) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   if (!absolute) {
-    sptr_t doc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
+    sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
     unsigned int idx = l_get_docpointer_index(doc);
     idx += n;
     if (idx > lua_objlen(lua, -1))
@@ -1201,18 +1201,18 @@ void l_goto_buffer(GtkWidget *editor, int n, int absolute) {
     lua_rawgeti(lua, -1, n);
   }
   sptr_t doc = l_checkdocpointer(lua, -1);
-  SS(editor, SCI_SETDOCPOINTER, 0, doc);
-  l_set_buffer_global(editor);
+  SS(view, SCI_SETDOCPOINTER, 0, doc);
+  l_set_buffer_global(view);
   lua_pop(lua, 2); // buffer table and buffers
 }
 
 /**
  * Sets the global 'buffer' variable to be the document in the specified
  * Scintilla object.
- * @param editor The Scintilla widget housing the buffer to be 'buffer'.
+ * @param view The Scintilla widget housing the buffer to be 'buffer'.
  */
-void l_set_buffer_global(GtkWidget *editor) {
-  sptr_t doc = SS(editor, SCI_GETDOCPOINTER, 0, 0);
+void l_set_buffer_global(GtkWidget *view) {
+  sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   lua_pushnil(lua);
   while (lua_next(lua, -2))
@@ -1231,7 +1231,7 @@ void l_set_buffer_global(GtkWidget *editor) {
  */
 void l_close() {
   closing = TRUE;
-  while (unsplit_view(focused_editor)) ; // need space to fix compiler warning
+  while (unsplit_view(focused_view)) ; // need space to fix compiler warning
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   lua_pushnil(lua);
   while (lua_next(lua, -2)) {
@@ -1240,7 +1240,7 @@ void l_close() {
     lua_pop(lua, 1); // value
   }
   lua_pop(lua, 1); // buffers
-  gtk_widget_destroy(focused_editor);
+  gtk_widget_destroy(focused_view);
   lua_close(lua);
 }
 
@@ -1308,7 +1308,7 @@ static int l_call_function(int nargs, int retn, int keep_return) {
     if (retn > 0 && !keep_return) lua_pop(lua, retn); // retn
     return result;
   } else {
-    if (focused_editor)
+    if (focused_view)
       l_emit_event("error", LUA_TSTRING, lua_tostring(lua, -1), -1);
     else
       printf("Lua Error: %s\n", lua_tostring(lua, -1));
@@ -1437,7 +1437,7 @@ static long l_toscintillaparam(lua_State *lua, int type, int *arg_idx) {
  * @param narg The relative stack position of the buffer table.
  */
 static void l_check_focused_buffer(lua_State *lua, int narg) {
-  sptr_t cur_doc = SS(focused_editor, SCI_GETDOCPOINTER, 0, 0);
+  sptr_t cur_doc = SS(focused_view, SCI_GETDOCPOINTER, 0, 0);
   luaL_argcheck(lua, cur_doc == l_checkdocpointer(lua, narg), 1,
                 "this buffer is not the current one");
 }
@@ -1544,14 +1544,14 @@ void l_gui_popup_context_menu(GdkEventButton *event) {
 /**
  * Calls Scintilla with appropriate parameters and returs appropriate values.
  * @param lua The Lua State.
- * @param editor The Scintilla view to call.
+ * @param view The Scintilla view to call.
  * @param msg The integer message index to call Scintilla with.
  * @param p1_type The Lua type of p1, the Scintilla w parameter.
  * @param p2_type The Lua type of p2, the Scintilla l parameter.
  * @param rt_type The Lua type of the Scintilla return parameter.
  * @param arg The index on the Lua stack where arguments to Scintilla begin.
  */
-static int l_call_scintilla(lua_State *lua, GtkWidget *editor, int msg,
+static int l_call_scintilla(lua_State *lua, GtkWidget *view, int msg,
                             int p1_type, int p2_type, int rt_type, int arg) {
   long params[2] = {0, 0};
   int params_needed = 2, len = 0, string_return = FALSE;
@@ -1580,7 +1580,7 @@ static int l_call_scintilla(lua_State *lua, GtkWidget *editor, int msg,
   if (params_needed > 0) params[0] = l_toscintillaparam(lua, p1_type, &arg);
   if (params_needed > 1) params[1] = l_toscintillaparam(lua, p2_type, &arg);
   if (string_return) { // if a string return, create a buffer for it
-    len = SS(editor, msg, params[0], 0);
+    len = SS(view, msg, params[0], 0);
     if (p1_type == tLENGTH) params[0] = len;
     return_string = malloc(len + 1);
     return_string[len] = '\0';
@@ -1590,7 +1590,7 @@ static int l_call_scintilla(lua_State *lua, GtkWidget *editor, int msg,
   }
 
   // Send the message to Scintilla and return the appropriate values.
-  sptr_t result = SS(editor, msg, params[0], params[1]);
+  sptr_t result = SS(view, msg, params[0], params[1]);
   arg = lua_gettop(lua);
   if (string_return) lua_pushlstring(lua, return_string, len);
   if (rt_type == tBOOL) lua_pushboolean(lua, result);
@@ -1605,7 +1605,7 @@ static int l_call_scintilla(lua_State *lua, GtkWidget *editor, int msg,
  * @see l_buffer_mt_index
  */
 static int l_call_buffer_function(lua_State *lua) {
-  GtkWidget *editor = focused_editor;
+  GtkWidget *view = focused_view;
   int buffer_func_table_idx = lua_upvalueindex(1);
   int msg = l_rawgeti_int(lua, buffer_func_table_idx, 1);
   int rt_type = l_rawgeti_int(lua, buffer_func_table_idx, 2);
@@ -1616,7 +1616,7 @@ static int l_call_buffer_function(lua_State *lua) {
     l_check_focused_buffer(lua, 1);
     arg = 2;
   }
-  return l_call_scintilla(lua, editor, msg, p1_type, p2_type, rt_type, arg);
+  return l_call_scintilla(lua, view, msg, p1_type, p2_type, rt_type, arg);
 }
 
 /**
@@ -1649,7 +1649,7 @@ static int l_buffer_mt_index(lua_State *lua) {
     int rt_type = l_rawgeti_int(lua, -1, 3);
     int p1_type = l_rawgeti_int(lua, -1, 4);
     if (p1_type != tVOID) { // indexible property
-      sptr_t doc = SS(focused_editor, SCI_GETDOCPOINTER, 0, 0);
+      sptr_t doc = SS(focused_view, SCI_GETDOCPOINTER, 0, 0);
       lua_newtable(lua);
       lua_pushstring(lua, key);
       lua_setfield(lua, -2, "property");
@@ -1657,7 +1657,7 @@ static int l_buffer_mt_index(lua_State *lua) {
       lua_setfield(lua, -2, "doc_pointer");
       l_mt(lua, "_bufferp_mt", l_bufferp_mt_index, l_bufferp_mt_newindex);
       return 1;
-    } else return l_call_scintilla(lua, focused_editor, msg, p1_type, tVOID,
+    } else return l_call_scintilla(lua, focused_view, msg, p1_type, tVOID,
                                    rt_type, 2);
   } else lua_pop(lua, 1); // non-table
 
@@ -1694,7 +1694,7 @@ static int l_bufferp_mt_(lua_State *lua, int n, const char *prop, int arg) {
     }
     luaL_argcheck(lua, msg != 0, arg,
                   (n == 1) ? "write-only property" : "read-only property");
-    return l_call_scintilla(lua, focused_editor, msg, p1_type, p2_type, rt_type,
+    return l_call_scintilla(lua, focused_view, msg, p1_type, p2_type, rt_type,
                             arg);
   } else lua_pop(lua, 1); // non-table
 
@@ -1719,10 +1719,9 @@ static int l_view_mt_index(lua_State *lua) {
   if (streq(key, "doc_pointer"))
     lua_pushinteger(lua, SS(l_checkview(lua, 1), SCI_GETDOCPOINTER, 0, 0));
   else if (streq(key, "size")) {
-    GtkWidget *editor = l_checkview(lua, 1);
-    if (GTK_IS_PANED(gtk_widget_get_parent(editor))) {
-      int pos = gtk_paned_get_position(
-                GTK_PANED(gtk_widget_get_parent(editor)));
+    GtkWidget *view = l_checkview(lua, 1);
+    if (GTK_IS_PANED(gtk_widget_get_parent(view))) {
+      int pos = gtk_paned_get_position(GTK_PANED(gtk_widget_get_parent(view)));
       lua_pushinteger(lua, pos);
     } else lua_pushnil(lua);
   } else lua_rawget(lua, 1);
@@ -1745,7 +1744,7 @@ static int l_gui_mt_index(lua_State *lua) {
   if (streq(key, "title"))
     lua_pushstring(lua, gtk_window_get_title(GTK_WINDOW(window)));
   else if (streq(key, "focused_doc_pointer"))
-    lua_pushinteger(lua, SS(focused_editor, SCI_GETDOCPOINTER, 0, 0));
+    lua_pushinteger(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
   else if (streq(key, "statusbar_text"))
     lua_pushstring(lua, statusbar_text);
   else if (streq(key, "clipboard_text")) {
@@ -1889,9 +1888,9 @@ static int l_cf_buffer_delete(lua_State *lua) {
   sptr_t doc = l_checkdocpointer(lua, 1);
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   if (lua_objlen(lua, -1) > 1)
-    l_goto_buffer(focused_editor, -1, FALSE);
+    l_goto_buffer(focused_view, -1, FALSE);
   else
-    new_buffer(focused_editor, TRUE, TRUE);
+    new_buffer(focused_view, TRUE, TRUE);
   remove_buffer(doc);
   l_emit_event("buffer_deleted", -1);
   l_emit_event("buffer_after_switch", -1);
@@ -1899,7 +1898,7 @@ static int l_cf_buffer_delete(lua_State *lua) {
 }
 
 static int l_cf_buffer_new(lua_State *lua) {
-  new_buffer(focused_editor, TRUE, TRUE);
+  new_buffer(focused_view, TRUE, TRUE);
   lua_getfield(lua, LUA_REGISTRYINDEX, "buffers");
   lua_rawgeti(lua, -1, lua_objlen(lua, -1));
   return 1;
@@ -1914,39 +1913,38 @@ static int l_cf_buffer_text_range(lua_State *lua) {
   int length = tr.chrg.cpMax - tr.chrg.cpMin;
   char *text = malloc(length + 1);
   tr.lpstrText = text;
-  SS(focused_editor, SCI_GETTEXTRANGE, 0, (long)(&tr));
+  SS(focused_view, SCI_GETTEXTRANGE, 0, (long)(&tr));
   lua_pushlstring(lua, text, length);
   g_free(text);
   return 1;
 }
 
 static int l_cf_view_focus(lua_State *lua) {
-  GtkWidget *editor = l_checkview(lua, 1);
-  // editor might be an old reference; GTK_IS_WIDGET checks for a valid widget
-  if (GTK_IS_WIDGET(editor)) gtk_widget_grab_focus(editor);
+  GtkWidget *view = l_checkview(lua, 1);
+  // view might be an old reference; GTK_IS_WIDGET checks for a valid widget
+  if (GTK_IS_WIDGET(view)) gtk_widget_grab_focus(view);
   return 0;
 }
 
 static int l_cf_view_split(lua_State *lua) {
-  GtkWidget *editor = l_checkview(lua, 1);
+  GtkWidget *view = l_checkview(lua, 1);
   int vertical = TRUE;
   if (lua_gettop(lua) > 1) vertical = lua_toboolean(lua, 2) == 1;
-  split_view(editor, vertical);
+  split_view(view, vertical);
   lua_pushvalue(lua, 1); // old view
   lua_getglobal(lua, "view"); // new view
   return 2;
 }
 
 static int l_cf_view_unsplit(lua_State *lua) {
-  GtkWidget *editor = l_checkview(lua, 1);
-  lua_pushboolean(lua, unsplit_view(editor));
+  GtkWidget *view = l_checkview(lua, 1);
+  lua_pushboolean(lua, unsplit_view(view));
   return 1;
 }
 
 #define child1(p) gtk_paned_get_child1(GTK_PANED(p))
 #define child2(p) gtk_paned_get_child2(GTK_PANED(p))
-#define editor_dpi(editor) \
-  l_get_docpointer_index(SS(editor, SCI_GETDOCPOINTER, 0, 0))
+#define view_dpi(view) l_get_docpointer_index(SS(view, SCI_GETDOCPOINTER, 0, 0))
 
 void l_create_entry(lua_State *lua, GtkWidget *c1, GtkWidget *c2,
                     int vertical) {
@@ -1954,12 +1952,12 @@ void l_create_entry(lua_State *lua, GtkWidget *c1, GtkWidget *c2,
   if (GTK_IS_PANED(c1))
     l_create_entry(lua, child1(c1), child2(c1), GTK_IS_HPANED(c1) == 1);
   else
-    lua_pushinteger(lua, editor_dpi(c1));
+    lua_pushinteger(lua, view_dpi(c1));
   lua_rawseti(lua, -2, 1);
   if (GTK_IS_PANED(c2))
     l_create_entry(lua, child1(c2), child2(c2), GTK_IS_HPANED(c2) == 1);
   else
-    lua_pushinteger(lua, editor_dpi(c2));
+    lua_pushinteger(lua, view_dpi(c2));
   lua_rawseti(lua, -2, 2);
   lua_pushboolean(lua, vertical);
   lua_setfield(lua, -2, "vertical");
@@ -1971,35 +1969,35 @@ void l_create_entry(lua_State *lua, GtkWidget *c1, GtkWidget *c2,
 static int l_cf_gui_get_split_table(lua_State *lua) {
   lua_getfield(lua, LUA_REGISTRYINDEX, "views");
   if (lua_objlen(lua, -1) > 1) {
-    GtkWidget *pane = gtk_widget_get_parent(focused_editor);
+    GtkWidget *pane = gtk_widget_get_parent(focused_view);
     while (GTK_IS_PANED(gtk_widget_get_parent(pane)))
       pane = gtk_widget_get_parent(pane);
     l_create_entry(lua, child1(pane), child2(pane), GTK_IS_HPANED(pane) == 1);
-  } else lua_pushinteger(lua, editor_dpi(focused_editor));
+  } else lua_pushinteger(lua, view_dpi(focused_view));
   return 1;
 }
 
-static int l_cf_gui_goto_(lua_State *lua, GtkWidget *editor, int buffer) {
+static int l_cf_gui_goto_(lua_State *lua, GtkWidget *view, int buffer) {
   int n = luaL_checkinteger(lua, 1);
   int abs = (lua_gettop(lua) > 1) ? lua_toboolean(lua, 2) == 1 : TRUE;
-  buffer ? l_goto_buffer(editor, n, abs) : l_goto_view(editor, n, abs);
+  buffer ? l_goto_buffer(view, n, abs) : l_goto_view(view, n, abs);
   return 0;
 }
 
 // If the indexed view is not currently focused, temporarily focus it so calls
 // to handlers will not throw 'indexed buffer is not the focused one' error.
 static int l_cf_view_goto_buffer(lua_State *lua) {
-  GtkWidget *editor = l_checkview(lua, 1);
-  int switch_focus = editor != focused_editor;
-  GtkWidget *orig_focused_editor = focused_editor;
-  if (switch_focus) SS(editor, SCI_SETFOCUS, TRUE, 0);
+  GtkWidget *view = l_checkview(lua, 1);
+  int switch_focus = view != focused_view;
+  GtkWidget *orig_focused_view = focused_view;
+  if (switch_focus) SS(view, SCI_SETFOCUS, TRUE, 0);
   lua_remove(lua, 1); // view table
   l_emit_event("buffer_before_switch", -1);
-  l_cf_gui_goto_(lua, editor, TRUE);
+  l_cf_gui_goto_(lua, view, TRUE);
   l_emit_event("buffer_after_switch", -1);
   if (switch_focus) {
-    SS(editor, SCI_SETFOCUS, FALSE, 0);
-    gtk_widget_grab_focus(orig_focused_editor);
+    SS(view, SCI_SETFOCUS, FALSE, 0);
+    gtk_widget_grab_focus(orig_focused_view);
   }
   return 0;
 }
@@ -2028,7 +2026,7 @@ static int l_cf_gui_dialog(lua_State *lua) {
 }
 
 static int l_cf_gui_goto_view(lua_State *lua) {
-  return l_cf_gui_goto_(lua, focused_editor, FALSE);
+  return l_cf_gui_goto_(lua, focused_view, FALSE);
 }
 
 static void t_menu_activate(GtkWidget *menu, gpointer id) {
@@ -2069,8 +2067,8 @@ static int l_cf_reset(lua_State *lua) {
   l_init(0, NULL, TRUE);
   lua_pushboolean(lua, TRUE);
   lua_setglobal(lua, "RESETTING");
-  l_set_view_global(focused_editor);
-  l_set_buffer_global(focused_editor);
+  l_set_view_global(focused_view);
+  l_set_buffer_global(focused_view);
   l_load_script("init.lua");
   lua_pushnil(lua);
   lua_setglobal(lua, "RESETTING");
