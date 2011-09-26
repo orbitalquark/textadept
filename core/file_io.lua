@@ -188,7 +188,7 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function reload(buffer)
   if not buffer then buffer = _G.buffer end
-  gui.check_focused_buffer(buffer)
+  buffer:check_global()
   if not buffer.filename then return end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local filename = buffer.filename:iconv(_CHARSET, 'UTF-8')
@@ -209,7 +209,7 @@ end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_encoding(buffer, encoding)
-  gui.check_focused_buffer(buffer)
+  buffer:check_global()
   if not buffer.encoding then error(L('Cannot change binary file encoding')) end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local text = buffer:get_text(buffer.length)
@@ -226,7 +226,7 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function save(buffer)
   if not buffer then buffer = _G.buffer end
-  gui.check_focused_buffer(buffer)
+  buffer:check_global()
   if not buffer.filename then return buffer:save_as() end
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
   local text = buffer:get_text(buffer.length)
@@ -248,7 +248,7 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function save_as(buffer, utf8_filename)
   if not buffer and not utf8_filename then buffer = _G.buffer end
-  gui.check_focused_buffer(buffer)
+  buffer:check_global()
   if not utf8_filename then
     utf8_filename = gui.dialog('filesave',
                                '--title', L('Save'),
@@ -281,7 +281,7 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function close(buffer)
   if not buffer then buffer = _G.buffer end
-  gui.check_focused_buffer(buffer)
+  buffer:check_global()
   if buffer.dirty and
      gui.dialog('msgbox',
                 '--title', L('Close without saving?'),
@@ -353,7 +353,7 @@ end)
 events.connect(events.FILE_OPENED, function(utf8_filename)
   local b = _BUFFERS[1]
   if #_BUFFERS == 2 and not (b.filename or b._type or b.dirty) then
-    view:goto_buffer(1, true)
+    view:goto_buffer(1)
     buffer:close()
   end
 end)

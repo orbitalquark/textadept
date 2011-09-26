@@ -234,8 +234,8 @@ keys[not OSX and 'caO' or 'cmO'] = utils.snapopen_filedir
 keys[not OSX and 'ci' or 'mi'] = utils.show_style
 
 -- Buffer.
-keys['c\t'] = { _view.goto_buffer, _view, 1, false }
-keys['cs\t'] = { _view.goto_buffer, _view, -1, false }
+keys['c\t'] = { _view.goto_buffer, _view, 1, true }
+keys['cs\t'] = { _view.goto_buffer, _view, -1, true }
 keys[not OSX and 'cb' or 'mb'] = gui.switch_buffer
 -- Indentation.
 -- TODO: { utils.set_indentation, 2 }
@@ -258,11 +258,11 @@ keys[not OSX and 'cL' or 'mL'] = m_textadept.mime_types.select_lexer
 keys.f5 = { _buffer.colourise, _buffer, 0, -1 }
 
 -- View.
-keys[not OSX and 'can' or 'ca\t'] = { gui.goto_view, 1, false }
-keys[not OSX and 'cap' or 'cas\t'] = { gui.goto_view, -1, false }
-keys[not OSX and 'cas' or 'cs'] = { _view.split, _view, false }
+keys[not OSX and 'can' or 'ca\t'] = { gui.goto_view, 1, true }
+keys[not OSX and 'cap' or 'cas\t'] = { gui.goto_view, -1, true }
+keys[not OSX and 'cas' or 'cs'] = { _view.split, _view }
 if not OSX then keys.cah = keys.cas end
-keys[not OSX and 'cav' or 'cv'] = { _view.split, _view }
+keys[not OSX and 'cav' or 'cv'] = { _view.split, _view, true }
 keys[not OSX and 'caw' or 'cw'] = { _view.unsplit, _view }
 keys[not OSX and 'caW' or 'cW'] = utils.unsplit_all
 keys[not OSX and 'ca+' or 'c+'] = { utils.grow, 10 }

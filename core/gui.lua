@@ -3,56 +3,47 @@
 local L = locale.localize
 local gui = gui
 
--- LuaDoc is in core/.gui.luadoc.
-function gui.check_focused_buffer(buffer)
-  if type(buffer) ~= 'table' or not buffer.doc_pointer then
-    error(L('Buffer argument expected.'), 2)
-  elseif gui.focused_doc_pointer ~= buffer.doc_pointer then
-    error(L('This buffer is not the current one.'), 2)
-  end
-end
-
--- LuaDoc is in core/.gui.luadoc.
-function gui._print(buffer_type, ...)
-  local function safe_print(...)
-    if buffer._type ~= buffer_type then
-      -- Try to find a message buffer to print to. Otherwise create one.
-      local message_buffer, message_buffer_index
-      local message_view, message_view_index
-      for i, buffer in ipairs(_BUFFERS) do
-        if buffer._type == buffer_type then
-          message_buffer, message_buffer_index = buffer, i
-          for j, view in ipairs(_VIEWS) do
-            if view.doc_pointer == message_buffer.doc_pointer then
-              message_view, message_view_index = view, j
-              break
-            end
+-- TODO:
+-- @param buffer_type
+-- @param ...
+local function _print(buffer_type, ...)
+  if buffer._type ~= buffer_type then
+    -- Try to find a message buffer to print to. Otherwise create one.
+    local message_buffer, message_view
+    for _, buffer in ipairs(_BUFFERS) do
+      if buffer._type == buffer_type then
+        message_buffer = buffer
+        for _, view in ipairs(_VIEWS) do
+          if view.buffer == message_buffer then
+            message_view = view
+            break
           end
-          break
         end
-      end
-      if not message_view then
-        local _, message_view = view:split(false) -- horizontal split
-        if not message_buffer then
-          message_buffer = new_buffer()
-          message_buffer._type = buffer_type
-          events.emit(events.FILE_OPENED)
-        else
-          message_view:goto_buffer(message_buffer_index, true)
-        end
-      else
-        gui.goto_view(message_view_index, true)
+        break
       end
     end
-    local args, n = {...}, select('#', ...)
-    for i = 1, n do args[i] = tostring(args[i]) end
-    buffer:append_text(table.concat(args, '\t'))
-    buffer:append_text('\n')
-    buffer:goto_pos(buffer.length)
-    buffer:set_save_point()
+    if not message_view then
+      local _, message_view = view:split()
+      if not message_buffer then
+        message_buffer = new_buffer()
+        message_buffer._type = buffer_type
+        events.emit(events.FILE_OPENED)
+      else
+        message_view:goto_buffer(_BUFFERS[message_buffer])
+      end
+    else
+      gui.goto_view(_VIEWS[message_view])
+    end
   end
-  pcall(safe_print, ...) -- prevent endless loops on error
+  local args, n = {...}, select('#', ...)
+  for i = 1, n do args[i] = tostring(args[i]) end
+  buffer:append_text(table.concat(args, '\t'))
+  buffer:append_text('\n')
+  buffer:goto_pos(buffer.length)
+  buffer:set_save_point()
 end
+-- LuaDoc is in core/.gui.luadoc.
+function gui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 
 -- LuaDoc is in core/.gui.luadoc.
 function gui.print(...) gui._print(L('[Message Buffer]'), ...) end
@@ -84,7 +75,7 @@ function gui.switch_buffer()
     items[#items + 1] = filename
   end
   local i = gui.filteredlist(L('Switch Buffers'), columns, items, true)
-  if i then view:goto_buffer(i + 1, true) end
+  if i then view:goto_buffer(i + 1) end
 end
 
 local connect = events.connect
