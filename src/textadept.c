@@ -749,6 +749,7 @@ static gboolean c_keypress(GtkWidget*_, GdkEventKey *event, gpointer __) {
  * Initializes or re-initializes the Lua state.
  * Populates the state with global variables and functions, then runs the
  * 'core/init.lua' script.
+ * @param L The Lua state.
  * @param argc The number of command line parameters.
  * @param argv The array of command line parameters.
  * @param reinit Flag indicating whether or not to reinitialize the Lua state.
@@ -1125,7 +1126,7 @@ static const char *l_rawgetstr(lua_State *L, int index, const char *k) {
  * Checks whether the function argument narg is the given Scintilla parameter
  * type and returns it cast to the proper type.
  * @param L The Lua state.
- * @param index The stack index of the Scintilla parameter.
+ * @param narg The stack index of the Scintilla parameter.
  * @param type The Scintilla type to convert to.
  * @return Scintilla param
  */
@@ -1184,6 +1185,7 @@ static void lL_globaldoccheck(lua_State *L, int narg) {
  * stack.
  * Consult the LuaDoc for the table format.
  * @param L The Lua state.
+ * @param index The stack index of the table to create the menu from.
  * @param callback A GCallback associated with each menu item.
  * @param submenu Flag indicating whether or not this menu is a submenu.
  */
