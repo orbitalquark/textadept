@@ -18,7 +18,7 @@ find.in_files_label_text = L('In files')
 
 local MARK_FIND = _SCINTILLA.next_marker_number()
 local MARK_FIND_COLOR = 0x4D9999
-local previous_view
+local prev_view
 
 -- Text escape sequences with their associated characters.
 -- @class table
@@ -76,7 +76,9 @@ function find.find_in_files(utf8_dir)
     search_dir(dir)
     if #matches == 1 then matches[2] = L('No results found') end
     matches[#matches + 1] = ''
-    if buffer._type ~= L('[Files Found Buffer]') then previous_view = view end
+    if buffer._type ~= L('[Files Found Buffer]') then
+      prev_view = _VIEWS[view]
+    end
     gui._print(L('[Files Found Buffer]'), table.concat(matches, '\n'))
   end
 end
@@ -313,17 +315,18 @@ local function goto_file(pos, line_num)
       buffer:marker_add(line_num, MARK_FIND)
       buffer:goto_pos(buffer.current_pos)
       if #_VIEWS == 1 then
-        _, previous_view = view:split(false) -- horizontal
+        view:split()
+        prev_view = 2 -- second view
       else
         local clicked_view = view
-        if previous_view then previous_view:focus() end
+        if prev_view then gui.goto_view(prev_view) end
         if buffer._type == L('[Files Found Buffer]') then
           -- There are at least two find in files views; find one of those views
           -- that the file was not selected from and focus it.
-          for _, v in ipairs(_VIEWS) do
+          for i, v in ipairs(_VIEWS) do
             if v ~= clicked_view then
-              previous_view = v
-              v:focus()
+              prev_view = i
+              gui.goto_view(i)
               break
             end
           end
@@ -339,12 +342,12 @@ events.connect(events.DOUBLE_CLICK, goto_file)
 
 -- LuaDoc is in core/.find.luadoc.
 function find.goto_file_in_list(next)
-  local orig_view = view
+  local orig_view = _VIEWS[view]
   for _, buffer in ipairs(_BUFFERS) do
     if buffer._type == L('[Files Found Buffer]') then
-      for _, view in ipairs(_VIEWS) do
-        if view.doc_pointer == buffer.doc_pointer then
-          view:focus()
+      for j, view in ipairs(_VIEWS) do
+        if view.buffer == buffer then
+          gui.goto_view(j)
           local orig_line = buffer:line_from_position(buffer.current_pos)
           local line = orig_line
           while true do
@@ -352,7 +355,7 @@ function find.goto_file_in_list(next)
             if line > buffer.line_count - 1 then line = 0 end
             if line < 0 then line = buffer.line_count - 1 end
             if line == orig_line then -- prevent infinite loops
-              orig_view:focus()
+              gui.goto_view(orig_view)
               return
             end
             if buffer:get_line(line):match('^(.+):(%d+):.+$') then

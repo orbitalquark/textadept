@@ -31,15 +31,23 @@ arg = {}
 
 
 ---
--- A numerically indexed table of open buffers in Textadept.
+-- Table of all open buffers in Textadept.
+-- Numeric keys have buffer values and buffer keys have their associated numeric
+-- keys.
 -- @class table
 -- @name _BUFFERS
+-- @usage _BUFFERS[1] contains the first buffer.
+-- @usage _BUFFERS[_BUFFERS[1]] evaluates to 1, the index of the first buffer.
 _BUFFERS = {}
 
 ---
--- A numerically indexed table of views in Textadept.
+-- Table of all views in Textadept.
+-- Numeric keys have view values and view keys have their associated numeric
+-- keys.
 -- @class table
 -- @name _VIEWS
+-- @usage _VIEWS[1] contains the first view.
+-- @usage _VIEWS[_VIEWS[1]] evaluates to 1, the index of the first view.
 _VIEWS = {}
 
 ---

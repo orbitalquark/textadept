@@ -106,7 +106,7 @@ table.sort(lexers)
 -- @param style_num A style number in the range 0 <= style_num < 256.
 -- @see buffer.style_at
 local function get_style_name(buffer, style_num)
-  gui.check_focused_buffer(buffer)
+  buffer:check_global()
   if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
   return buffer:private_lexer_call(style_num)
 end
@@ -130,7 +130,7 @@ local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
 -- @param lang The string language to set.
 -- @usage buffer:set_lexer('language_name')
 local function set_lexer(buffer, lang)
-  gui.check_focused_buffer(buffer)
+  buffer:check_global()
   buffer._lexer = lang
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
@@ -161,7 +161,7 @@ local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 --   lexer can be different from the lexer passed to buffer:set_lexer().
 --   Defaults to false.
 local function get_lexer(buffer, current)
-  gui.check_focused_buffer(buffer)
+  buffer:check_global()
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
   if not current then return lexer end
   local i, ws, style_at = buffer.current_pos, ws_styles[lexer], buffer.style_at

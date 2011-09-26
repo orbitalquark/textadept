@@ -92,7 +92,7 @@ function load(filename)
     end
   end
   f:close()
-  _VIEWS[current_view]:focus()
+  gui.goto_view(current_view)
   if #not_found > 0 then
     gui.dialog('msgbox',
                '--title', L('Session Files Not Found'),
@@ -121,7 +121,7 @@ function save(filename)
   for _, buffer in ipairs(_BUFFERS) do
     local filename = buffer.filename or buffer._type
     if filename then
-      local current = buffer.doc_pointer == gui.focused_doc_pointer
+      local current = buffer == view.buffer
       local anchor = current and 'anchor' or '_anchor'
       local current_pos = current and 'current_pos' or '_current_pos'
       local top_line = current and 'first_visible_line' or '_first_visible_line'
@@ -138,32 +138,25 @@ function save(filename)
     local spaces = (' '):rep(level)
     session[#session + 1] = split_line:format(spaces, number, vertical, size)
     spaces = (' '):rep(level + 1)
-    if type(c1) == 'table' then
+    if c1[1] and c1[2] then
       write_split(c1, level + 1, 1)
     else
-      session[#session + 1] = view_line:format(spaces, 1, c1)
+      session[#session + 1] = view_line:format(spaces, 1, _BUFFERS[c1.buffer])
     end
-    if type(c2) == 'table' then
+    if c2[1] and c2[2] then
       write_split(c2, level + 1, 2)
     else
-      session[#session + 1] = view_line:format(spaces, 2, c2)
+      session[#session + 1] = view_line:format(spaces, 2, _BUFFERS[c2.buffer])
     end
   end
   local splits = gui.get_split_table()
-  if type(splits) == 'table' then
+  if splits[1] and splits[2] then
     write_split(splits, 0, 0)
   else
-    session[#session + 1] = view_line:format('', 1, splits)
+    session[#session + 1] = view_line:format('', 1, _BUFFERS[splits.buffer])
   end
   -- Write out the current focused view.
-  local current_view = view
-  for i = 1, #_VIEWS do
-    if _VIEWS[i] == current_view then
-      current_view = i
-      break
-    end
-  end
-  session[#session + 1] = ("current_view: %d"):format(current_view)
+  session[#session + 1] = ("current_view: %d"):format(_VIEWS[view])
   -- Write out other things.
   local size = gui.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])

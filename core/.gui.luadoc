@@ -9,8 +9,6 @@ module('gui')
 -- ## Fields
 --
 -- * `title` [string]: The title of the Textadept window.
--- * `focused_doc_pointer` [number]: The pointer to the document associated with
---   the buffer of the currently focused view. (Read-only)
 -- * `menubar` [table]: A table of GTK menus defining a menubar. (Write-only)
 -- * `context_menu`: A GTK menu defining the editor's context menu.
 -- * `clipboard_text` [string]: The text on the clipboard. (Read-only)
@@ -23,8 +21,9 @@ module('gui')
 -- Goes to the specified view.
 -- Activates the 'view_*_switch' signal.
 -- @param n A relative or absolute view index.
--- @param absolute Flag indicating if n is an absolute index or not.
-function goto_view(n, absolute) end
+-- @param relative Flag indicating if n is a relative index or not. Defaults to
+--   false.
+function goto_view(n, relative) end
 
 ---
 -- Gets the current split view structure.
@@ -38,22 +37,16 @@ function get_split_table() end
 ---
 -- Creates a GTK menu, returning the userdata.
 -- @param menu_table A table defining the menu. It is an ordered list of tables
---   with a string menu item and integer menu ID.
---   The string menu item is handled as follows:
+--   with a string menu item, integer menu ID, and optional keycode and modifier
+--   mask. The latter two are used to display key shortcuts in the menu. The
+--   string menu item is handled as follows:
 --     'gtk-*' - a stock menu item is created based on the GTK stock-id.
 --     'separator' - a menu separator item is created.
 --     Otherwise a regular menu item with a mnemonic is created.
 --   Submenus are just nested menu-structure tables. Their title text is defined
 --   with a 'title' key.
+-- @see keys.get_gdk_key
 function gtkmenu(menu_table) end
-
----
--- Checks if the buffer being indexed is the currently focused buffer.
--- This is necessary because any buffer actions are performed in the focused
--- views' buffer, which may not be the buffer being indexed. Throws an error
--- if the check fails.
--- @param buffer The buffer in question.
-function check_focused_buffer(buffer) end
 
 ---
 -- Helper function for printing messages to buffers.

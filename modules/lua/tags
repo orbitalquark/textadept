@@ -41,6 +41,8 @@ DEFAULT	_	0;"	F	class:lexer
 DEFAULT_DEPTH	_	0;"	F	class:_m.textadept.snapopen
 DEFAULT_SESSION	_	0;"	F	class:_m.textadept.session
 DOUBLE_CLICK	_	0;"	F	class:events
+DWELL_END	_	0;"	F	class:events
+DWELL_START	_	0;"	F	class:events
 EDGE_BACKGROUND	_	0;"	F	class:_SCINTILLA.constants
 EDGE_LINE	_	0;"	F	class:_SCINTILLA.constants
 EDGE_NONE	_	0;"	F	class:_SCINTILLA.constants
@@ -58,7 +60,6 @@ HIGHLIGHT_BRACES	_	0;"	F	class:_m.textadept.editing
 HOTSPOT_CLICK	_	0;"	F	class:events
 HOTSPOT_DOUBLE_CLICK	_	0;"	F	class:events
 HOTSPOT_RELEASE_CLICK	_	0;"	F	class:events
-HUGE_VAL	_	0;"	F	class:math
 IDENTIFIER	_	0;"	F	class:lexer
 INDIC0_MASK	_	0;"	F	class:_SCINTILLA.constants
 INDIC1_MASK	_	0;"	F	class:_SCINTILLA.constants
@@ -716,14 +717,7 @@ _insert	_	0;"	f	class:_m.textadept.snippets
 _m	_	0;"	m	
 _m	_	0;"	t	
 _m.cpp	_	0;"	m	
-_m.css	_	0;"	m	
-_m.hypertext	_	0;"	m	
-_m.java	_	0;"	m	
 _m.lua	_	0;"	m	
-_m.php	_	0;"	m	
-_m.rails	_	0;"	m	
-_m.rhtml	_	0;"	m	
-_m.ruby	_	0;"	m	
 _m.textadept	_	0;"	m	
 _m.textadept.adeptsense	_	0;"	m	
 _m.textadept.bookmarks	_	0;"	m	
@@ -811,6 +805,7 @@ brace_highlight	_	0;"	f	class:buffer
 brace_highlight_indicator	_	0;"	f	class:buffer
 brace_match	_	0;"	f	class:buffer
 braces	_	0;"	t	class:_m.textadept.editing
+buffer	_	0;"	F	class:view
 buffer	_	0;"	m	
 buffer	_	0;"	t	
 buffered_draw	_	0;"	F	class:buffer
@@ -850,7 +845,7 @@ char_right	_	0;"	f	class:buffer
 char_right_extend	_	0;"	f	class:buffer
 char_right_rect_extend	_	0;"	f	class:buffer
 chdir	_	0;"	f	class:lfs
-check_focused_buffer	_	0;"	f	class:gui
+check_global	_	0;"	f	class:buffer
 choose_caret_x	_	0;"	f	class:buffer
 class_definition	_	0;"	F	class:_m.textadept.adeptsense.syntax
 clear	_	0;"	f	class:_m.textadept.adeptsense
@@ -889,7 +884,6 @@ context_menu	_	0;"	t	class:_m.textadept.menu
 contracted_fold_next	_	0;"	f	class:buffer
 control_char_symbol	_	0;"	F	class:buffer
 control_structure_patterns	_	0;"	t	class:_m.lua
-control_structure_patterns	_	0;"	t	class:_m.ruby
 convert_eo_ls	_	0;"	f	class:buffer
 convert_indentation	_	0;"	f	class:_m.textadept.editing
 copy	_	0;"	f	class:buffer
@@ -905,9 +899,6 @@ cpp	_	0;"	t	class:_m
 cpp	_	0;"	t	class:keys
 cpp	_	0;"	t	class:snippets
 create	_	0;"	f	class:coroutine
-css	_	0;"	t	class:_m
-css	_	0;"	t	class:keys
-css	_	0;"	t	class:snippets
 ctags_kinds	_	0;"	t	class:_m.textadept.adeptsense
 current_pos	_	0;"	F	class:buffer
 current_word	_	0;"	f	class:_m.textadept.editing
@@ -938,8 +929,6 @@ direct_pointer	_	0;"	F	class:buffer
 dirty	_	0;"	F	class:buffer
 disconnect	_	0;"	f	class:events
 doc_line_from_visible	_	0;"	f	class:buffer
-doc_pointer	_	0;"	F	class:buffer
-doc_pointer	_	0;"	F	class:view
 docstatusbar_text	_	0;"	F	class:gui
 document_end	_	0;"	f	class:buffer
 document_end_extend	_	0;"	f	class:buffer
@@ -1002,8 +991,6 @@ fmod	_	0;"	f	class:math
 focus	_	0;"	F	class:buffer
 focus	_	0;"	f	class:gui.command_entry
 focus	_	0;"	f	class:gui.find
-focus	_	0;"	f	class:view
-focused_doc_pointer	_	0;"	F	class:gui
 fold	_	0;"	f	class:lexer
 fold_expanded	_	0;"	F	class:buffer
 fold_level	_	0;"	F	class:buffer
@@ -1060,8 +1047,6 @@ goto_next	_	0;"	f	class:_m.textadept.bookmarks
 goto_pos	_	0;"	f	class:buffer
 goto_prev	_	0;"	f	class:_m.textadept.bookmarks
 goto_required	_	0;"	f	class:_m.lua
-goto_required	_	0;"	f	class:_m.php
-goto_required	_	0;"	f	class:_m.ruby
 goto_view	_	0;"	f	class:gui
 grab_focus	_	0;"	f	class:buffer
 graph	_	0;"	F	class:lexer
@@ -1092,9 +1077,7 @@ home_wrap	_	0;"	f	class:buffer
 home_wrap_extend	_	0;"	f	class:buffer
 hotspot_active_underline	_	0;"	F	class:buffer
 hotspot_single_line	_	0;"	F	class:buffer
-hypertext	_	0;"	t	class:_m
-hypertext	_	0;"	t	class:keys
-hypertext	_	0;"	t	class:snippets
+huge	_	0;"	F	class:math
 iconv	_	0;"	f	class:string
 in_files	_	0;"	F	class:gui.find
 in_files_label_text	_	0;"	F	class:gui.find
@@ -1121,9 +1104,6 @@ integer	_	0;"	F	class:lexer
 io	_	0;"	m	
 io	_	0;"	t	
 ipairs	_	0;"	f	
-java	_	0;"	t	class:_m
-java	_	0;"	t	class:keys
-java	_	0;"	t	class:snippets
 join_lines	_	0;"	f	class:_m.textadept.editing
 keys	_	0;"	m	
 keys	_	0;"	t	
@@ -1178,7 +1158,6 @@ load	_	0;"	f
 load	_	0;"	f	class:_m.textadept.session
 load	_	0;"	f	class:lexer
 load_ctags	_	0;"	f	class:_m.textadept.adeptsense
-load_project	_	0;"	f	class:_m.rails
 loaded	_	0;"	F	class:package
 loaders	_	0;"	F	class:package
 loadfile	_	0;"	f	
@@ -1272,7 +1251,6 @@ next_marker_number	_	0;"	f	class:_SCINTILLA
 next_user_list_type	_	0;"	f	class:_SCINTILLA
 nonnewline	_	0;"	F	class:lexer
 nonnewline_esc	_	0;"	F	class:lexer
-notification	_	0;"	f	class:events
 oct_num	_	0;"	F	class:lexer
 open	_	0;"	f	class:_m.textadept.snapopen
 open	_	0;"	f	class:io
@@ -1300,9 +1278,6 @@ paste	_	0;"	f	class:buffer
 path	_	0;"	F	class:package
 patterns	_	0;"	t	class:_m.textadept.mime_types
 pcall	_	0;"	f	
-php	_	0;"	t	class:_m
-php	_	0;"	t	class:keys
-php	_	0;"	t	class:snippets
 pi	_	0;"	F	class:math
 point_x_from_position	_	0;"	f	class:buffer
 point_y_from_position	_	0;"	f	class:buffer
@@ -1333,9 +1308,6 @@ punct	_	0;"	F	class:lexer
 purple	_	0;"	F	class:lexer.colors
 quit	_	0;"	f	
 rad	_	0;"	f	class:math
-rails	_	0;"	t	class:_m
-rails	_	0;"	t	class:keys
-rails	_	0;"	t	class:snippets
 random	_	0;"	f	class:math
 randomseed	_	0;"	f	class:math
 rawequal	_	0;"	f	
@@ -1377,14 +1349,8 @@ resume	_	0;"	f	class:coroutine
 reverse	_	0;"	f	class:string
 rgba_image_height	_	0;"	F	class:buffer
 rgba_image_width	_	0;"	F	class:buffer
-rhtml	_	0;"	t	class:_m
-rhtml	_	0;"	t	class:keys
-rhtml	_	0;"	t	class:snippets
 rmdir	_	0;"	f	class:lfs
 rotate_selection	_	0;"	f	class:buffer
-ruby	_	0;"	t	class:_m
-ruby	_	0;"	t	class:keys
-ruby	_	0;"	t	class:snippets
 run	_	0;"	f	class:_m.textadept.run
 run	_	0;"	t	class:_m.textadept
 run_command	_	0;"	t	class:_m.textadept.run
@@ -1430,22 +1396,10 @@ selection_start	_	0;"	F	class:buffer
 selections	_	0;"	F	class:buffer
 self	_	0;"	F	class:_m.textadept.adeptsense.syntax
 sense	_	0;"	F	class:_m.cpp
-sense	_	0;"	F	class:_m.css
-sense	_	0;"	F	class:_m.hypertext
-sense	_	0;"	F	class:_m.java
 sense	_	0;"	F	class:_m.lua
-sense	_	0;"	F	class:_m.php
-sense	_	0;"	F	class:_m.rails
-sense	_	0;"	F	class:_m.rhtml
-sense	_	0;"	F	class:_m.ruby
 session	_	0;"	t	class:_m.textadept
 set_buffer_properties	_	0;"	f	class:_m.cpp
-set_buffer_properties	_	0;"	f	class:_m.css
-set_buffer_properties	_	0;"	f	class:_m.hypertext
-set_buffer_properties	_	0;"	f	class:_m.java
 set_buffer_properties	_	0;"	f	class:_m.lua
-set_buffer_properties	_	0;"	f	class:_m.php
-set_buffer_properties	_	0;"	f	class:_m.ruby
 set_chars_default	_	0;"	f	class:buffer
 set_contextmenu	_	0;"	f	class:_m.textadept.menu
 set_empty_selection	_	0;"	f	class:buffer
@@ -1487,7 +1441,6 @@ show_apidoc	_	0;"	f	class:_m.textadept.adeptsense
 show_documentation	_	0;"	f	class:_m.textadept.adeptsense
 show_lines	_	0;"	f	class:buffer
 sin	_	0;"	f	class:math
-singular	_	0;"	F	class:_m.rails
 sinh	_	0;"	f	class:math
 size	_	0;"	F	class:gui
 size	_	0;"	F	class:view
@@ -1581,7 +1534,6 @@ title	_	0;"	F	class:gui
 tmpfile	_	0;"	f	class:io
 tmpname	_	0;"	f	class:os
 toggle	_	0;"	f	class:_m.textadept.bookmarks
-toggle_block	_	0;"	f	class:_m.ruby
 toggle_caret_sticky	_	0;"	f	class:buffer
 toggle_fold	_	0;"	f	class:buffer
 token	_	0;"	f	class:lexer
@@ -1592,7 +1544,6 @@ traceback	_	0;"	f	class:debug
 transpose_chars	_	0;"	f	class:_m.textadept.editing
 try_encodings	_	0;"	t	class:io
 try_to_autocomplete_end	_	0;"	f	class:_m.lua
-try_to_autocomplete_end	_	0;"	f	class:_m.ruby
 two_phase_draw	_	0;"	F	class:buffer
 type	_	0;"	f	
 type	_	0;"	f	class:io
