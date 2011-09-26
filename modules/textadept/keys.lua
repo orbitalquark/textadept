@@ -94,7 +94,7 @@ local function constantize_menu_buffer_functions()
   for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 end
 events.connect(events.BUFFER_NEW, constantize_menu_buffer_functions)
--- Scintilla's first buffer doesn't have this.
+-- Scintilla's first buffer does not have this.
 if not RESETTING then constantize_menu_buffer_functions() end
 
 --[[

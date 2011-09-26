@@ -100,11 +100,7 @@ end
 for lexer in pairs(lexers_found) do lexers[#lexers + 1] = lexer end
 table.sort(lexers)
 
---
--- Returns the name of the style associated with a style number.
--- @param buffer The buffer to get the style name of.
--- @param style_num A style number in the range 0 <= style_num < 256.
--- @see buffer.style_at
+-- LuaDoc is in core/.buffer.luadoc.
 local function get_style_name(buffer, style_num)
   buffer:check_global()
   if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
@@ -117,31 +113,22 @@ end
 -- @class table
 -- @name ws_styles
 local ws_styles = {}
-
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
---
--- Replacement for buffer:set_lexer_language().
--- Sets a buffer._lexer field so it can be restored without querying the
--- mime-types tables. Also if the user manually sets the lexer, it should be
--- restored.
--- Loads the language-specific module if it exists.
--- @param buffer The buffer to set the lexer language of.
--- @param lang The string language to set.
--- @usage buffer:set_lexer('language_name')
+-- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, lang)
   buffer:check_global()
   buffer._lexer = lang
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
-  local ret, err = pcall(require, lang)
-  if ret then
-    ret, err = pcall(require, lang..'.post_init')
+  local ok, err = pcall(require, lang)
+  if ok then
+    ok, err = pcall(require, lang..'.post_init')
     _m[lang].set_buffer_properties()
     events.emit(events.LANGUAGE_MODULE_LOADED, lang)
   end
   local module_not_found = "^module '"..lang.."[^\']*' not found:"
-  if not ret and not err:find(module_not_found) then error(err) end
+  if not ok and not err:find(module_not_found) then error(err) end
   buffer:colourise(0, -1)
   if ws_styles[lang] then return end
 
@@ -154,12 +141,7 @@ local function set_lexer(buffer, lang)
 end
 
 local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
---
--- Replacement for buffer:get_lexer_language().
--- @param buffer The buffer to get the lexer language of.
--- @param current If true, returns the lexer at the current caret position. This
---   lexer can be different from the lexer passed to buffer:set_lexer().
---   Defaults to false.
+-- LuaDoc is in core/.buffer.luadoc.
 local function get_lexer(buffer, current)
   buffer:check_global()
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
@@ -173,7 +155,7 @@ events.connect(events.BUFFER_NEW, function()
   buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
   buffer.get_style_name = get_style_name
 end, 1)
--- Scintilla's first buffer doesn't have these.
+-- Scintilla's first buffer does not have these.
 if not RESETTING then
   buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
   buffer.get_style_name = get_style_name
@@ -192,10 +174,7 @@ local function handle_new()
   end
   if not lexer then
     for patt, lex in pairs(patterns) do
-      if line:find(patt) then
-        lexer = lex
-        break
-      end
+      if line:find(patt) then lexer = lex break end
     end
   end
   if not lexer and buffer.filename then
@@ -203,6 +182,8 @@ local function handle_new()
   end
   buffer:set_lexer(lexer or 'container')
 end
+events.connect(events.FILE_OPENED, handle_new)
+events.connect(events.FILE_SAVED_AS, handle_new)
 
 -- Sets the buffer's lexer based on filename, shebang words, or
 -- first line pattern.
@@ -210,14 +191,11 @@ local function restore_lexer()
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'container')
 end
+events.connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
+events.connect(events.VIEW_NEW, restore_lexer, 1)
 
-local connect = events.connect
-connect(events.FILE_OPENED, handle_new)
-connect(events.FILE_SAVED_AS, handle_new)
-connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
-connect(events.VIEW_NEW, restore_lexer, 1)
-connect(events.RESET_AFTER,
-        function() buffer:set_lexer(buffer._lexer or 'container') end)
+events.connect(events.RESET_AFTER,
+               function() buffer:set_lexer(buffer._lexer or 'container') end)
 
 ---
 -- Prompts the user to select a lexer from a filtered list for the current

@@ -19,10 +19,7 @@ local env = setmetatable({}, {
   end,
   __newindex = function(t, k, v)
     for _, t2 in ipairs{ buffer, view, gui } do
-      if t2[k] ~= nil then
-        t2[k] = v
-        return
-      end
+      if t2[k] ~= nil then t2[k] = v return end
     end
     rawset(t, k, v)
   end,
@@ -33,18 +30,16 @@ events.connect(events.COMMAND_ENTRY_COMMAND, function(command)
   local f, err = loadstring(command)
   if err then error(err) end
   gui.command_entry.focus() -- toggle focus to hide
-  setfenv(f, env)
-  f()
+  setfenv(f, env)()
   events.emit(events.UPDATE_UI)
 end)
 
 events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
-  local ce = gui.command_entry
   if keys.KEYSYMS[code] == 'esc' then
-    ce.focus() -- toggle focus to hide
+    gui.command_entry.focus() -- toggle focus to hide
     return true
   elseif keys.KEYSYMS[code] == '\t' then
-    local substring = ce.entry_text:match('[%w_.:]+$') or ''
+    local substring = gui.command_entry.entry_text:match('[%w_.:]+$') or ''
     local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
     local f, err = loadstring('return ('..path..')')
     if type(f) == "function" then setfenv(f, env) end
@@ -83,7 +78,7 @@ events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
       end
     end
     table.sort(cmpls)
-    ce.show_completions(cmpls)
+    gui.command_entry.show_completions(cmpls)
     return true
   end
 end)

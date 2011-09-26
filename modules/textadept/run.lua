@@ -68,9 +68,8 @@ local function command(cmd_table)
   if not buffer.filename then return end
   buffer:save()
   local action = cmd_table[buffer.filename:match('[^.]+$')]
-  if action then
-    return execute(type(action) == 'function' and action() or action)
-  end
+  if not action then return end
+  return execute(type(action) == 'function' and action() or action)
 end
 
 ---

@@ -18,13 +18,12 @@ module('io', package.seeall)
 --
 -- Example:
 --
---     events.connect(events.FILE_OPENED,
---       function(utf8_filename)
---         local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
---         local f = io.open(filename, 'rb')
---         -- process file
---         f:close()
---       end)
+--     events.connect(events.FILE_OPENED, function(utf8_filename)
+--       local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
+--       local f = io.open(filename, 'rb')
+--       -- process file
+--       f:close()
+--     end)
 --
 -- [string_iconv]: ../modules/string.html#iconv
 --
@@ -95,80 +94,7 @@ end
 -- List of encodings to try to decode files as after UTF-8.
 -- @class table
 -- @name try_encodings
-try_encodings = {
-  'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'
-}
-
--- Opens a file or goes to its already open buffer.
--- @param utf8_filename The absolute path to the file to open. Must be UTF-8
---   encoded.
-local function _open(utf8_filename)
-  if not utf8_filename then return end
-  utf8_filename = utf8_filename:gsub('^file://', '')
-  if WIN32 then utf8_filename = utf8_filename:gsub('/', '\\') end
-  for i, buffer in ipairs(_BUFFERS) do
-    if utf8_filename == buffer.filename then
-      view:goto_buffer(i)
-      return
-    end
-  end
-
-  local text
-  local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
-  local f, err = io.open(filename, 'rb')
-  if not f then error(err) end
-  text = f:read('*all')
-  f:close()
-  if not text then return end -- filename exists, but cannot read it
-  local buffer = new_buffer()
-  -- Tries to detect character encoding and convert text from it to UTF-8.
-  local encoding, encoding_bom = detect_encoding(text)
-  if encoding ~= 'binary' then
-    if encoding then
-      if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
-      text = text:iconv('UTF-8', encoding)
-    else
-      -- Try list of encodings.
-      for _, try_encoding in ipairs(try_encodings) do
-        local ret, conv = pcall(string.iconv, text, 'UTF-8', try_encoding)
-        if ret then
-          encoding = try_encoding
-          text = conv
-          break
-        end
-      end
-      if not encoding then error(L('Encoding conversion failed.')) end
-    end
-  else
-    encoding = nil
-  end
-  local c = _SCINTILLA.constants
-  buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
-  buffer.code_page = encoding and c.SC_CP_UTF8 or 0
-  -- Tries to set the buffer's EOL mode appropriately based on the file.
-  local s, e = text:find('\r\n?')
-  if s and e then
-    buffer.eol_mode = (s == e and c.SC_EOL_CR or c.SC_EOL_CRLF)
-  else
-    buffer.eol_mode = c.SC_EOL_LF
-  end
-  buffer:add_text(text, #text)
-  buffer:goto_pos(0)
-  buffer:empty_undo_buffer()
-  buffer.modification_time = lfs.attributes(filename).modification
-  buffer.filename = utf8_filename
-  buffer:set_save_point()
-  events.emit(events.FILE_OPENED, utf8_filename)
-
-  -- Add file to recent files list, eliminating duplicates.
-  for i, file in ipairs(recent_files) do
-    if file == utf8_filename then
-      table.remove(recent_files, i)
-      break
-    end
-  end
-  table.insert(recent_files, 1, utf8_filename)
-end
+try_encodings = { 'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman' }
 
 ---
 -- Opens a list of files.
@@ -182,7 +108,61 @@ function open_file(utf8_filenames)
                               '--select-multiple',
                               '--with-directory',
                               (buffer.filename or ''):match('.+[/\\]') or '')
-  for filename in utf8_filenames:gmatch('[^\n]+') do _open(filename) end
+  for utf8_filename in utf8_filenames:gmatch('[^\n]+') do
+    utf8_filename = utf8_filename:gsub('^file://', '')
+    if WIN32 then utf8_filename = utf8_filename:gsub('/', '\\') end
+    for i, buffer in ipairs(_BUFFERS) do
+      if utf8_filename == buffer.filename then view:goto_buffer(i) return end
+    end
+
+    local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
+    local f, err = io.open(filename, 'rb')
+    if not f then error(err) end
+    local text = f:read('*all')
+    f:close()
+    if not text then return end -- filename exists, but cannot read it
+    local buffer = new_buffer()
+    -- Tries to detect character encoding and convert text from it to UTF-8.
+    local encoding, encoding_bom = detect_encoding(text)
+    if encoding ~= 'binary' then
+      if encoding then
+        if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
+        text = text:iconv('UTF-8', encoding)
+      else
+        -- Try list of encodings.
+        for _, try_encoding in ipairs(try_encodings) do
+          local ok, conv = pcall(string.iconv, text, 'UTF-8', try_encoding)
+          if ok then encoding, text = try_encoding, conv break end
+        end
+        if not encoding then error(L('Encoding conversion failed.')) end
+      end
+    else
+      encoding = nil
+    end
+    local c = _SCINTILLA.constants
+    buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
+    buffer.code_page = encoding and c.SC_CP_UTF8 or 0
+    -- Tries to set the buffer's EOL mode appropriately based on the file.
+    local s, e = text:find('\r\n?')
+    if s and e then
+      buffer.eol_mode = (s == e and c.SC_EOL_CR or c.SC_EOL_CRLF)
+    else
+      buffer.eol_mode = c.SC_EOL_LF
+    end
+    buffer:add_text(text, #text)
+    buffer:goto_pos(0)
+    buffer:empty_undo_buffer()
+    buffer.modification_time = lfs.attributes(filename).modification
+    buffer.filename = utf8_filename
+    buffer:set_save_point()
+    events.emit(events.FILE_OPENED, utf8_filename)
+
+    -- Add file to recent files list, eliminating duplicates.
+    for i, file in ipairs(recent_files) do
+      if file == utf8_filename then table.remove(recent_files, i) break end
+    end
+    table.insert(recent_files, 1, utf8_filename)
+  end
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
@@ -231,8 +211,7 @@ local function save(buffer)
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
   local text = buffer:get_text(buffer.length)
   if buffer.encoding then
-    local bom = buffer.encoding_bom or ''
-    text = bom..text:iconv(buffer.encoding, 'UTF-8')
+    text = (buffer.encoding_bom or '')..text:iconv(buffer.encoding, 'UTF-8')
   end
   local filename = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local f, err = io.open(filename, 'wb')
@@ -282,16 +261,14 @@ end
 local function close(buffer)
   if not buffer then buffer = _G.buffer end
   buffer:check_global()
-  if buffer.dirty and
-     gui.dialog('msgbox',
-                '--title', L('Close without saving?'),
-                '--text', L('There are unsaved changes in'),
-                '--informative-text',
-                string.format('%s', (buffer.filename or
-                              buffer._type or L('Untitled'))),
-                '--button1', 'gtk-cancel',
-                '--button2', L('Close _without saving'),
-                '--no-newline') ~= '2' then
+  local filename = buffer.filename or buffer._type or L('Untitled')
+  if buffer.dirty and gui.dialog('msgbox',
+                                 '--title', L('Close without saving?'),
+                                 '--text', L('There are unsaved changes in'),
+                                 '--informative-text', filename,
+                                 '--button1', 'gtk-cancel',
+                                 '--button2', L('Close _without saving'),
+                                 '--no-newline') ~= '2' then
     return false
   end
   buffer:delete()
@@ -327,8 +304,8 @@ local function update_modified_file()
                   '--title', L('Reload?'),
                   '--text', L('Reload modified file?'),
                   '--informative-text',
-                  string.format('"%s"\n%s', utf8_filename,
-                                L('has been modified. Reload it?')),
+                  ('"%s"\n%s'):format(utf8_filename,
+                                      L('has been modified. Reload it?')),
                   '--no-cancel',
                   '--no-newline') == '1' then
       buffer:reload()

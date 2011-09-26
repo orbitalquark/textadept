@@ -238,8 +238,7 @@ local function replace(rtext)
   local captures = find.captures
   if captures then
     for i = 1, #captures do
-      local v = captures[i]:gsub('%%', '%%%%') -- escape '%' for gsub
-      rtext = rtext:gsub('%%'..i, v)
+      rtext = rtext:gsub('%%'..i, captures[i]:gsub('%%', '%%%%'))
     end
   end
   local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', run)
@@ -301,6 +300,7 @@ local function replace_all(ftext, rtext, flags)
 end
 events.connect(events.REPLACE_ALL, replace_all)
 
+-- TODO: refactor?
 -- When the user double-clicks a found file, go to the line in the file the text
 -- was found at.
 -- @param pos The position of the caret.
@@ -354,10 +354,8 @@ function find.goto_file_in_list(next)
             line = line + (next and 1 or -1)
             if line > buffer.line_count - 1 then line = 0 end
             if line < 0 then line = buffer.line_count - 1 end
-            if line == orig_line then -- prevent infinite loops
-              gui.goto_view(orig_view)
-              return
-            end
+            -- Prevent infinite loops.
+            if line == orig_line then gui.goto_view(orig_view) return end
             if buffer:get_line(line):match('^(.+):(%d+):.+$') then
               buffer:goto_line(line)
               goto_file(buffer.current_pos, line)
@@ -371,5 +369,6 @@ function find.goto_file_in_list(next)
 end
 
 if buffer then buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end
-events.connect(events.VIEW_NEW,
-  function() buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end)
+events.connect(events.VIEW_NEW, function()
+  buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR)
+end)

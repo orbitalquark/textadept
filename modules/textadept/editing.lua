@@ -199,8 +199,7 @@ function autocomplete_word(word_chars)
     local s, e = buffer_text:find(patt, match_pos + 1)
     local match = buffer_text:sub(s, e)
     if not completions[match] and #match > #root then
-      c_list[#c_list + 1] = match
-      completions[match] = true
+      c_list[#c_list + 1], completions[match] = match, true
     end
     buffer.target_start, buffer.target_end = match_pos + 1, buffer.length
     match_pos = buffer:search_in_target(root)
@@ -277,12 +276,10 @@ function prepare_for_save()
   local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
-  local line_end_position = buffer.line_end_position
-  local char_at = buffer.char_at
+  local line_end_position, char_at = buffer.line_end_position, buffer.char_at
   local lines = buffer.line_count
   for line = 0, lines - 1 do
-    local s = buffer:position_from_line(line)
-    local e = line_end_position[line]
+    local s, e = buffer:position_from_line(line), line_end_position[line]
     local i = e - 1
     local c = char_at[i]
     while i >= s and c == 9 or c == 32 do
@@ -312,9 +309,8 @@ events.connect(events.FILE_BEFORE_SAVE, prepare_for_save)
 --   is deleted.
 function current_word(action)
   local buffer = buffer
-  local s = buffer:word_start_position(buffer.current_pos)
-  local e = buffer:word_end_position(buffer.current_pos)
-  buffer:set_sel(s, e)
+  buffer:set_sel(buffer:word_start_position(buffer.current_pos),
+                 buffer:word_end_position(buffer.current_pos))
   if action == 'delete' then buffer:delete_back() end
 end
 
@@ -478,8 +474,9 @@ local function clear_highlighted_words()
   buffer.indicator_current = INDIC_HIGHLIGHT
   buffer:indicator_clear_range(0, buffer.length)
 end
-events.connect(events.KEYPRESS,
-  function(code) if K[code] == 'esc' then clear_highlighted_words() end end)
+events.connect(events.KEYPRESS, function(code)
+  if K[code] == 'esc' then clear_highlighted_words() end
+end)
 
 ---
 -- Highlights all occurances of the word under the caret and adds markers to the
