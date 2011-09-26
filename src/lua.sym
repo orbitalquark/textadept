@@ -122,3 +122,5 @@ luaopen_os
 luaopen_package
 luaopen_string
 luaopen_table
+luaopen_lfs
+luaopen_lpeg
