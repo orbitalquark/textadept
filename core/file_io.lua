@@ -162,6 +162,7 @@ function open_file(utf8_filenames)
       if file == utf8_filename then table.remove(recent_files, i) break end
     end
     table.insert(recent_files, 1, utf8_filename)
+    lfs.chdir(utf8_filename:iconv('UTF-8', _CHARSET):match('.+[/\\]'))
   end
 end
 
@@ -241,6 +242,7 @@ local function save_as(buffer, utf8_filename)
     buffer.filename = utf8_filename
     buffer:save()
     events.emit(events.FILE_SAVED_AS, utf8_filename)
+    lfs.chdir(utf8_filename:iconv('UTF-8', _CHARSET):match('.+[/\\]'))
   end
 end
 
