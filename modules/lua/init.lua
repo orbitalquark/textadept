@@ -150,25 +150,22 @@ function goto_required()
   end
 end
 
-events.connect(events.FILE_AFTER_SAVE,
-  function() -- show syntax errors as annotations
-    if buffer:get_lexer() == 'lua' then
-      local buffer = buffer
-      buffer:annotation_clear_all()
-      local text = buffer:get_text()
-      text = text:gsub('^#![^\n]+', '') -- ignore shebang line
-      local _, err = loadstring(text)
-      if err then
-        local line, msg = err:match('^.-:(%d+):%s*(.+)$')
-        if line then
-          buffer.annotation_visible = 2
-          buffer:annotation_set_text(line - 1, msg)
-          buffer.annotation_style[line - 1] = 8 -- error style number
-          buffer:goto_line(line - 1)
-        end
-      end
-    end
-  end)
+-- Show syntax errors as annotations.
+events.connect(events.FILE_AFTER_SAVE, function()
+  if buffer:get_lexer() ~= 'lua' then return end
+  local buffer = buffer
+  buffer:annotation_clear_all()
+  local text = buffer:get_text():gsub('^#![^\n]+', '') -- ignore shebang line
+  local f, err = loadstring(text)
+  if f then return end
+  local line, msg = err:match('^.-:(%d+):%s*(.+)$')
+  if line then
+    buffer.annotation_visible = 2
+    buffer:annotation_set_text(line - 1, msg)
+    buffer.annotation_style[line - 1] = 8 -- error style number
+    buffer:goto_line(line - 1)
+  end
+end)
 
 ---
 -- Container for Lua-specific key commands.

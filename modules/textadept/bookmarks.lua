@@ -86,5 +86,6 @@ function goto()
 end
 
 if buffer then buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end
-events.connect(events.VIEW_NEW,
-  function() buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end)
+events.connect(events.VIEW_NEW, function()
+  buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR)
+end)

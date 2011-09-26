@@ -167,8 +167,8 @@ local function run_command(command, command_type)
       end
     end
   end
-  local _, ret = xpcall(function() return f(unpack(args, 2)) end, error)
-  return ret
+  local _, result = xpcall(function() return f(unpack(args, 2)) end, error)
+  return result
 end
 _M.run_command = run_command -- export for menu.lua without creating LuaDoc
 
@@ -276,10 +276,7 @@ local function get_gdk_key(key_seq)
   local byte = string_byte(key)
   if #key > 1 or byte < 32 then
     for i, s in pairs(KEYSYMS) do
-      if s == key and i ~= 0xFE20 then
-        byte = i
-        break
-      end
+      if s == key and i ~= 0xFE20 then byte = i break end
     end
   end
   return byte, modifiers

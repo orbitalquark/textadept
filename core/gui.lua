@@ -3,36 +3,21 @@
 local L = locale.localize
 local gui = gui
 
--- TODO:
--- @param buffer_type
--- @param ...
+-- LuaDoc is in core/.gui.luadoc.
 local function _print(buffer_type, ...)
   if buffer._type ~= buffer_type then
-    -- Try to find a message buffer to print to. Otherwise create one.
-    local message_buffer, message_view
-    for _, buffer in ipairs(_BUFFERS) do
-      if buffer._type == buffer_type then
-        message_buffer = buffer
-        for _, view in ipairs(_VIEWS) do
-          if view.buffer == message_buffer then
-            message_view = view
-            break
-          end
-        end
-        break
-      end
+    for i, view in ipairs(_VIEWS) do
+      if view.buffer._type == buffer_type then gui.goto_view(i) break end
     end
-    if not message_view then
-      local _, message_view = view:split()
-      if not message_buffer then
-        message_buffer = new_buffer()
-        message_buffer._type = buffer_type
-        events.emit(events.FILE_OPENED)
-      else
-        message_view:goto_buffer(_BUFFERS[message_buffer])
+    if view.buffer._type ~= buffer_type then
+      view:split()
+      for i, buffer in ipairs(_BUFFERS) do
+        if buffer._type == buffer_type then view:goto_buffer(i) break end
       end
-    else
-      gui.goto_view(_VIEWS[message_view])
+      if buffer._type ~= buffer_type then
+        new_buffer()._type = buffer_type
+        events.emit(events.FILE_OPENED)
+      end
     end
   end
   local args, n = {...}, select('#', ...)
@@ -107,39 +92,37 @@ connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
+local function set_properties()
+  local buffer = buffer
+  -- Lexer.
+  buffer:set_lexer_language('lpeg')
+  buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
+  buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
+  buffer:private_lexer_call(SETLEXERLANGUAGE, 'container')
+  buffer.style_bits = 8
+  -- Properties.
+  buffer.property['textadept.home'] = _HOME
+  buffer.property['lexer.lpeg.home'] = _LEXERPATH
+  buffer.property['lexer.lpeg.script'] = _HOME..'/lexers/lexer.lua'
+  if _THEME and #_THEME > 0 then
+    buffer.property['lexer.lpeg.color.theme'] = _THEME..'/lexer.lua'
+  end
+  -- Buffer.
+  buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
+  -- Load theme.
+  if _THEME and #_THEME > 0 then
+    local ok, err = pcall(dofile, _THEME..'/buffer.lua')
+    if not ok then io.stderr:write(err) end
+  end
+end
+
 -- Sets default properties for a Scintilla document.
 connect(events.BUFFER_NEW, function()
-  local function run()
-    local buffer = buffer
-
-    -- Lexer.
-    buffer:set_lexer_language('lpeg')
-    buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
-    buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-    buffer:private_lexer_call(SETLEXERLANGUAGE, 'container')
-    buffer.style_bits = 8
-
-    -- Properties.
-    buffer.property['textadept.home'] = _HOME
-    buffer.property['lexer.lpeg.home'] = _LEXERPATH
-    buffer.property['lexer.lpeg.script'] = _HOME..'/lexers/lexer.lua'
-    if _THEME and #_THEME > 0 then
-      buffer.property['lexer.lpeg.color.theme'] = _THEME..'/lexer.lua'
-    end
-
-    -- Buffer.
-    buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
-
-    if _THEME and #_THEME > 0 then
-      local ok, err = pcall(dofile, _THEME..'/buffer.lua')
-      if not ok then io.stderr:write(err) end
-    end
-  end
   -- Normally when an error occurs, a new buffer is created with the error
   -- message, but if an error occurs here, this event would be called again and
   -- again, erroring each time resulting in an infinite loop; print error to
   -- stderr instead.
-  local ok, err = pcall(run)
+  local ok, err = pcall(set_properties)
   if not ok then io.stderr:write(err) end
 end)
 connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
@@ -259,15 +242,13 @@ connect(events.QUIT, function()
       list[#list + 1] = buffer.filename or buffer._type or L('Untitled')
     end
   end
-  if #list > 0 and
-     gui.dialog('msgbox',
-                '--title', L('Quit without saving?'),
-                '--text', L('The following buffers are unsaved:'),
-                '--informative-text',
-                string.format('%s', table.concat(list, '\n')),
-                '--button1', 'gtk-cancel',
-                '--button2', L('Quit _without saving'),
-                '--no-newline') ~= '2' then
+  if #list > 0 and gui.dialog('msgbox',
+                              '--title', L('Quit without saving?'),
+                              '--text', L('The following buffers are unsaved:'),
+                              '--informative-text', table.concat(list, '\n'),
+                              '--button1', 'gtk-cancel',
+                              '--button2', L('Quit _without saving'),
+                              '--no-newline') ~= '2' then
     return false
   end
   return true

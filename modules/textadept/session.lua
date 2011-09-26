@@ -33,10 +33,7 @@ MAX_RECENT_FILES = 10
 function load(filename)
   local not_found = {}
   local f = io.open(filename or DEFAULT_SESSION, 'rb')
-  if not f then
-    io.close_all()
-    return false
-  end
+  if not f then io.close_all() return false end
   local current_view, splits = 1, { [0] = {} }
   local lfs_attributes = lfs.attributes
   for line in f:lines() do
@@ -50,8 +47,7 @@ function load(filename)
           not_found[#not_found + 1] = filename
         end
       else
-        new_buffer()
-        buffer._type = filename
+        new_buffer()._type = filename
         events.emit(events.FILE_OPENED, filename)
       end
       -- Restore saved buffer selection and view.
@@ -62,7 +58,7 @@ function load(filename)
       buffer._anchor, buffer._current_pos = anchor, current_pos
       buffer._first_visible_line = first_visible_line
       buffer:line_scroll(0,
-        buffer:visible_from_doc_line(first_visible_line))
+             buffer:visible_from_doc_line(first_visible_line))
       buffer:set_sel(anchor, current_pos)
     elseif line:find('^%s*split%d:') then
       local level, num, type, size =
@@ -77,8 +73,7 @@ function load(filename)
       if buf_idx > #_BUFFERS then buf_idx = #_BUFFERS end
       view:goto_buffer(buf_idx)
     elseif line:find('^current_view:') then
-      local view_idx = line:match('^current_view: (%d+)')
-      current_view = tonumber(view_idx) or 1
+      current_view = tonumber(line:match('^current_view: (%d+)')) or 1
     elseif line:find('^size:') then
       local width, height = line:match('^size: (%d+) (%d+)$')
       if width and height then gui.size = { width, height } end
@@ -97,8 +92,7 @@ function load(filename)
     gui.dialog('msgbox',
                '--title', L('Session Files Not Found'),
                '--text', L('The following session files were not found'),
-               '--informative-text',
-               string.format('%s', table.concat(not_found, '\n')))
+               '--informative-text', table.concat(not_found, '\n'))
   end
   return true
 end
