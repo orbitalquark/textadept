@@ -23,6 +23,7 @@
 * [LuaDoc](../index.html)
 * [Download](http://code.google.com/p/textadept/downloads/list) |
   [Hg](http://code.google.com/p/textadept/source/browse)
+* [Language Modules](https://bitbucket.org/mitchell)
 * [Mailing List](http://groups.google.com/group/textadept)
 * [Wiki](http://caladbolg.net/textadeptwiki)
 * [Bug Tracker](http://code.google.com/p/textadept/issues/list)
