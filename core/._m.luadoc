@@ -71,6 +71,19 @@ module('_m')
 --       buffer.indent = 2
 --     end
 --
+-- #### Context Menu (Optional)
+--
+-- Language-specific context menus, accessible by right-clicking inside the
+-- view, can be defined as:
+--
+--     context_menu = {
+--       { 'label1', action1 },
+--       { 'label2', action2 },
+--       ...
+--     }
+--
+-- See `modules/textadept/menu.lua` for examples on how to define menus.
+--
 -- ## Modules and Key Commands
 --
 -- When assigning [key commands](../modules/_m.textadept.keys.html) to module
