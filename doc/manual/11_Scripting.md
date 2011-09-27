@@ -15,6 +15,17 @@ Textadept's API is heavily documented. The [LuaDoc](../index.html) is the
 ultimate resource on scripting Textadept. There are of course abundant scripting
 examples since Textadept is mostly written in Lua.
 
+## Lua Configuration
+
+[Lua 5.1](http://www.lua.org/manual/5.1/) is built into Textadept. It has the
+same configuration (`luaconf.h`) as vanilla Lua with the following exceptions:
+
+* `TA_LUA_PATH` and `TA_LUA_CPATH` are the environment variable used in place of
+  the usual `LUA_PATH` and `LUA_CPATH`.
+* `LUA_ROOT` is `/usr/` in Linux systems instead of `/usr/local/`.
+* The `LUA_COMPAT_VARARG`, `LUA_COMPAT_MOD`, `LUA_COMPAT_GFIND`, and
+  `LUA_COMPAT_OPENLIB` compatibility flags for Lua 5.0 are turned off.
+
 ## Scintilla
 
 The editing component used by Textadept is [Scintilla](http://scintilla.org).

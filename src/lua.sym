@@ -21,7 +21,6 @@ luaL_loadfile
 luaL_loadstring
 luaL_newmetatable
 luaL_newstate
-luaL_openlib
 luaL_openlibs
 luaL_optinteger
 luaL_optlstring
