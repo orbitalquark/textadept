@@ -78,6 +78,11 @@ indentation size. See the module's Lua code for these settings. If you wish to
 change them or use different settings, see the
 [Customizing Modules](#customizing_modules) section below.
 
+#### Context Menu
+
+Some language-specific modules add extra actions to the context menu.
+Right-click inside the view to bring up this menu.
+
 ## Getting Modules
 
 The officially supported language modules are hosted on

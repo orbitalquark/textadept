@@ -238,18 +238,25 @@ local contextmenu_actions = {}
 -- Creates a menu suitable for gui.gtkmenu from the menu table format.
 -- Also assigns key commands.
 -- @param menu The menu to create a gtkmenu from.
+-- @param contextmenu Flag indicating whether or not the menu is a context menu.
+--   If so, menu_id offset is 1000. Defaults to false.
 -- @return gtkmenu that can be passed to gui.gtkmenu.
-local function read_menu_table(menu)
+local function read_menu_table(menu, contextmenu)
   local gtkmenu = {}
   gtkmenu.title = menu.title
   for _, menuitem in ipairs(menu) do
     if menuitem.title then
-      gtkmenu[#gtkmenu + 1] = read_menu_table(menuitem)
+      gtkmenu[#gtkmenu + 1] = read_menu_table(menuitem, contextmenu)
     else
-      local label, f, menu_id = menuitem[1], menuitem[2], #menu_actions + 1
+      local label, f = menuitem[1], menuitem[2]
+      local menu_id = not contextmenu and #menu_actions + 1 or
+                      #contextmenu_actions + 1000 + 1
       local key, mods = keys.get_gdk_key(key_shortcuts[get_id(f)])
       gtkmenu[#gtkmenu + 1] = { label, menu_id, key, mods }
-      if f then menu_actions[menu_id] = f end
+      if f then
+        local actions = not contextmenu and menu_actions or contextmenu_actions
+        actions[menu_id < 1000 and menu_id or menu_id - 1000] = f
+      end
     end
   end
   return gtkmenu
@@ -276,6 +283,7 @@ function set_menubar(menubar)
   end
   gui.menubar = _menubar
 end
+set_menubar(menubar)
 
 ---
 -- Sets gui.context_menu from the given menu table.
@@ -283,34 +291,12 @@ end
 --   entry is either a submenu or menu text and a function or action table.
 -- @see set_menubar
 function set_contextmenu(menu_table)
-  context_actions = {}
-  local context_menu = {}
-  for menu_id, menuitem in ipairs(menu_table) do
-    context_menu[#context_menu + 1] = { menuitem[1], menu_id + 1000 }
-    if menuitem[2] then context_actions[menu_id] = menuitem[2] end
-  end
-  gui.context_menu = gui.gtkmenu(context_menu)
+  contextmenu_actions = {}
+  gui.context_menu = gui.gtkmenu(read_menu_table(menu_table, true))
 end
-
-set_menubar(menubar)
 set_contextmenu(context_menu)
 
-events.connect(events.MENU_CLICKED, function(menu_id)
-  local action, action_type
-  if menu_id > 1000 then
-    action = context_actions[menu_id - 1000]
-  else
-    action = menu_actions[menu_id]
-  end
-  action_type = type(action)
-  if action_type ~= 'function' and action_type ~= 'table' then
-    error(L('Unknown command:')..' '..tostring(action))
-  end
-  keys.run_command(action, action_type)
-end)
-
 local items, commands
-local columns = { L('Command'), L('Key Command') }
 
 -- Builds the item and commands tables for the filteredlist dialog.
 -- @param menu The menu to read from.
@@ -331,6 +317,7 @@ local function build_command_tables(menu, title, items, commands)
   end
 end
 
+local columns = { L('Command'), L('Key Command') }
 ---
 -- Prompts the user with a filteredlist to run menu commands.
 function select_command()
@@ -345,5 +332,22 @@ function rebuild_command_tables()
   items, commands = {}, {}
   build_command_tables(menubar, nil, items, commands)
 end
-
 rebuild_command_tables()
+
+events.connect(events.MENU_CLICKED, function(menu_id)
+  local actions = menu_id < 1000 and menu_actions or contextmenu_actions
+  local action = actions[menu_id < 1000 and menu_id or menu_id - 1000]
+  if type(action) ~= 'function' and type(action) ~= 'table' then
+    error(L('Unknown command:')..' '..tostring(action))
+  end
+  keys.run_command(action, type(action))
+end)
+
+-- Set a language-specific context menu or the default one.
+local function set_lang_contextmenu()
+  local lang = buffer:get_lexer()
+  set_contextmenu(_m[lang] and _m[lang].context_menu or context_menu)
+end
+events.connect(events.LANGUAGE_MODULE_LOADED, set_lang_contextmenu)
+events.connect(events.BUFFER_AFTER_SWITCH, set_lang_contextmenu)
+events.connect(events.BUFFER_NEW, set_lang_contextmenu)
