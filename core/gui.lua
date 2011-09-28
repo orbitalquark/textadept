@@ -63,6 +63,21 @@ function gui.switch_buffer()
   if i then view:goto_buffer(i + 1) end
 end
 
+-- LuaDoc is in core/.gui.luadoc.
+function gui.goto_file(filename, split, preferred_view)
+  if #_VIEWS == 1 and view.buffer.filename ~= filename and split then
+    view:split()
+  else
+    local other_view = _VIEWS[preferred_view]
+    for i, v in ipairs(_VIEWS) do
+      if v.buffer.filename == filename then gui.goto_view(i) return end
+      if not other_view and v ~= view then other_view = i end
+    end
+    if other_view then gui.goto_view(other_view) end
+  end
+  io.open_file(filename)
+end
+
 local connect = events.connect
 
 -- Sets default properties for a Scintilla window.

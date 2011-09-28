@@ -18,7 +18,7 @@ find.in_files_label_text = L('In files')
 
 local MARK_FIND = _SCINTILLA.next_marker_number()
 local MARK_FIND_COLOR = 0x4D9999
-local prev_view
+local preferred_view
 
 -- Text escape sequences with their associated characters.
 -- @class table
@@ -62,7 +62,7 @@ function find.find_in_files(utf8_dir)
     function search_dir(directory)
       for file in lfs_dir(directory) do
         if not file:find('^%.%.?$') then -- ignore . and ..
-          local path = directory..'/'..file
+          local path = directory..(not WIN32 and '/' or '\\')..file
           local type = lfs_attributes(path, 'mode')
           if type == 'directory' then
             search_dir(path)
@@ -76,9 +76,7 @@ function find.find_in_files(utf8_dir)
     search_dir(dir)
     if #matches == 1 then matches[2] = L('No results found') end
     matches[#matches + 1] = ''
-    if buffer._type ~= L('[Files Found Buffer]') then
-      prev_view = _VIEWS[view]
-    end
+    if buffer._type ~= L('[Files Found Buffer]') then preferred_view = view end
     gui._print(L('[Files Found Buffer]'), table.concat(matches, '\n'))
   end
 end
@@ -300,7 +298,6 @@ local function replace_all(ftext, rtext, flags)
 end
 events.connect(events.REPLACE_ALL, replace_all)
 
--- TODO: refactor?
 -- When the user double-clicks a found file, go to the line in the file the text
 -- was found at.
 -- @param pos The position of the caret.
@@ -314,27 +311,8 @@ local function goto_file(pos, line_num)
       buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR)
       buffer:marker_add(line_num, MARK_FIND)
       buffer:goto_pos(buffer.current_pos)
-      if #_VIEWS == 1 then
-        view:split()
-        prev_view = 2 -- second view
-      else
-        local clicked_view = view
-        if prev_view then gui.goto_view(prev_view) end
-        if buffer._type == L('[Files Found Buffer]') then
-          -- There are at least two find in files views; find one of those views
-          -- that the file was not selected from and focus it.
-          for i, v in ipairs(_VIEWS) do
-            if v ~= clicked_view then
-              prev_view = i
-              gui.goto_view(i)
-              break
-            end
-          end
-        end
-      end
-      io.open_file(file)
-      buffer:ensure_visible_enforce_policy(file_line_num - 1)
-      buffer:goto_line(file_line_num - 1)
+      gui.goto_file(file, true, preferred_view)
+      _m.textadept.editing.goto_line(file_line_num)
     end
   end
 end
