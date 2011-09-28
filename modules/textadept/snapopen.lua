@@ -11,8 +11,9 @@ module('_m.textadept.snapopen', package.seeall)
 --
 -- * `PATHS` [table]: Table of default UTF-8 paths to search.
 -- * `DEFAULT_DEPTH` [number]: Maximum directory depth to search. The default
---   value is 4.
--- * `MAX` [number]: Maximum number of files to list. The default value is 1000.
+--   value is `4`.
+-- * `MAX` [number]: Maximum number of files to list. The default value is
+--   `1000`.
 --
 -- ## Examples
 --
@@ -43,7 +44,7 @@ local DEPTH = DEFAULT_DEPTH
 -- Determines whether or not the given file matches the given filter.
 -- @param file The filename.
 -- @param filter The filter table.
--- @return boolean true or false.
+-- @return boolean `true` or `false`.
 local function exclude(file, filter)
   if not filter then return false end
   local string_match, string_sub = string.match, string.sub
@@ -88,14 +89,14 @@ end
 --   paths to search.
 -- @param filter A filter for files and folders to exclude. The filter may be
 --   a string or table. Each filter is a Lua pattern. Any files matching a
---   filter are excluded. Prefix a pattern with '!' to exclude any files that
+--   filter are excluded. Prefix a pattern with `!` to exclude any files that
 --   do not match the filter. Directories can be excluded by adding filters to
---   a table assigned to a 'folders' key in the filter table. All strings should
+--   a table assigned to a `folders` key in the filter table. All strings should
 --   be UTF-8 encoded.
--- @param exclusive Flag indicating whether or not to exclude PATHS in the
---   search. Defaults to false.
+-- @param exclusive Flag indicating whether or not to exclude `PATHS` in the
+--   search. Defaults to `false`.
 -- @param depth Number of directories to recurse into for finding files.
---   Defaults to DEFAULT_DEPTH.
+--   Defaults to `DEFAULT_DEPTH`.
 -- @usage _m.textadept.snapopen.open()
 -- @usage _m.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)
 -- @usage _m.textadept.snapopen.open(nil, '!%.lua$')

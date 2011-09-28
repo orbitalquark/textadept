@@ -4,7 +4,7 @@
 
 ---
 -- The currently focused view.
--- It also represents the structure of any view table in 'views'.
+-- It also represents the structure of any view table in `_G._VIEWS`.
 module('view')
 
 -- Markdown:
@@ -16,7 +16,7 @@ module('view')
 
 ---
 -- Splits the indexed view vertically or horizontally and focuses the new view.
--- @param vertical Flag indicating a vertical split. Defaults to false for
+-- @param vertical Flag indicating a vertical split. Defaults to `false` for
 --   horizontal.
 -- @return old view and new view tables.
 function view:split(vertical) end
@@ -28,9 +28,9 @@ function view:unsplit() end
 
 ---
 -- Goes to the specified buffer in the indexed view.
--- Activates the 'buffer_*_switch' signals.
--- @param n A relative or absolute buffer index. An absolute index of -1 goes
+-- Generates `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
+-- @param n A relative or absolute buffer index. An absolute index of `-1` goes
 --   to the last buffer.
--- @param relative Flag indicating if n is a relative index or not. Defaults to
---   false.
+-- @param relative Flag indicating if `n` is a relative index or not. Defaults
+--   to `false`.
 function view:goto_buffer(n, relative) end

@@ -116,8 +116,8 @@ local getmetatable = getmetatable
 local error = function(e) events.emit(events.ERROR, e) end
 
 ---
--- Lookup table for key values higher than 255.
--- If a key value given to 'keypress' is higher than 255, this table is used to
+-- Lookup table for key codes higher than 255.
+-- If a key code given to `keypress()` is higher than 255, this table is used to
 -- return a string representation of the key if it exists.
 -- @class table
 -- @name KEYSYMS
@@ -149,9 +149,9 @@ local function clear_key_sequence()
 end
 
 -- Runs a given command.
--- This is also used by menu.lua.
+-- This is also used by `modules/textadept/menu.lua`.
 -- @param command A function or table as described above.
--- @param command_type The type() of command.
+-- @param command_type Equivalent to `type(command)`.
 -- @return the value the command returns.
 local function run_command(command, command_type)
   local f, args = command_type == 'function' and command or command[1], no_args
@@ -172,7 +172,7 @@ local function run_command(command, command_type)
 end
 _M.run_command = run_command -- export for menu.lua without creating LuaDoc
 
--- Return codes for run_key_command().
+-- Return codes for `run_key_command()`.
 local INVALID = -1
 local PROPAGATE = 0
 local CHAIN = 1
@@ -180,7 +180,7 @@ local HALT = 2
 
 -- Runs a key command associated with the current keychain.
 -- @param lexer Optional lexer name for lexer-specific commands.
--- @return INVALID, PROPAGATE, CHAIN, or HALT.
+-- @return `INVALID`, `PROPAGATE`, `CHAIN`, or `HALT`.
 local function run_key_command(lexer)
   local key, key_type = keys, type(keys)
   if lexer and key_type == 'table' and key[lexer] then key = key[lexer] end
@@ -204,13 +204,13 @@ end
 
 -- Handles Textadept keypresses.
 -- It is called every time a key is pressed, and based on lexer, executes a
--- command. The command is looked up in the global 'keys' key command table.
+-- command. The command is looked up in the `_G.keys` table.
 -- @param code The keycode.
 -- @param shift Whether or not the Shift modifier is pressed.
 -- @param control Whether or not the Control modifier is pressed.
 -- @param alt Whether or not the Alt/option modifier is pressed.
 -- @param meta Whether or not the Command modifier on Mac OSX is pressed.
--- @return true to stop handling the key; nil otherwise.
+-- @return `true` to stop handling the key; `nil` otherwise.
 local function keypress(code, shift, control, alt, meta)
   local buffer = buffer
   local key

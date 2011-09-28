@@ -70,7 +70,7 @@ function find_incremental() end
 
 ---
 -- Performs a find in files with the given directory.
--- Use the gui.find fields to set the text to find and find options.
+-- Use the `gui.find` fields to set the text to find and option flags.
 -- @param utf8_dir UTF-8 encoded directory name. If none is provided, the user
 --   is prompted for one.
 function find_in_files(utf8_dir) end

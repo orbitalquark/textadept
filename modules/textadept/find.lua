@@ -88,12 +88,12 @@ end
 -- @param next Flag indicating whether or not the search direction is forward.
 -- @param flags Search flags. This is a number mask of 4 flags: match case (2),
 --   whole word (4), Lua pattern (8), and in files (16) joined with binary OR.
---   If nil, this is determined based on the checkboxes in the find box.
--- @param nowrap Flag indicating whether or not the search won't wrap.
+--   If `nil`, this is determined based on the checkboxes in the find box.
+-- @param nowrap Flag indicating whether or not the search will not wrap.
 -- @param wrapped Utility flag indicating whether or not the search has wrapped
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
--- @return position of the found text or -1
+-- @return position of the found text or `-1`
 local function find_(text, next, flags, nowrap, wrapped)
   if text == '' then return end
   local buffer = buffer
@@ -161,7 +161,7 @@ events.connect(events.FIND, find_)
 
 -- Finds and selects text incrementally in the current buffer from a start
 -- point.
--- Flags other than SCFIND_MATCHCASE are ignored.
+-- Flags other than `SCFIND_MATCHCASE` are ignored.
 -- @param text The text to find.
 local function find_incremental(text)
   local flags = find.match_case and c.SCFIND_MATCHCASE or 0
@@ -206,7 +206,7 @@ local loadstring = loadstring
 local pcall = pcall
 
 -- Runs the given code.
--- This function is passed to string.gsub() in the replace() function.
+-- This function is passed to `string.gsub()` in the `replace()` function.
 -- @param code The code to run.
 local function run(code)
   local ok, val = pcall(loadstring('return '..code))
@@ -222,11 +222,11 @@ local function run(code)
 end
 
 -- Replaces found text.
--- 'find_' is called first, to select any found text. The selected text is then
--- replaced by the specified replacement text.
+-- `find_()` is called first, to select any found text. The selected text is
+-- then replaced by the specified replacement text.
 -- This function ignores 'Find in Files'.
 -- @param rtext The text to replace found text with. It can contain both Lua
---   capture items (%n where 1 <= n <= 9) for Lua pattern searches and %()
+--   capture items (`%n` where 1 <= `n` <= 9) for Lua pattern searches and `%()`
 --   sequences for embedding Lua code for any search.
 -- @see find
 local function replace(rtext)
@@ -259,7 +259,7 @@ events.connect(events.REPLACE, replace)
 -- This function ignores 'Find in Files'.
 -- @param ftext The text to find.
 -- @param rtext The text to replace found text with.
--- @param flags The number mask identical to the one in 'find'.
+-- @param flags The number mask identical to the one in `find_()`.
 -- @see find
 local function replace_all(ftext, rtext, flags)
   if #ftext == 0 then return end

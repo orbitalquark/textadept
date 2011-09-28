@@ -37,7 +37,7 @@ arg = {}
 -- @class table
 -- @name _BUFFERS
 -- @usage _BUFFERS[1] contains the first buffer.
--- @usage _BUFFERS[_BUFFERS[1]] evaluates to 1, the index of the first buffer.
+-- @usage _BUFFERS[buffer] returns the index of the current buffer in _BUFFERS.
 _BUFFERS = {}
 
 ---
@@ -47,42 +47,43 @@ _BUFFERS = {}
 -- @class table
 -- @name _VIEWS
 -- @usage _VIEWS[1] contains the first view.
--- @usage _VIEWS[_VIEWS[1]] evaluates to 1, the index of the first view.
+-- @usage _VIEWS[view] returns the index of the current view in _VIEWS.
 _VIEWS = {}
 
 ---
 -- Creates a new buffer.
--- Activates the 'buffer_new' signal.
+-- Generates a `BUFFER_NEW` event.
 -- @return the new buffer.
 function new_buffer() end
 
 ---
 -- Calls a given function after an interval of time.
--- To repeatedly call the function, return true inside the function. A nil or
--- false return value stops repetition.
+-- To repeatedly call the function, return true inside the function. A `nil` or
+-- `false` return value stops repetition.
 -- @param interval The interval in seconds to call the function after.
 -- @param f The function to call.
--- @param ... Additional arguments to pass to f.
+-- @param ... Additional arguments to pass to `f`.
 function timeout(interval, f, ...) end
 
 ---
 -- Resets the Lua state by reloading all init scripts.
 -- Language-specific modules for opened files are NOT reloaded. Re-opening the
 -- files that use them will reload those modules.
--- This function is useful for modifying init scripts (such as keys.lua) on the
--- fly without having to restart Textadept.
--- A global RESETTING variable is set to true when re-initing the Lua State. Any
--- scripts that need to differentiate between startup and reset can utilize this
+-- This function is useful for modifying init scripts (such as the user's
+-- `modules/textadept/keys.lua`) on the fly without having to restart Textadept.
+-- `_G.RESETTING` is set to `true` when re-initing the Lua State. Any scripts
+-- that need to differentiate between startup and reset can utilize this
 -- variable.
 function reset() end
 
---- Quits Textadept.
+---
+-- Quits Textadept.
 function quit() end
 
 ---
--- Calls 'dofile' on the given filename in the user's Textadept directory.
--- This is typically used for loading user files like key commands or snippets.
+-- Calls `dofile()` on the given filename in the user's Textadept directory.
 -- Errors are printed to the Textadept message buffer.
 -- @param filename The name of the file (not path).
 -- @return true if successful; false otherwise.
+-- @see dofile
 function user_dofile(filename) end

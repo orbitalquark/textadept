@@ -6,7 +6,7 @@ local gui = gui
 
 ---
 -- Provides dynamic menus for Textadept.
--- This module should be 'require'ed last, after _m.textadept.keys since it
+-- This module should be `require`ed last, after `_m.textadept.keys` since it
 -- looks up defined key commands to show them in menus.
 module('_m.textadept.menu', package.seeall)
 
@@ -216,7 +216,7 @@ menubar = {
 }
 
 ---
--- Contains the right-click context menu.
+-- Contains the default right-click context menu.
 -- @class table
 -- @name context_menu
 context_menu = {
@@ -235,12 +235,13 @@ local key_shortcuts = {}
 local menu_actions = {}
 local contextmenu_actions = {}
 
--- Creates a menu suitable for gui.gtkmenu from the menu table format.
+-- Creates a menu suitable for `gui.gtkmenu()` from the menu table format.
 -- Also assigns key commands.
 -- @param menu The menu to create a gtkmenu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu.
---   If so, menu_id offset is 1000. Defaults to false.
--- @return gtkmenu that can be passed to gui.gtkmenu.
+--   If so, menu_id offset is 1000. Defaults to `false`.
+-- @return gtkmenu that can be passed to `gui.gtkmenu()`.
+-- @see gui.gtkmenu
 local function read_menu_table(menu, contextmenu)
   local gtkmenu = {}
   gtkmenu.title = menu.title
@@ -263,14 +264,14 @@ local function read_menu_table(menu, contextmenu)
 end
 
 ---
--- Sets gui.menubar from the given table of menus.
+-- Sets `gui.menubar` from the given table of menus.
 -- @param menubar The table of menus to create the menubar from. Each table
 --   entry is another table that corresponds to a particular menu. A menu can
---   have a 'title' key with string value. Each menu item is either a submenu
+--   have a `title` key with string value. Each menu item is either a submenu
 --   (another menu table) or a table consisting of two items: string menu text
 --   and a function or action table just like in `keys`. The table can
 --   optionally contain 2 more number values: a GDK keycode and modifier mask
---   for setting a menu accelerator. If the menu text is 'separator', a menu
+--   for setting a menu accelerator. If the menu text is `'separator'`, a menu
 --   separator is created and no action table is required.
 -- @see keys.get_gdk_key
 function set_menubar(menubar)
@@ -286,7 +287,7 @@ end
 set_menubar(menubar)
 
 ---
--- Sets gui.context_menu from the given menu table.
+-- Sets `gui.context_menu` from the given menu table.
 -- @param menu_table The menu table to create the context menu from. Each table
 --   entry is either a submenu or menu text and a function or action table.
 -- @see set_menubar
@@ -326,8 +327,8 @@ function select_command()
 end
 
 ---
--- Rebuilds the tables used by select_command().
--- This should be called every time set_menubar() is called.
+-- Rebuilds the tables used by `select_command()`.
+-- This should be called every time `set_menubar()` is called.
 function rebuild_command_tables()
   items, commands = {}, {}
   build_command_tables(menubar, nil, items, commands)

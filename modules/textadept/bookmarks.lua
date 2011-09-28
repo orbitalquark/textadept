@@ -10,7 +10,7 @@ module('_m.textadept.bookmarks', package.seeall)
 -- ## Settings
 --
 -- * `MARK_BOOKMARK_COLOR` [number]: The color used for a bookmarked line in
---   0xBBGGRR format.
+--   `0xBBGGRR` format.
 
 -- settings
 MARK_BOOKMARK_COLOR = 0xC08040
