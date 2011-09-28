@@ -345,10 +345,11 @@ events.connect(events.MENU_CLICKED, function(menu_id)
 end)
 
 -- Set a language-specific context menu or the default one.
-local function set_lang_contextmenu()
+local function set_language_contextmenu()
   local lang = buffer:get_lexer()
   set_contextmenu(_m[lang] and _m[lang].context_menu or context_menu)
 end
-events.connect(events.LANGUAGE_MODULE_LOADED, set_lang_contextmenu)
-events.connect(events.BUFFER_AFTER_SWITCH, set_lang_contextmenu)
+events.connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
+events.connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
+events.connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
 events.connect(events.BUFFER_NEW, set_lang_contextmenu)
