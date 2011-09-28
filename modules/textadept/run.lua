@@ -135,24 +135,26 @@ error_detail = {}
 -- @param line_num The line double-clicked.
 -- @see error_detail
 function goto_error(pos, line_num)
-  local type = buffer._type
-  if type == L('[Message Buffer]') or type == L('[Error Buffer]') then
-    line = buffer:get_line(line_num)
-    for _, error_detail in pairs(error_detail) do
-      local captures = { line:match(error_detail.pattern) }
-      if #captures > 0 then
-        local utf8_filename = captures[error_detail.filename]
-        local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
-        if lfs.attributes(filename) then
-          io.open_file(utf8_filename)
-          _m.textadept.editing.goto_line(captures[error_detail.line])
-          local msg = captures[error_detail.message]
-          if msg then buffer:call_tip_show(buffer.current_pos, msg) end
-        else
-          error(string.format('"%s" %s', utf8_filename, L('does not exist')))
-        end
-        break
+  if buffer._type ~= L('[Message Buffer]') and
+     buffer._type ~= L('[Error Buffer]') then
+    return
+  end
+  local buffer = buffer
+  line = buffer:get_line(line_num)
+  for _, error_detail in pairs(error_detail) do
+    local captures = { line:match(error_detail.pattern) }
+    if #captures > 0 then
+      local utf8_filename = captures[error_detail.filename]
+      local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
+      if lfs.attributes(filename) then
+        gui.goto_file(utf8_filename, true)
+        _m.textadept.editing.goto_line(captures[error_detail.line])
+        local msg = captures[error_detail.message]
+        if msg then buffer:call_tip_show(buffer.current_pos, msg) end
+      else
+        error(string.format('"%s" %s', utf8_filename, L('does not exist')))
       end
+      return
     end
   end
 end

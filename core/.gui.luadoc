@@ -26,6 +26,18 @@ module('gui')
 function goto_view(n, relative) end
 
 ---
+-- Goes to the buffer with the given filename.
+-- If the desired buffer is open in a view, goes to that view. Otherwise, opens
+-- the buffer in either the `preferred_view` if given, the first view that is
+-- not the current one, a split view if `split` is `true`, or the current view.
+-- @param filename The filename of the buffer to go to.
+-- @param split If there is only one view, split it and open the buffer in the
+--   other view.
+-- @param preferred_view When multiple views exist and the desired buffer is not
+--   open in any of them, open it in this one.
+function goto_file(filename, split, preferred_view) end
+
+---
 -- Gets the current split view structure.
 -- @return table of split views. Each split view entry is a table with 4
 --   fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either
