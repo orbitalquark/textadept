@@ -717,7 +717,14 @@ _insert	_	0;"	f	class:_m.textadept.snippets
 _m	_	0;"	m	
 _m	_	0;"	t	
 _m.cpp	_	0;"	m	
+_m.css	_	0;"	m	
+_m.hypertext	_	0;"	m	
+_m.java	_	0;"	m	
 _m.lua	_	0;"	m	
+_m.php	_	0;"	m	
+_m.rails	_	0;"	m	
+_m.rhtml	_	0;"	m	
+_m.ruby	_	0;"	m	
 _m.textadept	_	0;"	m	
 _m.textadept.adeptsense	_	0;"	m	
 _m.textadept.bookmarks	_	0;"	m	
@@ -884,6 +891,7 @@ context_menu	_	0;"	t	class:_m.textadept.menu
 contracted_fold_next	_	0;"	f	class:buffer
 control_char_symbol	_	0;"	F	class:buffer
 control_structure_patterns	_	0;"	t	class:_m.lua
+control_structure_patterns	_	0;"	t	class:_m.ruby
 convert_eo_ls	_	0;"	f	class:buffer
 convert_indentation	_	0;"	f	class:_m.textadept.editing
 copy	_	0;"	f	class:buffer
@@ -899,6 +907,9 @@ cpp	_	0;"	t	class:_m
 cpp	_	0;"	t	class:keys
 cpp	_	0;"	t	class:snippets
 create	_	0;"	f	class:coroutine
+css	_	0;"	t	class:_m
+css	_	0;"	t	class:keys
+css	_	0;"	t	class:snippets
 ctags_kinds	_	0;"	t	class:_m.textadept.adeptsense
 current_pos	_	0;"	F	class:buffer
 current_word	_	0;"	f	class:_m.textadept.editing
@@ -1040,6 +1051,7 @@ goto	_	0;"	f	class:_m.textadept.bookmarks
 goto_buffer	_	0;"	f	class:view
 goto_ctag	_	0;"	f	class:_m.textadept.adeptsense
 goto_error	_	0;"	f	class:_m.textadept.run
+goto_file	_	0;"	f	class:gui
 goto_file_in_list	_	0;"	f	class:gui.find
 goto_line	_	0;"	f	class:_m.textadept.editing
 goto_line	_	0;"	f	class:buffer
@@ -1047,6 +1059,8 @@ goto_next	_	0;"	f	class:_m.textadept.bookmarks
 goto_pos	_	0;"	f	class:buffer
 goto_prev	_	0;"	f	class:_m.textadept.bookmarks
 goto_required	_	0;"	f	class:_m.lua
+goto_required	_	0;"	f	class:_m.php
+goto_required	_	0;"	f	class:_m.ruby
 goto_view	_	0;"	f	class:gui
 grab_focus	_	0;"	f	class:buffer
 graph	_	0;"	F	class:lexer
@@ -1078,6 +1092,9 @@ home_wrap_extend	_	0;"	f	class:buffer
 hotspot_active_underline	_	0;"	F	class:buffer
 hotspot_single_line	_	0;"	F	class:buffer
 huge	_	0;"	F	class:math
+hypertext	_	0;"	t	class:_m
+hypertext	_	0;"	t	class:keys
+hypertext	_	0;"	t	class:snippets
 iconv	_	0;"	f	class:string
 in_files	_	0;"	F	class:gui.find
 in_files_label_text	_	0;"	F	class:gui.find
@@ -1104,6 +1121,9 @@ integer	_	0;"	F	class:lexer
 io	_	0;"	m	
 io	_	0;"	t	
 ipairs	_	0;"	f	
+java	_	0;"	t	class:_m
+java	_	0;"	t	class:keys
+java	_	0;"	t	class:snippets
 join_lines	_	0;"	f	class:_m.textadept.editing
 keys	_	0;"	m	
 keys	_	0;"	t	
@@ -1158,6 +1178,7 @@ load	_	0;"	f
 load	_	0;"	f	class:_m.textadept.session
 load	_	0;"	f	class:lexer
 load_ctags	_	0;"	f	class:_m.textadept.adeptsense
+load_project	_	0;"	f	class:_m.rails
 loaded	_	0;"	F	class:package
 loaders	_	0;"	F	class:package
 loadfile	_	0;"	f	
@@ -1278,6 +1299,9 @@ paste	_	0;"	f	class:buffer
 path	_	0;"	F	class:package
 patterns	_	0;"	t	class:_m.textadept.mime_types
 pcall	_	0;"	f	
+php	_	0;"	t	class:_m
+php	_	0;"	t	class:keys
+php	_	0;"	t	class:snippets
 pi	_	0;"	F	class:math
 point_x_from_position	_	0;"	f	class:buffer
 point_y_from_position	_	0;"	f	class:buffer
@@ -1308,6 +1332,9 @@ punct	_	0;"	F	class:lexer
 purple	_	0;"	F	class:lexer.colors
 quit	_	0;"	f	
 rad	_	0;"	f	class:math
+rails	_	0;"	t	class:_m
+rails	_	0;"	t	class:keys
+rails	_	0;"	t	class:snippets
 random	_	0;"	f	class:math
 randomseed	_	0;"	f	class:math
 rawequal	_	0;"	f	
@@ -1349,8 +1376,14 @@ resume	_	0;"	f	class:coroutine
 reverse	_	0;"	f	class:string
 rgba_image_height	_	0;"	F	class:buffer
 rgba_image_width	_	0;"	F	class:buffer
+rhtml	_	0;"	t	class:_m
+rhtml	_	0;"	t	class:keys
+rhtml	_	0;"	t	class:snippets
 rmdir	_	0;"	f	class:lfs
 rotate_selection	_	0;"	f	class:buffer
+ruby	_	0;"	t	class:_m
+ruby	_	0;"	t	class:keys
+ruby	_	0;"	t	class:snippets
 run	_	0;"	f	class:_m.textadept.run
 run	_	0;"	t	class:_m.textadept
 run_command	_	0;"	t	class:_m.textadept.run
@@ -1396,10 +1429,22 @@ selection_start	_	0;"	F	class:buffer
 selections	_	0;"	F	class:buffer
 self	_	0;"	F	class:_m.textadept.adeptsense.syntax
 sense	_	0;"	F	class:_m.cpp
+sense	_	0;"	F	class:_m.css
+sense	_	0;"	F	class:_m.hypertext
+sense	_	0;"	F	class:_m.java
 sense	_	0;"	F	class:_m.lua
+sense	_	0;"	F	class:_m.php
+sense	_	0;"	F	class:_m.rails
+sense	_	0;"	F	class:_m.rhtml
+sense	_	0;"	F	class:_m.ruby
 session	_	0;"	t	class:_m.textadept
 set_buffer_properties	_	0;"	f	class:_m.cpp
+set_buffer_properties	_	0;"	f	class:_m.css
+set_buffer_properties	_	0;"	f	class:_m.hypertext
+set_buffer_properties	_	0;"	f	class:_m.java
 set_buffer_properties	_	0;"	f	class:_m.lua
+set_buffer_properties	_	0;"	f	class:_m.php
+set_buffer_properties	_	0;"	f	class:_m.ruby
 set_chars_default	_	0;"	f	class:buffer
 set_contextmenu	_	0;"	f	class:_m.textadept.menu
 set_empty_selection	_	0;"	f	class:buffer
@@ -1441,6 +1486,7 @@ show_apidoc	_	0;"	f	class:_m.textadept.adeptsense
 show_documentation	_	0;"	f	class:_m.textadept.adeptsense
 show_lines	_	0;"	f	class:buffer
 sin	_	0;"	f	class:math
+singular	_	0;"	F	class:_m.rails
 sinh	_	0;"	f	class:math
 size	_	0;"	F	class:gui
 size	_	0;"	F	class:view
@@ -1534,6 +1580,7 @@ title	_	0;"	F	class:gui
 tmpfile	_	0;"	f	class:io
 tmpname	_	0;"	f	class:os
 toggle	_	0;"	f	class:_m.textadept.bookmarks
+toggle_block	_	0;"	f	class:_m.ruby
 toggle_caret_sticky	_	0;"	f	class:buffer
 toggle_fold	_	0;"	f	class:buffer
 token	_	0;"	f	class:lexer
@@ -1544,6 +1591,7 @@ traceback	_	0;"	f	class:debug
 transpose_chars	_	0;"	f	class:_m.textadept.editing
 try_encodings	_	0;"	t	class:io
 try_to_autocomplete_end	_	0;"	f	class:_m.lua
+try_to_autocomplete_end	_	0;"	f	class:_m.ruby
 two_phase_draw	_	0;"	F	class:buffer
 type	_	0;"	f	
 type	_	0;"	f	class:io
