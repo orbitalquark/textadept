@@ -142,10 +142,9 @@ end)
 events.connect(events.AUTO_C_SELECTION, function(text, position)
   local buffer = buffer
   local caret = buffer.selection_n_caret[buffer.main_selection]
-  if position ~= caret then text = text:sub(caret - position + 1) end
   buffer:begin_undo_action()
   for i = 0, buffer.selections - 1 do
-    buffer.target_start = buffer.selection_n_anchor[i]
+    buffer.target_start = buffer.selection_n_anchor[i] - (caret - position)
     buffer.target_end = buffer.selection_n_caret[i]
     buffer:replace_target(text)
     buffer.selection_n_anchor[i] = buffer.selection_n_anchor[i] + #text
@@ -215,7 +214,7 @@ function autocomplete_word(word_chars)
     else
       -- Scintilla does not emit AUTO_C_SELECTION in this case. This is
       -- necessary for autocompletion with multiple selections.
-      events.emit(events.AUTO_C_SELECTION, c_list[1]:sub(#root + 1), caret)
+      events.emit(events.AUTO_C_SELECTION, c_list[1], caret - #root)
     end
     return true
   end
