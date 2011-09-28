@@ -120,8 +120,8 @@ module('_m.textadept.snippets', package.seeall)
 -- The stack of currently running snippets.
 local snippet_stack = {}
 
--- Contains newline sequences for buffer.eol_mode.
--- This table is used by new_snippet().
+-- Contains newline sequences for `buffer.eol_mode`.
+-- This table is used by `new_snippet()`.
 -- @class table
 -- @name newlines
 local newlines = { [0] = '\r\n', '\r', '\n' }
@@ -174,7 +174,7 @@ end
 -- Inserts a snippet.
 -- @param text Optional snippet text. If none is specified, the snippet text
 --   is determined from the trigger and lexer.
--- @return false if no snippet was expanded; true otherwise.
+-- @return `false` if no snippet was expanded; `true` otherwise.
 function _insert(text)
   local buffer = buffer
   local trigger
@@ -196,7 +196,7 @@ end
 ---
 -- Goes back to the previous placeholder, reverting any changes from the current
 -- one.
--- @return false if no snippet is active; nil otherwise.
+-- @return `false` if no snippet is active; `nil` otherwise.
 function _previous()
   if #snippet_stack == 0 then return false end
   snippet_stack[#snippet_stack]:previous()
@@ -253,8 +253,8 @@ local escapes = {
 -- @class table
 -- @name _snippet_mt
 _snippet_mt = {
-  -- Gets a snippet's end position in the Scintilla buffer.
-  -- @param snippet The snippet returned by new_snippet().
+  -- Gets a snippet's end position in the buffer.
+  -- @param snippet The snippet returned by `new_snippet()`.
   get_end_position = function(snippet)
     local e = buffer:indicator_end(INDIC_SNIPPET, snippet.start_position + 1)
     if e == 0 then e = snippet.start_position end
@@ -262,7 +262,7 @@ _snippet_mt = {
   end,
 
   -- Gets the text for a snippet.
-  -- @param snippet The snippet returned by new_snippet().
+  -- @param snippet The snippet returned by `new_snippet()`.
   get_text = function(snippet)
     local s, e = snippet.start_position, snippet:get_end_position()
     local ok, text = pcall(buffer.text_range, buffer, s, e)
@@ -270,8 +270,8 @@ _snippet_mt = {
   end,
 
   -- Sets the text for a snippet.
-  -- This text will be displayed immediately in the Scintilla buffer.
-  -- @param snippet The snippet returned by new_snippet().
+  -- This text will be displayed immediately in the buffer.
+  -- @param snippet The snippet returned by `new_snippet()`.
   -- @param text The snippet's text.
   set_text = function(snippet, text)
     local buffer = buffer
@@ -281,25 +281,25 @@ _snippet_mt = {
   end,
 
   -- Returns the escaped form of the snippet's text.
-  -- @param snippet The snippet returned by new_snippet().
+  -- @param snippet The snippet returned by `new_snippet()`.
   -- @see escapes
   get_escaped_text = function(snippet)
     return snippet:get_text():gsub('%%[%%%(%)>%]]', escapes)
   end,
 
   -- Returns the unescaped form of the given text.
-  -- This does the opposite of get_escaped_text() by default. The behaviour is
-  -- slightly different when the 'complete' parameter is true.
+  -- This does the opposite of `get_escaped_text()` by default. The behaviour is
+  -- slightly different when `complete` true.
   -- @param text Text to unescape.
   -- @param complete Flag indicating whether or not to also remove the extra
-  --   escape character '%'. Defaults to false.
+  --   escape character '%'. Defaults to `false`.
   unescape_text = function(text, complete)
     text = text:gsub('\027.', escapes)
     return complete and text:gsub('%%([%%%(%)>%]])', '%1') or text
   end,
 
   -- Executes code in the snippet for the given index.
-  -- @param snippet The snippet returned by new_snippet().
+  -- @param snippet The snippet returned by `new_snippet()`.
   -- @param index Execute code with this index.
   execute_code = function(snippet, index)
     local escaped_text = snippet:get_escaped_text()
@@ -322,7 +322,7 @@ _snippet_mt = {
   end,
 
   -- Goes to the next placeholder in a snippet.
-  -- @param snippet The snippet returned by new_snippet().
+  -- @param snippet The snippet returned by `new_snippet()`.
   next = function(snippet)
     local buffer = buffer
     -- If the snippet was just initialized, determine how many placeholders it
@@ -374,7 +374,7 @@ _snippet_mt = {
   end,
 
   -- Goes to the previous placeholder in a snippet.
-  -- @param snippet The snippet returned by new_snippet().
+  -- @param snippet The snippet returned by `new_snippet()`.
   previous = function(snippet)
     if snippet.index > 2 then
       snippet:set_text(snippet.snapshots[snippet.index - 2])
@@ -386,7 +386,7 @@ _snippet_mt = {
   end,
 
   -- Cancels a snippet.
-  -- @param snippet The snippet returned by new_snippet().
+  -- @param snippet The snippet returned by `new_snippet()`.
   cancel = function(snippet)
     local buffer = buffer
     buffer:set_sel(snippet.start_position, snippet:get_end_position())
@@ -396,8 +396,8 @@ _snippet_mt = {
     snippet_stack[#snippet_stack] = nil
   end,
 
-  -- Finishes a snippet by going to its '%0' placeholder and cleaning up.
-  -- @param snippet The snippet returned by new_snippet().
+  -- Finishes a snippet by going to its `%0` placeholder and cleaning up.
+  -- @param snippet The snippet returned by `new_snippet()`.
   finish = function(snippet)
     local buffer = buffer
     snippet:set_text(snippet.unescape_text(snippet:get_text(), true))
@@ -423,7 +423,7 @@ events.connect(events.VIEW_NEW,
                function() buffer.indic_style[INDIC_SNIPPET] = INDIC_HIDDEN end)
 
 ---
--- Provides access to snippets from _G.
+-- Provides access to snippets from `_G`.
 -- @class table
 -- @name _G.snippets
 _G.snippets = _M

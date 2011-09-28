@@ -15,14 +15,14 @@ module('_m.textadept.run', package.seeall)
 --
 -- * `_G.events.COMPILE_OUTPUT`: Called after a compile command is executed.
 --   When connecting to this event (typically from a language-specific module),
---   connect with an index of 1 and return `true` if the event was handled and
+--   connect with an index of `1` and return `true` if the event was handled and
 --   you want to override the default handler that prints the output to a new
 --   view.<br />
 --       * `lexer`: The lexer language.
 --       * `output`: The output from the command.
 -- * `_G.events.RUN_OUTPUT`: Called after a run command is executed. When
 --   connecting to this event (typically from a language-specific module),
---   connect with an index of 1 and return `true` if the event was handled and
+--   connect with an index of `1` and return `true` if the event was handled and
 --   you want to override the default handler that prints the output to a new
 --   view.<br />
 --       * `lexer`: The lexer language.
@@ -36,10 +36,10 @@ events.RUN_OUTPUT = 'run_output'
 -- Executes the command line parameter and prints the output to Textadept.
 -- @param command The command line string.
 --   It can have the following macros:
---     * %(filepath) The full path of the current file.
---     * %(filedir) The current file's directory path.
---     * %(filename) The name of the file including extension.
---     * %(filename_noext) The name of the file excluding extension.
+--     + `%(filepath)`: The full path of the current file.
+--     + `%(filedir)`: The current file's directory path.
+--     + `%(filename)`: The name of the file including extension.
+--     + `%(filename_noext)`: The name of the file excluding extension.
 function execute(command)
   local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local filedir, filename = '', filepath
@@ -63,7 +63,7 @@ function execute(command)
 end
 
 -- Executes a compile or run command.
--- @param cmd_table Either compile_command or run_command
+-- @param cmd_table Either `compile_command` or `run_command`.
 local function command(cmd_table)
   if not buffer.filename then return end
   buffer:save()
@@ -82,7 +82,7 @@ end
 compile_command = {}
 
 ---
--- Compiles the file as specified by its extension in the compile_command
+-- Compiles the file as specified by its extension in the `compile_command`
 -- table.
 -- @see compile_command
 function compile()
@@ -102,7 +102,7 @@ events.connect(events.COMPILE_OUTPUT,
 run_command = {}
 
 ---
--- Runs/executes the file as specified by its extension in the run_command
+-- Runs/executes the file as specified by its extension in the `run_command`
 -- table.
 -- @see run_command
 function run()
@@ -114,15 +114,15 @@ events.connect(events.RUN_OUTPUT,
 ---
 -- A table of error string details.
 -- Each entry is a table with the following fields:
---   pattern: the Lua pattern that matches a specific error string.
---   filename: the index of the Lua capture that contains the filename the error
---     occured in.
---   line: the index of the Lua capture that contains the line number the error
---     occured on.
---   message: [Optional] the index of the Lua capture that contains the error's
---     message. A call tip will be displayed if a message was captured.
+--   + `pattern`: The Lua pattern that matches a specific error string.
+--   + `filename`: The index of the Lua capture that contains the filename the
+--     error occured in.
+--   + `line`: The index of the Lua capture that contains the line number the
+--     error occured on.
+--   + `message`: [Optional] The index of the Lua capture that contains the
+--     error's message. A call tip will be displayed if a message was captured.
 -- When an error message is double-clicked, the user is taken to the point of
---   error.
+-- error.
 -- This table is usually populated by language-specific modules.
 -- @class table
 -- @name error_detail

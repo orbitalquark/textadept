@@ -1,6 +1,7 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
---- Processes command line arguments for Textadept.
+---
+-- Processes command line arguments for Textadept.
 module('args', package.seeall)
 
 -- Markdown:
@@ -30,9 +31,9 @@ end
 
 ---
 -- Processes command line arguments.
--- Add command line switches with args.register(). Any unrecognized arguments
+-- Add command line switches with `args.register()`. Any unrecognized arguments
 -- are treated as filepaths and opened.
--- Generates an 'arg_none' event when no args are present.
+-- Generates an `'arg_none'` event when no args are present.
 -- @see register
 function process()
   local no_args = true
@@ -71,7 +72,7 @@ if WIN32 and #arg[0] > 0 then
   for i = 1, #params do arg[#arg + 1] = params[i] end
 end
 
--- Set _G._USERHOME.
+-- Set `_G._USERHOME`.
 local userhome = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'
 for i = 1, #arg do
   if (arg[i] == '-u' or arg[i] == '--userhome') and arg[i + 1] then

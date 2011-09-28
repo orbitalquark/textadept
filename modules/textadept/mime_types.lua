@@ -14,7 +14,7 @@ module('_m.textadept.mime_types', package.seeall)
 --
 -- * **buffer:set\_lexer** (language)<br />
 --   Replacement for [`buffer:set_lexer_language()`][buffer_set_lexer_language].
---   <br /> Sets a buffer._lexer field so it can be restored without querying
+--   <br /> Sets a `buffer._lexer` field so it can be restored without querying
 --   the mime-types tables. Also if the user manually sets the lexer, it should
 --   be restored.<br />
 --   Loads the language-specific module if it exists.
@@ -50,7 +50,7 @@ shebangs = {}
 -- @name patterns
 patterns = {}
 
--- Load mime-types from mime_types.conf
+-- Load mime-types from `modules/textadept/mime_types.conf`.
 local mime_types
 local f = io.open(_HOME..'/modules/textadept/mime_types.conf', 'rb')
 if f then
@@ -100,6 +100,14 @@ end
 for lexer in pairs(lexers_found) do lexers[#lexers + 1] = lexer end
 table.sort(lexers)
 
+---
+-- Prompts the user to select a lexer from a filtered list for the current
+-- buffer.
+function select_lexer()
+  local lexer = gui.filteredlist(L('Select Lexer'), 'Name', lexers)
+  if lexer then buffer:set_lexer(lexer) end
+end
+
 -- LuaDoc is in core/.buffer.luadoc.
 local function get_style_name(buffer, style_num)
   buffer:check_global()
@@ -109,7 +117,7 @@ end
 
 -- Contains the whitespace styles for lexers.
 -- These whitespace styles are used to determine the lexer at the current caret
--- position since the styles have the name '[lang]_whitespace'.
+-- position since the styles have the name `[lang]_whitespace`.
 -- @class table
 -- @name ws_styles
 local ws_styles = {}
@@ -130,9 +138,8 @@ local function set_lexer(buffer, lang)
   local module_not_found = "^module '"..lang.."[^\']*' not found:"
   if not ok and not err:find(module_not_found) then error(err) end
   buffer:colourise(0, -1)
+  -- Create the ws_styles[lexer] lookup table for `get_lexer()`.
   if ws_styles[lang] then return end
-
-  -- Create the ws_styles[lexer] lookup table for get_lexer().
   local ws = {}
   for i = 0, 255 do
     ws[i] = buffer:private_lexer_call(i):find('whitespace') ~= nil
@@ -196,11 +203,3 @@ events.connect(events.VIEW_NEW, restore_lexer, 1)
 
 events.connect(events.RESET_AFTER,
                function() buffer:set_lexer(buffer._lexer or 'container') end)
-
----
--- Prompts the user to select a lexer from a filtered list for the current
--- buffer.
-function select_lexer()
-  local lexer = gui.filteredlist(L('Select Lexer'), 'Name', lexers)
-  if lexer then buffer:set_lexer(lexer) end
-end

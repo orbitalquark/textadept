@@ -13,19 +13,19 @@ module('_m.textadept.editing', package.seeall)
 --
 -- * `AUTOPAIR` [bool]: Opening `(`, `[`, `[`, `"`, or `'` characters are
 --   automatically closed. The default value is `true`.
--- * `HIGHLIGHT_BRACES` [bool]: Highlight matching '()[]{}<>' characters. The
+-- * `HIGHLIGHT_BRACES` [bool]: Highlight matching `()[]{}<>` characters. The
 --   default value is `true`.
 -- * `AUTOINDENT` [bool]: Match the indentation level of the previous line when
 --   pressing the Enter key. The default value is `true`.
 -- * `STRIP_WHITESPACE_ON_SAVE` [bool]: Strip trailing whitespace on file save.
 --   The default value is `true`.
 -- * `MARK_HIGHLIGHT_BACK` [number]: The background color used for a line
---   containing a highlighted word in 0xBBGGRR format.
+--   containing a highlighted word in `0xBBGGRR` format.
 -- * `INDIC_HIGHLIGHT_BACK` [number]: The color used for an indicator for a
---   highlighted word in 0xBBGGRR format.
--- * `INDIC_HIGHLIGHT_ALPHA` [number]: The alpha transparency value between 0
---   (transparent) and 255 (opaque) used for an indicator for a highlighted
---   word. The default value is 100.
+--   highlighted word in `0xBBGGRR` format.
+-- * `INDIC_HIGHLIGHT_ALPHA` [number]: The alpha transparency value between `0`
+--   (transparent) and `255` (opaque) used for an indicator for a highlighted
+--   word. The default value is `100`.
 
 -- settings
 AUTOPAIR = true
@@ -39,7 +39,7 @@ INDIC_HIGHLIGHT_ALPHA = 100
 
 ---
 -- Comment strings for various lexer languages.
--- Used for the block_comment() function. Keys are lexer language names and
+-- Used for the `block_comment()` function. Keys are lexer language names and
 -- values are the line comment delimiters for the language. This table is
 -- typically populated by language-specific modules.
 -- @class table
@@ -156,8 +156,8 @@ events.connect(events.AUTO_C_SELECTION, function(text, position)
 end)
 
 ---
--- Goes to a matching brace position, selecting the text inside if specified.
--- @param select If true, selects the text between matching braces.
+-- Goes to a matching brace position, selecting the text inside if specified to.
+-- @param select If `true`, selects the text between matching braces.
 function match_brace(select)
   local buffer = buffer
   local caret = buffer.current_pos
@@ -179,7 +179,7 @@ end
 -- Pops up an autocompletion list for the current word based on other words in
 -- the document.
 -- @param word_chars String of chars considered to be part of words.
--- @return true if there were completions to show; false otherwise.
+-- @return `true` if there were completions to show; `false` otherwise.
 function autocomplete_word(word_chars)
   local buffer = buffer
   local caret, length = buffer.current_pos, buffer.length
@@ -254,7 +254,8 @@ end
 
 ---
 -- Goes to the requested line.
--- @param line Optional line number to go to.
+-- @param line Optional line number to go to. If `nil`, the user is prompted for
+--   one.
 function goto_line(line)
   if not line then
     line = tonumber(gui.dialog('standard-inputbox',
@@ -305,7 +306,7 @@ events.connect(events.FILE_BEFORE_SAVE, prepare_for_save)
 
 ---
 -- Selects the current word under the caret and if action indicates, deletes it.
--- @param action Optional action to perform with selected word. If 'delete', it
+-- @param action Optional action to perform with selected word. If `delete`, it
 --   is deleted.
 function current_word(action)
   local buffer = buffer

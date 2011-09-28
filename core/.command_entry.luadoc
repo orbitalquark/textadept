@@ -11,5 +11,6 @@ module('gui.command_entry')
 --
 -- * `entry_text` [string]: The text in the entry.
 
---- Focuses the command entry.
+---
+-- Focuses the command entry.
 function focus() end

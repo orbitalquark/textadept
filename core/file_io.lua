@@ -68,9 +68,9 @@ boms = {
 
 -- Attempt to detect the encoding of the given text.
 -- @param text Text to determine encoding from.
--- @return encoding string for string.iconv() (unless 'binary', indicating a
---   binary file), byte-order mark (BOM) string or nil. If encoding string is
---   nil, no encoding has been detected.
+-- @return encoding string for `string.iconv()` (unless `'binary'`, indicating a
+--   binary file), byte-order mark (BOM) string or `nil`. If encoding string is
+--   `nil`, no encoding has been detected.
 local function detect_encoding(text)
   local b1, b2, b3, b4 = string.byte(text, 1, 4)
   if b1 == 239 and b2 == 187 and b3 == 191 then
@@ -98,8 +98,8 @@ try_encodings = { 'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman' }
 
 ---
 -- Opens a list of files.
--- @param utf8_filenames A '\n' separated list of UTF-8-encoded filenames to
---   open. If nil, the user is prompted with a fileselect dialog.
+-- @param utf8_filenames A `\n` separated list of UTF-8-encoded filenames to
+--   open. If `nil`, the user is prompted with a fileselect dialog.
 -- @usage io.open_file(utf8_encoded_filename)
 function open_file(utf8_filenames)
   utf8_filenames = utf8_filenames or
@@ -328,7 +328,7 @@ events.connect(events.BUFFER_NEW, function()
   buffer.encoding = 'UTF-8'
 end)
 
--- Close initial 'Untitled' buffer.
+-- Close initial "Untitled" buffer.
 events.connect(events.FILE_OPENED, function(utf8_filename)
   local b = _BUFFERS[1]
   if #_BUFFERS == 2 and not (b.filename or b._type or b.dirty) then

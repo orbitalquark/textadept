@@ -204,7 +204,7 @@ end
 ---
 -- Disconnects a handler function from an event.
 -- @param event The string event name.
--- @param index Index of the handler (returned by events.connect).
+-- @param index Index of the handler (returned by `events.connect()`).
 -- @see connect
 function disconnect(event, index)
   if not handlers[event] then return end
@@ -216,11 +216,12 @@ local error_emitted = false
 ---
 -- Calls all handlers for the given event in sequence (effectively "generating"
 -- the event).
--- If true or false is explicitly returned by any handler, the event is not
+-- If `true` or `false` is explicitly returned by any handler, the event is not
 -- propagated any further; iteration ceases.
 -- @param event The string event name.
 -- @param ... Arguments passed to the handler.
--- @return true or false if any handler explicitly returned such; nil otherwise.
+-- @return `true` or `false` if any handler explicitly returned such; nil
+--   otherwise.
 function emit(event, ...)
   if not event then error(L('Undefined event name')) end
   local h = handlers[event]

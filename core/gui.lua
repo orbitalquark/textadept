@@ -128,20 +128,20 @@ end)
 connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
--- @param buffer The currently focused buffer.
+-- @param buffer The global buffer.
 local function set_title(buffer)
   local filename = buffer.filename or buffer._type or L('Untitled')
   gui.title = string.format('%s %s Textadept (%s)', filename:match('[^/\\]+$'),
                             buffer.dirty and '*' or '-', filename)
 end
 
--- Changes Textadept title to show 'clean' buffer.
+-- Changes Textadept title to show the buffer as being "clean".
 connect(events.SAVE_POINT_REACHED, function()
   buffer.dirty = false
   set_title(buffer)
 end)
 
--- Changes Textadept title to show 'dirty' buffer.
+-- Changes Textadept title to show thee buffer as "dirty".
 connect(events.SAVE_POINT_LEFT, function()
   buffer.dirty = true
   set_title(buffer)

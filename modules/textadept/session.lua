@@ -11,10 +11,10 @@ module('_m.textadept.session', package.seeall)
 --
 -- * `DEFAULT_SESSION` [string]: The path to the default session file.
 -- * `SAVE_ON_QUIT` [bool]: Save the session when quitting. The default value is
---   `true` and can be disabled by passing the command line switch '-n' or
---   '--nosession' to Textadept.
+--   `true` and can be disabled by passing the command line switch `-n` or
+--   `--nosession` to Textadept.
 -- * `MAX_RECENT_FILES` [number]: The maximum number of files from the recent
---   files list to save to the session. The default is 10.
+--   files list to save to the session. The default is `10`.
 
 -- settings
 DEFAULT_SESSION = _USERHOME..'/session'
@@ -27,8 +27,8 @@ MAX_RECENT_FILES = 10
 -- Textadept restores split views, opened buffers, cursor information, and
 -- project manager details.
 -- @param filename The absolute path to the session file to load. Defaults to
---   DEFAULT_SESSION if not specified.
--- @return true if the session file was opened and read; false otherwise.
+--   `DEFAULT_SESSION` if not specified.
+-- @return `true` if the session file was opened and read; `false` otherwise.
 -- @usage _m.textadept.session.load(filename)
 function load(filename)
   local not_found = {}
@@ -104,7 +104,7 @@ events.connect('arg_none', function() if SAVE_ON_QUIT then load() end end)
 -- Saves split views, opened buffers, cursor information, and project manager
 -- details.
 -- @param filename The absolute path to the session file to save. Defaults to
---   either the current session file or DEFAULT_SESSION if not specified.
+--   either the current session file or `DEFAULT_SESSION` if not specified.
 -- @usage _m.textadept.session.save(filename)
 function save(filename)
   local session = {}
@@ -196,4 +196,3 @@ events.connect(events.QUIT, function() if SAVE_ON_QUIT then save() end end, 1)
 
 local function no_session() SAVE_ON_QUIT = false end
 args.register('-n', '--nosession', 0, no_session, 'No session functionality')
-

@@ -4,23 +4,24 @@
 
 ---
 -- The current buffer in the current view.
--- It also represents the structure of any buffer table in 'buffers'.
+-- It also represents the structure of any buffer table in `_G._BUFFER`.
 module('buffer')
 
 -- Markdown:
 -- ## Fields
 --
 -- * `additional_caret_fore` [number]: The foreground color of additional carets
---   in 0xBBGGRR format.
+--   in `0xBBGGRR` format.
 -- * `additional_carets_blink` [bool]: Whether additional carets will blink.
 -- * `additional_carets_visible` [bool]: Whether additional carets are visible.
 -- * `additional_sel_alpha` [number]: The alpha of additional selections.
---   Alpha ranges from 0 (transparent) to 255 (opaque) or 256 for no alpha.
+--   Alpha ranges from `0` (transparent) to `255` (opaque) or `256` for no
+--   alpha.
 -- * `additional_sel_back` [number]: The background color of additional
---   selections in 0xBBGGRR format. `buffer:set_sel_back(true, ...)` must have
+--   selections in `0xBBGGRR` format. `buffer:set_sel_back(true, ...)` must have
 --   been called previously for this to have an effect.
 -- * `additional_sel_fore` [number]: The foreground color of additional
---   selections in 0xBBGGRR format. `buffer:set_sel_fore(true, ...)` must have
+--   selections in `0xBBGGRR` format. `buffer:set_sel_fore(true, ...)` must have
 --   been called previously for this to have an effect.
 -- * `additional_selection_typing` [bool]: Whether typing can be performed into
 --   multiple selections.
@@ -33,10 +34,10 @@ module('buffer')
 -- * `annotation_style_offset` [number]: The start of the range of style numbers
 --   used for annotations. Annotation styles may be completely separated from
 --   standard text styles by setting a style offset. For example, setting this
---   to 512 would allow the annotation styles to be numbered from 512 upto 767
---   so they do not overlap styles set by lexers (or margins if margins offset
---   is 256). Each style number set with `buffer.annotation_style` has the
---   offset added before looking up the style.
+--   to `512` would allow the annotation styles to be numbered from `512` upto
+--   `767` so they do not overlap styles set by lexers (or margins if margins
+--   offset is `256`). Each style number set with `buffer.annotation_style` has
+--   the offset added before looking up the style.
 -- * `annotation_visible` [number]: The visibility of annotations.<br />
 --       * `_SCINTILLA.constants.ANNOTATION_HIDDEN` (0): Annotations are not
 --         displayed.
@@ -69,41 +70,42 @@ module('buffer')
 -- * `auto_c_max_height` [number]: The maximum height, in rows, of
 --   auto-completion and user lists. The default is 5 rows.
 -- * `auto_c_max_width` [number]: The maximum width, in characters, of
---   auto-completion and user lists. Set to 0 to autosize to fit longest item,
+--   auto-completion and user lists. Set to `0` to autosize to fit longest item,
 --   which is the default.
 -- * `auto_c_separator` [number]: The auto-completion list separator character
 --   byte. The default is the space character.
 -- * `auto_c_type_separator` [number]: The auto-completion list type-separator
---   character byte. The default is '?'. Autocompletion list items may display
+--   character byte. The default is `'?'`. Autocompletion list items may display
 --   an image as well as text. Each image is first registered with an integer
 --   type. Then this integer is included in the text of the list separated by a
---   '?' from the text.
+--   `?` from the text.
 -- * `back_space_un_indents` [bool]: Whether a backspace pressed when caret is
 --   within indentation unindents.
 -- * `buffered_draw` [bool]: Whether drawing is buffered. If drawing is buffered
 --   then each line of text is drawn into a bitmap buffer before drawing it to
 --   the screen to avoid flicker. The default is for drawing to be buffered.
 --   first or directly onto the screen.
--- * `call_tip_back` [number]: The background color for the call tip in 0xBBGGRR
---   format. (Write-only)
--- * `call_tip_fore` [number]: The foreground color for the call tip in 0xBBGGRR
---   format. (Write-only)
+-- * `call_tip_back` [number]: The background color for the call tip in
+--   `0xBBGGRR` format. (Write-only)
+-- * `call_tip_fore` [number]: The foreground color for the call tip in
+--   `0xBBGGRR` format. (Write-only)
 -- * `call_tip_fore_hlt` [number]: The foreground color for the highlighted part
---   of the call tip in 0xBBGGRR format. (Write-only)
+--   of the call tip in `0xBBGGRR` format. (Write-only)
 -- * `call_tip_use_style` [number]: Enable use of
 --   `_SCINTILLA.constants.STYLE_CALLTIP` and set call tip tab size in pixels.
---   If the tab size is less than 1, Tab characters are not treated specially.
--- * `caret_fore` [number]: The foreground color of the caret in 0xBBGGRR
+--   If the tab size is less than `1`, Tab characters are not treated specially.
+-- * `caret_fore` [number]: The foreground color of the caret in `0xBBGGRR`
 --   format.
 -- * `caret_line_back` [number]: The color of the background of the line
---   containing the caret in 0xBBGGRR format.
+--   containing the caret in `0xBBGGRR` format.
 -- * `caret_line_back_alpha` [number]: The background alpha of the caret line.
---   Alpha ranges from 0 (transparent) to 255 (opaque) or 256 for no alpha.
+--   Alpha ranges from `0` (transparent) to `255` (opaque) or `256` for no
+--   alpha.
 -- * `caret_line_visible` [bool]: Whether the background of the line containing
 --   the caret is in a different color.
 -- * `caret_period` [number]: The time in milliseconds that the caret is on and
---   off. Setting the period to 0 stops the caret blinking. The default value is
---   500 milliseconds.
+--   off. Setting the period to `0` stops the caret blinking. The default value
+--   is 500 milliseconds.
 -- * `caret_sticky` [number]: The caret preferred x position changing when the
 --   user types.<br />
 --       * `_SCINTILLA.constants.SC_CARETSTICKY_OFF` (0): All text changes (and
@@ -124,9 +126,9 @@ module('buffer')
 --         default value.
 --       * `_SCINTILLA.constants.CARETSTYLE_BLOCK` (2): A block caret.
 -- * `caret_width` [number]: The width of the insert mode caret in pixels. Can
---   be 0, 1, 2 or 3 pixels. The default width is 1 pixel. This setting only
---   affects the width of the cursor when the cursor style is set to line caret
---   mode, it does not affect the width for a block caret.
+--   be `0`, `1`, `2` or `3` pixels. The default width is 1 pixel. This setting
+--   only affects the width of the cursor when the cursor style is set to line
+--   caret mode, it does not affect the width for a block caret.
 -- * `char_at` [table]: Table of character bytes at positions in the document
 --   starting at zero. (Read-only)
 -- * `code_page` [number]: The code page used to interpret the bytes of the
@@ -135,8 +137,8 @@ module('buffer')
 -- * `column` [table]: Table of column numbers, taking tab widths into account,
 --   for positions starting from zero. (Read-only)
 -- * `control_char_symbol` [number]: The way control characters are displayed.
---   If less than 32, keep the rounded rectangle as ASCII mnemonics. Otherwise,
---   use the given character byte. The default value is 0.
+--   If less than `32`, keep the rounded rectangle as ASCII mnemonics.
+--   Otherwise, use the given character byte. The default value is `0`.
 -- * `current_pos` [number]: The position of the caret. When setting, the caret
 --   is not scrolled into view.
 -- * `cursor` [number]: The cursor type.<br />
@@ -154,7 +156,7 @@ module('buffer')
 --       * `_SCINTILLA.constants.SC_EOL_CRLF` (0): `CRLF`.
 --       * `_SCINTILLA.constants.SC_EOL_CR` (1): `CR`.
 --       * `_SCINTILLA.constants.SC_EOL_LF` (2): `LF`.
--- * `edge_colour` [number]: The color used in edge indication in 0xBBGGRR
+-- * `edge_colour` [number]: The color used in edge indication in `0xBBGGRR`
 --   format.
 -- * `edge_column` [number]: The column number which text should be kept within.
 -- * `edge_mode` [number]: The edge highlight mode.<br />
@@ -166,7 +168,7 @@ module('buffer')
 --         characters after the column limit is changed to the color set by
 --         `buffer.edge_colour`.
 -- * `encoding` [string or nil]: The encoding of the file on the hard disk. It
---   will be nil if the file is a binary file.
+--   will be `nil` if the file is a binary file.
 -- * `encoding_bom` [string]: The byte-order mark of the file encoding (if any).
 -- * `end_at_last_line` [bool]: Whether the maximum scroll position has the last
 --   line at the bottom of the view. If `false`, allows scrolling one page below
@@ -184,7 +186,7 @@ module('buffer')
 -- * `focus` [bool]: The internal focus flag.
 -- * `fold_expanded` [bool]: Expanded state of a header line.
 -- * `fold_level` [table]: Table of fold levels for lines starting from zero.
---   Fold levels encodes an integer level along witth flags indicating whether
+--   Fold levels encodes an integer level along with flags indicating whether
 --   the line is a header and whether it is effectively white space.<br />
 --       * `_SCINTILLA.constants.SC_FOLDLEVELBASE` (0x400): Initial fold level.
 --       * `_SCINTILLA.constants.SC_FOLDLEVELWHITEFLAG` (0x1000): Indicates that
@@ -202,12 +204,12 @@ module('buffer')
 --   `false` to never see it and `true` to enable it again. The default state is
 --   to display it when needed.
 -- * `highlight_guide` [number]: The highlighted indentation guide column. Set
---   to 0 to cancel this highlight.
+--   to `0` to cancel this highlight.
 -- * `hotspot_active_underline` [bool]: Whether active hotspots are underlined.
 -- * `hotspot_single_line` [bool]: Whether hotspots are limited to single line
---   so hotspots on two lines don't merge.
+--   so hotspots on two lines do not merge.
 -- * `indent` [number]: Ihe number of spaces used for one level of indentation.
---   For a width of 0, the indent size is the same as the tab size.
+--   For a width of `0`, the indent size is the same as the tab size.
 -- * `indentation_guides` [number]: Indentation guides appearance.
 --   Indentation guides are dotted vertical lines that appear within indentation
 --   white space every indent size columns.
@@ -224,17 +226,17 @@ module('buffer')
 --         shown beyond the actual indentation up to the level of the next
 --         non-empty line or previous non-empty line whichever is the greater.
 --         This setting is good for most languages.
--- * `indic_alpha` [table]: Table of alpha transparency values ranging from 0
---   (transparent) to 255 (opaque) or 256 (no alpha) for indicators from 0 to
---   31. Used for drawing the fill color of the `INDIC_ROUNDBOX` and
+-- * `indic_alpha` [table]: Table of alpha transparency values ranging from `0`
+--   (transparent) to `255` (opaque) or `256` (no alpha) for indicators from `0`
+--   to `31`. Used for drawing the fill color of the `INDIC_ROUNDBOX` and
 --   `INDIC_STRAIGHTBOX` rectangle.
--- * `indic_fore` [table]: Table of foreground colors in 0xBBGGRR format for
---   indicators from zero to 31.
+-- * `indic_fore` [table]: Table of foreground colors in `0xBBGGRR` format for
+--   indicators from `0` to `31`.
 -- * `indic_outline_alpha` [table]: Table of alpha transparency values ranging
---   from 0 (transparent) to 255 (opaque) or 256 (no alpha) for indicators from
---   0 to 31. Used for drawing the outline color of the `INDIC_ROUNDBOX` and
---   `INDIC_STRAIGHTBOX` rectangle.
--- * `indic_style` [table]: Table of styles for indicators from zero to 31.
+--   from `0` (transparent) to `255` (opaque) or `256` (no alpha) for indicators
+--   from `0` to `31`. Used for drawing the outline color of the
+--   `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX` rectangle.
+-- * `indic_style` [table]: Table of styles for indicators from `0` to `31`.
 --   <br />
 --       * `_SCINTILLA.constants.INDIC_PLAIN` (0): Underlined with a single,
 --         straight line.
@@ -250,13 +252,13 @@ module('buffer')
 --         corners around the text using translucent drawing with the interior
 --         usually more transparent than the border. Use `buffer.indic_alpha`
 --         and `buffer.indic_outline_alpha` to control the alpha transparency
---         values. The default alpha values are 30 for fill color and 50 for
+--         values. The default alpha values are `30` for fill color and `50` for
 --         outline color.
 --       * `_SCINTILLA.constants.INDIC_STRAIGHTBOX` (8): A rectangle around the
 --         text using translucent drawing with the interior usually more
 --         transparent than the border. You can use `buffer.indic_alpha` and
 --         `buffer.indic_outline_alpha` to control the alpha transparency
---         values. The default alpha values are 30 for fill color and 50 for
+--         values. The default alpha values are `30` for fill color and `50` for
 --         outline color.
 --       * `_SCINTILLA.constants.INDIC_DASH` (9): A dashed underline.
 --       * `_SCINTILLA.constants.INDIC_DOTS` (10): A dotted underline.
@@ -268,14 +270,15 @@ module('buffer')
 --         the alpha and outline alpha settings with the top-left pixel using
 --         the alpha setting. `buffer.indic_alpha` and
 --         `buffer.indic_outline_alpha` control the alpha transparency values.
---         The default values are 30 for alpha and 50 for outline alpha. To
+--         The default values are `30` for alpha and `50` for outline alpha. To
 --         avoid excessive memory allocation the maximum width of a dotted box
 --         is 4000 pixels.
 --       * Use `_SCINTILLA.next_indic_number()` for custom indicators.
 -- * `indic_under` [table]: Table of booleans for drawing under text or over
---   (default) for indicators from zero to 31.
--- * `indicator_current` [number]: The indicator in the range of 0 to 31 used
---   for `buffer:indicator_fill_range()` and `buffer:indicator_clear_range()`.
+--   (default) for indicators from `0` to `31`.
+-- * `indicator_current` [number]: The indicator in the range of `0` to `31`
+--   used for `buffer:indicator_fill_range()` and
+--   `buffer:indicator_clear_range()`.
 -- * `indicator_value` [number]: The indicator value used for
 --   `buffer:indicator_fill_range()`. Currently all values are drawn the same.
 -- * `keys_unicode` [bool]: Interpret keyboard input as Unicode.
@@ -333,8 +336,8 @@ module('buffer')
 -- * `margin_style_offset` [number]: The start of the range of style numbers
 --   used for margin text. Margin styles may be completely separated from
 --   standard text styles by setting a style offset. For example, setting this
---   to 256 would allow the margin styles to be numbered from 256 upto 511 so
---   they do not overlap styles set by lexers. Each style number set with
+--   to `256` would allow the margin styles to be numbered from `256` upto `511`
+--   so they do not overlap styles set by lexers. Each style number set with
 --   `buffer.margin_style` has the offset added before looking up the style.
 -- * `margin_type_n` [table]: Table of margin types for margins from zero to
 --   four.<br />
@@ -399,7 +402,7 @@ module('buffer')
 -- * `property` [table]: Table of keyword:value string pairs used by a lexer for
 --   some optional features. (Write-only)
 -- * `property_int` [table]: Interprets `buffer.property[keyword]` as an integer
---   if found or returns 0. (Read-only)
+--   if found or returns `0`. (Read-only)
 -- * `read_only` [bool]: Read-only mode.
 -- * `rectangular_selection_anchor` [number]: The position of the anchor of the
 --   rectangular selection.
@@ -421,7 +424,7 @@ module('buffer')
 -- * `scroll_width` [number]: The document width assumed for scrolling. For
 --   performance, the view does not measure the display width of the document to
 --   determine the properties of the horizontal scroll bar. Instead, an assumed
---   width is used. The default value is 2000. To ensure the width of the
+--   width is used. The default value is `2000`. To ensure the width of the
 --   currently visible lines can be scrolled use `buffer.scroll_width_tracking`.
 -- * `scroll_width_tracking` [bool]: Whether the maximum width line displayed is
 --   used to set scroll width.
@@ -438,8 +441,8 @@ module('buffer')
 --       * `_SCINTILLA.constants.SCFIND_POSIX` (0x00400000): Treat regular
 --         expression in a more POSIX compatible manner by interpreting bare `(`
 --        and `)` for tagged sections rather than `\(` and `\)`.
--- * `sel_alpha` [number]: The alpha of the selection, between 0 (transparent)
---   and 255 (opaque), or 256 for no alpha.
+-- * `sel_alpha` [number]: The alpha of the selection, between `0` (transparent)
+--   and `255` (opaque), or `256` for no alpha.
 -- * `sel_eol_filled` [bool]: The selection end of line fill. The selection can
 --   be drawn up to the right hand border by setting this property.
 -- * `selection_end` [number]: The position that ends the selection - this
@@ -461,7 +464,7 @@ module('buffer')
 -- * `selection_n_caret_virtual_space` [table]: Table of the amount of virtual
 --   space for carets for existing selections starting from zero, the main
 --   selection.
--- * `selection_n_end` [table]:  Table of positions that end selections for
+-- * `selection_n_end` [table]: Table of positions that end selections for
 --   existing selections starting from zero, the main selection.
 -- * `selection_n_start` [table]: Table of positions that start selections for
 --   existing selections starting from zero, the main selection.
@@ -475,35 +478,36 @@ module('buffer')
 --       * `_SCINTILLA.constants.SC_STATUS_BADALLOC` (2): Memory is exhausted.
 -- * `style_at` [table]: Table of style bytes at positions in the document
 --   starting at zero. (Read-only)
--- * `style_back` [table]: Table of background colors in 0xBBGGRR format for
---   styles from zero to 255.
+-- * `style_back` [table]: Table of background colors in `0xBBGGRR` format for
+--   styles from `0` to `255`.
 -- * `style_bits` [number]: The number of bits in style bytes used to hold the
 --   lexical state.
 -- * `style_bits_needed` [number]: The number of bits the current lexer needs
 --   for styling. (Read-only)
--- * `style_bold` [table]: Table of booleans for bold styles from zero to 255.
--- * `style_case` [table]: Table of cases for styles from zero to 255.<br />
+-- * `style_bold` [table]: Table of booleans for bold styles from `0` to `255`.
+-- * `style_case` [table]: Table of cases for styles from `0` to `255`.<br />
 --       * `_SCINTILLA.constants.SC_CASE_MIXED` (0): Normal, mixed case.
 --       * `_SCINTILLA.constants.SC_CASE_UPPER` (1): Upper case.
 --       * `_SCINTILLA.constants.SC_CASE_LOWER` (2): Lower case.
 -- * `style_changeable` [table]: Table of booleans for changeable styles from
---   zero to 255. The default setting is `true`.
--- * `style_character_set` [table]: Table of character sets for styles from zero
---   to 255.
+--   `0` to `255`. The default setting is `true`.
+-- * `style_character_set` [table]: Table of character sets for styles from `0`
+--   to `255`.
 -- * `style_eol_filled` [table]: Table of booleans for end of line filled styles
---   from zero to 255.
+--   from `0` to `255`.
 --   of line is filled.
--- * `style_font` [table]: Table of font faces for styles from zero to 255.
--- * `style_fore` [table]: Table of foreground colors in 0xBBGGRR format for
---   styles from zero to 255.
--- * `style_hot_spot` [table]: Table of boolean hotspot styles from zero to 255.
--- * `style_italic` [table]: Table of booleans for italic styles from zero to
---   255.
--- * `style_size` [table]: Table of font sizes for styles from zero to 255.
--- * `style_underline` [table]: Table of booleans for underlined styles from
---   zero to 255.
--- * `style_visible` [table]: Table of booleans for visible styles from zero to
---   255.
+-- * `style_font` [table]: Table of font faces for styles from `0` to `255`.
+-- * `style_fore` [table]: Table of foreground colors in `0xBBGGRR` format for
+--   styles from `0` to `255`.
+-- * `style_hot_spot` [table]: Table of boolean hotspot styles from `0` to
+--   `255`.
+-- * `style_italic` [table]: Table of booleans for italic styles from `0` to
+--   `255`.
+-- * `style_size` [table]: Table of font sizes for styles from `0` to `255`.
+-- * `style_underline` [table]: Table of booleans for underlined styles from `0`
+--   to `255`.
+-- * `style_visible` [table]: Table of booleans for visible styles from `0` to
+--   `255`.
 -- * `tab_indents` [bool]: Whether a tab pressed when caret is within
 --   indentation indents.
 -- * `tab_width` [number]: The visible size of a tab as a multiple of the width
@@ -584,7 +588,7 @@ module('buffer')
 --         flag at end of subline drawn near text.
 --       * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_START_BY_TEXT` (2): Visual
 --         flag at beginning of subline drawn near text.
--- * `x_offset` [number]: The horizontal scroll position. A value of 0 is the
+-- * `x_offset` [number]: The horizontal scroll position. A value of `0` is the
 --   normal position with the first text column visible at the left of the view.
 -- * `zoom` [number]: The number of points added to the size of all fonts. It
 --   may be positive to magnify or negative to reduce.
@@ -653,7 +657,7 @@ function buffer.auto_c_active(buffer) end
 ---
 -- Remove the auto-completion list from the screen.
 -- A set of characters that will cancel autocompletion can be specified with
--- buffer:auto_c_stops().
+-- `buffer:auto_c_stops()`.
 -- @param buffer The global buffer.
 function buffer.auto_c_cancel(buffer) end
 
@@ -685,7 +689,7 @@ function buffer.auto_c_pos_start(buffer) end
 ---
 -- Select the item in the auto-completion list that starts with a string.
 -- By default, comparisons are case sensitive, but this can change with
--- buffer.auto_c_ignore_case.
+-- `buffer.auto_c_ignore_case`.
 -- @param buffer The global buffer.
 -- @param string
 function buffer.auto_c_select(buffer, string) end
@@ -748,8 +752,8 @@ function buffer.brace_highlight(buffer, pos1, pos2) end
 function buffer.brace_highlight_indicator(buffer, use_indicator, indic_num) end
 
 ---
--- Find the position of a matching brace or -1 if no match.
--- The brace characters handled are '(', ')', '[', ']', '{', '}', '<', and '>'.
+-- Find the position of a matching brace or `-1` if no match.
+-- The brace characters handled are `(`, `)`, `[`, `]`, `{`, `}`, `<`, and `>`.
 -- The search is forwards from an opening brace and backwards from a closing
 -- brace. A match only occurs if the style of the matching brace is the same as
 -- the starting brace or the matching brace is beyond the end of styling. Nested
@@ -790,7 +794,7 @@ function buffer.call_tip_set_hlt(buffer, start_pos, end_pos) end
 -- The call tip text is aligned to start 1 line below this character unless up
 -- and/or down arrows have been included in the call tip text in which case the
 -- tip is aligned to the right-hand edge of the rightmost arrow. The assumption
--- is that the text starts with something like "\001 1 of 3 \002".
+-- is that the text starts with something like `"\001 1 of 3 \002"`.
 -- @param buffer The global buffer.
 -- @param pos The position.
 -- @param text The text.
@@ -853,7 +857,7 @@ function buffer.char_position_from_point(buffer, x, y) end
 
 ---
 -- Find the position of a character from a point within the window.
--- Return -1 if not close to text.
+-- Return `-1` if not close to text.
 -- @param buffer The global buffer.
 -- @param x
 -- @param y
@@ -901,7 +905,7 @@ function buffer.clear_all(buffer) end
 function buffer.clear_all_cmd_keys(buffer) end
 
 ---
--- Set all style bytes to 0, remove all folding information.
+-- Set all style bytes to `0`, remove all folding information.
 -- @param buffer The global buffer.
 function buffer.clear_document_style(buffer) end
 
@@ -916,17 +920,17 @@ function buffer.clear_registered_images(buffer) end
 function buffer.clear_selections(buffer) end
 
 ---
--- colorise a segment of the document using the current lexing language.
+-- Colorise a segment of the document using the current lexing language.
 -- @param buffer The global buffer.
 -- @param start_pos The start position.
--- @param end_pos The end position or -1 to style from start_pos to the end of
---   the document.
+-- @param end_pos The end position or `-1` to style from `start_pos` to the end
+--   of the document.
 function buffer.colourise(buffer, start_pos, end_pos) end
 
 ---
 -- Find the next line at or after line_start that is a contracted fold header
 -- line.
--- Return -1 when no more lines.
+-- Return `-1` when no more lines.
 -- @param buffer The global buffer.
 -- @param line_start The start line number.
 -- @return number
@@ -936,9 +940,9 @@ function buffer.contracted_fold_next(buffer, line_start) end
 -- Converts all line endings in the document to one mode.
 -- @param buffer The global buffer.
 -- @param mode The line ending mode. Valid values are:
---   _SCINTILLA.constants.SC_EOL_CRLF (0),
---   _SCINTILLA.constants.SC_EOL_CR (1), or
---   _SCINTILLA.constants.SC_EOL_LF (2).
+--   `_SCINTILLA.constants.SC_EOL_CRLF` (0),
+--   `_SCINTILLA.constants.SC_EOL_CR (1)`, or
+--   `_SCINTILLA.constants.SC_EOL_LF (2)`.
 function buffer.convert_eo_ls(buffer, mode) end
 
 ---
@@ -1048,7 +1052,7 @@ function buffer.empty_undo_buffer(buffer) end
 
 ---
 -- Translates a UTF8 string into the document encoding.
--- Return the length of the result in bytes. On error return 0.
+-- Return the length of the result in bytes. On error return `0`.
 -- @param buffer The global buffer.
 -- @param string The string.
 -- @return number
@@ -1109,7 +1113,7 @@ function buffer.get_hotspot_active_fore(buffer) end
 -- Find the last child line of a header line.
 -- @param buffer The global buffer.
 -- @param header_line The line number of a header line.
--- @param level The level or -1 for the level of header_line.
+-- @param level The level or `-1` for the level of header_line.
 function buffer.get_last_child(buffer, header_line, level) end
 
 ---
@@ -1126,28 +1130,28 @@ function buffer.get_lexer_language(buffer) end
 function buffer.get_line(buffer, line) end
 
 ---
--- Retrieve the position of the end of the selection at the given line (-1 if no
--- selection on this line).
+-- Retrieve the position of the end of the selection at the given line (`-1` if
+-- no selection on this line).
 -- @param buffer The global buffer.
 -- @param line The line number.
 function buffer.get_line_sel_end_position(buffer, line) end
 
 ---
--- Retrieve the position of the start of the selection at the given line (-1 if
--- no selection on this line).
+-- Retrieve the position of the start of the selection at the given line (`-1`
+-- if no selection on this line).
 -- @param buffer The global buffer.
 -- @param line The line number.
 function buffer.get_line_sel_start_position(buffer, line) end
 
 ---
--- Retrieve a "property" value previously set with `buffer.property`.
+-- Retrieve a `property` value previously set with `buffer.property`.
 -- @param buffer The global buffer.
 -- @param key Keyword.
 -- @return string
 function buffer.get_property(buffer, key) end
 
 ---
--- Retrieve a "property" value previously set with `buffer.property`, with "$()"
+-- Retrieve a `property` value previously set with `buffer.property`, with `$()`
 -- variable replacement on returned buffer.
 -- @param buffer The global buffer.
 -- @param key Keyword.
@@ -1194,7 +1198,7 @@ function buffer.grab_focus(buffer) end
 
 ---
 -- Make a range of lines invisible.
--- This has no effect on fold levels or fold flags. start_line can not be
+-- This has no effect on fold levels or fold flags. `start_line` can not be
 -- hidden.
 -- @param buffer The global buffer.
 -- @param start_line The start line.
@@ -1265,7 +1269,7 @@ function buffer.indicator_clear_range(buffer, pos, clear_length) end
 ---
 -- Find the position where a particular indicator ends.
 -- @param buffer The global buffer.
--- @param indicator An indicator number in the range of 0 to 31.
+-- @param indicator An indicator number in the range of `0` to `31`.
 -- @param pos The position of the indicator.
 function buffer.indicator_end(buffer, indicator, pos) end
 
@@ -1280,7 +1284,7 @@ function buffer.indicator_fill_range(buffer, pos, fill_length) end
 ---
 -- Find the position where a particular indicator starts.
 -- @param buffer The global buffer.
--- @param indicator An indicator number in the range of 0 to 31.
+-- @param indicator An indicator number in the range of `0` to `31`.
 -- @param pos The position of the indicator.
 function buffer.indicator_start(buffer, indicator, pos) end
 
@@ -1288,7 +1292,7 @@ function buffer.indicator_start(buffer, indicator, pos) end
 -- Retrieve the value of a particular indicator at a position.
 -- Currently all values are drawn the same.
 -- @param buffer The global buffer.
--- @param indicator The indicator number in the range of 0 to 31.
+-- @param indicator The indicator number in the range of `0` to `31`.
 -- @param pos The position.
 -- @return number
 function buffer.indicator_value_at(buffer, indicator, pos) end
@@ -1298,7 +1302,7 @@ function buffer.indicator_value_at(buffer, indicator, pos) end
 -- If the current position is after the insertion point then it is moved along
 -- with its surrounding text but no scrolling is performed.
 -- @param buffer The global buffer.
--- @param pos The position to insert text at or -1 for the current position.
+-- @param pos The position to insert text at or `-1` for the current position.
 -- @param text The text to insert.
 function buffer.insert_text(buffer, pos, text) end
 
@@ -1438,10 +1442,10 @@ function buffer.line_up_rect_extend(buffer) end
 function buffer.lines_join(buffer) end
 
 ---
--- Split the lines in the target into lines that are less wide than pixel_width
--- where possible.
+-- Split the lines in the target into lines that are less wide than
+-- `pixel_width` where possible.
 -- @param buffer The global buffer.
--- @param pixel_width The pixel width. When 0, the width of the view is used.
+-- @param pixel_width The pixel width. When `0`, the width of the view is used.
 function buffer.lines_split(buffer, pixel_width) end
 
 ---
@@ -1471,10 +1475,10 @@ function buffer.margin_text_clear_all(buffer) end
 ---
 -- Add a marker to a line, returning an ID which can be used to find or delete
 -- the marker.
--- Returns -1 if this fails (illegal line number, out of memory).
+-- Returns `-1` if this fails (illegal line number, out of memory).
 -- @param buffer The global buffer.
 -- @param line The line number.
--- @param marker_num A marker number in the range of 0 to 31.
+-- @param marker_num A marker number in the range of `0` to `31`.
 -- @return number
 function buffer.marker_add(buffer, line, marker_num) end
 
@@ -1489,16 +1493,16 @@ function buffer.marker_add_set(buffer, line, marker_mask) end
 ---
 -- Set the symbol used for a particular marker number.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of 0 to 31.
--- @param marker_symbol A marker symbol: _SCINTILLA.constants.SC_MARK_*.
+-- @param marker_num A marker number in the range of `0` to `31`.
+-- @param marker_symbol A marker symbol: `_SCINTILLA.constants.SC_MARK_*`.
 -- @see _SCINTILLA.next_marker_number
 function buffer.marker_define(buffer, marker_num, marker_symbol) end
 
 ---
 -- Define a marker from a pixmap.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of 0 to 31.
--- @param pixmap Null-terminated pixmap data.
+-- @param marker_num A marker number in the range of `0` to `31`.
+-- @param pixmap `NULL`-terminated pixmap data.
 function buffer.marker_define_pixmap(buffer, marker_num, pixmap) end
 
 ---
@@ -1506,35 +1510,35 @@ function buffer.marker_define_pixmap(buffer, marker_num, pixmap) end
 -- It has the width and height from `buffer.rgba_image_width` and
 -- `buffer.rgba_image_height`.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of 0 to 31.
+-- @param marker_num A marker number in the range of `0` to `31`.
 -- @param pixels A sequence of 4 byte pixel values starting with the pixels for
 --   the top line, with the leftmost pixel first, then continuing with the
 --   pixels for subsequent lines. There is no gap between lines for alignment
 --   reasons. Each pixel consists of, in order, a red byte, a green byte, a blue
 --   byte and an alpha byte. The colour bytes are not premultiplied by the alpha
---   value. That is, a fully red pixel that is 25% opaque will be [FF, 00, 00,
---   3F].
+--   value. That is, a fully red pixel that is 25% opaque will be `[FF, 00, 00,
+--   3F]`.
 function buffer.marker_define_rgba_image(buffer, marker_num, pixels) end
 
 ---
 -- Delete a marker from a line.
 -- @param buffer The global buffer.
 -- @param line The line number.
--- @param marker_num A marker number in the range of 0 to 31 or -1 to delete all
---   markers from the line.
+-- @param marker_num A marker number in the range of `0` to `31` or `-1` to
+--   delete all markers from the line.
 function buffer.marker_delete(buffer, line, marker_num) end
 
 ---
 -- Delete all markers with a particular number from all lines.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of 0 to 31 or -1 to delete all
---   markers from all lines.
+-- @param marker_num A marker number in the range of `0` to `31` or `-1` to
+--   delete all markers from the line.
 function buffer.marker_delete_all(buffer, marker_num) end
 
 ---
 -- Delete a marker.
 -- @param buffer The global buffer.
--- @param handle The identifier of a marker returned by buffer:marker_add().
+-- @param handle The identifier of a marker returned by `buffer:marker_add()`.
 function buffer.marker_delete_handle(buffer, handle) end
 
 ---
@@ -1554,15 +1558,15 @@ function buffer.marker_get(buffer, line) end
 
 ---
 -- Retrieve the line number at which a particular marker is located.
--- Returns -1 if it not found.
+-- Returns `-1` if it not found.
 -- @param buffer The global buffer.
--- @param handle The identifier of a marker returned by buffer:marker_add().
+-- @param handle The identifier of a marker returned by `buffer:marker_add()`.
 -- @return number
 function buffer.marker_line_from_handle(buffer, handle) end
 
 ---
 -- Find the next line at or after start_line that includes a marker in mask.
--- Return -1 when no more lines.
+-- Return `-1` when no more lines.
 -- @param buffer The global buffer.
 -- @param start_line The start line.
 -- @param marker_mask A mask of markers to find. Set bit 0 to find marker 0, bit
@@ -1571,7 +1575,7 @@ function buffer.marker_line_from_handle(buffer, handle) end
 function buffer.marker_next(buffer, start_line, marker_mask) end
 
 ---
--- Find the previous line before lineStart that includes a marker in mask.
+-- Find the previous line before `start_line` that includes a marker in mask.
 -- @param buffer The global buffer.
 -- @param start_line The start line.
 -- @param marker_mask A mask of markers to find. Set bit 0 to find marker 0, bit
@@ -1583,42 +1587,42 @@ function buffer.marker_previous(buffer, start_line, marker_mask) end
 -- Set the alpha used for a marker that is drawn in the text area, not the
 -- margin.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of 0 to 31.
--- @param alpha An alpha value between 0 (transparent) and 255 (opaque), or 256
---   for no alpha.
+-- @param marker_num A marker number in the range of `0` to `31`.
+-- @param alpha An alpha value between `0` (transparent) and `255` (opaque), or
+--   `256` for no alpha.
 function buffer.marker_set_alpha(buffer, marker_num, alpha) end
 
 ---
 -- Set the background color used for a particular marker number.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of 0 to 31.
--- @param color A color in 0xBBGGRR format.
+-- @param marker_num A marker number in the range of `0` to `31`.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.marker_set_back(buffer, marker_num, color) end
 
 ---
 -- Set the background color used for a particular marker number when its
 -- folding block is selected.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of 0 to 31.
--- @param color A color in 0xBBGGRR format. The default color is #FF0000.
+-- @param marker_num A marker number in the range of `0` to `31`.
+-- @param color A color in `0xBBGGRR` format. The default color is `#FF0000`.
 function buffer.marker_set_back_selected(buffer, marker_num, color) end
 
 ---
 -- Set the foreground color used for a particular marker number.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of 0 to 31.
--- @param color A color in 0xBBGGRR format.
+-- @param marker_num A marker number in the range of `0` to `31`.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.marker_set_fore(buffer, marker_num, color) end
 
 ---
 -- Return the symbol defined for marker_num with `buffer:marker_define()`.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of 0 to 31.
+-- @param marker_num A marker number in the range of `0` to `31`.
 -- @return number
 function buffer.marker_symbol_defined(buffer, marker_num) end
 
 ---
--- Move the caret inside current view if it's not there already.
+-- Move the caret inside current view if it is not there already.
 -- Any selection is lost.
 -- @param buffer The global buffer.
 function buffer.move_caret_inside_view(buffer) end
@@ -1738,7 +1742,7 @@ function buffer.position_after(buffer, pos) end
 
 ---
 -- Given a valid document position, return the previous position taking code
--- page into account. Returns 0 if passed 0.
+-- page into account. Returns `0` if passed `0`.
 -- @param buffer The global buffer.
 -- @param pos The position.
 -- @return number
@@ -1746,7 +1750,7 @@ function buffer.position_before(buffer, pos) end
 
 ---
 -- Retrieve the position at the start of a line.
--- If line is greater than the lines in the document, returns -1.
+-- If line is greater than the lines in the document, returns `-1`.
 -- @param buffer The global buffer.
 -- @param line The line.
 -- @return number
@@ -1761,7 +1765,7 @@ function buffer.position_from_line(buffer, line) end
 function buffer.position_from_point(buffer, x, y) end
 
 ---
--- Returns the position from a point within the window, but return -1 if not
+-- Returns the position from a point within the window, but return `-1` if not
 -- close to text.
 -- @param buffer The global buffer.
 -- @param x
@@ -1778,7 +1782,7 @@ function buffer.redo(buffer) end
 -- Register an XPM image for use in autocompletion lists.
 -- @param buffer The global buffer.
 -- @param type Integer type to register the image with.
--- @param xpm_data XPM data as is described for buffer:marker_define_pixmap().
+-- @param xpm_data XPM data as is described for `buffer:marker_define_pixmap()`.
 function buffer.register_image(buffer, type, xpm_data) end
 
 ---
@@ -1788,7 +1792,7 @@ function buffer.register_image(buffer, type, xpm_data) end
 -- @param buffer The global buffer.
 -- @param type Integer type to register the image with.
 -- @param pixels RGBA data as is described for
---   buffer:marker_define_rgba_image().
+--   `buffer:marker_define_rgba_image()`.
 function buffer.register_rgba_image(buffer, type, pixels) end
 
 ---
@@ -1809,11 +1813,11 @@ function buffer.replace_sel(buffer, text) end
 function buffer.replace_target(buffer, text) end
 
 ---
--- Replace the target text with the argument text after \d processing.
--- Looks for \d where d is between 1 and 9 and replaces these with the strings
--- matched in the last search operation which were surrounded by \( and \).
--- Returns the length of the replacement text including any change caused by
--- processing the \d patterns.
+-- Replace the target text with the argument text after `\d` processing.
+-- Looks for `\d` where `d` is between `1` and `9` and replaces these with the
+-- strings matched in the last search operation which were surrounded by `\(`
+-- and `\)`. Returns the length of the replacement text including any change
+-- caused by processing the `\d` patterns.
 -- @param buffer The global buffer.
 -- @param text The text (can contain NULs).
 -- @return number
@@ -1849,7 +1853,8 @@ function buffer.search_anchor(buffer) end
 ---
 -- Search for a counted string in the target and set the target to the found
 -- range.
--- Returns length of range or -1 for failure in which case target is not moved.
+-- Returns length of range or `-1` for failure in which case target is not
+-- moved.
 -- @param buffer The global buffer.
 -- @param text The text (can contain NULs).
 -- @return number
@@ -1857,8 +1862,8 @@ function buffer.search_in_target(buffer, text) end
 
 ---
 -- Find some text starting at the search anchor.
--- The return value is -1 if nothing is found, otherwise the return value is the
--- start position of the matching text. The selection is updated to show the
+-- The return value is `-1` if nothing is found, otherwise the return value is
+-- the start position of the matching text. The selection is updated to show the
 -- matched text, but is not scrolled into view.
 -- @param buffer The global buffer.
 -- @param flags Search flags. See `buffer.search_flags`.
@@ -1868,8 +1873,8 @@ function buffer.search_next(buffer, flags, text) end
 
 ---
 -- Find some text starting at the search anchor and moving backwards.
--- The return value is -1 if nothing is found, otherwise the return value is the
--- start position of the matching text. The selection is updated to show the
+-- The return value is `-1` if nothing is found, otherwise the return value is
+-- the start position of the matching text. The selection is updated to show the
 -- matched text, but is not scrolled into view.
 -- @param buffer The global buffer.
 -- @param flags Search flags. See `buffer.search_flags`.
@@ -1893,7 +1898,7 @@ function buffer.selection_duplicate(buffer) end
 -- Reset the set of characters for whitespace and word characters to the
 -- defaults.
 -- This sets whitespace to space, tab and other characters with codes less than
--- 0x20, with word characters set to alphanumeric and '_'.
+-- `0x20`, with word characters set to alphanumeric and `'_'`.
 -- @param buffer The global buffer.
 function buffer.set_chars_default(buffer) end
 
@@ -1920,34 +1925,34 @@ function buffer.set_fold_flags(buffer, flags) end
 -- Set the colors used as a chequerboard pattern in the fold margin.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in 0xBBGGRR format.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.set_fold_margin_colour(buffer, use_setting, color) end
 
 ---
--- Set the colors used as a chequerboard pattern in the fold margin.
+-- Set the colors used as a checkerboard pattern in the fold margin.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in 0xBBGGRR format.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.set_fold_margin_hi_colour(buffer, use_setting, color) end
 
 ---
 -- Set a back color for active hotspots.
 -- @param buffer The global buffer.
 -- @param use_setting Enable the color change.
--- @param color A color in 0xBBGGRR format.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.set_hotspot_active_back(buffer, use_setting, color) end
 
 ---
 -- Set a fore color for active hotspots.
 -- @param buffer The global buffer.
 -- @param use_setting Enable the color change.
--- @param color A color in 0xBBGGRR format.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.set_hotspot_active_fore(buffer, use_setting, color) end
 
 ---
 -- Set the length of the utf8 argument for calling `buffer:encoded_from_utf8()`.
 -- @param buffer The global buffer.
--- @param bytes Bytes or -1 for measuring to first nul.
+-- @param bytes Bytes or `-1` for measuring to first NUL.
 function buffer.set_length_for_encode(buffer, bytes) end
 
 ---
@@ -1969,7 +1974,7 @@ function buffer.set_save_point(buffer) end
 -- @param start_pos Start position. If negative, it means the end of the
 --   document.
 -- @param end_pos End position. If negative, it means remove any selection (i.e.
---   set the anchor to the same position as current_pos).
+--   set the `anchor` to the same position as `current_pos`).
 function buffer.set_sel(buffer, start_pos, end_pos) end
 
 ---
@@ -1977,7 +1982,7 @@ function buffer.set_sel(buffer, start_pos, end_pos) end
 -- use this setting.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in 0xBBGGRR format.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.set_sel_back(buffer, use_setting, color) end
 
 ---
@@ -1985,7 +1990,7 @@ function buffer.set_sel_back(buffer, use_setting, color) end
 -- to use this setting.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in 0xBBGGRR format.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.set_sel_fore(buffer, use_setting, color) end
 
 ---
@@ -2023,14 +2028,14 @@ function buffer.set_visible_policy(buffer, visible_policy, visible_slop) end
 -- Set the background color of all whitespace and whether to use this setting.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in 0xBBGGRR format.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.set_whitespace_back(buffer, use_setting, color) end
 
 ---
 -- Set the foreground color of all whitespace and whether to use this setting.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in 0xBBGGRR format.
+-- @param color A color in `0xBBGGRR` format.
 function buffer.set_whitespace_fore(buffer, use_setting, color) end
 
 ---
@@ -2056,7 +2061,7 @@ function buffer.set_y_caret_policy(buffer, caret_policy, caret_slop) end
 
 ---
 -- Make a range of lines visible.
--- This has no effect on fold levels or fold flags. start_line can not be
+-- This has no effect on fold levels or fold flags. `start_line` can not be
 -- hidden.
 -- @param buffer The global buffer.
 -- @param start_line The start line.
@@ -2154,7 +2159,7 @@ function buffer.text_height(buffer, line) end
 -- Measure the pixel width of some text in a particular style.
 -- Does not handle tab or control characters.
 -- @param buffer The global buffer.
--- @param style_num The style number.
+-- @param style_num The style number between `0` and `255`.
 -- @param text The text.
 -- @return number
 function buffer.text_width(buffer, style_num, text) end
@@ -2235,7 +2240,7 @@ function buffer.vertical_centre_caret(buffer) end
 ---
 -- Find the display line of a document line taking hidden lines into account.
 -- If there is folding and line is outside the range of lines in the document,
--- the return value is -1.
+-- the return value is `-1`.
 -- @param buffer The global buffer.
 -- @param line The line number.
 -- @return number
@@ -2352,16 +2357,15 @@ function buffer.zoom_out(buffer) end
 -- Checks whether the given buffer is the global one.
 -- If not, throws an error indicating so. It is necessary to call this at the
 -- top of all buffer functions to avoid unexpected behavior since most buffer
--- functions operate on the global 'buffer', which is not necessarily the given
--- one.
+-- functions operate on `_G.buffer`, which is not necessarily the given one.
 -- @param buffer The buffer to check.
 function buffer.check_global(buffer) end
 
 ---
 -- Deletes the current buffer.
--- WARNING: this function should NOT be called via scripts. io provides a
--- close() function for buffers to prompt for confirmation if necessary; this
--- function does not. Activates the 'buffer_deleted' signal.
+-- WARNING: this function should NOT be called via scripts. `_G.io` provides a
+-- `close()` function for buffers to prompt for confirmation if necessary; this
+-- function does not. Genrates a `BUFFER_DELETED` event.
 -- @param buffer The global buffer.
 function buffer.delete(buffer) end
 
@@ -2381,7 +2385,7 @@ function buffer.reload(buffer) end
 -- Sets the encoding for the buffer, converting its contents in the process.
 -- @param buffer The global buffer.
 -- @param encoding The encoding to set. Valid encodings are ones that GTK's
---   g_convert() function accepts (typically GNU iconv's encodings).
+--   `g_convert()` function accepts (typically GNU iconv's encodings).
 -- @usage buffer.set_encoding(buffer, 'ASCII')
 function buffer.set_encoding(buffer) end
 
@@ -2405,8 +2409,8 @@ function buffer.save_as(buffer) end
 function buffer.close(buffer) end
 
 ---
--- Replacement for buffer.set_lexer_language(buffer).
--- Sets a buffer._lexer field so it can be restored without querying the
+-- Replacement for `buffer.set_lexer_language(buffer)`.
+-- Sets a `buffer._lexer` field so it can be restored without querying the
 -- mime-types tables. Also if the user manually sets the lexer, it should be
 -- restored.
 -- Loads the language-specific module if it exists.
@@ -2416,14 +2420,14 @@ function buffer.close(buffer) end
 function buffer.set_lexer(buffer, lang) end
 
 ---
--- Replacement for buffer.get_lexer_language(buffer).
+-- Replacement for `buffer.get_lexer_language(buffer)`.
 -- @param buffer The global buffer.
 function buffer.get_lexer(buffer) end
 
 ---
 -- Returns the name of the style associated with a style number.
 -- @param buffer The global buffer.
--- @param style_num A style number in the range 0 <= style_num < 256.
+-- @param style_num A style number from `0` to `255`.
 -- @see buffer.style_at
 function buffer.get_style_name(buffer, style_num) end
 
