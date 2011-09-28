@@ -13,7 +13,9 @@ else
 PLAT_FLAGS = -DGTK -D__BSD__
 endif
 SCI_THREAD_FLAG =
-LUA_CFLAGS = -DLUA_USE_LINUX
+#LUA_CFLAGS = -DLUA_USE_LINUX
+#Lua Coco needs the following flags because GCC is stupid.
+LUA_CFLAGS = -DLUA_USE_LINUX -fomit-frame-pointer -maccumulate-outgoing-args
 TEXTADEPT = textadept
 TEXTADEPT_RC =
 EXPORTLUASYMS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
@@ -28,7 +30,8 @@ PKG_CONFIG = pkg-config --define-variable=prefix=win32gtk
 PKG_CONFIG_PATH = $(shell pwd)/win32gtk/lib/pkgconfig
 PLAT_FLAGS = -DGTK -D__WIN32__
 SCI_THREAD_FLAG = -DG_THREADS_IMPL_NONE
-LUA_CFLAGS = -D_WIN32 -DWIN32
+#LUA_CFLAGS = -D_WIN32 -DWIN32
+LUA_CFLAGS = -D_WIN32 -DWIN32 -fomit-frame-pointer -maccumulate-outgoing-args
 TEXTADEPT = textadept.exe
 TEXTADEPT_RC = textadept_rc.o
 EXPORTLUASYMS = -Wl,--retain-symbols-file -Wl,lua.sym
@@ -88,7 +91,7 @@ LUA_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o \
   lvm.o lzio.o \
   lauxlib.o lbaselib.o ldblib.o liolib.o lmathlib.o ltablib.o lstrlib.o \
   loadlib.o loslib.o linit.o \
-  lpeg.o lfs.o
+  lpeg.o lfs.o lcoco.o
 GCOCOADIALOG = gcocoadialog.o
 
 # Scintilla

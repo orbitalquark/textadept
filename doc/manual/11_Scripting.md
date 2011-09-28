@@ -26,6 +26,10 @@ same configuration (`luaconf.h`) as vanilla Lua with the following exceptions:
 * The `LUA_COMPAT_VARARG`, `LUA_COMPAT_MOD`, `LUA_COMPAT_GFIND`, and
   `LUA_COMPAT_OPENLIB` compatibility flags for Lua 5.0 are turned off.
 
+In addition, the [Lua Coco](http://coco.luajit.org/index.html) extension is used
+to allow coroutines to yield across the C call boundary, which would normally
+cause an error.
+
 ## Scintilla
 
 The editing component used by Textadept is [Scintilla](http://scintilla.org).
