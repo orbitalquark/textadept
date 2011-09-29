@@ -237,7 +237,7 @@ local function keypress(code, shift, control, alt, meta)
 
   local success
   for i = 1, 2 do
-    local status = run_key_command(i == 1 and buffer:get_lexer())
+    local status = run_key_command(i == 1 and buffer:get_lexer(true))
     if status > 0 then -- CHAIN or HALT
       if status == HALT then
         -- Clear the key sequence, but keep any status messages from the key

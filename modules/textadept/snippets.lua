@@ -179,7 +179,7 @@ function _insert(text)
   local buffer = buffer
   local trigger
   if not text then
-    local lexer = buffer:get_lexer()
+    local lexer = buffer:get_lexer(true)
     trigger = buffer:text_range(buffer:word_start_position(buffer.current_pos),
                                 buffer.current_pos)
     local snip = snippets
