@@ -35,8 +35,8 @@ with
     require 'textadept.snapopen'
     require 'textadept.snippets'
 
-    --require 'textadept.menu'
     require 'textadept.keys'
+    --require 'textadept.menu'
 
 Note that his list was obtained from the `textadept` module's `init.lua` which
 is located in the `modules/textadept/` directory.

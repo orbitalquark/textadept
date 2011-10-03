@@ -93,7 +93,8 @@ sequences when no selection is present does not have the same effect.
 
 The indent size is usually set by a [language-specific
 module](7_Modules.html#buffer_properties) or the [theme](8_Themes.html#buffer).
-Textadept shows what it is using for indentation in the document statusbar.
+You can set it manually using the `Buffer -> Indentation` menu. Textadept shows
+what it is using for indentation in the document statusbar.
 
 ![Document Statusbar](images/docstatusbar.png)
 
