@@ -4,7 +4,7 @@
 
 In its bid for minimalism, Textadept also needs very little to run. In fact, the
 only thing it needs is [GTK+ 2.0](http://gtk.org) >= 2.16 on Linux systems. GTK
-is already included in Windows and Mac OSX packages. Textadept also has it's own
+is already included in Windows and Mac OSX packages. Textadept also has its own
 version of Lua.
 
 Note: for Win32 and Mac OSX, more than 3/4 of the download and unpackaged

@@ -12,4 +12,4 @@ Textadept has a [mailing list](http://groups.google.com/group/textadept) and a
 [freenode.net](http://freenode.net) in `#textadept`.
 
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>

@@ -38,4 +38,4 @@ pops in and out as you wish.
 The left side of the statusbar displays any status messages. The right side
 shows the current buffer's status.
 
-<br/><br/><br/>
+<br/><br/><br/><br />
