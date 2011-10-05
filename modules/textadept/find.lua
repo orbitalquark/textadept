@@ -236,7 +236,7 @@ local function replace(rtext)
   local captures = find.captures
   if captures then
     for i = 1, #captures do
-      rtext = rtext:gsub('%%'..i, captures[i]:gsub('%%', '%%%%'))
+      rtext = rtext:gsub('%%'..i, (captures[i]:gsub('%%', '%%%%')))
     end
   end
   local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', run)
