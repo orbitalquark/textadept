@@ -515,8 +515,8 @@ function complete(sense, only_fields, only_functions)
   else
     -- Scintilla does not emit `AUTO_C_SELECTION` in this case. This is
     -- necessary for autocompletion with multiple selections.
-    events.emit(events.AUTO_C_SELECTION, completions[1]:sub(#part + 1),
-                buffer.current_pos)
+    local text = completions[1]:sub(#part + 1):match('^(.+)%?%d+$')
+    events.emit(events.AUTO_C_SELECTION, text, buffer.current_pos)
   end
   return true
 end
