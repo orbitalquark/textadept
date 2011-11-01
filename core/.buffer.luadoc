@@ -91,6 +91,9 @@ module('buffer')
 --   `0xBBGGRR` format. (Write-only)
 -- * `call_tip_fore_hlt` [number]: The foreground color for the highlighted part
 --   of the call tip in `0xBBGGRR` format. (Write-only)
+-- * `call_tip_position` [boolean]: The position of calltip, above or below 
+--   text. By default the calltip is displayed below the text. Setting to `true`
+--   will display it above the text.
 -- * `call_tip_use_style` [number]: Enable use of
 --   `_SCINTILLA.constants.STYLE_CALLTIP` and set call tip tab size in pixels.
 --   If the tab size is less than `1`, Tab characters are not treated specially.
@@ -309,6 +312,7 @@ module('buffer')
 -- * `line_visible` [bool]: Is a line visible? (Read-only)
 -- * `lines_on_screen` [number]: The number of lines completely visible.
 --   (Read-only)
+-- * `lines_visible` [bool]: Are all lines visible? (Read-only)
 -- * `main_selection` [number]: The main selection. The main selection may be
 --   displayed in different colors or with a differently styled caret. Only an
 --   already existing selection can be made main.
@@ -503,11 +507,23 @@ module('buffer')
 --   `255`.
 -- * `style_italic` [table]: Table of booleans for italic styles from `0` to
 --   `255`.
--- * `style_size` [table]: Table of font sizes for styles from `0` to `255`.
+-- * `style_size` [table]: Table of font sizes for styles from `0` to `255`. 
+--   Font size is a whole number of points.
+-- * `style_size_fractional` [table]: Table of sizes of characters for styles
+--     from `0` to `255`. Size is in hundreths of a point and multiplied by 100
+--     internally. For example, a text size of 9.4 points is set with 940.
 -- * `style_underline` [table]: Table of booleans for underlined styles from `0`
 --   to `255`.
 -- * `style_visible` [table]: Table of booleans for visible styles from `0` to
 --   `255`.
+-- * `style_weight` [table]: Table of character weights for styles from `0` to
+--   `255`. The weight or boldness of a font can be set with a number between 1
+--   and 999 with 1 being very light and 999 very heavy. While any value can be
+--   used, fonts often only support between 2 and 4 weights with three weights
+--   being common enough to use symbolic names:<br />
+--       * `_SCINTILLA.constants.SC_WEIGHT_NORMAL` (400): Normal.
+--       * `_SCINTILLA.constants.SC_WEIGHT_SEMIBOLD` (600): Semi-bold.
+--       * `_SCINTILLA.constants.SC_WEIGHT_BOLD` (700): Bold.
 -- * `tab_indents` [bool]: Whether a tab pressed when caret is within
 --   indentation indents.
 -- * `tab_width` [number]: The visible size of a tab as a multiple of the width
@@ -2439,6 +2455,7 @@ function buffer.get_style_name(buffer, style_num) end
 --   * character_pointer
 --   * identifier
 --   * key_words
+--   * technology
 
 -- Unused Functions.
 --   * add_styled_text
@@ -2462,3 +2479,4 @@ function buffer.get_style_name(buffer, style_num) end
 --   * property_type
 --   * describe_property
 --   * describe_key_word_sets
+--   * create_loader

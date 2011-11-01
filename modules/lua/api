@@ -153,12 +153,14 @@ SCI_AUTOCSETTYPESEPARATOR _SCINTILLA.constants.SCI_AUTOCSETTYPESEPARATOR\n2286\n
 SCI_CALLTIPSETBACK _SCINTILLA.constants.SCI_CALLTIPSETBACK\n2205\n
 SCI_CALLTIPSETFORE _SCINTILLA.constants.SCI_CALLTIPSETFORE\n2206\n
 SCI_CALLTIPSETFOREHLT _SCINTILLA.constants.SCI_CALLTIPSETFOREHLT\n2207\n
+SCI_CALLTIPSETPOSITION _SCINTILLA.constants.SCI_CALLTIPSETPOSITION\n2213\n
 SCI_CALLTIPUSESTYLE _SCINTILLA.constants.SCI_CALLTIPUSESTYLE\n2212\n
 SCI_GETADDITIONALCARETFORE _SCINTILLA.constants.SCI_GETADDITIONALCARETFORE\n2605\n
 SCI_GETADDITIONALCARETSBLINK _SCINTILLA.constants.SCI_GETADDITIONALCARETSBLINK\n2568\n
 SCI_GETADDITIONALCARETSVISIBLE _SCINTILLA.constants.SCI_GETADDITIONALCARETSVISIBLE\n2609\n
 SCI_GETADDITIONALSELALPHA _SCINTILLA.constants.SCI_GETADDITIONALSELALPHA\n2603\n
 SCI_GETADDITIONALSELECTIONTYPING _SCINTILLA.constants.SCI_GETADDITIONALSELECTIONTYPING\n2566\n
+SCI_GETALLLINESVISIBLE _SCINTILLA.constants.SCI_GETALLLINESVISIBLE\n2236\n
 SCI_GETANCHOR _SCINTILLA.constants.SCI_GETANCHOR\n2009\n
 SCI_GETBACKSPACEUNINDENTS _SCINTILLA.constants.SCI_GETBACKSPACEUNINDENTS\n2263\n
 SCI_GETBUFFEREDDRAW _SCINTILLA.constants.SCI_GETBUFFEREDDRAW\n2034\n
@@ -265,10 +267,10 @@ SCI_GETTABINDENTS _SCINTILLA.constants.SCI_GETTABINDENTS\n2261\n
 SCI_GETTABWIDTH _SCINTILLA.constants.SCI_GETTABWIDTH\n2121\n
 SCI_GETTARGETEND _SCINTILLA.constants.SCI_GETTARGETEND\n2193\n
 SCI_GETTARGETSTART _SCINTILLA.constants.SCI_GETTARGETSTART\n2191\n
+SCI_GETTECHNOLOGY _SCINTILLA.constants.SCI_GETTECHNOLOGY\n2631\n
 SCI_GETTEXTLENGTH _SCINTILLA.constants.SCI_GETTEXTLENGTH\n2183\n
 SCI_GETTWOPHASEDRAW _SCINTILLA.constants.SCI_GETTWOPHASEDRAW\n2283\n
 SCI_GETUNDOCOLLECTION _SCINTILLA.constants.SCI_GETUNDOCOLLECTION\n2019\n
-SCI_GETUSEPALETTE _SCINTILLA.constants.SCI_GETUSEPALETTE\n2139\n
 SCI_GETUSETABS _SCINTILLA.constants.SCI_GETUSETABS\n2125\n
 SCI_GETVIEWEOL _SCINTILLA.constants.SCI_GETVIEWEOL\n2355\n
 SCI_GETVIEWWS _SCINTILLA.constants.SCI_GETVIEWWS\n2020\n
@@ -399,9 +401,9 @@ SCI_SETTABINDENTS _SCINTILLA.constants.SCI_SETTABINDENTS\n2260\n
 SCI_SETTABWIDTH _SCINTILLA.constants.SCI_SETTABWIDTH\n2036\n
 SCI_SETTARGETEND _SCINTILLA.constants.SCI_SETTARGETEND\n2192\n
 SCI_SETTARGETSTART _SCINTILLA.constants.SCI_SETTARGETSTART\n2190\n
+SCI_SETTECHNOLOGY _SCINTILLA.constants.SCI_SETTECHNOLOGY\n2630\n
 SCI_SETTWOPHASEDRAW _SCINTILLA.constants.SCI_SETTWOPHASEDRAW\n2284\n
 SCI_SETUNDOCOLLECTION _SCINTILLA.constants.SCI_SETUNDOCOLLECTION\n2012\n
-SCI_SETUSEPALETTE _SCINTILLA.constants.SCI_SETUSEPALETTE\n2039\n
 SCI_SETUSETABS _SCINTILLA.constants.SCI_SETUSETABS\n2124\n
 SCI_SETVIEWEOL _SCINTILLA.constants.SCI_SETVIEWEOL\n2356\n
 SCI_SETVIEWWS _SCINTILLA.constants.SCI_SETVIEWWS\n2021\n
@@ -428,8 +430,10 @@ SCI_STYLEGETFORE _SCINTILLA.constants.SCI_STYLEGETFORE\n2481\n
 SCI_STYLEGETHOTSPOT _SCINTILLA.constants.SCI_STYLEGETHOTSPOT\n2493\n
 SCI_STYLEGETITALIC _SCINTILLA.constants.SCI_STYLEGETITALIC\n2484\n
 SCI_STYLEGETSIZE _SCINTILLA.constants.SCI_STYLEGETSIZE\n2485\n
+SCI_STYLEGETSIZEFRACTIONAL _SCINTILLA.constants.SCI_STYLEGETSIZEFRACTIONAL\n2062\n
 SCI_STYLEGETUNDERLINE _SCINTILLA.constants.SCI_STYLEGETUNDERLINE\n2488\n
 SCI_STYLEGETVISIBLE _SCINTILLA.constants.SCI_STYLEGETVISIBLE\n2491\n
+SCI_STYLEGETWEIGHT _SCINTILLA.constants.SCI_STYLEGETWEIGHT\n2064\n
 SCI_STYLESETBACK _SCINTILLA.constants.SCI_STYLESETBACK\n2052\n
 SCI_STYLESETBOLD _SCINTILLA.constants.SCI_STYLESETBOLD\n2053\n
 SCI_STYLESETCASE _SCINTILLA.constants.SCI_STYLESETCASE\n2060\n
@@ -441,8 +445,10 @@ SCI_STYLESETFORE _SCINTILLA.constants.SCI_STYLESETFORE\n2051\n
 SCI_STYLESETHOTSPOT _SCINTILLA.constants.SCI_STYLESETHOTSPOT\n2409\n
 SCI_STYLESETITALIC _SCINTILLA.constants.SCI_STYLESETITALIC\n2054\n
 SCI_STYLESETSIZE _SCINTILLA.constants.SCI_STYLESETSIZE\n2055\n
+SCI_STYLESETSIZEFRACTIONAL _SCINTILLA.constants.SCI_STYLESETSIZEFRACTIONAL\n2061\n
 SCI_STYLESETUNDERLINE _SCINTILLA.constants.SCI_STYLESETUNDERLINE\n2059\n
 SCI_STYLESETVISIBLE _SCINTILLA.constants.SCI_STYLESETVISIBLE\n2074\n
+SCI_STYLESETWEIGHT _SCINTILLA.constants.SCI_STYLESETWEIGHT\n2063\n
 SCK_ADD _SCINTILLA.constants.SCK_ADD\n310\n
 SCK_BACK _SCINTILLA.constants.SCK_BACK\n8\n
 SCK_DELETE _SCINTILLA.constants.SCK_DELETE\n308\n
@@ -565,6 +571,7 @@ SC_FOLDLEVELNUMBERMASK _SCINTILLA.constants.SC_FOLDLEVELNUMBERMASK\n4095\n
 SC_FOLDLEVELNUMBERMASK lexer.SC_FOLDLEVELNUMBERMASK\nFlag used with `SCI_GETFOLDLEVEL(line)` to get the fold level of a line.\n
 SC_FOLDLEVELWHITEFLAG _SCINTILLA.constants.SC_FOLDLEVELWHITEFLAG\n4096\n
 SC_FOLDLEVELWHITEFLAG lexer.SC_FOLDLEVELWHITEFLAG\nFlag indicating that the line is blank.\n
+SC_FONT_SIZE_MULTIPLIER _SCINTILLA.constants.SC_FONT_SIZE_MULTIPLIER\n100\n
 SC_IV_LOOKBOTH _SCINTILLA.constants.SC_IV_LOOKBOTH\n3\n
 SC_IV_LOOKFORWARD _SCINTILLA.constants.SC_IV_LOOKFORWARD\n2\n
 SC_IV_NONE _SCINTILLA.constants.SC_IV_NONE\n0\n
@@ -652,6 +659,8 @@ SC_STARTACTION _SCINTILLA.constants.SC_STARTACTION\n8192\n
 SC_STATUS_BADALLOC _SCINTILLA.constants.SC_STATUS_BADALLOC\n2\n
 SC_STATUS_FAILURE _SCINTILLA.constants.SC_STATUS_FAILURE\n1\n
 SC_STATUS_OK _SCINTILLA.constants.SC_STATUS_OK\n0\n
+SC_TECHNOLOGY_DEFAULT _SCINTILLA.constants.SC_TECHNOLOGY_DEFAULT\n0\n
+SC_TECHNOLOGY_DIRECTWRITE _SCINTILLA.constants.SC_TECHNOLOGY_DIRECTWRITE\n1\n
 SC_TIME_FOREVER _SCINTILLA.constants.SC_TIME_FOREVER\n10000000\n
 SC_TYPE_BOOLEAN _SCINTILLA.constants.SC_TYPE_BOOLEAN\n0\n
 SC_TYPE_INTEGER _SCINTILLA.constants.SC_TYPE_INTEGER\n1\n
@@ -660,6 +669,9 @@ SC_UPDATE_CONTENT _SCINTILLA.constants.SC_UPDATE_CONTENT\n1\n
 SC_UPDATE_H_SCROLL _SCINTILLA.constants.SC_UPDATE_H_SCROLL\n8\n
 SC_UPDATE_SELECTION _SCINTILLA.constants.SC_UPDATE_SELECTION\n2\n
 SC_UPDATE_V_SCROLL _SCINTILLA.constants.SC_UPDATE_V_SCROLL\n4\n
+SC_WEIGHT_BOLD _SCINTILLA.constants.SC_WEIGHT_BOLD\n700\n
+SC_WEIGHT_NORMAL _SCINTILLA.constants.SC_WEIGHT_NORMAL\n400\n
+SC_WEIGHT_SEMIBOLD _SCINTILLA.constants.SC_WEIGHT_SEMIBOLD\n600\n
 SC_WRAPINDENT_FIXED _SCINTILLA.constants.SC_WRAPINDENT_FIXED\n0\n
 SC_WRAPINDENT_INDENT _SCINTILLA.constants.SC_WRAPINDENT_INDENT\n2\n
 SC_WRAPINDENT_SAME _SCINTILLA.constants.SC_WRAPINDENT_SAME\n1\n
@@ -798,6 +810,7 @@ call_tip_cancel buffer.call_tip_cancel(buffer)\nRemove the call tip from the scr
 call_tip_fore buffer.call_tip_fore [number]\nThe foreground color for the call tip in `0xBBGGRR` format. (Write-only)\n
 call_tip_fore_hlt buffer.call_tip_fore_hlt [number]\nThe foreground color for the highlighted part of the call tip in `0xBBGGRR`\nformat. (Write-only)\n
 call_tip_pos_start buffer.call_tip_pos_start(buffer)\nRetrieve the position where the caret was before displaying the call tip.\n@param buffer The global buffer.\n@return number\n
+call_tip_position buffer.call_tip_position [boolean]\nThe position of calltip, above or below  text. By default the calltip is\ndisplayed below the text. Setting to `true` will display it above the text.\n
 call_tip_set_hlt buffer.call_tip_set_hlt(buffer, start_pos, end_pos)\nHighlights a segment of a call tip.\n@param buffer The global buffer.\n@param start_pos The start position.\n@param end_pos The end position.\n
 call_tip_show buffer.call_tip_show(buffer, pos, text)\nShow a call tip containing a definition near position pos. The call tip text\nis aligned to start 1 line below this character unless up and/or down arrows\nhave been included in the call tip text in which case the tip is aligned to\nthe right-hand edge of the rightmost arrow. The assumption is that the text\nstarts with something like `"\001 1 of 3 \002"`.\n@param buffer The global buffer.\n@param pos The position.\n@param text The text.\n
 call_tip_use_style buffer.call_tip_use_style [number]\nEnable use of `_SCINTILLA.constants.STYLE_CALLTIP` and set call tip tab\nsize in pixels. If the tab size is less than `1`, Tab characters are not\ntreated specially.\n
@@ -1139,6 +1152,7 @@ lines io.lines([filename])\nOpens the given file name in read mode and returns a
 lines_join buffer.lines_join(buffer)\nJoin the lines in the target. Where this would lead to no space between words,\nan extra space is inserted.\n@param buffer The global buffer.\n
 lines_on_screen buffer.lines_on_screen [number]\nThe number of lines completely visible. (Read-only)\n
 lines_split buffer.lines_split(buffer, pixel_width)\nSplit the lines in the target into lines that are less wide than `pixel_width`\nwhere possible.\n@param buffer The global buffer.\n@param pixel_width The pixel width. When `0`, the width of the view is used.\n
+lines_visible buffer.lines_visible [bool]\nAre all lines visible? (Read-only)\n
 load _G.load(func [, chunkname])\nLoads a chunk using function `func` to get its pieces. Each call to `func`\nmust return a string that concatenates with previous results. A return of\nan empty string, nil, or no value signals the end of the chunk. If there\nare no errors, returns the compiled chunk as a function; otherwise, returns\nnil plus the error message. The environment of the returned function is the\nglobal environment. `chunkname` is used as the chunk name for error messages\nand debug information. When absent, it defaults to "`=(load)`".\n
 load _m.textadept.session.load(filename)\nLoads a Textadept session file. Textadept restores split views, opened buffers,\ncursor information, and project manager details.\n@param filename The absolute path to the session file to load. Defaults to\n`DEFAULT_SESSION` if not specified.\n@usage _m.textadept.session.load(filename)\n@return `true` if the session file was opened and read; `false` otherwise.\n
 load lexer.load(lexer_name)\nInitializes the specified lexer.\n@param lexer_name The name of the lexing language.\n
@@ -1503,13 +1517,15 @@ style_number lexer.style_number\nTypically used for numbers.\n
 style_operator lexer.style_operator\nTypically used for operators.\n
 style_preproc lexer.style_preproc\nTypically used for preprocessor statements.\n
 style_reset_default buffer.style_reset_default(buffer)\nReset the default style to its state at startup.\n@param buffer The global buffer.\n
-style_size buffer.style_size [table]\nTable of font sizes for styles from `0` to `255`.\n
+style_size buffer.style_size [table]\nTable of font sizes for styles from `0` to `255`.  Font size is a whole\nnumber of points.\n
+style_size_fractional buffer.style_size_fractional [table]\nTable of sizes of characters for styles\n  from `0` to `255`. Size is in hundreths of a point and multiplied by 100\n  internally. For example, a text size of 9.4 points is set with 940.\n\n
 style_string lexer.style_string\nTypically used for strings.\n
 style_tag lexer.style_tag\nTypically used for markup tags.\n
 style_type lexer.style_type\nTypically used for static types.\n
 style_underline buffer.style_underline [table]\nTable of booleans for underlined styles from `0` to `255`.\n
 style_variable lexer.style_variable\nTypically used for variables.\n
 style_visible buffer.style_visible [table]\nTable of booleans for visible styles from `0` to `255`.\n
+style_weight buffer.style_weight [table]\nTable of character weights for styles from `0` to `255`. The weight or\nboldness of a font can be set with a number between 1 and 999 with 1 being\nvery light and 999 very heavy. While any value can be used, fonts often only\nsupport between 2 and 4 weights with three weights being common enough to\nuse symbolic names:\n    * `_SCINTILLA.constants.SC_WEIGHT_NORMAL` (400): Normal.\n    * `_SCINTILLA.constants.SC_WEIGHT_SEMIBOLD` (600): Semi-bold.\n    * `_SCINTILLA.constants.SC_WEIGHT_BOLD` (700): Bold.\n\n
 sub string.sub(s, i [, j])\nReturns the substring of `s` that starts at `i` and continues until `j`;\n`i` and `j` can be negative. If `j` is absent, then it is assumed to\nbe equal to -1 (which is the same as the string length). In particular,\nthe call `string.sub(s,1,j)` returns a prefix of `s` with length `j`, and\n`string.sub(s, -i)` returns a suffix of `s` with length `i`.\n
 swap_main_anchor_caret buffer.swap_main_anchor_caret(buffer)\nSwap that caret and anchor of the main selection.\n@param buffer The global buffer.\n
 switch_buffer gui.switch_buffer()\nDisplays a dialog with a list of buffers to switch to and switches to the\nselected one, if any.\n
