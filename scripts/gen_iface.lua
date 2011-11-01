@@ -160,6 +160,7 @@ end
 -- Use this function for custom indicators in order to prevent clashes with
 -- identifiers of other custom indicators.
 -- @usage local indic_num = _SCINTILLA.next_indic_number()
+-- @see buffer.indic_style
 function next_indic_number()
   indic_number = indic_number + 1
   return indic_number
