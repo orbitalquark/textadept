@@ -162,7 +162,7 @@ function open_file(utf8_filenames)
       if file == utf8_filename then table.remove(recent_files, i) break end
     end
     table.insert(recent_files, 1, utf8_filename)
-    lfs.chdir(utf8_filename:iconv('UTF-8', _CHARSET):match('.+[/\\]'))
+    lfs.chdir(utf8_filename:iconv('UTF-8', _CHARSET):match('.+[/\\]') or '.')
   end
 end
 
