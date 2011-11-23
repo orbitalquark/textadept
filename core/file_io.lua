@@ -250,13 +250,12 @@ end
 -- Saves all dirty buffers to their respective files.
 -- @usage io.save_all()
 function save_all()
-  local current_buffer, current_index = buffer, 1
+  local current_buffer = _BUFFERS[buffer]
   for i, buffer in ipairs(_BUFFERS) do
     view:goto_buffer(i)
-    if buffer == current_buffer then current_index = i end
     if buffer.filename and buffer.dirty then buffer:save() end
   end
-  view:goto_buffer(current_index)
+  view:goto_buffer(current_buffer)
 end
 
 -- LuaDoc is in core/.buffer.luadoc.

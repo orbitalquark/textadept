@@ -272,8 +272,7 @@ connect(events.BUFFER_NEW, function() set_title(buffer) end)
 connect(events.BUFFER_BEFORE_SWITCH, function()
   local buffer = buffer
   -- Save view state.
-  buffer._anchor = buffer.anchor
-  buffer._current_pos = buffer.current_pos
+  buffer._anchor, buffer._current_pos = buffer.anchor, buffer.current_pos
   buffer._first_visible_line = buffer.first_visible_line
   -- Save fold state.
   buffer._folds = {}

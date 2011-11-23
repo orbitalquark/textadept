@@ -78,7 +78,7 @@ local function write_apidoc(file, m, b)
   local p = io.popen(table.concat(doc, '\n'))
   doc = p:read('*all'):gsub('\n', '\\n')
   p:close()
-  file[#file + 1] = table.concat({ name:match('[^%.:]+$') , doc }, ' ')
+  file[#file + 1] = name:match('[^%.:]+$')..' '..doc
 end
 
 -- Called by LuaDoc to process a doc object.

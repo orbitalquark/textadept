@@ -140,6 +140,6 @@ end
 
 -- Create Lua adeptsense for textadept.
 if adeptsense then
-  os.execute(table.concat{ 'luadoc -d ../modules/lua -doclet adeptsensedoc ',
-                           '../modules ../core ../lexers/lexer.lua' })
+  os.execute('luadoc -d ../modules/lua -doclet adeptsensedoc '..
+             '../modules ../core ../lexers/lexer.lua')
 end
