@@ -101,7 +101,7 @@ if not RESETTING then constantize_menu_buffer_functions() end
   Windows and Linux menu key commands.
 
   Unassigned keys (~ denotes keys reserved by the operating system):
-  c:   A B C         H              p qQ     T ~ V   X        ) ] }  *      \n
+  c:   A B C         H              p qQ       ~ V   X        ) ] }  *      \n
   a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpP QrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=~~\n\s
   ca: aAbBcCdDeE F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  / ~~  \s
 
@@ -116,7 +116,7 @@ if not RESETTING then constantize_menu_buffer_functions() end
   Mac OSX menu key commands.
 
   Unassigned keys (~ denotes keys reserved by the operating system):
-  m:   A B C        ~    JkK  ~M    p  ~    tT U V   Xy       ) ] }  *    ~~\n~~
+  m:   A B C        ~    JkK  ~M    p  ~    t  U V   Xy       ) ] }  *    ~~\n~~
   c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /     \s
   cm: aAbBcC~DeE F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n~~
 
@@ -280,6 +280,7 @@ keys[not OSX and 'caV' or 'cV'] =
 keys[not OSX and 'c=' or 'm='] = _buffer.zoom_in
 keys[not OSX and 'c-' or 'm-'] = _buffer.zoom_out
 keys[not OSX and 'c0' or 'm0'] = utils.reset_zoom
+keys[not OSX and 'cT' or 'mT'] = gui.select_theme
 
 -- Help.
 keys.f1 = { utils.open_webpage, _HOME..'/doc/manual/1_Introduction.html' }

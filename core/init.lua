@@ -15,18 +15,7 @@ require 'keys'
 
 _LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers'
 
-_THEME = 'light'
-local f = io.open(_USERHOME..'/theme', 'rb')
-if f then
-  local theme = f:read('*line'):match('[^\r\n]+')
-  f:close()
-  if theme and #theme > 0 then _THEME = theme end
-end
-if not _THEME:find('[/\\]') then
-  local theme = _THEME
-  _THEME = _USERHOME..'/themes/'..theme
-  if not lfs.attributes(_THEME) then _THEME = _HOME..'/themes/'..theme end
-end
+gui.set_theme()
 
 -- LuaDoc is in core/._G.luadoc.
 function user_dofile(filename)

@@ -132,6 +132,7 @@ Ctrl+Alt+Shift+V         |^⇧V      |Toggle virtual space
 Ctrl+=                   |⌘=       |Zoom in
 Ctrl+-                   |⌘-       |Zoom out
 Ctrl+0                   |⌘0       |Reset zoom
+Ctrl+Shift+T             |⌘⇧T      |Select theme...
 
 **Help**                        |||
 F1      |F1  |Open manual

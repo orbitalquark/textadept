@@ -3,7 +3,8 @@
 local L = locale.localize
 local gui = gui
 
--- LuaDoc is in core/.gui.luadoc.
+-- Helper function for printing messages to buffers.
+-- @see gui._print
 local function _print(buffer_type, ...)
   if buffer._type ~= buffer_type then
     for i, view in ipairs(_VIEWS) do
@@ -78,6 +79,74 @@ function gui.goto_file(filename, split, preferred_view)
   io.open_file(filename)
 end
 
+local THEME
+-- LuaDoc is in core/.gui.luadoc.
+function gui.set_theme(name)
+  if not name then
+    -- Read theme from ~/.textadept/theme, defaulting to 'light'.
+    local f = io.open(_USERHOME..'/theme', 'rb')
+    if f then
+      name = f:read('*line'):match('[^\r\n]+')
+      f:close()
+    end
+    if not name or name == '' then name = 'light' end
+  end
+
+  -- Get the path of the theme.
+  local theme
+  if not name:find('[/\\]') then
+    if lfs.attributes(_USERHOME..'/themes/'..name) then
+      theme = _USERHOME..'/themes/'..name
+    elseif lfs.attributes(_HOME..'/themes/'..name) then
+      theme = _HOME..'/themes/'..name
+    end
+  elseif lfs.attributes(name) then
+    theme = name
+  end
+  if not theme then error(('"%s" %s'):format(name, L("theme not found."))) end
+
+  if buffer and view then
+    local current_buffer, current_view = _BUFFERS[buffer], _VIEWS[view]
+    for i in ipairs(_BUFFERS) do
+      view:goto_buffer(i)
+      buffer.property['lexer.lpeg.color.theme'] = theme..'/lexer.lua'
+      local lexer = buffer:get_lexer()
+      buffer:set_lexer('null') -- lexer needs to be changed to reset styles
+      buffer:set_lexer(lexer)
+      local ok, err = pcall(dofile, theme..'/buffer.lua')
+      if not ok then io.stderr:write(err) end
+    end
+    view:goto_buffer(current_buffer)
+    for i in ipairs(_VIEWS) do
+      gui.goto_view(i)
+      local lexer = buffer:get_lexer()
+      buffer:set_lexer('null') -- lexer needs to be changed to reset styles
+      buffer:set_lexer(lexer)
+      local ok, err = pcall(dofile, theme..'/view.lua')
+      if not ok then io.stderr:write(err) end
+    end
+    gui.goto_view(current_view)
+  end
+  THEME = theme
+end
+
+-- LuaDoc is in core/.gui.luadoc.
+function gui.select_theme()
+  local themes, themes_found = {}, {}
+  for theme in lfs.dir(_HOME..'/themes') do
+    if not theme:find('^%.%.?$') then themes_found[theme] = true end
+  end
+  if lfs.attributes(_USERHOME..'/themes') then
+    for theme in lfs.dir(_USERHOME..'/themes') do
+      if not theme:find('^%.%.?$') then themes_found[theme] = true end
+    end
+  end
+  for theme in pairs(themes_found) do themes[#themes + 1] = theme end
+  table.sort(themes)
+  local theme = gui.filteredlist(L('Select Theme'), L('Name'), themes)
+  if theme then gui.set_theme(theme) end
+end
+
 local connect = events.connect
 
 -- Sets default properties for a Scintilla window.
@@ -96,11 +165,9 @@ connect(events.VIEW_NEW, function()
   for _, key in ipairs(ctrl_shift_keys) do
     buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL + c.SCMOD_SHIFT)
   end
-
-  if _THEME and #_THEME > 0 then
-    local ok, err = pcall(dofile, _THEME..'/view.lua')
-    if not ok then io.stderr:write(err) end
-  end
+  -- Load theme.
+  local ok, err = pcall(dofile, THEME..'/view.lua')
+  if not ok then io.stderr:write(err) end
 end)
 connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
@@ -119,16 +186,12 @@ local function set_properties()
   buffer.property['textadept.home'] = _HOME
   buffer.property['lexer.lpeg.home'] = _LEXERPATH
   buffer.property['lexer.lpeg.script'] = _HOME..'/lexers/lexer.lua'
-  if _THEME and #_THEME > 0 then
-    buffer.property['lexer.lpeg.color.theme'] = _THEME..'/lexer.lua'
-  end
+  buffer.property['lexer.lpeg.color.theme'] = THEME..'/lexer.lua'
   -- Buffer.
   buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
   -- Load theme.
-  if _THEME and #_THEME > 0 then
-    local ok, err = pcall(dofile, _THEME..'/buffer.lua')
-    if not ok then io.stderr:write(err) end
-  end
+  local ok, err = pcall(dofile, THEME..'/buffer.lua')
+  if not ok then io.stderr:write(err) end
 end
 
 -- Sets default properties for a Scintilla document.

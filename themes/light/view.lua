@@ -42,9 +42,9 @@ buffer:set_sel_fore(1, 0x333333)
 buffer:set_sel_back(1, 0x999999)
 --buffer.sel_alpha =
 --buffer.sel_eol_filled = true
-buffer.caret_fore = 0x333333
+buffer.caret_fore = 0x4D4D4D
 buffer.caret_line_visible = true
-buffer.caret_line_back = 0xDDDDDD
+buffer.caret_line_back = 0xCCCCCC
 --buffer.caret_line_back_alpha =
 --buffer.caret_period = 0
 --buffer.caret_style = 2
@@ -64,8 +64,8 @@ buffer.margin_mask_n[2] = c.SC_MASK_FOLDERS
 buffer.margin_sensitive_n[2] = true
 --buffer.margin_left =
 --buffer.margin_right =
-buffer:set_fold_margin_colour(1, 0xCCCCCC)
-buffer:set_fold_margin_hi_colour(1, 0xCCCCCC)
+buffer:set_fold_margin_colour(1, 0xE6E6E6)
+buffer:set_fold_margin_hi_colour(1, 0xE6E6E6)
 
 -- Annotations.
 buffer.annotation_visible = 2
@@ -79,11 +79,11 @@ buffer.indentation_guides = 3
 
 -- Fold Margin Markers.
 buffer:marker_define(c.SC_MARKNUM_FOLDEROPEN, c.SC_MARK_ARROWDOWN)
-buffer:marker_set_fore(c.SC_MARKNUM_FOLDEROPEN, 0)
-buffer:marker_set_back(c.SC_MARKNUM_FOLDEROPEN, 0)
+buffer:marker_set_fore(c.SC_MARKNUM_FOLDEROPEN, 0x808080)
+buffer:marker_set_back(c.SC_MARKNUM_FOLDEROPEN, 0x808080)
 buffer:marker_define(c.SC_MARKNUM_FOLDER, c.SC_MARK_ARROW)
-buffer:marker_set_fore(c.SC_MARKNUM_FOLDER, 0)
-buffer:marker_set_back(c.SC_MARKNUM_FOLDER, 0)
+buffer:marker_set_fore(c.SC_MARKNUM_FOLDER, 0x808080)
+buffer:marker_set_back(c.SC_MARKNUM_FOLDER, 0x808080)
 buffer:marker_define(c.SC_MARKNUM_FOLDERSUB, c.SC_MARK_EMPTY)
 buffer:marker_define(c.SC_MARKNUM_FOLDERTAIL, c.SC_MARK_EMPTY)
 buffer:marker_define(c.SC_MARKNUM_FOLDEREND, c.SC_MARK_EMPTY)
@@ -113,7 +113,7 @@ buffer:set_fold_flags(16)
 -- Long Lines.
 --buffer.edge_mode = 1
 --buffer.edge_column = 80
---buffer.edge_colour = 0x333333
+--buffer.edge_colour = 0x808080
 
 -- Notifications.
 buffer.mod_event_mask = c.SC_MOD_CHANGEFOLD
