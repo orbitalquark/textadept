@@ -205,6 +205,7 @@ static void new_window() {
   g_list_free(icon_list);
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_name(window, "textadept");
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
   signal(window, "delete-event", w_exit);
   signal(window, "focus-in-event", w_focus);
@@ -234,7 +235,6 @@ static void new_window() {
   gtk_box_pack_start(GTK_BOX(vbox), find, FALSE, FALSE, 5);
 
   command_entry = gtk_entry_new();
-  gtk_widget_set_name(command_entry, "textadept-command-entry");
   signal(command_entry, "activate", c_activate);
   signal(command_entry, "key-press-event", c_keypress);
   gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
@@ -574,7 +574,6 @@ static GtkWidget *new_findbox() {
   g_object_unref(find_store);
   gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(find_combo), FALSE);
   find_entry = gtk_bin_get_child(GTK_BIN(find_combo));
-  gtk_widget_set_name(find_entry, "textadept-find-entry");
   gtk_entry_set_activates_default(GTK_ENTRY(find_entry), TRUE);
   GtkWidget *replace_combo = gtk_combo_box_entry_new_with_model(
                              GTK_TREE_MODEL(repl_store), 0);
@@ -582,7 +581,6 @@ static GtkWidget *new_findbox() {
   g_object_unref(repl_store);
   gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(replace_combo), FALSE);
   replace_entry = gtk_bin_get_child(GTK_BIN(replace_combo));
-  gtk_widget_set_name(replace_entry, "textadept-replace-entry");
   gtk_entry_set_activates_default(GTK_ENTRY(replace_entry), TRUE);
   fnext_button = gtk_button_new_with_mnemonic("Find _Next");
   fprev_button = gtk_button_new_with_mnemonic("Find _Prev");
