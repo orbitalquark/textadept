@@ -52,7 +52,7 @@ events.connect(events.COMMAND_ENTRY_COMMAND, function(text)
     local f = io.open(tmpfile, 'wb')
     f:write(input)
     f:close()
-    local cmd = table.concat({ cat, '"'..tmpfile..'"', '|', text }, ' ')
+    local cmd = cat..' "'..tmpfile..'" | '..text
     if WIN32 then cmd = cmd:gsub('/', '\\') end
     local p = io.popen(cmd)
     if s ~= e then

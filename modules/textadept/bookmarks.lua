@@ -78,7 +78,7 @@ function goto()
   if line == -1 then return end
   repeat
     local text = buffer:get_line(line):sub(1, -2) -- chop \n
-    markers[#markers + 1] = table.concat({ line + 1, text }, ': ')
+    markers[#markers + 1] = tostring(line + 1)..': '..text
     line = buffer:marker_next(line + 1, 2^MARK_BOOKMARK)
   until line < 0
   local line = gui.filteredlist(L('Select Bookmark'), 'Bookmark', markers)

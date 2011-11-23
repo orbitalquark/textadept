@@ -214,17 +214,17 @@ end
 -- Global snippets and snippets in the current lexer are shown.
 function _select()
   local list = {}
-  local table_concat, type = table.concat, type
+  local type = type
   for trigger, text in pairs(snippets) do
     if type(text) == 'string' and
        trigger ~= '_NAME' and trigger ~= '_PACKAGE' then
-      list[#list + 1] = table_concat({trigger, 'global', text }, '\0')
+      list[#list + 1] = trigger..'\0global\0'..text
     end
   end
   local lexer = buffer:get_lexer()
   for trigger, text in pairs(snippets[lexer] or {}) do
     if type(text) == 'string' then
-      list[#list + 1] = table_concat({trigger, lexer, text }, '\0')
+      list[#list + 1] = trigger..'\0'..lexer..'\0'..text
     end
   end
   table.sort(list)
