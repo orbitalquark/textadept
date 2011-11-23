@@ -107,3 +107,18 @@ function dialog(kind, ...) end
 -- @usage gui.filteredlist('Title', { 'Foo', 'Bar' }, { 'a', 'b', 'c', 'd' },
 --                         false, '--output-column', '2')
 function filteredlist(title, columns, items, int_return, ...) end
+
+---
+-- Sets the editor theme from the given name.
+-- Themes in `_USERHOME/themes/` are checked first, followed by `_HOME/themes/`.
+-- If the name contains slashes ('/' on Linux and Mac OSX and '\' on Win32), it
+-- is assumed to be an absolute path so `_USERHOME` and `_HOME` are not checked.
+-- Throws an error if the theme is not found. Any errors in the theme are
+-- printed to `io.stderr`.
+-- @param name The name or absolute path of a theme. If nil, sets the default
+--   theme.
+function set_theme(name) end
+
+---
+-- Prompts the user to select an editor theme from a filtered list.
+function select_theme() end

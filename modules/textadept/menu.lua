@@ -203,6 +203,8 @@ menubar = {
     { L('Zoom In'), _buffer.zoom_in },
     { L('Zoom Out'), _buffer.zoom_out },
     { L('Reset Zoom'), utils.reset_zoom },
+    SEPARATOR,
+    { L('Select Theme...'), gui.select_theme },
   },
   { title = L('Help'),
     { L('Show Manual'),

@@ -13,7 +13,7 @@ module('_m.textadept.bookmarks', package.seeall)
 --   `0xBBGGRR` format.
 
 -- settings
-MARK_BOOKMARK_COLOR = 0xC08040
+MARK_BOOKMARK_COLOR = 0xB3661A
 -- end settings
 
 local MARK_BOOKMARK = _SCINTILLA.next_marker_number()

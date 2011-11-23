@@ -12,7 +12,6 @@ module('_G')
 -- * `_LEXERPATH` [string]: Paths to lexers, formatted like
 --   [`package.path`][package_path].
 -- * `_RELEASE` [string]: The Textadept release version.
--- * `_THEME` [string]: The [theme](../manual/8_Themes.lua) file to use.
 -- * `_USERHOME` [string]: Path to the user's `~/.textadept/`.
 -- * `_CHARSET` [string]: The character set encoding of the filesystem. This is
 --   used in [File I/O](../modules/io.html).

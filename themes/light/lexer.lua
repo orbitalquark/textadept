@@ -8,43 +8,72 @@
 module('lexer', package.seeall)
 
 colors = {
-  green   = color('4D', '99', '4D'),
-  blue    = color('4D', '4D', '99'),
-  red     = color('99', '4C', '4C'),
-  yellow  = color('99', '99', '4D'),
-  teal    = color('4D', '99', '99'),
-  white   = color('EE', 'EE', 'EE'),
-  black   = color('33', '33', '33'),
-  grey    = color('AA', 'AA', 'AA'),
-  purple  = color('99', '4D', '99'),
-  orange  = color('C0', '80', '40'),
-  lgreen  = color('80', 'C0', '40'),
-  lblue   = color('40', '80', 'C0'),
-  lred    = color('C0', '40', '40'),
-  lyellow = color('C0', 'C0', '40'),
-  lteal   = color('40', 'C0', 'C0'),
-  lpurple = color('C0', '40', '80'),
-  lorange = color('C0', '80', '40'),
+  -- Greyscale colors.
+--dark_black   = color('00', '00', '00'),
+--black        = color('1A', '1A', '1A'),
+  light_black  = color('33', '33', '33'),
+  --             color('4D', '4D', '4D'),
+--dark_grey    = color('66', '66', '66'),
+  grey         = color('80', '80', '80'),
+--light_grey   = color('99', '99', '99'),
+  --             color('B3', 'B3', 'B3'),
+  dark_white   = color('CC', 'CC', 'CC'),
+  white        = color('E6', 'E6', 'E6'),
+--light_white  = color('FF', 'FF', 'FF'),
+
+  -- Dark colors.
+--dark_red      = color('66', '1A', '1A'),
+  dark_yellow   = color('66', '66', '1A'),
+  dark_green    = color('1A', '66', '1A'),
+--dark_teal     = color('1A', '66', '66'),
+--dark_purple   = color('66', '1A', '66'),
+  dark_orange   = color('B3', '66', '1A'),
+--dark_pink     = color('B3', '66', '66'),
+  dark_lavender = color('66', '66', 'B3'),
+  dark_blue     = color('1A', '66', 'B3'),
+
+  -- Normal colors.
+  red      = color('99', '4D', '4D'),
+  yellow   = color('99', '99', '4D'),
+  green    = color('4D', '99', '4D'),
+  teal     = color('4D', '99', '99'),
+  purple   = color('99', '4D', '99'),
+--orange   = color('E6', '99', '4D'),
+--pink     = color('E6', '99', '99'),
+  lavender = color('99', '99', 'E6'),
+--blue     = color('4D', '99', 'E6'),
+
+  -- Light colors.
+  light_red      = color('CC', '80', '80'),
+--light_yellow   = color('CC', 'CC', '80'),
+--light_green    = color('80', 'CC', '80'),
+--light_teal     = color('80', 'CC', 'CC'),
+--light_purple   = color('CC', '80', 'CC'),
+--light_orange   = color('FF', 'CC', '80'),
+--light_pink     = color('FF', 'CC', 'CC'),
+--light_lavender = color('CC', 'CC', 'FF'),
+  light_blue     = color('80', 'CC', 'FF'),
 }
 
-style_nothing    = style {                                        }
-style_char       = style { fore = colors.red,    bold      = true }
-style_class      = style { fore = colors.black,  underline = true }
-style_comment    = style { fore = colors.lblue,  bold      = true }
-style_constant   = style { fore = colors.teal,   bold      = true }
-style_definition = style { fore = colors.red,    bold      = true }
-style_error      = style { fore = colors.lred                     }
-style_function   = style { fore = colors.blue,   bold      = true }
-style_keyword    = style { fore = colors.yellow, bold      = true }
-style_number     = style { fore = colors.teal                     }
-style_operator   = style { fore = colors.black,  bold      = true }
-style_string     = style { fore = colors.green,  bold      = true }
-style_preproc    = style { fore = colors.red                      }
-style_tag        = style { fore = colors.teal,   bold      = true }
-style_type       = style { fore = colors.green                    }
-style_variable   = style { fore = colors.red                      }
-style_whitespace = style {                                        }
-style_embedded   = style_tag..{ back = color('DD', 'DD', 'DD')    }
+style_nothing    = style {                                  }
+style_class      = style { fore = colors.yellow             }
+style_comment    = style { fore = colors.grey               }
+style_constant   = style { fore = colors.red                }
+style_definition = style { fore = colors.yellow             }
+style_error      = style { fore = colors.red, italic = true }
+style_function   = style { fore = colors.dark_orange        }
+style_keyword    = style { fore = colors.dark_blue          }
+style_label      = style { fore = colors.dark_orange        }
+style_number     = style { fore = colors.teal               }
+style_operator   = style { fore = colors.purple             }
+style_regex      = style { fore = colors.dark_green         }
+style_string     = style { fore = colors.green              }
+style_preproc    = style { fore = colors.dark_yellow        }
+style_tag        = style { fore = colors.dark_blue          }
+style_type       = style { fore = colors.lavender           }
+style_variable   = style { fore = colors.dark_lavender      }
+style_whitespace = style {                                  }
+style_embedded   = style_tag..{ back = colors.dark_white    }
 style_identifier = style_nothing
 
 -- Default styles.
@@ -59,12 +88,12 @@ end
 style_default = style {
   font = font_face,
   size = font_size,
-  fore = colors.black,
+  fore = colors.light_black,
   back = colors.white
 }
-style_line_number = style { fore = colors.black, back = colors.grey }
-style_bracelight = style { fore = color('66', '99', 'FF'), bold = true }
-style_bracebad = style { fore = color('FF', '66', '99'), bold = true }
+style_line_number = style { fore = colors.grey, back = colors.white }
+style_bracelight = style { fore = colors.light_blue }
+style_bracebad = style { fore = colors.light_red }
 style_controlchar = style_nothing
-style_indentguide = style { fore = colors.grey, back = colors.white }
-style_calltip = style { fore = colors.black, back = color('DD', 'DD', 'DD') }
+style_indentguide = style { fore = colors.dark_white, back = colors.dark_white }
+style_calltip = style { fore = colors.light_black, back = colors.dark_white }

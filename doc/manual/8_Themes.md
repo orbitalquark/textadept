@@ -1,16 +1,13 @@
 # Themes
 
 Textadept's look and feel can be customized with themes. The themes that come
-with Textadept are `'light'`, `'dark'`, and `'scite'`. By default the `'light'`
-theme is used. The `'scite'` theme is recommended for users accustomed to SciTE.
-To change the theme, create a `~/.textadept/theme` file whose first line of text
-is the name of the theme you would like to use.
+with Textadept are `light` and `dark`'. By default the `light` theme is used. To
+change the theme, create a `~/.textadept/theme` file whose first line of text is
+the name of the theme you would like to use.
 
 ![Light Theme](images/lighttheme.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Dark Theme](images/darktheme.png)
-&nbsp;&nbsp;&nbsp;&nbsp;
-![SciTE Theme](images/scitetheme.png)
 
 Themes apply to all buffers. You cannot assign a theme to a particular file or
 filetype. You can change things like tab and indent settings per filetype
@@ -55,14 +52,30 @@ See the [LuaDoc](../modules/buffer.html) for documentation on the properties.
 `view.lua` contains view-specific properties like caret and selection colors.
 See the [LuaDoc](../modules/buffer.html) for documentation on the properties.
 
-## Theming Text Fields
+## Testing Themes
 
-There is no way to theme text fields like the Find and Replace ones from within
-Textadept. Instead, use [GTK Resource files][gtkrc]. The names of the text field
-widgets are:
+You can reload or switch between themes on the fly using `Ctrl+Shift+T` (⌘⇧T on
+Mac OSX), but be aware that the Scintilla views do not reset themselves, so any
+options set explicitly in the previous theme's `view.lua` file that are not set
+explicitly in the new theme will carry over. The switch feature is intended
+primarily for theme exploration and/or development and can be slow when many
+buffers or views are open.
 
-* Find field: `textadept-find-entry`.
-* Replace field: `textadept-replace-entry`.
-* Command entry: `textadept-command-entry`.
+Any errors that occur in the theme are printed to `io.stderr`.
+
+## Theming the GUI
+
+There is no way to theme GUI controls like text fields and buttons from within
+Textadept. Instead, use [GTK Resource files][gtkrc]. The `GtkWindow` name is
+`textadept`. For example, styling all text fields with a
+`"textadept-entry-style"` would be done like this:
+
+    widget "textadept*GtkEntry*" style "textadept-entry-style"
 
 [gtkrc]: http://library.gnome.org/devel/gtk/stable/gtk-Resource-Files.html
+
+## Getting Themes
+
+For now, user-created themes are obtained from the
+[wiki](http://caladbolg.net/textadeptwiki). The classic `dark`, `light`, and
+`scite` themes prior to version 4.3 have been moved there.
