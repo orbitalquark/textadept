@@ -101,7 +101,7 @@ if not RESETTING then constantize_menu_buffer_functions() end
   Windows and Linux menu key commands.
 
   Unassigned keys (~ denotes keys reserved by the operating system):
-  c:   A B C         H              p qQ       ~ V   X        ) ] }  *      \n
+  c:   A B C         H              p qQ       ~ V   X Y      ) ] }  *      \n
   a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpP QrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=~~\n\s
   ca: aAbBcCdDeE F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  / ~~  \s
 
@@ -116,7 +116,7 @@ if not RESETTING then constantize_menu_buffer_functions() end
   Mac OSX menu key commands.
 
   Unassigned keys (~ denotes keys reserved by the operating system):
-  m:   A B C        ~    JkK  ~M    p  ~    t  U V   Xy       ) ] }  *    ~~\n~~
+  m:   A B C        ~    JkK  ~M    p  ~    t  U V   XyY      ) ] }  *    ~~\n~~
   c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /     \s
   cm: aAbBcC~DeE F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n~~
 
@@ -172,7 +172,6 @@ keys[not OSX and 'cD' or 'mD'] = { m_editing.current_word, 'select' }
 keys[not OSX and 'cN' or 'mN'] = m_editing.select_line
 keys[not OSX and 'cP' or 'mP'] = m_editing.select_paragraph
 keys[not OSX and 'cI' or 'mI'] = m_editing.select_indented_block
-keys[not OSX and 'cY' or 'mY'] = m_editing.select_style
 -- Selection.
 keys[not OSX and 'cau' or 'cu'] = _buffer.upper_case
 keys[not OSX and 'caU' or 'cU'] = _buffer.lower_case

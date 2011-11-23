@@ -80,7 +80,6 @@ menubar = {
       { L('Select Line'), m_editing.select_line },
       { L('Select Paragraph'), m_editing.select_paragraph },
       { L('Select Indented Block'), m_editing.select_indented_block },
-      { L('Select Style'), m_editing.select_style },
     },
     { title = L('Selection'),
       { L('Upper Case Selection'), _buffer.upper_case },

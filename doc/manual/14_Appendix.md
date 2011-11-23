@@ -45,7 +45,6 @@ Ctrl+Shift+D            |⌘⇧D      |Select word
 Ctrl+Shift+N            |⌘⇧N      |Select line
 Ctrl+Shift+P            |⌘⇧P      |Select paragraph
 Ctrl+Shift+I            |⌘⇧I      |Select indented block
-Ctrl+Y                  |⌘⇧Y      |Select style
 Ctrl+Alt+U              |^U       |Upper case selection
 Ctrl+Alt+Shift+U        |^⇧U      |Lower case selection
 Alt+<                   |^<       |Enclose as XML tags
