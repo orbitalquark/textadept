@@ -426,20 +426,6 @@ function select_indented_block()
 end
 
 ---
--- Selects all text with the same style as under the caret.
-function select_style()
-  local buffer = buffer
-  local start_pos, length = buffer.current_pos, buffer.length
-  local base_style, style_at = buffer.style_at[start_pos], buffer.style_at
-  local pos = start_pos - 1
-  while pos >= 0 and style_at[pos] == base_style do pos = pos - 1 end
-  local start_style = pos
-  pos = start_pos + 1
-  while pos < length and style_at[pos] == base_style do pos = pos + 1 end
-  buffer:set_sel(start_style + 1, pos)
-end
-
----
 -- Converts indentation between tabs and spaces.
 function convert_indentation()
   local buffer = buffer
