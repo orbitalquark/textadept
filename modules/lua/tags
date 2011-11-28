@@ -89,6 +89,7 @@ KEYPRESS	_	0;"	F	class:events
 KEYSYMS	_	0;"	t	class:keys
 KEYWORD	_	0;"	F	class:lexer
 KEYWORDSET_MAX	_	0;"	F	class:_SCINTILLA.constants
+LABEL	_	0;"	F	class:lexer
 LANGUAGE_MODULE_LOADED	_	0;"	F	class:events
 LANGUAGE_MODULE_PREFIX	_	0;"	F	class:keys
 MARGIN_CLICK	_	0;"	F	class:events
@@ -106,6 +107,7 @@ PATHS	_	0;"	F	class:_m.textadept.snapopen
 PREPROCESSOR	_	0;"	F	class:lexer
 QUIT	_	0;"	F	class:events
 R	_	0;"	f	class:lpeg
+REGEX	_	0;"	F	class:lexer
 REPLACE	_	0;"	F	class:events
 REPLACE_ALL	_	0;"	F	class:events
 RESETTING	_	0;"	F	
@@ -720,7 +722,6 @@ _RELEASE	_	0;"	F
 _RULES	_	0;"	t	class:lexer
 _SCINTILLA	_	0;"	m	
 _SCINTILLA	_	0;"	t	
-_THEME	_	0;"	F	
 _USERHOME	_	0;"	F	
 _VERSION	_	0;"	F	
 _VIEWS	_	0;"	t	
@@ -1428,7 +1429,7 @@ select_indented_block	_	0;"	f	class:_m.textadept.editing
 select_lexer	_	0;"	f	class:_m.textadept.mime_types
 select_line	_	0;"	f	class:_m.textadept.editing
 select_paragraph	_	0;"	f	class:_m.textadept.editing
-select_style	_	0;"	f	class:_m.textadept.editing
+select_theme	_	0;"	f	class:gui
 selection_duplicate	_	0;"	f	class:buffer
 selection_end	_	0;"	F	class:buffer
 selection_is_rectangle	_	0;"	F	class:buffer
@@ -1479,6 +1480,7 @@ set_sel_fore	_	0;"	f	class:buffer
 set_selection	_	0;"	f	class:buffer
 set_styling	_	0;"	f	class:buffer
 set_text	_	0;"	f	class:buffer
+set_theme	_	0;"	f	class:gui
 set_visible_policy	_	0;"	f	class:buffer
 set_whitespace_back	_	0;"	f	class:buffer
 set_whitespace_fore	_	0;"	f	class:buffer
@@ -1535,7 +1537,6 @@ style_bits_needed	_	0;"	F	class:buffer
 style_bold	_	0;"	F	class:buffer
 style_case	_	0;"	F	class:buffer
 style_changeable	_	0;"	F	class:buffer
-style_char	_	0;"	F	class:lexer
 style_character_set	_	0;"	F	class:buffer
 style_class	_	0;"	F	class:lexer
 style_clear_all	_	0;"	f	class:buffer
@@ -1553,10 +1554,12 @@ style_hot_spot	_	0;"	F	class:buffer
 style_identifier	_	0;"	F	class:lexer
 style_italic	_	0;"	F	class:buffer
 style_keyword	_	0;"	F	class:lexer
+style_label	_	0;"	F	class:lexer
 style_nothing	_	0;"	F	class:lexer
 style_number	_	0;"	F	class:lexer
 style_operator	_	0;"	F	class:lexer
 style_preproc	_	0;"	F	class:lexer
+style_regex	_	0;"	F	class:lexer
 style_reset_default	_	0;"	f	class:buffer
 style_size	_	0;"	F	class:buffer
 style_size_fractional	_	0;"	F	class:buffer

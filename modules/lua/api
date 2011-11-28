@@ -89,6 +89,7 @@ KEYPRESS events.KEYPRESS\nCalled when a key is pressed.\n    * `code`: The key c
 KEYSYMS keys.KEYSYMS [table]\nLookup table for key codes higher than 255. If a key code given to `keypress()`\nis higher than 255, this table is used to return a string representation of\nthe key if it exists.\n
 KEYWORD lexer.KEYWORD\n\n
 KEYWORDSET_MAX _SCINTILLA.constants.KEYWORDSET_MAX\n8\n
+LABEL lexer.LABEL\n\n
 LANGUAGE_MODULE_LOADED events.LANGUAGE_MODULE_LOADED\nCalled when loading a language-specific module. This is useful for overriding\nits key commands since they are not available when Textadept starts. Arguments:\n    * `lang`: The language lexer name.\n\n
 LANGUAGE_MODULE_PREFIX keys.LANGUAGE_MODULE_PREFIX [string]\nThe starting key command of the keychain reserved for language-specific\nmodules. Defaults to Ctrl/Cmd+L.\n
 MARGIN_CLICK events.MARGIN_CLICK\nCalled when the mouse is clicked inside a margin.\n    * `margin`: The margin number that was clicked.\n    * `position`: The position of the start of the line in the buffer that\n      corresponds to the margin click.\n    * `modifiers`: The appropriate combination of\n      `_SCINTILLA.constants.SCI_SHIFT`, `_SCINTILLA.constants.SCI_CTRL`,\n      and `_SCINTILLA.constants.SCI_ALT` to indicate the keys that were\n      held down at the time of the margin click.\n\n
@@ -106,6 +107,7 @@ PATHS _m.textadept.snapopen.PATHS [table]\nTable of default UTF-8 paths to searc
 PREPROCESSOR lexer.PREPROCESSOR\n\n
 QUIT events.QUIT\nCalled when quitting Textadept. When connecting to this event, connect with\nan index of 1 or the handler will be ignored.\n
 R lpeg.R({range})\nReturns a pattern that matches any single character belonging to one of\nthe given ranges. Each range is a string xy of length 2, representing all\ncharacters with code between the codes of x and y (both inclusive). As an\nexample, the pattern lpeg.R("09") matches any digit, and lpeg.R("az", "AZ")\nmatches any ASCII letter.\n
+REGEX lexer.REGEX\n\n
 REPLACE events.REPLACE\nCalled to replace selected (found) text.\n    * `text`: The text to replace selected text with.\n\n
 REPLACE_ALL events.REPLACE_ALL\nCalled to replace all occurances of found text.\n    * `find_text`: The text to search for.\n    * `repl_text`: The text to replace found text with.\n\n
 RESETTING _G.RESETTING [bool]\nIf `reset()` has been called, this flag is `true` while the Lua state is\nbeing re-initialized.\n
@@ -719,7 +721,6 @@ _LEXERPATH _G._LEXERPATH [string]\nPaths to lexers, formatted like `package.path
 _RELEASE _G._RELEASE [string]\nThe Textadept release version.\n
 _RULES lexer._RULES [table]\nList of rule names with associated LPeg patterns for a specific lexer. It\nis accessible to other lexers for embedded lexer applications.\n
 _SCINTILLA _G._SCINTILLA [module]\nScintilla constants, functions, and properties. Do not modify anything in\nthis module. Doing so will result in instability.\n
-_THEME _G._THEME [string]\nThe theme file to use.\n
 _USERHOME _G._USERHOME [string]\nPath to the user's `~/.textadept/`.\n
 _VERSION _G._VERSION\nA global variable (not a function) that holds a string containing the current\ninterpreter version. The current contents of this variable is "`Lua 5.1`".\n
 _VIEWS _G._VIEWS [table]\nTable of all views in Textadept. Numeric keys have view values and view keys\nhave their associated numeric keys.\n
@@ -1388,7 +1389,7 @@ select_indented_block _m.textadept.editing.select_indented_block()\nSelects inde
 select_lexer _m.textadept.mime_types.select_lexer()\nPrompts the user to select a lexer from a filtered list for the current buffer.\n
 select_line _m.textadept.editing.select_line()\nSelects the current line.\n
 select_paragraph _m.textadept.editing.select_paragraph()\nSelects the current paragraph. Paragraphs are delimited by two or more\nconsecutive newlines.\n
-select_style _m.textadept.editing.select_style()\nSelects all text with the same style as under the caret.\n
+select_theme gui.select_theme()\nPrompts the user to select an editor theme from a filtered list.\n
 selection_duplicate buffer.selection_duplicate(buffer)\nDuplicate the selection. If selection empty duplicate the line containing\nthe caret.\n@param buffer The global buffer.\n
 selection_end buffer.selection_end [number]\nThe position that ends the selection - this becomes the current position. This\ndoes not make the caret visible.\n
 selection_is_rectangle buffer.selection_is_rectangle [bool]\nIs the selection rectangular? The alternative is the more common stream\nselection. (Read-only)\n
@@ -1439,6 +1440,7 @@ set_sel_fore buffer.set_sel_fore(buffer, use_setting, color)\nSet the foreground
 set_selection buffer.set_selection(buffer, caret, anchor)\nSet a simple selection from anchor to caret.\n@param buffer The global buffer.\n@param caret The caret.\n@param anchor The anchor.\n
 set_styling buffer.set_styling(buffer, length, style)\nChange style from current styling position for length characters to a style\nand move the current styling position to after this newly styled segment.\n@param buffer The global buffer.\n@param length The length to style.\n@param style The style number to set.\n
 set_text buffer.set_text(buffer, text)\nReplace the contents of the document with the argument text.\n@param buffer The global buffer.\n@param text The text.\n
+set_theme gui.set_theme(name)\nSets the editor theme from the given name. Themes in `_USERHOME/themes/` are\nchecked first, followed by `_HOME/themes/`. If the name contains slashes ('/'\non Linux and Mac OSX and '\' on Win32), it is assumed to be an absolute path\nso `_USERHOME` and `_HOME` are not checked. Throws an error if the theme is\nnot found. Any errors in the theme are printed to `io.stderr`.\n@param name The name or absolute path of a theme. If nil, sets the default\ntheme.\n
 set_visible_policy buffer.set_visible_policy(buffer, visible_policy, visible_slop)\nSet the way the display area is determined when a particular line is to\nbe moved to by `buffer:goto_line()`, etc. It is similar in operation to\n`buffer:set_y_caret_policy()`.\n@param buffer The global buffer.\n@param visible_policy A combination of `_SCINTILLA.constants.VISIBLE_SLOP`,\n(0x01) and `_SCINTILLA.constants.VISIBLE_STRICT` (0x04).\n@param visible_slop The slop value.\n
 set_whitespace_back buffer.set_whitespace_back(buffer, use_setting, color)\nSet the background color of all whitespace and whether to use this setting.\n@param buffer The global buffer.\n@param use_setting Enable color change.\n@param color A color in `0xBBGGRR` format.\n
 set_whitespace_fore buffer.set_whitespace_fore(buffer, use_setting, color)\nSet the foreground color of all whitespace and whether to use this setting.\n@param buffer The global buffer.\n@param use_setting Enable color change.\n@param color A color in `0xBBGGRR` format.\n
@@ -1494,7 +1496,6 @@ style_bits_needed buffer.style_bits_needed [number]\nThe number of bits the curr
 style_bold buffer.style_bold [table]\nTable of booleans for bold styles from `0` to `255`.\n
 style_case buffer.style_case [table]\nTable of cases for styles from `0` to `255`.\n    * `_SCINTILLA.constants.SC_CASE_MIXED` (0): Normal, mixed case.\n    * `_SCINTILLA.constants.SC_CASE_UPPER` (1): Upper case.\n    * `_SCINTILLA.constants.SC_CASE_LOWER` (2): Lower case.\n\n
 style_changeable buffer.style_changeable [table]\nTable of booleans for changeable styles from `0` to `255`. The default\nsetting is `true`.\n
-style_char lexer.style_char\nTypically used for character literals.\n
 style_character_set buffer.style_character_set [table]\nTable of character sets for styles from `0` to `255`.\n
 style_class lexer.style_class\nTypically used for class definitions.\n
 style_clear_all buffer.style_clear_all(buffer)\nClear all the styles and make equivalent to the global default style.\n@param buffer The global buffer.\n
@@ -1512,10 +1513,12 @@ style_hot_spot buffer.style_hot_spot [table]\nTable of boolean hotspot styles fr
 style_identifier lexer.style_identifier\nTypically used for identifier words.\n
 style_italic buffer.style_italic [table]\nTable of booleans for italic styles from `0` to `255`.\n
 style_keyword lexer.style_keyword\nTypically used for language keywords.\n
+style_label lexer.style_label\nTypically used for labels.\n
 style_nothing lexer.style_nothing\nTypically used for whitespace.\n
 style_number lexer.style_number\nTypically used for numbers.\n
 style_operator lexer.style_operator\nTypically used for operators.\n
 style_preproc lexer.style_preproc\nTypically used for preprocessor statements.\n
+style_regex lexer.style_regex\nTypically used for regular expression strings.\n
 style_reset_default buffer.style_reset_default(buffer)\nReset the default style to its state at startup.\n@param buffer The global buffer.\n
 style_size buffer.style_size [table]\nTable of font sizes for styles from `0` to `255`.  Font size is a whole\nnumber of points.\n
 style_size_fractional buffer.style_size_fractional [table]\nTable of sizes of characters for styles\n  from `0` to `255`. Size is in hundreths of a point and multiplied by 100\n  internally. For example, a text size of 9.4 points is set with 940.\n\n
