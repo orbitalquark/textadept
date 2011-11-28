@@ -144,7 +144,12 @@ function gui.select_theme()
   for theme in pairs(themes_found) do themes[#themes + 1] = theme end
   table.sort(themes)
   local theme = gui.filteredlist(L('Select Theme'), L('Name'), themes)
-  if theme then gui.set_theme(theme) end
+  if not theme then return end
+  gui.set_theme(theme)
+  local f = io.open(_USERHOME..'/theme', 'wb')
+  if not f then return end
+  f:write(theme)
+  f:close()
 end
 
 local connect = events.connect
