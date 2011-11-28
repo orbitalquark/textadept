@@ -1,5 +1,6 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- Dark lexer theme for Textadept.
+-- Contributions by Ana Balan.
 
 -- Please note this theme is in a separate Lua state than Textadept's main one.
 -- This means the global variables like 'buffer', 'view', and 'gui' are not
