@@ -790,9 +790,7 @@ autocomplete_word _m.textadept.editing.autocomplete_word(word_chars)\nPops up an
 back_space_un_indents buffer.back_space_un_indents [bool]\nWhether a backspace pressed when caret is within indentation unindents.\n
 back_tab buffer.back_tab(buffer)\nDedent the selected lines.\n@param buffer The global buffer.\n
 begin_undo_action buffer.begin_undo_action(buffer)\nStart a sequence of actions that is undone and redone as a unit. May be nested.\n@param buffer The global buffer.\n
-black lexer.colors.black\nBlack.\n
 block_comment _m.textadept.editing.block_comment(comment)\nBlock comments or uncomments code with a given comment string.\n@param comment The comment string inserted or removed from the beginning of\neach line in the selection.\n
-blue lexer.colors.blue\nBlue.\n
 boms io.boms [table]\nList of byte-order marks (BOMs).\n
 bookmarks _m.textadept.bookmarks [module]\nBookmarks for the textadept module.\n
 brace_bad_light buffer.brace_bad_light(buffer, pos)\nHighlight the character at a position indicating there is no matching brace.\n@param buffer The global buffer.\n@param pos The position or -1 to remove the highlight.\n
@@ -1050,8 +1048,6 @@ goto_required _m.ruby.goto_required()\nDetermine the Ruby file being 'require'd,
 goto_view gui.goto_view(n, relative)\nGoes to the specified view. Generates `VIEW_BEFORE_SWITCH` and\n`VIEW_AFTER_SWITCH` events.\n@param n A relative or absolute view index.\n@param relative Flag indicating if n is a relative index or not. Defaults\nto false.\n
 grab_focus buffer.grab_focus(buffer)\nSet the focus to this view.\n@param buffer The global buffer.\n
 graph lexer.graph\nMatches any graphical character (`!` to `~`).\n
-green lexer.colors.green\nGreen.\n
-grey lexer.colors.grey\nGrey.\n
 grow_selection _m.textadept.editing.grow_selection(amount)\nGrows the selection by a character amount on either end.\n@param amount The amount to grow the selection on either end.\n
 gsub string.gsub(s, pattern, repl [, n])\nReturns a copy of `s` in which all (or the first `n`, if given) occurrences\nof the `pattern` have been replaced by a replacement string specified by\n`repl`, which can be a string, a table, or a function. `gsub` also returns,\nas its second value, the total number of matches that occurred. If `repl`\nis a string, then its value is used for replacement. The character `%`\nworks as an escape character: any sequence in `repl` of the form `%n`, with\n*n* between 1 and 9, stands for the value of the *n*-th captured substring\n(see below). The sequence `%0` stands for the whole match. The sequence `%%`\nstands for a single `%`. If `repl` is a table, then the table is queried for\nevery match, using the first capture as the key; if the pattern specifies no\ncaptures, then the whole match is used as the key. If `repl` is a function,\nthen this function is called every time a match occurs, with all captured\nsubstrings passed as arguments, in order; if the pattern specifies no\ncaptures, then the whole match is passed as a sole argument. If the value\nreturned by the table query or by the function call is a string or a number,\nthen it is used as the replacement string; otherwise, if it is false or nil,\nthen there is no replacement (that is, the original match is kept in the\nstring). Here are some examples: x = string.gsub("hello world", "(%w+)",\n"%1 %1") --> x="hello hello world world" x = string.gsub("hello world", "%w+",\n"%0 %0", 1) --> x="hello hello world" x = string.gsub("hello world from Lua",\n"(%w+)%s*(%w+)", "%2 %1") --> x="world hello Lua from" x = string.gsub("home =\n$HOME, user = $USER", "%$(%w+)", os.getenv) --> x="home = /home/roberto, user =\nroberto" x = string.gsub("4+5 = $return 4+5$", "%$(.-)%$", function (s) return\nloadstring(s)() end) --> x="4+5 = 9" local t = {name="lua", version="5.1"}\nx = string.gsub("$name-$version.tar.gz", "%$(%w+)", t) --> x="lua-5.1.tar.gz"\n
 gtkmenu gui.gtkmenu(menu_table)\nCreates a GTK menu, returning the userdata.\n@param menu_table A table defining the menu. It is an ordered list of tables\nwith a string menu item, integer menu ID, and optional keycode and modifier\nmask. The latter two are used to display key shortcuts in the menu. The\nstring menu item is handled as follows: `'gtk-*'` - a stock menu item is\ncreated based on the GTK stock-id. `'separator'` - a menu separator item is\ncreated. Otherwise a regular menu item with a mnemonic is created. Submenus\nare just nested menu-structure tables. Their title text is defined with a\n`title` key.\n@see keys.get_gdk_key\n
@@ -1254,7 +1250,6 @@ open _m.textadept.snapopen.open(utf8_paths, filter, exclusive, depth)\nQuickly o
 open io.open(filename [, mode])\nThis function opens a file, in the mode specified in the string `mode`. It\nreturns a new file handle, or, in case of errors, nil plus an error\nmessage. The `mode` string can be any of the following: "r": read mode (the\ndefault); "w": write mode; "a": append mode; "r+": update mode, all previous\ndata is preserved; "w+": update mode, all previous data is erased; "a+":\nappend update mode, previous data is preserved, writing is only allowed at\nthe end of file. The `mode` string can also have a '`b`' at the end, which\nis needed in some systems to open the file in binary mode. This string is\nexactly what is used in the standard C function `fopen`.\n
 open_file io.open_file(utf8_filenames)\nOpens a list of files.\n@param utf8_filenames A `\\n` separated list of UTF-8-encoded filenames to\nopen. If `nil`, the user is prompted with a fileselect dialog.\n@usage io.open_file(utf8_encoded_filename)\n
 open_recent_file io.open_recent_file()\nPrompts the user to open a recently opened file.\n
-orange lexer.colors.orange\nOrange.\n
 os _G.os [module]\nLua os module.\n
 output io.output([file])\nSimilar to `io.input`, but operates over the default output file.\n
 overtype buffer.overtype [bool]\nOvertype mode.\n
@@ -1304,7 +1299,6 @@ properties _SCINTILLA.properties [table]\nScintilla properties.\n
 property buffer.property [table]\nTable of keyword:value string pairs used by a lexer for some optional\nfeatures. (Write-only)\n
 property_int buffer.property_int [table]\nInterprets `buffer.property[keyword]` as an integer if found or returns\n`0`. (Read-only)\n
 punct lexer.punct\nMatches any punctuation character not alphanumeric (`!` to `/`, `:` to `@`,\n`[` to `'`, `{` to `~`).\n
-purple lexer.colors.purple\nPurple.\n
 quit _G.quit()\nQuits Textadept.\n
 rad math.rad(x)\nReturns the angle `x` (given in degrees) in radians.\n
 rails _G.keys.rails [table]\nContainer for Rails-specific key commands.\n
@@ -1325,7 +1319,6 @@ rectangular_selection_anchor_virtual_space buffer.rectangular_selection_anchor_v
 rectangular_selection_caret buffer.rectangular_selection_caret [number]\nThe position of the caret of the rectangular selection.\n
 rectangular_selection_caret_virtual_space buffer.rectangular_selection_caret_virtual_space [number]\nThe amount of virtual space for the caret of the rectangular selection.\n
 rectangular_selection_modifier buffer.rectangular_selection_modifier [number]\nThe modifier key used to indicate that a rectangular selection should be\ncreated when combined with a mouse drag.\n    * `_SCINTILLA.constants.SCMOD_CTRL` (2): Control key (default).\n    * `_SCINTILLA.constants.SCMOD_ALT` (4): Alt key.\n    * `_SCINTILLA.constants.SCMOD_SUPER` (8): Left Windows key on a Windows\n      keyboard or the Command key on a Mac.\n\n
-red lexer.colors.red\nRed.\n
 redo buffer.redo(buffer)\nRedoes the next action on the undo history.\n@param buffer The global buffer.\n
 register args.register(switch1, switch2, narg, f, description)\nRegisters a command line switch.\n@param switch1 String switch (short version).\n@param switch2 String switch (long version).\n@param narg The number of expected parameters for the switch.\n@param f The Lua function to run when the switch is tripped.\n@param description Description of the switch.\n
 register_image buffer.register_image(buffer, type, xpm_data)\nRegister an XPM image for use in autocompletion lists.\n@param buffer The global buffer.\n@param type Integer type to register the image with.\n@param xpm_data XPM data as is described for `buffer:marker_define_pixmap()`.\n
@@ -1545,7 +1538,6 @@ target_as_utf8 buffer.target_as_utf8(buffer)\nReturns the target converted to UT
 target_end buffer.target_end [number]\nThe position that ends the target which is used for updating the document\nwithout affecting the scroll position. The target is also set by a successful\n`buffer:search_in_target()`.\n
 target_from_selection buffer.target_from_selection(buffer)\nMake the target range start and end be the same as the selection range start\nand end.\n@param buffer The global buffer.\n
 target_start buffer.target_start [number]\nThe position that starts the target which is used for updating the document\nwithout affecting the scroll position. The target is also set by a successful\n`buffer:search_in_target()`.\n
-teal lexer.colors.teal\nTeal.\n
 text_height buffer.text_height(buffer, line)\nRetrieve the height of a particular line of text in pixels.\n@param buffer The global buffer.\n@param line The line number.\n@return number\n
 text_length buffer.text_length [number]\nThe number of characters in the document. (Read-only)\n
 text_range buffer.text_range(buffer, start_pos, end_pos)\nGets a range of text from the current buffer.\n@param buffer The global buffer.\n@param start_pos The beginning position of the range of text to get.\n@param end_pos The end position of the range of text to get.\n
@@ -1601,7 +1593,6 @@ view_eol buffer.view_eol [bool]\nWhether the end of line characters are visible.
 view_ws buffer.view_ws [number]\nThe visibility of white space characters.\n    * `_SCINTILLA.constants.SCWS_INVISIBLE` (0): The normal display mode\n      with white space displayed as an empty background color.\n    * `_SCINTILLA.constants.SCWS_VISIBLEALWAYS` (1): White space characters\n      are drawn as dots and arrows.\n    * `_SCINTILLA.constants.SCWS_VISIBLEAFTERINDENT` (2): White space used\n      for indentation is displayed normally but after the first visible\n      character, it is shown as dots and arrows.\n\n
 virtual_space_options buffer.virtual_space_options [number]\nVirtual space options.\n    * `_SCINTILLA.constants.SCVS_NONE` (0): Disables all use of virtual\n      space (default).\n    * `_SCINTILLA.constants.SCVS_RECTANGULARSELECTION` (1): Enabled only\n      for rectangular selections.\n    * `_SCINTILLA.constants.SCVS_USERACCESSIBLE` (2): Enabled.\n\n
 visible_from_doc_line buffer.visible_from_doc_line(buffer, line)\nFind the display line of a document line taking hidden lines into account. If\nthere is folding and line is outside the range of lines in the document,\nthe return value is `-1`.\n@param buffer The global buffer.\n@param line The line number.\n@return number\n
-white lexer.colors.white\nWhite.\n
 whitespace_chars buffer.whitespace_chars [string]\nThe set of characters making up whitespace for when moving or selecting by\nword. Use after setting `buffer.word_chars`. (Write-only)\n
 whitespace_size buffer.whitespace_size [number]\nThe size of the dots used to mark space characters.\n
 whole_word gui.find.whole_word [bool]\nOnly whole-word matches are allowed in searches.\n
@@ -1636,7 +1627,6 @@ write io.write(···)\nEquivalent to `io.output():write`.\n
 x_offset buffer.x_offset [number]\nThe horizontal scroll position. A value of `0` is the normal position with\nthe first text column visible at the left of the view.\n
 xdigit lexer.xdigit\nMatches any hexadecimal digit (`0-9`, `A-F`, `a-f`).\n
 xpcall _G.xpcall(f, err)\nThis function is similar to `pcall`, except that you can set a new error\nhandler. `xpcall` calls function `f` in protected mode, using `err` as the\nerror handler. Any error inside `f` is not propagated; instead, `xpcall`\ncatches the error, calls the `err` function with the original error object,\nand returns a status code. Its first result is the status code (a boolean),\nwhich is true if the call succeeds without errors. In this case, `xpcall`\nalso returns all results from the call, after this first result. In case of\nany error, `xpcall` returns false plus the result from `err`.\n
-yellow lexer.colors.yellow\nYellow.\n
 yield coroutine.yield(···)\nSuspends the execution of the calling coroutine. The coroutine cannot be\nrunning a C function, a metamethod, or an iterator. Any arguments to `yield`\nare passed as extra results to `resume`.\n
 zoom buffer.zoom [number]\nThe number of points added to the size of all fonts. It may be positive to\nmagnify or negative to reduce.\n
 zoom_in buffer.zoom_in(buffer)\nMagnify the displayed text by increasing the sizes by 1 point if the current\nzoom factor is less than 20 points.\n@param buffer The global buffer.\n

@@ -814,9 +814,7 @@ autocomplete_word	_	0;"	f	class:_m.textadept.editing
 back_space_un_indents	_	0;"	F	class:buffer
 back_tab	_	0;"	f	class:buffer
 begin_undo_action	_	0;"	f	class:buffer
-black	_	0;"	F	class:lexer.colors
 block_comment	_	0;"	f	class:_m.textadept.editing
-blue	_	0;"	F	class:lexer.colors
 boms	_	0;"	t	class:io
 bookmarks	_	0;"	t	class:_m.textadept
 brace_bad_light	_	0;"	f	class:buffer
@@ -1078,8 +1076,6 @@ goto_required	_	0;"	f	class:_m.ruby
 goto_view	_	0;"	f	class:gui
 grab_focus	_	0;"	f	class:buffer
 graph	_	0;"	F	class:lexer
-green	_	0;"	F	class:lexer.colors
-grey	_	0;"	F	class:lexer.colors
 grow_selection	_	0;"	f	class:_m.textadept.editing
 gsub	_	0;"	f	class:string
 gtkmenu	_	0;"	f	class:gui
@@ -1292,7 +1288,6 @@ open	_	0;"	f	class:_m.textadept.snapopen
 open	_	0;"	f	class:io
 open_file	_	0;"	f	class:io
 open_recent_file	_	0;"	f	class:io
-orange	_	0;"	F	class:lexer.colors
 os	_	0;"	m	
 os	_	0;"	t	
 output	_	0;"	f	class:io
@@ -1344,7 +1339,6 @@ properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
 property_int	_	0;"	F	class:buffer
 punct	_	0;"	F	class:lexer
-purple	_	0;"	F	class:lexer.colors
 quit	_	0;"	f	
 rad	_	0;"	f	class:math
 rails	_	0;"	t	class:_m
@@ -1365,7 +1359,6 @@ rectangular_selection_anchor_virtual_space	_	0;"	F	class:buffer
 rectangular_selection_caret	_	0;"	F	class:buffer
 rectangular_selection_caret_virtual_space	_	0;"	F	class:buffer
 rectangular_selection_modifier	_	0;"	F	class:buffer
-red	_	0;"	F	class:lexer.colors
 redo	_	0;"	f	class:buffer
 register	_	0;"	f	class:args
 register_image	_	0;"	f	class:buffer
@@ -1587,7 +1580,6 @@ target_as_utf8	_	0;"	f	class:buffer
 target_end	_	0;"	F	class:buffer
 target_from_selection	_	0;"	f	class:buffer
 target_start	_	0;"	F	class:buffer
-teal	_	0;"	F	class:lexer.colors
 text_height	_	0;"	f	class:buffer
 text_length	_	0;"	F	class:buffer
 text_range	_	0;"	f	class:buffer
@@ -1644,7 +1636,6 @@ view_eol	_	0;"	F	class:buffer
 view_ws	_	0;"	F	class:buffer
 virtual_space_options	_	0;"	F	class:buffer
 visible_from_doc_line	_	0;"	f	class:buffer
-white	_	0;"	F	class:lexer.colors
 whitespace_chars	_	0;"	F	class:buffer
 whitespace_size	_	0;"	F	class:buffer
 whole_word	_	0;"	F	class:gui.find
@@ -1679,7 +1670,6 @@ write	_	0;"	f	class:io
 x_offset	_	0;"	F	class:buffer
 xdigit	_	0;"	F	class:lexer
 xpcall	_	0;"	f	
-yellow	_	0;"	F	class:lexer.colors
 yield	_	0;"	f	class:coroutine
 zoom	_	0;"	F	class:buffer
 zoom_in	_	0;"	f	class:buffer
