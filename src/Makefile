@@ -13,9 +13,7 @@ else
 PLAT_FLAGS = -DGTK -D__BSD__
 endif
 SCI_THREAD_FLAG =
-#LUA_CFLAGS = -DLUA_USE_LINUX
-#Lua Coco needs the following flags because GCC is stupid.
-LUA_CFLAGS = -DLUA_USE_LINUX -fomit-frame-pointer -maccumulate-outgoing-args
+LUA_CFLAGS = -DLUA_USE_LINUX
 TEXTADEPT = textadept
 TEXTADEPT_RC =
 EXPORTLUASYMS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
@@ -30,8 +28,7 @@ PKG_CONFIG = pkg-config --define-variable=prefix=win32gtk
 PKG_CONFIG_PATH = $(shell pwd)/win32gtk/lib/pkgconfig
 PLAT_FLAGS = -DGTK -D__WIN32__
 SCI_THREAD_FLAG = -DG_THREADS_IMPL_NONE
-#LUA_CFLAGS = -D_WIN32 -DWIN32
-LUA_CFLAGS = -D_WIN32 -DWIN32 -fomit-frame-pointer -maccumulate-outgoing-args
+LUA_CFLAGS = -D_WIN32 -DWIN32
 TEXTADEPT = textadept.exe
 TEXTADEPT_RC = textadept_rc.o
 EXPORTLUASYMS = -Wl,--retain-symbols-file -Wl,lua.sym
@@ -62,7 +59,7 @@ DEBUG_FLAG = -DNDEBUG
 else
 DEBUG_FLAG = -DDEBUG -DTRACE -g
 endif
-INCLUDEDIRS = -Iscintilla/include -Ilua/include -Igcocoadialog
+INCLUDEDIRS = -Iscintilla/include -Ilua/src -Igcocoadialog
 
 ifdef GTK3
 GTKVERSION = gtk+-3.0
@@ -86,12 +83,12 @@ GTKLIBS += -framework Carbon -framework Cocoa -ligemacintegration
 endif
 
 TEXTADEPT_OBJS = textadept.o
-LUA_OBJS = lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o \
-  lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o ltm.o lundump.o \
-  lvm.o lzio.o \
-  lauxlib.o lbaselib.o ldblib.o liolib.o lmathlib.o ltablib.o lstrlib.o \
-  loadlib.o loslib.o linit.o \
-  lpeg.o lfs.o lcoco.o
+LUA_OBJS = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
+  linit.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o \
+  ltable.o ltm.o lundump.o lvm.o lzio.o \
+  lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o lmathlib.o \
+  loadlib.o loslib.o ltablib.o lstrlib.o \
+  lpeg.o lfs.o
 GCOCOADIALOG = gcocoadialog.o
 
 # Scintilla

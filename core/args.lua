@@ -41,10 +41,10 @@ function process()
   while i <= #arg do
     local switch = switches[arg[i]]
     if switch then
-      local f, n = unpack(switch)
+      local f, n = table.unpack(switch)
       local args = {}
       for j = i + 1, i + n do args[#args + 1] = arg[j] end
-      f(unpack(args))
+      f(table.unpack(args))
       i = i + n
     else
       io.open_file(arg[i])
@@ -59,7 +59,7 @@ end
 local function show_help()
   print('Usage: textadept [args] [filenames]')
   local line = "  %s [%d args]: %s"
-  for k, v in pairs(switches) do print(line:format(k, unpack(v, 2))) end
+  for k, v in pairs(switches) do print(line:format(k, table.unpack(v, 2))) end
   os.exit()
 end
 register('-h', '--help', 0, show_help, 'Displays this')

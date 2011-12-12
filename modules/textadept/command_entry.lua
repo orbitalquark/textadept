@@ -27,10 +27,10 @@ local env = setmetatable({}, {
 
 -- Execute a Lua command.
 events.connect(events.COMMAND_ENTRY_COMMAND, function(command)
-  local f, err = loadstring(command)
+  local f, err = load(command, nil, 'bt', env)
   if err then error(err) end
   gui.command_entry.focus() -- toggle focus to hide
-  setfenv(f, env)()
+  f()
   events.emit(events.UPDATE_UI)
 end)
 
@@ -41,8 +41,7 @@ events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   elseif keys.KEYSYMS[code] == '\t' then
     local substring = gui.command_entry.entry_text:match('[%w_.:]+$') or ''
     local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
-    local f, err = loadstring('return ('..path..')')
-    if type(f) == "function" then setfenv(f, env) end
+    local f, err = load('return ('..path..')', nil, 'bt', env)
     local ok, tbl = pcall(f)
     local cmpls = {}
     prefix = '^'..prefix

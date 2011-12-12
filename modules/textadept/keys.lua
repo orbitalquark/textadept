@@ -225,7 +225,7 @@ keys[not OSX and 'cf2' or 'mf2'] = m_textadept.bookmarks.toggle
 keys[not OSX and 'csf2' or 'msf2'] = m_textadept.bookmarks.clear
 keys.f2 = m_textadept.bookmarks.goto_next
 keys.sf2 = m_textadept.bookmarks.goto_prev
-keys.af2 = m_textadept.bookmarks.goto
+keys.af2 = m_textadept.bookmarks.goto_bookmark
 -- Snapopen.
 keys[not OSX and 'cu' or 'mu'] = { m_textadept.snapopen.open, _USERHOME }
 -- TODO: { m_textadept.snapopen.open, _HOME }

@@ -307,8 +307,9 @@ _snippet_mt = {
     escaped_text = escaped_text:gsub('%%'..index..'<([^>]*)>', function(code)
       local env = setmetatable({ selected_text = snippet.original_sel_text },
                                { __index = _G })
-      local f, result = loadstring('return '..snippet.unescape_text(code, true))
-      if f then f, result = pcall(setfenv(f, env)) end
+      local f, result = load('return '..snippet.unescape_text(code, true), nil,
+                             'bt', env)
+      if f then f, result = pcall(f) end
       return result or ''
     end)
     -- Shell code.

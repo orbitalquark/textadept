@@ -131,7 +131,7 @@ menubar = {
       { L('Clear Bookmarks'), m_textadept.bookmarks.clear },
       { L('Next Bookmark'), m_textadept.bookmarks.goto_next },
       { L('Previous Bookmark'), m_textadept.bookmarks.goto_prev },
-      { L('Goto Bookmark...'), m_textadept.bookmarks.goto },
+      { L('Goto Bookmark...'), m_textadept.bookmarks.goto_bookmark },
     },
     { title = L('Snapopen'),
       { L('Snapopen User Home'), { m_textadept.snapopen.open, _USERHOME } },

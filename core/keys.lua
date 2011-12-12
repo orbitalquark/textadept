@@ -107,7 +107,8 @@ LANGUAGE_MODULE_PREFIX = (not OSX and CTRL or META)..'l'
 local OSX = OSX
 local string = string
 local string_byte, string_char = string.byte, string.char
-local xpcall, next, type, unpack = xpcall, next, type, unpack
+local table_unpack = table.unpack
+local xpcall, next, type = xpcall, next, type
 local no_args = {}
 local getmetatable = getmetatable
 local error = function(e) events.emit(events.ERROR, e) end
@@ -164,7 +165,7 @@ local function run_command(command, command_type)
       end
     end
   end
-  local _, result = xpcall(function() return f(unpack(args, 2)) end, error)
+  local _, result = xpcall(f, error, table_unpack(args, 2))
   return result
 end
 _M.run_command = run_command -- export for menu.lua without creating LuaDoc
