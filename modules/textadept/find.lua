@@ -42,7 +42,7 @@ function find.find_in_files(utf8_dir)
     local text = find.find_entry_text
     if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
     if not find.match_case then text = text:lower() end
-    if find.whole_word then text = '[^%W_]'..text..'[^%W_]' end
+    if find.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
     local match_case, whole_word = find.match_case, find.whole_word
     local matches = { 'Find: '..text }
     function search_file(file)
@@ -50,7 +50,6 @@ function find.find_in_files(utf8_dir)
       for line in io.lines(file) do
         local optimized_line = line
         if not match_case then optimized_line = line:lower() end
-        if whole_word then optimized_line = ' '..line..' ' end
         if optimized_line:find(text) then
           file = file:iconv('UTF-8', _CHARSET)
           matches[#matches + 1] = ('%s:%s:%s'):format(file, line_num, line)
@@ -127,7 +126,7 @@ local function find_(text, next, flags, nowrap, wrapped)
     local results = { buffer_text:find(text, buffer.anchor + increment + 1) }
     if #results > 0 then
       result = results[1]
-      find.captures = { unpack(results, 3) }
+      find.captures = { table.unpack(results, 3) }
       buffer:set_sel(results[2], result - 1)
     else
       result = -1
@@ -200,14 +199,13 @@ events.connect(events.COMMAND_ENTRY_COMMAND, function(text)
 end, 1) -- place before command_entry.lua's handler (if necessary)
 
 -- Optimize for speed.
-local loadstring = loadstring
-local pcall = pcall
+local load, pcall = load, pcall
 
 -- Runs the given code.
 -- This function is passed to `string.gsub()` in the `replace()` function.
 -- @param code The code to run.
 local function run(code)
-  local ok, val = pcall(loadstring('return '..code))
+  local ok, val = pcall(load('return '..code))
   if not ok then
     gui.dialog('ok-msgbox',
                '--title', L('Error'),

@@ -156,7 +156,7 @@ events.connect(events.FILE_AFTER_SAVE, function()
   local buffer = buffer
   buffer:annotation_clear_all()
   local text = buffer:get_text():gsub('^#![^\n]+', '') -- ignore shebang line
-  local f, err = loadstring(text)
+  local f, err = load(text)
   if f then return end
   local line, msg = err:match('^.-:(%d+):%s*(.+)$')
   if line then

@@ -226,9 +226,9 @@ function emit(event, ...)
   if not event then error(L('Undefined event name')) end
   local h = handlers[event]
   if not h then return end
-  local pcall, unpack, type = pcall, unpack, type
+  local pcall, table_unpack, type = pcall, table.unpack, type
   for i = 1, #h do
-    local ok, result = pcall(h[i], unpack{...})
+    local ok, result = pcall(h[i], table_unpack{...})
     if not ok then
       if not error_emitted then
         error_emitted = true
@@ -276,7 +276,7 @@ connect('SCN', function(n)
   if not f then return end
   local args = {}
   for i = 2, #f do args[i - 1] = n[f[i]] end
-  return emit(f[1], unpack(args))
+  return emit(f[1], table.unpack(args))
 end)
 
 -- Set event constants.

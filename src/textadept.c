@@ -164,7 +164,7 @@ int main(int argc, char **argv) {
   char *last_slash = strrchr(textadept_home, G_DIR_SEPARATOR);
   if (last_slash) *last_slash = '\0';
   gtk_init(&argc, &argv);
-  if (lua = lua_open(), !lL_init(lua, argc, argv, FALSE)) return 1;
+  if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
   new_window();
   lL_dofile(lua, "init.lua");
   gtk_main();
@@ -732,7 +732,7 @@ static gboolean c_keypress(GtkWidget*_, GdkEventKey *event, gpointer __) {
 /******************************************************************************/
 
 #define lL_openlib(l, n, f) \
-  (lua_pushcfunction(l, f), lua_pushstring(l, n), lua_call(l, 1, 0))
+  (luaL_requiref(l, n, f, 1), lua_pop(l, 1))
 #define l_setcfunction(l, n, k, f) \
   (lua_pushcfunction(l, f), lua_setfield(l, (n > 0) ? n : n - 1, k))
 #define l_setmetatable(l, n, k, i, ni) { \
@@ -765,7 +765,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
     lua_getglobal(L, "package"), lua_getfield(L, -1, "loaded");
     lL_cleartable(L, lua_gettop(L));
     lua_pop(L, 2); // package and package.loaded
-    lL_cleartable(L, LUA_GLOBALSINDEX);
+    lL_cleartable(L, LUA_RIDX_GLOBALS);
   }
   luaL_openlibs(L);
   lL_openlib(L, "lpeg", luaopen_lpeg);
@@ -840,7 +840,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
  */
 static int lL_dofile(lua_State *L, const char *filename) {
   char *file = g_strconcat(textadept_home, "/", filename, NULL);
-  int ok = (luaL_dofile(L, file) == 0);
+  int ok = (luaL_dofile(L, file) == LUA_OK);
   if (!ok) {
     GtkWidget *dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
                                                GTK_MESSAGE_ERROR,
@@ -883,8 +883,8 @@ static void lL_addview(lua_State *L, GtkWidget *view) {
   l_setmetatable(L, -2, "ta_view", lview__index, lview__newindex);
   // vs[userdata] = v, vs[#vs + 1] = v, vs[v] = #vs
   lua_pushvalue(L, -2), lua_settable(L, -4);
-  lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_objlen(L, -3) + 1);
-  lua_pushinteger(L, lua_objlen(L, -2)), lua_settable(L, -3);
+  lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_rawlen(L, -3) + 1);
+  lua_pushinteger(L, lua_rawlen(L, -2)), lua_settable(L, -3);
   lua_pop(L, 1); // views
 }
 
@@ -903,9 +903,9 @@ static void lL_removeview(lua_State *L, GtkWidget *view) {
     if (lua_isnumber(L, -2) && view != l_toview(L, -1)) {
       lua_getfield(L, -1, "widget_pointer");
       // vs[userdata] = v, vs[#vs + 1] = v, vs[v] = #vs
-      lua_pushvalue(L, -2), lua_rawseti(L, -6, lua_objlen(L, -6) + 1);
+      lua_pushvalue(L, -2), lua_rawseti(L, -6, lua_rawlen(L, -6) + 1);
       lua_pushvalue(L, -2), lua_settable(L, -6);
-      lua_pushinteger(L, lua_objlen(L, -4)), lua_settable(L, -5);
+      lua_pushinteger(L, lua_rawlen(L, -4)), lua_settable(L, -5);
     } else lua_pop(L, 1); // value
   }
   lua_pop(L, 1); // views
@@ -942,8 +942,8 @@ static void lL_adddoc(lua_State *L, sptr_t doc) {
   l_setmetatable(L, -2, "ta_buffer", lbuf_property, lbuf_property);
   // bs[userdata] = b, bs[#bs + 1] = b, bs[b] = #bs
   lua_pushvalue(L, -2), lua_settable(L, -4);
-  lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_objlen(L, -3) + 1);
-  lua_pushinteger(L, lua_objlen(L, -2)), lua_settable(L, -3);
+  lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_rawlen(L, -3) + 1);
+  lua_pushinteger(L, lua_rawlen(L, -2)), lua_settable(L, -3);
   lua_pop(L, 1); // buffers
 }
 
@@ -975,9 +975,9 @@ static void lL_removedoc(lua_State *L, sptr_t doc) {
     if (lua_isnumber(L, -2) && doc != l_todoc(L, -1)) {
       lua_getfield(L, -1, "doc_pointer");
       // bs[userdata] = b, bs[#bs + 1] = b, bs[b] = #bs
-      lua_pushvalue(L, -2), lua_rawseti(L, -6, lua_objlen(L, -6) + 1);
+      lua_pushvalue(L, -2), lua_rawseti(L, -6, lua_rawlen(L, -6) + 1);
       lua_pushvalue(L, -2), lua_settable(L, -6);
-      lua_pushinteger(L, lua_objlen(L, -4)), lua_settable(L, -5);
+      lua_pushinteger(L, lua_rawlen(L, -4)), lua_settable(L, -5);
     } else lua_pop(L, 1); // value
   }
   lua_pop(L, 1); // buffers
@@ -1000,15 +1000,15 @@ static void lL_gotodoc(lua_State *L, GtkWidget *view, int n, int relative) {
     l_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_gettable(L, -2);
     n = lua_tointeger(L, -1) + n;
     lua_pop(L, 1); // index
-    if (n > lua_objlen(L, -1))
+    if (n > lua_rawlen(L, -1))
       n = 1;
     else if (n < 1)
-      n = lua_objlen(L, -1);
+      n = lua_rawlen(L, -1);
     lua_rawgeti(L, -1, n);
   } else {
-    luaL_argcheck(L, (n > 0 && n <= lua_objlen(L, -1)) || n == -1, 2,
+    luaL_argcheck(L, (n > 0 && n <= lua_rawlen(L, -1)) || n == -1, 2,
                   "no Buffer exists at that index");
-    lua_rawgeti(L, -1, (n > 0) ? n : lua_objlen(L, -1));
+    lua_rawgeti(L, -1, (n > 0) ? n : lua_rawlen(L, -1));
   }
   sptr_t doc = l_todoc(L, -1);
   SS(view, SCI_SETDOCPOINTER, 0, doc);
@@ -1153,7 +1153,7 @@ static long lL_checkscintillaparam(lua_State *L, int *narg, int type) {
 static GtkWidget *lL_checkview(lua_State *L, int narg) {
   luaL_getmetatable(L, "ta_view");
   lua_getmetatable(L, narg);
-  luaL_argcheck(L, lua_equal(L, -1, -2), narg, "View expected");
+  luaL_argcheck(L, lua_compare(L, -1, -2, LUA_OPEQ), narg, "View expected");
   lua_getfield(L, (narg > 0) ? narg : narg - 2, "widget_pointer");
   GtkWidget *view = (GtkWidget *)lua_touserdata(L, -1);
   lua_pop(L, 3); // widget_pointer, metatable, metatable
@@ -1170,7 +1170,7 @@ static GtkWidget *lL_checkview(lua_State *L, int narg) {
 static void lL_globaldoccheck(lua_State *L, int narg) {
   luaL_getmetatable(L, "ta_buffer");
   lua_getmetatable(L, (narg > 0) ? narg : narg - 1);
-  luaL_argcheck(L, lua_equal(L, -1, -2), narg, "Buffer expected");
+  luaL_argcheck(L, lua_compare(L, -1, -2, LUA_OPEQ), narg, "Buffer expected");
   lua_getfield(L, (narg > 0) ? narg : narg - 2, "doc_pointer");
   sptr_t doc = (sptr_t)lua_touserdata(L, -1);
   luaL_argcheck(L, doc == SS(focused_view, SCI_GETDOCPOINTER, 0, 0), narg,
@@ -1210,7 +1210,7 @@ static void l_pushgtkmenu(lua_State *L, int index, GCallback callback,
         gtk_menu_shell_append(GTK_MENU_SHELL(menu),
                               (GtkWidget *)lua_touserdata(L, -1));
         lua_pop(L, 1); // gtkmenu
-      } else if (lua_objlen(L, -1) == 2 || lua_objlen(L, -1) == 4) {
+      } else if (lua_rawlen(L, -1) == 2 || lua_rawlen(L, -1) == 4) {
         lua_rawgeti(L, -1, 1);
         label = lua_tostring(L, -1);
         lua_pop(L, 1); // label
@@ -1286,7 +1286,7 @@ static int lL_event(lua_State *L, const char *name, ...) {
         type = va_arg(ap, int);
       }
       va_end(ap);
-      if (lua_pcall(L, n, 1, 0) == 0)
+      if (lua_pcall(L, n, 1, 0) == LUA_OK)
         ret = lua_toboolean(L, -1);
       else
         lL_event(L, "error", LUA_TSTRING, lua_tostring(L, -1), -1);
@@ -1386,7 +1386,7 @@ static int l_callscintilla(lua_State *L, int msg, int wtype, int ltype,
 
   // Set wParam and lParam appropriately for Scintilla based on wtype and ltype.
   if (wtype == tLENGTH && ltype == tSTRING) {
-    wparam = (uptr_t)lua_strlen(L, arg);
+    wparam = (uptr_t)lua_rawlen(L, arg);
     lparam = (sptr_t)luaL_checkstring(L, arg);
     params_needed = 0;
   } else if (ltype == tSTRINGRESULT) {
@@ -1429,7 +1429,7 @@ static int lbuf_property(lua_State *L) {
   int newindex = (lua_gettop(L) == 3);
   luaL_getmetatable(L, "ta_buffer");
   lua_getmetatable(L, 1); // metatable can be either ta_buffer or ta_bufferp
-  int is_buffer = lua_equal(L, -1, -2);
+  int is_buffer = lua_compare(L, -1, -2, LUA_OPEQ);
   lua_pop(L, 2); // metatable, metatable
 
   // If the key is a Scintilla function, return a callable closure.
@@ -1567,7 +1567,7 @@ static int lgui__newindex(lua_State *L) {
     gtk_widget_hide(menubar);
 #endif
   } else if (strcmp(key, "size") == 0) {
-    luaL_argcheck(L, lua_istable(L, 3) && lua_objlen(L, 3) == 2, 3,
+    luaL_argcheck(L, lua_istable(L, 3) && lua_rawlen(L, 3) == 2, 3,
                   "{ width, height } table expected");
     int w = l_rawgetiint(L, 3, 1), h = l_rawgetiint(L, 3, 2);
     if (w > 0 && h > 0) gtk_window_resize(GTK_WINDOW(window), w, h);
@@ -1667,7 +1667,7 @@ static int lbuffer_delete(lua_State *L) {
   lL_globaldoccheck(L, 1);
   sptr_t doc = SS(focused_view, SCI_GETDOCPOINTER, 0, 0);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  if (lua_objlen(L, -1) == 1) new_buffer(0);
+  if (lua_rawlen(L, -1) == 1) new_buffer(0);
   lL_gotodoc(L, focused_view, -1, TRUE);
   delete_buffer(doc);
   lL_event(L, "buffer_deleted", -1),
@@ -1678,7 +1678,7 @@ static int lbuffer_delete(lua_State *L) {
 static int lbuffer_new(lua_State *L) {
   new_buffer(0);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  lua_rawgeti(L, -1, lua_objlen(L, -1));
+  lua_rawgeti(L, -1, lua_rawlen(L, -1));
   return 1;
 }
 
@@ -1757,11 +1757,11 @@ static int lgui_dialog(lua_State *L) {
   GCDialogType type = gcocoadialog_type(luaL_checkstring(L, 1));
   int i, j, k, n = lua_gettop(L) - 1, argc = n;
   for (i = 2; i < n + 2; i++)
-    if (lua_istable(L, i)) argc += lua_objlen(L, i) - 1;
+    if (lua_istable(L, i)) argc += lua_rawlen(L, i) - 1;
   const char **argv = malloc((argc + 1) * sizeof(const char *));
   for (i = 0, j = 2; j < n + 2; j++)
     if (lua_istable(L, j)) {
-      int len = lua_objlen(L, j);
+      int len = lua_rawlen(L, j);
       for (k = 1; k <= len; k++) {
         lua_rawgeti(L, j, k);
         argv[i++] = luaL_checkstring(L, -1);
@@ -1782,13 +1782,13 @@ static int lgui_goto_view(lua_State *L) {
   if (relative) {
     l_pushview(L, focused_view), lua_gettable(L, -2);
     n = lua_tointeger(L, -1) + n;
-    if (n > lua_objlen(L, -2))
+    if (n > lua_rawlen(L, -2))
       n = 1;
     else if (n < 1)
-      n = lua_objlen(L, -2);
+      n = lua_rawlen(L, -2);
     lua_rawgeti(L, -2, n);
   } else {
-    luaL_argcheck(L, n > 0 && n <= lua_objlen(L, -1), 1,
+    luaL_argcheck(L, n > 0 && n <= lua_rawlen(L, -1), 1,
                   "no View exists at that index");
     lua_rawgeti(L, -1, n);
   }
@@ -1848,7 +1848,7 @@ static gboolean emit_timeout(gpointer data) {
   lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[0]); // function
   int nargs = 0, repeat = TRUE;
   while (refs[++nargs]) lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[nargs]);
-  int ok = (lua_pcall(lua, nargs - 1, 1, 0) == 0);
+  int ok = (lua_pcall(lua, nargs - 1, 1, 0) == LUA_OK);
   if (!ok || !lua_toboolean(lua, -1)) {
     while (--nargs >= 0) luaL_unref(lua, LUA_REGISTRYINDEX, refs[nargs]);
     repeat = FALSE;

@@ -72,7 +72,7 @@ end
 
 ---
 -- Goes to selected bookmark from a filtered list.
-function goto()
+function goto_bookmark()
   local buffer = buffer
   local markers, line = {}, buffer:marker_next(0, 2^MARK_BOOKMARK)
   if line == -1 then return end
