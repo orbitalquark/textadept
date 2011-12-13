@@ -19,7 +19,7 @@ local s = '_G._SCINTILLA.constants'
 f = io.open('../core/iface.lua', 'w')
 
 -- Write header.
-f:write [[
+f:write [=[
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local M = {}
@@ -30,7 +30,7 @@ local M = {}
 -- Do not modify anything in this module. Doing so will result in instability.
 module('_SCINTILLA')]]
 
-]]
+]=]
 
 -- Constants ({"constant", value}).
 for item in iface:match('Constants%[%] = (%b{})'):sub(2, -2):gmatch('%b{}') do
