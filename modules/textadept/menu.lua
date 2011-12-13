@@ -11,7 +11,7 @@ local M = {}
 -- Provides dynamic menus for Textadept.
 -- This module should be `require`ed last, after `_m.textadept.keys` since it
 -- looks up defined key commands to show them in menus.
-module('_m.textadept.menu', package.seeall)]]
+module('_m.textadept.menu')]]
 
 local _buffer, _view = buffer, view
 local m_textadept, m_editing = _m.textadept, _m.textadept.editing

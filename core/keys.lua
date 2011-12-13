@@ -7,7 +7,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Manages key commands in Textadept.
-module('keys', package.seeall)]]
+module('keys')]]
 
 -- Markdown:
 -- ## Overview

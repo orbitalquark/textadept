@@ -8,7 +8,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Handles file-specific settings.
-module('_m.textadept.mime_types', package.seeall)]]
+module('_m.textadept.mime_types')]]
 
 -- Markdown:
 -- ## Overview

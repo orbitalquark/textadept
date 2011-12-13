@@ -6,7 +6,7 @@ local events = events
 --[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's io package to provide file input/output routines for Textadept.
-module('io', package.seeall)]]
+module('io')]]
 
 -- Markdown:
 -- ## Converting Filenames to and from UTF-8

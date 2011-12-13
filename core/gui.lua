@@ -414,6 +414,8 @@ connect(events.ERROR, function(...) gui._print(L('[Error Buffer]'), ...) end)
 -- Each argument is like a string in Lua's `arg` table. Tables of strings are
 -- allowed as arguments and are expanded in place. This is useful for
 -- filteredlist dialogs with many items.
+-- @param kind The kind of gcocoadialog.
+-- @param ... Parameters to the gcocoadialog.
 -- @return string gcocoadialog result.
 -- @class function
 -- @name dialog

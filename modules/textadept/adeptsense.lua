@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Language autocompletion support for the textadept module.
-module('_m.textadept.adeptsense', package.seeall)]]
+module('_m.textadept.adeptsense')]]
 
 -- Markdown:
 -- ## Overview

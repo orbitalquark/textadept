@@ -7,7 +7,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Textadept's core event structure and handlers.
-module('events', package.seeall)]]
+module('events')]]
 
 -- Markdown:
 -- ## Overview

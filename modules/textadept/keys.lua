@@ -10,7 +10,7 @@ local M = {}
 -- Defines key commands for Textadept.
 -- This set of key commands is pretty standard among other text editors.
 -- This module, should be 'require'ed last, but before _m.textadept.menu.
-module('_m.textadept.keys', package.seeall)]]
+module('_m.textadept.keys')]]
 
 local keys, _buffer, _view = keys, buffer, view
 local m_textadept, m_editing = _m.textadept, _m.textadept.editing
