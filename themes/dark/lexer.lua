@@ -6,9 +6,9 @@
 -- This means the global variables like 'buffer', 'view', and 'gui' are not
 -- available here. Only the variables in the 'lexer' module are.
 
-module('lexer', package.seeall)
+local l, color, style = lexer, lexer.color, lexer.style
 
-colors = {
+l.colors = {
   -- Greyscale colors.
 --dark_black   = color('00', '00', '00'),
   black        = color('1A', '1A', '1A'),
@@ -56,26 +56,26 @@ colors = {
   light_blue     = color('80', 'CC', 'FF'),
 }
 
-style_nothing    = style {                                  }
-style_class      = style { fore = colors.light_yellow       }
-style_comment    = style { fore = colors.dark_grey          }
-style_constant   = style { fore = colors.red                }
-style_definition = style { fore = colors.light_yellow       }
-style_error      = style { fore = colors.red, italic = true }
-style_function   = style { fore = colors.blue               }
-style_keyword    = style { fore = colors.dark_white         }
-style_label      = style { fore = colors.orange             }
-style_number     = style { fore = colors.teal               }
-style_operator   = style { fore = colors.yellow             }
-style_regex      = style { fore = colors.light_green        }
-style_string     = style { fore = colors.green              }
-style_preproc    = style { fore = colors.purple             }
-style_tag        = style { fore = colors.dark_white         }
-style_type       = style { fore = colors.lavender           }
-style_variable   = style { fore = colors.light_blue         }
-style_whitespace = style {                                  }
-style_embedded   = style_tag..{ back = colors.light_black   }
-style_identifier = style_nothing
+l.style_nothing    = style {                                    }
+l.style_class      = style { fore = l.colors.light_yellow       }
+l.style_comment    = style { fore = l.colors.dark_grey          }
+l.style_constant   = style { fore = l.colors.red                }
+l.style_definition = style { fore = l.colors.light_yellow       }
+l.style_error      = style { fore = l.colors.red, italic = true }
+l.style_function   = style { fore = l.colors.blue               }
+l.style_keyword    = style { fore = l.colors.dark_white         }
+l.style_label      = style { fore = l.colors.orange             }
+l.style_number     = style { fore = l.colors.teal               }
+l.style_operator   = style { fore = l.colors.yellow             }
+l.style_regex      = style { fore = l.colors.light_green        }
+l.style_string     = style { fore = l.colors.green              }
+l.style_preproc    = style { fore = l.colors.purple             }
+l.style_tag        = style { fore = l.colors.dark_white         }
+l.style_type       = style { fore = l.colors.lavender           }
+l.style_variable   = style { fore = l.colors.light_blue         }
+l.style_whitespace = style {                                    }
+l.style_embedded   = l.style_tag..{ back = l.colors.light_black }
+l.style_identifier = l.style_nothing
 
 -- Default styles.
 local font_face = '!Bitstream Vera Sans Mono'
@@ -86,15 +86,19 @@ elseif OSX then
   font_face = '!Monaco'
   font_size = 12
 end
-style_default = style {
+l.style_default = style {
   font = font_face,
   size = font_size,
-  fore = colors.light_grey,
-  back = colors.black
+  fore = l.colors.light_grey,
+  back = l.colors.black
 }
-style_line_number = style { fore = colors.dark_grey, back = colors.black }
-style_bracelight = style { fore = colors.light_blue }
-style_bracebad = style { fore = colors.light_red }
-style_controlchar = style_nothing
-style_indentguide = style { fore = colors.light_black, back = colors.light_black }
-style_calltip = style { fore = colors.light_grey, back = colors.light_black }
+l.style_line_number = style { fore = l.colors.dark_grey, back = l.colors.black }
+l.style_bracelight = style { fore = l.colors.light_blue }
+l.style_bracebad = style { fore = l.colors.light_red }
+l.style_controlchar = l.style_nothing
+l.style_indentguide = style {
+  fore = l.colors.light_black, back = l.colors.light_black
+}
+l.style_calltip = style {
+  fore = l.colors.light_grey, back = l.colors.light_black
+}
