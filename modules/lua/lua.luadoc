@@ -234,9 +234,9 @@ function tostring(v) end
 -- "`table`", "`function`", "`thread`", and "`userdata`".
 function type(v) end
 
--- * `_G._VERSION`: A global variable (not a function) that holds a string
---   containing the current interpreter version. The current contents of this
---   variable is "`Lua 5.2`".
+-- * `_G._VERSION` [string]: A global variable (not a function) that holds a
+--   string containing the current interpreter version. The current contents of
+--   this variable is "`Lua 5.2`".
 
 ---
 -- This function is similar to `pcall`, except that it sets a new message
