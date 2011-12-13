@@ -22,10 +22,13 @@ f = io.open('../core/iface.lua', 'w')
 f:write [[
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Scintilla constants, functions, and properties.
 -- Do not modify anything in this module. Doing so will result in instability.
-module('_SCINTILLA')
+module('_SCINTILLA')]]
 
 ]]
 
@@ -92,7 +95,7 @@ f:write [[
 -- Scintilla constants.
 -- @class table
 -- @name constants
-constants = {]]
+M.constants = {]]
 f:write(table.concat(constants, ','))
 f:write('}\n\n')
 
@@ -114,7 +117,7 @@ f:write [[
 -- Scintilla functions.
 -- @class table
 -- @name functions
-functions = {]]
+M.functions = {]]
 f:write(table.concat(functions, ','))
 f:write('}\n\n')
 
@@ -136,7 +139,7 @@ f:write [[
 -- Scintilla properties.
 -- @class table
 -- @name properties
-properties = {]]
+M.properties = {]]
 f:write(table.concat(properties, ','))
 f:write('}\n\n')
 
@@ -150,7 +153,8 @@ local marker_number, indic_number, list_type = -1, 7, 0
 -- identifiers of other custom markers.
 -- @usage local marknum = _SCINTILLA.next_marker_number()
 -- @see buffer.marker_define
-function next_marker_number()
+-- @name next_marker_number
+function M.next_marker_number()
   marker_number = marker_number + 1
   return marker_number
 end
@@ -161,7 +165,8 @@ end
 -- identifiers of other custom indicators.
 -- @usage local indic_num = _SCINTILLA.next_indic_number()
 -- @see buffer.indic_style
-function next_indic_number()
+-- @name next_indic_number
+function M.next_indic_number()
   indic_number = indic_number + 1
   return indic_number
 end
@@ -172,10 +177,13 @@ end
 -- type identifiers of other custom user lists.
 -- @usage local list_type = _SCINTILLA.next_user_list_type()
 -- @see buffer.user_list_show
-function next_user_list_type()
+-- @name next_user_list_type
+function M.next_user_list_type()
   list_type = list_type + 1
   return list_type
 end
+
+return M
 ]]
 
 f:close()

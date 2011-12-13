@@ -5,6 +5,41 @@ local events = events
 local find = gui.find
 local c = _SCINTILLA.constants
 
+--[[ This comment is for LuaDoc.
+---
+-- Textadept's integrated find/replace dialog.
+module('gui.find')]]
+
+-- Markdown:
+-- ## Fields
+--
+-- * `find_entry_text` [string]: The text in the find entry.
+-- * `replace_entry_text` [string]: The text in the replace entry.
+-- * `match_case` [bool]: Searches are case-sensitive.
+-- * `whole_word` [bool]: Only whole-word matches are allowed in searches.
+-- * `lua` [bool]: The search text is interpreted as a Lua pattern.
+-- * `in_files` [bool]: Search for the text in a list of files.
+-- * `find_label_text` [string]: The text of the 'Find' label. This is primarily
+--   used for localization. (Write-only)
+-- * `replace_label_text` [string]: The text of the 'Replace' label. This is
+--   primarily used for localization. (Write-only)
+-- * `find_next_button_text` [string]: The text of the 'Find Next' button. This
+--   is primarily used for localization. (Write-only)
+-- * `find_prev_button_text` [string]: The text of the 'Find Prev' button. This
+--   is primarily used for localization. (Write-only)
+-- * `replace_button_text` [string]: The text of the 'Replace' button. This is
+--   primarily used for localization. (Write-only)
+-- * `replace_all_button_text` [string]: The text of the 'Replace All' button.
+--   This is primarily used for localization. (Write-only)
+-- * `match_case_label_text` [string]: The text of the 'Match case' label. This
+--   is primarily used for localization. (Write-only)
+-- * `whole_word_label_text` [string]: The text of the 'Whole word' label. This
+--   is primarily used for localization. (Write-only)
+-- * `lua_pattern_label_text` [string]: The text of the 'Lua pattern' label.
+--   This is primarily used for localization. (Write-only)
+-- * `in_files_label_text` [string]: The text of the 'In files' label. This is
+--   primarily used for localization. (Write-only)
+
 find.find_label_text = L('Find:')
 find.replace_label_text = L('Replace:')
 find.find_next_button_text = L('Find Next')
@@ -28,7 +63,12 @@ local escapes = {
   ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
 }
 
--- LuaDoc is in core/.find.luadoc.
+---
+-- Performs a find in files with the given directory.
+-- Use the `gui.find` fields to set the text to find and option flags.
+-- @param utf8_dir UTF-8 encoded directory name. If none is provided, the user
+--   is prompted for one.
+-- @name find_in_files
 function find.find_in_files(utf8_dir)
   if not utf8_dir then
     utf8_dir = gui.dialog('fileselect',
@@ -166,7 +206,11 @@ local function find_incremental(text)
   find_(text, true, flags)
 end
 
--- LuaDoc is in core/.find.luadoc.
+---
+-- Begins an incremental find using the Lua command entry.
+-- Lua command functionality will be unavailable until the search is finished
+-- (pressing 'Escape' by default).
+-- @name find_incremental
 function find.find_incremental()
   find.incremental = true
   find.incremental_start = buffer.current_pos
@@ -316,7 +360,11 @@ local function goto_file(pos, line_num)
 end
 events.connect(events.DOUBLE_CLICK, goto_file)
 
--- LuaDoc is in core/.find.luadoc.
+---
+-- Goes to the next or previous file found relative to the file
+-- on the current line.
+-- @param next Flag indicating whether or not to go to the next file.
+-- @name goto_file_in_list
 function find.goto_file_in_list(next)
   local orig_view = _VIEWS[view]
   for _, buffer in ipairs(_BUFFERS) do
@@ -348,3 +396,35 @@ if buffer then buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end
 events.connect(events.VIEW_NEW, function()
   buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR)
 end)
+
+-- The functions below are Lua C functions.
+
+---
+-- Displays and focuses the find/replace dialog.
+-- @class function
+-- @name focus
+local focus
+
+---
+-- Mimicks a press of the 'Find Next' button in the Find box.
+-- @class function
+-- @name find_next
+local find_next
+
+---
+-- Mimicks a press of the 'Find Prev' button in the Find box.
+-- @class function
+-- @name find_prev
+local find_prev
+
+---
+-- Mimicks a press of the 'Replace' button in the Find box.
+-- @class function
+-- @name replace
+local replace
+
+---
+-- Mimicks a press of the 'Replace All' button in the Find box.
+-- @class function
+-- @name replace_all
+local replace_all

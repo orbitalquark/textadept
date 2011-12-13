@@ -191,7 +191,7 @@ Ctrl+Shift+U, xxxx, Enter|None|Input Unicode character U-xxxx.
 ## Lua Patterns
 
 The following is taken from the
-[Lua 5.1 Reference Manual](http://www.lua.org/manual/5.1/manual.html#5.4.1).
+[Lua 5.2 Reference Manual](http://www.lua.org/manual/5.2/manual.html#6.4.1).
 
 _Character Class:_
 
@@ -204,13 +204,13 @@ combinations are allowed in describing a character class:
 * **`%a`:** represents all letters.
 * **`%c`:** represents all control characters.
 * **`%d`:** represents all digits.
+* **`%g`:** represents all printable characters except space.
 * **`%l`:** represents all lowercase letters.
 * **`%p`:** represents all punctuation characters.
 * **`%s`:** represents all space characters.
 * **`%u`:** represents all uppercase letters.
 * **`%w`:** represents all alphanumeric characters.
 * **`%x`:** represents all hexadecimal digits.
-* **`%z`:** represents the character with representation 0.
 * **`%`_`x`_:** (where _x_ is any non-alphanumeric character) represents the
   character _x_. This is the standard way to escape the magic characters. Any
   punctuation character (even the non magic) can be preceded by a '`%`' when
@@ -259,6 +259,11 @@ A _pattern item_ can be
   counting +_1_ for an _x_ and -_1_ for a _y_, the ending _y_ is the first _y_
   where the count reaches 0. For instance, the item `%b()` matches expressions
   with balanced parentheses.
+* `%f[set]`, a _frontier pattern_; such item matches an empty string at any
+  position such that the next character belongs to _set_ and the previous
+  character does not belong to _set_. The set _set_ is interpreted as previously
+  described. The beginning and the end of the subject are handled as if they
+  were the character `'\0'`.
 
 _Pattern:_
 
@@ -280,5 +285,3 @@ is captured with number 2, and the part matching "`%s*`" has number 3.
 As a special case, the empty capture `()` captures the current string position
 (a number). For instance, if we apply the pattern `"()aa()"` on the string
 `"flaaap"`, there will be two captures: 3 and 5.
-
-A pattern cannot contain embedded zeros. Use `%z` instead.

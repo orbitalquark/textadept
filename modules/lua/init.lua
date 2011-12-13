@@ -1,11 +1,14 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local M = {}
+
+--[[
 ---
 -- The lua module.
 -- It provides utilities for editing Lua code.
 -- User tags are loaded from _USERHOME/modules/lua/tags and user apis are loaded
 -- from _USERHOME/modules/lua/api.
-module('_m.lua', package.seeall)
+module('_m.lua', package.seeall)]]
 
 -- Markdown:
 -- ## Key Commands
@@ -35,38 +38,39 @@ m_run.error_detail.lua = {
 
 ---
 -- Sets default buffer properties for Lua files.
-function set_buffer_properties()
+-- @name set_buffer_properties
+function M.set_buffer_properties()
 
 end
 
 -- Adeptsense.
 
-sense = _m.textadept.adeptsense.new('lua')
-sense.syntax.class_definition = 'module%s*%(?%s*[\'"]([%w_%.]+)'
-sense.syntax.symbol_chars = '[%w_%.:]'
-sense.syntax.type_declarations = {}
-sense.syntax.type_assignments = {
+M.sense = _m.textadept.adeptsense.new('lua')
+M.sense.syntax.class_definition = 'module%s*%(?%s*[\'"]([%w_%.]+)'
+M.sense.syntax.symbol_chars = '[%w_%.:]'
+M.sense.syntax.type_declarations = {}
+M.sense.syntax.type_assignments = {
   ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
   ['^([%w_%.]+)%s*$'] = '%1', -- foo = _m.textadept.adeptsense
   ['^(_m%.textadept%.adeptsense)%.new'] = '%1',
   ['require%s*%(?%s*(["\'])([%w_%.]+)%1%)?'] = '%2',
   ['^io%.p?open%s*%b()%s*$'] = 'file'
 }
-sense.api_files = { _HOME..'/modules/lua/api' }
-sense:add_trigger('.')
-sense:add_trigger(':', false, true)
+M.sense.api_files = { _HOME..'/modules/lua/api' }
+M.sense:add_trigger('.')
+M.sense:add_trigger(':', false, true)
 
 -- script/update_doc generates a fake set of ctags used for autocompletion.
-sense.ctags_kinds = {
+M.sense.ctags_kinds = {
   f = 'functions',
   F = 'fields',
   m = 'classes',
   t = 'fields',
 }
-sense:load_ctags(_HOME..'/modules/lua/tags', true)
+M.sense:load_ctags(_HOME..'/modules/lua/tags', true)
 
 -- Strips '_G' from symbols since it's implied.
-function sense:get_symbol()
+function M.sense:get_symbol()
   local symbol, part = self.super.get_symbol(self)
   if symbol:find('^_G') then symbol = symbol:gsub('_G%.?', '') end
   if part == '_G' then part = '' end
@@ -76,7 +80,7 @@ end
 -- Shows an autocompletion list for the symbol behind the caret.
 -- If the symbol contains a ':', only display functions. Otherwise, display
 -- both functions and fields.
-function sense:complete(only_fields, only_functions)
+function M.sense:complete(only_fields, only_functions)
   local line, pos = buffer:get_cur_line()
   local symbol = line:sub(1, pos):match(self.syntax.symbol_chars..'*$')
   return self.super.complete(self, false, symbol:find(':'))
@@ -84,10 +88,10 @@ end
 
 -- Load user tags and apidoc.
 if lfs.attributes(_USERHOME..'/modules/lua/tags') then
-  sense:load_ctags(_USERHOME..'/modules/lua/tags')
+  M.sense:load_ctags(_USERHOME..'/modules/lua/tags')
 end
 if lfs.attributes(_USERHOME..'/modules/lua/api') then
-  sense.api_files[#sense.api_files + 1] = _USERHOME..'/modules/lua/api'
+  M.sense.api_files[#M.sense.api_files + 1] = _USERHOME..'/modules/lua/api'
 end
 
 -- Commands.
@@ -106,7 +110,8 @@ local control_structure_patterns = {
 -- Tries to autocomplete Lua's 'end' keyword for control structures like 'if',
 -- 'while', 'for', etc.
 -- @see control_structure_patterns
-function try_to_autocomplete_end()
+-- @name try_to_autocomplete_end
+function M.try_to_autocomplete_end()
   local buffer = buffer
   local line_num = buffer:line_from_position(buffer.current_pos)
   local line = buffer:get_line(line_num)
@@ -131,7 +136,8 @@ end
 ---
 -- Determines the Lua file being 'require'd, searches through package.path for
 -- that file, and opens it in Textadept.
-function goto_required()
+-- @name goto_required
+function M.goto_required()
   local line = buffer:get_cur_line()
   local patterns = { 'require%s*(%b())', 'require%s*(([\'"])[^%2]+%2)' }
   local file
@@ -140,14 +146,9 @@ function goto_required()
     if file then break end
   end
   if not file then return end
-  file = file:sub(2, -2):gsub('%.', '/')
-  for path in package.path:gmatch('[^;]+') do
-    path = path:gsub('?', file)
-    if lfs.attributes(path) then
-      io.open_file(path:iconv('UTF-8', _CHARSET))
-      break
-    end
-  end
+  file = package.searchpath(file:sub(2, -2):iconv('UTF-8', _CHARSET),
+                            package.path)
+  if file then io.open_file(file) end
 end
 
 -- Show syntax errors as annotations.
@@ -175,9 +176,9 @@ keys.lua = {
   [keys.LANGUAGE_MODULE_PREFIX] = {
     m = { io.open_file,
           (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET) },
-    g = goto_required,
+    g = M.goto_required,
   },
-  ['s\n'] = try_to_autocomplete_end,
+  ['s\n'] = M.try_to_autocomplete_end,
 }
 
 -- Snippets.
@@ -196,3 +197,5 @@ if type(snippets) == 'table' then
     forp = "for %1(k), %2(v) in pairs(%3(table)) do\n\t%0\nend",
   }
 end
+
+return M

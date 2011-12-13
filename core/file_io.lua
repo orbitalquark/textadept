@@ -3,9 +3,10 @@
 local L = locale.localize
 local events = events
 
+--[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's io package to provide file input/output routines for Textadept.
-module('io', package.seeall)
+module('io', package.seeall)]]
 
 -- Markdown:
 -- ## Converting Filenames to and from UTF-8
@@ -53,13 +54,13 @@ events.FILE_SAVED_AS = 'file_saved_as'
 -- The most recent are towards the top.
 -- @class table
 -- @name recent_files
-recent_files = {}
+io.recent_files = {}
 
 ---
 -- List of byte-order marks (BOMs).
 -- @class table
 -- @name boms
-boms = {
+io.boms = {
   ['UTF-16BE'] = string.char(254, 255),
   ['UTF-16LE'] = string.char(255, 254),
   ['UTF-32BE'] = string.char(0, 0, 254, 255),
@@ -76,13 +77,13 @@ local function detect_encoding(text)
   if b1 == 239 and b2 == 187 and b3 == 191 then
     return 'UTF-8', string.char(239, 187, 191)
   elseif b1 == 254 and b2 == 255 then
-    return 'UTF-16BE', boms['UTF-16BE']
+    return 'UTF-16BE', io.boms['UTF-16BE']
   elseif b1 == 255 and b2 == 254 then
-    return 'UTF-16LE', boms['UTF-16LE']
+    return 'UTF-16LE', io.boms['UTF-16LE']
   elseif b1 == 0 and b2 == 0 and b3 == 254 and b4 == 255 then
-    return 'UTF-32BE', boms['UTF-32BE']
+    return 'UTF-32BE', io.boms['UTF-32BE']
   elseif b1 == 255 and b2 == 254 and b3 == 0 and b4 == 0 then
-    return 'UTF-32LE', boms['UTF-32LE']
+    return 'UTF-32LE', io.boms['UTF-32LE']
   else
     local chunk = #text > 65536 and text:sub(1, 65536) or text
     if chunk:find('\0') then return 'binary' end -- binary file
@@ -94,14 +95,15 @@ end
 -- List of encodings to try to decode files as after UTF-8.
 -- @class table
 -- @name try_encodings
-try_encodings = { 'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman' }
+io.try_encodings = { 'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman' }
 
 ---
 -- Opens a list of files.
 -- @param utf8_filenames A `\n` separated list of UTF-8-encoded filenames to
 --   open. If `nil`, the user is prompted with a fileselect dialog.
 -- @usage io.open_file(utf8_encoded_filename)
-function open_file(utf8_filenames)
+-- @name open_file
+function io.open_file(utf8_filenames)
   utf8_filenames = utf8_filenames or
                    gui.dialog('fileselect',
                               '--title', L('Open'),
@@ -130,7 +132,7 @@ function open_file(utf8_filenames)
         text = text:iconv('UTF-8', encoding)
       else
         -- Try list of encodings.
-        for _, try_encoding in ipairs(try_encodings) do
+        for _, try_encoding in ipairs(io.try_encodings) do
           local ok, conv = pcall(string.iconv, text, 'UTF-8', try_encoding)
           if ok then encoding, text = try_encoding, conv break end
         end
@@ -158,10 +160,10 @@ function open_file(utf8_filenames)
     events.emit(events.FILE_OPENED, utf8_filename)
 
     -- Add file to recent files list, eliminating duplicates.
-    for i, file in ipairs(recent_files) do
-      if file == utf8_filename then table.remove(recent_files, i) break end
+    for i, file in ipairs(io.recent_files) do
+      if file == utf8_filename then table.remove(io.recent_files, i) break end
     end
-    table.insert(recent_files, 1, utf8_filename)
+    table.insert(io.recent_files, 1, utf8_filename)
     lfs.chdir(utf8_filename:iconv(_CHARSET, 'UTF-8'):match('.+[/\\]') or '.')
   end
 end
@@ -201,7 +203,7 @@ local function set_encoding(buffer, encoding)
   buffer:add_text(text, #text)
   buffer:line_scroll(0, first_visible_line)
   buffer:goto_pos(pos)
-  buffer.encoding, buffer.encoding_bom = encoding, boms[encoding]
+  buffer.encoding, buffer.encoding_bom = encoding, io.boms[encoding]
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
@@ -249,7 +251,8 @@ end
 ---
 -- Saves all dirty buffers to their respective files.
 -- @usage io.save_all()
-function save_all()
+-- @name save_all
+function io.save_all()
   local current_buffer = _BUFFERS[buffer]
   for i, buffer in ipairs(_BUFFERS) do
     view:goto_buffer(i)
@@ -282,7 +285,8 @@ end
 -- saved automatically. They must be saved manually.
 -- @usage io.close_all()
 -- @return true if user did not cancel.
-function close_all()
+-- @name close_all
+function io.close_all()
   while #_BUFFERS > 1 do
     view:goto_buffer(#_BUFFERS)
     if not buffer:close() then return false end
@@ -338,7 +342,8 @@ end)
 
 ---
 -- Prompts the user to open a recently opened file.
-function open_recent_file()
-  local i = gui.filteredlist(L('Open'), L('File'), recent_files, true)
-  if i then open_file(recent_files[i + 1]) end
+-- @name open_recent_file
+function io.open_recent_file()
+  local i = gui.filteredlist(L('Open'), L('File'), io.recent_files, true)
+  if i then open_file(io.recent_files[i + 1]) end
 end

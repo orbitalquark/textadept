@@ -2,9 +2,12 @@
 
 local L = locale.localize
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Bookmarks for the textadept module.
-module('_m.textadept.bookmarks', package.seeall)
+module('_m.textadept.bookmarks', package.seeall)]]
 
 -- Markdown:
 -- ## Settings
@@ -13,14 +16,15 @@ module('_m.textadept.bookmarks', package.seeall)
 --   `0xBBGGRR` format.
 
 -- settings
-MARK_BOOKMARK_COLOR = 0xB3661A
+M.MARK_BOOKMARK_COLOR = 0xB3661A
 -- end settings
 
 local MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 
 ---
 -- Adds a bookmark to the current line.
-function add()
+-- @name add
+function M.add()
   local buffer = buffer
   local line = buffer:line_from_position(buffer.current_pos)
   buffer:marker_add(line, MARK_BOOKMARK)
@@ -28,7 +32,8 @@ end
 
 ---
 -- Clears the bookmark at the current line.
-function remove()
+-- @name remove
+function M.remove()
   local buffer = buffer
   local line = buffer:line_from_position(buffer.current_pos)
   buffer:marker_delete(line, MARK_BOOKMARK)
@@ -36,21 +41,26 @@ end
 
 ---
 -- Toggles a bookmark on the current line.
-function toggle()
+-- @name toggle
+function M.toggle()
   local buffer = buffer
   local line = buffer:line_from_position(buffer.current_pos)
   local markers = buffer:marker_get(line) -- bit mask
   local bit = 2^MARK_BOOKMARK
-  if markers % (bit + bit) < bit then add() else remove() end
+  if markers % (bit + bit) < bit then M.add() else M.remove() end
 end
 
 ---
 -- Clears all bookmarks in the current buffer.
-function clear() buffer:marker_delete_all(MARK_BOOKMARK) end
+-- @name clear
+function M.clear()
+  buffer:marker_delete_all(MARK_BOOKMARK)
+end
 
 ---
 -- Goes to the next bookmark in the current buffer.
-function goto_next()
+-- @name goto_next
+function M.goto_next()
   local buffer = buffer
   local current_line = buffer:line_from_position(buffer.current_pos)
   local line = buffer:marker_next(current_line + 1, 2^MARK_BOOKMARK)
@@ -60,7 +70,8 @@ end
 
 ---
 -- Goes to the previous bookmark in the current buffer.
-function goto_prev()
+-- @name goto_prev
+function M.goto_prev()
   local buffer = buffer
   local current_line = buffer:line_from_position(buffer.current_pos)
   local line = buffer:marker_previous(current_line - 1, 2^MARK_BOOKMARK)
@@ -72,7 +83,8 @@ end
 
 ---
 -- Goes to selected bookmark from a filtered list.
-function goto_bookmark()
+-- @name goto_bookmark
+function M.goto_bookmark()
   local buffer = buffer
   local markers, line = {}, buffer:marker_next(0, 2^MARK_BOOKMARK)
   if line == -1 then return end
@@ -85,7 +97,9 @@ function goto_bookmark()
   if line then _m.textadept.editing.goto_line(line:match('^%d+')) end
 end
 
-if buffer then buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR) end
+if buffer then buffer:marker_set_back(MARK_BOOKMARK, M.MARK_BOOKMARK_COLOR) end
 events.connect(events.VIEW_NEW, function()
-  buffer:marker_set_back(MARK_BOOKMARK, MARK_BOOKMARK_COLOR)
+  buffer:marker_set_back(MARK_BOOKMARK, M.MARK_BOOKMARK_COLOR)
 end)
+
+return M

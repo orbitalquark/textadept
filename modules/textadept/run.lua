@@ -3,12 +3,15 @@
 local L = locale.localize
 local events = events
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Module for running/executing source files.
 -- Typically, language-specific modules populate the 'compile_command',
 -- 'run_command', and 'error_detail' tables for a particular language's file
 -- extension.
-module('_m.textadept.run', package.seeall)
+module('_m.textadept.run', package.seeall)]]
 
 -- Markdown:
 -- ## Run Events
@@ -40,7 +43,8 @@ events.RUN_OUTPUT = 'run_output'
 --     + `%(filedir)`: The current file's directory path.
 --     + `%(filename)`: The name of the file including extension.
 --     + `%(filename_noext)`: The name of the file excluding extension.
-function execute(command)
+-- @name execute
+function M.execute(command)
   local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local filedir, filename = '', filepath
   if filepath:find('[/\\]') then
@@ -69,7 +73,7 @@ local function command(cmd_table)
   buffer:save()
   local action = cmd_table[buffer.filename:match('[^.]+$')]
   if not action then return end
-  return execute(type(action) == 'function' and action() or action)
+  return M.execute(type(action) == 'function' and action() or action)
 end
 
 ---
@@ -79,15 +83,16 @@ end
 -- This table is typically populated by language-specific modules.
 -- @class table
 -- @name compile_command
-compile_command = {}
+M.compile_command = {}
 
 ---
 -- Compiles the file as specified by its extension in the `compile_command`
 -- table.
 -- @see compile_command
-function compile()
+-- @name compile
+function M.compile()
   events.emit(events.COMPILE_OUTPUT, buffer:get_lexer(),
-              command(compile_command))
+              command(M.compile_command))
 end
 events.connect(events.COMPILE_OUTPUT,
                function(lexer, output) gui.print(output) end)
@@ -99,14 +104,15 @@ events.connect(events.COMPILE_OUTPUT,
 -- This table is typically populated by language-specific modules.
 -- @class table
 -- @name run_command
-run_command = {}
+M.run_command = {}
 
 ---
 -- Runs/executes the file as specified by its extension in the `run_command`
 -- table.
 -- @see run_command
-function run()
-  events.emit(events.RUN_OUTPUT, buffer:get_lexer(), command(run_command))
+-- @name run
+function M.run()
+  events.emit(events.RUN_OUTPUT, buffer:get_lexer(), command(M.run_command))
 end
 events.connect(events.RUN_OUTPUT,
                function(lexer, output) gui.print(output) end)
@@ -126,7 +132,7 @@ events.connect(events.RUN_OUTPUT,
 -- This table is usually populated by language-specific modules.
 -- @class table
 -- @name error_detail
-error_detail = {}
+M.error_detail = {}
 
 ---
 -- When the user double-clicks an error message, go to the line in the file
@@ -141,7 +147,7 @@ function goto_error(pos, line_num)
   end
   local buffer = buffer
   line = buffer:get_line(line_num)
-  for _, error_detail in pairs(error_detail) do
+  for _, error_detail in pairs(M.error_detail) do
     local captures = { line:match(error_detail.pattern) }
     if #captures > 0 then
       local utf8_filename = captures[error_detail.filename]
@@ -159,3 +165,5 @@ function goto_error(pos, line_num)
   end
 end
 events.connect(events.DOUBLE_CLICK, goto_error)
+
+return M

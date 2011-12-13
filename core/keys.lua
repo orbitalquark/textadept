@@ -2,9 +2,12 @@
 
 local L = locale.localize
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Manages key commands in Textadept.
-module('keys', package.seeall)
+module('keys', package.seeall)]]
 
 -- Markdown:
 -- ## Overview
@@ -99,8 +102,8 @@ local CTRL = 'c'..ADD
 local ALT = 'a'..ADD
 local META = 'm'..ADD
 local SHIFT = 's'..ADD
-CLEAR = 'esc'
-LANGUAGE_MODULE_PREFIX = (not OSX and CTRL or META)..'l'
+M.CLEAR = 'esc'
+M.LANGUAGE_MODULE_PREFIX = (not OSX and CTRL or META)..'l'
 -- end settings
 
 -- Optimize for speed.
@@ -119,7 +122,7 @@ local error = function(e) events.emit(events.ERROR, e) end
 -- return a string representation of the key if it exists.
 -- @class table
 -- @name KEYSYMS
-KEYSYMS = { -- from <gdk/gdkkeysyms.h>
+M.KEYSYMS = { -- from <gdk/gdkkeysyms.h>
   [0xFE20] = '\t', -- backtab; will be 'shift'ed
   [0xFF08] = '\b',
   [0xFF09] = '\t',
@@ -168,7 +171,7 @@ local function run_command(command, command_type)
   local _, result = xpcall(f, error, table_unpack(args, 2))
   return result
 end
-_M.run_command = run_command -- export for menu.lua without creating LuaDoc
+M.run_command = run_command -- export for menu.lua without creating LuaDoc
 
 -- Return codes for `run_key_command()`.
 local INVALID = -1
@@ -212,12 +215,12 @@ end
 local function keypress(code, shift, control, alt, meta)
   local buffer = buffer
   local key
-  --print(code, keys.KEYSYMS[ch], shift, control, alt, meta)
+  --print(code, M.KEYSYMS[ch], shift, control, alt, meta)
   if code < 256 then
     key = string_char(code)
     shift = false -- for printable characters, key is upper case
   else
-    key = KEYSYMS[code]
+    key = M.KEYSYMS[code]
     if not key then return end
   end
   control = control and CTRL or ''
@@ -227,7 +230,7 @@ local function keypress(code, shift, control, alt, meta)
   local key_seq = control..alt..meta..shift..key
   --print(key_seq)
 
-  if #keychain > 0 and key_seq == keys.CLEAR then
+  if #keychain > 0 and key_seq == M.CLEAR then
     clear_key_sequence()
     return true
   end
@@ -273,10 +276,12 @@ local function get_gdk_key(key_seq)
                     (mods:find('a') and 8 or 0) + (mods:find('m') and 4 or 0)
   local byte = string_byte(key)
   if #key > 1 or byte < 32 then
-    for i, s in pairs(KEYSYMS) do
+    for i, s in pairs(M.KEYSYMS) do
       if s == key and i ~= 0xFE20 then byte = i break end
     end
   end
   return byte, modifiers
 end
-_M.get_gdk_key = get_gdk_key -- export for menu.lua without generating LuaDoc
+M.get_gdk_key = get_gdk_key -- export for menu.lua without generating LuaDoc
+
+return M

@@ -3,9 +3,12 @@
 local L = locale.localize
 local events = events
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Handles file-specific settings.
-module('_m.textadept.mime_types', package.seeall)
+module('_m.textadept.mime_types', package.seeall)]]
 
 -- Markdown:
 -- ## Overview
@@ -36,19 +39,19 @@ events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
 -- File extensions with their associated lexers.
 -- @class table
 -- @name extensions
-extensions = {}
+M.extensions = {}
 
 ---
 -- Shebang words and their associated lexers.
 -- @class table
 -- @name shebangs
-shebangs = {}
+M.shebangs = {}
 
 ---
 -- First-line patterns and their associated lexers.
 -- @class table
 -- @name patterns
-patterns = {}
+M.patterns = {}
 
 -- Load mime-types from `modules/textadept/mime_types.conf`.
 local mime_types
@@ -66,11 +69,11 @@ for line in mime_types:gmatch('[^\r\n]+') do
   if not line:find('^%s*%%') then
     if line:find('^%s*[^#/]') then -- extension definition
       local ext, lexer_name = line:match('^%s*(.+)%s+(%S+)$')
-      if ext and lexer_name then extensions[ext] = lexer_name end
+      if ext and lexer_name then M.extensions[ext] = lexer_name end
     else -- shebang or pattern
       local ch, text, lexer_name = line:match('^%s*([#/])(.+)%s+(%S+)$')
       if ch and text and lexer_name then
-        (ch == '#' and shebangs or patterns)[text] = lexer_name
+        (ch == '#' and M.shebangs or M.patterns)[text] = lexer_name
       end
     end
   end
@@ -81,7 +84,7 @@ end
 -- Lexers are read from `lexers/` and `~/.textadept/lexers/`.
 -- @class table
 -- @name lexers
-lexers = {}
+M.lexers = {}
 
 -- Generate lexer list
 local lexers_found = {}
@@ -97,14 +100,15 @@ if lfs.attributes(_USERHOME..'/lexers') then
     end
   end
 end
-for lexer in pairs(lexers_found) do lexers[#lexers + 1] = lexer end
-table.sort(lexers)
+for lexer in pairs(lexers_found) do M.lexers[#M.lexers + 1] = lexer end
+table.sort(M.lexers)
 
 ---
 -- Prompts the user to select a lexer from a filtered list for the current
 -- buffer.
-function select_lexer()
-  local lexer = gui.filteredlist(L('Select Lexer'), 'Name', lexers)
+-- @name select_lexer
+function M.select_lexer()
+  local lexer = gui.filteredlist(L('Select Lexer'), 'Name', M.lexers)
   if lexer then buffer:set_lexer(lexer) end
 end
 
@@ -129,14 +133,13 @@ local function set_lexer(buffer, lang)
   buffer._lexer = lang
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
-  local ok, err = pcall(require, lang)
-  if ok then
-    ok, err = pcall(require, lang..'.post_init')
+  if package.searchpath(lang, package.path) then
+    _m[lang] = require(lang)
+    local post_init = lang..'.post_init'
+    if package.searchpath(post_init, package.path) then require(post_init) end
     _m[lang].set_buffer_properties()
     events.emit(events.LANGUAGE_MODULE_LOADED, lang)
   end
-  local module_not_found = "^module '"..lang.."[^\']*' not found:"
-  if not ok and not err:find(module_not_found) then error(err) end
   buffer:colourise(0, -1)
   -- Create the ws_styles[lexer] lookup table for `get_lexer()`.
   if ws_styles[lang] then return end
@@ -175,17 +178,17 @@ local function handle_new()
   local line = buffer:get_line(0)
   if line:find('^#!') then
     for word in line:gsub('[/\\]', ' '):gmatch('%S+') do
-      lexer = shebangs[word]
+      lexer = M.shebangs[word]
       if lexer then break end
     end
   end
   if not lexer then
-    for patt, lex in pairs(patterns) do
+    for patt, lex in pairs(M.patterns) do
       if line:find(patt) then lexer = lex break end
     end
   end
   if not lexer and buffer.filename then
-    lexer = extensions[buffer.filename:match('[^/\\.]+$')]
+    lexer = M.extensions[buffer.filename:match('[^/\\.]+$')]
   end
   buffer:set_lexer(lexer or 'container')
 end
@@ -203,3 +206,5 @@ events.connect(events.VIEW_NEW, restore_lexer, 1)
 
 events.connect(events.RESET_AFTER,
                function() buffer:set_lexer(buffer._lexer or 'container') end)
+
+return M

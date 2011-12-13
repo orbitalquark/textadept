@@ -3,9 +3,12 @@
 local L = locale.localize
 local events = events
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Filter-Through for the textadept module.
-module('_m.textadept.filter_through', package.seeall)
+module('_m.textadept.filter_through', package.seeall)]]
 
 local cat = not WIN32 and 'cat' or 'type'
 local tmpfile = _USERHOME..'/.ft'
@@ -22,7 +25,8 @@ local filter_through_active = false
 -- text is selected and spans a single line, only the selected text is used. (3)
 -- If no text is selected, the entire buffer is used.
 -- The input text is replaced with the standard output (stdout) of the command.
-function filter_through()
+-- @name filter_through
+function M.filter_through()
   filter_through_active = true
   gui.command_entry.focus()
 end
@@ -69,3 +73,5 @@ events.connect(events.COMMAND_ENTRY_COMMAND, function(text)
     return true
   end
 end, 1) -- place before command_entry.lua's handler (if necessary)
+
+return M

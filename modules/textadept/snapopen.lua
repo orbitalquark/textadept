@@ -2,9 +2,12 @@
 
 local L = locale.localize
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Snapopen for the textadept module.
-module('_m.textadept.snapopen', package.seeall)
+module('_m.textadept.snapopen', package.seeall)]]
 
 -- Markdown:
 -- ## Settings
@@ -33,13 +36,13 @@ module('_m.textadept.snapopen', package.seeall)
 --     snapopen(project_dir, { folders = { '%.hg' } }, true)
 
 -- settings
-PATHS = {}
-DEFAULT_DEPTH = 4
-MAX = 1000
+M.PATHS = {}
+M.DEFAULT_DEPTH = 4
+M.MAX = 1000
 -- end settings
 
 local lfs_dir, lfs_attributes = lfs.dir, lfs.attributes
-local DEPTH = DEFAULT_DEPTH
+local DEPTH = M.DEFAULT_DEPTH
 
 -- Determines whether or not the given file matches the given filter.
 -- @param file The filename.
@@ -66,7 +69,7 @@ end
 -- @param depth The current depth of nested folders.
 -- @param filter The filter table.
 local function add_directory(utf8_dir, list, depth, filter)
-  local string_match, string_gsub, MAX = string.match, string.gsub, MAX
+  local string_match, string_gsub, MAX = string.match, string.gsub, M.MAX
   local dir = utf8_dir:iconv(_CHARSET, 'UTF-8')
   for file in lfs_dir(dir) do
     if not string_match(file, '^%.%.?$') then
@@ -101,26 +104,29 @@ end
 -- @usage _m.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)
 -- @usage _m.textadept.snapopen.open(nil, '!%.lua$')
 -- @usage _m.textadept.snapopen.open(nil, { folders = { '%.hg' } })
-function open(utf8_paths, filter, exclusive, depth)
+-- @name open
+function M.open(utf8_paths, filter, exclusive, depth)
   if not utf8_paths then utf8_paths = {} end
   if type(utf8_paths) == 'string' then utf8_paths = { utf8_paths } end
   if not filter then filter = {} end
   if type(filter) == 'string' then filter = { filter } end
   if not exclusive then
-    for _, path in ipairs(PATHS) do utf8_paths[#utf8_paths + 1] = path end
+    for _, path in ipairs(M.PATHS) do utf8_paths[#utf8_paths + 1] = path end
   end
-  DEPTH = depth or DEFAULT_DEPTH
+  DEPTH = depth or M.DEFAULT_DEPTH
   local list = {}
   for _, path in ipairs(utf8_paths) do add_directory(path, list, 1, filter) end
-  if #list >= MAX then
+  if #list >= M.MAX then
     gui.dialog('ok-msgbox',
                '--title', L('File Limit Exceeded'),
                '--informative-text',
-               string.format('%d %s %d', MAX,
+               string.format('%d %s %d', M.MAX,
                              L('files or more were found. Showing the first'),
-                             MAX))
+                             M.MAX))
   end
   local utf8_filenames = gui.filteredlist(L('Open'), L('File'), list, false,
                                           '--select-multiple') or ''
   for filename in utf8_filenames:gmatch('[^\n]+') do io.open_file(filename) end
 end
+
+return M

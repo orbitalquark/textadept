@@ -1,11 +1,14 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- The cpp module.
 -- It provides utilities for editing C/C++ code.
 -- User tags are loaded from _USERHOME/modules/cpp/tags and user apis are loaded
 -- from _USERHOME/modules/cpp/api.
-module('_m.cpp', package.seeall)
+module('_m.cpp', package.seeall)]]
 
 -- Markdown:
 -- ## Key Commands
@@ -38,14 +41,15 @@ m_run.error_detail.c = {
 
 ---
 -- Sets default buffer properties for C/C++ files.
-function set_buffer_properties()
+-- @name set_buffer_properties
+function M.set_buffer_properties()
 
 end
 
 -- Adeptsense.
 
-sense = _m.textadept.adeptsense.new('cpp')
-sense.ctags_kinds = {
+M.sense = _m.textadept.adeptsense.new('cpp')
+M.sense.ctags_kinds = {
   c = 'classes',
   d = 'functions',
   e = 'fields',
@@ -55,20 +59,20 @@ sense.ctags_kinds = {
   s = 'classes',
   t = 'classes'
 }
-sense:load_ctags(_HOME..'/modules/cpp/tags', true)
-sense.api_files = { _HOME..'/modules/cpp/api', _HOME..'/modules/cpp/lua_api' }
-sense.syntax.type_declarations = {
+M.sense:load_ctags(_HOME..'/modules/cpp/tags', true)
+M.sense.api_files = { _HOME..'/modules/cpp/api', _HOME..'/modules/cpp/lua_api' }
+M.sense.syntax.type_declarations = {
   '([%w_%.]+)[%s%*&]+%_[^%w_]', -- Foo bar, Foo *bar, Foo* bar, Foo &bar, etc.
 }
-sense:add_trigger('.')
-sense:add_trigger('->')
+M.sense:add_trigger('.')
+M.sense:add_trigger('->')
 
 -- Load user tags and apidoc.
 if lfs.attributes(_USERHOME..'/modules/cpp/tags') then
-  sense:load_ctags(_USERHOME..'/modules/cpp/tags')
+  M.sense:load_ctags(_USERHOME..'/modules/cpp/tags')
 end
 if lfs.attributes(_USERHOME..'/modules/cpp/api') then
-  sense.api_files[#sense.api_files + 1] = _USERHOME..'/modules/cpp/api'
+  M.sense.api_files[#M.sense.api_files + 1] = _USERHOME..'/modules/cpp/api'
 end
 
 -- Commands.
@@ -162,3 +166,5 @@ if type(snippets) == 'table' then
     llos = 'luaL_optstring(%1(lua), %2(-1), %3(default))',
   }
 end
+
+return M

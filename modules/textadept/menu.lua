@@ -4,11 +4,14 @@
 local L = locale.localize
 local gui = gui
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Provides dynamic menus for Textadept.
 -- This module should be `require`ed last, after `_m.textadept.keys` since it
 -- looks up defined key commands to show them in menus.
-module('_m.textadept.menu', package.seeall)
+module('_m.textadept.menu', package.seeall)]]
 
 local _buffer, _view = buffer, view
 local m_textadept, m_editing = _m.textadept, _m.textadept.editing
@@ -32,7 +35,7 @@ end
 -- Contains the main menubar.
 -- @class table
 -- @name menubar
-menubar = {
+M.menubar = {
   { title = L('File'),
     { L('gtk-new'), new_buffer },
     { L('gtk-open'), io.open_file },
@@ -220,7 +223,7 @@ menubar = {
 -- Contains the default right-click context menu.
 -- @class table
 -- @name context_menu
-context_menu = {
+M.context_menu = {
   { L('gtk-undo'), _buffer.undo },
   { L('gtk-redo'), _buffer.redo },
   SEPARATOR,
@@ -275,7 +278,8 @@ end
 --   for setting a menu accelerator. If the menu text is `'separator'`, a menu
 --   separator is created and no action table is required.
 -- @see keys.get_gdk_key
-function set_menubar(menubar)
+-- @name set_menubar
+function M.set_menubar(menubar)
   key_shortcuts = {}
   for key, f in pairs(keys) do key_shortcuts[get_id(f)] = key end
   menu_actions = {}
@@ -285,18 +289,19 @@ function set_menubar(menubar)
   end
   gui.menubar = _menubar
 end
-set_menubar(menubar)
+M.set_menubar(M.menubar)
 
 ---
 -- Sets `gui.context_menu` from the given menu table.
 -- @param menu_table The menu table to create the context menu from. Each table
 --   entry is either a submenu or menu text and a function or action table.
 -- @see set_menubar
-function set_contextmenu(menu_table)
+-- @name set_contextmenu
+function M.set_contextmenu(menu_table)
   contextmenu_actions = {}
   gui.context_menu = gui.gtkmenu(read_menu_table(menu_table, true))
 end
-set_contextmenu(context_menu)
+M.set_contextmenu(M.context_menu)
 
 local items, commands
 
@@ -322,7 +327,8 @@ end
 local columns = { L('Command'), L('Key Command') }
 ---
 -- Prompts the user with a filteredlist to run menu commands.
-function select_command()
+-- @name select_command
+function M.select_command()
   local i = gui.filteredlist(L('Run Command'), columns, items, true)
   if i then keys.run_command(commands[i + 1], type(commands[i + 1])) end
 end
@@ -330,11 +336,12 @@ end
 ---
 -- Rebuilds the tables used by `select_command()`.
 -- This should be called every time `set_menubar()` is called.
-function rebuild_command_tables()
+-- @name rebuild_command_tables
+function M.rebuild_command_tables()
   items, commands = {}, {}
-  build_command_tables(menubar, nil, items, commands)
+  build_command_tables(M.menubar, nil, items, commands)
 end
-rebuild_command_tables()
+M.rebuild_command_tables()
 
 events.connect(events.MENU_CLICKED, function(menu_id)
   local actions = menu_id < 1000 and menu_actions or contextmenu_actions
@@ -348,9 +355,11 @@ end)
 -- Set a language-specific context menu or the default one.
 local function set_language_contextmenu()
   local lang = buffer:get_lexer()
-  set_contextmenu(_m[lang] and _m[lang].context_menu or context_menu)
+  M.set_contextmenu(_m[lang] and _m[lang].context_menu or M.context_menu)
 end
 events.connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
 events.connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
 events.connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
 events.connect(events.BUFFER_NEW, set_lang_contextmenu)
+
+return M

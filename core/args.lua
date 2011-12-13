@@ -1,8 +1,11 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Processes command line arguments for Textadept.
-module('args', package.seeall)
+module('args', package.seeall)]]
 
 -- Markdown:
 -- ## Arg Events
@@ -24,7 +27,8 @@ local switches = {}
 -- @param narg The number of expected parameters for the switch.
 -- @param f The Lua function to run when the switch is tripped.
 -- @param description Description of the switch.
-function register(switch1, switch2, narg, f, description)
+-- @name register
+function M.register(switch1, switch2, narg, f, description)
   local t = { f, narg, description }
   switches[switch1], switches[switch2] = t, t
 end
@@ -35,7 +39,8 @@ end
 -- are treated as filepaths and opened.
 -- Generates an `'arg_none'` event when no args are present.
 -- @see register
-function process()
+-- @name process
+function M.process()
   local no_args = true
   local i = 1
   while i <= #arg do
@@ -62,7 +67,7 @@ local function show_help()
   for k, v in pairs(switches) do print(line:format(k, table.unpack(v, 2))) end
   os.exit()
 end
-register('-h', '--help', 0, show_help, 'Displays this')
+M.register('-h', '--help', 0, show_help, 'Displays this')
 
 -- For Windows, create arg table from single command line string (arg[0]).
 if WIN32 and #arg[0] > 0 then
@@ -90,4 +95,6 @@ if not lfs.attributes(userhome..'/init.lua') then
 end
 _G._USERHOME = userhome
 
-register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
+M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
+
+return M

@@ -2,9 +2,12 @@
 
 local L = locale.localize
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Session support for the textadept module.
-module('_m.textadept.session', package.seeall)
+module('_m.textadept.session', package.seeall)]]
 
 -- Markdown:
 -- ## Settings
@@ -17,9 +20,9 @@ module('_m.textadept.session', package.seeall)
 --   files list to save to the session. The default is `10`.
 
 -- settings
-DEFAULT_SESSION = _USERHOME..'/session'
-SAVE_ON_QUIT = true
-MAX_RECENT_FILES = 10
+M.DEFAULT_SESSION = _USERHOME..'/session'
+M.SAVE_ON_QUIT = true
+M.MAX_RECENT_FILES = 10
 -- end settings
 
 ---
@@ -30,9 +33,10 @@ MAX_RECENT_FILES = 10
 --   `DEFAULT_SESSION` if not specified.
 -- @return `true` if the session file was opened and read; `false` otherwise.
 -- @usage _m.textadept.session.load(filename)
-function load(filename)
+-- @name load
+function M.load(filename)
   local not_found = {}
-  local f = io.open(filename or DEFAULT_SESSION, 'rb')
+  local f = io.open(filename or M.DEFAULT_SESSION, 'rb')
   if not f then io.close_all() return false end
   local current_view, splits = 1, { [0] = {} }
   local lfs_attributes = lfs.attributes
@@ -97,7 +101,7 @@ function load(filename)
   return true
 end
 -- Load session when no args are present.
-events.connect('arg_none', function() if SAVE_ON_QUIT then load() end end)
+events.connect('arg_none', function() if M.SAVE_ON_QUIT then M.load() end end)
 
 ---
 -- Saves a Textadept session to a file.
@@ -106,7 +110,8 @@ events.connect('arg_none', function() if SAVE_ON_QUIT then load() end end)
 -- @param filename The absolute path to the session file to save. Defaults to
 --   either the current session file or `DEFAULT_SESSION` if not specified.
 -- @usage _m.textadept.session.save(filename)
-function save(filename)
+-- @name save
+function M.save(filename)
   local session = {}
   local buffer_line = "buffer: %d %d %d %s" -- anchor, cursor, line, filename
   local split_line = "%ssplit%d: %s %d" -- level, number, type, size
@@ -155,11 +160,11 @@ function save(filename)
   local size = gui.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
   for i, filename in ipairs(io.recent_files) do
-    if i > MAX_RECENT_FILES then break end
+    if i > M.MAX_RECENT_FILES then break end
     session[#session + 1] = ("recent: %s"):format(filename)
   end
   -- Write the session.
-  local f = io.open(filename or DEFAULT_SESSION, 'wb')
+  local f = io.open(filename or M.DEFAULT_SESSION, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
     f:close()
@@ -168,31 +173,36 @@ end
 
 ---
 -- Prompts the user for a Textadept session to load.
-function prompt_load()
+-- @name prompt_load
+function M.prompt_load()
   local utf8_filename = gui.dialog('fileselect',
                                    '--title', L('Load Session'),
                                    '--with-directory',
-                                   DEFAULT_SESSION:match('.+[/\\]') or '',
+                                   M.DEFAULT_SESSION:match('.+[/\\]') or '',
                                    '--with-file',
-                                   DEFAULT_SESSION:match('[^/\\]+$') or '',
+                                   M.DEFAULT_SESSION:match('[^/\\]+$') or '',
                                    '--no-newline')
-  if #utf8_filename > 0 then load(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
+  if #utf8_filename > 0 then M.load(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
 end
 
 ---
 -- Prompts the user to save the current Textadept session to a file.
-function prompt_save()
+-- @name prompt_save
+function M.prompt_save()
   local utf8_filename = gui.dialog('filesave',
                                    '--title', L('Save Session'),
                                    '--with-directory',
-                                   DEFAULT_SESSION:match('.+[/\\]') or '',
+                                   M.DEFAULT_SESSION:match('.+[/\\]') or '',
                                    '--with-file',
-                                   DEFAULT_SESSION:match('[^/\\]+$') or '',
+                                   M.DEFAULT_SESSION:match('[^/\\]+$') or '',
                                    '--no-newline')
-  if #utf8_filename > 0 then save(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
+  if #utf8_filename > 0 then M.save(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
 end
 
-events.connect(events.QUIT, function() if SAVE_ON_QUIT then save() end end, 1)
+events.connect(events.QUIT,
+               function() if M.SAVE_ON_QUIT then M.save() end end, 1)
 
-local function no_session() SAVE_ON_QUIT = false end
+local function no_session() M.SAVE_ON_QUIT = false end
 args.register('-n', '--nosession', 0, no_session, 'No session functionality')
+
+return M
