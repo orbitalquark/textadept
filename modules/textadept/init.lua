@@ -1,22 +1,28 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local M = {}
+_m.textadept = M
+
+--[[ This comment is for LuaDoc.
 ---
 -- The textadept module.
 -- It provides utilities for editing text in Textadept.
-module('_m.textadept', package.seeall)
+module('_m.textadept', package.seeall)]]
 
-require 'textadept.adeptsense'
-require 'textadept.bookmarks'
+M.adeptsense = require 'textadept.adeptsense'
+M.bookmarks = require 'textadept.bookmarks'
 require 'textadept.command_entry'
-require 'textadept.editing'
+M.editing = require 'textadept.editing'
 require 'textadept.find'
-require 'textadept.filter_through'
-require 'textadept.mime_types'
-require 'textadept.run'
-require 'textadept.session'
-require 'textadept.snapopen'
-require 'textadept.snippets'
+M.filter_through = require 'textadept.filter_through'
+M.mime_types = require 'textadept.mime_types'
+M.run = require 'textadept.run'
+M.session = require 'textadept.session'
+M.snapopen = require 'textadept.snapopen'
+M.snippets = require 'textadept.snippets'
 
 -- These need to be loaded last.
-require 'textadept.keys'
-require 'textadept.menu'
+M.keys = require 'textadept.keys'
+M.menu = require 'textadept.menu'
+
+return M

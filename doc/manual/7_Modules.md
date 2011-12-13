@@ -135,9 +135,7 @@ a `post_init.lua` file. For example, instead of copying the `lua` module and
 changing its `set_buffer_properties()` function to use tabs, you can do this
 from `post_init.lua`:
 
-    module('_m.lua', package.seeall)
-
-    function set_buffer_properties()
+    function _m.lua.set_buffer_properties()
       buffer.use_tabs = true
     end
 

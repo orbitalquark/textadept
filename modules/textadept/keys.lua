@@ -3,18 +3,21 @@
 local L = locale.localize
 local gui = gui
 
+local M = {}
+
+--[[
 ---
 -- Defines key commands for Textadept.
 -- This set of key commands is pretty standard among other text editors.
 -- This module, should be 'require'ed last, but before _m.textadept.menu.
-module('_m.textadept.keys', package.seeall)
+module('_m.textadept.keys', package.seeall)]]
 
 local keys, _buffer, _view = keys, buffer, view
 local m_textadept, m_editing = _m.textadept, _m.textadept.editing
 local c, OSX = _SCINTILLA.constants, OSX
 
 -- Utility functions.
-utils = {
+M.utils = {
   enclose_as_xml_tags = function()
     m_editing.enclose('<', '>')
     local buffer = buffer
@@ -78,7 +81,8 @@ utils = {
       if not p then error(L('Error loading webpage:')..url) end
     else
       cmd = string.format(OSX and 'open "file://%s"' or 'xdg-open "%s" &', url)
-      if os.execute(cmd) ~= 0 then error(L('Error loading webpage:')..url) end
+      local _, _, code = os.execute(cmd)
+      if code ~= 0 then error(L('Error loading webpage:')..url) end
     end
   end
 }
@@ -175,7 +179,7 @@ keys[not OSX and 'cI' or 'mI'] = m_editing.select_indented_block
 -- Selection.
 keys[not OSX and 'cau' or 'cu'] = _buffer.upper_case
 keys[not OSX and 'caU' or 'cU'] = _buffer.lower_case
-keys[not OSX and 'a<' or 'c<'] = utils.enclose_as_xml_tags
+keys[not OSX and 'a<' or 'c<'] = M.utils.enclose_as_xml_tags
 keys[not OSX and 'a>' or 'c>'] = { m_editing.enclose, '<', ' />' }
 keys[not OSX and "a'" or "c'"] = { m_editing.enclose, "'", "'" }
 keys[not OSX and 'a"' or 'c"'] = { m_editing.enclose, '"', '"' }
@@ -200,7 +204,7 @@ keys[not OSX and 'caR' or 'cR'] = gui.find.replace_all
 -- Replace is ar when find pane is focused.
 -- Replace All is aa when find pane is focused.
 keys[not OSX and 'caf' or 'cmf'] = gui.find.find_incremental
-keys[not OSX and 'cF' or 'mF'] = utils.find_in_files
+keys[not OSX and 'cF' or 'mF'] = M.utils.find_in_files
 -- Find in Files is ai when find pane is focused.
 keys[not OSX and 'cag' or 'cmg'] = { gui.find.goto_file_in_list, true }
 keys[not OSX and 'caG' or 'cmG'] = { gui.find.goto_file_in_list, false }
@@ -208,7 +212,7 @@ keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
 -- Tools.
 keys[not OSX and 'ce' or 'me'] = gui.command_entry.focus
-keys[not OSX and 'cE' or 'mE'] = utils.select_command
+keys[not OSX and 'cE' or 'mE'] = M.utils.select_command
 keys[not OSX and 'cr' or 'mr'] = m_textadept.run.run
 keys[not OSX and 'cR' or 'mR'] = m_textadept.run.compile
 keys[not OSX and 'c|' or 'm|'] = m_textadept.filter_through.filter_through
@@ -229,30 +233,30 @@ keys.af2 = m_textadept.bookmarks.goto_bookmark
 -- Snapopen.
 keys[not OSX and 'cu' or 'mu'] = { m_textadept.snapopen.open, _USERHOME }
 -- TODO: { m_textadept.snapopen.open, _HOME }
-keys[not OSX and 'caO' or 'cmO'] = utils.snapopen_filedir
-keys[not OSX and 'ci' or 'mi'] = utils.show_style
+keys[not OSX and 'caO' or 'cmO'] = M.utils.snapopen_filedir
+keys[not OSX and 'ci' or 'mi'] = M.utils.show_style
 
 -- Buffer.
 keys['c\t'] = { _view.goto_buffer, _view, 1, true }
 keys['cs\t'] = { _view.goto_buffer, _view, -1, true }
 keys[not OSX and 'cb' or 'mb'] = gui.switch_buffer
 -- Indentation.
--- TODO: { utils.set_indentation, 2 }
--- TODO: { utils.set_indentation, 3 }
--- TODO: { utils.set_indentation, 4 }
--- TODO: { utils.set_indentation, 8 }
-keys[not OSX and 'caT' or 'cT'] = { utils.toggle_property, 'use_tabs' }
+-- TODO: { M.utils.set_indentation, 2 }
+-- TODO: { M.utils.set_indentation, 3 }
+-- TODO: { M.utils.set_indentation, 4 }
+-- TODO: { M.utils.set_indentation, 8 }
+keys[not OSX and 'caT' or 'cT'] = { M.utils.toggle_property, 'use_tabs' }
 keys[not OSX and 'cai' or 'ci'] = m_editing.convert_indentation
 -- EOL Mode.
--- TODO: { utils.set_eol_mode, c.SC_EOL_CRLF }
--- TODO: { utils.set_eol_mode, c.SC_EOL_CR }
--- TODO: { utils.set_eol_mode, c.SC_EOL_LF }
+-- TODO: { M.utils.set_eol_mode, c.SC_EOL_CRLF }
+-- TODO: { M.utils.set_eol_mode, c.SC_EOL_CR }
+-- TODO: { M.utils.set_eol_mode, c.SC_EOL_LF }
 -- Encoding.
--- TODO: { utils.set_encoding, 'UTF-8' }
--- TODO: { utils.set_encoding, 'ASCII' }
--- TODO: { utils.set_encoding, 'ISO-8859-1' }
--- TODO: { utils.set_encoding, 'MacRoman' }
--- TODO: { utils.set_encoding, 'UTF-16LE' }
+-- TODO: { M.utils.set_encoding, 'UTF-8' }
+-- TODO: { M.utils.set_encoding, 'ASCII' }
+-- TODO: { M.utils.set_encoding, 'ISO-8859-1' }
+-- TODO: { M.utils.set_encoding, 'MacRoman' }
+-- TODO: { M.utils.set_encoding, 'UTF-16LE' }
 keys[not OSX and 'cL' or 'mL'] = m_textadept.mime_types.select_lexer
 keys.f5 = { _buffer.colourise, _buffer, 0, -1 }
 
@@ -263,27 +267,27 @@ keys[not OSX and 'cas' or 'cs'] = { _view.split, _view }
 if not OSX then keys.cah = keys.cas end
 keys[not OSX and 'cav' or 'cv'] = { _view.split, _view, true }
 keys[not OSX and 'caw' or 'cw'] = { _view.unsplit, _view }
-keys[not OSX and 'caW' or 'cW'] = utils.unsplit_all
-keys[not OSX and 'ca+' or 'c+'] = { utils.grow, 10 }
-keys[not OSX and 'ca=' or 'c='] = { utils.grow, 10 }
-keys[not OSX and 'ca-' or 'c-'] = { utils.shrink, 10 }
--- TODO: utils.toggle_current_fold
-keys[not OSX and 'ca\n' or 'c\n'] = { utils.toggle_property, 'view_eol' }
+keys[not OSX and 'caW' or 'cW'] = M.utils.unsplit_all
+keys[not OSX and 'ca+' or 'c+'] = { M.utils.grow, 10 }
+keys[not OSX and 'ca=' or 'c='] = { M.utils.grow, 10 }
+keys[not OSX and 'ca-' or 'c-'] = { M.utils.shrink, 10 }
+-- TODO: M.utils.toggle_current_fold
+keys[not OSX and 'ca\n' or 'c\n'] = { M.utils.toggle_property, 'view_eol' }
 if not OSX then keys['ca\n\r'] = keys['ca\n'] end
-keys[not OSX and 'ca\\' or 'c\\'] = { utils.toggle_property, 'wrap_mode' }
+keys[not OSX and 'ca\\' or 'c\\'] = { M.utils.toggle_property, 'wrap_mode' }
 keys[not OSX and 'caI' or 'cI'] =
-  { utils.toggle_property, 'indentation_guides' }
-keys[not OSX and 'caS' or 'cS'] = { utils.toggle_property, 'view_ws' }
+  { M.utils.toggle_property, 'indentation_guides' }
+keys[not OSX and 'caS' or 'cS'] = { M.utils.toggle_property, 'view_ws' }
 keys[not OSX and 'caV' or 'cV'] =
-  { utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE }
+  { M.utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE }
 keys[not OSX and 'c=' or 'm='] = _buffer.zoom_in
 keys[not OSX and 'c-' or 'm-'] = _buffer.zoom_out
-keys[not OSX and 'c0' or 'm0'] = utils.reset_zoom
+keys[not OSX and 'c0' or 'm0'] = M.utils.reset_zoom
 keys[not OSX and 'cT' or 'mT'] = gui.select_theme
 
 -- Help.
-keys.f1 = { utils.open_webpage, _HOME..'/doc/manual/1_Introduction.html' }
-keys.sf1 = { utils.open_webpage, _HOME..'/doc/index.html' }
+keys.f1 = { M.utils.open_webpage, _HOME..'/doc/manual/1_Introduction.html' }
+keys.sf1 = { M.utils.open_webpage, _HOME..'/doc/index.html' }
 -- TODO: { gui.dialog, 'ok-msgbox', '--title', 'Textadept'
 --         '--informative-text', _RELEASE, '--no-cancel' }
 
@@ -312,3 +316,5 @@ if OSX then
   keys.cd = _buffer.clear
   keys.cl = _buffer.vertical_centre_caret
 end
+
+return M

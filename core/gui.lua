@@ -3,6 +3,22 @@
 local L = locale.localize
 local gui = gui
 
+--[[ This comment is for LuaDoc.
+--- The core gui table.
+module('gui')]]
+
+-- Markdown:
+-- ## Fields
+--
+-- * `title` [string]: The title of the Textadept window.
+-- * `menubar` [table]: A table of GTK menus defining a menubar. (Write-only)
+-- * `context_menu`: A GTK menu defining the editor's context menu.
+-- * `clipboard_text` [string]: The text on the clipboard. (Read-only)
+-- * `statusbar_text` [string]: The text displayed by the statusbar.
+-- * `docstatusbar_text` [string]: The text displayed by the doc statusbar.
+--   (Write-only)
+-- * `size` [table]: The size of the Textadept window (`{ width, height }`).
+
 -- Helper function for printing messages to buffers.
 -- @see gui._print
 local function _print(buffer_type, ...)
@@ -28,13 +44,42 @@ local function _print(buffer_type, ...)
   buffer:goto_pos(buffer.length)
   buffer:set_save_point()
 end
--- LuaDoc is in core/.gui.luadoc.
+---
+-- Helper function for printing messages to buffers.
+-- Splits the view and opens a new buffer for printing messages. If the message
+-- buffer is already open and a view is currently showing it, the message is
+-- printed to that view. Otherwise the view is split, goes to the open message
+-- buffer, and prints to it.
+-- @param buffer_type String type of message buffer.
+-- @param ... Message strings.
+-- @usage gui._print(L('[Error Buffer]'), error_message)
+-- @usage gui._print(L('[Message Buffer]'), message)
+-- @name _print
 function gui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 
--- LuaDoc is in core/.gui.luadoc.
+---
+-- Prints messages to the Textadept message buffer.
+-- Opens a new buffer (if one has not already been opened) for printing
+-- messages.
+-- @param ... Message strings.
+-- @name print
 function gui.print(...) gui._print(L('[Message Buffer]'), ...) end
 
--- LuaDoc is in core/.gui.luadoc.
+---
+-- Shortcut function for `gui.dialog('filtered_list', ...)` with 'Ok' and
+-- 'Cancel' buttons.
+-- @param title The title for the filteredlist dialog.
+-- @param columns A column name or list of column names.
+-- @param items An item or list of items.
+-- @param int_return If `true`, returns the integer index of the selected item
+--   in the filteredlist. Defaults to `false`, which returns the string item.
+--   Not compatible with a `'--select-multiple'` filteredlist.
+-- @param ... Additional parameters to pass to `gui.dialog()`.
+-- @return Either a string or integer on success; `nil` otherwise.
+-- @usage gui.filteredlist('Title', 'Foo', { 'Bar', 'Baz' })
+-- @usage gui.filteredlist('Title', { 'Foo', 'Bar' }, { 'a', 'b', 'c', 'd' },
+--                         false, '--output-column', '2')
+-- @name filteredlist
 function gui.filteredlist(title, columns, items, int_return, ...)
   local out = gui.dialog('filteredlist',
                          '--title', title,
@@ -52,7 +97,10 @@ function gui.filteredlist(title, columns, items, int_return, ...)
   end
 end
 
--- LuaDoc is in core/.gui.luadoc.
+---
+-- Displays a dialog with a list of buffers to switch to and switches to the
+-- selected one, if any.
+-- @name switch_buffer
 function gui.switch_buffer()
   local columns, items = { L('Name'), L('File') }, {}
   for _, buffer in ipairs(_BUFFERS) do
@@ -64,7 +112,17 @@ function gui.switch_buffer()
   if i then view:goto_buffer(i + 1) end
 end
 
--- LuaDoc is in core/.gui.luadoc.
+---
+-- Goes to the buffer with the given filename.
+-- If the desired buffer is open in a view, goes to that view. Otherwise, opens
+-- the buffer in either the `preferred_view` if given, the first view that is
+-- not the current one, a split view if `split` is `true`, or the current view.
+-- @param filename The filename of the buffer to go to.
+-- @param split If there is only one view, split it and open the buffer in the
+--   other view.
+-- @param preferred_view When multiple views exist and the desired buffer is not
+--   open in any of them, open it in this one.
+-- @name goto_file
 function gui.goto_file(filename, split, preferred_view)
   if #_VIEWS == 1 and view.buffer.filename ~= filename and split then
     view:split()
@@ -80,7 +138,16 @@ function gui.goto_file(filename, split, preferred_view)
 end
 
 local THEME
--- LuaDoc is in core/.gui.luadoc.
+---
+-- Sets the editor theme from the given name.
+-- Themes in `_USERHOME/themes/` are checked first, followed by `_HOME/themes/`.
+-- If the name contains slashes ('/' on Linux and Mac OSX and '\' on Win32), it
+-- is assumed to be an absolute path so `_USERHOME` and `_HOME` are not checked.
+-- Throws an error if the theme is not found. Any errors in the theme are
+-- printed to `io.stderr`.
+-- @param name The name or absolute path of a theme. If nil, sets the default
+--   theme.
+-- @name set_theme
 function gui.set_theme(name)
   if not name then
     -- Read theme from ~/.textadept/theme, defaulting to 'light'.
@@ -130,7 +197,9 @@ function gui.set_theme(name)
   THEME = theme
 end
 
--- LuaDoc is in core/.gui.luadoc.
+---
+-- Prompts the user to select an editor theme from a filtered list.
+-- @name select_theme
 function gui.select_theme()
   local themes, themes_found = {}, {}
   for theme in lfs.dir(_HOME..'/themes') do
@@ -337,3 +406,52 @@ connect(events.QUIT, function()
 end)
 
 connect(events.ERROR, function(...) gui._print(L('[Error Buffer]'), ...) end)
+
+-- The functions below are Lua C functions.
+
+---
+-- Displays a gcocoadialog of a specified type with the given string arguments.
+-- Each argument is like a string in Lua's `arg` table. Tables of strings are
+-- allowed as arguments and are expanded in place. This is useful for
+-- filteredlist dialogs with many items.
+-- @return string gcocoadialog result.
+-- @class function
+-- @name dialog
+local dialog
+
+---
+-- Gets the current split view structure.
+-- @return table of split views. Each split view entry is a table with 4
+--   fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either
+--   split view entries or the index of the buffer shown in each view;
+--   `vertical` is a flag indicating if the split is vertical or not; and
+--   `size` is the integer position of the split resizer.
+-- @class function
+-- @name get_split_table
+local get_split_table
+
+---
+-- Goes to the specified view.
+-- Generates `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
+-- @param n A relative or absolute view index.
+-- @param relative Flag indicating if n is a relative index or not. Defaults to
+--   false.
+-- @class function
+-- @name goto_view
+local goto_view
+
+---
+-- Creates a GTK menu, returning the userdata.
+-- @param menu_table A table defining the menu. It is an ordered list of tables
+--   with a string menu item, integer menu ID, and optional keycode and modifier
+--   mask. The latter two are used to display key shortcuts in the menu. The
+--   string menu item is handled as follows:
+--     `'gtk-*'` - a stock menu item is created based on the GTK stock-id.
+--     `'separator'` - a menu separator item is created.
+--     Otherwise a regular menu item with a mnemonic is created.
+--   Submenus are just nested menu-structure tables. Their title text is defined
+--   with a `title` key.
+-- @see keys.get_gdk_key
+-- @class function
+-- @name gtkmenu
+local gtkmenu

@@ -1,8 +1,11 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Language autocompletion support for the textadept module.
-module('_m.textadept.adeptsense', package.seeall)
+module('_m.textadept.adeptsense', package.seeall)]]
 
 -- Markdown:
 -- ## Overview
@@ -324,8 +327,8 @@ module('_m.textadept.adeptsense', package.seeall)
 
 local senses = {}
 
-FUNCTIONS = '/* XPM */\nstatic char *function[] = {\n/* columns rows colors chars-per-pixel */\n"16 16 5 1",\n"  c #000000",\n". c #E0BC38",\n"X c #F0DC5C",\n"o c #FCFC80",\n"O c None",\n/* pixels */\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOO  OOOO",\n"OOOOOOOOO oo  OO",\n"OOOOOOOO ooooo O",\n"OOOOOOO ooooo. O",\n"OOOO  O XXoo.. O",\n"OOO oo  XXX... O",\n"OO ooooo XX.. OO",\n"O ooooo.  X. OOO",\n"O XXoo.. O  OOOO",\n"O XXX... OOOOOOO",\n"O XXX.. OOOOOOOO",\n"OO  X. OOOOOOOOO",\n"OOOO  OOOOOOOOOO"\n};'
-FIELDS = '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars-per-pixel */\n"16 16 5 1",\n"  c #000000",\n". c #8C748C",\n"X c #9C94A4",\n"o c #ACB4C0",\n"O c None",\n/* pixels */\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOO  OOOOO",\n"OOOOOOOO oo  OOO",\n"OOOOOOO ooooo OO",\n"OOOOOO ooooo. OO",\n"OOOOOO XXoo.. OO",\n"OOOOOO XXX... OO",\n"OOOOOO XXX.. OOO",\n"OOOOOOO  X. OOOO",\n"OOOOOOOOO  OOOOO",\n"OOOOOOOOOOOOOOOO"\n};'
+M.FUNCTIONS = '/* XPM */\nstatic char *function[] = {\n/* columns rows colors chars-per-pixel */\n"16 16 5 1",\n"  c #000000",\n". c #E0BC38",\n"X c #F0DC5C",\n"o c #FCFC80",\n"O c None",\n/* pixels */\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOO  OOOO",\n"OOOOOOOOO oo  OO",\n"OOOOOOOO ooooo O",\n"OOOOOOO ooooo. O",\n"OOOO  O XXoo.. O",\n"OOO oo  XXX... O",\n"OO ooooo XX.. OO",\n"O ooooo.  X. OOO",\n"O XXoo.. O  OOOO",\n"O XXX... OOOOOOO",\n"O XXX.. OOOOOOOO",\n"OO  X. OOOOOOOOO",\n"OOOO  OOOOOOOOOO"\n};'
+M.FIELDS = '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars-per-pixel */\n"16 16 5 1",\n"  c #000000",\n". c #8C748C",\n"X c #9C94A4",\n"o c #ACB4C0",\n"O c None",\n/* pixels */\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOO  OOOOO",\n"OOOOOOOO oo  OOO",\n"OOOOOOO ooooo OO",\n"OOOOOO ooooo. OO",\n"OOOOOO XXoo.. OO",\n"OOOOOO XXX... OO",\n"OOOOOO XXX.. OOO",\n"OOOOOOO  X. OOOO",\n"OOOOOOOOO  OOOOO",\n"OOOOOOOOOOOOOOOO"\n};'
 
 ---
 -- Returns a full symbol (if any) and current symbol part (if any) behind the
@@ -333,7 +336,8 @@ FIELDS = '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars-per-
 -- For example: `buffer.cur` would return `'buffer'` and `'cur'`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @return symbol or `''`, part or `''`.
-function get_symbol(sense)
+-- @name get_symbol
+function M.get_symbol(sense)
   local line, p = buffer:get_cur_line()
   local sc, wc = sense.syntax.symbol_chars, sense.syntax.word_chars
   local patt = string.format('(%s-)[^%s%%s]+([%s]*)$', sc, wc, wc)
@@ -352,7 +356,8 @@ end
 -- @param symbol The symbol to get the class of.
 -- @return class or `nil`
 -- @see syntax
-function get_class(sense, symbol)
+-- @name get_class
+function M.get_class(sense, symbol)
   local buffer = buffer
   local self = sense.syntax.self
   local class_definition = sense.syntax.class_definition
@@ -446,7 +451,8 @@ end
 -- @param only_functions If `true`, returns list of only functions; defaults to
 --   `false`.
 -- @return completion_list or `nil`
-function get_completions(sense, symbol, only_fields, only_functions)
+-- @name get_completions
+function M.get_completions(sense, symbol, only_fields, only_functions)
   if only_fields and only_functions or not symbol then return nil end
   local compls = sense.completions
   local class = compls[symbol] and symbol or sense:get_class(symbol)
@@ -502,14 +508,15 @@ end
 -- @return `true` on success or `false`.
 -- @see get_symbol
 -- @see get_completions
-function complete(sense, only_fields, only_functions)
+-- @name complete
+function M.complete(sense, only_fields, only_functions)
   local buffer = buffer
   local symbol, part = sense:get_symbol()
   local completions = sense:get_completions(symbol, only_fields, only_functions)
   if not completions then return false end
   buffer:clear_registered_images()
-  buffer:register_image(1, FIELDS)
-  buffer:register_image(2, FUNCTIONS)
+  buffer:register_image(1, M.FIELDS)
+  buffer:register_image(2, M.FUNCTIONS)
   if not buffer.auto_c_choose_single or #completions ~= 1 then
     buffer:auto_c_show(#part, table.concat(completions, ' '))
   else
@@ -533,7 +540,8 @@ end
 -- @usage sense:add_trigger('.')
 -- @usage sense:add_trigger(':', false, true) -- only functions
 -- @usage sense:add_trigger('->')
-function add_trigger(sense, c, only_fields, only_functions)
+-- @name add_trigger
+function M.add_trigger(sense, c, only_fields, only_functions)
   if #c > 2 then return end -- TODO: warn
   local c1, c2 = c:match('.$'):byte(), #c > 1 and c:sub(1, 1):byte()
   local i = events.connect(events.CHAR_ADDED, function(char)
@@ -552,7 +560,8 @@ end
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol to get apidocs for.
 -- @return apidoc_list or `nil`
-function get_apidoc(sense, symbol)
+-- @name get_apidoc
+function M.get_apidoc(sense, symbol)
   if not symbol then return nil end
   local apidocs = { pos = 1 }
   local word_chars = sense.syntax.word_chars
@@ -588,7 +597,8 @@ end
 -- @return `true` on success or `false`.
 -- @see get_symbol
 -- @see get_apidoc
-function show_apidoc(sense)
+-- @name show_apidoc
+function M.show_apidoc(sense)
   local buffer = buffer
   local symbol
   local s, e = buffer.selection_start, buffer.selection_end
@@ -637,7 +647,8 @@ end
 -- @param tag_file The path of the ctags file to load.
 -- @param nolocations If `true`, does not store the locations of the tags for
 --   use by `goto_ctag()`. Defaults to `false`.
-function load_ctags(sense, tag_file, nolocations)
+-- @name load_ctags
+function M.load_ctags(sense, tag_file, nolocations)
   local ctags_kinds = sense.ctags_kinds
   local completions = sense.completions
   local locations = sense.locations
@@ -713,7 +724,8 @@ end
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param k The ctag character kind (e.g. `'f'` for a Lua function).
 -- @param title The title for the filteredlist dialog.
-function goto_ctag(sense, k, title)
+-- @name goto_ctag
+function M.goto_ctag(sense, k, title)
   if not sense.locations[k] then return end -- no ctags loaded
   local items = {}
   local kind = sense.ctags_kinds[k]
@@ -754,14 +766,16 @@ end
 -- @param file_name The name of the file the tag belongs to.
 -- @param ex_cmd The `ex_cmd` returned by ctags.
 -- @param ext_fields The `ext_fields` returned by ctags.
-function handle_ctag(sense, tag_name, file_name, ex_cmd, ext_fields) end
+-- @name handle_ctag
+function M.handle_ctag(sense, tag_name, file_name, ex_cmd, ext_fields) end
 
 ---
 -- Clears an Adeptsense.
 -- This is necessary for loading a new ctags file or completions from a
 -- different project.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
-function clear(sense)
+-- @name clear
+function M.clear(sense)
   sense.inherited_classes = {}
   sense.completions = {}
   sense.locations = {}
@@ -774,7 +788,8 @@ end
 -- This function should be replaced with your own if you have any persistant
 -- objects that need to be deleted.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
-function handle_clear(sense) end
+-- @name handle_clear
+function M.handle_clear(sense) end
 
 ---
 -- Creates a new Adeptsense for the given lexer language.
@@ -782,7 +797,8 @@ function handle_clear(sense) end
 -- @param lang The lexer language to create an Adeptsense for.
 -- @return adeptsense
 -- @usage local lua_sense = _m.textadept.adeptsense.new('lua')
-function new(lang)
+-- @name new
+function M.new(lang)
   local sense = senses[lang]
   if sense then
     sense.ctags_kinds = nil
@@ -894,8 +910,8 @@ syntax = {
   type_assignments = {}
 },
 
-    super = setmetatable({}, { __index = _M })
-  }, { __index = _M })
+    super = setmetatable({}, { __index = M })
+  }, { __index = M })
 
   senses[lang] = sense
   return sense
@@ -905,7 +921,8 @@ end
 -- Completes the symbol at the current position based on the current lexer's
 -- Adeptsense.
 -- This should be called by key commands and menus instead of `complete()`.
-function complete_symbol()
+-- @name complete_symbol
+function M.complete_symbol()
   local m = _m[buffer:get_lexer()]
   if m and m.sense then m.sense:complete() end
 end
@@ -914,7 +931,10 @@ end
 -- Shows API documentation for the symbol at the current position based on the
 -- current lexer's Adeptsense.
 -- This should be called by key commands and menus instead of `show_apidoc()`.
-function show_documentation()
+-- @name show_documentation
+function M.show_documentation()
   local m = _m[buffer:get_lexer()]
   if m and m.sense then m.sense:show_apidoc() end
 end
+
+return M

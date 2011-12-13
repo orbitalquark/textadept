@@ -4,6 +4,16 @@
 local L = locale.localize
 local events = events
 
+--[[ This comment is for LuaDoc.
+---
+-- Textadept's Command entry.
+module('gui.command_entry')]]
+
+-- Markdown:
+-- ## Fields
+--
+-- * `entry_text` [string]: The text in the entry.
+
 -- Environment for abbreviated commands.
 -- @class table
 -- @name env
@@ -81,3 +91,11 @@ events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
     return true
   end
 end)
+
+-- The function below is a Lua C function.
+
+---
+-- Focuses the command entry.
+-- @class function
+-- @name focus
+local focus

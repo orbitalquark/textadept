@@ -1,8 +1,11 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Contains all messages used by Textadept for localization.
-module('locale', package.seeall)
+module('locale', package.seeall)]]
 
 -- Markdown:
 -- ## Fields
@@ -29,4 +32,7 @@ f:close()
 ---
 -- Localizes the given string.
 -- @param id String to localize.
-function localize(id) return localizations[id] or 'No Localization' end
+-- @name localize
+function M.localize(id) return localizations[id] or 'No Localization' end
+
+return M

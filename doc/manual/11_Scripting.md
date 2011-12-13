@@ -17,18 +17,15 @@ examples since Textadept is mostly written in Lua.
 
 ## Lua Configuration
 
-[Lua 5.1](http://www.lua.org/manual/5.1/) is built into Textadept. It has the
+[Lua 5.2](http://www.lua.org/manual/5.2/) is built into Textadept. It has the
 same configuration (`luaconf.h`) as vanilla Lua with the following exceptions:
 
 * `TA_LUA_PATH` and `TA_LUA_CPATH` are the environment variable used in place of
   the usual `LUA_PATH` and `LUA_CPATH`.
 * `LUA_ROOT` is `/usr/` in Linux systems instead of `/usr/local/`.
-* The `LUA_COMPAT_VARARG`, `LUA_COMPAT_MOD`, `LUA_COMPAT_GFIND`, and
-  `LUA_COMPAT_OPENLIB` compatibility flags for Lua 5.0 are turned off.
-
-In addition, the [Lua Coco](http://coco.luajit.org/index.html) extension is used
-to allow coroutines to yield across the C call boundary, which would normally
-cause an error.
+* The `LUA_COMPAT_COMPAT`, `LUA_COMPAT_LOADERS`, `LUA_COMPAT_LOG10`,
+  `LUA_COMPAT_LOADSTRING`, and `LUA_COMPAT_MAXN` compatibility flags for Lua 5.1
+  are turned off.
 
 ## Scintilla
 

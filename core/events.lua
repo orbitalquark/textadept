@@ -2,9 +2,12 @@
 
 local L = locale.localize
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Textadept's core event structure and handlers.
-module('events', package.seeall)
+module('events', package.seeall)]]
 
 -- Markdown:
 -- ## Overview
@@ -181,9 +184,7 @@ module('events', package.seeall)
 -- A table of event names and a table of functions connected to them.
 -- @class table
 -- @name handlers
-handlers = {}
-
-local handlers = handlers
+M.handlers = {}
 
 ---
 -- Adds a handler function to an event.
@@ -193,10 +194,11 @@ local handlers = handlers
 -- @param index Optional index to insert the handler into.
 -- @return Index of handler.
 -- @see disconnect
-function connect(event, f, index)
+-- @name connect
+function M.connect(event, f, index)
   if not event then error(L('Undefined event name')) end
-  if not handlers[event] then handlers[event] = {} end
-  local h = handlers[event]
+  if not M.handlers[event] then M.handlers[event] = {} end
+  local h = M.handlers[event]
   if index then table.insert(h, index, f) else h[#h + 1] = f end
   return index or #h
 end
@@ -206,9 +208,10 @@ end
 -- @param event The string event name.
 -- @param index Index of the handler (returned by `events.connect()`).
 -- @see connect
-function disconnect(event, index)
-  if not handlers[event] then return end
-  table.remove(handlers[event], index)
+-- @name disconnect
+function M.disconnect(event, index)
+  if not M.handlers[event] then return end
+  table.remove(M.handlers[event], index)
 end
 
 local error_emitted = false
@@ -222,9 +225,10 @@ local error_emitted = false
 -- @param ... Arguments passed to the handler.
 -- @return `true` or `false` if any handler explicitly returned such; nil
 --   otherwise.
-function emit(event, ...)
+-- @name emit
+function M.emit(event, ...)
   if not event then error(L('Undefined event name')) end
-  local h = handlers[event]
+  local h = M.handlers[event]
   if not h then return end
   local pcall, table_unpack, type = pcall, table.unpack, type
   for i = 1, #h do
@@ -232,7 +236,7 @@ function emit(event, ...)
     if not ok then
       if not error_emitted then
         error_emitted = true
-        emit(events.ERROR, result)
+        M.emit(events.ERROR, result)
         error_emitted = false
       else
         io.stderr:write(result)
@@ -271,16 +275,16 @@ local scnotifications = {
 }
 
 -- Handles Scintilla notifications.
-connect('SCN', function(n)
+M.connect('SCN', function(n)
   local f = scnotifications[n.code]
   if not f then return end
   local args = {}
   for i = 2, #f do args[i - 1] = n[f[i]] end
-  return emit(f[1], table.unpack(args))
+  return M.emit(f[1], table.unpack(args))
 end)
 
 -- Set event constants.
-for _, n in pairs(scnotifications) do _M[n[1]:upper()] = n[1] end
+for _, n in pairs(scnotifications) do M[n[1]:upper()] = n[1] end
 local ta_events = {
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
   'buffer_deleted', 'buffer_new', 'command_entry_command',
@@ -288,4 +292,6 @@ local ta_events = {
   'replace', 'replace_all', 'reset_after', 'reset_before', 'view_after_switch',
   'view_before_switch', 'view_new'
 }
-for _, e in pairs(ta_events) do _M[e:upper()] = e end
+for _, e in pairs(ta_events) do M[e:upper()] = e end
+
+return M

@@ -4,9 +4,12 @@ local L = locale.localize
 local events = events
 local K = keys.KEYSYMS
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Editing commands for the textadept module.
-module('_m.textadept.editing', package.seeall)
+module('_m.textadept.editing', package.seeall)]]
 
 -- Markdown:
 -- ## Settings
@@ -28,13 +31,13 @@ module('_m.textadept.editing', package.seeall)
 --   word. The default value is `100`.
 
 -- settings
-AUTOPAIR = true
-HIGHLIGHT_BRACES = true
-AUTOINDENT = true
-STRIP_WHITESPACE_ON_SAVE = true
-MARK_HIGHLIGHT_BACK = buffer and buffer.caret_line_back or 0xEEEEEE
-INDIC_HIGHLIGHT_BACK = 0x4D99E6
-INDIC_HIGHLIGHT_ALPHA = 100
+M.AUTOPAIR = true
+M.HIGHLIGHT_BRACES = true
+M.AUTOINDENT = true
+M.STRIP_WHITESPACE_ON_SAVE = true
+M.MARK_HIGHLIGHT_BACK = buffer and buffer.caret_line_back or 0xEEEEEE
+M.INDIC_HIGHLIGHT_BACK = 0x4D99E6
+M.INDIC_HIGHLIGHT_ALPHA = 100
 -- end settings
 
 ---
@@ -45,7 +48,7 @@ INDIC_HIGHLIGHT_ALPHA = 100
 -- @class table
 -- @name comment_string
 -- @see block_comment
-comment_string = {}
+M.comment_string = {}
 
 ---
 -- Auto-matched characters.
@@ -55,7 +58,7 @@ comment_string = {}
 -- @class table
 -- @name char_matches
 -- @usage _m.textadept.editing.char_matches.hypertext = { ..., [60] = '>' }
-char_matches = {
+M.char_matches = {
   [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'
 }
 
@@ -67,7 +70,7 @@ char_matches = {
 -- @class table
 -- @name braces
 -- @usage _m.textadept.editing.braces.hypertext = { ..., [60] = 1, [62] = 1 }
-braces = { -- () [] {}
+M.braces = { -- () [] {}
   [40] = 1, [91] = 1, [123] = 1,
   [41] = 1, [93] = 1, [125] = 1,
 }
@@ -80,33 +83,33 @@ local current_call_tip = {}
 
 -- Matches characters specified in char_matches.
 events.connect(events.CHAR_ADDED, function(c)
-  if not AUTOPAIR then return end
+  if not M.AUTOPAIR then return end
   local buffer = buffer
-  local match = (char_matches[buffer:get_lexer()] or char_matches)[c]
+  local match = (M.char_matches[buffer:get_lexer()] or M.char_matches)[c]
   if match and buffer.selections == 1 then buffer:insert_text(-1, match) end
 end)
 
 -- Removes matched chars on backspace.
 events.connect(events.KEYPRESS, function(code)
-  if not AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
+  if not M.AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
   local buffer = buffer
   local pos = buffer.current_pos
   local c = buffer.char_at[pos - 1]
-  local match = (char_matches[buffer:get_lexer()] or char_matches)[c]
+  local match = (M.char_matches[buffer:get_lexer()] or M.char_matches)[c]
   if match and buffer.char_at[pos] == string.byte(match) then buffer:clear() end
 end)
 
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function()
-  if not HIGHLIGHT_BRACES then return end
+  if not M.HIGHLIGHT_BRACES then return end
   local buffer = buffer
-  local current_pos = buffer.current_pos
-  if (braces[buffer:get_lexer()] or braces)[buffer.char_at[current_pos]] then
-    local pos = buffer:brace_match(current_pos)
-    if pos ~= -1 then
-      buffer:brace_highlight(current_pos, pos)
+  local pos = buffer.current_pos
+  if (M.braces[buffer:get_lexer()] or M.braces)[buffer.char_at[pos]] then
+    local match = buffer:brace_match(pos)
+    if match ~= -1 then
+      buffer:brace_highlight(pos, match)
     else
-      buffer:brace_bad_light(current_pos)
+      buffer:brace_bad_light(pos)
     end
   else
     buffer:brace_bad_light(-1)
@@ -115,7 +118,7 @@ end)
 
 -- Auto-indent on return.
 events.connect(events.CHAR_ADDED, function(char)
-  if not AUTOINDENT or char ~= 10 then return end
+  if not M.AUTOINDENT or char ~= 10 then return end
   local buffer = buffer
   local anchor, caret = buffer.anchor, buffer.current_pos
   local line = buffer:line_from_position(caret)
@@ -157,7 +160,8 @@ end)
 ---
 -- Goes to a matching brace position, selecting the text inside if specified to.
 -- @param select If `true`, selects the text between matching braces.
-function match_brace(select)
+-- @name match_brace
+function M.match_brace(select)
   local buffer = buffer
   local caret = buffer.current_pos
   local match_pos = buffer:brace_match(caret)
@@ -175,7 +179,8 @@ end
 -- the document.
 -- @param word_chars String of chars considered to be part of words.
 -- @return `true` if there were completions to show; `false` otherwise.
-function autocomplete_word(word_chars)
+-- @name autocomplete_word
+function M.autocomplete_word(word_chars)
   local buffer = buffer
   local caret, length = buffer.current_pos, buffer.length
   local completions, c_list = {}, {}
@@ -220,10 +225,11 @@ end
 -- Block comments or uncomments code with a given comment string.
 -- @param comment The comment string inserted or removed from the beginning of
 --   each line in the selection.
-function block_comment(comment)
+-- @name block_comment
+function M.block_comment(comment)
   local buffer = buffer
   if not comment then
-    comment = comment_string[buffer:get_lexer()]
+    comment = M.comment_string[buffer:get_lexer()]
     if not comment then return end
   end
   local anchor, caret = buffer.selection_start, buffer.selection_end
@@ -251,7 +257,8 @@ end
 -- Goes to the requested line.
 -- @param line Optional line number to go to. If `nil`, the user is prompted for
 --   one.
-function goto_line(line)
+-- @name goto_line
+function M.goto_line(line)
   if not line then
     line = tonumber(gui.dialog('standard-inputbox',
                                '--title', L('Go To'),
@@ -267,8 +274,9 @@ end
 -- Prepares the buffer for saving to a file.
 -- Strips trailing whitespace off of every line, ensures an ending newline, and
 -- converts non-consistent EOLs.
-function prepare_for_save()
-  if not STRIP_WHITESPACE_ON_SAVE then return end
+-- @name prepare_for_save
+function M.prepare_for_save()
+  if not M.STRIP_WHITESPACE_ON_SAVE then return end
   local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
@@ -297,13 +305,14 @@ function prepare_for_save()
   buffer:convert_eo_ls(buffer.eol_mode)
   buffer:end_undo_action()
 end
-events.connect(events.FILE_BEFORE_SAVE, prepare_for_save)
+events.connect(events.FILE_BEFORE_SAVE, M.prepare_for_save)
 
 ---
 -- Selects the current word under the caret and if action indicates, deletes it.
 -- @param action Optional action to perform with selected word. If `delete`, it
 --   is deleted.
-function current_word(action)
+-- @name current_word
+function M.current_word(action)
   local buffer = buffer
   buffer:set_sel(buffer:word_start_position(buffer.current_pos),
                  buffer:word_end_position(buffer.current_pos))
@@ -314,7 +323,8 @@ end
 -- Transposes characters intelligently.
 -- If the caret is at the end of a line, the two characters before the caret are
 -- transposed. Otherwise, the characters to the left and right are.
-function transpose_chars()
+-- @name transpose_chars
+function M.transpose_chars()
   local buffer = buffer
   local pos = buffer.current_pos
   if pos == buffer.length then return end
@@ -328,7 +338,8 @@ end
 
 ---
 -- Joins the current line with the line below.
-function join_lines()
+-- @name join_lines
+function M.join_lines()
   local buffer = buffer
   buffer:line_end()
   local line = buffer:line_from_position(buffer.current_pos)
@@ -343,7 +354,8 @@ end
 -- enclosed.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
-function enclose(left, right)
+-- @name enclose
+function M.enclose(left, right)
   local buffer = buffer
   buffer:begin_undo_action()
   local txt = buffer:get_sel_text()
@@ -359,7 +371,8 @@ end
 -- Selects text between a given pair of strings.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
-function select_enclosed(left, right)
+-- @name select_enclosed
+function M.select_enclosed(left, right)
   local buffer = buffer
   buffer:search_anchor()
   local s = buffer:search_prev(0, left)
@@ -370,7 +383,8 @@ end
 ---
 -- Grows the selection by a character amount on either end.
 -- @param amount The amount to grow the selection on either end.
-function grow_selection(amount)
+-- @name grow_selection
+function M.grow_selection(amount)
   local buffer = buffer
   local anchor, caret = buffer.anchor, buffer.current_pos
   if anchor < caret then
@@ -382,7 +396,8 @@ end
 
 ---
 -- Selects the current line.
-function select_line()
+-- @name select_line
+function M.select_line()
   buffer:home()
   buffer:line_end_extend()
 end
@@ -390,7 +405,8 @@ end
 ---
 -- Selects the current paragraph.
 -- Paragraphs are delimited by two or more consecutive newlines.
-function select_paragraph()
+-- @name select_paragraph
+function M.select_paragraph()
   buffer:para_up()
   buffer:para_down_extend()
 end
@@ -402,7 +418,8 @@ end
 -- top and bottom of it are one indentation level lower, they are added to the
 -- selection. In all other cases, the behavior is the same as if no text is
 -- selected.
-function select_indented_block()
+-- @name select_indented_block
+function M.select_indented_block()
   local buffer = buffer
   local s = buffer:line_from_position(buffer.selection_start)
   local e = buffer:line_from_position(buffer.selection_end)
@@ -423,7 +440,8 @@ end
 
 ---
 -- Converts indentation between tabs and spaces.
-function convert_indentation()
+-- @name convert_indentation
+function M.convert_indentation()
   local buffer = buffer
   local line_indentation = buffer.line_indentation
   local line_indent_position = buffer.line_indent_position
@@ -463,7 +481,8 @@ end)
 ---
 -- Highlights all occurances of the word under the caret and adds markers to the
 -- lines they are on.
-function highlight_word()
+-- @name highlight_word
+function M.highlight_word()
   clear_highlighted_words()
   local buffer = buffer
   local s, e = buffer.selection_start, buffer.selection_end
@@ -490,10 +509,12 @@ end
 -- Sets view properties for highlighted word indicators and markers.
 local function set_highlight_properties()
   local buffer = buffer
-  buffer:marker_set_back(MARK_HIGHLIGHT, MARK_HIGHLIGHT_BACK)
-  buffer.indic_fore[INDIC_HIGHLIGHT] = INDIC_HIGHLIGHT_BACK
+  buffer:marker_set_back(MARK_HIGHLIGHT, M.MARK_HIGHLIGHT_BACK)
+  buffer.indic_fore[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_BACK
   buffer.indic_style[INDIC_HIGHLIGHT] = _SCINTILLA.constants.INDIC_ROUNDBOX
-  buffer.indic_alpha[INDIC_HIGHLIGHT] = INDIC_HIGHLIGHT_ALPHA
+  buffer.indic_alpha[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_ALPHA
 end
 if buffer then set_highlight_properties() end
 events.connect(events.VIEW_NEW, set_highlight_properties)
+
+return M

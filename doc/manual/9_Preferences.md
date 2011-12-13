@@ -23,20 +23,21 @@ menu, replace
 
 with
 
-    require 'textadept.adeptsense'
-    require 'textadept.bookmarks'
+    _m.textadept = {}
+    _m.textadept.adeptsense = require 'textadept.adeptsense'
+    _m.textadept.bookmarks = require 'textadept.bookmarks'
     require 'textadept.command_entry'
-    require 'textadept.editing'
+    _m.textadept.editing = require 'textadept.editing'
     require 'textadept.find'
-    require 'textadept.filter_through'
-    require 'textadept.mime_types'
-    require 'textadept.run'
-    require 'textadept.session'
-    require 'textadept.snapopen'
-    require 'textadept.snippets'
+    _m.textadept.filter_through = require 'textadept.filter_through'
+    _m.textadept.mime_types = require 'textadept.mime_types'
+    _m.textadept.run = require 'textadept.run'
+    _m.textadept.session = require 'textadept.session'
+    _m.textadept.snapopen = require 'textadept.snapopen'
+    _m.textadept.snippets = require 'textadept.snippets'
 
-    require 'textadept.keys'
-    --require 'textadept.menu'
+    _m.textadept.keys = require 'textadept.keys'
+    --_m.textadept.menu = require 'textadept.menu'
 
 Note that his list was obtained from the `textadept` module's `init.lua` which
 is located in the `modules/textadept/` directory.

@@ -2,9 +2,12 @@
 
 local L = locale.localize
 
+local M = {}
+
+--[[ This comment is for LuaDoc.
 ---
 -- Provides Lua-style snippets for Textadept.
-module('_m.textadept.snippets', package.seeall)
+module('_m.textadept.snippets', package.seeall)]]
 
 -- Markdown:
 -- ## Overview
@@ -137,7 +140,7 @@ local function new_snippet(text, trigger)
     trigger = trigger,
     original_sel_text = buffer:get_sel_text(),
     snapshots = {}
-  }, { __index = _snippet_mt })
+  }, { __index = M._snippet_mt })
   snippet_stack[#snippet_stack + 1] = snippet
 
   -- Convert and match indentation.
@@ -175,7 +178,8 @@ end
 -- @param text Optional snippet text. If none is specified, the snippet text
 --   is determined from the trigger and lexer.
 -- @return `false` if no snippet was expanded; `true` otherwise.
-function _insert(text)
+-- @name _insert
+function M._insert(text)
   local buffer = buffer
   local trigger
   if not text then
@@ -197,7 +201,8 @@ end
 -- Goes back to the previous placeholder, reverting any changes from the current
 -- one.
 -- @return `false` if no snippet is active; `nil` otherwise.
-function _previous()
+-- @name _previous
+function M._previous()
   if #snippet_stack == 0 then return false end
   snippet_stack[#snippet_stack]:previous()
 end
@@ -205,14 +210,16 @@ end
 ---
 -- Cancels the active snippet, reverting to the state before its activation, and
 -- restores the previously running snippet (if any).
-function _cancel_current()
+-- @name _cancel_current
+function M._cancel_current()
   if #snippet_stack > 0 then snippet_stack[#snippet_stack]:cancel() end
 end
 
 ---
 -- Prompts the user to select a snippet to insert from a filtered list dialog.
 -- Global snippets and snippets in the current lexer are shown.
-function _select()
+-- @name _select
+function M._select()
   local list = {}
   local type = type
   for trigger, text in pairs(snippets) do
@@ -235,7 +242,7 @@ function _select()
   local i = gui.filteredlist(L('Select Snippet'),
                              { L('Trigger'), L('Scope'), L('Snippet Text') },
                              t, true, '--output-column', '2')
-  if i then _insert(t[(i + 1) * 3]) end
+  if i then M._insert(t[(i + 1) * 3]) end
 end
 
 -- Table of escape sequences.
@@ -252,7 +259,7 @@ local escapes = {
 -- Metatable for a snippet object.
 -- @class table
 -- @name _snippet_mt
-_snippet_mt = {
+M._snippet_mt = {
   -- Gets a snippet's end position in the buffer.
   -- @param snippet The snippet returned by `new_snippet()`.
   get_end_position = function(snippet)
@@ -427,4 +434,6 @@ events.connect(events.VIEW_NEW,
 -- Provides access to snippets from `_G`.
 -- @class table
 -- @name _G.snippets
-_G.snippets = _M
+_G.snippets = M
+
+return M
