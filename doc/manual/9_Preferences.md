@@ -14,33 +14,25 @@ to load alongside the default modules, your `~/.textadept/init.lua` would
 contain
 
     require 'textadept'
-    require 'foo'
+    _m.foo = require 'foo'
 
-If instead you wanted to load all Textadept's default modules except for the
-menu, replace
+Please note that the `textadept` module populates the `_m.textadept` table
+itself because of internal dependencies. Normally, modules do not do this, hence
+why `_m.foo = require 'foo'` is used. However, modules using the old `module`
+function from Lua 5.1 will populate the `_m[module]` table automatically.
 
-    require 'textadept'
+If instead you wanted to load all of Textadept's default modules except for the
+menu, copy the `textadept` module's `init.lua` (located in the
+`modules/textadept/` directory) to `~/.textadept/modules/textadept/` and change
 
-with
+    M.menu = require 'textadept.menu'
 
-    _m.textadept = {}
-    _m.textadept.adeptsense = require 'textadept.adeptsense'
-    _m.textadept.bookmarks = require 'textadept.bookmarks'
-    require 'textadept.command_entry'
-    _m.textadept.editing = require 'textadept.editing'
-    require 'textadept.find'
-    _m.textadept.filter_through = require 'textadept.filter_through'
-    _m.textadept.mime_types = require 'textadept.mime_types'
-    _m.textadept.run = require 'textadept.run'
-    _m.textadept.session = require 'textadept.session'
-    _m.textadept.snapopen = require 'textadept.snapopen'
-    _m.textadept.snippets = require 'textadept.snippets'
+to
 
-    _m.textadept.keys = require 'textadept.keys'
-    --_m.textadept.menu = require 'textadept.menu'
+    --M.menu = require 'textadept.menu'
 
-Note that his list was obtained from the `textadept` module's `init.lua` which
-is located in the `modules/textadept/` directory.
+Of course if you prefer, you can put the relevant code directly in
+`~/.textadept/init.lua` instead.
 
 It is important to realize that Textadept will not load anything you do not tell
 it to. If your `~/.textadept/init.lua` exists and is empty, no modules are
