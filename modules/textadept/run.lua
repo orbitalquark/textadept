@@ -11,7 +11,7 @@ local M = {}
 -- Typically, language-specific modules populate the 'compile_command',
 -- 'run_command', and 'error_detail' tables for a particular language's file
 -- extension.
-module('_m.textadept.run', package.seeall)]]
+module('_m.textadept.run')]]
 
 -- Markdown:
 -- ## Run Events

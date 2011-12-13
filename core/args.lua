@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Processes command line arguments for Textadept.
-module('args', package.seeall)]]
+module('args')]]
 
 -- Markdown:
 -- ## Arg Events

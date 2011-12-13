@@ -7,7 +7,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Session support for the textadept module.
-module('_m.textadept.session', package.seeall)]]
+module('_m.textadept.session')]]
 
 -- Markdown:
 -- ## Settings

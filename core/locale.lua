@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Contains all messages used by Textadept for localization.
-module('locale', package.seeall)]]
+module('locale')]]
 
 -- Markdown:
 -- ## Fields

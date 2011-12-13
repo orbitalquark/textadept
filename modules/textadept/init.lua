@@ -7,7 +7,7 @@ _m.textadept = M
 ---
 -- The textadept module.
 -- It provides utilities for editing text in Textadept.
-module('_m.textadept', package.seeall)]]
+module('_m.textadept')]]
 
 M.adeptsense = require 'textadept.adeptsense'
 M.bookmarks = require 'textadept.bookmarks'

@@ -8,7 +8,7 @@ local M = {}
 -- It provides utilities for editing Lua code.
 -- User tags are loaded from _USERHOME/modules/lua/tags and user apis are loaded
 -- from _USERHOME/modules/lua/api.
-module('_m.lua', package.seeall)]]
+module('_m.lua')]]
 
 -- Markdown:
 -- ## Key Commands

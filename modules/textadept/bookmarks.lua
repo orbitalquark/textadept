@@ -7,7 +7,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Bookmarks for the textadept module.
-module('_m.textadept.bookmarks', package.seeall)]]
+module('_m.textadept.bookmarks')]]
 
 -- Markdown:
 -- ## Settings

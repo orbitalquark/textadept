@@ -7,7 +7,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Snapopen for the textadept module.
-module('_m.textadept.snapopen', package.seeall)]]
+module('_m.textadept.snapopen')]]
 
 -- Markdown:
 -- ## Settings

@@ -9,7 +9,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Editing commands for the textadept module.
-module('_m.textadept.editing', package.seeall)]]
+module('_m.textadept.editing')]]
 
 -- Markdown:
 -- ## Settings
