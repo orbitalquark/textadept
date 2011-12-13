@@ -345,5 +345,5 @@ end)
 -- @name open_recent_file
 function io.open_recent_file()
   local i = gui.filteredlist(L('Open'), L('File'), io.recent_files, true)
-  if i then open_file(io.recent_files[i + 1]) end
+  if i then M.open_file(io.recent_files[i + 1]) end
 end
