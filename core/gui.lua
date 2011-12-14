@@ -259,7 +259,6 @@ local function set_properties()
   -- Properties.
   buffer.property['textadept.home'] = _HOME
   buffer.property['lexer.lpeg.home'] = _LEXERPATH
-  buffer.property['lexer.lpeg.script'] = _HOME..'/lexers/lexer.lua'
   buffer.property['lexer.lpeg.color.theme'] = THEME..'/lexer.lua'
   -- Buffer.
   buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
