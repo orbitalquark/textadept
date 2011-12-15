@@ -731,8 +731,18 @@ static gboolean c_keypress(GtkWidget*_, GdkEventKey *event, gpointer __) {
 /******************************** Lua Interface *******************************/
 /******************************************************************************/
 
+#if LUAJIT
+#define LUA_RIDX_GLOBALS LUA_GLOBALSINDEX
+#define LUA_OK 0
+#define lua_rawlen lua_objlen
+#define LUA_OPEQ 0
+#define lua_compare(l, a, b, _) lua_equal(l, a, b)
 #define lL_openlib(l, n, f) \
-  (luaL_requiref(l, n, f, 1), lua_pop(l, 1))
+  (lua_pushcfunction(l, f), lua_pushstring(l, n), lua_call(l, 1, 0))
+#else
+#define lL_openlib(l, n, f) (luaL_requiref(l, n, f, 1), lua_pop(l, 1))
+#endif
+
 #define l_setcfunction(l, n, k, f) \
   (lua_pushcfunction(l, f), lua_setfield(l, (n > 0) ? n : n - 1, k))
 #define l_setmetatable(l, n, k, i, ni) { \
