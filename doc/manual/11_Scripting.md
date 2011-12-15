@@ -23,9 +23,9 @@ same configuration (`luaconf.h`) as vanilla Lua with the following exceptions:
 * `TA_LUA_PATH` and `TA_LUA_CPATH` are the environment variable used in place of
   the usual `LUA_PATH` and `LUA_CPATH`.
 * `LUA_ROOT` is `/usr/` in Linux systems instead of `/usr/local/`.
-* The `LUA_COMPAT_COMPAT`, `LUA_COMPAT_LOADERS`, `LUA_COMPAT_LOG10`,
-  `LUA_COMPAT_LOADSTRING`, and `LUA_COMPAT_MAXN` compatibility flags for Lua 5.1
-  are turned off.
+* All compatibility flags for Lua 5.1 are turned off. (`LUA_COMPAT_UNPACK`,
+  `LUA_COMPAT_LOADERS`, `LUA_COMPAT_LOG10`, `LUA_COMPAT_LOADSTRING`,
+  `LUA_COMPAT_MAXN`, and `LUA_COMPAT_MODULE`.)
 
 ## Scintilla
 
