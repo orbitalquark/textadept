@@ -19,6 +19,8 @@ TEXTADEPT_RC =
 EXPORTLUASYMS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
 WINDRES =
 LDL = -ldl
+LUAJIT_LIB = libluajit.a
+LUAJIT_MAKE =
 
 # Win32 (WIN32=1)
 ifdef WIN32
@@ -34,6 +36,8 @@ TEXTADEPT_RC = textadept_rc.o
 EXPORTLUASYMS = -Wl,--retain-symbols-file -Wl,lua.sym
 WINDRES = i486-mingw32-windres
 LDL =
+LUAJIT_LIB = lua51.dll
+LUAJIT_MAKE = HOST_CC="gcc -m32" CROSS=i486-mingw32- TARGET_SYS=Windows
 endif
 
 # Mac OSX (OSX=1)
@@ -52,14 +56,28 @@ TEXTADEPT_RC =
 EXPORTLUASYMS = -rdynamic
 WINDRES =
 LDL =
+LUAJIT_LIB = libluajit.a
+LUAJIT_MAKE =
 endif
 
+# No debugging unless DEBUG=1.
 ifndef DEBUG
 DEBUG_FLAG = -DNDEBUG
 else
 DEBUG_FLAG = -DDEBUG -DTRACE -g
 endif
-INCLUDEDIRS = -Iscintilla/include -Ilua/src -Igcocoadialog
+
+# Do not compile with LuaJIT unless LUAJIT=1.
+ifndef LUAJIT
+LUADIR = lua
+LUAJIT_FLAG =
+LUAJIT_LIB =
+else
+LUADIR = luajit
+LUAJIT_FLAG = -DLUAJIT
+endif
+
+INCLUDEDIRS = -Iscintilla/include -I$(LUADIR)/src -Igcocoadialog
 
 ifdef GTK3
 GTKVERSION = gtk+-3.0
@@ -69,8 +87,8 @@ endif
 
 # Textadept
 
-CFLAGS = -std=c99 $(DEBUG_FLAG) -O $(PLAT_FLAGS) $(INCLUDEDIRS) -W -Wall \
-  -Wno-sign-compare -Wno-unused
+CFLAGS = -std=c99 $(DEBUG_FLAG) $(LUAJIT_FLAG) -O $(PLAT_FLAGS) $(INCLUDEDIRS) \
+  -W -Wall -Wno-sign-compare -Wno-unused
 GTKFLAGS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --cflags $(GTKVERSION))
 GTKLIBS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
@@ -89,6 +107,13 @@ LUA_OBJS = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
   lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o lmathlib.o \
   loadlib.o loslib.o ltablib.o lstrlib.o \
   lpeg.o lfs.o
+LUA_SRCS = lua/src/*.c lua/src/lib/*.c
+LUAJIT_OBJS =
+ifdef LUAJIT
+LUA_OBJS = lpeg.o lfs.o
+LUA_SRCS = lua/src/lib/lpeg.c lua/src/lib/lfs.c
+LUAJIT_OBJS = $(LUAJIT_LIB)
+endif
 GCOCOADIALOG = gcocoadialog.o
 
 # Scintilla
@@ -122,20 +147,23 @@ $(SCINTILLA_LEXER): LexLPeg.cxx
 	$(CPP) $(SCI_CXXFLAGS) $(GTKFLAGS) $(LUA_CFLAGS) -DLPEG_LEXER -DNO_SCITE -c $^
 $(TEXTADEPT_OBJS): *.c
 	$(CC) $(CFLAGS) $(GTKFLAGS) -c $^
-$(LUA_OBJS): lua/src/*.c
+$(LUA_OBJS): $(LUA_SRCS)
 	$(CC) $(LUA_CFLAGS) $(INCLUDEDIRS) -c $^
+$(LUAJIT_OBJS):
+	cd luajit && make $(LUAJIT_MAKE)
+	cp luajit/src/$(LUAJIT_LIB) .
 $(GCOCOADIALOG): gcocoadialog/gcocoadialog.c
 	$(CC) $(GTKFLAGS) $(INCLUDEDIRS) -c $^
 $(TEXTADEPT):\
   $(SCINTILLA_OBJS) $(SCINTILLA_MARSHALLER) $(SCINTILLA_LEXER) \
-  $(TEXTADEPT_OBJS) $(LUA_OBJS) $(GCOCOADIALOG) \
+  $(TEXTADEPT_OBJS) $(LUA_OBJS) $(LUAJIT_OBJS) $(GCOCOADIALOG) \
   $(TEXTADEPT_RC)
 	$(CPP) $(EXPORTLUASYMS) -o $@ $^ $(GTKLIBS) $(LDL)
 	mv $(TEXTADEPT) ../
 $(TEXTADEPT_RC): textadept.rc
 	$(WINDRES) $^ $@
 clean:
-	rm ../$(TEXTADEPT) *.o
+	rm -f ../$(TEXTADEPT) *.o *.a *.dll
 
 # Package (only for Linux x86_64)
 # Pass 'VERSION=[release version]' to 'make'.
@@ -177,6 +205,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	# Win32
 	cp -r $(RELEASEDIR32) $(RELEASEDIRWIN32)
 	cp ../$(TEXTADEPTWIN32) $(RELEASEDIRWIN32)
+	if [ -f lua51.dll ]; then cp lua51.dll $(RELEASEDIRWIN32); fi
 	cp win32gtk/bin/*.dll $(RELEASEDIRWIN32)
 	cp -r win32gtk/{etc,lib,share} $(RELEASEDIRWIN32)
 	rm -r $(RELEASEDIRWIN32)/lib/{*.a,glib-2.0,gtk-2.0/include,pkgconfig}

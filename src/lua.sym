@@ -1,3 +1,4 @@
+# This file has Lua 5.2 symbols and Lua 5.1 symbols (for LuaJIT).
 luaL_addlstring
 luaL_addstring
 luaL_addvalue
@@ -39,6 +40,8 @@ luaL_prepbuffersize
 luaL_pushresult
 luaL_pushresultsize
 luaL_ref
+luaL_register
+luaL_typerror
 luaL_requiref
 luaL_setfuncs
 luaL_setmetatable
@@ -55,13 +58,16 @@ lua_callk
 lua_checkstack
 lua_close
 lua_concat
+lua_cpcall
 lua_copy
 lua_createtable
 lua_dump
+lua_equal
 lua_error
 lua_gc
 lua_getallocf
 lua_getctx
+lua_getfenv
 lua_getfield
 lua_gethook
 lua_gethookcount
@@ -81,11 +87,13 @@ lua_isnumber
 lua_isstring
 lua_isuserdata
 lua_len
+lua_lessthan
 lua_load
 lua_newstate
 lua_newthread
 lua_newuserdata
 lua_next
+lua_objlen
 lua_pcall
 lua_pcallk
 lua_pushboolean
@@ -110,6 +118,7 @@ lua_remove
 lua_replace
 lua_resume
 lua_setallocf
+lua_setfenv
 lua_setfield
 lua_sethook
 lua_setlevel

@@ -79,3 +79,21 @@ lines (put `//` at the start of the line):
     #define CharacterRange Sci_CharacterRange
     #define TextRange Sci_TextRange
     #define TextToFind Sci_TextToFind
+
+#### Compiling with LuaJIT
+
+[LuaJIT](http://luajit.org) is a Just-In-Time Compiler for Lua and can boost the
+speed of Lua programs. I have noticed that syntax highlighting can be up to 2
+times faster with LuaJIT than with vanilla Lua. This difference is largely
+unnoticable on modern computers and usually only discernable when initially
+loading large files. Other than syntax highlighting, LuaJIT offers no real
+benefit performance-wise to justify it being Textadept's default runtime.
+LuaJIT's [ffi library](http://luajit.org/ext_ffi.html), however, appears to be
+useful for interfacing with external, non-Lua, libraries.
+
+You can compile Textadept with LuaJIT by running `make LUAJIT=1` for non-Windows
+systems and `make WIN32=1 LUAJIT=1` for Windows systems.
+
+Please note that a `lua51.dll` is produced for Windows platforms because
+limitations on external Lua library loading do not allow statically linking
+LuaJIT to Textadept. Static linking occurs on all other platforms.

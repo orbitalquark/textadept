@@ -5,6 +5,7 @@ _RELEASE = "Textadept 4.3"
 package.path = _HOME..'/core/?.lua;'..package.path
 os.setlocale('C', 'collate')
 
+if jit then require 'compat' end
 _SCINTILLA = require 'iface'
 args = require 'args'
 locale = require 'locale'
