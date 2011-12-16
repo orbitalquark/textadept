@@ -7,7 +7,7 @@
 local xpcall51 = xpcall
 function xpcall(f, error, ...)
   local args = {...}
-  return xpcall51(function() f(unpack(args)) end, error)
+  return xpcall51(function() return f(unpack(args)) end, error)
 end
 
 -- In Lua 5.1, `load` did not take mode and environment parameters.
