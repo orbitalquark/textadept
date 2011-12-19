@@ -79,6 +79,7 @@ M.utils = {
       cmd = string.format('start "" "%s"', url)
       local p = io.popen(cmd)
       if not p then error(L('Error loading webpage:')..url) end
+      p:close()
     else
       cmd = string.format(OSX and 'open "file://%s"' or 'xdg-open "%s" &', url)
       local _, _, code = os.execute(cmd)
