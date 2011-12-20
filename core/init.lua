@@ -54,7 +54,7 @@ function user_dofile(filename)
   return ok
 end
 
--- The tables below were defined in C.
+--[[ The tables below were defined in C.
 
 ---
 -- Command line parameters.
@@ -121,3 +121,4 @@ local reset
 -- @class function
 -- @name timeout
 local timeout
+]]

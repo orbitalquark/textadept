@@ -406,7 +406,7 @@ end)
 
 connect(events.ERROR, function(...) gui._print(L('[Error Buffer]'), ...) end)
 
--- The functions below are Lua C functions.
+--[[ The functions below are Lua C functions.
 
 ---
 -- Displays a gcocoadialog of a specified type with the given string arguments.
@@ -456,3 +456,4 @@ local goto_view
 -- @class function
 -- @name gtkmenu
 local gtkmenu
+]]
