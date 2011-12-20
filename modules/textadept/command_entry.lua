@@ -92,10 +92,11 @@ events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   end
 end)
 
--- The function below is a Lua C function.
+--[[ The function below is a Lua C function.
 
 ---
 -- Focuses the command entry.
 -- @class function
 -- @name focus
 local focus
+]]

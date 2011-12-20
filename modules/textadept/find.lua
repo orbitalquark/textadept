@@ -397,7 +397,7 @@ events.connect(events.VIEW_NEW, function()
   buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR)
 end)
 
--- The functions below are Lua C functions.
+--[[ The functions below are Lua C functions.
 
 ---
 -- Displays and focuses the find/replace dialog.
@@ -428,3 +428,4 @@ local replace
 -- @class function
 -- @name replace_all
 local replace_all
+]]
