@@ -91,7 +91,7 @@ module('buffer')
 --   `0xBBGGRR` format. (Write-only)
 -- * `call_tip_fore_hlt` [number]: The foreground color for the highlighted part
 --   of the call tip in `0xBBGGRR` format. (Write-only)
--- * `call_tip_position` [boolean]: The position of calltip, above or below 
+-- * `call_tip_position` [boolean]: The position of calltip, above or below
 --   text. By default the calltip is displayed below the text. Setting to `true`
 --   will display it above the text.
 -- * `call_tip_use_style` [number]: Enable use of
@@ -507,7 +507,7 @@ module('buffer')
 --   `255`.
 -- * `style_italic` [table]: Table of booleans for italic styles from `0` to
 --   `255`.
--- * `style_size` [table]: Table of font sizes for styles from `0` to `255`. 
+-- * `style_size` [table]: Table of font sizes for styles from `0` to `255`.
 --   Font size is a whole number of points.
 -- * `style_size_fractional` [table]: Table of sizes of characters for styles
 --     from `0` to `255`. Size is in hundreths of a point and multiplied by 100
@@ -984,6 +984,13 @@ function buffer.copy_range(buffer, start_pos, end_pos) end
 -- @param buffer The global buffer.
 -- @param text The text.
 function buffer.copy_text(buffer, text) end
+
+---
+-- Count characters between two positions.
+-- @param start_pos
+-- @param end_pos
+-- @return number
+function buffer.count_characters(buffer, start_pos, end_pos) end
 
 ---
 -- Cut the selection to the clipboard.
