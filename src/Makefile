@@ -13,8 +13,9 @@ else
 PLAT_FLAGS = -DGTK -D__BSD__
 endif
 SCI_THREAD_FLAG =
-LUA_CFLAGS = -DLUA_USE_LINUX
+LUAFLAGS = -DLUA_USE_LINUX
 TEXTADEPT = textadept
+TEXTADEPTJIT = textadeptjit
 TEXTADEPT_RC =
 EXPORTLUASYMS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
 WINDRES =
@@ -30,8 +31,9 @@ PKG_CONFIG = pkg-config --define-variable=prefix=win32gtk
 PKG_CONFIG_PATH = $(shell pwd)/win32gtk/lib/pkgconfig
 PLAT_FLAGS = -DGTK -D__WIN32__
 SCI_THREAD_FLAG = -DG_THREADS_IMPL_NONE
-LUA_CFLAGS = -D_WIN32 -DWIN32
+LUAFLAGS = -D_WIN32 -DWIN32
 TEXTADEPT = textadept.exe
+TEXTADEPTJIT = textadeptjit.exe
 TEXTADEPT_RC = textadept_rc.o
 EXPORTLUASYMS = -Wl,--retain-symbols-file -Wl,lua.sym
 WINDRES = i486-mingw32-windres
@@ -50,8 +52,9 @@ PKG_CONFIG = gtkosx/bin/pkg-config --define-variable=prefix=gtkosx
 PKG_CONFIG_PATH = $(shell pwd)/gtkosx/lib/pkgconfig
 PLAT_FLAGS = -DGTK -D__OSX__
 SCI_THREAD_FLAG =
-LUA_CFLAGS = -DLUA_USE_MACOSX
+LUAFLAGS = -DLUA_USE_MACOSX
 TEXTADEPT = textadept.osx
+TEXTADEPTJIT = textadeptjit.osx
 TEXTADEPT_RC =
 EXPORTLUASYMS = -rdynamic
 WINDRES =
@@ -109,16 +112,11 @@ LUA_OBJS = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
   lpeg.o lfs.o
 LUA_SRCS = lua/src/*.c lua/src/lib/*.c
 LUAJIT_OBJS =
-ifdef LUAJIT
-LUA_OBJS = lpeg.o lfs.o
-LUA_SRCS = lua/src/lib/lpeg.c lua/src/lib/lfs.c
-LUAJIT_OBJS = $(LUAJIT_LIB)
-endif
 GCOCOADIALOG = gcocoadialog.o
 
 # Scintilla
 
-SCI_CXXFLAGS = $(DEBUG_FLAG) -pedantic -Os $(PLAT_FLAGS) -DSCI_LEXER \
+SCIFLAGS = $(DEBUG_FLAG) -pedantic -Os $(PLAT_FLAGS) -DSCI_LEXER \
   $(SCI_THREAD_FLAG) $(INCLUDEDIRS) -Iscintilla/src -Iscintilla/gtk \
   -Iscintilla/lexlib \
   -Wall -Wno-missing-braces -Wno-char-subscripts -Wno-long-long
@@ -136,24 +134,36 @@ SCINTILLA_LEXER = LexLPeg.o
 
 # Build
 
+ifdef LUAJIT
+TEXTADEPT_OBJS = textadeptjit.o
+LUA_OBJS = lpegjit.o lfsjit.o
+LUA_SRCS = lua/src/lib/*.c
+LUAJIT_OBJS = $(LUAJIT_LIB)
+SCINTILLA_LEXER = LexLPegjit.o
+TEXTADEPT = $(TEXTADEPTJIT)
+endif
+
 all: $(TEXTADEPT)
 
 $(SCINTILLA_OBJS): scintilla/gtk/*.cxx scintilla/src/*.cxx \
   scintilla/lexlib/*.cxx
-	$(CPP) $(SCI_CXXFLAGS) $(GTKFLAGS) -c $^
+	$(CPP) $(SCIFLAGS) $(GTKFLAGS) -c $^
 $(SCINTILLA_MARSHALLER): scintilla/gtk/scintilla-marshal.c
-	$(CC) $(SCI_CXXFLAGS) $(GTKFLAGS) -w -c $^
+	$(CC) $(SCIFLAGS) $(GTKFLAGS) -w -c $<
 $(SCINTILLA_LEXER): LexLPeg.cxx
-	$(CPP) $(SCI_CXXFLAGS) $(GTKFLAGS) $(LUA_CFLAGS) -DLPEG_LEXER -DNO_SCITE -c $^
-$(TEXTADEPT_OBJS): *.c
-	$(CC) $(CFLAGS) $(GTKFLAGS) -c $^
+	$(CPP) $(SCIFLAGS) $(GTKFLAGS) $(LUAFLAGS) -DLPEG_LEXER -DNO_SCITE -c $< -o $@
+$(TEXTADEPT_OBJS): textadept.c
+	$(CC) $(CFLAGS) $(GTKFLAGS) -c $< -o $@
 $(LUA_OBJS): $(LUA_SRCS)
-	$(CC) $(LUA_CFLAGS) $(INCLUDEDIRS) -c $^
+	$(CC) $(LUAFLAGS) $(INCLUDEDIRS) -c $^
+ifdef LUAJIT
+	for lib in $(LUA_OBJS); do mv $$(echo $$lib | sed 's/jit//g') $$lib; done
+endif
 $(LUAJIT_OBJS):
 	cd luajit && make $(LUAJIT_MAKE)
 	cp luajit/src/$(LUAJIT_LIB) .
 $(GCOCOADIALOG): gcocoadialog/gcocoadialog.c
-	$(CC) $(GTKFLAGS) $(INCLUDEDIRS) -c $^
+	$(CC) $(GTKFLAGS) $(INCLUDEDIRS) -c $<
 $(TEXTADEPT):\
   $(SCINTILLA_OBJS) $(SCINTILLA_MARSHALLER) $(SCINTILLA_LEXER) \
   $(TEXTADEPT_OBJS) $(LUA_OBJS) $(LUAJIT_OBJS) $(GCOCOADIALOG) \
@@ -164,6 +174,7 @@ $(TEXTADEPT_RC): textadept.rc
 	$(WINDRES) $^ $@
 clean:
 	rm -f ../$(TEXTADEPT) *.o *.a *.dll
+	cd luajit && make clean
 
 # Package (only for Linux x86_64)
 # Pass 'VERSION=[release version]' to 'make'.
