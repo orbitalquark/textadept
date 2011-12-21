@@ -91,8 +91,9 @@ benefit performance-wise to justify it being Textadept's default runtime.
 LuaJIT's [ffi library](http://luajit.org/ext_ffi.html), however, appears to be
 useful for interfacing with external, non-Lua, libraries.
 
-You can compile Textadept with LuaJIT by running `make LUAJIT=1` for non-Windows
-systems and `make WIN32=1 LUAJIT=1` for Windows systems.
+You can compile Textadept with LuaJIT by running `make LUAJIT=1` for Linux
+systems, `make OSX=1 LUAJIT=1` for Mac OSX, and `make WIN32=1 LUAJIT=1` for
+Windows systems.
 
 Please note that a `lua51.dll` is produced for Windows platforms because
 limitations on external Lua library loading do not allow statically linking
