@@ -922,6 +922,7 @@ coroutine	_	0;"	m
 coroutine	_	0;"	t	
 cos	_	0;"	f	class:math
 cosh	_	0;"	f	class:math
+count_characters	_	0;"	f	class:buffer
 cpath	_	0;"	F	class:package
 cpp	_	0;"	t	class:_m
 cpp	_	0;"	t	class:keys
