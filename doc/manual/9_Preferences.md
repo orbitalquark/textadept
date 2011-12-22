@@ -18,8 +18,7 @@ contain
 
 Please note that the `textadept` module populates the `_m.textadept` table
 itself because of internal dependencies. Normally, modules do not do this, hence
-why `_m.foo = require 'foo'` is used. However, modules using the old `module`
-function from Lua 5.1 will populate the `_m[module]` table automatically.
+why `_m.foo = require 'foo'` is used.
 
 If instead you wanted to load all of Textadept's default modules except for the
 menu, copy the `textadept` module's `init.lua` (located in the
