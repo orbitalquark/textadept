@@ -19,11 +19,9 @@ module('_m.textadept.session')]]
 -- * `MAX_RECENT_FILES` [number]: The maximum number of files from the recent
 --   files list to save to the session. The default is `10`.
 
--- settings
 M.DEFAULT_SESSION = _USERHOME..'/session'
 M.SAVE_ON_QUIT = true
 M.MAX_RECENT_FILES = 10
--- end settings
 
 ---
 -- Loads a Textadept session file.

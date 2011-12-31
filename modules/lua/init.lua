@@ -62,10 +62,7 @@ M.sense:add_trigger(':', false, true)
 
 -- script/update_doc generates a fake set of ctags used for autocompletion.
 M.sense.ctags_kinds = {
-  f = 'functions',
-  F = 'fields',
-  m = 'classes',
-  t = 'fields',
+  f = 'functions', F = 'fields', m = 'classes', t = 'fields'
 }
 M.sense:load_ctags(_HOME..'/modules/lua/tags', true)
 

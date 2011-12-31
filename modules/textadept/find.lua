@@ -159,7 +159,6 @@ local function find_(text, next, flags, nowrap, wrapped)
     buffer:search_anchor()
     result = buffer['search_'..(next and 'next' or 'prev')](buffer, flags, text)
     if result ~= -1 then buffer:scroll_caret() end
-
   elseif flags < 16 then -- lua pattern search (forward search only)
     text = text:gsub('\\[abfnrtv\\]', escapes)
     local buffer_text = buffer:get_text(buffer.length)
@@ -171,7 +170,6 @@ local function find_(text, next, flags, nowrap, wrapped)
     else
       result = -1
     end
-
   else -- find in files
     find.find_in_files()
     return
@@ -212,8 +210,7 @@ end
 -- (pressing 'Escape' by default).
 -- @name find_incremental
 function find.find_incremental()
-  find.incremental = true
-  find.incremental_start = buffer.current_pos
+  find.incremental, find.incremental_start = true, buffer.current_pos
   gui.command_entry.entry_text = ''
   gui.command_entry.focus()
 end

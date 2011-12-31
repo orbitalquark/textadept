@@ -35,11 +35,9 @@ module('_m.textadept.snapopen')]]
 --     local project_dir = '/path/to/project'
 --     snapopen(project_dir, { folders = { '%.hg' } }, true)
 
--- settings
 M.PATHS = {}
 M.DEFAULT_DEPTH = 4
 M.MAX = 1000
--- end settings
 
 local lfs_dir, lfs_attributes = lfs.dir, lfs.attributes
 local DEPTH = M.DEFAULT_DEPTH

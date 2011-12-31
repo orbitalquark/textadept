@@ -30,7 +30,6 @@ module('_m.textadept.editing')]]
 --   (transparent) and `255` (opaque) used for an indicator for a highlighted
 --   word. The default value is `100`.
 
--- settings
 M.AUTOPAIR = true
 M.HIGHLIGHT_BRACES = true
 M.AUTOINDENT = true
@@ -38,7 +37,6 @@ M.STRIP_WHITESPACE_ON_SAVE = true
 M.MARK_HIGHLIGHT_BACK = buffer and buffer.caret_line_back or 0xEEEEEE
 M.INDIC_HIGHLIGHT_BACK = 0x4D99E6
 M.INDIC_HIGHLIGHT_ALPHA = 100
--- end settings
 
 ---
 -- Comment strings for various lexer languages.
@@ -54,26 +52,22 @@ M.comment_string = {}
 -- Auto-matched characters.
 -- Used for auto-matching parentheses, brackets, braces, quotes, etc. Keys are
 -- lexer language names and values are tables of character match pairs. This
--- table can be populated by language-specific modules.
+-- table can be populated by language-specific modules. The defaults are '()',
+-- '[]', '{}', '''', and '""'.
 -- @class table
 -- @name char_matches
 -- @usage _m.textadept.editing.char_matches.hypertext = { ..., [60] = '>' }
-M.char_matches = {
-  [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'
-}
+M.char_matches = { [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"' }
 
 ---
 -- Highlighted brace characters.
 -- Keys are lexer language names and values are tables of characters that count
 -- as brace characters. This table can be populated by language-specific
--- modules.
+-- modules. The defaults are '(', ')', '[', ']', '{', and '}'.
 -- @class table
 -- @name braces
 -- @usage _m.textadept.editing.braces.hypertext = { ..., [60] = 1, [62] = 1 }
-M.braces = { -- () [] {}
-  [40] = 1, [91] = 1, [123] = 1,
-  [41] = 1, [93] = 1, [125] = 1,
-}
+M.braces = { [40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1 }
 
 -- The current call tip.
 -- Used for displaying call tips.
@@ -284,12 +278,8 @@ function M.prepare_for_save()
   local lines = buffer.line_count
   for line = 0, lines - 1 do
     local s, e = buffer:position_from_line(line), line_end_position[line]
-    local i = e - 1
-    local c = char_at[i]
-    while i >= s and c == 9 or c == 32 do
-      i = i - 1
-      c = char_at[i]
-    end
+    local i, c = e - 1, char_at[e - 1]
+    while i >= s and c == 9 or c == 32 do i, c = i - 1, char_at[i - 1] end
     if i < e - 1 then
       buffer.target_start, buffer.target_end = i + 1, e
       buffer:replace_target('')
@@ -297,8 +287,7 @@ function M.prepare_for_save()
   end
   -- Ensure ending newline.
   local e = buffer:position_from_line(lines)
-  if lines == 1 or
-     lines > 1 and e > buffer:position_from_line(lines - 1) then
+  if lines == 1 or lines > 1 and e > buffer:position_from_line(lines - 1) then
     buffer:insert_text(e, '\n')
   end
   -- Convert non-consistent EOLs
@@ -493,15 +482,13 @@ function M.highlight_word()
   if word == '' then return end
   buffer.search_flags = _SCINTILLA.constants.SCFIND_WHOLEWORD +
                         _SCINTILLA.constants.SCFIND_MATCHCASE
-  buffer.target_start = 0
-  buffer.target_end = buffer.length
+  buffer.target_start, buffer.target_end = 0, buffer.length
   while buffer:search_in_target(word) > 0 do
     local len = buffer.target_end - buffer.target_start
     buffer:marker_add(buffer:line_from_position(buffer.target_start),
                       MARK_HIGHLIGHT)
     buffer:indicator_fill_range(buffer.target_start, len)
-    buffer.target_start = buffer.target_end
-    buffer.target_end = buffer.length
+    buffer.target_start, buffer.target_end = buffer.target_end, buffer.length
   end
   buffer:set_sel(s, e)
 end

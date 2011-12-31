@@ -15,9 +15,7 @@ module('_m.textadept.bookmarks')]]
 -- * `MARK_BOOKMARK_COLOR` [number]: The color used for a bookmarked line in
 --   `0xBBGGRR` format.
 
--- settings
 M.MARK_BOOKMARK_COLOR = 0xB3661A
--- end settings
 
 local MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 

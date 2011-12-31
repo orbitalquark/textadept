@@ -50,14 +50,8 @@ end
 
 M.sense = _m.textadept.adeptsense.new('cpp')
 M.sense.ctags_kinds = {
-  c = 'classes',
-  d = 'functions',
-  e = 'fields',
-  f = 'functions',
-  g = 'classes',
-  m = 'fields',
-  s = 'classes',
-  t = 'classes'
+  c = 'classes', d = 'functions', e = 'fields', f = 'functions', g = 'classes',
+  m = 'fields', s = 'classes', t = 'classes'
 }
 M.sense:load_ctags(_HOME..'/modules/cpp/tags', true)
 M.sense.api_files = { _HOME..'/modules/cpp/api', _HOME..'/modules/cpp/lua_api' }
