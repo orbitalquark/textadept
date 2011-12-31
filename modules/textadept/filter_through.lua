@@ -1,8 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-local events = events
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -30,6 +27,8 @@ function M.filter_through()
   filter_through_active = true
   gui.command_entry.focus()
 end
+
+local events = events
 
 events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   if filter_through_active and keys.KEYSYMS[code] == 'esc' then

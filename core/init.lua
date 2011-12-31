@@ -8,7 +8,7 @@ os.setlocale('C', 'collate')
 if jit then require 'compat' end -- compatibility for LuaJIT
 _SCINTILLA = require 'iface'
 args = require 'args'
-locale = require 'locale'
+_L = require 'locale'
 events = require 'events'
 require 'file_io'
 require 'gui'
@@ -34,6 +34,7 @@ module('_G')]]
 -- * `_USERHOME` [string]: Path to the user's `~/.textadept/`.
 -- * `_CHARSET` [string]: The character set encoding of the filesystem. This is
 --   used in [File I/O](../modules/io.html).
+-- * `_L` [table]: Contains all messages used by Textadept for localization.
 -- * `RESETTING` [bool]: If [`reset()`](../modules/_G.html#reset) has been
 --   called, this flag is `true` while the Lua state is being re-initialized.
 -- * `WIN32` [bool]: If Textadept is running on Windows, this flag is `true`.

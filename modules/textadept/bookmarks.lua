@@ -1,7 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -91,7 +89,7 @@ function M.goto_bookmark()
     markers[#markers + 1] = tostring(line + 1)..': '..text
     line = buffer:marker_next(line + 1, 2^MARK_BOOKMARK)
   until line < 0
-  local line = gui.filteredlist(L('Select Bookmark'), 'Bookmark', markers)
+  local line = gui.filteredlist(_L['Select Bookmark'], _L['Bookmark'], markers)
   if line then _m.textadept.editing.goto_line(line:match('^%d+')) end
 end
 

@@ -1,7 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -196,7 +194,7 @@ M.handlers = {}
 -- @see disconnect
 -- @name connect
 function M.connect(event, f, index)
-  if not event then error(L('Undefined event name')) end
+  if not event then error(_L['Undefined event name']) end
   if not M.handlers[event] then M.handlers[event] = {} end
   local h = M.handlers[event]
   if index then table.insert(h, index, f) else h[#h + 1] = f end
@@ -227,7 +225,7 @@ local error_emitted = false
 --   otherwise.
 -- @name emit
 function M.emit(event, ...)
-  if not event then error(L('Undefined event name')) end
+  if not event then error(_L['Undefined event name']) end
   local h = M.handlers[event]
   if not h then return end
   local pcall, table_unpack, type = pcall, table.unpack, type

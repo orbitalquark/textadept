@@ -1,7 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -116,13 +114,13 @@ function M.open(utf8_paths, filter, exclusive, depth)
   for _, path in ipairs(utf8_paths) do add_directory(path, list, 1, filter) end
   if #list >= M.MAX then
     gui.dialog('ok-msgbox',
-               '--title', L('File Limit Exceeded'),
+               '--title', _L['File Limit Exceeded'],
                '--informative-text',
                string.format('%d %s %d', M.MAX,
-                             L('files or more were found. Showing the first'),
+                             _L['files or more were found. Showing the first'],
                              M.MAX))
   end
-  local utf8_filenames = gui.filteredlist(L('Open'), L('File'), list, false,
+  local utf8_filenames = gui.filteredlist(_L['Open'], _L['File'], list, false,
                                           '--select-multiple') or ''
   for filename in utf8_filenames:gmatch('[^\n]+') do io.open_file(filename) end
 end

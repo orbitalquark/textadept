@@ -1,9 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-local events = events
-local K = keys.KEYSYMS
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -74,6 +70,9 @@ M.braces = { [40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1 }
 -- @class table
 -- @name current_call_tip
 local current_call_tip = {}
+
+local events = events
+local K = keys.KEYSYMS
 
 -- Matches characters specified in char_matches.
 events.connect(events.CHAR_ADDED, function(c)
@@ -255,8 +254,8 @@ end
 function M.goto_line(line)
   if not line then
     line = tonumber(gui.dialog('standard-inputbox',
-                               '--title', L('Go To'),
-                               '--text', L('Line Number:'),
+                               '--title', _L['Go To'],
+                               '--text', _L['Line Number:'],
                                '--no-newline'):match('%-?%d+$'))
     if not line or line < 0 then return end
   end

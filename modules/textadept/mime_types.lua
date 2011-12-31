@@ -1,8 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-local events = events
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -33,6 +30,7 @@ module('_m.textadept.mime_types')]]
 --       * `lang`: The language lexer name.
 
 -- Events.
+local events = events
 events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
 
 ---
@@ -108,7 +106,7 @@ table.sort(M.lexers)
 -- buffer.
 -- @name select_lexer
 function M.select_lexer()
-  local lexer = gui.filteredlist(L('Select Lexer'), 'Name', M.lexers)
+  local lexer = gui.filteredlist(_L['Select Lexer'], _L['Name'], M.lexers)
   if lexer then buffer:set_lexer(lexer) end
 end
 

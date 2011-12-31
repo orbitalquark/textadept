@@ -1,9 +1,6 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-local events = events
 local find = gui.find
-local c = _SCINTILLA.constants
 
 --[[ This comment is for LuaDoc.
 ---
@@ -40,16 +37,17 @@ module('gui.find')]]
 -- * `in_files_label_text` [string]: The text of the 'In files' label. This is
 --   primarily used for localization. (Write-only)
 
-find.find_label_text = L('Find:')
-find.replace_label_text = L('Replace:')
-find.find_next_button_text = L('Find Next')
-find.find_prev_button_text = L('Find Prev')
-find.replace_button_text = L('Replace')
-find.replace_all_button_text = L('Replace All')
-find.match_case_label_text = L('Match case')
-find.whole_word_label_text = L('Whole word')
-find.lua_pattern_label_text = L('Lua pattern')
-find.in_files_label_text = L('In files')
+local _L = _L
+find.find_label_text = _L['Find:']
+find.replace_label_text = _L['Replace:']
+find.find_next_button_text = _L['Find Next']
+find.find_prev_button_text = _L['Find Prev']
+find.replace_button_text = _L['Replace']
+find.replace_all_button_text = _L['Replace All']
+find.match_case_label_text = _L['Match case']
+find.whole_word_label_text = _L['Whole word']
+find.lua_pattern_label_text = _L['Lua pattern']
+find.in_files_label_text = _L['In files']
 
 local MARK_FIND = _SCINTILLA.next_marker_number()
 local MARK_FIND_COLOR = 0x4D9999
@@ -72,7 +70,7 @@ local escapes = {
 function find.find_in_files(utf8_dir)
   if not utf8_dir then
     utf8_dir = gui.dialog('fileselect',
-                          '--title', L('Find in Files'),
+                          '--title', _L['Find in Files'],
                           '--select-only-directories',
                           '--with-directory',
                           (buffer.filename or ''):match('^.+[/\\]') or '',
@@ -113,12 +111,15 @@ function find.find_in_files(utf8_dir)
     end
     local dir = utf8_dir:iconv(_CHARSET, 'UTF-8')
     search_dir(dir)
-    if #matches == 1 then matches[2] = L('No results found') end
+    if #matches == 1 then matches[2] = _L['No results found'] end
     matches[#matches + 1] = ''
-    if buffer._type ~= L('[Files Found Buffer]') then preferred_view = view end
-    gui._print(L('[Files Found Buffer]'), table.concat(matches, '\n'))
+    if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
+    gui._print(_L['[Files Found Buffer]'], table.concat(matches, '\n'))
   end
 end
+
+local events = events
+local c = _SCINTILLA.constants
 
 -- Finds and selects text in the current buffer.
 -- @param text The text to find.
@@ -178,10 +179,10 @@ local function find_(text, next, flags, nowrap, wrapped)
   if result == -1 and not nowrap and not wrapped then -- wrap the search
     local anchor, pos = buffer.anchor, buffer.current_pos
     buffer:goto_pos((next or flags >= 8) and 0 or buffer.length)
-    gui.statusbar_text = L('Search wrapped')
+    gui.statusbar_text = _L['Search wrapped']
     result = find_(text, next, flags, true, true)
     if result == -1 then
-      gui.statusbar_text = L('No results found')
+      gui.statusbar_text = _L['No results found']
       buffer:line_scroll(0, first_visible_line)
       buffer:goto_pos(anchor)
     end
@@ -249,8 +250,8 @@ local function run(code)
   local ok, val = pcall(load('return '..code))
   if not ok then
     gui.dialog('ok-msgbox',
-               '--title', L('Error'),
-               '--text', L('An error occured:'),
+               '--title', _L['Error'],
+               '--text', _L['An error occured:'],
                '--informative-text', val:gsub('"', '\\"'),
                '--no-cancel')
     error()
@@ -332,7 +333,7 @@ local function replace_all(ftext, rtext, flags)
     buffer:set_sel(anchor, current_pos)
     buffer:marker_delete_handle(end_marker)
   end
-  gui.statusbar_text = ("%d %s"):format(count, L('replacement(s) made'))
+  gui.statusbar_text = ("%d %s"):format(count, _L['replacement(s) made'])
   buffer:end_undo_action()
 end
 events.connect(events.REPLACE_ALL, replace_all)
@@ -342,7 +343,7 @@ events.connect(events.REPLACE_ALL, replace_all)
 -- @param pos The position of the caret.
 -- @param line_num The line double-clicked.
 local function goto_file(pos, line_num)
-  if buffer._type == L('[Files Found Buffer]') then
+  if buffer._type == _L['[Files Found Buffer]'] then
     line = buffer:get_line(line_num)
     local file, file_line_num = line:match('^(.+):(%d+):.+$')
     if file and file_line_num then
@@ -365,7 +366,7 @@ events.connect(events.DOUBLE_CLICK, goto_file)
 function find.goto_file_in_list(next)
   local orig_view = _VIEWS[view]
   for _, buffer in ipairs(_BUFFERS) do
-    if buffer._type == L('[Files Found Buffer]') then
+    if buffer._type == _L['[Files Found Buffer]'] then
       for j, view in ipairs(_VIEWS) do
         if view.buffer == buffer then
           gui.goto_view(j)

@@ -1,8 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-local events = events
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -32,6 +29,7 @@ module('_m.textadept.run')]]
 --       * `output`: The output from the command.
 
 -- Events.
+local events = events
 events.COMPILE_OUTPUT = 'compile_output'
 events.RUN_OUTPUT = 'run_output'
 
@@ -139,8 +137,8 @@ M.error_detail = {}
 -- @param line_num The line double-clicked.
 -- @see error_detail
 function goto_error(pos, line_num)
-  if buffer._type ~= L('[Message Buffer]') and
-     buffer._type ~= L('[Error Buffer]') then
+  if buffer._type ~= _L['[Message Buffer]'] and
+     buffer._type ~= _L['[Error Buffer]'] then
     return
   end
   local buffer = buffer
@@ -156,7 +154,7 @@ function goto_error(pos, line_num)
         local msg = captures[error_detail.message]
         if msg then buffer:call_tip_show(buffer.current_pos, msg) end
       else
-        error(string.format('"%s" %s', utf8_filename, L('does not exist')))
+        error(string.format('"%s" %s', utf8_filename, _L['does not exist']))
       end
       return
     end

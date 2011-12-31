@@ -1,9 +1,6 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- Modified by Jay Gould.
 
-local L = locale.localize
-local events = events
-
 --[[ This comment is for LuaDoc.
 ---
 -- Textadept's Command entry.
@@ -34,6 +31,8 @@ local env = setmetatable({}, {
     rawset(t, k, v)
   end,
 })
+
+local events = events
 
 -- Execute a Lua command.
 events.connect(events.COMMAND_ENTRY_COMMAND, function(command)
