@@ -223,10 +223,7 @@ function M._select()
   local list = {}
   local type = type
   for trigger, text in pairs(snippets) do
-    if type(text) == 'string' and
-       trigger ~= '_NAME' and trigger ~= '_PACKAGE' then
-      list[#list + 1] = trigger..'\0global\0'..text
-    end
+    if type(text) == 'string' then list[#list + 1] = trigger..'\0 \0'..text end
   end
   local lexer = buffer:get_lexer()
   for trigger, text in pairs(snippets[lexer] or {}) do

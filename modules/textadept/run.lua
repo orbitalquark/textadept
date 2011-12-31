@@ -52,10 +52,8 @@ function M.execute(command)
   end
   local filename_noext = filename:match('^(.+)%.')
   command = command:gsub('%%%b()', {
-    ['%(filepath)'] = filepath,
-    ['%(filedir)'] = filedir,
-    ['%(filename)'] = filename,
-    ['%(filename_noext)'] = filename_noext,
+    ['%(filepath)'] = filepath, ['%(filedir)'] = filedir,
+    ['%(filename)'] = filename, ['%(filename_noext)'] = filename_noext,
   })
   local current_dir = lfs.currentdir()
   lfs.chdir(filedir)

@@ -324,11 +324,9 @@ events.connect(events.VIEW_AFTER_SWITCH, update_modified_file)
 events.connect(events.BUFFER_NEW, function()
   local buffer = buffer
   buffer.reload = reload
-  buffer.set_encoding = set_encoding
-  buffer.save = save
-  buffer.save_as = save_as
+  buffer.save, buffer.save_as = save, save_as
   buffer.close = close
-  buffer.encoding = 'UTF-8'
+  buffer.encoding, buffer.set_encoding = 'UTF-8', set_encoding
 end)
 
 -- Close initial "Untitled" buffer.

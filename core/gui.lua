@@ -276,7 +276,6 @@ connect(events.BUFFER_NEW, function()
   local ok, err = pcall(set_properties)
   if not ok then io.stderr:write(err) end
 end)
-connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
 -- @param buffer The global buffer.
@@ -312,8 +311,9 @@ connect(events.URI_DROPPED, function(utf8_uris)
     end
   end
 end)
-connect(events.APPLEEVENT_ODOC,
-  function(uri) return events.emit(events.URI_DROPPED, 'file://'..uri) end)
+connect(events.APPLEEVENT_ODOC, function(uri)
+  return events.emit(events.URI_DROPPED, 'file://'..uri)
+end)
 
 local string_format = string.format
 local EOLs = { L('CRLF'), L('CR'), L('LF') }
@@ -339,6 +339,8 @@ connect(events.MARGIN_CLICK, function(margin, pos, modifiers)
   if margin == 2 then buffer:toggle_fold(buffer:line_from_position(pos)) end
 end)
 
+-- Updates the statusbar and titlebar for a new Scintilla document.
+connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
 connect(events.BUFFER_NEW, function() set_title(buffer) end)
 
 -- Save buffer properties.

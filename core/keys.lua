@@ -96,15 +96,10 @@ module('keys')]]
 -- Therefore, any module containing key commands should be loaded after all
 -- other modules, whose functions are being referenced, have been loaded.
 
--- settings
 local ADD = ''
-local CTRL = 'c'..ADD
-local ALT = 'a'..ADD
-local META = 'm'..ADD
-local SHIFT = 's'..ADD
+local CTRL, ALT, META, SHIFT = 'c'..ADD, 'a'..ADD, 'm'..ADD, 's'..ADD
 M.CLEAR = 'esc'
 M.LANGUAGE_MODULE_PREFIX = (not OSX and CTRL or META)..'l'
--- end settings
 
 -- Optimize for speed.
 local OSX = OSX
@@ -174,10 +169,7 @@ end
 M.run_command = run_command -- export for menu.lua without creating LuaDoc
 
 -- Return codes for `run_key_command()`.
-local INVALID = -1
-local PROPAGATE = 0
-local CHAIN = 1
-local HALT = 2
+local INVALID, PROPAGATE, CHAIN, HALT = -1, 0, 1, 2
 
 -- Runs a key command associated with the current keychain.
 -- @param lexer Optional lexer name for lexer-specific commands.
@@ -223,11 +215,8 @@ local function keypress(code, shift, control, alt, meta)
     key = M.KEYSYMS[code]
     if not key then return end
   end
-  control = control and CTRL or ''
-  alt = alt and ALT or ''
-  meta = meta and OSX and META or ''
-  shift = shift and SHIFT or ''
-  local key_seq = control..alt..meta..shift..key
+  local key_seq = (control and CTRL or '')..(alt and ALT or '')..
+                  (meta and OSX and META or '')..(shift and SHIFT or '')..key
   --print(key_seq)
 
   if #keychain > 0 and key_seq == M.CLEAR then
