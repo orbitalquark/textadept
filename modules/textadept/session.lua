@@ -1,7 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -92,8 +90,8 @@ function M.load(filename)
   gui.goto_view(current_view)
   if #not_found > 0 then
     gui.dialog('msgbox',
-               '--title', L('Session Files Not Found'),
-               '--text', L('The following session files were not found'),
+               '--title', _L['Session Files Not Found'],
+               '--text', _L['The following session files were not found'],
                '--informative-text', table.concat(not_found, '\n'))
   end
   return true
@@ -174,7 +172,7 @@ end
 -- @name prompt_load
 function M.prompt_load()
   local utf8_filename = gui.dialog('fileselect',
-                                   '--title', L('Load Session'),
+                                   '--title', _L['Load Session'],
                                    '--with-directory',
                                    M.DEFAULT_SESSION:match('.+[/\\]') or '',
                                    '--with-file',
@@ -188,7 +186,7 @@ end
 -- @name prompt_save
 function M.prompt_save()
   local utf8_filename = gui.dialog('filesave',
-                                   '--title', L('Save Session'),
+                                   '--title', _L['Save Session'],
                                    '--with-directory',
                                    M.DEFAULT_SESSION:match('.+[/\\]') or '',
                                    '--with-file',

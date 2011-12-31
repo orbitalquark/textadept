@@ -1,7 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -236,8 +234,8 @@ function M._select()
   for i = 1, #list do
     t[#t + 1], t[#t + 2], t[#t + 3] = list[i]:match('^(%Z+)%z(%Z+)%z(%Z+)$')
   end
-  local i = gui.filteredlist(L('Select Snippet'),
-                             { L('Trigger'), L('Scope'), L('Snippet Text') },
+  local i = gui.filteredlist(_L['Select Snippet'],
+                             { _L['Trigger'], _L['Scope'], _L['Snippet Text'] },
                              t, true, '--output-column', '2')
   if i then M._insert(t[(i + 1) * 3]) end
 end

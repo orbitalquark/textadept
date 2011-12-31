@@ -1,6 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
 local gui = gui
 
 --[[ This comment is for LuaDoc.
@@ -18,6 +17,8 @@ module('gui')]]
 -- * `docstatusbar_text` [string]: The text displayed by the doc statusbar.
 --   (Write-only)
 -- * `size` [table]: The size of the Textadept window (`{ width, height }`).
+
+local _L = _L
 
 -- Helper function for printing messages to buffers.
 -- @see gui._print
@@ -52,8 +53,8 @@ end
 -- buffer, and prints to it.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
--- @usage gui._print(L('[Error Buffer]'), error_message)
--- @usage gui._print(L('[Message Buffer]'), message)
+-- @usage gui._print(_L['[Error Buffer]'], error_message)
+-- @usage gui._print(_L['[Message Buffer]'], message)
 -- @name _print
 function gui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 
@@ -63,7 +64,7 @@ function gui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 -- messages.
 -- @param ... Message strings.
 -- @name print
-function gui.print(...) gui._print(L('[Message Buffer]'), ...) end
+function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
 
 ---
 -- Shortcut function for `gui.dialog('filtered_list', ...)` with 'Ok' and
@@ -102,13 +103,13 @@ end
 -- selected one, if any.
 -- @name switch_buffer
 function gui.switch_buffer()
-  local columns, items = { L('Name'), L('File') }, {}
+  local columns, items = { _L['Name'], _L['File'] }, {}
   for _, buffer in ipairs(_BUFFERS) do
-    local filename = buffer.filename or buffer._type or L('Untitled')
+    local filename = buffer.filename or buffer._type or _L['Untitled']
     items[#items + 1] = (buffer.dirty and '*' or '')..filename:match('[^/\\]+$')
     items[#items + 1] = filename
   end
-  local i = gui.filteredlist(L('Switch Buffers'), columns, items, true)
+  local i = gui.filteredlist(_L['Switch Buffers'], columns, items, true)
   if i then view:goto_buffer(i + 1) end
 end
 
@@ -170,7 +171,7 @@ function gui.set_theme(name)
   elseif lfs.attributes(name) then
     theme = name
   end
-  if not theme then error(('"%s" %s'):format(name, L("theme not found."))) end
+  if not theme then error(('"%s" %s'):format(name, _L["theme not found."])) end
 
   if buffer and view then
     local current_buffer, current_view = _BUFFERS[buffer], _VIEWS[view]
@@ -212,7 +213,7 @@ function gui.select_theme()
   end
   for theme in pairs(themes_found) do themes[#themes + 1] = theme end
   table.sort(themes)
-  local theme = gui.filteredlist(L('Select Theme'), L('Name'), themes)
+  local theme = gui.filteredlist(_L['Select Theme'], _L['Name'], themes)
   if not theme then return end
   gui.set_theme(theme)
   local f = io.open(_USERHOME..'/theme', 'wb')
@@ -280,7 +281,7 @@ end)
 -- Sets the title of the Textadept window to the buffer's filename.
 -- @param buffer The global buffer.
 local function set_title(buffer)
-  local filename = buffer.filename or buffer._type or L('Untitled')
+  local filename = buffer.filename or buffer._type or _L['Untitled']
   gui.title = string.format('%s %s Textadept (%s)', filename:match('[^/\\]+$'),
                             buffer.dirty and '*' or '-', filename)
 end
@@ -316,7 +317,7 @@ connect(events.APPLEEVENT_ODOC, function(uri)
 end)
 
 local string_format = string.format
-local EOLs = { L('CRLF'), L('CR'), L('LF') }
+local EOLs = { _L['CRLF'], _L['CR'], _L['LF'] }
 local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 -- Sets docstatusbar text.
 connect(events.UPDATE_UI, function()
@@ -326,12 +327,12 @@ connect(events.UPDATE_UI, function()
   local col = buffer.column[pos] + 1
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
   local eol = EOLs[buffer.eol_mode + 1]
-  local tabs = string_format('%s %d', buffer.use_tabs and L('Tabs:') or
-                             L('Spaces:'), buffer.indent)
+  local tabs = string_format('%s %d', buffer.use_tabs and _L['Tabs:'] or
+                             _L['Spaces:'], buffer.indent)
   local enc = buffer.encoding or ''
   gui.docstatusbar_text =
-    string_format('%s %d/%d    %s %d    %s    %s    %s    %s', L('Line:'), line,
-                  max, L('Col:'), col, lexer, eol, tabs, enc)
+    string_format('%s %d/%d    %s %d    %s    %s    %s    %s', _L['Line:'],
+                  line, max, _L['Col:'], col, lexer, eol, tabs, enc)
 end)
 
 -- Toggles folding.
@@ -391,22 +392,23 @@ connect(events.QUIT, function()
   local list = {}
   for _, buffer in ipairs(_BUFFERS) do
     if buffer.dirty then
-      list[#list + 1] = buffer.filename or buffer._type or L('Untitled')
+      list[#list + 1] = buffer.filename or buffer._type or _L['Untitled']
     end
   end
   if #list > 0 and gui.dialog('msgbox',
-                              '--title', L('Quit without saving?'),
-                              '--text', L('The following buffers are unsaved:'),
+                              '--title', _L['Quit without saving?'],
+                              '--text',
+                              _L['The following buffers are unsaved:'],
                               '--informative-text', table.concat(list, '\n'),
                               '--button1', 'gtk-cancel',
-                              '--button2', L('Quit _without saving'),
+                              '--button2', _L['Quit _without saving'],
                               '--no-newline') ~= '2' then
     return false
   end
   return true
 end)
 
-connect(events.ERROR, function(...) gui._print(L('[Error Buffer]'), ...) end)
+connect(events.ERROR, function(...) gui._print(_L['[Error Buffer]'], ...) end)
 
 --[[ The functions below are Lua C functions.
 

@@ -1,7 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-
 local M = {}
 
 --[[ This comment is for LuaDoc.
@@ -188,7 +186,7 @@ local function run_key_command(lexer)
 
   if key_type ~= 'function' and key_type ~= 'table' then return INVALID end
   if key_type == 'table' and #key == 0 and next(key) then
-    gui.statusbar_text = L('Keychain:')..' '..table.concat(keychain, ' ')
+    gui.statusbar_text = _L['Keychain:']..' '..table.concat(keychain, ' ')
     return CHAIN
   end
 
@@ -234,7 +232,7 @@ local function keypress(code, shift, control, alt, meta)
         -- command itself.
         keychain = {}
         local text = gui.statusbar_text or ''
-        if text == L('Invalid sequence') or text:find('^'..L('Keychain:')) then
+        if text == _L['Invalid sequence'] or text:find(_L['Keychain:']) then
           gui.statusbar_text = ''
         end
       end
@@ -245,7 +243,7 @@ local function keypress(code, shift, control, alt, meta)
   local size = #keychain - 1
   clear_key_sequence()
   if not success and size > 0 then -- INVALID keychain sequence
-    gui.statusbar_text = L('Invalid sequence')
+    gui.statusbar_text = _L['Invalid sequence']
     return true
   end
   -- PROPAGATE otherwise.

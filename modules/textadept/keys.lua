@@ -1,8 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-local gui = gui
-
 local M = {}
 
 --[[
@@ -12,7 +9,7 @@ local M = {}
 -- This module, should be 'require'ed last, but before _m.textadept.menu.
 module('_m.textadept.keys')]]
 
-local keys, _buffer, _view = keys, buffer, view
+local keys, gui, _buffer, _view = keys, gui, buffer, view
 local m_textadept, m_editing = _m.textadept, _m.textadept.editing
 local c, OSX = _SCINTILLA.constants, OSX
 
@@ -38,8 +35,8 @@ M.utils = {
   show_style = function()
     local buffer = buffer
     local style = buffer.style_at[buffer.current_pos]
-    local text = string.format("%s %s\n%s %s (%d)", L('Lexer'),
-                               buffer:get_lexer(), L('Style'),
+    local text = string.format("%s %s\n%s %s (%d)", _L['Lexer'],
+                               buffer:get_lexer(), _L['Style'],
                                buffer:get_style_name(style), style)
     buffer:call_tip_show(buffer.current_pos, text)
   end,
@@ -78,12 +75,12 @@ M.utils = {
     if WIN32 then
       cmd = string.format('start "" "%s"', url)
       local p = io.popen(cmd)
-      if not p then error(L('Error loading webpage:')..url) end
+      if not p then error(_L['Error loading webpage:']..url) end
       p:close()
     else
       cmd = string.format(OSX and 'open "file://%s"' or 'xdg-open "%s" &', url)
       local _, _, code = os.execute(cmd)
-      if code ~= 0 then error(L('Error loading webpage:')..url) end
+      if code ~= 0 then error(_L['Error loading webpage:']..url) end
     end
   end
 }

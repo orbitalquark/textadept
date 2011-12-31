@@ -1,8 +1,5 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
-local L = locale.localize
-local events = events
-
 --[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's io package to provide file input/output routines for Textadept.
@@ -44,6 +41,7 @@ module('io')]]
 --       * `filename`: The filename encoded in UTF-8.
 
 -- Events.
+local events = events
 events.FILE_OPENED = 'file_opened'
 events.FILE_BEFORE_SAVE = 'file_before_save'
 events.FILE_AFTER_SAVE = 'file_after_save'
@@ -106,7 +104,7 @@ io.try_encodings = { 'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman' }
 function io.open_file(utf8_filenames)
   utf8_filenames = utf8_filenames or
                    gui.dialog('fileselect',
-                              '--title', L('Open'),
+                              '--title', _L['Open'],
                               '--select-multiple',
                               '--with-directory',
                               (buffer.filename or ''):match('.+[/\\]') or '')
@@ -136,7 +134,7 @@ function io.open_file(utf8_filenames)
           local ok, conv = pcall(string.iconv, text, 'UTF-8', try_encoding)
           if ok then encoding, text = try_encoding, conv break end
         end
-        if not encoding then error(L('Encoding conversion failed.')) end
+        if not encoding then error(_L['Encoding conversion failed.']) end
       end
     else
       encoding = nil
@@ -193,7 +191,9 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_encoding(buffer, encoding)
   buffer:check_global()
-  if not buffer.encoding then error(L('Cannot change binary file encoding')) end
+  if not buffer.encoding then
+    error(_L['Cannot change binary file encoding'])
+  end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local text = buffer:get_text(buffer.length)
   text = text:iconv(buffer.encoding, 'UTF-8')
@@ -233,7 +233,7 @@ local function save_as(buffer, utf8_filename)
   buffer:check_global()
   if not utf8_filename then
     utf8_filename = gui.dialog('filesave',
-                               '--title', L('Save'),
+                               '--title', _L['Save'],
                                '--with-directory',
                                (buffer.filename or ''):match('.+[/\\]') or '',
                                '--with-file',
@@ -265,13 +265,13 @@ end
 local function close(buffer)
   if not buffer then buffer = _G.buffer end
   buffer:check_global()
-  local filename = buffer.filename or buffer._type or L('Untitled')
+  local filename = buffer.filename or buffer._type or _L['Untitled']
   if buffer.dirty and gui.dialog('msgbox',
-                                 '--title', L('Close without saving?'),
-                                 '--text', L('There are unsaved changes in'),
+                                 '--title', _L['Close without saving?'],
+                                 '--text', _L['There are unsaved changes in'],
                                  '--informative-text', filename,
                                  '--button1', 'gtk-cancel',
-                                 '--button2', L('Close _without saving'),
+                                 '--button2', _L['Close _without saving'],
                                  '--no-newline') ~= '2' then
     return false
   end
@@ -306,11 +306,11 @@ local function update_modified_file()
   if buffer.modification_time < attributes.modification then
     buffer.modification_time = attributes.modification
     if gui.dialog('yesno-msgbox',
-                  '--title', L('Reload?'),
-                  '--text', L('Reload modified file?'),
+                  '--title', _L['Reload?'],
+                  '--text', _L['Reload modified file?'],
                   '--informative-text',
                   ('"%s"\n%s'):format(utf8_filename,
-                                      L('has been modified. Reload it?')),
+                                      _L['has been modified. Reload it?']),
                   '--no-cancel',
                   '--no-newline') == '1' then
       buffer:reload()
@@ -342,6 +342,6 @@ end)
 -- Prompts the user to open a recently opened file.
 -- @name open_recent_file
 function io.open_recent_file()
-  local i = gui.filteredlist(L('Open'), L('File'), io.recent_files, true)
+  local i = gui.filteredlist(_L['Open'], _L['File'], io.recent_files, true)
   if i then io.open_file(io.recent_files[i + 1]) end
 end
