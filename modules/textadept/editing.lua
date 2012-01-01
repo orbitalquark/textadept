@@ -71,11 +71,11 @@ M.braces = { [40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1 }
 -- @name current_call_tip
 local current_call_tip = {}
 
-local events = events
+local events, events_connect = events, events.connect
 local K = keys.KEYSYMS
 
 -- Matches characters specified in char_matches.
-events.connect(events.CHAR_ADDED, function(c)
+events_connect(events.CHAR_ADDED, function(c)
   if not M.AUTOPAIR then return end
   local buffer = buffer
   local match = (M.char_matches[buffer:get_lexer()] or M.char_matches)[c]
@@ -83,7 +83,7 @@ events.connect(events.CHAR_ADDED, function(c)
 end)
 
 -- Removes matched chars on backspace.
-events.connect(events.KEYPRESS, function(code)
+events_connect(events.KEYPRESS, function(code)
   if not M.AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
   local buffer = buffer
   local pos = buffer.current_pos
@@ -93,7 +93,7 @@ events.connect(events.KEYPRESS, function(code)
 end)
 
 -- Highlights matching braces.
-events.connect(events.UPDATE_UI, function()
+events_connect(events.UPDATE_UI, function()
   if not M.HIGHLIGHT_BRACES then return end
   local buffer = buffer
   local pos = buffer.current_pos
@@ -110,7 +110,7 @@ events.connect(events.UPDATE_UI, function()
 end)
 
 -- Auto-indent on return.
-events.connect(events.CHAR_ADDED, function(char)
+events_connect(events.CHAR_ADDED, function(char)
   if not M.AUTOINDENT or char ~= 10 then return end
   local buffer = buffer
   local anchor, caret = buffer.anchor, buffer.current_pos
@@ -122,20 +122,19 @@ events.connect(events.CHAR_ADDED, function(char)
     local s = buffer.line_indent_position[line]
     buffer.line_indentation[line] = indentation
     local e = buffer.line_indent_position[line]
-    local diff = e - s
     if e > s then -- move selection on
-      if anchor >= s then anchor = anchor + diff end
-      if caret  >= s then caret  = caret  + diff end
+      if anchor >= s then anchor = anchor + e - s end
+      if caret  >= s then caret  = caret  + e - s end
     elseif e < s then -- move selection back
-      if anchor >= e then anchor = anchor >= s and anchor + diff or e end
-      if caret  >= e then caret  = caret  >= s and caret  + diff or e end
+      if anchor >= e then anchor = anchor >= s and anchor + e - s or e end
+      if caret  >= e then caret  = caret  >= s and caret  + e - s or e end
     end
     buffer:set_sel(anchor, caret)
   end
 end)
 
 -- Autocomplete multiple selections.
-events.connect(events.AUTO_C_SELECTION, function(text, position)
+events_connect(events.AUTO_C_SELECTION, function(text, position)
   local buffer = buffer
   local caret = buffer.selection_n_caret[buffer.main_selection]
   buffer:begin_undo_action()
@@ -293,7 +292,7 @@ function M.prepare_for_save()
   buffer:convert_eo_ls(buffer.eol_mode)
   buffer:end_undo_action()
 end
-events.connect(events.FILE_BEFORE_SAVE, M.prepare_for_save)
+events_connect(events.FILE_BEFORE_SAVE, M.prepare_for_save)
 
 ---
 -- Selects the current word under the caret and if action indicates, deletes it.
@@ -363,9 +362,8 @@ end
 function M.select_enclosed(left, right)
   local buffer = buffer
   buffer:search_anchor()
-  local s = buffer:search_prev(0, left)
-  local e = buffer:search_next(0, right)
-  if s and e then buffer:set_sel(s + 1, e) end
+  local s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
+  if s >= 0 and e >= 0 then buffer:set_sel(s + 1, e) end
 end
 
 ---
@@ -413,12 +411,10 @@ function M.select_indented_block()
   local e = buffer:line_from_position(buffer.selection_end)
   local indent = buffer.line_indentation[s] - buffer.indent
   if indent < 0 then return end
-  if buffer:get_sel_text() ~= '' then
-    if buffer.line_indentation[s - 1] == indent and
-       buffer.line_indentation[e + 1] == indent then
-      s, e = s - 1, e + 1
-      indent = indent + buffer.indent -- do not run while loops
-    end
+  if buffer:get_sel_text() ~= '' and
+     buffer.line_indentation[s - 1] == indent and
+     buffer.line_indentation[e + 1] == indent then
+    s, e, indent = s - 1, e + 1, indent + buffer.indent
   end
   while buffer.line_indentation[s - 1] > indent do s = s - 1 end
   while buffer.line_indentation[e + 1] > indent do e = e + 1 end
@@ -462,7 +458,7 @@ local function clear_highlighted_words()
   buffer.indicator_current = INDIC_HIGHLIGHT
   buffer:indicator_clear_range(0, buffer.length)
 end
-events.connect(events.KEYPRESS, function(code)
+events_connect(events.KEYPRESS, function(code)
   if K[code] == 'esc' then clear_highlighted_words() end
 end)
 
@@ -501,6 +497,6 @@ local function set_highlight_properties()
   buffer.indic_alpha[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_ALPHA
 end
 if buffer then set_highlight_properties() end
-events.connect(events.VIEW_NEW, set_highlight_properties)
+events_connect(events.VIEW_NEW, set_highlight_properties)
 
 return M

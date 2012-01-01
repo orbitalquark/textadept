@@ -10,11 +10,6 @@ local M = {}
 -- looks up defined key commands to show them in menus.
 module('_m.textadept.menu')]]
 
-local _L, gui, _buffer, _view = _L, gui, buffer, view
-local m_textadept, m_editing = _m.textadept, _m.textadept.editing
-local c, SEPARATOR = _SCINTILLA.constants, { 'separator' }
-local utils = m_textadept.keys.utils
-
 -- Get a string uniquely identifying a key command.
 -- This is used to match menu items with key commands to show the key shortcut.
 -- @param f A value in the `keys` table.
@@ -28,6 +23,12 @@ local function get_id(f)
   return id
 end
 
+local _L, io, gui, gui_find, buffer, view = _L, io, gui, gui.find, buffer, view
+local m_textadept, m_editing = _m.textadept, _m.textadept.editing
+local m_bookmarks, m_snippets = m_textadept.bookmarks, m_textadept.snippets
+local utils = m_textadept.keys.utils
+local SEPARATOR, c = { 'separator' }, _SCINTILLA.constants
+
 ---
 -- Contains the main menubar.
 -- @class table
@@ -37,11 +38,11 @@ M.menubar = {
     { _L['gtk-new'], new_buffer },
     { _L['gtk-open'], io.open_file },
     { _L['Open Recent...'], io.open_recent_file },
-    { _L['Reload'], _buffer.reload },
-    { _L['gtk-save'], _buffer.save },
-    { _L['gtk-save-as'], _buffer.save_as },
+    { _L['Reload'], buffer.reload },
+    { _L['gtk-save'], buffer.save },
+    { _L['gtk-save-as'], buffer.save_as },
     SEPARATOR,
-    { _L['gtk-close'], _buffer.close },
+    { _L['gtk-close'], buffer.close },
     { _L['Close All'], io.close_all },
     SEPARATOR,
     { _L['Load Session...'], m_textadept.session.prompt_load },
@@ -50,15 +51,15 @@ M.menubar = {
     { _L['gtk-quit'], quit },
   },
   { title = _L['Edit'],
-    { _L['gtk-undo'], _buffer.undo },
-    { _L['gtk-redo'], _buffer.redo },
+    { _L['gtk-undo'], buffer.undo },
+    { _L['gtk-redo'], buffer.redo },
     SEPARATOR,
-    { _L['gtk-cut'], _buffer.cut },
-    { _L['gtk-copy'], _buffer.copy },
-    { _L['gtk-paste'], _buffer.paste },
-    { _L['Duplicate Line'], _buffer.line_duplicate },
-    { _L['gtk-delete'], _buffer.clear },
-    { _L['gtk-select-all'], _buffer.select_all },
+    { _L['gtk-cut'], buffer.cut },
+    { _L['gtk-copy'], buffer.copy },
+    { _L['gtk-paste'], buffer.paste },
+    { _L['Duplicate Line'], buffer.line_duplicate },
+    { _L['gtk-delete'], buffer.clear },
+    { _L['gtk-select-all'], buffer.select_all },
     SEPARATOR,
     { _L['Match Brace'], m_editing.match_brace },
     { _L['Complete Word'], { m_editing.autocomplete_word, '%w_' } },
@@ -85,8 +86,8 @@ M.menubar = {
       { _L['Select Indented Block'], m_editing.select_indented_block },
     },
     { title = _L['Selection'],
-      { _L['Upper Case Selection'], _buffer.upper_case },
-      { _L['Lower Case Selection'], _buffer.lower_case },
+      { _L['Upper Case Selection'], buffer.upper_case },
+      { _L['Lower Case Selection'], buffer.lower_case },
       SEPARATOR,
       { _L['Enclose as XML Tags'], utils.enclose_as_xml_tags },
       { _L['Enclose as Single XML Tag'], { m_editing.enclose, '<', ' />' } },
@@ -99,21 +100,21 @@ M.menubar = {
       { _L['Grow Selection'], { m_editing.grow_selection, 1 } },
       { _L['Shrink Selection'], { m_editing.grow_selection, -1 } },
       SEPARATOR,
-      { _L['Move Selected Lines Up'], _buffer.move_selected_lines_up },
-      { _L['Move Selected Lines Down'], _buffer.move_selected_lines_down },
+      { _L['Move Selected Lines Up'], buffer.move_selected_lines_up },
+      { _L['Move Selected Lines Down'], buffer.move_selected_lines_down },
     },
   },
   { title = _L['Search'],
-    { _L['gtk-find'], gui.find.focus },
-    { _L['Find Next'], gui.find.find_next },
-    { _L['Find Previous'], gui.find.find_prev },
-    { _L['Replace'], gui.find.replace },
-    { _L['Replace All'], gui.find.replace_all },
-    { _L['Find Incremental'], gui.find.find_incremental },
+    { _L['gtk-find'], gui_find.focus },
+    { _L['Find Next'], gui_find.find_next },
+    { _L['Find Previous'], gui_find.find_prev },
+    { _L['Replace'], gui_find.replace },
+    { _L['Replace All'], gui_find.replace_all },
+    { _L['Find Incremental'], gui_find.find_incremental },
     SEPARATOR,
     { _L['Find in Files'], utils.find_in_files },
-    { _L['Goto Next File Found'], { gui.find.goto_file_in_list, true } },
-    { _L['Goto Previous File Found'], { gui.find.goto_file_in_list, false } },
+    { _L['Goto Next File Found'], { gui_find.goto_file_in_list, true } },
+    { _L['Goto Previous File Found'], { gui_find.goto_file_in_list, false } },
     SEPARATOR,
     { _L['gtk-jump-to'], m_editing.goto_line },
   },
@@ -130,11 +131,11 @@ M.menubar = {
       { _L['Show Documentation'], m_textadept.adeptsense.show_documentation },
     },
     { title = _L['Bookmark'],
-      { _L['Toggle Bookmark'], m_textadept.bookmarks.toggle },
-      { _L['Clear Bookmarks'], m_textadept.bookmarks.clear },
-      { _L['Next Bookmark'], m_textadept.bookmarks.goto_next },
-      { _L['Previous Bookmark'], m_textadept.bookmarks.goto_prev },
-      { _L['Goto Bookmark...'], m_textadept.bookmarks.goto_bookmark },
+      { _L['Toggle Bookmark'], m_bookmarks.toggle },
+      { _L['Clear Bookmarks'], m_bookmarks.clear },
+      { _L['Next Bookmark'], m_bookmarks.goto_next },
+      { _L['Previous Bookmark'], m_bookmarks.goto_prev },
+      { _L['Goto Bookmark...'], m_bookmarks.goto_bookmark },
     },
     { title = _L['Snapopen'],
       { _L['Snapopen User Home'], { m_textadept.snapopen.open, _USERHOME } },
@@ -142,17 +143,17 @@ M.menubar = {
       { _L['Snapopen Current Directory'], utils.snapopen_filedir },
     },
     { title = _L['Snippets'],
-      { _L['Insert Snippet...'], m_textadept.snippets._select },
-      { _L['Expand Snippet/Next Placeholder'], m_textadept.snippets._insert },
-      { _L['Previous Snippet Placeholder'], m_textadept.snippets._previous },
-      { _L['Cancel Snippet'], m_textadept.snippets._cancel_current },
+      { _L['Insert Snippet...'], m_snippets._select },
+      { _L['Expand Snippet/Next Placeholder'], m_snippets._insert },
+      { _L['Previous Snippet Placeholder'], m_snippets._previous },
+      { _L['Cancel Snippet'], m_snippets._cancel_current },
     },
     SEPARATOR,
     { _L['Show Style'], utils.show_style },
   },
   { title = _L['Buffer'],
-    { _L['Next Buffer'], { _view.goto_buffer, _view, 1, true } },
-    { _L['Previous Buffer'], { _view.goto_buffer, _view, -1, true } },
+    { _L['Next Buffer'], { view.goto_buffer, view, 1, true } },
+    { _L['Previous Buffer'], { view.goto_buffer, view, -1, true } },
     { _L['Switch to Buffer...'], gui.switch_buffer },
     SEPARATOR,
     { title = _L['Indentation'],
@@ -179,15 +180,15 @@ M.menubar = {
     SEPARATOR,
     { _L['Select Lexer...'], m_textadept.mime_types.select_lexer },
     { _L['Refresh Syntax Highlighting'],
-      { _buffer.colourise, _buffer, 0, -1 } },
+      { buffer.colourise, buffer, 0, -1 } },
   },
   { title = _L['View'],
     { _L['Next View'], { gui.goto_view, 1, true } },
     { _L['Previous View'], { gui.goto_view, -1, true } },
     SEPARATOR,
-    { _L['Split View Horizontal'], { _view.split, _view } },
-    { _L['Split View Vertical'], { _view.split, _view, true } },
-    { _L['Unsplit View'], { _view.unsplit, _view } },
+    { _L['Split View Horizontal'], { view.split, view } },
+    { _L['Split View Vertical'], { view.split, view, true } },
+    { _L['Unsplit View'], { view.unsplit, view } },
     { _L['Unsplit All Views'], utils.unsplit_all },
     { _L['Grow View'], { utils.grow, 10 } },
     { _L['Shrink View'], { utils.shrink, 10 } },
@@ -203,8 +204,8 @@ M.menubar = {
       { utils.toggle_property, 'virtual_space_options',
         c.SCVS_USERACCESSIBLE } },
     SEPARATOR,
-    { _L['Zoom In'], _buffer.zoom_in },
-    { _L['Zoom Out'], _buffer.zoom_out },
+    { _L['Zoom In'], buffer.zoom_in },
+    { _L['Zoom Out'], buffer.zoom_out },
     { _L['Reset Zoom'], utils.reset_zoom },
     SEPARATOR,
     { _L['Select Theme...'], gui.select_theme },
@@ -225,20 +226,19 @@ M.menubar = {
 -- @class table
 -- @name context_menu
 M.context_menu = {
-  { _L['gtk-undo'], _buffer.undo },
-  { _L['gtk-redo'], _buffer.redo },
+  { _L['gtk-undo'], buffer.undo },
+  { _L['gtk-redo'], buffer.redo },
   SEPARATOR,
-  { _L['gtk-cut'], _buffer.cut },
-  { _L['gtk-copy'], _buffer.copy },
-  { _L['gtk-paste'], _buffer.paste },
-  { _L['gtk-delete'], _buffer.clear },
+  { _L['gtk-cut'], buffer.cut },
+  { _L['gtk-copy'], buffer.copy },
+  { _L['gtk-paste'], buffer.paste },
+  { _L['gtk-delete'], buffer.clear },
   SEPARATOR,
-  { _L['gtk-select-all'], _buffer.select_all }
+  { _L['gtk-select-all'], buffer.select_all }
 }
 
 local key_shortcuts = {}
-local menu_actions = {}
-local contextmenu_actions = {}
+local menu_actions, contextmenu_actions = {}, {}
 
 -- Creates a menu suitable for `gui.gtkmenu()` from the menu table format.
 -- Also assigns key commands.
@@ -344,7 +344,9 @@ function M.rebuild_command_tables()
 end
 M.rebuild_command_tables()
 
-events.connect(events.MENU_CLICKED, function(menu_id)
+local events, events_connect = events, events.connect
+
+events_connect(events.MENU_CLICKED, function(menu_id)
   local actions = menu_id < 1000 and menu_actions or contextmenu_actions
   local action = actions[menu_id < 1000 and menu_id or menu_id - 1000]
   if type(action) ~= 'function' and type(action) ~= 'table' then
@@ -355,12 +357,12 @@ end)
 
 -- Set a language-specific context menu or the default one.
 local function set_language_contextmenu()
-  local lang = buffer:get_lexer()
+  local lang = _G.buffer:get_lexer()
   M.set_contextmenu(_m[lang] and _m[lang].context_menu or M.context_menu)
 end
-events.connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
-events.connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
-events.connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
-events.connect(events.BUFFER_NEW, set_lang_contextmenu)
+events_connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
+events_connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
+events_connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
+events_connect(events.BUFFER_NEW, set_lang_contextmenu)
 
 return M

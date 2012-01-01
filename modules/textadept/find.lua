@@ -118,7 +118,7 @@ function find.find_in_files(utf8_dir)
   end
 end
 
-local events = events
+local events, events_connect = events, events.connect
 local c = _SCINTILLA.constants
 
 -- Finds and selects text in the current buffer.
@@ -193,7 +193,7 @@ local function find_(text, next, flags, nowrap, wrapped)
 
   return result
 end
-events.connect(events.FIND, find_)
+events_connect(events.FIND, find_)
 
 -- Finds and selects text incrementally in the current buffer from a start
 -- point.
@@ -216,7 +216,7 @@ function find.find_incremental()
   gui.command_entry.focus()
 end
 
-events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
+events_connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   if find.incremental then
     if keys.KEYSYMS[code] == 'esc' then
       find.incremental = nil
@@ -232,7 +232,7 @@ events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
 end, 1) -- place before command_entry.lua's handler (if necessary)
 
 -- 'Find next' for incremental search.
-events.connect(events.COMMAND_ENTRY_COMMAND, function(text)
+events_connect(events.COMMAND_ENTRY_COMMAND, function(text)
   if find.incremental then
     find.incremental_start = buffer.current_pos + 1
     find_incremental(text)
@@ -290,7 +290,7 @@ local function replace(rtext)
     buffer:goto_pos(buffer.current_pos)
   end
 end
-events.connect(events.REPLACE, replace)
+events_connect(events.REPLACE, replace)
 
 -- Replaces all found text.
 -- If any text is selected, all found text in that selection is replaced.
@@ -336,7 +336,7 @@ local function replace_all(ftext, rtext, flags)
   gui.statusbar_text = ("%d %s"):format(count, _L['replacement(s) made'])
   buffer:end_undo_action()
 end
-events.connect(events.REPLACE_ALL, replace_all)
+events_connect(events.REPLACE_ALL, replace_all)
 
 -- When the user double-clicks a found file, go to the line in the file the text
 -- was found at.
@@ -356,7 +356,7 @@ local function goto_file(pos, line_num)
     end
   end
 end
-events.connect(events.DOUBLE_CLICK, goto_file)
+events_connect(events.DOUBLE_CLICK, goto_file)
 
 ---
 -- Goes to the next or previous file found relative to the file
@@ -391,7 +391,7 @@ function find.goto_file_in_list(next)
 end
 
 if buffer then buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end
-events.connect(events.VIEW_NEW, function()
+events_connect(events.VIEW_NEW, function()
   buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR)
 end)
 

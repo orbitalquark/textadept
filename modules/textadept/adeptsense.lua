@@ -903,9 +903,7 @@ syntax = {
   class_definition = 'class%s+([%w_]+)',
   word_chars = '%w_',
   symbol_chars = '[%w_%.]',
-  type_declarations = {
-    '(%u[%w_%.]+)%s+%_', -- Foo bar
-  },
+  type_declarations = { '(%u[%w_%.]+)%s+%_' }, -- Foo bar
   type_declarations_exclude = {},
   type_assignments = {}
 },

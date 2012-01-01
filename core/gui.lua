@@ -222,10 +222,10 @@ function gui.select_theme()
   f:close()
 end
 
-local connect = events.connect
+local events, events_connect = events, events.connect
 
 -- Sets default properties for a Scintilla window.
-connect(events.VIEW_NEW, function()
+events_connect(events.VIEW_NEW, function()
   local buffer = buffer
   local c = _SCINTILLA.constants
 
@@ -244,7 +244,7 @@ connect(events.VIEW_NEW, function()
   local ok, err = pcall(dofile, THEME..'/view.lua')
   if not ok then io.stderr:write(err) end
 end)
-connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
+events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
@@ -269,7 +269,7 @@ local function set_properties()
 end
 
 -- Sets default properties for a Scintilla document.
-connect(events.BUFFER_NEW, function()
+events_connect(events.BUFFER_NEW, function()
   -- Normally when an error occurs, a new buffer is created with the error
   -- message, but if an error occurs here, this event would be called again and
   -- again, erroring each time resulting in an infinite loop; print error to
@@ -287,19 +287,19 @@ local function set_title(buffer)
 end
 
 -- Changes Textadept title to show the buffer as being "clean".
-connect(events.SAVE_POINT_REACHED, function()
+events_connect(events.SAVE_POINT_REACHED, function()
   buffer.dirty = false
   set_title(buffer)
 end)
 
 -- Changes Textadept title to show thee buffer as "dirty".
-connect(events.SAVE_POINT_LEFT, function()
+events_connect(events.SAVE_POINT_LEFT, function()
   buffer.dirty = true
   set_title(buffer)
 end)
 
 -- Open uri(s).
-connect(events.URI_DROPPED, function(utf8_uris)
+events_connect(events.URI_DROPPED, function(utf8_uris)
   for utf8_uri in utf8_uris:gmatch('[^\r\n]+') do
     if utf8_uri:find('^file://') then
       utf8_uri = utf8_uri:match('^file://([^\r\n]+)')
@@ -312,7 +312,7 @@ connect(events.URI_DROPPED, function(utf8_uris)
     end
   end
 end)
-connect(events.APPLEEVENT_ODOC, function(uri)
+events_connect(events.APPLEEVENT_ODOC, function(uri)
   return events.emit(events.URI_DROPPED, 'file://'..uri)
 end)
 
@@ -320,7 +320,7 @@ local string_format = string.format
 local EOLs = { _L['CRLF'], _L['CR'], _L['LF'] }
 local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
 -- Sets docstatusbar text.
-connect(events.UPDATE_UI, function()
+events_connect(events.UPDATE_UI, function()
   local buffer = buffer
   local pos = buffer.current_pos
   local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
@@ -336,32 +336,30 @@ connect(events.UPDATE_UI, function()
 end)
 
 -- Toggles folding.
-connect(events.MARGIN_CLICK, function(margin, pos, modifiers)
+events_connect(events.MARGIN_CLICK, function(margin, pos, modifiers)
   if margin == 2 then buffer:toggle_fold(buffer:line_from_position(pos)) end
 end)
 
 -- Updates the statusbar and titlebar for a new Scintilla document.
-connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
-connect(events.BUFFER_NEW, function() set_title(buffer) end)
+events_connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
+events_connect(events.BUFFER_NEW, function() set_title(buffer) end)
 
 -- Save buffer properties.
-connect(events.BUFFER_BEFORE_SWITCH, function()
+events_connect(events.BUFFER_BEFORE_SWITCH, function()
   local buffer = buffer
   -- Save view state.
   buffer._anchor, buffer._current_pos = buffer.anchor, buffer.current_pos
   buffer._first_visible_line = buffer.first_visible_line
   -- Save fold state.
   buffer._folds = {}
-  local folds = buffer._folds
-  local i = buffer:contracted_fold_next(0)
+  local folds, i = buffer._folds, buffer:contracted_fold_next(0)
   while i >= 0 do
-    folds[#folds + 1] = i
-    i = buffer:contracted_fold_next(i + 1)
+    folds[#folds + 1], i = i, buffer:contracted_fold_next(i + 1)
   end
 end)
 
 -- Restore buffer properties.
-connect(events.BUFFER_AFTER_SWITCH, function()
+events_connect(events.BUFFER_AFTER_SWITCH, function()
   local buffer = buffer
   if not buffer._folds then return end
   -- Restore fold state.
@@ -374,21 +372,22 @@ connect(events.BUFFER_AFTER_SWITCH, function()
 end)
 
 -- Updates titlebar and statusbar.
-connect(events.BUFFER_AFTER_SWITCH, function()
+events_connect(events.BUFFER_AFTER_SWITCH, function()
   set_title(buffer)
   events.emit(events.UPDATE_UI)
 end)
 
 -- Updates titlebar and statusbar.
-connect(events.VIEW_AFTER_SWITCH, function()
+events_connect(events.VIEW_AFTER_SWITCH, function()
   set_title(buffer)
   events.emit(events.UPDATE_UI)
 end)
 
-connect(events.RESET_AFTER, function() gui.statusbar_text = 'Lua reset' end)
+events_connect(events.RESET_AFTER,
+               function() gui.statusbar_text = 'Lua reset' end)
 
 -- Prompts for confirmation if any buffers are dirty.
-connect(events.QUIT, function()
+events_connect(events.QUIT, function()
   local list = {}
   for _, buffer in ipairs(_BUFFERS) do
     if buffer.dirty then
@@ -408,7 +407,8 @@ connect(events.QUIT, function()
   return true
 end)
 
-connect(events.ERROR, function(...) gui._print(_L['[Error Buffer]'], ...) end)
+events_connect(events.ERROR,
+               function(...) gui._print(_L['[Error Buffer]'], ...) end)
 
 --[[ The functions below are Lua C functions.
 

@@ -30,7 +30,7 @@ module('_m.textadept.mime_types')]]
 --       * `lang`: The language lexer name.
 
 -- Events.
-local events = events
+local events, events_connect = events, events.connect
 events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
 
 ---
@@ -159,7 +159,7 @@ local function get_lexer(buffer, current)
   return get_style_name(buffer, style_at[i]):match('^(.+)_whitespace$') or lexer
 end
 
-events.connect(events.BUFFER_NEW, function()
+events_connect(events.BUFFER_NEW, function()
   buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
   buffer.get_style_name = get_style_name
 end, 1)
@@ -190,8 +190,8 @@ local function handle_new()
   end
   buffer:set_lexer(lexer or 'container')
 end
-events.connect(events.FILE_OPENED, handle_new)
-events.connect(events.FILE_SAVED_AS, handle_new)
+events_connect(events.FILE_OPENED, handle_new)
+events_connect(events.FILE_SAVED_AS, handle_new)
 
 -- Sets the buffer's lexer based on filename, shebang words, or
 -- first line pattern.
@@ -199,10 +199,10 @@ local function restore_lexer()
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'container')
 end
-events.connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
-events.connect(events.VIEW_NEW, restore_lexer, 1)
+events_connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
+events_connect(events.VIEW_NEW, restore_lexer, 1)
 
-events.connect(events.RESET_AFTER,
+events_connect(events.RESET_AFTER,
                function() buffer:set_lexer(buffer._lexer or 'container') end)
 
 return M

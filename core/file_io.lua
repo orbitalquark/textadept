@@ -41,7 +41,7 @@ module('io')]]
 --       * `filename`: The filename encoded in UTF-8.
 
 -- Events.
-local events = events
+local events, events_connect = events, events.connect
 events.FILE_OPENED = 'file_opened'
 events.FILE_BEFORE_SAVE = 'file_before_save'
 events.FILE_AFTER_SAVE = 'file_after_save'
@@ -139,15 +139,15 @@ function io.open_file(utf8_filenames)
     else
       encoding = nil
     end
-    local c = _SCINTILLA.constants
     buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
-    buffer.code_page = encoding and c.SC_CP_UTF8 or 0
+    buffer.code_page = encoding and _SCINTILLA.constants.SC_CP_UTF8 or 0
     -- Tries to set the buffer's EOL mode appropriately based on the file.
     local s, e = text:find('\r\n?')
     if s and e then
-      buffer.eol_mode = (s == e and c.SC_EOL_CR or c.SC_EOL_CRLF)
+      buffer.eol_mode = (s == e and _SCINTILLA.constants.SC_EOL_CR or
+                         _SCINTILLA.constants.SC_EOL_CRLF)
     else
-      buffer.eol_mode = c.SC_EOL_LF
+      buffer.eol_mode = _SCINTILLA.constants.SC_EOL_LF
     end
     buffer:add_text(text, #text)
     buffer:goto_pos(0)
@@ -317,11 +317,11 @@ local function update_modified_file()
     end
   end
 end
-events.connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
-events.connect(events.VIEW_AFTER_SWITCH, update_modified_file)
+events_connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
+events_connect(events.VIEW_AFTER_SWITCH, update_modified_file)
 
 -- Set additional buffer functions.
-events.connect(events.BUFFER_NEW, function()
+events_connect(events.BUFFER_NEW, function()
   local buffer = buffer
   buffer.reload = reload
   buffer.save, buffer.save_as = save, save_as
@@ -330,7 +330,7 @@ events.connect(events.BUFFER_NEW, function()
 end)
 
 -- Close initial "Untitled" buffer.
-events.connect(events.FILE_OPENED, function(utf8_filename)
+events_connect(events.FILE_OPENED, function(utf8_filename)
   local b = _BUFFERS[1]
   if #_BUFFERS == 2 and not (b.filename or b._type or b.dirty) then
     view:goto_buffer(1)
