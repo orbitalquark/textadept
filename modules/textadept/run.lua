@@ -29,7 +29,7 @@ module('_m.textadept.run')]]
 --       * `output`: The output from the command.
 
 -- Events.
-local events = events
+local events, events_connect = events, events.connect
 events.COMPILE_OUTPUT = 'compile_output'
 events.RUN_OUTPUT = 'run_output'
 
@@ -90,7 +90,7 @@ function M.compile()
   events.emit(events.COMPILE_OUTPUT, buffer:get_lexer(),
               command(M.compile_command))
 end
-events.connect(events.COMPILE_OUTPUT,
+events_connect(events.COMPILE_OUTPUT,
                function(lexer, output) gui.print(output) end)
 
 ---
@@ -110,7 +110,7 @@ M.run_command = {}
 function M.run()
   events.emit(events.RUN_OUTPUT, buffer:get_lexer(), command(M.run_command))
 end
-events.connect(events.RUN_OUTPUT,
+events_connect(events.RUN_OUTPUT,
                function(lexer, output) gui.print(output) end)
 
 ---
@@ -160,6 +160,6 @@ function goto_error(pos, line_num)
     end
   end
 end
-events.connect(events.DOUBLE_CLICK, goto_error)
+events_connect(events.DOUBLE_CLICK, goto_error)
 
 return M

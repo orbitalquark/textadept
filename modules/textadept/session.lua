@@ -61,8 +61,7 @@ function M.load(filename)
              buffer:visible_from_doc_line(first_visible_line))
       buffer:set_sel(anchor, current_pos)
     elseif line:find('^%s*split%d:') then
-      local level, num, type, size =
-        line:match('^(%s*)split(%d): (%S+) (%d+)')
+      local level, num, type, size = line:match('^(%s*)split(%d): (%S+) (%d+)')
       local view = splits[#level] and splits[#level][tonumber(num)] or view
       splits[#level + 1] = { view:split(type == 'true') }
       splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
