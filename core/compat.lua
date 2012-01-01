@@ -27,7 +27,7 @@ function xpcall(f, error, ...)
 end
 
 -- In Lua 5.1, `module` exists.
-module = nil
+_G.module = nil -- use _G prefix so LuaDoc does not get confused
 
 -- In Lua 5.1, `package.loaders` is `package.searchers`
 package.searchers = package.loaders
