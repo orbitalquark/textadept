@@ -302,25 +302,26 @@ events_connect(events.FILE_BEFORE_SAVE, M.prepare_for_save)
 -- @name transpose_chars
 function M.transpose_chars()
   local buffer = buffer
-  local pos = buffer.current_pos
-  if pos == buffer.length then return end
-  local c1, c2 = buffer.char_at[pos - 1], buffer.char_at[pos]
-  buffer:begin_undo_action()
-  buffer:delete_back()
-  buffer:insert_text((c2 == 10 or c2 == 13) and pos - 2 or pos, string.char(c1))
-  buffer:end_undo_action()
-  buffer:goto_pos(pos)
+  local pos, c = buffer.current_pos, buffer.char_at[buffer.current_pos]
+  local eol = c == 10 or c == 13 or pos == buffer.length
+  if eol then pos = pos - 1 end
+  buffer.target_start, buffer.target_end = pos - 1, pos + 1
+  buffer:replace_target(buffer:text_range(pos - 1, pos + 1):reverse())
+  buffer:goto_pos(not eol and pos or pos + 1)
 end
 
 ---
--- Joins the current line with the line below.
+-- Joins the currently selected lines.
+-- If no lines are selected, joins the current line with the line below.
 -- @name join_lines
 function M.join_lines()
   local buffer = buffer
+  buffer:target_from_selection()
   buffer:line_end()
-  local line = buffer:line_from_position(buffer.current_pos)
-  buffer.target_start = buffer.current_pos
-  buffer.target_end = buffer:position_from_line(line + 1)
+  local line = buffer:line_from_position(buffer.target_start)
+  if line == buffer:line_from_position(buffer.target_end) then
+    buffer.target_end = buffer:position_from_line(line + 1)
+  end
   buffer:lines_join()
 end
 
@@ -333,14 +334,11 @@ end
 -- @name enclose
 function M.enclose(left, right)
   local buffer = buffer
-  buffer:begin_undo_action()
-  local txt = buffer:get_sel_text()
-  if txt == '' then
-    buffer:word_left_extend()
-    txt = buffer:get_sel_text()
-  end
-  buffer:replace_sel(left..txt..right)
-  buffer:end_undo_action()
+  buffer:target_from_selection()
+  local s, e = buffer.target_start, buffer.target_end
+  if s == e then buffer.target_start = buffer:word_start_position(s, true) end
+  buffer:replace_target(left..buffer:text_range(buffer.target_start, e)..right)
+  buffer:goto_pos(buffer.target_end)
 end
 
 ---
@@ -374,8 +372,8 @@ end
 -- @name select_word
 function M.select_word(action)
   local buffer = buffer
-  buffer:set_sel(buffer:word_start_position(buffer.current_pos),
-                 buffer:word_end_position(buffer.current_pos))
+  buffer:set_sel(buffer:word_start_position(buffer.current_pos, true),
+                 buffer:word_end_position(buffer.current_pos, true))
 end
 
 ---
@@ -469,10 +467,10 @@ function M.highlight_word()
   local buffer = buffer
   local s, e = buffer.selection_start, buffer.selection_end
   if s == e then
-    s, e = buffer:word_start_position(s), buffer:word_end_position(s)
+    s, e = buffer:word_start_position(s, true), buffer:word_end_position(s)
   end
+  if s == e then return end
   local word = buffer:text_range(s, e)
-  if word == '' then return end
   buffer.search_flags = _SCINTILLA.constants.SCFIND_WHOLEWORD +
                         _SCINTILLA.constants.SCFIND_MATCHCASE
   buffer.target_start, buffer.target_end = 0, buffer.length

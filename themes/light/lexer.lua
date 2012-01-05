@@ -86,10 +86,8 @@ elseif OSX then
   font_size = 12
 end
 l.style_default = style {
-  font = font_face,
-  size = font_size,
-  fore = l.colors.light_black,
-  back = l.colors.white
+  font = font_face, size = font_size,
+  fore = l.colors.light_black, back = l.colors.white
 }
 l.style_line_number = style { fore = l.colors.grey, back = l.colors.white }
 l.style_bracelight = style { fore = l.colors.light_blue }

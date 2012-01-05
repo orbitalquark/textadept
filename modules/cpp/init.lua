@@ -117,7 +117,7 @@ if type(snippets) == 'table' then
     lit = 'lua_istable(%1(lua), %2(-1))',
     lith = 'lua_isthread(%1(lua), %2(-1))',
     liu = 'lua_isuserdata(%1(lua), %2(-1))',
-    llen = 'lua_objlen(%1(lua), %2(-1))',
+    llen = 'lua_rawlen(%1(lua), %2(-1))',
     lpop = 'lua_pop(%1(lua), %2(1));',
     lpb = 'lua_pushboolean(%1(lua), %2(boolean));',
     lpcc = 'lua_pushcclosure(%1(lua), %2(closure_func), %3(num_values));',

@@ -216,6 +216,7 @@ function gui.select_theme()
   local theme = gui.filteredlist(_L['Select Theme'], _L['Name'], themes)
   if not theme then return end
   gui.set_theme(theme)
+  -- Write the theme to the user's theme file.
   local f = io.open(_USERHOME..'/theme', 'wb')
   if not f then return end
   f:write(theme)
@@ -394,17 +395,14 @@ events_connect(events.QUIT, function()
       list[#list + 1] = buffer.filename or buffer._type or _L['Untitled']
     end
   end
-  if #list > 0 and gui.dialog('msgbox',
-                              '--title', _L['Quit without saving?'],
-                              '--text',
-                              _L['The following buffers are unsaved:'],
-                              '--informative-text', table.concat(list, '\n'),
-                              '--button1', 'gtk-cancel',
-                              '--button2', _L['Quit _without saving'],
-                              '--no-newline') ~= '2' then
-    return false
-  end
-  return true
+  return #list < 1 or gui.dialog('msgbox',
+                                 '--title', _L['Quit without saving?'],
+                                 '--text',
+                                 _L['The following buffers are unsaved:'],
+                                 '--informative-text', table.concat(list, '\n'),
+                                 '--button1', 'gtk-cancel',
+                                 '--button2', _L['Quit _without saving'],
+                                 '--no-newline') == '2'
 end)
 
 events_connect(events.ERROR,

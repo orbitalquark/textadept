@@ -165,12 +165,10 @@ local function find_(text, next, flags, nowrap, wrapped)
     local buffer_text = buffer:get_text(buffer.length)
     local results = { buffer_text:find(text, buffer.anchor + increment + 1) }
     if #results > 0 then
-      result = results[1]
       find.captures = { table.unpack(results, 3) }
-      buffer:set_sel(results[2], result - 1)
-    else
-      result = -1
+      buffer:set_sel(results[2], results[1] - 1)
     end
+    result = results[1] or -1
   else -- find in files
     find.find_in_files()
     return
@@ -221,11 +219,10 @@ events_connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
     if keys.KEYSYMS[code] == 'esc' then
       find.incremental = nil
     elseif code < 256 or keys.KEYSYMS[code] == '\b' then
-      local text = gui.command_entry.entry_text
       if keys.KEYSYMS[code] == '\b' then
-        find_incremental(text:sub(1, -2))
+        find_incremental(gui.command_entry.entry_text:sub(1, -2))
       else
-        find_incremental(text..string.char(code))
+        find_incremental(gui.command_entry.entry_text..string.char(code))
       end
     end
   end

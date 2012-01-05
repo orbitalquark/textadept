@@ -210,7 +210,7 @@ end
 local function save(buffer)
   if not buffer then buffer = _G.buffer end
   buffer:check_global()
-  if not buffer.filename then return buffer:save_as() end
+  if not buffer.filename then buffer:save_as() return end
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
   local text = buffer:get_text(buffer.length)
   if buffer.encoding then
