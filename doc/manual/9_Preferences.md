@@ -14,11 +14,11 @@ to load alongside the default modules, your `~/.textadept/init.lua` would
 contain
 
     require 'textadept'
-    _m.foo = require 'foo'
+    _M.foo = require 'foo'
 
-Please note that the `textadept` module populates the `_m.textadept` table
+Please note that the `textadept` module populates the `_M.textadept` table
 itself because of internal dependencies. Normally, modules do not do this, hence
-why `_m.foo = require 'foo'` is used.
+why `_M.foo = require 'foo'` is used.
 
 If instead you wanted to load all of Textadept's default modules except for the
 menu, copy the `textadept` module's `init.lua` (located in the
@@ -46,8 +46,8 @@ whitespace stripping on save, your `~/.textadept/init.lua` might look like:
 
     require 'textadept'
 
-    _m.textadept.editing.AUTOPAIR = false
-    _m.textadept.editing.STRIP_WHITESPACE_ON_SAVE = false
+    _M.textadept.editing.AUTOPAIR = false
+    _M.textadept.editing.STRIP_WHITESPACE_ON_SAVE = false
 
 #### Other
 

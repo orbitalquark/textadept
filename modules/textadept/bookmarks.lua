@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Bookmarks for the textadept module.
-module('_m.textadept.bookmarks')]]
+module('_M.textadept.bookmarks')]]
 
 -- Markdown:
 -- ## Settings
@@ -61,7 +61,7 @@ function M.goto_next()
   local current_line = buffer:line_from_position(buffer.current_pos)
   local line = buffer:marker_next(current_line + 1, 2^MARK_BOOKMARK)
   if line == -1 then line = buffer:marker_next(0, 2^MARK_BOOKMARK) end
-  if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
+  if line >= 0 then _M.textadept.editing.goto_line(line + 1) end
 end
 
 ---
@@ -74,7 +74,7 @@ function M.goto_prev()
   if line == -1 then
     line = buffer:marker_previous(buffer.line_count, 2^MARK_BOOKMARK)
   end
-  if line >= 0 then _m.textadept.editing.goto_line(line + 1) end
+  if line >= 0 then _M.textadept.editing.goto_line(line + 1) end
 end
 
 ---
@@ -90,7 +90,7 @@ function M.goto_bookmark()
     line = buffer:marker_next(line + 1, 2^MARK_BOOKMARK)
   until line < 0
   local line = gui.filteredlist(_L['Select Bookmark'], _L['Bookmark'], markers)
-  if line then _m.textadept.editing.goto_line(line:match('^%d+')) end
+  if line then _M.textadept.editing.goto_line(line:match('^%d+')) end
 end
 
 if buffer then buffer:marker_set_back(MARK_BOOKMARK, M.MARK_BOOKMARK_COLOR) end

@@ -8,7 +8,7 @@ local M = {}
 -- It provides utilities for editing C/C++ code.
 -- User tags are loaded from _USERHOME/modules/cpp/tags and user apis are loaded
 -- from _USERHOME/modules/cpp/api.
-module('_m.cpp')]]
+module('_M.cpp')]]
 
 -- Markdown:
 -- ## Key Commands
@@ -22,19 +22,19 @@ module('_m.cpp')]]
 --
 -- ## Fields
 --
--- * `sense`: The C/C++ [Adeptsense](_m.textadept.adeptsense.html).
+-- * `sense`: The C/C++ [Adeptsense](_M.textadept.adeptsense.html).
 
-local m_editing, m_run = _m.textadept.editing, _m.textadept.run
+local Mediting, Mrun = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.
-m_editing.comment_string.cpp = '//'
+Mediting.comment_string.cpp = '//'
 -- Compile and Run command tables use file extensions.
-m_run.compile_command.c =
+Mrun.compile_command.c =
   'gcc -pedantic -Os -o "%(filename_noext)" %(filename)'
-m_run.compile_command.cpp =
+Mrun.compile_command.cpp =
   'g++ -pedantic -Os -o "%(filename_noext)" %(filename)'
-m_run.run_command.c = '%(filedir)%(filename_noext)'
-m_run.run_command.cpp = '%(filedir)%(filename_noext)'
-m_run.error_detail.c = {
+Mrun.run_command.c = '%(filedir)%(filename_noext)'
+Mrun.run_command.cpp = '%(filedir)%(filename_noext)'
+Mrun.error_detail.c = {
   pattern = '^(.-):(%d+): (.+)$',
   filename = 1, line = 2, message = 3
 }
@@ -48,7 +48,7 @@ end
 
 -- Adeptsense.
 
-M.sense = _m.textadept.adeptsense.new('cpp')
+M.sense = _M.textadept.adeptsense.new('cpp')
 M.sense.ctags_kinds = {
   c = 'classes', d = 'functions', e = 'fields', f = 'functions', g = 'classes',
   m = 'fields', s = 'classes', t = 'classes'

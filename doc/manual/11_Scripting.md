@@ -2,7 +2,7 @@
 
 Textadept has superb support for editing Lua code. Syntax autocomplete and
 LuaDoc is available for many Textadept objects as well as Lua's standard
-libraries. See the [lua module documentation](../modules/_m.lua.commands.html)
+libraries. See the [lua module documentation](../modules/_M.lua.commands.html)
 for more information.
 
 ![Adeptsense ta](images/adeptsense_ta.png)

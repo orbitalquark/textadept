@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Provides Lua-style snippets for Textadept.
-module('_m.textadept.snippets')]]
+module('_M.textadept.snippets')]]
 
 -- Markdown:
 -- ## Overview

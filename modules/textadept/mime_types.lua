@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Handles file-specific settings.
-module('_m.textadept.mime_types')]]
+module('_M.textadept.mime_types')]]
 
 -- Markdown:
 -- ## Overview
@@ -132,10 +132,10 @@ local function set_lexer(buffer, lang)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
   if package.searchpath(lang, package.path) then
-    _m[lang] = require(lang)
+    _M[lang] = require(lang)
     local post_init = lang..'.post_init'
     if package.searchpath(post_init, package.path) then require(post_init) end
-    _m[lang].set_buffer_properties()
+    _M[lang].set_buffer_properties()
     events.emit(events.LANGUAGE_MODULE_LOADED, lang)
   end
   buffer:colourise(0, -1)

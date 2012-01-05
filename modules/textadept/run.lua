@@ -8,7 +8,7 @@ local M = {}
 -- Typically, language-specific modules populate the 'compile_command',
 -- 'run_command', and 'error_detail' tables for a particular language's file
 -- extension.
-module('_m.textadept.run')]]
+module('_M.textadept.run')]]
 
 -- Markdown:
 -- ## Run Events
@@ -150,7 +150,7 @@ function goto_error(pos, line_num)
       local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
       if lfs.attributes(filename) then
         gui.goto_file(utf8_filename, true)
-        _m.textadept.editing.goto_line(captures[error_detail.line])
+        _M.textadept.editing.goto_line(captures[error_detail.line])
         local msg = captures[error_detail.message]
         if msg then buffer:call_tip_show(buffer.current_pos, msg) end
       else

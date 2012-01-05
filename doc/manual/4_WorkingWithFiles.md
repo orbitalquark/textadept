@@ -62,7 +62,7 @@ displays a list of files to open, including files in subdirectories. You can
 snapopen the current file's directory with `Ctrl+Alt+Shift+O` (`^⌘⇧O` on Mac
 OSX) or from the `Tools -> Snapopen -> Current Directory` menu. Snapopen is
 pretty limited from the menu, but more versatile in scripts. See its
-[LuaDoc](../modules/_m.textadept.snapopen.html). `Ctrl+U` (`⌘U`) snaps open
+[LuaDoc](../modules/_M.textadept.snapopen.html). `Ctrl+U` (`⌘U`) snaps open
 `~/.textadept/`.
 
 ![Snapopen](images/snapopen.png)

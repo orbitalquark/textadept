@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Language autocompletion support for the textadept module.
-module('_m.textadept.adeptsense')]]
+module('_M.textadept.adeptsense')]]
 
 -- Markdown:
 -- ## Overview
@@ -50,7 +50,7 @@ module('_m.textadept.adeptsense')]]
 --     $> cd modules/lua/
 --     $> textadept init.lua
 --
---     sense = _m.textadept.adeptsense.new('lua')
+--     sense = _M.textadept.adeptsense.new('lua')
 --
 -- Where 'lua' is replaced by your language's name.
 --
@@ -102,12 +102,12 @@ module('_m.textadept.adeptsense')]]
 --
 -- Sometimes a type can be inferred by the right side of a variable assignment.
 -- In the Lua code `local foo = 'bar'`, the variable `foo` has type `string`.
--- Similarly, in `local foo = _m.textadept.adeptsense`, `foo` has type
--- `_m.textadept.adeptsense`.
+-- Similarly, in `local foo = _M.textadept.adeptsense`, `foo` has type
+-- `_M.textadept.adeptsense`.
 --
 --     sense.syntax.type_assignments = {
 --       ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
---       ['^([%w_%.]+)'] = '%1' -- foo = _m.textadept.adeptsense
+--       ['^([%w_%.]+)'] = '%1' -- foo = _M.textadept.adeptsense
 --     }
 --
 -- Note the `^` in the pattern. The beginning of the right hand side of the
@@ -753,7 +753,7 @@ function M.goto_ctag(sense, k, title)
       buffer:goto_pos(buffer.target_start)
     end
   else
-    _m.textadept.editing.goto_line(tonumber(line))
+    _M.textadept.editing.goto_line(tonumber(line))
   end
 end
 
@@ -796,7 +796,7 @@ function M.handle_clear(sense) end
 -- Only one sense can exist per language.
 -- @param lang The lexer language to create an Adeptsense for.
 -- @return adeptsense
--- @usage local lua_sense = _m.textadept.adeptsense.new('lua')
+-- @usage local lua_sense = _M.textadept.adeptsense.new('lua')
 -- @name new
 function M.new(lang)
   local sense = senses[lang]
@@ -921,7 +921,7 @@ end
 -- This should be called by key commands and menus instead of `complete()`.
 -- @name complete_symbol
 function M.complete_symbol()
-  local m = _m[buffer:get_lexer()]
+  local m = _M[buffer:get_lexer()]
   if m and m.sense then m.sense:complete() end
 end
 
@@ -931,7 +931,7 @@ end
 -- This should be called by key commands and menus instead of `show_apidoc()`.
 -- @name show_documentation
 function M.show_documentation()
-  local m = _m[buffer:get_lexer()]
+  local m = _M[buffer:get_lexer()]
   if m and m.sense then m.sense:show_apidoc() end
 end
 

@@ -6,9 +6,9 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Provides dynamic menus for Textadept.
--- This module should be `require`ed last, after `_m.textadept.keys` since it
+-- This module should be `require`ed last, after `_M.textadept.keys` since it
 -- looks up defined key commands to show them in menus.
-module('_m.textadept.menu')]]
+module('_M.textadept.menu')]]
 
 -- Get a string uniquely identifying a key command.
 -- This is used to match menu items with key commands to show the key shortcut.
@@ -24,9 +24,9 @@ local function get_id(f)
 end
 
 local _L, io, gui, gui_find, buffer, view = _L, io, gui, gui.find, buffer, view
-local m_textadept, m_editing = _m.textadept, _m.textadept.editing
-local m_bookmarks, m_snippets = m_textadept.bookmarks, m_textadept.snippets
-local utils = m_textadept.keys.utils
+local Mtextadept, Mediting = _M.textadept, _M.textadept.editing
+local Mbookmarks, Msnippets = Mtextadept.bookmarks, Mtextadept.snippets
+local utils = Mtextadept.keys.utils
 local SEPARATOR, c = { 'separator' }, _SCINTILLA.constants
 
 ---
@@ -45,8 +45,8 @@ M.menubar = {
     { _L['gtk-close'], buffer.close },
     { _L['Close All'], io.close_all },
     SEPARATOR,
-    { _L['Load Session...'], m_textadept.session.prompt_load },
-    { _L['Save Session...'], m_textadept.session.prompt_save },
+    { _L['Load Session...'], Mtextadept.session.prompt_load },
+    { _L['Save Session...'], Mtextadept.session.prompt_save },
     SEPARATOR,
     { _L['gtk-quit'], quit },
   },
@@ -61,44 +61,41 @@ M.menubar = {
     { _L['gtk-delete'], buffer.clear },
     { _L['gtk-select-all'], buffer.select_all },
     SEPARATOR,
-    { _L['Match Brace'], m_editing.match_brace },
-    { _L['Complete Word'], { m_editing.autocomplete_word, '%w_' } },
-    { _L['Delete Word'], { m_editing.current_word, 'delete' } },
-    { _L['Highlight Word'], m_editing.highlight_word },
-    { _L['Toggle Block Comment'], m_editing.block_comment },
-    { _L['Transpose Characters'], m_editing.transpose_chars },
-    { _L['Join Lines'], m_editing.join_lines },
+    { _L['Match Brace'], Mediting.match_brace },
+    { _L['Complete Word'], { Mediting.autocomplete_word, '%w_' } },
+    { _L['Delete Word'], { Mediting.current_word, 'delete' } },
+    { _L['Highlight Word'], Mediting.highlight_word },
+    { _L['Toggle Block Comment'], Mediting.block_comment },
+    { _L['Transpose Characters'], Mediting.transpose_chars },
+    { _L['Join Lines'], Mediting.join_lines },
     { title = _L['Select'],
-      { _L['Select to Matching Brace'], { m_editing.match_brace, 'select' } },
-      { _L['Select between XML Tags'],
-        { m_editing.select_enclosed, '>', '<' } },
-      { _L['Select in XML Tag'], { m_editing.select_enclosed, '<', '>' } },
-      { _L['Select in Single Quotes'],
-        { m_editing.select_enclosed, "'", "'" } },
-      { _L['Select in Double Quotes'],
-        { m_editing.select_enclosed, '"', '"' } },
-      { _L['Select in Parentheses'], { m_editing.select_enclosed, '(', ')' } },
-      { _L['Select in Brackets'], { m_editing.select_enclosed, '[', ']' } },
-      { _L['Select in Braces'], { m_editing.select_enclosed, '{', '}' } },
-      { _L['Select Word'], { m_editing.current_word, 'select' } },
-      { _L['Select Line'], m_editing.select_line },
-      { _L['Select Paragraph'], m_editing.select_paragraph },
-      { _L['Select Indented Block'], m_editing.select_indented_block },
+      { _L['Select to Matching Brace'], { Mediting.match_brace, 'select' } },
+      { _L['Select between XML Tags'], { Mediting.select_enclosed, '>', '<' } },
+      { _L['Select in XML Tag'], { Mediting.select_enclosed, '<', '>' } },
+      { _L['Select in Single Quotes'], { Mediting.select_enclosed, "'", "'" } },
+      { _L['Select in Double Quotes'], { Mediting.select_enclosed, '"', '"' } },
+      { _L['Select in Parentheses'], { Mediting.select_enclosed, '(', ')' } },
+      { _L['Select in Brackets'], { Mediting.select_enclosed, '[', ']' } },
+      { _L['Select in Braces'], { Mediting.select_enclosed, '{', '}' } },
+      { _L['Select Word'], { Mediting.current_word, 'select' } },
+      { _L['Select Line'], Mediting.select_line },
+      { _L['Select Paragraph'], Mediting.select_paragraph },
+      { _L['Select Indented Block'], Mediting.select_indented_block },
     },
     { title = _L['Selection'],
       { _L['Upper Case Selection'], buffer.upper_case },
       { _L['Lower Case Selection'], buffer.lower_case },
       SEPARATOR,
       { _L['Enclose as XML Tags'], utils.enclose_as_xml_tags },
-      { _L['Enclose as Single XML Tag'], { m_editing.enclose, '<', ' />' } },
-      { _L['Enclose in Single Quotes'], { m_editing.enclose, "'", "'" } },
-      { _L['Enclose in Double Quotes'], { m_editing.enclose, '"', '"' } },
-      { _L['Enclose in Parentheses'], { m_editing.enclose, '(', ')' } },
-      { _L['Enclose in Brackets'], { m_editing.enclose, '[', ']' } },
-      { _L['Enclose in Braces'], { m_editing.enclose, '{', '}' } },
+      { _L['Enclose as Single XML Tag'], { Mediting.enclose, '<', ' />' } },
+      { _L['Enclose in Single Quotes'], { Mediting.enclose, "'", "'" } },
+      { _L['Enclose in Double Quotes'], { Mediting.enclose, '"', '"' } },
+      { _L['Enclose in Parentheses'], { Mediting.enclose, '(', ')' } },
+      { _L['Enclose in Brackets'], { Mediting.enclose, '[', ']' } },
+      { _L['Enclose in Braces'], { Mediting.enclose, '{', '}' } },
       SEPARATOR,
-      { _L['Grow Selection'], { m_editing.grow_selection, 1 } },
-      { _L['Shrink Selection'], { m_editing.grow_selection, -1 } },
+      { _L['Grow Selection'], { Mediting.grow_selection, 1 } },
+      { _L['Shrink Selection'], { Mediting.grow_selection, -1 } },
       SEPARATOR,
       { _L['Move Selected Lines Up'], buffer.move_selected_lines_up },
       { _L['Move Selected Lines Down'], buffer.move_selected_lines_down },
@@ -116,37 +113,37 @@ M.menubar = {
     { _L['Goto Next File Found'], { gui_find.goto_file_in_list, true } },
     { _L['Goto Previous File Found'], { gui_find.goto_file_in_list, false } },
     SEPARATOR,
-    { _L['gtk-jump-to'], m_editing.goto_line },
+    { _L['gtk-jump-to'], Mediting.goto_line },
   },
   { title = _L['Tools'],
     { _L['Command Entry'], gui.command_entry.focus },
     { _L['Select Command'], utils.select_command },
     SEPARATOR,
-    { _L['Run'], m_textadept.run.run },
-    { _L['Compile'], m_textadept.run.compile },
-    { _L['Filter Through'], _m.textadept.filter_through.filter_through },
+    { _L['Run'], Mtextadept.run.run },
+    { _L['Compile'], Mtextadept.run.compile },
+    { _L['Filter Through'], _M.textadept.filter_through.filter_through },
     SEPARATOR,
     { title = _L['Adeptsense'],
-      { _L['Complete Symbol'], m_textadept.adeptsense.complete_symbol },
-      { _L['Show Documentation'], m_textadept.adeptsense.show_documentation },
+      { _L['Complete Symbol'], Mtextadept.adeptsense.complete_symbol },
+      { _L['Show Documentation'], Mtextadept.adeptsense.show_documentation },
     },
     { title = _L['Bookmark'],
-      { _L['Toggle Bookmark'], m_bookmarks.toggle },
-      { _L['Clear Bookmarks'], m_bookmarks.clear },
-      { _L['Next Bookmark'], m_bookmarks.goto_next },
-      { _L['Previous Bookmark'], m_bookmarks.goto_prev },
-      { _L['Goto Bookmark...'], m_bookmarks.goto_bookmark },
+      { _L['Toggle Bookmark'], Mbookmarks.toggle },
+      { _L['Clear Bookmarks'], Mbookmarks.clear },
+      { _L['Next Bookmark'], Mbookmarks.goto_next },
+      { _L['Previous Bookmark'], Mbookmarks.goto_prev },
+      { _L['Goto Bookmark...'], Mbookmarks.goto_bookmark },
     },
     { title = _L['Snapopen'],
-      { _L['Snapopen User Home'], { m_textadept.snapopen.open, _USERHOME } },
-      { _L['Snapopen Textadept Home'], { m_textadept.snapopen.open, _HOME } },
+      { _L['Snapopen User Home'], { Mtextadept.snapopen.open, _USERHOME } },
+      { _L['Snapopen Textadept Home'], { Mtextadept.snapopen.open, _HOME } },
       { _L['Snapopen Current Directory'], utils.snapopen_filedir },
     },
     { title = _L['Snippets'],
-      { _L['Insert Snippet...'], m_snippets._select },
-      { _L['Expand Snippet/Next Placeholder'], m_snippets._insert },
-      { _L['Previous Snippet Placeholder'], m_snippets._previous },
-      { _L['Cancel Snippet'], m_snippets._cancel_current },
+      { _L['Insert Snippet...'], Msnippets._select },
+      { _L['Expand Snippet/Next Placeholder'], Msnippets._insert },
+      { _L['Previous Snippet Placeholder'], Msnippets._previous },
+      { _L['Cancel Snippet'], Msnippets._cancel_current },
     },
     SEPARATOR,
     { _L['Show Style'], utils.show_style },
@@ -163,7 +160,7 @@ M.menubar = {
       { _L['Tab width: 8'], { utils.set_indentation, 8 } },
       SEPARATOR,
       { _L['Toggle Use Tabs'], { utils.toggle_property, 'use_tabs' } },
-      { _L['Convert Indentation'], m_editing.convert_indentation },
+      { _L['Convert Indentation'], Mediting.convert_indentation },
     },
     { title = _L['EOL Mode'],
       { _L['CRLF'], { utils.set_eol_mode, c.SC_EOL_CRLF } },
@@ -178,7 +175,7 @@ M.menubar = {
       { _L['UTF-16 Encoding'], { utils.set_encoding, 'UTF-16LE' } },
     },
     SEPARATOR,
-    { _L['Select Lexer...'], m_textadept.mime_types.select_lexer },
+    { _L['Select Lexer...'], Mtextadept.mime_types.select_lexer },
     { _L['Refresh Syntax Highlighting'],
       { buffer.colourise, buffer, 0, -1 } },
   },
@@ -358,7 +355,7 @@ end)
 -- Set a language-specific context menu or the default one.
 local function set_language_contextmenu()
   local lang = _G.buffer:get_lexer()
-  M.set_contextmenu(_m[lang] and _m[lang].context_menu or M.context_menu)
+  M.set_contextmenu(_M[lang] and _M[lang].context_menu or M.context_menu)
 end
 events_connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
 events_connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)

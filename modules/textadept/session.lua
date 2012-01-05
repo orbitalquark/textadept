@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Session support for the textadept module.
-module('_m.textadept.session')]]
+module('_M.textadept.session')]]
 
 -- Markdown:
 -- ## Settings
@@ -28,7 +28,7 @@ M.MAX_RECENT_FILES = 10
 -- @param filename The absolute path to the session file to load. Defaults to
 --   `DEFAULT_SESSION` if not specified.
 -- @return `true` if the session file was opened and read; `false` otherwise.
--- @usage _m.textadept.session.load(filename)
+-- @usage _M.textadept.session.load(filename)
 -- @name load
 function M.load(filename)
   local not_found = {}
@@ -104,7 +104,7 @@ events.connect('arg_none', function() if M.SAVE_ON_QUIT then M.load() end end)
 -- details.
 -- @param filename The absolute path to the session file to save. Defaults to
 --   either the current session file or `DEFAULT_SESSION` if not specified.
--- @usage _m.textadept.session.save(filename)
+-- @usage _M.textadept.session.save(filename)
 -- @name save
 function M.save(filename)
   local session = {}
