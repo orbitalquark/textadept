@@ -296,18 +296,6 @@ end
 events_connect(events.FILE_BEFORE_SAVE, M.prepare_for_save)
 
 ---
--- Selects the current word under the caret and if action indicates, deletes it.
--- @param action Optional action to perform with selected word. If `delete`, it
---   is deleted.
--- @name current_word
-function M.current_word(action)
-  local buffer = buffer
-  buffer:set_sel(buffer:word_start_position(buffer.current_pos),
-                 buffer:word_end_position(buffer.current_pos))
-  if action == 'delete' then buffer:delete_back() end
-end
-
----
 -- Transposes characters intelligently.
 -- If the caret is at the end of a line, the two characters before the caret are
 -- transposed. Otherwise, the characters to the left and right are.
@@ -379,6 +367,15 @@ function M.grow_selection(amount)
   else
     buffer:set_sel(anchor + amount, caret - amount)
   end
+end
+
+---
+-- Selects the current word under the caret.
+-- @name select_word
+function M.select_word(action)
+  local buffer = buffer
+  buffer:set_sel(buffer:word_start_position(buffer.current_pos),
+                 buffer:word_end_position(buffer.current_pos))
 end
 
 ---

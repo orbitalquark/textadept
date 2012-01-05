@@ -11,6 +11,10 @@ module('_M.textadept.keys')]]
 
 -- Utility functions.
 M.utils = {
+  delete_word = function()
+    _M.textadept.editing.select_word()
+    buffer:delete_back()
+  end,
   enclose_as_xml_tags = function()
     _M.textadept.editing.enclose('<', '>')
     local buffer = buffer
@@ -159,7 +163,7 @@ keys.del = buffer.clear
 keys[not OSX and 'ca' or 'ma'] = buffer.select_all
 keys.cm = Mediting.match_brace
 keys[not OSX and 'c\n' or 'cesc'] = { Mediting.autocomplete_word, '%w_' }
-keys[not OSX and 'adel' or 'cdel'] = { Mediting.current_word, 'delete' }
+keys[not OSX and 'adel' or 'cdel'] = utils.delete_word
 keys[not OSX and 'caH' or 'mH'] = Mediting.highlight_word
 keys[not OSX and 'c/' or 'm/'] = Mediting.block_comment
 keys.ct = Mediting.transpose_chars
@@ -173,7 +177,7 @@ keys[not OSX and 'c"' or 'm"'] = { Mediting.select_enclosed, '"', '"' }
 keys[not OSX and 'c(' or 'm('] = { Mediting.select_enclosed, '(', ')' }
 keys[not OSX and 'c[' or 'm['] = { Mediting.select_enclosed, '[', ']' }
 keys[not OSX and 'c{' or 'm{'] = { Mediting.select_enclosed, '{', '}' }
-keys[not OSX and 'cD' or 'mD'] = { Mediting.current_word, 'select' }
+keys[not OSX and 'cD' or 'mD'] = Mediting.select_word
 keys[not OSX and 'cN' or 'mN'] = Mediting.select_line
 keys[not OSX and 'cP' or 'mP'] = Mediting.select_paragraph
 keys[not OSX and 'cI' or 'mI'] = Mediting.select_indented_block
