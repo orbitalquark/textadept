@@ -352,7 +352,7 @@ local function goto_file(pos, line_num)
       buffer:marker_add(line_num, MARK_FIND)
       buffer:goto_pos(buffer.current_pos)
       gui.goto_file(file, true, preferred_view)
-      _m.textadept.editing.goto_line(file_line_num)
+      _M.textadept.editing.goto_line(file_line_num)
     end
   end
 end

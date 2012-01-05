@@ -36,7 +36,7 @@ module('keys')]]
 --
 -- For key values less than 255, Lua's [`string.char()`][string_char] is used to
 -- determine the key's string representation. Otherwise, the
--- [`KEYSYMS`](../modules/_m.textadept.keys.html#KEYSYMS) lookup table is used.
+-- [`KEYSYMS`](../modules/_M.textadept.keys.html#KEYSYMS) lookup table is used.
 --
 -- [string_char]: http://www.lua.org/manual/5.1/manual.html#pdf-string.char
 --

@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Snapopen for the textadept module.
-module('_m.textadept.snapopen')]]
+module('_M.textadept.snapopen')]]
 
 -- Markdown:
 -- ## Settings
@@ -18,7 +18,7 @@ module('_m.textadept.snapopen')]]
 --
 -- ## Examples
 --
---     local snapopen = _m.textadept.snapopen.open
+--     local snapopen = _M.textadept.snapopen.open
 --
 --     -- Show all files in PATHS.
 --     snapopen()
@@ -96,10 +96,10 @@ end
 --   search. Defaults to `false`.
 -- @param depth Number of directories to recurse into for finding files.
 --   Defaults to `DEFAULT_DEPTH`.
--- @usage _m.textadept.snapopen.open()
--- @usage _m.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)
--- @usage _m.textadept.snapopen.open(nil, '!%.lua$')
--- @usage _m.textadept.snapopen.open(nil, { folders = { '%.hg' } })
+-- @usage _M.textadept.snapopen.open()
+-- @usage _M.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)
+-- @usage _M.textadept.snapopen.open(nil, '!%.lua$')
+-- @usage _M.textadept.snapopen.open(nil, { folders = { '%.hg' } })
 -- @name open
 function M.open(utf8_paths, filter, exclusive, depth)
   if not utf8_paths then utf8_paths = {} end

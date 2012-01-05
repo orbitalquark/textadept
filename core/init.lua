@@ -18,7 +18,7 @@ _LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers'
 
 gui.set_theme()
 
-_m = {} -- modules table
+_M = {} -- modules table
 
 --[[ This comment is for LuaDoc.
 --- Extends Lua's _G table to provide extra functions and fields.

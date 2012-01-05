@@ -40,7 +40,7 @@ other languages have basic support with the help of
 ![Adeptsense Doc](images/adeptsense_doc.png)
 
 For more information on adding adeptsense support for another language, see
-the [LuaDoc](../modules/_m.textadept.adeptsense.html).
+the [LuaDoc](../modules/_M.textadept.adeptsense.html).
 
 ## Find and Replace
 

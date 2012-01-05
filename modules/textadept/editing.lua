@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Editing commands for the textadept module.
-module('_m.textadept.editing')]]
+module('_M.textadept.editing')]]
 
 -- Markdown:
 -- ## Settings
@@ -52,7 +52,7 @@ M.comment_string = {}
 -- '[]', '{}', '''', and '""'.
 -- @class table
 -- @name char_matches
--- @usage _m.textadept.editing.char_matches.hypertext = { ..., [60] = '>' }
+-- @usage _M.textadept.editing.char_matches.hypertext = { ..., [60] = '>' }
 M.char_matches = { [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"' }
 
 ---
@@ -62,7 +62,7 @@ M.char_matches = { [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"' }
 -- modules. The defaults are '(', ')', '[', ']', '{', and '}'.
 -- @class table
 -- @name braces
--- @usage _m.textadept.editing.braces.hypertext = { ..., [60] = 1, [62] = 1 }
+-- @usage _M.textadept.editing.braces.hypertext = { ..., [60] = 1, [62] = 1 }
 M.braces = { [40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1 }
 
 -- The current call tip.

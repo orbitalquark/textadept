@@ -8,7 +8,7 @@ local M = {}
 -- It provides utilities for editing Lua code.
 -- User tags are loaded from _USERHOME/modules/lua/tags and user apis are loaded
 -- from _USERHOME/modules/lua/api.
-module('_m.lua')]]
+module('_M.lua')]]
 
 -- Markdown:
 -- ## Key Commands
@@ -24,14 +24,14 @@ module('_m.lua')]]
 --
 -- ## Fields
 --
--- * `sense`: The Lua [Adeptsense](_m.textadept.adeptsense.html).
+-- * `sense`: The Lua [Adeptsense](_M.textadept.adeptsense.html).
 
-local m_editing, m_run = _m.textadept.editing, _m.textadept.run
+local Mediting, Mrun = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.
-m_editing.comment_string.lua = '--'
+Mediting.comment_string.lua = '--'
 -- Compile and Run command tables use file extensions.
-m_run.run_command.lua = 'lua %(filename)'
-m_run.error_detail.lua = {
+Mrun.run_command.lua = 'lua %(filename)'
+Mrun.error_detail.lua = {
   pattern = '^lua: (.-):(%d+): (.+)$',
   filename = 1, line = 2, message = 3
 }
@@ -45,14 +45,14 @@ end
 
 -- Adeptsense.
 
-M.sense = _m.textadept.adeptsense.new('lua')
+M.sense = _M.textadept.adeptsense.new('lua')
 M.sense.syntax.class_definition = 'module%s*%(?%s*[\'"]([%w_%.]+)'
 M.sense.syntax.symbol_chars = '[%w_%.:]'
 M.sense.syntax.type_declarations = {}
 M.sense.syntax.type_assignments = {
   ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
-  ['^([%w_%.]+)%s*$'] = '%1', -- foo = _m.textadept.adeptsense
-  ['^(_m%.textadept%.adeptsense)%.new'] = '%1',
+  ['^([%w_%.]+)%s*$'] = '%1', -- foo = _M.textadept.adeptsense
+  ['^(_M%.textadept%.adeptsense)%.new'] = '%1',
   ['require%s*%(?%s*(["\'])([%w_%.]+)%1%)?'] = '%2',
   ['^io%.p?open%s*%b()%s*$'] = 'file'
 }

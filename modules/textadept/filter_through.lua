@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Filter-Through for the textadept module.
-module('_m.textadept.filter_through')]]
+module('_M.textadept.filter_through')]]
 
 local cat = not WIN32 and 'cat' or 'type'
 local tmpfile = _USERHOME..'/.ft'

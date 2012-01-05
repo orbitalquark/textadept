@@ -1,10 +1,10 @@
 -- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the
--- global _m table.
+-- global _M table.
 
 ---
 -- A table of loaded modules.
-module('_m')
+module('_M')
 
 -- Markdown:
 -- ## Overview
@@ -23,39 +23,39 @@ module('_m')
 --
 -- #### Snippets
 --
--- [Snippets](../modules/_m.textadept.snippets.html) for common code constructs.
+-- [Snippets](../modules/_M.textadept.snippets.html) for common code constructs.
 --
 -- #### Commands
 --
 -- ##### Run
 --
 -- If the code can be run by an interpreter or other executable, create a [run
--- command](../modules/_m.textadept.run.html#run_command) for it as well as an
--- [error format](../modules/_m.textadept.run.html#error_detail) for the ability
+-- command](../modules/_M.textadept.run.html#run_command) for it as well as an
+-- [error format](../modules/_M.textadept.run.html#error_detail) for the ability
 -- to jump to the position in a file where the error occured.
 --
 -- For example:
 --
---     _m.textadept.run.run_command.lua = 'lua %(filename)'
+--     _M.textadept.run.run_command.lua = 'lua %(filename)'
 --
 -- ##### Compile
 --
 -- If the code can be compiled by an executable, create a [compile
--- command](../modules/_m.textadept.run.html#compile_command) for it.
+-- command](../modules/_M.textadept.run.html#compile_command) for it.
 --
 -- For example:
 --
---     _m.textadept.run.compile_command.lua = 'luac %(filename)'
+--     _M.textadept.run.compile_command.lua = 'luac %(filename)'
 --
 -- ##### Block Comment
 --
 -- Create a [comment
--- prefix](../modules/_m.textadept.editing.html#comment_string) for it so code
+-- prefix](../modules/_M.textadept.editing.html#comment_string) for it so code
 -- can be easily commented and uncommented.
 --
 -- For example:
 --
---     _m.textadept.editing.comment_string.lua = '--'
+--     _M.textadept.editing.comment_string.lua = '--'
 --
 -- #### Buffer Properties
 --
@@ -86,7 +86,7 @@ module('_m')
 --
 -- ## Modules and Key Commands
 --
--- When assigning [key commands](../modules/_m.textadept.keys.html) to module
+-- When assigning [key commands](../modules/_M.textadept.keys.html) to module
 -- functions, do not forget to do so AFTER the function has been defined.
 -- Typically key commands are placed at the end of files, like `init.lua` in
 -- the `textadept` module.
