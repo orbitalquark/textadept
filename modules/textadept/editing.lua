@@ -158,8 +158,9 @@ function M.match_brace(select)
   local caret = buffer.current_pos
   local match_pos = buffer:brace_match(caret)
   if match_pos == -1 then return end
-  if not select then caret = match_pos end
-  if match_pos > caret then
+  if not select then
+    buffer:goto_pos(match_pos)
+  elseif match_pos > caret then
     buffer:set_sel(caret, match_pos + 1)
   else
     buffer:set_sel(caret + 1, match_pos)
