@@ -2,10 +2,8 @@
 
 package.path = table.concat({
   _USERHOME..'/?.lua',
-  _USERHOME..'/modules/?.lua',
-  _USERHOME..'/modules/?/init.lua',
-  _HOME..'/modules/?.lua',
-  _HOME..'/modules/?/init.lua',
+  _USERHOME..'/modules/?.lua', _USERHOME..'/modules/?/init.lua',
+  _HOME..'/modules/?.lua', _HOME..'/modules/?/init.lua',
   package.path
 }, ';');
 
