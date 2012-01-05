@@ -514,7 +514,6 @@ function M.complete(sense, only_fields, only_functions)
   local symbol, part = sense:get_symbol()
   local completions = sense:get_completions(symbol, only_fields, only_functions)
   if not completions then return false end
-  buffer:clear_registered_images()
   buffer:register_image(1, M.FIELDS)
   buffer:register_image(2, M.FUNCTIONS)
   if not buffer.auto_c_choose_single or #completions ~= 1 then
