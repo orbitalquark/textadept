@@ -4,10 +4,10 @@
   <img src="images/ui.png" alt="UI" />
 </div>
 
-Textadept's user interface was designed to be simple. It consists of an optional
-menubar, editor view, initially hidden find/replace dialog, initially hidden
-command entry, and statusbar. Below are brief descriptions of these features.
-More in-depth discussion about some of them is provided later in the manual.
+Textadept's user interface was designed to be simple. It consists of a menubar,
+editor view, initially hidden find/replace dialog, initially hidden command
+entry, and statusbar. Below are brief descriptions of these features. More
+in-depth discussion about some of them is provided later in the manual.
 
 ## Menubar
 
