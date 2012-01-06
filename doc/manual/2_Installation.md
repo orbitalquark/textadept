@@ -44,7 +44,7 @@ language modules by default.
 
 ## Installation
 
-Textadept was designed to be as easy as possible to install by any user. You do
+Textadept is designed to be as easy as possible to install by any user. You do
 not need to have administrator privileges.
 
 #### Linux

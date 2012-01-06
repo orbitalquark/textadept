@@ -25,10 +25,10 @@ Ctrl+C<br/>Ctrl+Ins     |⌘C       |Copy
 Ctrl+V<br/>Shift+Ins    |⌘V       |Paste
 Ctrl+D                  |⌘D       |Duplicate line
 Del                     |⌦<br/>^D |Delete
+Alt+Del                 |^⌦       |Delete word
 Ctrl+A                  |⌘A       |Select all
 Ctrl+M                  |^M       |Match brace
 Ctrl+Enter              |^⎋       |Complete word
-Alt+Del                 |^⌦       |Delete word
 Ctrl+Alt+Shift+H        |⌘⇧H      |Highlight word
 Ctrl+/                  |^/       |Toggle block comment
 Ctrl+T                  |^T       |Transpose characters

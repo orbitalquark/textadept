@@ -6,37 +6,35 @@
   <img src="images/textadept.png" alt="Textadept" />
 </div>
 
-Textadept is a cross-platform text editor for programmers.
+Textadept is a fast, minimalist, and ridiculously extensible cross-platform text
+editor for programmers. Written in a combination of C and [Lua](http://lua.org)
+and relentlessly optimized for speed and minimalism over the years, Textadept is
+an ideal editor for programmers who want endless extensibility options without
+sacrificing speed or succumbing to code bloat and featuritis.
 
-In a world where code bloat is commonplace and application speed is second to
-its number of features, Textadept breaks that trend, aiming to stay minimalist
-and fast, but at the same time being ridiculously extensible. At its core lies
-less than 2000 lines of C code, and that is how it always will be. While other
-editors rely on numerous plugins for a wide range of functionality, recordable
-macros to speed up workflow, and shell scripts to quickly transform text,
-Textadept takes it to the extreme: it gives you complete control over the entire
-application using the embedded [Lua](http://lua.org) language. Lua is one of the
-fastest scripting languages available and has a very small footprint. In fact,
-most of Textadept is written in Lua. The application's incredibly fast startup
-time and operation attest to Lua's worthiness.
+#### Fast
 
-Tired of all those features you never use in other editors? With Textadept you
-can disable or remove anything you dislike or do not need. Wish you had an
-additional feature? Chances are you can add it yourself.
+Textadept is _fast_. It starts up instantly and has a very responsive user
+interface (UI). Even though the editor is mostly written in Lua, Lua is one of
+the fastest scripting languages available. With [LuaJIT](http://luajit.org),
+Textadept is faster than ever before, though using LuaJIT is overkill.
 
-Annoyed of recording complicated macros in other editors, only to find yourself
-re-recording them over and over with little changes each time? You may be
-surprised to find you can write the same commands in Lua, from moving the caret
-to replacing text, performing searches, and much more!
+#### Minimalist
 
-Worried that your existing shell scripts for transforming text in other editors
-will not be compatible with Lua or Textadept? No need to be. You can run those
-scripts from within the editor or Lua.
+Textadept is minimalist. Not only is this apparent in the UI, but the editor's C
+core was designed to never exceed 2000 lines of code and its Lua extension code
+is not supposed to go beyond 4000 lines. After 4 1/2 years of development,
+Textadept has fewer lines of code (~5000) than it did in its first release
+(~5600) and is vastly superior in every respect.
 
-These are just some of Textadept's strengths. Textadept is not about
-constraining the user to a certain set of features while allowing minimal
-customization and/or extensibility. Textadept is about allowing that
-customization and extensibility from the start; the features come after that.
+#### Ridiculously Extensible
+
+Textadept is ridiculously extensible. It was designed to be that way from the
+very beginning. The features came later. Most of Textadept is written in Lua,
+from syntax highlighting to opening and saving files to searching and replacing
+and more. Textadept gives you complete control over the entire application using
+Lua. You can do everything from moving the caret to changing menus and key
+commands on-the-fly to handling UI events. The possibilities are limitless.
 
 <div style="float: left; margin: 0 3em 1em 0;">
   <img src="images/splitviews.png" alt="Split Views" />
