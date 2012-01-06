@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2012 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local all = false
 if #arg == 0 then all = true end

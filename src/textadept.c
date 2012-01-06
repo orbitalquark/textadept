@@ -1,4 +1,4 @@
-// Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+// Copyright 2007-2012 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 #include <stdarg.h>
 #include <stdio.h>

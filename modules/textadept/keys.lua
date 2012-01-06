@@ -1,8 +1,8 @@
--- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2012 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local M = {}
 
---[[
+--[[ This comment is for LuaDoc.
 ---
 -- Defines key commands for Textadept.
 -- This set of key commands is pretty standard among other text editors.

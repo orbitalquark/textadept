@@ -1,8 +1,8 @@
--- Copyright 2007-2011 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2012 Mitchell mitchell<att>caladbolg.net. See LICENSE.
 
 local M = {}
 
---[[
+--[[ This comment is for LuaDoc.
 ---
 -- The lua module.
 -- It provides utilities for editing Lua code.
