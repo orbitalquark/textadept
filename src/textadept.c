@@ -732,7 +732,6 @@ static gboolean c_keypress(GtkWidget*_, GdkEventKey *event, gpointer __) {
 /******************************************************************************/
 
 #if LUAJIT
-#define LUA_RIDX_GLOBALS LUA_GLOBALSINDEX
 #define LUA_OK 0
 #define lua_rawlen lua_objlen
 #define LUA_OPEQ 0
@@ -773,9 +772,15 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
     lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_views");
   } else { // clear package.loaded and _G
     lua_getglobal(L, "package"), lua_getfield(L, -1, "loaded");
-    lL_cleartable(L, lua_gettop(L));
+    lL_cleartable(L, -1);
     lua_pop(L, 2); // package and package.loaded
-    lL_cleartable(L, LUA_RIDX_GLOBALS);
+#if !LUAJIT
+    lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+    lL_cleartable(L, -1);
+    lua_pop(L, 1); // _G
+#else
+    lL_cleartable(L, LUA_GLOBALSINDEX);
+#endif
   }
   luaL_openlibs(L);
   lL_openlib(L, "lpeg", luaopen_lpeg);
@@ -1052,17 +1057,18 @@ static void l_close(lua_State *L) {
 
 /**
  * Clears a table at the given valid index by setting all of its keys to nil.
- * Cannot be called with a pseudo-index.
  * @param L The Lua state.
  * @param index The stack index of the table.
  */
 static void lL_cleartable(lua_State *L, int index) {
+  lua_pushvalue(L, index); // copy to stack top so relative indices can be used
   lua_pushnil(L);
-  while (lua_next(L, index)) {
+  while (lua_next(L, -2)) {
     lua_pop(L, 1); // value
-    lua_pushnil(L), lua_rawset(L, index);
-    lua_pushnil(L); // get 'new' first key
+    lua_pushnil(L), lua_rawset(L, -3);
+    lua_pushnil(L); // key for lua_next
   }
+  lua_pop(L, 1); // table copy
 }
 
 /**
@@ -1201,7 +1207,7 @@ static void l_pushgtkmenu(lua_State *L, int index, GCallback callback,
                           int submenu) {
   GtkWidget *menu = gtk_menu_new(), *menu_item = 0, *submenu_root = 0;
   const char *label;
-  lua_pushvalue(L, index); // copy to stack top so pseudo-indices can be used
+  lua_pushvalue(L, index); // copy to stack top so relative indices can be used
   lua_getfield(L, -1, "title");
   if (!lua_isnil(L, -1) || submenu) { // title required for submenu
     label = !lua_isnil(L, -1) ? lua_tostring(L, -1) : "notitle";
