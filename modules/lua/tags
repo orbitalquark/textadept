@@ -934,7 +934,6 @@ css	_	0;"	t	class:keys
 css	_	0;"	t	class:snippets
 ctags_kinds	_	0;"	t	class:_M.textadept.adeptsense
 current_pos	_	0;"	F	class:buffer
-current_word	_	0;"	f	class:_M.textadept.editing
 currentdir	_	0;"	f	class:lfs
 cursor	_	0;"	F	class:buffer
 cut	_	0;"	f	class:buffer
@@ -1433,6 +1432,7 @@ select_lexer	_	0;"	f	class:_M.textadept.mime_types
 select_line	_	0;"	f	class:_M.textadept.editing
 select_paragraph	_	0;"	f	class:_M.textadept.editing
 select_theme	_	0;"	f	class:gui
+select_word	_	0;"	f	class:_M.textadept.editing
 selection_duplicate	_	0;"	f	class:buffer
 selection_end	_	0;"	F	class:buffer
 selection_is_rectangle	_	0;"	F	class:buffer
