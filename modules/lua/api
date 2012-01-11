@@ -907,7 +907,6 @@ css _G.snippets.css [table]\nContainer for CSS-specific snippets.\n
 css _M.css [module]\nThe css module. It provides utilities for editing CSS code. User tags\nare loaded from _USERHOME/modules/css/tags and user apis are loaded from\n_USERHOME/modules/css/api.\n
 ctags_kinds _M.textadept.adeptsense.ctags_kinds [table]\nContains a map of ctags kinds to Adeptsense kinds. Recognized kinds are\n`'functions'`, `'fields'`, and `'classes'`. Classes are quite simply containers\nfor functions and fields so Lua modules would count as classes. Any other\nkinds will be passed to `handle_ctag()` for user-defined handling.\n@see handle_ctag\n
 current_pos buffer.current_pos [number]\nThe position of the caret. When setting, the caret is not scrolled into view.\n
-current_word _M.textadept.editing.current_word(action)\nSelects the current word under the caret and if action indicates, deletes it.\n@param action Optional action to perform with selected word. If `delete`,\nit is deleted.\n
 currentdir lfs.currentdir()\nReturns a string with the current working directory or nil plus an error\nstring.\n
 cursor buffer.cursor [number]\nThe cursor type.\n    * `_SCINTILLA.constants.SC_CURSORNORMAL` (-1): The normal cursor is\n      displayed.\n    * `_SCINTILLA.constants.SC_CURSORWAIT` (4): The wait cursor is\n      displayed when the mouse is over the view.\n\n
 cut buffer.cut(buffer)\nCut the selection to the clipboard.\n@param buffer The global buffer.\n
@@ -1111,7 +1110,7 @@ ipairs _G.ipairs(t)\nIf `t` has a metamethod `__ipairs`, calls it with `t` as ar
 java _G.keys.java [table]\nContainer for Java-specific key commands.\n
 java _G.snippets.java [table]\nContainer for Java-specific snippets.\n
 java _M.java [module]\nThe java module. It provides utilities for editing Java code. User tags\nare loaded from _USERHOME/modules/java/tags and user apis are loaded from\n_USERHOME/modules/java/api.\n
-join_lines _M.textadept.editing.join_lines()\nJoins the current line with the line below.\n
+join_lines _M.textadept.editing.join_lines()\nJoins the currently selected lines. If no lines are selected, joins the\ncurrent line with the line below.\n
 keys _G.keys [module]\nManages key commands in Textadept.\n
 keys _M.textadept.keys [module]\nDefines key commands for Textadept. This set of key commands is pretty\nstandard among other text editors. This module, should be 'require'ed last,\nbut before _M.textadept.menu.\n
 keys_unicode buffer.keys_unicode [bool]\nInterpret keyboard input as Unicode.\n
@@ -1393,6 +1392,7 @@ select_lexer _M.textadept.mime_types.select_lexer()\nPrompts the user to select 
 select_line _M.textadept.editing.select_line()\nSelects the current line.\n
 select_paragraph _M.textadept.editing.select_paragraph()\nSelects the current paragraph. Paragraphs are delimited by two or more\nconsecutive newlines.\n
 select_theme gui.select_theme()\nPrompts the user to select an editor theme from a filtered list.\n
+select_word _M.textadept.editing.select_word(action)\nSelects the current word under the caret.\n
 selection_duplicate buffer.selection_duplicate(buffer)\nDuplicate the selection. If selection empty duplicate the line containing\nthe caret.\n@param buffer The global buffer.\n
 selection_end buffer.selection_end [number]\nThe position that ends the selection - this becomes the current position. This\ndoes not make the caret visible.\n
 selection_is_rectangle buffer.selection_is_rectangle [bool]\nIs the selection rectangular? The alternative is the more common stream\nselection. (Read-only)\n
