@@ -10,7 +10,6 @@ module('_M.textadept.snapopen')]]
 -- Markdown:
 -- ## Settings
 --
--- * `PATHS` [table]: Table of default UTF-8 paths to search.
 -- * `DEFAULT_DEPTH` [number]: Maximum directory depth to search. The default
 --   value is `4`.
 -- * `MAX` [number]: Maximum number of files to list. The default value is
@@ -29,11 +28,26 @@ module('_M.textadept.snapopen')]]
 --     -- Show all Lua files in PATHS.
 --     snapopen(nil, '!%.lua$')
 --
---     -- Ignore the .hg folder in the local Mercurial repository.
---     local project_dir = '/path/to/project'
---     snapopen(project_dir, { folders = { '%.hg' } }, true)
+--     -- Ignore the project's 'images' folder and HTML pages.
+--     snapopen('/path/to/project',
+--              { folders = { 'images' }, extensions = { 'html' } }, true)
 
+---
+-- Table of default UTF-8 paths to search.
+-- @class table
+-- @name PATHS
 M.PATHS = {}
+---
+-- Default file and directory filters.
+-- @class table
+-- @name FILTER
+M.FILTER = {
+  extensions = {
+    'a', 'bmp', 'bz2', 'class', 'dll', 'exe', 'gif', 'gz', 'jar', 'jpeg', 'jpg',
+    'o', 'png', 'so', 'tar', 'tgz', 'tif', 'tiff', 'zip'
+  },
+  folders = { '%.bzr$', '%.git$', '%.hg$', '%.svn$', 'CVS$' }
+}
 M.DEFAULT_DEPTH = 4
 M.MAX = 1000
 
@@ -48,6 +62,8 @@ local function exclude(file, filter)
   if not filter then return false end
   local string_match, string_sub = string.match, string.sub
   local utf8_file = file:iconv('UTF-8', _CHARSET)
+  local ext = filter.extensions
+  if ext and ext[utf8_file:match('[^%.]+$')] then return true end
   for i = 1, #filter do
     local patt = filter[i]
     if string_sub(patt, 1, 1) ~= '!' then
@@ -89,11 +105,16 @@ end
 -- @param filter A filter for files and folders to exclude. The filter may be
 --   a string or table. Each filter is a Lua pattern. Any files matching a
 --   filter are excluded. Prefix a pattern with `!` to exclude any files that
---   do not match the filter. Directories can be excluded by adding filters to
---   a table assigned to a `folders` key in the filter table. All strings should
---   be UTF-8 encoded.
--- @param exclusive Flag indicating whether or not to exclude `PATHS` in the
+--   do not match the filter. File extensions can be more efficiently excluded
+--   by adding the extension text to a table assigned to an `extensions` key in
+--   the filter table instead of using individual filters. Directories can be
+--   excluded by adding filters to a table assigned to a `folders` key in the
+--   filter table. All strings should be UTF-8 encoded.
+-- @param exclude_PATHS Flag indicating whether or not to exclude `PATHS` in the
 --   search. Defaults to `false`.
+-- @param exclude_FILTER Flag indicating whether or not to exclude `FILTER` from
+--   `filter` in the search. If false, adds `FILTER` to the given `filter`.
+--   Defaults to `false`.
 -- @param depth Number of directories to recurse into for finding files.
 --   Defaults to `DEFAULT_DEPTH`.
 -- @usage _M.textadept.snapopen.open()
@@ -101,15 +122,32 @@ end
 -- @usage _M.textadept.snapopen.open(nil, '!%.lua$')
 -- @usage _M.textadept.snapopen.open(nil, { folders = { '%.hg' } })
 -- @name open
-function M.open(utf8_paths, filter, exclusive, depth)
+function M.open(utf8_paths, filter, exclude_PATHS, exclude_FILTER, depth)
+  -- Convert utf8_paths to a table from nil or string arguments.
   if not utf8_paths then utf8_paths = {} end
   if type(utf8_paths) == 'string' then utf8_paths = { utf8_paths } end
+  -- Convert filter to a table from nil or string arguments.
   if not filter then filter = {} end
   if type(filter) == 'string' then filter = { filter } end
-  if not exclusive then
-    for _, path in ipairs(M.PATHS) do utf8_paths[#utf8_paths + 1] = path end
+  -- Add PATHS to utf8_paths unless specified otherwise.
+  if not exclude_PATHS then
+    for i = 1, #M.PATHS do utf8_paths[#utf8_paths + 1] = M.PATHS[i] end
+  end
+  -- Add FILTER to filter unless specified otherwise.
+  if not exclude_FILTER then
+    for k, v in pairs(M.FILTER) do
+      if not filter[k] then filter[k] = {} end
+      local filter_k = filter[k]
+      for i = 1, #v do filter_k[#filter_k + 1] = v[i] end
+    end
   end
   DEPTH = depth or M.DEFAULT_DEPTH
+
+  -- Create file extension filter hash table for quick lookups.
+  local ext = filter.extensions
+  if ext then for i = 1, #ext do ext[ext[i]] = true end end
+
+  -- Create the file list, prompt the user to choose a file, then open the file.
   local list = {}
   for _, path in ipairs(utf8_paths) do add_directory(path, list, 1, filter) end
   if #list >= M.MAX then
