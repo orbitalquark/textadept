@@ -34,7 +34,6 @@ module('_G')]]
 -- * `_USERHOME` [string]: Path to the user's `~/.textadept/`.
 -- * `_CHARSET` [string]: The character set encoding of the filesystem. This is
 --   used in [File I/O](../modules/io.html).
--- * `_L` [table]: Contains all messages used by Textadept for localization.
 -- * `RESETTING` [bool]: If [`reset()`](../modules/_G.html#reset) has been
 --   called, this flag is `true` while the Lua state is being re-initialized.
 -- * `WIN32` [bool]: If Textadept is running on Windows, this flag is `true`.
@@ -82,6 +81,12 @@ local _BUFFERS
 -- @usage _VIEWS[1] contains the first view.
 -- @usage _VIEWS[view] returns the index of the current view in _VIEWS.
 local _VIEWS
+
+---
+-- Contains all messages used by Textadept for localization.
+-- @class table
+-- @name _L
+local _L
 
 -- The functions below are Lua C functions.
 
