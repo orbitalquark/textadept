@@ -10,9 +10,14 @@ module('view')
 -- Markdown:
 -- ## Fields
 --
--- * `buffer` [table]: The buffer this view contains. (Read-only)
 -- * `size` [number]: The position of the split resizer (if this view is part of
 --   a split view).
+
+---
+-- The buffer this view contains. (Read-only)
+-- @class table
+-- @name buffer
+local buffer
 
 ---
 -- Splits the indexed view vertically or horizontally and focuses the new view.

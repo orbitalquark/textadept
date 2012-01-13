@@ -10,13 +10,11 @@ module('gui')]]
 -- ## Fields
 --
 -- * `title` [string]: The title of the Textadept window.
--- * `menubar` [table]: A table of GTK menus defining a menubar. (Write-only)
 -- * `context_menu`: A GTK menu defining the editor's context menu.
 -- * `clipboard_text` [string]: The text on the clipboard. (Read-only)
 -- * `statusbar_text` [string]: The text displayed by the statusbar.
 -- * `docstatusbar_text` [string]: The text displayed by the doc statusbar.
 --   (Write-only)
--- * `size` [table]: The size of the Textadept window (`{ width, height }`).
 
 local _L = _L
 
@@ -408,7 +406,21 @@ end)
 events_connect(events.ERROR,
                function(...) gui._print(_L['[Error Buffer]'], ...) end)
 
---[[ The functions below are Lua C functions.
+--[[ The tables below were defined in C.
+
+---
+-- A table of GTK menus defining a menubar. (Write-only)
+-- @class table
+-- @name menubar
+local menubar
+
+---
+-- The size of the Textadept window (`{ width, height }`).
+-- @class table
+-- @name size
+local size
+
+The functions below are Lua C functions.
 
 ---
 -- Displays a gcocoadialog of a specified type with the given string arguments.
