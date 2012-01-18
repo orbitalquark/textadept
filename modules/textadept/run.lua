@@ -29,9 +29,9 @@ module('_M.textadept.run')]]
 --       * `output`: The output from the command.
 
 -- Events.
-local events, events_connect = events, events.connect
-events.COMPILE_OUTPUT = 'compile_output'
-events.RUN_OUTPUT = 'run_output'
+local events, events_connect, events_emit = events, events.connect, events.emit
+local COMPILE_OUTPUT, RUN_OUTPUT = 'compile_output', 'run_output'
+events.COMPILE_OUTPUT, events.RUN_OUTPUT = COMPILE_OUTPUT, RUN_OUTPUT
 
 ---
 -- Executes the command line parameter and prints the output to Textadept.
@@ -42,7 +42,7 @@ events.RUN_OUTPUT = 'run_output'
 --     + `%(filename)`: The name of the file including extension.
 --     + `%(filename_noext)`: The name of the file excluding extension.
 -- @name execute
-function M.execute(command)
+function M.execute(command, lexer)
   local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local filedir, filename = '', filepath
   if filepath:find('[/\\]') then
@@ -55,21 +55,24 @@ function M.execute(command)
   })
   local current_dir = lfs.currentdir()
   lfs.chdir(filedir)
+  events_emit(COMPILE_OUTPUT, lexer, '> '..command:iconv('UTF-8', _CHARSET))
   local p = io.popen(command..' 2>&1')
-  local out = p:read('*all')
-  p:close()
+  for line in p:lines() do
+    events_emit(COMPILE_OUTPUT, lexer, line:iconv('UTF-8', _CHARSET))
+  end
+  local ok, status, code = p:close()
+  if ok then events_emit(COMPILE_OUTPUT, lexer, status..': '..code) end
   lfs.chdir(current_dir)
-  return ('> '..command..'\n'..out):iconv('UTF-8', _CHARSET)
 end
 
 -- Executes a compile or run command.
 -- @param cmd_table Either `compile_command` or `run_command`.
-local function command(cmd_table)
+local function command(cmd_table, lexer)
   if not buffer.filename then return end
   buffer:save()
   local action = cmd_table[buffer.filename:match('[^.]+$')]
   if not action then return end
-  return M.execute(type(action) == 'function' and action() or action)
+  M.execute(type(action) == 'function' and action() or action, lexer)
 end
 
 ---
@@ -86,12 +89,8 @@ M.compile_command = {}
 -- table.
 -- @see compile_command
 -- @name compile
-function M.compile()
-  events.emit(events.COMPILE_OUTPUT, buffer:get_lexer(),
-              command(M.compile_command))
-end
-events_connect(events.COMPILE_OUTPUT,
-               function(lexer, output) gui.print(output) end)
+function M.compile() command(M.compile_command, buffer:get_lexer()) end
+events_connect(COMPILE_OUTPUT, function(lexer, output) gui.print(output) end)
 
 ---
 -- File extensions and their associated 'go' actions.
@@ -107,11 +106,8 @@ M.run_command = {}
 -- table.
 -- @see run_command
 -- @name run
-function M.run()
-  events.emit(events.RUN_OUTPUT, buffer:get_lexer(), command(M.run_command))
-end
-events_connect(events.RUN_OUTPUT,
-               function(lexer, output) gui.print(output) end)
+function M.run() command(M.run_command, buffer:get_lexer()) end
+events_connect(RUN_OUTPUT, function(lexer, output) gui.print(output) end)
 
 ---
 -- A table of error string details.
