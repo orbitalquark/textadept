@@ -82,12 +82,6 @@ local _BUFFERS
 -- @usage _VIEWS[view] returns the index of the current view in _VIEWS.
 local _VIEWS
 
----
--- Contains all messages used by Textadept for localization.
--- @class table
--- @name _L
-local _L
-
 -- The functions below are Lua C functions.
 
 ---
