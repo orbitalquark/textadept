@@ -2,6 +2,19 @@
 
 local M = {}
 
+--[[ This comment is for LuaDoc.
+---
+-- Table of all messages used by Textadept for localization.
+module('_L')]]
+
+-- Markdown:
+-- # Settings
+--
+-- * `_NIL` [string]: String returned when no localization for a given message
+--   exists.
+
+M._NIL = 'No Localization'
+
 local f = io.open(_USERHOME..'/locale.conf', 'rb')
 if not f then f = io.open(_HOME..'/core/locale.conf', 'rb') end
 if not f then error('"core/locale.conf" not found.') end
@@ -13,4 +26,10 @@ for line in f:lines() do
 end
 f:close()
 
-return setmetatable(M, { __index = function() return 'No Localization' end })
+---
+-- This table contains no functions.
+-- @class function
+-- @name no_functions
+local no_functions
+
+return setmetatable(M, { __index = function() return M._NIL end })

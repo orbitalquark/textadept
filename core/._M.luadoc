@@ -2,9 +2,10 @@
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the
 -- global _M table.
 
+--[[ This comment is for LuaDoc.
 ---
 -- A table of loaded modules.
-module('_M')
+module('_M')]]
 
 -- Markdown:
 -- ## Overview
@@ -93,4 +94,6 @@ module('_M')
 
 ---
 -- This module contains no functions.
-function no_functions() end no_functions = nil
+-- @class function
+-- @name no_functions
+local no_functions
