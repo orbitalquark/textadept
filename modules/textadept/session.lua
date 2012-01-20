@@ -78,11 +78,14 @@ function M.load(filename)
       if width and height then gui.size = { width, height } end
     elseif line:find('^recent:') then
       local filename = line:match('^recent: (.+)$')
-      local recent = io.recent_files
+      local recent, exists = io.recent_files, false
       for i, file in ipairs(recent) do
-        if filename == file then break end
-        if i == #recent then recent[#recent + 1] = filename end
+        if filename == file then
+          exists = true
+          break
+        end
       end
+      if not exists then recent[#recent + 1] = filename  end
     end
   end
   f:close()
