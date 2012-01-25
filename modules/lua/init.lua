@@ -26,12 +26,12 @@ module('_M.lua')]]
 --
 -- * `sense`: The Lua [Adeptsense](_M.textadept.adeptsense.html).
 
-local Mediting, Mrun = _M.textadept.editing, _M.textadept.run
+local m_editing, m_run = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.
-Mediting.comment_string.lua = '--'
+m_editing.comment_string.lua = '--'
 -- Compile and Run command tables use file extensions.
-Mrun.run_command.lua = 'lua %(filename)'
-Mrun.error_detail.lua = {
+m_run.run_command.lua = 'lua %(filename)'
+m_run.error_detail.lua = {
   pattern = '^lua: (.-):(%d+): (.+)$',
   filename = 1, line = 2, message = 3
 }

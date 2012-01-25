@@ -24,17 +24,17 @@ module('_M.cpp')]]
 --
 -- * `sense`: The C/C++ [Adeptsense](_M.textadept.adeptsense.html).
 
-local Mediting, Mrun = _M.textadept.editing, _M.textadept.run
+local m_editing, m_run = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.
-Mediting.comment_string.cpp = '//'
+m_editing.comment_string.cpp = '//'
 -- Compile and Run command tables use file extensions.
-Mrun.compile_command.c =
+m_run.compile_command.c =
   'gcc -pedantic -Os -o "%(filename_noext)" %(filename)'
-Mrun.compile_command.cpp =
+m_run.compile_command.cpp =
   'g++ -pedantic -Os -o "%(filename_noext)" %(filename)'
-Mrun.run_command.c = '%(filedir)%(filename_noext)'
-Mrun.run_command.cpp = '%(filedir)%(filename_noext)'
-Mrun.error_detail.c = {
+m_run.run_command.c = '%(filedir)%(filename_noext)'
+m_run.run_command.cpp = '%(filedir)%(filename_noext)'
+m_run.error_detail.c = {
   pattern = '^(.-):(%d+): (.+)$',
   filename = 1, line = 2, message = 3
 }
