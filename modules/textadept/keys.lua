@@ -101,8 +101,8 @@ if not RESETTING then constantize_menu_buffer_functions() end
 
 local keys = keys
 local io, gui, gui_find, buffer, view = io, gui, gui.find, buffer, view
-local Mtextadept, Mediting = _M.textadept, _M.textadept.editing
-local Mbookmarks, Msnippets = Mtextadept.bookmarks, Mtextadept.snippets
+local m_textadept, m_editing = _M.textadept, _M.textadept.editing
+local m_bookmarks, m_snippets = m_textadept.bookmarks, m_textadept.snippets
 local OSX, c = OSX, _SCINTILLA.constants
 local utils = M.utils
 
@@ -147,8 +147,8 @@ keys[not OSX and 'cs' or 'ms'] = buffer.save
 keys[not OSX and 'cS' or 'mS'] = buffer.save_as
 keys[not OSX and 'cw' or 'mw'] = buffer.close
 keys[not OSX and 'cW' or 'mW'] = io.close_all
--- TODO: Mtextadept.sessions.prompt_load
--- TODO: Mtextadept.sessions.prompt_save
+-- TODO: m_textadept.sessions.prompt_load
+-- TODO: m_textadept.sessions.prompt_save
 keys[not OSX and 'aq' or 'mq'] = quit
 
 -- Edit.
@@ -161,38 +161,38 @@ keys[not OSX and 'cv' or 'mv'] = buffer.paste
 keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate
 keys.del = buffer.clear
 keys[not OSX and 'ca' or 'ma'] = buffer.select_all
-keys.cm = Mediting.match_brace
-keys[not OSX and 'c\n' or 'cesc'] = { Mediting.autocomplete_word, '%w_' }
+keys.cm = m_editing.match_brace
+keys[not OSX and 'c\n' or 'cesc'] = { m_editing.autocomplete_word, '%w_' }
 keys[not OSX and 'adel' or 'cdel'] = utils.delete_word
-keys[not OSX and 'caH' or 'mH'] = Mediting.highlight_word
-keys[not OSX and 'c/' or 'm/'] = Mediting.block_comment
-keys.ct = Mediting.transpose_chars
-keys[not OSX and 'cJ' or 'cj'] = Mediting.join_lines
+keys[not OSX and 'caH' or 'mH'] = m_editing.highlight_word
+keys[not OSX and 'c/' or 'm/'] = m_editing.block_comment
+keys.ct = m_editing.transpose_chars
+keys[not OSX and 'cJ' or 'cj'] = m_editing.join_lines
 -- Select.
-keys.cM = { Mediting.match_brace, 'select' }
-keys[not OSX and 'c<' or 'm<'] = { Mediting.select_enclosed, '>', '<' }
-keys[not OSX and 'c>' or 'm>'] = { Mediting.select_enclosed, '<', '>' }
-keys[not OSX and "c'" or "m'"] = { Mediting.select_enclosed, "'", "'" }
-keys[not OSX and 'c"' or 'm"'] = { Mediting.select_enclosed, '"', '"' }
-keys[not OSX and 'c(' or 'm('] = { Mediting.select_enclosed, '(', ')' }
-keys[not OSX and 'c[' or 'm['] = { Mediting.select_enclosed, '[', ']' }
-keys[not OSX and 'c{' or 'm{'] = { Mediting.select_enclosed, '{', '}' }
-keys[not OSX and 'cD' or 'mD'] = Mediting.select_word
-keys[not OSX and 'cN' or 'mN'] = Mediting.select_line
-keys[not OSX and 'cP' or 'mP'] = Mediting.select_paragraph
-keys[not OSX and 'cI' or 'mI'] = Mediting.select_indented_block
+keys.cM = { m_editing.match_brace, 'select' }
+keys[not OSX and 'c<' or 'm<'] = { m_editing.select_enclosed, '>', '<' }
+keys[not OSX and 'c>' or 'm>'] = { m_editing.select_enclosed, '<', '>' }
+keys[not OSX and "c'" or "m'"] = { m_editing.select_enclosed, "'", "'" }
+keys[not OSX and 'c"' or 'm"'] = { m_editing.select_enclosed, '"', '"' }
+keys[not OSX and 'c(' or 'm('] = { m_editing.select_enclosed, '(', ')' }
+keys[not OSX and 'c[' or 'm['] = { m_editing.select_enclosed, '[', ']' }
+keys[not OSX and 'c{' or 'm{'] = { m_editing.select_enclosed, '{', '}' }
+keys[not OSX and 'cD' or 'mD'] = m_editing.select_word
+keys[not OSX and 'cN' or 'mN'] = m_editing.select_line
+keys[not OSX and 'cP' or 'mP'] = m_editing.select_paragraph
+keys[not OSX and 'cI' or 'mI'] = m_editing.select_indented_block
 -- Selection.
 keys[not OSX and 'cau' or 'cu'] = buffer.upper_case
 keys[not OSX and 'caU' or 'cU'] = buffer.lower_case
 keys[not OSX and 'a<' or 'c<'] = utils.enclose_as_xml_tags
-keys[not OSX and 'a>' or 'c>'] = { Mediting.enclose, '<', ' />' }
-keys[not OSX and "a'" or "c'"] = { Mediting.enclose, "'", "'" }
-keys[not OSX and 'a"' or 'c"'] = { Mediting.enclose, '"', '"' }
-keys[not OSX and 'a(' or 'c('] = { Mediting.enclose, '(', ')' }
-keys[not OSX and 'a[' or 'c['] = { Mediting.enclose, '[', ']' }
-keys[not OSX and 'a{' or 'c{'] = { Mediting.enclose, '{', '}' }
-keys[not OSX and 'c+' or 'm+'] = { Mediting.grow_selection, 1 }
-keys[not OSX and 'c_' or 'm_'] = { Mediting.grow_selection, -1 }
+keys[not OSX and 'a>' or 'c>'] = { m_editing.enclose, '<', ' />' }
+keys[not OSX and "a'" or "c'"] = { m_editing.enclose, "'", "'" }
+keys[not OSX and 'a"' or 'c"'] = { m_editing.enclose, '"', '"' }
+keys[not OSX and 'a(' or 'c('] = { m_editing.enclose, '(', ')' }
+keys[not OSX and 'a[' or 'c['] = { m_editing.enclose, '[', ']' }
+keys[not OSX and 'a{' or 'c{'] = { m_editing.enclose, '{', '}' }
+keys[not OSX and 'c+' or 'm+'] = { m_editing.grow_selection, 1 }
+keys[not OSX and 'c_' or 'm_'] = { m_editing.grow_selection, -1 }
 keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
@@ -213,31 +213,31 @@ keys[not OSX and 'cF' or 'mF'] = utils.find_in_files
 -- Find in Files is ai when find pane is focused.
 keys[not OSX and 'cag' or 'cmg'] = { gui_find.goto_file_in_list, true }
 keys[not OSX and 'caG' or 'cmG'] = { gui_find.goto_file_in_list, false }
-keys[not OSX and 'cj' or 'mj'] = Mediting.goto_line
+keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
 -- Tools.
 keys[not OSX and 'ce' or 'me'] = gui.command_entry.focus
 keys[not OSX and 'cE' or 'mE'] = utils.select_command
-keys[not OSX and 'cr' or 'mr'] = Mtextadept.run.run
-keys[not OSX and 'cR' or 'mR'] = Mtextadept.run.compile
-keys[not OSX and 'c|' or 'm|'] = Mtextadept.filter_through.filter_through
+keys[not OSX and 'cr' or 'mr'] = m_textadept.run.run
+keys[not OSX and 'cR' or 'mR'] = m_textadept.run.compile
+keys[not OSX and 'c|' or 'm|'] = m_textadept.filter_through.filter_through
 -- Adeptsense.
-keys[not OSX and 'c ' or 'aesc'] = Mtextadept.adeptsense.complete_symbol
-keys.ch = Mtextadept.adeptsense.show_documentation
+keys[not OSX and 'c ' or 'aesc'] = m_textadept.adeptsense.complete_symbol
+keys.ch = m_textadept.adeptsense.show_documentation
 -- Snippets.
-keys[not OSX and 'ck' or 'a\t'] = Msnippets._select
-keys['\t'] = Msnippets._insert
-keys['s\t'] = Msnippets._previous
-keys[not OSX and 'cK' or 'as\t'] = Msnippets._cancel_current
+keys[not OSX and 'ck' or 'a\t'] = m_snippets._select
+keys['\t'] = m_snippets._insert
+keys['s\t'] = m_snippets._previous
+keys[not OSX and 'cK' or 'as\t'] = m_snippets._cancel_current
 -- Bookmark.
-keys[not OSX and 'cf2' or 'mf2'] = Mbookmarks.toggle
-keys[not OSX and 'csf2' or 'msf2'] = Mbookmarks.clear
-keys.f2 = Mbookmarks.goto_next
-keys.sf2 = Mbookmarks.goto_prev
-keys.af2 = Mbookmarks.goto_bookmark
+keys[not OSX and 'cf2' or 'mf2'] = m_bookmarks.toggle
+keys[not OSX and 'csf2' or 'msf2'] = m_bookmarks.clear
+keys.f2 = m_bookmarks.goto_next
+keys.sf2 = m_bookmarks.goto_prev
+keys.af2 = m_bookmarks.goto_bookmark
 -- Snapopen.
-keys[not OSX and 'cu' or 'mu'] = { Mtextadept.snapopen.open, _USERHOME }
--- TODO: { Mtextadept.snapopen.open, _HOME }
+keys[not OSX and 'cu' or 'mu'] = { m_textadept.snapopen.open, _USERHOME }
+-- TODO: { m_textadept.snapopen.open, _HOME }
 keys[not OSX and 'caO' or 'cmO'] = utils.snapopen_filedir
 keys[not OSX and 'ci' or 'mi'] = utils.show_style
 
@@ -251,7 +251,7 @@ keys[not OSX and 'cb' or 'mb'] = gui.switch_buffer
 -- TODO: { utils.set_indentation, 4 }
 -- TODO: { utils.set_indentation, 8 }
 keys[not OSX and 'caT' or 'cT'] = { utils.toggle_property, 'use_tabs' }
-keys[not OSX and 'cai' or 'ci'] = Mediting.convert_indentation
+keys[not OSX and 'cai' or 'ci'] = m_editing.convert_indentation
 -- EOL Mode.
 -- TODO: { utils.set_eol_mode, c.SC_EOL_CRLF }
 -- TODO: { utils.set_eol_mode, c.SC_EOL_CR }
@@ -262,7 +262,7 @@ keys[not OSX and 'cai' or 'ci'] = Mediting.convert_indentation
 -- TODO: { utils.set_encoding, 'ISO-8859-1' }
 -- TODO: { utils.set_encoding, 'MacRoman' }
 -- TODO: { utils.set_encoding, 'UTF-16LE' }
-keys[not OSX and 'cL' or 'mL'] = Mtextadept.mime_types.select_lexer
+keys[not OSX and 'cL' or 'mL'] = m_textadept.mime_types.select_lexer
 keys.f5 = { buffer.colourise, buffer, 0, -1 }
 
 -- View.
