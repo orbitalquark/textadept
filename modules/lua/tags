@@ -53,6 +53,7 @@ FILE_AFTER_SAVE	_	0;"	F	class:events
 FILE_BEFORE_SAVE	_	0;"	F	class:events
 FILE_OPENED	_	0;"	F	class:events
 FILE_SAVED_AS	_	0;"	F	class:events
+FILTER	_	0;"	t	class:_M.textadept.snapopen
 FIND	_	0;"	F	class:events
 FUNCTION	_	0;"	F	class:lexer
 FUNCTIONS	_	0;"	F	class:_M.textadept.adeptsense
@@ -103,7 +104,7 @@ NUMBER	_	0;"	F	class:lexer
 OPERATOR	_	0;"	F	class:lexer
 OSX	_	0;"	F	
 P	_	0;"	f	class:lpeg
-PATHS	_	0;"	F	class:_M.textadept.snapopen
+PATHS	_	0;"	t	class:_M.textadept.snapopen
 PREPROCESSOR	_	0;"	F	class:lexer
 QUIT	_	0;"	F	class:events
 R	_	0;"	f	class:lpeg
@@ -717,7 +718,8 @@ _EMBEDDEDRULES	_	0;"	t	class:lexer
 _G	_	0;"	F	
 _G	_	0;"	m	
 _HOME	_	0;"	F	
-_L	_	0;"	F	
+_L	_	0;"	m	
+_L	_	0;"	t	
 _LEXERPATH	_	0;"	F	
 _M	_	0;"	m	
 _M	_	0;"	t	
@@ -742,6 +744,7 @@ _M.textadept.run	_	0;"	m
 _M.textadept.session	_	0;"	m	
 _M.textadept.snapopen	_	0;"	m	
 _M.textadept.snippets	_	0;"	m	
+_NIL	_	0;"	F	class:_L
 _RELEASE	_	0;"	F	
 _RULES	_	0;"	t	class:lexer
 _SCINTILLA	_	0;"	m	
@@ -831,9 +834,9 @@ brace_highlight_indicator	_	0;"	f	class:buffer
 brace_match	_	0;"	f	class:buffer
 braces	_	0;"	t	class:_M.textadept.editing
 btest	_	0;"	f	class:bit32
-buffer	_	0;"	F	class:view
 buffer	_	0;"	m	
 buffer	_	0;"	t	
+buffer	_	0;"	t	class:view
 buffered_draw	_	0;"	F	class:buffer
 byte	_	0;"	f	class:string
 call_tip_active	_	0;"	f	class:buffer
@@ -1261,8 +1264,8 @@ math	_	0;"	t
 max	_	0;"	f	class:math
 max_line_state	_	0;"	F	class:buffer
 menu	_	0;"	t	class:_M.textadept
-menubar	_	0;"	F	class:gui
 menubar	_	0;"	t	class:_M.textadept.menu
+menubar	_	0;"	t	class:gui
 mime_types	_	0;"	t	class:_M.textadept
 min	_	0;"	f	class:math
 mkdir	_	0;"	f	class:lfs
@@ -1506,8 +1509,8 @@ show_lines	_	0;"	f	class:buffer
 sin	_	0;"	f	class:math
 singular	_	0;"	F	class:_M.rails
 sinh	_	0;"	f	class:math
-size	_	0;"	F	class:gui
 size	_	0;"	F	class:view
+size	_	0;"	t	class:gui
 snapopen	_	0;"	t	class:_M.textadept
 snippets	_	0;"	t	class:
 snippets	_	0;"	t	class:_M.textadept
