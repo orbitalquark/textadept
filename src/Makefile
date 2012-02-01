@@ -180,10 +180,15 @@ clean:
 # Pass 'VERSION=[release version]' to 'make'.
 
 TEXTADEPT32 = $(TEXTADEPT)32
+TEXTADEPTJIT32 = $(TEXTADEPT)jit32
 TEXTADEPT64 = $(TEXTADEPT)
+TEXTADEPTJIT64 = $(TEXTADEPT)jit
 TEXTADEPT64LPNG12 = $(TEXTADEPT).lpng12
+TEXTADEPTJIT64LPNG12 = $(TEXTADEPT)jit.lpng12
 TEXTADEPTWIN32 = $(TEXTADEPT).exe
+TEXTADEPTJITWIN32 = $(TEXTADEPT)jit.exe
 TEXTADEPTMAC = $(TEXTADEPT).osx
+TEXTADEPTJITMAC = $(TEXTADEPT)jit.osx
 RELEASEDIR32 = textadept_$(value VERSION)
 RELEASEDIR64 = $(RELEASEDIR32).x86_64
 RELEASEDIRWIN32 = $(RELEASEDIR32).win32
@@ -210,13 +215,21 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	# Linux x64_64
 	cp -r $(RELEASEDIR32) $(RELEASEDIR64)
 	cp ../$(TEXTADEPT64) $(RELEASEDIR64)
+	if [ -f ../$(TEXTADEPTJIT64) ]; then \
+		cp ../$(TEXTADEPTJIT64) $(RELEASEDIR64); \
+	fi
 	cp ../$(TEXTADEPT64LPNG12) $(RELEASEDIR64)
+	if [ -f ../$(TEXTADEPTJIT64LPNG12) ]; then \
+		cp ../$(TEXTADEPTJIT64LPNG12) $(RELEASEDIR64); \
+	fi
 	tar czf $(PACKAGE64) $(RELEASEDIR64)
 	rm -r $(RELEASEDIR64)
 	# Win32
 	cp -r $(RELEASEDIR32) $(RELEASEDIRWIN32)
 	cp ../$(TEXTADEPTWIN32) $(RELEASEDIRWIN32)
-	if [ -f lua51.dll ]; then cp lua51.dll $(RELEASEDIRWIN32); fi
+	if [ -f ../$(TEXTADEPTJITWIN32) ]; then \
+		cp ../$(TEXTADEPTJITWIN32) lua51.dll $(RELEASEDIRWIN32); \
+	fi
 	cp win32gtk/bin/*.dll $(RELEASEDIRWIN32)
 	cp -r win32gtk/{etc,lib,share} $(RELEASEDIRWIN32)
 	rm -r $(RELEASEDIRWIN32)/lib/{*.a,glib-2.0,gtk-2.0/include,pkgconfig}
@@ -224,26 +237,33 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	rm -r $(RELEASEDIRWIN32)
 	# Linux 32-bit
 	cp ../$(TEXTADEPT32) $(RELEASEDIR32)/$(TEXTADEPT)
+	if [ -f ../$(TEXTADEPTJIT32) ]; then \
+		cp ../$(TEXTADEPTJIT32) $(RELEASEDIR32)/$(TEXTADEPTJIT); \
+	fi
 	tar czf $(PACKAGE32) $(RELEASEDIR32)
 	# Mac OSX
 	mkdir $(RELEASEDIRMAC)
-	cp -r ../osxapp $(TEXTADEPTAPP)
+	cp -rL gtkosx $(TEXTADEPTAPP)
 	cp -r $(RELEASEDIR32)/* $(TEXTADEPTAPP)/Contents/Resources/
+	rm -f $(TEXTADEPTAPP)/Contents/Resources/{$(TEXTADEPT),$(TEXTADEPTJIT)}
 	mv $(TEXTADEPTAPP)/Contents/Resources/core/images/textadept.icns \
 		$(TEXTADEPTAPP)/Contents/Resources/
 	cp ../$(TEXTADEPTMAC) $(TEXTADEPTAPP)/Contents/MacOS/
+	if [ -f ../$(TEXTADEPTJITMAC) ]; then \
+		cp ../$(TEXTADEPTJITMAC) $(TEXTADEPTAPP)/Contents/MacOS/; \
+	fi
 	zip -r $(PACKAGEMAC) $(RELEASEDIRMAC)
 	rm -r $(RELEASEDIRMAC)
 	# Source
-	rm $(RELEASEDIR32)/$(TEXTADEPT)
-	cp -rL lua scintilla gcocoadialog LexLPeg.cxx $(RELEASEDIR32)/src/
+	rm $(RELEASEDIR32)/{$(TEXTADEPT),$(TEXTADEPTJIT)}
+	cp -rL lua luajit scintilla gcocoadialog LexLPeg.cxx $(RELEASEDIR32)/src/
+	cd $(RELEASEDIR32)/src/luajit && make clean && cd ../../../
 	rm -r $(RELEASEDIR32)/src/scintilla/.hg
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)
 	rm -r $(RELEASEDIR32)
 	# Modules
 	mkdir -p $(MODULESDIR)
-	for module in $(MODULES); \
-	do \
+	for module in $(MODULES); do \
 		hg clone /home/mitchell/code/textadept/modules/$$module \
 		$(MODULESDIR)/$$module; \
 	done
