@@ -1,0 +1,22 @@
+--- luadoc/util.lua.orig	2012-02-10 13:34:46.166184400 -0500
++++ luadoc/util.lua	2012-02-10 13:36:59.847551200 -0500
+@@ -29,8 +29,8 @@
+ -- @see string.gsub
+ 
+ function trim_comment (s)
+-	s = string.gsub(s, "%-%-+(.*)$", "%1")
+-	return trim(s)
++	s = string.gsub(s, "%-%-+ ?(.*)$", "%1")
++	return s
+ end
+ 
+ -------------------------------------------------------------------------------
+@@ -52,7 +52,7 @@
+ 	if str1 == nil or string.len(str1) == 0 then
+ 		return str2
+ 	else
+-		return str1 .. " " .. str2
++		return str1 .. "\n" .. str2
+ 	end
+ end
+ 
