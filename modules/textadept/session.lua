@@ -10,12 +10,16 @@ module('_M.textadept.session')]]
 -- Markdown:
 -- ## Settings
 --
--- * `DEFAULT_SESSION` [string]: The path to the default session file.
--- * `SAVE_ON_QUIT` [bool]: Save the session when quitting. The default value is
---   `true` and can be disabled by passing the command line switch `-n` or
---   `--nosession` to Textadept.
--- * `MAX_RECENT_FILES` [number]: The maximum number of files from the recent
---   files list to save to the session. The default is `10`.
+-- * `DEFAULT_SESSION` [string]
+--   The path to the default session file.
+-- * `SAVE_ON_QUIT` [bool]
+--   Save the session when quitting.
+--   The default value is `true` and can be disabled by passing the command line
+--   switch `-n` or `--nosession` to Textadept.
+-- * `MAX_RECENT_FILES` [number]
+--   The maximum number of files from the recent files list to save to the
+--   session.
+--   The default value is `10`.
 
 M.DEFAULT_SESSION = _USERHOME..'/session'
 M.SAVE_ON_QUIT = true
@@ -25,8 +29,8 @@ M.MAX_RECENT_FILES = 10
 -- Loads a Textadept session file.
 -- Textadept restores split views, opened buffers, cursor information, and
 -- project manager details.
--- @param filename The absolute path to the session file to load. Defaults to
---   `DEFAULT_SESSION` if not specified.
+-- @param filename The absolute path to the session file to load. The default
+--   value is `DEFAULT_SESSION`.
 -- @return `true` if the session file was opened and read; `false` otherwise.
 -- @usage _M.textadept.session.load(filename)
 -- @name load
@@ -105,8 +109,8 @@ events.connect('arg_none', function() if M.SAVE_ON_QUIT then M.load() end end)
 -- Saves a Textadept session to a file.
 -- Saves split views, opened buffers, cursor information, and project manager
 -- details.
--- @param filename The absolute path to the session file to save. Defaults to
---   either the current session file or `DEFAULT_SESSION` if not specified.
+-- @param filename The absolute path to the session file to save. The default
+--   value is either the current session file or `DEFAULT_SESSION`.
 -- @usage _M.textadept.session.save(filename)
 -- @name save
 function M.save(filename)

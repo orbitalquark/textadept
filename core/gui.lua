@@ -9,12 +9,16 @@ module('gui')]]
 -- Markdown:
 -- ## Fields
 --
--- * `title` [string]: The title of the Textadept window.
--- * `context_menu`: A GTK menu defining the editor's context menu.
--- * `clipboard_text` [string]: The text on the clipboard. (Read-only)
--- * `statusbar_text` [string]: The text displayed by the statusbar.
--- * `docstatusbar_text` [string]: The text displayed by the doc statusbar.
---   (Write-only)
+-- * `title` [string]
+--   The title of the Textadept window.
+-- * `context_menu`
+--   A GTK menu defining the editor's context menu.
+-- * `clipboard_text` [string] (Read-only)
+--   The text on the clipboard.
+-- * `statusbar_text` [string]
+--   The text displayed by the statusbar.
+-- * `docstatusbar_text` [string] (Write-only)
+--   The text displayed by the doc statusbar.
 
 local _L = _L
 
@@ -71,8 +75,8 @@ function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
 -- @param columns A column name or list of column names.
 -- @param items An item or list of items.
 -- @param int_return If `true`, returns the integer index of the selected item
---   in the filteredlist. Defaults to `false`, which returns the string item.
---   Not compatible with a `'--select-multiple'` filteredlist.
+--   in the filteredlist. The default value is `false`, which returns the string
+--   item. Not compatible with a `'--select-multiple'` filteredlist.
 -- @param ... Additional parameters to pass to `gui.dialog()`.
 -- @return Either a string or integer on success; `nil` otherwise.
 -- @usage gui.filteredlist('Title', 'Foo', { 'Bar', 'Baz' })
@@ -449,8 +453,8 @@ local get_split_table
 -- Goes to the specified view.
 -- Generates `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
 -- @param n A relative or absolute view index.
--- @param relative Flag indicating if n is a relative index or not. Defaults to
---   false.
+-- @param relative Flag indicating if n is a relative index or not. The default
+--   value is `false`.
 -- @class function
 -- @name goto_view
 local goto_view

@@ -294,7 +294,7 @@ M._snippet_mt = {
   -- slightly different when `complete` true.
   -- @param text Text to unescape.
   -- @param complete Flag indicating whether or not to also remove the extra
-  --   escape character '%'. Defaults to `false`.
+  --   escape character '%'. The default value is `false`.
   unescape_text = function(text, complete)
     text = text:gsub('\027.', escapes)
     return complete and text:gsub('%%([%%%(%)>%]])', '%1') or text

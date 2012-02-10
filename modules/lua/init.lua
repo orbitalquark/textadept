@@ -13,18 +13,23 @@ module('_M.lua')]]
 -- Markdown:
 -- ## Key Commands
 --
--- + `Ctrl+L, M` (`⌘L, M` on Mac OSX): Open this module for editing.
--- + `Ctrl+L, G` (`⌘L, G`): Goto file being 'require'd on the current line.
--- + `Shift+Return` (`⇧↩`): Try to autocomplete an `if`, `for`, etc. statement
---   with `end`.
--- + `.`: When to the right of a known symbol, show an autocompletion list of
---   fields and functions.
--- + `:`: When to the right of a known symbol, show an autocompletion list of
+-- + `Ctrl+L, M` (`⌘L, M` on Mac OSX)
+--   Open this module for editing.
+-- + `Ctrl+L, G` (`⌘L, G`)
+--   Goto file being 'require'd on the current line.
+-- + `Shift+Return` (`⇧↩`)
+--   Try to autocomplete an `if`, `for`, etc. statement with `end`.
+-- + `.`
+--   When to the right of a known symbol, show an autocompletion list of fields
+--   and functions.
+-- + `:`
+--   When to the right of a known symbol, show an autocompletion list of
 --   functions only.
 --
 -- ## Fields
 --
--- * `sense`: The Lua [Adeptsense](_M.textadept.adeptsense.html).
+-- * `sense`
+--   The Lua [Adeptsense](_M.textadept.adeptsense.html).
 
 local m_editing, m_run = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.

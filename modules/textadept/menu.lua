@@ -244,7 +244,7 @@ local menu_actions, contextmenu_actions = {}, {}
 -- Also assigns key commands.
 -- @param menu The menu to create a gtkmenu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu.
---   If so, menu_id offset is 1000. Defaults to `false`.
+--   If so, menu_id offset is 1000. The default value is `false`.
 -- @return gtkmenu that can be passed to `gui.gtkmenu()`.
 -- @see gui.gtkmenu
 local function read_menu_table(menu, contextmenu)

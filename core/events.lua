@@ -34,41 +34,53 @@ module('events')]]
 -- they pass. Events that modules emit are listed on their respective LuaDoc
 -- pages.
 --
--- * `APPLEEVENT_ODOC`: Called when Mac OSX tells Textadept to open a document.
---   <br />
+-- * `APPLEEVENT_ODOC`
+--   Called when Mac OSX tells Textadept to open a document.
 --       * `uri`: The URI to open.
--- * `AUTO_C_CHAR_DELETED`: Called when the user deleted a character while the
---   autocompletion list was active.
--- * `AUTO_C_RELEASE`: Called when the user has cancelled the autocompletion
---   list.
--- * `AUTO_C_SELECTION`: Called when the user has selected an item in an
---   autocompletion list and before the selection is inserted. Automatic
---   insertion can be cancelled by calling `buffer:auto_c_cancel()` before
---   returning from the event handler.<br />
+-- * `AUTO_C_CHAR_DELETED`
+--   Called when the user deleted a character while the autocompletion list was
+--   active.
+-- * `AUTO_C_RELEASE`
+--   Called when the user has cancelled the autocompletion list.
+-- * `AUTO_C_SELECTION`
+--   Called when the user has selected an item in an autocompletion list and
+--   before the selection is inserted.
+--   Automatic insertion can be cancelled by calling `buffer:auto_c_cancel()`
+--   before returning from the event handler. Arguments:
 --       * `text`: The text of the selection.
 --       * `position`: The start position of the word being completed.
--- * `BUFFER_AFTER_SWITCH`: Called right after a buffer is switched to.
--- * `BUFFER_BEFORE_SWITCH`: Called right before another buffer is switched to.
--- * `BUFFER_DELETED`: Called after a buffer was deleted.
--- * `BUFFER_NEW`: Called when a new buffer is created.
--- * `CALL_TIP_CLICK`: Called when the user clicks on a calltip.
---   <br />
+-- * `BUFFER_AFTER_SWITCH`
+--   Called right after a buffer is switched to.
+-- * `BUFFER_BEFORE_SWITCH`
+--   Called right before another buffer is switched to.
+-- * `BUFFER_DELETED`
+--   Called after a buffer was deleted.
+-- * `BUFFER_NEW`
+--   Called when a new buffer is created.
+-- * `CALL_TIP_CLICK`
+--   Called when the user clicks on a calltip.
+--   Arguments:
 --       * `position`: Set to 1 if the click is in an up arrow, 2 if in a down
 --         arrow, and 0 if elsewhere.
--- * `CHAR_ADDED`: Called when an ordinary text character is added to the
---   buffer.<br />
+-- * `CHAR_ADDED`
+--   Called when an ordinary text character is added to the buffer.
+--   Arguments:
 --       * `ch`: The text character byte.
--- * `COMMAND_ENTRY_COMMAND`: Called when a command is entered into the Command
---   Entry.<br />
+-- * `COMMAND_ENTRY_COMMAND`
+--   Called when a command is entered into the Command Entry.
+--   Arguments:
 --       * `command`: The command text.
--- * `COMMAND_ENTRY_KEYPRESS`: Called when a key is pressed in the Command
---   Entry.<br />
+-- * `COMMAND_ENTRY_KEYPRESS`
+--   Called when a key is pressed in the Command Entry.
+--   Arguments:
 --       * `code`: The key code.
 --       * `shift`: The Shift key is held down.
 --       * `ctrl`: The Control/Command key is held down.
 --       * `alt`: The Alt/option key is held down.
 --       * `meta`: The Control key on Mac OSX is held down.
--- * `DOUBLE_CLICK`: Called when the mouse button is double-clicked.<br />
+-- * `DOUBLE_CLICK`
+--   Called when the mouse button is double-clicked.
+--   Arguments:
 --       * `position`: The text position of the double click.
 --       * `line`: The line of the double click.
 --       * `modifiers`: The key modifiers held down. It is a combination of zero
@@ -76,60 +88,80 @@ module('events')]]
 --         `_SCINTILLA.constants.SCMOD_CTRL`,
 --         `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --         `_SCINTILLA.constants.SCMOD_META`.
--- * `DWELL_END`: Called after a `DWELL_START` and the mouse is moved or other
---   activity such as key press indicates the dwell is over.<br />
+-- * `DWELL_END`
+--   Called after a `DWELL_START` and the mouse is moved or other activity such
+--   as key press indicates the dwell is over.
+--   Arguments:
 --       * `position`: The nearest position in the document to the position
 --         where the mouse pointer was lingering.
 --       * `x`: Where the pointer lingered.
 --       * `y`: Where the pointer lingered.
--- * `DWELL_START`: Called when the user keeps the mouse in one position for the
---   dwell period (see `_SCINTILLA.constants.SCI_SETMOUSEDWELLTIME`).<br />
+-- * `DWELL_START`
+--   Called when the user keeps the mouse in one position for the dwell period
+--   (see `_SCINTILLA.constants.SCI_SETMOUSEDWELLTIME`).
+--   Arguments:
 --       * `position`: The nearest position in the document to the position
 --         where the mouse pointer was lingering.
 --       * `x`: Where the pointer lingered.
 --       * `y`: Where the pointer lingered.
--- * `ERROR`: Called when an error occurs.<br />
+-- * `ERROR`
+--   Called when an error occurs.
+--   Arguments:
 --       * `text`: The error text.
--- * `FIND`: Called when finding text via the Find dialog box.<br />
+-- * `FIND`
+--   Called when finding text via the Find dialog box.
+--   Arguments:
 --       * `text`: The text to search for.
 --       * `next`: Search forward.
--- * `HOTSPOT_CLICK`: Called when the user clicks on text that is in a style
---   with the hotspot attribute set.<br />
+-- * `HOTSPOT_CLICK`
+--   Called when the user clicks on text that is in a style with the hotspot
+--   attribute set.
+--   Arguments:
 --       * `position`: The text position of the click.
 --       * `modifiers`: The key modifiers held down. It is a combination of zero
 --         or more of `_SCINTILLA.constants.SCMOD_ALT`,
 --         `_SCINTILLA.constants.SCMOD_CTRL`,
 --         `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --         `_SCINTILLA.constants.SCMOD_META`.
--- * `HOTSPOT_DOUBLE_CLICK`: Called when the user double clicks on text that is
---   in a style with the hotspot attribute set.<br />
+-- * `HOTSPOT_DOUBLE_CLICK`
+--   Called when the user double clicks on text that is in a style with the
+--   hotspot attribute set.
+--   Arguments:
 --       * `position`: The text position of the double click.
 --       * `modifiers`: The key modifiers held down. It is a combination of zero
 --         or more of `_SCINTILLA.constants.SCMOD_ALT`,
 --         `_SCINTILLA.constants.SCMOD_CTRL`,
 --         `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --         `_SCINTILLA.constants.SCMOD_META`.
--- * `HOTSPOT_RELEASE_CLICK`: Called when the user releases the mouse on text
---   that is in a style with the hotspot attribute set.<br />
+-- * `HOTSPOT_RELEASE_CLICK`
+--   Called when the user releases the mouse on text that is in a style with the
+--   hotspot attribute set.
+--   Arguments:
 --       * `position`: The text position of the release.
--- * `INDICATOR_CLICK`: Called when the user clicks the mouse on text that has
---   an indicator.<br />
+-- * `INDICATOR_CLICK`
+--   Called when the user clicks the mouse on text that has an indicator.
+--   Arguments:
 --       * `position`: The text position of the click.
 --       * `modifiers`: The key modifiers held down. It is a combination of zero
 --         or more of `_SCINTILLA.constants.SCMOD_ALT`,
 --         `_SCINTILLA.constants.SCMOD_CTRL`,
 --         `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --         `_SCINTILLA.constants.SCMOD_META`.
--- * `INDICATOR_RELEASE`: Called when the user releases the mouse on text that
---   has an indicator.<br />
+-- * `INDICATOR_RELEASE`
+--   Called when the user releases the mouse on text that has an indicator.
+--   Arguments:
 --       * `position`: The text position of the release.
--- * `KEYPRESS`: Called when a key is pressed.<br />
+-- * `KEYPRESS`
+--   Called when a key is pressed.
+--   Arguments:
 --       * `code`: The key code.
 --       * `shift`: The Shift key is held down.
 --       * `ctrl`: The Control/Command key is held down.
 --       * `alt`: The Alt/option key is held down.
 --       * `meta`: The Control key on Mac OSX is held down.
--- * `MARGIN_CLICK`: Called when the mouse is clicked inside a margin.<br />
+-- * `MARGIN_CLICK`
+--   Called when the mouse is clicked inside a margin.
+--   Arguments:
 --       * `margin`: The margin number that was clicked.
 --       * `position`: The position of the start of the line in the buffer that
 --         corresponds to the margin click.
@@ -137,35 +169,53 @@ module('events')]]
 --         `_SCINTILLA.constants.SCI_SHIFT`, `_SCINTILLA.constants.SCI_CTRL`,
 --         and `_SCINTILLA.constants.SCI_ALT` to indicate the keys that were
 --         held down at the time of the margin click.
--- * `MENU_CLICKED`: Called when a menu item is selected.<br />
+-- * `MENU_CLICKED`
+--   Called when a menu item is selected.
+--   Arguments:
 --       * `menu_id`: The numeric ID of the menu item set in `gui.gtkmenu()`.
--- * `QUIT`: Called when quitting Textadept. When connecting to this event,
---   connect with an index of 1 or the handler will be ignored.
--- * `REPLACE`:  Called to replace selected (found) text.<br />
+-- * `QUIT`
+--   Called when quitting Textadept.
+--   When connecting to this event, connect with an index of 1 or the handler
+--   will be ignored.
+-- * `REPLACE`
+--   Called to replace selected (found) text.
+--   Arguments:
 --       * `text`: The text to replace selected text with.
--- * `REPLACE_ALL`: Called to replace all occurances of found text.<br />
+-- * `REPLACE_ALL`
+--   Called to replace all occurances of found text.
+--   Arguments:
 --       * `find_text`: The text to search for.
 --       * `repl_text`: The text to replace found text with.
--- * `RESET_AFTER`: Called after resetting the Lua state. This is triggered by
---   `reset()`.
--- * `RESET_BEFORE`: Called before resetting the Lua state. This is triggered by
---   `reset()`.
--- * `SAVE_POINT_LEFT`: Called when a save point is left.
--- * `SAVE_POINT_REACHED`: Called when a save point is entered.
--- * `UPDATE_UI`: Called when either the text or styling of the buffer has
---   changed or the selection range has changed.
--- * `URI_DROPPED`: Called when the user has dragged a URI such as a file name
---   onto the view.<br />
+-- * `RESET_AFTER`
+--   Called after resetting the Lua state.
+--   This is triggered by `reset()`.
+-- * `RESET_BEFORE`
+--   Called before resetting the Lua state.
+--   This is triggered by `reset()`.
+-- * `SAVE_POINT_LEFT`
+--   Called when a save point is left.
+-- * `SAVE_POINT_REACHED`
+--   Called when a save point is entered.
+-- * `UPDATE_UI`
+--   Called when either the text or styling of the buffer has changed or the
+--   selection range has changed.
+-- * `URI_DROPPED`
+--   Called when the user has dragged a URI such as a file name onto the view.
+--   Arguments:
 --       * `text`: The URI text.
--- * `USER_LIST_SELECTION`: Called when the user has selected an item in a user
---   list.<br />
+-- * `USER_LIST_SELECTION`
+--   Called when the user has selected an item in a user list.
+--   Arguments:
 --       * `list_type`: This is set to the list_type parameter from the
 --         `buffer:user_list_show()` call that initiated the list.
 --       * `text`: The text of the selection.
 --       * `position`: The position the list was displayed at.
--- * `VIEW_NEW`: Called when a new view is created.
--- * `VIEW_BEFORE_SWITCH`: Called right before another view is switched to.
--- * `VIEW_AFTER_SWITCH`: Called right after another view is switched to.
+-- * `VIEW_NEW`
+--   Called when a new view is created.
+-- * `VIEW_BEFORE_SWITCH`
+--   Called right before another view is switched to.
+-- * `VIEW_AFTER_SWITCH`
+--   Called right after another view is switched to.
 --
 -- ## Example
 --

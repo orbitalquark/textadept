@@ -314,16 +314,19 @@ module('_M.textadept.adeptsense')]]
 --
 -- #### Other Adeptsense Settings
 --
--- * `always_show_globals` [bool]: Include globals in the list of completions
---   offered. Globals are classes, functions, and fields that do not belong to
---   another class. They are contained in `completions['']`. The default value
---   is `true`.
+-- * `always_show_globals` [bool]
+--   Include globals in the list of completions offered.
+--   Globals are classes, functions, and fields that do not belong to another
+--   class. They are contained in `completions['']`. The default value is
+--   `true`.
 
 --
 -- ## Settings
 --
--- * `FUNCTIONS` [string]: XPM image for Adeptsense functions.
--- * `FIELDS` [string]: XPM image for Adeptsense fields.
+-- * `FUNCTIONS` [string]
+--   XPM image for Adeptsense functions.
+-- * `FIELDS` [string]
+--   XPM image for Adeptsense fields.
 
 local senses = {}
 
@@ -415,10 +418,10 @@ end
 -- Adds an inherited class's completions to the given completion list.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param class The name of the class to add inherited completions from.
--- @param only_fields If `true`, adds only fields to the completion list;
---   defaults to `false`.
--- @param only_funcs If `true`, adds only functions to the completion list;
---   defaults to `false`.
+-- @param only_fields If `true`, adds only fields to the completion list. The
+--   default value is `false`.
+-- @param only_funcs If `true`, adds only functions to the completion list. The
+--   default value is `false`.
 -- @param c The completion list to add completions to.
 -- @param added Table that keeps track of what inherited classes have been
 --   added. This prevents stack overflow errors. Should be `{}` on the initial
@@ -446,10 +449,10 @@ end
 -- Returns a list of completions for the given symbol.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol to get completions for.
--- @param only_fields If `true`, returns list of only fields; defaults to
---   `false`.
--- @param only_functions If `true`, returns list of only functions; defaults to
---   `false`.
+-- @param only_fields If `true`, returns list of only fields. The default value
+--   is `false`.
+-- @param only_functions If `true`, returns list of only functions. The default
+--   value is `false`.
 -- @return completion_list or `nil`
 -- @name get_completions
 function M.get_completions(sense, symbol, only_fields, only_functions)
@@ -501,10 +504,10 @@ end
 ---
 -- Shows an autocompletion list for the symbol behind the caret.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
--- @param only_fields If `true`, returns list of only fields; defaults to
---   `false`.
--- @param only_functions If `true`, returns list of only functions; defaults to
---   `false1.
+-- @param only_fields If `true`, returns list of only fields. The default value
+--   is `false`.
+-- @param only_functions If `true`, returns list of only functions. The default
+--   value is `false`.
 -- @return `true` on success or `false`.
 -- @see get_symbol
 -- @see get_completions
@@ -532,10 +535,10 @@ end
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param c The character(s) that triggers the autocompletion. You can have up
 --   to two characters.
--- @param only_fields If `true`, this trigger only completes fields. Defaults to
---   `false`.
+-- @param only_fields If `true`, this trigger only completes fields. The default
+--   value is `false`.
 -- @param only_functions If `true`, this trigger only completes functions.
---   Defaults to `false`.
+--   The default value is `false`.
 -- @usage sense:add_trigger('.')
 -- @usage sense:add_trigger(':', false, true) -- only functions
 -- @usage sense:add_trigger('->')
@@ -645,7 +648,7 @@ end
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param tag_file The path of the ctags file to load.
 -- @param nolocations If `true`, does not store the locations of the tags for
---   use by `goto_ctag()`. Defaults to `false`.
+--   use by `goto_ctag()`. The default value is `false`.
 -- @name load_ctags
 function M.load_ctags(sense, tag_file, nolocations)
   local ctags_kinds = sense.ctags_kinds
@@ -876,7 +879,7 @@ api_files = {},
 --   are shown (if any). Completions will not be shown for both a class and
 --   superclass unless defined in a previously loaded ctags file. Also, multiple
 --   superclasses cannot be recognized by this pattern; use a ctags file
---   instead. Defaults to `'class%s+([%w_]+)'`.
+--   instead. The default value is `'class%s+([%w_]+)'`.
 -- @field word_chars A Lua pattern of characters allowed in a word. The default
 --   is `'%w_'`.
 -- @field symbol_chars A Lua pattern of characters allowed in a symbol,
@@ -884,11 +887,11 @@ api_files = {},
 --   default is `'[%w_%.]'`.
 -- @field type_declarations A list of Lua patterns used for determining the
 --   class type of a symbol. The first capture returned must be the class name.
---   Use `%_` to match the symbol. The default is `'(%u[%w_%.]+)%s+%_'`.
+--   Use `%_` to match the symbol. The default value is `'(%u[%w_%.]+)%s+%_'`.
 -- @field type_declarations_exclude A table of types to exclude, even if they
 --   match a type_declaration pattern. Each excluded type is a table key and has
 --   a `true` boolean value. For example, `{ Foo = true }` excludes any type
---   whose name is `Foo`. Defaults to being empty.
+--   whose name is `Foo`. The default value is `{}`.
 -- @field type_assignments A map of Lua patterns to class types for variable
 --   assignments. This is typically used for dynamically typed languages. For
 --   example, `sense.type_assignments['^"'] = 'string'`  would recognize string

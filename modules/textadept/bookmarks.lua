@@ -10,8 +10,8 @@ module('_M.textadept.bookmarks')]]
 -- Markdown:
 -- ## Settings
 --
--- * `MARK_BOOKMARK_COLOR` [number]: The color used for a bookmarked line in
---   `0xBBGGRR` format.
+-- * `MARK_BOOKMARK_COLOR` [number]
+--   The color used for a bookmarked line in `0xBBGGRR` format.
 
 M.MARK_BOOKMARK_COLOR = 0xB3661A
 

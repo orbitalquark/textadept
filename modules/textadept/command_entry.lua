@@ -9,7 +9,8 @@ module('gui.command_entry')]]
 -- Markdown:
 -- ## Fields
 --
--- * `entry_text` [string]: The text in the entry.
+-- * `entry_text` [string]
+--   The text in the entry.
 
 -- Environment for abbreviated commands.
 -- @class table

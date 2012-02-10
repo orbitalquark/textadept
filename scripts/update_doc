@@ -37,6 +37,7 @@ if luadoc then
     for line in f:lines() do
       if flag and line:match('^%-%-') then
         local match = line:match('^%-%- ([^\n]+)')
+        if match and match:find('^%s*[*+] ') then match = match..'<br />' end
         markdown[#markdown + 1] = match or ''
       elseif flag then -- markdown ended
         break

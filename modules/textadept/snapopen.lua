@@ -10,10 +10,10 @@ module('_M.textadept.snapopen')]]
 -- Markdown:
 -- ## Settings
 --
--- * `DEFAULT_DEPTH` [number]: Maximum directory depth to search. The default
---   value is `4`.
--- * `MAX` [number]: Maximum number of files to list. The default value is
---   `1000`.
+-- * `DEFAULT_DEPTH` [number]
+--   Maximum directory depth to search. The default value is `4`.
+-- * `MAX` [number]
+--   Maximum number of files to list. The default value is `1000`.
 --
 -- ## Examples
 --
@@ -111,12 +111,12 @@ end
 --   excluded by adding filters to a table assigned to a `folders` key in the
 --   filter table. All strings should be UTF-8 encoded.
 -- @param exclude_PATHS Flag indicating whether or not to exclude `PATHS` in the
---   search. Defaults to `false`.
+--   search. The default value is `false`.
 -- @param exclude_FILTER Flag indicating whether or not to exclude `FILTER` from
 --   `filter` in the search. If false, adds `FILTER` to the given `filter`.
---   Defaults to `false`.
+--   The default value is `false`.
 -- @param depth Number of directories to recurse into for finding files.
---   Defaults to `DEFAULT_DEPTH`.
+--   The default value is `DEFAULT_DEPTH`.
 -- @usage _M.textadept.snapopen.open()
 -- @usage _M.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)
 -- @usage _M.textadept.snapopen.open(nil, '!%.lua$')

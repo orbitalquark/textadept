@@ -13,18 +13,22 @@ module('_M.textadept.run')]]
 -- Markdown:
 -- ## Run Events
 --
--- * `_G.events.COMPILE_OUTPUT`: Called after a compile command is executed.
+-- * `_G.events.COMPILE_OUTPUT`
+--   Called after a compile command is executed.
 --   When connecting to this event (typically from a language-specific module),
 --   connect with an index of `1` and return `true` if the event was handled and
 --   you want to override the default handler that prints the output to a new
---   view.<br />
+--   view.
+--   Arguments:
 --       * `lexer`: The lexer language.
 --       * `output`: The output from the command.
--- * `_G.events.RUN_OUTPUT`: Called after a run command is executed. When
---   connecting to this event (typically from a language-specific module),
+-- * `_G.events.RUN_OUTPUT`
+--   Called after a run command is executed.
+--   When connecting to this event (typically from a language-specific module),
 --   connect with an index of `1` and return `true` if the event was handled and
 --   you want to override the default handler that prints the output to a new
---   view.<br />
+--   view.
+--   Arguments:
 --       * `lexer`: The lexer language.
 --       * `output`: The output from the command.
 
