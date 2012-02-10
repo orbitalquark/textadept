@@ -10,32 +10,48 @@ module('gui.find')]]
 -- Markdown:
 -- ## Fields
 --
--- * `find_entry_text` [string]: The text in the find entry.
--- * `replace_entry_text` [string]: The text in the replace entry.
--- * `match_case` [bool]: Searches are case-sensitive.
--- * `whole_word` [bool]: Only whole-word matches are allowed in searches.
--- * `lua` [bool]: The search text is interpreted as a Lua pattern.
--- * `in_files` [bool]: Search for the text in a list of files.
--- * `find_label_text` [string]: The text of the 'Find' label. This is primarily
---   used for localization. (Write-only)
--- * `replace_label_text` [string]: The text of the 'Replace' label. This is
---   primarily used for localization. (Write-only)
--- * `find_next_button_text` [string]: The text of the 'Find Next' button. This
---   is primarily used for localization. (Write-only)
--- * `find_prev_button_text` [string]: The text of the 'Find Prev' button. This
---   is primarily used for localization. (Write-only)
--- * `replace_button_text` [string]: The text of the 'Replace' button. This is
---   primarily used for localization. (Write-only)
--- * `replace_all_button_text` [string]: The text of the 'Replace All' button.
---   This is primarily used for localization. (Write-only)
--- * `match_case_label_text` [string]: The text of the 'Match case' label. This
---   is primarily used for localization. (Write-only)
--- * `whole_word_label_text` [string]: The text of the 'Whole word' label. This
---   is primarily used for localization. (Write-only)
--- * `lua_pattern_label_text` [string]: The text of the 'Lua pattern' label.
---   This is primarily used for localization. (Write-only)
--- * `in_files_label_text` [string]: The text of the 'In files' label. This is
---   primarily used for localization. (Write-only)
+-- * `find_entry_text` [string]
+--   The text in the find entry.
+-- * `replace_entry_text` [string]
+--   The text in the replace entry.
+-- * `match_case` [bool]
+--   Searches are case-sensitive.
+-- * `whole_word` [bool]
+--   Only whole-word matches are allowed in searches.
+-- * `lua` [bool]
+--   The search text is interpreted as a Lua pattern.
+-- * `in_files` [bool]
+--   Search for the text in a list of files.
+-- * `find_label_text` [string] (Write-only)
+--   The text of the 'Find' label.
+--   This is primarily used for localization.
+-- * `replace_label_text` [string] (Write-only)
+--   The text of the 'Replace' label.
+--   This is primarily used for localization.
+-- * `find_next_button_text` [string] (Write-only)
+--   The text of the 'Find Next' button.
+--   This is primarily used for localization.
+-- * `find_prev_button_text` [string] (Write-only)
+--   The text of the 'Find Prev' button.
+--   This is primarily used for localization.
+-- * `replace_button_text` [string] (Write-only)
+--   The text of the 'Replace' button.
+--   This is primarily used for localization.
+-- * `replace_all_button_text` [string] (Write-only)
+--   The text of the 'Replace All' button.
+--   This is primarily used for localization.
+-- * `match_case_label_text` [string] (Write-only)
+--   The text of the 'Match case' label.
+--   This is primarily used for localization.
+-- * `whole_word_label_text` [string] (Write-only)
+--   The text of the 'Whole word' label.
+--   This is primarily used for localization.
+-- * `lua_pattern_label_text` [string] (Write-only)
+--   The text of the 'Lua pattern' label.
+--   This is primarily used for localization.
+-- * `in_files_label_text` [string] (Write-only)
+--   The text of the 'In files' label.
+--   This is primarily used for localization.
 
 local _L = _L
 find.find_label_text = _L['Find:']

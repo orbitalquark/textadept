@@ -59,9 +59,10 @@ function dofile([filename]) end
 -- message.
 function error(message [, level]) end
 
--- * `_G._G`: A global variable (not a function) that holds the global
---   environment (see §2.2). Lua itself does not use this variable; changing its
---   value does not affect any environment, nor vice-versa.
+-- * `_G._G`
+--   A global variable (not a function) that holds the global environment
+--   (see §2.2). Lua itself does not use this variable; changing its value does
+--   not affect any environment, nor vice-versa.
 
 ---
 -- If `object` does not have a metatable, returns nil. Otherwise, if the
@@ -234,9 +235,10 @@ function tostring(v) end
 -- "`table`", "`function`", "`thread`", and "`userdata`".
 function type(v) end
 
--- * `_G._VERSION` [string]: A global variable (not a function) that holds a
---   string containing the current interpreter version. The current contents of
---   this variable is "`Lua 5.2`".
+-- * `_G._VERSION` [string]
+--   A global variable (not a function) that holds a string containing the
+--   current interpreter version. The current contents of this variable is
+--   "`Lua 5.2`".
 
 ---
 -- This function is similar to `pcall`, except that it sets a new message
@@ -320,8 +322,9 @@ function coroutine.yield(···) end
 -- any loader for the module, then `require` raises an error.
 function require(modname) end
 
--- * `package.config`: A string describing some compile-time configurations for
---   packages. This string is a sequence of lines:
+-- * `package.config`
+--   A string describing some compile-time configurations for packages. This
+--   string is a sequence of lines:
 --     The first line is the directory separator string. Default is '`\`' for
 --     Windows and '`/`' for all other systems.
 --     The second line is the character that separates templates in a path.
@@ -333,16 +336,17 @@ function require(modname) end
 --     The fifth line is a mark to ignore all text before it when building the
 --     `luaopen_` function name. Default is '`-`'.
 
--- * `package.cpath`: The path used by `require` to search for a C loader.
+-- * `package.cpath`
+--   The path used by `require` to search for a C loader.
 --   Lua initializes the C path `package.cpath` in the same way it initializes
 --   the Lua path `package.path`, using the environment variable `LUA_CPATH_5_2`
 --   or the environment variable `LUA_CPATH` or a default path defined in
 --   `luaconf.h`.
 
--- * `package.loaded`: A table used by `require` to control which modules are
---   already loaded. When you require a module `modname` and
---   `package.loaded[modname]` is not false, `require` simply returns the value
---   stored there.
+-- * `package.loaded`
+--   A table used by `require` to control which modules are already loaded. When
+--   you require a module `modname` and `package.loaded[modname]` is not false,
+--   `require` simply returns the value stored there.
 --   This variable is only a reference to the real table; assignments to this
 --   variable do not change the table used by `require`.
 
@@ -367,20 +371,21 @@ function require(modname) end
 -- systems that support the `dlfcn` standard).
 function package.loadlib(libname, funcname) end
 
--- * `package.path`: The path used by `require` to search for a Lua loader.
+-- * `package.path`
+--   The path used by `require` to search for a Lua loader.
 --   At start-up, Lua initializes this variable with the value of the
 --   environment variable `LUA_PATH_5_2` or the environment variable `LUA_PATH`
 --   or with a default path defined in `luaconf.h`, if those environment
 --   variables are not defined. Any "`;;`" in the value of the environment
 --   variable is replaced by the default path.
 
--- * `package.preload`: A table to store loaders for specific modules (see
---   `require`).
+-- * `package.preload`
+--   A table to store loaders for specific modules (see `require`).
 --   This variable is only a reference to the real table; assignments to this
 --   variable do not change the table used by `require`.
 
--- * `package.searchers`: A table used by `require` to control how to load
---   modules.
+-- * `package.searchers`
+--   A table used by `require` to control how to load modules.
 --   Each entry in this table is a *searcher function*. When looking for a
 --   module, `require` calls each of these searchers in ascending order, with
 --   the module name (the argument given to `require`) as its sole parameter.
@@ -720,8 +725,9 @@ function math.fmod(x, y) end
 -- absolute value of `m` is in the range *[0.5, 1)* (or zero when `x` is zero).
 function math.frexp(x) end
 
--- * `math.huge`: The value `HUGE_VAL`, a value larger than or equal to any
---   other numerical value.
+-- * `math.huge`
+--   The value `HUGE_VAL`, a value larger than or equal to any other numerical
+--   value.
 
 ---
 -- Returns 'm2^e' (`e` should be an integer).
@@ -745,7 +751,8 @@ function math.min(x, ···) end
 -- `x`.
 function math.modf(x) end
 
--- * `math.pi`: The value of 'π'.
+-- * `math.pi`
+--   The value of 'π'.
 
 ---
 -- Returns *x^y*. (You can also use the expression `x^y` to compute this
@@ -956,9 +963,12 @@ function io.popen(prog [, mode]) end
 -- Equivalent to `io.input():read(···)`.
 function io.read(···) end
 
--- * `io.stderr`: Standard error.
--- * `io.stdin`: Standard in.
--- * `io.stdout`: Standard out.
+-- * `io.stderr`
+--   Standard error.
+-- * `io.stdin`
+--   Standard in.
+-- * `io.stdout`
+--   Standard out.
 
 ---
 -- Returns a handle for a temporary file. This file is opened in update

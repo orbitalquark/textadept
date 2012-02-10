@@ -10,8 +10,8 @@ module('_L')]]
 -- Markdown:
 -- # Settings
 --
--- * `_NIL` [string]: String returned when no localization for a given message
---   exists.
+-- * `_NIL` [string]
+--   String returned when no localization for a given message exists.
 
 M._NIL = 'No Localization'
 

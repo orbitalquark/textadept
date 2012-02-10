@@ -27,17 +27,24 @@ module('_G')]]
 -- Markdown:
 -- ## Fields
 --
--- * `_HOME` [string]: Path to the directory containing Textadept.
--- * `_LEXERPATH` [string]: Paths to lexers, formatted like
---   [`package.path`][package_path].
--- * `_RELEASE` [string]: The Textadept release version.
--- * `_USERHOME` [string]: Path to the user's `~/.textadept/`.
--- * `_CHARSET` [string]: The character set encoding of the filesystem. This is
---   used in [File I/O](../modules/io.html).
--- * `RESETTING` [bool]: If [`reset()`](../modules/_G.html#reset) has been
---   called, this flag is `true` while the Lua state is being re-initialized.
--- * `WIN32` [bool]: If Textadept is running on Windows, this flag is `true`.
--- * `OSX` [bool]: If Textadept is running on Mac OSX, this flag is `true`.
+-- * `_HOME` [string]
+--   Path to the directory containing Textadept.
+-- * `_LEXERPATH` [string]
+--   Paths to lexers, formatted like [`package.path`][package_path].
+-- * `_RELEASE` [string]
+--   The Textadept release version.
+-- * `_USERHOME` [string]
+--   Path to the user's `~/.textadept/`.
+-- * `_CHARSET` [string]
+--   The character set encoding of the filesystem.
+--   This is used in [File I/O](../modules/io.html).
+-- * `RESETTING` [bool]
+--   If [`reset()`](../modules/_G.html#reset) has been called, this flag is
+--   `true` while the Lua state is being re-initialized.
+-- * `WIN32` [bool]
+--   If Textadept is running on Windows, this flag is `true`.
+-- * `OSX` [bool]
+--   If Textadept is running on Mac OSX, this flag is `true`.
 --
 -- [package_path]: http://www.lua.org/manual/5.1/manual.html#pdf-package.path
 

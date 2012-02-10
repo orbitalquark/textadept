@@ -10,8 +10,8 @@ module('view')
 -- Markdown:
 -- ## Fields
 --
--- * `size` [number]: The position of the split resizer (if this view is part of
---   a split view).
+-- * `size` [number]
+--   The position of the split resizer (if this view is part of a split view).
 
 ---
 -- The buffer this view contains. (Read-only)
@@ -21,8 +21,8 @@ local buffer
 
 ---
 -- Splits the indexed view vertically or horizontally and focuses the new view.
--- @param vertical Flag indicating a vertical split. Defaults to `false` for
---   horizontal.
+-- @param vertical Flag indicating a vertical split. The default value is
+--   `false` for horizontal.
 -- @return old view and new view tables.
 function view:split(vertical) end
 
@@ -36,6 +36,6 @@ function view:unsplit() end
 -- Generates `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
 -- @param n A relative or absolute buffer index. An absolute index of `-1` goes
 --   to the last buffer.
--- @param relative Flag indicating if `n` is a relative index or not. Defaults
---   to `false`.
+-- @param relative Flag indicating if `n` is a relative index or not. The
+--   default value is `false`.
 function view:goto_buffer(n, relative) end

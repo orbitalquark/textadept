@@ -8,25 +8,13 @@ local M = {}
 module('_M.textadept.mime_types')]]
 
 -- Markdown:
--- ## Overview
---
--- This module adds an extra function to `buffer`:
---
--- * **buffer:set\_lexer** (language)<br />
---   Replacement for [`buffer:set_lexer_language()`][buffer_set_lexer_language].
---   <br /> Sets a `buffer._lexer` field so it can be restored without querying
---   the mime-types tables. Also if the user manually sets the lexer, it should
---   be restored.<br />
---   Loads the language-specific module if it exists.
---       - lang: The string language to set.
---
--- [buffer_set_lexer_language]: buffer.html#buffer:set_lexer_language
---
 -- ## Mime-type Events
 --
--- * `_G.events.LANGUAGE_MODULE_LOADED`: Called when loading a language-specific
---   module. This is useful for overriding its key commands since they are not
---   available when Textadept starts. Arguments:<br />
+-- * `_G.events.LANGUAGE_MODULE_LOADED`
+--   Called when loading a language-specific module.
+--   This is useful for overriding its key commands since they are not available
+--   when Textadept starts.
+--   Arguments:
 --       * `lang`: The language lexer name.
 
 -- Events.

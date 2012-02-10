@@ -10,21 +10,29 @@ module('_M.textadept.editing')]]
 -- Markdown:
 -- ## Settings
 --
--- * `AUTOPAIR` [bool]: Opening `(`, `[`, `[`, `"`, or `'` characters are
---   automatically closed. The default value is `true`.
--- * `HIGHLIGHT_BRACES` [bool]: Highlight matching `()[]{}<>` characters. The
---   default value is `true`.
--- * `AUTOINDENT` [bool]: Match the indentation level of the previous line when
---   pressing the Enter key. The default value is `true`.
--- * `STRIP_WHITESPACE_ON_SAVE` [bool]: Strip trailing whitespace on file save.
+-- * `AUTOPAIR` [bool]
+--   Opening `(`, `[`, `[`, `"`, or `'` characters are automatically closed.
 --   The default value is `true`.
--- * `MARK_HIGHLIGHT_BACK` [number]: The background color used for a line
---   containing a highlighted word in `0xBBGGRR` format.
--- * `INDIC_HIGHLIGHT_BACK` [number]: The color used for an indicator for a
---   highlighted word in `0xBBGGRR` format.
--- * `INDIC_HIGHLIGHT_ALPHA` [number]: The alpha transparency value between `0`
---   (transparent) and `255` (opaque) used for an indicator for a highlighted
---   word. The default value is `100`.
+-- * `HIGHLIGHT_BRACES` [bool]
+--   Highlight matching `()[]{}<>` characters.
+--   The default value is `true`.
+-- * `AUTOINDENT` [bool]
+--   Match the indentation level of the previous line when pressing the Enter
+--   key.
+--   The default value is `true`.
+-- * `STRIP_WHITESPACE_ON_SAVE` [bool]
+--   Strip trailing whitespace on file save.
+--   The default value is `true`.
+-- * `MARK_HIGHLIGHT_BACK` [number]
+--   The background color used for a line containing a highlighted word in
+--   `0xBBGGRR` format.
+-- * `INDIC_HIGHLIGHT_BACK` [number]
+--   The color used for an indicator for a highlighted word in `0xBBGGRR`
+--   format.
+-- * `INDIC_HIGHLIGHT_ALPHA` [number]
+--   The alpha transparency value between `0` (transparent) and `255` (opaque)
+--   used for an indicator for a highlighted word.
+--   The default value is `100`.
 
 M.AUTOPAIR = true
 M.HIGHLIGHT_BRACES = true

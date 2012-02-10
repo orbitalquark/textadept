@@ -27,17 +27,21 @@ module('io')]]
 --
 -- ## File Events
 --
--- * `_G.events.FILE_OPENED`: Called when a file is opened in a new buffer.
---   Arguments:<br />
+-- * `_G.events.FILE_OPENED`
+--   Called when a file is opened in a new buffer.
+--   Arguments:
 --       * `filename`: The filename encoded in UTF-8.
--- * `_G.events.FILE_BEFORE_SAVE`: Called right before a file is saved to disk.
---   Arguments:<br />
+-- * `_G.events.FILE_BEFORE_SAVE`
+--   Called right before a file is saved to disk.
+--   Arguments:
 --       * `filename`: The filename encoded in UTF-8.
--- * `_G.events.FILE_AFTER_SAVE`: Called right after a file is saved to disk.
---   Arguments:<br />
+-- * `_G.events.FILE_AFTER_SAVE`
+--   Called right after a file is saved to disk.
+--   Arguments:
 --       * `filename`: The filename encoded in UTF-8.
--- * `_G.events.FILE_SAVED_AS`: Called when a file is saved under a different
---   filename. Arguments:<br />
+-- * `_G.events.FILE_SAVED_AS`
+--   Called when a file is saved under a different filename.
+--   Arguments:
 --       * `filename`: The filename encoded in UTF-8.
 
 -- Events.

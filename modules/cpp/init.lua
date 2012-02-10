@@ -13,16 +13,21 @@ module('_M.cpp')]]
 -- Markdown:
 -- ## Key Commands
 --
--- + `Ctrl+L, M` (`⌘L, M` on Mac OSX): Open this module for editing.
--- + `.`: When to the right of a known symbol, show an autocompletion list of
---   fields and functions.
--- + `->`: When to the right of a known symbol, show an autocompletion list of
---   fields and functions.
--- + `Shift+Return` (`⇧↩`): Add ';' to line end and insert newline.
+-- + `Ctrl+L, M` (`⌘L, M` on Mac OSX)
+--   Open this module for editing.
+-- + `.`
+--   When to the right of a known symbol, show an autocompletion list of fields
+--   and functions.
+-- + `->`
+--   When to the right of a known symbol, show an autocompletion list of fields
+--   and functions.
+-- + `Shift+Return` (`⇧↩`)
+--   Add ';' to line end and insert newline.
 --
 -- ## Fields
 --
--- * `sense`: The C/C++ [Adeptsense](_M.textadept.adeptsense.html).
+-- * `sense`
+--   The C/C++ [Adeptsense](_M.textadept.adeptsense.html).
 
 local m_editing, m_run = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.

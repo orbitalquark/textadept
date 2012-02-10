@@ -37,13 +37,13 @@ local function write_apidoc(file, m, b)
   local name = b.name
   if not name:find('[%.:]') then name = m.name..'.'..name end
   -- Block documentation for the function or field.
-  local doc = { 'fmt -s -w 80 <<"EOF"' }
+  local doc = {}
   -- Function arguments or field type.
   local header = name
   if b.class == 'function' then
     header = header..(b.param and '('..table.concat(b.param, ', ')..')' or '')
   end
-  if b.modifier then header = header..' '..b.modifier end
+  if b.modifier and b.modifier ~= '' then header = header..' '..b.modifier end
   doc[#doc + 1] = header
   -- Function or field description.
   doc[#doc + 1] = b.description:gsub('\\n', '\\\\n')
@@ -74,10 +74,7 @@ local function write_apidoc(file, m, b)
     end
   end
   -- Format the block documentation.
-  doc[#doc + 1] = 'EOF'
-  local p = io.popen(table.concat(doc, '\n'))
-  doc = p:read('*all'):gsub('\n', '\\n')
-  p:close()
+  doc = table.concat(doc, '\n'):gsub('\n', '\\n')
   file[#file + 1] = name:match('[^%.:]+$')..' '..doc
 end
 
@@ -115,8 +112,7 @@ function start(doc)
     local module, field, docs
     -- Adds the field to its module's LuaDoc.
     local function add_field()
-      local doc = table.concat(docs, ' ')
-      doc = doc:gsub('\n ', '\n'):gsub('<br />', '')
+      local doc = table.concat(docs, '\n')
       doc = doc:gsub('%[([^%]]+)%]%b[]', '%1'):gsub('%[([^%]]+)%]%b()', '%1')
       field.description = doc
       local m = modules[field.module]
@@ -149,16 +145,9 @@ function start(doc)
         if doc ~= '' then
           field.modifier, doc = doc:match('^%s*([^:]*):?%s*(.*)$')
         end
-        docs[#docs + 1] = doc
+        if doc ~= '' then docs[#docs + 1] = doc end
       elseif field and line:find('^%-%-%s+[^\r\n]+') then
-        -- Add this additional documentation to the current field being
-        -- parsed. If the doc is indented more than usual, preserve the
-        -- formatting by adding a newline to the previous doc line.
-        local doc, indent = line:match('^%-%-%s%s%s((%s*)[^\r\n]+)')
-        if #indent > 0 and docs[#docs]:sub(-1) ~= '\n' then
-          docs[#docs] = docs[#docs]..'\n'
-        end
-        docs[#docs + 1] = #indent > 0 and doc..'\n' or doc
+        docs[#docs + 1] = line:match('^%-%-%s%s%s(%s*[^\r\n]+)')
       elseif field and
              (line:find('^%-%-[\r\n]*$') or line:find('^[\r\n]*$')) then
         -- End of field documentation. Add it to its module's LuaDoc.
