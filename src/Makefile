@@ -102,6 +102,7 @@ endif
 ifdef OSX
 GTKLIBS += -framework Carbon -framework Cocoa -ligemacintegration
 endif
+GCDFLAGS = -DNOHELP -DLIBRARY
 
 TEXTADEPT_OBJS = textadept.o
 LUA_OBJS = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
@@ -163,7 +164,7 @@ $(LUAJIT_OBJS):
 	cd luajit && make $(LUAJIT_MAKE)
 	cp luajit/src/$(LUAJIT_LIB) .
 $(GCOCOADIALOG): gcocoadialog/gcocoadialog.c
-	$(CC) $(GTKFLAGS) $(INCLUDEDIRS) -c $<
+	$(CC) $(GTKFLAGS) $(GCDFLAGS) $(INCLUDEDIRS) -c $<
 $(TEXTADEPT):\
   $(SCINTILLA_OBJS) $(SCINTILLA_MARSHALLER) $(SCINTILLA_LEXER) \
   $(TEXTADEPT_OBJS) $(LUA_OBJS) $(LUAJIT_OBJS) $(GCOCOADIALOG) \
