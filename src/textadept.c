@@ -20,10 +20,7 @@
 #include <windows.h>
 #define main main_
 #elif __OSX__
-#include <Carbon/Carbon.h>
-#include "igemacintegration/ige-mac-menu.h"
-#define GDK_MOD1_MASK 1 << 7 // Alt/option key (1 << 7 == GDK_MOD5_MASK)
-#define GDK_MOD5_MASK 1 << 3 // Command key (1 << 3 == GDK_MOD1_MASK)
+#include <gtkmacintegration/gtkosxapplication.h>
 #elif __BSD__
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -69,8 +66,11 @@ static gboolean w_focus(GtkWidget *, GdkEventFocus *, gpointer);
 static gboolean w_keypress(GtkWidget *, GdkEventKey *, gpointer);
 static gboolean w_exit(GtkWidget *, GdkEventAny *, gpointer);
 #if __OSX__
-static OSErr w_ae_open(const AppleEvent *, AppleEvent *, long);
-static OSErr w_ae_quit(const AppleEvent *, AppleEvent *, long);
+GtkOSXApplication *app;
+#define app_signal(a, s, c) g_signal_connect(a, s, G_CALLBACK(c), 0)
+static gboolean w_open_osx(GtkOSXApplication *, char *, gpointer);
+static gboolean w_exit_osx(GtkOSXApplication *, gpointer);
+static void w_quit_osx(GtkOSXApplication *, gpointer);
 #endif
 
 // Find/Replace
@@ -145,28 +145,31 @@ static int lbuf_property(lua_State *),
  * @param argv The array of command line params.
  */
 int main(int argc, char **argv) {
+  gtk_init(&argc, &argv);
 #if !(__WIN32__ || __OSX__ || __BSD__)
   textadept_home = g_file_read_link("/proc/self/exe", NULL);
 #elif __OSX__
-  CFURLRef bundle = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-  if (bundle) {
-    CFStringRef path = CFURLCopyFileSystemPath(bundle, kCFURLPOSIXPathStyle);
-    const char *p = CFStringGetCStringPtr(path, kCFStringEncodingMacRoman);
-    textadept_home = g_strconcat(p, "/Contents/Resources/", NULL);
-    CFRelease(path), CFRelease(bundle);
-  } else textadept_home = calloc(1, 1);
+  app = g_object_new(GTK_TYPE_OSX_APPLICATION, NULL);
+  char *path = quartz_application_get_resource_path();
+  textadept_home = g_filename_from_utf8((const char *)path, -1, NULL, NULL,
+                                        NULL);
+  g_free(path);
 #elif __BSD__
   textadept_home = malloc(FILENAME_MAX);
   int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
   size_t cb = FILENAME_MAX;
   sysctl(mib, 4, textadept_home, &cb, NULL, 0);
 #endif
+#if !__OSX__
   char *last_slash = strrchr(textadept_home, G_DIR_SEPARATOR);
   if (last_slash) *last_slash = '\0';
-  gtk_init(&argc, &argv);
+#endif
   if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
   new_window();
   lL_dofile(lua, "init.lua");
+#if __OSX__
+  gtk_osxapplication_ready(app);
+#endif
   gtk_main();
   free(textadept_home);
   return 0;
@@ -213,10 +216,10 @@ static void new_window() {
   accel = gtk_accel_group_new();
 
 #if __OSX__
-  AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
-                        NewAEEventHandlerUPP(w_ae_open), 0, FALSE);
-  AEInstallEventHandler(kCoreEventClass, kAEQuitApplication,
-                        NewAEEventHandlerUPP(w_ae_quit), 0, FALSE);
+  gtk_osxapplication_set_use_quartz_accelerators(app, FALSE);
+  app_signal(app, "NSApplicationOpenFile", w_open_osx);
+  app_signal(app, "NSApplicationBlockTermination", w_exit_osx);
+  app_signal(app, "NSApplicationWillTerminate", w_quit_osx);
 #endif
 
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
@@ -261,9 +264,6 @@ static void new_window() {
   statusbar[1] = gtk_statusbar_new();
   gtk_statusbar_push(GTK_STATUSBAR(statusbar[1]), 0, "");
   g_object_set(G_OBJECT(statusbar[1]), "width-request", 400, NULL);
-#if __OSX__
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar[1]), FALSE);
-#endif
   gtk_box_pack_start(GTK_BOX(hboxs), statusbar[1], FALSE, FALSE, 0);
 
   gtk_widget_show_all(window);
@@ -466,7 +466,7 @@ static gboolean s_keypress(GtkWidget *view, GdkEventKey *event, gpointer _) {
                   event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
                   event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
                   event->state & GDK_MOD1_MASK, LUA_TBOOLEAN,
-                  event->state & GDK_MOD5_MASK, -1);
+                  event->state & GDK_META_MASK, -1);
 }
 
 /**
@@ -517,36 +517,32 @@ static gboolean w_exit(GtkWidget*_, GdkEventAny*__, gpointer ___) {
 
 #if __OSX__
 /**
- * Signal for an Open Document AppleEvent.
+ * Signal for opening files from OSX.
  * Generates an 'appleevent_odoc' event for each document sent.
  */
-static OSErr w_ae_open(const AppleEvent *event, AppleEvent*_, long __) {
-  AEDescList file_list;
-  if (AEGetParamDesc(event, keyDirectObject, typeAEList, &file_list) == noErr) {
-    long count = 0;
-    AECountItems(&file_list, &count);
-    for (int i = 1; i <= count; i++) {
-      FSRef fsref;
-      AEGetNthPtr(&file_list, i, typeFSRef, NULL, NULL, &fsref, sizeof(FSRef),
-                  NULL);
-      CFURLRef url = CFURLCreateFromFSRef(kCFAllocatorDefault, &fsref);
-      if (url) {
-        CFStringRef path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
-        const char *p = CFStringGetCStringPtr(path, kCFStringEncodingMacRoman);
-        lL_event(lua, "appleevent_odoc", LUA_TSTRING, p, -1);
-        CFRelease(path), CFRelease(url);
-      }
-    }
-    AEDisposeDesc(&file_list);
-  }
-  return noErr;
+static gboolean w_open_osx(GtkOSXApplication*_, char *path, gpointer __) {
+  lL_event(lua, "appleevent_odoc", LUA_TSTRING, path, -1);
+  return TRUE;
 }
 
 /**
- * Signal for a Quit Application AppleEvent.
+ * Signal for block terminating Textadept from OSX.
+ * Generates a 'quit' event.
  */
-static OSErr w_ae_quit(const AppleEvent*_, AppleEvent*__, long ___) {
-  return w_exit(NULL, NULL, NULL) ? (OSErr) noErr : errAEEventNotHandled;
+static gboolean w_exit_osx(GtkOSXApplication*_, gpointer __) {
+  return !lL_event(lua, "quit", -1);
+}
+
+/**
+ * Signal for terminating Textadept from OSX.
+ * Closes the Lua state and releases resources.
+ * @see l_close
+ */
+static void w_quit_osx(GtkOSXApplication*_, gpointer __) {
+  l_close(lua);
+  scintilla_release_resources();
+  g_object_unref(app);
+  gtk_main_quit();
 }
 #endif
 
@@ -724,7 +720,7 @@ static gboolean c_keypress(GtkWidget*_, GdkEventKey *event, gpointer __) {
                   LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
                   event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
                   event->state & GDK_MOD1_MASK, LUA_TBOOLEAN,
-                  event->state & GDK_MOD5_MASK, -1);
+                  event->state & GDK_META_MASK, -1);
 }
 
 /******************************************************************************/
@@ -1579,7 +1575,7 @@ static int lgui__newindex(lua_State *L) {
     gtk_box_reorder_child(GTK_BOX(vbox), menubar, 0);
     gtk_widget_show_all(menubar);
 #if __OSX__
-    ige_mac_menu_set_menu_bar(GTK_MENU_SHELL(menubar));
+    gtk_osxapplication_set_menu_bar(app, GTK_MENU_SHELL(menubar));
     gtk_widget_hide(menubar);
 #endif
   } else if (strcmp(key, "size") == 0) {

@@ -36,7 +36,7 @@ module('events')]]
 --
 -- * `APPLEEVENT_ODOC`
 --   Called when Mac OSX tells Textadept to open a document.
---       * `uri`: The URI to open.
+--       * `uri`: The URI to open encoded in UTF-8.
 -- * `AUTO_C_CHAR_DELETED`
 --   Called when the user deleted a character while the autocompletion list was
 --   active.
@@ -202,7 +202,7 @@ module('events')]]
 -- * `URI_DROPPED`
 --   Called when the user has dragged a URI such as a file name onto the view.
 --   Arguments:
---       * `text`: The URI text.
+--       * `text`: The URI text encoded in UTF-8.
 -- * `USER_LIST_SELECTION`
 --   Called when the user has selected an item in a user list.
 --   Arguments:
