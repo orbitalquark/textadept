@@ -442,9 +442,9 @@ local dialog
 -- Gets the current split view structure.
 -- @return table of split views. Each split view entry is a table with 4
 --   fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either
---   split view entries or the index of the buffer shown in each view;
---   `vertical` is a flag indicating if the split is vertical or not; and
---   `size` is the integer position of the split resizer.
+--   nested split view entries or the views themselves; `vertical` is a flag
+--   indicating if the split is vertical or not; and `size` is the integer
+--   position of the split resizer.
 -- @class function
 -- @name get_split_table
 local get_split_table

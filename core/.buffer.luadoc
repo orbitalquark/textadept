@@ -2561,9 +2561,9 @@ function buffer.check_global(buffer) end
 
 ---
 -- Deletes the current buffer.
--- WARNING: this function should NOT be called via scripts. `_G.io` provides a
--- `close()` function for buffers to prompt for confirmation if necessary; this
--- function does not. Genrates a `BUFFER_DELETED` event.
+-- WARNING: this function should NOT be called via scripts. Use `buffer:close()`
+-- instead, which prompts for confirmation if necessary. Generates a
+-- `BUFFER_DELETED` event.
 -- @param buffer The global buffer.
 function buffer.delete(buffer) end
 
