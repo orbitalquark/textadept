@@ -58,7 +58,7 @@ module('keys')]]
 --   The default value is 'c'.
 -- + `ALT` [string]
 --   The string representing the Alt/option key.
---   The default value is 'a'
+--   The default value is 'a'.
 -- + `META` [string]
 --   The string representing the Command key on Mac OSX.
 --   The default value is 'm'.
@@ -268,8 +268,8 @@ local function get_gdk_key(key_seq)
   local mods, key = key_seq:match('^([cams]*)(.+)$')
   if not mods or not key then return nil end
   local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
-                    (mods:find('c') and (not OSX and 4 or 128) or 0) +
-                    (mods:find('a') and 8 or 0) + (mods:find('m') and 4 or 0)
+                    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
+                    (mods:find('m') and 268435456 or 0)
   local byte = string_byte(key)
   if #key > 1 or byte < 32 then
     for i, s in pairs(M.KEYSYMS) do

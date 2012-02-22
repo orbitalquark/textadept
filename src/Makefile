@@ -100,7 +100,7 @@ ifdef LIBPNG12
 GTKLIBS := $(shell sed -e 's/lpng14/lpng12/;' <<< "$(GTKLIBS)")
 endif
 ifdef OSX
-GTKLIBS += -framework Carbon -framework Cocoa -ligemacintegration
+GTKLIBS += -framework Cocoa -lgtkmacintegration
 endif
 GCDFLAGS = -DNOHELP -DLIBRARY
 
