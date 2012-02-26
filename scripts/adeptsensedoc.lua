@@ -64,7 +64,13 @@ local function write_apidoc(file, m, b)
     end
   end
   -- Function returns (@return).
-  if b.class == 'function' and b.ret then doc[#doc + 1] = '@return '..b.ret end
+  if b.class == 'function' and b.ret then
+    if type(b.ret) == 'string' then
+      doc[#doc + 1] = '@return '..b.ret
+    else
+      for _, u in ipairs(b.ret) do doc[#doc + 1] = '@return '..u end
+    end
+  end
   -- See also (@see).
   if b.see then
     if type(b.see) == 'string' then
