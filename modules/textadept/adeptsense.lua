@@ -338,7 +338,8 @@ M.FIELDS = '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars-pe
 -- caret.
 -- For example: `buffer.cur` would return `'buffer'` and `'cur'`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
--- @return symbol or `''`, part or `''`.
+-- @return symbol or `''`
+-- @return part or `''`
 -- @name get_symbol
 function M.get_symbol(sense)
   local line, p = buffer:get_cur_line()
