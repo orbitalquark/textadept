@@ -108,7 +108,8 @@ function gui.switch_buffer()
   local columns, items = { _L['Name'], _L['File'] }, {}
   for _, buffer in ipairs(_BUFFERS) do
     local filename = buffer.filename or buffer._type or _L['Untitled']
-    items[#items + 1] = (buffer.dirty and '*' or '')..filename:match('[^/\\]+$')
+    if buffer.filename then filename = filename:match('[^/\\]+$') end
+    items[#items + 1] = (buffer.dirty and '*' or '')..filename
     items[#items + 1] = filename
   end
   local i = gui.filteredlist(_L['Switch Buffers'], columns, items, true)
@@ -285,7 +286,8 @@ end)
 -- @param buffer The global buffer.
 local function set_title(buffer)
   local filename = buffer.filename or buffer._type or _L['Untitled']
-  gui.title = string.format('%s %s Textadept (%s)', filename:match('[^/\\]+$'),
+  if buffer.filename then filename = filename:match('[^/\\]+$') end
+  gui.title = string.format('%s %s Textadept (%s)', filename,
                             buffer.dirty and '*' or '-', filename)
 end
 
