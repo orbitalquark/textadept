@@ -1,7 +1,7 @@
 ANNOTATION_BOXED _SCINTILLA.constants.ANNOTATION_BOXED\n2
 ANNOTATION_HIDDEN _SCINTILLA.constants.ANNOTATION_HIDDEN\n0
 ANNOTATION_STANDARD _SCINTILLA.constants.ANNOTATION_STANDARD\n1
-APPLEEVENT_ODOC events.APPLEEVENT_ODOC\nCalled when Mac OSX tells Textadept to open a document.\n    * `uri`: The URI to open.
+APPLEEVENT_ODOC events.APPLEEVENT_ODOC\nCalled when Mac OSX tells Textadept to open a document.\n    * `uri`: The URI to open encoded in UTF-8.
 AUTOINDENT _M.textadept.editing.AUTOINDENT [bool]\nMatch the indentation level of the previous line when pressing the Enter\nkey.\nThe default value is `true`.
 AUTOPAIR _M.textadept.editing.AUTOPAIR [bool]\nOpening `(`, `[`, `[`, `"`, or `'` characters are automatically closed.\nThe default value is `true`.
 AUTO_C_CHAR_DELETED events.AUTO_C_CHAR_DELETED\nCalled when the user deleted a character while the autocompletion list was\nactive.
@@ -701,7 +701,7 @@ STYLE_MAX _SCINTILLA.constants.STYLE_MAX\n255
 TYPE lexer.TYPE\n
 UNDO_MAY_COALESCE _SCINTILLA.constants.UNDO_MAY_COALESCE\n1
 UPDATE_UI events.UPDATE_UI\nCalled when either the text or styling of the buffer has changed or the\nselection range has changed.
-URI_DROPPED events.URI_DROPPED\nCalled when the user has dragged a URI such as a file name onto the view.\nArguments:\n    * `text`: The URI text.
+URI_DROPPED events.URI_DROPPED\nCalled when the user has dragged a URI such as a file name onto the view.\nArguments:\n    * `text`: The URI text encoded in UTF-8.
 USER_LIST_SELECTION events.USER_LIST_SELECTION\nCalled when the user has selected an item in a user list.\nArguments:\n    * `list_type`: This is set to the list_type parameter from the\n      `buffer:user_list_show()` call that initiated the list.\n    * `text`: The text of the selection.\n    * `position`: The position the list was displayed at.
 V lpeg.V(v)\nThis operation creates a non-terminal (a variable) for a grammar. The created\nnon-terminal refers to the rule indexed by v in the enclosing grammar. (See\nGrammars for details.)
 VARIABLE lexer.VARIABLE\n
@@ -922,7 +922,7 @@ del_line_right buffer.del_line_right(buffer)\nDelete forwards from the current p
 del_word_left buffer.del_word_left(buffer)\nDelete the word to the left of the caret.\n@param buffer The global buffer.
 del_word_right buffer.del_word_right(buffer)\nDelete the word to the right of the caret.\n@param buffer The global buffer.
 del_word_right_end buffer.del_word_right_end(buffer)\nDelete the word to the right of the caret, but not the trailing non-word\ncharacters.\n@param buffer The global buffer.
-delete buffer.delete(buffer)\nDeletes the current buffer.\nWARNING: this function should NOT be called via scripts. `_G.io` provides a\n`close()` function for buffers to prompt for confirmation if necessary; this\nfunction does not. Genrates a `BUFFER_DELETED` event.\n@param buffer The global buffer.
+delete buffer.delete(buffer)\nDeletes the current buffer.\nWARNING: this function should NOT be called via scripts. Use `buffer:close()`\ninstead, which prompts for confirmation if necessary. Generates a\n`BUFFER_DELETED` event.\n@param buffer The global buffer.
 delete_back buffer.delete_back(buffer)\nDelete the selection or if no selection, the character before the caret.\n@param buffer The global buffer.
 delete_back_not_line buffer.delete_back_not_line(buffer)\nDelete the selection or if no selection, the character before the caret.\nWill not delete the character before at the start of a line.
 delimited_range lexer.delimited_range(chars, escape, end_optional, balanced, forbidden)\nCreates an LPeg pattern that matches a range of characters delimitted by a\nspecific character(s).\nThis can be used to match a string, parenthesis, etc.\n@param chars The character(s) that bound the matched range.\n@param escape Optional escape character. This parameter may be omitted, nil,\n  or the empty string.\n@param end_optional Optional flag indicating whether or not an ending\n  delimiter is optional or not. If true, the range begun by the start\n  delimiter matches until an end delimiter or the end of the input is\n  reached.\n@param balanced Optional flag indicating whether or not a balanced range is\n  matched, like `%b` in Lua's `string.find`. This flag only applies if\n  `chars` consists of two different characters (e.g. '()').\n@param forbidden Optional string of characters forbidden in a delimited\n  range. Each character is part of the set.\n@usage local sq_str_noescapes = delimited_range("'")\n@usage local sq_str_escapes = delimited_range("'", '\\', true)\n@usage local unbalanced_parens = delimited_range('()', '\\', true)\n@usage local balanced_parens = delimited_range('()', '\\', true, true)
@@ -1025,10 +1025,10 @@ get_property buffer.get_property(buffer, key)\nRetrieve a `property` value previ
 get_property lexer.get_property(key, default)\nReturns an integer property value for a given key.\n@param key The property key.\n@param default Optional integer value to return if key is not set.
 get_property_expanded buffer.get_property_expanded(buffer, key)\nRetrieve a `property` value previously set with `buffer.property`, with `$()`\nvariable replacement on returned buffer.\n@param buffer The global buffer.\n@param key Keyword.\n@return string
 get_sel_text buffer.get_sel_text(buffer)\nRetrieve the selected text.\nAlso returns the length of the text.\n@param buffer The global buffer.\n@return string, number
-get_split_table gui.get_split_table()\nGets the current split view structure.\n@return table of split views. Each split view entry is a table with 4\n  fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either\n  split view entries or the index of the buffer shown in each view;\n  `vertical` is a flag indicating if the split is vertical or not; and\n  `size` is the integer position of the split resizer.
+get_split_table gui.get_split_table()\nGets the current split view structure.\n@return table of split views. Each split view entry is a table with 4\n  fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either\n  nested split view entries or the views themselves; `vertical` is a flag\n  indicating if the split is vertical or not; and `size` is the integer\n  position of the split resizer.
 get_style_at lexer.get_style_at(pos)\nReturns the string style name and style number at a given position.\n@param pos The position to get the style for.
 get_style_name buffer.get_style_name(buffer, style_num)\nReturns the name of the style associated with a style number.\n@param buffer The global buffer.\n@param style_num A style number from `0` to `255`.\n@see buffer.style_at
-get_symbol _M.textadept.adeptsense.get_symbol(sense)\nReturns a full symbol (if any) and current symbol part (if any) behind the\ncaret.\nFor example: `buffer.cur` would return `'buffer'` and `'cur'`.\n@param sense The Adeptsense returned by `adeptsense.new()`.\n@return symbol or `''`, part or `''`.
+get_symbol _M.textadept.adeptsense.get_symbol(sense)\nReturns a full symbol (if any) and current symbol part (if any) behind the\ncaret.\nFor example: `buffer.cur` would return `'buffer'` and `'cur'`.\n@param sense The Adeptsense returned by `adeptsense.new()`.\n@return symbol or `''`\n@return part or `''`
 get_tag buffer.get_tag(buffer, tag_num)\nRetrieve the value of a tag from a regular expression search.\n@param buffer The global buffer.\n@param tag_num The tag number.\n@return string
 get_text buffer.get_text(buffer)\nRetrieve all the text in the document.\nAlso returns number of characters retrieved.\n@param buffer The global buffer.
 getenv os.getenv(varname)\nReturns the value of the process environment variable `varname`, or\nnil if the variable is not defined.
@@ -1466,7 +1466,7 @@ show_apidoc _M.textadept.adeptsense.show_apidoc(sense)\nShows a calltip with API
 show_documentation _M.textadept.adeptsense.show_documentation()\nShows API documentation for the symbol at the current position based on the\ncurrent lexer's Adeptsense.\nThis should be called by key commands and menus instead of `show_apidoc()`.
 show_lines buffer.show_lines(buffer, start_line, end_line)\nMake a range of lines visible.\nThis has no effect on fold levels or fold flags. `start_line` can not be\nhidden.\n@param buffer The global buffer.\n@param start_line The start line.\n@param end_line The end line.
 sin math.sin(x)\nReturns the sine of `x` (assumed to be in radians).
-singular _M.rails.singular\nA map of plural controller names to their singulars. Add key-value pairs to\nthis if singularize() is incorrectly converting your plural\ncontroller name to its singular model name.
+singular _M.rails.singular\nA map of plural controller names to their singulars. Add\nkey-value pairs to this if singularize() is incorrectly\nconverting your plural controller name to its singular model name.
 sinh math.sinh(x)\nReturns the hyperbolic sine of `x`.
 size gui.size [table]\nThe size of the Textadept window (`{ width, height }`).
 size view.size [number]\nThe position of the split resizer (if this view is part of a split view).
