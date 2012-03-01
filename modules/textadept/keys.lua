@@ -320,6 +320,8 @@ if OSX then
   keys.cE = buffer.line_end_extend
   keys.cd = buffer.clear
   keys.cl = buffer.vertical_centre_caret
+  keys.aright = buffer.word_right
+  keys.aleft = buffer.word_left
 end
 
 return M
