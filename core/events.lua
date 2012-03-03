@@ -88,6 +88,9 @@ module('events')]]
 --         `_SCINTILLA.constants.SCMOD_CTRL`,
 --         `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --         `_SCINTILLA.constants.SCMOD_META`.
+--         Note: If you set `buffer.rectangular_selection_modifier` to
+--         `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
+--         Ctrl and Alt due to a Scintilla limitation with GTK.
 -- * `DWELL_END`
 --   Called after a `DWELL_START` and the mouse is moved or other activity such
 --   as key press indicates the dwell is over.
@@ -123,6 +126,9 @@ module('events')]]
 --         `_SCINTILLA.constants.SCMOD_CTRL`,
 --         `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --         `_SCINTILLA.constants.SCMOD_META`.
+--         Note: If you set `buffer.rectangular_selection_modifier` to
+--         `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
+--         Ctrl and Alt due to a Scintilla limitation with GTK.
 -- * `HOTSPOT_DOUBLE_CLICK`
 --   Called when the user double clicks on text that is in a style with the
 --   hotspot attribute set.
@@ -133,6 +139,9 @@ module('events')]]
 --         `_SCINTILLA.constants.SCMOD_CTRL`,
 --         `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --         `_SCINTILLA.constants.SCMOD_META`.
+--         Note: If you set `buffer.rectangular_selection_modifier` to
+--         `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
+--         Ctrl and Alt due to a Scintilla limitation with GTK.
 -- * `HOTSPOT_RELEASE_CLICK`
 --   Called when the user releases the mouse on text that is in a style with the
 --   hotspot attribute set.
@@ -147,6 +156,9 @@ module('events')]]
 --         `_SCINTILLA.constants.SCMOD_CTRL`,
 --         `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --         `_SCINTILLA.constants.SCMOD_META`.
+--         Note: If you set `buffer.rectangular_selection_modifier` to
+--         `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
+--         Ctrl and Alt due to a Scintilla limitation with GTK.
 -- * `INDICATOR_RELEASE`
 --   Called when the user releases the mouse on text that has an indicator.
 --   Arguments:
@@ -169,6 +181,9 @@ module('events')]]
 --         `_SCINTILLA.constants.SCI_SHIFT`, `_SCINTILLA.constants.SCI_CTRL`,
 --         and `_SCINTILLA.constants.SCI_ALT` to indicate the keys that were
 --         held down at the time of the margin click.
+--         Note: If you set `buffer.rectangular_selection_modifier` to
+--         `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
+--         Ctrl and Alt due to a Scintilla limitation with GTK.
 -- * `MENU_CLICKED`
 --   Called when a menu item is selected.
 --   Arguments:
