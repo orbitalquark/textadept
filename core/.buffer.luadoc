@@ -2621,7 +2621,9 @@ function buffer.set_lexer(buffer, lang) end
 ---
 -- Replacement for `buffer.get_lexer_language(buffer)`.
 -- @param buffer The global buffer.
-function buffer.get_lexer(buffer) end
+-- @param current Whether to get the lexer at the current caret position in
+--   multi-language lexers. The default is `false` and returns the parent lexer.
+function buffer.get_lexer(buffer, current) end
 
 ---
 -- Returns the name of the style associated with a style number.
