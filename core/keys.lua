@@ -82,6 +82,19 @@ module('keys')]]
 -- When searching for a key command to execute in the `keys` table, key commands
 -- in the current lexer have priority, followed by the ones in the global table.
 --
+-- #### Propagation
+--
+-- Normally when the same key command is assigned to two separate functions of
+-- different precedence, the higher priority key command is run and the lower
+-- priority one is not. However, it is sometimes desirable to have the lower
+-- priority command run after the higher one. For example, `Ctrl+Enter` may
+-- trigger Adeptsense autocompletion in lexers that have Adeptsense, but should
+-- fall back on autocompleting words in the buffer if no Adeptsense completions
+-- are available. In order for this to happen, the first function has to return
+-- `false` (and only `false`; `nil` is not sufficient) when it wants to allow a
+-- lower priority function to run. Any other return value halts propagation and
+-- the key is consumed.
+--
 -- ## Example
 --
 --     keys = {
@@ -89,13 +102,16 @@ module('keys')]]
 --       ['ctrl+b'] = buffer.char_left,
 --       lua = {
 --         ['ctrl+f'] = { buffer.add_text, buffer, 'function' },
+--         ['ctrl+b'] = function() return false end
 --       }
 --     }
 --
 -- The first two key commands are global and call `buffer:char_right()` and
--- `buffer:char_left()` respectively. The last command applies only in the Lua
--- lexer. If `ctrl+f` is pressed in a Lua file, the global key command with the
--- same shortcut is overridden and `function` is added to the buffer.
+-- `buffer:char_left()` respectively. The last two commands apply only in the
+-- Lua lexer. If `ctrl+f` is pressed in a Lua file, the global key command with
+-- the same shortcut is overridden and `function` is added to the buffer.
+-- However, `ctrl+b` in a Lua file does not override its global command because
+-- of the `false` return. Instead, propagation occurs as described above.
 --
 -- ## Problems
 --
