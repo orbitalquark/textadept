@@ -1,0 +1,95 @@
+/* Copyright 2012 Mitchell mitchell.att.foicica.com. */
+
+* {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: #1a66b3;
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+a:visited { color: #661a66; }
+
+blockquote { margin-left: 1em; }
+
+body {
+  background-color: #e6e6e6;
+  color: #333333;
+}
+
+code {
+  font-size: larger;
+}
+
+h1 { margin: 0 0 1em 0; }
+h2, h3, h4, h5, h6 { margin: 1em 0 1em 0; }
+h1 { font-size: 1.3em; }
+h2 { font-size: 1.1em; }
+h3 { font-size: 1em; }
+h4 { font-size: 0.9em; }
+h5 { font-size: 0.8em; }
+
+hr {
+  border: 1px solid #cccccc;
+  margin: 1em 0 1em 0;
+}
+
+li > code, p > code { color: #808080; }
+
+pre {
+  color: #808080;
+  margin: 0 2.5em 0 2.5em;
+}
+
+table, th, td {
+  border: 1px solid #999999;
+  border-collapse: collapse;
+  margin-left: 1em;
+  padding: 0.25em;
+}
+
+ul { list-style-type: disc; }
+
+#content {
+  font-size: 1.2em;
+  margin: 0.5em;
+}
+
+#nav {
+  border: 1px solid #999999;
+  float: left;
+  width: 10em;
+}
+#nav ul {
+  list-style-type: none;
+  margin: 0.25em 0.25em 0.25em 0.5em;
+}
+#nav ul ul { margin: 0 0.25em 0 1em; }
+
+#toc {
+  border: 1px solid #999999;
+  float: right;
+  margin: 0 0 1em 1em;
+}
+#toc ul {
+  color: #808080;
+  margin: 0.25em 0.25em 0.25em 1.25em;
+}
+#toc ul ul { margin: 0 0.25em 0 1em; }
+
+#nav h2, #toc h2 {
+  border-bottom: 1px solid #999999;
+  background-color: #cccccc;
+  font-size: 1em;
+  font-weight: normal;
+  margin: 0;
+  padding: 0.25em;
+}
+
+#main { margin-left: 11em; }
+#main p { margin: 1em; }
+#main ol, #main ul { margin-left: 2.5em; }
+#main ol p, #main ul p { margin-left: 0; }
