@@ -15,7 +15,7 @@ Changes:
 * Lexers with no tokens can be styled manually.
 * Added more OSX default key shortcuts.
 
-[`gui.filteredlist()`]: api/gui.html#filteredlist
+[`gui.filteredlist()`]: ../api/gui.html#filteredlist
 [GtkOSXApplication]: https://live.gnome.org/GTK%2B/OSX/Integration#Gtk-mac-integration.2BAC8-GtkOSXApplication
 
 ## 5.0 (01 Feb 2012)
@@ -35,7 +35,7 @@ Changes:
 * Updated to [Scintilla][] 3.0.3.
 * Also include [LuaJIT][] executables in releases.
 
-[4 to 5 migration guide]: manual/14_Appendix.html#Textadept.4.to.5
+[4 to 5 migration guide]: ../manual/14_Appendix.html#Textadept.4.to.5
 [Scintilla]: http://scintilla.org
 [LuaJIT]: http://luajit.org
 
@@ -54,11 +54,11 @@ Changes:
 * Renamed editing module's `current_word()` to [`select_word()`][].
 * Updated [manual][].
 
-[`reset()`]: api/_G.html#reset
-[`_L`]: api/_L.html
-[`_M`]: api/_M.html
-[manual]: manual
-[`select_word()`]: api/_M.textadept.editing.html#select_word
+[`reset()`]: ../api/_G.html#reset
+[`_L`]: ../api/_L.html
+[`_M`]: ../api/_M.html
+[manual]: ./
+[`select_word()`]: ../api/_M.textadept.editing.html#select_word
 
 ## 5.0 alpha (21 Dec 2012)
 
@@ -73,7 +73,7 @@ Changes:
 * Textadept can be compiled with [LuaJIT][].
 
 [Lua 5.2]: http://www.lua.org/manual/5.2/
-[manual]: manual
+[manual]: ./
 [LuaJIT]: http://luajit.org
 
 ## 4.3 (01 Dec 2011)
@@ -91,8 +91,8 @@ Changes:
 * Simplify theming via [gtkrc][] by naming `GtkWindow` only.
 * Updated to [Scintilla][] 3.0.1.
 
-[theme switching]: api/gui.html#set_theme
-[gtkrc]: manual/8_Themes.html#Theming.the.GUI
+[theme switching]: ../api/gui.html#set_theme
+[gtkrc]: ../manual/8_Themes.html#Theming.the.GUI
 [Scintilla]: http://scintilla.org
 
 ## 4.2 (01 Nov 2011)
@@ -133,13 +133,13 @@ Changes:
 * Use lexer at the caret for key commands and snippets.
 * Updated to [Scintilla][] 2.29.
 
-[dwell events]: api/events.html
-[`_BUFFERS`]: api/_G.html#_BUFFERS
-[`_VIEWS`]: api/_G.html#_VIEWS
-[`buffer:check_global()`]: api/buffer.html#buffer.check_global
-[`view:goto_buffer()`]: api/view.html#view:goto_buffer
-[`gui.goto_view()`]: api/gui.html#goto_view
-[context menu]: api/_M.html#Context.Menu
+[dwell events]: ../api/events.html
+[`_BUFFERS`]: ../api/_G.html#_BUFFERS
+[`_VIEWS`]: ../api/_G.html#_VIEWS
+[`buffer:check_global()`]: ../api/buffer.html#buffer.check_global
+[`view:goto_buffer()`]: ../api/view.html#view:goto_buffer
+[`gui.goto_view()`]: ../api/gui.html#goto_view
+[context menu]: ../api/_M.html#Context.Menu
 [LuaCoco]: http://coco.luajit.org/
 [Scintilla]: http://scintilla.org
 
@@ -162,8 +162,8 @@ Changes:
 * Changed some key commands from 4.0 beta 2.
 * Do not hide the statusbar when the command entry has focus.
 
-[3 to 4 migration guide]: manual/14_Appendix.html#Textadept.3.to.4
-[`gui.dialog()`]: api/gui.html#dialog
+[3 to 4 migration guide]: ../manual/14_Appendix.html#Textadept.3.to.4
+[`gui.dialog()`]: ../api/gui.html#dialog
 
 ## 4.0 beta 2 (11 Aug 2011)
 
@@ -182,7 +182,7 @@ Changes:
 * Swapped OSX `c` and `m` key command definition modifiers.
 * Changed some key bindings from 4.0 beta.
 
-[recent file list]: api/io.html#recent_files
+[recent file list]: ../api/io.html#recent_files
 
 ## 4.0 beta (01 Aug 2011)
 
@@ -205,9 +205,9 @@ Changes:
 * *Completely new set of key commands.*
 * Updated to [Scintilla][] 2.28.
 
-[`io.open_recent_file()`]: api/io.html#open_recent_file
-[`buffer` functions]: api/buffer.html#Functions
-[menu]: api/gui.html#gtkmenu
+[`io.open_recent_file()`]: ../api/io.html#open_recent_file
+[`buffer` functions]: ../api/buffer.html#Functions
+[menu]: ../api/gui.html#gtkmenu
 [Scintilla]: http://scintilla.org
 
 ## 3.9 (01 Jul 2011)
@@ -230,11 +230,11 @@ Changes:
 * Added ConTeXt lexer.
 
 [GTK]: http://gtk.org
-[`gui.dialog`]: api/gui.html#dialog
-[functions]: api/_SCINTILLA.html#Functions
+[`gui.dialog`]: ../api/gui.html#dialog
+[functions]: ../api/_SCINTILLA.html#Functions
 [Scintilla]: http://scintilla.org
-[emit events]: api/_M.textadept.run.html#Run.Events
-[find]: api/gui.find.html
+[emit events]: ../api/_M.textadept.run.html#Run.Events
+[find]: ../api/gui.find.html
 
 ## 3.8 (11 Jun 2011)
 
@@ -255,12 +255,12 @@ Changes:
 * Added native folding for more than 60% of existing lexers. The rest still use
   folding by indentation by default.
 
-[`events.handlers`]: api/events.html#handlers
-[events]: api/events.html
-[documentation]: manual/7_Modules.html#Getting.Modules
+[`events.handlers`]: ../api/events.html#handlers
+[events]: ../api/events.html
+[documentation]: ../manual/7_Modules.html#Getting.Modules
 [official modules]: http://foicica.com/hg
 [Scintilla]: http://scintilla.org
-[easier]: api/lexer.html#Simple.Code.Folding
+[easier]: ../api/lexer.html#Simple.Code.Folding
 
 ## 3.7 (01 May 2011)
 
@@ -273,8 +273,8 @@ Changes:
 * Changed Mac OSX Adeptsense complete key command from `~` to `Ctrl+Escape`.
 * Added [PHP module][].
 
-[`buffer:get_lexer()`]: api/buffer.html#buffer.get_lexer
-[PHP module]: api/_M.php.html
+[`buffer:get_lexer()`]: ../api/buffer.html#buffer.get_lexer
+[PHP module]: ../api/_M.php.html
 
 ## 3.7 beta 3 (01 Apr 2011)
 
@@ -310,13 +310,13 @@ Changes:
 * Officially supported modules have their own [repositories][] and are available
   as a separate download.
 
-[`post_init.lua`]: manual/7_Modules.html#Customizing.Modules
-[module]: api/_M.rails.html
-[RHTML module]: api/_M.rhtml.html
-[`buffer:get_lexer(true)`]: api/buffer.html#buffer.get_lexer
+[`post_init.lua`]: ../manual/7_Modules.html#Customizing.Modules
+[module]: ../api/_M.rails.html
+[RHTML module]: ../api/_M.rhtml.html
+[`buffer:get_lexer(true)`]: ../api/buffer.html#buffer.get_lexer
 [Scintilla]: http://scintilla.org
-[`_m.textadept.snippets`]: api/_M.textadept.snippets.html
-[`gui.print()`]: api/gui.html#print
+[`_m.textadept.snippets`]: ../api/_M.textadept.snippets.html
+[`gui.print()`]: ../api/gui.html#print
 [repositories]: http://foicica.com/hg
 
 ## 3.7 beta 2 (01 Mar 2011)
@@ -351,15 +351,15 @@ Changes:
 * Included libpng12 build for 64-bit Debian-based Linux distros (Ubuntu).
 * Added [CSS][], [HTML][], [Java][], and [Ruby][] modules with Adeptsenses.
 
-[`goto_ctag()`]: api/_M.textadept.adeptsense.html#goto_ctag
+[`goto_ctag()`]: ../api/_M.textadept.adeptsense.html#goto_ctag
 [Scintilla]: http://scintilla.org
-[tutorial]: api/_M.textadept.adeptsense.html
-[`complete()`]: api/_M.textadept.adeptsense.html#complete
-[`show_documentation()`]: api/_M.textadept.adeptsense.html#show_documentation
-[CSS]: api/_M.css.html
-[HTML]: api/_M.hypertext.html
-[Java]: api/_M.java.html
-[Ruby]: api/_M.ruby.html
+[tutorial]: ../api/_M.textadept.adeptsense.html
+[`complete()`]: ../api/_M.textadept.adeptsense.html#complete
+[`show_documentation()`]: ../api/_M.textadept.adeptsense.html#show_documentation
+[CSS]: ../api/_M.css.html
+[HTML]: ../api/_M.hypertext.html
+[Java]: ../api/_M.java.html
+[Ruby]: ../api/_M.ruby.html
 
 ## 3.7 beta (01 Feb 2011)
 
@@ -381,11 +381,11 @@ Changes:
 * Language-specific [`char_matches`][] and [`braces`][] can be defined.
 * `command_entry_keypress` event accepts modifier keys.
 
-[Adeptsense]: manual/6_AdeptEditing.html#Adeptsense
-[`language_module_loaded`]: api/_M.textadept.mime_types.html#Mime-type.Events
-[`gui.filteredlist()`]: api/gui.html#filteredlist
-[`char_matches`]: api/_M.textadept.editing.html#char_matches
-[`braces`]: api/_M.textadept.editing.html#braces
+[Adeptsense]: ../manual/6_AdeptEditing.html#Adeptsense
+[`language_module_loaded`]: ../api/_M.textadept.mime_types.html#Mime-type.Events
+[`gui.filteredlist()`]: ../api/gui.html#filteredlist
+[`char_matches`]: ../api/_M.textadept.editing.html#char_matches
+[`braces`]: ../api/_M.textadept.editing.html#braces
 
 ## 3.6 (01 Jan 2011)
 
@@ -405,8 +405,8 @@ Changes:
 * Moved GUI events from `core/events.lua` to `core/gui.lua`.
 * Separated key command manager from key command definitions.
 
-[`_m.textadept.filter_through`]: api/_M.textadept.filter_through.html
-[shell commands]: manual/10_Advanced.html#Shell.Commands.and.Filtering.Text
+[`_m.textadept.filter_through`]: ../api/_M.textadept.filter_through.html
+[shell commands]: ../manual/10_Advanced.html#Shell.Commands.and.Filtering.Text
 
 ## 3.5 (01 Dec 2010)
 
@@ -424,10 +424,10 @@ Changes:
 * New [manual][].
 * Added `file_after_save` [event][].
 
-[Menus]: api/_M.textadept.menu.html
-[`_m.textadept.editing.enclose()`]: api/_M.textadept.editing.html#enclose
-[manual]: manual
-[event]: api/io.html#File.Events
+[Menus]: ../api/_M.textadept.menu.html
+[`_m.textadept.editing.enclose()`]: ../api/_M.textadept.editing.html#enclose
+[manual]: ./
+[event]: ../api/io.html#File.Events
 
 ## 3.4 (01 Nov 2010)
 
@@ -465,12 +465,12 @@ Changes:
 * Updated to [Scintilla][] 2.22.
 * Renamed `_G.MAC` to `_G.OSX`.
 
-[Switch Buffers]: manual/4_WorkingWithFiles.html#Buffer.Browser
-[`gui.dialog()`]: api/gui.html#dialog
-[`_m.textadept.snapopen.open()`]: api/_M.textadept.snapopen.html#open
-[highlight]: manual/6_AdeptEditing.html#Word.Highlight
-[`_G.timeout()`]: api/_G.html#timeout
-[find API]: api/gui.find.html#find_in_files
+[Switch Buffers]: ../manual/4_WorkingWithFiles.html#Buffer.Browser
+[`gui.dialog()`]: ../api/gui.html#dialog
+[`_m.textadept.snapopen.open()`]: ../api/_M.textadept.snapopen.html#open
+[highlight]: ../manual/6_AdeptEditing.html#Word.Highlight
+[`_G.timeout()`]: ../api/_G.html#timeout
+[find API]: ../api/gui.find.html#find_in_files
 [Scintilla]: http://scintilla.org
 
 ## 3.3 (01 Oct 2010)
@@ -484,7 +484,7 @@ Changes:
 * Added [`_m.textadept.snapopen`][] module with menu options for rapidly opening
   files.
 
-[`_m.textadept.snapopen`]: api/_M.textadept.snapopen.html
+[`_m.textadept.snapopen`]: ../api/_M.textadept.snapopen.html
 
 ## 3.2 (01 Sep 2010)
 
@@ -512,7 +512,7 @@ Changes:
 * Updated to [Scintilla][] 2.20.
 * Added Lua autocompletion.
 
-[propagation]: api/keys.html#Propagation
+[propagation]: ../api/keys.html#Propagation
 [Scintilla]: http://scintilla.org
 
 ## 3.0 (01 Jul 2010)
@@ -528,7 +528,7 @@ Changes:
 
 * More accurate CSS and Diff lexers.
 
-[2 to 3 migration guide]: manual/14_Appendix.html#Textadept.2.to.3
+[2 to 3 migration guide]: ../manual/14_Appendix.html#Textadept.2.to.3
 
 ## 3.0 beta (21 Jun 2010)
 
@@ -551,13 +551,13 @@ Changes:
 * Added statusbar notification on [`reset()`][].
 * Added Gtkrc, Prolog, and Go lexers.
 
-[`buffer:text_range()`]: api/buffer.html#buffer.text_range
-[`textadept`]: api/_M.textadept.html
-[API]: api
+[`buffer:text_range()`]: ../api/buffer.html#buffer.text_range
+[`textadept`]: ../api/_M.textadept.html
+[API]: ../api
 [Scintilla]: http://scintilla.org
-[Abbreviated]: manual/10_Advanced.html#Command.Entry
-[arguments]: api/args.html
-[`reset()`]: api/_G.html#reset
+[Abbreviated]: ../manual/10_Advanced.html#Command.Entry
+[arguments]: ../api/args.html
+[`reset()`]: ../api/_G.html#reset
 
 ## 2.2 (11 May 2010)
 
@@ -594,10 +594,10 @@ Changes:
 * Added Inform, Lilypond, and NSIS lexers.
 * `_m.textadept.editing.enclosure` is now an accessible table.
 
-[`buffer:text_range()`]: api/buffer.html#buffer.text_range
-[run]: api/_M.html#Run
-[compile]: api/_M.html#Compile
-[Block comment]: api/_M.html#Block.Comment
+[`buffer:text_range()`]: ../api/buffer.html#buffer.text_range
+[run]: ../api/_M.html#Run
+[compile]: ../api/_M.html#Compile
+[Block comment]: ../api/_M.html#Block.Comment
 
 ## 2.2 beta (01 Apr 2010)
 
@@ -624,7 +624,7 @@ Changes:
 * Removed api file support.
 
 [gcocoadialog]: http://foicica.com/gcocoadialog
-[`gui.dialog('filteredist', ...)]: api/gui.html#dialog
+[`gui.dialog('filteredist', ...)]: ../api/gui.html#dialog
 
 ## 2.1 (01 Mar 2010)
 
@@ -672,7 +672,7 @@ Changes:
 * Added `style_whitespace` to [lexers][] for custom styles.
 * Added standard `F3` key command for "Find Next" for Windows/Linux.
 
-[lexers]: api/lexer.html
+[lexers]: ../api/lexer.html
 
 ## 2.0 beta (31 Jul 2009)
 
@@ -715,15 +715,15 @@ Changes:
 * Removed confusing `local function` and `local table` LuaDoc.
 * Rewrote the manual and most of the documentation.
 
-[list of encodings]: api/io.html#try_encodings
-[events]: api/events.html
+[list of encodings]: ../api/io.html#try_encodings
+[events]: ../api/events.html
 [Scintilla]: http://scintilla.org
-[compile commands]: api/_M.textadept.run.html#compile_command
-[run commands]: api/_M.textadept.run.html#run_command
+[compile commands]: ../api/_M.textadept.run.html#compile_command
+[run commands]: ../api/_M.textadept.run.html#run_command
 [gcocoadialog]: http://foicica.com/gcocoadialog
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
 [cocoaDialog]: http://cocoadialog.sf.net
-[Incremental find]: manual/6_AdeptEditing.html#Find.Incremental
+[Incremental find]: ../manual/6_AdeptEditing.html#Find.Incremental
 [GTK]: http://gtk.org
 
 ## 1.6 (01 Apr 2009)
@@ -741,7 +741,7 @@ Updates:
 * Trimmed theme files.
 * Added `file_before_save` [event][].
 
-[event]: api/io.html#File.Events
+[event]: ../api/io.html#File.Events
 
 ## 1.6 beta (01 Mar 2009)
 
@@ -766,7 +766,7 @@ Updates:
 * Removed `project` PM browser.
 * Multiple character encoding support for opening and saving files.
 
-[`_m.textadept.run`]: api/_M.textadept.run.html
+[`_m.textadept.run`]: ../api/_M.textadept.run.html
 
 ## 1.5 (20 Feb 2009)
 
@@ -854,7 +854,7 @@ Updates:
   is displayed in a message buffer and you can double-click errors and warnings
   to go to them in the source file.
 
-[`_m.textadept.run`]: api/_M.textadept.run.html
+[`_m.textadept.run`]: ../api/_M.textadept.run.html
 
 ## 1.1 (11 Jan 2009)
 
@@ -872,8 +872,8 @@ Updates:
 * Various improvements to efficiency, speed, and readability of source code.
 * Manually parse `~/.gtkrc-2.0` on Mac since GTK-OSX does not do it.
 
-[localization]: api/_L.html
-[bookmarks]: api/_M.textadept.bookmarks.html
+[localization]: ../api/_L.html
+[bookmarks]: ../api/_M.textadept.bookmarks.html
 
 ## 1.0 (01 Jan 2009)
 
@@ -896,7 +896,7 @@ Updates:
 * New Textadept icons.
 * Added a true project manager.
 
-[find]: api/gui.find.html
+[find]: ../api/gui.find.html
 [GTK-OSX]: http://www.gtk.org/download/macos.php
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: http://keplerproject.github.com/luafilesystem/
@@ -919,9 +919,9 @@ Updates:
   "buffer_new" and "view_new" event handlers respectively.
 * File types can be recognized by [pattern matching][] the first line.
 
-[Theming]: manual/8_Themes.html
-[manual]: manual
-[pattern matching]: manual/9_Preferences.html#Detect.by.Pattern
+[Theming]: ../manual/8_Themes.html
+[manual]: ./
+[pattern matching]: ../manual/9_Preferences.html#Detect.by.Pattern
 
 ## 0.5 (23 Jul 2008)
 
@@ -959,8 +959,8 @@ Updates:
 * Added Doxygen documentation for C source files.
 * Updated Luadoc, and added Textadept manual.
 
-[bookmark]: api/_M.textadept.bookmarks.html
-[tab-completion]: manual/10_Advanced.html#Tab.Completion
+[bookmark]: ../api/_M.textadept.bookmarks.html
+[tab-completion]: ../manual/10_Advanced.html#Tab.Completion
 
 ## 0.3 (04 Mar 2008)
 
@@ -980,7 +980,7 @@ Updates:
 * Added new find in files project manager browser.
 * Fixed some code redundancy and typos in documentation.
 
-[`select_indented_block()`]: api/_M.textadept.editing.html#select_indented_block
+[`select_indented_block()`]: ../api/_M.textadept.editing.html#select_indented_block
 [Zenity]: http://live.gnome.org/Zenity
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
 
