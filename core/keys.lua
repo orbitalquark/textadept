@@ -153,9 +153,20 @@ M.KEYSYMS = { -- from <gdk/gdkkeysyms.h>
   [0xFF55] = 'pgup',  [0xFF56] = 'pgdn',
   [0xFF57] = 'end',
   [0xFF63] = 'ins',
-  [0xFFBE] = 'f1', [0xFFBF] = 'f2',  [0xFFC0] = 'f3',  [0xFFC1] = 'f4',
-  [0xFFC2] = 'f5', [0xFFC3] = 'f6',  [0xFFC4] = 'f7',  [0xFFC5] = 'f8',
-  [0xFFC6] = 'f9', [0xFFC7] = 'f10', [0xFFC8] = 'f11', [0xFFC9] = 'f12',
+  [0xFF95] = 'kphome',
+  [0xFF96] = 'kpleft',  [0xFF97] = 'kpup',
+  [0xFF98] = 'kpright', [0xFF99] = 'kpdown',
+  [0xFF9A] = 'kppgup',  [0xFF9B] = 'kppgdn',
+  [0xFF9C] = 'kpend',
+  [0xFFAA] = 'kpmul', [0xFFAB] = 'kpadd',
+  [0xFFAD] = 'kpsub', [0xFFAF] = 'kpdiv',
+  [0xFFAE] = 'kpdec',
+  [0xFFB0] = 'kp0', [0xFFB1] = 'kp1', [0xFFB2] = 'kp2', [0xFFB3] = 'kp3',
+  [0xFFB4] = 'kp4', [0xFFB5] = 'kp5', [0xFFB6] = 'kp6', [0xFFB7] = 'kp7',
+  [0xFFB8] = 'kp8', [0xFFB9] = 'kp9',
+  [0xFFBE] = 'f1',  [0xFFBF] = 'f2',  [0xFFC0] = 'f3',  [0xFFC1] = 'f4',
+  [0xFFC2] = 'f5',  [0xFFC3] = 'f6',  [0xFFC4] = 'f7',  [0xFFC5] = 'f8',
+  [0xFFC6] = 'f9',  [0xFFC7] = 'f10', [0xFFC8] = 'f11', [0xFFC9] = 'f12',
 }
 
 -- The current key sequence.
