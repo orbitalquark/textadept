@@ -1,4 +1,4 @@
--- Copyright 2007-2012 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 -- When using LuaJIT try to retain backwards compatibility (Lua 5.1).
 -- LuaJIT is compiled with LUAJIT_ENABLE_LUA52COMPAT for some Lua 5.2 features.
