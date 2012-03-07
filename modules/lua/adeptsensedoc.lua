@@ -1,16 +1,17 @@
 -- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
 
----
 -- Adeptsense doclet for LuaDoc.
 -- This module is used by LuaDoc to create an adeptsense for Lua with a fake
 -- ctags file and an api file.
+-- To preserve formatting, the included `luadoc.patch` file must be applied to
+-- your instance of LuaDoc. It will not affect the look of HTML web pages, only
+-- the look of plain-text Adeptsense api files.
 -- Since LuaDoc does not recognize module fields, this doclet parses the Lua
 -- modules for comments of the form "-- * `field_name`" to generate a field tag
 -- and apidoc. Multiple line comments for fields must be indented flush with
--- `field_name` (3 spaces). Indenting more than this preserves formatting in the
--- apidoc.
+-- `field_name` (3 spaces).
 -- @usage luadoc -d [output_path] -doclet path/to/adeptsensedoc [file(s)]
-module('adeptsensedoc', package.seeall)
+local M = {}
 
 local CTAGS_FMT = '%s\t_\t0;"\t%s\t%s'
 local string_format = string.format
@@ -86,7 +87,7 @@ end
 
 -- Called by LuaDoc to process a doc object.
 -- @param doc The LuaDoc doc object.
-function start(doc)
+function M.start(doc)
 --  require 'luarocks.require'
 --  local profiler = require 'profiler'
 --  profiler.start()
@@ -115,7 +116,7 @@ function start(doc)
   -- Parse out module fields (-- * `FIELD`: doc) and insert them into the
   -- module's LuaDoc.
   for _, file in ipairs(doc.files) do
-    local module, field, docs
+    local module_name, field, docs
     -- Adds the field to its module's LuaDoc.
     local function add_field()
       local doc = table.concat(docs, '\n')
@@ -138,14 +139,14 @@ function start(doc)
     for line in f:lines() do
       if not field and line:find('^module%(') then
         -- Get the module's name to add the parsed fields to.
-        module = line:match("^module%('([^']+)'")
+        module_name = line:match("^module%('([^']+)'")
       elseif line:find('^%-%- %* `') then
         -- New field; if another field was parsed right before this one, add
         -- the former field to its module's LuaDoc.
         if field then add_field() end
         field, docs = {}, {}
         local name, doc = line:match('^%-%- %* `([^`]+)`([^\r\n]*)')
-        field.module = name:match('^_G%.(.-)%.[^%.]+$') or module or
+        field.module = name:match('^_G%.(.-)%.[^%.]+$') or module_name or
                        name:match('^[^%.]+')
         field.name = name:match('[^%.]+$')
         if doc ~= '' then
@@ -216,14 +217,14 @@ function start(doc)
   end
   table.sort(ctags)
   table.sort(apidoc)
-  local f = io.open(options.output_dir..'/tags', 'w')
+  local f = io.open(M.options.output_dir..'/tags', 'w')
   f:write(table.concat(ctags, '\n'))
   f:close()
-  f = io.open(options.output_dir..'api', 'w')
+  f = io.open(M.options.output_dir..'api', 'w')
   f:write(table.concat(apidoc, '\n'))
   f:close()
 
 --  profiler.stop()
 end
 
-return _M
+return M

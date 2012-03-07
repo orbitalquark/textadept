@@ -5,11 +5,10 @@ local io_open, io_popen = io.open, io.popen
 local string_format, string_rep = string.format, string.rep
 local table_concat = table.concat
 
----
 -- Markdown doclet for Luadoc.
 -- Requires Discount (http://www.pell.portland.or.us/~orc/Code/discount/).
 -- @usage luadoc -d [output_path] -doclet path/to/markdowndoc [file(s)]
-module('markdowndoc')
+local M = {}
 
 local NAVFILE = '%s* [%s](%s)\n'
 local FUNCTION = '<a id="%s" />\n### `%s` (%s)\n\n'
@@ -34,11 +33,11 @@ local HTML = [[
     <body>
       <div id="content">
         <div id="nav">
-          <div class="title">Modules</div>
+          <h2>Modules</h2>
           %(nav)
         </div>
         <div id="toc">
-          <div class="title">Contents</div>
+          <h2>Contents</h2>
           %(toc)
         </div>
         <div id="main">
@@ -106,7 +105,7 @@ end
 
 -- Called by LuaDoc to process a doc object.
 -- @param doc The LuaDoc doc object.
-function start(doc)
+function M.start(doc)
   local modules, files = doc.modules, doc.files
 
   -- Create the navigation list.
@@ -120,7 +119,8 @@ function start(doc)
     end
     h[#h + 1] = self
   end
-  local navfile = options.output_dir..'/api/.nav.md'
+  (require 'lfs').mkdir(M.options.output_dir..'/api')
+  local navfile = M.options.output_dir..'/api/.nav.md'
   local f = io_open(navfile, 'wb')
   write_nav(f, hierarchy)
   f:close()
@@ -138,7 +138,7 @@ function start(doc)
     local module = modules[name]
     local filename = filedocs[module.doc]
 
-    local mdfile = options.output_dir..'/api/'..name..'.md'
+    local mdfile = M.options.output_dir..'/api/'..name..'.md'
     local f = io_open(mdfile, 'wb')
 
     -- Write the header and description.
@@ -211,7 +211,7 @@ function start(doc)
     local toc, main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
     p:close()
     toc = toc:gsub('(<a.-)%b()(</a>)', '%1%2') -- strip function parameters
-    f = io_open(options.output_dir..'/api/'..name..'.html', 'wb')
+    f = io_open(M.options.output_dir..'/api/'..name..'.html', 'wb')
     local html = HTML:gsub('%%%(([^)]+)%)', {
       title = name..' - Textadept API', nav = nav, toc = toc, main = main
     })
@@ -219,3 +219,5 @@ function start(doc)
     f:close()
   end
 end
+
+return M
