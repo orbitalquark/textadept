@@ -1,8 +1,9 @@
 # Preferences
 
 At this point it is assumed you are at least familiar with the basics of
-[Lua](http://www.lua.org). You do not have to know a lot of the language to
-configure Textadept.
+[Lua][]. You do not have to know a lot of the language to configure Textadept.
+
+[Lua]: http://www.lua.org
 
 ## User Init
 
@@ -37,11 +38,11 @@ It is important to realize that Textadept will not load anything you do not tell
 it to. If your `~/.textadept/init.lua` exists and is empty, no modules are
 loaded (pretty much rendering Textadept useless).
 
-#### Module Settings
+### Module Settings
 
 Many of Textadept's modules have settings you can change from your
 `~/.textadept/init.lua`. These settings are viewed from module's
-[LuaDoc](../index.html). For example, to disable character autopairing and
+[LuaDoc][]. For example, to disable character autopairing and
 whitespace stripping on save, your `~/.textadept/init.lua` might look like:
 
     require 'textadept'
@@ -49,13 +50,17 @@ whitespace stripping on save, your `~/.textadept/init.lua` might look like:
     _M.textadept.editing.AUTOPAIR = false
     _M.textadept.editing.STRIP_WHITESPACE_ON_SAVE = false
 
-#### Other
+[LuaDoc]: ../api/index.html
+
+### Other
 
 Your `~/.textadept/init.lua` is not restricted to just loading modules or
 setting preferences. It is just Lua code that is run when Textadept loads. For
-more information, see the [scripting](11_Scripting.html) page.
+more information, see the [scripting][] page.
 
-##### Snippets
+[scripting]: 11_Scripting.html
+
+#### Snippets
 
 You can add global snippets to `snippets` such as:
 
@@ -65,7 +70,7 @@ You can add global snippets to `snippets` such as:
 So typing `file` or `path` and then pressing `Tab` (`⇥` on Mac OSX) will insert
 the snippet.
 
-##### Key Commands
+#### Key Commands
 
 It is not recommended to edit Textadept's `modules/textadept/keys.lua` for
 changing the key bindings since your changes could be overwritten when updating
@@ -107,29 +112,32 @@ can override or add to them in your `~/.textadept/mime_types.conf`:
 It is not recommended to edit Textadept's `modules/textadept/mime_types.conf`
 because your changes may be overwritten when updating Textadept.
 
-#### Detection by File Extension
+### Detect by File Extension
 
     file_ext lexer
 
 Note: `file_ext` should not start with a `.` (period).
 
-#### Detection by Shebang Keywords
+### Detect by Shebang Keywords
 
     #shebang_word lexer
 
 Examples of `shebang_word`'s are `lua`, `ruby`, `python`.
 
-#### Detection by Pattern
+### Detect by Pattern
 
     /pattern lexer
 
 Only the last space, the one separating the pattern from the lexer, is
 significant. No spaces in the pattern need to be escaped.
 
-## Default Run and Compile Commands and Block Quotes for Languages
+## More Language Preferences
 
 Textadept does not come with language-specific modules for all languages so you
 can add run commands, compile commands, and block quotes manually:
 
-* [Run/Compile commands](http://caladbolg.net/textadeptwiki/index.php?n=Main.RunSupplemental)
-* [Block Quotes](http://caladbolg.net/textadeptwiki/index.php?n=Main.CommentSupplemental)
+* [Run/Compile commands][]
+* [Block Quotes][]
+
+[Run/Compile commands]: http://caladbolg.net/textadeptwiki/index.php?n=Main.RunSupplemental
+[Block Quotes]: http://caladbolg.net/textadeptwiki/index.php?n=Main.CommentSupplemental

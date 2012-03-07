@@ -2,23 +2,26 @@
 
 Textadept has superb support for editing Lua code. Syntax autocomplete and
 LuaDoc is available for many Textadept objects as well as Lua's standard
-libraries. See the [lua module documentation](../modules/_M.lua.commands.html)
-for more information.
+libraries. See the [`lua` module documentation][] for more information.
 
 ![Adeptsense ta](images/adeptsense_ta.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Adeptsense tadoc](images/adeptsense_tadoc.png)
 
+[`lua` module documentation]: ../api/_M.lua.html
+
 ## LuaDoc and Examples
 
-Textadept's API is heavily documented. The [LuaDoc](../index.html) is the
-ultimate resource on scripting Textadept. There are of course abundant scripting
-examples since Textadept is mostly written in Lua.
+Textadept's API is heavily documented. The [LuaDoc][] is the ultimate resource
+on scripting Textadept. There are of course abundant scripting examples since
+Textadept is mostly written in Lua.
+
+[LuaDoc]: ../api/index.html
 
 ## Lua Configuration
 
-[Lua 5.2](http://www.lua.org/manual/5.2/) is built into Textadept. It has the
-same configuration (`luaconf.h`) as vanilla Lua with the following exceptions:
+[Lua 5.2][] is built into Textadept. It has the same configuration (`luaconf.h`)
+as vanilla Lua with the following exceptions:
 
 * `TA_LUA_PATH` and `TA_LUA_CPATH` are the environment variable used in place of
   the usual `LUA_PATH` and `LUA_CPATH`.
@@ -27,47 +30,52 @@ same configuration (`luaconf.h`) as vanilla Lua with the following exceptions:
   `LUA_COMPAT_LOADERS`, `LUA_COMPAT_LOG10`, `LUA_COMPAT_LOADSTRING`,
   `LUA_COMPAT_MAXN`, and `LUA_COMPAT_MODULE`.)
 
+[Lua 5.2]: http://www.lua.org/manual/5.2/
+
 ## Scintilla
 
-The editing component used by Textadept is [Scintilla](http://scintilla.org).
-The [buffer](../modules/buffer.html) part of Textadept's API is derived from the
-[Scintilla API](http://scintilla.org/ScintillaDoc.html) so any C/C++ code using
+The editing component used by Textadept is [Scintilla][]. The [buffer][] part of
+Textadept's API is derived from the [Scintilla API][] so any C/C++ code using
 Scintilla calls can be ported to Lua without too much trouble.
 
-## Textadept Folder Structure
+[Scintilla]: http://scintilla.org
+[buffer]: ../api/buffer.html
+[Scintilla API]: http://scintilla.org/ScintillaDoc.html
+
+## Textadept Structure
 
 Because Textadept is mostly written in Lua, its Lua scripts have to be stored in
 an organized folder structure.
 
-#### Core
+### Core
 
 Textadept's core Lua modules are contained in `core/`. These are absolutely
 necessary in order for the application to run. They are responsible for
 Textadept's Lua to C interface, event structure, file input/output, and
 localization.
 
-#### Lexers
+### Lexers
 
 Lexer Lua modules are responsible for the syntax highlighting of source code.
 They are located in `lexers/`.
 
-#### Modules
+### Modules
 
 Editor Lua modules are contained in `modules/`. These provide advanced text
 editing capabilities and can be available for all programming languages or
 targeted at specific ones.
 
-#### Themes
+### Themes
 
 Built-in themes to customize the look and behavior of Textadept are located in
 `themes/`.
 
-#### User
+### User
 
 User Lua modules are contained in the `~/.textadept/` folder. This folder may
 contain `lexers/`, `modules/`, and `themes/` subdirectories.
 
-#### GTK
+### GTK
 
 The `etc/`, `lib/`, and `share/` directories are used by GTK and only appear in
 the Win32 and Mac OSX packages.

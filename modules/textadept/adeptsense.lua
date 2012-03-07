@@ -21,14 +21,16 @@ module('_M.textadept.adeptsense')]]
 -- ## Creating an Adeptsense
 --
 -- Adeptsenses exist per-language and are typically defined in a
--- [language-specific module](../manual/7_Modules.html#language_specific).
--- First check to see if the module for your language has an Adeptsense. If not,
--- you will need to create one. The language modules included with Textadept
--- have Adeptsenses so they can be used for reference. If your language is
--- similar to any of those languages, you can copy and modify the existing
--- language's Adeptsense, saving some time and effort.
+-- [language-specific module][]. First check to see if the module for your
+-- language has an Adeptsense. If not, you will need to create one. The language
+-- modules included with Textadept have Adeptsenses so they can be used for
+-- reference. If your language is similar to any of those languages, you can
+-- copy and modify the existing language's Adeptsense, saving some time and
+-- effort.
 --
--- #### Terminology
+-- [language-specific module]: _M.html#Language-Specific.Modules
+--
+-- ### Terminology
 --
 -- Not all languages have "classes", "functions", and "fields" in the full sense
 -- of the word. Normally classes are referred to as objects in Object Oriented
@@ -41,7 +43,7 @@ module('_M.textadept.adeptsense')]]
 -- For Lua, consider modules and tables as "classes", functions as "functions",
 -- and module/table keys as "fields".
 --
--- #### Introduction
+-- ### Introduction
 --
 -- Open the language-specific module for editing and create a new instance of an
 -- Adeptsense.
@@ -54,19 +56,19 @@ module('_M.textadept.adeptsense')]]
 --
 -- Where 'lua' is replaced by your language's name.
 --
--- #### Syntax Options
+-- ### Syntax Options
 --
 -- The syntax of different languages varies so the Adeptsense must be configured
 -- for your language in order to function properly. See the [`syntax`](#syntax)
 -- table documentation for all options.
 --
--- ##### syntax.self
+-- #### `self`
 --
 -- The first syntax option is `syntax.self`. While Lua has a `self` identifier,
 -- it is not used in the usual sense for a class instance so it will just be
 -- ignored.
 --
--- ##### syntax.class_definition
+-- #### `class_definition`
 --
 -- Next is `syntax.class_definition`. Lua does not really have the "class"
 -- concept most OOP programmers are used to, but modules do behave somewhat like
@@ -76,29 +78,29 @@ module('_M.textadept.adeptsense')]]
 --
 -- The "class"'s name is the identifier in quotes.
 --
--- ##### syntax.word_chars
+-- #### `word_chars`
 --
 -- Lua words already consist of the default `%w_` so no changes are necessary.
 --
--- ##### syntax.symbol_chars
+-- #### `symbol_chars`
 --
 -- In addition to the usual `[%w_%.]` symbol characters, Lua also allows symbols
 -- to contain a `:`.
 --
 --     sense.syntax.symbol_chars = '[%w_%.:]'
 --
--- ##### syntax.type_declarations
+-- #### `type_declarations`
 --
 -- Since Lua has no type declarations (e.g. `int x` in C), the
 -- `syntax.type_declarations` table should be empty:
 --
 --     sense.syntax.type_declarations = {}
 --
--- ##### syntax.type\_declarations\_exclude
+-- #### `type_declarations_exclude`
 --
 -- Since Lua has no type declarations, no changes are necessary.
 --
--- ##### syntax.type_assignments
+-- #### `type_assignments`
 --
 -- Sometimes a type can be inferred by the right side of a variable assignment.
 -- In the Lua code `local foo = 'bar'`, the variable `foo` has type `string`.
@@ -114,7 +116,7 @@ module('_M.textadept.adeptsense')]]
 -- assignment should be matched, otherwise `local foo = bar('baz')` could infer
 -- an incorrect type.
 --
--- #### Completion Lists
+-- ### Completion Lists
 --
 -- The [`completions`](#completions) table contains the completion lists for
 -- all classes. Each table entry key is the class's name and the value is a
@@ -132,19 +134,18 @@ module('_M.textadept.adeptsense')]]
 -- Obviously manually creating completion lists would be incredibly
 -- time-consuming so there is a shortcut method.
 --
--- ##### Ctags
+-- #### Ctags
 --
--- Adeptsense recognizes the output from [Ctags](http://ctags.sourceforge.net/)
--- and can populate the `completions` table from it with a little bit of help.
--- Ctags has a list of "kinds" for every language. You can see them by running
--- `ctags --list-kinds` in your shell. Since Adeptsense only cares about
--- classes, functions, and fields, you need to let it know which kind of tag is
--- which. Unfortunately, Lua support in Ctags is not good at all. Instead,
--- Textadept has a utility (`scripts/adeptsensedoc.lua`) to generate a fake set
--- of tags that is more useful. Functions are tagged `'f'` and should be
--- recognized as such; table keys are tagged `'t'` and should be recognized as
--- fields; module fields, `'F'`, should be fields; and modules, `'m'`, should be
--- classes:
+-- Adeptsense recognizes the output from [Ctags][] and can populate the
+-- `completions` table from it with a little bit of help. Ctags has a list of
+-- "kinds" for every language. You can see them by running `ctags --list-kinds`
+-- in your shell. Since Adeptsense only cares about classes, functions, and
+-- fields, you need to let it know which kind of tag is which. Unfortunately,
+-- Lua support in Ctags is not good at all. Instead, Textadept has a utility
+-- (`scripts/adeptsensedoc.lua`) to generate a fake set of tags that is more
+-- useful. Functions are tagged `'f'` and should be recognized as such; table
+-- keys are tagged `'t'` and should be recognized as fields; module fields,
+-- `'F'`, should be fields; and modules, `'m'`, should be classes:
 --
 --     sense.ctags_kinds = {
 --       f = 'functions',
@@ -159,7 +160,9 @@ module('_M.textadept.adeptsense')]]
 --
 -- Textadept comes with a set of Ctags for its Lua API.
 --
--- #### API Documentation
+-- [ctags]: http://ctags.sourceforge.net
+--
+-- ### API Documentation
 --
 -- Adeptsense can show API documentation for symbols from files specified in its
 -- [`api_files`](#api_files) table. See the previous link for documentation on
@@ -167,7 +170,7 @@ module('_M.textadept.adeptsense')]]
 --
 --     sense.api_files = { _HOME..'/modules/lua/api' }
 --
--- #### Triggers
+-- ### Triggers
 --
 -- Triggers are characters or character sequences that trigger an autocompletion
 -- list to be displayed. Lua has two characters that can do so: `.` and `:`. The
@@ -178,7 +181,7 @@ module('_M.textadept.adeptsense')]]
 --     sense:add_trigger('.')
 --     sense:add_trigger(':', false, true)
 --
--- #### User-Settings
+-- ### User-Settings
 --
 -- Finally, you should allow the users of your Adeptsense to supply their own
 -- Ctags and API files in addition to any default ones you loaded or specified
@@ -192,13 +195,13 @@ module('_M.textadept.adeptsense')]]
 --       sense.api_files[#sense.api_files + 1] = _USERHOME..'/modules/lua/api'
 --     end
 --
--- #### Summary
+-- ### Summary
 --
 -- The above method of setting syntax options, ctags kinds, and trigger
 -- characters for an Adeptsense is sufficient for most static and some dynamic
 -- languages. The rest of this document is devoted to more complex techniques.
 --
--- #### Overriding Adeptsense Functions
+-- ### Overriding Adeptsense Functions
 --
 -- Sometimes Adeptsense's default behavior is not sufficient. Maybe the
 -- `type_declarations` and `type_assignments` tables used by the
@@ -218,7 +221,7 @@ module('_M.textadept.adeptsense')]]
 -- The default Adeptsense functions are called by using the `self.super`
 -- reference.
 --
--- ##### Examples for Ruby
+-- #### Examples for Ruby
 --
 -- In Ruby, everything is an object -- even numbers. Since numbers do not have
 -- a type declaration, the [`get_class()`](#get_class) function should return
@@ -252,7 +255,7 @@ module('_M.textadept.adeptsense')]]
 -- that handles strings, hashes, symbols, and regexps as well. Please refer to
 -- it for more information.
 --
--- ##### Examples for Java
+-- #### Examples for Java
 --
 -- Autocomplete of Java `import` statements is something nice to have. Ctags
 -- produces a tag for packages so it is rather straightforward to build an
@@ -312,7 +315,7 @@ module('_M.textadept.adeptsense')]]
 --       self.imports = {}
 --     end
 --
--- #### Other Adeptsense Settings
+-- ### Other Adeptsense Settings
 --
 -- * `always_show_globals` [bool]
 --   Include globals in the list of completions offered.

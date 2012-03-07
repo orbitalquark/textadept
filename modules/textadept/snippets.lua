@@ -36,7 +36,7 @@ module('_M.textadept.snippets')]]
 --
 -- A snippet to insert may contain any of the following:
 --
--- #### Plain Text
+-- ### Plain Text
 --
 -- Any plain text characters may be used with the exception of `%` followed
 -- immediately by a digit (`0`-`9`), `(`, `)`, `>`, or `]` character. These are
@@ -45,7 +45,7 @@ module('_M.textadept.snippets')]]
 -- another `%` to the first `%`. For example, `%%>` in the snippet inserts a
 -- literal `%>` into the document.
 --
--- #### Placeholders
+-- ### Placeholders
 --
 -- Textadept's snippets provide a number of different placeholders. The simplest
 -- ones are of the form
@@ -82,17 +82,17 @@ module('_M.textadept.snippets')]]
 -- variable (containing the current selection in the buffer). After execution,
 -- the placeholder contains the return value of the code that was run.
 --
--- Shell code is executed using Lua's [`io.popen()`][io_popen] which reads from
--- the process' standard output (STDOUT). After execution, the placeholder will
+-- Shell code is executed using Lua's [`io.popen()`][] which reads from the
+-- process' standard output (STDOUT). After execution, the placeholder will
 -- contain the STDOUT of the process.
 --
--- [io_popen]: http://www.lua.org/manual/5.1/manual.html#pdf-io.popen
+-- [`io.popen()`]: http://www.lua.org/manual/5.2/manual.html#pdf-io.popen
 --
 -- These kinds of placeholders can be used to transform mirrored text. For
 -- example, `%2<([[%1]]):gsub('^.', function(c) return c:upper() end)>` will
 -- capitalize a mirrored `%1` placeholder.
 --
--- ##### Important Note
+-- #### Important Note
 --
 -- It is very important that any `%`, `(`, `)`, `>`, or `]` characters
 -- **within** placeholders be escaped with a `%` as necessary. Otherwise,

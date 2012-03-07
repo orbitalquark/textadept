@@ -61,8 +61,9 @@ A quicker, though slightly more limited alternative to the standard
 displays a list of files to open, including files in subdirectories. You can
 snapopen the current file's directory with `Ctrl+Alt+Shift+O` (`^⌘⇧O` on Mac
 OSX) or from the `Tools -> Snapopen -> Current Directory` menu. Snapopen is
-pretty limited from the menu, but more versatile in scripts. See its
-[LuaDoc](../modules/_M.textadept.snapopen.html). `Ctrl+U` (`⌘U`) snaps open
-`~/.textadept/`.
+pretty limited from the menu, but more versatile in scripts. See its [LuaDoc][].
+`Ctrl+U` (`⌘U`) snaps open `~/.textadept/`.
+
+[LuaDoc]: ../api/_M.textadept.snapopen.html
 
 ![Snapopen](images/snapopen.png)

@@ -2,24 +2,26 @@
 
 ## Overview
 
-<div style="float: right; margin: 0 0 1em 1em;">
-  <img src="images/textadept.png" alt="Textadept" />
-</div>
+![Textadept](images/textadept.png)
 
 Textadept is a fast, minimalist, and ridiculously extensible cross-platform text
-editor for programmers. Written in a combination of C and [Lua](http://lua.org)
-and relentlessly optimized for speed and minimalism over the years, Textadept is
-an ideal editor for programmers who want endless extensibility options without
+editor for programmers. Written in a combination of C and [Lua][] and
+relentlessly optimized for speed and minimalism over the years, Textadept is an
+ideal editor for programmers who want endless extensibility options without
 sacrificing speed or succumbing to code bloat and featuritis.
 
-#### Fast
+[Lua]: http://lua.org
+
+### Fast
 
 Textadept is _fast_. It starts up instantly and has a very responsive user
 interface (UI). Even though the editor is mostly written in Lua, Lua is one of
-the fastest scripting languages available. With [LuaJIT](http://luajit.org),
-Textadept is faster than ever before, though using LuaJIT is overkill.
+the fastest scripting languages available. With [LuaJIT][], Textadept is faster
+than ever before, though using LuaJIT is overkill.
 
-#### Minimalist
+[LuaJIT]: http://luajit.org
+
+### Minimalist
 
 Textadept is minimalist. Not only is this apparent in the UI, but the editor's C
 core was designed to never exceed 2000 lines of code and its Lua extension code
@@ -27,7 +29,7 @@ is not supposed to go beyond 4000 lines. After 4 1/2 years of development,
 Textadept has fewer lines of code (~5000) than it did in its first release
 (~5600) and is vastly superior in every respect.
 
-#### Ridiculously Extensible
+### Ridiculously Extensible
 
 Textadept is ridiculously extensible. It was designed to be that way from the
 very beginning. The features came later. Most of Textadept is written in Lua,
@@ -36,9 +38,7 @@ and more. Textadept gives you complete control over the entire application using
 Lua. You can do everything from moving the caret to changing menus and key
 commands on-the-fly to handling UI events. The possibilities are limitless.
 
-<div style="float: left; margin: 0 3em 1em 0;">
-  <img src="images/splitviews.png" alt="Split Views" />
-</div>
+![Split Views](images/splitviews.png)
 
 ## Manual Notation
 
@@ -61,13 +61,3 @@ commands on-the-fly to handling UI events. The possibilities are limitless.
   Mac OSX's (e.g `Ctrl` to `⌘`), but this is not always the case. Please do not
   view the key equivalents as translations of one another, but rather as
   separate entities. This will minimize confusion.
-
-## Features at a Glance
-
-* Self-contained executable - no installation necessary.
-* Entirely keyboard driven.
-* Unlimited split views.
-* Support for over 80 programming languages.
-* Powerful snippets and key commands.
-* Code autocompletion and API lookup.
-* Unparalleled extensibility.

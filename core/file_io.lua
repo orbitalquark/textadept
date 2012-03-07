@@ -6,13 +6,14 @@
 module('io')]]
 
 -- Markdown:
--- ## Converting Filenames to and from UTF-8
+-- ## Working with UTF-8
 --
 -- If your filesystem does not use UTF-8 encoded filenames, conversions to and
--- from that encoding will be necessary. When opening and saving files through
--- dialogs, Textadept takes care of these conversions for you, but if you need
--- to do them manually, use [`string.iconv()`][string_iconv] along with
--- `_CHARSET`, your filesystem's detected encoding.
+-- from that encoding are necessary since all of Textadept's internal strings
+-- are UTF-8 encoded. When opening and saving files through dialogs, these
+-- conversions are performed autmatically, but if you need to do them manually,
+-- use [`string.iconv()`][] along with `_CHARSET`, your filesystem's detected
+-- encoding.
 --
 -- Example:
 --
@@ -23,26 +24,26 @@ module('io')]]
 --       f:close()
 --     end)
 --
--- [string_iconv]: ../modules/string.html#iconv
+-- [`string.iconv()`]: string.html#iconv
 --
 -- ## File Events
 --
 -- * `_G.events.FILE_OPENED`
 --   Called when a file is opened in a new buffer.
 --   Arguments:
---       * `filename`: The filename encoded in UTF-8.
+--     * `filename`: The filename encoded in UTF-8.
 -- * `_G.events.FILE_BEFORE_SAVE`
 --   Called right before a file is saved to disk.
 --   Arguments:
---       * `filename`: The filename encoded in UTF-8.
+--     * `filename`: The filename encoded in UTF-8.
 -- * `_G.events.FILE_AFTER_SAVE`
 --   Called right after a file is saved to disk.
 --   Arguments:
---       * `filename`: The filename encoded in UTF-8.
+--     * `filename`: The filename encoded in UTF-8.
 -- * `_G.events.FILE_SAVED_AS`
 --   Called when a file is saved under a different filename.
 --   Arguments:
---       * `filename`: The filename encoded in UTF-8.
+--     * `filename`: The filename encoded in UTF-8.
 
 -- Events.
 local events, events_connect = events, events.connect

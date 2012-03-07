@@ -1,8 +1,6 @@
 # User Interface
 
-<div style="float: right; margin: 0 0 1em 1em;">
-  <img src="images/ui.png" alt="UI" />
-</div>
+![UI](images/ui.png)
 
 Textadept's user interface was designed to be simple. It consists of a menubar,
 editor view, initially hidden find/replace dialog, initially hidden command
@@ -37,5 +35,3 @@ pops in and out as you wish.
 
 The left side of the statusbar displays any status messages. The right side
 shows the current buffer's status.
-
-<br/><br/><br/><br />

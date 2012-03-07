@@ -5,8 +5,8 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Module for running/executing source files.
--- Typically, language-specific modules populate the 'compile_command',
--- 'run_command', and 'error_detail' tables for a particular language's file
+-- Typically, language-specific modules populate the `compile_command`,
+-- `run_command`, and `error_detail` tables for a particular language's file
 -- extension.
 module('_M.textadept.run')]]
 
@@ -20,8 +20,8 @@ module('_M.textadept.run')]]
 --   you want to override the default handler that prints the output to a new
 --   view.
 --   Arguments:
---       * `lexer`: The lexer language.
---       * `output`: The output from the command.
+--     * `lexer`: The lexer language.
+--     * `output`: The output from the command.
 -- * `_G.events.RUN_OUTPUT`
 --   Called after a run command is executed.
 --   When connecting to this event (typically from a language-specific module),
@@ -29,8 +29,8 @@ module('_M.textadept.run')]]
 --   you want to override the default handler that prints the output to a new
 --   view.
 --   Arguments:
---       * `lexer`: The lexer language.
---       * `output`: The output from the command.
+--     * `lexer`: The lexer language.
+--     * `output`: The output from the command.
 
 -- Events.
 local events, events_connect, events_emit = events, events.connect, events.emit
@@ -45,6 +45,7 @@ events.COMPILE_OUTPUT, events.RUN_OUTPUT = COMPILE_OUTPUT, RUN_OUTPUT
 --     + `%(filedir)`: The current file's directory path.
 --     + `%(filename)`: The name of the file including extension.
 --     + `%(filename_noext)`: The name of the file excluding extension.
+-- @param lexer The current lexer.
 -- @name execute
 function M.execute(command, lexer)
   local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
@@ -71,6 +72,7 @@ end
 
 -- Executes a compile or run command.
 -- @param cmd_table Either `compile_command` or `run_command`.
+-- @param lexer The current lexer.
 local function command(cmd_table, lexer)
   if not buffer.filename then return end
   buffer:save()
@@ -116,6 +118,7 @@ events_connect(RUN_OUTPUT, function(lexer, output) gui.print(output) end)
 ---
 -- A table of error string details.
 -- Each entry is a table with the following fields:
+--
 --   + `pattern`: The Lua pattern that matches a specific error string.
 --   + `filename`: The index of the Lua capture that contains the filename the
 --     error occured in.
@@ -123,6 +126,7 @@ events_connect(RUN_OUTPUT, function(lexer, output) gui.print(output) end)
 --     error occured on.
 --   + `message`: [Optional] The index of the Lua capture that contains the
 --     error's message. A call tip will be displayed if a message was captured.
+--
 -- When an error message is double-clicked, the user is taken to the point of
 -- error.
 -- This table is usually populated by language-specific modules.

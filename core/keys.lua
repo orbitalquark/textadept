@@ -34,17 +34,20 @@ module('keys')]]
 --     ADD = '+'
 --     -- pressing control, alt, shift, and 'a' yields: 'Ctrl+Alt+Shift+A'
 --
--- For key values less than 255, Lua's [`string.char()`][string_char] is used to
--- determine the key's string representation. Otherwise, the
--- [`KEYSYMS`](../modules/_M.textadept.keys.html#KEYSYMS) lookup table is used.
+-- For key values less than 255, Lua's [`string.char()`][] is used to determine
+-- the key's string representation. Otherwise, the [`KEYSYMS`](#KEYSYMS) lookup
+-- table is used.
 --
--- [string_char]: http://www.lua.org/manual/5.1/manual.html#pdf-string.char
+-- [`string.char()`]: http://www.lua.org/manual/5.2/manual.html#pdf-string.char
 --
 -- Normally, Lua functions are assigned to key commands, but those functions are
 -- called without any arguments. In order to pass arguments to a function,
 -- assign a table to the key command. This table contains the function followed
--- by its arguments in order. Any [buffer](../modules/buffer.html) or
--- [view](../modules/view.html) references are handled correctly at runtime.
+-- by its arguments in order. Any [buffer][] or [view][] references are handled
+-- correctly at runtime.
+--
+-- [buffer]: buffer.html
+-- [view]: view.html
 --
 -- Key commands can be chained like in Emacs using keychain sequences. By
 -- default, the `Esc` key (`Apple+Esc` on Mac OSX) cancels the current keychain,
@@ -77,12 +80,12 @@ module('keys')]]
 --   modules.
 --   The default value is Ctrl/Cmd+L.
 --
--- ## Key Command Precedence
+-- ## Precedence
 --
 -- When searching for a key command to execute in the `keys` table, key commands
 -- in the current lexer have priority, followed by the ones in the global table.
 --
--- #### Propagation
+-- ### Propagation
 --
 -- Normally when the same key command is assigned to two separate functions of
 -- different precedence, the higher priority key command is run and the lower

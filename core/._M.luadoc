@@ -13,52 +13,64 @@ module('_M')]]
 -- Note that while language-specific modules can only be used by files of that
 -- language, they persist in Textadept's Lua state. Because of this, it is not
 -- recommended to set global functions or variables and depend on them, as they
--- may be inadvertantly overwritten. Keep these inside the module.
+-- may be inadvertantly overwritten. Keep them inside the module.
 --
 -- ## Structure
 --
 -- Each module should have an `init.lua` that `require`s all submodules it
 -- needs. For an example, see `modules/textadept/init.lua`.
 --
--- ## Recommended Features for Language-Specific Modules
+-- ## Language-Specific Modules
 --
--- #### Snippets
+-- The following is a list of recommended features for Language-Specific
+-- modules. They are all entirely optional.
 --
--- [Snippets](../modules/_M.textadept.snippets.html) for common code constructs.
+-- ### Snippets
 --
--- #### Commands
+-- [Snippets][] for common code constructs.
 --
--- ##### Run
+-- [Snippets]: _M.textadept.snippets.html
+--
+-- ### Commands
+--
+-- #### Run
 --
 -- If the code can be run by an interpreter or other executable, create a [run
--- command](../modules/_M.textadept.run.html#run_command) for it as well as an
--- [error format](../modules/_M.textadept.run.html#error_detail) for the ability
--- to jump to the position in a file where the error occured.
+-- command][] for it as well as an [error format][] for the ability to jump to
+-- the position in a file where the error occured.
 --
 -- For example:
 --
 --     _M.textadept.run.run_command.lua = 'lua %(filename)'
 --
--- ##### Compile
+-- [run command]: _M.textadept.run.html#run_command
+-- [error format]: _M.textadept.run.html#error_detail
 --
--- If the code can be compiled by an executable, create a [compile
--- command](../modules/_M.textadept.run.html#compile_command) for it.
+-- #### Compile
+--
+-- If the code can be compiled by an executable, create a [compile command][]
+-- for it.
 --
 -- For example:
 --
 --     _M.textadept.run.compile_command.lua = 'luac %(filename)'
 --
--- ##### Block Comment
+-- [compile command]: _M.textadept.run.html#compile_command
 --
--- Create a [comment
--- prefix](../modules/_M.textadept.editing.html#comment_string) for it so code
--- can be easily commented and uncommented.
+-- #### Block Comment
+--
+-- Create a [comment prefix][] for it so code can be easily commented and
+-- uncommented.
+--
+-- [comment prefix]: _M.textadept.editing.html#comment_string
 --
 -- For example:
 --
 --     _M.textadept.editing.comment_string.lua = '--'
 --
--- #### Buffer Properties
+-- [comment prefix]: _M.textadept.editing.html#comment_string
+--
+-- ### Buffer Properties
 --
 -- Add a `set_buffer_properties` function with default buffer properties for
 -- code like tab and indentation settings.
@@ -72,7 +84,7 @@ module('_M')]]
 --       buffer.indent = 2
 --     end
 --
--- #### Context Menu (Optional)
+-- ### Context Menu
 --
 -- Language-specific context menus, accessible by right-clicking inside the
 -- view, can be defined as:
@@ -84,16 +96,3 @@ module('_M')]]
 --     }
 --
 -- See `modules/textadept/menu.lua` for examples on how to define menus.
---
--- ## Modules and Key Commands
---
--- When assigning [key commands](../modules/_M.textadept.keys.html) to module
--- functions, do not forget to do so AFTER the function has been defined.
--- Typically key commands are placed at the end of files, like `init.lua` in
--- the `textadept` module.
-
----
--- This module contains no functions.
--- @class function
--- @name no_functions
-local no_functions

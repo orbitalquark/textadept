@@ -3,51 +3,51 @@
 ## Requirements
 
 In its bid for minimalism, Textadept also needs very little to run. In fact, the
-only thing it needs is [GTK+ 2.0](http://gtk.org) >= 2.16 on Linux systems. GTK
-is already included in Windows and Mac OSX packages. Textadept also has its own
-version of Lua.
+only thing it needs is [GTK+ 2.0][] >= 2.16 on Linux systems. GTK is already
+included in Windows and Mac OSX packages. Textadept also has its own version of
+Lua.
 
 Note: for Win32 and Mac OSX, more than 3/4 of the download and unpackaged
 application sizes are due to GTK, the cross-platform GUI toolkit Textadept uses.
 Textadept itself is much smaller.
 
-#### Linux
+[GTK+ 2.0]: http://gtk.org
+
+### Linux
 
 Most Linux systems already have GTK+ installed. If not, it is probably available
 through your package manager. Otherwise, compile and install it from the
-[GTK+ website](http://www.gtk.org/download-linux.html).
+[GTK+ website][].
 
-#### Mac OSX
+[GTK+ website]: http://www.gtk.org/download-linux.html
 
-Prior to 3.5, the GTK+ [Mac OSX Framework][GTK-OSX] was required. Newer versions
-are all-inclusive and do not require anything.
+### Mac OSX
 
-[GTK-OSX]: http://code.google.com/p/textadept/downloads/detail?name=Gtk-Framework-2.14.3-2-test1.dmg
+No requirements other than Mac OSX 10.5 (Leopard) or higher with an Intel CPU.
 
-Note that Textadept is designed for Intel Leopard+ Macs.
+### Windows
 
-#### Windows
-
-Prior to 3.5, the [GTK+ 2.0 Runtime](http://sourceforge.net/projects/gtk-win/)
-was required. Newer versions are all-inclusive and do not require anything.
+No requirements.
 
 ## Download
 
-Download Textadept from the [project page](http://textadept.googlecode.com/).
-Select the appropriate package for your platform.
+Download Textadept from the [project page][]. Select the appropriate package for
+your platform.
 
-You can also download an official set of
-[language-specific modules](7_Modules.html#language_specific), but this is
-optional. The list of language modules in the package is contained
-[here](https://bitbucket.org/mitchell). Textadept includes C/C++ and Lua
-language modules by default.
+You can also download an official set of [language-specific modules][], but this
+is optional. The list of language modules in the package is contained [here][].
+Textadept includes C/C++ and Lua language modules by default.
+
+[project page]: http://foicica.com/textadept
+[language-specific modules]: 7_Modules.html#Language.Specific
+[here]: http://foicica.com/hg
 
 ## Installation
 
 Textadept is designed to be as easy as possible to install by any user. You do
 not need to have administrator privileges.
 
-#### Linux
+### Linux
 
 Unpack the archive anywhere. Run Textadept by running
 `/path/to/textadept_VERSION/textadept` from the terminal. You can also create a
@@ -58,7 +58,7 @@ If you downloaded the set of language-specific modules, unpack it where you
 unpacked the Textadept archive. The modules will be contained in
 `/path/to/textadept_VERSION/modules/`.
 
-##### Problems
+#### Problems
 
 It is difficult to provide a single binary that runs on all Linux platforms
 since the versions of software installed vary widely from distribution to
@@ -75,9 +75,11 @@ former has been compiled to use `libpng12`.
 
 If the above situation did not apply to you, do not be alarmed. The solution is
 actually quite painless even though it requires recompiling Textadept. See the
-[compiling](12_Compiling.html) page for more information.
+[compiling][] page for more information.
 
-#### Mac OSX
+[compiling]: 12_Compiling.html
+
+### Mac OSX
 
 Unpack the archive and move `textadept.app` to your user or system
 `Applications` directory like any other Mac OSX application. Run Textadept by
@@ -87,17 +89,20 @@ If you downloaded the set of language-specific modules, unpack it, right-click
 `textadept.app`, select `Show Package Contents`, navigate to
 `Contents/Resources/modules`, and copy the unpacked modules there.
 
-##### Environment Variables
+#### Environment Variables
 
 By default, GUI apps like Textadept do not utilize environment variables such as
-`PATH` from your shell profile. Therefore, any [modules](7_Modules.md) that use
-programs contained in `PATH` (e.g. the progams in `/usr/local/bin/`) for run and
-compile commands will not be found. The solution is to follow the instructions
-[here](http://developer.apple.com/library/mac/#qa/qa1067/_index.html) to export
-whichever environment variables you need. At the very least, set `PATH` to be
-`$PATH`. You will have to logout and log back in for the changes to take effect.
+`PATH` from your shell profile. Therefore, any [modules][] that use programs
+contained in `PATH` (e.g. the progams in `/usr/local/bin/`) for run and compile
+commands will not be found. The solution is to follow these [instructions][] to
+export whichever environment variables you need. At the very least, set `PATH`
+to be `$PATH`. You will have to logout and log back in for the changes to take
+effect.
 
-#### Windows
+[modules]: 7_Modules.html
+[instructions]: http://developer.apple.com/library/mac/#qa/qa1067/_index.html
+
+### Windows
 
 Unpack the archive anywhere. Run Textadept by double-clicking `textadept.exe`.
 You can also create shortcuts to the executable in your Start Menu, Quick Launch
