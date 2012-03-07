@@ -22,6 +22,7 @@ WINDRES =
 LDL = -ldl
 LUAJIT_LIB = libluajit.a
 LUAJIT_MAKE =
+LUADOC = luadoc
 
 # Win32 (WIN32=1)
 ifdef WIN32
@@ -40,6 +41,7 @@ WINDRES = i486-mingw32-windres
 LDL =
 LUAJIT_LIB = lua51.dll
 LUAJIT_MAKE = HOST_CC="gcc -m32" CROSS=i486-mingw32- TARGET_SYS=Windows
+LUADOC = luadoc_start.bat
 endif
 
 # Mac OSX (OSX=1)
@@ -61,6 +63,7 @@ WINDRES =
 LDL =
 LUAJIT_LIB = libluajit.a
 LUAJIT_MAKE =
+LUADOC = luadoc
 endif
 
 # No debugging unless DEBUG=1.
@@ -177,6 +180,19 @@ clean:
 	rm -f ../$(TEXTADEPT) *.o *.a *.dll
 	cd luajit && make clean
 
+doc: manual luadoc adeptsense doxygen
+manual:
+	cd ../doc && lua gen_manual.lua
+luadoc: ../modules ../core ../lexers/lexer.lua
+	cd ../doc && $(LUADOC) -d . -doclet markdowndoc $^
+adeptsense: ../modules ../core ../lexers/lexer.lua
+	cd ../modules && $(LUADOC) -d lua --doclet lua/adeptsensedoc $^
+doxygen: Doxyfile
+	cd ../ && doxygen $<
+cleandoc:
+	rm -f ../doc/manual/*.html
+	rm -rf ../doc/api ../doc/doxygen
+
 # Package (only for Linux x86_64)
 # Pass 'VERSION=[release version]' to 'make'.
 
@@ -205,8 +221,7 @@ MODULESDIR = $(RELEASEDIR32)/modules
 MODULESPKG = ../releases/$(RELEASEDIR32).modules.zip
 
 release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
-  ../$(TEXTADEPTMAC) ../$(TEXTADEPTLPNG12)
-	sh -c 'cd ../scripts && ./update_doc'
+  ../$(TEXTADEPTMAC) ../$(TEXTADEPTLPNG12) doc
 	hg archive $(RELEASEDIR32)
 	rm $(RELEASEDIR32)/.hg*
 	cp -r ../doc $(RELEASEDIR32)
