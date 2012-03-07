@@ -218,6 +218,14 @@ function M.start(doc)
     f:write(html)
     f:close()
   end
+
+  -- Write index.html.
+  f = io_open(M.options.output_dir..'/api/index.html', 'wb')
+  local html = HTML:gsub('%%%(([^)]+)%)', {
+    title = 'Textadept API', nav = nav, toc = '', main = ''
+  })
+  f:write(html)
+  f:close()
 end
 
 return M
