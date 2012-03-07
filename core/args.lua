@@ -10,8 +10,8 @@ module('args')]]
 -- Markdown:
 -- ## Arg Events
 --
--- + `'arg_none'`: Called when no command line arguments are passed to Textadept
---   on init.
+-- + `'arg_none'`
+--   Called when no command line arguments are passed to Textadept on init.
 
 local arg = arg
 

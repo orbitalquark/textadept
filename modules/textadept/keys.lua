@@ -6,7 +6,7 @@ local M = {}
 ---
 -- Defines key commands for Textadept.
 -- This set of key commands is pretty standard among other text editors.
--- This module, should be 'require'ed last, but before _M.textadept.menu.
+-- This module, should be `require`ed last, but before `_M.textadept.menu`.
 module('_M.textadept.keys')]]
 
 -- Utility functions.

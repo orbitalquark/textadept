@@ -15,7 +15,7 @@ module('_M.textadept.mime_types')]]
 --   This is useful for overriding its key commands since they are not available
 --   when Textadept starts.
 --   Arguments:
---       * `lang`: The language lexer name.
+--     * `lang`: The language lexer name.
 
 -- Events.
 local events, events_connect = events, events.connect

@@ -184,12 +184,10 @@ function start(doc)
     end
     -- Tag the functions and write the apidoc.
     for _, f in ipairs(m.functions) do
-      if not f:find('no_functions') then -- ignore placeholders
-        local func = f:match('[^%.:]+$')
-        local ext_fields = module == '_G' and '' or 'class:'..module
-        write_tag(ctags, func, 'f', ext_fields)
-        write_apidoc(apidoc, m, m.functions[f])
-      end
+      local func = f:match('[^%.:]+$')
+      local ext_fields = module == '_G' and '' or 'class:'..module
+      write_tag(ctags, func, 'f', ext_fields)
+      write_apidoc(apidoc, m, m.functions[f])
     end
     -- Tag the tables and write the apidoc.
     for _, t in ipairs(m.tables or {}) do

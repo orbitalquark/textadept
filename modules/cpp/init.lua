@@ -6,8 +6,8 @@ local M = {}
 ---
 -- The cpp module.
 -- It provides utilities for editing C/C++ code.
--- User tags are loaded from _USERHOME/modules/cpp/tags and user apis are loaded
--- from _USERHOME/modules/cpp/api.
+-- User tags are loaded from `_USERHOME/modules/cpp/tags` and user apis are
+-- loaded from `_USERHOME/modules/cpp/api`.
 module('_M.cpp')]]
 
 -- Markdown:

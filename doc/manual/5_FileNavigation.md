@@ -23,5 +23,3 @@ extends the selection.
 
 Textadept supports the keybindings you are accustomed to for navigating text
 fields in Mac OSX.
-
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>

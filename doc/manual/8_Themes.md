@@ -11,10 +11,11 @@ the name of the theme you would like to use.
 
 Themes apply to all buffers. You cannot assign a theme to a particular file or
 filetype. You can change things like tab and indent settings per filetype
-however by creating a [language-specific
-module](7_Modules.html#buffer_properties).
+however by creating a [language-specific module].
 
-## Creating or Modifying a Theme
+[language-specific module]: 7_Modules.html#Buffer.Properties
+
+## Creating or Modifying Themes
 
 Each theme is a single folder on the filesystem composed of three files:
 `lexer.lua`, `buffer.lua`, and `view.lua`. It is recommended to put themes in
@@ -27,15 +28,16 @@ To use a theme not located in `~/.textadept/themes/` or Textadept's `themes/`
 directory, you need to specify an absolute path to the theme's folder in your
 `~/.textadept/theme` file.
 
-#### Lexer
+### Lexer
 
 Textadept uses lexers to assign names to buffer elements like comments, strings,
 and keywords. These elements are assigned styles composed of font and color
 information in the theme's `lexer.lua`. See the `Styling Tokens` section of the
-[lexer](../modules/lexer.html) page for more information on how to create styles
-and colors.
+[lexer][] page for more information on how to create styles and colors.
 
-#### Buffer
+[lexer]: ../api/lexer.html
+
+### Buffer
 
 `buffer.lua` contains buffer-specific properties like indentation size and
 whether or not to use tabs. For example, to set the default tab size to 4 and
@@ -45,12 +47,16 @@ use tabs:
     buffer.use_tabs = true
     buffer.indent = 4
 
-See the [LuaDoc](../modules/buffer.html) for documentation on the properties.
+See the [LuaDoc][] for documentation on the properties.
 
-#### View
+[LuaDoc]: ../api/buffer.html
+
+### View
 
 `view.lua` contains view-specific properties like caret and selection colors.
-See the [LuaDoc](../modules/buffer.html) for documentation on the properties.
+See the [LuaDoc][] for documentation on the properties.
+
+[LuaDoc]: ../api/buffer.html
 
 ## Testing Themes
 
@@ -66,16 +72,17 @@ Any errors that occur in the theme are printed to `io.stderr`.
 ## Theming the GUI
 
 There is no way to theme GUI controls like text fields and buttons from within
-Textadept. Instead, use [GTK Resource files][gtkrc]. The `GtkWindow` name is
+Textadept. Instead, use [GTK Resource files][]. The `GtkWindow` name is
 `textadept`. For example, styling all text fields with a
 `"textadept-entry-style"` would be done like this:
 
     widget "textadept*GtkEntry*" style "textadept-entry-style"
 
-[gtkrc]: http://library.gnome.org/devel/gtk/stable/gtk-Resource-Files.html
+[GTK Resource files]: http://library.gnome.org/devel/gtk/stable/gtk-Resource-Files.html
 
 ## Getting Themes
 
-For now, user-created themes are obtained from the
-[wiki](http://caladbolg.net/textadeptwiki). The classic `dark`, `light`, and
-`scite` themes prior to version 4.3 have been moved there.
+For now, user-created themes are obtained from the [wiki][]. The classic `dark`,
+`light`, and `scite` themes prior to version 4.3 have been moved there.
+
+[wiki]: http://caladbolg.net/textadeptwiki

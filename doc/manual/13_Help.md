@@ -7,9 +7,9 @@ parameters.
 
 ## Online Help
 
-Textadept has a [mailing list](http://groups.google.com/group/textadept) and a
-[wiki](http://caladbolg.net/textadeptwiki). You can also join us on IRC via
-[freenode.net](http://freenode.net) in `#textadept`.
+Textadept has a [mailing list][] and a [wiki][]. You can also join us on IRC via
+[freenode.net][] in `#textadept`.
 
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+[mailing list]: http://foicica.com/lists
+[wiki]: http://caladbolg.net/textadeptwiki
+[freenode.net]: http://freenode.net

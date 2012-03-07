@@ -8,7 +8,7 @@ local M = {}
 module('_L')]]
 
 -- Markdown:
--- # Settings
+-- ## Settings
 --
 -- * `_NIL` [string]
 --   String returned when no localization for a given message exists.
@@ -25,11 +25,5 @@ for line in f:lines() do
   end
 end
 f:close()
-
----
--- This table contains no functions.
--- @class function
--- @name no_functions
-local no_functions
 
 return setmetatable(M, { __index = function() return M._NIL end })
