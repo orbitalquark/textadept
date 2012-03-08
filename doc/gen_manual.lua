@@ -10,6 +10,9 @@ local HTML = [[
     </head>
     <body>
       <div id="content">
+        <div id="header">
+          %(header)
+        </div>
         <div id="nav">
           <h2>Manual</h2>
           %(nav)
@@ -21,10 +24,14 @@ local HTML = [[
         <div id="main">
           %(main)
         </div>
+        <div id="footer">
+          %(footer)
+        </div>
       </div>
     </body>
   </html>
 ]]
+local template = {}
 
 -- Get manual pages.
 local pages = {}
@@ -37,6 +44,14 @@ pages[#pages + 1] = '../../README.md'
 pages[#pages + 1] = '../../CHANGELOG.md'
 pages[#pages + 1] = '../../THANKS.md'
 
+-- Create the header and footer.
+local p = io.popen('markdown header.md')
+template.header = p:read('*all')
+p:close()
+p = io.popen('markdown footer.md')
+template.footer = p:read('*all')
+p:close()
+
 -- Create the navigation list.
 local navfile = 'manual/.nav.md'
 local f = io.open(navfile, 'wb')
@@ -46,21 +61,20 @@ for _, page in ipairs(pages) do
   f:write('* [', name, '](', page:gsub('%.md$', '.html'), ')\n')
 end
 f:close()
-local p = io.popen('markdown "'..navfile..'"')
-local nav = p:read('*all')
+p = io.popen('markdown "'..navfile..'"')
+template.nav = p:read('*all')
 p:close()
 
 -- Write HTML.
 for _, page in ipairs(pages) do
   local name = page:match('^%A+(.-)%.md$'):gsub('(%l)(%u)', '%1 %2')
-  local p = io.popen('markdown -f toc -T "manual/'..page..'"')
-  local toc, main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
+  template.title = name..' - Textadept Manual'
+  p = io.popen('markdown -f toc -T "manual/'..page..'"')
+  template.toc, template.main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
   p:close()
   if page:find('^%.%./') then page = page:match('^%A+(.+)$') end
   f = io.open('manual/'..page:gsub('%.md$', '.html'), 'wb')
-  local html = HTML:gsub('%%%(([^)]+)%)', {
-    title = name..' - Textadept Manual', nav = nav, toc = toc, main = main
-  })
+  local html = HTML:gsub('%%%(([^)]+)%)', template)
   f:write(html)
   f:close()
 end
