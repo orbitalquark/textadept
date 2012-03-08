@@ -1871,7 +1871,7 @@ static gboolean emit_timeout(gpointer data) {
 }
 
 static int ltimeout(lua_State *L) {
-  int timeout = luaL_checkinteger(L, 1);
+  double timeout = luaL_checknumber(L, 1);
   luaL_argcheck(L, timeout > 0, 1, "timeout must be > 0");
   luaL_argcheck(L, lua_isfunction(L, 2), 2, "function expected");
   int n = lua_gettop(L);
@@ -1882,7 +1882,7 @@ static int ltimeout(lua_State *L) {
     lua_pushvalue(L, i);
     refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
   }
-  g_timeout_add_seconds(timeout, emit_timeout, (gpointer)refs);
+  g_timeout_add(timeout * 1000, emit_timeout, (gpointer)refs);
   return 0;
 }
 
