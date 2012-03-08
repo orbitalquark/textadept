@@ -13,8 +13,6 @@ a {
 a:hover { text-decoration: underline; }
 a:visited { color: #661a66; }
 
-blockquote { margin-left: 1em; }
-
 body {
   background-color: #e6e6e6;
   color: #333333;

@@ -13,15 +13,15 @@ local M = {}
 local NAVFILE = '%s* [%s](%s)\n'
 local FUNCTION = '<a id="%s" />\n### `%s` (%s)\n\n'
 --local FUNCTION = '### `%s` (%s)\n\n'
-local DESCRIPTION = '> %s\n\n'
-local LIST_TITLE = '> %s:\n\n'
-local PARAM = '> * `%s`: %s\n'
-local USAGE = '> * `%s`\n'
-local RETURN = '> * %s\n'
-local SEE = '> * [`%s`](#%s)\n'
+local DESCRIPTION = '%s\n\n'
+local LIST_TITLE = '%s:\n\n'
+local PARAM = '* `%s`: %s\n'
+local USAGE = '* `%s`\n'
+local RETURN = '* %s\n'
+local SEE = '* [`%s`](#%s)\n'
 local TABLE = '<a id="%s" />\n### `%s`\n\n'
 --local TABLE = '### `%s`\n\n'
-local FIELD = '> * `%s`: %s\n'
+local FIELD = '* `%s`: %s\n'
 local HTML = [[
   <!doctype html>
   <html>
