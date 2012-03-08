@@ -6,6 +6,7 @@ Textadept the amazing editor that it is today.
 ## Code and Documentation Contributors
 
 * Alex Bepple
+* Ana Balan
 * Anton Verbitski
 * Brian Schott
 * Callum Wilson

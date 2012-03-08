@@ -8,7 +8,7 @@ libraries. See the [`lua` module documentation][] for more information.
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Adeptsense tadoc](images/adeptsense_tadoc.png)
 
-[`lua` module documentation]: ../api/_M.lua.html
+[`lua` module documentation]: api/_M.lua.html
 
 ## LuaDoc and Examples
 
@@ -16,7 +16,7 @@ Textadept's API is heavily documented. The [LuaDoc][] is the ultimate resource
 on scripting Textadept. There are of course abundant scripting examples since
 Textadept is mostly written in Lua.
 
-[LuaDoc]: ../api/index.html
+[LuaDoc]: api/index.html
 
 ## Lua Configuration
 
@@ -39,7 +39,7 @@ Textadept's API is derived from the [Scintilla API][] so any C/C++ code using
 Scintilla calls can be ported to Lua without too much trouble.
 
 [Scintilla]: http://scintilla.org
-[buffer]: ../api/buffer.html
+[buffer]: api/buffer.html
 [Scintilla API]: http://scintilla.org/ScintillaDoc.html
 
 ## Textadept Structure

@@ -64,6 +64,6 @@ OSX) or from the `Tools -> Snapopen -> Current Directory` menu. Snapopen is
 pretty limited from the menu, but more versatile in scripts. See its [LuaDoc][].
 `Ctrl+U` (`⌘U`) snaps open `~/.textadept/`.
 
-[LuaDoc]: ../api/_M.textadept.snapopen.html
+[LuaDoc]: api/_M.textadept.snapopen.html
 
 ![Snapopen](images/snapopen.png)

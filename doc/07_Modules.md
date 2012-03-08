@@ -14,7 +14,7 @@ snippets, etc.). These kinds of modules are generally loaded on startup. See the
 [preferences][] page for instructions on how to load generic modules when
 Textadept starts.
 
-[textadept module]: ../api/_M.textadept.html
+[textadept module]: api/_M.textadept.html
 [preferences]: 9_Preferences.html#User.Init
 
 ## Language Specific
@@ -25,8 +25,8 @@ particular programming language unless you specify otherwise. Examples are the
 [cpp][] and [lua][] modules which provide special editing features for the C/C++
 and Lua languages respectively.
 
-[cpp]: ../api/_M.cpp.html
-[lua]: ../api/_M.lua.html
+[cpp]: api/_M.cpp.html
+[lua]: api/_M.lua.html
 
 ### Lexer
 
@@ -34,7 +34,7 @@ All languages have a [lexer][] that performs syntax highlighting on the source
 code. While the lexer itself is not part of the module, its existence in
 `lexers/` is required.
 
-[lexer]: ../api/lexer.html
+[lexer]: api/lexer.html
 
 ### Activation
 
@@ -55,7 +55,7 @@ within another snippet).
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Snippet Expanded](images/snippet2.png)
 
-[snippets]: ../api/_M.textadept.snippets.html
+[snippets]: api/_M.textadept.snippets.html
 
 ### Commands
 
@@ -63,7 +63,7 @@ Most language-specific modules have a set of [key commands][]. See the module's
 Lua code for which key commands are available. They are typically stored in the
 `Ctrl+L` (`⌘L` on Mac OSX) key prefix.
 
-[key commands]: ../api/_M.textadept.keys.html
+[key commands]: api/_M.textadept.keys.html
 
 #### Run
 
@@ -120,7 +120,7 @@ module, it will be loaded instead of the one that comes with Textadept.
 
 See the [LuaDoc][] for modules.
 
-[LuaDoc]: ../api/_M.html
+[LuaDoc]: api/_M.html
 
 ## Customizing Modules
 
@@ -155,4 +155,4 @@ from `post_init.lua`:
 Similarly, you can use `post_init.lua` to change the compile/run commands, load
 more [Adeptsense tags][], and add additional key commands and snippets.
 
-[Adeptsense tags]: ../api/_M.textadept.adeptsense.html#load_ctags
+[Adeptsense tags]: api/_M.textadept.adeptsense.html#load_ctags

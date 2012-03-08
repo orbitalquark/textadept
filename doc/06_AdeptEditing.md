@@ -46,7 +46,7 @@ For more information on adding adeptsense support for another language, see
 the [LuaDoc][].
 
 [ctags]: http://ctags.sf.net
-[LuaDoc]: ../api/_M.textadept.adeptsense.html
+[LuaDoc]: api/_M.textadept.adeptsense.html
 
 ## Find and Replace
 

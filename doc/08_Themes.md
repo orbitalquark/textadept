@@ -35,7 +35,7 @@ and keywords. These elements are assigned styles composed of font and color
 information in the theme's `lexer.lua`. See the `Styling Tokens` section of the
 [lexer][] page for more information on how to create styles and colors.
 
-[lexer]: ../api/lexer.html
+[lexer]: api/lexer.html
 
 ### Buffer
 
@@ -49,14 +49,14 @@ use tabs:
 
 See the [LuaDoc][] for documentation on the properties.
 
-[LuaDoc]: ../api/buffer.html
+[LuaDoc]: api/buffer.html
 
 ### View
 
 `view.lua` contains view-specific properties like caret and selection colors.
 See the [LuaDoc][] for documentation on the properties.
 
-[LuaDoc]: ../api/buffer.html
+[LuaDoc]: api/buffer.html
 
 ## Testing Themes
 

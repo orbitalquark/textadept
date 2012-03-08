@@ -495,7 +495,7 @@ Localization is done using a global table [`_L`][] instead of calling
 `locale.localize()`. Replace all instances of `locale.localize('message')` with
 `_L['message']`. This allows messages to be modified via scripts if desirable.
 
-[`_L`]: ../api/_L.html
+[`_L`]: api/_L.html
 
 ##### `current_word`
 
@@ -613,8 +613,8 @@ Key commands in `~/.textadept/key_commands.lua` and snippets in
 [`keys`][] and/or [`snippets`][] from within your `~/.textadept/init.lua` or a
 file loaded by `~/.textadept/init.lua`.
 
-[`keys`]: ../api/keys.html
-[`snippets`]: ../api/_M.textadept.snippets.html
+[`keys`]: api/keys.html
+[`snippets`]: api/_M.textadept.snippets.html
 
 #### Function Changes
 
@@ -659,28 +659,28 @@ Here is a summary of API changes:
   * Renamed `textadept.session_file` to `_SESSIONFILE`.
 * Removed global `textadept` module.
 
-[API]: ../api
-[`_m.textadept.snippets`]: ../api/_M.textadept.snippets.html
-[`_G.events`]: ../api/events.html
-[`events.emit()`]: ../api/events.html#emit
-[`events.connect()`]: ../api/events.html#connect
-[`_SCINTILLA.constants`]: ../api/_SCINTILLA.html#constants
-[`_SCINTILLA.functions`]: ../api/_SCINTILLA.html#functions
-[`_SCINTILLA.properties`]: ../api/_SCINTILLA.html#properties
-[`_BUFFERS`]: ../api/_G.html#_BUFFERS
-[`_VIEWS`]: ../api/_G.html#_VIEWS
-[`gui`]: ../api/gui.html
-[`gui._print()`]: ../api/gui.html#_print
-[`gui.command_entry`]: ../api/gui.command_entry.html
-[`gui.dialog()`]: ../api/gui.html#dialog
-[`gui.find`]: ../api/gui.find.html
-[`gui.get_split_table()`]: ../api/gui.html#get_split_table
-[`gui.gtkmenu()`]: ../api/gui.html#gtkmenu
-[`gui.goto_view()`]: ../api/gui.html#goto_view
-[`gui.print()`]: ../api/gui.html#print
-[`gui.switch_buffer()`]: ../api/gui.html#switch_buffer
-[`new_buffer()`]: ../api/_G.html#new_buffer
-[`quit()`]: ../api/_G.html#quit
-[`reset()`]:../api/_G.html#reset
-[`user_dofile()`]: ../api/_G.html#user_dofile
-[`string.iconv()`]: ../api/string.html#iconv
+[API]: api
+[`_m.textadept.snippets`]: api/_M.textadept.snippets.html
+[`_G.events`]: api/events.html
+[`events.emit()`]: api/events.html#emit
+[`events.connect()`]: api/events.html#connect
+[`_SCINTILLA.constants`]: api/_SCINTILLA.html#constants
+[`_SCINTILLA.functions`]: api/_SCINTILLA.html#functions
+[`_SCINTILLA.properties`]: api/_SCINTILLA.html#properties
+[`_BUFFERS`]: api/_G.html#_BUFFERS
+[`_VIEWS`]: api/_G.html#_VIEWS
+[`gui`]: api/gui.html
+[`gui._print()`]: api/gui.html#_print
+[`gui.command_entry`]: api/gui.command_entry.html
+[`gui.dialog()`]: api/gui.html#dialog
+[`gui.find`]: api/gui.find.html
+[`gui.get_split_table()`]: api/gui.html#get_split_table
+[`gui.gtkmenu()`]: api/gui.html#gtkmenu
+[`gui.goto_view()`]: api/gui.html#goto_view
+[`gui.print()`]: api/gui.html#print
+[`gui.switch_buffer()`]: api/gui.html#switch_buffer
+[`new_buffer()`]: api/_G.html#new_buffer
+[`quit()`]: api/_G.html#quit
+[`reset()`]:api/_G.html#reset
+[`user_dofile()`]: api/_G.html#user_dofile
+[`string.iconv()`]: api/string.html#iconv
