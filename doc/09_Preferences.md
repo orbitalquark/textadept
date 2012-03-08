@@ -50,7 +50,7 @@ whitespace stripping on save, your `~/.textadept/init.lua` might look like:
     _M.textadept.editing.AUTOPAIR = false
     _M.textadept.editing.STRIP_WHITESPACE_ON_SAVE = false
 
-[LuaDoc]: ../api/index.html
+[LuaDoc]: api/index.html
 
 ### Other
 

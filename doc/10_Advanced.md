@@ -15,7 +15,7 @@ redirects to  [`gui.print()`][]. Use `_G.print()` for Lua's `print()`.
 ![Command Entry](images/commandentry.png)
 
 [scripting]: 11_Scripting.html
-[`gui.print()`]: ../api/gui.html#print
+[`gui.print()`]: api/gui.html#print
 
 ### Tab Completion
 
@@ -31,7 +31,7 @@ You can extend the command entry to do more than enter Lua commands. An
 example of this is [incremental search][]. See `modules/textadept/find.lua` for
 the implementation.
 
-[incremental search]: ../api/gui.find.html#find_incremental
+[incremental search]: api/gui.find.html#find_incremental
 
 ## Command Selection
 
@@ -81,4 +81,4 @@ supported by other text editors and operating systems. You can change the file's
 encoding via the `Buffer -> Encoding` menu. Textadept saves new files as UTF-8
 by default.
 
-[`io.try_encodings`]: ../api/io.html#try_encodings
+[`io.try_encodings`]: api/io.html#try_encodings

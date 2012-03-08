@@ -190,7 +190,7 @@ adeptsense: ../modules ../core ../lexers/lexer.lua
 doxygen: Doxyfile
 	cd ../ && doxygen $<
 cleandoc:
-	rm -f ../doc/manual/*.html
+	rm -f ../doc/*.html
 	rm -rf ../doc/api ../doc/doxygen
 
 # Package (only for Linux x86_64)
