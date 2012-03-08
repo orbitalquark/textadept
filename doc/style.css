@@ -1,7 +1,7 @@
 /* Copyright 2012 Mitchell mitchell.att.foicica.com. */
 
 * {
-  border: 0;
+  border: 0 solid #999999;
   margin: 0;
   padding: 0;
 }
@@ -45,7 +45,7 @@ pre {
 }
 
 table, th, td {
-  border: 1px solid #999999;
+  border-width: 1px;
   border-collapse: collapse;
   margin-left: 1em;
   padding: 0.25em;
@@ -53,14 +53,29 @@ table, th, td {
 
 ul { list-style-type: disc; }
 
-#content {
-  font-size: 1.2em;
-  margin: 0.5em;
+#content { font-size: 1.2em; }
+
+#header h1 {
+  background-color: #cccccc;
+  border-width: 0 0 1px 0;
+  padding: 0.25em;
+  margin: 0;
+}
+#header ul {
+  border-width: 0 0 1px 0;
+  list-style: none;
+  margin-bottom: 1.5em;
+  padding: 0.25em;
+}
+#header li {
+  color: #808080;
+  display: inline;
 }
 
 #nav {
-  border: 1px solid #999999;
+  border-width: 1px 1px 1px 0;
   float: left;
+  margin-bottom: 1.5em;
   width: 10em;
 }
 #nav ul {
@@ -70,7 +85,7 @@ ul { list-style-type: disc; }
 #nav ul ul { margin: 0 0.25em 0 1em; }
 
 #toc {
-  border: 1px solid #999999;
+  border-width: 1px 0 1px 1px;
   float: right;
   margin: 0 0 1em 1em;
 }
@@ -81,7 +96,7 @@ ul { list-style-type: disc; }
 #toc ul ul { margin: 0 0.25em 0 1em; }
 
 #nav h2, #toc h2 {
-  border-bottom: 1px solid #999999;
+  border-width: 0 0 1px 0;
   background-color: #cccccc;
   font-size: 1em;
   font-weight: normal;
@@ -93,3 +108,11 @@ ul { list-style-type: disc; }
 #main p { margin: 1em; }
 #main ol, #main ul { margin-left: 2.5em; }
 #main ol p, #main ul p { margin-left: 0; }
+
+#footer {
+  background-color: #cccccc;
+  border-width: 1px 0 0 0;
+  clear: both;
+  padding: 0.25em;
+  margin-top: 1.5em;
+}

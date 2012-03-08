@@ -184,7 +184,7 @@ doc: manual luadoc adeptsense doxygen
 manual:
 	cd ../doc && lua gen_manual.lua
 luadoc: ../modules ../core ../lexers/lexer.lua
-	cd ../doc && $(LUADOC) -d . -doclet markdowndoc $^
+	cd ../doc && $(LUADOC) -d . -t . --doclet markdowndoc $^
 adeptsense: ../modules ../core ../lexers/lexer.lua
 	cd ../modules && $(LUADOC) -d lua --doclet lua/adeptsensedoc $^
 doxygen: Doxyfile

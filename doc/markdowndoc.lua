@@ -32,6 +32,9 @@ local HTML = [[
     </head>
     <body>
       <div id="content">
+        <div id="header">
+          %(header)
+        </div>
         <div id="nav">
           <h2>Modules</h2>
           %(nav)
@@ -42,6 +45,9 @@ local HTML = [[
         </div>
         <div id="main">
           %(main)
+        </div>
+        <div id="footer">
+          %(footer)
         </div>
       </div>
     </body>
@@ -106,7 +112,21 @@ end
 -- Called by LuaDoc to process a doc object.
 -- @param doc The LuaDoc doc object.
 function M.start(doc)
+  local template = {
+    title = 'Textadept API', header = '', toc = '', main = '', footer = ''
+  }
   local modules, files = doc.modules, doc.files
+
+  -- Create the header and footer, if given a template.
+  local header, footer = '', ''
+  if M.options.template_dir ~= 'luadoc/doclet/html/' then
+    local p = io.popen('markdown "'..M.options.template_dir..'header.md"')
+    template.header = p:read('*all')
+    p:close()
+    p = io.popen('markdown "'..M.options.template_dir..'footer.md"')
+    template.footer = p:read('*all')
+    p:close()
+  end
 
   -- Create the navigation list.
   local hierarchy = {}
@@ -125,8 +145,14 @@ function M.start(doc)
   write_nav(f, hierarchy)
   f:close()
   local p = io_popen('markdown "'..navfile..'"')
-  local nav = p:read('*all')
+  template.nav = p:read('*all')
   p:close()
+
+  -- Write index.html.
+  f = io_open(M.options.output_dir..'/api/index.html', 'wb')
+  local html = HTML:gsub('%%%(([^)]+)%)', template)
+  f:write(html)
+  f:close()
 
   -- Create a map of doc objects to file names so their Markdown doc comments
   -- can be extracted.
@@ -207,25 +233,16 @@ function M.start(doc)
     f:close()
 
     -- Write HTML.
+    template.title = name..' - Textadept API'
     local p = io_popen('markdown -f toc -T "'..mdfile..'"')
-    local toc, main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
+    template.toc, template.main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
     p:close()
-    toc = toc:gsub('(<a.-)%b()(</a>)', '%1%2') -- strip function parameters
+    template.toc = template.toc:gsub('(<a.-)%b()(</a>)', '%1%2') -- strip params
     f = io_open(M.options.output_dir..'/api/'..name..'.html', 'wb')
-    local html = HTML:gsub('%%%(([^)]+)%)', {
-      title = name..' - Textadept API', nav = nav, toc = toc, main = main
-    })
+    local html = HTML:gsub('%%%(([^)]+)%)', template)
     f:write(html)
     f:close()
   end
-
-  -- Write index.html.
-  f = io_open(M.options.output_dir..'/api/index.html', 'wb')
-  local html = HTML:gsub('%%%(([^)]+)%)', {
-    title = 'Textadept API', nav = nav, toc = '', main = ''
-  })
-  f:write(html)
-  f:close()
 end
 
 return M
