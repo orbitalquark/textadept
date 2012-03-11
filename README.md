@@ -44,7 +44,7 @@ directory. They are also available [online][].
 
 ## Contact
 
-Contact me by email: mitchell.at.foicica.com.
+Contact me by email: mitchell.att.foicica.com.
 
 There is also a [mailing list][].
 
