@@ -2,6 +2,15 @@
 
 ## 5.1 (01 Mar 2012)
 
+Download:
+
+* [Textadept 5.1 -- Win32][]
+* [Textadept 5.1 -- Mac OSX Intel 10.5+][]
+* [Textadept 5.1 -- Linux][]
+* [Textadept 5.1 -- Linux x86_64][]
+* [Textadept 5.1 -- Source][]
+* [Textadept 5.1 -- Modules][]
+
 Bugfixes:
 
 * Fixed crash caused by [`gui.filteredlist()`][] dialogs.
@@ -15,6 +24,12 @@ Changes:
 * Lexers with no tokens can be styled manually.
 * Added more OSX default key shortcuts.
 
+[Textadept 5.1 -- Win32]: download/textadept_5.1.win32.zip
+[Textadept 5.1 -- Mac OSX Intel 10.5+]: download/textadept_5.1.osx.zip
+[Textadept 5.1 -- Linux]: download/textadept_5.1.tgz
+[Textadept 5.1 -- Linux x86_64]: download/textadept_5.1.x86_64.tgz
+[Textadept 5.1 -- Source]: download/textadept_5.1.src.zip
+[Textadept 5.1 -- Modules]: download/textadept_5.1.modules.zip
 [`gui.filteredlist()`]: api/gui.html#filteredlist
 [GtkOSXApplication]: https://live.gnome.org/GTK%2B/OSX/Integration#Gtk-mac-integration.2BAC8-GtkOSXApplication
 
@@ -22,6 +37,15 @@ Changes:
 
 Please see the [4 to 5 migration guide][] for upgrading from Textadept 4 to
 Textadept 5.
+
+Download:
+
+* [Textadept 5.0 -- Win32][]
+* [Textadept 5.0 -- Mac OSX Intel 10.5+][]
+* [Textadept 5.0 -- Linux][]
+* [Textadept 5.0 -- Linux x86_64][]
+* [Textadept 5.0 -- Source][]
+* [Textadept 5.0 -- Modules][]
 
 Bugfixes:
 
@@ -36,10 +60,25 @@ Changes:
 * Also include [LuaJIT][] executables in releases.
 
 [4 to 5 migration guide]: 14_Appendix.html#Textadept.4.to.5
+[Textadept 5.0 -- Win32]: download/textadept_5.0.win32.zip
+[Textadept 5.0 -- Mac OSX Intel 10.5+]: download/textadept_5.0.osx.zip
+[Textadept 5.0 -- Linux]: download/textadept_5.0.tgz
+[Textadept 5.0 -- Linux x86_64]: download/textadept_5.0.x86_64.tgz
+[Textadept 5.0 -- Source]: download/textadept_5.0.src.zip
+[Textadept 5.0 -- Modules]: download/textadept_5.0.modules.zip
 [Scintilla]: http://scintilla.org
 [LuaJIT]: http://luajit.org
 
 ## 5.0 beta (11 Jan 2012)
+
+Download:
+
+* [Textadept 5.0 beta -- Win32][]
+* [Textadept 5.0 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 5.0 beta -- Linux][]
+* [Textadept 5.0 beta -- Linux x86_64][]
+* [Textadept 5.0 beta -- Source][]
+* [Textadept 5.0 beta -- Modules][]
 
 Bugfixes:
 
@@ -54,6 +93,12 @@ Changes:
 * Renamed editing module's `current_word()` to [`select_word()`][].
 * Updated [manual][].
 
+[Textadept 5.0 beta -- Win32]: download/textadept_5.0_beta.win32.zip
+[Textadept 5.0 beta -- Mac OSX Intel 10.5+]: download/textadept_5.0_beta.osx.zip
+[Textadept 5.0 beta -- Linux]: download/textadept_5.0_beta.tgz
+[Textadept 5.0 beta -- Linux x86_64]: download/textadept_5.0_beta.x86_64.tgz
+[Textadept 5.0 beta -- Source]: download/textadept_5.0_beta.src.zip
+[Textadept 5.0 beta -- Modules]: download/textadept_5.0_beta.modules.zip
 [`reset()`]: api/_G.html#reset
 [`_L`]: api/_L.html
 [`_M`]: api/_M.html
@@ -61,6 +106,15 @@ Changes:
 [`select_word()`]: api/_M.textadept.editing.html#select_word
 
 ## 5.0 alpha (21 Dec 2012)
+
+Download:
+
+* [Textadept 5.0 alpha -- Win32][]
+* [Textadept 5.0 alpha -- Mac OSX Intel 10.5+][]
+* [Textadept 5.0 alpha -- Linux][]
+* [Textadept 5.0 alpha -- Linux x86_64][]
+* [Textadept 5.0 alpha -- Source][]
+* [Textadept 5.0 alpha -- Modules][]
 
 Bugfixes:
 
@@ -72,11 +126,26 @@ Changes:
 * Updated sections in the [manual][] to reflect Lua 5.2 changes.
 * Textadept can be compiled with [LuaJIT][].
 
+[Textadept 5.0 alpha -- Win32]: download/textadept_5.0_alpha.win32.zip
+[Textadept 5.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_5.0_alpha.osx.zip
+[Textadept 5.0 alpha -- Linux]: download/textadept_5.0_alpha.tgz
+[Textadept 5.0 alpha -- Linux x86_64]: download/textadept_5.0_alpha.x86_64.tgz
+[Textadept 5.0 alpha -- Source]: download/textadept_5.0_alpha.src.zip
+[Textadept 5.0 alpha -- Modules]: download/textadept_5.0_alpha.modules.zip
 [Lua 5.2]: http://www.lua.org/manual/5.2/
 [manual]: ./
 [LuaJIT]: http://luajit.org
 
 ## 4.3 (01 Dec 2011)
+
+Download:
+
+* [Textadept 4.3 -- Win32][]
+* [Textadept 4.3 -- Mac OSX Intel 10.5+][]
+* [Textadept 4.3 -- Linux][]
+* [Textadept 4.3 -- Linux x86_64][]
+* [Textadept 4.3 -- Source][]
+* [Textadept 4.3 -- Modules][]
 
 Bugfixes:
 
@@ -91,11 +160,26 @@ Changes:
 * Simplify theming via [gtkrc][] by naming `GtkWindow` only.
 * Updated to [Scintilla][] 3.0.1.
 
+[Textadept 4.3 -- Win32]: download/textadept_4.3.win32.zip
+[Textadept 4.3 -- Mac OSX Intel 10.5+]: download/textadept_4.3.osx.zip
+[Textadept 4.3 -- Linux]: download/textadept_4.3.tgz
+[Textadept 4.3 -- Linux x86_64]: download/textadept_4.3.x86_64.tgz
+[Textadept 4.3 -- Source]: download/textadept_4.3.src.zip
+[Textadept 4.3 -- Modules]: download/textadept_4.3.modules.zip
 [theme switching]: api/gui.html#set_theme
 [gtkrc]: 8_Themes.html#Theming.the.GUI
 [Scintilla]: http://scintilla.org
 
 ## 4.2 (01 Nov 2011)
+
+Download:
+
+* [Textadept 4.2 -- Win32][]
+* [Textadept 4.2 -- Mac OSX Intel 10.5+][]
+* [Textadept 4.2 -- Linux][]
+* [Textadept 4.2 -- Linux x86_64][]
+* [Textadept 4.2 -- Source][]
+* [Textadept 4.2 -- Modules][]
 
 Bugfixes:
 
@@ -106,9 +190,24 @@ Changes:
 
 * Updated to [Scintilla][] 3.0.0.
 
+[Textadept 4.2 -- Win32]: download/textadept_4.2.win32.zip
+[Textadept 4.2 -- Mac OSX Intel 10.5+]: download/textadept_4.2.osx.zip
+[Textadept 4.2 -- Linux]: download/textadept_4.2.tgz
+[Textadept 4.2 -- Linux x86_64]: download/textadept_4.2.x86_64.tgz
+[Textadept 4.2 -- Source]: download/textadept_4.2.src.zip
+[Textadept 4.2 -- Modules]: download/textadept_4.2.modules.zip
 [Scintilla]: http://scintilla.org
 
 ## 4.1 (01 Oct 2011)
+
+Download:
+
+* [Textadept 4.1 -- Win32][]
+* [Textadept 4.1 -- Mac OSX Intel 10.5+][]
+* [Textadept 4.1 -- Linux][]
+* [Textadept 4.1 -- Linux x86_64][]
+* [Textadept 4.1 -- Source][]
+* [Textadept 4.1 -- Modules][]
 
 Bugfixes:
 
@@ -133,6 +232,12 @@ Changes:
 * Use lexer at the caret for key commands and snippets.
 * Updated to [Scintilla][] 2.29.
 
+[Textadept 4.1 -- Win32]: download/textadept_4.1.win32.zip
+[Textadept 4.1 -- Mac OSX Intel 10.5+]: download/textadept_4.1.osx.zip
+[Textadept 4.1 -- Linux]: download/textadept_4.1.tgz
+[Textadept 4.1 -- Linux x86_64]: download/textadept_4.1.x86_64.tgz
+[Textadept 4.1 -- Source]: download/textadept_4.1.src.zip
+[Textadept 4.1 -- Modules]: download/textadept_4.1.modules.zip
 [dwell events]: api/events.html
 [`_BUFFERS`]: api/_G.html#_BUFFERS
 [`_VIEWS`]: api/_G.html#_VIEWS
@@ -147,6 +252,15 @@ Changes:
 
 Please see the [3 to 4 migration guide][] for upgrading from Textadept 3 to
 Textadept 4.
+
+Download:
+
+* [Textadept 4.0 -- Win32][]
+* [Textadept 4.0 -- Mac OSX Intel 10.5+][]
+* [Textadept 4.0 -- Linux][]
+* [Textadept 4.0 -- Linux x86_64][]
+* [Textadept 4.0 -- Source][]
+* [Textadept 4.0 -- Modules][]
 
 Bugfixes:
 
@@ -163,9 +277,24 @@ Changes:
 * Do not hide the statusbar when the command entry has focus.
 
 [3 to 4 migration guide]: 14_Appendix.html#Textadept.3.to.4
+[Textadept 4.0 -- Win32]: download/textadept_4.0.win32.zip
+[Textadept 4.0 -- Mac OSX Intel 10.5+]: download/textadept_4.0.osx.zip
+[Textadept 4.0 -- Linux]: download/textadept_4.0.tgz
+[Textadept 4.0 -- Linux x86_64]: download/textadept_4.0.x86_64.tgz
+[Textadept 4.0 -- Source]: download/textadept_4.0.src.zip
+[Textadept 4.0 -- Modules]: download/textadept_4.0.modules.zip
 [`gui.dialog()`]: api/gui.html#dialog
 
 ## 4.0 beta 2 (11 Aug 2011)
+
+Download:
+
+* [Textadept 4.0 beta 2 -- Win32][]
+* [Textadept 4.0 beta 2 -- Mac OSX Intel 10.5+][]
+* [Textadept 4.0 beta 2 -- Linux][]
+* [Textadept 4.0 beta 2 -- Linux x86_64][]
+* [Textadept 4.0 beta 2 -- Source][]
+* [Textadept 4.0 beta 2 -- Modules][]
 
 Bugfixes:
 
@@ -182,9 +311,24 @@ Changes:
 * Swapped OSX `c` and `m` key command definition modifiers.
 * Changed some key bindings from 4.0 beta.
 
+[Textadept 4.0 beta 2 -- Win32]: download/textadept_4.0_beta_2.win32.zip
+[Textadept 4.0 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_4.0_beta_2.osx.zip
+[Textadept 4.0 beta 2 -- Linux]: download/textadept_4.0_beta_2.tgz
+[Textadept 4.0 beta 2 -- Linux x86_64]: download/textadept_4.0_beta_2.x86_64.tgz
+[Textadept 4.0 beta 2 -- Source]: download/textadept_4.0_beta_2.src.zip
+[Textadept 4.0 beta 2 -- Modules]: download/textadept_4.0_beta_2.modules.zip
 [recent file list]: api/io.html#recent_files
 
 ## 4.0 beta (01 Aug 2011)
+
+Download:
+
+* [Textadept 4.0 beta -- Win32][]
+* [Textadept 4.0 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 4.0 beta -- Linux][]
+* [Textadept 4.0 beta -- Linux x86_64][]
+* [Textadept 4.0 beta -- Source][]
+* [Textadept 4.0 beta -- Modules][]
 
 Bugfixes:
 
@@ -205,12 +349,27 @@ Changes:
 * *Completely new set of key commands.*
 * Updated to [Scintilla][] 2.28.
 
+[Textadept 4.0 beta -- Win32]: download/textadept_4.0_beta.win32.zip
+[Textadept 4.0 beta -- Mac OSX Intel 10.5+]: download/textadept_4.0_beta.osx.zip
+[Textadept 4.0 beta -- Linux]: download/textadept_4.0_beta.tgz
+[Textadept 4.0 beta -- Linux x86_64]: download/textadept_4.0_beta.x86_64.tgz
+[Textadept 4.0 beta -- Source]: download/textadept_4.0_beta.src.zip
+[Textadept 4.0 beta -- Modules]: download/textadept_4.0_beta.modules.zip
 [`io.open_recent_file()`]: api/io.html#open_recent_file
 [`buffer` functions]: api/buffer.html#Functions
 [menu]: api/gui.html#gtkmenu
 [Scintilla]: http://scintilla.org
 
 ## 3.9 (01 Jul 2011)
+
+Download:
+
+* [Textadept 3.9 -- Win32][]
+* [Textadept 3.9 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.9 -- Linux][]
+* [Textadept 3.9 -- Linux x86_64][]
+* [Textadept 3.9 -- Source][]
+* [Textadept 3.9 -- Modules][]
 
 Bugfixes:
 
@@ -229,6 +388,12 @@ Changes:
 * Can localize the labels and buttons in the GUI [find][] frame.
 * Added ConTeXt lexer.
 
+[Textadept 3.9 -- Win32]: download/textadept_3.9.win32.zip
+[Textadept 3.9 -- Mac OSX Intel 10.5+]: download/textadept_3.9.osx.zip
+[Textadept 3.9 -- Linux]: download/textadept_3.9.tgz
+[Textadept 3.9 -- Linux x86_64]: download/textadept_3.9.x86_64.tgz
+[Textadept 3.9 -- Source]: download/textadept_3.9.src.zip
+[Textadept 3.9 -- Modules]: download/textadept_3.9.modules.zip
 [GTK]: http://gtk.org
 [`gui.dialog`]: api/gui.html#dialog
 [functions]: api/_SCINTILLA.html#Functions
@@ -237,6 +402,15 @@ Changes:
 [find]: api/gui.find.html
 
 ## 3.8 (11 Jun 2011)
+
+Download:
+
+* [Textadept 3.8 -- Win32][]
+* [Textadept 3.8 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.8 -- Linux][]
+* [Textadept 3.8 -- Linux x86_64][]
+* [Textadept 3.8 -- Source][]
+* [Textadept 3.8 -- Modules][]
 
 Bugfixes:
 
@@ -255,6 +429,12 @@ Changes:
 * Added native folding for more than 60% of existing lexers. The rest still use
   folding by indentation by default.
 
+[Textadept 3.8 -- Win32]: download/textadept_3.8.win32.zip
+[Textadept 3.8 -- Mac OSX Intel 10.5+]: download/textadept_3.8.osx.zip
+[Textadept 3.8 -- Linux]: download/textadept_3.8.tgz
+[Textadept 3.8 -- Linux x86_64]: download/textadept_3.8.x86_64.tgz
+[Textadept 3.8 -- Source]: download/textadept_3.8.src.zip
+[Textadept 3.8 -- Modules]: download/textadept_3.8.modules.zip
 [`events.handlers`]: api/events.html#handlers
 [events]: api/events.html
 [documentation]: 7_Modules.html#Getting.Modules
@@ -263,6 +443,15 @@ Changes:
 [easier]: api/lexer.html#Simple.Code.Folding
 
 ## 3.7 (01 May 2011)
+
+Download:
+
+* [Textadept 3.7 -- Win32][]
+* [Textadept 3.7 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.7 -- Linux][]
+* [Textadept 3.7 -- Linux x86_64][]
+* [Textadept 3.7 -- Source][]
+* [Textadept 3.7 -- Modules][]
 
 Bugfixes:
 
@@ -273,10 +462,25 @@ Changes:
 * Changed Mac OSX Adeptsense complete key command from `~` to `Ctrl+Escape`.
 * Added [PHP module][].
 
+[Textadept 3.7 -- Win32]: download/textadept_3.7.win32.zip
+[Textadept 3.7 -- Mac OSX Intel 10.5+]: download/textadept_3.7.osx.zip
+[Textadept 3.7 -- Linux]: download/textadept_3.7.tgz
+[Textadept 3.7 -- Linux x86_64]: download/textadept_3.7.x86_64.tgz
+[Textadept 3.7 -- Source]: download/textadept_3.7.src.zip
+[Textadept 3.7 -- Modules]: download/textadept_3.7.modules.zip
 [`buffer:get_lexer()`]: api/buffer.html#buffer.get_lexer
 [PHP module]: api/_M.php.html
 
 ## 3.7 beta 3 (01 Apr 2011)
+
+Download:
+
+* [Textadept 3.7 beta 3 -- Win32][]
+* [Textadept 3.7 beta 3 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.7 beta 3 -- Linux][]
+* [Textadept 3.7 beta 3 -- Linux x86_64][]
+* [Textadept 3.7 beta 3 -- Source][]
+* [Textadept 3.7 beta 3 -- Modules][]
 
 Bugfixes:
 
@@ -310,6 +514,12 @@ Changes:
 * Officially supported modules have their own [repositories][] and are available
   as a separate download.
 
+[Textadept 3.7 beta 3 -- Win32]: download/textadept_3.7_beta_3.win32.zip
+[Textadept 3.7 beta 3 -- Mac OSX Intel 10.5+]: download/textadept_3.7_beta_3.osx.zip
+[Textadept 3.7 beta 3 -- Linux]: download/textadept_3.7_beta_3.tgz
+[Textadept 3.7 beta 3 -- Linux x86_64]: download/textadept_3.7_beta_3.x86_64.tgz
+[Textadept 3.7 beta 3 -- Source]: download/textadept_3.7_beta_3.src.zip
+[Textadept 3.7 beta 3 -- Modules]: download/textadept_3.7_beta_3.modules.zip
 [`post_init.lua`]: 7_Modules.html#Customizing.Modules
 [module]: api/_M.rails.html
 [RHTML module]: api/_M.rhtml.html
@@ -320,6 +530,14 @@ Changes:
 [repositories]: http://foicica.com/hg
 
 ## 3.7 beta 2 (01 Mar 2011)
+
+Download:
+
+* [Textadept 3.7 beta 2 -- Win32][]
+* [Textadept 3.7 beta 2 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.7 beta 2 -- Linux][]
+* [Textadept 3.7 beta 2 -- Linux x86_64][]
+* [Textadept 3.7 beta 2 -- Source][]
 
 Bugfixes:
 
@@ -351,6 +569,11 @@ Changes:
 * Included libpng12 build for 64-bit Debian-based Linux distros (Ubuntu).
 * Added [CSS][], [HTML][], [Java][], and [Ruby][] modules with Adeptsenses.
 
+[Textadept 3.7 beta 2 -- Win32]: download/textadept_3.7_beta_2.win32.zip
+[Textadept 3.7 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_3.7_beta_2.osx.zip
+[Textadept 3.7 beta 2 -- Linux]: download/textadept_3.7_beta_2.tgz
+[Textadept 3.7 beta 2 -- Linux x86_64]: download/textadept_3.7_beta_2.x86_64.tgz
+[Textadept 3.7 beta 2 -- Source]: download/textadept_3.7_beta_2.src.zip
 [`goto_ctag()`]: api/_M.textadept.adeptsense.html#goto_ctag
 [Scintilla]: http://scintilla.org
 [tutorial]: api/_M.textadept.adeptsense.html
@@ -362,6 +585,14 @@ Changes:
 [Ruby]: api/_M.ruby.html
 
 ## 3.7 beta (01 Feb 2011)
+
+Download:
+
+* [Textadept 3.7 beta -- Win32][]
+* [Textadept 3.7 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 3.7 beta -- Linux][]
+* [Textadept 3.7 beta -- Linux x86_64][]
+* [Textadept 3.7 beta -- Source][]
 
 Bugfixes:
 
@@ -381,6 +612,11 @@ Changes:
 * Language-specific [`char_matches`][] and [`braces`][] can be defined.
 * `command_entry_keypress` event accepts modifier keys.
 
+[Textadept 3.7 beta -- Win32]: download/textadept_3.7_beta.win32.zip
+[Textadept 3.7 beta -- Mac OSX Intel 10.5+]: download/textadept_3.7_beta.osx.zip
+[Textadept 3.7 beta -- Linux]: download/textadept_3.7_beta.tgz
+[Textadept 3.7 beta -- Linux x86_64]: download/textadept_3.7_beta.x86_64.tgz
+[Textadept 3.7 beta -- Source]: download/textadept_3.7_beta.src.zip
 [Adeptsense]: 6_AdeptEditing.html#Adeptsense
 [`language_module_loaded`]: api/_M.textadept.mime_types.html#Mime-type.Events
 [`gui.filteredlist()`]: api/gui.html#filteredlist
@@ -388,6 +624,14 @@ Changes:
 [`braces`]: api/_M.textadept.editing.html#braces
 
 ## 3.6 (01 Jan 2011)
+
+Download:
+
+* [Textadept 3.6 -- Win32][]
+* [Textadept 3.6 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.6 -- Linux][]
+* [Textadept 3.6 -- Linux x86_64][]
+* [Textadept 3.6 -- Source][]
 
 Bugfixes:
 
@@ -405,10 +649,23 @@ Changes:
 * Moved GUI events from `core/events.lua` to `core/gui.lua`.
 * Separated key command manager from key command definitions.
 
+[Textadept 3.6 -- Win32]: download/textadept_3.6.win32.zip
+[Textadept 3.6 -- Mac OSX Intel 10.5+]: download/textadept_3.6.osx.zip
+[Textadept 3.6 -- Linux]: download/textadept_3.6.tgz
+[Textadept 3.6 -- Linux x86_64]: download/textadept_3.6.x86_64.tgz
+[Textadept 3.6 -- Source]: download/textadept_3.6.src.zip
 [`_m.textadept.filter_through`]: api/_M.textadept.filter_through.html
 [shell commands]: 10_Advanced.html#Shell.Commands.and.Filtering.Text
 
 ## 3.5 (01 Dec 2010)
+
+Download:
+
+* [Textadept 3.5 -- Win32][]
+* [Textadept 3.5 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.5 -- Linux][]
+* [Textadept 3.5 -- Linux x86_64][]
+* [Textadept 3.5 -- Source][]
 
 Bugfixes:
 
@@ -424,12 +681,25 @@ Changes:
 * New [manual][].
 * Added `file_after_save` [event][].
 
+[Textadept 3.5 -- Win32]: download/textadept_3.5.win32.zip
+[Textadept 3.5 -- Mac OSX Intel 10.5+]: download/textadept_3.5.osx.zip
+[Textadept 3.5 -- Linux]: download/textadept_3.5.tgz
+[Textadept 3.5 -- Linux x86_64]: download/textadept_3.5.x86_64.tgz
+[Textadept 3.5 -- Source]: download/textadept_3.5.src.zip
 [Menus]: api/_M.textadept.menu.html
 [`_m.textadept.editing.enclose()`]: api/_M.textadept.editing.html#enclose
 [manual]: ./
 [event]: api/io.html#File.Events
 
 ## 3.4 (01 Nov 2010)
+
+Download:
+
+* [Textadept 3.4 -- Win32][]
+* [Textadept 3.4 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.4 -- Linux][]
+* [Textadept 3.4 -- Linux x86_64][]
+* [Textadept 3.4 -- Source][]
 
 Bugfixes:
 
@@ -465,6 +735,11 @@ Changes:
 * Updated to [Scintilla][] 2.22.
 * Renamed `_G.MAC` to `_G.OSX`.
 
+[Textadept 3.4 -- Win32]: download/textadept_3.4.win32.zip
+[Textadept 3.4 -- Mac OSX Intel 10.5+]: download/textadept_3.4.osx.zip
+[Textadept 3.4 -- Linux]: download/textadept_3.4.tgz
+[Textadept 3.4 -- Linux x86_64]: download/textadept_3.4.x86_64.tgz
+[Textadept 3.4 -- Source]: download/textadept_3.4.src.zip
 [Switch Buffers]: 4_WorkingWithFiles.html#Buffer.Browser
 [`gui.dialog()`]: api/gui.html#dialog
 [`_m.textadept.snapopen.open()`]: api/_M.textadept.snapopen.html#open
@@ -475,6 +750,14 @@ Changes:
 
 ## 3.3 (01 Oct 2010)
 
+Download:
+
+* [Textadept 3.3 -- Win32][]
+* [Textadept 3.3 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.3 -- Linux][]
+* [Textadept 3.3 -- Linux x86_64][]
+* [Textadept 3.3 -- Source][]
+
 Bugfixes:
 
 * Fixed buggy snippet menu.
@@ -484,9 +767,22 @@ Changes:
 * Added [`_m.textadept.snapopen`][] module with menu options for rapidly opening
   files.
 
+[Textadept 3.3 -- Win32]: download/textadept_3.3.win32.zip
+[Textadept 3.3 -- Mac OSX Intel 10.5+]: download/textadept_3.3.osx.zip
+[Textadept 3.3 -- Linux]: download/textadept_3.3.tgz
+[Textadept 3.3 -- Linux x86_64]: download/textadept_3.3.x86_64.tgz
+[Textadept 3.3 -- Source]: download/textadept_3.3.src.zip
 [`_m.textadept.snapopen`]: api/_M.textadept.snapopen.html
 
 ## 3.2 (01 Sep 2010)
+
+Download:
+
+* [Textadept 3.2 -- Win32][]
+* [Textadept 3.2 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.2 -- Linux][]
+* [Textadept 3.2 -- Linux x86_64][]
+* [Textadept 3.2 -- Source][]
 
 Bugfixes:
 
@@ -497,10 +793,23 @@ Changes:
 * Updated to the new [Scintillua][] that does not required patched Scintilla.
 * Updated to [Scintilla][] 2.21.
 
+[Textadept 3.2 -- Win32]: download/textadept_3.2.win32.zip
+[Textadept 3.2 -- Mac OSX Intel 10.5+]: download/textadept_3.2.osx.zip
+[Textadept 3.2 -- Linux]: download/textadept_3.2.tgz
+[Textadept 3.2 -- Linux x86_64]: download/textadept_3.2.x86_64.tgz
+[Textadept 3.2 -- Source]: download/textadept_3.2.src.zip
 [Scintillua]: http://foicica.com/scintillua
 [Scintilla]: http://scintilla.org
 
 ## 3.1 (21 Aug 2010)
+
+Download:
+
+* [Textadept 3.1 -- Win32][]
+* [Textadept 3.1 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.1 -- Linux][]
+* [Textadept 3.1 -- Linux x86_64][]
+* [Textadept 3.1 -- Source][]
 
 Bugfixes:
 
@@ -512,6 +821,11 @@ Changes:
 * Updated to [Scintilla][] 2.20.
 * Added Lua autocompletion.
 
+[Textadept 3.1 -- Win32]: download/textadept_3.1.win32.zip
+[Textadept 3.1 -- Mac OSX Intel 10.5+]: download/textadept_3.1.osx.zip
+[Textadept 3.1 -- Linux]: download/textadept_3.1.tgz
+[Textadept 3.1 -- Linux x86_64]: download/textadept_3.1.x86_64.tgz
+[Textadept 3.1 -- Source]: download/textadept_3.1.src.zip
 [propagation]: api/keys.html#Propagation
 [Scintilla]: http://scintilla.org
 
@@ -519,6 +833,14 @@ Changes:
 
 Please see the [2 to 3 migration guide][] for upgrading from Textadept 2 to
 Textadept 3.
+
+Download:
+
+* [Textadept 3.0 -- Win32][]
+* [Textadept 3.0 -- Mac OSX Intel 10.5+][]
+* [Textadept 3.0 -- Linux][]
+* [Textadept 3.0 -- Linux x86_64][]
+* [Textadept 3.0 -- Source][]
 
 Bugfixes:
 
@@ -529,8 +851,21 @@ Changes:
 * More accurate CSS and Diff lexers.
 
 [2 to 3 migration guide]: 14_Appendix.html#Textadept.2.to.3
+[Textadept 3.0 -- Win32]: download/textadept_3.0.win32.zip
+[Textadept 3.0 -- Mac OSX Intel 10.5+]: download/textadept_3.0.osx.zip
+[Textadept 3.0 -- Linux]: download/textadept_3.0.tgz
+[Textadept 3.0 -- Linux x86_64]: download/textadept_3.0.x86_64.tgz
+[Textadept 3.0 -- Source]: download/textadept_3.0.src.zip
 
 ## 3.0 beta (21 Jun 2010)
+
+Download:
+
+* [Textadept 3.0 beta -- Win32][]
+* [Textadept 3.0 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 3.0 beta -- Linux][]
+* [Textadept 3.0 beta -- Linux x86_64][]
+* [Textadept 3.0 beta -- Source][]
 
 Bugfixes:
 
@@ -551,6 +886,11 @@ Changes:
 * Added statusbar notification on [`reset()`][].
 * Added Gtkrc, Prolog, and Go lexers.
 
+[Textadept 3.0 beta -- Win32]: download/textadept_3.0_beta.win32.zip
+[Textadept 3.0 beta -- Mac OSX Intel 10.5+]: download/textadept_3.0_beta.osx.zip
+[Textadept 3.0 beta -- Linux]: download/textadept_3.0_beta.tgz
+[Textadept 3.0 beta -- Linux x86_64]: download/textadept_3.0_beta.x86_64.tgz
+[Textadept 3.0 beta -- Source]: download/textadept_3.0_beta.src.zip
 [`buffer:text_range()`]: api/buffer.html#buffer.text_range
 [`textadept`]: api/_M.textadept.html
 [API]: api
@@ -560,6 +900,14 @@ Changes:
 [`reset()`]: api/_G.html#reset
 
 ## 2.2 (11 May 2010)
+
+Download:
+
+* [Textadept 2.2 -- Win32][]
+* [Textadept 2.2 -- Mac OSX Intel 10.5+][]
+* [Textadept 2.2 -- Linux][]
+* [Textadept 2.2 -- Linux x86_64][]
+* [Textadept 2.2 -- Source][]
 
 Bugfixes:
 
@@ -572,7 +920,21 @@ Changes:
 * `_USERHOME` comes before `_HOME` in `package.path` so `require` searches
   `~/.textadept/` first.
 
+[Textadept 2.2 -- Win32]: download/textadept_2.2.win32.zip
+[Textadept 2.2 -- Mac OSX Intel 10.5+]: download/textadept_2.2.osx.zip
+[Textadept 2.2 -- Linux]: download/textadept_2.2.tgz
+[Textadept 2.2 -- Linux x86_64]: download/textadept_2.2.x86_64.tgz
+[Textadept 2.2 -- Source]: download/textadept_2.2.src.zip
+
 ## 2.2 beta 2 (01 May 2010)
+
+Download:
+
+* [Textadept 2.2 beta 2 -- Win32][]
+* [Textadept 2.2 beta 2 -- Mac OSX Intel 10.5+][]
+* [Textadept 2.2 beta 2 -- Linux][]
+* [Textadept 2.2 beta 2 -- Linux x86_64][]
+* [Textadept 2.2 beta 2 -- Source][]
 
 Bugfixes:
 
@@ -594,12 +956,25 @@ Changes:
 * Added Inform, Lilypond, and NSIS lexers.
 * `_m.textadept.editing.enclosure` is now an accessible table.
 
+[Textadept 2.2 beta 2 -- Win32]: download/textadept_2.2_beta2.win32.zip
+[Textadept 2.2 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_2.2_beta2.osx.zip
+[Textadept 2.2 beta 2 -- Linux]: download/textadept_2.2_beta2.tgz
+[Textadept 2.2 beta 2 -- Linux x86_64]: download/textadept_2.2_beta2.x86_64.tgz
+[Textadept 2.2 beta 2 -- Source]: download/textadept_2.2_beta2.src.zip
 [`buffer:text_range()`]: api/buffer.html#buffer.text_range
 [run]: api/_M.html#Run
 [compile]: api/_M.html#Compile
 [Block comment]: api/_M.html#Block.Comment
 
 ## 2.2 beta (01 Apr 2010)
+
+Download:
+
+* [Textadept 2.2 beta -- Win32][]
+* [Textadept 2.2 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 2.2 beta -- Linux][]
+* [Textadept 2.2 beta -- Linux x86_64][]
+* [Textadept 2.2 beta -- Source][]
 
 Bugfixes:
 
@@ -623,10 +998,23 @@ Changes:
 * Snippets use multiple carets.
 * Removed api file support.
 
+[Textadept 2.2 beta -- Win32]: download/textadept_2.2_beta.win32.zip
+[Textadept 2.2 beta -- Mac OSX Intel 10.5+]: download/textadept_2.2_beta.osx.zip
+[Textadept 2.2 beta -- Linux]: download/textadept_2.2_beta.tgz
+[Textadept 2.2 beta -- Linux x86_64]: download/textadept_2.2_beta.x86_64.tgz
+[Textadept 2.2 beta -- Source]: download/textadept_2.2_beta.src.zip
 [gcocoadialog]: http://foicica.com/gcocoadialog
 [`gui.dialog('filteredist', ...)]: api/gui.html#dialog
 
 ## 2.1 (01 Mar 2010)
+
+Download:
+
+* [Textadept 2.1 -- Win32][]
+* [Textadept 2.1 -- Mac OSX Intel 10.5+][]
+* [Textadept 2.1 -- Linux][]
+* [Textadept 2.1 -- Linux x86_64][]
+* [Textadept 2.1 -- Source][]
 
 Bugfixes:
 
@@ -650,9 +1038,22 @@ Changes:
 * Updated to [Scintilla][] 2.03.
 * Modified quit and close dialogs to be more readable.
 
+[Textadept 2.1 -- Win32]: download/textadept_2.1.win32.zip
+[Textadept 2.1 -- Mac OSX Intel 10.5+]: download/textadept_2.1.osx.zip
+[Textadept 2.1 -- Linux]: download/textadept_2.1.tgz
+[Textadept 2.1 -- Linux x86_64]: download/textadept_2.1.x86_64.tgz
+[Textadept 2.1 -- Source]: download/textadept_2.1.src.zip
 [Scintilla]: http://scintilla.org
 
 ## 2.0 (01 Oct 2009)
+
+Download:
+
+* [Textadept 2.0 -- Win32][]
+* [Textadept 2.0 -- Mac OSX Intel 10.5+][]
+* [Textadept 2.0 -- Linux][]
+* [Textadept 2.0 -- Linux x86_64][]
+* [Textadept 2.0 -- Source][]
 
 Bugfixes:
 
@@ -672,9 +1073,21 @@ Changes:
 * Added `style_whitespace` to [lexers][] for custom styles.
 * Added standard `F3` key command for "Find Next" for Windows/Linux.
 
+[Textadept 2.0 -- Win32]: download/textadept_2.0.win32.zip
+[Textadept 2.0 -- Mac OSX Intel 10.5+]: download/textadept_2.0.dmg
+[Textadept 2.0 -- Linux]: download/textadept_2.0.tgz
+[Textadept 2.0 -- Linux x86_64]: download/textadept_2.0.x86_64.tgz
+[Textadept 2.0 -- Source]: download/textadept_2.0.src.zip
 [lexers]: api/lexer.html
 
 ## 2.0 beta (31 Jul 2009)
+
+Download:
+
+* [Textadept 2.0 beta -- Win32][]
+* [Textadept 2.0 beta -- Linux][]
+* [Textadept 2.0 beta -- Linux x86_64][]
+* [Textadept 2.0 beta -- Source][]
 
 Bugfixes:
 
@@ -715,6 +1128,10 @@ Changes:
 * Removed confusing `local function` and `local table` LuaDoc.
 * Rewrote the manual and most of the documentation.
 
+[Textadept 2.0 beta -- Win32]: download/textadept_2.0_beta.win32.zip
+[Textadept 2.0 beta -- Linux]: download/textadept_2.0_beta.tgz
+[Textadept 2.0 beta -- Linux x86_64]: download/textadept_2.0_beta.x86_64.tgz
+[Textadept 2.0 beta -- Source]: download/textadept_2.0_beta.src.zip
 [list of encodings]: api/io.html#try_encodings
 [events]: api/events.html
 [Scintilla]: http://scintilla.org
@@ -727,6 +1144,14 @@ Changes:
 [GTK]: http://gtk.org
 
 ## 1.6 (01 Apr 2009)
+
+Download:
+
+* [Textadept 1.6 -- Win32][]
+* [Textadept 1.6 -- Mac OSX Intel 10.5+][]
+* [Textadept 1.6 -- Linux][]
+* [Textadept 1.6 -- Linux x86_64][]
+* [Textadept 1.6 -- Source][]
 
 Bugfixes:
 
@@ -741,9 +1166,22 @@ Updates:
 * Trimmed theme files.
 * Added `file_before_save` [event][].
 
+[Textadept 1.6 -- Win32]: download/textadept_1.6.win32.zip
+[Textadept 1.6 -- Mac OSX Intel 10.5+]: download/textadept_1.6.dmg
+[Textadept 1.6 -- Linux]: download/textadept_1.6.tgz
+[Textadept 1.6 -- Linux x86_64]: download/textadept_1.6.x86_64.tgz
+[Textadept 1.6 -- Source]: download/textadept_1.6.src.zip
 [event]: api/io.html#File.Events
 
 ## 1.6 beta (01 Mar 2009)
+
+Download:
+
+* [Textadept 1.6 beta -- Win32][]
+* [Textadept 1.6 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 1.6 beta -- Linux][]
+* [Textadept 1.6 beta -- Linux x86_64][]
+* [Textadept 1.6 beta -- Source][]
 
 Bugfixes:
 
@@ -766,9 +1204,22 @@ Updates:
 * Removed `project` PM browser.
 * Multiple character encoding support for opening and saving files.
 
+[Textadept 1.6 beta -- Win32]: download/textadept_1.6beta.win32.zip
+[Textadept 1.6 beta -- Mac OSX Intel 10.5+]: download/textadept_1.6beta.dmg
+[Textadept 1.6 beta -- Linux]: download/textadept_1.6beta.tgz
+[Textadept 1.6 beta -- Linux x86_64]: download/textadept_1.6beta.x86_64.tgz
+[Textadept 1.6 beta -- Source]: download/textadept_1.6beta.src.zip
 [`_m.textadept.run`]: api/_M.textadept.run.html
 
 ## 1.5 (20 Feb 2009)
+
+Download:
+
+* [Textadept 1.5 -- Win32][]
+* [Textadept 1.5 -- Mac OSX Intel 10.5+][]
+* [Textadept 1.5 -- Linux][]
+* [Textadept 1.5 -- Linux x86_64][]
+* [Textadept 1.5 -- Source][]
 
 Bugfixes:
 
@@ -794,7 +1245,21 @@ Updates:
 * Moved mime-types into `core/ext/mime_types.conf` configuration file.
 * Moved localization into `core/locale.conf` configuration file.
 
+[Textadept 1.5 -- Win32]: download/textadept_1.5.win32.zip
+[Textadept 1.5 -- Mac OSX Intel 10.5+]: download/textadept_1.5.dmg
+[Textadept 1.5 -- Linux]: download/textadept_1.5.tgz
+[Textadept 1.5 -- Linux x86_64]: download/textadept_1.5.x86_64.tgz
+[Textadept 1.5 -- Source]: download/textadept_1.5.src.zip
+
 ## 1.4 (10 Feb 2009)
+
+Download:
+
+* [Textadept 1.4 -- Win32][]
+* [Textadept 1.4 -- Mac OSX Intel 10.5+][]
+* [Textadept 1.4 -- Linux][]
+* [Textadept 1.4 -- Linux x86_64][]
+* [Textadept 1.4 -- Source][]
 
 Bugfixes:
 
@@ -812,7 +1277,21 @@ Updates:
 * Special buffers are not "Untitled" anymore.
 * Moved `textadept.locale` table to `_G`.
 
+[Textadept 1.4 -- Win32]: download/textadept_1.4.win32.zip
+[Textadept 1.4 -- Mac OSX Intel 10.5+]: download/textadept_1.4.dmg
+[Textadept 1.4 -- Linux]: download/textadept_1.4.tgz
+[Textadept 1.4 -- Linux x86_64]: download/textadept_1.4.x86_64.tgz
+[Textadept 1.4 -- Source]: download/textadept_1.4.src.zip
+
 ## 1.3 (30 Jan 2009)
+
+Download:
+
+* [Textadept 1.3 -- Win32][]
+* [Textadept 1.3 -- Mac OSX Intel 10.5+][]
+* [Textadept 1.3 -- Linux][]
+* [Textadept 1.3 -- Linux x86_64][]
+* [Textadept 1.3 -- Source][]
 
 Bugfixes:
 
@@ -841,7 +1320,19 @@ Updates:
 * Use a combo entry for the Project Manager browser entry.
 * Print messages to a split view instead of switching buffers.
 
+[Textadept 1.3 -- Win32]: download/textadept_1.3.win32.zip
+[Textadept 1.3 -- Mac OSX Intel 10.5+]: download/textadept_1.3.dmg
+[Textadept 1.3 -- Linux]: download/textadept_1.3.tgz
+[Textadept 1.3 -- Linux x86_64]: download/textadept_1.3.x86_64.tgz
+[Textadept 1.3 -- Source]: download/textadept_1.3.src.zip
+
 ## 1.2 (21 Jan 2009)
+
+Download:
+
+* [Textadept 1.2 -- Win32][]
+* [Textadept 1.2 -- Mac OSX Intel 10.5+][]
+* [Textadept 1.2 -- Linux][]
 
 Bugfixes:
 
@@ -854,9 +1345,18 @@ Updates:
   is displayed in a message buffer and you can double-click errors and warnings
   to go to them in the source file.
 
+[Textadept 1.2 -- Win32]: download/textadept_1.2.win32.zip
+[Textadept 1.2 -- Mac OSX Intel 10.5+]: download/textadept_1.2.dmg
+[Textadept 1.2 -- Linux]: download/textadept_1.2.tgz
 [`_m.textadept.run`]: api/_M.textadept.run.html
 
 ## 1.1 (11 Jan 2009)
+
+Download:
+
+* [Textadept 1.1 -- Win32][]
+* [Textadept 1.1 -- Mac OSX Intel 10.5+][]
+* [Textadept 1.1 -- Linux][]
 
 Bugfixes:
 
@@ -872,10 +1372,19 @@ Updates:
 * Various improvements to efficiency, speed, and readability of source code.
 * Manually parse `~/.gtkrc-2.0` on Mac since GTK-OSX does not do it.
 
+[Textadept 1.1 -- Win32]: download/textadept_1.1_win32.zip
+[Textadept 1.1 -- Mac OSX Intel 10.5+]: download/textadept_1.1.dmg
+[Textadept 1.1 -- Linux]: download/textadept_1.1.tgz
 [localization]: api/_L.html
 [bookmarks]: api/_M.textadept.bookmarks.html
 
 ## 1.0 (01 Jan 2009)
+
+Download:
+
+* [Textadept 1.0 -- Win32][]
+* [Textadept 1.0 -- Mac OSX Intel 10.5+][]
+* [Textadept 1.0 -- Linux][]
 
 Bugfixes:
 
@@ -896,12 +1405,21 @@ Updates:
 * New Textadept icons.
 * Added a true project manager.
 
+[Textadept 1.0 -- Win32]: download/textadept_1.0_win32.zip
+[Textadept 1.0 -- Mac OSX Intel 10.5+]: download/textadept_1.0.dmg
+[Textadept 1.0 -- Linux]: download/textadept_1.0.tgz
 [find]: api/gui.find.html
 [GTK-OSX]: http://www.gtk.org/download/macos.php
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: http://keplerproject.github.com/luafilesystem/
 
 ## 0.6 (03 Oct 2008)
+
+Download:
+
+* [Textadept 0.6 -- Win32][]
+* [Textadept 0.6 -- Linux][]
+* [Textadept 0.6 -- Linux x86_64][]
 
 Bugfixes:
 
@@ -919,11 +1437,19 @@ Updates:
   "buffer_new" and "view_new" event handlers respectively.
 * File types can be recognized by [pattern matching][] the first line.
 
+[Textadept 0.6 -- Win32]: download/ta_beta_r6_win32.zip
+[Textadept 0.6 -- Linux]: download/ta_beta_r6.tgz
+[Textadept 0.6 -- Linux x86_64]: download/ta_beta_r6_x86_64.tgz
 [Theming]: 8_Themes.html
 [manual]: ./
 [pattern matching]: 9_Preferences.html#Detect.by.Pattern
 
 ## 0.5 (23 Jul 2008)
+
+Download:
+
+* [Textadept 0.5 -- Linux][]
+* [Textadept 0.5 -- Linux x86_64][]
 
 Bugfixes:
 
@@ -937,7 +1463,16 @@ Updates:
   module.
 * Updated some Luadoc.
 
+[Textadept 0.5 -- Linux]: download/ta_beta_r5.tgz
+[Textadept 0.5 -- Linux x86_64]: download/ta_beta_r5_x86_64.tgz
+
 ## 0.4 (25 Jun 2008)
+
+Download:
+
+* [Textadept 0.4 -- Mac OSX Intel 10.5+][]
+* [Textadept 0.4 -- Linux][]
+* [Textadept 0.4 -- Linux x86_64][]
 
 Bugfixes:
 
@@ -959,10 +1494,17 @@ Updates:
 * Added Doxygen documentation for C source files.
 * Updated Luadoc, and added Textadept manual.
 
+[Textadept 0.4 -- Mac OSX Intel 10.5+]: download/ta_beta_r4_osx.tgz
+[Textadept 0.4 -- Linux]: download/ta_beta_r4.tgz
+[Textadept 0.4 -- Linux x86_64]: download/ta_beta_r4_x86_64.tgz
 [bookmark]: api/_M.textadept.bookmarks.html
 [tab-completion]: 10_Advanced.html#Tab.Completion
 
 ## 0.3 (04 Mar 2008)
+
+Download:
+
+* [Textadept 0.3 -- Linux][]
 
 Bugfixes:
 
@@ -980,11 +1522,17 @@ Updates:
 * Added new find in files project manager browser.
 * Fixed some code redundancy and typos in documentation.
 
+[Textadept 0.3 -- Linux]: download/ta_beta_r3.tgz
 [`select_indented_block()`]: api/_M.textadept.editing.html#select_indented_block
 [Zenity]: http://live.gnome.org/Zenity
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
 
 ## 0.2 (20 Dec 2007)
+
+Download:
+
+* [Textadept 0.2 -- Mac OSX Intel 10.5+][]
+* [Textadept 0.2 -- Linux][]
 
 Bugfixes:
 
@@ -998,6 +1546,17 @@ Updates:
 * Lexers.
 * Improved support for embedded language-specific snippets.
 
+[Textadept 0.2 -- Mac OSX Intel 10.5+]: download/ta_beta_r2.1_osx.tgz
+[Textadept 0.2 -- Linux]: download/ta_beta_r2.tgz
+
 ## 0.1 (01 Dec 2007)
 
+Download:
+
+* [Textadept 0.1 -- Mac OSX Intel 10.5+][]
+* [Textadept 0.1 -- Linux][]
+
 Initial Release
+
+[Textadept 0.1 -- Mac OSX Intel 10.5+]: download/ta_beta_r1_osx.tgz
+[Textadept 0.1 -- Linux]: download/ta_beta_r1.tgz
