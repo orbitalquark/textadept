@@ -1,5 +1,9 @@
 # Changelog
 
+[Atom Feed][]
+
+[Atom Feed]: feed
+
 ## 5.1 (01 Mar 2012)
 
 Download:
@@ -105,7 +109,7 @@ Changes:
 [manual]: ./
 [`select_word()`]: api/_M.textadept.editing.html#select_word
 
-## 5.0 alpha (21 Dec 2012)
+## 5.0 alpha (21 Dec 2011)
 
 Download:
 
