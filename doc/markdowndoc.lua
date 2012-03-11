@@ -120,10 +120,10 @@ function M.start(doc)
   -- Create the header and footer, if given a template.
   local header, footer = '', ''
   if M.options.template_dir ~= 'luadoc/doclet/html/' then
-    local p = io.popen('markdown "'..M.options.template_dir..'header.md"')
+    local p = io.popen('markdown "'..M.options.template_dir..'.header.md"')
     template.header = p:read('*all')
     p:close()
-    p = io.popen('markdown "'..M.options.template_dir..'footer.md"')
+    p = io.popen('markdown "'..M.options.template_dir..'.footer.md"')
     template.footer = p:read('*all')
     p:close()
   end

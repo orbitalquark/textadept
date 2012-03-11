@@ -181,8 +181,8 @@ clean:
 	cd luajit && make clean
 
 doc: manual luadoc adeptsense doxygen
-manual:
-	cd ../doc && lua gen_manual.lua
+manual: ../doc/*.md ../*.md
+	../doc/bombay -d ../doc -t ../doc --title Textadept --navtitle Manual $^
 luadoc: ../modules ../core ../lexers/lexer.lua
 	cd ../doc && $(LUADOC) -d . -t . --doclet markdowndoc $^
 adeptsense: ../modules ../core ../lexers/lexer.lua
