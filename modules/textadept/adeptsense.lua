@@ -927,7 +927,7 @@ end
 -- This should be called by key commands and menus instead of `complete()`.
 -- @name complete_symbol
 function M.complete_symbol()
-  local m = _M[buffer:get_lexer()]
+  local m = _M[buffer:get_lexer(true)]
   if m and m.sense then m.sense:complete() end
 end
 
@@ -937,7 +937,7 @@ end
 -- This should be called by key commands and menus instead of `show_apidoc()`.
 -- @name show_documentation
 function M.show_documentation()
-  local m = _M[buffer:get_lexer()]
+  local m = _M[buffer:get_lexer(true)]
   if m and m.sense then m.sense:show_apidoc() end
 end
 

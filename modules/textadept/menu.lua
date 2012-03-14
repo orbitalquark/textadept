@@ -357,7 +357,7 @@ end)
 
 -- Set a language-specific context menu or the default one.
 local function set_language_contextmenu()
-  local lang = _G.buffer:get_lexer()
+  local lang = _G.buffer:get_lexer(true)
   M.set_contextmenu(_M[lang] and _M[lang].context_menu or M.context_menu)
 end
 events_connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
