@@ -36,7 +36,7 @@ M.utils = {
     local buffer = buffer
     local style = buffer.style_at[buffer.current_pos]
     local text = string.format("%s %s\n%s %s (%d)", _L['Lexer'],
-                               buffer:get_lexer(), _L['Style'],
+                               buffer:get_lexer(true), _L['Style'],
                                buffer:get_style_name(style), style)
     buffer:call_tip_show(buffer.current_pos, text)
   end,

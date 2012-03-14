@@ -223,7 +223,7 @@ function M._select()
   for trigger, text in pairs(snippets) do
     if type(text) == 'string' then list[#list + 1] = trigger..'\0 \0'..text end
   end
-  local lexer = buffer:get_lexer()
+  local lexer = buffer:get_lexer(true)
   for trigger, text in pairs(snippets[lexer] or {}) do
     if type(text) == 'string' then
       list[#list + 1] = trigger..'\0'..lexer..'\0'..text

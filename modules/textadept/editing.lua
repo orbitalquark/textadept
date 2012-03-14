@@ -86,7 +86,7 @@ local K = keys.KEYSYMS
 events_connect(events.CHAR_ADDED, function(c)
   if not M.AUTOPAIR then return end
   local buffer = buffer
-  local match = (M.char_matches[buffer:get_lexer()] or M.char_matches)[c]
+  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[c]
   if match and buffer.selections == 1 then buffer:insert_text(-1, match) end
 end)
 
@@ -96,7 +96,7 @@ events_connect(events.KEYPRESS, function(code)
   local buffer = buffer
   local pos = buffer.current_pos
   local c = buffer.char_at[pos - 1]
-  local match = (M.char_matches[buffer:get_lexer()] or M.char_matches)[c]
+  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[c]
   if match and buffer.char_at[pos] == string.byte(match) then buffer:clear() end
 end)
 
@@ -105,7 +105,7 @@ events_connect(events.UPDATE_UI, function()
   if not M.HIGHLIGHT_BRACES then return end
   local buffer = buffer
   local pos = buffer.current_pos
-  if (M.braces[buffer:get_lexer()] or M.braces)[buffer.char_at[pos]] then
+  if (M.braces[buffer:get_lexer(true)] or M.braces)[buffer.char_at[pos]] then
     local match = buffer:brace_match(pos)
     if match ~= -1 then
       buffer:brace_highlight(pos, match)
@@ -238,7 +238,7 @@ end
 function M.block_comment(comment)
   local buffer = buffer
   if not comment then
-    comment = M.comment_string[buffer:get_lexer()]
+    comment = M.comment_string[buffer:get_lexer(true)]
     if not comment then return end
   end
   local anchor, caret = buffer.selection_start, buffer.selection_end
