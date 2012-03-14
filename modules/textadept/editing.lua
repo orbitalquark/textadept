@@ -179,15 +179,22 @@ end
 -- Pops up an autocompletion list for the current word based on other words in
 -- the document.
 -- @param word_chars String of chars considered to be part of words.
+-- @param default_words Optional list of words considered to be in the document,
+--   even if they are not. Words may contain registered images.
 -- @return `true` if there were completions to show; `false` otherwise.
 -- @name autocomplete_word
-function M.autocomplete_word(word_chars)
+function M.autocomplete_word(word_chars, default_words)
   local buffer = buffer
   local caret, length = buffer.current_pos, buffer.length
   local completions, c_list = {}, {}
   local buffer_text = buffer:get_text(buffer.length)
   local root = buffer_text:sub(1, caret):match('['..word_chars..']+$')
   if not root or root == '' then return end
+  for _, word in ipairs(default_words or {}) do
+    if word:match('^'..root) then
+      c_list[#c_list + 1], completions[word:match('^(.-)%??%d*$')] = word, true
+    end
+  end
   local patt = '^['..word_chars..']+'
   buffer.target_start, buffer.target_end = 0, buffer.length
   buffer.search_flags = _SCINTILLA.constants.SCFIND_WORDSTART
@@ -216,7 +223,8 @@ function M.autocomplete_word(word_chars)
     else
       -- Scintilla does not emit AUTO_C_SELECTION in this case. This is
       -- necessary for autocompletion with multiple selections.
-      events.emit(events.AUTO_C_SELECTION, c_list[1], caret - #root)
+      local text = c_list[1]:match('^(.-)%??%d*$')
+      events.emit(events.AUTO_C_SELECTION, text, caret - #root)
     end
     return true
   end
