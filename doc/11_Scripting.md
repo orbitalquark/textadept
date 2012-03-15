@@ -12,11 +12,30 @@ libraries. See the [`lua` module documentation][] for more information.
 
 ## LuaDoc and Examples
 
-Textadept's API is heavily documented. The [LuaDoc][] is the ultimate resource
-on scripting Textadept. There are of course abundant scripting examples since
-Textadept is mostly written in Lua.
+Textadept's API is heavily documented. The [API docs][] are the ultimate
+resource on scripting Textadept. There are of course abundant scripting examples
+since Textadept is mostly written in Lua.
 
-[LuaDoc]: api/index.html
+[API docs]: api/index.html
+
+### Generating LuaDoc
+
+You can generate API documentation for your own modules using the
+`doc/markdowndoc.lua` [LuaDoc][] module:
+
+    luadoc -d . --doclet _HOME/doc/markdowndoc [module(s)]
+
+or
+
+    luadoc -d . -t template_dir --doclet _HOME/doc/markdowndoc [module(s)]
+
+where `_HOME` is where Textadept is installed and `template_dir` is an optional
+template directory that contains two Markdown files: `.header.md` and
+`.footer.md`. (See `doc/.header.md` and `doc/.footer.md` for examples.) You must
+have [Discount][] installed.
+
+[LuaDoc]: http://keplerproject.github.com/luadoc/
+[Discount]: http://www.pell.portland.or.us/~orc/Code/discount/
 
 ## Lua Configuration
 

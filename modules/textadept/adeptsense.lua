@@ -331,6 +331,19 @@ module('_M.textadept.adeptsense')]]
 -- You will have to do something similar if you are writing an Adeptsense for a
 -- child lexer language.
 --
+-- ### Generating Lua Adeptsense
+--
+-- You can generate Lua Adeptsense for your own modules using the Lua language
+-- module's `adeptsensedoc.lua` module with [LuaDoc][]:
+--
+--     luadoc -d . --doclet _HOME/modules/lua/adeptsensedoc [module(s)]
+--
+-- where `_HOME` is where Textadept is installed. The `tags` and `api` files are
+-- output to the current directory and can be loaded via
+-- [`load_ctags()`](#load_ctags) and [`api_files`](#api_files) respectively.
+--
+-- [LuaDoc]: http://keplerproject.github.com/luadoc/
+--
 -- ### Other Adeptsense Settings
 --
 -- * `always_show_globals` [bool]
