@@ -315,6 +315,22 @@ module('_M.textadept.adeptsense')]]
 --       self.imports = {}
 --     end
 --
+-- ### Child Language Adeptsenses
+--
+-- When Adeptsense completion is triggered, the Adeptsense for the language at
+-- the *current caret position* is used, not necessarily the parent language's
+-- Adeptsense. For example, when editing CSS inside of an HTML file, the user
+-- expects the CSS Adeptsense to be used. However, child language Adeptsenses
+-- are not loaded automatically and must be loaded by the parent language
+-- module. For the case of CSS in HTML, the HTML module's `init.lua` must
+-- contain:
+--
+--     -- Load CSS Adeptsense.
+--     if not _M.css then _M.css = require 'css' end
+--
+-- You will have to do something similar if you are writing an Adeptsense for a
+-- child lexer language.
+--
 -- ### Other Adeptsense Settings
 --
 -- * `always_show_globals` [bool]
