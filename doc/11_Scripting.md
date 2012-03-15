@@ -31,8 +31,11 @@ or
 
 where `_HOME` is where Textadept is installed and `template_dir` is an optional
 template directory that contains two Markdown files: `.header.md` and
-`.footer.md`. (See `doc/.header.md` and `doc/.footer.md` for examples.) You must
-have [Discount][] installed.
+`.footer.md`. (See `doc/.header.md` and `doc/.footer.md` for examples.) An
+`api/` directory containing the API documentation is created in the current
+directory.
+
+You must have [Discount][] installed.
 
 [LuaDoc]: http://keplerproject.github.com/luadoc/
 [Discount]: http://www.pell.portland.or.us/~orc/Code/discount/
