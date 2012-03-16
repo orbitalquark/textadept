@@ -8,9 +8,7 @@ local M = {}
 -- It provides utilities for editing C/C++ code.
 -- User tags are loaded from `_USERHOME/modules/cpp/tags` and user apis are
 -- loaded from `_USERHOME/modules/cpp/api`.
-module('_M.cpp')]]
-
--- Markdown:
+--
 -- ## Key Commands
 --
 -- + `Ctrl+L, M` (`⌘L, M` on Mac OSX)
@@ -23,11 +21,9 @@ module('_M.cpp')]]
 --   and functions.
 -- + `Shift+Return` (`⇧↩`)
 --   Add ';' to line end and insert newline.
---
--- ## Fields
---
--- * `sense`
+-- @field sense
 --   The C/C++ [Adeptsense](_M.textadept.adeptsense.html).
+module('_M.cpp')]]
 
 local m_editing, m_run = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.

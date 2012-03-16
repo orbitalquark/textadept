@@ -5,9 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Manages key commands in Textadept.
-module('keys')]]
-
--- Markdown:
+--
 -- ## Overview
 --
 -- Key commands are defined in the global table `keys`. Each key-value pair in
@@ -51,34 +49,8 @@ module('keys')]]
 --
 -- Key commands can be chained like in Emacs using keychain sequences. By
 -- default, the `Esc` key (`Apple+Esc` on Mac OSX) cancels the current keychain,
--- but it can be redefined by setting the `keys.CLEAR` field. Naturally, the
+-- but it can be redefined by re-defining [`CLEAR`](#CLEAR). Naturally, the
 -- clear sequence cannot be chained.
---
--- ## Settings
---
--- + `CTRL` [string]
---   The string representing the Control key.
---   The default value is 'c'.
--- + `ALT` [string]
---   The string representing the Alt/option key.
---   The default value is 'a'.
--- + `META` [string]
---   The string representing the Command key on Mac OSX.
---   The default value is 'm'.
--- + `SHIFT` [string]
---   The string representing the Shift key.
---   The default value is 's'.
--- + `ADD` [string]
---   The string representing used to join together a sequence of Control, Alt,
---   Meta, or Shift modifier keys.
---   The default value is ''.
--- * `CLEAR` [string]
---   The string representing the key sequence that clears the current keychain.
---   The default value is 'esc' (Escape).
--- * `LANGUAGE_MODULE_PREFIX` [string]
---   The starting key command of the keychain reserved for language-specific
---   modules.
---   The default value is Ctrl/Cmd+L.
 --
 -- ## Precedence
 --
@@ -118,9 +90,18 @@ module('keys')]]
 --
 -- ## Problems
 --
--- All Lua functions must be defined BEFORE they are reference in key commands.
--- Therefore, any module containing key commands should be loaded after all
--- other modules, whose functions are being referenced, have been loaded.
+-- All Lua functions must be defined **before** they are reference in key
+-- commands. Therefore, any module containing key commands should be loaded
+-- after all other modules, whose functions are being referenced, have been
+-- loaded.
+-- @field CLEAR (string)
+--   The string representing the key sequence that clears the current keychain.
+--   The default value is `'esc'` (Escape).
+-- @field LANGUAGE_MODULE_PREFIX (string)
+--   The starting key command of the keychain reserved for language-specific
+--   modules.
+--   The default value is Ctrl/Cmd+L.
+module('keys')]]
 
 local ADD = ''
 local CTRL, ALT, META, SHIFT = 'c'..ADD, 'a'..ADD, 'm'..ADD, 's'..ADD

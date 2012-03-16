@@ -5,13 +5,9 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Table of all messages used by Textadept for localization.
-module('_L')]]
-
--- Markdown:
--- ## Settings
---
--- * `_NIL` [string]
+-- @field _NIL (string)
 --   String returned when no localization for a given message exists.
+module('_L')]]
 
 M._NIL = 'No Localization'
 

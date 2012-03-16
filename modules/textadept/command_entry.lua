@@ -4,13 +4,9 @@
 --[[ This comment is for LuaDoc.
 ---
 -- Textadept's Command entry.
-module('gui.command_entry')]]
-
--- Markdown:
--- ## Fields
---
--- * `entry_text` [string]
+-- @field entry_text (string)
 --   The text in the entry.
+module('gui.command_entry')]]
 
 -- Environment for abbreviated commands.
 -- @class table

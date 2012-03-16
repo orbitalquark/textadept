@@ -5,34 +5,30 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Editing commands for the textadept module.
-module('_M.textadept.editing')]]
-
--- Markdown:
--- ## Settings
---
--- * `AUTOPAIR` [bool]
+-- @field AUTOPAIR (bool)
 --   Opening `(`, `[`, `[`, `"`, or `'` characters are automatically closed.
 --   The default value is `true`.
--- * `HIGHLIGHT_BRACES` [bool]
---   Highlight matching `()[]{}<>` characters.
+-- @field HIGHLIGHT_BRACES (bool)
+--   Highlight matching `()[]{}` characters.
 --   The default value is `true`.
--- * `AUTOINDENT` [bool]
+-- @field AUTOINDENT (bool)
 --   Match the indentation level of the previous line when pressing the Enter
 --   key.
 --   The default value is `true`.
--- * `STRIP_WHITESPACE_ON_SAVE` [bool]
+-- @field STRIP_WHITESPACE_ON_SAVE (bool)
 --   Strip trailing whitespace on file save.
 --   The default value is `true`.
--- * `MARK_HIGHLIGHT_BACK` [number]
+-- @field MARK_HIGHLIGHT_BACK (number)
 --   The background color used for a line containing a highlighted word in
 --   `0xBBGGRR` format.
--- * `INDIC_HIGHLIGHT_BACK` [number]
+-- @field INDIC_HIGHLIGHT_BACK (number)
 --   The color used for an indicator for a highlighted word in `0xBBGGRR`
 --   format.
--- * `INDIC_HIGHLIGHT_ALPHA` [number]
+-- @field INDIC_HIGHLIGHT_ALPHA (number)
 --   The alpha transparency value between `0` (transparent) and `255` (opaque)
 --   used for an indicator for a highlighted word.
 --   The default value is `100`.
+module('_M.textadept.editing')]]
 
 M.AUTOPAIR = true
 M.HIGHLIGHT_BRACES = true
@@ -44,7 +40,7 @@ M.INDIC_HIGHLIGHT_ALPHA = 100
 
 ---
 -- Comment strings for various lexer languages.
--- Used for the `block_comment()` function. Keys are lexer language names and
+-- Used by the `block_comment()` function. Keys are lexer language names and
 -- values are the line comment delimiters for the language. This table is
 -- typically populated by language-specific modules.
 -- @class table
@@ -61,6 +57,7 @@ M.comment_string = {}
 -- @class table
 -- @name char_matches
 -- @usage _M.textadept.editing.char_matches.hypertext = { ..., [60] = '>' }
+-- @see AUTOPAIR
 M.char_matches = { [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"' }
 
 ---
@@ -71,6 +68,7 @@ M.char_matches = { [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"' }
 -- @class table
 -- @name braces
 -- @usage _M.textadept.editing.braces.hypertext = { ..., [60] = 1, [62] = 1 }
+-- @see HIGHLIGHT_BRACES
 M.braces = { [40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1 }
 
 -- The current call tip.
@@ -232,8 +230,10 @@ end
 
 ---
 -- Block comments or uncomments code with a given comment string.
+-- If none is specified, uses the `comment_string` table.
 -- @param comment The comment string inserted or removed from the beginning of
 --   each line in the selection.
+-- @see comment_string
 -- @name block_comment
 function M.block_comment(comment)
   local buffer = buffer
@@ -281,8 +281,9 @@ end
 
 ---
 -- Prepares the buffer for saving to a file.
--- Strips trailing whitespace off of every line, ensures an ending newline, and
--- converts non-consistent EOLs.
+-- Strips trailing whitespace off of every line if `STRIP_WHITESPACE_ON_SAVE` is
+-- `true`, ensures an ending newline, and converts non-consistent EOLs.
+-- @see STRIP_WHITESPACE_ON_SAVE
 -- @name prepare_for_save
 function M.prepare_for_save()
   if not M.STRIP_WHITESPACE_ON_SAVE then return end
@@ -386,7 +387,7 @@ end
 ---
 -- Selects the current word under the caret.
 -- @name select_word
-function M.select_word(action)
+function M.select_word()
   local buffer = buffer
   buffer:set_sel(buffer:word_start_position(buffer.current_pos, true),
                  buffer:word_end_position(buffer.current_pos, true))

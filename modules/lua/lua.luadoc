@@ -59,7 +59,7 @@ function dofile([filename]) end
 -- message.
 function error(message [, level]) end
 
--- * `_G._G`
+-- * `_G._G` (table)
 --   A global variable (not a function) that holds the global environment
 --   (see §2.2). Lua itself does not use this variable; changing its value does
 --   not affect any environment, nor vice-versa.
@@ -235,7 +235,7 @@ function tostring(v) end
 -- "`table`", "`function`", "`thread`", and "`userdata`".
 function type(v) end
 
--- * `_G._VERSION` [string]
+-- * `_G._VERSION` (string)
 --   A global variable (not a function) that holds a string containing the
 --   current interpreter version. The current contents of this variable is
 --   "`Lua 5.2`".
@@ -322,7 +322,7 @@ function coroutine.yield(···) end
 -- any loader for the module, then `require` raises an error.
 function require(modname) end
 
--- * `package.config`
+-- * `package.config` (string)
 --   A string describing some compile-time configurations for packages. This
 --   string is a sequence of lines:
 --     The first line is the directory separator string. Default is '`\`' for
@@ -336,14 +336,14 @@ function require(modname) end
 --     The fifth line is a mark to ignore all text before it when building the
 --     `luaopen_` function name. Default is '`-`'.
 
--- * `package.cpath`
+-- * `package.cpath` (string)
 --   The path used by `require` to search for a C loader.
 --   Lua initializes the C path `package.cpath` in the same way it initializes
 --   the Lua path `package.path`, using the environment variable `LUA_CPATH_5_2`
 --   or the environment variable `LUA_CPATH` or a default path defined in
 --   `luaconf.h`.
 
--- * `package.loaded`
+-- * `package.loaded` (table)
 --   A table used by `require` to control which modules are already loaded. When
 --   you require a module `modname` and `package.loaded[modname]` is not false,
 --   `require` simply returns the value stored there.
@@ -371,7 +371,7 @@ function require(modname) end
 -- systems that support the `dlfcn` standard).
 function package.loadlib(libname, funcname) end
 
--- * `package.path`
+-- * `package.path` (string)
 --   The path used by `require` to search for a Lua loader.
 --   At start-up, Lua initializes this variable with the value of the
 --   environment variable `LUA_PATH_5_2` or the environment variable `LUA_PATH`
@@ -379,12 +379,12 @@ function package.loadlib(libname, funcname) end
 --   variables are not defined. Any "`;;`" in the value of the environment
 --   variable is replaced by the default path.
 
--- * `package.preload`
+-- * `package.preload` (table)
 --   A table to store loaders for specific modules (see `require`).
 --   This variable is only a reference to the real table; assignments to this
 --   variable do not change the table used by `require`.
 
--- * `package.searchers`
+-- * `package.searchers` (table)
 --   A table used by `require` to control how to load modules.
 --   Each entry in this table is a *searcher function*. When looking for a
 --   module, `require` calls each of these searchers in ascending order, with
@@ -725,7 +725,7 @@ function math.fmod(x, y) end
 -- absolute value of `m` is in the range *[0.5, 1)* (or zero when `x` is zero).
 function math.frexp(x) end
 
--- * `math.huge`
+-- * `math.huge` (number)
 --   The value `HUGE_VAL`, a value larger than or equal to any other numerical
 --   value.
 
@@ -751,7 +751,7 @@ function math.min(x, ···) end
 -- `x`.
 function math.modf(x) end
 
--- * `math.pi`
+-- * `math.pi` (number)
 --   The value of 'π'.
 
 ---
@@ -963,11 +963,11 @@ function io.popen(prog [, mode]) end
 -- Equivalent to `io.input():read(···)`.
 function io.read(···) end
 
--- * `io.stderr`
+-- * `io.stderr` (file)
 --   Standard error.
--- * `io.stdin`
+-- * `io.stdin` (file)
 --   Standard in.
--- * `io.stdout`
+-- * `io.stdout` (file)
 --   Standard out.
 
 ---

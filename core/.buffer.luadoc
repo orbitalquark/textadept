@@ -5,37 +5,32 @@
 ---
 -- The current buffer in the current view.
 -- It also represents the structure of any buffer table in `_G._BUFFER`.
-module('buffer')
-
--- Markdown:
--- ## Fields
---
--- * `additional_caret_fore` [number]
+-- @field additional_caret_fore (number)
 --   The foreground color of additional carets in `0xBBGGRR` format.
--- * `additional_carets_blink` [bool]
+-- @field additional_carets_blink (bool)
 --   Whether additional carets will blink.
--- * `additional_carets_visible` [bool]
+-- @field additional_carets_visible (bool)
 --   Whether additional carets are visible.
--- * `additional_sel_alpha` [number]
+-- @field additional_sel_alpha (number)
 --   The alpha of additional selections. Alpha ranges from `0` (transparent) to
 --   `255` (opaque) or `256` for no alpha.
--- * `additional_sel_back` [number]
+-- @field additional_sel_back (number)
 --   The background color of additional selections in `0xBBGGRR` format.
 --   `buffer:set_sel_back(true, ...)` must have been called previously for this
 --   to have an effect.
--- * `additional_sel_fore` [number]
+-- @field additional_sel_fore (number)
 --   The foreground color of additional selections in `0xBBGGRR` format.
 --   `buffer:set_sel_fore(true, ...)` must have been called previously for this
 --   to have an effect.
--- * `additional_selection_typing` [bool]
+-- @field additional_selection_typing (bool)
 --   Whether typing can be performed into multiple selections.
--- * `anchor` [number]
+-- @field anchor (number)
 --   The position of the opposite end of the selection to the caret.
--- * `annotation_lines` [table] (Read-only)
+-- @field annotation_lines (table, Read-only)
 --   Table of the number of annotation lines for lines starting from zero.
--- * `annotation_style` [table]
+-- @field annotation_style (table)
 --   Table of style numbers for annotations for lines starting at zero.
--- * `annotation_style_offset` [number]
+-- @field annotation_style_offset (number)
 --   The start of the range of style numbers used for annotations.
 --   Annotation styles may be completely separated from standard text styles by
 --   setting a style offset. For example, setting this to `512` would allow the
@@ -43,746 +38,773 @@ module('buffer')
 --   overlap styles set by lexers (or margins if margins offset is `256`). Each
 --   style number set with `buffer.annotation_style` has the offset added before
 --   looking up the style.
--- * `annotation_visible` [number]
+-- @field annotation_visible (number)
 --   The visibility of annotations.
---     * `_SCINTILLA.constants.ANNOTATION_HIDDEN` (0)
---       Annotations are not displayed.
---     * `_SCINTILLA.constants.ANNOTATION_STANDARD` (1)
---       Annotations are drawn left justified with no adornment.
---     * `_SCINTILLA.constants.ANNOTATION_BOXED` (2)
---       Annotations are indented to match the text and are surrounded by a box.
--- * `auto_c_auto_hide` [bool]
+--
+--   * `_SCINTILLA.constants.ANNOTATION_HIDDEN` (0)
+--     Annotations are not displayed.
+--   * `_SCINTILLA.constants.ANNOTATION_STANDARD` (1)
+--     Annotations are drawn left justified with no adornment.
+--   * `_SCINTILLA.constants.ANNOTATION_BOXED` (2)
+--     Annotations are indented to match the text and are surrounded by a box.
+-- @field auto_c_auto_hide (bool)
 --   Whether or not autocompletion is hidden automatically when nothing matches.
 --   By default, the list is cancelled if there are no viable matches (the user
 --   has typed characters that no longer match a list entry).
--- * `auto_c_cancel_at_start` [bool]
+-- @field auto_c_cancel_at_start (bool)
 --   Whether auto-completion is cancelled by backspacing to a position before
 --   where the box was created.
 --   If `false`, the list is not cancelled until the caret moves before the
 --   first character of the word being completed. If `true`, cancel if the user
 --   backspaces to a position before where it was created.
--- * `auto_c_choose_single` [bool]
+-- @field auto_c_choose_single (bool)
 --   Whether a single item auto-completion list automatically choose the item.
 --   The default is to display the list even if there is only a single item.
--- * `auto_c_drop_rest_of_word` [bool]
+-- @field auto_c_drop_rest_of_word (bool)
 --   Whether or not autocompletion deletes any word characters after the
 --   inserted text upon completion.
 --   The default is `false`.
--- * `auto_c_fill_ups` [string] (Write-only)
+-- @field auto_c_fill_ups (string, Write-only)
 --   A set of characters that when typed will cause the autocompletion to choose
 --   the selected item.
 --   By default, no fillup characters are set.
--- * `auto_c_ignore_case` [bool]
+-- @field auto_c_ignore_case (bool)
 --   Whether case is significant when performing auto-completion searches.
 --   By default, matching of characters to list members is case sensitive.
--- * `auto_c_max_height` [number]
+-- @field auto_c_max_height (number)
 --   The maximum height, in rows, of auto-completion and user lists.
 --   The default is 5 rows.
--- * `auto_c_max_width` [number]
+-- @field auto_c_max_width (number)
 --   The maximum width, in characters, of auto-completion and user lists.
 --   Set to `0` to autosize to fit longest item, which is the default.
--- * `auto_c_separator` [number]
+-- @field auto_c_separator (number)
 --   The auto-completion list separator character byte.
 --   The default is the space character.
--- * `auto_c_type_separator` [number]
+-- @field auto_c_type_separator (number)
 --   The auto-completion list type-separator character byte.
 --   The default is `'?'`. Autocompletion list items may display an image as
 --   well as text. Each image is first registered with an integer type. Then
 --   this integer is included in the text of the list separated by a `?` from
 --   the text.
--- * `back_space_un_indents` [bool]
+-- @field back_space_un_indents (bool)
 --   Whether a backspace pressed when caret is within indentation unindents.
--- * `buffered_draw` [bool]
+-- @field buffered_draw (bool)
 --   Whether drawing is buffered.
 --   If drawing is buffered then each line of text is drawn into a bitmap buffer
 --   before drawing it to the screen to avoid flicker. The default is for
 --   drawing to be buffered. first or directly onto the screen.
--- * `call_tip_back` [number] (Write-only)
+-- @field call_tip_back (number, Write-only)
 --   The background color for the call tip in `0xBBGGRR` format.
--- * `call_tip_fore` [number] (Write-only)
+-- @field call_tip_fore (number, Write-only)
 --   The foreground color for the call tip in `0xBBGGRR` format.
--- * `call_tip_fore_hlt` [number] (Write-only)
+-- @field call_tip_fore_hlt (number, Write-only)
 --   The foreground color for the highlighted part of the call tip in `0xBBGGRR`
 --   format.
--- * `call_tip_position` [boolean]
+-- @field call_tip_position (boolean)
 --   The position of calltip, above or below text.
 --   By default the calltip is displayed below the text. Setting to `true` will
 --   display it above the text.
--- * `call_tip_use_style` [number]
+-- @field call_tip_use_style (number)
 --   Enable use of `_SCINTILLA.constants.STYLE_CALLTIP` and set call tip tab
 --   size in pixels.
 --   If the tab size is less than `1`, Tab characters are not treated specially.
--- * `caret_fore` [number]
+-- @field caret_fore (number)
 --   The foreground color of the caret in `0xBBGGRR` format.
--- * `caret_line_back` [number]
+-- @field caret_line_back (number)
 --   The color of the background of the line containing the caret in `0xBBGGRR`
 --   format.
--- * `caret_line_back_alpha` [number]
+-- @field caret_line_back_alpha (number)
 --   The background alpha of the caret line.
 --   Alpha ranges from `0` (transparent) to `255` (opaque) or `256` for no
 --   alpha.
--- * `caret_line_visible` [bool]
+-- @field caret_line_visible (bool)
 --   Whether the background of the line containing the caret is in a different
 --   color.
--- * `caret_period` [number]
+-- @field caret_period (number)
 --   The time in milliseconds that the caret is on and off.
 --   Setting the period to `0` stops the caret blinking. The default value is
 --   500 milliseconds.
--- * `caret_sticky` [number]
+-- @field caret_sticky (number)
 --   The caret preferred x position changing when the user types.
---     * `_SCINTILLA.constants.SC_CARETSTICKY_OFF` (0)
---       All text changes (and all caret position changes) will remember the
---       caret's new horizontal position when moving to different lines.
---       This is the default.
---     * `_SCINTILLA.constants.SC_CARETSTICKY_ON` (1)
---       The only thing which will cause the editor to remember the horizontal
---       caret position is moving the caret with mouse or keyboard (left/right
---       arrow keys, home/end keys, etc).
---     * `_SCINTILLA.constants.SC_CARETSTICKY_WHITESPACE` (2)
---       The caret acts like sticky off except under one special case; when
---       space or tab characters are inserted. (Including pasting
---       *only space/tabs* -- undo, redo, etc. do not exhibit this behavior.)
--- * `caret_style` [number]
+--
+--   * `_SCINTILLA.constants.SC_CARETSTICKY_OFF` (0)
+--     All text changes (and all caret position changes) will remember the
+--     caret's new horizontal position when moving to different lines.
+--     This is the default.
+--   * `_SCINTILLA.constants.SC_CARETSTICKY_ON` (1)
+--     The only thing which will cause the editor to remember the horizontal
+--     caret position is moving the caret with mouse or keyboard (left/right
+--     arrow keys, home/end keys, etc).
+--   * `_SCINTILLA.constants.SC_CARETSTICKY_WHITESPACE` (2)
+--     The caret acts like sticky off except under one special case; when space
+--     or tab characters are inserted. (Including pasting *only space/tabs* --
+--     undo, redo, etc. do not exhibit this behavior.)
+-- @field caret_style (number)
 --   The style of the caret to be drawn.
---     * `_SCINTILLA.constants.CARETSTYLE_INVISIBLE` (0)
---       Not draw the caret at all.
---     * `_SCINTILLA.constants.CARETSTYLE_LINE` (1)
---       A line caret. This is the default value.
---     * `_SCINTILLA.constants.CARETSTYLE_BLOCK` (2)
---       A block caret.
--- * `caret_width` [number]
+--
+--   * `_SCINTILLA.constants.CARETSTYLE_INVISIBLE` (0)
+--     Not draw the caret at all.
+--   * `_SCINTILLA.constants.CARETSTYLE_LINE` (1)
+--     A line caret. This is the default value.
+--   * `_SCINTILLA.constants.CARETSTYLE_BLOCK` (2)
+--     A block caret.
+-- @field caret_width (number)
 --   The width of the insert mode caret in pixels.
 --   Can be `0`, `1`, `2` or `3` pixels. The default width is 1 pixel. This
 --   setting only affects the width of the cursor when the cursor style is set
 --   to line caret mode, it does not affect the width for a block caret.
--- * `char_at` [table] (Read-only)
+-- @field char_at (table, Read-only)
 --   Table of character bytes at positions in the document starting at zero.
--- * `code_page` [number]
+-- @field code_page (number)
 --   The code page used to interpret the bytes of the document as characters.
 --   The `_SCINTILLA.constants.SC_CP_UTF8` value can be used to enter Unicode
 --   mode.
--- * `column` [table] (Read-only)
+-- @field column (table, Read-only)
 --   Table of column numbers, taking tab widths into account, for positions
 --   starting from zero.
--- * `control_char_symbol` [number]
+-- @field control_char_symbol (number)
 --   The way control characters are displayed.
 --   If less than `32`, keep the rounded rectangle as ASCII mnemonics.
 --   Otherwise, use the given character byte. The default value is `0`.
--- * `current_pos` [number]
+-- @field current_pos (number)
 --   The position of the caret.
 --   When setting, the caret is not scrolled into view.
--- * `cursor` [number]
+-- @field cursor (number)
 --   The cursor type.
---     * `_SCINTILLA.constants.SC_CURSORNORMAL` (-1)
---       The normal cursor is displayed.
---     * `_SCINTILLA.constants.SC_CURSORWAIT` (4)
---       The wait cursor is displayed when the mouse is over the view.
--- * `direct_function` [number] (Read-only)
+--
+--   * `_SCINTILLA.constants.SC_CURSORNORMAL` (-1)
+--     The normal cursor is displayed.
+--   * `_SCINTILLA.constants.SC_CURSORWAIT` (4)
+--     The wait cursor is displayed when the mouse is over the view.
+-- @field direct_function (number, Read-only)
 --   A pointer to a function that processes messages for this view.
--- * `direct_pointer` [number] (Read-only)
+-- @field direct_pointer (number, Read-only)
 --   A pointer value to use as the first argument when calling the function
 --   returned by direct_function.
--- * `dirty` [bool]
+-- @field dirty (bool)
 --   Flag indicating whether or not the buffer has been modified since it was
 --   last saved.
--- * `eol_mode` [number]
+-- @field eol_mode (number)
 --   The current end of line mode.
---     * `_SCINTILLA.constants.SC_EOL_CRLF` (0)
---       `CRLF`.
---     * `_SCINTILLA.constants.SC_EOL_CR` (1)
---       `CR`.
---     * `_SCINTILLA.constants.SC_EOL_LF` (2)
---       `LF`.
--- * `edge_colour` [number]
+--
+--   * `_SCINTILLA.constants.SC_EOL_CRLF` (0)
+--     `CRLF`.
+--   * `_SCINTILLA.constants.SC_EOL_CR` (1)
+--     `CR`.
+--   * `_SCINTILLA.constants.SC_EOL_LF` (2)
+--     `LF`.
+-- @field edge_colour (number)
 --   The color used in edge indication in `0xBBGGRR` format.
--- * `edge_column` [number]
+-- @field edge_column (number)
 --   The column number which text should be kept within.
--- * `edge_mode` [number]
+-- @field edge_mode (number)
 --   The edge highlight mode.
---     * `_SCINTILLA.constants.EDGE_NONE` (0)
---       Long lines are not marked. This is the default state.
---     * `_SCINTILLA.constants.EDGE_LINE` (1)
---       A vertical line is drawn at the column number set by
---       `buffer.edge_column`.
---     * `_SCINTILLA.constants.EDGE_BACKGROUND` (2)
---       The background color of characters after the column limit is changed to
---       the color set by `buffer.edge_colour`.
--- * `encoding` [string or nil]
+--
+--   * `_SCINTILLA.constants.EDGE_NONE` (0)
+--     Long lines are not marked. This is the default state.
+--   * `_SCINTILLA.constants.EDGE_LINE` (1)
+--     A vertical line is drawn at the column number set by
+--     `buffer.edge_column`.
+--   * `_SCINTILLA.constants.EDGE_BACKGROUND` (2)
+--     The background color of characters after the column limit is changed to
+--     the color set by `buffer.edge_colour`.
+-- @field encoding (string or nil)
 --   The encoding of the file on the hard disk.
 --   It will be `nil` if the file is a binary file.
--- * `encoding_bom` [string]
+-- @field encoding_bom (string)
 --   The byte-order mark of the file encoding (if any).
--- * `end_at_last_line` [bool]
+-- @field end_at_last_line (bool)
 --   Whether the maximum scroll position has the last line at the bottom of the
 --   view.
 --   If `false`, allows scrolling one page below the last line. The default
 --   value is `true`.
--- * `end_styled` [number] (Read-only)
+-- @field end_styled (number, Read-only)
 --   The position of the last correctly styled character.
--- * `extra_ascent` [number]
+-- @field extra_ascent (number)
 --   The extra ascent, the maximum that any style extends above the baseline,
 --   added to each line.
--- * `extra_descent` [number]
+-- @field extra_descent (number)
 --   The extra descent, the maximum that any style extends below the baseline,
 --   added to each line.
--- * `filename` [string]
+-- @field filename (string)
 --   The absolute path to the file associated with this buffer.
---   It is encoded in UTF-8. Use [`string.iconv()`][] for charset conversions.
--- * `first_visible_line` [number]
+--   It is encoded in UTF-8. Use [`string.iconv()`](string.html#iconv) for
+--   charset conversions.
+-- @field first_visible_line (number)
 --   The display line at the top of the display.
--- * `focus` [bool]
+-- @field focus (bool)
 --   The internal focus flag.
--- * `fold_expanded` [bool]
+-- @field fold_expanded (bool)
 --   Expanded state of a header line.
--- * `fold_level` [table]
+-- @field fold_level (table)
 --   Table of fold levels for lines starting from zero.
 --   Fold levels encodes an integer level along with flags indicating whether
 --   the line is a header and whether it is effectively white space.
---     * `_SCINTILLA.constants.SC_FOLDLEVELBASE` (0x400)
---       Initial fold level.
---     * `_SCINTILLA.constants.SC_FOLDLEVELWHITEFLAG` (0x1000)
---       Indicates that the line is blank.
---     * `_SCINTILLA.constants.SC_FOLDLEVELHEADERFLAG` (0x2000)
---       Indicates that the line is a header (fold point).
--- * `fold_parent` [table] (Read-only)
+--
+--   * `_SCINTILLA.constants.SC_FOLDLEVELBASE` (0x400)
+--     Initial fold level.
+--   * `_SCINTILLA.constants.SC_FOLDLEVELWHITEFLAG` (0x1000)
+--     Indicates that the line is blank.
+--   * `_SCINTILLA.constants.SC_FOLDLEVELHEADERFLAG` (0x2000)
+--     Indicates that the line is a header (fold point).
+-- @field fold_parent (table, Read-only)
 --   Table of parent line numbers for child lines starting from zero.
 --   `-1` means no line was found.
--- * `font_quality` [number] (Windows only)
+-- @field font_quality (number) (Windows only)
 --   The quality level for text.
---     * `_SCINTILLA.constants.SC_EFF_QUALITY_DEFAULt` (0).
---     * `_SCINTILLA.constants.SC_EFF_QUALITY_NON_ANTIALIASED` (1).
---     * `_SCINTILLA.constants.SC_EFF_QUALITY_ANTIALIASED` (2).
---     * `_SCINTILLA.constants.SC_EFF_QUALITY_LCD_OPTIMIZED` (3).
--- * `h_scroll_bar` [bool]
+--
+--   * `_SCINTILLA.constants.SC_EFF_QUALITY_DEFAULt` (0).
+--   * `_SCINTILLA.constants.SC_EFF_QUALITY_NON_ANTIALIASED` (1).
+--   * `_SCINTILLA.constants.SC_EFF_QUALITY_ANTIALIASED` (2).
+--   * `_SCINTILLA.constants.SC_EFF_QUALITY_LCD_OPTIMIZED` (3).
+-- @field h_scroll_bar (bool)
 --   Whether the horizontal scroll bar is visible.
 --   Set to `false` to never see it and `true` to enable it again. The default
 --   state is to display it when needed.
--- * `highlight_guide` [number]
+-- @field highlight_guide (number)
 --   The highlighted indentation guide column.
 --   Set to `0` to cancel this highlight.
--- * `hotspot_active_underline` [bool]
+-- @field hotspot_active_underline (bool)
 --   Whether active hotspots are underlined.
--- * `hotspot_single_line` [bool]
+-- @field hotspot_single_line (bool)
 --   Whether hotspots are limited to single line so hotspots on two lines do not
 --   merge.
--- * `indent` [number]
+-- @field indent (number)
 --   Ihe number of spaces used for one level of indentation.
 --   For a width of `0`, the indent size is the same as the tab size.
--- * `indentation_guides` [number]
+-- @field indentation_guides (number)
 --   Indentation guides appearance.
 --   Indentation guides are dotted vertical lines that appear within indentation
 --   white space every indent size columns.
---     * `_SCINTILLA.constants.SC_IV_NONE` (0)
---       No indentation guides are shown.
---     * `_SCINTILLA.constants.SC_IV_REAL` (1)
---       Indentation guides are shown inside real indentation white space.
---     * `_SCINTILLA.constants.SC_IV_LOOKFORWARD` (2)
---       Indentation guides are shown beyond the actual indentation up to the
---       level of the next non-empty line.
---       If the previous non-empty line was a fold header then indentation
---       guides are shown for one more level of indent than that line. This
---       setting is good for Python.
---     * `_SCINTILLA.constants.SC_IV_LOOKBOTH` (3)
---       Indentation guides are shown beyond the actual indentation up to the
---       level of the next non-empty line or previous non-empty line whichever
---       is the greater.
---       This setting is good for most languages.
--- * `indic_alpha` [table]
+--
+--   * `_SCINTILLA.constants.SC_IV_NONE` (0)
+--     No indentation guides are shown.
+--   * `_SCINTILLA.constants.SC_IV_REAL` (1)
+--     Indentation guides are shown inside real indentation white space.
+--   * `_SCINTILLA.constants.SC_IV_LOOKFORWARD` (2)
+--     Indentation guides are shown beyond the actual indentation up to the
+--     level of the next non-empty line.
+--     If the previous non-empty line was a fold header then indentation guides
+--     are shown for one more level of indent than that line. This setting is
+--     good for Python.
+--   * `_SCINTILLA.constants.SC_IV_LOOKBOTH` (3)
+--     Indentation guides are shown beyond the actual indentation up to the
+--     level of the next non-empty line or previous non-empty line whichever is
+--     the greater.
+--     This setting is good for most languages.
+-- @field indic_alpha (table)
 --   Table of alpha transparency values ranging from `0` (transparent) to `255`
 --   (opaque) or `256` (no alpha) for indicators from `0` to `31`.
 --   Used for drawing the fill color of the `INDIC_ROUNDBOX` and
 --   `INDIC_STRAIGHTBOX` rectangle.
--- * `indic_fore` [table]
+-- @field indic_fore (table)
 --   Table of foreground colors in `0xBBGGRR` format for indicators from `0` to
 --   `31`.
--- * `indic_outline_alpha` [table]
+-- @field indic_outline_alpha (table)
 --   Table of alpha transparency values ranging from `0` (transparent) to `255`
 --   (opaque) or `256` (no alpha) for indicators from `0` to `31`.
 --   Used for drawing the outline color of the `INDIC_ROUNDBOX` and
 --   `INDIC_STRAIGHTBOX` rectangle.
--- * `indic_style` [table]
+-- @field indic_style (table)
 --   Table of styles for indicators from `0` to `31`.
---     * `_SCINTILLA.constants.INDIC_PLAIN` (0)
---       Underlined with a single, straight line.
---     * `_SCINTILLA.constants.INDIC_SQUIGGLE` (1)
---       A squiggly underline. Requires 3 pixels of descender space.
---     * `_SCINTILLA.constants.INDIC_TT` (2)
---       A line of small T shapes.
---     * `_SCINTILLA.constants.INDIC_DIAGONAL` (3)
---       Diagonal hatching.
---     * `_SCINTILLA.constants.INDIC_STRIKE` (4)
---       Strike out.
---     * `_SCINTILLA.constants.INDIC_HIDDEN` (5)
---       An indicator with no visual effect.
---     * `_SCINTILLA.constants.INDIC_BOX` (6)
---       A rectangle around the text.
---     * `_SCINTILLA.constants.INDIC_ROUNDBOX` (7)
---       A rectangle with rounded corners around the text using translucent
---       drawing with the interior usually more transparent than the border. Use
---       `buffer.indic_alpha` and `buffer.indic_outline_alpha` to control the
---       alpha transparency values. The default alpha values are `30` for fill
---       color and `50` for outline color.
---     * `_SCINTILLA.constants.INDIC_STRAIGHTBOX` (8)
---       A rectangle around the text using translucent drawing with the interior
---       usually more transparent than the border.
---       You can use `buffer.indic_alpha` and `buffer.indic_outline_alpha` to
---       control the alpha transparency values. The default alpha values are
---       `30` for fill color and `50` for outline color.
---     * `_SCINTILLA.constants.INDIC_DASH` (9)
---       A dashed underline.
---     * `_SCINTILLA.constants.INDIC_DOTS` (10)
---       A dotted underline.
---     * `_SCINTILLA.constants.INDIC_SQUIGGLELOW` (11)
---       Similar to `INDIC_SQUIGGLE` but only using 2 vertical pixels so will
---       fit under small fonts.
---     * `_SCINTILLA.constants.INDIC_DOTBOX` (12)
---       A dotted rectangle around the text using translucent drawing.
---       Translucency alternates between the alpha and outline alpha settings
---       with the top-left pixel using the alpha setting. `buffer.indic_alpha`
---       and `buffer.indic_outline_alpha` control the alpha transparency values.
---       The default values are `30` for alpha and `50` for outline alpha. To
---       avoid excessive memory allocation the maximum width of a dotted box is
---       4000 pixels.
---     * Use `_SCINTILLA.next_indic_number()` for custom indicators.
--- * `indic_under` [table]
+--
+--   * `_SCINTILLA.constants.INDIC_PLAIN` (0)
+--     Underlined with a single, straight line.
+--   * `_SCINTILLA.constants.INDIC_SQUIGGLE` (1)
+--     A squiggly underline. Requires 3 pixels of descender space.
+--   * `_SCINTILLA.constants.INDIC_TT` (2)
+--     A line of small T shapes.
+--   * `_SCINTILLA.constants.INDIC_DIAGONAL` (3)
+--     Diagonal hatching.
+--   * `_SCINTILLA.constants.INDIC_STRIKE` (4)
+--     Strike out.
+--   * `_SCINTILLA.constants.INDIC_HIDDEN` (5)
+--     An indicator with no visual effect.
+--   * `_SCINTILLA.constants.INDIC_BOX` (6)
+--     A rectangle around the text.
+--   * `_SCINTILLA.constants.INDIC_ROUNDBOX` (7)
+--     A rectangle with rounded corners around the text using translucent
+--     drawing with the interior usually more transparent than the border. Use
+--     `buffer.indic_alpha` and `buffer.indic_outline_alpha` to control the
+--     alpha transparency values. The default alpha values are `30` for fill
+--     color and `50` for outline color.
+--   * `_SCINTILLA.constants.INDIC_STRAIGHTBOX` (8)
+--     A rectangle around the text using translucent drawing with the interior
+--     usually more transparent than the border.
+--     You can use `buffer.indic_alpha` and `buffer.indic_outline_alpha` to
+--     control the alpha transparency values. The default alpha values are `30`
+--     for fill color and `50` for outline color.
+--   * `_SCINTILLA.constants.INDIC_DASH` (9)
+--     A dashed underline.
+--   * `_SCINTILLA.constants.INDIC_DOTS` (10)
+--     A dotted underline.
+--   * `_SCINTILLA.constants.INDIC_SQUIGGLELOW` (11)
+--     Similar to `INDIC_SQUIGGLE` but only using 2 vertical pixels so will fit
+--     under small fonts.
+--   * `_SCINTILLA.constants.INDIC_DOTBOX` (12)
+--     A dotted rectangle around the text using translucent drawing.
+--     Translucency alternates between the alpha and outline alpha settings with
+--     the top-left pixel using the alpha setting. `buffer.indic_alpha` and
+--     `buffer.indic_outline_alpha` control the alpha transparency values.
+--     The default values are `30` for alpha and `50` for outline alpha. To
+--     avoid excessive memory allocation the maximum width of a dotted box is
+--     4000 pixels.
+--   * Use `_SCINTILLA.next_indic_number()` for custom indicators.
+-- @field indic_under (table)
 --   Table of booleans for drawing under text or over (default) for indicators
 --   from `0` to `31`.
--- * `indicator_current` [number]
+-- @field indicator_current (number)
 --   The indicator in the range of `0` to `31` used for
 --   `buffer:indicator_fill_range()` and `buffer:indicator_clear_range()`.
--- * `indicator_value` [number]
+-- @field indicator_value (number)
 --   The indicator value used for `buffer:indicator_fill_range()`.
 --   Currently all values are drawn the same.
--- * `keys_unicode` [bool]
+-- @field keys_unicode (bool)
 --   Interpret keyboard input as Unicode.
--- * `layout_cache` [number]
+-- @field layout_cache (number)
 --   The degree of caching of layout information.
---     * `_SCINTILLA.constants.SC_CACHE_NONE` (0)
---       No lines are cached.
---     * `_SCINTILLA.constants.SC_CACHE_CARET` (1)
---       The line containing the text caret.
---       This is the default.
---     * `_SCINTILLA.constants.SC_CACHE_PAGE` (2)
---       Visible lines plus the line containing the caret.
---     * `_SCINTILLA.constants.SC_CACHE_DOCUMENT` (3)
---       All lines in the document.
--- * `length` [number] (Read-only)
+--
+--   * `_SCINTILLA.constants.SC_CACHE_NONE` (0)
+--     No lines are cached.
+--   * `_SCINTILLA.constants.SC_CACHE_CARET` (1)
+--     The line containing the text caret.
+--     This is the default.
+--   * `_SCINTILLA.constants.SC_CACHE_PAGE` (2)
+--     Visible lines plus the line containing the caret.
+--   * `_SCINTILLA.constants.SC_CACHE_DOCUMENT` (3)
+--     All lines in the document.
+-- @field length (number, Read-only)
 --   The number of bytes in the document.
--- * `lexer` [number]
+-- @field lexer (number)
 --   The lexing language of the document.
--- * `line_count` [number] (Read-only)
+-- @field line_count (number, Read-only)
 --   The number of lines in the document.
 --   There is always at least one.
--- * `line_end_position` [table] (Read-only)
+-- @field line_end_position (table, Read-only)
 --   Table of positions after the last visible characters on a line for lines
 --   starting from zero.
--- * `line_indent_position` [table] (Read-only)
+-- @field line_indent_position (table, Read-only)
 --   Table of positions before the first non indentation character on a line for
 --   lines starting from zero.
--- * `line_indentation` [table]
+-- @field line_indentation (table)
 --   Table of line indentation amounts for lines starting from zero.
 --   The indentation is measured in character columns, which correspond to the
 --   width of space characters.
--- * `line_state` [table]
+-- @field line_state (table)
 --   Table of extra styling information for lines starting from zero.
 --   As well as the 8 bits of lexical state stored for each character there is
 --   also an integer stored for each line. This can be used for longer lived
 --   parse states.
--- * `line_visible` [bool] (Read-only)
+-- @field line_visible (bool, Read-only)
 --   Is a line visible?
--- * `lines_on_screen` [number] (Read-only)
+-- @field lines_on_screen (number, Read-only)
 --   The number of lines completely visible.
--- * `lines_visible` [bool] (Read-only)
+-- @field lines_visible (bool, Read-only)
 --   Are all lines visible?
--- * `main_selection` [number]
+-- @field main_selection (number)
 --   The main selection.
 --   The main selection may be displayed in different colors or with a
 --   differently styled caret. Only an already existing selection can be made
 --   main.
--- * `margin_cursor_n` [table]
+-- @field margin_cursor_n (table)
 --   Table of cursors shown for margins from zero to four.
 --   A reversed arrow cursor is normally shown over all margins.
---     * `_SCINTILLA.constants.SC_CURSORARROW`
---       Normal arrow.
---     * `_SCINTILLA.constants.SC_CURSORREVERSEARROW`
---       Reversed arrow.
--- * `margin_left` [number]
+--
+--   * `_SCINTILLA.constants.SC_CURSORARROW`
+--     Normal arrow.
+--   * `_SCINTILLA.constants.SC_CURSORREVERSEARROW`
+--     Reversed arrow.
+-- @field margin_left (number)
 --   The size in pixels of the left margin.
 --   The default is to one pixel.
--- * `margin_mask_n` [table]
+-- @field margin_mask_n (table)
 --   Table of marker masks for margins from zero to four.
 --   A mask determines which markers are displayed in a margin.
--- * `margin_options` [number]
+-- @field margin_options (number)
 --   A bit mask of margin options.
---     * `_SCINTILLA.constants.SC_MARGINOPTION_NONE` (0)
---       None (default).
---     * `_SCINTILLA.constants.SC_MARGINOPTION_SUBLINESELECT` (1)
---       Controls how wrapped lines are selected when clicking on margin in
---       front of them.
---       If set, only sub line of wrapped line is selected, otherwise whole
---       wrapped line is selected.
--- * `margin_right` [number]
+--
+--   * `_SCINTILLA.constants.SC_MARGINOPTION_NONE` (0)
+--     None (default).
+--   * `_SCINTILLA.constants.SC_MARGINOPTION_SUBLINESELECT` (1)
+--     Controls how wrapped lines are selected when clicking on margin in front
+--     of them.
+--     If set, only sub line of wrapped line is selected, otherwise whole
+--     wrapped line is selected.
+-- @field margin_right (number)
 --   The size in pixels of the right margin.
 --   The default is to one pixel.
--- * `margin_sensitive_n` [table]
+-- @field margin_sensitive_n (table)
 --   Table of mouse click sensitivity booleans for margins from zero to four.
 --   A click in a sensitive margin emits a `margin_click` event. By default, all
 --   margins are insensitive.
--- * `margin_style` [table]
+-- @field margin_style (table)
 --   Table of style numbers for text margin lines starting from zero.
--- * `margin_style_offset` [number]
+-- @field margin_style_offset (number)
 --   The start of the range of style numbers used for margin text.
 --   Margin styles may be completely separated from standard text styles by
 --   setting a style offset. For example, setting this to `256` would allow the
 --   margin styles to be numbered from `256` upto `511` so they do not overlap
 --   styles set by lexers. Each style number set with `buffer.margin_style` has
 --   the offset added before looking up the style.
--- * `margin_type_n` [table]
+-- @field margin_type_n (table)
 --   Table of margin types for margins from zero to four.
---     * `_SCINTILLA.constants.SC_MARGIN_SYMBOL` (0)
---       A symbol margin.
---     * `_SCINTILLA.constants.SC_MARGIN_NUMBER` (1)
---       A line number margin.
---     * `_SCINTILLA.constants.SC_MARGIN_BACK` (2)
---       A symbol margin that sets its background color to match the default
---       text background color.
---     * `_SCINTILLA.constants.SC_MARGIN_FORE` (3)
---       A symbol margin that sets its background color to match the default
---       text foreground color.
---     * `_SCINTILLA.constants.SC_MARGIN_TEXT` (4)
---       A text margin.
---     * `_SCINTILLA.constants.SC_MARGIN_RTEXT` (5)
---       A right justified text margin.
--- * `margin_width_n` [table]
+--
+--   * `_SCINTILLA.constants.SC_MARGIN_SYMBOL` (0)
+--     A symbol margin.
+--   * `_SCINTILLA.constants.SC_MARGIN_NUMBER` (1)
+--     A line number margin.
+--   * `_SCINTILLA.constants.SC_MARGIN_BACK` (2)
+--     A symbol margin that sets its background color to match the default
+--     text background color.
+--   * `_SCINTILLA.constants.SC_MARGIN_FORE` (3)
+--     A symbol margin that sets its background color to match the default
+--     text foreground color.
+--   * `_SCINTILLA.constants.SC_MARGIN_TEXT` (4)
+--     A text margin.
+--   * `_SCINTILLA.constants.SC_MARGIN_RTEXT` (5)
+--     A right justified text margin.
+-- @field margin_width_n (table)
 --   Table of margin widths expressed in pixes for margins from zero to four.
--- * `max_line_state` [number] (Read-only)
+-- @field max_line_state (number, Read-only)
 --   The last line number that has line state.
--- * `modify` [bool]
+-- @field modify (bool)
 --   Whether the document is different from when it was last saved.
--- * `mouse_down_captures` [bool]
+-- @field mouse_down_captures (bool)
 --   Whether the mouse is captured when its button is pressed.
--- * `mouse_dwell_time` [number]
+-- @field mouse_dwell_time (number)
 --   The time the mouse must sit still to generate a mouse dwell event.
 --   If set to `_SCINTILLA.constants.SC_TIME_FOREVER`, the default, no dwell
 --   events are generated.
--- * `multi_paste` [bool]
+-- @field multi_paste (bool)
 --   The effect of pasting when there are multiple selections.
---     * `_SCINTILLA.constants.SC_MULTIPASTE_ONCE` (0)
---       Pasted text can go into just the main selection (default).
---     * `_SCINTILLA.constants.SC_MULTIPASTE_EACH` (1)
---       Pasted text can go into each selection.
--- * `multiple_selection` [bool]
+--
+--   * `_SCINTILLA.constants.SC_MULTIPASTE_ONCE` (0)
+--     Pasted text can go into just the main selection (default).
+--   * `_SCINTILLA.constants.SC_MULTIPASTE_EACH` (1)
+--     Pasted text can go into each selection.
+-- @field multiple_selection (bool)
 --   Whether multiple selections can be made.
 --   When multiple selection is disabled, it is not possible to select multiple
 --   ranges by holding down the Ctrl key while dragging with the mouse.
--- * `overtype` [bool]
+-- @field overtype (bool)
 --   Overtype mode.
--- * `position_cache` [number]
+-- @field position_cache (number)
 --   The number of entries in the position cache.
 --   The position cache stores position information for short runs of text so
 --   that their layout can be determined more quickly if the run recurs.
--- * `print_colour_mode` [number]
+-- @field print_colour_mode (number)
 --   The print color mode.
---     * `_SCINTILLA.constants.SC_PRINT_NORMAL` (0)
---       Print using the current screen colors.
---       This is the default.
---     * `_SCINTILLA.constants.SC_PRINT_INVERTLIGHT` (1)
---       If you use a dark screen background this saves ink by inverting the
---       light value of all colors and printing on a white background.
---     * `_SCINTILLA.constants.SC_PRINT_BLACKONWHITE` (2)
---       Print all text as black on a white background.
---     * `_SCINTILLA.constants.SC_PRINT_COLOURONWHITE` (3)
---       Everything prints in its own color on a white background.
---     * `_SCINTILLA.constants.SC_PRINT_COLOURONWHITEDEFAULTBG` (4)
---       Everything prints in its own color on a white background except that
---       line numbers use their own background color.
--- * `print_magnification` [number]
+--
+--   * `_SCINTILLA.constants.SC_PRINT_NORMAL` (0)
+--     Print using the current screen colors.
+--     This is the default.
+--   * `_SCINTILLA.constants.SC_PRINT_INVERTLIGHT` (1)
+--     If you use a dark screen background this saves ink by inverting the light
+--     value of all colors and printing on a white background.
+--   * `_SCINTILLA.constants.SC_PRINT_BLACKONWHITE` (2)
+--     Print all text as black on a white background.
+--   * `_SCINTILLA.constants.SC_PRINT_COLOURONWHITE` (3)
+--     Everything prints in its own color on a white background.
+--   * `_SCINTILLA.constants.SC_PRINT_COLOURONWHITEDEFAULTBG` (4)
+--     Everything prints in its own color on a white background except that line
+--     numbers use their own background color.
+-- @field print_magnification (number)
 --   The print magnification added to the point size of each style for printing.
--- * `print_wrap_mode` [number]
+-- @field print_wrap_mode (number)
 --   Printing line wrap mode.
---     * `_SCINTILLA.constants.SC_WRAP_NONE` (0)
---       Each line of text generates one line of output and the line is
---       truncated if it is too long to fit into the print area.
---     * `_SCINTILLA.constants.SC_WRAP_WORD` (1)
---       Wraps printed output so that all characters fit into the print
---       rectangle.
---       Tries to wrap only between words as indicated by white space or style
---       changes although if a word is longer than a line, it will be wrapped
---       before the line end. This is the default.
---     * `_SCINTILLA.constants.SC_WRAP_CHAR` (2).
--- * `property` [table] (Write-only)
+--
+--   * `_SCINTILLA.constants.SC_WRAP_NONE` (0)
+--     Each line of text generates one line of output and the line is truncated
+--     if it is too long to fit into the print area.
+--   * `_SCINTILLA.constants.SC_WRAP_WORD` (1)
+--     Wraps printed output so that all characters fit into the print rectangle.
+--     Tries to wrap only between words as indicated by white space or style
+--     changes although if a word is longer than a line, it will be wrapped
+--     before the line end. This is the default.
+--   * `_SCINTILLA.constants.SC_WRAP_CHAR` (2).
+-- @field property (table, Write-only)
 --   Table of keyword:value string pairs used by a lexer for some optional
 --   features.
--- * `property_int` [table] (Read-only)
+-- @field property_int (table, Read-only)
 --   Interprets `buffer.property[keyword]` as an integer if found or returns
 --   `0`.
--- * `read_only` [bool]
+-- @field read_only (bool)
 --   Read-only mode.
--- * `rectangular_selection_anchor` [number]
+-- @field rectangular_selection_anchor (number)
 --   The position of the anchor of the rectangular selection.
--- * `rectangular_selection_anchor_virtual_space` [number]
+-- @field rectangular_selection_anchor_virtual_space (number)
 --   The amount of virtual space for the anchor of the rectangular selection.
--- * `rectangular_selection_caret` [number]
+-- @field rectangular_selection_caret (number)
 --   The position of the caret of the rectangular selection.
--- * `rectangular_selection_caret_virtual_space` [number]
+-- @field rectangular_selection_caret_virtual_space (number)
 --   The amount of virtual space for the caret of the rectangular selection.
--- * `rectangular_selection_modifier` [number]
+-- @field rectangular_selection_modifier (number)
 --   The modifier key used to indicate that a rectangular selection should be
 --   created when combined with a mouse drag.
---     * `_SCINTILLA.constants.SCMOD_CTRL` (2)
---       Control key (default).
---     * `_SCINTILLA.constants.SCMOD_ALT` (4)
---       Alt key.
---     * `_SCINTILLA.constants.SCMOD_SUPER` (8)
---       Left Windows key on a Windows keyboard or the Command key on a Mac.
--- * `rgba_image_height` [number]
+--
+--   * `_SCINTILLA.constants.SCMOD_CTRL` (2)
+--     Control key (default).
+--   * `_SCINTILLA.constants.SCMOD_ALT` (4)
+--     Alt key.
+--   * `_SCINTILLA.constants.SCMOD_SUPER` (8)
+--     Left Windows key on a Windows keyboard or the Command key on a Mac.
+-- @field rgba_image_height (number)
 --   The height for future RGBA image data.
--- * `rgba_image_width` [number]
+-- @field rgba_image_width (number)
 --   The width for future RGBA image data.
--- * `scroll_width` [number]
+-- @field scroll_width (number)
 --   The document width assumed for scrolling.
 --   For performance, the view does not measure the display width of the
 --   document to determine the properties of the horizontal scroll bar. Instead,
 --   an assumed width is used. The default value is `2000`. To ensure the width
 --   of the currently visible lines can be scrolled use
 --   `buffer.scroll_width_tracking`.
--- * `scroll_width_tracking` [bool]
+-- @field scroll_width_tracking (bool)
 --   Whether the maximum width line displayed is used to set scroll width.
--- * `search_flags` [number]
+-- @field search_flags (number)
 --   The search flags used by `buffer:search_in_target()`.
---     * `_SCINTILLA.constants.SCFIND_WHOLEWORD` (2)
---       A match only occurs with text that matches the case of the search
---       string.
---     * `_SCINTILLA.constants.SCFIND_MATCHCASE` (4)
---       A match only occurs if the characters before and after are not word
---       characters.
---     * `_SCINTILLA.constants.SCFIND_WORDSTART` (0x00100000)
---       A match only occurs if the character before is not a word character.
---     * `_SCINTILLA.constants.SCFIND_REGEXP` (0x00200000)
---       The search string should be interpreted as a regular expression.
---     * `_SCINTILLA.constants.SCFIND_POSIX` (0x00400000)
---       Treat regular expression in a more POSIX compatible manner by
---       interpreting bare `(` and `)` for tagged sections rather than `\(` and
---       `\)`.
--- * `sel_alpha` [number]
+--
+--   * `_SCINTILLA.constants.SCFIND_WHOLEWORD` (2)
+--     A match only occurs with text that matches the case of the search string.
+--   * `_SCINTILLA.constants.SCFIND_MATCHCASE` (4)
+--     A match only occurs if the characters before and after are not word
+--     characters.
+--   * `_SCINTILLA.constants.SCFIND_WORDSTART` (0x00100000)
+--     A match only occurs if the character before is not a word character.
+--   * `_SCINTILLA.constants.SCFIND_REGEXP` (0x00200000)
+--     The search string should be interpreted as a regular expression.
+--   * `_SCINTILLA.constants.SCFIND_POSIX` (0x00400000)
+--     Treat regular expression in a more POSIX compatible manner by
+--     interpreting bare `(` and `)` for tagged sections rather than `\(` and
+--     `\)`.
+-- @field sel_alpha (number)
 --   The alpha of the selection, between `0` (transparent) and `255` (opaque),
 --   or `256` for no alpha.
--- * `sel_eol_filled` [bool]
+-- @field sel_eol_filled (bool)
 --   The selection end of line fill.
 --   The selection can be drawn up to the right hand border by setting this
 --   property.
--- * `selection_end` [number]
+-- @field selection_end (number)
 --   The position that ends the selection - this becomes the current position.
 --   This does not make the caret visible.
--- * `selection_is_rectangle` [bool] (Read-only)
+-- @field selection_is_rectangle (bool, Read-only)
 --   Is the selection rectangular?
 --   The alternative is the more common stream selection.
--- * `selection_mode` [number]
+-- @field selection_mode (number)
 --   The mode of the current selection.
---     * `_SCINTILLA.constants.SC_SEL_STREAM` (0)
---       Stream.
---     * `_SCINTILLA.constants.SC_SEL_RECTANGLE` (1)
---       Rectangle.
---     * `_SCINTILLA.constants.SC_SEL_LINES` (2)
---       Lines.
---     * `_SCINTILLA.constants.SC_SEL_THIN` (3)
---       Thin rectangular.
--- * `selection_n_anchor` [table]
+--
+--   * `_SCINTILLA.constants.SC_SEL_STREAM` (0)
+--     Stream.
+--   * `_SCINTILLA.constants.SC_SEL_RECTANGLE` (1)
+--     Rectangle.
+--   * `_SCINTILLA.constants.SC_SEL_LINES` (2)
+--     Lines.
+--   * `_SCINTILLA.constants.SC_SEL_THIN` (3)
+--     Thin rectangular.
+-- @field selection_n_anchor (table)
 --   Table of anchor positions for existing selections starting from zero, the
 --   main selection.
--- * `selection_n_anchor_virtual_space` [table]
+-- @field selection_n_anchor_virtual_space (table)
 --   Table of the amount of virtual space for anchors for existing selections
 --   starting from zero, the main selection.
--- * `selection_n_caret` [table]
+-- @field selection_n_caret (table)
 --   Table of caret positions for existing selections starting from zero, the
 --   main selection.
--- * `selection_n_caret_virtual_space` [table]
+-- @field selection_n_caret_virtual_space (table)
 --   Table of the amount of virtual space for carets for existing selections
 --   starting from zero, the main selection.
--- * `selection_n_end` [table]
+-- @field selection_n_end (table)
 --   Table of positions that end selections for existing selections starting
 --   from zero, the main selection.
--- * `selection_n_start` [table]
+-- @field selection_n_start (table)
 --   Table of positions that start selections for existing selections starting
 --   from zero, the main selection.
--- * `selection_start` [number]
+-- @field selection_start (number)
 --   The position that starts the selection - this becomes the anchor.
 --   This does not make the caret visible.
--- * `selections` [number] (Read-only)
+-- @field selections (number, Read-only)
 --   The number of selections currently active.
--- * `status` [number]
+-- @field status (number)
 --   The error status.
---     * `_SCINTILLA.constants.SC_STATUS_OK` (0)
---       No failures.
---     * `_SCINTILLA.constants.SC_STATUS_FAILURE` (1)
---       Generic failure.
---     * `_SCINTILLA.constants.SC_STATUS_BADALLOC` (2)
---       Memory is exhausted.
--- * `style_at` [table] (Read-only)
+--
+--   * `_SCINTILLA.constants.SC_STATUS_OK` (0)
+--     No failures.
+--   * `_SCINTILLA.constants.SC_STATUS_FAILURE` (1)
+--     Generic failure.
+--   * `_SCINTILLA.constants.SC_STATUS_BADALLOC` (2)
+--     Memory is exhausted.
+-- @field style_at (table, Read-only)
 --   Table of style bytes at positions in the document starting at zero.
--- * `style_back` [table]
+-- @field style_back (table)
 --   Table of background colors in `0xBBGGRR` format for styles from `0` to
 --   `255`.
--- * `style_bits` [number]
+-- @field style_bits (number)
 --   The number of bits in style bytes used to hold the lexical state.
--- * `style_bits_needed` [number] (Read-only)
+-- @field style_bits_needed (number, Read-only)
 --   The number of bits the current lexer needs for styling.
--- * `style_bold` [table]
+-- @field style_bold (table)
 --   Table of booleans for bold styles from `0` to `255`.
--- * `style_case` [table]
+-- @field style_case (table)
 --   Table of cases for styles from `0` to `255`.
---     * `_SCINTILLA.constants.SC_CASE_MIXED` (0)
---       Normal, mixed case.
---     * `_SCINTILLA.constants.SC_CASE_UPPER` (1)
---       Upper case.
---     * `_SCINTILLA.constants.SC_CASE_LOWER` (2)
---       Lower case.
--- * `style_changeable` [table]
+--
+--   * `_SCINTILLA.constants.SC_CASE_MIXED` (0)
+--     Normal, mixed case.
+--   * `_SCINTILLA.constants.SC_CASE_UPPER` (1)
+--     Upper case.
+--   * `_SCINTILLA.constants.SC_CASE_LOWER` (2)
+--     Lower case.
+-- @field style_changeable (table)
 --   Table of booleans for changeable styles from `0` to `255`.
 --   The default setting is `true`.
--- * `style_character_set` [table]
+-- @field style_character_set (table)
 --   Table of character sets for styles from `0` to `255`.
--- * `style_eol_filled` [table]
+-- @field style_eol_filled (table)
 --   Table of booleans for end of line filled styles from `0` to `255`.
--- * `style_font` [table]
+-- @field style_font (table)
 --   Table of font faces for styles from `0` to `255`.
--- * `style_fore` [table]
+-- @field style_fore (table)
 --   Table of foreground colors in `0xBBGGRR` format for styles from `0` to
 --   `255`.
--- * `style_hot_spot` [table]
+-- @field style_hot_spot (table)
 --   Table of boolean hotspot styles from `0` to `255`.
--- * `style_italic` [table]
+-- @field style_italic (table)
 --   Table of booleans for italic styles from `0` to `255`.
--- * `style_size` [table]
+-- @field style_size (table)
 --   Table of font sizes for styles from `0` to `255`.
 --   Font size is a whole number of points.
--- * `style_size_fractional` [table]
+-- @field style_size_fractional (table)
 --   Table of sizes of characters for styles from `0` to `255`.
 --   Size is in hundreths of a point and multiplied by 100 internally. For
 --   example, a text size of 9.4 points is set with 940.
--- * `style_underline` [table]
+-- @field style_underline (table)
 --   Table of booleans for underlined styles from `0` to `255`.
--- * `style_visible` [table]
+-- @field style_visible (table)
 --   Table of booleans for visible styles from `0` to `255`.
--- * `style_weight` [table]
+-- @field style_weight (table)
 --   Table of character weights for styles from `0` to `255`.
 --   The weight or boldness of a font can be set with a number between 1 and 999
 --   with 1 being very light and 999 very heavy. While any value can be used,
 --   fonts often only support between 2 and 4 weights with three weights being
 --   common enough to use symbolic names:
---     * `_SCINTILLA.constants.SC_WEIGHT_NORMAL` (400)
---       Normal.
---     * `_SCINTILLA.constants.SC_WEIGHT_SEMIBOLD` (600)
---       Semi-bold.
---     * `_SCINTILLA.constants.SC_WEIGHT_BOLD` (700)
---       Bold.
--- * `tab_indents` [bool]
+--
+--   * `_SCINTILLA.constants.SC_WEIGHT_NORMAL` (400)
+--     Normal.
+--   * `_SCINTILLA.constants.SC_WEIGHT_SEMIBOLD` (600)
+--     Semi-bold.
+--   * `_SCINTILLA.constants.SC_WEIGHT_BOLD` (700)
+--     Bold.
+-- @field tab_indents (bool)
 --   Whether a tab pressed when caret is within indentation indents.
--- * `tab_width` [number]
+-- @field tab_width (number)
 --   The visible size of a tab as a multiple of the width of a space character.
 --   The default tab width is 8 characters.
--- * `target_end` [number]
+-- @field target_end (number)
 --   The position that ends the target which is used for updating the document
 --   without affecting the scroll position.
 --   The target is also set by a successful `buffer:search_in_target()`.
--- * `target_start` [number]
+-- @field target_start (number)
 --   The position that starts the target which is used for updating the document
 --   without affecting the scroll position.
 --   The target is also set by a successful `buffer:search_in_target()`.
--- * `text_length` [number] (Read-only)
+-- @field text_length (number, Read-only)
 --   The number of characters in the document.
--- * `two_phase_draw` [bool]
+-- @field two_phase_draw (bool)
 --   Two phase drawing mode.
 --   When `true`, drawing is performed in two phases, first the background and
 --   then the foreground. This avoids chopping off characters that overlap the
 --   next run. The default is for drawing to be two phase.
--- * `undo_collection` [bool]
+-- @field undo_collection (bool)
 --   Whether to collect undo information.
 --   When stopping collection, use `buffer:empty_undo_buffer()` to avoid the
 --   undo buffer being unsynchronized with the data in the buffer.
--- * `use_tabs` [bool]
+-- @field use_tabs (bool)
 --   Whether tabs will be used in indentation.
 --   The default is `true`. `false` will only use space characters.
--- * `v_scroll_bar` [bool]
+-- @field v_scroll_bar (bool)
 --   Whether the vertical scroll bar is visible.
 --   Set to `false` to never see it and `true` to enable it again. The default
 --   state is to display it when required.
--- * `view_eol` [bool]
+-- @field view_eol (bool)
 --   Whether the end of line characters are visible.
 --   Normally, the end of line characters are hidden.
--- * `view_ws` [number]
+-- @field view_ws (number)
 --   The visibility of white space characters.
---     * `_SCINTILLA.constants.SCWS_INVISIBLE` (0)
---       The normal display mode with white space displayed as an empty
---       background color.
---     * `_SCINTILLA.constants.SCWS_VISIBLEALWAYS` (1)
---       White space characters are drawn as dots and arrows.
---     * `_SCINTILLA.constants.SCWS_VISIBLEAFTERINDENT` (2)
---       White space used for indentation is displayed normally but after the
---       first visible character, it is shown as dots and arrows.
--- * `virtual_space_options` [number]
+--
+--   * `_SCINTILLA.constants.SCWS_INVISIBLE` (0)
+--     The normal display mode with white space displayed as an empty background
+--     color.
+--   * `_SCINTILLA.constants.SCWS_VISIBLEALWAYS` (1)
+--     White space characters are drawn as dots and arrows.
+--   * `_SCINTILLA.constants.SCWS_VISIBLEAFTERINDENT` (2)
+--     White space used for indentation is displayed normally but after the
+--     first visible character, it is shown as dots and arrows.
+-- @field virtual_space_options (number)
 --   Virtual space options.
---     * `_SCINTILLA.constants.SCVS_NONE` (0)
---       Disables all use of virtual space (default).
---     * `_SCINTILLA.constants.SCVS_RECTANGULARSELECTION` (1)
---       Enabled only for rectangular selections.
---     * `_SCINTILLA.constants.SCVS_USERACCESSIBLE` (2)
---       Enabled.
--- * `whitespace_chars` [string] (Write-only)
+--
+--   * `_SCINTILLA.constants.SCVS_NONE` (0)
+--     Disables all use of virtual space (default).
+--   * `_SCINTILLA.constants.SCVS_RECTANGULARSELECTION` (1)
+--     Enabled only for rectangular selections.
+--   * `_SCINTILLA.constants.SCVS_USERACCESSIBLE` (2)
+--     Enabled.
+-- @field whitespace_chars (string, Write-only)
 --   The set of characters making up whitespace for when moving or selecting by
 --   word.
 --   Use after setting `buffer.word_chars`.
--- * `wrap_indent_mode` [number]
+-- @field wrap_indent_mode (number)
 --   How wrapped sublines are placed.
 --   Default is fixed.
---     * `_SCINTILLA.constants.SC_WRAP_INDENT_FIXED` (0)
---       Wrapped sublines aligned to left of window plus amount set by
---       `buffer.wrap_start_indent`.
---     * `_SCINTILLA.constants.SC_WRAP_INDENT_SAME` (1)
---       Wrapped sublines are aligned to first subline indent.
---     * `_SCINTILLA.constants.SC_WRAP_INDENT_INDENT` (2)
---       Wrapped sublines are aligned to first subline indent plus one more
---       level of indentation.
--- * `whitespace_size` [number]
+--
+--   * `_SCINTILLA.constants.SC_WRAP_INDENT_FIXED` (0)
+--     Wrapped sublines aligned to left of window plus amount set by
+--     `buffer.wrap_start_indent`.
+--   * `_SCINTILLA.constants.SC_WRAP_INDENT_SAME` (1)
+--     Wrapped sublines are aligned to first subline indent.
+--   * `_SCINTILLA.constants.SC_WRAP_INDENT_INDENT` (2)
+--     Wrapped sublines are aligned to first subline indent plus one more level
+--     of indentation.
+-- @field whitespace_size (number)
 --   The size of the dots used to mark space characters.
--- * `word_chars` [string]
+-- @field word_chars (string)
 --   The set of characters making up words when moving or selecting by word.
--- * `wrap_mode` [number]
+-- @field wrap_mode (number)
 --   Text word wrap mode.
---     * `_SCINTILLA.constants.SC_WRAP_NONE` (0)
---       Disable line wrapping.
---     * `_SCINTILLA.constants.SC_WRAP_WORD` (1)
---       Enable wrapping on word boundaries.
---     * `_SCINTILLA.constants.SC_WRAP_CHAR` (2)
---       Enable wrapping between any characters.
--- * `wrap_start_indent` [number]
+--
+--   * `_SCINTILLA.constants.SC_WRAP_NONE` (0)
+--     Disable line wrapping.
+--   * `_SCINTILLA.constants.SC_WRAP_WORD` (1)
+--     Enable wrapping on word boundaries.
+--   * `_SCINTILLA.constants.SC_WRAP_CHAR` (2)
+--     Enable wrapping between any characters.
+-- @field wrap_start_indent (number)
 --   The start indent for wrapped lines.
--- * `wrap_visual_flags` [number]
+-- @field wrap_visual_flags (number)
 --   The display mode of visual flags for wrapped lines.
---     * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_NONE` (0)
---       No visual flags.
---     * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_END` (1)
---       Visual flag at end of subline of a wrapped line.
---     * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_START` (2)
---       Visual flag at begin of subline of a wrapped line.
---       Subline is indented by at least 1 to make room for the flag.
--- * `wrap_visual_flags_location` [number]
+--
+--   * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_NONE` (0)
+--     No visual flags.
+--   * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_END` (1)
+--     Visual flag at end of subline of a wrapped line.
+--   * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_START` (2)
+--     Visual flag at begin of subline of a wrapped line.
+--     Subline is indented by at least 1 to make room for the flag.
+-- @field wrap_visual_flags_location (number)
 --   The location of visual flags for wrapped lines.
---     * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_DEFAULT` (0)
---       Visual flags drawn near border.
---     * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_END_BY_TEXT` (1)
---       Visual flag at end of subline drawn near text.
---     * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_START_BY_TEXT` (2)
---       Visual flag at beginning of subline drawn near text.
--- * `x_offset` [number]
+--
+--   * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_DEFAULT` (0)
+--     Visual flags drawn near border.
+--   * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_END_BY_TEXT` (1)
+--     Visual flag at end of subline drawn near text.
+--   * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_START_BY_TEXT` (2)
+--     Visual flag at beginning of subline drawn near text.
+-- @field x_offset (number)
 --   The horizontal scroll position.
 --   A value of `0` is the normal position with the first text column visible at
 --   the left of the view.
--- * `zoom` [number]
+-- @field zoom (number)
 --   The number of points added to the size of all fonts.
 --   It may be positive to magnify or negative to reduce.
---
--- [`string.iconv()`]: string.html#iconv
+module('buffer')
 
 ---
 -- Add a selection from anchor to caret as the main selection.

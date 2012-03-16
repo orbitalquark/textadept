@@ -5,13 +5,9 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Bookmarks for the textadept module.
-module('_M.textadept.bookmarks')]]
-
--- Markdown:
--- ## Settings
---
--- * `MARK_BOOKMARK_COLOR` [number]
+-- @field MARK_BOOKMARK_COLOR (number)
 --   The color used for a bookmarked line in `0xBBGGRR` format.
+module('_M.textadept.bookmarks')]]
 
 M.MARK_BOOKMARK_COLOR = 0xB3661A
 
