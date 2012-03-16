@@ -21,39 +21,34 @@ gui.set_theme()
 _M = {} -- modules table
 
 --[[ This comment is for LuaDoc.
---- Extends Lua's _G table to provide extra functions and fields.
-module('_G')]]
-
--- Markdown:
--- ## Fields
---
--- * `_HOME` [string]
+---
+-- Extends Lua's _G table to provide extra functions and fields.
+-- @field _HOME (string)
 --   Path to the directory containing Textadept.
--- * `_LEXERPATH` [string]
---   Paths to lexers, formatted like [`package.path`][].
--- * `_RELEASE` [string]
+-- @field _LEXERPATH (string)
+--   Paths to lexers, formatted like
+--   [`package.path`](http://lua.org/manual/5.2/manual.html#pdf-package.path).
+-- @field _RELEASE (string)
 --   The Textadept release version.
--- * `_USERHOME` [string]
+-- @field _USERHOME (string)
 --   Path to the user's `~/.textadept/`.
--- * `_CHARSET` [string]
+-- @field _CHARSET (string)
 --   The character set encoding of the filesystem.
---   This is used in [File I/O][].
--- * `RESETTING` [bool]
+--   This is used in [File I/O](io.html).
+-- @field RESETTING (bool)
 --   If [`reset()`](#reset) has been called, this flag is `true` while the Lua
 --   state is being re-initialized.
--- * `WIN32` [bool]
+-- @field WIN32 (bool)
 --   If Textadept is running on Windows, this flag is `true`.
--- * `OSX` [bool]
+-- @field OSX (bool)
 --   If Textadept is running on Mac OSX, this flag is `true`.
---
--- [`package.path`]: http://www.lua.org/manual/5.2/manual.html#pdf-package.path
--- [File I/O]: io.html
+module('_G')]]
 
 ---
 -- Calls `dofile()` on the given filename in the user's Textadept directory.
 -- Errors are printed to the Textadept message buffer.
 -- @param filename The name of the file (not path).
--- @return true if successful; false otherwise.
+-- @return `true` if successful; `false` otherwise.
 -- @see dofile
 function user_dofile(filename)
   if not lfs.attributes(_USERHOME..'/'..filename) then return false end
@@ -116,6 +111,7 @@ local quit
 -- that need to differentiate between startup and reset can utilize this
 -- variable.
 -- @class function
+-- @see RESETTING
 -- @name reset
 local reset
 

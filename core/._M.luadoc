@@ -5,9 +5,7 @@
 --[[ This comment is for LuaDoc.
 ---
 -- A table of loaded modules.
-module('_M')]]
-
--- Markdown:
+--
 -- ## Overview
 --
 -- Note that while language-specific modules can only be used by files of that
@@ -96,3 +94,4 @@ module('_M')]]
 --     }
 --
 -- See `modules/textadept/menu.lua` for examples on how to define menus.
+module('_M')]]

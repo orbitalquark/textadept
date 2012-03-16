@@ -3,9 +3,7 @@
 --[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's io package to provide file input/output routines for Textadept.
-module('io')]]
-
--- Markdown:
+--
 -- ## Working with UTF-8
 --
 -- If your filesystem does not use UTF-8 encoded filenames, conversions to and
@@ -44,6 +42,7 @@ module('io')]]
 --   Called when a file is saved under a different filename.
 --   Arguments:
 --     * `filename`: The filename encoded in UTF-8.
+module('io')]]
 
 -- Events.
 local events, events_connect = events, events.connect
@@ -289,7 +288,7 @@ end
 -- If any buffer is dirty, the user is prompted to continue. No buffers are
 -- saved automatically. They must be saved manually.
 -- @usage io.close_all()
--- @return true if user did not cancel.
+-- @return `true` if user did not cancel.
 -- @name close_all
 function io.close_all()
   while #_BUFFERS > 1 do
@@ -345,6 +344,7 @@ end)
 
 ---
 -- Prompts the user to open a recently opened file.
+-- @see recent_files
 -- @name open_recent_file
 function io.open_recent_file()
   local i = gui.filteredlist(_L['Open'], _L['File'], io.recent_files, true)

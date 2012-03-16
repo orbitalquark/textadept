@@ -5,13 +5,9 @@
 ---
 -- The currently focused view.
 -- It also represents the structure of any view table in `_G._VIEWS`.
-module('view')
-
--- Markdown:
--- ## Fields
---
--- * `size` [number]
+-- @field size (number)
 --   The position of the split resizer (if this view is part of a split view).
+module('view')
 
 ---
 -- The buffer this view contains. (Read-only)

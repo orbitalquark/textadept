@@ -2,12 +2,10 @@
 
 local M = {}
 
---[[ This comment is for LuaDoc.
+--[=[ This comment is for LuaDoc.
 ---
 -- Provides Lua-style snippets for Textadept.
-module('_M.textadept.snippets')]]
-
--- Markdown:
+--
 -- ## Overview
 --
 -- Snippets are dynamic pieces of text inserted into a document that contain
@@ -117,6 +115,7 @@ module('_M.textadept.snippets')]]
 --
 -- It is recommended to use tab characters instead of spaces like in the last
 -- example. Tabs will be converted to spaces as necessary.
+module('_M.textadept.snippets')]=]
 
 -- The stack of currently running snippets.
 local snippet_stack = {}

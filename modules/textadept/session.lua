@@ -5,21 +5,17 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Session support for the textadept module.
-module('_M.textadept.session')]]
-
--- Markdown:
--- ## Settings
---
--- * `DEFAULT_SESSION` [string]
+-- @field DEFAULT_SESSION (string)
 --   The path to the default session file.
--- * `SAVE_ON_QUIT` [bool]
+-- @field SAVE_ON_QUIT (bool)
 --   Save the session when quitting.
 --   The default value is `true` and can be disabled by passing the command line
 --   switch `-n` or `--nosession` to Textadept.
--- * `MAX_RECENT_FILES` [number]
+-- @field MAX_RECENT_FILES (number)
 --   The maximum number of files from the recent files list to save to the
 --   session.
 --   The default value is `10`.
+module('_M.textadept.session')]]
 
 M.DEFAULT_SESSION = _USERHOME..'/session'
 M.SAVE_ON_QUIT = true
@@ -33,6 +29,7 @@ M.MAX_RECENT_FILES = 10
 --   value is `DEFAULT_SESSION`.
 -- @return `true` if the session file was opened and read; `false` otherwise.
 -- @usage _M.textadept.session.load(filename)
+-- @see DEFAULT_SESSION
 -- @name load
 function M.load(filename)
   local not_found = {}
@@ -112,6 +109,7 @@ events.connect('arg_none', function() if M.SAVE_ON_QUIT then M.load() end end)
 -- @param filename The absolute path to the session file to save. The default
 --   value is either the current session file or `DEFAULT_SESSION`.
 -- @usage _M.textadept.session.save(filename)
+-- @see DEFAULT_SESSION
 -- @name save
 function M.save(filename)
   local session = {}

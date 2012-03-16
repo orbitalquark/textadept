@@ -8,9 +8,7 @@ local M = {}
 -- Typically, language-specific modules populate the `compile_command`,
 -- `run_command`, and `error_detail` tables for a particular language's file
 -- extension.
-module('_M.textadept.run')]]
-
--- Markdown:
+--
 -- ## Run Events
 --
 -- * `_G.events.COMPILE_OUTPUT`
@@ -31,6 +29,7 @@ module('_M.textadept.run')]]
 --   Arguments:
 --     * `lexer`: The lexer language.
 --     * `output`: The output from the command.
+module('_M.textadept.run')]]
 
 -- Events.
 local events, events_connect, events_emit = events, events.connect, events.emit

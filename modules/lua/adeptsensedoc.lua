@@ -40,16 +40,35 @@ local function write_apidoc(file, m, b)
   -- Block documentation for the function or field.
   local doc = {}
   -- Function arguments or field type.
+  local class = b.class
   local header = name
-  if b.class == 'function' then
+  if class == 'function' then
     header = header..(b.param and '('..table.concat(b.param, ', ')..')' or '')
+  elseif class == 'field' and b.description:find('^%s*%b()') then
+    header = header..' '..b.description:match('^%s*(%b())')
+  elseif class == 'module' or class == 'table' then
+    header = header..' ('..class..')'
   end
-  if b.modifier and b.modifier ~= '' then header = header..' '..b.modifier end
   doc[#doc + 1] = header
   -- Function or field description.
-  doc[#doc + 1] = b.description:gsub('\\n', '\\\\n')
+  local description = b.description
+  if class == 'module' then
+    -- Modules usually have additional Markdown documentation so just grab the
+    -- documentation before a Markdown header.
+    description = description:match('^(.-)[\r\n]+#') or description
+  elseif class == 'field' then
+    -- Type information is already in the header; discard it in the description.
+    description = description:match('^%s*%b()[\t ]*[\r\n]*(.+)$') or description
+    -- Strip consistent leading whitespace.
+    local indent
+    indent, description = description:match('^(%s*)(.*)$')
+    if indent ~= '' then description = description:gsub('\n'..indent, '\n') end
+  end
+  doc[#doc + 1] = description:gsub('\\n', '\\\\n')
+                             :gsub('%[([^%]]+)%]%b[]', '%1') -- Markdown links
+                             :gsub('%[([^%]]+)%]%b()', '%1') -- Markdown links
   -- Function parameters (@param).
-  if b.class == 'function' and b.param then
+  if class == 'function' and b.param then
     for _, p in ipairs(b.param) do
       if b.param[p] and #b.param[p] > 0 then
         doc[#doc + 1] = '@param '..p..' '..b.param[p]:gsub('\\n', '\\\\n')
@@ -57,7 +76,7 @@ local function write_apidoc(file, m, b)
     end
   end
   -- Function usage (@usage).
-  if b.class == 'function' and b.usage then
+  if class == 'function' and b.usage then
     if type(b.usage) == 'string' then
       doc[#doc + 1] = '@usage '..b.usage
     else
@@ -65,7 +84,7 @@ local function write_apidoc(file, m, b)
     end
   end
   -- Function returns (@return).
-  if b.class == 'function' and b.ret then
+  if class == 'function' and b.ret then
     if type(b.ret) == 'string' then
       doc[#doc + 1] = '@return '..b.ret
     else
@@ -92,10 +111,10 @@ function M.start(doc)
 --  local profiler = require 'profiler'
 --  profiler.start()
 
-  local modules = doc.modules
+  local modules, files = doc.modules, doc.files
 
   -- Convert module functions in the Lua luadoc into LuaDoc modules.
-  local lua_luadoc = doc.files['../modules/lua/lua.luadoc']
+  local lua_luadoc = files['../modules/lua/lua.luadoc']
   if lua_luadoc then
     for _, f in ipairs(lua_luadoc.functions) do
       f = lua_luadoc.functions[f]
@@ -113,45 +132,50 @@ function M.start(doc)
     end
   end
 
+  -- Create a map of file names to doc objects so their module names can be
+  -- determined.
+  local filedocs = {}
+  for _, name in ipairs(files) do filedocs[name] = files[name].doc end
+
   -- Parse out module fields (-- * `FIELD`: doc) and insert them into the
   -- module's LuaDoc.
-  for _, file in ipairs(doc.files) do
+  for _, file in ipairs(files) do
     local module_name, field, docs
+    local module_doc = filedocs[file][1]
+    if module_doc and module_doc.class == 'module' then
+      module_name = module_doc.name
+      modules[module_name].fields = module_doc.field
+    elseif module_doc then
+      print('[WARN] '..file..' has no module declaration')
+    end
     -- Adds the field to its module's LuaDoc.
     local function add_field()
       local doc = table.concat(docs, '\n')
-      doc = doc:gsub('%[([^%]]+)%]%b[]', '%1'):gsub('%[([^%]]+)%]%b()', '%1')
       field.description = doc
       local m = modules[field.module]
       if not m then
         local name = field.module
-        _G.print("Module '"..name.."' does not exist. Faking...")
+        print('[INFO] module `'..name..'\' does not exist. Faking...')
         m = { name = name, functions = {}, fake = true }
         modules[#modules + 1] = name
         modules[name] = m
       end
       if not m.fields then m.fields = {} end
       m.fields[#m.fields + 1] = field.name
-      m.fields[field.name] = field
+      m.fields[field.name] = field.description
       field = nil
     end
     local f = io.open(file, 'rb')
     for line in f:lines() do
-      if not field and line:find('^module%(') then
-        -- Get the module's name to add the parsed fields to.
-        module_name = line:match("^module%('([^']+)'")
-      elseif line:find('^%-%- %* `') then
+      if line:find('^%-%- %* `') then
         -- New field; if another field was parsed right before this one, add
         -- the former field to its module's LuaDoc.
         if field then add_field() end
         field, docs = {}, {}
-        local name, doc = line:match('^%-%- %* `([^`]+)`([^\r\n]*)')
+        local name, doc = line:match('^%-%- %* `([^`]+)`%s*([^\r\n]*)')
         field.module = name:match('^_G%.(.-)%.[^%.]+$') or module_name or
                        name:match('^[^%.]+')
         field.name = name:match('[^%.]+$')
-        if doc ~= '' then
-          field.modifier, doc = doc:match('^%s*([^:]*):?%s*(.*)$')
-        end
         if doc ~= '' then docs[#docs + 1] = doc end
       elseif field and line:find('^%-%-%s+[^\r\n]+') then
         docs[#docs + 1] = line:match('^%-%-%s%s%s(%s*[^\r\n]+)')
@@ -180,7 +204,7 @@ function M.start(doc)
         -- Tag the module as a global table.
         write_tag(ctags, module, 't', '')
       end
-      m.modifier = '[module]'
+      m.class = 'module'
       write_apidoc(apidoc, { name = '_G' }, m)
     end
     -- Tag the functions and write the apidoc.
@@ -195,32 +219,38 @@ function M.start(doc)
       local table = m.tables[t]
       local module = module -- define locally so any modification stays local
       if t:find('^_G%.') then module, t = t:match('^_G%.(.-)%.?([^%.]+)$') end
-      if not module then _G.print(table.name) end
+      if not module then print(table.name) end
       local ext_fields = module == '_G' and '' or 'class:'..module
       write_tag(ctags, t, 't', ext_fields)
-      table.modifier = '[table]'
       write_apidoc(apidoc, m, table)
       -- Tag the fields of the tables.
       t = module..'.'..t
       for _, f in ipairs(table.field or {}) do
         write_tag(ctags, f, 'F', 'class:'..t)
-        write_apidoc(apidoc, { name = t },
-                     { name = f, description = table.field[f] })
+        write_apidoc(apidoc, { name = t }, {
+                       name = f,
+                       description = table.field[f],
+                       class = 'table'
+                     })
       end
     end
     -- Tag the fields.
     for _, f in ipairs(m.fields or {}) do
       local ext_fields = module == '_G' and '' or 'class:'..module
       write_tag(ctags, f, 'F', ext_fields)
-      write_apidoc(apidoc, m, m.fields[f])
+      write_apidoc(apidoc, { name = f }, {
+                     name = module..'.'..f,
+                     description = m.fields[f],
+                     class = 'field'
+                   })
     end
   end
   table.sort(ctags)
   table.sort(apidoc)
-  local f = io.open(M.options.output_dir..'/tags', 'w')
+  local f = io.open(M.options.output_dir..'/tags', 'wb')
   f:write(table.concat(ctags, '\n'))
   f:close()
-  f = io.open(M.options.output_dir..'api', 'w')
+  f = io.open(M.options.output_dir..'api', 'wb')
   f:write(table.concat(apidoc, '\n'))
   f:close()
 

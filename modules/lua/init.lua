@@ -8,9 +8,7 @@ local M = {}
 -- It provides utilities for editing Lua code.
 -- User tags are loaded from `_USERHOME/modules/lua/tags` and user apis are
 -- loaded from `_USERHOME/modules/lua/api`.
-module('_M.lua')]]
-
--- Markdown:
+--
 -- ## Key Commands
 --
 -- + `Ctrl+L, M` (`⌘L, M` on Mac OSX)
@@ -25,11 +23,9 @@ module('_M.lua')]]
 -- + `:`
 --   When to the right of a known symbol, show an autocompletion list of
 --   functions only.
---
--- ## Fields
---
--- * `sense`
+-- @field sense
 --   The Lua [Adeptsense](_M.textadept.adeptsense.html).
+module('_M.lua')]]
 
 local m_editing, m_run = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.

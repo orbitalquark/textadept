@@ -5,13 +5,12 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Processes command line arguments for Textadept.
-module('args')]]
-
--- Markdown:
+--
 -- ## Arg Events
 --
 -- + `'arg_none'`
 --   Called when no command line arguments are passed to Textadept on init.
+module('args')]]
 
 local arg = arg
 

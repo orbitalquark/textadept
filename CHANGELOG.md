@@ -226,7 +226,7 @@ Changes:
 * Slight API changes:
   + [`_BUFFERS`][] and [`_VIEWS`][] structure changed.
   + Removed `buffer.doc_pointer` and `view.doc_pointer`.
-  + Added `view.buffer` field.
+  + Added [`view.buffer`][] field.
   + Renamed `gui.check_focused_buffer()` to [`buffer:check_global()`][].
   + [`view:goto_buffer()`][] and [`gui.goto_view()`] arguments make sense now.
     (May require changes to custom key commands.)
@@ -245,6 +245,7 @@ Changes:
 [dwell events]: api/events.html
 [`_BUFFERS`]: api/_G.html#_BUFFERS
 [`_VIEWS`]: api/_G.html#_VIEWS
+[`view.buffer`]: api/view.html#buffer
 [`buffer:check_global()`]: api/buffer.html#buffer.check_global
 [`view:goto_buffer()`]: api/view.html#view:goto_buffer
 [`gui.goto_view()`]: api/gui.html#goto_view
@@ -270,7 +271,7 @@ Bugfixes:
 
 * Makefile should only link to `libdl.so` on Linux/BSD.
 * Fixed memory access bug in [`gui.dialog()`][].
-* Autocompletion list sort order respects `buffer.auto_c_ignore_case` now.
+* Autocompletion list sort order respects [`buffer.auto_c_ignore_case`][] now.
 * Fixed split view focus bug with the same buffer in two views.
 * Set new buffer EOL mode properly on Mac OSX.
 
@@ -288,6 +289,7 @@ Changes:
 [Textadept 4.0 -- Source]: download/textadept_4.0.src.zip
 [Textadept 4.0 -- Modules]: download/textadept_4.0.modules.zip
 [`gui.dialog()`]: api/gui.html#dialog
+[`buffer.auto_c_ignore_case`]: api/buffer.html#auto_c_ignore_case
 
 ## 4.0 beta 2 (11 Aug 2011)
 
@@ -347,7 +349,7 @@ Changes:
   `buffer.line_down()` is allowed).
 * Complete overhaul of menus and added accelerators to [menu][] items.
 * Renamed `_m.textadept.editing.SAVE_STRIPS_WS` to
-  `_m.textadept.editing.STRIP_WHITESPACE_ON_SAVE`.
+  [`_m.textadept.editing.STRIP_WHITESPACE_ON_SAVE`][].
 * Renamed `_m.textadept.editing.select_scope()` to
   `_m.textadept.editing.select_style()`.
 * *Completely new set of key commands.*
@@ -361,6 +363,7 @@ Changes:
 [Textadept 4.0 beta -- Modules]: download/textadept_4.0_beta.modules.zip
 [`io.open_recent_file()`]: api/io.html#open_recent_file
 [`buffer` functions]: api/buffer.html#Functions
+[`_m.textadept.editing.STRIP_WHITESPACE_ON_SAVE`]: api/_M.textadept.editing.html#STRIP_WHITESPACE_ON_SAVE
 [menu]: api/gui.html#gtkmenu
 [Scintilla]: http://scintilla.org
 
@@ -514,7 +517,7 @@ Changes:
   etc. is now `Ctrl+Shift+B` (`Apple+Shift+B`).
 * Key commands and menu definition syntax changed.
 * Snapopen allows for multiple-selection.
-* [`gui.print()`] handles `nil` and non-string arguments properly.
+* [`gui.print()`][] handles `nil` and non-string arguments properly.
 * Officially supported modules have their own [repositories][] and are available
   as a separate download.
 
@@ -562,14 +565,14 @@ Changes:
 * Added class context completion to Adeptsense.
 * Added class type-inference through variable assignment to Adeptsense.
 * Added Adeptsense [tutorial][].
-* Added `_m.textadept.adeptsense.always_show_globals` setting for showing
+* Added [`_m.textadept.adeptsense.always_show_globals`][] setting for showing
   globals in completion lists.
 * `Ctrl+H` (highlight word) is now `Ctrl+Shift+H`.
 * `Ctrl+H` now shows Adeptsense documentation.
 * Added Adeptsense [`complete()`][] and [`show_documentation()`][] functions to
   the menu.
 * Language modules condensed into single `init.lua` file.
-* Added `sense.syntax.word_chars` to Adeptsense.
+* Added [`sense.syntax.word_chars`][] to Adeptsense.
 * Included libpng12 build for 64-bit Debian-based Linux distros (Ubuntu).
 * Added [CSS][], [HTML][], [Java][], and [Ruby][] modules with Adeptsenses.
 
@@ -581,8 +584,10 @@ Changes:
 [`goto_ctag()`]: api/_M.textadept.adeptsense.html#goto_ctag
 [Scintilla]: http://scintilla.org
 [tutorial]: api/_M.textadept.adeptsense.html
+[`_m.textadept.adeptsense.always_show_globals`]: api/_M.textadept.adeptsense.html#always_show_globals
 [`complete()`]: api/_M.textadept.adeptsense.html#complete
 [`show_documentation()`]: api/_M.textadept.adeptsense.html#show_documentation
+[`sense.syntax.word_chars`]: api/_M.textadept.adeptsense.html#syntax
 [CSS]: api/_M.css.html
 [HTML]: api/_M.hypertext.html
 [Java]: api/_M.java.html
@@ -645,7 +650,7 @@ Bugfixes:
 
 Changes:
 
-* `buffer.rectangular_selection_modifier` on Linux is the Super/Windows key.
+* [`buffer.rectangular_selection_modifier`][] on Linux is the Super/Windows key.
 * Improved Hypertext lexer.
 * Added Markdown, BibTeX, CMake, CUDA, Desktop Entry, F#, GLSL, and Nemerle
   lexers.
@@ -658,6 +663,7 @@ Changes:
 [Textadept 3.6 -- Linux]: download/textadept_3.6.tgz
 [Textadept 3.6 -- Linux x86_64]: download/textadept_3.6.x86_64.tgz
 [Textadept 3.6 -- Source]: download/textadept_3.6.src.zip
+[`buffer.rectangular_selection_modifier`]: api/buffer.html#rectangular_selection_modifier
 [`_m.textadept.filter_through`]: api/_M.textadept.filter_through.html
 [shell commands]: 10_Advanced.html#Shell.Commands.and.Filtering.Text
 
@@ -721,13 +727,13 @@ Changes:
 * An `update_ui` event is triggered after a Lua command is entered.
 * [`gui.dialog()`][] can take tables of strings as arguments now.
 * [`_m.textadept.snapopen.open()`][] takes a recursion depth as a parameter and
-  falls back on a `DEFAULT_DEPTH` if necessary.
+  falls back on a [`DEFAULT_DEPTH`][] if necessary.
 * Removed `_m.textadept.editing.smart_cutcopy()` and
   `_m.textadept.editing.squeeze()` functions.
 * Added `_m.textadept.editing.SAVE_STRIPS_WS` option to disable strip whitespace
   on save.
 * Changed locale implementation. Locale files are much easier to create now.
-* `gui.statusbar_text` is now readable instead of being write-only.
+* [`gui.statusbar_text`][] is now readable instead of being write-only.
 * Can [highlight][] all occurances of a word.
 * Added jsp lexer.
 * More consistant handling of `\` directory separator for Win32.
@@ -737,7 +743,7 @@ Changes:
   period of time.
 * Find in files is accessible through [find API][].
 * Updated to [Scintilla][] 2.22.
-* Renamed `_G.MAC` to `_G.OSX`.
+* Renamed `_G.MAC` to [`_G.OSX`][].
 
 [Textadept 3.4 -- Win32]: download/textadept_3.4.win32.zip
 [Textadept 3.4 -- Mac OSX Intel 10.5+]: download/textadept_3.4.osx.zip
@@ -747,10 +753,13 @@ Changes:
 [Switch Buffers]: 4_WorkingWithFiles.html#Buffer.Browser
 [`gui.dialog()`]: api/gui.html#dialog
 [`_m.textadept.snapopen.open()`]: api/_M.textadept.snapopen.html#open
+[`DEFAULT_DEPTH`]: api/_M.textadept.snapopen.html#DEFAULT_DEPTH
+[`gui.statusbar_text`]: api/gui.html#statusbar_text
 [highlight]: 6_AdeptEditing.html#Word.Highlight
 [`_G.timeout()`]: api/_G.html#timeout
 [find API]: api/gui.find.html#find_in_files
 [Scintilla]: http://scintilla.org
+[`_G.OSX`]: api/_G.html#OSX
 
 ## 3.3 (01 Oct 2010)
 
@@ -921,14 +930,16 @@ Bugfixes:
 
 Changes:
 
-* `_USERHOME` comes before `_HOME` in `package.path` so `require` searches
-  `~/.textadept/` first.
+* [`_USERHOME`][] comes before [`_HOME`][] in `package.path` so `require`
+  searches `~/.textadept/` first.
 
 [Textadept 2.2 -- Win32]: download/textadept_2.2.win32.zip
 [Textadept 2.2 -- Mac OSX Intel 10.5+]: download/textadept_2.2.osx.zip
 [Textadept 2.2 -- Linux]: download/textadept_2.2.tgz
 [Textadept 2.2 -- Linux x86_64]: download/textadept_2.2.x86_64.tgz
 [Textadept 2.2 -- Source]: download/textadept_2.2.src.zip
+[`_USERHOME`]: api/_G.html#_USERHOME
+[`_HOME`]: api/_G.html#_HOME
 
 ## 2.2 beta 2 (01 May 2010)
 
@@ -991,7 +1002,7 @@ Changes:
 * Removed `_m.textadept.mlines` module since Scintilla's multiple selections
   supercedes it.
 * Removed side pane.
-* New [`gui.dialog('filteredlist', ...)] from [gcocoadialog][].
+* New [`gui.dialog('filteredlist', ...)][] from [gcocoadialog][].
 * Can select buffer from filteredlist dialog (replacing side pane buffer list).
 * Can select lexer from filteredlist dialog.
 * Can have user `key_commands.lua`, `snippets.lua`, `mime_types.conf`,
@@ -1008,7 +1019,7 @@ Changes:
 [Textadept 2.2 beta -- Linux x86_64]: download/textadept_2.2_beta.x86_64.tgz
 [Textadept 2.2 beta -- Source]: download/textadept_2.2_beta.src.zip
 [gcocoadialog]: http://foicica.com/gcocoadialog
-[`gui.dialog('filteredist', ...)]: api/gui.html#dialog
+[`gui.dialog('filteredlist', ...)]: api/gui.html#dialog
 
 ## 2.1 (01 Mar 2010)
 
@@ -1032,7 +1043,7 @@ Bugfixes:
 Changes:
 
 * Added Dot and JSON lexers.
-* Search `_USERHOME` in addition to `_HOME` for themes.
+* Search [`_USERHOME`][] in addition to [`_HOME`][] for themes.
 * Added command line switch for not loading/saving session.
 * Modified key commands to be more key-layout agnostic.
 * Added `reset_before` and `reset_after` events while `textadept.reset()` is
@@ -1047,6 +1058,8 @@ Changes:
 [Textadept 2.1 -- Linux]: download/textadept_2.1.tgz
 [Textadept 2.1 -- Linux x86_64]: download/textadept_2.1.x86_64.tgz
 [Textadept 2.1 -- Source]: download/textadept_2.1.src.zip
+[`_USERHOME`]: api/_G.html#_USERHOME
+[`_HOME`]: api/_G.html#_HOME
 [Scintilla]: http://scintilla.org
 
 ## 2.0 (01 Oct 2009)
@@ -1074,7 +1087,7 @@ Changes:
 * Refactored `modules/textadept/lsnippets.lua`.
 * Updated key commands.
 * Allow PM modules in the `~/.textadept` user directory.
-* Added `style_whitespace` to [lexers][] for custom styles.
+* Added [`style_whitespace`][] to [lexers][] for custom styles.
 * Added standard `F3` key command for "Find Next" for Windows/Linux.
 
 [Textadept 2.0 -- Win32]: download/textadept_2.0.win32.zip
@@ -1082,6 +1095,7 @@ Changes:
 [Textadept 2.0 -- Linux]: download/textadept_2.0.tgz
 [Textadept 2.0 -- Linux x86_64]: download/textadept_2.0.x86_64.tgz
 [Textadept 2.0 -- Source]: download/textadept_2.0.src.zip
+[`style_whitespace`]: api/lexer.html#style_whitespace
 [lexers]: api/lexer.html
 
 ## 2.0 beta (31 Jul 2009)
@@ -1513,7 +1527,7 @@ Download:
 Bugfixes:
 
 * Fixed bug in editing module's [`select_indented_block()`][].
-* Fixed empty `buffer.filename` bug in `textadept.io.save_as()`.
+* Fixed empty [`buffer.filename`][] bug in `textadept.io.save_as()`.
 * Fixed setting of Ruby lexer after detecting filetype.
 
 Updates:
@@ -1528,6 +1542,7 @@ Updates:
 
 [Textadept 0.3 -- Linux]: download/ta_beta_r3.tgz
 [`select_indented_block()`]: api/_M.textadept.editing.html#select_indented_block
+[`buffer.filename`]: api/buffer.html#filename
 [Zenity]: http://live.gnome.org/Zenity
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
 

@@ -4,21 +4,17 @@ local gui = gui
 
 --[[ This comment is for LuaDoc.
 --- The core gui table.
-module('gui')]]
-
--- Markdown:
--- ## Fields
---
--- * `title` [string]
+-- @field title (string)
 --   The title of the Textadept window.
--- * `context_menu`
+-- @field context_menu
 --   A GTK menu defining the editor's context menu.
--- * `clipboard_text` [string] (Read-only)
+-- @field clipboard_text (string, Read-only)
 --   The text on the clipboard.
--- * `statusbar_text` [string]
+-- @field statusbar_text (string)
 --   The text displayed by the statusbar.
--- * `docstatusbar_text` [string] (Write-only)
+-- @field docstatusbar_text (string, Write-only)
 --   The text displayed by the doc statusbar.
+module('gui')]]
 
 local _L = _L
 

@@ -5,9 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Textadept's core event structure and handlers.
-module('events')]]
-
--- Markdown:
+--
 -- ## Overview
 --
 -- Textadept is very event-driven. Most of its functionality comes through event
@@ -248,6 +246,7 @@ module('events')]]
 --
 --     events.connect('my_event', my_event_handler)
 --     events.emit('my_event', 'my message') -- prints 'my message' to a view
+module('events')]]
 
 ---
 -- A table of event names and a table of functions connected to them.

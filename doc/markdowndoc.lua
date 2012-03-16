@@ -11,6 +11,7 @@ local table_concat = table.concat
 local M = {}
 
 local NAVFILE = '%s* [%s](%s)\n'
+local FIELD = '<a id="%s" />\n### `%s` %s\n\n'
 local FUNCTION = '<a id="%s" />\n### `%s` (%s)\n\n'
 --local FUNCTION = '### `%s` (%s)\n\n'
 local DESCRIPTION = '%s\n\n'
@@ -21,7 +22,7 @@ local RETURN = '* %s\n'
 local SEE = '* [`%s`](#%s)\n'
 local TABLE = '<a id="%s" />\n### `%s`\n\n'
 --local TABLE = '### `%s`\n\n'
-local FIELD = '* `%s`: %s\n'
+local TFIELD = '* `%s`: %s\n'
 local HTML = [[
   <!doctype html>
   <html>
@@ -170,30 +171,24 @@ function M.start(doc)
     -- Write the header and description.
     f:write('# ', name, '\n\n')
     f:write(module.description, '\n\n')
-
-    -- Extract any Markdown doc comments and insert them.
-    -- Markdown doc comments must immediately proceed a 'module' declaration
-    -- (excluding blank lines), start with '-- Markdown:', and end on a blank or
-    -- uncommented line.
-    if filename then
-      local module_declaration, markdown = false, false
-      local module_file = io_open(filename, 'rb')
-      for line in module_file:lines() do
-        if not module_declaration and line:find('^module') then
-          module_declaration = true
-        elseif module_declaration and not markdown and line ~= '' then
-          if line ~= '-- Markdown:' then break end
-          markdown = true
-        elseif markdown then
-          line = line:match('^%-%-%s?(.*)$')
-          if not line then break end
-          f:write(line, '\n')
-        end
-      end
-      module_file:close()
-    end
-    f:write('\n')
     f:write('- - -\n\n')
+
+    -- Write fields.
+    if module.doc[1].class == 'module' then
+      local fields = module.doc[1].field
+      if fields and #fields > 0 then
+        table.sort(fields)
+        f:write('## Fields\n\n')
+        f:write('- - -\n\n')
+        for _, field in ipairs(fields) do
+          local type, description = fields[field]:match('^(%b())%s*(.+)$')
+          f:write(string_format(FIELD, field, field, type or ''))
+          write_description(f, description or fields[field])
+          f:write('- - -\n\n')
+        end
+        f:write('\n')
+      end
+    end
 
     -- Write functions.
     local funcs = module.functions
@@ -223,7 +218,7 @@ function M.start(doc)
         local tbl = tables[tname]
         f:write(string_format(TABLE, tbl.name, tbl.name))
         write_description(f, tbl.description)
-        write_hashmap(f, 'Fields', FIELD, tbl.field)
+        write_hashmap(f, 'Fields', TFIELD, tbl.field)
         write_list(f, 'Usage', USAGE, tbl.usage)
         write_list(f, 'See also', SEE, tbl.see)
         f:write('- - -\n\n')
@@ -238,6 +233,7 @@ function M.start(doc)
     template.toc, template.main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
     p:close()
     template.toc = template.toc:gsub('(<a.-)%b()(</a>)', '%1%2') -- strip params
+                               :gsub('<code>([^<]+)</code>', '%1') -- sans serif
     f = io_open(M.options.output_dir..'/api/'..name..'.html', 'wb')
     local html = HTML:gsub('%%%(([^)]+)%)', template)
     f:write(html)

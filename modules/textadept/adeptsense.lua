@@ -5,9 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Language autocompletion support for the textadept module.
-module('_M.textadept.adeptsense')]]
-
--- Markdown:
+--
 -- ## Overview
 --
 -- Adeptsense is a form of autocompletion for programming. It has the means to
@@ -142,7 +140,7 @@ module('_M.textadept.adeptsense')]]
 -- in your shell. Since Adeptsense only cares about classes, functions, and
 -- fields, you need to let it know which kind of tag is which. Unfortunately,
 -- Lua support in Ctags is not good at all. Instead, Textadept has a utility
--- (`scripts/adeptsensedoc.lua`) to generate a fake set of tags that is more
+-- (`modules/lua/adeptsensedoc.lua`) to generate a fake set of tags that is more
 -- useful. Functions are tagged `'f'` and should be recognized as such; table
 -- keys are tagged `'t'` and should be recognized as fields; module fields,
 -- `'F'`, should be fields; and modules, `'m'`, should be classes:
@@ -201,7 +199,7 @@ module('_M.textadept.adeptsense')]]
 -- characters for an Adeptsense is sufficient for most static and some dynamic
 -- languages. The rest of this document is devoted to more complex techniques.
 --
--- ### Overriding Adeptsense Functions
+-- ### Fine-Tuning
 --
 -- Sometimes Adeptsense's default behavior is not sufficient. Maybe the
 -- `type_declarations` and `type_assignments` tables used by the
@@ -343,22 +341,16 @@ module('_M.textadept.adeptsense')]]
 -- [`load_ctags()`](#load_ctags) and [`api_files`](#api_files) respectively.
 --
 -- [LuaDoc]: http://keplerproject.github.com/luadoc/
---
--- ### Other Adeptsense Settings
---
--- * `always_show_globals` [bool]
+-- @field always_show_globals (bool)
 --   Include globals in the list of completions offered.
 --   Globals are classes, functions, and fields that do not belong to another
 --   class. They are contained in `completions['']`. The default value is
 --   `true`.
-
---
--- ## Settings
---
--- * `FUNCTIONS` [string]
+-- @field FUNCTIONS (string)
 --   XPM image for Adeptsense functions.
--- * `FIELDS` [string]
+-- @field FIELDS (string)
 --   XPM image for Adeptsense fields.
+module('_M.textadept.adeptsense')]]
 
 local senses = {}
 

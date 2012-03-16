@@ -6,7 +6,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Provides dynamic menus for Textadept.
--- This module should be `require`ed last, after `_M.textadept.keys` since it
+-- This module should be `require`d last, after `_M.textadept.keys` since it
 -- looks up defined key commands to show them in menus.
 module('_M.textadept.menu')]]
 
@@ -279,6 +279,7 @@ end
 --   for setting a menu accelerator. If the menu text is `'separator'`, a menu
 --   separator is created and no action table is required.
 -- @see keys.get_gdk_key
+-- @see rebuild_command_tables
 -- @name set_menubar
 function M.set_menubar(menubar)
   key_shortcuts = {}

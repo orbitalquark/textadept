@@ -5,9 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Handles file-specific settings.
-module('_M.textadept.mime_types')]]
-
--- Markdown:
+--
 -- ## Mime-type Events
 --
 -- * `_G.events.LANGUAGE_MODULE_LOADED`
@@ -16,6 +14,7 @@ module('_M.textadept.mime_types')]]
 --   when Textadept starts.
 --   Arguments:
 --     * `lang`: The language lexer name.
+module('_M.textadept.mime_types')]]
 
 -- Events.
 local events, events_connect = events, events.connect

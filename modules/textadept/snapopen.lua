@@ -5,15 +5,6 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Snapopen for the textadept module.
-module('_M.textadept.snapopen')]]
-
--- Markdown:
--- ## Settings
---
--- * `DEFAULT_DEPTH` [number]
---   Maximum directory depth to search. The default value is `4`.
--- * `MAX` [number]
---   Maximum number of files to list. The default value is `1000`.
 --
 -- ## Examples
 --
@@ -29,8 +20,15 @@ module('_M.textadept.snapopen')]]
 --     snapopen(nil, '!%.lua$')
 --
 --     -- Ignore the project's 'images' folder and HTML pages.
---     snapopen('/path/to/project',
---              { folders = { 'images' }, extensions = { 'html' } }, true)
+--     snapopen('/path/to/project', {
+--                folders = { 'images' },
+--                extensions = { 'html' }
+--              }, true)
+-- @field DEFAULT_DEPTH (number)
+--   Maximum directory depth to search. The default value is `4`.
+-- @field MAX (number)
+--   Maximum number of files to list. The default value is `1000`.
+module('_M.textadept.snapopen')]]
 
 ---
 -- Table of default UTF-8 paths to search.
