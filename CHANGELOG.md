@@ -447,7 +447,7 @@ Changes:
 [documentation]: 7_Modules.html#Getting.Modules
 [official modules]: http://foicica.com/hg
 [Scintilla]: http://scintilla.org
-[easier]: api/lexer.html#Simple.Code.Folding
+[easier]: api/lexer.html#Simple.Folding
 
 ## 3.7 (01 May 2011)
 
