@@ -147,10 +147,11 @@ function M.start(doc)
   write_nav(f, hierarchy)
   f:close()
   local p = io_popen('markdown "'..navfile..'"')
-  template.nav = p:read('*all')
+  local nav = p:read('*all')
   p:close()
 
   -- Write index.html.
+  template.nav = nav
   f = io_open(M.options.output_dir..'/api/index.html', 'wb')
   local html = HTML:gsub('%%%(([^)]+)%)', template)
   f:write(html)
@@ -230,6 +231,7 @@ function M.start(doc)
 
     -- Write HTML.
     template.title = name..' - Textadept API'
+    template.nav = nav:gsub('<a[^>]+>('..name:match('[^%.]+$')..')</a>', '%1')
     local p = io_popen('markdown -f toc -T "'..mdfile..'"')
     template.toc, template.main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
     p:close()
