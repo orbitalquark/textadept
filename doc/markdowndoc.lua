@@ -29,6 +29,7 @@ local HTML = [[
     <head>
       <title>%(title)</title>
       <link rel="stylesheet" href="../style.css" type="text/css" />
+      <link rel="icon" href="../icon.png" type="image/png" />
       <meta charset="utf-8" />
     </head>
     <body>
