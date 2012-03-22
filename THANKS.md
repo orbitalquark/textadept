@@ -13,6 +13,7 @@ Textadept the amazing editor that it is today.
 * Jay Gould
 * Jeff Stone
 * M Rawash
+* Manuel Montenegro
 * Martin Morawetz
 * Neil Hodgson
 * Nils Nordman
