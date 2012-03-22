@@ -291,8 +291,8 @@ keys[not OSX and 'c0' or 'm0'] = utils.reset_zoom
 keys[not OSX and 'cT' or 'mT'] = gui.select_theme
 
 -- Help.
-keys.f1 = { utils.open_webpage, _HOME..'/doc/manual/1_Introduction.html' }
-keys.sf1 = { utils.open_webpage, _HOME..'/doc/index.html' }
+keys.f1 = { utils.open_webpage, _HOME..'/doc/01_Introduction.html' }
+keys.sf1 = { utils.open_webpage, _HOME..'/doc/api/index.html' }
 -- TODO: { gui.dialog, 'ok-msgbox', '--title', 'Textadept'
 --         '--informative-text', _RELEASE, '--no-cancel' }
 
