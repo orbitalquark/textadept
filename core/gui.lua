@@ -122,17 +122,26 @@ end
 --   other view.
 -- @param preferred_view When multiple views exist and the desired buffer is not
 --   open in any of them, open it in this one.
+-- @param sloppy Flag indicating whether or not to not match `filename` to
+--   `buffer.filename` exactly. When `true`, matches `filename` to only the last
+--   part of `buffer.filename` This is useful for run and compile commands which
+--   output relative filenames and paths instead of full ones and it is likely
+--   that the file in question is already open. The default value is `false`.
 -- @name goto_file
-function gui.goto_file(filename, split, preferred_view)
-  if #_VIEWS == 1 and view.buffer.filename ~= filename and split then
+function gui.goto_file(filename, split, preferred_view, sloppy)
+  local patt = not sloppy and '^'..filename..'$' or filename..'$'
+  if #_VIEWS == 1 and split and not (view.buffer.filename or ''):find(patt) then
     view:split()
   else
     local other_view = _VIEWS[preferred_view]
     for i, v in ipairs(_VIEWS) do
-      if v.buffer.filename == filename then gui.goto_view(i) return end
+      if (v.buffer.filename or ''):find(patt) then gui.goto_view(i) return end
       if not other_view and v ~= view then other_view = i end
     end
     if other_view then gui.goto_view(other_view) end
+  end
+  for i, buffer in ipairs(_BUFFERS) do
+    if (buffer.filename or ''):find(patt) then view:goto_buffer(i) return end
   end
   io.open_file(filename)
 end
