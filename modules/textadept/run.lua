@@ -36,6 +36,8 @@ local events, events_connect, events_emit = events, events.connect, events.emit
 local COMPILE_OUTPUT, RUN_OUTPUT = 'compile_output', 'run_output'
 events.COMPILE_OUTPUT, events.RUN_OUTPUT = COMPILE_OUTPUT, RUN_OUTPUT
 
+local preferred_view
+
 ---
 -- Executes the command line parameter and prints the output to Textadept.
 -- @param command The command line string.
@@ -47,6 +49,7 @@ events.COMPILE_OUTPUT, events.RUN_OUTPUT = COMPILE_OUTPUT, RUN_OUTPUT
 -- @param lexer The current lexer.
 -- @name execute
 function M.execute(command, lexer)
+  preferred_view = view
   local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local filedir, filename = '', filepath
   if filepath:find('[/\\]') then
@@ -144,21 +147,16 @@ function goto_error(pos, line_num)
      buffer._type ~= _L['[Error Buffer]'] then
     return
   end
-  local buffer = buffer
   line = buffer:get_line(line_num)
   for _, error_detail in pairs(M.error_detail) do
     local captures = { line:match(error_detail.pattern) }
     if #captures > 0 then
       local utf8_filename = captures[error_detail.filename]
       local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
-      if lfs.attributes(filename) then
-        gui.goto_file(utf8_filename, true)
-        _M.textadept.editing.goto_line(captures[error_detail.line])
-        local msg = captures[error_detail.message]
-        if msg then buffer:call_tip_show(buffer.current_pos, msg) end
-      else
-        error(string.format('"%s" %s', utf8_filename, _L['does not exist']))
-      end
+      gui.goto_file(utf8_filename, true, preferred_view, true)
+      _M.textadept.editing.goto_line(captures[error_detail.line])
+      local msg = captures[error_detail.message]
+      if msg then buffer:call_tip_show(buffer.current_pos, msg) end
       return
     end
   end
