@@ -139,5 +139,5 @@ can add run commands, compile commands, and block quotes manually:
 * [Run/Compile commands][]
 * [Block Quotes][]
 
-[Run/Compile commands]: http://caladbolg.net/textadeptwiki/index.php?n=Main.RunSupplemental
-[Block Quotes]: http://caladbolg.net/textadeptwiki/index.php?n=Main.CommentSupplemental
+[Run/Compile commands]: http://foicica.com/wiki/RunSupplemental
+[Block Quotes]: http://foicica.com/wiki/CommentSupplemental
