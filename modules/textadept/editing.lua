@@ -269,9 +269,11 @@ end
 -- @name goto_line
 function M.goto_line(line)
   if not line then
-    line = tonumber(gui.dialog('standard-inputbox',
+    line = tonumber(gui.dialog('inputbox',
                                '--title', _L['Go To'],
                                '--text', _L['Line Number:'],
+                               '--button1', _L['_OK'],
+                               '--button2', _L['_Cancel'],
                                '--no-newline'):match('%-?%d+$'))
     if not line or line < 0 then return end
   end

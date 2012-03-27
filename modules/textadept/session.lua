@@ -95,7 +95,8 @@ function M.load(filename)
     gui.dialog('msgbox',
                '--title', _L['Session Files Not Found'],
                '--text', _L['The following session files were not found'],
-               '--informative-text', table.concat(not_found, '\n'))
+               '--informative-text', table.concat(not_found, '\n'),
+               '--button1', _L['_OK'])
   end
   return true
 end
@@ -177,6 +178,8 @@ end
 function M.prompt_load()
   local utf8_filename = gui.dialog('fileselect',
                                    '--title', _L['Load Session'],
+                                   '--button1', _L['_Open'],
+                                   '--button2', _L['_Cancel'],
                                    '--with-directory',
                                    M.DEFAULT_SESSION:match('.+[/\\]') or '',
                                    '--with-file',
@@ -191,6 +194,8 @@ end
 function M.prompt_save()
   local utf8_filename = gui.dialog('filesave',
                                    '--title', _L['Save Session'],
+                                   '--button1', _L['_Save'],
+                                   '--button2', _L['_Cancel'],
                                    '--with-directory',
                                    M.DEFAULT_SESSION:match('.+[/\\]') or '',
                                    '--with-file',

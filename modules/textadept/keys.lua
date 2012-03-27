@@ -294,7 +294,8 @@ keys[not OSX and 'cT' or 'mT'] = gui.select_theme
 keys.f1 = { utils.open_webpage, _HOME..'/doc/01_Introduction.html' }
 keys.sf1 = { utils.open_webpage, _HOME..'/doc/api/index.html' }
 -- TODO: { gui.dialog, 'ok-msgbox', '--title', 'Textadept'
---         '--informative-text', _RELEASE, '--no-cancel' }
+--         '--informative-text', _RELEASE, '--button1', _L['_OK'],
+--         '--no-cancel' }
 
 -- Movement commands.
 if OSX then

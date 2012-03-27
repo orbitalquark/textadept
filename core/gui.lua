@@ -82,8 +82,8 @@ function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
 function gui.filteredlist(title, columns, items, int_return, ...)
   local out = gui.dialog('filteredlist',
                          '--title', title,
-                         '--button1', 'gtk-ok',
-                         '--button2', 'gtk-cancel',
+                         '--button1', _L['_OK'],
+                         '--button2', _L['_Cancel'],
                          '--no-newline',
                          int_return and '' or '--string-output',
                          '--columns', columns,
@@ -91,7 +91,7 @@ function gui.filteredlist(title, columns, items, int_return, ...)
                          ...)
   local patt = int_return and '^(%-?%d+)\n(%d+)$' or '^([^\n]+)\n(.+)$'
   local response, value = out:match(patt)
-  if response == (int_return and '1' or 'gtk-ok') then
+  if response == (int_return and '1' or _L['_OK']) then
     return not int_return and value or tonumber(value)
   end
 end
@@ -409,7 +409,7 @@ events_connect(events.QUIT, function()
                                  '--text',
                                  _L['The following buffers are unsaved:'],
                                  '--informative-text', table.concat(list, '\n'),
-                                 '--button1', 'gtk-cancel',
+                                 '--button1', _L['_Cancel'],
                                  '--button2', _L['Quit _without saving'],
                                  '--no-newline') == '2'
 end)
