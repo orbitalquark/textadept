@@ -106,7 +106,7 @@ For now, user-created modules are obtained from the [wiki][].
 
 [here]: http://foicica.com/hg
 [Mercurial]: http://mercurial.selenic.com
-[wiki]: http://caladbolg.net/textadeptwiki
+[wiki]: http://foicica.com/wiki/textadept
 
 ## Installing Modules
 

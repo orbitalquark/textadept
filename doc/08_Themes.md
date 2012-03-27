@@ -85,4 +85,4 @@ Textadept. Instead, use [GTK Resource files][]. The `GtkWindow` name is
 For now, user-created themes are obtained from the [wiki][]. The classic `dark`,
 `light`, and `scite` themes prior to version 4.3 have been moved there.
 
-[wiki]: http://caladbolg.net/textadeptwiki
+[wiki]: http://foicica.com/wiki/textadept
