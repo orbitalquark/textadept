@@ -109,6 +109,8 @@ function io.open_file(utf8_filenames)
   utf8_filenames = utf8_filenames or
                    gui.dialog('fileselect',
                               '--title', _L['Open'],
+                              '--button1', _L['_Open'],
+                              '--button2', _L['_Cancel'],
                               '--select-multiple',
                               '--with-directory',
                               (buffer.filename or ''):match('.+[/\\]') or '')
@@ -238,6 +240,8 @@ local function save_as(buffer, utf8_filename)
   if not utf8_filename then
     utf8_filename = gui.dialog('filesave',
                                '--title', _L['Save'],
+                               '--button1', _L['_Save'],
+                               '--button2', _L['_Cancel'],
                                '--with-directory',
                                (buffer.filename or ''):match('.+[/\\]') or '',
                                '--with-file',
@@ -274,7 +278,7 @@ local function close(buffer)
                                  '--title', _L['Close without saving?'],
                                  '--text', _L['There are unsaved changes in'],
                                  '--informative-text', filename,
-                                 '--button1', 'gtk-cancel',
+                                 '--button1', _L['_Cancel'],
                                  '--button2', _L['Close _without saving'],
                                  '--no-newline') ~= '2' then
     return false
@@ -315,6 +319,8 @@ local function update_modified_file()
                   '--informative-text',
                   ('"%s"\n%s'):format(utf8_filename,
                                       _L['has been modified. Reload it?']),
+                  '--button1', _L['_Yes'],
+                  '--button2', _L['_No'],
                   '--no-cancel',
                   '--no-newline') == '1' then
       buffer:reload()

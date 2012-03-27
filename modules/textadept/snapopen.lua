@@ -154,7 +154,8 @@ function M.open(utf8_paths, filter, exclude_PATHS, exclude_FILTER, depth)
                '--informative-text',
                string.format('%d %s %d', M.MAX,
                              _L['files or more were found. Showing the first'],
-                             M.MAX))
+                             M.MAX),
+               '--button1', _L['_OK'])
   end
   local utf8_filenames = gui.filteredlist(_L['Open'], _L['File'], list, false,
                                           '--select-multiple') or ''
