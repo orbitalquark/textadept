@@ -1575,6 +1575,7 @@ style_underline	_	0;"	F	class:buffer
 style_variable	_	0;"	F	class:lexer
 style_visible	_	0;"	F	class:buffer
 style_weight	_	0;"	F	class:buffer
+style_whitespace	_	0;"	F	class:lexer
 sub	_	0;"	f	class:string
 swap_main_anchor_caret	_	0;"	f	class:buffer
 switch_buffer	_	0;"	f	class:gui
