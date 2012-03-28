@@ -187,8 +187,8 @@ luadoc: ../modules ../core ../lexers/lexer.lua
 	cd ../doc && $(LUADOC) -d . -t . --doclet markdowndoc $^
 adeptsense: ../modules ../core ../lexers/lexer.lua
 	cd ../modules && $(LUADOC) -d lua --doclet lua/adeptsensedoc $^
-doxygen: Doxyfile
-	cd ../ && doxygen $<
+doxygen: ../Doxyfile
+	doxygen $<
 cleandoc:
 	rm -f ../doc/*.html
 	rm -rf ../doc/api ../doc/doxygen
@@ -224,8 +224,8 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
   ../$(TEXTADEPTMAC) ../$(TEXTADEPTLPNG12) doc
 	hg archive $(RELEASEDIR32)
 	rm $(RELEASEDIR32)/.hg*
-	cp -r ../doc $(RELEASEDIR32)
-	hg clone http://scintillua.googlecode.com/hg/ tmp
+	cp -rL ../doc $(RELEASEDIR32)
+	hg clone http://foicica.com/hg/scintillua tmp
 	mv tmp/lexers $(RELEASEDIR32)
 	rm -r tmp
 	# Linux x64_64
