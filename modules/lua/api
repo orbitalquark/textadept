@@ -906,7 +906,7 @@ cpp _M.cpp (module)\nThe cpp module.\nIt provides utilities for editing C/C++ co
 create coroutine.create(f)\nCreates a new coroutine, with body `f`. `f` must be a Lua\nfunction. Returns this new coroutine, an object with type `"thread"`.
 css _G.keys.css (table)\nContainer for CSS-specific key commands.
 css _G.snippets.css (table)\nContainer for CSS-specific snippets.
-css _M.css (module)\nThe css module.\nIt provides utilities for editing CSS code.\nUser tags are loaded from _USERHOME/modules/css/tags and user apis are loaded\nfrom _USERHOME/modules/css/api.
+css _M.css (module)\nThe css module.\nIt provides utilities for editing CSS code.\nUser tags are loaded from `_USERHOME/modules/css/tags` and user apis are\nloaded from `_USERHOME/modules/css/api`.
 ctags_kinds _M.textadept.adeptsense.ctags_kinds (table)\nContains a map of ctags kinds to Adeptsense kinds.\nRecognized kinds are `'functions'`, `'fields'`, and `'classes'`. Classes are\nquite simply containers for functions and fields so Lua modules would count\nas classes. Any other kinds will be passed to `handle_ctag()` for\nuser-defined handling.\n@see handle_ctag
 current_pos buffer.current_pos (number)\nThe position of the caret.\nWhen setting, the caret is not scrolled into view.
 currentdir lfs.currentdir()\nReturns a string with the current working directory or nil plus an error\nstring.
@@ -1083,7 +1083,7 @@ hotspot_single_line buffer.hotspot_single_line (bool)\nWhether hotspots are limi
 huge math.huge (number)\nThe value `HUGE_VAL`, a value larger than or equal to any other numerical\nvalue.
 hypertext _G.keys.hypertext (table)\nContainer for HTML-specific key commands.
 hypertext _G.snippets.hypertext (table)\nContainer for HTML-specific snippets.
-hypertext _M.hypertext (module)\nThe hypertext module.\nIt provides utilities for editing HTML code.\nUser tags are loaded from _USERHOME/modules/hypertext/tags and user apis are\nloaded from _USERHOME/modules/hypertext/api.
+hypertext _M.hypertext (module)\nThe hypertext module.\nIt provides utilities for editing HTML code.\nUser tags are loaded from `_USERHOME/modules/hypertext/tags` and user apis\nare loaded from `_USERHOME/modules/hypertext/api`.
 iconv string.iconv(text, to, from)\nConverts a string from one character set to another using iconv.\nValid character sets are ones GLib's `g_convert()` accepts, typically GNU\niconv's character sets.\n@param text The text to convert.\n@param to The character set to convert to.\n@param from The character set to convert from.
 in_files gui.find.in_files (bool)\nSearch for the text in a list of files.
 in_files_label_text gui.find.in_files_label_text (string, Write-only)\nThe text of the 'In files' label.\nThis is primarily used for localization.
@@ -1111,7 +1111,7 @@ io _G.io (module)\nLua io module.
 ipairs _G.ipairs(t)\nIf `t` has a metamethod `__ipairs`, calls it with `t` as argument and returns\nthe first three results from the call.\n\nOtherwise, returns three values: an iterator function, the table `t`, and 0,\nso that the construction\n\n  for i,v in ipairs(t) do *body* end\n\nwill iterate over the pairs (`1,t[1]`), (`2,t[2]`), ..., up to the\nfirst integer key absent from the table.
 java _G.keys.java (table)\nContainer for Java-specific key commands.
 java _G.snippets.java (table)\nContainer for Java-specific snippets.
-java _M.java (module)\nThe java module.\nIt provides utilities for editing Java code.\nUser tags are loaded from _USERHOME/modules/java/tags and user apis are\nloaded from _USERHOME/modules/java/api.
+java _M.java (module)\nThe java module.\nIt provides utilities for editing Java code.\nUser tags are loaded from `_USERHOME/modules/java/tags` and user apis are\nloaded from `_USERHOME/modules/java/api`.
 join_lines _M.textadept.editing.join_lines()\nJoins the currently selected lines.\nIf no lines are selected, joins the current line with the line below.
 keys _G.keys (module)\nManages key commands in Textadept.
 keys _M.textadept.keys (module)\nDefines key commands for Textadept.\nThis set of key commands is pretty standard among other text editors.\nThis module, should be `require`d last, but before `_M.textadept.menu`.
@@ -1277,7 +1277,7 @@ patterns _M.textadept.mime_types.patterns (table)\nFirst-line patterns and their
 pcall _G.pcall(f [, arg1, ···])\nCalls function `f` with the given arguments in *protected mode*. This\nmeans that any error inside `f` is not propagated; instead, `pcall` catches\nthe error and returns a status code. Its first result is the status code (a\nboolean), which is true if the call succeeds without errors. In such case,\n`pcall` also returns all results from the call, after this first result. In\ncase of any error, `pcall` returns false plus the error message.
 php _G.keys.php (table)\nContainer for PHP-specific key commands.
 php _G.snippets.php (table)\nContainer for PHP-specific snippets.
-php _M.php (module)\nThe php module.\nIt provides utilities for editing PHP code.\nUser tags are loaded from _USERHOME/modules/php/tags and user apis are loaded\nfrom _USERHOME/modules/php/api.
+php _M.php (module)\nThe php module.\nIt provides utilities for editing PHP code.\nUser tags are loaded from `_USERHOME/modules/php/tags` and user apis are\nloaded from `_USERHOME/modules/php/api`.
 pi math.pi (number)\nThe value of 'π'.
 point_x_from_position buffer.point_x_from_position(buffer, pos)\nRetrieve the x value of the point in the window where a position is\ndisplayed.\n@param buffer The global buffer.\n@param pos The position.\n@return number
 point_y_from_position buffer.point_y_from_position(buffer, pos)\nRetrieve the y value of the point in the window where a position is\ndisplayed.\n@param buffer The global buffer.\n@param pos The position.\n@return number
@@ -1309,7 +1309,7 @@ quit _G.quit()\nQuits Textadept.
 rad math.rad(x)\nReturns the angle `x` (given in degrees) in radians.
 rails _G.keys.rails (table)\nContainer for Rails-specific key commands.
 rails _G.snippets.rails (table)\nContainer for Rails-specific snippets.
-rails _M.rails (module)\nThe rails module.\nIt provides utilities for editing Ruby on Rails code.\nUser tags are loaded from _USERHOME/modules/rails/tags and user apis are\nloaded from _USERHOME/modules/rails/api.
+rails _M.rails (module)\nThe rails module.\nIt provides utilities for editing Ruby on Rails code.\nUser tags are loaded from `_USERHOME/modules/rails/tags` and user apis are\nloaded from `_USERHOME/modules/rails/api`.
 random math.random([m [, n]])\nThis function is an interface to the simple pseudo-random generator\nfunction `rand` provided by Standard C. (No guarantees can be given for its\nstatistical properties.)\n\nWhen called without arguments, returns a uniform pseudo-random real\nnumber in the range [0,1). When called with an integer number `m`,\n`math.random` returns a uniform pseudo-random integer in the range [1, m].\nWhen called with two integer numbers `m` and `n`, `math.random` returns a\nuniform pseudo-random integer in the range [m, n].
 randomseed math.randomseed(x)\nSets `x` as the "seed" for the pseudo-random generator: equal seeds\nproduce equal sequences of numbers.
 rawequal _G.rawequal(v1, v2)\nChecks whether `v1` is equal to `v2`, without invoking any\nmetamethod. Returns a boolean.
@@ -1354,14 +1354,14 @@ rgba_image_height buffer.rgba_image_height (number)\nThe height for future RGBA 
 rgba_image_width buffer.rgba_image_width (number)\nThe width for future RGBA image data.
 rhtml _G.keys.rhtml (table)\nContainer for RHTML-specific key commands.
 rhtml _G.snippets.rhtml (table)\nContainer for RHTML-specific snippets.
-rhtml _M.rhtml (module)\nThe RHTML module.\nIt provides utilities for editing RHTML.\nUser tags are loaded from _USERHOME/modules/rhtml/tags and user apis are\nloaded from _USERHOME/modules/rhtml/api.
+rhtml _M.rhtml (module)\nThe RHTML module.\nIt provides utilities for editing RHTML.\nUser tags are loaded from `_USERHOME/modules/rhtml/tags` and user apis are\nloaded from `_USERHOME/modules/rhtml/api`.
 rmdir lfs.rmdir(dirname)\nRemoves an existing directory. The argument is the name of the directory.\n\nReturns true if the operation was successful; in case of error, it returns\nnil plus an error string.
 rotate_selection buffer.rotate_selection(buffer)\nSet the main selection to the next selection.\n@param buffer The global buffer.
 rrotate bit32.rrotate(x, disp)\nReturns the number `x` rotated `disp` bits to the right. The number `disp`\nmay be any representable integer.\n\nFor any valid displacement, the following identity holds:\n\n  assert(bit32.rrotate(x, disp) == bit32.rrotate(x, disp % 32))\n\nIn particular, negative displacements rotate to the left.
 rshift bit32.rshift(x, disp)\nReturns the number `x` shifted `disp` bits to the right. The number `disp`\nmay be any representable integer. Negative displacements shift to the left.\nIn any direction, vacant bits are filled with zeros. In particular,\ndisplacements with absolute values higher than 31 result in zero (all bits\nare shifted out).\n\nFor positive displacements, the following equality holds:\n\n  assert(bit32.rshift(b, disp) == math.floor(b % 2^32 / 2^disp))\n\nThis shift operation is what is called logical shift.
 ruby _G.keys.ruby (table)\nContainer for Ruby-specific key commands.
 ruby _G.snippets.ruby (table)\nContainer for Ruby-specific snippets.
-ruby _M.ruby (module)\nThe ruby module.\nIt provides utilities for editing Ruby code.\nUser tags are loaded from _USERHOME/modules/ruby/tags and user apis are\nloaded from _USERHOME/modules/ruby/api.
+ruby _M.ruby (module)\nThe ruby module.\nIt provides utilities for editing Ruby code.\nUser tags are loaded from `_USERHOME/modules/ruby/tags` and user apis are\nloaded from `_USERHOME/modules/ruby/api`.
 run _M.textadept.run (module)\nModule for running/executing source files.\nTypically, language-specific modules populate the `compile_command`,\n`run_command`, and `error_detail` tables for a particular language's file\nextension.
 run _M.textadept.run.run()\nRuns/executes the file as specified by its extension in the `run_command`\ntable.\n@see run_command
 run_command _M.textadept.run.run_command (table)\nFile extensions and their associated 'go' actions.\nEach key is a file extension whose value is either a command line string to\nexecute or a function returning one.\nThis table is typically populated by language-specific modules.
@@ -1409,14 +1409,14 @@ selection_start buffer.selection_start (number)\nThe position that starts the se
 selections buffer.selections (number, Read-only)\nThe number of selections currently active.
 self _M.textadept.adeptsense.syntax.self (table)\nThe language's syntax-equivalent of `self`. Default is `'self'`.
 sense _M.cpp.sense\nThe C/C++ Adeptsense.
-sense _M.css.sense\n: The CSS Adeptsense.
-sense _M.hypertext.sense\n: The HTML Adeptsense.
+sense _M.css.sense\nThe CSS Adeptsense.
+sense _M.hypertext.sense\nThe HTML Adeptsense.
 sense _M.java.sense\nThe Java Adeptsense.
 sense _M.lua.sense\nThe Lua Adeptsense.
-sense _M.php.sense\n: The PHP Adeptsense.
-sense _M.rails.sense\n: The Rails Adeptsense.
-sense _M.rhtml.sense\n: The RHTML Adeptsense.
-sense _M.ruby.sense\n: The Ruby Adeptsense.
+sense _M.php.sense\nThe PHP Adeptsense.
+sense _M.rails.sense\nThe Rails Adeptsense.
+sense _M.rhtml.sense\nThe RHTML Adeptsense.
+sense _M.ruby.sense\nThe Ruby Adeptsense.
 session _M.textadept.session (module)\nSession support for the textadept module.
 set_buffer_properties _M.cpp.set_buffer_properties()\nSets default buffer properties for C/C++ files.
 set_buffer_properties _M.css.set_buffer_properties()\nSets default buffer properties for CSS files.
@@ -1466,7 +1466,7 @@ show_apidoc _M.textadept.adeptsense.show_apidoc(sense)\nShows a calltip with API
 show_documentation _M.textadept.adeptsense.show_documentation()\nShows API documentation for the symbol at the current position based on the\ncurrent lexer's Adeptsense.\nThis should be called by key commands and menus instead of `show_apidoc()`.
 show_lines buffer.show_lines(buffer, start_line, end_line)\nMake a range of lines visible.\nThis has no effect on fold levels or fold flags. `start_line` can not be\nhidden.\n@param buffer The global buffer.\n@param start_line The start line.\n@param end_line The end line.
 sin math.sin(x)\nReturns the sine of `x` (assumed to be in radians).
-singular _M.rails.singular\n: A map of plural controller names to their singulars. Add\nkey-value pairs to this if singularize() is incorrectly\nconverting your plural controller name to its singular model name.
+singular _M.rails.singular\nA map of plural controller names to their singulars. Add key-value pairs to\nthis if singularize() is incorrectly converting your plural\ncontroller name to its singular model name.
 sinh math.sinh(x)\nReturns the hyperbolic sine of `x`.
 size gui.size (table)\nThe size of the Textadept window (`{ width, height }`).
 size view.size (number)\nThe position of the split resizer (if this view is part of a split view).
