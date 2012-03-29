@@ -4,6 +4,55 @@
 
 [Atom Feed]: feed
 
+## 5.2 (01 Apr 2012)
+
+Download:
+
+* [Textadept 5.2 -- Win32][]
+* [Textadept 5.2 -- Mac OSX Intel 10.5+][]
+* [Textadept 5.2 -- Linux][]
+* [Textadept 5.2 -- Linux x86_64][]
+* [Textadept 5.2 -- Source][]
+* [Textadept 5.2 -- Modules][]
+
+Bugfixes:
+
+* Fixed LuaDoc for [`buffer:get_lexer()`][].
+* Fixed bug with relative paths from command line files.
+* [`buffer:get_lexer(true)`][] is used more often when it should be.
+* Improved message double-clicking behavior for run and compile commands.
+
+Changes:
+
+* [`_M.set_buffer_properties()`][] is now optional for language modules.
+* Added keypad keys to [`keys.KEYSYMS`][].
+* [`_G.timeout()`][] accepts fractional seconds.
+* Replaced `scripts/update_doc` with `src/Makefile` targets.
+* New Manual and LuaDoc HTML page formatting.
+* [`_M.textadept.editing.autocomplete_word()`][] accepts default words.
+* Added documentation on [generating LuaDoc][] and [Lua Adeptsense][].
+* Moved `Markdown:` comments into LuaDoc.
+* Added Spanish and German translations.
+* Use [GTK][] 2.24 on Windows.
+* Updated to [Scintilla][] 3.0.4.
+
+[Textadept 5.2 -- Win32]: download/textadept_5.2.win32.zip
+[Textadept 5.2 -- Mac OSX Intel 10.5+]: download/textadept_5.2.osx.zip
+[Textadept 5.2 -- Linux]: download/textadept_5.2.tgz
+[Textadept 5.2 -- Linux x86_64]: download/textadept_5.2.x86_64.tgz
+[Textadept 5.2 -- Source]: download/textadept_5.2.src.zip
+[Textadept 5.2 -- Modules]: download/textadept_5.2.modules.zip
+[`buffer:get_lexer()`]: api/buffer.html#buffer.get_lexer
+[`buffer:get_lexer(true)`]: api/buffer.html#buffer.get_lexer
+[`_M.set_buffer_properties()`]: api/_M.html#Buffer.Properties
+[`keys.KEYSYMS`]: api/keys.html#KEYSYMS
+[`_G.timeout()`]: api/_G.html#timeout
+[`_M.textadept.editing.autocomplete_word()`]: api/_M.textadept.editing.html#autocomplete_word
+[generating LuaDoc]: 11_Scripting.html#Generating.LuaDoc
+[Lua Adeptsense]: api/_M.textadept.adeptsense.html#Generating.Lua.Adeptsense
+[GTK]: http://gtk.org
+[Scintilla]: http://scintilla.org
+
 ## 5.1 (01 Mar 2012)
 
 Download:
