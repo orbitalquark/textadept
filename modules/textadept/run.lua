@@ -68,7 +68,7 @@ function M.execute(command, lexer)
     events_emit(COMPILE_OUTPUT, lexer, line:iconv('UTF-8', _CHARSET))
   end
   local ok, status, code = p:close()
-  if ok then events_emit(COMPILE_OUTPUT, lexer, status..': '..code) end
+  if ok and code then events_emit(COMPILE_OUTPUT, lexer, status..': '..code) end
   lfs.chdir(current_dir)
 end
 
