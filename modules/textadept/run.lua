@@ -77,10 +77,47 @@ end
 -- @param lexer The current lexer.
 local function command(cmd_table, lexer)
   if not buffer.filename then return end
+  buffer:annotation_clear_all()
   buffer:save()
   local action = cmd_table[buffer.filename:match('[^.]+$')]
   if not action then return end
   M.execute(type(action) == 'function' and action() or action, lexer)
+end
+
+-- Parses the given message for an error description and returns a table of the
+-- error's details.
+-- @param message The message to parse for errors.
+-- @see error_detail
+local function get_error_details(message)
+  for _, error_detail in pairs(M.error_detail) do
+    local captures = { message:match(error_detail.pattern) }
+    if #captures > 0 then
+      local details = {}
+      for detail, i in pairs(error_detail) do details[detail] = captures[i] end
+      return details
+    end
+  end
+  return nil
+end
+
+-- Prints the output from a run or compile command.
+-- If the output is an error message, an annotation is shown in the source file
+-- if the file is currently open in another view.
+-- @param lexer The current lexer.
+-- @param output The output to print.
+local function print_output(lexer, output)
+  gui.print(output)
+  local error_details = get_error_details(output)
+  if not error_details or not error_details.message then return end
+  for i = 1, #_VIEWS do
+    local filename = _VIEWS[i].buffer.filename
+    if filename and filename:find(error_details.filename..'$') then
+      gui.goto_view(i)
+      buffer:annotation_set_text(error_details.line - 1, error_details.message)
+      buffer.annotation_style[error_details.line - 1] = 8 -- error_details
+      return
+    end
+  end
 end
 
 ---
@@ -98,7 +135,7 @@ M.compile_command = {}
 -- @see compile_command
 -- @name compile
 function M.compile() command(M.compile_command, buffer:get_lexer()) end
-events_connect(COMPILE_OUTPUT, function(lexer, output) gui.print(output) end)
+events_connect(COMPILE_OUTPUT, print_output)
 
 ---
 -- File extensions and their associated 'go' actions.
@@ -115,7 +152,7 @@ M.run_command = {}
 -- @see run_command
 -- @name run
 function M.run() command(M.run_command, buffer:get_lexer()) end
-events_connect(RUN_OUTPUT, function(lexer, output) gui.print(output) end)
+events_connect(RUN_OUTPUT, print_output)
 
 ---
 -- A table of error string details.
@@ -147,18 +184,14 @@ function goto_error(pos, line_num)
      buffer._type ~= _L['[Error Buffer]'] then
     return
   end
-  line = buffer:get_line(line_num)
-  for _, error_detail in pairs(M.error_detail) do
-    local captures = { line:match(error_detail.pattern) }
-    if #captures > 0 then
-      local utf8_filename = captures[error_detail.filename]
-      local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
-      gui.goto_file(utf8_filename, true, preferred_view, true)
-      _M.textadept.editing.goto_line(captures[error_detail.line])
-      local msg = captures[error_detail.message]
-      if msg then buffer:call_tip_show(buffer.current_pos, msg) end
-      return
-    end
+  local error_details = get_error_details(buffer:get_line(line_num))
+  if not error_details then return end
+  gui.goto_file(error_details.filename, true, preferred_view, true)
+  local line, message = error_details.line, error_details.message
+  buffer:goto_line(line - 1)
+  if message then
+    buffer:annotation_set_text(line - 1, message)
+    buffer.annotation_style[line - 1] = 8 -- error
   end
 end
 events_connect(events.DOUBLE_CLICK, goto_error)
