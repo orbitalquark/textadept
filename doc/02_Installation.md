@@ -3,15 +3,21 @@
 ## Requirements
 
 In its bid for minimalism, Textadept also needs very little to run. In fact, the
-only thing it needs is [GTK+ 2.0][] >= 2.16 on Linux systems. GTK is already
+only thing it needs is [GTK+][] >= 2.18 on Linux systems. GTK is already
 included in Windows and Mac OSX packages. Textadept also has its own version of
 Lua.
 
-Note: for Win32 and Mac OSX, more than 3/4 of the download and unpackaged
-application sizes are due to GTK, the cross-platform GUI toolkit Textadept uses.
-Textadept itself is much smaller.
+Notes:
 
-[GTK+ 2.0]: http://gtk.org
+* The Linux binaries provided require GLib >= 2.28 to support single-instance
+  functionality. You can compile Textadept with earlier versions of GLib down to
+  2.22. For reference, Ubuntu 11.04, Debian Wheezy, Fedora 15, and openSUSE 11.4
+  support GLib 2.28 or higher.
+* For Win32 and Mac OSX, more than 3/4 of the download and unpackaged
+  application sizes are due to GTK+, the cross-platform GUI toolkit Textadept
+  uses. Textadept itself is much smaller.
+
+[GTK+]: http://gtk.org
 
 ### Linux
 
@@ -49,20 +55,51 @@ not need to have administrator privileges.
 
 ### Linux
 
-Unpack the archive anywhere. Run Textadept by running
-`/path/to/textadept_VERSION/textadept` from the terminal. You can also create a
-symlink to the executable in your `PATH` (e.g. `/usr/bin`) or make a GNOME, KDE,
-XFCE, etc. button or menu launcher.
+Unpack the archive anywhere.
 
 If you downloaded the set of language-specific modules, unpack it where you
 unpacked the Textadept archive. The modules will be contained in
 `/path/to/textadept_VERSION/modules/`.
 
+### Mac OSX
+
+Unpack the archive and move `Textadept.app` to your user or system
+`Applications` directory like any other Mac OSX application. There is also a
+`ta` script for launching Textadept from the command line that you can put in
+your `PATH`, but this is optional.
+
+If you downloaded the set of language-specific modules, unpack it, right-click
+`Textadept.app`, select `Show Package Contents`, navigate to
+`Contents/Resources/modules`, and copy the unpacked modules there.
+
+### Windows
+
+Unpack the archive anywhere.
+
+If you downloaded the set of language-specific modules, unpack it where you
+unpacked the Textadept archive. The modules will be contained in
+`textadept_VERSION\modules\`.
+
+## Running
+
+### Linux
+
+Run Textadept by running `/path/to/textadept_VERSION/textadept` from the
+terminal. You can also create a symlink to the executable in your `PATH` (e.g.
+`/usr/bin`) or make a GNOME, KDE, XFCE, etc. button or menu launcher.
+
+There is also a `textadeptjit` executable for running Textadept with [LuaJIT][].
+Please note there may be [compatibility issues][]. The `textadept` executable is
+recommended.
+
+[LuaJIT]: http://luajit.org
+[compatibility issues]: 11_Scripting.html#LuaJIT
+
 #### Problems
 
 It is difficult to provide a single binary that runs on all Linux platforms
 since the versions of software installed vary widely from distribution to
-distribution. Because the Linux version of Textadept uses the version of GTK
+distribution. Because the Linux version of Textadept uses the version of GTK+
 installed on your system, an error like: `error while loading shared  libraries:
 <lib>: cannot open shared object file: No such file or directory` may occur when
 trying to run the program.
@@ -81,13 +118,16 @@ actually quite painless even though it requires recompiling Textadept. See the
 
 ### Mac OSX
 
-Unpack the archive and move `Textadept.app` to your user or system
-`Applications` directory like any other Mac OSX application. Run Textadept by
-double-clicking `Textadept.app`.
+Run Textadept by double-clicking `Textadept.app`.
 
-If you downloaded the set of language-specific modules, unpack it, right-click
-`Textadept.app`, select `Show Package Contents`, navigate to
-`Contents/Resources/modules`, and copy the unpacked modules there.
+`Textadept.app` also contains an executable for running Textadept with
+[LuaJIT][]. You can enable it by setting a `TEXTADEPTJIT`
+[environment variable](#Environment.Variables) or using `export TEXTADEPTJIT=1`
+in the terminal. Please note there may be [compatibility issues][]. The
+non-LuaJIT executable is recommended.
+
+[LuaJIT]: http://luajit.org
+[compatibility issues]: 11_Scripting.html#LuaJIT
 
 #### Environment Variables
 
@@ -104,13 +144,28 @@ effect.
 
 ### Windows
 
-Unpack the archive anywhere. Run Textadept by double-clicking `textadept.exe`.
-You can also create shortcuts to the executable in your Start Menu, Quick Launch
-toolbar, Desktop, etc.
+Run Textadept by double-clicking `textadept.exe`. You can also create shortcuts
+to the executable in your Start Menu, Quick Launch toolbar, Desktop, etc.
 
-If you downloaded the set of language-specific modules, unpack it where you
-unpacked the Textadept archive. The modules will be contained in
-`textadept_VERSION\modules\`.
+There is also a `textadeptjit.exe` executable for running Textadept with
+[LuaJIT][]. Please note there may be [compatibility issues][]. The
+`textadept.exe` executable is recommended.
+
+[LuaJIT]: http://luajit.org
+[compatibility issues]: 11_Scripting.html#LuaJIT
+
+## Single Instance
+
+Textadept is a single-instance application on Linux, BSD, and Mac OSX. This
+means that after Textadept is opened, running `textadept file.ext`
+(`ta file.ext` on Mac OSX) from the command line or opening a file with
+Textadept from a file manager will open `file.ext` in the already open instance
+of Textadept. You can override this and open the file in a new instance by
+passing a `-f` or `--force` switch to Textadept: `textadept -f file.ext`
+(`ta -f file.ext`). When the force switch is not present, files will be opened
+in the original Textadept instance, regardless of how many instances are open.
+
+Single instance is not supported on Windows.
 
 ![Linux](images/linux.png)
 &nbsp;&nbsp;
