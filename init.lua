@@ -9,4 +9,4 @@ package.path = table.concat({
 
 if not user_dofile('init.lua') then require 'textadept' end
 
-if not RESETTING then args.process() end
+if not RESETTING then args.process(arg) end

@@ -29,16 +29,6 @@
 #define SS(view, m, w, l) scintilla_send_message(SCINTILLA(view), m, w, l)
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
 
-// Defines for different GTK versions.
-#if !(GTK_CHECK_VERSION(2,18,0) || GTK_CHECK_VERSION(3,0,0))
-#define gtk_widget_set_can_default(w,_) GTK_WIDGET_SET_FLAGS(w, GTK_CAN_DEFAULT)
-#define gtk_widget_set_can_focus(w,_) GTK_WIDGET_UNSET_FLAGS(w, GTK_CAN_FOCUS)
-#define gtk_widget_get_allocation(e, a) \
-  ((a)->width = e->allocation.width, (a)->height = e->allocation.height)
-#define gtk_widget_has_focus GTK_WIDGET_HAS_FOCUS
-#define gtk_widget_get_visible GTK_WIDGET_VISIBLE
-#define gtk_widget_get_window(w) w->window
-#endif
 #if GTK_CHECK_VERSION(3,0,0)
 #define gtk_statusbar_set_has_resize_grip(_,__)
 #define gtk_combo_box_entry_new_with_model(m,_) \
@@ -65,8 +55,11 @@ static gboolean s_buttonpress(GtkWidget *, GdkEventButton *, gpointer);
 static gboolean w_focus(GtkWidget *, GdkEventFocus *, gpointer);
 static gboolean w_keypress(GtkWidget *, GdkEventKey *, gpointer);
 static gboolean w_exit(GtkWidget *, GdkEventAny *, gpointer);
+#if GLIB_CHECK_VERSION(2,28,0)
+static int a_command_line(GApplication *, GApplicationCommandLine *, gpointer);
+#endif
 #if __OSX__
-GtkOSXApplication *app;
+GtkOSXApplication *osxapp;
 #define app_signal(a, s, c) g_signal_connect(a, s, G_CALLBACK(c), 0)
 static gboolean w_open_osx(GtkOSXApplication *, char *, gpointer);
 static gboolean w_exit_osx(GtkOSXApplication *, gpointer);
@@ -138,18 +131,22 @@ static int lbuf_property(lua_State *),
 /******************************************************************************/
 
 /**
- * Runs Textadept in Linux or Mac.
- * Inits the Lua state, creates the user interface, and then runs core/init.lua
- * followed by init.lua.
+ * Runs Textadept.
+ * Initializes the Lua state, creates the user interface, and then runs
+ * `core/init.lua` followed by `init.lua`.
  * @param argc The number of command line params.
  * @param argv The array of command line params.
  */
 int main(int argc, char **argv) {
   gtk_init(&argc, &argv);
+
 #if !(__WIN32__ || __OSX__ || __BSD__)
   textadept_home = g_file_read_link("/proc/self/exe", NULL);
+#elif __WIN32__
+  textadept_home = malloc(FILENAME_MAX);
+  GetModuleFileName(0, textadept_home, FILENAME_MAX);
 #elif __OSX__
-  app = g_object_new(GTK_TYPE_OSX_APPLICATION, NULL);
+  osxapp = g_object_new(GTK_TYPE_OSX_APPLICATION, NULL);
   char *path = quartz_application_get_resource_path();
   textadept_home = g_filename_from_utf8((const char *)path, -1, NULL, NULL,
                                         NULL);
@@ -164,13 +161,36 @@ int main(int argc, char **argv) {
   char *last_slash = strrchr(textadept_home, G_DIR_SEPARATOR);
   if (last_slash) *last_slash = '\0';
 #endif
+
+#if GLIB_CHECK_VERSION(2,28,0)
+  int force = 0;
+  for (int i = 0; i < argc; i++)
+    if (strcmp("-f", argv[i]) == 0 || strcmp("--force", argv[i]) == 0) {
+      force = 1;
+      break;
+    }
+  GApplication *app = g_application_new("textadept.editor",
+                                        G_APPLICATION_HANDLES_COMMAND_LINE);
+  g_signal_connect(app, "command-line", G_CALLBACK(a_command_line), 0);
+  gboolean registered = g_application_register(app, NULL, NULL);
+  if (!registered || !g_application_get_is_remote(app) || force) {
+#endif
+
   if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
   new_window();
   lL_dofile(lua, "init.lua");
 #if __OSX__
-  gtk_osxapplication_ready(app);
+  gtk_osxapplication_ready(osxapp);
 #endif
+
+#if GLIB_CHECK_VERSION(2,28,0)
+    gtk_main();
+  } else g_application_run(app, argc, argv);
+  g_object_unref(app);
+#else
   gtk_main();
+#endif
+
   free(textadept_home);
   return 0;
 }
@@ -181,8 +201,6 @@ int main(int argc, char **argv) {
  * @see main
  */
 int WINAPI WinMain(HINSTANCE _, HINSTANCE __, LPSTR lpCmdLine, int ___) {
-  textadept_home = malloc(FILENAME_MAX);
-  GetModuleFileName(0, textadept_home, FILENAME_MAX);
   return main(1, &lpCmdLine);
 }
 #endif
@@ -216,10 +234,10 @@ static void new_window() {
   accel = gtk_accel_group_new();
 
 #if __OSX__
-  gtk_osxapplication_set_use_quartz_accelerators(app, FALSE);
-  app_signal(app, "NSApplicationOpenFile", w_open_osx);
-  app_signal(app, "NSApplicationBlockTermination", w_exit_osx);
-  app_signal(app, "NSApplicationWillTerminate", w_quit_osx);
+  gtk_osxapplication_set_use_quartz_accelerators(osxapp, FALSE);
+  app_signal(osxapp, "NSApplicationOpenFile", w_open_osx);
+  app_signal(osxapp, "NSApplicationBlockTermination", w_exit_osx);
+  app_signal(osxapp, "NSApplicationWillTerminate", w_quit_osx);
 #endif
 
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
@@ -515,6 +533,34 @@ static gboolean w_exit(GtkWidget*_, GdkEventAny*__, gpointer ___) {
   return FALSE;
 }
 
+#if GLIB_CHECK_VERSION(2,28,0)
+/**
+ * Processes a remote Textadept's command line arguments.
+ */
+static int a_command_line(GApplication *app, GApplicationCommandLine *cmdline,
+                          gpointer _) {
+  if (!lua) return 0; // only process argv for secondary/remote instances
+  int argc = 0;
+  char **argv = g_application_command_line_get_arguments(cmdline, &argc);
+  if (argc > 1) {
+    lua_getglobal(lua, "args"), lua_getfield(lua, -1, "process");
+    lua_newtable(lua);
+    lua_pushstring(lua, g_application_command_line_get_cwd(cmdline));
+    lua_rawseti(lua, -2, -1);
+    for (int i = 0; i < argc; i++)
+      lua_pushstring(lua, argv[i]), lua_rawseti(lua, -2, i);
+    if (lua_pcall(lua, 1, 0, 0) != LUA_OK) {
+      lL_event(lua, "error", LUA_TSTRING, lua_tostring(lua, -1), -1);
+      lua_pop(lua, 1); // error message
+    }
+    lua_pop(lua, 1); // args
+  }
+  g_strfreev(argv);
+  gtk_window_present(GTK_WINDOW(window));
+  return 0;
+}
+#endif
+
 #if __OSX__
 /**
  * Signal for opening files from OSX.
@@ -541,7 +587,7 @@ static gboolean w_exit_osx(GtkOSXApplication*_, gpointer __) {
 static void w_quit_osx(GtkOSXApplication*_, gpointer __) {
   l_close(lua);
   scintilla_release_resources();
-  g_object_unref(app);
+  g_object_unref(osxapp);
   gtk_main_quit();
 }
 #endif
@@ -1575,7 +1621,7 @@ static int lgui__newindex(lua_State *L) {
     gtk_box_reorder_child(GTK_BOX(vbox), menubar, 0);
     gtk_widget_show_all(menubar);
 #if __OSX__
-    gtk_osxapplication_set_menu_bar(app, GTK_MENU_SHELL(menubar));
+    gtk_osxapplication_set_menu_bar(osxapp, GTK_MENU_SHELL(menubar));
     gtk_widget_hide(menubar);
 #endif
   } else if (strcmp(key, "size") == 0) {

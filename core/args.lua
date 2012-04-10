@@ -37,9 +37,10 @@ end
 -- Add command line switches with `args.register()`. Any unrecognized arguments
 -- are treated as filepaths and opened.
 -- Generates an `'arg_none'` event when no args are present.
+-- @param arg Argument table.
 -- @see register
 -- @name process
-function M.process()
+function M.process(arg)
   local no_args = true
   local i = 1
   while i <= #arg do
@@ -53,7 +54,8 @@ function M.process()
     else
       if not arg[i]:find(not WIN32 and '^/' or '^%u:[/\\]') then
         -- Convert relative path to absolute path.
-        arg[i] = lfs.currentdir()..(not WIN32 and '/' or '\\')..arg[i]
+        local cwd = arg[-1] or lfs.currentdir()
+        arg[i] = cwd..(not WIN32 and '/' or '\\')..arg[i]
       end
       io.open_file(arg[i])
       no_args = false
@@ -99,5 +101,6 @@ end
 _G._USERHOME = userhome
 
 M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
+M.register('-f', '--force', 0, function() end, 'Forces unique instance')
 
 return M
