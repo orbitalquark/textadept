@@ -66,7 +66,7 @@ installation and run `make WIN32=1` to build `../textadept.exe`.
 
 After using `jhbuild`, GTK is in `~/gtk` so make a symlink from `~/gtk/inst` to
 `src/gtkosx` in Textadept. Then run `make OSX=1` to build `../textadept.osx`. At
-this point it is recommended to build a new `textadept.app` from an existing
+this point it is recommended to build a new `Textadept.app` from an existing
 one. Download the most recent app and replace `Contents/MacOS/textadept.osx`,
 all `.dylib` files in `Contents/Resources/lib`, and all `.so` files in
 `Contents/Resources/lib/gtk-2.0/<version>/{engines,immodules,loaders}` with your
