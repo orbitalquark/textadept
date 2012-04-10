@@ -54,6 +54,15 @@ as vanilla Lua with the following exceptions:
 
 [Lua 5.2]: http://www.lua.org/manual/5.2/
 
+### LuaJIT
+
+Even though Textadept can be run with [LuaJIT][], LuaJIT is based on Lua 5.1 and
+is not fully compatible with Lua 5.2. Therefore, modules and scripts should be
+written to be compatible with both versions. There is a compatibility layer in
+`core/compat.lua`. Please see it for more information.
+
+[LuaJIT]: http://luajit.org
+
 ## Scintilla
 
 The editing component used by Textadept is [Scintilla][]. The [buffer][] part of
