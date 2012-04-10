@@ -81,12 +81,12 @@ actually quite painless even though it requires recompiling Textadept. See the
 
 ### Mac OSX
 
-Unpack the archive and move `textadept.app` to your user or system
+Unpack the archive and move `Textadept.app` to your user or system
 `Applications` directory like any other Mac OSX application. Run Textadept by
-double-clicking `textadept.app`.
+double-clicking `Textadept.app`.
 
 If you downloaded the set of language-specific modules, unpack it, right-click
-`textadept.app`, select `Show Package Contents`, navigate to
+`Textadept.app`, select `Show Package Contents`, navigate to
 `Contents/Resources/modules`, and copy the unpacked modules there.
 
 #### Environment Variables
