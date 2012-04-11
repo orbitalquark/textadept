@@ -545,8 +545,8 @@ static int a_command_line(GApplication *app, GApplicationCommandLine *cmdline,
   if (argc > 1) {
     lua_getglobal(lua, "args"), lua_getfield(lua, -1, "process");
     lua_newtable(lua);
-    lua_pushstring(lua, g_application_command_line_get_cwd(cmdline));
-    lua_rawseti(lua, -2, -1);
+    const char *cwd = g_application_command_line_get_cwd(cmdline);
+    lua_pushstring(lua, cwd ? cwd : ""), lua_rawseti(lua, -2, -1);
     for (int i = 0; i < argc; i++)
       lua_pushstring(lua, argv[i]), lua_rawseti(lua, -2, i);
     if (lua_pcall(lua, 1, 0, 0) != LUA_OK) {
