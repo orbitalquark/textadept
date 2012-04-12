@@ -55,7 +55,7 @@ static gboolean s_buttonpress(GtkWidget *, GdkEventButton *, gpointer);
 static gboolean w_focus(GtkWidget *, GdkEventFocus *, gpointer);
 static gboolean w_keypress(GtkWidget *, GdkEventKey *, gpointer);
 static gboolean w_exit(GtkWidget *, GdkEventAny *, gpointer);
-#if GLIB_CHECK_VERSION(2,28,0)
+#if GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE
 static int a_command_line(GApplication *, GApplicationCommandLine *, gpointer);
 #endif
 #if __OSX__
@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
   if (last_slash) *last_slash = '\0';
 #endif
 
-#if GLIB_CHECK_VERSION(2,28,0)
+#if GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE
   int force = 0;
   for (int i = 0; i < argc; i++)
     if (strcmp("-f", argv[i]) == 0 || strcmp("--force", argv[i]) == 0) {
@@ -183,7 +183,7 @@ int main(int argc, char **argv) {
   gtk_osxapplication_ready(osxapp);
 #endif
 
-#if GLIB_CHECK_VERSION(2,28,0)
+#if GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE
     gtk_main();
   } else g_application_run(app, argc, argv);
   g_object_unref(app);
@@ -533,7 +533,7 @@ static gboolean w_exit(GtkWidget*_, GdkEventAny*__, gpointer ___) {
   return FALSE;
 }
 
-#if GLIB_CHECK_VERSION(2,28,0)
+#if GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE
 /**
  * Processes a remote Textadept's command line arguments.
  */

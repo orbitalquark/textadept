@@ -83,6 +83,13 @@ LUADIR = luajit
 LUAJIT_FLAG = -DLUAJIT
 endif
 
+# Single instance unless NO_SINGLE_INSTANCE=1
+ifndef NO_SINGLE_INSTANCE
+SI_FLAG = -DSINGLE_INSTANCE
+else
+SI_FLAG =
+endif
+
 INCLUDEDIRS = -Iscintilla/include -I$(LUADIR)/src -Igcocoadialog
 
 ifdef GTK3
@@ -93,8 +100,8 @@ endif
 
 # Textadept
 
-CFLAGS = -std=c99 $(DEBUG_FLAG) $(LUAJIT_FLAG) -O $(PLAT_FLAGS) $(INCLUDEDIRS) \
-  -W -Wall -Wno-sign-compare -Wno-unused
+CFLAGS = -std=c99 $(DEBUG_FLAG) $(LUAJIT_FLAG) $(SI_FLAG) -O $(PLAT_FLAGS) \
+  $(INCLUDEDIRS) -W -Wall -Wno-sign-compare -Wno-unused
 GTKFLAGS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --cflags $(GTKVERSION))
 GTKLIBS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
