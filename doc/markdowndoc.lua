@@ -11,8 +11,8 @@ local table_concat = table.concat
 local M = {}
 
 local NAVFILE = '%s* [%s](%s)\n'
-local FIELD = '<a id="%s" />\n### `%s` %s\n\n'
-local FUNCTION = '<a id="%s" />\n### `%s` (%s)\n\n'
+local FIELD = '<a id="%s"></a>\n### `%s` %s\n\n'
+local FUNCTION = '<a id="%s"></a>\n### `%s` (%s)\n\n'
 --local FUNCTION = '### `%s` (%s)\n\n'
 local DESCRIPTION = '%s\n\n'
 local LIST_TITLE = '%s:\n\n'
@@ -20,7 +20,7 @@ local PARAM = '* `%s`: %s\n'
 local USAGE = '* `%s`\n'
 local RETURN = '* %s\n'
 local SEE = '* [`%s`](#%s)\n'
-local TABLE = '<a id="%s" />\n### `%s`\n\n'
+local TABLE = '<a id="%s"></a>\n### `%s`\n\n'
 --local TABLE = '### `%s`\n\n'
 local TFIELD = '* `%s`: %s\n'
 local HTML = [[
