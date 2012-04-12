@@ -341,6 +341,30 @@ local M = {}
 -- [`load_ctags()`](#load_ctags) and [`api_files`](#api_files) respectively.
 --
 -- [LuaDoc]: http://keplerproject.github.com/luadoc/
+--
+-- #### Module Fields
+--
+-- Not only does the Lua Adeptsense generator recognize functions and tables
+-- within modules, but it also recognizes module fields and their types with a
+-- certain syntax:
+--
+-- <pre><code>---
+-- -- Module documentation.
+-- -- &#64;field field_name (type)
+-- --   Field documentation.
+-- </code></pre>
+--
+-- or
+--
+-- <pre><code>---
+-- -- Module documentation
+-- -- * `field_name` (type)
+-- --   Field documentation.
+-- --   Multiple documentation lines must be indented.
+-- </code></pre>
+--
+-- Please note the latter ``-- * `field_name` `` syntax can appear anywhere
+-- inside a module, not just the module LuaDoc.
 -- @field always_show_globals (bool)
 --   Include globals in the list of completions offered.
 --   Globals are classes, functions, and fields that do not belong to another
