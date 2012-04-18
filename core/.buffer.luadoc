@@ -54,9 +54,19 @@
 -- @field auto_c_cancel_at_start (bool)
 --   Whether auto-completion is cancelled by backspacing to a position before
 --   where the box was created.
---   If `false`, the list is not cancelled until the caret moves before the
---   first character of the word being completed. If `true`, cancel if the user
+--   If `false`, the list is not cancelled until the caret moves at least one
+--   character before the word being completed. If `true`, cancel if the user
 --   backspaces to a position before where it was created.
+-- @field auto_c_case_insensitive (int)
+--   Auto-completion case insensitive behavior.
+--   When autocompletion is set to ignore case (`buffer.auto_c_ignore_case`), by
+--   default it will nonetheless select the first list member that matches in a
+--   case sensitive way to entered characters.
+--
+--   * `_SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOR_RESPECTCASE` (0)
+--     Prefer case-sensitive matches.
+--   * `_SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOR_IGNORECASE` (1)
+--     No preference.
 -- @field auto_c_choose_single (bool)
 --   Whether a single item auto-completion list automatically choose the item.
 --   The default is to display the list even if there is only a single item.
@@ -2679,6 +2689,9 @@ function buffer.get_style_name(buffer, style_num) end
 --   * annotation_set_styles
 --   * annotation_get_styles
 --   * add_undo_action
+--   * find_indicator_show
+--   * find_indicator_flash
+--   * find_indicator_hide
 --   * load_lexer_library
 --   * property_names
 --   * property_type
