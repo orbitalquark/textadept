@@ -3,7 +3,7 @@
 
 -- This script generates the _SCINTILLA table from SciTE's Lua Interface tables.
 
-local f = io.open('../../scite-latest/scite/src/IFaceTable.cxx')
+local f = io.open(arg[1] or '../../scite-latest/scite/src/IFaceTable.cxx', 'rb')
 local iface = f:read('*all')
 f:close()
 
@@ -16,7 +16,7 @@ local types = {
 }
 local s = '_G._SCINTILLA.constants'
 
-f = io.open('../core/iface.lua', 'w')
+f = io.open('../core/iface.lua', 'wb')
 
 -- Write header.
 f:write [=[
@@ -39,7 +39,7 @@ for item in iface:match('Constants%[%] = (%b{})'):sub(2, -2):gmatch('%b{}') do
      not name:find('^SCLEX_') then
     if name == 'SC_MASK_FOLDERS' then value = '-33554432' end
     constants[#constants + 1] = string_format('%s=%s', name, value)
-    fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s`: %d', s, name, value)
+    fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, name, value)
   end
 end
 
@@ -75,7 +75,7 @@ local events = {
 }
 for event, value in pairs(events) do
   constants[#constants + 1] = string_format('%s=%d', event, value)
-  fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s`: %d', s, event, value)
+  fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, event, value)
 end
 -- Lexers added to constants.
 local lexers = {
@@ -86,7 +86,7 @@ local lexers = {
 }
 for lexer, value in pairs(lexers) do
   constants[#constants + 1] = string_format('%s=%d', lexer, value)
-  fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s`: %d', s, lexer, value)
+  fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, lexer, value)
 end
 
 -- Write constants.
@@ -188,7 +188,7 @@ return M
 
 f:close()
 
-f = io.open('../core/._SCINTILLA.luadoc', 'w')
+f = io.open('../core/._SCINTILLA.luadoc', 'wb')
 f:write [[
 -- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- This is a DUMMY FILE used for making Adeptsense for built-in constants in the
