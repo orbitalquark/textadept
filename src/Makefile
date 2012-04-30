@@ -267,6 +267,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	# Mac OSX
 	mkdir $(RELEASEDIRMAC)
 	cp -rL gtkosx $(TEXTADEPTAPP)
+	mv $(TEXTADEPTAPP)/Contents/MacOS/ta $(RELEASEDIRMAC)
 	cp -r $(RELEASEDIR32)/* $(TEXTADEPTAPP)/Contents/Resources/
 	rm -f $(TEXTADEPTAPP)/Contents/Resources/{$(TEXTADEPT),$(TEXTADEPTJIT)}
 	mv $(TEXTADEPTAPP)/Contents/Resources/core/images/textadept.icns \
