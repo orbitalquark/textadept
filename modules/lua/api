@@ -136,6 +136,7 @@ SCI_ANNOTATIONSETSTYLEOFFSET _SCINTILLA.constants.SCI_ANNOTATIONSETSTYLEOFFSET\n
 SCI_ANNOTATIONSETVISIBLE _SCINTILLA.constants.SCI_ANNOTATIONSETVISIBLE\n2548
 SCI_AUTOCGETAUTOHIDE _SCINTILLA.constants.SCI_AUTOCGETAUTOHIDE\n2119
 SCI_AUTOCGETCANCELATSTART _SCINTILLA.constants.SCI_AUTOCGETCANCELATSTART\n2111
+SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR _SCINTILLA.constants.SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR\n2635
 SCI_AUTOCGETCHOOSESINGLE _SCINTILLA.constants.SCI_AUTOCGETCHOOSESINGLE\n2114
 SCI_AUTOCGETDROPRESTOFWORD _SCINTILLA.constants.SCI_AUTOCGETDROPRESTOFWORD\n2271
 SCI_AUTOCGETIGNORECASE _SCINTILLA.constants.SCI_AUTOCGETIGNORECASE\n2116
@@ -145,6 +146,7 @@ SCI_AUTOCGETSEPARATOR _SCINTILLA.constants.SCI_AUTOCGETSEPARATOR\n2107
 SCI_AUTOCGETTYPESEPARATOR _SCINTILLA.constants.SCI_AUTOCGETTYPESEPARATOR\n2285
 SCI_AUTOCSETAUTOHIDE _SCINTILLA.constants.SCI_AUTOCSETAUTOHIDE\n2118
 SCI_AUTOCSETCANCELATSTART _SCINTILLA.constants.SCI_AUTOCSETCANCELATSTART\n2110
+SCI_AUTOCSETCASEINSENSITIVEBEHAVIOUR _SCINTILLA.constants.SCI_AUTOCSETCASEINSENSITIVEBEHAVIOUR\n2634
 SCI_AUTOCSETCHOOSESINGLE _SCINTILLA.constants.SCI_AUTOCSETCHOOSESINGLE\n2113
 SCI_AUTOCSETDROPRESTOFWORD _SCINTILLA.constants.SCI_AUTOCSETDROPRESTOFWORD\n2270
 SCI_AUTOCSETFILLUPS _SCINTILLA.constants.SCI_AUTOCSETFILLUPS\n2112
@@ -524,6 +526,8 @@ SC_CACHE_PAGE _SCINTILLA.constants.SC_CACHE_PAGE\n2
 SC_CARETSTICKY_OFF _SCINTILLA.constants.SC_CARETSTICKY_OFF\n0
 SC_CARETSTICKY_ON _SCINTILLA.constants.SC_CARETSTICKY_ON\n1
 SC_CARETSTICKY_WHITESPACE _SCINTILLA.constants.SC_CARETSTICKY_WHITESPACE\n2
+SC_CASEINSENSITIVEBEHAVIOUR_IGNORECASE _SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOUR_IGNORECASE\n1
+SC_CASEINSENSITIVEBEHAVIOUR_RESPECTCASE _SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOUR_RESPECTCASE\n0
 SC_CASE_LOWER _SCINTILLA.constants.SC_CASE_LOWER\n2
 SC_CASE_MIXED _SCINTILLA.constants.SC_CASE_MIXED\n0
 SC_CASE_UPPER _SCINTILLA.constants.SC_CASE_UPPER\n1
@@ -774,7 +778,8 @@ attributes lfs.attributes(filepath [, aname])\nReturns a table with the file att
 auto_c_active buffer.auto_c_active(buffer)\nIs there an auto-completion list visible?\n@return bool
 auto_c_auto_hide buffer.auto_c_auto_hide (bool)\nWhether or not autocompletion is hidden automatically when nothing matches.\nBy default, the list is cancelled if there are no viable matches (the user\nhas typed characters that no longer match a list entry).
 auto_c_cancel buffer.auto_c_cancel(buffer)\nRemove the auto-completion list from the screen.\nA set of characters that will cancel autocompletion can be specified with\n`buffer:auto_c_stops()`.\n@param buffer The global buffer.
-auto_c_cancel_at_start buffer.auto_c_cancel_at_start (bool)\nWhether auto-completion is cancelled by backspacing to a position before\nwhere the box was created.\nIf `false`, the list is not cancelled until the caret moves before the\nfirst character of the word being completed. If `true`, cancel if the user\nbackspaces to a position before where it was created.
+auto_c_cancel_at_start buffer.auto_c_cancel_at_start (bool)\nWhether auto-completion is cancelled by backspacing to a position before\nwhere the box was created.\nIf `false`, the list is not cancelled until the caret moves at least one\ncharacter before the word being completed. If `true`, cancel if the user\nbackspaces to a position before where it was created.
+auto_c_case_insensitive buffer.auto_c_case_insensitive (int)\nAuto-completion case insensitive behavior.\nWhen autocompletion is set to ignore case (`buffer.auto_c_ignore_case`), by\ndefault it will nonetheless select the first list member that matches in a\ncase sensitive way to entered characters.\n\n* `_SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOR_RESPECTCASE` (0)\n  Prefer case-sensitive matches.\n* `_SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOR_IGNORECASE` (1)\n  No preference.
 auto_c_choose_single buffer.auto_c_choose_single (bool)\nWhether a single item auto-completion list automatically choose the item.\nThe default is to display the list even if there is only a single item.
 auto_c_complete buffer.auto_c_complete(buffer)\nUser has selected an item so remove the list and insert the selection.\nThis has the same effect as the tab key.\n@param buffer The global buffer.
 auto_c_drop_rest_of_word buffer.auto_c_drop_rest_of_word (bool)\nWhether or not autocompletion deletes any word characters after the\ninserted text upon completion.\nThe default is `false`.
@@ -1298,7 +1303,7 @@ print_colour_mode buffer.print_colour_mode (number)\nThe print color mode.\n\n* 
 print_magnification buffer.print_magnification (number)\nThe print magnification added to the point size of each style for printing.
 print_wrap_mode buffer.print_wrap_mode (number)\nPrinting line wrap mode.\n\n* `_SCINTILLA.constants.SC_WRAP_NONE` (0)\n  Each line of text generates one line of output and the line is truncated\n  if it is too long to fit into the print area.\n* `_SCINTILLA.constants.SC_WRAP_WORD` (1)\n  Wraps printed output so that all characters fit into the print rectangle.\n  Tries to wrap only between words as indicated by white space or style\n  changes although if a word is longer than a line, it will be wrapped\n  before the line end. This is the default.\n* `_SCINTILLA.constants.SC_WRAP_CHAR` (2).
 private_lexer_call buffer.private_lexer_call(buffer, operation, data)\nFor private communication between an application and a known lexer.\n@param buffer The global buffer.\n@param operation An operation number.\n@param data Number data.
-process args.process()\nProcesses command line arguments.\nAdd command line switches with `args.register()`. Any unrecognized arguments\nare treated as filepaths and opened.\nGenerates an `'arg_none'` event when no args are present.\n@see register
+process args.process(arg)\nProcesses command line arguments.\nAdd command line switches with `args.register()`. Any unrecognized arguments\nare treated as filepaths and opened.\nGenerates an `'arg_none'` event when no args are present.\n@param arg Argument table.\n@see register
 prompt_load _M.textadept.session.prompt_load()\nPrompts the user for a Textadept session to load.
 prompt_save _M.textadept.session.prompt_save()\nPrompts the user to save the current Textadept session to a file.
 properties _SCINTILLA.properties (table)\nScintilla properties.
