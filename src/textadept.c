@@ -1,5 +1,6 @@
 // Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
 
+#include <locale.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -176,6 +177,7 @@ int main(int argc, char **argv) {
   if (!registered || !g_application_get_is_remote(app) || force) {
 #endif
 
+  setlocale(LC_NUMERIC, "C");
   if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
   new_window();
   lL_dofile(lua, "init.lua");
