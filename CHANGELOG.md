@@ -4,6 +4,43 @@
 
 [Atom Feed]: feed
 
+## 5.3 (01 May 2012)
+
+Download:
+
+* [Textadept 5.3 -- Win32][]
+* [Textadept 5.3 -- Mac OSX Intel 10.5+][]
+* [Textadept 5.3 -- Linux][]
+* [Textadept 5.3 -- Linux x86_64][]
+* [Textadept 5.3 -- Source][]
+* [Textadept 5.3 -- Modules][]
+
+Bugfixes:
+
+* Fixed bug with run/compile commands in LuaJIT version.
+* User annotation preferences are preserved.
+* Fixed bug with number representation in some locales.
+
+Changes:
+
+* Annotations are used for showing run/compile command output.
+* Textadept is [single-instance][] by default on Linux and Mac OSX.
+* Textadept requires [GTK][] 2.18 or higher now instead of 2.16.
+* The provided Textadept binaries [require][] [GLib][] 2.28 or higher.
+* Updated to [Scintilla][] 3.1.0.
+
+[Textadept 5.3 -- Win32]: download/textadept_5.3.win32.zip
+[Textadept 5.3 -- Mac OSX Intel 10.5+]: download/textadept_5.3.osx.zip
+[Textadept 5.3 -- Linux]: download/textadept_5.3.tgz
+[Textadept 5.3 -- Linux x86_64]: download/textadept_5.3.x86_64.tgz
+[Textadept 5.3 -- Source]: download/textadept_5.3.src.zip
+[Textadept 5.3 -- Modules]: download/textadept_5.3.modules.zip
+[single-instance]: 02_Installation.html#Single.Instance
+[GTK]: http://gtk.org
+[require]: 02_Installation.html#Requirements
+[GLib]: http://gtk.org/download/linux.php
+[Scintilla]: http://scintilla.org
+
 ## 5.2 (01 Apr 2012)
 
 Download:
