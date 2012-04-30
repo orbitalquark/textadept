@@ -136,6 +136,7 @@ SCI_ANNOTATIONSETSTYLEOFFSET	_	0;"	F	class:_SCINTILLA.constants
 SCI_ANNOTATIONSETVISIBLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETAUTOHIDE	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETCANCELATSTART	_	0;"	F	class:_SCINTILLA.constants
+SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETCHOOSESINGLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETDROPRESTOFWORD	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETIGNORECASE	_	0;"	F	class:_SCINTILLA.constants
@@ -145,6 +146,7 @@ SCI_AUTOCGETSEPARATOR	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETTYPESEPARATOR	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCSETAUTOHIDE	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCSETCANCELATSTART	_	0;"	F	class:_SCINTILLA.constants
+SCI_AUTOCSETCASEINSENSITIVEBEHAVIOUR	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCSETCHOOSESINGLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCSETDROPRESTOFWORD	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCSETFILLUPS	_	0;"	F	class:_SCINTILLA.constants
@@ -524,6 +526,8 @@ SC_CACHE_PAGE	_	0;"	F	class:_SCINTILLA.constants
 SC_CARETSTICKY_OFF	_	0;"	F	class:_SCINTILLA.constants
 SC_CARETSTICKY_ON	_	0;"	F	class:_SCINTILLA.constants
 SC_CARETSTICKY_WHITESPACE	_	0;"	F	class:_SCINTILLA.constants
+SC_CASEINSENSITIVEBEHAVIOUR_IGNORECASE	_	0;"	F	class:_SCINTILLA.constants
+SC_CASEINSENSITIVEBEHAVIOUR_RESPECTCASE	_	0;"	F	class:_SCINTILLA.constants
 SC_CASE_LOWER	_	0;"	F	class:_SCINTILLA.constants
 SC_CASE_MIXED	_	0;"	F	class:_SCINTILLA.constants
 SC_CASE_UPPER	_	0;"	F	class:_SCINTILLA.constants
@@ -800,6 +804,7 @@ auto_c_active	_	0;"	f	class:buffer
 auto_c_auto_hide	_	0;"	F	class:buffer
 auto_c_cancel	_	0;"	f	class:buffer
 auto_c_cancel_at_start	_	0;"	F	class:buffer
+auto_c_case_insensitive	_	0;"	F	class:buffer
 auto_c_choose_single	_	0;"	F	class:buffer
 auto_c_complete	_	0;"	f	class:buffer
 auto_c_drop_rest_of_word	_	0;"	F	class:buffer
