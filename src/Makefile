@@ -7,10 +7,13 @@ CC = gcc
 CPP = g++
 PKG_CONFIG = pkg-config
 PKG_CONFIG_PATH = $PKG_CONFIG_PATH
-ifndef BSD
+ifndef NCURSES
 PLAT_FLAGS = -DGTK
 else
-PLAT_FLAGS = -DGTK -D__BSD__
+PLAT_FLAGS = -DNCURSES
+endif
+ifdef BSD
+PLAT_FLAGS += -D__BSD__
 endif
 SCI_THREAD_FLAG =
 LUAFLAGS = -DLUA_USE_LINUX
@@ -30,7 +33,7 @@ CC = i486-mingw32-gcc -mms-bitfields
 CPP = i486-mingw32-g++ -mms-bitfields -mwindows -static-libgcc -static-libstdc++
 PKG_CONFIG = pkg-config --define-variable=prefix=win32gtk
 PKG_CONFIG_PATH = $(shell pwd)/win32gtk/lib/pkgconfig
-PLAT_FLAGS = -DGTK -D__WIN32__
+PLAT_FLAGS += -D__WIN32__
 SCI_THREAD_FLAG = -DG_THREADS_IMPL_NONE
 LUAFLAGS = -D_WIN32 -DWIN32
 TEXTADEPT = textadept.exe
@@ -52,7 +55,7 @@ CPP = g++ -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
   -isysroot /Developer/SDKs/MacOSX10.5.sdk
 PKG_CONFIG = gtkosx/bin/pkg-config --define-variable=prefix=gtkosx
 PKG_CONFIG_PATH = $(shell pwd)/gtkosx/lib/pkgconfig
-PLAT_FLAGS = -DGTK -D__OSX__
+PLAT_FLAGS += -D__OSX__
 SCI_THREAD_FLAG =
 LUAFLAGS = -DLUA_USE_MACOSX
 TEXTADEPT = textadept.osx
@@ -91,6 +94,9 @@ SI_FLAG =
 endif
 
 INCLUDEDIRS = -Iscintilla/include -I$(LUADIR)/src -Igcocoadialog
+ifdef NCURSES
+INCLUDEDIRS += -Iscintilla/term -Itermkey
+endif
 
 ifdef GTK3
 GTKVERSION = gtk+-3.0
@@ -104,6 +110,9 @@ CFLAGS = -std=c99 $(DEBUG_FLAG) $(LUAJIT_FLAG) $(SI_FLAG) -O $(PLAT_FLAGS) \
   $(INCLUDEDIRS) -W -Wall -Wno-sign-compare -Wno-unused
 GTKFLAGS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --cflags $(GTKVERSION))
+ifndef NCURSES
+CFLAGS += $(GTKFLAGS)
+endif
 GTKLIBS = $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) \
   --libs $(GTKVERSION))
 ifdef LIBPNG12
@@ -112,7 +121,15 @@ endif
 ifdef OSX
 GTKLIBS += -framework Cocoa -lgtkmacintegration
 endif
-GCDFLAGS = -DNOHELP -DLIBRARY
+GCDFLAGS = $(PLAT_FLAGS) -DNOHELP -DLIBRARY
+ifndef NCURSES
+GCDFLAGS += $(GTKFLAGS)
+endif
+ifndef NCURSES
+LIBS = $(GTKLIBS)
+else
+LIBS = -lncursesw -lcdk
+endif
 
 TEXTADEPT_OBJS = textadept.o
 LUA_OBJS = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
@@ -124,13 +141,18 @@ LUA_OBJS = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
 LUA_SRCS = lua/src/*.c lua/src/lib/*.c
 LUAJIT_OBJS =
 GCOCOADIALOG = gcocoadialog.o
+ifdef NCURSES
+TERMKEY_OBJS = termkey.o driver-ti.o driver-csi.o
+endif
 
 # Scintilla
 
 SCIFLAGS = $(DEBUG_FLAG) -pedantic -Os $(PLAT_FLAGS) -DSCI_LEXER \
-  $(SCI_THREAD_FLAG) $(INCLUDEDIRS) -Iscintilla/src -Iscintilla/gtk \
-  -Iscintilla/lexlib \
+  $(SCI_THREAD_FLAG) $(INCLUDEDIRS) -Iscintilla/src -Iscintilla/lexlib \
   -Wall -Wno-missing-braces -Wno-char-subscripts -Wno-long-long
+ifndef NCURSES
+SCIFLAGS += -Iscintilla/gtk
+endif
 
 SCINTILLA_OBJS = AutoComplete.o CallTip.o Catalogue.o CellBuffer.o \
   CharClassify.o ContractionState.o Decoration.o Document.o Editor.o \
@@ -138,9 +160,15 @@ SCINTILLA_OBJS = AutoComplete.o CallTip.o Catalogue.o CellBuffer.o \
   PositionCache.o RESearch.o RunStyles.o ScintillaBase.o Selection.o \
   Style.o UniConversion.o ViewStyle.o XPM.o \
   Accessor.o CharacterSet.o LexerBase.o LexerModule.o LexerNoExceptions.o \
-  LexerSimple.o PropSetSimple.o StyleContext.o WordList.o \
-  PlatGTK.o ScintillaGTK.o
+  LexerSimple.o PropSetSimple.o StyleContext.o WordList.o
+ifndef NCURSES
+SCINTILLA_GTK_OBJS = PlatGTK.o ScintillaGTK.o
 SCINTILLA_MARSHALLER = scintilla-marshal.o
+SCINTILLA_PLAT_OBJS = $(SCINTILLA_GTK_OBJS) $(SCINTILLA_MARSHALLER)
+else
+SCINTILLA_TERM_OBJS = ScintillaTerm.o
+SCINTILLA_PLAT_OBJS = $(SCINTILLA_TERM_OBJS)
+endif
 SCINTILLA_LEXER = LexLPeg.o
 
 # Build
@@ -156,15 +184,18 @@ endif
 
 all: $(TEXTADEPT)
 
-$(SCINTILLA_OBJS): scintilla/gtk/*.cxx scintilla/src/*.cxx \
-  scintilla/lexlib/*.cxx
+$(SCINTILLA_OBJS): scintilla/src/*.cxx scintilla/lexlib/*.cxx
+	$(CPP) $(SCIFLAGS) -c $^
+$(SCINTILLA_GTK_OBJS): scintilla/gtk/*.cxx
 	$(CPP) $(SCIFLAGS) $(GTKFLAGS) -c $^
+$(SCINTILLA_TERM_OBJS): scintilla/term/*.cxx
+	$(CPP) $(SCIFLAGS) -c $^
 $(SCINTILLA_MARSHALLER): scintilla/gtk/scintilla-marshal.c
 	$(CC) $(SCIFLAGS) $(GTKFLAGS) -w -c $<
 $(SCINTILLA_LEXER): LexLPeg.cxx
-	$(CPP) $(SCIFLAGS) $(GTKFLAGS) $(LUAFLAGS) -DLPEG_LEXER -DNO_SCITE -c $< -o $@
+	$(CPP) $(SCIFLAGS) $(LUAFLAGS) -DLPEG_LEXER -DNO_SCITE -c $< -o $@
 $(TEXTADEPT_OBJS): textadept.c
-	$(CC) $(CFLAGS) $(GTKFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 $(LUA_OBJS): $(LUA_SRCS)
 	$(CC) $(LUAFLAGS) $(INCLUDEDIRS) -c $^
 ifdef LUAJIT
@@ -174,12 +205,14 @@ $(LUAJIT_OBJS):
 	cd luajit && make $(LUAJIT_MAKE)
 	cp luajit/src/$(LUAJIT_LIB) .
 $(GCOCOADIALOG): gcocoadialog/gcocoadialog.c
-	$(CC) $(GTKFLAGS) $(GCDFLAGS) $(INCLUDEDIRS) -c $<
+	$(CC) $(GCDFLAGS) $(INCLUDEDIRS) -c $<
+$(TERMKEY_OBJS): termkey/*.c
+	$(CC) -std=c99 -c $^
 $(TEXTADEPT):\
-  $(SCINTILLA_OBJS) $(SCINTILLA_MARSHALLER) $(SCINTILLA_LEXER) \
+  $(SCINTILLA_OBJS) $(SCINTILLA_PLAT_OBJS) $(SCINTILLA_LEXER) \
   $(TEXTADEPT_OBJS) $(LUA_OBJS) $(LUAJIT_OBJS) $(GCOCOADIALOG) \
-  $(TEXTADEPT_RC)
-	$(CPP) $(EXPORTLUASYMS) -o $@ $^ $(GTKLIBS) $(LDL)
+  $(TERMKEY_OBJS) $(TEXTADEPT_RC)
+	$(CPP) $(EXPORTLUASYMS) -o $@ $^ $(LIBS) $(LDL)
 	mv $(TEXTADEPT) ../
 $(TEXTADEPT_RC): textadept.rc
 	$(WINDRES) $^ $@
