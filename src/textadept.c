@@ -42,6 +42,7 @@
 typedef GtkWidget Scintilla;
 #define SS(view, m, w, l) scintilla_send_message(SCINTILLA(view), m, w, l)
 #define signal(o, s, c) g_signal_connect(G_OBJECT(o), s, G_CALLBACK(c), 0)
+#define osx_signal(a, s, c) g_signal_connect(a, s, G_CALLBACK(c), 0)
 #define focus_view(v) gtk_widget_grab_focus(v)
 #define scintilla_delete(w) gtk_widget_destroy(w)
 #if GTK_CHECK_VERSION(3,0,0)
@@ -64,75 +65,45 @@ typedef GtkWidget Scintilla;
 
 // Window
 char *textadept_home = NULL;
+Scintilla *focused_view;
 #if GTK
-GtkWidget *window, *focused_view, *menubar, *statusbar[2];
+GtkWidget *window, *menubar, *statusbar[2];
 GtkAccelGroup *accel;
-static void new_window();
-static GtkWidget *new_view(sptr_t);
-static void new_buffer(sptr_t);
-static void s_notify(GtkWidget *, int, void *, void *);
-static void s_command(GtkWidget *, int, void *, void *);
-static int s_keypress(GtkWidget *, GdkEventKey *, void *);
-static int s_buttonpress(GtkWidget *, GdkEventButton *, void *);
-static int w_focus(GtkWidget *, GdkEventFocus *, void *);
-static int w_keypress(GtkWidget *, GdkEventKey *, void *);
-static int w_exit(GtkWidget *, GdkEventAny *, void *);
-#if GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE
-static int a_command_line(GApplication *, GApplicationCommandLine *, void *);
-#endif
 #if __OSX__
 GtkOSXApplication *osxapp;
-#define app_signal(a, s, c) g_signal_connect(a, s, G_CALLBACK(c), 0)
-static int w_open_osx(GtkOSXApplication *, char *, void *);
-static int w_exit_osx(GtkOSXApplication *, void *);
-static void w_quit_osx(GtkOSXApplication *, void *);
 #endif
-#elif NCURSES
-Scintilla *focused_view;
-static void new_window();
-static Scintilla *new_view(sptr_t);
-static void new_buffer(sptr_t);
-static void s_notify(Scintilla *, int, void *, void *);
 #endif
 
 // Find/Replace
 #if GTK
-GtkWidget *findbox, *find_entry, *replace_entry, *fnext_button, *fprev_button,
-          *r_button, *ra_button, *match_case_opt, *whole_word_opt, *lua_opt,
-          *in_files_opt, *flabel, *rlabel;
-typedef GtkListStore LIST_STORE;
-LIST_STORE *find_store, *repl_store;
-typedef GtkWidget FINDBOX;
-typedef GtkWidget * FIND_BUTTON;
+typedef GtkWidget FindBox;
+GtkWidget *find_entry, *replace_entry, *flabel, *rlabel;
+typedef GtkWidget * FindButton;
+FindButton fnext_button, fprev_button, r_button, ra_button;
+typedef GtkWidget * Option;
+typedef GtkListStore ListStore;
+ListStore *find_store, *repl_store;
 #elif NCURSES
-WINDOW *findbox;
-char *find_text = NULL, *repl_text = NULL;
-enum { fnext_button, fprev_button, r_button, ra_button };
-int match_case_opt = FALSE, whole_word_opt = FALSE, lua_opt = FALSE,
-    in_files_opt = FALSE;
-typedef char * LIST_STORE;
-LIST_STORE find_store[10] = {
+typedef WINDOW FindBox;
+char *find_text = NULL, *repl_text = NULL, *flabel = NULL, *rlabel = NULL;
+typedef int FindButton;
+FindButton fnext_button = 1, fprev_button = 2, r_button = 3, ra_button = 4;
+typedef int Option;
+typedef char * ListStore;
+ListStore find_store[10] = {
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 }, repl_store[10] = {
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
-typedef WINDOW FINDBOX;
-typedef int FIND_BUTTON;
 #endif
-static FINDBOX *new_findbox();
-static void f_clicked(FIND_BUTTON, void *);
+FindBox *findbox;
+Option match_case = 0, whole_word = 0, lua_pattern = 0, in_files = 0;
 
 // Command Entry
 #if GTK
 GtkWidget *command_entry;
 GtkListStore *cc_store;
 GtkEntryCompletion *command_entry_completion;
-static int cc_matchfunc(GtkEntryCompletion *, const char *, GtkTreeIter *,
-                        void *);
-static int cc_matchselected(GtkEntryCompletion *, GtkTreeModel *, GtkTreeIter *,
-                            void *);
-static void c_activate(GtkWidget *, void *);
-static int c_keypress(GtkWidget *, GdkEventKey *, void *);
 #elif NCURSES
 char *command_text = NULL;
 #endif
@@ -181,9 +152,613 @@ static int lbuf_property(lua_State *),
            lfind_replace_all(lua_State *),
            lce_focus(lua_State *), lce_show_completions(lua_State *);
 
-/******************************************************************************/
-/******************************* GUI Interface ********************************/
-/******************************************************************************/
+// Scintilla signals.
+
+/**
+ * Change focus to the given Scintilla view.
+ * Generates 'view_before_switch' and 'view_after_switch' events.
+ * @param view The Scintilla view to focus.
+ */
+static void goto_view(Scintilla *view) {
+  if (!closing) lL_event(lua, "view_before_switch", -1);
+  focused_view = view;
+  l_setglobalview(lua, view);
+  l_setglobaldoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0));
+  if (!closing) lL_event(lua, "view_after_switch", -1);
+}
+
+/**
+ * Signal for a Scintilla notification.
+ */
+static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
+  struct SCNotification *n = (struct SCNotification *)lParam;
+  if (focused_view == view || n->nmhdr.code == SCN_URIDROPPED) {
+    if (focused_view != view) goto_view(view);
+    lL_notify(lua, n);
+  } else if (n->nmhdr.code == SCN_SAVEPOINTLEFT) {
+    Scintilla *prev = focused_view;
+    goto_view(view);
+    lL_notify(lua, n);
+    goto_view(prev); // do not let a split view steal focus
+  }
+}
+
+#if GTK
+/**
+ * Signal for a Scintilla command.
+ * Currently handles SCEN_SETFOCUS.
+ */
+static void s_command(GtkWidget *view, int wParam, void*_, void*__) {
+  if (wParam >> 16 == SCEN_SETFOCUS) goto_view(view);
+}
+
+/**
+ * Signal for a Scintilla keypress.
+ */
+static int s_keypress(GtkWidget *view, GdkEventKey *event, void*_) {
+  return lL_event(lua, "keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN,
+                  event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
+                  event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
+                  event->state & GDK_MOD1_MASK, LUA_TBOOLEAN,
+                  event->state & GDK_META_MASK, -1);
+}
+
+/**
+ * Signal for a Scintilla mouse click.
+ */
+static int s_buttonpress(GtkWidget*_, GdkEventButton *event, void*__) {
+  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+    return (lL_showcontextmenu(lua, (void *)event), TRUE);
+  return FALSE;
+}
+#endif
+
+/**
+ * Creates a new Scintilla document and adds it to the Lua state.
+ * Generates 'buffer_before_switch' and 'buffer_new' events.
+ * @param doc Almost always zero, except for the first Scintilla view created,
+ *   in which its doc pointer would be given here.
+ * @see lL_adddoc
+ */
+static void new_buffer(sptr_t doc) {
+  if (!doc) { // create the new document
+    doc = SS(focused_view, SCI_CREATEDOCUMENT, 0, 0);
+    lL_event(lua, "buffer_before_switch", -1);
+    lL_adddoc(lua, doc);
+    lL_gotodoc(lua, focused_view, -1, FALSE);
+  } else {
+    // The first Scintilla window already has a pre-created buffer.
+    lL_adddoc(lua, doc);
+    SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
+  }
+  l_setglobaldoc(lua, doc);
+  lL_event(lua, "buffer_new", -1);
+}
+
+/**
+ * Removes the Scintilla buffer from the current Scintilla view.
+ * @param doc The Scintilla document.
+ * @see lL_removedoc
+ */
+static void delete_buffer(sptr_t doc) {
+  lL_removedoc(lua, doc);
+  SS(focused_view, SCI_RELEASEDOCUMENT, 0, doc);
+}
+
+/**
+ * Creates a new Scintilla view.
+ * Generates a 'view_new' event.
+ * @param doc The document to load in the new view. Almost never zero, except
+ *   for the first Scintilla view created, in which there is no doc pointer.
+ * @return Scintilla view
+ * @see lL_addview
+ */
+static Scintilla *new_view(sptr_t doc) {
+#if GTK
+  Scintilla *view = scintilla_new();
+  gtk_widget_set_size_request(view, 1, 1); // minimum size
+  signal(view, SCINTILLA_NOTIFY, s_notify);
+  signal(view, "command", s_command);
+  signal(view, "key-press-event", s_keypress);
+  signal(view, "button-press-event", s_buttonpress);
+#elif NCURSES
+  Scintilla *view = scintilla_new(s_notify);
+#endif
+  SS(view, SCI_USEPOPUP, 0, 0);
+  lL_addview(lua, view);
+  focused_view = view;
+  focus_view(view);
+  if (doc) {
+    SS(view, SCI_SETDOCPOINTER, 0, doc);
+    l_setglobaldoc(lua, doc);
+  } else new_buffer(SS(view, SCI_GETDOCPOINTER, 0, 0));
+  l_setglobalview(lua, view);
+  lL_event(lua, "view_new", -1);
+  return view;
+}
+
+/**
+ * Removes a Scintilla view.
+ * @param view The Scintilla view to remove.
+ * @see lL_removeview
+ */
+static void delete_view(Scintilla *view) {
+  lL_removeview(lua, view);
+  scintilla_delete(view);
+}
+
+/**
+ * Splits the given Scintilla view into two views.
+ * The new view shows the same document as the original one.
+ * @param view The Scintilla view to split.
+ * @param vertical Flag indicating whether to split the view vertically or
+ *   horozontally.
+ */
+static void split_view(Scintilla *view, int vertical) {
+  sptr_t curdoc = SS(view, SCI_GETDOCPOINTER, 0, 0);
+  int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0);
+  int current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0);
+  int anchor = SS(view, SCI_GETANCHOR, 0, 0);
+
+#if GTK
+  GtkAllocation allocation;
+  gtk_widget_get_allocation(view, &allocation);
+  int middle = (vertical ? allocation.width : allocation.height) / 2;
+
+  g_object_ref(view);
+  GtkWidget *view2 = new_view(curdoc);
+  GtkWidget *parent = gtk_widget_get_parent(view);
+  gtk_container_remove(GTK_CONTAINER(parent), view);
+  GtkWidget *pane = vertical ? gtk_hpaned_new() : gtk_vpaned_new();
+  gtk_paned_add1(GTK_PANED(pane), view), gtk_paned_add2(GTK_PANED(pane), view2);
+  gtk_container_add(GTK_CONTAINER(parent), pane);
+  gtk_paned_set_position(GTK_PANED(pane), middle);
+  gtk_widget_show_all(pane);
+  g_object_unref(view);
+#elif NCURSES
+  WINDOW *win = scintilla_get_window(view);
+  int x, y;
+  getbegyx(win, y, x);
+  int width = getmaxx(win) - x, height = getmaxy(win) - y;
+  wresize(win, vertical ? height : height / 2, vertical ? width / 2 : width);
+  Scintilla *view2 = new_view(curdoc);
+  wresize(scintilla_get_window(view2), vertical ? height : height / 2,
+                                       vertical ? width / 2 : width);
+  mvwin(scintilla_get_window(view2), vertical ? y : y + height / 2,
+                                     vertical ? x + width / 2 : x);
+  // TODO: draw split
+#endif
+  focus_view(view2);
+
+  SS(view2, SCI_SETSEL, anchor, current_pos);
+  int new_first_line = SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0);
+  SS(view2, SCI_LINESCROLL, first_line - new_first_line, 0);
+}
+
+#if GTK
+/**
+ * Remove all Scintilla views from the given pane and delete them.
+ * @param pane The GTK pane to remove Scintilla views from.
+ * @see delete_view
+ */
+static void remove_views_from_pane(GtkWidget *pane) {
+  GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane));
+  GtkWidget *child2 = gtk_paned_get_child2(GTK_PANED(pane));
+  GTK_IS_PANED(child1) ? remove_views_from_pane(child1) : delete_view(child1);
+  GTK_IS_PANED(child2) ? remove_views_from_pane(child2) : delete_view(child2);
+}
+#endif
+
+/**
+ * Unsplits the pane a given Scintilla view is in and keeps the view.
+ * All views in the other pane are deleted.
+ * @param view The Scintilla view to keep when unsplitting.
+ * @see remove_views_from_pane
+ * @see delete_view
+ */
+static int unsplit_view(Scintilla *view) {
+#if GTK
+  GtkWidget *pane = gtk_widget_get_parent(view);
+  if (!GTK_IS_PANED(pane)) return FALSE;
+  GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane));
+  if (other == view) other = gtk_paned_get_child2(GTK_PANED(pane));
+  g_object_ref(view), g_object_ref(other);
+  gtk_container_remove(GTK_CONTAINER(pane), view);
+  gtk_container_remove(GTK_CONTAINER(pane), other);
+  GTK_IS_PANED(other) ? remove_views_from_pane(other) : delete_view(other);
+  GtkWidget *parent = gtk_widget_get_parent(pane);
+  gtk_container_remove(GTK_CONTAINER(parent), pane);
+  if (GTK_IS_PANED(parent)) {
+    if (!gtk_paned_get_child1(GTK_PANED(parent)))
+      gtk_paned_add1(GTK_PANED(parent), view);
+    else
+      gtk_paned_add2(GTK_PANED(parent), view);
+  } else gtk_container_add(GTK_CONTAINER(parent), view);
+  gtk_widget_show_all(parent);
+  gtk_widget_grab_focus(GTK_WIDGET(view));
+  g_object_unref(view), g_object_unref(other);
+  return TRUE;
+#elif NCURSES
+  return FALSE;
+#endif
+}
+
+// Textadept signals.
+
+#if GTK
+// Application signal.
+
+#if GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE
+/**
+ * Processes a remote Textadept's command line arguments.
+ */
+static int a_command_line(GApplication *app, GApplicationCommandLine *cmdline,
+                          void*_) {
+  if (!lua) return 0; // only process argv for secondary/remote instances
+  int argc = 0;
+  char **argv = g_application_command_line_get_arguments(cmdline, &argc);
+  if (argc > 1) {
+    lua_getglobal(lua, "args"), lua_getfield(lua, -1, "process");
+    lua_newtable(lua);
+    const char *cwd = g_application_command_line_get_cwd(cmdline);
+    lua_pushstring(lua, cwd ? cwd : ""), lua_rawseti(lua, -2, -1);
+    for (int i = 0; i < argc; i++)
+      lua_pushstring(lua, argv[i]), lua_rawseti(lua, -2, i);
+    if (lua_pcall(lua, 1, 0, 0) != LUA_OK) {
+      lL_event(lua, "error", LUA_TSTRING, lua_tostring(lua, -1), -1);
+      lua_pop(lua, 1); // error message
+    }
+    lua_pop(lua, 1); // args
+  }
+  g_strfreev(argv);
+  gtk_window_present(GTK_WINDOW(window));
+  return 0;
+}
+#endif
+
+// Window signals.
+
+/**
+ * Signal for a Textadept window focus change.
+ */
+static int w_focus(GtkWidget*_, GdkEventFocus *event, void*__) {
+  if (focused_view && !gtk_widget_has_focus(focused_view))
+    gtk_widget_grab_focus(focused_view);
+  return FALSE;
+}
+
+/**
+ * Signal for a Textadept keypress.
+ * Currently handled keypresses:
+ *  - Escape: hides the find box if it is open.
+ */
+static int w_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
+  if (event->keyval == 0xff1b && gtk_widget_get_visible(findbox) &&
+      !gtk_widget_has_focus(command_entry)) {
+    gtk_widget_hide(findbox);
+    gtk_widget_grab_focus(focused_view);
+    return TRUE;
+  } else return FALSE;
+}
+
+/**
+ * Signal for exiting Textadept.
+ * Generates a 'quit' event.
+ * Closes the Lua state and releases resources.
+ * @see l_close
+ */
+static int w_exit(GtkWidget*_, GdkEventAny*__, void*___) {
+  if (!lL_event(lua, "quit", -1)) return TRUE;
+  l_close(lua);
+  scintilla_release_resources();
+  gtk_main_quit();
+  return FALSE;
+}
+
+#if __OSX__
+/**
+ * Signal for opening files from OSX.
+ * Generates an 'appleevent_odoc' event for each document sent.
+ */
+static int w_open_osx(GtkOSXApplication*_, char *path, void*__) {
+  lL_event(lua, "appleevent_odoc", LUA_TSTRING, path, -1);
+  return TRUE;
+}
+
+/**
+ * Signal for block terminating Textadept from OSX.
+ * Generates a 'quit' event.
+ */
+static int w_exit_osx(GtkOSXApplication*_, void*__) {
+  return !lL_event(lua, "quit", -1);
+}
+
+/**
+ * Signal for terminating Textadept from OSX.
+ * Closes the Lua state and releases resources.
+ * @see l_close
+ */
+static void w_quit_osx(GtkOSXApplication*_, void*__) {
+  l_close(lua);
+  scintilla_release_resources();
+  g_object_unref(osxapp);
+  gtk_main_quit();
+}
+#endif
+#endif // if GTK
+
+// Find/replace signals.
+
+/**
+ * Adds the given text to the find/replace history list if it is not at the top.
+ * @param text The text to add.
+ * @param store The ListStore to add the text to.
+ */
+static void find_add_to_history(const char *text, ListStore *store) {
+#if GTK
+  char *first_item = NULL;
+  GtkTreeIter iter;
+  if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter))
+    gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &first_item, -1);
+  if (!first_item || strcmp(text, first_item) != 0) {
+    gtk_list_store_prepend(store, &iter);
+    gtk_list_store_set(store, &iter, 0, text, -1);
+    g_free(first_item);
+    int count = 1;
+    while (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter))
+      if (++count > 10) gtk_list_store_remove(store, &iter); // keep 10 items
+  }
+#elif NCURSES
+  if (!store[0] || strcmp(text, store[0]) != 0) {
+    if (store[9]) free(store[9]);
+    for (int i = 0; i < 9; i++) store[i + 1] = store[i];
+    store[0] = copy(text);
+  }
+#endif
+}
+
+/**
+ * Signal for a find box button click.
+ */
+static void f_clicked(FindButton button, void*_) {
+#if GTK
+  const char *find_text = gtk_entry_get_text(GTK_ENTRY(find_entry));
+  const char *repl_text = gtk_entry_get_text(GTK_ENTRY(replace_entry));
+#endif
+  if (strlen(find_text) == 0) return;
+  if (button == fnext_button || button == fprev_button) {
+    find_add_to_history(find_text, find_store);
+    lL_event(lua, "find", LUA_TSTRING, find_text, LUA_TBOOLEAN,
+             button == fnext_button, -1);
+  } else {
+    find_add_to_history(repl_text, repl_store);
+    if (button == r_button) {
+      lL_event(lua, "replace", LUA_TSTRING, repl_text, -1);
+      lL_event(lua, "find", LUA_TSTRING, find_text, LUA_TBOOLEAN, 1, -1);
+    } else
+      lL_event(lua, "replace_all", LUA_TSTRING, find_text, LUA_TSTRING,
+               repl_text, -1);
+  }
+}
+
+#if GTK
+// Command entry completion signals.
+
+/**
+ * The match function for the command entry.
+ * Since the completion list is filled by Lua, every item is a "match".
+ */
+static int cc_matchfunc(GtkEntryCompletion*_, const char *__, GtkTreeIter*___,
+                        void*____) { return 1; }
+
+/**
+ * Replaces the current word (consisting of alphanumeric and underscore
+ * characters) with the match text.
+ */
+static int cc_matchselected(GtkEntryCompletion*_, GtkTreeModel *model,
+                                 GtkTreeIter *iter, void*__) {
+  const char *text = gtk_entry_get_text(GTK_ENTRY(command_entry)), *p;
+  for (p = text + strlen(text) - 1; g_ascii_isalnum(*p) || *p == '_'; p--)
+    g_signal_emit_by_name(G_OBJECT(command_entry), "move-cursor",
+                          GTK_MOVEMENT_VISUAL_POSITIONS, -1, TRUE, 0);
+  if (p < text + strlen(text) - 1)
+    g_signal_emit_by_name(G_OBJECT(command_entry), "backspace", 0);
+
+  char *match;
+  gtk_tree_model_get(model, iter, 0, &match, -1);
+  g_signal_emit_by_name(G_OBJECT(command_entry), "insert-at-cursor", match, 0);
+  g_free(match);
+
+  gtk_list_store_clear(cc_store);
+  return TRUE;
+}
+
+// Command entry signals.
+
+/**
+ * Signal for the 'enter' key being pressed in the Command Entry.
+ */
+static void c_activate(GtkWidget *entry, void*_) {
+  lL_event(lua, "command_entry_command", LUA_TSTRING,
+           gtk_entry_get_text(GTK_ENTRY(entry)), -1);
+}
+
+/**
+ * Signal for a keypress inside the Command Entry.
+ */
+static int c_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
+  return lL_event(lua, "command_entry_keypress", LUA_TNUMBER, event->keyval,
+                  LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
+                  event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
+                  event->state & GDK_MOD1_MASK, LUA_TBOOLEAN,
+                  event->state & GDK_META_MASK, -1);
+}
+#endif // if GTK
+
+/**
+ * Creates the Find box.
+ */
+static FindBox *new_findbox() {
+#if GTK
+#define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
+  gtk_table_attach(GTK_TABLE(findbox), w, x1, x2, y1, y2, xo, yo, xp, yp)
+#define EXPAND_FILL (GtkAttachOptions)(GTK_EXPAND | GTK_FILL)
+#define SHRINK_FILL (GtkAttachOptions)(GTK_SHRINK | GTK_FILL)
+
+  findbox = gtk_table_new(2, 6, FALSE);
+  find_store = gtk_list_store_new(1, G_TYPE_STRING);
+  repl_store = gtk_list_store_new(1, G_TYPE_STRING);
+
+  flabel = gtk_label_new_with_mnemonic("_Find:");
+  rlabel = gtk_label_new_with_mnemonic("R_eplace:");
+  GtkWidget *find_combo = gtk_combo_box_entry_new_with_model(
+                          GTK_TREE_MODEL(find_store), 0);
+  gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(find_combo), 0);
+  g_object_unref(find_store);
+  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(find_combo), FALSE);
+  find_entry = gtk_bin_get_child(GTK_BIN(find_combo));
+  gtk_entry_set_activates_default(GTK_ENTRY(find_entry), TRUE);
+  GtkWidget *replace_combo = gtk_combo_box_entry_new_with_model(
+                             GTK_TREE_MODEL(repl_store), 0);
+  gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(replace_combo), 0);
+  g_object_unref(repl_store);
+  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(replace_combo), FALSE);
+  replace_entry = gtk_bin_get_child(GTK_BIN(replace_combo));
+  gtk_entry_set_activates_default(GTK_ENTRY(replace_entry), TRUE);
+  fnext_button = gtk_button_new_with_mnemonic("Find _Next");
+  fprev_button = gtk_button_new_with_mnemonic("Find _Prev");
+  r_button = gtk_button_new_with_mnemonic("_Replace");
+  ra_button = gtk_button_new_with_mnemonic("Replace _All");
+  match_case = gtk_check_button_new_with_mnemonic("_Match case");
+  whole_word = gtk_check_button_new_with_mnemonic("_Whole word");
+  lua_pattern = gtk_check_button_new_with_mnemonic("_Lua pattern");
+  in_files = gtk_check_button_new_with_mnemonic("_In files");
+
+  gtk_label_set_mnemonic_widget(GTK_LABEL(flabel), find_entry);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(rlabel), replace_entry);
+
+  attach(find_combo, 1, 2, 0, 1, EXPAND_FILL, SHRINK_FILL, 5, 0);
+  attach(replace_combo, 1, 2, 1, 2, EXPAND_FILL, SHRINK_FILL, 5, 0);
+  attach(flabel, 0, 1, 0, 1, SHRINK_FILL, SHRINK_FILL, 5, 0);
+  attach(rlabel, 0, 1, 1, 2, SHRINK_FILL, SHRINK_FILL, 5, 0);
+  attach(fnext_button, 2, 3, 0, 1, SHRINK_FILL, SHRINK_FILL, 0, 0);
+  attach(fprev_button, 3, 4, 0, 1, SHRINK_FILL, SHRINK_FILL, 0, 0);
+  attach(r_button, 2, 3, 1, 2, SHRINK_FILL, SHRINK_FILL, 0, 0);
+  attach(ra_button, 3, 4, 1, 2, SHRINK_FILL, SHRINK_FILL, 0, 0);
+  attach(match_case, 4, 5, 0, 1, SHRINK_FILL, SHRINK_FILL, 5, 0);
+  attach(whole_word, 4, 5, 1, 2, SHRINK_FILL, SHRINK_FILL, 5, 0);
+  attach(lua_pattern, 5, 6, 0, 1, SHRINK_FILL, SHRINK_FILL, 5, 0);
+  attach(in_files, 5, 6, 1, 2, SHRINK_FILL, SHRINK_FILL, 5, 0);
+
+  signal(fnext_button, "clicked", f_clicked);
+  signal(fprev_button, "clicked", f_clicked);
+  signal(r_button, "clicked", f_clicked);
+  signal(ra_button, "clicked", f_clicked);
+
+  gtk_widget_set_can_default(fnext_button, TRUE);
+  gtk_widget_set_can_focus(fnext_button, FALSE);
+  gtk_widget_set_can_focus(fprev_button, FALSE);
+  gtk_widget_set_can_focus(r_button, FALSE);
+  gtk_widget_set_can_focus(ra_button, FALSE);
+  gtk_widget_set_can_focus(match_case, FALSE);
+  gtk_widget_set_can_focus(whole_word, FALSE);
+  gtk_widget_set_can_focus(lua_pattern, FALSE);
+  gtk_widget_set_can_focus(in_files, FALSE);
+#endif
+
+  return findbox;
+}
+
+/**
+ * Creates the Textadept window.
+ * The window contains a menubar, frame for Scintilla views, hidden find box,
+ * hidden command entry, and two status bars: one for notifications and the
+ * other for buffer status.
+ */
+static void new_window() {
+#if GTK
+  GList *icon_list = NULL;
+  const char *icons[] = { "16x16", "32x32", "48x48", "64x64", "128x128" };
+  for (int i = 0; i < 5; i++) {
+    char *icon_file = g_strconcat(textadept_home, "/core/images/ta_", icons[i],
+                                  ".png", NULL);
+    GdkPixbuf *pb = gdk_pixbuf_new_from_file(icon_file, NULL);
+    if (pb) icon_list = g_list_prepend(icon_list, pb);
+    g_free(icon_file);
+  }
+  gtk_window_set_default_icon_list(icon_list);
+  g_list_foreach(icon_list, (GFunc)g_object_unref, NULL);
+  g_list_free(icon_list);
+
+  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_name(window, "textadept");
+  gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
+  signal(window, "delete-event", w_exit);
+  signal(window, "focus-in-event", w_focus);
+  signal(window, "key-press-event", w_keypress);
+  accel = gtk_accel_group_new();
+
+#if __OSX__
+  gtk_osxapplication_set_use_quartz_accelerators(osxapp, FALSE);
+  osx_signal(osxapp, "NSApplicationOpenFile", w_open_osx);
+  osx_signal(osxapp, "NSApplicationBlockTermination", w_exit_osx);
+  osx_signal(osxapp, "NSApplicationWillTerminate", w_quit_osx);
+#endif
+
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_add(GTK_CONTAINER(window), vbox);
+
+  menubar = gtk_menu_bar_new();
+  gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
+
+  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+
+  GtkWidget *view = new_view(0);
+  gtk_box_pack_start(GTK_BOX(hbox), view, TRUE, TRUE, 0);
+
+  GtkWidget *find = new_findbox();
+  gtk_box_pack_start(GTK_BOX(vbox), find, FALSE, FALSE, 5);
+
+  command_entry = gtk_entry_new();
+  signal(command_entry, "activate", c_activate);
+  signal(command_entry, "key-press-event", c_keypress);
+  gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
+
+  command_entry_completion = gtk_entry_completion_new();
+  signal(command_entry_completion, "match-selected", cc_matchselected);
+  gtk_entry_completion_set_match_func(command_entry_completion, cc_matchfunc,
+                                      NULL, NULL);
+  gtk_entry_completion_set_popup_set_width(command_entry_completion, FALSE);
+  gtk_entry_completion_set_text_column(command_entry_completion, 0);
+  cc_store = gtk_list_store_new(1, G_TYPE_STRING);
+  gtk_entry_completion_set_model(command_entry_completion,
+                                 GTK_TREE_MODEL(cc_store));
+  gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
+
+  GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
+
+  statusbar[0] = gtk_statusbar_new();
+  gtk_statusbar_push(GTK_STATUSBAR(statusbar[0]), 0, "");
+  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar[0]), FALSE);
+  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[0], TRUE, TRUE, 0);
+
+  statusbar[1] = gtk_statusbar_new();
+  gtk_statusbar_push(GTK_STATUSBAR(statusbar[1]), 0, "");
+  g_object_set(G_OBJECT(statusbar[1]), "width-request", 400, NULL);
+  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[1], FALSE, FALSE, 0);
+
+  gtk_widget_show_all(window);
+  gtk_widget_hide(menubar); // hide initially
+  gtk_widget_hide(findbox); // hide initially
+  gtk_widget_hide(command_entry); // hide initially
+#elif NCURSES
+  Scintilla *view = new_view(0);
+  wresize(scintilla_get_window(view), LINES - 2, COLS);
+  mvwin(scintilla_get_window(view), 1, 0);
+#endif
+}
 
 /**
  * Runs Textadept.
@@ -324,619 +899,6 @@ int WINAPI WinMain(HINSTANCE _, HINSTANCE __, LPSTR lpCmdLine, int ___) {
   return main(1, &lpCmdLine);
 }
 #endif
-
-/**
- * Creates the Textadept window.
- * The window contains a menubar, frame for Scintilla views, hidden find box,
- * hidden command entry, and two status bars: one for notifications and the
- * other for buffer status.
- */
-static void new_window() {
-#if GTK
-  GList *icon_list = NULL;
-  const char *icons[] = { "16x16", "32x32", "48x48", "64x64", "128x128" };
-  for (int i = 0; i < 5; i++) {
-    char *icon_file = g_strconcat(textadept_home, "/core/images/ta_", icons[i],
-                                  ".png", NULL);
-    GdkPixbuf *pb = gdk_pixbuf_new_from_file(icon_file, NULL);
-    if (pb) icon_list = g_list_prepend(icon_list, pb);
-    g_free(icon_file);
-  }
-  gtk_window_set_default_icon_list(icon_list);
-  g_list_foreach(icon_list, (GFunc)g_object_unref, NULL);
-  g_list_free(icon_list);
-
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_name(window, "textadept");
-  gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
-  signal(window, "delete-event", w_exit);
-  signal(window, "focus-in-event", w_focus);
-  signal(window, "key-press-event", w_keypress);
-  accel = gtk_accel_group_new();
-
-#if __OSX__
-  gtk_osxapplication_set_use_quartz_accelerators(osxapp, FALSE);
-  app_signal(osxapp, "NSApplicationOpenFile", w_open_osx);
-  app_signal(osxapp, "NSApplicationBlockTermination", w_exit_osx);
-  app_signal(osxapp, "NSApplicationWillTerminate", w_quit_osx);
-#endif
-
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
-  gtk_container_add(GTK_CONTAINER(window), vbox);
-
-  menubar = gtk_menu_bar_new();
-  gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
-
-  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
-
-  GtkWidget *view = new_view(0);
-  gtk_box_pack_start(GTK_BOX(hbox), view, TRUE, TRUE, 0);
-
-  GtkWidget *find = new_findbox();
-  gtk_box_pack_start(GTK_BOX(vbox), find, FALSE, FALSE, 5);
-
-  command_entry = gtk_entry_new();
-  signal(command_entry, "activate", c_activate);
-  signal(command_entry, "key-press-event", c_keypress);
-  gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
-
-  command_entry_completion = gtk_entry_completion_new();
-  signal(command_entry_completion, "match-selected", cc_matchselected);
-  gtk_entry_completion_set_match_func(command_entry_completion, cc_matchfunc,
-                                      NULL, NULL);
-  gtk_entry_completion_set_popup_set_width(command_entry_completion, FALSE);
-  gtk_entry_completion_set_text_column(command_entry_completion, 0);
-  cc_store = gtk_list_store_new(1, G_TYPE_STRING);
-  gtk_entry_completion_set_model(command_entry_completion,
-                                 GTK_TREE_MODEL(cc_store));
-  gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
-
-  GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
-
-  statusbar[0] = gtk_statusbar_new();
-  gtk_statusbar_push(GTK_STATUSBAR(statusbar[0]), 0, "");
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar[0]), FALSE);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[0], TRUE, TRUE, 0);
-
-  statusbar[1] = gtk_statusbar_new();
-  gtk_statusbar_push(GTK_STATUSBAR(statusbar[1]), 0, "");
-  g_object_set(G_OBJECT(statusbar[1]), "width-request", 400, NULL);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[1], FALSE, FALSE, 0);
-
-  gtk_widget_show_all(window);
-  gtk_widget_hide(menubar); // hide initially
-  gtk_widget_hide(findbox); // hide initially
-  gtk_widget_hide(command_entry); // hide initially
-#elif NCURSES
-  Scintilla *view = new_view(0);
-  wresize(scintilla_get_window(view), LINES - 2, COLS);
-  mvwin(scintilla_get_window(view), 1, 0);
-#endif
-}
-
-/**
- * Creates a new Scintilla view.
- * Generates a 'view_new' event.
- * @param doc The document to load in the new view. Almost never zero, except
- *   for the first Scintilla view created, in which there is no doc pointer.
- * @return Scintilla view
- * @see lL_addview
- */
-static Scintilla *new_view(sptr_t doc) {
-#if GTK
-  Scintilla *view = scintilla_new();
-  gtk_widget_set_size_request(view, 1, 1); // minimum size
-  signal(view, SCINTILLA_NOTIFY, s_notify);
-  signal(view, "command", s_command);
-  signal(view, "key-press-event", s_keypress);
-  signal(view, "button-press-event", s_buttonpress);
-#elif NCURSES
-  Scintilla *view = scintilla_new(s_notify);
-#endif
-  SS(view, SCI_USEPOPUP, 0, 0);
-  lL_addview(lua, view);
-  focused_view = view;
-  focus_view(view);
-  if (doc) {
-    SS(view, SCI_SETDOCPOINTER, 0, doc);
-    l_setglobaldoc(lua, doc);
-  } else new_buffer(SS(view, SCI_GETDOCPOINTER, 0, 0));
-  l_setglobalview(lua, view);
-  lL_event(lua, "view_new", -1);
-  return view;
-}
-
-/**
- * Removes a Scintilla view.
- * @param view The Scintilla view to remove.
- * @see lL_removeview
- */
-static void delete_view(Scintilla *view) {
-  lL_removeview(lua, view);
-  scintilla_delete(view);
-}
-
-/**
- * Creates a new Scintilla document and adds it to the Lua state.
- * Generates 'buffer_before_switch' and 'buffer_new' events.
- * @param doc Almost always zero, except for the first Scintilla view created,
- *   in which its doc pointer would be given here.
- * @see lL_adddoc
- */
-static void new_buffer(sptr_t doc) {
-  if (!doc) { // create the new document
-    doc = SS(focused_view, SCI_CREATEDOCUMENT, 0, 0);
-    lL_event(lua, "buffer_before_switch", -1);
-    lL_adddoc(lua, doc);
-    lL_gotodoc(lua, focused_view, -1, FALSE);
-  } else {
-    // The first Scintilla window already has a pre-created buffer.
-    lL_adddoc(lua, doc);
-    SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
-  }
-  l_setglobaldoc(lua, doc);
-  lL_event(lua, "buffer_new", -1);
-}
-
-/**
- * Removes the Scintilla buffer from the current Scintilla view.
- * @param doc The Scintilla document.
- * @see lL_removedoc
- */
-static void delete_buffer(sptr_t doc) {
-  lL_removedoc(lua, doc);
-  SS(focused_view, SCI_RELEASEDOCUMENT, 0, doc);
-}
-
-/**
- * Splits the given Scintilla view into two views.
- * The new view shows the same document as the original one.
- * @param view The Scintilla view to split.
- * @param vertical Flag indicating whether to split the view vertically or
- *   horozontally.
- */
-static void split_view(Scintilla *view, int vertical) {
-  sptr_t curdoc = SS(view, SCI_GETDOCPOINTER, 0, 0);
-  int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0);
-  int current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0);
-  int anchor = SS(view, SCI_GETANCHOR, 0, 0);
-
-#if GTK
-  GtkAllocation allocation;
-  gtk_widget_get_allocation(view, &allocation);
-  int middle = (vertical ? allocation.width : allocation.height) / 2;
-
-  g_object_ref(view);
-  GtkWidget *view2 = new_view(curdoc);
-  GtkWidget *parent = gtk_widget_get_parent(view);
-  gtk_container_remove(GTK_CONTAINER(parent), view);
-  GtkWidget *pane = vertical ? gtk_hpaned_new() : gtk_vpaned_new();
-  gtk_paned_add1(GTK_PANED(pane), view), gtk_paned_add2(GTK_PANED(pane), view2);
-  gtk_container_add(GTK_CONTAINER(parent), pane);
-  gtk_paned_set_position(GTK_PANED(pane), middle);
-  gtk_widget_show_all(pane);
-  g_object_unref(view);
-#elif NCURSES
-  WINDOW *win = scintilla_get_window(view);
-  int x, y;
-  getbegyx(win, y, x);
-  int width = getmaxx(win) - x, height = getmaxy(win) - y;
-  wresize(win, vertical ? height : height / 2, vertical ? width / 2 : width);
-  Scintilla *view2 = new_view(curdoc);
-  wresize(scintilla_get_window(view2), vertical ? height : height / 2,
-                                       vertical ? width / 2 : width);
-  mvwin(scintilla_get_window(view2), vertical ? y : y + height / 2,
-                                     vertical ? x + width / 2 : x);
-  // TODO: draw split
-#endif
-  focus_view(view2);
-
-  SS(view2, SCI_SETSEL, anchor, current_pos);
-  int new_first_line = SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0);
-  SS(view2, SCI_LINESCROLL, first_line - new_first_line, 0);
-}
-
-#if GTK
-/**
- * Remove all Scintilla views from the given pane and delete them.
- * @param pane The GTK pane to remove Scintilla views from.
- * @see delete_view
- */
-static void remove_views_from_pane(GtkWidget *pane) {
-  GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane));
-  GtkWidget *child2 = gtk_paned_get_child2(GTK_PANED(pane));
-  GTK_IS_PANED(child1) ? remove_views_from_pane(child1) : delete_view(child1);
-  GTK_IS_PANED(child2) ? remove_views_from_pane(child2) : delete_view(child2);
-}
-#endif
-
-/**
- * Unsplits the pane a given Scintilla view is in and keeps the view.
- * All views in the other pane are deleted.
- * @param view The Scintilla view to keep when unsplitting.
- * @see remove_views_from_pane
- * @see delete_view
- */
-static int unsplit_view(Scintilla *view) {
-#if GTK
-  GtkWidget *pane = gtk_widget_get_parent(view);
-  if (!GTK_IS_PANED(pane)) return FALSE;
-  GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane));
-  if (other == view) other = gtk_paned_get_child2(GTK_PANED(pane));
-  g_object_ref(view), g_object_ref(other);
-  gtk_container_remove(GTK_CONTAINER(pane), view);
-  gtk_container_remove(GTK_CONTAINER(pane), other);
-  GTK_IS_PANED(other) ? remove_views_from_pane(other) : delete_view(other);
-  GtkWidget *parent = gtk_widget_get_parent(pane);
-  gtk_container_remove(GTK_CONTAINER(parent), pane);
-  if (GTK_IS_PANED(parent)) {
-    if (!gtk_paned_get_child1(GTK_PANED(parent)))
-      gtk_paned_add1(GTK_PANED(parent), view);
-    else
-      gtk_paned_add2(GTK_PANED(parent), view);
-  } else gtk_container_add(GTK_CONTAINER(parent), view);
-  gtk_widget_show_all(parent);
-  gtk_widget_grab_focus(GTK_WIDGET(view));
-  g_object_unref(view), g_object_unref(other);
-  return TRUE;
-#elif NCURSES
-  return FALSE;
-#endif
-}
-
-/******************************************************************************/
-/************************* GUI Notifications/Signals **************************/
-/******************************************************************************/
-
-/**
- * Change focus to the given Scintilla view.
- * Generates 'view_before_switch' and 'view_after_switch' events.
- * @param view The Scintilla view to focus.
- */
-static void goto_view(Scintilla *view) {
-  if (!closing) lL_event(lua, "view_before_switch", -1);
-  focused_view = view;
-  l_setglobalview(lua, view);
-  l_setglobaldoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0));
-  if (!closing) lL_event(lua, "view_after_switch", -1);
-}
-
-/**
- * Signal for a Scintilla notification.
- */
-static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
-  struct SCNotification *n = (struct SCNotification *)lParam;
-  if (focused_view == view || n->nmhdr.code == SCN_URIDROPPED) {
-    if (focused_view != view) goto_view(view);
-    lL_notify(lua, n);
-  } else if (n->nmhdr.code == SCN_SAVEPOINTLEFT) {
-    Scintilla *prev = focused_view;
-    goto_view(view);
-    lL_notify(lua, n);
-    goto_view(prev); // do not let a split view steal focus
-  }
-}
-
-#if GTK
-/**
- * Signal for a Scintilla command.
- * Currently handles SCEN_SETFOCUS.
- */
-static void s_command(GtkWidget *view, int wParam, void*_, void*__) {
-  if (wParam >> 16 == SCEN_SETFOCUS) goto_view(view);
-}
-
-/**
- * Signal for a Scintilla keypress.
- */
-static int s_keypress(GtkWidget *view, GdkEventKey *event, void*_) {
-  return lL_event(lua, "keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN,
-                  event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
-                  event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
-                  event->state & GDK_MOD1_MASK, LUA_TBOOLEAN,
-                  event->state & GDK_META_MASK, -1);
-}
-
-/**
- * Signal for a Scintilla mouse click.
- */
-static int s_buttonpress(GtkWidget*_, GdkEventButton *event, void*__) {
-  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
-    return (lL_showcontextmenu(lua, (void *)event), TRUE);
-  return FALSE;
-}
-
-/**
- * Signal for a Textadept window focus change.
- */
-static int w_focus(GtkWidget*_, GdkEventFocus *event, void*__) {
-  if (focused_view && !gtk_widget_has_focus(focused_view))
-    gtk_widget_grab_focus(focused_view);
-  return FALSE;
-}
-
-/**
- * Signal for a Textadept keypress.
- * Currently handled keypresses:
- *  - Escape: hides the find box if it is open.
- */
-static int w_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
-  if (event->keyval == 0xff1b && gtk_widget_get_visible(findbox) &&
-      !gtk_widget_has_focus(command_entry)) {
-    gtk_widget_hide(findbox);
-    gtk_widget_grab_focus(focused_view);
-    return TRUE;
-  } else return FALSE;
-}
-
-/**
- * Signal for exiting Textadept.
- * Generates a 'quit' event.
- * Closes the Lua state and releases resources.
- * @see l_close
- */
-static int w_exit(GtkWidget*_, GdkEventAny*__, void*___) {
-  if (!lL_event(lua, "quit", -1)) return TRUE;
-  l_close(lua);
-  scintilla_release_resources();
-  gtk_main_quit();
-  return FALSE;
-}
-
-#if GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE
-/**
- * Processes a remote Textadept's command line arguments.
- */
-static int a_command_line(GApplication *app, GApplicationCommandLine *cmdline,
-                          void*_) {
-  if (!lua) return 0; // only process argv for secondary/remote instances
-  int argc = 0;
-  char **argv = g_application_command_line_get_arguments(cmdline, &argc);
-  if (argc > 1) {
-    lua_getglobal(lua, "args"), lua_getfield(lua, -1, "process");
-    lua_newtable(lua);
-    const char *cwd = g_application_command_line_get_cwd(cmdline);
-    lua_pushstring(lua, cwd ? cwd : ""), lua_rawseti(lua, -2, -1);
-    for (int i = 0; i < argc; i++)
-      lua_pushstring(lua, argv[i]), lua_rawseti(lua, -2, i);
-    if (lua_pcall(lua, 1, 0, 0) != LUA_OK) {
-      lL_event(lua, "error", LUA_TSTRING, lua_tostring(lua, -1), -1);
-      lua_pop(lua, 1); // error message
-    }
-    lua_pop(lua, 1); // args
-  }
-  g_strfreev(argv);
-  gtk_window_present(GTK_WINDOW(window));
-  return 0;
-}
-#endif
-
-#if __OSX__
-/**
- * Signal for opening files from OSX.
- * Generates an 'appleevent_odoc' event for each document sent.
- */
-static int w_open_osx(GtkOSXApplication*_, char *path, void*__) {
-  lL_event(lua, "appleevent_odoc", LUA_TSTRING, path, -1);
-  return TRUE;
-}
-
-/**
- * Signal for block terminating Textadept from OSX.
- * Generates a 'quit' event.
- */
-static int w_exit_osx(GtkOSXApplication*_, void*__) {
-  return !lL_event(lua, "quit", -1);
-}
-
-/**
- * Signal for terminating Textadept from OSX.
- * Closes the Lua state and releases resources.
- * @see l_close
- */
-static void w_quit_osx(GtkOSXApplication*_, void*__) {
-  l_close(lua);
-  scintilla_release_resources();
-  g_object_unref(osxapp);
-  gtk_main_quit();
-}
-#endif
-#endif // if GTK
-
-/******************************************************************************/
-/************************* Find/Replace GUI Interface *************************/
-/******************************************************************************/
-
-#if GTK
-#define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
-  gtk_table_attach(GTK_TABLE(findbox), w, x1, x2, y1, y2, xo, yo, xp, yp)
-#define EXPAND_FILL (GtkAttachOptions)(GTK_EXPAND | GTK_FILL)
-#define SHRINK_FILL (GtkAttachOptions)(GTK_SHRINK | GTK_FILL)
-#endif
-/**
- * Creates the Find box.
- */
-static FINDBOX *new_findbox() {
-#if GTK
-  findbox = gtk_table_new(2, 6, FALSE);
-  find_store = gtk_list_store_new(1, G_TYPE_STRING);
-  repl_store = gtk_list_store_new(1, G_TYPE_STRING);
-
-  flabel = gtk_label_new_with_mnemonic("_Find:");
-  rlabel = gtk_label_new_with_mnemonic("R_eplace:");
-  GtkWidget *find_combo = gtk_combo_box_entry_new_with_model(
-                          GTK_TREE_MODEL(find_store), 0);
-  gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(find_combo), 0);
-  g_object_unref(find_store);
-  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(find_combo), FALSE);
-  find_entry = gtk_bin_get_child(GTK_BIN(find_combo));
-  gtk_entry_set_activates_default(GTK_ENTRY(find_entry), TRUE);
-  GtkWidget *replace_combo = gtk_combo_box_entry_new_with_model(
-                             GTK_TREE_MODEL(repl_store), 0);
-  gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(replace_combo), 0);
-  g_object_unref(repl_store);
-  gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(replace_combo), FALSE);
-  replace_entry = gtk_bin_get_child(GTK_BIN(replace_combo));
-  gtk_entry_set_activates_default(GTK_ENTRY(replace_entry), TRUE);
-  fnext_button = gtk_button_new_with_mnemonic("Find _Next");
-  fprev_button = gtk_button_new_with_mnemonic("Find _Prev");
-  r_button = gtk_button_new_with_mnemonic("_Replace");
-  ra_button = gtk_button_new_with_mnemonic("Replace _All");
-  match_case_opt = gtk_check_button_new_with_mnemonic("_Match case");
-  whole_word_opt = gtk_check_button_new_with_mnemonic("_Whole word");
-  lua_opt = gtk_check_button_new_with_mnemonic("_Lua pattern");
-  in_files_opt = gtk_check_button_new_with_mnemonic("_In files");
-
-  gtk_label_set_mnemonic_widget(GTK_LABEL(flabel), find_entry);
-  gtk_label_set_mnemonic_widget(GTK_LABEL(rlabel), replace_entry);
-
-  attach(find_combo, 1, 2, 0, 1, EXPAND_FILL, SHRINK_FILL, 5, 0);
-  attach(replace_combo, 1, 2, 1, 2, EXPAND_FILL, SHRINK_FILL, 5, 0);
-  attach(flabel, 0, 1, 0, 1, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(rlabel, 0, 1, 1, 2, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(fnext_button, 2, 3, 0, 1, SHRINK_FILL, SHRINK_FILL, 0, 0);
-  attach(fprev_button, 3, 4, 0, 1, SHRINK_FILL, SHRINK_FILL, 0, 0);
-  attach(r_button, 2, 3, 1, 2, SHRINK_FILL, SHRINK_FILL, 0, 0);
-  attach(ra_button, 3, 4, 1, 2, SHRINK_FILL, SHRINK_FILL, 0, 0);
-  attach(match_case_opt, 4, 5, 0, 1, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(whole_word_opt, 4, 5, 1, 2, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(lua_opt, 5, 6, 0, 1, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(in_files_opt, 5, 6, 1, 2, SHRINK_FILL, SHRINK_FILL, 5, 0);
-
-  signal(fnext_button, "clicked", f_clicked);
-  signal(fprev_button, "clicked", f_clicked);
-  signal(r_button, "clicked", f_clicked);
-  signal(ra_button, "clicked", f_clicked);
-
-  gtk_widget_set_can_default(fnext_button, TRUE);
-  gtk_widget_set_can_focus(fnext_button, FALSE);
-  gtk_widget_set_can_focus(fprev_button, FALSE);
-  gtk_widget_set_can_focus(r_button, FALSE);
-  gtk_widget_set_can_focus(ra_button, FALSE);
-  gtk_widget_set_can_focus(match_case_opt, FALSE);
-  gtk_widget_set_can_focus(whole_word_opt, FALSE);
-  gtk_widget_set_can_focus(lua_opt, FALSE);
-  gtk_widget_set_can_focus(in_files_opt, FALSE);
-#endif
-
-  return findbox;
-}
-
-/******************************************************************************/
-/**************************** Find/Replace Signals ****************************/
-/******************************************************************************/
-
-/**
- * Adds the given text to the find/replace history list if it is not at the top.
- * @param text The text to add.
- * @param store The LIST_STORE to add the text to.
- */
-static void find_add_to_history(const char *text, LIST_STORE *store) {
-#if GTK
-  char *first_item = NULL;
-  GtkTreeIter iter;
-  if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter))
-    gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &first_item, -1);
-  if (!first_item || strcmp(text, first_item) != 0) {
-    gtk_list_store_prepend(store, &iter);
-    gtk_list_store_set(store, &iter, 0, text, -1);
-    g_free(first_item);
-    int count = 1;
-    while (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter))
-      if (++count > 10) gtk_list_store_remove(store, &iter); // keep 10 items
-  }
-#elif NCURSES
-  if (!store[0] || strcmp(text, store[0]) != 0) {
-    if (store[9]) free(store[9]);
-    for (int i = 0; i < 9; i++) store[i + 1] = store[i];
-    store[0] = copy(text);
-  }
-#endif
-}
-
-/**
- * Signal for a find box button click.
- */
-static void f_clicked(FIND_BUTTON button, void*_) {
-#if GTK
-  const char *find_text = gtk_entry_get_text(GTK_ENTRY(find_entry));
-  const char *repl_text = gtk_entry_get_text(GTK_ENTRY(replace_entry));
-#endif
-  if (strlen(find_text) == 0) return;
-  if (button == fnext_button || button == fprev_button) {
-    find_add_to_history(find_text, find_store);
-    lL_event(lua, "find", LUA_TSTRING, find_text, LUA_TBOOLEAN,
-             button == fnext_button, -1);
-  } else {
-    find_add_to_history(repl_text, repl_store);
-    if (button == r_button) {
-      lL_event(lua, "replace", LUA_TSTRING, repl_text, -1);
-      lL_event(lua, "find", LUA_TSTRING, find_text, LUA_TBOOLEAN, 1, -1);
-    } else
-      lL_event(lua, "replace_all", LUA_TSTRING, find_text, LUA_TSTRING,
-               repl_text, -1);
-  }
-}
-
-/******************************************************************************/
-/************************ Command Entry GUI Interface *************************/
-/******************************************************************************/
-
-#if GTK
-/**
- * The match function for the command entry.
- * Since the completion list is filled by Lua, every item is a "match".
- */
-static int cc_matchfunc(GtkEntryCompletion*_, const char *__, GtkTreeIter*___,
-                        void*____) { return 1; }
-
-/**
- * Replaces the current word (consisting of alphanumeric and underscore
- * characters) with the match text.
- */
-static int cc_matchselected(GtkEntryCompletion*_, GtkTreeModel *model,
-                                 GtkTreeIter *iter, void*__) {
-  const char *text = gtk_entry_get_text(GTK_ENTRY(command_entry)), *p;
-  for (p = text + strlen(text) - 1; g_ascii_isalnum(*p) || *p == '_'; p--)
-    g_signal_emit_by_name(G_OBJECT(command_entry), "move-cursor",
-                          GTK_MOVEMENT_VISUAL_POSITIONS, -1, TRUE, 0);
-  if (p < text + strlen(text) - 1)
-    g_signal_emit_by_name(G_OBJECT(command_entry), "backspace", 0);
-
-  char *match;
-  gtk_tree_model_get(model, iter, 0, &match, -1);
-  g_signal_emit_by_name(G_OBJECT(command_entry), "insert-at-cursor", match, 0);
-  g_free(match);
-
-  gtk_list_store_clear(cc_store);
-  return TRUE;
-}
-
-/******************************************************************************/
-/*************************** Command Entry Signals ****************************/
-/******************************************************************************/
-
-/**
- * Signal for the 'enter' key being pressed in the Command Entry.
- */
-static void c_activate(GtkWidget *entry, void*_) {
-  lL_event(lua, "command_entry_command", LUA_TSTRING,
-           gtk_entry_get_text(GTK_ENTRY(entry)), -1);
-}
-
-/**
- * Signal for a keypress inside the Command Entry.
- */
-static int c_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
-  return lL_event(lua, "command_entry_keypress", LUA_TNUMBER, event->keyval,
-                  LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
-                  event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
-                  event->state & GDK_MOD1_MASK, LUA_TBOOLEAN,
-                  event->state & GDK_META_MASK, -1);
-}
-#endif // if GTK
 
 /******************************************************************************/
 /******************************** Lua Interface *******************************/
@@ -1873,13 +1835,13 @@ static int lfind__index(lua_State *L) {
     lua_pushstring(L, repl_text);
 #endif
   else if (strcmp(key, "match_case") == 0)
-    lua_pushboolean(L, toggled(match_case_opt));
+    lua_pushboolean(L, toggled(match_case));
   else if (strcmp(key, "whole_word") == 0)
-    lua_pushboolean(L, toggled(whole_word_opt));
+    lua_pushboolean(L, toggled(whole_word));
   else if (strcmp(key, "lua") == 0)
-    lua_pushboolean(L, toggled(lua_opt));
+    lua_pushboolean(L, toggled(lua_pattern));
   else if (strcmp(key, "in_files") == 0)
-    lua_pushboolean(L, toggled(in_files_opt));
+    lua_pushboolean(L, toggled(in_files));
   else
     lua_rawget(L, 1);
   return 1;
@@ -1907,13 +1869,13 @@ static int lfind__newindex(lua_State *L) {
     repl_text = copy(lua_tostring(L, 3));
 #endif
   } else if (strcmp(key, "match_case") == 0)
-    toggle(match_case_opt, lua_toboolean(L, -1));
+    toggle(match_case, lua_toboolean(L, -1));
   else if (strcmp(key, "whole_word") == 0)
-    toggle(whole_word_opt, lua_toboolean(L, -1));
+    toggle(whole_word, lua_toboolean(L, -1));
   else if (strcmp(key, "lua") == 0)
-    toggle(lua_opt, lua_toboolean(L, -1));
+    toggle(lua_pattern, lua_toboolean(L, -1));
   else if (strcmp(key, "in_files") == 0)
-    toggle(in_files_opt, lua_toboolean(L, -1));
+    toggle(in_files, lua_toboolean(L, -1));
 #if GTK
   else if (strcmp(key, "find_label_text") == 0)
     gtk_label_set_text_with_mnemonic(GTK_LABEL(flabel), lua_tostring(L, 3));
@@ -1928,13 +1890,13 @@ static int lfind__newindex(lua_State *L) {
   else if (strcmp(key, "replace_all_button_text") == 0)
     gtk_button_set_label(GTK_BUTTON(ra_button), lua_tostring(L, 3));
   else if (strcmp(key, "match_case_label_text") == 0)
-    gtk_button_set_label(GTK_BUTTON(match_case_opt), lua_tostring(L, 3));
+    gtk_button_set_label(GTK_BUTTON(match_case), lua_tostring(L, 3));
   else if (strcmp(key, "whole_word_label_text") == 0)
-    gtk_button_set_label(GTK_BUTTON(whole_word_opt), lua_tostring(L, 3));
+    gtk_button_set_label(GTK_BUTTON(whole_word), lua_tostring(L, 3));
   else if (strcmp(key, "lua_pattern_label_text") == 0)
-    gtk_button_set_label(GTK_BUTTON(lua_opt), lua_tostring(L, 3));
+    gtk_button_set_label(GTK_BUTTON(lua_pattern), lua_tostring(L, 3));
   else if (strcmp(key, "in_files_label_text") == 0)
-    gtk_button_set_label(GTK_BUTTON(in_files_opt), lua_tostring(L, 3));
+    gtk_button_set_label(GTK_BUTTON(in_files), lua_tostring(L, 3));
 #endif
   else
     lua_rawset(L, 1);
