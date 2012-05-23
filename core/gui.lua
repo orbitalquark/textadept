@@ -4,7 +4,7 @@ local gui = gui
 
 --[[ This comment is for LuaDoc.
 --- The core gui table.
--- @field title (string)
+-- @field title (string, Write-only)
 --   The title of the Textadept window.
 -- @field context_menu
 --   A GTK menu defining the editor's context menu.
