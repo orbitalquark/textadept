@@ -267,6 +267,9 @@
 --   * `_SCINTILLA.constants.SC_EFF_QUALITY_NON_ANTIALIASED` (1).
 --   * `_SCINTILLA.constants.SC_EFF_QUALITY_ANTIALIASED` (2).
 --   * `_SCINTILLA.constants.SC_EFF_QUALITY_LCD_OPTIMIZED` (3).
+-- @field gap_position (number, Read-only)
+--   A position which, to avoid performance costs, should not be within the
+--   range of a call to `buffer:get_range_pointer()`.
 -- @field h_scroll_bar (bool)
 --   Whether the horizontal scroll bar is visible.
 --   Set to `false` to never see it and `true` to enable it again. The default
@@ -1239,6 +1242,12 @@ function buffer.delete_back(buffer) end
 function buffer.delete_back_not_line(buffer) end
 
 ---
+-- Delete a range of text in the document.
+-- @param pos The start position of the range to delete.
+-- @param length The length of the range to delete.
+function buffer.delete_range(buffer, pos, length) end
+
+---
 -- Find the document line of a display line taking hidden lines into account.
 -- @param buffer The global buffer.
 -- @return number
@@ -1385,6 +1394,15 @@ function buffer.get_property(buffer, key) end
 -- @param key Keyword.
 -- @return string
 function buffer.get_property_expanded(buffer, key) end
+
+---
+-- Return a read-only pointer to a range of characters in the document.
+-- May move the gap so that the range is contiguous, but will only move up to
+-- range_length bytes.
+-- The gap is not moved unless it is within the requested range so this call can
+-- be faster than `SCI_GETCHARACTERPOINTER`. This can be used by application
+-- code that is able to act on blocks of text or ranges of lines.
+function buffer.get_range_pointer(buffer, position, range_length) end
 
 ---
 -- Retrieve the selected text.
