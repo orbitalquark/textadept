@@ -201,6 +201,7 @@ SCI_GETFOLDEXPANDED	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETFOLDLEVEL	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETFOLDPARENT	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETFONTQUALITY	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETGAPPOSITION	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETHIGHLIGHTGUIDE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETHOTSPOTACTIVEUNDERLINE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETHOTSPOTSINGLELINE	_	0;"	F	class:_SCINTILLA.constants
@@ -686,6 +687,7 @@ SC_WRAPVISUALFLAGLOC_DEFAULT	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAPVISUALFLAGLOC_END_BY_TEXT	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAPVISUALFLAGLOC_START_BY_TEXT	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAPVISUALFLAG_END	_	0;"	F	class:_SCINTILLA.constants
+SC_WRAPVISUALFLAG_MARGIN	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAPVISUALFLAG_NONE	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAPVISUALFLAG_START	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAP_CHAR	_	0;"	F	class:_SCINTILLA.constants
@@ -959,6 +961,7 @@ del_word_right_end	_	0;"	f	class:buffer
 delete	_	0;"	f	class:buffer
 delete_back	_	0;"	f	class:buffer
 delete_back_not_line	_	0;"	f	class:buffer
+delete_range	_	0;"	f	class:buffer
 delimited_range	_	0;"	f	class:lexer
 dialog	_	0;"	f	class:gui
 difftime	_	0;"	f	class:os
@@ -1042,6 +1045,7 @@ form_feed	_	0;"	f	class:buffer
 format	_	0;"	f	class:string
 frexp	_	0;"	f	class:math
 functions	_	0;"	t	class:_SCINTILLA
+gap_position	_	0;"	F	class:buffer
 get_apidoc	_	0;"	f	class:_M.textadept.adeptsense
 get_class	_	0;"	f	class:_M.textadept.adeptsense
 get_completions	_	0;"	f	class:_M.textadept.adeptsense
@@ -1059,6 +1063,7 @@ get_line_sel_start_position	_	0;"	f	class:buffer
 get_property	_	0;"	f	class:buffer
 get_property	_	0;"	f	class:lexer
 get_property_expanded	_	0;"	f	class:buffer
+get_range_pointer	_	0;"	f	class:buffer
 get_sel_text	_	0;"	f	class:buffer
 get_split_table	_	0;"	f	class:gui
 get_style_at	_	0;"	f	class:lexer
