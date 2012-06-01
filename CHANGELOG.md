@@ -4,6 +4,33 @@
 
 [Atom Feed]: feed
 
+## 5.4 (01 Jun 2012)
+
+Download:
+
+* [Textadept 5.4 -- Win32][]
+* [Textadept 5.4 -- Mac OSX Intel 10.5+][]
+* [Textadept 5.4 -- Linux][]
+* [Textadept 5.4 -- Linux x86_64][]
+* [Textadept 5.4 -- Source][]
+* [Textadept 5.4 -- Modules][]
+
+Bugfixes:
+
+* None.
+
+Changes:
+
+* Updated to [Scintilla][] 3.2.0.
+
+[Textadept 5.4 -- Win32]: download/textadept_5.4.win32.zip
+[Textadept 5.4 -- Mac OSX Intel 10.5+]: download/textadept_5.4.osx.zip
+[Textadept 5.4 -- Linux]: download/textadept_5.4.tgz
+[Textadept 5.4 -- Linux x86_64]: download/textadept_5.4.x86_64.tgz
+[Textadept 5.4 -- Source]: download/textadept_5.4.src.zip
+[Textadept 5.4 -- Modules]: download/textadept_5.4.modules.zip
+[Scintilla]: http://scintilla.org
+
 ## 5.3 (01 May 2012)
 
 Download:
