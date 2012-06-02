@@ -93,7 +93,7 @@ else
 SI_FLAG =
 endif
 
-INCLUDEDIRS = -Iscintilla/include -I$(LUADIR)/src -Igcocoadialog
+INCLUDEDIRS = -Iscintilla/include -I$(LUADIR)/src -Igtdialog
 ifdef NCURSES
 INCLUDEDIRS += -Iscintilla/term -Itermkey
 endif
@@ -121,9 +121,9 @@ endif
 ifdef OSX
 GTKLIBS += -framework Cocoa -lgtkmacintegration
 endif
-GCDFLAGS = $(PLAT_FLAGS) -DNOHELP -DLIBRARY
+GTDFLAGS = $(PLAT_FLAGS) -DNOHELP -DLIBRARY
 ifndef NCURSES
-GCDFLAGS += $(GTKFLAGS)
+GTDFLAGS += $(GTKFLAGS)
 endif
 ifndef NCURSES
 LIBS = $(GTKLIBS)
@@ -140,7 +140,7 @@ LUA_OBJS = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
   lpeg.o lfs.o
 LUA_SRCS = lua/src/*.c lua/src/lib/*.c
 LUAJIT_OBJS =
-GCOCOADIALOG = gcocoadialog.o
+GTDIALOG = gtdialog.o
 ifdef NCURSES
 TERMKEY_OBJS = termkey.o driver-ti.o driver-csi.o
 endif
@@ -204,13 +204,13 @@ endif
 $(LUAJIT_OBJS):
 	cd luajit && make $(LUAJIT_MAKE)
 	cp luajit/src/$(LUAJIT_LIB) .
-$(GCOCOADIALOG): gcocoadialog/gcocoadialog.c
-	$(CC) $(GCDFLAGS) $(INCLUDEDIRS) -c $<
+$(GTDIALOG): gtdialog/gtdialog.c
+	$(CC) $(GTDFLAGS) $(INCLUDEDIRS) -c $<
 $(TERMKEY_OBJS): termkey/*.c
 	$(CC) -std=c99 -c $^
 $(TEXTADEPT):\
   $(SCINTILLA_OBJS) $(SCINTILLA_PLAT_OBJS) $(SCINTILLA_LEXER) \
-  $(TEXTADEPT_OBJS) $(LUA_OBJS) $(LUAJIT_OBJS) $(GCOCOADIALOG) \
+  $(TEXTADEPT_OBJS) $(LUA_OBJS) $(LUAJIT_OBJS) $(GTDIALOG) \
   $(TERMKEY_OBJS) $(TEXTADEPT_RC)
 	$(CPP) $(EXPORTLUASYMS) -o $@ $^ $(LIBS) $(LDL)
 	mv $(TEXTADEPT) ../
@@ -313,7 +313,7 @@ release: ../$(TEXTADEPT) ../$(TEXTADEPT32) ../$(TEXTADEPTWIN32) \
 	rm -r $(RELEASEDIRMAC)
 	# Source
 	rm $(RELEASEDIR32)/{$(TEXTADEPT),$(TEXTADEPTJIT)}
-	cp -rL lua luajit scintilla gcocoadialog LexLPeg.cxx $(RELEASEDIR32)/src/
+	cp -rL lua luajit scintilla gtdialog LexLPeg.cxx $(RELEASEDIR32)/src/
 	cd $(RELEASEDIR32)/src/luajit && make clean && cd ../../../
 	rm -r $(RELEASEDIR32)/src/scintilla/.hg
 	zip -r $(SRCPACKAGE) $(RELEASEDIR32)

@@ -1115,7 +1115,7 @@ Changes:
 * Removed `_m.textadept.mlines` module since Scintilla's multiple selections
   supercedes it.
 * Removed side pane.
-* New [`gui.dialog('filteredlist', ...)][] from [gcocoadialog][].
+* New [`gui.dialog('filteredlist', ...)][] from [gtdialog][].
 * Can select buffer from filteredlist dialog (replacing side pane buffer list).
 * Can select lexer from filteredlist dialog.
 * Can have user `key_commands.lua`, `snippets.lua`, `mime_types.conf`,
@@ -1131,7 +1131,7 @@ Changes:
 [Textadept 2.2 beta -- Linux]: download/textadept_2.2_beta.tgz
 [Textadept 2.2 beta -- Linux x86_64]: download/textadept_2.2_beta.x86_64.tgz
 [Textadept 2.2 beta -- Source]: download/textadept_2.2_beta.src.zip
-[gcocoadialog]: http://foicica.com/gcocoadialog
+[gtdialog]: http://foicica.com/gtdialog
 [`gui.dialog('filteredlist', ...)]: api/gui.html#dialog
 
 ## 2.1 (01 Mar 2010)
@@ -1247,7 +1247,7 @@ Changes:
 * Sessions functionality moved to `modules/textadept/session.lua` from
   `core/file_io.lua`.
 * The `char_added` event now passes an int, not a string, to handler functions.
-* Replaced [cocoaDialog][] and [lua_dialog][] with my C-based [gcocoadialog][].
+* Replaced [cocoaDialog][] and [lua_dialog][] with my C-based [gtdialog][].
 * [Incremental find][] via the Lua command entry.
 * *NO* dependencies other than [GTK][] on _all_ platforms.
 
@@ -1268,7 +1268,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [compile commands]: api/_M.textadept.run.html#compile_command
 [run commands]: api/_M.textadept.run.html#run_command
-[gcocoadialog]: http://foicica.com/gcocoadialog
+[gtdialog]: http://foicica.com/gtdialog
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
 [cocoaDialog]: http://cocoadialog.sf.net
 [Incremental find]: 6_AdeptEditing.html#Find.Incremental

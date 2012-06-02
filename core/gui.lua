@@ -342,7 +342,7 @@ events_connect(events.UPDATE_UI, function()
   local enc = buffer.encoding or ''
   local text = not NCURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
                                '%s %d/%d  %s %d  %s  %s  %s  %s'
-  gui.docstatusbar_text = string_format(text, _L['Line:'], line, max, 
+  gui.docstatusbar_text = string_format(text, _L['Line:'], line, max,
                                         _L['Col:'], col, lexer, eol, tabs, enc)
 end)
 
@@ -435,13 +435,13 @@ local size
 The functions below are Lua C functions.
 
 ---
--- Displays a gcocoadialog of a specified type with the given string arguments.
+-- Displays a gtdialog of a specified type with the given string arguments.
 -- Each argument is like a string in Lua's `arg` table. Tables of strings are
 -- allowed as arguments and are expanded in place. This is useful for
 -- filteredlist dialogs with many items.
--- @param kind The kind of gcocoadialog.
--- @param ... Parameters to the gcocoadialog.
--- @return string gcocoadialog result.
+-- @param kind The kind of gtdialog.
+-- @param ... Parameters to the gtdialog.
+-- @return string gtdialog result.
 -- @class function
 -- @name dialog
 local dialog
