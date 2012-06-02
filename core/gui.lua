@@ -340,9 +340,10 @@ events_connect(events.UPDATE_UI, function()
   local tabs = string_format('%s %d', buffer.use_tabs and _L['Tabs:'] or
                              _L['Spaces:'], buffer.indent)
   local enc = buffer.encoding or ''
-  gui.docstatusbar_text =
-    string_format('%s %d/%d    %s %d    %s    %s    %s    %s', _L['Line:'],
-                  line, max, _L['Col:'], col, lexer, eol, tabs, enc)
+  local text = not NCURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
+                               '%s %d/%d  %s %d  %s  %s  %s  %s'
+  gui.docstatusbar_text = string_format(text, _L['Line:'], line, max, 
+                                        _L['Col:'], col, lexer, eol, tabs, enc)
 end)
 
 -- Toggles folding.
