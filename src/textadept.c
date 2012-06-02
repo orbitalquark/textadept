@@ -25,7 +25,7 @@
 #define PLAT_TERM 1
 #endif
 
-#include "gcocoadialog.h"
+#include "gtdialog.h"
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
@@ -466,7 +466,7 @@ static int lce__newindex(lua_State *L) {
 
 /** `gui.dialog()` Lua function. */
 static int lgui_dialog(lua_State *L) {
-  GCDialogType type = gcocoadialog_type(luaL_checkstring(L, 1));
+  GTDialogType type = gtdialog_type(luaL_checkstring(L, 1));
   int i, j, k, n = lua_gettop(L) - 1, argc = n;
   for (i = 2; i < n + 2; i++)
     if (lua_istable(L, i)) argc += lua_rawlen(L, i) - 1;
@@ -481,7 +481,7 @@ static int lgui_dialog(lua_State *L) {
       }
     } else argv[i++] = luaL_checkstring(L, j);
   argv[argc] = 0;
-  char *out = gcocoadialog(type, argc, argv);
+  char *out = gtdialog(type, argc, argv);
   lua_pushstring(L, out);
   free(out), free(argv);
   return 1;
