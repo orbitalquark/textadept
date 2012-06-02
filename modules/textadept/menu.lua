@@ -241,13 +241,13 @@ M.context_menu = {
 local key_shortcuts = {}
 local menu_actions, contextmenu_actions = {}, {}
 
--- Creates a menu suitable for `gui.gtkmenu()` from the menu table format.
+-- Creates a menu suitable for `gui.menu()` from the menu table format.
 -- Also assigns key commands.
--- @param menu The menu to create a gtkmenu from.
+-- @param menu The menu to create a GTK menu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu.
 --   If so, menu_id offset is 1000. The default value is `false`.
--- @return gtkmenu that can be passed to `gui.gtkmenu()`.
--- @see gui.gtkmenu
+-- @return GTK menu that can be passed to `gui.menu()`.
+-- @see gui.menu
 local function read_menu_table(menu, contextmenu)
   local gtkmenu = {}
   gtkmenu.title = menu.title
@@ -288,7 +288,7 @@ function M.set_menubar(menubar)
   menu_actions = {}
   local _menubar = {}
   for i = 1, #menubar do
-    _menubar[#_menubar + 1] = gui.gtkmenu(read_menu_table(menubar[i]))
+    _menubar[#_menubar + 1] = gui.menu(read_menu_table(menubar[i]))
   end
   gui.menubar = _menubar
 end
@@ -302,7 +302,7 @@ M.set_menubar(M.menubar)
 -- @name set_contextmenu
 function M.set_contextmenu(menu_table)
   contextmenu_actions = {}
-  gui.context_menu = gui.gtkmenu(read_menu_table(menu_table, true))
+  gui.context_menu = gui.menu(read_menu_table(menu_table, true))
 end
 M.set_contextmenu(M.context_menu)
 
