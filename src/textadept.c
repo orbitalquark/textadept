@@ -659,8 +659,7 @@ static void l_pushmenu(lua_State *L, int index, void (*callback)(void),
         label = lua_tostring(L, -1);
         lua_pop(L, 1); // label
         int menu_id = l_rawgetiint(L, -1, 2);
-        int key = l_rawgetiint(L, -1, 3);
-        int modifiers = l_rawgetiint(L, -1, 4);
+        int key = l_rawgetiint(L, -1, 3), modifiers = l_rawgetiint(L, -1, 4);
         if (label) {
           if (g_str_has_prefix(label, "gtk-"))
             menu_item = gtk_image_menu_item_new_from_stock(label, NULL);
@@ -1240,8 +1239,7 @@ static int ltimeout(lua_State *L) {
 static int lstring_iconv(lua_State *L) {
   size_t text_len = 0;
   char *text = (char *)luaL_checklstring(L, 1, &text_len);
-  const char *to = luaL_checkstring(L, 2);
-  const char *from = luaL_checkstring(L, 3);
+  const char *to = luaL_checkstring(L, 2), *from = luaL_checkstring(L, 3);
   int converted = FALSE;
   iconv_t cd = iconv_open(to, from);
   if (cd != (iconv_t) -1) {
@@ -1714,11 +1712,13 @@ static void split_view(Scintilla *view, int vertical) {
   int width = getmaxx(win) - x, height = getmaxy(win) - y;
   wresize(win, vertical ? height : height / 2, vertical ? width / 2 : width);
   Scintilla *view2 = new_view(curdoc);
-  wresize(scintilla_get_window(view2), vertical ? height : height / 2,
-                                       vertical ? width / 2 : width);
-  mvwin(scintilla_get_window(view2), vertical ? y : y + height / 2,
-                                     vertical ? x + width / 2 : x);
-  // TODO: draw split
+  wresize(scintilla_get_window(view2), vertical ? height : height / 2 - 1,
+                                       vertical ? width / 2 - 1 : width);
+  mvwin(scintilla_get_window(view2), vertical ? y : y + height / 2 + 1,
+                                     vertical ? x + width / 2 + 1 : x);
+  vertical ? mvvline(y, x + width / 2, '|', height)
+           : mvhline(y + height / 2, x, '-', width);
+  // TODO: additional splitting.
 #endif
   focus_view(view2);
 
