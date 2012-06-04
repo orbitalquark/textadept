@@ -58,16 +58,15 @@ typedef GtkWidget Scintilla;
 #define focus_view(v) \
   SS(focused_view, SCI_SETFOCUS, 0, 0), SS(v, SCI_SETFOCUS, 1, 0)
 #endif
-#define copy(s) strcpy(malloc(strlen(s) + 1), s)
 
 // Window
-char *textadept_home = NULL;
-Scintilla *focused_view;
+static char *textadept_home = NULL;
+static Scintilla *focused_view;
 #if GTK
-GtkWidget *window, *menubar, *statusbar[2];
-GtkAccelGroup *accel;
+static GtkWidget *window, *menubar, *statusbar[2];
+static GtkAccelGroup *accel;
 #if __OSX__
-GtkOSXApplication *osxapp;
+static GtkOSXApplication *osxapp;
 #endif
 #endif
 static void new_buffer(sptr_t);
@@ -75,50 +74,51 @@ static Scintilla *new_view(sptr_t);
 
 // Find/Replace
 #if GTK
-typedef GtkWidget FindBox;
-GtkWidget *find_entry, *replace_entry, *flabel, *rlabel;
+static GtkWidget *findbox, *find_entry, *replace_entry, *flabel, *rlabel;
 #define find_text gtk_entry_get_text(GTK_ENTRY(find_entry))
 #define repl_text gtk_entry_get_text(GTK_ENTRY(replace_entry))
 typedef GtkWidget * FindButton;
-FindButton fnext_button, fprev_button, r_button, ra_button;
-typedef GtkWidget * Option;
-Option match_case, whole_word, lua_pattern, in_files;
+static FindButton fnext_button, fprev_button, r_button, ra_button;
+static GtkWidget *match_case, *whole_word, *lua_pattern, *in_files;
 typedef GtkListStore ListStore;
-ListStore *find_store, *repl_store;
+static ListStore *find_store, *repl_store;
 #elif NCURSES
-typedef WINDOW FindBox;
-char *find_text = NULL, *repl_text = NULL, *flabel = NULL, *rlabel = NULL;
+static CDKSCREEN *findbox = NULL;
+static CDKENTRY *find_entry, *replace_entry;
+static char *find_text = NULL, *repl_text = NULL, *flabel = NULL,
+            *rlabel = NULL;
 typedef int FindButton;
-enum FindButton { fnext_button, fprev_button, r_button, ra_button };
-typedef int Option;
-Option match_case = 0, whole_word = 0, lua_pattern = 0, in_files = 0;
+enum FindButton { fnext_button, r_button, fprev_button, ra_button };
+static int match_case = FALSE, whole_word = FALSE, lua_pattern = FALSE,
+           in_files = FALSE;
+static char *button_labels[4] = { NULL, NULL, NULL, NULL },
+            *option_labels[4] = { NULL, NULL, NULL, NULL };
 typedef char * ListStore;
-ListStore find_store[10] = {
+static ListStore find_store[10] = {
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 }, repl_store[10] = {
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 #endif
-FindBox *findbox;
 
 // Command Entry
 #if GTK
-GtkWidget *command_entry;
+static GtkWidget *command_entry;
 #define command_text gtk_entry_get_text(GTK_ENTRY(command_entry))
-GtkListStore *cc_store;
-GtkEntryCompletion *command_entry_completion;
+static GtkListStore *cc_store;
+static GtkEntryCompletion *command_entry_completion;
 #elif NCURSES
-CDKENTRY *command_entry = NULL;
-char *command_text = NULL;
+static CDKENTRY *command_entry = NULL;
+static char *command_text = NULL;
 #endif
 
 // Lua
-lua_State *lua;
+static lua_State *lua;
 #if NCURSES
-int quit = FALSE;
+static int quit = FALSE;
 #endif
-int closing = FALSE;
-char *statusbar_text = NULL;
+static int closing = FALSE;
+static char *statusbar_text = NULL;
 static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
            tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 static int lL_init(lua_State *, int, char **, int);
@@ -238,6 +238,18 @@ static int a_command_line(GApplication *app, GApplicationCommandLine *cmdline,
 #endif
 
 /**
+ * Frees the given string's current value, if any, and copies the given value to
+ * it.
+ * The given string must be freed when finished.
+ * @param s The address of the string to copy value to.
+ * @param value The new value to copy. It may be freed immediately.
+ */
+static void fcopy(char **s, const char *value) {
+  if (*s) free(*s);
+  *s = strcpy(malloc(strlen(value) + 1), value);
+}
+
+/**
  * Adds the given text to the find/replace history list if it is not at the top.
  * @param text The text to add.
  * @param store The ListStore to add the text to.
@@ -259,8 +271,8 @@ static void find_add_to_history(const char *text, ListStore *store) {
 #elif NCURSES
   if (!store[0] || strcmp(text, store[0]) != 0) {
     if (store[9]) free(store[9]);
-    for (int i = 0; i < 9; i++) store[i + 1] = store[i];
-    store[0] = copy(text);
+    for (int i = 9; i > 0; i--) store[i] = store[i - 1];
+    store[0] = NULL, fcopy(&store[0], text);
   }
 #endif
 }
@@ -294,6 +306,62 @@ static int lfind_prev(lua_State *L) {
   return (f_clicked(fprev_button, NULL), 0);
 }
 
+#if NCURSES
+/**
+ * Signal for a tab keypress in a CDKEntry to inject a tab in a CDKButtonbox.
+ */
+static int buttonbox_tab(EObjectType cdkType, void *object, void *data,
+                         chtype key) {
+  injectCDKButtonbox((CDKBUTTONBOX *)data, key);
+  return TRUE;
+}
+
+/**
+ * Signal for a keypress in the Find/Replace Entry.
+ * For F1-F4 keys, toggle the respective search option.
+ * For Up/Down keys, scroll through find/replace history.
+ */
+static int entry_keypress(EObjectType cdkType, void *object, void *data,
+                         chtype key) {
+  switch (key) {
+    case KEY_F(1):
+      match_case = !match_case, option_labels[0] += match_case ? -4 : 4;
+      break;
+    case KEY_F(2):
+      whole_word = !whole_word, option_labels[1] += whole_word ? -4 : 4;
+      break;
+    case KEY_F(3):
+      lua_pattern = !lua_pattern, option_labels[2] += lua_pattern ? -4 : 4;
+      break;
+    case KEY_F(4):
+      in_files = !in_files, option_labels[3] += in_files ? -4 : 4;
+      break;
+    case KEY_UP:
+    case KEY_DOWN: {
+      CDKENTRY *entry = (CDKENTRY *)object;
+      ListStore *store = (entry == find_entry) ? find_store : repl_store;
+      char *value = getCDKEntryValue(entry);
+      int i;
+      for (i = 9; i >= 0; i--)
+        if (store[i] && strcmp(store[i], value) == 0) break;
+      (key == KEY_UP) ? i++ : i--;
+      if (i >= 0 && i <= 9 && store[i])
+        setCDKEntryValue(entry, store[i]), drawCDKEntry(entry, FALSE);
+      break;
+    }
+  }
+  if (key >= KEY_F(1) && key <= KEY_F(4)) {
+    CDKBUTTONBOX **optionbox = (CDKBUTTONBOX **)data;
+    int width = (*optionbox)->boxWidth - 1;
+    destroyCDKButtonbox(*optionbox);
+    *optionbox = newCDKButtonbox(findbox, RIGHT, TOP, 2, width, NULL, 2, 2,
+                                 option_labels, 4, A_NORMAL, FALSE, FALSE);
+    drawCDKButtonbox(*optionbox, FALSE);
+  }
+  return TRUE;
+}
+#endif
+
 /** `find.focus()` Lua function. */
 static int lfind_focus(lua_State *L) {
 #if GTK
@@ -306,7 +374,45 @@ static int lfind_focus(lua_State *L) {
     gtk_widget_hide(findbox);
   }
 #elif NCURSES
-  // TODO: toggle findbox focus.
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+  if (!findbox) {
+    findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0));
+    int b_width = max(strlen(button_labels[0]), strlen(button_labels[1])) +
+                  max(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
+    int o_width = max(strlen(option_labels[0]), strlen(option_labels[1])) +
+                  max(strlen(option_labels[2]), strlen(option_labels[3])) + 3;
+    int l_width = max(strlen(flabel), strlen(rlabel));
+    int e_width = COLS - o_width - b_width - l_width - 1;
+    find_entry = newCDKEntry(findbox, l_width - strlen(flabel), TOP, NULL,
+                             flabel, A_NORMAL, '_', vMIXED, e_width, 0, 64,
+                             FALSE, FALSE);
+    replace_entry = newCDKEntry(findbox, l_width - strlen(rlabel), BOTTOM, NULL,
+                                rlabel, A_NORMAL, '_', vMIXED, e_width, 0, 64,
+                                FALSE, FALSE);
+    CDKBUTTONBOX *buttonbox = newCDKButtonbox(findbox, COLS - o_width - b_width,
+                                              TOP, 2, b_width, NULL, 2, 2,
+                                              button_labels, 4, A_REVERSE,
+                                              FALSE, FALSE);
+    CDKBUTTONBOX *optionbox = newCDKButtonbox(findbox, RIGHT, TOP, 2, o_width,
+                                              NULL, 2, 2, option_labels, 4,
+                                              A_NORMAL, FALSE, FALSE);
+    bindCDKObject(vENTRY, find_entry, KEY_TAB, buttonbox_tab, buttonbox);
+    bindCDKObject(vENTRY, find_entry, KEY_BTAB, buttonbox_tab, buttonbox);
+    setCDKEntryPostProcess(find_entry, entry_keypress, &optionbox);
+    bindCDKObject(vENTRY, replace_entry, KEY_TAB, buttonbox_tab, buttonbox);
+    bindCDKObject(vENTRY, replace_entry, KEY_BTAB, buttonbox_tab, buttonbox);
+    setCDKEntryPostProcess(replace_entry, entry_keypress, &optionbox);
+    drawCDKEntry(replace_entry, FALSE);
+    drawCDKButtonbox(buttonbox, FALSE), drawCDKButtonbox(optionbox, FALSE);
+    while (activateCDKEntry(find_entry, NULL)) {
+      fcopy(&find_text, getCDKEntryValue(find_entry));
+      fcopy(&repl_text, getCDKEntryValue(replace_entry));
+      f_clicked(getCDKButtonboxCurrentButton(buttonbox), NULL);
+    }
+    destroyCDKEntry(find_entry), destroyCDKEntry(replace_entry);
+    destroyCDKButtonbox(buttonbox), destroyCDKButtonbox(optionbox);
+    delwin(findbox->window), destroyCDKScreen(findbox), findbox = NULL;
+  }
 #endif
   return 0;
 }
@@ -348,27 +454,29 @@ static int lfind__index(lua_State *L) {
 
 #if GTK
 #define toggle(w, b) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), b)
+#define set_label_text(l, t) gtk_label_set_text_with_mnemonic(GTK_LABEL(l), t)
+#define set_button_label(b, l) gtk_button_set_label(GTK_BUTTON(b), l)
 #elif NCURSES
 #define toggle(w, b) w = b
+#define set_label_text(l, t) fcopy(&l, t)
+#define set_button_label(b, l) fcopy(&button_labels[b], l)
 #endif
 /** `find.__newindex` Lua metatable. */
 static int lfind__newindex(lua_State *L) {
   const char *key = lua_tostring(L, 2);
-  if (strcmp(key, "find_entry_text") == 0) {
+  if (strcmp(key, "find_entry_text") == 0)
 #if GTK
     gtk_entry_set_text(GTK_ENTRY(find_entry), lua_tostring(L, 3));
 #elif NCURSES
-    if (find_text) free(find_text);
-    find_text = copy(lua_tostring(L, 3));
+    fcopy(&find_text, lua_tostring(L, 3));
 #endif
-  } else if (strcmp(key, "replace_entry_text") == 0) {
+  else if (strcmp(key, "replace_entry_text") == 0)
 #if GTK
     gtk_entry_set_text(GTK_ENTRY(replace_entry), lua_tostring(L, 3));
 #elif NCURSES
-    if (repl_text) free(repl_text);
-    repl_text = copy(lua_tostring(L, 3));
+    fcopy(&repl_text, lua_tostring(L, 3));
 #endif
-  } else if (strcmp(key, "match_case") == 0)
+  else if (strcmp(key, "match_case") == 0)
     toggle(match_case, lua_toboolean(L, -1));
   else if (strcmp(key, "whole_word") == 0)
     toggle(whole_word, lua_toboolean(L, -1));
@@ -376,19 +484,19 @@ static int lfind__newindex(lua_State *L) {
     toggle(lua_pattern, lua_toboolean(L, -1));
   else if (strcmp(key, "in_files") == 0)
     toggle(in_files, lua_toboolean(L, -1));
-#if GTK
   else if (strcmp(key, "find_label_text") == 0)
-    gtk_label_set_text_with_mnemonic(GTK_LABEL(flabel), lua_tostring(L, 3));
+    set_label_text(flabel, lua_tostring(L, 3));
   else if (strcmp(key, "replace_label_text") == 0)
-    gtk_label_set_text_with_mnemonic(GTK_LABEL(rlabel), lua_tostring(L, 3));
+    set_label_text(rlabel, lua_tostring(L, 3));
   else if (strcmp(key, "find_next_button_text") == 0)
-    gtk_button_set_label(GTK_BUTTON(fnext_button), lua_tostring(L, 3));
+    set_button_label(fnext_button, lua_tostring(L, 3));
   else if (strcmp(key, "find_prev_button_text") == 0)
-    gtk_button_set_label(GTK_BUTTON(fprev_button), lua_tostring(L, 3));
+    set_button_label(fprev_button, lua_tostring(L, 3));
   else if (strcmp(key, "replace_button_text") == 0)
-    gtk_button_set_label(GTK_BUTTON(r_button), lua_tostring(L, 3));
+    set_button_label(r_button, lua_tostring(L, 3));
   else if (strcmp(key, "replace_all_button_text") == 0)
-    gtk_button_set_label(GTK_BUTTON(ra_button), lua_tostring(L, 3));
+    set_button_label(ra_button, lua_tostring(L, 3));
+#if GTK
   else if (strcmp(key, "match_case_label_text") == 0)
     gtk_button_set_label(GTK_BUTTON(match_case), lua_tostring(L, 3));
   else if (strcmp(key, "whole_word_label_text") == 0)
@@ -397,6 +505,24 @@ static int lfind__newindex(lua_State *L) {
     gtk_button_set_label(GTK_BUTTON(lua_pattern), lua_tostring(L, 3));
   else if (strcmp(key, "in_files_label_text") == 0)
     gtk_button_set_label(GTK_BUTTON(in_files), lua_tostring(L, 3));
+#elif NCURSES
+  // Prepend "</R>" to each option label because pointer arithmetic will be
+  // used to make the "</R>" visible or invisible (thus highlighting or
+  // unhighlighting the label) depending on whether or not the option is
+  // enabled by the user.
+  else if (strcmp(key, "match_case_label_text") == 0) {
+    lua_pushstring(L, "</R>"), lua_pushvalue(L, 3), lua_concat(L, 2);
+    fcopy(&option_labels[0], lua_tostring(L, -1)), option_labels[0] += 4;
+  } else if (strcmp(key, "whole_word_label_text") == 0) {
+    lua_pushstring(L, "</R>"), lua_pushvalue(L, 3), lua_concat(L, 2);
+    fcopy(&option_labels[1], lua_tostring(L, -1)), option_labels[1] += 4;
+  } else if (strcmp(key, "lua_pattern_label_text") == 0) {
+    lua_pushstring(L, "</R>"), lua_pushvalue(L, 3), lua_concat(L, 2);
+    fcopy(&option_labels[2], lua_tostring(L, -1)), option_labels[2] += 4;
+  } else if (strcmp(key, "in_files_label_text") == 0) {
+    lua_pushstring(L, "</R>"), lua_pushvalue(L, 3), lua_concat(L, 2);
+    fcopy(&option_labels[3], lua_tostring(L, -1)), option_labels[3] += 4;
+  }
 #endif
   else
     lua_rawset(L, 1);
@@ -416,12 +542,11 @@ static int lce_focus(lua_State *L) {
 #elif NCURSES
   if (!command_entry) {
     CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
-    command_entry = newCDKEntry(screen, LEFT, TOP, "", "", A_NORMAL, '_',
+    command_entry = newCDKEntry(screen, LEFT, TOP, NULL, NULL, A_NORMAL, '_',
                                 vMIXED, 0, 0, 256, FALSE, FALSE);
     setCDKEntryValue(command_entry, command_text);
     if (activateCDKEntry(command_entry, NULL)) {
-      if (command_text) free(command_text);
-      command_text = copy(getCDKEntryValue(command_entry));
+      fcopy(&command_text, getCDKEntryValue(command_entry));
       lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
     }
     destroyCDKEntry(command_entry), command_entry = NULL;
@@ -450,6 +575,8 @@ static int lce_show_completions(lua_State *L) {
     lua_pop(L, 1); // value
   }
   gtk_entry_completion_complete(completion);
+#elif NCURSES
+  // TODO: cycle through completions.
 #endif
   return 0;
 }
@@ -467,14 +594,14 @@ static int lce__index(lua_State *L) {
 /** `command_entry.__newindex` Lua metatable. */
 static int lce__newindex(lua_State *L) {
   const char *key = lua_tostring(L, 2);
-  if (strcmp(key, "entry_text") == 0) {
+  if (strcmp(key, "entry_text") == 0)
 #if GTK
     gtk_entry_set_text(GTK_ENTRY(command_entry), lua_tostring(L, 3));
 #elif NCURSES
-    if (command_text) free(command_text);
-    command_text = copy(lua_tostring(L, 3));
+    fcopy(&command_text, lua_tostring(L, 3));
 #endif
-  } else lua_rawset(L, 1);
+  else
+    lua_rawset(L, 1);
   return 0;
 }
 
@@ -731,7 +858,7 @@ static int lgui__index(lua_State *L) {
     lua_pushstring(L, text ? text : "");
     if (text) free(text);
 #elif NCURSES
-    lua_pushstring(L, ""); // TODO: get Xclipboard text?
+    lua_pushstring(L, ""); // TODO: get Xclipboard text?, CDK GPasteBuffer?
 #endif
   } else if (strcmp(key, "size") == 0) {
 #if GTK
@@ -774,8 +901,7 @@ static int lgui__newindex(lua_State *L) {
   else if (strcmp(key, "docstatusbar_text") == 0)
     set_statusbar_text(lua_tostring(L, 3), 1);
   else if (strcmp(key, "statusbar_text") == 0) {
-    if (statusbar_text) free(statusbar_text);
-    statusbar_text = copy(luaL_optstring(L, 3, ""));
+    fcopy(&statusbar_text, luaL_optstring(L, 3, ""));
     set_statusbar_text(statusbar_text, 0);
   } else if (strcmp(key, "menubar") == 0) {
 #if GTK
@@ -1845,11 +1971,11 @@ static Scintilla *new_view(sptr_t doc) {
   return view;
 }
 
+#if GTK
 /**
  * Creates the Find box.
  */
-static FindBox *new_findbox() {
-#if GTK
+static GtkWidget *new_findbox() {
 #define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
   gtk_table_attach(GTK_TABLE(findbox), w, x1, x2, y1, y2, xo, yo, xp, yp)
 #define EXPAND_FILL (GtkAttachOptions)(GTK_EXPAND | GTK_FILL)
@@ -1914,12 +2040,10 @@ static FindBox *new_findbox() {
   gtk_widget_set_can_focus(whole_word, FALSE);
   gtk_widget_set_can_focus(lua_pattern, FALSE);
   gtk_widget_set_can_focus(in_files, FALSE);
-#endif
 
   return findbox;
 }
 
-#if GTK
 /**
  * Signal for the 'enter' key being pressed in the Command Entry.
  */
@@ -2160,11 +2284,6 @@ int main(int argc, char **argv) {
         break;
       default: continue;
     }
-//    if (c == SCK_ESCAPE && gtk_widget_get_visible(findbox) &&
-//        !gtk_widget_has_focus(command_entry)) {
-//      gtk_widget_hide(findbox);
-//      gtk_widget_grab_focus(focused_view);
-//    } else
     curs_set(0); // disable cursor when Scintilla has focus
     if (!lL_event(lua, "keypress", LUA_TNUMBER, c, LUA_TBOOLEAN,
                   key.modifiers & TERMKEY_KEYMOD_SHIFT, LUA_TBOOLEAN,
