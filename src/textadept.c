@@ -22,6 +22,7 @@
 #define PLAT_GTK 1
 #elif NCURSES
 #include <ncurses.h>
+#include <cdk.h>
 #define PLAT_TERM 1
 #endif
 
@@ -107,6 +108,7 @@ GtkWidget *command_entry;
 GtkListStore *cc_store;
 GtkEntryCompletion *command_entry_completion;
 #elif NCURSES
+CDKENTRY *command_entry = NULL;
 char *command_text = NULL;
 #endif
 
@@ -412,7 +414,19 @@ static int lce_focus(lua_State *L) {
     gtk_widget_grab_focus(focused_view);
   }
 #elif NCURSES
-  // TODO: ce toggle focus.
+  if (!command_entry) {
+    CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
+    command_entry = newCDKEntry(screen, LEFT, TOP, "", "", A_NORMAL, '_',
+                                vMIXED, 0, 0, 256, FALSE, FALSE);
+    setCDKEntryValue(command_entry, command_text);
+    if (activateCDKEntry(command_entry, NULL)) {
+      if (command_text) free(command_text);
+      command_text = copy(getCDKEntryValue(command_entry));
+      lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
+    }
+    destroyCDKEntry(command_entry), command_entry = NULL;
+    delwin(screen->window), destroyCDKScreen(screen);
+  }
 #endif
   return 0;
 }
