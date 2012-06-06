@@ -27,7 +27,7 @@ local _L, io, gui, gui_find, buffer, view = _L, io, gui, gui.find, buffer, view
 local m_textadept, m_editing = _M.textadept, _M.textadept.editing
 local m_bookmarks, Msnippets = m_textadept.bookmarks, m_textadept.snippets
 local utils = m_textadept.keys.utils
-local SEPARATOR, c = { 'separator' }, _SCINTILLA.constants
+local SEPARATOR, c = { '' }, _SCINTILLA.constants
 
 ---
 -- Contains the main menubar.
@@ -271,15 +271,8 @@ end
 
 ---
 -- Sets `gui.menubar` from the given table of menus.
--- @param menubar The table of menus to create the menubar from. Each table
---   entry is another table that corresponds to a particular menu. A menu can
---   have a `title` key with string value. Each menu item is either a submenu
---   (another menu table) or a table consisting of two items: string menu text
---   and a function or action table just like in `keys`. The table can
---   optionally contain 2 more number values: a GDK keycode and modifier mask
---   for setting a menu accelerator. If the menu text is `'separator'`, a menu
---   separator is created and no action table is required.
--- @see keys.get_gdk_key
+-- @param menubar The table of menus to create the menubar from.
+-- @see gui.menu
 -- @see rebuild_command_tables
 -- @name set_menubar
 function M.set_menubar(menubar)
@@ -317,10 +310,10 @@ local function build_command_tables(menu, title, items, commands)
   for _, menuitem in ipairs(menu) do
     if menuitem.title then
       build_command_tables(menuitem, menuitem.title, items, commands)
-    elseif menuitem[1] ~= 'separator' then
+    elseif menuitem[1] ~= '' then
       local label, f = menuitem[1], menuitem[2]
       if title then label = title..': '..label end
-      items[#items + 1] = label:gsub('_([^_])', '%1'):gsub('^gtk%-', '')
+      items[#items + 1] = label:gsub('_([^_])', '%1')
       items[#items + 1] = key_shortcuts[get_id(f)] or ''
       commands[#commands + 1] = f
     end

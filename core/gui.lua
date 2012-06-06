@@ -468,18 +468,17 @@ local get_split_table
 local goto_view
 
 ---
--- Creates a GTK menu, returning the userdata.
+-- Creates a menu, returning the userdata.
 -- @param menu_table A table defining the menu. It is an ordered list of tables
---   with a string menu item, integer menu ID, and optional keycode and modifier
---   mask. The latter two are used to display key shortcuts in the menu. The
---   string menu item is handled as follows:
---     `'gtk-*'` - a stock menu item is created based on the GTK stock-id.
---     `'separator'` - a menu separator item is created.
---     Otherwise a regular menu item with a mnemonic is created.
---   Submenus are just nested menu-structure tables. Their title text is defined
---   with a `title` key.
+--   with a string menu item, integer menu ID, and optional GDK keycode and
+--   modifier mask. The latter two are used to display key shortcuts in the
+--   menu. `_` characters are treated as a menu mnemonics. If the menu item is
+--   empty, a menu separator item is created. Submenus are just nested
+--   menu-structure tables. Their title text is defined with a `title` key.
+-- @usage gui.menu{ { '_New', 1 }, { '_Open', 2 }, { '' }, { '_Quit', 4 } }
+-- @usage gui.menu{ { '_New', 1, keys.get_gdk_key('cn') } }
 -- @see keys.get_gdk_key
 -- @class function
--- @name gtkmenu
-local gtkmenu
+-- @name menu
+local menu
 ]]
