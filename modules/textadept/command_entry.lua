@@ -35,7 +35,7 @@ local events = events
 events.connect(events.COMMAND_ENTRY_COMMAND, function(command)
   local f, err = load(command, nil, 'bt', env)
   if err then error(err) end
-  gui.command_entry.focus() -- toggle focus to hide
+  if not NCURSES then gui.command_entry.focus() end -- toggle focus to hide
   f()
   events.emit(events.UPDATE_UI)
 end)
@@ -44,7 +44,7 @@ events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   if keys.KEYSYMS[code] == 'esc' then
     gui.command_entry.focus() -- toggle focus to hide
     return true
-  elseif keys.KEYSYMS[code] == '\t' then
+  elseif not NCURSES and keys.KEYSYMS[code] == '\t' or code == 9 then
     local substring = gui.command_entry.entry_text:match('[%w_.:]+$') or ''
     local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
     local f, err = load('return ('..path..')', nil, 'bt', env)
@@ -95,4 +95,13 @@ end)
 -- @class function
 -- @name focus
 local focus
+
+---
+-- Shows the given list of completions for the current word prefix.
+-- On selection, the current word prefix is replaced with the completion.
+-- @param completions The table of completions to show. Non-string values are
+--   ignored.
+-- @class function
+-- @name show_completions
+local show_completions
 ]]

@@ -529,6 +529,15 @@ static int lfind__newindex(lua_State *L) {
   return 0;
 }
 
+#if NCURSES
+/**
+ * Signal for the 'tab' key being pressed in the Command Entry.
+ */
+static int c_keypress(EObjectType _, void *__, void *___, chtype ____) {
+  return (lL_event(lua, "command_entry_keypress", LUA_TNUMBER, '\t', -1), TRUE);
+}
+#endif
+
 /** `command_entry.focus()` Lua function. */
 static int lce_focus(lua_State *L) {
 #if GTK
@@ -544,6 +553,7 @@ static int lce_focus(lua_State *L) {
     CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
     command_entry = newCDKEntry(screen, LEFT, TOP, NULL, NULL, A_NORMAL, '_',
                                 vMIXED, 0, 0, 256, FALSE, FALSE);
+    bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
     setCDKEntryValue(command_entry, command_text);
     if (activateCDKEntry(command_entry, NULL)) {
       fcopy(&command_text, getCDKEntryValue(command_entry));
@@ -558,25 +568,55 @@ static int lce_focus(lua_State *L) {
 
 /** `command_entry.show_completions()` Lua function. */
 static int lce_show_completions(lua_State *L) {
-#if GTK
   luaL_checktype(L, 1, LUA_TTABLE);
+  int len = lua_rawlen(L, 1);
+#if GTK
   GtkEntryCompletion *completion = gtk_entry_get_completion(
                                    GTK_ENTRY(command_entry));
   GtkListStore *store = GTK_LIST_STORE(
                         gtk_entry_completion_get_model(completion));
   gtk_list_store_clear(store);
-  lua_pushnil(L);
-  while (lua_next(L, 1)) {
+#elif NCURSES
+  const char **items = malloc(len * sizeof(const char *));
+  int width = 0;
+#endif
+  for (int i = 1; i <= len; i++) {
+    lua_rawgeti(L, 1, i);
     if (lua_type(L, -1) == LUA_TSTRING) {
+#if GTK
       GtkTreeIter iter;
       gtk_list_store_append(store, &iter);
       gtk_list_store_set(store, &iter, 0, lua_tostring(L, -1), -1);
-    } else warn("command_entry.show_completions: non-string value ignored");
+#elif NCURSES
+      items[i - 1] = lua_tostring(L, -1);
+      if (width < strlen(items[i - 1])) width = strlen(items[i - 1]);
+#endif
+    }
     lua_pop(L, 1); // value
   }
+#if GTK
   gtk_entry_completion_complete(completion);
 #elif NCURSES
-  // TODO: cycle through completions.
+  // Screen needs to take into account border width and scroll bar width.
+  int height = (len < LINES - 3) ? len : LINES - 5;
+  CDKSCREEN *screen = initCDKScreen(newwin(height + 2, width + 4,
+                                           LINES - 4 - height, 0));
+  CDKSCROLL *scrolled = newCDKScroll(screen, LEFT, TOP, RIGHT, 0, 0, NULL,
+                                     (char **)items, len, FALSE, A_REVERSE,
+                                     TRUE, FALSE);
+  if (len > 0 && activateCDKScroll(scrolled, NULL) >= 0) {
+    char *text = getCDKEntryValue(command_entry), *p;
+    p = text + strlen(text);
+    while (p > text && (isalnum(*(p - 1)) || *(p - 1) == '_')) p--;
+    lua_pushlstring(L, text, p - text);
+    lua_pushstring(L, items[getCDKScrollCurrentItem(scrolled)]);
+    lua_concat(L, 2);
+    setCDKEntryValue(command_entry, (char *)lua_tostring(L, -1));
+    drawCDKEntry(command_entry, FALSE);
+  }
+  destroyCDKScroll(scrolled);
+  delwin(screen->window), destroyCDKScreen(screen);
+  free(items);
 #endif
   return 0;
 }
@@ -584,10 +624,12 @@ static int lce_show_completions(lua_State *L) {
 /** `command_entry.__index` Lua metatable. */
 static int lce__index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
-  if (strcmp(key, "entry_text") == 0)
+  if (strcmp(key, "entry_text") == 0) {
     lua_pushstring(L, command_text);
-  else
-    lua_rawget(L, 1);
+#if NCURSES
+    if (command_entry) lua_pushstring(L, getCDKEntryValue(command_entry));
+#endif
+  } else lua_rawget(L, 1);
   return 1;
 }
 
@@ -2069,18 +2111,16 @@ static int c_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
  */
 static int cc_matchselected(GtkEntryCompletion*_, GtkTreeModel *model,
                                  GtkTreeIter *iter, void*__) {
-  const char *text = gtk_entry_get_text(GTK_ENTRY(command_entry)), *p;
-  for (p = text + strlen(text) - 1; g_ascii_isalnum(*p) || *p == '_'; p--)
+  const char *text = gtk_entry_get_text(GTK_ENTRY(command_entry)), *p, *match;
+  p = text + strlen(text) - 1;
+  for (; p >= text && (g_ascii_isalnum(*p) || *p == '_'); p--)
     g_signal_emit_by_name(G_OBJECT(command_entry), "move-cursor",
                           GTK_MOVEMENT_VISUAL_POSITIONS, -1, TRUE, 0);
   if (p < text + strlen(text) - 1)
-    g_signal_emit_by_name(G_OBJECT(command_entry), "backspace", 0);
-
-  char *match;
+    g_signal_emit_by_name(G_OBJECT(command_entry), "backspace", 0); // for undo
   gtk_tree_model_get(model, iter, 0, &match, -1);
   g_signal_emit_by_name(G_OBJECT(command_entry), "insert-at-cursor", match, 0);
   g_free(match);
-
   gtk_list_store_clear(cc_store);
   return TRUE;
 }
