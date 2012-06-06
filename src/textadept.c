@@ -122,6 +122,7 @@ static char *statusbar_text = NULL;
 static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
            tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 static int lL_init(lua_State *, int, char **, int);
+LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
 
 #define l_setglobalview(l, v) (l_pushview(l, v), lua_setglobal(l, "view"))
 #define l_setglobaldoc(l, d) (l_pushdoc(l, d), lua_setglobal(l, "buffer"))
@@ -134,9 +135,6 @@ static int lL_init(lua_State *, int, char **, int);
   } \
   lua_setmetatable(l, (n > 0) ? n : n - 1); \
 }
-LUALIB_API int (luaopen_lpeg) (lua_State *);
-LUALIB_API int (luaopen_lfs) (lua_State *);
-
 #if LUAJIT
 #define LUA_OK 0
 #define lua_rawlen lua_objlen
@@ -838,18 +836,12 @@ static void l_pushmenu(lua_State *L, int index, void (*callback)(void),
                               (GtkWidget *)lua_touserdata(L, -1));
         lua_pop(L, 1); // menu
       } else if (lua_rawlen(L, -1) == 2 || lua_rawlen(L, -1) == 4) {
-        lua_rawgeti(L, -1, 1);
-        label = lua_tostring(L, -1);
-        lua_pop(L, 1); // label
+        lua_rawgeti(L, -1, 1), label = lua_tostring(L, -1), lua_pop(L, 1);
         int menu_id = l_rawgetiint(L, -1, 2);
         int key = l_rawgetiint(L, -1, 3), modifiers = l_rawgetiint(L, -1, 4);
         if (label) {
-          if (g_str_has_prefix(label, "gtk-"))
-            menu_item = gtk_image_menu_item_new_from_stock(label, NULL);
-          else if (strcmp(label, "separator") == 0)
-            menu_item = gtk_separator_menu_item_new();
-          else
-            menu_item = gtk_menu_item_new_with_mnemonic(label);
+          menu_item = (*label) ? gtk_menu_item_new_with_mnemonic(label)
+                               : gtk_separator_menu_item_new();
           if (key || modifiers)
               gtk_widget_add_accelerator(menu_item, "activate", accel, key,
                                          modifiers, GTK_ACCEL_VISIBLE);
@@ -2120,7 +2112,7 @@ static int cc_matchselected(GtkEntryCompletion*_, GtkTreeModel *model,
     g_signal_emit_by_name(G_OBJECT(command_entry), "backspace", 0); // for undo
   gtk_tree_model_get(model, iter, 0, &match, -1);
   g_signal_emit_by_name(G_OBJECT(command_entry), "insert-at-cursor", match, 0);
-  g_free(match);
+  g_free((char *)match);
   gtk_list_store_clear(cc_store);
   return TRUE;
 }
