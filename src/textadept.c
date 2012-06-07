@@ -205,15 +205,20 @@ static int a_command_line(GApplication *app, GApplicationCommandLine *cmdline,
   int argc = 0;
   char **argv = g_application_command_line_get_arguments(cmdline, &argc);
   if (argc > 1) {
-    lua_getglobal(lua, "args"), lua_getfield(lua, -1, "process");
-    lua_newtable(lua);
-    const char *cwd = g_application_command_line_get_cwd(cmdline);
-    lua_pushstring(lua, cwd ? cwd : ""), lua_rawseti(lua, -2, -1);
-    for (int i = 0; i < argc; i++)
-      lua_pushstring(lua, argv[i]), lua_rawseti(lua, -2, i);
-    if (lua_pcall(lua, 1, 0, 0) != LUA_OK) {
-      lL_event(lua, "error", LUA_TSTRING, lua_tostring(lua, -1), -1);
-      lua_pop(lua, 1); // error message
+    lua_getglobal(lua, "args");
+    if (lua_istable(lua, -1)) {
+      lua_getfield(lua, -1, "process");
+      if (lua_isfunction(lua, -1)) {
+        lua_newtable(lua);
+        const char *cwd = g_application_command_line_get_cwd(cmdline);
+        lua_pushstring(lua, cwd ? cwd : ""), lua_rawseti(lua, -2, -1);
+        for (int i = 0; i < argc; i++)
+          lua_pushstring(lua, argv[i]), lua_rawseti(lua, -2, i);
+        if (lua_pcall(lua, 1, 0, 0) != LUA_OK) {
+          lL_event(lua, "error", LUA_TSTRING, lua_tostring(lua, -1), -1);
+          lua_pop(lua, 1); // error message
+        }
+      } else lua_pop(lua, 1); // non-function
     }
     lua_pop(lua, 1); // args
   }
