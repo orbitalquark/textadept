@@ -158,8 +158,8 @@ local keychain = {}
 
 -- Clears the current key sequence.
 local function clear_key_sequence()
-  if #keychain > 0 then keychain = {} end
-  gui.statusbar_text = ''
+  -- Clearing a table is faster than re-creating one.
+  if #keychain == 1 then keychain[1] = nil else keychain = {} end
 end
 
 -- Runs a given command.
@@ -237,6 +237,7 @@ local function keypress(code, shift, control, alt, meta)
                   (meta and OSX and META or '')..(shift and SHIFT or '')..key
   --print(key_seq)
 
+  gui.statusbar_text = ''
   if #keychain > 0 and key_seq == M.CLEAR then
     clear_key_sequence()
     return true
@@ -247,22 +248,14 @@ local function keypress(code, shift, control, alt, meta)
   for i = 1, 2 do
     local status = run_key_command(i == 1 and buffer:get_lexer(true))
     if status > 0 then -- CHAIN or HALT
-      if status == HALT then
-        -- Clear the key sequence, but keep any status messages from the key
-        -- command itself.
-        keychain = {}
-        local text = gui.statusbar_text or ''
-        if text == _L['Invalid sequence'] or text:find(_L['Keychain:']) then
-          gui.statusbar_text = ''
-        end
-      end
+      if status == HALT then clear_key_sequence() end
       return true
     end
     success = success or status ~= -1
   end
-  local size = #keychain - 1
+  local size = #keychain
   clear_key_sequence()
-  if not success and size > 0 then -- INVALID keychain sequence
+  if not success and size > 1 then -- INVALID keychain sequence
     gui.statusbar_text = _L['Invalid sequence']
     return true
   end
