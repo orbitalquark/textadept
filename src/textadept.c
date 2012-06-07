@@ -118,7 +118,6 @@ static lua_State *lua = NULL;
 static int quit = FALSE;
 #endif
 static int closing = FALSE;
-static char *statusbar_text = NULL;
 static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
            tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 static int lL_init(lua_State *, int, char **, int);
@@ -353,46 +352,45 @@ static int lfind_focus(lua_State *L) {
   }
 #elif NCURSES
 #define max(a, b) (((a) > (b)) ? (a) : (b))
-  if (!findbox) {
-    findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0));
-    int b_width = max(strlen(button_labels[0]), strlen(button_labels[1])) +
-                  max(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
-    int o_width = max(strlen(option_labels[0]), strlen(option_labels[1])) +
-                  max(strlen(option_labels[2]), strlen(option_labels[3])) + 3;
-    int l_width = max(strlen(flabel), strlen(rlabel));
-    int e_width = COLS - o_width - b_width - l_width - 1;
-    find_entry = newCDKEntry(findbox, l_width - strlen(flabel), TOP, NULL,
-                             flabel, A_NORMAL, '_', vMIXED, e_width, 0, 64,
-                             FALSE, FALSE);
-    replace_entry = newCDKEntry(findbox, l_width - strlen(rlabel), BOTTOM, NULL,
-                                rlabel, A_NORMAL, '_', vMIXED, e_width, 0, 64,
-                                FALSE, FALSE);
-    CDKBUTTONBOX *buttonbox = newCDKButtonbox(findbox, COLS - o_width - b_width,
-                                              TOP, 2, b_width, NULL, 2, 2,
-                                              button_labels, 4, A_REVERSE,
-                                              FALSE, FALSE);
-    CDKBUTTONBOX *optionbox = newCDKButtonbox(findbox, RIGHT, TOP, 2, o_width,
-                                              NULL, 2, 2, option_labels, 4,
-                                              A_NORMAL, FALSE, FALSE);
-    bindCDKObject(vENTRY, find_entry, KEY_TAB, buttonbox_tab, buttonbox);
-    bindCDKObject(vENTRY, find_entry, KEY_BTAB, buttonbox_tab, buttonbox);
-    setCDKEntryPostProcess(find_entry, entry_keypress, &optionbox);
-    bindCDKObject(vENTRY, replace_entry, KEY_TAB, buttonbox_tab, buttonbox);
-    bindCDKObject(vENTRY, replace_entry, KEY_BTAB, buttonbox_tab, buttonbox);
-    setCDKEntryPostProcess(replace_entry, entry_keypress, &optionbox);
-    drawCDKEntry(replace_entry, FALSE);
-    drawCDKButtonbox(buttonbox, FALSE), drawCDKButtonbox(optionbox, FALSE);
-    curs_set(1);
-    while (activateCDKEntry(find_entry, NULL)) {
-      fcopy(&find_text, getCDKEntryValue(find_entry));
-      fcopy(&repl_text, getCDKEntryValue(replace_entry));
-      f_clicked(getCDKButtonboxCurrentButton(buttonbox), NULL);
-    }
-    curs_set(0);
-    destroyCDKEntry(find_entry), destroyCDKEntry(replace_entry);
-    destroyCDKButtonbox(buttonbox), destroyCDKButtonbox(optionbox);
-    delwin(findbox->window), destroyCDKScreen(findbox), findbox = NULL;
+  if (findbox) return 0; // already active
+  findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0));
+  int b_width = max(strlen(button_labels[0]), strlen(button_labels[1])) +
+                max(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
+  int o_width = max(strlen(option_labels[0]), strlen(option_labels[1])) +
+                max(strlen(option_labels[2]), strlen(option_labels[3])) + 3;
+  int l_width = max(strlen(flabel), strlen(rlabel));
+  int e_width = COLS - o_width - b_width - l_width - 1;
+  find_entry = newCDKEntry(findbox, l_width - strlen(flabel), TOP, NULL,
+                           flabel, A_NORMAL, '_', vMIXED, e_width, 0, 64,
+                           FALSE, FALSE);
+  replace_entry = newCDKEntry(findbox, l_width - strlen(rlabel), BOTTOM, NULL,
+                              rlabel, A_NORMAL, '_', vMIXED, e_width, 0, 64,
+                              FALSE, FALSE);
+  CDKBUTTONBOX *buttonbox = newCDKButtonbox(findbox, COLS - o_width - b_width,
+                                            TOP, 2, b_width, NULL, 2, 2,
+                                            button_labels, 4, A_REVERSE,
+                                            FALSE, FALSE);
+  CDKBUTTONBOX *optionbox = newCDKButtonbox(findbox, RIGHT, TOP, 2, o_width,
+                                            NULL, 2, 2, option_labels, 4,
+                                            A_NORMAL, FALSE, FALSE);
+  bindCDKObject(vENTRY, find_entry, KEY_TAB, buttonbox_tab, buttonbox);
+  bindCDKObject(vENTRY, find_entry, KEY_BTAB, buttonbox_tab, buttonbox);
+  setCDKEntryPostProcess(find_entry, entry_keypress, &optionbox);
+  bindCDKObject(vENTRY, replace_entry, KEY_TAB, buttonbox_tab, buttonbox);
+  bindCDKObject(vENTRY, replace_entry, KEY_BTAB, buttonbox_tab, buttonbox);
+  setCDKEntryPostProcess(replace_entry, entry_keypress, &optionbox);
+  drawCDKEntry(replace_entry, FALSE);
+  drawCDKButtonbox(buttonbox, FALSE), drawCDKButtonbox(optionbox, FALSE);
+  curs_set(1);
+  while (activateCDKEntry(find_entry, NULL)) {
+    fcopy(&find_text, getCDKEntryValue(find_entry));
+    fcopy(&repl_text, getCDKEntryValue(replace_entry));
+    f_clicked(getCDKButtonboxCurrentButton(buttonbox), NULL);
   }
+  curs_set(0);
+  destroyCDKEntry(find_entry), destroyCDKEntry(replace_entry);
+  destroyCDKButtonbox(buttonbox), destroyCDKButtonbox(optionbox);
+  delwin(findbox->window), destroyCDKScreen(findbox), findbox = NULL;
 #endif
   return 0;
 }
@@ -529,21 +527,20 @@ static int lce_focus(lua_State *L) {
     gtk_widget_grab_focus(focused_view);
   }
 #elif NCURSES
-  if (!command_entry) {
-    CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
-    command_entry = newCDKEntry(screen, LEFT, TOP, NULL, NULL, A_NORMAL, '_',
-                                vMIXED, 0, 0, 256, FALSE, FALSE);
-    bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
-    setCDKEntryValue(command_entry, command_text);
-    curs_set(1);
-    if (activateCDKEntry(command_entry, NULL)) {
-      fcopy(&command_text, getCDKEntryValue(command_entry));
-      lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
-    }
-    curs_set(0);
-    destroyCDKEntry(command_entry), command_entry = NULL;
-    delwin(screen->window), destroyCDKScreen(screen);
+  if (command_entry) return 0; // already active
+  CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
+  command_entry = newCDKEntry(screen, LEFT, TOP, NULL, NULL, A_NORMAL, '_',
+                              vMIXED, 0, 0, 256, FALSE, FALSE);
+  bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
+  setCDKEntryValue(command_entry, command_text);
+  curs_set(1);
+  if (activateCDKEntry(command_entry, NULL)) {
+    fcopy(&command_text, getCDKEntryValue(command_entry));
+    lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
   }
+  curs_set(0);
+  destroyCDKEntry(command_entry), command_entry = NULL;
+  delwin(screen->window), destroyCDKScreen(screen);
 #endif
   return 0;
 }
@@ -870,9 +867,7 @@ static int lgui_menu(lua_State *L) {
 /** `gui.__index` Lua metatable. */
 static int lgui__index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
-  if (strcmp(key, "statusbar_text") == 0)
-    lua_pushstring(L, statusbar_text);
-  else if (strcmp(key, "clipboard_text") == 0) {
+  if (strcmp(key, "clipboard_text") == 0) {
 #if GTK
     char *text = gtk_clipboard_wait_for_text(
                  gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
@@ -921,10 +916,9 @@ static int lgui__newindex(lua_State *L) {
     luaL_argerror(L, 3, "read-only property");
   else if (strcmp(key, "docstatusbar_text") == 0)
     set_statusbar_text(lua_tostring(L, 3), 1);
-  else if (strcmp(key, "statusbar_text") == 0) {
-    fcopy(&statusbar_text, luaL_optstring(L, 3, ""));
-    set_statusbar_text(statusbar_text, 0);
-  } else if (strcmp(key, "menubar") == 0) {
+  else if (strcmp(key, "statusbar_text") == 0)
+    set_statusbar_text(lua_tostring(L, 3), 0);
+  else if (strcmp(key, "menubar") == 0) {
 #if GTK
     luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");
     GtkWidget *new_menubar = gtk_menu_bar_new();

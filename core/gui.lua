@@ -10,7 +10,7 @@ local gui = gui
 --   A GTK menu defining the editor's context menu.
 -- @field clipboard_text (string, Read-only)
 --   The text on the clipboard.
--- @field statusbar_text (string)
+-- @field statusbar_text (string, Write-only)
 --   The text displayed by the statusbar.
 -- @field docstatusbar_text (string, Write-only)
 --   The text displayed by the doc statusbar.
