@@ -580,8 +580,7 @@ static int lce_show_completions(lua_State *L) {
                                      TRUE, FALSE);
   curs_set(0);
   if (len > 0 && activateCDKScroll(scrolled, NULL) >= 0) {
-    char *text = getCDKEntryValue(command_entry), *p;
-    p = text + strlen(text);
+    char *text = getCDKEntryValue(command_entry), *p = text + strlen(text);
     while (p > text && (isalnum(*(p - 1)) || *(p - 1) == '_')) p--;
     lua_pushlstring(L, text, p - text);
     lua_pushstring(L, items[getCDKScrollCurrentItem(scrolled)]);
@@ -1095,7 +1094,7 @@ static long lL_checkscintillaparam(lua_State *L, int *narg, int type) {
   else if (type == tKEYMOD) {
     int key = luaL_checkinteger(L, (*narg)++) & 0xFFFF;
     return key | ((luaL_checkinteger(L, (*narg)++) &
-                 (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
+                  (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
   } else if (type > tVOID && type < tBOOL)
     return luaL_checklong(L, (*narg)++);
   else
@@ -1274,8 +1273,7 @@ static void new_buffer(sptr_t doc) {
 static int lbuffer_new(lua_State *L) {
   new_buffer(0);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  lua_rawgeti(L, -1, lua_rawlen(L, -1));
-  return 1;
+  return (lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);
 }
 
 /** `_G.quit()` Lua function. */
@@ -1358,10 +1356,8 @@ static int ltimeout(lua_State *L) {
   int *refs = (int *)calloc(n, sizeof(int));
   lua_pushvalue(L, 2);
   refs[0] = luaL_ref(L, LUA_REGISTRYINDEX);
-  for (int i = 3; i <= n; i++) {
-    lua_pushvalue(L, i);
-    refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
-  }
+  for (int i = 3; i <= n; i++)
+    lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
   g_timeout_add(timeout * 1000, emit_timeout, (void *)refs);
 #elif NCURSES
   luaL_error(L, "not implemented in this environment");
@@ -1377,8 +1373,7 @@ static int lstring_iconv(lua_State *L) {
   int converted = FALSE;
   iconv_t cd = iconv_open(to, from);
   if (cd != (iconv_t) -1) {
-    char *out = malloc(text_len + 1);
-    char *outp = out;
+    char *out = malloc(text_len + 1), *outp = out;
     size_t inbytesleft = text_len, outbytesleft = text_len;
     if (iconv(cd, &text, &inbytesleft, &outp, &outbytesleft) != -1)
       lua_pushlstring(L, out, outp - out), converted = TRUE;
@@ -1716,9 +1711,8 @@ static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
     lL_notify(lua, n);
   } else if (n->nmhdr.code == SCN_SAVEPOINTLEFT) {
     Scintilla *prev = focused_view;
-    goto_view(view);
-    lL_notify(lua, n);
-    goto_view(prev); // do not let a split view steal focus
+    // Do not let a split view steal focus.
+    goto_view(view), lL_notify(lua, n), goto_view(prev);
   }
 }
 
@@ -1857,8 +1851,8 @@ static void split_view(Scintilla *view, int vertical) {
 /** `view.split()` Lua function. */
 static int lview_split(lua_State *L) {
   split_view(lL_checkview(L, 1), lua_toboolean(L, 2));
-  lua_pushvalue(L, 1), lua_getglobal(L, "view"); // old view, new view
-  return 2;
+  // Return old view, new view.
+  return (lua_pushvalue(L, 1), lua_getglobal(L, "view"), 2);
 }
 
 /** `view.unsplit()` Lua function. */
@@ -1945,8 +1939,7 @@ static Scintilla *new_view(sptr_t doc) {
 #endif
   SS(view, SCI_USEPOPUP, 0, 0);
   lL_addview(lua, view);
-  focused_view = view;
-  focus_view(view);
+  focused_view = view, focus_view(view);
   if (doc) {
     SS(view, SCI_SETDOCPOINTER, 0, doc);
     l_setglobaldoc(lua, doc);
