@@ -1475,15 +1475,24 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   lua_pushboolean(L, 1), lua_setglobal(L, "WIN32");
 #elif __OSX__
   lua_pushboolean(L, 1), lua_setglobal(L, "OSX");
-#endif
-#if GTK
-  const char *charset = 0;
-  g_get_charset(&charset);
-  lua_pushstring(L, charset), lua_setglobal(L, "_CHARSET");
 #elif NCURSES
   lua_pushboolean(L, 1), lua_setglobal(L, "NCURSES");
-  lua_pushstring(L, "UTF-8"), lua_setglobal(L, "_CHARSET"); // TODO: get charset
 #endif
+  const char *charset = 0;
+#if GTK
+  g_get_charset(&charset);
+#elif NCURSES
+  charset = getenv("CHARSET");
+  if (!charset || !*charset) {
+    char *locale = getenv("LC_ALL");
+    if (!locale || !*locale) locale = getenv("LANG");
+    if (locale && (charset = strchr(locale, '.'))) charset++;
+  }
+  // Note: __WIN32__ uses GetACP() to determine codepage.
+  // If __WIN32__ is ever supported, use a codepage -> charset look-up table
+  // like glib's `libcharset/localecharset.c`.
+#endif
+  lua_pushstring(L, charset), lua_setglobal(L, "_CHARSET");
 
   if (lL_dofile(L, "core/init.lua")) {
     lua_getglobal(L, "_SCINTILLA");
