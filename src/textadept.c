@@ -22,7 +22,7 @@
 #define PLAT_GTK 1
 #elif NCURSES
 #include <ncurses.h>
-#include <cdk.h>
+#include <cdk/cdk.h>
 #define PLAT_TERM 1
 #endif
 
@@ -199,8 +199,8 @@ static int lL_event(lua_State *L, const char *name, ...) {
 /**
  * Processes a remote Textadept's command line arguments.
  */
-static int a_command_line(GApplication *app, GApplicationCommandLine *cmdline,
-                          void*_) {
+static int a_command_line(GApplication*_, GApplicationCommandLine *cmdline,
+                          void*__) {
   if (!lua) return 0; // only process argv for secondary/remote instances
   int argc = 0;
   char **argv = g_application_command_line_get_arguments(cmdline, &argc);
@@ -1513,7 +1513,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
 /**
  * Signal for a Textadept window focus change.
  */
-static int w_focus(GtkWidget*_, GdkEventFocus *event, void*__) {
+static int w_focus(GtkWidget*_, GdkEventFocus*__, void*___) {
   if (focused_view && !gtk_widget_has_focus(focused_view))
     gtk_widget_grab_focus(focused_view);
   return FALSE;
@@ -1737,7 +1737,7 @@ static void s_command(GtkWidget *view, int wParam, void*_, void*__) {
 /**
  * Signal for a Scintilla keypress.
  */
-static int s_keypress(GtkWidget *view, GdkEventKey *event, void*_) {
+static int s_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
   return lL_event(lua, "keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN,
                   event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
                   event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
@@ -2188,7 +2188,7 @@ int main(int argc, char **argv) {
   char *last_slash = NULL;
 #if !(__WIN32__ || __OSX__ || __BSD__)
   textadept_home = malloc(FILENAME_MAX);
-  readlink("/proc/self/exe", textadept_home, FILENAME_MAX);
+  int _ = readlink("/proc/self/exe", textadept_home, FILENAME_MAX);
   if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
 #elif __WIN32__
   textadept_home = malloc(FILENAME_MAX);

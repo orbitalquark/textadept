@@ -8,9 +8,9 @@ CPP = g++
 PKG_CONFIG = pkg-config
 PKG_CONFIG_PATH = $PKG_CONFIG_PATH
 ifndef NCURSES
-PLAT_FLAGS = -DGTK
+PLAT_FLAGS = -DGTK -D_XOPEN_SOURCE=700
 else
-PLAT_FLAGS = -DNCURSES
+PLAT_FLAGS = -DNCURSES -D_XOPEN_SOURCE=700
 endif
 ifdef BSD
 PLAT_FLAGS += -D__BSD__
@@ -128,7 +128,7 @@ endif
 ifndef NCURSES
 LIBS = $(GTKLIBS)
 else
-LIBS = -lncursesw -lcdk
+LIBS = -lncurses -lcdk
 endif
 
 TEXTADEPT_OBJS = textadept.o
