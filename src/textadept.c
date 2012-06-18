@@ -1835,22 +1835,10 @@ static void split_view(Scintilla *view, int vertical) {
   gtk_paned_set_position(GTK_PANED(pane), middle);
   gtk_widget_show_all(pane);
   g_object_unref(view);
-#elif NCURSES
-  WINDOW *win = scintilla_get_window(view);
-  int x, y;
-  getbegyx(win, y, x);
-  int width = getmaxx(win) - x, height = getmaxy(win) - y;
-  wresize(win, vertical ? height : height / 2, vertical ? width / 2 : width);
-  Scintilla *view2 = new_view(curdoc);
-  wresize(scintilla_get_window(view2), vertical ? height : height / 2 - 1,
-                                       vertical ? width / 2 - 1 : width);
-  mvwin(scintilla_get_window(view2), vertical ? y : y + height / 2 + 1,
-                                     vertical ? x + width / 2 + 1 : x);
-  vertical ? mvvline(y, x + width / 2, '|', height)
-           : mvhline(y + height / 2, x, '-', width);
-  // TODO: additional splitting.
-#endif
   focus_view(view2);
+#elif NCURSES
+  // TODO: split.
+#endif
 
   SS(view2, SCI_SETSEL, anchor, current_pos);
   int new_first_line = SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0);
