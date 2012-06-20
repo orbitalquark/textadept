@@ -229,7 +229,9 @@ static int a_command_line(GApplication*_, GApplicationCommandLine *cmdline,
   return 0;
 }
 #endif
-#elif NCURSES
+#endif
+
+#if NCURSES
 /**
  * Frees the given string's current value, if any, and copies the given value to
  * it.
@@ -2246,32 +2248,19 @@ int main(int argc, char **argv) {
 
   TermKeyResult res;
   TermKeyKey key;
+  int keysyms[] = {
+    0, SCK_BACK, SCK_TAB, SCK_RETURN, SCK_ESCAPE, 0, 0, SCK_UP, SCK_DOWN,
+    SCK_LEFT, SCK_RIGHT, 0, 0, SCK_INSERT, SCK_DELETE, 0, SCK_PRIOR, SCK_NEXT,
+    SCK_HOME, SCK_END
+  };
   int c = 0;
   while ((res = termkey_waitkey(tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
-    switch (key.type) {
-      case TERMKEY_TYPE_UNICODE: c = key.code.codepoint; break;
-      case TERMKEY_TYPE_KEYSYM:
-        switch (key.code.sym) {
-          case TERMKEY_SYM_BACKSPACE: c = SCK_BACK; break;
-          case TERMKEY_SYM_TAB: c = SCK_TAB; break;
-          case TERMKEY_SYM_ENTER: c = SCK_RETURN; break;
-          case TERMKEY_SYM_ESCAPE: c = SCK_ESCAPE; break;
-          case TERMKEY_SYM_UP: c = SCK_UP; break;
-          case TERMKEY_SYM_DOWN: c = SCK_DOWN; break;
-          case TERMKEY_SYM_LEFT: c = SCK_LEFT; break;
-          case TERMKEY_SYM_RIGHT: c = SCK_RIGHT; break;
-          case TERMKEY_SYM_INSERT: c = SCK_INSERT; break;
-          case TERMKEY_SYM_DELETE: c = SCK_DELETE; break;
-          case TERMKEY_SYM_PAGEUP: c = SCK_PRIOR; break;
-          case TERMKEY_SYM_PAGEDOWN: c = SCK_NEXT; break;
-          case TERMKEY_SYM_HOME: c = SCK_HOME; break;
-          case TERMKEY_SYM_END: c = SCK_END; break;
-          default: break;
-        }
-        break;
-      default: continue;
-    }
+    if (key.type == TERMKEY_TYPE_UNICODE)
+      c = key.code.codepoint;
+    else if (key.type == TERMKEY_TYPE_KEYSYM &&
+             key.code.sym >= 0 && key.code.sym <= TERMKEY_SYM_END)
+      c = keysyms[key.code.sym];
     if (!lL_event(lua, "keypress", LUA_TNUMBER, c, LUA_TBOOLEAN,
                   key.modifiers & TERMKEY_KEYMOD_SHIFT, LUA_TBOOLEAN,
                   key.modifiers & TERMKEY_KEYMOD_CTRL, LUA_TBOOLEAN,
