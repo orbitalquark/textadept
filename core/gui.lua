@@ -7,7 +7,7 @@ local gui = gui
 -- @field title (string, Write-only)
 --   The title of the Textadept window.
 -- @field context_menu
---   A GTK menu defining the editor's context menu.
+--   A `gui.menu` defining the editor's context menu.
 -- @field clipboard_text (string, Read-only)
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
@@ -159,13 +159,15 @@ local THEME
 -- @name set_theme
 function gui.set_theme(name)
   if not name then
-    -- Read theme from ~/.textadept/theme, defaulting to 'light'.
-    local f = io.open(_USERHOME..'/theme', 'rb')
+    -- Read theme from ~/.textadept/theme or ~/.textadept/theme_term depending
+    -- on NCURSES platform, defaulting to 'light' or 'term' respectively.
+    local theme_file = not NCURSES and 'theme' or 'theme_term'
+    local f = io.open(_USERHOME..'/'..theme_file, 'rb')
     if f then
       name = f:read('*line'):match('[^\r\n]+')
       f:close()
     end
-    if not name or name == '' then name = 'light' end
+    if not name or name == '' then name = not NCURSES and 'light' or 'term' end
   end
 
   -- Get the path of the theme.
@@ -225,7 +227,8 @@ function gui.select_theme()
   if not theme then return end
   gui.set_theme(theme)
   -- Write the theme to the user's theme file.
-  local f = io.open(_USERHOME..'/theme', 'wb')
+  local theme_file = not NCURSES and 'theme' or 'theme_term'
+  local f = io.open(_USERHOME..'/'..theme_file, 'wb')
   if not f then return end
   f:write(theme)
   f:close()
