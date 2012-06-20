@@ -1,9 +1,10 @@
 # Themes
 
 Textadept's look and feel can be customized with themes. The themes that come
-with Textadept are `light` and `dark`'. By default the `light` theme is used. To
-change the theme, create a `~/.textadept/theme` file whose first line of text is
-the name of the theme you would like to use.
+with Textadept are `light`, `dark`, and `term`. By default the `light` theme is
+used for GUI environments and `term` for terminal environments. To change the
+theme, create a `~/.textadept/theme` and/or `~/.textadept/theme_term` whose
+first lines of text are the names of the themes you would like to use.
 
 ![Light Theme](images/lighttheme.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
