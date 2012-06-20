@@ -21,6 +21,8 @@
 #include <gtk/gtk.h>
 #define PLAT_GTK 1
 #elif NCURSES
+#include <signal.h>
+#include <termios.h>
 #include <ncurses.h>
 #include <cdk/cdk.h>
 #define PLAT_TERM 1
@@ -1815,12 +1817,12 @@ static int lview_goto_buffer(lua_State *L) {
  *   horozontally.
  */
 static void split_view(Scintilla *view, int vertical) {
+#if GTK
   sptr_t curdoc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0);
   int current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0);
   int anchor = SS(view, SCI_GETANCHOR, 0, 0);
 
-#if GTK
   GtkAllocation allocation;
   gtk_widget_get_allocation(view, &allocation);
   int middle = (vertical ? allocation.width : allocation.height) / 2;
@@ -1836,13 +1838,13 @@ static void split_view(Scintilla *view, int vertical) {
   gtk_widget_show_all(pane);
   g_object_unref(view);
   focus_view(view2);
-#elif NCURSES
-  // TODO: split.
-#endif
 
   SS(view2, SCI_SETSEL, anchor, current_pos);
   int new_first_line = SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0);
   SS(view2, SCI_LINESCROLL, first_line - new_first_line, 0);
+#elif NCURSES
+  // TODO: split.
+#endif
 }
 
 /** `view.split()` Lua function. */
@@ -2168,6 +2170,8 @@ int main(int argc, char **argv) {
 #if GTK
   gtk_init(&argc, &argv);
 #elif NCURSES
+  static struct termios oldterm;
+  tcgetattr(0, &oldterm); // save old terminal settings
   TermKey *tk = termkey_new(0, TERMKEY_FLAG_NOTERMIOS);
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
   curs_set(0); // disable cursor when Scintilla has focus
@@ -2229,6 +2233,17 @@ int main(int argc, char **argv) {
   gtk_main();
 #endif
 #elif NCURSES
+  // Ignore some termios (from GNU Nano) and signals.
+  struct termios term;
+  tcgetattr(0, &term);
+  term.c_iflag &= ~IEXTEN, term.c_iflag &= ~IXON;
+  term.c_oflag &= ~OPOST;
+  term.c_lflag &= ~ISIG;
+  tcsetattr(0, TCSANOW, &term);
+  struct sigaction ignore;
+  memset(&ignore, 0, sizeof(struct sigaction)), ignore.sa_handler = SIG_IGN;
+  /*sigaction(SIGINT, &ignore, NULL),*/ sigaction(SIGTSTP, &ignore, NULL);
+
   TermKeyResult res;
   TermKeyKey key;
   int c = 0;
@@ -2268,12 +2283,12 @@ int main(int argc, char **argv) {
       l_close(lua);
       break;
     } else quit = FALSE;
-//    redrawwin(stdscr);
     wrefresh(scintilla_get_window(focused_view));
     redrawwin(scintilla_get_window(focused_view));
   }
   endwin();
   termkey_destroy(tk);
+  tcsetattr(0, TCSANOW, &oldterm); // restore old terminal settings
 #endif
 
   free(textadept_home);
