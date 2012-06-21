@@ -110,8 +110,8 @@ local utils = M.utils
   Windows and Linux menu key commands.
 
   Unassigned keys (~ denotes keys reserved by the operating system):
-  c:   A B C         H              p qQ       ~ V   X Y      ) ] }  *      \n
-  a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpP QrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=~~\n\s
+  c:   A B C         H              p  Q       ~ V   X Y      ) ] }  *      \n
+  a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=~~\n\s
   ca: aAbBcCdDeE F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  / ~~  \s
 
   CTRL = 'c' (Control ^)
@@ -149,7 +149,7 @@ keys[not OSX and 'cw' or 'mw'] = buffer.close
 keys[not OSX and 'cW' or 'mW'] = io.close_all
 -- TODO: m_textadept.sessions.prompt_load
 -- TODO: m_textadept.sessions.prompt_save
-keys[not OSX and 'aq' or 'mq'] = quit
+keys[not OSX and 'cq' or 'mq'] = quit
 
 -- Edit.
 keys[not OSX and 'cz' or 'mz'] = buffer.undo
