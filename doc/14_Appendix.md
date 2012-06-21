@@ -15,7 +15,7 @@ Ctrl+W      |⌘W  |Close file
 Ctrl+Shift+W|⌘⇧W |Close all files
 None        |None|Load session...
 None        |None|Load session...
-Alt+Q       |⌘Q  |Quit
+Ctrl+Q      |⌘Q  |Quit
 **Edit**                        |||
 Ctrl+Z<br/>Alt+Backspace|⌘Z       |Undo
 Ctrl+Y<br/>Ctrl+Shift+Z |⌘⇧Z      |Redo
