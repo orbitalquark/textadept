@@ -17,7 +17,7 @@ local M = {}
 --   The default value is `10`.
 module('_M.textadept.session')]]
 
-M.DEFAULT_SESSION = _USERHOME..'/session'
+M.DEFAULT_SESSION = _USERHOME..(not NCURSES and '/session' or '/session_term')
 M.SAVE_ON_QUIT = true
 M.MAX_RECENT_FILES = 10
 
