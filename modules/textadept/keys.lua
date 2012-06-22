@@ -328,7 +328,8 @@ keys[not OSX and (not NCURSES and 'cai' or 'mi')
 -- TODO: { utils.set_encoding, 'ISO-8859-1' }
 -- TODO: { utils.set_encoding, 'MacRoman' }
 -- TODO: { utils.set_encoding, 'UTF-16LE' }
-keys[not OSX and 'cL' or 'mL'] = m_textadept.mime_types.select_lexer
+keys[not OSX and not NCURSES and 'cL'
+                             or 'mL'] = m_textadept.mime_types.select_lexer
 keys.f5 = { buffer.colourise, buffer, 0, -1 }
 if NCURSES then keys.cl = keys.f5 end
 
