@@ -325,7 +325,11 @@ local columns = { _L['Command'], _L['Key Command'] }
 -- Prompts the user with a filteredlist to run menu commands.
 -- @name select_command
 function M.select_command()
-  local i = gui.filteredlist(_L['Run Command'], columns, items, true)
+  local i = gui.filteredlist(_L['Run Command'], columns, items, true,
+                             NCURSES and {
+                               '--width', gui.size[1] - 2,
+                               '--height', gui.size[2] - 2,
+                             } or '')
   if i then keys.run_command(commands[i + 1], type(commands[i + 1])) end
 end
 

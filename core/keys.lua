@@ -105,8 +105,9 @@ module('keys')]]
 
 local ADD = ''
 local CTRL, ALT, META, SHIFT = 'c'..ADD, 'a'..ADD, 'm'..ADD, 's'..ADD
+if NCURSES then ALT = META end
 M.CLEAR = 'esc'
-M.LANGUAGE_MODULE_PREFIX = (not OSX and CTRL or META)..'l'
+M.LANGUAGE_MODULE_PREFIX = (not OSX and not NCURSES and CTRL or META)..'l'
 
 -- Optimize for speed.
 local OSX = OSX
@@ -124,7 +125,14 @@ local error = function(e) events.emit(events.ERROR, e) end
 -- return a string representation of the key if it exists.
 -- @class table
 -- @name KEYSYMS
-M.KEYSYMS = { -- from <gdk/gdkkeysyms.h>
+M.KEYSYMS = {
+  -- from Scintilla.h
+  [300] = 'down', [301] = 'up', [302] = 'left', [303] = 'right',
+  [304] = 'home', [305] = 'end',
+  [306] = 'pgup', [307] = 'pgdn',
+  [308] = 'del',
+  [309] = 'ins',
+  -- from <gdk/gdkkeysyms.h>
   [0xFE20] = '\t', -- backtab; will be 'shift'ed
   [0xFF08] = '\b',
   [0xFF09] = '\t',
@@ -228,7 +236,7 @@ local function keypress(code, shift, control, alt, meta)
   --print(code, M.KEYSYMS[ch], shift, control, alt, meta)
   if code < 256 then
     key = string_char(code)
-    shift = false -- for printable characters, key is upper case
+    shift = shift and code < 32 -- for printable characters, key is upper case
   else
     key = M.KEYSYMS[code]
     if not key then return end
@@ -238,6 +246,7 @@ local function keypress(code, shift, control, alt, meta)
   --print(key_seq)
 
   gui.statusbar_text = ''
+  --if NCURSES then gui.statusbar_text = '"'..key_seq..'"' end
   if #keychain > 0 and key_seq == M.CLEAR then
     clear_key_sequence()
     return true

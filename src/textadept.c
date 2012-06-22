@@ -2235,29 +2235,28 @@ int main(int argc, char **argv) {
   gtk_main();
 #endif
 #elif NCURSES
-  // Ignore some termios (from GNU Nano) and signals.
+  // Ignore some termios (from GNU Nano).
   struct termios term;
   tcgetattr(0, &term);
   term.c_iflag &= ~IEXTEN, term.c_iflag &= ~IXON;
   term.c_oflag &= ~OPOST;
   term.c_lflag &= ~ISIG;
   tcsetattr(0, TCSANOW, &term);
-  struct sigaction ignore;
-  memset(&ignore, 0, sizeof(struct sigaction)), ignore.sa_handler = SIG_IGN;
-  /*sigaction(SIGINT, &ignore, NULL),*/ sigaction(SIGTSTP, &ignore, NULL);
 
   TermKeyResult res;
   TermKeyKey key;
   int keysyms[] = {
-    0, SCK_BACK, SCK_TAB, SCK_RETURN, SCK_ESCAPE, 0, 0, SCK_UP, SCK_DOWN,
-    SCK_LEFT, SCK_RIGHT, 0, 0, SCK_INSERT, SCK_DELETE, 0, SCK_PRIOR, SCK_NEXT,
-    SCK_HOME, SCK_END
-  };
+    0, SCK_BACK, SCK_TAB, SCK_RETURN, 0xFF1B /* GDK esc */, 0, 0, SCK_UP,
+    SCK_DOWN, SCK_LEFT, SCK_RIGHT, 0, 0, SCK_INSERT, SCK_DELETE, 0, SCK_PRIOR,
+    SCK_NEXT, SCK_HOME, SCK_END
+  }; // note: use GDK keysym value for esc for now
   int c = 0;
   while ((res = termkey_waitkey(tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
     if (key.type == TERMKEY_TYPE_UNICODE)
       c = key.code.codepoint;
+    else if (key.type == TERMKEY_TYPE_FUNCTION)
+      c = 0xFFBD + key.code.number; // use GDK keysym values for now
     else if (key.type == TERMKEY_TYPE_KEYSYM &&
              key.code.sym >= 0 && key.code.sym <= TERMKEY_SYM_END)
       c = keysyms[key.code.sym];
