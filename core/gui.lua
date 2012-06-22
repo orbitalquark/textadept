@@ -108,7 +108,8 @@ function gui.switch_buffer()
     items[#items + 1] = (buffer.dirty and '*' or '')..basename
     items[#items + 1] = filename
   end
-  local i = gui.filteredlist(_L['Switch Buffers'], columns, items, true)
+  local i = gui.filteredlist(_L['Switch Buffers'], columns, items, true,
+                             NCURSES and { '--width', gui.size[1] - 2 } or '')
   if i then view:goto_buffer(i + 1) end
 end
 

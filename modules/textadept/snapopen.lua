@@ -157,8 +157,9 @@ function M.open(utf8_paths, filter, exclude_PATHS, exclude_FILTER, depth)
                              M.MAX),
                '--button1', _L['_OK'])
   end
+  local width = NCURSES and { '--width', gui.size[1] - 2 } or ''
   local utf8_filenames = gui.filteredlist(_L['Open'], _L['File'], list, false,
-                                          '--select-multiple') or ''
+                                          '--select-multiple', width) or ''
   for filename in utf8_filenames:gmatch('[^\n]+') do io.open_file(filename) end
 end
 
