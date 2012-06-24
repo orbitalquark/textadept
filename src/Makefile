@@ -128,7 +128,7 @@ endif
 ifndef NCURSES
 LIBS = $(GTKLIBS)
 else
-LIBS = -lncurses -lcdk
+LIBS = -lncursesw -lcdk
 endif
 
 TEXTADEPT_OBJS = textadept.o

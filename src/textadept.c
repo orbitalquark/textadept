@@ -1376,7 +1376,7 @@ static int lstring_iconv(lua_State *L) {
   const char *to = luaL_checkstring(L, 2), *from = luaL_checkstring(L, 3);
   int converted = FALSE;
   iconv_t cd = iconv_open(to, from);
-  if (cd != (iconv_t) -1) {
+  if (cd != (iconv_t)-1) {
     char *out = malloc(text_len + 1), *outp = out;
     size_t inbytesleft = text_len, outbytesleft = text_len;
     if (iconv(cd, &text, &inbytesleft, &outp, &outbytesleft) != -1)
@@ -2175,6 +2175,7 @@ int main(int argc, char **argv) {
   static struct termios oldterm;
   tcgetattr(0, &oldterm); // save old terminal settings
   TermKey *tk = termkey_new(0, TERMKEY_FLAG_NOTERMIOS);
+  setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
   curs_set(0); // disable cursor when Scintilla has focus
 #endif
