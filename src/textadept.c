@@ -2271,8 +2271,7 @@ int main(int argc, char **argv) {
       l_close(lua);
       break;
     } else quit = FALSE;
-    wrefresh(scintilla_get_window(focused_view));
-    redrawwin(scintilla_get_window(focused_view));
+    scintilla_refresh(focused_view);
   }
   endwin();
   termkey_destroy(tk);
