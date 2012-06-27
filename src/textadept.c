@@ -6,16 +6,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if __WIN32__
+#if __linux__
+#include <unistd.h>
+#elif _WIN32
 #include <windows.h>
 #define main main_
-#elif __OSX__
+#elif __APPLE__ && !NCURSES
 #include <gtkmacintegration/gtkosxapplication.h>
-#elif __BSD__
+//#elif __APPLE__ && NCURSES
+//#include <mach-o/dyld.h>
+#elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
 #include <sys/types.h>
 #include <sys/sysctl.h>
-#else
-#include <unistd.h>
 #endif
 #if GTK
 #include <gtk/gtk.h>
@@ -67,7 +69,7 @@ static Scintilla *focused_view;
 #if GTK
 static GtkWidget *window, *menubar, *statusbar[2];
 static GtkAccelGroup *accel;
-#if __OSX__
+#if __APPLE__ && !NCURSES
 static GtkOSXApplication *osxapp;
 #endif
 #endif
@@ -779,6 +781,7 @@ static int l_rawgetiint(lua_State *L, int index, int n) {
   return ret;
 }
 
+#if GTK
 /**
  * Pushes a menu created from the table at the given valid index onto the stack.
  * Consult the LuaDoc for the table format.
@@ -788,9 +791,8 @@ static int l_rawgetiint(lua_State *L, int index, int n) {
  *   item.
  * @param submenu Flag indicating whether or not this menu is a submenu.
  */
-static void l_pushmenu(lua_State *L, int index, void (*callback)(void),
+static void l_pushmenu(lua_State *L, int index, GCallback callback,
                        int submenu) {
-#if GTK
   GtkWidget *menu = gtk_menu_new(), *menu_item = 0, *submenu_root = 0;
   const char *label;
   lua_pushvalue(L, index); // copy to stack top so relative indices can be used
@@ -822,7 +824,7 @@ static void l_pushmenu(lua_State *L, int index, void (*callback)(void),
           if (key || modifiers)
               gtk_widget_add_accelerator(menu_item, "activate", accel, key,
                                          modifiers, GTK_ACCEL_VISIBLE);
-          g_signal_connect(menu_item, "activate", G_CALLBACK(callback),
+          g_signal_connect(menu_item, "activate", callback,
                            GINT_TO_POINTER(menu_id));
           gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
         }
@@ -832,12 +834,8 @@ static void l_pushmenu(lua_State *L, int index, void (*callback)(void),
   }
   lua_pop(L, 1); // table copy
   lua_pushlightuserdata(L, !submenu_root ? menu : submenu_root);
-#elif NCURSES
-  lua_pushnil(L); // TODO: create and push menu (memory management?).
-#endif
 }
 
-#if GTK
 /**
  * Signal for a menu item click.
  */
@@ -850,7 +848,7 @@ static void m_clicked(GtkWidget*_, void *id) {
 static int lgui_menu(lua_State *L) {
   luaL_checktype(L, 1, LUA_TTABLE);
 #if GTK
-  l_pushmenu(L, -1, m_clicked, FALSE);
+  l_pushmenu(L, -1, G_CALLBACK(m_clicked), FALSE);
 #elif NCURSES
   // TODO: create menu and manage memory.
 #endif
@@ -928,7 +926,7 @@ static int lgui__newindex(lua_State *L) {
     gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
     gtk_box_reorder_child(GTK_BOX(vbox), menubar, 0);
     gtk_widget_show_all(menubar);
-#if __OSX__
+#if __APPLE__ && !NCURSES
     gtk_osxapplication_set_menu_bar(osxapp, GTK_MENU_SHELL(menubar));
     gtk_widget_hide(menubar);
 #endif
@@ -1294,6 +1292,12 @@ static int lquit(lua_State *L) {
   return 0;
 }
 
+#if _WIN32
+char *stpcpy(char *dest, const char *src) {
+  return strcpy(dest, src), dest + strlen(src);
+}
+#endif
+
 /**
  * Loads and runs the given file.
  * @param L The Lua state.
@@ -1475,9 +1479,9 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   lua_setglobal(L, "_BUFFERS");
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_views"), lua_setglobal(L, "_VIEWS");
   lua_pushstring(L, textadept_home), lua_setglobal(L, "_HOME");
-#if __WIN32__
+#if _WIN32
   lua_pushboolean(L, 1), lua_setglobal(L, "WIN32");
-#elif __OSX__
+#elif __APPLE__
   lua_pushboolean(L, 1), lua_setglobal(L, "OSX");
 #elif NCURSES
   lua_pushboolean(L, 1), lua_setglobal(L, "NCURSES");
@@ -1492,9 +1496,9 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
     if (!locale || !*locale) locale = getenv("LANG");
     if (locale && (charset = strchr(locale, '.'))) charset++;
   }
-  // Note: __WIN32__ uses GetACP() to determine codepage.
-  // If __WIN32__ is ever supported, use a codepage -> charset look-up table
-  // like glib's `libcharset/localecharset.c`.
+  // Note: _WIN32 uses GetACP() to determine codepage.
+  // If _WIN32 is ever supported, use a codepage -> charset look-up table like
+  // glib's `libcharset/localecharset.c`.
 #endif
   lua_pushstring(L, charset), lua_setglobal(L, "_CHARSET");
 
@@ -1653,7 +1657,7 @@ static int w_exit(GtkWidget*_, GdkEventAny*__, void*___) {
   return FALSE;
 }
 
-#if __OSX__
+#if __APPLE__ && !NCURSES
 /**
  * Signal for opening files from OSX.
  * Generates an 'appleevent_odoc' event for each document sent.
@@ -2099,7 +2103,7 @@ static void new_window() {
   signal(window, "key-press-event", w_keypress);
   accel = gtk_accel_group_new();
 
-#if __OSX__
+#if __APPLE__ && !NCURSES
   gtk_osxapplication_set_use_quartz_accelerators(osxapp, FALSE);
   osx_signal(osxapp, "NSApplicationOpenFile", w_open_osx);
   osx_signal(osxapp, "NSApplicationBlockTermination", w_exit_osx);
@@ -2181,21 +2185,28 @@ int main(int argc, char **argv) {
 #endif
 
   char *last_slash = NULL;
-#if !(__WIN32__ || __OSX__ || __BSD__)
+#if __linux__
   textadept_home = malloc(FILENAME_MAX);
   int _ = readlink("/proc/self/exe", textadept_home, FILENAME_MAX);
   if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
-#elif __WIN32__
+#elif _WIN32
   textadept_home = malloc(FILENAME_MAX);
   GetModuleFileName(0, textadept_home, FILENAME_MAX);
   if ((last_slash = strrchr(textadept_home, '\\'))) *last_slash = '\0';
-#elif __OSX__
+#elif __APPLE__ && !NCURSES
   osxapp = g_object_new(GTK_TYPE_OSX_APPLICATION, NULL);
   char *path = quartz_application_get_resource_path();
   textadept_home = g_filename_from_utf8((const char *)path, -1, NULL, NULL,
                                         NULL);
   g_free(path);
-#elif __BSD__
+//#elif __APPLE__ && NCURSES
+//  char *path = malloc(FILENAME_MAX), *p = NULL
+//  uint32_t size = FILENAME_MAX;
+//  _NSGetExecutablePath(path, &size);
+//  textadept_home = realpath(path, NULL);
+//  p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
+//  free(path);
+#elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
   textadept_home = malloc(FILENAME_MAX);
   int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
   size_t cb = FILENAME_MAX;
@@ -2223,7 +2234,7 @@ int main(int argc, char **argv) {
   if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
   new_window();
   lL_dofile(lua, "init.lua");
-#if __OSX__
+#if __APPLE__
   gtk_osxapplication_ready(osxapp);
 #endif
 
@@ -2283,7 +2294,7 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-#if __WIN32__
+#if _WIN32
 /**
  * Runs Textadept in Windows.
  * @see main
