@@ -15,9 +15,17 @@ from the [GTK+ website][]. Additionally you will need the [GNU C compiler][]
 distribution through its package manager. For example, Ubuntu includes these
 tools in the `build-essential` package.
 
+If you would like to compile the terminal version of Textadept, you will need
+the ncurses and CDK development libraries. Similarly, they should be available
+from your package manager. For Debian-based distributions like Ubuntu, the
+packages are typically called `libncurses5-dev` and `libcdk5-dev`. Otherwise,
+compile and install them from their [respective][] [websites][].
+
 [GTK+ website]: http://www.gtk.org/download/linux.html
 [GNU C compiler]: http://gcc.gnu.org
 [GNU Make]: http://www.gnu.org/software/make/
+[respective]: http://invisible-island.net/ncurses/#download_ncurses
+[websites]: http://invisible-island.net/cdk/#download
 
 ### Windows
 
@@ -61,9 +69,9 @@ either run `make win32`, modify the `CROSS` variable in the `win32` block of
 `src/Makefile` and run `make win32`, or run `make CROSS=i486-mingw32- win32` to
 build `../textadept.exe` and `../textadeptjit.exe`.
 
-Please note that a `lua51.dll` is produced for Windows platforms because
-limitations on external Lua library loading do not allow statically linking
-LuaJIT to Textadept. Static linking occurs on all other platforms.
+Please note that a `lua51.dll` is produced for _only_ the `textadeptjit.exe`
+because limitations on external Lua library loading do not allow statically
+linking LuaJIT to Textadept.
 
 ### Mac OSX
 

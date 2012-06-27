@@ -2,20 +2,24 @@
 
 ![UI](images/ui.png)
 
-Textadept's user interface was designed to be simple. It consists of a menubar,
-editor view, initially hidden find/replace dialog, initially hidden command
-entry, and statusbar. Below are brief descriptions of these features. More
-in-depth discussion about some of them is provided later in the manual.
+Textadept's user interface was designed to be simple. It consists of a menubar
+(GUI version), editor view, initially hidden find/replace dialog, initially
+hidden command entry, and statusbar. Below are brief descriptions of these
+features. More in-depth discussion about some of them is provided later in the
+manual.
 
 ## Menubar
 
 The completely customizable (and optional!) menubar provides access to all of
-Textadept's features.
+Textadept's features. It is only available in the GUI version of Textadept.
+In the terminal, you can use the
+[command selection](10_Advance.html#Command.Selection) dialog instead.
 
 ## Editor View
 
 The editor view is where you will spend most of your time in Textadept. It
-supports unlimited split views and is completely controllable by Lua.
+supports unlimited split views (GUI version) and is completely controllable by
+Lua.
 
 ## Find and Replace Dialog
 

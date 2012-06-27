@@ -7,6 +7,10 @@ only thing it needs is [GTK+][] >= 2.18 on Linux systems. GTK is already
 included in Windows and Mac OSX packages. Textadept also has its own version of
 Lua.
 
+The _experimental_ terminal version of Textadept requires [ncurses][] and
+[CDK][]. These dependencies are only necessary if you wish to run Textadept from
+a terminal.
+
 Notes:
 
 * The Linux binaries provided require GLib >= 2.28 to support single-instance
@@ -18,6 +22,8 @@ Notes:
   uses. Textadept itself is much smaller.
 
 [GTK+]: http://gtk.org
+[ncurses]: http://invisible-island.net/ncurses/ncurses.html
+[CDK]: http://invisible-island.net/cdk/
 
 ### Linux
 
@@ -25,7 +31,14 @@ Most Linux systems already have GTK+ installed. If not, it is probably available
 through your package manager. Otherwise, compile and install it from the
 [GTK+ website][].
 
+Most Linux systems already have ncurses installed, but probably not CDK. Look
+for them in your package manager, or compile and install them from their
+[respective][] [websites][]. For Debian-based distributions like Ubuntu, the
+packages are typically called `libncursesw5` and `libcdk5`.
+
 [GTK+ website]: http://www.gtk.org/download-linux.html
+[respective]: http://invisible-island.net/ncurses/#download_ncurses
+[websites]: http://invisible-island.net/cdk/#download
 
 ### Mac OSX
 
@@ -92,6 +105,9 @@ There is also a `textadeptjit` executable for running Textadept with [LuaJIT][].
 Please note there may be [compatibility issues][]. The `textadept` executable is
 recommended.
 
+The `textadept-ncurses` and `textadeptjit-ncurses` executables are version of
+Textadept for the terminal.
+
 [LuaJIT]: http://luajit.org
 [compatibility issues]: 11_Scripting.html#LuaJIT
 
@@ -102,17 +118,9 @@ since the versions of software installed vary widely from distribution to
 distribution. Because the Linux version of Textadept uses the version of GTK+
 installed on your system, an error like: `error while loading shared  libraries:
 <lib>: cannot open shared object file: No such file or directory` may occur when
-trying to run the program.
-
-The most common occurance of this error is for the `libpng12` library on 64-bit
-(x86\_64) Debian and Debian-based Linux distributions like Ubuntu because
-`libpng12` has not been replaced in favor of the newer `libpng14`. If you are
-experiencing this error, simply rename `textadept.lpng12` to `textadept`. The
-former has been compiled to use `libpng12`.
-
-If the above situation did not apply to you, do not be alarmed. The solution is
-actually quite painless even though it requires recompiling Textadept. See the
-[compiling][] page for more information.
+trying to run the program. The solution is actually quite painless even though
+it requires recompiling Textadept. See the [compiling][] page for more
+information.
 
 [compiling]: 12_Compiling.html
 
@@ -165,7 +173,8 @@ passing a `-f` or `--force` switch to Textadept: `textadept -f file.ext`
 (`ta -f file.ext`). When the force switch is not present, files will be opened
 in the original Textadept instance, regardless of how many instances are open.
 
-Single instance is not supported on Windows.
+Single instance is not supported on the Windows and terminal versions of
+Textadept.
 
 ![Linux](images/linux.png)
 &nbsp;&nbsp;
