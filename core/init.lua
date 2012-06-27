@@ -1,6 +1,6 @@
 -- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-_RELEASE = "Textadept 5.4"
+_RELEASE = "Textadept 5.5 beta"
 
 package.path = _HOME..'/core/?.lua;'..package.path
 os.setlocale('C', 'collate')
@@ -42,6 +42,8 @@ _M = {} -- modules table
 --   If Textadept is running on Windows, this flag is `true`.
 -- @field OSX (bool)
 --   If Textadept is running on Mac OSX, this flag is `true`.
+-- @field NCURSES (bool)
+--   If Textadept is running in the terminal, this flag is `true`.
 module('_G')]]
 
 ---
