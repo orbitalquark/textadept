@@ -14,7 +14,7 @@ sacrificing speed or succumbing to code bloat and featuritis.
 
 * Self-contained executable -- no installation necessary.
 * Entirely keyboard driven.
-* Unlimited split views.
+* Unlimited split views (GUI version).
 * Support for over 80 programming languages.
 * Powerful snippets and key commands.
 * Code autocompletion and API lookup.
@@ -27,7 +27,12 @@ operating systems and depends only on [GTK+ 2.0][] version 2.16 or greater on
 Linux. Lua is pre-compiled into Textadept on all platforms and a GTK runtime is
 included on Windows and Mac OSX.
 
+The _experimental_ version of Textadept for the terminal requires only
+[ncurses][] and [CDK][].
+
 [GTK+ 2.0]: http://gtk.org
+[ncurses]: http://invisible-island.net/ncurses/ncurses.html
+[CDK]: http://invisible-island.net/cdk/
 
 ## Download
 
