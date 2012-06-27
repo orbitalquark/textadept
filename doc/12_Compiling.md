@@ -23,7 +23,7 @@ tools in the `build-essential` package.
 
 Compiling Textadept on Windows is no longer supported. If you wish to do so
 however, you need a C compiler that supports the C99 standard (Microsoft's does
-not) and the [GTK+ for Windows bundle][] (2.22 is recommended).
+not) and the [GTK+ for Windows bundle][] (2.24 is recommended).
 
 The preferred way to compile for Windows is cross-compiling from Linux. To do
 so, in addition to the GTK bundle mentioned above, you need [MinGW][] with the
@@ -50,25 +50,29 @@ platform you are on) and not a platform-specific binary package.
 ### Linux and BSD
 
 For Linux systems, simply run `make` in the `src/` directory. The `textadept`
-executable is created in the root directory. Make a symlink from it to
-`/usr/bin/` or elsewhere in your `PATH`.
-
-BSD users please run `make BSD=1`.
+and `textadeptjit` executables are created in the root directory. Make a symlink
+from them to `/usr/bin/` or elsewhere in your `PATH`.
 
 ### Cross Compiling for Windows
 
 When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
-into a new `src/win32gtk` directory. Then modify the `CC`, `CPP`, and `WINDRES`
-variables in the `WIN32` block of `src/Makefile` to match your MinGW
-installation and run `make WIN32=1` to build `../textadept.exe`.
+into a new `src/win32gtk` directory. Then, depending on your MingW installation,
+either run `make win32`, modify the `CROSS` variable in the `win32` block of
+`src/Makefile` and run `make win32`, or run `make CROSS=i486-mingw32- win32` to
+build `../textadept.exe` and `../textadeptjit.exe`.
+
+Please note that a `lua51.dll` is produced for Windows platforms because
+limitations on external Lua library loading do not allow statically linking
+LuaJIT to Textadept. Static linking occurs on all other platforms.
 
 ### Mac OSX
 
 After using `jhbuild`, GTK is in `~/gtk` so make a symlink from `~/gtk/inst` to
-`src/gtkosx` in Textadept. Then run `make OSX=1` to build `../textadept.osx`. At
-this point it is recommended to build a new `Textadept.app` from an existing
-one. Download the most recent app and replace `Contents/MacOS/textadept.osx`,
-all `.dylib` files in `Contents/Resources/lib`, and all `.so` files in
+`src/gtkosx` in Textadept. Then run `make` to build `../textadept.osx` and
+`../textadeptjit.osx`. At this point it is recommended to build a new
+`Textadept.app` from an existing one. Download the most recent app and replace
+`Contents/MacOS/textadept.osx`, `Contents/MacOS/textadeptjit.osx`, all `.dylib`
+files in `Contents/Resources/lib`, and all `.so` files in
 `Contents/Resources/lib/gtk-2.0/<version>/{engines,immodules,loaders}` with your
 own versions in `src/gtkosx/lib`. If you wish, you may also replace the files
 in `Contents/Resources/{etc,share}`, but these rarely change.
@@ -86,7 +90,7 @@ lines (put `//` at the start of the line):
     #define TextRange Sci_TextRange
     #define TextToFind Sci_TextToFind
 
-### Compiling with LuaJIT
+### Notes on LuaJIT
 
 [LuaJIT][] is a Just-In-Time Compiler for Lua and can boost the speed of Lua
 programs. I have noticed that syntax highlighting can be up to 2 times faster
@@ -96,14 +100,6 @@ files. Other than syntax highlighting, LuaJIT offers no real benefit
 performance-wise to justify it being Textadept's default runtime. LuaJIT's
 [ffi library][], however, appears to be useful for interfacing with external,
 non-Lua, libraries.
-
-You can compile Textadept with LuaJIT by running `make LUAJIT=1` for Linux
-systems, `make OSX=1 LUAJIT=1` for Mac OSX, and `make WIN32=1 LUAJIT=1` for
-Windows systems.
-
-Please note that a `lua51.dll` is produced for Windows platforms because
-limitations on external Lua library loading do not allow statically linking
-LuaJIT to Textadept. Static linking occurs on all other platforms.
 
 [LuaJIT]: http://luajit.org
 [ffi library]: http://luajit.org/ext_ffi.html
