@@ -116,6 +116,7 @@ termkey_objs = termkey.o driver-ti.o driver-csi.o
 
 all: textadept textadeptjit
 ncurses: textadept-ncurses textadeptjit-ncurses
+m32: textadept32 textadeptjit32 textadept32-ncurses textadeptjit32-ncurses
 win32: textadept.exe textadeptjit.exe
 osx: textadept.osx textadeptjit.osx
 osx-ncurses: textadept-ncurses.osx textadeptjit-ncurses.osx
@@ -183,10 +184,10 @@ textadeptjit-ncurses: $(scintilla_objs) ScintillaTerm.o LexLPegjit.o \
                       textadeptjit-ncurses.o $(luajit_objs) libluajit.a \
                       gtdialog-ncurses.o $(termkey_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ -lncursesw -lcdk $(LDFLAGS)
-textadept32: textadept; mv ../$< ../$@
-textadeptjit32: textadeptjit; mv ../$< ../$@
-textadept32-ncurses: textadept-ncurses; mv ../$< ../$@
-textadeptjit32-ncurses: textadeptjit-ncurses; mv ../$< ../$@
+textadept32: ../textadept; mv $< ../$@
+textadeptjit32: ../textadeptjit; mv $< ../$@
+textadept32-ncurses: ../textadept-ncurses; mv $< ../$@
+textadeptjit32-ncurses: ../textadeptjit-ncurses; mv $< ../$@
 textadept.exe: $(scintilla_objs) $(scintilla_gtk_objs) scintilla-marshal.o \
                LexLPeg.o textadept.o textadept_rc.o $(lua_objs) gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(gtk_libs) $(LDFLAGS)
@@ -201,11 +202,12 @@ textadeptjit-ncurses.osx: textadeptjit-ncurses; mv ../$< ../$@
 
 # Clean.
 
-clean: mostlyclean
-	rm -f ../textadept* *.a *.dll
-	cd luajit && make clean
 mostlyclean:
 	rm -f *.o
+cleanjit:
+	cd luajit && make clean
+clean: mostlyclean cleanjit
+	rm -f ../textadept* *.a *.dll
 
 # Documentation.
 
