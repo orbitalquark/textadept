@@ -76,11 +76,9 @@ endif
 # Scintilla.
 
 sci_flags = -pedantic -Os $(plat_flag) -DSCI_LEXER -DNDEBUG \
-            -Iscintilla/include -Iscintilla/src -Iscintilla/lexlib -Wall \
-            -Wno-missing-braces -Wno-char-subscripts -Wno-long-long
-ifeq (win32, $(MAKECMDGOALS))
-  sci_flags += -DG_THREADS_IMPL_NONE
-endif
+            -DG_THREADS_IMPL_NONE -Iscintilla/include -Iscintilla/src \
+            -Iscintilla/lexlib -Wall -Wno-missing-braces -Wno-char-subscripts \
+            -Wno-long-long
 
 scintilla_objs = AutoComplete.o CallTip.o Catalogue.o CellBuffer.o \
                  CharClassify.o ContractionState.o Decoration.o Document.o \
