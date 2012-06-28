@@ -100,6 +100,7 @@ MARK_HIGHLIGHT_BACK	_	0;"	F	class:_M.textadept.editing
 MAX	_	0;"	F	class:_M.textadept.snapopen
 MAX_RECENT_FILES	_	0;"	F	class:_M.textadept.session
 MENU_CLICKED	_	0;"	F	class:events
+NCURSES	_	0;"	F	
 NUMBER	_	0;"	F	class:lexer
 OPERATOR	_	0;"	F	class:lexer
 OSX	_	0;"	F	
@@ -1100,7 +1101,6 @@ grab_focus	_	0;"	f	class:buffer
 graph	_	0;"	F	class:lexer
 grow_selection	_	0;"	f	class:_M.textadept.editing
 gsub	_	0;"	f	class:string
-gtkmenu	_	0;"	f	class:gui
 gui	_	0;"	m	
 gui	_	0;"	t	
 gui.command_entry	_	0;"	m	
@@ -1273,6 +1273,7 @@ math	_	0;"	m
 math	_	0;"	t	
 max	_	0;"	f	class:math
 max_line_state	_	0;"	F	class:buffer
+menu	_	0;"	f	class:gui
 menu	_	0;"	t	class:_M.textadept
 menubar	_	0;"	t	class:_M.textadept.menu
 menubar	_	0;"	t	class:gui
@@ -1514,6 +1515,7 @@ setuservalue	_	0;"	f	class:debug
 setvbuf	_	0;"	f	class:file
 shebangs	_	0;"	t	class:_M.textadept.mime_types
 show_apidoc	_	0;"	f	class:_M.textadept.adeptsense
+show_completions	_	0;"	f	class:gui.command_entry
 show_documentation	_	0;"	f	class:_M.textadept.adeptsense
 show_lines	_	0;"	f	class:buffer
 sin	_	0;"	f	class:math
