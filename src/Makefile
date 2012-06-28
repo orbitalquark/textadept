@@ -121,6 +121,15 @@ win32: textadept.exe textadeptjit.exe
 osx: textadept.osx textadeptjit.osx
 osx-ncurses: textadept-ncurses.osx textadeptjit-ncurses.osx
 
+tmp:
+	rm -rf /tmp/tabuild && hg clone ../ /tmp/tabuild
+	cp -rL ../doc ../lexers ../modules /tmp/tabuild/
+	cp -r gtdialog LexLPeg.cxx lua luajit scintilla termkey win32gtk \
+		/tmp/tabuild/src/
+	cd /tmp/tabuild/src/luajit && make clean
+	ln -s `pwd`/../releases /tmp/tabuild
+	@echo /tmp/tabuild ready for building.
+
 # Dependencies.
 
 $(scintilla_objs): scintilla/src/*.cxx scintilla/lexlib/*.cxx
@@ -226,31 +235,33 @@ cleandoc:
 
 # Package.
 
-basedir = textadept_$(value VERSION)
+basedir = textadept_$(shell grep "_RELEASE =" ../core/init.lua | \
+                            cut -d ' ' -f 4- | sed -e 's/"//; s/ /_/;')
 modules = css hypertext java rails rhtml ruby php
 
-release: doc $(basedir).x86_64 $(basedir).i386 $(basedir).win32 $(basedir).osx \
-         $(basedir).src $(basedir).modules cleanup
+release: ../textadept ../textadeptjit ../textadept-ncurses \
+         ../textadeptjit-ncurses ../textadept32 ../textadeptjit32 \
+         ../textadept32-ncurses ../textadeptjit32-ncurses ../textadept.exe \
+         ../textadeptjit.exe ../textadept.osx ../textadeptjit.osx lua51.dll \
+         doc pkg_x86_64 pkg_i386 pkg_win32 pkg_osx pkg_src pkg_modules cleanup
 
-$(basedir): ../textadept ../textadeptjit ../textadept-ncurses \
-            ../textadeptjit-ncurses ../textadept32 ../textadeptjit32 \
-            ../textadept32-ncurses ../textadeptjit32-ncurses ../textadept.exe \
-            ../textadeptjit.exe ../textadept.osx ../textadeptjit.osx lua51.dll
+# Release directories.
+
+$(basedir):
 	hg archive $@
 	rm $@/.hg*
 	cp -rL ../doc $@
 	hg clone /home/mitchell/code/scintillua tmp && mv tmp/lexers $@ && rm -r tmp
 $(basedir).x86_64: ../textadept ../textadeptjit ../textadept-ncurses \
                    ../textadeptjit-ncurses | $(basedir)
-	cp -r $| $@ && cp $^ $@ && tar czf ../releases/$@.tgz $@ && rm -r $@
+	cp -r $| $@ && cp $^ $@
 $(basedir).i386: ../textadept32 ../textadeptjit32 ../textadept32-ncurses \
                  ../textadeptjit32-ncurses | $(basedir)
-	cp -r $| $@ && cp $^ $@ && tar czf ../releases/$@.tgz $@ && rm -r $@
+	cp -r $| $@ && cp $^ $@
 $(basedir).win32: ../textadept.exe ../textadeptjit.exe lua51.dll | $(basedir)
 	cp -r $| $@ && cp $^ $@
 	cp win32gtk/bin/*.dll $@ && cp -r win32gtk/etc win32gtk/lib win32gtk/share $@
 	rm -r $@/lib/*.a $@/lib/glib-2.0 $@/lib/gtk-2.0/include $@/lib/pkgconfig
-	zip -r ../releases/$@.zip $@ && rm -r $@
 $(basedir).osx: ../textadept.osx ../textadeptjit.osx | $(basedir)
 	mkdir $@ && cp -rL gtkosx $@/Textadept.app
 	cp $^ $@/Textadept.app/Contents/MacOS/
@@ -258,19 +269,28 @@ $(basedir).osx: ../textadept.osx ../textadeptjit.osx | $(basedir)
 	mv $@/Textadept.app/Contents/Resources/core/images/textadept.icns \
 		$@/Textadept.app/Contents/Resources/
 	mv $@/Textadept.app/Contents/MacOS/ta $@
-	zip -r ../releases/$@.zip $@ && rm -r $@
 $(basedir).src: | $(basedir)
 	cp -r $| $@ && cp -rL lua luajit scintilla gtdialog LexLPeg.cxx termkey $@/src
 	cd $@/src/luajit && make clean && cd ../../../
 	rm -r $@/src/scintilla/.hg
-	zip -r ../releases/$@.zip $@ && rm -r $@
 $(basedir).modules:
 	mkdir -p $@/modules
 	for module in $(modules); do \
 		hg clone /home/mitchell/code/textadept/modules/$$module \
 			$@/modules/$$module; \
 	done
-	zip -r ../releases/$@.zip $@ && rm -r $@
+
+# Release Packages.
+
+pkg_x86_64: $(basedir).x86_64 ; tar czf ../releases/$<.tgz $< && rm -r $<
+pkg_i386: $(basedir).i386 ; tar czf ../releases/$<.tgz $< && rm -r $<
+pkg_win32: $(basedir).win32 ; zip -r ../releases/$<.zip $< && rm -r $<
+pkg_osx: $(basedir).osx ; zip -r ../releases/$<.zip $< && rm -r $<
+pkg_src: $(basedir).src ; zip -r ../releases/$<.zip $< && rm -r $<
+pkg_modules: $(basedir).modules ; zip -r ../releases/$<.zip $< && rm -r $<
+
+# Clean.
+
 cleanup: ../releases/$(basedir).x86_64.tgz ../releases/$(basedir).i386.tgz \
          ../releases/$(basedir).win32.zip ../releases/$(basedir).osx.zip \
          ../releases/$(basedir).src.zip ../releases/$(basedir).modules.zip | \
