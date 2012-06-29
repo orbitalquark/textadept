@@ -25,9 +25,9 @@ than ever before, though using LuaJIT is overkill.
 
 Textadept is minimalist. Not only is this apparent in the UI, but the editor's C
 core was designed to never exceed 2000 lines of code and its Lua extension code
-is not supposed to go beyond 4000 lines. After 4 1/2 years of development,
-Textadept has fewer lines of code (~5000) than it did in its first release
-(~5600) and is vastly superior in every respect.
+is not supposed to go beyond 4000 lines. After 4 1/2 years of development, even
+though Textadept has about the same number of lines of code than it did in its
+first release (~5600), it is vastly superior in every respect.
 
 ### Ridiculously Extensible
 
