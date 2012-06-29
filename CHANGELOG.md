@@ -4,6 +4,46 @@
 
 [Atom Feed]: feed
 
+## 5.5 beta (01 Jul 2012)
+
+Download:
+
+* [Textadept 5.5 beta -- Win32][]
+* [Textadept 5.5 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 5.5 beta -- Linux][]
+* [Textadept 5.5 beta -- Linux x86_64][]
+* [Textadept 5.5 beta -- Source][]
+* [Textadept 5.5 beta -- Modules][]
+
+Bugfixes:
+
+* None.
+
+Changes:
+
+* Experimental ncurses support.
+* No more `'gtk-'` stock menu item support and changed `'separator'` to `''`.
+* Renamed `gui.gtkmenu()` to [`gui.menu()`][].
+* Changed [`gui.statusbar_text`][] to be write-only.
+* Changed 'Quit' key command to 'Ctrl+Q' on Win32 and Linux.
+* Show text that could not be localized.
+* Changed `make` commands for [compiling][] Textadept.
+* x86\_64 binary provides `libpng12` executables by default.
+* Updated to [Lua 5.2.1][].
+* Updated to [LuaJIT][] 2.0.0-beta10.
+
+[Textadept 5.5 beta -- Win32]: download/textadept_5.5_beta.win32.zip
+[Textadept 5.5 beta -- Mac OSX Intel 10.5+]: download/textadept_5.5_beta.osx.zip
+[Textadept 5.5 beta -- Linux]: download/textadept_5.5_beta.i386.tgz
+[Textadept 5.5 beta -- Linux x86_64]: download/textadept_5.5_beta.x86_64.tgz
+[Textadept 5.5 beta -- Source]: download/textadept_5.5_beta.src.zip
+[Textadept 5.5 beta -- Modules]: download/textadept_5.5_beta.modules.zip
+[`gui.menu()`]: api/gui.html#menu
+[`gui.statusbar_text`]: api/gui.html#statusbar_text
+[compiling]: 12_Compiling.html
+[Lua 5.2.1]: http://www.lua.org/manual/5.2/
+[LuaJIT]: http://luajit.org
+
 ## 5.4 (01 Jun 2012)
 
 Download:
