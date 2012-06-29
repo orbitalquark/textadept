@@ -48,7 +48,7 @@ else ifeq (Darwin, $(shell uname -s))
   CXXFLAGS = -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
              -isysroot /Developer/SDKs/MacOSX10.5.sdk
   LUAFLAGS = -DLUA_USE_MACOSX
-  LDFLAGS = -rdynamic
+  LDFLAGS = -liconv -rdynamic
 
   #ifneq (ncurses, $(MAKECMDGOALS))
     plat_flag = -DGTK
@@ -121,8 +121,8 @@ osx-ncurses: textadept-ncurses.osx textadeptjit-ncurses.osx
 
 tmp:
 	rm -rf /tmp/tabuild && hg clone ../ /tmp/tabuild
-	cp -rL ../doc ../lexers ../modules /tmp/tabuild/
-	cp -r gtdialog LexLPeg.cxx lua luajit scintilla termkey win32gtk \
+	cp -rL Doxygen ../doc ../lexers ../modules /tmp/tabuild/
+	cp -r gtdialog gtkosx LexLPeg.cxx lua luajit scintilla termkey win32gtk \
 		/tmp/tabuild/src/
 	cd /tmp/tabuild/src/luajit && make clean
 	ln -s `pwd`/../releases /tmp/tabuild
