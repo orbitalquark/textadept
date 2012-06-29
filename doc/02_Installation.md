@@ -105,7 +105,7 @@ There is also a `textadeptjit` executable for running Textadept with [LuaJIT][].
 Please note there may be [compatibility issues][]. The `textadept` executable is
 recommended.
 
-The `textadept-ncurses` and `textadeptjit-ncurses` executables are version of
+The `textadept-ncurses` and `textadeptjit-ncurses` executables are versions of
 Textadept for the terminal.
 
 [LuaJIT]: http://luajit.org
