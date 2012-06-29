@@ -256,6 +256,7 @@ $(basedir).x86_64: ../textadept ../textadeptjit ../textadept-ncurses \
 $(basedir).i386: ../textadept32 ../textadeptjit32 ../textadept32-ncurses \
                  ../textadeptjit32-ncurses | $(basedir)
 	cp -r $| $@ && cp $^ $@
+	for t in `ls $@/textadept*`; do mv $$t `echo $$t | sed -e 's/32//;'`; done
 $(basedir).win32: ../textadept.exe ../textadeptjit.exe lua51.dll | $(basedir)
 	cp -r $| $@ && cp $^ $@
 	cp win32gtk/bin/*.dll $@ && cp -r win32gtk/etc win32gtk/lib win32gtk/share $@
