@@ -29,6 +29,7 @@ Changes:
 * Show text that could not be localized.
 * Changed `make` commands for [compiling][] Textadept.
 * x86\_64 binary provides `libpng12` executables by default.
+* Can cross compile to Mac OSX from Linux.
 * Updated to [Lua 5.2.1][].
 * Updated to [LuaJIT][] 2.0.0-beta10.
 

@@ -187,12 +187,15 @@ $(lua_objs): lua/src/*.c lua/src/lib/*.c
 $(luajit_objs): lua/src/lib/*.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Iluajit/src $^
 	for lib in $(luajit_objs); do mv $$(echo $$lib | sed 's/jit//g') $$lib; done
-$(libluajit):
+libluajit.a:
 	cd luajit && make CC="$(CC) $(CFLAGS)"
-	cp luajit/src/libluajit.a $@
+	cp luajit/src/$@ .
 lua51.dll:
 	cd luajit && make HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
 	cp luajit/src/$@ .
+libluajit.osx.a:
+	cd luajit && make CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin || return 0
+	cp luajit/src/libluajit.a $@
 gtdialog.o: gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -DGTK -DNOHELP -DLIBRARY $(gtk_flags) $<
 gtdialog-ncurses.o: gtdialog/gtdialog.c
