@@ -42,13 +42,12 @@ Windows header files. They should be available from your package manager.
 
 ### Mac OSX
 
-[XCode][] is needed for Mac OSX as well as [jhbuild][]. After building
-`meta-gtk-osx-bootstrap` and `meta-gtk-osx-core`, you need to build
-`meta-gtk-osx-themes`. Note that the entire compiling process can easily take
-30 minutes or more and ultimately consume nearly 1GB of disk space.
+Compiling Textadept on Mac OSX is no longer supported. The preferred way is
+cross-compiling from Linux. To do so, you will need my [GTK+ for OSX bundle][]
+and the [Apple Crosscompiler][] binaries.
 
-[XCode]: http://developer.apple.com/TOOLS/xcode/
-[jhbuild]: http://sourceforge.net/apps/trac/gtk-osx/wiki/Build
+[GTK+ for OSX bundle]: download/gtkosx-2.24.9.zip
+[Apple Crosscompiler]: https://launchpad.net/~flosoft/+archive/cross-apple
 
 ## Compiling
 
@@ -73,30 +72,37 @@ Please note that a `lua51.dll` is produced for _only_ the `textadeptjit.exe`
 because limitations on external Lua library loading do not allow statically
 linking LuaJIT to Textadept.
 
-### Mac OSX
+### Cross Compiling for Mac OSX
 
-After using `jhbuild`, GTK is in `~/gtk` so make a symlink from `~/gtk/inst` to
-`src/gtkosx` in Textadept. Then run `make` to build `../textadept.osx` and
+When cross-compiling from within Linux, first unzip the GTK+ for OSX bundle into
+a new `src/gtkosx` directory. Then run `make` to build `../textadept.osx` and
 `../textadeptjit.osx`. At this point it is recommended to build a new
 `Textadept.app` from an existing one. Download the most recent app and replace
-`Contents/MacOS/textadept.osx`, `Contents/MacOS/textadeptjit.osx`, all `.dylib`
-files in `Contents/Resources/lib`, and all `.so` files in
-`Contents/Resources/lib/gtk-2.0/<version>/{engines,immodules,loaders}` with your
-own versions in `src/gtkosx/lib`. If you wish, you may also replace the files
-in `Contents/Resources/{etc,share}`, but these rarely change.
+`Contents/MacOS/textadept.osx` and `Contents/MacOS/textadeptjit.osx` with your
+own versions.
 
-#### Problems
+#### Compiling on OSX (Legacy)
 
-If the build fails because of a
+[XCode][] is needed for Mac OSX as well as [jhbuild][]. After building
+`meta-gtk-osx-bootstrap` and `meta-gtk-osx-core`, you need to build
+`meta-gtk-osx-themes`. Note that the entire compiling process can easily take 30
+minutes or more and ultimately consume nearly 1GB of disk space.
 
-    `redefinition of 'struct Sci_TextRange'`
+After using `jhbuild`, GTK is in `~/gtk` so make a symlink from `~/gtk/inst` to
+`src/gtkosx` in Textadept. Then open `src/Makefile` and uncomment the `Darwin`
+block. Finally, run `make osx` to build `../textadept.osx` and
+`../textadeptjit.osx`.
 
-error, open `src/scintilla/include/Scintilla.h` and comment out the following
-lines (put `//` at the start of the line):
+Note: to build a GTK+ for OSX bundle, the following needs to be run from the
+`src` directory before zipping up `gtkosx/include` and `gtkosx/lib`:
 
-    #define CharacterRange Sci_CharacterRange
-    #define TextRange Sci_TextRange
-    #define TextToFind Sci_TextToFind
+    sed -i -e 's|libdir=/Users/username/gtk/inst/lib|libdir=${prefix}/lib|;' \
+    gtkosx/lib/pkgconfig/*.pc
+
+where `username` is replaced with your username.
+
+[XCode]: http://developer.apple.com/TOOLS/xcode/
+[jhbuild]: http://sourceforge.net/apps/trac/gtk-osx/wiki/Build
 
 ### Notes on LuaJIT
 
