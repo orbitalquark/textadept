@@ -405,6 +405,9 @@ if OSX or NCURSES then
     keys.mU = buffer.page_up_extend
     keys.mD = buffer.page_down_extend
   end
+  -- GTKOSX reports Fn-key as a single keycode which confuses Scintilla. Do not
+  -- propagate it.
+  keys.fn = function() return true end
 end
 
 return M

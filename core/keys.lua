@@ -126,13 +126,13 @@ local error = function(e) events.emit(events.ERROR, e) end
 -- @class table
 -- @name KEYSYMS
 M.KEYSYMS = {
-  -- from Scintilla.h
+  -- From Scintilla.h.
   [300] = 'down', [301] = 'up', [302] = 'left', [303] = 'right',
   [304] = 'home', [305] = 'end',
   [306] = 'pgup', [307] = 'pgdn',
   [308] = 'del',
   [309] = 'ins',
-  -- from <gdk/gdkkeysyms.h>
+  -- From <gdk/gdkkeysyms.h>.
   [0xFE20] = '\t', -- backtab; will be 'shift'ed
   [0xFF08] = '\b',
   [0xFF09] = '\t',
@@ -159,6 +159,8 @@ M.KEYSYMS = {
   [0xFFBE] = 'f1',  [0xFFBF] = 'f2',  [0xFFC0] = 'f3',  [0xFFC1] = 'f4',
   [0xFFC2] = 'f5',  [0xFFC3] = 'f6',  [0xFFC4] = 'f7',  [0xFFC5] = 'f8',
   [0xFFC6] = 'f9',  [0xFFC7] = 'f10', [0xFFC8] = 'f11', [0xFFC9] = 'f12',
+  -- Mac OSX.
+  [16777232] = 'fn', -- GTKOSX does not recognize Fn-key combinations, just this
 }
 
 -- The current key sequence.
