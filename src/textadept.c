@@ -16,6 +16,7 @@
 //#elif __APPLE__ && NCURSES
 //#include <mach-o/dyld.h>
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
+#define u_int unsigned int // 'u_int' undefined when _POSIX_SOURCE is defined
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #endif

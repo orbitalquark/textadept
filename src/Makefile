@@ -1,6 +1,7 @@
 # Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-ifeq (Linux, $(shell uname -s))
+kernel = $(shell uname -s)
+ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
   ifeq (win32, $(MAKECMDGOALS))
     CROSS = i586-mingw32msvc-
     CC = gcc
@@ -9,6 +10,7 @@ ifeq (Linux, $(shell uname -s))
     CXXFLAGS = -mms-bitfields -mwindows -static-libgcc -static-libstdc++
     LDFLAGS = -liconv -Wl,--retain-symbols-file -Wl,lua.sym
     WINDRES = windres
+    MAKE = make
 
     plat_flag = -DGTK
     gtk_flags = $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
@@ -29,6 +31,7 @@ ifeq (Linux, $(shell uname -s))
                -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk
     LUAFLAGS = -DLUA_USE_MACOSX
     LDFLAGS = -liconv -rdynamic
+    MAKE = make
 
     #ifneq (ncurses, $(MAKECMDGOALS))
       plat_flag = -DGTK
@@ -49,7 +52,13 @@ ifeq (Linux, $(shell uname -s))
     CC = gcc
     CXX = g++
     LUAFLAGS = -DLUA_USE_LINUX
-    LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym -ldl
+    LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
+    ifeq (Linux, $(kernel))
+      LDFLAGS += -ldl
+      MAKE = make
+    else
+      MAKE = gmake
+    endif
 
     ifneq (ncurses, $(MAKECMDGOALS))
       plat_flag = -DGTK
@@ -151,7 +160,7 @@ tmp:
 	cp -rL ../Doxyfile ../doc ../lexers ../modules /tmp/tabuild/
 	cp -r gtdialog gtkosx LexLPeg.cxx libluajit.osx.a lua luajit lua51.dll \
 		scintilla termkey win32gtk /tmp/tabuild/src/
-	cd /tmp/tabuild/src/luajit && make clean
+	cd /tmp/tabuild/src/luajit && $(MAKE) clean
 	ln -s `pwd`/../releases /tmp/tabuild
 	@echo /tmp/tabuild ready for building.
 
@@ -188,13 +197,14 @@ $(luajit_objs): lua/src/lib/*.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Iluajit/src $^
 	for lib in $(luajit_objs); do mv $$(echo $$lib | sed 's/jit//g') $$lib; done
 libluajit.a:
-	cd luajit && make CC="$(CC) $(CFLAGS)"
+	cd luajit && $(MAKE) CC="$(CC) $(CFLAGS)"
 	cp luajit/src/$@ .
 lua51.dll:
-	cd luajit && make HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
+	cd luajit && $(MAKE) HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
 	cp luajit/src/$@ .
 libluajit.osx.a:
-	cd luajit && make CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin || return 0
+	cd luajit && $(MAKE) CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin || \
+		return 0
 	cp luajit/src/libluajit.a $@
 gtdialog.o: gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -DGTK -DNOHELP -DLIBRARY $(gtk_flags) $<
@@ -242,7 +252,7 @@ textadeptjit-ncurses.osx: textadeptjit-ncurses; mv ../$< ../$@
 mostlyclean:
 	rm -f *.o
 cleanjit:
-	cd luajit && make clean
+	cd luajit && $(MAKE) clean
 clean: mostlyclean cleanjit
 	rm -f ../textadept* *.a *.dll
 
@@ -300,7 +310,7 @@ $(basedir).osx: ../textadept.osx ../textadeptjit.osx | $(basedir)
 	mv $@/Textadept.app/Contents/MacOS/ta $@
 $(basedir).src: | $(basedir)
 	cp -r $| $@ && cp -rL lua luajit scintilla gtdialog LexLPeg.cxx termkey $@/src
-	cd $@/src/luajit && make clean && cd ../../../
+	cd $@/src/luajit && $(MAKE) clean && cd ../../../
 	rm -r $@/src/scintilla/.hg
 $(basedir).modules:
 	mkdir -p $@/modules
