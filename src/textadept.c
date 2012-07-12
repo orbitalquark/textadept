@@ -25,6 +25,7 @@
 #define PLAT_GTK 1
 #elif NCURSES
 #include <signal.h>
+#include <sys/ioctl.h>
 #include <termios.h>
 #include <ncurses.h>
 #include <cdk/cdk.h>
@@ -2166,6 +2167,20 @@ static void new_window() {
 #endif
 }
 
+#if NCURSES
+/**
+ * Signal for a terminal resize.
+ */
+static void resize(int signal) {
+  struct winsize win;
+  ioctl(0, TIOCGWINSZ, &win);
+  resizeterm(win.ws_row, win.ws_col);
+  wresize(scintilla_get_window(focused_view), LINES - 2, COLS);
+  lL_event(lua, "update_ui", -1);
+  scintilla_refresh(focused_view);
+}
+#endif
+
 /**
  * Runs Textadept.
  * Initializes the Lua state, creates the user interface, and then runs
@@ -2255,6 +2270,10 @@ int main(int argc, char **argv) {
   term.c_oflag &= ~OPOST;
   term.c_lflag &= ~ISIG;
   tcsetattr(0, TCSANOW, &term);
+  // Set terminal resize handler.
+  struct sigaction act;
+  memset(&act, 0, sizeof(struct sigaction));
+  act.sa_handler = resize, sigaction(SIGWINCH, &act, NULL);
 
   TermKeyResult res;
   TermKeyKey key;
