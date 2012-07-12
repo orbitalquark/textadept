@@ -2271,6 +2271,8 @@ int main(int argc, char **argv) {
   gtk_main();
 #endif
 #elif NCURSES
+  scintilla_refresh(focused_view);
+
   // Ignore some termios (from GNU Nano).
   tcgetattr(0, &term);
   term.c_iflag &= ~IEXTEN, term.c_iflag &= ~IXON;
