@@ -63,6 +63,7 @@ typedef GtkWidget Scintilla;
 #define SS(view, m, w, l) scintilla_send_message(view, m, w, l)
 #define focus_view(v) \
   SS(focused_view, SCI_SETFOCUS, 0, 0), SS(v, SCI_SETFOCUS, 1, 0)
+static struct termios term;
 #endif
 
 // Window
@@ -405,6 +406,7 @@ static int lfind_focus(lua_State *L) {
   destroyCDKEntry(find_entry), destroyCDKEntry(replace_entry);
   destroyCDKButtonbox(buttonbox), destroyCDKButtonbox(optionbox);
   delwin(findbox->window), destroyCDKScreen(findbox), findbox = NULL;
+  tcsetattr(0, TCSANOW, &term);
 #endif
   return 0;
 }
@@ -544,6 +546,7 @@ static int lce_focus(lua_State *L) {
   curs_set(0);
   destroyCDKEntry(command_entry), command_entry = NULL;
   delwin(screen->window), destroyCDKScreen(screen);
+  tcsetattr(0, TCSANOW, &term);
 #endif
   return 0;
 }
@@ -2264,7 +2267,6 @@ int main(int argc, char **argv) {
 #endif
 #elif NCURSES
   // Ignore some termios (from GNU Nano).
-  struct termios term;
   tcgetattr(0, &term);
   term.c_iflag &= ~IEXTEN, term.c_iflag &= ~IXON;
   term.c_oflag &= ~OPOST;
