@@ -366,6 +366,7 @@ static int lfind_focus(lua_State *L) {
 #elif NCURSES
 #define max(a, b) (((a) > (b)) ? (a) : (b))
   if (findbox) return 0; // already active
+  wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
   findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0));
   int b_width = max(strlen(button_labels[0]), strlen(button_labels[1])) +
                 max(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
@@ -401,12 +402,14 @@ static int lfind_focus(lua_State *L) {
     fcopy(&find_text, getCDKEntryValue(find_entry));
     fcopy(&repl_text, getCDKEntryValue(replace_entry));
     f_clicked(getCDKButtonboxCurrentButton(buttonbox), NULL);
+    scintilla_refresh(focused_view);
   }
   curs_set(0);
   destroyCDKEntry(find_entry), destroyCDKEntry(replace_entry);
   destroyCDKButtonbox(buttonbox), destroyCDKButtonbox(optionbox);
   delwin(findbox->window), destroyCDKScreen(findbox), findbox = NULL;
   tcsetattr(0, TCSANOW, &term);
+  wresize(scintilla_get_window(focused_view), LINES - 2, COLS);
 #endif
   return 0;
 }
