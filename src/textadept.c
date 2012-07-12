@@ -517,10 +517,14 @@ static int lfind__newindex(lua_State *L) {
 
 #if NCURSES
 /**
- * Signal for the 'tab' key being pressed in the Command Entry.
+ * Signal for a keypress inside the Command Entry.
  */
-static int c_keypress(EObjectType _, void*__, void*___, chtype ____) {
-  return (lL_event(lua, "command_entry_keypress", LUA_TNUMBER, '\t', -1), TRUE);
+static int c_keypress(EObjectType _, void *object, void *__, chtype key) {
+  if (key == KEY_ENTER) {
+    fcopy(&command_text, getCDKEntryValue((CDKENTRY *)object));
+    lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
+  } else lL_event(lua, "command_entry_keypress", LUA_TNUMBER, '\t', -1);
+  return key == KEY_TAB;
 }
 #endif
 
@@ -540,12 +544,10 @@ static int lce_focus(lua_State *L) {
   command_entry = newCDKEntry(screen, LEFT, TOP, NULL, NULL, A_NORMAL, '_',
                               vMIXED, 0, 0, 256, FALSE, FALSE);
   bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
+  bindCDKObject(vENTRY, command_entry, KEY_ENTER, c_keypress, NULL);
   setCDKEntryValue(command_entry, command_text);
   curs_set(1);
-  if (activateCDKEntry(command_entry, NULL)) {
-    fcopy(&command_text, getCDKEntryValue(command_entry));
-    lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
-  }
+  activateCDKEntry(command_entry, NULL);
   curs_set(0);
   destroyCDKEntry(command_entry), command_entry = NULL;
   delwin(screen->window), destroyCDKScreen(screen);
