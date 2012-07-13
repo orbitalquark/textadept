@@ -57,6 +57,9 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       LDFLAGS += -ldl
       MAKE = make
     else
+      ifeq (ncurses, $(MAKECMDGOALS))
+        LDFLAGS += -liconv
+      endif
       MAKE = gmake
     endif
 
