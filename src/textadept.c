@@ -2273,6 +2273,7 @@ int main(int argc, char **argv) {
 #elif NCURSES
   scintilla_refresh(focused_view);
 
+  stderr = freopen("/dev/null", "w", stderr); // redirect stderr
   // Ignore some termios (from GNU Nano).
   tcgetattr(0, &term);
   term.c_iflag &= ~IEXTEN, term.c_iflag &= ~IXON;
