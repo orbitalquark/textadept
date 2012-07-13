@@ -8,6 +8,7 @@ Textadept the amazing editor that it is today.
 * Alex Bepple
 * Ana Balan
 * Anton Verbitski
+* Bill Meahan
 * Brian Schott
 * Callum Wilson
 * Jay Gould

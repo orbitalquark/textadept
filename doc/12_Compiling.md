@@ -19,25 +19,29 @@ If you would like to compile the terminal version of Textadept, you will need
 the ncurses and CDK development libraries. Similarly, they should be available
 from your package manager. For Debian-based distributions like Ubuntu, the
 packages are typically called `libncurses5-dev` and `libcdk5-dev`. Otherwise,
-compile and install them from their [respective][] [websites][].
+compile and install them from their [respective][] [websites][]. BSD users will
+also need to have [libiconv][].
 
 [GTK+ website]: http://www.gtk.org/download/linux.html
 [GNU C compiler]: http://gcc.gnu.org
 [GNU Make]: http://www.gnu.org/software/make/
 [respective]: http://invisible-island.net/ncurses/#download_ncurses
 [websites]: http://invisible-island.net/cdk/#download
+[libiconv]: http://www.gnu.org/software/libiconv/
 
 ### Windows
 
 Compiling Textadept on Windows is no longer supported. If you wish to do so
 however, you need a C compiler that supports the C99 standard (Microsoft's does
-not) and the [GTK+ for Windows bundle][] (2.24 is recommended).
+not), the [GTK+ for Windows bundle][] (2.24 is recommended), and [libiconv][]
+(the "Developer files" zip).
 
 The preferred way to compile for Windows is cross-compiling from Linux. To do
 so, in addition to the GTK bundle mentioned above, you need [MinGW][] with the
 Windows header files. They should be available from your package manager.
 
 [GTK+ for Windows bundle]: http://www.gtk.org/download/win32.html
+[libiconv]: http://gnuwin32.sourceforge.net/packages/libiconv.htm
 [MinGW]: http://mingw.org
 
 ### Mac OSX
@@ -56,17 +60,23 @@ platform you are on) and not a platform-specific binary package.
 
 ### Linux and BSD
 
-For Linux systems, simply run `make` in the `src/` directory. The `textadept`
-and `textadeptjit` executables are created in the root directory. Make a symlink
-from them to `/usr/bin/` or elsewhere in your `PATH`.
+For Linux and BSD systems, simply run `make` in the `src/` directory. The
+`textadept` and `textadeptjit` executables are created in the root directory.
+Make a symlink from them to `/usr/bin/` or elsewhere in your `PATH`.
+
+Note: you may have to run `make CFLAGS="-I/usr/local/include"
+CXXFLAGS="-I/usr/local/include -L/usr/local/lib"` if the prefix where any
+dependencies are installed is `/usr/local` and your compiler flags do not
+include them by default.
 
 ### Cross Compiling for Windows
 
 When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
-into a new `src/win32gtk` directory. Then, depending on your MingW installation,
-either run `make win32`, modify the `CROSS` variable in the `win32` block of
-`src/Makefile` and run `make win32`, or run `make CROSS=i486-mingw32- win32` to
-build `../textadept.exe` and `../textadeptjit.exe`.
+into a new `src/win32gtk` directory. Also, unzip the libiconv zip into the same
+directory. Then, depending on your MinGW installation, either run `make win32`,
+modify the `CROSS` variable in the `win32` block of `src/Makefile` and run
+`make win32`, or run `make CROSS=i486-mingw32- win32` to build
+`../textadept.exe` and `../textadeptjit.exe`.
 
 Please note that a `lua51.dll` is produced for _only_ the `textadeptjit.exe`
 because limitations on external Lua library loading do not allow statically
@@ -75,8 +85,8 @@ linking LuaJIT to Textadept.
 ### Cross Compiling for Mac OSX
 
 When cross-compiling from within Linux, first unzip the GTK+ for OSX bundle into
-a new `src/gtkosx` directory. Then run `make` to build `../textadept.osx` and
-`../textadeptjit.osx`. At this point it is recommended to build a new
+a new `src/gtkosx` directory. Then run `make osx` to build `../textadept.osx`
+and `../textadeptjit.osx`. At this point it is recommended to build a new
 `Textadept.app` from an existing one. Download the most recent app and replace
 `Contents/MacOS/textadept.osx` and `Contents/MacOS/textadeptjit.osx` with your
 own versions.
