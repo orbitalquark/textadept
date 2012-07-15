@@ -6,7 +6,7 @@ local buffer = buffer
 
 -- Multiple Selection and Virtual Space
 --buffer.multiple_selection = true
---buffer.additional_selection_typing = true
+buffer.additional_selection_typing = true
 --buffer.multi_paste = 1
 --buffer.virtual_space_options = 3
 buffer.rectangular_selection_modifier = 8
