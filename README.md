@@ -28,11 +28,10 @@ Linux. Lua is pre-compiled into Textadept on all platforms and a GTK runtime is
 included on Windows and Mac OSX.
 
 The _experimental_ version of Textadept for the terminal requires only
-[ncurses][] and [CDK][].
+[ncurses][].
 
 [GTK+ 2.0]: http://gtk.org
 [ncurses]: http://invisible-island.net/ncurses/ncurses.html
-[CDK]: http://invisible-island.net/cdk/
 
 ## Download
 

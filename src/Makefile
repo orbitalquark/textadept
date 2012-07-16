@@ -148,6 +148,10 @@ lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            lpeg.o lfs.o
 luajit_objs = lpegjit.o lfsjit.o
 termkey_objs = termkey.o driver-ti.o driver-csi.o
+cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
+           cdk_params.o cdkscreen.o debug.o draw.o entry.o fselect.o \
+           itemlist.o label.o mentry.o menu.o popup_label.o position.o \
+           scroll.o select_file.o traverse.o version.o
 
 # Build.
 
@@ -162,7 +166,7 @@ tmp:
 	rm -rf /tmp/tabuild && hg clone ../ /tmp/tabuild
 	cp -rL ../Doxyfile ../doc ../lexers ../modules /tmp/tabuild/
 	cp -r gtdialog gtkosx LexLPeg.cxx libluajit.osx.a lua luajit lua51.dll \
-		scintilla termkey win32gtk /tmp/tabuild/src/
+		scintilla termkey cdk win32gtk /tmp/tabuild/src/
 	cd /tmp/tabuild/src/luajit && $(MAKE) clean
 	ln -s `pwd`/../releases /tmp/tabuild
 	@echo /tmp/tabuild ready for building.
@@ -176,7 +180,7 @@ $(scintilla_gtk_objs): scintilla/gtk/*.cxx
 scintilla-marshal.o: scintilla/gtk/scintilla-marshal.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(gtk_flags) $<
 ScintillaTerm.o: scintilla/term/ScintillaTerm.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) -Iscintilla/term -Itermkey $^
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) -Iscintilla/term $^
 LexLPeg.o: LexLPeg.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUAFLAGS) $(sci_flags) -DLPEG_LEXER \
 		-DNO_SCITE -Ilua/src $<
@@ -190,10 +194,10 @@ textadeptjit.o: textadept.c
 		-o $@
 textadept-ncurses.o: textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -Ilua/src -Iscintilla/term -Itermkey \
-		$< -o $@
+		-Icdk $< -o $@
 textadeptjit-ncurses.o: textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src \
-		-Iscintilla/term -Itermkey $< -o $@
+		-Iscintilla/term -Itermkey -Icdk $< -o $@
 $(lua_objs): lua/src/*.c lua/src/lib/*.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Ilua/src $^
 $(luajit_objs): lua/src/lib/*.c
@@ -212,9 +216,11 @@ libluajit.osx.a:
 gtdialog.o: gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -DGTK -DNOHELP -DLIBRARY $(gtk_flags) $<
 gtdialog-ncurses.o: gtdialog/gtdialog.c
-	$(CROSS)$(CC) -c $(CFLAGS) -DNCURSES -DNOHELP -DLIBRARY $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) -DNCURSES -DNOHELP -DLIBRARY -Icdk $< -o $@
 $(termkey_objs): termkey/*.c
 	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 $^
+$(cdk_objs): cdk/*.c
+	$(CROSS)$(CC) -c $(CFLAGS) -D_GNU_SOURCE -Icdk $^
 textadept_rc.o: textadept.rc
 	$(CROSS)$(WINDRES) $^ $@
 
@@ -228,12 +234,12 @@ textadeptjit: $(scintilla_objs) $(scintilla_gtk_objs) scintilla-marshal.o \
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(gtk_libs) $(LDFLAGS)
 textadept-ncurses: $(scintilla_objs) ScintillaTerm.o LexLPeg.o \
                    textadept-ncurses.o $(lua_objs) gtdialog-ncurses.o \
-                   $(termkey_objs)
-	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ -lncursesw -lcdk $(LDFLAGS)
+                   $(termkey_objs) $(cdk_objs)
+	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ -lncursesw $(LDFLAGS)
 textadeptjit-ncurses: $(scintilla_objs) ScintillaTerm.o LexLPegjit.o \
                       textadeptjit-ncurses.o $(luajit_objs) $(libluajit) \
-                      gtdialog-ncurses.o $(termkey_objs)
-	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ -lncursesw -lcdk $(LDFLAGS)
+                      gtdialog-ncurses.o $(termkey_objs) $(cdk_objs)
+	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ -lncursesw $(LDFLAGS)
 textadept32: ../textadept; mv $< ../$@
 textadeptjit32: ../textadeptjit; mv $< ../$@
 textadept32-ncurses: ../textadept-ncurses; mv $< ../$@
@@ -312,7 +318,8 @@ $(basedir).osx: ../textadept.osx ../textadeptjit.osx | $(basedir)
 		$@/Textadept.app/Contents/Resources/
 	mv $@/Textadept.app/Contents/MacOS/ta $@
 $(basedir).src: | $(basedir)
-	cp -r $| $@ && cp -rL lua luajit scintilla gtdialog LexLPeg.cxx termkey $@/src
+	cp -r $| $@
+	cp -rL lua luajit scintilla gtdialog LexLPeg.cxx termkey cdk $@/src
 	cd $@/src/luajit && $(MAKE) clean && cd ../../../
 	rm -r $@/src/scintilla/.hg
 $(basedir).modules:
