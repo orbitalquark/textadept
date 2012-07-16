@@ -26,7 +26,7 @@ Ctrl+D                  |⌘D       |None         |Duplicate line
 Del                     |⌦<br/>^D |Del<br/>^D   |Delete
 Alt+Del                 |^⌦       |M-Del<br/>M-D|Delete word
 Ctrl+A                  |⌘A       |M-A          |Select all
-Ctrl+M<br/>Ctrl+]       |^M       |M-M          |Match brace
+Ctrl+M                  |^M       |M-M          |Match brace
 Ctrl+Enter              |^⎋       |M-Enter      |Complete word
 Ctrl+Alt+Shift+H        |⌘⇧H      |None         |Highlight word
 Ctrl+/                  |^/       |M-/          |Toggle block comment
@@ -69,7 +69,7 @@ Ctrl+Alt+G               |^⌘G |None         |Goto next file found
 Ctrl+Alt+Shift+G         |^⌘⇧G|None         |Goto previous file found
 Ctrl+J                   |⌘J  |^J           |Jump to line
 **Tools**                       ||||
-Ctrl+E          |⌘E     |M-C          |Command entry
+Ctrl+E          |⌘E     |M-E          |Command entry
 Ctrl+Shift+E    |⌘⇧E    |M-S-C        |Select command
 Ctrl+R          |⌘R     |^R           |Run
 Ctrl+Shift+R    |⌘⇧R    |M-^R         |Compile
