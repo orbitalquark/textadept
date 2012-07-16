@@ -69,7 +69,7 @@ Ctrl+Alt+G               |^⌘G |None         |Goto next file found
 Ctrl+Alt+Shift+G         |^⌘⇧G|None         |Goto previous file found
 Ctrl+J                   |⌘J  |^J           |Jump to line
 **Tools**                       ||||
-Ctrl+E          |⌘E     |M-E          |Command entry
+Ctrl+E          |⌘E     |M-C          |Command entry
 Ctrl+Shift+E    |⌘⇧E    |M-S-C        |Select command
 Ctrl+R          |⌘R     |^R           |Run
 Ctrl+Shift+R    |⌘⇧R    |M-^R         |Compile
