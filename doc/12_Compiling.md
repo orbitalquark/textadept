@@ -16,17 +16,19 @@ distribution through its package manager. For example, Ubuntu includes these
 tools in the `build-essential` package.
 
 If you would like to compile the terminal version of Textadept, you will need
-the ncurses and CDK development libraries. Similarly, they should be available
-from your package manager. For Debian-based distributions like Ubuntu, the
-packages are typically called `libncurses5-dev` and `libcdk5-dev`. Otherwise,
-compile and install them from their [respective][] [websites][]. BSD users will
-also need to have [libiconv][].
+the ncurses development library. Similarly, it should be available from your
+package manager. For Debian-based distributions like Ubuntu, the package is
+typically called `libncurses5-dev`. Otherwise, compile and install ncurses from
+the [ncurses website][]. Note: you should have a development version of ncurses
+compiled with "wide" (multibyte) character support installed. (Therefore, Debian
+users will also need `libncursesw5-dev`.)
+
+In addition, BSD users will need to have [libiconv][] installed.
 
 [GTK+ website]: http://www.gtk.org/download/linux.html
 [GNU C compiler]: http://gcc.gnu.org
 [GNU Make]: http://www.gnu.org/software/make/
-[respective]: http://invisible-island.net/ncurses/#download_ncurses
-[websites]: http://invisible-island.net/cdk/#download
+[ncurses website]: http://invisible-island.net/ncurses/#download_ncurses
 [libiconv]: http://www.gnu.org/software/libiconv/
 
 ### Windows

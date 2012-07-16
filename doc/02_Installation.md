@@ -7,9 +7,8 @@ only thing it needs is [GTK+][] >= 2.18 on Linux systems. GTK is already
 included in Windows and Mac OSX packages. Textadept also has its own version of
 Lua.
 
-The _experimental_ terminal version of Textadept requires [ncurses][] and
-[CDK][]. These dependencies are only necessary if you wish to run Textadept from
-a terminal.
+The _experimental_ terminal version of Textadept requires [ncurses][]. This
+dependency is only necessary if you wish to run Textadept from a terminal.
 
 Notes:
 
@@ -23,7 +22,6 @@ Notes:
 
 [GTK+]: http://gtk.org
 [ncurses]: http://invisible-island.net/ncurses/ncurses.html
-[CDK]: http://invisible-island.net/cdk/
 
 ### Linux
 
@@ -31,14 +29,14 @@ Most Linux systems already have GTK+ installed. If not, it is probably available
 through your package manager. Otherwise, compile and install it from the
 [GTK+ website][].
 
-Most Linux systems already have ncurses installed, but probably not CDK. Look
-for them in your package manager, or compile and install them from their
-[respective][] [websites][]. For Debian-based distributions like Ubuntu, the
-packages are typically called `libncursesw5` and `libcdk5`.
+Most Linux systems already have ncurses installed. If not, look for it in your
+package manager, or compile and install it from the [ncurses website][]. For
+Debian-based distributions like Ubuntu, the package is typically called
+`libncursesw5`. Note: you should have a version of ncurses compiled with "wide"
+(multibyte) character support installed.
 
 [GTK+ website]: http://www.gtk.org/download-linux.html
-[respective]: http://invisible-island.net/ncurses/#download_ncurses
-[websites]: http://invisible-island.net/cdk/#download
+[ncurses website]: http://invisible-island.net/ncurses/#download_ncurses
 
 ### Mac OSX
 

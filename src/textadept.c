@@ -28,7 +28,7 @@
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <ncurses.h>
-#include <cdk/cdk.h>
+#include "cdk.h"
 #define PLAT_TERM 1
 #endif
 
