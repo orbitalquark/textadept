@@ -129,3 +129,21 @@ non-Lua, libraries.
 
 [LuaJIT]: http://luajit.org
 [ffi library]: http://luajit.org/ext_ffi.html
+
+### Notes on CDK
+
+[CDK][] is a library of ncurses widgets. Textadept includes a stripped down
+version of this library. The following source files have been removed:
+`alphalist.c`, `calendar.c`, `cdk_compat.{c,h}`, `cdk_test.h`, `dialog.c`,
+`{d,f}scale.{c,h}`, `fslider.{c,h}`, `gen-{scale,slider}.{c,h}`, `get_index.c`,
+`get_string.c`, `graph.c`, `histogram.c`, `marquee.c`, `matrix.c`,
+`popup_dialog.c`, `radio.c`, `scale.{c,h}`, `selection.c`, `slider.{c,h}`,
+`swindow.c`, `template.c`, `u{scale,slider}.{c,h}`, `view_{file,info}.c`, and
+`viewer.c`.
+
+`cdk.h` has been modified to not `#include` "matrix.h", "viewer.h", and any
+headers labeled "Generated headers" due to their machine-dependence.
+
+Also, the `deleteFileCB` routine in `fselect.c` has been deactivated.
+
+[CDK]: http://invisible-island.net/cdk/
