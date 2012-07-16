@@ -158,7 +158,7 @@ local utils = M.utils
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~             ^]
 -- cm:  bcd  g~~ k ~  pq  t v xyz
--- m:    c                J            qQ  sS  u vVw xXyYzZ*
+-- m:          e          J            qQ  sS  u vVw xXyYzZ*
 -- Note: m[befhstv] may be used by GUI terminals.
 --
 -- CTRL = 'c' (Control ^)
@@ -268,7 +268,8 @@ end
 keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
 -- Tools.
-keys[not OSX and not NCURSES and 'ce' or 'me'] = gui.command_entry.focus
+keys[not OSX and (not NCURSES and 'ce' or 'mc')
+             or 'me'] = gui.command_entry.focus
 keys[not OSX and (not NCURSES and 'cE' or 'mC')
              or 'mE'] = utils.select_command
 keys[not OSX and 'cr' or 'mr'] = m_textadept.run.run
