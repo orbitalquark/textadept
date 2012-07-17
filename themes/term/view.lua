@@ -78,11 +78,16 @@ buffer.annotation_visible = 2
 --buffer.indentation_guides = 3
 
 -- Fold Margin Markers.
---buffer:marker_define(c.SC_MARKNUM_FOLDERSUB, '_')
---buffer:marker_define(c.SC_MARKNUM_FOLDERTAIL, 'L')
---buffer:marker_define(c.SC_MARKNUM_FOLDEREND, '+')
---buffer:marker_define(c.SC_MARKNUM_FOLDEROPENMID, '+')
---buffer:marker_define(c.SC_MARKNUM_FOLDERMIDTAIL, 't')
+--buffer:marker_define(c.SC_MARKNUM_FOLDERSUB,
+--                     c.SC_MARK_CHARACTER + string.byte('_'))
+--buffer:marker_define(c.SC_MARKNUM_FOLDERTAIL,
+--                     c.SC_MARK_CHARACTER + string.byte('L'))
+--buffer:marker_define(c.SC_MARKNUM_FOLDEREND,
+--                     c.SC_MARK_CHARACTER + string.byte('+'))
+--buffer:marker_define(c.SC_MARKNUM_FOLDEROPENMID,
+--                     c.SC_MARK_CHARACTER + string.byte('+'))
+--buffer:marker_define(c.SC_MARKNUM_FOLDERMIDTAIL,
+--                     c.SC_MARK_CHARACTER + string.byte('t'))
 
 -- Autocompletion.
 --buffer.auto_c_cancel_at_start = false
