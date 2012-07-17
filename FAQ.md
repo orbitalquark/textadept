@@ -83,6 +83,20 @@ Take a look at these [comments][].
 - - -
 
 **Q:**
+The ncurses version does not support feature _x_ the GUI version does. Is this a
+bug?
+
+**A:**
+Please see the [ncurses compatibility][] section of the appendix. If the feature
+in question is not listed there, it may be a bug. Please [contact][] me with any
+bug reports.
+
+[ncurses compatibility]: 14_Appendix.html#Ncurses.Compatibility
+[contact]: README.html#Contact
+
+- - -
+
+**Q:**
 Are my Textadept 4.x scripts compatible with Textadept 5.x?
 
 **A:**
