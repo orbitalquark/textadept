@@ -34,7 +34,8 @@ M.AUTOPAIR = true
 M.HIGHLIGHT_BRACES = true
 M.AUTOINDENT = true
 M.STRIP_WHITESPACE_ON_SAVE = true
-M.MARK_HIGHLIGHT_BACK = buffer and buffer.caret_line_back or 0xEEEEEE
+M.MARK_HIGHLIGHT_BACK = buffer and buffer.caret_line_back or
+                        (not NCURSES and 0xEEEEEE or 0xFFFF00)
 M.INDIC_HIGHLIGHT_BACK = 0x4D99E6
 M.INDIC_HIGHLIGHT_ALPHA = 100
 
@@ -503,9 +504,11 @@ function M.highlight_word()
   buffer:set_sel(s, e)
 end
 
+local NCURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for highlighted word indicators and markers.
 local function set_highlight_properties()
   local buffer = buffer
+  if NCURSES then buffer:marker_define(MARK_HIGHLIGHT, NCURSES_MARK) end
   buffer:marker_set_back(MARK_HIGHLIGHT, M.MARK_HIGHLIGHT_BACK)
   buffer.indic_fore[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_BACK
   buffer.indic_style[INDIC_HIGHLIGHT] = _SCINTILLA.constants.INDIC_ROUNDBOX
