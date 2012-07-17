@@ -147,6 +147,7 @@ function gui.goto_file(filename, split, preferred_view, sloppy)
   io.open_file(filename)
 end
 
+local theme_file = not NCURSES and 'theme' or 'theme_term'
 local THEME
 ---
 -- Sets the editor theme from the given name.
@@ -162,7 +163,6 @@ function gui.set_theme(name)
   if not name then
     -- Read theme from ~/.textadept/theme or ~/.textadept/theme_term depending
     -- on NCURSES platform, defaulting to 'light' or 'term' respectively.
-    local theme_file = not NCURSES and 'theme' or 'theme_term'
     local f = io.open(_USERHOME..'/'..theme_file, 'rb')
     if f then
       name = f:read('*line'):match('[^\r\n]+')
@@ -228,7 +228,6 @@ function gui.select_theme()
   if not theme then return end
   gui.set_theme(theme)
   -- Write the theme to the user's theme file.
-  local theme_file = not NCURSES and 'theme' or 'theme_term'
   local f = io.open(_USERHOME..'/'..theme_file, 'wb')
   if not f then return end
   f:write(theme)
