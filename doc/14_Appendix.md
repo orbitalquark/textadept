@@ -278,6 +278,30 @@ As a special case, the empty capture `()` captures the current string position
 
 [Lua 5.2 Reference Manual]: http://www.lua.org/manual/5.2/manual.html#6.4.1
 
+## Ncurses Compatibility
+
+Textadept 5.5 beta introduced an ncurses version that can run in a terminal
+emulator. However, since ncurses is quite low-level in terms of graphics
+capability compared to GTK, the ncurses version of Textadept lacks some
+features in its editing component Scintilla:
+
+* Buffered and two-phase drawing is not supported.
+* Edge lines are not displayed properly (the line is drawn over by text lines).
+* Indentation guides are not visible (pixmap surfaces are not supported).
+* Indicators are not displayed (they would be drawn over by text lines).
+* Line carets are not supported.
+* Mouse interactions are not supported.
+* Multiple fonts and font sizes are not supported.
+* Only 8 colors are supported: black (`0x000000`), red (`0xFF0000`), green
+  (`0x00FF00`), yellow (`0xFFFF00`), blue (`0x0000FF`), magenta (`0xFF00FF`),
+  cyan (`0x00FFFF`), and white (`0xFFFFFF`). Even if your terminal uses a
+  different color map, you must use these color values with Scintilla;
+  unrecognized colors are set to white by default. Lexers can use up to 8 more
+  colors by setting the style's `bold` attribute.
+* Viewing whitespace does not show the 'Tab' character arrows
+  (`surface->LineTo()` is not supported for drawing arrows).
+* Visual wrap flags are not supported (`surface->LineTo()` is not supported).
+
 ## Migration Guides
 
 ### Textadept 4 to 5
@@ -286,7 +310,7 @@ Lua has been upgraded from [5.1 to 5.2][], so many scripts written for Textadept
 4 are not compatible with Textadept 5. Since incompatible scripts may cause
 crashes on startup, the following guide will help you migrate your scripts from
 Textadept 4 to Textadept 5. While this guide is not exhaustive, it covers the
-changes I had to Textadept's internals.
+changes I had to make to Textadept's internals.
 
 [5.1 to 5.2]: http://www.lua.org/manual/5.2/manual.html#8
 
