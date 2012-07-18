@@ -28,7 +28,7 @@
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <ncurses.h>
-#include "cdk.h"
+#include "cdk_int.h"
 #define PLAT_TERM 1
 #endif
 
@@ -350,6 +350,17 @@ static int entry_keypress(EObjectType _, void *object, void *data, chtype key) {
   }
   return TRUE;
 }
+
+/**
+ * Returns the text on Scintilla's clipboard.
+ * The return value needs to be `free`d.
+ */
+static char *get_clipboard() {
+  char *text = malloc(scintilla_get_clipboard(focused_view, NULL));
+  return (scintilla_get_clipboard(focused_view, text), text);
+}
+
+#define set_clipboard(t) SS(focused_view, SCI_COPYTEXT, strlen(t), (sptr_t)t)
 #endif
 
 /** `find.focus()` Lua function. */
@@ -397,6 +408,8 @@ static int lfind_focus(lua_State *L) {
   // Draw these widgets manually since activateCDKEntry() only draws find_entry.
   drawCDKEntry(replace_entry, FALSE);
   drawCDKButtonbox(buttonbox, FALSE), drawCDKButtonbox(optionbox, FALSE);
+  char *clipboard = get_clipboard();
+  GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer
   curs_set(1);
   while (activateCDKEntry(find_entry, NULL)) {
     fcopy(&find_text, getCDKEntryValue(find_entry));
@@ -405,6 +418,9 @@ static int lfind_focus(lua_State *L) {
     scintilla_refresh(focused_view);
   }
   curs_set(0);
+  // Set Scintilla clipboard with new CDK paste buffer if necessary.
+  if (strcmp(clipboard, GPasteBuffer)) set_clipboard(GPasteBuffer);
+  free(clipboard), free(GPasteBuffer), GPasteBuffer = NULL;
   destroyCDKEntry(find_entry), destroyCDKEntry(replace_entry);
   destroyCDKButtonbox(buttonbox), destroyCDKButtonbox(optionbox);
   delwin(findbox->window), destroyCDKScreen(findbox), findbox = NULL;
@@ -546,9 +562,14 @@ static int lce_focus(lua_State *L) {
   bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
   bindCDKObject(vENTRY, command_entry, KEY_ENTER, c_keypress, NULL);
   setCDKEntryValue(command_entry, command_text);
+  char *clipboard = get_clipboard();
+  GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer
   curs_set(1);
   activateCDKEntry(command_entry, NULL);
   curs_set(0);
+  // Set Scintilla clipboard with new CDK paste buffer if necessary.
+  if (strcmp(clipboard, GPasteBuffer)) set_clipboard(GPasteBuffer);
+  free(clipboard), free(GPasteBuffer), GPasteBuffer = NULL;
   destroyCDKEntry(command_entry), command_entry = NULL;
   delwin(screen->window), destroyCDKScreen(screen);
   tcsetattr(0, TCSANOW, &term);
@@ -875,7 +896,9 @@ static int lgui__index(lua_State *L) {
     lua_pushstring(L, text ? text : "");
     if (text) free(text);
 #elif NCURSES
-    lua_pushstring(L, ""); // TODO: get Xclipboard text?, CDK GPasteBuffer?
+    char *text = get_clipboard();
+    lua_pushlstring(L, text, scintilla_get_clipboard(focused_view, NULL));
+    free(text);
 #endif
   } else if (strcmp(key, "size") == 0) {
 #if GTK

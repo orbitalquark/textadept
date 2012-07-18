@@ -303,6 +303,7 @@ features in its editing component Scintilla:
 * Viewing whitespace does not show the 'Tab' character arrows
   (`surface->LineTo()` is not supported for drawing arrows).
 * Visual wrap flags are not supported (`surface->LineTo()` is not supported).
+* X selections (primary and secondary) are not integrated into the clipboard.
 
 ## Migration Guides
 
