@@ -289,9 +289,11 @@ features in its editing component Scintilla:
 * Edge lines are not displayed properly (the line is drawn over by text lines).
 * Indentation guides are not visible (pixmap surfaces are not supported).
 * Indicators are not displayed (they would be drawn over by text lines).
+* Insert mode caret is not drawn properly (no way to detect it from within
+  `surface->FillRectangle()`).
 * Line carets are not supported.
 * Marker types other than `SC_MARK_CHARACTER` are not drawn (`surface->LineTo()`
-  is not supported).
+  is not supported for drawing marker shapes).
 * Mouse interactions are not supported.
 * Multiple fonts and font sizes are not supported.
 * Only 8 colors are supported: black (`0x000000`), red (`0xFF0000`), green
