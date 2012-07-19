@@ -645,7 +645,7 @@ end
 ---
 -- Shows a calltip with API documentation for the symbol behind the caret.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
--- @return `true` on success or `false`.
+-- @return list of api docs on success or `nil`.
 -- @see get_symbol
 -- @see get_apidoc
 -- @name show_apidoc
@@ -664,7 +664,7 @@ function M.show_apidoc(sense)
     symbol = buffer:text_range(s, e)
   end
   local apidocs = sense:get_apidoc(symbol)
-  if not apidocs then return false end
+  if not apidocs then return nil end
   for i, doc in ipairs(apidocs) do
     doc = doc:gsub('\\\\', '%%esc%%'):gsub('\\n', '\n'):gsub('%%esc%%', '\\')
     if #apidocs > 1 then
@@ -674,19 +674,7 @@ function M.show_apidoc(sense)
     apidocs[i] = doc
   end
   buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos or 1])
-  -- Cycle through calltips.
-  local event_id = events.connect(events.CALL_TIP_CLICK, function(position)
-    apidocs.pos = apidocs.pos + (position == 1 and -1 or 1)
-    if apidocs.pos > #apidocs then apidocs.pos = 1 end
-    if apidocs.pos < 1 then apidocs.pos = #apidocs end
-    buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos])
-  end)
-  timeout(1, function()
-    local ok, active = pcall(buffer.call_tip_active, buffer)
-    if ok and active then return true end
-    events.disconnect(events.CALL_TIP_CLICK, event_id)
-  end)
-  return true
+  return apidocs
 end
 
 ---
@@ -976,14 +964,29 @@ function M.complete_symbol()
   if m and m.sense then m.sense:complete() end
 end
 
+local shown_apidocs = nil
 ---
 -- Shows API documentation for the symbol at the current position based on the
 -- current lexer's Adeptsense.
+-- If documentation is already being shown, cycles through multiple definitions.
 -- This should be called by key commands and menus instead of `show_apidoc()`.
 -- @name show_documentation
 function M.show_documentation()
-  local m = _M[buffer:get_lexer(true)]
-  if m and m.sense then m.sense:show_apidoc() end
+  if not buffer:call_tip_active() then
+    local m = _M[buffer:get_lexer(true)]
+    if m and m.sense then shown_apidocs = m.sense:show_apidoc() end
+  else
+    events.emit(events.CALL_TIP_CLICK, 1)
+  end
 end
+
+-- Cycle through apidoc calltips.
+events.connect(events.CALL_TIP_CLICK, function(position)
+  if not shown_apidocs then return end
+  shown_apidocs.pos = shown_apidocs.pos + (position == 1 and -1 or 1)
+  if shown_apidocs.pos > #shown_apidocs then shown_apidocs.pos = 1 end
+  if shown_apidocs.pos < 1 then shown_apidocs.pos = #shown_apidocs end
+  buffer:call_tip_show(buffer.current_pos, shown_apidocs[shown_apidocs.pos])
+end)
 
 return M
