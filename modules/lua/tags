@@ -131,14 +131,20 @@ SCFIND_WORDSTART	_	0;"	F	class:_SCINTILLA.constants
 SCI_ANNOTATIONGETLINES	_	0;"	F	class:_SCINTILLA.constants
 SCI_ANNOTATIONGETSTYLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_ANNOTATIONGETSTYLEOFFSET	_	0;"	F	class:_SCINTILLA.constants
+SCI_ANNOTATIONGETSTYLES	_	0;"	F	class:_SCINTILLA.constants
+SCI_ANNOTATIONGETTEXT	_	0;"	F	class:_SCINTILLA.constants
 SCI_ANNOTATIONGETVISIBLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_ANNOTATIONSETSTYLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_ANNOTATIONSETSTYLEOFFSET	_	0;"	F	class:_SCINTILLA.constants
+SCI_ANNOTATIONSETSTYLES	_	0;"	F	class:_SCINTILLA.constants
+SCI_ANNOTATIONSETTEXT	_	0;"	F	class:_SCINTILLA.constants
 SCI_ANNOTATIONSETVISIBLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETAUTOHIDE	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETCANCELATSTART	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETCHOOSESINGLE	_	0;"	F	class:_SCINTILLA.constants
+SCI_AUTOCGETCURRENT	_	0;"	F	class:_SCINTILLA.constants
+SCI_AUTOCGETCURRENTTEXT	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETDROPRESTOFWORD	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETIGNORECASE	_	0;"	F	class:_SCINTILLA.constants
 SCI_AUTOCGETMAXHEIGHT	_	0;"	F	class:_SCINTILLA.constants
@@ -216,6 +222,7 @@ SCI_GETKEYSUNICODE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETLAYOUTCACHE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETLENGTH	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETLEXER	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETLEXERLANGUAGE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETLINECOUNT	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETLINEENDPOSITION	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETLINEINDENTATION	_	0;"	F	class:_SCINTILLA.constants
@@ -244,7 +251,10 @@ SCI_GETPOSITIONCACHE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETPRINTCOLOURMODE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETPRINTMAGNIFICATION	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETPRINTWRAPMODE	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETPROPERTY	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETPROPERTYEXPANDED	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETPROPERTYINT	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETPUNCTUATIONCHARS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETREADONLY	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETRECTANGULARSELECTIONANCHOR	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETRECTANGULARSELECTIONANCHORVIRTUALSPACE	_	0;"	F	class:_SCINTILLA.constants
@@ -272,6 +282,7 @@ SCI_GETSTYLEBITS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETSTYLEBITSNEEDED	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETTABINDENTS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETTABWIDTH	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETTAG	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETTARGETEND	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETTARGETSTART	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETTECHNOLOGY	_	0;"	F	class:_SCINTILLA.constants
@@ -283,7 +294,9 @@ SCI_GETVIEWEOL	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETVIEWWS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETVIRTUALSPACEOPTIONS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETVSCROLLBAR	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETWHITESPACECHARS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETWHITESPACESIZE	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETWORDCHARS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETWRAPINDENTMODE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETWRAPMODE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETWRAPSTARTINDENT	_	0;"	F	class:_SCINTILLA.constants
@@ -305,8 +318,16 @@ SCI_LEXER_START	_	0;"	F	class:_SCINTILLA.constants
 SCI_LINESONSCREEN	_	0;"	F	class:_SCINTILLA.constants
 SCI_MARGINGETSTYLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_MARGINGETSTYLEOFFSET	_	0;"	F	class:_SCINTILLA.constants
+SCI_MARGINGETSTYLES	_	0;"	F	class:_SCINTILLA.constants
+SCI_MARGINGETTEXT	_	0;"	F	class:_SCINTILLA.constants
 SCI_MARGINSETSTYLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_MARGINSETSTYLEOFFSET	_	0;"	F	class:_SCINTILLA.constants
+SCI_MARGINSETSTYLES	_	0;"	F	class:_SCINTILLA.constants
+SCI_MARGINSETTEXT	_	0;"	F	class:_SCINTILLA.constants
+SCI_MARKERSETALPHA	_	0;"	F	class:_SCINTILLA.constants
+SCI_MARKERSETBACK	_	0;"	F	class:_SCINTILLA.constants
+SCI_MARKERSETBACKSELECTED	_	0;"	F	class:_SCINTILLA.constants
+SCI_MARKERSETFORE	_	0;"	F	class:_SCINTILLA.constants
 SCI_OPTIONAL_START	_	0;"	F	class:_SCINTILLA.constants
 SCI_RGBAIMAGESETHEIGHT	_	0;"	F	class:_SCINTILLA.constants
 SCI_RGBAIMAGESETWIDTH	_	0;"	F	class:_SCINTILLA.constants
@@ -344,6 +365,7 @@ SCI_SETEXTRADESCENT	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETFIRSTVISIBLELINE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETFOCUS	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETFOLDEXPANDED	_	0;"	F	class:_SCINTILLA.constants
+SCI_SETFOLDFLAGS	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETFOLDLEVEL	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETFONTQUALITY	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETHIGHLIGHTGUIDE	_	0;"	F	class:_SCINTILLA.constants
@@ -359,6 +381,7 @@ SCI_SETKEYSUNICODE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETKEYWORDS	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETLAYOUTCACHE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETLEXER	_	0;"	F	class:_SCINTILLA.constants
+SCI_SETLEXERLANGUAGE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETLINEINDENTATION	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETLINESTATE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETMAINSELECTION	_	0;"	F	class:_SCINTILLA.constants
@@ -382,6 +405,7 @@ SCI_SETPRINTCOLOURMODE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETPRINTMAGNIFICATION	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETPRINTWRAPMODE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETPROPERTY	_	0;"	F	class:_SCINTILLA.constants
+SCI_SETPUNCTUATIONCHARS	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETREADONLY	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETRECTANGULARSELECTIONANCHOR	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETRECTANGULARSELECTIONANCHORVIRTUALSPACE	_	0;"	F	class:_SCINTILLA.constants
@@ -433,6 +457,7 @@ SCI_STYLEGETCASE	_	0;"	F	class:_SCINTILLA.constants
 SCI_STYLEGETCHANGEABLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_STYLEGETCHARACTERSET	_	0;"	F	class:_SCINTILLA.constants
 SCI_STYLEGETEOLFILLED	_	0;"	F	class:_SCINTILLA.constants
+SCI_STYLEGETFONT	_	0;"	F	class:_SCINTILLA.constants
 SCI_STYLEGETFORE	_	0;"	F	class:_SCINTILLA.constants
 SCI_STYLEGETHOTSPOT	_	0;"	F	class:_SCINTILLA.constants
 SCI_STYLEGETITALIC	_	0;"	F	class:_SCINTILLA.constants
@@ -784,11 +809,10 @@ alpha	_	0;"	F	class:lexer
 always_show_globals	_	0;"	F	class:_M.textadept.adeptsense
 anchor	_	0;"	F	class:buffer
 annotation_clear_all	_	0;"	f	class:buffer
-annotation_get_text	_	0;"	f	class:buffer
 annotation_lines	_	0;"	F	class:buffer
-annotation_set_text	_	0;"	f	class:buffer
 annotation_style	_	0;"	F	class:buffer
 annotation_style_offset	_	0;"	F	class:buffer
+annotation_text	_	0;"	F	class:buffer
 annotation_visible	_	0;"	F	class:buffer
 any	_	0;"	F	class:lexer
 api_files	_	0;"	t	class:_M.textadept.adeptsense
@@ -810,10 +834,10 @@ auto_c_cancel_at_start	_	0;"	F	class:buffer
 auto_c_case_insensitive	_	0;"	F	class:buffer
 auto_c_choose_single	_	0;"	F	class:buffer
 auto_c_complete	_	0;"	f	class:buffer
+auto_c_current	_	0;"	F	class:buffer
+auto_c_current_text	_	0;"	F	class:buffer
 auto_c_drop_rest_of_word	_	0;"	F	class:buffer
 auto_c_fill_ups	_	0;"	F	class:buffer
-auto_c_get_current	_	0;"	f	class:buffer
-auto_c_get_current_text	_	0;"	f	class:buffer
 auto_c_ignore_case	_	0;"	F	class:buffer
 auto_c_max_height	_	0;"	F	class:buffer
 auto_c_max_width	_	0;"	F	class:buffer
@@ -1038,6 +1062,7 @@ focus	_	0;"	f	class:gui.command_entry
 focus	_	0;"	f	class:gui.find
 fold	_	0;"	f	class:lexer
 fold_expanded	_	0;"	F	class:buffer
+fold_flags	_	0;"	F	class:buffer
 fold_level	_	0;"	F	class:buffer
 fold_line_comments	_	0;"	f	class:lexer
 fold_parent	_	0;"	F	class:buffer
@@ -1057,20 +1082,16 @@ get_hotspot_active_fore	_	0;"	f	class:buffer
 get_indent_amount	_	0;"	f	class:lexer
 get_last_child	_	0;"	f	class:buffer
 get_lexer	_	0;"	f	class:buffer
-get_lexer_language	_	0;"	f	class:buffer
 get_line	_	0;"	f	class:buffer
 get_line_sel_end_position	_	0;"	f	class:buffer
 get_line_sel_start_position	_	0;"	f	class:buffer
-get_property	_	0;"	f	class:buffer
 get_property	_	0;"	f	class:lexer
-get_property_expanded	_	0;"	f	class:buffer
 get_range_pointer	_	0;"	f	class:buffer
 get_sel_text	_	0;"	f	class:buffer
 get_split_table	_	0;"	f	class:gui
 get_style_at	_	0;"	f	class:lexer
 get_style_name	_	0;"	f	class:buffer
 get_symbol	_	0;"	f	class:_M.textadept.adeptsense
-get_tag	_	0;"	f	class:buffer
 get_text	_	0;"	f	class:buffer
 getenv	_	0;"	f	class:os
 gethook	_	0;"	f	class:debug
@@ -1169,6 +1190,7 @@ lex	_	0;"	f	class:lexer
 lexer	_	0;"	F	class:buffer
 lexer	_	0;"	m	
 lexer	_	0;"	t	
+lexer_language	_	0;"	F	class:buffer
 lexers	_	0;"	t	class:_M.textadept.mime_types
 lfs	_	0;"	m	
 lfs	_	0;"	t	
@@ -1234,20 +1256,22 @@ lua	_	0;"	t	class:snippets
 lua_pattern_label_text	_	0;"	F	class:gui.find
 main_selection	_	0;"	F	class:buffer
 margin_cursor_n	_	0;"	F	class:buffer
-margin_get_text	_	0;"	f	class:buffer
 margin_left	_	0;"	F	class:buffer
 margin_mask_n	_	0;"	F	class:buffer
 margin_options	_	0;"	F	class:buffer
 margin_right	_	0;"	F	class:buffer
 margin_sensitive_n	_	0;"	F	class:buffer
-margin_set_text	_	0;"	f	class:buffer
 margin_style	_	0;"	F	class:buffer
 margin_style_offset	_	0;"	F	class:buffer
+margin_text	_	0;"	F	class:buffer
 margin_text_clear_all	_	0;"	f	class:buffer
 margin_type_n	_	0;"	F	class:buffer
 margin_width_n	_	0;"	F	class:buffer
 marker_add	_	0;"	f	class:buffer
 marker_add_set	_	0;"	f	class:buffer
+marker_alpha	_	0;"	F	class:buffer
+marker_back	_	0;"	F	class:buffer
+marker_back_selected	_	0;"	F	class:buffer
 marker_define	_	0;"	f	class:buffer
 marker_define_pixmap	_	0;"	f	class:buffer
 marker_define_rgba_image	_	0;"	f	class:buffer
@@ -1255,14 +1279,11 @@ marker_delete	_	0;"	f	class:buffer
 marker_delete_all	_	0;"	f	class:buffer
 marker_delete_handle	_	0;"	f	class:buffer
 marker_enable_highlight	_	0;"	f	class:buffer
+marker_fore	_	0;"	F	class:buffer
 marker_get	_	0;"	f	class:buffer
 marker_line_from_handle	_	0;"	f	class:buffer
 marker_next	_	0;"	f	class:buffer
 marker_previous	_	0;"	f	class:buffer
-marker_set_alpha	_	0;"	f	class:buffer
-marker_set_back	_	0;"	f	class:buffer
-marker_set_back_selected	_	0;"	f	class:buffer
-marker_set_fore	_	0;"	f	class:buffer
 marker_symbol_defined	_	0;"	f	class:buffer
 match	_	0;"	f	class:lpeg
 match	_	0;"	f	class:string
@@ -1355,8 +1376,10 @@ prompt_load	_	0;"	f	class:_M.textadept.session
 prompt_save	_	0;"	f	class:_M.textadept.session
 properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
+property_expanded	_	0;"	F	class:buffer
 property_int	_	0;"	F	class:buffer
 punct	_	0;"	F	class:lexer
+punctuation_chars	_	0;"	F	class:buffer
 quit	_	0;"	f	
 rad	_	0;"	f	class:math
 rails	_	0;"	t	class:_M
@@ -1481,14 +1504,12 @@ set_chars_default	_	0;"	f	class:buffer
 set_contextmenu	_	0;"	f	class:_M.textadept.menu
 set_empty_selection	_	0;"	f	class:buffer
 set_encoding	_	0;"	f	class:buffer
-set_fold_flags	_	0;"	f	class:buffer
 set_fold_margin_colour	_	0;"	f	class:buffer
 set_fold_margin_hi_colour	_	0;"	f	class:buffer
 set_hotspot_active_back	_	0;"	f	class:buffer
 set_hotspot_active_fore	_	0;"	f	class:buffer
 set_length_for_encode	_	0;"	f	class:buffer
 set_lexer	_	0;"	f	class:buffer
-set_lexer_language	_	0;"	f	class:buffer
 set_menubar	_	0;"	f	class:_M.textadept.menu
 set_save_point	_	0;"	f	class:buffer
 set_sel	_	0;"	f	class:buffer
@@ -1566,7 +1587,6 @@ style_error	_	0;"	F	class:lexer
 style_font	_	0;"	F	class:buffer
 style_fore	_	0;"	F	class:buffer
 style_function	_	0;"	F	class:lexer
-style_get_font	_	0;"	f	class:buffer
 style_hot_spot	_	0;"	F	class:buffer
 style_identifier	_	0;"	F	class:lexer
 style_italic	_	0;"	F	class:buffer
@@ -1599,6 +1619,7 @@ tab_indents	_	0;"	F	class:buffer
 tab_width	_	0;"	F	class:buffer
 table	_	0;"	m	
 table	_	0;"	t	
+tag	_	0;"	F	class:buffer
 tan	_	0;"	f	class:math
 tanh	_	0;"	f	class:math
 target_as_utf8	_	0;"	f	class:buffer

@@ -79,11 +79,11 @@ buffer.indentation_guides = 3
 
 -- Fold Margin Markers.
 buffer:marker_define(c.SC_MARKNUM_FOLDEROPEN, c.SC_MARK_ARROWDOWN)
-buffer:marker_set_fore(c.SC_MARKNUM_FOLDEROPEN, 0x666666)
-buffer:marker_set_back(c.SC_MARKNUM_FOLDEROPEN, 0x666666)
+buffer.marker_fore[c.SC_MARKNUM_FOLDEROPEN] = 0x666666
+buffer.marker_back[c.SC_MARKNUM_FOLDEROPEN] = 0x666666
 buffer:marker_define(c.SC_MARKNUM_FOLDER, c.SC_MARK_ARROW)
-buffer:marker_set_fore(c.SC_MARKNUM_FOLDER, 0x666666)
-buffer:marker_set_back(c.SC_MARKNUM_FOLDER, 0x666666)
+buffer.marker_fore[c.SC_MARKNUM_FOLDER] = 0x666666
+buffer.marker_back[c.SC_MARKNUM_FOLDER] = 0x666666
 buffer:marker_define(c.SC_MARKNUM_FOLDERSUB, c.SC_MARK_EMPTY)
 buffer:marker_define(c.SC_MARKNUM_FOLDERTAIL, c.SC_MARK_EMPTY)
 buffer:marker_define(c.SC_MARKNUM_FOLDEREND, c.SC_MARK_EMPTY)
@@ -101,7 +101,7 @@ buffer.auto_c_choose_single = true
 buffer.call_tip_use_style = 0
 
 -- Folding.
-buffer:set_fold_flags(16)
+buffer.fold_flags = 16
 
 -- Line Wrapping.
 --buffer.wrap_mode = 1

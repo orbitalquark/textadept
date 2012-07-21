@@ -111,7 +111,7 @@ end
 -- @name ws_styles
 local ws_styles = {}
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
-local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
+local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, lang)
   buffer:check_global()
@@ -135,7 +135,7 @@ local function set_lexer(buffer, lang)
   ws_styles[lang] = ws
 end
 
-local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
+local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- LuaDoc is in core/.buffer.luadoc.
 local function get_lexer(buffer, current)
   buffer:check_global()

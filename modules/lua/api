@@ -131,14 +131,20 @@ SCFIND_WORDSTART _SCINTILLA.constants.SCFIND_WORDSTART\n1048576
 SCI_ANNOTATIONGETLINES _SCINTILLA.constants.SCI_ANNOTATIONGETLINES\n2546
 SCI_ANNOTATIONGETSTYLE _SCINTILLA.constants.SCI_ANNOTATIONGETSTYLE\n2543
 SCI_ANNOTATIONGETSTYLEOFFSET _SCINTILLA.constants.SCI_ANNOTATIONGETSTYLEOFFSET\n2551
+SCI_ANNOTATIONGETSTYLES _SCINTILLA.constants.SCI_ANNOTATIONGETSTYLES\n2545
+SCI_ANNOTATIONGETTEXT _SCINTILLA.constants.SCI_ANNOTATIONGETTEXT\n2541
 SCI_ANNOTATIONGETVISIBLE _SCINTILLA.constants.SCI_ANNOTATIONGETVISIBLE\n2549
 SCI_ANNOTATIONSETSTYLE _SCINTILLA.constants.SCI_ANNOTATIONSETSTYLE\n2542
 SCI_ANNOTATIONSETSTYLEOFFSET _SCINTILLA.constants.SCI_ANNOTATIONSETSTYLEOFFSET\n2550
+SCI_ANNOTATIONSETSTYLES _SCINTILLA.constants.SCI_ANNOTATIONSETSTYLES\n2544
+SCI_ANNOTATIONSETTEXT _SCINTILLA.constants.SCI_ANNOTATIONSETTEXT\n2540
 SCI_ANNOTATIONSETVISIBLE _SCINTILLA.constants.SCI_ANNOTATIONSETVISIBLE\n2548
 SCI_AUTOCGETAUTOHIDE _SCINTILLA.constants.SCI_AUTOCGETAUTOHIDE\n2119
 SCI_AUTOCGETCANCELATSTART _SCINTILLA.constants.SCI_AUTOCGETCANCELATSTART\n2111
 SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR _SCINTILLA.constants.SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR\n2635
 SCI_AUTOCGETCHOOSESINGLE _SCINTILLA.constants.SCI_AUTOCGETCHOOSESINGLE\n2114
+SCI_AUTOCGETCURRENT _SCINTILLA.constants.SCI_AUTOCGETCURRENT\n2445
+SCI_AUTOCGETCURRENTTEXT _SCINTILLA.constants.SCI_AUTOCGETCURRENTTEXT\n2610
 SCI_AUTOCGETDROPRESTOFWORD _SCINTILLA.constants.SCI_AUTOCGETDROPRESTOFWORD\n2271
 SCI_AUTOCGETIGNORECASE _SCINTILLA.constants.SCI_AUTOCGETIGNORECASE\n2116
 SCI_AUTOCGETMAXHEIGHT _SCINTILLA.constants.SCI_AUTOCGETMAXHEIGHT\n2211
@@ -216,6 +222,7 @@ SCI_GETKEYSUNICODE _SCINTILLA.constants.SCI_GETKEYSUNICODE\n2522
 SCI_GETLAYOUTCACHE _SCINTILLA.constants.SCI_GETLAYOUTCACHE\n2273
 SCI_GETLENGTH _SCINTILLA.constants.SCI_GETLENGTH\n2006
 SCI_GETLEXER _SCINTILLA.constants.SCI_GETLEXER\n4002
+SCI_GETLEXERLANGUAGE _SCINTILLA.constants.SCI_GETLEXERLANGUAGE\n4012
 SCI_GETLINECOUNT _SCINTILLA.constants.SCI_GETLINECOUNT\n2154
 SCI_GETLINEENDPOSITION _SCINTILLA.constants.SCI_GETLINEENDPOSITION\n2136
 SCI_GETLINEINDENTATION _SCINTILLA.constants.SCI_GETLINEINDENTATION\n2127
@@ -244,7 +251,10 @@ SCI_GETPOSITIONCACHE _SCINTILLA.constants.SCI_GETPOSITIONCACHE\n2515
 SCI_GETPRINTCOLOURMODE _SCINTILLA.constants.SCI_GETPRINTCOLOURMODE\n2149
 SCI_GETPRINTMAGNIFICATION _SCINTILLA.constants.SCI_GETPRINTMAGNIFICATION\n2147
 SCI_GETPRINTWRAPMODE _SCINTILLA.constants.SCI_GETPRINTWRAPMODE\n2407
+SCI_GETPROPERTY _SCINTILLA.constants.SCI_GETPROPERTY\n4008
+SCI_GETPROPERTYEXPANDED _SCINTILLA.constants.SCI_GETPROPERTYEXPANDED\n4009
 SCI_GETPROPERTYINT _SCINTILLA.constants.SCI_GETPROPERTYINT\n4010
+SCI_GETPUNCTUATIONCHARS _SCINTILLA.constants.SCI_GETPUNCTUATIONCHARS\n2649
 SCI_GETREADONLY _SCINTILLA.constants.SCI_GETREADONLY\n2140
 SCI_GETRECTANGULARSELECTIONANCHOR _SCINTILLA.constants.SCI_GETRECTANGULARSELECTIONANCHOR\n2591
 SCI_GETRECTANGULARSELECTIONANCHORVIRTUALSPACE _SCINTILLA.constants.SCI_GETRECTANGULARSELECTIONANCHORVIRTUALSPACE\n2595
@@ -272,6 +282,7 @@ SCI_GETSTYLEBITS _SCINTILLA.constants.SCI_GETSTYLEBITS\n2091
 SCI_GETSTYLEBITSNEEDED _SCINTILLA.constants.SCI_GETSTYLEBITSNEEDED\n4011
 SCI_GETTABINDENTS _SCINTILLA.constants.SCI_GETTABINDENTS\n2261
 SCI_GETTABWIDTH _SCINTILLA.constants.SCI_GETTABWIDTH\n2121
+SCI_GETTAG _SCINTILLA.constants.SCI_GETTAG\n2616
 SCI_GETTARGETEND _SCINTILLA.constants.SCI_GETTARGETEND\n2193
 SCI_GETTARGETSTART _SCINTILLA.constants.SCI_GETTARGETSTART\n2191
 SCI_GETTECHNOLOGY _SCINTILLA.constants.SCI_GETTECHNOLOGY\n2631
@@ -283,7 +294,9 @@ SCI_GETVIEWEOL _SCINTILLA.constants.SCI_GETVIEWEOL\n2355
 SCI_GETVIEWWS _SCINTILLA.constants.SCI_GETVIEWWS\n2020
 SCI_GETVIRTUALSPACEOPTIONS _SCINTILLA.constants.SCI_GETVIRTUALSPACEOPTIONS\n2597
 SCI_GETVSCROLLBAR _SCINTILLA.constants.SCI_GETVSCROLLBAR\n2281
+SCI_GETWHITESPACECHARS _SCINTILLA.constants.SCI_GETWHITESPACECHARS\n2647
 SCI_GETWHITESPACESIZE _SCINTILLA.constants.SCI_GETWHITESPACESIZE\n2087
+SCI_GETWORDCHARS _SCINTILLA.constants.SCI_GETWORDCHARS\n2646
 SCI_GETWRAPINDENTMODE _SCINTILLA.constants.SCI_GETWRAPINDENTMODE\n2473
 SCI_GETWRAPMODE _SCINTILLA.constants.SCI_GETWRAPMODE\n2269
 SCI_GETWRAPSTARTINDENT _SCINTILLA.constants.SCI_GETWRAPSTARTINDENT\n2465
@@ -305,8 +318,16 @@ SCI_LEXER_START _SCINTILLA.constants.SCI_LEXER_START\n4000
 SCI_LINESONSCREEN _SCINTILLA.constants.SCI_LINESONSCREEN\n2370
 SCI_MARGINGETSTYLE _SCINTILLA.constants.SCI_MARGINGETSTYLE\n2533
 SCI_MARGINGETSTYLEOFFSET _SCINTILLA.constants.SCI_MARGINGETSTYLEOFFSET\n2538
+SCI_MARGINGETSTYLES _SCINTILLA.constants.SCI_MARGINGETSTYLES\n2535
+SCI_MARGINGETTEXT _SCINTILLA.constants.SCI_MARGINGETTEXT\n2531
 SCI_MARGINSETSTYLE _SCINTILLA.constants.SCI_MARGINSETSTYLE\n2532
 SCI_MARGINSETSTYLEOFFSET _SCINTILLA.constants.SCI_MARGINSETSTYLEOFFSET\n2537
+SCI_MARGINSETSTYLES _SCINTILLA.constants.SCI_MARGINSETSTYLES\n2534
+SCI_MARGINSETTEXT _SCINTILLA.constants.SCI_MARGINSETTEXT\n2530
+SCI_MARKERSETALPHA _SCINTILLA.constants.SCI_MARKERSETALPHA\n2476
+SCI_MARKERSETBACK _SCINTILLA.constants.SCI_MARKERSETBACK\n2042
+SCI_MARKERSETBACKSELECTED _SCINTILLA.constants.SCI_MARKERSETBACKSELECTED\n2292
+SCI_MARKERSETFORE _SCINTILLA.constants.SCI_MARKERSETFORE\n2041
 SCI_OPTIONAL_START _SCINTILLA.constants.SCI_OPTIONAL_START\n3000
 SCI_RGBAIMAGESETHEIGHT _SCINTILLA.constants.SCI_RGBAIMAGESETHEIGHT\n2625
 SCI_RGBAIMAGESETWIDTH _SCINTILLA.constants.SCI_RGBAIMAGESETWIDTH\n2624
@@ -344,6 +365,7 @@ SCI_SETEXTRADESCENT _SCINTILLA.constants.SCI_SETEXTRADESCENT\n2527
 SCI_SETFIRSTVISIBLELINE _SCINTILLA.constants.SCI_SETFIRSTVISIBLELINE\n2613
 SCI_SETFOCUS _SCINTILLA.constants.SCI_SETFOCUS\n2380
 SCI_SETFOLDEXPANDED _SCINTILLA.constants.SCI_SETFOLDEXPANDED\n2229
+SCI_SETFOLDFLAGS _SCINTILLA.constants.SCI_SETFOLDFLAGS\n2233
 SCI_SETFOLDLEVEL _SCINTILLA.constants.SCI_SETFOLDLEVEL\n2222
 SCI_SETFONTQUALITY _SCINTILLA.constants.SCI_SETFONTQUALITY\n2611
 SCI_SETHIGHLIGHTGUIDE _SCINTILLA.constants.SCI_SETHIGHLIGHTGUIDE\n2134
@@ -359,6 +381,7 @@ SCI_SETKEYSUNICODE _SCINTILLA.constants.SCI_SETKEYSUNICODE\n2521
 SCI_SETKEYWORDS _SCINTILLA.constants.SCI_SETKEYWORDS\n4005
 SCI_SETLAYOUTCACHE _SCINTILLA.constants.SCI_SETLAYOUTCACHE\n2272
 SCI_SETLEXER _SCINTILLA.constants.SCI_SETLEXER\n4001
+SCI_SETLEXERLANGUAGE _SCINTILLA.constants.SCI_SETLEXERLANGUAGE\n4006
 SCI_SETLINEINDENTATION _SCINTILLA.constants.SCI_SETLINEINDENTATION\n2126
 SCI_SETLINESTATE _SCINTILLA.constants.SCI_SETLINESTATE\n2092
 SCI_SETMAINSELECTION _SCINTILLA.constants.SCI_SETMAINSELECTION\n2574
@@ -382,6 +405,7 @@ SCI_SETPRINTCOLOURMODE _SCINTILLA.constants.SCI_SETPRINTCOLOURMODE\n2148
 SCI_SETPRINTMAGNIFICATION _SCINTILLA.constants.SCI_SETPRINTMAGNIFICATION\n2146
 SCI_SETPRINTWRAPMODE _SCINTILLA.constants.SCI_SETPRINTWRAPMODE\n2406
 SCI_SETPROPERTY _SCINTILLA.constants.SCI_SETPROPERTY\n4004
+SCI_SETPUNCTUATIONCHARS _SCINTILLA.constants.SCI_SETPUNCTUATIONCHARS\n2648
 SCI_SETREADONLY _SCINTILLA.constants.SCI_SETREADONLY\n2171
 SCI_SETRECTANGULARSELECTIONANCHOR _SCINTILLA.constants.SCI_SETRECTANGULARSELECTIONANCHOR\n2590
 SCI_SETRECTANGULARSELECTIONANCHORVIRTUALSPACE _SCINTILLA.constants.SCI_SETRECTANGULARSELECTIONANCHORVIRTUALSPACE\n2594
@@ -433,6 +457,7 @@ SCI_STYLEGETCASE _SCINTILLA.constants.SCI_STYLEGETCASE\n2489
 SCI_STYLEGETCHANGEABLE _SCINTILLA.constants.SCI_STYLEGETCHANGEABLE\n2492
 SCI_STYLEGETCHARACTERSET _SCINTILLA.constants.SCI_STYLEGETCHARACTERSET\n2490
 SCI_STYLEGETEOLFILLED _SCINTILLA.constants.SCI_STYLEGETEOLFILLED\n2487
+SCI_STYLEGETFONT _SCINTILLA.constants.SCI_STYLEGETFONT\n2486
 SCI_STYLEGETFORE _SCINTILLA.constants.SCI_STYLEGETFORE\n2481
 SCI_STYLEGETHOTSPOT _SCINTILLA.constants.SCI_STYLEGETHOTSPOT\n2493
 SCI_STYLEGETITALIC _SCINTILLA.constants.SCI_STYLEGETITALIC\n2484
@@ -760,11 +785,10 @@ alpha lexer.alpha\nMatches any alphabetic character (`A-Z`, `a-z`).
 always_show_globals _M.textadept.adeptsense.always_show_globals (bool)\nInclude globals in the list of completions offered.\nGlobals are classes, functions, and fields that do not belong to another\nclass. They are contained in `completions['']`. The default value is\n`true`.
 anchor buffer.anchor (number)\nThe position of the opposite end of the selection to the caret.
 annotation_clear_all buffer.annotation_clear_all(buffer)\nClear the annotations from all lines.\n@param buffer The global buffer.
-annotation_get_text buffer.annotation_get_text(buffer, line)\nGet the annotation text for a line.\n@param buffer The global buffer.\n@param line The line number.\n@return string
 annotation_lines buffer.annotation_lines (table, Read-only)\nTable of the number of annotation lines for lines starting from zero.
-annotation_set_text buffer.annotation_set_text(buffer, line, text)\nSet the annotation text for a line.\n@param buffer The global buffer.\n@param line The line number.\n@param text The text.
 annotation_style buffer.annotation_style (table)\nTable of style numbers for annotations for lines starting at zero.
 annotation_style_offset buffer.annotation_style_offset (number)\nThe start of the range of style numbers used for annotations.\nAnnotation styles may be completely separated from standard text styles by\nsetting a style offset. For example, setting this to `512` would allow the\nannotation styles to be numbered from `512` upto `767` so they do not\noverlap styles set by lexers (or margins if margins offset is `256`). Each\nstyle number set with `buffer.annotation_style` has the offset added before\nlooking up the style.
+annotation_text buffer.annotation_text (table)\nTable of annotation text for lines starting from zero.
 annotation_visible buffer.annotation_visible (number)\nThe visibility of annotations.\n\n* `_SCINTILLA.constants.ANNOTATION_HIDDEN` (0)\n  Annotations are not displayed.\n* `_SCINTILLA.constants.ANNOTATION_STANDARD` (1)\n  Annotations are drawn left justified with no adornment.\n* `_SCINTILLA.constants.ANNOTATION_BOXED` (2)\n  Annotations are indented to match the text and are surrounded by a box.
 any lexer.any\nMatches any single character.
 api_files _M.textadept.adeptsense.api_files (table)\nContains a list of api files used by `show_apidoc()`.\nEach line in the api file contains a symbol name (not the full symbol)\nfollowed by a space character and then the symbol's documentation. Since\nthere may be many duplicate symbol names, it is recommended to put the full\nsymbol and arguments, if any, on the first line. (e.g. `Class.function(arg1,\narg2, ...)`). This allows the correct documentation to be shown based on the\ncurrent context. In the documentation, newlines are represented with `\\n`. A\n`\` before `\\n` escapes the newline.
@@ -785,10 +809,10 @@ auto_c_cancel_at_start buffer.auto_c_cancel_at_start (bool)\nWhether auto-comple
 auto_c_case_insensitive buffer.auto_c_case_insensitive (int)\nAuto-completion case insensitive behavior.\nWhen autocompletion is set to ignore case (`buffer.auto_c_ignore_case`), by\ndefault it will nonetheless select the first list member that matches in a\ncase sensitive way to entered characters.\n\n* `_SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOR_RESPECTCASE` (0)\n  Prefer case-sensitive matches.\n* `_SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOR_IGNORECASE` (1)\n  No preference.
 auto_c_choose_single buffer.auto_c_choose_single (bool)\nWhether a single item auto-completion list automatically choose the item.\nThe default is to display the list even if there is only a single item.
 auto_c_complete buffer.auto_c_complete(buffer)\nUser has selected an item so remove the list and insert the selection.\nThis has the same effect as the tab key.\n@param buffer The global buffer.
+auto_c_current buffer.auto_c_current (number, Read-only)\nThe currently selected item position in the auto-completion list.
+auto_c_current_text buffer.auto_c_current_text (string, Read-only)\nThe currently selected item text in the auto-completion list.
 auto_c_drop_rest_of_word buffer.auto_c_drop_rest_of_word (bool)\nWhether or not autocompletion deletes any word characters after the\ninserted text upon completion.\nThe default is `false`.
 auto_c_fill_ups buffer.auto_c_fill_ups (string, Write-only)\nA set of characters that when typed will cause the autocompletion to choose\nthe selected item.\nBy default, no fillup characters are set.
-auto_c_get_current buffer.auto_c_get_current(buffer)\nGet currently selected item position in the auto-completion list.\n@param buffer The global buffer.\n@return number
-auto_c_get_current_text buffer.auto_c_get_current_text(buffer)\nGet currently selected item text in the auto-completion list.\n@param buffer The global buffer.\n@return string
 auto_c_ignore_case buffer.auto_c_ignore_case (bool)\nWhether case is significant when performing auto-completion searches.\nBy default, matching of characters to list members is case sensitive.
 auto_c_max_height buffer.auto_c_max_height (number)\nThe maximum height, in rows, of auto-completion and user lists.\nThe default is 5 rows.
 auto_c_max_width buffer.auto_c_max_width (number)\nThe maximum width, in characters, of auto-completion and user lists.\nSet to `0` to autosize to fit longest item, which is the default.
@@ -1008,6 +1032,7 @@ focus gui.command_entry.focus()\nFocuses the command entry.
 focus gui.find.focus()\nDisplays and focuses the find/replace dialog.
 fold lexer.fold(text, start_pos, start_line, start_level)\nFolds the given text.\nCalled by LexLPeg.cxx; do not call from Lua.\nIf the current lexer has no _fold function, folding by indentation is\nperformed if the 'fold.by.indentation' property is set.\n@param text The document text to fold.\n@param start_pos The position in the document text starts at.\n@param start_line The line number text starts on.\n@param start_level The fold level text starts on.\n@return Table of fold levels.
 fold_expanded buffer.fold_expanded (bool)\nExpanded state of a header line.
+fold_flags buffer.fold_flags (number)\nThe style options for folding.\nBits set in flags determine where folding lines are drawn:\n\n* `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_EXPANDED` (2)\n  Draw above if expanded.\n* `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_CONTRACTED` (4)\n  Draw above if not expanded.\n* `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_EXPANDED` (8)\n  Draw below if expanded.\n* `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_CONTRACTED` (16)\n  Draw below if not expanded.
 fold_level buffer.fold_level (table)\nTable of fold levels for lines starting from zero.\nFold levels encodes an integer level along with flags indicating whether\nthe line is a header and whether it is effectively white space.\n\n* `_SCINTILLA.constants.SC_FOLDLEVELBASE` (0x400)\n  Initial fold level.\n* `_SCINTILLA.constants.SC_FOLDLEVELWHITEFLAG` (0x1000)\n  Indicates that the line is blank.\n* `_SCINTILLA.constants.SC_FOLDLEVELHEADERFLAG` (0x2000)\n  Indicates that the line is a header (fold point).
 fold_line_comments lexer.fold_line_comments(prefix)\nReturns a fold function that folds consecutive line comments.\nThis function should be used inside the lexer's `_foldsymbols` table.\n@param prefix The prefix string defining a line comment.\n@usage [l.COMMENT] = { ['--'] = l.fold_line_comments('--') }\n@usage [l.COMMENT] = { ['//'] = l.fold_line_comments('//') }
 fold_parent buffer.fold_parent (table, Read-only)\nTable of parent line numbers for child lines starting from zero.\n`-1` means no line was found.
@@ -1026,21 +1051,17 @@ get_hotspot_active_back buffer.get_hotspot_active_back(buffer)\nGet the back col
 get_hotspot_active_fore buffer.get_hotspot_active_fore(buffer)\nGet the fore color for active hotspots.\n@param buffer The global buffer.\n@return number
 get_indent_amount lexer.get_indent_amount(line)\nReturns the indent amount of text for a given line.\n@param line The line number to get the indent amount of.
 get_last_child buffer.get_last_child(buffer, header_line, level)\nFind the last child line of a header line.\n@param buffer The global buffer.\n@param header_line The line number of a header line.\n@param level The level or `-1` for the level of header_line.
-get_lexer buffer.get_lexer(buffer, current)\nReplacement for `buffer.get_lexer_language(buffer)`.\n@param buffer The global buffer.\n@param current Whether to get the lexer at the current caret position in\n  multi-language lexers. The default is `false` and returns the parent lexer.
-get_lexer_language buffer.get_lexer_language(buffer)\nRetrieve the name of the lexer.\n@param buffer The global buffer.
+get_lexer buffer.get_lexer(buffer, current)\nReplacement for `buffer.lexer_language`.\n@param buffer The global buffer.\n@param current Whether to get the lexer at the current caret position in\n  multi-language lexers. The default is `false` and returns the parent lexer.
 get_line buffer.get_line(buffer, line)\nRetrieve the contents of a line.\nAlso returns the length of the line.\n@param buffer The global buffer.\n@param line The line number.\n@return string, number
 get_line_sel_end_position buffer.get_line_sel_end_position(buffer, line)\nRetrieve the position of the end of the selection at the given line (`-1` if\nno selection on this line).\n@param buffer The global buffer.\n@param line The line number.
 get_line_sel_start_position buffer.get_line_sel_start_position(buffer, line)\nRetrieve the position of the start of the selection at the given line (`-1`\nif no selection on this line).\n@param buffer The global buffer.\n@param line The line number.
-get_property buffer.get_property(buffer, key)\nRetrieve a `property` value previously set with `buffer.property`.\n@param buffer The global buffer.\n@param key Keyword.\n@return string
 get_property lexer.get_property(key, default)\nReturns an integer property value for a given key.\n@param key The property key.\n@param default Optional integer value to return if key is not set.
-get_property_expanded buffer.get_property_expanded(buffer, key)\nRetrieve a `property` value previously set with `buffer.property`, with `$()`\nvariable replacement on returned buffer.\n@param buffer The global buffer.\n@param key Keyword.\n@return string
 get_range_pointer buffer.get_range_pointer(buffer, position, range_length)\nReturn a read-only pointer to a range of characters in the document.\nMay move the gap so that the range is contiguous, but will only move up to\nrange_length bytes.\nThe gap is not moved unless it is within the requested range so this call can\nbe faster than `SCI_GETCHARACTERPOINTER`. This can be used by application\ncode that is able to act on blocks of text or ranges of lines.
 get_sel_text buffer.get_sel_text(buffer)\nRetrieve the selected text.\nAlso returns the length of the text.\n@param buffer The global buffer.\n@return string, number
 get_split_table gui.get_split_table()\nGets the current split view structure.\n@return table of split views. Each split view entry is a table with 4\n  fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either\n  nested split view entries or the views themselves; `vertical` is a flag\n  indicating if the split is vertical or not; and `size` is the integer\n  position of the split resizer.
 get_style_at lexer.get_style_at(pos)\nReturns the string style name and style number at a given position.\n@param pos The position to get the style for.
 get_style_name buffer.get_style_name(buffer, style_num)\nReturns the name of the style associated with a style number.\n@param buffer The global buffer.\n@param style_num A style number from `0` to `255`.\n@see buffer.style_at
 get_symbol _M.textadept.adeptsense.get_symbol(sense)\nReturns a full symbol (if any) and current symbol part (if any) behind the\ncaret.\nFor example: `buffer.cur` would return `'buffer'` and `'cur'`.\n@param sense The Adeptsense returned by `adeptsense.new()`.\n@return symbol or `''`\n@return part or `''`
-get_tag buffer.get_tag(buffer, tag_num)\nRetrieve the value of a tag from a regular expression search.\n@param buffer The global buffer.\n@param tag_num The tag number.\n@return string
 get_text buffer.get_text(buffer)\nRetrieve all the text in the document.\nAlso returns number of characters retrieved.\n@param buffer The global buffer.
 getenv os.getenv(varname)\nReturns the value of the process environment variable `varname`, or\nnil if the variable is not defined.
 gethook debug.gethook([thread])\nReturns the current hook settings of the thread, as three values: the\ncurrent hook function, the current hook mask, and the current hook count\n(as set by the `debug.sethook` function).
@@ -1133,6 +1154,7 @@ length buffer.length (number, Read-only)\nThe number of bytes in the document.
 lex lexer.lex(text, init_style)\nLexes the given text.\nCalled by LexLPeg.cxx; do not call from Lua.\nIf the lexer has a _LEXBYLINE flag set, the text is lexed one line at a time.\nOtherwise the text is lexed as a whole.\n@param text The text to lex.\n@param init_style The current style. Multilang lexers use this to determine\n  which language to start lexing in.
 lexer _G.lexer (module)\nPerforms lexing of Scintilla documents.
 lexer buffer.lexer (number)\nThe lexing language of the document.
+lexer_language buffer.lexer_language (string)\nThe name of the lexer.
 lexers _M.textadept.mime_types.lexers (table)\nList of detected lexers.\nLexers are read from `lexers/` and `~/.textadept/lexers/`.
 lfs _G.lfs (module)\nLua lfs module.
 line_copy buffer.line_copy(buffer)\nCopy the line containing the caret.\n@param buffer The global buffer.
@@ -1196,20 +1218,22 @@ lua gui.find.lua (bool)\nThe search text is interpreted as a Lua pattern.
 lua_pattern_label_text gui.find.lua_pattern_label_text (string, Write-only)\nThe text of the 'Lua pattern' label.\nThis is primarily used for localization.
 main_selection buffer.main_selection (number)\nThe main selection.\nThe main selection may be displayed in different colors or with a\ndifferently styled caret. Only an already existing selection can be made\nmain.
 margin_cursor_n buffer.margin_cursor_n (table)\nTable of cursors shown for margins from zero to four.\nA reversed arrow cursor is normally shown over all margins.\n\n* `_SCINTILLA.constants.SC_CURSORARROW`\n  Normal arrow.\n* `_SCINTILLA.constants.SC_CURSORREVERSEARROW`\n  Reversed arrow.
-margin_get_text buffer.margin_get_text(buffer, line)\nGet the text in the text margin for a line.\n@param buffer The global buffer.\n@param line The line number.\n@return string
 margin_left buffer.margin_left (number)\nThe size in pixels of the left margin.\nThe default is to one pixel.
 margin_mask_n buffer.margin_mask_n (table)\nTable of marker masks for margins from zero to four.\nA mask determines which markers are displayed in a margin.
 margin_options buffer.margin_options (number)\nA bit mask of margin options.\n\n* `_SCINTILLA.constants.SC_MARGINOPTION_NONE` (0)\n  None (default).\n* `_SCINTILLA.constants.SC_MARGINOPTION_SUBLINESELECT` (1)\n  Controls how wrapped lines are selected when clicking on margin in front\n  of them.\n  If set, only sub line of wrapped line is selected, otherwise whole\n  wrapped line is selected.
 margin_right buffer.margin_right (number)\nThe size in pixels of the right margin.\nThe default is to one pixel.
 margin_sensitive_n buffer.margin_sensitive_n (table)\nTable of mouse click sensitivity booleans for margins from zero to four.\nA click in a sensitive margin emits a `margin_click` event. By default, all\nmargins are insensitive.
-margin_set_text buffer.margin_set_text(buffer, line, text)\nSet the text in the text margin for a line.\n@param buffer The global buffer.\n@param line The line number.\n@param text The text.
 margin_style buffer.margin_style (table)\nTable of style numbers for text margin lines starting from zero.
 margin_style_offset buffer.margin_style_offset (number)\nThe start of the range of style numbers used for margin text.\nMargin styles may be completely separated from standard text styles by\nsetting a style offset. For example, setting this to `256` would allow the\nmargin styles to be numbered from `256` upto `511` so they do not overlap\nstyles set by lexers. Each style number set with `buffer.margin_style` has\nthe offset added before looking up the style.
+margin_text buffer.margin_text (table)\nTable of text in the text margin for lines starting from zero.
 margin_text_clear_all buffer.margin_text_clear_all(buffer)\nClear the margin text on all lines.\n@param buffer The global buffer.
 margin_type_n buffer.margin_type_n (table)\nTable of margin types for margins from zero to four.\n\n* `_SCINTILLA.constants.SC_MARGIN_SYMBOL` (0)\n  A symbol margin.\n* `_SCINTILLA.constants.SC_MARGIN_NUMBER` (1)\n  A line number margin.\n* `_SCINTILLA.constants.SC_MARGIN_BACK` (2)\n  A symbol margin that sets its background color to match the default\n  text background color.\n* `_SCINTILLA.constants.SC_MARGIN_FORE` (3)\n  A symbol margin that sets its background color to match the default\n  text foreground color.\n* `_SCINTILLA.constants.SC_MARGIN_TEXT` (4)\n  A text margin.\n* `_SCINTILLA.constants.SC_MARGIN_RTEXT` (5)\n  A right justified text margin.
 margin_width_n buffer.margin_width_n (table)\nTable of margin widths expressed in pixes for margins from zero to four.
 marker_add buffer.marker_add(buffer, line, marker_num)\nAdd a marker to a line, returning an ID which can be used to find or delete\nthe marker.\nReturns `-1` if this fails (illegal line number, out of memory).\n@param buffer The global buffer.\n@param line The line number.\n@param marker_num A marker number in the range of `0` to `31`.\n@return number
 marker_add_set buffer.marker_add_set(buffer, line, marker_mask)\nAdd a set of markers to a line.\n@param buffer The global buffer.\n@param line The line number.\n@param marker_mask A mask of markers to set. Set bit 0 to set marker 0, bit\n  1 for marker 1 and so on.
+marker_alpha buffer.marker_alpha (table, Write-only)\nTable of alpha values used for markers that are drawn in the text area, not\nthe margin.\nMarkers are numbers in the range of `0` to `31`. Alpha values are between\n`0` (transparent) and `255` (opaque), or `256` for no alpha.
+marker_back buffer.marker_back (table, Write-only)\nTable of the background colors used for particular marker numbers.\nMarker numbers are in the range of `0` to `31`. Colors are in `0xBBGGRR`\nformat.
+marker_back_selected buffer.marker_back_selected (table, Write-only)\nTable of the background colors used for particular marker numbers when\ntheir folding blocks are selected.\nMarker numbers are in the range of `0` to `31`. Colors are in `0xBBGGRR`\nformat. The default color is `#FF0000`.
 marker_define buffer.marker_define(buffer, marker_num, marker_symbol)\nSet the symbol used for a particular marker number.\n@param buffer The global buffer.\n@param marker_num A marker number in the range of `0` to `31`.\n@param marker_symbol A marker symbol: `_SCINTILLA.constants.SC_MARK_*`.\n@see _SCINTILLA.next_marker_number
 marker_define_pixmap buffer.marker_define_pixmap(buffer, marker_num, pixmap)\nDefine a marker from a pixmap.\n@param buffer The global buffer.\n@param marker_num A marker number in the range of `0` to `31`.\n@param pixmap `NULL`-terminated pixmap data.
 marker_define_rgba_image buffer.marker_define_rgba_image(buffer, marker_num, pixels)\nDefine a marker from RGBA data.\nIt has the width and height from `buffer.rgba_image_width` and\n`buffer.rgba_image_height`.\n@param buffer The global buffer.\n@param marker_num A marker number in the range of `0` to `31`.\n@param pixels A sequence of 4 byte pixel values starting with the pixels for\n  the top line, with the leftmost pixel first, then continuing with the\n  pixels for subsequent lines. There is no gap between lines for alignment\n  reasons. Each pixel consists of, in order, a red byte, a green byte, a blue\n  byte and an alpha byte. The colour bytes are not premultiplied by the alpha\n  value. That is, a fully red pixel that is 25% opaque will be `[FF, 00, 00,\n  3F]`.
@@ -1217,14 +1241,11 @@ marker_delete buffer.marker_delete(buffer, line, marker_num)\nDelete a marker fr
 marker_delete_all buffer.marker_delete_all(buffer, marker_num)\nDelete all markers with a particular number from all lines.\n@param buffer The global buffer.\n@param marker_num A marker number in the range of `0` to `31` or `-1` to\n  delete all markers from the line.
 marker_delete_handle buffer.marker_delete_handle(buffer, handle)\nDelete a marker.\n@param buffer The global buffer.\n@param handle The identifier of a marker returned by `buffer:marker_add()`.
 marker_enable_highlight buffer.marker_enable_highlight(buffer, enabled)\nEnable/disable highlight for current folding block (smallest one that\ncontains the caret)\n@param buffer The global buffer.
+marker_fore buffer.marker_fore (table, Write-only)\nTable of the foreground colors used for particular marker numbers.\nMarker numbers are in the range of `0` to `31`. Colors are in `0xBBGGRR`\nformat.
 marker_get buffer.marker_get(buffer, line)\nGet a bit mask of all the markers set on a line.\nBit 0 is set if marker 0 is present, bit 1 for marker 1 and so on.\n@param buffer The global buffer.\n@param line The line number.\n@return number.
 marker_line_from_handle buffer.marker_line_from_handle(buffer, handle)\nRetrieve the line number at which a particular marker is located.\nReturns `-1` if it not found.\n@param buffer The global buffer.\n@param handle The identifier of a marker returned by `buffer:marker_add()`.\n@return number
 marker_next buffer.marker_next(buffer, start_line, marker_mask)\nFind the next line at or after start_line that includes a marker in mask.\nReturn `-1` when no more lines.\n@param buffer The global buffer.\n@param start_line The start line.\n@param marker_mask A mask of markers to find. Set bit 0 to find marker 0, bit\n  1 for marker 1 and so on.\n@return number
 marker_previous buffer.marker_previous(buffer, start_line, marker_mask)\nFind the previous line before `start_line` that includes a marker in mask.\n@param buffer The global buffer.\n@param start_line The start line.\n@param marker_mask A mask of markers to find. Set bit 0 to find marker 0, bit\n  1 for marker 1 and so on.\n@return number
-marker_set_alpha buffer.marker_set_alpha(buffer, marker_num, alpha)\nSet the alpha used for a marker that is drawn in the text area, not the\nmargin.\n@param buffer The global buffer.\n@param marker_num A marker number in the range of `0` to `31`.\n@param alpha An alpha value between `0` (transparent) and `255` (opaque), or\n  `256` for no alpha.
-marker_set_back buffer.marker_set_back(buffer, marker_num, color)\nSet the background color used for a particular marker number.\n@param buffer The global buffer.\n@param marker_num A marker number in the range of `0` to `31`.\n@param color A color in `0xBBGGRR` format.
-marker_set_back_selected buffer.marker_set_back_selected(buffer, marker_num, color)\nSet the background color used for a particular marker number when its\nfolding block is selected.\n@param buffer The global buffer.\n@param marker_num A marker number in the range of `0` to `31`.\n@param color A color in `0xBBGGRR` format. The default color is `#FF0000`.
-marker_set_fore buffer.marker_set_fore(buffer, marker_num, color)\nSet the foreground color used for a particular marker number.\n@param buffer The global buffer.\n@param marker_num A marker number in the range of `0` to `31`.\n@param color A color in `0xBBGGRR` format.
 marker_symbol_defined buffer.marker_symbol_defined(buffer, marker_num)\nReturn the symbol defined for marker_num with `buffer:marker_define()`.\n@param buffer The global buffer.\n@param marker_num A marker number in the range of `0` to `31`.\n@return number
 match lpeg.match(pattern, subject [, init])\nThe matching function. It attempts to match the given pattern against the\nsubject string. If the match succeeds, returns the index in the subject of\nthe first character after the match, or the captured values (if the pattern\ncaptured any value).\n\nAn optional numeric argument init makes the match starts at that position in\nthe subject string. As usual in Lua libraries, a negative value counts from\nthe end.\n\nUnlike typical pattern-matching functions, match works only in anchored mode;\nthat is, it tries to match the pattern with a prefix of the given subject\nstring (at position init), not with an arbitrary substring of the subject.\nSo, if we want to find a pattern anywhere in a string, we must either write a\nloop in Lua or write a pattern that matches anywhere. This second approach is\neasy and quite efficient; see examples.
 match string.match(s, pattern [, init])\nLooks for the first *match* of `pattern` in the string `s`. If it\nfinds one, then `match` returns the captures from the pattern; otherwise\nit returns nil. If `pattern` specifies no captures, then the whole match\nis returned. A third, optional numerical argument `init` specifies where\nto start the search; its default value is 1 and can be negative.
@@ -1313,9 +1334,11 @@ process args.process(arg)\nProcesses command line arguments.\nAdd command line s
 prompt_load _M.textadept.session.prompt_load()\nPrompts the user for a Textadept session to load.
 prompt_save _M.textadept.session.prompt_save()\nPrompts the user to save the current Textadept session to a file.
 properties _SCINTILLA.properties (table)\nScintilla properties.
-property buffer.property (table, Write-only)\nTable of keyword:value string pairs used by a lexer for some optional\nfeatures.
+property buffer.property (table)\nTable of keyword:value string pairs used by a lexer for some optional\nfeatures.
+property_expanded buffer.property_expanded (table)\nTable of keyword:value string pairs used by a lexer for some optional\nfeatures with `$()` variable replacement on returned string.
 property_int buffer.property_int (table, Read-only)\nInterprets `buffer.property[keyword]` as an integer if found or returns\n`0`.
 punct lexer.punct\nMatches any punctuation character not alphanumeric (`!` to `/`, `:` to `@`,\n  `[` to `'`, `{` to `~`).
+punctuation_chars buffer.punctuation_chars (string)\nThe set of characters making up punctuation characters.\nUse after setting `buffer.word_chars`.
 quit _G.quit()\nQuits Textadept.
 rad math.rad(x)\nReturns the angle `x` (given in degrees) in radians.
 rails _G.keys.rails (table)\nContainer for Rails-specific key commands.
@@ -1440,14 +1463,12 @@ set_chars_default buffer.set_chars_default(buffer)\nReset the set of characters 
 set_contextmenu _M.textadept.menu.set_contextmenu(menu_table)\nSets `gui.context_menu` from the given menu table.\n@param menu_table The menu table to create the context menu from. Each table\n  entry is either a submenu or menu text and a function or action table.\n@see set_menubar
 set_empty_selection buffer.set_empty_selection(buffer, pos)\nSet caret to a position, while removing any existing selection.\nThe caret is not scrolled into view.\n@param buffer The buffer\n@param pos The position to move to.
 set_encoding buffer.set_encoding(buffer, encoding)\nSets the encoding for the buffer, converting its contents in the process.\n@param buffer The global buffer.\n@param encoding The encoding to set. Valid encodings are ones that GTK's\n  `g_convert()` function accepts (typically GNU iconv's encodings).\n@usage buffer.set_encoding(buffer, 'ASCII')
-set_fold_flags buffer.set_fold_flags(buffer, flags)\nSet some style options for folding.\n@param buffer The global buffer.\n@param flags Mask of fold flags. Flags available are\n  `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_EXPANDED` (2): Draw above if\n  expanded; `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_CONTRACTED` (4):\n  Draw above if not expanded;\n  `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_EXPANDED` (8): Draw below if\n  expanded; `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_CONTRACTED` (16):\n  Draw below if not expanded
 set_fold_margin_colour buffer.set_fold_margin_colour(buffer, use_setting, color)\nSet the colors used as a chequerboard pattern in the fold margin.\n@param buffer The global buffer.\n@param use_setting Enable color change.\n@param color A color in `0xBBGGRR` format.
 set_fold_margin_hi_colour buffer.set_fold_margin_hi_colour(buffer, use_setting, color)\nSet the colors used as a checkerboard pattern in the fold margin.\n@param buffer The global buffer.\n@param use_setting Enable color change.\n@param color A color in `0xBBGGRR` format.
 set_hotspot_active_back buffer.set_hotspot_active_back(buffer, use_setting, color)\nSet a back color for active hotspots.\n@param buffer The global buffer.\n@param use_setting Enable the color change.\n@param color A color in `0xBBGGRR` format.
 set_hotspot_active_fore buffer.set_hotspot_active_fore(buffer, use_setting, color)\nSet a fore color for active hotspots.\n@param buffer The global buffer.\n@param use_setting Enable the color change.\n@param color A color in `0xBBGGRR` format.
 set_length_for_encode buffer.set_length_for_encode(buffer, bytes)\nSet the length of the utf8 argument for calling `buffer:encoded_from_utf8()`.\n@param buffer The global buffer.\n@param bytes Bytes or `-1` for measuring to first NUL.
-set_lexer buffer.set_lexer(buffer, lang)\nReplacement for `buffer.set_lexer_language(buffer)`.\nSets a `buffer._lexer` field so it can be restored without querying the\nmime-types tables. Also if the user manually sets the lexer, it should be\nrestored.\nLoads the language-specific module if it exists.\nThis function is added by `_M.textadept.mime_types`.\n@param buffer The global buffer.\n@param lang The string language to set.\n@usage buffer.set_lexer(buffer, 'language_name')
-set_lexer_language buffer.set_lexer_language(buffer, language_name)\nSet the lexing language of the document based on string name.\n@param buffer The global buffer.\n@param language_name The language name.
+set_lexer buffer.set_lexer(buffer, lang)\nReplacement for `buffer.lexer_language =`.\nSets a `buffer._lexer` field so it can be restored without querying the\nmime-types tables. Also if the user manually sets the lexer, it should be\nrestored.\nLoads the language-specific module if it exists.\nThis function is added by `_M.textadept.mime_types`.\n@param buffer The global buffer.\n@param lang The string language to set.\n@usage buffer.set_lexer(buffer, 'language_name')
 set_menubar _M.textadept.menu.set_menubar(menubar)\nSets `gui.menubar` from the given table of menus.\n@param menubar The table of menus to create the menubar from.\n@see gui.menu\n@see rebuild_command_tables
 set_save_point buffer.set_save_point(buffer)\nRemember the current position in the undo history as the position at which\nthe document was saved.\n@param buffer The global buffer.
 set_sel buffer.set_sel(buffer, start_pos, end_pos)\nSelect a range of text.\nThe caret is scrolled into view after this operation.\n@param buffer The global buffer.\n@param start_pos Start position. If negative, it means the end of the\n  document.\n@param end_pos End position. If negative, it means remove any selection (i.e.\n  set the `anchor` to the same position as `current_pos`).
@@ -1460,7 +1481,7 @@ set_theme gui.set_theme(name)\nSets the editor theme from the given name.\nTheme
 set_visible_policy buffer.set_visible_policy(buffer, visible_policy, visible_slop)\nSet the way the display area is determined when a particular line is to be\nmoved to by `buffer:goto_line()`, etc.\nIt is similar in operation to `buffer:set_y_caret_policy()`.\n@param buffer The global buffer.\n@param visible_policy A combination of `_SCINTILLA.constants.VISIBLE_SLOP`,\n  (0x01) and `_SCINTILLA.constants.VISIBLE_STRICT` (0x04).\n@param visible_slop The slop value.
 set_whitespace_back buffer.set_whitespace_back(buffer, use_setting, color)\nSet the background color of all whitespace and whether to use this setting.\n@param buffer The global buffer.\n@param use_setting Enable color change.\n@param color A color in `0xBBGGRR` format.
 set_whitespace_fore buffer.set_whitespace_fore(buffer, use_setting, color)\nSet the foreground color of all whitespace and whether to use this setting.\n@param buffer The global buffer.\n@param use_setting Enable color change.\n@param color A color in `0xBBGGRR` format.
-set_x_caret_policy buffer.set_x_caret_policy(buffer, caret_policy, caret_slop)\nSet the way the caret is kept visible when going sideway.\nThe exclusion zone is given in pixels.\n@param buffer The global buffer.\n@param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`\n  (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),\n  `_SCINTILLA.constants.CARET_JUMPS` (0x10), and\n  `_SCINTILLA.constants.CARET_EVEN` (0x08).\n@param caret_slop A slop value.
+set_x_caret_policy buffer.set_x_caret_policy(buffer, caret_policy, caret_slop)\nSet the way the caret is kept visible when going sideways.\nThe exclusion zone is given in pixels.\n@param buffer The global buffer.\n@param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`\n  (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),\n  `_SCINTILLA.constants.CARET_JUMPS` (0x10), and\n  `_SCINTILLA.constants.CARET_EVEN` (0x08).\n@param caret_slop A slop value.
 set_y_caret_policy buffer.set_y_caret_policy(buffer, caret_policy, caret_slop)\nSet the way the line the caret is on is kept visible.\n@param buffer The global buffer.\n@param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`\n  (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),\n  `_SCINTILLA.constants.CARET_JUMPS` (0x10), and\n  `_SCINTILLA.constants.CARET_EVEN` (0x08).\n@param caret_slop A slop value.
 sethook debug.sethook([thread, ] hook, mask [, count])\nSets the given function as a hook. The string `mask` and the number\n`count` describe when the hook will be called. The string mask may have\nthe following characters, with the given meaning:\n  "c": the hook is called every time Lua calls a function;\n  "r": the hook is called every time Lua returns from a function;\n  "l": the hook is called every time Lua enters a new line of code.\n\nWith a `count` different from zero, the hook is called after every `count`\ninstructions.\n\nWhen called without arguments, `debug.sethook` turns off the hook.\n\nWhen the hook is called, its first parameter is a string describing\nthe event that has triggered its call: `"call"` (or `"tail call"`),\n`"return"`, `"line"`, and `"count"`. For line events, the hook also gets the\nnew line number as its second parameter. Inside a hook, you can call\n`getinfo` with level 2 to get more information about the running function\n(level 0 is the `getinfo` function, and level 1 is the hook function).
 setlocal debug.setlocal([thread, ] level, local, value)\nThis function assigns the value `value` to the local variable with\nindex `local` of the function at level `level` of the stack. The function\nreturns nil if there is no local variable with the given index, and raises\nan error when called with a `level` out of range. (You can call `getinfo`\nto check whether the level is valid.) Otherwise, it returns the name of\nthe local variable.\n\nSee `debug.getlocal` for more information about variable indices and names.
@@ -1524,7 +1545,6 @@ style_error lexer.style_error\nStyle typically used for erroneous syntax.
 style_font buffer.style_font (table)\nTable of font faces for styles from `0` to `255`.
 style_fore buffer.style_fore (table)\nTable of foreground colors in `0xBBGGRR` format for styles from `0` to\n`255`.
 style_function lexer.style_function\nStyle typically used for function definitions.
-style_get_font buffer.style_get_font(buffer, style_num)\nReturns the font name of a given style.\n@param buffer The global buffer.\n@param style_num The style number.\n@return string
 style_hot_spot buffer.style_hot_spot (table)\nTable of boolean hotspot styles from `0` to `255`.
 style_identifier lexer.style_identifier\nStyle typically used for identifier words.
 style_italic buffer.style_italic (table)\nTable of booleans for italic styles from `0` to `255`.
@@ -1556,6 +1576,7 @@ tab buffer.tab(buffer)\nIf selection is empty or all on one line replace the sel
 tab_indents buffer.tab_indents (bool)\nWhether a tab pressed when caret is within indentation indents.
 tab_width buffer.tab_width (number)\nThe visible size of a tab as a multiple of the width of a space character.\nThe default tab width is 8 characters.
 table _G.table (module)\nLua table module.
+tag buffer.tag (table)\nTable of values of tags from a regular expression search.
 tan math.tan(x)\nReturns the tangent of `x` (assumed to be in radians).
 tanh math.tanh(x)\nReturns the hyperbolic tangent of `x`.
 target_as_utf8 buffer.target_as_utf8(buffer)\nReturns the target converted to UTF8.\n@param buffer The global buffer.
@@ -1619,7 +1640,7 @@ view_eol buffer.view_eol (bool)\nWhether the end of line characters are visible.
 view_ws buffer.view_ws (number)\nThe visibility of white space characters.\n\n* `_SCINTILLA.constants.SCWS_INVISIBLE` (0)\n  The normal display mode with white space displayed as an empty background\n  color.\n* `_SCINTILLA.constants.SCWS_VISIBLEALWAYS` (1)\n  White space characters are drawn as dots and arrows.\n* `_SCINTILLA.constants.SCWS_VISIBLEAFTERINDENT` (2)\n  White space used for indentation is displayed normally but after the\n  first visible character, it is shown as dots and arrows.
 virtual_space_options buffer.virtual_space_options (number)\nVirtual space options.\n\n* `_SCINTILLA.constants.SCVS_NONE` (0)\n  Disables all use of virtual space (default).\n* `_SCINTILLA.constants.SCVS_RECTANGULARSELECTION` (1)\n  Enabled only for rectangular selections.\n* `_SCINTILLA.constants.SCVS_USERACCESSIBLE` (2)\n  Enabled.
 visible_from_doc_line buffer.visible_from_doc_line(buffer, line)\nFind the display line of a document line taking hidden lines into account.\nIf there is folding and line is outside the range of lines in the document,\nthe return value is `-1`.\n@param buffer The global buffer.\n@param line The line number.\n@return number
-whitespace_chars buffer.whitespace_chars (string, Write-only)\nThe set of characters making up whitespace for when moving or selecting by\nword.\nUse after setting `buffer.word_chars`.
+whitespace_chars buffer.whitespace_chars (string)\nThe set of characters making up whitespace for when moving or selecting by\nword.\nUse after setting `buffer.word_chars`.
 whitespace_size buffer.whitespace_size (number)\nThe size of the dots used to mark space characters.
 whole_word gui.find.whole_word (bool)\nOnly whole-word matches are allowed in searches.
 whole_word_label_text gui.find.whole_word_label_text (string, Write-only)\nThe text of the 'Whole word' label.\nThis is primarily used for localization.

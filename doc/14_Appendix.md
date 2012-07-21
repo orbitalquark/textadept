@@ -309,6 +309,64 @@ features in its editing component Scintilla:
 
 ## Migration Guides
 
+### Textadept 5 to 6
+
+Textadept 6 introduces some API changes.
+
+#### Function Changes
+
+##### `buffer`
+
+Some of the "get" and "set" functions in `buffer` have been converted to
+properties:
+
+* `buffer:annotation_get_text(line)` -> `buffer.annotation_text[line]`
+* `buffer:annotation_set_text(line, text)` ->
+  `buffer.annotation_text[line] = text`
+* `buffer:auto_c_get_current()` -> `buffer.auto_c_current`
+* `buffer:auto_c_get_current_text()` -> `buffer.auto_c_current_text`
+* `buffer:get_lexer_language()` -> `buffer.lexer_language`
+* `buffer:get_property(key)` -> `buffer.property[key]`
+* `buffer:get_property_expanded(key)` -> `buffer.property_expanded[key]`
+* `buffer:get_tag(tag_num)` -> `buffer.tag[tag_num]`
+* `buffer:margin_get_text(line)` -> `buffer.margin_text[line]`
+* `buffer:margin_set_text(line, text)` -> `buffer.margin_text[line] = text`
+* `buffer:marker_set_alpha(marker_num, alpha)` ->
+  `buffer.marker_alpha[marker_num] = alpha`
+* `buffer:marker_set_back(marker_num, color)` ->
+  `buffer.marker_back[marker_num] = color`
+* `buffer:marker_set_back_selected(marker_num, color)` ->
+  `buffer.marker_back_selected[marker_num] = color`
+* `buffer:marker_set_fore(marker_num, color)` ->
+  `buffer.marker_fore[marker_num] = color`
+* `buffer:set_fold_flags(flags)` -> `buffer.fold_flags = flags`
+* `buffer:set_lexer_language(language_name)` ->
+  `buffer.lexer_language = language_name`
+* `buffer:style_get_font(style_num)` -> `buffer.style_font[style_num]`
+
+##### `goto_required`
+
+`_M.lua.goto_required()`, `_M.php.goto_required()`, and
+`_M.ruby.goto_required()` have all been removed. They are inaccurate when
+projects re-define or define their own search paths.
+
+##### `prepare_for_save`
+
+`_M.textadept.editing.prepare_for_save()` moved directly into an event handler
+and cannot be called separately anymore.
+
+##### `session`
+
+`_M.textadept.session.prompt_load()` and `_M.textadept.session.prompt_save()`
+functionality has been moved into [`_M.textadept.session.load()`][] and
+[`_M.textadept.session.save()`][]. Therefore, replace all instances of
+`prompt_load` and `prompt_save` with `load` and `save` respectively.
+
+##### `gtkmenu`
+
+`gui.gtkmenu()` was renamed to `gui.menu()`. Therefore, replace all instances of
+`gui.gtkmenu` with `gui.menu`.
+
 ### Textadept 4 to 5
 
 Lua has been upgraded from [5.1 to 5.2][], so many scripts written for Textadept

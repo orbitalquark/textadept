@@ -260,11 +260,11 @@ events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
-local SETLEXERLANGUAGE = _SCINTILLA.functions.set_lexer_language[1]
+local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 local function set_properties()
   local buffer = buffer
   -- Lexer.
-  buffer:set_lexer_language('lpeg')
+  buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, 'container')
@@ -331,7 +331,7 @@ end)
 
 local string_format = string.format
 local EOLs = { _L['CRLF'], _L['CR'], _L['LF'] }
-local GETLEXERLANGUAGE = _SCINTILLA.functions.get_lexer_language[1]
+local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- Sets docstatusbar text.
 events_connect(events.UPDATE_UI, function()
   local buffer = buffer

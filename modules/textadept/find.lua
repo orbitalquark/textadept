@@ -58,7 +58,7 @@ find.replace_button_text = not NCURSES and _L['_Replace'] or _L['[Replace]']
 find.replace_all_button_text = not NCURSES and _L['Replace _All'] or _L['[All]']
 find.match_case_label_text = not NCURSES and _L['_Match case'] or _L['Case(F1)']
 find.whole_word_label_text = not NCURSES and _L['_Whole word'] or _L['Word(F2)']
-find.lua_pattern_label_text = not NCURSES and _L['_Lua pattern'] or 
+find.lua_pattern_label_text = not NCURSES and _L['_Lua pattern'] or
                               _L['Pattern(F3)']
 find.in_files_label_text = not NCURSES and _L['_In files'] or _L['Files(F4)']
 
@@ -362,7 +362,7 @@ local function goto_file(pos, line_num)
     local file, file_line_num = line:match('^(.+):(%d+):.+$')
     if file and file_line_num then
       buffer:marker_delete_all(MARK_FIND)
-      buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR)
+      buffer.marker_back[MARK_FIND] = MARK_FIND_COLOR
       buffer:marker_add(line_num, MARK_FIND)
       buffer:goto_pos(buffer.current_pos)
       gui.goto_file(file, true, preferred_view)
@@ -404,9 +404,9 @@ function find.goto_file_in_list(next)
   end
 end
 
-if buffer then buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR) end
+if buffer then buffer.marker_back[MARK_FIND] = MARK_FIND_COLOR end
 events_connect(events.VIEW_NEW, function()
-  buffer:marker_set_back(MARK_FIND, MARK_FIND_COLOR)
+  buffer.marker_back[MARK_FIND] = MARK_FIND_COLOR
 end)
 
 --[[ The functions below are Lua C functions.
