@@ -46,19 +46,6 @@ _M = {} -- modules table
 --   If Textadept is running in the terminal, this flag is `true`.
 module('_G')]]
 
----
--- Calls `dofile()` on the given filename in the user's Textadept directory.
--- Errors are printed to the Textadept message buffer.
--- @param filename The name of the file (not path).
--- @return `true` if successful; `false` otherwise.
--- @see dofile
-function user_dofile(filename)
-  if not lfs.attributes(_USERHOME..'/'..filename) then return false end
-  local ok, err = pcall(dofile, _USERHOME..'/'..filename)
-  if not ok then gui.print(err) end
-  return ok
-end
-
 --[[ The tables below were defined in C.
 
 ---

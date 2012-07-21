@@ -174,10 +174,11 @@ events_connect(RUN_OUTPUT, print_output)
 M.error_detail = {}
 
 ---
--- When the user double-clicks an error message, go to the line in the file
--- the error occured at and display a calltip with the error message.
+-- Goes to the line in the file an error occured at and displays a calltip with
+-- the error message.
+-- This is typically called when the user double-clicks an error message,
 -- @param pos The position of the caret.
--- @param line_num The line double-clicked.
+-- @param line_num The line the error occurs on.
 -- @see error_detail
 function goto_error(pos, line_num)
   if buffer._type ~= _L['[Message Buffer]'] and

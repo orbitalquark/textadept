@@ -177,8 +177,8 @@ keys[not OSX and 'cs' or 'ms'] = buffer.save
 keys[not OSX and (not NCURSES and 'cS' or 'cms') or 'mS'] = buffer.save_as
 keys[not OSX and 'cw' or 'mw'] = buffer.close
 keys[not OSX and (not NCURSES and 'cW' or 'cmw') or 'mW'] = io.close_all
--- TODO: m_textadept.sessions.prompt_load
--- TODO: m_textadept.sessions.prompt_save
+-- TODO: m_textadept.sessions.load
+-- TODO: m_textadept.sessions.save
 keys[not OSX and 'cq' or 'mq'] = quit
 
 -- Edit.

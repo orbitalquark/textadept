@@ -156,6 +156,33 @@ events_connect(events.AUTO_C_SELECTION, function(text, position)
   buffer:auto_c_cancel() -- tell Scintilla not to handle autocompletion normally
 end)
 
+-- Prepares the buffer for saving to a file.
+events_connect(events.FILE_BEFORE_SAVE, function()
+  if not M.STRIP_WHITESPACE_ON_SAVE then return end
+  local buffer = buffer
+  buffer:begin_undo_action()
+  -- Strip trailing whitespace.
+  local line_end_position, char_at = buffer.line_end_position, buffer.char_at
+  local lines = buffer.line_count
+  for line = 0, lines - 1 do
+    local s, e = buffer:position_from_line(line), line_end_position[line]
+    local i, c = e - 1, char_at[e - 1]
+    while i >= s and c == 9 or c == 32 do i, c = i - 1, char_at[i - 1] end
+    if i < e - 1 then
+      buffer.target_start, buffer.target_end = i + 1, e
+      buffer:replace_target('')
+    end
+  end
+  -- Ensure ending newline.
+  local e = buffer:position_from_line(lines)
+  if lines == 1 or lines > 1 and e > buffer:position_from_line(lines - 1) then
+    buffer:insert_text(e, '\n')
+  end
+  -- Convert non-consistent EOLs
+  buffer:convert_eo_ls(buffer.eol_mode)
+  buffer:end_undo_action()
+end)
+
 ---
 -- Goes to a matching brace position, selecting the text inside if specified to.
 -- @param select If `true`, selects the text between matching braces.
@@ -281,39 +308,6 @@ function M.goto_line(line)
   buffer:ensure_visible_enforce_policy(line - 1)
   buffer:goto_line(line - 1)
 end
-
----
--- Prepares the buffer for saving to a file.
--- Strips trailing whitespace off of every line if `STRIP_WHITESPACE_ON_SAVE` is
--- `true`, ensures an ending newline, and converts non-consistent EOLs.
--- @see STRIP_WHITESPACE_ON_SAVE
--- @name prepare_for_save
-function M.prepare_for_save()
-  if not M.STRIP_WHITESPACE_ON_SAVE then return end
-  local buffer = buffer
-  buffer:begin_undo_action()
-  -- Strip trailing whitespace.
-  local line_end_position, char_at = buffer.line_end_position, buffer.char_at
-  local lines = buffer.line_count
-  for line = 0, lines - 1 do
-    local s, e = buffer:position_from_line(line), line_end_position[line]
-    local i, c = e - 1, char_at[e - 1]
-    while i >= s and c == 9 or c == 32 do i, c = i - 1, char_at[i - 1] end
-    if i < e - 1 then
-      buffer.target_start, buffer.target_end = i + 1, e
-      buffer:replace_target('')
-    end
-  end
-  -- Ensure ending newline.
-  local e = buffer:position_from_line(lines)
-  if lines == 1 or lines > 1 and e > buffer:position_from_line(lines - 1) then
-    buffer:insert_text(e, '\n')
-  end
-  -- Convert non-consistent EOLs
-  buffer:convert_eo_ls(buffer.eol_mode)
-  buffer:end_undo_action()
-end
-events_connect(events.FILE_BEFORE_SAVE, M.prepare_for_save)
 
 ---
 -- Transposes characters intelligently.

@@ -7,6 +7,8 @@ package.path = table.concat({
   package.path
 }, ';');
 
-if not user_dofile('init.lua') then require 'textadept' end
+local user_init, exists = _USERHOME..'/init.lua', lfs.attributes
+local ok, err = pcall(dofile, user_init)
+if ok or not exists(user_init) then require 'textadept' else gui.print(err) end
 
 if not RESETTING then args.process(arg) end
