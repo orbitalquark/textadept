@@ -503,7 +503,7 @@ local NCURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
 local function set_highlight_properties()
   local buffer = buffer
   if NCURSES then buffer:marker_define(MARK_HIGHLIGHT, NCURSES_MARK) end
-  buffer:marker_set_back(MARK_HIGHLIGHT, M.MARK_HIGHLIGHT_BACK)
+  buffer.marker_back[MARK_HIGHLIGHT] = M.MARK_HIGHLIGHT_BACK
   buffer.indic_fore[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_BACK
   buffer.indic_style[INDIC_HIGHLIGHT] = _SCINTILLA.constants.INDIC_ROUNDBOX
   buffer.indic_alpha[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_ALPHA

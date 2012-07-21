@@ -38,6 +38,8 @@
 --   overlap styles set by lexers (or margins if margins offset is `256`). Each
 --   style number set with `buffer.annotation_style` has the offset added before
 --   looking up the style.
+-- @field annotation_text (table)
+--   Table of annotation text for lines starting from zero.
 -- @field annotation_visible (number)
 --   The visibility of annotations.
 --
@@ -70,6 +72,10 @@
 -- @field auto_c_choose_single (bool)
 --   Whether a single item auto-completion list automatically choose the item.
 --   The default is to display the list even if there is only a single item.
+-- @field auto_c_current (number, Read-only)
+--   The currently selected item position in the auto-completion list.
+-- @field auto_c_current_text (string, Read-only)
+--   The currently selected item text in the auto-completion list.
 -- @field auto_c_drop_rest_of_word (bool)
 --   Whether or not autocompletion deletes any word characters after the
 --   inserted text upon completion.
@@ -246,6 +252,18 @@
 --   The internal focus flag.
 -- @field fold_expanded (bool)
 --   Expanded state of a header line.
+-- @field fold_flags (number)
+--   The style options for folding.
+--   Bits set in flags determine where folding lines are drawn:
+--
+--   * `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_EXPANDED` (2)
+--     Draw above if expanded.
+--   * `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_CONTRACTED` (4)
+--     Draw above if not expanded.
+--   * `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_EXPANDED` (8)
+--     Draw below if expanded.
+--   * `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_CONTRACTED` (16)
+--     Draw below if not expanded.
 -- @field fold_level (table)
 --   Table of fold levels for lines starting from zero.
 --   Fold levels encodes an integer level along with flags indicating whether
@@ -390,6 +408,8 @@
 --   The number of bytes in the document.
 -- @field lexer (number)
 --   The lexing language of the document.
+-- @field lexer_language (string)
+--   The name of the lexer.
 -- @field line_count (number, Read-only)
 --   The number of lines in the document.
 --   There is always at least one.
@@ -459,6 +479,8 @@
 --   margin styles to be numbered from `256` upto `511` so they do not overlap
 --   styles set by lexers. Each style number set with `buffer.margin_style` has
 --   the offset added before looking up the style.
+-- @field margin_text (table)
+--   Table of text in the text margin for lines starting from zero.
 -- @field margin_type_n (table)
 --   Table of margin types for margins from zero to four.
 --
@@ -478,6 +500,24 @@
 --     A right justified text margin.
 -- @field margin_width_n (table)
 --   Table of margin widths expressed in pixes for margins from zero to four.
+-- @field marker_alpha (table, Write-only)
+--   Table of alpha values used for markers that are drawn in the text area, not
+--   the margin.
+--   Markers are numbers in the range of `0` to `31`. Alpha values are between
+--   `0` (transparent) and `255` (opaque), or `256` for no alpha.
+-- @field marker_back (table, Write-only)
+--   Table of the background colors used for particular marker numbers.
+--   Marker numbers are in the range of `0` to `31`. Colors are in `0xBBGGRR`
+--   format.
+-- @field marker_back_selected (table, Write-only)
+--   Table of the background colors used for particular marker numbers when
+--   their folding blocks are selected.
+--   Marker numbers are in the range of `0` to `31`. Colors are in `0xBBGGRR`
+--   format. The default color is `#FF0000`.
+-- @field marker_fore (table, Write-only)
+--   Table of the foreground colors used for particular marker numbers.
+--   Marker numbers are in the range of `0` to `31`. Colors are in `0xBBGGRR`
+--   format.
 -- @field max_line_state (number, Read-only)
 --   The last line number that has line state.
 -- @field modify (bool)
@@ -535,12 +575,18 @@
 --     changes although if a word is longer than a line, it will be wrapped
 --     before the line end. This is the default.
 --   * `_SCINTILLA.constants.SC_WRAP_CHAR` (2).
--- @field property (table, Write-only)
+-- @field property (table)
 --   Table of keyword:value string pairs used by a lexer for some optional
 --   features.
+-- @field property_expanded (table)
+--   Table of keyword:value string pairs used by a lexer for some optional
+--   features with `$()` variable replacement on returned string.
 -- @field property_int (table, Read-only)
 --   Interprets `buffer.property[keyword]` as an integer if found or returns
 --   `0`.
+-- @field punctuation_chars (string)
+--   The set of characters making up punctuation characters.
+--   Use after setting `buffer.word_chars`.
 -- @field read_only (bool)
 --   Read-only mode.
 -- @field rectangular_selection_anchor (number)
@@ -711,6 +757,8 @@
 -- @field tab_width (number)
 --   The visible size of a tab as a multiple of the width of a space character.
 --   The default tab width is 8 characters.
+-- @field tag (table)
+--   Table of values of tags from a regular expression search.
 -- @field target_end (number)
 --   The position that ends the target which is used for updating the document
 --   without affecting the scroll position.
@@ -760,10 +808,14 @@
 --     Enabled only for rectangular selections.
 --   * `_SCINTILLA.constants.SCVS_USERACCESSIBLE` (2)
 --     Enabled.
--- @field whitespace_chars (string, Write-only)
+-- @field whitespace_chars (string)
 --   The set of characters making up whitespace for when moving or selecting by
 --   word.
 --   Use after setting `buffer.word_chars`.
+-- @field whitespace_size (number)
+--   The size of the dots used to mark space characters.
+-- @field word_chars (string)
+--   The set of characters making up words when moving or selecting by word.
 -- @field wrap_indent_mode (number)
 --   How wrapped sublines are placed.
 --   Default is fixed.
@@ -776,10 +828,6 @@
 --   * `_SCINTILLA.constants.SC_WRAP_INDENT_INDENT` (2)
 --     Wrapped sublines are aligned to first subline indent plus one more level
 --     of indentation.
--- @field whitespace_size (number)
---   The size of the dots used to mark space characters.
--- @field word_chars (string)
---   The set of characters making up words when moving or selecting by word.
 -- @field wrap_mode (number)
 --   Text word wrap mode.
 --
@@ -851,20 +899,6 @@ function buffer.allocate(buffer, bytes) end
 function buffer.annotation_clear_all(buffer) end
 
 ---
--- Get the annotation text for a line.
--- @param buffer The global buffer.
--- @param line The line number.
--- @return string
-function buffer.annotation_get_text(buffer, line) end
-
----
--- Set the annotation text for a line.
--- @param buffer The global buffer.
--- @param line The line number.
--- @param text The text.
-function buffer.annotation_set_text(buffer, line, text) end
-
----
 -- Append a string to the end of the document without changing the selection.
 -- The current selection is not changed and the new text is not scrolled into
 -- view.
@@ -890,18 +924,6 @@ function buffer.auto_c_cancel(buffer) end
 -- This has the same effect as the tab key.
 -- @param buffer The global buffer.
 function buffer.auto_c_complete(buffer) end
-
----
--- Get currently selected item position in the auto-completion list.
--- @param buffer The global buffer.
--- @return number
-function buffer.auto_c_get_current(buffer) end
-
----
--- Get currently selected item text in the auto-completion list.
--- @param buffer The global buffer.
--- @return string
-function buffer.auto_c_get_current_text(buffer) end
 
 ---
 -- Retrieve the position of the caret when the auto-completion list was
@@ -1354,11 +1376,6 @@ function buffer.get_hotspot_active_fore(buffer) end
 function buffer.get_last_child(buffer, header_line, level) end
 
 ---
--- Retrieve the name of the lexer.
--- @param buffer The global buffer.
-function buffer.get_lexer_language(buffer) end
-
----
 -- Retrieve the contents of a line.
 -- Also returns the length of the line.
 -- @param buffer The global buffer.
@@ -1381,21 +1398,6 @@ function buffer.get_line_sel_end_position(buffer, line) end
 function buffer.get_line_sel_start_position(buffer, line) end
 
 ---
--- Retrieve a `property` value previously set with `buffer.property`.
--- @param buffer The global buffer.
--- @param key Keyword.
--- @return string
-function buffer.get_property(buffer, key) end
-
----
--- Retrieve a `property` value previously set with `buffer.property`, with `$()`
--- variable replacement on returned buffer.
--- @param buffer The global buffer.
--- @param key Keyword.
--- @return string
-function buffer.get_property_expanded(buffer, key) end
-
----
 -- Return a read-only pointer to a range of characters in the document.
 -- May move the gap so that the range is contiguous, but will only move up to
 -- range_length bytes.
@@ -1410,13 +1412,6 @@ function buffer.get_range_pointer(buffer, position, range_length) end
 -- @param buffer The global buffer.
 -- @return string, number
 function buffer.get_sel_text(buffer) end
-
----
--- Retrieve the value of a tag from a regular expression search.
--- @param buffer The global buffer.
--- @param tag_num The tag number.
--- @return string
-function buffer.get_tag(buffer, tag_num) end
 
 ---
 -- Retrieve all the text in the document.
@@ -1700,20 +1695,6 @@ function buffer.lines_split(buffer, pixel_width) end
 function buffer.lower_case(buffer) end
 
 ---
--- Get the text in the text margin for a line.
--- @param buffer The global buffer.
--- @param line The line number.
--- @return string
-function buffer.margin_get_text(buffer, line) end
-
----
--- Set the text in the text margin for a line.
--- @param buffer The global buffer.
--- @param line The line number.
--- @param text The text.
-function buffer.margin_set_text(buffer, line, text) end
-
----
 -- Clear the margin text on all lines.
 -- @param buffer The global buffer.
 function buffer.margin_text_clear_all(buffer) end
@@ -1828,37 +1809,6 @@ function buffer.marker_next(buffer, start_line, marker_mask) end
 --   1 for marker 1 and so on.
 -- @return number
 function buffer.marker_previous(buffer, start_line, marker_mask) end
-
----
--- Set the alpha used for a marker that is drawn in the text area, not the
--- margin.
--- @param buffer The global buffer.
--- @param marker_num A marker number in the range of `0` to `31`.
--- @param alpha An alpha value between `0` (transparent) and `255` (opaque), or
---   `256` for no alpha.
-function buffer.marker_set_alpha(buffer, marker_num, alpha) end
-
----
--- Set the background color used for a particular marker number.
--- @param buffer The global buffer.
--- @param marker_num A marker number in the range of `0` to `31`.
--- @param color A color in `0xBBGGRR` format.
-function buffer.marker_set_back(buffer, marker_num, color) end
-
----
--- Set the background color used for a particular marker number when its
--- folding block is selected.
--- @param buffer The global buffer.
--- @param marker_num A marker number in the range of `0` to `31`.
--- @param color A color in `0xBBGGRR` format. The default color is `#FF0000`.
-function buffer.marker_set_back_selected(buffer, marker_num, color) end
-
----
--- Set the foreground color used for a particular marker number.
--- @param buffer The global buffer.
--- @param marker_num A marker number in the range of `0` to `31`.
--- @param color A color in `0xBBGGRR` format.
-function buffer.marker_set_fore(buffer, marker_num, color) end
 
 ---
 -- Return the symbol defined for marker_num with `buffer:marker_define()`.
@@ -2156,18 +2106,6 @@ function buffer.set_chars_default(buffer) end
 function buffer.set_empty_selection(buffer, pos) end
 
 ---
--- Set some style options for folding.
--- @param buffer The global buffer.
--- @param flags Mask of fold flags. Flags available are
---   `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_EXPANDED` (2): Draw above if
---   expanded; `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_CONTRACTED` (4):
---   Draw above if not expanded;
---   `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_EXPANDED` (8): Draw below if
---   expanded; `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_CONTRACTED` (16):
---   Draw below if not expanded
-function buffer.set_fold_flags(buffer, flags) end
-
----
 -- Set the colors used as a chequerboard pattern in the fold margin.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
@@ -2200,12 +2138,6 @@ function buffer.set_hotspot_active_fore(buffer, use_setting, color) end
 -- @param buffer The global buffer.
 -- @param bytes Bytes or `-1` for measuring to first NUL.
 function buffer.set_length_for_encode(buffer, bytes) end
-
----
--- Set the lexing language of the document based on string name.
--- @param buffer The global buffer.
--- @param language_name The language name.
-function buffer.set_lexer_language(buffer, language_name) end
 
 ---
 -- Remember the current position in the undo history as the position at which
@@ -2285,7 +2217,7 @@ function buffer.set_whitespace_back(buffer, use_setting, color) end
 function buffer.set_whitespace_fore(buffer, use_setting, color) end
 
 ---
--- Set the way the caret is kept visible when going sideway.
+-- Set the way the caret is kept visible when going sideways.
 -- The exclusion zone is given in pixels.
 -- @param buffer The global buffer.
 -- @param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`
@@ -2359,13 +2291,6 @@ function buffer.stuttered_page_up_extend(buffer) end
 -- Clear all the styles and make equivalent to the global default style.
 -- @param buffer The global buffer.
 function buffer.style_clear_all(buffer) end
-
----
--- Returns the font name of a given style.
--- @param buffer The global buffer.
--- @param style_num The style number.
--- @return string
-function buffer.style_get_font(buffer, style_num) end
 
 ---
 -- Reset the default style to its state at startup.
@@ -2655,7 +2580,7 @@ function buffer.save_as(buffer, utf8_filename) end
 function buffer.close(buffer) end
 
 ---
--- Replacement for `buffer.set_lexer_language(buffer)`.
+-- Replacement for `buffer.lexer_language =`.
 -- Sets a `buffer._lexer` field so it can be restored without querying the
 -- mime-types tables. Also if the user manually sets the lexer, it should be
 -- restored.
@@ -2667,7 +2592,7 @@ function buffer.close(buffer) end
 function buffer.set_lexer(buffer, lang) end
 
 ---
--- Replacement for `buffer.get_lexer_language(buffer)`.
+-- Replacement for `buffer.lexer_language`.
 -- @param buffer The global buffer.
 -- @param current Whether to get the lexer at the current caret position in
 --   multi-language lexers. The default is `false` and returns the parent lexer.

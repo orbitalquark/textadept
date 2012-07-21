@@ -139,7 +139,7 @@ events.connect(events.FILE_AFTER_SAVE, function()
   if f then return end
   local line, msg = err:match('^.-:(%d+):%s*(.+)$')
   if line then
-    buffer:annotation_set_text(line - 1, msg)
+    buffer.annotation_text[line - 1] = msg
     buffer.annotation_style[line - 1] = 8 -- error style number
     buffer:goto_line(line - 1)
   end

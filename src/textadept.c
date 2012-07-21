@@ -881,7 +881,7 @@ static int lgui_menu(lua_State *L) {
 #if GTK
   l_pushmenu(L, -1, G_CALLBACK(m_clicked), FALSE);
 #elif NCURSES
-  // TODO: create menu and manage memory.
+  luaL_error(L, "not implemented in this environment");
 #endif
   return 1;
 }
@@ -1247,8 +1247,9 @@ static int lbuf_property(lua_State *L) {
     int wtype = l_rawgetiint(L, -1, !newindex ? 4 : 3);
     int ltype = !newindex ? tVOID : l_rawgetiint(L, -1, 4);
     int rtype = !newindex ? l_rawgetiint(L, -1, 3) : tVOID;
-    if (newindex && (ltype != tVOID || wtype == tSTRING)) {
-      int temp = wtype;
+    if (newindex &&
+        (ltype != tVOID || wtype == tSTRING || wtype == tSTRINGRESULT)) {
+      int temp = (wtype != tSTRINGRESULT) ? wtype : tSTRING;
       wtype = ltype, ltype = temp;
     }
     luaL_argcheck(L, msg != 0, !newindex ? 2 : 3,

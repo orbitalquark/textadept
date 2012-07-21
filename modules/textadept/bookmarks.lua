@@ -90,13 +90,12 @@ function M.goto_bookmark()
 end
 
 local NCURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
-if buffer then
+-- Sets view properties for bookmark markers.
+local function set_bookmark_properties()
   if NCURSES then buffer:marker_define(MARK_BOOKMARK, NCURSES_MARK) end
-  buffer:marker_set_back(MARK_BOOKMARK, M.MARK_BOOKMARK_COLOR)
+  buffer.marker_back[MARK_BOOKMARK] = M.MARK_BOOKMARK_COLOR
 end
-events.connect(events.VIEW_NEW, function()
-  if NCURSES then buffer:marker_define(MARK_BOOKMARK, NCURSES_MARK) end
-  buffer:marker_set_back(MARK_BOOKMARK, M.MARK_BOOKMARK_COLOR)
-end)
+if buffer then set_bookmark_properties() end
+events.connect(events.VIEW_NEW, set_bookmark_properties)
 
 return M

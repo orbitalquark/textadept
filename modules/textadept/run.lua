@@ -113,7 +113,7 @@ local function print_output(lexer, output)
     local filename = _VIEWS[i].buffer.filename
     if filename and filename:find(error_details.filename..'$') then
       gui.goto_view(i)
-      buffer:annotation_set_text(error_details.line - 1, error_details.message)
+      buffer.annotation_text[error_details.line - 1] = error_details.message
       buffer.annotation_style[error_details.line - 1] = 8 -- error_details
       return
     end
@@ -191,7 +191,7 @@ function goto_error(pos, line_num)
   local line, message = error_details.line, error_details.message
   buffer:goto_line(line - 1)
   if message then
-    buffer:annotation_set_text(line - 1, message)
+    buffer.annotation_text[line - 1] = message
     buffer.annotation_style[line - 1] = 8 -- error
   end
 end

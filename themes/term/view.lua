@@ -100,7 +100,7 @@ buffer.auto_c_choose_single = true
 buffer.call_tip_use_style = 0
 
 -- Folding.
---buffer:set_fold_flags(16)
+--buffer.fold_flags = 16
 
 -- Line Wrapping.
 --buffer.wrap_mode = 1
