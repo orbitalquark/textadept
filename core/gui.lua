@@ -424,7 +424,7 @@ events_connect(events.ERROR,
 --[[ The tables below were defined in C.
 
 ---
--- A table of GTK menus defining a menubar. (Write-only)
+-- A table of menus defining a menubar. (Write-only)
 -- @class table
 -- @name menubar
 local menubar
@@ -442,6 +442,7 @@ The functions below are Lua C functions.
 -- Each argument is like a string in Lua's `arg` table. Tables of strings are
 -- allowed as arguments and are expanded in place. This is useful for
 -- filteredlist dialogs with many items.
+-- For more information on gtdialog, see http://foicica.com/gtdialog.
 -- @param kind The kind of gtdialog.
 -- @param ... Parameters to the gtdialog.
 -- @return string gtdialog result.

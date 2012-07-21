@@ -24,16 +24,26 @@ M.MAX_RECENT_FILES = 10
 ---
 -- Loads a Textadept session file.
 -- Textadept restores split views, opened buffers, cursor information, and
--- project manager details.
--- @param filename The absolute path to the session file to load. The default
---   value is `DEFAULT_SESSION`.
+-- recent files.
+-- @param filename The absolute path to the session file to load. If `nil`, the
+--   user is prompted for one.
 -- @return `true` if the session file was opened and read; `false` otherwise.
 -- @usage _M.textadept.session.load(filename)
 -- @see DEFAULT_SESSION
 -- @name load
 function M.load(filename)
+  filename = filename or gui.dialog('fileselect',
+                                    '--title', _L['Load Session'],
+                                    '--button1', _L['_Open'],
+                                    '--button2', _L['_Cancel'],
+                                    '--with-directory',
+                                    M.DEFAULT_SESSION:match('.+[/\\]') or '',
+                                    '--with-file',
+                                    M.DEFAULT_SESSION:match('[^/\\]+$') or '',
+                                    '--no-newline'):iconv(_CHARSET, 'UTF-8')
+  if filename == '' then return end
   local not_found = {}
-  local f = io.open(filename or M.DEFAULT_SESSION, 'rb')
+  local f = io.open(filename, 'rb')
   if not f then io.close_all() return false end
   local current_view, splits = 1, { [0] = {} }
   local lfs_attributes = lfs.attributes
@@ -101,18 +111,29 @@ function M.load(filename)
   return true
 end
 -- Load session when no args are present.
-events.connect('arg_none', function() if M.SAVE_ON_QUIT then M.load() end end)
+events.connect('arg_none', function()
+  if M.SAVE_ON_QUIT then M.load(M.DEFAULT_SESSION) end
+end)
 
 ---
 -- Saves a Textadept session to a file.
--- Saves split views, opened buffers, cursor information, and project manager
--- details.
--- @param filename The absolute path to the session file to save. The default
---   value is either the current session file or `DEFAULT_SESSION`.
+-- Saves split views, opened buffers, cursor information, and recent files.
+-- @param filename The absolute path to the session file to save. If `nil`, the
+--   user is prompted for one.
 -- @usage _M.textadept.session.save(filename)
 -- @see DEFAULT_SESSION
 -- @name save
 function M.save(filename)
+  filename = filename or gui.dialog('filesave',
+                                    '--title', _L['Save Session'],
+                                    '--button1', _L['_Save'],
+                                    '--button2', _L['_Cancel'],
+                                    '--with-directory',
+                                    M.DEFAULT_SESSION:match('.+[/\\]') or '',
+                                    '--with-file',
+                                    M.DEFAULT_SESSION:match('[^/\\]+$') or '',
+                                    '--no-newline'):iconv(_CHARSET, 'UTF-8')
+  if filename == '' then return end
   local session = {}
   local buffer_line = "buffer: %d %d %d %s" -- anchor, cursor, line, filename
   local split_line = "%ssplit%d: %s %d" -- level, number, type, size
@@ -165,47 +186,16 @@ function M.save(filename)
     session[#session + 1] = ("recent: %s"):format(filename)
   end
   -- Write the session.
-  local f = io.open(filename or M.DEFAULT_SESSION, 'wb')
+  local f = io.open(filename, 'wb')
   if f then
     f:write(table.concat(session, '\n'))
     f:close()
   end
 end
-
----
--- Prompts the user for a Textadept session to load.
--- @name prompt_load
-function M.prompt_load()
-  local utf8_filename = gui.dialog('fileselect',
-                                   '--title', _L['Load Session'],
-                                   '--button1', _L['_Open'],
-                                   '--button2', _L['_Cancel'],
-                                   '--with-directory',
-                                   M.DEFAULT_SESSION:match('.+[/\\]') or '',
-                                   '--with-file',
-                                   M.DEFAULT_SESSION:match('[^/\\]+$') or '',
-                                   '--no-newline')
-  if #utf8_filename > 0 then M.load(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
-end
-
----
--- Prompts the user to save the current Textadept session to a file.
--- @name prompt_save
-function M.prompt_save()
-  local utf8_filename = gui.dialog('filesave',
-                                   '--title', _L['Save Session'],
-                                   '--button1', _L['_Save'],
-                                   '--button2', _L['_Cancel'],
-                                   '--with-directory',
-                                   M.DEFAULT_SESSION:match('.+[/\\]') or '',
-                                   '--with-file',
-                                   M.DEFAULT_SESSION:match('[^/\\]+$') or '',
-                                   '--no-newline')
-  if #utf8_filename > 0 then M.save(utf8_filename:iconv(_CHARSET, 'UTF-8')) end
-end
-
-events.connect(events.QUIT,
-               function() if M.SAVE_ON_QUIT then M.save() end end, 1)
+-- Save session on quit.
+events.connect(events.QUIT, function()
+  if M.SAVE_ON_QUIT then M.save(M.DEFAULT_SESSION) end
+end, 1)
 
 local function no_session() M.SAVE_ON_QUIT = false end
 args.register('-n', '--nosession', 0, no_session, 'No session functionality')

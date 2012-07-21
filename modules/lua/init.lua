@@ -13,8 +13,6 @@ local M = {}
 --
 -- + `Ctrl+L, M` (`⌘L, M` on Mac OSX)
 --   Open this module for editing.
--- + `Ctrl+L, G` (`⌘L, G`)
---   Goto file being 'require'd on the current line.
 -- + `Shift+Return` (`⇧↩`)
 --   Try to autocomplete an `if`, `for`, etc. statement with `end`.
 -- + `.`
@@ -131,24 +129,6 @@ function M.try_to_autocomplete_end()
   return false
 end
 
----
--- Determines the Lua file being 'require'd, searches through package.path for
--- that file, and opens it in Textadept.
--- @name goto_required
-function M.goto_required()
-  local line = buffer:get_cur_line()
-  local patterns = { 'require%s*(%b())', 'require%s*(([\'"])[^%2]+%2)' }
-  local file
-  for _, patt in ipairs(patterns) do
-    file = line:match(patt)
-    if file then break end
-  end
-  if not file then return end
-  file = package.searchpath(file:sub(2, -2):iconv('UTF-8', _CHARSET),
-                            package.path)
-  if file then io.open_file(file) end
-end
-
 -- Show syntax errors as annotations.
 events.connect(events.FILE_AFTER_SAVE, function()
   if buffer:get_lexer() ~= 'lua' then return end
@@ -173,7 +153,6 @@ keys.lua = {
   [keys.LANGUAGE_MODULE_PREFIX] = {
     m = { io.open_file,
           (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET) },
-    g = M.goto_required,
   },
   ['s\n'] = M.try_to_autocomplete_end,
 }
