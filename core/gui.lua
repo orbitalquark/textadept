@@ -442,7 +442,8 @@ The functions below are Lua C functions.
 -- Each argument is like a string in Lua's `arg` table. Tables of strings are
 -- allowed as arguments and are expanded in place. This is useful for
 -- filteredlist dialogs with many items.
--- For more information on gtdialog, see http://foicica.com/gtdialog.
+-- For more information on gtdialog, see [http://foicica.com/gtdialog](
+-- http://foicica.com/gtdialog).
 -- @param kind The kind of gtdialog.
 -- @param ... Parameters to the gtdialog.
 -- @return string gtdialog result.
