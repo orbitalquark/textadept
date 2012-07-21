@@ -279,8 +279,8 @@ keys[not OSX and (not NCURSES and 'c|' or 'c\\')
              or 'm|'] = m_textadept.filter_through.filter_through
 -- Adeptsense.
 keys[not OSX and (not NCURSES and 'c ' or 'c@')
-             or 'aesc'] = m_textadept.adeptsense.complete_symbol
-keys[not NCURSES and 'ch' or 'mh'] = m_textadept.adeptsense.show_documentation
+             or 'aesc'] = m_textadept.adeptsense.complete
+keys[not NCURSES and 'ch' or 'mh'] = m_textadept.adeptsense.show_apidoc
 if NCURSES then keys.mH = keys.mh end -- in case mh is used by GUI terminals
 -- Snippets.
 keys[not OSX and (not NCURSES and 'ck' or 'mk') or 'a\t'] = m_snippets._select

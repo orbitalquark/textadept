@@ -552,7 +552,8 @@ end
 
 ---
 -- Shows an autocompletion list for the symbol behind the caret.
--- @param sense The Adeptsense returned by `adeptsense.new()`.
+-- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
+--   the current language's Adeptsense (if it exists).
 -- @param only_fields If `true`, returns list of only fields. The default value
 --   is `false`.
 -- @param only_functions If `true`, returns list of only functions. The default
@@ -563,6 +564,8 @@ end
 -- @name complete
 function M.complete(sense, only_fields, only_functions)
   local buffer = buffer
+  sense = sense or (_M[buffer:get_lexer(true)] or {}).sense
+  if not sense then return end
   local symbol, part = sense:get_symbol()
   local completions = sense:get_completions(symbol, only_fields, only_functions)
   if not completions then return false end
@@ -642,15 +645,21 @@ function M.get_apidoc(sense, symbol)
   return apidocs
 end
 
+local apidocs = nil
 ---
 -- Shows a calltip with API documentation for the symbol behind the caret.
--- @param sense The Adeptsense returned by `adeptsense.new()`.
+-- If documentation is already being shown, cycles through multiple definitions.
+-- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
+--   the current language's Adeptsense (if it exists).
 -- @return list of api docs on success or `nil`.
 -- @see get_symbol
 -- @see get_apidoc
 -- @name show_apidoc
 function M.show_apidoc(sense)
   local buffer = buffer
+  if buffer:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
+  sense = sense or (_M[buffer:get_lexer(true)] or {}).sense
+  if not sense then return end
   local symbol
   local s, e = buffer.selection_start, buffer.selection_end
   if s == e then
@@ -663,7 +672,7 @@ function M.show_apidoc(sense)
   else
     symbol = buffer:text_range(s, e)
   end
-  local apidocs = sense:get_apidoc(symbol)
+  apidocs = sense:get_apidoc(symbol)
   if not apidocs then return nil end
   for i, doc in ipairs(apidocs) do
     doc = doc:gsub('\\\\', '%%esc%%'):gsub('\\n', '\n'):gsub('%%esc%%', '\\')
@@ -676,6 +685,15 @@ function M.show_apidoc(sense)
   buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos or 1])
   return apidocs
 end
+
+-- Cycle through apidoc calltips.
+events.connect(events.CALL_TIP_CLICK, function(position)
+  if not apidocs then return end
+  apidocs.pos = apidocs.pos + (position == 1 and -1 or 1)
+  if apidocs.pos > #apidocs then apidocs.pos = 1 end
+  if apidocs.pos < 1 then apidocs.pos = #apidocs end
+  buffer:call_tip_show(buffer.current_pos, apidocs[apidocs.pos])
+end)
 
 ---
 -- Loads the given ctags file for autocompletion.
@@ -953,40 +971,5 @@ syntax = {
   senses[lang] = sense
   return sense
 end
-
----
--- Completes the symbol at the current position based on the current lexer's
--- Adeptsense.
--- This should be called by key commands and menus instead of `complete()`.
--- @name complete_symbol
-function M.complete_symbol()
-  local m = _M[buffer:get_lexer(true)]
-  if m and m.sense then m.sense:complete() end
-end
-
-local shown_apidocs = nil
----
--- Shows API documentation for the symbol at the current position based on the
--- current lexer's Adeptsense.
--- If documentation is already being shown, cycles through multiple definitions.
--- This should be called by key commands and menus instead of `show_apidoc()`.
--- @name show_documentation
-function M.show_documentation()
-  if not buffer:call_tip_active() then
-    local m = _M[buffer:get_lexer(true)]
-    if m and m.sense then shown_apidocs = m.sense:show_apidoc() end
-  else
-    events.emit(events.CALL_TIP_CLICK, 1)
-  end
-end
-
--- Cycle through apidoc calltips.
-events.connect(events.CALL_TIP_CLICK, function(position)
-  if not shown_apidocs then return end
-  shown_apidocs.pos = shown_apidocs.pos + (position == 1 and -1 or 1)
-  if shown_apidocs.pos > #shown_apidocs then shown_apidocs.pos = 1 end
-  if shown_apidocs.pos < 1 then shown_apidocs.pos = #shown_apidocs end
-  buffer:call_tip_show(buffer.current_pos, shown_apidocs[shown_apidocs.pos])
-end)
 
 return M

@@ -355,12 +355,30 @@ projects re-define or define their own search paths.
 `_M.textadept.editing.prepare_for_save()` moved directly into an event handler
 and cannot be called separately anymore.
 
-##### `session`
+##### Sessions
 
 `_M.textadept.session.prompt_load()` and `_M.textadept.session.prompt_save()`
 functionality has been moved into [`_M.textadept.session.load()`][] and
 [`_M.textadept.session.save()`][]. Therefore, replace all instances of
 `prompt_load` and `prompt_save` with `load` and `save` respectively.
+
+[`_M.textadept.session.load()`]: api/_M.textadept.session.html#load
+[`_M.textadept.session.save()`]: api/_M.textadept.session.html#save
+
+##### Adeptsense
+
+`_M.textadept.adeptsense.complete_symbol()` and
+`_M.textadept.adeptsense.show_documentation()` functionality has been moved into
+[`_M.textadept.adeptsense.complete()`][] and
+[`_M.textadept.adeptsense.show_apidoc()`][]. Therefore, replace all instances
+of `complete_symbol` and `show_documentation` with `complete` and `show_apidoc`.
+
+[`_M.textadept.adeptsense.complete()`]: api/_M.textadept.adeptsense.html#complete
+[`_M.textadept.adeptsense.show_apidoc()`]: api/_M.textadept.adeptsense.html#show_apidoc
+
+##### `user_dofile`
+
+`_G.user_dofile()` was removed. Use `dofile(_USERHOME..'/file.lua')` instead.
 
 ##### `gtkmenu`
 
