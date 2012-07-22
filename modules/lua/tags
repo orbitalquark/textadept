@@ -747,6 +747,7 @@ WIN32	_	0;"	F
 _BUFFERS	_	0;"	t	
 _CHARSET	_	0;"	F	
 _EMBEDDEDRULES	_	0;"	t	class:lexer
+_EXISTS	_	0;"	f	class:_L
 _G	_	0;"	F	
 _G	_	0;"	m	
 _HOME	_	0;"	F	
@@ -776,7 +777,6 @@ _M.textadept.run	_	0;"	m
 _M.textadept.session	_	0;"	m	
 _M.textadept.snapopen	_	0;"	m	
 _M.textadept.snippets	_	0;"	m	
-_NIL	_	0;"	F	class:_L
 _RELEASE	_	0;"	F	
 _RULES	_	0;"	t	class:lexer
 _SCINTILLA	_	0;"	m	
@@ -936,7 +936,6 @@ comment_string	_	0;"	t	class:_M.textadept.editing
 compile	_	0;"	f	class:_M.textadept.run
 compile_command	_	0;"	t	class:_M.textadept.run
 complete	_	0;"	f	class:_M.textadept.adeptsense
-complete_symbol	_	0;"	f	class:_M.textadept.adeptsense
 completions	_	0;"	t	class:_M.textadept.adeptsense
 concat	_	0;"	f	class:table
 config	_	0;"	F	class:package
@@ -1114,9 +1113,6 @@ goto_line	_	0;"	f	class:buffer
 goto_next	_	0;"	f	class:_M.textadept.bookmarks
 goto_pos	_	0;"	f	class:buffer
 goto_prev	_	0;"	f	class:_M.textadept.bookmarks
-goto_required	_	0;"	f	class:_M.lua
-goto_required	_	0;"	f	class:_M.php
-goto_required	_	0;"	f	class:_M.ruby
 goto_view	_	0;"	f	class:gui
 grab_focus	_	0;"	f	class:buffer
 graph	_	0;"	F	class:lexer
@@ -1363,7 +1359,6 @@ position_from_point	_	0;"	f	class:buffer
 position_from_point_close	_	0;"	f	class:buffer
 pow	_	0;"	f	class:math
 preload	_	0;"	F	class:package
-prepare_for_save	_	0;"	f	class:_M.textadept.editing
 print	_	0;"	F	class:lexer
 print	_	0;"	f	
 print	_	0;"	f	class:gui
@@ -1372,8 +1367,6 @@ print_magnification	_	0;"	F	class:buffer
 print_wrap_mode	_	0;"	F	class:buffer
 private_lexer_call	_	0;"	f	class:buffer
 process	_	0;"	f	class:args
-prompt_load	_	0;"	f	class:_M.textadept.session
-prompt_save	_	0;"	f	class:_M.textadept.session
 properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
 property_expanded	_	0;"	F	class:buffer
@@ -1537,7 +1530,6 @@ setvbuf	_	0;"	f	class:file
 shebangs	_	0;"	t	class:_M.textadept.mime_types
 show_apidoc	_	0;"	f	class:_M.textadept.adeptsense
 show_completions	_	0;"	f	class:gui.command_entry
-show_documentation	_	0;"	f	class:_M.textadept.adeptsense
 show_lines	_	0;"	f	class:buffer
 sin	_	0;"	f	class:math
 singular	_	0;"	F	class:_M.rails
@@ -1668,7 +1660,6 @@ upvalueid	_	0;"	f	class:debug
 upvaluejoin	_	0;"	f	class:debug
 use_pop_up	_	0;"	f	class:buffer
 use_tabs	_	0;"	F	class:buffer
-user_dofile	_	0;"	f	
 user_list_show	_	0;"	f	class:buffer
 v_scroll_bar	_	0;"	F	class:buffer
 vc_home	_	0;"	f	class:buffer
