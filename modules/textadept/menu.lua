@@ -285,7 +285,7 @@ function M.set_menubar(menubar)
   end
   gui.menubar = _menubar
 end
-M.set_menubar(M.menubar)
+if not NCURSES then M.set_menubar(M.menubar) end
 
 ---
 -- Sets `gui.context_menu` from the given menu table.
@@ -297,7 +297,7 @@ function M.set_contextmenu(menu_table)
   contextmenu_actions = {}
   gui.context_menu = gui.menu(read_menu_table(menu_table, true))
 end
-M.set_contextmenu(M.context_menu)
+if not NCURSES then M.set_contextmenu(M.context_menu) end
 
 local items, commands
 
@@ -351,14 +351,16 @@ events_connect(events.MENU_CLICKED, function(menu_id)
   keys.run_command(action, type(action))
 end)
 
--- Set a language-specific context menu or the default one.
-local function set_language_contextmenu()
-  local lang = _G.buffer:get_lexer(true)
-  M.set_contextmenu(_M[lang] and _M[lang].context_menu or M.context_menu)
+if not NCURSES then
+  -- Set a language-specific context menu or the default one.
+  local function set_language_contextmenu()
+    local lang = _G.buffer:get_lexer(true)
+    M.set_contextmenu(_M[lang] and _M[lang].context_menu or M.context_menu)
+  end
+  events_connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
+  events_connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
+  events_connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
+  events_connect(events.BUFFER_NEW, set_lang_contextmenu)
 end
-events_connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
-events_connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
-events_connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
-events_connect(events.BUFFER_NEW, set_lang_contextmenu)
 
 return M
