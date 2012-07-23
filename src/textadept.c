@@ -22,14 +22,12 @@
 #endif
 #if GTK
 #include <gtk/gtk.h>
-#define PLAT_GTK 1
 #elif NCURSES
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <ncurses.h>
 #include "cdk_int.h"
-#define PLAT_TERM 1
 #endif
 
 #include "gtdialog.h"
