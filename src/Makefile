@@ -21,7 +21,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
                        --libs gtk+-2.0)
 
     luadoc = luadoc_start.bat
-  else ifeq (osx, $(MAKECMDGOALS))
+  else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
     CROSS = i686-apple-darwin10-
     CC = gcc
     CFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
@@ -33,7 +33,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
     LDFLAGS = -liconv -rdynamic
     MAKE = make
 
-    #ifneq (ncurses, $(MAKECMDGOALS))
+    ifneq (osx-ncurses, $(MAKECMDGOALS))
       plat_flag = -DGTK
       gtk_flags = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
                           pkg-config --define-variable=prefix=gtkosx \
@@ -41,10 +41,11 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       gtk_libs = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
                          pkg-config --define-variable=prefix=gtkosx \
                          --libs gtk+-2.0) -framework Cocoa -lgtkmacintegration
-    #else
-    #  plat_flag = -DNCURSES
-    #  .DEFAULT_GOAL := osx-ncurses
-    #endif
+    else
+      plat_flag = -DNCURSES
+      ncurses_lib = -lncurses
+      .DEFAULT_GOAL := osx-ncurses
+    endif
     libluajit = libluajit.osx.a
 
     luadoc = luadoc
@@ -74,6 +75,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       gtk_libs = $(shell pkg-config --libs gtk+-$(gtk_version))
     else
       plat_flag = -DNCURSES
+      ncurses_lib = -lncursesw
     endif
     libluajit = libluajit.a
 
@@ -100,6 +102,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
 #    .DEFAULT_GOAL := osx
 #  #else
 #  #  plat_flag = -DNCURSES
+#  #  ncurses_lib = -lncurses
 #  #  .DEFAULT_GOAL := osx-ncurses
 #  #endif
 #
@@ -241,11 +244,11 @@ textadeptjit: $(scintilla_objs) $(scintilla_gtk_objs) scintilla-marshal.o \
 textadept-ncurses: $(scintilla_objs) ScintillaTerm.o LexLPeg-ncurses.o \
                    textadept-ncurses.o $(lua_objs) gtdialog-ncurses.o \
                    $(termkey_objs) $(cdk_objs)
-	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ -lncursesw $(LDFLAGS)
+	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(ncurses_lib) $(LDFLAGS)
 textadeptjit-ncurses: $(scintilla_objs) ScintillaTerm.o LexLPegjit-ncurses.o \
                       textadeptjit-ncurses.o $(luajit_objs) $(libluajit) \
                       gtdialog-ncurses.o $(termkey_objs) $(cdk_objs)
-	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ -lncursesw $(LDFLAGS)
+	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(ncurses_lib) $(LDFLAGS)
 textadept32: ../textadept; mv $< ../$@
 textadeptjit32: ../textadeptjit; mv $< ../$@
 textadept32-ncurses: ../textadept-ncurses; mv $< ../$@
@@ -316,7 +319,8 @@ $(basedir).win32: ../textadept.exe ../textadeptjit.exe lua51.dll | $(basedir)
 	cp -r $| $@ && cp $^ $@
 	cp win32gtk/bin/*.dll $@ && cp -r win32gtk/etc win32gtk/lib win32gtk/share $@
 	rm -r $@/lib/*.a $@/lib/glib-2.0 $@/lib/gtk-2.0/include $@/lib/pkgconfig
-$(basedir).osx: ../textadept.osx ../textadeptjit.osx | $(basedir)
+$(basedir).osx: ../textadept.osx ../textadeptjit.osx ../textadept-ncurses.osx \
+                ../textadeptjit-ncurses.osx | $(basedir)
 	mkdir $@ && cp -rL gtkosx/app $@/Textadept.app
 	cp $^ $@/Textadept.app/Contents/MacOS/
 	cp -rL $|/* $@/Textadept.app/Contents/Resources/

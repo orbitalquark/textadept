@@ -2280,7 +2280,7 @@ int main(int argc, char **argv) {
   if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
   new_window();
   lL_dofile(lua, "init.lua");
-#if __APPLE__
+#if __APPLE__ && !NCURSES
   gtk_osxapplication_ready(osxapp);
 #endif
 
