@@ -303,6 +303,7 @@ features in its editing component Scintilla:
 * Indicators are not displayed (they would be drawn over by text lines).
 * Insert mode caret is not drawn properly (no way to detect it from within
   `surface->FillRectangle()`).
+* Margins are overwritten by long lines when scrolling to the right.
 * Marker types other than `SC_MARK_CHARACTER` are not drawn (pixmap surfaces are
   not supported and `surface->LineTo()` is not supported for drawing marker
   shapes and ).
