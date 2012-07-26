@@ -187,6 +187,12 @@ LexLPeg.o: LexLPeg.cxx
 LexLPegjit.o: LexLPeg.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUAFLAGS) $(sci_flags) -DLPEG_LEXER \
 		-DNO_SCITE -Iluajit/src $< -o $@
+LexLPeg-ncurses.o: LexLPeg.cxx
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUAFLAGS) $(sci_flags) -DLPEG_LEXER \
+		-DNO_SCITE -DNCURSES -Ilua/src $< -o $@
+LexLPegjit-ncurses.o: LexLPeg.cxx
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUAFLAGS) $(sci_flags) -DLPEG_LEXER \
+		-DNO_SCITE -DNCURSES -Iluajit/src $< -o $@
 textadept.o: textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -Ilua/src $(gtk_flags) $<
 textadeptjit.o: textadept.c
@@ -232,11 +238,11 @@ textadept: $(scintilla_objs) $(scintilla_gtk_objs) scintilla-marshal.o \
 textadeptjit: $(scintilla_objs) $(scintilla_gtk_objs) scintilla-marshal.o \
               LexLPegjit.o textadeptjit.o $(luajit_objs) $(libluajit) gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(gtk_libs) $(LDFLAGS)
-textadept-ncurses: $(scintilla_objs) ScintillaTerm.o LexLPeg.o \
+textadept-ncurses: $(scintilla_objs) ScintillaTerm.o LexLPeg-ncurses.o \
                    textadept-ncurses.o $(lua_objs) gtdialog-ncurses.o \
                    $(termkey_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ -lncursesw $(LDFLAGS)
-textadeptjit-ncurses: $(scintilla_objs) ScintillaTerm.o LexLPegjit.o \
+textadeptjit-ncurses: $(scintilla_objs) ScintillaTerm.o LexLPegjit-ncurses.o \
                       textadeptjit-ncurses.o $(luajit_objs) $(libluajit) \
                       gtdialog-ncurses.o $(termkey_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ -lncursesw $(LDFLAGS)
