@@ -362,6 +362,8 @@ properties:
   `buffer.lexer_language = language_name`
 * `buffer:style_get_font(style_num)` -> `buffer.style_font[style_num]`
 
+These changes will affect custom themes.
+
 ##### `goto_required`
 
 `_M.lua.goto_required()`, `_M.php.goto_required()`, and
@@ -370,8 +372,8 @@ projects re-define or define their own search paths.
 
 ##### `prepare_for_save`
 
-`_M.textadept.editing.prepare_for_save()` moved directly into an event handler
-and cannot be called separately anymore.
+`_M.textadept.editing.prepare_for_save()` was moved directly into an event
+handler and cannot be called separately anymore.
 
 ##### Sessions
 
