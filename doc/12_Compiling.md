@@ -66,6 +66,8 @@ For Linux and BSD systems, simply run `make` in the `src/` directory. The
 `textadept` and `textadeptjit` executables are created in the root directory.
 Make a symlink from them to `/usr/bin/` or elsewhere in your `PATH`.
 
+Similarly, `make ncurses` builds `textadept-ncurses` and `textadeptjit-ncurses`.
+
 Note: you may have to run `make CFLAGS="-I/usr/local/include"
 CXXFLAGS="-I/usr/local/include -L/usr/local/lib"` if the prefix where any
 dependencies are installed is `/usr/local` and your compiler flags do not
@@ -93,9 +95,12 @@ and `../textadeptjit.osx`. At this point it is recommended to build a new
 `Contents/MacOS/textadept.osx` and `Contents/MacOS/textadeptjit.osx` with your
 own versions.
 
+Similarly, `make osx-ncurses` builds `../textadept-ncurses.osx` and
+`../textadeptjit-ncurses.osx`.
+
 #### Compiling on OSX (Legacy)
 
-[XCode][] is needed for Mac OSX as well as [jhbuild][]. After building
+[XCode][] is needed for Mac OSX as well as [jhbuild][] (for GTK). After building
 `meta-gtk-osx-bootstrap` and `meta-gtk-osx-core`, you need to build
 `meta-gtk-osx-themes`. Note that the entire compiling process can easily take 30
 minutes or more and ultimately consume nearly 1GB of disk space.
@@ -112,6 +117,10 @@ Note: to build a GTK+ for OSX bundle, the following needs to be run from the
     gtkosx/lib/pkgconfig/*.pc
 
 where `username` is replaced with your username.
+
+Compiling the terminal version is not so expensive. After uncommenting the
+`Darwin` block mentioned above, simply run `make osx-ncurses` to build
+`../textadept-ncurses.osx` and `../textadeptjit-ncurses.osx`.
 
 [XCode]: http://developer.apple.com/TOOLS/xcode/
 [jhbuild]: http://sourceforge.net/apps/trac/gtk-osx/wiki/Build
