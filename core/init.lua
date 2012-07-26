@@ -1,6 +1,6 @@
 -- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-_RELEASE = "Textadept 5.5 beta"
+_RELEASE = "Textadept 6.0 beta"
 
 package.path = _HOME..'/core/?.lua;'..package.path
 os.setlocale('C', 'collate')
