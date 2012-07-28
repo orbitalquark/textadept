@@ -81,7 +81,11 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       plat_flag = -DNCURSES
       ncurses_lib = -lncursesw
     endif
-    libluajit = libluajit.a
+    ifeq (x86_64, $(shell uname -i))
+      libluajit = libluajit.a
+    else ifeq (i386, $(shell uname -i))
+      libluajit = libluajit32.a
+    endif
 
     luadoc = luadoc
   endif
@@ -173,7 +177,7 @@ osx-ncurses: textadept-ncurses.osx textadeptjit-ncurses.osx
 tmp:
 	rm -rf /tmp/tabuild && hg clone ../ /tmp/tabuild
 	cp -rL ../Doxyfile ../doc ../lexers ../modules /tmp/tabuild/
-	cp -r gtdialog gtkosx LexLPeg.cxx libluajit.osx.a lua luajit lua51.dll \
+	cp -r gtdialog gtkosx LexLPeg.cxx libluajit*.a lua luajit lua51.dll \
 		scintilla termkey cdk win32gtk /tmp/tabuild/src/
 	cd /tmp/tabuild/src/luajit && $(MAKE) clean
 	ln -s `pwd`/../releases /tmp/tabuild
@@ -220,6 +224,9 @@ $(luajit_objs): lua/src/lib/*.c
 libluajit.a:
 	cd luajit && $(MAKE) CC="$(CC) $(CFLAGS)"
 	cp luajit/src/$@ .
+libluajit32.a:
+	cd luajit && $(MAKE) CC="$(CC) -m32 $(CFLAGS)"
+	cp luajit/src/libluajit.a $@
 lua51.dll:
 	cd luajit && $(MAKE) HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
 	cp luajit/src/$@ .
