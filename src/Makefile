@@ -178,7 +178,7 @@ tmp:
 	rm -rf /tmp/tabuild && hg clone ../ /tmp/tabuild
 	cp -rL ../Doxyfile ../doc ../lexers ../modules /tmp/tabuild/
 	cp -r gtdialog gtkosx LexLPeg.cxx libluajit*.a lua luajit lua51.dll \
-		scintilla termkey cdk win32gtk /tmp/tabuild/src/
+		scintilla termkey cdk win*gtk /tmp/tabuild/src/
 	cd /tmp/tabuild/src/luajit && $(MAKE) clean
 	ln -s `pwd`/../releases /tmp/tabuild
 	@echo /tmp/tabuild ready for building.
