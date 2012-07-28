@@ -2,8 +2,12 @@
 
 kernel = $(shell uname -s)
 ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
-  ifeq (win32, $(MAKECMDGOALS))
-    CROSS = i586-mingw32msvc-
+  ifeq (win, $(findstring win, $(MAKECMDGOALS)))
+    ifeq (win32, $(MAKECMDGOALS))
+      CROSS = i686-w64-mingw32-
+    else ifeq (win64, $(MAKECMDGOALS))
+      CROSS = x86_64-w64-mingw32-
+    endif
     CC = gcc
     CFLAGS = -mms-bitfields
     CXX = g++
@@ -13,11 +17,11 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
     MAKE = make
 
     plat_flag = -DGTK
-    gtk_flags = $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
-                        pkg-config --define-variable=prefix=win32gtk \
+    gtk_flags = $(shell PKG_CONFIG_PATH=`pwd`/$(MAKECMDGOALS)gtk/lib/pkgconfig \
+                        pkg-config --define-variable=prefix=$(MAKECMDGOALS)gtk \
                         --cflags gtk+-2.0)
-    gtk_libs = $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
-                       pkg-config --define-variable=prefix=win32gtk \
+    gtk_libs = $(shell PKG_CONFIG_PATH=`pwd`/$(MAKECMDGOALS)gtk/lib/pkgconfig \
+                       pkg-config --define-variable=prefix=$(MAKECMDGOALS)gtk \
                        --libs gtk+-2.0)
 
     luadoc = luadoc_start.bat
@@ -162,6 +166,7 @@ all: textadept textadeptjit
 ncurses: textadept-ncurses textadeptjit-ncurses
 m32: textadept32 textadeptjit32 textadept32-ncurses textadeptjit32-ncurses
 win32: textadept.exe textadeptjit.exe
+win64: textadept64.exe #textadeptjit64.exe
 osx: textadept.osx textadeptjit.osx
 osx-ncurses: textadept-ncurses.osx textadeptjit-ncurses.osx
 
@@ -218,6 +223,9 @@ libluajit.a:
 lua51.dll:
 	cd luajit && $(MAKE) HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
 	cp luajit/src/$@ .
+lua51_64.dll:
+	cd luajit && $(MAKE) HOST_CC="$(CC)" CROSS=$(CROSS) TARGET_SYS=Windows
+	cp luajit/src/$@ .
 libluajit.osx.a:
 	cd luajit && $(MAKE) CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin || \
 		return 0
@@ -260,6 +268,13 @@ textadeptjit.exe: $(scintilla_objs) $(scintilla_gtk_objs) scintilla-marshal.o \
                   LexLPegjit.o textadeptjit.o textadept_rc.o $(luajit_objs) \
                   lua51.dll gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(gtk_libs) $(LDFLAGS)
+textadept64.exe: $(scintilla_objs) $(scintilla_gtk_objs) scintilla-marshal.o \
+                 LexLPeg.o textadept.o textadept_rc.o $(lua_objs) gtdialog.o
+	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(gtk_libs) $(LDFLAGS)
+textadeptjit64.exe: $(scintilla_objs) $(scintilla_gtk_objs) \
+                    scintilla-marshal.o LexLPegjit.o textadeptjit.o \
+                    textadept_rc.o $(luajit_objs) lua51_64.dll gtdialog.o
+	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(gtk_libs) $(LDFLAGS)
 textadept.osx: textadept; mv ../$< ../$@
 textadeptjit.osx: textadeptjit; mv ../$< ../$@
 textadept-ncurses.osx: textadept-ncurses; mv ../$< ../$@
@@ -298,8 +313,10 @@ modules = css hypertext java rails rhtml ruby php
 release: ../textadept ../textadeptjit ../textadept-ncurses \
          ../textadeptjit-ncurses ../textadept32 ../textadeptjit32 \
          ../textadept32-ncurses ../textadeptjit32-ncurses ../textadept.exe \
-         ../textadeptjit.exe ../textadept.osx ../textadeptjit.osx lua51.dll \
-         doc pkg_x86_64 pkg_i386 pkg_win32 pkg_osx pkg_src pkg_modules cleanup
+         ../textadeptjit.exe ../textadept64.exe ../textadept.osx \
+         ../textadeptjit.osx lua51.dll \
+         doc pkg_x86_64 pkg_i386 pkg_win32 pkg_win64 pkg_osx pkg_src \
+         pkg_modules cleanup
 
 # Release directories.
 
@@ -318,6 +335,11 @@ $(basedir).i386: ../textadept32 ../textadeptjit32 ../textadept32-ncurses \
 $(basedir).win32: ../textadept.exe ../textadeptjit.exe lua51.dll | $(basedir)
 	cp -r $| $@ && cp $^ $@
 	cp win32gtk/bin/*.dll $@ && cp -r win32gtk/etc win32gtk/lib win32gtk/share $@
+	rm -r $@/lib/*.a $@/lib/glib-2.0 $@/lib/gtk-2.0/include $@/lib/pkgconfig
+$(basedir).win64: ../textadept64.exe | $(basedir)
+	cp -r $| $@ && cp $^ $@
+	for t in `ls $@/textadept*`; do mv $$t `echo $$t | sed -e 's/64\././;'`; done
+	cp win64gtk/bin/*.dll $@ && cp -r win64gtk/etc win64gtk/lib win64gtk/share $@
 	rm -r $@/lib/*.a $@/lib/glib-2.0 $@/lib/gtk-2.0/include $@/lib/pkgconfig
 $(basedir).osx: ../textadept.osx ../textadeptjit.osx ../textadept-ncurses.osx \
                 ../textadeptjit-ncurses.osx | $(basedir)
@@ -344,6 +366,7 @@ $(basedir).modules:
 pkg_x86_64: $(basedir).x86_64 ; tar czf ../releases/$<.tgz $< && rm -r $<
 pkg_i386: $(basedir).i386 ; tar czf ../releases/$<.tgz $< && rm -r $<
 pkg_win32: $(basedir).win32 ; zip -r ../releases/$<.zip $< && rm -r $<
+pkg_win64: $(basedir).win64 ; zip -r ../releases/$<.zip $< && rm -r $<
 pkg_osx: $(basedir).osx ; zip -r ../releases/$<.zip $< && rm -r $<
 pkg_src: $(basedir).src ; zip -r ../releases/$<.zip $< && rm -r $<
 pkg_modules: $(basedir).modules ; zip -r ../releases/$<.zip $< && rm -r $<
