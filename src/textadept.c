@@ -13,8 +13,8 @@
 #define main main_
 #elif __APPLE__ && !NCURSES
 #include <gtkmacintegration/gtkosxapplication.h>
-//#elif __APPLE__ && NCURSES
-//#include <mach-o/dyld.h>
+#elif __APPLE__ && NCURSES
+#include <mach-o/dyld.h>
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
 #define u_int unsigned int // 'u_int' undefined when _POSIX_SOURCE is defined
 #include <sys/types.h>
@@ -1513,7 +1513,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   lua_pushstring(L, textadept_home), lua_setglobal(L, "_HOME");
 #if _WIN32
   lua_pushboolean(L, 1), lua_setglobal(L, "WIN32");
-#elif __APPLE__
+#elif __APPLE__ && !NCURSES
   lua_pushboolean(L, 1), lua_setglobal(L, "OSX");
 #elif NCURSES
   lua_pushboolean(L, 1), lua_setglobal(L, "NCURSES");
@@ -2245,13 +2245,13 @@ int main(int argc, char **argv) {
   textadept_home = g_filename_from_utf8((const char *)path, -1, NULL, NULL,
                                         NULL);
   g_free(path);
-//#elif __APPLE__ && NCURSES
-//  char *path = malloc(FILENAME_MAX), *p = NULL
-//  uint32_t size = FILENAME_MAX;
-//  _NSGetExecutablePath(path, &size);
-//  textadept_home = realpath(path, NULL);
-//  p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
-//  free(path);
+#elif __APPLE__ && NCURSES
+  char *path = malloc(FILENAME_MAX), *p = NULL;
+  uint32_t size = FILENAME_MAX;
+  _NSGetExecutablePath(path, &size);
+  textadept_home = realpath(path, NULL);
+  p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
+  free(path);
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
   textadept_home = malloc(FILENAME_MAX);
   int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
