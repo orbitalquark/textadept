@@ -178,14 +178,14 @@ static int lL_event(lua_State *L, const char *name, ...) {
         if (type == LUA_TNIL)
           lua_pushnil(L);
         else if (type == LUA_TBOOLEAN)
-          lua_pushboolean(L, (long)arg);
+          lua_pushboolean(L, (sptr_t)arg);
         else if (type == LUA_TNUMBER)
-          lua_pushinteger(L, (long)arg);
+          lua_pushinteger(L, (sptr_t)arg);
         else if (type == LUA_TSTRING)
           lua_pushstring(L, (char *)arg);
         else if (type == LUA_TLIGHTUSERDATA || type == LUA_TTABLE) {
-          lua_rawgeti(L, LUA_REGISTRYINDEX, (long)arg);
-          luaL_unref(L, LUA_REGISTRYINDEX, (long)arg);
+          lua_rawgeti(L, LUA_REGISTRYINDEX, (sptr_t)arg);
+          luaL_unref(L, LUA_REGISTRYINDEX, (sptr_t)arg);
         }
       }
       va_end(ap);
@@ -1105,7 +1105,7 @@ static int lbuffer_text_range(lua_State *L) {
   tr.chrg.cpMax = luaL_checkinteger(L, 3);
   luaL_argcheck(L, tr.chrg.cpMin <= tr.chrg.cpMax, 3, "start > end");
   tr.lpstrText = malloc(tr.chrg.cpMax - tr.chrg.cpMin + 1);
-  SS(focused_view, SCI_GETTEXTRANGE, 0, (long)(&tr));
+  SS(focused_view, SCI_GETTEXTRANGE, 0, (sptr_t)(&tr));
   lua_pushlstring(L, tr.lpstrText, tr.chrg.cpMax - tr.chrg.cpMin);
   if (tr.lpstrText) free(tr.lpstrText);
   return 1;
@@ -1119,9 +1119,9 @@ static int lbuffer_text_range(lua_State *L) {
  * @param type The Scintilla type to convert to.
  * @return Scintilla param
  */
-static long lL_checkscintillaparam(lua_State *L, int *narg, int type) {
+static sptr_t lL_checkscintillaparam(lua_State *L, int *narg, int type) {
   if (type == tSTRING)
-    return (long)luaL_checkstring(L, (*narg)++);
+    return (sptr_t)luaL_checkstring(L, (*narg)++);
   else if (type == tBOOL)
     return lua_toboolean(L, (*narg)++);
   else if (type == tKEYMOD) {
