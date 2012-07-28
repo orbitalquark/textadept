@@ -20,6 +20,17 @@ the terminal version.)
 - - -
 
 **Q.**
+I downloaded the Windows 64-bit version but I do not see `textadeptjit.exe`. Did
+you forget to include it?
+
+**A:**
+No. Currently, [MinGW-w64][] cannot compile 64-bit LuaJIT.
+
+[MinGW-w64]: http://mingw-w64.sourceforge.net/
+
+- - -
+
+**Q.**
 After upgrading to Textadept 5 from Textadept 4, Textadept 5 crashes hard with
 no messages. What can I do?
 
