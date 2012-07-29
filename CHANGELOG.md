@@ -4,6 +4,51 @@
 
 [Atom Feed]: feed
 
+## 6.0 beta (01 Aug 2012)
+
+Please see the [5 to 6 migration guide][] for upgrading from Textadept 5 to
+Textadept 6.
+
+Download:
+
+* [Textadept 6.0 beta -- Win32][]
+* [Textadept 6.0 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 6.0 beta -- Linux][]
+* [Textadept 6.0 beta -- Linux x86_64][]
+* [Textadept 6.0 beta -- Source][]
+* [Textadept 6.0 beta -- Modules][]
+
+Bugfixes:
+
+* Lots of bugfixes to the experimental ncurses version.
+
+Changes:
+
+* Removed Lua, Ruby, and PHP modules' `goto_required()` functions.
+* Moved `_M.textadept.editing.prepare_for_save()` directly into event handler.
+* Moved `_M.textadept.session.prompt_load()` and `prompt_save()` functionality
+  into [`_M.textadept.session.load()`][] and [`_M.textadept.session.save()`][].
+* Removed `_G.user_dofile()`.
+* Converted some `buffer` "get" and "set" functions into properties.
+* Moved `_M.textadept.adeptsense.complete_symbol()` and `show_documentation()`
+  functionality into [`_M.textadept.adeptsense.complete()`][] and
+  [`show_apidoc()`][].
+* New 64-bit Windows version (note: without LuaJIT).
+* Updated to [Scintilla][] 3.2.1.
+
+[5 to 6 migration guide]: 14_Appendix.html#Textadept.5.to.6
+[Textadept 6.0 beta -- Win32]: download/textadept_6.0_beta.win32.zip
+[Textadept 6.0 beta -- Mac OSX Intel 10.5+]: download/textadept_6.0_beta.osx.zip
+[Textadept 6.0 beta -- Linux]: download/textadept_6.0_beta.i386.tgz
+[Textadept 6.0 beta -- Linux x86_64]: download/textadept_6.0_beta.x86_64.tgz
+[Textadept 6.0 beta -- Source]: download/textadept_6.0_beta.src.zip
+[Textadept 6.0 beta -- Modules]: download/textadept_6.0_beta.modules.zip
+[`_M.textadept.session.load()`]: api/_M.textadept.session.html#load
+[`_M.textadept.session.save()`]: api/_M.textadept.session.html#save
+[`_M.textadept.adeptsense.complete()`]: api/_M.textadept.adeptsense.html#complete
+[`show_apidoc()`]: api/_M.textadept.adeptsense.html#show_apidoc
+[Scintilla]: http://scintilla.org
+
 ## 5.5 beta (01 Jul 2012)
 
 Download:
