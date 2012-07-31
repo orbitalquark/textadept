@@ -19,32 +19,6 @@ the terminal version.)
 
 - - -
 
-**Q.**
-I downloaded the Windows 64-bit version but I do not see `textadeptjit.exe`. Did
-you forget to include it?
-
-**A:**
-No. Currently, [MinGW-w64][] cannot compile 64-bit LuaJIT.
-
-[MinGW-w64]: http://mingw-w64.sourceforge.net/
-
-- - -
-
-**Q.**
-After upgrading to Textadept 5 from Textadept 4, Textadept 5 crashes hard with
-no messages. What can I do?
-
-**A:**
-You likely have old modules that are not compatible with Textadept 5. Most
-offending modules use the `module()` Lua 5.1 function which was removed in Lua
-5.2. You can temporarily move your `~/.textadept/` directory elsewhere and
-restart Textadept to be sure old modules are causing problems. You can correct
-them using the [migration guide][].
-
-[migration guide]: 14_Appendix.html#Textadept.4.to.5
-
-- - -
-
 **Q:**
 I downloaded the Linux version, but when I try to compile it, some files are not
 found. Where do I get these files?
@@ -108,13 +82,39 @@ bug reports.
 - - -
 
 **Q:**
-Are my Textadept 4.x scripts compatible with Textadept 5.x?
+Pressing "Control+O" in the ncurses version on Mac OSX does not do anything.
+Why?
 
 **A:**
-No. Lua was updated to 5.2 and there were some API changes. See the [migration
-guide][].
+For whatever reason, "Control+O" is discarded by the terminal driver. To enable
+it, run `stty discard undef` first. You can put the command in your `~/.bashrc`
+or `~/.bash_profile` to make it permanent.
+
+- - -
+
+**Q.**
+After upgrading to Textadept >= 5 from Textadept 4, Textadept crashes hard with
+no messages. What can I do?
+
+**A:**
+You likely have old modules that are not compatible with Textadept >= 5. Most
+offending modules use the `module()` Lua 5.1 function which was removed in Lua
+5.2. You can temporarily move your `~/.textadept/` directory elsewhere and
+restart Textadept to be sure old modules are causing problems. You can correct
+them using the [migration guide][].
 
 [migration guide]: 14_Appendix.html#Textadept.4.to.5
+
+- - -
+
+**Q:**
+Are my Textadept 5.x scripts compatible with Textadept 6.x?
+
+**A:**
+Maybe. There were some API changes. See the [migration guide][]. Most themes are
+not compatible.
+
+[migration guide]: 14_Appendix.html#Textadept.5.to.6
 
 - - -
 
