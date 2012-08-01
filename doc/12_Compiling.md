@@ -73,6 +73,15 @@ CXXFLAGS="-I/usr/local/include -L/usr/local/lib"` if the prefix where any
 dependencies are installed is `/usr/local` and your compiler flags do not
 include them by default.
 
+#### Installing
+
+Textadept is self-contained, meaning it does not need to be installed and can be
+run from wherever it is located. However, if you want to install Textadept like
+a normal Linux application, run the usual `make` and then `make install` or
+`sudo make install` depending on your privilages. The default prefix is
+`/usr/local` but you can change this by setting `DESTDIR` (e.g. `make install
+DESTDIR=/prefix/to/install/to`).
+
 ### Cross Compiling for Windows
 
 When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
