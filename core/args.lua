@@ -65,14 +65,14 @@ function M.process(arg)
   if no_args then events.emit('arg_none') end
 end
 
--- Shows all registered command line switches in a help dialog.
+-- Shows all registered command line switches on the command line.
 local function show_help()
   print('Usage: textadept [args] [filenames]')
   local line = "  %s [%d args]: %s"
   for k, v in pairs(switches) do print(line:format(k, table.unpack(v, 2))) end
   os.exit()
 end
-M.register('-h', '--help', 0, show_help, 'Displays this')
+if not NCURSES then M.register('-h', '--help', 0, show_help, 'Shows this') end
 
 -- For Windows, create arg table from single command line string (arg[0]).
 if WIN32 and #arg[0] > 0 then
