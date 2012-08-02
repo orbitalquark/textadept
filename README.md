@@ -35,9 +35,9 @@ The _experimental_ version of Textadept for the terminal requires only
 
 ## Download
 
-Download Textadept from the [project page][].
+Download Textadept from the project's [download page][].
 
-[project page]: http://foicica.com/textadept
+[download page]: http://foicica.com/textadept/download
 
 ## Installation and Usage
 
