@@ -89,7 +89,7 @@ typedef GtkListStore ListStore;
 static ListStore *find_store, *repl_store;
 #elif NCURSES
 static CDKSCREEN *findbox = NULL;
-static CDKENTRY *find_entry, *replace_entry;
+static CDKENTRY *find_entry, *replace_entry, *focused_entry;
 static char *find_text = NULL, *repl_text = NULL, *flabel = NULL,
             *rlabel = NULL;
 typedef int FindButton;
@@ -307,19 +307,25 @@ static int lfind_prev(lua_State *L) {
 
 #if NCURSES
 /**
- * Signal for a tab keypress in a CDKEntry to inject a tab in a CDKButtonbox.
- */
-static int buttonbox_tab(EObjectType _, void*__, void *data, chtype key) {
-  return (injectCDKButtonbox((CDKBUTTONBOX *)data, key), TRUE);
-}
-
-/**
  * Signal for a keypress in the Find/Replace Entry.
+ * For tab keys, toggle through find/replace buttons.
+ * For ^N and ^P keys, cycle through find/replace history.
  * For F1-F4 keys, toggle the respective search option.
- * For Up/Down keys, scroll through find/replace history.
+ * For up and down keys, toggle entry focus.
  */
 static int entry_keypress(EObjectType _, void *object, void *data, chtype key) {
-  if (key >= KEY_F(1) && key <= KEY_F(4)) {
+  if (key == KEY_TAB || key == KEY_BTAB)
+    injectCDKButtonbox((CDKBUTTONBOX *)data, key);
+  else if (key == CDK_PREV || key == CDK_NEXT) {
+    CDKENTRY *entry = (CDKENTRY *)object;
+    ListStore *store = (entry == find_entry) ? find_store : repl_store;
+    int i;
+    for (i = 9; i >= 0; i--)
+      if (store[i] && strcmp(store[i], getCDKEntryValue(entry)) == 0) break;
+    (key == CDK_PREV) ? i++ : i--;
+    if (i >= 0 && i <= 9 && store[i])
+      setCDKEntryValue(entry, store[i]), drawCDKEntry(entry, FALSE);
+  } else if (key >= KEY_F(1) && key <= KEY_F(4)) {
     // Use pointer arithmetic to highlight/unhighlight options as necessary.
     if (key == KEY_F(1))
       match_case = !match_case, option_labels[0] += match_case ? -4 : 4;
@@ -338,13 +344,8 @@ static int entry_keypress(EObjectType _, void *object, void *data, chtype key) {
     drawCDKButtonbox(*optionbox, FALSE);
   } else if (key == KEY_UP || key == KEY_DOWN) {
     CDKENTRY *entry = (CDKENTRY *)object;
-    ListStore *store = (entry == find_entry) ? find_store : repl_store;
-    int i;
-    for (i = 9; i >= 0; i--)
-      if (store[i] && strcmp(store[i], getCDKEntryValue(entry)) == 0) break;
-    (key == KEY_UP) ? i++ : i--;
-    if (i >= 0 && i <= 9 && store[i])
-      setCDKEntryValue(entry, store[i]), drawCDKEntry(entry, FALSE);
+    focused_entry = (entry == find_entry) ? replace_entry : find_entry;
+    injectCDKEntry(entry, KEY_ENTER);
   }
   return TRUE;
 }
@@ -358,6 +359,9 @@ static char *get_clipboard() {
   return (scintilla_get_clipboard(focused_view, text), text);
 }
 
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+#define bind(k, d) bindCDKObject(vENTRY, find_entry, k, entry_keypress, d), \
+                   bindCDKObject(vENTRY, replace_entry, k, entry_keypress, d)
 #define set_clipboard(t) SS(focused_view, SCI_COPYTEXT, strlen(t), (sptr_t)t)
 #endif
 
@@ -373,7 +377,6 @@ static int lfind_focus(lua_State *L) {
     gtk_widget_hide(findbox);
   }
 #elif NCURSES
-#define max(a, b) (((a) > (b)) ? (a) : (b))
   if (findbox) return 0; // already active
   wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
   findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0));
@@ -395,12 +398,11 @@ static int lfind_focus(lua_State *L) {
   CDKBUTTONBOX *optionbox = newCDKButtonbox(findbox, RIGHT, TOP, 2, o_width,
                                             NULL, 2, 2, option_labels, 4,
                                             A_NORMAL, FALSE, FALSE);
-  bindCDKObject(vENTRY, find_entry, KEY_TAB, buttonbox_tab, buttonbox);
-  bindCDKObject(vENTRY, find_entry, KEY_BTAB, buttonbox_tab, buttonbox);
-  setCDKEntryPostProcess(find_entry, entry_keypress, &optionbox);
-  bindCDKObject(vENTRY, replace_entry, KEY_TAB, buttonbox_tab, buttonbox);
-  bindCDKObject(vENTRY, replace_entry, KEY_BTAB, buttonbox_tab, buttonbox);
-  setCDKEntryPostProcess(replace_entry, entry_keypress, &optionbox);
+  bind(KEY_TAB, buttonbox), bind(KEY_BTAB, buttonbox);
+  bind(CDK_NEXT, NULL), bind(CDK_PREV, NULL);
+  bind(KEY_F(1), &optionbox), bind(KEY_F(2), &optionbox);
+  bind(KEY_F(3), &optionbox), bind(KEY_F(4), &optionbox);
+  bind(KEY_DOWN, NULL), bind(KEY_UP, NULL);
   setCDKEntryValue(find_entry, find_text);
   setCDKEntryValue(replace_entry, repl_text);
   // Draw these widgets manually since activateCDKEntry() only draws find_entry.
@@ -409,11 +411,17 @@ static int lfind_focus(lua_State *L) {
   char *clipboard = get_clipboard();
   GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer
   curs_set(1);
-  while (activateCDKEntry(find_entry, NULL)) {
+  activateCDKEntry(focused_entry = find_entry, NULL);
+  while (focused_entry->exitType == vNORMAL ||
+         focused_entry->exitType == vNEVER_ACTIVATED) {
     fcopy(&find_text, getCDKEntryValue(find_entry));
     fcopy(&repl_text, getCDKEntryValue(replace_entry));
-    f_clicked(getCDKButtonboxCurrentButton(buttonbox), NULL);
-    scintilla_refresh(focused_view);
+    if (focused_entry->exitType == vNORMAL) {
+      f_clicked(getCDKButtonboxCurrentButton(buttonbox), NULL);
+      scintilla_refresh(focused_view);
+    }
+    find_entry->exitType = replace_entry->exitType = vNEVER_ACTIVATED;
+    activateCDKEntry(focused_entry, NULL);
   }
   curs_set(0);
   // Set Scintilla clipboard with new CDK paste buffer if necessary.
