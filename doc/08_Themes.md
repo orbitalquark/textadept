@@ -7,8 +7,10 @@ theme, create a `~/.textadept/theme` and/or `~/.textadept/theme_term` whose
 first lines of text are the names of the themes you would like to use.
 
 ![Light Theme](images/lighttheme.png)
-&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
 ![Dark Theme](images/darktheme.png)
+&nbsp;&nbsp;
+![Term Theme](images/termtheme.png)
 
 Themes apply to all buffers. You cannot assign a theme to a particular file or
 filetype. You can change things like tab and indent settings per filetype

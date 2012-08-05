@@ -174,8 +174,12 @@ in the original Textadept instance, regardless of how many instances are open.
 Single instance is not supported on the Windows and terminal versions of
 Textadept.
 
+<span style="display: block; text-align: right; margin-left: -10em;">
 ![Linux](images/linux.png)
 &nbsp;&nbsp;
 ![Mac OSX](images/macosx.png)
 &nbsp;&nbsp;
 ![Win32](images/win32.png)
+&nbsp;&nbsp;
+![ncurses](images/ncurses.png)
+</span>
