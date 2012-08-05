@@ -72,6 +72,12 @@ The ncurses version does not support feature _x_ the GUI version does. Is this a
 bug?
 
 **A:**
+Maybe. Some terminals do not recognize certain key commands like `Shift+Arrow`
+for making selections. Linux's virtual terminals (the ones accessible with
+`Ctrl+Alt+FunctionKey`) are an example. GNOME Terminal, LXTerminal and XTerm
+seem to work fine. rxvt and rxvt-unicode do not work out of the box, but may be
+configurable.
+
 Please see the [ncurses compatibility][] section of the appendix. If the feature
 in question is not listed there, it may be a bug. Please [contact][] me with any
 bug reports.
