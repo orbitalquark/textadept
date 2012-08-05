@@ -2,7 +2,7 @@
 
 Textadept's look and feel can be customized with themes. The themes that come
 with Textadept are `light`, `dark`, and `term`. By default the `light` theme is
-used for GUI environments and `term` for terminal environments. To change the
+used for the GUI version and `term` for the ncurses version. To change the
 theme, create a `~/.textadept/theme` and/or `~/.textadept/theme_term` whose
 first lines of text are the names of the themes you would like to use.
 
@@ -61,12 +61,12 @@ See the [LuaDoc][] for documentation on the properties.
 
 ## Testing Themes
 
-You can reload or switch between themes on the fly using `Ctrl+Shift+T` (⌘⇧T on
-Mac OSX), but be aware that the Scintilla views do not reset themselves, so any
-options set explicitly in the previous theme's `view.lua` file that are not set
-explicitly in the new theme will carry over. The switch feature is intended
-primarily for theme exploration and/or development and can be slow when many
-buffers or views are open.
+You can reload or switch between themes on the fly using `Ctrl+Shift+T` (`⌘⇧T`
+on Mac OSX | none in ncurses), but be aware that the Scintilla views do not
+reset themselves, so any options set explicitly in the previous theme's
+`view.lua` file that are not set explicitly in the new theme will carry over.
+The switch feature is intended primarily for theme exploration and/or
+development and can be slow when many buffers or views are open.
 
 Any errors that occur in the theme are printed to `io.stderr`.
 

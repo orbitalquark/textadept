@@ -7,8 +7,8 @@ only thing it needs is [GTK+][] >= 2.18 on Linux systems. GTK is already
 included in Windows and Mac OSX packages. Textadept also has its own version of
 Lua.
 
-The _experimental_ terminal version of Textadept requires [ncurses][]. This
-dependency is only necessary if you wish to run Textadept from a terminal.
+The terminal version of Textadept requires [ncurses][]. This dependency is only
+necessary if you wish to run Textadept from a terminal.
 
 Notes:
 

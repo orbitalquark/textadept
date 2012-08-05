@@ -67,8 +67,8 @@ You can add global snippets to `snippets` such as:
     snippets['file'] = '%<buffer.filename>'
     snippets['path'] = "%<(buffer.filename or ''):match('^.+[/\\]')>"
 
-So typing `file` or `path` and then pressing `Tab` (`⇥` on Mac OSX) will insert
-the snippet.
+So typing `file` or `path` and then pressing `Tab` (`⇥` on Mac OSX | `Tab` in
+ncurses) will insert the snippet.
 
 #### Key Commands
 
