@@ -3,10 +3,10 @@
 ## Command Entry
 
 Access to the Lua state is available through the command entry. Press `Ctrl+E`
-(`⌘E` on Mac OSX) to access it. It is useful for debugging, inspecting, and
-entering buffer or view commands. If you try to cause instability in Textadept's
-Lua state, you might very well succeed so be careful. For more information, see
-the [scripting][] page.
+(`⌘E` on Mac OSX | `M-C` in ncurses) to access it. It is useful for debugging,
+inspecting, and entering buffer or view commands. If you try to cause
+instability in Textadept's Lua state, you might very well succeed so be careful.
+For more information, see the [scripting][] page.
 
 Abbreviated commands for the `buffer`, `view` and `gui` are available. So
 `buffer:append_text('foo')` can be shortened to `append_text('foo')`. `print()`
@@ -20,8 +20,9 @@ redirects to  [`gui.print()`][]. Use `_G.print()` for Lua's `print()`.
 ### Tab Completion
 
 Tab-completion for functions, variables, tables, etc. is available. Press the
-`Tab` (`⇥`) key to display a list of available completions. Use the arrow keys
-to make a selection and press `Enter` (`↩`) to insert it.
+`Tab` (`⇥` on Mac OSX | `Tab` in ncurses) key to display a list of available
+completions. Use the arrow keys to make a selection and press `Enter` (`↩` |
+`Enter`) to insert it.
 
 ![Command Completion](images/commandentrycompletion.png)
 
@@ -36,11 +37,11 @@ the implementation.
 ## Command Selection
 
 If you did not disable the menu in your [preferences][], then pressing
-`Ctrl+Shift+E` (`⌘⇧E` on Mac OSX) brings up the command selection dialog. Typing
-part of any command filters the list with spaces being wildcards. This is an
-easy way to run commands without navigating the menus, using the mouse, or
-remembering key commands. It is also useful for looking up particular key
-commands quickly.
+`Ctrl+Shift+E` (`⌘⇧E` on Mac OSX | `M-S-C` in ncurses) brings up the command
+selection dialog. Typing part of any command filters the list with spaces being
+wildcards. This is an easy way to run commands without navigating the menus,
+using the mouse, or remembering key commands. It is also useful for looking up
+particular key commands quickly.
 
 [preferences]: 9_Preferences.html#User.Init
 
@@ -53,8 +54,8 @@ buffer (or a selection). You could do the following from the command entry:
     ls={}; for l in buffer:get_text():gmatch('[^\n]+') do ls[#ls+1]=l end;
     table.sort(ls); buffer:set_text(table.concat(ls, '\n'))
 
-A simpler way would be to press `Ctrl+|` (`⌘|` on Mac OSX), enter the shell
-command `sort`, and hit `Enter` (`↩`).
+A simpler way would be to press `Ctrl+|` (`⌘|` on Mac OSX | `^\` in ncurses),
+enter the shell command `sort`, and hit `Enter` (`↩` | `Enter`).
 
 The standard input (stdin) for shell commands is determined as follows:
 

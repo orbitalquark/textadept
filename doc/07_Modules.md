@@ -44,12 +44,12 @@ is loaded or a buffer's lexer is set to that language.
 ### Snippets
 
 Most language-specific modules have a set of [snippets][]. Press `Ctrl+K` (`⌥⇥`
-on Mac OSX) for a list of available snippets or see the module's Lua code. To
-insert a snippet, type its trigger followed by the `Tab` (`⇥`) key. Subsequent
-presses of `Tab` (`⇥`) causes the caret to enter tab stops in sequential order,
-`Shift+Tab` (`⇧⇥`) goes back to the previous tab stop, and `Ctrl+Shift+K` (`⌥⇧⇥`
-on Mac OSX) cancels the current snippet. Snippets can be nested (inserted from
-within another snippet).
+on Mac OSX | `M-K` in ncurses) for a list of available snippets or see the
+module's Lua code. To insert a snippet, type its trigger followed by the `Tab`
+(`⇥` | `Tab`) key. Subsequent presses of `Tab` (`⇥` | `Tab`) causes the caret to
+enter tab stops in sequential order, `Shift+Tab` (`⇧⇥` | `S-Tab`) goes back to
+the previous tab stop, and `Ctrl+Shift+K` (`⌥⇧⇥` | `M-S-K`) cancels the current
+snippet. Snippets can be nested (inserted from within another snippet).
 
 ![Snippet](images/snippet.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -61,24 +61,25 @@ within another snippet).
 
 Most language-specific modules have a set of [key commands][]. See the module's
 Lua code for which key commands are available. They are typically stored in the
-`Ctrl+L` (`⌘L` on Mac OSX) key prefix.
+`Ctrl+L` (`⌘L` on Mac OSX | `M-L` in ncurses) key prefix.
 
 [key commands]: api/_M.textadept.keys.html
 
 #### Run
 
 Most language-specific modules have a command that runs the code in the current
-file. Pressing `Ctrl+R` (`⌘R` on Mac OSX) runs that command.
+file. Pressing `Ctrl+R` (`⌘R` on Mac OSX | `^R` in ncurses) runs that command.
 
 #### Compile
 
 Most language-specific modules have a command that compiles the code in the
-current file. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX) runs that command.
+current file. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in ncurses)
+runs that command.
 
 #### Block Comments
 
-Pressing `Ctrl+/` (`⌘/` on Mac OSX) comments or uncomments the code on the
-selected lines.
+Pressing `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in ncurses) comments or uncomments
+the code on the selected lines.
 
 ### Buffer Properties
 
