@@ -306,7 +306,7 @@ features in its editing component Scintilla:
 * Margins are overwritten by long lines when scrolling to the right.
 * Marker types other than `SC_MARK_CHARACTER` are not drawn (pixmap surfaces are
   not supported and `surface->LineTo()` is not supported for drawing marker
-  shapes and ).
+  shapes).
 * Mouse interactions, cursor types, and hotspots are not supported.
 * Only 8 colors are supported: black (`0x000000`), red (`0xFF0000`), green
   (`0x00FF00`), yellow (`0xFFFF00`), blue (`0x0000FF`), magenta (`0xFF00FF`),
