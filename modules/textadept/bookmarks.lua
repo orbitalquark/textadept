@@ -14,32 +14,19 @@ M.MARK_BOOKMARK_COLOR = not NCURSES and 0xB3661A or 0xFF0000
 local MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 
 ---
--- Adds a bookmark to the current line.
--- @name add
-function M.add()
-  local buffer = buffer
-  local line = buffer:line_from_position(buffer.current_pos)
-  buffer:marker_add(line, MARK_BOOKMARK)
-end
-
----
--- Clears the bookmark at the current line.
--- @name remove
-function M.remove()
-  local buffer = buffer
-  local line = buffer:line_from_position(buffer.current_pos)
-  buffer:marker_delete(line, MARK_BOOKMARK)
-end
-
----
 -- Toggles a bookmark on the current line.
+-- @param on If `true`, adds a bookmark to the current line. If `false`, removes
+--   the bookmark on the current line. Otherwise, toggles a bookmark.
 -- @name toggle
-function M.toggle()
+function M.toggle(on)
   local buffer = buffer
   local line = buffer:line_from_position(buffer.current_pos)
-  local markers = buffer:marker_get(line) -- bit mask
-  local bit = 2^MARK_BOOKMARK
-  if markers % (bit + bit) < bit then M.add() else M.remove() end
+  local f = on and buffer.marker_add or buffer.marker_delete
+  if on == nil then -- toggle
+    local bit, marker_mask = 2^MARK_BOOKMARK, buffer:marker_get(line)
+    if marker_mask % (bit + bit) < bit then f = buffer.marker_add end
+  end
+  f(buffer, line, MARK_BOOKMARK)
 end
 
 ---
