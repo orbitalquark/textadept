@@ -25,7 +25,7 @@ local M = {}
 --                extensions = { 'html' }
 --              }, true)
 -- @field DEFAULT_DEPTH (number)
---   Maximum directory depth to search. The default value is `4`.
+--   Maximum directory depth to search. The default value is `99`.
 -- @field MAX (number)
 --   Maximum number of files to list. The default value is `1000`.
 module('_M.textadept.snapopen')]]
@@ -46,7 +46,7 @@ M.FILTER = {
   },
   folders = { '%.bzr$', '%.git$', '%.hg$', '%.svn$', 'CVS$' }
 }
-M.DEFAULT_DEPTH = 4
+M.DEFAULT_DEPTH = 99
 M.MAX = 1000
 
 local lfs_dir, lfs_attributes = lfs.dir, lfs.attributes
