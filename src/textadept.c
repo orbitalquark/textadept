@@ -2341,6 +2341,19 @@ int main(int argc, char **argv) {
                          key.modifiers & TERMKEY_KEYMOD_ALT);
     if (quit && lL_event(lua, "quit", -1)) {
       l_close(lua);
+      // Free some memory.
+      free(flabel), free(rlabel);
+      if (find_text) free(find_text);
+      if (repl_text) free(repl_text);
+      for (int i = 0; i < 4; i++) free(button_labels[i]);
+      free(match_case ? option_labels[0] : option_labels[0] - 4);
+      free(whole_word ? option_labels[1] : option_labels[1] - 4);
+      free(lua_pattern ? option_labels[2] : option_labels[2] - 4);
+      free(in_files ? option_labels[3] : option_labels[3] - 4);
+      for (int i = 0; i < 10; i++) {
+        if (find_store[i]) free(find_store[i]);
+        if (repl_store[i]) free(repl_store[i]);
+      }
       break;
     } else quit = FALSE;
     scintilla_refresh(focused_view);
