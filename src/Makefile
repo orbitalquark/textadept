@@ -181,7 +181,7 @@ osx-ncurses: textadept-ncurses.osx textadeptjit-ncurses.osx
 tmp:
 	rm -rf /tmp/tabuild && hg clone ../ /tmp/tabuild
 	cp -rL ../Doxyfile ../doc ../lexers ../modules /tmp/tabuild/
-	cp -r gtdialog gtkosx LexLPeg.cxx libluajit*.a lua luajit lua51.dll \
+	cp -rL gtdialog gtkosx LexLPeg.cxx libluajit*.a lua luajit lua51.dll \
 		scintilla termkey cdk win*gtk /tmp/tabuild/src/
 	cd /tmp/tabuild/src/luajit && $(MAKE) clean
 	ln -s `pwd`/../releases /tmp/tabuild
