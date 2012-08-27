@@ -154,7 +154,7 @@ Clicking the mouse at a point in the buffer while holding `Control` places an
 additional caret at that point. Clicking and dragging while holding `Control`
 creates multiple selections. Start typing to enter text at each selection.
 
-This is currently unavailable on Mac OSX and in ncurses.
+This is currently unavailable in ncurses.
 
 ### Selecting Entities
 
