@@ -1,4 +1,4 @@
--- Copyright 2007-2012 Mitchell mitchell<att>caladbolg.net. See LICENSE.
+-- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- Terminal editor theme for Textadept.
 
 local c = _SCINTILLA.constants
@@ -7,8 +7,9 @@ local buffer = buffer
 -- Multiple Selection and Virtual Space
 --buffer.multiple_selection = true
 buffer.additional_selection_typing = true
---buffer.multi_paste = 1
---buffer.virtual_space_options = 3
+--buffer.multi_paste = c.SC_MULTIPASTE_EACH
+--buffer.virtual_space_options = c.SCVS_RECTANGULARSELECTION +
+--                               c.SCVS_USERACCESSIBLE
 buffer.rectangular_selection_modifier = c.SCMOD_SUPER
 --buffer.additional_sel_alpha =
 --buffer.additional_sel_fore =
@@ -29,7 +30,7 @@ buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
 --buffer.end_at_last_line = false
 
 -- Whitespace
---buffer.view_ws = 1
+--buffer.view_ws = c.SCWS_VISIBLEALWAYS
 --buffer.whitespace_size =
 --buffer.extra_ascent =
 --buffer.extra_descent =
@@ -47,9 +48,9 @@ buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
 --buffer.caret_line_back =
 --buffer.caret_line_back_alpha =
 --buffer.caret_period = 500
---buffer.caret_style = 1
+--buffer.caret_style = c.CARETSTYLE_LINE
 --buffer.caret_width =
---buffer.caret_sticky = 1
+--buffer.caret_sticky = c.SC_CARETSTICKY_ON
 
 -- Line Number Margin.
 buffer.margin_width_n[0] = 4
@@ -68,14 +69,14 @@ buffer.margin_mask_n[2] = c.SC_MASK_FOLDERS
 --buffer:set_fold_margin_hi_colour(1, 0xFFFFFF)
 
 -- Annotations.
-buffer.annotation_visible = 2
+buffer.annotation_visible = c.ANNOTATION_BOXED
 
 -- Other.
 --buffer.buffered_draw = true
 --buffer.two_phase_draw = true
 
 -- Indentation Guides.
---buffer.indentation_guides = 3
+--buffer.indentation_guides = c.SC_IV_LOOKBOTH
 
 -- Fold Margin Markers.
 --buffer:marker_define(c.SC_MARKNUM_FOLDERSUB,
@@ -100,17 +101,17 @@ buffer.auto_c_choose_single = true
 buffer.call_tip_use_style = 0
 
 -- Folding.
---buffer.fold_flags = 16
+--buffer.fold_flags = c.SC_FOLDFLAG_LINEAFTER_CONTRACTED
 
 -- Line Wrapping.
---buffer.wrap_mode = 1
---buffer.wrap_visual_flags = 1
---buffer.wrap_visual_flags_location = 1
-buffer.wrap_indent_mode = 2
+--buffer.wrap_mode = c.SC_WRAP_WORD
+--buffer.wrap_visual_flags = c.SC_WRAPVISUALFLAG_MARGIN
+--buffer.wrap_visual_flags_location = c.SC_WRAPVISUALFLAGLOC_END_BY_TEXT
+buffer.wrap_indent_mode = c.SC_WRAPINDENT_SAME
 --buffer.wrap_start_indent =
 
 -- Long Lines.
---buffer.edge_mode = 1
+--buffer.edge_mode = c.EDGE_BACKGROUND
 --buffer.edge_column = 80
 --buffer.edge_colour = 0xFFFFFF
 
