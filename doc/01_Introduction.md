@@ -16,8 +16,8 @@ sacrificing speed or succumbing to code bloat and featuritis.
 
 Textadept is _fast_. It starts up instantly and has a very responsive user
 interface (UI). Even though the editor is mostly written in Lua, Lua is one of
-the fastest scripting languages available. With [LuaJIT][], Textadept is faster
-than ever before, though using LuaJIT is overkill.
+the fastest scripting languages available. With the optional [LuaJIT][] version,
+Textadept is faster than ever before.
 
 [LuaJIT]: http://luajit.org
 
@@ -25,9 +25,9 @@ than ever before, though using LuaJIT is overkill.
 
 Textadept is minimalist. Not only is this apparent in the UI, but the editor's C
 core was designed to never exceed 2000 lines of code and its Lua extension code
-is not supposed to go beyond 4000 lines. After 4 1/2 years of development, even
-though Textadept has about the same number of lines of code than it did in its
-first release (~5600), it is vastly superior in every respect.
+is not supposed to go beyond 4000 lines. After 5 years of development, Textadept
+has maintained the same amount of code since its inception (~5600 lines) while
+evolving into a vastly superior editor.
 
 ### Ridiculously Extensible
 
@@ -58,7 +58,7 @@ commands on-the-fly to handling UI events. The possibilities are limitless.
   `N` pressed followed by `Shift` and `N`.
 * When mentioning key commands, the Mac OSX and ncurses equivalents will often
   be shown in parenthesis. It may be tempting to assume that some Windows/Linux
-  keys map to Mac OSX's (e.g `Ctrl` to `⌘`) or ncurses' (`Ctrl` to `^`), but
-  this is not always the case. Please do not view the key equivalents as
+  keys map to Mac OSX's (e.g. `Ctrl` to `⌘`) or ncurses' (e.g. `Ctrl` to `^`),
+  but this is not always the case. Please do not view the key equivalents as
   translations of one another, but rather as separate entities. This will
   minimize confusion.
