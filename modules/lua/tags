@@ -82,6 +82,7 @@ INDIC_PLAIN	_	0;"	F	class:_SCINTILLA.constants
 INDIC_ROUNDBOX	_	0;"	F	class:_SCINTILLA.constants
 INDIC_SQUIGGLE	_	0;"	F	class:_SCINTILLA.constants
 INDIC_SQUIGGLELOW	_	0;"	F	class:_SCINTILLA.constants
+INDIC_SQUIGGLEPIXMAP	_	0;"	F	class:_SCINTILLA.constants
 INDIC_STRAIGHTBOX	_	0;"	F	class:_SCINTILLA.constants
 INDIC_STRIKE	_	0;"	F	class:_SCINTILLA.constants
 INDIC_TT	_	0;"	F	class:_SCINTILLA.constants
@@ -265,6 +266,7 @@ SCI_GETSCROLLWIDTH	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETSCROLLWIDTHTRACKING	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETSEARCHFLAGS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETSELALPHA	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETSELECTIONEMPTY	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETSELECTIONEND	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETSELECTIONMODE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETSELECTIONNANCHOR	_	0;"	F	class:_SCINTILLA.constants
@@ -330,6 +332,7 @@ SCI_MARKERSETBACKSELECTED	_	0;"	F	class:_SCINTILLA.constants
 SCI_MARKERSETFORE	_	0;"	F	class:_SCINTILLA.constants
 SCI_OPTIONAL_START	_	0;"	F	class:_SCINTILLA.constants
 SCI_RGBAIMAGESETHEIGHT	_	0;"	F	class:_SCINTILLA.constants
+SCI_RGBAIMAGESETSCALE	_	0;"	F	class:_SCINTILLA.constants
 SCI_RGBAIMAGESETWIDTH	_	0;"	F	class:_SCINTILLA.constants
 SCI_SELECTIONISRECTANGLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETADDITIONALCARETFORE	_	0;"	F	class:_SCINTILLA.constants
@@ -791,7 +794,6 @@ _print	_	0;"	f	class:gui
 _select	_	0;"	f	class:_M.textadept.snippets
 abs	_	0;"	f	class:math
 acos	_	0;"	f	class:math
-add	_	0;"	f	class:_M.textadept.bookmarks
 add_selection	_	0;"	f	class:buffer
 add_text	_	0;"	f	class:buffer
 add_trigger	_	0;"	f	class:_M.textadept.adeptsense
@@ -1113,6 +1115,8 @@ goto_line	_	0;"	f	class:buffer
 goto_next	_	0;"	f	class:_M.textadept.bookmarks
 goto_pos	_	0;"	f	class:buffer
 goto_prev	_	0;"	f	class:_M.textadept.bookmarks
+goto_required	_	0;"	f	class:_M.php
+goto_required	_	0;"	f	class:_M.ruby
 goto_view	_	0;"	f	class:gui
 grab_focus	_	0;"	f	class:buffer
 graph	_	0;"	F	class:lexer
@@ -1178,6 +1182,7 @@ keys	_	0;"	m
 keys	_	0;"	t	
 keys	_	0;"	t	class:_M.textadept
 keys_unicode	_	0;"	F	class:buffer
+last_char_includes	_	0;"	f	class:lexer
 layout_cache	_	0;"	F	class:buffer
 ldexp	_	0;"	f	class:math
 len	_	0;"	f	class:string
@@ -1399,7 +1404,6 @@ register	_	0;"	f	class:args
 register_image	_	0;"	f	class:buffer
 register_rgba_image	_	0;"	f	class:buffer
 reload	_	0;"	f	class:buffer
-remove	_	0;"	f	class:_M.textadept.bookmarks
 remove	_	0;"	f	class:os
 remove	_	0;"	f	class:table
 rename	_	0;"	f	class:os
@@ -1419,6 +1423,7 @@ reset	_	0;"	f
 resume	_	0;"	f	class:coroutine
 reverse	_	0;"	f	class:string
 rgba_image_height	_	0;"	F	class:buffer
+rgba_image_scale	_	0;"	F	class:buffer
 rgba_image_width	_	0;"	F	class:buffer
 rhtml	_	0;"	t	class:_M
 rhtml	_	0;"	t	class:keys
@@ -1464,6 +1469,7 @@ select_paragraph	_	0;"	f	class:_M.textadept.editing
 select_theme	_	0;"	f	class:gui
 select_word	_	0;"	f	class:_M.textadept.editing
 selection_duplicate	_	0;"	f	class:buffer
+selection_empty	_	0;"	F	class:buffer
 selection_end	_	0;"	F	class:buffer
 selection_is_rectangle	_	0;"	F	class:buffer
 selection_mode	_	0;"	F	class:buffer
@@ -1663,6 +1669,8 @@ use_tabs	_	0;"	F	class:buffer
 user_list_show	_	0;"	f	class:buffer
 v_scroll_bar	_	0;"	F	class:buffer
 vc_home	_	0;"	f	class:buffer
+vc_home_display	_	0;"	f	class:buffer
+vc_home_display_extend	_	0;"	f	class:buffer
 vc_home_extend	_	0;"	f	class:buffer
 vc_home_rect_extend	_	0;"	f	class:buffer
 vc_home_wrap	_	0;"	f	class:buffer
