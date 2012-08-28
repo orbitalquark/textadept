@@ -30,6 +30,8 @@
 --   Table of the number of annotation lines for lines starting from zero.
 -- @field annotation_style (table)
 --   Table of style numbers for annotations for lines starting at zero.
+--   Only some style attributes are active in annotations: font,
+--   size/size_fractional, bold/weight, italics, fore, back, and character_set.
 -- @field annotation_style_offset (number)
 --   The start of the range of style numbers used for annotations.
 --   Annotation styles may be completely separated from standard text styles by
@@ -380,6 +382,11 @@
 --     The default values are `30` for alpha and `50` for outline alpha. To
 --     avoid excessive memory allocation the maximum width of a dotted box is
 --     4000 pixels.
+--   * `_SCINTILLA.constants.INDIC_SQUIGGLEPIXMAP` (13)
+--     A version of `INDIC_SQUIGGLE` that draws using a pixmap instead of as a
+--     series of line segments for performance. Measured to be between 3 and 6
+--     times faster than `INDIC_SQUIGGLE` on GTK+. Apperance will not be as good
+--     as `INDIC_SQUIGGLE` on OSX in HiDPI mode.
 --   * Use `_SCINTILLA.next_indic_number()` for custom indicators.
 -- @field indic_under (table)
 --   Table of booleans for drawing under text or over (default) for indicators
@@ -472,6 +479,8 @@
 --   margins are insensitive.
 -- @field margin_style (table)
 --   Table of style numbers for text margin lines starting from zero.
+--   Only some style attributes are active in text margins: font,
+--   size/size_fractional, bold/weight, italics, fore, back, and character_set.
 -- @field margin_style_offset (number)
 --   The start of the range of style numbers used for margin text.
 --   Margin styles may be completely separated from standard text styles by
@@ -609,6 +618,12 @@
 --     Left Windows key on a Windows keyboard or the Command key on a Mac.
 -- @field rgba_image_height (number)
 --   The height for future RGBA image data.
+-- @field rgba_image_scale (number)
+--   The scale factor in percent for future RGBA image data.
+--   This is useful on OSX with a retina display where each display unit is 2
+--   pixels: use a factor of 200 so that each image pixel is dsplayed using a
+--   screen pixel. The default scale, 100, will stretch each image pixel to
+--   cover 4 screen pixels on a retina display.
 -- @field rgba_image_width (number)
 --   The width for future RGBA image data.
 -- @field scroll_width (number)
@@ -643,6 +658,8 @@
 --   The selection end of line fill.
 --   The selection can be drawn up to the right hand border by setting this
 --   property.
+-- @field selection_empty (bool, Read-only)
+--   Is every selected range empty?
 -- @field selection_end (number)
 --   The position that ends the selection - this becomes the current position.
 --   This does not make the caret visible.
@@ -2378,6 +2395,18 @@ function buffer.user_list_show(buffer, list_type, item_list) end
 -- If already there move to first character on line.
 -- @param buffer The global buffer.
 function buffer.vc_home(buffer) end
+
+---
+-- Move caret to before first visible character on display line.
+-- If already there move to first character on display line.
+-- @param buffer The global buffer.
+function buffer.vc_home_display(buffer) end
+
+---
+-- Like `buffer:vc_home_display()` but extending selection to new caret
+-- position.
+-- @param buffer The global buffer.
+function buffer.vc_home_display_extend(buffer) end
 
 ---
 -- Like `buffer:vc_home()` but extending selection to new caret position.
