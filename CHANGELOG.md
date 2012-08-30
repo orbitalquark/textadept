@@ -24,6 +24,7 @@ Bugfixes:
 * ncurses replace entry can now be focused.
 * Fixed ncurses memory leaks.
 * Fixed multiple selection in Mac OSX.
+* Show key shortcuts in ncurses [`_M.textadept.menu.select_command()`][].
 
 Changes:
 
@@ -44,9 +45,10 @@ Changes:
 [Textadept 6.0 beta 2 -- Linux x86_64]: download/textadept_6.0_beta_2.x86_64.tgz
 [Textadept 6.0 beta 2 -- Source]: download/textadept_6.0_beta_2.src.zip
 [Textadept 6.0 beta 2 -- Modules]: download/textadept_6.0_beta_2.modules.zip
+[`_M.textadept.menu.select_command()`]: api/_M.textadept.menu.html#select_command
+[`_M.textadept.bookmarks.toggle()`]: api/_M.textadept.bookmarks.html#toggle
 [`_M.textadept.snapopen.DEFAULT_DEPTH`]: api/_M.textadept.snapopen.html#DEFAULT_DEPTH
 [`MAX`]: api/_M.textadept.snapopen.html#MAX
-[`_M.textadept.bookmarks.toggle()`]: api/_M.textadept.bookmarks.html#toggle
 [Scintilla]: http://scintilla.org
 
 ## 6.0 beta (01 Aug 2012)
