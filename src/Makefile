@@ -331,7 +331,7 @@ cleandoc:
 # Package.
 
 basedir = textadept_$(shell grep "_RELEASE =" ../core/init.lua | \
-                            cut -d ' ' -f 4- | sed -e 's/"//; s/ /_/;')
+                            cut -d ' ' -f 4- | sed -e 's/"//; s/ /_/g;')
 modules = css hypertext java rails rhtml ruby php
 
 release: ../textadept ../textadeptjit ../textadept-ncurses \
