@@ -13,7 +13,7 @@ manual.
 The completely customizable (and optional!) menubar provides access to all of
 Textadept's features. It is only available in the GUI version of Textadept.
 In the terminal, you can use the
-[command selection](10_Advance.html#Command.Selection) dialog instead.
+[command selection](10_Advanced.html#Command.Selection) dialog instead.
 
 ## Editor View
 
