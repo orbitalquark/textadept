@@ -4,10 +4,52 @@
 
 [Atom Feed]: feed
 
-## 6.0 beta (01 Aug 2012)
+## 6.0 beta 2 (01 Sept 2012)
 
 Please see the [5 to 6 migration guide][] for upgrading from Textadept 5 to
 Textadept 6.
+
+Download:
+
+* [Textadept 6.0 beta 2 -- Win32][]
+* [Textadept 6.0 beta 2 -- Mac OSX Intel 10.5+][]
+* [Textadept 6.0 beta 2 -- Linux][]
+* [Textadept 6.0 beta 2 -- Linux x86_64][]
+* [Textadept 6.0 beta 2 -- Source][]
+* [Textadept 6.0 beta 2 -- Modules][]
+
+Bugfixes:
+
+* Disabled `--help` switch to ncurses version due to terminal output mangling.
+* ncurses replace entry can now be focused.
+* Fixed ncurses memory leaks.
+* Fixed multiple selection in Mac OSX.
+
+Changes:
+
+* Added `make install` and `make uninstall` rules for optional installation.
+* Updated manual with ncurses key commands.
+* Consolidated `_M.textadept.bookmarks.add()` and
+  `_M.textadept.bookmarks.remove()` into [`_M.textadept.bookmarks.toggle()`][].
+* Updated manual images.
+* [`_M.textadept.snapopen.DEFAULT_DEPTH`][] is now `99` since [`MAX`][] is the
+  limiting factor.
+* Use constant names in theme options instead of nondescript integers.
+* Updated to [Scintilla 3.2.2][].
+
+[5 to 6 migration guide]: 14_Appendix.html#Textadept.5.to.6
+[Textadept 6.0 beta 2 -- Win32]: download/textadept_6.0_beta_2.win32.zip
+[Textadept 6.0 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_6.0_beta_2.osx.zip
+[Textadept 6.0 beta 2 -- Linux]: download/textadept_6.0_beta_2.i386.tgz
+[Textadept 6.0 beta 2 -- Linux x86_64]: download/textadept_6.0_beta_2.x86_64.tgz
+[Textadept 6.0 beta 2 -- Source]: download/textadept_6.0_beta_2.src.zip
+[Textadept 6.0 beta 2 -- Modules]: download/textadept_6.0_beta_2.modules.zip
+[`_M.textadept.snapopen.DEFAULT_DEPTH`]: api/_M.textadept.snapopen.html#DEFAULT_DEPTH
+[`MAX`]: api/_M.textadept.snapopen.html#MAX
+[`_M.textadept.bookmarks.toggle()`]: api/_M.textadept.bookmarks.html#toggle
+[Scintilla]: http://scintilla.org
+
+## 6.0 beta (01 Aug 2012)
 
 Download:
 
@@ -36,7 +78,6 @@ Changes:
 * New 64-bit Windows version (note: without LuaJIT).
 * Updated to [Scintilla][] 3.2.1.
 
-[5 to 6 migration guide]: 14_Appendix.html#Textadept.5.to.6
 [Textadept 6.0 beta -- Win32]: download/textadept_6.0_beta.win32.zip
 [Textadept 6.0 beta -- Mac OSX Intel 10.5+]: download/textadept_6.0_beta.osx.zip
 [Textadept 6.0 beta -- Linux]: download/textadept_6.0_beta.i386.tgz
