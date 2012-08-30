@@ -405,6 +405,15 @@ of `complete_symbol` and `show_documentation` with `complete` and `show_apidoc`.
 `gui.gtkmenu()` was renamed to `gui.menu()`. Therefore, replace all instances of
 `gui.gtkmenu` with `gui.menu`.
 
+##### Bookmarks
+
+`_M.textadept.bookmarks.add()` and `_M.textadept.bookmarks.remove()` were
+consolidated into [`_M.textadept.bookmarks.toggle()`][]. Replace `add()` with
+`toggle(true)` and `remove()` with `toggle(false)`. `toggle()` functionality
+otherwise remains the same.
+
+[`_M.textadept.bookmarks.toggle()`]: api/_M.textadept.bookmarks.html#toggle
+
 ### Textadept 4 to 5
 
 Lua has been upgraded from [5.1 to 5.2][], so many scripts written for Textadept
