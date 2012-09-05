@@ -4,7 +4,7 @@
 
 [Atom Feed]: feed
 
-## 6.0 beta 2 (01 Sept 2012)
+## 6.0 beta 2 (01 Sep 2012)
 
 Please see the [5 to 6 migration guide][] for upgrading from Textadept 5 to
 Textadept 6.
@@ -36,7 +36,7 @@ Changes:
 * [`_M.textadept.snapopen.DEFAULT_DEPTH`][] is now `99` since [`MAX`][] is the
   limiting factor.
 * Use constant names in theme options instead of nondescript integers.
-* Updated to [Scintilla 3.2.2][].
+* Updated to [Scintilla][] 3.2.2.
 
 [5 to 6 migration guide]: 14_Appendix.html#Textadept.5.to.6
 [Textadept 6.0 beta 2 -- Win32]: download/textadept_6.0_beta_2.win32.zip
