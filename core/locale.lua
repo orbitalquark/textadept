@@ -16,6 +16,10 @@ local none = 'No Localization: '
 function M._EXISTS(message) return M[message] ~= none..message end
 
 local f = io.open(_USERHOME..'/locale.conf', 'rb')
+if not f then
+  local lang = (os.getenv('LANG') or ''):match('^[^_.@]+')
+  if lang then f = io.open(_HOME..'/core/locales/locale.'..lang..'.conf') end
+end
 if not f then f = io.open(_HOME..'/core/locale.conf', 'rb') end
 if not f then error('"core/locale.conf" not found.') end
 for line in f:lines() do
