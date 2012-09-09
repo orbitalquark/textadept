@@ -269,37 +269,6 @@ local function read_menu_table(menu, contextmenu)
   return gtkmenu
 end
 
----
--- Sets `gui.menubar` from the given table of menus.
--- @param menubar The table of menus to create the menubar from.
--- @see gui.menu
--- @see rebuild_command_tables
--- @name set_menubar
-function M.set_menubar(menubar)
-  key_shortcuts = {}
-  for key, f in pairs(keys) do key_shortcuts[get_id(f)] = key end
-  if NCURSES then return end -- only wanted to populate key_shortcuts
-  menu_actions = {}
-  local _menubar = {}
-  for i = 1, #menubar do
-    _menubar[#_menubar + 1] = gui.menu(read_menu_table(menubar[i]))
-  end
-  gui.menubar = _menubar
-end
-M.set_menubar(M.menubar)
-
----
--- Sets `gui.context_menu` from the given menu table.
--- @param menu_table The menu table to create the context menu from. Each table
---   entry is either a submenu or menu text and a function or action table.
--- @see set_menubar
--- @name set_contextmenu
-function M.set_contextmenu(menu_table)
-  contextmenu_actions = {}
-  gui.context_menu = gui.menu(read_menu_table(menu_table, true))
-end
-if not NCURSES then M.set_contextmenu(M.context_menu) end
-
 local items, commands
 
 -- Builds the item and commands tables for the filteredlist dialog.
@@ -321,6 +290,39 @@ local function build_command_tables(menu, title, items, commands)
   end
 end
 
+---
+-- Sets `gui.menubar` from the given table of menus.
+-- @param menubar The table of menus to create the menubar from.
+-- @see gui.menu
+-- @see rebuild_command_tables
+-- @name set_menubar
+function M.set_menubar(menubar)
+  key_shortcuts = {}
+  for key, f in pairs(keys) do key_shortcuts[get_id(f)] = key end
+  if NCURSES then return end -- only wanted to populate key_shortcuts
+  menu_actions = {}
+  local _menubar = {}
+  for i = 1, #menubar do
+    _menubar[#_menubar + 1] = gui.menu(read_menu_table(menubar[i]))
+  end
+  gui.menubar = _menubar
+  items, commands = {}, {}
+  build_command_tables(M.menubar, nil, items, commands)
+end
+M.set_menubar(M.menubar)
+
+---
+-- Sets `gui.context_menu` from the given menu table.
+-- @param menu_table The menu table to create the context menu from. Each table
+--   entry is either a submenu or menu text and a function or action table.
+-- @see set_menubar
+-- @name set_contextmenu
+function M.set_contextmenu(menu_table)
+  contextmenu_actions = {}
+  gui.context_menu = gui.menu(read_menu_table(menu_table, true))
+end
+if not NCURSES then M.set_contextmenu(M.context_menu) end
+
 local columns = { _L['Command'], _L['Key Command'] }
 ---
 -- Prompts the user with a filteredlist to run menu commands.
@@ -330,16 +332,6 @@ function M.select_command()
                              NCURSES and { '--width', gui.size[1] - 2 } or '')
   if i then keys.run_command(commands[i + 1], type(commands[i + 1])) end
 end
-
----
--- Rebuilds the tables used by `select_command()`.
--- This should be called every time `set_menubar()` is called.
--- @name rebuild_command_tables
-function M.rebuild_command_tables()
-  items, commands = {}, {}
-  build_command_tables(M.menubar, nil, items, commands)
-end
-M.rebuild_command_tables()
 
 local events, events_connect = events, events.connect
 
