@@ -33,8 +33,7 @@ module('_M.textadept.run')]]
 
 -- Events.
 local events, events_connect, events_emit = events, events.connect, events.emit
-local COMPILE_OUTPUT, RUN_OUTPUT = 'compile_output', 'run_output'
-events.COMPILE_OUTPUT, events.RUN_OUTPUT = COMPILE_OUTPUT, RUN_OUTPUT
+events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
 
 local preferred_view
 
@@ -46,9 +45,11 @@ local preferred_view
 --     + `%(filedir)`: The current file's directory path.
 --     + `%(filename)`: The name of the file including extension.
 --     + `%(filename_noext)`: The name of the file excluding extension.
--- @param lexer The current lexer.
+-- @param compiling Flag indicating whether or not the command is a compiler
+--   command. The default value is `false`.
+-- @see _G.events
 -- @name execute
-function M.execute(command, lexer)
+function M.execute(command, compiling)
   preferred_view = view
   local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local filedir, filename = '', filepath
@@ -62,26 +63,29 @@ function M.execute(command, lexer)
   })
   local current_dir = lfs.currentdir()
   lfs.chdir(filedir)
-  events_emit(COMPILE_OUTPUT, lexer, '> '..command:iconv('UTF-8', _CHARSET))
+  local event = compiling and events.COMPILE_OUTPUT or events.RUN_OUTPUT
+  local lexer = buffer:get_lexer()
+  events_emit(event, lexer, '> '..command:iconv('UTF-8', _CHARSET))
   local p = io.popen(command..' 2>&1')
   for line in p:lines() do
-    events_emit(COMPILE_OUTPUT, lexer, line:iconv('UTF-8', _CHARSET))
+    events_emit(event, lexer, line:iconv('UTF-8', _CHARSET))
   end
   local ok, status, code = p:close()
-  if ok and code then events_emit(COMPILE_OUTPUT, lexer, status..': '..code) end
+  if ok and code then events_emit(event, lexer, status..': '..code) end
   lfs.chdir(current_dir)
 end
 
 -- Executes a compile or run command.
 -- @param cmd_table Either `compile_command` or `run_command`.
--- @param lexer The current lexer.
-local function command(cmd_table, lexer)
+-- @param compiling Flag indicating whether or not the command is a compiler
+--   command. The default value is `false`.
+local function command(cmd_table, compiling)
   if not buffer.filename then return end
   buffer:annotation_clear_all()
   buffer:save()
   local action = cmd_table[buffer.filename:match('[^.]+$')]
   if not action then return end
-  M.execute(type(action) == 'function' and action() or action, lexer)
+  M.execute(type(action) == 'function' and action() or action, compiling)
 end
 
 -- Parses the given message for an error description and returns a table of the
@@ -134,8 +138,8 @@ M.compile_command = {}
 -- table.
 -- @see compile_command
 -- @name compile
-function M.compile() command(M.compile_command, buffer:get_lexer()) end
-events_connect(COMPILE_OUTPUT, print_output)
+function M.compile() command(M.compile_command, true) end
+events_connect(events.COMPILE_OUTPUT, print_output)
 
 ---
 -- File extensions and their associated 'go' actions.
@@ -151,8 +155,8 @@ M.run_command = {}
 -- table.
 -- @see run_command
 -- @name run
-function M.run() command(M.run_command, buffer:get_lexer()) end
-events_connect(RUN_OUTPUT, print_output)
+function M.run() command(M.run_command) end
+events_connect(events.RUN_OUTPUT, print_output)
 
 ---
 -- A table of error string details.
