@@ -4,29 +4,32 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Editing commands for the textadept module.
+-- Editing features for Textadept.
 -- @field AUTOPAIR (bool)
---   Opening `(`, `[`, `[`, `"`, or `'` characters are automatically closed.
+--   Opening `(`, `[`, `{`, `"`, or `'` characters are automatically closed.
 --   The default value is `true`.
+--   Auto-paired characters are defined in the [`char_matches`](#char_matches)
+--   table.
 -- @field HIGHLIGHT_BRACES (bool)
 --   Highlight matching `()[]{}` characters.
 --   The default value is `true`.
+--   Matching braces are defined in the [`braces`](#braces) table.
 -- @field AUTOINDENT (bool)
---   Match the indentation level of the previous line when pressing the Enter
---   key.
+--   Match the indentation level of the previous line when pressing the `Enter`
+--   (`↩` on Mac OSX | `Enter` in ncurses) key.
 --   The default value is `true`.
 -- @field STRIP_WHITESPACE_ON_SAVE (bool)
 --   Strip trailing whitespace on file save.
 --   The default value is `true`.
 -- @field MARK_HIGHLIGHT_BACK (number)
---   The background color used for a line containing a highlighted word in
---   `0xBBGGRR` format.
+--   The background color used for a line containing a
+--   [highlighted word](#highlight_word) in `0xBBGGRR` format.
 -- @field INDIC_HIGHLIGHT_BACK (number)
---   The color used for an indicator for a highlighted word in `0xBBGGRR`
---   format.
+--   The color used for an indicator for a [highlighted word](#highlight_word)
+--   in `0xBBGGRR` format.
 -- @field INDIC_HIGHLIGHT_ALPHA (number)
 --   The alpha transparency value between `0` (transparent) and `255` (opaque)
---   used for an indicator for a highlighted word.
+--   used for an indicator for a [highlighted word](#highlight_word).
 --   The default value is `100`.
 module('_M.textadept.editing')]]
 
@@ -43,7 +46,9 @@ M.INDIC_HIGHLIGHT_ALPHA = 100
 -- Comment strings for various lexer languages.
 -- Used by the `block_comment()` function. Keys are lexer language names and
 -- values are the line comment delimiters for the language. This table is
--- typically populated by language-specific modules.
+-- typically populated by [language-specific modules][].
+--
+-- [language-specific modules]: _M.html#Block.Comment
 -- @class table
 -- @name comment_string
 -- @see block_comment
@@ -52,9 +57,10 @@ M.comment_string = {}
 ---
 -- Auto-matched characters.
 -- Used for auto-matching parentheses, brackets, braces, quotes, etc. Keys are
--- lexer language names and values are tables of character match pairs. This
--- table can be populated by language-specific modules. The defaults are '()',
--- '[]', '{}', '''', and '""'.
+-- lexer language names and values are tables of character match pairs. A pair's
+-- key is an ASCII value and the value is the string character match. The
+-- defaults are `()`, `[]`, `{}`, `''`, and `""`.
+-- This table can be populated by language-specific modules.
 -- @class table
 -- @name char_matches
 -- @usage _M.textadept.editing.char_matches.hypertext = { ..., [60] = '>' }
@@ -63,9 +69,10 @@ M.char_matches = { [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"' }
 
 ---
 -- Highlighted brace characters.
--- Keys are lexer language names and values are tables of characters that count
--- as brace characters. This table can be populated by language-specific
--- modules. The defaults are '(', ')', '[', ']', '{', and '}'.
+-- Keys are lexer language names and values are tables of character ASCII values
+-- that count as brace characters. The defaults are `(`, `)`, `[`, `]`, `{`, and
+-- `}`.
+-- This table can be populated by language-specific modules.
 -- @class table
 -- @name braces
 -- @usage _M.textadept.editing.braces.hypertext = { ..., [60] = 1, [62] = 1 }
@@ -204,10 +211,15 @@ end
 ---
 -- Pops up an autocompletion list for the current word based on other words in
 -- the document.
--- @param word_chars String of chars considered to be part of words.
+-- @param word_chars String of characters considered to be part of words. Since
+--   this string is used in a Lua pattern character set, character classes and
+--   ranges may be used.
 -- @param default_words Optional list of words considered to be in the document,
---   even if they are not. Words may contain registered images.
+--   even if they are not. Words may contain [registered images][].
+--
+-- [registered images]: buffer.html#register_image
 -- @return `true` if there were completions to show; `false` otherwise.
+-- @usage _M.textadept.editing.autocomplete_word('%w_')
 -- @name autocomplete_word
 function M.autocomplete_word(word_chars, default_words)
   local buffer = buffer
@@ -326,7 +338,9 @@ end
 
 ---
 -- Joins the currently selected lines.
--- If no lines are selected, joins the current line with the line below.
+-- As long as any part of a line is selected, the entire line is eligible for
+-- joining. If no lines are selected, joins the current line with the line
+-- below.
 -- @name join_lines
 function M.join_lines()
   local buffer = buffer
@@ -368,8 +382,9 @@ function M.select_enclosed(left, right)
 end
 
 ---
--- Grows the selection by a character amount on either end.
--- @param amount The amount to grow the selection on either end.
+-- Grows the selection by the given number of characters on either end.
+-- @param amount The number of characters to grow the selection by on either
+--   end.
 -- @name grow_selection
 function M.grow_selection(amount)
   local buffer = buffer
@@ -383,6 +398,7 @@ end
 
 ---
 -- Selects the current word under the caret.
+-- @see buffer.word_chars
 -- @name select_word
 function M.select_word()
   local buffer = buffer
@@ -400,7 +416,7 @@ end
 
 ---
 -- Selects the current paragraph.
--- Paragraphs are delimited by two or more consecutive newlines.
+-- Paragraphs are surrounded by one or more blank lines.
 -- @name select_paragraph
 function M.select_paragraph()
   buffer:para_up()
@@ -410,10 +426,10 @@ end
 ---
 -- Selects indented blocks intelligently.
 -- If no block of text is selected, all text with the current level of
--- indentation is selected. If a block of text is selected and the lines to the
--- top and bottom of it are one indentation level lower, they are added to the
--- selection. In all other cases, the behavior is the same as if no text is
--- selected.
+-- indentation is selected. If a block of text is selected and the lines
+-- immediately above and below it are one indentation level lower, they are
+-- added to the selection. In all other cases, the behavior is the same as if no
+-- text is selected.
 -- @name select_indented_block
 function M.select_indented_block()
   local buffer = buffer
@@ -434,6 +450,9 @@ end
 
 ---
 -- Converts indentation between tabs and spaces.
+-- If `buffer.use_tabs` is `true`, all indenting spaces are converted to tabs.
+-- Otherwise, all indenting tabs are converted to spaces.
+-- @see buffer.use_tabs
 -- @name convert_indentation
 function M.convert_indentation()
   local buffer = buffer
@@ -473,8 +492,9 @@ events_connect(events.KEYPRESS, function(code)
 end)
 
 ---
--- Highlights all occurances of the word under the caret and adds markers to the
--- lines they are on.
+-- Highlights all occurances of either the selected text or the word under the
+-- caret and adds markers to the lines they are on.
+-- @see buffer.word_chars
 -- @name highlight_word
 function M.highlight_word()
   clear_highlighted_words()

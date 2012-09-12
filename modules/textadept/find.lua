@@ -4,7 +4,7 @@ local find = gui.find
 
 --[[ This comment is for LuaDoc.
 ---
--- Textadept's integrated find/replace dialog.
+-- Textadept's Find & Replace pane.
 -- @field find_entry_text (string)
 --   The text in the find entry.
 -- @field replace_entry_text (string)
@@ -75,10 +75,12 @@ local escapes = {
 }
 
 ---
--- Performs a find in files with the given directory.
--- Use the `gui.find` fields to set the text to find and option flags.
--- @param utf8_dir UTF-8 encoded directory name. If none is provided, the user
---   is prompted for one.
+-- Searches the given directory for files that match search text and options and
+-- prints the results to a buffer.
+-- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
+-- search text and option flags, respectively.
+-- @param utf8_dir UTF-8 encoded directory name. If `nil`, the user is prompted
+-- for one.
 -- @name find_in_files
 function find.find_in_files(utf8_dir)
   if not utf8_dir then
@@ -219,9 +221,10 @@ local function find_incremental(text)
 end
 
 ---
--- Begins an incremental find using the Lua command entry.
--- Lua command functionality will be unavailable until the search is finished
--- (pressing 'Escape' by default).
+-- Begins an incremental find using the command entry.
+-- Only the `match_case` find option is recognized. Normal command entry
+-- functionality will be unavailable until the search is finished by pressing
+-- `Esc` (`⎋` on Mac OSX | `Esc` in ncurses).
 -- @name find_incremental
 function find.find_incremental()
   find.incremental, find.incremental_start = true, buffer.current_pos
@@ -373,8 +376,8 @@ end
 events_connect(events.DOUBLE_CLICK, goto_file)
 
 ---
--- Goes to the next or previous file found relative to the file
--- on the current line.
+-- Goes to the next or previous file found relative to the file on the current
+-- line in the results list.
 -- @param next Flag indicating whether or not to go to the next file.
 -- @name goto_file_in_list
 function find.goto_file_in_list(next)
@@ -412,31 +415,31 @@ end)
 --[[ The functions below are Lua C functions.
 
 ---
--- Displays and focuses the find/replace dialog.
+-- Displays and focuses the Find & Replace pane.
 -- @class function
 -- @name focus
 local focus
 
 ---
--- Mimicks a press of the 'Find Next' button in the Find box.
+-- Mimicks a press of the 'Find Next' button.
 -- @class function
 -- @name find_next
 local find_next
 
 ---
--- Mimicks a press of the 'Find Prev' button in the Find box.
+-- Mimicks a press of the 'Find Prev' button.
 -- @class function
 -- @name find_prev
 local find_prev
 
 ---
--- Mimicks a press of the 'Replace' button in the Find box.
+-- Mimicks a press of the 'Replace' button.
 -- @class function
 -- @name replace
 local replace
 
 ---
--- Mimicks a press of the 'Replace All' button in the Find box.
+-- Mimicks a press of the 'Replace All' button.
 -- @class function
 -- @name replace_all
 local replace_all

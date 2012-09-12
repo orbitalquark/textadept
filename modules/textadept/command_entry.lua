@@ -3,7 +3,7 @@
 
 --[[ This comment is for LuaDoc.
 ---
--- Textadept's Command entry.
+-- Textadept's Command Entry.
 -- @field entry_text (string)
 --   The text in the entry.
 module('gui.command_entry')]]
@@ -98,7 +98,8 @@ local focus
 
 ---
 -- Shows the given list of completions for the current word prefix.
--- On selection, the current word prefix is replaced with the completion.
+-- On selection, the current word prefix is replaced with the completion. Word
+-- prefix characters are alphanumerics and underscores.
 -- @param completions The table of completions to show. Non-string values are
 --   ignored.
 -- @class function

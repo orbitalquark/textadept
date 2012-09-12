@@ -4,28 +4,26 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Module for running/executing source files.
--- Typically, language-specific modules populate the `compile_command`,
+-- Compile and run/execute source files with Textadept.
+-- Typically, [language-specific modules][] populate the `compile_command`,
 -- `run_command`, and `error_detail` tables for a particular language's file
 -- extension.
+--
+-- [language-specific modules]: _M.html#Compile.and.Run
 --
 -- ## Run Events
 --
 -- * `_G.events.COMPILE_OUTPUT`
 --   Called after a compile command is executed.
---   When connecting to this event (typically from a language-specific module),
---   connect with an index of `1` and return `true` if the event was handled and
---   you want to override the default handler that prints the output to a new
---   view.
+--   By default, compiler output is printed to the message buffer. To override
+--   this behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --     * `lexer`: The lexer language.
 --     * `output`: The output from the command.
 -- * `_G.events.RUN_OUTPUT`
 --   Called after a run command is executed.
---   When connecting to this event (typically from a language-specific module),
---   connect with an index of `1` and return `true` if the event was handled and
---   you want to override the default handler that prints the output to a new
---   view.
+--   By default, output is printed to the message buffer. To override this
+--   behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --     * `lexer`: The lexer language.
 --     * `output`: The output from the command.
@@ -38,7 +36,8 @@ events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
 local preferred_view
 
 ---
--- Executes the command line parameter and prints the output to Textadept.
+-- Executes the command line parameter.
+-- Emits a `COMPILE_OUTPUT` or `RUN_OUTPUT` event based on the `compiling` flag.
 -- @param command The command line string.
 --   It can have the following macros:
 --     + `%(filepath)`: The full path of the current file.
@@ -125,64 +124,74 @@ local function print_output(lexer, output)
 end
 
 ---
--- File extensions and their associated 'compile' actions.
+-- File extensions and their associated "compile" shell commands.
 -- Each key is a file extension whose value is a either a command line string to
 -- execute or a function returning one.
--- This table is typically populated by language-specific modules.
+-- This table is typically populated by [language-specific modules][].
+--
+-- [language-specific modules]: _M.html#Compile.and.Run
 -- @class table
 -- @name compile_command
 M.compile_command = {}
 
 ---
--- Compiles the file as specified by its extension in the `compile_command`
--- table.
+-- Compiles the file based on its extension using the command from the
+-- `compile_command` table.
 -- @see compile_command
 -- @name compile
 function M.compile() command(M.compile_command, true) end
 events_connect(events.COMPILE_OUTPUT, print_output)
 
 ---
--- File extensions and their associated 'go' actions.
+-- File extensions and their associated "run" shell commands.
 -- Each key is a file extension whose value is either a command line string to
 -- execute or a function returning one.
--- This table is typically populated by language-specific modules.
+-- This table is typically populated by [language-specific modules][].
+--
+-- [language-specific modules]: _M.html#Compile.and.Run
 -- @class table
 -- @name run_command
 M.run_command = {}
 
 ---
--- Runs/executes the file as specified by its extension in the `run_command`
--- table.
+-- Runs/executes the file based on its extension using the command from the
+-- `run_command` table.
 -- @see run_command
 -- @name run
 function M.run() command(M.run_command) end
 events_connect(events.RUN_OUTPUT, print_output)
 
 ---
--- A table of error string details.
--- Each entry is a table with the following fields:
+-- A table of error string details for different programming languages.
+-- Each key is a lexer name whose value is a table with the following fields:
 --
---   + `pattern`: The Lua pattern that matches a specific error string.
+--   + `pattern`: The Lua pattern that matches a specific error string with
+--     captures for the filename the error occurs in, the line number the error
+--     occurred on, and an optional error message.
 --   + `filename`: The index of the Lua capture that contains the filename the
 --     error occured in.
 --   + `line`: The index of the Lua capture that contains the line number the
 --     error occured on.
---   + `message`: [Optional] The index of the Lua capture that contains the
---     error's message. A call tip will be displayed if a message was captured.
+--   + `message`: (Optional) The index of the Lua capture that contains the
+--     error's message. An annotation will be displayed if a message was
+--     captured.
 --
 -- When an error message is double-clicked, the user is taken to the point of
 -- error.
--- This table is usually populated by language-specific modules.
+-- This table is usually populated by [language-specific modules][].
+--
+-- [language-specific modules]: _M.html#Compile.and.Run
 -- @class table
 -- @name error_detail
 M.error_detail = {}
 
 ---
--- Goes to the line in the file an error occured at and displays a calltip with
--- the error message.
--- This is typically called when the user double-clicks an error message,
+-- Goes to the line in the file an error occured at based on the error message
+-- at the given position and displays an annotation with the error message.
+-- This is typically called by an event handler for when the user double-clicks
+-- on an error message.
 -- @param pos The position of the caret.
--- @param line_num The line the error occurs on.
+-- @param line_num The line number the caret is on with the error message.
 -- @see error_detail
 function goto_error(pos, line_num)
   if buffer._type ~= _L['[Message Buffer]'] and

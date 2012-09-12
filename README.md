@@ -5,8 +5,8 @@
 Textadept is a fast, minimalist, and ridiculously extensible cross-platform text
 editor for programmers. Written in a combination of C and [Lua][] and
 relentlessly optimized for speed and minimalism over the years, Textadept is an
-ideal editor for programmers who want endless extensibility options without
-sacrificing speed or succumbing to code bloat and featuritis.
+ideal editor for programmers who want endless extensibility without sacrificing
+speed or succumbing to code bloat and featuritis.
 
 [Lua]: http://lua.org
 
@@ -23,8 +23,8 @@ sacrificing speed or succumbing to code bloat and featuritis.
 ## Requirements
 
 In its bid for minimalism, Textadept has no dependencies on Windows and Mac OSX
-operating systems and depends only on [GTK+ 2.0][] version 2.16 or greater on
-Linux. Lua is pre-compiled into Textadept on all platforms and a GTK runtime is
+operating systems and depends only on [GTK+ 2.0][] version 2.18 or greater on
+Linux. Lua is pre-compiled into Textadept on all platforms and a GTK+ runtime is
 included on Windows and Mac OSX.
 
 The _experimental_ version of Textadept for the terminal requires only

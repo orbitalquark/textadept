@@ -3,35 +3,42 @@
 -- global view table.
 
 ---
--- The currently focused view.
--- It also represents the structure of any view table in `_G._VIEWS`.
+-- A Textadept view object.
 -- @field size (number)
 --   The position of the split resizer (if this view is part of a split view).
 module('view')
 
 ---
--- The buffer this view contains. (Read-only)
+-- The [buffer](buffer.html) the view contains. (Read-only)
 -- @class table
 -- @name buffer
 local buffer
 
 ---
--- Splits the indexed view vertically or horizontally and focuses the new view.
+-- Splits the given view vertically or horizontally and focuses the new view.
+-- Emits a `VIEW_NEW` event.
+-- @param view The view to split.
 -- @param vertical Flag indicating a vertical split. The default value is
 --   `false` for horizontal.
--- @return old view and new view tables.
-function view:split(vertical) end
+-- @return old view and new view.
+-- @see events.VIEW_NEW
+function split(view, vertical) end
 
 ---
--- Unsplits the indexed view if possible.
+-- Unsplits the given view if possible.
+-- @param view The view to unsplit.
 -- @return boolean if the view was unsplit or not.
-function view:unsplit() end
+function view.unsplit(view) end
 
 ---
--- Goes to the specified buffer in the indexed view.
--- Generates `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
--- @param n A relative or absolute buffer index. An absolute index of `-1` goes
---   to the last buffer.
+-- Goes to the specified buffer in the given view.
+-- Emits `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
+-- @param view The view to switch buffers in.
+-- @param n A relative or absolute buffer index in `_G._BUFFERS`. An absolute
+--   index of `-1` goes to the last buffer.
 -- @param relative Flag indicating if `n` is a relative index or not. The
 --   default value is `false`.
-function view:goto_buffer(n, relative) end
+-- @see _G._G._BUFFERS
+-- @see events.BUFFER_BEFORE_SWITCH
+-- @see events.BUFFER_AFTER_SWITCH
+function goto_buffer(view, n, relative) end

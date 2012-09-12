@@ -5,6 +5,8 @@
 Passing `-h` or `--help` to Textadept shows a list of available command line
 parameters.
 
+This is unavailable in ncurses.
+
 ## Online Help
 
 Textadept has a [mailing list][] and a [wiki][]. You can also join us on IRC via

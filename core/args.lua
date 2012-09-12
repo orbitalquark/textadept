@@ -9,7 +9,7 @@ local M = {}
 -- ## Arg Events
 --
 -- + `'arg_none'`
---   Called when no command line arguments are passed to Textadept on init.
+--   Called when no command line arguments are passed to Textadept on startup.
 module('args')]]
 
 local arg = arg
@@ -25,7 +25,7 @@ local switches = {}
 -- @param switch2 String switch (long version).
 -- @param narg The number of expected parameters for the switch.
 -- @param f The Lua function to run when the switch is tripped.
--- @param description Description of the switch.
+-- @param description Description of the switch for command line help.
 -- @name register
 function M.register(switch1, switch2, narg, f, description)
   local t = { f, narg, description }
@@ -36,9 +36,10 @@ end
 -- Processes command line arguments.
 -- Add command line switches with `args.register()`. Any unrecognized arguments
 -- are treated as filepaths and opened.
--- Generates an `'arg_none'` event when no args are present.
+-- Emits an `'arg_none'` event when no args are present.
 -- @param arg Argument table.
 -- @see register
+-- @see events
 -- @name process
 function M.process(arg)
   local no_args = true
@@ -94,7 +95,7 @@ if not lfs.attributes(userhome) then lfs.mkdir(userhome) end
 if not lfs.attributes(userhome..'/init.lua') then
   local f = io.open(userhome..'/init.lua', 'w')
   if f then
-    f:write("require 'textadept'\n")
+    f:write("_M.textadept = require 'textadept'\n")
     f:close()
   end
 end

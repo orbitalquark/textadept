@@ -21,6 +21,7 @@ CARET_JUMPS	_	0;"	F	class:_SCINTILLA.constants
 CARET_SLOP	_	0;"	F	class:_SCINTILLA.constants
 CARET_STRICT	_	0;"	F	class:_SCINTILLA.constants
 CHAR_ADDED	_	0;"	F	class:events
+CLASS	_	0;"	F	class:_M.textadept.adeptsense
 CLASS	_	0;"	F	class:lexer
 CLEAR	_	0;"	F	class:keys
 COMMAND_ENTRY_COMMAND	_	0;"	F	class:events
@@ -48,6 +49,7 @@ EDGE_LINE	_	0;"	F	class:_SCINTILLA.constants
 EDGE_NONE	_	0;"	F	class:_SCINTILLA.constants
 ERROR	_	0;"	F	class:events
 ERROR	_	0;"	F	class:lexer
+FIELD	_	0;"	F	class:_M.textadept.adeptsense
 FIELDS	_	0;"	F	class:_M.textadept.adeptsense
 FILE_AFTER_SAVE	_	0;"	F	class:events
 FILE_BEFORE_SAVE	_	0;"	F	class:events
@@ -55,6 +57,7 @@ FILE_OPENED	_	0;"	F	class:events
 FILE_SAVED_AS	_	0;"	F	class:events
 FILTER	_	0;"	t	class:_M.textadept.snapopen
 FIND	_	0;"	F	class:events
+FUNCTION	_	0;"	F	class:_M.textadept.adeptsense
 FUNCTION	_	0;"	F	class:lexer
 FUNCTIONS	_	0;"	F	class:_M.textadept.adeptsense
 HIGHLIGHT_BRACES	_	0;"	F	class:_M.textadept.editing
@@ -868,6 +871,7 @@ brace_highlight_indicator	_	0;"	f	class:buffer
 brace_match	_	0;"	f	class:buffer
 braces	_	0;"	t	class:_M.textadept.editing
 btest	_	0;"	f	class:bit32
+buffer	_	0;"	F	
 buffer	_	0;"	m	
 buffer	_	0;"	t	
 buffer	_	0;"	t	class:view
@@ -1115,8 +1119,6 @@ goto_line	_	0;"	f	class:buffer
 goto_next	_	0;"	f	class:_M.textadept.bookmarks
 goto_pos	_	0;"	f	class:buffer
 goto_prev	_	0;"	f	class:_M.textadept.bookmarks
-goto_required	_	0;"	f	class:_M.php
-goto_required	_	0;"	f	class:_M.ruby
 goto_view	_	0;"	f	class:gui
 grab_focus	_	0;"	f	class:buffer
 graph	_	0;"	F	class:lexer
@@ -1392,7 +1394,6 @@ rawset	_	0;"	f
 read	_	0;"	f	class:file
 read	_	0;"	f	class:io
 read_only	_	0;"	F	class:buffer
-rebuild_command_tables	_	0;"	f	class:_M.textadept.menu
 recent_files	_	0;"	t	class:io
 rectangular_selection_anchor	_	0;"	F	class:buffer
 rectangular_selection_anchor_virtual_space	_	0;"	F	class:buffer
@@ -1677,6 +1678,7 @@ vc_home_wrap	_	0;"	f	class:buffer
 vc_home_wrap_extend	_	0;"	f	class:buffer
 version	_	0;"	f	class:lpeg
 vertical_centre_caret	_	0;"	f	class:buffer
+view	_	0;"	F	
 view	_	0;"	m	
 view	_	0;"	t	
 view_eol	_	0;"	F	class:buffer

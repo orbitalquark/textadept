@@ -11,7 +11,7 @@ library versions installed vary widely from distribution to distribution. For
 example, `libpng14` has been available for many distributions since late 2009
 while the latest 2012 Ubuntu still uses `libpng12`. Unfortunately in these
 cases, the best idea is to compile Textadept. This process is actually very
-simple though. See the [compiling][] page. Only the GTK development libraries
+simple though. See the [compiling][] page. Only the GTK+ development libraries
 are needed for the GUI version. (The ncurses development library is required for
 the terminal version.)
 

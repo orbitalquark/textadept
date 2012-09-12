@@ -4,17 +4,16 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Language autocompletion support for the textadept module.
+-- Code autocompletion and documentation support for programming languages.
 --
 -- ## Overview
 --
 -- Adeptsense is a form of autocompletion for programming. It has the means to
 -- supply a list of potential completions for classes, member functions and
--- fields, packages, etc. Adeptsense can also display documentation for such
--- entities in the form of a calltip. This document provides the information
--- necessary in order to write a new Adeptsense for a language. For illustrative
--- purposes, an Adeptsense for Lua will be created. More advanced techniques
--- are covered later.
+-- fields, packages, etc and display their documentation in the form of a
+-- calltip. This document provides the information necessary in order to write a
+-- new Adeptsense for a language. For illustrative purposes, an Adeptsense for
+-- Lua will be created. More advanced techniques are covered later.
 --
 -- ## Creating an Adeptsense
 --
@@ -32,11 +31,11 @@ local M = {}
 --
 -- Not all languages have "classes", "functions", and "fields" in the full sense
 -- of the word. Normally classes are referred to as objects in Object Oriented
--- Programming (OOP), functions are class or instance methods a class can have,
--- and fields are class or instance properties. For example an "Apple" class may
--- have a "color" field and an "eat" function. To Adeptsense, the term "class"
--- is simply a container for "function" and "field" completions. "functions" and
--- "fields" are only distinguished by an icon in the completion list.
+-- Programming (OOP), functions are class or instance methods,and fields are
+-- class or instance properties. For example a "Cat" class may have a "color"
+-- field and a "meow" function. To Adeptsense, the term "class" is simply a
+-- container for "function" and "field" completions. "functions" and "fields"
+-- are only distinguished by an icon in the completion list.
 --
 -- For Lua, consider modules and tables as "classes", functions as "functions",
 -- and module/table keys as "fields".
@@ -146,10 +145,10 @@ local M = {}
 -- `'F'`, should be fields; and modules, `'m'`, should be classes:
 --
 --     sense.ctags_kinds = {
---       f = 'functions',
---       F = 'fields',
---       m = 'classes',
---       t = 'fields',
+--       f = _M.textadept.adeptsense.FUNCTION,
+--       F = _M.textadept.adeptsense.FIELD,
+--       m = _M.textadept.adeptsense.CLASS,
+--       t = _M.textadept.adeptsense.FIELD,
 --     }
 --
 -- To load a default set of Ctags, use [`load_ctags()`](#load_ctags).
@@ -306,7 +305,7 @@ local M = {}
 -- additional list of completions.
 --
 -- Finally since an `imports` table was created, it should be cleared when the
--- Adeptsense is cleared to free up memory. When this happens,
+-- Adeptsense is cleared to free up memory immediately. When this happens,
 -- [`handle_clear()`](#handle_clear) is called.
 --
 --     function sense:handle_clear()
@@ -368,18 +367,28 @@ local M = {}
 -- @field always_show_globals (bool)
 --   Include globals in the list of completions offered.
 --   Globals are classes, functions, and fields that do not belong to another
---   class. They are contained in `completions['']`. The default value is
---   `true`.
+--   class. They are contained in `completions['']`.
+--   The default value is `true`.
 -- @field FUNCTIONS (string)
 --   XPM image for Adeptsense functions.
 -- @field FIELDS (string)
 --   XPM image for Adeptsense fields.
+-- @field CLASS (string)
+--   Ctags kind for Adeptsense classes.
+-- @field FUNCTION (string)
+--   Ctags kind for Adeptsense functions.
+-- @field FIELD (string)
+--   Ctags kind for Adeptsense fields.
 module('_M.textadept.adeptsense')]]
 
 local senses = {}
 
 M.FUNCTIONS = not NCURSES and '/* XPM */\nstatic char *function[] = {\n/* columns rows colors chars-per-pixel */\n"16 16 5 1",\n"  c #000000",\n". c #E0BC38",\n"X c #F0DC5C",\n"o c #FCFC80",\n"O c None",\n/* pixels */\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOO  OOOO",\n"OOOOOOOOO oo  OO",\n"OOOOOOOO ooooo O",\n"OOOOOOO ooooo. O",\n"OOOO  O XXoo.. O",\n"OOO oo  XXX... O",\n"OO ooooo XX.. OO",\n"O ooooo.  X. OOO",\n"O XXoo.. O  OOOO",\n"O XXX... OOOOOOO",\n"O XXX.. OOOOOOOO",\n"OO  X. OOOOOOOOO",\n"OOOO  OOOOOOOOOO"\n};' or '*'
 M.FIELDS = not NCURSES and '/* XPM */\nstatic char *field[] = {\n/* columns rows colors chars-per-pixel */\n"16 16 5 1",\n"  c #000000",\n". c #8C748C",\n"X c #9C94A4",\n"o c #ACB4C0",\n"O c None",\n/* pixels */\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOOOOOOOOO",\n"OOOOOOOOO  OOOOO",\n"OOOOOOOO oo  OOO",\n"OOOOOOO ooooo OO",\n"OOOOOO ooooo. OO",\n"OOOOOO XXoo.. OO",\n"OOOOOO XXX... OO",\n"OOOOOO XXX.. OOO",\n"OOOOOOO  X. OOOO",\n"OOOOOOOOO  OOOOO",\n"OOOOOOOOOOOOOOOO"\n};' or '+'
+
+M.CLASS = 'classes'
+M.FUNCTION = 'functions'
+M.FIELD = 'fields'
 
 ---
 -- Returns a full symbol (if any) and current symbol part (if any) behind the
@@ -716,7 +725,7 @@ function M.load_ctags(sense, tag_file, nolocations)
     if tag_name then
       local k = ext_fields:sub(1, 1)
       local kind = ctags_kinds[k]
-      if kind == 'functions' or kind == 'fields' then
+      if kind == M.FUNCTION or kind == M.FIELD then
         -- Update completions.
         -- If no class structure is found, the global namespace is used.
         for _, key in ipairs{ 'class', 'interface', 'struct', 'union', '' } do
@@ -726,7 +735,7 @@ function M.load_ctags(sense, tag_file, nolocations)
               completions[class] = { fields = {}, functions = {} }
             end
             local t = completions[class][kind]
-            t[#t + 1] = tag_name..(kind == 'fields' and '?1' or '?2')
+            t[#t + 1] = tag_name..(kind == M.FIELD and '?1' or '?2')
             -- Update locations.
             if not nolocations then
               if not locations[k] then locations[k] = {} end
@@ -735,7 +744,7 @@ function M.load_ctags(sense, tag_file, nolocations)
             break
           end
         end
-      elseif kind == 'classes' then
+      elseif kind == M.CLASS then
         -- Update class list.
         local inherits = ext_fields:match('inherits:(%S+)')
         if not inherits then inherits = ext_fields:match('struct:(%S+)') end
@@ -776,11 +785,12 @@ function M.load_ctags(sense, tag_file, nolocations)
 end
 
 ---
--- Displays a filteredlist of all known symbols of the given kind (classes,
--- functions, fields, etc.) and jumps to the source of the selected one.
+-- Displays a filtered list dialog of all known symbols of the given kind
+-- (classes, functions, fields, etc.) and jumps to the source of the selected
+-- one.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param k The ctag character kind (e.g. `'f'` for a Lua function).
--- @param title The title for the filteredlist dialog.
+-- @param title The title for the filtered list dialog.
 -- @name goto_ctag
 function M.goto_ctag(sense, k, title)
   if not sense.locations[k] then return end -- no ctags loaded
@@ -788,13 +798,13 @@ function M.goto_ctag(sense, k, title)
   local kind = sense.ctags_kinds[k]
   for k, v in pairs(sense.locations[k]) do
     items[#items + 1] = k:match('[^#]+$') -- symbol name
-    if kind == 'functions' or kind == 'fields' then
+    if kind == M.FUNCTION or kind == M.FIELD then
       items[#items + 1] = k:match('^[^#]+') -- class name
     end
     items[#items + 1] = v[1]..':'..v[2]
   end
   local columns = { 'Name', 'Location' }
-  if kind == 'functions' or kind == 'fields' then
+  if kind == M.FUNCTION or kind == M.FIELD then
     table.insert(columns, 2, 'Class')
   end
   local location = gui.filteredlist(title, columns, items, false,
@@ -874,15 +884,17 @@ function M.new(lang)
 
 ---
 -- Contains a map of ctags kinds to Adeptsense kinds.
--- Recognized kinds are `'functions'`, `'fields'`, and `'classes'`. Classes are
--- quite simply containers for functions and fields so Lua modules would count
--- as classes. Any other kinds will be passed to `handle_ctag()` for
--- user-defined handling.
--- @usage luasense.ctags_kinds = { 'f' = 'functions' }
--- @usage csense.ctags_kinds = { 'm' = 'fields', 'f' = 'functions',
---   c = 'classes', s = 'classes' }
--- @usage javasense.ctags_kinds = { 'f' = 'fields', 'm' = 'functions',
---   c = 'classes', i = 'classes' }
+-- Recognized kinds are `FUNCTION`, `FIELD`, and `CLASS`. Classes are quite
+-- simply containers for functions and fields so Lua modules would count as
+-- classes. Any other kinds will be passed to `handle_ctag()` for user-defined
+-- handling.
+-- @usage luasense.ctags_kinds = { f = _M.textadept.adeptsense.FUNCTION }
+-- @usage csense.ctags_kinds = { m = _M.textadept.adeptsense.FIELD,
+--   f = _M.textadept.adeptsense.FUNCTION, c = _M.textadept.adeptsense.CLASS,
+--   s = _M.textadept.adeptsense.CLASS }
+-- @usage javasense.ctags_kinds = { f = _M.textadept.adeptsense.FIELD,
+--   m = _M.textadept.adeptsense.FUNCTION, c = _M.textadept.adeptsense.CLASS,
+--   i = _M.textadept.adeptsense.CLASS }
 -- @class table
 -- @name ctags_kinds
 -- @see handle_ctag
@@ -935,18 +947,20 @@ api_files = {},
 --   superclass unless defined in a previously loaded ctags file. Also, multiple
 --   superclasses cannot be recognized by this pattern; use a ctags file
 --   instead. The default value is `'class%s+([%w_]+)'`.
--- @field word_chars A Lua pattern of characters allowed in a word. The default
---   is `'%w_'`.
+-- @field word_chars A Lua pattern of characters allowed in a word.
+--   The default is `'%w_'`.
 -- @field symbol_chars A Lua pattern of characters allowed in a symbol,
---   including member operators. The pattern should be a character set. The
---   default is `'[%w_%.]'`.
+--   including member operators. The pattern should be a character set.
+--   The default is `'[%w_%.]'`.
 -- @field type_declarations A list of Lua patterns used for determining the
 --   class type of a symbol. The first capture returned must be the class name.
---   Use `%_` to match the symbol. The default value is `'(%u[%w_%.]+)%s+%_'`.
+--   Use `%_` to match the symbol.
+--   The default value is `'(%u[%w_%.]+)%s+%_'`.
 -- @field type_declarations_exclude A table of types to exclude, even if they
 --   match a type_declaration pattern. Each excluded type is a table key and has
 --   a `true` boolean value. For example, `{ Foo = true }` excludes any type
---   whose name is `Foo`. The default value is `{}`.
+--   whose name is `Foo`.
+--   The default value is `{}`.
 -- @field type_assignments A map of Lua patterns to class types for variable
 --   assignments. This is typically used for dynamically typed languages. For
 --   example, `sense.type_assignments['^"'] = 'string'`  would recognize string

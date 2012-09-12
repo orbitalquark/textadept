@@ -4,7 +4,7 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Filter-Through for the textadept module.
+-- Filters text through shell commands.
 module('_M.textadept.filter_through')]]
 
 local cat = not WIN32 and 'cat' or 'type'
@@ -12,7 +12,7 @@ local tmpfile = _USERHOME..'/.ft'
 local filter_through_active = false
 
 ---
--- Prompts for a Linux, Mac OSX, or Windows shell command to filter text
+-- Prompts for a Linux, BSD, Mac OSX, or Windows shell command to filter text
 -- through.
 -- The standard input (stdin) for shell commands is determined as follows:
 --

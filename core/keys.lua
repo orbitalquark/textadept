@@ -4,103 +4,88 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Manages key commands in Textadept.
+-- Manages key bindings in Textadept.
 --
 -- ## Overview
 --
--- Key commands are defined in the global table `keys`. Each key-value pair in
--- `keys` consists of either:
+-- Key bindings are defined in the global table `keys`. Each key-value pair in
+-- `keys` consists of either a string key sequence and its associated command,
+-- a string lexer language (from the `lexers/` directory) with a table of key
+-- sequences and commands, or a key sequence with a table of more sequences and
+-- commands. The latter is part of what is called a "key chain". When searching
+-- for a command to run based on a key sequence, key bindings in the current
+-- lexer have priority, followed by the ones in the global table. This means if
+-- there are two commands with the same key sequence, the one specific to the
+-- current lexer is run. However, if the command returns the boolean value
+-- `false`, the lower-priority command is also run. (This is useful for
+-- language-specific modules to override commands like Adeptsense
+-- autocompletion, but fall back to word autocompletion if the first command
+-- fails.)
 --
--- * A string representing a key command and an associated function or table.
--- * A string language name and its associated `keys`-like table.
--- * A string representing a key command and its associated `keys`-like table.
---   (This is a keychain sequence.)
+-- ## Key Sequences
 --
--- Language names are the names of the lexer files in `lexers/` such as `cpp`
--- and `lua`.
+-- Key sequences are strings built from a combination of modifier keys and the
+-- key itself. Modifier keys are `Control`, `Shift`, and `Alt` on Windows,
+-- Linux, BSD, and in ncurses. On Mac OSX they are `Command` (`⌘`), `Alt/Option`
+-- (`⌥`), `Control` (`^`), and `Shift` (`⇧`). These modifiers have the following
+-- string representations:
 --
--- A key command string is built from a combination of the `CTRL`, `ALT`,
--- `META`, `SHIFT`, and `ADD` constants as well as the pressed key itself. The
--- value of `ADD` is inserted between each of `CTRL`, `ALT`, `META`, `SHIFT`,
--- and the key. For example:
+-- Modifier | Linux / Win32 | Mac OSX | Terminal |
+-- ---------|---------------|---------|----------|
+-- Control  | `'c'`         | `'m'`   | `'c'`    |
+-- Alt      | `'a'`         | `'a'`   | `'m'`    |
+-- Shift    | `'s'`         | `'s'`   | `'s'`    |
+-- Command  | N/A           | `'c'`   | N/A      |
 --
---     -- keys.lua:
---     CTRL = 'Ctrl'
---     ALT = 'Alt'
---     SHIFT = 'Shift'
---     META = 'Meta'
---     ADD = '+'
---     -- pressing control, alt, shift, and 'a' yields: 'Ctrl+Alt+Shift+A'
+-- For key values less than 255, their string representation is the character
+-- that would normally be inserted if the `Ctrl`, `Alt`, and `Command` modifiers
+-- were not held down. Therefore, a combination of `Ctrl+Alt+Shift+A` has the
+-- key sequence `caA` on Windows and Linux, but a combination of
+-- `Ctrl+Shift+Tab` has the key sequence `cs\t`. On a United States English
+-- keyboard, since the combination of `Ctrl+Shift+,` has the key sequence `c<`
+-- (`Shift+,` inserts a `<`), the key binding is referred to as `Ctrl+<`. This
+-- allows key bindings to be language and layout agnostic. For key values
+-- greater than 255, the [`KEYSYMS`](#KEYSYMS) lookup table is used. Therefore,
+-- `Ctrl+Right Arrow` has the key sequence `cright`. Uncommenting the `print()`
+-- statements in `core/keys.lua` will print key sequences to standard out
+-- (stdout) for inspection.
 --
--- For key values less than 255, Lua's [`string.char()`][] is used to determine
--- the key's string representation. Otherwise, the [`KEYSYMS`](#KEYSYMS) lookup
--- table is used.
+-- ## Commands
 --
--- [`string.char()`]: http://www.lua.org/manual/5.2/manual.html#pdf-string.char
+-- Commands associated with key sequences can be either Lua functions, or
+-- tables containing Lua functions with a set of arguments to call the function
+-- with. Examples are
 --
--- Normally, Lua functions are assigned to key commands, but those functions are
--- called without any arguments. In order to pass arguments to a function,
--- assign a table to the key command. This table contains the function followed
--- by its arguments in order. Any [buffer][] or [view][] references are handled
--- correctly at runtime.
+--     keys['cn'] = new_buffer
+--     keys['cs'] = buffer.save
+--     keys['a('] = { _M.textadept.editing.enclose, '(', ')' }
 --
--- [buffer]: buffer.html
--- [view]: view.html
+-- Note that [`buffer`][] references are handled properly.
 --
--- Key commands can be chained like in Emacs using keychain sequences. By
--- default, the `Esc` key (`Apple+Esc` on Mac OSX) cancels the current keychain,
--- but it can be redefined by re-defining [`CLEAR`](#CLEAR). Naturally, the
--- clear sequence cannot be chained.
+-- [`buffer`]: buffer.html
 --
--- ## Precedence
+-- ## Key Chains
 --
--- When searching for a key command to execute in the `keys` table, key commands
--- in the current lexer have priority, followed by the ones in the global table.
+-- Key chains are a powerful concept. They allow multiple key bindings to be
+-- assigned to one key sequence. Language-specific modules
+-- [use key chains](#LANGUAGE_MODULE_PREFIX) for their functions. By default,
+-- the `Esc` (`⎋` on Mac OSX | `Esc` in ncurses) key cancels a key chain, but it
+-- can be redefined via [`CLEAR`](#CLEAR). An example key chain looks like
 --
--- ### Propagation
---
--- Normally when the same key command is assigned to two separate functions of
--- different precedence, the higher priority key command is run and the lower
--- priority one is not. However, it is sometimes desirable to have the lower
--- priority command run after the higher one. For example, `Ctrl+Enter` may
--- trigger Adeptsense autocompletion in lexers that have Adeptsense, but should
--- fall back on autocompleting words in the buffer if no Adeptsense completions
--- are available. In order for this to happen, the first function has to return
--- `false` (and only `false`; `nil` is not sufficient) when it wants to allow a
--- lower priority function to run. Any other return value halts propagation and
--- the key is consumed.
---
--- ## Example
---
---     keys = {
---       ['ctrl+f'] = buffer.char_right
---       ['ctrl+b'] = buffer.char_left,
---       lua = {
---         ['ctrl+f'] = { buffer.add_text, buffer, 'function' },
---         ['ctrl+b'] = function() return false end
---       }
+--     keys['aa'] = {
+--       a = function1,
+--       b = function2,
+--       c = { function3, arg1, arg2 }
 --     }
---
--- The first two key commands are global and call `buffer:char_right()` and
--- `buffer:char_left()` respectively. The last two commands apply only in the
--- Lua lexer. If `ctrl+f` is pressed in a Lua file, the global key command with
--- the same shortcut is overridden and `function` is added to the buffer.
--- However, `ctrl+b` in a Lua file does not override its global command because
--- of the `false` return. Instead, propagation occurs as described above.
---
--- ## Problems
---
--- All Lua functions must be defined **before** they are reference in key
--- commands. Therefore, any module containing key commands should be loaded
--- after all other modules, whose functions are being referenced, have been
--- loaded.
 -- @field CLEAR (string)
---   The string representing the key sequence that clears the current keychain.
---   The default value is `'esc'` (Escape).
+--   The string representing the key sequence that clears the current key chain.
+--   It cannot be part of a key chain.
+--   The default value is `'esc'` for the `Esc` (`⎋` on Mac OSX | `Esc` in
+--   ncurses) key.
 -- @field LANGUAGE_MODULE_PREFIX (string)
---   The starting key command of the keychain reserved for language-specific
+--   The starting key command of the key chain reserved for language-specific
 --   modules.
---   The default value is Ctrl/Cmd+L.
+--   The default value is `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in ncurses).
 module('keys')]]
 
 local ADD = ''
@@ -120,9 +105,9 @@ local getmetatable = getmetatable
 local error = function(e) events.emit(events.ERROR, e) end
 
 ---
--- Lookup table for key codes higher than 255.
--- If a key code given to `keypress()` is higher than 255, this table is used to
--- return a string representation of the key if it exists.
+-- Lookup table for string representations of GDK key codes higher than 255.
+-- Key codes can be identified by temporarily uncommenting the `print()`
+-- statements in `core/keys.lua`
 -- @class table
 -- @name KEYSYMS
 M.KEYSYMS = {
@@ -235,7 +220,7 @@ end
 local function keypress(code, shift, control, alt, meta)
   local buffer = buffer
   local key
-  --print(code, M.KEYSYMS[ch], shift, control, alt, meta)
+  --print(code, M.KEYSYMS[code], shift, control, alt, meta)
   if code < 256 then
     key = string_char(code)
     shift = shift and code < 32 -- for printable characters, key is upper case

@@ -10,8 +10,8 @@ local M = {}
 -- looks up defined key commands to show them in menus.
 module('_M.textadept.menu')]]
 
--- Get a string uniquely identifying a key command.
--- This is used to match menu items with key commands to show the key shortcut.
+-- Get a string uniquely identifying a key binding.
+-- This is used to match menu items with key bindings to show the key shortcut.
 -- @param f A value in the `keys` table.
 local function get_id(f)
   local id = ''
@@ -31,6 +31,7 @@ local SEPARATOR, c = { '' }, _SCINTILLA.constants
 
 ---
 -- Contains the main menubar.
+-- @see set_menubar
 -- @class table
 -- @name menubar
 M.menubar = {
@@ -224,6 +225,7 @@ M.menubar = {
 
 ---
 -- Contains the default right-click context menu.
+-- @see set_contextmenu
 -- @class table
 -- @name context_menu
 M.context_menu = {
@@ -243,10 +245,10 @@ local menu_actions, contextmenu_actions = {}, {}
 
 -- Creates a menu suitable for `gui.menu()` from the menu table format.
 -- Also assigns key commands.
--- @param menu The menu to create a GTK menu from.
+-- @param menu The menu to create a GTK+ menu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu.
 --   If so, menu_id offset is 1000. The default value is `false`.
--- @return GTK menu that can be passed to `gui.menu()`.
+-- @return GTK+ menu that can be passed to `gui.menu()`.
 -- @see gui.menu
 local function read_menu_table(menu, contextmenu)
   local gtkmenu = {}
@@ -271,7 +273,7 @@ end
 
 local items, commands
 
--- Builds the item and commands tables for the filteredlist dialog.
+-- Builds the item and commands tables for the filtered list dialog.
 -- @param menu The menu to read from.
 -- @param title The title of the menu.
 -- @param items The current list of items.
@@ -292,9 +294,13 @@ end
 
 ---
 -- Sets `gui.menubar` from the given table of menus.
--- @param menubar The table of menus to create the menubar from.
+-- @param menubar The table of menus to create the menubar from. Each menu is
+--   an ordered list of menu entries and has a `title` key for the menu/submenu
+--   title. Menu entries are either submenus of the same form as menus, or
+--   tables containing menu text and either a function to call or a table
+--   containing the function to call with its parameters.
+-- @see gui.menubar
 -- @see gui.menu
--- @see rebuild_command_tables
 -- @name set_menubar
 function M.set_menubar(menubar)
   key_shortcuts = {}
@@ -313,9 +319,13 @@ M.set_menubar(M.menubar)
 
 ---
 -- Sets `gui.context_menu` from the given menu table.
--- @param menu_table The menu table to create the context menu from. Each table
---   entry is either a submenu or menu text and a function or action table.
--- @see set_menubar
+-- @param menu_table The menu table to create the context menu from. The menu is
+--   an ordered list of menu entries and, if applicable, has a `title` key for
+--   the submenu title. Menu entries are either submenus of the same form as
+--   menus, or tables containing menu text and either a function to call or a
+--   table containing the function to call with its parameters.
+-- @see gui.context_menu
+-- @see gui.menu
 -- @name set_contextmenu
 function M.set_contextmenu(menu_table)
   contextmenu_actions = {}
@@ -325,7 +335,7 @@ if not NCURSES then M.set_contextmenu(M.context_menu) end
 
 local columns = { _L['Command'], _L['Key Command'] }
 ---
--- Prompts the user with a filteredlist to run menu commands.
+-- Prompts the user with a filtered list dialog to run menu commands.
 -- @name select_command
 function M.select_command()
   local i = gui.filteredlist(_L['Run Command'], columns, items, true,

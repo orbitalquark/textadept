@@ -2,18 +2,16 @@
 
 --[[ This comment is for LuaDoc.
 ---
--- Extends Lua's io package to provide file input/output routines for Textadept.
+-- Extends Lua's `io` package with Textadept functions for working with files.
 --
 -- ## Working with UTF-8
 --
--- If your filesystem does not use UTF-8 encoded filenames, conversions to and
--- from that encoding are necessary since all of Textadept's internal strings
--- are UTF-8 encoded. When opening and saving files through dialogs, these
--- conversions are performed autmatically, but if you need to do them manually,
--- use [`string.iconv()`][] along with `_CHARSET`, your filesystem's detected
--- encoding.
---
--- Example:
+-- If your filesystem does not use UTF-8 encoded filenames (e.g. Windows),
+-- conversions to and from that encoding are necessary since all of Textadept's
+-- internal strings are UTF-8 encoded. When opening and saving files through
+-- dialogs, these conversions are performed automatically, but if you need to do
+-- them manually, use [`string.iconv()`][] along with [`_CHARSET`][], your
+-- filesystem's detected encoding. An example is
 --
 --     events.connect(events.FILE_OPENED, function(utf8_filename)
 --       local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
@@ -23,25 +21,33 @@
 --     end)
 --
 -- [`string.iconv()`]: string.html#iconv
+-- [`_CHARSET`]: _G.html#_CHARSET
 --
 -- ## File Events
 --
 -- * `_G.events.FILE_OPENED`
 --   Called when a file is opened in a new buffer.
+--   This is emitted by [`open_file()`](#open_file)
 --   Arguments:
 --     * `filename`: The filename encoded in UTF-8.
 -- * `_G.events.FILE_BEFORE_SAVE`
 --   Called right before a file is saved to disk.
+--   This is emitted by [`buffer:save()`][]
 --   Arguments:
 --     * `filename`: The filename encoded in UTF-8.
 -- * `_G.events.FILE_AFTER_SAVE`
 --   Called right after a file is saved to disk.
+--   This is emitted by [`buffer:save()`][]
 --   Arguments:
 --     * `filename`: The filename encoded in UTF-8.
 -- * `_G.events.FILE_SAVED_AS`
 --   Called when a file is saved under a different filename.
+--   This is emitted by [`buffer:save_as()`][]
 --   Arguments:
 --     * `filename`: The filename encoded in UTF-8.
+--
+-- [`buffer:save()`]: buffer.html#save
+-- [`buffer:save_as()`]: buffer.html#save_as
 module('io')]]
 
 -- Events.
@@ -59,7 +65,7 @@ events.FILE_SAVED_AS = 'file_saved_as'
 io.recent_files = {}
 
 ---
--- List of byte-order marks (BOMs).
+-- List of byte-order marks (BOMs) for identifying unicode file types.
 -- @class table
 -- @name boms
 io.boms = {
@@ -94,16 +100,23 @@ local function detect_encoding(text)
 end
 
 ---
--- List of encodings to try to decode files as after UTF-8.
+-- List of encodings to try to decode files as.
+-- You should add to this list if you get a "Conversion failed" error when
+-- trying to open a file whose encoding is not recognized. Valid encodings are
+-- [GNU iconv's encodings][].
+--
+-- [GNU iconv's encodings]: http://www.gnu.org/software/libiconv/
 -- @class table
 -- @name try_encodings
 io.try_encodings = { 'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman' }
 
 ---
 -- Opens a list of files.
+-- Emits a `FILE_OPENED` event.
 -- @param utf8_filenames A `\n` separated list of UTF-8-encoded filenames to
 --   open. If `nil`, the user is prompted with a fileselect dialog.
 -- @usage io.open_file(utf8_encoded_filename)
+-- @see _G.events
 -- @name open_file
 function io.open_file(utf8_filenames)
   utf8_filenames = utf8_filenames or
@@ -259,6 +272,7 @@ end
 ---
 -- Saves all dirty buffers to their respective files.
 -- @usage io.save_all()
+-- @see buffer.save
 -- @name save_all
 function io.save_all()
   local current_buffer = _BUFFERS[buffer]
@@ -281,7 +295,7 @@ local function close(buffer)
                                  '--button1', _L['_Cancel'],
                                  '--button2', _L['Close _without saving'],
                                  '--no-newline') ~= '2' then
-    return false
+    return nil -- returning false can cause unwanted key command propagation
   end
   buffer:delete()
   return true
@@ -293,6 +307,7 @@ end
 -- saved automatically. They must be saved manually.
 -- @usage io.close_all()
 -- @return `true` if user did not cancel.
+-- @see buffer.close
 -- @name close_all
 function io.close_all()
   while #_BUFFERS > 1 do

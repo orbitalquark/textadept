@@ -6,12 +6,10 @@ local M = {}
 ---
 -- The cpp module.
 -- It provides utilities for editing C/C++ code.
--- User tags are loaded from `_USERHOME/modules/cpp/tags` and user apis are
--- loaded from `_USERHOME/modules/cpp/api`.
 --
--- ## Key Commands
+-- ## Key Bindings
 --
--- + `Ctrl+L, M` (`⌘L, M` on Mac OSX)
+-- + `Ctrl+L, M` (`⌘L, M` on Mac OSX | `M-L, M` in ncurses)
 --   Open this module for editing.
 -- + `.`
 --   When to the right of a known symbol, show an autocompletion list of fields
@@ -19,10 +17,12 @@ local M = {}
 -- + `->`
 --   When to the right of a known symbol, show an autocompletion list of fields
 --   and functions.
--- + `Shift+Return` (`⇧↩`)
---   Add ';' to line end and insert newline.
+-- + `Shift+Enter` (`⇧↩` | `S-Enter`)
+--   Add `;` to the end of the current line and insert a newline.
 -- @field sense
 --   The C/C++ [Adeptsense](_M.textadept.adeptsense.html).
+--   It loads user tags from `_USERHOME/modules/cpp/tags` and user apidocs from
+--   `_USERHOME/modules/cpp/api`.
 module('_M.cpp')]]
 
 local m_editing, m_run = _M.textadept.editing, _M.textadept.run
@@ -50,9 +50,10 @@ end
 -- Adeptsense.
 
 M.sense = _M.textadept.adeptsense.new('cpp')
+local as = _M.textadept.adeptsense
 M.sense.ctags_kinds = {
-  c = 'classes', d = 'functions', e = 'fields', f = 'functions', g = 'classes',
-  m = 'fields', s = 'classes', t = 'classes'
+  c = as.CLASS, d = as.FUNCTION, e = as.FIELD, f = as.FUNCTION, g = as.CLASS,
+  m = as.FIELD, s = as.CLASS, t = as.CLASS
 }
 M.sense:load_ctags(_HOME..'/modules/cpp/tags', true)
 M.sense.api_files = { _HOME..'/modules/cpp/api', _HOME..'/modules/cpp/lua_api' }
@@ -73,7 +74,7 @@ end
 -- Commands.
 
 ---
--- Container for C/C++-specific key commands.
+-- Container for C/C++-specific key bindings.
 -- @class table
 -- @name _G.keys.cpp
 keys.cpp = {
