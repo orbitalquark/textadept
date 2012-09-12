@@ -235,6 +235,14 @@ otherwise remains the same.
 
 [`_M.textadept.bookmarks.toggle()`]: api/_M.textadept.bookmarks.html#toggle
 
+##### `rebuild_command_tables`
+
+`_M.textadept.menu.rebuild_command_tables()` was integrated into
+[`_M.textadept.menu.set_menubar()`][]. Therefore, remove all calls to
+`rebuild_command_tables()` after `set_menubar()`.
+
+[`_M.textadept.menu.set_menubar()`]: api/_M.textadept.menu.html#set_menubar
+
 ### Textadept 4 to 5
 
 Lua has been upgraded from [5.1 to 5.2][], so many scripts written for Textadept
