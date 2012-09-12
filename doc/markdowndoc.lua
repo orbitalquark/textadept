@@ -19,10 +19,10 @@ local LIST_TITLE = '%s:\n\n'
 local PARAM = '* `%s`: %s\n'
 local USAGE = '* `%s`\n'
 local RETURN = '* %s\n'
-local SEE = '* [`%s`](#%s)\n'
+local SEE = '* [`%s`](%s)\n'
 local TABLE = '<a id="%s"></a>\n### `%s`\n\n'
 --local TABLE = '### `%s`\n\n'
-local TFIELD = '* `%s`: %s\n'
+local TFIELD = '* `%s`: %s\n '
 local HTML = [[
   <!doctype html>
   <html>
@@ -55,6 +55,10 @@ local HTML = [[
     </body>
   </html>
 ]]
+local titles = {
+  [PARAM] = 'Parameters', [USAGE] = 'Usage', [RETURN] = 'Return',
+  [SEE] = 'See also', [TFIELD] = 'Fields'
+}
 
 -- Writes LuaDoc hierarchical module navigation to the given file.
 -- @param f The navigation file being written to.
@@ -84,27 +88,41 @@ end
 
 -- Writes a LuaDoc list to the given file.
 -- @param f The markdown file being written to.
--- @param title The title of the list.
 -- @param fmt The format of a list item.
 -- @param list The LuaDoc list.
-local function write_list(f, title, fmt, list)
+local function write_list(f, fmt, list)
   if not list or #list == 0 then return end
   if type(list) == 'string' then list = { list } end
-  f:write(string_format(LIST_TITLE, title))
+  f:write(string_format(LIST_TITLE, titles[fmt]))
   for _, value in ipairs(list) do
-    f:write(string_format(fmt, value, value))
+    if fmt ~= SEE then
+      f:write(string_format(fmt, value, value))
+    else
+      -- Parse the identifier to determine if it belongs to the current module.
+      if value:find('%.') then
+        -- The identifier belongs to a different module. Link to it.
+        -- TODO: cannot link to fields, functions, or tables in `_G`.
+        value = value:gsub('^_G%.', '')
+        local link = value..'.html'
+        local module, func = value:match('^(.+)%.([^.]+)$')
+        if module and func then link = module..'.html'..(func ~= '' and '#'..func or '') end
+        f:write(string_format(fmt, value, link))
+      else
+        -- The identifier belongs to the same module. Anchor it.
+        f:write(string_format(fmt, value, '#'..value))
+      end
+    end
   end
   f:write('\n')
 end
 
 -- Writes a LuaDoc hashmap to the given file.
 -- @param f The markdown file being written to.
--- @param title The title of the hashmap.
 -- @param fmt The format of a hashmap item.
 -- @param list The LuaDoc hashmap.
-local function write_hashmap(f, title, fmt, hashmap)
+local function write_hashmap(f, fmt, hashmap)
   if not hashmap or #hashmap == 0 then return end
-  f:write(string_format(LIST_TITLE, title))
+  f:write(string_format(LIST_TITLE, titles[fmt]))
   for _, name in ipairs(hashmap) do
     f:write(string_format(fmt, name, hashmap[name] or ''))
   end
@@ -202,10 +220,10 @@ function M.start(doc)
         f:write(string_format(FUNCTION, func.name, func.name,
                               table_concat(func.param, ', '):gsub('_', '\\_')))
         write_description(f, func.description)
-        write_hashmap(f, 'Parameters', PARAM, func.param)
-        write_list(f, 'Usage', USAGE, func.usage)
-        write_list(f, 'Return', RETURN, func.ret)
-        write_list(f, 'See also', SEE, func.see)
+        write_hashmap(f, PARAM, func.param)
+        write_list(f, USAGE, func.usage)
+        write_list(f, RETURN, func.ret)
+        write_list(f, SEE, func.see)
         f:write('- - -\n\n')
       end
       f:write('\n')
@@ -220,9 +238,9 @@ function M.start(doc)
         local tbl = tables[tname]
         f:write(string_format(TABLE, tbl.name, tbl.name))
         write_description(f, tbl.description)
-        write_hashmap(f, 'Fields', TFIELD, tbl.field)
-        write_list(f, 'Usage', USAGE, tbl.usage)
-        write_list(f, 'See also', SEE, tbl.see)
+        write_hashmap(f, TFIELD, tbl.field)
+        write_list(f, USAGE, tbl.usage)
+        write_list(f, SEE, tbl.see)
         f:write('- - -\n\n')
       end
     end
