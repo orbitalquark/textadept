@@ -29,6 +29,16 @@ local function write_tag(file, name, k, ext_fields)
   file[#file + 1] = string_format(CTAGS_FMT, name, k, ext_fields)
 end
 
+-- Strips Markdown links from the given documentation string.
+-- @param s String to strip Markdown links from.
+-- @return string
+local function strip_markdown_links(s)
+  return s:gsub('%[([^%]\r\n]+)%]%b[]', '%1') -- [foo][]
+          :gsub('%[([^%]\r\n]+)%]%b()', '%1') -- [foo](bar)
+          :gsub('\r?\n\r?\n%[([^%]\r\n]+)%]:[^\r\n]+', '') -- [foo]: bar
+          :gsub('\r?\n%[([^%]\r\n]+)%]:[^\r\n]+', '') -- [foo]: bar
+end
+
 -- Writes a function or field apidoc.
 -- @param file The file to write to.
 -- @param m The LuaDoc module object.
@@ -64,14 +74,12 @@ local function write_apidoc(file, m, b)
     indent, description = description:match('^(%s*)(.*)$')
     if indent ~= '' then description = description:gsub('\n'..indent, '\n') end
   end
-  doc[#doc + 1] = description:gsub('\\n', '\\\\n')
-                             :gsub('%[([^%]]+)%]%b[]', '%1') -- Markdown links
-                             :gsub('%[([^%]]+)%]%b()', '%1') -- Markdown links
+  doc[#doc + 1] = strip_markdown_links(description)
   -- Function parameters (@param).
   if class == 'function' and b.param then
     for _, p in ipairs(b.param) do
       if b.param[p] and #b.param[p] > 0 then
-        doc[#doc + 1] = '@param '..p..' '..b.param[p]:gsub('\\n', '\\\\n')
+        doc[#doc + 1] = '@param '..p..' '..strip_markdown_links(b.param[p])
       end
     end
   end
