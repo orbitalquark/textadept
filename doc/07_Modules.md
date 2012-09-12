@@ -1,92 +1,69 @@
 # Modules
 
-Most of Textadept's functionality comes from modules written in Lua. A module
-consists of a single directory with an `init.lua` script to load any additional
-Lua files (typically in the same location). Essentially there are two classes of
-module: generic and language-specific.
+Most of Textadept's functionality comes from Lua modules. Essentially there are
+two classes of module: generic and language-specific. A generic module provides
+features for all programming languages while a language-specific module provides
+features for a specific programming language.
 
 ## Generic
 
-This class of modules is usually available globally for programming in all
-languages or writing plain-text. An example is the [textadept module][] which
-implements most of Textadept's functionality (find/replace, key commands, menus,
-snippets, etc.). These kinds of modules are generally loaded on startup. See the
-[preferences][] page for instructions on how to load generic modules when
-Textadept starts.
+Generic modules have a broad scope and are usually available for programming in
+all languages or writing plain-text. An example is the [textadept module][]
+which implements most of Textadept's functionality (find & replace, key
+bindings, menus, snippets, etc.). These kinds of modules are generally loaded on
+startup. See the [preferences][] page for instructions on how to load generic
+modules when Textadept starts.
 
 [textadept module]: api/_M.textadept.html
-[preferences]: 9_Preferences.html#User.Init
+[preferences]: 08_Preferences.html#Loading.Modules
 
-## Language Specific
+## Language-Specific
 
-Each module of this class of modules is named after a language lexer in the
-`lexers/` directory and is only available only for editing code in that
-particular programming language unless you specify otherwise. Examples are the
-[cpp][] and [lua][] modules which provide special editing features for the C/C++
-and Lua languages respectively.
+Language-specific modules have a scope limited to a single programming language.
+The name of the module is named after the language's lexer in the `lexers/`
+directory and is automatically loaded when editing source code in that
+particular language. In addition to some of the editing features discussed
+[earlier][], these kinds of modules typically also have shell commands for
+running and compiling code, indentation settings, custom key bindings, and
+perhaps a custom context menu. These features are discussed below.
 
-[cpp]: api/_M.cpp.html
-[lua]: api/_M.lua.html
+[earlier]: 06_AdeptEditing.html#Source.Code.Editing
 
-### Lexer
+### Compile and Run
 
-All languages have a [lexer][] that performs syntax highlighting on the source
-code. While the lexer itself is not part of the module, its existence in
-`lexers/` is required.
+Most language-specific modules have a command that compiles and/or runs the code
+in the current file. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in
+ncurses) executes the command for compiling code and `Ctrl+R` (`⌘R` | `^R`)
+executes the command for running code. Double-clicking on any error messages
+will jump to where the errors occurred. Note: In order for these features to
+work, the language you are working with must have its run command and error
+format defined. If the language-specific module does not exist or does not
+[define][] commands or an error format, it can be done [manually][] in your
+[user-init file][].
 
-[lexer]: api/lexer.html
-
-### Activation
-
-Language-specific modules are automatically loaded when a file of that language
-is loaded or a buffer's lexer is set to that language.
-
-### Snippets
-
-Most language-specific modules have a set of [snippets][]. Press `Ctrl+K` (`⌥⇥`
-on Mac OSX | `M-K` in ncurses) for a list of available snippets or see the
-module's Lua code. To insert a snippet, type its trigger followed by the `Tab`
-(`⇥` | `Tab`) key. Subsequent presses of `Tab` (`⇥` | `Tab`) causes the caret to
-enter tab stops in sequential order, `Shift+Tab` (`⇧⇥` | `S-Tab`) goes back to
-the previous tab stop, and `Ctrl+Shift+K` (`⌥⇧⇥` | `M-S-K`) cancels the current
-snippet. Snippets can be nested (inserted from within another snippet).
-
-![Snippet](images/snippet.png)
-&nbsp;&nbsp;&nbsp;&nbsp;
-![Snippet Expanded](images/snippet2.png)
-
-[snippets]: api/_M.textadept.snippets.html
-
-### Commands
-
-Most language-specific modules have a set of [key commands][]. See the module's
-Lua code for which key commands are available. They are typically stored in the
-`Ctrl+L` (`⌘L` on Mac OSX | `M-L` in ncurses) key prefix.
-
-[key commands]: api/_M.textadept.keys.html
-
-#### Run
-
-Most language-specific modules have a command that runs the code in the current
-file. Pressing `Ctrl+R` (`⌘R` on Mac OSX | `^R` in ncurses) runs that command.
-
-#### Compile
-
-Most language-specific modules have a command that compiles the code in the
-current file. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in ncurses)
-runs that command.
-
-#### Block Comments
-
-Pressing `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in ncurses) comments or uncomments
-the code on the selected lines.
+[define]: api/_M.html#Compile.and.Run
+[manually]: http://foicica.com/wiki/run-supplemental
+[user-init file]: 08_Preferences.html#User.Init
 
 ### Buffer Properties
 
-Sometimes language-specific modules set default buffer properties like tabs and
-indentation size. See the module's Lua code for these settings. If you wish to
-change them or use different settings, see the
-[Customizing Modules](#Customizing.Modules) section below.
+Some programming languages have style guidelines for indentation and/or line
+endings which differ from Textadept's defaults. In this case, language-specific
+modules [set][] these preferences. If you wish to change them or use your own
+preferences, see the [language module preferences][] section.
+
+[set]: api/_M.html#Buffer.Properties
+[language module preferences]: 08_Preferences.html#Language-Specific
+
+### Key Bindings
+
+Most language-specific modules have a set of key bindings for
+[custom commands][]. See the module's [LuaDoc][] or code to find out which key
+bindings are assigned. They are typically stored in the `Ctrl+L` (`⌘L` on Mac
+OSX | `M-L` in ncurses) key chain prefix.
+
+[custom commands]: api/_M.html#Commands
+[LuaDoc]: api/index.html
 
 ### Context Menu
 
@@ -99,9 +76,7 @@ The officially supported language modules are hosted [here][] and are available
 as a separate download. To upgrade to the most recent version of a module, you
 can either use [Mercurial][] (run `hg pull` and then `hg update` on or from
 within the module) or download a zipped version from the module's repository
-homepage and overwrite the existing one. If you do not have access to `_HOME`,
-place the updated module in your `_USERHOME` and replace all instances of
-`_HOME` with `_USERHOME` in the module's `init.lua`.
+homepage and overwrite the existing one.
 
 For now, user-created modules are obtained from the [wiki][].
 
@@ -111,7 +86,10 @@ For now, user-created modules are obtained from the [wiki][].
 
 ## Installing Modules
 
-It is recommended to put all custom or user-created modules in your
+If you do not have write permissions for the directory Textadept is installed
+in, place the module in your `~/.textadept/modules/` folder and replace all
+instances of `_HOME` with `_USERHOME` in the module's `init.lua`. It is
+recommended to put all custom or user-created modules in your
 `~/.textadept/modules/` directory so they will not be overwritten when you
 update Textadept. Also, modules in that directory override any modules in
 Textadept's  `modules/` directory. This means that if you have your own `lua`
@@ -119,41 +97,6 @@ module, it will be loaded instead of the one that comes with Textadept.
 
 ## Developing Modules
 
-See the [LuaDoc][] for modules.
+See the [module LuaDoc][].
 
-[LuaDoc]: api/_M.html
-
-## Customizing Modules
-
-It is never recommended to modify the default modules that come with Textadept,
-even if you just want to change the buffer settings for a language-specific
-module or add a few more snippets. Instead you have two options: load your own
-module instead of the default one or load your custom module code after the
-default module loads. To load your own module, simply place it appropriately in
-`~/.textadept/modules/`. To load your module code after the default module
-loads, create a `post_init.lua` Lua script in the appropriate
-`~/.textadept/modules/` sub-folder. Please note that for generic modules, only
-the first option applies. Either option applies for language-specific modules.
-
-Suppose you wanted to completely change the menubar structure. You would first
-create a new `menu.lua` and then put it in `~/.textadept/modules/textadept/`.
-Now when Textadept looks for `menu.lua`, it will load yours instead of its own.
-Similarly, if you copy the default Lua language-specific module (`modules/lua`)
-to `~/.textadept/modules/` and make custom changes, that module is loaded for
-editing Lua code instead of the default module.
-
-If you keep a modified copy of language-specific modules, you will likely want
-to update them with each new Textadept release. Instead of potentially wasting
-time merging your changes, you can load custom code independent of the module in
-a `post_init.lua` file. For example, instead of copying the `lua` module and
-changing its `set_buffer_properties()` function to use tabs, you can do this
-from `post_init.lua`:
-
-    function _M.lua.set_buffer_properties()
-      buffer.use_tabs = true
-    end
-
-Similarly, you can use `post_init.lua` to change the compile/run commands, load
-more [Adeptsense tags][], and add additional key commands and snippets.
-
-[Adeptsense tags]: api/_M.textadept.adeptsense.html#load_ctags
+[module LuaDoc]: api/_M.html

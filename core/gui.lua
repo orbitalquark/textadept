@@ -3,17 +3,18 @@
 local gui = gui
 
 --[[ This comment is for LuaDoc.
---- The core gui table.
+---
+-- Utilities for Textadept's user interface.
 -- @field title (string, Write-only)
 --   The title of the Textadept window.
 -- @field context_menu
---   A `gui.menu` defining the editor's context menu.
+--   A [`gui.menu`](#menu) defining the editor's context menu.
 -- @field clipboard_text (string, Read-only)
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
 --   The text displayed by the statusbar.
 -- @field docstatusbar_text (string, Write-only)
---   The text displayed by the doc statusbar.
+--   The text displayed by the buffer statusbar.
 module('gui')]]
 
 local _L = _L
@@ -45,10 +46,10 @@ local function _print(buffer_type, ...)
 end
 ---
 -- Helper function for printing messages to buffers.
--- Splits the view and opens a new buffer for printing messages. If the message
--- buffer is already open and a view is currently showing it, the message is
--- printed to that view. Otherwise the view is split, goes to the open message
--- buffer, and prints to it.
+-- Splits the view and opens a new buffer for printing messages to. If the
+-- message buffer is already open in a view, the message is printed to that
+-- view. Otherwise the view is split and the message buffer is opened or
+-- displayed before being printed to.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
 -- @usage gui._print(_L['[Error Buffer]'], error_message)
@@ -58,26 +59,27 @@ function gui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 
 ---
 -- Prints messages to the Textadept message buffer.
--- Opens a new buffer (if one has not already been opened) for printing
--- messages.
+-- Opens a new buffer if one has not already been opened for printing messages.
 -- @param ... Message strings.
 -- @name print
 function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
 
 ---
--- Shortcut function for `gui.dialog('filtered_list', ...)` with 'Ok' and
+-- Shortcut function for `gui.dialog('filteredlist', ...)` with 'Ok' and
 -- 'Cancel' buttons.
--- @param title The title for the filteredlist dialog.
+-- @param title The title for the filtered list dialog.
 -- @param columns A column name or list of column names.
 -- @param items An item or list of items.
 -- @param int_return If `true`, returns the integer index of the selected item
---   in the filteredlist. The default value is `false`, which returns the string
---   item. Not compatible with a `'--select-multiple'` filteredlist.
+--   in the filtered list and is not compatible with the `'--select-multiple'`
+--   option. The default value is `false`, which returns the string item(s).
 -- @param ... Additional parameters to pass to `gui.dialog()`.
--- @return Either a string or integer on success; `nil` otherwise.
+-- @return Either a string or integer on success; `nil` otherwise. In strings,
+--   multiple items are separated by newlines.
 -- @usage gui.filteredlist('Title', 'Foo', { 'Bar', 'Baz' })
 -- @usage gui.filteredlist('Title', { 'Foo', 'Bar' }, { 'a', 'b', 'c', 'd' },
 --                         false, '--output-column', '2')
+-- @see dialog
 -- @name filteredlist
 function gui.filteredlist(title, columns, items, int_return, ...)
   local out = gui.dialog('filteredlist',
@@ -151,11 +153,11 @@ local theme_file = not NCURSES and 'theme' or 'theme_term'
 local THEME
 ---
 -- Sets the editor theme from the given name.
--- Themes in `_USERHOME/themes/` are checked first, followed by `_HOME/themes/`.
--- If the name contains slashes ('/' on Linux and Mac OSX and '\' on Win32), it
--- is assumed to be an absolute path so `_USERHOME` and `_HOME` are not checked.
--- Throws an error if the theme is not found. Any errors in the theme are
--- printed to `io.stderr`.
+-- Themes with the given name in the `_USERHOME/themes/` directory override
+-- themes of the same name in `_HOME/themes/`. If the name contains slashes (`\`
+-- on Windows, `/` otherwise), it is assumed to be an absolute path to a theme
+-- instead of a theme name. An error is thrown if the theme is not found. Any
+-- errors in the theme are printed to `io.stderr`.
 -- @param name The name or absolute path of a theme. If nil, sets the default
 --   theme.
 -- @name set_theme
@@ -210,7 +212,8 @@ function gui.set_theme(name)
 end
 
 ---
--- Prompts the user to select an editor theme from a filtered list.
+-- Prompts the user to select an editor theme from a filtered list dialog.
+-- Themes in the `_HOME/themes/` and `_USERHOME/themes/` directories are listed.
 -- @name select_theme
 function gui.select_theme()
   local themes, themes_found = {}, {}
@@ -425,12 +428,13 @@ events_connect(events.ERROR,
 
 ---
 -- A table of menus defining a menubar. (Write-only)
+-- @see _M.textadept.menu.set_menubar
 -- @class table
 -- @name menubar
 local menubar
 
 ---
--- The size of the Textadept window (`{ width, height }`).
+-- A table containing the width and height values of the Textadept window.
 -- @class table
 -- @name size
 local size
@@ -438,12 +442,13 @@ local size
 The functions below are Lua C functions.
 
 ---
--- Displays a gtdialog of a specified type with the given string arguments.
+-- Displays a [gtdialog][1] of a specified type with the given string arguments.
 -- Each argument is like a string in Lua's `arg` table. Tables of strings are
 -- allowed as arguments and are expanded in place. This is useful for
--- filteredlist dialogs with many items.
--- For more information on gtdialog, see [http://foicica.com/gtdialog](
--- http://foicica.com/gtdialog).
+-- filtered list dialogs with many items.
+-- For more information on gtdialog, see [http://foicica.com/gtdialog][1].
+--
+-- [1]: http://foicica.com/gtdialog
 -- @param kind The kind of gtdialog.
 -- @param ... Parameters to the gtdialog.
 -- @return string gtdialog result.
@@ -453,6 +458,7 @@ local dialog
 
 ---
 -- Gets the current split view structure.
+-- This is primarily used in session saving.
 -- @return table of split views. Each split view entry is a table with 4
 --   fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either
 --   nested split view entries or the views themselves; `vertical` is a flag
@@ -464,16 +470,22 @@ local get_split_table
 
 ---
 -- Goes to the specified view.
--- Generates `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
--- @param n A relative or absolute view index.
+-- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
+-- @param n A relative or absolute view index in `_G._VIEWS`.
 -- @param relative Flag indicating if n is a relative index or not. The default
 --   value is `false`.
+-- @see _G._G._VIEWS
+-- @see events.VIEW_BEFORE_SWITCH
+-- @see events.VIEW_AFTER_SWITCH
 -- @class function
 -- @name goto_view
 local goto_view
 
 ---
 -- Creates a menu, returning the userdata.
+-- This is a low-level function. You probably want to use the higher-level
+-- `_M.textadept.menu.set_menubar()` or `_M.textadept.menu.set_contextmenu()`
+-- functions. Emits a `MENU_CLICKED` event when a menu item is selected.
 -- @param menu_table A table defining the menu. It is an ordered list of tables
 --   with a string menu item, integer menu ID, and optional GDK keycode and
 --   modifier mask. The latter two are used to display key shortcuts in the
@@ -481,8 +493,10 @@ local goto_view
 --   empty, a menu separator item is created. Submenus are just nested
 --   menu-structure tables. Their title text is defined with a `title` key.
 -- @usage gui.menu{ { '_New', 1 }, { '_Open', 2 }, { '' }, { '_Quit', 4 } }
--- @usage gui.menu{ { '_New', 1, keys.get_gdk_key('cn') } }
--- @see keys.get_gdk_key
+-- @usage gui.menu{ { '_New', 1, string.byte('n'), 4 } } -- 'Ctrl+N'
+-- @see events.MENU_CLICKED
+-- @see _M.textadept.menu.set_menubar
+-- @see _M.textadept.menu.set_contextmenu
 -- @class function
 -- @name menu
 local menu

@@ -4,14 +4,14 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Handles file-specific settings.
+-- Handles file type detection.
 --
 -- ## Mime-type Events
 --
 -- * `_G.events.LANGUAGE_MODULE_LOADED`
---   Called when loading a language-specific module.
---   This is useful for overriding its key commands since they are not available
---   when Textadept starts.
+--   Called after loading a language-specific module.
+--   This is useful for overriding a language-specific module's key bindings
+--   or other properties since the module is not loaded when Textadept starts.
 --   Arguments:
 --     * `lang`: The language lexer name.
 module('_M.textadept.mime_types')]]
@@ -21,19 +21,25 @@ local events, events_connect = events, events.connect
 events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
 
 ---
--- File extensions with their associated lexers.
+-- Table of file extensions with their associated lexers.
+-- If the file type is not recognized by shebang words or first-line patterns,
+-- each file extension is matched against the file's extension.
 -- @class table
 -- @name extensions
 M.extensions = {}
 
 ---
--- Shebang words and their associated lexers.
+-- Table of shebang words and their associated lexers.
+-- If the file has a shebang line, a line that starts with `#!` and is the first
+-- line in the file, each shebang word is matched against that line.
 -- @class table
 -- @name shebangs
 M.shebangs = {}
 
 ---
--- First-line patterns and their associated lexers.
+-- Table of first-line patterns and their associated lexers.
+-- If a file type is not recognized by shebang words, each pattern is matched
+-- against the first line in the file.
 -- @class table
 -- @name patterns
 M.patterns = {}
@@ -91,6 +97,7 @@ table.sort(M.lexers)
 ---
 -- Prompts the user to select a lexer from a filtered list for the current
 -- buffer.
+-- @see buffer.set_lexer
 -- @name select_lexer
 function M.select_lexer()
   local lexer = gui.filteredlist(_L['Select Lexer'], _L['Name'], M.lexers)

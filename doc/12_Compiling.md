@@ -7,21 +7,23 @@ as running it.
 
 ### Linux and BSD
 
-Linux systems need the GTK+ development libraries. Your package manager should
-allow you to install them. For Debian-based distributions like Ubuntu, the
-package is typically called `libgtk2.0-dev`. Otherwise, compile and install GTK
-from the [GTK+ website][]. Additionally you will need the [GNU C compiler][]
-(`gcc`) and [GNU Make][] (`make`). Both should be available for your Linux
-distribution through its package manager. For example, Ubuntu includes these
-tools in the `build-essential` package.
+First, Linux and BSD systems will need the [GNU C compiler][] (`gcc`) and
+[GNU Make][] (`make`). Both should be available for your distribution through a
+package manager. For example, Ubuntu includes these tools in the
+`build-essential` package.
+
+Next, the GTK+ development libraries are necessary for compiling the GUI version
+of Textadept. Your package manager should allow you to install them. For
+Debian-based Linux distributions like Ubuntu, the package is typically called
+`libgtk2.0-dev`. Otherwise, compile and install GTK+ from the [GTK+ website][].
 
 If you would like to compile the terminal version of Textadept, you will need
 the ncurses development library. Similarly, it should be available from your
-package manager. For Debian-based distributions like Ubuntu, the package is
-typically called `libncurses5-dev`. Otherwise, compile and install ncurses from
-the [ncurses website][]. Note: you should have a development version of ncurses
-compiled with "wide" (multibyte) character support installed. (Therefore, Debian
-users will also need `libncursesw5-dev`.)
+package manager. For Debian-based Linux distributions like Ubuntu, the package
+is typically called `libncurses5-dev`. Otherwise, compile and install ncurses
+from the [ncurses website][]. Note: you need to have a development version of
+ncurses compiled with "wide" (multibyte) character support installed.
+(Therefore, Debian users will _also_ need `libncursesw5-dev`.)
 
 In addition, BSD users will need to have [libiconv][] installed.
 
@@ -34,31 +36,31 @@ In addition, BSD users will need to have [libiconv][] installed.
 ### Windows
 
 Compiling Textadept on Windows is no longer supported. If you wish to do so
-however, you need a C compiler that supports the C99 standard (Microsoft's does
-not), the [GTK+ for Windows bundle][] (2.24 is recommended), and [libiconv][]
+however, you need a C compiler that supports the C99 standard, the
+[GTK+ for Windows bundle][] (2.24 is recommended), and [libiconv for Windows][]
 (the "Developer files" zip).
 
 The preferred way to compile for Windows is cross-compiling from Linux. To do
-so, in addition to the GTK bundle mentioned above, you need [MinGW][] with the
+so, in addition to the GTK+ bundle mentioned above, you need [MinGW][] with the
 Windows header files. They should be available from your package manager.
 
 [GTK+ for Windows bundle]: http://www.gtk.org/download/win32.html
-[libiconv]: http://gnuwin32.sourceforge.net/packages/libiconv.htm
+[libiconv for Windows]: http://gnuwin32.sourceforge.net/packages/libiconv.htm
 [MinGW]: http://mingw.org
 
 ### Mac OSX
 
 Compiling Textadept on Mac OSX is no longer supported. The preferred way is
 cross-compiling from Linux. To do so, you will need my [GTK+ for OSX bundle][]
-and the [Apple Crosscompiler][] binaries.
+and the [Apple Cross-compiler][] binaries.
 
 [GTK+ for OSX bundle]: download/gtkosx-2.24.9.zip
-[Apple Crosscompiler]: https://launchpad.net/~flosoft/+archive/cross-apple
+[Apple Cross-compiler]: https://launchpad.net/~flosoft/+archive/cross-apple
 
 ## Compiling
 
-Make sure you downloaded the `textadept_x.x.src.zip` (regardless of what
-platform you are on) and not a platform-specific binary package.
+Make sure you downloaded the `textadept_x.x.src.zip`, regardless of what
+platform you are on, and not a platform-specific binary package.
 
 ### Linux and BSD
 
@@ -68,10 +70,13 @@ Make a symlink from them to `/usr/bin/` or elsewhere in your `PATH`.
 
 Similarly, `make ncurses` builds `textadept-ncurses` and `textadeptjit-ncurses`.
 
-Note: you may have to run `make CFLAGS="-I/usr/local/include"
-CXXFLAGS="-I/usr/local/include -L/usr/local/lib"` if the prefix where any
-dependencies are installed is `/usr/local` and your compiler flags do not
-include them by default.
+Note: you may have to run
+
+    make CFLAGS="-I/usr/local/include" \
+         CXXFLAGS="-I/usr/local/include -L/usr/local/lib"
+
+if the prefix where any dependencies are installed is `/usr/local` and your
+compiler flags do not include them by default.
 
 #### Installing
 
@@ -79,8 +84,8 @@ Textadept is self-contained, meaning it does not need to be installed and can be
 run from wherever it is located. However, if you want to install Textadept like
 a normal Linux application, run the usual `make` and then `make install` or
 `sudo make install` depending on your privilages. The default prefix is
-`/usr/local` but you can change this by setting `DESTDIR` (e.g. `make install
-DESTDIR=/prefix/to/install/to`).
+`/usr/local` but you can change this by setting `DESTDIR` (e.g.
+`make install DESTDIR=/prefix/to/install/to`).
 
 ### Cross Compiling for Windows
 
@@ -109,12 +114,12 @@ Similarly, `make osx-ncurses` builds `../textadept-ncurses.osx` and
 
 #### Compiling on OSX (Legacy)
 
-[XCode][] is needed for Mac OSX as well as [jhbuild][] (for GTK). After building
-`meta-gtk-osx-bootstrap` and `meta-gtk-osx-core`, you need to build
+[XCode][] is needed for Mac OSX as well as [jhbuild][] (for GTK+). After
+building `meta-gtk-osx-bootstrap` and `meta-gtk-osx-core`, you need to build
 `meta-gtk-osx-themes`. Note that the entire compiling process can easily take 30
 minutes or more and ultimately consume nearly 1GB of disk space.
 
-After using `jhbuild`, GTK is in `~/gtk` so make a symlink from `~/gtk/inst` to
+After using `jhbuild`, GTK+ is in `~/gtk` so make a symlink from `~/gtk/inst` to
 `src/gtkosx` in Textadept. Then open `src/Makefile` and uncomment the `Darwin`
 block. Finally, run `make osx` to build `../textadept.osx` and
 `../textadeptjit.osx`.

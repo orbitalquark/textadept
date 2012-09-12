@@ -4,17 +4,23 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Session support for the textadept module.
+-- Session support for Textadept.
 -- @field DEFAULT_SESSION (string)
 --   The path to the default session file.
+--   The default value is `_USERHOME/session`, or `_USERHOME/session_term` if
+--   [`_G.NCURSES`][] is `true`.
+--
+--   [`_G.NCURSES`]: _G.html#NCURSES
 -- @field SAVE_ON_QUIT (bool)
 --   Save the session when quitting.
---   The default value is `true` and can be disabled by passing the command line
---   switch `-n` or `--nosession` to Textadept.
+--   The default value is `true`, but can be disabled by passing the command
+--   line switch `-n` or `--nosession` to Textadept.
 -- @field MAX_RECENT_FILES (number)
---   The maximum number of files from the recent files list to save to the
+--   The maximum number of files from [`io.recent_files`][] to save to the
 --   session.
 --   The default value is `10`.
+--
+--   [`io.recent_files`]: io.html#recent_files
 module('_M.textadept.session')]]
 
 M.DEFAULT_SESSION = _USERHOME..(not NCURSES and '/session' or '/session_term')

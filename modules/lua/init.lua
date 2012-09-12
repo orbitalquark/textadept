@@ -6,15 +6,14 @@ local M = {}
 ---
 -- The lua module.
 -- It provides utilities for editing Lua code.
--- User tags are loaded from `_USERHOME/modules/lua/tags` and user apis are
--- loaded from `_USERHOME/modules/lua/api`.
 --
--- ## Key Commands
+-- ## Key Bindings
 --
--- + `Ctrl+L, M` (`⌘L, M` on Mac OSX)
+-- + `Ctrl+L, M` (`⌘L, M` on Mac OSX | `M-L, M` in ncurses)
 --   Open this module for editing.
--- + `Shift+Return` (`⇧↩`)
---   Try to autocomplete an `if`, `for`, etc. statement with `end`.
+-- + `Shift+Enter` (`⇧↩` | `S-Enter`)
+--   Try to autocomplete an `if`, `while`, `for`, etc. control structures with
+--   `end`.
 -- + `.`
 --   When to the right of a known symbol, show an autocompletion list of fields
 --   and functions.
@@ -23,12 +22,15 @@ local M = {}
 --   functions only.
 -- @field sense
 --   The Lua [Adeptsense](_M.textadept.adeptsense.html).
+--   It loads user tags from `_USERHOME/modules/lua/tags` and user apidocs from
+--   `_USERHOME/modules/lua/api`.
 module('_M.lua')]]
 
 local m_editing, m_run = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.
 m_editing.comment_string.lua = '--'
 -- Compile and Run command tables use file extensions.
+m_run.compile_command.lua = 'luac %(filename)'
 m_run.run_command.lua = 'lua %(filename)'
 m_run.error_detail.lua = {
   pattern = '^lua: (.-):(%d+): (.+)$',
@@ -60,8 +62,9 @@ M.sense:add_trigger('.')
 M.sense:add_trigger(':', false, true)
 
 -- script/update_doc generates a fake set of ctags used for autocompletion.
+local as = _M.textadept.adeptsense
 M.sense.ctags_kinds = {
-  f = 'functions', F = 'fields', m = 'classes', t = 'fields'
+  f = as.FUNCTION, F = as.FIELD, m = as.CLASS, t = as.FIELD
 }
 M.sense:load_ctags(_HOME..'/modules/lua/tags', true)
 
@@ -93,7 +96,7 @@ end
 -- Commands.
 
 ---
--- Patterns for auto 'end' completion for control structures.
+-- Patterns for auto `end` completion for control structures.
 -- @class table
 -- @name control_structure_patterns
 -- @see try_to_autocomplete_end
@@ -103,8 +106,8 @@ local control_structure_patterns = {
 }
 
 ---
--- Tries to autocomplete Lua's 'end' keyword for control structures like 'if',
--- 'while', 'for', etc.
+-- Tries to autocomplete Lua's `end` keyword for control structures like `if`,
+-- `while`, `for`, etc.
 -- @see control_structure_patterns
 -- @name try_to_autocomplete_end
 function M.try_to_autocomplete_end()
@@ -146,7 +149,7 @@ events.connect(events.FILE_AFTER_SAVE, function()
 end)
 
 ---
--- Container for Lua-specific key commands.
+-- Container for Lua-specific key bindings.
 -- @class table
 -- @name _G.keys.lua
 keys.lua = {

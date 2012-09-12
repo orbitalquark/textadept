@@ -6,92 +6,149 @@
 ---
 -- A table of loaded modules.
 --
--- ## Overview
+-- ## Module Guidelines
 --
--- Note that while language-specific modules can only be used by files of that
--- language, they persist in Textadept's Lua state. Because of this, it is not
--- recommended to set global functions or variables and depend on them, as they
--- may be inadvertantly overwritten. Keep them inside the module.
+-- At the very least, modules consist of a single directory with an `init.lua`
+-- script. However, the script can load additional Lua files present in the
+-- directory. (For an example, see `modules/textadept/init.lua`.)
 --
--- ## Structure
+-- Once modules are loaded, regardless of whether they are generic or
+-- language-specific, they persist in Textadept's Lua State; they are never
+-- unloaded. Therefore, modules should not set global functions or variables in
+-- order to avoid polluting the global environment. All functions and variables
+-- should be contained within the module.
 --
--- Each module should have an `init.lua` that `require`s all submodules it
--- needs. For an example, see `modules/textadept/init.lua`.
+-- ### Language-Specific
 --
--- ## Language-Specific Modules
---
--- The following is a list of recommended features for Language-Specific
--- modules. They are all entirely optional.
---
--- ### Snippets
---
--- [Snippets][] for common code constructs.
---
--- [Snippets]: _M.textadept.snippets.html
---
--- ### Commands
---
--- #### Run
---
--- If the code can be run by an interpreter or other executable, create a [run
--- command][] for it as well as an [error format][] for the ability to jump to
--- the position in a file where the error occured.
---
--- For example:
---
---     _M.textadept.run.run_command.lua = 'lua %(filename)'
---
--- [run command]: _M.textadept.run.html#run_command
--- [error format]: _M.textadept.run.html#error_detail
---
--- #### Compile
---
--- If the code can be compiled by an executable, create a [compile command][]
--- for it.
---
--- For example:
---
---     _M.textadept.run.compile_command.lua = 'luac %(filename)'
---
--- [compile command]: _M.textadept.run.html#compile_command
+-- To fully take advantage of Textadept's features, language-specific modules
+-- should have at a minimum: a block comment string, run and/or compile
+-- commands, a buffer property setter function, and if possible, an Adeptsense.
+-- Optional features are extra snippets and commands and a context menu.
 --
 -- #### Block Comment
 --
--- Create a [comment prefix][] for it so code can be easily commented and
--- uncommented.
---
--- [comment prefix]: _M.textadept.editing.html#comment_string
---
--- For example:
+-- The `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in ncurses) key binding toggles code
+-- comments. In order for this to work for your language, the
+-- [`_M.textadept.editing.comment_string`][] table must have a key with the
+-- language's lexer name assigned to a comment prefix string. For Lua, it would
+-- look like
 --
 --     _M.textadept.editing.comment_string.lua = '--'
 --
--- [comment prefix]: _M.textadept.editing.html#comment_string
+-- [`_M.textadept.editing.comment_string`]: _M.textadept.editing.html#comment_string
 --
--- ### Buffer Properties
+-- #### Compile and Run
 --
--- Add a `set_buffer_properties` function with default buffer properties for
--- code like tab and indentation settings.
+-- The `Ctrl+Shift+R` and `Ctrl+R` (`⌘⇧R` and `⌘R` on Mac OSX | `M-^R` and `^R`
+-- in ncurses) key bindings compile and run code, respectively. In order for
+-- these to work for your language, the [`_M.textadept.run.compile_command`][]
+-- and [`_M.textadept.run.run_command`][] tables must have keys with the
+-- language's lexer name assigned to compile and run shell commands,
+-- respectively. Commands may contain [macros][]. For Lua, it would look like
 --
--- For example:
+--     _M.textadept.run.compile_command.lua = 'luac %(filename)'
+--     _M.textadept.run.run_command = 'lua %(filename)'
 --
---     function set_buffer_properties()
---       local buffer = buffer
---       buffer.use_tabs = false
---       buffer.tab_width = 2
---       buffer.indent = 2
---     end
+-- The module should also define error details in
+-- [`_M.textadept.run.error_detail`][] so double-clicking on compile or runtime
+-- errors will jump to the error's location. The format for Lua errors looks
+-- like
 --
--- ### Context Menu
---
--- Language-specific context menus, accessible by right-clicking inside the
--- view, can be defined as:
---
---     context_menu = {
---       { 'label1', action1 },
---       { 'label2', action2 },
---       ...
+--     _M.textadept.run.error_detail.lua = {
+--       pattern = '^lua: (.-):(%d+): (.+)$',
+--       filename = 1, line = 2, message = 3
 --     }
 --
--- See `modules/textadept/menu.lua` for examples on how to define menus.
+-- [`_M.textadept.run.compile_command`]: _M.textadept.run.html#compile_command
+-- [`_M.textadept.run.run_command`]: _M.textadept.run.html#run_command
+-- [macros]: _M.textadept.run.html#execute
+-- [`_M.textadept.run.error_detail`]: _M.textadept.run.html#error_detail
+--
+-- #### Buffer Properties
+--
+-- By default, Textadept uses 2 spaces as indentation. If your language has
+-- different indentation guidelines, change them in a `set_buffer_properties()`
+-- function. Using tabs of width 8 would look like
+--
+--     function M.set_buffer_properties()
+--       buffer.tab_width = 8
+--       buffer.use_tabs = true
+--     end
+--
+-- This function is called automatically to set the properties for the
+-- language's source files.
+--
+-- #### Adeptsense
+--
+-- The `Ctrl+Space` and `Ctrl+H` (`⌥⎋` and `^H` on Mac OSX | `^Space` and `M-H`
+-- or `M-S-H` in ncurses) key bindings autocomplete symbols and show API
+-- documentation, respectively, when editing code. In order for these to work
+-- for your language, you must create an [Adeptsense][].
+--
+-- [Adeptsense]: _M.textadept.adeptsense.html
+--
+-- #### Snippets
+--
+-- [Snippets][] for common language constructs can be useful. Some snippets for
+-- common Lua control structures look like
+--
+--     snippets.lua = {
+--       f = "function %1(name)(%2(args))\n\t%0\nend",
+--       ['for'] = "for i = %1(1), %2(10)%3(, -1) do\n\t%0\nend",
+--       fori = "for %1(i), %2(val) in ipairs(%3(table)) do\n\t%0\nend",
+--       forp = "for %1(k), %2(v) in pairs(%3(table)) do\n\t%0\nend",
+--     }
+--
+-- [Snippets]: _M.textadept.snippets.html
+--
+-- #### Commands
+--
+-- Additional editing features for the language can be useful. For example, the
+-- [Lua][] module has a feature to autocomplete the `end` keyword in a control
+-- structure and the [C/C++][] module has a feature to add a `;` to the end of
+-- the current line and insert a new line. Both are bound to the `Shift+Enter`
+-- (`⇧↩` on Mac OSX | `S-Enter` in ncurses) key for easy access.
+--
+--     function M.try_to_autocomplete_end()
+--       ...
+--     end
+--
+--     keys.lua = {
+--       ['s\n'] = M.try_to_autocomplete_end
+--     }
+--
+-- ---
+--
+--     keys.cpp = {
+--       ['s\n'] = function()
+--         buffer:line_end()
+--         buffer:add_text(';')
+--         buffer:new_line()
+--       end
+--     }
+--
+-- [Lua]: _M.lua.html
+-- [C/C++]: _M.cpp.html
+--
+-- #### Context Menu
+--
+-- Language-specific [context menus][], accessible by right-clicking inside the
+-- view, can be useful for accessing module features without using key bindings.
+-- For Lua this may look like
+--
+--     M.context_menu = {
+--       { _L['_Undo'], buffer.undo },
+--       { _L['_Redo'], buffer.redo },
+--       { '' },
+--       { _L['Cu_t'], buffer.cut },
+--       { _L['_Copy'], buffer.copy },
+--       { _L['_Paste'], buffer.paste },
+--       { _L['_Delete'], buffer.clear },
+--       { '' },
+--       { _L['Select _All'], buffer.select_all },
+--       { '' },
+--       { 'Autocomplete "end"', M.try_to_autocomplete_end }
+--     }
+--
+-- [context menus]: _M.textadept.menu.html#set_contextmenu
 module('_M')]]

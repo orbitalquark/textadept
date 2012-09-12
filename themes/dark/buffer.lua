@@ -11,6 +11,6 @@ buffer.property['fold.line.comments'] = '0'
 -- Tabs and Indentation.
 buffer.tab_width = 2
 buffer.use_tabs = false
-buffer.indent = 2
+--buffer.indent = 2
 buffer.tab_indents = true
 buffer.back_space_un_indents = true

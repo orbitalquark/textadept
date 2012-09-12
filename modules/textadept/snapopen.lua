@@ -4,30 +4,13 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Snapopen for the textadept module.
---
--- ## Examples
---
---     local snapopen = _M.textadept.snapopen.open
---
---     -- Show all files in PATHS.
---     snapopen()
---
---     -- Show all files in the current file's directory.
---     snapopen(buffer.filename:match('^(.+)[/\\]'), nil, true)
---
---     -- Show all Lua files in PATHS.
---     snapopen(nil, '!%.lua$')
---
---     -- Ignore the project's 'images' folder and HTML pages.
---     snapopen('/path/to/project', {
---                folders = { 'images' },
---                extensions = { 'html' }
---              }, true)
+-- Quickly open files in a set of directories using a filtered list dialog.
 -- @field DEFAULT_DEPTH (number)
---   Maximum directory depth to search. The default value is `99`.
+--   Maximum directory depth to search.
+--   The default value is `99`.
 -- @field MAX (number)
---   Maximum number of files to list. The default value is `1000`.
+--   Maximum number of files to list.
+--   The default value is `1000`.
 module('_M.textadept.snapopen')]]
 
 ---
@@ -37,6 +20,7 @@ module('_M.textadept.snapopen')]]
 M.PATHS = {}
 ---
 -- Default file and directory filters.
+-- Contains common binary file extensions and version control folders.
 -- @class table
 -- @name FILTER
 M.FILTER = {
@@ -97,15 +81,16 @@ local function add_directory(utf8_dir, list, depth, filter)
 end
 
 ---
--- Quickly open a file in set of directories.
+-- Quickly open files in set of directories using a filtered list dialog.
+-- The number of files in the list is capped at `MAX`.
 -- @param utf8_paths A UTF-8 string directory path or table of UTF-8 directory
 --   paths to search.
 -- @param filter A filter for files and folders to exclude. The filter may be
 --   a string or table. Each filter is a Lua pattern. Any files matching a
 --   filter are excluded. Prefix a pattern with `!` to exclude any files that
---   do not match the filter. File extensions can be more efficiently excluded
---   by adding the extension text to a table assigned to an `extensions` key in
---   the filter table instead of using individual filters. Directories can be
+--   do not match a filter. File extensions can be more efficiently excluded by
+--   adding the extension text to a table assigned to an `extensions` key in the
+--   filter table instead of using individual filters. Directories can be
 --   excluded by adding filters to a table assigned to a `folders` key in the
 --   filter table. All strings should be UTF-8 encoded.
 -- @param exclude_PATHS Flag indicating whether or not to exclude `PATHS` in the
@@ -115,10 +100,17 @@ end
 --   The default value is `false`.
 -- @param depth Number of directories to recurse into for finding files.
 --   The default value is `DEFAULT_DEPTH`.
--- @usage _M.textadept.snapopen.open()
+-- @usage _M.textadept.snapopen.open() -- list all files in PATHS
 -- @usage _M.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)
--- @usage _M.textadept.snapopen.open(nil, '!%.lua$')
--- @usage _M.textadept.snapopen.open(nil, { folders = { '%.hg' } })
+--   -- list all files in the current file's directory
+-- @usage _M.textadept.snapopen.open(nil, '!%.lua$') -- list all Lua files in
+--    PATHS
+-- @usage _M.textadept.snapopen.open('/project', { folders = { 'secret' } },
+--   true) -- list all project files except those in a secret folder
+-- @see PATHS
+-- @see FILTER
+-- @see DEFAULT_DEPTH
+-- @see MAX
 -- @name open
 function M.open(utf8_paths, filter, exclude_PATHS, exclude_FILTER, depth)
   -- Convert utf8_paths to a table from nil or string arguments.

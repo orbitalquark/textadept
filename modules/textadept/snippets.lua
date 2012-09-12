@@ -4,117 +4,76 @@ local M = {}
 
 --[=[ This comment is for LuaDoc.
 ---
--- Provides Lua-style snippets for Textadept.
+-- Snippets for Textadept.
 --
 -- ## Overview
 --
--- Snippets are dynamic pieces of text inserted into a document that contain
--- placeholders for further input, mirror or transform that input, and execute
--- code.
---
 -- Snippets are defined in the global table `snippets`. Each key-value pair in
--- `snippets` consists of either:
---
--- * A string snippet trigger word and its expanded text.
--- * A string lexer language name and its associated `snippets`-like table.
---
--- Language names are the names of the lexer files in `lexers/` such as `cpp`
--- and `lua`.
---
--- By default, the `Tab` key expands a snippet and tabs through placeholders
--- while `Shift+Tab` tabs backwards through them. Snippets can also be expanded
--- inside one another.
---
--- ## Snippet Precedence
---
--- When searching for a snippet to expand in the `snippets` table, snippets in
--- the current lexer have priority, followed by the ones in the global table.
+-- `snippets` consists of either a string trigger word and its snippet text, or
+-- a string lexer language (from the `lexers/` directory) with a table of
+-- trigger words and snippet texts. When searching for a snippet to insert based
+-- on a trigger word, snippets in the current lexer have priority, followed by
+-- the ones in the global table. This means if there are two snippets with the
+-- same trigger word, the one specific to the current lexer is inserted, not the
+-- global one.
 --
 -- ## Snippet Syntax
 --
--- A snippet to insert may contain any of the following:
---
--- ### Plain Text
---
--- Any plain text characters may be used with the exception of `%` followed
--- immediately by a digit (`0`-`9`), `(`, `)`, `>`, or `]` character. These are
--- "escape sequences" for the more complicated features of snippets. If you want
--- to use `%` followed by one of the before-mentioned characters, prepend
--- another `%` to the first `%`. For example, `%%>` in the snippet inserts a
--- literal `%>` into the document.
+-- Any plain text characters may be used with the exception of `%`. Just like in
+-- Lua patterns, `%` is an escape character. The sequence `%%` stands for a
+-- single `%`. Also, it is recommended to use `\t` characters for indentation
+-- because they can be converted to spaces based on the current indentation
+-- settings. In addition to plain text, snippets can contain placeholders for
+-- further user input, can mirror or transform those user inputs, and/or execute
+-- arbitrary code.
 --
 -- ### Placeholders
 --
--- Textadept's snippets provide a number of different placeholders. The simplest
--- ones are of the form
+-- `%`_`n`_`(`_`text`_`)` sequences are called placeholders, where _`n`_ is an
+-- integer and _`text`_ is the default text inserted into the placeholder.
+-- Placeholders are visited in numeric order each time [`_insert()`](#_insert)
+-- is called with an active snippet. When no more placeholders are left, the
+-- caret is placed at the `%0` placeholder (if it exists), or at the end of the
+-- snippet. Examples are
 --
---     %num
+--     snippets['foo'] = 'foobar%1(baz)'
+--     snippets['bar'] = 'start\n\t%0\nend'
 --
--- where `num` is a number. Placeholders are visited in numeric order (1, 2, 3,
--- etc.) with the `Tab` key after the snippet is inserted and can be used to
--- enter in additional text. When no more placeholders are left, the caret is
--- placed at either the end of the snippet or the `%0` placeholder if it exists.
+-- ### Mirrors
 --
--- A placeholder can specify default text. It is of the form
+-- `%`_`n`_ sequences are called mirrors, where _`n`_ is an integer. Mirrors
+-- with the same _`n`_ as a placeholder mirror any user input in the
+-- placeholder. If no placeholder exists for _`n`_, the first occurrence of that
+-- mirror in the snippet becomes the placeholder, but with no default text.
+-- Examples are
 --
---     %num(default text)
+--     snippets['foo'] = '%1(mirror), %1, on the wall'
+--     snippets['q'] = '"%1"'
 --
--- where, again, `num` is a number. These kinds of placeholders take precedence
--- over the simpler placeholders described above. If a snippet contains more
--- than one placeholder with the same `num`, the one containing default text is
--- visited first and the others become _mirrors_. Mirrors simply mirror the text
--- typed into the current placeholder.
+-- ### Transforms
 --
--- The last kind of placeholder executes either Lua or Shell code.
+-- `%`_`n`_`<`_`Lua code`_`>` and `%`_`n`_`[`_`Shell code`_`]` sequences are
+-- called transforms, where _`n`_ is an integer,  _`Lua code`_ is arbitrary Lua
+-- code, and _`Shell code`_ is arbitrary Shell code. The _`n`_ is optional, and
+-- for transforms that omit it, their code is executed the moment the snippet is
+-- inserted. Otherwise, the code is executed as placeholders are visited.
 --
---     %<lua_code>
---     %num<lua_code>
---     %[shell_code]
---     %num[shell_code]
+-- Lua code is run in Textadept's Lua State with with an additional
+-- `selected_text` global variable that contains the current selection in the
+-- buffer. The transform is replaced with the return value of the executed code.
+-- An example is
 --
--- For placeholders that omit `num`, their code is executed the moment the
--- snippet is inserted. Otherwise the code is executed as placeholders are
--- visited.
+--     snippets['foo'] = [[
+--     %2<('%1'):gsub('^.', function(c)
+--       return c:upper() -- capitalize the word
+--     end)>, %1(mirror) on the wall.]]
 --
--- For Lua code, the global Lua state is available as well as a `selected_text`
--- variable (containing the current selection in the buffer). After execution,
--- the placeholder contains the return value of the code that was run.
+-- Shell code is executed using Lua's [`io.popen()`][]. The transform is
+-- replaced with the process' standard output (stdout). An example is
 --
--- Shell code is executed using Lua's [`io.popen()`][] which reads from the
--- process' standard output (STDOUT). After execution, the placeholder will
--- contain the STDOUT of the process.
+--     snippets['foo'] = '$%1(HOME) = %2[echo $%1]'
 --
 -- [`io.popen()`]: http://www.lua.org/manual/5.2/manual.html#pdf-io.popen
---
--- These kinds of placeholders can be used to transform mirrored text. For
--- example, `%2<([[%1]]):gsub('^.', function(c) return c:upper() end)>` will
--- capitalize a mirrored `%1` placeholder.
---
--- #### Important Note
---
--- It is very important that any `%`, `(`, `)`, `>`, or `]` characters
--- **within** placeholders be escaped with a `%` as necessary. Otherwise,
--- unexpected results will occur. `%`s only need to be escaped if they are
--- proceeded by a digit, `(`s and `)`s only need to be escaped directly after a
--- %num sequence or inside default text placeholders **if and only if** there is
--- no matching parenthesis (thus, nested parentheses do not need to be escaped),
--- `]`s only need to be escaped inside Shell code placeholders, and `>`s only
--- need to be escaped inside Lua code placeholders.
---
--- ## Example
---
---     snippets.snippet = 'snippets.%1 = \'%0\''
---     snippets.file = '%<buffer.filename>'
---     snippets.lua = {
---       f = 'function %1(name)(%2(args))\n\t%0\nend'
---     }
---
--- The first two snippets are global. The first is quite simple to understand.
--- The second runs Lua code to determine the current buffer's filename and
--- inserts it. The last snippet expands only when editing Lua code.
---
--- It is recommended to use tab characters instead of spaces like in the last
--- example. Tabs will be converted to spaces as necessary.
 module('_M.textadept.snippets')]=]
 
 -- The stack of currently running snippets.
@@ -171,10 +130,12 @@ local function new_snippet(text, trigger)
 end
 
 ---
--- Inserts a snippet.
--- @param text Optional snippet text. If none is specified, the snippet text
---   is determined from the trigger and lexer.
--- @return `false` if no snippet was expanded; `true` otherwise.
+-- Inserts a new snippet or goes to the next placeholder of the active snippet.
+-- @param text Optional snippet text. If `nil`, attempts to insert a new snippet
+--   based on the trigger, the word to the left of the caret, and the current
+--   lexer.
+-- @return `false` if no action was taken; `nil` otherwise.
+-- @see buffer.word_chars
 -- @name _insert
 function M._insert(text)
   local buffer = buffer
@@ -195,8 +156,8 @@ function M._insert(text)
 end
 
 ---
--- Goes back to the previous placeholder, reverting any changes from the current
--- one.
+-- Goes back to the previous snippet placeholder, reverting any changes from the
+-- current one.
 -- @return `false` if no snippet is active; `nil` otherwise.
 -- @name _previous
 function M._previous()
@@ -426,7 +387,10 @@ events.connect(events.VIEW_NEW,
                function() buffer.indic_style[INDIC_SNIPPET] = INDIC_HIDDEN end)
 
 ---
--- Provides access to snippets from `_G`.
+-- Table of snippet triggers with their snippet text.
+-- Language-specific snippets are in another table value whose key is the
+-- language's lexer name.
+-- This table also contains the `_M.textadept.snippets` module.
 -- @class table
 -- @name _G.snippets
 _G.snippets = M

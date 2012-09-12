@@ -170,6 +170,12 @@ function M.start(doc)
 
   -- Write index.html.
   template.nav = nav
+  local api_index = M.options.output_dir..'/.api_index.md'
+  if (require 'lfs').attributes(api_index) then
+    local p = io_popen('markdown -f toc -T "'..api_index..'"')
+    template.toc, template.main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
+    p:close()
+  end
   f = io_open(M.options.output_dir..'/api/index.html', 'wb')
   local html = HTML:gsub('%%%(([^)]+)%)', template)
   f:write(html)
