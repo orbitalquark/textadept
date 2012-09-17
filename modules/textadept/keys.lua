@@ -186,6 +186,19 @@ local M = {}
 -- None            |^L          |None        |Center line vertically
 -- **Other**                |    |    |
 -- Ctrl+Shift+U, xxxx, Enter|None|None|Input Unicode character U-xxxx.
+-- **ncurses CDK Fields**|   |            |
+-- N/A                   |N/A|^B<br/>Left |Cursor left
+-- N/A                   |N/A|^F<br/>Right|Cursor right
+-- N/A                   |N/A|Del         |Delete forward
+-- N/A                   |N/A|^H<br/>Bksp |Delete back
+-- N/A                   |N/A|^V          |Paste
+-- N/A                   |N/A|^X          |Cut all
+-- N/A                   |N/A|^Y          |Copy all
+-- N/A                   |N/A|^U          |Erase all
+-- N/A                   |N/A|^A          |Home
+-- N/A                   |N/A|^E          |End
+-- N/A                   |N/A|^T          |Transpose characters
+-- N/A                   |N/A|^L          |Refresh
 module('_M.textadept.keys')]]
 
 -- Utility functions.
