@@ -270,7 +270,7 @@ local function set_properties()
   buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-  buffer:private_lexer_call(SETLEXERLANGUAGE, 'container')
+  buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
   buffer.style_bits = 8
   -- Properties.
   buffer.property['textadept.home'] = _HOME
