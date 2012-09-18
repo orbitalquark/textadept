@@ -233,16 +233,13 @@ function find.find_incremental()
 end
 
 events_connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
-  if find.incremental then
-    if keys.KEYSYMS[code] == 'esc' then
-      find.incremental = nil
-    elseif code < 256 or keys.KEYSYMS[code] == '\b' then
-      if keys.KEYSYMS[code] == '\b' then
-        find_incremental(gui.command_entry.entry_text:sub(1, -2))
-      else
-        find_incremental(gui.command_entry.entry_text..string.char(code))
-      end
-    end
+  if not find.incremental then return end
+  if not NCURSES and keys.KEYSYMS[code] == 'esc' or code == 27 then
+    find.incremental = nil
+  elseif keys.KEYSYMS[code] == '\b' then
+    find_incremental(gui.command_entry.entry_text:sub(1, -2))
+  elseif code < 256 then
+    find_incremental(gui.command_entry.entry_text..string.char(code))
   end
 end, 1) -- place before command_entry.lua's handler (if necessary)
 

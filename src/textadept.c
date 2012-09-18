@@ -540,13 +540,18 @@ static int lfind__newindex(lua_State *L) {
 #if NCURSES
 /**
  * Signal for a keypress inside the Command Entry.
+ * As a BINDFN, returns `TRUE` to stop key propagation.
+ * As a PROCESSFN, returns `TRUE` to continue key propagation.
  */
-static int c_keypress(EObjectType _, void *object, void *__, chtype key) {
+static int c_keypress(EObjectType _, void *object, void *data, chtype key) {
+  if (data && (key == KEY_ENTER || key == KEY_TAB)) return TRUE;
+  int ret = TRUE;
   if (key == KEY_ENTER) {
     fcopy(&command_text, getCDKEntryValue((CDKENTRY *)object));
-    lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
-  } else lL_event(lua, "command_entry_keypress", LUA_TNUMBER, '\t', -1);
-  return key == KEY_TAB;
+    ret = lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
+  } else ret = !lL_event(lua, "command_entry_keypress", LUA_TNUMBER, key, -1);
+  scintilla_refresh(focused_view), drawCDKEntry((CDKENTRY *)object, FALSE);
+  return key == KEY_TAB || ret;
 }
 #endif
 
@@ -567,6 +572,7 @@ static int lce_focus(lua_State *L) {
                               vMIXED, 0, 0, 256, FALSE, FALSE);
   bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
   bindCDKObject(vENTRY, command_entry, KEY_ENTER, c_keypress, NULL);
+  setCDKEntryPreProcess(command_entry, c_keypress, "");
   setCDKEntryValue(command_entry, command_text);
   char *clipboard = get_clipboard();
   GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer

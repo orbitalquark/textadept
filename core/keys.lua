@@ -111,6 +111,8 @@ local error = function(e) events.emit(events.ERROR, e) end
 -- @class table
 -- @name KEYSYMS
 M.KEYSYMS = {
+  -- From ncurses.h
+  [263] = '\b',
   -- From Scintilla.h.
   [300] = 'down', [301] = 'up', [302] = 'left', [303] = 'right',
   [304] = 'home', [305] = 'end',
