@@ -2129,8 +2129,10 @@ static int cc_matchfunc(GtkEntryCompletion*_, const char *__, GtkTreeIter*___,
 static void new_window() {
 #if GTK
   GList *icon_list = NULL;
-  const char *icons[] = { "16x16", "32x32", "48x48", "64x64", "128x128" };
-  for (int i = 0; i < 5; i++) {
+  const char *icons[] = {
+    "16x16", "32x32", "48x48", "64x64", "128x128", "256x256"
+  };
+  for (int i = 0; i < 6; i++) {
     char *icon_file = g_strconcat(textadept_home, "/core/images/ta_", icons[i],
                                   ".png", NULL);
     GdkPixbuf *pb = gdk_pixbuf_new_from_file(icon_file, NULL);
