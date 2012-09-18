@@ -344,7 +344,7 @@ events_connect(events.UPDATE_UI, function()
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
   local eol = EOLs[buffer.eol_mode + 1]
   local tabs = string_format('%s %d', buffer.use_tabs and _L['Tabs:'] or
-                             _L['Spaces:'], buffer.indent)
+                             _L['Spaces:'], buffer.tab_width)
   local enc = buffer.encoding or ''
   local text = not NCURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
                                '%s %d/%d  %s %d  %s  %s  %s  %s'
