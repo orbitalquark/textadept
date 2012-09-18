@@ -182,7 +182,7 @@ local function handle_new()
   if not lexer and buffer.filename then
     lexer = M.extensions[buffer.filename:match('[^/\\.]+$')]
   end
-  buffer:set_lexer(lexer or 'container')
+  buffer:set_lexer(lexer or 'text')
 end
 events_connect(events.FILE_OPENED, handle_new)
 events_connect(events.FILE_SAVED_AS, handle_new)
@@ -191,12 +191,12 @@ events_connect(events.FILE_SAVED_AS, handle_new)
 -- first line pattern.
 local function restore_lexer()
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-  buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'container')
+  buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
 end
 events_connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
 events_connect(events.VIEW_NEW, restore_lexer, 1)
 
 events_connect(events.RESET_AFTER,
-               function() buffer:set_lexer(buffer._lexer or 'container') end)
+               function() buffer:set_lexer(buffer._lexer or 'text') end)
 
 return M
