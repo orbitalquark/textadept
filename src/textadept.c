@@ -380,6 +380,7 @@ static int lfind_focus(lua_State *L) {
   if (findbox) return 0; // already active
   wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
   findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0));
+  tcsetattr(0, TCSANOW, &term);
   int b_width = max(strlen(button_labels[0]), strlen(button_labels[1])) +
                 max(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
   int o_width = max(strlen(option_labels[0]), strlen(option_labels[1])) +
@@ -430,7 +431,6 @@ static int lfind_focus(lua_State *L) {
   destroyCDKEntry(find_entry), destroyCDKEntry(replace_entry);
   destroyCDKButtonbox(buttonbox), destroyCDKButtonbox(optionbox);
   delwin(findbox->window), destroyCDKScreen(findbox), findbox = NULL;
-  tcsetattr(0, TCSANOW, &term);
   wresize(scintilla_get_window(focused_view), LINES - 2, COLS);
 #endif
   return 0;
@@ -568,6 +568,7 @@ static int lce_focus(lua_State *L) {
 #elif NCURSES
   if (command_entry) return 0; // already active
   CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
+  tcsetattr(0, TCSANOW, &term);
   command_entry = newCDKEntry(screen, LEFT, TOP, NULL, NULL, A_NORMAL, '_',
                               vMIXED, 0, 0, 256, FALSE, FALSE);
   bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
@@ -584,7 +585,6 @@ static int lce_focus(lua_State *L) {
   free(clipboard), free(GPasteBuffer), GPasteBuffer = NULL;
   destroyCDKEntry(command_entry), command_entry = NULL;
   delwin(screen->window), destroyCDKScreen(screen);
-  tcsetattr(0, TCSANOW, &term);
 #endif
   return 0;
 }
