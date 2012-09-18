@@ -180,7 +180,7 @@ local M = {}
 -- Bksp            |⌫<br/>⇧⌫    |^H<br/>Bksp |Delete back
 -- Ctrl+Bksp       |⌘⌫          |None        |Delete word left
 -- Ctrl+Shift+Bksp |⌘⇧⌫         |None        |Delete line left
--- Tab             |⇥           |Tab         |Insert tab or indent
+-- Tab             |⇥           |Tab<br/>^I  |Insert tab or indent
 -- Shift+Tab       |⇧⇥          |S-Tab       |Dedent
 -- None            |^K          |^K          |Cut to line end
 -- None            |^L          |None        |Center line vertically

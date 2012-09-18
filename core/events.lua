@@ -67,11 +67,14 @@ local M = {}
 --   * `ch`: The text character byte.
 -- @field COMMAND_ENTRY_COMMAND (string)
 --   Called when a command is entered into the Command Entry.
+--   If any handler returns `true`, the Command Entry does not hide
+--   automatically.
 --   Arguments:
 --
 --   * `command`: The command text.
 -- @field COMMAND_ENTRY_KEYPRESS (string)
 --   Called when a key is pressed in the Command Entry.
+--   If any handler returns `true`, the key is not inserted into the entry.
 --   Arguments:
 --
 --   * `code`: The key code.
@@ -176,6 +179,7 @@ local M = {}
 --   * `position`: The text position of the release.
 -- @field KEYPRESS (string)
 --   Called when a key is pressed.
+--   If any handler returns `true`, the key is not inserted into the buffer.
 --   Arguments:
 --
 --   * `code`: The key code.
