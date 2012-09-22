@@ -6,6 +6,8 @@ package.path = table.concat({
   _HOME..'/modules/?.lua', _HOME..'/modules/?/init.lua',
   package.path
 }, ';');
+local so = not WIN32 and '/?.so;' or '/?.dll;'
+package.cpath = _USERHOME..so.._USERHOME..'/modules'..so..package.cpath
 
 local user_init, exists = _USERHOME..'/init.lua', lfs.attributes
 local ok, err = pcall(dofile, user_init)
