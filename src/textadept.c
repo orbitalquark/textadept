@@ -1362,7 +1362,7 @@ static int lL_dofile(lua_State *L, const char *filename) {
                                                lua_tostring(L, -1));
     gtk_dialog_run(GTK_DIALOG(dialog)), gtk_widget_destroy(dialog);
 #elif NCURSES
-    WINDOW *win = newwin(0, 0, 0, 0);
+    WINDOW *win = newwin(0, 0, 1, 0);
     wprintw(win, lua_tostring(L, -1)), wrefresh(win);
     getch(), delwin(win);
 #endif
@@ -1434,7 +1434,7 @@ static int lstring_iconv(lua_State *L) {
     free(out);
     iconv_close(cd);
   }
-  if (!converted) luaL_error(L, "Conversion failed");
+  if (!converted) luaL_error(L, "conversion failed");
   return 1;
 }
 
