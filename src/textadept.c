@@ -1,5 +1,6 @@
 // Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
 
+#include <errno.h>
 #include <locale.h>
 #include <iconv.h>
 #include <stdarg.h>
@@ -1421,20 +1422,27 @@ static int ltimeout(lua_State *L) {
 
 /** `string.iconv()` Lua function. */
 static int lstring_iconv(lua_State *L) {
-  size_t text_len = 0;
-  char *text = (char *)luaL_checklstring(L, 1, &text_len);
+  size_t inbytesleft = 0;
+  char *inbuf = (char *)luaL_checklstring(L, 1, &inbytesleft);
   const char *to = luaL_checkstring(L, 2), *from = luaL_checkstring(L, 3);
-  int converted = FALSE;
   iconv_t cd = iconv_open(to, from);
   if (cd != (iconv_t)-1) {
-    char *out = malloc(text_len + 1), *outp = out;
-    size_t inbytesleft = text_len, outbytesleft = text_len;
-    if (iconv(cd, &text, &inbytesleft, &outp, &outbytesleft) != -1)
-      lua_pushlstring(L, out, outp - out), converted = TRUE;
-    free(out);
-    iconv_close(cd);
-  }
-  if (!converted) luaL_error(L, "conversion failed");
+    char *outbuf = malloc(inbytesleft + 1), *outbufp = outbuf;
+    size_t outbytesleft = inbytesleft, bufsize = inbytesleft;
+    int n = 1; // concat this many converted strings
+    while (iconv(cd, &inbuf, &inbytesleft, &outbufp, &outbytesleft) == -1)
+      if (errno == E2BIG) {
+        // Buffer was too small to store converted string. Push the partially
+        // converted string for later concatenation.
+        lua_pushlstring(L, outbuf, outbufp - outbuf), n++;
+        outbufp = outbuf, outbytesleft = bufsize;
+      } else {
+        free(outbuf), iconv_close(cd);
+        luaL_error(L, "conversion failed");
+      }
+    lua_pushlstring(L, outbuf, outbufp - outbuf), lua_concat(L, n);
+    free(outbuf), iconv_close(cd);
+  } else luaL_error(L, "invalid encoding(s)");
   return 1;
 }
 
