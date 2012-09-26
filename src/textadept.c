@@ -1434,7 +1434,7 @@ static int lstring_iconv(lua_State *L) {
       if (errno == E2BIG) {
         // Buffer was too small to store converted string. Push the partially
         // converted string for later concatenation.
-        lua_pushlstring(L, outbuf, outbufp - outbuf), n++;
+        lua_checkstack(L, 2), lua_pushlstring(L, outbuf, outbufp - outbuf), n++;
         outbufp = outbuf, outbytesleft = bufsize;
       } else {
         free(outbuf), iconv_close(cd);
