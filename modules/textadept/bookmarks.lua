@@ -24,7 +24,7 @@ function M.toggle(on)
   local f = on and buffer.marker_add or buffer.marker_delete
   if on == nil then -- toggle
     local bit, marker_mask = 2^MARK_BOOKMARK, buffer:marker_get(line)
-    if marker_mask % (bit + bit) < bit then f = buffer.marker_add end
+    if bit32.band(marker_mask, bit) == 0 then f = buffer.marker_add end
   end
   f(buffer, line, MARK_BOOKMARK)
 end
