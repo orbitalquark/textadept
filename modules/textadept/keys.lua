@@ -184,6 +184,8 @@ local M = {}
 -- Shift+Tab       |⇧⇥          |S-Tab       |Dedent
 -- None            |^K          |^K          |Cut to line end
 -- None            |^L          |None        |Center line vertically
+-- N/A             |N/A         |^^          |Mark text at the caret position
+-- N/A             |N/A         |^]          |Swap caret and mark anchor
 -- **Other**                |    |    |
 -- Ctrl+Shift+U, xxxx, Enter|None|None|Input Unicode character U-xxxx.
 -- **ncurses CDK Fields**|   |            |
@@ -274,6 +276,10 @@ M.utils = {
       local _, _, code = os.execute(cmd)
       if code ~= 0 then error(_L['Error loading webpage:']..url) end
     end
+  end,
+  cut_to_eol = function()
+    _G.buffer:line_end_extend()
+    _G.buffer:cut()
   end
 }
 -- The following buffer functions need to be constantized in order for menu
@@ -348,7 +354,7 @@ local utils = M.utils
 --   * No modifiers are recognized for the function keys (e.g. F1-F12).
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:        g~~   ~             ^]
+-- c:        g~~   ~
 -- cm:  bcd  g~~ k ~  pq  t v xyz
 -- m:          e          J            qQ  sS  u vVw xXyYzZ*
 -- Note: m[befhstv] may be used by GUI terminals.
@@ -564,42 +570,55 @@ end
 --         '--no-cancel' }
 
 -- Movement commands.
-if OSX or NCURSES then
-  keys.ck = function()
-    _G.buffer:line_end_extend()
-    _G.buffer:cut()
-  end
-  keys.cf = buffer.char_right
-  keys.cb = buffer.char_left
-  keys.cn = buffer.line_down
-  keys.cp = buffer.line_up
-  keys.ca = buffer.vc_home
-  keys.ce = buffer.line_end
-  keys[OSX and 'cA' or 'mA'] = buffer.vc_home_extend
-  keys[OSX and 'cE' or 'mE'] = buffer.line_end_extend
+if OSX then
+  keys.cf, keys.cF = buffer.char_right, buffer.char_right_extend
+  keys.cmf, keys.cmF = buffer.word_right, buffer.word_right_extend
+  keys.cb, keys.cB = buffer.char_left, buffer.char_left_extend
+  keys.cmb, keys.cmB = buffer.word_left, buffer.word_left_extend
+  keys.cn, keys.cN = buffer.line_down, buffer.line_down_extend
+  keys.cp, keys.cP = buffer.line_up, buffer.line_up_extend
+  keys.ca, keys.cA = buffer.vc_home, buffer.vc_home_extend
+  keys.ce, keys.cE = buffer.line_end, buffer.line_end_extend
+  keys.aright, keys.aleft = buffer.word_right, buffer.word_left
   keys.cd = buffer.clear
-  if OSX then
-    keys.cF = buffer.char_right_extend
-    keys.cmf = buffer.word_right
-    keys.cmF = buffer.word_right_extend
-    keys.cB = buffer.char_left_extend
-    keys.cmb = buffer.word_left
-    keys.cmB = buffer.word_left_extend
-    keys.cN = buffer.line_down_extend
-    keys.cP = buffer.line_up_extend
-    keys.cl = buffer.vertical_centre_caret
-    keys.aright = buffer.word_right
-    keys.aleft = buffer.word_left
-  else
-    keys.md = utils.delete_word
-    keys.cma = buffer.document_start
-    keys.cme = buffer.document_end
-    keys.mU = buffer.page_up_extend
-    keys.mD = buffer.page_down_extend
-  end
-  -- GTKOSX reports Fn-key as a single keycode which confuses Scintilla. Do not
-  -- propagate it.
+  keys.ck = utils.cut_to_eol
+  keys.cl = buffer.vertical_centre_caret
+  -- GTKOSX reports Fn-key as a single keycode which confuses Scintilla. Do
+  -- not propagate it.
   keys.fn = function() return true end
+elseif NCURSES then
+  local mark_mode = false
+  local function move(s) buffer[mark_mode and s..'_extend' or s](_G.buffer) end
+
+  keys['c^'] = function() mark_mode = not mark_mode end
+  keys['c]'] = buffer.swap_main_anchor_caret
+  keys.cf, keys.cb = { move, 'char_right' }, { move, 'char_left' }
+  keys.cn, keys.cp = { move, 'line_down' }, { move, 'line_up' }
+  keys.ca, keys.ce = { move, 'vc_home' }, { move, 'line_end' }
+  keys.mA, keys.mE = buffer.vc_home_extend, buffer.line_end_extend
+  keys.right, keys.cright = keys.cf, { move, 'word_right' }
+  keys.left, keys.cleft = keys.cb, { move 'word_left' }
+  keys.down, keys.up = keys.cn, keys.cp
+  keys.home, keys['end'] = keys.ca, keys.ce
+  keys.pgup, keys.mU = { move, 'page_up' }, buffer.page_up_extend
+  keys.pgdn, keys.mD = { move, 'page_down' }, buffer.page_down_extend
+  keys.cma = { move, 'document_start' }
+  keys.cme = { move, 'document_end' }
+  keys.cd, keys.md = buffer.clear, utils.delete_word
+  keys.ck = utils.cut_to_eol
+
+  local INS_OR_DEL = _SCINTILLA.constants.SC_MOD_INSERTTEXT +
+                     _SCINTILLA.constants.SC_MOD_DELETETEXT
+  events.connect(events.BUFFER_NEW,
+                 function() _G.buffer.mod_event_mask = INS_OR_DEL end)
+  -- Scintilla's first buffer does not have this.
+  if not RESETTING then _G.buffer.mod_event_mask = INS_OR_DEL end
+
+  local bit32_band = bit32.band
+  -- Inserting or deleting text should cancel mark mode.
+  events.connect(events.MODIFIED, function(modification_type)
+    mark_mode = mark_mode and bit32_band(modification_type, INS_OR_DEL) == 0
+  end)
 end
 
 return M

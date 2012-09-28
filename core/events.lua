@@ -347,6 +347,7 @@ local scnotifications = {
   [c.SCN_SAVEPOINTLEFT] = { 'save_point_left' },
   [c.SCN_DOUBLECLICK] = { 'double_click', 'position', 'line', 'modifiers' },
   [c.SCN_UPDATEUI] = { 'update_ui' },
+  [c.SCN_MODIFIED] = { 'modified', 'modification_type' }, -- undocumented
   [c.SCN_MARGINCLICK] = { 'margin_click', 'margin', 'position', 'modifiers' },
   [c.SCN_USERLISTSELECTION] = {
     'user_list_selection', 'wParam', 'text', 'position'

@@ -83,6 +83,20 @@ a `""` sequence. Typing `Ctrl++` (`^+` | `M-+`) as a follow-up selects the
 double-quotes too. See the `Edit -> Select In...` menu for available entities
 and their key bindings.
 
+### Marks
+
+In ncurses, since some terminals do not recognize certain key commands like
+`Shift+Arrow` for making selections, you can use marks to create selections.
+Create a mark at the current caret position with `^^`. Then use regular movement
+keys like the arrows, page up/down, and home/end to extend the selection in one
+direction. Pressing `^]` swaps the current caret position with the original mark
+position so you can extend the selection in the opposite direction. Any time you
+type text, delete text, or run a command that does either, the mark is removed
+and ordinary navigation is restored. You can also press `^^` again to stop
+selecting text.
+
+Marks are only supported in ncurses.
+
 ### Transforms
 
 #### Enclose Entities
