@@ -1754,8 +1754,8 @@ static void lL_notify(lua_State *L, struct SCNotification *n) {
   lua_pushinteger(L, n->position), lua_setfield(L, -2, "position");
   lua_pushinteger(L, n->ch), lua_setfield(L, -2, "ch");
   lua_pushinteger(L, n->modifiers), lua_setfield(L, -2, "modifiers");
-  //lua_pushinteger(L, n->modificationType);
-  //lua_setfield(L, -2, "modification_type");
+  lua_pushinteger(L, n->modificationType);
+  lua_setfield(L, -2, "modification_type");
   lua_pushstring(L, n->text), lua_setfield(L, -2, "text");
   //lua_pushinteger(L, n->length), lua_setfield(L, -2, "length");
   //lua_pushinteger(L, n->linesAdded), lua_setfield(L, -2, "lines_added");
