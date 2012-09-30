@@ -24,8 +24,8 @@ CHAR_ADDED events.CHAR_ADDED (string)\nCalled when an ordinary text character is
 CLASS _M.textadept.adeptsense.CLASS (string)\nCtags kind for Adeptsense classes.
 CLASS lexer.CLASS\nToken type for class tokens.
 CLEAR keys.CLEAR (string)\nThe string representing the key sequence that clears the current key chain.\nIt cannot be part of a key chain.\nThe default value is `'esc'` for the `Esc` (`⎋` on Mac OSX | `Esc` in\nncurses) key.
-COMMAND_ENTRY_COMMAND events.COMMAND_ENTRY_COMMAND (string)\nCalled when a command is entered into the Command Entry.\nArguments:\n\n* `command`: The command text.
-COMMAND_ENTRY_KEYPRESS events.COMMAND_ENTRY_KEYPRESS (string)\nCalled when a key is pressed in the Command Entry.\nArguments:\n\n* `code`: The key code.\n* `shift`: The Shift key is held down.\n* `ctrl`: The Control/Command key is held down.\n* `alt`: The Alt/option key is held down.\n* `meta`: The Control key on Mac OSX is held down.
+COMMAND_ENTRY_COMMAND events.COMMAND_ENTRY_COMMAND (string)\nCalled when a command is entered into the Command Entry.\nIf any handler returns `true`, the Command Entry does not hide\nautomatically.\nArguments:\n\n* `command`: The command text.
+COMMAND_ENTRY_KEYPRESS events.COMMAND_ENTRY_KEYPRESS (string)\nCalled when a key is pressed in the Command Entry.\nIf any handler returns `true`, the key is not inserted into the entry.\nArguments:\n\n* `code`: The key code.\n* `shift`: The Shift key is held down.\n* `ctrl`: The Control/Command key is held down.\n* `alt`: The Alt/option key is held down.\n* `meta`: The Control key on Mac OSX is held down.
 COMMENT lexer.COMMENT\nToken type for comment tokens.
 COMPILE_OUTPUT events.COMPILE_OUTPUT\nCalled after a compile command is executed.\nBy default, compiler output is printed to the message buffer. To override\nthis behavior, connect to the event with an index of `1` and return `true`.\nArguments:\n  * `lexer`: The lexer language.\n  * `output`: The output from the command.
 CONSTANT lexer.CONSTANT\nToken type for constant tokens.
@@ -90,7 +90,7 @@ INDIC_STRAIGHTBOX _SCINTILLA.constants.INDIC_STRAIGHTBOX\n8
 INDIC_STRIKE _SCINTILLA.constants.INDIC_STRIKE\n4
 INDIC_TT _SCINTILLA.constants.INDIC_TT\n2
 INVALID_POSITION _SCINTILLA.constants.INVALID_POSITION\n-1
-KEYPRESS events.KEYPRESS (string)\nCalled when a key is pressed.\nArguments:\n\n* `code`: The key code.\n* `shift`: The Shift key is held down.\n* `ctrl`: The Control/Command key is held down.\n* `alt`: The Alt/option key is held down.\n* `meta`: The Control key on Mac OSX is held down.
+KEYPRESS events.KEYPRESS (string)\nCalled when a key is pressed.\nIf any handler returns `true`, the key is not inserted into the buffer.\nArguments:\n\n* `code`: The key code.\n* `shift`: The Shift key is held down.\n* `ctrl`: The Control/Command key is held down.\n* `alt`: The Alt/option key is held down.\n* `meta`: The Control key on Mac OSX is held down.
 KEYSYMS keys.KEYSYMS (table)\nLookup table for string representations of GDK key codes higher than 255.\nKey codes can be identified by temporarily uncommenting the `print()`\nstatements in `core/keys.lua`
 KEYWORD lexer.KEYWORD\nToken type for keyword tokens.
 KEYWORDSET_MAX _SCINTILLA.constants.KEYWORDSET_MAX\n8
