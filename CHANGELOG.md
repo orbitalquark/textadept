@@ -4,10 +4,56 @@
 
 [Atom Feed]: feed
 
-## 6.0 beta 2 (01 Sep 2012)
+## 6.0 beta 3 (01 Oct 2012)
 
 Please see the [5 to 6 migration guide][] for upgrading from Textadept 5 to
 Textadept 6.
+
+Download:
+
+* [Textadept 6.0 beta 3 -- Win32][]
+* [Textadept 6.0 beta 3 -- Mac OSX Intel 10.5+][]
+* [Textadept 6.0 beta 3 -- Linux][]
+* [Textadept 6.0 beta 3 -- Linux x86_64][]
+* [Textadept 6.0 beta 3 -- Source][]
+* [Textadept 6.0 beta 3 -- Modules][]
+
+Bugfixes:
+
+* Cancelling in [`buffer:close()`][] caused unwanted key propagation.
+* Correctly emit [`RUN_OUTPUT` events][].
+* Fixed bug with extra empty entry in the buffer browser.
+* Fixed incremental find in ncurses.
+* Fixed ncurses crash when pasting with no clipboard text.
+* Keep termios disabled in ncurses CDK widgets.
+* Do not write ncurses initialization errors over titlebar.
+* Fixed bug in [`string.iconv()`][].
+
+Changes:
+
+* Attempt to autodetect locale using `LANG` environment variable.
+* Removed `_M.textadept.menu.rebuild_command_tables()`.
+* Manual and Lua API documentation largely re-written.
+* Key Bindings reference moved from Appendix to [`_M.textadept.keys`][] LuaDoc.
+* Plain text lexer name changed from `container` to `text`.
+* New application icon.
+* Removed `./?.lua` and `./?.so` from `package.path` and `package.cpath`,
+  respectively.
+* Added marks for making selections in ncurses.
+
+[5 to 6 migration guide]: 14_Appendix.html#Textadept.5.to.6
+[Textadept 6.0 beta 3 -- Win32]: download/textadept_6.0_beta_3.win32.zip
+[Textadept 6.0 beta 3 -- Mac OSX Intel 10.5+]: download/textadept_6.0_beta_3.osx.zip
+[Textadept 6.0 beta 3 -- Linux]: download/textadept_6.0_beta_3.i386.tgz
+[Textadept 6.0 beta 3 -- Linux x86_64]: download/textadept_6.0_beta_3.x86_64.tgz
+[Textadept 6.0 beta 3 -- Source]: download/textadept_6.0_beta_3.src.zip
+[Textadept 6.0 beta 3 -- Modules]: download/textadept_6.0_beta_3.modules.zip
+[`buffer:close()`]: api/buffer.html#close
+[`RUN_OUTPUT` events]: api/_M.textadept.run.html#Run.Events
+[`string.iconv()`]: api/string.html#iconv
+[`_M.textadept.keys`]: api/_M.textadept.keys.html
+
+## 6.0 beta 2 (01 Sep 2012)
 
 Download:
 
