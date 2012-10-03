@@ -127,23 +127,13 @@ end)
 events_connect(events.CHAR_ADDED, function(char)
   if not M.AUTOINDENT or char ~= 10 then return end
   local buffer = buffer
-  local anchor, caret = buffer.anchor, buffer.current_pos
-  local line = buffer:line_from_position(caret)
-  local pline = line - 1
-  while pline >= 0 and #buffer:get_line(pline) == 1 do pline = pline - 1 end
-  if pline >= 0 then
-    local indentation = buffer.line_indentation[pline]
-    local s = buffer.line_indent_position[line]
-    buffer.line_indentation[line] = indentation
-    local e = buffer.line_indent_position[line]
-    if e > s then -- move selection on
-      if anchor >= s then anchor = anchor + e - s end
-      if caret  >= s then caret  = caret  + e - s end
-    elseif e < s then -- move selection back
-      if anchor >= e then anchor = anchor >= s and anchor + e - s or e end
-      if caret  >= e then caret  = caret  >= s and caret  + e - s or e end
-    end
-    buffer:set_sel(anchor, caret)
+  local pos = buffer.current_pos
+  local line = buffer:line_from_position(pos)
+  local i = line - 1
+  while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
+  if i >= 0 then
+    buffer.line_indentation[line] = buffer.line_indentation[i]
+    buffer:goto_pos(buffer.line_indent_position[line])
   end
 end)
 
