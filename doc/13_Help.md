@@ -5,7 +5,18 @@
 Passing `-h` or `--help` to Textadept shows a list of available command line
 parameters.
 
-This is unavailable in ncurses.
+Switch             |Arguments|Description
+-------------------|:-------:|-----------
+`-f`, `--force`    |    0    |Forces [unique instance][].
+`-h`, `--help`     |    0    |Shows this.
+`-n`, `--nosession`|    0    |No [session][] functionality.
+`-u`, `--userhome` |    1    |Sets alternate [`_USERHOME`][].
+
+The help switch is unavailable in ncurses.
+
+[unique instance]: 02_Installation.html#Single.Instance
+[session]: 04_WorkingWithFiles.html#Sessions
+[`_USERHOME`]: api/_G.html#_USERHOME
 
 ## Online Help
 
