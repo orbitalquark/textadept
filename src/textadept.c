@@ -62,6 +62,7 @@ typedef GtkWidget Scintilla;
 #define SS(view, m, w, l) scintilla_send_message(view, m, w, l)
 #define focus_view(v) \
   SS(focused_view, SCI_SETFOCUS, 0, 0), SS(v, SCI_SETFOCUS, 1, 0)
+#define flushch() timeout(0), getch(), timeout(-1)
 static struct termios term;
 #endif
 
@@ -431,7 +432,7 @@ static int lfind_focus(lua_State *L) {
   free(clipboard), free(GPasteBuffer), GPasteBuffer = NULL;
   destroyCDKEntry(find_entry), destroyCDKEntry(replace_entry);
   destroyCDKButtonbox(buttonbox), destroyCDKButtonbox(optionbox);
-  delwin(findbox->window), destroyCDKScreen(findbox), findbox = NULL;
+  delwin(findbox->window), destroyCDKScreen(findbox), findbox = NULL, flushch();
   wresize(scintilla_get_window(focused_view), LINES - 2, COLS);
 #endif
   return 0;
@@ -585,7 +586,7 @@ static int lce_focus(lua_State *L) {
   if (strcmp(clipboard, GPasteBuffer)) set_clipboard(GPasteBuffer);
   free(clipboard), free(GPasteBuffer), GPasteBuffer = NULL;
   destroyCDKEntry(command_entry), command_entry = NULL;
-  delwin(screen->window), destroyCDKScreen(screen);
+  delwin(screen->window), destroyCDKScreen(screen), flushch();
 #endif
   return 0;
 }
@@ -639,7 +640,7 @@ static int lce_show_completions(lua_State *L) {
   }
   curs_set(1);
   destroyCDKScroll(scrolled);
-  delwin(screen->window), destroyCDKScreen(screen);
+  delwin(screen->window), destroyCDKScreen(screen), flushch();
   free(items);
   drawCDKEntry(command_entry, FALSE);
 #endif
