@@ -27,7 +27,8 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Scintilla constants, functions, and properties.
--- Do not modify anything in this module. Doing so will result in instability.
+-- Do not modify anything in this module. Doing so will have unpredictable
+-- consequences.
 module('_SCINTILLA')]]
 
 ]=]
@@ -93,6 +94,7 @@ end
 f:write [[
 ---
 -- Scintilla constants.
+-- Each key is a Scintilla constant with its associated numeric value.
 -- @class table
 -- @name constants
 M.constants = {]]
@@ -115,6 +117,18 @@ end
 f:write [[
 ---
 -- Scintilla functions.
+-- Each key is a Scintilla function name with a table value containing its ID,
+-- return type, wParam type, and lParam type. Types are as follows:
+--
+--   + `0`: Void.
+--   + `1`: Integer.
+--   + `2`: Length of the given lParam string.
+--   + `3`: Integer position.
+--   + `4`: Colour in `0xBBGGRR` format.
+--   + `5`: Boolean `true` or `false`.
+--   + `6`: Bitmask of Scintilla key modifiers and a key value.
+--   + `7`: String parameter.
+--   + `8`: String return value.
 -- @class table
 -- @name functions
 M.functions = {]]
@@ -137,6 +151,11 @@ end
 f:write [[
 ---
 -- Scintilla properties.
+-- Each key is a Scintilla property name with a table value containing the ID of
+-- its "get" function, the ID of its "set" function, its return type, and its
+-- wParam type. The wParam type will be non-zero if the property is an indexable
+-- property. Types are the same as in the `functions` table.
+-- @see functions
 -- @class table
 -- @name properties
 M.properties = {]]
@@ -174,7 +193,7 @@ end
 ---
 -- Returns a unique user list type.
 -- Use this function for custom user lists in order to prevent clashes with
--- type identifiers of other custom user lists.
+-- list identifiers of other custom user lists.
 -- @usage local list_type = _SCINTILLA.next_user_list_type()
 -- @see buffer.user_list_show
 -- @name next_user_list_type
