@@ -10,8 +10,8 @@ buffer.additional_selection_typing = true
 --buffer.multi_paste = c.SC_MULTIPASTE_EACH
 --buffer.virtual_space_options = c.SCVS_RECTANGULARSELECTION +
 --                               c.SCVS_USERACCESSIBLE
-buffer.rectangular_selection_modifier = WIN32 or OSX and c.SCMOD_ALT or
-                                                         c.SCMOD_SUPER
+buffer.rectangular_selection_modifier = (WIN32 or OSX) and c.SCMOD_ALT or
+                                                           c.SCMOD_SUPER
 --buffer.additional_sel_alpha =
 --buffer.additional_sel_fore =
 --buffer.additional_sel_back =
