@@ -235,7 +235,7 @@ M.utils = {
     buffer:call_tip_show(buffer.current_pos, text)
   end,
   set_indentation = function(i)
-    buffer.indent, buffer.tab_width = i, i
+    buffer.tab_width = i
     events.emit(events.UPDATE_UI) -- for updating statusbar
   end,
   toggle_property = function(property, i)
