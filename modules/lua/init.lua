@@ -122,7 +122,7 @@ function M.try_to_autocomplete_end()
       buffer:new_line()
       buffer:new_line()
       buffer:add_text(patt:find('repeat') and 'until' or 'end')
-      line_indentation[line_num + 1] = indent + buffer.indent
+      line_indentation[line_num + 1] = indent + buffer.tab_width
       buffer:line_up()
       buffer:line_end()
       buffer:end_undo_action()
