@@ -5,15 +5,13 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Handles file type detection.
---
--- ## Mime-type Events
---
--- * `_G.events.LANGUAGE_MODULE_LOADED`
+-- @field _G.events.LANGUAGE_MODULE_LOADED (string)
 --   Called after loading a language-specific module.
 --   This is useful for overriding a language-specific module's key bindings
 --   or other properties since the module is not loaded when Textadept starts.
 --   Arguments:
---     * `lang`: The language lexer name.
+--
+--   * `lang`: The language lexer name.
 module('_M.textadept.mime_types')]]
 
 -- Events.

@@ -10,23 +10,22 @@ local M = {}
 -- extension.
 --
 -- [language-specific modules]: _M.html#Compile.and.Run
---
--- ## Run Events
---
--- * `_G.events.COMPILE_OUTPUT`
+-- @field _G.events.COMPILE_OUTPUT (string)
 --   Called after a compile command is executed.
 --   By default, compiler output is printed to the message buffer. To override
 --   this behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
---     * `lexer`: The lexer language.
---     * `output`: The output from the command.
--- * `_G.events.RUN_OUTPUT`
+--
+--   * `lexer`: The lexer language.
+--   * `output`: The output from the command.
+-- @field _G.events.RUN_OUTPUT (string)
 --   Called after a run command is executed.
 --   By default, output is printed to the message buffer. To override this
 --   behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
---     * `lexer`: The lexer language.
---     * `output`: The output from the command.
+--
+--   * `lexer`: The lexer language.
+--   * `output`: The output from the command.
 module('_M.textadept.run')]]
 
 -- Events.
