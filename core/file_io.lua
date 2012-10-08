@@ -13,6 +13,8 @@
 -- them manually, use [`string.iconv()`][] along with [`_CHARSET`][], your
 -- filesystem's detected encoding. An example is
 --
+-- <div style="clear: right;"><!-- Clear Table of Contents --></div>
+--
 --     events.connect(events.FILE_OPENED, function(utf8_filename)
 --       local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
 --       local f = io.open(filename, 'rb')
@@ -22,31 +24,35 @@
 --
 -- [`string.iconv()`]: string.html#iconv
 -- [`_CHARSET`]: _G.html#_CHARSET
---
--- ## File Events
---
--- * `_G.events.FILE_OPENED`
+-- @field _G.events.FILE_OPENED (string)
 --   Called when a file is opened in a new buffer.
 --   This is emitted by [`open_file()`](#open_file)
 --   Arguments:
---     * `filename`: The filename encoded in UTF-8.
--- * `_G.events.FILE_BEFORE_SAVE`
+--
+--   * `filename`: The filename encoded in UTF-8.
+-- @field _G.events.FILE_BEFORE_SAVE (string)
 --   Called right before a file is saved to disk.
 --   This is emitted by [`buffer:save()`][]
 --   Arguments:
---     * `filename`: The filename encoded in UTF-8.
--- * `_G.events.FILE_AFTER_SAVE`
+--
+--   * `filename`: The filename encoded in UTF-8.
+--
+-- [`buffer:save()`]: buffer.html#save
+-- @field _G.events.FILE_AFTER_SAVE (string)
 --   Called right after a file is saved to disk.
 --   This is emitted by [`buffer:save()`][]
 --   Arguments:
---     * `filename`: The filename encoded in UTF-8.
--- * `_G.events.FILE_SAVED_AS`
+--
+--   * `filename`: The filename encoded in UTF-8.
+--
+-- [`buffer:save()`]: buffer.html#save
+-- @field _G.events.FILE_SAVED_AS (string)
 --   Called when a file is saved under a different filename.
 --   This is emitted by [`buffer:save_as()`][]
 --   Arguments:
---     * `filename`: The filename encoded in UTF-8.
 --
--- [`buffer:save()`]: buffer.html#save
+--   * `filename`: The filename encoded in UTF-8.
+--
 -- [`buffer:save_as()`]: buffer.html#save_as
 module('io')]]
 

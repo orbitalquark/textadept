@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Scintilla constants, functions, and properties.
--- Do not modify anything in this module. Doing so will have unpredicable
+-- Do not modify anything in this module. Doing so will have unpredictable
 -- consequences.
 module('_SCINTILLA')]]
 
