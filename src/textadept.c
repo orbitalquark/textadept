@@ -895,7 +895,7 @@ static int lgui_menu(lua_State *L) {
 #if GTK
   l_pushmenu(L, -1, G_CALLBACK(m_clicked), FALSE);
 #elif NCURSES
-  luaL_error(L, "not implemented in this environment");
+  lua_pushnil(L);
 #endif
   return 1;
 }

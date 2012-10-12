@@ -305,7 +305,6 @@ end
 function M.set_menubar(menubar)
   key_shortcuts = {}
   for key, f in pairs(keys) do key_shortcuts[get_id(f)] = key end
-  if NCURSES then return end -- only wanted to populate key_shortcuts
   menu_actions = {}
   local _menubar = {}
   for i = 1, #menubar do
