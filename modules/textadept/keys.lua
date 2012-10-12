@@ -597,7 +597,7 @@ elseif NCURSES then
   keys.ca, keys.ce = { move, 'vc_home' }, { move, 'line_end' }
   keys.mA, keys.mE = buffer.vc_home_extend, buffer.line_end_extend
   keys.right, keys.cright = keys.cf, { move, 'word_right' }
-  keys.left, keys.cleft = keys.cb, { move 'word_left' }
+  keys.left, keys.cleft = keys.cb, { move, 'word_left' }
   keys.down, keys.up = keys.cn, keys.cp
   keys.home, keys['end'] = keys.ca, keys.ce
   keys.pgup, keys.mU = { move, 'page_up' }, buffer.page_up_extend
