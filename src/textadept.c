@@ -863,7 +863,7 @@ static void l_pushmenu(lua_State *L, int index, GCallback callback,
         if (label) {
           menu_item = (*label) ? gtk_menu_item_new_with_mnemonic(label)
                                : gtk_separator_menu_item_new();
-          if (key || modifiers)
+          if (*label && key > 0)
               gtk_widget_add_accelerator(menu_item, "activate", accel, key,
                                          modifiers, GTK_ACCEL_VISIBLE);
           g_signal_connect(menu_item, "activate", callback,

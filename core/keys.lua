@@ -275,7 +275,10 @@ local function get_gdk_key(key_seq)
   local byte = string_byte(key)
   if #key > 1 or byte < 32 then
     for i, s in pairs(M.KEYSYMS) do
-      if s == key and i ~= 0xFE20 then byte = i break end
+      if s == key and i ~= 0xFE20 and (i > 0xFE20 or NCURSES) then
+        byte = i
+        break
+      end
     end
   end
   return byte, modifiers
