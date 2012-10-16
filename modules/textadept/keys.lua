@@ -125,7 +125,7 @@ local M = {}
 -- Ctrl+Alt+Shift+W         |^⇧W      |N/A  |Unsplit all views
 -- Ctrl+Alt++<br/>Ctrl+Alt+=|^+<br/>^=|N/A  |Grow view
 -- Ctrl+Alt+-               |^-       |N/A  |Shrink view
--- None                     |None     |None |Toggle current fold
+-- Ctrl+*                   |⌘*       |M-*  |Toggle current fold
 -- Ctrl+Alt+Enter           |^↩       |None |Toggle view EOL
 -- Ctrl+Alt+\\              |^\\      |None |Toggle wrap mode
 -- Ctrl+Alt+Shift+I         |^⇧I      |N/A  |Toggle show indent guides
@@ -307,7 +307,7 @@ local utils = M.utils
 -- Windows and Linux menu key commands.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:   A B C         H              p  Q       ~ V   X Y      ) ] }  *
+-- c:   A B C         H              p  Q       ~ V   X Y      ) ] }
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdDeE F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
@@ -322,7 +322,7 @@ local utils = M.utils
 -- Mac OSX menu key commands.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- m:   A B C        ~    JkK  ~M    p  ~    t  U V   XyY      ) ] }  *    ~~\n
+-- m:   A B C        ~    JkK  ~M    p  ~    t  U V   XyY      ) ] }       ~~\n
 -- c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /
 -- cm: aAbBcC~DeE F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
@@ -356,7 +356,7 @@ local utils = M.utils
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
 -- cm:  bcd  g~~ k ~  pq  t v xyz
--- m:          e          J            qQ  sS  u vVw xXyYzZ*
+-- m:          e          J            qQ  sS  u vVw xXyYzZ
 -- Note: m[befhstv] may be used by GUI terminals.
 --
 -- CTRL = 'c' (Control ^)
@@ -544,7 +544,7 @@ if not NCURSES then
   keys[not OSX and 'ca=' or 'c='] = { utils.grow, 10 }
   keys[not OSX and 'ca-' or 'c-'] = { utils.shrink, 10 }
 end
--- TODO: utils.toggle_current_fold
+keys[not OSX and not NCURSES and 'c*' or 'm*'] = utils.toggle_current_fold
 if not NCURSES then
   keys[not OSX and 'ca\n' or 'c\n'] = { utils.toggle_property, 'view_eol' }
   if not OSX then keys['ca\n\r'] = keys['ca\n'] end
