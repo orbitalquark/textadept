@@ -107,11 +107,11 @@
        xlink:href="#linearGradient3813"
        id="linearGradient6625"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.6530612,0,0,0.57142868,71.246061,842.69362)"
-       x1="161.66667"
-       y1="34.695507"
-       x2="128.33333"
-       y2="176.36217" />
+       gradientTransform="matrix(0.81632648,0,0,0.64285727,42.980755,838.09632)"
+       x1="142.50002"
+       y1="28.5844"
+       x2="142.50002"
+       y2="168.58437" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3813"
@@ -372,8 +372,8 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-24.307286px"
-       originy="-17.89017px" />
+       originx="0px"
+       originy="0px" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -389,7 +389,7 @@
             <dc:title>Mitchell</dc:title>
           </cc:Agent>
         </dc:creator>
-        <dc:description>Textadept icon without 50 degree CCW inclination.</dc:description>
+        <dc:description>Textadept icon without 50 degree CCW inclination and gloss without -2.5 degree CCW inclination.</dc:description>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -446,7 +446,7 @@
     <path
        inkscape:connector-curvature="0"
        id="path3007"
-       d="m 244.30729,903.472 c 1e-5,-22.09137 -35.81722,-39.99999 -79.99999,-39.99999 -44.18279,0 -80.000012,17.90862 -80.000014,39.99999 4e-6,22.09139 35.817224,40.00001 80.000014,40.00001 44.18277,-10e-6 79.99999,-17.90862 79.99999,-40.00001 z"
+       d="m 259.30729,906.472 c 10e-6,-24.85279 -44.77153,-44.99999 -99.99999,-44.99999 -55.22849,0 -100.000012,20.1472 -100.000014,44.99999 5e-6,24.85282 44.771524,45.00001 100.000014,45.00001 55.22846,-10e-6 99.99999,-20.1472 99.99999,-45.00001 z"
        style="fill:url(#linearGradient6625);fill-opacity:1;display:inline" />
   </g>
   <g
@@ -467,7 +467,7 @@
            sodipodi:cy="12.362183"
            sodipodi:rx="5"
            sodipodi:ry="5"
-           d="m 150,12.362183 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z"
+           d="m 150,12.362183 c 0,2.761423 -2.23858,5 -5,5 -2.76142,0 -5,-2.238577 -5,-5 0,-2.7614241 2.23858,-5.0000004 5,-5.0000004 2.76142,0 5,2.2385763 5,5.0000004 z"
            transform="matrix(-2.3500066,0,0,2.3500066,502.55824,787.9208)" />
         <path
            sodipodi:type="arc"
@@ -477,7 +477,7 @@
            sodipodi:cy="7.8621826"
            sodipodi:rx="2"
            sodipodi:ry="1.5"
-           d="m 147,7.8621826 a 2,1.5 0 1 1 -4,0 2,1.5 0 1 1 4,0 z"
+           d="m 147,7.8621826 c 0,0.8284271 -0.89543,1.5 -2,1.5 -1.10457,0 -2,-0.6715729 -2,-1.5 0,-0.8284271 0.89543,-1.5 2,-1.5 1.10457,0 2,0.6715729 2,1.5 z"
            transform="matrix(-3.75,0,0,3.6666667,705.55729,783.14396)" />
       </g>
       <path
