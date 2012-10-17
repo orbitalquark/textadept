@@ -88,11 +88,11 @@ local M = {}
 -- Ctrl+K          |⌥⇥     |M-K          |Insert snippet...
 -- Shift+Tab       |⇧⇥     |S-Tab        |Previous snippet placeholder
 -- Ctrl+Shift+K    |⌥⇧⇥    |M-S-K        |Cancel snippet
--- Ctrl+F2         |⌘F2    |None         |Toggle bookmark
--- Ctrl+Shift+F2   |⌘⇧F2   |None         |Clear bookmarks
--- F2              |F2     |None         |Next bookmark
--- Shift+F2        |⇧F2    |None         |Previous bookmark
--- Alt+F2          |⌥F2    |None         |Goto bookmark...
+-- Ctrl+F2         |⌘F2    |F1           |Toggle bookmark
+-- Ctrl+Shift+F2   |⌘⇧F2   |F6           |Clear bookmarks
+-- F2              |F2     |F2           |Next bookmark
+-- Shift+F2        |⇧F2    |F3           |Previous bookmark
+-- Alt+F2          |⌥F2    |F4           |Goto bookmark...
 -- Ctrl+U          |⌘U     |^U           |Snapopen `_USERHOME`
 -- None            |None   |None         |Snapopen `_HOME`
 -- Ctrl+Alt+Shift+O|^⌘⇧O   |M-S-O        |Snapopen current directory
@@ -486,14 +486,12 @@ keys['\t'] = m_snippets._insert
 keys['s\t'] = m_snippets._previous
 keys[not OSX and (not NCURSES and 'cK' or 'mK')
              or 'as\t'] = m_snippets._cancel_current
-if not NCURSES then
-  -- Bookmark.
-  keys[not OSX and 'cf2' or 'mf2'] = m_bookmarks.toggle
-  keys[not OSX and 'csf2' or 'msf2'] = m_bookmarks.clear
-  keys.f2 = m_bookmarks.goto_next
-  keys.sf2 = m_bookmarks.goto_prev
-  keys.af2 = m_bookmarks.goto_bookmark
-end
+-- Bookmark.
+keys[not OSX and (not NCURSES and 'cf2' or 'f1') or 'mf2'] = m_bookmarks.toggle
+keys[not OSX and (not NCURSES and 'csf2' or 'f6') or 'msf2'] = m_bookmarks.clear
+keys.f2 = m_bookmarks.goto_next
+keys[not NCURSES and 'sf2' or 'f3'] = m_bookmarks.goto_prev
+keys[not NCURSES and 'af2' or 'f4'] = m_bookmarks.goto_bookmark
 -- Snapopen.
 keys[not OSX and 'cu' or 'mu'] = { m_textadept.snapopen.open, _USERHOME }
 -- TODO: { m_textadept.snapopen.open, _HOME }
