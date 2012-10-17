@@ -62,8 +62,11 @@ your `menu.lua` instead of its own.
 
 ### Language-Specific
 
-Similar to generic modules, copying the default Lua language-specific module
-(`modules/lua`) to `~/.textadept/modules/` causes Textadept to load that module
+Similar to generic modules, putting your own language-specific module in
+`~/.textadept/modules/` causes Textadept to load that module for editing the
+language's code instead of the default one in `modules/` (if the latter exists).
+For example, copying the default Lua language-specific module from
+`modules/lua/` to `~/.textadept/modules/` causes Textadept to use that module
 for editing Lua code instead of the default one. If you make custom changes to
 these kinds of copies of language-specific modules, you will likely want to
 update them with each new Textadept release. Instead of potentially wasting time
@@ -100,6 +103,10 @@ contain the following:
     _M.textadept = require 'textadept'
     _M.foo = require 'foo'
 
+Language-specific modules are loaded automatically by Textadept when a source
+file of that language is opened. No additional action is required after
+installing the module.
+
 ### Key Bindings
 
 For simple changes to key bindings, `~/.textadept/init.lua` is a good place to
@@ -111,7 +118,8 @@ instead of `Ctrl+N`:
 
 If you plan on redefining most key bindings, you would probably want to copy or
 create a new `keys.lua` and then put it in `~/.textadept/modules/textadept/`.
-You can learn more about key bindings in the [key bindings LuaDoc][].
+You can learn more about key bindings and how to define them in the
+[key bindings LuaDoc][].
 
 [key bindings LuaDoc]: api/keys.html
 
@@ -160,17 +168,26 @@ can override or add to them in your `~/.textadept/mime_types.conf`:
 
 ### Detect by Extension
 
+The syntax for mapping a file extension to a lexer is:
+
     file_ext lexer
 
 Note: `file_ext` should not start with a `.` (period).
 
 ### Detect by Shebang
 
+The syntax for mapping a word contained in a shebang line (the first line of a
+file whose first two characters are `#!`) to a lexer is:
+
     #shebang_word lexer
 
-Examples of `shebang_word`s are `lua`, `ruby`, `python`.
+Examples of `shebang_word`s are `lua`, `ruby`, `python` which match lines like
+`#!/usr/bin/lua`, `#!/usr/env/ruby`, and `#!/usr/bin/python3`, respectively.
 
 ### Detect by Pattern
+
+The syntax for mapping a Lua pattern that matches the first line of a file to a
+lexer is:
 
     /pattern lexer
 

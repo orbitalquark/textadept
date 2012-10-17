@@ -57,17 +57,29 @@ key (`^` on Mac OSX | N/A in ncurses) places an additional caret at that point.
 Clicking and dragging while holding the same modifier creates multiple
 selections. When you start typing, the text is mirrored at each selection.
 
-This is currently unavailable in ncurses.
+Creating multiple selections with the mouse is currently unavailable in ncurses.
 
 ### Rectangular Selection
 
 Holding `Alt+Shift` (`⌥⇧` on Mac OSX | `M-S-` in ncurses) and pressing the arrow
 keys enables rectangular selections to be made. Start typing to type on each
-line.
+line. You can also hold the `Alt` modifier key (`Super` on Linux | `⌥` on Mac
+OSX | N/A in ncurses) while clicking and dragging the mouse to create
+rectangular selections.
 
 ![Rectangular Selection](images/rectangularselection.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Rectangular Edit](images/rectangularselection2.png)
+
+Note: In some Linux environments, the `Alt+Shift+Arrow` combinations are used by
+the window manager and may need to be reconfigured. Also, `Super`+Mouse is used
+because `Alt`+Mouse generally moves windows. If you prefer to use `Alt`, you can
+change [`buffer.rectangular_selection_modifier`][] in your [theme][]. The
+`Super` modifier key is usually defined as the left "Windows" key, but may need
+to be reconfigured too.
+
+[`buffer.rectangular_selection_modifier`]: api/buffer.html#rectangular_selection_modifier
+[theme]: 09_Themes.html#View
 
 ### Select to Matching Brace
 
@@ -85,7 +97,7 @@ and their key bindings.
 
 ### Marks
 
-In ncurses, since some terminals do not recognize certain key commands like
+In ncurses, since some terminals do not recognize certain key combinations like
 `Shift+Arrow` for making selections, you can use marks to create selections.
 Create a mark at the current caret position with `^^`. Then use regular movement
 keys like the arrows, page up/down, and home/end to extend the selection in one
@@ -150,6 +162,8 @@ previous, replace, and replace all buttons; `Up` and `Down` arrows switch
 between the find and replace text fields; `^P` and `^N` cycles through history;
 and `F1-F4` toggles find options.
 
+Pressing `Esc` (`⎋` | `Esc`) hides the pane when you are finished.
+
 [Lua patterns]: 14_Appendix.html#Lua.Patterns
 
 ### Replace in Selection
@@ -212,7 +226,8 @@ highlight syntax incorrectly. Pressing `F5` triggers a full redraw.
 Some lexers support code folding, where blocks of code can be temporarily
 hidden, making viewing easier. Fold points are denoted by arrows in the margin
 to the left of the code. Clicking on one toggles the folding for that block of
-code.
+code. You can also press `Ctrl+*` (`⌘*` on Mac OSX | `M-*` in ncurses) to
+toggle the fold point on the current line.
 
 ![Folding](images/folding.png)
 
@@ -234,7 +249,8 @@ and display API documentation. Symbol completion is available by pressing
 `Ctrl+Space` (`⌥⎋` on Mac OSX | `^Space` in ncurses). Documentation for symbols
 is available with `Ctrl+H` (`^H` | `M-H` or `M-S-H`). Note: In order for this
 feature to work, the language you are working with must have an [Adeptsense][]
-defined. Language-specific modules usually [define Adeptsenses][].
+defined. [Language-specific modules][] usually [define Adeptsenses][]. All of
+the [official][] Textadept language-specific modules have Adeptsenses.
 
 ![Adeptsense Lua](images/adeptsense_lua.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -242,8 +258,10 @@ defined. Language-specific modules usually [define Adeptsenses][].
 
 ![Adeptsense Doc](images/adeptsense_doc.png)
 
+[Language-specific modules]: 07_Modules.html#Language-Specific
 [Adeptsense]: api/_M.textadept.adeptsense.html
 [define Adeptsenses]: api/_M.html#Adeptsense
+[official]: http://foicica.com/hg
 
 ### Snippets
 

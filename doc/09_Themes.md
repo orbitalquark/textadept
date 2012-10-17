@@ -2,7 +2,7 @@
 
 Textadept's look and feel is customized with themes. The themes that come with
 Textadept are `light`, `dark`, and `term`. By default the `light` theme is used
-for the GUI version and `term` for the ncurses version.
+for the GUI version and `term` for the terminal version.
 
 <span style="display: block; clear: right;"></span>
 
@@ -27,6 +27,12 @@ theme, it will be loaded instead of the one that comes with Textadept.
 comments, strings, and keywords in programming languages. [Styles][] are
 composed of fonts and colors and apply universally to all programming language
 elements, resulting in a single, unified theme.
+
+In the terminal version of Textadept, colors are determined by your terminal
+emulator's settings. The only colors recognized by Textadept are the standard
+black, red, green, yellow, blue, magenta, cyan, white, and bold variants of
+those colors. How your terminal chooses to display these colors is up to you.
+However, you can still customize which colors are used for particular styles.
 
 [Styles]: api/lexer.html#Styling.Tokens
 

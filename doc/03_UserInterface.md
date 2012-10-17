@@ -11,11 +11,11 @@ provided later in the manual.
 ## Menu
 
 The completely customizable menu provides access to all of Textadept's features.
-It is only available in the GUI version of Textadept. In the terminal, you can
-use the [command selection][] dialog instead. Textadept is very keyboard-driven
-so most menu items have an assigned key shortcut. Key bindings are changeable
-in your [key preferences][] and will reflect in the menu. Here is a
-[complete list][] of default key bindings.
+It is only available in the GUI version of Textadept. In the terminal version,
+you can use the [command selection][] dialog instead. Textadept is very
+keyboard-driven so most menu items have an assigned key shortcut. Key bindings
+are changeable in your [key preferences][] and will reflect in the menu. Here is
+a [complete list][] of default key bindings.
 
 [command selection]: 10_Advanced.html#Command.Selection
 [key preferences]: 08_Preferences.html#Key.Bindings

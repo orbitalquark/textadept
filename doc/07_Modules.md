@@ -36,9 +36,9 @@ in the current file. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in
 ncurses) executes the command for compiling code and `Ctrl+R` (`⌘R` | `^R`)
 executes the command for running code. Double-clicking on any error messages
 will jump to where the errors occurred. Note: In order for these features to
-work, the language you are working with must have its run command and error
-format defined. If the language-specific module does not exist or does not
-[define][] commands or an error format, it can be done [manually][] in your
+work, the language you are working with must have its compile and run commands
+and error format defined. If the language-specific module does not exist or does
+not [define][] commands or an error format, it can be done [manually][] in your
 [user-init file][].
 
 [define]: api/_M.html#Compile.and.Run

@@ -52,8 +52,12 @@ the `Buffer -> Indentation` menu.
 #### Line Endings
 
 Line endings, commonly known as end-of-line (EOL) markers, are set based on the
-current platform. On Windows, CRLF (`\r\n`) is used. Otherwise, LF (`\n`) is.
-This can be changed manually using the `Buffer -> EOL Mode` menu.
+current platform for new files. On Windows, CRLF (`\r\n`) is used. Otherwise, LF
+(`\n`) is. This can be changed manually using the `Buffer -> EOL Mode` menu.
+Unlike indentation settings, switching EOL modes converts all existing EOLs
+automatically. Textadept attempts to auto-detect the EOL mode of opened files
+regardless of the current platform, but falls back to the defaults mentioned
+earlier when necessary.
 
 #### Encodings
 
@@ -112,8 +116,8 @@ horizontally and vertically. `Ctrl+Alt+S` or `Ctrl+Alt+H` splits horizontally
 into top and bottom views and `Ctrl+Alt+V` splits vertically (`^S` and `^V`
 respectively on Mac OSX | N/A in ncurses) into side-by-side views. You can
 resize the splitter bar by clicking and dragging with the mouse or using
-`Ctrl+Alt++` and `Ctrl+Alt+-` (`^+` and `^-` | N/A). The same file can be worked
-with in multiple views.
+`Ctrl+Alt++` and `Ctrl+Alt+-` (`^+` and `^-` | N/A). The same file can be opened
+in multiple views.
 
 Pressing `Ctrl+Alt+N` (`^⌥⇥` on Mac OSX | N/A in ncurses) goes to the next view
 and `Ctrl+Alt+P` (`^⌥⇧⇥` | N/A) goes to the previous one. Note: depending on the
