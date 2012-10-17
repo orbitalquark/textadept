@@ -22,7 +22,7 @@ since the editor is written primarily in Lua.
 
 ### Generating LuaDoc
 
-You can generate API documentation for your own modules using the
+You can generate Textadept-like API documentation for your own modules using the
 `doc/markdowndoc.lua` [LuaDoc][] module (you must have [Discount][] installed):
 
     luadoc -d . [-t template_dir] --doclet _HOME/doc/markdowndoc [module(s)]

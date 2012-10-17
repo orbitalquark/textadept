@@ -24,10 +24,10 @@ caret : `(`, `)`, `[`, `]`, `{`, and `}`. Pressing `Ctrl+M` (`^M` on Mac OSX |
 ## Bookmarks
 
 You can place bookmarks on lines in buffers to jump back to them later.
-`Ctrl+F2` (`⌘F2` on Mac OSX | none in ncurses) toggles a bookmark on the current
-line, `F2` jumps to the next bookmarked line, `Shift+F2` (`⇧F2` | none) jumps to
-the previously bookmarked line, `Alt+F2` (`⌥F2` | none) jumps to the bookmark
-selected from a list, and `Ctrl+Shift+F2` (`⌘⇧F2` | none) clears all bookmarks
+`Ctrl+F2` (`⌘F2` on Mac OSX | `F1` in ncurses) toggles a bookmark on the current
+line, `F2` jumps to the next bookmarked line, `Shift+F2` (`⇧F2` | `F3`) jumps to
+the previously bookmarked line, `Alt+F2` (`⌥F2` | `F4`) jumps to the bookmark
+selected from a list, and `Ctrl+Shift+F2` (`⌘⇧F2` | `F6`) clears all bookmarks
 in the current buffer.
 
 ## Goto Line

@@ -6,8 +6,8 @@ In its bid for minimalism, Textadept also needs very little to run. The GUI
 version needs only [GTK+][], a cross-platform GUI toolkit, version 2.18 or later
 on Linux and BSD systems. A GTK+ runtime is already bundled into the Windows
 and Mac OSX packages. Textadept also has its own [copy of Lua][]. The terminal
-version of Textadept requires [ncurses][]. This dependency is only necessary if
-you wish to run the editor from a terminal.
+(ncurses) version of Textadept requires [ncurses][], but that dependency is only
+necessary if you wish to run the editor from a terminal.
 
 [GTK+]: http://gtk.org
 [copy of Lua]: 11_Scripting.html#Lua.Configuration
@@ -20,9 +20,10 @@ available through your package manager. Otherwise, compile and install it from
 the [GTK+ website][].
 
 The GUI versions of Textadept in the Linux binary downloads require GLib version
-2.28 or later to support single-instance functionality. You can compile
-Textadept with earlier versions of GLib down to 2.22. For reference, Ubuntu
-11.04, Debian Wheezy, Fedora 15, and openSUSE 11.4 support GLib 2.28 or later.
+2.28 or later to support [single-instance](#Single.Instance) functionality. You
+can compile Textadept with earlier versions of GLib down to 2.22. For reference,
+Ubuntu 11.04, Debian Wheezy, Fedora 15, and openSUSE 11.4 support GLib 2.28 or
+later.
 
 Most Linux and BSD systems already have ncurses installed. If not, look for it in
 your package manager, or compile and install it from the [ncurses website][].

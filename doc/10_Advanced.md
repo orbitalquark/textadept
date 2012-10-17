@@ -8,9 +8,9 @@ inspecting, and entering `buffer` or `view` commands. If you try to cause
 instability in Textadept's Lua state, you might very well succeed so be careful.
 For available commands, see the [Lua API][]. Abbreviated commands for
 [`buffer`][], [`view`][] and [`gui`][] are available: the command
-`buffer:append_text('foo')` can be shortened to `append_text('foo')`. As a
-result, use `_G.print()` for Lua's `print()` since [`gui.print()`][] is
-shortened to `print()`.
+`buffer:append_text('foo')` can be shortened to `append_text('foo')`. Therefore,
+use `_G.print()` for Lua's `print()` since [`gui.print()`][] is shortened to
+`print()`.
 
 ![Command Entry](images/commandentry.png)
 
