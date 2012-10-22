@@ -47,6 +47,12 @@ local find = gui.find
 -- @field in_files_label_text (string, Write-only)
 --   The text of the 'In files' label.
 --   This is primarily used for localization.
+-- @field _G.events.FIND_WRAPPED (string)
+--   Called when a search for text wraps, either from bottom to top when
+--   searching for a next occurrence, or from top to bottom when searching for a
+--   previous occurrence.
+--   This is useful for implementing a more visual or audible notice when a
+--   search wraps in addition to the statusbar message.
 module('gui.find')]]
 
 local _L = _L
@@ -61,6 +67,10 @@ find.whole_word_label_text = not NCURSES and _L['_Whole word'] or _L['Word(F2)']
 find.lua_pattern_label_text = not NCURSES and _L['_Lua pattern'] or
                               _L['Pattern(F3)']
 find.in_files_label_text = not NCURSES and _L['_In files'] or _L['Files(F4)']
+
+-- Events.
+local events, events_connect = events, events.connect
+events.FIND_WRAPPED = 'find_wrapped'
 
 local MARK_FIND = _SCINTILLA.next_marker_number()
 local MARK_FIND_COLOR = 0x4D9999
@@ -135,7 +145,6 @@ function find.find_in_files(utf8_dir)
   end
 end
 
-local events, events_connect = events, events.connect
 local c = _SCINTILLA.constants
 
 -- Finds and selects text in the current buffer.
@@ -195,6 +204,7 @@ local function find_(text, next, flags, nowrap, wrapped)
     local anchor, pos = buffer.anchor, buffer.current_pos
     buffer:goto_pos((next or flags >= 8) and 0 or buffer.length)
     gui.statusbar_text = _L['Search wrapped']
+    events.emit(events.FIND_WRAPPED)
     result = find_(text, next, flags, true, true)
     if result == -1 then
       gui.statusbar_text = _L['No results found']
