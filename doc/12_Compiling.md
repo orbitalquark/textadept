@@ -156,17 +156,19 @@ non-Lua, libraries.
 ### Notes on CDK
 
 [CDK][] is a library of ncurses widgets. The terminal version of Textadept
-includes a stripped down version of this library. The following source files
-were removed from CDK: `alphalist.c`, `calendar.c`, `cdk_compat.{c,h}`,
-`cdk_test.h`, `dialog.c`, `{d,f}scale.{c,h}`, `fslider.{c,h}`,
-`gen-{scale,slider}.{c,h}`, `get_index.c`, `get_string.c`, `graph.c`,
-`histogram.c`, `marquee.c`, `matrix.c`, `popup_dialog.c`, `radio.c`,
-`scale.{c,h}`, `selection.c`, `slider.{c,h}`, `swindow.c`, `template.c`,
-`u{scale,slider}.{c,h}`, `view_{file,info}.c`, and `viewer.c`.
+includes a slightly modified, stripped down version of this library. The changes
+made to CDK are as follows:
 
-`cdk.h` has been modified to not `#include` "matrix.h", "viewer.h", and any
-headers labeled "Generated headers" due to their machine-dependence.
-
-Also, the `deleteFileCB` routine in `fselect.c` has been deactivated.
+* The following source files were removed: `alphalist.c`, `calendar.c`,
+  `cdk_compat.{c,h}`, `cdk_test.h`, `dialog.c`, `{d,f}scale.{c,h}`,
+  `fslider.{c,h}`, `gen-{scale,slider}.{c,h}`, `get_index.c`, `get_string.c`,
+  `graph.c`, `histogram.c`, `marquee.c`, `matrix.c`, `popup_dialog.c`,
+  `radio.c`, `scale.{c,h}`, `selection.c`, `slider.{c,h}`, `swindow.c`,
+  `template.c`, `u{scale,slider}.{c,h}`, `view_{file,info}.c`, and `viewer.c`.
+* `cdk.h` does not `#include` "matrix.h", "viewer.h", and any headers labeled
+  "Generated headers" due to their machine-dependence.
+* `cdk_config.h` no longer defines `HAVE_SETLOCALE` since Textadept handles
+  locale settings.
+* The `deleteFileCB` routine in `fselect.c` has been deactivated.
 
 [CDK]: http://invisible-island.net/cdk/

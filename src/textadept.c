@@ -2281,7 +2281,7 @@ int main(int argc, char **argv) {
 #endif
 #endif
 
-  setlocale(LC_NUMERIC, "C");
+  setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C");
   if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
   new_window();
   lL_dofile(lua, "init.lua");
