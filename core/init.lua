@@ -3,7 +3,6 @@
 _RELEASE = "Textadept 6.0 beta 3"
 
 package.path = _HOME..'/core/?.lua;'..package.path
-os.setlocale('C', 'collate')
 
 if jit then require 'compat' end -- compatibility for LuaJIT
 _SCINTILLA = require 'iface'
