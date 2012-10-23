@@ -34,20 +34,20 @@ events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
 
 local preferred_view
 
----
--- Executes the command line parameter.
+-- Executes a compile or run command.
 -- Emits a `COMPILE_OUTPUT` or `RUN_OUTPUT` event based on the `compiling` flag.
--- @param command The command line string.
---   It can have the following macros:
---     + `%(filepath)`: The full path of the current file.
---     + `%(filedir)`: The current file's directory path.
---     + `%(filename)`: The name of the file including extension.
---     + `%(filename_noext)`: The name of the file excluding extension.
+-- @param cmd_table Either `compile_command` or `run_command`.
 -- @param compiling Flag indicating whether or not the command is a compiler
 --   command. The default value is `false`.
 -- @see _G.events
--- @name execute
-function M.execute(command, compiling)
+local function command(cmd_table, compiling)
+  if not buffer.filename then return end
+  buffer:annotation_clear_all()
+  buffer:save()
+  local command = cmd_table[buffer.filename:match('[^.]+$')]
+  if not command then return end
+  if type(command) == 'function' then command = command() end
+
   preferred_view = view
   local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
   local filedir, filename = '', filepath
@@ -71,19 +71,6 @@ function M.execute(command, compiling)
   local ok, status, code = p:close()
   if ok and code then events_emit(event, lexer, status..': '..code) end
   lfs.chdir(current_dir)
-end
-
--- Executes a compile or run command.
--- @param cmd_table Either `compile_command` or `run_command`.
--- @param compiling Flag indicating whether or not the command is a compiler
---   command. The default value is `false`.
-local function command(cmd_table, compiling)
-  if not buffer.filename then return end
-  buffer:annotation_clear_all()
-  buffer:save()
-  local action = cmd_table[buffer.filename:match('[^.]+$')]
-  if not action then return end
-  M.execute(type(action) == 'function' and action() or action, compiling)
 end
 
 -- Parses the given message for an error description and returns a table of the
@@ -125,7 +112,14 @@ end
 ---
 -- File extensions and their associated "compile" shell commands.
 -- Each key is a file extension whose value is a either a command line string to
--- execute or a function returning one.
+-- execute or a function returning one. The command string can have the
+-- following macros:
+--
+--   + `%(filepath)`: The full path of the current file.
+--   + `%(filedir)`: The current file's directory path.
+--   + `%(filename)`: The name of the file including extension.
+--   + `%(filename_noext)`: The name of the file excluding extension.
+--
 -- This table is typically populated by [language-specific modules][].
 --
 -- [language-specific modules]: _M.html#Compile.and.Run
@@ -136,7 +130,9 @@ M.compile_command = {}
 ---
 -- Compiles the file based on its extension using the command from the
 -- `compile_command` table.
+-- Emits a `COMPILE_OUTPUT` event.
 -- @see compile_command
+-- @see _G.events
 -- @name compile
 function M.compile() command(M.compile_command, true) end
 events_connect(events.COMPILE_OUTPUT, print_output)
@@ -144,7 +140,14 @@ events_connect(events.COMPILE_OUTPUT, print_output)
 ---
 -- File extensions and their associated "run" shell commands.
 -- Each key is a file extension whose value is either a command line string to
--- execute or a function returning one.
+-- execute or a function returning one. The command string can have the
+-- following macros:
+--
+--   + `%(filepath)`: The full path of the current file.
+--   + `%(filedir)`: The current file's directory path.
+--   + `%(filename)`: The name of the file including extension.
+--   + `%(filename_noext)`: The name of the file excluding extension.
+--
 -- This table is typically populated by [language-specific modules][].
 --
 -- [language-specific modules]: _M.html#Compile.and.Run
@@ -155,7 +158,9 @@ M.run_command = {}
 ---
 -- Runs/executes the file based on its extension using the command from the
 -- `run_command` table.
+-- Emits a `RUN_OUTPUT` event.
 -- @see run_command
+-- @see _G.events
 -- @name run
 function M.run() command(M.run_command) end
 events_connect(events.RUN_OUTPUT, print_output)

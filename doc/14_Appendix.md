@@ -243,6 +243,14 @@ otherwise remains the same.
 
 [`_M.textadept.menu.set_menubar()`]: api/_M.textadept.menu.html#set_menubar
 
+##### `execute`
+
+`_M.textadept.run.execute()` was removed. Use [`_M.textadept.run.run()`][] and
+[`_M.textadept.run.compile()`][] exclusively.
+
+[`_M.textadept.run.run()`]: api/_M.textadept.run.html#run
+[`_M.textadept.run.compile()`]: api/_M.textadept.run.html#compile
+
 ### Textadept 4 to 5
 
 Lua has been upgraded from [5.1 to 5.2][], so many scripts written for Textadept
