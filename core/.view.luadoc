@@ -28,7 +28,7 @@ function split(view, vertical) end
 -- Unsplits the given view if possible.
 -- @param view The view to unsplit.
 -- @return boolean if the view was unsplit or not.
-function view.unsplit(view) end
+function unsplit(view) end
 
 ---
 -- Goes to the specified buffer in the given view.
