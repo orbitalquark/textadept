@@ -38,7 +38,7 @@ In addition, BSD users will need to have [libiconv][] installed.
 Compiling Textadept on Windows is no longer supported. If you wish to do so
 however, you need a C compiler that supports the C99 standard, the
 [GTK+ for Windows bundle][] (2.24 is recommended), and [libiconv for Windows][]
-(the "Developer files" zip).
+(the "Developer files" and "Binaries" zip).
 
 The preferred way to compile for Windows is cross-compiling from Linux. To do
 so, in addition to the GTK+ bundle mentioned above, you need [MinGW][] with the
@@ -90,11 +90,12 @@ a normal Linux application, run the usual `make` and then `make install` or
 ### Cross Compiling for Windows
 
 When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
-into a new `src/win32gtk` directory. Also, unzip the libiconv zip into the same
+into a new `src/win32gtk` directory. Also, unzip the libiconv zips into the same
 directory. Then, depending on your MinGW installation, either run `make win32`,
 modify the `CROSS` variable in the `win32` block of `src/Makefile` and run
 `make win32`, or run `make CROSS=i486-mingw32- win32` to build
-`../textadept.exe` and `../textadeptjit.exe`.
+`../textadept.exe` and `../textadeptjit.exe`. Finally, copy the dll files from
+`src/win32gtk/bin` to the directory containing the Textadept executables.
 
 Please note that a `lua51.dll` is produced for _only_ the `textadeptjit.exe`
 because limitations on external Lua library loading do not allow statically
