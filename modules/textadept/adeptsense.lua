@@ -82,7 +82,7 @@ local M = {}
 -- #### `symbol_chars`
 --
 -- In addition to the usual `[%w_%.]` symbol characters, Lua also allows symbols
--- to contain a `:`.
+-- to contain a ':'.
 --
 --     sense.syntax.symbol_chars = '[%w_%.:]'
 --
@@ -109,7 +109,7 @@ local M = {}
 --       ['^([%w_%.]+)'] = '%1' -- foo = _M.textadept.adeptsense
 --     }
 --
--- Note the `^` in the pattern. The beginning of the right hand side of the
+-- Note the '^' in the pattern. The beginning of the right hand side of the
 -- assignment should be matched, otherwise `local foo = bar('baz')` could infer
 -- an incorrect type.
 --
@@ -139,7 +139,7 @@ local M = {}
 -- in your shell. Since Adeptsense only cares about classes, functions, and
 -- fields, you need to let it know which kind of tag is which. Unfortunately,
 -- Lua support in Ctags is not good at all. Instead, Textadept has a utility
--- (`modules/lua/adeptsensedoc.lua`) to generate a fake set of tags that is more
+-- (*modules/lua/adeptsensedoc.lua*) to generate a fake set of tags that is more
 -- useful. Functions are tagged `'f'` and should be recognized as such; table
 -- keys are tagged `'t'` and should be recognized as fields; module fields,
 -- `'F'`, should be fields; and modules, `'m'`, should be classes:
@@ -170,8 +170,8 @@ local M = {}
 -- ### Triggers
 --
 -- Triggers are characters or character sequences that trigger an autocompletion
--- list to be displayed. Lua has two characters that can do so: `.` and `:`. The
--- `.` should autocomplete both fields and functions while `:` should
+-- list to be displayed. Lua has two characters that can do so: '.' and ':'. The
+-- '.' should autocomplete both fields and functions while ':' should
 -- autocomplete only functions. This is specified using
 -- [`add_trigger()`](#add_trigger).
 --
@@ -235,7 +235,7 @@ local M = {}
 --     end
 --
 -- Note that there is no plus or minus prefix in the pattern. This is because
--- `+` or `-` characters are not a part of `syntax.symbol_chars` so a symbol
+-- '+' or '-' characters are not a part of `syntax.symbol_chars` so a symbol
 -- will not contain either of them.
 --
 -- Like numbers, the syntax for constructing strings, arrays, hashes, and the
@@ -260,7 +260,7 @@ local M = {}
 --
 -- Since Adeptsense ignores any tags not mapped to `classes`, `functions`, or
 -- `fields` in [`ctags_kinds`](#ctags_kinds), it passes an unknown tag to the
--- [`handle_ctag()`](#handle_ctag) function. In this case, package (`p`) tags
+-- [`handle_ctag()`](#handle_ctag) function. In this case, package ('p') tags
 -- need to be handled.
 --
 --     function sense:handle_ctag(tag_name, file_name, ex_cmd, ext_fields)
@@ -275,7 +275,7 @@ local M = {}
 --     end
 --
 -- Now that we have a list of import completions, it should be activated by the
--- normal trigger (`.`), but only on a line that contains an `import` statement.
+-- normal trigger ('.'), but only on a line that contains an `import` statement.
 -- The [`get_completions`](#get_completions) function needs to be overridden to
 -- use the `import` table's completions when necessary.
 --
@@ -319,7 +319,7 @@ local M = {}
 -- Adeptsense. For example, when editing CSS inside of an HTML file, the user
 -- expects the CSS Adeptsense to be used. However, child language Adeptsenses
 -- are not loaded automatically and must be loaded by the parent language
--- module. For the case of CSS in HTML, the HTML module's `init.lua` must
+-- module. For the case of CSS in HTML, the HTML module's *init.lua* must
 -- contain:
 --
 --     -- Load CSS Adeptsense.
@@ -331,11 +331,11 @@ local M = {}
 -- ### Generating Lua Adeptsense
 --
 -- You can generate Lua Adeptsense for your own modules using the Lua language
--- module's `adeptsensedoc.lua` module with [LuaDoc][]:
+-- module's *adeptsensedoc.lua* module with [LuaDoc][]:
 --
 --     luadoc -d . --doclet _HOME/modules/lua/adeptsensedoc [module(s)]
 --
--- where `_HOME` is where Textadept is installed. The `tags` and `api` files are
+-- where `_HOME` is where Textadept is installed. The *tags* and *api* files are
 -- output to the current directory and can be loaded via
 -- [`load_ctags()`](#load_ctags) and [`api_files`](#api_files) respectively.
 --
@@ -930,8 +930,8 @@ locations = {},
 -- there may be many duplicate symbol names, it is recommended to put the full
 -- symbol and arguments, if any, on the first line. (e.g. `Class.function(arg1,
 -- arg2, ...)`). This allows the correct documentation to be shown based on the
--- current context. In the documentation, newlines are represented with `\n`. A
--- `\` before `\n` escapes the newline.
+-- current context. In the documentation, newlines are represented with "\n". A
+-- '\' before "\n" escapes the newline.
 -- @class table
 -- @name api_files
 api_files = {},

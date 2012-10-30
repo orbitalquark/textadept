@@ -10,7 +10,7 @@ local M = {}
 --
 -- Key bindings are defined in the global table `keys`. Each key-value pair in
 -- `keys` consists of either a string key sequence and its associated command,
--- a string lexer language (from the `lexers/` directory) with a table of key
+-- a string lexer language (from the *lexers/* directory) with a table of key
 -- sequences and commands, or a key sequence with a table of more sequences and
 -- commands. The latter is part of what is called a "key chain". When searching
 -- for a command to run based on a key sequence, key bindings in the current
@@ -25,9 +25,9 @@ local M = {}
 -- ## Key Sequences
 --
 -- Key sequences are strings built from a combination of modifier keys and the
--- key itself. Modifier keys are `Control`, `Shift`, and `Alt` on Windows,
--- Linux, BSD, and in ncurses. On Mac OSX they are `Command` (`⌘`), `Alt/Option`
--- (`⌥`), `Control` (`^`), and `Shift` (`⇧`). These modifiers have the following
+-- key itself. Modifier keys are "Control", "Shift", and "Alt" on Windows,
+-- Linux, BSD, and in ncurses. On Mac OSX they are "Command" (`⌘`), "Alt/Option"
+-- (`⌥`), "Control" (`^`), and "Shift" (`⇧`). These modifiers have the following
 -- string representations:
 --
 -- Modifier | Linux / Win32 | Mac OSX | Terminal |
@@ -38,16 +38,16 @@ local M = {}
 -- Command  | N/A           | `'c'`   | N/A      |
 --
 -- For key values less than 255, their string representation is the character
--- that would normally be inserted if the `Ctrl`, `Alt`, and `Command` modifiers
--- were not held down. Therefore, a combination of `Ctrl+Alt+Shift+A` has the
--- key sequence `caA` on Windows and Linux, but a combination of
+-- that would normally be inserted if the "Control", "Alt", and "Command"
+-- modifiers were not held down. Therefore, a combination of `Ctrl+Alt+Shift+A`
+-- has the key sequence `caA` on Windows and Linux, but a combination of
 -- `Ctrl+Shift+Tab` has the key sequence `cs\t`. On a United States English
 -- keyboard, since the combination of `Ctrl+Shift+,` has the key sequence `c<`
 -- (`Shift+,` inserts a `<`), the key binding is referred to as `Ctrl+<`. This
 -- allows key bindings to be language and layout agnostic. For key values
 -- greater than 255, the [`KEYSYMS`](#KEYSYMS) lookup table is used. Therefore,
 -- `Ctrl+Right Arrow` has the key sequence `cright`. Uncommenting the `print()`
--- statements in `core/keys.lua` will print key sequences to standard out
+-- statements in *core/keys.lua* will print key sequences to standard out
 -- (stdout) for inspection.
 --
 -- ## Commands
@@ -107,7 +107,7 @@ local error = function(e) events.emit(events.ERROR, e) end
 ---
 -- Lookup table for string representations of GDK key codes higher than 255.
 -- Key codes can be identified by temporarily uncommenting the `print()`
--- statements in `core/keys.lua`
+-- statements in *core/keys.lua*
 -- @class table
 -- @name KEYSYMS
 M.KEYSYMS = {
@@ -160,7 +160,7 @@ local function clear_key_sequence()
 end
 
 -- Runs a given command.
--- This is also used by `modules/textadept/menu.lua`.
+-- This is also used by *modules/textadept/menu.lua*.
 -- @param command A function or table as described above.
 -- @param command_type Equivalent to `type(command)`.
 -- @return the value the command returns.

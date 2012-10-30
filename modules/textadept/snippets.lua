@@ -10,7 +10,7 @@ local M = {}
 --
 -- Snippets are defined in the global table `snippets`. Each key-value pair in
 -- `snippets` consists of either a string trigger word and its snippet text, or
--- a string lexer language (from the `lexers/` directory) with a table of
+-- a string lexer language (from the *lexers/* directory) with a table of
 -- trigger words and snippet texts. When searching for a snippet to insert based
 -- on a trigger word, snippets in the current lexer have priority, followed by
 -- the ones in the global table. This means if there are two snippets with the
@@ -19,9 +19,9 @@ local M = {}
 --
 -- ## Snippet Syntax
 --
--- Any plain text characters may be used with the exception of `%`. Just like in
--- Lua patterns, `%` is an escape character. The sequence `%%` stands for a
--- single `%`. Also, it is recommended to use `\t` characters for indentation
+-- Any plain text characters may be used with the exception of '%'. Just like in
+-- Lua patterns, '%' is an escape character. The sequence "%%" stands for a
+-- single '%'. Also, it is recommended to use "\t" characters for indentation
 -- because they can be converted to spaces based on the current indentation
 -- settings. In addition to plain text, snippets can contain placeholders for
 -- further user input, can mirror or transform those user inputs, and/or execute
@@ -360,7 +360,7 @@ M._snippet_mt = {
     snippet_stack[#snippet_stack] = nil
   end,
 
-  -- Finishes a snippet by going to its `%0` placeholder and cleaning up.
+  -- Finishes a snippet by going to its "%0" placeholder and cleaning up.
   -- @param snippet The snippet returned by `new_snippet()`.
   finish = function(snippet)
     local buffer = buffer

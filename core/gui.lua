@@ -153,11 +153,11 @@ local theme_file = not NCURSES and 'theme' or 'theme_term'
 local THEME
 ---
 -- Sets the editor theme from the given name.
--- Themes with the given name in the `_USERHOME/themes/` directory override
--- themes of the same name in `_HOME/themes/`. If the name contains slashes (`\`
--- on Windows, `/` otherwise), it is assumed to be an absolute path to a theme
--- instead of a theme name. An error is thrown if the theme is not found. Any
--- errors in the theme are printed to `io.stderr`.
+-- Themes with the given name in the *`_USERHOME`/themes/* directory override
+-- themes of the same name in *`_HOME`/themes/*. If the name contains slashes
+-- ('\' on Windows, '/' otherwise), it is assumed to be an absolute path to a
+-- theme instead of a theme name. An error is thrown if the theme is not found.
+-- Any errors in the theme are printed to `io.stderr`.
 -- @param name The name or absolute path of a theme. If nil, sets the default
 --   theme.
 -- @name set_theme
@@ -213,7 +213,8 @@ end
 
 ---
 -- Prompts the user to select an editor theme from a filtered list dialog.
--- Themes in the `_HOME/themes/` and `_USERHOME/themes/` directories are listed.
+-- Themes in the *`_HOME`/themes/* and *`_USERHOME`/themes/* directories are
+-- listed.
 -- @name select_theme
 function gui.select_theme()
   local themes, themes_found = {}, {}
@@ -489,7 +490,7 @@ local goto_view
 -- @param menu_table A table defining the menu. It is an ordered list of tables
 --   with a string menu item, integer menu ID, and optional GDK keycode and
 --   modifier mask. The latter two are used to display key shortcuts in the
---   menu. `_` characters are treated as a menu mnemonics. If the menu item is
+--   menu. '_' characters are treated as a menu mnemonics. If the menu item is
 --   empty, a menu separator item is created. Submenus are just nested
 --   menu-structure tables. Their title text is defined with a `title` key.
 -- @usage gui.menu{ { '_New', 1 }, { '_Open', 2 }, { '' }, { '_Quit', 4 } }

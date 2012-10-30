@@ -7,23 +7,23 @@ as running it.
 
 ### Linux and BSD
 
-First, Linux and BSD systems will need the [GNU C compiler][] (`gcc`) and
-[GNU Make][] (`make`). Both should be available for your distribution through a
+First, Linux and BSD systems will need the [GNU C compiler][] (*gcc*) and
+[GNU Make][] (*make*). Both should be available for your distribution through a
 package manager. For example, Ubuntu includes these tools in the
-`build-essential` package.
+"build-essential" package.
 
 Next, the GTK+ development libraries are necessary for compiling the GUI version
 of Textadept. Your package manager should allow you to install them. For
 Debian-based Linux distributions like Ubuntu, the package is typically called
-`libgtk2.0-dev`. Otherwise, compile and install GTK+ from the [GTK+ website][].
+"libgtk2.0-dev". Otherwise, compile and install GTK+ from the [GTK+ website][].
 
 If you would like to compile the terminal version of Textadept, you will need
 the ncurses development library. Similarly, it should be available from your
 package manager. For Debian-based Linux distributions like Ubuntu, the package
-is typically called `libncurses5-dev`. Otherwise, compile and install ncurses
-from the [ncurses website][]. Note: you need to have a development version of
-ncurses compiled with "wide" (multibyte) character support installed.
-(Therefore, Debian users will _also_ need `libncursesw5-dev`.)
+is typically called "libncurses5-dev". Otherwise, compile and install ncurses
+from the [ncurses website][]. Note: you need to have the wide-character
+development version of ncurses installed, which handles multibyte sequences.
+(Therefore, Debian users will _also_ need "libncursesw5-dev".)
 
 In addition, BSD users will need to have [libiconv][] installed.
 
@@ -59,23 +59,23 @@ and the [Apple Cross-compiler][] binaries.
 
 ## Compiling
 
-Make sure you downloaded the `textadept_x.x.src.zip`, regardless of what
+Make sure you downloaded the *textadept_x.x.src.zip*, regardless of what
 platform you are on, and not a platform-specific binary package.
 
 ### Linux and BSD
 
-For Linux and BSD systems, simply run `make` in the `src/` directory. The
-`textadept` and `textadeptjit` executables are created in the root directory.
-Make a symlink from them to `/usr/bin/` or elsewhere in your `PATH`.
+For Linux and BSD systems, simply run `make` in the *src/* directory. The
+*textadept* and *textadeptjit* executables are created in the root directory.
+Make a symlink from them to */usr/bin/* or elsewhere in your `PATH`.
 
-Similarly, `make ncurses` builds `textadept-ncurses` and `textadeptjit-ncurses`.
+Similarly, `make ncurses` builds *textadept-ncurses* and *textadeptjit-ncurses*.
 
 Note: you may have to run
 
     make CFLAGS="-I/usr/local/include" \
          CXXFLAGS="-I/usr/local/include -L/usr/local/lib"
 
-if the prefix where any dependencies are installed is `/usr/local` and your
+if the prefix where any dependencies are installed is */usr/local/* and your
 compiler flags do not include them by default.
 
 #### Installing
@@ -84,49 +84,49 @@ Textadept is self-contained, meaning it does not need to be installed and can be
 run from wherever it is located. However, if you want to install Textadept like
 a normal Linux application, run the usual `make` and then `make install` or
 `sudo make install` depending on your privilages. The default prefix is
-`/usr/local` but you can change this by setting `DESTDIR` (e.g.
+*/usr/local* but you can change this by setting `DESTDIR` (e.g.
 `make install DESTDIR=/prefix/to/install/to`).
 
 ### Cross Compiling for Windows
 
 When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
-into a new `src/win32gtk` directory. Also, unzip the libiconv zips into the same
+into a new *src/win32gtk* directory. Also, unzip the libiconv zips into the same
 directory. Then, depending on your MinGW installation, either run `make win32`,
-modify the `CROSS` variable in the `win32` block of `src/Makefile` and run
+modify the `CROSS` variable in the "win32" block of *src/Makefile* and run
 `make win32`, or run `make CROSS=i486-mingw32- win32` to build
-`../textadept.exe` and `../textadeptjit.exe`. Finally, copy the dll files from
-`src/win32gtk/bin` to the directory containing the Textadept executables.
+*../textadept.exe* and *../textadeptjit.exe*. Finally, copy the dll files from
+*src/win32gtk/bin* to the directory containing the Textadept executables.
 
-Please note that a `lua51.dll` is produced for _only_ the `textadeptjit.exe`
+Please note that a *lua51.dll* is produced for _only_ the *textadeptjit.exe*
 because limitations on external Lua library loading do not allow statically
 linking LuaJIT to Textadept.
 
 ### Cross Compiling for Mac OSX
 
 When cross-compiling from within Linux, first unzip the GTK+ for OSX bundle into
-a new `src/gtkosx` directory. Then run `make osx` to build `../textadept.osx`
-and `../textadeptjit.osx`. At this point it is recommended to build a new
-`Textadept.app` from an existing one. Download the most recent app and replace
-`Contents/MacOS/textadept.osx` and `Contents/MacOS/textadeptjit.osx` with your
+a new *src/gtkosx* directory. Then run `make osx` to build *../textadept.osx*
+and *../textadeptjit.osx*. At this point it is recommended to build a new
+*Textadept.app* from an existing one. Download the most recent app and replace
+*Contents/MacOS/textadept.osx* and *Contents/MacOS/textadeptjit.osx* with your
 own versions.
 
-Similarly, `make osx-ncurses` builds `../textadept-ncurses.osx` and
-`../textadeptjit-ncurses.osx`.
+Similarly, `make osx-ncurses` builds *../textadept-ncurses.osx* and
+*../textadeptjit-ncurses.osx*.
 
 #### Compiling on OSX (Legacy)
 
 [XCode][] is needed for Mac OSX as well as [jhbuild][] (for GTK+). After
-building `meta-gtk-osx-bootstrap` and `meta-gtk-osx-core`, you need to build
-`meta-gtk-osx-themes`. Note that the entire compiling process can easily take 30
+building "meta-gtk-osx-bootstrap" and "meta-gtk-osx-core", you need to build
+"meta-gtk-osx-themes". Note that the entire compiling process can easily take 30
 minutes or more and ultimately consume nearly 1GB of disk space.
 
-After using `jhbuild`, GTK+ is in `~/gtk` so make a symlink from `~/gtk/inst` to
-`src/gtkosx` in Textadept. Then open `src/Makefile` and uncomment the `Darwin`
-block. Finally, run `make osx` to build `../textadept.osx` and
-`../textadeptjit.osx`.
+After using *jhbuild*, GTK+ is in *~/gtk/* so make a symlink from *~/gtk/inst*
+to *src/gtkosx* in Textadept. Then open *src/Makefile* and uncomment the
+"Darwin" block. Finally, run `make osx` to build *../textadept.osx* and
+*../textadeptjit.osx*.
 
 Note: to build a GTK+ for OSX bundle, the following needs to be run from the
-`src` directory before zipping up `gtkosx/include` and `gtkosx/lib`:
+*src/* directory before zipping up *gtkosx/include* and *gtkosx/lib*:
 
     sed -i -e 's|libdir=/Users/username/gtk/inst/lib|libdir=${prefix}/lib|;' \
     gtkosx/lib/pkgconfig/*.pc
@@ -134,8 +134,8 @@ Note: to build a GTK+ for OSX bundle, the following needs to be run from the
 where `username` is replaced with your username.
 
 Compiling the terminal version is not so expensive. After uncommenting the
-`Darwin` block mentioned above, simply run `make osx-ncurses` to build
-`../textadept-ncurses.osx` and `../textadeptjit-ncurses.osx`.
+"Darwin" block mentioned above, simply run `make osx-ncurses` to build
+*../textadept-ncurses.osx* and *../textadeptjit-ncurses.osx*.
 
 [XCode]: http://developer.apple.com/TOOLS/xcode/
 [jhbuild]: http://sourceforge.net/apps/trac/gtk-osx/wiki/Build
@@ -160,16 +160,16 @@ non-Lua, libraries.
 includes a slightly modified, stripped down version of this library. The changes
 made to CDK are as follows:
 
-* The following source files were removed: `alphalist.c`, `calendar.c`,
-  `cdk_compat.{c,h}`, `cdk_test.h`, `dialog.c`, `{d,f}scale.{c,h}`,
-  `fslider.{c,h}`, `gen-{scale,slider}.{c,h}`, `get_index.c`, `get_string.c`,
-  `graph.c`, `histogram.c`, `marquee.c`, `matrix.c`, `popup_dialog.c`,
-  `radio.c`, `scale.{c,h}`, `selection.c`, `slider.{c,h}`, `swindow.c`,
-  `template.c`, `u{scale,slider}.{c,h}`, `view_{file,info}.c`, and `viewer.c`.
-* `cdk.h` does not `#include` "matrix.h", "viewer.h", and any headers labeled
+* The following source files were removed: *alphalist.c*, *calendar.c*,
+  *cdk_compat.{c,h}*, *cdk_test.h*, *dialog.c*, *{d,f}scale.{c,h}*,
+  *fslider.{c,h}*, *gen-{scale,slider}.{c,h}*, *get_index.c*, *get_string.c*,
+  *graph.c*, *histogram.c*, *marquee.c*, *matrix.c*, *popup_dialog.c*,
+  *radio.c*, *scale.{c,h}*, *selection.c*, *slider.{c,h}*, *swindow.c*,
+  *template.c*, *u{scale,slider}.{c,h}*, *view_{file,info}.c*, and *viewer.c*.
+* *cdk.h* does not `#include` "matrix.h", "viewer.h", and any headers labeled
   "Generated headers" due to their machine-dependence.
-* `cdk_config.h` no longer defines `HAVE_SETLOCALE` since Textadept handles
+* *cdk_config.h* no longer defines `HAVE_SETLOCALE` since Textadept handles
   locale settings.
-* The `deleteFileCB` routine in `fselect.c` has been deactivated.
+* The `deleteFileCB` routine in *fselect.c* has been deactivated.
 
 [CDK]: http://invisible-island.net/cdk/

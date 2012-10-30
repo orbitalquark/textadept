@@ -6,12 +6,13 @@ local M = {}
 ---
 -- Editing features for Textadept.
 -- @field AUTOPAIR (bool)
---   Opening `(`, `[`, `{`, `"`, or `'` characters are automatically closed.
+--   Opening '(', '[', '{', '&quot;', or '&apos;' characters are automatically
+--   closed.
 --   The default value is `true`.
 --   Auto-paired characters are defined in the [`char_matches`](#char_matches)
 --   table.
 -- @field HIGHLIGHT_BRACES (bool)
---   Highlight matching `()[]{}` characters.
+--   Highlight matching "()[]{}" characters.
 --   The default value is `true`.
 --   Matching braces are defined in the [`braces`](#braces) table.
 -- @field AUTOINDENT (bool)
@@ -23,10 +24,10 @@ local M = {}
 --   The default value is `true`.
 -- @field MARK_HIGHLIGHT_BACK (number)
 --   The background color used for a line containing a
---   [highlighted word](#highlight_word) in `0xBBGGRR` format.
+--   [highlighted word](#highlight_word) in "0xBBGGRR" format.
 -- @field INDIC_HIGHLIGHT_BACK (number)
 --   The color used for an indicator for a [highlighted word](#highlight_word)
---   in `0xBBGGRR` format.
+--   in "0xBBGGRR" format.
 -- @field INDIC_HIGHLIGHT_ALPHA (number)
 --   The alpha transparency value between `0` (transparent) and `255` (opaque)
 --   used for an indicator for a [highlighted word](#highlight_word).
@@ -59,7 +60,7 @@ M.comment_string = {}
 -- Used for auto-matching parentheses, brackets, braces, quotes, etc. Keys are
 -- lexer language names and values are tables of character match pairs. A pair's
 -- key is an ASCII value and the value is the string character match. The
--- defaults are `()`, `[]`, `{}`, `''`, and `""`.
+-- defaults are "()", "[]", "{}", "''", and """".
 -- This table can be populated by language-specific modules.
 -- @class table
 -- @name char_matches
@@ -70,8 +71,8 @@ M.char_matches = { [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"' }
 ---
 -- Highlighted brace characters.
 -- Keys are lexer language names and values are tables of character ASCII values
--- that count as brace characters. The defaults are `(`, `)`, `[`, `]`, `{`, and
--- `}`.
+-- that count as brace characters. The defaults are '(', ')', '[', ']', '{', and
+-- '}'.
 -- This table can be populated by language-specific modules.
 -- @class table
 -- @name braces

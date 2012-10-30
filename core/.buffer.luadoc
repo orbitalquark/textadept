@@ -10,7 +10,7 @@
 --
 -- [buffer]: _G.html#buffer
 -- @field additional_caret_fore (number)
---   The foreground color of additional carets in `0xBBGGRR` format.
+--   The foreground color of additional carets in "0xBBGGRR" format.
 -- @field additional_carets_blink (bool)
 --   Whether additional carets will blink.
 -- @field additional_carets_visible (bool)
@@ -19,11 +19,11 @@
 --   The alpha of additional selections. Alpha ranges from `0` (transparent) to
 --   `255` (opaque) or `256` for no alpha.
 -- @field additional_sel_back (number)
---   The background color of additional selections in `0xBBGGRR` format.
+--   The background color of additional selections in "0xBBGGRR" format.
 --   `buffer:set_sel_back(true, ...)` must have been called previously for this
 --   to have an effect.
 -- @field additional_sel_fore (number)
---   The foreground color of additional selections in `0xBBGGRR` format.
+--   The foreground color of additional selections in "0xBBGGRR" format.
 --   `buffer:set_sel_fore(true, ...)` must have been called previously for this
 --   to have an effect.
 -- @field additional_selection_typing (bool)
@@ -106,7 +106,7 @@
 --   The auto-completion list type-separator character byte.
 --   The default is `'?'`. Autocompletion list items may display an image as
 --   well as text. Each image is first registered with an integer type. Then
---   this integer is included in the text of the list separated by a `?` from
+--   this integer is included in the text of the list separated by a '?' from
 --   the text.
 -- @field back_space_un_indents (bool)
 --   Whether a backspace pressed when caret is within indentation unindents.
@@ -116,11 +116,11 @@
 --   before drawing it to the screen to avoid flicker. The default is for
 --   drawing to be buffered. first or directly onto the screen.
 -- @field call_tip_back (number, Write-only)
---   The background color for the call tip in `0xBBGGRR` format.
+--   The background color for the call tip in "0xBBGGRR" format.
 -- @field call_tip_fore (number, Write-only)
---   The foreground color for the call tip in `0xBBGGRR` format.
+--   The foreground color for the call tip in "0xBBGGRR" format.
 -- @field call_tip_fore_hlt (number, Write-only)
---   The foreground color for the highlighted part of the call tip in `0xBBGGRR`
+--   The foreground color for the highlighted part of the call tip in "0xBBGGRR"
 --   format.
 -- @field call_tip_position (boolean)
 --   The position of calltip, above or below text.
@@ -131,9 +131,9 @@
 --   size in pixels.
 --   If the tab size is less than `1`, Tab characters are not treated specially.
 -- @field caret_fore (number)
---   The foreground color of the caret in `0xBBGGRR` format.
+--   The foreground color of the caret in "0xBBGGRR" format.
 -- @field caret_line_back (number)
---   The color of the background of the line containing the caret in `0xBBGGRR`
+--   The color of the background of the line containing the caret in "0xBBGGRR"
 --   format.
 -- @field caret_line_back_alpha (number)
 --   The background alpha of the caret line.
@@ -210,13 +210,13 @@
 --   The current end of line mode.
 --
 --   * `_SCINTILLA.constants.SC_EOL_CRLF` (0)
---     `CRLF`.
+--     "CR+LF" ("\r\n").
 --   * `_SCINTILLA.constants.SC_EOL_CR` (1)
---     `CR`.
+--     "CR" ("\r").
 --   * `_SCINTILLA.constants.SC_EOL_LF` (2)
---     `LF`.
+--     "LF" ("\n").
 -- @field edge_colour (number)
---   The color used in edge indication in `0xBBGGRR` format.
+--   The color used in edge indication in "0xBBGGRR" format.
 -- @field edge_column (number)
 --   The column number which text should be kept within.
 -- @field edge_mode (number)
@@ -335,7 +335,7 @@
 --   Used for drawing the fill color of the `INDIC_ROUNDBOX` and
 --   `INDIC_STRAIGHTBOX` rectangle.
 -- @field indic_fore (table)
---   Table of foreground colors in `0xBBGGRR` format for indicators from `0` to
+--   Table of foreground colors in "0xBBGGRR" format for indicators from `0` to
 --   `31`.
 -- @field indic_outline_alpha (table)
 --   Table of alpha transparency values ranging from `0` (transparent) to `255`
@@ -479,7 +479,7 @@
 --   The default is to one pixel.
 -- @field margin_sensitive_n (table)
 --   Table of mouse click sensitivity booleans for margins from zero to four.
---   A click in a sensitive margin emits a `margin_click` event. By default, all
+--   A click in a sensitive margin emits a `MARGIN_CLICK` event. By default, all
 --   margins are insensitive.
 -- @field margin_style (table)
 --   Table of style numbers for text margin lines starting from zero.
@@ -520,16 +520,16 @@
 --   `0` (transparent) and `255` (opaque), or `256` for no alpha.
 -- @field marker_back (table, Write-only)
 --   Table of the background colors used for particular marker numbers.
---   Marker numbers are in the range of `0` to `31`. Colors are in `0xBBGGRR`
+--   Marker numbers are in the range of `0` to `31`. Colors are in "0xBBGGRR"
 --   format.
 -- @field marker_back_selected (table, Write-only)
 --   Table of the background colors used for particular marker numbers when
 --   their folding blocks are selected.
---   Marker numbers are in the range of `0` to `31`. Colors are in `0xBBGGRR`
---   format. The default color is `#FF0000`.
+--   Marker numbers are in the range of `0` to `31`. Colors are in "0xBBGGRR"
+--   format. The default color is `0x0000FF`.
 -- @field marker_fore (table, Write-only)
 --   Table of the foreground colors used for particular marker numbers.
---   Marker numbers are in the range of `0` to `31`. Colors are in `0xBBGGRR`
+--   Marker numbers are in the range of `0` to `31`. Colors are in "0xBBGGRR"
 --   format.
 -- @field max_line_state (number, Read-only)
 --   The last line number that has line state.
@@ -653,8 +653,8 @@
 --     The search string should be interpreted as a regular expression.
 --   * `_SCINTILLA.constants.SCFIND_POSIX` (0x00400000)
 --     Treat regular expression in a more POSIX compatible manner by
---     interpreting bare `(` and `)` for tagged sections rather than `\(` and
---     `\)`.
+--     interpreting bare '(' and ')' for tagged sections rather than "\(" and
+--     "\)".
 -- @field sel_alpha (number)
 --   The alpha of the selection, between `0` (transparent) and `255` (opaque),
 --   or `256` for no alpha.
@@ -716,7 +716,7 @@
 -- @field style_at (table, Read-only)
 --   Table of style bytes at positions in the document starting at zero.
 -- @field style_back (table)
---   Table of background colors in `0xBBGGRR` format for styles from `0` to
+--   Table of background colors in "0xBBGGRR" format for styles from `0` to
 --   `255`.
 -- @field style_bits (number)
 --   The number of bits in style bytes used to hold the lexical state.
@@ -743,7 +743,7 @@
 -- @field style_font (table)
 --   Table of font faces for styles from `0` to `255`.
 -- @field style_fore (table)
---   Table of foreground colors in `0xBBGGRR` format for styles from `0` to
+--   Table of foreground colors in "0xBBGGRR" format for styles from `0` to
 --   `255`.
 -- @field style_hot_spot (table)
 --   Table of boolean hotspot styles from `0` to `255`.
@@ -1020,7 +1020,7 @@ function brace_highlight_indicator(buffer, use_indicator, indic_num) end
 
 ---
 -- Find the position of a matching brace or `-1` if no match.
--- The brace characters handled are `(`, `)`, `[`, `]`, `{`, `}`, `<`, and `>`.
+-- The brace characters handled are '(', ')', '[', ']', '{', '}', '<', and '>'.
 -- The search is forwards from an opening brace and backwards from a closing
 -- brace. A match only occurs if the style of the matching brace is the same as
 -- the starting brace or the matching brace is beyond the end of styling. Nested
@@ -1423,7 +1423,7 @@ function get_line_sel_start_position(buffer, line) end
 -- May move the gap so that the range is contiguous, but will only move up to
 -- range_length bytes.
 -- The gap is not moved unless it is within the requested range so this call can
--- be faster than `SCI_GETCHARACTERPOINTER`. This can be used by application
+-- be faster than `buffer.character_pointer`. This can be used by application
 -- code that is able to act on blocks of text or ranges of lines.
 function get_range_pointer(buffer, position, range_length) end
 
@@ -2030,7 +2030,7 @@ function replace_sel(buffer, text) end
 function replace_target(buffer, text) end
 
 ---
--- Replace the target text with the argument text after `\d` processing.
+-- Replace the target text with the argument text after \d` processing.
 -- Looks for `\d` where `d` is between `1` and `9` and replaces these with the
 -- strings matched in the last search operation which were surrounded by `\(`
 -- and `\)`. Returns the length of the replacement text including any change
@@ -2115,7 +2115,7 @@ function selection_duplicate(buffer) end
 -- Reset the set of characters for whitespace and word characters to the
 -- defaults.
 -- This sets whitespace to space, tab and other characters with codes less than
--- `0x20`, with word characters set to alphanumeric and `'_'`.
+-- 0x20, with word characters set to alphanumeric and `'_'`.
 -- @param buffer The global buffer.
 function set_chars_default(buffer) end
 
@@ -2130,28 +2130,28 @@ function set_empty_selection(buffer, pos) end
 -- Set the colors used as a chequerboard pattern in the fold margin.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in `0xBBGGRR` format.
+-- @param color A color in "0xBBGGRR" format.
 function set_fold_margin_colour(buffer, use_setting, color) end
 
 ---
 -- Set the colors used as a checkerboard pattern in the fold margin.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in `0xBBGGRR` format.
+-- @param color A color in "0xBBGGRR" format.
 function set_fold_margin_hi_colour(buffer, use_setting, color) end
 
 ---
 -- Set a back color for active hotspots.
 -- @param buffer The global buffer.
 -- @param use_setting Enable the color change.
--- @param color A color in `0xBBGGRR` format.
+-- @param color A color in "0xBBGGRR" format.
 function set_hotspot_active_back(buffer, use_setting, color) end
 
 ---
 -- Set a fore color for active hotspots.
 -- @param buffer The global buffer.
 -- @param use_setting Enable the color change.
--- @param color A color in `0xBBGGRR` format.
+-- @param color A color in "0xBBGGRR" format.
 function set_hotspot_active_fore(buffer, use_setting, color) end
 
 ---
@@ -2181,7 +2181,7 @@ function set_sel(buffer, start_pos, end_pos) end
 -- use this setting.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in `0xBBGGRR` format.
+-- @param color A color in "0xBBGGRR" format.
 function set_sel_back(buffer, use_setting, color) end
 
 ---
@@ -2189,7 +2189,7 @@ function set_sel_back(buffer, use_setting, color) end
 -- to use this setting.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in `0xBBGGRR` format.
+-- @param color A color in "0xBBGGRR" format.
 function set_sel_fore(buffer, use_setting, color) end
 
 ---
@@ -2227,14 +2227,14 @@ function set_visible_policy(buffer, visible_policy, visible_slop) end
 -- Set the background color of all whitespace and whether to use this setting.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in `0xBBGGRR` format.
+-- @param color A color in "0xBBGGRR" format.
 function set_whitespace_back(buffer, use_setting, color) end
 
 ---
 -- Set the foreground color of all whitespace and whether to use this setting.
 -- @param buffer The global buffer.
 -- @param use_setting Enable color change.
--- @param color A color in `0xBBGGRR` format.
+-- @param color A color in "0xBBGGRR" format.
 function set_whitespace_fore(buffer, use_setting, color) end
 
 ---

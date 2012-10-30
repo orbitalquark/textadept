@@ -21,7 +21,7 @@ The help switch is unavailable in ncurses.
 ## Online Help
 
 Textadept has a [mailing list][] and a [wiki][]. You can also join us on IRC via
-[freenode.net][] in `#textadept`.
+[freenode.net][] in "#textadept".
 
 [mailing list]: http://foicica.com/lists
 [wiki]: http://foicica.com/wiki/textadept

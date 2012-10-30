@@ -28,7 +28,7 @@ M.extensions = {}
 
 ---
 -- Table of shebang words and their associated lexers.
--- If the file has a shebang line, a line that starts with `#!` and is the first
+-- If the file has a shebang line, a line that starts with "#!" and is the first
 -- line in the file, each shebang word is matched against that line.
 -- @class table
 -- @name shebangs
@@ -42,7 +42,7 @@ M.shebangs = {}
 -- @name patterns
 M.patterns = {}
 
--- Load mime-types from `modules/textadept/mime_types.conf`.
+-- Load mime-types from *modules/textadept/mime_types.conf*.
 local mime_types
 local f = io.open(_HOME..'/modules/textadept/mime_types.conf', 'rb')
 if f then
@@ -70,7 +70,7 @@ end
 
 ---
 -- List of detected lexers.
--- Lexers are read from `lexers/` and `~/.textadept/lexers/`.
+-- Lexers are read from *lexers/* and *~/.textadept/lexers/*.
 -- @class table
 -- @name lexers
 M.lexers = {}
@@ -111,7 +111,7 @@ end
 
 -- Contains the whitespace styles for lexers.
 -- These whitespace styles are used to determine the lexer at the current caret
--- position since the styles have the name `[lang]_whitespace`.
+-- position since the styles have the name "[lang]_whitespace".
 -- @class table
 -- @name ws_styles
 local ws_styles = {}

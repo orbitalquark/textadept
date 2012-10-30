@@ -44,23 +44,23 @@ commands on-the-fly to handling core events. The possibilities are limitless.
 
 This manual uses notation that is worth clarifying.
 
-Directories and file paths are represented like this: `/path/to/file_or_dir`.
-(On Windows machines, `/` and `\` can be used interchangeably as directory
-separators.) Any relative paths, paths that do not begin with `/` or `C:\`, are
-relative to the location of Textadept. `~/` is denoted as the user's home
-directory. On Windows machines this is the value of the `USERHOME` environment
-variable, typically `C:\Users\<username>\` or
-`C:\Documents and Settings\<username>\`. On Linux, BSD, and Mac OSX machines it
-is the value of `HOME`, typically `/home/<username>/` and `/Users/<username>/`
+Directories and file paths are represented like this: */path/to/dir/* and
+*/path/to/file*. (On Windows machines, "/" and "\" can be used interchangeably
+as directory separators.) Any relative paths, paths that do not begin with "/"
+or "C:\", are relative to the location of Textadept. *~/* is denoted as the
+user's home directory. On Windows machines this is the value of the "USERHOME"
+environment variable, typically *C:\Users\username\\* or
+*C:\Documents and Settings\username\\*. On Linux, BSD, and Mac OSX machines
+it is the value of "$HOME", typically */home/username/* and */Users/username/*
 respectively.
 
 Key bindings are represented like this: `Ctrl+N`. They are not case sensitive.
-`Ctrl+N` means the `N` key is pressed with only the `Control` modifier key being
-held down, not the `Shift` modifier key. `Ctrl+Shift+N` means the `N` key is
-pressed with both `Control` and `Shift` modifiers held down. The same notation
+`Ctrl+N` means the "N" key is pressed with only the "Control" modifier key being
+held down, not the "Shift" modifier key. `Ctrl+Shift+N` means the "N" key is
+pressed with both "Control" and "Shift" modifiers held down. The same notation
 is applicable to key chains: `Ctrl+N, N` vs. `Ctrl+N, Shift+N`. In the first key
-chain, `Control` and `N` are pressed followed by `N` with no modifiers. The
-second has `Control` and `N` pressed followed by `Shift` and `N`.
+chain, "Control" and "N" are pressed followed by "N" with no modifiers. The
+second has "Control" and "N" pressed followed by "Shift" and "N".
 
 When key bindings are mentioned, the Mac OSX and ncurses equivalents are often
 shown in parenthesis. It may be tempting to assume that some Windows/Linux keys

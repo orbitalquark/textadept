@@ -31,13 +31,13 @@ _M = {} -- modules table
 -- @field _RELEASE (string)
 --   The Textadept release version.
 -- @field _USERHOME (string)
---   Path to the user's `~/.textadept/`, where all preferences and user-data is
+--   Path to the user's *~/.textadept/*, where all preferences and user-data is
 --   stored.
---   On Windows machines `~/` is the value of the `USERHOME` environment
---   variable, typically `C:\Users\<username>\` or
---   `C:\Documents and Settings\<username>\`. On Linux, BSD, and Mac OSX
---   machines `~/` is the value of `HOME`, typically `/home/<username>/` and
---   `/Users/<username>/` respectively.
+--   On Windows machines *~/* is the value of the "USERHOME" environment
+--   variable, typically *C:\Users\username\\* or
+--   *C:\Documents and Settings\username\\*. On Linux, BSD, and Mac OSX
+--   machines *~/* is the value of "$HOME", typically */home/username/* and
+--   */Users/username/* respectively.
 -- @field _CHARSET (string)
 --   The character set encoding of the filesystem.
 --   This is used when [working with files](io.html).
@@ -115,7 +115,7 @@ local quit
 -- Language-specific modules for opened files are NOT reloaded. Re-opening the
 -- files that use them will reload those modules instead.
 -- This function is useful for modifying user scripts (such as
--- `~/.textadept/init.lua` and `~/.textadept/modules/textadept/keys.lua`) on
+-- *~/.textadept/init.lua* and *~/.textadept/modules/textadept/keys.lua*) on
 -- the fly without having to restart Textadept. `_G.RESETTING` is set to `true`
 -- when re-initing the Lua State. Any scripts that need to differentiate between
 -- startup and reset can utilize this variable.

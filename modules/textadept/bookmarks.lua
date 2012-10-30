@@ -6,7 +6,7 @@ local M = {}
 ---
 -- Bookmarks for Textadept.
 -- @field MARK_BOOKMARK_COLOR (number)
---   The color used for a bookmarked line in `0xBBGGRR` format.
+--   The color used for a bookmarked line in "0xBBGGRR" format.
 module('_M.textadept.bookmarks')]]
 
 M.MARK_BOOKMARK_COLOR = not NCURSES and 0xB3661A or 0xFF0000

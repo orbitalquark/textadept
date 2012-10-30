@@ -28,8 +28,8 @@ later.
 Most Linux and BSD systems already have ncurses installed. If not, look for it in
 your package manager, or compile and install it from the [ncurses website][].
 For Debian-based distributions like Ubuntu, the package is typically called
-`libncursesw5`. Note: you need to have a version of ncurses compiled with "wide"
-(multibyte) character support installed.
+"libncursesw5". Note: you need to have the wide-character version of ncurses
+installed, which handles multibyte characters.
 
 [GTK+ website]: http://www.gtk.org/download-linux.html
 [ncurses website]: http://invisible-island.net/ncurses/#download_ncurses
@@ -69,18 +69,18 @@ Unpack the archive anywhere.
 
 If you downloaded the set of language-specific modules, unpack it where you
 unpacked the Textadept archive. The modules will be contained in the
-`/path/to/textadept_VERSION/modules/` directory.
+*/path/to/textadept_VERSION/modules/* directory.
 
 ### Mac OSX
 
-Unpack the archive and move `Textadept.app` to your user or system
-`Applications` directory like any other Mac OSX application. There is also a
-`ta` script for launching Textadept from the command line that you can put in
-your `PATH` (e.g. `/usr/local/bin`), but this is optional.
+Unpack the archive and move *Textadept.app* to your user or system
+*Applications/* directory like any other Mac OSX application. There is also a
+*ta* script for launching Textadept from the command line that you can put in
+a directory in your "$PATH" (e.g. */usr/local/bin/*), but this is optional.
 
 If you downloaded the set of language-specific modules, unpack it, right-click
-`Textadept.app`, select `Show Package Contents`, navigate to
-`Contents/Resources/modules/`, and copy the unpacked modules there.
+*Textadept.app*, select "Show Package Contents", navigate to
+*Contents/Resources/modules/*, and copy the unpacked modules there.
 
 ### Windows
 
@@ -88,23 +88,24 @@ Unpack the archive anywhere.
 
 If you downloaded the set of language-specific modules, unpack it where you
 unpacked the Textadept archive. The modules will be contained in the
-`textadept_VERSION\modules\` directory.
+*textadept_VERSION\modules\\* directory.
 
 ## Running
 
 ### Linux and BSD
 
-Run Textadept by running `/path/to/textadept_VERSION/textadept` from the
-terminal. You can also create a symbolic link to the executable in your `PATH`
-(e.g. `/usr/bin`) or make a GNOME, KDE, XFCE, etc. button or menu launcher.
+Run Textadept by running */path/to/textadept_VERSION/textadept* from the
+terminal. You can also create a symbolic link to the executable in a directory
+in your "$PATH" (e.g. */usr/bin/*) or make a GNOME, KDE, XFCE, etc. button or
+menu launcher.
 
-There is also a `textadeptjit` executable for running Textadept with [LuaJIT][].
-Please note there may be [compatibility issues][]. The `textadept` executable is
+There is also a *textadeptjit* executable for running Textadept with [LuaJIT][].
+Please note there may be [compatibility issues][]. The *textadept* executable is
 recommended.
 
-The `textadept-ncurses` and `textadeptjit-ncurses` executables are versions of
-Textadept for the terminal. Run them as you would run the `textadept` and
-`textadeptjit` executables, but from a terminal instead.
+The *textadept-ncurses* and *textadeptjit-ncurses* executables are versions of
+Textadept for the terminal. Run them as you would run the *textadept* and
+*textadeptjit* executables, but from a terminal instead.
 
 [LuaJIT]: http://luajit.org
 [compatibility issues]: 11_Scripting.html#LuaJIT
@@ -127,11 +128,11 @@ page for more information.
 
 ### Mac OSX
 
-Run Textadept by double-clicking `Textadept.app`. You can also pin it to your
+Run Textadept by double-clicking *Textadept.app*. You can also pin it to your
 dock.
 
-`Textadept.app` also contains an executable for running Textadept with
-[LuaJIT][]. You can enable it by setting a `TEXTADEPTJIT`
+*Textadept.app* also contains an executable for running Textadept with
+[LuaJIT][]. You can enable it by setting a "TEXTADEPTJIT"
 [environment variable](#Environment.Variables) or using `export TEXTADEPTJIT=1`
 in the terminal. Please note there may be [compatibility issues][]. The
 non-LuaJIT executable is recommended.
@@ -142,11 +143,11 @@ non-LuaJIT executable is recommended.
 #### Environment Variables
 
 By default, GUI apps like Textadept do not utilize environment variables like
-`PATH` from your shell profile. Therefore, any [modules][] that use programs
-contained in `PATH` (e.g. the progams in `/usr/local/bin/`) for run and compile
+"$PATH" from your shell profile. Therefore, any [modules][] that use programs
+contained in "$PATH" (e.g. the progams in */usr/local/bin/*) for run and compile
 commands will not be found. The solution is to follow [these instructions][] to
-export whichever environment variables you need. At the very least, set `PATH`
-to be `$PATH`. You will have to logout and log back in for the changes to take
+export whichever environment variables you need. At the very least, set "PATH"
+to be "$PATH". You will have to logout and log back in for the changes to take
 effect.
 
 [modules]: 07_Modules.html
@@ -154,19 +155,19 @@ effect.
 
 ### Windows
 
-Run Textadept by double-clicking `textadept.exe`. You can also create shortcuts
+Run Textadept by double-clicking *textadept.exe*. You can also create shortcuts
 to the executable in your Start Menu, Quick Launch toolbar, Desktop, etc.
 
-There is also a `textadeptjit.exe` executable for running Textadept with
+There is also a *textadeptjit.exe* executable for running Textadept with
 [LuaJIT][]. Please note there may be [compatibility issues][]. The
-`textadept.exe` executable is recommended.
+*textadept.exe* executable is recommended.
 
 [LuaJIT]: http://luajit.org
 [compatibility issues]: 11_Scripting.html#LuaJIT
 
-### `~/.textadept`
+### *~/.textadept*
 
-Textadept stores all of your preferences and user-data in your `~/.textadept/`
+Textadept stores all of your preferences and user-data in your *~/.textadept/*
 folder. If this folder does not exist, Textadept creates it on startup. You will
 learn more about this folder later.
 
@@ -175,7 +176,7 @@ learn more about this folder later.
 Textadept is a single-instance application on Linux, BSD, and Mac OSX. This
 means that after Textadept is opened, running `textadept file.ext`
 (`ta file.ext` on Mac OSX) from the command line or opening a file with
-Textadept from a file manager will open `file.ext` in the existing instance of
+Textadept from a file manager will open *file.ext* in the existing instance of
 Textadept. You can override this and open the file in a new instance by passing
 a `-f` or `--force` switch to Textadept: `textadept -f file.ext`
 (`ta -f file.ext`). When the force switch is not present, files will be opened

@@ -7,8 +7,8 @@ local M = {}
 -- Session support for Textadept.
 -- @field DEFAULT_SESSION (string)
 --   The path to the default session file.
---   The default value is `_USERHOME/session`, or `_USERHOME/session_term` if
---   [`_G.NCURSES`][] is `true`.
+--   The default value is *`_USERHOME`/session*, or *`_USERHOME`/session_term*
+--   if [`_G.NCURSES`][] is `true`.
 --
 --   [`_G.NCURSES`]: _G.html#NCURSES
 -- @field SAVE_ON_QUIT (bool)

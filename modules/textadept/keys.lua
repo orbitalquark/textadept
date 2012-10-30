@@ -107,13 +107,13 @@ local M = {}
 -- None            |None  |None         |Tab width: 8
 -- Ctrl+Alt+Shift+T|^⇧T   |M-T<br/>M-S-T|Toggle use tabs
 -- Ctrl+Alt+I      |^I    |M-I          |Convert indentation
--- None            |None  |None         |`CRLF` EOL mode
--- None            |None  |None         |`CR` EOL mode
--- None            |None  |None         |`LF` EOL mode
--- None            |None  |None         |`UTF-8` encoding
--- None            |None  |None         |`ASCII` encoding
--- None            |None  |None         |`ISO-8859-1` encoding
--- None            |None  |None         |`UTF-16` encoding
+-- None            |None  |None         |CR+LF EOL mode
+-- None            |None  |None         |CR EOL mode
+-- None            |None  |None         |LF EOL mode
+-- None            |None  |None         |UTF-8 encoding
+-- None            |None  |None         |ASCII encoding
+-- None            |None  |None         |ISO-8859-1 encoding
+-- None            |None  |None         |UTF-16 encoding
 -- Ctrl+Shift+L    |⌘⇧L   |M-S-L        |Select lexer...
 -- F5              |F5    |^L<br/>F5    |Refresh syntax highlighting
 -- **View**                 |         |     |
