@@ -5,17 +5,17 @@
 Textadept has many basic editing features you are familiar with: basic text
 entry, undo/redo, clipboard manipulation, deleting characters and words,
 duplicating lines, joining lines, and transposing characters. These are
-accessible from the top-level `Edit` menu and have associated key bindings.
+accessible from the top-level "Edit" menu and have associated key bindings.
 Some of the basic editing features you may not be familiar with are discussed
 below.
 
 ### Autopaired Characters
 
-Usually, quote (`'`, `"`) and brace (`(`, `[`, `{`) characters go together in
-pairs. By default, Textadept automatically inserts the complement character when
-the first is typed. Similarly, the complement is deleted when you press `Bksp`
-(`⌫` on Mac OSX | `Bksp` in ncurses) over the first. See the [preferences][]
-page if you would like to disable this.
+Usually, quote ('&apos;', '&quot;') and brace ('(', '[', '{') characters go
+together in pairs. By default, Textadept automatically inserts the complement
+character when the first is typed. Similarly, the complement is deleted when you
+press `Bksp` (`⌫` on Mac OSX | `Bksp` in ncurses) over the first. See the
+[preferences][] page if you would like to disable this.
 
 [preferences]: 08_Preferences.html#Generic
 
@@ -44,15 +44,15 @@ The caret also changes to an underline when in overwrite mode.
 ## Selections
 
 Textadept has many ways of creating and working with selections. Basic
-selections are what you get when you do things like hold the `Shift` modifier
-key (`⇧` on Mac OSX | `S-` in ncurses) while pressing the arrow keys, click and
-drag the mouse over a range of text, or press `Ctrl+A` (`⌘A` | `M-A`) for
+selections are what you get when you do things like hold the "Shift" modifier
+key (`⇧` on Mac OSX | "Shift" in ncurses) while pressing the arrow keys, click
+and drag the mouse over a range of text, or press `Ctrl+A` (`⌘A` | `M-A`) for
 "Select All". More advanced selections like multiple and rectangular selections
 are more complicated to create, but have powerful uses.
 
 ### Multiple Selection
 
-Clicking the mouse at a point in the buffer while holding the `Ctrl` modifier
+Clicking the mouse at a point in the buffer while holding the "Control" modifier
 key (`^` on Mac OSX | N/A in ncurses) places an additional caret at that point.
 Clicking and dragging while holding the same modifier creates multiple
 selections. When you start typing, the text is mirrored at each selection.
@@ -63,7 +63,7 @@ Creating multiple selections with the mouse is currently unavailable in ncurses.
 
 Holding `Alt+Shift` (`⌥⇧` on Mac OSX | `M-S-` in ncurses) and pressing the arrow
 keys enables rectangular selections to be made. Start typing to type on each
-line. You can also hold the `Alt` modifier key (`Super` on Linux | `⌥` on Mac
+line. You can also hold the "Alt" modifier key ("Super" on Linux | `⌥` on Mac
 OSX | N/A in ncurses) while clicking and dragging the mouse to create
 rectangular selections.
 
@@ -72,10 +72,10 @@ rectangular selections.
 ![Rectangular Edit](images/rectangularselection2.png)
 
 Note: In some Linux environments, the `Alt+Shift+Arrow` combinations are used by
-the window manager and may need to be reconfigured. Also, `Super`+Mouse is used
-because `Alt`+Mouse generally moves windows. If you prefer to use `Alt`, you can
+the window manager and may need to be reconfigured. Also, `Super+Mouse` is used
+because `Alt+Mouse` generally moves windows. If you prefer to use "Alt", you can
 change [`buffer.rectangular_selection_modifier`][] in your [theme][]. The
-`Super` modifier key is usually defined as the left "Windows" key, but may need
+"Super" modifier key is usually defined as the left "Windows" key, but may need
 to be reconfigured too.
 
 [`buffer.rectangular_selection_modifier`]: api/buffer.html#rectangular_selection_modifier
@@ -83,7 +83,7 @@ to be reconfigured too.
 
 ### Select to Matching Brace
 
-Putting the caret over a brace character (`(`, `)`, `[`, `]`, `{`, or `}`) and
+Putting the caret over a brace character ('(', ')', '[', ']', '{', or '}') and
 pressing `Ctrl+Shift+M` (`^⇧M` on Mac OSX| `M-S-M` in ncurses) extends the
 selection to the brace character's matching brace.
 
@@ -91,9 +91,9 @@ selection to the brace character's matching brace.
 
 Textadept allows you to select many different entities from the caret. For
 example, `Ctrl+"` (`^"` on Mac OSX | `M-"` in ncurses) selects all characters in
-a `""` sequence. Typing `Ctrl++` (`^+` | `M-+`) as a follow-up selects the
-double-quotes too. See the `Edit -> Select In...` menu for available entities
-and their key bindings.
+a double-quoted sequence. Typing `Ctrl++` (`^+` | `M-+`) as a follow-up selects
+the double-quotes too. See the "Edit -> Select In..." menu for available
+entities and their key bindings.
 
 ### Marks
 
@@ -114,7 +114,7 @@ Marks are only supported in ncurses.
 #### Enclose Entities
 
 As a complement to selecting entities, you can enclose text as entities. The
-`Edit -> Selection -> Enclose In...` menu contains all available entities and
+"Edit -> Selection -> Enclose In..." menu contains all available entities and
 their key bindings.
 
 If no text is selected, the word to the left of the caret is enclosed.
@@ -146,9 +146,9 @@ line is eligible for moving.
 Replace pane. In addition to offering the usual find and replace with "Match
 Case" and "Whole Word" options and find/replace history, Textadept allows you to
 find with [Lua patterns][] and replace with Lua captures and even Lua code! For
-example: replacing all `(%w+)` with `%(string.upper('%1'))` upper-cases all
-words in the buffer. Lua captures (`%`_`n`_) are only available from a Lua
-pattern search, but embedded Lua code enclosed in `%()` is always allowed.
+example: replacing all `(%w+)` with `%(string.upper('%1'))` uppercases all words
+in the buffer. Lua captures (`%`_`n`_) are only available from a Lua pattern
+search, but embedded Lua code enclosed in `%()` is always allowed.
 
 Note the `Ctrl+G`, `Ctrl+Shift+G`, `Ctrl+Alt+R`, `Ctrl+Alt+Shift+R` key bindings
 for find next, find previous, replace, and replace all (`⌘G`, `⌘⇧G`, `^R`, `^⇧R`
@@ -168,9 +168,9 @@ Pressing `Esc` (`⎋` | `Esc`) hides the pane when you are finished.
 
 ### Replace in Selection
 
-By default, `Replace All` replaces all text in the buffer. If you want to
+By default, "Replace All" replaces all text in the buffer. If you want to
 replace all text in just a portion of the buffer, select a block of text and
-then `Replace All`.
+then "Replace All".
 
 ### Find in Files
 
@@ -179,8 +179,8 @@ will prompt for a directory to search. The results are displayed in a new
 buffer. Double-clicking a search result jumps to it in the file. You can also
 use the `Ctrl+Alt+G` and `Ctrl+Alt+Shift+G` (`^⌘G` and `^⌘⇧G` on Mac OSX | none
 in ncurses) key bindings. Replace in Files is not supported. You will have to
-`Find in Files` first, and then `Replace All` for each file a result is found
-in. The `Match Case`, `Whole Word`, and `Lua pattern` flags still apply.
+"Find in Files" first, and then "Replace All" for each file a result is found
+in. The "Match Case", "Whole Word", and "Lua pattern" flags still apply.
 
 _Warning_: currently, there is no way to specify a file-type filter, so Find in
 Files will scan **all** files, even binary ones, in **all** sub-directories.
@@ -197,7 +197,7 @@ such as [ack][] is recommended.
 
 You can start an incremental search by pressing `Ctrl+Alt+F` (`^⌘F` on Mac OSX |
 `M-^F` in ncurses). Incremental search searches the buffer as you type. Only the
-`Match Case` option is recognized. Pressing `Esc` (`⎋` | `Esc`) stops the
+"Match Case" option is recognized. Pressing `Esc` (`⎋` | `Esc`) stops the
 search.
 
 ## Source Code Editing

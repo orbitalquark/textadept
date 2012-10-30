@@ -22,8 +22,8 @@ local M = {}
 --   functions only.
 -- @field sense
 --   The Lua [Adeptsense](_M.textadept.adeptsense.html).
---   It loads user tags from `_USERHOME/modules/lua/tags` and user apidocs from
---   `_USERHOME/modules/lua/api`.
+--   It loads user tags from *`_USERHOME`/modules/lua/tags* and user apidocs
+--   from *`_USERHOME`/modules/lua/api*.
 module('_M.lua')]]
 
 local m_editing, m_run = _M.textadept.editing, _M.textadept.run

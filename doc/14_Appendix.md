@@ -129,16 +129,16 @@ features in its editing component Scintilla:
   not supported and `surface->LineTo()` is not supported for drawing marker
   shapes).
 * Mouse interactions, cursor types, and hotspots are not supported.
-* Only 8 colors are supported: black (`0x000000`), red (`0xFF0000`), green
-  (`0x00FF00`), yellow (`0xFFFF00`), blue (`0x0000FF`), magenta (`0xFF00FF`),
-  cyan (`0x00FFFF`), and white (`0xFFFFFF`). Even if your terminal uses a
-  different color map, you must use these color values with Scintilla;
-  unrecognized colors are set to white by default. Lexers can use up to 8 more
-  colors by setting the lexer style's `bold` attribute.
+* Only 8 colors are supported: black (0x000000), red (0xFF0000), green
+  (0x00FF00), yellow (0xFFFF00), blue (0x0000FF), magenta (0xFF00FF), cyan
+  (0x00FFFF), and white (0xFFFFFF). Even if your terminal uses a different color
+  map, you must use these color values with Scintilla; unrecognized colors are
+  set to white by default. Lexers can use up to 8 more colors by setting the
+  lexer style's "bold" attribute.
 * Scroll bars are not supported.
 * Some styles settings like font name, font size, and italic do not display
   properly (terminals use one only font, size and variant).
-* Viewing whitespace does not show the 'Tab' character arrows
+* Viewing whitespace does not show the "Tab" character arrows
   (`surface->LineTo()` is not supported for drawing arrows).
 * Visual wrap flags are not supported (`surface->LineTo()` is not supported).
 * X selections (primary and secondary) are not integrated into the clipboard.
@@ -451,7 +451,7 @@ to
 
 ##### `os.execute`
 
-`os.execute()`s function parameters have changed. If you are only interested in
+`os.execute()`'s function parameters have changed. If you are only interested in
 the return code, change
 
     local code = os.execute(cmd)
@@ -536,7 +536,7 @@ keychains. Therefore, Textadept's key bindings have changed radically, as has
 the menu structure and menu mnemonics. In order for key bindings to appear in
 menus, `_m.textadept.menu` needs to know which commands are assigned to which
 keys. Therefore, the menu module needs to be `require`d *after*
-`_m.textadept.keys`. If your `~/.textadept/init.lua` is calling
+`_m.textadept.keys`. If your *~/.textadept/init.lua* is calling
 `require 'textadept'`, you do not have to make any changes. If you are loading
 individual modules from `_m.textadept`, ensure `_m.textadept.menu` is loaded
 after `_m.textadept.keys`.
@@ -566,12 +566,12 @@ Replace all instances of `_m.textadept.editing.SAVE_STRIPS_WS` with
 
 ##### Core Extensions
 
-There are no more core extention modules (previously in `core/ext/`). They have
-been relocated to `modules/textadept/` so putting
+There are no more core extention modules (previously in *core/ext/*). They have
+been relocated to *modules/textadept/* so putting
 
     require 'textadept'
 
-in your `~/.textadept/init.lua` will load all the modules you would expect.
+in your *~/.textadept/init.lua* will load all the modules you would expect.
 Please see the [preferences][] page for instructions on how to load specific
 modules.
 
@@ -579,10 +579,10 @@ modules.
 
 ##### Autoloading
 
-Key bindings in `~/.textadept/key_commands.lua` and snippets in
-`~/.textadept/snippets.lua` are no longer auto-loaded. Instead, modify
-[`keys`][] and/or [`snippets`][] from within your `~/.textadept/init.lua` or a
-file loaded by `~/.textadept/init.lua`.
+Key bindings in *~/.textadept/key_commands.lua* and snippets in
+*~/.textadept/snippets.lua* are no longer auto-loaded. Instead, modify
+[`keys`][] and/or [`snippets`][] from within your *~/.textadept/init.lua* or a
+file loaded by *~/.textadept/init.lua*.
 
 [`keys`]: api/keys.html
 [`snippets`]: api/_M.textadept.snippets.html
@@ -652,6 +652,6 @@ Here is a summary of API changes:
 [`gui.switch_buffer()`]: api/gui.html#switch_buffer
 [`new_buffer()`]: api/_G.html#new_buffer
 [`quit()`]: api/_G.html#quit
-[`reset()`]:api/_G.html#reset
+[`reset()`]: api/_G.html#reset
 [`user_dofile()`]: api/_G.html#user_dofile
 [`string.iconv()`]: api/string.html#iconv

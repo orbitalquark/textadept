@@ -27,7 +27,6 @@ CLEAR	_	0;"	F	class:keys
 COMMAND_ENTRY_COMMAND	_	0;"	F	class:events
 COMMAND_ENTRY_KEYPRESS	_	0;"	F	class:events
 COMMENT	_	0;"	F	class:lexer
-COMPILE_OUTPUT	_	0;"	F	class:events
 CONSTANT	_	0;"	F	class:lexer
 Carg	_	0;"	f	class:lpeg
 Cb	_	0;"	f	class:lpeg
@@ -51,10 +50,6 @@ ERROR	_	0;"	F	class:events
 ERROR	_	0;"	F	class:lexer
 FIELD	_	0;"	F	class:_M.textadept.adeptsense
 FIELDS	_	0;"	F	class:_M.textadept.adeptsense
-FILE_AFTER_SAVE	_	0;"	F	class:events
-FILE_BEFORE_SAVE	_	0;"	F	class:events
-FILE_OPENED	_	0;"	F	class:events
-FILE_SAVED_AS	_	0;"	F	class:events
 FILTER	_	0;"	t	class:_M.textadept.snapopen
 FIND	_	0;"	F	class:events
 FUNCTION	_	0;"	F	class:_M.textadept.adeptsense
@@ -95,7 +90,6 @@ KEYSYMS	_	0;"	t	class:keys
 KEYWORD	_	0;"	F	class:lexer
 KEYWORDSET_MAX	_	0;"	F	class:_SCINTILLA.constants
 LABEL	_	0;"	F	class:lexer
-LANGUAGE_MODULE_LOADED	_	0;"	F	class:events
 LANGUAGE_MODULE_PREFIX	_	0;"	F	class:keys
 MARGIN_CLICK	_	0;"	F	class:events
 MARKER_MAX	_	0;"	F	class:_SCINTILLA.constants
@@ -119,7 +113,6 @@ REPLACE_ALL	_	0;"	F	class:events
 RESETTING	_	0;"	F	
 RESET_AFTER	_	0;"	F	class:events
 RESET_BEFORE	_	0;"	F	class:events
-RUN_OUTPUT	_	0;"	F	class:events
 S	_	0;"	f	class:lpeg
 SAVE_ON_QUIT	_	0;"	F	class:_M.textadept.session
 SAVE_POINT_LEFT	_	0;"	F	class:events
@@ -752,13 +745,21 @@ WHITESPACE	_	0;"	F	class:lexer
 WIN32	_	0;"	F	
 _BUFFERS	_	0;"	t	
 _CHARSET	_	0;"	F	
-_EMBEDDEDRULES	_	0;"	t	class:lexer
 _EXISTS	_	0;"	f	class:_L
 _G	_	0;"	F	
 _G	_	0;"	m	
+_G.events.COMPILE_OUTPUT	_	0;"	F	class:_M.textadept.run
+_G.events.FILE_AFTER_SAVE	_	0;"	F	class:io
+_G.events.FILE_BEFORE_SAVE	_	0;"	F	class:io
+_G.events.FILE_OPENED	_	0;"	F	class:io
+_G.events.FILE_SAVED_AS	_	0;"	F	class:io
+_G.events.FIND_WRAPPED	_	0;"	F	class:gui.find
+_G.events.LANGUAGE_MODULE_LOADED	_	0;"	F	class:_M.textadept.mime_types
+_G.events.RUN_OUTPUT	_	0;"	F	class:_M.textadept.run
 _HOME	_	0;"	F	
 _L	_	0;"	m	
 _L	_	0;"	t	
+_LEXBYLINE	_	0;"	F	class:lexer.lexer
 _LEXERPATH	_	0;"	F	
 _M	_	0;"	m	
 _M	_	0;"	t	
@@ -768,6 +769,7 @@ _M.hypertext	_	0;"	m
 _M.java	_	0;"	m	
 _M.lua	_	0;"	m	
 _M.php	_	0;"	m	
+_M.python	_	0;"	m	
 _M.rails	_	0;"	m	
 _M.rhtml	_	0;"	m	
 _M.ruby	_	0;"	m	
@@ -783,18 +785,24 @@ _M.textadept.run	_	0;"	m
 _M.textadept.session	_	0;"	m	
 _M.textadept.snapopen	_	0;"	m	
 _M.textadept.snippets	_	0;"	m	
+_NAME	_	0;"	F	class:lexer.lexer
 _RELEASE	_	0;"	F	
-_RULES	_	0;"	t	class:lexer
+_RULES	_	0;"	F	class:lexer.lexer
 _SCINTILLA	_	0;"	m	
 _SCINTILLA	_	0;"	t	
 _USERHOME	_	0;"	F	
 _VERSION	_	0;"	F	
 _VIEWS	_	0;"	t	
 _cancel_current	_	0;"	f	class:_M.textadept.snippets
+_fold	_	0;"	F	class:lexer.lexer
+_foldsymbols	_	0;"	F	class:lexer.lexer
 _insert	_	0;"	f	class:_M.textadept.snippets
+_lexer	_	0;"	F	class:lexer.lexer
 _previous	_	0;"	f	class:_M.textadept.snippets
 _print	_	0;"	f	class:gui
+_rules	_	0;"	F	class:lexer.lexer
 _select	_	0;"	f	class:_M.textadept.snippets
+_tokenstyles	_	0;"	F	class:lexer.lexer
 abs	_	0;"	f	class:math
 acos	_	0;"	f	class:math
 add_selection	_	0;"	f	class:buffer
@@ -820,6 +828,7 @@ annotation_style_offset	_	0;"	F	class:buffer
 annotation_text	_	0;"	F	class:buffer
 annotation_visible	_	0;"	F	class:buffer
 any	_	0;"	F	class:lexer
+any_char	_	0;"	F	class:lexer
 api_files	_	0;"	t	class:_M.textadept.adeptsense
 append_text	_	0;"	f	class:buffer
 arg	_	0;"	t	
@@ -1032,7 +1041,6 @@ error	_	0;"	f
 error_detail	_	0;"	t	class:_M.textadept.run
 events	_	0;"	m	
 events	_	0;"	t	
-execute	_	0;"	f	class:_M.textadept.run
 execute	_	0;"	f	class:os
 exit	_	0;"	f	class:os
 exp	_	0;"	f	class:math
@@ -1193,6 +1201,7 @@ lex	_	0;"	f	class:lexer
 lexer	_	0;"	F	class:buffer
 lexer	_	0;"	m	
 lexer	_	0;"	t	
+lexer	_	0;"	t	class:lexer
 lexer_language	_	0;"	F	class:buffer
 lexers	_	0;"	t	class:_M.textadept.mime_types
 lfs	_	0;"	m	
@@ -1380,6 +1389,9 @@ property_expanded	_	0;"	F	class:buffer
 property_int	_	0;"	F	class:buffer
 punct	_	0;"	F	class:lexer
 punctuation_chars	_	0;"	F	class:buffer
+python	_	0;"	t	class:_M
+python	_	0;"	t	class:keys
+python	_	0;"	t	class:snippets
 quit	_	0;"	f	
 rad	_	0;"	f	class:math
 rails	_	0;"	t	class:_M
@@ -1489,6 +1501,7 @@ sense	_	0;"	F	class:_M.hypertext
 sense	_	0;"	F	class:_M.java
 sense	_	0;"	F	class:_M.lua
 sense	_	0;"	F	class:_M.php
+sense	_	0;"	F	class:_M.python
 sense	_	0;"	F	class:_M.rails
 sense	_	0;"	F	class:_M.rhtml
 sense	_	0;"	F	class:_M.ruby
@@ -1499,6 +1512,7 @@ set_buffer_properties	_	0;"	f	class:_M.hypertext
 set_buffer_properties	_	0;"	f	class:_M.java
 set_buffer_properties	_	0;"	f	class:_M.lua
 set_buffer_properties	_	0;"	f	class:_M.php
+set_buffer_properties	_	0;"	f	class:_M.python
 set_buffer_properties	_	0;"	f	class:_M.ruby
 set_chars_default	_	0;"	f	class:buffer
 set_contextmenu	_	0;"	f	class:_M.textadept.menu

@@ -119,7 +119,7 @@ io.try_encodings = { 'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman' }
 ---
 -- Opens a list of files.
 -- Emits a `FILE_OPENED` event.
--- @param utf8_filenames A `\n` separated list of UTF-8-encoded filenames to
+-- @param utf8_filenames A "\n" separated list of UTF-8-encoded filenames to
 --   open. If `nil`, the user is prompted with a fileselect dialog.
 -- @usage io.open_file(utf8_encoded_filename)
 -- @see _G.events

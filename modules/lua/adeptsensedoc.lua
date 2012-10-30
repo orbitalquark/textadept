@@ -3,7 +3,7 @@
 -- Adeptsense doclet for LuaDoc.
 -- This module is used by LuaDoc to create an adeptsense for Lua with a fake
 -- ctags file and an api file.
--- To preserve formatting, the included `luadoc.patch` file must be applied to
+-- To preserve formatting, the included *luadoc.patch* file must be applied to
 -- your instance of LuaDoc. It will not affect the look of HTML web pages, only
 -- the look of plain-text Adeptsense api files.
 -- Since LuaDoc does not recognize module fields, this doclet parses the Lua
@@ -29,14 +29,16 @@ local function write_tag(file, name, k, ext_fields)
   file[#file + 1] = string_format(CTAGS_FMT, name, k, ext_fields)
 end
 
--- Strips Markdown links from the given documentation string.
--- @param s String to strip Markdown links from.
+-- Sanitizes Markdown from the given documentation string by stripping links and
+-- replacing HTML entities.
+-- @param s String to sanitize Markdown from.
 -- @return string
-local function strip_markdown_links(s)
+local function sanitize_markdown(s)
   return s:gsub('%[([^%]\r\n]+)%]%b[]', '%1') -- [foo][]
           :gsub('%[([^%]\r\n]+)%]%b()', '%1') -- [foo](bar)
           :gsub('\r?\n\r?\n%[([^%]\r\n]+)%]:[^\r\n]+', '') -- [foo]: bar
           :gsub('\r?\n%[([^%]\r\n]+)%]:[^\r\n]+', '') -- [foo]: bar
+          :gsub('&([%a]+);', { quot = '"', apos = "'" })
 end
 
 -- Writes a function or field apidoc.
@@ -74,12 +76,12 @@ local function write_apidoc(file, m, b)
     indent, description = description:match('^(%s*)(.*)$')
     if indent ~= '' then description = description:gsub('\n'..indent, '\n') end
   end
-  doc[#doc + 1] = strip_markdown_links(description)
+  doc[#doc + 1] = sanitize_markdown(description)
   -- Function parameters (@param).
   if class == 'function' and b.param then
     for _, p in ipairs(b.param) do
       if b.param[p] and #b.param[p] > 0 then
-        doc[#doc + 1] = '@param '..p..' '..strip_markdown_links(b.param[p])
+        doc[#doc + 1] = '@param '..p..' '..sanitize_markdown(b.param[p])
       end
     end
   end

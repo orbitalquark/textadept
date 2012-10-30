@@ -16,7 +16,7 @@ movement bindings is found in the "Movement" section of the
 ## Brace Match
 
 By default, Textadept will highlight the matching brace characters under the
-caret : `(`, `)`, `[`, `]`, `{`, and `}`. Pressing `Ctrl+M` (`^M` on Mac OSX |
+caret : '(', ')', '[', ']', '{', and '}'. Pressing `Ctrl+M` (`^M` on Mac OSX |
 `M-M` in ncurses) moves the caret to that matching brace.
 
 ![Matching Braces](images/matchingbrace.png)

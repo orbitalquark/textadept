@@ -8,9 +8,9 @@
 --
 -- ## Module Guidelines
 --
--- At the very least, modules consist of a single directory with an `init.lua`
+-- At the very least, modules consist of a single directory with an *init.lua*
 -- script. However, the script can load additional Lua files present in the
--- directory. (For an example, see `modules/textadept/init.lua`.)
+-- directory. (For an example, see *modules/textadept/init.lua*.)
 --
 -- Once modules are loaded, regardless of whether they are generic or
 -- language-specific, they persist in Textadept's Lua State; they are never
@@ -105,7 +105,7 @@
 --
 -- Additional editing features for the language can be useful. For example, the
 -- [Lua][] module has a feature to autocomplete the `end` keyword in a control
--- structure and the [C/C++][] module has a feature to add a `;` to the end of
+-- structure and the [C/C++][] module has a feature to add a ';' to the end of
 -- the current line and insert a new line. Both are bound to the `Shift+Enter`
 -- (`⇧↩` on Mac OSX | `S-Enter` in ncurses) key for easy access.
 --

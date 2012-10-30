@@ -44,7 +44,7 @@ future indentation; it does not convert existing indentation. `Ctrl+Alt+I` (`^I`
 | `M-I`) performs the conversion. (If the buffer is using tabs, all indenting
 spaces are converted to tabs. If the buffer is using spaces, all indenting tabs
 are converted to spaces.) Similarly, you can set indentation size manually using
-the `Buffer -> Indentation` menu.
+the "Buffer -> Indentation" menu.
 
 [language-specific module]: 07_Modules.html#Buffer.Properties
 [theme]: 09_Themes.html#Buffer
@@ -52,8 +52,8 @@ the `Buffer -> Indentation` menu.
 #### Line Endings
 
 Line endings, commonly known as end-of-line (EOL) markers, are set based on the
-current platform for new files. On Windows, CRLF (`\r\n`) is used. Otherwise, LF
-(`\n`) is. This can be changed manually using the `Buffer -> EOL Mode` menu.
+current platform for new files. On Windows, CRLF ("\r\n") is used. Otherwise, LF
+("\n") is. This can be changed manually using the "Buffer -> EOL Mode" menu.
 Unlike indentation settings, switching EOL modes converts all existing EOLs
 automatically. Textadept attempts to auto-detect the EOL mode of opened files
 regardless of the current platform, but falls back to the defaults mentioned
@@ -70,7 +70,7 @@ list of encodings Textadept tries to detect via [`io.try_encodings`][].
 
 It is recommended to use UTF-8 encoded files because UTF-8 is very well
 supported by other text editors and operating systems. You can change file
-encoding via the `Buffer -> Encoding` menu. Conversion is immediate, requiring
+encoding via the "Buffer -> Encoding" menu. Conversion is immediate, requiring
 no separate steps. Textadept saves new files as UTF-8 by default, but does not
 alter the encoding of existing files.
 
@@ -87,7 +87,7 @@ files to reopen.
 By default, Textadept saves its state on exit so it can be restored the next
 time the editor starts up. You can disable this by passing the `-n` or
 `--no-session` switch to Textadept on startup. Sessions can be manually saved
-and opened via the `File -> Save Session...` and `File -> Load Session...`
+and opened via the "File -> Save Session..." and "File -> Load Session..."
 menus. Session files store information such as open buffers, current split
 views, caret and scroll positions in each buffer, Textadept's window size, and
 recently opened files. Tampering with session files may have unintended
@@ -99,9 +99,9 @@ A quicker, though slightly more limited alternative to the standard file
 selection dialog is snapopen. It behaves like the buffer browser, but displays a
 list of files to open, including files in sub-directories. You can snapopen the
 current file's directory with `Ctrl+Alt+Shift+O` (`^⌘⇧O` on Mac OSX | `M-S-O` in
-ncurses) or from the `Tools -> Snapopen -> Current Directory` menu. Snapopen is
+ncurses) or from the "Tools -> Snapopen -> Current Directory" menu. Snapopen is
 pretty limited from the menu, but more versatile in [scripts][]. `Ctrl+U` (`⌘U`
-| `^U`) snaps open `~/.textadept/`.
+| `^U`) snaps open *~/.textadept/*.
 
 [scripts]: api/_M.textadept.snapopen.html
 
@@ -137,7 +137,7 @@ viewing whitespace. These options change how buffers in the view are displayed.
 
 #### Line Endings
 
-Normally, EOL characters (`\r` and `\n`) are invisible. Pressing
+Normally, EOL characters ("\r" and "\n") are invisible. Pressing
 `Ctrl+Alt+Enter` (`^↩` on Mac OSX | none in ncurses) toggles their visibility.
 
 #### Long Lines

@@ -18,11 +18,11 @@ local M = {}
 --   When to the right of a known symbol, show an autocompletion list of fields
 --   and functions.
 -- + `Shift+Enter` (`⇧↩` | `S-Enter`)
---   Add `;` to the end of the current line and insert a newline.
+--   Add ';' to the end of the current line and insert a newline.
 -- @field sense
 --   The C/C++ [Adeptsense](_M.textadept.adeptsense.html).
---   It loads user tags from `_USERHOME/modules/cpp/tags` and user apidocs from
---   `_USERHOME/modules/cpp/api`.
+--   It loads user tags from *`_USERHOME`/modules/cpp/tags* and user apidocs
+--   from *`_USERHOME`/modules/cpp/api*.
 module('_M.cpp')]]
 
 local m_editing, m_run = _M.textadept.editing, _M.textadept.run

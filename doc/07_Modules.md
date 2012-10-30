@@ -20,7 +20,7 @@ modules when Textadept starts.
 ## Language-Specific
 
 Language-specific modules have a scope limited to a single programming language.
-The name of the module is named after the language's lexer in the `lexers/`
+The name of the module is named after the language's lexer in the *lexers/*
 directory and is automatically loaded when editing source code in that
 particular language. In addition to some of the editing features discussed
 [earlier][], these kinds of modules typically also have shell commands for
@@ -87,12 +87,12 @@ For now, user-created modules are obtained from the [wiki][].
 ## Installing Modules
 
 If you do not have write permissions for the directory Textadept is installed
-in, place the module in your `~/.textadept/modules/` folder and replace all
-instances of `_HOME` with `_USERHOME` in the module's `init.lua`. It is
+in, place the module in your *~/.textadept/modules/* folder and replace all
+instances of `_HOME` with `_USERHOME` in the module's *init.lua*. It is
 recommended to put all custom or user-created modules in your
-`~/.textadept/modules/` directory so they will not be overwritten when you
+*~/.textadept/modules/* directory so they will not be overwritten when you
 update Textadept. Also, modules in that directory override any modules in
-Textadept's  `modules/` directory. This means that if you have your own `lua`
+Textadept's  *modules/* directory. This means that if you have your own *lua*
 module, it will be loaded instead of the one that comes with Textadept.
 
 ## Developing Modules

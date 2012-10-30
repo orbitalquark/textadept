@@ -87,7 +87,7 @@ end
 --   paths to search.
 -- @param filter A filter for files and folders to exclude. The filter may be
 --   a string or table. Each filter is a Lua pattern. Any files matching a
---   filter are excluded. Prefix a pattern with `!` to exclude any files that
+--   filter are excluded. Prefix a pattern with '!' to exclude any files that
 --   do not match a filter. File extensions can be more efficiently excluded by
 --   adding the extension text to a table assigned to an `extensions` key in the
 --   filter table instead of using individual filters. Directories can be
