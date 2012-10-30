@@ -224,7 +224,7 @@ local function keypress(code, shift, control, alt, meta)
   local key
   --print(code, M.KEYSYMS[code], shift, control, alt, meta)
   if code < 256 then
-    key = string_char(code)
+    key = (not NCURSES or code ~= 7) and string_char(code) or 'esc'
     shift = shift and code < 32 -- for printable characters, key is upper case
   else
     key = M.KEYSYMS[code]
