@@ -27,8 +27,7 @@ operating systems and depends only on [GTK+ 2.0][] version 2.18 or greater on
 Linux. Lua is pre-compiled into Textadept on all platforms and a GTK+ runtime is
 included on Windows and Mac OSX.
 
-The _experimental_ version of Textadept for the terminal requires only
-[ncurses][].
+The version of Textadept for the terminal requires only [ncurses][].
 
 [GTK+ 2.0]: http://gtk.org
 [ncurses]: http://invisible-island.net/ncurses/ncurses.html
@@ -41,7 +40,7 @@ Download Textadept from the project's [download page][].
 
 ## Installation and Usage
 
-Textadept comes with a comprehensive manual and API documentation in the `doc/`
+Textadept comes with a comprehensive manual and API documentation in the *doc/*
 directory. They are also available [online][].
 
 [online]: http://foicica.com/textadept
