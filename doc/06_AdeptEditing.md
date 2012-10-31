@@ -126,7 +126,7 @@ word encloses it in XML tags.
 #### Change Case
 
 Pressing `Ctrl+Alt+U` or `Ctrl+Alt+Shift+U` (`^U` or `^⇧U` on Mac OSX | `M-^U`
-or `M-^L` in ncurses) converts selected text to uppercase letters or lowercase
+or `M-^L` in ncurses) converts selected text to upper case letters or lower case
 letters respectively.
 
 #### Change Indent Level
@@ -150,9 +150,9 @@ line is eligible for moving.
 Replace pane. In addition to offering the usual find and replace with "Match
 Case" and "Whole Word" options and find/replace history, Textadept allows you to
 find with [Lua patterns][] and replace with Lua captures and even Lua code! For
-example: replacing all `(%w+)` with `%(string.upper('%1'))` uppercases all words
-in the buffer. Lua captures (`%`_`n`_) are only available from a Lua pattern
-search, but embedded Lua code enclosed in `%()` is always allowed.
+example: replacing all `(%w+)` with `%(string.upper('%1'))` upper cases all
+words in the buffer. Lua captures (`%`_`n`_) are only available from a Lua
+pattern search, but embedded Lua code enclosed in `%()` is always allowed.
 
 Note the `Ctrl+G`, `Ctrl+Shift+G`, `Ctrl+Alt+R`, `Ctrl+Alt+Shift+R` key bindings
 for find next, find previous, replace, and replace all (`⌘G`, `⌘⇧G`, `^R`, `^⇧R`
