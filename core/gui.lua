@@ -65,8 +65,8 @@ function gui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
 
 ---
--- Shortcut function for `gui.dialog('filteredlist', ...)` with 'Ok' and
--- 'Cancel' buttons.
+-- Shortcut function for `gui.dialog('filteredlist', ...)` with "Ok" and
+-- "Cancel" buttons.
 -- @param title The title for the filtered list dialog.
 -- @param columns A column name or list of column names.
 -- @param items An item or list of items.
@@ -157,8 +157,9 @@ local THEME
 -- themes of the same name in *`_HOME`/themes/*. If the name contains slashes
 -- ('\' on Windows, '/' otherwise), it is assumed to be an absolute path to a
 -- theme instead of a theme name. An error is thrown if the theme is not found.
--- Any errors in the theme are printed to `io.stderr`.
--- @param name The name or absolute path of a theme. If nil, sets the default
+-- Any errors in the theme are printed to `io.stderr`. Running Textadept from a
+-- terminal is the easiest way to see errors as they occur.
+-- @param name The name or absolute path of a theme. If `nil`, sets the default
 --   theme.
 -- @name set_theme
 function gui.set_theme(name)

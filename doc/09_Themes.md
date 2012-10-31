@@ -31,10 +31,11 @@ elements, resulting in a single, unified theme.
 In the terminal version of Textadept, colors are determined by your terminal
 emulator's settings. The only colors recognized by Textadept are the standard
 black, red, green, yellow, blue, magenta, cyan, white, and bold variants of
-those colors. How your terminal chooses to display these colors is up to you.
-However, you can still customize which colors are used for particular styles.
+those colors. How your terminal chooses to display these colors is up to your
+terminal settings. However, you can still customize which colors are used for
+particular styles.
 
-[Styles]: api/lexer.html#Styling.Tokens
+[Styles]: api/lexer.html#Styles.and.Styling
 
 ### Buffer
 
@@ -78,7 +79,8 @@ Behind the scenes, Textadept is setting the theme name in a *~/.textadept/theme*
 or *~/.textadept/theme_term* file. To use a theme not listed, specify an
 absolute path to the theme's folder in your *~/.textadept/theme* or
 *~/.textadept/theme_term* file. When testing themes, any errors that occur are
-printed to standard error.
+printed to standard error. Running Textadept from a terminal is the easiest way
+to see errors as they occur.
 
 [language-specific module]: 07_Modules.html#Buffer.Properties
 

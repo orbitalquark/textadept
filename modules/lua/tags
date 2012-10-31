@@ -1099,7 +1099,6 @@ get_line	_	0;"	f	class:buffer
 get_line_sel_end_position	_	0;"	f	class:buffer
 get_line_sel_start_position	_	0;"	f	class:buffer
 get_property	_	0;"	f	class:lexer
-get_range_pointer	_	0;"	f	class:buffer
 get_sel_text	_	0;"	f	class:buffer
 get_split_table	_	0;"	f	class:gui
 get_style_at	_	0;"	f	class:lexer

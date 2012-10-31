@@ -18,34 +18,34 @@ local find = gui.find
 -- @field in_files (bool)
 --   Search for the text in a list of files.
 -- @field find_label_text (string, Write-only)
---   The text of the 'Find' label.
+--   The text of the "Find" label.
 --   This is primarily used for localization.
 -- @field replace_label_text (string, Write-only)
---   The text of the 'Replace' label.
+--   The text of the "Replace" label.
 --   This is primarily used for localization.
 -- @field find_next_button_text (string, Write-only)
---   The text of the 'Find Next' button.
+--   The text of the "Find Next" button.
 --   This is primarily used for localization.
 -- @field find_prev_button_text (string, Write-only)
---   The text of the 'Find Prev' button.
+--   The text of the "Find Prev" button.
 --   This is primarily used for localization.
 -- @field replace_button_text (string, Write-only)
---   The text of the 'Replace' button.
+--   The text of the "Replace" button.
 --   This is primarily used for localization.
 -- @field replace_all_button_text (string, Write-only)
---   The text of the 'Replace All' button.
+--   The text of the "Replace All" button.
 --   This is primarily used for localization.
 -- @field match_case_label_text (string, Write-only)
---   The text of the 'Match case' label.
+--   The text of the "Match case" label.
 --   This is primarily used for localization.
 -- @field whole_word_label_text (string, Write-only)
---   The text of the 'Whole word' label.
+--   The text of the "Whole word" label.
 --   This is primarily used for localization.
 -- @field lua_pattern_label_text (string, Write-only)
---   The text of the 'Lua pattern' label.
+--   The text of the "Lua pattern" label.
 --   This is primarily used for localization.
 -- @field in_files_label_text (string, Write-only)
---   The text of the 'In files' label.
+--   The text of the "In files" label.
 --   This is primarily used for localization.
 -- @field _G.events.FIND_WRAPPED (string)
 --   Called when a search for text wraps, either from bottom to top when
@@ -253,7 +253,7 @@ events_connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   end
 end, 1) -- place before command_entry.lua's handler (if necessary)
 
--- 'Find next' for incremental search.
+-- "Find next" for incremental search.
 events_connect(events.COMMAND_ENTRY_COMMAND, function(text)
   if find.incremental then
     find.incremental_start = buffer.current_pos + 1
@@ -286,7 +286,7 @@ end
 -- Replaces found text.
 -- `find_()` is called first, to select any found text. The selected text is
 -- then replaced by the specified replacement text.
--- This function ignores 'Find in Files'.
+-- This function ignores "Find in Files".
 -- @param rtext The text to replace found text with. It can contain both Lua
 --   capture items (`%n` where 1 <= `n` <= 9) for Lua pattern searches and `%()`
 --   sequences for embedding Lua code for any search.
@@ -318,7 +318,7 @@ events_connect(events.REPLACE, replace)
 
 -- Replaces all found text.
 -- If any text is selected, all found text in that selection is replaced.
--- This function ignores 'Find in Files'.
+-- This function ignores "Find in Files".
 -- @param ftext The text to find.
 -- @param rtext The text to replace found text with.
 -- @param flags The number mask identical to the one in `find_()`.
@@ -428,25 +428,25 @@ end)
 local focus
 
 ---
--- Mimicks a press of the 'Find Next' button.
+-- Mimicks a press of the "Find Next" button.
 -- @class function
 -- @name find_next
 local find_next
 
 ---
--- Mimicks a press of the 'Find Prev' button.
+-- Mimicks a press of the "Find Prev" button.
 -- @class function
 -- @name find_prev
 local find_prev
 
 ---
--- Mimicks a press of the 'Replace' button.
+-- Mimicks a press of the "Replace" button.
 -- @class function
 -- @name replace
 local replace
 
 ---
--- Mimicks a press of the 'Replace All' button.
+-- Mimicks a press of the "Replace All" button.
 -- @class function
 -- @name replace_all
 local replace_all

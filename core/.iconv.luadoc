@@ -2,7 +2,7 @@
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the
 -- string table.
 
---- Extends Lua's `string` package to provide character set conversions.
+--- Extends Lua's `string` library to provide character set conversions.
 module('string')
 
 ---

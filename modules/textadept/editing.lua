@@ -60,7 +60,7 @@ M.comment_string = {}
 -- Used for auto-matching parentheses, brackets, braces, quotes, etc. Keys are
 -- lexer language names and values are tables of character match pairs. A pair's
 -- key is an ASCII value and the value is the string character match. The
--- defaults are "()", "[]", "{}", "''", and """".
+-- defaults are "()", "[]", "{}", "&apos;&apos;", and "&quot;&quot;".
 -- This table can be populated by language-specific modules.
 -- @class table
 -- @name char_matches
