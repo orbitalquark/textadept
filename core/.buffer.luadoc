@@ -911,7 +911,7 @@ function add_text(buffer, text) end
 -- Enlarge the document to a particular size of text bytes.
 -- The document will not be made smaller than its current contents.
 -- @param buffer The global buffer.
--- @param bytes
+-- @param bytes The number of bytes the document can store.
 function allocate(buffer, bytes) end
 
 ---
@@ -929,7 +929,7 @@ function append_text(buffer, text) end
 
 ---
 -- Is there an auto-completion list visible?
--- @param buffer
+-- @param buffer The global buffer.
 -- @return bool
 function auto_c_active(buffer) end
 
@@ -958,7 +958,7 @@ function auto_c_pos_start(buffer) end
 -- By default, comparisons are case sensitive, but this can change with
 -- `buffer.auto_c_ignore_case`.
 -- @param buffer The global buffer.
--- @param string
+-- @param string The item in the list to select.
 function auto_c_select(buffer, string) end
 
 ---
@@ -990,7 +990,7 @@ function begin_undo_action(buffer) end
 ---
 -- Highlight the character at a position indicating there is no matching brace.
 -- @param buffer The global buffer.
--- @param pos The position or -1 to remove the highlight.
+-- @param pos The position or `-1` to remove the highlight.
 function brace_bad_light(buffer, pos) end
 
 ---
@@ -1118,8 +1118,8 @@ function char_left_rect_extend(buffer) end
 ---
 -- Find the position of a character from a point within the window.
 -- @param buffer The global buffer.
--- @param x
--- @param y
+-- @param x The x-coordinate in the window.
+-- @param y The y-coordinate in the window.
 -- @return number
 function char_position_from_point(buffer, x, y) end
 
@@ -1127,8 +1127,8 @@ function char_position_from_point(buffer, x, y) end
 -- Find the position of a character from a point within the window.
 -- Return `-1` if not close to text.
 -- @param buffer The global buffer.
--- @param x
--- @param y
+-- @param x The x-coordinate in the window.
+-- @param y The y-coordinate in the window.
 -- @return number
 function char_position_from_point_close(buffer, x, y) end
 
@@ -1215,7 +1215,7 @@ function convert_eo_ls(buffer, mode) end
 
 ---
 -- Copy the selection to the clipboard.
--- @param buffer The buffer
+-- @param buffer The global buffer.
 function copy(buffer) end
 
 ---
@@ -1239,8 +1239,9 @@ function copy_text(buffer, text) end
 
 ---
 -- Count characters between two positions.
--- @param start_pos
--- @param end_pos
+-- @param buffer The global buffer.
+-- @param start_pos The start position.
+-- @param end_pos The end position.
 -- @return number
 function count_characters(buffer, start_pos, end_pos) end
 
@@ -1396,7 +1397,7 @@ function get_hotspot_active_fore(buffer) end
 -- Find the last child line of a header line.
 -- @param buffer The global buffer.
 -- @param header_line The line number of a header line.
--- @param level The level or `-1` for the level of header_line.
+-- @param level The level or `-1` for the level of `header_line`.
 function get_last_child(buffer, header_line, level) end
 
 ---
@@ -1533,7 +1534,7 @@ function indicator_end(buffer, indicator, pos) end
 -- Turn a indicator on over a range.
 -- This function fills with the current indicator value.
 -- @param buffer The global buffer.
--- @param pos the start position.
+-- @param pos The start position.
 -- @param fill_length The length.
 function indicator_fill_range(buffer, pos, fill_length) end
 
@@ -1787,7 +1788,7 @@ function marker_delete_handle(buffer, handle) end
 -- Enable/disable highlight for current folding block (smallest one that
 -- contains the caret)
 -- @param buffer The global buffer.
--- @param enabled
+-- @param enabled Whether to enable highlight.
 function marker_enable_highlight(buffer, enabled) end
 
 ---
@@ -1970,8 +1971,8 @@ function position_from_line(buffer, line) end
 ---
 -- Find the position from a point within the window.
 -- @param buffer The global buffer.
--- @param x
--- @param y
+-- @param x The x-coordinate in the window.
+-- @param y The y-coordinate in the window.
 -- @return number
 function position_from_point(buffer, x, y) end
 
@@ -1979,8 +1980,8 @@ function position_from_point(buffer, x, y) end
 -- Returns the position from a point within the window, but return `-1` if not
 -- close to text.
 -- @param buffer The global buffer.
--- @param x
--- @param y
+-- @param x The x-coordinate in the window.
+-- @param y The y-coordinate in the window.
 -- @return number
 function position_from_point_close(buffer, x, y) end
 
@@ -2019,7 +2020,7 @@ function replace_sel(buffer, text) end
 -- After replacement, the target range refers to the replacement text.
 -- Returns the length of the replacement text.
 -- @param buffer The global buffer.
--- @param text The text (can contain NULs).
+-- @param text The text (can contain null bytes).
 -- @return number
 function replace_target(buffer, text) end
 
@@ -2030,7 +2031,7 @@ function replace_target(buffer, text) end
 -- and `\)`. Returns the length of the replacement text including any change
 -- caused by processing the `\d` patterns.
 -- @param buffer The global buffer.
--- @param text The text (can contain NULs).
+-- @param text The text (can contain null bytes).
 -- @return number
 function replace_target_re(buffer, text) end
 
@@ -2067,7 +2068,7 @@ function search_anchor(buffer) end
 -- Returns length of range or `-1` for failure in which case target is not
 -- moved.
 -- @param buffer The global buffer.
--- @param text The text (can contain NULs).
+-- @param text The text (can contain null bytes).
 -- @return number
 function search_in_target(buffer, text) end
 
@@ -2080,6 +2081,7 @@ function search_in_target(buffer, text) end
 -- @param flags Search flags. See `buffer.search_flags`.
 -- @param text The text.
 -- @return number
+-- @see search_flags
 function search_next(buffer, flags, text) end
 
 ---
@@ -2091,6 +2093,7 @@ function search_next(buffer, flags, text) end
 -- @param flags Search flags. See `buffer.search_flags`.
 -- @param text The text.
 -- @return number
+-- @see search_flags
 function search_prev(buffer, flags, text) end
 
 ---
@@ -2151,7 +2154,7 @@ function set_hotspot_active_fore(buffer, use_setting, color) end
 ---
 -- Set the length of the utf8 argument for calling `buffer:encoded_from_utf8()`.
 -- @param buffer The global buffer.
--- @param bytes Bytes or `-1` for measuring to first NUL.
+-- @param bytes Bytes or `-1` for measuring to first null byte.
 function set_length_for_encode(buffer, bytes) end
 
 ---
@@ -2212,7 +2215,7 @@ function set_text(buffer, text) end
 -- moved to by `buffer:goto_line()`, etc.
 -- It is similar in operation to `buffer:set_y_caret_policy()`.
 -- @param buffer The global buffer.
--- @param visible_policy A combination of `_SCINTILLA.constants.VISIBLE_SLOP`,
+-- @param visible_policy A combination of `_SCINTILLA.constants.VISIBLE_SLOP`
 --   (0x01) and `_SCINTILLA.constants.VISIBLE_STRICT` (0x04).
 -- @param visible_slop The slop value.
 function set_visible_policy(buffer, visible_policy, visible_slop) end
@@ -2237,8 +2240,8 @@ function set_whitespace_fore(buffer, use_setting, color) end
 -- @param buffer The global buffer.
 -- @param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`
 --   (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),
---   `_SCINTILLA.constants.CARET_JUMPS` (0x10), and
---   `_SCINTILLA.constants.CARET_EVEN` (0x08).
+--   `_SCINTILLA.constants.CARET_EVEN` (0x08), and
+--   `_SCINTILLA.constants.CARET_JUMPS` (0x10).
 -- @param caret_slop A slop value.
 function set_x_caret_policy(buffer, caret_policy, caret_slop) end
 
@@ -2247,8 +2250,8 @@ function set_x_caret_policy(buffer, caret_policy, caret_slop) end
 -- @param buffer The global buffer.
 -- @param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`
 --   (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),
---   `_SCINTILLA.constants.CARET_JUMPS` (0x10), and
---   `_SCINTILLA.constants.CARET_EVEN` (0x08).
+--   `_SCINTILLA.constants.CARET_EVEN` (0x08), and
+--   `_SCINTILLA.constants.CARET_JUMPS` (0x10).
 -- @param caret_slop A slop value.
 function set_y_caret_policy(buffer, caret_policy, caret_slop) end
 
