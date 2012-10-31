@@ -348,7 +348,7 @@ local utils = M.utils
 --         * Adding the Alt and/or Shift modifiers to any of the above keys also
 --           gives the same result, but with only the Alt modifier being
 --           recognized (e.g. `keys['ca$']` would be `keys['ca\']`).
---   * Control+[Alt+]Shift+letter does not report the uppercase letter (e.g.
+--   * Control+[Alt+]Shift+letter does not report the upper case letter (e.g.
 --     `keys.cA` in the GUI would be `keys.ca` in the terminal and similarly,
 --     `keys.caA` would be `keys.caa`).
 --   * No modifiers are recognized for the function keys (e.g. F1-F12).
