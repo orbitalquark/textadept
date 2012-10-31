@@ -78,10 +78,10 @@ local M = {}
 --   Arguments:
 --
 --   * `code`: The key code.
---   * `shift`: The Shift key is held down.
---   * `ctrl`: The Control/Command key is held down.
---   * `alt`: The Alt/option key is held down.
---   * `meta`: The Control key on Mac OSX is held down.
+--   * `shift`: The "Shift" modifier key is held down.
+--   * `ctrl`: The "Control"/"Command" modifier key is held down.
+--   * `alt`: The "Alt"/"Option" modifier key is held down.
+--   * `meta`: The "Control" modifier key on Mac OSX is held down.
 -- @field DOUBLE_CLICK (string)
 --   Called when the mouse button is double-clicked.
 --   Arguments:
@@ -94,8 +94,8 @@ local M = {}
 --     `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --     `_SCINTILLA.constants.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
---     Ctrl and Alt due to a Scintilla limitation with GTK+.
+--     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
+--     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field DWELL_END (string)
 --   Called after a `DWELL_START` and the mouse is moved or other activity such
 --   as key press indicates the dwell is over.
@@ -137,8 +137,8 @@ local M = {}
 --     `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --     `_SCINTILLA.constants.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
---     Ctrl and Alt due to a Scintilla limitation with GTK+.
+--     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
+--     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field HOTSPOT_DOUBLE_CLICK (string)
 --   Called when the user double clicks on text that is in a style with the
 --   hotspot attribute set.
@@ -151,8 +151,8 @@ local M = {}
 --     `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --     `_SCINTILLA.constants.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
---     Ctrl and Alt due to a Scintilla limitation with GTK+.
+--     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
+--     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field HOTSPOT_RELEASE_CLICK (string)
 --   Called when the user releases the mouse on text that is in a style with the
 --   hotspot attribute set.
@@ -170,8 +170,8 @@ local M = {}
 --     `_SCINTILLA.constants.SCMOD_SHIFT`, and
 --     `_SCINTILLA.constants.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
---     Ctrl and Alt due to a Scintilla limitation with GTK+.
+--     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
+--     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field INDICATOR_RELEASE (string)
 --   Called when the user releases the mouse on text that has an indicator.
 --   Arguments:
@@ -183,10 +183,10 @@ local M = {}
 --   Arguments:
 --
 --   * `code`: The key code.
---   * `shift`: The Shift key is held down.
---   * `ctrl`: The Control/Command key is held down.
---   * `alt`: The Alt/option key is held down.
---   * `meta`: The Control key on Mac OSX is held down.
+--   * `shift`: The "Shift" modifier key is held down.
+--   * `ctrl`: The "Control"/"Command" modifier key is held down.
+--   * `alt`: The "Alt"/"Option" modifier key is held down.
+--   * `meta`: The "Control" modifier key on Mac OSX is held down.
 -- @field MARGIN_CLICK (string)
 --   Called when the mouse is clicked inside a margin.
 --   Arguments:
@@ -199,8 +199,8 @@ local M = {}
 --     and `_SCINTILLA.constants.SCI_ALT` to indicate the keys that were held
 --     down at the time of the margin click.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `_SCINTILLA.constants.SCMOD_CTRL`, the Ctrl key is reported as *both*
---     Ctrl and Alt due to a Scintilla limitation with GTK+.
+--     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
+--     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field MENU_CLICKED (string)
 --   Called when a menu item is selected.
 --   Arguments:
@@ -283,7 +283,7 @@ M.handlers = {}
 -- @param f The Lua function to add.
 -- @param index Optional index to insert the handler into.
 -- @return Index of handler.
--- @usage events.connect('my_event', function(message) gui.print(message) end)
+-- @usage events.connect('my_event', function(msg) gui.print(msg) end)
 -- @see disconnect
 -- @name connect
 function M.connect(event, f, index)

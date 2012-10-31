@@ -20,15 +20,16 @@ empty, no modules are loaded (pretty much rendering Textadept useless).
 
 It is never recommended to modify the default modules that come with Textadept,
 even if you just want to change an option in a generic module, modify the buffer
-settings for a language-specific module, edit file types, or just add a small
-bit of custom code. Those changes may be overwritten when you upgrade Textadept
-to a newer version. Instead you have two options: load your own module instead
-of the default one, or run your custom module code after the default module
-loads. To load your own module, simply place it appropriately in
-*~/.textadept/modules/*. To run your module code after a default generic module
-loads, put your code in *~/.textadept/init.lua*. To run your module code after a
-default language-specific module loads, create a *post_init.lua* Lua script in
-the appropriate *~/.textadept/modules/* module folder.
+settings for a language-specific module, edit file types, or add a small bit of
+custom code. Those changes may be overwritten when you upgrade Textadept to a
+newer version. Instead you have two options: load your own module instead of the
+default one, or run your custom module code after the default module loads. To
+load your own module, simply place it appropriately in *~/.textadept/modules/*.
+To run your module code after a default generic module loads, put your code in
+*~/.textadept/init.lua*. To run your module code after a default
+language-specific module loads, create a *post_init.lua* Lua script in the
+appropriate *~/.textadept/modules/* module folder. These methods are discussed
+below.
 
 ### Generic
 

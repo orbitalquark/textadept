@@ -25,11 +25,11 @@ can compile Textadept with earlier versions of GLib down to 2.22. For reference,
 Ubuntu 11.04, Debian Wheezy, Fedora 15, and openSUSE 11.4 support GLib 2.28 or
 later.
 
-Most Linux and BSD systems already have ncurses installed. If not, look for it in
-your package manager, or compile and install it from the [ncurses website][].
-For Debian-based distributions like Ubuntu, the package is typically called
-"libncursesw5". Note: you need to have the wide-character version of ncurses
-installed, which handles multibyte characters.
+Most Linux and BSD systems already have ncurses installed. If not, look for it
+in your package manager, or compile and install it from the [ncurses website][].
+You need to have or compile the wide-character version of ncurses, which handles
+multibyte characters. For Debian-based distributions like Ubuntu, the package is
+typically called "libncursesw5".
 
 [GTK+ website]: http://www.gtk.org/download-linux.html
 [ncurses website]: http://invisible-island.net/ncurses/#download_ncurses
@@ -69,7 +69,7 @@ Unpack the archive anywhere.
 
 If you downloaded the set of language-specific modules, unpack it where you
 unpacked the Textadept archive. The modules will be contained in the
-*/path/to/textadept_VERSION/modules/* directory.
+*/path/to/textadept_x.x/modules/* directory.
 
 ### Mac OSX
 
@@ -88,16 +88,16 @@ Unpack the archive anywhere.
 
 If you downloaded the set of language-specific modules, unpack it where you
 unpacked the Textadept archive. The modules will be contained in the
-*textadept_VERSION\modules\\* directory.
+*textadept_x.x\modules\\* directory.
 
 ## Running
 
 ### Linux and BSD
 
-Run Textadept by running */path/to/textadept_VERSION/textadept* from the
-terminal. You can also create a symbolic link to the executable in a directory
-in your "$PATH" (e.g. */usr/bin/*) or make a GNOME, KDE, XFCE, etc. button or
-menu launcher.
+Run Textadept by running */path/to/textadept_x.x/textadept* from the terminal.
+You can also create a symbolic link to the executable in a directory in your
+"$PATH" (e.g. */usr/local/bin/*) or make a GNOME, KDE, XFCE, etc. button or menu
+launcher.
 
 There is also a *textadeptjit* executable for running Textadept with [LuaJIT][].
 Please note there may be [compatibility issues][]. The *textadept* executable is
@@ -142,13 +142,13 @@ non-LuaJIT executable is recommended.
 
 #### Environment Variables
 
-By default, GUI apps like Textadept do not utilize environment variables like
-"$PATH" from your shell profile. Therefore, any [modules][] that use programs
-contained in "$PATH" (e.g. the progams in */usr/local/bin/*) for run and compile
-commands will not be found. The solution is to follow [these instructions][] to
-export whichever environment variables you need. At the very least, set "PATH"
-to be "$PATH". You will have to logout and log back in for the changes to take
-effect.
+By default, Mac OSX GUI apps like Textadept do not utilize environment variables
+like "$PATH" from your shell profile. Therefore, any [modules][] that use
+programs contained in "$PATH" (e.g. the progams in */usr/local/bin/*) for run
+and compile commands will not be found. The solution is to follow
+[these instructions][] to export whichever environment variables you need. At
+the very least, set "PATH" to be "$PATH". You will have to logout and log back
+in for the changes to take effect.
 
 [modules]: 07_Modules.html
 [these instructions]: http://developer.apple.com/library/mac/#qa/qa1067/_index.html

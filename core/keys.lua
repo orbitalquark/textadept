@@ -54,7 +54,7 @@ local M = {}
 --
 -- Commands associated with key sequences can be either Lua functions, or
 -- tables containing Lua functions with a set of arguments to call the function
--- with. Examples are
+-- with. Examples are:
 --
 --     keys['cn'] = new_buffer
 --     keys['cs'] = buffer.save
@@ -70,7 +70,7 @@ local M = {}
 -- assigned to one key sequence. Language-specific modules
 -- [use key chains](#LANGUAGE_MODULE_PREFIX) for their functions. By default,
 -- the `Esc` (`⎋` on Mac OSX | `Esc` in ncurses) key cancels a key chain, but it
--- can be redefined via [`CLEAR`](#CLEAR). An example key chain looks like
+-- can be redefined via [`CLEAR`](#CLEAR). An example key chain looks like:
 --
 --     keys['aa'] = {
 --       a = function1,
@@ -105,7 +105,7 @@ local getmetatable = getmetatable
 local error = function(e) events.emit(events.ERROR, e) end
 
 ---
--- Lookup table for string representations of GDK key codes higher than 255.
+-- Lookup table for string representations of key codes higher than 255.
 -- Key codes can be identified by temporarily uncommenting the `print()`
 -- statements in *core/keys.lua*
 -- @class table

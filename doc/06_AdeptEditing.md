@@ -45,17 +45,17 @@ The caret also changes to an underline when in overwrite mode.
 
 Textadept has many ways of creating and working with selections. Basic
 selections are what you get when you do things like hold the "Shift" modifier
-key (`⇧` on Mac OSX | "Shift" in ncurses) while pressing the arrow keys, click
-and drag the mouse over a range of text, or press `Ctrl+A` (`⌘A` | `M-A`) for
-"Select All". More advanced selections like multiple and rectangular selections
-are more complicated to create, but have powerful uses.
+key while pressing the arrow keys, click and drag the mouse over a range of
+text, or press `Ctrl+A` (`⌘A` | `M-A`) for "Select All". More advanced
+selections like multiple and rectangular selections are more complicated to
+create, but have powerful uses.
 
 ### Multiple Selection
 
 Clicking the mouse at a point in the buffer while holding the "Control" modifier
-key (`^` on Mac OSX | N/A in ncurses) places an additional caret at that point.
-Clicking and dragging while holding the same modifier creates multiple
-selections. When you start typing, the text is mirrored at each selection.
+key places an additional caret at that point. Clicking and dragging while
+holding the same modifier creates multiple selections. When you start typing,
+the text is mirrored at each selection.
 
 Creating multiple selections with the mouse is currently unavailable in ncurses.
 
@@ -63,9 +63,8 @@ Creating multiple selections with the mouse is currently unavailable in ncurses.
 
 Holding `Alt+Shift` (`⌥⇧` on Mac OSX | `M-S-` in ncurses) and pressing the arrow
 keys enables rectangular selections to be made. Start typing to type on each
-line. You can also hold the "Alt" modifier key ("Super" on Linux | `⌥` on Mac
-OSX | N/A in ncurses) while clicking and dragging the mouse to create
-rectangular selections.
+line. You can also hold the "Alt" modifier key ("Super" on Linux) while clicking
+and dragging the mouse to create rectangular selections.
 
 ![Rectangular Selection](images/rectangularselection.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -77,6 +76,9 @@ because `Alt+Mouse` generally moves windows. If you prefer to use "Alt", you can
 change [`buffer.rectangular_selection_modifier`][] in your [theme][]. The
 "Super" modifier key is usually defined as the left "Windows" key, but may need
 to be reconfigured too.
+
+Creating rectangular selections with the mouse is currently unavailable in
+ncurses.
 
 [`buffer.rectangular_selection_modifier`]: api/buffer.html#rectangular_selection_modifier
 [theme]: 09_Themes.html#View
@@ -91,9 +93,9 @@ selection to the brace character's matching brace.
 
 Textadept allows you to select many different entities from the caret. For
 example, `Ctrl+"` (`^"` on Mac OSX | `M-"` in ncurses) selects all characters in
-a double-quoted sequence. Typing `Ctrl++` (`^+` | `M-+`) as a follow-up selects
-the double-quotes too. See the "Edit -> Select In..." menu for available
-entities and their key bindings.
+a double-quoted range. Typing `Ctrl++` (`^+` | `M-+`) as a follow-up selects the
+double-quotes too. See the "Edit -> Select In..." menu for available entities
+and their key bindings.
 
 ### Marks
 
@@ -117,12 +119,14 @@ As a complement to selecting entities, you can enclose text as entities. The
 "Edit -> Selection -> Enclose In..." menu contains all available entities and
 their key bindings.
 
-If no text is selected, the word to the left of the caret is enclosed.
+If no text is selected, the word to the left of the caret is enclosed. For
+example, pressing `Alt+<` (`^<` on Mac OSX | `M->` in ncurses) at the end of a
+word encloses it in XML tags.
 
 #### Change Case
 
 Pressing `Ctrl+Alt+U` or `Ctrl+Alt+Shift+U` (`^U` or `^⇧U` on Mac OSX | `M-^U`
-or `M-^L` in ncurses) converts selected text to upper-case letters or lower-case
+or `M-^L` in ncurses) converts selected text to uppercase letters or lowercase
 letters respectively.
 
 #### Change Indent Level
@@ -223,7 +227,7 @@ highlight syntax incorrectly. Pressing `F5` triggers a full redraw.
 
 ### Code Folding
 
-Some lexers support code folding, where blocks of code can be temporarily
+Some lexers support "code folding", where blocks of code can be temporarily
 hidden, making viewing easier. Fold points are denoted by arrows in the margin
 to the left of the code. Clicking on one toggles the folding for that block of
 code. You can also press `Ctrl+*` (`⌘*` on Mac OSX | `M-*` in ncurses) to

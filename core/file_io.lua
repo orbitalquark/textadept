@@ -2,7 +2,7 @@
 
 --[[ This comment is for LuaDoc.
 ---
--- Extends Lua's `io` package with Textadept functions for working with files.
+-- Extends Lua's `io` library with Textadept functions for working with files.
 --
 -- ## Working with UTF-8
 --

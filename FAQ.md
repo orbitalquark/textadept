@@ -8,8 +8,8 @@ How do I fix it?
 **A:**
 It is difficult to provide a binary that runs on all Linux platforms since the
 library versions installed vary widely from distribution to distribution. For
-example, `libpng14` has been available for many distributions since late 2009
-while the latest 2012 Ubuntu still uses `libpng12`. Unfortunately in these
+example, "libpng14" has been available for many distributions since late 2009
+while the latest 2012 Ubuntu still uses "libpng12". Unfortunately in these
 cases, the best idea is to compile Textadept. This process is actually very
 simple though. See the [compiling][] page. Only the GTK+ development libraries
 are needed for the GUI version. (The ncurses development library is required for
@@ -33,7 +33,7 @@ The source version contains all the files necessary for compiling Textadept.
 Autocompletion does not work for my language. Why not?
 
 **A:**
-`modules/textadept/key_commands.lua` calls
+*modules/textadept/key_commands.lua* calls
 [`_M.textadept.editing.autocomplete_word()`][] with `'%w_'`, which in [Lua][] is
 all ASCII alphanumeric characters and underscores. You can add character ranges
 in `'\xXX-\xXX'` or `'\ddd-\ddd'` [format][] (e.g. `'%w_\127-\255'`).
@@ -88,13 +88,12 @@ bug reports.
 - - -
 
 **Q:**
-Pressing "Control+O" in the ncurses version on Mac OSX does not do anything.
-Why?
+Pressing `^O` in the ncurses version on Mac OSX does not do anything. Why?
 
 **A:**
-For whatever reason, "Control+O" is discarded by the terminal driver. To enable
-it, run `stty discard undef` first. You can put the command in your `~/.bashrc`
-or `~/.bash_profile` to make it permanent.
+For whatever reason, `^O` is discarded by the terminal driver. To enable it, run
+`stty discard undef` first. You can put the command in your *~/.bashrc* or
+*~/.bash_profile* to make it permanent.
 
 - - -
 
@@ -105,7 +104,7 @@ no messages. What can I do?
 **A:**
 You likely have old modules that are not compatible with Textadept >= 5. Most
 offending modules use the `module()` Lua 5.1 function which was removed in Lua
-5.2. You can temporarily move your `~/.textadept/` directory elsewhere and
+5.2. You can temporarily move your *~/.textadept/* directory elsewhere and
 restart Textadept to be sure old modules are causing problems. You can correct
 them using the [migration guide][].
 

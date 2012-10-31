@@ -45,8 +45,8 @@ commands on-the-fly to handling core events. The possibilities are limitless.
 This manual uses notation that is worth clarifying.
 
 Directories and file paths are represented like this: */path/to/dir/* and
-*/path/to/file*. (On Windows machines, "/" and "\" can be used interchangeably
-as directory separators.) Any relative paths, paths that do not begin with "/"
+*/path/to/file*. (On Windows machines, '/' and '\' can be used interchangeably
+as directory separators.) Any relative paths, paths that do not begin with '/'
 or "C:\", are relative to the location of Textadept. *~/* is denoted as the
 user's home directory. On Windows machines this is the value of the "USERHOME"
 environment variable, typically *C:\Users\username\\* or

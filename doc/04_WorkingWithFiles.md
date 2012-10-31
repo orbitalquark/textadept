@@ -51,8 +51,8 @@ the "Buffer -> Indentation" menu.
 
 #### Line Endings
 
-Line endings, commonly known as end-of-line (EOL) markers, are set based on the
-current platform for new files. On Windows, CRLF ("\r\n") is used. Otherwise, LF
+Line endings, commonly known as end-of-line (EOL) markers, are set for new files
+based on the current platform. On Windows, CRLF ("\r\n") is used. Otherwise, LF
 ("\n") is. This can be changed manually using the "Buffer -> EOL Mode" menu.
 Unlike indentation settings, switching EOL modes converts all existing EOLs
 automatically. Textadept attempts to auto-detect the EOL mode of opened files
@@ -86,12 +86,11 @@ files to reopen.
 
 By default, Textadept saves its state on exit so it can be restored the next
 time the editor starts up. You can disable this by passing the `-n` or
-`--no-session` switch to Textadept on startup. Sessions can be manually saved
-and opened via the "File -> Save Session..." and "File -> Load Session..."
-menus. Session files store information such as open buffers, current split
-views, caret and scroll positions in each buffer, Textadept's window size, and
-recently opened files. Tampering with session files may have unintended
-consequences.
+`--nosession` switch to Textadept on startup. Sessions can be manually saved and
+opened via the "File -> Save Session..." and "File -> Load Session..." menus.
+Session files store information such as open buffers, current split views, caret
+and scroll positions in each buffer, Textadept's window size, and recently
+opened files. Tampering with session files may have unintended consequences.
 
 ### Snapopen
 
@@ -133,7 +132,9 @@ Split views are unavailable in ncurses.
 
 Individual views have many configurable settings. Among the more useful settings
 are viewing line endings, handling long lines, viewing indentation guides, and
-viewing whitespace. These options change how buffers in the view are displayed.
+viewing whitespace. These options change how buffers in the _current_ view are
+displayed. Changing a setting in one view does not change that setting in
+any other split view. It will have to be done manually.
 
 #### Line Endings
 

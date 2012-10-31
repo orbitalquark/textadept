@@ -38,7 +38,7 @@ In addition, BSD users will need to have [libiconv][] installed.
 Compiling Textadept on Windows is no longer supported. If you wish to do so
 however, you need a C compiler that supports the C99 standard, the
 [GTK+ for Windows bundle][] (2.24 is recommended), and [libiconv for Windows][]
-(the "Developer files" and "Binaries" zip).
+(the "Developer files" and "Binaries" zip files).
 
 The preferred way to compile for Windows is cross-compiling from Linux. To do
 so, in addition to the GTK+ bundle mentioned above, you need [MinGW][] with the
@@ -90,12 +90,12 @@ a normal Linux application, run the usual `make` and then `make install` or
 ### Cross Compiling for Windows
 
 When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
-into a new *src/win32gtk* directory. Also, unzip the libiconv zips into the same
-directory. Then, depending on your MinGW installation, either run `make win32`,
-modify the `CROSS` variable in the "win32" block of *src/Makefile* and run
-`make win32`, or run `make CROSS=i486-mingw32- win32` to build
+into a new *src/win32gtk/* directory. Also, unzip the libiconv zips into the
+same directory. Then, depending on your MinGW installation, either run
+`make win32`, modify the `CROSS` variable in the "win32" block of *src/Makefile*
+and run `make win32`, or run `make CROSS=i486-mingw32- win32` to build
 *../textadept.exe* and *../textadeptjit.exe*. Finally, copy the dll files from
-*src/win32gtk/bin* to the directory containing the Textadept executables.
+*src/win32gtk/bin/* to the directory containing the Textadept executables.
 
 Please note that a *lua51.dll* is produced for _only_ the *textadeptjit.exe*
 because limitations on external Lua library loading do not allow statically
@@ -104,7 +104,7 @@ linking LuaJIT to Textadept.
 ### Cross Compiling for Mac OSX
 
 When cross-compiling from within Linux, first unzip the GTK+ for OSX bundle into
-a new *src/gtkosx* directory. Then run `make osx` to build *../textadept.osx*
+a new *src/gtkosx/* directory. Then run `make osx` to build *../textadept.osx*
 and *../textadeptjit.osx*. At this point it is recommended to build a new
 *Textadept.app* from an existing one. Download the most recent app and replace
 *Contents/MacOS/textadept.osx* and *Contents/MacOS/textadeptjit.osx* with your
@@ -126,7 +126,7 @@ to *src/gtkosx* in Textadept. Then open *src/Makefile* and uncomment the
 *../textadeptjit.osx*.
 
 Note: to build a GTK+ for OSX bundle, the following needs to be run from the
-*src/* directory before zipping up *gtkosx/include* and *gtkosx/lib*:
+*src/* directory before zipping up *gtkosx/include/* and *gtkosx/lib/*:
 
     sed -i -e 's|libdir=/Users/username/gtk/inst/lib|libdir=${prefix}/lib|;' \
     gtkosx/lib/pkgconfig/*.pc
@@ -135,7 +135,8 @@ where `username` is replaced with your username.
 
 Compiling the terminal version is not so expensive. After uncommenting the
 "Darwin" block mentioned above, simply run `make osx-ncurses` to build
-*../textadept-ncurses.osx* and *../textadeptjit-ncurses.osx*.
+*../textadept-ncurses.osx* and *../textadeptjit-ncurses.osx*. No additional
+libraries are needed.
 
 [XCode]: http://developer.apple.com/TOOLS/xcode/
 [jhbuild]: http://sourceforge.net/apps/trac/gtk-osx/wiki/Build

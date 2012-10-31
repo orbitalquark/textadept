@@ -315,13 +315,8 @@ or
 and
 
     -- File ~/.textadept/init.lua
-    require 'textadept'
+    _M.textadept = require 'textadept'
     _M.foo = require 'foo'
-
-Please remember that, as stated in the documentation, `require 'textadept'` is a
-special case and `_M.textadept = require 'textadept'` is not necessary because
-of internal dependencies. All other modules need the
-`_M.module = require 'module'` construct.
 
 Notice that `_M` is the new module table instead of `_m`. More on this
 [later](#Global.Module.Table).

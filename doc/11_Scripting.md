@@ -89,9 +89,8 @@ are located in *lexers/*.
 
 ### Modules
 
-Editing modules are contained in *modules/*. These provide advanced text editing
-capabilities and can be available for all programming languages or targeted at
-specific ones.
+Generic and language-specific modules for editing text and source code are
+contained in *modules/*.
 
 ### Themes
 

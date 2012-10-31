@@ -104,8 +104,8 @@
 --   The default is the space character.
 -- @field auto_c_type_separator (number)
 --   The auto-completion list type-separator character byte.
---   The default is `'?'`. Autocompletion list items may display an image as
---   well as text. Each image is first registered with an integer type. Then
+--   The default is `63` ('?'). Autocompletion list items may display an image
+--   as well as text. Each image is first registered with an integer type. Then
 --   this integer is included in the text of the list separated by a '?' from
 --   the text.
 -- @field back_space_un_indents (bool)
@@ -625,8 +625,8 @@
 -- @field rgba_image_scale (number)
 --   The scale factor in percent for future RGBA image data.
 --   This is useful on OSX with a retina display where each display unit is 2
---   pixels: use a factor of 200 so that each image pixel is dsplayed using a
---   screen pixel. The default scale, 100, will stretch each image pixel to
+--   pixels: use a factor of `200` so that each image pixel is dsplayed using a
+--   screen pixel. The default scale, `100`, will stretch each image pixel to
 --   cover 4 screen pixels on a retina display.
 -- @field rgba_image_width (number)
 --   The width for future RGBA image data.
@@ -653,8 +653,8 @@
 --     The search string should be interpreted as a regular expression.
 --   * `_SCINTILLA.constants.SCFIND_POSIX` (0x00400000)
 --     Treat regular expression in a more POSIX compatible manner by
---     interpreting bare '(' and ')' for tagged sections rather than "\(" and
---     "\)".
+--     interpreting bare '(' and ')' for tagged sections rather than "\\(" and
+--     "\\)".
 -- @field sel_alpha (number)
 --   The alpha of the selection, between `0` (transparent) and `255` (opaque),
 --   or `256` for no alpha.
@@ -963,6 +963,7 @@ function auto_c_select(buffer, string) end
 
 ---
 -- Display an auto-completion list.
+-- @param buffer The global buffer.
 -- @param len_entered The number of characters before the caret used to provide
 --   the context.
 -- @param item_list List of words separated by separator characters (initially
@@ -1207,9 +1208,9 @@ function contracted_fold_next(buffer, line_start) end
 -- Converts all line endings in the document to one mode.
 -- @param buffer The global buffer.
 -- @param mode The line ending mode. Valid values are:
---   `_SCINTILLA.constants.SC_EOL_CRLF` (0),
---   `_SCINTILLA.constants.SC_EOL_CR (1)`, or
---   `_SCINTILLA.constants.SC_EOL_LF (2)`.
+--   * `_SCINTILLA.constants.SC_EOL_CRLF` (0)
+--   * `_SCINTILLA.constants.SC_EOL_CR` (1)
+--   * `_SCINTILLA.constants.SC_EOL_LF` (2)
 function convert_eo_ls(buffer, mode) end
 
 ---
@@ -1282,10 +1283,12 @@ function delete_back(buffer) end
 ---
 -- Delete the selection or if no selection, the character before the caret.
 -- Will not delete the character before at the start of a line.
+-- @param buffer The global buffer.
 function delete_back_not_line(buffer) end
 
 ---
 -- Delete a range of text in the document.
+-- @param buffer The global buffer.
 -- @param pos The start position of the range to delete.
 -- @param length The length of the range to delete.
 function delete_range(buffer, pos, length) end
@@ -1378,7 +1381,7 @@ function form_feed(buffer) end
 function get_cur_line(buffer) end
 
 ---
--- Get the back color for active hotspots in 0xBBGGRR format.
+-- Get the back color for active hotspots in "0xBBGGRR" format.
 -- @param buffer The global buffer.
 -- @return number
 function get_hotspot_active_back(buffer) end
@@ -1417,15 +1420,6 @@ function get_line_sel_end_position(buffer, line) end
 -- @param buffer The global buffer.
 -- @param line The line number.
 function get_line_sel_start_position(buffer, line) end
-
----
--- Return a read-only pointer to a range of characters in the document.
--- May move the gap so that the range is contiguous, but will only move up to
--- range_length bytes.
--- The gap is not moved unless it is within the requested range so this call can
--- be faster than `buffer.character_pointer`. This can be used by application
--- code that is able to act on blocks of text or ranges of lines.
-function get_range_pointer(buffer, position, range_length) end
 
 ---
 -- Retrieve the selected text.
@@ -2030,7 +2024,7 @@ function replace_sel(buffer, text) end
 function replace_target(buffer, text) end
 
 ---
--- Replace the target text with the argument text after \d` processing.
+-- Replace the target text with the argument text after `\d` processing.
 -- Looks for `\d` where `d` is between `1` and `9` and replaces these with the
 -- strings matched in the last search operation which were surrounded by `\(`
 -- and `\)`. Returns the length of the replacement text including any change
@@ -2115,7 +2109,7 @@ function selection_duplicate(buffer) end
 -- Reset the set of characters for whitespace and word characters to the
 -- defaults.
 -- This sets whitespace to space, tab and other characters with codes less than
--- 0x20, with word characters set to alphanumeric and `'_'`.
+-- 0x20, with word characters set to alphanumeric and '_'.
 -- @param buffer The global buffer.
 function set_chars_default(buffer) end
 
@@ -2651,6 +2645,7 @@ function get_style_name(buffer, style_num) end
 --   * mod_event_mask
 --   * paste_convert_endings
 --   * character_pointer
+--   * get_range_pointer
 --   * identifier
 --   * key_words
 --   * technology

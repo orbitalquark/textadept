@@ -22,12 +22,10 @@ modules when Textadept starts.
 Language-specific modules have a scope limited to a single programming language.
 The name of the module is named after the language's lexer in the *lexers/*
 directory and is automatically loaded when editing source code in that
-particular language. In addition to some of the editing features discussed
-[earlier][], these kinds of modules typically also have shell commands for
+particular language. In addition to the source code editing features discussed
+previously, these kinds of modules typically also have shell commands for
 running and compiling code, indentation settings, custom key bindings, and
 perhaps a custom context menu. These features are discussed below.
-
-[earlier]: 06_AdeptEditing.html#Source.Code.Editing
 
 ### Compile and Run
 
