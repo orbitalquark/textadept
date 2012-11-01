@@ -107,7 +107,7 @@
        xlink:href="#linearGradient3813"
        id="linearGradient6625"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.81632648,0,0,0.64285727,42.980755,838.09632)"
+       gradientTransform="matrix(0.55150218,-0.60185902,0.47396409,0.43430807,-3.6956723,951.51679)"
        x1="142.50002"
        y1="28.5844"
        x2="142.50002"
@@ -389,7 +389,7 @@
             <dc:title>Mitchell</dc:title>
           </cc:Agent>
         </dc:creator>
-        <dc:description>Textadept icon without 50 degree CCW inclination and gloss without -2.5 degree CCW inclination.</dc:description>
+        <dc:description>Textadept icon.</dc:description>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -400,11 +400,12 @@
      transform="translate(-24.307286,-824.47201)">
     <path
        style="fill:#ffcc00;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 273.5573,921.972 c 0,-34.10356 -55.62865,-61.75001 -124.25002,-61.75001 -68.621408,0 -124.250029,27.64645 -124.250016,61.75 -5.2e-5,34.10364 55.628626,61.75004 124.250026,61.75004 68.62137,0 124.24999,-27.64641 124.25001,-61.75003 z"
+       d="m 210.61742,834.38843 c -26.12485,-21.92134 -83.06066,2.92188 -127.169634,55.4889 -44.108991,52.56705 -58.68797,112.95187 -32.563127,134.87317 26.124871,21.9214 83.060671,-2.9218 127.169661,-55.48888 44.10896,-52.56702 58.68797,-112.95179 32.5631,-134.87319 z"
        id="path3018"
        inkscape:connector-curvature="0" />
     <g
-       id="g4046">
+       id="g4046"
+       transform="translate(-20.471354,8.490502)">
       <g
          style="fill:#e5b800;fill-opacity:1"
          transform="translate(88.103719,180)"
@@ -446,7 +447,7 @@
     <path
        inkscape:connector-curvature="0"
        id="path3007"
-       d="m 259.30729,906.472 c 10e-6,-24.85279 -44.77153,-44.99999 -99.99999,-44.99999 -55.22849,0 -100.000012,20.1472 -100.000014,44.99999 5e-6,24.85282 44.771524,45.00001 100.000014,45.00001 55.22846,-10e-6 99.99999,-20.1472 99.99999,-45.00001 z"
+       d="m 192.86426,838.21808 c -18.3234,-16.79032 -63.42468,2.60747 -100.736494,43.32617 -37.311824,40.71871 -52.704952,87.339 -34.381559,104.1293 18.323428,16.79035 63.424693,-2.60746 100.736523,-43.32618 37.3118,-40.7187 52.70494,-87.33898 34.38153,-104.12929 z"
        style="fill:url(#linearGradient6625);fill-opacity:1;display:inline" />
   </g>
   <g
@@ -456,7 +457,8 @@
      style="display:inline"
      transform="translate(-24.307286,-824.47201)">
     <g
-       id="g3845">
+       id="g3845"
+       transform="matrix(0.64278761,-0.76604444,0.76604444,0.64278761,-671.49336,451.3133)">
       <g
          id="g3841">
         <path
