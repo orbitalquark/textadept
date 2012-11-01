@@ -4,10 +4,53 @@
 
 [Atom Feed]: feed
 
-## 6.0 beta 3 (01 Oct 2012)
+## 6.0 (01 Nov 2012)
 
 Please see the [5 to 6 migration guide][] for upgrading from Textadept 5 to
 Textadept 6.
+
+Download:
+
+* [Textadept 6.0 -- Win32][]
+* [Textadept 6.0 -- Mac OSX Intel 10.5+][]
+* [Textadept 6.0 -- Linux][]
+* [Textadept 6.0 -- Linux x86_64][]
+* [Textadept 6.0 -- Source][]
+* [Textadept 6.0 -- Modules][]
+
+Bugfixes:
+
+* Handle rapidly pressing `Esc` twice in ncurses dialogs.
+* Complete transition to `buffer.tab_size` from `buffer.indent`.
+* Fixed regression in ncurses command selection.
+* Fixed GUI menu key shortcut handling.
+* Fixed string collation bug in ncurses due to CDK.
+* Pass `Esc` to Scintilla correctly in ncurses.
+
+Changes:
+
+* Added key binding for toggling fold points.
+* Added ncurses key bindings for bookmarks.
+* Added [`event.FIND_WRAPPED`][] event.
+* Removed `_M.textadept.run.execute()`.
+* Updated documentation and documentation formatting.
+* Added [Python module][].
+* Updated to [Scintilla][] 3.2.3.
+* Updated to [LuaJIT][] 2.0.0-beta11.
+
+[5 to 6 migration guide]: 14_Appendix.html#Textadept.5.to.6
+[Textadept 6.0 -- Win32]: download/textadept_6.0.win32.zip
+[Textadept 6.0 -- Mac OSX Intel 10.5+]: download/textadept_6.0.osx.zip
+[Textadept 6.0 -- Linux]: download/textadept_6.0.i386.tgz
+[Textadept 6.0 -- Linux x86_64]: download/textadept_6.0.x86_64.tgz
+[Textadept 6.0 -- Source]: download/textadept_6.0.src.zip
+[Textadept 6.0 -- Modules]: download/textadept_6.0.modules.zip
+[`event.FIND_WRAPPED`]: api/gui.find.html#_G.events.FIND_WRAPPED
+[Python module]: api/_M.python.html
+[Scintilla]: http://scintilla.org
+[LuaJIT]: http://luajit.org
+
+## 6.0 beta 3 (01 Oct 2012)
 
 Download:
 
@@ -41,7 +84,6 @@ Changes:
   respectively.
 * Added marks for making selections in ncurses.
 
-[5 to 6 migration guide]: 14_Appendix.html#Textadept.5.to.6
 [Textadept 6.0 beta 3 -- Win32]: download/textadept_6.0_beta_3.win32.zip
 [Textadept 6.0 beta 3 -- Mac OSX Intel 10.5+]: download/textadept_6.0_beta_3.osx.zip
 [Textadept 6.0 beta 3 -- Linux]: download/textadept_6.0_beta_3.i386.tgz
@@ -84,7 +126,6 @@ Changes:
 * Use constant names in theme options instead of nondescript integers.
 * Updated to [Scintilla][] 3.2.2.
 
-[5 to 6 migration guide]: 14_Appendix.html#Textadept.5.to.6
 [Textadept 6.0 beta 2 -- Win32]: download/textadept_6.0_beta_2.win32.zip
 [Textadept 6.0 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_6.0_beta_2.osx.zip
 [Textadept 6.0 beta 2 -- Linux]: download/textadept_6.0_beta_2.i386.tgz
