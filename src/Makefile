@@ -332,7 +332,7 @@ cleandoc:
 
 basedir = textadept_$(shell grep "_RELEASE =" ../core/init.lua | \
                             cut -d ' ' -f 4- | sed -e 's/"//; s/ /_/g;')
-modules = css hypertext java rails rhtml ruby php
+modules = css hypertext java rails rhtml ruby php python
 
 release: ../textadept ../textadeptjit ../textadept-ncurses \
          ../textadeptjit-ncurses ../textadept32 ../textadeptjit32 \
