@@ -40,8 +40,8 @@ buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
 --buffer.view_eol = true
 
 -- Caret and Selection Styles.
-buffer:set_sel_fore(1, 0x333333)
-buffer:set_sel_back(1, 0x999999)
+buffer:set_sel_fore(true, 0x333333)
+buffer:set_sel_back(true, 0x999999)
 --buffer.sel_alpha =
 --buffer.sel_eol_filled = true
 buffer.caret_fore = 0x4D4D4D
@@ -66,8 +66,8 @@ buffer.margin_mask_n[2] = c.SC_MASK_FOLDERS
 buffer.margin_sensitive_n[2] = true
 --buffer.margin_left =
 --buffer.margin_right =
-buffer:set_fold_margin_colour(1, 0xE6E6E6)
-buffer:set_fold_margin_hi_colour(1, 0xE6E6E6)
+buffer:set_fold_margin_colour(true, 0xE6E6E6)
+buffer:set_fold_margin_hi_colour(true, 0xE6E6E6)
 
 -- Annotations.
 buffer.annotation_visible = c.ANNOTATION_BOXED
