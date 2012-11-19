@@ -121,8 +121,8 @@ local M = {}
 --
 --     sense.completions = {
 --       ['class1'] = {
---         functions = { 'fun1', 'fun2', ...},
---         fields = { 'f1', 'f2', ... }
+--         functions = {'fun1', 'fun2', ...},
+--         fields = {'f1', 'f2', ...}
 --       },
 --       ['class2'] = ...,
 --       ...
@@ -165,7 +165,7 @@ local M = {}
 -- [`api_files`](#api_files) table. See the previous link for documentation on
 -- how the API file should be structured.
 --
---     sense.api_files = { _HOME..'/modules/lua/api' }
+--     sense.api_files = {_HOME..'/modules/lua/api'}
 --
 -- ### Triggers
 --
@@ -450,7 +450,7 @@ function M.get_class(sense, symbol)
           s, e, assignment = line:find(assignment_patt)
           if assignment then
             for patt, type in pairs(type_assignments) do
-              local captures = { assignment:match(patt) }
+              local captures = {assignment:match(patt)}
               if #captures > 0 then
                 class = type:gsub('%%(%d+)', function(n)
                   return captures[tonumber(n)]
@@ -626,7 +626,7 @@ end
 -- @name get_apidoc
 function M.get_apidoc(sense, symbol)
   if not symbol then return nil end
-  local apidocs = { pos = 1 }
+  local apidocs = {pos = 1}
   local word_chars = sense.syntax.word_chars
   local patt = string.format('^(.-)[^%s]*([%s]+)$', word_chars, word_chars)
   local entity, func = symbol:match(patt)
@@ -728,18 +728,18 @@ function M.load_ctags(sense, tag_file, nolocations)
       if kind == M.FUNCTION or kind == M.FIELD then
         -- Update completions.
         -- If no class structure is found, the global namespace is used.
-        for _, key in ipairs{ 'class', 'interface', 'struct', 'union', '' } do
+        for _, key in ipairs{'class', 'interface', 'struct', 'union', ''} do
           local class = (key == '') and '' or ext_fields:match(key..':(%S+)')
           if class then
             if not completions[class] then
-              completions[class] = { fields = {}, functions = {} }
+              completions[class] = {fields = {}, functions = {}}
             end
             local t = completions[class][kind]
             t[#t + 1] = tag_name..(kind == M.FIELD and '?1' or '?2')
             -- Update locations.
             if not nolocations then
               if not locations[k] then locations[k] = {} end
-              locations[k][class..'#'..tag_name] = { file_name, ex_cmd }
+              locations[k][class..'#'..tag_name] = {file_name, ex_cmd}
             end
             break
           end
@@ -757,21 +757,21 @@ function M.load_ctags(sense, tag_file, nolocations)
             -- an empty completions table needs to be added to it so
             -- get_completions() does not return prematurely.
             if not completions[tag_name] then
-              completions[tag_name] = { fields = {}, functions = {} }
+              completions[tag_name] = {fields = {}, functions = {}}
             end
           end
         end
         -- Update completions.
         -- Add the class to the global namespace.
         if not completions[''] then
-          completions[''] = { fields = {}, functions = {} }
+          completions[''] = {fields = {}, functions = {}}
         end
         local t = completions[''].fields
         t[#t + 1] = tag_name..'?1'
         -- Update locations.
         if not nolocations then
           if not locations[k] then locations[k] = {} end
-          locations[k][tag_name] = { file_name, ex_cmd }
+          locations[k][tag_name] = {file_name, ex_cmd}
         end
       else
         sense:handle_ctag(tag_name, file_name, ex_cmd, ext_fields)
@@ -803,7 +803,7 @@ function M.goto_ctag(sense, k, title)
     end
     items[#items + 1] = v[1]..':'..v[2]
   end
-  local columns = { 'Name', 'Location' }
+  local columns = {'Name', 'Location'}
   if kind == M.FUNCTION or kind == M.FIELD then
     table.insert(columns, 2, 'Class')
   end
@@ -888,13 +888,13 @@ function M.new(lang)
 -- simply containers for functions and fields so Lua modules would count as
 -- classes. Any other kinds will be passed to `handle_ctag()` for user-defined
 -- handling.
--- @usage luasense.ctags_kinds = { f = _M.textadept.adeptsense.FUNCTION }
--- @usage csense.ctags_kinds = { m = _M.textadept.adeptsense.FIELD,
+-- @usage luasense.ctags_kinds = {f = _M.textadept.adeptsense.FUNCTION}
+-- @usage csense.ctags_kinds = {m = _M.textadept.adeptsense.FIELD,
 --   f = _M.textadept.adeptsense.FUNCTION, c = _M.textadept.adeptsense.CLASS,
---   s = _M.textadept.adeptsense.CLASS }
--- @usage javasense.ctags_kinds = { f = _M.textadept.adeptsense.FIELD,
+--   s = _M.textadept.adeptsense.CLASS}
+-- @usage javasense.ctags_kinds = {f = _M.textadept.adeptsense.FIELD,
 --   m = _M.textadept.adeptsense.FUNCTION, c = _M.textadept.adeptsense.CLASS,
---   i = _M.textadept.adeptsense.CLASS }
+--   i = _M.textadept.adeptsense.CLASS}
 -- @class table
 -- @name ctags_kinds
 -- @see handle_ctag
@@ -958,8 +958,8 @@ api_files = {},
 --   The default value is `'(%u[%w_%.]+)%s+%_'`.
 -- @field type_declarations_exclude A table of types to exclude, even if they
 --   match a type_declaration pattern. Each excluded type is a table key and has
---   a `true` boolean value. For example, `{ Foo = true }` excludes any type
---   whose name is `Foo`.
+--   a `true` boolean value. For example, `{Foo = true}` excludes any type whose
+--   name is `Foo`.
 --   The default value is `{}`.
 -- @field type_assignments A map of Lua patterns to class types for variable
 --   assignments. This is typically used for dynamically typed languages. For
@@ -974,13 +974,13 @@ syntax = {
   class_definition = 'class%s+([%w_]+)',
   word_chars = '%w_',
   symbol_chars = '[%w_%.]',
-  type_declarations = { '(%u[%w_%.]+)%s+%_' }, -- Foo bar
+  type_declarations = {'(%u[%w_%.]+)%s+%_'}, -- Foo bar
   type_declarations_exclude = {},
   type_assignments = {}
 },
 
-    super = setmetatable({}, { __index = M })
-  }, { __index = M })
+    super = setmetatable({}, {__index = M})
+  }, {__index = M})
 
   senses[lang] = sense
   return sense

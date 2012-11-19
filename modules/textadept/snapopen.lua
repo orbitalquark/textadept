@@ -28,7 +28,7 @@ M.FILTER = {
     'a', 'bmp', 'bz2', 'class', 'dll', 'exe', 'gif', 'gz', 'jar', 'jpeg', 'jpg',
     'o', 'png', 'so', 'tar', 'tgz', 'tif', 'tiff', 'zip'
   },
-  folders = { '%.bzr$', '%.git$', '%.hg$', '%.svn$', 'CVS$' }
+  folders = {'%.bzr$', '%.git$', '%.hg$', '%.svn$', 'CVS$'}
 }
 M.DEFAULT_DEPTH = 99
 M.MAX = 1000
@@ -105,7 +105,7 @@ end
 --   -- list all files in the current file's directory
 -- @usage _M.textadept.snapopen.open(nil, '!%.lua$') -- list all Lua files in
 --    PATHS
--- @usage _M.textadept.snapopen.open('/project', { folders = { 'secret' } },
+-- @usage _M.textadept.snapopen.open('/project', {folders = {'secret'}},
 --   true) -- list all project files except those in a secret folder
 -- @see PATHS
 -- @see FILTER
@@ -115,10 +115,10 @@ end
 function M.open(utf8_paths, filter, exclude_PATHS, exclude_FILTER, depth)
   -- Convert utf8_paths to a table from nil or string arguments.
   if not utf8_paths then utf8_paths = {} end
-  if type(utf8_paths) == 'string' then utf8_paths = { utf8_paths } end
+  if type(utf8_paths) == 'string' then utf8_paths = {utf8_paths} end
   -- Convert filter to a table from nil or string arguments.
   if not filter then filter = {} end
-  if type(filter) == 'string' then filter = { filter } end
+  if type(filter) == 'string' then filter = {filter} end
   -- Add PATHS to utf8_paths unless specified otherwise.
   if not exclude_PATHS then
     for i = 1, #M.PATHS do utf8_paths[#utf8_paths + 1] = M.PATHS[i] end
@@ -149,7 +149,7 @@ function M.open(utf8_paths, filter, exclude_PATHS, exclude_FILTER, depth)
                              M.MAX),
                '--button1', _L['_OK'])
   end
-  local width = NCURSES and { '--width', gui.size[1] - 2 } or ''
+  local width = NCURSES and {'--width', gui.size[1] - 2} or ''
   local utf8_filenames = gui.filteredlist(_L['Open'], _L['File'], list, false,
                                           '--select-multiple', width) or ''
   for filename in utf8_filenames:gmatch('[^\n]+') do io.open_file(filename) end

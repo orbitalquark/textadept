@@ -92,7 +92,7 @@ end
 -- @param list The LuaDoc list.
 local function write_list(f, fmt, list)
   if not list or #list == 0 then return end
-  if type(list) == 'string' then list = { list } end
+  if type(list) == 'string' then list = {list} end
   f:write(string_format(LIST_TITLE, titles[fmt]))
   for _, value in ipairs(list) do
     if fmt ~= SEE then

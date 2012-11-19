@@ -58,7 +58,7 @@ local M = {}
 --
 --     keys['cn'] = new_buffer
 --     keys['cs'] = buffer.save
---     keys['a('] = { _M.textadept.editing.enclose, '(', ')' }
+--     keys['a('] = {_M.textadept.editing.enclose, '(', ')'}
 --
 -- Note that [`buffer`][] references are handled properly.
 --
@@ -75,7 +75,7 @@ local M = {}
 --     keys['aa'] = {
 --       a = function1,
 --       b = function2,
---       c = { function3, arg1, arg2 }
+--       c = {function3, arg1, arg2}
 --     }
 -- @field CLEAR (string)
 --   The string representing the key sequence that clears the current key chain.

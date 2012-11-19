@@ -38,7 +38,7 @@ local function sanitize_markdown(s)
           :gsub('%[([^%]\r\n]+)%]%b()', '%1') -- [foo](bar)
           :gsub('\r?\n\r?\n%[([^%]\r\n]+)%]:[^\r\n]+', '') -- [foo]: bar
           :gsub('\r?\n%[([^%]\r\n]+)%]:[^\r\n]+', '') -- [foo]: bar
-          :gsub('&([%a]+);', { quot = '"', apos = "'" })
+          :gsub('&([%a]+);', {quot = '"', apos = "'"})
 end
 
 -- Writes a function or field apidoc.
@@ -131,7 +131,7 @@ function M.start(doc)
       local module = f.name:match('^([^%.:]+)[%.:]') or '_G'
       if not modules[module] then
         modules[#modules + 1] = module
-        modules[module] = { name = module, functions = {} }
+        modules[module] = {name = module, functions = {}}
         -- For functions like file:read(), 'file' is not a module; fake it.
         if f.name:find(':') then modules[module].fake = true end
       end
@@ -166,7 +166,7 @@ function M.start(doc)
       if not m then
         local name = field.module
         print('[INFO] module `'..name..'\' does not exist. Faking...')
-        m = { name = name, functions = {}, fake = true }
+        m = {name = name, functions = {}, fake = true}
         modules[#modules + 1] = name
         modules[name] = m
       end
@@ -215,7 +215,7 @@ function M.start(doc)
         write_tag(ctags, module, 't', '')
       end
       m.class = 'module'
-      write_apidoc(apidoc, { name = '_G' }, m)
+      write_apidoc(apidoc, {name = '_G'}, m)
     end
     -- Tag the functions and write the apidoc.
     for _, f in ipairs(m.functions) do
@@ -237,7 +237,7 @@ function M.start(doc)
       t = module..'.'..t
       for _, f in ipairs(table.field or {}) do
         write_tag(ctags, f, 'F', 'class:'..t)
-        write_apidoc(apidoc, { name = t }, {
+        write_apidoc(apidoc, {name = t}, {
                        name = f,
                        description = table.field[f],
                        class = 'table'
@@ -248,7 +248,7 @@ function M.start(doc)
     for _, f in ipairs(m.fields or {}) do
       local ext_fields = module == '_G' and '' or 'class:'..module
       write_tag(ctags, f, 'F', ext_fields)
-      write_apidoc(apidoc, { name = f }, {
+      write_apidoc(apidoc, {name = f}, {
                      name = module..'.'..f,
                      description = m.fields[f],
                      class = 'field'

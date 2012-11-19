@@ -56,7 +56,7 @@ M.sense.ctags_kinds = {
   m = as.FIELD, s = as.CLASS, t = as.CLASS
 }
 M.sense:load_ctags(_HOME..'/modules/cpp/tags', true)
-M.sense.api_files = { _HOME..'/modules/cpp/api', _HOME..'/modules/cpp/lua_api' }
+M.sense.api_files = {_HOME..'/modules/cpp/api', _HOME..'/modules/cpp/lua_api'}
 M.sense.syntax.type_declarations = {
   '([%w_%.]+)[%s%*&]+%_[^%w_]', -- Foo bar, Foo *bar, Foo* bar, Foo &bar, etc.
 }
@@ -79,8 +79,8 @@ end
 -- @name _G.keys.cpp
 keys.cpp = {
   [keys.LANGUAGE_MODULE_PREFIX] = {
-    m = { io.open_file,
-          (_HOME..'/modules/cpp/init.lua'):iconv('UTF-8', _CHARSET) },
+    m = {io.open_file,
+         (_HOME..'/modules/cpp/init.lua'):iconv('UTF-8', _CHARSET)},
   },
   ['s\n'] = function()
     buffer:line_end()

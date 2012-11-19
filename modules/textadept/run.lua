@@ -79,7 +79,7 @@ end
 -- @see error_detail
 local function get_error_details(message)
   for _, error_detail in pairs(M.error_detail) do
-    local captures = { message:match(error_detail.pattern) }
+    local captures = {message:match(error_detail.pattern)}
     if #captures > 0 then
       local details = {}
       for detail, i in pairs(error_detail) do details[detail] = captures[i] end

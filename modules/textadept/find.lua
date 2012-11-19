@@ -109,7 +109,7 @@ function find.find_in_files(utf8_dir)
     if not find.match_case then text = text:lower() end
     if find.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
     local match_case, whole_word = find.match_case, find.whole_word
-    local matches = { 'Find: '..text }
+    local matches = {'Find: '..text}
     function search_file(file)
       local line_num = 1
       for line in io.lines(file) do
@@ -189,9 +189,9 @@ local function find_(text, next, flags, nowrap, wrapped)
   elseif flags < 16 then -- lua pattern search (forward search only)
     text = text:gsub('\\[abfnrtv\\]', escapes)
     local buffer_text = buffer:get_text(buffer.length)
-    local results = { buffer_text:find(text, buffer.anchor + increment + 1) }
+    local results = {buffer_text:find(text, buffer.anchor + increment + 1)}
     if #results > 0 then
-      find.captures = { table.unpack(results, 3) }
+      find.captures = {table.unpack(results, 3)}
       buffer:set_sel(results[2], results[1] - 1)
     end
     result = results[1] or -1
