@@ -33,4 +33,4 @@ for line in f:lines() do
 end
 f:close()
 
-return setmetatable(M, { __index = function(t, k) return none..k end })
+return setmetatable(M, {__index = function(t, k) return none..k end})

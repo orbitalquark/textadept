@@ -342,30 +342,30 @@ end
 --- Map of Scintilla notifications to their handlers.
 local c = _SCINTILLA.constants
 local scnotifications = {
-  [c.SCN_CHARADDED] = { 'char_added', 'ch' },
-  [c.SCN_SAVEPOINTREACHED] = { 'save_point_reached' },
-  [c.SCN_SAVEPOINTLEFT] = { 'save_point_left' },
-  [c.SCN_DOUBLECLICK] = { 'double_click', 'position', 'line', 'modifiers' },
-  [c.SCN_UPDATEUI] = { 'update_ui' },
-  [c.SCN_MODIFIED] = { 'modified', 'modification_type' }, -- undocumented
-  [c.SCN_MARGINCLICK] = { 'margin_click', 'margin', 'position', 'modifiers' },
+  [c.SCN_CHARADDED] = {'char_added', 'ch'},
+  [c.SCN_SAVEPOINTREACHED] = {'save_point_reached'},
+  [c.SCN_SAVEPOINTLEFT] = {'save_point_left'},
+  [c.SCN_DOUBLECLICK] = {'double_click', 'position', 'line', 'modifiers'},
+  [c.SCN_UPDATEUI] = {'update_ui'},
+  [c.SCN_MODIFIED] = {'modified', 'modification_type'}, -- undocumented
+  [c.SCN_MARGINCLICK] = {'margin_click', 'margin', 'position', 'modifiers'},
   [c.SCN_USERLISTSELECTION] = {
     'user_list_selection', 'wParam', 'text', 'position'
   },
-  [c.SCN_URIDROPPED] = { 'uri_dropped', 'text' },
-  [c.SCN_DWELLSTART] = { 'dwell_start', 'position', 'x', 'y' },
-  [c.SCN_DWELLEND] = { 'dwell_end', 'position', 'x', 'y' },
-  [c.SCN_HOTSPOTCLICK] = { 'hotspot_click', 'position', 'modifiers' },
+  [c.SCN_URIDROPPED] = {'uri_dropped', 'text'},
+  [c.SCN_DWELLSTART] = {'dwell_start', 'position', 'x', 'y'},
+  [c.SCN_DWELLEND] = {'dwell_end', 'position', 'x', 'y'},
+  [c.SCN_HOTSPOTCLICK] = {'hotspot_click', 'position', 'modifiers'},
   [c.SCN_HOTSPOTDOUBLECLICK] = {
     'hotspot_double_click', 'position', 'modifiers'
   },
-  [c.SCN_CALLTIPCLICK] = { 'call_tip_click', 'position' },
-  [c.SCN_AUTOCSELECTION] = { 'auto_c_selection', 'text', 'position' },
-  [c.SCN_INDICATORCLICK] = { 'indicator_click', 'position', 'modifiers' },
-  [c.SCN_INDICATORRELEASE] = { 'indicator_release', 'position' },
-  [c.SCN_AUTOCCANCELLED] = { 'auto_c_cancelled' },
-  [c.SCN_AUTOCCHARDELETED] = { 'auto_c_char_deleted' },
-  [c.SCN_HOTSPOTRELEASECLICK] = { 'hotspot_release_click', 'position' },
+  [c.SCN_CALLTIPCLICK] = {'call_tip_click', 'position'},
+  [c.SCN_AUTOCSELECTION] = {'auto_c_selection', 'text', 'position'},
+  [c.SCN_INDICATORCLICK] = {'indicator_click', 'position', 'modifiers'},
+  [c.SCN_INDICATORRELEASE] = {'indicator_release', 'position'},
+  [c.SCN_AUTOCCANCELLED] = {'auto_c_cancelled'},
+  [c.SCN_AUTOCCHARDELETED] = {'auto_c_char_deleted'},
+  [c.SCN_HOTSPOTRELEASECLICK] = {'hotspot_release_click', 'position'},
 }
 
 -- Handles Scintilla notifications.

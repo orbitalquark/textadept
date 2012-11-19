@@ -28,7 +28,7 @@ local switches = {}
 -- @param description Description of the switch for command line help.
 -- @name register
 function M.register(switch1, switch2, narg, f, description)
-  local t = { f, narg, description }
+  local t = {f, narg, description}
   switches[switch1], switches[switch2] = t, t
 end
 

@@ -114,7 +114,7 @@ end
 -- [GNU iconv's encodings]: http://www.gnu.org/software/libiconv/
 -- @class table
 -- @name try_encodings
-io.try_encodings = { 'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman' }
+io.try_encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
 ---
 -- Opens a list of files.
@@ -375,6 +375,6 @@ end)
 -- @name open_recent_file
 function io.open_recent_file()
   local i = gui.filteredlist(_L['Open'], _L['File'], io.recent_files, true,
-                             NCURSES and { '--width', gui.size[1] - 2 } or '')
+                             NCURSES and {'--width', gui.size[1] - 2} or '')
   if i then io.open_file(io.recent_files[i + 1]) end
 end

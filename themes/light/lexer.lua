@@ -55,25 +55,25 @@ l.colors = {
   light_blue     = color('80', 'CC', 'FF'),
 }
 
-l.style_nothing    = style {                                    }
-l.style_class      = style { fore = l.colors.yellow             }
-l.style_comment    = style { fore = l.colors.grey               }
-l.style_constant   = style { fore = l.colors.red                }
-l.style_definition = style { fore = l.colors.yellow             }
-l.style_error      = style { fore = l.colors.red, italic = true }
-l.style_function   = style { fore = l.colors.dark_orange        }
-l.style_keyword    = style { fore = l.colors.dark_blue          }
-l.style_label      = style { fore = l.colors.dark_orange        }
-l.style_number     = style { fore = l.colors.teal               }
-l.style_operator   = style { fore = l.colors.purple             }
-l.style_regex      = style { fore = l.colors.dark_green         }
-l.style_string     = style { fore = l.colors.green              }
-l.style_preproc    = style { fore = l.colors.dark_yellow        }
-l.style_tag        = style { fore = l.colors.dark_blue          }
-l.style_type       = style { fore = l.colors.lavender           }
-l.style_variable   = style { fore = l.colors.dark_lavender      }
-l.style_whitespace = style {                                    }
-l.style_embedded   = l.style_tag..{ back = l.colors.dark_white  }
+l.style_nothing    = style{                                  }
+l.style_class      = style{fore = l.colors.yellow            }
+l.style_comment    = style{fore = l.colors.grey              }
+l.style_constant   = style{fore = l.colors.red               }
+l.style_definition = style{fore = l.colors.yellow            }
+l.style_error      = style{fore = l.colors.red, italic = true}
+l.style_function   = style{fore = l.colors.dark_orange       }
+l.style_keyword    = style{fore = l.colors.dark_blue         }
+l.style_label      = style{fore = l.colors.dark_orange       }
+l.style_number     = style{fore = l.colors.teal              }
+l.style_operator   = style{fore = l.colors.purple            }
+l.style_regex      = style{fore = l.colors.dark_green        }
+l.style_string     = style{fore = l.colors.green             }
+l.style_preproc    = style{fore = l.colors.dark_yellow       }
+l.style_tag        = style{fore = l.colors.dark_blue         }
+l.style_type       = style{fore = l.colors.lavender          }
+l.style_variable   = style{fore = l.colors.dark_lavender     }
+l.style_whitespace = style{                                  }
+l.style_embedded   = l.style_tag..{back = l.colors.dark_white}
 l.style_identifier = l.style_nothing
 
 -- Default styles.
@@ -85,17 +85,15 @@ elseif OSX then
   font_face = '!Monaco'
   font_size = 12
 end
-l.style_default = style {
+l.style_default = style{
   font = font_face, size = font_size,
   fore = l.colors.light_black, back = l.colors.white
 }
-l.style_line_number = style { fore = l.colors.grey, back = l.colors.white }
-l.style_bracelight = style { fore = l.colors.light_blue }
-l.style_bracebad = style { fore = l.colors.light_red }
+l.style_line_number = style{fore = l.colors.grey, back = l.colors.white}
+l.style_bracelight = style{fore = l.colors.light_blue}
+l.style_bracebad = style{fore = l.colors.light_red}
 l.style_controlchar = l.style_nothing
-l.style_indentguide = style {
+l.style_indentguide = style{
   fore = l.colors.dark_white, back = l.colors.dark_white
 }
-l.style_calltip = style {
-  fore = l.colors.light_black, back = l.colors.dark_white
-}
+l.style_calltip = style{fore = l.colors.light_black, back = l.colors.dark_white}

@@ -22,7 +22,7 @@ local env = setmetatable({}, {
     return f
   end,
   __newindex = function(t, k, v)
-    for _, t2 in ipairs{ buffer, view, gui } do
+    for _, t2 in ipairs{buffer, view, gui} do
       if t2[k] ~= nil then t2[k] = v return end
     end
     rawset(t, k, v)
@@ -51,7 +51,7 @@ events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
     local cmpls = {}
     prefix = '^'..prefix
     if not ok then -- shorthand notation
-      for _, t in ipairs{ buffer, view, gui, _G } do
+      for _, t in ipairs{buffer, view, gui, _G} do
         for k in pairs(t) do
           if type(k) == 'string' and k:find(prefix) then
             cmpls[#cmpls + 1] = k

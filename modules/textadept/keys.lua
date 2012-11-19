@@ -393,7 +393,7 @@ keys[not OSX and (not NCURSES and 'adel' or 'mdel')
 keys[not OSX and not NCURSES and 'ca' or 'ma'] = buffer.select_all
 keys[not NCURSES and 'cm' or 'mm'] = m_editing.match_brace
 keys[not OSX and (not NCURSES and 'c\n' or 'cmj')
-             or 'cesc'] = { m_editing.autocomplete_word, '%w_' }
+             or 'cesc'] = {m_editing.autocomplete_word, '%w_'}
 if not NCURSES then
   keys[not OSX and 'caH' or 'mH'] = m_editing.highlight_word
 end
@@ -401,22 +401,22 @@ keys[not OSX and not NCURSES and 'c/' or 'm/'] = m_editing.block_comment
 keys.ct = m_editing.transpose_chars
 keys[not OSX and (not NCURSES and 'cJ' or 'mj') or 'cj'] = m_editing.join_lines
 -- Select.
-keys[not NCURSES and 'cM' or 'mM'] = { m_editing.match_brace, 'select' }
+keys[not NCURSES and 'cM' or 'mM'] = {m_editing.match_brace, 'select'}
 keys[not OSX and not NCURSES and 'c<'
-                             or 'm<'] = { m_editing.select_enclosed, '>', '<' }
+                             or 'm<'] = {m_editing.select_enclosed, '>', '<'}
 if not NCURSES then
-  keys[not OSX and 'c>' or 'm>'] = { m_editing.select_enclosed, '<', '>' }
+  keys[not OSX and 'c>' or 'm>'] = {m_editing.select_enclosed, '<', '>'}
 end
 keys[not OSX and not NCURSES and "c'"
-                             or "m'"] = { m_editing.select_enclosed, "'", "'" }
+                             or "m'"] = {m_editing.select_enclosed, "'", "'"}
 keys[not OSX and not NCURSES and 'c"'
-                             or 'm"'] = { m_editing.select_enclosed, '"', '"' }
+                             or 'm"'] = {m_editing.select_enclosed, '"', '"'}
 keys[not OSX and not NCURSES and 'c('
-                             or 'm('] = { m_editing.select_enclosed, '(', ')' }
+                             or 'm('] = {m_editing.select_enclosed, '(', ')'}
 keys[not OSX and not NCURSES and 'c['
-                             or 'm['] = { m_editing.select_enclosed, '[', ']' }
+                             or 'm['] = {m_editing.select_enclosed, '[', ']'}
 keys[not OSX and not NCURSES and 'c{'
-                             or 'm{'] = { m_editing.select_enclosed, '{', '}' }
+                             or 'm{'] = {m_editing.select_enclosed, '{', '}'}
 keys[not OSX and (not NCURSES and 'cD' or 'mW') or 'mD'] = m_editing.select_word
 keys[not OSX and not NCURSES and 'cN' or 'mN'] = m_editing.select_line
 keys[not OSX and not NCURSES and 'cP' or 'mP'] = m_editing.select_paragraph
@@ -427,19 +427,18 @@ keys[not OSX and (not NCURSES and 'caU' or 'cml') or 'cU'] = buffer.lower_case
 keys[not OSX and (not NCURSES and 'a<' or 'm>')
              or 'c<'] = utils.enclose_as_xml_tags
 if not NCURSES then
-  keys[not OSX and 'a>' or 'c>'] = { m_editing.enclose, '<', ' />' }
-  keys[not OSX and "a'" or "c'"] = { m_editing.enclose, "'", "'" }
-  keys[not OSX and 'a"' or 'c"'] = { m_editing.enclose, '"', '"' }
+  keys[not OSX and 'a>' or 'c>'] = {m_editing.enclose, '<', ' />'}
+  keys[not OSX and "a'" or "c'"] = {m_editing.enclose, "'", "'"}
+  keys[not OSX and 'a"' or 'c"'] = {m_editing.enclose, '"', '"'}
 end
 keys[not OSX and (not NCURSES and 'a(' or 'm)')
-             or 'c('] = { m_editing.enclose, '(', ')' }
+             or 'c('] = {m_editing.enclose, '(', ')'}
 keys[not OSX and (not NCURSES and 'a[' or 'm]')
-             or 'c['] = { m_editing.enclose, '[', ']' }
+             or 'c['] = {m_editing.enclose, '[', ']'}
 keys[not OSX and (not NCURSES and 'a{' or 'm}')
-             or 'c{'] = { m_editing.enclose, '{', '}' }
-keys[not OSX and not NCURSES and 'c+' or 'm+'] = { m_editing.grow_selection, 1 }
-keys[not OSX and not NCURSES and 'c_'
-                             or 'm_'] = { m_editing.grow_selection, -1 }
+             or 'c{'] = {m_editing.enclose, '{', '}'}
+keys[not OSX and not NCURSES and 'c+' or 'm+'] = {m_editing.grow_selection, 1}
+keys[not OSX and not NCURSES and 'c_' or 'm_'] = {m_editing.grow_selection, -1}
 keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
@@ -460,8 +459,8 @@ keys[not OSX and not NCURSES and 'caf' or 'cmf'] = gui_find.find_incremental
 if not NCURSES then keys[not OSX and 'cF' or 'mF'] = utils.find_in_files end
 -- Find in Files is ai when find pane is focused in GUI.
 if not NCURSES then
-  keys[not OSX and 'cag' or 'cmg'] = { gui_find.goto_file_in_list, true }
-  keys[not OSX and 'caG' or 'cmG'] = { gui_find.goto_file_in_list, false }
+  keys[not OSX and 'cag' or 'cmg'] = {gui_find.goto_file_in_list, true}
+  keys[not OSX and 'caG' or 'cmG'] = {gui_find.goto_file_in_list, false}
 end
 keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
@@ -493,65 +492,65 @@ keys.f2 = m_bookmarks.goto_next
 keys[not NCURSES and 'sf2' or 'f3'] = m_bookmarks.goto_prev
 keys[not NCURSES and 'af2' or 'f4'] = m_bookmarks.goto_bookmark
 -- Snapopen.
-keys[not OSX and 'cu' or 'mu'] = { m_textadept.snapopen.open, _USERHOME }
--- TODO: { m_textadept.snapopen.open, _HOME }
+keys[not OSX and 'cu' or 'mu'] = {m_textadept.snapopen.open, _USERHOME}
+-- TODO: {m_textadept.snapopen.open, _HOME}
 keys[not OSX and (not NCURSES and 'caO' or 'mO')
              or 'cmO'] = utils.snapopen_filedir
 if not NCURSES then keys[not OSX and 'ci' or 'mi'] = utils.show_style end
 
 -- Buffer.
-keys[not NCURSES and 'c\t' or 'mn'] = { view.goto_buffer, view, 1, true }
-keys[not NCURSES and 'cs\t' or 'mp'] = { view.goto_buffer, view, -1, true }
+keys[not NCURSES and 'c\t' or 'mn'] = {view.goto_buffer, view, 1, true}
+keys[not NCURSES and 'cs\t' or 'mp'] = {view.goto_buffer, view, -1, true}
 keys[not OSX and not NCURSES and 'cb' or 'mb'] = gui.switch_buffer
 if NCURSES then keys.mB = keys.mb end -- in case mb is used by GUI terminals
 -- Indentation.
--- TODO: { utils.set_indentation, 2 }
--- TODO: { utils.set_indentation, 3 }
--- TODO: { utils.set_indentation, 4 }
--- TODO: { utils.set_indentation, 8 }
+-- TODO: {utils.set_indentation, 2}
+-- TODO: {utils.set_indentation, 3}
+-- TODO: {utils.set_indentation, 4}
+-- TODO: {utils.set_indentation, 8}
 keys[not OSX and (not NCURSES and 'caT' or 'mt')
-             or 'cT'] = { utils.toggle_property, 'use_tabs' }
+             or 'cT'] = {utils.toggle_property, 'use_tabs'}
 if NCURSES then keys.mT = keys.mt end -- in case mt is used by GUI terminals
 keys[not OSX and (not NCURSES and 'cai' or 'mi')
              or 'ci'] = m_editing.convert_indentation
 -- EOL Mode.
--- TODO: { utils.set_eol_mode, c.SC_EOL_CRLF }
--- TODO: { utils.set_eol_mode, c.SC_EOL_CR }
--- TODO: { utils.set_eol_mode, c.SC_EOL_LF }
+-- TODO: {utils.set_eol_mode, c.SC_EOL_CRLF}
+-- TODO: {utils.set_eol_mode, c.SC_EOL_CR}
+-- TODO: {utils.set_eol_mode, c.SC_EOL_LF}
 -- Encoding.
--- TODO: { utils.set_encoding, 'UTF-8' }
--- TODO: { utils.set_encoding, 'ASCII' }
--- TODO: { utils.set_encoding, 'ISO-8859-1' }
--- TODO: { utils.set_encoding, 'MacRoman' }
--- TODO: { utils.set_encoding, 'UTF-16LE' }
+-- TODO: {utils.set_encoding, 'UTF-8'}
+-- TODO: {utils.set_encoding, 'ASCII'}
+-- TODO: {utils.set_encoding, 'ISO-8859-1'}
+-- TODO: {utils.set_encoding, 'MacRoman'}
+-- TODO: {utils.set_encoding, 'UTF-16LE'}
 keys[not OSX and not NCURSES and 'cL'
                              or 'mL'] = m_textadept.mime_types.select_lexer
-keys.f5 = { buffer.colourise, buffer, 0, -1 }
+keys.f5 = {buffer.colourise, buffer, 0, -1}
 if NCURSES then keys.cl = keys.f5 end
 
 -- View.
 if not NCURSES then
-  keys[not OSX and 'can' or 'ca\t'] = { gui.goto_view, 1, true }
-  keys[not OSX and 'cap' or 'cas\t'] = { gui.goto_view, -1, true }
-  keys[not OSX and 'cas' or 'cs'] = { view.split, view }
+  keys[not OSX and 'can' or 'ca\t'] = {gui.goto_view, 1, true}
+  keys[not OSX and 'cap' or 'cas\t'] = {gui.goto_view, -1, true}
+  keys[not OSX and 'cas' or 'cs'] = {view.split, view}
   if not OSX then keys.cah = keys.cas end
-  keys[not OSX and 'cav' or 'cv'] = { view.split, view, true }
-  keys[not OSX and 'caw' or 'cw'] = { view.unsplit, view }
+  keys[not OSX and 'cav' or 'cv'] = {view.split, view, true}
+  keys[not OSX and 'caw' or 'cw'] = {view.unsplit, view}
   keys[not OSX and 'caW' or 'cW'] = utils.unsplit_all
-  keys[not OSX and 'ca+' or 'c+'] = { utils.grow, 10 }
-  keys[not OSX and 'ca=' or 'c='] = { utils.grow, 10 }
-  keys[not OSX and 'ca-' or 'c-'] = { utils.shrink, 10 }
+  keys[not OSX and 'ca+' or 'c+'] = {utils.grow, 10}
+  keys[not OSX and 'ca=' or 'c='] = {utils.grow, 10}
+  keys[not OSX and 'ca-' or 'c-'] = {utils.shrink, 10}
 end
 keys[not OSX and not NCURSES and 'c*' or 'm*'] = utils.toggle_current_fold
 if not NCURSES then
-  keys[not OSX and 'ca\n' or 'c\n'] = { utils.toggle_property, 'view_eol' }
+  keys[not OSX and 'ca\n' or 'c\n'] = {utils.toggle_property, 'view_eol'}
   if not OSX then keys['ca\n\r'] = keys['ca\n'] end
-  keys[not OSX and 'ca\\' or 'c\\'] = { utils.toggle_property, 'wrap_mode' }
+  keys[not OSX and 'ca\\' or 'c\\'] = {utils.toggle_property, 'wrap_mode'}
   keys[not OSX and 'caI' or 'cI'] =
-    { utils.toggle_property, 'indentation_guides' }
-  keys[not OSX and 'caS' or 'cS'] = { utils.toggle_property, 'view_ws' }
+    {utils.toggle_property, 'indentation_guides'}
+  keys[not OSX and 'caS' or 'cS'] = {utils.toggle_property, 'view_ws'}
   keys[not OSX and 'caV' or 'cV'] =
-    { utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE }
+    {utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE}
 end
 keys[not OSX and not NCURSES and 'c=' or 'm='] = buffer.zoom_in
 keys[not OSX and not NCURSES and 'c-' or 'm-'] = buffer.zoom_out
@@ -560,12 +559,11 @@ if not NCURSES then keys[not OSX and 'cT' or 'mT'] = gui.select_theme end
 
 -- Help.
 if not NCURSES then
-  keys.f1 = { utils.open_webpage, _HOME..'/doc/01_Introduction.html' }
-  keys.sf1 = { utils.open_webpage, _HOME..'/doc/api/index.html' }
+  keys.f1 = {utils.open_webpage, _HOME..'/doc/01_Introduction.html'}
+  keys.sf1 = {utils.open_webpage, _HOME..'/doc/api/index.html'}
 end
--- TODO: { gui.dialog, 'ok-msgbox', '--title', 'Textadept'
---         '--informative-text', _RELEASE, '--button1', _L['_OK'],
---         '--no-cancel' }
+-- TODO: {gui.dialog, 'ok-msgbox', '--title', 'Textadept', '--informative-text',
+--        _RELEASE, '--button1', _L['_OK'], '--no-cancel'}
 
 -- Movement commands.
 if OSX then
@@ -590,18 +588,18 @@ elseif NCURSES then
 
   keys['c^'] = function() mark_mode = not mark_mode end
   keys['c]'] = buffer.swap_main_anchor_caret
-  keys.cf, keys.cb = { move, 'char_right' }, { move, 'char_left' }
-  keys.cn, keys.cp = { move, 'line_down' }, { move, 'line_up' }
-  keys.ca, keys.ce = { move, 'vc_home' }, { move, 'line_end' }
+  keys.cf, keys.cb = {move, 'char_right'}, {move, 'char_left'}
+  keys.cn, keys.cp = {move, 'line_down'}, {move, 'line_up'}
+  keys.ca, keys.ce = {move, 'vc_home'}, {move, 'line_end'}
   keys.mA, keys.mE = buffer.vc_home_extend, buffer.line_end_extend
-  keys.right, keys.cright = keys.cf, { move, 'word_right' }
-  keys.left, keys.cleft = keys.cb, { move, 'word_left' }
+  keys.right, keys.cright = keys.cf, {move, 'word_right'}
+  keys.left, keys.cleft = keys.cb, {move, 'word_left'}
   keys.down, keys.up = keys.cn, keys.cp
   keys.home, keys['end'] = keys.ca, keys.ce
-  keys.pgup, keys.mU = { move, 'page_up' }, buffer.page_up_extend
-  keys.pgdn, keys.mD = { move, 'page_down' }, buffer.page_down_extend
-  keys.cma = { move, 'document_start' }
-  keys.cme = { move, 'document_end' }
+  keys.pgup, keys.mU = {move, 'page_up'}, buffer.page_up_extend
+  keys.pgdn, keys.mD = {move, 'page_down'}, buffer.page_down_extend
+  keys.cma = {move, 'document_start'}
+  keys.cme = {move, 'document_end'}
   keys.cd, keys.md = buffer.clear, utils.delete_word
   keys.ck = utils.cut_to_eol
 

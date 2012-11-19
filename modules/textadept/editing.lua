@@ -64,9 +64,9 @@ M.comment_string = {}
 -- This table can be populated by language-specific modules.
 -- @class table
 -- @name char_matches
--- @usage _M.textadept.editing.char_matches.hypertext = { ..., [60] = '>' }
+-- @usage _M.textadept.editing.char_matches.hypertext = {..., [60] = '>'}
 -- @see AUTOPAIR
-M.char_matches = { [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"' }
+M.char_matches = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 
 ---
 -- Highlighted brace characters.
@@ -76,9 +76,9 @@ M.char_matches = { [40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"' }
 -- This table can be populated by language-specific modules.
 -- @class table
 -- @name braces
--- @usage _M.textadept.editing.braces.hypertext = { ..., [60] = 1, [62] = 1 }
+-- @usage _M.textadept.editing.braces.hypertext = {..., [60] = 1, [62] = 1}
 -- @see HIGHLIGHT_BRACES
-M.braces = { [40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1 }
+M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 
 -- The current call tip.
 -- Used for displaying call tips.

@@ -51,7 +51,7 @@ function M.load(filename)
   local not_found = {}
   local f = io.open(filename, 'rb')
   if not f then io.close_all() return false end
-  local current_view, splits = 1, { [0] = {} }
+  local current_view, splits = 1, {[0] = {}}
   local lfs_attributes = lfs.attributes
   for line in f:lines() do
     if line:find('^buffer:') then
@@ -80,7 +80,7 @@ function M.load(filename)
     elseif line:find('^%s*split%d:') then
       local level, num, type, size = line:match('^(%s*)split(%d): (%S+) (%d+)')
       local view = splits[#level] and splits[#level][tonumber(num)] or view
-      splits[#level + 1] = { view:split(type == 'true') }
+      splits[#level + 1] = {view:split(type == 'true')}
       splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
     elseif line:find('^%s*view%d:') then
       local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
@@ -92,7 +92,7 @@ function M.load(filename)
       current_view = tonumber(line:match('^current_view: (%d+)')) or 1
     elseif line:find('^size:') then
       local width, height = line:match('^size: (%d+) (%d+)$')
-      if width and height then gui.size = { width, height } end
+      if width and height then gui.size = {width, height} end
     elseif line:find('^recent:') then
       local filename = line:match('^recent: (.+)$')
       local recent, exists = io.recent_files, false

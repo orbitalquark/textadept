@@ -83,7 +83,7 @@ local snippet_stack = {}
 -- This table is used by `new_snippet()`.
 -- @class table
 -- @name newlines
-local newlines = { [0] = '\r\n', '\r', '\n' }
+local newlines = {[0] = '\r\n', '\r', '\n'}
 
 local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
 
@@ -96,12 +96,12 @@ local function new_snippet(text, trigger)
     trigger = trigger,
     original_sel_text = buffer:get_sel_text(),
     snapshots = {}
-  }, { __index = M._snippet_mt })
+  }, {__index = M._snippet_mt})
   snippet_stack[#snippet_stack + 1] = snippet
 
   -- Convert and match indentation.
   local lines = {}
-  local indent = { [true] = '\t', [false] = (' '):rep(buffer.tab_width) }
+  local indent = {[true] = '\t', [false] = (' '):rep(buffer.tab_width)}
   local use_tabs = buffer.use_tabs
   for line in (text..'\n'):gmatch('([^\r\n]*)\r?\n') do
     lines[#lines + 1] = line:gsub('^(%s*)', function(indentation)
@@ -195,9 +195,9 @@ function M._select()
     t[#t + 1], t[#t + 2], t[#t + 3] = list[i]:match('^(%Z+)%z(%Z+)%z(%Z+)$')
   end
   local i = gui.filteredlist(_L['Select Snippet'],
-                             { _L['Trigger'], _L['Scope'], _L['Snippet Text'] },
+                             {_L['Trigger'], _L['Scope'], _L['Snippet Text']},
                              t, true, '--output-column', '2',
-                             NCURSES and { '--width', gui.size[1] - 2 } or '')
+                             NCURSES and {'--width', gui.size[1] - 2} or '')
   if i then M._insert(t[(i + 1) * 3]) end
 end
 
@@ -268,8 +268,8 @@ M._snippet_mt = {
     local escaped_text = snippet:get_escaped_text()
     -- Lua code.
     escaped_text = escaped_text:gsub('%%'..index..'<([^>]*)>', function(code)
-      local env = setmetatable({ selected_text = snippet.original_sel_text },
-                               { __index = _G })
+      local env = setmetatable({selected_text = snippet.original_sel_text},
+                               {__index = _G})
       local f, result = load('return '..snippet.unescape_text(code, true), nil,
                              'bt', env)
       if f then f, result = pcall(f) end

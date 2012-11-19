@@ -76,9 +76,9 @@ function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
 -- @param ... Additional parameters to pass to `gui.dialog()`.
 -- @return Either a string or integer on success; `nil` otherwise. In strings,
 --   multiple items are separated by newlines.
--- @usage gui.filteredlist('Title', 'Foo', { 'Bar', 'Baz' })
--- @usage gui.filteredlist('Title', { 'Foo', 'Bar' }, { 'a', 'b', 'c', 'd' },
---                         false, '--output-column', '2')
+-- @usage gui.filteredlist('Title', 'Foo', {'Bar', 'Baz'})
+-- @usage gui.filteredlist('Title', {'Foo', 'Bar'}, {'a', 'b', 'c', 'd'}, false,
+--                         '--output-column', '2')
 -- @see dialog
 -- @name filteredlist
 function gui.filteredlist(title, columns, items, int_return, ...)
@@ -103,7 +103,7 @@ end
 -- selected one, if any.
 -- @name switch_buffer
 function gui.switch_buffer()
-  local columns, items = { _L['Name'], _L['File'] }, {}
+  local columns, items = {_L['Name'], _L['File']}, {}
   for _, buffer in ipairs(_BUFFERS) do
     local filename = buffer.filename or buffer._type or _L['Untitled']
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
@@ -111,7 +111,7 @@ function gui.switch_buffer()
     items[#items + 1] = filename
   end
   local i = gui.filteredlist(_L['Switch Buffers'], columns, items, true,
-                             NCURSES and { '--width', gui.size[1] - 2 } or '--')
+                             NCURSES and {'--width', gui.size[1] - 2} or '--')
   if i then view:goto_buffer(i + 1) end
 end
 
@@ -250,7 +250,7 @@ events_connect(events.VIEW_NEW, function()
   local ctrl_keys = {
     '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
   }
-  local ctrl_shift_keys = { 'L', 'T', 'U', 'Z' }
+  local ctrl_shift_keys = {'L', 'T', 'U', 'Z'}
   for _, key in ipairs(ctrl_keys) do
     buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL)
   end
@@ -335,7 +335,7 @@ events_connect(events.APPLEEVENT_ODOC, function(uri)
 end)
 
 local string_format = string.format
-local EOLs = { _L['CRLF'], _L['CR'], _L['LF'] }
+local EOLs = {_L['CRLF'], _L['CR'], _L['LF']}
 local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- Sets docstatusbar text.
 events_connect(events.UPDATE_UI, function()
@@ -494,8 +494,8 @@ local goto_view
 --   menu. '_' characters are treated as a menu mnemonics. If the menu item is
 --   empty, a menu separator item is created. Submenus are just nested
 --   menu-structure tables. Their title text is defined with a `title` key.
--- @usage gui.menu{ { '_New', 1 }, { '_Open', 2 }, { '' }, { '_Quit', 4 } }
--- @usage gui.menu{ { '_New', 1, string.byte('n'), 4 } } -- 'Ctrl+N'
+-- @usage gui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4}}
+-- @usage gui.menu{{'_New', 1, string.byte('n'), 4}} -- 'Ctrl+N'
 -- @see events.MENU_CLICKED
 -- @see _M.textadept.menu.set_menubar
 -- @see _M.textadept.menu.set_contextmenu

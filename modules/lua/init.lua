@@ -57,7 +57,7 @@ M.sense.syntax.type_assignments = {
   ['require%s*%(?%s*(["\'])([%w_%.]+)%1%)?'] = '%2',
   ['^io%.p?open%s*%b()%s*$'] = 'file'
 }
-M.sense.api_files = { _HOME..'/modules/lua/api' }
+M.sense.api_files = {_HOME..'/modules/lua/api'}
 M.sense:add_trigger('.')
 M.sense:add_trigger(':', false, true)
 
@@ -154,8 +154,8 @@ end)
 -- @name _G.keys.lua
 keys.lua = {
   [keys.LANGUAGE_MODULE_PREFIX] = {
-    m = { io.open_file,
-          (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET) },
+    m = {io.open_file,
+         (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET)},
   },
   ['s\n'] = M.try_to_autocomplete_end,
 }
