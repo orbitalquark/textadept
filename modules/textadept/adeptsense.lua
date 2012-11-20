@@ -315,7 +315,7 @@ local M = {}
 -- ### Child Language Adeptsenses
 --
 -- When Adeptsense completion is triggered, the Adeptsense for the language at
--- the *current caret position* is used, not necessarily the parent language's
+-- the *caret position* is used, not necessarily the parent language's
 -- Adeptsense. For example, when editing CSS inside of an HTML file, the user
 -- expects the CSS Adeptsense to be used. However, child language Adeptsenses
 -- are not loaded automatically and must be loaded by the parent language
