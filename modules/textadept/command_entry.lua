@@ -96,9 +96,9 @@ end)
 local focus
 
 ---
--- Shows the given list of completions for the current word prefix.
--- On selection, the current word prefix is replaced with the completion. Word
--- prefix characters are alphanumerics and underscores.
+-- Shows the completion list *completions* for the current word prefix.
+-- Word prefix characters are alphanumerics and underscores. On selection, the
+-- word prefix is replaced with the completion.
 -- @param completions The table of completions to show. Non-string values are
 --   ignored.
 -- @class function

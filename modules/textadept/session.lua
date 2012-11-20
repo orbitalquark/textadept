@@ -6,18 +6,17 @@ local M = {}
 ---
 -- Session support for Textadept.
 -- @field DEFAULT_SESSION (string)
---   The path to the default session file.
---   The default value is *`_USERHOME`/session*, or *`_USERHOME`/session_term*
---   if [`_G.NCURSES`][] is `true`.
+--   The path to the default session file, *`_USERHOME`/session*, or
+--   *`_USERHOME`/session_term* if [`_G.NCURSES`][] is `true`.
 --
 --   [`_G.NCURSES`]: _G.html#NCURSES
 -- @field SAVE_ON_QUIT (bool)
 --   Save the session when quitting.
---   The default value is `true`, but can be disabled by passing the command
---   line switch `-n` or `--nosession` to Textadept.
+--   The default value is `true`, but is disabled when passing the command line
+--   switch `-n` or `--nosession` to Textadept.
 -- @field MAX_RECENT_FILES (number)
---   The maximum number of files from [`io.recent_files`][] to save to the
---   session.
+--   The maximum number of recent files to save to the session.
+--   Recent files are stored in [`io.recent_files`][].
 --   The default value is `10`.
 --
 --   [`io.recent_files`]: io.html#recent_files
@@ -28,11 +27,12 @@ M.SAVE_ON_QUIT = true
 M.MAX_RECENT_FILES = 10
 
 ---
--- Loads a Textadept session file.
+-- Loads the Textadept session file *filename* or prompts the user to select
+-- one, returning `true` if the session file was opened and read.
 -- Textadept restores split views, opened buffers, cursor information, and
 -- recent files.
--- @param filename The absolute path to the session file to load. If `nil`, the
---   user is prompted for one.
+-- @param filename Optional absolute path to the session file to load. If `nil`,
+--   the user is prompted for one.
 -- @return `true` if the session file was opened and read; `false` otherwise.
 -- @usage _M.textadept.session.load(filename)
 -- @see DEFAULT_SESSION
@@ -122,10 +122,10 @@ events.connect('arg_none', function()
 end)
 
 ---
--- Saves a Textadept session to a file.
+-- Saves a Textadept session to file *filename* or a user-selected file.
 -- Saves split views, opened buffers, cursor information, and recent files.
--- @param filename The absolute path to the session file to save. If `nil`, the
---   user is prompted for one.
+-- @param filename Optional absolute path to the session file to save. If `nil`,
+--   the user is prompted for one.
 -- @usage _M.textadept.session.save(filename)
 -- @see DEFAULT_SESSION
 -- @name save

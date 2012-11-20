@@ -83,9 +83,9 @@ local M = {}
 --   The default value is `'esc'` for the `Esc` (`⎋` on Mac OSX | `Esc` in
 --   ncurses) key.
 -- @field LANGUAGE_MODULE_PREFIX (string)
---   The starting key command of the key chain reserved for language-specific
---   modules.
---   The default value is `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in ncurses).
+--   The starting key of the key chain reserved for language-specific modules.
+--   The default value is `'cl'` on platforms other than Mac OSX, `'ml'`
+--   otherwise. Equivalent to `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in ncurses).
 module('keys')]]
 
 local ADD = ''
@@ -107,7 +107,7 @@ local error = function(e) events.emit(events.ERROR, e) end
 ---
 -- Lookup table for string representations of key codes higher than 255.
 -- Key codes can be identified by temporarily uncommenting the `print()`
--- statements in *core/keys.lua*
+-- statements in *core/keys.lua*.
 -- @class table
 -- @name KEYSYMS
 M.KEYSYMS = {
@@ -281,5 +281,12 @@ local function get_gdk_key(key_seq)
   return byte, modifiers
 end
 M.get_gdk_key = get_gdk_key -- export for menu.lua without generating LuaDoc
+
+---
+-- Map of key bindings to commands, with language-specific key tables assigned
+-- to a lexer name key.
+-- @class table
+-- @name _G.keys
+local keys
 
 return M

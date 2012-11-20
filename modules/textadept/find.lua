@@ -11,12 +11,16 @@ local find = gui.find
 --   The text in the replace entry.
 -- @field match_case (bool)
 --   Searches are case-sensitive.
+--   The default value is `false`.
 -- @field whole_word (bool)
---   Only whole-word matches are allowed in searches.
+--   Match only whole-words in searches.
+--   The default value is `false`.
 -- @field lua (bool)
---   The search text is interpreted as a Lua pattern.
+--   Interpret search text as a Lua pattern.
+--   The default value is `false`.
 -- @field in_files (bool)
 --   Search for the text in a list of files.
+--   The default value is `false`.
 -- @field find_label_text (string, Write-only)
 --   The text of the "Find" label.
 --   This is primarily used for localization.
@@ -85,12 +89,12 @@ local escapes = {
 }
 
 ---
--- Searches the given directory for files that match search text and options and
--- prints the results to a buffer.
+-- Searches the *utf8_dir* or user-specified directory for files that match
+-- search text and options and prints the results to a buffer.
 -- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
 -- search text and option flags, respectively.
--- @param utf8_dir UTF-8 encoded directory name. If `nil`, the user is prompted
--- for one.
+-- @param utf8_dir Optional UTF-8 encoded directory name to search. If `nil`,
+--   the user is prompted for one.
 -- @name find_in_files
 function find.find_in_files(utf8_dir)
   if not utf8_dir then
@@ -383,9 +387,10 @@ end
 events_connect(events.DOUBLE_CLICK, goto_file)
 
 ---
--- Goes to the next or previous file found relative to the file on the current
--- line in the results list.
--- @param next Flag indicating whether or not to go to the next file.
+-- If *next* is `true`, goes to the next file found, relative to the file on the
+-- current line in the results list. Otherwise goes to the previous file found.
+-- @param next Optional flag indicating whether or not to go to the next file.
+--   The default value is `false`.
 -- @name goto_file_in_list
 function find.goto_file_in_list(next)
   local orig_view = _VIEWS[view]
@@ -428,25 +433,25 @@ end)
 local focus
 
 ---
--- Mimicks a press of the "Find Next" button.
+-- Mimics pressing the "Find Next" button.
 -- @class function
 -- @name find_next
 local find_next
 
 ---
--- Mimicks a press of the "Find Prev" button.
+-- Mimics pressing the "Find Prev" button.
 -- @class function
 -- @name find_prev
 local find_prev
 
 ---
--- Mimicks a press of the "Replace" button.
+-- Mimics pressing the "Replace" button.
 -- @class function
 -- @name replace
 local replace
 
 ---
--- Mimicks a press of the "Replace All" button.
+-- Mimics pressing the "Replace All" button.
 -- @class function
 -- @name replace_all
 local replace_all

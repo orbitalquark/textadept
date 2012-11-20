@@ -12,9 +12,8 @@ local tmpfile = _USERHOME..'/.ft'
 local filter_through_active = false
 
 ---
--- Prompts for a Linux, BSD, Mac OSX, or Windows shell command to filter text
--- through.
--- The standard input (stdin) for shell commands is determined as follows:
+-- Prompts the user for a Linux, BSD, Mac OSX, or Windows shell command to
+-- filter text through with standard input (stdin) as follows:
 --
 -- 1. If text is selected and spans multiple lines, all text on the lines
 -- containing the selection is used. However, if the end of the selection is at

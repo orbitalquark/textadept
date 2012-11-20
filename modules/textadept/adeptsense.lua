@@ -194,7 +194,7 @@ local M = {}
 --
 -- ### Summary
 --
--- The above method of setting syntax options, ctags kinds, and trigger
+-- The above method of setting syntax options, Ctags kinds, and trigger
 -- characters for an Adeptsense is sufficient for most static and some dynamic
 -- languages. The rest of this document is devoted to more complex techniques.
 --
@@ -367,7 +367,7 @@ local M = {}
 -- @field always_show_globals (bool)
 --   Include globals in the list of completions offered.
 --   Globals are classes, functions, and fields that do not belong to another
---   class. They are contained in `completions['']`.
+--   class. They are contained in `sense.completions['']`.
 --   The default value is `true`.
 -- @field FUNCTIONS (string)
 --   XPM image for Adeptsense functions.
@@ -393,7 +393,8 @@ M.FIELD = 'fields'
 ---
 -- Returns a full symbol (if any) and current symbol part (if any) behind the
 -- caret.
--- For example: `buffer.cur` would return `'buffer'` and `'cur'`.
+-- For example: `buffer.cur` would return `'buffer'` and `'cur'`. Returns empty
+-- strings instead of `nil`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @return symbol or `''`
 -- @return part or `''`
@@ -408,11 +409,11 @@ function M.get_symbol(sense)
 end
 
 ---
--- Returns the class name for a given symbol.
--- If the symbol is `sense.syntax.self` and a class definition using the
--- `sense.syntax.class_definition` keyword is found, that class is returned.
--- Otherwise the buffer is searched backwards for a type declaration of the
--- symbol according to the patterns in `sense.syntax.type_declarations`.
+-- Returns the class name for *symbol* name.
+-- If *symbol* is `sense.syntax.self` and inside a class definition matching
+-- `sense.syntax.class_definition`, that class is returned. Otherwise the
+-- buffer is searched backwards for a type declaration of *symbol* according to
+-- the patterns in `sense.syntax.type_declarations`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol to get the class of.
 -- @return class or `nil`
@@ -504,13 +505,14 @@ local function add_inherited(sense, class, only_fields, only_funcs, c, added)
 end
 
 ---
--- Returns a list of completions for the given symbol.
+-- Returns a list of function (unless *only_fields* is `true`) and field (unless
+-- *only_funcs* is `true`) completions for *symbol* name.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol to get completions for.
--- @param only_fields If `true`, returns list of only fields. The default value
---   is `false`.
--- @param only_functions If `true`, returns list of only functions. The default
---   value is `false`.
+-- @param only_fields Optional flag indicating whether or not to return a list
+--   of only fields. The default value is `false`.
+-- @param only_functions Optional flag indicating whether or not to return a
+--   list of only functions. The default value is `false`.
 -- @return completion_list or `nil`
 -- @name get_completions
 function M.get_completions(sense, symbol, only_fields, only_functions)
@@ -560,13 +562,15 @@ function M.get_completions(sense, symbol, only_fields, only_functions)
 end
 
 ---
--- Shows an autocompletion list for the symbol behind the caret.
+-- Shows an autocompletion list of functions (unless *only_fields* is `true`)
+-- and fields (unless *only_funcs* is `true`) for the symbol behind the caret,
+-- returning `true` on success.
 -- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
 --   the current language's Adeptsense (if it exists).
--- @param only_fields If `true`, returns list of only fields. The default value
---   is `false`.
--- @param only_functions If `true`, returns list of only functions. The default
---   value is `false`.
+-- @param only_fields Optional flag indicating whether or not to return a list
+--   of only fields. The default value is `false`.
+-- @param only_functions Optional flag indicating whether or not to return a
+--   list of only functions. The default value is `false`.
 -- @return `true` on success or `false`.
 -- @see get_symbol
 -- @see get_completions
@@ -592,14 +596,16 @@ function M.complete(sense, only_fields, only_functions)
 end
 
 ---
--- Sets the trigger for autocompletion.
+-- Sets the trigger character(s) *c* for autocompletion.
+-- If *only_fields* is `true`, the trigger only completes fields. If
+-- *only_functions* is `true`, the trigger only completes functions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param c The character(s) that triggers the autocompletion. You can have up
 --   to two characters.
--- @param only_fields If `true`, this trigger only completes fields. The default
---   value is `false`.
--- @param only_functions If `true`, this trigger only completes functions.
---   The default value is `false`.
+-- @param only_fields Optional flag indicating whether or not this trigger only
+--   completes fields. The default value is `false`.
+-- @param only_functions Optional flag indicating whether or not this trigger
+--   only completes functions. The default value is `false`.
 -- @usage sense:add_trigger('.')
 -- @usage sense:add_trigger(':', false, true) -- only functions
 -- @usage sense:add_trigger('->')
@@ -617,9 +623,8 @@ function M.add_trigger(sense, c, only_fields, only_functions)
 end
 
 ---
--- Returns a list of apidocs for the given symbol.
--- If there are multiple apidocs, the index of one to display is the value of
--- the `pos` key in the returned list.
+-- Returns a list of apidocs for *symbol* name.
+-- The list contains a `pos` key with the index of the apidoc to show.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol to get apidocs for.
 -- @return apidoc_list or `nil`
@@ -656,7 +661,7 @@ end
 
 local apidocs = nil
 ---
--- Shows a calltip with API documentation for the symbol behind the caret.
+-- Shows a call tip with API documentation for the symbol behind the caret.
 -- If documentation is already being shown, cycles through multiple definitions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
 --   the current language's Adeptsense (if it exists).
@@ -705,14 +710,16 @@ events.connect(events.CALL_TIP_CLICK, function(position)
 end)
 
 ---
--- Loads the given ctags file for autocompletion.
--- It is recommended to pass `-n` to ctags in order to use line numbers instead
--- of text patterns to locate tags. This will greatly reduce memory usage for a
--- large number of symbols if `nolocations` is not `true`.
+-- Loads the Ctags file *tag_file* for autocompletions.
+-- If *nolocations* is `true`, `sense:goto_ctag()` cannot be used with this set
+-- of tags. It is recommended to pass `-n` to `ctags` in order to use line
+-- numbers instead of text patterns to locate tags. This will greatly reduce
+-- memory usage for a large number of symbols if `nolocations` is `false`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
--- @param tag_file The path of the ctags file to load.
--- @param nolocations If `true`, does not store the locations of the tags for
---   use by `goto_ctag()`. The default value is `false`.
+-- @param tag_file The path of the Ctags file to load.
+-- @param nolocations Optional flag indicating whether or not to discard the
+--   locations of the tags for use by `sense:goto_ctag()`. The default value is
+--   `false`.
 -- @name load_ctags
 function M.load_ctags(sense, tag_file, nolocations)
   local ctags_kinds = sense.ctags_kinds
@@ -785,21 +792,21 @@ function M.load_ctags(sense, tag_file, nolocations)
 end
 
 ---
--- Displays a filtered list dialog of all known symbols of the given kind
--- (classes, functions, fields, etc.) and jumps to the source of the selected
--- one.
+-- Prompts the user to select a symbol to jump to from a list of all known
+-- symbols of kind *kind* (classes, functions, fields, etc.) shown in a filtered
+-- list dialog whose title text is *title*.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
--- @param k The ctag character kind (e.g. `'f'` for a Lua function).
+-- @param kind The Ctag character kind (e.g. `'f'` for a Lua function).
 -- @param title The title for the filtered list dialog.
 -- @name goto_ctag
-function M.goto_ctag(sense, k, title)
-  if not sense.locations[k] then return end -- no ctags loaded
+function M.goto_ctag(sense, kind, title)
+  if not sense.locations[kind] then return end -- no Ctags loaded
   local items = {}
-  local kind = sense.ctags_kinds[k]
-  for k, v in pairs(sense.locations[k]) do
-    items[#items + 1] = k:match('[^#]+$') -- symbol name
+  local kind = sense.ctags_kinds[kind]
+  for kind, v in pairs(sense.locations[kind]) do
+    items[#items + 1] = kind:match('[^#]+$') -- symbol name
     if kind == M.FUNCTION or kind == M.FIELD then
-      items[#items + 1] = k:match('^[^#]+') -- class name
+      items[#items + 1] = kind:match('^[^#]+') -- class name
     end
     items[#items + 1] = v[1]..':'..v[2]
   end
@@ -825,21 +832,21 @@ function M.goto_ctag(sense, k, title)
 end
 
 ---
--- Called by `load_ctags()` when a ctag kind is not recognized.
--- This method should be replaced with your own that is specific to the
--- language.
+-- Called by `load_ctags()` when a Ctag kind is not recognized.
+-- The parameters are extracted from Ctags' [tag format][]. This method should
+-- be replaced with your own that is specific to the language.
+--
+-- [tag format]: http://ctags.sourceforge.net/ctags.html#TAG%20FILE%20FORMAT
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param tag_name The tag name.
 -- @param file_name The name of the file the tag belongs to.
--- @param ex_cmd The `ex_cmd` returned by ctags.
--- @param ext_fields The `ext_fields` returned by ctags.
+-- @param ex_cmd The `ex_cmd` returned by Ctags.
+-- @param ext_fields The `ext_fields` returned by Ctags.
 -- @name handle_ctag
 function M.handle_ctag(sense, tag_name, file_name, ex_cmd, ext_fields) end
 
 ---
--- Clears an Adeptsense.
--- This is necessary for loading a new ctags file or completions from a
--- different project.
+-- Clears the Adeptsense for loading new Ctags or project files.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @name clear
 function M.clear(sense)
@@ -851,7 +858,7 @@ function M.clear(sense)
 end
 
 ---
--- Called when clearing an Adeptsense.
+-- Called when clearing the Adeptsense.
 -- This function should be replaced with your own if you have any persistant
 -- objects that need to be deleted.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
@@ -859,7 +866,7 @@ end
 function M.handle_clear(sense) end
 
 ---
--- Creates a new Adeptsense for the given lexer language.
+-- Creates and returns a new Adeptsense for *lang* name.
 -- Only one sense can exist per language.
 -- @param lang The lexer language to create an Adeptsense for.
 -- @return adeptsense
@@ -883,7 +890,7 @@ function M.new(lang)
     always_show_globals = true,
 
 ---
--- Contains a map of ctags kinds to Adeptsense kinds.
+-- A map of Ctags kinds to Adeptsense kinds.
 -- Recognized kinds are `FUNCTION`, `FIELD`, and `CLASS`. Classes are quite
 -- simply containers for functions and fields so Lua modules would count as
 -- classes. Any other kinds will be passed to `handle_ctag()` for user-defined
@@ -901,13 +908,14 @@ function M.new(lang)
 ctags_kinds = {},
 
 ---
--- Contains a map of classes and a list of their inherited classes.
+-- A map of classes and a list of their inherited classes, normally populated by
+-- `load_ctags()`.
 -- @class table
 -- @name inherited_classes
 inherited_classes = {},
 
 ---
--- Contains lists of possible completions for known symbols.
+-- A list containing lists of possible completions for known symbols.
 -- Each symbol key has a table value that contains a list of field completions
 -- with a `fields` key and a list of functions completions with a `functions`
 -- key. This table is normally populated by `load_ctags()`, but can also be set
@@ -917,14 +925,14 @@ inherited_classes = {},
 completions = {},
 
 ---
--- Contains the locations of known symbols.
--- This table is populated by `load_ctags()`.
+-- A list of the locations of known symbols, normally populated by
+-- `load_ctags()`.
 -- @class table
 -- @name locations
 locations = {},
 
 ---
--- Contains a list of api files used by `show_apidoc()`.
+-- A list of api files used by `show_apidoc()`.
 -- Each line in the api file contains a symbol name (not the full symbol)
 -- followed by a space character and then the symbol's documentation. Since
 -- there may be many duplicate symbol names, it is recommended to put the full
@@ -937,35 +945,36 @@ locations = {},
 api_files = {},
 
 ---
--- Contains syntax-specific values for the language.
--- @field self The language's syntax-equivalent of `self`. Default is `'self'`.
+-- Map of language-specific syntax settings.
+-- @field self The language's syntax-equivalent of `self`. The default value is
+--   `'self'`.
 -- @field class_definition A Lua pattern representing the language's class
 --   definition syntax. The first capture returned must be the class name. A
 --   second, optional capture contains the class' superclass (if any). If no
 --   completions are found for the class name, completions for the superclass
 --   are shown (if any). Completions will not be shown for both a class and
---   superclass unless defined in a previously loaded ctags file. Also, multiple
---   superclasses cannot be recognized by this pattern; use a ctags file
+--   superclass unless defined in a previously loaded Ctags file. Also, multiple
+--   superclasses cannot be recognized by this pattern; use a Ctags file
 --   instead. The default value is `'class%s+([%w_]+)'`.
 -- @field word_chars A Lua pattern of characters allowed in a word.
---   The default is `'%w_'`.
+--   The default value is `'%w_'`.
 -- @field symbol_chars A Lua pattern of characters allowed in a symbol,
 --   including member operators. The pattern should be a character set.
---   The default is `'[%w_%.]'`.
+--   The default value is `'[%w_%.]'`.
 -- @field type_declarations A list of Lua patterns used for determining the
 --   class type of a symbol. The first capture returned must be the class name.
 --   Use `%_` to match the symbol.
 --   The default value is `'(%u[%w_%.]+)%s+%_'`.
 -- @field type_declarations_exclude A table of types to exclude, even if they
---   match a type_declaration pattern. Each excluded type is a table key and has
---   a `true` boolean value. For example, `{Foo = true}` excludes any type whose
---   name is `Foo`.
+--   match a `type_declarations` pattern. Each excluded type is a table key and
+--   has a `true` boolean value. For example, `{Foo = true}` excludes any type
+--   whose name is `Foo`.
 --   The default value is `{}`.
 -- @field type_assignments A map of Lua patterns to class types for variable
---   assignments. This is typically used for dynamically typed languages. For
---   example, `sense.type_assignments['^"'] = 'string'`  would recognize string
+--   assignments, typically used for dynamically typed languages. For example,
+--   `sense.syntax.type_assignments['^"'] = 'string'`  would recognize string
 --   assignments in Lua so the `foo` in `foo = "bar"` would be recognized as
---   type `string`. The class type value can contain pattern captures.
+--   type `string`. The class type value may contain `%n` pattern captures.
 -- @class table
 -- @name syntax
 -- @see get_class

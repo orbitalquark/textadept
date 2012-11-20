@@ -20,23 +20,26 @@ local arg = arg
 local switches = {}
 
 ---
--- Registers a command line switch.
--- @param switch1 String switch (short version).
--- @param switch2 String switch (long version).
+-- Registers a command line switch with short and long versions *short* and
+-- *long*, respectively. *narg* is the number of arguments the switch accepts,
+-- *f* is the function called when the switch is tripped, and *description* is
+-- the switch's description when displaying help.
+-- @param short String short version of the switch.
+-- @param long String long version of the switch.
 -- @param narg The number of expected parameters for the switch.
 -- @param f The Lua function to run when the switch is tripped.
 -- @param description Description of the switch for command line help.
 -- @name register
-function M.register(switch1, switch2, narg, f, description)
+function M.register(short, long, narg, f, description)
   local t = {f, narg, description}
-  switches[switch1], switches[switch2] = t, t
+  switches[short], switches[long] = t, t
 end
 
 ---
--- Processes command line arguments.
--- Add command line switches with `args.register()`. Any unrecognized arguments
--- are treated as filepaths and opened.
--- Emits an `'arg_none'` event when no args are present.
+-- Processes command line argument table *arg*, handling switches previously
+-- defined using `args.register()` and treating unrecognized arguments as
+-- filenames to open.
+-- Emits an `'arg_none'` event when no arguments are present.
 -- @param arg Argument table.
 -- @see register
 -- @see events

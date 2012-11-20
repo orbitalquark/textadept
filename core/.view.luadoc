@@ -15,29 +15,34 @@ module('view')
 local buffer
 
 ---
--- Splits the given view vertically or horizontally and focuses the new view.
+-- Splits the view into top and bottom views, unless *vertical* is `true`,
+-- focuses the new view, and returns both the old and new views.
+-- If *vertical* is `false`, splits the view vertically into left and
+-- right views.
 -- Emits a `VIEW_NEW` event.
 -- @param view The view to split.
--- @param vertical Flag indicating a vertical split. The default value is
---   `false` for horizontal.
+-- @param vertical Optional flag indicating whether or not to split the view
+--   vertically. The default value is `false` for horizontal.
 -- @return old view and new view.
 -- @see events.VIEW_NEW
 function split(view, vertical) end
 
 ---
--- Unsplits the given view if possible.
+-- Unsplits the view if possible, returning `true` on success.
 -- @param view The view to unsplit.
 -- @return boolean if the view was unsplit or not.
 function unsplit(view) end
 
 ---
--- Goes to the specified buffer in the given view.
+-- Goes to buffer number *n* in the view.
+-- If *relative* is `true`, *n* is an index relative to the index of the current
+-- buffer in `_G._BUFFERS` instead of an absolute index.
 -- Emits `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
 -- @param view The view to switch buffers in.
 -- @param n A relative or absolute buffer index in `_G._BUFFERS`. An absolute
 --   index of `-1` goes to the last buffer.
--- @param relative Flag indicating if `n` is a relative index or not. The
---   default value is `false`.
+-- @param relative Optional flag indicating whether *n* is a relative or
+--   absolute index. The default value is `false` for an absolute index.
 -- @see _G._G._BUFFERS
 -- @see events.BUFFER_BEFORE_SWITCH
 -- @see events.BUFFER_AFTER_SWITCH

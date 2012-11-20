@@ -11,15 +11,13 @@ local M = {}
 --
 -- + `Ctrl+L, M` (`⌘L, M` on Mac OSX | `M-L, M` in ncurses)
 --   Open this module for editing.
--- + `Shift+Enter` (`⇧↩` | `S-Enter`)
---   Try to autocomplete an `if`, `while`, `for`, etc. control structures with
---   `end`.
 -- + `.`
---   When to the right of a known symbol, show an autocompletion list of fields
---   and functions.
+--   Show an autocompletion list of fields for the symbol behind the caret.
 -- + `:`
---   When to the right of a known symbol, show an autocompletion list of
---   functions only.
+--   Show an autocompletion list of functions for the symbol behind the caret.
+-- + `Shift+Enter` (`⇧↩` | `S-Enter`)
+--   Autocomplete an `if`, `while`, `for`, etc. control structure with the `end`
+--   keyword.
 -- @field sense
 --   The Lua [Adeptsense](_M.textadept.adeptsense.html).
 --   It loads user tags from *`_USERHOME`/modules/lua/tags* and user apidocs
@@ -96,7 +94,7 @@ end
 -- Commands.
 
 ---
--- Patterns for auto `end` completion for control structures.
+-- List of patterns for auto-`end` completion for control structures.
 -- @class table
 -- @name control_structure_patterns
 -- @see try_to_autocomplete_end
@@ -106,8 +104,8 @@ local control_structure_patterns = {
 }
 
 ---
--- Tries to autocomplete Lua's `end` keyword for control structures like `if`,
--- `while`, `for`, etc.
+-- Tries to autocomplete control structures like `if`, `while`, `for`, etc. with
+-- the `end` keyword.
 -- @see control_structure_patterns
 -- @name try_to_autocomplete_end
 function M.try_to_autocomplete_end()

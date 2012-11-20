@@ -12,11 +12,12 @@ local M = {}
 
 local NAVFILE = '%s* [%s](%s)\n'
 local FIELD = '<a id="%s"></a>\n### `%s` %s\n\n'
-local FUNCTION = '<a id="%s"></a>\n### `%s` (%s)\n\n'
+local FUNCTION = '<a id="%s"></a>\n### `%s`(*%s*)\n\n'
+local FUNCTION_NO_PARAMS = '<a id="%s"></a>\n### `%s`()\n\n'
 --local FUNCTION = '### `%s` (%s)\n\n'
 local DESCRIPTION = '%s\n\n'
 local LIST_TITLE = '%s:\n\n'
-local PARAM = '* `%s`: %s\n'
+local PARAM = '* *`%s`*: %s\n'
 local USAGE = '* `%s`\n'
 local RETURN = '* %s\n'
 local SEE = '* [`%s`](%s)\n'
@@ -225,8 +226,12 @@ function M.start(doc)
       f:write('- - -\n\n')
       for _, fname in ipairs(funcs) do
         local func = funcs[fname]
-        f:write(string_format(FUNCTION, func.name, func.name,
-                              table_concat(func.param, ', '):gsub('_', '\\_')))
+        local params = table_concat(func.param, ', '):gsub('_', '\\_')
+        if params ~= '' then
+          f:write(string_format(FUNCTION, func.name, func.name, params))
+        else
+          f:write(string_format(FUNCTION_NO_PARAMS, func.name, func.name))
+        end
         write_description(f, func.description)
         write_hashmap(f, PARAM, func.param)
         write_list(f, USAGE, func.usage)

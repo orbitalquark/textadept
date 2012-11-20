@@ -25,33 +25,33 @@
 -- [`string.iconv()`]: string.html#iconv
 -- [`_CHARSET`]: _G.html#_CHARSET
 -- @field _G.events.FILE_OPENED (string)
---   Called when a file is opened in a new buffer.
---   This is emitted by [`open_file()`](#open_file)
+--   Called when opening a file in a new buffer.
+--   Emitted by [`open_file()`](#open_file).
 --   Arguments:
 --
---   * `filename`: The filename encoded in UTF-8.
+--   * _`filename`_: The UTF-8-encoded filename.
 -- @field _G.events.FILE_BEFORE_SAVE (string)
---   Called right before a file is saved to disk.
---   This is emitted by [`buffer:save()`][]
+--   Called right before saving a file to disk.
+--   Emitted by [`buffer:save()`][].
 --   Arguments:
 --
---   * `filename`: The filename encoded in UTF-8.
+--   * _`filename`_: The UTF-8-encoded filename.
 --
 -- [`buffer:save()`]: buffer.html#save
 -- @field _G.events.FILE_AFTER_SAVE (string)
---   Called right after a file is saved to disk.
---   This is emitted by [`buffer:save()`][]
+--   Called right after saving a file to disk.
+--   Emitted by [`buffer:save()`][].
 --   Arguments:
 --
---   * `filename`: The filename encoded in UTF-8.
+--   * _`filename`_: The UTF-8-encoded filename.
 --
 -- [`buffer:save()`]: buffer.html#save
 -- @field _G.events.FILE_SAVED_AS (string)
---   Called when a file is saved under a different filename.
---   This is emitted by [`buffer:save_as()`][]
+--   Called after saving a file under a different filename.
+--   Emitted by [`buffer:save_as()`][].
 --   Arguments:
 --
---   * `filename`: The filename encoded in UTF-8.
+--   * _`filename`_: The UTF-8-encoded filename.
 --
 -- [`buffer:save_as()`]: buffer.html#save_as
 module('io')]]
@@ -64,8 +64,7 @@ events.FILE_AFTER_SAVE = 'file_after_save'
 events.FILE_SAVED_AS = 'file_saved_as'
 
 ---
--- List of recently opened files.
--- The most recent are towards the top.
+-- List of recently opened files, the most recent being towards the top.
 -- @class table
 -- @name recent_files
 io.recent_files = {}
@@ -109,19 +108,41 @@ end
 -- List of encodings to try to decode files as.
 -- You should add to this list if you get a "Conversion failed" error when
 -- trying to open a file whose encoding is not recognized. Valid encodings are
--- [GNU iconv's encodings][].
+-- [GNU iconv's encodings][] and include:
+--
+--   * European: ASCII, ISO-8859-{1,2,3,4,5,7,9,10,13,14,15,16}, KOI8-R, KOI8-U,
+--     KOI8-RU, CP{1250,1251,1252,1253,1254,1257}, CP{850,866,1131},
+--     Mac{Roman,CentralEurope,Iceland,Croatian,Romania},
+--     Mac{Cyrillic,Ukraine,Greek,Turkish}, Macintosh.
+--   * Semitic: ISO-8859-{6,8}, CP{1255,1256}, CP862, Mac{Hebrew,Arabic}.
+--   * Japanese: EUC-JP, SHIFT_JIS, CP932, ISO-2022-JP, ISO-2022-JP-2,
+--     ISO-2022-JP-1.
+--   * Chinese: EUC-CN, HZ, GBK, CP936, GB18030, EUC-TW, BIG5, CP950,
+--     BIG5-HKSCS, BIG5-HKSCS:2004, BIG5-HKSCS:2001, BIG5-HKSCS:1999,
+--     ISO-2022-CN, ISO-2022-CN-EXT.
+--   * Korean: EUC-KR, CP949, ISO-2022-KR, JOHAB.
+--   * Armenian: ARMSCII-8.
+--   * Georgian: Georgian-Academy, Georgian-PS.
+--   * Tajik: KOI8-T.
+--   * Kazakh: PT154, RK1048.
+--   * Thai: ISO-8859-11, TIS-620, CP874, MacThai.
+--   * Laotian: MuleLao-1, CP1133.
+--   * Vietnamese: VISCII, TCVN, CP1258.
+--   * Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16,
+--     UTF-16BE, UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 --
 -- [GNU iconv's encodings]: http://www.gnu.org/software/libiconv/
+-- @usage io.try_encodings[#io.try_encodings + 1] = 'UTF-16'
 -- @class table
 -- @name try_encodings
 io.try_encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
 ---
--- Opens a list of files.
+-- Opens *utf8_filenames*, a "\n" delimited string of UTF-8-encoded filenames,
+-- or user-selected files.
 -- Emits a `FILE_OPENED` event.
--- @param utf8_filenames A "\n" separated list of UTF-8-encoded filenames to
---   open. If `nil`, the user is prompted with a fileselect dialog.
--- @usage io.open_file(utf8_encoded_filename)
+-- @param utf8_filenames Optional list of filenames to open. If `nil`, the user
+--   is prompted with a fileselect dialog.
 -- @see _G.events
 -- @name open_file
 function io.open_file(utf8_filenames)
@@ -276,8 +297,7 @@ local function save_as(buffer, utf8_filename)
 end
 
 ---
--- Saves all dirty buffers to their respective files.
--- @usage io.save_all()
+-- Saves all unsaved buffers to their respective files.
 -- @see buffer.save
 -- @name save_all
 function io.save_all()
@@ -308,10 +328,9 @@ local function close(buffer)
 end
 
 ---
--- Closes all open buffers.
--- If any buffer is dirty, the user is prompted to continue. No buffers are
--- saved automatically. They must be saved manually.
--- @usage io.close_all()
+-- Closes all open buffers, prompting the user to continue with unsaved buffers,
+-- and returning `true` if the user did not cancel.
+-- No buffers are saved automatically. They must be saved manually.
 -- @return `true` if user did not cancel.
 -- @see buffer.close
 -- @name close_all
