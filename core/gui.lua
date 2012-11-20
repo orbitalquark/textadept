@@ -4,11 +4,13 @@ local gui = gui
 
 --[[ This comment is for LuaDoc.
 ---
--- Utilities for Textadept's user interface.
+-- Utilities for interacting with Textadept's user interface.
 -- @field title (string, Write-only)
 --   The title of the Textadept window.
 -- @field context_menu
---   A [`gui.menu`](#menu) defining the editor's context menu.
+--   The editor's context menu, a [`gui.menu()`](#menu).
+--   This is a low-level field. You probably want to use the higher-level
+--   `_M.textadept.menu.set_contextmenu()`.
 -- @field clipboard_text (string, Read-only)
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
@@ -65,15 +67,19 @@ function gui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
 
 ---
--- Shortcut function for `gui.dialog('filteredlist', ...)` with "Ok" and
--- "Cancel" buttons.
+-- Convenience function for `gui.dialog('filteredlist', ...)` with "Ok" and
+-- "Cancel" buttons that returns the text or index of the selection depending on
+-- the boolean value of *int_return*.
+-- *title* is the title of the dialog,*columns* is a list of column names, and
+-- *items* is a list of items to show.
 -- @param title The title for the filtered list dialog.
 -- @param columns A column name or list of column names.
 -- @param items An item or list of items.
--- @param int_return If `true`, returns the integer index of the selected item
---   in the filtered list and is not compatible with the `'--select-multiple'`
---   option. The default value is `false`, which returns the string item(s).
--- @param ... Additional parameters to pass to `gui.dialog()`.
+-- @param int_return Optional flag indicating whether to return the integer
+--   index of the selected item in the filtered list or the string selected
+--   item. A `true` value is not compatible with the `'--select-multiple'`
+--   option. The default value is `false`.
+-- @param ... Optional additional parameters to pass to `gui.dialog()`.
 -- @return Either a string or integer on success; `nil` otherwise. In strings,
 --   multiple items are separated by newlines.
 -- @usage gui.filteredlist('Title', 'Foo', {'Bar', 'Baz'})
@@ -99,8 +105,7 @@ function gui.filteredlist(title, columns, items, int_return, ...)
 end
 
 ---
--- Displays a dialog with a list of buffers to switch to and switches to the
--- selected one, if any.
+-- Prompts the user to select a buffer to switch to.
 -- @name switch_buffer
 function gui.switch_buffer()
   local columns, items = {_L['Name'], _L['File']}, {}
@@ -116,20 +121,22 @@ function gui.switch_buffer()
 end
 
 ---
--- Goes to the buffer with the given filename.
--- If the desired buffer is open in a view, goes to that view. Otherwise, opens
--- the buffer in either the `preferred_view` if given, the first view that is
--- not the current one, a split view if `split` is `true`, or the current view.
+-- Goes to the buffer whose filename is *filename* in an existing view,
+-- otherwise splitting the current view if *split* is `true` or going to the
+-- next or *preferred_view* view instead of staying in the current one.
+-- If *sloppy* is `true`, only the last part of *filename* is matched to a
+-- buffer's `filename`.
 -- @param filename The filename of the buffer to go to.
--- @param split If there is only one view, split it and open the buffer in the
---   other view.
--- @param preferred_view When multiple views exist and the desired buffer is not
---   open in any of them, open it in this one.
--- @param sloppy Flag indicating whether or not to not match `filename` to
---   `buffer.filename` exactly. When `true`, matches `filename` to only the last
---   part of `buffer.filename` This is useful for run and compile commands which
---   output relative filenames and paths instead of full ones and it is likely
---   that the file in question is already open. The default value is `false`.
+-- @param split Optional flag indicating whether or not to open the buffer in a
+--   split view if there is only one view. The default value is `false`.
+-- @param preferred_view Optional view to open the desired buffer in if the
+--   buffer is not visible in any other view.
+-- @param sloppy Optional flag indicating whether or not to not match `filename`
+--   to `buffer.filename` exactly. When `true`, matches `filename` to only the
+--   last part of `buffer.filename` This is useful for run and compile commands
+--   which output relative filenames and paths instead of full ones and it is
+--   likely that the file in question is already open. The default value is
+--   `false`.
 -- @name goto_file
 function gui.goto_file(filename, split, preferred_view, sloppy)
   local patt = not sloppy and '^'..filename..'$' or filename..'$'
@@ -152,15 +159,15 @@ end
 local theme_file = not NCURSES and 'theme' or 'theme_term'
 local THEME
 ---
--- Sets the editor theme from the given name.
--- Themes with the given name in the *`_USERHOME`/themes/* directory override
--- themes of the same name in *`_HOME`/themes/*. If the name contains slashes
--- ('\' on Windows, '/' otherwise), it is assumed to be an absolute path to a
--- theme instead of a theme name. An error is thrown if the theme is not found.
--- Any errors in the theme are printed to `io.stderr`. Running Textadept from a
+-- Sets the editor theme name to *name* or the default platform theme.
+-- Themes with *name* in the *`_USERHOME`/themes/* directory override themes of
+-- the same name in *`_HOME`/themes/*. If *name* contains slashes ('\' on
+-- Windows, '/' otherwise), it is assumed to be an absolute path to a theme
+-- instead of a theme name. An error is thrown if the theme is not found. Any
+-- errors in the theme are printed to `io.stderr`. Running Textadept from a
 -- terminal is the easiest way to see errors as they occur.
--- @param name The name or absolute path of a theme. If `nil`, sets the default
---   theme.
+-- @param name Optional name or absolute path of a theme. If `nil`, sets the
+--   default platform theme.
 -- @name set_theme
 function gui.set_theme(name)
   if not name then
@@ -213,9 +220,8 @@ function gui.set_theme(name)
 end
 
 ---
--- Prompts the user to select an editor theme from a filtered list dialog.
--- Themes in the *`_HOME`/themes/* and *`_USERHOME`/themes/* directories are
--- listed.
+-- Prompts the user to select an editor theme from a list of themes found in the
+-- *`_HOME`/themes/* and *`_USERHOME`/themes/* directories.
 -- @name select_theme
 function gui.select_theme()
   local themes, themes_found = {}, {}
@@ -444,10 +450,10 @@ local size
 The functions below are Lua C functions.
 
 ---
--- Displays a [gtdialog][1] of a specified type with the given string arguments.
--- Each argument is like a string in Lua's `arg` table. Tables of strings are
--- allowed as arguments and are expanded in place. This is useful for
--- filtered list dialogs with many items.
+-- Displays a *kind* [gtdialog][1] with the given string arguments to pass to
+-- the dialog and returns a formatted string of the dialog's output.
+-- Table arguments containing strings are allowed and expanded in place. This is
+-- useful for filtered list dialogs with many items.
 -- For more information on gtdialog, see [http://foicica.com/gtdialog][1].
 --
 -- [1]: http://foicica.com/gtdialog
@@ -459,7 +465,7 @@ The functions below are Lua C functions.
 local dialog
 
 ---
--- Gets the current split view structure.
+-- Returns the current split view structure.
 -- This is primarily used in session saving.
 -- @return table of split views. Each split view entry is a table with 4
 --   fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either
@@ -471,11 +477,13 @@ local dialog
 local get_split_table
 
 ---
--- Goes to the specified view.
+-- Goes to view number *n*.
+-- If *relative* is `true`, *n* is an index relative to the index of the current
+-- view in `_G._VIEWS` instead of an absolute index.
 -- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
 -- @param n A relative or absolute view index in `_G._VIEWS`.
--- @param relative Flag indicating if n is a relative index or not. The default
---   value is `false`.
+-- @param relative Optional flag indicating whether *n* is a relative or
+--   absolute index. The default value is `false` for an absolute index.
 -- @see _G._G._VIEWS
 -- @see events.VIEW_BEFORE_SWITCH
 -- @see events.VIEW_AFTER_SWITCH
@@ -484,10 +492,11 @@ local get_split_table
 local goto_view
 
 ---
--- Creates a menu, returning the userdata.
--- This is a low-level function. You probably want to use the higher-level
--- `_M.textadept.menu.set_menubar()` or `_M.textadept.menu.set_contextmenu()`
--- functions. Emits a `MENU_CLICKED` event when a menu item is selected.
+-- Low-level function for creating a menu from table *menu_table* and returning
+-- the userdata.
+-- You probably want to use the higher-level `_M.textadept.menu.set_menubar()`
+-- or `_M.textadept.menu.set_contextmenu()` functions. Emits a `MENU_CLICKED`
+-- event when a menu item is selected.
 -- @param menu_table A table defining the menu. It is an ordered list of tables
 --   with a string menu item, integer menu ID, and optional GDK keycode and
 --   modifier mask. The latter two are used to display key shortcuts in the

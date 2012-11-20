@@ -12,11 +12,9 @@ local M = {}
 -- + `Ctrl+L, M` (`⌘L, M` on Mac OSX | `M-L, M` in ncurses)
 --   Open this module for editing.
 -- + `.`
---   When to the right of a known symbol, show an autocompletion list of fields
---   and functions.
+--   Show an autocompletion list of members for the symbol behind the caret.
 -- + `->`
---   When to the right of a known symbol, show an autocompletion list of fields
---   and functions.
+--   Show an autocompletion list of members for the symbol behind the caret.
 -- + `Shift+Enter` (`⇧↩` | `S-Enter`)
 --   Add ';' to the end of the current line and insert a newline.
 -- @field sense
@@ -74,7 +72,7 @@ end
 -- Commands.
 
 ---
--- Container for C/C++-specific key bindings.
+-- Table of C/C++-specific key bindings.
 -- @class table
 -- @name _G.keys.cpp
 keys.cpp = {
@@ -92,7 +90,7 @@ keys.cpp = {
 -- Snippets.
 
 ---
--- Container for C/C++-specific snippets.
+-- Table of C/C++-specific snippets.
 -- @class table
 -- @name _G.snippets.cpp
 if type(snippets) == 'table' then

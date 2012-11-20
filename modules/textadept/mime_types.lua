@@ -4,14 +4,14 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Handles file type detection.
+-- Handles file type detection for Textadept.
 -- @field _G.events.LANGUAGE_MODULE_LOADED (string)
 --   Called after loading a language-specific module.
 --   This is useful for overriding a language-specific module's key bindings
 --   or other properties since the module is not loaded when Textadept starts.
 --   Arguments:
 --
---   * `lang`: The language lexer name.
+--   * *`lang`*: The language lexer name.
 module('_M.textadept.mime_types')]]
 
 -- Events.
@@ -19,7 +19,8 @@ local events, events_connect = events, events.connect
 events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
 
 ---
--- Table of file extensions with their associated lexers.
+-- Map of file extensions (excluding the leading '.') to their associated
+-- lexers.
 -- If the file type is not recognized by shebang words or first-line patterns,
 -- each file extension is matched against the file's extension.
 -- @class table
@@ -27,7 +28,7 @@ events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
 M.extensions = {}
 
 ---
--- Table of shebang words and their associated lexers.
+-- Map of shebang words to their associated lexers.
 -- If the file has a shebang line, a line that starts with "#!" and is the first
 -- line in the file, each shebang word is matched against that line.
 -- @class table
@@ -35,7 +36,7 @@ M.extensions = {}
 M.shebangs = {}
 
 ---
--- Table of first-line patterns and their associated lexers.
+-- Map of first-line patterns to their associated lexers.
 -- If a file type is not recognized by shebang words, each pattern is matched
 -- against the first line in the file.
 -- @class table
@@ -69,8 +70,7 @@ for line in mime_types:gmatch('[^\r\n]+') do
 end
 
 ---
--- List of detected lexers.
--- Lexers are read from *lexers/* and *~/.textadept/lexers/*.
+-- List of detected lexers are read from *lexers/* and *~/.textadept/lexers/*.
 -- @class table
 -- @name lexers
 M.lexers = {}
@@ -93,8 +93,7 @@ for lexer in pairs(lexers_found) do M.lexers[#M.lexers + 1] = lexer end
 table.sort(M.lexers)
 
 ---
--- Prompts the user to select a lexer from a filtered list for the current
--- buffer.
+-- Prompts the user to select a lexer for the current buffer.
 -- @see buffer.set_lexer
 -- @name select_lexer
 function M.select_lexer()

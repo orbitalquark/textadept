@@ -5,8 +5,9 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Defines key commands for Textadept.
--- This set of key commands is pretty standard among other text editors.
--- This module should be `require`d last, but before `_M.textadept.menu`.
+-- This set of key commands is pretty standard among other text editors. If
+-- applicable, load this module second to last in your *~/.textadept/init.lua*,
+-- before `_M.textadept.menu`.
 --
 -- ## Key Bindings
 --
@@ -25,7 +26,7 @@ local M = {}
 -- None          |None     |None      |Load session...
 -- Ctrl+Q        |⌘Q       |^Q        |Quit
 -- **Edit**                |         |             |
--- Ctrl+Z<br/>Alt+Backspace|⌘Z       |^Z           |Undo
+-- Ctrl+Z<br/>Alt+Bksp     |⌘Z       |^Z           |Undo
 -- Ctrl+Y<br/>Ctrl+Shift+Z |⌘⇧Z      |^Y           |Redo
 -- Ctrl+X<br/>Shift+Del    |⌘X<br/>⇧⌦|^X           |Cut
 -- Ctrl+C<br/>Ctrl+Ins     |⌘C       |^C           |Copy
@@ -113,14 +114,15 @@ local M = {}
 -- None            |None  |None         |UTF-8 encoding
 -- None            |None  |None         |ASCII encoding
 -- None            |None  |None         |ISO-8859-1 encoding
+-- None            |None  |None         |MacRoman encoding
 -- None            |None  |None         |UTF-16 encoding
 -- Ctrl+Shift+L    |⌘⇧L   |M-S-L        |Select lexer...
 -- F5              |F5    |^L<br/>F5    |Refresh syntax highlighting
 -- **View**                 |         |     |
 -- Ctrl+Alt+N               |^⌥⇥      |N/A  |Next view
 -- Ctrl+Alt+P               |^⌥⇧⇥     |N/A  |Previous view
--- Ctrl+Alt+S<br/>Ctrl+Alt+H|^S       |N/A  |Split view horizontal
--- Ctrl+Alt+V               |^V       |N/A  |Split view vertical
+-- Ctrl+Alt+S<br/>Ctrl+Alt+H|^S       |N/A  |Split view horizontally
+-- Ctrl+Alt+V               |^V       |N/A  |Split view vertically
 -- Ctrl+Alt+W               |^W       |N/A  |Unsplit view
 -- Ctrl+Alt+Shift+W         |^⇧W      |N/A  |Unsplit all views
 -- Ctrl+Alt++<br/>Ctrl+Alt+=|^+<br/>^=|N/A  |Grow view

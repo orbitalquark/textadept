@@ -5,9 +5,10 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Provides dynamic menus for Textadept.
--- This module should be `require`d last, after `_M.textadept.keys` since it
--- looks up defined key commands to show them in menus.
+-- Defines the menus used by Textadept.
+-- If applicable, load this module last in your *~/.textadept/init.lua*, after
+-- `_M.textadept.keys` since it looks up defined key commands to show them in
+-- menus.
 module('_M.textadept.menu')]]
 
 -- Get a string uniquely identifying a key binding.
@@ -30,7 +31,8 @@ local utils = m_textadept.keys.utils
 local SEPARATOR, c = {''}, _SCINTILLA.constants
 
 ---
--- Contains the main menubar.
+-- Defines the default main menubar.
+-- Changing this field does not change the menubar. Use `set_menubar()` instead.
 -- @see set_menubar
 -- @class table
 -- @name menubar
@@ -218,7 +220,9 @@ M.menubar = {
 }
 
 ---
--- Contains the default right-click context menu.
+-- Defines the default right-click context menu.
+-- Changing this field does not change the context menu. Use `set_contextmenu()`
+-- instead.
 -- @see set_contextmenu
 -- @class table
 -- @name context_menu
@@ -287,12 +291,13 @@ local function build_command_tables(menu, title, items, commands)
 end
 
 ---
--- Sets `gui.menubar` from the given table of menus.
--- @param menubar The table of menus to create the menubar from. Each menu is
---   an ordered list of menu entries and has a `title` key for the menu/submenu
---   title. Menu entries are either submenus of the same form as menus, or
---   tables containing menu text and either a function to call or a table
---   containing the function to call with its parameters.
+-- Sets `gui.menubar` from *menubar*, a table of menus.
+-- Each menu is an ordered list of menu items and has a `title` key for the
+-- title text. Menu items are tables containing menu text and either a function
+-- to call or a table containing a function with its parameters to call when an
+-- item is clicked. Menu items may also be sub-menus, ordered lists of menu
+-- items with an additional `title` key for the sub-menu's title text.
+-- @param menubar The table of menus to create the menubar from.
 -- @see gui.menubar
 -- @see gui.menu
 -- @name set_menubar
@@ -311,24 +316,24 @@ end
 M.set_menubar(M.menubar)
 
 ---
--- Sets `gui.context_menu` from the given menu table.
--- @param menu_table The menu table to create the context menu from. The menu is
---   an ordered list of menu entries and, if applicable, has a `title` key for
---   the submenu title. Menu entries are either submenus of the same form as
---   menus, or tables containing menu text and either a function to call or a
---   table containing the function to call with its parameters.
+-- Sets `gui.context_menu` from *menu*, an ordered list of menu items.
+-- Menu items are tables containing menu text and either a function to call or
+-- a table containing a function with its parameters to call when an item is
+-- clicked. Menu items may also be sub-menus, ordered lists of menu items with
+-- an additional `title` key for the sub-menu's title text.
+-- @param menu The menu to create the context menu from.
 -- @see gui.context_menu
 -- @see gui.menu
 -- @name set_contextmenu
-function M.set_contextmenu(menu_table)
+function M.set_contextmenu(menu)
   contextmenu_actions = {}
-  gui.context_menu = gui.menu(read_menu_table(menu_table, true))
+  gui.context_menu = gui.menu(read_menu_table(menu, true))
 end
 if not NCURSES then M.set_contextmenu(M.context_menu) end
 
 local columns = {_L['Command'], _L['Key Command']}
 ---
--- Prompts the user with a filtered list dialog to run menu commands.
+-- Prompts the user to select a menu command to run.
 -- @name select_command
 function M.select_command()
   local i = gui.filteredlist(_L['Run Command'], columns, items, true,

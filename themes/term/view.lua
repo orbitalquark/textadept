@@ -98,7 +98,7 @@ buffer.auto_c_choose_single = true
 --buffer.auto_c_max_width =
 
 -- Call Tips.
-buffer.call_tip_use_style = 0
+--buffer.call_tip_use_style =
 
 -- Folding.
 --buffer.fold_flags = c.SC_FOLDFLAG_LINEAFTER_CONTRACTED

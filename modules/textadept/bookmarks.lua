@@ -6,7 +6,7 @@ local M = {}
 ---
 -- Bookmarks for Textadept.
 -- @field MARK_BOOKMARK_COLOR (number)
---   The color used for a bookmarked line in "0xBBGGRR" format.
+--   The color, in "0xBBGGRR" format, used for a bookmarked line.
 module('_M.textadept.bookmarks')]]
 
 M.MARK_BOOKMARK_COLOR = not NCURSES and 0xB3661A or 0xFF0000
@@ -14,9 +14,10 @@ M.MARK_BOOKMARK_COLOR = not NCURSES and 0xB3661A or 0xFF0000
 local MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 
 ---
--- Toggles a bookmark on the current line.
--- @param on If `true`, adds a bookmark to the current line. If `false`, removes
---   the bookmark on the current line. Otherwise, toggles a bookmark.
+-- Toggles the bookmark on the current line unless *on* is given.
+-- If *on* is `true` or `false`, adds or removes the bookmark, respectively.
+-- @param on Optional flag indicating whether to add or remove a bookmark on the
+--   current line. The default value is `nil`, toggling a bookmark.
 -- @name toggle
 function M.toggle(on)
   local buffer = buffer
@@ -52,21 +53,21 @@ local function goto_mark(f, increment, wrap_start)
 end
 
 ---
--- Goes to the next bookmark in the current buffer.
+-- Goes to the next bookmarked line in the current buffer.
 -- @name goto_next
 function M.goto_next()
   goto_mark(buffer.marker_next, 1, 0)
 end
 
 ---
--- Goes to the previous bookmark in the current buffer.
+-- Goes to the previous bookmarked line in the current buffer.
 -- @name goto_prev
 function M.goto_prev()
   goto_mark(buffer.marker_previous, -1, buffer.line_count)
 end
 
 ---
--- Goes to selected bookmark from a filtered list.
+-- Prompts the user to select a bookmarked line to go to.
 -- @name goto_bookmark
 function M.goto_bookmark()
   local buffer = buffer

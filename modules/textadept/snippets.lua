@@ -130,10 +130,11 @@ local function new_snippet(text, trigger)
 end
 
 ---
--- Inserts a new snippet or goes to the next placeholder of the active snippet.
+-- Inserts snippet text *text* or the snippet associated with the trigger behind
+-- the caret as a snippet, or goes to the next placeholder of the active
+-- snippet, ultimately only returning `false` if no action was taken.
 -- @param text Optional snippet text. If `nil`, attempts to insert a new snippet
---   based on the trigger, the word to the left of the caret, and the current
---   lexer.
+--   based on the trigger, the word behind caret, and the current lexer.
 -- @return `false` if no action was taken; `nil` otherwise.
 -- @see buffer.word_chars
 -- @name _insert
@@ -157,7 +158,7 @@ end
 
 ---
 -- Goes back to the previous snippet placeholder, reverting any changes from the
--- current one.
+-- current one, but returns `false` only if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
 -- @name _previous
 function M._previous()
@@ -166,16 +167,15 @@ function M._previous()
 end
 
 ---
--- Cancels the active snippet, reverting to the state before its activation, and
--- restores the previously running snippet (if any).
+-- Cancels insertion of the active snippet.
 -- @name _cancel_current
 function M._cancel_current()
   if #snippet_stack > 0 then snippet_stack[#snippet_stack]:cancel() end
 end
 
 ---
--- Prompts the user to select a snippet to insert from a filtered list dialog.
--- Global snippets and snippets in the current lexer are shown.
+-- Prompts the user for a snippet to insert from a list of global and
+-- language-specific snippets.
 -- @name _select
 function M._select()
   local list = {}
@@ -387,9 +387,8 @@ events.connect(events.VIEW_NEW,
                function() buffer.indic_style[INDIC_SNIPPET] = INDIC_HIDDEN end)
 
 ---
--- Table of snippet triggers with their snippet text.
--- Language-specific snippets are in another table value whose key is the
--- language's lexer name.
+-- Map of snippet triggers with their snippet text, with language-specific
+-- snippets tables assigned to a lexer name key.
 -- This table also contains the `_M.textadept.snippets` module.
 -- @class table
 -- @name _G.snippets

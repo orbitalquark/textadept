@@ -6,10 +6,10 @@ local M = {}
 ---
 -- Quickly open files in a set of directories using a filtered list dialog.
 -- @field DEFAULT_DEPTH (number)
---   Maximum directory depth to search.
+--   The maximum directory depth to search.
 --   The default value is `99`.
 -- @field MAX (number)
---   Maximum number of files to list.
+--   The maximum number of files to list.
 --   The default value is `1000`.
 module('_M.textadept.snapopen')]]
 

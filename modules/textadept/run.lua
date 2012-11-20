@@ -11,21 +11,21 @@ local M = {}
 --
 -- [language-specific modules]: _M.html#Compile.and.Run
 -- @field _G.events.COMPILE_OUTPUT (string)
---   Called after a compile command is executed.
+--   Called after executing a language's compile command.
 --   By default, compiler output is printed to the message buffer. To override
 --   this behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
---   * `lexer`: The lexer language.
---   * `output`: The output from the command.
+--   * `lexer`: The lexer language name.
+--   * `output`: The string output from the command.
 -- @field _G.events.RUN_OUTPUT (string)
---   Called after a run command is executed.
+--   Called after executing a language's run command.
 --   By default, output is printed to the message buffer. To override this
 --   behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
---   * `lexer`: The lexer language.
---   * `output`: The output from the command.
+--   * `lexer`: The lexer language name.
+--   * `output`: The string output from the command.
 module('_M.textadept.run')]]
 
 -- Events.
@@ -110,15 +110,14 @@ local function print_output(lexer, output)
 end
 
 ---
--- File extensions and their associated "compile" shell commands.
--- Each key is a file extension whose value is a either a command line string to
--- execute or a function returning one. The command string can have the
--- following macros:
+-- Map of file extensions (excluding the leading '.') to their associated
+-- "compile" shell command line strings or functions returning such strings.
+-- Command line strings may have the following macros:
 --
 --   + `%(filepath)`: The full path of the current file.
 --   + `%(filedir)`: The current file's directory path.
---   + `%(filename)`: The name of the file including extension.
---   + `%(filename_noext)`: The name of the file excluding extension.
+--   + `%(filename)`: The name of the file, including its extension.
+--   + `%(filename_noext)`: The name of the file, excluding its extension.
 --
 -- This table is typically populated by [language-specific modules][].
 --
@@ -138,15 +137,14 @@ function M.compile() command(M.compile_command, true) end
 events_connect(events.COMPILE_OUTPUT, print_output)
 
 ---
--- File extensions and their associated "run" shell commands.
--- Each key is a file extension whose value is either a command line string to
--- execute or a function returning one. The command string can have the
--- following macros:
+-- Map of file extensions (excluding the leading '.') to their associated
+-- "run" shell command line strings or functions returning such strings.
+-- Command line strings may have the following macros:
 --
 --   + `%(filepath)`: The full path of the current file.
 --   + `%(filedir)`: The current file's directory path.
---   + `%(filename)`: The name of the file including extension.
---   + `%(filename_noext)`: The name of the file excluding extension.
+--   + `%(filename)`: The name of the file, including its extension.
+--   + `%(filename_noext)`: The name of the file, excluding its extension.
 --
 -- This table is typically populated by [language-specific modules][].
 --
@@ -166,17 +164,17 @@ function M.run() command(M.run_command) end
 events_connect(events.RUN_OUTPUT, print_output)
 
 ---
--- A table of error string details for different programming languages.
--- Each key is a lexer name whose value is a table with the following fields:
+-- Map of lexer names to their error string details, tables containing the
+-- following fields:
 --
---   + `pattern`: The Lua pattern that matches a specific error string with
---     captures for the filename the error occurs in, the line number the error
---     occurred on, and an optional error message.
---   + `filename`: The index of the Lua capture that contains the filename the
---     error occured in.
---   + `line`: The index of the Lua capture that contains the line number the
---     error occured on.
---   + `message`: (Optional) The index of the Lua capture that contains the
+--   + `pattern`: A Lua pattern that matches the language's error string,
+--     capturing the filename the error occurs in, the line number the error
+--     occurred on, and optionally the error message.
+--   + `filename`: The numeric index of the Lua capture containing the filename
+--      the error occurred in.
+--   + `line`: The numeric index of the Lua capture containing the line number
+--      the error occurred on.
+--   + `message`: (Optional) The numeric index of the Lua capture containing the
 --     error's message. An annotation will be displayed if a message was
 --     captured.
 --
@@ -190,8 +188,9 @@ events_connect(events.RUN_OUTPUT, print_output)
 M.error_detail = {}
 
 ---
--- Goes to the line in the file an error occured at based on the error message
--- at the given position and displays an annotation with the error message.
+-- Goes to line number *line_num* in the file an error occurred at based on the
+-- error message at position *pos* in the buffer and displays an annotation with
+-- the error message.
 -- This is typically called by an event handler for when the user double-clicks
 -- on an error message.
 -- @param pos The position of the caret.
