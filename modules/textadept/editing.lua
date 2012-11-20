@@ -139,10 +139,10 @@ end)
 -- Autocomplete multiple selections.
 events_connect(events.AUTO_C_SELECTION, function(text, position)
   local buffer = buffer
-  local caret = buffer.selection_n_caret[buffer.main_selection]
+  local pos = buffer.selection_n_caret[buffer.main_selection]
   buffer:begin_undo_action()
   for i = 0, buffer.selections - 1 do
-    buffer.target_start = buffer.selection_n_anchor[i] - (caret - position)
+    buffer.target_start = buffer.selection_n_anchor[i] - (pos - position)
     buffer.target_end = buffer.selection_n_caret[i]
     buffer:replace_target(text)
     buffer.selection_n_anchor[i] = buffer.selection_n_anchor[i] + #text
@@ -187,15 +187,15 @@ end)
 -- @name match_brace
 function M.match_brace(select)
   local buffer = buffer
-  local caret = buffer.current_pos
-  local match_pos = buffer:brace_match(caret)
+  local pos = buffer.current_pos
+  local match_pos = buffer:brace_match(pos)
   if match_pos == -1 then return end
   if not select then
     buffer:goto_pos(match_pos)
-  elseif match_pos > caret then
-    buffer:set_sel(caret, match_pos + 1)
+  elseif match_pos > pos then
+    buffer:set_sel(pos, match_pos + 1)
   else
-    buffer:set_sel(caret + 1, match_pos)
+    buffer:set_sel(pos + 1, match_pos)
   end
 end
 
@@ -216,10 +216,10 @@ end
 -- @name autocomplete_word
 function M.autocomplete_word(word_chars, default_words)
   local buffer = buffer
-  local caret, length = buffer.current_pos, buffer.length
+  local pos, length = buffer.current_pos, buffer.length
   local completions, c_list = {}, {}
   local buffer_text = buffer:get_text(buffer.length)
-  local root = buffer_text:sub(1, caret):match('['..word_chars..']+$')
+  local root = buffer_text:sub(1, pos):match('['..word_chars..']+$')
   if not root or root == '' then return end
   for _, word in ipairs(default_words or {}) do
     if word:match('^'..root) then
@@ -255,7 +255,7 @@ function M.autocomplete_word(word_chars, default_words)
       -- Scintilla does not emit AUTO_C_SELECTION in this case. This is
       -- necessary for autocompletion with multiple selections.
       local text = c_list[1]:match('^(.-)%??%d*$')
-      events.emit(events.AUTO_C_SELECTION, text, caret - #root)
+      events.emit(events.AUTO_C_SELECTION, text, pos - #root)
     end
     return true
   end
@@ -277,25 +277,25 @@ function M.block_comment(prefix)
     prefix = M.comment_string[buffer:get_lexer(true)]
     if not prefix then return end
   end
-  local anchor, caret = buffer.selection_start, buffer.selection_end
+  local anchor, pos = buffer.selection_start, buffer.selection_end
   local s = buffer:line_from_position(anchor)
-  local e = buffer:line_from_position(caret)
+  local e = buffer:line_from_position(pos)
   local mlines = s ~= e
-  if mlines and caret == buffer:position_from_line(e) then e = e - 1 end
+  if mlines and pos == buffer:position_from_line(e) then e = e - 1 end
   buffer:begin_undo_action()
   for line = s, e do
     local pos = buffer:position_from_line(line)
     if buffer:text_range(pos, pos + #prefix) == prefix then
       buffer:set_sel(pos, pos + #prefix)
       buffer:replace_sel('')
-      caret = caret - #prefix
+      pos = pos - #prefix
     else
       buffer:insert_text(pos, prefix)
-      caret = caret + #prefix
+      pos = pos + #prefix
     end
   end
   buffer:end_undo_action()
-  if mlines then buffer:set_sel(anchor, caret) else buffer:goto_pos(caret) end
+  if mlines then buffer:set_sel(anchor, pos) else buffer:goto_pos(pos) end
 end
 
 ---
@@ -383,16 +383,16 @@ end
 -- @name grow_selection
 function M.grow_selection(amount)
   local buffer = buffer
-  local anchor, caret = buffer.anchor, buffer.current_pos
-  if anchor < caret then
-    buffer:set_sel(anchor - amount, caret + amount)
+  local anchor, pos = buffer.anchor, buffer.current_pos
+  if anchor < pos then
+    buffer:set_sel(anchor - amount, pos + amount)
   else
-    buffer:set_sel(anchor + amount, caret - amount)
+    buffer:set_sel(anchor + amount, pos - amount)
   end
 end
 
 ---
--- Selects the current word under the caret.
+-- Selects the current word.
 -- @see buffer.word_chars
 -- @name select_word
 function M.select_word()
@@ -489,8 +489,8 @@ events_connect(events.KEYPRESS, function(code)
 end)
 
 ---
--- Highlights all occurrences of the selected text or the word under the caret
--- and adds markers to the lines they are on.
+-- Highlights all occurrences of the selected text or the current word and adds
+-- markers to the lines they are on.
 -- @see buffer.word_chars
 -- @name highlight_word
 function M.highlight_word()

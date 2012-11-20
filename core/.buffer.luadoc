@@ -969,9 +969,8 @@ module('buffer')
 function add_selection(buffer, caret, anchor) end
 
 ---
--- Adds string *text* to the buffer at the current position and moves the
--- current position to the end of the added text, but does not scroll it into
--- view.
+-- Adds string *text* to the buffer at the caret and moves the caret to the end
+-- of the added text, but does not scroll it into view.
 -- @param buffer The global buffer.
 -- @param text The text to add.
 function add_text(buffer, text) end
@@ -1227,7 +1226,7 @@ function char_right_rect_extend(buffer) end
 function choose_caret_x(buffer) end
 
 ---
--- Deletes the selected text or the character at the current position.
+-- Deletes the selected text or the character at the caret.
 -- @param buffer The global buffer.
 function clear(buffer) end
 
@@ -1328,12 +1327,12 @@ function count_characters(buffer, start_pos, end_pos) end
 function cut(buffer) end
 
 ---
--- Deletes text from the current position to the beginning of the line.
+-- Deletes text from the caret to the beginning of the line.
 -- @param buffer The global buffer.
 function del_line_left(buffer) end
 
 ---
--- Deletes text from the current position to the end of the line.
+-- Deletes text from the caret to the end of the line.
 -- @param buffer The global buffer.
 function del_line_right(buffer) end
 
@@ -1457,7 +1456,7 @@ function ensure_visible_enforce_policy(buffer, line) end
 function find_column(buffer, line, column) end
 
 ---
--- Inserts a Form Feed ("\f") character at the current position.
+-- Inserts a Form Feed ("\f") character at the caret.
 -- @param buffer The global buffer.
 function form_feed(buffer) end
 
@@ -1647,10 +1646,9 @@ function indicator_start(buffer, indicator, pos) end
 function indicator_value_at(buffer, indicator, pos) end
 
 ---
--- Inserts string *text* at position *pos* or the current position if *pos* is
--- `-1`.
--- If the current position is after the *pos*, it is moved appropriately, but
--- not scrolled into view.
+-- Inserts string *text* at position *pos* or the caret if *pos* is `-1`.
+-- If the caret is after the *pos*, it is moved appropriately, but not scrolled
+-- into view.
 -- @param buffer The global buffer.
 -- @param pos The position to insert text at or `-1` for the current position.
 -- @param text The text to insert.
@@ -1759,12 +1757,12 @@ function line_length(buffer, line) end
 function line_scroll(buffer, columns, lines) end
 
 ---
--- Scroll the buffer down one line, keeping the current position visible.
+-- Scroll the buffer down one line, keeping the caret visible.
 -- @param buffer The global buffer.
 function line_scroll_down(buffer) end
 
 ---
--- Scroll the buffer up one line, keeping the current position visible.
+-- Scroll the buffer up one line, keeping the caret visible.
 -- @param buffer The global buffer.
 function line_scroll_up(buffer) end
 
@@ -1950,8 +1948,8 @@ function marker_previous(buffer, start_line, marker_mask) end
 function marker_symbol_defined(buffer, marker_num) end
 
 ---
--- Moves the current position to be visible inside the view if it is not
--- already, removing any selections.
+-- Moves the caret to be visible inside the view if it is not already, removing
+-- any selections.
 -- @param buffer The global buffer.
 function move_caret_inside_view(buffer) end
 
@@ -1966,8 +1964,8 @@ function move_selected_lines_down(buffer) end
 function move_selected_lines_up(buffer) end
 
 ---
--- Inserts a new line character(s) at the current position depending on the end
--- of line mode.
+-- Inserts a new line character(s) at the caret depending on the end of line
+-- mode.
 -- @param buffer The global buffer.
 function new_line(buffer) end
 
@@ -2149,7 +2147,7 @@ function replace_target_re(buffer, text) end
 function rotate_selection(buffer) end
 
 ---
--- Scrolls the current position into view based on the policies set with
+-- Scrolls the caret into view based on the policies set with
 -- `buffer:set_x_caret_policy()` and `buffer:set_y_caret_policy()`.
 -- @param buffer The global buffer.
 -- @see set_x_caret_policy
@@ -2427,7 +2425,7 @@ function swap_main_anchor_caret(buffer) end
 
 ---
 -- Indents the selected lines, replaces the selected text on a line with a Tab
--- character ("\t"), or inserts a Tab character at the current position.
+-- character ("\t"), or inserts a Tab character at the caret.
 -- @param buffer The global buffer.
 function tab(buffer) end
 
@@ -2574,8 +2572,8 @@ function word_end_position(buffer, pos, only_word_chars) end
 function word_left(buffer) end
 
 ---
--- Moves the caret left one word, positioning the current position at the end of
--- the previous word.
+-- Moves the caret left one word, positioning the caret at the end of the
+-- previous word.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_left_end(buffer) end

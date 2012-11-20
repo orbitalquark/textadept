@@ -109,8 +109,8 @@ local function get_style_name(buffer, style_num)
 end
 
 -- Contains the whitespace styles for lexers.
--- These whitespace styles are used to determine the lexer at the current caret
--- position since the styles have the name "[lang]_whitespace".
+-- These whitespace styles are used to determine the lexer at the caret position
+-- since the styles have the name "[lang]_whitespace".
 -- @class table
 -- @name ws_styles
 local ws_styles = {}
