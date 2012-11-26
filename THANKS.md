@@ -20,6 +20,7 @@ Textadept the amazing editor that it is today.
 * Neil Hodgson
 * Nils Nordman
 * Patrick McMorris
+* Pedro Andres Aranda Gutierrez
 * Robert Gieseke
 * Russell Dickinson
 * Ryan Pusztai

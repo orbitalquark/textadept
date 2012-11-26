@@ -67,10 +67,10 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       endif
       MAKE = gmake
     endif
-    DESTDIR = /usr/local
+    PREFIX ?= /usr/local
 
-    bin_dir = $(DESTDIR)/bin
-    data_dir = $(DESTDIR)/share/textadept
+    bin_dir = $(DESTDIR)$(PREFIX)/bin
+    data_dir = $(DESTDIR)$(PREFIX)/share/textadept
 
     ifneq (ncurses, $(MAKECMDGOALS))
       plat_flag = -DGTK
@@ -299,7 +299,7 @@ install: ../textadept ../textadeptjit ../textadept-ncurses \
 	install -d $(bin_dir) $(data_dir)
 	install $^ $(data_dir)
 	cp -r $| $(data_dir)
-	ln -s $(subst .., $(data_dir), $^) $(bin_dir)
+	ln -s $(subst .., $(subst $(DESTDIR),, $(data_dir)), $^) $(bin_dir)
 uninstall:
 	rm $(bin_dir)/textadept*
 	rm -r $(data_dir)
