@@ -958,8 +958,8 @@
 module('buffer')
 
 ---
--- Adds a new selection to a text range from *anchor* to *caret* as the main
--- selection, retaining all other selections as additional selections.
+-- Selects the change of text from *anchor* to *caret* as the main selection, 
+-- retaining all other selections as additional selections.
 -- Even if no text is selected, the current position counts as an empty
 -- selection. Use `buffer:set_selection()` first when setting a list of
 -- selections.
@@ -1788,8 +1788,8 @@ function line_up_extend(buffer) end
 function line_up_rect_extend(buffer) end
 
 ---
--- Joins the lines in the target range, inserting spaces in-between words on
--- separate lines.
+-- Joins the lines in the target range, inserting spaces in-between joined 
+-- words.
 -- @param buffer The global buffer.
 function lines_join(buffer) end
 
