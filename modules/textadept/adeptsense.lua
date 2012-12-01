@@ -413,9 +413,10 @@ end
 -- If *symbol* is `sense.syntax.self` and inside a class definition matching
 -- `sense.syntax.class_definition`, that class is returned. Otherwise the
 -- buffer is searched backwards for a type declaration of *symbol* according to
--- the patterns in `sense.syntax.type_declarations`.
+-- the patterns in `sense.syntax.type_declarations` or a type assignment of
+-- *symbol* according to `sense.syntax.type_assignments`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
--- @param symbol The symbol to get the class of.
+-- @param symbol The symbol name to get the class of.
 -- @return class or `nil`
 -- @see syntax
 -- @name get_class
@@ -508,7 +509,7 @@ end
 -- Returns a list of function (unless *only_fields* is `true`) and field (unless
 -- *only_funcs* is `true`) completions for *symbol* name.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
--- @param symbol The symbol to get completions for.
+-- @param symbol The symbol name to get completions for.
 -- @param only_fields Optional flag indicating whether or not to return a list
 --   of only fields. The default value is `false`.
 -- @param only_functions Optional flag indicating whether or not to return a
@@ -626,8 +627,8 @@ end
 -- Returns a list of apidocs for *symbol* name.
 -- The list contains a `pos` key with the index of the apidoc to show.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
--- @param symbol The symbol to get apidocs for.
--- @return apidoc_list or `nil`
+-- @param symbol The symbol name to get apidocs for.
+-- @return list of apidocs or `nil`
 -- @name get_apidoc
 function M.get_apidoc(sense, symbol)
   if not symbol then return nil end
@@ -665,7 +666,7 @@ local apidocs = nil
 -- If documentation is already being shown, cycles through multiple definitions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
 --   the current language's Adeptsense (if it exists).
--- @return list of api docs on success or `nil`.
+-- @return list of apidocs on success or `nil`.
 -- @see get_symbol
 -- @see get_apidoc
 -- @name show_apidoc
@@ -868,7 +869,7 @@ function M.handle_clear(sense) end
 ---
 -- Creates and returns a new Adeptsense for *lang* name.
 -- Only one sense can exist per language.
--- @param lang The lexer language to create an Adeptsense for.
+-- @param lang The lexer language name to create an Adeptsense for.
 -- @return adeptsense
 -- @usage local lua_sense = _M.textadept.adeptsense.new('lua')
 -- @name new

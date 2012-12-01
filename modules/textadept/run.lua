@@ -193,7 +193,7 @@ M.error_detail = {}
 -- the error message.
 -- This is typically called by an event handler for when the user double-clicks
 -- on an error message.
--- @param pos The position of the caret.
+-- @param pos The position of the caret in the buffer.
 -- @param line_num The line number the caret is on with the error message.
 -- @see error_detail
 function goto_error(pos, line_num)

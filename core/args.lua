@@ -24,11 +24,12 @@ local switches = {}
 -- *long*, respectively. *narg* is the number of arguments the switch accepts,
 -- *f* is the function called when the switch is tripped, and *description* is
 -- the switch's description when displaying help.
--- @param short String short version of the switch.
--- @param long String long version of the switch.
+-- @param short The string short version of the switch.
+-- @param long The string long version of the switch.
 -- @param narg The number of expected parameters for the switch.
 -- @param f The Lua function to run when the switch is tripped.
--- @param description Description of the switch for command line help.
+-- @param description The string description of the switch for command line
+--   help.
 -- @name register
 function M.register(short, long, narg, f, description)
   local t = {f, narg, description}

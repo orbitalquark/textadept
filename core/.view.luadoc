@@ -22,7 +22,7 @@ local buffer
 -- Emits a `VIEW_NEW` event.
 -- @param view The view to split.
 -- @param vertical Optional flag indicating whether or not to split the view
---   vertically. The default value is `false` for horizontal.
+--   vertically. The default value is `false`, for horizontal.
 -- @return old view and new view.
 -- @see events.VIEW_NEW
 function split(view, vertical) end
@@ -42,7 +42,7 @@ function unsplit(view) end
 -- @param n A relative or absolute buffer index in `_G._BUFFERS`. An absolute
 --   index of `-1` goes to the last buffer.
 -- @param relative Optional flag indicating whether *n* is a relative or
---   absolute index. The default value is `false` for an absolute index.
+--   absolute index. The default value is `false`, for an absolute index.
 -- @see _G._G._BUFFERS
 -- @see events.BUFFER_BEFORE_SWITCH
 -- @see events.BUFFER_AFTER_SWITCH

@@ -133,8 +133,9 @@ end
 -- Inserts snippet text *text* or the snippet associated with the trigger behind
 -- the caret as a snippet, or goes to the next placeholder of the active
 -- snippet, ultimately only returning `false` if no action was taken.
--- @param text Optional snippet text. If `nil`, attempts to insert a new snippet
---   based on the trigger, the word behind caret, and the current lexer.
+-- @param text Optional snippet text to insert. If `nil`, attempts to insert a
+--   new snippet based on the trigger, the word behind caret, and the current
+--   lexer.
 -- @return `false` if no action was taken; `nil` otherwise.
 -- @see buffer.word_chars
 -- @name _insert
