@@ -397,8 +397,8 @@
 --
 --   [`_SCINTILLA.next_indic_number()`]: _SCINTILLA.html#next_indic_number
 -- @field indic_under (table)
---   Table of flags indicating whether to draw indicators over text or under it
---   for indicator numbers from `0` to `31`.
+--   Table of flags indicating whether or not to draw indicators over text or
+--   under it for indicator numbers from `0` to `31`.
 --   For values to be `true`, [`buffer.two_phase_draw`](#two_phase_draw) must be
 --   `true`.
 --   The default values are `false` for drawing indicators over text.
@@ -650,7 +650,7 @@
 --   The width for an RGBA image to be defined using
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
 -- @field scroll_width (number)
---   The assumed document width for horizontal scrolling purposes.
+--   The assumed buffer width for horizontal scrolling purposes.
 --   For performance, the view does not measure the display width of the buffer
 --   to determine the properties of the horizontal scroll bar, but uses an
 --   assumed width instead. To ensure the width of the currently visible lines
@@ -958,14 +958,14 @@
 module('buffer')
 
 ---
--- Selects the change of text from *anchor* to *caret* as the main selection, 
+-- Selects the change of text from *anchor* to *caret* as the main selection,
 -- retaining all other selections as additional selections.
 -- Even if no text is selected, the current position counts as an empty
 -- selection. Use `buffer:set_selection()` first when setting a list of
 -- selections.
 -- @param buffer The global buffer.
--- @param caret The caret.
--- @param anchor The anchor.
+-- @param caret The caret position of the range of text to select in *buffer*.
+-- @param anchor The anchor position of the range of text to select in *buffer*.
 function add_selection(buffer, caret, anchor) end
 
 ---
@@ -979,7 +979,7 @@ function add_text(buffer, text) end
 -- Enlarges the buffer to store *bytes* number of bytes, but never shrinks it
 -- beyond the size of its contents.
 -- @param buffer The global buffer.
--- @param bytes The number of bytes the buffer can store.
+-- @param bytes The number of bytes *buffer* can store.
 function allocate(buffer, bytes) end
 
 ---
@@ -991,7 +991,7 @@ function annotation_clear_all(buffer) end
 -- Appends string *text* to the end of the buffer without changing the selected
 -- text or scrolling the text into view.
 -- @param buffer The global buffer.
--- @param text The text.
+-- @param text The text to append.
 function append_text(buffer, text) end
 
 ---
@@ -1031,8 +1031,8 @@ function auto_c_select(buffer, string) end
 -- @param buffer The global buffer.
 -- @param len_entered The number of characters before the caret used to provide
 --   the context.
--- @param item_list Sorted list of words separated by separator characters
---   (initially spaces).
+-- @param item_list The sorted string of words to show, separated by
+--   `buffer.auto_c_separator` characters (initially spaces).
 function auto_c_show(buffer, len_entered, item_list) end
 
 ---
@@ -1040,7 +1040,8 @@ function auto_c_show(buffer, len_entered, item_list) end
 -- typed.
 -- The default set is an empty string.
 -- @param buffer The global buffer.
--- @param chars String list of characters. This list is empty by default.
+-- @param chars The string of characters that cancel autocompletion. This string
+--   is empty by default.
 function auto_c_stops(buffer, chars) end
 
 ---
@@ -1059,7 +1060,8 @@ function begin_undo_action(buffer) end
 -- the `_SCINTILLA.constants.STYLE_BRACEBAD` style.
 -- Removes highlighting when *pos* is `-1`.
 -- @param buffer The global buffer.
--- @param pos The position or `-1` to remove the highlight.
+-- @param pos The position in *buffer* to highlight, or `-1` to remove the
+--   highlight.
 function brace_bad_light(buffer, pos) end
 
 ---
@@ -1067,8 +1069,8 @@ function brace_bad_light(buffer, pos) end
 -- the range of `0` to `31`, instead of the
 -- `_SCINTILLA.constants.STYLE_BRACEBAD` style if *use_indicator* is `true`.
 -- @param buffer The global buffer.
--- @param use_indicator Use an indicator.
--- @param indic_num The indicator number.
+-- @param use_indicator Whether or not to use an indicator.
+-- @param indic_num The indicator number to use.
 function brace_bad_light_indicator(buffer, use_indicator, indic_num) end
 
 ---
@@ -1077,8 +1079,8 @@ function brace_bad_light_indicator(buffer, use_indicator, indic_num) end
 -- If indent guides are enabled, locate the column with `buffer.column` and
 -- set `buffer.highlight_guide` in order to highlight the indent guide.
 -- @param buffer The global buffer.
--- @param pos1 The first position.
--- @param pos2 The second position.
+-- @param pos1 The first position in *buffer* to highlight.
+-- @param pos2 The second position in *buffer* to highlight.
 function brace_highlight(buffer, pos1, pos2) end
 
 ---
@@ -1086,8 +1088,8 @@ function brace_highlight(buffer, pos1, pos2) end
 -- the range of `0` to `31`, instead of the
 -- `_SCINTILLA.constants.STYLE_BRACELIGHT` style if *use_indicator* is `true`.
 -- @param buffer The global buffer.
--- @param use_indicator Use an indicator.
--- @param indic_num The indicator number.
+-- @param use_indicator Whether or not to use an indicator.
+-- @param indic_num The indicator number to use.
 function brace_highlight_indicator(buffer, use_indicator, indic_num) end
 
 ---
@@ -1096,7 +1098,7 @@ function brace_highlight_indicator(buffer, use_indicator, indic_num) end
 -- The brace characters recognized are '(', ')', '[', ']', '{', '}', '<', and
 -- '>' and must have the same style.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position of the brace in *buffer* to match.
 -- @return number.
 function brace_match(buffer, pos) end
 
@@ -1121,8 +1123,8 @@ function call_tip_pos_start(buffer) end
 -- Highlights call tip text from *start_pos*, starting from zero, to *end_pos*
 -- with the color `buffer.call_tip_fore_hlt`.
 -- @param buffer The global buffer.
--- @param start_pos The start position.
--- @param end_pos The end position.
+-- @param start_pos The start position in the call tip text to highlight.
+-- @param end_pos The end position in the call tip text to highlight.
 function call_tip_set_hlt(buffer, start_pos, end_pos) end
 
 ---
@@ -1131,8 +1133,8 @@ function call_tip_set_hlt(buffer, start_pos, end_pos) end
 -- Any "\001" or "\002" bytes in *text* are replaced by arrow visuals,
 -- indicating the word has more than one call tip.
 -- @param buffer The global buffer.
--- @param pos The position.
--- @param text The text.
+-- @param pos The position in *buffer* to show the call tip at.
+-- @param text The call tip text to show.
 function call_tip_show(buffer, pos, text) end
 
 ---
@@ -1163,8 +1165,10 @@ function cancel(buffer) end
 -- Tells the lexer to re-process the range of text from *start_pos* to
 -- *end_pos*.
 -- @param buffer The global buffer.
--- @param start_pos The start position.
--- @param end_pos The end position.
+-- @param start_pos The start position of the range of text in *buffer* to
+--   re-process.
+-- @param end_pos The end position of the range of text in *buffer* to
+--   re-process.
 function change_lexer_state(buffer, start_pos, end_pos) end
 
 ---
@@ -1187,8 +1191,8 @@ function char_left_rect_extend(buffer) end
 ---
 -- Returns the character position closest to view coordinates *x* and *y*.
 -- @param buffer The global buffer.
--- @param x The x-coordinate in the view.
--- @param y The y-coordinate in the view.
+-- @param x The x-coordinate in the view to use.
+-- @param y The y-coordinate in the view to use.
 -- @return number
 function char_position_from_point(buffer, x, y) end
 
@@ -1196,8 +1200,8 @@ function char_position_from_point(buffer, x, y) end
 -- Returns the character position closest to view coordinates *x* and *y*, or
 -- `-1` if the point is outside the window or not close to any text.
 -- @param buffer The global buffer.
--- @param x The x-coordinate in the view.
--- @param y The y-coordinate in the view.
+-- @param x The x-coordinate in the view to use.
+-- @param y The y-coordinate in the view to use.
 -- @return number
 function char_position_from_point_close(buffer, x, y) end
 
@@ -1261,23 +1265,24 @@ function clear_selections(buffer) end
 -- *end_pos*.
 -- If *end_pos* is `-1`, styles and folds to the end of the buffer.
 -- @param buffer The global buffer.
--- @param start_pos The start position.
--- @param end_pos The end position or `-1` to style from `start_pos` to the end
---   of the document.
+-- @param start_pos The start position of the range of text in *buffer* to
+--   process.
+-- @param end_pos The end position of the range of text in *buffer* to process,
+--   or `-1` to process from *start_pos* to the end of *buffer*.
 function colourise(buffer, start_pos, end_pos) end
 
 ---
 -- Returns the line number of the next contracted fold header line starting at
 -- *line_start*, or `-1`.
 -- @param buffer The global buffer.
--- @param line_start The start line number.
+-- @param line_start The line number in *buffer* to start at.
 -- @return number
 function contracted_fold_next(buffer, line_start) end
 
 ---
 -- Converts all line endings to end of line mode *mode*.
 -- @param buffer The global buffer.
--- @param mode The line ending mode. Valid values are:
+-- @param mode The line ending mode to convert to. Valid values are:
 --   * `_SCINTILLA.constants.SC_EOL_CRLF` (0)
 --   * `_SCINTILLA.constants.SC_EOL_CR` (1)
 --   * `_SCINTILLA.constants.SC_EOL_LF` (2)
@@ -1299,22 +1304,24 @@ function copy_allow_line(buffer) end
 ---
 -- Copies the range of text from *start_pos* to *end_pos* to the clipboard.
 -- @param buffer The global buffer.
--- @param start_pos The start position.
--- @param end_pos The end position.
+-- @param start_pos The start position of the range of text in *buffer* to copy.
+-- @param end_pos The end position of the range of text in *buffer* to copy.
 function copy_range(buffer, start_pos, end_pos) end
 
 ---
 -- Copies string *text* to the clipboard.
 -- @param buffer The global buffer.
--- @param text The text.
+-- @param text The text to copy.
 function copy_text(buffer, text) end
 
 ---
 -- Returns the number of whole characters in-between positions *start_pos* and
 -- *end_pos*.
 -- @param buffer The global buffer.
--- @param start_pos The start position.
--- @param end_pos The end position.
+-- @param start_pos The start position of the range of text in *buffer* to start
+--   counting at.
+-- @param end_pos The end position of the range of text in *buffer* to stop
+--   counting at.
 -- @return number
 function count_characters(buffer, start_pos, end_pos) end
 
@@ -1371,8 +1378,8 @@ function delete_back_not_line(buffer) end
 ---
 -- Deletes the range of text from *pos* to *pos* + *length* in the buffer.
 -- @param buffer The global buffer.
--- @param pos The start position of the range to delete.
--- @param length The length of the range to delete.
+-- @param pos The start position of the range of text in *buffer* to delete.
+-- @param length The number of characters in the range of text to delete.
 function delete_range(buffer, pos, length) end
 
 ---
@@ -1382,7 +1389,7 @@ function delete_range(buffer, pos, length) end
 -- *display_line* is greater than or equal to the number of displayed lines,
 -- returns `buffer.line_count`.
 -- @param buffer The global buffer.
--- @param display_line The display line number.
+-- @param display_line The display line number to use.
 -- @return number
 function doc_line_from_visible(buffer, display_line) end
 
@@ -1422,7 +1429,7 @@ function empty_undo_buffer(buffer) end
 -- Returns the result of UTF-8-encoded string *string* converted into the
 -- buffer's encoding.
 -- @param buffer The global buffer.
--- @param string The string.
+-- @param string The UTF-8-encoded string to convert.
 -- @return number
 function encoded_from_utf8(buffer, string) end
 
@@ -1435,7 +1442,7 @@ function end_undo_action(buffer) end
 -- Ensures line number *line* is visible by expanding any fold header lines
 -- hiding it.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to ensure visible.
 function ensure_visible(buffer, line) end
 
 ---
@@ -1443,7 +1450,7 @@ function ensure_visible(buffer, line) end
 -- hiding it and applies the vertical caret policy set with
 -- `buffer:set_visible_policy()`.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to ensure visible.
 function ensure_visible_enforce_policy(buffer, line) end
 
 ---
@@ -1451,8 +1458,8 @@ function ensure_visible_enforce_policy(buffer, line) end
 -- tab and multi-byte characters into account, or the position at the end of
 -- line *line*.
 -- @param buffer The global buffer.
--- @param line The line number.
--- @param column The column number.
+-- @param line The line number in *buffer* to use.
+-- @param column The column number to use.
 function find_column(buffer, line, column) end
 
 ---
@@ -1484,15 +1491,15 @@ function get_hotspot_active_fore(buffer) end
 -- fold level is greater than *level* or the level of *start_line* if *level* is
 -- `-1`.
 -- @param buffer The global buffer.
--- @param start_line The line number of a header line.
--- @param level The level or `-1` for the level of `start_line`.
+-- @param start_line The line number in *buffer* of a header line.
+-- @param level The fold level, or `-1` for the level of *start_line*.
 function get_last_child(buffer, start_line, level) end
 
 ---
 -- Returns the text on line number *line*, including end of line characters, and
 -- the length of the line.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to use.
 -- @return string, number
 function get_line(buffer, line) end
 
@@ -1500,14 +1507,14 @@ function get_line(buffer, line) end
 -- Returns the position of the end of the selected text on line number *line*,
 -- or `-1`.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to use.
 function get_line_sel_end_position(buffer, line) end
 
 ---
 -- Returns the position of the beginning of the selected text on line number
 -- *line*, or `-1`.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to use.
 function get_line_sel_start_position(buffer, line) end
 
 ---
@@ -1528,13 +1535,13 @@ function get_text(buffer) end
 -- Places the caret an anchor at the beginning of line number *line* and scrolls
 -- them into view.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to go to.
 function goto_line(buffer, line) end
 
 ---
 -- Places the caret and anchor at position *pos* and scrolls them into view.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position in *buffer* to go to.
 function goto_pos(buffer, pos) end
 
 ---
@@ -1547,14 +1554,14 @@ function grab_focus(buffer) end
 -- This has no effect on fold levels or fold flags and the first line cannot be
 -- hidden.
 -- @param buffer The global buffer.
--- @param start_line The start line.
--- @param end_line The end line.
+-- @param start_line The start line of the range of lines in *buffer* to hide.
+-- @param end_line The end line of the range of lines in *buffer* to hide.
 function hide_lines(buffer, start_line, end_line) end
 
 ---
 -- Do not highlight selected text if *normal* is `true`.
 -- @param buffer The global buffer.
--- @param normal Draw normal selection.
+-- @param normal Whether or not to draw the normal selection.
 function hide_selection(buffer, normal) end
 
 ---
@@ -1600,7 +1607,7 @@ function home_wrap_extend(buffer) end
 -- Returns a bit-mask representing which indicators are on at position *pos*.
 -- Bit 0 is set if indicator 0 is on, bit 1 for indicator 1, etc.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position in *buffer* to get indicators at.
 -- @return number
 function indicator_all_on_for(buffer, pos) end
 
@@ -1608,8 +1615,10 @@ function indicator_all_on_for(buffer, pos) end
 -- Clears indicator `buffer.indicator_current` over the range of text from *pos*
 -- to *pos* + *clear_length*.
 -- @param buffer The global buffer.
--- @param pos The start position.
--- @param clear_length The length.
+-- @param pos The start position of the range of text in *buffer* to clear
+--   indicators over.
+-- @param clear_length The number of characters in the range of text to clear
+--   indicators over.
 function indicator_clear_range(buffer, pos, clear_length) end
 
 ---
@@ -1617,15 +1626,17 @@ function indicator_clear_range(buffer, pos, clear_length) end
 -- to `31`, at position *pos*.
 -- @param buffer The global buffer.
 -- @param indicator An indicator number in the range of `0` to `31`.
--- @param pos The position of the indicator.
+-- @param pos The position in *buffer* of the indicator.
 function indicator_end(buffer, indicator, pos) end
 
 ---
 -- Sets indicator `buffer.indicator_value` or `buffer.indicator_current` over
 -- the range of text from *pos* to *pos* + *fill_length*.
 -- @param buffer The global buffer.
--- @param pos The start position.
--- @param fill_length The length.
+-- @param pos The start position of the range of text in *buffer* to set
+--   indicators over.
+-- @param fill_length The number of characters in the range of text to set
+--   indicators over.
 function indicator_fill_range(buffer, pos, fill_length) end
 
 ---
@@ -1633,7 +1644,7 @@ function indicator_fill_range(buffer, pos, fill_length) end
 -- range of `0` to `31`, at position *pos*.
 -- @param buffer The global buffer.
 -- @param indicator An indicator number in the range of `0` to `31`.
--- @param pos The position of the indicator.
+-- @param pos The position in *buffer* of the indicator.
 function indicator_start(buffer, indicator, pos) end
 
 ---
@@ -1641,7 +1652,7 @@ function indicator_start(buffer, indicator, pos) end
 -- `31`, at position *pos*.
 -- @param buffer The global buffer.
 -- @param indicator The indicator number in the range of `0` to `31`.
--- @param pos The position.
+-- @param pos The position in *buffer* of the indicator.
 -- @return number
 function indicator_value_at(buffer, indicator, pos) end
 
@@ -1650,7 +1661,8 @@ function indicator_value_at(buffer, indicator, pos) end
 -- If the caret is after the *pos*, it is moved appropriately, but not scrolled
 -- into view.
 -- @param buffer The global buffer.
--- @param pos The position to insert text at or `-1` for the current position.
+-- @param pos The position in *buffer* to insert text at, or `-1` for the
+--   current position.
 -- @param text The text to insert.
 function insert_text(buffer, pos, text) end
 
@@ -1734,7 +1746,7 @@ function line_end_wrap_extend(buffer) end
 -- Returns `0` if *pos* is less than 0 or `buffer.line_count` if *pos* is
 -- greater than `buffer.length`.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position in *buffer* to get the line number of.
 -- @return number
 function line_from_position(buffer, pos) end
 
@@ -1744,7 +1756,7 @@ function line_from_position(buffer, pos) end
 -- To get line length excluding end of line characters, use
 -- `buffer.line_end_position[line] - buffer:position_from_line(line)`.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to get the length of.
 -- @return number
 function line_length(buffer, line) end
 
@@ -1788,7 +1800,7 @@ function line_up_extend(buffer) end
 function line_up_rect_extend(buffer) end
 
 ---
--- Joins the lines in the target range, inserting spaces in-between joined 
+-- Joins the lines in the target range, inserting spaces in-between joined
 -- words.
 -- @param buffer The global buffer.
 function lines_join(buffer) end
@@ -1797,7 +1809,8 @@ function lines_join(buffer) end
 -- Splits the lines in the target range into lines of width at most
 -- *pixel_width* or the width of the view if *pixel_width* is `0`.
 -- @param buffer The global buffer.
--- @param pixel_width The pixel width. When `0`, the width of the view is used.
+-- @param pixel_width The pixel width to split lines at. When `0`, uses the
+--   width of the view.
 function lines_split(buffer, pixel_width) end
 
 ---
@@ -1816,8 +1829,8 @@ function margin_text_clear_all(buffer) end
 -- `buffer:marker_delete_handle()` and `buffer:marker_line_from_handle()`, or
 -- `-1` if the marker cannot be added.
 -- @param buffer The global buffer.
--- @param line The line number.
--- @param marker_num A marker number in the range of `0` to `31`.
+-- @param line The line number to add the marker on.
+-- @param marker_num The marker number in the range of `0` to `31` to add.
 -- @return number
 function marker_add(buffer, line, marker_num) end
 
@@ -1826,8 +1839,8 @@ function marker_add(buffer, line, marker_num) end
 -- number *line*.
 -- Bit 0 is set to add marker 0, bit 1 for marker 1, etc., up to marker 31.
 -- @param buffer The global buffer.
--- @param line The line number.
--- @param marker_mask A mask of markers to set. Set bit 0 to set marker 0, bit
+-- @param line The line number to add the markers on.
+-- @param marker_mask The mask of markers to set. Set bit 0 to set marker 0, bit
 --   1 for marker 1 and so on.
 function marker_add_set(buffer, line, marker_mask) end
 
@@ -1835,8 +1848,9 @@ function marker_add_set(buffer, line, marker_mask) end
 -- Sets the symbol *marker_symbol* shown in the margin for marker number
 -- *marker_num*, in the range of `0` to `31`.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of `0` to `31`.
--- @param marker_symbol A marker symbol: `_SCINTILLA.constants.SC_MARK_*`.
+-- @param marker_num The marker number in the range of `0` to `31` to set
+--   *marker_symbol* for.
+-- @param marker_symbol The marker symbol: `_SCINTILLA.constants.SC_MARK_*`.
 -- @see _SCINTILLA.next_marker_number
 function marker_define(buffer, marker_num, marker_symbol) end
 
@@ -1845,8 +1859,9 @@ function marker_define(buffer, marker_num, marker_symbol) end
 -- `0` to `31`.
 -- Pixmap markers use the `_SCINTILLA.constants.SC_MARK_PIXMAP` marker symbol.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of `0` to `31`.
--- @param pixmap `NULL`-terminated pixmap data.
+-- @param marker_num The marker number in the range of `0` to `31` to define
+--   pixmap *pixmap* for.
+-- @param pixmap The string pixmap data.
 function marker_define_pixmap(buffer, marker_num, pixmap) end
 
 ---
@@ -1858,31 +1873,32 @@ function marker_define_pixmap(buffer, marker_num, pixmap) end
 -- of 4 byte pixel values (red, blue, green, and alpha) defining the image line
 -- by line starting at the top-left pixel.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of `0` to `31`.
--- @param pixels A sequence of 4 byte pixel values starting with the pixels for
---   the top line, with the leftmost pixel first, then continuing with the
---   pixels for subsequent lines. There is no gap between lines for alignment
---   reasons. Each pixel consists of, in order, a red byte, a green byte, a blue
---   byte and an alpha byte. The colour bytes are not premultiplied by the alpha
---   value. That is, a fully red pixel that is 25% opaque will be `[FF, 00, 00,
---   3F]`.
+-- @param marker_num The marker number in the range of `0` to `31` to define
+--   RGBA data *pixels* for.
+-- @param pixels The string sequence of 4 byte pixel values starting with the
+--   pixels for the top line, with the leftmost pixel first, then continuing
+--   with the pixels for subsequent lines. There is no gap between lines for
+--   alignment reasons. Each pixel consists of, in order, a red byte, a green
+--   byte, a blue byte and an alpha byte. The colour bytes are not premultiplied
+--   by the alpha value. That is, a fully red pixel that is 25% opaque will be
+--   `[FF, 00, 00, 3F]`.
 function marker_define_rgba_image(buffer, marker_num, pixels) end
 
 ---
 -- Deletes marker number *marker_num*, in the range of `0` to `31` or `-1` for
 -- all markers, from line number *line*.
 -- @param buffer The global buffer.
--- @param line The line number.
--- @param marker_num A marker number in the range of `0` to `31` or `-1` to
---   delete all markers from the line.
+-- @param line The line number to delete the marker on.
+-- @param marker_num The marker number in the range of `0` to `31` to delete
+--   from *line*, or `-1` to delete all markers from the line.
 function marker_delete(buffer, line, marker_num) end
 
 ---
 -- Deletes marker number *marker_num*, in the range of `0` to `31` or `-1` for
 -- all markers, from all lines in the buffer.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of `0` to `31` or `-1` to
---   delete all markers from the line.
+-- @param marker_num The marker number in the range of `0` to `31` to delete
+--   from all lines, or `-1` to delete all markers from all lines.
 function marker_delete_all(buffer, marker_num) end
 
 ---
@@ -1895,14 +1911,14 @@ function marker_delete_handle(buffer, handle) end
 -- Highlights the margin fold markers for the current fold block if *enabled* is
 -- `true`.
 -- @param buffer The global buffer.
--- @param enabled Whether to enable highlight.
+-- @param enabled Whether or not to enable highlight.
 function marker_enable_highlight(buffer, enabled) end
 
 ---
 -- Returns a bit-mask representing which markers are set line number *line*.
 -- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number to get markers on.
 -- @return number.
 function marker_get(buffer, line) end
 
@@ -1920,9 +1936,9 @@ function marker_line_from_handle(buffer, handle) end
 -- `-1`.
 -- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc., up to marker 31.
 -- @param buffer The global buffer.
--- @param start_line The start line.
--- @param marker_mask A mask of markers to find. Set bit 0 to find marker 0, bit
---   1 for marker 1 and so on.
+-- @param start_line The start line to search from.
+-- @param marker_mask The mask of markers to find. Set bit 0 to find marker 0,
+--   bit 1 for marker 1 and so on.
 -- @return number
 function marker_next(buffer, start_line, marker_mask) end
 
@@ -1932,9 +1948,9 @@ function marker_next(buffer, start_line, marker_mask) end
 -- `-1`.
 -- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc., up to marker 31.
 -- @param buffer The global buffer.
--- @param start_line The start line.
--- @param marker_mask A mask of markers to find. Set bit 0 to find marker 0, bit
---   1 for marker 1 and so on.
+-- @param start_line The start line to search from.
+-- @param marker_mask The mask of markers to find. Set bit 0 to find marker 0,
+--   bit 1 for marker 1 and so on.
 -- @return number
 function marker_previous(buffer, start_line, marker_mask) end
 
@@ -1943,7 +1959,8 @@ function marker_previous(buffer, start_line, marker_mask) end
 -- `0` to `31`, used in `buffer:marker_define()`,
 -- `buffer:marker_define_pixmap()`, or `buffer:marker_define_rgba_image()`.
 -- @param buffer The global buffer.
--- @param marker_num A marker number in the range of `0` to `31`.
+-- @param marker_num The marker number in the range of `0` to `31` to get the
+--   symbol of.
 -- @return number
 function marker_symbol_defined(buffer, marker_num) end
 
@@ -2036,14 +2053,14 @@ function paste(buffer) end
 ---
 -- Returns the x-coordinate in the view of position *pos*.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position in *buffer* to get the x-coordinate in the view of.
 -- @return number
 function point_x_from_position(buffer, pos) end
 
 ---
 -- Returns the y-coordinate in the view of position *pos*.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position in *buffer* to get the y-coordinate in the view of.
 -- @return number
 function point_y_from_position(buffer, pos) end
 
@@ -2051,14 +2068,14 @@ function point_y_from_position(buffer, pos) end
 -- Returns the position of the next character after position *pos*, taking code
 -- page into account, or `buffer.length - 1`.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position in *buffer* to get the position after from.
 function position_after(buffer, pos) end
 
 ---
 -- Returns the position of the previous character before position *pos*, taking
 -- code page into account, or `0`.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position in *buffer* to get the position before from.
 -- @return number
 function position_before(buffer, pos) end
 
@@ -2066,7 +2083,7 @@ function position_before(buffer, pos) end
 -- Returns the position at the beginning of line number *line*.
 -- Returns `-1` if *line* is greater than `buffer.line_count`.
 -- @param buffer The global buffer.
--- @param line The line.
+-- @param line The line number in *buffer* to get the beginning position for.
 -- @return number
 function position_from_line(buffer, line) end
 
@@ -2074,8 +2091,8 @@ function position_from_line(buffer, line) end
 -- Returns the position closest to view coordinates *x* and *y*, which may be
 -- in-between multi-byte characters.
 -- @param buffer The global buffer.
--- @param x The x-coordinate in the view.
--- @param y The y-coordinate in the view.
+-- @param x The x-coordinate in the view to use.
+-- @param y The y-coordinate in the view to use.
 -- @return number
 function position_from_point(buffer, x, y) end
 
@@ -2084,8 +2101,8 @@ function position_from_point(buffer, x, y) end
 -- in-between multi-byte characters, or `-1` if the point is outside the window
 -- or not close to any text.
 -- @param buffer The global buffer.
--- @param x The x-coordinate in the view.
--- @param y The y-coordinate in the view.
+-- @param x The x-coordinate in the view to use.
+-- @param y The y-coordinate in the view to use.
 -- @return number
 function position_from_point_close(buffer, x, y) end
 
@@ -2099,7 +2116,7 @@ function redo(buffer) end
 -- autocompletion lists.
 -- @param buffer The global buffer.
 -- @param type Integer type to register the image with.
--- @param xpm_data XPM data as is described for `buffer:marker_define_pixmap()`.
+-- @param xpm_data The XPM data as described in `buffer:marker_define_pixmap()`.
 function register_image(buffer, type, xpm_data) end
 
 ---
@@ -2111,14 +2128,14 @@ function register_image(buffer, type, xpm_data) end
 -- by line starting at the top-left pixel.
 -- @param buffer The global buffer.
 -- @param type Integer type to register the image with.
--- @param pixels RGBA data as is described for
+-- @param pixels The RGBA data as described in
 --   `buffer:marker_define_rgba_image()`.
 function register_rgba_image(buffer, type, pixels) end
 
 ---
 -- Replaces the selected text with string *text*, scrolling the caret into view.
 -- @param buffer The global buffer.
--- @param text The text.
+-- @param text The text to replace the selected text with.
 function replace_sel(buffer, text) end
 
 ---
@@ -2127,7 +2144,7 @@ function replace_sel(buffer, text) end
 -- The recommended way to delete text in the buffer is to set the target to the
 -- text to be removed, and to call this function with an empty string.
 -- @param buffer The global buffer.
--- @param text The text (can contain null bytes).
+-- @param text The text to replace the target range with.
 -- @return number
 function replace_target(buffer, text) end
 
@@ -2137,7 +2154,7 @@ function replace_target(buffer, text) end
 -- tag match values from the regular expression or the entire match for "\0",
 -- returning the length of the replacement text.
 -- @param buffer The global buffer.
--- @param text The text (can contain null bytes).
+-- @param text The text to replace the target range with.
 -- @return number
 function replace_target_re(buffer, text) end
 
@@ -2176,7 +2193,7 @@ function search_anchor(buffer) end
 -- `buffer.search_flags` and, if found, sets the new target range to that
 -- occurrence, returning its position or `-1` otherwise.
 -- @param buffer The global buffer.
--- @param text The text (can contain null bytes).
+-- @param text The text to search the target range for.
 -- @return number
 function search_in_target(buffer, text) end
 
@@ -2186,8 +2203,8 @@ function search_in_target(buffer, text) end
 -- occurrence or `-1`.
 -- Selected text is not scrolled into view.
 -- @param buffer The global buffer.
--- @param flags Search flags. See `buffer.search_flags`.
--- @param text The text.
+-- @param flags The search flags to use. See `buffer.search_flags`.
+-- @param text The text to search for.
 -- @return number
 -- @see search_flags
 function search_next(buffer, flags, text) end
@@ -2197,8 +2214,8 @@ function search_next(buffer, flags, text) end
 -- search anchor using search flags *flags*, returning the position of the
 -- occurrence or `-1`.
 -- @param buffer The global buffer.
--- @param flags Search flags. See `buffer.search_flags`.
--- @param text The text.
+-- @param flags The search flags to use. See `buffer.search_flags`.
+-- @param text The text to search for.
 -- @return number
 -- @see search_flags
 function search_prev(buffer, flags, text) end
@@ -2224,45 +2241,46 @@ function set_chars_default(buffer) end
 -- Sets the current position to position *pos* without scrolling the view,
 -- removing any selections.
 -- @param buffer The buffer
--- @param pos The position to move to.
+-- @param pos The position in *buffer* to move to.
 function set_empty_selection(buffer, pos) end
 
 ---
 -- Overrides the default color of the fold margin with *color*, in "0xBBGGRR"
 -- format, if *use_setting* is `true`.
 -- @param buffer The global buffer.
--- @param use_setting Enable color change.
--- @param color A color in "0xBBGGRR" format.
+-- @param use_setting Whether or not to use *color*.
+-- @param color The color in "0xBBGGRR" format.
 function set_fold_margin_colour(buffer, use_setting, color) end
 
 ---
 -- Overrides the default highlight color of the fold margin with *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The global buffer.
--- @param use_setting Enable color change.
--- @param color A color in "0xBBGGRR" format.
+-- @param use_setting Whether or not to use *color*.
+-- @param color The color in "0xBBGGRR" format.
 function set_fold_margin_hi_colour(buffer, use_setting, color) end
 
 ---
 -- Overrides the default background color of active hotspots with *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The global buffer.
--- @param use_setting Enable the color change.
--- @param color A color in "0xBBGGRR" format.
+-- @param use_setting Whether or not to use *color*.
+-- @param color The color in "0xBBGGRR" format.
 function set_hotspot_active_back(buffer, use_setting, color) end
 
 ---
 -- Overrides the default foreground color of active hotspots with *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The global buffer.
--- @param use_setting Enable the color change.
--- @param color A color in "0xBBGGRR" format.
+-- @param use_setting Whether or not to use *color*.
+-- @param color The color in "0xBBGGRR" format.
 function set_hotspot_active_fore(buffer, use_setting, color) end
 
 ---
 -- Sets the length of *string* in `buffer:encoded_from_utf8()` to *bytes*.
 -- @param buffer The global buffer.
--- @param bytes Bytes or `-1` for measuring to first null byte.
+-- @param bytes The number of bytes to encode, or `-1` for measuring to first
+--   null byte.
 function set_length_for_encode(buffer, bytes) end
 
 ---
@@ -2274,34 +2292,35 @@ function set_save_point(buffer) end
 -- Selects the range of text from *start_pos* to *end_pos* in the buffer,
 -- scrolling the selected text into view.
 -- @param buffer The global buffer.
--- @param start_pos Start position. If negative, it means the end of the
---   document.
--- @param end_pos End position. If negative, it means remove any selection (i.e.
---   set the `anchor` to the same position as `current_pos`).
+-- @param start_pos The start position of the range of text in *buffer* to
+--   select. If negative, it means the end of the buffer.
+-- @param end_pos The end position of the range of text in *buffer* to select.
+--   If negative, it means remove any selection (i.e. set the `anchor` to the
+--   same position as `current_pos`).
 function set_sel(buffer, start_pos, end_pos) end
 
 ---
 -- Overrides the default background color of all selected text with *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The global buffer.
--- @param use_setting Enable color change.
--- @param color A color in "0xBBGGRR" format.
+-- @param use_setting Whether or not to use *color*.
+-- @param color The color in "0xBBGGRR" format.
 function set_sel_back(buffer, use_setting, color) end
 
 ---
 -- Overrides the default foreground color of all selected text with *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The global buffer.
--- @param use_setting Enable color change.
--- @param color A color in "0xBBGGRR" format.
+-- @param use_setting Whether or not to use *color*.
+-- @param color The color in "0xBBGGRR" format.
 function set_sel_fore(buffer, use_setting, color) end
 
 ---
 -- Selects the range of text from *anchor* to *caret* in the buffer, removing
 -- all other selections.
 -- @param buffer The global buffer.
--- @param caret The caret.
--- @param anchor The anchor.
+-- @param caret The caret position of the range of text to select in *buffer*.
+-- @param anchor The anchor position of the range of text to select in *buffer*.
 function set_selection(buffer, caret, anchor) end
 
 ---
@@ -2309,14 +2328,14 @@ function set_selection(buffer, caret, anchor) end
 -- position, to style number *style*, in the range from `0` to `255`, and
 -- increments the styling position by *length*.
 -- @param buffer The global buffer.
--- @param length The length to style.
+-- @param length The number of characters to style.
 -- @param style The style number to set.
 function set_styling(buffer, length, style) end
 
 ---
 -- Replaces all of the text in the buffer with string *text*.
 -- @param buffer The global buffer.
--- @param text The text.
+-- @param text The text to set.
 function set_text(buffer, text) end
 
 ---
@@ -2325,45 +2344,45 @@ function set_text(buffer, text) end
 -- from the bottom of the view.
 -- It is similar in operation to `buffer:set_y_caret_policy()`.
 -- @param buffer The global buffer.
--- @param visible_policy A combination of `_SCINTILLA.constants.VISIBLE_SLOP`
---   (0x01) and `_SCINTILLA.constants.VISIBLE_STRICT` (0x04).
--- @param visible_slop The slop value.
+-- @param visible_policy The combination of `_SCINTILLA.constants.VISIBLE_SLOP`
+--   (0x01) and `_SCINTILLA.constants.VISIBLE_STRICT` (0x04) policy flags to set.
+-- @param visible_slop The slop value to use.
 function set_visible_policy(buffer, visible_policy, visible_slop) end
 
 ---
 -- Overrides the background color of whitespace with *color*, in "0xBBGGRR"
 -- format, if *use_setting* is `true`.
 -- @param buffer The global buffer.
--- @param use_setting Enable color change.
--- @param color A color in "0xBBGGRR" format.
+-- @param use_setting Whether or not to use *color*.
+-- @param color The color in "0xBBGGRR" format.
 function set_whitespace_back(buffer, use_setting, color) end
 
 ---
 -- Overrides the foreground color of whitespace with *color*, in "0xBBGGRR"
 -- format, if *use_setting* is `true`.
--- @param use_setting Enable color change.
--- @param color A color in "0xBBGGRR" format.
+-- @param use_setting Whether or not to use *color*.
+-- @param color The color in "0xBBGGRR" format.
 function set_whitespace_fore(buffer, use_setting, color) end
 
 ---
 -- Set the way the caret is kept visible when going sideways.
 -- The exclusion zone is given in pixels.
 -- @param buffer The global buffer.
--- @param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`
+-- @param caret_policy The combination of `_SCINTILLA.constants.CARET_SLOP`
 --   (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),
 --   `_SCINTILLA.constants.CARET_EVEN` (0x08), and
---   `_SCINTILLA.constants.CARET_JUMPS` (0x10).
--- @param caret_slop A slop value.
+--   `_SCINTILLA.constants.CARET_JUMPS` (0x10) policy flags to set.
+-- @param caret_slop The slop value to use.
 function set_x_caret_policy(buffer, caret_policy, caret_slop) end
 
 ---
 -- Set the way the line the caret is on is kept visible.
 -- @param buffer The global buffer.
--- @param caret_policy A combination of `_SCINTILLA.constants.CARET_SLOP`
+-- @param caret_policy The combination of `_SCINTILLA.constants.CARET_SLOP`
 --   (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),
 --   `_SCINTILLA.constants.CARET_EVEN` (0x08), and
---   `_SCINTILLA.constants.CARET_JUMPS` (0x10).
--- @param caret_slop A slop value.
+--   `_SCINTILLA.constants.CARET_JUMPS` (0x10) policy flags to set.
+-- @param caret_slop The slop value to use.
 function set_y_caret_policy(buffer, caret_policy, caret_slop) end
 
 ---
@@ -2371,16 +2390,16 @@ function set_y_caret_policy(buffer, caret_policy, caret_slop) end
 -- This has no effect on fold levels or fold flags and the first line cannot be
 -- hidden.
 -- @param buffer The global buffer.
--- @param start_line The start line.
--- @param end_line The end line.
+-- @param start_line The start line of the range of lines in *buffer* to show.
+-- @param end_line The end line of the range of lines in *buffer* to show.
 function show_lines(buffer, start_line, end_line) end
 
 ---
 -- Begin styling at position *position* with the 8-bit styling bit-mask *mask*
 -- that determines which style bits can be set with `buffer:set_styling()`.
 -- @param buffer The global buffer.
--- @param position The styling position.
--- @param mask The bit mask of the style bytes that can be set.
+-- @param position The position in *buffer* to start styling at.
+-- @param mask The bit mask of style bits that can be set when styling.
 -- @usage buffer:start_styling(0, 0xFF)
 function start_styling(buffer, position, mask) end
 
@@ -2444,7 +2463,7 @@ function target_from_selection(buffer) end
 ---
 -- Returns the height in pixels of line number *line*.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to get the pixel height of.
 -- @return number
 function text_height(buffer, line) end
 
@@ -2452,8 +2471,8 @@ function text_height(buffer, line) end
 -- Returns the width in pixels of string *text* styled with style number
 -- *style_num*, in the range of `0` to `255`.
 -- @param buffer The global buffer.
--- @param style_num The style number between `0` and `255`.
--- @param text The text.
+-- @param style_num The style number between `0` and `255` to use.
+-- @param text The text to measure the width of.
 -- @return number
 function text_width(buffer, style_num, text) end
 
@@ -2471,7 +2490,7 @@ function toggle_caret_sticky(buffer) end
 -- of its child lines are displayed, and contracted, where all of its child
 -- lines are hidden.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to toggle the fold on.
 function toggle_fold(buffer, line) end
 
 ---
@@ -2490,9 +2509,9 @@ function upper_case(buffer) end
 -- *list_type* which is greater than zero and sent in a `USER_LIST_SELECTION`
 -- event after selecting an item.
 -- @param buffer The global buffer.
--- @param list_type A list identifier number greater than zero.
--- @param item_list List of words separated by separator characters (initially
---   spaces).
+-- @param list_type The list identifier number greater than zero to use.
+-- @param item_list The sorted string of words to show, separated by
+--   `buffer.auto_c_separator` characters (initially spaces).
 -- @see _SCINTILLA.next_user_list_type
 function user_list_show(buffer, list_type, item_list) end
 
@@ -2547,7 +2566,7 @@ function vertical_centre_caret(buffer) end
 -- buffer.
 -- Lines can occupy more than one display line if they wrap.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to use.
 -- @return number
 function visible_from_doc_line(buffer, line) end
 
@@ -2557,12 +2576,12 @@ function visible_from_doc_line(buffer, line) end
 -- character to its right and *only_word_chars* is `false`, returns the position
 -- of the first word character.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position in *buffer* of the word.
 -- @param only_word_chars If `true`, stops searching at the first non-word
 --   character in the search direction. Otherwise, the first character in the
 --   search direction sets the type of the search as word or non-word and the
 --   search stops at the first non-matching character. Searches are also
---   terminated by the start or end of the document.
+--   terminated by the start or end of the buffer.
 function word_end_position(buffer, pos, only_word_chars) end
 
 ---
@@ -2648,18 +2667,18 @@ function word_right_extend(buffer) end
 -- character to its left and *only_word_chars* is `false`, returns the position
 -- of the last word character.
 -- @param buffer The global buffer.
--- @param pos The position.
+-- @param pos The position in *buffer* of the word.
 -- @param only_word_chars If `true`, stops searching at the first non-word
 --   character in the search direction. Otherwise, the first character in the
 --   search direction sets the type of the search as word or non-word and the
 --   search stops at the first non-matching character. Searches are also
---   terminated by the start or end of the document.
+--   terminated by the start or end of the buffer.
 function word_start_position(buffer, pos, only_word_chars) end
 
 ---
 -- Returns the number of wrapped lines needed to display line number *line*.
 -- @param buffer The global buffer.
--- @param line The line number.
+-- @param line The line number in *buffer* to use.
 -- @return number
 function wrap_count(buffer, line) end
 
@@ -2695,8 +2714,8 @@ function delete(buffer) end
 ---
 -- Returns the range of text from *start_pos* to *end_pos* in the buffer.
 -- @param buffer The global buffer.
--- @param start_pos The beginning position of the range of text to get.
--- @param end_pos The end position of the range of text to get.
+-- @param start_pos The start position of the range of text to get in *buffer*.
+-- @param end_pos The end position of the range of text to get in *buffer*.
 function text_range(buffer, start_pos, end_pos) end
 
 ---
@@ -2708,8 +2727,8 @@ function reload(buffer) end
 -- Sets the encoding for the buffer to *encoding*, converting its contents from
 -- the old encoding to the new one.
 -- @param buffer The global buffer.
--- @param encoding The encoding to set. Valid encodings are ones that GNU iconv
---   accepts.
+-- @param encoding The string encoding to set. Valid encodings are ones that GNU
+--   iconv accepts.
 -- @usage buffer.set_encoding(buffer, 'ASCII')
 function set_encoding(buffer, encoding) end
 
@@ -2740,7 +2759,7 @@ function close(buffer) end
 -- Sets the name of the lexer used by the buffer to *lang*, loading its
 -- language-specific module if the module exists.
 -- @param buffer The global buffer.
--- @param lang The string language to set.
+-- @param lang The string language name to set.
 -- @usage buffer.set_lexer(buffer, 'language_name')
 function set_lexer(buffer, lang) end
 
@@ -2748,14 +2767,15 @@ function set_lexer(buffer, lang) end
 -- Returns the name of the lexer used by the buffer, or the name of the lexer at
 -- the current position in a multiple-language lexer if *current* is `true`.
 -- @param buffer The global buffer.
--- @param current Whether to get the lexer at the current caret position in
---   multi-language lexers. The default is `false` and returns the parent lexer.
+-- @param current Whether or not to get the lexer at the current caret position
+--   in multi-language lexers. The default is `false` and returns the parent
+--   lexer.
 function get_lexer(buffer, current) end
 
 ---
 -- Returns the name of style number *style_num*, in the range of `0` to `255`.
 -- @param buffer The global buffer.
--- @param style_num A style number from `0` to `255`.
+-- @param style_num The style number from `0` to `255` to get the name of.
 -- @see buffer.style_at
 function get_style_name(buffer, style_num) end
 

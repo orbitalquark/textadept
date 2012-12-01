@@ -33,6 +33,6 @@ module('string')
 --
 -- [GNU iconv's character sets]: http://www.gnu.org/software/libiconv/
 -- @param text The text to convert.
--- @param to The character set to convert to.
--- @param from The character set to convert from.
+-- @param to The string character set to convert to.
+-- @param from The string character set to convert from.
 function iconv(text, to, from) end

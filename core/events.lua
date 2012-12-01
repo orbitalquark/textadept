@@ -273,7 +273,7 @@ M.handlers = {}
 -- *index*, returning a handler ID for *f*. *event* is an arbitrary event name
 -- that does not need to have been previously defined.
 -- @param event The string event name.
--- @param f The Lua function to add.
+-- @param f The Lua function to connect to *event*.
 -- @param index Optional index to insert the handler into.
 -- @return handler ID.
 -- @usage events.connect('my_event', function(msg) gui.print(msg) end)

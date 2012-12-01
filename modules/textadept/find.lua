@@ -93,7 +93,7 @@ local escapes = {
 -- search text and options and prints the results to a buffer.
 -- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
 -- search text and option flags, respectively.
--- @param utf8_dir Optional UTF-8 encoded directory name to search. If `nil`,
+-- @param utf8_dir Optional UTF-8-encoded directory name to search. If `nil`,
 --   the user is prompted for one.
 -- @name find_in_files
 function find.find_in_files(utf8_dir)

@@ -297,7 +297,7 @@ end
 -- to call or a table containing a function with its parameters to call when an
 -- item is clicked. Menu items may also be sub-menus, ordered lists of menu
 -- items with an additional `title` key for the sub-menu's title text.
--- @param menubar The table of menus to create the menubar from.
+-- @param menubar The table of menu tables to create the menubar from.
 -- @see gui.menubar
 -- @see gui.menu
 -- @name set_menubar
@@ -321,7 +321,7 @@ M.set_menubar(M.menubar)
 -- a table containing a function with its parameters to call when an item is
 -- clicked. Menu items may also be sub-menus, ordered lists of menu items with
 -- an additional `title` key for the sub-menu's title text.
--- @param menu The menu to create the context menu from.
+-- @param menu The menu table to create the context menu from.
 -- @see gui.context_menu
 -- @see gui.menu
 -- @name set_contextmenu

@@ -207,7 +207,7 @@ end
 -- @param word_chars String of characters considered to be part of words. Since
 --   this string is used in a Lua pattern character set, character classes and
 --   ranges may be used.
--- @param default_words Optional list of words considered to be in the document,
+-- @param default_words Optional list of words considered to be in the buffer,
 --   even if they are not. Words may contain [registered images][].
 --
 -- [registered images]: buffer.html#register_image

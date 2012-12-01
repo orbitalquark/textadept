@@ -131,8 +131,8 @@ end
 --   split view if there is only one view. The default value is `false`.
 -- @param preferred_view Optional view to open the desired buffer in if the
 --   buffer is not visible in any other view.
--- @param sloppy Optional flag indicating whether or not to not match `filename`
---   to `buffer.filename` exactly. When `true`, matches `filename` to only the
+-- @param sloppy Optional flag indicating whether or not to not match *filename*
+--   to `buffer.filename` exactly. When `true`, matches *filename* to only the
 --   last part of `buffer.filename` This is useful for run and compile commands
 --   which output relative filenames and paths instead of full ones and it is
 --   likely that the file in question is already open. The default value is
@@ -166,8 +166,8 @@ local THEME
 -- instead of a theme name. An error is thrown if the theme is not found. Any
 -- errors in the theme are printed to `io.stderr`. Running Textadept from a
 -- terminal is the easiest way to see errors as they occur.
--- @param name Optional name or absolute path of a theme. If `nil`, sets the
---   default platform theme.
+-- @param name Optional name or absolute path of a theme to set. If `nil`, sets
+--   the default platform theme.
 -- @name set_theme
 function gui.set_theme(name)
   if not name then
@@ -483,7 +483,7 @@ local get_split_table
 -- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
 -- @param n A relative or absolute view index in `_G._VIEWS`.
 -- @param relative Optional flag indicating whether *n* is a relative or
---   absolute index. The default value is `false` for an absolute index.
+--   absolute index. The default value is `false`, for an absolute index.
 -- @see _G._G._VIEWS
 -- @see events.VIEW_BEFORE_SWITCH
 -- @see events.VIEW_AFTER_SWITCH

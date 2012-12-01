@@ -6,9 +6,9 @@
 --
 -- ## Working with UTF-8
 --
--- If your filesystem does not use UTF-8 encoded filenames (e.g. Windows),
+-- If your filesystem does not use UTF-8-encoded filenames (e.g. Windows),
 -- conversions to and from that encoding are necessary since all of Textadept's
--- internal strings are UTF-8 encoded. When opening and saving files through
+-- internal strings are UTF-8-encoded. When opening and saving files through
 -- dialogs, these conversions are performed automatically, but if you need to do
 -- them manually, use [`string.iconv()`][] along with [`_CHARSET`][], your
 -- filesystem's detected encoding. An example is
@@ -141,8 +141,8 @@ io.try_encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 -- Opens *utf8_filenames*, a "\n" delimited string of UTF-8-encoded filenames,
 -- or user-selected files.
 -- Emits a `FILE_OPENED` event.
--- @param utf8_filenames Optional list of filenames to open. If `nil`, the user
---   is prompted with a fileselect dialog.
+-- @param utf8_filenames Optional list of UTF-8-encoded filenames to open. If
+--   `nil`, the user is prompted with a fileselect dialog.
 -- @see _G.events
 -- @name open_file
 function io.open_file(utf8_filenames)
