@@ -85,9 +85,10 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       plat_flag = -DNCURSES
       ncurses_lib = -lncursesw
     endif
-    ifeq (x86_64, $(shell uname -i))
+    x64 = $(shell echo "" | $(CC) -E -dM - | grep __x86_64__ | cut -d ' ' -f 3)
+    ifeq (1, $(x64))
       libluajit = libluajit.a
-    else ifeq (i386, $(shell uname -i))
+    else
       libluajit = libluajit32.a
     endif
 
