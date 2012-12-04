@@ -2238,7 +2238,8 @@ int main(int argc, char **argv) {
   char *last_slash = NULL;
 #if __linux__
   textadept_home = malloc(FILENAME_MAX);
-  int _ = readlink("/proc/self/exe", textadept_home, FILENAME_MAX);
+  int len = readlink("/proc/self/exe", textadept_home, FILENAME_MAX);
+  textadept_home[len] = '\0';
   if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
 #elif _WIN32
   textadept_home = malloc(FILENAME_MAX);
