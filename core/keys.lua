@@ -111,7 +111,9 @@ local error = function(e) events.emit(events.ERROR, e) end
 -- @class table
 -- @name KEYSYMS
 M.KEYSYMS = {
-  -- From ncurses.h
+  -- From Scintilla.h and cdk/curdefs.h.
+  [7] = 'esc', [8] = '\b', [9] = '\t', [13] = '\n', [27] = 'esc',
+  -- From ncurses.h.
   [263] = '\b',
   -- From Scintilla.h.
   [300] = 'down', [301] = 'up', [302] = 'left', [303] = 'right',
@@ -224,7 +226,7 @@ local function keypress(code, shift, control, alt, meta)
   local key
   --print(code, M.KEYSYMS[code], shift, control, alt, meta)
   if code < 256 then
-    key = (not NCURSES or code ~= 7) and string_char(code) or 'esc'
+    key = (not NCURSES or code ~= 7) and string_char(code) or M.KEYSYMS[code]
     shift = shift and code < 32 -- for printable characters, key is upper case
   else
     key = M.KEYSYMS[code]

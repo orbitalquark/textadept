@@ -43,7 +43,7 @@ end)
 events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   if keys.KEYSYMS[code] == 'esc' then
     gui.command_entry.focus() -- toggle focus to hide
-  elseif not NCURSES and keys.KEYSYMS[code] == '\t' or code == 9 then
+  elseif keys.KEYSYMS[code] == '\t' then
     local substring = gui.command_entry.entry_text:match('[%w_.:]+$') or ''
     local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
     local f, err = load('return ('..path..')', nil, 'bt', env)
