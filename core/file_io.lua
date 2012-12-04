@@ -161,12 +161,15 @@ function io.open_file(utf8_filenames)
       if utf8_filename == buffer.filename then view:goto_buffer(i) return end
     end
 
-    local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
+    local filename, text = utf8_filename:iconv(_CHARSET, 'UTF-8'), ''
     local f, err = io.open(filename, 'rb')
-    if not f then error(err) end
-    local text = f:read('*all')
-    f:close()
-    if not text then return end -- filename exists, but cannot read it
+    if f then
+      text = f:read('*all')
+      f:close()
+      if not text then return end -- filename exists, but cannot read it
+    elseif lfs.attributes(filename) then
+      error(err)
+    end
     local buffer = new_buffer()
     -- Tries to detect character encoding and convert text from it to UTF-8.
     local encoding, encoding_bom = detect_encoding(text)
@@ -198,7 +201,7 @@ function io.open_file(utf8_filenames)
     buffer:add_text(text, #text)
     buffer:goto_pos(0)
     buffer:empty_undo_buffer()
-    buffer.modification_time = lfs.attributes(filename).modification
+    buffer.mod_time = lfs.attributes(filename, 'modification') or os.time()
     buffer.filename = utf8_filename
     buffer:set_save_point()
     events.emit(events.FILE_OPENED, utf8_filename)
@@ -230,7 +233,7 @@ local function reload(buffer)
   buffer:line_scroll(0, first_visible_line)
   buffer:goto_pos(pos)
   buffer:set_save_point()
-  buffer.modification_time = lfs.attributes(filename).modification
+  buffer.mod_time = lfs.attributes(filename, 'modification')
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
@@ -267,7 +270,7 @@ local function save(buffer)
   f:write(text)
   f:close()
   buffer:set_save_point()
-  buffer.modification_time = lfs.attributes(filename).modification
+  buffer.mod_time = lfs.attributes(filename, 'modification')
   if buffer._type then buffer._type = nil end
   events.emit(events.FILE_AFTER_SAVE, buffer.filename)
 end
@@ -347,10 +350,10 @@ local function update_modified_file()
   local buffer = buffer
   local utf8_filename = buffer.filename
   local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
-  local attributes = lfs.attributes(filename)
-  if not attributes or not buffer.modification_time then return end
-  if buffer.modification_time < attributes.modification then
-    buffer.modification_time = attributes.modification
+  local mod_time = lfs.attributes(filename, 'modification')
+  if not mod_time or not buffer.mod_time then return end
+  if buffer.mod_time < mod_time then
+    buffer.mod_time = mod_time
     if gui.dialog('yesno-msgbox',
                   '--title', _L['Reload?'],
                   '--text', _L['Reload modified file?'],
