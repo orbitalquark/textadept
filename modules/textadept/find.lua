@@ -248,7 +248,7 @@ end
 
 events_connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   if not find.incremental then return end
-  if not NCURSES and keys.KEYSYMS[code] == 'esc' or code == 27 then
+  if keys.KEYSYMS[code] == 'esc' then
     find.incremental = nil
   elseif keys.KEYSYMS[code] == '\b' then
     find_incremental(gui.command_entry.entry_text:sub(1, -2))
