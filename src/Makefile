@@ -3,6 +3,7 @@
 kernel = $(shell uname -s)
 ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
   ifeq (win, $(findstring win, $(MAKECMDGOALS)))
+    # Cross-compile for Win32.
     ifeq (win32, $(MAKECMDGOALS))
       CROSS = i686-w64-mingw32-
     else ifeq (win64, $(MAKECMDGOALS))
@@ -26,6 +27,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
 
     luadoc = luadoc_start.bat
   else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
+    # Cross-compile for Mac OSX.
     CROSS = i686-apple-darwin10-
     CC = gcc
     CFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
@@ -54,6 +56,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
 
     luadoc = luadoc
   else
+    # Build for Linux/BSD.
     CC = gcc
     CXX = g++
     LUAFLAGS = -DLUA_USE_LINUX
@@ -230,7 +233,7 @@ libluajit.a:
 	cd luajit && $(MAKE) CC="$(CC) $(CFLAGS)"
 	cp luajit/src/$@ .
 libluajit32.a:
-	cd luajit && $(MAKE) CC="$(CC) -m32 $(CFLAGS)"
+	cd luajit && $(MAKE) CC="$(CC) $(CFLAGS)"
 	cp luajit/src/libluajit.a $@
 lua51.dll:
 	cd luajit && $(MAKE) HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
