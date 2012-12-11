@@ -4,6 +4,43 @@
 
 [Atom Feed]: feed
 
+## 6.1 (11 Dec 2012)
+
+Download:
+
+* [Textadept 6.1 -- Win32][]
+* [Textadept 6.1 -- Mac OSX Intel 10.5+][]
+* [Textadept 6.1 -- Linux][]
+* [Textadept 6.1 -- Linux x86_64][]
+* [Textadept 6.1 -- Source][]
+* [Textadept 6.1 -- Modules][]
+
+Bugfixes:
+
+* Do not set current directory when opening/saving files.
+* Detect Linux processor arch better.
+* Recognize special ncurses keys better.
+* Fixed potential bug with determining `_HOME` on Linux.
+* Fixed bug when opening non-existent files from the command line.
+* LuaJIT compiles correctly on ARM now.
+
+Changes:
+
+* Improved speed and memory usage of lexers.
+* Better Makefile support for building packages for Linux distros.
+* Rewrote LuaDoc [API documentation][].
+* Added French translation.
+* Updated to [LuaJIT][] 2.0.0.
+
+[Textadept 6.1 -- Win32]: download/textadept_6.1.win32.zip
+[Textadept 6.1 -- Mac OSX Intel 10.5+]: download/textadept_6.1.osx.zip
+[Textadept 6.1 -- Linux]: download/textadept_6.1.i386.tgz
+[Textadept 6.1 -- Linux x86_64]: download/textadept_6.1.x86_64.tgz
+[Textadept 6.1 -- Source]: download/textadept_6.1.src.zip
+[Textadept 6.1 -- Modules]: download/textadept_6.1.modules.zip
+[API documentation]: api/index.html
+[LuaJIT]: http://luajit.org
+
 ## 6.0 (01 Nov 2012)
 
 Please see the [5 to 6 migration guide][] for upgrading from Textadept 5 to
