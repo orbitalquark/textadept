@@ -14,13 +14,8 @@ local M = {}
 module('_M.textadept.snapopen')]]
 
 ---
--- Table of default UTF-8 paths to search.
--- @class table
--- @name PATHS
-M.PATHS = {}
----
--- Default file and directory filters.
--- Contains common binary file extensions and version control folders.
+-- The default filter table containing common binary file extensions and version
+-- control folders to exclude from snapopen file lists.
 -- @class table
 -- @name FILTER
 M.FILTER = {
@@ -81,48 +76,43 @@ local function add_directory(utf8_dir, list, depth, filter)
 end
 
 ---
--- Quickly open files in set of directories using a filtered list dialog.
--- The number of files in the list is capped at `MAX`.
+-- Quickly open files from the set of directories *utf8_paths* using a filtered
+-- list dialog.
+-- Files shown in the dialog do not match any pattern in string or table
+-- *filter*, and, unless *exclude_FILTER* is `true`, `FILTER` as well. A filter
+-- table contains Lua patterns that match filenames to exclude. Patterns
+-- starting with '!' exclude files that do not match the pattern that follows.
+-- The filter may also contain an `extensions` key whose value is a table of
+-- file extensions to exclude. Additionally, it may contain a `folders` key
+-- whose value is a table of folder names to exclude. Extensions and folder
+-- names must be encoded in UTF-8. The number of files in the list is capped at
+-- `MAX`.
 -- @param utf8_paths A UTF-8 string directory path or table of UTF-8 directory
 --   paths to search.
--- @param filter A filter for files and folders to exclude. The filter may be
---   a string or table. Each filter is a Lua pattern. Any files matching a
---   filter are excluded. Prefix a pattern with '!' to exclude any files that
---   do not match a filter. File extensions can be more efficiently excluded by
---   adding the extension text to a table assigned to an `extensions` key in the
---   filter table instead of using individual filters. Directories can be
---   excluded by adding filters to a table assigned to a `folders` key in the
---   filter table. All strings should be UTF-8 encoded.
--- @param exclude_PATHS Flag indicating whether or not to exclude `PATHS` in the
---   search. The default value is `false`.
--- @param exclude_FILTER Flag indicating whether or not to exclude `FILTER` from
---   `filter` in the search. If false, adds `FILTER` to the given `filter`.
---   The default value is `false`.
+-- @param filter Optional filter for files and folders to exclude.
+-- @param exclude_FILTER Optional flag indicating whether or not to exclude the
+--   default filter `FILTER` in the search. If `false`, adds `FILTER` to
+--   *filter*.
+--   The default value is `false` to include the default filter.
 -- @param depth Number of directories to recurse into for finding files.
 --   The default value is `DEFAULT_DEPTH`.
--- @usage _M.textadept.snapopen.open() -- list all files in PATHS
--- @usage _M.textadept.snapopen.open(buffer.filename:match('^.+/'), nil, true)
---   -- list all files in the current file's directory
--- @usage _M.textadept.snapopen.open(nil, '!%.lua$') -- list all Lua files in
---    PATHS
--- @usage _M.textadept.snapopen.open('/project', {folders = {'secret'}},
---   true) -- list all project files except those in a secret folder
--- @see PATHS
+-- @usage _M.textadept.snapopen.open(buffer.filename:match('^.+/')) -- list all
+--   files in the current file's directory, subject to the default filter
+-- @usage _M.textadept.snapopen.open('/project', '!%.lua$') -- list all Lua
+--    files in a project directory
+-- @usage _M.textadept.snapopen.open('/project', {folders = {'build'}}) -- list
+--   all source files in a project directory
 -- @see FILTER
 -- @see DEFAULT_DEPTH
 -- @see MAX
 -- @name open
-function M.open(utf8_paths, filter, exclude_PATHS, exclude_FILTER, depth)
+function M.open(utf8_paths, filter, exclude_FILTER, depth)
   -- Convert utf8_paths to a table from nil or string arguments.
   if not utf8_paths then utf8_paths = {} end
   if type(utf8_paths) == 'string' then utf8_paths = {utf8_paths} end
   -- Convert filter to a table from nil or string arguments.
   if not filter then filter = {} end
   if type(filter) == 'string' then filter = {filter} end
-  -- Add PATHS to utf8_paths unless specified otherwise.
-  if not exclude_PATHS then
-    for i = 1, #M.PATHS do utf8_paths[#utf8_paths + 1] = M.PATHS[i] end
-  end
   -- Add FILTER to filter unless specified otherwise.
   if not exclude_FILTER then
     for k, v in pairs(M.FILTER) do
