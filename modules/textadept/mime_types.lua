@@ -129,7 +129,8 @@ local function set_lexer(buffer, lang)
     if _M[lang].set_buffer_properties then _M[lang].set_buffer_properties() end
     events.emit(events.LANGUAGE_MODULE_LOADED, lang)
   end
-  buffer:colourise(0, -1)
+  local last_line = buffer.first_visible_line + buffer.lines_on_screen
+  buffer:colourise(0, buffer:position_from_line(last_line + 1))
   -- Create the ws_styles[lexer] lookup table for `get_lexer()`.
   if ws_styles[lang] then return end
   local ws = {}
