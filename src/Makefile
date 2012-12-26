@@ -65,7 +65,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       LDFLAGS += -ldl
       MAKE = make
     else
-      ifeq (ncurses, $(MAKECMDGOALS))
+      ifeq (ncurses, $(findstring ncurses, $(MAKECMDGOALS)))
         LDFLAGS += -liconv
       endif
       MAKE = gmake
@@ -75,7 +75,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
     bin_dir = $(DESTDIR)$(PREFIX)/bin
     data_dir = $(DESTDIR)$(PREFIX)/share/textadept
 
-    ifneq (ncurses, $(MAKECMDGOALS))
+    ifneq (ncurses, $(findstring ncurses, $(MAKECMDGOALS)))
       plat_flag = -DGTK
       ifndef GTK3
         gtk_version = 2.0
@@ -84,9 +84,11 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       endif
       gtk_flags = $(shell pkg-config --cflags gtk+-$(gtk_version))
       gtk_libs = $(shell pkg-config --libs gtk+-$(gtk_version))
+      install_targets = ../textadept ../textadeptjit
     else
       plat_flag = -DNCURSES
       ncurses_lib = -lncursesw
+      install_targets = ../textadept-ncurses ../textadeptjit-ncurses
     endif
     x64 = $(shell echo "" | $(CC) -E -dM - | grep __x86_64__ | cut -d ' ' -f 3)
     ifeq (1, $(x64))
@@ -297,9 +299,8 @@ textadeptjit-ncurses.osx: textadeptjit-ncurses; mv ../$< ../$@
 
 # Install/uninstall.
 
-install: ../textadept ../textadeptjit ../textadept-ncurses \
-         ../textadeptjit-ncurses | ../core ../doc ../init.lua ../lexers \
-                                   ../LICENSE ../modules ../themes
+install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
+                              ../modules ../themes
 	install -d $(bin_dir) $(data_dir)
 	install $^ $(data_dir)
 	cp -r $| $(data_dir)
