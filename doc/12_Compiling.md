@@ -87,6 +87,9 @@ a normal Linux application, run the usual `make` and then `make install` or
 */usr/local* but you can change this by setting `DESTDIR` (e.g.
 `make install DESTDIR=/prefix/to/install/to`).
 
+Similarly, `make ncurses` and `make ncurses install` installs the ncurses
+version.
+
 ### Cross Compiling for Windows
 
 When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
