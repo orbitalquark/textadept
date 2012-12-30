@@ -103,7 +103,6 @@ NUMBER	_	0;"	F	class:lexer
 OPERATOR	_	0;"	F	class:lexer
 OSX	_	0;"	F	
 P	_	0;"	f	class:lpeg
-PATHS	_	0;"	t	class:_M.textadept.snapopen
 PREPROCESSOR	_	0;"	F	class:lexer
 QUIT	_	0;"	F	class:events
 R	_	0;"	f	class:lpeg
