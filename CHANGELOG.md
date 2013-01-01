@@ -4,6 +4,35 @@
 
 [Atom Feed]: feed
 
+## 6.2 (01 Jan 2013)
+
+Download:
+
+* [Textadept 6.2 -- Win32][]
+* [Textadept 6.2 -- Mac OSX Intel 10.5+][]
+* [Textadept 6.2 -- Linux][]
+* [Textadept 6.2 -- Linux x86_64][]
+* [Textadept 6.2 -- Source][]
+* [Textadept 6.2 -- Modules][]
+
+Bugfixes:
+
+* None.
+
+Changes:
+
+* Greatly improved speed when loading large files.
+* `make install` and `make ncurses install` install separate binaries on Linux.
+* Changed API for [`_M.textadept.snapopen.open()`][] and removed `PATHS`.
+
+[Textadept 6.2 -- Win32]: download/textadept_6.2.win32.zip
+[Textadept 6.2 -- Mac OSX Intel 10.5+]: download/textadept_6.2.osx.zip
+[Textadept 6.2 -- Linux]: download/textadept_6.2.i386.tgz
+[Textadept 6.2 -- Linux x86_64]: download/textadept_6.2.x86_64.tgz
+[Textadept 6.2 -- Source]: download/textadept_6.2.src.zip
+[Textadept 6.2 -- Modules]: download/textadept_6.2.modules.zip
+[`_M.textadept.snapopen.open()`]: api/_M.textadept.snapopen.html#open
+
 ## 6.1 (11 Dec 2012)
 
 Download:
