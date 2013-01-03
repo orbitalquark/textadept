@@ -585,38 +585,16 @@ if OSX then
   -- not propagate it.
   keys.fn = function() return true end
 elseif NCURSES then
-  local mark_mode = false
-  local function move(s) buffer[mark_mode and s..'_extend' or s](_G.buffer) end
-
-  keys['c^'] = function() mark_mode = not mark_mode end
+  keys['c^'] = function() _G.buffer.selection_mode = 0 end
   keys['c]'] = buffer.swap_main_anchor_caret
-  keys.cf, keys.cb = {move, 'char_right'}, {move, 'char_left'}
-  keys.cn, keys.cp = {move, 'line_down'}, {move, 'line_up'}
-  keys.ca, keys.ce = {move, 'vc_home'}, {move, 'line_end'}
+  keys.cf, keys.cb = buffer.char_right, buffer.char_left
+  keys.cn, keys.cp = buffer.line_down, buffer.line_up
+  keys.ca, keys.ce = buffer.vc_home, buffer.line_end
   keys.mA, keys.mE = buffer.vc_home_extend, buffer.line_end_extend
-  keys.right, keys.cright = keys.cf, {move, 'word_right'}
-  keys.left, keys.cleft = keys.cb, {move, 'word_left'}
-  keys.down, keys.up = keys.cn, keys.cp
-  keys.home, keys['end'] = keys.ca, keys.ce
-  keys.pgup, keys.mU = {move, 'page_up'}, buffer.page_up_extend
-  keys.pgdn, keys.mD = {move, 'page_down'}, buffer.page_down_extend
-  keys.cma = {move, 'document_start'}
-  keys.cme = {move, 'document_end'}
+  keys.mU, keys.mD = buffer.page_up_extend, buffer.page_down_extend
+  keys.cma, keys.cme = buffer.document_start, buffer.document_end
   keys.cd, keys.md = buffer.clear, utils.delete_word
   keys.ck = utils.cut_to_eol
-
-  local INS_OR_DEL = _SCINTILLA.constants.SC_MOD_INSERTTEXT +
-                     _SCINTILLA.constants.SC_MOD_DELETETEXT
-  events.connect(events.BUFFER_NEW,
-                 function() _G.buffer.mod_event_mask = INS_OR_DEL end)
-  -- Scintilla's first buffer does not have this.
-  if not RESETTING then _G.buffer.mod_event_mask = INS_OR_DEL end
-
-  local bit32_band = bit32.band
-  -- Inserting or deleting text should cancel mark mode.
-  events.connect(events.MODIFIED, function(modification_type)
-    mark_mode = mark_mode and bit32_band(modification_type, INS_OR_DEL) == 0
-  end)
 end
 
 return M
