@@ -331,8 +331,8 @@ events_connect(events.URI_DROPPED, function(utf8_uris)
         return string.char(tonumber(hex, 16))
       end)
       if WIN32 then utf8_uri = utf8_uri:sub(2, -1) end -- ignore leading '/'
-      local uri = utf8_uri:iconv(_CHARSET, 'UTF-8')
-      if lfs.attributes(uri).mode ~= 'directory' then io.open_file(utf8_uri) end
+      local mode = lfs.attributes(utf8_uri:iconv(_CHARSET, 'UTF-8'), 'mode')
+      if mode and mode ~= 'directory' then io.open_file(utf8_uri) end
     end
   end
 end)
