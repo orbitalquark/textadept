@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 -- This script generates the _SCINTILLA table from SciTE's Lua Interface tables.
 
@@ -20,7 +20,7 @@ f = io.open('../core/iface.lua', 'wb')
 
 -- Write header.
 f:write [=[
--- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 local M = {}
 
@@ -206,7 +206,7 @@ f:close()
 
 f = io.open('../core/._SCINTILLA.luadoc', 'wb')
 f:write [[
--- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- This is a DUMMY FILE used for making Adeptsense for built-in constants in the
 -- global _SCINTILLA.constants table.
 

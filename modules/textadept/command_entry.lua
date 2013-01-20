@@ -1,4 +1,4 @@
--- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- Modified by Jay Gould.
 
 --[[ This comment is for LuaDoc.
