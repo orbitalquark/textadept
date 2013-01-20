@@ -1,4 +1,4 @@
--- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 -- Adeptsense doclet for LuaDoc.
 -- This module is used by LuaDoc to create an adeptsense for Lua with a fake

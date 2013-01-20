@@ -1,4 +1,4 @@
--- Copyright 2007-2012 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- Light lexer theme for Textadept.
 
 -- Please note this theme is in a separate Lua state than Textadept's main one.
