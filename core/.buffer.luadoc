@@ -153,6 +153,11 @@
 -- @field caret_line_visible (bool)
 --   Color the background of the line containing the caret a different color.
 --   The default value is `false`.
+-- @field caret_line_visible_always (bool)
+--   Whether or not the caret line is always visible, even when the window is
+--   not in focus.
+--   The default value is `false`, showing the caret line only when the window
+--   is in focus.
 -- @field caret_period (number)
 --   The time in milliseconds between caret blinks.
 --   A value of `0` stops blinking.
