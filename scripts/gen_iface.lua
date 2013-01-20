@@ -93,8 +93,7 @@ end
 -- Write constants.
 f:write [[
 ---
--- Scintilla constants.
--- Each key is a Scintilla constant with its associated numeric value.
+-- Map of Scintilla constant names to their numeric values.
 -- @class table
 -- @name constants
 M.constants = {]]
@@ -116,15 +115,14 @@ end
 -- Write functions.
 f:write [[
 ---
--- Scintilla functions.
--- Each key is a Scintilla function name with a table value containing its ID,
--- return type, wParam type, and lParam type. Types are as follows:
+-- Map of Scintilla function names to tables containing their IDs, return types,
+-- wParam types, and lParam types. Types are as follows:
 --
 --   + `0`: Void.
 --   + `1`: Integer.
 --   + `2`: Length of the given lParam string.
 --   + `3`: Integer position.
---   + `4`: Colour in "0xBBGGRR" format.
+--   + `4`: Color, in "0xBBGGRR" format.
 --   + `5`: Boolean `true` or `false`.
 --   + `6`: Bitmask of Scintilla key modifiers and a key value.
 --   + `7`: String parameter.
@@ -150,11 +148,10 @@ end
 -- Write properties.
 f:write [[
 ---
--- Scintilla properties.
--- Each key is a Scintilla property name with a table value containing the ID of
--- its "get" function, the ID of its "set" function, its return type, and its
--- wParam type. The wParam type will be non-zero if the property is an indexable
--- property. Types are the same as in the `functions` table.
+-- Map of Scintilla property names to table values containing their "get"
+-- function IDs, "set" function IDs, return types, and wParam types.
+-- The wParam type will be non-zero if the property is indexable.
+-- Types are the same as in the `functions` table.
 -- @see functions
 -- @class table
 -- @name properties
@@ -167,7 +164,7 @@ f:write [[
 local marker_number, indic_number, list_type = -1, 7, 0
 
 ---
--- Returns a unique marker number.
+-- Returns a unique marker number for use with `buffer.marker_define()`.
 -- Use this function for custom markers in order to prevent clashes with
 -- identifiers of other custom markers.
 -- @usage local marknum = _SCINTILLA.next_marker_number()
@@ -179,7 +176,7 @@ function M.next_marker_number()
 end
 
 ---
--- Returns a unique indicator number.
+-- Returns a unique indicator number for use with custom indicators.
 -- Use this function for custom indicators in order to prevent clashes with
 -- identifiers of other custom indicators.
 -- @usage local indic_num = _SCINTILLA.next_indic_number()
@@ -191,7 +188,7 @@ function M.next_indic_number()
 end
 
 ---
--- Returns a unique user list type.
+-- Returns a unique user list type for use with `buffer.user_list_show()`.
 -- Use this function for custom user lists in order to prevent clashes with
 -- list identifiers of other custom user lists.
 -- @usage local list_type = _SCINTILLA.next_user_list_type()
