@@ -184,6 +184,7 @@ SCI_GETCARETFORE _SCINTILLA.constants.SCI_GETCARETFORE\n2138
 SCI_GETCARETLINEBACK _SCINTILLA.constants.SCI_GETCARETLINEBACK\n2097
 SCI_GETCARETLINEBACKALPHA _SCINTILLA.constants.SCI_GETCARETLINEBACKALPHA\n2471
 SCI_GETCARETLINEVISIBLE _SCINTILLA.constants.SCI_GETCARETLINEVISIBLE\n2095
+SCI_GETCARETLINEVISIBLEALWAYS _SCINTILLA.constants.SCI_GETCARETLINEVISIBLEALWAYS\n2654
 SCI_GETCARETPERIOD _SCINTILLA.constants.SCI_GETCARETPERIOD\n2075
 SCI_GETCARETSTICKY _SCINTILLA.constants.SCI_GETCARETSTICKY\n2457
 SCI_GETCARETSTYLE _SCINTILLA.constants.SCI_GETCARETSTYLE\n2513
@@ -352,6 +353,7 @@ SCI_SETCARETFORE _SCINTILLA.constants.SCI_SETCARETFORE\n2069
 SCI_SETCARETLINEBACK _SCINTILLA.constants.SCI_SETCARETLINEBACK\n2098
 SCI_SETCARETLINEBACKALPHA _SCINTILLA.constants.SCI_SETCARETLINEBACKALPHA\n2470
 SCI_SETCARETLINEVISIBLE _SCINTILLA.constants.SCI_SETCARETLINEVISIBLE\n2096
+SCI_SETCARETLINEVISIBLEALWAYS _SCINTILLA.constants.SCI_SETCARETLINEVISIBLEALWAYS\n2655
 SCI_SETCARETPERIOD _SCINTILLA.constants.SCI_SETCARETPERIOD\n2076
 SCI_SETCARETSTICKY _SCINTILLA.constants.SCI_SETCARETSTICKY\n2458
 SCI_SETCARETSTYLE _SCINTILLA.constants.SCI_SETCARETSTYLE\n2512
@@ -876,6 +878,7 @@ caret_fore buffer.caret_fore (number)\nThe foreground color, in "0xBBGGRR" forma
 caret_line_back buffer.caret_line_back (number)\nThe background color, in "0xBBGGRR" format, of the line containing the\ncaret.
 caret_line_back_alpha buffer.caret_line_back_alpha (number)\nThe background alpha value, ranging from `0` (transparent) to `255`\n(opaque), of the caret line.\nThe default value is `256`, for no alpha.
 caret_line_visible buffer.caret_line_visible (bool)\nColor the background of the line containing the caret a different color.\nThe default value is `false`.
+caret_line_visible_always buffer.caret_line_visible_always (bool)\nWhether or not the caret line is always visible, even when the window is\nnot in focus.\nThe default value is `false`, showing the caret line only when the window\nis in focus.
 caret_period buffer.caret_period (number)\nThe time in milliseconds between caret blinks.\nA value of `0` stops blinking.\nThe default value is `500`.
 caret_sticky buffer.caret_sticky (number)\nThe preferred horizontal position of the caret when moving between lines.\n\n* `_SCINTILLA.constants.SC_CARETSTICKY_OFF` (0)\n  Use the same position as on the previous line.\n* `_SCINTILLA.constants.SC_CARETSTICKY_ON` (1)\n  Use the last position the caret was moved to via the mouse, left/right\n  arrow keys, home/end keys, etc. Typing text does not affect the position.\n* `_SCINTILLA.constants.SC_CARETSTICKY_WHITESPACE` (2)\n  Use the same position as on the previous line, but prior to any inserted\n  indentation.\n\nThe default value is `0`.
 caret_style buffer.caret_style (number)\nThe style of caret to draw.\n\n* `_SCINTILLA.constants.CARETSTYLE_INVISIBLE` (0)\n  No caret.\n* `_SCINTILLA.constants.CARETSTYLE_LINE` (1)\n  A line caret.\n* `_SCINTILLA.constants.CARETSTYLE_BLOCK` (2)\n  A block caret.\n\nThe default value is `1`.

@@ -176,6 +176,7 @@ SCI_GETCARETFORE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETCARETLINEBACK	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETCARETLINEBACKALPHA	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETCARETLINEVISIBLE	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETCARETLINEVISIBLEALWAYS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETCARETPERIOD	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETCARETSTICKY	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETCARETSTYLE	_	0;"	F	class:_SCINTILLA.constants
@@ -344,6 +345,7 @@ SCI_SETCARETFORE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETCARETLINEBACK	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETCARETLINEBACKALPHA	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETCARETLINEVISIBLE	_	0;"	F	class:_SCINTILLA.constants
+SCI_SETCARETLINEVISIBLEALWAYS	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETCARETPERIOD	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETCARETSTICKY	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETCARETSTYLE	_	0;"	F	class:_SCINTILLA.constants
@@ -904,6 +906,7 @@ caret_fore	_	0;"	F	class:buffer
 caret_line_back	_	0;"	F	class:buffer
 caret_line_back_alpha	_	0;"	F	class:buffer
 caret_line_visible	_	0;"	F	class:buffer
+caret_line_visible_always	_	0;"	F	class:buffer
 caret_period	_	0;"	F	class:buffer
 caret_sticky	_	0;"	F	class:buffer
 caret_style	_	0;"	F	class:buffer
