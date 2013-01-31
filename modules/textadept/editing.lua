@@ -15,6 +15,12 @@ local M = {}
 --   Highlight matching brace characters like "()[]{}".
 --   The default value is `true`.
 --   Matching braces are defined in the [`braces`](#braces) table.
+-- @field TYPEOVER_CHARS (bool)
+--   Move over the typeover character under the caret when typing it instead of
+--   inserting it.
+--   The default value is `true`.
+--   Typeover characters are defined in the [`typeover_chars`](#typeover_chars)
+--   table.
 -- @field AUTOINDENT (bool)
 --   Match the indentation level of the previous line when inserting a new line.
 --   The default value is `true`.
@@ -35,6 +41,7 @@ module('_M.textadept.editing')]]
 
 M.AUTOPAIR = true
 M.HIGHLIGHT_BRACES = true
+M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
 M.STRIP_WHITESPACE_ON_SAVE = true
 M.MARK_HIGHLIGHT_BACK = buffer and buffer.caret_line_back or
@@ -78,6 +85,17 @@ M.char_matches = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 -- @see HIGHLIGHT_BRACES
 M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 
+---
+-- Table of characters to move over when typed, with language-specific typeover
+-- character tables assigned to a lexer name key.
+-- The ASCII values of characters are keys and are assigned non-`nil` values.
+-- The default characters are ')', ']', '}', '&apos;', and '&quot;'.
+-- @class table
+-- @name typeover_chars
+-- @usage _M.textadept.editing.typeover_chars.hypertext = {..., [62] = 1}
+-- @see TYPEOVER_CHARS
+M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
+
 -- The current call tip.
 -- Used for displaying call tips.
 -- @class table
@@ -119,6 +137,16 @@ events_connect(events.UPDATE_UI, function()
     end
   else
     buffer:brace_bad_light(-1)
+  end
+end)
+
+-- Moves over typeover characters when typed.
+events_connect(events.KEYPRESS, function(code)
+  if not M.TYPEOVER_CHARS then return end
+  local buffer = buffer
+  if M.typeover_chars[code] and buffer.char_at[buffer.current_pos] == code then
+    buffer:char_right()
+    return true
   end
 end)
 

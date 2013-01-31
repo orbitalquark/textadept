@@ -14,8 +14,9 @@ below.
 Usually, quote ('&apos;', '&quot;') and brace ('(', '[', '{') characters go
 together in pairs. By default, Textadept automatically inserts the complement
 character when the first is typed. Similarly, the complement is deleted when you
-press `Bksp` (`⌫` on Mac OSX | `Bksp` in ncurses) over the first. See the
-[preferences][] page if you would like to disable this.
+press `Bksp` (`⌫` on Mac OSX | `Bksp` in ncurses) over the first. Typing over
+complement characters is also supported. See the [preferences][] page if you
+would like to disable these features.
 
 [preferences]: 08_Preferences.html#Generic
 

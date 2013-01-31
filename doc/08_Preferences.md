@@ -35,12 +35,14 @@ below.
 
 Many of Textadept's generic modules have settings you can change from
 *~/.textadept/init.lua* after the module is loaded. These settings are viewed
-from module's [LuaDoc][]. For example, to disable character autopairing and
-stripping whitespace on save, your *~/.textadept/init.lua* might look like:
+from module's [LuaDoc][]. For example, to disable character autopairing with
+typeover and stripping whitespace on save, your *~/.textadept/init.lua* might
+look like:
 
     _M.textadept = require 'textadept'
 
     _M.textadept.editing.AUTOPAIR = false
+    _M.textadept.editing.TYPEOVER_CHARS = false
     _M.textadept.editing.STRIP_WHITESPACE_ON_SAVE = false
 
 Now suppose you wanted to load all of Textadept's default modules except for the
