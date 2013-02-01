@@ -739,6 +739,7 @@ STYLE_LASTPREDEFINED _SCINTILLA.constants.STYLE_LASTPREDEFINED\n39
 STYLE_LINENUMBER _SCINTILLA.constants.STYLE_LINENUMBER\n33
 STYLE_MAX _SCINTILLA.constants.STYLE_MAX\n255
 TYPE lexer.TYPE (string)\nThe token name for type tokens.
+TYPEOVER_CHARS _M.textadept.editing.TYPEOVER_CHARS (bool)\nMove over the typeover character under the caret when typing it instead of\ninserting it.\nThe default value is `true`.\nTypeover characters are defined in the `typeover_chars`\ntable.
 UNDO_MAY_COALESCE _SCINTILLA.constants.UNDO_MAY_COALESCE\n1
 UPDATE_UI events.UPDATE_UI (string)\nCalled when the text, styling, or selection range in the buffer changes.
 URI_DROPPED events.URI_DROPPED (string)\nCalled after dragging and dropping a URI such as a file name onto the view.\nArguments:\n\n* _`text`_: The UTF-8-encoded URI text.
@@ -1623,6 +1624,7 @@ type lpeg.type(value)\nIf the given value is a pattern, returns the string "patt
 type_assignments _M.textadept.adeptsense.syntax.type_assignments (table)\nA map of Lua patterns to class types for variable\n  assignments, typically used for dynamically typed languages. For example,\n  `sense.syntax.type_assignments['^"'] = 'string'`  would recognize string\n  assignments in Lua so the `foo` in `foo = "bar"` would be recognized as\n  type `string`. The class type value may contain `%n` pattern captures.
 type_declarations _M.textadept.adeptsense.syntax.type_declarations (table)\nA list of Lua patterns used for determining the\n  class type of a symbol. The first capture returned must be the class name.\n  Use `%_` to match the symbol.\n  The default value is `'(%u[%w_%.]+)%s+%_'`.
 type_declarations_exclude _M.textadept.adeptsense.syntax.type_declarations_exclude (table)\nA table of types to exclude, even if they\n  match a `type_declarations` pattern. Each excluded type is a table key and\n  has a `true` boolean value. For example, `{Foo = true}` excludes any type\n  whose name is `Foo`.\n  The default value is `{}`.
+typeover_chars _M.textadept.editing.typeover_chars (table)\nTable of characters to move over when typed, with language-specific typeover\ncharacter tables assigned to a lexer name key.\nThe ASCII values of characters are keys and are assigned non-`nil` values.\nThe default characters are ')', ']', '}', ''', and '"'.\n@see TYPEOVER_CHARS
 undo buffer.undo(buffer)\nUndoes the most recent action.\n@param buffer The global buffer.
 undo_collection buffer.undo_collection (bool)\nCollect undo information.\nWhen setting to `false`, call\n`buffer:empty_undo_buffer()` to avoid desynchronizing\nthe undo buffer with the buffer text.\nThe default value is `true`.
 unlock lfs.unlock(filehandle[, start[, length]])\nUnlocks a file or a part of it. This function works on open files; the file\nhandle should be specified as the first argument. The optional arguments\nstart and length can be used to specify a starting point and its length; both\nshould be numbers.\n\nReturns true if the operation was successful; in case of error, it returns\nnil plus an error string.
