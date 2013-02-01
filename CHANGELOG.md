@@ -4,6 +4,36 @@
 
 [Atom Feed]: feed
 
+## 6.3 (01 Feb 2013)
+
+Download:
+
+* [Textadept 6.3 -- Win32][]
+* [Textadept 6.3 -- Mac OSX Intel 10.5+][]
+* [Textadept 6.3 -- Linux][]
+* [Textadept 6.3 -- Linux x86_64][]
+* [Textadept 6.3 -- Source][]
+* [Textadept 6.3 -- Modules][]
+
+Bugfixes:
+
+* Do not error on non-existant dropped URIs.
+* Fixed crash in Python module when parsing some syntax error messages.
+
+Changes:
+
+* Use Scintilla API for ncurses mark mode.
+* Updated to Scintilla 3.2.4.
+* Added [typeover characters][].
+
+[Textadept 6.3 -- Win32]: download/textadept_6.3.win32.zip
+[Textadept 6.3 -- Mac OSX Intel 10.5+]: download/textadept_6.3.osx.zip
+[Textadept 6.3 -- Linux]: download/textadept_6.3.i386.tgz
+[Textadept 6.3 -- Linux x86_64]: download/textadept_6.3.x86_64.tgz
+[Textadept 6.3 -- Source]: download/textadept_6.3.src.zip
+[Textadept 6.3 -- Modules]: download/textadept_6.3.modules.zip
+[typeover characters]: api/_M.textadept.editing.html#TYPEOVER_CHARS
+
 ## 6.2 (01 Jan 2013)
 
 Download:
