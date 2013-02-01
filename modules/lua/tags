@@ -731,6 +731,7 @@ STYLE_LASTPREDEFINED	_	0;"	F	class:_SCINTILLA.constants
 STYLE_LINENUMBER	_	0;"	F	class:_SCINTILLA.constants
 STYLE_MAX	_	0;"	F	class:_SCINTILLA.constants
 TYPE	_	0;"	F	class:lexer
+TYPEOVER_CHARS	_	0;"	F	class:_M.textadept.editing
 UNDO_MAY_COALESCE	_	0;"	F	class:_SCINTILLA.constants
 UPDATE_UI	_	0;"	F	class:events
 URI_DROPPED	_	0;"	F	class:events
@@ -1666,6 +1667,7 @@ type	_	0;"	f	class:lpeg
 type_assignments	_	0;"	F	class:_M.textadept.adeptsense.syntax
 type_declarations	_	0;"	F	class:_M.textadept.adeptsense.syntax
 type_declarations_exclude	_	0;"	F	class:_M.textadept.adeptsense.syntax
+typeover_chars	_	0;"	t	class:_M.textadept.editing
 undo	_	0;"	f	class:buffer
 undo_collection	_	0;"	F	class:buffer
 unlock	_	0;"	f	class:lfs
