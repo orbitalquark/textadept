@@ -87,10 +87,12 @@ files to reopen.
 By default, Textadept saves its state on exit so it can be restored the next
 time the editor starts up. You can disable this by passing the `-n` or
 `--nosession` switch to Textadept on startup. Sessions can be manually saved and
-opened via the "File -> Save Session..." and "File -> Load Session..." menus.
-Session files store information such as open buffers, current split views, caret
-and scroll positions in each buffer, Textadept's window size, and recently
-opened files. Tampering with session files may have unintended consequences.
+opened via the "File -> Save Session..." and "File -> Load Session..." menus or
+by using the `-s` and `--session` switches on startup. The switches accept the
+path of a session file or the name of a session in *~/.textadept/*. Session
+files store information such as open buffers, current split views, caret and
+scroll positions in each buffer, Textadept's window size, and recently opened
+files. Tampering with session files may have unintended consequences.
 
 ### Snapopen
 

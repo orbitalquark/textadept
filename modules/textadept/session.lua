@@ -198,12 +198,19 @@ function M.save(filename)
     f:close()
   end
 end
--- Save session on quit.
+-- Saves session on quit.
 events.connect(events.QUIT, function()
   if M.SAVE_ON_QUIT then M.save(M.DEFAULT_SESSION) end
 end, 1)
 
+-- Does not save session on quit.
 local function no_session() M.SAVE_ON_QUIT = false end
 args.register('-n', '--nosession', 0, no_session, 'No session functionality')
+-- Loads the given session on startup.
+local function load_session(name)
+  if lfs.attributes(name) then M.load(name) return end
+  M.load(_USERHOME..'/'..name)
+end
+args.register('-s', '--session', 1, load_session, 'Load session')
 
 return M
