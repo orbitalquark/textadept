@@ -10,6 +10,7 @@ Switch             |Arguments|Description
 `-f`, `--force`    |    0    |Forces [unique instance][].
 `-h`, `--help`     |    0    |Shows this.
 `-n`, `--nosession`|    0    |No [session][] functionality.
+`-s`, `--session`  |    1    |Loads [session][] on startup.
 `-u`, `--userhome` |    1    |Sets alternate [`_USERHOME`][].
 
 The help switch is unavailable in ncurses.
