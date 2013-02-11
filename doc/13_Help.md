@@ -7,6 +7,7 @@ parameters.
 
 Switch             |Arguments|Description
 -------------------|:-------:|-----------
+`-e`, `--execute`  |    1    |Run Lua [code][].
 `-f`, `--force`    |    0    |Forces [unique instance][].
 `-h`, `--help`     |    0    |Shows this.
 `-n`, `--nosession`|    0    |No [session][] functionality.
@@ -15,6 +16,7 @@ Switch             |Arguments|Description
 
 The help switch is unavailable in ncurses.
 
+[code]: 10_Advanced.html#Command.Entry
 [unique instance]: 02_Installation.html#Single.Instance
 [session]: 04_WorkingWithFiles.html#Sessions
 [`_USERHOME`]: api/_G.html#_USERHOME

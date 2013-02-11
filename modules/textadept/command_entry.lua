@@ -87,6 +87,14 @@ events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
   end
 end)
 
+-- Executes Lua code on startup.
+local function execute(command)
+  local f, err = load(command, nil, 'bt', env)
+  if err then error(err) end
+  f()
+end
+args.register('-e', '--execute', 1, execute, 'Execute Lua code')
+
 --[[ The function below is a Lua C function.
 
 ---
