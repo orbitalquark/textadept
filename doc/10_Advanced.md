@@ -10,7 +10,8 @@ For available commands, see the [Lua API][]. Abbreviated commands for
 [`buffer`][], [`view`][] and [`gui`][] are available: the command
 `buffer:append_text('foo')` can be shortened to `append_text('foo')`. Therefore,
 use `_G.print()` for Lua's `print()` since [`gui.print()`][] is shortened to
-`print()`.
+`print()`. You can also run commands on startup using the `-e` and `--execute`
+command line switches.
 
 ![Command Entry](images/commandentry.png)
 
