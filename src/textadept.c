@@ -2139,6 +2139,7 @@ static void new_window() {
   signal(window, "delete-event", w_exit);
   signal(window, "focus-in-event", w_focus);
   signal(window, "key-press-event", w_keypress);
+  gtdialog_set_parent(GTK_WINDOW(window));
   accel = gtk_accel_group_new();
 
 #if (__APPLE__ && !NCURSES)
