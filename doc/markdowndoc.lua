@@ -268,9 +268,10 @@ function M.start(doc)
     p:close()
     template.toc = template.toc:gsub('(<a.-)%b()(</a>)', '%1%2') -- strip params
                                :gsub('<code>([^<]+)</code>', '%1') -- sans serif
-                               :gsub('_G.(events.[%w_]+)', '<small>%1</small>')
-                               :gsub('rectangular_[%w_]+', '<small>%0</small>')
-                               :gsub('SC_[%u]+', '<small>%0</small>')
+                               :gsub('>rectangular_[%w_]+', '><small%0</small>')
+                               :gsub('>SC_[%u]+', '><small%0</small>')
+                               :gsub('>_G.(events.[%w_]+)',
+                                     '><small>%1</small>')
     f = io_open(M.options.output_dir..'/api/'..name..'.html', 'wb')
     local html = HTML:gsub('%%%(([^)]+)%)', template)
     f:write(html)
