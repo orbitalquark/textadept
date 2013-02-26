@@ -2787,6 +2787,9 @@ function get_style_name(buffer, style_num) end
 -- Unused Fields.
 --   * status
 --   * mouse_down_captures
+--   * line_end_types_supported+
+--   * line_end_types_allowed+
+--   * line_end_types_active+
 --   * focus
 --   * use_palette
 --   * font_quality
@@ -2801,11 +2804,18 @@ function get_style_name(buffer, style_num) end
 --   * field gap_position
 --   * identifier
 --   * key_words
+--   * sub_style_bases+
+--   * distance_to_secondary_styles+
+--   * sub_styles_start+
+--   * sub_styles_length+
+--   * identifiers+
 --   * technology
 
 -- Unused Functions.
 --   * add_styled_text
 --   * get_styled_text
+--   * release_all_extended_styles
+--   * allocate_extended_styles
 --   * assign_cmd_key
 --   * clear_cmd_key
 --   * set_styling_ex
@@ -2831,5 +2841,9 @@ function get_style_name(buffer, style_num) end
 --   * property_type
 --   * describe_property
 --   * describe_key_word_sets
+--   * allocate_sub_styles+
+--   * free_sub_styles+
 --   * create_loader
 --   * private_lexer_call
+--
+--   + provisional features
