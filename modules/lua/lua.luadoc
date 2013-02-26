@@ -538,16 +538,17 @@ function string.gmatch(s, pattern) end
 -- If `repl` is a string, then its value is used for replacement. The character
 -- `%` works as an escape character: any sequence in `repl` of the form `%d`,
 -- with `d` between 1 and 9, stands for the value of the `d`-th captured
--- substring (see below). The sequence `%0` stands for the whole match. The
--- sequence `%%` stands for a single `%`.
+-- substring. The sequence `%0` stands for the whole match. The sequence `%%`
+-- stands for a single `%`.
 --
 -- If `repl` is a table, then the table is queried for every match, using
--- the first capture as the key; if the pattern specifies no captures, then
--- the whole match is used as the key.
+-- the first capture as the key.
+--
 -- If `repl` is a function, then this function is called every time a match
--- occurs, with all captured substrings passed as arguments, in order; if
--- the pattern specifies no captures, then the whole match is passed as a
--- sole argument.
+-- occurs, with all captured substrings passed as arguments, in order.
+--
+-- In any case, if the pattern specifies no captures, then it behaves as if the
+-- whole pattern was inside a capture.
 --
 -- If the value returned by the table query or by the function call is a
 -- string or a number, then it is used as the replacement string; otherwise,
