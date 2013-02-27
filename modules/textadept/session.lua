@@ -40,8 +40,6 @@ M.MAX_RECENT_FILES = 10
 function M.load(filename)
   filename = filename or gui.dialog('fileselect',
                                     '--title', _L['Load Session'],
-                                    '--button1', _L['_Open'],
-                                    '--button2', _L['_Cancel'],
                                     '--with-directory',
                                     M.DEFAULT_SESSION:match('.+[/\\]') or '',
                                     '--with-file',
@@ -132,8 +130,6 @@ end)
 function M.save(filename)
   filename = filename or gui.dialog('filesave',
                                     '--title', _L['Save Session'],
-                                    '--button1', _L['_Save'],
-                                    '--button2', _L['_Cancel'],
                                     '--with-directory',
                                     M.DEFAULT_SESSION:match('.+[/\\]') or '',
                                     '--with-file',

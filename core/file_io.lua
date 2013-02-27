@@ -149,8 +149,6 @@ function io.open_file(utf8_filenames)
   utf8_filenames = utf8_filenames or
                    gui.dialog('fileselect',
                               '--title', _L['Open'],
-                              '--button1', _L['_Open'],
-                              '--button2', _L['_Cancel'],
                               '--select-multiple',
                               '--with-directory',
                               (buffer.filename or ''):match('.+[/\\]') or '')
@@ -282,8 +280,6 @@ local function save_as(buffer, utf8_filename)
   if not utf8_filename then
     utf8_filename = gui.dialog('filesave',
                                '--title', _L['Save'],
-                               '--button1', _L['_Save'],
-                               '--button2', _L['_Cancel'],
                                '--with-directory',
                                (buffer.filename or ''):match('.+[/\\]') or '',
                                '--with-file',
