@@ -1998,12 +1998,18 @@ static Scintilla *new_view(sptr_t doc) {
  * Creates the Find box.
  */
 static GtkWidget *new_findbox() {
+#if !GTK_CHECK_VERSION(3,4,0)
+  findbox = gtk_table_new(2, 6, FALSE);
 #define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
   gtk_table_attach(GTK_TABLE(findbox), w, x1, x2, y1, y2, xo, yo, xp, yp)
 #define EXPAND_FILL (GtkAttachOptions)(GTK_EXPAND | GTK_FILL)
 #define SHRINK_FILL (GtkAttachOptions)(GTK_SHRINK | GTK_FILL)
-
-  findbox = gtk_table_new(2, 6, FALSE);
+#else
+  findbox = gtk_grid_new();
+  gtk_grid_set_column_spacing(GTK_GRID(findbox), 5);
+#define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
+  gtk_grid_attach(GTK_GRID(findbox), w, x1, y1, 1, 1)
+#endif
   find_store = gtk_list_store_new(1, G_TYPE_STRING);
   repl_store = gtk_list_store_new(1, G_TYPE_STRING);
 
