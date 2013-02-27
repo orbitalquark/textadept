@@ -45,6 +45,7 @@ buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
 --buffer.sel_eol_filled = true
 --buffer.caret_fore = 0x000000
 --buffer.caret_line_visible = true
+--buffer.caret_line_visible_always = true
 --buffer.caret_line_back =
 --buffer.caret_line_back_alpha =
 --buffer.caret_period = 500
