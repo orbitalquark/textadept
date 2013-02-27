@@ -133,7 +133,7 @@ function M.open(utf8_paths, filter, exclude_FILTER, depth)
   if #list >= M.MAX then
     gui.dialog('ok-msgbox',
                '--title', _L['File Limit Exceeded'],
-               '--informative-text',
+               '--text',
                string.format('%d %s %d', M.MAX,
                              _L['files or more were found. Showing the first'],
                              M.MAX),

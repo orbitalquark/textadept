@@ -100,8 +100,6 @@ function find.find_in_files(utf8_dir)
   if not utf8_dir then
     utf8_dir = gui.dialog('fileselect',
                           '--title', _L['Find in Files'],
-                          '--button1', _L['_Open'],
-                          '--button2', _L['_Cancel'],
                           '--select-only-directories',
                           '--with-directory',
                           (buffer.filename or ''):match('^.+[/\\]') or '',

@@ -214,8 +214,8 @@ M.menubar = {
     {_L['Show _LuaDoc'], {utils.open_webpage, _HOME..'/doc/api/index.html'}},
     SEPARATOR,
     {_L['_About'],
-      {gui.dialog, 'ok-msgbox', '--title', 'Textadept', '--informative-text',
-       _RELEASE, '--button1', _L['_OK'], '--no-cancel'}},
+      {gui.dialog, 'ok-msgbox', '--title', 'Textadept', '--text', _RELEASE,
+       '--button1', _L['_OK'], '--no-cancel'}},
   },
 }
 
