@@ -154,10 +154,9 @@
 --   Color the background of the line containing the caret a different color.
 --   The default value is `false`.
 -- @field caret_line_visible_always (bool)
---   Whether or not the caret line is always visible, even when the window is
---   not in focus.
---   The default value is `false`, showing the caret line only when the window
---   is in focus.
+--   Always show the caret line, even when the window is not in focus.
+--   The default value is `false`, showing the line only when the window is in
+--   focus.
 -- @field caret_period (number)
 --   The time in milliseconds between caret blinks.
 --   A value of `0` stops blinking.
@@ -653,7 +652,8 @@
 --   cover 4 screen pixels on a retina display.
 -- @field rgba_image_width (number)
 --   The width for an RGBA image to be defined using
---   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
+--   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image) and
+--   [`buffer:register_rgba_image()`](#register_rgba_image).
 -- @field scroll_width (number)
 --   The assumed buffer width for horizontal scrolling purposes.
 --   For performance, the view does not measure the display width of the buffer
@@ -683,6 +683,39 @@
 --     expression.
 --
 --   The default value is `0`.
+--
+--   Regular expression characters recognized are:
+--
+--   * `.`
+--     Matches any character.
+--   * `[set]`
+--     Matches any character in *set*, including ranges (e.g. `[A-Za-z]`).
+--   * `[^set]`
+--     Matches the complement of *set*.
+--   * `*`
+--     Matches zero or more of the previous match.
+--   * `+`
+--     Matches one or more of the previous match.
+--   * `\<`
+--     Matches the beginning of a word.
+--     [`buffer.word_chars`](#word_chars) defines word characters.
+--   * `\>`
+--     Matches the end of a word.
+--     [`buffer.word_chars`](#word_chars) defines word characters.
+--   * `^`
+--     Matches the start of a line unless inside a set.
+--   * `$`
+--     Matches the end of a line unless inside a set.
+--   * `\(`
+--     The beginning of a tagged matching region.
+--   * `\)`
+--     The end of a tagged matching region.
+--   * `\n`
+--     The matched text of the *n*th tagged region. In replacement text, "\0" is
+--     all matched text.
+--   * `\x`
+--     Represents character *x*, ignoring any special meaning it may have by
+--     itself.
 -- @field sel_alpha (number)
 --   The alpha value, ranging from `0` (transparent) to `255` (opaque), of the
 --   selection.
@@ -1182,7 +1215,7 @@ function change_lexer_state(buffer, start_pos, end_pos) end
 function char_left(buffer) end
 
 ---
--- Moves the caret left one character, extending the selection to the new
+-- Moves the caret left one character, extending the selected text to the new
 -- position.
 -- @param buffer The global buffer.
 function char_left_extend(buffer) end
@@ -1216,7 +1249,7 @@ function char_position_from_point_close(buffer, x, y) end
 function char_right(buffer) end
 
 ---
--- Moves the caret right one character, extending the selection to the new
+-- Moves the caret right one character, extending the selected text to the new
 -- position.
 -- @param buffer The global buffer.
 function char_right_extend(buffer) end
@@ -1404,8 +1437,8 @@ function doc_line_from_visible(buffer, display_line) end
 function document_end(buffer) end
 
 ---
--- Moves the caret to the end of the buffer, extending the selection to the new
--- position.
+-- Moves the caret to the end of the buffer, extending the selected text to the
+-- new position.
 -- @param buffer The global buffer.
 function document_end_extend(buffer) end
 
@@ -1415,8 +1448,8 @@ function document_end_extend(buffer) end
 function document_start(buffer) end
 
 ---
--- Moves the caret to the beginning of the buffer, extending selection to the
--- new position.
+-- Moves the caret to the beginning of the buffer, extending the selected text
+-- to the new position.
 -- @param buffer The global buffer.
 function document_start_extend(buffer) end
 
@@ -1581,13 +1614,13 @@ function home_display(buffer) end
 
 ---
 -- Moves the caret to the beginning of the current wrapped line, extending the
--- selection to the new position.
+-- selected text to the new position.
 -- @param buffer The global buffer.
 function home_display_extend(buffer) end
 
 ---
--- Moves the caret to the beginning of the current line, extending selection to
--- the new position.
+-- Moves the caret to the beginning of the current line, extending the selected
+-- text to the new position.
 -- @param buffer The global buffer.
 function home_extend(buffer) end
 
@@ -1604,7 +1637,7 @@ function home_rect_extend(buffer) end
 function home_wrap(buffer) end
 
 ---
--- Like `buffer:home_wrap()`, but extends the selection to the new position.
+-- Like `buffer:home_wrap()`, but extends the selected text to the new position.
 -- @param buffer The global buffer.
 function home_wrap_extend(buffer) end
 
@@ -1692,7 +1725,8 @@ function line_delete(buffer) end
 function line_down(buffer) end
 
 ---
--- Moves the caret down one line, extending the selection to the new position.
+-- Moves the caret down one line, extending the selected text to the new
+-- position.
 -- @param buffer The global buffer.
 function line_down_extend(buffer) end
 
@@ -1719,13 +1753,13 @@ function line_end_display(buffer) end
 
 ---
 -- Moves the caret to the end of the current wrapped line, extending the
--- selection to the new position.
+-- selected text to the new position.
 -- @param buffer The global buffer.
 function line_end_display_extend(buffer) end
 
 ---
--- Moves the caret to the end of the current line, extending the selection to
--- the new position.
+-- Moves the caret to the end of the current line, extending the selected text
+-- to the new position.
 -- @param buffer The global buffer.
 function line_end_extend(buffer) end
 
@@ -1742,7 +1776,8 @@ function line_end_rect_extend(buffer) end
 function line_end_wrap(buffer) end
 
 ---
--- Like `buffer:line_end_wrap()`, but extends the selection to the new position.
+-- Like `buffer:line_end_wrap()`, but extends the selected text to the new
+-- position.
 -- @param buffer The global buffer.
 function line_end_wrap_extend(buffer) end
 
@@ -1794,7 +1829,7 @@ function line_transpose(buffer) end
 function line_up(buffer) end
 
 ---
--- Moves the caret up one line, extending the selection to the new position.
+-- Moves the caret up one line, extending the selected text to the new position.
 -- @param buffer The global buffer.
 function line_up_extend(buffer) end
 
@@ -1997,7 +2032,8 @@ function new_line(buffer) end
 function page_down(buffer) end
 
 ---
--- Moves the caret one page down, extending the selection to the new position.
+-- Moves the caret one page down, extending the selected text to the new
+-- position.
 -- @param buffer The global buffer.
 function page_down_extend(buffer) end
 
@@ -2013,7 +2049,7 @@ function page_down_rect_extend(buffer) end
 function page_up(buffer) end
 
 ---
--- Moves the caret one page up, extending the selection to the new position.
+-- Moves the caret one page up, extending the selected text to the new position.
 -- @param buffer The global buffer.
 function page_up_extend(buffer) end
 
@@ -2030,7 +2066,7 @@ function page_up_rect_extend(buffer) end
 function para_down(buffer) end
 
 ---
--- Moves the caret one paragraph down, extending the selection to the new
+-- Moves the caret one paragraph down, extending the selected text to the new
 -- position.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @param buffer The global buffer.
@@ -2043,7 +2079,7 @@ function para_down_extend(buffer) end
 function para_up(buffer) end
 
 ---
--- Moves the caret one paragraph up, extending the selection to the new
+-- Moves the caret one paragraph up, extending the selected text to the new
 -- position.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @param buffer The global buffer.
@@ -2200,6 +2236,7 @@ function search_anchor(buffer) end
 -- @param buffer The global buffer.
 -- @param text The text to search the target range for.
 -- @return number
+-- @see search_flags
 function search_in_target(buffer, text) end
 
 ---
@@ -2415,7 +2452,7 @@ function start_styling(buffer, position, mask) end
 function stuttered_page_down(buffer) end
 
 ---
--- Like `buffer:stuttered_page_down()`, but extends the selection to the new
+-- Like `buffer:stuttered_page_down()`, but extends the selected text to the new
 -- position.
 -- @param buffer The global buffer.
 function stuttered_page_down_extend(buffer) end
@@ -2426,7 +2463,7 @@ function stuttered_page_down_extend(buffer) end
 function stuttered_page_up(buffer) end
 
 ---
--- Like `buffer:stuttered_page_up()`, but extends the selection to the new
+-- Like `buffer:stuttered_page_up()`, but extends the selected text to the new
 -- position.
 -- @param buffer The global buffer.
 function stuttered_page_up_extend(buffer) end
@@ -2533,13 +2570,13 @@ function vc_home(buffer) end
 function vc_home_display(buffer) end
 
 ---
--- Like `buffer:vc_home_display()`, but extends the selection to the new
+-- Like `buffer:vc_home_display()`, but extends the selected text to the new
 -- position.
 -- @param buffer The global buffer.
 function vc_home_display_extend(buffer) end
 
 ---
--- Like `buffer:vc_home()`, but extends the selection to the new position.
+-- Like `buffer:vc_home()`, but extends the selected text to the new position.
 -- @param buffer The global buffer.
 function vc_home_extend(buffer) end
 
@@ -2556,7 +2593,8 @@ function vc_home_rect_extend(buffer) end
 function vc_home_wrap(buffer) end
 
 ---
--- Like `buffer:vc_home_wrap()`, but extends the selection to the new position.
+-- Like `buffer:vc_home_wrap()`, but extends the selected text to the new
+-- position.
 -- @param buffer The global buffer.
 function vc_home_wrap_extend(buffer) end
 
@@ -2603,12 +2641,14 @@ function word_left(buffer) end
 function word_left_end(buffer) end
 
 ---
--- Like `buffer:word_left_end()`, but extends the selection to the new position.
+-- Like `buffer:word_left_end()`, but extends the selected text to the new
+-- position.
 -- @param buffer The global buffer.
 function word_left_end_extend(buffer) end
 
 ---
--- Moves the caret left one word, extending the selection to the new position.
+-- Moves the caret left one word, extending the selected text to the new
+-- position.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_left_extend(buffer) end
@@ -2622,7 +2662,7 @@ function word_part_left(buffer) end
 
 ---
 -- Moves to the previous underscore or change in capitalization within the
--- current word, extending the selection to the new position.
+-- current word, extending the selected text to the new position.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_part_left_extend(buffer) end
@@ -2636,7 +2676,7 @@ function word_part_right(buffer) end
 
 ---
 -- Moves to the next underscore or change in capitalization within the current
--- word, extending the selection to the new position.
+-- word, extending the selected text to the new position.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_part_right_extend(buffer) end
@@ -2655,13 +2695,14 @@ function word_right(buffer) end
 function word_right_end(buffer) end
 
 ---
--- Like `buffer:word_right_end()`, but extends the selection to the new
+-- Like `buffer:word_right_end()`, but extends the selected text to the new
 -- position.
 -- @param buffer The global buffer.
 function word_right_end_extend(buffer) end
 
 ---
--- Moves the caret right one word, extending the selection to the new position.
+-- Moves the caret right one word, extending the selected text to the new
+-- position.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_right_extend(buffer) end
@@ -2769,8 +2810,8 @@ function close(buffer) end
 function set_lexer(buffer, lang) end
 
 ---
--- Returns the name of the lexer used by the buffer, or the name of the lexer at
--- the current position in a multiple-language lexer if *current* is `true`.
+-- Returns the name of the lexer used by the buffer, or the name of the lexer
+-- under the caret in a multiple-language lexer if *current* is `true`.
 -- @param buffer The global buffer.
 -- @param current Whether or not to get the lexer at the current caret position
 --   in multi-language lexers. The default is `false` and returns the parent
