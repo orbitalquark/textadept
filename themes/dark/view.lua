@@ -46,6 +46,7 @@ buffer:set_sel_back(true, 0x808080)
 --buffer.sel_eol_filled = true
 buffer.caret_fore = 0x808080
 buffer.caret_line_visible = true
+--buffer.caret_line_visible_always = true
 buffer.caret_line_back = 0x333333
 --buffer.caret_line_back_alpha =
 --buffer.caret_period = 0
