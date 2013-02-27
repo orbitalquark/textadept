@@ -1180,7 +1180,7 @@ static int l_callscintilla(lua_State *L, int msg, int wtype, int ltype,
     wparam = (uptr_t)lua_rawlen(L, arg);
     lparam = (sptr_t)luaL_checkstring(L, arg);
     params_needed = 0;
-  } else if (ltype == tSTRINGRESULT)
+  } else if (ltype == tSTRINGRESULT || rtype == tSTRINGRESULT)
     string_return = TRUE, params_needed = (wtype == tLENGTH) ? 0 : 1;
   if (params_needed > 0) wparam = lL_checkscintillaparam(L, &arg, wtype);
   if (params_needed > 1) lparam = lL_checkscintillaparam(L, &arg, ltype);
