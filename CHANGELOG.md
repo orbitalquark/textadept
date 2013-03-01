@@ -4,6 +4,40 @@
 
 [Atom Feed]: feed
 
+## 6.4 (01 Mar 2013)
+
+Download:
+
+* [Textadept 6.4 -- Win32][]
+* [Textadept 6.4 -- Mac OSX Intel 10.5+][]
+* [Textadept 6.4 -- Linux][]
+* [Textadept 6.4 -- Linux x86_64][]
+* [Textadept 6.4 -- Source][]
+* [Textadept 6.4 -- Modules][]
+
+Bugfixes:
+
+* Dialogs belong to the Textadept window.
+* Fixed bug in documentation link generator.
+* Fixed bug with indexable buffer properties that return strings.
+
+Changes:
+
+* Added [command line switches][] for loading sessions on startup.
+* Added [command line switches][] for running Lua code on startup.
+* Updated to [Scintilla][] 3.2.5.
+* Updated to [LuaJIT][] 2.0.1.
+
+[Textadept 6.4 -- Win32]: download/textadept_6.4.win32.zip
+[Textadept 6.4 -- Mac OSX Intel 10.5+]: download/textadept_6.4.osx.zip
+[Textadept 6.4 -- Linux]: download/textadept_6.4.i386.tgz
+[Textadept 6.4 -- Linux x86_64]: download/textadept_6.4.x86_64.tgz
+[Textadept 6.4 -- Source]: download/textadept_6.4.src.zip
+[Textadept 6.4 -- Modules]: download/textadept_6.4.modules.zip
+[command line switches]: 13_Help.html#Command.Line.Parameters
+[Scintilla]: http://scintilla.org
+[LuaJIT]: http://luajit.org
+
 ## 6.3 (01 Feb 2013)
 
 Download:
@@ -23,7 +57,7 @@ Bugfixes:
 Changes:
 
 * Use Scintilla API for ncurses mark mode.
-* Updated to Scintilla 3.2.4.
+* Updated to [Scintilla][] 3.2.4.
 * Added [typeover characters][].
 
 [Textadept 6.3 -- Win32]: download/textadept_6.3.win32.zip
@@ -32,6 +66,7 @@ Changes:
 [Textadept 6.3 -- Linux x86_64]: download/textadept_6.3.x86_64.tgz
 [Textadept 6.3 -- Source]: download/textadept_6.3.src.zip
 [Textadept 6.3 -- Modules]: download/textadept_6.3.modules.zip
+[Scintilla]: http://scintilla.org
 [typeover characters]: api/_M.textadept.editing.html#TYPEOVER_CHARS
 
 ## 6.2 (01 Jan 2013)
