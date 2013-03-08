@@ -243,6 +243,7 @@ function gui.select_theme()
   if not f then return end
   f:write(theme)
   f:close()
+  reset()
 end
 
 local events, events_connect = events, events.connect
