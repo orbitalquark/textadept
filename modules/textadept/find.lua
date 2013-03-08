@@ -323,17 +323,16 @@ events_connect(events.REPLACE, replace)
 -- This function ignores "Find in Files".
 -- @param ftext The text to find.
 -- @param rtext The text to replace found text with.
--- @param flags The number mask identical to the one in `find_()`.
 -- @see find
-local function replace_all(ftext, rtext, flags)
-  if #ftext == 0 then return end
+local function replace_all(ftext, rtext)
+  if ftext == '' then return end
   if find.in_files then find.in_files = false end
   local buffer = buffer
   buffer:begin_undo_action()
   local count = 0
-  if #buffer:get_sel_text() == 0 then
+  if buffer:get_sel_text() == '' then
     buffer:goto_pos(0)
-    while(find_(ftext, true, flags, true) ~= -1) do
+    while(find_(ftext, true, nil, true) ~= -1) do
       replace(rtext)
       count = count + 1
     end
@@ -344,13 +343,13 @@ local function replace_all(ftext, rtext, flags)
     local end_marker = buffer:marker_add(buffer:line_from_position(e + 1),
                                          MARK_FIND)
     buffer:goto_pos(s)
-    local pos = find_(ftext, true, flags, true)
+    local pos = find_(ftext, true, nil, true)
     while pos ~= -1 and
           pos < buffer:position_from_line(
                        buffer:marker_line_from_handle(end_marker)) do
       replace(rtext)
       count = count + 1
-      pos = find_(ftext, true, flags, true)
+      pos = find_(ftext, true, nil, true)
     end
     e = buffer:position_from_line(buffer:marker_line_from_handle(end_marker))
     buffer:goto_pos(e)
