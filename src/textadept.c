@@ -202,9 +202,7 @@ static int lL_event(lua_State *L, const char *name, ...) {
 
 #if GTK
 #if (GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE)
-/**
- * Processes a remote Textadept's command line arguments.
- */
+/** Processes a remote Textadept's command line arguments. */
 static int a_command_line(GApplication*_, GApplicationCommandLine *cmdline,
                           void*__) {
   if (!lua) return 0; // only process argv for secondary/remote instances
@@ -277,9 +275,7 @@ static void find_add_to_history(const char *text, ListStore *store) {
 #endif
 }
 
-/**
- * Signal for a find box button click.
- */
+/** Signal for a find box button click. */
 static void f_clicked(FindButton button, void*_) {
   if (find_text && !*find_text) return;
   if (button == fnext_button || button == fprev_button) {
@@ -353,7 +349,7 @@ static int entry_keypress(EObjectType _, void *object, void *data, chtype key) {
 
 /**
  * Returns the text on Scintilla's clipboard.
- * The return value needs to be `free`d.
+ * The return value needs to be freed.
  */
 static char *get_clipboard() {
   char *text = malloc(scintilla_get_clipboard(focused_view, NULL));
@@ -878,9 +874,7 @@ static void l_pushmenu(lua_State *L, int index, GCallback callback,
   lua_pushlightuserdata(L, !submenu_root ? menu : submenu_root);
 }
 
-/**
- * Signal for a menu item click.
- */
+/** Signal for a menu item click. */
 static void m_clicked(GtkWidget*_, void *id) {
   lL_event(lua, "menu_clicked", LUA_TNUMBER, GPOINTER_TO_INT(id), -1);
 }
@@ -1557,9 +1551,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
 }
 
 #if GTK
-/**
- * Signal for a Textadept window focus change.
- */
+/** Signal for a Textadept window focus change. */
 static int w_focus(GtkWidget*_, GdkEventFocus*__, void*___) {
   if (focused_view && !gtk_widget_has_focus(focused_view))
     gtk_widget_grab_focus(focused_view);
@@ -1757,9 +1749,7 @@ static void lL_notify(lua_State *L, struct SCNotification *n) {
   lL_event(L, "SCN", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
 }
 
-/**
- * Signal for a Scintilla notification.
- */
+/** Signal for a Scintilla notification. */
 static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
   struct SCNotification *n = (struct SCNotification *)lParam;
   if (focused_view == view || n->nmhdr.code == SCN_URIDROPPED) {
@@ -1781,9 +1771,7 @@ static void s_command(GtkWidget *view, int wParam, void*_, void*__) {
   if (wParam >> 16 == SCEN_SETFOCUS) goto_view(view);
 }
 
-/**
- * Signal for a Scintilla keypress.
- */
+/** Signal for a Scintilla keypress. */
 static int s_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
   return lL_event(lua, "keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN,
                   event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
@@ -1812,9 +1800,7 @@ static void lL_showcontextmenu(lua_State *L, void *event) {
   } else lua_pop(L, 1); // non-table
 }
 
-/**
- * Signal for a Scintilla mouse click.
- */
+/** Signal for a Scintilla mouse click. */
 static int s_buttonpress(GtkWidget*_, GdkEventButton *event, void*__) {
   if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     return (lL_showcontextmenu(lua, (void *)event), TRUE);
@@ -1994,9 +1980,7 @@ static Scintilla *new_view(sptr_t doc) {
 }
 
 #if GTK
-/**
- * Creates the Find box.
- */
+/** Creates the Find box. */
 static GtkWidget *new_findbox() {
 #if !GTK_CHECK_VERSION(3,4,0)
   findbox = gtk_table_new(2, 6, FALSE);
@@ -2071,16 +2055,12 @@ static GtkWidget *new_findbox() {
   return findbox;
 }
 
-/**
- * Signal for the 'enter' key being pressed in the Command Entry.
- */
+/** Signal for the 'enter' key being pressed in the Command Entry. */
 static void c_activate(GtkWidget*_, void*__) {
   lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
 }
 
-/**
- * Signal for a keypress inside the Command Entry.
- */
+/** Signal for a keypress inside the Command Entry. */
 static int c_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
   return lL_event(lua, "command_entry_keypress", LUA_TNUMBER, event->keyval,
                   LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
@@ -2210,9 +2190,7 @@ static void new_window() {
 }
 
 #if NCURSES
-/**
- * Signal for a terminal resize.
- */
+/** Signal for a terminal resize. */
 static void resize(int signal) {
   struct winsize win;
   ioctl(0, TIOCGWINSZ, &win);
