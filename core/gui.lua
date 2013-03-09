@@ -226,11 +226,15 @@ end
 function gui.select_theme()
   local themes, themes_found = {}, {}
   for theme in lfs.dir(_HOME..'/themes') do
-    if not theme:find('^%.%.?$') then themes_found[theme] = true end
+    if not theme:find('^%.') then themes_found[theme] = true end
   end
   if lfs.attributes(_USERHOME..'/themes') then
-    for theme in lfs.dir(_USERHOME..'/themes') do
-      if not theme:find('^%.%.?$') then themes_found[theme] = true end
+    local theme_dir = _USERHOME..'/themes/'
+    for theme in lfs.dir(theme_dir) do
+      if not theme:find('^%.') and
+         lfs.attributes(theme_dir..theme, 'mode') == 'directory' then
+        themes_found[theme] = true
+      end
     end
   end
   for theme in pairs(themes_found) do themes[#themes + 1] = theme end
