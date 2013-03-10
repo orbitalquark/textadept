@@ -121,7 +121,10 @@ features in its editing component Scintilla:
 * Extra ascent and decent for lines is not supported.
 * Fold lines are not supported (`surface->LineTo()` is not supported).
 * Indentation guides are not visible (pixmap surfaces are not supported).
-* Indicators are not displayed (they would be drawn over by text lines).
+* Indicators other than `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX` are not drawn
+  (`surface->LineTo()` is not supported for drawing indicator shapes and pixmap
+  surfaces are not supported). Translucent drawing and rounded corners are not
+  supported either.
 * Insert mode caret is not drawn properly (no way to detect it from within
   `surface->FillRectangle()`).
 * Margins are overwritten by long lines when scrolling to the right.
