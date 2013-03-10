@@ -44,9 +44,9 @@ M.HIGHLIGHT_BRACES = true
 M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
 M.STRIP_WHITESPACE_ON_SAVE = true
-M.MARK_HIGHLIGHT_BACK = buffer and buffer.caret_line_back or
-                        (not NCURSES and 0xEEEEEE or 0xFFFF00)
-M.INDIC_HIGHLIGHT_BACK = 0x4D99E6
+M.MARK_HIGHLIGHT_BACK = not NCURSES and (buffer and buffer.caret_line_back or
+                                         0xEEEEEE) or 0x00FFFF
+M.INDIC_HIGHLIGHT_BACK = not NCURSES and 0x4D99E6 or 0x00FFFF
 M.INDIC_HIGHLIGHT_ALPHA = 100
 
 ---
