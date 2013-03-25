@@ -187,15 +187,18 @@ in ncurses) key bindings. Replace in Files is not supported. You will have to
 "Find in Files" first, and then "Replace All" for each file a result is found
 in. The "Match Case", "Whole Word", and "Lua pattern" flags still apply.
 
-_Warning_: currently, there is no way to specify a file-type filter, so Find in
-Files will scan **all** files, even binary ones, in **all** sub-directories.
-Searches also block Textadept from receiving additional input, making the
-interface temporarily unresponsive. Searching large directories or projects can
-be very time consuming and frustrating, so using a specialized, external tool
-such as [ack][] is recommended.
+_Warning_: currently, the only way to specify a file-type filter is through the
+[find API][] and even though the default filter excludes common binary files
+and version control folders from searches, Find in Files could still scan
+unrecognized binary files or large, unwanted sub-directories. Searches also
+block Textadept from receiving additional input, making the interface
+temporarily unresponsive. Searching large directories or projects can be very
+time consuming and frustrating, so using a specialized, external tool such as
+[ack][] is recommended.
 
 ![Find in Files](images/findinfiles.png)
 
+[find API]: api/gui.find.html#FILTER
 [ack]: http://betterthangrep.com/
 
 ### Incremental Find

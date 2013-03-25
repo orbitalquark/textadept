@@ -224,9 +224,7 @@ M.utils = {
   end,
   select_command = function() _M.textadept.menu.select_command() end,
   snapopen_filedir = function()
-    if buffer.filename then
-      _M.textadept.snapopen.open(buffer.filename:match('^(.+)[/\\]'))
-    end
+    if buffer.filename then io.snapopen(buffer.filename:match('^(.+)[/\\]')) end
   end,
   show_style = function()
     local buffer = buffer
@@ -494,8 +492,8 @@ keys.f2 = m_bookmarks.goto_next
 keys[not NCURSES and 'sf2' or 'f3'] = m_bookmarks.goto_prev
 keys[not NCURSES and 'af2' or 'f4'] = m_bookmarks.goto_bookmark
 -- Snapopen.
-keys[not OSX and 'cu' or 'mu'] = {m_textadept.snapopen.open, _USERHOME}
--- TODO: {m_textadept.snapopen.open, _HOME}
+keys[not OSX and 'cu' or 'mu'] = {io.snapopen, _USERHOME}
+-- TODO: {io.snapopen, _HOME}
 keys[not OSX and (not NCURSES and 'caO' or 'mO')
              or 'cmO'] = utils.snapopen_filedir
 if not NCURSES then keys[not OSX and 'ci' or 'mi'] = utils.show_style end

@@ -80,6 +80,22 @@ local MARK_FIND = _SCINTILLA.next_marker_number()
 local MARK_FIND_COLOR = 0x4D9999
 local preferred_view
 
+---
+-- Table of Lua patterns matching files and folders to exclude when finding in
+-- files.
+-- Each filter string is a pattern that matches filenames to exclude, with
+-- patterns matching folders to exclude listed in a `folders` sub-table.
+-- Patterns starting with '!' exclude files and folders that do not match the
+-- pattern that follows. Use a table of raw file extensions assigned to an
+-- `extensions` key for fast filtering by extension. All strings must be encoded
+-- in `_G._CHARSET`, not UTF-8.
+-- The default value is `lfs.FILTER`, a filter for common binary file extensions
+-- and version control folders.
+-- @see find_in_files
+-- @class table
+-- @name FILTER
+find.FILTER = lfs.FILTER
+
 -- Text escape sequences with their associated characters.
 -- @class table
 -- @name escapes
@@ -92,9 +108,11 @@ local escapes = {
 -- Searches the *utf8_dir* or user-specified directory for files that match
 -- search text and options and prints the results to a buffer.
 -- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
--- search text and option flags, respectively.
--- @param utf8_dir Optional UTF-8-encoded directory name to search. If `nil`,
+-- search text and option flags, respectively. Use `FILTER` to set the search
+-- filter.
+-- @param utf8_dir Optional UTF-8-encoded directory path to search. If `nil`,
 --   the user is prompted for one.
+-- @see FILTER
 -- @name find_in_files
 function find.find_in_files(utf8_dir)
   if not utf8_dir then
@@ -105,46 +123,28 @@ function find.find_in_files(utf8_dir)
                           (buffer.filename or ''):match('^.+[/\\]') or '',
                           '--no-newline')
   end
-  if #utf8_dir > 0 then
-    local text = find.find_entry_text
-    if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
-    if not find.match_case then text = text:lower() end
-    if find.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
-    local match_case, whole_word = find.match_case, find.whole_word
-    local matches = {'Find: '..text}
-    function search_file(file)
-      local line_num = 1
-      for line in io.lines(file) do
-        local optimized_line = line
-        if not match_case then optimized_line = line:lower() end
-        if optimized_line:find(text) then
-          file = file:iconv('UTF-8', _CHARSET)
-          matches[#matches + 1] = ('%s:%s:%s'):format(file, line_num, line)
-        end
-        line_num = line_num + 1
+  if utf8_dir == '' then return end
+
+  local text = find.find_entry_text
+  if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
+  if not find.match_case then text = text:lower() end
+  if find.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
+  local matches = {_L['Find:']..' '..text}
+  lfs.dir_foreach(utf8_dir, function(file)
+    local match_case = find.match_case
+    local line_num = 1
+    for line in io.lines(file) do
+      if (match_case and line or line:lower()):find(text) then
+        file = file:iconv('UTF-8', _CHARSET)
+        matches[#matches + 1] = ('%s:%s:%s'):format(file, line_num, line)
       end
+      line_num = line_num + 1
     end
-    local lfs_dir, lfs_attributes = lfs.dir, lfs.attributes
-    function search_dir(directory)
-      for file in lfs_dir(directory) do
-        if not file:find('^%.%.?$') then -- ignore . and ..
-          local path = directory..(not WIN32 and '/' or '\\')..file
-          local type = lfs_attributes(path, 'mode')
-          if type == 'directory' then
-            search_dir(path)
-          elseif type == 'file' then
-            search_file(path)
-          end
-        end
-      end
-    end
-    local dir = utf8_dir:iconv(_CHARSET, 'UTF-8')
-    search_dir(dir)
-    if #matches == 1 then matches[2] = _L['No results found'] end
-    matches[#matches + 1] = ''
-    if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-    gui._print(_L['[Files Found Buffer]'], table.concat(matches, '\n'))
-  end
+  end, find.FILTER, true)
+  if #matches == 1 then matches[2] = _L['No results found'] end
+  matches[#matches + 1] = ''
+  if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
+  gui._print(_L['[Files Found Buffer]'], table.concat(matches, '\n'))
 end
 
 local c = _SCINTILLA.constants

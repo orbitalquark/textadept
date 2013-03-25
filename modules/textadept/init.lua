@@ -18,7 +18,6 @@ M.filter_through = require 'textadept.filter_through'
 M.mime_types = require 'textadept.mime_types'
 M.run = require 'textadept.run'
 M.session = require 'textadept.session'
-M.snapopen = require 'textadept.snapopen'
 M.snippets = require 'textadept.snippets'
 
 -- These need to be loaded last.
