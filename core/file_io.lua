@@ -54,6 +54,9 @@
 --   * _`filename`_: The UTF-8-encoded filename.
 --
 -- [`buffer:save_as()`]: buffer.html#save_as
+-- @field SNAPOPEN_MAX (number)
+--   The maximum number of files to list in the snapopen dialog.
+--   The default value is `1000`.
 module('io')]]
 
 -- Events.
@@ -62,6 +65,8 @@ events.FILE_OPENED = 'file_opened'
 events.FILE_BEFORE_SAVE = 'file_before_save'
 events.FILE_AFTER_SAVE = 'file_after_save'
 events.FILE_SAVED_AS = 'file_saved_as'
+
+io.SNAPOPEN_MAX = 1000
 
 ---
 -- List of recently opened files, the most recent being towards the top.
@@ -141,8 +146,8 @@ io.try_encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 -- Opens *utf8_filenames*, a "\n" delimited string of UTF-8-encoded filenames,
 -- or user-selected files.
 -- Emits a `FILE_OPENED` event.
--- @param utf8_filenames Optional list of UTF-8-encoded filenames to open. If
---   `nil`, the user is prompted with a fileselect dialog.
+-- @param utf8_filenames Optional string list of UTF-8-encoded filenames to
+--   open. If `nil`, the user is prompted with a fileselect dialog.
 -- @see _G.events
 -- @name open_file
 function io.open_file(utf8_filenames)
@@ -393,4 +398,54 @@ function io.open_recent_file()
   local i = gui.filteredlist(_L['Open'], _L['File'], io.recent_files, true,
                              NCURSES and {'--width', gui.size[1] - 2} or '')
   if i then io.open_file(io.recent_files[i + 1]) end
+end
+
+---
+-- Quickly open files from *utf8_paths*, a "\n" delimited string of
+-- UTF-8-encoded directory paths, using a filtered list dialog.
+-- Files shown in the dialog do not match any pattern in string or table
+-- *filter*, and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A
+-- filter table contains Lua patterns that match filenames to exclude, with
+-- patterns matching folders to exclude listed in a `folders` sub-table.
+-- Patterns starting with '!' exclude files and folders that do not match the
+-- pattern that follows. Use a table of raw file extensions assigned to an
+-- `extensions` key for fast filtering by extension. All strings must be encoded
+-- in `_G._CHARSET`, not UTF-8. The number of files in the list is capped at
+-- `SNAPOPEN_MAX`.
+-- @param utf8_paths String list of UTF-8-encoded directory paths to search.
+-- @param filter Optional filter for files and folders to exclude.
+-- @param exclude_FILTER Optional flag indicating whether or not to exclude the
+--   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
+--   *filter*.
+--   The default value is `false` to include the default filter.
+-- @param ... Optional additional parameters to pass to `gui.dialog()`.
+-- @usage io.snapopen(buffer.filename:match('^.+/')) -- list all files in the
+--   current file's directory, subject to the default filter
+-- @usage io.snapopen('/project', '!%.lua$') -- list all Lua files in a project
+--    directory
+-- @usage io.snapopen('/project', {folders = {'build'}}) -- list all source
+--   files in a project directory
+-- @see lfs.FILTER
+-- @see SNAPOPEN_MAX
+-- @name snapopen
+function io.snapopen(utf8_paths, filter, exclude_FILTER, ...)
+  local list = {}
+  for utf8_path in utf8_paths:gmatch('[^\n]+') do
+    lfs.dir_foreach(utf8_path, function(file)
+      if #list >= io.SNAPOPEN_MAX then return false end
+      list[#list + 1] = file:gsub('^%.[/\\]', '')
+    end, filter, exclude_FILTER)
+  end
+  if #list >= io.SNAPOPEN_MAX then
+    gui.dialog('ok-msgbox',
+               '--title', _L['File Limit Exceeded'],
+               '--text',
+               string.format('%d %s %d', io.SNAPOPEN_MAX,
+                             _L['files or more were found. Showing the first'],
+                             io.SNAPOPEN_MAX),
+               '--button1', _L['_OK'])
+  end
+  local width = NCURSES and {'--width', gui.size[1] - 2} or ''
+  io.open_file(gui.filteredlist(_L['Open'], _L['File'], list, false,
+                                '--select-multiple', width, ...) or '')
 end

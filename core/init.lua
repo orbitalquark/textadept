@@ -10,6 +10,7 @@ args = require 'args'
 _L = require 'locale'
 events = require 'events'
 require 'file_io'
+require 'lfs_ext'
 require 'gui'
 keys = require 'keys'
 
