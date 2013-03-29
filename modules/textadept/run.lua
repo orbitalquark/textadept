@@ -10,6 +10,9 @@ local M = {}
 -- extension.
 --
 -- [language-specific modules]: _M.html#Compile.and.Run
+-- @field cwd (string, Read-only)
+--   The working directory for the most recently executed compile or run
+--   command.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Called after executing a language's compile command.
 --   By default, compiler output is printed to the message buffer. To override
@@ -70,6 +73,7 @@ local function command(cmd_table, compiling)
   end
   local ok, status, code = p:close()
   if ok and code then events_emit(event, lexer, status..': '..code) end
+  M.cwd = filedir
   lfs.chdir(current_dir)
 end
 
@@ -203,7 +207,7 @@ function goto_error(pos, line_num)
   end
   local error_details = get_error_details(buffer:get_line(line_num))
   if not error_details then return end
-  gui.goto_file(error_details.filename, true, preferred_view, true)
+  gui.goto_file(M.cwd..error_details.filename, true, preferred_view, true)
   local line, message = error_details.line, error_details.message
   buffer:goto_line(line - 1)
   if message then
