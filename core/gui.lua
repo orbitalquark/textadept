@@ -139,7 +139,11 @@ end
 --   `false`.
 -- @name goto_file
 function gui.goto_file(filename, split, preferred_view, sloppy)
-  local patt = not sloppy and '^'..filename..'$' or filename..'$'
+  local patt = '^'..filename..'$'
+  if sloppy then
+    local i = filename:reverse():find('[/\\]%.%.?') -- ./ or ../
+    patt = i and filename:sub(-i + 1, -1)..'$' or filename..'$'
+  end
   if #_VIEWS == 1 and split and not (view.buffer.filename or ''):find(patt) then
     view:split()
   else
