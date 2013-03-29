@@ -1,6 +1,22 @@
 # FAQ
 
 **Q:**
+What is the difference between *textadept* and *textadeptjit*? Which one should
+I use?
+
+**A:**
+*textadept* uses Lua 5.2 while *textadeptjit* uses [LuaJIT][], which is based on
+Lua 5.1. Other than access to the [FFI Library][], *textadeptjit* does not
+provide any noteworthy benefits. It used to be the case that *textadeptjit* was
+slightly faster when loading large files, but Textadept 6.1 was the last version
+that had a noticible difference between the two. *textadept* is recommended.
+
+[LuaJIT]: http://luajit.org
+[FFI library]: http://luajit.org/ext_ffi.html
+
+- - -
+
+**Q:**
 On Linux I get a `error while loading shared libraries: <lib>: cannot open`
 `shared object file: No such file or directory` when trying to run Textadept.
 How do I fix it?
@@ -94,32 +110,6 @@ Pressing `^O` in the ncurses version on Mac OSX does not do anything. Why?
 For whatever reason, `^O` is discarded by the terminal driver. To enable it, run
 `stty discard undef` first. You can put the command in your *~/.bashrc* or
 *~/.bash_profile* to make it permanent.
-
-- - -
-
-**Q.**
-After upgrading to Textadept >= 5 from Textadept 4, Textadept crashes hard with
-no messages. What can I do?
-
-**A:**
-You likely have old modules that are not compatible with Textadept >= 5. Most
-offending modules use the `module()` Lua 5.1 function which was removed in Lua
-5.2. You can temporarily move your *~/.textadept/* directory elsewhere and
-restart Textadept to be sure old modules are causing problems. You can correct
-them using the [migration guide][].
-
-[migration guide]: 14_Appendix.html#Textadept.4.to.5
-
-- - -
-
-**Q:**
-Are my Textadept 5.x scripts compatible with Textadept 6.x?
-
-**A:**
-Maybe. There were some API changes. See the [migration guide][]. Most themes are
-not compatible.
-
-[migration guide]: 14_Appendix.html#Textadept.5.to.6
 
 - - -
 
