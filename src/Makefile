@@ -166,8 +166,8 @@ lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
            lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
            lmathlib.o loadlib.o loslib.o ltablib.o lstrlib.o \
-           lpeg.o lfs.o
-luajit_objs = lpegjit.o lfsjit.o
+           lpvm.o lpcap.o lptree.o lpcode.o lpprint.o lfs.o
+luajit_objs = lpvmjit.o lpcapjit.o lptreejit.o lpcodejit.o lpprintjit.o lfsjit.o
 termkey_objs = termkey.o driver-ti.o driver-csi.o
 cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
            cdk_params.o cdkscreen.o debug.o draw.o entry.o fselect.o \
@@ -226,9 +226,9 @@ textadept-ncurses.o: textadept.c
 textadeptjit-ncurses.o: textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src \
 		-Iscintilla/term -Itermkey -Icdk $< -o $@
-$(lua_objs): lua/src/*.c lua/src/lib/*.c
+$(lua_objs): lua/src/*.c lua/src/lib/*.c lua/src/lib/lpeg/*.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Ilua/src $^
-$(luajit_objs): lua/src/lib/*.c
+$(luajit_objs): lua/src/lib/*.c lua/src/lib/lpeg/*.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Iluajit/src $^
 	for lib in $(luajit_objs); do mv $$(echo $$lib | sed 's/jit//g') $$lib; done
 libluajit.a:
