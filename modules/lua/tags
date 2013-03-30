@@ -7,6 +7,7 @@ AUTOPAIR	_	0;"	F	class:_M.textadept.editing
 AUTO_C_CHAR_DELETED	_	0;"	F	class:events
 AUTO_C_RELEASE	_	0;"	F	class:events
 AUTO_C_SELECTION	_	0;"	F	class:events
+B	_	0;"	f	class:lpeg
 BUFFER_AFTER_SWITCH	_	0;"	F	class:events
 BUFFER_BEFORE_SWITCH	_	0;"	F	class:events
 BUFFER_DELETED	_	0;"	F	class:events
@@ -38,7 +39,6 @@ Cp	_	0;"	f	class:lpeg
 Cs	_	0;"	f	class:lpeg
 Ct	_	0;"	f	class:lpeg
 DEFAULT	_	0;"	F	class:lexer
-DEFAULT_DEPTH	_	0;"	F	class:_M.textadept.snapopen
 DEFAULT_SESSION	_	0;"	F	class:_M.textadept.session
 DOUBLE_CLICK	_	0;"	F	class:events
 DWELL_END	_	0;"	F	class:events
@@ -50,8 +50,12 @@ ERROR	_	0;"	F	class:events
 ERROR	_	0;"	F	class:lexer
 FIELD	_	0;"	F	class:_M.textadept.adeptsense
 FIELDS	_	0;"	F	class:_M.textadept.adeptsense
-FILTER	_	0;"	t	class:_M.textadept.snapopen
+FILTER	_	0;"	t	class:gui.find
+FILTER	_	0;"	t	class:lfs
 FIND	_	0;"	F	class:events
+FOLD_BASE	_	0;"	F	class:lexer
+FOLD_BLANK	_	0;"	F	class:lexer
+FOLD_HEADER	_	0;"	F	class:lexer
 FUNCTION	_	0;"	F	class:_M.textadept.adeptsense
 FUNCTION	_	0;"	F	class:lexer
 FUNCTIONS	_	0;"	F	class:_M.textadept.adeptsense
@@ -95,7 +99,6 @@ MARGIN_CLICK	_	0;"	F	class:events
 MARKER_MAX	_	0;"	F	class:_SCINTILLA.constants
 MARK_BOOKMARK_COLOR	_	0;"	F	class:_M.textadept.bookmarks
 MARK_HIGHLIGHT_BACK	_	0;"	F	class:_M.textadept.editing
-MAX	_	0;"	F	class:_M.textadept.snapopen
 MAX_RECENT_FILES	_	0;"	F	class:_M.textadept.session
 MENU_CLICKED	_	0;"	F	class:events
 NCURSES	_	0;"	F	
@@ -607,13 +610,9 @@ SC_FOLDFLAG_LINEAFTER_EXPANDED	_	0;"	F	class:_SCINTILLA.constants
 SC_FOLDFLAG_LINEBEFORE_CONTRACTED	_	0;"	F	class:_SCINTILLA.constants
 SC_FOLDFLAG_LINEBEFORE_EXPANDED	_	0;"	F	class:_SCINTILLA.constants
 SC_FOLDLEVELBASE	_	0;"	F	class:_SCINTILLA.constants
-SC_FOLDLEVELBASE	_	0;"	F	class:lexer
 SC_FOLDLEVELHEADERFLAG	_	0;"	F	class:_SCINTILLA.constants
-SC_FOLDLEVELHEADERFLAG	_	0;"	F	class:lexer
 SC_FOLDLEVELNUMBERMASK	_	0;"	F	class:_SCINTILLA.constants
-SC_FOLDLEVELNUMBERMASK	_	0;"	F	class:lexer
 SC_FOLDLEVELWHITEFLAG	_	0;"	F	class:_SCINTILLA.constants
-SC_FOLDLEVELWHITEFLAG	_	0;"	F	class:lexer
 SC_FONT_SIZE_MULTIPLIER	_	0;"	F	class:_SCINTILLA.constants
 SC_IV_LOOKBOTH	_	0;"	F	class:_SCINTILLA.constants
 SC_IV_LOOKFORWARD	_	0;"	F	class:_SCINTILLA.constants
@@ -731,6 +730,7 @@ SC_WRAPVISUALFLAG_START	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAP_CHAR	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAP_NONE	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAP_WORD	_	0;"	F	class:_SCINTILLA.constants
+SNAPOPEN_MAX	_	0;"	F	class:io
 STRING	_	0;"	F	class:lexer
 STRIP_WHITESPACE_ON_SAVE	_	0;"	F	class:_M.textadept.editing
 STYLE_BRACEBAD	_	0;"	F	class:_SCINTILLA.constants
@@ -797,7 +797,6 @@ _M.textadept.menu	_	0;"	m
 _M.textadept.mime_types	_	0;"	m	
 _M.textadept.run	_	0;"	m	
 _M.textadept.session	_	0;"	m	
-_M.textadept.snapopen	_	0;"	m	
 _M.textadept.snippets	_	0;"	m	
 _NAME	_	0;"	F	class:lexer.lexer
 _RELEASE	_	0;"	F	
@@ -1002,6 +1001,7 @@ current_pos	_	0;"	F	class:buffer
 currentdir	_	0;"	f	class:lfs
 cursor	_	0;"	F	class:buffer
 cut	_	0;"	f	class:buffer
+cwd	_	0;"	F	class:_M.textadept.run
 date	_	0;"	f	class:os
 debug	_	0;"	f	class:debug
 debug	_	0;"	m	
@@ -1022,6 +1022,7 @@ dialog	_	0;"	f	class:gui
 difftime	_	0;"	f	class:os
 digit	_	0;"	F	class:lexer
 dir	_	0;"	f	class:lfs
+dir_foreach	_	0;"	f	class:lfs
 dirty	_	0;"	F	class:buffer
 disconnect	_	0;"	f	class:events
 doc_line_from_visible	_	0;"	f	class:buffer
@@ -1341,7 +1342,6 @@ next_user_list_type	_	0;"	f	class:_SCINTILLA
 nonnewline	_	0;"	F	class:lexer
 nonnewline_esc	_	0;"	F	class:lexer
 oct_num	_	0;"	F	class:lexer
-open	_	0;"	f	class:_M.textadept.snapopen
 open	_	0;"	f	class:io
 open_file	_	0;"	f	class:io
 open_recent_file	_	0;"	f	class:io
@@ -1463,6 +1463,7 @@ save	_	0;"	f	class:buffer
 save_all	_	0;"	f	class:io
 save_as	_	0;"	f	class:buffer
 scroll_caret	_	0;"	f	class:buffer
+scroll_range	_	0;"	f	class:buffer
 scroll_to_end	_	0;"	f	class:buffer
 scroll_to_start	_	0;"	f	class:buffer
 scroll_width	_	0;"	F	class:buffer
@@ -1563,7 +1564,7 @@ singular	_	0;"	F	class:_M.rails
 sinh	_	0;"	f	class:math
 size	_	0;"	F	class:view
 size	_	0;"	t	class:gui
-snapopen	_	0;"	t	class:_M.textadept
+snapopen	_	0;"	f	class:io
 snippets	_	0;"	t	class:
 snippets	_	0;"	t	class:_M.textadept
 sort	_	0;"	f	class:table
