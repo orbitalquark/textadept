@@ -2213,12 +2213,23 @@ function rotate_selection(buffer) end
 function scroll_caret(buffer) end
 
 ---
--- Scroll to the end of the buffer without moving the caret.
+-- Scrolls the range between *primary_pos* and *secondary_pos* into view, with
+-- priority given to *primary_pos*.
+-- Similar to `buffer:scroll_caret()`, but with *primary_pos* instead of
+-- `buffer.current_pos`.
+-- This is useful for scrolling search results into view.
+-- @param buffer The global buffer.
+-- @param secondary_pos The secondary range position to scroll into view.
+-- @param primary_pos The primary range position to scroll into view.
+function scroll_range(buffer, secondary_pos, primary_pos) end
+
+---
+-- Scrolls to the end of the buffer without moving the caret.
 -- @param buffer The global buffer.
 function scroll_to_end(buffer) end
 
 ---
--- Scroll to the beginning of the buffer without moving the caret.
+-- Scrolls to the beginning of the buffer without moving the caret.
 -- @param buffer The global buffer.
 function scroll_to_start(buffer) end
 
