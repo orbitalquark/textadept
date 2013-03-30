@@ -187,7 +187,7 @@ local function find_(text, next, flags, nowrap, wrapped)
     buffer:goto_pos(buffer[next and 'current_pos' or 'anchor'] + increment)
     buffer:search_anchor()
     result = buffer['search_'..(next and 'next' or 'prev')](buffer, flags, text)
-    if result ~= -1 then buffer:scroll_caret() end
+    buffer:scroll_range(buffer.anchor, buffer.current_pos)
   elseif flags < 16 then -- lua pattern search (forward search only)
     text = text:gsub('\\[abfnrtv\\]', escapes)
     local buffer_text = buffer:get_text(buffer.length)
