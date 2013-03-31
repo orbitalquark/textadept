@@ -4,6 +4,50 @@
 
 [Atom Feed]: feed
 
+## 6.5 (01 Apr 2013)
+
+Download:
+
+* [Textadept 6.5 -- Win32][]
+* [Textadept 6.5 -- Mac OSX Intel 10.5+][]
+* [Textadept 6.5 -- Linux][]
+* [Textadept 6.5 -- Linux x86_64][]
+* [Textadept 6.5 -- Source][]
+* [Textadept 6.5 -- Modules][]
+
+Bugfixes:
+
+* Only consider visible directories in *_USERHOME/themes/* as themes.
+* Indicator for highlighted words works in ncurses.
+* Improved message double-clicking behavior for compile and run commands by
+  adding [`_M.textadept.run.cwd`][].
+* Fixed disorienting scrolling when wrapping only one search result.
+
+Changes:
+
+* Reset Lua state after selecting a new theme.
+* Added [`lfs.dir_foreach()`][].
+* Added file and directory [filtering][] for Find in Files.
+* Moved `_M.textadept.snapopen` into [`io`][].
+* Renamed some [`lexer` constants][].
+* Added Less, Literal Coffeescript, and Sass lexers.
+* Updated to [Scintilla][] 3.3.0.
+* Updated to [Lua][] 5.2.2.
+
+[Textadept 6.5 -- Win32]: download/textadept_6.5.win32.zip
+[Textadept 6.5 -- Mac OSX Intel 10.5+]: download/textadept_6.5.osx.zip
+[Textadept 6.5 -- Linux]: download/textadept_6.5.i386.tgz
+[Textadept 6.5 -- Linux x86_64]: download/textadept_6.5.x86_64.tgz
+[Textadept 6.5 -- Source]: download/textadept_6.5.src.zip
+[Textadept 6.5 -- Modules]: download/textadept_6.5.modules.zip
+[`_M.textadept.run.cwd`]: api/_M.textadept.run.html#cwd
+[`lfs.dir_foreach()`]: api/lfs.html#dir_foreach
+[filtering]: api/gui.find.html#FILTER
+[`io`]: api/io.html#snapopen
+[`lexer` constants]: api/lexer.html#FOLD_BASE
+[Scintilla]: http://scintilla.org
+[Lua]: http://lua.org
+
 ## 6.4 (01 Mar 2013)
 
 Download:
