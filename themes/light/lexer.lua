@@ -77,12 +77,12 @@ l.style_embedded   = l.style_tag..{back = l.colors.dark_white}
 l.style_identifier = l.style_nothing
 
 -- Default styles.
-local font_face = '!Bitstream Vera Sans Mono'
+local font_face = 'Bitstream Vera Sans Mono'
 local font_size = 10
 if WIN32 then
-  font_face = '!Courier New'
+  font_face = 'Courier New'
 elseif OSX then
-  font_face = '!Monaco'
+  font_face = 'Monaco'
   font_size = 12
 end
 l.style_default = style{
