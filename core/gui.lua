@@ -116,7 +116,7 @@ function gui.switch_buffer()
     items[#items + 1] = filename
   end
   local i = gui.filteredlist(_L['Switch Buffers'], columns, items, true,
-                             NCURSES and {'--width', gui.size[1] - 2} or '--')
+                             CURSES and {'--width', gui.size[1] - 2} or '--')
   if i then view:goto_buffer(i + 1) end
 end
 
@@ -160,7 +160,7 @@ function gui.goto_file(filename, split, preferred_view, sloppy)
   io.open_file(filename)
 end
 
-local theme_file = not NCURSES and 'theme' or 'theme_term'
+local theme_file = not CURSES and 'theme' or 'theme_term'
 local THEME
 ---
 -- Sets the editor theme name to *name* or the default platform theme.
@@ -176,13 +176,13 @@ local THEME
 function gui.set_theme(name)
   if not name then
     -- Read theme from ~/.textadept/theme or ~/.textadept/theme_term depending
-    -- on NCURSES platform, defaulting to 'light' or 'term' respectively.
+    -- on CURSES platform, defaulting to 'light' or 'term' respectively.
     local f = io.open(_USERHOME..'/'..theme_file, 'rb')
     if f then
       name = f:read('*line'):match('[^\r\n]+')
       f:close()
     end
-    if not name or name == '' then name = not NCURSES and 'light' or 'term' end
+    if not name or name == '' then name = not CURSES and 'light' or 'term' end
   end
 
   -- Get the path of the theme.
@@ -363,8 +363,8 @@ events_connect(events.UPDATE_UI, function()
   local tabs = string_format('%s %d', buffer.use_tabs and _L['Tabs:'] or
                              _L['Spaces:'], buffer.tab_width)
   local enc = buffer.encoding or ''
-  local text = not NCURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
-                               '%s %d/%d  %s %d  %s  %s  %s  %s'
+  local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
+                              '%s %d/%d  %s %d  %s  %s  %s  %s'
   gui.docstatusbar_text = string_format(text, _L['Line:'], line, max,
                                         _L['Col:'], col, lexer, eol, tabs, enc)
 end)

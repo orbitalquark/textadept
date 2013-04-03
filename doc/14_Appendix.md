@@ -99,12 +99,12 @@ As a special case, the empty capture `()` captures the current string position
 
 [Lua 5.2 Reference Manual]: http://www.lua.org/manual/5.2/manual.html#6.4.1
 
-## Ncurses Compatibility
+## Curses Compatibility
 
-Textadept 5.5 beta introduced an ncurses version that can run in a terminal
-emulator. However, since ncurses is quite low-level in terms of graphics
-capability compared to GTK+, the ncurses version of Textadept lacks some
-features in its editing component Scintilla:
+Textadept 5.5 beta introduced a curses version that can run in a terminal
+emulator. However, since curses is quite low-level in terms of graphics
+capability compared to GTK+, the curses version of Textadept lacks some features
+in its editing component Scintilla:
 
 * Any settings with alpha values are not supported.
 * Autocompletion lists cannot show images (pixmap surfaces are not supported).
@@ -115,8 +115,8 @@ features in its editing component Scintilla:
   drawing arrow shapes).
 * Caret settings like period, line style, and width are not supported
   (terminals use block carets with their own period definitions).
-* Code pages other than UTF-8 have not been tested and it is possible ncurses
-  does not support them.
+* Code pages other than UTF-8 have not been tested and it is possible some
+  curses implementations do not support them.
 * Edge lines are not displayed properly (the line is drawn over by text lines).
 * Extra ascent and decent for lines is not supported.
 * Fold lines are not supported (`surface->LineTo()` is not supported).

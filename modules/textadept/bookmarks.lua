@@ -9,7 +9,7 @@ local M = {}
 --   The color, in "0xBBGGRR" format, used for a bookmarked line.
 module('_M.textadept.bookmarks')]]
 
-M.MARK_BOOKMARK_COLOR = not NCURSES and 0xB3661A or 0xFF0000
+M.MARK_BOOKMARK_COLOR = not CURSES and 0xB3661A or 0xFF0000
 
 local MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 
@@ -82,10 +82,10 @@ function M.goto_bookmark()
   if line then _M.textadept.editing.goto_line(line:match('^%d+')) end
 end
 
-local NCURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
+local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for bookmark markers.
 local function set_bookmark_properties()
-  if NCURSES then buffer:marker_define(MARK_BOOKMARK, NCURSES_MARK) end
+  if CURSES then buffer:marker_define(MARK_BOOKMARK, CURSES_MARK) end
   buffer.marker_back[MARK_BOOKMARK] = M.MARK_BOOKMARK_COLOR
 end
 if buffer then set_bookmark_properties() end

@@ -7,9 +7,9 @@ local M = {}
 -- Session support for Textadept.
 -- @field DEFAULT_SESSION (string)
 --   The path to the default session file, *`_USERHOME`/session*, or
---   *`_USERHOME`/session_term* if [`_G.NCURSES`][] is `true`.
+--   *`_USERHOME`/session_term* if [`_G.CURSES`][] is `true`.
 --
---   [`_G.NCURSES`]: _G.html#NCURSES
+--   [`_G.CURSES`]: _G.html#CURSES
 -- @field SAVE_ON_QUIT (bool)
 --   Save the session when quitting.
 --   The default value is `true`, but is disabled when passing the command line
@@ -22,7 +22,7 @@ local M = {}
 --   [`io.recent_files`]: io.html#recent_files
 module('_M.textadept.session')]]
 
-M.DEFAULT_SESSION = _USERHOME..(not NCURSES and '/session' or '/session_term')
+M.DEFAULT_SESSION = _USERHOME..(not CURSES and '/session' or '/session_term')
 M.SAVE_ON_QUIT = true
 M.MAX_RECENT_FILES = 10
 

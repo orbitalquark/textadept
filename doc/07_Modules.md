@@ -31,7 +31,7 @@ perhaps a custom context menu. These features are discussed below.
 
 Most language-specific modules have a command that compiles and/or runs the code
 in the current file. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in
-ncurses) executes the command for compiling code and `Ctrl+R` (`⌘R` | `^R`)
+curses) executes the command for compiling code and `Ctrl+R` (`⌘R` | `^R`)
 executes the command for running code. Double-clicking on any error messages
 will jump to where the errors occurred. Note: In order for these features to
 work, the language you are working with must have its compile and run commands
@@ -58,7 +58,7 @@ preferences, see the [language module preferences][] section.
 Most language-specific modules have a set of key bindings for
 [custom commands][]. See the module's [LuaDoc][] or code to find out which key
 bindings are assigned. They are typically stored in the `Ctrl+L` (`⌘L` on Mac
-OSX | `M-L` in ncurses) key chain prefix.
+OSX | `M-L` in curses) key chain prefix.
 
 [custom commands]: api/_M.html#Commands
 [LuaDoc]: api/index.html

@@ -77,7 +77,7 @@ local function show_help()
   for k, v in pairs(switches) do print(line:format(k, table.unpack(v, 2))) end
   os.exit()
 end
-if not NCURSES then M.register('-h', '--help', 0, show_help, 'Shows this') end
+if not CURSES then M.register('-h', '--help', 0, show_help, 'Shows this') end
 
 -- For Windows, create arg table from single command line string (arg[0]).
 if WIN32 and #arg[0] > 0 then

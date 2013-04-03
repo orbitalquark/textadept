@@ -60,17 +60,17 @@ local find = gui.find
 module('gui.find')]]
 
 local _L = _L
-find.find_label_text = not NCURSES and _L['_Find:'] or _L['Find:']
-find.replace_label_text = not NCURSES and _L['R_eplace:'] or _L['Replace:']
-find.find_next_button_text = not NCURSES and _L['Find _Next'] or _L['[Next]']
-find.find_prev_button_text = not NCURSES and _L['Find _Prev'] or _L['[Prev]']
-find.replace_button_text = not NCURSES and _L['_Replace'] or _L['[Replace]']
-find.replace_all_button_text = not NCURSES and _L['Replace _All'] or _L['[All]']
-find.match_case_label_text = not NCURSES and _L['_Match case'] or _L['Case(F1)']
-find.whole_word_label_text = not NCURSES and _L['_Whole word'] or _L['Word(F2)']
-find.lua_pattern_label_text = not NCURSES and _L['_Lua pattern'] or
+find.find_label_text = not CURSES and _L['_Find:'] or _L['Find:']
+find.replace_label_text = not CURSES and _L['R_eplace:'] or _L['Replace:']
+find.find_next_button_text = not CURSES and _L['Find _Next'] or _L['[Next]']
+find.find_prev_button_text = not CURSES and _L['Find _Prev'] or _L['[Prev]']
+find.replace_button_text = not CURSES and _L['_Replace'] or _L['[Replace]']
+find.replace_all_button_text = not CURSES and _L['Replace _All'] or _L['[All]']
+find.match_case_label_text = not CURSES and _L['_Match case'] or _L['Case(F1)']
+find.whole_word_label_text = not CURSES and _L['_Whole word'] or _L['Word(F2)']
+find.lua_pattern_label_text = not CURSES and _L['_Lua pattern'] or
                               _L['Pattern(F3)']
-find.in_files_label_text = not NCURSES and _L['_In files'] or _L['Files(F4)']
+find.in_files_label_text = not CURSES and _L['_In files'] or _L['Files(F4)']
 
 -- Events.
 local events, events_connect = events, events.connect
@@ -236,7 +236,7 @@ end
 -- Begins an incremental find using the command entry.
 -- Only the `match_case` find option is recognized. Normal command entry
 -- functionality will be unavailable until the search is finished by pressing
--- `Esc` (`⎋` on Mac OSX | `Esc` in ncurses).
+-- `Esc` (`⎋` on Mac OSX | `Esc` in curses).
 -- @name find_incremental
 function find.find_incremental()
   find.incremental, find.incremental_start = true, buffer.current_pos

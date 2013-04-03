@@ -62,8 +62,8 @@ is applicable to key chains: `Ctrl+N, N` vs. `Ctrl+N, Shift+N`. In the first key
 chain, "Control" and "N" are pressed followed by "N" with no modifiers. The
 second has "Control" and "N" pressed followed by "Shift" and "N".
 
-When key bindings are mentioned, the Mac OSX and ncurses equivalents are often
+When key bindings are mentioned, the Mac OSX and curses equivalents are often
 shown in parenthesis. It may be tempting to assume that some Windows/Linux keys
-map to Mac OSX's (e.g. `Ctrl` to `⌘`) or ncurses' (e.g. `Ctrl` to `^`), but this
+map to Mac OSX's (e.g. `Ctrl` to `⌘`) or curses' (e.g. `Ctrl` to `^`), but this
 is not always the case. Please do not view the key equivalents as translations
 of one another, but rather as separate entities. This will minimize confusion.

@@ -35,7 +35,7 @@ local events = events
 events.connect(events.COMMAND_ENTRY_COMMAND, function(command)
   local f, err = load(command, nil, 'bt', env)
   if err then error(err) end
-  if not NCURSES then gui.command_entry.focus() end -- toggle focus to hide
+  if not CURSES then gui.command_entry.focus() end -- toggle focus to hide
   f()
   events.emit(events.UPDATE_UI)
 end)

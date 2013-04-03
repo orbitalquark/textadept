@@ -27,7 +27,7 @@
 --
 -- #### Block Comment
 --
--- The `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in ncurses) key binding toggles code
+-- The `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in curses) key binding toggles code
 -- comments. In order for this to work for your language, the
 -- [`_M.textadept.editing.comment_string`][] table must have a key with the
 -- language's lexer name assigned to a comment prefix string. For Lua, it would
@@ -40,7 +40,7 @@
 -- #### Compile and Run
 --
 -- The `Ctrl+Shift+R` and `Ctrl+R` (`⌘⇧R` and `⌘R` on Mac OSX | `M-^R` and `^R`
--- in ncurses) key bindings compile and run code, respectively. In order for
+-- in curses) key bindings compile and run code, respectively. In order for
 -- these to work for your language, the [`_M.textadept.run.compile_command`][]
 -- and [`_M.textadept.run.run_command`][] tables must have keys with the
 -- language's lexer name assigned to compile and run shell commands,
@@ -81,7 +81,7 @@
 -- #### Adeptsense
 --
 -- The `Ctrl+Space` and `Ctrl+H` (`⌥⎋` and `^H` on Mac OSX | `^Space` and `M-H`
--- or `M-S-H` in ncurses) key bindings autocomplete symbols and show API
+-- or `M-S-H` in curses) key bindings autocomplete symbols and show API
 -- documentation, respectively, when editing code. In order for these to work
 -- for your language, you must create an [Adeptsense][].
 --
@@ -107,7 +107,7 @@
 -- [Lua][] module has a feature to autocomplete the `end` keyword in a control
 -- structure and the [C/C++][] module has a feature to add a ';' to the end of
 -- the current line and insert a new line. Both are bound to the `Shift+Enter`
--- (`⇧↩` on Mac OSX | `S-Enter` in ncurses) key for easy access.
+-- (`⇧↩` on Mac OSX | `S-Enter` in curses) key for easy access.
 --
 --     function M.try_to_autocomplete_end()
 --       ...

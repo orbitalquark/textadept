@@ -330,7 +330,7 @@ function M.set_contextmenu(menu)
   contextmenu_actions = {}
   gui.context_menu = gui.menu(read_menu_table(menu, true))
 end
-if not NCURSES then M.set_contextmenu(M.context_menu) end
+if not CURSES then M.set_contextmenu(M.context_menu) end
 
 local columns = {_L['Command'], _L['Key Command']}
 ---
@@ -338,7 +338,7 @@ local columns = {_L['Command'], _L['Key Command']}
 -- @name select_command
 function M.select_command()
   local i = gui.filteredlist(_L['Run Command'], columns, items, true,
-                             NCURSES and {'--width', gui.size[1] - 2} or '')
+                             CURSES and {'--width', gui.size[1] - 2} or '')
   if i then keys.run_command(commands[i + 1], type(commands[i + 1])) end
 end
 
@@ -353,7 +353,7 @@ events_connect(events.MENU_CLICKED, function(menu_id)
   keys.run_command(action, type(action))
 end)
 
-if not NCURSES then
+if not CURSES then
   -- Set a language-specific context menu or the default one.
   local function set_language_contextmenu()
     local lang = _G.buffer:get_lexer(true)

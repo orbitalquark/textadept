@@ -28,8 +28,8 @@ example, "libpng14" has been available for many distributions since late 2009
 while the latest 2012 Ubuntu still uses "libpng12". Unfortunately in these
 cases, the best idea is to compile Textadept. This process is actually very
 simple though. See the [compiling][] page. Only the GTK+ development libraries
-are needed for the GUI version. (The ncurses development library is required for
-the terminal version.)
+are needed for the GUI version. (A development library for a curses
+implementation is required for the terminal version.)
 
 [compiling]: 12_Compiling.html
 
@@ -84,7 +84,7 @@ Take a look at these [comments][].
 - - -
 
 **Q:**
-The ncurses version does not support feature _x_ the GUI version does. Is this a
+The curses version does not support feature _x_ the GUI version does. Is this a
 bug?
 
 **A:**
@@ -94,17 +94,17 @@ for making selections. Linux's virtual terminals (the ones accessible with
 seem to work fine. rxvt and rxvt-unicode do not work out of the box, but may be
 configurable.
 
-Please see the [ncurses compatibility][] section of the appendix. If the feature
+Please see the [curses compatibility][] section of the appendix. If the feature
 in question is not listed there, it may be a bug. Please [contact][] me with any
 bug reports.
 
-[ncurses compatibility]: 14_Appendix.html#Ncurses.Compatibility
+[curses compatibility]: 14_Appendix.html#Curses.Compatibility
 [contact]: README.html#Contact
 
 - - -
 
 **Q:**
-Pressing `^O` in the ncurses version on Mac OSX does not do anything. Why?
+Pressing `^O` in the curses version on Mac OSX does not do anything. Why?
 
 **A:**
 For whatever reason, `^O` is discarded by the terminal driver. To enable it, run

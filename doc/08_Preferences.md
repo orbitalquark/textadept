@@ -134,8 +134,8 @@ You can add global snippets in *~/.textadept/init.lua*, such as:
     snippets['path'] = "%<(buffer.filename or ''):match('^.+[/\\]')>"
 
 So typing `file` or `path` and then pressing `Tab` (`⇥` on Mac OSX | `Tab` in
-ncurses) will insert the snippet, regardless of the current programming
-language. You can learn about snippet syntax in the [snippets LuaDoc][].
+curses) will insert the snippet, regardless of the current programming language.
+You can learn about snippet syntax in the [snippets LuaDoc][].
 
 [snippets LuaDoc]: api/_M.textadept.snippets.html
 
