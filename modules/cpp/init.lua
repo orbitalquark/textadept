@@ -9,7 +9,7 @@ local M = {}
 --
 -- ## Key Bindings
 --
--- + `Ctrl+L, M` (`⌘L, M` on Mac OSX | `M-L, M` in ncurses)
+-- + `Ctrl+L, M` (`⌘L, M` on Mac OSX | `M-L, M` in curses)
 --   Open this module for editing.
 -- + `.`
 --   Show an autocompletion list of members for the symbol behind the caret.

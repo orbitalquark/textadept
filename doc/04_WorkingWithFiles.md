@@ -9,7 +9,7 @@ single tab bar for multiple views would cause confusion and having one tab bar
 per view would clutter the interface.
 
 Instead of having tabs, Textadept has the buffer browser. Press `Ctrl+B` (`⌘B`
-on Mac OSX | `M-B` or `M-S-B` in ncurses) to open it.
+on Mac OSX | `M-B` or `M-S-B` in curses) to open it.
 
 ![Buffer Browser](images/bufferbrowser.png)
 
@@ -21,7 +21,7 @@ wildcards. You can also just use the arrow keys. Pressing `Enter` or selecting
 ![Buffer Browser Filtered](images/bufferbrowserfiltered.png)
 
 You can see which buffer is active by looking at Textadept's titlebar. Pressing
-`Ctrl+Tab` (`^⇥` on Mac OSX | `M-N` in ncurses) cycles to the next buffer and
+`Ctrl+Tab` (`^⇥` on Mac OSX | `M-N` in curses) cycles to the next buffer and
 `Ctrl+Shift+Tab` (`^⇧⇥` | `M-P`) cycles to the previous one.
 
 ### Settings
@@ -39,7 +39,7 @@ settings in the buffer status statusbar.
 Indentation is usually set by a [language-specific module][] or the current
 [theme][]. By default, indentation is 2 spaces. You can toggle between using
 tabs and spaces manually by pressing `Ctrl+Alt+Shift+T` (`^⇧T` on Mac OSX |
-`M-T` or `M-S-T` in ncurses). Toggling between tabs and spaces only affects
+`M-T` or `M-S-T` in curses). Toggling between tabs and spaces only affects
 future indentation; it does not convert existing indentation. `Ctrl+Alt+I` (`^I`
 | `M-I`) performs the conversion. (If the buffer is using tabs, all indenting
 spaces are converted to tabs. If the buffer is using spaces, all indenting tabs
@@ -78,7 +78,7 @@ alter the encoding of existing files.
 
 ### Recent Files
 
-Pressing `Ctrl+Alt+O` (`^⌘O` on Mac OSX | `M-^O` in ncurses) brings up a dialog
+Pressing `Ctrl+Alt+O` (`^⌘O` on Mac OSX | `M-^O` in curses) brings up a dialog
 that behaves like the buffer browser, but displays a list of recently opened
 files to reopen.
 
@@ -100,7 +100,7 @@ A quicker, though slightly more limited alternative to the standard file
 selection dialog is snapopen. It behaves like the buffer browser, but displays a
 list of files to open, including files in sub-directories. You can snapopen the
 current file's directory with `Ctrl+Alt+Shift+O` (`^⌘⇧O` on Mac OSX | `M-S-O` in
-ncurses) or from the "Tools -> Snapopen -> Current Directory" menu. Snapopen is
+curses) or from the "Tools -> Snapopen -> Current Directory" menu. Snapopen is
 pretty limited from the menu, but more versatile in [scripts][]. `Ctrl+U` (`⌘U`
 | `^U`) snaps open *~/.textadept/*.
 
@@ -115,20 +115,20 @@ pretty limited from the menu, but more versatile in [scripts][]. `Ctrl+U` (`⌘U
 Textadept allows you to split the editor window as many times as you like both
 horizontally and vertically. `Ctrl+Alt+S` or `Ctrl+Alt+H` splits horizontally
 into top and bottom views and `Ctrl+Alt+V` splits vertically (`^S` and `^V`
-respectively on Mac OSX | N/A in ncurses) into side-by-side views. You can
-resize the splitter bar by clicking and dragging with the mouse or using
-`Ctrl+Alt++` and `Ctrl+Alt+-` (`^+` and `^-` | N/A). The same file can be opened
-in multiple views.
+respectively on Mac OSX | N/A in curses) into side-by-side views. You can resize
+the splitter bar by clicking and dragging with the mouse or using `Ctrl+Alt++`
+and `Ctrl+Alt+-` (`^+` and `^-` | N/A). The same file can be opened in multiple
+views.
 
-Pressing `Ctrl+Alt+N` (`^⌥⇥` on Mac OSX | N/A in ncurses) goes to the next view
+Pressing `Ctrl+Alt+N` (`^⌥⇥` on Mac OSX | N/A in curses) goes to the next view
 and `Ctrl+Alt+P` (`^⌥⇧⇥` | N/A) goes to the previous one. Note: depending on the
 split sequence, the order when cycling between views may be unexpected.
 
 To unsplit a view, enter the view to keep open and press `Ctrl+Alt+W` (`^W` on
-Mac OSX | N/A in ncurses). To unsplit all views, use `Ctrl+Alt+Shift+W` (`^⇧W` |
+Mac OSX | N/A in curses). To unsplit all views, use `Ctrl+Alt+Shift+W` (`^⇧W` |
 N/A).
 
-Split views are unavailable in ncurses.
+Split views are unavailable in curses.
 
 ### Settings
 
@@ -141,33 +141,32 @@ any other split view. It will have to be done manually.
 #### Line Endings
 
 Normally, EOL characters ("\r" and "\n") are invisible. Pressing
-`Ctrl+Alt+Enter` (`^↩` on Mac OSX | none in ncurses) toggles their visibility.
+`Ctrl+Alt+Enter` (`^↩` on Mac OSX | none in curses) toggles their visibility.
 
 #### Long Lines
 
 By default, lines with more characters than the view can show are not wrapped
-into view. `Ctrl+Alt+\` (`^\` on Mac OSX | none in ncurses) toggles line
+into view. `Ctrl+Alt+\` (`^\` on Mac OSX | none in curses) toggles line
 wrapping.
 
 #### Indentation Guides
 
 By default, small guiding lines are shown based on indentation level.
-`Ctrl+Alt+Shift+I` (`^⇧I` on Mac OSX | N/A in ncurses) toggles showing these
+`Ctrl+Alt+Shift+I` (`^⇧I` on Mac OSX | N/A in curses) toggles showing these
 guides.
 
-Indentation guides are unavailable in ncurses.
+Indentation guides are unavailable in curses.
 
 #### Whitespace
 
 Normally, whitespace characters, tabs and spaces, are invisible. Pressing
-`Ctrl+Alt+Shift+S` (`^⇧S` on Mac OSX | none in ncurses) toggles their
-visibility. Visible spaces are shown as dots and visible tabs are shown as
-arrows.
+`Ctrl+Alt+Shift+S` (`^⇧S` on Mac OSX | none in curses) toggles their visibility.
+Visible spaces are shown as dots and visible tabs are shown as arrows.
 
 ### Zoom
 
 You can temporarily increase or decrease the font size in a view with `Ctrl+=`
-(`⌘=` on Mac OSX | N/A in ncurses) and `Ctrl+-` (`⌘-` | N/A) respectively.
+(`⌘=` on Mac OSX | N/A in curses) and `Ctrl+-` (`⌘-` | N/A) respectively.
 `Ctrl+0` (`⌘0` | N/A) resets the zoom.
 
-Zooming is unavailable in ncurses.
+Zooming is unavailable in curses.

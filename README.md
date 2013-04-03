@@ -19,7 +19,7 @@ speed or succumbing to code bloat and featuritis.
 * Powerful snippets and key commands.
 * Code autocompletion and API lookup.
 * Unparalleled extensibility.
-* Terminal (ncurses) version.
+* Terminal (curses) version.
 
 ## Requirements
 
@@ -28,7 +28,8 @@ operating systems and depends only on [GTK+ 2.0][] version 2.18 or greater on
 Linux. Lua is pre-compiled into Textadept on all platforms and a GTK+ runtime is
 included on Windows and Mac OSX.
 
-The terminal version of Textadept requires only [ncurses][].
+The terminal version of Textadept requires only an implementation of curses like
+[ncurses][].
 
 [GTK+ 2.0]: http://gtk.org
 [ncurses]: http://invisible-island.net/ncurses/ncurses.html

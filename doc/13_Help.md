@@ -14,7 +14,7 @@ Switch             |Arguments|Description
 `-s`, `--session`  |    1    |Loads [session][] on startup.
 `-u`, `--userhome` |    1    |Sets alternate [`_USERHOME`][].
 
-The help switch is unavailable in ncurses.
+The help switch is unavailable in curses.
 
 [code]: 10_Advanced.html#Command.Entry
 [unique instance]: 02_Installation.html#Single.Instance

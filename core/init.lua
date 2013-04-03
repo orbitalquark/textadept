@@ -49,11 +49,11 @@ _M = {} -- modules table
 --   If Textadept is running on Windows, this flag is `true`.
 -- @field OSX (bool)
 --   If Textadept is running on Mac OSX, this flag is `true`.
--- @field NCURSES (bool)
+-- @field CURSES (bool)
 --   If Textadept is running in the terminal, this flag is `true`.
---   ncurses feature incompatibilities are listed in the [Appendix][].
+--   Curses feature incompatibilities are listed in the [Appendix][].
 --
---   [Appendix]: ../14_Appendix.html#Ncurses.Compatibility
+--   [Appendix]: ../14_Appendix.html#Curses.Compatibility
 module('_G')]]
 
 --[[ The tables below were defined in C.

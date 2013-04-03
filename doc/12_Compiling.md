@@ -18,12 +18,13 @@ Debian-based Linux distributions like Ubuntu, the package is typically called
 "libgtk2.0-dev". Otherwise, compile and install GTK+ from the [GTK+ website][].
 
 If you would like to compile the terminal version of Textadept, you will need
-the ncurses development library. Similarly, it should be available from your
-package manager. For Debian-based Linux distributions like Ubuntu, the package
-is typically called "libncurses5-dev". Otherwise, compile and install ncurses
-from the [ncurses website][]. Note: you need to have the wide-character
-development version of ncurses installed, which handles multibyte sequences.
-(Therefore, Debian users will _also_ need "libncursesw5-dev".)
+the development library for a curses implementation like ncurses. Similarly, one
+should be available from your package manager. For Debian-based Linux
+distributions like Ubuntu, the ncurses package is typically called
+"libncurses5-dev". Otherwise, compile and install ncurses from the
+[ncurses website][]. Note: you need to have the wide-character development
+version of ncurses installed, which handles multibyte sequences. (Therefore,
+Debian users will _also_ need "libncursesw5-dev".)
 
 In addition, BSD users will need to have [libiconv][] installed.
 
@@ -68,7 +69,7 @@ For Linux and BSD systems, simply run `make` in the *src/* directory. The
 *textadept* and *textadeptjit* executables are created in the root directory.
 Make a symlink from them to */usr/bin/* or elsewhere in your `PATH`.
 
-Similarly, `make ncurses` builds *textadept-ncurses* and *textadeptjit-ncurses*.
+Similarly, `make curses` builds *textadept-curses* and *textadeptjit-curses*.
 
 Note: you may have to run
 
@@ -87,8 +88,7 @@ a normal Linux application, run the usual `make` and then `make install` or
 */usr/local* but you can change this by setting `DESTDIR` (e.g.
 `make install DESTDIR=/prefix/to/install/to`).
 
-Similarly, `make ncurses` and `make ncurses install` installs the ncurses
-version.
+Similarly, `make curses` and `make curses install` installs the curses version.
 
 ### Cross Compiling for Windows
 
@@ -113,8 +113,8 @@ and *../textadeptjit.osx*. At this point it is recommended to build a new
 *Contents/MacOS/textadept.osx* and *Contents/MacOS/textadeptjit.osx* with your
 own versions.
 
-Similarly, `make osx-ncurses` builds *../textadept-ncurses.osx* and
-*../textadeptjit-ncurses.osx*.
+Similarly, `make osx-curses` builds *../textadept-curses.osx* and
+*../textadeptjit-curses.osx*.
 
 #### Compiling on OSX (Legacy)
 
@@ -137,8 +137,8 @@ Note: to build a GTK+ for OSX bundle, the following needs to be run from the
 where `username` is replaced with your username.
 
 Compiling the terminal version is not so expensive. After uncommenting the
-"Darwin" block mentioned above, simply run `make osx-ncurses` to build
-*../textadept-ncurses.osx* and *../textadeptjit-ncurses.osx*. No additional
+"Darwin" block mentioned above, simply run `make osx-curses` to build
+*../textadept-curses.osx* and *../textadeptjit-curses.osx*. No additional
 libraries are needed.
 
 [XCode]: http://developer.apple.com/TOOLS/xcode/
@@ -160,7 +160,7 @@ non-Lua, libraries.
 
 ### Notes on CDK
 
-[CDK][] is a library of ncurses widgets. The terminal version of Textadept
+[CDK][] is a library of curses widgets. The terminal version of Textadept
 includes a slightly modified, stripped down version of this library. The changes
 made to CDK are as follows:
 
@@ -173,7 +173,8 @@ made to CDK are as follows:
 * *cdk.h* does not `#include` "matrix.h", "viewer.h", and any headers labeled
   "Generated headers" due to their machine-dependence.
 * *cdk_config.h* no longer defines `HAVE_SETLOCALE` since Textadept handles
-  locale settings.
+  locale settings and no longer defines `HAVE_NCURSES_H` and `NCURSES` since
+  Textadept supports multiple curses implementations, not just ncurses.
 * The `deleteFileCB` routine in *fselect.c* has been deactivated.
 
 [CDK]: http://invisible-island.net/cdk/

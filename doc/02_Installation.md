@@ -6,8 +6,9 @@ In its bid for minimalism, Textadept also needs very little to run. The GUI
 version needs only [GTK+][], a cross-platform GUI toolkit, version 2.18 or later
 on Linux and BSD systems. A GTK+ runtime is already bundled into the Windows
 and Mac OSX packages. Textadept also has its own [copy of Lua][]. The terminal
-(ncurses) version of Textadept requires [ncurses][], but that dependency is only
-necessary if you wish to run the editor from a terminal.
+(curses) version of Textadept requires a curses implementation like [ncurses][],
+but that dependency is only necessary if you wish to run the editor from a
+terminal.
 
 [GTK+]: http://gtk.org
 [copy of Lua]: 11_Scripting.html#Lua.Configuration
@@ -25,11 +26,12 @@ can compile Textadept with earlier versions of GLib down to 2.22. For reference,
 Ubuntu 11.04, Debian Wheezy, Fedora 15, and openSUSE 11.4 support GLib 2.28 or
 later.
 
-Most Linux and BSD systems already have ncurses installed. If not, look for it
-in your package manager, or compile and install it from the [ncurses website][].
-You need to have or compile the wide-character version of ncurses, which handles
-multibyte characters. For Debian-based distributions like Ubuntu, the package is
-typically called "libncursesw5".
+Most Linux and BSD systems already have a curses implementation like ncurses
+installed. If not, look for one in your package manager, or compile and install
+ncurses from the [ncurses website][]. You need to have or compile the
+wide-character version of ncurses, which handles multibyte characters. For
+Debian-based distributions like Ubuntu, the package is typically called
+"libncursesw5".
 
 [GTK+ website]: http://www.gtk.org/download-linux.html
 [ncurses website]: http://invisible-island.net/ncurses/#download_ncurses
@@ -103,7 +105,7 @@ There is also a *textadeptjit* executable for running Textadept with [LuaJIT][].
 Please note there may be [compatibility issues][]. The *textadept* executable is
 recommended.
 
-The *textadept-ncurses* and *textadeptjit-ncurses* executables are versions of
+The *textadept-curses* and *textadeptjit-curses* executables are versions of
 Textadept for the terminal. Run them as you would run the *textadept* and
 *textadeptjit* executables, but from a terminal instead.
 
@@ -192,5 +194,5 @@ Textadept.
 &nbsp;&nbsp;
 ![Win32](images/win32.png)
 &nbsp;&nbsp;
-![ncurses](images/ncurses.png)
+![curses](images/ncurses.png)
 </span>

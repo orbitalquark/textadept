@@ -198,7 +198,7 @@ function M._select()
   local i = gui.filteredlist(_L['Select Snippet'],
                              {_L['Trigger'], _L['Scope'], _L['Snippet Text']},
                              t, true, '--output-column', '2',
-                             NCURSES and {'--width', gui.size[1] - 2} or '')
+                             CURSES and {'--width', gui.size[1] - 2} or '')
   if i then M._insert(t[(i + 1) * 3]) end
 end
 

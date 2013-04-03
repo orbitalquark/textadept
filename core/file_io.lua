@@ -396,7 +396,7 @@ end)
 -- @name open_recent_file
 function io.open_recent_file()
   local i = gui.filteredlist(_L['Open'], _L['File'], io.recent_files, true,
-                             NCURSES and {'--width', gui.size[1] - 2} or '')
+                             CURSES and {'--width', gui.size[1] - 2} or '')
   if i then io.open_file(io.recent_files[i + 1]) end
 end
 
@@ -445,7 +445,7 @@ function io.snapopen(utf8_paths, filter, exclude_FILTER, ...)
                              io.SNAPOPEN_MAX),
                '--button1', _L['_OK'])
   end
-  local width = NCURSES and {'--width', gui.size[1] - 2} or ''
+  local width = CURSES and {'--width', gui.size[1] - 2} or ''
   io.open_file(gui.filteredlist(_L['Open'], _L['File'], list, false,
                                 '--select-multiple', width, ...) or '')
 end

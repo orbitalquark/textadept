@@ -190,7 +190,7 @@ local M = {}
 -- N/A             |N/A         |^]          |Swap caret and mark anchor
 -- **Other**                |    |    |
 -- Ctrl+Shift+U, xxxx, Enter|None|None|Input Unicode character U-xxxx.
--- **ncurses CDK Fields**|   |            |
+-- **curses CDK Fields**|   |            |
 -- N/A                   |N/A|^B<br/>Left |Cursor left
 -- N/A                   |N/A|^F<br/>Right|Cursor right
 -- N/A                   |N/A|Del         |Delete forward
@@ -334,7 +334,7 @@ local utils = M.utils
 -- Command, Option, Shift, and 'a' = 'amA'
 -- Command, Option, Shift, and '\t' = 'ams\t'
 --
--- ncurses key commands.
+-- curses key commands.
 --
 -- The terminal keymap is much more limited and complicated:
 --   * Control+[Shift+](digit/symbol) gives limited results.
@@ -367,14 +367,14 @@ local utils = M.utils
 -- Control, Meta, and 'a' = 'cma'
 
 -- File.
-keys[not OSX and (not NCURSES and 'cn' or 'cmn') or 'mn'] = new_buffer
+keys[not OSX and (not CURSES and 'cn' or 'cmn') or 'mn'] = new_buffer
 keys[not OSX and 'co' or 'mo'] = io.open_file
-keys[not OSX and not NCURSES and 'cao' or 'cmo'] = io.open_recent_file
-keys[not OSX and (not NCURSES and 'cO' or 'mo') or 'mO'] = buffer.reload
+keys[not OSX and not CURSES and 'cao' or 'cmo'] = io.open_recent_file
+keys[not OSX and (not CURSES and 'cO' or 'mo') or 'mO'] = buffer.reload
 keys[not OSX and 'cs' or 'ms'] = buffer.save
-keys[not OSX and (not NCURSES and 'cS' or 'cms') or 'mS'] = buffer.save_as
+keys[not OSX and (not CURSES and 'cS' or 'cms') or 'mS'] = buffer.save_as
 keys[not OSX and 'cw' or 'mw'] = buffer.close
-keys[not OSX and (not NCURSES and 'cW' or 'cmw') or 'mW'] = io.close_all
+keys[not OSX and (not CURSES and 'cW' or 'cmw') or 'mW'] = io.close_all
 -- TODO: m_textadept.sessions.load
 -- TODO: m_textadept.sessions.save
 keys[not OSX and 'cq' or 'mq'] = quit
@@ -382,136 +382,135 @@ keys[not OSX and 'cq' or 'mq'] = quit
 -- Edit.
 keys[not OSX and 'cz' or 'mz'] = buffer.undo
 if not OSX then keys.cy = buffer.redo end
-if not NCURSES then keys[not OSX and 'cZ' or 'mZ'] = buffer.redo end
+if not CURSES then keys[not OSX and 'cZ' or 'mZ'] = buffer.redo end
 keys[not OSX and 'cx' or 'mx'] = buffer.cut
 keys[not OSX and 'cc' or 'mc'] = buffer.copy
 keys[not OSX and 'cv' or 'mv'] = buffer.paste
-if not NCURSES then keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate end
+if not CURSES then keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate end
 keys.del = buffer.clear
-keys[not OSX and (not NCURSES and 'adel' or 'mdel')
+keys[not OSX and (not CURSES and 'adel' or 'mdel')
              or 'cdel'] = utils.delete_word
-keys[not OSX and not NCURSES and 'ca' or 'ma'] = buffer.select_all
-keys[not NCURSES and 'cm' or 'mm'] = m_editing.match_brace
-keys[not OSX and (not NCURSES and 'c\n' or 'cmj')
+keys[not OSX and not CURSES and 'ca' or 'ma'] = buffer.select_all
+keys[not CURSES and 'cm' or 'mm'] = m_editing.match_brace
+keys[not OSX and (not CURSES and 'c\n' or 'cmj')
              or 'cesc'] = {m_editing.autocomplete_word, '%w_'}
-if not NCURSES then
+if not CURSES then
   keys[not OSX and 'caH' or 'mH'] = m_editing.highlight_word
 end
-keys[not OSX and not NCURSES and 'c/' or 'm/'] = m_editing.block_comment
+keys[not OSX and not CURSES and 'c/' or 'm/'] = m_editing.block_comment
 keys.ct = m_editing.transpose_chars
-keys[not OSX and (not NCURSES and 'cJ' or 'mj') or 'cj'] = m_editing.join_lines
+keys[not OSX and (not CURSES and 'cJ' or 'mj') or 'cj'] = m_editing.join_lines
 -- Select.
-keys[not NCURSES and 'cM' or 'mM'] = {m_editing.match_brace, 'select'}
-keys[not OSX and not NCURSES and 'c<'
-                             or 'm<'] = {m_editing.select_enclosed, '>', '<'}
-if not NCURSES then
+keys[not CURSES and 'cM' or 'mM'] = {m_editing.match_brace, 'select'}
+keys[not OSX and not CURSES and 'c<'
+                            or 'm<'] = {m_editing.select_enclosed, '>', '<'}
+if not CURSES then
   keys[not OSX and 'c>' or 'm>'] = {m_editing.select_enclosed, '<', '>'}
 end
-keys[not OSX and not NCURSES and "c'"
-                             or "m'"] = {m_editing.select_enclosed, "'", "'"}
-keys[not OSX and not NCURSES and 'c"'
-                             or 'm"'] = {m_editing.select_enclosed, '"', '"'}
-keys[not OSX and not NCURSES and 'c('
-                             or 'm('] = {m_editing.select_enclosed, '(', ')'}
-keys[not OSX and not NCURSES and 'c['
-                             or 'm['] = {m_editing.select_enclosed, '[', ']'}
-keys[not OSX and not NCURSES and 'c{'
-                             or 'm{'] = {m_editing.select_enclosed, '{', '}'}
-keys[not OSX and (not NCURSES and 'cD' or 'mW') or 'mD'] = m_editing.select_word
-keys[not OSX and not NCURSES and 'cN' or 'mN'] = m_editing.select_line
-keys[not OSX and not NCURSES and 'cP' or 'mP'] = m_editing.select_paragraph
-keys[not OSX and not NCURSES and 'cI' or 'mI'] = m_editing.select_indented_block
+keys[not OSX and not CURSES and "c'"
+                            or "m'"] = {m_editing.select_enclosed, "'", "'"}
+keys[not OSX and not CURSES and 'c"'
+                            or 'm"'] = {m_editing.select_enclosed, '"', '"'}
+keys[not OSX and not CURSES and 'c('
+                            or 'm('] = {m_editing.select_enclosed, '(', ')'}
+keys[not OSX and not CURSES and 'c['
+                            or 'm['] = {m_editing.select_enclosed, '[', ']'}
+keys[not OSX and not CURSES and 'c{'
+                            or 'm{'] = {m_editing.select_enclosed, '{', '}'}
+keys[not OSX and (not CURSES and 'cD' or 'mW') or 'mD'] = m_editing.select_word
+keys[not OSX and not CURSES and 'cN' or 'mN'] = m_editing.select_line
+keys[not OSX and not CURSES and 'cP' or 'mP'] = m_editing.select_paragraph
+keys[not OSX and not CURSES and 'cI' or 'mI'] = m_editing.select_indented_block
 -- Selection.
 keys[not OSX and 'cau' or 'cu'] = buffer.upper_case
-keys[not OSX and (not NCURSES and 'caU' or 'cml') or 'cU'] = buffer.lower_case
-keys[not OSX and (not NCURSES and 'a<' or 'm>')
+keys[not OSX and (not CURSES and 'caU' or 'cml') or 'cU'] = buffer.lower_case
+keys[not OSX and (not CURSES and 'a<' or 'm>')
              or 'c<'] = utils.enclose_as_xml_tags
-if not NCURSES then
+if not CURSES then
   keys[not OSX and 'a>' or 'c>'] = {m_editing.enclose, '<', ' />'}
   keys[not OSX and "a'" or "c'"] = {m_editing.enclose, "'", "'"}
   keys[not OSX and 'a"' or 'c"'] = {m_editing.enclose, '"', '"'}
 end
-keys[not OSX and (not NCURSES and 'a(' or 'm)')
+keys[not OSX and (not CURSES and 'a(' or 'm)')
              or 'c('] = {m_editing.enclose, '(', ')'}
-keys[not OSX and (not NCURSES and 'a[' or 'm]')
+keys[not OSX and (not CURSES and 'a[' or 'm]')
              or 'c['] = {m_editing.enclose, '[', ']'}
-keys[not OSX and (not NCURSES and 'a{' or 'm}')
+keys[not OSX and (not CURSES and 'a{' or 'm}')
              or 'c{'] = {m_editing.enclose, '{', '}'}
-keys[not OSX and not NCURSES and 'c+' or 'm+'] = {m_editing.grow_selection, 1}
-keys[not OSX and not NCURSES and 'c_' or 'm_'] = {m_editing.grow_selection, -1}
+keys[not OSX and not CURSES and 'c+' or 'm+'] = {m_editing.grow_selection, 1}
+keys[not OSX and not CURSES and 'c_' or 'm_'] = {m_editing.grow_selection, -1}
 keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
 -- Search.
-keys[not OSX and not NCURSES and 'cf' or 'mf'] = gui_find.focus
-if NCURSES then keys.mF = keys.mf end -- in case mf is used by GUI terminals
-keys[not OSX and not NCURSES and 'cg' or 'mg'] = gui_find.find_next
-if not OSX and not NCURSES then keys.f3 = keys.cg end
-keys[not OSX and not NCURSES and 'cG' or 'mG'] = gui_find.find_prev
-if not OSX and not NCURSES then keys.sf3 = keys.cG end
-keys[not OSX and (not NCURSES and 'car' or 'mr') or 'cr'] = gui_find.replace
-keys[not OSX and (not NCURSES and 'caR' or 'mR') or 'cR'] = gui_find.replace_all
+keys[not OSX and not CURSES and 'cf' or 'mf'] = gui_find.focus
+if CURSES then keys.mF = keys.mf end -- in case mf is used by GUI terminals
+keys[not OSX and not CURSES and 'cg' or 'mg'] = gui_find.find_next
+if not OSX and not CURSES then keys.f3 = keys.cg end
+keys[not OSX and not CURSES and 'cG' or 'mG'] = gui_find.find_prev
+if not OSX and not CURSES then keys.sf3 = keys.cG end
+keys[not OSX and (not CURSES and 'car' or 'mr') or 'cr'] = gui_find.replace
+keys[not OSX and (not CURSES and 'caR' or 'mR') or 'cR'] = gui_find.replace_all
 -- Find Next is an when find pane is focused in GUI.
 -- Find Prev is ap when find pane is focused in GUI.
 -- Replace is ar when find pane is focused in GUI.
 -- Replace All is aa when find pane is focused in GUI.
-keys[not OSX and not NCURSES and 'caf' or 'cmf'] = gui_find.find_incremental
-if not NCURSES then keys[not OSX and 'cF' or 'mF'] = utils.find_in_files end
+keys[not OSX and not CURSES and 'caf' or 'cmf'] = gui_find.find_incremental
+if not CURSES then keys[not OSX and 'cF' or 'mF'] = utils.find_in_files end
 -- Find in Files is ai when find pane is focused in GUI.
-if not NCURSES then
+if not CURSES then
   keys[not OSX and 'cag' or 'cmg'] = {gui_find.goto_file_in_list, true}
   keys[not OSX and 'caG' or 'cmG'] = {gui_find.goto_file_in_list, false}
 end
 keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
 -- Tools.
-keys[not OSX and (not NCURSES and 'ce' or 'mc')
+keys[not OSX and (not CURSES and 'ce' or 'mc')
              or 'me'] = gui.command_entry.focus
-keys[not OSX and (not NCURSES and 'cE' or 'mC')
-             or 'mE'] = utils.select_command
+keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
 keys[not OSX and 'cr' or 'mr'] = m_textadept.run.run
-keys[not OSX and (not NCURSES and 'cR' or 'cmr')
+keys[not OSX and (not CURSES and 'cR' or 'cmr')
              or 'mR'] = m_textadept.run.compile
-keys[not OSX and (not NCURSES and 'c|' or 'c\\')
+keys[not OSX and (not CURSES and 'c|' or 'c\\')
              or 'm|'] = m_textadept.filter_through.filter_through
 -- Adeptsense.
-keys[not OSX and (not NCURSES and 'c ' or 'c@')
+keys[not OSX and (not CURSES and 'c ' or 'c@')
              or 'aesc'] = m_textadept.adeptsense.complete
-keys[not NCURSES and 'ch' or 'mh'] = m_textadept.adeptsense.show_apidoc
-if NCURSES then keys.mH = keys.mh end -- in case mh is used by GUI terminals
+keys[not CURSES and 'ch' or 'mh'] = m_textadept.adeptsense.show_apidoc
+if CURSES then keys.mH = keys.mh end -- in case mh is used by GUI terminals
 -- Snippets.
-keys[not OSX and (not NCURSES and 'ck' or 'mk') or 'a\t'] = m_snippets._select
+keys[not OSX and (not CURSES and 'ck' or 'mk') or 'a\t'] = m_snippets._select
 keys['\t'] = m_snippets._insert
 keys['s\t'] = m_snippets._previous
-keys[not OSX and (not NCURSES and 'cK' or 'mK')
+keys[not OSX and (not CURSES and 'cK' or 'mK')
              or 'as\t'] = m_snippets._cancel_current
 -- Bookmark.
-keys[not OSX and (not NCURSES and 'cf2' or 'f1') or 'mf2'] = m_bookmarks.toggle
-keys[not OSX and (not NCURSES and 'csf2' or 'f6') or 'msf2'] = m_bookmarks.clear
+keys[not OSX and (not CURSES and 'cf2' or 'f1') or 'mf2'] = m_bookmarks.toggle
+keys[not OSX and (not CURSES and 'csf2' or 'f6') or 'msf2'] = m_bookmarks.clear
 keys.f2 = m_bookmarks.goto_next
-keys[not NCURSES and 'sf2' or 'f3'] = m_bookmarks.goto_prev
-keys[not NCURSES and 'af2' or 'f4'] = m_bookmarks.goto_bookmark
+keys[not CURSES and 'sf2' or 'f3'] = m_bookmarks.goto_prev
+keys[not CURSES and 'af2' or 'f4'] = m_bookmarks.goto_bookmark
 -- Snapopen.
 keys[not OSX and 'cu' or 'mu'] = {io.snapopen, _USERHOME}
 -- TODO: {io.snapopen, _HOME}
-keys[not OSX and (not NCURSES and 'caO' or 'mO')
+keys[not OSX and (not CURSES and 'caO' or 'mO')
              or 'cmO'] = utils.snapopen_filedir
-if not NCURSES then keys[not OSX and 'ci' or 'mi'] = utils.show_style end
+if not CURSES then keys[not OSX and 'ci' or 'mi'] = utils.show_style end
 
 -- Buffer.
-keys[not NCURSES and 'c\t' or 'mn'] = {view.goto_buffer, view, 1, true}
-keys[not NCURSES and 'cs\t' or 'mp'] = {view.goto_buffer, view, -1, true}
-keys[not OSX and not NCURSES and 'cb' or 'mb'] = gui.switch_buffer
-if NCURSES then keys.mB = keys.mb end -- in case mb is used by GUI terminals
+keys[not CURSES and 'c\t' or 'mn'] = {view.goto_buffer, view, 1, true}
+keys[not CURSES and 'cs\t' or 'mp'] = {view.goto_buffer, view, -1, true}
+keys[not OSX and not CURSES and 'cb' or 'mb'] = gui.switch_buffer
+if CURSES then keys.mB = keys.mb end -- in case mb is used by GUI terminals
 -- Indentation.
 -- TODO: {utils.set_indentation, 2}
 -- TODO: {utils.set_indentation, 3}
 -- TODO: {utils.set_indentation, 4}
 -- TODO: {utils.set_indentation, 8}
-keys[not OSX and (not NCURSES and 'caT' or 'mt')
+keys[not OSX and (not CURSES and 'caT' or 'mt')
              or 'cT'] = {utils.toggle_property, 'use_tabs'}
-if NCURSES then keys.mT = keys.mt end -- in case mt is used by GUI terminals
-keys[not OSX and (not NCURSES and 'cai' or 'mi')
+if CURSES then keys.mT = keys.mt end -- in case mt is used by GUI terminals
+keys[not OSX and (not CURSES and 'cai' or 'mi')
              or 'ci'] = m_editing.convert_indentation
 -- EOL Mode.
 -- TODO: {utils.set_eol_mode, c.SC_EOL_CRLF}
@@ -523,13 +522,13 @@ keys[not OSX and (not NCURSES and 'cai' or 'mi')
 -- TODO: {utils.set_encoding, 'ISO-8859-1'}
 -- TODO: {utils.set_encoding, 'MacRoman'}
 -- TODO: {utils.set_encoding, 'UTF-16LE'}
-keys[not OSX and not NCURSES and 'cL'
-                             or 'mL'] = m_textadept.mime_types.select_lexer
+keys[not OSX and not CURSES and 'cL'
+                            or 'mL'] = m_textadept.mime_types.select_lexer
 keys.f5 = {buffer.colourise, buffer, 0, -1}
-if NCURSES then keys.cl = keys.f5 end
+if CURSES then keys.cl = keys.f5 end
 
 -- View.
-if not NCURSES then
+if not CURSES then
   keys[not OSX and 'can' or 'ca\t'] = {gui.goto_view, 1, true}
   keys[not OSX and 'cap' or 'cas\t'] = {gui.goto_view, -1, true}
   keys[not OSX and 'cas' or 'cs'] = {view.split, view}
@@ -541,8 +540,8 @@ if not NCURSES then
   keys[not OSX and 'ca=' or 'c='] = {utils.grow, 10}
   keys[not OSX and 'ca-' or 'c-'] = {utils.shrink, 10}
 end
-keys[not OSX and not NCURSES and 'c*' or 'm*'] = utils.toggle_current_fold
-if not NCURSES then
+keys[not OSX and not CURSES and 'c*' or 'm*'] = utils.toggle_current_fold
+if not CURSES then
   keys[not OSX and 'ca\n' or 'c\n'] = {utils.toggle_property, 'view_eol'}
   if not OSX then keys['ca\n\r'] = keys['ca\n'] end
   keys[not OSX and 'ca\\' or 'c\\'] = {utils.toggle_property, 'wrap_mode'}
@@ -552,13 +551,13 @@ if not NCURSES then
   keys[not OSX and 'caV' or 'cV'] =
     {utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE}
 end
-keys[not OSX and not NCURSES and 'c=' or 'm='] = buffer.zoom_in
-keys[not OSX and not NCURSES and 'c-' or 'm-'] = buffer.zoom_out
-keys[not OSX and not NCURSES and 'c0' or 'm0'] = utils.reset_zoom
-if not NCURSES then keys[not OSX and 'cT' or 'mT'] = gui.select_theme end
+keys[not OSX and not CURSES and 'c=' or 'm='] = buffer.zoom_in
+keys[not OSX and not CURSES and 'c-' or 'm-'] = buffer.zoom_out
+keys[not OSX and not CURSES and 'c0' or 'm0'] = utils.reset_zoom
+if not CURSES then keys[not OSX and 'cT' or 'mT'] = gui.select_theme end
 
 -- Help.
-if not NCURSES then
+if not CURSES then
   keys.f1 = {utils.open_webpage, _HOME..'/doc/01_Introduction.html'}
   keys.sf1 = {utils.open_webpage, _HOME..'/doc/api/index.html'}
 end
@@ -582,7 +581,7 @@ if OSX then
   -- GTKOSX reports Fn-key as a single keycode which confuses Scintilla. Do
   -- not propagate it.
   keys.fn = function() return true end
-elseif NCURSES then
+elseif CURSES then
   keys['c^'] = function() _G.buffer.selection_mode = 0 end
   keys['c]'] = buffer.swap_main_anchor_caret
   keys.cf, keys.cb = buffer.char_right, buffer.char_left

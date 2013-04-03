@@ -26,7 +26,7 @@ local M = {}
 --
 -- Key sequences are strings built from a combination of modifier keys and the
 -- key itself. Modifier keys are "Control", "Shift", and "Alt" on Windows,
--- Linux, BSD, and in ncurses. On Mac OSX they are "Command" (`⌘`), "Alt/Option"
+-- Linux, BSD, and in curses. On Mac OSX they are "Command" (`⌘`), "Alt/Option"
 -- (`⌥`), "Control" (`^`), and "Shift" (`⇧`). These modifiers have the following
 -- string representations:
 --
@@ -69,7 +69,7 @@ local M = {}
 -- Key chains are a powerful concept. They allow multiple key bindings to be
 -- assigned to one key sequence. Language-specific modules
 -- [use key chains](#LANGUAGE_MODULE_PREFIX) for their functions. By default,
--- the `Esc` (`⎋` on Mac OSX | `Esc` in ncurses) key cancels a key chain, but it
+-- the `Esc` (`⎋` on Mac OSX | `Esc` in curses) key cancels a key chain, but it
 -- can be redefined via [`CLEAR`](#CLEAR). An example key chain looks like:
 --
 --     keys['aa'] = {
@@ -81,18 +81,18 @@ local M = {}
 --   The string representing the key sequence that clears the current key chain.
 --   It cannot be part of a key chain.
 --   The default value is `'esc'` for the `Esc` (`⎋` on Mac OSX | `Esc` in
---   ncurses) key.
+--   curses) key.
 -- @field LANGUAGE_MODULE_PREFIX (string)
 --   The starting key of the key chain reserved for language-specific modules.
 --   The default value is `'cl'` on platforms other than Mac OSX, `'ml'`
---   otherwise. Equivalent to `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in ncurses).
+--   otherwise. Equivalent to `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in curses).
 module('keys')]]
 
 local ADD = ''
 local CTRL, ALT, META, SHIFT = 'c'..ADD, 'a'..ADD, 'm'..ADD, 's'..ADD
-if NCURSES then ALT = META end
+if CURSES then ALT = META end
 M.CLEAR = 'esc'
-M.LANGUAGE_MODULE_PREFIX = (not OSX and not NCURSES and CTRL or META)..'l'
+M.LANGUAGE_MODULE_PREFIX = (not OSX and not CURSES and CTRL or META)..'l'
 
 -- Optimize for speed.
 local OSX = OSX
@@ -113,7 +113,7 @@ local error = function(e) events.emit(events.ERROR, e) end
 M.KEYSYMS = {
   -- From Scintilla.h and cdk/curdefs.h.
   [7] = 'esc', [8] = '\b', [9] = '\t', [13] = '\n', [27] = 'esc',
-  -- From ncurses.h.
+  -- From curses.h.
   [263] = '\b',
   -- From Scintilla.h.
   [300] = 'down', [301] = 'up', [302] = 'left', [303] = 'right',
@@ -226,7 +226,7 @@ local function keypress(code, shift, control, alt, meta)
   local key
   --print(code, M.KEYSYMS[code], shift, control, alt, meta)
   if code < 256 then
-    key = (not NCURSES or code ~= 7) and string_char(code) or M.KEYSYMS[code]
+    key = (not CURSES or code ~= 7) and string_char(code) or M.KEYSYMS[code]
     shift = shift and code < 32 -- for printable characters, key is upper case
   else
     key = M.KEYSYMS[code]
@@ -237,7 +237,7 @@ local function keypress(code, shift, control, alt, meta)
   --print(key_seq)
 
   gui.statusbar_text = ''
-  --if NCURSES then gui.statusbar_text = '"'..key_seq..'"' end
+  --if CURSES then gui.statusbar_text = '"'..key_seq..'"' end
   if #keychain > 0 and key_seq == M.CLEAR then
     clear_key_sequence()
     return true

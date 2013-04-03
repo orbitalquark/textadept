@@ -12,9 +12,9 @@
 #elif _WIN32
 #include <windows.h>
 #define main main_
-#elif (__APPLE__ && !NCURSES)
+#elif (__APPLE__ && !CURSES)
 #include <gtkmacintegration/gtkosxapplication.h>
-#elif (__APPLE__ && NCURSES)
+#elif (__APPLE__ && CURSES)
 #include <mach-o/dyld.h>
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
 #define u_int unsigned int // 'u_int' undefined when _POSIX_SOURCE is defined
@@ -23,11 +23,11 @@
 #endif
 #if GTK
 #include <gtk/gtk.h>
-#elif NCURSES
+#elif CURSES
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <termios.h>
-#include <ncurses.h>
+#include <curses.h>
 #include "cdk_int.h"
 #endif
 
@@ -39,7 +39,7 @@
 #include "SciLexer.h"
 #if GTK
 #include "ScintillaWidget.h"
-#elif NCURSES
+#elif CURSES
 #include "ScintillaTerm.h"
 #include "termkey.h"
 #endif
@@ -58,7 +58,7 @@ typedef GtkWidget Scintilla;
 #define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
 #endif
-#elif NCURSES
+#elif CURSES
 #define SS(view, m, w, l) scintilla_send_message(view, m, w, l)
 #define focus_view(v) \
   SS(focused_view, SCI_SETFOCUS, 0, 0), SS(v, SCI_SETFOCUS, 1, 0)
@@ -72,7 +72,7 @@ static Scintilla *focused_view;
 #if GTK
 static GtkWidget *window, *menubar, *statusbar[2];
 static GtkAccelGroup *accel;
-#if (__APPLE__ && !NCURSES)
+#if (__APPLE__ && !CURSES)
 static GtkOSXApplication *osxapp;
 #endif
 #endif
@@ -89,7 +89,7 @@ static FindButton fnext_button, fprev_button, r_button, ra_button;
 static GtkWidget *match_case, *whole_word, *lua_pattern, *in_files;
 typedef GtkListStore ListStore;
 static ListStore *find_store, *repl_store;
-#elif NCURSES
+#elif CURSES
 static CDKSCREEN *findbox = NULL;
 static CDKENTRY *find_entry, *replace_entry, *focused_entry;
 static char *find_text = NULL, *repl_text = NULL, *flabel = NULL,
@@ -114,14 +114,14 @@ static GtkWidget *command_entry;
 #define command_text gtk_entry_get_text(GTK_ENTRY(command_entry))
 static GtkListStore *cc_store;
 static GtkEntryCompletion *command_entry_completion;
-#elif NCURSES
+#elif CURSES
 static CDKENTRY *command_entry = NULL;
 static char *command_text = NULL;
 #endif
 
 // Lua
 static lua_State *lua = NULL;
-#if NCURSES
+#if CURSES
 static int quit = FALSE;
 #endif
 static int closing = FALSE;
@@ -233,7 +233,7 @@ static int a_command_line(GApplication*_, GApplicationCommandLine *cmdline,
 #endif
 #endif
 
-#if NCURSES
+#if CURSES
 /**
  * Frees the given string's current value, if any, and copies the given value to
  * it.
@@ -266,7 +266,7 @@ static void find_add_to_history(const char *text, ListStore *store) {
     while (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter))
       if (++count > 10) gtk_list_store_remove(store, &iter); // keep 10 items
   }
-#elif NCURSES
+#elif CURSES
   if (text && (!store[0] || strcmp(text, store[0]) != 0)) {
     if (store[9]) free(store[9]);
     for (int i = 9; i > 0; i--) store[i] = store[i - 1];
@@ -302,7 +302,7 @@ static int lfind_prev(lua_State *L) {
   return (f_clicked(fprev_button, NULL), 0);
 }
 
-#if NCURSES
+#if CURSES
 /**
  * Signal for a keypress in the Find/Replace Entry.
  * For tab keys, toggle through find/replace buttons.
@@ -373,7 +373,7 @@ static int lfind_focus(lua_State *L) {
     gtk_widget_grab_focus(focused_view);
     gtk_widget_hide(findbox);
   }
-#elif NCURSES
+#elif CURSES
   if (findbox) return 0; // already active
   wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
   findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0)), eraseCDKScreen(findbox);
@@ -444,7 +444,7 @@ static int lfind_replace_all(lua_State *L) {
 
 #if GTK
 #define toggled(w) gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))
-#elif NCURSES
+#elif CURSES
 #define toggled(w) w
 #endif
 /** `find.__index` Lua metatable. */
@@ -472,7 +472,7 @@ static int lfind__index(lua_State *L) {
 #define set_label_text(l, t) gtk_label_set_text_with_mnemonic(GTK_LABEL(l), t)
 #define set_button_label(b, l) gtk_button_set_label(GTK_BUTTON(b), l)
 #define set_option_label(o, _, l) gtk_button_set_label(GTK_BUTTON(o), l)
-#elif NCURSES
+#elif CURSES
 #define toggle(w, b) w = b
 #define set_label_text(l, t) fcopy(&l, t)
 #define set_button_label(b, l) fcopy(&button_labels[b], l)
@@ -492,13 +492,13 @@ static int lfind__newindex(lua_State *L) {
   if (strcmp(key, "find_entry_text") == 0)
 #if GTK
     gtk_entry_set_text(GTK_ENTRY(find_entry), lua_tostring(L, 3));
-#elif NCURSES
+#elif CURSES
     fcopy(&find_text, lua_tostring(L, 3));
 #endif
   else if (strcmp(key, "replace_entry_text") == 0)
 #if GTK
     gtk_entry_set_text(GTK_ENTRY(replace_entry), lua_tostring(L, 3));
-#elif NCURSES
+#elif CURSES
     fcopy(&repl_text, lua_tostring(L, 3));
 #endif
   else if (strcmp(key, "match_case") == 0)
@@ -533,7 +533,7 @@ static int lfind__newindex(lua_State *L) {
   return 0;
 }
 
-#if NCURSES
+#if CURSES
 /**
  * Signal for a keypress inside the Command Entry.
  * As a BINDFN, returns `TRUE` to stop key propagation.
@@ -561,7 +561,7 @@ static int lce_focus(lua_State *L) {
     gtk_widget_hide(command_entry);
     gtk_widget_grab_focus(focused_view);
   }
-#elif NCURSES
+#elif CURSES
   if (command_entry) return 0; // already active
   CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
   tcsetattr(0, TCSANOW, &term);
@@ -595,7 +595,7 @@ static int lce_show_completions(lua_State *L) {
   GtkListStore *store = GTK_LIST_STORE(
                         gtk_entry_completion_get_model(completion));
   gtk_list_store_clear(store);
-#elif NCURSES
+#elif CURSES
   const char **items = malloc(len * sizeof(const char *));
   int width = 0;
 #endif
@@ -606,7 +606,7 @@ static int lce_show_completions(lua_State *L) {
       GtkTreeIter iter;
       gtk_list_store_append(store, &iter);
       gtk_list_store_set(store, &iter, 0, lua_tostring(L, -1), -1);
-#elif NCURSES
+#elif CURSES
       items[i - 1] = lua_tostring(L, -1);
       if (width < strlen(items[i - 1])) width = strlen(items[i - 1]);
 #endif
@@ -615,7 +615,7 @@ static int lce_show_completions(lua_State *L) {
   }
 #if GTK
   gtk_entry_completion_complete(completion);
-#elif NCURSES
+#elif CURSES
   // Screen needs to take into account border width and scroll bar width.
   int height = (len < LINES - 3) ? len : LINES - 5;
   CDKSCREEN *screen = initCDKScreen(newwin(height + 2, width + 4,
@@ -646,7 +646,7 @@ static int lce__index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "entry_text") == 0) {
     lua_pushstring(L, command_text);
-#if NCURSES
+#if CURSES
     if (command_entry) lua_pushstring(L, getCDKEntryValue(command_entry));
 #endif
   } else lua_rawget(L, 1);
@@ -659,7 +659,7 @@ static int lce__newindex(lua_State *L) {
   if (strcmp(key, "entry_text") == 0)
 #if GTK
     gtk_entry_set_text(GTK_ENTRY(command_entry), lua_tostring(L, 3));
-#elif NCURSES
+#elif CURSES
     fcopy(&command_text, lua_tostring(L, 3));
 #endif
   else
@@ -731,7 +731,7 @@ static int lgui_get_split_table(lua_State *L) {
       pane = gtk_widget_get_parent(pane);
     l_pushsplittable(L, child1(pane), child2(pane));
   } else l_pushview(L, focused_view);
-#elif NCURSES
+#elif CURSES
   l_pushview(L, focused_view); // TODO: push split table
 #endif
   return 1;
@@ -885,7 +885,7 @@ static int lgui_menu(lua_State *L) {
   luaL_checktype(L, 1, LUA_TTABLE);
 #if GTK
   return (l_pushmenu(L, -1, G_CALLBACK(m_clicked), FALSE), 1);
-#elif NCURSES
+#elif CURSES
   return (lua_pushnil(L), 1);
 #endif
 }
@@ -899,7 +899,7 @@ static int lgui__index(lua_State *L) {
                  gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
     lua_pushstring(L, text ? text : "");
     if (text) free(text);
-#elif NCURSES
+#elif CURSES
     char *text = get_clipboard();
     lua_pushlstring(L, text, scintilla_get_clipboard(focused_view, NULL));
     free(text);
@@ -908,7 +908,7 @@ static int lgui__index(lua_State *L) {
 #if GTK
     int width, height;
     gtk_window_get_size(GTK_WINDOW(window), &width, &height);
-#elif NCURSES
+#elif CURSES
     int width = COLS, height = LINES;
 #endif
     lua_newtable(L);
@@ -923,7 +923,7 @@ static void set_statusbar_text(const char *text, int bar) {
   if (!statusbar[0] || !statusbar[1]) return; // unavailable on startup
   gtk_statusbar_pop(GTK_STATUSBAR(statusbar[bar]), 0);
   gtk_statusbar_push(GTK_STATUSBAR(statusbar[bar]), 0, text);
-#elif NCURSES
+#elif CURSES
   for (int i = ((bar == 0) ? 0 : 20); i < ((bar == 0) ? 20 : COLS); i++)
     mvaddch(LINES - 1, i, ' '); // clear statusbar
   mvaddstr(LINES - 1, (bar == 0) ? 0 : COLS - strlen(text), text), refresh();
@@ -936,7 +936,7 @@ static int lgui__newindex(lua_State *L) {
   if (strcmp(key, "title") == 0) {
 #if GTK
     gtk_window_set_title(GTK_WINDOW(window), lua_tostring(L, 3));
-#elif NCURSES
+#elif CURSES
     for (int i = 0; i < COLS; i++) mvaddch(0, i, ' '); // clear titlebar
     mvaddstr(0, 0, lua_tostring(L, 3)), refresh();
 #endif
@@ -962,7 +962,7 @@ static int lgui__newindex(lua_State *L) {
     gtk_box_pack_start(GTK_BOX(vbox), menubar = new_menubar, FALSE, FALSE, 0);
     gtk_box_reorder_child(GTK_BOX(vbox), new_menubar, 0);
     gtk_widget_show_all(new_menubar);
-#if (__APPLE__ && !NCURSES)
+#if (__APPLE__ && !CURSES)
     gtk_osxapplication_set_menu_bar(osxapp, GTK_MENU_SHELL(new_menubar));
     gtk_widget_hide(new_menubar);
 #endif
@@ -1318,7 +1318,7 @@ static int lquit(lua_State *L) {
 #if GTK
   GdkEventAny event = { GDK_DELETE, gtk_widget_get_window(window), TRUE };
   gdk_event_put((GdkEvent *)(&event));
-#elif NCURSES
+#elif CURSES
   quit = true;
 #endif
   return 0;
@@ -1347,7 +1347,7 @@ static int lL_dofile(lua_State *L, const char *filename) {
                                                GTK_BUTTONS_OK, "%s\n",
                                                lua_tostring(L, -1));
     gtk_dialog_run(GTK_DIALOG(dialog)), gtk_widget_destroy(dialog);
-#elif NCURSES
+#elif CURSES
     WINDOW *win = newwin(0, 0, 1, 0);
     wprintw(win, lua_tostring(L, -1)), wrefresh(win);
     getch(), delwin(win);
@@ -1396,7 +1396,7 @@ static int ltimeout(lua_State *L) {
   for (int i = 2; i <= n; i++)
     lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
   g_timeout_add(timeout * 1000, emit_timeout, (void *)refs);
-#elif NCURSES
+#elif CURSES
   luaL_error(L, "not implemented in this environment");
 #endif
   return 0;
@@ -1517,15 +1517,15 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   lua_pushstring(L, textadept_home), lua_setglobal(L, "_HOME");
 #if _WIN32
   lua_pushboolean(L, 1), lua_setglobal(L, "WIN32");
-#elif (__APPLE__ && !NCURSES)
+#elif (__APPLE__ && !CURSES)
   lua_pushboolean(L, 1), lua_setglobal(L, "OSX");
-#elif NCURSES
-  lua_pushboolean(L, 1), lua_setglobal(L, "NCURSES");
+#elif CURSES
+  lua_pushboolean(L, 1), lua_setglobal(L, "CURSES");
 #endif
   const char *charset = NULL;
 #if GTK
   g_get_charset(&charset);
-#elif NCURSES
+#elif CURSES
   charset = getenv("CHARSET");
   if (!charset || !*charset) {
     char *locale = getenv("LC_ALL");
@@ -1651,7 +1651,7 @@ static int unsplit_view(Scintilla *view) {
   gtk_widget_grab_focus(GTK_WIDGET(view));
   g_object_unref(view), g_object_unref(other);
   return TRUE;
-#elif NCURSES
+#elif CURSES
   return FALSE;
 #endif
 }
@@ -1688,7 +1688,7 @@ static int w_exit(GtkWidget*_, GdkEventAny*__, void*___) {
   return FALSE;
 }
 
-#if (__APPLE__ && !NCURSES)
+#if (__APPLE__ && !CURSES)
 /**
  * Signal for opening files from OSX.
  * Generates an 'appleevent_odoc' event for each document sent.
@@ -1873,7 +1873,7 @@ static void split_view(Scintilla *view, int vertical) {
   SS(view2, SCI_SETSEL, anchor, current_pos);
   int new_first_line = SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0);
   SS(view2, SCI_LINESCROLL, first_line - new_first_line, 0);
-#elif NCURSES
+#elif CURSES
   // TODO: split.
 #endif
 }
@@ -1902,7 +1902,7 @@ static int lview__index(lua_State *L) {
       int pos = gtk_paned_get_position(GTK_PANED(gtk_widget_get_parent(view)));
       lua_pushinteger(L, pos);
     } else lua_pushnil(L);
-#elif NCURSES
+#elif CURSES
     lua_pushnil(L); // TODO: push size
 #endif
   } else lua_rawget(L, 1);
@@ -1920,7 +1920,7 @@ static int lview__newindex(lua_State *L) {
     int size = luaL_checkinteger(L, 3);
     if (size < 0) size = 0;
     if (GTK_IS_PANED(pane)) gtk_paned_set_position(GTK_PANED(pane), size);
-#elif NCURSES
+#elif CURSES
     // TODO: set size.
 #endif
   } else lua_rawset(L, 1);
@@ -1964,7 +1964,7 @@ static Scintilla *new_view(sptr_t doc) {
   signal(view, "command", s_command);
   signal(view, "key-press-event", s_keypress);
   signal(view, "button-press-event", s_buttonpress);
-#elif NCURSES
+#elif CURSES
   Scintilla *view = scintilla_new(s_notify);
 #endif
   SS(view, SCI_USEPOPUP, 0, 0);
@@ -2128,7 +2128,7 @@ static void new_window() {
   gtdialog_set_parent(GTK_WINDOW(window));
   accel = gtk_accel_group_new();
 
-#if (__APPLE__ && !NCURSES)
+#if (__APPLE__ && !CURSES)
   gtk_osxapplication_set_use_quartz_accelerators(osxapp, FALSE);
   osx_signal(osxapp, "NSApplicationOpenFile", w_open_osx);
   osx_signal(osxapp, "NSApplicationBlockTermination", w_exit_osx);
@@ -2182,14 +2182,14 @@ static void new_window() {
   gtk_widget_hide(menubar); // hide initially
   gtk_widget_hide(findbox); // hide initially
   gtk_widget_hide(command_entry); // hide initially
-#elif NCURSES
+#elif CURSES
   Scintilla *view = new_view(0);
   wresize(scintilla_get_window(view), LINES - 2, COLS);
   mvwin(scintilla_get_window(view), 1, 0);
 #endif
 }
 
-#if NCURSES
+#if CURSES
 /** Signal for a terminal resize. */
 static void resize(int signal) {
   struct winsize win;
@@ -2211,7 +2211,7 @@ static void resize(int signal) {
 int main(int argc, char **argv) {
 #if GTK
   gtk_init(&argc, &argv);
-#elif NCURSES
+#elif CURSES
   static struct termios oldterm;
   tcgetattr(0, &oldterm); // save old terminal settings
   TermKey *tk = termkey_new(0, TERMKEY_FLAG_NOTERMIOS);
@@ -2230,13 +2230,13 @@ int main(int argc, char **argv) {
   textadept_home = malloc(FILENAME_MAX);
   GetModuleFileName(0, textadept_home, FILENAME_MAX);
   if ((last_slash = strrchr(textadept_home, '\\'))) *last_slash = '\0';
-#elif (__APPLE__ && !NCURSES)
+#elif (__APPLE__ && !CURSES)
   osxapp = g_object_new(GTK_TYPE_OSX_APPLICATION, NULL);
   char *path = quartz_application_get_resource_path();
   textadept_home = g_filename_from_utf8((const char *)path, -1, NULL, NULL,
                                         NULL);
   g_free(path);
-#elif (__APPLE__ && NCURSES)
+#elif (__APPLE__ && CURSES)
   char *path = malloc(FILENAME_MAX), *p = NULL;
   uint32_t size = FILENAME_MAX;
   _NSGetExecutablePath(path, &size);
@@ -2271,7 +2271,7 @@ int main(int argc, char **argv) {
   if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
   new_window();
   lL_dofile(lua, "init.lua");
-#if (__APPLE__ && !NCURSES)
+#if (__APPLE__ && !CURSES)
   gtk_osxapplication_ready(osxapp);
 #endif
 
@@ -2283,7 +2283,7 @@ int main(int argc, char **argv) {
 #else
   gtk_main();
 #endif
-#elif NCURSES
+#elif CURSES
   scintilla_refresh(focused_view);
 
   stderr = freopen("/dev/null", "w", stderr); // redirect stderr

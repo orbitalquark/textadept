@@ -69,7 +69,7 @@ documentation or read the [LuaDoc][].
 ## Switch Themes
 
 You can switch between or reload themes using `Ctrl+Shift+T` (`⌘⇧T` on Mac OSX |
-none in ncurses). However, be aware that the views do not reset themselves. Any
+none in curses). However, be aware that the views do not reset themselves. Any
 properties set explicitly in the previous theme's *view.lua* file that are not
 set explicitly in the new theme will carry over. Restarting Textadept will fix
 this. Also, be aware that themes apply to all buffers. You cannot assign a theme
