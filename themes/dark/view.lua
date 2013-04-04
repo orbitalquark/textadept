@@ -74,7 +74,7 @@ buffer:set_fold_margin_hi_colour(true, 0x1A1A1A)
 buffer.annotation_visible = c.ANNOTATION_BOXED
 
 -- Other.
---buffer.buffered_draw = false
+buffer.buffered_draw = not OSX -- Quartz buffers drawing
 --buffer.two_phase_draw = false
 
 -- Indentation Guides.

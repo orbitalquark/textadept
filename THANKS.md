@@ -14,6 +14,7 @@ Textadept the amazing editor that it is today.
 * Gilles Grégoire
 * Jay Gould
 * Jeff Stone
+* John Benediktsson
 * M Rawash
 * Manuel Montenegro
 * Martin Morawetz
