@@ -132,12 +132,15 @@ in its editing component Scintilla:
   not supported and `surface->LineTo()` is not supported for drawing marker
   shapes).
 * Mouse interactions, cursor types, and hotspots are not supported.
-* Only 8 colors are supported: black (0x000000), red (0xFF0000), green
-  (0x00FF00), yellow (0xFFFF00), blue (0x0000FF), magenta (0xFF00FF), cyan
-  (0x00FFFF), and white (0xFFFFFF). Even if your terminal uses a different color
-  map, you must use these color values with Scintilla; unrecognized colors are
-  set to white by default. Lexers can use up to 8 more colors by setting the
-  lexer style's "bold" attribute.
+* Up to 16 colors are supported: black (`0x000000`), red (`0x800000`), green
+  (`0x008000`), yellow (`0x808000`), blue (`0x000080`), magenta (`0x800080`),
+  cyan (`0x008080`), white (`0xC0C0C0`), light black (`0x404040`), light red
+  (`0xFF0000`), light green (`0x00FF00`), light yellow (`0xFFFF00`), light blue
+  (`0x0000FF`), light magenta (`0xFF00FF`), light cyan (`0x00FFFF`), and light
+  white (`0xFFFFFF`). Even if your terminal uses a different color map, you must
+  use these color values with Scintilla; unrecognized colors are set to white by
+  default. For some terminals, you may need to set a lexer style's `bold`
+  attribute in order to use the light color variant.
 * Scroll bars are not supported.
 * Some styles settings like font name, font size, and italic do not display
   properly (terminals use one only font, size and variant).
