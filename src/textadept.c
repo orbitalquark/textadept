@@ -24,11 +24,14 @@
 #if GTK
 #include <gtk/gtk.h>
 #elif CURSES
+#if !_WIN32
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+#else
+#undef main
+#endif
 #include <curses.h>
-#include "cdk_int.h"
 #endif
 
 #include "gtdialog.h"
@@ -41,7 +44,10 @@
 #include "ScintillaWidget.h"
 #elif CURSES
 #include "ScintillaTerm.h"
+#include "cdk_int.h"
+#if !_WIN32
 #include "termkey.h"
+#endif
 #endif
 
 #if GTK
@@ -63,7 +69,6 @@ typedef GtkWidget Scintilla;
 #define focus_view(v) \
   SS(focused_view, SCI_SETFOCUS, 0, 0), SS(v, SCI_SETFOCUS, 1, 0)
 #define flushch() timeout(0), getch(), timeout(-1)
-static struct termios term;
 #endif
 
 // Window
@@ -72,9 +77,11 @@ static Scintilla *focused_view;
 #if GTK
 static GtkWidget *window, *menubar, *statusbar[2];
 static GtkAccelGroup *accel;
-#if (__APPLE__ && !CURSES)
+#if __APPLE__
 static GtkOSXApplication *osxapp;
 #endif
+#elif CURSES && !_WIN32
+static struct termios term;
 #endif
 static void new_buffer(sptr_t);
 static Scintilla *new_view(sptr_t);
@@ -377,7 +384,9 @@ static int lfind_focus(lua_State *L) {
   if (findbox) return 0; // already active
   wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
   findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0)), eraseCDKScreen(findbox);
+#if !_WIN32
   tcsetattr(0, TCSANOW, &term);
+#endif
   int b_width = max(strlen(button_labels[0]), strlen(button_labels[1])) +
                 max(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
   int o_width = max(strlen(option_labels[0]), strlen(option_labels[1])) +
@@ -564,7 +573,9 @@ static int lce_focus(lua_State *L) {
 #elif CURSES
   if (command_entry) return 0; // already active
   CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
+#if !_WIN32
   tcsetattr(0, TCSANOW, &term);
+#endif
   command_entry = newCDKEntry(screen, LEFT, TOP, NULL, NULL, A_NORMAL, '_',
                               vMIXED, 0, 0, 256, FALSE, FALSE);
   bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
@@ -1319,7 +1330,7 @@ static int lquit(lua_State *L) {
   GdkEventAny event = { GDK_DELETE, gtk_widget_get_window(window), TRUE };
   gdk_event_put((GdkEvent *)(&event));
 #elif CURSES
-  quit = true;
+  quit = TRUE;
 #endif
   return 0;
 }
@@ -1519,22 +1530,23 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   lua_pushboolean(L, 1), lua_setglobal(L, "WIN32");
 #elif (__APPLE__ && !CURSES)
   lua_pushboolean(L, 1), lua_setglobal(L, "OSX");
-#elif CURSES
+#endif
+#if CURSES
   lua_pushboolean(L, 1), lua_setglobal(L, "CURSES");
 #endif
   const char *charset = NULL;
 #if GTK
   g_get_charset(&charset);
-#elif CURSES
+#elif (CURSES && !_WIN32)
   charset = getenv("CHARSET");
   if (!charset || !*charset) {
     char *locale = getenv("LC_ALL");
     if (!locale || !*locale) locale = getenv("LANG");
     if (locale && (charset = strchr(locale, '.'))) charset++;
   }
-  // Note: _WIN32 uses GetACP() to determine codepage.
-  // If _WIN32 is ever supported, use a codepage -> charset look-up table like
-  // glib's `libcharset/localecharset.c`.
+#elif (CURSES && _WIN32)
+  char codepage[8];
+  sprintf(codepage, "CP%d", GetACP()), charset = codepage;
 #endif
   lua_pushstring(L, charset), lua_setglobal(L, "_CHARSET");
 
@@ -2189,7 +2201,7 @@ static void new_window() {
 #endif
 }
 
-#if CURSES
+#if (CURSES && !_WIN32)
 /** Signal for a terminal resize. */
 static void resize(int signal) {
   struct winsize win;
@@ -2212,12 +2224,17 @@ int main(int argc, char **argv) {
 #if GTK
   gtk_init(&argc, &argv);
 #elif CURSES
+#if !_WIN32
   static struct termios oldterm;
   tcgetattr(0, &oldterm); // save old terminal settings
   TermKey *tk = termkey_new(0, TERMKEY_FLAG_NOTERMIOS);
+#endif
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
   curs_set(0); // disable cursor when Scintilla has focus
+#if _WIN32
+  raw(), noecho();
+#endif
 #endif
 
   char *last_slash = NULL;
@@ -2286,6 +2303,7 @@ int main(int argc, char **argv) {
 #elif CURSES
   scintilla_refresh(focused_view);
 
+#if !_WIN32
   stderr = freopen("/dev/null", "w", stderr); // redirect stderr
   // Ignore some termios (from GNU Nano).
   tcgetattr(0, &term);
@@ -2297,7 +2315,57 @@ int main(int argc, char **argv) {
   struct sigaction act;
   memset(&act, 0, sizeof(struct sigaction));
   act.sa_handler = resize, sigaction(SIGWINCH, &act, NULL);
+#else
+  freopen("NUL", "w", stderr); // redirect stderr
+#endif
 
+  int c = 0, shift, ctrl, alt, *mods[] = { &shift, &ctrl, &alt };
+#if _WIN32
+  int keysyms[] = {
+    0, SCK_DOWN, SCK_UP, SCK_LEFT, SCK_RIGHT, SCK_HOME, SCK_BACK, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SCK_DELETE, SCK_INSERT, 0, 0, 0, 0, 0, 0,
+    SCK_NEXT, SCK_PRIOR, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    SCK_END
+  }, shift_keysyms[] = {
+    SCK_TAB, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, SCK_DELETE, 0, 0, SCK_END, 0, 0, 0, SCK_HOME,
+    SCK_INSERT, 0, SCK_LEFT, 0, 0, 0, 0, 0, 0, 0, 0, SCK_RIGHT
+  }, ctrl_keysyms[] = {
+    SCK_LEFT, SCK_RIGHT, SCK_PRIOR, SCK_NEXT, SCK_HOME, SCK_END, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    SCK_INSERT, 0, 0, SCK_UP, SCK_DOWN, SCK_TAB, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SCK_BACK, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SCK_DELETE, 0, SCK_RETURN
+  }, alt_keysyms[] = {
+    SCK_DELETE, SCK_INSERT, 0, 0, 0, SCK_TAB, '-', '=', SCK_HOME, SCK_PRIOR,
+    SCK_NEXT, SCK_END, SCK_UP, SCK_DOWN, SCK_RIGHT, SCK_LEFT, SCK_RETURN,
+    SCK_ESCAPE, '`', '[', ']', ';', '\'', ',', 0, '\\', SCK_BACK, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '/'
+  }; // '-', '=', SCK_RETURN, '`', ';', ',', '\\', '/' do not work for me
+  while ((c = wgetch(scintilla_get_window(focused_view))) != ERR) {
+    shift = ctrl = alt = FALSE;
+    if (c >= KEY_MIN && c <= KEY_END && keysyms[c - KEY_MIN])
+      c = keysyms[c - KEY_MIN];
+    else if (c >= KEY_F(1) && c <= KEY_F(48)) {
+      if (c > KEY_F(12)) *mods[(c - KEY_F(1)) / 12 - 1] = TRUE;
+      c = 0xFFBE + (c - KEY_F(1)) % 12; // use GDK keysym values for now
+    } else if (c >= KEY_BTAB && c <= KEY_SRIGHT && shift_keysyms[c - KEY_BTAB])
+      c = shift_keysyms[c - KEY_BTAB], shift = TRUE;
+    else if (c >= ALT_0 && c <= ALT_9)
+      c = '0' + (c - ALT_0), alt = TRUE;
+    else if (c >= ALT_A && c <= ALT_Z)
+      c = 'a' + (c - ALT_A), alt = TRUE;
+    else if (c >= CTL_LEFT && c <= CTL_ENTER && ctrl_keysyms[c - CTL_LEFT])
+      c = ctrl_keysyms[c - CTL_LEFT], ctrl = TRUE;
+    else if (c >= ALT_DEL && c <= ALT_BSLASH && alt_keysyms[c - ALT_DEL])
+      c = alt_keysyms[c - ALT_DEL], alt = TRUE;
+    else if (c == KEY_SUP || c == KEY_SDOWN)
+      c = (c == KEY_SUP) ? SCK_UP : SCK_DOWN, shift = TRUE;
+    else if (c < 0x20 && c != 8 && c != 9 && c != 13 && c != 27)
+      c = tolower(c ^ 0x40), ctrl = TRUE;
+#else
   TermKeyResult res;
   TermKeyKey key;
   int keysyms[] = {
@@ -2305,7 +2373,6 @@ int main(int argc, char **argv) {
     SCK_LEFT, SCK_RIGHT, 0, 0, SCK_INSERT, SCK_DELETE, 0, SCK_PRIOR, SCK_NEXT,
     SCK_HOME, SCK_END
   };
-  int c = 0;
   while ((res = termkey_waitkey(tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
     if (key.type == TERMKEY_TYPE_UNICODE)
@@ -2315,13 +2382,13 @@ int main(int argc, char **argv) {
     else if (key.type == TERMKEY_TYPE_KEYSYM &&
              key.code.sym >= 0 && key.code.sym <= TERMKEY_SYM_END)
       c = keysyms[key.code.sym];
-    if (!lL_event(lua, "keypress", LUA_TNUMBER, c, LUA_TBOOLEAN,
-                  key.modifiers & TERMKEY_KEYMOD_SHIFT, LUA_TBOOLEAN,
-                  key.modifiers & TERMKEY_KEYMOD_CTRL, LUA_TBOOLEAN,
-                  key.modifiers & TERMKEY_KEYMOD_ALT, LUA_TBOOLEAN, FALSE, -1))
-      scintilla_send_key(focused_view, c, key.modifiers & TERMKEY_KEYMOD_SHIFT,
-                         key.modifiers & TERMKEY_KEYMOD_CTRL,
-                         key.modifiers & TERMKEY_KEYMOD_ALT);
+    shift = (key.modifiers & TERMKEY_KEYMOD_SHIFT) ? TRUE : FALSE;
+    ctrl = (key.modifiers & TERMKEY_KEYMOD_CTRL) ? TRUE : FALSE;
+    alt = (key.modifiers & TERMKEY_KEYMOD_ALT) ? TRUE : FALSE;
+#endif
+    if (!lL_event(lua, "keypress", LUA_TNUMBER, c, LUA_TBOOLEAN, shift,
+                  LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
+      scintilla_send_key(focused_view, c, shift, ctrl, alt);
     if (quit && lL_event(lua, "quit", -1)) {
       l_close(lua);
       // Free some memory.
@@ -2342,15 +2409,17 @@ int main(int argc, char **argv) {
     scintilla_refresh(focused_view);
   }
   endwin();
+#if !_WIN32
   termkey_destroy(tk);
   tcsetattr(0, TCSANOW, &oldterm); // restore old terminal settings
+#endif
 #endif
 
   free(textadept_home);
   return 0;
 }
 
-#if _WIN32
+#if (_WIN32 && !CURSES)
 /**
  * Runs Textadept in Windows.
  * @see main

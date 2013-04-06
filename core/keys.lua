@@ -112,7 +112,7 @@ local error = function(e) events.emit(events.ERROR, e) end
 -- @name KEYSYMS
 M.KEYSYMS = {
   -- From Scintilla.h and cdk/curdefs.h.
-  [7] = 'esc', [8] = '\b', [9] = '\t', [13] = '\n', [27] = 'esc',
+  [7] = 'esc', [8] = '\b', [9] = '\t', [13] = '\n', [27] = 'esc', [127] = 'del',
   -- From curses.h.
   [263] = '\b',
   -- From Scintilla.h.
