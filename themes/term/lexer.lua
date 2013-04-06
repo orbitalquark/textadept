@@ -9,14 +9,27 @@
 local l, color, style = lexer, lexer.color, lexer.style
 
 l.colors = {
+  -- Normal colors.
   black = color('00', '00', '00'),
-  red = color('FF', '00', '00'),
-  green = color('00', 'FF', '00'),
-  yellow = color('FF', 'FF', '00'),
-  blue = color('00', '00', 'FF'),
-  magenta = color('FF', '00', 'FF'),
-  cyan = color('00', 'FF', 'FF'),
-  white = color('FF', 'FF', 'FF')
+  red = color('80', '00', '00'),
+  green = color('00', '80', '00'),
+  yellow = color('80', '80', '00'),
+  blue = color('00', '00', '80'),
+  magenta = color('80', '00', '80'),
+  cyan = color('00', '80', '80'),
+  white = color('C0', 'C0', 'C0'),
+
+  -- Light colors. (16 color terminals only.)
+  -- These only apply to 16 color terminals. For other terminals, set the
+  -- style's `bold` attribute to use the light color variant.
+  light_black = color('40', '40', '40'),
+  light_red = color('FF', '00', '00'),
+  light_green = color('00', 'FF', '00'),
+  light_yellow = color('FF', 'FF', '00'),
+  light_blue = color('00', '00', 'FF'),
+  light_magenta = color('FF', '00', 'FF'),
+  light_cyan = color('00', 'FF', 'FF'),
+  light_white = color('FF', 'FF', 'FF'),
 }
 
 l.style_nothing    = style{                                    }
