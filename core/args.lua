@@ -80,7 +80,7 @@ end
 if not CURSES then M.register('-h', '--help', 0, show_help, 'Shows this') end
 
 -- For Windows, create arg table from single command line string (arg[0]).
-if WIN32 and #arg[0] > 0 then
+if WIN32 and not CURSES and #arg[0] > 0 then
   local P, C = lpeg.P, lpeg.C
   local param = P('"') * C((1 - P('"'))^0) * '"' + C((1 - P(' '))^1)
   local params = lpeg.match(lpeg.Ct(param * (P(' ')^1 * param)^0), arg[0])

@@ -171,10 +171,16 @@ made to CDK are as follows:
   *radio.c*, *scale.{c,h}*, *selection.c*, *slider.{c,h}*, *swindow.c*,
   *template.c*, *u{scale,slider}.{c,h}*, *view_{file,info}.c*, and *viewer.c*.
 * *cdk.h* does not `#include` "matrix.h", "viewer.h", and any headers labeled
-  "Generated headers" due to their machine-dependence.
+  "Generated headers" due to their machine-dependence. It also `#define`s
+  `boolean` as `CDKboolean` on Windows platforms since the former is already
+  `typedef`ed.
 * *cdk_config.h* no longer defines `HAVE_SETLOCALE` since Textadept handles
-  locale settings and no longer defines `HAVE_NCURSES_H` and `NCURSES` since
-  Textadept supports multiple curses implementations, not just ncurses.
+  locale settings, no longer defines `HAVE_NCURSES_H` and `NCURSES` since
+  Textadept supports multiple curses implementations (not just ncurses), and
+  conditionally enables `HAVE_GRP_H`, `HAVE_LSTAT`, and `HAVE_PWD_H` definitions
+  on \*nix platforms since Windows does not have them.
+* *cdk_util.h* `#define`s `Beep` as `CDKBeep` on Windows platforms since Beep is
+  already defined.
 * The `deleteFileCB` routine in *fselect.c* has been deactivated.
 
 [CDK]: http://invisible-island.net/cdk/
