@@ -2235,6 +2235,9 @@ int main(int argc, char **argv) {
 #if _WIN32
   raw(), noecho();
 #endif
+#ifdef NCURSES_REENTRANT
+  ESCDELAY = getenv("ESCDELAY") ? atoi(getenv("ESCDELAY")) : 100;
+#endif
 #endif
 
   char *last_slash = NULL;
