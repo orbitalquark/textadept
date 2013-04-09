@@ -554,7 +554,13 @@ static int c_keypress(EObjectType _, void *object, void *data, chtype key) {
   if (key == KEY_ENTER) {
     fcopy(&command_text, getCDKEntryValue((CDKENTRY *)object));
     ret = lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
-  } else ret = !lL_event(lua, "command_entry_keypress", LUA_TNUMBER, key, -1);
+  } else {
+    int ctrl = key < 0x20 && key != 9 && key != 10 && key != 13 && key != 27;
+    if (ctrl) key = tolower(key ^ 0x40);
+    // TODO: F1-F12.
+    ret = !lL_event(lua, "command_entry_keypress", LUA_TNUMBER, key,
+                    LUA_TBOOLEAN, FALSE, LUA_TBOOLEAN, ctrl, -1);
+  }
   scintilla_refresh(focused_view), drawCDKEntry((CDKENTRY *)object, FALSE);
   return key == KEY_TAB || ret;
 }
@@ -2385,9 +2391,9 @@ int main(int argc, char **argv) {
     else if (key.type == TERMKEY_TYPE_KEYSYM &&
              key.code.sym >= 0 && key.code.sym <= TERMKEY_SYM_END)
       c = keysyms[key.code.sym];
-    shift = (key.modifiers & TERMKEY_KEYMOD_SHIFT) ? TRUE : FALSE;
-    ctrl = (key.modifiers & TERMKEY_KEYMOD_CTRL) ? TRUE : FALSE;
-    alt = (key.modifiers & TERMKEY_KEYMOD_ALT) ? TRUE : FALSE;
+    shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
+    ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
+    alt = key.modifiers & TERMKEY_KEYMOD_ALT;
 #endif
     if (!lL_event(lua, "keypress", LUA_TNUMBER, c, LUA_TBOOLEAN, shift,
                   LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))

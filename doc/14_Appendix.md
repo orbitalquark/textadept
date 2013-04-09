@@ -142,6 +142,8 @@ in its editing component Scintilla:
   default. For some terminals, you may need to set a lexer style's `bold`
   attribute in order to use the light color variant.
 * Scroll bars are not supported.
+* Some key sequences are not recognized by the terminal or have unexpected key
+* codes.
 * Some styles settings like font name, font size, and italic do not display
   properly (terminals use one only font, size and variant).
 * Viewing whitespace does not show the "Tab" character arrows
