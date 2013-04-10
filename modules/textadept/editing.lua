@@ -533,7 +533,7 @@ function M.highlight_word()
   buffer.search_flags = _SCINTILLA.constants.SCFIND_WHOLEWORD +
                         _SCINTILLA.constants.SCFIND_MATCHCASE
   buffer.target_start, buffer.target_end = 0, buffer.length
-  while buffer:search_in_target(word) > 0 do
+  while buffer:search_in_target(word) > -1 do
     local len = buffer.target_end - buffer.target_start
     buffer:marker_add(buffer:line_from_position(buffer.target_start),
                       MARK_HIGHLIGHT)
