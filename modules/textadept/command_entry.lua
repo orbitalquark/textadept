@@ -1,12 +1,78 @@
 -- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
--- Modified by Jay Gould.
+-- Abbreviated environment and commands from Jay Gould.
+
+local M = gui.command_entry
 
 --[[ This comment is for LuaDoc.
 ---
 -- Textadept's Command Entry.
+--
+-- ## Modes
+--
+-- The command entry supports multiple [modes][] that have their own sets of key
+-- bindings stored in a separate table in `_G.keys` under a mode prefix key.
+-- Mode names are arbitrary, but cannot conflict with lexer names or key
+-- sequence strings (e.g. `'lua'` or `'send'`) due to the method used for
+-- looking up key bindings. An example mode is "lua_command" mode for executing
+-- Lua commands:
+--
+--     local gui_ce = gui.command_entry
+--     keys['ce'] = {gui_ce.enter_mode, 'lua_command'}
+--     keys.lua_command = {
+--       ['\t'] = gui_ce.complete_lua,
+--       ['\n'] = {gui_ce.finish_mode, gui_ce.execute_lua}
+--     }
+--
+-- In this case, `Ctrl+E` opens the command entry and enters "lua_command" key
+-- mode where the `Tab` and `Enter` keys have special, defined functionality.
+-- (By default, `Esc` is pre-defined to exit any command entry mode.) `Tab`
+-- shows a list of Lua completions for the entry text and `Enter` exits
+-- "lua_command" key mode and executes the entered code. All other keys are
+-- handled normally by the command entry.
+--
+-- It is important to note that while in any command entry key mode, all editor
+-- key bindings are ignored -- even if the editor, not the command entry, has
+-- focus. You must first exit the key mode by pressing `Esc` (or `Enter` in the
+-- case of the above "lua_command" key mode).
+--
+-- [modes]: keys.html#Modes
 -- @field entry_text (string)
 --   The text in the entry.
 module('gui.command_entry')]]
+
+---
+-- Opens the command entry in key mode *mode*.
+-- Key bindings will be looked up in `keys[mode]` instead of `keys`. The `Esc`
+-- (`⎋` on Mac OSX | `Esc` in curses) key exits the current mode, closes the
+-- command entry, and restores normal key lookup.
+-- This function is useful for binding keys to enter a command entry mode.
+-- @param mode The key mode to enter into, or `nil` to exit the current mode.
+-- @usage keys['ce'] = {gui.command_entry.enter_mode, 'command_entry'}
+-- @see _G.keys.MODE
+-- @name enter_mode
+function M.enter_mode(mode)
+  keys.MODE = mode
+  if mode then keys[mode]['esc'] = M.enter_mode end
+  -- In curses, M.focus() does not return immediately, so the key sequence that
+  -- called M.focus() is still on the keychain. Clear it.
+  if CURSES then keys.clear_key_sequence() end
+  M.focus()
+end
+
+---
+-- Exits the current key mode, closes the command entry, and calls function *f*
+-- with the command entry text as an argument.
+-- This is useful for binding keys to exit a command entry mode and perform an
+-- action with the entered text.
+-- @param f The function to call. It should accept the command entry text as an
+--   argument.
+-- @usage keys['\n'] = {gui.command_entry.finish_mode, gui.print}
+-- @name finish_mode
+function M.finish_mode(f)
+  M.enter_mode(nil)
+  f(M.entry_text)
+  if CURSES then return false end -- propagate to exit CDK entry on Enter
+end
 
 -- Environment for abbreviated commands.
 -- @class table
@@ -29,71 +95,73 @@ local env = setmetatable({}, {
   end,
 })
 
-local events = events
-
--- Execute a Lua command.
-events.connect(events.COMMAND_ENTRY_COMMAND, function(command)
-  local f, err = load(command, nil, 'bt', env)
+---
+-- Executes string *code* as Lua code.
+-- Code is subject to an "abbreviated" environment where the `buffer`, `view`,
+-- and `gui` tables are also considered as globals.
+-- @param code The Lua code to execute.
+-- @name execute_lua
+function M.execute_lua(code)
+  local f, err = load(code, nil, 'bt', env)
   if err then error(err) end
-  if not CURSES then gui.command_entry.focus() end -- toggle focus to hide
   f()
   events.emit(events.UPDATE_UI)
-end)
+end
+args.register('-e', '--execute', 1, M.execute_lua, 'Execute Lua code')
 
-events.connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
-  if keys.KEYSYMS[code] == 'esc' then
-    gui.command_entry.focus() -- toggle focus to hide
-  elseif keys.KEYSYMS[code] == '\t' then
-    local substring = gui.command_entry.entry_text:match('[%w_.:]+$') or ''
-    local path, o, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
-    local f, err = load('return ('..path..')', nil, 'bt', env)
-    local ok, tbl = pcall(f)
-    local cmpls = {}
-    prefix = '^'..prefix
-    if not ok then -- shorthand notation
-      for _, t in ipairs{buffer, view, gui, _G} do
-        for k in pairs(t) do
-          if type(k) == 'string' and k:find(prefix) then
-            cmpls[#cmpls + 1] = k
-          end
-        end
+---
+-- Shows a set of Lua code completions for string *code* or `entry_text`.
+-- Completions are subject to an "abbreviated" environment where the `buffer`,
+-- `view`, and `gui` tables are also considered as globals.
+-- @param code The Lua code to complete. The default value is the value of
+--   `entry_text`.
+-- @name complete_lua
+function M.complete_lua(code)
+  local substring = (code or M.entry_text):match('[%w_.:]+$') or ''
+  local path, op, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
+  local f, err = load('return ('..path..')', nil, 'bt', env)
+  local ok, tbl = pcall(f)
+  local cmpls = {}
+  prefix = '^'..prefix
+  if not ok then -- shorthand notation
+    for _, t in ipairs{buffer, view, gui, _G} do
+      for k in pairs(t) do
+        if type(k) == 'string' and k:find(prefix) then cmpls[#cmpls + 1] = k end
       end
+    end
+    for f in pairs(_SCINTILLA.functions) do
+      if f:find(prefix) then cmpls[#cmpls + 1] = f end
+    end
+    for p in pairs(_SCINTILLA.properties) do
+      if p:find(prefix) then cmpls[#cmpls + 1] = p end
+    end
+  else
+    if type(tbl) ~= 'table' then return end
+    for k in pairs(tbl) do
+      if type(k) == 'string' and k:find(prefix) then cmpls[#cmpls + 1] = k end
+    end
+    if path == 'buffer' and op == ':' then
       for f in pairs(_SCINTILLA.functions) do
         if f:find(prefix) then cmpls[#cmpls + 1] = f end
       end
+    elseif path == 'buffer' and op == '.' then
       for p in pairs(_SCINTILLA.properties) do
         if p:find(prefix) then cmpls[#cmpls + 1] = p end
       end
-    else
-      if type(tbl) ~= 'table' then return end
-      for k in pairs(tbl) do
-        if type(k) == 'string' and k:find(prefix) then cmpls[#cmpls + 1] = k end
-      end
-      if path == 'buffer' then
-        if o == ':' then
-          for f in pairs(_SCINTILLA.functions) do
-            if f:find(prefix) then cmpls[#cmpls + 1] = f end
-          end
-        else
-          for p in pairs(_SCINTILLA.properties) do
-            if p:find(prefix) then cmpls[#cmpls + 1] = p end
-          end
-        end
-      end
     end
-    table.sort(cmpls)
-    gui.command_entry.show_completions(cmpls)
-    return true
   end
-end)
-
--- Executes Lua code on startup.
-local function execute(command)
-  local f, err = load(command, nil, 'bt', env)
-  if err then error(err) end
-  f()
+  table.sort(cmpls)
+  M.show_completions(cmpls)
+  return true
 end
-args.register('-e', '--execute', 1, execute, 'Execute Lua code')
+
+local events = events
+-- Pass command entry keys to the default keypress handler.
+-- Since the command entry is designed to be modal, command entry key bindings
+-- should stay separate from editor key bindings.
+events.connect(events.COMMAND_ENTRY_KEYPRESS, function(...)
+  if keys.MODE then return events.emit(events.KEYPRESS, ...) end
+end)
 
 --[[ The function below is a Lua C function.
 

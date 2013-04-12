@@ -104,7 +104,7 @@ As a special case, the empty capture `()` captures the current string position
 Textadept 5.5 beta introduced a curses version that can run in a terminal
 emulator. However, since curses is quite low-level in terms of graphics
 capability compared to GTK+, the curses version of Textadept lacks some features
-in its editing component Scintilla:
+in its editing component Scintilla and in general:
 
 * Any settings with alpha values are not supported.
 * Autocompletion lists cannot show images (pixmap surfaces are not supported).

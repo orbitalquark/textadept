@@ -298,7 +298,8 @@ events.connect(events.BUFFER_NEW, constantize_menu_buffer_functions)
 if not RESETTING then constantize_menu_buffer_functions() end
 
 local keys = keys
-local io, gui, gui_find, buffer, view = io, gui, gui.find, buffer, view
+local io, gui, gui_find, gui_ce = io, gui, gui.find, gui.command_entry
+local buffer, view = buffer, view
 local m_textadept, m_editing = _M.textadept, _M.textadept.editing
 local m_bookmarks, m_snippets = m_textadept.bookmarks, m_textadept.snippets
 local OSX, c = OSX, _SCINTILLA.constants
@@ -466,13 +467,13 @@ keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
 -- Tools.
 keys[not OSX and (not CURSES and 'ce' or 'mc')
-             or 'me'] = gui.command_entry.focus
+             or 'me'] = {gui_ce.enter_mode, 'lua_command'}
 keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
 keys[not OSX and 'cr' or 'mr'] = m_textadept.run.run
 keys[not OSX and (not CURSES and 'cR' or 'cmr')
              or 'mR'] = m_textadept.run.compile
 keys[not OSX and (not CURSES and 'c|' or 'c\\')
-             or 'm|'] = m_textadept.filter_through.filter_through
+             or 'm|'] = {gui_ce.enter_mode, 'filter_through'}
 -- Adeptsense.
 keys[not OSX and (not CURSES and 'c ' or 'c@')
              or 'aesc'] = m_textadept.adeptsense.complete
@@ -593,5 +594,26 @@ elseif CURSES then
   keys.cd, keys.md = buffer.clear, utils.delete_word
   keys.ck = utils.cut_to_eol
 end
+
+-- Modes.
+keys.lua_command = {
+  ['\t'] = gui_ce.complete_lua,
+  ['\n'] = {gui_ce.finish_mode, gui_ce.execute_lua}
+}
+keys.filter_through = {
+  ['\n'] = {gui_ce.finish_mode, m_textadept.filter_through.filter_through},
+}
+keys.find_incremental = {
+  ['\n'] = gui_find.find_incremental_next,
+  ['cr'] = gui_find.find_incremental_prev,
+  ['\b'] = function()
+    gui_find.find_incremental(gui_ce.entry_text:sub(1, -2))
+    return false -- propagate
+  end
+}
+setmetatable(keys.find_incremental, {__index = function(t, k)
+               if #k > 1 and k:find('^[cams]*.+$') then return end
+               gui_find.find_incremental(gui_ce.entry_text..k)
+             end})
 
 return M

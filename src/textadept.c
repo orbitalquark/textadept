@@ -549,33 +549,24 @@ static int lfind__newindex(lua_State *L) {
  * As a PROCESSFN, returns `TRUE` to continue key propagation.
  */
 static int c_keypress(EObjectType _, void *object, void *data, chtype key) {
-  if (data && (key == KEY_ENTER || key == KEY_TAB)) return TRUE;
-  int ret = TRUE;
-  if (key == KEY_ENTER) {
-    fcopy(&command_text, getCDKEntryValue((CDKENTRY *)object));
-    ret = lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
-  } else {
-    int ctrl = key < 0x20 && key != 9 && key != 10 && key != 13 && key != 27;
-    if (ctrl) key = tolower(key ^ 0x40);
-    // TODO: F1-F12.
-    ret = !lL_event(lua, "command_entry_keypress", LUA_TNUMBER, key,
-                    LUA_TBOOLEAN, FALSE, LUA_TBOOLEAN, ctrl, -1);
-  }
+  if (!data && key == KEY_TAB) return TRUE; // do not exit on Tab
+  int ctrl = key < 0x20 && key != 9 && key != 27;
+  if (ctrl) key = tolower(key ^ 0x40);
+  if (key == 27) key = SCK_ESCAPE;
+  int halt = lL_event(lua, "command_entry_keypress", LUA_TNUMBER, key,
+                      LUA_TBOOLEAN, FALSE, LUA_TBOOLEAN, ctrl, -1);
   scintilla_refresh(focused_view), drawCDKEntry((CDKENTRY *)object, FALSE);
-  return key == KEY_TAB || ret;
+  return !halt || key == SCK_ESCAPE;
 }
 #endif
 
 /** `command_entry.focus()` Lua function. */
 static int lce_focus(lua_State *L) {
 #if GTK
-  if (!gtk_widget_has_focus(command_entry)) {
-    gtk_widget_show(command_entry);
-    gtk_widget_grab_focus(command_entry);
-  } else {
-    gtk_widget_hide(command_entry);
-    gtk_widget_grab_focus(focused_view);
-  }
+  if (!gtk_widget_get_visible(command_entry))
+    gtk_widget_show(command_entry), gtk_widget_grab_focus(command_entry);
+  else
+    gtk_widget_hide(command_entry), gtk_widget_grab_focus(focused_view);
 #elif CURSES
   if (command_entry) return 0; // already active
   CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
@@ -585,7 +576,6 @@ static int lce_focus(lua_State *L) {
   command_entry = newCDKEntry(screen, LEFT, TOP, NULL, NULL, A_NORMAL, '_',
                               vMIXED, 0, 0, 256, FALSE, FALSE);
   bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
-  bindCDKObject(vENTRY, command_entry, KEY_ENTER, c_keypress, NULL);
   setCDKEntryPreProcess(command_entry, c_keypress, "");
   setCDKEntryValue(command_entry, command_text);
   char *clipboard = get_clipboard();
@@ -607,12 +597,15 @@ static int lce_show_completions(lua_State *L) {
   luaL_checktype(L, 1, LUA_TTABLE);
   int len = lua_rawlen(L, 1);
 #if GTK
+  if (!gtk_widget_get_visible(command_entry))
+    luaL_error(L, "command entry inactive");
   GtkEntryCompletion *completion = gtk_entry_get_completion(
                                    GTK_ENTRY(command_entry));
   GtkListStore *store = GTK_LIST_STORE(
                         gtk_entry_completion_get_model(completion));
   gtk_list_store_clear(store);
 #elif CURSES
+  if (!command_entry) luaL_error(L, "command entry inactive");
   const char **items = malloc(len * sizeof(const char *));
   int width = 0;
 #endif
@@ -2073,11 +2066,6 @@ static GtkWidget *new_findbox() {
   return findbox;
 }
 
-/** Signal for the 'enter' key being pressed in the Command Entry. */
-static void c_activate(GtkWidget*_, void*__) {
-  lL_event(lua, "command_entry_command", LUA_TSTRING, command_text, -1);
-}
-
 /** Signal for a keypress inside the Command Entry. */
 static int c_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
   return lL_event(lua, "command_entry_keypress", LUA_TNUMBER, event->keyval,
@@ -2167,7 +2155,6 @@ static void new_window() {
   gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), FALSE, FALSE, 5);
 
   command_entry = gtk_entry_new();
-  signal(command_entry, "activate", c_activate);
   signal(command_entry, "key-press-event", c_keypress);
   gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
 

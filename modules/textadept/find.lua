@@ -1,6 +1,6 @@
 -- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-local find = gui.find
+local M = gui.find
 
 --[[ This comment is for LuaDoc.
 ---
@@ -60,17 +60,17 @@ local find = gui.find
 module('gui.find')]]
 
 local _L = _L
-find.find_label_text = not CURSES and _L['_Find:'] or _L['Find:']
-find.replace_label_text = not CURSES and _L['R_eplace:'] or _L['Replace:']
-find.find_next_button_text = not CURSES and _L['Find _Next'] or _L['[Next]']
-find.find_prev_button_text = not CURSES and _L['Find _Prev'] or _L['[Prev]']
-find.replace_button_text = not CURSES and _L['_Replace'] or _L['[Replace]']
-find.replace_all_button_text = not CURSES and _L['Replace _All'] or _L['[All]']
-find.match_case_label_text = not CURSES and _L['_Match case'] or _L['Case(F1)']
-find.whole_word_label_text = not CURSES and _L['_Whole word'] or _L['Word(F2)']
-find.lua_pattern_label_text = not CURSES and _L['_Lua pattern'] or
-                              _L['Pattern(F3)']
-find.in_files_label_text = not CURSES and _L['_In files'] or _L['Files(F4)']
+M.find_label_text = not CURSES and _L['_Find:'] or _L['Find:']
+M.replace_label_text = not CURSES and _L['R_eplace:'] or _L['Replace:']
+M.find_next_button_text = not CURSES and _L['Find _Next'] or _L['[Next]']
+M.find_prev_button_text = not CURSES and _L['Find _Prev'] or _L['[Prev]']
+M.replace_button_text = not CURSES and _L['_Replace'] or _L['[Replace]']
+M.replace_all_button_text = not CURSES and _L['Replace _All'] or _L['[All]']
+M.match_case_label_text = not CURSES and _L['_Match case'] or _L['Case(F1)']
+M.whole_word_label_text = not CURSES and _L['_Whole word'] or _L['Word(F2)']
+M.lua_pattern_label_text = not CURSES and _L['_Lua pattern'] or
+                           _L['Pattern(F3)']
+M.in_files_label_text = not CURSES and _L['_In files'] or _L['Files(F4)']
 
 -- Events.
 local events, events_connect = events, events.connect
@@ -94,7 +94,7 @@ local preferred_view
 -- @see find_in_files
 -- @class table
 -- @name FILTER
-find.FILTER = lfs.FILTER
+M.FILTER = lfs.FILTER
 
 -- Text escape sequences with their associated characters.
 -- @class table
@@ -114,7 +114,7 @@ local escapes = {
 --   the user is prompted for one.
 -- @see FILTER
 -- @name find_in_files
-function find.find_in_files(utf8_dir)
+function M.find_in_files(utf8_dir)
   if not utf8_dir then
     utf8_dir = gui.dialog('fileselect',
                           '--title', _L['Find in Files'],
@@ -125,13 +125,13 @@ function find.find_in_files(utf8_dir)
   end
   if utf8_dir == '' then return end
 
-  local text = find.find_entry_text
-  if not find.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
-  if not find.match_case then text = text:lower() end
-  if find.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
+  local text = M.find_entry_text
+  if not M.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
+  if not M.match_case then text = text:lower() end
+  if M.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
   local matches = {_L['Find:']..' '..text}
   lfs.dir_foreach(utf8_dir, function(file)
-    local match_case = find.match_case
+    local match_case = M.match_case
     local line_num = 1
     for line in io.lines(file) do
       if (match_case and line or line:lower()):find(text) then
@@ -140,7 +140,7 @@ function find.find_in_files(utf8_dir)
       end
       line_num = line_num + 1
     end
-  end, find.FILTER, true)
+  end, M.FILTER, true)
   if #matches == 1 then matches[2] = _L['No results found'] end
   matches[#matches + 1] = ''
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
@@ -174,14 +174,14 @@ local function find_(text, next, flags, nowrap, wrapped)
 
   if not flags then
     flags = 0
-    if find.match_case then flags = flags + c.SCFIND_MATCHCASE end
-    if find.whole_word then flags = flags + c.SCFIND_WHOLEWORD end
-    if find.lua then flags = flags + 8 end
-    if find.in_files then flags = flags + 16 end
+    if M.match_case then flags = flags + c.SCFIND_MATCHCASE end
+    if M.whole_word then flags = flags + c.SCFIND_WHOLEWORD end
+    if M.lua then flags = flags + 8 end
+    if M.in_files then flags = flags + 16 end
   end
 
   local result
-  find.captures = nil
+  M.captures = nil
 
   if flags < 8 then
     buffer:goto_pos(buffer[next and 'current_pos' or 'anchor'] + increment)
@@ -193,12 +193,12 @@ local function find_(text, next, flags, nowrap, wrapped)
     local buffer_text = buffer:get_text(buffer.length)
     local results = {buffer_text:find(text, buffer.anchor + increment + 1)}
     if #results > 0 then
-      find.captures = {table.unpack(results, 3)}
+      M.captures = {table.unpack(results, 3)}
       buffer:set_sel(results[2], results[1] - 1)
     end
     result = results[1] or -1
   else -- find in files
-    find.find_in_files()
+    M.find_in_files()
     return
   end
 
@@ -222,47 +222,52 @@ local function find_(text, next, flags, nowrap, wrapped)
 end
 events_connect(events.FIND, find_)
 
--- Finds and selects text incrementally in the current buffer from a start
--- point.
+-- Finds and selects text incrementally in the current buffer from a starting
+-- position.
 -- Flags other than `SCFIND_MATCHCASE` are ignored.
 -- @param text The text to find.
-local function find_incremental(text)
-  local flags = find.match_case and c.SCFIND_MATCHCASE or 0
-  buffer:goto_pos(find.incremental_start or 0)
-  find_(text, true, flags)
+-- @param next Flag indicating whether or not the search direction is forward.
+local function find_incremental(text, next)
+  buffer:goto_pos(M.incremental_start or 0)
+  find_(text, next, M.match_case and c.SCFIND_MATCHCASE or 0)
 end
 
 ---
--- Begins an incremental find using the command entry.
+-- Begins an incremental search using the command entry if *text* is `nil`;
+-- otherwise continues an incremental search by searching for the next instance
+-- of string *text*.
 -- Only the `match_case` find option is recognized. Normal command entry
--- functionality will be unavailable until the search is finished by pressing
--- `Esc` (`⎋` on Mac OSX | `Esc` in curses).
+-- functionality is unavailable until the search is finished by pressing `Esc`
+-- (`⎋` on Mac OSX | `Esc` in curses).
+-- @param text The text to incrementally search for, or `nil` to begin an
+--   incremental search.
 -- @name find_incremental
-function find.find_incremental()
-  find.incremental, find.incremental_start = true, buffer.current_pos
+function M.find_incremental(text)
+  if text then find_incremental(text, true) return end
+  M.incremental_start = buffer.current_pos
   gui.command_entry.entry_text = ''
-  gui.command_entry.focus()
+  gui.command_entry.enter_mode('find_incremental')
 end
 
-events_connect(events.COMMAND_ENTRY_KEYPRESS, function(code)
-  if not find.incremental then return end
-  if keys.KEYSYMS[code] == 'esc' then
-    find.incremental = nil
-  elseif keys.KEYSYMS[code] == '\b' then
-    find_incremental(gui.command_entry.entry_text:sub(1, -2))
-  elseif code < 256 then
-    find_incremental(gui.command_entry.entry_text..string.char(code))
-  end
-end, 1) -- place before command_entry.lua's handler (if necessary)
+---
+-- Continues an incremental search by searching for the next match starting from
+-- the current position.
+-- @see find_incremental
+-- @name find_incremental_next
+function M.find_incremental_next()
+  M.incremental_start = buffer.current_pos + 1
+  find_incremental(gui.command_entry.entry_text, true)
+end
 
--- "Find next" for incremental search.
-events_connect(events.COMMAND_ENTRY_COMMAND, function(text)
-  if find.incremental then
-    find.incremental_start = buffer.current_pos + 1
-    find_incremental(text)
-    return true
-  end
-end, 1) -- place before command_entry.lua's handler (if necessary)
+---
+-- Continues an incremental search by searching for the previous match starting
+-- from the current position.
+-- @see find_incremental
+-- @name find_incremental_prev
+function M.find_incremental_prev()
+  M.incremental_start = buffer.current_pos - 1
+  find_incremental(gui.command_entry.entry_text, false)
+end
 
 -- Optimize for speed.
 local load, pcall = load, pcall
@@ -295,11 +300,11 @@ end
 -- @see find
 local function replace(rtext)
   if buffer:get_sel_text() == '' then return end
-  if find.in_files then find.in_files = false end
+  if M.in_files then M.in_files = false end
   local buffer = buffer
   buffer:target_from_selection()
   rtext = rtext:gsub('%%%%', '\\037') -- escape '%%'
-  local captures = find.captures
+  local captures = M.captures
   if captures then
     for i = 1, #captures do
       rtext = rtext:gsub('%%'..i, (captures[i]:gsub('%%', '%%%%')))
@@ -326,7 +331,7 @@ events_connect(events.REPLACE, replace)
 -- @see find
 local function replace_all(ftext, rtext)
   if ftext == '' then return end
-  if find.in_files then find.in_files = false end
+  if M.in_files then M.in_files = false end
   local buffer = buffer
   buffer:begin_undo_action()
   local count = 0
@@ -389,7 +394,7 @@ events_connect(events.DOUBLE_CLICK, goto_file)
 -- @param next Optional flag indicating whether or not to go to the next file.
 --   The default value is `false`.
 -- @name goto_file_in_list
-function find.goto_file_in_list(next)
+function M.goto_file_in_list(next)
   local orig_view = _VIEWS[view]
   for _, buffer in ipairs(_BUFFERS) do
     if buffer._type == _L['[Files Found Buffer]'] then
