@@ -586,6 +586,7 @@ function M.complete(sense, only_fields, only_functions)
   buffer:register_image(1, M.FIELDS)
   buffer:register_image(2, M.FUNCTIONS)
   if not buffer.auto_c_choose_single or #completions ~= 1 then
+    buffer.auto_c_order = 0 -- pre-sorted
     buffer:auto_c_show(#part, table.concat(completions, ' '))
   else
     -- Scintilla does not emit `AUTO_C_SELECTION` in this case. This is

@@ -278,6 +278,7 @@ function M.autocomplete_word(word_chars, default_words)
   end
   if #c_list > 0 then
     if not buffer.auto_c_choose_single or #c_list ~= 1 then
+      buffer.auto_c_order = 0 -- pre-sorted
       buffer:auto_c_show(#root, table.concat(c_list, ' '))
     else
       -- Scintilla does not emit AUTO_C_SELECTION in this case. This is
