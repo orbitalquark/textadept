@@ -107,6 +107,20 @@
 --   lists.
 --   The default value is `0`, which automatically sizes the list to fit the
 --   longest item.
+-- @field auto_c_order (number)
+--   The order setting for autocompletion lists.
+--
+--   * `_SCINTILLA.constants.SC_ORDER_PRESORTED` (0)
+--     Autocompletion lists passed to [`buffer.auto_c_show`](#auto_c_show) are
+--     in sorted alphabetical order.
+--   * `_SCINTILLA.constants.SC_ORDER_PERFORMSORT` (1)
+--     Scintilla should sort autocompletion lists passed to
+--     [`buffer.auto_c_show`](#auto_c_show).
+--   * `_SCINTILLA.constants.SC_ORDER_CUSTOM` (2)
+--     Autocompletion lists passed to [`buffer.auto_c_show`](#auto_c_show) are
+--     sorted in a custom order.
+--
+--   The default value is `0`.
 -- @field auto_c_separator (number)
 --   The character byte that separates autocompletion list items.
 --   The default value is `32` (' ').
@@ -1066,6 +1080,8 @@ function auto_c_select(buffer, string) end
 -- are delimited by `buffer.auto_c_separator` characters, using *len_entered*
 -- number of characters behind the caret as the prefix of the word to
 -- autocomplete.
+-- The sorted order of *item_list*, `buffer.auto_c_order`, must be already
+-- defined.
 -- @param buffer The global buffer.
 -- @param len_entered The number of characters before the caret used to provide
 --   the context.
