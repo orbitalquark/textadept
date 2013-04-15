@@ -36,7 +36,7 @@ local M = {}
 -- Alt+Del                 |^⌦       |M-Del<br/>M-D|Delete word
 -- Ctrl+A                  |⌘A       |M-A          |Select all
 -- Ctrl+M                  |^M       |M-M          |Match brace
--- Ctrl+Enter              |^⎋       |M-Enter      |Complete word
+-- Ctrl+Enter              |^⎋       |M-Enter^(†)  |Complete word
 -- Ctrl+Alt+Shift+H        |⌘⇧H      |None         |Highlight word
 -- Ctrl+/                  |^/       |M-/          |Toggle block comment
 -- Ctrl+T                  |^T       |^T           |Transpose characters
@@ -203,6 +203,8 @@ local M = {}
 -- N/A                   |N/A|^E          |End
 -- N/A                   |N/A|^T          |Transpose characters
 -- N/A                   |N/A|^L          |Refresh
+--
+-- †: Ctrl+Enter in Win32 curses.
 module('_M.textadept.keys')]]
 
 -- Utility functions.
@@ -305,7 +307,7 @@ local m_bookmarks, m_snippets = m_textadept.bookmarks, m_textadept.snippets
 local OSX, c = OSX, _SCINTILLA.constants
 local utils = M.utils
 
--- Windows and Linux menu key commands.
+-- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:   A B C         H              p  Q       ~ V   X Y      ) ] }
@@ -318,9 +320,9 @@ local utils = M.utils
 -- SHIFT = 's' (Shift ⇧)
 -- ADD = ''
 -- Control, Alt, Shift, and 'a' = 'caA'
--- Control, Alt, Shift, and '\t' = 'cas\t'
+-- Control, Shift, and '\t' = 'cs\t'
 --
--- Mac OSX menu key commands.
+-- Mac OSX key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- m:   A B C        ~    JkK  ~M    p  ~    t  U V   XyY      ) ] }       ~~\n
@@ -333,32 +335,26 @@ local utils = M.utils
 -- SHIFT = 's' (Shift ⇧)
 -- ADD = ''
 -- Command, Option, Shift, and 'a' = 'amA'
--- Command, Option, Shift, and '\t' = 'ams\t'
+-- Command, Shift, and '\t' = 'ms\t'
 --
--- curses key commands.
+-- Curses key bindings.
 --
--- The terminal keymap is much more limited and complicated:
---   * Control+[Shift+](digit/symbol) gives limited results.
---     Here are example keymaps for a US English keyboard:
---       Pressing Control+ `1234567890-=[]\;',./
---       Results in c:     @ @ \]^_   __ ]\ g
---       (e.g. `keys.c2` in the GUI would be `keys['c@']` in the terminal.)
---       Notes:
---         * Adding the Shift modifier to any of the above keys gives the same
---           result.
---         * Adding the Alt and/or Shift modifiers to any of the above keys also
---           gives the same result, but with only the Alt modifier being
---           recognized (e.g. `keys['ca$']` would be `keys['ca\']`).
---   * Control+[Alt+]Shift+letter does not report the upper case letter (e.g.
---     `keys.cA` in the GUI would be `keys.ca` in the terminal and similarly,
---     `keys.caA` would be `keys.caa`).
---   * No modifiers are recognized for the function keys (e.g. F1-F12).
+-- Key bindings available depend on your implementation of curses.
+--
+-- For ncurses (Linux, Mac OSX, BSD):
+--   * The only Control keys recognized are 'ca'-'cz', 'c@', 'c\\', 'c]', 'c^',
+--     and 'c_'.
+--   * Control+Shift and Control+Shift+Meta keys are not recognized.
+--   * Modifiers for function keys F1-F12 are not recognized.
+-- For pdcurses (Win32):
+--   * Control+Shift+Letter keys are not recognized. Other Control+Shift keys
+--     are.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
 -- cm:  bcd  g~~ k ~  pq  t v xyz
 -- m:          e          J            qQ  sS  u vVw xXyYzZ
--- Note: m[befhstv] may be used by GUI terminals.
+-- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- CTRL = 'c' (Control ^)
 -- ALT = [unused]
@@ -395,6 +391,7 @@ keys[not OSX and not CURSES and 'ca' or 'ma'] = buffer.select_all
 keys[not CURSES and 'cm' or 'mm'] = m_editing.match_brace
 keys[not OSX and (not CURSES and 'c\n' or 'cmj')
              or 'cesc'] = {m_editing.autocomplete_word, '%w_'}
+if CURSES and WIN32 then keys['c\r'] = keys['cmj'] end
 if not CURSES then
   keys[not OSX and 'caH' or 'mH'] = m_editing.highlight_word
 end
@@ -423,7 +420,7 @@ keys[not OSX and not CURSES and 'cN' or 'mN'] = m_editing.select_line
 keys[not OSX and not CURSES and 'cP' or 'mP'] = m_editing.select_paragraph
 keys[not OSX and not CURSES and 'cI' or 'mI'] = m_editing.select_indented_block
 -- Selection.
-keys[not OSX and 'cau' or 'cu'] = buffer.upper_case
+keys[not OSX and (not CURSES and 'cau' or 'cmu') or 'cu'] = buffer.upper_case
 keys[not OSX and (not CURSES and 'caU' or 'cml') or 'cU'] = buffer.lower_case
 keys[not OSX and (not CURSES and 'a<' or 'm>')
              or 'c<'] = utils.enclose_as_xml_tags
@@ -475,7 +472,7 @@ keys[not OSX and (not CURSES and 'cR' or 'cmr')
 keys[not OSX and (not CURSES and 'c|' or 'c\\')
              or 'm|'] = {gui_ce.enter_mode, 'filter_through'}
 -- Adeptsense.
-keys[not OSX and (not CURSES and 'c ' or 'c@')
+keys[not OSX and ((not CURSES or WIN32) and 'c ' or 'c@')
              or 'aesc'] = m_textadept.adeptsense.complete
 keys[not CURSES and 'ch' or 'mh'] = m_textadept.adeptsense.show_apidoc
 if CURSES then keys.mH = keys.mh end -- in case mh is used by GUI terminals
