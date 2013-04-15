@@ -80,7 +80,7 @@ static GtkAccelGroup *accel;
 #if __APPLE__
 static GtkOSXApplication *osxapp;
 #endif
-#elif CURSES && !_WIN32
+#elif (CURSES && !_WIN32)
 static struct termios term;
 #endif
 static void new_buffer(sptr_t);
@@ -588,6 +588,9 @@ static int lce_focus(lua_State *L) {
   free(clipboard), free(GPasteBuffer), GPasteBuffer = NULL;
   destroyCDKEntry(command_entry), command_entry = NULL;
   delwin(screen->window), destroyCDKScreen(screen), flushch();
+#if _WIN32
+  redrawwin(scintilla_get_window(focused_view)); // needed for pdcurses
+#endif
 #endif
   return 0;
 }
@@ -646,6 +649,9 @@ static int lce_show_completions(lua_State *L) {
   destroyCDKScroll(scrolled);
   delwin(screen->window), destroyCDKScreen(screen), flushch();
   free(items);
+#if _WIN32
+  redrawwin(scintilla_get_window(focused_view)); // needed for pdcurses
+#endif
   drawCDKEntry(command_entry, FALSE);
 #endif
   return 0;
@@ -697,6 +703,9 @@ static int lgui_dialog(lua_State *L) {
   char *out = gtdialog(type, argc, argv);
   lua_pushstring(L, out);
   free(out), free(argv);
+#if (CURSES && _WIN32)
+  redrawwin(scintilla_get_window(focused_view)); // needed for pdcurses
+#endif
   return 1;
 }
 
@@ -2313,62 +2322,37 @@ int main(int argc, char **argv) {
   act.sa_handler = resize, sigaction(SIGWINCH, &act, NULL);
 #else
   freopen("NUL", "w", stderr); // redirect stderr
+  PDC_save_key_modifiers(TRUE);
 #endif
 
-  int c = 0, shift, ctrl, alt, *mods[] = { &shift, &ctrl, &alt };
+  int c = 0;
 #if _WIN32
-  int keysyms[] = {
-    0, SCK_DOWN, SCK_UP, SCK_LEFT, SCK_RIGHT, SCK_HOME, SCK_BACK, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SCK_DELETE, SCK_INSERT, 0, 0, 0, 0, 0, 0,
-    SCK_NEXT, SCK_PRIOR, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    SCK_END
-  }, shift_keysyms[] = {
-    SCK_TAB, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, SCK_DELETE, 0, 0, SCK_END, 0, 0, 0, SCK_HOME,
-    SCK_INSERT, 0, SCK_LEFT, 0, 0, 0, 0, 0, 0, 0, 0, SCK_RIGHT
-  }, ctrl_keysyms[] = {
-    SCK_LEFT, SCK_RIGHT, SCK_PRIOR, SCK_NEXT, SCK_HOME, SCK_END, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    SCK_INSERT, 0, 0, SCK_UP, SCK_DOWN, SCK_TAB, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SCK_BACK, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SCK_DELETE, 0, SCK_RETURN
-  }, alt_keysyms[] = {
-    SCK_DELETE, SCK_INSERT, 0, 0, 0, SCK_TAB, '-', '=', SCK_HOME, SCK_PRIOR,
-    SCK_NEXT, SCK_END, SCK_UP, SCK_DOWN, SCK_RIGHT, SCK_LEFT, SCK_RETURN,
-    SCK_ESCAPE, '`', '[', ']', ';', '\'', ',', 0, '\\', SCK_BACK, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '/'
-  }; // '-', '=', SCK_RETURN, '`', ';', ',', '\\', '/' do not work for me
+  int keysyms[] = {0,SCK_DOWN,SCK_UP,SCK_LEFT,SCK_RIGHT,SCK_HOME,SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,SCK_INSERT,0,0,0,0,0,0,SCK_NEXT,SCK_PRIOR,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_END};
+  int shift_keysyms[] = {SCK_TAB,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,0,0,SCK_END,0,0,0,SCK_HOME,SCK_INSERT,0,SCK_LEFT,0,0,0,0,0,0,0,0,SCK_RIGHT,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_UP,SCK_DOWN};
+  int ctrl_keysyms[] = {SCK_LEFT,SCK_RIGHT,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_INSERT,0,0,SCK_UP,SCK_DOWN,SCK_TAB,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,0,SCK_RETURN};
+  int alt_keysyms[] = {SCK_DELETE,SCK_INSERT,0,0,0,SCK_TAB,'-','=',SCK_HOME,SCK_PRIOR,SCK_NEXT,SCK_END,SCK_UP,SCK_DOWN,SCK_RIGHT,SCK_LEFT,SCK_RETURN,SCK_ESCAPE,'`','[',']',';','\'',',','.','/',SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'\\'}; // SCK_RETURN, '\\' do not work for me
   while ((c = wgetch(scintilla_get_window(focused_view))) != ERR) {
-    shift = ctrl = alt = FALSE;
-    if (c >= KEY_MIN && c <= KEY_END && keysyms[c - KEY_MIN])
+    if (c < 0x20 && c != 8 && c != 9 && c != 13 && c != 27)
+      c = tolower(c ^ 0x40);
+    else if (c == 27)
+      c = SCK_ESCAPE;
+    else if (c >= KEY_MIN && c <= KEY_END && keysyms[c - KEY_MIN])
       c = keysyms[c - KEY_MIN];
-    else if (c >= KEY_F(1) && c <= KEY_F(48)) {
-      if (c > KEY_F(12)) *mods[(c - KEY_F(1)) / 12 - 1] = TRUE;
+    else if (c >= KEY_F(1) && c <= KEY_F(48))
       c = 0xFFBE + (c - KEY_F(1)) % 12; // use GDK keysym values for now
-    } else if (c >= KEY_BTAB && c <= KEY_SRIGHT && shift_keysyms[c - KEY_BTAB])
-      c = shift_keysyms[c - KEY_BTAB], shift = TRUE;
-    else if (c >= ALT_0 && c <= ALT_9)
-      c = '0' + (c - ALT_0), alt = TRUE;
-    else if (c >= ALT_A && c <= ALT_Z)
-      c = 'a' + (c - ALT_A), alt = TRUE;
+    else if (c >= KEY_BTAB && c <= KEY_SDOWN && shift_keysyms[c - KEY_BTAB])
+      c = shift_keysyms[c - KEY_BTAB];
     else if (c >= CTL_LEFT && c <= CTL_ENTER && ctrl_keysyms[c - CTL_LEFT])
-      c = ctrl_keysyms[c - CTL_LEFT], ctrl = TRUE;
+      c = ctrl_keysyms[c - CTL_LEFT];
     else if (c >= ALT_DEL && c <= ALT_BSLASH && alt_keysyms[c - ALT_DEL])
-      c = alt_keysyms[c - ALT_DEL], alt = TRUE;
-    else if (c == KEY_SUP || c == KEY_SDOWN)
-      c = (c == KEY_SUP) ? SCK_UP : SCK_DOWN, shift = TRUE;
-    else if (c < 0x20 && c != 8 && c != 9 && c != 13 && c != 27)
-      c = tolower(c ^ 0x40), ctrl = TRUE;
+      c = alt_keysyms[c - ALT_DEL];
+    int shift = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_SHIFT;
+    int ctrl = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_CONTROL;
+    int alt = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_ALT;
 #else
   TermKeyResult res;
   TermKeyKey key;
-  int keysyms[] = {
-    0, SCK_BACK, SCK_TAB, SCK_RETURN, SCK_ESCAPE, 0, 0, SCK_UP, SCK_DOWN,
-    SCK_LEFT, SCK_RIGHT, 0, 0, SCK_INSERT, SCK_DELETE, 0, SCK_PRIOR, SCK_NEXT,
-    SCK_HOME, SCK_END
-  };
+  int keysyms[] = {0,SCK_BACK,SCK_TAB,SCK_RETURN,SCK_ESCAPE,0,0,SCK_UP,SCK_DOWN,SCK_LEFT,SCK_RIGHT,0,0,SCK_INSERT,SCK_DELETE,0,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END};
   while ((res = termkey_waitkey(tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
     if (key.type == TERMKEY_TYPE_UNICODE)
@@ -2378,9 +2362,9 @@ int main(int argc, char **argv) {
     else if (key.type == TERMKEY_TYPE_KEYSYM &&
              key.code.sym >= 0 && key.code.sym <= TERMKEY_SYM_END)
       c = keysyms[key.code.sym];
-    shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
-    ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
-    alt = key.modifiers & TERMKEY_KEYMOD_ALT;
+    int shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
+    int ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
+    int alt = key.modifiers & TERMKEY_KEYMOD_ALT;
 #endif
     if (!lL_event(lua, "keypress", LUA_TNUMBER, c, LUA_TBOOLEAN, shift,
                   LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
