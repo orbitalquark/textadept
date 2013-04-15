@@ -672,14 +672,14 @@ static int lce__index(lua_State *L) {
 /** `command_entry.__newindex` Lua metatable. */
 static int lce__newindex(lua_State *L) {
   const char *key = lua_tostring(L, 2);
-  if (strcmp(key, "entry_text") == 0)
+  if (strcmp(key, "entry_text") == 0) {
 #if GTK
     gtk_entry_set_text(GTK_ENTRY(command_entry), lua_tostring(L, 3));
 #elif CURSES
+    if (command_entry) setCDKEntryValue(command_entry, lua_tostring(L, 3));
     fcopy(&command_text, lua_tostring(L, 3));
 #endif
-  else
-    lua_rawset(L, 1);
+  } else lua_rawset(L, 1);
   return 0;
 }
 
