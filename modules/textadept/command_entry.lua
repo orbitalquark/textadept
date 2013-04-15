@@ -61,16 +61,16 @@ end
 
 ---
 -- Exits the current key mode, closes the command entry, and calls function *f*
--- with the command entry text as an argument.
+-- (if given) with the command entry text as an argument.
 -- This is useful for binding keys to exit a command entry mode and perform an
 -- action with the entered text.
--- @param f The function to call. It should accept the command entry text as an
---   argument.
+-- @param f Optional function to call. It should accept the command entry text
+--   as an argument.
 -- @usage keys['\n'] = {gui.command_entry.finish_mode, gui.print}
 -- @name finish_mode
 function M.finish_mode(f)
   M.enter_mode(nil)
-  f(M.entry_text)
+  if f then f(M.entry_text) end
   if CURSES then return false end -- propagate to exit CDK entry on Enter
 end
 
