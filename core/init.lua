@@ -4,7 +4,6 @@ _RELEASE = "Textadept 6.5"
 
 package.path = _HOME..'/core/?.lua;'..package.path
 
-if jit then require 'compat' end -- compatibility for LuaJIT
 _SCINTILLA = require 'iface'
 args = require 'args'
 _L = require 'locale'
@@ -19,6 +18,9 @@ _LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers'
 gui.set_theme()
 
 _M = {} -- modules table
+
+-- LuaJIT compatibility.
+if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 
 --[[ This comment is for LuaDoc.
 ---
