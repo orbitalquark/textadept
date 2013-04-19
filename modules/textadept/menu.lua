@@ -216,7 +216,8 @@ M.menubar = {
     {_L['_About'],
       {gui.dialog, 'ok-msgbox', '--title', 'Textadept', '--text', _RELEASE,
        '--informative-text', 'Copyright © 2007-2013 Mitchell. See LICENSE\n'..
-       'http://foicica.com/textadept', '--button1', _L['_OK'], '--no-cancel'}},
+       'http://foicica.com/textadept', '--button1', _L['_OK'], '--no-cancel',
+       '--icon-file', _HOME..'/core/images/ta_64x64.png'}},
   },
 }
 
