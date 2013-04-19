@@ -74,3 +74,15 @@ The standard input (stdin) for shell commands is determined as follows:
 * If no text is selected, the entire buffer is used.
 
 The input text is replaced with the standard output (stdout) of the command.
+
+## Remote Control
+
+Since Textadept can execute arbitrary Lua code passed via the `-e` and
+`--execute` command line switches, a side-effect of [single instance][]
+functionality on the platforms that support it is that you can remotely control
+the original instance. For example:
+
+    ta ~/.textadept/init.lua &
+    ta -e "events.emit(events.FIND, 'require')"
+
+[single instance]: 02_Installation.html#Single.Instance
