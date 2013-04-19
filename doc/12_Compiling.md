@@ -181,6 +181,8 @@ made to CDK are as follows:
   on \*nix platforms since Windows does not have them.
 * *cdk_util.h* `#define`s `Beep` as `CDKBeep` on Windows platforms since Beep is
   already defined.
-* The `deleteFileCB` routine in *fselect.c* has been deactivated.
+* The `baseName` and `dirName` functions in *cdk.c* recognize Window's '\'
+  directory separator.
+* The `deleteFileCB` function in *fselect.c* has been deactivated.
 
 [CDK]: http://invisible-island.net/cdk/
