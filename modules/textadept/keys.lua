@@ -344,7 +344,7 @@ local utils = M.utils
 -- For ncurses (Linux, Mac OSX, BSD):
 --   * The only Control keys recognized are 'ca'-'cz', 'c@', 'c\\', 'c]', 'c^',
 --     and 'c_'.
---   * Control+Shift and Control+Shift+Meta keys are not recognized.
+--   * Control+Shift and Control+Meta+Shift keys are not recognized.
 --   * Modifiers for function keys F1-F12 are not recognized.
 -- For pdcurses (Win32):
 --   * Control+Shift+Letter keys are not recognized. Other Control+Shift keys
