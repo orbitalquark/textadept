@@ -52,7 +52,7 @@ module('gui.command_entry')]]
 -- @name enter_mode
 function M.enter_mode(mode)
   keys.MODE = mode
-  if mode then keys[mode]['esc'] = M.enter_mode end
+  if mode and not keys[mode]['esc'] then keys[mode]['esc'] = M.enter_mode end
   -- In curses, M.focus() does not return immediately, so the key sequence that
   -- called M.focus() is still on the keychain. Clear it.
   if CURSES then keys.clear_key_sequence() end
