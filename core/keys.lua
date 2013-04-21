@@ -182,8 +182,6 @@ M.KEYSYMS = {
   [0xFFBE] = 'f1',  [0xFFBF] = 'f2',  [0xFFC0] = 'f3',  [0xFFC1] = 'f4',
   [0xFFC2] = 'f5',  [0xFFC3] = 'f6',  [0xFFC4] = 'f7',  [0xFFC5] = 'f8',
   [0xFFC6] = 'f9',  [0xFFC7] = 'f10', [0xFFC8] = 'f11', [0xFFC9] = 'f12',
-  -- Mac OSX.
-  [16777232] = 'fn', -- GTKOSX does not recognize Fn-key combinations, just this
 }
 
 -- The current key sequence.
