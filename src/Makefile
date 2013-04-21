@@ -61,7 +61,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
                          --libs gtk+-2.0 gmodule-2.0 gtk-mac-integration) \
                          -framework Cocoa
     else
-      plat_flag = -DCURSES
+      plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
       curses_libs = -lncurses
     endif
     libluajit = libluajit.osx.a
