@@ -78,7 +78,7 @@ static Scintilla *focused_view;
 static GtkWidget *window, *menubar, *statusbar[2];
 static GtkAccelGroup *accel;
 #if __APPLE__
-static GtkOSXApplication *osxapp;
+static GtkosxApplication *osxapp;
 #endif
 #elif (CURSES && !_WIN32)
 static struct termios term;
@@ -982,7 +982,7 @@ static int lgui__newindex(lua_State *L) {
     gtk_box_reorder_child(GTK_BOX(vbox), new_menubar, 0);
     gtk_widget_show_all(new_menubar);
 #if (__APPLE__ && !CURSES)
-    gtk_osxapplication_set_menu_bar(osxapp, GTK_MENU_SHELL(new_menubar));
+    gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(new_menubar));
     gtk_widget_hide(new_menubar);
 #endif
 #endif
@@ -1713,7 +1713,7 @@ static int w_exit(GtkWidget*_, GdkEventAny*__, void*___) {
  * Signal for opening files from OSX.
  * Generates an 'appleevent_odoc' event for each document sent.
  */
-static int w_open_osx(GtkOSXApplication*_, char *path, void*__) {
+static int w_open_osx(GtkosxApplication*_, char *path, void*__) {
   return (lL_event(lua, "appleevent_odoc", LUA_TSTRING, path, -1), TRUE);
 }
 
@@ -1721,7 +1721,7 @@ static int w_open_osx(GtkOSXApplication*_, char *path, void*__) {
  * Signal for block terminating Textadept from OSX.
  * Generates a 'quit' event.
  */
-static int w_exit_osx(GtkOSXApplication*_, void*__) {
+static int w_exit_osx(GtkosxApplication*_, void*__) {
   return !lL_event(lua, "quit", -1);
 }
 
@@ -1730,7 +1730,7 @@ static int w_exit_osx(GtkOSXApplication*_, void*__) {
  * Closes the Lua state and releases resources.
  * @see l_close
  */
-static void w_quit_osx(GtkOSXApplication*_, void*__) {
+static void w_quit_osx(GtkosxApplication*_, void*__) {
   l_close(lua);
   scintilla_release_resources();
   g_object_unref(osxapp);
@@ -2144,7 +2144,7 @@ static void new_window() {
   accel = gtk_accel_group_new();
 
 #if (__APPLE__ && !CURSES)
-  gtk_osxapplication_set_use_quartz_accelerators(osxapp, FALSE);
+  gtkosx_application_set_use_quartz_accelerators(osxapp, FALSE);
   osx_signal(osxapp, "NSApplicationOpenFile", w_open_osx);
   osx_signal(osxapp, "NSApplicationBlockTermination", w_exit_osx);
   osx_signal(osxapp, "NSApplicationWillTerminate", w_quit_osx);
@@ -2253,8 +2253,8 @@ int main(int argc, char **argv) {
   GetModuleFileName(0, textadept_home, FILENAME_MAX);
   if ((last_slash = strrchr(textadept_home, '\\'))) *last_slash = '\0';
 #elif (__APPLE__ && !CURSES)
-  osxapp = g_object_new(GTK_TYPE_OSX_APPLICATION, NULL);
-  char *path = quartz_application_get_resource_path();
+  osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
+  char *path = gtkosx_application_get_resource_path();
   textadept_home = g_filename_from_utf8((const char *)path, -1, NULL, NULL,
                                         NULL);
   g_free(path);
@@ -2294,7 +2294,7 @@ int main(int argc, char **argv) {
   new_window();
   lL_dofile(lua, "init.lua");
 #if (__APPLE__ && !CURSES)
-  gtk_osxapplication_ready(osxapp);
+  gtkosx_application_ready(osxapp);
 #endif
 
 #if GTK

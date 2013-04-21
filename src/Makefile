@@ -58,7 +58,8 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
                           --cflags gtk+-2.0)
       gtk_libs = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
                          pkg-config --define-variable=prefix=gtkosx \
-                         --libs gtk+-2.0) -framework Cocoa -lgtkmacintegration
+                         --libs gtk+-2.0 gmodule-2.0 gtk-mac-integration) \
+                         -framework Cocoa
     else
       plat_flag = -DCURSES
       curses_libs = -lncurses

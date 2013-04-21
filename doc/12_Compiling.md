@@ -55,7 +55,7 @@ Compiling Textadept on Mac OSX is no longer supported. The preferred way is
 cross-compiling from Linux. To do so, you will need my [GTK+ for OSX bundle][]
 and the [Apple Cross-compiler][] binaries.
 
-[GTK+ for OSX bundle]: download/gtkosx-2.24.9.zip
+[GTK+ for OSX bundle]: download/gtkosx-2.24.16.zip
 [Apple Cross-compiler]: https://launchpad.net/~flosoft/+archive/cross-apple
 
 ## Compiling
