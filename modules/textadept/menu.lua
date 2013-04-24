@@ -66,7 +66,7 @@ M.menubar = {
     {_L['Select _All'], buffer.select_all},
     SEPARATOR,
     {_L['_Match Brace'], m_editing.match_brace},
-    {_L['Complete _Word'], {m_editing.autocomplete_word, '%w_'}},
+    {_L['Complete _Word'], m_editing.autocomplete_word},
     {_L['_Highlight Word'], m_editing.highlight_word},
     {_L['Toggle _Block Comment'], m_editing.block_comment},
     {_L['T_ranspose Characters'], m_editing.transpose_chars},

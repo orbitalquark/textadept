@@ -46,22 +46,6 @@ The source version contains all the files necessary for compiling Textadept.
 - - -
 
 **Q:**
-Autocompletion does not work for my language. Why not?
-
-**A:**
-*modules/textadept/key_commands.lua* calls
-[`_M.textadept.editing.autocomplete_word()`][] with `'%w_'`, which in [Lua][] is
-all ASCII alphanumeric characters and underscores. You can add character ranges
-in `'\xXX-\xXX'` or `'\ddd-\ddd'` [format][] (e.g. `'%w_\127-\255'`).
-Unfortunately this probably will not work for unicode.
-
-[`_M.textadept.editing.autocomplete_word()`]: api/_M.textadept.editing.html#autocomplete_word
-[Lua]: 14_Appendix.html#Lua.Patterns
-[Format]: http://www.lua.org/manual/5.2/manual.html#3.1
-
-- - -
-
-**Q:**
 When I click the "Compile" or "Run" menu item (or execute the key command),
 either nothing happens or the wrong command is executed. How can I tell
 Textadept which command to run?
