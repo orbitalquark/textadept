@@ -2785,6 +2785,14 @@ function check_global(buffer) end
 function delete(buffer) end
 
 ---
+-- Creates and returns a new buffer.
+-- Emits a `BUFFER_NEW` event.
+-- @return the new buffer.
+-- @class function
+-- @see events.BUFFER_NEW
+function new() end
+
+---
 -- Returns the range of text from *start_pos* to *end_pos* in the buffer.
 -- @param buffer The global buffer.
 -- @param start_pos The start position of the range of text to get in *buffer*.

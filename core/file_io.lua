@@ -173,7 +173,7 @@ function io.open_file(utf8_filenames)
     elseif lfs.attributes(filename) then
       error(err)
     end
-    local buffer = new_buffer()
+    local buffer = buffer.new()
     -- Tries to detect character encoding and convert text from it to UTF-8.
     local encoding, encoding_bom = detect_encoding(text)
     if encoding ~= 'binary' then

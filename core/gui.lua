@@ -34,7 +34,7 @@ local function _print(buffer_type, ...)
         if buffer._type == buffer_type then view:goto_buffer(i) break end
       end
       if buffer._type ~= buffer_type then
-        new_buffer()._type = buffer_type
+        buffer.new()._type = buffer_type
         events.emit(events.FILE_OPENED)
       end
     end

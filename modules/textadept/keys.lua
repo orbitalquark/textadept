@@ -364,7 +364,7 @@ local utils = M.utils
 -- Control, Meta, and 'a' = 'cma'
 
 -- File.
-keys[not OSX and (not CURSES and 'cn' or 'cmn') or 'mn'] = new_buffer
+keys[not OSX and (not CURSES and 'cn' or 'cmn') or 'mn'] = buffer.new
 keys[not OSX and 'co' or 'mo'] = io.open_file
 keys[not OSX and not CURSES and 'cao' or 'cmo'] = io.open_recent_file
 keys[not OSX and (not CURSES and 'cO' or 'mo') or 'mO'] = buffer.reload

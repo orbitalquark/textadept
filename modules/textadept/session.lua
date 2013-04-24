@@ -62,7 +62,7 @@ function M.load(filename)
           not_found[#not_found + 1] = filename
         end
       else
-        new_buffer()._type = filename
+        buffer.new()._type = filename
         events.emit(events.FILE_OPENED, filename)
       end
       -- Restore saved buffer selection and view.

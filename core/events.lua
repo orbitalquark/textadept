@@ -53,7 +53,7 @@ local M = {}
 --   Emitted by [`buffer:delete()`][].
 -- @field BUFFER_NEW (string)
 --   Called after creating a new buffer.
---   Emitted on startup and by [`new_buffer()`][].
+--   Emitted on startup and by [`buffer.new()`][].
 -- @field CALL_TIP_CLICK (string)
 --   Called when clicking on a calltip.
 --   Arguments:
@@ -244,7 +244,7 @@ local M = {}
 --
 -- [`buffer:auto_c_cancel()`]: buffer.html#auto_c_cancel
 -- [`view:goto_buffer()`]: view.html#goto_buffer
--- [`new_buffer()`]: _G.html#new_buffer
+-- [`buffer.new()`]: buffer.html#new
 -- [`buffer:delete()`]: buffer.html#delete
 -- [dwell period]: buffer.html#mouse_dwell_time
 -- [`gui.menu()`]: gui.html#menu
