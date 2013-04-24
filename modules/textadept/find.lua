@@ -76,8 +76,6 @@ M.in_files_label_text = not CURSES and _L['_In files'] or _L['Files(F4)']
 local events, events_connect = events, events.connect
 events.FIND_WRAPPED = 'find_wrapped'
 
-local MARK_FIND = _SCINTILLA.next_marker_number()
-local MARK_FIND_COLOR = 0x4D9999
 local preferred_view
 
 ---
@@ -227,46 +225,36 @@ events_connect(events.FIND, find_)
 -- Flags other than `SCFIND_MATCHCASE` are ignored.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
-local function find_incremental(text, next)
+-- @param anchor Flag indicating whether or not to search from the current
+--   position.
+local function find_incremental(text, next, anchor)
+  if anchor then
+    M.incremental_start = buffer.current_pos + (next and 1 or -1)
+  end
   buffer:goto_pos(M.incremental_start or 0)
   find_(text, next, M.match_case and c.SCFIND_MATCHCASE or 0)
 end
 
 ---
 -- Begins an incremental search using the command entry if *text* is `nil`;
--- otherwise continues an incremental search by searching for the next instance
--- of string *text*.
+-- otherwise continues an incremental search by searching for the next or
+-- previous instance of string *text* depending on boolean *next*.
+-- If *anchor* is `true`, searches for *text* starting from the current position
+-- instead of the position where incremental search began at.
 -- Only the `match_case` find option is recognized. Normal command entry
 -- functionality is unavailable until the search is finished by pressing `Esc`
 -- (`⎋` on Mac OSX | `Esc` in curses).
 -- @param text The text to incrementally search for, or `nil` to begin an
 --   incremental search.
+-- @param next Flag indicating whether or not the search direction is forward.
+-- @param anchor Optional flag indicating whether or not to start searching from
+--   the current position. The default value is `false`.
 -- @name find_incremental
-function M.find_incremental(text)
-  if text then find_incremental(text, true) return end
+function M.find_incremental(text, next, anchor)
+  if text then find_incremental(text, next, anchor) return end
   M.incremental_start = buffer.current_pos
   gui.command_entry.entry_text = ''
   gui.command_entry.enter_mode('find_incremental')
-end
-
----
--- Continues an incremental search by searching for the next match starting from
--- the current position.
--- @see find_incremental
--- @name find_incremental_next
-function M.find_incremental_next()
-  M.incremental_start = buffer.current_pos + 1
-  find_incremental(gui.command_entry.entry_text, true)
-end
-
----
--- Continues an incremental search by searching for the previous match starting
--- from the current position.
--- @see find_incremental
--- @name find_incremental_prev
-function M.find_incremental_prev()
-  M.incremental_start = buffer.current_pos - 1
-  find_incremental(gui.command_entry.entry_text, false)
 end
 
 -- Optimize for speed.
@@ -323,6 +311,7 @@ local function replace(rtext)
 end
 events_connect(events.REPLACE, replace)
 
+local MARK_FIND = _SCINTILLA.next_marker_number()
 -- Replaces all found text.
 -- If any text is selected, all found text in that selection is replaced.
 -- This function ignores "Find in Files".
@@ -368,63 +357,54 @@ local function replace_all(ftext, rtext)
 end
 events_connect(events.REPLACE_ALL, replace_all)
 
--- When the user double-clicks a found file, go to the line in the file the text
--- was found at.
--- @param pos The position of the caret.
--- @param line_num The line double-clicked.
-local function goto_file(pos, line_num)
-  if buffer._type == _L['[Files Found Buffer]'] then
-    line = buffer:get_line(line_num)
-    local file, file_line_num = line:match('^(.+):(%d+):.+$')
-    if file and file_line_num then
-      buffer:marker_delete_all(MARK_FIND)
-      buffer.marker_back[MARK_FIND] = MARK_FIND_COLOR
-      buffer:marker_add(line_num, MARK_FIND)
-      buffer:goto_pos(buffer.current_pos)
-      gui.goto_file(file, true, preferred_view)
-      _M.textadept.editing.goto_line(file_line_num)
-    end
-  end
-end
-events_connect(events.DOUBLE_CLICK, goto_file)
-
+-- Returns whether or not the given buffer is a files found buffer.
+local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 ---
--- If *next* is `true`, goes to the next file found, relative to the file on the
--- current line in the results list. Otherwise goes to the previous file found.
--- @param next Optional flag indicating whether or not to go to the next file.
---   The default value is `false`.
--- @name goto_file_in_list
-function M.goto_file_in_list(next)
-  local orig_view = _VIEWS[view]
-  for _, buffer in ipairs(_BUFFERS) do
-    if buffer._type == _L['[Files Found Buffer]'] then
-      for j, view in ipairs(_VIEWS) do
-        if view.buffer == buffer then
-          gui.goto_view(j)
-          local orig_line = buffer:line_from_position(buffer.current_pos)
-          local line = orig_line
-          while true do
-            line = line + (next and 1 or -1)
-            if line > buffer.line_count - 1 then line = 0 end
-            if line < 0 then line = buffer.line_count - 1 end
-            -- Prevent infinite loops.
-            if line == orig_line then gui.goto_view(orig_view) return end
-            if buffer:get_line(line):match('^(.+):(%d+):.+$') then
-              buffer:goto_line(line)
-              goto_file(buffer.current_pos, line)
-              return
-            end
-          end
-        end
-      end
-    end
+-- Goes to the source of the find in files search result on line number *line*
+-- in the files found buffer, or if `nil`, the next or previous search result
+-- depending on boolean *next*.
+-- @param line The line number in the files found buffer that contains the
+--   search result to go to.
+-- @param next Optional flag indicating whether to go to the next search result
+--   or the previous one. Only applicable when *line* is `nil` or `false`.
+-- @name goto_file_found
+function M.goto_file_found(line, next)
+  local cur_buf, ff_view, ff_buf = _BUFFERS[buffer], nil, nil
+  for i = 1, #_VIEWS do
+    if is_ff_buf(_VIEWS[i].buffer) then ff_view = i break end
   end
-end
+  for i = 1, #_BUFFERS do
+    if is_ff_buf(_BUFFERS[i]) then ff_buf = i break end
+  end
+  if not ff_view and not ff_buf then return end
+  if ff_view then gui.goto_view(ff_view) else view:goto_buffer(ff_buf) end
 
-if buffer then buffer.marker_back[MARK_FIND] = MARK_FIND_COLOR end
-events_connect(events.VIEW_NEW, function()
-  buffer.marker_back[MARK_FIND] = MARK_FIND_COLOR
-end)
+  -- If not line was given, find the next search result.
+  if not line and next ~= nil then
+    local buffer = buffer
+    if next then buffer:line_end() else buffer:home() end
+    buffer:search_anchor()
+    local f = buffer['search_'..(next and 'next' or 'prev')]
+    local pos = f(buffer, _SCINTILLA.constants.SCFIND_REGEXP, '^.+:[0-9]+:.+$')
+    if pos == -1 then
+      buffer:goto_line(next and 0 or buffer.line_count)
+      buffer:search_anchor()
+      pos = f(buffer, _SCINTILLA.constants.SCFIND_REGEXP, '^.+:[0-9]+:.+$')
+    end
+    if pos == -1 then if CURSES then view:goto_buffer(cur_buf) end return end
+    line = buffer:line_from_position(pos)
+  end
+  buffer:goto_line(line)
+
+  -- Goto the source of the search result.
+  local file, line_num = buffer:get_cur_line():match('^(.+):(%d+):.+$')
+  if not file then if CURSES then view:goto_buffer(cur_buf) end return end
+  _M.textadept.editing.select_line()
+  gui.goto_file(file, true, preferred_view)
+  _M.textadept.editing.goto_line(line_num)
+end
+events_connect(events.DOUBLE_CLICK,
+               function(pos, line) M.goto_file_found(line) end)
 
 --[[ The functions below are Lua C functions.
 

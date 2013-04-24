@@ -33,8 +33,8 @@ completions. Use the arrow keys to make a selection and press `Enter` (`↩` |
 ### Extending
 
 You can extend the command entry to do more than enter Lua commands. An
-example of this is [incremental search][]. See *modules/textadept/find.lua* for
-the implementation.
+example of this is [incremental search][]. See *modules/textadept/find.lua* and
+*modules/textadept/keys.lua* for the implementation.
 
 [incremental search]: api/gui.find.html#find_incremental
 
