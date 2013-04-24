@@ -30,13 +30,8 @@ local m_bookmarks, Msnippets = m_textadept.bookmarks, m_textadept.snippets
 local utils = m_textadept.keys.utils
 local SEPARATOR, c = {''}, _SCINTILLA.constants
 
----
--- Defines the default main menubar.
--- Changing this field does not change the menubar. Use `set_menubar()` instead.
--- @see set_menubar
--- @class table
--- @name menubar
-M.menubar = {
+-- The default main menubar.
+local menubar = {
   { title = _L['_File'],
     {_L['_New'], buffer.new},
     {_L['_Open'], io.open_file},
@@ -221,14 +216,8 @@ M.menubar = {
   },
 }
 
----
--- Defines the default right-click context menu.
--- Changing this field does not change the context menu. Use `set_contextmenu()`
--- instead.
--- @see set_contextmenu
--- @class table
--- @name context_menu
-M.context_menu = {
+-- The default right-click context menu.
+local context_menu = {
   {_L['_Undo'], buffer.undo},
   {_L['_Redo'], buffer.redo},
   SEPARATOR,
@@ -313,9 +302,9 @@ function M.set_menubar(menubar)
   end
   gui.menubar = _menubar
   items, commands = {}, {}
-  build_command_tables(M.menubar, nil, items, commands)
+  build_command_tables(menubar, nil, items, commands)
 end
-M.set_menubar(M.menubar)
+M.set_menubar(menubar)
 
 ---
 -- Sets `gui.context_menu` from *menu*, an ordered list of menu items.
@@ -331,7 +320,7 @@ function M.set_contextmenu(menu)
   contextmenu_actions = {}
   gui.context_menu = gui.menu(read_menu_table(menu, true))
 end
-if not CURSES then M.set_contextmenu(M.context_menu) end
+if not CURSES then M.set_contextmenu(context_menu) end
 
 local columns = {_L['Command'], _L['Key Command']}
 ---
@@ -358,7 +347,7 @@ if not CURSES then
   -- Set a language-specific context menu or the default one.
   local function set_language_contextmenu()
     local lang = _G.buffer:get_lexer(true)
-    M.set_contextmenu(_M[lang] and _M[lang].context_menu or M.context_menu)
+    M.set_contextmenu(_M[lang] and _M[lang].context_menu or context_menu)
   end
   events_connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
   events_connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
