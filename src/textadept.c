@@ -2163,10 +2163,6 @@ static void new_window() {
 
   gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), FALSE, FALSE, 5);
 
-  command_entry = gtk_entry_new();
-  signal(command_entry, "key-press-event", c_keypress);
-  gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
-
   command_entry_completion = gtk_entry_completion_new();
   signal(command_entry_completion, "match-selected", cc_matchselected);
   gtk_entry_completion_set_match_func(command_entry_completion, cc_matchfunc,
@@ -2176,8 +2172,12 @@ static void new_window() {
   cc_store = gtk_list_store_new(1, G_TYPE_STRING);
   gtk_entry_completion_set_model(command_entry_completion,
                                  GTK_TREE_MODEL(cc_store));
-  gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
   g_object_unref(cc_store);
+
+  command_entry = gtk_entry_new();
+  gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
+  signal(command_entry, "key-press-event", c_keypress);
+  gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
 
   GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
