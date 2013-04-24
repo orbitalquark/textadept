@@ -182,10 +182,10 @@ then "Replace All".
 `Ctrl+Shift+F` brings up Find in Files (`⌘⇧F` on Mac OSX | none in curses) and
 will prompt for a directory to search. The results are displayed in a new
 buffer. Double-clicking a search result jumps to it in the file. You can also
-use the `Ctrl+Alt+G` and `Ctrl+Alt+Shift+G` (`^⌘G` and `^⌘⇧G` on Mac OSX | none
-in curses) key bindings. Replace in Files is not supported. You will have to
-"Find in Files" first, and then "Replace All" for each file a result is found
-in. The "Match Case", "Whole Word", and "Lua pattern" flags still apply.
+use the `Ctrl+Alt+G` and `Ctrl+Alt+Shift+G` (`^⌘G` and `^⌘⇧G` | none) key
+bindings. Replace in Files is not supported. You will have to "Find in Files"
+first, and then "Replace All" for each file a result is found in. The "Match
+Case", "Whole Word", and "Lua pattern" flags still apply.
 
 _Warning_: currently, the only way to specify a file-type filter is through the
 [find API][] and even though the default filter excludes common binary files

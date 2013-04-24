@@ -461,8 +461,8 @@ keys[not OSX and not CURSES and 'caf' or 'cmf'] = gui_find.find_incremental
 if not CURSES then keys[not OSX and 'cF' or 'mF'] = utils.find_in_files end
 -- Find in Files is ai when find pane is focused in GUI.
 if not CURSES then
-  keys[not OSX and 'cag' or 'cmg'] = {gui_find.goto_file_in_list, true}
-  keys[not OSX and 'caG' or 'cmG'] = {gui_find.goto_file_in_list, false}
+  keys[not OSX and 'cag' or 'cmg'] = {gui_find.goto_file_found, false, true}
+  keys[not OSX and 'caG' or 'cmG'] = {gui_find.goto_file_found, false, false}
 end
 keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
@@ -607,16 +607,20 @@ keys.filter_through = {
   ['\n'] = {gui_ce.finish_mode, m_editing.filter_through},
 }
 keys.find_incremental = {
-  ['\n'] = gui_find.find_incremental_next,
-  ['cr'] = gui_find.find_incremental_prev,
+  ['\n'] = function()
+    gui_find.find_incremental(gui_ce.entry_text, true, true)
+  end,
+  ['cr'] = function()
+    gui_find.find_incremental(gui_ce.entry_text, false, true)
+  end,
   ['\b'] = function()
-    gui_find.find_incremental(gui_ce.entry_text:sub(1, -2))
+    gui_find.find_incremental(gui_ce.entry_text:sub(1, -2), true)
     return false -- propagate
   end
 }
 setmetatable(keys.find_incremental, {__index = function(t, k)
                if #k > 1 and k:find('^[cams]*.+$') then return end
-               gui_find.find_incremental(gui_ce.entry_text..k)
+               gui_find.find_incremental(gui_ce.entry_text..k, true)
              end})
 
 return M
