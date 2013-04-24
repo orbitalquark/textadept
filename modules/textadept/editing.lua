@@ -27,16 +27,9 @@ local M = {}
 -- @field STRIP_WHITESPACE_ON_SAVE (bool)
 --   Strip trailing whitespace on file save.
 --   The default value is `true`.
--- @field MARK_HIGHLIGHT_BACK (number)
---   The background color, in "0xBBGGRR" format, used for a line containing the
---   [highlighted word](#highlight_word).
 -- @field INDIC_HIGHLIGHT_BACK (number)
 --   The color, in "0xBBGGRR" format, used for an indicator for the
 --   [highlighted word](#highlight_word).
--- @field INDIC_HIGHLIGHT_ALPHA (number)
---   The alpha value, ranging from `0` (transparent) to `255` (opaque) used for
---   an indicator for the [highlighted word](#highlight_word).
---   The default value is `100`.
 module('_M.textadept.editing')]]
 
 M.AUTOPAIR = true
@@ -44,10 +37,7 @@ M.HIGHLIGHT_BRACES = true
 M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
 M.STRIP_WHITESPACE_ON_SAVE = true
-M.MARK_HIGHLIGHT_BACK = not CURSES and (buffer and buffer.caret_line_back or
-                                        0xEEEEEE) or 0x00FFFF
 M.INDIC_HIGHLIGHT_BACK = not CURSES and 0x4D99E6 or 0x00FFFF
-M.INDIC_HIGHLIGHT_ALPHA = 100
 
 ---
 -- Map of lexer names to line comment prefix strings for programming languages,
@@ -503,13 +493,11 @@ function M.convert_indentation()
   buffer:end_undo_action()
 end
 
-local MARK_HIGHLIGHT = _SCINTILLA.next_marker_number()
 local INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 -- Clears highlighted word indicators and markers.
 local function clear_highlighted_words()
   local buffer = buffer
-  buffer:marker_delete_all(MARK_HIGHLIGHT)
   buffer.indicator_current = INDIC_HIGHLIGHT
   buffer:indicator_clear_range(0, buffer.length)
 end
@@ -518,8 +506,7 @@ events_connect(events.KEYPRESS, function(code)
 end)
 
 ---
--- Highlights all occurrences of the selected text or the current word and adds
--- markers to the lines they are on.
+-- Highlights all occurrences of the selected text or the current word.
 -- @see buffer.word_chars
 -- @name highlight_word
 function M.highlight_word()
@@ -536,23 +523,19 @@ function M.highlight_word()
   buffer.target_start, buffer.target_end = 0, buffer.length
   while buffer:search_in_target(word) > -1 do
     local len = buffer.target_end - buffer.target_start
-    buffer:marker_add(buffer:line_from_position(buffer.target_start),
-                      MARK_HIGHLIGHT)
     buffer:indicator_fill_range(buffer.target_start, len)
     buffer.target_start, buffer.target_end = buffer.target_end, buffer.length
   end
   buffer:set_sel(s, e)
 end
 
-local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for highlighted word indicators and markers.
 local function set_highlight_properties()
   local buffer = buffer
-  if CURSES then buffer:marker_define(MARK_HIGHLIGHT, CURSES_MARK) end
-  buffer.marker_back[MARK_HIGHLIGHT] = M.MARK_HIGHLIGHT_BACK
   buffer.indic_fore[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_BACK
   buffer.indic_style[INDIC_HIGHLIGHT] = _SCINTILLA.constants.INDIC_ROUNDBOX
-  buffer.indic_alpha[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_ALPHA
+  buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
+  if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
 end
 if buffer then set_highlight_properties() end
 events_connect(events.VIEW_NEW, set_highlight_properties)
