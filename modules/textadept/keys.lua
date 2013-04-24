@@ -390,7 +390,7 @@ keys[not OSX and (not CURSES and 'adel' or 'mdel')
 keys[not OSX and not CURSES and 'ca' or 'ma'] = buffer.select_all
 keys[not CURSES and 'cm' or 'mm'] = m_editing.match_brace
 keys[not OSX and (not CURSES and 'c\n' or 'cmj')
-             or 'cesc'] = {m_editing.autocomplete_word, '%w_'}
+             or 'cesc'] = m_editing.autocomplete_word
 if CURSES and WIN32 then keys['c\r'] = keys['cmj'] end
 if not CURSES then
   keys[not OSX and 'caH' or 'mH'] = m_editing.highlight_word

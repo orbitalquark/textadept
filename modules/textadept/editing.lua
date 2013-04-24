@@ -221,30 +221,26 @@ end
 -- Displays an autocompletion list, built from the set of *default_words* and
 -- existing words in the buffer, for the word behind the caret, returning `true`
 -- if completions were found.
--- *word_chars* contains a set of word characters.
--- @param word_chars String of characters considered to be part of words. Since
---   this string is used in a Lua pattern character set, character classes and
---   ranges may be used.
 -- @param default_words Optional list of words considered to be in the buffer,
 --   even if they are not. Words may contain [registered images][].
 --
 -- [registered images]: buffer.html#register_image
 -- @return `true` if there were completions to show; `false` otherwise.
--- @usage _M.textadept.editing.autocomplete_word('%w_')
+-- @see buffer.word_chars
 -- @name autocomplete_word
-function M.autocomplete_word(word_chars, default_words)
+function M.autocomplete_word(default_words)
   local buffer = buffer
   local pos, length = buffer.current_pos, buffer.length
   local completions, c_list = {}, {}
   local buffer_text = buffer:get_text(buffer.length)
-  local root = buffer_text:sub(1, pos):match('['..word_chars..']+$')
+  local root = buffer_text:sub(1, pos):match('['..buffer.word_chars..']+$')
   if not root or root == '' then return end
   for _, word in ipairs(default_words or {}) do
     if word:match('^'..root) then
       c_list[#c_list + 1], completions[word:match('^(.-)%??%d*$')] = word, true
     end
   end
-  local patt = '^['..word_chars..']+'
+  local patt = '^['..buffer.word_chars..']+'
   buffer.target_start, buffer.target_end = 0, buffer.length
   buffer.search_flags = _SCINTILLA.constants.SCFIND_WORDSTART
   if not buffer.auto_c_ignore_case then
