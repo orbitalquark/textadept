@@ -1121,6 +1121,13 @@ static int lbuffer_delete(lua_State *L) {
   return 0;
 }
 
+/** `_G.buffer_new()` Lua function. */
+static int lbuffer_new(lua_State *L) {
+  new_buffer(0);
+  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
+  return (lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);
+}
+
 /** `buffer.text_range()` Lua function. */
 static int lbuffer_text_range(lua_State *L) {
   lL_globaldoccheck(L, 1);
@@ -1294,6 +1301,7 @@ static void lL_adddoc(lua_State *L, sptr_t doc) {
   lua_pushvalue(L, -1), lua_setfield(L, -3, "doc_pointer");
   l_setcfunction(L, -2, "check_global", lbuffer_check_global);
   l_setcfunction(L, -2, "delete", lbuffer_delete);
+  l_setcfunction(L, -2, "new", lbuffer_new);
   l_setcfunction(L, -2, "text_range", lbuffer_text_range);
   l_setmetatable(L, -2, "ta_buffer", lbuf_property, lbuf_property);
   // bs[userdata] = b, bs[#bs + 1] = b, bs[b] = #bs
@@ -1323,13 +1331,6 @@ static void new_buffer(sptr_t doc) {
   }
   l_setglobaldoc(lua, doc);
   lL_event(lua, "buffer_new", -1);
-}
-
-/** `_G.buffer_new()` Lua function. */
-static int lbuffer_new(lua_State *L) {
-  new_buffer(0);
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  return (lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);
 }
 
 /** `_G.quit()` Lua function. */
@@ -1519,7 +1520,6 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   lua_setglobal(L, "gui");
 
   lua_getglobal(L, "_G");
-  l_setcfunction(L, -1, "new_buffer", lbuffer_new);
   l_setcfunction(L, -1, "quit", lquit);
   l_setcfunction(L, -1, "reset", lreset);
   l_setcfunction(L, -1, "timeout", ltimeout);

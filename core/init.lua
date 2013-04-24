@@ -104,15 +104,6 @@ local view
 -- The functions below are Lua C functions.
 
 ---
--- Creates and returns a new buffer.
--- Emits a `BUFFER_NEW` event.
--- @return the new buffer.
--- @class function
--- @see events.BUFFER_NEW
--- @name new_buffer
-local new_buffer
-
----
 -- Emits a `QUIT` event, and unless any handler returns `false`, quits
 -- Textadept.
 -- @see events.QUIT

@@ -58,7 +58,7 @@ local M = {}
 -- containing Lua functions with a set of arguments to call the function with.
 -- Examples are:
 --
---     keys['cn'] = new_buffer
+--     keys['cn'] = buffer.new
 --     keys['cs'] = buffer.save
 --     keys['a('] = {_M.textadept.editing.enclose, '(', ')'}
 --     keys['cu'] = function() io.snapopen(_USERHOME) end

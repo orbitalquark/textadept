@@ -38,7 +38,7 @@ local SEPARATOR, c = {''}, _SCINTILLA.constants
 -- @name menubar
 M.menubar = {
   { title = _L['_File'],
-    {_L['_New'], new_buffer},
+    {_L['_New'], buffer.new},
     {_L['_Open'], io.open_file},
     {_L['Open _Recent...'], io.open_recent_file},
     {_L['Re_load'], buffer.reload},
