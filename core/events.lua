@@ -255,11 +255,7 @@ local M = {}
 -- [`gui.goto_view()`]: gui.html#goto_view
 module('events')]]
 
----
--- Map of event names with tables of the functions connected to them.
--- @class table
--- @name handlers
-M.handlers = {}
+local handlers = {}
 
 ---
 -- Adds function *f* to the set of event handlers for *event* at position
@@ -274,8 +270,8 @@ M.handlers = {}
 -- @name connect
 function M.connect(event, f, index)
   if not event then error(_L['Undefined event name']) end
-  if not M.handlers[event] then M.handlers[event] = {} end
-  local h = M.handlers[event]
+  if not handlers[event] then handlers[event] = {} end
+  local h = handlers[event]
   if index then table.insert(h, index, f) else h[#h + 1] = f end
   return index or #h
 end
@@ -288,8 +284,8 @@ end
 -- @see connect
 -- @name disconnect
 function M.disconnect(event, id)
-  if not M.handlers[event] then return end
-  table.remove(M.handlers[event], id)
+  if not handlers[event] then return end
+  table.remove(handlers[event], id)
 end
 
 local error_emitted = false
@@ -310,7 +306,7 @@ local error_emitted = false
 -- @name emit
 function M.emit(event, ...)
   if not event then error(_L['Undefined event name']) end
-  local h = M.handlers[event]
+  local h = handlers[event]
   if not h then return end
   local pcall, table_unpack, type = pcall, table.unpack, type
   for i = 1, #h do
