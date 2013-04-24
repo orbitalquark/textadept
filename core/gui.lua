@@ -54,7 +54,6 @@ end
 -- displayed before being printed to.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
--- @usage gui._print(_L['[Error Buffer]'], error_message)
 -- @usage gui._print(_L['[Message Buffer]'], message)
 -- @name _print
 function gui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
@@ -438,8 +437,7 @@ events_connect(events.QUIT, function()
                                  '--no-newline') == '2'
 end)
 
-events_connect(events.ERROR,
-               function(...) gui._print(_L['[Error Buffer]'], ...) end)
+events_connect(events.ERROR, gui.print)
 
 --[[ The tables below were defined in C.
 

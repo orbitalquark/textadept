@@ -32,12 +32,14 @@ perhaps a custom context menu. These features are discussed below.
 Most language-specific modules have a command that compiles and/or runs the code
 in the current file. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in
 curses) executes the command for compiling code and `Ctrl+R` (`⌘R` | `^R`)
-executes the command for running code. Double-clicking on any error messages
-will jump to where the errors occurred. Note: In order for these features to
-work, the language you are working with must have its compile and run commands
-and error format defined. If the language-specific module does not exist or does
-not [define][] commands or an error format, it can be done [manually][] in your
-[user-init file][].
+executes the command for running code. Any recognized errors in the output are
+marked. Pressing `Ctrl+Alt+E` (`^⌘E` | `M-X`) attempts to jump to the source of
+the next recognized error and `Ctrl+Alt+Shift+E` (`^⌘⇧E` | `M-S-X`) attempts to
+jump to the previous one. Double-clicking on errors will also jump to their
+sources. Note: In order for these features to work, the language you are working
+with must have its compile and run commands and error format defined. If the
+language-specific module does not exist or does not [define][] commands or an
+error format, it can be done [manually][] in your [user-init file][].
 
 [define]: api/_M.html#Compile.and.Run
 [manually]: http://foicica.com/wiki/run-supplemental

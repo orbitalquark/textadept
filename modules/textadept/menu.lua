@@ -120,6 +120,8 @@ local menubar = {
     SEPARATOR,
     {_L['_Run'], m_textadept.run.run},
     {_L['_Compile'], m_textadept.run.compile},
+    {_L['_Next Error'], {m_textadept.run.goto_error, false, true}},
+    {_L['_Previous Error'], {m_textadept.run.goto_error, false, false}},
     SEPARATOR,
     { title = _L['_Adeptsense'],
       {_L['_Complete Symbol'], m_textadept.adeptsense.complete},
