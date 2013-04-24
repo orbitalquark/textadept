@@ -41,6 +41,7 @@ local M = {}
 -- Ctrl+/                  |^/       |M-/          |Toggle block comment
 -- Ctrl+T                  |^T       |^T           |Transpose characters
 -- Ctrl+Shift+J            |^J       |M-J          |Join lines
+-- Ctrl+&#124;             |⌘&#124;  |^\           |Filter text through
 -- Ctrl+Shift+M            |^⇧M      |M-S-M        |Select to matching brace
 -- Ctrl+<                  |⌘<       |M-<          |Select between XML tags
 -- Ctrl+>                  |⌘>       |None         |Select in XML tag
@@ -82,7 +83,6 @@ local M = {}
 -- Ctrl+Shift+E    |⌘⇧E    |M-S-C        |Select command
 -- Ctrl+R          |⌘R     |^R           |Run
 -- Ctrl+Shift+R    |⌘⇧R    |M-^R         |Compile
--- Ctrl+&#124;     |⌘&#124;|^\           |Filter text through
 -- Ctrl+Space      |⌥⎋     |^Space       |Complete symbol
 -- Ctrl+H          |^H     |M-H<br/>M-S-H|Show documentation
 -- Tab             |⇥      |Tab          |Expand snippet or next placeholder
@@ -398,6 +398,8 @@ end
 keys[not OSX and not CURSES and 'c/' or 'm/'] = m_editing.block_comment
 keys.ct = m_editing.transpose_chars
 keys[not OSX and (not CURSES and 'cJ' or 'mj') or 'cj'] = m_editing.join_lines
+keys[not OSX and (not CURSES and 'c|' or 'c\\')
+             or 'm|'] = {gui_ce.enter_mode, 'filter_through'}
 -- Select.
 keys[not CURSES and 'cM' or 'mM'] = {m_editing.match_brace, 'select'}
 keys[not OSX and not CURSES and 'c<'
@@ -469,8 +471,6 @@ keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
 keys[not OSX and 'cr' or 'mr'] = m_textadept.run.run
 keys[not OSX and (not CURSES and 'cR' or 'cmr')
              or 'mR'] = m_textadept.run.compile
-keys[not OSX and (not CURSES and 'c|' or 'c\\')
-             or 'm|'] = {gui_ce.enter_mode, 'filter_through'}
 -- Adeptsense.
 keys[not OSX and ((not CURSES or WIN32) and 'c ' or 'c@')
              or 'aesc'] = m_textadept.adeptsense.complete
@@ -598,7 +598,7 @@ keys.lua_command = {
   ['\n'] = {gui_ce.finish_mode, gui_ce.execute_lua}
 }
 keys.filter_through = {
-  ['\n'] = {gui_ce.finish_mode, m_textadept.filter_through.filter_through},
+  ['\n'] = {gui_ce.finish_mode, m_editing.filter_through},
 }
 keys.find_incremental = {
   ['\n'] = gui_find.find_incremental_next,
