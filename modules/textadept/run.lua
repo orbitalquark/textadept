@@ -10,9 +10,13 @@ local M = {}
 -- extension.
 --
 -- [language-specific modules]: _M.html#Compile.and.Run
+-- @field MARK_ERROR_BACK (number)
+--   The background color, in "0xBBGGRR" format, used for a line containing a
+--   recognized run or compile error.
 -- @field cwd (string, Read-only)
 --   The working directory for the most recently executed compile or run
 --   command.
+--   It is used for error messages with relative file paths.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Called after executing a language's compile command.
 --   By default, compiler output is printed to the message buffer. To override
@@ -30,6 +34,8 @@ local M = {}
 --   * `lexer`: The lexer language name.
 --   * `output`: The string output from the command.
 module('_M.textadept.run')]]
+
+M.MARK_ERROR_BACK = not CURSES and 0x8080CC or 0x0000FF
 
 -- Events.
 local events, events_connect, events_emit = events, events.connect, events.emit
@@ -93,23 +99,17 @@ local function get_error_details(message)
   return nil
 end
 
+local MARK_ERROR = _SCINTILLA.next_marker_number()
+
 -- Prints the output from a run or compile command.
--- If the output is an error message, an annotation is shown in the source file
--- if the file is currently open in another view.
+-- If the output is a recognized error message, mark it.
 -- @param lexer The current lexer.
 -- @param output The output to print.
 local function print_output(lexer, output)
   gui.print(output)
-  local error_details = get_error_details(output)
-  if not error_details or not error_details.message then return end
-  for i = 1, #_VIEWS do
-    local filename = _VIEWS[i].buffer.filename
-    if filename and filename:find(error_details.filename..'$') then
-      gui.goto_view(i)
-      buffer.annotation_text[error_details.line - 1] = error_details.message
-      buffer.annotation_style[error_details.line - 1] = 8 -- error_details
-      return
-    end
+  if get_error_details(output) then
+    -- Current position is one line below the error due to gui.print()'s '\n'.
+    buffer:marker_add(buffer.line_count - 2, MARK_ERROR)
   end
 end
 
@@ -191,30 +191,65 @@ events_connect(events.RUN_OUTPUT, print_output)
 -- @name error_detail
 M.error_detail = {}
 
+-- Returns whether or not the given buffer is a message buffer.
+local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 ---
--- Goes to line number *line_num* in the file an error occurred at based on the
--- error message at position *pos* in the buffer and displays an annotation with
--- the error message.
--- This is typically called by an event handler for when the user double-clicks
--- on an error message.
--- @param pos The position of the caret in the buffer.
--- @param line_num The line number the caret is on with the error message.
+-- Goes to the source of the recognized compile/run error on line number *line*
+-- in the message buffer, or if `nil`, the next or previous recognized error
+-- depending on boolean *next*.
+-- Displays an annotation with the error message, if available.
+-- @param line The line number in the message buffer that contains the
+--   compile/run error to go to.
+-- @param next Optional flag indicating whether to go to the next recognized
+--   error or the previous one. Only applicable when *line* is `nil` or `false`.
 -- @see error_detail
-function goto_error(pos, line_num)
-  if buffer._type ~= _L['[Message Buffer]'] and
-     buffer._type ~= _L['[Error Buffer]'] then
-    return
+-- @see cwd
+-- @name goto_error
+function M.goto_error(line, next)
+  local cur_buf, msg_view, msg_buf = _BUFFERS[buffer], nil, nil
+  for i = 1, #_VIEWS do
+    if is_msg_buf(_VIEWS[i].buffer) then msg_view = i break end
   end
-  local error_details = get_error_details(buffer:get_line(line_num))
-  if not error_details then return end
-  gui.goto_file(M.cwd..error_details.filename, true, preferred_view, true)
-  local line, message = error_details.line, error_details.message
+  for i = 1, #_BUFFERS do
+    if is_msg_buf(_BUFFERS[i]) then msg_buf = i break end
+  end
+  if not msg_view and not msg_buf then return end
+  if msg_view then gui.goto_view(msg_view) else view:goto_buffer(msg_buf) end
+
+  -- If no line was given, find the next error marker.
+  if not line and next ~= nil then
+    local buffer = buffer
+    local f = buffer['marker_'..(next and 'next' or 'previous')]
+    line = f(buffer, buffer:line_from_position(buffer.current_pos) +
+                     (next and 1 or -1), 2^MARK_ERROR)
+    if line == -1 then
+      line = f(buffer, next and 0 or buffer.line_count, 2^MARK_ERROR)
+      if line == -1 then if CURSES then view:goto_buffer(cur_buf) end return end
+    end
+  end
+  buffer:goto_line(line)
+
+  -- Goto the error and show an annotation.
+  local err = get_error_details(buffer:get_line(line))
+  if not err then if CURSES then view:goto_buffer(cur_buf) end return end
+  _M.textadept.editing.select_line()
+  gui.goto_file(M.cwd..err.filename, true, preferred_view, true)
+  local line, message = err.line, err.message
   buffer:goto_line(line - 1)
   if message then
     buffer.annotation_text[line - 1] = message
     buffer.annotation_style[line - 1] = 8 -- error
   end
 end
-events_connect(events.DOUBLE_CLICK, goto_error)
+events_connect(events.DOUBLE_CLICK, function(pos, line) M.goto_error(line) end)
+
+local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
+-- Sets view properties for error markers.
+local function set_error_properties()
+  if CURSES then buffer:marker_define(MARK_ERROR, CURSES_MARK) end
+  buffer.marker_back[MARK_ERROR] = M.MARK_ERROR_BACK
+end
+if buffer then set_error_properties() end
+events_connect(events.VIEW_NEW, set_error_properties)
 
 return M

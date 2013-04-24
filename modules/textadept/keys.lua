@@ -83,6 +83,8 @@ local M = {}
 -- Ctrl+Shift+E    |⌘⇧E    |M-S-C        |Select command
 -- Ctrl+R          |⌘R     |^R           |Run
 -- Ctrl+Shift+R    |⌘⇧R    |M-^R         |Compile
+-- Ctrl+Alt+E      |^⌘E    |M-X          |Next Error
+-- Ctrl+Alt+Shift+E|^⌘⇧E   |M-S-X        |Previous Error
 -- Ctrl+Space      |⌥⎋     |^Space       |Complete symbol
 -- Ctrl+H          |^H     |M-H<br/>M-S-H|Show documentation
 -- Tab             |⇥      |Tab          |Expand snippet or next placeholder
@@ -312,7 +314,7 @@ local utils = M.utils
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:   A B C         H              p  Q       ~ V   X Y      ) ] }
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
--- ca: aAbBcCdDeE F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  /   \s
+-- ca: aAbBcCdD   F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
 -- CTRL = 'c' (Control ^)
 -- ALT = 'a' (Alt)
@@ -327,7 +329,7 @@ local utils = M.utils
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- m:   A B C        ~    JkK  ~M    p  ~    t  U V   XyY      ) ] }       ~~\n
 -- c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /
--- cm: aAbBcC~DeE F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
+-- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
 -- CTRL = 'c' (Control ^)
 -- ALT = 'a' (Alt/option ⌥)
@@ -353,7 +355,7 @@ local utils = M.utils
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
 -- cm:  bcd  g~~ k ~  pq  t v xyz
--- m:          e          J            qQ  sS  u vVw xXyYzZ
+-- m:          e          J            qQ  sS  u vVw   yYzZ
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- CTRL = 'c' (Control ^)
@@ -471,6 +473,10 @@ keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
 keys[not OSX and 'cr' or 'mr'] = m_textadept.run.run
 keys[not OSX and (not CURSES and 'cR' or 'cmr')
              or 'mR'] = m_textadept.run.compile
+keys[not OSX and (not CURSES and 'cae' or 'mx')
+             or 'cme'] = {m_textadept.run.goto_error, false, true}
+keys[not OSX and (not CURSES and 'caE' or 'mX')
+             or 'cmE'] = {m_textadept.run.goto_error, false, false}
 -- Adeptsense.
 keys[not OSX and ((not CURSES or WIN32) and 'c ' or 'c@')
              or 'aesc'] = m_textadept.adeptsense.complete
