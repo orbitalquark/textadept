@@ -24,16 +24,16 @@ local M = {}
 -- event like a keypress if it has already been handled.
 --
 -- @field APPLEEVENT_ODOC (string)
---   Called when Mac OSX tells Textadept to open a document.
+--   Emitted when Mac OSX tells Textadept to open a document.
 --   Arguments:
 --
 --   * _`uri`_: The UTF-8-encoded URI to open.
 -- @field AUTO_C_CHAR_DELETED (string)
---   Called when deleting a character while the autocompletion list is active.
+--   Emitted when deleting a character while the autocompletion list is active.
 -- @field AUTO_C_RELEASE (string)
---   Called when canceling the autocompletion list.
+--   Emitted when canceling the autocompletion list.
 -- @field AUTO_C_SELECTION (string)
---   Called when selecting an item in the autocompletion list and before
+--   Emitted when selecting an item in the autocompletion list and before
 --   inserting the selection.
 --   Automatic insertion can be cancelled by calling
 --   [`buffer:auto_c_cancel()`][] before returning from the event handler.
@@ -43,30 +43,30 @@ local M = {}
 --   * _`position`_: The position in the buffer of the beginning of the
 --     autocompleted word.
 -- @field BUFFER_AFTER_SWITCH (string)
---   Called right after switching to another buffer.
+--   Emitted right after switching to another buffer.
 --   Emitted by [`view:goto_buffer()`][].
 -- @field BUFFER_BEFORE_SWITCH (string)
---   Called right before switching to another buffer.
+--   Emitted right before switching to another buffer.
 --   Emitted by [`view:goto_buffer()`][].
 -- @field BUFFER_DELETED (string)
---   Called after deleting a buffer.
+--   Emitted after deleting a buffer.
 --   Emitted by [`buffer:delete()`][].
 -- @field BUFFER_NEW (string)
---   Called after creating a new buffer.
+--   Emitted after creating a new buffer.
 --   Emitted on startup and by [`buffer.new()`][].
 -- @field CALL_TIP_CLICK (string)
---   Called when clicking on a calltip.
+--   Emitted when clicking on a calltip.
 --   Arguments:
 --
 --   * _`position`_: `1` if the up arrow was clicked, 2 if the down arrow was
 --     clicked, and 0 otherwise.
 -- @field CHAR_ADDED (string)
---   Called after adding an ordinary text character to the buffer.
+--   Emitted after adding an ordinary text character to the buffer.
 --   Arguments:
 --
 --   * _`ch`_: The text character byte.
 -- @field COMMAND_ENTRY_KEYPRESS (string)
---   Called when pressing a key in the Command Entry.
+--   Emitted when pressing a key in the Command Entry.
 --   If any handler returns `true`, the key is not inserted into the entry.
 --   Arguments:
 --
@@ -76,7 +76,7 @@ local M = {}
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
 --   * _`meta`_: The "Control" modifier key on Mac OSX is held down.
 -- @field DOUBLE_CLICK (string)
---   Called after double-clicking the mouse button.
+--   Emitted after double-clicking the mouse button.
 --   Arguments:
 --
 --   * _`position`_: The position in the buffer double-clicked.
@@ -89,32 +89,32 @@ local M = {}
 --     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
 --     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field DWELL_END (string)
---   Called after a `DWELL_START` when the mouse moves, a key is pressed, etc.
+--   Emitted after a `DWELL_START` when the mouse moves, a key is pressed, etc.
 --   Arguments:
 --
 --   * _`position`_: The position in the buffer closest to *x* and *y*.
 --   * _`x`_: The x-coordinate of the mouse in the view.
 --   * _`y`_: The y-coordinate of the mouse in the view.
 -- @field DWELL_START (string)
---   Called after keeping the mouse stationary for the [dwell period][]
+--   Emitted after keeping the mouse stationary for the [dwell period][]
 --   Arguments:
 --
 --   * _`position`_: The position in the buffer closest to *x* and *y*.
 --   * _`x`_: The x-coordinate of the mouse in the view.
 --   * _`y`_: The y-coordinate of the mouse in the view.
 -- @field ERROR (string)
---   Called when an error occurs.
+--   Emitted when an error occurs.
 --   Arguments:
 --
 --   * _`text`_: The error text.
 -- @field FIND (string)
---   Called to find text via the Find dialog box.
+--   Emitted to find text via the Find dialog box.
 --   Arguments:
 --
 --   * _`text`_: The text to search for.
 --   * _`next`_: Whether or not to search forward.
 -- @field HOTSPOT_CLICK (string)
---   Called when clicking on text that is in a style with the hotspot attribute
+--   Emitted when clicking on text that is in a style with the hotspot attribute
 --   set.
 --   Arguments:
 --
@@ -127,7 +127,7 @@ local M = {}
 --     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
 --     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field HOTSPOT_DOUBLE_CLICK (string)
---   Called when double-clicking on text that is in a style with the hotspot
+--   Emitted when double-clicking on text that is in a style with the hotspot
 --   attribute set.
 --   Arguments:
 --
@@ -140,13 +140,13 @@ local M = {}
 --     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
 --     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field HOTSPOT_RELEASE_CLICK (string)
---   Called after releasing the mouse after clicking on text that was in a style
---   with the hotspot attribute set.
+--   Emitted after releasing the mouse after clicking on text that was in a
+--   style with the hotspot attribute set.
 --   Arguments:
 --
 --   * _`position`_: The position in the buffer unclicked.
 -- @field INDICATOR_CLICK (string)
---   Called when clicking the mouse on text that has an indicator.
+--   Emitted when clicking the mouse on text that has an indicator.
 --   Arguments:
 --
 --   * _`position`_: The position in the buffer clicked.
@@ -158,13 +158,13 @@ local M = {}
 --     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
 --     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field INDICATOR_RELEASE (string)
---   Called after releasing the mouse after clicking on text that had an
+--   Emitted after releasing the mouse after clicking on text that had an
 --   indicator.
 --   Arguments:
 --
 --   * _`position`_: The position in the buffer unclicked.
 -- @field KEYPRESS (string)
---   Called when pressing a key.
+--   Emitted when pressing a key.
 --   If any handler returns `true`, the key is not inserted into the buffer.
 --   Arguments:
 --
@@ -174,7 +174,7 @@ local M = {}
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
 --   * _`meta`_: The "Control" modifier key on Mac OSX is held down.
 -- @field MARGIN_CLICK (string)
---   Called when clicking the mouse inside a margin.
+--   Emitted when clicking the mouse inside a margin.
 --   Arguments:
 --
 --   * _`margin`_: The margin number clicked.
@@ -188,58 +188,59 @@ local M = {}
 --     `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as
 --     *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field MENU_CLICKED (string)
---   Called after selecting a menu item.
+--   Emitted after selecting a menu item.
 --   Arguments:
 --
 --   * _`menu_id`_: The numeric ID of the menu item set in [`gui.menu()`][].
 -- @field QUIT (string)
---   Called when quitting Textadept.
+--   Emitted when quitting Textadept.
 --   When connecting to this event, connect with an index of 1 or the handler
 --   will be ignored.
 --   Emitted by [`quit()`][].
 -- @field REPLACE (string)
---   Called to replace selected (found) text.
+--   Emitted to replace selected (found) text.
 --   Arguments:
 --
 --   * _`text`_: The text to replace the selected text with.
 -- @field REPLACE_ALL (string)
---   Called to replace all occurrences of found text.
+--   Emitted to replace all occurrences of found text.
 --   Arguments:
 --
 --   * _`find_text`_: The text to search for.
 --   * _`repl_text`_: The text to replace found text with.
 -- @field RESET_AFTER (string)
---   Called after resetting the Lua state.
+--   Emitted after resetting the Lua state.
 --   Emitted by [`reset()`][].
 -- @field RESET_BEFORE (string)
---   Called before resetting the Lua state.
+--   Emitted before resetting the Lua state.
 --   Emitted by [`reset()`][].
 -- @field SAVE_POINT_LEFT (string)
---   Called after leaving a save point.
+--   Emitted after leaving a save point.
 -- @field SAVE_POINT_REACHED (string)
---   Called after reaching a save point.
+--   Emitted after reaching a save point.
 -- @field UPDATE_UI (string)
---   Called when the text, styling, or selection range in the buffer changes.
+--   Emitted when the text, styling, or selection range in the buffer changes.
 -- @field URI_DROPPED (string)
---   Called after dragging and dropping a URI such as a file name onto the view.
+--   Emitted after dragging and dropping a URI such as a file name onto the
+--   view.
 --   Arguments:
 --
 --   * _`text`_: The UTF-8-encoded URI text.
 -- @field USER_LIST_SELECTION (string)
---   Called after selecting an item in a user list.
+--   Emitted after selecting an item in a user list.
 --   Arguments:
 --
 --   * _`list_type`_: The *list_type* from [`buffer:user_list_show()`][].
 --   * _`text`_: The text of the selection.
 --   * _`position`_: The position in the buffer the list was displayed at.
 -- @field VIEW_NEW (string)
---   Called after creating a new view.
+--   Emitted after creating a new view.
 --   Emitted on startup and by [`view:split()`][].
 -- @field VIEW_BEFORE_SWITCH (string)
---   Called right before switching to another view.
+--   Emitted right before switching to another view.
 --   Emitted by [`gui.goto_view()`][].
 -- @field VIEW_AFTER_SWITCH (string)
---   Called right after switching to another view.
+--   Emitted right after switching to another view.
 --   Emitted by [`gui.goto_view()`][].
 --
 -- [`buffer:auto_c_cancel()`]: buffer.html#auto_c_cancel

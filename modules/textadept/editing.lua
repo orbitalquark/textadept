@@ -344,7 +344,7 @@ function M.transpose_chars()
   if eol then pos = pos - 1 end
   buffer.target_start, buffer.target_end = pos - 1, pos + 1
   buffer:replace_target(buffer:text_range(pos - 1, pos + 1):reverse())
-  buffer:goto_pos(not eol and pos or pos + 1)
+  buffer:goto_pos(pos + 1)
 end
 
 ---

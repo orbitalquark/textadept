@@ -6,7 +6,7 @@ local M = {}
 ---
 -- Handles file type detection for Textadept.
 -- @field _G.events.LANGUAGE_MODULE_LOADED (string)
---   Called after loading a language-specific module.
+--   Emitted after loading a language-specific module.
 --   This is useful for overriding a language-specific module's key bindings
 --   or other properties since the module is not loaded when Textadept starts.
 --   Arguments:
@@ -70,22 +70,19 @@ for line in mime_types:gmatch('[^\r\n]+') do
 end
 
 ---
--- List of detected lexers are read from *lexers/* and *~/.textadept/lexers/*.
+-- List of lexers found in `_LEXERPATH`.
 -- @class table
 -- @name lexers
 M.lexers = {}
 
 -- Generate lexer list
 local lexers_found = {}
-for lexer in lfs.dir(_HOME..'/lexers') do
-  if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
-    lexers_found[lexer:match('^(.+)%.lua$')] = true
-  end
-end
-if lfs.attributes(_USERHOME..'/lexers') then
-  for lexer in lfs.dir(_USERHOME..'/lexers') do
-    if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
-      lexers_found[lexer:match('^(.+)%.lua$')] = true
+for dir in _LEXERPATH:gsub('[/\\]%?%.lua', ''):gmatch('[^;]+') do
+  if lfs.attributes(dir) then
+    for lexer in lfs.dir(dir) do
+      if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
+        lexers_found[lexer:match('^(.+)%.lua$')] = true
+      end
     end
   end
 end

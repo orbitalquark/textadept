@@ -9,7 +9,7 @@ local M = {}
 -- ## Arg Events
 --
 -- + `'arg_none'`
---   Called when no command line arguments are passed to Textadept on startup.
+--   Emitted when no command line arguments are passed to Textadept on startup.
 module('args')]]
 
 local arg = arg
