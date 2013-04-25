@@ -112,6 +112,7 @@ function M.load(filename)
                '--title', _L['Session Files Not Found'],
                '--text', _L['The following session files were not found'],
                '--informative-text', table.concat(not_found, '\n'),
+               '--icon', 'gtk-dialog-warning',
                '--button1', _L['_OK'])
   end
   return true

@@ -317,6 +317,7 @@ local function close(buffer)
                                  '--title', _L['Close without saving?'],
                                  '--text', _L['There are unsaved changes in'],
                                  '--informative-text', filename,
+                                 '--icon', 'gtk-dialog-question',
                                  '--button1', _L['_Cancel'],
                                  '--button2', _L['Close _without saving'],
                                  '--no-newline') ~= '2' then
@@ -358,6 +359,7 @@ local function update_modified_file()
                   '--informative-text',
                   ('"%s"\n%s'):format(utf8_filename,
                                       _L['has been modified. Reload it?']),
+                  '--icon', 'gtk-dialog-question',
                   '--button1', _L['_Yes'],
                   '--button2', _L['_No'],
                   '--no-cancel',
@@ -440,6 +442,7 @@ function io.snapopen(utf8_paths, filter, exclude_FILTER, ...)
                string.format('%d %s %d', io.SNAPOPEN_MAX,
                              _L['files or more were found. Showing the first'],
                              io.SNAPOPEN_MAX),
+               '--icon', 'gtk-dialog-info',
                '--button1', _L['_OK'])
   end
   local width = CURSES and {'--width', gui.size[1] - 2} or ''

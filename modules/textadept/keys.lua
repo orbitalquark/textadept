@@ -565,8 +565,6 @@ if not CURSES then
   keys.f1 = {utils.open_webpage, _HOME..'/doc/01_Introduction.html'}
   keys.sf1 = {utils.open_webpage, _HOME..'/doc/api/index.html'}
 end
--- TODO: {gui.dialog, 'ok-msgbox', '--title', 'Textadept', '--text', _RELEASE,
---        '--button1', _L['_OK'], '--no-cancel'}
 
 -- Movement commands.
 if OSX then

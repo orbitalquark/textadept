@@ -270,6 +270,7 @@ local function run(code)
                '--title', _L['Error'],
                '--text', _L['An error occured:'],
                '--informative-text', val:gsub('"', '\\"'),
+               '--icon', 'gtk-dialog-error',
                '--button1', _L['_OK'],
                '--button2', _L['_Cancel'],
                '--no-cancel')
