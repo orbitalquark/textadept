@@ -69,7 +69,7 @@ function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
 -- Convenience function for `gui.dialog('filteredlist', ...)` with "Ok" and
 -- "Cancel" buttons that returns the text or index of the selection depending on
 -- the boolean value of *int_return*.
--- *title* is the title of the dialog,*columns* is a list of column names, and
+-- *title* is the title of the dialog, *columns* is a list of column names, and
 -- *items* is a list of items to show.
 -- @param title The title for the filtered list dialog.
 -- @param columns A column name or list of column names.
@@ -253,7 +253,7 @@ function gui.select_theme()
   reset()
 end
 
-local events, events_connect = events, events.connect
+local events, events_connect, events_emit = events, events.connect, events.emit
 
 -- Sets default properties for a Scintilla window.
 events_connect(events.VIEW_NEW, function()
@@ -275,7 +275,7 @@ events_connect(events.VIEW_NEW, function()
   local ok, err = pcall(dofile, THEME..'/view.lua')
   if not ok then io.stderr:write(err) end
 end)
-events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
+events_connect(events.VIEW_NEW, function() events_emit(events.UPDATE_UI) end)
 
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
@@ -345,7 +345,7 @@ events_connect(events.URI_DROPPED, function(utf8_uris)
   end
 end)
 events_connect(events.APPLEEVENT_ODOC, function(uri)
-  return events.emit(events.URI_DROPPED, 'file://'..uri)
+  return events_emit(events.URI_DROPPED, 'file://'..uri)
 end)
 
 local string_format = string.format
@@ -360,7 +360,7 @@ events_connect(events.UPDATE_UI, function()
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
   local eol = EOLs[buffer.eol_mode + 1]
   local tabs = string_format('%s %d', buffer.use_tabs and _L['Tabs:'] or
-                             _L['Spaces:'], buffer.tab_width)
+                                      _L['Spaces:'], buffer.tab_width)
   local enc = buffer.encoding or ''
   local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
                               '%s %d/%d  %s %d  %s  %s  %s  %s'
@@ -374,7 +374,7 @@ events_connect(events.MARGIN_CLICK, function(margin, pos, modifiers)
 end)
 
 -- Updates the statusbar and titlebar for a new Scintilla document.
-events_connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
+events_connect(events.BUFFER_NEW, function() events_emit(events.UPDATE_UI) end)
 events_connect(events.BUFFER_NEW, function() set_title(buffer) end)
 
 -- Save buffer properties.
@@ -396,7 +396,7 @@ events_connect(events.BUFFER_AFTER_SWITCH, function()
   local buffer = buffer
   if not buffer._folds then return end
   -- Restore fold state.
-  for _, i in ipairs(buffer._folds) do buffer:toggle_fold(i) end
+  for i = 1, #buffer._folds do buffer:toggle_fold(buffer._folds[i]) end
   -- Restore view state.
   buffer:set_sel(buffer._anchor, buffer._current_pos)
   buffer:line_scroll(0,
@@ -407,13 +407,13 @@ end)
 -- Updates titlebar and statusbar.
 events_connect(events.BUFFER_AFTER_SWITCH, function()
   set_title(buffer)
-  events.emit(events.UPDATE_UI)
+  events_emit(events.UPDATE_UI)
 end)
 
 -- Updates titlebar and statusbar.
 events_connect(events.VIEW_AFTER_SWITCH, function()
   set_title(buffer)
-  events.emit(events.UPDATE_UI)
+  events_emit(events.UPDATE_UI)
 end)
 
 events_connect(events.RESET_AFTER,
@@ -457,13 +457,14 @@ local size
 The functions below are Lua C functions.
 
 ---
--- Displays a *kind* [gtdialog][1] with the given string arguments to pass to
+-- Displays a *kind* [gtdialog][] with the given string arguments to pass to
 -- the dialog and returns a formatted string of the dialog's output.
 -- Table arguments containing strings are allowed and expanded in place. This is
 -- useful for filtered list dialogs with many items.
--- For more information on gtdialog, see [http://foicica.com/gtdialog][1].
+-- For more information on gtdialog, see [http://foicica.com/gtdialog][].
 --
--- [1]: http://foicica.com/gtdialog
+-- [gtdialog]: http://foicica.com/gtdialog/02_Usage.html
+-- [http://foicica.com/gtdialog]: http://foicica.com/gtdialog
 -- @param kind The kind of gtdialog.
 -- @param ... Parameters to the gtdialog.
 -- @return string gtdialog result.

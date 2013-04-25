@@ -52,7 +52,7 @@ local M = gui.find
 --   The text of the "In files" label.
 --   This is primarily used for localization.
 -- @field _G.events.FIND_WRAPPED (string)
---   Called when a search for text wraps, either from bottom to top when
+--   Emitted when a search for text wraps, either from bottom to top when
 --   searching for a next occurrence, or from top to bottom when searching for a
 --   previous occurrence.
 --   This is useful for implementing a more visual or audible notice when a

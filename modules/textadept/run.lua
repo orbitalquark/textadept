@@ -18,7 +18,7 @@ local M = {}
 --   command.
 --   It is used for error messages with relative file paths.
 -- @field _G.events.COMPILE_OUTPUT (string)
---   Called after executing a language's compile command.
+--   Emitted after executing a language's compile command.
 --   By default, compiler output is printed to the message buffer. To override
 --   this behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
@@ -26,7 +26,7 @@ local M = {}
 --   * `lexer`: The lexer language name.
 --   * `output`: The string output from the command.
 -- @field _G.events.RUN_OUTPUT (string)
---   Called after executing a language's run command.
+--   Emitted after executing a language's run command.
 --   By default, output is printed to the message buffer. To override this
 --   behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:

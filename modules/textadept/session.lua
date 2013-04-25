@@ -12,6 +12,8 @@ local M = {}
 --   [`_G.CURSES`]: _G.html#CURSES
 -- @field SAVE_ON_QUIT (bool)
 --   Save the session when quitting.
+--   The session file saved is always `DEFAULT_SESSION`, even if a different
+--   session was loaded with [`load()`](#load).
 --   The default value is `true`, but is disabled when passing the command line
 --   switch `-n` or `--nosession` to Textadept.
 -- @field MAX_RECENT_FILES (number)
@@ -100,7 +102,7 @@ function M.load(filename)
           break
         end
       end
-      if not exists then recent[#recent + 1] = filename  end
+      if not exists then recent[#recent + 1] = filename end
     end
   end
   f:close()
@@ -203,10 +205,9 @@ end, 1)
 local function no_session() M.SAVE_ON_QUIT = false end
 args.register('-n', '--nosession', 0, no_session, 'No session functionality')
 -- Loads the given session on startup.
-local function load_session(name)
+args.register('-s', '--session', 1, function(name)
   if lfs.attributes(name) then M.load(name) return end
   M.load(_USERHOME..'/'..name)
-end
-args.register('-s', '--session', 1, load_session, 'Load session')
+end, 'Load session')
 
 return M

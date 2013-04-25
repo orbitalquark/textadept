@@ -25,13 +25,13 @@
 -- [`string.iconv()`]: string.html#iconv
 -- [`_CHARSET`]: _G.html#_CHARSET
 -- @field _G.events.FILE_OPENED (string)
---   Called when opening a file in a new buffer.
+--   Emitted when opening a file in a new buffer.
 --   Emitted by [`open_file()`](#open_file).
 --   Arguments:
 --
 --   * _`filename`_: The UTF-8-encoded filename.
 -- @field _G.events.FILE_BEFORE_SAVE (string)
---   Called right before saving a file to disk.
+--   Emitted right before saving a file to disk.
 --   Emitted by [`buffer:save()`][].
 --   Arguments:
 --
@@ -39,7 +39,7 @@
 --
 -- [`buffer:save()`]: buffer.html#save
 -- @field _G.events.FILE_AFTER_SAVE (string)
---   Called right after saving a file to disk.
+--   Emitted right after saving a file to disk.
 --   Emitted by [`buffer:save()`][].
 --   Arguments:
 --
@@ -47,7 +47,7 @@
 --
 -- [`buffer:save()`]: buffer.html#save
 -- @field _G.events.FILE_SAVED_AS (string)
---   Called after saving a file under a different filename.
+--   Emitted after saving a file under a different filename.
 --   Emitted by [`buffer:save_as()`][].
 --   Arguments:
 --
@@ -79,10 +79,8 @@ io.recent_files = {}
 -- @class table
 -- @name boms
 io.boms = {
-  ['UTF-16BE'] = string.char(254, 255),
-  ['UTF-16LE'] = string.char(255, 254),
-  ['UTF-32BE'] = string.char(0, 0, 254, 255),
-  ['UTF-32LE'] = string.char(255, 254, 0, 0)
+  ['UTF-16BE'] = '\254\255', ['UTF-16LE'] = '\255\254',
+  ['UTF-32BE'] = '\0\0\254\255', ['UTF-32LE'] = '\255\254\0\0'
 }
 
 -- Attempt to detect the encoding of the given text.
@@ -93,7 +91,7 @@ io.boms = {
 local function detect_encoding(text)
   local b1, b2, b3, b4 = string.byte(text, 1, 4)
   if b1 == 239 and b2 == 187 and b3 == 191 then
-    return 'UTF-8', string.char(239, 187, 191)
+    return 'UTF-8', '\239\187\191'
   elseif b1 == 254 and b2 == 255 then
     return 'UTF-16BE', io.boms['UTF-16BE']
   elseif b1 == 255 and b2 == 254 then
@@ -102,9 +100,8 @@ local function detect_encoding(text)
     return 'UTF-32BE', io.boms['UTF-32BE']
   elseif b1 == 255 and b2 == 254 and b3 == 0 and b4 == 0 then
     return 'UTF-32LE', io.boms['UTF-32LE']
-  else
-    local chunk = #text > 65536 and text:sub(1, 65536) or text
-    if chunk:find('\0') then return 'binary' end -- binary file
+  elseif text:sub(1, 65536):find('\0') then
+    return 'binary'
   end
   return nil
 end
