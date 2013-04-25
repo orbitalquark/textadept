@@ -432,6 +432,7 @@ events_connect(events.QUIT, function()
                                  '--text',
                                  _L['The following buffers are unsaved:'],
                                  '--informative-text', table.concat(list, '\n'),
+                                 '--icon', 'gtk-dialog-question',
                                  '--button1', _L['_Cancel'],
                                  '--button2', _L['Quit _without saving'],
                                  '--no-newline') == '2'
