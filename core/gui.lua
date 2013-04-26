@@ -357,7 +357,7 @@ events_connect(events.UPDATE_UI, function()
   local pos = buffer.current_pos
   local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
   local col = buffer.column[pos] + 1
-  local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
+  local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE):match('^[^/]+')
   local eol = EOLs[buffer.eol_mode + 1]
   local tabs = string_format('%s %d', buffer.use_tabs and _L['Tabs:'] or
                                       _L['Spaces:'], buffer.tab_width)

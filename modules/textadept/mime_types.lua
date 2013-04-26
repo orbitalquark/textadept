@@ -43,79 +43,49 @@ M.shebangs = {}
 -- @name patterns
 M.patterns = {}
 
--- Load mime-types from *modules/textadept/mime_types.conf*.
-local mime_types
-local f = io.open(_HOME..'/modules/textadept/mime_types.conf', 'rb')
-if f then
-  mime_types = f:read('*all')
-  f:close()
-end
-f = io.open(_USERHOME..'/mime_types.conf', 'rb')
-if f then
-  mime_types = mime_types..'\n'..f:read('*all')
-  f:close()
-end
-for line in mime_types:gmatch('[^\r\n]+') do
-  if not line:find('^%s*%%') then
-    if line:find('^%s*[^#/]') then -- extension definition
-      local ext, lexer_name = line:match('^%s*(.+)%s+(%S+)$')
-      if ext and lexer_name then M.extensions[ext] = lexer_name end
-    else -- shebang or pattern
-      local ch, text, lexer_name = line:match('^%s*([#/])(.+)%s+(%S+)$')
-      if ch and text and lexer_name then
-        (ch == '#' and M.shebangs or M.patterns)[text] = lexer_name
-      end
-    end
-  end
-end
-
 ---
 -- List of lexers found in `_LEXERPATH`.
 -- @class table
 -- @name lexers
 M.lexers = {}
 
--- Generate lexer list
-local lexers_found = {}
-for dir in _LEXERPATH:gsub('[/\\]%?%.lua', ''):gmatch('[^;]+') do
-  if lfs.attributes(dir) then
-    for lexer in lfs.dir(dir) do
-      if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
-        lexers_found[lexer:match('^(.+)%.lua$')] = true
-      end
-    end
-  end
-end
-for lexer in pairs(lexers_found) do M.lexers[#M.lexers + 1] = lexer end
-table.sort(M.lexers)
-
----
--- Prompts the user to select a lexer for the current buffer.
--- @see buffer.set_lexer
--- @name select_lexer
-function M.select_lexer()
-  local lexer = gui.filteredlist(_L['Select Lexer'], _L['Name'], M.lexers)
-  if lexer then buffer:set_lexer(lexer) end
-end
-
+local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- LuaDoc is in core/.buffer.luadoc.
-local function get_style_name(buffer, style_num)
+local function get_lexer(buffer, current)
   buffer:check_global()
-  if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
-  return buffer:private_lexer_call(style_num)
+  local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
+  return current and lexer:match('[^/]+$') or lexer:match('^[^/]+')
 end
 
--- Contains the whitespace styles for lexers.
--- These whitespace styles are used to determine the lexer at the caret position
--- since the styles have the name "[lang]_whitespace".
--- @class table
--- @name ws_styles
-local ws_styles = {}
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, lang)
   buffer:check_global()
+
+  -- If no language was given, attempt to detect it.
+  if not lang then
+    local line = buffer:get_line(0)
+    -- Detect from shebang line.
+    if line:find('^#!') then
+      for word in line:gsub('[/\\]', ' '):gmatch('%S+') do
+        if M.shebangs[word] then lang = M.shebangs[word] break end
+      end
+    end
+    -- Detect from first line.
+    if not lang then
+      for patt, lexer in pairs(M.patterns) do
+        if line:find(patt) then lang = lexer break end
+      end
+    end
+    -- Detect from file extension.
+    if not lang and buffer.filename then
+      lang = M.extensions[buffer.filename:match('[^/\\.]+$')]
+    end
+    if not lang then lang = 'text' end
+  end
+
+  -- Set the lexer and load its language-specific module.
   buffer._lexer = lang
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
@@ -128,70 +98,77 @@ local function set_lexer(buffer, lang)
   end
   local last_line = buffer.first_visible_line + buffer.lines_on_screen
   buffer:colourise(0, buffer:position_from_line(last_line + 1))
-  -- Create the ws_styles[lexer] lookup table for `get_lexer()`.
-  if ws_styles[lang] then return end
-  local ws = {}
-  for i = 0, 255 do
-    ws[i] = buffer:private_lexer_call(i):find('whitespace') ~= nil
-  end
-  ws_styles[lang] = ws
 end
 
-local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- LuaDoc is in core/.buffer.luadoc.
-local function get_lexer(buffer, current)
+local function get_style_name(buffer, style_num)
   buffer:check_global()
-  local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
-  if not current then return lexer end
-  local i, ws, style_at = buffer.current_pos, ws_styles[lexer], buffer.style_at
-  if ws then while i > 0 and not ws[style_at[i]] do i = i - 1 end end
-  return get_style_name(buffer, style_at[i]):match('^(.+)_whitespace$') or lexer
+  if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
+  return buffer:private_lexer_call(style_num)
 end
 
-events_connect(events.BUFFER_NEW, function()
-  buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
+-- Gives new buffers lexer-specific functions.
+local function set_lexer_functions()
+  buffer.get_lexer, buffer.set_lexer = get_lexer, set_lexer
   buffer.get_style_name = get_style_name
-end, 1)
+end
+events_connect(events.BUFFER_NEW, set_lexer_functions, 1)
 -- Scintilla's first buffer does not have these.
-if not RESETTING then
-  buffer.set_lexer, buffer.get_lexer = set_lexer, get_lexer
-  buffer.get_style_name = get_style_name
-end
+if not RESETTING then set_lexer_functions() end
 
--- Performs actions suitable for a new buffer.
--- Sets the buffer's lexer language and loads the language module.
-local function handle_new()
-  local lexer
-  local line = buffer:get_line(0)
-  if line:find('^#!') then
-    for word in line:gsub('[/\\]', ' '):gmatch('%S+') do
-      lexer = M.shebangs[word]
-      if lexer then break end
-    end
-  end
-  if not lexer then
-    for patt, lex in pairs(M.patterns) do
-      if line:find(patt) then lexer = lex break end
-    end
-  end
-  if not lexer and buffer.filename then
-    lexer = M.extensions[buffer.filename:match('[^/\\.]+$')]
-  end
-  buffer:set_lexer(lexer or 'text')
-end
-events_connect(events.FILE_OPENED, handle_new)
-events_connect(events.FILE_SAVED_AS, handle_new)
+-- Auto-detect lexer on file open or save as.
+events_connect(events.FILE_OPENED, function() buffer:set_lexer() end)
+events_connect(events.FILE_SAVED_AS, function() buffer:set_lexer() end)
 
--- Sets the buffer's lexer based on filename, shebang words, or
--- first line pattern.
-local function restore_lexer()
-  buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-  buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
-end
+-- Restores the buffer's lexer.
+local function restore_lexer() buffer:set_lexer(buffer._lexer) end
 events_connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
-events_connect(events.VIEW_NEW, restore_lexer, 1)
+events_connect(events.VIEW_NEW, restore_lexer)
+events_connect(events.RESET_AFTER, restore_lexer)
 
-events_connect(events.RESET_AFTER,
-               function() buffer:set_lexer(buffer._lexer or 'text') end)
+---
+-- Prompts the user to select a lexer for the current buffer.
+-- @see buffer.set_lexer
+-- @name select_lexer
+function M.select_lexer()
+  local lexer = gui.filteredlist(_L['Select Lexer'], _L['Name'], M.lexers)
+  if lexer then buffer:set_lexer(lexer) end
+end
+
+-- Load mime-types.
+local function process_line(line)
+  if line:find('^%s*%%') then return end
+  if line:find('^%s*[^#/]') then -- extension definition
+    local ext, lexer_name = line:match('^%s*(.+)%s+(%S+)$')
+    if ext and lexer_name then M.extensions[ext] = lexer_name end
+  else -- shebang or pattern
+    local ch, text, lexer_name = line:match('^%s*([#/])(.+)%s+(%S+)$')
+    if ch and text and lexer_name then
+      (ch == '#' and M.shebangs or M.patterns)[text] = lexer_name
+    end
+  end
+end
+local f = io.open(_HOME..'/modules/textadept/mime_types.conf', 'rb')
+for line in f:lines() do process_line(line) end
+f:close()
+f = io.open(_USERHOME..'/mime_types.conf', 'rb')
+if f then
+  for line in f:lines() do process_line(line) end
+  f:close()
+end
+
+-- Generate lexer list.
+local lexers_found = {}
+for dir in _LEXERPATH:gsub('[/\\]%?%.lua', ''):gmatch('[^;]+') do
+  if lfs.attributes(dir) then
+    for lexer in lfs.dir(dir) do
+      if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
+        lexers_found[lexer:match('^(.+)%.lua$')] = true
+      end
+    end
+  end
+end
+for lexer in pairs(lexers_found) do M.lexers[#M.lexers + 1] = lexer end
+table.sort(M.lexers)
 
 return M
