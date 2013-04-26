@@ -131,7 +131,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
 #                       --libs gtk+-2.0) -framework Cocoa -lgtkmacintegration
 #    .DEFAULT_GOAL := osx
 #  #else
-#  #  plat_flag = -DCURSES
+#  #  plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
 #  #  curses_libs = -lncurses
 #  #  .DEFAULT_GOAL := osx-curses
 #  #endif

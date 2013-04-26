@@ -176,9 +176,10 @@ made to CDK are as follows:
   `typedef`ed.
 * *cdk_config.h* no longer defines `HAVE_SETLOCALE` since Textadept handles
   locale settings, no longer defines `HAVE_NCURSES_H` and `NCURSES` since
-  Textadept supports multiple curses implementations (not just ncurses), and
+  Textadept supports multiple curses implementations (not just ncurses),
   conditionally enables `HAVE_GRP_H`, `HAVE_LSTAT`, and `HAVE_PWD_H` definitions
-  on \*nix platforms since Windows does not have them.
+  on \*nix platforms since Windows does not have them, and explicitly undefines
+  `NCURSES_OPAQUE` since newer versions of ncurses on Mac OSX define it.
 * *cdk_util.h* `#define`s `Beep` as `CDKBeep` on Windows platforms since Beep is
   already defined.
 * The `baseName` and `dirName` functions in *cdk.c* recognize Window's '\'
