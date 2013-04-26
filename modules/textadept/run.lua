@@ -16,7 +16,7 @@ local M = {}
 -- @field cwd (string, Read-only)
 --   The working directory for the most recently executed compile or run
 --   command.
---   It is used for error messages with relative file paths.
+--   It is used for going to error messages with relative file paths.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Emitted after executing a language's compile command.
 --   By default, compiler output is printed to the message buffer. To override
@@ -195,8 +195,8 @@ M.error_detail = {}
 local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 ---
 -- Goes to the source of the recognized compile/run error on line number *line*
--- in the message buffer, or if `nil`, the next or previous recognized error
--- depending on boolean *next*.
+-- in the message buffer or the next or previous recognized error depending on
+-- boolean *next*.
 -- Displays an annotation with the error message, if available.
 -- @param line The line number in the message buffer that contains the
 --   compile/run error to go to.
