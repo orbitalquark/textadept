@@ -381,28 +381,20 @@ end
 
 ---
 -- Selects the text in-between strings *left* and *right* containing the caret.
+-- If already selected, toggles between selecting the *left* and *right*
+-- enclosures too.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
 -- @name select_enclosed
 function M.select_enclosed(left, right)
   local buffer = buffer
+  local anchor, pos = buffer.anchor, buffer.current_pos
+  if anchor ~= pos then buffer:goto_pos(pos - #right) end
   buffer:search_anchor()
   local s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
-  if s >= 0 and e >= 0 then buffer:set_sel(s + 1, e) end
-end
-
----
--- Grows the selected text by *amount* number of characters on either end.
--- @param amount The number of characters to grow the selection by on either
---   end.
--- @name grow_selection
-function M.grow_selection(amount)
-  local buffer = buffer
-  local anchor, pos = buffer.anchor, buffer.current_pos
-  if anchor < pos then
-    buffer:set_sel(anchor - amount, pos + amount)
-  else
-    buffer:set_sel(anchor + amount, pos - amount)
+  if s >= 0 and e >= 0 then
+    if s + #left == anchor and e == pos then s, e = s - #left, e + #right end
+    buffer:set_sel(s + #left, e)
   end
 end
 

@@ -63,8 +63,6 @@ local M = {}
 -- Alt+(                   |^(       |M-)          |Enclose in parentheses
 -- Alt+[                   |^[       |M-]          |Enclose in brackets
 -- Alt+{                   |^{       |M-}          |Enclose in braces
--- Ctrl++                  |⌘+       |M-+          |Grow selection bounds by 1
--- Ctrl+\_                 |⌘\_      |M-\_         |Shrink selection bounds by 1
 -- Ctrl+Shift+Up           |^⇧⇡      |S-^Up        |Move selected lines up
 -- Ctrl+Shift+Down         |^⇧⇣      |S-^Down      |Move selected lines down
 -- **Search**               |    |             |
@@ -312,7 +310,7 @@ local utils = M.utils
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:   A B C         H              p  Q       ~ V   X Y      ) ] }
+-- c:   A B C         H              p  Q       ~ V   X Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdD   F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
@@ -327,7 +325,7 @@ local utils = M.utils
 -- Mac OSX key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- m:   A B C        ~    JkK  ~M    p  ~    t  U V   XyY      ) ] }       ~~\n
+-- m:   A B C        ~    JkK  ~M    p  ~    t  U V   XyY  _   ) ] }   +   ~~\n
 -- c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
@@ -355,7 +353,7 @@ local utils = M.utils
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
 -- cm:  bcd  g~~ k ~  pq  t v xyz
--- m:          e          J            qQ  sS  u vVw   yYzZ
+-- m:          e          J            qQ  sS  u vVw   yYzZ_          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- CTRL = 'c' (Control ^)
@@ -439,8 +437,6 @@ keys[not OSX and (not CURSES and 'a[' or 'm]')
              or 'c['] = {m_editing.enclose, '[', ']'}
 keys[not OSX and (not CURSES and 'a{' or 'm}')
              or 'c{'] = {m_editing.enclose, '{', '}'}
-keys[not OSX and not CURSES and 'c+' or 'm+'] = {m_editing.grow_selection, 1}
-keys[not OSX and not CURSES and 'c_' or 'm_'] = {m_editing.grow_selection, -1}
 keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
