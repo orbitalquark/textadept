@@ -41,6 +41,8 @@ with must have its compile and run commands and error format defined. If the
 language-specific module does not exist or does not [define][] commands or an
 error format, it can be done [manually][] in your [user-init file][].
 
+![Runtime Error](images/runerror.png)
+
 [define]: api/_M.html#Compile.and.Run
 [manually]: http://foicica.com/wiki/run-supplemental
 [user-init file]: 08_Preferences.html#User.Init
