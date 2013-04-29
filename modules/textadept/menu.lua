@@ -24,10 +24,8 @@ local function get_id(f)
   return id
 end
 
-local _L, io, gui, gui_find, buffer, view = _L, io, gui, gui.find, buffer, view
-local m_textadept, m_editing = _M.textadept, _M.textadept.editing
-local m_bookmarks, Msnippets = m_textadept.bookmarks, m_textadept.snippets
-local utils = m_textadept.keys.utils
+local _L, _M, buffer, view = _L, _M, buffer, view
+local m_editing, utils = _M.textadept.editing, _M.textadept.keys.utils
 local SEPARATOR, c = {''}, _SCINTILLA.constants
 
 -- The default main menubar.
@@ -43,8 +41,8 @@ local menubar = {
     {_L['_Close'], buffer.close},
     {_L['Close All'], io.close_all},
     SEPARATOR,
-    {_L['Loa_d Session...'], m_textadept.session.load},
-    {_L['Sav_e Session...'], m_textadept.session.save},
+    {_L['Loa_d Session...'], _M.textadept.session.load},
+    {_L['Sav_e Session...'], _M.textadept.session.save},
     SEPARATOR,
     {_L['_Quit'], quit},
   },
@@ -98,16 +96,16 @@ local menubar = {
     },
   },
   { title = _L['_Search'],
-    {_L['_Find'], gui_find.focus},
-    {_L['Find _Next'], gui_find.find_next},
-    {_L['Find _Previous'], gui_find.find_prev},
-    {_L['_Replace'], gui_find.replace},
-    {_L['Replace _All'], gui_find.replace_all},
-    {_L['Find _Incremental'], gui_find.find_incremental},
+    {_L['_Find'], gui.find.focus},
+    {_L['Find _Next'], gui.find.find_next},
+    {_L['Find _Previous'], gui.find.find_prev},
+    {_L['_Replace'], gui.find.replace},
+    {_L['Replace _All'], gui.find.replace_all},
+    {_L['Find _Incremental'], gui.find.find_incremental},
     SEPARATOR,
     {_L['Find in Fi_les'], utils.find_in_files},
-    {_L['Goto Nex_t File Found'], {gui_find.goto_file_found, false, true}},
-    {_L['Goto Previou_s File Found'], {gui_find.goto_file_found, false, false}},
+    {_L['Goto Nex_t File Found'], {gui.find.goto_file_found, false, true}},
+    {_L['Goto Previou_s File Found'], {gui.find.goto_file_found, false, false}},
     SEPARATOR,
     {_L['_Jump to'], m_editing.goto_line},
   },
@@ -115,21 +113,21 @@ local menubar = {
     {_L['Command _Entry'], {gui.command_entry.enter_mode, 'lua_command'}},
     {_L['Select Co_mmand'], utils.select_command},
     SEPARATOR,
-    {_L['_Run'], m_textadept.run.run},
-    {_L['_Compile'], m_textadept.run.compile},
-    {_L['_Next Error'], {m_textadept.run.goto_error, false, true}},
-    {_L['_Previous Error'], {m_textadept.run.goto_error, false, false}},
+    {_L['_Run'], _M.textadept.run.run},
+    {_L['_Compile'], _M.textadept.run.compile},
+    {_L['_Next Error'], {_M.textadept.run.goto_error, false, true}},
+    {_L['_Previous Error'], {_M.textadept.run.goto_error, false, false}},
     SEPARATOR,
     { title = _L['_Adeptsense'],
-      {_L['_Complete Symbol'], m_textadept.adeptsense.complete},
-      {_L['Show _Documentation'], m_textadept.adeptsense.show_apidoc},
+      {_L['_Complete Symbol'], _M.textadept.adeptsense.complete},
+      {_L['Show _Documentation'], _M.textadept.adeptsense.show_apidoc},
     },
     { title = _L['_Bookmark'],
-      {_L['_Toggle Bookmark'], m_bookmarks.toggle},
-      {_L['_Clear Bookmarks'], m_bookmarks.clear},
-      {_L['_Next Bookmark'], m_bookmarks.goto_next},
-      {_L['_Previous Bookmark'], m_bookmarks.goto_prev},
-      {_L['_Goto Bookmark...'], m_bookmarks.goto_bookmark},
+      {_L['_Toggle Bookmark'], _M.textadept.bookmarks.toggle},
+      {_L['_Clear Bookmarks'], _M.textadept.bookmarks.clear},
+      {_L['_Next Bookmark'], _M.textadept.bookmarks.goto_next},
+      {_L['_Previous Bookmark'], _M.textadept.bookmarks.goto_prev},
+      {_L['_Goto Bookmark...'], _M.textadept.bookmarks.goto_bookmark},
     },
     { title = _L['Snap_open'],
       {_L['Snapopen _User Home'], {io.snapopen, _USERHOME}},
@@ -137,10 +135,10 @@ local menubar = {
       {_L['Snapopen _Current Directory'], utils.snapopen_filedir},
     },
     { title = _L['_Snippets'],
-      {_L['_Insert Snippet...'], Msnippets._select},
-      {_L['_Expand Snippet/Next Placeholder'], Msnippets._insert},
-      {_L['_Previous Snippet Placeholder'], Msnippets._previous},
-      {_L['_Cancel Snippet'], Msnippets._cancel_current},
+      {_L['_Insert Snippet...'], _M.textadept.snippets._select},
+      {_L['_Expand Snippet/Next Placeholder'], _M.textadept.snippets._insert},
+      {_L['_Previous Snippet Placeholder'], _M.textadept.snippets._previous},
+      {_L['_Cancel Snippet'], _M.textadept.snippets._cancel_current},
     },
     SEPARATOR,
     {_L['Show St_yle'], utils.show_style},
@@ -172,7 +170,7 @@ local menubar = {
       {_L['UTF-1_6 Encoding'], {utils.set_encoding, 'UTF-16LE'}},
     },
     SEPARATOR,
-    {_L['Select _Lexer...'], m_textadept.mime_types.select_lexer},
+    {_L['Select _Lexer...'], _M.textadept.mime_types.select_lexer},
     {_L['_Refresh Syntax Highlighting'], {buffer.colourise, buffer, 0, -1}},
   },
   { title = _L['_View'],
@@ -228,8 +226,27 @@ local context_menu = {
   {_L['Select _All'], buffer.select_all}
 }
 
-local key_shortcuts = {}
-local menu_actions, contextmenu_actions = {}, {}
+-- Returns the GDK integer keycode and modifier mask for a key sequence.
+-- This is used for creating menu accelerators.
+-- @param key_seq The string key sequence.
+-- @return keycode and modifier mask
+local function get_gdk_key(key_seq)
+  if not key_seq then return nil end
+  local mods, key = key_seq:match('^([cams]*)(.+)$')
+  if not mods or not key then return nil end
+  local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
+                    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
+                    (mods:find('m') and 268435456 or 0)
+  local byte = string.byte(key)
+  if #key > 1 or byte < 32 then
+    for i, s in pairs(keys.KEYSYMS) do
+      if s == key and i > 0xFE20 then byte = i break end
+    end
+  end
+  return byte, modifiers
+end
+
+local key_shortcuts, menu_actions, contextmenu_actions
 
 -- Creates a menu suitable for `gui.menu()` from the menu table format.
 -- Also assigns key commands.
@@ -248,7 +265,7 @@ local function read_menu_table(menu, contextmenu)
       local label, f = menuitem[1], menuitem[2]
       local menu_id = not contextmenu and #menu_actions + 1 or
                       #contextmenu_actions + 1000 + 1
-      local key, mods = keys.get_gdk_key(key_shortcuts[get_id(f)])
+      local key, mods = get_gdk_key(key_shortcuts[get_id(f)])
       gtkmenu[#gtkmenu + 1] = {label, menu_id, key, mods}
       if f then
         local actions = not contextmenu and menu_actions or contextmenu_actions
@@ -258,8 +275,6 @@ local function read_menu_table(menu, contextmenu)
   end
   return gtkmenu
 end
-
-local items, commands
 
 -- Builds the item and commands tables for the filtered list dialog.
 -- @param menu The menu to read from.
@@ -279,6 +294,8 @@ local function build_command_tables(menu, title, items, commands)
     end
   end
 end
+
+local items, commands
 
 ---
 -- Sets `gui.menubar` from *menubar*, a table of menus.
@@ -321,19 +338,17 @@ function M.set_contextmenu(menu)
 end
 if not CURSES then M.set_contextmenu(context_menu) end
 
-local columns = {_L['Command'], _L['Key Command']}
 ---
 -- Prompts the user to select a menu command to run.
 -- @name select_command
 function M.select_command()
-  local i = gui.filteredlist(_L['Run Command'], columns, items, true,
+  local i = gui.filteredlist(_L['Run Command'],
+                             {_L['Command'], _L['Key Command']}, items, true,
                              CURSES and {'--width', gui.size[1] - 2} or '')
   if i then keys.run_command(commands[i + 1], type(commands[i + 1])) end
 end
 
-local events, events_connect = events, events.connect
-
-events_connect(events.MENU_CLICKED, function(menu_id)
+events.connect(events.MENU_CLICKED, function(menu_id)
   local actions = menu_id < 1000 and menu_actions or contextmenu_actions
   local action = actions[menu_id < 1000 and menu_id or menu_id - 1000]
   if type(action) ~= 'function' and type(action) ~= 'table' then
@@ -348,10 +363,10 @@ if not CURSES then
     local lang = _G.buffer:get_lexer(true)
     M.set_contextmenu(_M[lang] and _M[lang].context_menu or context_menu)
   end
-  events_connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
-  events_connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
-  events_connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
-  events_connect(events.BUFFER_NEW, set_lang_contextmenu)
+  events.connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
+  events.connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
+  events.connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
+  events.connect(events.BUFFER_NEW, set_lang_contextmenu)
 end
 
 return M

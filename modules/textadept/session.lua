@@ -71,11 +71,9 @@ function M.load(filename)
       local anchor = tonumber(anchor) or 0
       local current_pos = tonumber(current_pos) or 0
       local first_visible_line = tonumber(first_visible_line) or 0
-      local buffer = buffer
       buffer._anchor, buffer._current_pos = anchor, current_pos
       buffer._first_visible_line = first_visible_line
-      buffer:line_scroll(0,
-             buffer:visible_from_doc_line(first_visible_line))
+      buffer:line_scroll(0, buffer:visible_from_doc_line(first_visible_line))
       buffer:set_sel(anchor, current_pos)
     elseif line:find('^%s*split%d:') then
       local level, num, type, size = line:match('^(%s*)split(%d): (%S+) (%d+)')
@@ -97,10 +95,7 @@ function M.load(filename)
       local filename = line:match('^recent: (.+)$')
       local recent, exists = io.recent_files, false
       for i, file in ipairs(recent) do
-        if filename == file then
-          exists = true
-          break
-        end
+        if filename == file then exists = true break end
       end
       if not exists then recent[#recent + 1] = filename end
     end
@@ -186,9 +181,9 @@ function M.save(filename)
   -- Write out other things.
   local size = gui.size
   session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
-  for i, filename in ipairs(io.recent_files) do
+  for i = 1, #io.recent_files do
     if i > M.MAX_RECENT_FILES then break end
-    session[#session + 1] = ("recent: %s"):format(filename)
+    session[#session + 1] = ("recent: %s"):format(io.recent_files[i])
   end
   -- Write the session.
   local f = io.open(filename, 'wb')
@@ -203,8 +198,8 @@ events.connect(events.QUIT, function()
 end, 1)
 
 -- Does not save session on quit.
-local function no_session() M.SAVE_ON_QUIT = false end
-args.register('-n', '--nosession', 0, no_session, 'No session functionality')
+args.register('-n', '--nosession', 0,
+              function() M.SAVE_ON_QUIT = false end, 'No session functionality')
 -- Loads the given session on startup.
 args.register('-s', '--session', 1, function(name)
   if lfs.attributes(name) then M.load(name) return end

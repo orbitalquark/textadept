@@ -323,7 +323,7 @@ local M = {}
 -- contain:
 --
 --     -- Load CSS Adeptsense.
---     if not _M.css then _M.css = require 'css' end
+--     if not _M.css then _M.css = require('css') end
 --
 -- You will have to do something similar if you are writing an Adeptsense for a
 -- child lexer language.
@@ -577,7 +577,6 @@ end
 -- @see get_completions
 -- @name complete
 function M.complete(sense, only_fields, only_functions)
-  local buffer = buffer
   sense = sense or (_M[buffer:get_lexer(true)] or {}).sense
   if not sense then return end
   local symbol, part = sense:get_symbol()
@@ -672,7 +671,6 @@ local apidocs = nil
 -- @see get_apidoc
 -- @name show_apidoc
 function M.show_apidoc(sense)
-  local buffer = buffer
   if buffer:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
   sense = sense or (_M[buffer:get_lexer(true)] or {}).sense
   if not sense then return end

@@ -79,7 +79,7 @@ io.recent_files = {}
 -- @class table
 -- @name boms
 io.boms = {
-  ['UTF-16BE'] = '\254\255', ['UTF-16LE'] = '\255\254',
+  ['UTF-16BE'] = '\254\255',     ['UTF-16LE'] = '\255\254',
   ['UTF-32BE'] = '\0\0\254\255', ['UTF-32LE'] = '\255\254\0\0'
 }
 
@@ -346,7 +346,6 @@ end
 -- of Textadept.
 local function update_modified_file()
   if not buffer.filename then return end
-  local buffer = buffer
   local utf8_filename = buffer.filename
   local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
   local mod_time = lfs.attributes(filename, 'modification')
@@ -373,7 +372,6 @@ events_connect(events.VIEW_AFTER_SWITCH, update_modified_file)
 
 -- Set additional buffer functions.
 events_connect(events.BUFFER_NEW, function()
-  local buffer = buffer
   buffer.reload = reload
   buffer.save, buffer.save_as = save, save_as
   buffer.close = close
@@ -382,8 +380,8 @@ end)
 
 -- Close initial "Untitled" buffer.
 events_connect(events.FILE_OPENED, function(utf8_filename)
-  local b = _BUFFERS[1]
-  if #_BUFFERS == 2 and not (b.filename or b._type or b.dirty) then
+  local buf = _BUFFERS[1]
+  if #_BUFFERS == 2 and not (buf.filename or buf._type or buf.dirty) then
     view:goto_buffer(1)
     buffer:close()
   end

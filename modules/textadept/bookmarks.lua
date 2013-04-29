@@ -20,7 +20,6 @@ local MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 --   current line. The default value is `nil`, toggling a bookmark.
 -- @name toggle
 function M.toggle(on)
-  local buffer = buffer
   local line = buffer:line_from_position(buffer.current_pos)
   local f = on and buffer.marker_add or buffer.marker_delete
   if on == nil then -- toggle
@@ -45,7 +44,6 @@ end
 -- @param start `0` when going to the next mark, `buffer.line_count` when going
 --   to the previous mark.
 local function goto_mark(f, increment, wrap_start)
-  local buffer = buffer
   local current_line = buffer:line_from_position(buffer.current_pos)
   local line = f(buffer, current_line + increment, 2^MARK_BOOKMARK)
   if line == -1 then line = f(buffer, wrap_start, 2^MARK_BOOKMARK) end

@@ -122,21 +122,9 @@ local M = {}
 --   The default value is `nil`.
 module('keys')]]
 
-local ADD = ''
-local CTRL, ALT, META, SHIFT = 'c'..ADD, 'a'..ADD, 'm'..ADD, 's'..ADD
-if CURSES then ALT = META end
+local CTRL, ALT, META, SHIFT = 'c', not CURSES and 'a' or 'm', 'm', 's'
 M.CLEAR = 'esc'
 M.LANGUAGE_MODULE_PREFIX = (not OSX and not CURSES and CTRL or META)..'l'
-
--- Optimize for speed.
-local OSX = OSX
-local string = string
-local string_byte, string_char = string.byte, string.char
-local table_unpack = table.unpack
-local xpcall, next, type = xpcall, next, type
-local no_args = {}
-local getmetatable = getmetatable
-local error = function(e) events.emit(events.ERROR, e) end
 
 ---
 -- Lookup table for string representations of key codes higher than 255.
@@ -195,13 +183,15 @@ end
 -- Export for command_entry.lua without creating LuaDoc.
 if CURSES then M.clear_key_sequence = clear_key_sequence end
 
+local none = {}
+local function key_error(e) events.emit(events.ERROR, e) end
 -- Runs a given command.
 -- This is also used by *modules/textadept/menu.lua*.
 -- @param command A function or table as described above.
 -- @param command_type Equivalent to `type(command)`.
 -- @return the value the command returns.
 local function run_command(command, command_type)
-  local f, args = command_type == 'function' and command or command[1], no_args
+  local f, args = command_type == 'function' and command or command[1], none
   if command_type == 'table' then
     args = command
     -- If the argument is a view or buffer, use the current one instead.
@@ -214,7 +204,7 @@ local function run_command(command, command_type)
       end
     end
   end
-  local _, result = xpcall(f, error, table_unpack(args, 2))
+  local _, result = xpcall(f, key_error, table.unpack(args, 2))
   return result
 end
 M.run_command = run_command -- export for menu.lua without creating LuaDoc
@@ -251,7 +241,7 @@ end
 -- @return `true` to stop handling the key; `nil` otherwise.
 local function keypress(code, shift, control, alt, meta)
   --print(code, M.KEYSYMS[code], shift, control, alt, meta)
-  local key = code < 256 and (not CURSES or code ~= 7) and string_char(code) or
+  local key = code < 256 and (not CURSES or code ~= 7) and string.char(code) or
                                                            M.KEYSYMS[code]
   if not key then return end
   shift = shift and (code >= 256 or code == 9) -- printable chars are uppercased
@@ -284,27 +274,6 @@ local function keypress(code, shift, control, alt, meta)
   -- PROPAGATE otherwise.
 end
 events.connect(events.KEYPRESS, keypress, 1)
-
--- Returns the GDK integer keycode and modifier mask for a key sequence.
--- This is used for creating menu accelerators.
--- @param key_seq The string key sequence.
--- @return keycode and modifier mask
-local function get_gdk_key(key_seq)
-  if not key_seq then return nil end
-  local mods, key = key_seq:match('^([cams]*)(.+)$')
-  if not mods or not key then return nil end
-  local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
-                    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
-                    (mods:find('m') and 268435456 or 0)
-  local byte = string_byte(key)
-  if #key > 1 or byte < 32 then
-    for i, s in pairs(M.KEYSYMS) do
-      if s == key and i > 0xFE20 then byte = i break end
-    end
-  end
-  return byte, modifiers
-end
-M.get_gdk_key = get_gdk_key -- export for menu.lua without generating LuaDoc
 
 ---
 -- Map of key bindings to commands, with language-specific key tables assigned

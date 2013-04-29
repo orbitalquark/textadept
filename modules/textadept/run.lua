@@ -218,7 +218,6 @@ function M.goto_error(line, next)
 
   -- If no line was given, find the next error marker.
   if not line and next ~= nil then
-    local buffer = buffer
     local f = buffer['marker_'..(next and 'next' or 'previous')]
     line = f(buffer, buffer:line_from_position(buffer.current_pos) +
                      (next and 1 or -1), 2^MARK_ERROR)
