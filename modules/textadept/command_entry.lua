@@ -120,7 +120,7 @@ function M.complete_lua(code)
   local substring = (code or M.entry_text):match('[%w_.:]+$') or ''
   local path, op, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
   local f, err = load('return ('..path..')', nil, 'bt', env)
-  local ok, tbl = pcall(f)
+  local ok, result = pcall(f)
   local cmpls = {}
   prefix = '^'..prefix
   if not ok then -- shorthand notation
@@ -136,8 +136,8 @@ function M.complete_lua(code)
       if p:find(prefix) then cmpls[#cmpls + 1] = p end
     end
   else
-    if type(tbl) ~= 'table' then return end
-    for k in pairs(tbl) do
+    if type(result) ~= 'table' then return end
+    for k in pairs(result) do
       if type(k) == 'string' and k:find(prefix) then cmpls[#cmpls + 1] = k end
     end
     if path == 'buffer' and op == ':' then
@@ -152,10 +152,8 @@ function M.complete_lua(code)
   end
   table.sort(cmpls)
   M.show_completions(cmpls)
-  return true
 end
 
-local events = events
 -- Pass command entry keys to the default keypress handler.
 -- Since the command entry is designed to be modal, command entry key bindings
 -- should stay separate from editor key bindings.

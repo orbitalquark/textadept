@@ -12,8 +12,6 @@ local M = {}
 --   Emitted when no command line arguments are passed to Textadept on startup.
 module('args')]]
 
-local arg = arg
-
 -- Contains registered command line switches.
 -- @class table
 -- @name switches
@@ -79,6 +77,8 @@ local function show_help()
 end
 if not CURSES then M.register('-h', '--help', 0, show_help, 'Shows this') end
 
+local arg = arg
+
 -- For Windows, create arg table from single command line string (arg[0]).
 if WIN32 and not CURSES and #arg[0] > 0 then
   local P, C = lpeg.P, lpeg.C
@@ -99,7 +99,7 @@ if not lfs.attributes(userhome) then lfs.mkdir(userhome) end
 if not lfs.attributes(userhome..'/init.lua') then
   local f = io.open(userhome..'/init.lua', 'w')
   if f then
-    f:write("_M.textadept = require 'textadept'\n")
+    f:write("_M.textadept = require('textadept')\n")
     f:close()
   end
 end

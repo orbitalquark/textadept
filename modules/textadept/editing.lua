@@ -92,31 +92,26 @@ M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
 -- @name current_call_tip
 local current_call_tip = {}
 
-local events, events_connect = events, events.connect
-local K = keys.KEYSYMS
-
 -- Matches characters specified in char_matches.
-events_connect(events.CHAR_ADDED, function(c)
+events.connect(events.CHAR_ADDED, function(c)
   if not M.AUTOPAIR then return end
-  local buffer = buffer
   local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[c]
   if match and buffer.selections == 1 then buffer:insert_text(-1, match) end
 end)
 
 -- Removes matched chars on backspace.
-events_connect(events.KEYPRESS, function(code)
-  if not M.AUTOPAIR or K[code] ~= '\b' or buffer.selections ~= 1 then return end
-  local buffer = buffer
-  local pos = buffer.current_pos
-  local c = buffer.char_at[pos - 1]
-  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[c]
+events.connect(events.KEYPRESS, function(code)
+  if not M.AUTOPAIR or keys.KEYSYMS[code] ~= '\b' or buffer.selections ~= 1 then
+    return
+  end
+  local pos, char = buffer.current_pos, buffer.char_at[buffer.current_pos - 1]
+  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[char]
   if match and buffer.char_at[pos] == string.byte(match) then buffer:clear() end
 end)
 
 -- Highlights matching braces.
-events_connect(events.UPDATE_UI, function()
+events.connect(events.UPDATE_UI, function()
   if not M.HIGHLIGHT_BRACES then return end
-  local buffer = buffer
   local pos = buffer.current_pos
   if (M.braces[buffer:get_lexer(true)] or M.braces)[buffer.char_at[pos]] then
     local match = buffer:brace_match(pos)
@@ -131,9 +126,8 @@ events_connect(events.UPDATE_UI, function()
 end)
 
 -- Moves over typeover characters when typed.
-events_connect(events.KEYPRESS, function(code)
+events.connect(events.KEYPRESS, function(code)
   if not M.TYPEOVER_CHARS then return end
-  local buffer = buffer
   if M.typeover_chars[code] and buffer.char_at[buffer.current_pos] == code then
     buffer:char_right()
     return true
@@ -141,7 +135,7 @@ events_connect(events.KEYPRESS, function(code)
 end)
 
 -- Auto-indent on return.
-events_connect(events.CHAR_ADDED, function(char)
+events.connect(events.CHAR_ADDED, function(char)
   if not M.AUTOINDENT or char ~= 10 then return end
   local buffer = buffer
   local pos = buffer.current_pos
@@ -155,7 +149,7 @@ events_connect(events.CHAR_ADDED, function(char)
 end)
 
 -- Autocomplete multiple selections.
-events_connect(events.AUTO_C_SELECTION, function(text, position)
+events.connect(events.AUTO_C_SELECTION, function(text, position)
   local buffer = buffer
   local pos = buffer.selection_n_caret[buffer.main_selection]
   buffer:begin_undo_action()
@@ -171,7 +165,7 @@ events_connect(events.AUTO_C_SELECTION, function(text, position)
 end)
 
 -- Prepares the buffer for saving to a file.
-events_connect(events.FILE_BEFORE_SAVE, function()
+events.connect(events.FILE_BEFORE_SAVE, function()
   if not M.STRIP_WHITESPACE_ON_SAVE then return end
   local buffer = buffer
   buffer:begin_undo_action()
@@ -189,7 +183,7 @@ events_connect(events.FILE_BEFORE_SAVE, function()
   end
   -- Ensure ending newline.
   local e = buffer:position_from_line(lines)
-  if lines == 1 or lines > 1 and e > buffer:position_from_line(lines - 1) then
+  if lines == 1 or e > buffer:position_from_line(lines - 1) then
     buffer:insert_text(e, '\n')
   end
   -- Convert non-consistent EOLs
@@ -204,7 +198,6 @@ end)
 --   between matching braces. The default value is `false`.
 -- @name match_brace
 function M.match_brace(select)
-  local buffer = buffer
   local pos = buffer.current_pos
   local match_pos = buffer:brace_match(pos)
   if match_pos == -1 then return end
@@ -232,7 +225,7 @@ function M.autocomplete_word(default_words)
   local buffer = buffer
   local pos, length = buffer.current_pos, buffer.length
   local completions, c_list = {}, {}
-  local buffer_text = buffer:get_text(buffer.length)
+  local buffer_text = buffer:get_text()
   local root = buffer_text:sub(1, pos):match('['..buffer.word_chars..']+$')
   if not root or root == '' then return end
   for _, word in ipairs(default_words or {}) do
@@ -288,10 +281,8 @@ end
 -- @name block_comment
 function M.block_comment(prefix)
   local buffer = buffer
-  if not prefix then
-    prefix = M.comment_string[buffer:get_lexer(true)]
-    if not prefix then return end
-  end
+  prefix = prefix or M.comment_string[buffer:get_lexer(true)]
+  if not prefix then return end
   local anchor, pos = buffer.selection_start, buffer.selection_end
   local s = buffer:line_from_position(anchor)
   local e = buffer:line_from_position(pos)
@@ -338,9 +329,8 @@ end
 -- transposed. Otherwise, the characters to the left and right are.
 -- @name transpose_chars
 function M.transpose_chars()
-  local buffer = buffer
-  local pos, c = buffer.current_pos, buffer.char_at[buffer.current_pos]
-  local eol = c == 10 or c == 13 or pos == buffer.length
+  local pos, char = buffer.current_pos, buffer.char_at[buffer.current_pos]
+  local eol = char == 10 or char == 13 or pos == buffer.length
   if eol then pos = pos - 1 end
   buffer.target_start, buffer.target_end = pos - 1, pos + 1
   buffer:replace_target(buffer:text_range(pos - 1, pos + 1):reverse())
@@ -354,7 +344,6 @@ end
 -- joining.
 -- @name join_lines
 function M.join_lines()
-  local buffer = buffer
   buffer:target_from_selection()
   buffer:line_end()
   local line = buffer:line_from_position(buffer.target_start)
@@ -371,7 +360,6 @@ end
 -- @param right The right part of the enclosure.
 -- @name enclose
 function M.enclose(left, right)
-  local buffer = buffer
   buffer:target_from_selection()
   local s, e = buffer.target_start, buffer.target_end
   if s == e then buffer.target_start = buffer:word_start_position(s, true) end
@@ -387,7 +375,6 @@ end
 -- @param right The right part of the enclosure.
 -- @name select_enclosed
 function M.select_enclosed(left, right)
-  local buffer = buffer
   local anchor, pos = buffer.anchor, buffer.current_pos
   if anchor ~= pos then buffer:goto_pos(pos - #right) end
   buffer:search_anchor()
@@ -403,7 +390,6 @@ end
 -- @see buffer.word_chars
 -- @name select_word
 function M.select_word()
-  local buffer = buffer
   buffer:set_sel(buffer:word_start_position(buffer.current_pos, true),
                  buffer:word_end_position(buffer.current_pos, true))
 end
@@ -485,12 +471,11 @@ local INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 -- Clears highlighted word indicators and markers.
 local function clear_highlighted_words()
-  local buffer = buffer
   buffer.indicator_current = INDIC_HIGHLIGHT
   buffer:indicator_clear_range(0, buffer.length)
 end
-events_connect(events.KEYPRESS, function(code)
-  if K[code] == 'esc' then clear_highlighted_words() end
+events.connect(events.KEYPRESS, function(code)
+  if keys.KEYSYMS[code] == 'esc' then clear_highlighted_words() end
 end)
 
 ---
@@ -519,14 +504,13 @@ end
 
 -- Sets view properties for highlighted word indicators and markers.
 local function set_highlight_properties()
-  local buffer = buffer
   buffer.indic_fore[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_BACK
   buffer.indic_style[INDIC_HIGHLIGHT] = _SCINTILLA.constants.INDIC_ROUNDBOX
   buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
   if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
 end
 if buffer then set_highlight_properties() end
-events_connect(events.VIEW_NEW, set_highlight_properties)
+events.connect(events.VIEW_NEW, set_highlight_properties)
 
 ---
 -- Passes selected or all buffer text to string shell command *cmd* as standard
@@ -545,7 +529,6 @@ events_connect(events.VIEW_NEW, set_highlight_properties)
 --   through.
 -- @name filter_through
 function M.filter_through(cmd)
-  local buffer = buffer
   local s, e = buffer.selection_start, buffer.selection_end
   local input
   if s ~= e then -- use selected lines as input

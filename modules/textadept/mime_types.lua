@@ -15,7 +15,6 @@ local M = {}
 module('_M.textadept.mime_types')]]
 
 -- Events.
-local events, events_connect = events, events.connect
 events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
 
 ---
@@ -112,19 +111,19 @@ local function set_lexer_functions()
   buffer.get_lexer, buffer.set_lexer = get_lexer, set_lexer
   buffer.get_style_name = get_style_name
 end
-events_connect(events.BUFFER_NEW, set_lexer_functions, 1)
+events.connect(events.BUFFER_NEW, set_lexer_functions, 1)
 -- Scintilla's first buffer does not have these.
 if not RESETTING then set_lexer_functions() end
 
 -- Auto-detect lexer on file open or save as.
-events_connect(events.FILE_OPENED, function() buffer:set_lexer() end)
-events_connect(events.FILE_SAVED_AS, function() buffer:set_lexer() end)
+events.connect(events.FILE_OPENED, function() buffer:set_lexer() end)
+events.connect(events.FILE_SAVED_AS, function() buffer:set_lexer() end)
 
 -- Restores the buffer's lexer.
 local function restore_lexer() buffer:set_lexer(buffer._lexer) end
-events_connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
-events_connect(events.VIEW_NEW, restore_lexer)
-events_connect(events.RESET_AFTER, restore_lexer)
+events.connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
+events.connect(events.VIEW_NEW, restore_lexer)
+events.connect(events.RESET_AFTER, restore_lexer)
 
 ---
 -- Prompts the user to select a lexer for the current buffer.

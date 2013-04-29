@@ -4,23 +4,21 @@ _RELEASE = "Textadept 6.6 beta"
 
 package.path = _HOME..'/core/?.lua;'..package.path
 
-_SCINTILLA = require 'iface'
-args = require 'args'
-_L = require 'locale'
-events = require 'events'
-require 'file_io'
-require 'lfs_ext'
-require 'gui'
-keys = require 'keys'
+_SCINTILLA = require('iface')
+args = require('args')
+_L = require('locale')
+events = require('events')
+require('file_io')
+require('lfs_ext')
+require('gui')
+keys = require('keys')
 
 _LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers'
-
-gui.set_theme()
-
 _M = {} -- modules table
-
 -- LuaJIT compatibility.
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
+
+gui.set_theme()
 
 --[[ This comment is for LuaDoc.
 ---

@@ -24,13 +24,13 @@ local M = {}
 --   from *`_USERHOME`/modules/lua/api*.
 module('_M.lua')]]
 
-local m_editing, m_run = _M.textadept.editing, _M.textadept.run
 -- Comment string tables use lexer names.
-m_editing.comment_string.lua = '--'
+_M.textadept.editing.comment_string.lua = '--'
+
 -- Compile and Run command tables use file extensions.
-m_run.compile_command.lua = 'luac %(filename)'
-m_run.run_command.lua = 'lua %(filename)'
-m_run.error_detail.lua = {
+_M.textadept.run.compile_command.lua = 'luac %(filename)'
+_M.textadept.run.run_command.lua = 'lua %(filename)'
+_M.textadept.run.error_detail.lua = {
   pattern = '^lua: (.-):(%d+): (.+)$',
   filename = 1, line = 2, message = 3
 }
@@ -109,7 +109,6 @@ local control_structure_patterns = {
 -- @see control_structure_patterns
 -- @name try_to_autocomplete_end
 function M.try_to_autocomplete_end()
-  local buffer = buffer
   local line_num = buffer:line_from_position(buffer.current_pos)
   local line = buffer:get_line(line_num)
   local line_indentation = buffer.line_indentation
@@ -133,7 +132,6 @@ end
 -- Show syntax errors as annotations.
 events.connect(events.FILE_AFTER_SAVE, function()
   if buffer:get_lexer() ~= 'lua' then return end
-  local buffer = buffer
   buffer:annotation_clear_all()
   local text = buffer:get_text():gsub('^#![^\n]+', '') -- ignore shebang line
   local f, err = load(text)

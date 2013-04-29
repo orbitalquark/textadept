@@ -162,7 +162,7 @@ function M.start(doc)
     end
     h[#h + 1] = self
   end
-  (require 'lfs').mkdir(M.options.output_dir..'/api')
+  require('lfs').mkdir(M.options.output_dir..'/api')
   local navfile = M.options.output_dir..'/api/.nav.md'
   local f = io_open(navfile, 'wb')
   write_nav(f, hierarchy)
@@ -174,7 +174,7 @@ function M.start(doc)
   -- Write index.html.
   template.nav = nav
   local api_index = M.options.output_dir..'/.api_index.md'
-  if (require 'lfs').attributes(api_index) then
+  if require('lfs').attributes(api_index) then
     local p = io_popen('markdown -f toc -T "'..api_index..'"')
     template.toc, template.main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
     p:close()

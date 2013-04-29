@@ -73,7 +73,6 @@ M.lua_pattern_label_text = not CURSES and _L['_Lua pattern'] or
 M.in_files_label_text = not CURSES and _L['_In files'] or _L['Files(F4)']
 
 -- Events.
-local events, events_connect = events, events.connect
 events.FIND_WRAPPED = 'find_wrapped'
 
 local preferred_view
@@ -101,49 +100,6 @@ local escapes = {
   ['\\a'] = '\a', ['\\b'] = '\b', ['\\f'] = '\f', ['\\n'] = '\n',
   ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
 }
-
----
--- Searches the *utf8_dir* or user-specified directory for files that match
--- search text and options and prints the results to a buffer.
--- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
--- search text and option flags, respectively. Use `FILTER` to set the search
--- filter.
--- @param utf8_dir Optional UTF-8-encoded directory path to search. If `nil`,
---   the user is prompted for one.
--- @see FILTER
--- @name find_in_files
-function M.find_in_files(utf8_dir)
-  if not utf8_dir then
-    utf8_dir = gui.dialog('fileselect',
-                          '--title', _L['Find in Files'],
-                          '--select-only-directories',
-                          '--with-directory',
-                          (buffer.filename or ''):match('^.+[/\\]') or '',
-                          '--no-newline')
-  end
-  if utf8_dir == '' then return end
-
-  local text = M.find_entry_text
-  if not M.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
-  if not M.match_case then text = text:lower() end
-  if M.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
-  local matches = {_L['Find:']..' '..text}
-  lfs.dir_foreach(utf8_dir, function(file)
-    local match_case = M.match_case
-    local line_num = 1
-    for line in io.lines(file) do
-      if (match_case and line or line:lower()):find(text) then
-        file = file:iconv('UTF-8', _CHARSET)
-        matches[#matches + 1] = ('%s:%s:%s'):format(file, line_num, line)
-      end
-      line_num = line_num + 1
-    end
-  end, M.FILTER, true)
-  if #matches == 1 then matches[2] = _L['No results found'] end
-  matches[#matches + 1] = ''
-  if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-  gui._print(_L['[Files Found Buffer]'], table.concat(matches, '\n'))
-end
 
 local c = _SCINTILLA.constants
 
@@ -218,7 +174,7 @@ local function find_(text, next, flags, nowrap, wrapped)
 
   return result
 end
-events_connect(events.FIND, find_)
+events.connect(events.FIND, find_)
 
 -- Finds and selects text incrementally in the current buffer from a starting
 -- position.
@@ -257,26 +213,47 @@ function M.find_incremental(text, next, anchor)
   gui.command_entry.enter_mode('find_incremental')
 end
 
--- Optimize for speed.
-local load, pcall = load, pcall
-
--- Runs the given code.
--- This function is passed to `string.gsub()` in the `replace()` function.
--- @param code The code to run.
-local function run(code)
-  local ok, val = pcall(load('return '..code))
-  if not ok then
-    gui.dialog('ok-msgbox',
-               '--title', _L['Error'],
-               '--text', _L['An error occured:'],
-               '--informative-text', val:gsub('"', '\\"'),
-               '--icon', 'gtk-dialog-error',
-               '--button1', _L['_OK'],
-               '--button2', _L['_Cancel'],
-               '--no-cancel')
-    error()
+---
+-- Searches the *utf8_dir* or user-specified directory for files that match
+-- search text and options and prints the results to a buffer.
+-- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
+-- search text and option flags, respectively. Use `FILTER` to set the search
+-- filter.
+-- @param utf8_dir Optional UTF-8-encoded directory path to search. If `nil`,
+--   the user is prompted for one.
+-- @see FILTER
+-- @name find_in_files
+function M.find_in_files(utf8_dir)
+  if not utf8_dir then
+    utf8_dir = gui.dialog('fileselect',
+                          '--title', _L['Find in Files'],
+                          '--select-only-directories',
+                          '--with-directory',
+                          (buffer.filename or ''):match('^.+[/\\]') or '',
+                          '--no-newline')
   end
-  return val
+  if utf8_dir == '' then return end
+
+  local text = M.find_entry_text
+  if not M.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
+  if not M.match_case then text = text:lower() end
+  if M.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
+  local matches = {_L['Find:']..' '..text}
+  lfs.dir_foreach(utf8_dir, function(file)
+    local match_case = M.match_case
+    local line_num = 1
+    for line in io.lines(file) do
+      if (match_case and line or line:lower()):find(text) then
+        file = file:iconv('UTF-8', _CHARSET)
+        matches[#matches + 1] = ('%s:%s:%s'):format(file, line_num, line)
+      end
+      line_num = line_num + 1
+    end
+  end, M.FILTER, true)
+  if #matches == 1 then matches[2] = _L['No results found'] end
+  matches[#matches + 1] = ''
+  if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
+  gui._print(_L['[Files Found Buffer]'], table.concat(matches, '\n'))
 end
 
 -- Replaces found text.
@@ -290,27 +267,38 @@ end
 local function replace(rtext)
   if buffer:get_sel_text() == '' then return end
   if M.in_files then M.in_files = false end
-  local buffer = buffer
   buffer:target_from_selection()
   rtext = rtext:gsub('%%%%', '\\037') -- escape '%%'
-  local captures = M.captures
-  if captures then
-    for i = 1, #captures do
-      rtext = rtext:gsub('%%'..i, (captures[i]:gsub('%%', '%%%%')))
+  if M.captures then
+    for i = 1, #M.captures do
+      rtext = rtext:gsub('%%'..i, (M.captures[i]:gsub('%%', '%%%%')))
     end
   end
-  local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', run)
+  local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', function(code)
+    local ok, result = pcall(load('return '..code))
+    if not ok then error(result) end
+    return result
+  end)
   if ok then
     rtext = rtext:gsub('\\037', '%%') -- unescape '%'
     buffer:replace_target(rtext:gsub('\\[abfnrtv\\]', escapes))
     buffer:goto_pos(buffer.target_end) -- 'find' text after this replacement
   else
+    gui.dialog('ok-msgbox',
+               '--title', _L['Error'],
+               '--text', _L['An error occured:'],
+               '--informative-text',
+               rtext:match(':1:(.+)$') or rtext:match(':%d+:(.+)$'),
+               '--icon', 'gtk-dialog-error',
+               '--button1', _L['_OK'],
+               '--button2', _L['_Cancel'],
+               '--no-cancel')
     -- Since find is called after replace returns, have it 'find' the current
     -- text again, rather than the next occurance so the user can fix the error.
     buffer:goto_pos(buffer.current_pos)
   end
 end
-events_connect(events.REPLACE, replace)
+events.connect(events.REPLACE, replace)
 
 local MARK_FIND = _SCINTILLA.next_marker_number()
 -- Replaces all found text.
@@ -356,7 +344,7 @@ local function replace_all(ftext, rtext)
   gui.statusbar_text = ("%d %s"):format(count, _L['replacement(s) made'])
   buffer:end_undo_action()
 end
-events_connect(events.REPLACE_ALL, replace_all)
+events.connect(events.REPLACE_ALL, replace_all)
 
 -- Returns whether or not the given buffer is a files found buffer.
 local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
@@ -382,7 +370,6 @@ function M.goto_file_found(line, next)
 
   -- If not line was given, find the next search result.
   if not line and next ~= nil then
-    local buffer = buffer
     if next then buffer:line_end() else buffer:home() end
     buffer:search_anchor()
     local f = buffer['search_'..(next and 'next' or 'prev')]
@@ -404,7 +391,7 @@ function M.goto_file_found(line, next)
   gui.goto_file(file, true, preferred_view)
   _M.textadept.editing.goto_line(line_num)
 end
-events_connect(events.DOUBLE_CLICK,
+events.connect(events.DOUBLE_CLICK,
                function(pos, line) M.goto_file_found(line) end)
 
 --[[ The functions below are Lua C functions.

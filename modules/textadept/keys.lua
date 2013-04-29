@@ -215,7 +215,6 @@ M.utils = {
   end,
   enclose_as_xml_tags = function()
     _M.textadept.editing.enclose('<', '>')
-    local buffer = buffer
     local pos = buffer.current_pos
     while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
     buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
@@ -229,7 +228,6 @@ M.utils = {
     if buffer.filename then io.snapopen(buffer.filename:match('^(.+)[/\\]')) end
   end,
   show_style = function()
-    local buffer = buffer
     local style = buffer.style_at[buffer.current_pos]
     local text = string.format("%s %s\n%s %s (%d)", _L['Lexer'],
                                buffer:get_lexer(true), _L['Style'],
@@ -245,7 +243,7 @@ M.utils = {
     if type(state) == 'boolean' then
       buffer[property] = not state
     elseif type(state) == 'number' then
-      buffer[property] = buffer[property] == 0 and (i or 1) or 0
+      buffer[property] = state == 0 and (i or 1) or 0
     end
     events.emit(events.UPDATE_UI) -- for updating statusbar
   end,
@@ -262,26 +260,23 @@ M.utils = {
   grow = function() if view.size then view.size = view.size + 10 end end,
   shrink = function() if view.size then view.size = view.size - 10 end end,
   toggle_current_fold = function()
-    local buffer = buffer
     buffer:toggle_fold(buffer:line_from_position(buffer.current_pos))
   end,
   reset_zoom = function() buffer.zoom = 0 end,
   open_webpage = function(url)
-    local cmd
     if WIN32 then
-      cmd = string.format('start "" "%s"', url)
-      local p = io.popen(cmd)
+      local p = io.popen(string.format('start "" "%s"', url))
       if not p then error(_L['Error loading webpage:']..url) end
       p:close()
     else
-      cmd = string.format(OSX and 'open "file://%s"' or 'xdg-open "%s" &', url)
-      local _, _, code = os.execute(cmd)
+      local _, _, code = os.execute(string.format(OSX and 'open "file://%s"' or
+                                                  'xdg-open "%s" &', url))
       if code ~= 0 then error(_L['Error loading webpage:']..url) end
     end
   end,
   cut_to_eol = function()
-    _G.buffer:line_end_extend()
-    _G.buffer:cut()
+    buffer:line_end_extend()
+    buffer:cut()
   end
 }
 -- The following buffer functions need to be constantized in order for menu
@@ -299,13 +294,9 @@ events.connect(events.BUFFER_NEW, constantize_menu_buffer_functions)
 -- Scintilla's first buffer does not have this.
 if not RESETTING then constantize_menu_buffer_functions() end
 
-local keys = keys
-local io, gui, gui_find, gui_ce = io, gui, gui.find, gui.command_entry
-local buffer, view = buffer, view
-local m_textadept, m_editing = _M.textadept, _M.textadept.editing
-local m_bookmarks, m_snippets = m_textadept.bookmarks, m_textadept.snippets
-local OSX, c = OSX, _SCINTILLA.constants
-local utils = M.utils
+local _M, keys, buffer, view = _M, keys, buffer, view
+local m_editing, utils = _M.textadept.editing, M.utils
+local OSX, CURSES, c = OSX, CURSES, _SCINTILLA.constants
 
 -- Windows and Linux key bindings.
 --
@@ -372,8 +363,8 @@ keys[not OSX and 'cs' or 'ms'] = buffer.save
 keys[not OSX and (not CURSES and 'cS' or 'cms') or 'mS'] = buffer.save_as
 keys[not OSX and 'cw' or 'mw'] = buffer.close
 keys[not OSX and (not CURSES and 'cW' or 'cmw') or 'mW'] = io.close_all
--- TODO: m_textadept.sessions.load
--- TODO: m_textadept.sessions.save
+-- TODO: _M.textadept.sessions.load
+-- TODO: _M.textadept.sessions.save
 keys[not OSX and 'cq' or 'mq'] = quit
 
 -- Edit.
@@ -399,7 +390,7 @@ keys[not OSX and not CURSES and 'c/' or 'm/'] = m_editing.block_comment
 keys.ct = m_editing.transpose_chars
 keys[not OSX and (not CURSES and 'cJ' or 'mj') or 'cj'] = m_editing.join_lines
 keys[not OSX and (not CURSES and 'c|' or 'c\\')
-             or 'm|'] = {gui_ce.enter_mode, 'filter_through'}
+             or 'm|'] = {gui.command_entry.enter_mode, 'filter_through'}
 -- Select.
 keys[not CURSES and 'cM' or 'mM'] = {m_editing.match_brace, 'select'}
 keys[not OSX and not CURSES and 'c<'
@@ -441,55 +432,58 @@ keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
 -- Search.
-keys[not OSX and not CURSES and 'cf' or 'mf'] = gui_find.focus
+keys[not OSX and not CURSES and 'cf' or 'mf'] = gui.find.focus
 if CURSES then keys.mF = keys.mf end -- in case mf is used by GUI terminals
-keys[not OSX and not CURSES and 'cg' or 'mg'] = gui_find.find_next
+keys[not OSX and not CURSES and 'cg' or 'mg'] = gui.find.find_next
 if not OSX and not CURSES then keys.f3 = keys.cg end
-keys[not OSX and not CURSES and 'cG' or 'mG'] = gui_find.find_prev
+keys[not OSX and not CURSES and 'cG' or 'mG'] = gui.find.find_prev
 if not OSX and not CURSES then keys.sf3 = keys.cG end
-keys[not OSX and (not CURSES and 'car' or 'mr') or 'cr'] = gui_find.replace
-keys[not OSX and (not CURSES and 'caR' or 'mR') or 'cR'] = gui_find.replace_all
+keys[not OSX and (not CURSES and 'car' or 'mr') or 'cr'] = gui.find.replace
+keys[not OSX and (not CURSES and 'caR' or 'mR') or 'cR'] = gui.find.replace_all
 -- Find Next is an when find pane is focused in GUI.
 -- Find Prev is ap when find pane is focused in GUI.
 -- Replace is ar when find pane is focused in GUI.
 -- Replace All is aa when find pane is focused in GUI.
-keys[not OSX and not CURSES and 'caf' or 'cmf'] = gui_find.find_incremental
+keys[not OSX and not CURSES and 'caf' or 'cmf'] = gui.find.find_incremental
 if not CURSES then keys[not OSX and 'cF' or 'mF'] = utils.find_in_files end
 -- Find in Files is ai when find pane is focused in GUI.
 if not CURSES then
-  keys[not OSX and 'cag' or 'cmg'] = {gui_find.goto_file_found, false, true}
-  keys[not OSX and 'caG' or 'cmG'] = {gui_find.goto_file_found, false, false}
+  keys[not OSX and 'cag' or 'cmg'] = {gui.find.goto_file_found, false, true}
+  keys[not OSX and 'caG' or 'cmG'] = {gui.find.goto_file_found, false, false}
 end
 keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
 -- Tools.
 keys[not OSX and (not CURSES and 'ce' or 'mc')
-             or 'me'] = {gui_ce.enter_mode, 'lua_command'}
+             or 'me'] = {gui.command_entry.enter_mode, 'lua_command'}
 keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
-keys[not OSX and 'cr' or 'mr'] = m_textadept.run.run
+keys[not OSX and 'cr' or 'mr'] = _M.textadept.run.run
 keys[not OSX and (not CURSES and 'cR' or 'cmr')
-             or 'mR'] = m_textadept.run.compile
+             or 'mR'] = _M.textadept.run.compile
 keys[not OSX and (not CURSES and 'cae' or 'mx')
-             or 'cme'] = {m_textadept.run.goto_error, false, true}
+             or 'cme'] = {_M.textadept.run.goto_error, false, true}
 keys[not OSX and (not CURSES and 'caE' or 'mX')
-             or 'cmE'] = {m_textadept.run.goto_error, false, false}
+             or 'cmE'] = {_M.textadept.run.goto_error, false, false}
 -- Adeptsense.
 keys[not OSX and ((not CURSES or WIN32) and 'c ' or 'c@')
-             or 'aesc'] = m_textadept.adeptsense.complete
-keys[not CURSES and 'ch' or 'mh'] = m_textadept.adeptsense.show_apidoc
+             or 'aesc'] = _M.textadept.adeptsense.complete
+keys[not CURSES and 'ch' or 'mh'] = _M.textadept.adeptsense.show_apidoc
 if CURSES then keys.mH = keys.mh end -- in case mh is used by GUI terminals
 -- Snippets.
-keys[not OSX and (not CURSES and 'ck' or 'mk') or 'a\t'] = m_snippets._select
-keys['\t'] = m_snippets._insert
-keys['s\t'] = m_snippets._previous
+keys[not OSX and (not CURSES and 'ck' or 'mk')
+             or 'a\t'] = _M.textadept.snippets._select
+keys['\t'] = _M.textadept.snippets._insert
+keys['s\t'] = _M.textadept.snippets._previous
 keys[not OSX and (not CURSES and 'cK' or 'mK')
-             or 'as\t'] = m_snippets._cancel_current
+             or 'as\t'] = _M.textadept.snippets._cancel_current
 -- Bookmark.
-keys[not OSX and (not CURSES and 'cf2' or 'f1') or 'mf2'] = m_bookmarks.toggle
-keys[not OSX and (not CURSES and 'csf2' or 'f6') or 'msf2'] = m_bookmarks.clear
-keys.f2 = m_bookmarks.goto_next
-keys[not CURSES and 'sf2' or 'f3'] = m_bookmarks.goto_prev
-keys[not CURSES and 'af2' or 'f4'] = m_bookmarks.goto_bookmark
+keys[not OSX and (not CURSES and 'cf2' or 'f1')
+             or 'mf2'] = _M.textadept.bookmarks.toggle
+keys[not OSX and (not CURSES and 'csf2' or 'f6')
+             or 'msf2'] = _M.textadept.bookmarks.clear
+keys.f2 = _M.textadept.bookmarks.goto_next
+keys[not CURSES and 'sf2' or 'f3'] = _M.textadept.bookmarks.goto_prev
+keys[not CURSES and 'af2' or 'f4'] = _M.textadept.bookmarks.goto_bookmark
 -- Snapopen.
 keys[not OSX and 'cu' or 'mu'] = {io.snapopen, _USERHOME}
 -- TODO: {io.snapopen, _HOME}
@@ -523,7 +517,7 @@ keys[not OSX and (not CURSES and 'cai' or 'mi')
 -- TODO: {utils.set_encoding, 'MacRoman'}
 -- TODO: {utils.set_encoding, 'UTF-16LE'}
 keys[not OSX and not CURSES and 'cL'
-                            or 'mL'] = m_textadept.mime_types.select_lexer
+                            or 'mL'] = _M.textadept.mime_types.select_lexer
 keys.f5 = {buffer.colourise, buffer, 0, -1}
 if CURSES then keys.cl = keys.f5 end
 
@@ -594,27 +588,28 @@ end
 
 -- Modes.
 keys.lua_command = {
-  ['\t'] = gui_ce.complete_lua,
-  ['\n'] = {gui_ce.finish_mode, gui_ce.execute_lua}
+  ['\t'] = gui.command_entry.complete_lua,
+  ['\n'] = {gui.command_entry.finish_mode, gui.command_entry.execute_lua}
 }
 keys.filter_through = {
-  ['\n'] = {gui_ce.finish_mode, m_editing.filter_through},
+  ['\n'] = {gui.command_entry.finish_mode, m_editing.filter_through},
 }
 keys.find_incremental = {
   ['\n'] = function()
-    gui_find.find_incremental(gui_ce.entry_text, true, true)
+    gui.find.find_incremental(gui.command_entry.entry_text, true, true)
   end,
   ['cr'] = function()
-    gui_find.find_incremental(gui_ce.entry_text, false, true)
+    gui.find.find_incremental(gui.command_entry.entry_text, false, true)
   end,
   ['\b'] = function()
-    gui_find.find_incremental(gui_ce.entry_text:sub(1, -2), true)
+    gui.find.find_incremental(gui.command_entry.entry_text:sub(1, -2), true)
     return false -- propagate
   end
 }
+-- Add the character for any key pressed without modifiers to incremental find.
 setmetatable(keys.find_incremental, {__index = function(t, k)
                if #k > 1 and k:find('^[cams]*.+$') then return end
-               gui_find.find_incremental(gui_ce.entry_text..k, true)
+               gui.find.find_incremental(gui.command_entry.entry_text..k, true)
              end})
 
 return M

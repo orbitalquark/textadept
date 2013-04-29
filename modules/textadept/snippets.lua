@@ -79,19 +79,13 @@ module('_M.textadept.snippets')]=]
 -- The stack of currently running snippets.
 local snippet_stack = {}
 
--- Contains newline sequences for `buffer.eol_mode`.
--- This table is used by `new_snippet()`.
--- @class table
--- @name newlines
-local newlines = {[0] = '\r\n', '\r', '\n'}
-
 local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
 
+local newlines = {[0] = '\r\n', '\r', '\n'}
 -- Inserts a new snippet.
 -- @param text The new snippet to insert.
 -- @param trigger The trigger text used to expand the snippet, if any.
 local function new_snippet(text, trigger)
-  local buffer = buffer
   local snippet = setmetatable({
     trigger = trigger,
     original_sel_text = buffer:get_sel_text(),
@@ -140,7 +134,6 @@ end
 -- @see buffer.word_chars
 -- @name _insert
 function M._insert(text)
-  local buffer = buffer
   local trigger
   if not text then
     local lexer = buffer:get_lexer(true)
@@ -179,7 +172,7 @@ end
 -- language-specific snippets.
 -- @name _select
 function M._select()
-  local list = {}
+  local list, t = {}, {}
   local type = type
   for trigger, text in pairs(snippets) do
     if type(text) == 'string' then list[#list + 1] = trigger..'\0 \0'..text end
@@ -191,7 +184,6 @@ function M._select()
     end
   end
   table.sort(list)
-  local t = {}
   for i = 1, #list do
     t[#t + 1], t[#t + 2], t[#t + 3] = list[i]:match('^(%Z+)%z(%Z+)%z(%Z+)$')
   end
@@ -238,7 +230,6 @@ M._snippet_mt = {
   -- @param snippet The snippet returned by `new_snippet()`.
   -- @param text The snippet's text.
   set_text = function(snippet, text)
-    local buffer = buffer
     buffer.target_start = snippet.start_position
     buffer.target_end = snippet:get_end_position()
     buffer:replace_target(text)
@@ -341,19 +332,15 @@ M._snippet_mt = {
   -- Goes to the previous placeholder in a snippet.
   -- @param snippet The snippet returned by `new_snippet()`.
   previous = function(snippet)
-    if snippet.index > 2 then
-      snippet:set_text(snippet.snapshots[snippet.index - 2])
-      snippet.index = snippet.index - 2
-      snippet:next()
-    else
-      snippet:cancel()
-    end
+    if snippet.index <= 2 then snippet:cancel() return end
+    snippet:set_text(snippet.snapshots[snippet.index - 2])
+    snippet.index = snippet.index - 2
+    snippet:next()
   end,
 
   -- Cancels a snippet.
   -- @param snippet The snippet returned by `new_snippet()`.
   cancel = function(snippet)
-    local buffer = buffer
     buffer:set_sel(snippet.start_position, snippet:get_end_position())
     buffer:replace_sel(snippet.trigger or snippet.original_sel_text)
     buffer.indicator_current = INDIC_SNIPPET
@@ -364,7 +351,6 @@ M._snippet_mt = {
   -- Finishes a snippet by going to its "%0" placeholder and cleaning up.
   -- @param snippet The snippet returned by `new_snippet()`.
   finish = function(snippet)
-    local buffer = buffer
     snippet:set_text(snippet.unescape_text(snippet:get_text(), true))
     local s, e = snippet:get_text():find('%%0')
     if s and e then

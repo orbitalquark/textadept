@@ -117,8 +117,8 @@ end
 -- Called by LuaDoc to process a doc object.
 -- @param doc The LuaDoc doc object.
 function M.start(doc)
---  require 'luarocks.require'
---  local profiler = require 'profiler'
+--  require('luarocks.require')
+--  local profiler = require('profiler')
 --  profiler.start()
 
   local modules, files = doc.modules, doc.files

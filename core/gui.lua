@@ -19,8 +19,6 @@ local gui = gui
 --   The text displayed by the buffer statusbar.
 module('gui')]]
 
-local _L = _L
-
 -- Helper function for printing messages to buffers.
 -- @see gui._print
 local function _print(buffer_type, ...)
@@ -161,6 +159,7 @@ end
 
 local theme_file = not CURSES and 'theme' or 'theme_term'
 local THEME
+
 ---
 -- Sets the editor theme name to *name* or the default platform theme.
 -- Themes with *name* in the *`_USERHOME`/themes/* directory override themes of
@@ -348,23 +347,21 @@ events_connect(events.APPLEEVENT_ODOC, function(uri)
   return events_emit(events.URI_DROPPED, 'file://'..uri)
 end)
 
-local string_format = string.format
 local EOLs = {_L['CRLF'], _L['CR'], _L['LF']}
 local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- Sets docstatusbar text.
 events_connect(events.UPDATE_UI, function()
-  local buffer = buffer
   local pos = buffer.current_pos
   local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
   local col = buffer.column[pos] + 1
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE):match('^[^/]+')
   local eol = EOLs[buffer.eol_mode + 1]
-  local tabs = string_format('%s %d', buffer.use_tabs and _L['Tabs:'] or
+  local tabs = string.format('%s %d', buffer.use_tabs and _L['Tabs:'] or
                                       _L['Spaces:'], buffer.tab_width)
   local enc = buffer.encoding or ''
   local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
                               '%s %d/%d  %s %d  %s  %s  %s  %s'
-  gui.docstatusbar_text = string_format(text, _L['Line:'], line, max,
+  gui.docstatusbar_text = string.format(text, _L['Line:'], line, max,
                                         _L['Col:'], col, lexer, eol, tabs, enc)
 end)
 

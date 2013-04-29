@@ -290,7 +290,6 @@ function M.disconnect(event, id)
 end
 
 local error_emitted = false
-
 ---
 -- Sequentially calls all handler functions for *event* with the given
 -- arguments.
