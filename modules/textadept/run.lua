@@ -38,7 +38,6 @@ module('_M.textadept.run')]]
 M.MARK_ERROR_BACK = not CURSES and 0x8080CC or 0x0000FF
 
 -- Events.
-local events, events_connect, events_emit = events, events.connect, events.emit
 events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
 
 local preferred_view
@@ -71,6 +70,7 @@ local function command(cmd_table, compiling)
   local current_dir = lfs.currentdir()
   lfs.chdir(filedir)
   local event = compiling and events.COMPILE_OUTPUT or events.RUN_OUTPUT
+  local events_emit = events.emit
   local lexer = buffer:get_lexer()
   events_emit(event, lexer, '> '..command:iconv('UTF-8', _CHARSET))
   local p = io.popen(command..' 2>&1')
@@ -138,7 +138,7 @@ M.compile_command = {}
 -- @see _G.events
 -- @name compile
 function M.compile() command(M.compile_command, true) end
-events_connect(events.COMPILE_OUTPUT, print_output)
+events.connect(events.COMPILE_OUTPUT, print_output)
 
 ---
 -- Map of file extensions (excluding the leading '.') to their associated
@@ -165,7 +165,7 @@ M.run_command = {}
 -- @see _G.events
 -- @name run
 function M.run() command(M.run_command) end
-events_connect(events.RUN_OUTPUT, print_output)
+events.connect(events.RUN_OUTPUT, print_output)
 
 ---
 -- Map of lexer names to their error string details, tables containing the
@@ -240,7 +240,7 @@ function M.goto_error(line, next)
     buffer.annotation_style[line - 1] = 8 -- error
   end
 end
-events_connect(events.DOUBLE_CLICK, function(pos, line) M.goto_error(line) end)
+events.connect(events.DOUBLE_CLICK, function(pos, line) M.goto_error(line) end)
 
 local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for error markers.
@@ -249,6 +249,6 @@ local function set_error_properties()
   buffer.marker_back[MARK_ERROR] = M.MARK_ERROR_BACK
 end
 if buffer then set_error_properties() end
-events_connect(events.VIEW_NEW, set_error_properties)
+events.connect(events.VIEW_NEW, set_error_properties)
 
 return M

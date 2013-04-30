@@ -661,6 +661,7 @@ function M.get_apidoc(sense, symbol)
 end
 
 local apidocs = nil
+
 ---
 -- Shows a call tip with API documentation for the symbol behind the caret.
 -- If documentation is already being shown, cycles through multiple definitions.
