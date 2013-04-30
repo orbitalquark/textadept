@@ -79,32 +79,10 @@ io.recent_files = {}
 -- @class table
 -- @name boms
 io.boms = {
-  ['UTF-16BE'] = '\254\255',     ['UTF-16LE'] = '\255\254',
+  ['UTF-8'] = '\239\187\191',
+  ['UTF-16BE'] = '\254\255', ['UTF-16LE'] = '\255\254',
   ['UTF-32BE'] = '\0\0\254\255', ['UTF-32LE'] = '\255\254\0\0'
 }
-
--- Attempt to detect the encoding of the given text.
--- @param text Text to determine encoding from.
--- @return encoding string for `string.iconv()` (unless `'binary'`, indicating a
---   binary file), byte-order mark (BOM) string or `nil`. If encoding string is
---   `nil`, no encoding has been detected.
-local function detect_encoding(text)
-  local b1, b2, b3, b4 = string.byte(text, 1, 4)
-  if b1 == 239 and b2 == 187 and b3 == 191 then
-    return 'UTF-8', '\239\187\191'
-  elseif b1 == 254 and b2 == 255 then
-    return 'UTF-16BE', io.boms['UTF-16BE']
-  elseif b1 == 255 and b2 == 254 then
-    return 'UTF-16LE', io.boms['UTF-16LE']
-  elseif b1 == 0 and b2 == 0 and b3 == 254 and b4 == 255 then
-    return 'UTF-32BE', io.boms['UTF-32BE']
-  elseif b1 == 255 and b2 == 254 and b3 == 0 and b4 == 0 then
-    return 'UTF-32LE', io.boms['UTF-32LE']
-  elseif text:sub(1, 65536):find('\0') then
-    return 'binary'
-  end
-  return nil
-end
 
 ---
 -- List of encodings to try to decode files as.
@@ -134,10 +112,10 @@ end
 --     UTF-16BE, UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 --
 -- [GNU iconv's encodings]: http://www.gnu.org/software/libiconv/
--- @usage io.try_encodings[#io.try_encodings + 1] = 'UTF-16'
+-- @usage io.encodings[#io.encodings + 1] = 'UTF-16'
 -- @class table
--- @name try_encodings
-io.try_encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
+-- @name encodings
+io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
 ---
 -- Opens *utf8_filenames*, a "\n" delimited string of UTF-8-encoded filenames,
@@ -171,26 +149,24 @@ function io.open_file(utf8_filenames)
       error(err)
     end
     local buffer = buffer.new()
-    -- Tries to detect character encoding and convert text from it to UTF-8.
-    local encoding, encoding_bom = detect_encoding(text)
-    if encoding ~= 'binary' then
-      if encoding then
-        if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
-        text = text:iconv('UTF-8', encoding)
-      else
-        -- Try list of encodings.
-        for _, try_encoding in ipairs(io.try_encodings) do
-          local ok, conv = pcall(string.iconv, text, 'UTF-8', try_encoding)
-          if ok then encoding, text = try_encoding, conv break end
-        end
-        if not encoding then error(_L['Encoding conversion failed.']) end
+    buffer.encoding, buffer.encoding_bom = nil, nil
+    -- Try to detect character encoding and convert to UTF-8.
+    for encoding, bom in pairs(io.boms) do
+      if text:sub(1, #bom) == bom then
+        buffer.encoding, buffer.encoding_bom = encoding, bom
+        text = text:sub(#bom + 1, -1):iconv('UTF-8', encoding)
+        break
       end
-    else
-      encoding = nil
     end
-    buffer.encoding, buffer.encoding_bom = encoding, encoding_bom
+    if not buffer.encoding and not text:sub(1, 65536):find('\0') then
+      for i = 1, #io.encodings do
+        local ok, conv = pcall(string.iconv, text, 'UTF-8', io.encodings[i])
+        if ok then buffer.encoding, text = io.encodings[i], conv break end
+      end
+      if not buffer.encoding then error(_L['Encoding conversion failed.']) end
+    end
     buffer.code_page = encoding and _SCINTILLA.constants.SC_CP_UTF8 or 0
-    -- Tries to set the buffer's EOL mode appropriately based on the file.
+    -- Detect EOL mode.
     local s, e = text:find('\r\n?')
     if s and e then
       buffer.eol_mode = (s == e and _SCINTILLA.constants.SC_EOL_CR or
