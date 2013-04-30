@@ -101,78 +101,73 @@ local escapes = {
   ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
 }
 
-local c = _SCINTILLA.constants
-
 -- Finds and selects text in the current buffer.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
 -- @param flags Search flags. This is a number mask of 4 flags: match case (2),
 --   whole word (4), Lua pattern (8), and in files (16) joined with binary OR.
 --   If `nil`, this is determined based on the checkboxes in the find box.
--- @param nowrap Flag indicating whether or not the search will not wrap.
+-- @param no_wrap Flag indicating whether or not the search will not wrap.
 -- @param wrapped Utility flag indicating whether or not the search has wrapped
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
 -- @return position of the found text or `-1`
-local function find_(text, next, flags, nowrap, wrapped)
+local function find_(text, next, flags, no_wrap, wrapped)
   if text == '' then return end
-  local buffer = buffer
-  local first_visible_line = buffer.first_visible_line -- for 'no results found'
-
-  local increment
-  if buffer.current_pos == buffer.anchor then
-    increment = 0
-  elseif not wrapped then
-    increment = next and 1 or -1
-  end
-
   if not flags then
+    local c = _SCINTILLA.constants
     flags = 0
     if M.match_case then flags = flags + c.SCFIND_MATCHCASE end
     if M.whole_word then flags = flags + c.SCFIND_WHOLEWORD end
     if M.lua then flags = flags + 8 end
     if M.in_files then flags = flags + 16 end
   end
+  if flags >= 16 then M.find_in_files() return end -- not performed here
+  local first_visible_line = buffer.first_visible_line -- for 'no results found'
 
-  local result
-  M.captures = nil
-
-  if flags < 8 then
-    buffer:goto_pos(buffer[next and 'current_pos' or 'anchor'] + increment)
-    buffer:search_anchor()
-    result = buffer['search_'..(next and 'next' or 'prev')](buffer, flags, text)
-    buffer:scroll_range(buffer.anchor, buffer.current_pos)
-  elseif flags < 16 then -- lua pattern search (forward search only)
-    text = text:gsub('\\[abfnrtv\\]', escapes)
-    local buffer_text = buffer:get_text(buffer.length)
-    local results = {buffer_text:find(text, buffer.anchor + increment + 1)}
-    if #results > 0 then
-      M.captures = {table.unpack(results, 3)}
-      buffer:set_sel(results[2], results[1] - 1)
-    end
-    result = results[1] or -1
-  else -- find in files
-    M.find_in_files()
-    return
+  -- If text is selected, assume it is from the current search and increment the
+  -- caret appropriately for the next search.
+  if buffer:get_sel_text() ~= '' then
+    buffer:goto_pos(buffer[next and 'current_pos' or 'anchor'] +
+                    (next and 1 or -1))
   end
 
-  if result == -1 and not nowrap and not wrapped then -- wrap the search
+  local pos = -1
+  if flags < 8 then
+    -- Scintilla search.
+    buffer:search_anchor()
+    pos = buffer['search_'..(next and 'next' or 'prev')](buffer, flags, text)
+  elseif flags < 16 then
+    -- Lua pattern search.
+    local patt = text:gsub('\\[abfnrtv\\]', escapes)
+    local s = next and buffer.current_pos or 0
+    local e = next and buffer.length or buffer.current_pos
+    local caps = {buffer:text_range(s, e):find(next and patt or '^.*()'..patt)}
+    M.captures = {table.unpack(caps, next and 3 or 4)}
+    if #caps > 0 then
+      pos, e = s + caps[next and 1 or 3] - 1, s + caps[2]
+      buffer:set_sel(e, pos)
+    end
+  end
+  buffer:scroll_range(buffer.anchor, buffer.current_pos)
+
+  -- If nothing was found, wrap the search.
+  if pos == -1 and not no_wrap then
     local anchor, pos = buffer.anchor, buffer.current_pos
-    buffer:goto_pos((next or flags >= 8) and 0 or buffer.length)
+    buffer:goto_pos(next and 0 or buffer.length)
     gui.statusbar_text = _L['Search wrapped']
     events.emit(events.FIND_WRAPPED)
-    result = find_(text, next, flags, true, true)
-    if result == -1 then
+    pos = find_(text, next, flags, true, true)
+    if pos == -1 then
       gui.statusbar_text = _L['No results found']
-      buffer:line_scroll(0, first_visible_line)
+      buffer:line_scroll(0, first_visible_line - buffer.first_visible_line)
       buffer:goto_pos(anchor)
     end
-    return result
-  elseif result ~= -1 and not wrapped then
+  elseif not wrapped then
     gui.statusbar_text = ''
   end
 
-  return result
+  return pos
 end
 events.connect(events.FIND, find_)
 
@@ -188,7 +183,7 @@ local function find_incremental(text, next, anchor)
     M.incremental_start = buffer.current_pos + (next and 1 or -1)
   end
   buffer:goto_pos(M.incremental_start or 0)
-  find_(text, next, M.match_case and c.SCFIND_MATCHCASE or 0)
+  find_(text, next, M.match_case and _SCINTILLA.constants.SCFIND_MATCHCASE or 0)
 end
 
 ---
@@ -300,7 +295,7 @@ local function replace(rtext)
 end
 events.connect(events.REPLACE, replace)
 
-local MARK_FIND = _SCINTILLA.next_marker_number()
+local INDIC_REPLACE = _SCINTILLA.next_indic_number()
 -- Replaces all found text.
 -- If any text is selected, all found text in that selection is replaced.
 -- This function ignores "Find in Files".
@@ -310,7 +305,6 @@ local MARK_FIND = _SCINTILLA.next_marker_number()
 local function replace_all(ftext, rtext)
   if ftext == '' then return end
   if M.in_files then M.in_files = false end
-  local buffer = buffer
   buffer:begin_undo_action()
   local count = 0
   if buffer:get_sel_text() == '' then
@@ -320,26 +314,19 @@ local function replace_all(ftext, rtext)
       count = count + 1
     end
   else
-    local anchor, current_pos = buffer.selection_start, buffer.selection_end
-    local s, e = anchor, current_pos
-    buffer:insert_text(e, '\n')
-    local end_marker = buffer:marker_add(buffer:line_from_position(e + 1),
-                                         MARK_FIND)
+    local s, e = buffer.selection_start, buffer.selection_end
+    buffer.indicator_current = INDIC_REPLACE
+    buffer:indicator_fill_range(e, 1)
     buffer:goto_pos(s)
     local pos = find_(ftext, true, nil, true)
-    while pos ~= -1 and
-          pos < buffer:position_from_line(
-                       buffer:marker_line_from_handle(end_marker)) do
+    while pos ~= -1 and pos <= buffer:indicator_end(INDIC_REPLACE, s) do
       replace(rtext)
       count = count + 1
       pos = find_(ftext, true, nil, true)
     end
-    e = buffer:position_from_line(buffer:marker_line_from_handle(end_marker))
-    buffer:goto_pos(e)
-    buffer:delete_back() -- delete '\n' added
-    if s == current_pos then anchor = e - 1 else current_pos = e - 1 end
-    buffer:set_sel(anchor, current_pos)
-    buffer:marker_delete_handle(end_marker)
+    e = buffer:indicator_end(INDIC_REPLACE, s)
+    buffer:set_sel(s, e > 0 and e or buffer.length)
+    buffer:indicator_clear_range(e, 1)
   end
   gui.statusbar_text = ("%d %s"):format(count, _L['replacement(s) made'])
   buffer:end_undo_action()
