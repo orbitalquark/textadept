@@ -252,7 +252,7 @@ function gui.select_theme()
   reset()
 end
 
-local events, events_connect, events_emit = events, events.connect, events.emit
+local events, events_connect = events, events.connect
 
 -- Sets default properties for a Scintilla window.
 events_connect(events.VIEW_NEW, function()
@@ -274,7 +274,7 @@ events_connect(events.VIEW_NEW, function()
   local ok, err = pcall(dofile, THEME..'/view.lua')
   if not ok then io.stderr:write(err) end
 end)
-events_connect(events.VIEW_NEW, function() events_emit(events.UPDATE_UI) end)
+events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
@@ -310,7 +310,7 @@ end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
 -- @param buffer The global buffer.
-local function set_title(buffer)
+local function set_title()
   local filename = buffer.filename or buffer._type or _L['Untitled']
   local basename = buffer.filename and filename:match('[^/\\]+$') or filename
   gui.title = string.format('%s %s Textadept (%s)', basename,
@@ -320,13 +320,13 @@ end
 -- Changes Textadept title to show the buffer as being "clean".
 events_connect(events.SAVE_POINT_REACHED, function()
   buffer.dirty = false
-  set_title(buffer)
+  set_title()
 end)
 
 -- Changes Textadept title to show thee buffer as "dirty".
 events_connect(events.SAVE_POINT_LEFT, function()
   buffer.dirty = true
-  set_title(buffer)
+  set_title()
 end)
 
 -- Open uri(s).
@@ -344,7 +344,7 @@ events_connect(events.URI_DROPPED, function(utf8_uris)
   end
 end)
 events_connect(events.APPLEEVENT_ODOC, function(uri)
-  return events_emit(events.URI_DROPPED, 'file://'..uri)
+  return events.emit(events.URI_DROPPED, 'file://'..uri)
 end)
 
 local EOLs = {_L['CRLF'], _L['CR'], _L['LF']}
@@ -371,8 +371,8 @@ events_connect(events.MARGIN_CLICK, function(margin, pos, modifiers)
 end)
 
 -- Updates the statusbar and titlebar for a new Scintilla document.
-events_connect(events.BUFFER_NEW, function() events_emit(events.UPDATE_UI) end)
-events_connect(events.BUFFER_NEW, function() set_title(buffer) end)
+events_connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
+events_connect(events.BUFFER_NEW, function() set_title() end)
 
 -- Save buffer properties.
 events_connect(events.BUFFER_BEFORE_SWITCH, function()
@@ -403,14 +403,14 @@ end)
 
 -- Updates titlebar and statusbar.
 events_connect(events.BUFFER_AFTER_SWITCH, function()
-  set_title(buffer)
-  events_emit(events.UPDATE_UI)
+  set_title()
+  events.emit(events.UPDATE_UI)
 end)
 
 -- Updates titlebar and statusbar.
 events_connect(events.VIEW_AFTER_SWITCH, function()
-  set_title(buffer)
-  events_emit(events.UPDATE_UI)
+  set_title()
+  events.emit(events.UPDATE_UI)
 end)
 
 events_connect(events.RESET_AFTER,

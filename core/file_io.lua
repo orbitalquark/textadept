@@ -219,7 +219,7 @@ local function set_encoding(buffer, encoding)
     error(_L['Cannot change binary file encoding'])
   end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
-  local text = buffer:get_text(buffer.length)
+  local text = buffer:get_text()
   text = text:iconv(buffer.encoding, 'UTF-8')
   text = text:iconv(encoding, buffer.encoding)
   text = text:iconv('UTF-8', encoding)
@@ -236,7 +236,7 @@ local function save(buffer)
   buffer:check_global()
   if not buffer.filename then buffer:save_as() return end
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
-  local text = buffer:get_text(buffer.length)
+  local text = buffer:get_text()
   if buffer.encoding then
     text = (buffer.encoding_bom or '')..text:iconv(buffer.encoding, 'UTF-8')
   end
@@ -264,11 +264,10 @@ local function save_as(buffer, utf8_filename)
                                (buffer.filename or ''):match('[^/\\]+$') or '',
                                '--no-newline')
   end
-  if #utf8_filename > 0 then
-    buffer.filename = utf8_filename
-    buffer:save()
-    events.emit(events.FILE_SAVED_AS, utf8_filename)
-  end
+  if utf8_filename == '' then return end
+  buffer.filename = utf8_filename
+  buffer:save()
+  events.emit(events.FILE_SAVED_AS, utf8_filename)
 end
 
 ---

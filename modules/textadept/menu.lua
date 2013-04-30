@@ -11,19 +11,6 @@ local M = {}
 -- menus.
 module('_M.textadept.menu')]]
 
--- Get a string uniquely identifying a key binding.
--- This is used to match menu items with key bindings to show the key shortcut.
--- @param f A value in the `keys` table.
-local function get_id(f)
-  local id = ''
-  if type(f) == 'function' then
-    id = tostring(f)
-  elseif type(f) == 'table' then
-    for _, v in ipairs(f) do id = id..tostring(v) end
-  end
-  return id
-end
-
 local _L, _M, buffer, view = _L, _M, buffer, view
 local m_editing, utils = _M.textadept.editing, _M.textadept.keys.utils
 local SEPARATOR, c = {''}, _SCINTILLA.constants
@@ -246,6 +233,19 @@ local function get_gdk_key(key_seq)
   return byte, modifiers
 end
 
+-- Get a string uniquely identifying a key binding.
+-- This is used to match menu items with key bindings to show the key shortcut.
+-- @param f A value in the `keys` table.
+local function get_id(f)
+  local id = ''
+  if type(f) == 'function' then
+    id = tostring(f)
+  elseif type(f) == 'table' then
+    for i = 1, #f do id = id..tostring(f[i]) end
+  end
+  return id
+end
+
 local key_shortcuts, menu_actions, contextmenu_actions
 
 -- Creates a menu suitable for `gui.menu()` from the menu table format.
@@ -348,6 +348,7 @@ function M.select_command()
   if i then keys.run_command(commands[i + 1], type(commands[i + 1])) end
 end
 
+-- Performs the appropriate action when clicking a menu item.
 events.connect(events.MENU_CLICKED, function(menu_id)
   local actions = menu_id < 1000 and menu_actions or contextmenu_actions
   local action = actions[menu_id < 1000 and menu_id or menu_id - 1000]

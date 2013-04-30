@@ -86,12 +86,6 @@ M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 -- @see TYPEOVER_CHARS
 M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
 
--- The current call tip.
--- Used for displaying call tips.
--- @class table
--- @name current_call_tip
-local current_call_tip = {}
-
 -- Matches characters specified in char_matches.
 events.connect(events.CHAR_ADDED, function(c)
   if not M.AUTOPAIR then return end
