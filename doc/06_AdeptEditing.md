@@ -248,8 +248,6 @@ code.
 
 ![Word Highlight](images/wordhighlight.png)
 
-This is not supported in curses.
-
 ### Adeptsense
 
 Textadept has the capability to autocomplete symbols for programming languages
