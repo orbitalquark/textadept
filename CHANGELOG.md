@@ -4,6 +4,67 @@
 
 [Atom Feed]: feed
 
+## 6.6 beta (01 May 2013)
+
+Download:
+
+* [Textadept 6.6 beta -- Win32][]
+* [Textadept 6.6 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 6.6 beta -- Linux][]
+* [Textadept 6.6 beta -- Linux x86_64][]
+* [Textadept 6.6 beta -- Source][]
+* [Textadept 6.6 beta -- Modules][]
+
+Bugfixes:
+
+* Fixed rendering on Mac OSX retina displays.
+* Fixed rectangle indicator display in curses.
+* Fixed Fn key recognition on Mac OSX.
+* Fixed compile errors for Mac OSX.
+* Find Previous for Lua patterns works.
+
+Changes:
+
+* Textadept supports multiple curses platforms, not just ncurses. Make targets
+  now use "curses" instead of "ncurses".
+* Better 16-color terminal support in lexer theme.
+* Reduced the delay when pressing `Esc` in curses.
+* [Messagebox][] dialogs can show icons via `--icon` and `--icon-file`.
+* New Win32 terminal version.
+* New [key modes][] functionality.
+* Updated to [Scintilla][] 3.3.1.
+* Renamed `_G.buffer_new()` to [`buffer.new()`][].
+* Changed the display of highlighted words, including removing
+  `_M.textadept.editing.INDIC_HIGHLIGHT_ALPHA`.
+* Changed [`_M.textadept.editing.autocomplete_word()`][] API.
+* Removed `_M.textadept.menu.menubar`, `_M.textadept.menu.contextmenu`, and
+  `events.handlers` tables from the API.
+* Moved `_M.textadept.filter_through` module functionality into
+  [`_M.textadept.editing.filter_through()`][].
+* Mark errors in compile/run commands and added
+  [`_M.textadept.run.goto_error()`][] menu options and key shortcuts.
+* Renamed `gui.find.goto_file_in_list()` to [`gui.find.goto_file_found()`][].
+* Consolidated `_M.textadept.editing.grow_selection()` functionality into
+  [`_M.textadept.editing.select_enclosed()`][].
+* Renamed `io.try_encodings` to [`io.encodings`][].
+
+[Textadept 6.6 beta -- Win32]: download/textadept_6.6_beta.win32.zip
+[Textadept 6.6 beta -- Mac OSX Intel 10.5+]: download/textadept_6.6_beta.osx.zip
+[Textadept 6.6 beta -- Linux]: download/textadept_6.6_beta.i386.tgz
+[Textadept 6.6 beta -- Linux x86_64]: download/textadept_6.6_beta.x86_64.tgz
+[Textadept 6.6 beta -- Source]: download/textadept_6.6_beta.src.zip
+[Textadept 6.6 beta -- Modules]: download/textadept_6.6_beta.modules.zip
+[Messagebox]: http://foicica.com/gtdialog/02_Usage.html#Messageboxes
+[key modes]: api/keys.html#Modes
+[Scintilla]: http://scintilla.org
+[`buffer.new()`]: api/buffer.html#new
+[`_M.textadept.editing.autocomplete_word()`]: api/_M.textadept.editing.html#autocomplete_word
+[`_M.textadept.editing.filter_through()`]: api/_M.textadept.editing.html#filter_through
+[`_M.textadept.run.goto_error()`]: api/_M.textadept.run.html#goto_error
+[`gui.find.goto_file_found()`]: api/gui.find.html#goto_file_found
+[`_M.textadept.editing.select_enclosed()`]: api/_M.textadept.editing.html#select_enclosed
+[`io.encodings`]: api/io.html#encodings
+
 ## 6.5 (01 Apr 2013)
 
 Download:
