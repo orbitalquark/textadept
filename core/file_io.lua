@@ -165,7 +165,7 @@ function io.open_file(utf8_filenames)
       end
       if not buffer.encoding then error(_L['Encoding conversion failed.']) end
     end
-    buffer.code_page = encoding and _SCINTILLA.constants.SC_CP_UTF8 or 0
+    buffer.code_page = buffer.encoding and _SCINTILLA.constants.SC_CP_UTF8 or 0
     -- Detect EOL mode.
     local s, e = text:find('\r\n?')
     if s and e then
