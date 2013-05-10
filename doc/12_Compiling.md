@@ -39,7 +39,8 @@ In addition, BSD users will need to have [libiconv][] installed.
 Compiling Textadept on Windows is no longer supported. If you wish to do so
 however, you need a C compiler that supports the C99 standard, the
 [GTK+ for Windows bundle][] (2.24 is recommended), and [libiconv for Windows][]
-(the "Developer files" and "Binaries" zip files).
+(the "Developer files" and "Binaries" zip files). To compile the terminal
+(pdcurses) version, you will need my [win32curses bundle][] instead.
 
 The preferred way to compile for Windows is cross-compiling from Linux. To do
 so, in addition to the GTK+ bundle mentioned above, you need [MinGW][] with the
@@ -47,6 +48,7 @@ Windows header files. They should be available from your package manager.
 
 [GTK+ for Windows bundle]: http://www.gtk.org/download/win32.html
 [libiconv for Windows]: http://gnuwin32.sourceforge.net/packages/libiconv.htm
+[win32curses bundle]: download/win32curses.zip
 [MinGW]: http://mingw.org
 
 ### Mac OSX
@@ -100,9 +102,14 @@ and run `make win32`, or run `make CROSS=i486-mingw32- win32` to build
 *../textadept.exe* and *../textadeptjit.exe*. Finally, copy the dll files from
 *src/win32gtk/bin/* to the directory containing the Textadept executables.
 
-Please note that a *lua51.dll* is produced for _only_ the *textadeptjit.exe*
-because limitations on external Lua library loading do not allow statically
-linking LuaJIT to Textadept.
+Similarly for the terminal version, unzip the win32curses bundle into a new
+*src/win32curses/* directory and run `make win32-curses` or its variants as
+suggested above to build *../textadept-curses.exe* and
+*../textadeptjit-curses.exe*.
+
+Please note that a *lua51.dll* is produced for _only_ *textadeptjit.exe* and
+*textadeptjit-curses.exe* because limitations on external Lua library loading do
+not allow statically linking LuaJIT to Textadept.
 
 ### Cross Compiling for Mac OSX
 
