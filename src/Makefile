@@ -98,7 +98,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       gtk_libs = $(shell pkg-config --libs gtk+-$(gtk_version))
       install_targets = ../textadept ../textadeptjit
     else
-      plat_flag = -DCURSES
+      plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
       curses_libs = -lncursesw
       install_targets = ../textadept-curses ../textadeptjit-curses
     endif
