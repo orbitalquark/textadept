@@ -9,8 +9,8 @@ package.path = table.concat({
 local so = not WIN32 and '/?.so;' or '/?.dll;'
 package.cpath = _USERHOME..so.._USERHOME..'/modules'..so..package.cpath
 
-local user_init, exists = _USERHOME..'/init.lua', lfs.attributes
-local ok, err = pcall(dofile, user_init)
-if ok or not exists(user_init) then require('textadept') else gui.print(err) end
+_M.textadept = require('textadept')
+local ok, err = pcall(dofile, _USERHOME..'/init.lua')
+if not ok and lfs.attributes(_USERHOME..'/init.lua') then gui.print(err) end
 
 if not RESETTING then args.process(arg) end

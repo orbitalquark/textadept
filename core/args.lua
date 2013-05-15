@@ -96,13 +96,8 @@ for i = 1, #arg do
   end
 end
 if not lfs.attributes(userhome) then lfs.mkdir(userhome) end
-if not lfs.attributes(userhome..'/init.lua') then
-  local f = io.open(userhome..'/init.lua', 'w')
-  if f then
-    f:write("_M.textadept = require('textadept')\n")
-    f:close()
-  end
-end
+local f = io.open(userhome..'/init.lua', 'a+') -- ensure existence
+if f then f:close() end
 _G._USERHOME = userhome
 
 M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
