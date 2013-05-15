@@ -67,16 +67,16 @@
 -- #### Buffer Properties
 --
 -- By default, Textadept uses 2 spaces as indentation. If your language has
--- different indentation guidelines, change them in a `set_buffer_properties()`
--- function. Using tabs of width 8 would look like
+-- different indentation guidelines, change them from an
+-- `events.LANGUAGE_MODULE_LOADED` event handler. Using tabs of width 8 would
+-- look like
 --
---     function M.set_buffer_properties()
---       buffer.tab_width = 8
---       buffer.use_tabs = true
+--     events.connect(events.LANGUAGE_MODULE_LOADED, function(lang)
+--       if lang == 'lua' then
+--         buffer.tab_width = 8
+--         buffer.use_tabs = true
+--       end
 --     end
---
--- This function is called automatically to set the properties for the
--- language's source files.
 --
 -- #### Adeptsense
 --
