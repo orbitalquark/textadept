@@ -9,12 +9,9 @@ At this point it is assumed you are at least familiar with the basics of
 
 Textadept executes a *~/.textadept/init.lua*, your user-init file, on startup.
 If this file does not exist, Textadept creates it for you. You can use the file
-to indicate what you want Textadept to do when the application starts. At first,
-it simply loads a module that contains most of Textadept's functionality.
-However, you are not restricted to just loading modules. You can run any Lua
-code you desire. It is important to realize that Textadept will not load
-anything you do not tell it to. If your *~/.textadept/init.lua* exists and is
-empty, no modules are loaded (pretty much rendering Textadept useless).
+to indicate what you want Textadept to do when the application starts, such as
+loading additional modules. However, you are not restricted to just loading
+modules. You can run any Lua code you desire.
 
 ## Modules
 
@@ -38,8 +35,6 @@ Many of Textadept's generic modules have settings you can change from
 from module's [LuaDoc][]. For example, to disable character autopairing with
 typeover and stripping whitespace on save, your *~/.textadept/init.lua* might
 look like:
-
-    _M.textadept = require 'textadept'
 
     _M.textadept.editing.AUTOPAIR = false
     _M.textadept.editing.TYPEOVER_CHARS = false
@@ -103,7 +98,6 @@ Suppose you created or downloaded a generic module called `foo` that you wanted
 to load along with the default modules Your *~/.textadept/init.lua* would
 contain the following:
 
-    _M.textadept = require 'textadept'
     _M.foo = require 'foo'
 
 Language-specific modules are loaded automatically by Textadept when a source
