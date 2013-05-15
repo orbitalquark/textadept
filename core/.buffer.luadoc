@@ -959,6 +959,8 @@
 --     Indent wrapped lines the same as the first line.
 --   * `_SCINTILLA.constants.SC_WRAP_INDENT_INDENT` (2)
 --     Indent wrapped lines one more level than the first line.
+--
+--   The default value is `0`.
 -- @field wrap_mode (number)
 --   Long line wrap mode.
 --
