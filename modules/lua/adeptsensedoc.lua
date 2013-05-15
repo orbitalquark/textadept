@@ -246,11 +246,15 @@ function M.start(doc)
     end
     -- Tag the fields.
     for _, f in ipairs(m.fields or {}) do
+      local field = m.fields[f]
+      local module = module -- define locally so any modification stays local
+      if f:find('^_G%.') then module, f = f:match('^_G%.(.-)%.?([^%.]+)$') end
+      if not module then print(field.name) end
       local ext_fields = module == '_G' and '' or 'class:'..module
       write_tag(ctags, f, 'F', ext_fields)
       write_apidoc(apidoc, {name = f}, {
                      name = module..'.'..f,
-                     description = m.fields[f],
+                     description = field,
                      class = 'field'
                    })
     end
