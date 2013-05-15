@@ -10,8 +10,8 @@ local M = {}
 -- extension.
 --
 -- [language-specific modules]: _M.html#Compile.and.Run
--- @field MARK_ERROR_BACK (number)
---   The background color, in "0xBBGGRR" format, used for a line containing a
+-- @field ERROR_COLOR (string)
+--   The name of the color in the current theme to mark a line containing a
 --   recognized run or compile error.
 -- @field cwd (string, Read-only)
 --   The working directory for the most recently executed compile or run
@@ -35,7 +35,7 @@ local M = {}
 --   * `output`: The string output from the command.
 module('_M.textadept.run')]]
 
-M.MARK_ERROR_BACK = not CURSES and 0x8080CC or 0x0000FF
+M.ERROR_COLOR = not CURSES and 'color.light_red' or 'color.red'
 
 -- Events.
 events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
@@ -246,7 +246,7 @@ local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for error markers.
 local function set_error_properties()
   if CURSES then buffer:marker_define(MARK_ERROR, CURSES_MARK) end
-  buffer.marker_back[MARK_ERROR] = M.MARK_ERROR_BACK
+  buffer.marker_back[MARK_ERROR] = buffer.property_int[M.ERROR_COLOR]
 end
 if buffer then set_error_properties() end
 events.connect(events.VIEW_NEW, set_error_properties)

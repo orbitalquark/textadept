@@ -1877,9 +1877,10 @@ static void split_view(Scintilla *view, int vertical) {
   gtk_widget_get_allocation(view, &allocation);
   int middle = (vertical ? allocation.width : allocation.height) / 2;
 
-  g_object_ref(view);
-  GtkWidget *view2 = new_view(curdoc);
   GtkWidget *parent = gtk_widget_get_parent(view);
+  if (!parent) return; // error on startup (e.g. loading theme or settings)
+  GtkWidget *view2 = new_view(curdoc);
+  g_object_ref(view);
   gtk_container_remove(GTK_CONTAINER(parent), view);
   GtkWidget *pane = vertical ? gtk_hpaned_new() : gtk_vpaned_new();
   gtk_paned_add1(GTK_PANED(pane), view), gtk_paned_add2(GTK_PANED(pane), view2);
@@ -1988,12 +1989,12 @@ static Scintilla *new_view(sptr_t doc) {
 #endif
   SS(view, SCI_USEPOPUP, 0, 0);
   lL_addview(lua, view);
+  l_setglobalview(lua, view);
   focused_view = view, focus_view(view);
   if (doc) {
     SS(view, SCI_SETDOCPOINTER, 0, doc);
     l_setglobaldoc(lua, doc);
   } else new_buffer(SS(view, SCI_GETDOCPOINTER, 0, 0));
-  l_setglobalview(lua, view);
   lL_event(lua, "view_new", -1);
   return view;
 }

@@ -548,7 +548,7 @@ end
 keys[not OSX and not CURSES and 'c=' or 'm='] = buffer.zoom_in
 keys[not OSX and not CURSES and 'c-' or 'm-'] = buffer.zoom_out
 keys[not OSX and not CURSES and 'c0' or 'm0'] = utils.reset_zoom
-if not CURSES then keys[not OSX and 'cT' or 'mT'] = gui.select_theme end
+if not CURSES then keys[not OSX and 'cT' or 'mT'] = gui.set_theme end
 
 -- Help.
 if not CURSES then

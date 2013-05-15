@@ -27,9 +27,9 @@ local M = {}
 -- @field STRIP_WHITESPACE_ON_SAVE (bool)
 --   Strip trailing whitespace on file save.
 --   The default value is `true`.
--- @field INDIC_HIGHLIGHT_BACK (number)
---   The color, in "0xBBGGRR" format, used for an indicator for the
---   [highlighted word](#highlight_word).
+-- @field HIGHLIGHT_COLOR (string)
+--   The name of the color in the current theme to
+--   [highlight words](#highlight_word) with.
 module('_M.textadept.editing')]]
 
 M.AUTOPAIR = true
@@ -37,7 +37,7 @@ M.HIGHLIGHT_BRACES = true
 M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
 M.STRIP_WHITESPACE_ON_SAVE = true
-M.INDIC_HIGHLIGHT_BACK = not CURSES and 0x4D99E6 or 0x00FFFF
+M.HIGHLIGHT_COLOR = not CURSES and 'color.orange' or 'color.yellow'
 
 ---
 -- Map of lexer names to line comment prefix strings for programming languages,
@@ -499,7 +499,7 @@ end
 
 -- Sets view properties for highlighted word indicators and markers.
 local function set_highlight_properties()
-  buffer.indic_fore[INDIC_HIGHLIGHT] = M.INDIC_HIGHLIGHT_BACK
+  buffer.indic_fore[INDIC_HIGHLIGHT] = buffer.property_int[M.HIGHLIGHT_COLOR]
   buffer.indic_style[INDIC_HIGHLIGHT] = _SCINTILLA.constants.INDIC_ROUNDBOX
   buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
   if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end

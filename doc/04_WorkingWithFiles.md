@@ -36,8 +36,8 @@ settings in the buffer status statusbar.
 
 #### Indentation
 
-Indentation is usually set by a [language-specific module][] or the current
-[theme][]. By default, indentation is 2 spaces. You can toggle between using
+Indentation is usually set by a [language-specific module][] or by the user's
+[settings][]. By default, indentation is 2 spaces. You can toggle between using
 tabs and spaces manually by pressing `Ctrl+Alt+Shift+T` (`^⇧T` on Mac OSX |
 `M-T` or `M-S-T` in curses). Toggling between tabs and spaces only affects
 future indentation; it does not convert existing indentation. `Ctrl+Alt+I` (`^I`
@@ -47,7 +47,7 @@ are converted to spaces.) Similarly, you can set indentation size manually using
 the "Buffer -> Indentation" menu.
 
 [language-specific module]: 07_Modules.html#Buffer.Properties
-[theme]: 09_Themes.html#Buffer
+[settings]: 08_Preferences.html#Buffer.Settings
 
 #### Line Endings
 

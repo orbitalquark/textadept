@@ -12,21 +12,17 @@ for the GUI version and "term" for the terminal version.
 &nbsp;&nbsp;
 ![Term Theme](images/termtheme.png)
 
-## Structure
-
-Each theme is a single folder composed of three files: *lexer.lua*,
-*buffer.lua*, and *view.lua*. It is recommended to put custom or downloaded
+Each theme is a single Lua file. It is recommended to put custom or downloaded
 themes in your *~/.textadept/themes/* directory so they will not be overwritten
 when you update Textadept. Also, themes in that directory override any themes in
 Textadept's *themes/* directory. This means that if you have your own *light*
 theme, it will be loaded instead of the one that comes with Textadept.
 
-### Lexer
-
-*lexer.lua* contains definitions for how to "style" syntactic elements like
-comments, strings, and keywords in programming languages. [Styles][] are
-composed of fonts and colors and apply universally to all programming language
-elements, resulting in a single, unified theme.
+Themes contain color definitions and definitions for how to highlight (or
+"style") syntactic elements like comments, strings, and keywords in programming
+languages. These [definitions][] apply universally to all programming language
+elements, resulting in a single, unified theme. Themes also set view-related
+editor properties like caret and selection colors.
 
 In the terminal version of Textadept, colors are determined by your terminal
 emulator's settings. The only colors recognized by Textadept are the standard
@@ -35,54 +31,18 @@ those colors. How your terminal chooses to display these colors is up to your
 terminal settings. However, you can still customize which colors are used for
 particular styles.
 
-[Styles]: api/lexer.html#Styles.and.Styling
-
-### Buffer
-
-*buffer.lua* contains [buffer-specific properties][] like the indentation
-character and indentation size. For example, to use tabs instead of spaces and
-have a tab size of 4 spaces by default:
-
-    buffer.tab_width = 4
-    buffer.use_tabs = true
-
-You can use [Adeptsense][] to view a property's documentation or read the
-[buffer LuaDoc][].
-
-[buffer-specific properties]: 04_WorkingWithFiles.html#Settings
-[Adeptsense]: 06_AdeptEditing.html#Adeptsense
-[buffer LuaDoc]: api/buffer.html
-
-### View
-
-*view.lua* contains view-specific properties which apply to all buffers. These
-properties are numerous and control many aspects of how buffers are displayed,
-from caret and selection colors to margin configurations to marker definitions.
-View properties also control editor behaviors like scrolling and autocompletion.
-Existing themes have various properties commented out. Uncomment a property to
-turn it on or change its value. You can use [Adeptsense][] to view a property's
-documentation or read the [LuaDoc][].
-
-[Adeptsense]: 06_AdeptEditing.html#Adeptsense
-[LuaDoc]: api/buffer.html
+[definitions]: api/lexer.html#Styles.and.Styling
 
 ## Switch Themes
 
 You can switch between or reload themes using `Ctrl+Shift+T` (`⌘⇧T` on Mac OSX |
-none in curses). However, be aware that the views do not reset themselves. Any
-properties set explicitly in the previous theme's *view.lua* file that are not
-set explicitly in the new theme will carry over. Restarting Textadept will fix
-this. Also, be aware that themes apply to all buffers. You cannot assign a theme
-to a particular file or file type. (You can change things like tab and indent
-settings per filetype, however, by creating a [language-specific module][].)
-Behind the scenes, Textadept is setting the theme name in a *~/.textadept/theme*
-or *~/.textadept/theme_term* file. To use a theme not listed, specify an
-absolute path to the theme's folder in your *~/.textadept/theme* or
-*~/.textadept/theme_term* file. When testing themes, any errors that occur are
-printed to standard error. Running Textadept from a terminal is the easiest way
-to see errors as they occur.
+none in curses). You can set that theme to be the default one by putting
 
-[language-specific module]: 07_Modules.html#Buffer.Properties
+    gui.set_theme('name')
+
+somewhere in your [*~/.textadept/init.lua*][].
+
+[*~/.textadept/init.lua*]: 08_Preferences.html#User.Init
 
 ## GUI Theme
 

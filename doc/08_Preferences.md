@@ -10,39 +10,38 @@ At this point it is assumed you are at least familiar with the basics of
 Textadept executes a *~/.textadept/init.lua*, your user-init file, on startup.
 If this file does not exist, Textadept creates it for you. You can use the file
 to indicate what you want Textadept to do when the application starts, such as
-loading additional modules. However, you are not restricted to just loading
-modules. You can run any Lua code you desire.
+changing the settings of existing modules, loading new ones, and/or running
+plain Lua code.
 
-## Modules
+### Modules
 
 It is never recommended to modify the default modules that come with Textadept,
 even if you just want to change an option in a generic module, modify the buffer
 settings for a language-specific module, edit file types, or add a small bit of
 custom code. Those changes may be overwritten when you upgrade Textadept to a
 newer version. Instead you have two options: load your own module instead of the
-default one, or run your custom module code after the default module loads. To
-load your own module, simply place it appropriately in *~/.textadept/modules/*.
-To run your module code after a default generic module loads, put your code in
-*~/.textadept/init.lua*. To run your module code after a default
-language-specific module loads, create a *post_init.lua* Lua script in the
-appropriate *~/.textadept/modules/* module folder. These methods are discussed
-below.
+default one, or run your custom module code after the default module loads. For
+the most part you will want to use the second option because it is simpler and
+more compatible with future releases. Both options are discussed below in the
+context of generic and language-specific modules.
 
-### Generic
+#### Generic
 
 Many of Textadept's generic modules have settings you can change from
 *~/.textadept/init.lua* after the module is loaded. These settings are viewed
 from module's [LuaDoc][]. For example, to disable character autopairing with
-typeover and stripping whitespace on save, your *~/.textadept/init.lua* might
-look like:
+typeover and stripping whitespace on save, your *~/.textadept/init.lua* would
+contain:
 
     _M.textadept.editing.AUTOPAIR = false
     _M.textadept.editing.TYPEOVER_CHARS = false
     _M.textadept.editing.STRIP_WHITESPACE_ON_SAVE = false
 
 Now suppose you wanted to load all of Textadept's default modules except for the
-menu. Copy the `textadept` module's *init.lua* (located in the
-*modules/textadept/* directory) to *~/.textadept/modules/textadept/* and change
+menu. You cannot do this after-the-fact from *~/.textadept/init.lua*. Instead
+you need Textadept to load your own module rather than the default one. Copy the
+`textadept` module's *init.lua* (located in the *modules/textadept/* directory)
+to *~/.textadept/modules/textadept/* and change
 
     M.menu = require 'textadept.menu'
 
@@ -51,27 +50,27 @@ to
     --M.menu = require 'textadept.menu'
 
 Now when Textadept looks for *modules/textadept/init.lua*, it will load yours
-instead of its own, and load everything but the menu. If instead you wanted to
+in place of its own, and load everything but the menu. If instead you wanted to
 completely change the menu structure, you would first create a new *menu.lua*
 and then put it in *~/.textadept/modules/textadept/*. Textadept will now load
-your *menu.lua* instead of its own.
+your *menu.lua* rather than its own.
 
 [LuaDoc]: api/index.html
 
-### Language-Specific
+#### Language-Specific
 
 Similar to generic modules, putting your own language-specific module in
 *~/.textadept/modules/* causes Textadept to load that module for editing the
 language's code instead of the default one in *modules/* (if the latter exists).
 For example, copying the default Lua language-specific module from
 *modules/lua/* to *~/.textadept/modules/* causes Textadept to use that module
-for editing Lua code instead of the default one. If you make custom changes to
-these kinds of copies of language-specific modules, you will likely want to
-update them with each new Textadept release. Instead of potentially wasting time
-merging your changes, you can run custom code independent of a module in the
-module's *post_init.lua* file. For example, instead of copying the `lua` module
-and creating an `events.LANGUAGE_MODULE_LOADED` event handler to use tabs, you
-can do this from *~/.textadept/modules/lua/post_init.lua*:
+for editing Lua code in place of the default one. However, if you make custom
+changes to that module and upgrade Textadept later, the module may no longer be
+compatible. Rather than potentially wasting time merging changes, you can run
+custom code independent of a module in the module's *post_init.lua* file. For
+example, instead of copying the `lua` module and creating an
+`events.LANGUAGE_MODULE_LOADED` event handler to use tabs, you can do this from
+*~/.textadept/modules/lua/post_init.lua*:
 
     events.connect(events.LANGUAGE_MODULE_LOADED, function(lang)
       if lang == 'lua' then buffer.use_tabs = true end
@@ -132,6 +131,35 @@ curses) will insert the snippet, regardless of the current programming language.
 You can learn about snippet syntax in the [snippets LuaDoc][].
 
 [snippets LuaDoc]: api/_M.textadept.snippets.html
+
+## Buffer Settings
+
+Since *~/.textadept/init.lua* is only run once on startup, it is not the
+appropriate place to set per-buffer properties like indentation size or
+view-related properties like the behaviors for scrolling and autocompletion.
+If you do set such properties in *~/.textadept/init.lua*, those settings only
+apply to the first buffer and view -- subsequent buffers and split views will
+not inherit those settings. Instead, put your settings in a
+*~/.textadept/settings.lua* file which is run each time a new buffer or split
+view is created. Any settings there override Textadept's default *settings.lua*
+settings. For example, to use tabs rather than spaces and have a tab size of 4
+spaces by default your *~/.textadept/settings.lua* would contain:
+
+    buffer.tab_width = 4
+    buffer.use_tabs = true
+
+(Remember that in order to have per-filetype properties, you need to have a
+[language-specific module][].)
+
+You can use Textadept's *settings.lua* as a reference to see what properties are
+available. It also has many commented out properties that you can copy to your
+*~/.textadept/settings.lua* and uncomment to turn on or change the value of. You
+can use [Adeptsense][] to view a property's documentation or read the
+[LuaDoc][].
+
+[language-specific module]: 07_Modules.html#Buffer.Properties
+[Adeptsense]: 06_AdeptEditing.html#Adeptsense
+[LuaDoc]: api/buffer.html
 
 ## Locale
 

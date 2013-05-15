@@ -5,11 +5,11 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Bookmarks for Textadept.
--- @field MARK_BOOKMARK_COLOR (number)
---   The color, in "0xBBGGRR" format, used for a bookmarked line.
+-- @field BOOKMARK_COLOR (string)
+--   The name of the color in the current theme to mark a bookmarked line with.
 module('_M.textadept.bookmarks')]]
 
-M.MARK_BOOKMARK_COLOR = not CURSES and 0xB3661A or 0xFF0000
+M.BOOKMARK_COLOR = not CURSES and 'color.dark_blue' or 'color.blue'
 
 local MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 
@@ -84,7 +84,7 @@ local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for bookmark markers.
 local function set_bookmark_properties()
   if CURSES then buffer:marker_define(MARK_BOOKMARK, CURSES_MARK) end
-  buffer.marker_back[MARK_BOOKMARK] = M.MARK_BOOKMARK_COLOR
+  buffer.marker_back[MARK_BOOKMARK] = buffer.property_int[M.BOOKMARK_COLOR]
 end
 if buffer then set_bookmark_properties() end
 events.connect(events.VIEW_NEW, set_bookmark_properties)

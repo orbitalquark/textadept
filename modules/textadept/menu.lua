@@ -185,7 +185,7 @@ local menubar = {
     {_L['Zoom _Out'], buffer.zoom_out},
     {_L['_Reset Zoom'], utils.reset_zoom},
     SEPARATOR,
-    {_L['Select _Theme...'], gui.select_theme},
+    {_L['Select _Theme...'], gui.set_theme},
   },
   { title = _L['_Help'],
     {_L['Show _Manual'],
