@@ -66,7 +66,7 @@ not notice any difference for working with files containing ASCII text since
 UTF-8 is compatible with it. Textadept can also detect ISO-8859-1 and MacRoman,
 the primary encodings used on Windows and Mac OSX respectively. Files with more
 exotic encodings may not be detected properly, if at all. You can change the
-list of encodings Textadept tries to detect via [`io.try_encodings`][].
+list of encodings Textadept tries to detect via [`io.encodings`][].
 
 It is recommended to use UTF-8 encoded files because UTF-8 is very well
 supported by other text editors and operating systems. You can change file
@@ -74,7 +74,7 @@ encoding via the "Buffer -> Encoding" menu. Conversion is immediate, requiring
 no separate steps. Textadept saves new files as UTF-8 by default, but does not
 alter the encoding of existing files.
 
-[`io.try_encodings`]: api/io.html#try_encodings
+[`io.encodings`]: api/io.html#encodings
 
 ### Recent Files
 
@@ -104,7 +104,7 @@ curses) or from the "Tools -> Snapopen -> Current Directory" menu. Snapopen is
 pretty limited from the menu, but more versatile in [scripts][]. `Ctrl+U` (`⌘U`
 | `^U`) snaps open *~/.textadept/*.
 
-[scripts]: api/_M.textadept.snapopen.html
+[scripts]: api/io.html#snapopen
 
 ![Snapopen](images/snapopen.png)
 

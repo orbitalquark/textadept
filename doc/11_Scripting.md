@@ -55,8 +55,8 @@ as vanilla Lua with the following exceptions:
 
 Even though Textadept can be run with [LuaJIT][], LuaJIT is based on Lua 5.1 and
 is not fully compatible with Lua 5.2. Therefore, modules and scripts should be
-written to be compatible with both versions. There is a compatibility layer in
-*core/compat.lua*. Please see it for more information.
+written to be compatible with both versions. For the most part, only Lua 5.2's
+`_ENV` is not supported by LuaJIT.
 
 [LuaJIT]: http://luajit.org
 
