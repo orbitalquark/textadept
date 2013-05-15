@@ -70,12 +70,12 @@ these kinds of copies of language-specific modules, you will likely want to
 update them with each new Textadept release. Instead of potentially wasting time
 merging your changes, you can run custom code independent of a module in the
 module's *post_init.lua* file. For example, instead of copying the `lua` module
-and changing its `set_buffer_properties()` function to use tabs, you can do this
-from *~/.textadept/modules/lua/post_init.lua*:
+and creating an `events.LANGUAGE_MODULE_LOADED` event handler to use tabs, you
+can do this from *~/.textadept/modules/lua/post_init.lua*:
 
-    function _M.lua.set_buffer_properties()
-      buffer.use_tabs = true
-    end
+    events.connect(events.LANGUAGE_MODULE_LOADED, function(lang)
+      if lang == 'lua' then buffer.use_tabs = true end
+    end)
 
 Similarly, you can use *post_init.lua* to change the module's
 [compile and run][] commands, load more [Adeptsense tags][], and add additional

@@ -38,13 +38,6 @@ _M.textadept.run.error_detail.c = {
   filename = 1, line = 2, message = 3
 }
 
----
--- Sets default buffer properties for C/C++ files.
--- @name set_buffer_properties
-function M.set_buffer_properties()
-
-end
-
 -- Adeptsense.
 
 M.sense = _M.textadept.adeptsense.new('cpp')

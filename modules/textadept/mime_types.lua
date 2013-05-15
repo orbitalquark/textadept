@@ -92,7 +92,6 @@ local function set_lexer(buffer, lang)
     _M[lang] = require(lang)
     local post_init = lang..'.post_init'
     if package.searchpath(post_init, package.path) then require(post_init) end
-    if _M[lang].set_buffer_properties then _M[lang].set_buffer_properties() end
     events.emit(events.LANGUAGE_MODULE_LOADED, lang)
   end
   local last_line = buffer.first_visible_line + buffer.lines_on_screen
