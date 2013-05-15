@@ -18,8 +18,6 @@ _M = {} -- modules table
 -- LuaJIT compatibility.
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 
-gui.set_theme()
-
 --[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's _G table to provide extra functions and fields for Textadept.

@@ -157,108 +157,70 @@ function gui.goto_file(filename, split, preferred_view, sloppy)
   io.open_file(filename)
 end
 
-local theme_file = not CURSES and 'theme' or 'theme_term'
-local THEME
+local theme = _HOME..'/themes/'..(not CURSES and 'light' or 'term')..'.lua'
 
 ---
--- Sets the editor theme name to *name* or the default platform theme.
--- Themes with *name* in the *`_USERHOME`/themes/* directory override themes of
--- the same name in *`_HOME`/themes/*. If *name* contains slashes ('\' on
--- Windows, '/' otherwise), it is assumed to be an absolute path to a theme
--- instead of a theme name. An error is thrown if the theme is not found. Any
--- errors in the theme are printed to `io.stderr`. Running Textadept from a
--- terminal is the easiest way to see errors as they occur.
--- @param name Optional name or absolute path of a theme to set. If `nil`, sets
---   the default platform theme.
+-- Sets the editor theme name to *name* or prompts the user to select one from a
+-- list of themes found in the *`_USERHOME`/themes/* and *`_HOME`/themes/*
+-- directories.
+-- User themes override Textadept's default themes when they have the same name.
+-- If *name* contains slashes, it is assumed to be an absolute path to a theme
+-- instead of a theme name.
+-- @param name Optional name or absolute path of a theme to set. If `nil`, the
+--   user is prompted for one.
 -- @name set_theme
 function gui.set_theme(name)
   if not name then
-    -- Read theme from ~/.textadept/theme or ~/.textadept/theme_term depending
-    -- on CURSES platform, defaulting to 'light' or 'term' respectively.
-    local f = io.open(_USERHOME..'/'..theme_file, 'rb')
-    if f then
-      name = f:read('*line'):match('[^\r\n]+')
-      f:close()
+    local themes, themes_found = {}, {}
+    for theme in lfs.dir(_HOME..'/themes') do
+      theme = theme:match('^(.-)%.lua$')
+      if theme then themes_found[theme] = true end
     end
-    if not name or name == '' then name = not CURSES and 'light' or 'term' end
-  end
-
-  -- Get the path of the theme.
-  local theme
-  if not name:find('[/\\]') then
-    if lfs.attributes(_USERHOME..'/themes/'..name) then
-      theme = _USERHOME..'/themes/'..name
-    elseif lfs.attributes(_HOME..'/themes/'..name) then
-      theme = _HOME..'/themes/'..name
-    end
-  elseif lfs.attributes(name) then
-    theme = name
-  end
-  if not theme then error(('"%s" %s'):format(name, _L["theme not found."])) end
-
-  if buffer and view then
-    local current_buffer, current_view = _BUFFERS[buffer], _VIEWS[view]
-    for i in ipairs(_BUFFERS) do
-      view:goto_buffer(i)
-      buffer.property['lexer.lpeg.color.theme'] = theme..'/lexer.lua'
-      local lexer = buffer:get_lexer()
-      buffer:set_lexer('null') -- lexer needs to be changed to reset styles
-      buffer:set_lexer(lexer)
-      local ok, err = pcall(dofile, theme..'/buffer.lua')
-      if not ok then io.stderr:write(err) end
-    end
-    view:goto_buffer(current_buffer)
-    for i in ipairs(_VIEWS) do
-      gui.goto_view(i)
-      local lexer = buffer:get_lexer()
-      buffer:set_lexer('null') -- lexer needs to be changed to reset styles
-      buffer:set_lexer(lexer)
-      local ok, err = pcall(dofile, theme..'/view.lua')
-      if not ok then io.stderr:write(err) end
-    end
-    gui.goto_view(current_view)
-  end
-  THEME = theme
-end
-
----
--- Prompts the user to select an editor theme from a list of themes found in the
--- *`_HOME`/themes/* and *`_USERHOME`/themes/* directories.
--- @name select_theme
-function gui.select_theme()
-  local themes, themes_found = {}, {}
-  for theme in lfs.dir(_HOME..'/themes') do
-    if not theme:find('^%.') then themes_found[theme] = true end
-  end
-  if lfs.attributes(_USERHOME..'/themes') then
-    local theme_dir = _USERHOME..'/themes/'
-    for theme in lfs.dir(theme_dir) do
-      if not theme:find('^%.') and
-         lfs.attributes(theme_dir..theme, 'mode') == 'directory' then
-        themes_found[theme] = true
+    if lfs.attributes(_USERHOME..'/themes') then
+      for theme in lfs.dir(_USERHOME..'/themes/') do
+        theme = theme:match('^(.-)%.lua$')
+        if theme then themes_found[theme] = true end
       end
     end
+    for theme in pairs(themes_found) do themes[#themes + 1] = theme end
+    table.sort(themes)
+    name = gui.filteredlist(_L['Select Theme'], _L['Name'], themes)
   end
-  for theme in pairs(themes_found) do themes[#themes + 1] = theme end
-  table.sort(themes)
-  local theme = gui.filteredlist(_L['Select Theme'], _L['Name'], themes)
-  if not theme then return end
-  gui.set_theme(theme)
-  -- Write the theme to the user's theme file.
-  local f = io.open(_USERHOME..'/'..theme_file, 'wb')
-  if not f then return end
-  f:write(theme)
-  f:close()
-  reset()
+  if name and not name:find('[/\\]') then
+    name = package.searchpath(name, _USERHOME..'/themes/?.lua;'..
+                                    _HOME..'/themes/?.lua')
+  end
+  if not name or not lfs.attributes(name) then return end
+  local current_buffer, current_view = _BUFFERS[buffer], _VIEWS[view]
+  for i = 1, #_BUFFERS do
+    view:goto_buffer(i)
+    dofile(name)
+  end
+  view:goto_buffer(current_buffer)
+  for i = 1, #_VIEWS do
+    gui.goto_view(i)
+    dofile(name)
+  end
+  gui.goto_view(current_view)
+--  if not RESETTING then reset() end
+  theme = name
 end
 
 local events, events_connect = events, events.connect
+
+-- Loads the theme and settings files.
+local function load_theme_and_settings()
+  dofile(theme)
+  dofile(_HOME..'/settings.lua')
+  if lfs.attributes(_USERHOME..'/settings.lua') then
+    dofile(_USERHOME..'/settings.lua')
+  end
+end
 
 -- Sets default properties for a Scintilla window.
 events_connect(events.VIEW_NEW, function()
   local buffer = buffer
   local c = _SCINTILLA.constants
-
   -- Allow redefinitions of these Scintilla key commands.
   local ctrl_keys = {
     '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
@@ -270,42 +232,23 @@ events_connect(events.VIEW_NEW, function()
   for _, key in ipairs(ctrl_shift_keys) do
     buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL + c.SCMOD_SHIFT)
   end
-  -- Load theme.
-  local ok, err = pcall(dofile, THEME..'/view.lua')
-  if not ok then io.stderr:write(err) end
+  load_theme_and_settings()
 end)
 events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
-local function set_properties()
-  local buffer = buffer
-  -- Lexer.
+-- Sets default properties for a Scintilla document.
+events_connect(events.BUFFER_NEW, function()
+  buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
+  buffer.style_bits = 8
   buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-  buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
-  buffer.style_bits = 8
-  -- Properties.
-  buffer.property['textadept.home'] = _HOME
   buffer.property['lexer.lpeg.home'] = _LEXERPATH
-  buffer.property['lexer.lpeg.color.theme'] = THEME..'/lexer.lua'
-  -- Buffer.
-  buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
-  -- Load theme.
-  local ok, err = pcall(dofile, THEME..'/buffer.lua')
-  if not ok then io.stderr:write(err) end
-end
-
--- Sets default properties for a Scintilla document.
-events_connect(events.BUFFER_NEW, function()
-  -- Normally when an error occurs, a new buffer is created with the error
-  -- message, but if an error occurs here, this event would be called again and
-  -- again, erroring each time resulting in an infinite loop; print error to
-  -- stderr instead.
-  local ok, err = pcall(set_properties)
-  if not ok then io.stderr:write(err) end
+  load_theme_and_settings()
+  buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
 end)
 
 -- Sets the title of the Textadept window to the buffer's filename.

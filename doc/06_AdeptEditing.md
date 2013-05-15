@@ -74,7 +74,7 @@ and dragging the mouse to create rectangular selections.
 Note: In some Linux environments, the `Alt+Shift+Arrow` combinations are used by
 the window manager and may need to be reconfigured. Also, `Super+Mouse` is used
 because `Alt+Mouse` generally moves windows. If you prefer to use "Alt", you can
-change [`buffer.rectangular_selection_modifier`][] in your [theme][]. The
+change [`buffer.rectangular_selection_modifier`][] in your [settings][]. The
 "Super" modifier key is usually defined as the left "Windows" key, but may need
 to be reconfigured too.
 
@@ -82,7 +82,7 @@ Creating rectangular selections with the mouse is currently unavailable in
 curses.
 
 [`buffer.rectangular_selection_modifier`]: api/buffer.html#rectangular_selection_modifier
-[theme]: 09_Themes.html#View
+[settings]: 08_Preferences.html#Buffer.Settings
 
 ### Select to Matching Brace
 
