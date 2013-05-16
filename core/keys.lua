@@ -223,7 +223,7 @@ local function key_command(prefix)
   end
   local key_type = type(key)
   if key_type ~= 'function' and key_type ~= 'table' then return INVALID end
-  if key_type == 'table' and #key == 0 and next(key) then
+  if key_type == 'table' and #key == 0 and next(key) or getmetatable(key) then
     gui.statusbar_text = _L['Keychain:']..' '..table.concat(keychain, ' ')
     return CHAIN
   end
