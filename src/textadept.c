@@ -22,6 +22,7 @@
 #include <sys/sysctl.h>
 #endif
 #if GTK
+#include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #elif CURSES
 #if !_WIN32
@@ -58,6 +59,8 @@ typedef GtkWidget Scintilla;
 #define focus_view(v) gtk_widget_grab_focus(v)
 #define scintilla_delete(w) gtk_widget_destroy(w)
 #if GTK_CHECK_VERSION(3,0,0)
+#define GDK_Return GDK_KEY_Return
+#define GDK_Escape GDK_KEY_Escape
 #define gtk_statusbar_set_has_resize_grip(_,__)
 #define gtk_combo_box_entry_new_with_model(m,_) \
   gtk_combo_box_new_with_model_and_entry(m)
@@ -1578,13 +1581,9 @@ static int w_focus(GtkWidget*_, GdkEventFocus*__, void*___) {
   return FALSE;
 }
 
-/**
- * Signal for a Textadept keypress.
- * Currently handled keypresses:
- *  - Escape: hides the find box if it is open.
- */
+/** Signal for a Textadept keypress. */
 static int w_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
-  if (event->keyval == 0xff1b && gtk_widget_get_visible(findbox) &&
+  if (event->keyval == GDK_Escape && gtk_widget_get_visible(findbox) &&
       !gtk_widget_has_focus(command_entry)) {
     gtk_widget_hide(findbox);
     gtk_widget_grab_focus(focused_view);
@@ -2075,13 +2074,26 @@ static GtkWidget *new_findbox() {
   return findbox;
 }
 
+/** Signal for the "Enter" key being pressed in the Command Entry. */
+static void c_activate(GtkWidget*_, void*__) {
+  lL_event(lua, "command_entry_keypress", LUA_TNUMBER, GDK_Return, -1);
+}
+
 /** Signal for a keypress inside the Command Entry. */
 static int c_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
+  // If "Enter" is pressed by itself, pass it to the entry completion.
+  if (event->keyval == GDK_Return && event->state == 0) return FALSE;
   return lL_event(lua, "command_entry_keypress", LUA_TNUMBER, event->keyval,
                   LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN,
                   event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
                   event->state & GDK_MOD1_MASK, LUA_TBOOLEAN,
                   event->state & GDK_META_MASK, -1);
+}
+
+/** Emit "Escape" key to the command entry on focus lost. */
+static int c_focusout(GtkWidget*_, GdkEvent *__, void*___) {
+  lL_event(lua, "command_entry_keypress", LUA_TNUMBER, GDK_Escape, -1);
+  return FALSE;
 }
 
 /**
@@ -2163,6 +2175,12 @@ static void new_window() {
 
   gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), FALSE, FALSE, 5);
 
+  command_entry = gtk_entry_new();
+  signal(command_entry, "activate", c_activate);
+  signal(command_entry, "key-press-event", c_keypress);
+  signal(command_entry, "focus-out-event", c_focusout);
+  gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
+
   command_entry_completion = gtk_entry_completion_new();
   signal(command_entry_completion, "match-selected", cc_matchselected);
   gtk_entry_completion_set_match_func(command_entry_completion, cc_matchfunc,
@@ -2172,12 +2190,8 @@ static void new_window() {
   cc_store = gtk_list_store_new(1, G_TYPE_STRING);
   gtk_entry_completion_set_model(command_entry_completion,
                                  GTK_TREE_MODEL(cc_store));
-  g_object_unref(cc_store);
-
-  command_entry = gtk_entry_new();
   gtk_entry_set_completion(GTK_ENTRY(command_entry), command_entry_completion);
-  signal(command_entry, "key-press-event", c_keypress);
-  gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
+  g_object_unref(cc_store);
 
   GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
