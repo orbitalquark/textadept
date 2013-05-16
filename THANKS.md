@@ -23,7 +23,7 @@ Textadept the amazing editor that it is today.
 * Patrick McMorris
 * Pedro Andres Aranda Gutierrez
 * Robert Gieseke
-* Russell Dickinson
+* Russell Dickenson
 * Ryan Pusztai
 * Scott Weisman
 * Steve Donovan
