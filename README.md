@@ -25,8 +25,8 @@ speed or succumbing to code bloat and featuritis.
 
 In its bid for minimalism, Textadept has no dependencies on Windows and Mac OSX
 operating systems and depends only on [GTK+ 2.0][] version 2.18 or greater on
-Linux. Lua is pre-compiled into Textadept on all platforms and a GTK+ runtime is
-included on Windows and Mac OSX.
+Linux. Textadept includes its own copy of Lua on all platforms and bundles in a
+GTK+ runtime on Windows and Mac OSX.
 
 The terminal version of Textadept requires only an implementation of curses like
 [ncurses][].
