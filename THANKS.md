@@ -22,6 +22,7 @@ Textadept the amazing editor that it is today.
 * Nils Nordman
 * Patrick McMorris
 * Pedro Andres Aranda Gutierrez
+* Richard Philips
 * Robert Gieseke
 * Russell Dickenson
 * Ryan Pusztai
