@@ -287,10 +287,8 @@ function M.block_comment(prefix)
     if buffer:text_range(pos, pos + #prefix) == prefix then
       buffer:set_sel(pos, pos + #prefix)
       buffer:replace_sel('')
-      pos = pos - #prefix
     else
       buffer:insert_text(pos, prefix)
-      pos = pos + #prefix
     end
   end
   buffer:end_undo_action()
