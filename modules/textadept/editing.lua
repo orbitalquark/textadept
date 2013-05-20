@@ -278,10 +278,9 @@ function M.block_comment(prefix)
   prefix = prefix or M.comment_string[buffer:get_lexer(true)]
   if not prefix then return end
   local anchor, pos = buffer.selection_start, buffer.selection_end
-  local s = buffer:line_from_position(anchor)
-  local e = buffer:line_from_position(pos)
-  local mlines = s ~= e
-  if mlines and pos == buffer:position_from_line(e) then e = e - 1 end
+  local s, e = buffer:line_from_position(anchor), buffer:line_from_position(pos)
+  if s ~= e and pos == buffer:position_from_line(e) then e = e - 1 end
+  anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
   buffer:begin_undo_action()
   for line = s, e do
     local pos = buffer:position_from_line(line)
@@ -295,7 +294,11 @@ function M.block_comment(prefix)
     end
   end
   buffer:end_undo_action()
-  if mlines then buffer:set_sel(anchor, pos) else buffer:goto_pos(pos) end
+  anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
+  if anchor < buffer:position_from_line(s) then
+    anchor = buffer:position_from_line(s) -- stay on the first line
+  end
+  if s ~= e then buffer:set_sel(anchor, pos) else buffer:goto_pos(pos) end
 end
 
 ---
