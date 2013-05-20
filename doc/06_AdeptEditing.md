@@ -2,29 +2,28 @@
 
 ## Basic Editing
 
-Textadept has many basic editing features you are familiar with: basic text
-entry, undo/redo, clipboard manipulation, deleting characters and words,
-duplicating lines, joining lines, and transposing characters. These are
-accessible from the top-level "Edit" menu and have associated key bindings.
-Some of the basic editing features you may not be familiar with are discussed
-below.
+Textadept features many common, basic editing features: inserting text,
+undo/redo, manipulating the clipboard, deleting characters and words,
+duplicating lines, joining lines, and transposing characters. The top-level
+"Edit" menu contains these actions and lists their associated key bindings. The
+manual discusses more elaborate editing features below.
 
 ### Autopaired Characters
 
 Usually, quote ('&apos;', '&quot;') and brace ('(', '[', '{') characters go
-together in pairs. By default, Textadept automatically inserts the complement
-character when the first is typed. Similarly, the complement is deleted when you
-press `Bksp` (`⌫` on Mac OSX | `Bksp` in curses) over the first. Typing over
-complement characters is also supported. See the [preferences][] page if you
-would like to disable these features.
+together in pairs. By default, Textadept automatically inserts complement
+characters and allows you to type over them. Similarly, the editor deletes the
+complement when you press `Bksp` (`⌫` on Mac OSX | `Bksp` in curses) over the
+first. The [preferences][] page details how to disable these features if you
+find them unsuitable.
 
 [preferences]: 08_Preferences.html#Generic
 
 ### Word Completion
 
-Textadept provides buffer-based word completion. Start typing a word, press
-`Ctrl+Enter` (`^⎋` on Mac OSX | `M-Enter` in curses), and a list of suggested
-completions based on words in the current buffer is provided. Continuing to type
+Textadept provides buffer-based word completion. Start typing a word and press
+`Ctrl+Enter` (`^⎋` on Mac OSX | `M-Enter` in curses) to display a list of
+suggested completions based on words in the current buffer. Continuing to type
 changes the suggestion. Press `Enter` (`↩` | `Enter`) to complete the selected
 word.
 
@@ -32,54 +31,55 @@ word.
 
 ### Virtual Space Mode
 
-Virtual space (freehand) mode is enabled and disabled with `Ctrl+Alt+Shift+V`
-(`^⇧V` in Mac OSX | none in curses). When enabled, caret movement is not
-restricted by line endings.
+Pressing `Ctrl+Alt+Shift+V` (`^⇧V` in Mac OSX | none in curses) enables and
+disables Virtual space (freehand) mode. When enabled, line endings do not
+restrict caret movement.
 
 ### Overwrite Mode
 
-Overwrite mode is enabled and disabled with the `Insert` key. When enabled,
-characters in the buffer will be overwritten instead of inserted as you type.
-The caret also changes to an underline when in overwrite mode.
+Enable and disable overwrite mode with the `Insert` key. When enabled, typing
+overwrites existing characters in the buffer rather than inserting the typed
+characters. The caret also changes to an underline in overwrite mode.
 
 ## Selections
 
-Textadept has many ways of creating and working with selections. Basic
-selections are what you get when you do things like hold the "Shift" modifier
-key while pressing the arrow keys, click and drag the mouse over a range of
-text, or press `Ctrl+A` (`⌘A` | `M-A`) for "Select All". More advanced
-selections like multiple and rectangular selections are more complicated to
-create, but have powerful uses.
+Textadept includes many ways of creating and working with selections. Creating
+basic selections entails holding down the "Shift" modifier key while pressing
+the arrow keys, clicking and dragging the mouse over a range of text, or
+pressing `Ctrl+A` (`⌘A` | `M-A`) to select all text. Creating more advanced
+selections like multiple and rectangular selections requires slightly more
+effort, but has powerful uses.
 
 ### Multiple Selection
 
 Clicking the mouse at a point in the buffer while holding the "Control" modifier
 key places an additional caret at that point. Clicking and dragging while
-holding the same modifier creates multiple selections. When you start typing,
-the text is mirrored at each selection.
+holding the same modifier creates multiple selections. Textadept will now mirror
+typed text at each selection.
 
-Creating multiple selections with the mouse is currently unavailable in curses.
+Textadept curses does not support creating multiple selections with the mouse.
 
 ### Rectangular Selection
 
 Holding `Alt+Shift` (`⌥⇧` on Mac OSX | `M-S-` in curses) and pressing the arrow
-keys enables rectangular selections to be made. Start typing to type on each
-line. You can also hold the "Alt" modifier key ("Super" on Linux) while clicking
-and dragging the mouse to create rectangular selections.
+keys creates a rectangular selection. A rectangular selection spanning multiple
+lines allows typing on each line. Holding the `Alt` modifier key (`Super` on
+Linux) while clicking and dragging the mouse also creates a rectangular
+selection.
 
 ![Rectangular Selection](images/rectangularselection.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Rectangular Edit](images/rectangularselection2.png)
 
-Note: In some Linux environments, the `Alt+Shift+Arrow` combinations are used by
-the window manager and may need to be reconfigured. Also, `Super+Mouse` is used
-because `Alt+Mouse` generally moves windows. If you prefer to use "Alt", you can
-change [`buffer.rectangular_selection_modifier`][] in your [settings][]. The
-"Super" modifier key is usually defined as the left "Windows" key, but may need
-to be reconfigured too.
+Note: In some Linux environments, the window manager consumes `Alt+Shift+Arrow`
+combinations so Textadept may need reconfiguring. Also, Textadept uses
+`Super+Mouse` because `Alt+Mouse` generally moves windows. (Your window manager
+usually defines the `Super` modifier key as the left "Windows" key.) If you
+prefer to use `Alt`, change [`buffer.rectangular_selection_modifier`][] in your
+[settings][].
 
-Creating rectangular selections with the mouse is currently unavailable in
-curses.
+Textadept curses does not support creating rectangular selections with the
+mouse.
 
 [`buffer.rectangular_selection_modifier`]: api/buffer.html#rectangular_selection_modifier
 [settings]: 08_Preferences.html#Buffer.Settings
@@ -92,37 +92,35 @@ selection to the brace character's matching brace.
 
 ### Entity Selection
 
-Textadept allows you to select many different entities from the caret. For
+Textadept allows the selection of many different entities from the caret. For
 example, `Ctrl+"` (`^"` on Mac OSX | `M-"` in curses) selects all characters in
-a double-quoted range. Typing `Ctrl++` (`^+` | `M-+`) as a follow-up selects the
-double-quotes too. See the "Edit -> Select In..." menu for available entities
-and their key bindings.
+a double-quoted range. Typing it again selects the double-quotes too. The
+"Edit -> Select In..." menu lists all selectable entities with their key
+bindings.
 
 ### Marks
 
 In curses, since some terminals do not recognize certain key combinations like
-`Shift+Arrow` for making selections, you can use marks to create selections.
-Create a mark at the current caret position with `^^`. Then use regular movement
-keys like the arrows, page up/down, and home/end to extend the selection in one
-direction. Pressing `^]` swaps the current caret position with the original mark
-position so you can extend the selection in the opposite direction. Any time you
-type text, delete text, or run a command that does either, the mark is removed
-and ordinary navigation is restored. You can also press `^^` again to stop
-selecting text.
+`Shift+Arrow` for making selections, marks can create selections. Create a mark
+at the current caret position with `^^`. Then use regular movement keys like the
+arrows, page up/down, and home/end to extend the selection in one direction.
+Pressing `^]` swaps the current caret position with the original mark position
+in order to extend the selection in the opposite direction. Typing text,
+deleting text, or running a command that does either, removes the mark and
+restores ordinary navigation. Pressing `^^` again also stops selecting text.
 
-Marks are only supported in curses.
+Only Textadept curses supports marks.
 
 ### Transforms
 
 #### Enclose Entities
 
-As a complement to selecting entities, you can enclose text as entities. The
-"Edit -> Selection -> Enclose In..." menu contains all available entities and
-their key bindings.
-
-If no text is selected, the word to the left of the caret is enclosed. For
-example, pressing `Alt+<` (`^<` on Mac OSX | `M->` in curses) at the end of a
-word encloses it in XML tags.
+As a complement to selecting entities, Textadept allows the enclosure of text in
+entities. The "Edit -> Selection -> Enclose In..." menu lists all enclosing
+entities with their key bindings. Each action encloses either the currently
+selected text or the word to the left of the caret. For example, pressing
+`Alt+<` (`^<` on Mac OSX | `M->` in curses) at the end of a word encloses it in
+XML tags.
 
 #### Change Case
 
@@ -132,69 +130,69 @@ letters respectively.
 
 #### Change Indent Level
 
-The amount of indentation for a selected set of lines is increased by pressing
-`Tab` (`⇥` on Mac OSX | `Tab` in curses) and decreased by pressing `Shift+Tab`
-(`⇧⇥` | `S-Tab`). Whole lines do not have to be selected. As long as any part of
-a line is selected, the entire line is eligible for indenting/dedenting. Using
-these key sequences when no selection is present does not have the same effect.
+Increase the amount of indentation for a selected set of lines by pressing `Tab`
+(`⇥` on Mac OSX | `Tab` in curses). `Shift+Tab` (`⇧⇥` | `S-Tab`) decreases it.
+You do not have to select whole lines. Selecting any part of a line renders the
+entire line eligible for indenting/dedenting. Using these key sequences when no
+selection is present does not have the same effect.
 
 #### Move Lines
 
-Selected lines are moved with the `Ctrl+Shift+Up` and `Ctrl+Shift+Down` (`^⇧⇡`
-and `^⇧⇣` on Mac OSX | `S-^Up` and `S-^Down` in curses) keys. Like with changing
-indent level, as long as any part of a line is selected, the entire line is
-eligible for moving.
+Move selected lines up and down with the `Ctrl+Shift+Up` and `Ctrl+Shift+Down`
+(`^⇧⇡` and `^⇧⇣` on Mac OSX | `S-^Up` and `S-^Down` in curses) keys,
+respectively. Like with changing indent level, selecting any part of a line
+renders the entire line eligible for moving.
 
 ## Find & Replace
 
 `Ctrl+F` (`⌘F` on Mac OSX | `M-F` or `M-S-F` in curses) brings up the Find &
 Replace pane. In addition to offering the usual find and replace with "Match
-Case" and "Whole Word" options and find/replace history, Textadept allows you to
-find with [Lua patterns][] and replace with Lua captures and even Lua code! For
-example: replacing all `(%w+)` with `%(string.upper('%1'))` upper cases all
-words in the buffer. Lua captures (`%`_`n`_) are only available from a Lua
-pattern search, but embedded Lua code enclosed in `%()` is always allowed.
+Case" and "Whole Word" options and find/replace history, Textadept supports
+finding with [Lua patterns][] and replacing with Lua captures and even Lua code!
+For example: replacing all `(%w+)` with `%(string.upper('%1'))` upper cases all
+words in the buffer. Replacement text only recognizes Lua captures (`%`_`n`_)
+from a Lua pattern search, but always allows embedded Lua code enclosed in
+`%()`.
 
 Note the `Ctrl+G`, `Ctrl+Shift+G`, `Ctrl+Alt+R`, `Ctrl+Alt+Shift+R` key bindings
 for find next, find previous, replace, and replace all (`⌘G`, `⌘⇧G`, `^R`, `^⇧R`
 respectively on Mac OSX | `M-G`, `M-S-G`, `M-R`, `M-S-R` in curses) only work
-when the Find & Replace pane is hidden. When the pane is visible in the GUI
+after hiding the Find & Replace pane. For at least the English locale in the GUI
 version, use the button mnemonics: `Alt+N`, `Alt+P`, `Alt+R`, and `Alt+A` (`⌘N`,
-`⌘P`, `⌘R`, `⌘A` | N/A) for English locale.
+`⌘P`, `⌘R`, `⌘A` | N/A) after bringing up the pane.
 
 In the curses version, `Tab` and `S-Tab` toggles between the find next, find
 previous, replace, and replace all buttons; `Up` and `Down` arrows switch
 between the find and replace text fields; `^P` and `^N` cycles through history;
 and `F1-F4` toggles find options.
 
-Pressing `Esc` (`⎋` | `Esc`) hides the pane when you are finished.
+Pressing `Esc` (`⎋` | `Esc`) hides the pane after you finish with it.
 
 [Lua patterns]: 14_Appendix.html#Lua.Patterns
 
 ### Replace in Selection
 
-By default, "Replace All" replaces all text in the buffer. If you want to
-replace all text in just a portion of the buffer, select a block of text and
-then "Replace All".
+By default, "Replace All" replaces all text in the buffer. Selecting a block of
+text and then "Replace All" replaces all text in the selection.
 
 ### Find in Files
 
 `Ctrl+Shift+F` brings up Find in Files (`⌘⇧F` on Mac OSX | none in curses) and
-will prompt for a directory to search. The results are displayed in a new
-buffer. Double-clicking a search result jumps to it in the file. You can also
-use the `Ctrl+Alt+G` and `Ctrl+Alt+Shift+G` (`^⌘G` and `^⌘⇧G` | none) key
-bindings. Replace in Files is not supported. You will have to "Find in Files"
-first, and then "Replace All" for each file a result is found in. The "Match
+prompts for a directory to search. A new buffer lists the search results.
+Double-clicking a search result jumps to it in the file, as do the the
+`Ctrl+Alt+G` and `Ctrl+Alt+Shift+G` (`^⌘G` and `^⌘⇧G` | none) key bindings.
+Textadept does not support replacing in files directly. You must "Find in Files"
+first, and then "Replace All" for each file containing a result. The "Match
 Case", "Whole Word", and "Lua pattern" flags still apply.
 
-_Warning_: currently, the only way to specify a file-type filter is through the
-[find API][] and even though the default filter excludes common binary files
+_Warning_: currently, the [find API][] provides the only means to specify a
+file-type filter. While the default filter excludes many common binary files
 and version control folders from searches, Find in Files could still scan
 unrecognized binary files or large, unwanted sub-directories. Searches also
 block Textadept from receiving additional input, making the interface
 temporarily unresponsive. Searching large directories or projects can be very
-time consuming and frustrating, so using a specialized, external tool such as
-[ack][] is recommended.
+time consuming and frustrating, so you may prefer to use a specialized, external
+tool such as [ack][].
 
 ![Find in Files](images/findinfiles.png)
 
@@ -203,57 +201,55 @@ time consuming and frustrating, so using a specialized, external tool such as
 
 ### Incremental Find
 
-You can start an incremental search by pressing `Ctrl+Alt+F` (`^⌘F` on Mac OSX |
-`M-^F` in curses). Incremental search searches the buffer as you type. Only the
-"Match Case" option is recognized. Pressing `Esc` (`⎋` | `Esc`) stops the
+Start an incremental search by pressing `Ctrl+Alt+F` (`^⌘F` on Mac OSX | `M-^F`
+in curses). Incremental search searches the buffer as you type, but only
+recognizes the "Match Case" find option. Pressing `Esc` (`⎋` | `Esc`) stops the
 search.
 
 ## Source Code Editing
 
-Textadept would not be a programmer's editor without some features for editing
-source code. Textadept understands the syntax and structure of more than 80
-different programming languages and recognizes hundreds of file types. It uses
-this knowledge to make viewing and editing code faster and easier.
+Being a programmer's editor, Textadept excels at editing source code. It
+understands the syntax and structure of more than 80 different programming
+languages and recognizes hundreds of file types. Textadept uses this knowledge
+to make viewing and editing code faster and easier.
 
 ### Lexers
 
-When you open a file, chances are that Textadept will identify the programming
-language associated with that file and set a "lexer" to highlight syntactic
-elements of the code. You can set or change the lexer manually by pressing
-`Ctrl+Shift+L` (`⌘⇧L` on Mac OSX | `M-S-L` in curses) and selecting a lexer from
-the list. You can customize how Textadept recognizes files in your
-[file type preferences][].
+Upon opening a file, Textadept attempts to identify the programming language
+associated with it and set a "lexer" to highlight syntactic elements of the
+code. Pressing `Ctrl+Shift+L` (`⌘⇧L` on Mac OSX | `M-S-L` in curses) and
+selecting a lexer from the list manually sets the lexer instead. Your
+[file type preferences][] customize how Textadept recognizes files.
 
-Lexers can sometimes lose track of their context while you are editing and
+Occasionally while you edit, lexers may lose track of their context and
 highlight syntax incorrectly. Pressing `F5` triggers a full redraw.
 
 [file type preferences]: 08_Preferences.html#File.Types
 
 ### Code Folding
 
-Some lexers support "code folding", where blocks of code can be temporarily
-hidden, making viewing easier. Fold points are denoted by arrows in the margin
-to the left of the code. Clicking on one toggles the folding for that block of
-code. You can also press `Ctrl+*` (`⌘*` on Mac OSX | `M-*` in curses) to toggle
-the fold point on the current line.
+Some lexers support "code folding", the act of temporarily hiding blocks of code
+in order to make viewing easier. Arrows in the margin to the left of the code
+denote fold points. Clicking on one toggles the folding for that block of code.
+Pressing `Ctrl+*` (`⌘*` on Mac OSX | `M-*` in curses) also toggles the fold
+point on the current line.
 
 ![Folding](images/folding.png)
 
 ### Word Highlight
 
-All occurrences of a given word are highlighted by putting the caret over the
-word and pressing `Ctrl+Alt+Shift+H` (`⌘⇧H` on Mac OSX | N/A in curses). This is
-useful to show occurrences of a variable name, but is not limited to source
-code.
+To highlight all occurrences of a given word, such as a variable name, put the
+caret over the word and press `Ctrl+Alt+Shift+H` (`⌘⇧H` on Mac OSX | N/A in
+curses). This feature also works for plain text.
 
 ![Word Highlight](images/wordhighlight.png)
 
 ### Adeptsense
 
 Textadept has the capability to autocomplete symbols for programming languages
-and display API documentation. Symbol completion is available by pressing
-`Ctrl+Space` (`⌥⎋` on Mac OSX | `^Space` in curses). Documentation for symbols
-is available with `Ctrl+H` (`^H` | `M-H` or `M-S-H`). Note: In order for this
+and display API documentation. Pressing `Ctrl+Space` (`⌥⎋` on Mac OSX | `^Space`
+in curses) completes the current symbol and `Ctrl+H` (`^H` | `M-H` or `M-S-H`)
+shows any known documentation on the current symbol. Note: In order for this
 feature to work, the language you are working with must have an [Adeptsense][]
 defined. [Language-specific modules][] usually [define Adeptsenses][]. All of
 the [official][] Textadept language-specific modules have Adeptsenses.
@@ -271,36 +267,36 @@ the [official][] Textadept language-specific modules have Adeptsenses.
 
 ### Snippets
 
-Snippets are essentially pieces of text inserted into a document. However,
-snippets are not limited to static text. They can be dynamic templates which
-contain placeholders for further user input, can mirror or transform those user
-inputs, and/or execute arbitrary code. Snippets are useful for rapidly
+Snippets are essentially pieces of text inserted into source code or plain text.
+However, snippets are not bound to static text. They can be dynamic templates
+which contain placeholders for further user input, can mirror or transform those
+user inputs, and/or can execute arbitrary code. Snippets are useful for rapidly
 constructing blocks of code such as control structures, method calls, and
 function declarations. Press `Ctrl+K` (`⌥⇥` on Mac OSX | `M-K` in curses) for a
-list of available snippets. Snippets are composed of trigger word and snippet
-text. Instead of manually selecting a snippet, you can type its trigger word
+list of available snippets. A snippet consists of a trigger word and snippet
+text. Instead of manually selecting a snippet to insert, type its trigger word
 followed by the `Tab` (`⇥` | `Tab`) key. Subsequent presses of `Tab` (`⇥` |
 `Tab`) cause the caret to enter placeholders in sequential order, `Shift+Tab`
 (`⇧⇥` | `S-Tab`) goes back to the previous placeholder, and `Ctrl+Shift+K`
-(`⌥⇧⇥` | `M-S-K`) cancels the current snippet. Snippets can be nested (inserted
-from within another snippet) and are not limited to source code.
-Language-specific modules usually [define snippets][], but you can create your
-own custom snippets in your [snippet preferences][].
+(`⌥⇧⇥` | `M-S-K`) cancels the current snippet. Textadept supports nested
+snippets, snippets inserted from within another snippet. Language-specific
+modules usually define their [own set][] of snippets, but your
+[snippet preferences][] can define some too.
 
 ![Snippet](images/snippet.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Snippet Expanded](images/snippet2.png)
 
-[define snippets]: api/_M.html#Snippets
+[own set]: api/_M.html#Snippets
 [snippet preferences]: 08_Preferences.html#Snippets
 
 ### Toggle Comments
 
 Pressing `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in curses) comments or uncomments the
-code on the selected lines. As long as any part of a line is selected, the
-entire line will be commented or uncommented. Note: In order for this feature to
+code on the selected lines. Selecting any part of a line renders the entire line
+eligible for commenting or uncommenting. Note: In order for this feature to
 work, the language you are working with must have its comment prefix defined.
-Language-specific modules usually [define prefixes][], but it can also be done
+Language-specific modules usually [define prefixes][], but you can do so
 [manually][] in your [user-init file][].
 
 [define prefixes]: api/_M.html#Block.Comment
