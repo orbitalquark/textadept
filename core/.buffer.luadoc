@@ -132,6 +132,17 @@
 --   or [`buffer:register_rgba_image()`](#register_rgba_image) before appending
 --   image types to list items after type separator characters.
 --   The default value is 63 ('?').
+-- @field automatic_fold (number)
+--   Bit-mask of options for automatic folding behavior.
+--
+--   * `_SCINTILLA.constants.SC_AUTOMATICFOLD_SHOW` (1)
+--     Automatically show lines as needed.
+--   * `_SCINTILLA.constants.SC_AUTOMATICFOLD_CLICK` (2)
+--     Handle clicks in the fold margin automatically.
+--   * `_SCINTILLA.constants.SC_AUTOMATICFOLD_CHANGE` (4)
+--     Show lines as needed when the fold structure changes.
+--
+--   The default value is `0`.
 -- @field back_space_un_indents (bool)
 --   Un-indent text when backspacing within indentation.
 --   The default value is `false`.
@@ -410,6 +421,10 @@
 --   * `_SCINTILLA.constants.INDIC_SQUIGGLEPIXMAP` (13)
 --     Identical to `INDIC_SQUIGGLE` but draws faster by using a pixmap instead
 --     of multiple line segments.
+--   * `_SCINTILLA.constants.INDIC_COMPOSITIONTHICK` (14)
+--     A 2-pixel thick underline at the bottom of the line inset by 1 pixel on
+--     on either side. Similar in appearance to Asian language input
+--     composition.
 --
 --   Use [`_SCINTILLA.next_indic_number()`][] for custom indicators.
 --
@@ -1510,6 +1525,16 @@ function ensure_visible(buffer, line) end
 function ensure_visible_enforce_policy(buffer, line) end
 
 ---
+-- Expands the fold states of the fold header on line number *line* and its
+-- children with fold level *level*.
+-- @param buffer The global buffer.
+-- @param line The line number in *buffer* to expand the folds for.
+-- @param level The previous fold level of *line*, not the current one. This is
+--   because this function is used to respond to changes in a line's fold level
+--   or fold header status, so a new fold level has already been set.
+function expand_children(buffer, line, level) end
+
+---
 -- Returns the position of column number *column* on line number *line*, taking
 -- tab and multi-byte characters into account, or the position at the end of
 -- line *line*.
@@ -1517,6 +1542,40 @@ function ensure_visible_enforce_policy(buffer, line) end
 -- @param line The line number in *buffer* to use.
 -- @param column The column number to use.
 function find_column(buffer, line, column) end
+
+---
+-- Expands, contracts, or toggles the fold states of all fold headers in the
+-- buffer, depending on *action*.
+-- When toggling, the state of the first fold header in the buffer determines
+-- whether to expand or contract.
+-- @param buffer The global buffer.
+-- @param action The fold action to perform. Valid values are:
+--   * `_SCINTILLA.constants.SC_FOLDACTION_CONTRACT` (0)
+--   * `_SCINTILLA.constants.SC_FOLDACTION_EXPAND` (1)
+--   * `_SCINTILLA.constants.SC_FOLDACTION_TOGGLE` (2)
+function fold_all(buffer, action) end
+
+---
+-- Expands, contracts, or toggles the fold states of the fold header on line
+-- number *line* and its children, depending on *action*.
+-- @param buffer The global buffer.
+-- @param line The line number in *buffer* to set the fold states for.
+-- @param action The fold action to perform. Valid values are:
+--   * `_SCINTILLA.constants.SC_FOLDACTION_CONTRACT` (0)
+--   * `_SCINTILLA.constants.SC_FOLDACTION_EXPAND` (1)
+--   * `_SCINTILLA.constants.SC_FOLDACTION_TOGGLE` (2)
+function fold_children(buffer, line, action) end
+
+---
+-- Expands, contracts, or toggles the fold state of the fold header on line
+-- number *line*, depending on *action*.
+-- @param buffer The global buffer.
+-- @param line The line number in *buffer* to set the fold state for.
+-- @param action The fold action to perform. Valid values are:
+--   * `_SCINTILLA.constants.SC_FOLDACTION_CONTRACT` (0)
+--   * `_SCINTILLA.constants.SC_FOLDACTION_EXPAND` (1)
+--   * `_SCINTILLA.constants.SC_FOLDACTION_TOGGLE` (2)
+function fold_line(buffer, line, action) end
 
 ---
 -- Inserts a Form Feed ("\f") character at the caret.
