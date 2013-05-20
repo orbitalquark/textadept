@@ -99,12 +99,15 @@ local env = setmetatable({}, {
 -- Executes string *code* as Lua code.
 -- Code is subject to an "abbreviated" environment where the `buffer`, `view`,
 -- and `gui` tables are also considered as globals.
+-- Print the results of '=' expressions like in the Lua prompt.
 -- @param code The Lua code to execute.
 -- @name execute_lua
 function M.execute_lua(code)
+  if code:sub(1, 1) == '=' then code = 'return '..code:sub(2) end
   local f, err = load(code, nil, 'bt', env)
   if err then error(err) end
-  f()
+  local result = f()
+  if result ~= nil then gui.print(result) end
   events.emit(events.UPDATE_UI)
 end
 args.register('-e', '--execute', 1, M.execute_lua, 'Execute Lua code')
