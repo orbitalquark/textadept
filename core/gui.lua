@@ -365,11 +365,6 @@ events_connect(events.UPDATE_UI, function()
                                         _L['Col:'], col, lexer, eol, tabs, enc)
 end)
 
--- Toggles folding.
-events_connect(events.MARGIN_CLICK, function(margin, pos, modifiers)
-  if margin == 2 then buffer:toggle_fold(buffer:line_from_position(pos)) end
-end)
-
 -- Updates the statusbar and titlebar for a new Scintilla document.
 events_connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
 events_connect(events.BUFFER_NEW, function() set_title() end)
