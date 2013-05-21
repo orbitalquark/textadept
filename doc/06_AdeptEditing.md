@@ -82,7 +82,7 @@ Textadept curses does not support creating rectangular selections with the
 mouse.
 
 [`buffer.rectangular_selection_modifier`]: api/buffer.html#rectangular_selection_modifier
-[settings]: 08_Preferences.html#Buffer.Settings
+[settings]: 08_Preferences.html#Buffer.Properties
 
 ### Select to Matching Brace
 

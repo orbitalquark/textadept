@@ -132,7 +132,7 @@ Learn more about snippet syntax in the [snippets LuaDoc][].
 
 [snippets LuaDoc]: api/_M.textadept.snippets.html
 
-## Buffer Settings
+## Buffer Properties
 
 Since Textadept runs *~/.textadept/init.lua* only once on startup, it is not the
 appropriate place to set per-buffer properties like indentation size or
@@ -140,10 +140,10 @@ view-related properties like the behaviors for scrolling and autocompletion.
 If you do set such properties in *~/.textadept/init.lua*, those settings only
 apply to the first buffer and view -- subsequent buffers and split views will
 not inherit those settings. Instead, put your settings in a
-*~/.textadept/settings.lua* file which runs after creating a new buffer or split
-view. Any settings there override Textadept's default *settings.lua* settings.
-For example, to use tabs rather than spaces and have a tab size of 4 spaces by
-default, your *~/.textadept/settings.lua* would contain:
+*~/.textadept/properties.lua* file which runs after creating a new buffer or
+split view. Any settings there override Textadept's default *properties.lua*
+settings. For example, to use tabs rather than spaces and have a tab size of 4
+spaces by default, your *~/.textadept/properties.lua* would contain:
 
     buffer.tab_width = 4
     buffer.use_tabs = true
@@ -151,10 +151,10 @@ default, your *~/.textadept/settings.lua* would contain:
 (Remember that in order to have per-filetype properties, you need to have a
 [language-specific module][].)
 
-Textadept's *settings.lua* is a good reference to see available properties to
+Textadept's *properties.lua* is a good reference to see available properties to
 set. It also has many commented out properties that you can copy to your
-*~/.textadept/settings.lua* and uncomment to turn on or change the value of. Use
-[Adeptsense][] to view a property's documentation or read the [LuaDoc][].
+*~/.textadept/properties.lua* and uncomment to turn on or change the value of.
+Use [Adeptsense][] to view a property's documentation or read the [LuaDoc][].
 
 [language-specific module]: 07_Modules.html#Buffer.Properties
 [Adeptsense]: 06_AdeptEditing.html#Adeptsense

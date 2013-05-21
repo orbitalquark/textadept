@@ -100,6 +100,8 @@ buffer.property['fold'] = '1'
 buffer.property['fold.by.indentation'] = '1'
 buffer.property['fold.line.comments'] = '0'
 buffer.fold_flags = not CURSES and c.SC_FOLDFLAG_LINEAFTER_CONTRACTED or 0
+buffer.automatic_fold = c.SC_AUTOMATICFOLD_SHOW + c.SC_AUTOMATICFOLD_CLICK +
+                        c.SC_AUTOMATICFOLD_CHANGE
 
 -- Line Wrapping.
 --buffer.wrap_mode = c.SC_WRAP_WORD
