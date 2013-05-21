@@ -47,7 +47,7 @@ to tabs. If the buffer uses spaces, all indenting tabs convert to spaces.)
 Similarly, the "Buffer -> Indentation" menu manually sets indentation size.
 
 [language-specific modules]: 07_Modules.html#Buffer.Properties
-[user settings]: 08_Preferences.html#Buffer.Settings
+[user settings]: 08_Preferences.html#Buffer.Properties
 
 #### Line Endings
 

@@ -208,12 +208,12 @@ end
 
 local events, events_connect = events, events.connect
 
--- Loads the theme and settings files.
+-- Loads the theme and properties files.
 local function load_theme_and_settings()
   dofile(theme)
-  dofile(_HOME..'/settings.lua')
-  if lfs.attributes(_USERHOME..'/settings.lua') then
-    dofile(_USERHOME..'/settings.lua')
+  dofile(_HOME..'/properties.lua')
+  if lfs.attributes(_USERHOME..'/properties.lua') then
+    dofile(_USERHOME..'/properties.lua')
   end
 end
 
