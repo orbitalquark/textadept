@@ -19,6 +19,8 @@ local gui = gui
 --   The text displayed by the buffer statusbar.
 module('gui')]]
 
+local theme = _HOME..'/themes/'..(not CURSES and 'light' or 'term')..'.lua'
+
 -- Helper function for printing messages to buffers.
 -- @see gui._print
 local function _print(buffer_type, ...)
@@ -156,8 +158,6 @@ function gui.goto_file(filename, split, preferred_view, sloppy)
   end
   io.open_file(filename)
 end
-
-local theme = _HOME..'/themes/'..(not CURSES and 'light' or 'term')..'.lua'
 
 ---
 -- Sets the editor theme name to *name* or prompts the user to select one from a

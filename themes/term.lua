@@ -27,9 +27,6 @@ property['color.light_magenta'] = 0xFF00FF
 property['color.light_cyan'] = 0xFFFF00
 property['color.light_white'] = 0xFFFFFF
 
--- Default style.
-property['style.default'] = 'fore:$(color.white),back:$(color.black)'
-
 -- Token styles.
 property['style.nothing'] = ''
 property['style.class'] = 'fore:$(color.yellow)'
@@ -51,6 +48,7 @@ property['style.embedded'] = '$(style.tag),back:$(color.black),bold'
 property['style.identifier'] = '$(style.nothing)'
 
 -- Predefined styles.
+property['style.default'] = 'fore:$(color.white),back:$(color.black)'
 property['style.linenumber'] = '$(style.default)'
 property['style.bracelight'] = 'fore:$(color.black),back:$(color.white)'
 property['style.bracebad'] = 'fore:$(color.red),bold'
