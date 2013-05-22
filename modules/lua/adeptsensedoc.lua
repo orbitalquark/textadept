@@ -230,7 +230,8 @@ function M.start(doc)
       local module = module -- define locally so any modification stays local
       if t:find('^_G%.') then module, t = t:match('^_G%.(.-)%.?([^%.]+)$') end
       if not module then print(table.name) end
-      local ext_fields = module == '_G' and '' or 'class:'..module
+      local ext_fields = (module == '_G' or module == '') and '' or
+                         'class:'..module
       write_tag(ctags, t, 't', ext_fields)
       write_apidoc(apidoc, m, table)
       -- Tag the fields of the tables.
