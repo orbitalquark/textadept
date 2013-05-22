@@ -43,12 +43,13 @@
 --   size/size_fractional, bold/weight, italics, fore, back, and character_set.
 -- @field annotation_style_offset (number)
 --   The beginning of the range of style numbers used for annotations.
+--   Always set this to the result of
+--   [`buffer.allocate_extended_styles`](#allocate_extended_styles).
 --   Annotation styles may be completely separated from standard text styles by
---   setting a style offset. For example, setting this to `512` would allow the
---   annotation styles to be numbered from `512` upto `767` so they do not
---   overlap styles set by lexers (or margins if margins offset is `256`). Each
---   style number set with `annotation_style` has the offset added before
---   looking up the style.
+--   setting a style offset. For example, when set to `512`, annotation styles
+--   are numbered from `512` upto `767` so they do not overlap styles set by
+--   lexers (or margins if margins offset is `256`). Each style number set with
+--   `annotation_style` has the offset added before looking up the style.
 --   The default value is `0`.
 -- @field annotation_text (table)
 --   Table of annotation text for line numbers starting from zero.
@@ -529,11 +530,13 @@
 --   size/size_fractional, bold/weight, italics, fore, back, and character_set.
 -- @field margin_style_offset (number)
 --   The beginning of the range of style numbers used for margin text.
+--   Always set this to the result of
+--   [`buffer.allocate_extended_styles`](#allocate_extended_styles).
 --   Margin styles may be completely separated from standard text styles by
---   setting a style offset. For example, setting this to `256` would allow the
---   margin styles to be numbered from `256` upto `511` so they do not overlap
---   styles set by lexers. Each style number set with `margin_style` has
---   the offset added before looking up the style.
+--   setting a style offset. For example, when set to `256`, margin styles are
+--   numbered from `256` upto `511` so they do not overlap styles set by lexers.
+--   Each style number set with `margin_style` has the offset added before
+--   looking up the style.
 -- @field margin_text (table)
 --   Table of text in the text margin for line numbers starting from zero.
 -- @field margin_type_n (table)
@@ -1052,6 +1055,17 @@ function add_text(buffer, text) end
 function allocate(buffer, bytes) end
 
 ---
+-- Allocates an additional *num_styles* number of styles for use by margins or
+-- annotations and returns the starting style number of the new range.
+-- These styles are outside the 0..255 range used by lexers.
+-- @param buffer The global buffer
+-- @param num_styles The number of additional styles to allocate.
+-- @return number
+-- @see annotation_style_offset
+-- @see margin_style_offset
+function allocate_extended_styles(buffer, num_styles) end
+
+---
 -- Clears annotations from all lines.
 -- @param buffer The global buffer.
 function annotation_clear_all(buffer) end
@@ -1170,7 +1184,7 @@ function brace_highlight_indicator(buffer, use_indicator, indic_num) end
 -- '>' and must have the same style.
 -- @param buffer The global buffer.
 -- @param pos The position of the brace in *buffer* to match.
--- @return number.
+-- @return number
 function brace_match(buffer, pos) end
 
 ---
@@ -2036,7 +2050,7 @@ function marker_enable_highlight(buffer, enabled) end
 -- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc.
 -- @param buffer The global buffer.
 -- @param line The line number to get markers on.
--- @return number.
+-- @return number
 function marker_get(buffer, line) end
 
 ---
@@ -2249,6 +2263,12 @@ function register_image(buffer, type, xpm_data) end
 -- @param pixels The RGBA data as described in
 --   `buffer:marker_define_rgba_image()`.
 function register_rgba_image(buffer, type, pixels) end
+
+---
+-- Releases all styles allocated with `buffer:allocate_extended_styles()`.
+-- @param buffer The global buffer.
+-- @see allocate_extended_styles
+function release_all_extended_styles(buffer) end
 
 ---
 -- Replaces the selected text with string *text*, scrolling the caret into view.
@@ -2953,8 +2973,6 @@ function get_style_name(buffer, style_num) end
 -- Unused Functions.
 --   * add_styled_text
 --   * get_styled_text
---   * release_all_extended_styles
---   * allocate_extended_styles
 --   * assign_cmd_key
 --   * clear_cmd_key
 --   * set_styling_ex
