@@ -51,15 +51,13 @@ property['color.light_red'] = 0x8080CC
 --property['color.light_lavender'] = 0xFFCCCC
 property['color.light_blue'] = 0xFFCC80
 
--- Default style.
-local font, size = 'Bitstream Vera Sans Mono', 10
+-- Default font.
+property['font'], property['fontsize'] = 'Bitstream Vera Sans Mono', 10
 if WIN32 then
-  font = 'Courier New'
+  property['font'] = 'Courier New'
 elseif OSX then
-  font, size = 'Monaco', 12
+  property['font'], property['fontsize'] = 'Monaco', 12
 end
-property['style.default'] = 'font:'..font..',size:'..size..
-                            ',fore:$(color.light_black),back:$(color.white)'
 
 -- Token styles.
 property['style.nothing'] = ''
@@ -82,6 +80,8 @@ property['style.embedded'] = '$(style.tag),back:$(color.dark_white)'
 property['style.identifier'] = '$(style.nothing)'
 
 -- Predefined styles.
+property['style.default'] = 'font:$(font),size:$(fontsize)'..
+                            ',fore:$(color.light_black),back:$(color.white)'
 property['style.linenumber'] = 'fore:$(color.grey),back:$(color.white)'
 property['style.bracelight'] = 'fore:$(color.light_blue)'
 property['style.bracebad'] = 'fore:$(color.light_red)'
