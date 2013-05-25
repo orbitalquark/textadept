@@ -143,6 +143,116 @@ non-existant graphics capabilities:
 
 ## Migration Guides
 
+### Textadept 6 to 7
+
+Textadept 7 introduces API changes and a completely new theme implementation.
+
+#### API Changes
+
+Old API                           |Change  |New API
+----------------------------------|:------:|-------
+**_G**                            |        |
+buffer\_new()                     |Renamed |\_G.[buffer.new()][]
+**_M.textadept**                  |        |
+filter\_through                   |Removed |N/A
+filter\_through.filter\_through() |Renamed |editing.[filter\_through()][]
+**_M.textadept.editing**          |        |
+autocomplete\_word(chars, default)|Changed |[autocomplete\_word][](default)
+grow\_selection()                 |Replaced|[select\_enclosed()][]
+**_M.textadept.menu**             |        |
+menubar                           |Removed |N/A
+contextmenu                       |Removed |N/A
+**_M.textadept.snapopen**         |Removed |N/A
+open                              |Changed |\_G.[io.snapopen()][]<sup>\*</sup>
+**events**                        |        |
+handlers                          |Removed |N/A
+**gui.find**                      |        |
+goto\_file\_in\_list()            |Renamed |[goto\_file\_found()][]
+**io**                            |        |
+try\_encodings                    |Renamed |[encodings][]
+
+<sup>\*</sup>Changed arguments too.
+
+[buffer.new()]: api/buffer.html#new
+[filter\_through()]: api/_M.textadept.editing.html#filter_through
+[autocomplete\_word]: api/_M.textadept.editing.html#autocomplete_word
+[select\_enclosed()]: api/_M.textadept.editing.html#select_enclosed
+[io.snapopen()]: api/io.html#snapopen
+[goto\_file\_found()]: api/gui.find.html#goto_file_found
+[encodings]: api/io.html#encodings
+
+#### Theme Changes
+
+You can use the following as a reference for converting your Textadept 6 themes
+to Textadept 7:
+
+    -- File *theme/lexer.lua*            | -- File *theme.lua*
+    -- Textadept 6                       | -- Textadept 7
+    local l = lexer                      | local buffer = buffer
+    local color = l.color                | local prop = buffer.property
+    local style = l.style                | local prop_int =
+                                         |   buffer.property_int
+                                         |
+    l.colors = {                         |
+      ...                                | ...
+      red = color('99', '4D', '4D'),     | prop['color.red'] = 0x4D4D99
+      yellow = color('99', '99', '4D'),  | prop['color.yellow'] = 0x4D9999
+      ...                                | ...
+    }                                    |
+                                         |
+    l.style_nothing = style{}            | prop['style.nothing'] = ''
+    l.style_class = style{               | prop['style.class'] =
+      fore = l.colors.yellow             |   'fore:$(color.yellow)'
+    }                                    | ...
+    ...                                  | prop['style.identifier'] =
+    l.style_identifier = l.style_nothing |   '$(style.nothing)'
+                                         |
+    ...                                  | ...
+                                         |
+                                         | prop['font'] = 'Monospace'
+    local font, size = 'Monospace', 10   | prop['fontsize'] = 10
+    l.style_default = style{             | prop['style.default'] =
+      font = font, size = size,          |   'font:$(font),'..
+      fore = l.colors.light_black        |   'size:$(fontsize),'..
+      back = l.colors.white              |   'fore:$(color.light_black),'..
+    }                                    |   'back:$(color.white)'
+    ...                                  | ...
+
+    -- File *theme/view.lua*             | -- Same file *theme.lua*!
+                                         |
+    ...                                  | ...
+    -- Caret and Selection Styles.       | -- Caret and Selection Styles.
+    buffer:set_sel_fore(true, 0x333333)  | buffer:set_sel_fore(true,
+                                         |   prop_int['color.light_black'])
+    buffer:set_sel_back(true, 0x999999)  | buffer:set_sel_back(true,
+                                         |   prop_int['color.light_grey'])
+    --buffer.sel_alpha =                 | --buffer.sel_alpha =
+    --buffer.sel_eol_filled = true       |
+    buffer.caret_fore = 0x4D4D4D         | buffer.caret_fore =
+                                         |   prop_int['color.grey_black']
+    ...                                  | ...
+
+Notes:
+
+1. Textadept 7's themes share its Lua state and set lexer colors and styles
+   through named buffer properties.
+2. Convert colors from "RRGGBB" string format to the "0xBBGGRR" number format
+   that Textadept's API documentation uses consistently.
+3. The only property names that matter are the "style._name_" ones. Other
+   property names are arbitrary.
+4. Instead of using variables, which are evaluated immediately, use "$(key)"
+   notation, which substitutes the value of property "key" at a later point in
+   time. This means you do not have to define properties before use. You can
+   also modify existing properties without redefining the properties that depend
+   on them. See the [customizing themes][] section for an example.
+5. Set view properties related to colors directly in *theme.lua* now instead of
+   a separate *view.lua*. You may use color properties defined earlier. Try to
+   refrain from setting properties like `buffer.sel_eol_filled` which belong in
+   a [*properties.lua*][] file.
+
+[customizing themes]: 09_Themes.html#Customizing.Themes
+[*properties.lua*]: 08_Preferences.html#Buffer.Properties
+
 ### Textadept 5 to 6
 
 Textadept 6 introduces some API changes. These changes affect themes in
@@ -232,7 +342,7 @@ localize(message)       |Renamed|\_G.[\_L][][message]
 **os**                  |       |
 code = execute(cmd)     |Changed|ok, status, code = execute(cmd)
 
-<sup>*</sup>In some cases, use `load()` with an environment instead:
+<sup>\*</sup>In some cases, use `load()` with an environment instead:
 
     setfenv(loadstring(str), env)() --> load(str, nil, 'bt', env)()
 
@@ -257,7 +367,7 @@ your own:
 You can use the following as a reference for converting your Lua 5.1 modules to
 Lua 5.2:
 
-    -- File ~/.textadept/modules/foo.lua
+    -- File *~/.textadept/modules/foo.lua*
     -- Lua 5.1                    | -- Lua 5.2
                                   |
                                   | local M = {}
@@ -281,7 +391,7 @@ Lua 5.2:
                                   |
                                   | return M
 
-    -- File ~/.textadept/init.lua
+    -- File *~/.textadept/init.lua*
     -- Lua 5.1                    | -- Lua 5.2
                                   |
     require 'textadept'           | _M.textadept = require 'textadept'
@@ -301,16 +411,18 @@ Notes:
 You can use the following as a reference for converting your Lua 5.1 themes to
 Lua 5.2:
 
+    -- File *~/.textadept/themes/theme/lexer.lua*
     -- Lua 5.1                       | -- Lua 5.2
                                      |
                                      | local l = lexer
-    module('lexer', package.seeall)  | local color, style = l.color, l.style
+    module('lexer', package.seeall)  | local color = l.color
+                                     | local style = l.style
                                      |
     colors = {                       | l.colors = {
       ...                            |   ...
     }                                | }
                                      |
-    style_nothing = style{...}       | l.style_nothing = style{...}
+    style_nothing = style{}          | l.style_nothing = style{...}
     style_class = style{             | l.style_class = style{
       fore = colors.light_yellow     |   fore = l.colors.light_yellow
     }                                | }
