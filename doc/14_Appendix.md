@@ -2,7 +2,7 @@
 
 ## Lua Patterns
 
-The following is taken from the [Lua 5.2 Reference Manual][].
+The following is from the [Lua 5.2 Reference Manual][].
 
 _Character Class:_
 
@@ -101,56 +101,43 @@ As a special case, the empty capture `()` captures the current string position
 
 ## Curses Compatibility
 
-Textadept 5.5 beta introduced a curses version that can run in a terminal
-emulator. However, since curses is quite low-level in terms of graphics
-capability compared to GTK+, the curses version of Textadept lacks some features
-in its editing component Scintilla and in general:
+Textadept 5.5 beta introduced a curses version that is capable of running in a
+terminal emulator. However, it lacks some GUI features due to curses'
+non-existant graphics capabilities:
 
-* Any settings with alpha values are not supported.
-* Autocompletion lists cannot show images (pixmap surfaces are not supported).
-  Instead, they show the first character in the string passed to
-  [`buffer:register_image()`][].
-* Buffered and two-phase drawing is not supported.
-* Call tip arrows are not displayed (`surface->Polygon()` is not supported for
-  drawing arrow shapes).
-* Caret settings like period, line style, and width are not supported
-  (terminals use block carets with their own period definitions).
-* Code pages other than UTF-8 have not been tested and it is possible some
-  curses implementations do not support them.
-* Edge lines are not displayed properly (the line is drawn over by text lines).
-* Extra ascent and decent for lines is not supported.
-* Fold lines are not supported (`surface->LineTo()` is not supported).
-* Indentation guides are not visible (pixmap surfaces are not supported).
-* Indicators other than `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX` are not drawn
-  (`surface->LineTo()` is not supported for drawing indicator shapes and pixmap
-  surfaces are not supported). Translucent drawing and rounded corners are not
-  supported either.
-* Insert mode caret is not drawn properly (no way to detect it from within
-  `surface->FillRectangle()`).
-* Margins are overwritten by long lines when scrolling to the right.
-* Marker types other than `SC_MARK_CHARACTER` are not drawn (pixmap surfaces are
-  not supported and `surface->LineTo()` is not supported for drawing marker
-  shapes).
-* Mouse interactions, cursor types, and hotspots are not supported.
-* Up to 16 colors are supported: black (`0x000000`), red (`0x800000`), green
+* No alpha values or transparency.
+* No images in autocompletion lists. Instead, autocompletion lists show the
+  first character in the string passed to [`buffer:register_image()`][].
+* No buffered or two-phase drawing.
+* No arrows on call tips.
+* Carets cannot have a period, line style, or width.
+* Edge lines may be obscured by text.
+* Extra line ascent or descent renders improperly.
+* No fold lines.
+* No indentation guides.
+* No indicators other than `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX`, although
+  neither has translucent drawing and `INDIC_ROUNDBOX` does not have rounded
+  corners.
+* Insert mode caret renders improperly.
+* When scrolling to the right, long lines overwrite margins.
+* No marker symbols other than `SC_MARK_CHARACTER`.
+* No mouse interactions, cursor types, or hotspots.
+* Only up to 16 colors recognized: black (`0x000000`), red (`0x800000`), green
   (`0x008000`), yellow (`0x808000`), blue (`0x000080`), magenta (`0x800080`),
   cyan (`0x008080`), white (`0xC0C0C0`), light black (`0x404040`), light red
   (`0xFF0000`), light green (`0x00FF00`), light yellow (`0xFFFF00`), light blue
   (`0x0000FF`), light magenta (`0xFF00FF`), light cyan (`0x00FFFF`), and light
   white (`0xFFFFFF`). Even if your terminal uses a different color map, you must
-  use these color values with Scintilla; unrecognized colors are set to white by
-  default. For some terminals, you may need to set a lexer style's `bold`
-  attribute in order to use the light color variant.
-* Scroll bars are not supported.
-* Some key sequences are not recognized by the terminal or have unexpected key
-* codes.
-* Some styles settings like font name, font size, and italic do not display
-  properly (terminals use one only font, size and variant).
-* Viewing whitespace does not show the "Tab" character arrows
-  (`surface->LineTo()` is not supported for drawing arrows).
-* Visual wrap flags are not supported (`surface->LineTo()` is not supported).
-* X selections (primary and secondary) are not integrated into the clipboard.
-* Zoom is not supported (terminal font size is fixed).
+  use these color values; unrecognized colors default to white. For some
+  terminals, you may need to set a lexer style's `bold` attribute to use the
+  light color variant.
+* No scroll bars.
+* Not all key sequences recognized properly.
+* No style settings like font name, font size, or italics.
+* No tab character arrows when viewing whitespace.
+* No visual wrap flags.
+* No X selection, primary or secondary, integration with the clipboard.
+* No zoom.
 
 [`buffer:register_image()`]: api/buffer.html#buffer.register_image
 
@@ -158,410 +145,214 @@ in its editing component Scintilla and in general:
 
 ### Textadept 5 to 6
 
-Textadept 6 introduces some API changes.
+Textadept 6 introduces some API changes. These changes affect themes in
+particular, so your themes may require upgrading.
 
-#### Function Changes
+Old API                              | Change | New API
+-------------------------------------|:------:|--------
+**buffer**                           |        |
+annotation\_get\_text(line)          |Renamed |annotation\_text[line]
+annotation\_set\_text(line, text)    |Renamed |annotation\_text[line] = text
+auto\_c\_get\_current()              |Renamed |auto\_c\_current
+auto\_c\_get\_current\_text()        |Renamed |auto\_c\_current\_text
+get\_lexer\_language()               |Renamed |lexer\_language
+get\_property(key)                   |Renamed |property[key]
+get\_property\_expanded(key)         |Renamed |property\_expanded[key]
+get\_tag(n)                          |Renamed |tag[n]
+margin\_get\_text(line)              |Renamed |margin\_text[line]
+margin\_set\_text(line, text)        |Renamed |margin\_text[line] = text
+marker\_set\_alpha(n, alpha)         |Renamed |marker\_alpha[n] = alpha
+marker\_set\_back(n, color)          |Renamed |marker\_back[n] = color
+marker\_set\_back\_selected(n, color)|Renamed |marker\_back\_selected[n] = color
+marker\_set\_fore(n, color)          |Renamed |marker\_fore[n] = color
+set\_fold\_flags(flags)              |Renamed |fold\_flags = flags
+set\_lexer\_language(name)           |Renamed |lexer\_language = name
+style\_get\_font(n)                  |Renamed |style\_font[n]
+**gui**                              |        |
+gtkmenu()                            |Renamed |[menu()][]
+**_G**                               |        |
+user\_dofile(file)                   |Renamed |dofile(\_USERHOME..'/'..file)
+**_M**                               |        |
+lua.goto\_required()                 |Removed |N/A
+php.goto\_required()                 |Removed |N/A
+ruby.goto\_required()                |Removed |N/A
+**_M.textadept.adeptsense**          |        |
+complete\_symbol()                   |Replaced|[complete()][]
+show\_documentation()                |Replaced|[show\_apidoc()][]
+**_M.textadept.bookmarks**           |        |
+N/A                                  |New     |[toggle()][]
+add()                                |Renamed |toggle(true)
+remove()                             |Renamed |toggle(false)
+**_M.textadept.editing**             |        |
+prepare\_for\_save()                 |Removed |N/A
+**_M.textadept.menu**                |        |
+rebuild\_command\_tables()           |Replaced|[set\_menubar()][]
+**_M.textadept.run**                 |        |
+execute()                            |Replaced|[run()][] and [compile()][]
+**_M.textadept.session**             |        |
+prompt\_load()                       |Replaced|[load()][]
+prompt\_save()                       |Replaced|[save()][]
 
-##### `buffer`
-
-Some of the "get" and "set" functions in `buffer` have been converted to
-properties:
-
-* `buffer:annotation_get_text(line)` -> `buffer.annotation_text[line]`
-* `buffer:annotation_set_text(line, text)` ->
-  `buffer.annotation_text[line] = text`
-* `buffer:auto_c_get_current()` -> `buffer.auto_c_current`
-* `buffer:auto_c_get_current_text()` -> `buffer.auto_c_current_text`
-* `buffer:get_lexer_language()` -> `buffer.lexer_language`
-* `buffer:get_property(key)` -> `buffer.property[key]`
-* `buffer:get_property_expanded(key)` -> `buffer.property_expanded[key]`
-* `buffer:get_tag(tag_num)` -> `buffer.tag[tag_num]`
-* `buffer:margin_get_text(line)` -> `buffer.margin_text[line]`
-* `buffer:margin_set_text(line, text)` -> `buffer.margin_text[line] = text`
-* `buffer:marker_set_alpha(marker_num, alpha)` ->
-  `buffer.marker_alpha[marker_num] = alpha`
-* `buffer:marker_set_back(marker_num, color)` ->
-  `buffer.marker_back[marker_num] = color`
-* `buffer:marker_set_back_selected(marker_num, color)` ->
-  `buffer.marker_back_selected[marker_num] = color`
-* `buffer:marker_set_fore(marker_num, color)` ->
-  `buffer.marker_fore[marker_num] = color`
-* `buffer:set_fold_flags(flags)` -> `buffer.fold_flags = flags`
-* `buffer:set_lexer_language(language_name)` ->
-  `buffer.lexer_language = language_name`
-* `buffer:style_get_font(style_num)` -> `buffer.style_font[style_num]`
-
-These changes will affect custom themes.
-
-##### `goto_required`
-
-`_M.lua.goto_required()`, `_M.php.goto_required()`, and
-`_M.ruby.goto_required()` have all been removed. They are inaccurate when
-projects re-define or define their own search paths.
-
-##### `prepare_for_save`
-
-`_M.textadept.editing.prepare_for_save()` was moved directly into an event
-handler and cannot be called separately anymore.
-
-##### Sessions
-
-`_M.textadept.session.prompt_load()` and `_M.textadept.session.prompt_save()`
-functionality has been moved into [`_M.textadept.session.load()`][] and
-[`_M.textadept.session.save()`][]. Therefore, replace all instances of
-`prompt_load` and `prompt_save` with `load` and `save` respectively.
-
-[`_M.textadept.session.load()`]: api/_M.textadept.session.html#load
-[`_M.textadept.session.save()`]: api/_M.textadept.session.html#save
-
-##### Adeptsense
-
-`_M.textadept.adeptsense.complete_symbol()` and
-`_M.textadept.adeptsense.show_documentation()` functionality has been moved into
-[`_M.textadept.adeptsense.complete()`][] and
-[`_M.textadept.adeptsense.show_apidoc()`][]. Therefore, replace all instances
-of `complete_symbol` and `show_documentation` with `complete` and `show_apidoc`.
-
-[`_M.textadept.adeptsense.complete()`]: api/_M.textadept.adeptsense.html#complete
-[`_M.textadept.adeptsense.show_apidoc()`]: api/_M.textadept.adeptsense.html#show_apidoc
-
-##### `user_dofile`
-
-`_G.user_dofile()` was removed. Use `dofile(_USERHOME..'/file.lua')` instead.
-
-##### `gtkmenu`
-
-`gui.gtkmenu()` was renamed to `gui.menu()`. Therefore, replace all instances of
-`gui.gtkmenu` with `gui.menu`.
-
-##### Bookmarks
-
-`_M.textadept.bookmarks.add()` and `_M.textadept.bookmarks.remove()` were
-consolidated into [`_M.textadept.bookmarks.toggle()`][]. Replace `add()` with
-`toggle(true)` and `remove()` with `toggle(false)`. `toggle()` functionality
-otherwise remains the same.
-
-[`_M.textadept.bookmarks.toggle()`]: api/_M.textadept.bookmarks.html#toggle
-
-##### `rebuild_command_tables`
-
-`_M.textadept.menu.rebuild_command_tables()` was integrated into
-[`_M.textadept.menu.set_menubar()`][]. Therefore, remove all calls to
-`rebuild_command_tables()` after `set_menubar()`.
-
-[`_M.textadept.menu.set_menubar()`]: api/_M.textadept.menu.html#set_menubar
-
-##### `execute`
-
-`_M.textadept.run.execute()` was removed. Use [`_M.textadept.run.run()`][] and
-[`_M.textadept.run.compile()`][] exclusively.
-
-[`_M.textadept.run.run()`]: api/_M.textadept.run.html#run
-[`_M.textadept.run.compile()`]: api/_M.textadept.run.html#compile
+[menu()]: api/gui.html#menu
+[complete()]: api/_M.textadept.adeptsense.html#complete
+[show\_apidoc()]: api/_M.textadept.adeptsense.html#show_apidoc
+[toggle()]: api/_M.textadept.bookmarks.html#toggle
+[set\_menubar()]: api/_M.textadept.menu.html#set_menubar
+[run()]: api/_M.textadept.run.html#run
+[compile()]: api/_M.textadept.run.html#compile
+[load()]: api/_M.textadept.session.html#load
+[save()]: api/_M.textadept.session.html#save
 
 ### Textadept 4 to 5
 
-Lua has been upgraded from [5.1 to 5.2][], so many scripts written for Textadept
-4 are not compatible with Textadept 5. Since incompatible scripts may cause
+Textadept 5 upgraded its copy of Lua from [5.1 to 5.2][]. Many old scripts are
+not compatible and need to be upgraded. Since incompatible scripts may cause
 crashes on startup, the following guide will help you migrate your scripts from
 Textadept 4 to Textadept 5. While this guide is not exhaustive, it covers the
 changes I had to make to Textadept's internals.
 
 [5.1 to 5.2]: http://www.lua.org/manual/5.2/manual.html#8
 
-#### Module Changes
-
-##### Syntax Changes
-
-Although Lua 5.2 only deprecates Lua 5.1's `module` syntax, Textadept 5 removes
-it. Therefore, replace
-
-    -- File ~/.textadept/modules/foo.lua
-    module('_m.foo', package.seeall)
-
-    function bar()
-      ...
-    end
-
-    ...
-
-and
-
-    -- File ~/.textadept/init.lua
-    require 'textadept'
-    require 'foo'
-
-with
-
-    -- File ~/.textadept/modules/foo.lua
-    local M = {}
-
-    function M.bar()
-      ...
-    end
-
-    ...
-
-    return M
-
-or
-
-    local M = {}
-    local _ENV = M
-    if setfenv then setfenv(1, _ENV) end -- LuaJIT support
-
-    function bar()
-      ...
-    end
-
-    function baz()
-      bar()
-    end
-
-    return M
-
-and
-
-    -- File ~/.textadept/init.lua
-    _M.textadept = require 'textadept'
-    _M.foo = require 'foo'
-
-Notice that `_M` is the new module table instead of `_m`. More on this
-[later](#Global.Module.Table).
-
-##### Module References
-
-Replace all instances of `_M` (a reference created by `module()` that holds the
-current module table) with `M` (the local module table you created).
-
-Also, prefix all instances of internal module function calls with `M` if you are
-not using `_ENV`. For example, change
-
-    module('foo', package.seeall)
-
-    function bar()
-      ...
-    end
-
-    function baz()
-      bar()
-    end
-
-to
-
-    local M = {}
-
-    function M.bar()
-      ...
-    end
-
-    function M.baz()
-      M.bar()
-    end
-
-    return M
-
-##### LuaDoc
-
-If you use LuaDoc for your modules, you can still document them like this:
-
-    local M = {}
-
-    --[[ This comment is for LuaDoc
-    ---
-    -- This is the documentation for module foo.
-    module('foo')]]
-
-    ---
-    -- Documentation for bar.
-    -- ...
-    -- @name bar
-    function M.bar()
-      ...
-    end
-
-    return M
-
-##### Global Module Table
-
-Originally, I wanted to use `_M` as the global table that contains modules, but
-Lua 5.1's modules used `_M` silently, so I had to settle with `_m`. Now that
-modules have been removed, `_M` is available again and is used. Therefore,
-replace all instances of `_m` with `_M`. In Textadept, you can easily do a
-search and replace with "Match Case" and "Whole Words" checked -- this is what I
-did when upgrading Textadept's internals.
-
-#### Function Changes
-
-##### `unpack`
-
-`unpack()` has been renamed to `table.unpack()`. Replace all instances of
-`unpack` with `table.unpack`.
-
-##### `xpcall`
-
-`xpcall()` accepts error function parameters so you can change code from
-
-    local args = {...}
-    xpcall(function() return f(unpack(args)) end, error_function)
-
-to
-
-    xpcall(f, error_function, ...)
-
-However, this is not required.
-
-##### `loadstring`
-
-`loadstring()` has been replaced by `load()` since the latter now recognizes a
-string chunk. Replace all instances of `loadstring` with `load`.
-
-##### `setfenv`
-
-`setfenv()` has been removed. In some cases, use `load()` with an environment
-instead. For example, change
-
-    local f, err = loadstring(command)
-    if err then error(err) end
-    setfenv(f, env)()
-
-to
-
-    local f, err = load(command, nil, 'bt', env)
-    if err then error(err) end
-    f()
-
-(The `'bt'` is necessary for loading both binary and text chunks.)
-
-If instead you want to set a function's environment, change
-
-    setfenv(f, env)
-
-to
-
-    debug.setupvalue(f, 1, env)
-
-##### `getfenv`
-
-`getfenv()` has been removed. Change
-
-    local env = getfenv(f)
-
-to
-
-    local debug = require 'debug'
-    local env = debug.getupvalue(f, 1)
-
-##### `os.execute`
-
-`os.execute()`'s function parameters have changed. If you are only interested in
-the return code, change
-
-    local code = os.execute(cmd)
-
-to
-
-    local _, _, code = os.execute(cmd)
-
-##### `localize`
-
-Localization is done using a global table [`_L`][] instead of calling
-`locale.localize()`. Replace all instances of `locale.localize('message')` with
-`_L['message']`. This allows messages to be modified via scripts if desirable.
-
-[`_L`]: api/_L.html
-
-##### `current_word`
-
-`_M.textadept.editing.current_word()` has been renamed to `select_word()` and
-does not take any parameters. There is a `_M.textadept.keys.utils.delete_word()`
-function that replaces `current_word('delete')`. You can use it or create a new
-function:
+#### API Changes
+
+Old API        |Change  |New API
+---------------|:------:|-------
+**_G**         |        |
+getfenv(f)     |Removed |N/A. Use:<br/>debug.getupvalue(f, 1)
+loadstring()   |Replaced|load()
+module()       |Removed |N/A
+setfenv(f, env)|Removed |N/A. Use:<br/>debug.setupvalue(f, 1, env)<sup>\*</sup>
+unpack()       |Renamed |table.unpack()
+xpcall(f, msgh)|Changed |xpcall(f, msgh, ...)
+**\_m**        |Renamed |**[\_M][]**<sup>†</sup>
+**_m.textadept.editing**|       |
+current\_word(action)   |Renamed|[select\_word()][]<sup>‡</sup>
+**locale**              |Removed|N/A
+localize(message)       |Renamed|\_G.[\_L][][message]
+**os**                  |       |
+code = execute(cmd)     |Changed|ok, status, code = execute(cmd)
+
+<sup>*</sup>In some cases, use `load()` with an environment instead:
+
+    setfenv(loadstring(str), env)() --> load(str, nil, 'bt', env)()
+
+<sup>†</sup>In Textadept, search for "\_m" and replace with "\_M" with the
+"Match Case" and "Whole Words" options checked -- this is what I did when
+upgrading Textadept's internals.
+
+<sup>‡</sup>To delete, call `_M.textadept.keys.utils.delete_word()` or define
+your own:
 
     local function delete_word()
       _M.textadept.editing.select_word()
       buffer:delete_back()
     end
 
+[\_M]: api/_M.html
+[select\_word()]: api/_M.textadept.editing.html#select_word
+[\_L]: api/_L.html
+
+#### Module Changes
+
+You can use the following as a reference for converting your Lua 5.1 modules to
+Lua 5.2:
+
+    -- File ~/.textadept/modules/foo.lua
+    -- Lua 5.1                    | -- Lua 5.2
+                                  |
+                                  | local M = {}
+                                  | --[[ This comment is for LuaDoc
+    ---                           | ---
+    -- This is the documentation  | -- This is the documentation
+    -- for module foo.            | -- for module foo.
+    module('foo', package.seeall) | module('foo')]]
+                                  |
+    ---                           | ---
+    -- Documentation for bar.     | -- Documentation for bar.
+    -- ...                        | -- ...
+    --                            | -- @name bar
+    function bar()                | function M.bar()
+      ...                         |   ...
+    end                           | end
+                                  |
+    function baz()                | function M.baz()
+      bar()                       |   M.bar()
+    end                           | end
+                                  |
+                                  | return M
+
+    -- File ~/.textadept/init.lua
+    -- Lua 5.1                    | -- Lua 5.2
+                                  |
+    require 'textadept'           | _M.textadept = require 'textadept'
+    require 'foo'                 | foo = require 'foo'
+
+Notes:
+
+1. Even though Lua 5.2 deprecates Lua 5.1's `module()`, Textadept 5 removes it.
+2. Prefix all intern module tables and function calls with `M`.
+3. Also, replace all instances (if any) of `_M` (a references created by
+   `module()` that holds the current module table) with `M`.
+4. You can use your existing LuaDoc comments by keeping the `module()` call
+   commented out and adding `@name` tags.
+
 #### Theme Changes
 
-Any custom themes need to be changed to remove the `module` syntax. Usually this
-involves changing
+You can use the following as a reference for converting your Lua 5.1 themes to
+Lua 5.2:
 
-    module('lexer', package.seeall)
+    -- Lua 5.1                       | -- Lua 5.2
+                                     |
+                                     | local l = lexer
+    module('lexer', package.seeall)  | local color, style = l.color, l.style
+                                     |
+    colors = {                       | l.colors = {
+      ...                            |   ...
+    }                                | }
+                                     |
+    style_nothing = style{...}       | l.style_nothing = style{...}
+    style_class = style{             | l.style_class = style{
+      fore = colors.light_yellow     |   fore = l.colors.light_yellow
+    }                                | }
+    ...                              | ...
+    style_identifier = style_nothing | l.style_identifier = l.style_nothing
+                                     |
+    ...                              | ...
+                                     |
+    style_default = style{           | l.style_default = style{
+      ...                            |   ...
+    }                                | }
+    style_line_number = {            | l.style_line_number = {
+      fore = colors.dark_grey,       |   fore = l.colors.dark_grey,
+      back = colors.black            |   back = l.colors.black
+    }                                | }
+    ...                              | ...
 
-    colors = {
-      ...
-    }
-
-    style_nothing = style { ... }
-    style_class = style { fore = colors.light_yellow }
-    ...
-    style_identifier = style_nothing
-
-    ...
-
-    style_default = style {
-      ...
-    }
-    style_line_number = { fore = colors.dark_grey, back = colors.black }
-    ...
-
-to
-
-    local l, color, style = lexer, lexer.color, lexer.style
-
-    l.colors = {
-      ...
-    }
-
-    l.style_nothing = style { ... }
-    l.style_class = style { fore = l.colors.light_yellow }
-    ...
-    l.style_identifier = l.style_nothing
-
-    ...
-
-    l.style_default = style {
-      ...
-    }
-    l.style_line_number = { fore = l.colors.dark_grey, back = l.colors.black }
-    ...
-
-Notice the `l.` prefix before most identifiers.
+Note the `l.` prefix before most identifiers.
 
 ### Textadept 3 to 4
 
 #### Key and Menu Changes
 
-Textadept 4 allow key bindings to appear in menus, but only simple ones, not
-keychains. Therefore, Textadept's key bindings have changed radically, as has
-the menu structure and menu mnemonics. In order for key bindings to appear in
-menus, `_m.textadept.menu` needs to know which commands are assigned to which
-keys. Therefore, the menu module needs to be `require`d *after*
-`_m.textadept.keys`. If your *~/.textadept/init.lua* is calling
-`require 'textadept'`, you do not have to make any changes. If you are loading
-individual modules from `_m.textadept`, ensure `_m.textadept.menu` is loaded
-after `_m.textadept.keys`.
+Textadept 4 features a brand new set of key bindings and menu structure. It also
+shows simple key bindings (not keychains) in menus. In order for key bindings to
+appear in menus, `_m.textadept.menu` must know which commands map to which keys.
+Therefore, the menu module needs to be `require`d *after* `_m.textadept.keys`.
+If your *~/.textadept/init.lua* calls `require 'textadept'`, you do not have to
+make any changes. If you load individual modules from `_m.textadept`, ensure
+`_m.textadept.menu` loads after `_m.textadept.keys`.
 
-On Mac OSX, key binding definition has changed. `m` is now ⌘ (command) and `a`
-is now ⌥ (alt/option). `c` remains ^ (control). Previously `a` was ⌘ and ⌥ was
-undefined. Please note, however, that not all ⌥ combinations by themselves will
-work since that key is typically used to compose locale-dependent characters.
+Mac OSX has different modifier key definitions. A new `m` indicates ⌘ (command)
+and `a` changed from ⌘ to ⌥ (alt/option). `c` remains ^ (control). Keep in mind
+that ⌥ functions as a compose key for locale-dependent characters.
 
-#### Function Changes
+#### API Changes
 
-##### `select_scope`
-
-`_m.textadept.editing.select_scope()` was renamed to `select_style()`.
-Therefore, replace all instances of `_m.textadept.editing.select_scope` with
-`_m.textadept.editing.select_style`.
-
-##### `SAVE_STRIPS_WS`
-
-`_m.textadept.editing.SAVE_STRIPS_WS` was renamed to `STRIP_WHITESPACE_ON_SAVE`.
-Replace all instances of `_m.textadept.editing.SAVE_STRIPS_WS` with
-`_m.textadept.editing.STRIP_WHITESPACE_ON_SAVE`.
+Old API                  |Change | New API
+-------------------------|:-----:|--------
+**\_m.textadept.editing**|       |
+select\_scope()          |Renamed|select\_style()
+SAVE\_STRIPS\_WS         |Renamed|STRIP\_WHITESPACE\_ON\_SAVE
 
 ### Textadept 2 to 3
 
@@ -569,92 +360,97 @@ Replace all instances of `_m.textadept.editing.SAVE_STRIPS_WS` with
 
 ##### Core Extensions
 
-There are no more core extention modules (previously in *core/ext/*). They have
-been relocated to *modules/textadept/* so putting
+The core extention modules moved from *core/ext/* to *modules/textadept/*.
+Putting
 
     require 'textadept'
 
-in your *~/.textadept/init.lua* will load all the modules you would expect.
-Please see the [preferences][] page for instructions on how to load specific
-modules.
+in your *~/.textadept/init.lua* loads all the modules you would expect. The
+[preferences][] page has instructions on how to load specific modules.
 
 [preferences]: 08_Preferences.html#User.Init
 
 ##### Autoloading
 
 Key bindings in *~/.textadept/key_commands.lua* and snippets in
-*~/.textadept/snippets.lua* are no longer auto-loaded. Instead, modify
-[`keys`][] and/or [`snippets`][] from within your *~/.textadept/init.lua* or a
-file loaded by *~/.textadept/init.lua*.
+*~/.textadept/snippets.lua* no longer auto-load. Move them to your
+*~/.textadept/init.lua* or a file loaded by *~/.textadept/init.lua*.
 
-[`keys`]: api/keys.html
-[`snippets`]: api/_M.textadept.snippets.html
+#### API Changes
 
-#### Function Changes
+Textadept has a brand new Lua [API][]. Old scripts and themes are likely not
+compatible and need to be upgraded.
 
-Textadept has a brand new Lua [API][]. It is likely that any external scripts,
-including themes, need to be rewritten.
-
-Here is a summary of API changes:
-
-* `_m.textadept.lsnippets` renamed to [`_m.textadept.snippets`][].
-* `textadept.events` renamed to [`_G.events`][].
-  * `events.handle()` renamed to [`events.emit()`][].
-  * `events.add_handler()` renamed to [`events.connect()`][].
-* `textadept.constants` renamed to [`_SCINTILLA.constants`][].
-* `textadept.buffer_functions` renamed to [`_SCINTILLA.functions`][].
-* `textadept.buffer_properties` renamed to [`_SCINTILLA.properties`][].
-* `textadept.buffers` renamed to [`_BUFFERS`][].
-* `textadept.views` renamed to [`_VIEWS`][].
-* New [`gui`][] module.
-  * Renamed `textadept._print()` to [`gui._print()`][].
-  * Renamed `textadept.check_focused_buffer()` to `gui.check_focused_buffer()`.
-  * Renamed `textadept.clipboard_text` to `gui.clipboard_text`.
-  * Renamed `textadept.context_menu` to `gui.context_menu`.
-  * Renamed `textadept.command_entry` to [`gui.command_entry`][].
-  * Renamed `textadept.dialog` to [`gui.dialog()`][].
-  * Renamed `textadept.docstatusbar_text` to `gui.docstatusbar_text`.
-  * Renamed `textadept.find` to [`gui.find`][].
-  * Renamed `textadept.focused_doc_pointer` to `gui.focused_doc_pointer`.
-  * Renamed `textadept.get_split_table()` to [`gui.get_split_table()`][].
-  * Renamed `textadept.gtkmenu()` to [`gui.gtkmenu()`][].
-  * Renamed `textadept.goto_view()` to [`gui.goto_view()`][].
-  * Renamed `textadept.menubar` to `gui.menubar`.
-  * Renamed `textadept.print()` to [`gui.print()`][].
-  * Renamed `textadept.size` to `gui.size`.
-  * Renamed `textadept.statusbar_text` to `gui.statusbar_text`.
-  * Renamed `textadept.switch_buffer()` to [`gui.switch_buffer()`][].
-  * Renamed `textadept.title` to `gui.title`.
-  * Renamed `textadept.new_buffer()` to [`new_buffer()`][].
-  * Renamed `textadept.quit()` to [`quit()`][].
-  * Renamed `textadept.reset()` to [`reset()`][].
-  * Renamed `textadept.user_dofile()` to [`user_dofile()`][].
-  * Renamed `textadept.iconv()` to [`string.iconv()`][].
-  * Renamed `textadept.session_file` to `_SESSIONFILE`.
-* Removed global `textadept` module.
+Old API                   |Change | New API
+--------------------------|:-----:|--------
+**_G**                    |       |
+N/A                       |New    |[\_SCINTILLA][]
+N/A                       |New    |[events][]
+N/A                       |New    |[gui][]
+**_m.textadept.lsnippets**|Renamed|**[_m.textadept.snippets][]**
+**textadept**             |Removed|N/A
+\_print()                 |Renamed|\_G.[gui.\_print()][]
+buffer\_functions         |Renamed|\_G.[\_SCINTILLA.functions][]
+buffer\_properties        |Renamed|\_G.[\_SCINTILLA.properties][]
+buffers                   |Renamed|\_G.[\_BUFFERS][]
+check\_focused\_buffer()  |Renamed|\_G.gui.check\_focused\_buffer()
+clipboard\_text           |Renamed|\_G.[gui.clipboard\_text][]
+command\_entry            |Renamed|\_G.[gui.command\_entry][]
+constants                 |Renamed|\_G.[\_SCINTILLA.constants][]
+context\_menu             |Renamed|\_G.[gui.context\_menu][]
+dialog                    |Renamed|\_G.[gui.dialog()][]
+docstatusbar\_text        |Renamed|\_G.[gui.docstatusbar\_text][]
+events                    |Renamed|\_G.[events][]
+events.add\_handler()     |Renamed|\_G.[events.connect()][]
+events.handle()           |Renamed|\_G.[events.emit()][]
+find                      |Renamed|\_G.[gui.find][]
+focused\_doc\_pointer     |Renamed|\_G.gui.focused\_doc\_pointer
+get\_split\_table()       |Renamed|\_G.[gui.get\_split\_table()][]
+goto\_view()              |Renamed|\_G.[gui.goto\_view()][]
+gtkmenu()                 |Renamed|\_G.[gui.gtkmenu()][]
+iconv()                   |Renamed|\_G.[string.iconv()][]
+menubar                   |Renamed|\_G.[gui.menubar][]
+new\_buffer()             |Renamed|\_G.[new\_buffer()][]
+print()                   |Renamed|\_G.[gui.print()][]
+quit()                    |Renamed|\_G.[quit()][]
+reset()                   |Renamed|\_G.[reset()][]
+session\_file             |Renamed|\_G.\_SESSIONFILE
+size                      |Renamed|\_G.[gui.size][]
+statusbar\_text           |Renamed|\_G.[gui.statusbar\_text][]
+switch\_buffer()          |Renamed|\_G.[gui.switch\_buffer()][]
+title                     |Renamed|\_G.[gui.title][]
+user\_dofile()            |Renamed|\_G.user\_dofile()
+views                     |Renamed|\_G.[\_VIEWS][]
 
 [API]: api
-[`_m.textadept.snippets`]: api/_M.textadept.snippets.html
-[`_G.events`]: api/events.html
-[`events.emit()`]: api/events.html#emit
-[`events.connect()`]: api/events.html#connect
-[`_SCINTILLA.constants`]: api/_SCINTILLA.html#constants
-[`_SCINTILLA.functions`]: api/_SCINTILLA.html#functions
-[`_SCINTILLA.properties`]: api/_SCINTILLA.html#properties
-[`_BUFFERS`]: api/_G.html#_BUFFERS
-[`_VIEWS`]: api/_G.html#_VIEWS
-[`gui`]: api/gui.html
-[`gui._print()`]: api/gui.html#_print
-[`gui.command_entry`]: api/gui.command_entry.html
-[`gui.dialog()`]: api/gui.html#dialog
-[`gui.find`]: api/gui.find.html
-[`gui.get_split_table()`]: api/gui.html#get_split_table
-[`gui.gtkmenu()`]: api/gui.html#gtkmenu
-[`gui.goto_view()`]: api/gui.html#goto_view
-[`gui.print()`]: api/gui.html#print
-[`gui.switch_buffer()`]: api/gui.html#switch_buffer
-[`new_buffer()`]: api/_G.html#new_buffer
-[`quit()`]: api/_G.html#quit
-[`reset()`]: api/_G.html#reset
-[`user_dofile()`]: api/_G.html#user_dofile
-[`string.iconv()`]: api/string.html#iconv
+[\_SCINTILLA]: api/_SCINTILLA.html
+[events]: api/events.html
+[gui]: api/gui.html
+[_m.textadept.snippets]: api/_M.textadept.snippets.html
+[gui.\_print()]: api/gui.html#_print
+[\_SCINTILLA.functions]: api/_SCINTILLA.html#functions
+[\_SCINTILLA.properties]: api/_SCINTILLA.html#properties
+[\_BUFFERS]: api/_G.html#_BUFFERS
+[gui.clipboard\_text]: api/gui.html#clipboard_text
+[gui.command\_entry]: api/gui.command_entry.html
+[\_SCINTILLA.constants]: api/_SCINTILLA.html#constants
+[gui.context\_menu]: api/gui.html#context_menu
+[gui.dialog()]: api/gui.html#dialog
+[gui.docstatusbar\_text]: api/gui.html#docstatusbar_text
+[events.connect()]: api/events.html#connect
+[events.emit()]: api/events.html#emit
+[gui.find]: api/gui.find.html
+[gui.get\_split\_table()]: api/gui.html#get_split_table
+[gui.goto\_view()]: api/gui.html#goto_view
+[gui.gtkmenu()]: api/gui.html#gtkmenu
+[string.iconv()]: api/string.html#iconv
+[gui.menubar]: api/gui.html#menubar
+[new\_buffer()]: api/_G.html#new_buffer
+[gui.print()]: api/gui.html#print
+[quit()]: api/_G.html#quit
+[reset()]: api/_G.html#reset
+[gui.size]: api/gui.html#size
+[gui.statusbar\_text]: api/gui.html#statusbar_text
+[gui.switch\_buffer()]: api/gui.html#switch_buffer
+[gui.title]: api/gui.html#title
+[\_VIEWS]: api/_G.html#_VIEWS
