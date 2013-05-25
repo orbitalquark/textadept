@@ -12,17 +12,11 @@ terminal version uses "term".
 &nbsp;&nbsp;
 ![Term Theme](images/termtheme.png)
 
-Each theme is a single Lua file. Putting custom or downloaded themes in your
-*~/.textadept/themes/* directory prevents you from overwriting them when you
-update Textadept. Also, themes in that directory override any themes in
-Textadept's *themes/* directory. This means that if you have your own *light*
-theme, Textadept loads that one instead of its own.
-
-Themes contain color definitions and definitions for how to highlight (or
-"style") syntactic elements like comments, strings, and keywords in programming
-languages. These [definitions][] apply universally to all programming language
-elements, resulting in a single, unified theme. Themes also set view-related
-editor properties like caret and selection colors.
+Each theme is a single Lua file. It contains color definitions and definitions
+for how to highlight (or "style") syntactic elements like comments, strings, and
+keywords in programming languages. These [definitions][] apply universally to
+all programming language elements, resulting in a single, unified theme. Themes
+also set view-related editor properties like caret and selection colors.
 
 Note: The only colors that the terminal version of Textadept recognizes are the
 standard black, red, green, yellow, blue, magenta, cyan, white, and bold
@@ -41,6 +35,31 @@ curses). Set that theme to be the default one by putting
 somewhere in your [*~/.textadept/init.lua*][].
 
 [*~/.textadept/init.lua*]: 08_Preferences.html#User.Init
+
+## Customizing Themes
+
+Like with modules, try to refrain from editing Textadept's default themes.
+Instead, put custom or downloaded themes in your *~/.textadept/themes/*
+directory. Doing this not only prevents you from overwriting your themes when
+you update Textadept, but causes the editor to load your themes instead of the
+default ones in *themes/*. For example, having your own *light.lua* theme
+results in Textadept loading that theme in place of its own.
+
+There are two ways to go about customizing themes. You can create a new one from
+scratch or tweak an existing one. Creating a new one is straightforward -- all
+you need to do is define a set of colors and a set of styles. Just follow the
+example of existing themes. If instead you want to use an existing theme like
+"light" but only change the font face and font size, you do not have to copy the
+whole theme to your *~/.textadept/themes/light.lua* before changing the font
+settings. Tweaking themes is very simple with Lua's `dofile()` function. In your
+*~/.textadept/themes/light.lua*, put:
+
+    dofile(_HOME..'/themes/light.lua')
+    buffer.property['font'] = 'font face'
+    buffer.property['fontsize'] = size
+
+This loads Textadept's "light" theme, but applies your font preferences. The
+same technique works for tweaking individual theme colors and/or styles.
 
 ## GUI Theme
 
