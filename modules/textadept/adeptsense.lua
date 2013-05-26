@@ -11,27 +11,26 @@ local M = {}
 -- Adeptsense is a form of autocompletion for programming. It has the means to
 -- supply a list of potential completions for classes, member functions and
 -- fields, packages, etc and display their documentation in the form of a
--- calltip. This document provides the information necessary in order to write a
--- new Adeptsense for a language. For illustrative purposes, an Adeptsense for
--- Lua will be created. More advanced techniques are covered later.
+-- calltip. This document provides the information necessary to write a new
+-- Adeptsense for a language and demonstrates how to create an Adeptsense for
+-- Lua. The document covers more advanced techniques later.
 --
 -- ## Creating an Adeptsense
 --
--- Adeptsenses exist per-language and are typically defined in a
--- [language-specific module][]. First check to see if the module for your
+-- Adeptsenses exist per-language so they should be defined in
+-- [language-specific modules][]. First check to see if the module for your
 -- language has an Adeptsense. If not, you will need to create one. The language
--- modules included with Textadept have Adeptsenses so they can be used for
--- reference. If your language is similar to any of those languages, you can
--- copy and modify the existing language's Adeptsense, saving some time and
--- effort.
+-- modules included with Textadept have Adeptsenses and are useful references.
+-- If your language is similar to any of those languages, you can copy and
+-- modify the existing language's Adeptsense, saving some time and effort.
 --
--- [language-specific module]: _M.html#Language-Specific.Modules
+-- [language-specific modules]: _M.html#Language-Specific.Modules
 --
 -- ### Terminology
 --
 -- Not all languages have "classes", "functions", and "fields" in the full sense
--- of the word. Normally classes are referred to as objects in Object Oriented
--- Programming (OOP), functions are class or instance methods,and fields are
+-- of the word. Object Oriented Programming (OOP) normally refers to classes as
+-- objects with functions being class or instance methods, and fields being
 -- class or instance properties. For example a "Cat" class may have a "color"
 -- field and a "meow" function. To Adeptsense, the term "class" is simply a
 -- container for "function" and "field" completions. "functions" and "fields"
@@ -51,7 +50,7 @@ local M = {}
 --
 --     sense = _M.textadept.adeptsense.new('lua')
 --
--- Where 'lua' is replaced by your language's name.
+-- replacing 'lua' with your language's name.
 --
 -- ### Syntax Options
 --
@@ -62,8 +61,8 @@ local M = {}
 -- #### `self`
 --
 -- The first syntax option is `syntax.self`. While Lua has a `self` identifier,
--- it is not used in the usual sense for a class instance so it will just be
--- ignored.
+-- Lua does not use that identifier in the usual sense for a class instance so
+-- it is ignored.
 --
 -- #### `class_definition`
 --

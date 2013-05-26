@@ -6,22 +6,26 @@
 --
 -- ## Working with UTF-8
 --
--- If your filesystem does not use UTF-8-encoded filenames (e.g. Windows),
--- conversions to and from that encoding are necessary since all of Textadept's
--- internal strings are UTF-8-encoded. When opening and saving files through
--- dialogs, these conversions are performed automatically, but if you need to do
--- them manually, use [`string.iconv()`][] along with [`_CHARSET`][], your
--- filesystem's detected encoding. An example is
+-- Textadept encodes all of its filenames, like [`buffer.filename`][], in UTF-8.
+-- If you try to use Lua to access the file associated with such a filename, you
+-- may not get the right file if your filesystem's encoding is not UTF-8 (e.g.
+-- Windows).
 --
--- <div style="clear: right;"><!-- Clear Table of Contents --></div>
+--     -- May not work on non-UTF-8 filesystems.
+--     local f = io.open(buffer.filename, 'rb')
 --
---     events.connect(events.FILE_OPENED, function(utf8_filename)
---       local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
---       local f = io.open(filename, 'rb')
---       -- process file
---       f:close()
---     end)
+-- You need to convert the filename to the filesystem's encoding using
+-- [`string.iconv()`][] along with [`_CHARSET`][]:
 --
+--     local name = string.iconv(buffer.filename,
+--                               _CHARSET, 'UTF-8')
+--     local f = io.open(name, 'rb')
+--
+-- Textadept automatically performs filename conversions for you when opening
+-- and saving files through dialogs. You only need to do manual conversions when
+-- working with the filesystem directly from Lua.
+--
+-- [`buffer.filename`]: buffer.html#filename
 -- [`string.iconv()`]: string.html#iconv
 -- [`_CHARSET`]: _G.html#_CHARSET
 -- @field _G.events.FILE_OPENED (string)

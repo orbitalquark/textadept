@@ -8,32 +8,31 @@ local M = {}
 --
 -- ## Overview
 --
--- Snippets are defined in the global table `snippets`. Each key-value pair in
--- `snippets` consists of either a string trigger word and its snippet text, or
--- a string lexer language (from the *lexers/* directory) with a table of
--- trigger words and snippet texts. When searching for a snippet to insert based
--- on a trigger word, snippets in the current lexer have priority, followed by
--- the ones in the global table. This means if there are two snippets with the
--- same trigger word, the one specific to the current lexer is inserted, not the
--- global one.
+-- Define snippets in the global `snippets` table in key-value pairs. Each pair
+-- consists of either a string trigger word and its snippet text, or a string
+-- lexer language (from the *lexers/* directory) with a table of trigger words
+-- and snippet texts. When searching for a snippet to insert based on a trigger
+-- word, Textadept considers snippets in the current lexer to have priority,
+-- followed by the ones in the global table. This means if there are two
+-- snippets with the same trigger word, Textadept inserts the one specific to
+-- the current lexer, not the global one.
 --
 -- ## Snippet Syntax
 --
--- Any plain text characters may be used with the exception of '%'. Just like in
--- Lua patterns, '%' is an escape character. The sequence "%%" stands for a
--- single '%'. Also, it is recommended to use "\t" characters for indentation
--- because they can be converted to spaces based on the current indentation
--- settings. In addition to plain text, snippets can contain placeholders for
--- further user input, can mirror or transform those user inputs, and/or execute
--- arbitrary code.
+-- You may use any plain text characters except '%' in snippet text. Just like
+-- in Lua patterns, '%' is an escape character. The sequence "%%" stands for a
+-- single '%'. Also, try to use "\t" characters for indentation so Textadept can
+-- make the necessary conversions to respect the user's indentation preference.
+-- Using the '%' sequences described below, you can define placeholders,
+-- mirrors, and transforms for user input.
 --
 -- ### Placeholders
 --
--- `%`_`n`_`(`_`text`_`)` sequences are called placeholders, where _`n`_ is an
--- integer and _`text`_ is the default text inserted into the placeholder.
--- Placeholders are visited in numeric order each time [`_insert()`](#_insert)
--- is called with an active snippet. When no more placeholders are left, the
--- caret is placed at the `%0` placeholder (if it exists), or at the end of the
+-- Textadept calls `%`_`n`_`(`_`text`_`)` sequences, where _`n`_ is an integer,
+-- placeholders. The editor visits placeholders in numeric order each time it
+-- calls [`_insert()`](#_insert) and inserts the default text _`text`_ into the
+-- placeholder. When there are no more placeholders left, Textadept places the
+-- caret at either the `%0` placeholder if it exists or at the end of the
 -- snippet. Examples are
 --
 --     snippets['foo'] = 'foobar%1(baz)'
@@ -41,8 +40,8 @@ local M = {}
 --
 -- ### Mirrors
 --
--- `%`_`n`_ sequences are called mirrors, where _`n`_ is an integer. Mirrors
--- with the same _`n`_ as a placeholder mirror any user input in the
+-- Textadept calls `%`_`n`_ sequences, where _`n`_ is an integer, mirrors.
+-- Mirrors with the same _`n`_ as a placeholder mirror any user input in the
 -- placeholder. If no placeholder exists for _`n`_, the first occurrence of that
 -- mirror in the snippet becomes the placeholder, but with no default text.
 -- Examples are
@@ -52,24 +51,24 @@ local M = {}
 --
 -- ### Transforms
 --
--- `%`_`n`_`<`_`Lua code`_`>` and `%`_`n`_`[`_`Shell code`_`]` sequences are
--- called transforms, where _`n`_ is an integer,  _`Lua code`_ is arbitrary Lua
--- code, and _`Shell code`_ is arbitrary Shell code. The _`n`_ is optional, and
--- for transforms that omit it, their code is executed the moment the snippet is
--- inserted. Otherwise, the code is executed as placeholders are visited.
+-- Textadept calls `%`_`n`_`<`_`Lua code`_`>` and `%`_`n`_`[`_`Shell code`_`]`
+-- sequences, where _`n`_ is an integer, transforms. _`Lua code`_ is arbitrary
+-- Lua code and _`Shell code`_ is arbitrary Shell code. Textadept executes the
+-- code when the editor visits placeholder _`n`_. If the transform omits _`n`_,
+-- Textadept executes the transform's code the moment the editor inserts the
+-- snippet.
 --
--- Lua code is run in Textadept's Lua State with with an additional
--- `selected_text` global variable that contains the current selection in the
--- buffer. The transform is replaced with the return value of the executed code.
--- An example is
+-- Textadept runs Lua code in its Lua State and replaces the transform with the
+-- code's return text. The code may use a temporary `selected_text` global
+-- variable that contains the current selection in the buffer. An example is
 --
 --     snippets['foo'] = [[
 --     %2<('%1'):gsub('^.', function(c)
 --       return c:upper() -- capitalize the word
 --     end)>, %1(mirror) on the wall.]]
 --
--- Shell code is executed using Lua's [`io.popen()`][]. The transform is
--- replaced with the process' standard output (stdout). An example is
+-- Textadept executes shell code using Lua's [`io.popen()`][] and replaces the
+-- transform with the process' standard output (stdout). An example is
 --
 --     snippets['foo'] = '$%1(HOME) = %2[echo $%1]'
 --
