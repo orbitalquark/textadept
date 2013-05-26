@@ -1,6 +1,6 @@
 -- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-_RELEASE = "Textadept 6.6"
+_RELEASE = "Textadept 7.0 alpha"
 
 package.path = _HOME..'/core/?.lua;'..package.path
 
