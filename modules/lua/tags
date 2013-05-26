@@ -27,6 +27,7 @@ CLASS	_	0;"	F	class:lexer
 CLEAR	_	0;"	F	class:keys
 COMMAND_ENTRY_KEYPRESS	_	0;"	F	class:events
 COMMENT	_	0;"	F	class:lexer
+COMPILE_OUTPUT	_	0;"	F	class:events
 CONSTANT	_	0;"	F	class:lexer
 CURSES	_	0;"	F	
 Carg	_	0;"	f	class:lpeg
@@ -50,9 +51,14 @@ ERROR	_	0;"	F	class:events
 ERROR	_	0;"	F	class:lexer
 FIELD	_	0;"	F	class:_M.textadept.adeptsense
 FIELDS	_	0;"	F	class:_M.textadept.adeptsense
+FILE_AFTER_SAVE	_	0;"	F	class:events
+FILE_BEFORE_SAVE	_	0;"	F	class:events
+FILE_OPENED	_	0;"	F	class:events
+FILE_SAVED_AS	_	0;"	F	class:events
 FILTER	_	0;"	t	class:gui.find
 FILTER	_	0;"	t	class:lfs
 FIND	_	0;"	F	class:events
+FIND_WRAPPED	_	0;"	F	class:events
 FOLD_BASE	_	0;"	F	class:lexer
 FOLD_BLANK	_	0;"	F	class:lexer
 FOLD_HEADER	_	0;"	F	class:lexer
@@ -71,6 +77,7 @@ INDICATOR_CLICK	_	0;"	F	class:events
 INDICATOR_RELEASE	_	0;"	F	class:events
 INDICS_MASK	_	0;"	F	class:_SCINTILLA.constants
 INDIC_BOX	_	0;"	F	class:_SCINTILLA.constants
+INDIC_COMPOSITIONTHICK	_	0;"	F	class:_SCINTILLA.constants
 INDIC_CONTAINER	_	0;"	F	class:_SCINTILLA.constants
 INDIC_DASH	_	0;"	F	class:_SCINTILLA.constants
 INDIC_DIAGONAL	_	0;"	F	class:_SCINTILLA.constants
@@ -93,6 +100,7 @@ KEYSYMS	_	0;"	t	class:keys
 KEYWORD	_	0;"	F	class:lexer
 KEYWORDSET_MAX	_	0;"	F	class:_SCINTILLA.constants
 LABEL	_	0;"	F	class:lexer
+LANGUAGE_MODULE_LOADED	_	0;"	F	class:events
 LANGUAGE_MODULE_PREFIX	_	0;"	F	class:keys
 MARGIN_CLICK	_	0;"	F	class:events
 MARKER_MAX	_	0;"	F	class:_SCINTILLA.constants
@@ -114,6 +122,7 @@ REPLACE_ALL	_	0;"	F	class:events
 RESETTING	_	0;"	F	
 RESET_AFTER	_	0;"	F	class:events
 RESET_BEFORE	_	0;"	F	class:events
+RUN_OUTPUT	_	0;"	F	class:events
 S	_	0;"	f	class:lpeg
 SAVE_ON_QUIT	_	0;"	F	class:_M.textadept.session
 SAVE_POINT_LEFT	_	0;"	F	class:events
@@ -175,6 +184,7 @@ SCI_GETADDITIONALSELALPHA	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETADDITIONALSELECTIONTYPING	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETALLLINESVISIBLE	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETANCHOR	_	0;"	F	class:_SCINTILLA.constants
+SCI_GETAUTOMATICFOLD	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETBACKSPACEUNINDENTS	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETBUFFEREDDRAW	_	0;"	F	class:_SCINTILLA.constants
 SCI_GETCARETFORE	_	0;"	F	class:_SCINTILLA.constants
@@ -350,6 +360,7 @@ SCI_SETADDITIONALSELBACK	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETADDITIONALSELECTIONTYPING	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETADDITIONALSELFORE	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETANCHOR	_	0;"	F	class:_SCINTILLA.constants
+SCI_SETAUTOMATICFOLD	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETBACKSPACEUNINDENTS	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETBUFFEREDDRAW	_	0;"	F	class:_SCINTILLA.constants
 SCI_SETCARETFORE	_	0;"	F	class:_SCINTILLA.constants
@@ -559,6 +570,9 @@ SCWS_VISIBLEALWAYS	_	0;"	F	class:_SCINTILLA.constants
 SC_ALPHA_NOALPHA	_	0;"	F	class:_SCINTILLA.constants
 SC_ALPHA_OPAQUE	_	0;"	F	class:_SCINTILLA.constants
 SC_ALPHA_TRANSPARENT	_	0;"	F	class:_SCINTILLA.constants
+SC_AUTOMATICFOLD_CHANGE	_	0;"	F	class:_SCINTILLA.constants
+SC_AUTOMATICFOLD_CLICK	_	0;"	F	class:_SCINTILLA.constants
+SC_AUTOMATICFOLD_SHOW	_	0;"	F	class:_SCINTILLA.constants
 SC_CACHE_CARET	_	0;"	F	class:_SCINTILLA.constants
 SC_CACHE_DOCUMENT	_	0;"	F	class:_SCINTILLA.constants
 SC_CACHE_NONE	_	0;"	F	class:_SCINTILLA.constants
@@ -605,6 +619,9 @@ SC_EFF_QUALITY_NON_ANTIALIASED	_	0;"	F	class:_SCINTILLA.constants
 SC_EOL_CR	_	0;"	F	class:_SCINTILLA.constants
 SC_EOL_CRLF	_	0;"	F	class:_SCINTILLA.constants
 SC_EOL_LF	_	0;"	F	class:_SCINTILLA.constants
+SC_FOLDACTION_CONTRACT	_	0;"	F	class:_SCINTILLA.constants
+SC_FOLDACTION_EXPAND	_	0;"	F	class:_SCINTILLA.constants
+SC_FOLDACTION_TOGGLE	_	0;"	F	class:_SCINTILLA.constants
 SC_FOLDFLAG_LEVELNUMBERS	_	0;"	F	class:_SCINTILLA.constants
 SC_FOLDFLAG_LINEAFTER_CONTRACTED	_	0;"	F	class:_SCINTILLA.constants
 SC_FOLDFLAG_LINEAFTER_EXPANDED	_	0;"	F	class:_SCINTILLA.constants
@@ -766,14 +783,6 @@ _CHARSET	_	0;"	F
 _EXISTS	_	0;"	f	class:_L
 _G	_	0;"	F	
 _G	_	0;"	m	
-_G.events.COMPILE_OUTPUT	_	0;"	F	class:_M.textadept.run
-_G.events.FILE_AFTER_SAVE	_	0;"	F	class:io
-_G.events.FILE_BEFORE_SAVE	_	0;"	F	class:io
-_G.events.FILE_OPENED	_	0;"	F	class:io
-_G.events.FILE_SAVED_AS	_	0;"	F	class:io
-_G.events.FIND_WRAPPED	_	0;"	F	class:gui.find
-_G.events.LANGUAGE_MODULE_LOADED	_	0;"	F	class:_M.textadept.mime_types
-_G.events.RUN_OUTPUT	_	0;"	F	class:_M.textadept.run
 _HOME	_	0;"	F	
 _L	_	0;"	m	
 _L	_	0;"	t	
@@ -834,6 +843,7 @@ additional_selection_typing	_	0;"	F	class:buffer
 adeptsense	_	0;"	t	class:_M.textadept
 all_lines_visible	_	0;"	F	class:buffer
 allocate	_	0;"	f	class:buffer
+allocate_extended_styles	_	0;"	f	class:buffer
 alnum	_	0;"	F	class:lexer
 alpha	_	0;"	F	class:lexer
 always_show_globals	_	0;"	F	class:_M.textadept.adeptsense
@@ -880,6 +890,7 @@ auto_c_show	_	0;"	f	class:buffer
 auto_c_stops	_	0;"	f	class:buffer
 auto_c_type_separator	_	0;"	F	class:buffer
 autocomplete_word	_	0;"	f	class:_M.textadept.editing
+automatic_fold	_	0;"	F	class:buffer
 back_space_un_indents	_	0;"	F	class:buffer
 back_tab	_	0;"	f	class:buffer
 band	_	0;"	f	class:bit32
@@ -1049,6 +1060,7 @@ enclose	_	0;"	f	class:_M.textadept.editing
 encoded_from_utf8	_	0;"	f	class:buffer
 encoding	_	0;"	F	class:buffer
 encoding_bom	_	0;"	F	class:buffer
+encodings	_	0;"	t	class:io
 end_at_last_line	_	0;"	F	class:buffer
 end_styled	_	0;"	F	class:buffer
 end_undo_action	_	0;"	f	class:buffer
@@ -1065,6 +1077,7 @@ execute	_	0;"	f	class:os
 execute_lua	_	0;"	f	class:gui.command_entry
 exit	_	0;"	f	class:os
 exp	_	0;"	f	class:math
+expand_children	_	0;"	f	class:buffer
 extend	_	0;"	F	class:lexer
 extensions	_	0;"	t	class:_M.textadept.mime_types
 extra_ascent	_	0;"	F	class:buffer
@@ -1094,9 +1107,12 @@ fmod	_	0;"	f	class:math
 focus	_	0;"	f	class:gui.command_entry
 focus	_	0;"	f	class:gui.find
 fold	_	0;"	f	class:lexer
+fold_all	_	0;"	f	class:buffer
+fold_children	_	0;"	f	class:buffer
 fold_expanded	_	0;"	F	class:buffer
 fold_flags	_	0;"	F	class:buffer
 fold_level	_	0;"	F	class:buffer
+fold_line	_	0;"	f	class:buffer
 fold_line_comments	_	0;"	f	class:lexer
 fold_parent	_	0;"	F	class:buffer
 form_feed	_	0;"	f	class:buffer
@@ -1204,6 +1220,7 @@ java	_	0;"	t	class:keys
 java	_	0;"	t	class:snippets
 join_lines	_	0;"	f	class:_M.textadept.editing
 keys	_	0;"	m	
+keys	_	0;"	t	
 keys	_	0;"	t	
 keys	_	0;"	t	class:_M.textadept
 last_char_includes	_	0;"	f	class:lexer
@@ -1425,6 +1442,7 @@ redo	_	0;"	f	class:buffer
 register	_	0;"	f	class:args
 register_image	_	0;"	f	class:buffer
 register_rgba_image	_	0;"	f	class:buffer
+release_all_extended_styles	_	0;"	f	class:buffer
 reload	_	0;"	f	class:buffer
 remove	_	0;"	f	class:os
 remove	_	0;"	f	class:table
@@ -1516,14 +1534,6 @@ sense	_	0;"	F	class:_M.rails
 sense	_	0;"	F	class:_M.rhtml
 sense	_	0;"	F	class:_M.ruby
 session	_	0;"	t	class:_M.textadept
-set_buffer_properties	_	0;"	f	class:_M.cpp
-set_buffer_properties	_	0;"	f	class:_M.css
-set_buffer_properties	_	0;"	f	class:_M.hypertext
-set_buffer_properties	_	0;"	f	class:_M.java
-set_buffer_properties	_	0;"	f	class:_M.lua
-set_buffer_properties	_	0;"	f	class:_M.php
-set_buffer_properties	_	0;"	f	class:_M.python
-set_buffer_properties	_	0;"	f	class:_M.ruby
 set_chars_default	_	0;"	f	class:buffer
 set_contextmenu	_	0;"	f	class:_M.textadept.menu
 set_empty_selection	_	0;"	f	class:buffer
@@ -1568,7 +1578,7 @@ sinh	_	0;"	f	class:math
 size	_	0;"	F	class:view
 size	_	0;"	t	class:gui
 snapopen	_	0;"	f	class:io
-snippets	_	0;"	t	class:
+snippets	_	0;"	t	
 snippets	_	0;"	t	class:_M.textadept
 sort	_	0;"	f	class:table
 space	_	0;"	F	class:lexer
@@ -1673,7 +1683,6 @@ tostring	_	0;"	f
 touch	_	0;"	f	class:lfs
 traceback	_	0;"	f	class:debug
 transpose_chars	_	0;"	f	class:_M.textadept.editing
-try_encodings	_	0;"	t	class:io
 try_to_autocomplete_end	_	0;"	f	class:_M.lua
 try_to_autocomplete_end	_	0;"	f	class:_M.ruby
 two_phase_draw	_	0;"	F	class:buffer
