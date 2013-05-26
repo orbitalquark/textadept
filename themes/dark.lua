@@ -80,8 +80,8 @@ property['style.embedded'] = '$(style.tag),back:$(color.light_black)'
 property['style.identifier'] = '$(style.nothing)'
 
 -- Predefined styles.
-property['style.default'] = 'font:$(font),size:$(fontsize)'..
-                            ',fore:$(color.light_grey),back:$(color.black)'
+property['style.default'] = 'font:$(font),size:$(fontsize),'..
+                            'fore:$(color.light_grey),back:$(color.black)'
 property['style.linenumber'] = 'fore:$(color.dark_grey),back:$(color.black)'
 property['style.bracelight'] = 'fore:$(color.light_blue)'
 property['style.bracebad'] = 'fore:$(color.light_red)'
