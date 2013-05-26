@@ -4,6 +4,41 @@
 
 [Atom Feed]: feed
 
+## 6.6 (01 Jun 2013)
+
+Download:
+
+* [Textadept 6.6 -- Win32][]
+* [Textadept 6.6 -- Mac OSX Intel 10.5+][]
+* [Textadept 6.6 -- Linux][]
+* [Textadept 6.6 -- Linux x86_64][]
+* [Textadept 6.6 -- Source][]
+* [Textadept 6.6 -- Modules][]
+
+Bugfixes:
+
+* Fixed GTK assertion errors in find/replace history.
+* Command entry loses focus less often.
+* Allow empty tables as keychains if they have metatables.
+* Fixed caret placement in block comment/uncomment.
+* Use '\n' keycode in curses instead of '\r'.
+
+Changes:
+
+* Removed `_M[lang].set_buffer_properties()` functions. Set properties through
+  [`events.LANGUAGE_MODULE_LOADED`] instead.
+* Print the results of '=' Lua commands.
+* Updated to [Scintilla][] 3.3.2.
+
+[Textadept 6.6 -- Win32]: download/textadept_6.6.win32.zip
+[Textadept 6.6 -- Mac OSX Intel 10.5+]: download/textadept_6.6.osx.zip
+[Textadept 6.6 -- Linux]: download/textadept_6.6.i386.tgz
+[Textadept 6.6 -- Linux x86_64]: download/textadept_6.6.x86_64.tgz
+[Textadept 6.6 -- Source]: download/textadept_6.6.src.zip
+[Textadept 6.6 -- Modules]: download/textadept_6.6.modules.zip
+[`events.LANGUAGE_MODULE_LOADED`]: api/_M.textadept.mime_types.html#_G.events.LANGUAGE_MODULE_LOADED
+[Scintilla]: http://scintilla.org
+
 ## 6.6 beta (01 May 2013)
 
 Download:
