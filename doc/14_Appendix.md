@@ -156,18 +156,24 @@ buffer\_new()                     |Renamed |\_G.[buffer.new()][]
 **_M.textadept**                  |        |
 filter\_through                   |Removed |N/A
 filter\_through.filter\_through() |Renamed |editing.[filter\_through()][]
+**_M.textadept.bookmark**         |        |
+MARK\_BOOKMARK\_COLOR             |Renamed |[BOOKMARK\_COLOR][]
 **_M.textadept.editing**          |        |
+INDIC\_HIGHLIGHT\_BACK            |Renamed |[HIGHLIGHT\_COLOR][]
 autocomplete\_word(chars, default)|Changed |[autocomplete\_word][](default)
 grow\_selection()                 |Replaced|[select\_enclosed()][]
 **_M.textadept.menu**             |        |
 menubar                           |Removed |N/A
 contextmenu                       |Removed |N/A
+**_M.textadept.run**              |        |
+MARK\_ERROR\_BACK                 |Renamed |[ERROR\_COLOR][]
 **_M.textadept.snapopen**         |Removed |N/A
 open                              |Changed |\_G.[io.snapopen()][]<sup>\*</sup>
 **events**                        |        |
 handlers                          |Removed |N/A
-**gui.find**                      |        |
-goto\_file\_in\_list()            |Renamed |[goto\_file\_found()][]
+**gui**                           |        |
+find.goto\_file\_in\_list()       |Renamed |find.[goto\_file\_found()][]
+select\_theme                     |Removed |N/A
 **io**                            |        |
 try\_encodings                    |Renamed |[encodings][]
 
@@ -175,8 +181,11 @@ try\_encodings                    |Renamed |[encodings][]
 
 [buffer.new()]: api/buffer.html#new
 [filter\_through()]: api/_M.textadept.editing.html#filter_through
+[BOOKMARK\_COLOR]: api/_M.textadept.bookmarks.html#BOOKMARK_COLOR
+[HIGHLIGHT\_COLOR]: api/_M.textadept.editing.html#HIGHLIGHT_COLOR
 [autocomplete\_word]: api/_M.textadept.editing.html#autocomplete_word
 [select\_enclosed()]: api/_M.textadept.editing.html#select_enclosed
+[ERROR\_COLOR]: api/_M.textadept.run.html#ERROR_COLOR
 [io.snapopen()]: api/io.html#snapopen
 [goto\_file\_found()]: api/gui.find.html#goto_file_found
 [encodings]: api/io.html#encodings
