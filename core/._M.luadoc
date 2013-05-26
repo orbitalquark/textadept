@@ -9,21 +9,21 @@
 -- ## Module Guidelines
 --
 -- At the very least, modules consist of a single directory with an *init.lua*
--- script. However, the script can load additional Lua files present in the
+-- script. However, the script may load additional Lua files present in the
 -- directory. (For an example, see *modules/textadept/init.lua*.)
 --
--- Once modules are loaded, regardless of whether they are generic or
--- language-specific, they persist in Textadept's Lua State; they are never
--- unloaded. Therefore, modules should not set global functions or variables in
--- order to avoid polluting the global environment. All functions and variables
--- should be contained within the module.
+-- Loaded modules, regardless of whether they are generic or language-specific,
+-- persist in Textadept's Lua State; Textadept never unloads them. Therefore,
+-- modules should define functions or variables within the module itself, not
+-- globally.
 --
 -- ### Language-Specific
 --
 -- To fully take advantage of Textadept's features, language-specific modules
 -- should have at a minimum: a block comment string, run and/or compile
--- commands, a buffer property setter function, and if possible, an Adeptsense.
--- Optional features are extra snippets and commands and a context menu.
+-- commands, an event handler for setting buffer properties like indentation,
+-- and if possible, an Adeptsense. Optional features are extra snippets and
+-- commands and a context menu.
 --
 -- #### Block Comment
 --
@@ -51,8 +51,7 @@
 --
 -- The module should also define error details in
 -- [`_M.textadept.run.error_detail`][] so double-clicking on compile or runtime
--- errors will jump to the error's location. The format for Lua errors looks
--- like
+-- errors jumps to the error's location. The format for Lua errors looks like
 --
 --     _M.textadept.run.error_detail.lua = {
 --       pattern = '^lua: (.-):(%d+): (.+)$',
@@ -89,7 +88,7 @@
 --
 -- #### Snippets
 --
--- [Snippets][] for common language constructs can be useful. Some snippets for
+-- [Snippets][] for common language constructs are useful. Some snippets for
 -- common Lua control structures look like
 --
 --     snippets.lua = {
@@ -109,23 +108,15 @@
 -- the current line and insert a new line. Both are bound to the `Shift+Enter`
 -- (`⇧↩` on Mac OSX | `S-Enter` in curses) key for easy access.
 --
---     function M.try_to_autocomplete_end()
---       ...
---     end
---
---     keys.lua = {
---       ['s\n'] = M.try_to_autocomplete_end
---     }
---
--- ---
---
---     keys.cpp = {
---       ['s\n'] = function()
---         buffer:line_end()
---         buffer:add_text(';')
---         buffer:new_line()
---       end
---     }
+--     -- In file *lua/init.lua*             | -- In file *cpp/init.lua*
+--                                           |
+--     function M.try_to_autocomplete_end()  | keys.cpp = {
+--       ...                                 |   ['s\n'] = function()
+--     end                                   |     buffer:line_end()
+--                                           |     buffer:add_text(';')
+--     keys.lua = {                          |     buffer:new_line()
+--       ['s\n'] = M.try_to_autocomplete_end |   end
+--     }                                     | }
 --
 -- [Lua]: _M.lua.html
 -- [C/C++]: _M.cpp.html
@@ -133,8 +124,8 @@
 -- #### Context Menu
 --
 -- Language-specific [context menus][], accessible by right-clicking inside the
--- view, can be useful for accessing module features without using key bindings.
--- For Lua this may look like
+-- view, are useful for accessing module features without using key bindings.
+-- For Lua this might look like
 --
 --     M.context_menu = {
 --       { _L['_Undo'], buffer.undo },

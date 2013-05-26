@@ -12,9 +12,9 @@ local M = gui.command_entry
 -- The command entry supports multiple [modes][] that have their own sets of key
 -- bindings stored in a separate table in `_G.keys` under a mode prefix key.
 -- Mode names are arbitrary, but cannot conflict with lexer names or key
--- sequence strings (e.g. `'lua'` or `'send'`) due to the method used for
--- looking up key bindings. An example mode is "lua_command" mode for executing
--- Lua commands:
+-- sequence strings (e.g. `'lua'` or `'send'`) due to the method Textadept uses
+-- for looking up key bindings. An example mode is "lua_command" mode for
+-- executing Lua commands:
 --
 --     local gui_ce = gui.command_entry
 --     keys['ce'] = {gui_ce.enter_mode, 'lua_command'}
@@ -25,15 +25,10 @@ local M = gui.command_entry
 --
 -- In this case, `Ctrl+E` opens the command entry and enters "lua_command" key
 -- mode where the `Tab` and `Enter` keys have special, defined functionality.
--- (By default, `Esc` is pre-defined to exit any command entry mode.) `Tab`
--- shows a list of Lua completions for the entry text and `Enter` exits
--- "lua_command" key mode and executes the entered code. All other keys are
--- handled normally by the command entry.
---
--- It is important to note that while in any command entry key mode, all editor
--- key bindings are ignored -- even if the editor, not the command entry, has
--- focus. You must first exit the key mode by pressing `Esc` (or `Enter` in the
--- case of the above "lua_command" key mode).
+-- (By default, Textadept pre-defines `Esc` to exit any command entry mode.)
+-- `Tab` shows a list of Lua completions for the entry text and `Enter` exits
+-- "lua_command" key mode and executes the entered code. The command entry
+-- handles all other keys normally.
 --
 -- [modes]: keys.html#Modes
 -- @field entry_text (string)

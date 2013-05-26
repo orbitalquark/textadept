@@ -8,21 +8,21 @@ local M = {}
 --
 -- ## Overview
 --
--- Key bindings are defined in the global table `keys`. Each key-value pair in
--- `keys` consists of either a string key sequence and its associated command,
--- a string lexer language (from the *lexers/* directory) with a table of key
--- sequences and commands, a string key mode with a table of key sequences and
--- commands, or a key sequence with a table of more sequences and commands. The
--- latter is part of what is called a "key chain", to be discussed below. When
--- searching for a command to run based on a key sequence, key bindings in the
--- current key mode have priority. If no key mode is active, key bindings in the
--- current lexer have priority, followed by the ones in the global table. This
--- means if there are two commands with the same key sequence, the one specific
--- to the current lexer is run. However, if the command returns the boolean
--- value `false`, the lower-priority command is also run. (This is useful for
--- language-specific modules to override commands like Adeptsense
--- autocompletion, but fall back to word autocompletion if the first command
--- fails.)
+-- Define key bindings in the global `keys` table in key-value pairs. Each pair
+-- consists of either a string key sequence and its associated command, a string
+-- lexer language (from the *lexers/* directory) with a table of key sequences
+-- and commands, a string key mode with a table of key sequences and commands,
+-- or a key sequence with a table of more sequences and commands. The latter is
+-- part of what is called a "key chain", to be discussed below. When searching
+-- for a command to run based on a key sequence, Textadept considers key
+-- bindings in the current key mode to have priority. If no key mode is active,
+-- key bindings in the current lexer have priority, followed by the ones in the
+-- global table. This means if there are two commands with the same key
+-- sequence, Textadept runs the one specific to the current lexer. However, if
+-- the command returns the boolean value `false`, Textadept also runs the
+-- lower-priority command. (This is useful for language-specific modules to
+-- override commands like Adeptsense autocompletion, but fall back to word
+-- autocompletion if the first command fails.)
 --
 -- ## Key Sequences
 --
@@ -39,24 +39,23 @@ local M = {}
 -- Shift    | `'s'`         | `'s'`   | `'s'`    |
 -- Command  | N/A           | `'c'`   | N/A      |
 --
--- For key values less than 255, their string representation is the character
--- that would normally be inserted if the "Control", "Alt", and "Command"
+-- The string representation of key values less than 255 is the character that
+-- Textadept would normally insert if the "Control", "Alt", and "Command"
 -- modifiers were not held down. Therefore, a combination of `Ctrl+Alt+Shift+A`
 -- has the key sequence `caA` on Windows and Linux, but a combination of
 -- `Ctrl+Shift+Tab` has the key sequence `cs\t`. On a United States English
 -- keyboard, since the combination of `Ctrl+Shift+,` has the key sequence `c<`
--- (`Shift+,` inserts a `<`), the key binding is referred to as `Ctrl+<`. This
--- allows key bindings to be language and layout agnostic. For key values
--- greater than 255, the [`KEYSYMS`](#KEYSYMS) lookup table is used. Therefore,
--- `Ctrl+Right Arrow` has the key sequence `cright`. Uncommenting the `print()`
--- statements in *core/keys.lua* will print key sequences to standard out
--- (stdout) for inspection.
+-- (`Shift+,` inserts a `<`), Textadept recognizes the key binding as `Ctrl+<`.
+-- This allows key bindings to be language and layout agnostic. For key values
+-- greater than 255, Textadept uses the [`KEYSYMS`](#KEYSYMS) lookup table.
+-- Therefore, `Ctrl+Right Arrow` has the key sequence `cright`. Uncommenting the
+-- `print()` statements in *core/keys.lua* causes Textadept to print key
+-- sequences to standard out (stdout) for inspection.
 --
 -- ## Commands
 --
--- Commands bound to key sequences can be either Lua functions, or tables
--- containing Lua functions with a set of arguments to call the function with.
--- Examples are:
+-- A command bound to a key sequence is either a Lua function or a table
+-- containing a Lua function with a set of arguments to pass. Examples are:
 --
 --     keys['cn'] = buffer.new
 --     keys['cs'] = buffer.save
@@ -66,15 +65,15 @@ local M = {}
 -- (The function and function table syntax are functionally equivalent. You can
 -- use either.)
 --
--- [`buffer`][] references are handled properly in static contexts.
+-- Textadept handles [`buffer`][] references properly in static contexts.
 --
 -- [`buffer`]: buffer.html
 --
 -- ## Modes
 --
--- Sets of key bindings can be grouped together into modes. When a key
--- [mode](#MODE) is active, all key bindings defined outside the mode are
--- ignored until the mode is unset. Here is a simple vi mode example:
+-- You can group together sets of key bindings into modes. When a key
+-- [mode](#MODE) is active, Textadept ignores all key bindings defined outside
+-- the mode until the mode is unset. Here is a simple vi mode example:
 --
 --     keys.command_mode = {
 --       ['h'] = buffer.char_left,
@@ -95,11 +94,11 @@ local M = {}
 --
 -- ## Key Chains
 --
--- Key chains are a powerful concept. They allow multiple key bindings to be
--- assigned to one key sequence. Language-specific modules
+-- Key chains are a powerful concept. They allow you to assign multiple key
+-- bindings to one key sequence. Language-specific modules
 -- [use key chains](#LANGUAGE_MODULE_PREFIX) for their functions. By default,
--- the `Esc` (`⎋` on Mac OSX | `Esc` in curses) key cancels a key chain, but it
--- can be redefined via [`CLEAR`](#CLEAR). An example key chain looks like:
+-- the `Esc` (`⎋` on Mac OSX | `Esc` in curses) key cancels a key chain, but you
+-- can redefine it via [`CLEAR`](#CLEAR). An example key chain looks like:
 --
 --     keys['aa'] = {
 --       a = function1,

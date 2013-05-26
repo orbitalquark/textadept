@@ -8,20 +8,25 @@ local M = {}
 --
 -- ## Overview
 --
--- Events occur when you do things like create a new buffer, press a key, click
--- on a menu, etc. You can even emit events yourself using Lua. Each event has a
--- set of event handlers, which are simply Lua functions called in the order
--- they were connected to an event. This enables dynamically loaded modules to
--- connect to events.
+-- Textadept emits events when you do things like create a new buffer, press a
+-- key, click on a menu, etc. You can even emit events yourself using Lua. Each
+-- event has a set of event handlers, which are simply Lua functions called in
+-- the order they were connected to an event. For example, if you created a
+-- module that needs to do something each time Textadept creates a new buffer,
+-- connect a Lua function to the [BUFFER_NEW](#BUFFER_NEW) event:
 --
--- Events themselves are nothing special. They do not have to be declared in
--- order to be used. They are simply strings containing an arbitrary event name.
--- When an event of this name is emitted, either by Textadept or you, all event
--- handlers assigned to it are run. Events can be given any number of arguments.
--- These arguments will be passed to the event's handler functions. If an event
--- handler returns a `true` or `false` boolean value explicitly, no subsequent
--- handlers are called. This is useful if you want to stop the propagation of an
--- event like a keypress if it has already been handled.
+--     events.connect(events.BUFFER_NEW, function()
+--       -- Do something here.
+--     end)
+--
+-- Events themselves are nothing special. You do not have to declare one before
+-- using it. Events are simply strings containing arbitrary event names. When
+-- either you or Textadept emits an event, Textadept runs all event handlers
+-- connected to the event, passing any given arguments to the event's handler
+-- functions. If an event handler explicitly returns a `true` or `false` boolean
+-- value, Textadept will not call subsequent handlers. This is useful if you
+-- want to stop the propagation of an event like a keypress if your event
+-- handler handled it.
 --
 -- @field APPLEEVENT_ODOC (string)
 --   Emitted when Mac OSX tells Textadept to open a document.
