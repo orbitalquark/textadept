@@ -361,7 +361,7 @@ end)
 if not CURSES then
   -- Set a language-specific context menu or the default one.
   local function set_language_contextmenu()
-    local lang = _G.buffer:get_lexer(true)
+    local lang = _G.buffer:get_lexer()
     M.set_contextmenu(_M[lang] and _M[lang].context_menu or context_menu)
   end
   events.connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
