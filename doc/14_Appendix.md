@@ -9,7 +9,7 @@ _Character Class:_
 A character class is used to represent a set of characters. The following
 combinations are allowed in describing a character class:
 
-* **_`x`_:** (where _x_ is not one of the magic characters `^$()%.[]*+-?`)
+* **_`x`_:** (where _x_ is not one of the magic characters `^%()%.[]*+-?`)
   represents the character _x_ itself.
 * **`.`:** (a dot) represents all characters.
 * **`%a`:** represents all letters.
@@ -211,20 +211,20 @@ to Textadept 7:
                                          |
     l.style_nothing = style{}            | prop['style.nothing'] = ''
     l.style_class = style{               | prop['style.class'] =
-      fore = l.colors.yellow             |   'fore:$(color.yellow)'
+      fore = l.colors.yellow             |   'fore:%(color.yellow)'
     }                                    | ...
     ...                                  | prop['style.identifier'] =
-    l.style_identifier = l.style_nothing |   '$(style.nothing)'
+    l.style_identifier = l.style_nothing |   '%(style.nothing)'
                                          |
     ...                                  | ...
                                          |
                                          | prop['font'] = 'Monospace'
     local font, size = 'Monospace', 10   | prop['fontsize'] = 10
     l.style_default = style{             | prop['style.default'] =
-      font = font, size = size,          |   'font:$(font),'..
-      fore = l.colors.light_black        |   'size:$(fontsize),'..
-      back = l.colors.white              |   'fore:$(color.light_black),'..
-    }                                    |   'back:$(color.white)'
+      font = font, size = size,          |   'font:%(font),'..
+      fore = l.colors.light_black        |   'size:%(fontsize),'..
+      back = l.colors.white              |   'fore:%(color.light_black),'..
+    }                                    |   'back:%(color.white)'
     ...                                  | ...
 
     -- File *theme/view.lua*             | -- Same file *theme.lua*!
@@ -249,7 +249,7 @@ Notes:
    that Textadept's API documentation uses consistently.
 3. The only property names that matter are the "style._name_" ones. Other
    property names are arbitrary.
-4. Instead of using variables, which are evaluated immediately, use "$(key)"
+4. Instead of using variables, which are evaluated immediately, use "%(key)"
    notation, which substitutes the value of property "key" at a later point in
    time. This means you do not have to define properties before use. You can
    also modify existing properties without redefining the properties that depend
