@@ -8,6 +8,7 @@ AUTO_C_CHAR_DELETED events.AUTO_C_CHAR_DELETED (string)\nEmitted when deleting a
 AUTO_C_RELEASE events.AUTO_C_RELEASE (string)\nEmitted when canceling the autocompletion list.
 AUTO_C_SELECTION events.AUTO_C_SELECTION (string)\nEmitted when selecting an item in the autocompletion list and before\ninserting the selection.\nAutomatic insertion can be cancelled by calling\n`buffer:auto_c_cancel()` before returning from the event handler.\nArguments:\n\n* _`text`_: The text of the selection.\n* _`position`_: The position in the buffer of the beginning of the\n  autocompleted word.
 B lpeg.B(patt)\nReturns a pattern that matches only if the input string at the current\nposition is preceded by `patt`. Pattern `patt` must match only strings with\nsome fixed length, and it cannot contain captures.\n\nLike the and predicate, this pattern never consumes any input, independently\nof success or failure.
+BOOKMARK_COLOR _M.textadept.bookmarks.BOOKMARK_COLOR (string)\nThe name of the color in the current theme to mark a bookmarked line with.
 BUFFER_AFTER_SWITCH events.BUFFER_AFTER_SWITCH (string)\nEmitted right after switching to another buffer.\nEmitted by `view:goto_buffer()`.
 BUFFER_BEFORE_SWITCH events.BUFFER_BEFORE_SWITCH (string)\nEmitted right before switching to another buffer.\nEmitted by `view:goto_buffer()`.
 BUFFER_DELETED events.BUFFER_DELETED (string)\nEmitted after deleting a buffer.\nEmitted by `buffer:delete()`.
@@ -49,6 +50,7 @@ EDGE_LINE _SCINTILLA.constants.EDGE_LINE\n1
 EDGE_NONE _SCINTILLA.constants.EDGE_NONE\n0
 ERROR events.ERROR (string)\nEmitted when an error occurs.\nArguments:\n\n* _`text`_: The error text.
 ERROR lexer.ERROR (string)\nThe token name for error tokens.
+ERROR_COLOR _M.textadept.run.ERROR_COLOR (string)\nThe name of the color in the current theme to mark a line containing a\nrecognized run or compile error.
 FIELD _M.textadept.adeptsense.FIELD (string)\nCtags kind for Adeptsense fields.
 FIELDS _M.textadept.adeptsense.FIELDS (string)\nXPM image for Adeptsense fields.
 FILE_AFTER_SAVE events.FILE_AFTER_SAVE (string)\nEmitted right after saving a file to disk.\nEmitted by `buffer:save()`.\nArguments:\n\n* _`filename`_: The UTF-8-encoded filename.
@@ -66,6 +68,7 @@ FUNCTION _M.textadept.adeptsense.FUNCTION (string)\nCtags kind for Adeptsense fu
 FUNCTION lexer.FUNCTION (string)\nThe token name for function tokens.
 FUNCTIONS _M.textadept.adeptsense.FUNCTIONS (string)\nXPM image for Adeptsense functions.
 HIGHLIGHT_BRACES _M.textadept.editing.HIGHLIGHT_BRACES (bool)\nHighlight matching brace characters like "()[]{}".\nThe default value is `true`.\nMatching braces are defined in the `braces` table.
+HIGHLIGHT_COLOR _M.textadept.editing.HIGHLIGHT_COLOR (string)\nThe name of the color in the current theme to\nhighlight words with.
 HOTSPOT_CLICK events.HOTSPOT_CLICK (string)\nEmitted when clicking on text that is in a style with the hotspot attribute\nset.\nArguments:\n\n* _`position`_: The position in the buffer clicked.\n* _`modifiers`_: A bit-mask of modifier keys held down. Modifiers are\n  `_SCINTILLA.constants.SCMOD_ALT`, `_SCINTILLA.constants.SCMOD_CTRL`,\n  `_SCINTILLA.constants.SCMOD_SHIFT`, and\n  `_SCINTILLA.constants.SCMOD_META`.\n  Note: If you set `buffer.rectangular_selection_modifier` to\n  `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as\n  *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 HOTSPOT_DOUBLE_CLICK events.HOTSPOT_DOUBLE_CLICK (string)\nEmitted when double-clicking on text that is in a style with the hotspot\nattribute set.\nArguments:\n\n* _`position`_: The position in the buffer double-clicked.\n* _`modifiers`_: A bit-mask of modifier keys held down. Modifiers are\n  `_SCINTILLA.constants.SCMOD_ALT`, `_SCINTILLA.constants.SCMOD_CTRL`,\n  `_SCINTILLA.constants.SCMOD_SHIFT`, and\n  `_SCINTILLA.constants.SCMOD_META`.\n  Note: If you set `buffer.rectangular_selection_modifier` to\n  `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as\n  *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 HOTSPOT_RELEASE_CLICK events.HOTSPOT_RELEASE_CLICK (string)\nEmitted after releasing the mouse after clicking on text that was in a\nstyle with the hotspot attribute set.\nArguments:\n\n* _`position`_: The position in the buffer unclicked.
@@ -84,7 +87,6 @@ INDIC_DIAGONAL _SCINTILLA.constants.INDIC_DIAGONAL\n3
 INDIC_DOTBOX _SCINTILLA.constants.INDIC_DOTBOX\n12
 INDIC_DOTS _SCINTILLA.constants.INDIC_DOTS\n10
 INDIC_HIDDEN _SCINTILLA.constants.INDIC_HIDDEN\n5
-INDIC_HIGHLIGHT_BACK _M.textadept.editing.INDIC_HIGHLIGHT_BACK (number)\nThe color, in "0xBBGGRR" format, used for an indicator for the\nhighlighted word.
 INDIC_MAX _SCINTILLA.constants.INDIC_MAX\n31
 INDIC_PLAIN _SCINTILLA.constants.INDIC_PLAIN\n0
 INDIC_ROUNDBOX _SCINTILLA.constants.INDIC_ROUNDBOX\n7
@@ -104,8 +106,6 @@ LANGUAGE_MODULE_LOADED events.LANGUAGE_MODULE_LOADED (string)\nEmitted after loa
 LANGUAGE_MODULE_PREFIX keys.LANGUAGE_MODULE_PREFIX (string)\nThe starting key of the key chain reserved for language-specific modules.\nThe default value is `'cl'` on platforms other than Mac OSX, `'ml'`\notherwise. Equivalent to `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in curses).
 MARGIN_CLICK events.MARGIN_CLICK (string)\nEmitted when clicking the mouse inside a margin.\nArguments:\n\n* _`margin`_: The margin number clicked.\n* _`position`_: The position of the start of the line in the buffer whose\n  margin line was clicked.\n* _`modifiers`_: A bit-mask of modifier keys held down. Modifiers are\n  `_SCINTILLA.constants.SCMOD_ALT`, `_SCINTILLA.constants.SCMOD_CTRL`,\n  `_SCINTILLA.constants.SCMOD_SHIFT`, and\n  `_SCINTILLA.constants.SCMOD_META`.\n  Note: If you set `buffer.rectangular_selection_modifier` to\n  `_SCINTILLA.constants.SCMOD_CTRL`, the "Control" modifier is reported as\n  *both* "Control" and "Alt" due to a Scintilla limitation with GTK+.
 MARKER_MAX _SCINTILLA.constants.MARKER_MAX\n31
-MARK_BOOKMARK_COLOR _M.textadept.bookmarks.MARK_BOOKMARK_COLOR (number)\nThe color, in "0xBBGGRR" format, used for a bookmarked line.
-MARK_ERROR_BACK _M.textadept.run.MARK_ERROR_BACK (number)\nThe background color, in "0xBBGGRR" format, used for a line containing a\nrecognized run or compile error.
 MAX_RECENT_FILES _M.textadept.session.MAX_RECENT_FILES (number)\nThe maximum number of recent files to save to the session.\nRecent files are stored in `io.recent_files`.\nThe default value is `10`.
 MENU_CLICKED events.MENU_CLICKED (string)\nEmitted after selecting a menu item.\nArguments:\n\n* _`menu_id`_: The numeric ID of the menu item set in `gui.menu()`.
 MODE keys.MODE (string)\nThe current key mode.\nWhen non-`nil`, all key bindings defined outside of `keys[MODE]` are\nignored.\nThe default value is `nil`.
@@ -755,14 +755,39 @@ SNAPOPEN_MAX io.SNAPOPEN_MAX (number)\nThe maximum number of files to list in th
 STRING lexer.STRING (string)\nThe token name for string tokens.
 STRIP_WHITESPACE_ON_SAVE _M.textadept.editing.STRIP_WHITESPACE_ON_SAVE (bool)\nStrip trailing whitespace on file save.\nThe default value is `true`.
 STYLE_BRACEBAD _SCINTILLA.constants.STYLE_BRACEBAD\n35
+STYLE_BRACEBAD lexer.STYLE_BRACEBAD (string)\nThe style used for unmatched brace characters.
 STYLE_BRACELIGHT _SCINTILLA.constants.STYLE_BRACELIGHT\n34
+STYLE_BRACELIGHT lexer.STYLE_BRACELIGHT (string)\nThe style used for highlighted brace characters.
 STYLE_CALLTIP _SCINTILLA.constants.STYLE_CALLTIP\n38
+STYLE_CALLTIP lexer.STYLE_CALLTIP (string)\nThe style used by call tips if `buffer.call_tip_use_style` is set.\nOnly the font name, size, and color attributes are used.
+STYLE_CLASS lexer.STYLE_CLASS (string)\nThe style typically used for class definitions.
+STYLE_COMMENT lexer.STYLE_COMMENT (string)\nThe style typically used for code comments.
+STYLE_CONSTANT lexer.STYLE_CONSTANT (string)\nThe style typically used for constants.
 STYLE_CONTROLCHAR _SCINTILLA.constants.STYLE_CONTROLCHAR\n36
+STYLE_CONTROLCHAR lexer.STYLE_CONTROLCHAR (string)\nThe style used for control characters.\nColor attributes are ignored.
 STYLE_DEFAULT _SCINTILLA.constants.STYLE_DEFAULT\n32
+STYLE_DEFAULT lexer.STYLE_DEFAULT (string)\nThe style all styles are based off of.
+STYLE_EMBEDDED lexer.STYLE_EMBEDDED (string)\nThe style typically used for embedded code.
+STYLE_ERROR lexer.STYLE_ERROR (string)\nThe style typically used for erroneous syntax.
+STYLE_FUNCTION lexer.STYLE_FUNCTION (string)\nThe style typically used for function definitions.
+STYLE_IDENTIFIER lexer.STYLE_IDENTIFIER (string)\nThe style typically used for identifier words.
 STYLE_INDENTGUIDE _SCINTILLA.constants.STYLE_INDENTGUIDE\n37
+STYLE_INDENTGUIDE lexer.STYLE_INDENTGUIDE (string)\nThe style used for indentation guides.
+STYLE_KEYWORD lexer.STYLE_KEYWORD (string)\nThe style typically used for language keywords.
+STYLE_LABEL lexer.STYLE_LABEL (string)\nThe style typically used for labels.
 STYLE_LASTPREDEFINED _SCINTILLA.constants.STYLE_LASTPREDEFINED\n39
 STYLE_LINENUMBER _SCINTILLA.constants.STYLE_LINENUMBER\n33
+STYLE_LINENUMBER lexer.STYLE_LINENUMBER (string)\nThe style used for all margins except fold margins.
 STYLE_MAX _SCINTILLA.constants.STYLE_MAX\n255
+STYLE_NOTHING lexer.STYLE_NOTHING (string)\nThe style typically used for no styling.
+STYLE_NUMBER lexer.STYLE_NUMBER (string)\nThe style typically used for numbers.
+STYLE_OPERATOR lexer.STYLE_OPERATOR (string)\nThe style typically used for operators.
+STYLE_PREPROCESSOR lexer.STYLE_PREPROCESSOR (string)\nThe style typically used for preprocessor statements.
+STYLE_REGEX lexer.STYLE_REGEX (string)\nThe style typically used for regular expression strings.
+STYLE_STRING lexer.STYLE_STRING (string)\nThe style typically used for strings.
+STYLE_TYPE lexer.STYLE_TYPE (string)\nThe style typically used for static types.
+STYLE_VARIABLE lexer.STYLE_VARIABLE (string)\nThe style typically used for variables.
+STYLE_WHITESPACE lexer.STYLE_WHITESPACE (string)\nThe style typically used for whitespace.
 TYPE lexer.TYPE (string)\nThe token name for type tokens.
 TYPEOVER_CHARS _M.textadept.editing.TYPEOVER_CHARS (bool)\nMove over the typeover character under the caret when typing it instead of\ninserting it.\nThe default value is `true`.\nTypeover characters are defined in the `typeover_chars`\ntable.
 UNDO_MAY_COALESCE _SCINTILLA.constants.UNDO_MAY_COALESCE\n1
@@ -928,7 +953,7 @@ char_right_rect_extend buffer.char_right_rect_extend(buffer)\nMoves the caret ri
 chdir lfs.chdir(path)\nChanges the current working directory to the given path.\n\nReturns true in case of success or nil plus an error string.
 check_global buffer.check_global(buffer)\nEnsures the buffer is the global one, `_G.buffer`, throwing an error\notherwise.\nThis function must be called in all buffer functions because only the global\nbuffer can be worked with.\n@param buffer The buffer to check.\n@see _G._G.buffer
 choose_caret_x buffer.choose_caret_x(buffer)\nSets the preferred horizontal position of the caret when moving between\nlines to the current position.\n@param buffer The global buffer.\n@see caret_sticky
-class_definition _M.textadept.adeptsense.syntax.class_definition (table)\nA Lua pattern representing the language's class\n  definition syntax. The first capture returned must be the class name. A\n  second, optional capture contains the class' superclass (if any). If no\n  completions are found for the class name, completions for the superclass\n  are shown (if any). Completions will not be shown for both a class and\n  superclass unless defined in a previously loaded Ctags file. Also, multiple\n  superclasses cannot be recognized by this pattern; use a Ctags file\n  instead. The default value is `'class%s+([%w_]+)'`.
+class_definition _M.textadept.adeptsense.syntax.class_definition (table)\nA Lua pattern representing the language's class\n  definition syntax. The first capture returned must be the class name. A\n  second, optional capture contains the class's superclass (if any). If no\n  completions are found for the class name, completions for the superclass\n  are shown (if any). Completions will not be shown for both a class and\n  superclass unless defined in a previously loaded Ctags file. Also, multiple\n  superclasses cannot be recognized by this pattern; use a Ctags file\n  instead. The default value is `'class%s+([%w_]+)'`.
 clear _M.textadept.adeptsense.clear(sense)\nClears the Adeptsense for loading new Ctags or project files.\n@param sense The Adeptsense returned by `adeptsense.new()`.
 clear _M.textadept.bookmarks.clear()\nClears all bookmarks in the current buffer.
 clear buffer.clear(buffer)\nDeletes the selected text or the character at the caret.\n@param buffer The global buffer.
@@ -946,8 +971,6 @@ close_all io.close_all()\nCloses all open buffers, prompting the user to continu
 cntrl lexer.cntrl (pattern)\nA pattern matching any control character (`0`..`31`).
 code_page buffer.code_page (number)\nThe code page used to interpret buffer bytes as characters.\n\n+ `0` None.\n+ `932` Japanese Shift-JIS.\n+ `936` Simplified Chinese GBK.\n+ `949` Korean Unified Hangul Code.\n+ `950` Traditional Chinese Big5.\n+ `1361` Korean Johab.\n+ `_SCINTILLA.constants.SC_CP_UTF8` (65001) UTF-8.\n\nThe default value is `0`.
 collectgarbage _G.collectgarbage([opt [, arg]])\nThis function is a generic interface to the garbage collector. It\nperforms different functions according to its first argument, `opt`:\n  "collect": performs a full garbage-collection cycle. This is the default\n             option.\n  "stop": stops automatic execution of the garbage collector.\n  "restart": restarts automatic execution of the garbage collector.\n  "count": returns the total memory in use by Lua (in Kbytes) and a second\n           value with the total memory in bytes modulo 1024. The first value\n           has a fractional part, so the following equality is always true:\n\n             k, b = collectgarbage("count")\n             assert(k*1024 == math.floor(k)*1024 + b)\n\n           (The second result is useful when Lua is compiled with a non\n           floating-point type for numbers.)\n  "step": performs a garbage-collection step. The step "size" is controlled\n          by `arg` (larger values mean more steps) in a non-specified way. If\n          you want to control the step size you must experimentally tune the\n          value of `arg`. Returns true if the step finished a collection\n          cycle.\n  "setpause": sets `arg` as the new value for the *pause* of the collector\n              (see §2.5). Returns the previous value for *pause*.\n  "setstepmul": sets `arg` as the new value for the *step multiplier*\n                of the collector (see §2.5). Returns the previous value for\n                *step*.\n  "isrunning": returns a boolean that tells whether the collector is running\n               (i.e., not stopped).\n  "generational": changes the collector to generational mode. This is an\n                  experimental feature (see §2.5).\n  "incremental": changes the collector to incremental mode. This is the\n                 default mode.
-color lexer.color(r, g, b)\nCreates and returns a Scintilla color from *r*, *g*, and *b* string\nhexadecimal color components.\n@param r The string red hexadecimal component of the color.\n@param g The string green hexadecimal component of the color.\n@param b The string blue hexadecimal component of the color.\n@usage local red = color('FF', '00', '00')\n@return integer color for Scintilla.
-colors lexer.colors (table)\nTable of common colors for a theme.\nThis table should be redefined in each theme.
 colourise buffer.colourise(buffer, start_pos, end_pos)\nTells the lexer to style and fold the range of text from *start_pos* to\n*end_pos*.\nIf *end_pos* is `-1`, styles and folds to the end of the buffer.\n@param buffer The global buffer.\n@param start_pos The start position of the range of text in *buffer* to\n  process.\n@param end_pos The end position of the range of text in *buffer* to process,\n  or `-1` to process from *start_pos* to the end of *buffer*.
 column buffer.column (table, Read-only)\nTable of column numbers, taking tab widths into account, for positions in\nthe buffer starting from zero.
 command_entry gui.command_entry (module)\nTextadept's Command Entry.
@@ -1103,7 +1126,8 @@ get_lexer buffer.get_lexer(buffer, current)\nReturns the name of the lexer used 
 get_line buffer.get_line(buffer, line)\nReturns the text on line number *line*, including end of line characters, and\nthe length of the line.\n@param buffer The global buffer.\n@param line The line number in *buffer* to use.\n@return string, number
 get_line_sel_end_position buffer.get_line_sel_end_position(buffer, line)\nReturns the position of the end of the selected text on line number *line*,\nor `-1`.\n@param buffer The global buffer.\n@param line The line number in *buffer* to use.
 get_line_sel_start_position buffer.get_line_sel_start_position(buffer, line)\nReturns the position of the beginning of the selected text on line number\n*line*, or `-1`.\n@param buffer The global buffer.\n@param line The line number in *buffer* to use.
-get_property lexer.get_property(key, default)\nReturns the integer property value associated with string property *key*, or\n*default*.\n@param key The string property key.\n@param default Optional integer value to return if *key* is not set.\n@return integer property value
+get_property lexer.get_property(key, default)\nReturns the string property value associated with string property *key*, or\n*default*.\n@param key The string property key.\n@param default Optional value to return if *key* is not set.\n@return property value
+get_property_expanded M.get_property_expanded(key)\nReturns the string property value associated with string property *key*,\nreplacing any "$()" and "%()" expressions with the values of their keys.\n@param key The string property key.\n@return property value
 get_sel_text buffer.get_sel_text(buffer)\nReturns the selected text and its length.\nMultiple selections are included in order with no delimiters. Rectangular\nselections are included from top to bottom with line ending delimiters.\nVirtual space is not included.\n@param buffer The global buffer.\n@return string, number
 get_split_table gui.get_split_table()\nReturns the current split view structure.\nThis is primarily used in session saving.\n@return table of split views. Each split view entry is a table with 4\n  fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either\n  nested split view entries or the views themselves; `vertical` is a flag\n  indicating if the split is vertical or not; and `size` is the integer\n  position of the split resizer.
 get_style_at lexer.get_style_at(pos)\nReturns the string style name and style number at position *pos* in the\nbuffer.\n@param pos The position in the buffer to get the style for.\n@return style name\n@return style number
@@ -1467,7 +1491,6 @@ select_indented_block _M.textadept.editing.select_indented_block()\nSelects inde
 select_lexer _M.textadept.mime_types.select_lexer()\nPrompts the user to select a lexer for the current buffer.\n@see buffer.set_lexer
 select_line _M.textadept.editing.select_line()\nSelects the current line.
 select_paragraph _M.textadept.editing.select_paragraph()\nSelects the current paragraph.\nParagraphs are surrounded by one or more blank lines.
-select_theme gui.select_theme()\nPrompts the user to select an editor theme from a list of themes found in the\n*`_HOME`/themes/* and *`_USERHOME`/themes/* directories.
 select_word _M.textadept.editing.select_word()\nSelects the current word.\n@see buffer.word_chars
 selection_duplicate buffer.selection_duplicate(buffer)\nDuplicates the selected text or the current line.\n@param buffer The global buffer.
 selection_empty buffer.selection_empty (bool, Read-only)\nWhether or not no text is selected.
@@ -1505,6 +1528,7 @@ set_hotspot_active_fore buffer.set_hotspot_active_fore(buffer, use_setting, colo
 set_length_for_encode buffer.set_length_for_encode(buffer, bytes)\nSets the length of *string* in `buffer:encoded_from_utf8()` to *bytes*.\n@param buffer The global buffer.\n@param bytes The number of bytes to encode, or `-1` for measuring to first\n  null byte.
 set_lexer buffer.set_lexer(buffer, lang)\nSets the name of the lexer used by the buffer to *lang* or the auto-detected\nlanguage and then loads the appropriate language-specific module if the\nmodule exists.\n@param buffer The global buffer.\n@param lang Optional string language name to set. If `nil`, attempts to\n  auto-detect the buffer's language.\n@usage buffer.set_lexer(buffer, 'language_name')
 set_menubar _M.textadept.menu.set_menubar(menubar)\nSets `gui.menubar` from *menubar*, a table of menus.\nEach menu is an ordered list of menu items and has a `title` key for the\ntitle text. Menu items are tables containing menu text and either a function\nto call or a table containing a function with its parameters to call when an\nitem is clicked. Menu items may also be sub-menus, ordered lists of menu\nitems with an additional `title` key for the sub-menu's title text.\n@param menubar The table of menu tables to create the menubar from.\n@see gui.menubar\n@see gui.menu
+set_property lexer.set_property(key, value)\nAssociates string property *key* with string *value*.\n@param key The string property key.\n@param value The string value.
 set_save_point buffer.set_save_point(buffer)\nTells Scintilla the buffer has no unsaved changes.\n@param buffer The global buffer.
 set_sel buffer.set_sel(buffer, start_pos, end_pos)\nSelects the range of text from *start_pos* to *end_pos* in the buffer,\nscrolling the selected text into view.\n@param buffer The global buffer.\n@param start_pos The start position of the range of text in *buffer* to\n  select. If negative, it means the end of the buffer.\n@param end_pos The end position of the range of text in *buffer* to select.\n  If negative, it means remove any selection (i.e. set the `anchor` to the\n  same position as `current_pos`).
 set_sel_back buffer.set_sel_back(buffer, use_setting, color)\nOverrides the default background color of all selected text with *color*, in\n"0xBBGGRR" format, if *use_setting* is `true`.\n@param buffer The global buffer.\n@param use_setting Whether or not to use *color*.\n@param color The color in "0xBBGGRR" format.
@@ -1512,7 +1536,7 @@ set_sel_fore buffer.set_sel_fore(buffer, use_setting, color)\nOverrides the defa
 set_selection buffer.set_selection(buffer, caret, anchor)\nSelects the range of text from *anchor* to *caret* in the buffer, removing\nall other selections.\n@param buffer The global buffer.\n@param caret The caret position of the range of text to select in *buffer*.\n@param anchor The anchor position of the range of text to select in *buffer*.
 set_styling buffer.set_styling(buffer, length, style)\nSets the style of the next *length* characters, from the current styling\nposition, to style number *style*, in the range from `0` to `255`, and\nincrements the styling position by *length*.\n@param buffer The global buffer.\n@param length The number of characters to style.\n@param style The style number to set.
 set_text buffer.set_text(buffer, text)\nReplaces all of the text in the buffer with string *text*.\n@param buffer The global buffer.\n@param text The text to set.
-set_theme gui.set_theme(name)\nSets the editor theme name to *name* or the default platform theme.\nThemes with *name* in the *`_USERHOME`/themes/* directory override themes of\nthe same name in *`_HOME`/themes/*. If *name* contains slashes ('\' on\nWindows, '/' otherwise), it is assumed to be an absolute path to a theme\ninstead of a theme name. An error is thrown if the theme is not found. Any\nerrors in the theme are printed to `io.stderr`. Running Textadept from a\nterminal is the easiest way to see errors as they occur.\n@param name Optional name or absolute path of a theme to set. If `nil`, sets\n  the default platform theme.
+set_theme gui.set_theme(name)\nSets the editor theme name to *name* or prompts the user to select one from a\nlist of themes found in the *`_USERHOME`/themes/* and *`_HOME`/themes/*\ndirectories.\nUser themes override Textadept's default themes when they have the same name.\nIf *name* contains slashes, it is assumed to be an absolute path to a theme\ninstead of a theme name.\n@param name Optional name or absolute path of a theme to set. If `nil`, the\n  user is prompted for one.
 set_visible_policy buffer.set_visible_policy(buffer, visible_policy, visible_slop)\nSets the visible policy bit-mask *visible_policy* for displaying lines using\n`buffer:ensure_visible_enforce_policy()` to *visible_slop* number of lines\nfrom the bottom of the view.\nIt is similar in operation to `buffer:set_y_caret_policy()`.\n@param buffer The global buffer.\n@param visible_policy The combination of `_SCINTILLA.constants.VISIBLE_SLOP`\n  (0x01) and `_SCINTILLA.constants.VISIBLE_STRICT` (0x04) policy flags to set.\n@param visible_slop The slop value to use.
 set_whitespace_back buffer.set_whitespace_back(buffer, use_setting, color)\nOverrides the background color of whitespace with *color*, in "0xBBGGRR"\nformat, if *use_setting* is `true`.\n@param buffer The global buffer.\n@param use_setting Whether or not to use *color*.\n@param color The color in "0xBBGGRR" format.
 set_whitespace_fore buffer.set_whitespace_fore(buffer, use_setting, color)\nOverrides the foreground color of whitespace with *color*, in "0xBBGGRR"\nformat, if *use_setting* is `true`.\n@param use_setting Whether or not to use *color*.\n@param color The color in "0xBBGGRR" format.
@@ -1556,54 +1580,26 @@ stuttered_page_down buffer.stuttered_page_down(buffer)\nMoves the caret to the b
 stuttered_page_down_extend buffer.stuttered_page_down_extend(buffer)\nLike `buffer:stuttered_page_down()`, but extends the selected text to the new\nposition.\n@param buffer The global buffer.
 stuttered_page_up buffer.stuttered_page_up(buffer)\nMoves the caret to the top of the page, or if already there, one page up.\n@param buffer The global buffer.
 stuttered_page_up_extend buffer.stuttered_page_up_extend(buffer)\nLike `buffer:stuttered_page_up()`, but extends the selected text to the new\nposition.\n@param buffer The global buffer.
-style lexer.style(style_table)\nCreates and returns a Scintilla style from the given table of style\nproperties.\n@param style_table A table of style properties:\n  * `font` (string) The name of the font the style uses.\n  * `size` (number) The size of the font the style uses.\n  * `bold` (bool) Whether or not the font face is bold.\n  * `italic` (bool) Whether or not the font face is italic.\n  * `underline` (bool) Whether or not the font face is underlined.\n  * `fore` (number) The foreground `color` of the font face.\n  * `back` (number) The background `color` of the font face.\n  * `eolfilled` (bool) Whether or not the background color extends to the end\n    of the line.\n  * `case` (number) The case of the font (1 = upper, 2 = lower, 0 = normal).\n  * `visible` (bool) Whether or not the text is visible.\n  * `changeable` (bool) Whether the text changable or read-only.\n  * `hotspot` (bool) Whether or not the text is clickable.\n@usage local style_bold_italic = style{bold = true, italic = true}\n@usage local style_grey = style{fore = l.colors.grey}\n@return style table\n@see color
 style_at buffer.style_at (table, Read-only)\nTable of style bytes at positions in the buffer starting from zero.
 style_back buffer.style_back (table)\nTable of background colors, in "0xBBGGRR" format, for style numbers from\n`0` to `255`.
 style_bits buffer.style_bits (number)\nThe number of bits in an 8-bit style byte to use for styling.\nThe number of styling bits required by the current lexer is\n`buffer.style_bits_needed`.\nThe default value is `5`.
 style_bits_needed buffer.style_bits_needed (number, Read-only)\nThe number of styling bits required by the current lexer.
 style_bold buffer.style_bold (table)\nTable of flags indicating whether or not text within styles has a bold font\nface for style numbers from `0` to `255`.\nThe default values are `false`.
-style_bracebad lexer.style_bracebad (table)\nThe style used for unmatched brace characters.
-style_bracelight lexer.style_bracelight (table)\nThe style used for highlighted brace characters.
-style_calltip lexer.style_calltip (table)\nThe style used by call tips if `buffer.call_tip_use_style` is set.\nOnly the font name, size, and color attributes are used.
 style_case buffer.style_case (table)\nTable of letter case modes for text within styles for style numbers from\n`0` to `255`.\n\n* `_SCINTILLA.constants.SC_CASE_MIXED` (0)\n  Display text in mixed case.\n* `_SCINTILLA.constants.SC_CASE_UPPER` (1)\n  Display text in upper case.\n* `_SCINTILLA.constants.SC_CASE_LOWER` (2)\n  Display text in lower case.\n\nThe default values are `0`.
 style_changeable buffer.style_changeable (table)\nTable of flags indicating whether or not text within styles is changeable\nfor style numbers from `0` to `255`.\nThe default values are `true`.\nCurrently, read-only styles do not allow the caret into the range of text,\nbut ranges containing read-only text are deletable.
 style_character_set buffer.style_character_set (table)\nTable of character sets for style numbers from `0` to `255`.\n\n* `_SCINTILLA.constants.SC_CHARSET_ANSI` (0)\n* `_SCINTILLA.constants.SC_CHARSET_DEFAULT` (1)\n* `_SCINTILLA.constants.SC_CHARSET_CYRILLIC` (1251)\n* `_SCINTILLA.constants.SC_CHARSET_EASTEUROPE` (238)\n* `_SCINTILLA.constants.SC_CHARSET_GB2312` (134)\n* `_SCINTILLA.constants.SC_CHARSET_HANGUL` (129)\n* `_SCINTILLA.constants.SC_CHARSET_RUSSIAN` (204)\n* `_SCINTILLA.constants.SC_CHARSET_SHIFTJIS` (128)\n* `_SCINTILLA.constants.SC_CHARSET_8859_15` (1000)\n\nThe default values are `1`.
-style_class lexer.style_class (table)\nThe style typically used for class definitions.
 style_clear_all buffer.style_clear_all(buffer)\nSets all styles to have the same properties as\n`_SCINTILLA.constants.STYLE_DEFAULT`.\n@param buffer The global buffer.
-style_comment lexer.style_comment (table)\nThe style typically used for code comments.
-style_constant lexer.style_constant (table)\nThe style typically used for constants.
-style_controlchar lexer.style_controlchar (table)\nThe style used for control characters.\nColor attributes are ignored.
-style_default lexer.style_default (table)\nThe style all styles are based off of.
-style_definition lexer.style_definition (table)\nThe style typically used for definitions.
-style_embedded lexer.style_embedded (table)\nThe style typically used for embedded code.
 style_eol_filled buffer.style_eol_filled (table)\nTable of flags indicating whether or not to extend the background colors of\nstyles whose characters occur last on lines all the way to the right margin\nof the view for style numbers from `0` to `255`.\nThe default values are `false`.
-style_error lexer.style_error (table)\nThe style typically used for erroneous syntax.
 style_font buffer.style_font (table)\nTable of font faces for style numbers from `0` to `255`.
 style_fore buffer.style_fore (table)\nTable of foreground colors, in "0xBBGGRR" format, for style numbers from\n`0` to `255`.
-style_function lexer.style_function (table)\nThe style typically used for function definitions.
 style_hot_spot buffer.style_hot_spot (table)\nTable of flags indicating whether or not text within styles is clickable\nfor style numbers from `0` to `255`.\nThe default values are `false`.
-style_identifier lexer.style_identifier (table)\nThe style typically used for identifier words.
-style_indentguide lexer.style_indentguide (table)\nThe style used for indentation guides.
 style_italic buffer.style_italic (table)\nTable of flags indicating whether or not text within styles has an italic\nfont face for style numbers from `0` to `255`.\nThe default values are `false`.
-style_keyword lexer.style_keyword (table)\nThe style typically used for language keywords.
-style_label lexer.style_label (table)\nThe style typically used for labels.
-style_line_number lexer.style_line_number (table)\nThe style used for all margins except fold margins.
-style_nothing lexer.style_nothing (table)\nThe style typically used for no styling.
-style_number lexer.style_number (table)\nThe style typically used for numbers.
-style_operator lexer.style_operator (table)\nThe style typically used for operators.
-style_preproc lexer.style_preproc (table)\nThe style typically used for preprocessor statements.
-style_regex lexer.style_regex (table)\nThe style typically used for regular expression strings.
 style_reset_default buffer.style_reset_default(buffer)\nResets `_SCINTILLA.constants.STYLE_DEFAULT` to its initial state.\n@param buffer The global buffer.
 style_size buffer.style_size (table)\nTable of font sizes, expressed in whole number points, for style numbers\nfrom `0` to `255`.
 style_size_fractional buffer.style_size_fractional (table)\nTable of character sizes, expressed in hundredths of a point, for style\nnumbers from `0` to `255`.\nFor example, a text size of 9.4 points is set using `940`.
-style_string lexer.style_string (table)\nThe style typically used for strings.
-style_tag lexer.style_tag (table)\nThe style typically used for markup tags.
-style_type lexer.style_type (table)\nThe style typically used for static types.
 style_underline buffer.style_underline (table)\nTable of flags indicating whether or not text within styles has an\nunderlined font face for style numbers from `0` to `255`.\nThe default values are `false`.
-style_variable lexer.style_variable (table)\nThe style typically used for variables.
 style_visible buffer.style_visible (table)\nTable of flags indicating whether or not text within styles is visible for\nstyle numbers from `0` to `255`.\nThe default values are `true`.
 style_weight buffer.style_weight (table)\nTable of character weights ranging from `1` (very light) to `999` (very\nheavy) for text within styles for style numbers from `0` to `255`.\nHowever, most fonts only support a small number of weights:\n\n* `_SCINTILLA.constants.SC_WEIGHT_NORMAL` (400)\n  Normal.\n* `_SCINTILLA.constants.SC_WEIGHT_SEMIBOLD` (600)\n  Semi-bold.\n* `_SCINTILLA.constants.SC_WEIGHT_BOLD` (700)\n  Bold.\n\nThe default values are `400`.
-style_whitespace lexer.style_whitespace (table)\nThe style typically used for whitespace.
 sub string.sub(s, i [, j])\nReturns the substring of `s` that starts at `i` and continues until\n`j`; `i` and `j` can be negative. If `j` is absent, then it is assumed to\nbe equal to -1 (which is the same as the string length). In particular,\nthe call `string.sub(s,1,j)` returns a prefix of `s` with length `j`, and\n`string.sub(s, -i)` returns a suffix of `s` with length `i`.\n\nIf, after the translation of negative indices, `i` is less than 1, it is\ncorrected to 1. If `j` is greater than the string length, it is corrected to\nthat length. If, after these corrections, `i` is greater than `j`, the\nfunction returns the empty string.
 swap_main_anchor_caret buffer.swap_main_anchor_caret(buffer)\nSwaps the anchor and caret positions of the main selection.\n@param buffer The global buffer.
 switch_buffer gui.switch_buffer()\nPrompts the user to select a buffer to switch to.
