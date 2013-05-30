@@ -22,6 +22,7 @@ Bugfixes:
 * Allow empty tables as keychains if they have metatables.
 * Fixed caret placement in block comment/uncomment.
 * Use '\n' keycode in curses instead of '\r'.
+* Fixed crash caused by split views.
 
 Changes:
 

@@ -399,6 +399,7 @@ end)
 -- Updates titlebar and statusbar.
 events_connect(events.BUFFER_AFTER_SWITCH, function()
   set_title()
+  buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   events.emit(events.UPDATE_UI)
 end)
 
