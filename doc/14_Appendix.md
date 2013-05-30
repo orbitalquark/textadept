@@ -258,9 +258,26 @@ Notes:
    a separate *view.lua*. You may use color properties defined earlier. Try to
    refrain from setting properties like `buffer.sel_eol_filled` which belong in
    a [*properties.lua*][] file.
+6. The separate *buffer.lua* is gone. Use [*properties.lua*][] or a
+   [language-specific module][].
 
 [customizing themes]: 09_Themes.html#Customizing.Themes
 [*properties.lua*]: 08_Preferences.html#Buffer.Properties
+[language-specific module]: 07_Modules.html#Buffer.Properties
+
+##### Theme Preference
+
+Textadept 7 ignores the *~/.textadept/theme* and *~/.textadept/theme_term* files
+that specified your preferred Textadept 6 theme. Use *~/.textadept/init.lua* to
+[set a preferred theme][] instead. For example, if you had custom GUI and
+terminal themes:
+
+    -- File *~/.textadept/init.lua*
+    gui.set_theme(not CURSES and 'custom' or 'custom_term')
+
+You may still use absolute paths for themes instead of names.
+
+[set a preferred theme]: 09_Themes.html#Switch.Themes
 
 ### Textadept 5 to 6
 
