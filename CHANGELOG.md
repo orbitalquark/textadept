@@ -4,6 +4,41 @@
 
 [Atom Feed]: feed
 
+## 7.0 alpha (01 Jun 2013)
+
+Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to
+Textadept 7.
+
+Download:
+
+* [Textadept 7.0 alpha -- Win32][]
+* [Textadept 7.0 alpha -- Mac OSX Intel 10.5+][]
+* [Textadept 7.0 alpha -- Linux][]
+* [Textadept 7.0 alpha -- Linux x86_64][]
+* [Textadept 7.0 alpha -- Source][]
+* [Textadept 7.0 alpha -- Modules][]
+
+Bugfixes:
+
+* None.
+
+Changes:
+
+* Completely new [theme implementation][].
+* New [*properties.lua*][] for custom buffer and view properties.
+* Updated to [Scintilla][] 3.3.3.
+
+[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
+[Textadept 7.0 alpha -- Win32]: download/textadept_7.0_alpha.win32.zip
+[Textadept 7.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_7.0_alpha.osx.zip
+[Textadept 7.0 alpha -- Linux]: download/textadept_7.0_alpha.i386.tgz
+[Textadept 7.0 alpha -- Linux x86_64]: download/textadept_7.0_alpha.x86_64.tgz
+[Textadept 7.0 alpha -- Source]: download/textadept_7.0_alpha.src.zip
+[Textadept 7.0 alpha -- Modules]: download/textadept_7.0_alpha.modules.zip
+[theme implementation]: 09_Themes.html
+[*properties.lua*]: 08_Preferences.html#Buffer.Properties
+[Scintilla]: http://scintilla.org
+
 ## 6.6 (01 Jun 2013)
 
 Download:
