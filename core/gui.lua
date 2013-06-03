@@ -19,7 +19,9 @@ local gui = gui
 --   The text displayed by the buffer statusbar.
 module('gui')]]
 
-local theme = _HOME..'/themes/'..(not CURSES and 'light' or 'term')..'.lua'
+local theme = package.searchpath(not CURSES and 'light' or 'term',
+                                 _USERHOME..'/themes/?.lua;'..
+                                 _HOME..'/themes/?.lua')
 
 -- Helper function for printing messages to buffers.
 -- @see gui._print
