@@ -36,9 +36,23 @@ The terminal version of Textadept requires only an implementation of curses like
 
 ## Download
 
-Download Textadept from the project's [download page][].
+Download Textadept from the project's [download page][] or from these quick
+links:
+
+* [Win32][]
+* [Mac OSX][]
+* [Linux][]
+* [Linux x86\_64][]
+* [Source][]
+* [Modules][]
 
 [download page]: http://foicica.com/textadept/download
+[Win32]: download/textadept_LATEST.win32.zip
+[Mac OSX]: download/textadept_LATEST.osx.zip
+[Linux]: download/textadept_LATEST.i386.tgz
+[Linux x86\_64]: download/textadept_LATEST.x86_64.tgz
+[Source]: download/textadept_LATEST.src.zip
+[Modules]: download/textadept_LATEST.modules.zip
 
 ## Installation and Usage
 
