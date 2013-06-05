@@ -132,8 +132,8 @@ M.LANGUAGE_MODULE_PREFIX = (not OSX and not CURSES and CTRL or META)..'l'
 -- @class table
 -- @name KEYSYMS
 M.KEYSYMS = {
-  -- From Scintilla.h and cdk/curdefs.h.
-  [7] = 'esc',
+  -- From Scintilla.h.
+  [7] = 'esc', [13] = '\n',
   -- From curses.h.
   [263] = '\b', [343] = '\n',
   -- From Scintilla.h.
@@ -240,8 +240,8 @@ end
 -- @return `true` to stop handling the key; `nil` otherwise.
 local function keypress(code, shift, control, alt, meta)
   --print(code, M.KEYSYMS[code], shift, control, alt, meta)
-  local key = code < 256 and (not CURSES or code ~= 7) and string.char(code) or
-                                                           M.KEYSYMS[code]
+  local key = code < 256 and (not CURSES or (code ~= 7 and code ~= 13)) and
+              string.char(code) or M.KEYSYMS[code]
   if not key then return end
   shift = shift and (code >= 256 or code == 9) -- printable chars are uppercased
   local key_seq = (control and CTRL or '')..(alt and ALT or '')..
