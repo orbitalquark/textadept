@@ -2367,7 +2367,7 @@ int main(int argc, char **argv) {
 #else
   TermKeyResult res;
   TermKeyKey key;
-  int keysyms[] = {0,SCK_BACK,SCK_TAB,'\n',SCK_ESCAPE,0,0,SCK_UP,SCK_DOWN,SCK_LEFT,SCK_RIGHT,0,0,SCK_INSERT,SCK_DELETE,0,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END};
+  int keysyms[] = {0,SCK_BACK,SCK_TAB,SCK_RETURN,SCK_ESCAPE,0,0,SCK_UP,SCK_DOWN,SCK_LEFT,SCK_RIGHT,0,0,SCK_INSERT,SCK_DELETE,0,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END};
   while ((res = termkey_waitkey(tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
     if (key.type == TERMKEY_TYPE_UNICODE)
