@@ -29,7 +29,7 @@ users _also_ need "libncursesw5-dev".)
 [GNU C compiler]: http://gcc.gnu.org
 [GNU Make]: http://www.gnu.org/software/make/
 [libiconv]: http://www.gnu.org/software/libiconv/
-[GTK+ website]: http://www.gtk.org/download/linux.html
+[GTK+ website]: http://www.gtk.org/download/linux.php
 [ncurses website]: http://invisible-island.net/ncurses/#download_ncurses
 
 ### Windows
@@ -44,7 +44,7 @@ The preferred way to compile for Windows is cross-compiling from Linux. To do
 so, in addition to the GTK+ and/or curses bundles mentioned above, you need
 [MinGW][] with the Windows header files. Your package manager should offer them.
 
-[GTK+ for Windows bundle]: http://www.gtk.org/download/win32.html
+[GTK+ for Windows bundle]: http://www.gtk.org/download/win32.php
 [libiconv for Windows]: http://gnuwin32.sourceforge.net/packages/libiconv.htm
 [win32curses bundle]: download/win32curses.zip
 [MinGW]: http://mingw.org
