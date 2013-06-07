@@ -34,29 +34,33 @@ users _also_ need "libncursesw5-dev".)
 
 ### Windows
 
-Compiling Textadept on Windows is no longer supported. Doing so requires a C
-compiler that supports the C99 standard, the [GTK+ for Windows bundle][]
-(2.24 is recommended), and [libiconv for Windows][] (the "Developer files" and
-"Binaries" zip files). The terminal (pdcurses) version requires my
-[win32curses bundle][] instead of GTK+ and libiconv.
+Compiling Textadept on Windows is no longer supported. The preferred way to
+compile for Windows is cross-compiling from Linux. To do so, you need [MinGW][]
+with the Windows header files. Your package manager should offer them. Run
+`make win32gtk` and/or `make win32curses` to prepare the GTK and/or curses build
+environments.
 
-The preferred way to compile for Windows is cross-compiling from Linux. To do
-so, in addition to the GTK+ and/or curses bundles mentioned above, you need
-[MinGW][] with the Windows header files. Your package manager should offer them.
+Note: compiling on Windows requires a C compiler that supports the C99 standard,
+the [GTK+ for Windows bundle][] (2.24 is recommended), and
+[libiconv for Windows][] (the "Developer files" and "Binaries" zip files). The
+terminal (pdcurses) version requires my [win32curses bundle][] instead of GTK+
+and libiconv.
 
+[MinGW]: http://mingw.org
 [GTK+ for Windows bundle]: http://www.gtk.org/download/win32.php
 [libiconv for Windows]: http://gnuwin32.sourceforge.net/packages/libiconv.htm
 [win32curses bundle]: download/win32curses.zip
-[MinGW]: http://mingw.org
 
 ### Mac OSX
 
 Compiling Textadept on Mac OSX is no longer supported. The preferred way is
-cross-compiling from Linux. To do so, you need my [GTK+ for OSX bundle][] and
-the [Apple Cross-compiler][] binaries.
+cross-compiling from Linux. To do so, you need the [Apple Cross-compiler][]
+binaries. Run `make gtkosx` to prepare the GTK build environment.
 
-[GTK+ for OSX bundle]: download/gtkosx-2.24.16.zip
+Note: compiling on Mac OSX requires my [GTK+ for OSX bundle][].
+
 [Apple Cross-compiler]: https://launchpad.net/~flosoft/+archive/cross-apple
+[GTK+ for OSX bundle]: download/gtkosx-2.24.16.zip
 
 ## Compiling
 
