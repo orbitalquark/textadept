@@ -61,6 +61,18 @@ settings. Tweaking themes is very simple with Lua's `dofile()` function. In your
 This loads Textadept's "light" theme, but applies your font preferences. The
 same technique works for tweaking individual theme colors and/or styles.
 
+### Language-Specific
+
+Textadept also allows you to customize themes per-language through the
+`events.LANGUAGE_MODULE_LOADED` event. For example, changing the color of
+functions in Java from orange to black in the "light" theme looks like this:
+
+    events.connect(events.LANGUAGE_MODULE_LOADED, function(lang)
+      if lang == 'java' then
+        buffer.property['style.function'] = 'fore:%(color.light_black)'
+      end
+    end)
+
 ## GUI Theme
 
 There is no way to theme GUI controls like text fields and buttons from within
