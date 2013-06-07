@@ -234,7 +234,9 @@ events_connect(events.VIEW_NEW, function()
   for _, key in ipairs(ctrl_shift_keys) do
     buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL + c.SCMOD_SHIFT)
   end
-  load_theme_and_settings()
+  -- Since BUFFER_NEW loads themes and settings on startup, only load them for
+  -- subsequent views.
+  if #_VIEWS > 1 then load_theme_and_settings() end
 end)
 events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
