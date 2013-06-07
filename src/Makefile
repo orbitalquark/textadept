@@ -444,3 +444,42 @@ cleanup: ../releases/$(basedir).x86_64.tgz ../releases/$(basedir).i386.tgz \
          ../releases/$(basedir).src.zip ../releases/$(basedir).modules.zip | \
          $(basedir)
 	rm -r $|
+
+# Platform UI directories.
+
+win32gtk_zip = gtk+-bundle_2.24.10-20120208_win32.zip
+win32iconv_bin_zip = libiconv-bin-zip.php
+win32iconv_lib_zip = libiconv-lib-zip.php
+win32curses_zip = win32curses.zip
+pdcurses_zip = download
+gtkosx_zip = gtkosx-2.24.16.zip
+
+$(win32gtk_zip):
+	wget "http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/$@"
+$(win32iconv_bin_zip):
+	wget "http://gnuwin32.sourceforge.net/downlinks/$@"
+$(win32iconv_lib_zip):
+	wget "http://gnuwin32.sourceforge.net/downlinks/$@"
+win32gtk: $(win32gtk_zip) $(win32iconv_bin_zip) $(win32iconv_lib_zip)
+	mkdir $@
+	unzip -d $@ $(win32gtk_zip)
+	for zip in $(win32iconv_bin_zip) $(win32iconv_lib_zip); do \
+		unzip -d $@ $$zip; \
+	done
+$(win32curses_zip):
+	wget "http://foicica.com/textadept/download/$@"
+$(pdcurses_zip):
+	wget "http://sf.net/projects/pdcurses/files/pdcurses/3.4/pdcurs34.zip/$@"
+win32curses: $(win32curses_zip) $(pdcurses_zip)
+	unzip $(win32curses_zip)
+	mkdir $@/src
+	unzip -d $@/src $(pdcurses_zip)
+	cp $@/lib/pdckbd.c $@/src/win32
+	cd $@/src/win32 && $(MAKE) -f gccwin32.mak CC="$(CROSS)$(CC) $(CFLAGS)" \
+		LIBEXE=$(CROSS)ar LINK="$(CROSS)$(CC) $(CFLAGS)" WIDE=Y UTF8=Y
+	cp $@/src/win32/pdcurses.a $@/lib/
+$(gtkosx_zip):
+	wget "http://foicica.com/textadept/download/$@"
+gtkosx: $(gtkosx_zip)
+	unzip $(gtkosx_zip)
+	mv $(shell echo $(gtkosx_zip) | sed -e 's/.zip//;') $@
