@@ -75,7 +75,7 @@ typedef GtkWidget Scintilla;
 #endif
 
 // Window
-static char *textadept_home = NULL;
+static char *textadept_home;
 static Scintilla *focused_view;
 #if GTK
 static GtkWidget *window, *menubar, *statusbar[2];
@@ -100,22 +100,15 @@ static GtkWidget *match_case, *whole_word, *lua_pattern, *in_files;
 typedef GtkListStore ListStore;
 static ListStore *find_store, *repl_store;
 #elif CURSES
-static CDKSCREEN *findbox = NULL;
+static CDKSCREEN *findbox;
 static CDKENTRY *find_entry, *replace_entry, *focused_entry;
-static char *find_text = NULL, *repl_text = NULL, *flabel = NULL,
-            *rlabel = NULL;
+static char *find_text, *repl_text, *flabel, *rlabel;
 typedef int FindButton;
 enum FindButton { fnext_button, r_button, fprev_button, ra_button };
-static int match_case = FALSE, whole_word = FALSE, lua_pattern = FALSE,
-           in_files = FALSE;
-static char *button_labels[4] = { NULL, NULL, NULL, NULL },
-            *option_labels[4] = { NULL, NULL, NULL, NULL };
+static int match_case, whole_word, lua_pattern, in_files;
+static char *button_labels[4], *option_labels[4];
 typedef char * ListStore;
-static ListStore find_store[10] = {
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
-}, repl_store[10] = {
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
-};
+static ListStore find_store[10], repl_store[10];
 #endif
 
 // Command Entry
@@ -125,16 +118,16 @@ static GtkWidget *command_entry;
 static GtkListStore *cc_store;
 static GtkEntryCompletion *command_entry_completion;
 #elif CURSES
-static CDKENTRY *command_entry = NULL;
-static char *command_text = NULL;
+static CDKENTRY *command_entry;
+static char *command_text;
 #endif
 
 // Lua
-static lua_State *lua = NULL;
+static lua_State *lua;
 #if CURSES
-static int quit = FALSE;
+static int quit;
 #endif
-static int closing = FALSE;
+static int closing;
 static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
            tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 static int lL_init(lua_State *, int, char **, int);
