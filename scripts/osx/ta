@@ -1,0 +1,12 @@
+#!/bin/bash
+# Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+  echo "ta - shell script to launch Textadept.app"
+  echo "Usage: ta [args] [filenames]"
+  echo "Run textadept --help for available args."
+elif [ "${1:0:1}" == "-" ]; then
+  open -n -a Textadept.app --args $@
+else
+  open -a Textadept.app $@
+fi

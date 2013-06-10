@@ -117,12 +117,12 @@ Lua library loading do not allow statically linking LuaJIT to Textadept.
 
 When cross-compiling from within Linux, first unzip the GTK+ for OSX bundle into
 a new *src/gtkosx/* directory. Then run `make osx` to build *../textadept.osx*
-and *../textadeptjit.osx*. Build a new *Textadept.app* from an existing one by
-downloading the most recent app and replacing *Contents/MacOS/textadept.osx* and
-*Contents/MacOS/textadeptjit.osx* with your own versions.
+and *../textadeptjit.osx*.
 
 Similarly, `make osx-curses` builds *../textadept-curses.osx* and
 *../textadeptjit-curses.osx*.
+
+Build a new *Textadept.app* with `make osx-app`.
 
 #### Compiling on OSX (Legacy)
 

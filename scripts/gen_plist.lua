@@ -1,0 +1,93 @@
+#!/usr/bin/lua
+-- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
+
+-- This script generates the "Info.plist" file for the Mac OSX App bundle.
+
+local lang, exts
+local languages, extensions = {}, {}
+
+-- Read languages and extensions.
+local f = io.open('../modules/textadept/mime_types.conf')
+for line in f:lines() do
+  if line:find('^%%') then
+    lang, exts = line:match('^%%%s*(.+)$'), {}
+    if lang then languages[#languages + 1], extensions[lang] = lang, exts end
+  elseif line:find('^%a') then
+    exts[#exts + 1] = line:match('^%S+')
+  end
+end
+f:close()
+
+-- Generate and write the XML.
+local xml = {[[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>]]}
+for i = 1, #languages do
+  lang, exts = languages[i], extensions[languages[i]]
+  if #exts > 0 then
+    xml[#xml + 1] = "\t\t<dict>"
+    xml[#xml + 1] = "\t\t\t<key>CFBundleTypeExtensions</key>"
+    xml[#xml + 1] = "\t\t\t<array>"
+    for j = 1, #exts do
+      xml[#xml + 1] = "\t\t\t\t<string>"..exts[j].."</string>"
+    end
+    xml[#xml + 1] = "\t\t\t</array>"
+    xml[#xml + 1] = "\t\t\t<key>CFBundleTypeName</key>"
+    xml[#xml + 1] = "\t\t\t<string>"..lang.." source</string>"
+    xml[#xml + 1] = "\t\t\t<key>CFBundleTypeRole</key>"
+    xml[#xml + 1] = "\t\t\t<string>Editor</string>"
+    xml[#xml + 1] = "\t\t</dict>"
+  end
+end
+xml[#xml + 1] = [[
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>*</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Document</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Document</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>****</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+	</array>
+	<key>CFBundleExecutable</key>
+	<string>textadept</string>
+	<key>CFBundleIconFile</key>
+	<string>textadept.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.textadept</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Textadept</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>7.0 alpha</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+</dict>
+</plist>
+]]
+f = io.open('../src/Info.plist', 'w')
+f:write(table.concat(xml, '\n'))
+f:close()
