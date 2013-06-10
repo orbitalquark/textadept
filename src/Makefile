@@ -373,6 +373,18 @@ cleandoc:
 basedir = textadept_$(shell grep "_RELEASE =" ../core/init.lua | \
                             cut -d ' ' -f 4- | sed -e 's/"//; s/ /_/g;')
 modules = css hypertext java rails rhtml ruby php python
+osxapp = Textadept.app
+osxapp_bin = $(osxapp)/Contents/MacOS
+osxapp_res = $(osxapp)/Contents/Resources
+osxapp_libs = libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib \
+              libffi.5.dylib libfontconfig.1.dylib libfreetype.6.dylib \
+              libgdk_pixbuf-2.0.0.dylib libgdk-quartz-2.0.0.dylib \
+              libgio-2.0.0.dylib libglib-2.0.0.dylib libgmodule-2.0.0.dylib \
+              libgobject-2.0.0.dylib libgthread-2.0.0.dylib \
+              libgtkmacintegration.2.dylib libgtk-quartz-2.0.0.dylib \
+              libintl.8.dylib libpango-1.0.0.dylib libpangocairo-1.0.0.dylib \
+              libpangoft2-1.0.0.dylib libpixman-1.0.dylib libpng14.14.dylib \
+              charset.alias gdk-pixbuf-2.0 gtk-2.0 pango
 
 release: ../textadept ../textadeptjit ../textadept-curses \
          ../textadeptjit-curses ../textadept32 ../textadeptjit32 \
@@ -407,14 +419,20 @@ $(basedir).win64: ../textadept64.exe | $(basedir)
 	for t in `ls $@/textadept*`; do mv $$t `echo $$t | sed -e 's/64\././;'`; done
 	cp win64gtk/bin/*.dll $@ && cp -r win64gtk/etc win64gtk/lib win64gtk/share $@
 	rm -r $@/lib/*.a $@/lib/glib-2.0 $@/lib/gtk-2.0/include $@/lib/pkgconfig
-$(basedir).osx: ../textadept.osx ../textadeptjit.osx ../textadept-curses.osx \
-                ../textadeptjit-curses.osx | $(basedir)
-	mkdir $@ && cp -rL gtkosx/app $@/Textadept.app
-	cp $^ $@/Textadept.app/Contents/MacOS/
-	cp -rL $|/* $@/Textadept.app/Contents/Resources/
-	mv $@/Textadept.app/Contents/Resources/core/images/textadept.icns \
-		$@/Textadept.app/Contents/Resources/
-	mv $@/Textadept.app/Contents/MacOS/ta $@
+osx-app: ../textadept.osx ../textadeptjit.osx ../textadept-curses.osx \
+         ../textadeptjit-curses.osx | $(basedir)
+	mkdir -p $(osxapp_bin) $(osxapp_res)
+	cp Info.plist $(osxapp_bin)/../
+	cp ../scripts/osx/textadept $^ $(osxapp_bin)/
+	cp -rL $|/* $(osxapp_res)/
+	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
+	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
+	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
+	rm -r $(osxapp_res)/lib/gtk-2.0/include $(osxapp_res)/lib/gtk-2.0/modules
+	rm $(osxapp_res)/lib/gtk-2.0/2.10.0/printbackends/*
+$(basedir).osx: osx-app | $(basedir)
+	mkdir $@ && mv $< $@
+	cp ../scripts/osx/ta $@
 $(basedir).src: | $(basedir)
 	cp -r $| $@
 	cp -rL lua luajit scintilla gtdialog LexLPeg.cxx termkey cdk $@/src
@@ -422,9 +440,8 @@ $(basedir).src: | $(basedir)
 	rm -r $@/src/scintilla/.hg
 $(basedir).modules:
 	mkdir -p $@/modules
-	for module in $(modules); do \
-		hg clone /home/mitchell/code/textadept/modules/$$module \
-			$@/modules/$$module; \
+	for mod in $(modules); do \
+		hg clone /home/mitchell/code/textadept/modules/$$mod $@/modules/$$mod; \
 	done
 
 # Release Packages.

@@ -1,0 +1,24 @@
+#!/bin/sh
+# Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
+
+# Set the GTK environment variables of resources within Textadept.app.
+bundle=$(cd "$(dirname "$0")/../../" && pwd)
+bundle_res="$bundle/Contents/Resources"
+export DYLD_LIBRARY_PATH="$bundle_res/lib:$DYLD_LIBRARY_PATH"
+export GTK_DATA_PREFIX="$bundle_res"
+export GTK_EXE_PREFIX="$bundle_res"
+export GTK_PATH="$bundle_res"
+export GTK2_RC_FILES="$bundle_res/etc/gtk-2.0/gtkrc"
+export GTK_IM_MODULE_FILE="$bundle_res/etc/gtk-2.0/gtk.immodules"
+export GDK_PIXBUF_MODULE_FILE="$bundle_res/etc/gtk-2.0/gdk-pixbuf.loaders"
+export PANGO_LIBDIR="$bundle_res/lib"
+export PANGO_SYSCONFDIR="$bundle_res/etc"
+export CHARSETALIASDIR="$bundle_res/lib"
+
+# Strip out the argument added by OSX.
+if [ x`echo "x$1" | sed -e "s/^x-psn_.*//"` == x ]; then shift 1; fi
+
+# Run Textadept.
+textadept=textadept.osx
+if [ ! -z $TEXTADEPTJIT ]; then textadept=textadeptjit.osx; fi
+exec "$bundle/Contents/MacOS/$textadept" "$@"
