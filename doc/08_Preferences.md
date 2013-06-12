@@ -35,7 +35,7 @@ with typeover and stripping whitespace on save, add the following to your
 
     _M.textadept.editing.AUTOPAIR = false
     _M.textadept.editing.TYPEOVER_CHARS = false
-    _M.textadept.editing.STRIP_WHITESPACE_ON_SAVE = false
+    _M.textadept.editing.STRIP_TRAILING_SPACES = false
 
 Now suppose you want to load all of Textadept's default modules except for the
 menu. You cannot do this after-the-fact from *~/.textadept/init.lua*. Instead
