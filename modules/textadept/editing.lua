@@ -24,7 +24,7 @@ local M = {}
 -- @field AUTOINDENT (bool)
 --   Match the indentation level of the previous line when inserting a new line.
 --   The default value is `true`.
--- @field STRIP_WHITESPACE_ON_SAVE (bool)
+-- @field STRIP_TRAILING_SPACES (bool)
 --   Strip trailing whitespace on file save.
 --   The default value is `true`.
 -- @field HIGHLIGHT_COLOR (string)
@@ -36,7 +36,7 @@ M.AUTOPAIR = true
 M.HIGHLIGHT_BRACES = true
 M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
-M.STRIP_WHITESPACE_ON_SAVE = true
+M.STRIP_TRAILING_SPACES = true
 M.HIGHLIGHT_COLOR = not CURSES and 'color.orange' or 'color.yellow'
 
 ---
@@ -160,7 +160,7 @@ end)
 
 -- Prepares the buffer for saving to a file.
 events.connect(events.FILE_BEFORE_SAVE, function()
-  if not M.STRIP_WHITESPACE_ON_SAVE then return end
+  if not M.STRIP_TRAILING_SPACES then return end
   local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
