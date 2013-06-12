@@ -58,16 +58,6 @@ Take a look at these [commands][].
 - - -
 
 **Q:**
-Clicking "Block Comment" (or executing the key command) does nothing. Why?
-
-**A:**
-Take a look at these [comments][].
-
-[comments]: http://foicica.com/wiki/comment-supplemental
-
-- - -
-
-**Q:**
 The curses version does not support feature _x_ the GUI version does. Is this a
 bug?
 

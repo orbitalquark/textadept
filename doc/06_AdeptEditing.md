@@ -294,11 +294,4 @@ modules usually define their [own set][] of snippets, but your
 
 Pressing `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in curses) comments or uncomments the
 code on the selected lines. Selecting any part of a line renders the entire line
-eligible for commenting or uncommenting. Note: In order for this feature to
-work, the language you are working with must have its comment prefix defined.
-Language-specific modules usually [define prefixes][], but you can do so
-[manually][] in your [user-init file][].
-
-[define prefixes]: api/_M.html#Block.Comment
-[manually]: http://foicica.com/wiki/comment-supplemental
-[user-init file]: 08_Preferences.html#User.Init
+eligible for commenting or uncommenting.

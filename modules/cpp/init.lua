@@ -23,9 +23,6 @@ local M = {}
 --   from *`_USERHOME`/modules/cpp/api*.
 module('_M.cpp')]]
 
--- Comment string tables use lexer names.
-_M.textadept.editing.comment_string.cpp = '//'
-
 -- Compile and Run command tables use file extensions.
 _M.textadept.run.compile_command.c =
   'gcc -pedantic -Os -o "%(filename_noext)" %(filename)'
