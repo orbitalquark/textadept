@@ -40,16 +40,14 @@ M.STRIP_TRAILING_SPACES = true
 M.HIGHLIGHT_COLOR = not CURSES and 'color.orange' or 'color.yellow'
 
 ---
--- Map of lexer names to line comment prefix strings for programming languages,
--- used by the `block_comment()` function.
--- Keys are lexer names and values are the line comment prefixes for the
--- language. This table is typically populated by [language-specific modules][].
---
--- [language-specific modules]: _M.html#Block.Comment
+-- Map of lexer names to line comment strings for programming languages, used by
+-- the `block_comment()` function.
+-- Keys are lexer names and values are either the language's line comment
+-- prefixes or block comment delimiters separated by a '|'.
 -- @class table
 -- @name comment_string
 -- @see block_comment
-M.comment_string = {}
+M.comment_string = {actionscript='//',ada='--',antlr='//',adpl='!',applescript='--',asp='\'',awk='#',b_lang='//',bash='#',batch=':',bibtex='%',boo='#',chuck='//',cmake='#',coffeescript='#',context='%',cpp='//',csharp='//',css='/*|*/',cuda='//',desktop='#',django='{#|#}',dmd='//',dot='//',eiffel='--',erlang='%',forth='|\\',fortran='!',fsharp='//',gap='#',gettext='#',glsl='//',gnuplot='#',go='//',groovy='//',gtkrc='#',haskell='--',hypertext='<!--|-->',idl='//',inform='!',ini='#',Io='#',java='//',javascript='//',json='/*|*/',jsp='//',latex='%',less='//',lilypond='%',lisp=';',lua='--',makefile='#',matlab='#',nemerle='//',nsis='#',objective_c='//',pascal='//',perl='#',php='//',pike='//',pkgbuild='#',prolog='%',props='#',ps='%',python='#',rails='#',rebol=';',rexx='--',rhtml='<!--|-->',rstats='#',ruby='#',sass='//',scala='//',scheme=';',smalltalk='"|"',sql='#',tcl='#',tex='%',vala='//',vb='\'',vbscript='\'',verilog='//',vhdl='--',xml='<!--|-->'}
 
 ---
 -- Map of auto-paired characters like parentheses, brackets, braces, and quotes,
@@ -264,38 +262,49 @@ function M.autocomplete_word(default_words)
 end
 
 ---
--- Comments or uncomments the selected lines with line comment prefix string
--- *prefix* or the prefix from the `comment_string` table for the current lexer.
+-- Comments or uncomments the selected lines with line comment string *comment*
+-- or the comment from the `comment_string` table for the current lexer.
 -- As long as any part of a line is selected, the entire line is eligible for
 -- commenting/uncommenting.
--- @param prefix Optional prefix string inserted or removed from the beginning
---   of each line in the selection. The default value is the prefix in the
---   `comment_string` table for the current lexer.
+-- @param comment Optional comment string inserted or removed from each line in
+--   the selection. Comment delimiters are separated by a '|'. The default value
+--   is the comment in the `comment_string` table for the current lexer.
 -- @see comment_string
 -- @name block_comment
-function M.block_comment(prefix)
+function M.block_comment(comment)
   local buffer = buffer
-  prefix = prefix or M.comment_string[buffer:get_lexer(true)]
+  comment = comment or M.comment_string[buffer:get_lexer(true)]
+  local prefix, suffix = comment:match('^([^|]+)|?([^|]*)$')
   if not prefix then return end
   local anchor, pos = buffer.selection_start, buffer.selection_end
   local s, e = buffer:line_from_position(anchor), buffer:line_from_position(pos)
-  if s ~= e and pos == buffer:position_from_line(e) then e = e - 1 end
+  local ignore_last_line = s ~= e and pos == buffer:position_from_line(e)
   anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
   buffer:begin_undo_action()
-  for line = s, e do
-    local pos = buffer:position_from_line(line)
-    if buffer:text_range(pos, pos + #prefix) == prefix then
-      buffer:set_sel(pos, pos + #prefix)
+  for line = s, not ignore_last_line and e or e - 1 do
+    local p = buffer:position_from_line(line)
+    if buffer:text_range(p, p + #prefix) == prefix then
+      buffer:set_sel(p, p + #prefix)
       buffer:replace_sel('')
+      if suffix ~= '' then
+        p = buffer.line_end_position[line]
+        buffer:set_sel(p - #suffix, p)
+        buffer:replace_sel('')
+        if line == s then anchor = anchor - #suffix end
+        if line == e then pos = pos - #suffix end
+      end
     else
-      buffer:insert_text(pos, prefix)
+      buffer:insert_text(p, prefix)
+      if suffix ~= '' then
+        buffer:insert_text(buffer.line_end_position[line], suffix)
+        if line == s then anchor = anchor + #suffix end
+        if line == e then pos = pos + #suffix end
+      end
     end
   end
   buffer:end_undo_action()
   anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
-  if anchor < buffer:position_from_line(s) then
-    anchor = buffer:position_from_line(s) -- stay on the first line
-  end
+  anchor = math.max(anchor, buffer:position_from_line(s)) -- stay on first line
   if s ~= e then buffer:set_sel(anchor, pos) else buffer:goto_pos(pos) end
 end
 

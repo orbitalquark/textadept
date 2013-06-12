@@ -24,9 +24,6 @@ local M = {}
 --   from *`_USERHOME`/modules/lua/api*.
 module('_M.lua')]]
 
--- Comment string tables use lexer names.
-_M.textadept.editing.comment_string.lua = '--'
-
 -- Compile and Run command tables use file extensions.
 _M.textadept.run.compile_command.lua = 'luac %(filename)'
 _M.textadept.run.run_command.lua = 'lua %(filename)'
