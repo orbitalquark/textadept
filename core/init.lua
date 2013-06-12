@@ -13,7 +13,6 @@ require('lfs_ext')
 require('gui')
 keys = require('keys')
 
-_LEXERPATH = _USERHOME..'/lexers/?.lua;'.._HOME..'/lexers'
 _M = {} -- modules table
 -- LuaJIT compatibility.
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
@@ -23,10 +22,6 @@ if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 -- Extends Lua's _G table to provide extra functions and fields for Textadept.
 -- @field _HOME (string)
 --   The path to the directory containing Textadept.
--- @field _LEXERPATH (string)
---   The paths to lexers, formatted like Lua's [`package.path`][].
---
---   [`package.path`]: http://lua.org/manual/5.2/manual.html#pdf-package.path
 -- @field _RELEASE (string)
 --   The Textadept release version string.
 -- @field _USERHOME (string)

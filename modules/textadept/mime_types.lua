@@ -43,7 +43,7 @@ M.shebangs = {}
 M.patterns = {}
 
 ---
--- List of lexers found in `_LEXERPATH`.
+-- List of available lexers.
 -- @class table
 -- @name lexers
 M.lexers = {}
@@ -157,7 +157,7 @@ end
 
 -- Generate lexer list.
 local lexers_found = {}
-for dir in _LEXERPATH:gsub('[/\\]%?%.lua', ''):gmatch('[^;]+') do
+for _, dir in ipairs{_HOME..'/lexers', _USERHOME..'/lexers'} do
   if lfs.attributes(dir) then
     for lexer in lfs.dir(dir) do
       if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
