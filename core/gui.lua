@@ -250,7 +250,8 @@ events_connect(events.BUFFER_NEW, function()
   buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-  buffer.property['lexer.lpeg.home'] = _LEXERPATH
+  buffer.property['lexer.lpeg.home'] = _USERHOME..'/lexers/?.lua;'..
+                                       _HOME..'/lexers'
   load_theme_and_settings()
   buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
 end)
