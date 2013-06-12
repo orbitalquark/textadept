@@ -6,18 +6,8 @@ local M = {}
 ---
 -- Map of all messages used by Textadept to their localized form.
 -- If the table does not contain the localized version of a given message, it
--- returns a string indicating so via a metamethod.
+-- returns a string that starts with "No Localization:" via a metamethod.
 module('_L')]]
-
-local none = 'No Localization: '
-
----
--- Returns whether or not *message* is localized.
--- This function is necessary since `_L[message]` never returns `nil`.
--- @param message The message to localize.
--- @return `true` if a localization exists, `false` otherwise.
--- @name _EXISTS
-function M._EXISTS(message) return M[message] ~= none..message end
 
 local f = io.open(_USERHOME..'/locale.conf', 'rb')
 if not f then
@@ -34,4 +24,5 @@ for line in f:lines() do
 end
 f:close()
 
-return setmetatable(M, {__index = function(t, k) return none..k end})
+return setmetatable(M,
+                    {__index = function(t, k) return 'No Localization:'..k end})
