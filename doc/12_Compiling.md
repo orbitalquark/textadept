@@ -36,9 +36,7 @@ users _also_ need "libncursesw5-dev".)
 
 Compiling Textadept on Windows is no longer supported. The preferred way to
 compile for Windows is cross-compiling from Linux. To do so, you need [MinGW][]
-with the Windows header files. Your package manager should offer them. Run
-`make win32gtk` and/or `make win32curses` to prepare the GTK and/or curses build
-environments.
+with the Windows header files. Your package manager should offer them.
 
 Note: compiling on Windows requires a C compiler that supports the C99 standard,
 the [GTK+ for Windows bundle][] (2.24 is recommended), and
@@ -55,23 +53,18 @@ and libiconv.
 
 Compiling Textadept on Mac OSX is no longer supported. The preferred way is
 cross-compiling from Linux. To do so, you need the [Apple Cross-compiler][]
-binaries. Run `make gtkosx` to prepare the GTK build environment.
-
-Note: compiling on Mac OSX requires my [GTK+ for OSX bundle][].
+binaries.
 
 [Apple Cross-compiler]: https://launchpad.net/~flosoft/+archive/cross-apple
-[GTK+ for OSX bundle]: download/gtkosx-2.24.16.zip
 
 ## Compiling
 
-Make sure you downloaded the *textadept_x.x.src.zip*, regardless of what
-platform you are on, and not a platform-specific binary package.
-
 ### Linux and BSD
 
-For Linux and BSD systems, simply run `make` in the *src/* directory, which
-creates the *textadept* and *textadeptjit* executables in the root directory.
-Make a symlink from them to */usr/bin/* or elsewhere in your `PATH`.
+For Linux and BSD systems, simply run `make deps` in the *src/* directory to
+prepare the build environment followed by `make` to build the *textadept* and
+*textadeptjit* executables in the root directory. Make a symlink from them to
+*/usr/bin/* or elsewhere in your `PATH`.
 
 Similarly, `make curses` builds *textadept-curses* and *textadeptjit-curses*.
 
@@ -87,25 +80,25 @@ compiler flags do not include them by default.
 
 Textadept is self-contained, meaning you do not have to install it, and runs
 from its current location. Should you choose to install Textadept like a normal
-Linux application, run the usual `make` and then `make install` or
-`sudo make install` commands depending on your privilages. The default prefix is
-*/usr/local* but setting `DESTDIR` (e.g.
+Linux application, run `make deps` and then the usual `make` and `make install`
+or `sudo make install` commands depending on your privilages. The default prefix
+is */usr/local* but setting `DESTDIR` (e.g.
 `make install DESTDIR=/prefix/to/install/to`) changes it.
 
 Similarly, `make curses` and `make curses install` installs the curses version.
 
 ### Cross Compiling for Windows
 
-When cross-compiling from within Linux, first unzip the GTK+ for Windows bundle
-into a new *src/win32gtk/* directory. Also, unzip the libiconv zips into the
-same directory. Then, depending on your MinGW installation, either run
-`make win32`, modify the `CROSS` variable in the "win32" block of *src/Makefile*
-and run `make win32`, or run `make CROSS=i486-mingw32- win32` to build
-*../textadept.exe* and *../textadeptjit.exe*. Finally, copy the dll files from
-*src/win32gtk/bin/* to the directory containing the Textadept executables.
+When cross-compiling from within Linux, first make a note of your MinGW
+compiler names. You may have to either modify the `CROSS` variable in the
+"win32" block of *src/Makefile* or append something like "CROSS=i486-mingw32-"
+when running `make`. After considering your MinGW compiler names, run
+`make win32-deps` or `make CROSS=i486-mingw32- win32-deps` to prepare the build
+environment followed by `make win32` or `make CROSS=i486-mingw32- win32` to
+build *../textadept.exe* and *../textadeptjit.exe*. Finally, copy the dll files
+from *src/win32gtk/bin/* to the directory containing the Textadept executables.
 
-Similarly for the terminal version, unzip the win32curses bundle into a new
-*src/win32curses/* directory and run `make win32-curses` or its variants as
+Similarly for the terminal version, run `make win32-curses` or its variant as
 suggested above to build *../textadept-curses.exe* and
 *../textadeptjit-curses.exe*.
 
@@ -115,9 +108,9 @@ Lua library loading do not allow statically linking LuaJIT to Textadept.
 
 ### Cross Compiling for Mac OSX
 
-When cross-compiling from within Linux, first unzip the GTK+ for OSX bundle into
-a new *src/gtkosx/* directory. Then run `make osx` to build *../textadept.osx*
-and *../textadeptjit.osx*.
+When cross-compiling from within Linux, run `make osx-deps` to prepare the build
+environment followed by `make osx` to build *../textadept.osx* and
+*../textadeptjit.osx*.
 
 Similarly, `make osx-curses` builds *../textadept-curses.osx* and
 *../textadeptjit-curses.osx*.
@@ -170,9 +163,9 @@ non-Lua, libraries.
 
 [CDK][] is a library of curses widgets. The terminal version of Textadept
 includes a slightly modified, stripped down version of this library. The changes
-made to CDK are as follows:
+made to CDK are in *src/cdk.patch* and listed as follows:
 
-* Removed the following source files: *alphalist.c*, *calendar.c*,
+* Excluded the following source files: *alphalist.c*, *calendar.c*,
   *cdk_compat.{c,h}*, *cdk_test.h*, *dialog.c*, *{d,f}scale.{c,h}*,
   *fslider.{c,h}*, *gen-{scale,slider}.{c,h}*, *get_index.c*, *get_string.c*,
   *graph.c*, *histogram.c*, *marquee.c*, *matrix.c*, *popup_dialog.c*,

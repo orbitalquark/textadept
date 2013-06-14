@@ -1,0 +1,53 @@
+diff -r a7133e1798ac src/Makefile
+--- a/src/Makefile	Thu Jun 13 08:39:50 2013 -0400
++++ b/src/Makefile	Thu Jun 13 08:43:22 2013 -0400
+@@ -100,7 +100,7 @@
+ # enabled by default. Some other features that *might* break some existing
+ # code (e.g. __pairs or os.execute() return values) can be enabled here.
+ # Note: this does not provide full compatibility with Lua 5.2 at this time.
+-#XCFLAGS+= -DLUAJIT_ENABLE_LUA52COMPAT
++XCFLAGS+= -DLUAJIT_ENABLE_LUA52COMPAT
+ #
+ # Disable the JIT compiler, i.e. turn LuaJIT into a pure interpreter.
+ #XCFLAGS+= -DLUAJIT_DISABLE_JIT
+diff -r a7133e1798ac src/luaconf.h
+--- a/src/luaconf.h	Thu Jun 13 08:39:50 2013 -0400
++++ b/src/luaconf.h	Thu Jun 13 08:43:22 2013 -0400
+@@ -18,15 +18,11 @@
+ #define LUA_LDIR	"!\\lua\\"
+ #define LUA_CDIR	"!\\"
+ #define LUA_PATH_DEFAULT \
+-  ".\\?.lua;" LUA_LDIR"?.lua;" LUA_LDIR"?\\init.lua;"
++  LUA_LDIR"?.lua;" LUA_LDIR"?\\init.lua;"
+ #define LUA_CPATH_DEFAULT \
+-  ".\\?.dll;" LUA_CDIR"?.dll;" LUA_CDIR"loadall.dll"
++  LUA_CDIR"?.dll;" LUA_CDIR"loadall.dll"
+ #else
+-/*
+-** Note to distribution maintainers: do NOT patch the following line!
+-** Please read ../doc/install.html#distro and pass PREFIX=/usr instead.
+-*/
+-#define LUA_ROOT	"/usr/local/"
++#define LUA_ROOT	"/usr/"
+ #define LUA_LDIR	LUA_ROOT "share/lua/5.1/"
+ #define LUA_CDIR	LUA_ROOT "lib/lua/5.1/"
+ #ifdef LUA_XROOT
+@@ -40,14 +36,14 @@
+ #define LUA_XCPATH
+ #endif
+ #define LUA_PATH_DEFAULT \
+-  "./?.lua;" LUA_JDIR"?.lua;" LUA_LDIR"?.lua;" LUA_LDIR"?/init.lua" LUA_XPATH
++  LUA_JDIR"?.lua;" LUA_LDIR"?.lua;" LUA_LDIR"?/init.lua" LUA_XPATH
+ #define LUA_CPATH_DEFAULT \
+-  "./?.so;" LUA_CDIR"?.so;" LUA_XCPATH LUA_CDIR"loadall.so"
++  LUA_CDIR"?.so;" LUA_XCPATH LUA_CDIR"loadall.so"
+ #endif
+ 
+ /* Environment variable names for path overrides and initialization code. */
+-#define LUA_PATH	"LUA_PATH"
+-#define LUA_CPATH	"LUA_CPATH"
++#define LUA_PATH	"TA_LUA_PATH"
++#define LUA_CPATH	"TA_LUA_CPATH"
+ #define LUA_INIT	"LUA_INIT"
+ 
+ /* Special file system characters. */
