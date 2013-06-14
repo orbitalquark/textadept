@@ -178,10 +178,8 @@ lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
            lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
            lmathlib.o loadlib.o loslib.o ltablib.o lstrlib.o \
-           lpeg.o lfs.o
-#          lpvm.o lpcap.o lptree.o lpcode.o lpprint.o lfs.o
-luajit_objs = lpegjit.o lfsjit.o
-#luajit_objs= lpvmjit.o lpcapjit.o lptreejit.o lpcodejit.o lpprintjit.o lfsjit.o
+           lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
+luajit_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o lfsjit.o
 termkey_objs = termkey.o driver-ti.o driver-csi.o
 cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
            cdk_params.o cdkscreen.o debug.o draw.o entry.o fselect.o \
@@ -210,6 +208,11 @@ tmp:
 	@echo /tmp/tabuild ready for building.
 
 # Dependencies.
+
+base_deps = scintilla scintilla/term scintillua lua lualibs luajit gtdialog cdk
+deps: $(base_deps) termkey
+win32-deps: $(base_deps) win32gtk win32curses
+osx-deps: $(base_deps) gtkosx termkey
 
 $(scintilla_objs): scintilla/src/*.cxx scintilla/lexlib/*.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $^
@@ -242,9 +245,9 @@ textadept-curses.o: textadept.c
 textadeptjit-curses.o: textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src \
 		-Iscintilla/term -Itermkey -Icdk $(curses_flags) $< -o $@
-$(lua_objs): lua/src/*.c lua/src/lib/*.c lua/src/lib/lpeg/*.c
+$(lua_objs): lua/src/*.c lua/src/lib/*.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Ilua/src $^
-$(luajit_objs): lua/src/lib/*.c lua/src/lib/lpeg/*.c
+$(luajit_objs): $(addprefix lua/src/lib/, $(luajit_objs:jit.o=.c))
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Iluajit/src $^
 	for lib in $(luajit_objs); do mv $$(echo $$lib | sed 's/jit//g') $$lib; done
 libluajit.a:
@@ -268,10 +271,10 @@ gtdialog.o: gtdialog/gtdialog.c
 gtdialog-curses.o: gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -DCURSES -DNOHELP -DLIBRARY -Icdk $(curses_flags) \
 		$< -o $@
-$(termkey_objs): termkey/*.c
-	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 $^
-$(cdk_objs): cdk/*.c
+$(cdk_objs): $(addprefix cdk/, $(cdk_objs:.o=.c))
 	$(CROSS)$(CC) -c $(CFLAGS) -D_GNU_SOURCE -Icdk $(curses_flags) $^
+$(termkey_objs): $(addprefix termkey/, $(termkey_objs:.o=.c))
+	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 $^
 textadept_rc.o: textadept.rc
 	$(CROSS)$(WINDRES) $^ $@
 
@@ -462,8 +465,18 @@ cleanup: ../releases/$(basedir).x86_64.tgz ../releases/$(basedir).i386.tgz \
          $(basedir)
 	rm -r $|
 
-# Platform UI directories.
+# External dependencies.
 
+scintilla_tgz = scintilla333.tgz?download
+scinterm_zip = scinterm.zip
+scintillua_zip = scintillua.zip
+lua_tgz = lua-5.2.2.tar.gz
+lpeg_tgz = lpeg-0.12.tar.gz
+lfs_zip = master.zip
+luajit_tgz = LuaJIT-2.0.2.tar.gz
+gtdialog_zip = gtdialog.zip
+cdk_tgz = cdk.tar.gz
+termkey_tgz = libtermkey-0.16.tar.gz
 win32gtk_zip = gtk+-bundle_2.24.10-20120208_win32.zip
 win32iconv_bin_zip = libiconv-bin-zip.php
 win32iconv_lib_zip = libiconv-lib-zip.php
@@ -471,32 +484,64 @@ win32curses_zip = win32curses.zip
 pdcurses_zip = download
 gtkosx_zip = gtkosx-2.24.16.zip
 
+$(scintilla_tgz): ; wget "http://prdownloads.sourceforge.net/scintilla/$@"
+scintilla: scintilla.patch | $(scintilla_tgz)
+	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
+	patch -d $@ -N -p1 < $<
+$(scinterm_zip):
+	wget "http://foicica.com/hg/scinterm/archive/tip.zip" && mv tip.zip $@
+scintilla/term: | $(scinterm_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
+scintillua: ../lexers LexLPeg.cxx
+$(scintillua_zip):
+	wget "http://foicica.com/hg/scintillua/archive/tip.zip" && mv tip.zip $@
+../lexers: | $(scintillua_zip)
+	mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
+	ln -s $@/lexers/*.lua $@
+LexLPeg.cxx: | ../lexers ; ln -s $|/$@ $@
+$(lua_tgz): ; wget "http://www.lua.org/ftp/$@"
+$(lpeg_tgz): ; wget "http://www.inf.puc-rio.br/~roberto/lpeg/$@"
+$(lfs_zip): ; wget "https://github.com/keplerproject/luafilesystem/archive/$@"
+lua: lua.patch | $(lua_tgz)
+	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
+	patch -d $@ -N -p1 < $<
+lualibs: lua/src/lib/lpeg lua/src/lib/lfs
+lua/src/lib/lpeg: | $(lpeg_tgz)
+	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
+lua/src/lib/lfs: | $(lfs_zip)
+	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
+$(luajit_tgz): ; wget "http://luajit.org/download/$@"
+luajit: luajit.patch | $(luajit_tgz)
+	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
+	patch -d $@ -N -p1 < $<
+$(gtdialog_zip):
+	wget "http://foicica.com/hg/gtdialog/archive/tip.zip" && mv tip.zip $@
+gtdialog: | $(gtdialog_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
+$(cdk_tgz): ; wget "http://invisible-island.net/datafiles/release/$@"
+cdk: cdk.patch | $(cdk_tgz)
+	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
+	mv $@/include/*.h $@
+	patch -d $@ -N -p1 < $<
+$(termkey_tgz): ; wget "http://www.leonerd.org.uk/code/libtermkey/$@"
+termkey: | $(termkey_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(win32gtk_zip):
 	wget "http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/$@"
-$(win32iconv_bin_zip):
-	wget "http://gnuwin32.sourceforge.net/downlinks/$@"
-$(win32iconv_lib_zip):
-	wget "http://gnuwin32.sourceforge.net/downlinks/$@"
-win32gtk: $(win32gtk_zip) $(win32iconv_bin_zip) $(win32iconv_lib_zip)
+$(win32iconv_bin_zip): ; wget "http://gnuwin32.sourceforge.net/downlinks/$@"
+$(win32iconv_lib_zip): ; wget "http://gnuwin32.sourceforge.net/downlinks/$@"
+win32gtk: | $(win32gtk_zip) $(win32iconv_bin_zip) $(win32iconv_lib_zip)
 	mkdir $@
 	unzip -d $@ $(win32gtk_zip)
 	for zip in $(win32iconv_bin_zip) $(win32iconv_lib_zip); do \
 		unzip -d $@ $$zip; \
 	done
-$(win32curses_zip):
-	wget "http://foicica.com/textadept/download/$@"
+$(win32curses_zip): ; wget "http://foicica.com/textadept/download/$@"
 $(pdcurses_zip):
 	wget "http://sf.net/projects/pdcurses/files/pdcurses/3.4/pdcurs34.zip/$@"
-win32curses: $(win32curses_zip) $(pdcurses_zip)
+win32curses: | $(win32curses_zip) $(pdcurses_zip)
 	unzip $(win32curses_zip)
-	mkdir $@/src
-	unzip -d $@/src $(pdcurses_zip)
+	mkdir $@/src && unzip -d $@/src $(pdcurses_zip)
 	cp $@/lib/pdckbd.c $@/src/win32
 	cd $@/src/win32 && $(MAKE) -f gccwin32.mak CC="$(CROSS)$(CC) $(CFLAGS)" \
 		LIBEXE=$(CROSS)ar LINK="$(CROSS)$(CC) $(CFLAGS)" WIDE=Y UTF8=Y
 	cp $@/src/win32/pdcurses.a $@/lib/
-$(gtkosx_zip):
-	wget "http://foicica.com/textadept/download/$@"
-gtkosx: $(gtkosx_zip)
-	unzip $(gtkosx_zip)
-	mv $(shell echo $(gtkosx_zip) | sed -e 's/.zip//;') $@
+$(gtkosx_zip): ; wget "http://foicica.com/textadept/download/$@"
+gtkosx: | $(gtkosx_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
