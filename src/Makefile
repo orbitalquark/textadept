@@ -200,7 +200,7 @@ osx-curses: textadept-curses.osx textadeptjit-curses.osx
 
 tmp:
 	rm -rf /tmp/tabuild && hg clone ../ /tmp/tabuild
-	cp -rL ../Doxyfile ../doc ../lexers ../modules /tmp/tabuild/
+	cp -rL ../doc ../lexers ../modules /tmp/tabuild/
 	cp -rL gtdialog gtkosx LexLPeg.cxx libluajit*.a lua luajit lua51.dll \
 		scintilla termkey cdk win*gtk win*curses /tmp/tabuild/src/
 	cd /tmp/tabuild/src/luajit && $(MAKE) clean
@@ -275,8 +275,7 @@ $(cdk_objs): $(addprefix cdk/, $(cdk_objs:.o=.c))
 	$(CROSS)$(CC) -c $(CFLAGS) -D_GNU_SOURCE -Icdk $(curses_flags) $^
 $(termkey_objs): $(addprefix termkey/, $(termkey_objs:.o=.c))
 	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 $^
-textadept_rc.o: textadept.rc
-	$(CROSS)$(WINDRES) $^ $@
+textadept_rc.o: textadept.rc ; $(CROSS)$(WINDRES) $^ $@
 
 # Executables.
 
@@ -294,10 +293,10 @@ textadeptjit-curses: $(scintilla_objs) ScintillaTerm.o LexLPegjit-curses.o \
                      textadeptjit-curses.o $(luajit_objs) $(libluajit) \
                      gtdialog-curses.o $(termkey_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(curses_libs) $(LDFLAGS)
-textadept32: ../textadept; mv $< ../$@
-textadeptjit32: ../textadeptjit; mv $< ../$@
-textadept32-curses: ../textadept-curses; mv $< ../$@
-textadeptjit32-curses: ../textadeptjit-curses; mv $< ../$@
+textadept32: ../textadept ; mv $< ../$@
+textadeptjit32: ../textadeptjit ; mv $< ../$@
+textadept32-curses: ../textadept-curses ; mv $< ../$@
+textadeptjit32-curses: ../textadeptjit-curses ; mv $< ../$@
 textadept.exe: $(scintilla_objs) $(scintilla_gtk_objs) scintilla-marshal.o \
                LexLPeg.o textadept.o textadept_rc.o $(lua_objs) gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(gtk_libs) $(LDFLAGS)
@@ -330,10 +329,10 @@ textadeptjit64-curses.exe: $(scintilla_objs) ScintillaTerm.o \
                            textadept_rc.o $(luajit_objs) lua51_64.dll \
                            gtdialog-curses.o $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(curses_libs) $(LDFLAGS)
-textadept.osx: textadept; mv ../$< ../$@
-textadeptjit.osx: textadeptjit; mv ../$< ../$@
-textadept-curses.osx: textadept-curses; mv ../$< ../$@
-textadeptjit-curses.osx: textadeptjit-curses; mv ../$< ../$@
+textadept.osx: textadept ; mv ../$< ../$@
+textadeptjit.osx: textadeptjit ; mv ../$< ../$@
+textadept-curses.osx: textadept-curses ; mv ../$< ../$@
+textadeptjit-curses.osx: textadeptjit-curses ; mv ../$< ../$@
 
 # Install/uninstall.
 
@@ -343,33 +342,24 @@ install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
 	install $^ $(data_dir)
 	cp -r $| $(data_dir)
 	ln -s $(subst .., $(subst $(DESTDIR),, $(data_dir)), $^) $(bin_dir)
-uninstall:
-	rm $(bin_dir)/textadept*
-	rm -r $(data_dir)
+uninstall: ; rm -r $(bin_dir)/textadept* $(data_dir)
 
 # Clean.
 
-mostlyclean:
-	rm -f *.o
-cleanjit:
-	cd luajit && $(MAKE) clean
-clean: mostlyclean cleanjit
-	rm -f ../textadept* *.a *.dll
+mostlyclean: ; rm -f *.o
+cleanjit: ; cd luajit && $(MAKE) clean
+clean: mostlyclean cleanjit ; rm -f ../textadept* *.a *.dll
 
 # Documentation.
 
-doc: manual luadoc adeptsense doxygen
-manual: ../doc/*.md ../*.md
-	../doc/bombay -d ../doc -t ../doc --title Textadept --navtitle Manual $^
+doc: manual luadoc adeptsense
+manual: ../doc/*.md ../*.md | ../doc/bombay
+	$| -d ../doc -t ../doc --title Textadept --navtitle Manual $^
 luadoc: ../modules ../core ../lexers/lexer.lua
 	cd ../doc && $(luadoc) -d . -t . --doclet markdowndoc $^
 adeptsense: ../modules ../core ../lexers/lexer.lua
 	cd ../modules && $(luadoc) -d lua --doclet lua/adeptsensedoc $^
-doxygen: ../Doxyfile
-	doxygen $<
-cleandoc:
-	rm -f ../doc/*.html
-	rm -rf ../doc/api ../doc/doxygen
+cleandoc: ; rm -rf ../doc/*.html ../doc/api
 
 # Package.
 
@@ -483,6 +473,7 @@ win32iconv_lib_zip = libiconv-lib-zip.php
 win32curses_zip = win32curses.zip
 pdcurses_zip = download
 gtkosx_zip = gtkosx-2.24.16.zip
+bombay_zip = bombay.zip
 
 $(scintilla_tgz): ; wget "http://prdownloads.sourceforge.net/scintilla/$@"
 scintilla: scintilla.patch | $(scintilla_tgz)
@@ -545,3 +536,8 @@ win32curses: | $(win32curses_zip) $(pdcurses_zip)
 	cp $@/src/win32/pdcurses.a $@/lib/
 $(gtkosx_zip): ; wget "http://foicica.com/textadept/download/$@"
 gtkosx: | $(gtkosx_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
+$(bombay_zip):
+	wget "http://foicica.com/hg/bombay/archive/tip.zip" && mv tip.zip $@
+../doc/bombay: | $(bombay_zip)
+	mkdir $(notdir $@) && unzip -d $(notdir $@) $| && \
+		mv $(notdir $@)/*/* $(dir $@)
