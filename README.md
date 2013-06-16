@@ -39,12 +39,24 @@ The terminal version of Textadept requires only an implementation of curses like
 Download Textadept from the project's [download page][] or from these quick
 links:
 
+Stable Builds
+
 * [Win32][]
 * [Mac OSX][]
 * [Linux][]
 * [Linux x86\_64][]
 * [Source][]
 * [Modules][]
+
+Unstable Builds
+
+* [Win32 Nightly][]
+* [Mac OSX Nightly][]
+* [Linux Nightly][]
+
+_Warning_: nightly builds are untested, may have bugs, and are the absolute
+cutting-edge versions of Textadept. They should not be used in production, but
+for testing purposes only.
 
 [download page]: http://foicica.com/textadept/download
 [Win32]: download/textadept_LATEST.win32.zip
@@ -53,6 +65,9 @@ links:
 [Linux x86\_64]: download/textadept_LATEST.x86_64.tgz
 [Source]: download/textadept_LATEST.src.zip
 [Modules]: download/textadept_LATEST.modules.zip
+[Win32 Nightly]: download/textadept_NIGHTLY.win32.zip
+[Mac OSX Nightly]: download/textadept_NIGHTLY.osx.zip
+[Linux Nightly]: download/textadept_NIGHTLY.i386.zip
 
 ## Installation and Usage
 
