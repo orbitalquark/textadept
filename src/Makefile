@@ -209,7 +209,8 @@ tmp:
 
 # Dependencies.
 
-base_deps = scintilla scintilla/term scintillua lua lualibs luajit gtdialog cdk
+base_deps = scintilla scintilla/term scintillua lua lualibs luajit gtdialog \
+            cdk ../doc/bombay
 deps: $(base_deps) termkey
 win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
@@ -353,8 +354,8 @@ clean: mostlyclean cleanjit ; rm -f ../textadept* *.a *.dll
 # Documentation.
 
 doc: manual luadoc adeptsense
-manual: ../doc/*.md ../*.md | ../doc/bombay
-	$| -d ../doc -t ../doc --title Textadept --navtitle Manual $^
+manual: ../doc/*.md ../*.md
+	../doc/bombay -d ../doc -t ../doc --title Textadept --navtitle Manual $^
 luadoc: ../modules ../core ../lexers/lexer.lua
 	cd ../doc && $(luadoc) -d . -t . --doclet markdowndoc $^
 adeptsense: ../modules ../core ../lexers/lexer.lua
@@ -365,6 +366,10 @@ cleandoc: ; rm -rf ../doc/*.html ../doc/api
 
 basedir = textadept_$(shell grep "_RELEASE =" ../core/init.lua | \
                             cut -d ' ' -f 4- | sed -e 's/"//; s/ /_/g;')
+nightly_basedir = textadept_NIGHTLY_$(shell date +"%F")
+ifdef NIGHTLY
+  basedir = $(nightly_basedir)
+endif
 modules = css hypertext java rails rhtml ruby php python
 osxapp = Textadept.app
 osxapp_bin = $(osxapp)/Contents/MacOS
@@ -387,6 +392,7 @@ release: ../textadept ../textadeptjit ../textadept-curses \
          ../textadeptjit.osx lua51.dll \
          doc pkg_x86_64 pkg_i386 pkg_win32 pkg_win64 pkg_osx pkg_src \
          pkg_modules cleanup
+release-nightly: nightly win32-nightly osx-nightly cleanup-nightly
 
 # Release directories.
 
@@ -424,7 +430,7 @@ osx-app: ../textadept.osx ../textadeptjit.osx ../textadept-curses.osx \
 	rm -r $(osxapp_res)/lib/gtk-2.0/include $(osxapp_res)/lib/gtk-2.0/modules
 	rm $(osxapp_res)/lib/gtk-2.0/2.10.0/printbackends/*
 $(basedir).osx: osx-app | $(basedir)
-	mkdir $@ && mv $< $@
+	mkdir $@ && mv $(osxapp) $@
 	cp ../scripts/osx/ta $@
 $(basedir).src: | $(basedir)
 	cp -r $| $@
@@ -454,6 +460,34 @@ cleanup: ../releases/$(basedir).x86_64.tgz ../releases/$(basedir).i386.tgz \
          ../releases/$(basedir).src.zip ../releases/$(basedir).modules.zip | \
          $(basedir)
 	rm -r $|
+
+# Nightly builds.
+
+nightly_dir = /tmp/tabuild_nightly
+
+$(nightly_dir):
+	hg clone -r tip /home/mitchell/code/textadept $@
+	ln -s /tmp $@/releases
+nightly: | $(nightly_dir)
+	make -C $(nightly_dir)/src deps clean
+	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -C $(nightly_dir)/src
+	make -C $(nightly_dir)/src curses
+	make -C $(nightly_dir)/src m32
+	make -C $(nightly_dir)/src doc NIGHTLY=1 pkg_i386
+win32-nightly: | $(nightly_dir)
+	make -C $(nightly_dir)/src clean CROSS=i586-mingw32msvc- win32-deps
+	make -C $(nightly_dir)/src CROSS=i586-mingw32msvc- win32
+	make -C $(nightly_dir)/src CROSS=i586-mingw32msvc- win32-curses
+	make -C $(nightly_dir)/src NIGHTLY=1 pkg_win32
+osx-nightly: | $(nightly_dir)
+	make -C $(nightly_dir)/src clean osx-deps
+	make -C $(nightly_dir)/src osx
+	make -C $(nightly_dir)/src osx-curses
+	make -C $(nightly_dir)/src NIGHTLY=1 pkg_osx
+cleanup-nightly: /tmp/$(nightly_basedir).i386.tgz \
+                 /tmp/$(nightly_basedir).win32.zip \
+                 /tmp/$(nightly_basedir).osx.zip | $(nightly_dir)
+	rm -rf $|
 
 # External dependencies.
 
@@ -524,6 +558,8 @@ win32gtk: | $(win32gtk_zip) $(win32iconv_bin_zip) $(win32iconv_lib_zip)
 	for zip in $(win32iconv_bin_zip) $(win32iconv_lib_zip); do \
 		unzip -d $@ $$zip; \
 	done
+	rm -r $@/etc/bash_completion.d $@/lib/gtk-2.0/modules $@/lib/*.def
+	cd $@/share && rm -r aclocal doc glib-2.0 gtk-2.0 gtk-doc locale man
 $(win32curses_zip): ; wget "http://foicica.com/textadept/download/$@"
 $(pdcurses_zip):
 	wget "http://sf.net/projects/pdcurses/files/pdcurses/3.4/pdcurs34.zip/$@"
