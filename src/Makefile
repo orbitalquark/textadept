@@ -178,8 +178,10 @@ lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
            lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
            lmathlib.o loadlib.o loslib.o ltablib.o lstrlib.o \
-           lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
-luajit_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o lfsjit.o
+           lpeg.o lfs.o
+#          lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
+luajit_objs = lpegjit.o lfsjit.o
+#luajit_objs= lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o lfsjit.o
 termkey_objs = termkey.o driver-ti.o driver-csi.o
 cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
            cdk_params.o cdkscreen.o debug.o draw.o entry.o fselect.o \
@@ -495,7 +497,7 @@ scintilla_tgz = scintilla333.tgz?download
 scinterm_zip = scinterm.zip
 scintillua_zip = scintillua.zip
 lua_tgz = lua-5.2.2.tar.gz
-lpeg_tgz = lpeg-0.12.tar.gz
+lpeg_tgz = lpeg-0.10.2.tar.gz
 lfs_zip = master.zip
 luajit_tgz = LuaJIT-2.0.2.tar.gz
 gtdialog_zip = gtdialog.zip
