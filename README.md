@@ -53,6 +53,7 @@ Unstable Builds
 * [Win32 Nightly][]
 * [Mac OSX Nightly][]
 * [Linux Nightly][]
+* [Linux x86\_64 Nightly][]
 
 _Warning_: nightly builds are untested, may have bugs, and are the absolute
 cutting-edge versions of Textadept. They should not be used in production, but
@@ -67,7 +68,8 @@ for testing purposes only.
 [Modules]: download/textadept_LATEST.modules.zip
 [Win32 Nightly]: download/textadept_NIGHTLY.win32.zip
 [Mac OSX Nightly]: download/textadept_NIGHTLY.osx.zip
-[Linux Nightly]: download/textadept_NIGHTLY.i386.zip
+[Linux Nightly]: download/textadept_NIGHTLY.i386.tgz
+[Linux x86\_64 Nightly]: download/textadept_NIGHTLY.x86_64.tgz
 
 ## Installation and Usage
 
