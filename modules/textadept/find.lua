@@ -378,8 +378,9 @@ function M.goto_file_found(line, next)
   gui.goto_file(file, true, preferred_view)
   _M.textadept.editing.goto_line(line_num)
 end
-events.connect(events.DOUBLE_CLICK,
-               function(pos, line) M.goto_file_found(line) end)
+events.connect(events.DOUBLE_CLICK, function(pos, line)
+  if is_ff_buf(buffer) then M.goto_file_found(line) end
+end)
 
 --[[ The functions below are Lua C functions.
 

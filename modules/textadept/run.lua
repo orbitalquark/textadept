@@ -240,7 +240,9 @@ function M.goto_error(line, next)
     buffer.annotation_style[line - 1] = 8 -- error
   end
 end
-events.connect(events.DOUBLE_CLICK, function(pos, line) M.goto_error(line) end)
+events.connect(events.DOUBLE_CLICK, function(pos, line)
+  if is_msg_buf(buffer) then M.goto_error(line) end
+end)
 
 local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for error markers.
