@@ -162,39 +162,21 @@ function gui.goto_file(filename, split, preferred_view, sloppy)
 end
 
 ---
--- Sets the editor theme name to *name* or prompts the user to select one from a
--- list of themes found in the *`_USERHOME`/themes/* and *`_HOME`/themes/*
--- directories and optionally sets key-value pair argument properties.
+-- Sets the editor theme name to *name* and optionally sets key-value pair
+-- argument properties.
 -- User themes override Textadept's default themes when they have the same name.
 -- If *name* contains slashes, it is assumed to be an absolute path to a theme
 -- instead of a theme name.
--- @param name Optional name or absolute path of a theme to set. If `nil`, the
---   user is prompted for one.
--- @param ... key-value argument pairs for theme properties to set. These
---   override the theme's defaults.
+-- @param name The name or absolute path of a theme to set.
+-- @param ... Optional key-value argument pairs for theme properties to set.
+--   These override the theme's defaults.
 -- @usage gui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)
 -- @name set_theme
 function gui.set_theme(name, ...)
-  if not name then
-    local themes, themes_found = {}, {}
-    for theme in lfs.dir(_HOME..'/themes') do
-      theme = theme:match('^(.-)%.lua$')
-      if theme then themes_found[theme] = true end
-    end
-    if lfs.attributes(_USERHOME..'/themes') then
-      for theme in lfs.dir(_USERHOME..'/themes/') do
-        theme = theme:match('^(.-)%.lua$')
-        if theme then themes_found[theme] = true end
-      end
-    end
-    for theme in pairs(themes_found) do themes[#themes + 1] = theme end
-    table.sort(themes)
-    name = gui.filteredlist(_L['Select Theme'], _L['Name'], themes)
-  end
-  if name and not name:find('[/\\]') then
-    name = package.searchpath(name, _USERHOME..'/themes/?.lua;'..
-                                    _HOME..'/themes/?.lua')
-  end
+  if not name then return end
+  name = name:find('[/\\]') and name or
+         package.searchpath(name, _USERHOME..'/themes/?.lua;'..
+                                  _HOME..'/themes/?.lua')
   if not name or not lfs.attributes(name) then return end
   local buffer, props = buffer, {...}
   local current_buffer, current_view = _BUFFERS[buffer], _VIEWS[view]

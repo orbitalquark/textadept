@@ -25,16 +25,20 @@ display these standard colors.
 
 [definitions]: api/lexer.html#Styles.and.Styling
 
-## Switch Themes
+## Setting Themes
 
-Switch between or reload themes using `Ctrl+Shift+T` (`⌘⇧T` on Mac OSX | none in
-curses). Set that theme to be the default one by putting
+Override the default theme in your [*~/.textadept/init.lua*][] using the
+[`gui.set_theme()`][] function. For example:
 
-    gui.set_theme('name')
+    gui.set_theme('dark')
 
-somewhere in your [*~/.textadept/init.lua*][].
+Either restart Textadept for changes to take effect or type [`reset()`][] in the
+[command entry][].
 
 [*~/.textadept/init.lua*]: 08_Preferences.html#User.Init
+[`gui.set_theme()`]: api/gui.html#set_theme
+[`reset()`]: api/_G.html#reset
+[command entry]: 10_Advanced.html#Command.Entry
 
 ## Customizing Themes
 
@@ -50,9 +54,9 @@ scratch or tweak an existing one. Creating a new one is straightforward -- all
 you need to do is define a set of colors and a set of styles. Just follow the
 example of existing themes. If instead you want to use an existing theme like
 "light" but only change the font face and font size, you have two options: call
-[`gui.set_theme()`][] with additional parameters from your
-*~/.textadept/init.lua* or create an abbreviated *~/.textadept/themes/light.lua*
-using Lua's `dofile()` function. For example:
+[`gui.set_theme()`][] from your *~/.textadept/init.lua* with additional
+parameters, or create an abbreviated *~/.textadept/themes/light.lua* using Lua's
+`dofile()` function. For example:
 
     -- File *~/.textadept/init.lua*
     gui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)

@@ -277,7 +277,7 @@ terminal themes:
 
 You may still use absolute paths for themes instead of names.
 
-[set a preferred theme]: 09_Themes.html#Switch.Themes
+[set a preferred theme]: 09_Themes.html#Setting.Themes
 
 ### Textadept 5 to 6
 

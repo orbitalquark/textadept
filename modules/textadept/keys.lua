@@ -136,7 +136,6 @@ local M = {}
 -- Ctrl+=                   |⌘=       |N/A  |Zoom in
 -- Ctrl+-                   |⌘-       |N/A  |Zoom out
 -- Ctrl+0                   |⌘0       |N/A  |Reset zoom
--- Ctrl+Shift+T             |⌘⇧T      |None |Select theme...
 -- **Help**|    |    |
 -- F1      |F1  |None|Open manual
 -- Shift+F1|⇧F1 |None|Open LuaDoc
@@ -301,7 +300,7 @@ local OSX, CURSES, c = OSX, CURSES, _SCINTILLA.constants
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:   A B C         H              p  Q       ~ V   X Y  _   ) ] }   +
+-- c:   A B C         H              p  Q     T ~ V   X Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdD   F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
@@ -316,7 +315,7 @@ local OSX, CURSES, c = OSX, CURSES, _SCINTILLA.constants
 -- Mac OSX key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- m:   A B C        ~    JkK  ~M    p  ~    t  U V   XyY  _   ) ] }   +   ~~\n
+-- m:   A B C        ~    JkK  ~M    p  ~    tT U V   XyY  _   ) ] }   +   ~~\n
 -- c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
@@ -548,7 +547,6 @@ end
 keys[not OSX and not CURSES and 'c=' or 'm='] = buffer.zoom_in
 keys[not OSX and not CURSES and 'c-' or 'm-'] = buffer.zoom_out
 keys[not OSX and not CURSES and 'c0' or 'm0'] = utils.reset_zoom
-if not CURSES then keys[not OSX and 'cT' or 'mT'] = gui.set_theme end
 
 -- Help.
 if not CURSES then
