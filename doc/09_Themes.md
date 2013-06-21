@@ -49,17 +49,24 @@ There are two ways to go about customizing themes. You can create a new one from
 scratch or tweak an existing one. Creating a new one is straightforward -- all
 you need to do is define a set of colors and a set of styles. Just follow the
 example of existing themes. If instead you want to use an existing theme like
-"light" but only change the font face and font size, you do not have to copy the
-whole theme to your *~/.textadept/themes/light.lua* before changing the font
-settings. Tweaking themes is very simple with Lua's `dofile()` function. In your
-*~/.textadept/themes/light.lua*, put:
+"light" but only change the font face and font size, you have two options: call
+[`gui.set_theme()`][] with additional parameters from your
+*~/.textadept/init.lua* or create an abbreviated *~/.textadept/themes/light.lua*
+using Lua's `dofile()` function. For example:
 
+    -- File *~/.textadept/init.lua*
+    gui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)
+
+    -- File *~/.textadept/themes/light.lua*
     dofile(_HOME..'/themes/light.lua')
-    buffer.property['font'] = 'font face'
+    buffer.property['font'] = 'Monospace'
     buffer.property['fontsize'] = size
 
-This loads Textadept's "light" theme, but applies your font preferences. The
-same technique works for tweaking individual theme colors and/or styles.
+Either one loads Textadept's "light" theme, but applies your font preferences.
+The same techniques work for tweaking individual theme colors and/or styles, but
+managing more changes is probably easier with the latter.
+
+[`gui.set_theme()`]: api/gui.html#set_theme
 
 ### Language-Specific
 

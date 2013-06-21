@@ -164,14 +164,17 @@ end
 ---
 -- Sets the editor theme name to *name* or prompts the user to select one from a
 -- list of themes found in the *`_USERHOME`/themes/* and *`_HOME`/themes/*
--- directories.
+-- directories and optionally sets key-value pair argument properties.
 -- User themes override Textadept's default themes when they have the same name.
 -- If *name* contains slashes, it is assumed to be an absolute path to a theme
 -- instead of a theme name.
 -- @param name Optional name or absolute path of a theme to set. If `nil`, the
 --   user is prompted for one.
+-- @param ... key-value argument pairs for theme properties to set. These
+--   override the theme's defaults.
+-- @usage gui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)
 -- @name set_theme
-function gui.set_theme(name)
+function gui.set_theme(name, ...)
   if not name then
     local themes, themes_found = {}, {}
     for theme in lfs.dir(_HOME..'/themes') do
@@ -193,15 +196,18 @@ function gui.set_theme(name)
                                     _HOME..'/themes/?.lua')
   end
   if not name or not lfs.attributes(name) then return end
+  local buffer, props = buffer, {...}
   local current_buffer, current_view = _BUFFERS[buffer], _VIEWS[view]
   for i = 1, #_BUFFERS do
     view:goto_buffer(i)
     dofile(name)
+    for j = 1, #props, 2 do buffer.property[props[j]] = props[j + 1] end
   end
   view:goto_buffer(current_buffer)
   for i = 1, #_VIEWS do
     gui.goto_view(i)
     dofile(name)
+    for j = 1, #props, 2 do buffer.property[props[j]] = props[j + 1] end
   end
   gui.goto_view(current_view)
 --  if not RESETTING then reset() end
