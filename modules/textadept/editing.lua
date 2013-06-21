@@ -333,9 +333,9 @@ end
 -- transposed. Otherwise, the characters to the left and right are.
 -- @name transpose_chars
 function M.transpose_chars()
+  if buffer.length == 0 then return end
   local pos, char = buffer.current_pos, buffer.char_at[buffer.current_pos]
-  local eol = char == 10 or char == 13 or pos == buffer.length
-  if eol and pos > 0 then pos = pos - 1 end
+  if char == 10 or char == 13 or pos == buffer.length then pos = pos - 1 end
   buffer.target_start, buffer.target_end = pos - 1, pos + 1
   buffer:replace_target(buffer:text_range(pos - 1, pos + 1):reverse())
   buffer:goto_pos(pos + 1)
