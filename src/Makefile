@@ -7,9 +7,11 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
     ifeq (win32, $(findstring win32, $(MAKECMDGOALS)))
       arch = win32
       CROSS = i686-w64-mingw32-
+      lua_dll = luajit/src/lua51.dll
     else ifeq (win64, $(findstring win64, $(MAKECMDGOALS)))
       arch = win64
       CROSS = x86_64-w64-mingw32-
+      lua_dll = luajit/src/lua51_64.dll
     endif
     CC = gcc
     CFLAGS = -mms-bitfields
@@ -64,7 +66,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
       CURSES_LIBS = -lncurses
     endif
-    libluajit = libluajit.osx.a
+    libluajit = luajit/src/libluajit.osx.a
 
     luadoc = luadoc
   else
@@ -103,11 +105,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       install_targets = ../textadept-curses ../textadeptjit-curses
     endif
     x64 = $(shell echo "" | $(CC) -E -dM - | grep __x86_64__ | cut -d ' ' -f 3)
-    ifeq (1, $(x64))
-      libluajit = libluajit.a
-    else
-      libluajit = libluajit32.a
-    endif
+    libluajit = luajit/src/libluajit.a
 
     luadoc = luadoc
   endif
@@ -192,22 +190,12 @@ cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
 
 all: textadept textadeptjit
 curses: textadept-curses textadeptjit-curses
-m32: textadept32 textadeptjit32 textadept32-curses textadeptjit32-curses
 win32: textadept.exe textadeptjit.exe
 win32-curses: textadept-curses.exe textadeptjit-curses.exe
-win64: textadept64.exe #textadeptjit64.exe
-win64-curses: textadept64-curses.exe #textadeptjit64-curses.exe
-osx: textadept.osx textadeptjit.osx
-osx-curses: textadept-curses.osx textadeptjit-curses.osx
-
-tmp:
-	rm -rf /tmp/tabuild && hg clone ../ /tmp/tabuild
-	cp -rL ../doc ../lexers ../modules /tmp/tabuild/
-	cp -rL gtdialog gtkosx LexLPeg.cxx libluajit*.a lua luajit lua51.dll \
-		scintilla termkey cdk win*gtk win*curses /tmp/tabuild/src/
-	cd /tmp/tabuild/src/luajit && $(MAKE) clean
-	ln -s `pwd`/../releases /tmp/tabuild
-	@echo /tmp/tabuild ready for building.
+win64: textadept.exe #textadeptjit.exe
+win64-curses: textadept-curses.exe #textadeptjit-curses.exe
+osx: textadept textadeptjit
+osx-curses: textadept-curses textadeptjit-curses
 
 # Dependencies.
 
@@ -257,22 +245,15 @@ $(lua_lib_objs): %.o: lua/src/lib/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Ilua/src $< -o $@
 $(luajit_lib_objs): %jit.o: lua/src/lib/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Iluajit/src $< -o $@
-libluajit.a:
-	cd luajit && $(MAKE) CC="$(CC) $(CFLAGS)"
-	cp luajit/src/$@ .
-libluajit32.a:
-	cd luajit && $(MAKE) CC="$(CC) $(CFLAGS)"
-	cp luajit/src/libluajit.a $@
-lua51.dll:
-	cd luajit && $(MAKE) HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
-	cp luajit/src/$@ .
-lua51_64.dll:
-	cd luajit && $(MAKE) HOST_CC="$(CC)" CROSS=$(CROSS) TARGET_SYS=Windows
-	cp luajit/src/$@ .
-libluajit.osx.a:
-	cd luajit && $(MAKE) CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin || \
-		return 0
-	cp luajit/src/libluajit.a $@
+luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC) $(CFLAGS)"
+luajit/src/lua51.dll:
+	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
+luajit/src/lua51_64.dll:
+	$(MAKE) -C luajit HOST_CC="$(CC)" CROSS=$(CROSS) TARGET_SYS=Windows \
+		TARGET_DLLNAME=$(notdir $@)
+luajit/src/libluajit.osx.a:
+	$(MAKE) -C luajit CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin \
+		LUAJIT_A=$(notdir $@) || return 0
 gtdialog.o: gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -DGTK -DNOHELP -DLIBRARY $(GTK_CFLAGS) $< -o $@
 gtdialog-curses.o: gtdialog/gtdialog.c
@@ -280,8 +261,7 @@ gtdialog-curses.o: gtdialog/gtdialog.c
 		$(CURSES_CFLAGS) $< -o $@
 $(cdk_objs): %.o: cdk/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) -D_GNU_SOURCE -Icdk $(CURSES_CFLAGS) $< -o $@
-$(termkey_objs): %.o: termkey/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 $< -o $@
+$(termkey_objs): %.o: termkey/%.c ; $(CROSS)$(CC) -c $(CFLAGS) -std=c99 $< -o $@
 textadept_rc.o: textadept.rc ; $(CROSS)$(WINDRES) $< $@
 
 # Executables.
@@ -302,17 +282,13 @@ textadeptjit-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                      $(luajit_lib_objs) $(libluajit) gtdialog-curses.o \
                      $(termkey_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
-textadept32: ../textadept ; mv $< ../$@
-textadeptjit32: ../textadeptjit ; mv $< ../$@
-textadept32-curses: ../textadept-curses ; mv $< ../$@
-textadeptjit32-curses: ../textadeptjit-curses ; mv $< ../$@
 textadept.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
                LexLPeg.o textadept.o textadept_rc.o $(lua_objs) \
                $(lua_lib_objs) gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadeptjit.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) \
                   scintilla-marshal.o LexLPegjit.o textadeptjit.o \
-                  textadept_rc.o $(luajit_lib_objs) lua51.dll gtdialog.o
+                  textadept_rc.o $(luajit_lib_objs) $(lua_dll) gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadept-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                       LexLPeg-curses.o textadept-curses.o textadept_rc.o \
@@ -320,31 +296,9 @@ textadept-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadeptjit-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                          LexLPegjit-curses.o textadeptjit-curses.o \
-                         textadept_rc.o $(luajit_lib_objs) lua51.dll \
+                         textadept_rc.o $(luajit_lib_objs) $(lua_dll) \
                          gtdialog-curses.o $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
-textadept64.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) \
-                 scintilla-marshal.o LexLPeg.o textadept.o textadept_rc.o \
-                 $(lua_objs) $(lua_lib_objs) gtdialog.o
-	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
-textadeptjit64.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) \
-                    scintilla-marshal.o LexLPegjit.o textadeptjit.o \
-                    textadept_rc.o $(luajit_lib_objs) lua51_64.dll gtdialog.o
-	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
-textadept64-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
-                        LexLPeg-curses.o textadept-curses.o textadept_rc.o \
-                        $(lua_objs) $(lua_lib_objs) gtdialog-curses.o \
-                        $(cdk_objs)
-	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
-textadeptjit64-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
-                           LexLPegjit-curses.o textadeptjit-curses.o \
-                           textadept_rc.o $(luajit_lib_objs) lua51_64.dll \
-                           gtdialog-curses.o $(cdk_objs)
-	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
-textadept.osx: textadept ; mv ../$< ../$@
-textadeptjit.osx: textadeptjit ; mv ../$< ../$@
-textadept-curses.osx: textadept-curses ; mv ../$< ../$@
-textadeptjit-curses.osx: textadeptjit-curses ; mv ../$< ../$@
 
 # Install/uninstall.
 
@@ -358,30 +312,30 @@ uninstall: ; rm -r $(bin_dir)/textadept* $(data_dir)
 
 # Clean.
 
-mostlyclean: ; rm -f *.o
-cleanjit: ; cd luajit && $(MAKE) clean
-clean: mostlyclean cleanjit ; rm -f ../textadept* *.a *.dll
+clean:
+	$(MAKE) -C luajit clean
+	rm -f *.o ../textadept*
 
 # Documentation.
 
 doc: manual luadoc adeptsense
-manual: ../doc/*.md ../*.md
-	../doc/bombay -d ../doc -t ../doc --title Textadept --navtitle Manual $^
-luadoc: ../modules ../core ../lexers/lexer.lua
-	cd ../doc && $(luadoc) -d . -t . --doclet markdowndoc $^
-adeptsense: ../modules ../core ../lexers/lexer.lua
-	cd ../modules && $(luadoc) -d lua --doclet lua/adeptsensedoc $^
+manual: ../doc/*.md ../*.md | ../doc/bombay
+	$| -d ../doc -t ../doc --title Textadept --navtitle Manual $^
+luadoc: ../modules ../core ../lexers
+	cd ../doc && $(luadoc) -d . -t . --doclet markdowndoc $^/lexer.lua
+adeptsense: ../modules ../core ../lexers
+	cd ../modules && $(luadoc) -d lua --doclet lua/adeptsensedoc $^/lexer.lua
 cleandoc: ; rm -rf ../doc/*.html ../doc/api
 
-# Package.
+# Releases.
 
-basedir = textadept_$(shell grep "_RELEASE =" ../core/init.lua | \
-                            cut -d ' ' -f 4- | sed -e 's/"//; s/ /_/g;')
-nightly_basedir = textadept_NIGHTLY_$(shell date +"%F")
-ifdef NIGHTLY
-  basedir = $(nightly_basedir)
+build_dir = /tmp/tabuild
+ifndef NIGHTLY
+  basedir = textadept_$(shell grep "_RELEASE =" ../core/init.lua | \
+                              cut -d ' ' -f 4- | sed -e 's/"//; s/ /_/g;')
+else
+  basedir = textadept_NIGHTLY_$(shell date +"%F")
 endif
-modules = css hypertext java rails rhtml ruby php python
 osxapp = Textadept.app
 osxapp_bin = $(osxapp)/Contents/MacOS
 osxapp_res = $(osxapp)/Contents/Resources
@@ -394,114 +348,70 @@ osxapp_libs = libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib \
               libintl.8.dylib libpango-1.0.0.dylib libpangocairo-1.0.0.dylib \
               libpangoft2-1.0.0.dylib libpixman-1.0.dylib libpng14.14.dylib \
               charset.alias gdk-pixbuf-2.0 gtk-2.0 pango
+modules = css hypertext java rails rhtml ruby php python
 
-release: ../textadept ../textadeptjit ../textadept-curses \
-         ../textadeptjit-curses ../textadept32 ../textadeptjit32 \
-         ../textadept32-curses ../textadeptjit32-curses ../textadept.exe \
-         ../textadeptjit.exe ../textadept-curses.exe \
-         ../textadeptjit-curses.exe ../textadept64.exe ../textadept.osx \
-         ../textadeptjit.osx lua51.dll \
-         doc pkg_x86_64 pkg_i386 pkg_win32 pkg_win64 pkg_osx pkg_modules cleanup
-release-nightly: nightly nightly64 win32-nightly osx-nightly cleanup-nightly
+release-all: release release64 win32-release osx-release modules-release \
+             cleanup-release
 
-# Release directories.
-
-$(basedir):
-	hg archive $@
-	rm $@/.hg*
-	cp -rL ../doc $@
-	hg clone /home/mitchell/code/scintillua tmp && mv tmp/lexers $@ && rm -r tmp
-$(basedir).x86_64: ../textadept ../textadeptjit ../textadept-curses \
-                   ../textadeptjit-curses | $(basedir)
-	cp -r $| $@ && cp $^ $@
-$(basedir).i386: ../textadept32 ../textadeptjit32 ../textadept32-curses \
-                 ../textadeptjit32-curses | $(basedir)
-	cp -r $| $@ && cp $^ $@
-	for t in `ls $@/textadept*`; do mv $$t `echo $$t | sed -e 's/32//;'`; done
-$(basedir).win32: ../textadept.exe ../textadeptjit.exe ../textadept-curses.exe \
-                  ../textadeptjit-curses.exe lua51.dll | $(basedir)
-	cp -r $| $@ && cp $^ $@
-	cp win32gtk/bin/*.dll $@ && cp -r win32gtk/etc win32gtk/lib win32gtk/share $@
-	rm -r $@/lib/*.a $@/lib/glib-2.0 $@/lib/gtk-2.0/include $@/lib/pkgconfig
-$(basedir).win64: ../textadept64.exe | $(basedir)
-	cp -r $| $@ && cp $^ $@
-	for t in `ls $@/textadept*`; do mv $$t `echo $$t | sed -e 's/64\././;'`; done
-	cp win64gtk/bin/*.dll $@ && cp -r win64gtk/etc win64gtk/lib win64gtk/share $@
-	rm -r $@/lib/*.a $@/lib/glib-2.0 $@/lib/gtk-2.0/include $@/lib/pkgconfig
-osx-app: ../textadept.osx ../textadeptjit.osx ../textadept-curses.osx \
-         ../textadeptjit-curses.osx | $(basedir)
-	mkdir -p $(osxapp_bin) $(osxapp_res)
-	cp Info.plist $(osxapp_bin)/../
-	cp ../scripts/osx/textadept $^ $(osxapp_bin)/
-	cp -rL $|/* $(osxapp_res)/
-	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
-	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
-	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
-	rm -r $(osxapp_res)/lib/gtk-2.0/include $(osxapp_res)/lib/gtk-2.0/modules
-	rm $(osxapp_res)/lib/gtk-2.0/2.10.0/printbackends/*
-$(basedir).osx: osx-app | $(basedir)
-	mkdir $@ && mv $(osxapp) $@
-	cp ../scripts/osx/ta $@
+$(build_dir): ; hg clone -r tip /home/mitchell/code/textadept $@
+$(basedir).i386: | $(build_dir) ; hg archive $@ -X ".hg*"
+release: $(basedir).i386 | $(build_dir)
+	make -C $|/src deps clean doc
+	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -C $|/src -j4 MAKE="make -j4"
+	make -C $|/src -j4 curses
+	cp -r $|/doc $|/lexers/lexers $|/textadept* $<
+	tar czf /tmp/$<.tgz $< && rm -rf $<
+$(basedir).x86_64: | $(build_dir) ; hg archive $@ -X ".hg*"
+release64: $(basedir).x86_64 | $(build_dir)
+	make -C $|/src clean
+	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -C $|/src -j4 CFLAGS=-m64 \
+		CXXFLAGS=-m64 MAKE="make -j4" || return 0
+	make -C $|/src -j4 CFLAGS=-m64 CXXFLAGS=-m64 \
+		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
+		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
+	touch $|/textadeptjit $|/textadeptjit-curses # TODO
+	cp -r $|/doc $|/lexers/lexers $|/textadept* $<
+	tar czf /tmp/$<.tgz $< && rm -rf $<
+$(basedir).win32: | $(build_dir) ; hg archive $@ -X ".hg*"
+win32-release: $(basedir).win32 | $(build_dir)
+	make -C $|/src -j4 clean CROSS=i586-mingw32msvc- win32-deps
+	cp $|/src/win32gtk/bin/*.dll $< && cp -r $|/src/win32gtk/etc \
+		$|/src/win32gtk/lib $|/src/win32gtk/share $<
+	rm -r $</lib/*.a $</lib/glib-2.0 $</lib/gtk-2.0/include $</lib/pkgconfig
+	make -C $|/src -j4 CROSS=i586-mingw32msvc- MAKE="make -j4" win32
+	make -C $|/src -j4 CROSS=i586-mingw32msvc- win32-curses
+	cp -r $|/doc $|/lexers/lexers $|/textadept* $|/src/luajit/src/lua51.dll $<
+	zip -r /tmp/$<.zip $< && rm -rf $<
+$(basedir).osx: ; mkdir $@ && cp ../scripts/osx/ta $@
+osx-release: $(basedir).osx | $(build_dir)
+	make -C $|/src clean osx-deps
+	make -C $|/src -j4 MAKE="make -j4" osx
+	make -C $|/src -j4 osx-curses
+	make -C $|/src osx-app && mv $|/src/$(osxapp) $<
+	zip -r /tmp/$<.zip $< && rm -rf $<
 $(basedir).modules:
 	mkdir -p $@/modules
 	for mod in $(modules); do \
 		hg clone /home/mitchell/code/textadept/modules/$$mod $@/modules/$$mod; \
 	done
-
-# Release Packages.
-
-pkg_x86_64: $(basedir).x86_64 ; tar czf ../releases/$<.tgz $< && rm -r $<
-pkg_i386: $(basedir).i386 ; tar czf ../releases/$<.tgz $< && rm -r $<
-pkg_win32: $(basedir).win32 ; zip -r ../releases/$<.zip $< && rm -r $<
-pkg_win64: $(basedir).win64 ; zip -r ../releases/$<.zip $< && rm -r $<
-pkg_osx: $(basedir).osx ; zip -r ../releases/$<.zip $< && rm -r $<
-pkg_modules: $(basedir).modules ; zip -r ../releases/$<.zip $< && rm -r $<
-
-# Clean.
-
-cleanup: ../releases/$(basedir).x86_64.tgz ../releases/$(basedir).i386.tgz \
-         ../releases/$(basedir).win32.zip ../releases/$(basedir).osx.zip \
-         ../releases/$(basedir).modules.zip | $(basedir)
-	rm -r $|
-
-# Nightly builds.
-
-nightly_dir = /tmp/tabuild_nightly
-
-$(nightly_dir):
-	hg clone -r tip /home/mitchell/code/textadept $@
-	ln -s /tmp $@/releases
-nightly: | $(nightly_dir)
-	make -C $(nightly_dir)/src deps clean
-	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -C $(nightly_dir)/src -j4 \
-		MAKE="make -j4"
-	make -C $(nightly_dir)/src -j4 curses
-	make -C $(nightly_dir)/src m32
-	make -C $(nightly_dir)/src doc NIGHTLY=1 pkg_i386
-nightly64: | $(nightly_dir)
-	make -C $(nightly_dir)/src clean
-	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -C $(nightly_dir)/src -j4 \
-		CFLAGS=-m64 CXXFLAGS=-m64 MAKE="make -j4" || return 0
-	make -C $(nightly_dir)/src -j4 CFLAGS=-m64 CXXFLAGS=-m64 \
-		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
-		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
-	touch $(nightly_dir)/textadeptjit $(nightly_dir)/textadeptjit-curses
-	make -C $(nightly_dir)/src doc NIGHTLY=1 pkg_x86_64
-win32-nightly: | $(nightly_dir)
-	make -C $(nightly_dir)/src -j4 clean CROSS=i586-mingw32msvc- win32-deps
-	make -C $(nightly_dir)/src -j4 CROSS=i586-mingw32msvc- MAKE="make -j4" win32
-	make -C $(nightly_dir)/src -j4 CROSS=i586-mingw32msvc- win32-curses
-	make -C $(nightly_dir)/src NIGHTLY=1 pkg_win32
-osx-nightly: | $(nightly_dir)
-	make -C $(nightly_dir)/src clean osx-deps
-	make -C $(nightly_dir)/src -j4 MAKE="make -j4" osx
-	make -C $(nightly_dir)/src -j4 osx-curses
-	make -C $(nightly_dir)/src NIGHTLY=1 pkg_osx
-cleanup-nightly: /tmp/$(nightly_basedir).i386.tgz \
-                 /tmp/$(nightly_basedir).x86_64.tgz \
-                 /tmp/$(nightly_basedir).win32.zip \
-                 /tmp/$(nightly_basedir).osx.zip | $(nightly_dir)
+modules-release: $(basedir).modules ; zip -r /tmp/$<.zip $< && rm -r $<
+cleanup-release: /tmp/$(basedir).x86_64.tgz /tmp/$(basedir).i386.tgz \
+                 /tmp/$(basedir).win32.zip /tmp/$(basedir).osx.zip \
+                 /tmp/$(basedir).modules.zip | $(build_dir)
 	rm -rf $|
+
+osx-app: ../textadept ../textadeptjit ../textadept-curses \
+         ../textadeptjit-curses ../scripts/osx/textadept_osx
+	mkdir -p $(osxapp_bin) $(osxapp_res)
+	cp Info.plist $(osxapp_bin)/../
+	cp $^ $(osxapp_bin)/
+	hg archive $(osxapp_res) -X ".hg*"
+	cp -r ../doc ../lexers/lexers $(osxapp_res)
+	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
+	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
+	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
+	rm -r $(osxapp_res)/lib/gtk-2.0/include $(osxapp_res)/lib/gtk-2.0/modules
+	rm $(osxapp_res)/lib/gtk-2.0/2.10.0/printbackends/*
 
 # External dependencies.
 
