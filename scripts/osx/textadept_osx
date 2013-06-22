@@ -19,6 +19,6 @@ export CHARSETALIASDIR="$bundle_res/lib"
 if [ x`echo "x$1" | sed -e "s/^x-psn_.*//"` == x ]; then shift 1; fi
 
 # Run Textadept.
-textadept=textadept.osx
-if [ ! -z $TEXTADEPTJIT ]; then textadept=textadeptjit.osx; fi
+textadept=textadept
+if [ ! -z $TEXTADEPTJIT ]; then textadept=textadeptjit; fi
 exec "$bundle/Contents/MacOS/$textadept" "$@"

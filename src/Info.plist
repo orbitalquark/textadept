@@ -953,7 +953,7 @@
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
-	<string>textadept</string>
+	<string>textadept_osx</string>
 	<key>CFBundleIconFile</key>
 	<string>textadept.icns</string>
 	<key>CFBundleIdentifier</key>
