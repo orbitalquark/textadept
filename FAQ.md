@@ -36,16 +36,6 @@ implementation is required for the terminal version.)
 - - -
 
 **Q:**
-I downloaded the Linux version, but when I try to compile it, some files are not
-found. Where do I get these files?
-
-**A:**
-You need to download the source version of the release, not the binary version.
-The source version contains all the files necessary for compiling Textadept.
-
-- - -
-
-**Q:**
 When I click the "Compile" or "Run" menu item (or execute the key command),
 either nothing happens or the wrong command is executed. How can I tell
 Textadept which command to run?

@@ -401,8 +401,7 @@ release: ../textadept ../textadeptjit ../textadept-curses \
          ../textadeptjit.exe ../textadept-curses.exe \
          ../textadeptjit-curses.exe ../textadept64.exe ../textadept.osx \
          ../textadeptjit.osx lua51.dll \
-         doc pkg_x86_64 pkg_i386 pkg_win32 pkg_win64 pkg_osx pkg_src \
-         pkg_modules cleanup
+         doc pkg_x86_64 pkg_i386 pkg_win32 pkg_win64 pkg_osx pkg_modules cleanup
 release-nightly: nightly nightly64 win32-nightly osx-nightly cleanup-nightly
 
 # Release directories.
@@ -443,11 +442,6 @@ osx-app: ../textadept.osx ../textadeptjit.osx ../textadept-curses.osx \
 $(basedir).osx: osx-app | $(basedir)
 	mkdir $@ && mv $(osxapp) $@
 	cp ../scripts/osx/ta $@
-$(basedir).src: | $(basedir)
-	cp -r $| $@
-	cp -rL lua luajit scintilla gtdialog LexLPeg.cxx termkey cdk $@/src
-	cd $@/src/luajit && $(MAKE) clean && cd ../../../
-	rm -r $@/src/scintilla/.hg
 $(basedir).modules:
 	mkdir -p $@/modules
 	for mod in $(modules); do \
@@ -461,15 +455,13 @@ pkg_i386: $(basedir).i386 ; tar czf ../releases/$<.tgz $< && rm -r $<
 pkg_win32: $(basedir).win32 ; zip -r ../releases/$<.zip $< && rm -r $<
 pkg_win64: $(basedir).win64 ; zip -r ../releases/$<.zip $< && rm -r $<
 pkg_osx: $(basedir).osx ; zip -r ../releases/$<.zip $< && rm -r $<
-pkg_src: $(basedir).src ; zip -r ../releases/$<.zip $< && rm -r $<
 pkg_modules: $(basedir).modules ; zip -r ../releases/$<.zip $< && rm -r $<
 
 # Clean.
 
 cleanup: ../releases/$(basedir).x86_64.tgz ../releases/$(basedir).i386.tgz \
          ../releases/$(basedir).win32.zip ../releases/$(basedir).osx.zip \
-         ../releases/$(basedir).src.zip ../releases/$(basedir).modules.zip | \
-         $(basedir)
+         ../releases/$(basedir).modules.zip | $(basedir)
 	rm -r $|
 
 # Nightly builds.
