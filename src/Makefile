@@ -390,9 +390,7 @@ osx-release: $(basedir).osx | $(build_dir)
 	zip -r /tmp/$<.zip $< && rm -rf $<
 $(basedir).modules:
 	mkdir -p $@/modules
-	for mod in $(modules); do \
-		hg clone /home/mitchell/code/textadept/modules/$$mod $@/modules/$$mod; \
-	done
+	for m in $(modules); do hg clone /home/mitchell/code/$$m $@/modules/$$m; done
 modules-release: $(basedir).modules ; zip -r /tmp/$<.zip $< && rm -r $<
 cleanup-release: /tmp/$(basedir).x86_64.tgz /tmp/$(basedir).i386.tgz \
                  /tmp/$(basedir).win32.zip /tmp/$(basedir).osx.zip \
