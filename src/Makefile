@@ -363,13 +363,12 @@ release: $(basedir).i386 | $(build_dir)
 	tar czf /tmp/$<.tgz $< && rm -rf $<
 $(basedir).x86_64: | $(build_dir) ; hg archive $@ -X ".hg*"
 release64: $(basedir).x86_64 | $(build_dir)
-	make -C $|/src clean
+	make -C $|/src clean libluajit64
 	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -C $|/src -j4 CFLAGS=-m64 \
 		CXXFLAGS=-m64 MAKE="make -j4" || return 0
 	make -C $|/src -j4 CFLAGS=-m64 CXXFLAGS=-m64 \
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
-	touch $|/textadeptjit $|/textadeptjit-curses # TODO
 	cp -r $|/doc $|/lexers/lexers $|/textadept* $<
 	tar czf /tmp/$<.tgz $< && rm -rf $<
 $(basedir).win32: | $(build_dir) ; hg archive $@ -X ".hg*"
@@ -422,6 +421,7 @@ lua_tgz = lua-5.2.2.tar.gz
 lpeg_tgz = lpeg-0.10.2.tar.gz
 lfs_zip = 5e55437028cc03d79c5a3cddce0cf8aecd0de2be.zip
 luajit_tgz = LuaJIT-2.0.2.tar.gz
+libluajit_tgz = libluajit_2.0.2.x86_64.tgz
 gtdialog_zip = gtdialog.zip
 cdk_tgz = cdk.tar.gz
 termkey_tgz = libtermkey-0.16.tar.gz
@@ -462,6 +462,8 @@ $(luajit_tgz): ; wget "http://luajit.org/download/$@"
 luajit: luajit.patch | $(luajit_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
+$(libluajit_tgz): ; wget "http://foicica.com/textadept/download/$@"
+libluajit64: | $(libluajit_tgz) ; tar xzf $|
 $(gtdialog_zip):
 	wget "http://foicica.com/hg/gtdialog/archive/tip.zip" && mv tip.zip $@
 gtdialog: | $(gtdialog_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
