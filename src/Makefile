@@ -419,7 +419,7 @@ scinterm_zip = scinterm.zip
 scintillua_zip = scintillua.zip
 lua_tgz = lua-5.2.2.tar.gz
 lpeg_tgz = lpeg-0.10.2.tar.gz
-lfs_zip = 5e55437028cc03d79c5a3cddce0cf8aecd0de2be.zip
+lfs_zip = d71c63cdb776f7d25313f8fcd14f07512ba1f83e.zip
 luajit_tgz = LuaJIT-2.0.2.tar.gz
 libluajit_tgz = libluajit_2.0.2.x86_64.tgz
 gtdialog_zip = gtdialog.zip
@@ -456,8 +456,9 @@ lua: lua.patch | $(lua_tgz)
 lualibs: lua/src/lib/lpeg lua/src/lib/lfs
 lua/src/lib/lpeg: | $(lpeg_tgz)
 	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
-lua/src/lib/lfs: | $(lfs_zip)
+lua/src/lib/lfs: lfs.patch | $(lfs_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
+	patch -d $(dir $@) -N -p1 < $<
 $(luajit_tgz): ; wget "http://luajit.org/download/$@"
 luajit: luajit.patch | $(luajit_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
