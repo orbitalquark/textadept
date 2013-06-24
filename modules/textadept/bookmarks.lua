@@ -36,48 +36,35 @@ function M.clear()
   buffer:marker_delete_all(MARK_BOOKMARK)
 end
 
--- Uses the given function and parameters to go to the next or previous mark.
--- @param f `buffer.marker_next` when going to the next mark,
---   `buffer.marker_previous` when going to the previous mark.
--- @param increment `1` when going to the next mark, `-1` when going to the
---   previous mark.
--- @param start `0` when going to the next mark, `buffer.line_count` when going
---   to the previous mark.
-local function goto_mark(f, increment, wrap_start)
-  local current_line = buffer:line_from_position(buffer.current_pos)
-  local line = f(buffer, current_line + increment, 2^MARK_BOOKMARK)
-  if line == -1 then line = f(buffer, wrap_start, 2^MARK_BOOKMARK) end
-  if line >= 0 then _M.textadept.editing.goto_line(line + 1) end
-end
-
 ---
--- Goes to the next bookmarked line in the current buffer.
--- @name goto_next
-function M.goto_next()
-  goto_mark(buffer.marker_next, 1, 0)
-end
-
----
--- Goes to the previous bookmarked line in the current buffer.
--- @name goto_prev
-function M.goto_prev()
-  goto_mark(buffer.marker_previous, -1, buffer.line_count)
-end
-
----
--- Prompts the user to select a bookmarked line to go to.
--- @name goto_bookmark
-function M.goto_bookmark()
-  local buffer = buffer
-  local markers, line = {}, buffer:marker_next(0, 2^MARK_BOOKMARK)
-  if line == -1 then return end
-  repeat
-    local text = buffer:get_line(line):sub(1, -2) -- chop \n
-    markers[#markers + 1] = tostring(line + 1)..': '..text
-    line = buffer:marker_next(line + 1, 2^MARK_BOOKMARK)
-  until line < 0
-  local line = gui.filteredlist(_L['Select Bookmark'], _L['Bookmark'], markers)
-  if line then _M.textadept.editing.goto_line(line:match('^%d+')) end
+-- Prompts the user to select a bookmarked line to go to unless *next* is given.
+-- If *next* is `true` or `false`, goes to the next or previous bookmark,
+-- respectively.
+-- @param next Optional flag indicating whether to go to the next or previous
+--   bookmarked line relative to the current line. The default value is `nil`,
+--   prompting the user for a bookmarked line to go to.
+-- @name goto_mark
+function M.goto_mark(next)
+  if next == nil then
+    local buffer = buffer
+    local marks, line = {}, buffer:marker_next(0, 2^MARK_BOOKMARK)
+    if line == -1 then return end
+    repeat
+      local text = buffer:get_line(line):sub(1, -2) -- chop \n
+      marks[#marks + 1] = tostring(line + 1)..': '..text
+      line = buffer:marker_next(line + 1, 2^MARK_BOOKMARK)
+    until line < 0
+    local line = gui.filteredlist(_L['Select Bookmark'], _L['Bookmark'], marks)
+    if line then _M.textadept.editing.goto_line(line:match('^%d+')) end
+  else
+    local f = next and buffer.marker_next or buffer.marker_previous
+    local current_line = buffer:line_from_position(buffer.current_pos)
+    local line = f(buffer, current_line + (next and 1 or -1), 2^MARK_BOOKMARK)
+    if line == -1 then
+      line = f(buffer, (next and 0 or buffer.line_count), 2^MARK_BOOKMARK)
+    end
+    if line >= 0 then _M.textadept.editing.goto_line(line + 1) end
+  end
 end
 
 local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
