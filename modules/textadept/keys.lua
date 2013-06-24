@@ -479,9 +479,9 @@ keys[not OSX and (not CURSES and 'cf2' or 'f1')
              or 'mf2'] = _M.textadept.bookmarks.toggle
 keys[not OSX and (not CURSES and 'csf2' or 'f6')
              or 'msf2'] = _M.textadept.bookmarks.clear
-keys.f2 = _M.textadept.bookmarks.goto_next
-keys[not CURSES and 'sf2' or 'f3'] = _M.textadept.bookmarks.goto_prev
-keys[not CURSES and 'af2' or 'f4'] = _M.textadept.bookmarks.goto_bookmark
+keys.f2 = {_M.textadept.bookmarks.goto_mark, true}
+keys[not CURSES and 'sf2' or 'f3'] = {_M.textadept.bookmarks.goto_mark, false}
+keys[not CURSES and 'af2' or 'f4'] = _M.textadept.bookmarks.goto_mark
 -- Snapopen.
 keys[not OSX and 'cu' or 'mu'] = {io.snapopen, _USERHOME}
 -- TODO: {io.snapopen, _HOME}

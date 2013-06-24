@@ -158,7 +158,11 @@ buffer\_new()                     |Renamed |\_G.[buffer.new()][]
 filter\_through                   |Removed |N/A
 filter\_through.filter\_through() |Renamed |editing.[filter\_through()][]
 **_M.textadept.bookmark**         |        |
+N/A                               |New     |[goto\_mark()][]
 MARK\_BOOKMARK\_COLOR             |Renamed |[BOOKMARK\_COLOR][]
+goto\_bookmark                    |Replaced|goto\_mark()
+goto\_next                        |Replaced|goto\_mark(true)
+goto\_prev                        |Replaced|goto\_mark(false)
 **_M.textadept.editing**          |        |
 INDIC\_HIGHLIGHT\_BACK            |Renamed |[HIGHLIGHT\_COLOR][]
 autocomplete\_word(chars, default)|Changed |[autocomplete\_word][](default)
@@ -184,6 +188,7 @@ try\_encodings                    |Renamed |[encodings][]
 
 [buffer.new()]: api/buffer.html#new
 [filter\_through()]: api/_M.textadept.editing.html#filter_through
+[goto\_mark()]: api/_M.textadept.bookmarks.html#goto_mark
 [BOOKMARK\_COLOR]: api/_M.textadept.bookmarks.html#BOOKMARK_COLOR
 [HIGHLIGHT\_COLOR]: api/_M.textadept.editing.html#HIGHLIGHT_COLOR
 [autocomplete\_word]: api/_M.textadept.editing.html#autocomplete_word
