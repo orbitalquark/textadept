@@ -110,8 +110,7 @@ local function set_lexer_functions()
   buffer.get_style_name = get_style_name
 end
 events.connect(events.BUFFER_NEW, set_lexer_functions, 1)
--- Scintilla's first buffer does not have these.
-if not RESETTING then set_lexer_functions() end
+set_lexer_functions() -- for the first buffer
 
 -- Auto-detect lexer on file open or save as.
 events.connect(events.FILE_OPENED, function() buffer:set_lexer() end)

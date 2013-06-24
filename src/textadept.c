@@ -1378,11 +1378,11 @@ static int lL_dofile(lua_State *L, const char *filename) {
 static int lreset(lua_State *L) {
   lL_event(L, "reset_before", -1);
   lL_init(L, 0, NULL, TRUE);
-  lua_pushboolean(L, TRUE), lua_setglobal(L, "RESETTING");
   l_setglobalview(L, focused_view);
   l_setglobaldoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
+  lua_pushnil(L), lua_setglobal(L, "arg");
   lL_dofile(L, "init.lua");
-  lua_pushnil(L), lua_setglobal(L, "RESETTING");
+  lua_getfield(L, LUA_REGISTRYINDEX, "ta_arg"), lua_setglobal(L, "arg");
   lL_event(L, "reset_after", -1);
   return 0;
 }
