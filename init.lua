@@ -13,4 +13,4 @@ _M.textadept = require('textadept')
 local ok, err = pcall(dofile, _USERHOME..'/init.lua')
 if not ok and lfs.attributes(_USERHOME..'/init.lua') then gui.print(err) end
 
-if not RESETTING then args.process(arg) end
+if arg then args.process(arg) end

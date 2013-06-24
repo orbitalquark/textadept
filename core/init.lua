@@ -35,9 +35,6 @@ if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 -- @field _CHARSET (string)
 --   The character set encoding of the filesystem.
 --   This is used when [working with files](io.html).
--- @field RESETTING (bool)
---   If [`reset()`](#reset) has been called, this flag is `true` while the Lua
---   state is being re-initialized.
 -- @field WIN32 (bool)
 --   If Textadept is running on Windows, this flag is `true`.
 -- @field OSX (bool)
@@ -108,11 +105,10 @@ local quit
 -- files that use them will reload those modules instead.
 -- This function is useful for modifying user scripts (such as
 -- *~/.textadept/init.lua* and *~/.textadept/modules/textadept/keys.lua*) on
--- the fly without having to restart Textadept. `_G.RESETTING` is set to `true`
--- when re-initing the Lua State. Any scripts that need to differentiate between
--- startup and reset can utilize this variable.
+-- the fly without having to restart Textadept. `arg` is set to `nil` when
+-- reinitializing the Lua State. Any scripts that need to differentiate between
+-- startup and reset can test `arg`.
 -- @class function
--- @see RESETTING
 -- @name reset
 local reset
 

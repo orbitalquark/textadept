@@ -192,7 +192,6 @@ function gui.set_theme(name, ...)
     for j = 1, #props, 2 do buffer.property[props[j]] = props[j + 1] end
   end
   gui.goto_view(current_view)
---  if not RESETTING then reset() end
   theme = name
 end
 

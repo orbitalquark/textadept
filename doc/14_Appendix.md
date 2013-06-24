@@ -152,6 +152,7 @@ Textadept 7 introduces API changes and a completely new theme implementation.
 Old API                           |Change  |New API
 ----------------------------------|:------:|-------
 **_G**                            |        |
+RESETTING                         |Removed |N/A<sup>\*</sup>
 buffer\_new()                     |Renamed |\_G.[buffer.new()][]
 **_M.textadept**                  |        |
 filter\_through                   |Removed |N/A
@@ -168,7 +169,7 @@ contextmenu                       |Removed |N/A
 **_M.textadept.run**              |        |
 MARK\_ERROR\_BACK                 |Renamed |[ERROR\_COLOR][]
 **_M.textadept.snapopen**         |Removed |N/A
-open                              |Changed |\_G.[io.snapopen()][]<sup>\*</sup>
+open                              |Changed |\_G.[io.snapopen()][]<sup>†</sup>
 **events**                        |        |
 handlers                          |Removed |N/A
 **gui**                           |        |
@@ -177,7 +178,9 @@ select\_theme                     |Removed |N/A
 **io**                            |        |
 try\_encodings                    |Renamed |[encodings][]
 
-<sup>\*</sup>Changed arguments too.
+<sup>\*</sup>`arg` is `nil` when resetting.
+
+<sup>†</sup>Changed arguments too.
 
 [buffer.new()]: api/buffer.html#new
 [filter\_through()]: api/_M.textadept.editing.html#filter_through
