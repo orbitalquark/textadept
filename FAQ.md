@@ -78,6 +78,15 @@ For whatever reason, `^O` is discarded by the terminal driver. To enable it, run
 - - -
 
 **Q:**
+How can I get the terminal version on Mac OSX to show more than 8 colors?
+
+**A:**
+Enable the "Use bright colors for bold text" setting in your Terminal.app
+preferences.
+
+- - -
+
+**Q:**
 Why does Textadept remember its window size but not its window position?
 
 **A:**
