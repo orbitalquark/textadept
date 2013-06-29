@@ -52,7 +52,7 @@ ERROR	_	0;"	F	class:events
 ERROR	_	0;"	F	class:lexer
 ERROR_COLOR	_	0;"	F	class:_M.textadept.run
 FIELD	_	0;"	F	class:_M.textadept.adeptsense
-FIELDS	_	0;"	F	class:_M.textadept.adeptsense
+FIELD_IMAGE	_	0;"	F	class:_M.textadept.adeptsense
 FILE_AFTER_SAVE	_	0;"	F	class:events
 FILE_BEFORE_SAVE	_	0;"	F	class:events
 FILE_OPENED	_	0;"	F	class:events
@@ -66,7 +66,7 @@ FOLD_BLANK	_	0;"	F	class:lexer
 FOLD_HEADER	_	0;"	F	class:lexer
 FUNCTION	_	0;"	F	class:_M.textadept.adeptsense
 FUNCTION	_	0;"	F	class:lexer
-FUNCTIONS	_	0;"	F	class:_M.textadept.adeptsense
+FUNCTION_IMAGE	_	0;"	F	class:_M.textadept.adeptsense
 HIGHLIGHT_BRACES	_	0;"	F	class:_M.textadept.editing
 HIGHLIGHT_COLOR	_	0;"	F	class:_M.textadept.editing
 HOTSPOT_CLICK	_	0;"	F	class:events
@@ -119,7 +119,6 @@ R	_	0;"	f	class:lpeg
 REGEX	_	0;"	F	class:lexer
 REPLACE	_	0;"	F	class:events
 REPLACE_ALL	_	0;"	F	class:events
-RESETTING	_	0;"	F	
 RESET_AFTER	_	0;"	F	class:events
 RESET_BEFORE	_	0;"	F	class:events
 RUN_OUTPUT	_	0;"	F	class:events
@@ -753,7 +752,7 @@ SC_WRAP_NONE	_	0;"	F	class:_SCINTILLA.constants
 SC_WRAP_WORD	_	0;"	F	class:_SCINTILLA.constants
 SNAPOPEN_MAX	_	0;"	F	class:io
 STRING	_	0;"	F	class:lexer
-STRIP_WHITESPACE_ON_SAVE	_	0;"	F	class:_M.textadept.editing
+STRIP_TRAILING_SPACES	_	0;"	F	class:_M.textadept.editing
 STYLE_BRACEBAD	_	0;"	F	class:_SCINTILLA.constants
 STYLE_BRACEBAD	_	0;"	F	class:lexer
 STYLE_BRACELIGHT	_	0;"	F	class:_SCINTILLA.constants
@@ -805,14 +804,12 @@ WHITESPACE	_	0;"	F	class:lexer
 WIN32	_	0;"	F	
 _BUFFERS	_	0;"	t	
 _CHARSET	_	0;"	F	
-_EXISTS	_	0;"	f	class:_L
 _G	_	0;"	F	
 _G	_	0;"	m	
 _HOME	_	0;"	F	
 _L	_	0;"	m	
 _L	_	0;"	t	
 _LEXBYLINE	_	0;"	F	class:lexer.lexer
-_LEXERPATH	_	0;"	F	
 _M	_	0;"	m	
 _M	_	0;"	t	
 _M.cpp	_	0;"	m	
@@ -1173,7 +1170,6 @@ getregistry	_	0;"	f	class:debug
 getupvalue	_	0;"	f	class:debug
 getuservalue	_	0;"	f	class:debug
 gmatch	_	0;"	f	class:string
-goto_bookmark	_	0;"	f	class:_M.textadept.bookmarks
 goto_buffer	_	0;"	f	class:view
 goto_ctag	_	0;"	f	class:_M.textadept.adeptsense
 goto_error	_	0;"	f	class:_M.textadept.run
@@ -1181,9 +1177,8 @@ goto_file	_	0;"	f	class:gui
 goto_file_found	_	0;"	f	class:gui.find
 goto_line	_	0;"	f	class:_M.textadept.editing
 goto_line	_	0;"	f	class:buffer
-goto_next	_	0;"	f	class:_M.textadept.bookmarks
+goto_mark	_	0;"	f	class:_M.textadept.bookmarks
 goto_pos	_	0;"	f	class:buffer
-goto_prev	_	0;"	f	class:_M.textadept.bookmarks
 goto_view	_	0;"	f	class:gui
 grab_focus	_	0;"	f	class:buffer
 graph	_	0;"	F	class:lexer
