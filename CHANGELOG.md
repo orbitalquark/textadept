@@ -4,10 +4,60 @@
 
 [Atom Feed]: feed
 
-## 7.0 alpha (01 Jun 2013)
+## 7.0 alpha 2 (01 Jul 2013)
 
 Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to
 Textadept 7.
+
+Download:
+
+* [Textadept 7.0 alpha 2 -- Win32][]
+* [Textadept 7.0 alpha 2 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.0 alpha 2 -- Linux][]
+* [Textadept 7.0 alpha 2 -- Linux x86_64][]
+* [Textadept 7.0 alpha 2 -- Modules][]
+
+Bugfixes:
+
+* Fixed bug in user theme loading.
+* Fixed "Enter" key autocompletion in curses.
+* Fixed crash when transposing in an empty buffer.
+* Fixed bug in find and run double-click event handlers.
+
+Changes:
+
+* Makefile improvements. See the [compiling][] page for more information. The
+  source release is no longer necessary.
+* Removed `_G._LEXERPATH` and `_L._EXISTS()`.
+* Renamed Adeptsense image fields.
+* Renamed `_M.textadept.editing.STRIP_WHITESPACE_ON_SAVE` to
+  `STRIP_TRAILING_SPACES`.
+* [`_M.textadept.editing.block_comment()`][] supports block comment delimiters.
+* Block comments for languages is now built-in. The supplemental ones on the
+  wiki are no longer needed.
+* [`gui.set_theme()`][] accepts key-value argument pairs for overriding theme
+  properties.
+* Removed `gui.select_theme()` since selected themes do not persist.
+* Removed `_G.RESETTING` flag.
+* Consolidated `_M.textadept.bookmarks.goto_*()` functionality into
+  [`_M.textadept.bookmarks.goto_mark()`][].
+* Updated to [LuaJIT][] 2.0.2.
+* New [nightly builds][].
+
+[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
+[Textadept 7.0 alpha 2 -- Win32]: download/textadept_7.0_alpha_2.win32.zip
+[Textadept 7.0 alpha 2 -- Mac OSX Intel 10.5+]: download/textadept_7.0_alpha_2.osx.zip
+[Textadept 7.0 alpha 2 -- Linux]: download/textadept_7.0_alpha_2.i386.tgz
+[Textadept 7.0 alpha 2 -- Linux x86_64]: download/textadept_7.0_alpha_2.x86_64.tgz
+[Textadept 7.0 alpha 2 -- Modules]: download/textadept_7.0_alpha_2.modules.zip
+[compiling]: 12_Compiling.html
+[`_M.textadept.editing.block_comment()`]: api/_M.textadept.editing.html#block_comment
+[`gui.set_theme()`]: api/gui.html#set_theme
+[`_M.textadept.bookmarks.goto_mark()`]: api/_M.textadept.bookmarks.html#goto_mark
+[LuaJIT]: http://luajit.org
+[nightly builds]: README.html#Download
+
+## 7.0 alpha (01 Jun 2013)
 
 Download:
 
@@ -28,7 +78,6 @@ Changes:
 * New [*properties.lua*][] for custom buffer and view properties.
 * Updated to [Scintilla][] 3.3.3.
 
-[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
 [Textadept 7.0 alpha -- Win32]: download/textadept_7.0_alpha.win32.zip
 [Textadept 7.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_7.0_alpha.osx.zip
 [Textadept 7.0 alpha -- Linux]: download/textadept_7.0_alpha.i386.tgz
