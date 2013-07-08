@@ -1883,6 +1883,7 @@ static void split_view(Scintilla *view, int vertical) {
   g_object_unref(view);
   focus_view(view2);
 
+  while (gtk_events_pending()) gtk_main_iteration();
   SS(view2, SCI_SETSEL, anchor, current_pos);
   int new_first_line = SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0);
   SS(view2, SCI_LINESCROLL, first_line - new_first_line, 0);
