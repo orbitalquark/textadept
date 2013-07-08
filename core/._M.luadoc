@@ -12,18 +12,17 @@
 -- script. However, the script may load additional Lua files present in the
 -- directory. (For an example, see *modules/textadept/init.lua*.)
 --
--- Loaded modules, regardless of whether they are generic or language-specific,
--- persist in Textadept's Lua State; Textadept never unloads them. Therefore,
--- modules should define functions or variables within the module itself, not
--- globally.
+-- Loaded modules, even language modules, persist in Textadept's Lua State;
+-- Textadept never unloads them. Therefore, modules should define functions or
+-- variables within the module itself, not globally.
 --
--- ### Language-Specific
+-- ### Language Modules
 --
--- To fully take advantage of Textadept's features, language-specific modules
--- should have at a minimum: a block comment string, run and/or compile
--- commands, an event handler for setting buffer properties like indentation,
--- and if possible, an Adeptsense. Optional features are extra snippets and
--- commands and a context menu.
+-- To fully take advantage of Textadept's features, language modules should have
+-- at a minimum: a block comment string, run and/or compile commands, an event
+-- handler for setting buffer properties like indentation, and if possible, an
+-- Adeptsense. Optional features are extra snippets and commands and a context
+-- menu.
 --
 -- #### Block Comment
 --

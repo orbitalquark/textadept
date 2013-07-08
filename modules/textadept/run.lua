@@ -5,11 +5,11 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Compile and run/execute source files with Textadept.
--- Typically, [language-specific modules][] populate the `compile_command`,
+-- Typically, [language modules][] populate the `compile_command`,
 -- `run_command`, and `error_detail` tables for a particular language's file
 -- extension.
 --
--- [language-specific modules]: _M.html#Compile.and.Run
+-- [language modules]: _M.html#Compile.and.Run
 -- @field ERROR_COLOR (string)
 --   The name of the color in the current theme to mark a line containing a
 --   recognized run or compile error.
@@ -123,9 +123,9 @@ end
 --   + `%(filename)`: The name of the file, including its extension.
 --   + `%(filename_noext)`: The name of the file, excluding its extension.
 --
--- This table is typically populated by [language-specific modules][].
+-- This table is typically populated by [language modules][].
 --
--- [language-specific modules]: _M.html#Compile.and.Run
+-- [language modules]: _M.html#Compile.and.Run
 -- @class table
 -- @name compile_command
 M.compile_command = {}
@@ -150,9 +150,9 @@ events.connect(events.COMPILE_OUTPUT, print_output)
 --   + `%(filename)`: The name of the file, including its extension.
 --   + `%(filename_noext)`: The name of the file, excluding its extension.
 --
--- This table is typically populated by [language-specific modules][].
+-- This table is typically populated by [language modules][].
 --
--- [language-specific modules]: _M.html#Compile.and.Run
+-- [language modules]: _M.html#Compile.and.Run
 -- @class table
 -- @name run_command
 M.run_command = {}
@@ -184,9 +184,9 @@ events.connect(events.RUN_OUTPUT, print_output)
 --
 -- When an error message is double-clicked, the user is taken to the point of
 -- error.
--- This table is usually populated by [language-specific modules][].
+-- This table is usually populated by [language modules][].
 --
--- [language-specific modules]: _M.html#Compile.and.Run
+-- [language modules]: _M.html#Compile.and.Run
 -- @class table
 -- @name error_detail
 M.error_detail = {}

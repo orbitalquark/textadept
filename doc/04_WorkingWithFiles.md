@@ -37,8 +37,8 @@ settings in the buffer status statusbar.
 
 #### Indentation
 
-Usually, [language-specific modules][] or [user settings][] dictate the
-buffer's indentation setting. By default, indentation is 2 spaces. Pressing
+Usually, [language modules][] or [user settings][] dictate the buffer's
+indentation setting. By default, indentation is 2 spaces. Pressing
 `Ctrl+Alt+Shift+T` (`^⇧T` on Mac OSX | `M-T` or `M-S-T` in curses) manually
 toggles between using tabs and spaces, although this only affects future
 indentation. Existing indentation remains unchanged. `Ctrl+Alt+I` (`^I` | `M-I`)
@@ -46,7 +46,7 @@ performs the conversion. (If the buffer uses tabs, all indenting spaces convert
 to tabs. If the buffer uses spaces, all indenting tabs convert to spaces.)
 Similarly, the "Buffer -> Indentation" menu manually sets indentation size.
 
-[language-specific modules]: 07_Modules.html#Buffer.Properties
+[language modules]: 07_Modules.html#Buffer.Properties
 [user settings]: 08_Preferences.html#Buffer.Properties
 
 #### Line Endings

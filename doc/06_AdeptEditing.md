@@ -251,8 +251,8 @@ and display API documentation. Pressing `Ctrl+Space` (`⌥⎋` on Mac OSX | `^Sp
 in curses) completes the current symbol and `Ctrl+H` (`^H` | `M-H` or `M-S-H`)
 shows any known documentation on the current symbol. Note: In order for this
 feature to work, the language you are working with must have an [Adeptsense][]
-defined. [Language-specific modules][] usually [define Adeptsenses][]. All of
-the [official][] Textadept language-specific modules have Adeptsenses.
+defined. [Language modules][] usually [define Adeptsenses][]. All of the
+[official][] Textadept language modules have Adeptsenses.
 
 ![Adeptsense Lua](images/adeptsense_lua.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -260,7 +260,7 @@ the [official][] Textadept language-specific modules have Adeptsenses.
 
 ![Adeptsense Doc](images/adeptsense_doc.png)
 
-[Language-specific modules]: 07_Modules.html#Language-Specific
+[Language modules]: 07_Modules.html#Language.Modules
 [Adeptsense]: api/_M.textadept.adeptsense.html
 [define Adeptsenses]: api/_M.html#Adeptsense
 [official]: http://foicica.com/hg
@@ -279,9 +279,9 @@ followed by the `Tab` (`⇥` | `Tab`) key. Subsequent presses of `Tab` (`⇥` |
 `Tab`) cause the caret to enter placeholders in sequential order, `Shift+Tab`
 (`⇧⇥` | `S-Tab`) goes back to the previous placeholder, and `Ctrl+Shift+K`
 (`⌥⇧⇥` | `M-S-K`) cancels the current snippet. Textadept supports nested
-snippets, snippets inserted from within another snippet. Language-specific
-modules usually define their [own set][] of snippets, but your
-[snippet preferences][] can define some too.
+snippets, snippets inserted from within another snippet. Language modules
+usually define their [own set][] of snippets, but your [snippet preferences][]
+can define some too.
 
 ![Snippet](images/snippet.png)
 &nbsp;&nbsp;&nbsp;&nbsp;

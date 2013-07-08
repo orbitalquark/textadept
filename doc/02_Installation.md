@@ -50,12 +50,12 @@ appropriate package for your platform. For the Windows and Mac OSX packages, the
 bundled GTK+ runtime accounts for more than 3/4 of the download and unpackaged
 application sizes. Textadept itself is much smaller.
 
-You also have the option of downloading an official set of
-[language-specific modules][] from the download page. Textadept itself includes
-C/C++ and Lua language modules by default.
+You also have the option of downloading an official set of [language modules][]
+from the download page. Textadept itself includes C/C++ and Lua language modules
+by default.
 
 [download page]: http://foicica.com/textadept/download
-[language-specific modules]: 07_Modules.html#Language-Specific
+[language modules]: 07_Modules.html#Language.Modules
 
 ## Installation
 
@@ -66,8 +66,8 @@ privileges.
 
 Unpack the archive anywhere.
 
-If you downloaded the set of language-specific modules, unpack it where you
-unpacked the Textadept archive. The modules are located in the
+If you downloaded the set of language modules, unpack it where you unpacked the
+Textadept archive. The modules are located in the
 */path/to/textadept_x.x/modules/* directory.
 
 ### Mac OSX
@@ -77,7 +77,7 @@ Unpack the archive and move *Textadept.app* to your user or system
 contains an optional *ta* script for launching Textadept from the command line
 that you can put in a directory in your "$PATH" (e.g. */usr/local/bin/*).
 
-If you downloaded the set of language-specific modules, unpack it, right-click
+If you downloaded the set of language modules, unpack it, right-click
 *Textadept.app*, select "Show Package Contents", navigate to
 *Contents/Resources/modules/*, and move the unpacked modules there.
 
@@ -85,9 +85,9 @@ If you downloaded the set of language-specific modules, unpack it, right-click
 
 Unpack the archive anywhere.
 
-If you downloaded the set of language-specific modules, unpack it where you
-unpacked the Textadept archive. The modules are located in the
-*textadept_x.x\modules\\* directory.
+If you downloaded the set of language modules, unpack it where you unpacked the
+Textadept archive. The modules are located in the *textadept_x.x\modules\\*
+directory.
 
 ## Running
 

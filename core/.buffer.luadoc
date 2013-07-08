@@ -2928,8 +2928,7 @@ function get_lexer(buffer, current) end
 
 ---
 -- Sets the name of the lexer used by the buffer to *lang* or the auto-detected
--- language and then loads the appropriate language-specific module if the
--- module exists.
+-- language and then loads the appropriate language module if the module exists.
 -- @param buffer The global buffer.
 -- @param lang Optional string language name to set. If `nil`, attempts to
 --   auto-detect the buffer's language.

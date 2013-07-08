@@ -101,8 +101,8 @@ local quit
 
 ---
 -- Resets the Lua state by reloading all initialization scripts.
--- Language-specific modules for opened files are NOT reloaded. Re-opening the
--- files that use them will reload those modules instead.
+-- Language modules for opened files are NOT reloaded. Re-opening the files that
+-- use them will reload those modules instead.
 -- This function is useful for modifying user scripts (such as
 -- *~/.textadept/init.lua* and *~/.textadept/modules/textadept/keys.lua*) on
 -- the fly without having to restart Textadept. `arg` is set to `nil` when
