@@ -144,7 +144,7 @@ local function find_(text, next, flags, no_wrap, wrapped)
     local e = next and buffer.length or buffer.current_pos
     local caps = {buffer:text_range(s, e):find(next and patt or '^.*()'..patt)}
     M.captures = {table.unpack(caps, next and 3 or 4)}
-    if #caps > 0 then
+    if #caps > 0 and caps[2] >= caps[1] then
       pos, e = s + caps[next and 1 or 3] - 1, s + caps[2]
       buffer:set_sel(e, pos)
     end
