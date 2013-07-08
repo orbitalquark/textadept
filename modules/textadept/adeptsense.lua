@@ -34,17 +34,17 @@ local M = {}
 --
 -- ## Adeptsense Basics
 --
--- Adeptsenses exist per-language so [language-specific modules][] typically
--- define them. Before attempting to write an Adeptsense, first determine if the
--- module for your language has an Adeptsense. Textadept's official language
--- modules have Adeptsenses and are good reference sources. If your language is
--- similar to any of Textadept's, you may be able to copy and modify that
--- language's Adeptsense, saving some time and effort.
+-- Adeptsenses exist per-language so [language modules][] typically define them.
+-- Before attempting to write an Adeptsense, first determine if the module for
+-- your language has an Adeptsense. Textadept's official language modules have
+-- Adeptsenses and are good reference sources. If your language is similar to
+-- any of Textadept's, you may be able to copy and modify that language's
+-- Adeptsense, saving some time and effort.
 --
--- [language-specific modules]: _M.html#Language-Specific.Modules
+-- [language modules]: _M.html#Language.Modules
 --
--- Creating a new instance of an Adeptsense from within a language-specific
--- module is easy. Just replace the '?' with the name of your language:
+-- Creating a new instance of an Adeptsense from within a language module is
+-- easy. Just replace the '?' with the name of your language:
 --
 --     M.sense = _M.textadept.adeptsense.new('?')
 --

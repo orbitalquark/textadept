@@ -1648,8 +1648,8 @@ Changes:
 
 * Added BSD support.
 * Removed kill-ring from editing module.
-* [Run][] and [compile][] commands are in language-specific modules.
-* [Block comment][] strings are in language-specific modules now.
+* [Run][] and [compile][] commands are in language modules.
+* [Block comment][] strings are in language modules now.
 * Remove "Untitled" buffer when necessary.
 * Moved "Search" menu into "Tools" menu to prevent `Alt+S` key conflict.
 * Rewrote lexers implementation.

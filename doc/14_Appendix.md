@@ -267,11 +267,11 @@ Notes:
    refrain from setting properties like `buffer.sel_eol_filled` which belong in
    a [*properties.lua*][] file.
 6. The separate *buffer.lua* is gone. Use [*properties.lua*][] or a
-   [language-specific module][].
+   [language module][].
 
 [customizing themes]: 09_Themes.html#Customizing.Themes
 [*properties.lua*]: 08_Preferences.html#Buffer.Properties
-[language-specific module]: 07_Modules.html#Buffer.Properties
+[language module]: 07_Modules.html#Buffer.Properties
 
 ##### Theme Preference
 

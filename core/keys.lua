@@ -20,9 +20,9 @@ local M = {}
 -- global table. This means if there are two commands with the same key
 -- sequence, Textadept runs the one specific to the current lexer. However, if
 -- the command returns the boolean value `false`, Textadept also runs the
--- lower-priority command. (This is useful for language-specific modules to
--- override commands like Adeptsense autocompletion, but fall back to word
--- autocompletion if the first command fails.)
+-- lower-priority command. (This is useful for language modules to override
+-- commands like Adeptsense autocompletion, but fall back to word autocompletion
+-- if the first command fails.)
 --
 -- ## Key Sequences
 --
@@ -95,7 +95,7 @@ local M = {}
 -- ## Key Chains
 --
 -- Key chains are a powerful concept. They allow you to assign multiple key
--- bindings to one key sequence. Language-specific modules
+-- bindings to one key sequence. Language modules
 -- [use key chains](#LANGUAGE_MODULE_PREFIX) for their functions. By default,
 -- the `Esc` (`⎋` on Mac OSX | `Esc` in curses) key cancels a key chain, but you
 -- can redefine it via [`CLEAR`](#CLEAR). An example key chain looks like:
@@ -111,7 +111,7 @@ local M = {}
 --   The default value is `'esc'` for the `Esc` (`⎋` on Mac OSX | `Esc` in
 --   curses) key.
 -- @field LANGUAGE_MODULE_PREFIX (string)
---   The starting key of the key chain reserved for language-specific modules.
+--   The starting key of the key chain reserved for language modules.
 --   The default value is `'cl'` on platforms other than Mac OSX, `'ml'`
 --   otherwise. Equivalent to `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in curses).
 -- @field MODE (string)

@@ -84,8 +84,8 @@ them.
 
 ### Modules
 
-*modules/* contains generic and language-specific modules for editing text and
-source code.
+*modules/* contains generic and language modules for editing text and source
+code.
 
 ### Themes
 

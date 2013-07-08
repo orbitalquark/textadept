@@ -6,9 +6,9 @@ local M = {}
 ---
 -- Handles file type detection for Textadept.
 -- @field _G.events.LANGUAGE_MODULE_LOADED (string)
---   Emitted after loading a language-specific module.
---   This is useful for overriding a language-specific module's key bindings
---   or other properties since the module is not loaded when Textadept starts.
+--   Emitted after loading a language module.
+--   This is useful for overriding a language module's key bindings or other
+--   properties since the module is not loaded when Textadept starts.
 --   Arguments:
 --
 --   * *`lang`*: The language lexer name.
@@ -84,7 +84,7 @@ local function set_lexer(buffer, lang)
     if not lang then lang = 'text' end
   end
 
-  -- Set the lexer and load its language-specific module.
+  -- Set the lexer and load its language module.
   buffer._lexer = lang
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)

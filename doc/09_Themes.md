@@ -72,7 +72,7 @@ managing more changes is probably easier with the latter.
 
 [`gui.set_theme()`]: api/gui.html#set_theme
 
-### Language-Specific
+### Language
 
 Textadept also allows you to customize themes per-language through the
 `events.LANGUAGE_MODULE_LOADED` event. For example, changing the color of
