@@ -189,19 +189,30 @@ local M = {}
 -- N/A             |N/A         |^]          |Swap caret and mark anchor
 -- **Other**                |    |    |
 -- Ctrl+Shift+U, xxxx, Enter|None|None|Input Unicode character U-xxxx.
--- **curses CDK Fields**|   |            |
--- N/A                   |N/A|^B<br/>Left |Cursor left
--- N/A                   |N/A|^F<br/>Right|Cursor right
--- N/A                   |N/A|Del         |Delete forward
--- N/A                   |N/A|^H<br/>Bksp |Delete back
--- N/A                   |N/A|^V          |Paste
--- N/A                   |N/A|^X          |Cut all
--- N/A                   |N/A|^Y          |Copy all
--- N/A                   |N/A|^U          |Erase all
--- N/A                   |N/A|^A          |Home
--- N/A                   |N/A|^E          |End
--- N/A                   |N/A|^T          |Transpose characters
--- N/A                   |N/A|^L          |Refresh
+-- **Entry Fields**|               |            |
+-- Left            |⇠<br/>^B       |^B<br/>Left |Cursor left
+-- Right           |⇢<br/>^F       |^F<br/>Right|Cursor right
+-- Del             |⌦              |Del         |Delete forward
+-- Bksp            |⌫              |^H<br/>Bksp |Delete back
+-- Ctrl+V          |⌘V             |^V          |Paste
+-- N/A             |N/A            |^X          |Cut all
+-- N/A             |N/A            |^Y          |Copy all
+-- N/A             |N/A            |^U          |Erase all
+-- Home            |↖<br/>⌘⇠<br/>^A|^A          |Home
+-- End             |↘<br/>⌘⇢<br/>^E|^E          |End
+-- N/A             |N/A            |^T          |Transpose characters
+-- N/A             |N/A            |^L          |Refresh
+-- **Find Fields**|   |     |
+-- N/A            |N/A|Tab  |Focus find buttons
+-- N/A            |N/A|S-Tab|Focus replace buttons
+-- Tab            |⇥  |Down |Focus replace field
+-- Shift+Tab      |⇧⇥ |Up   |Focus find field
+-- Down           |⇣  |^P   |Cycle back through find/replace history
+-- Up             |⇡  |^N   |Cycle forward through find/replace history
+-- N/A            |N/A|F1   |Toggle "Match Case"
+-- N/A            |N/A|F2   |Toggle "Whole Word"
+-- N/A            |N/A|F3   |Toggle "Lua Pattern"
+-- N/A            |N/A|F4   |Toggle "Find in Files"
 --
 -- †: Ctrl+Enter in Win32 curses.
 module('_M.textadept.keys')]]
