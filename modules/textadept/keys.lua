@@ -526,7 +526,7 @@ keys[not OSX and (not CURSES and 'cai' or 'mi')
 -- TODO: {utils.set_encoding, 'MacRoman'}
 -- TODO: {utils.set_encoding, 'UTF-16LE'}
 keys[not OSX and not CURSES and 'cL'
-                            or 'mL'] = _M.textadept.mime_types.select_lexer
+                            or 'mL'] = _M.textadept.file_types.select_lexer
 keys.f5 = {buffer.colourise, buffer, 0, -1}
 if CURSES then keys.cl = keys.f5 end
 

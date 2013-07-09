@@ -121,7 +121,7 @@ Changes:
 [Textadept 6.6 -- Linux x86_64]: download/textadept_6.6.x86_64.tgz
 [Textadept 6.6 -- Source]: download/textadept_6.6.src.zip
 [Textadept 6.6 -- Modules]: download/textadept_6.6.modules.zip
-[`events.LANGUAGE_MODULE_LOADED`]: api/_M.textadept.mime_types.html#_G.events.LANGUAGE_MODULE_LOADED
+[`events.LANGUAGE_MODULE_LOADED`]: api/_M.textadept.file_types.html#_G.events.LANGUAGE_MODULE_LOADED
 [Scintilla]: http://scintilla.org
 
 ## 6.6 beta (01 May 2013)
@@ -1312,7 +1312,7 @@ Changes:
 [Textadept 3.7 beta -- Linux x86_64]: download/textadept_3.7_beta.x86_64.tgz
 [Textadept 3.7 beta -- Source]: download/textadept_3.7_beta.src.zip
 [Adeptsense]: 6_AdeptEditing.html#Adeptsense
-[`language_module_loaded`]: api/_M.textadept.mime_types.html#Mime-type.Events
+[`language_module_loaded`]: api/_M.textadept.file_types.html#_G.events.LANGUAGE_MODULE_LOADED
 [`gui.filteredlist()`]: api/gui.html#filteredlist
 [`char_matches`]: api/_M.textadept.editing.html#char_matches
 [`braces`]: api/_M.textadept.editing.html#braces

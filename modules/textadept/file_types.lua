@@ -12,7 +12,7 @@ local M = {}
 --   Arguments:
 --
 --   * *`lang`*: The language lexer name.
-module('_M.textadept.mime_types')]]
+module('_M.textadept.file_types')]]
 
 -- Events.
 events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
@@ -24,7 +24,7 @@ events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
 -- each file extension is matched against the file's extension.
 -- @class table
 -- @name extensions
-M.extensions = {}
+M.extensions = {--[[Actionscript]]as='actionscript',asc='actionscript',--[[ADA]]ada='ada',adb='ada',ads='ada',--[[ANTLR]]g='antlr',--[[APDL]]ans='apdl',inp='apdl',mac='apdl',--[[Applescript]]applescript='applescript',--[[ASP]]asa='asp',asp='asp',hta='asp',--[[AWK]]awk='awk',--[[Batch]]bat='batch',cmd='batch',--[[Bibtex]]bib='bibtex',--[[Boo]]boo='boo',--[[C/C++]]c='cpp',cc='cpp',C='cpp',cpp='cpp',cxx='cpp',['c++']='cpp',h='cpp',hh='cpp',hpp='cpp',hxx='cpp',['h++']='cpp',--[[C#]]cs='csharp',--[[Chuck]]ck='chuck',--[[CMake]]cmake='cmake',['cmake.in']='cmake',ctest='cmake',['ctest.in']='cmake',--[[CoffeeScript]]coffee='coffeescript',--[[CSS]]css='css',--[[CUDA]]cu='cuda',cuh='cuda',--[[D]]d='dmd',di='dmd',--[[Desktop]]desktop='desktop',--[[diff]]diff='diff',patch='diff',--[[dot]]dot='dot',--[[Eiffel]]e='eiffel',eif='eiffel',--[[Erlang]]erl='erlang',hrl='erlang',--[[F#]]fs='fsharp',--[[Forth]]f='forth',forth='forth',frt='forth',fs='forth',--[[Fortran]]['for']='fortran',fort='fortran',fpp='fortran',f77='fortran',f90='fortran',f95='fortran',f03='fortran',f08='fortran',--[[Gap]]g='gap',gd='gap',gi='gap',gap='gap',--[[Gettext]]po='gettext',pot='gettext',--[[GLSL]]glslf='glsl',glslv='glsl',--[[GNUPlot]]dem='gnuplot',plt='gnuplot',--[[Go]]go='go',--[[Groovy]]groovy='groovy',gvy='groovy',--[[Gtkrc]]gtkrc='gtkrc',--[[Haskell]]hs='haskell',--[[HTML]]htm='hypertext',html='hypertext',shtm='hypertext',shtml='hypertext',xhtml='hypertext',--[[IDL]]idl='idl',odl='odl',--[[Inform]]inf='inform',--[[ini]]cfg='ini',cnf='ini',inf='ini',ini='ini',reg='ini',--[[Io]]io='Io',--[[Java]]bsh='java',java='java',--[[Javascript]]js='javascript',jsfl='javascript',--[[JSP]]jsp='jsp',--[[JSON]]json='json',--[[Latex]]bbl='latex',dtx='latex',ins='latex',ltx='latex',tex='latex',sty='latex',--[[Less]]less='less',--[[Lilypond]]lily='lilypond',ly='lilypond',--[[Lisp]]cl='lisp',el='lisp',lisp='lisp',lsp='lisp',--[[Literate Coffeescript]]litcoffee='litcoffee',--[[Lua]]lua='lua',--[[Makefile]]GNUmakefile='makefile',iface='makefile',mak='makefile',makefile='makefile',Makefile='makefile',--[[Markdown]]md='markdown',--[[Nemerle]]n='nemerle',--[[NSIS]]nsh='nsis',nsi='nsis',nsis='nsis',--[[Objective C]]m='objective_c',mm='objective_c',objc='objective_c',--[[OCAML]]caml='caml',ml='caml',mli='caml',mll='caml',mly='caml',--[[Octave]]--[[Pascal]]dpk='pascal',dpr='pascal',p='pascal',pas='pascal',--[[Perl]]al='perl',perl='perl',pl='perl',pm='perl',pod='perl',--[[PHP]]inc='php',php='php',php3='php',php4='php',phtml='php',--[[Pike]]pike='pike',pmod='pike',--[[Postscript]]eps='ps',ps='ps',--[[Prolog]]prolog='prolog',--[[Properties]]props='props',properties='props',--[[Python]]sc='python',py='python',pyw='python',--[[R]]R='rstats',Rout='rstats',Rhistory='rstats',Rt='rstats',['Rout.save']='rstats',['Rout.fail']='rstats',S='rstats',--[[Rebol]]r='rebol',reb='rebol',--[[Rexx]]orx='rexx',rex='rexx',--[[RHTML]]erb='rhtml',rhtml='rhtml',--[[Ruby]]Rakefile='ruby',rake='ruby',rb='ruby',rbw='ruby',--[[Sass CSS]]sass='sass',scss='sass',--[[Scala]]scala='scala',--[[Scheme]]sch='scheme',scm='scheme',--[[Shell]]bash='bash',bashrc='bash',bash_profile='bash',configure='bash',csh='bash',sh='bash',zsh='bash',--[[Smalltalk]]changes='smalltalk',st='smalltalk',sources='smalltalk',--[[SQL]]ddl='sql',sql='sql',--[[TCL]]tcl='tcl',tk='tcl',--[[Vala]]vala='vala',--[[Verilog]]v='verilog',ver='verilog',--[[VHDL]]vh='vhdl',vhd='vhdl',vhdl='vhdl',--[[Visual Basic]]asa='vb',bas='vb',cls='vb',ctl='vb',dob='vb',dsm='vb',dsr='vb',frm='vb',pag='vb',vb='vb',vba='vb',vbs='vb',--[[XML]]dtd='xml',svg='xml',xml='xml',xsd='xml',xsl='xml',xslt='xml',xul='xml'}
 
 ---
 -- Map of shebang words to their associated lexers.
@@ -32,7 +32,7 @@ M.extensions = {}
 -- line in the file, each shebang word is matched against that line.
 -- @class table
 -- @name shebangs
-M.shebangs = {}
+M.shebangs = {awk='awk',lua='lua',octave='matlab',perl='perl',php='php',python='python',ruby='ruby',bash='bash',sh='bash'}
 
 ---
 -- Map of first-line patterns to their associated lexers.
@@ -40,7 +40,7 @@ M.shebangs = {}
 -- against the first line in the file.
 -- @class table
 -- @name patterns
-M.patterns = {}
+M.patterns = {['^%s*class%s+%S+%s*<%s*ApplicationController']='rails',['^%s*class%s+%S+%s*<%s*ActionController::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Migration']='rails',['^%s*<%?xml%s']='xml'}
 
 ---
 -- List of available lexers.
@@ -129,28 +129,6 @@ events.connect(events.RESET_AFTER, restore_lexer)
 function M.select_lexer()
   local lexer = gui.filteredlist(_L['Select Lexer'], _L['Name'], M.lexers)
   if lexer then buffer:set_lexer(lexer) end
-end
-
--- Load mime-types.
-local function process_line(line)
-  if line:find('^%s*%%') then return end
-  if line:find('^%s*[^#/]') then -- extension definition
-    local ext, lexer_name = line:match('^%s*(.+)%s+(%S+)$')
-    if ext and lexer_name then M.extensions[ext] = lexer_name end
-  else -- shebang or pattern
-    local ch, text, lexer_name = line:match('^%s*([#/])(.+)%s+(%S+)$')
-    if ch and text and lexer_name then
-      (ch == '#' and M.shebangs or M.patterns)[text] = lexer_name
-    end
-  end
-end
-local f = io.open(_HOME..'/modules/textadept/mime_types.conf', 'rb')
-for line in f:lines() do process_line(line) end
-f:close()
-f = io.open(_USERHOME..'/mime_types.conf', 'rb')
-if f then
-  for line in f:lines() do process_line(line) end
-  f:close()
 end
 
 -- Generate lexer list.
