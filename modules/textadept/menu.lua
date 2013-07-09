@@ -157,7 +157,7 @@ local menubar = {
       {_L['UTF-1_6 Encoding'], {utils.set_encoding, 'UTF-16LE'}},
     },
     SEPARATOR,
-    {_L['Select _Lexer...'], _M.textadept.mime_types.select_lexer},
+    {_L['Select _Lexer...'], _M.textadept.file_types.select_lexer},
     {_L['_Refresh Syntax Highlighting'], {buffer.colourise, buffer, 0, -1}},
   },
   { title = _L['_View'],

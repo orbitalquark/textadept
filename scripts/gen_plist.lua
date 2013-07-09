@@ -7,16 +7,17 @@ local lang, exts
 local languages, extensions = {}, {}
 
 -- Read languages and extensions.
-local f = io.open('../modules/textadept/mime_types.conf')
-for line in f:lines() do
-  if line:find('^%%') then
-    lang, exts = line:match('^%%%s*(.+)$'), {}
+local f = io.open('../modules/textadept/file_types.lua')
+local types = f:read('*all'):match('M.extensions = (%b{})'):sub(2)
+f:close()
+for type in types:gmatch('(.-)[%],}]+') do
+  if type:find('^%-%-') then
+    lang, exts = type:match('([^%[]+)$'), {}
     if lang then languages[#languages + 1], extensions[lang] = lang, exts end
-  elseif line:find('^%a') then
-    exts[#exts + 1] = line:match('^%S+')
+  else
+    exts[#exts + 1] = type:match('^%[?\'?([^\'=]+)')
   end
 end
-f:close()
 
 -- Generate and write the XML.
 local xml = {[[
@@ -68,7 +69,7 @@ xml[#xml + 1] = [[
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
-	<string>textadept</string>
+	<string>textadept_osx</string>
 	<key>CFBundleIconFile</key>
 	<string>textadept.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -82,7 +83,7 @@ xml[#xml + 1] = [[
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>7.0 alpha</string>
+	<string>7.0 alpha 2</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>

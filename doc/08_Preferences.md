@@ -131,6 +131,24 @@ Learn more about snippet syntax in the [snippets LuaDoc][].
 
 [snippets LuaDoc]: api/_M.textadept.snippets.html
 
+### File Types
+
+Textadept recognizes a wide range of programming language files either by file
+extension, by a keyword in the shebang ("#!/path/to/exe") line, or by a
+[Lua pattern][] that matches the text of the first line. The editor does this by
+consulting a set of tables in [`_M.textadept.file_types`][] that are modifiable
+from *~/.textadept/init.lua*. For example:
+
+    -- Recognize .luadoc files as Lua code.
+    _M.textadept.file_types.extensions.luadoc = 'lua'
+    -- Change .html files to be recognized as XML files.
+    _M.textadept.file_types.extensions.html = 'xml'
+    -- Recognize a shebang line like "#!/usr/bin/zsh" as shell code.
+    _M.textadept.file_types.shebangs.zsh = 'bash'
+
+[Lua pattern]: 14_Appendix.html#Lua.Patterns
+[`_M.textadept.file_types`]: api/_M.textadept.file_types.html
+
 ## Buffer Properties
 
 Since Textadept runs *~/.textadept/init.lua* only once on startup, it is not the
@@ -170,52 +188,3 @@ send the modified *locale.conf* file to [me][]. I will include it in a future
 release.
 
 [me]: README.html#Contact
-
-## File Types
-
-Textadept recognizes a wide range of programming language files by any of the
-following:
-
-* File extension.
-* Keywords in the file's shebang ("#!/path/to/exe") line.
-* A pattern that matches the text of the file's first line.
-
-*modules/textadept/mime_types.conf* contains built-in file types. Override or
-add to them in your *~/.textadept/mime_types.conf*:
-
-    % Recognize .luadoc files as Lua code.
-    luadoc lua
-
-    % Change .html files to be recognized as XML files.
-    html xml
-
-### Detect by Extension
-
-The syntax for mapping a file extension to a lexer is:
-
-    file_ext lexer
-
-Note: `file_ext` should not start with a '.' (period).
-
-### Detect by Shebang
-
-The syntax for mapping a word contained in a shebang line (the first line of a
-file whose first two characters are "#!") to a lexer is:
-
-    #shebang_word lexer
-
-Examples of `shebang_word`s are "lua", "ruby", "python" which match lines like
-"#!/usr/bin/lua", "#!/usr/env/ruby", and "#!/usr/bin/python3", respectively.
-
-### Detect by Pattern
-
-The syntax for mapping a Lua pattern that matches the first line of a file to a
-lexer is:
-
-    /pattern lexer
-
-Patterns use [Lua pattern syntax][] with only the last space, the one separating
-the pattern from the lexer, being significant. No spaces in the pattern need
-escaping.
-
-[Lua pattern syntax]: 14_Appendix.html#Lua.Patterns

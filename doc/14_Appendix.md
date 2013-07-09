@@ -157,6 +157,7 @@ buffer\_new()                     |Renamed |\_G.[buffer.new()][]
 **_M.textadept**                  |        |
 filter\_through                   |Removed |N/A
 filter\_through.filter\_through() |Renamed |editing.[filter\_through()][]
+mime\_types                       |Renamed |[file\_types][]<sup>†</sup>
 **_M.textadept.bookmark**         |        |
 N/A                               |New     |[goto\_mark()][]
 MARK\_BOOKMARK\_COLOR             |Renamed |[BOOKMARK\_COLOR][]
@@ -184,10 +185,13 @@ try\_encodings                    |Renamed |[encodings][]
 
 <sup>\*</sup>`arg` is `nil` when resetting.
 
-<sup>†</sup>Changed arguments too.
+<sup>†</sup>Removed *mime_types.conf* files. Interact with Lua tables directly.
+
+<sup>‡</sup>Changed arguments too.
 
 [buffer.new()]: api/buffer.html#new
 [filter\_through()]: api/_M.textadept.editing.html#filter_through
+[file\_types]: api/_M.textadept.file_types.html
 [goto\_mark()]: api/_M.textadept.bookmarks.html#goto_mark
 [BOOKMARK\_COLOR]: api/_M.textadept.bookmarks.html#BOOKMARK_COLOR
 [HIGHLIGHT\_COLOR]: api/_M.textadept.editing.html#HIGHLIGHT_COLOR
