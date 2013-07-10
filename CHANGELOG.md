@@ -4,10 +4,42 @@
 
 [Atom Feed]: feed
 
-## 7.0 alpha 2 (01 Jul 2013)
+## 7.0 beta (11 Jul 2013)
 
 Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to
 Textadept 7.
+
+Download:
+
+* [Textadept 7.0 beta -- Win32][]
+* [Textadept 7.0 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 7.0 beta -- Linux][]
+* [Textadept 7.0 beta -- Linux x86_64][]
+* [Textadept 7.0 beta -- Modules][]
+
+Bugfixes:
+
+* Added file type for Go.
+* Fixed disorienting scrolling in some instances of splitting views.
+* Fixed corner-case bug in Lua Pattern "Replace All".
+
+Changes:
+
+* Renamed `_M.textadept.mime_types` to [`_M.textadept.file_types`][].
+* Eliminated *mime_types.conf* files. Add or modify file type tables
+  [directly][].
+* Changed scrollbar look and feel on Mac OSX.
+
+[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
+[Textadept 7.0 beta -- Win32]: download/textadept_7.0_beta.win32.zip
+[Textadept 7.0 beta -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta.osx.zip
+[Textadept 7.0 beta -- Linux]: download/textadept_7.0_beta.i386.tgz
+[Textadept 7.0 beta -- Linux x86_64]: download/textadept_7.0_beta.x86_64.tgz
+[Textadept 7.0 beta -- Modules]: download/textadept_7.0_beta.modules.zip
+[`_M.textadept.file_types`]: api/_M.textadept.file_types.html
+[directly]: 08_Preferences.html#File.Types
+
+## 7.0 alpha 2 (01 Jul 2013)
 
 Download:
 
@@ -44,7 +76,6 @@ Changes:
 * Updated to [LuaJIT][] 2.0.2.
 * New [nightly builds][].
 
-[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
 [Textadept 7.0 alpha 2 -- Win32]: download/textadept_7.0_alpha_2.win32.zip
 [Textadept 7.0 alpha 2 -- Mac OSX Intel 10.5+]: download/textadept_7.0_alpha_2.osx.zip
 [Textadept 7.0 alpha 2 -- Linux]: download/textadept_7.0_alpha_2.i386.tgz
