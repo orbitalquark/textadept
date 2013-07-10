@@ -351,6 +351,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>go</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Go source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>groovy</string>
 				<string>gvy</string>
 			</array>
@@ -967,7 +977,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>7.0 alpha 2</string>
+	<string>7.0 beta</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
