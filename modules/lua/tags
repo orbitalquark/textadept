@@ -826,9 +826,9 @@ _M.textadept	_	0;"	m
 _M.textadept.adeptsense	_	0;"	m	
 _M.textadept.bookmarks	_	0;"	m	
 _M.textadept.editing	_	0;"	m	
+_M.textadept.file_types	_	0;"	m	
 _M.textadept.keys	_	0;"	m	
 _M.textadept.menu	_	0;"	m	
-_M.textadept.mime_types	_	0;"	m	
 _M.textadept.run	_	0;"	m	
 _M.textadept.session	_	0;"	m	
 _M.textadept.snippets	_	0;"	m	
@@ -1099,10 +1099,11 @@ exit	_	0;"	f	class:os
 exp	_	0;"	f	class:math
 expand_children	_	0;"	f	class:buffer
 extend	_	0;"	F	class:lexer
-extensions	_	0;"	t	class:_M.textadept.mime_types
+extensions	_	0;"	t	class:_M.textadept.file_types
 extra_ascent	_	0;"	F	class:buffer
 extra_descent	_	0;"	F	class:buffer
 extract	_	0;"	f	class:bit32
+file_types	_	0;"	t	class:_M.textadept
 filename	_	0;"	F	class:buffer
 filter_through	_	0;"	f	class:_M.textadept.editing
 filteredlist	_	0;"	f	class:gui
@@ -1253,7 +1254,7 @@ lexer	_	0;"	m
 lexer	_	0;"	t	
 lexer	_	0;"	t	class:lexer
 lexer_language	_	0;"	F	class:buffer
-lexers	_	0;"	t	class:_M.textadept.mime_types
+lexers	_	0;"	t	class:_M.textadept.file_types
 lfs	_	0;"	m	
 lfs	_	0;"	t	
 line_copy	_	0;"	f	class:buffer
@@ -1358,7 +1359,6 @@ max_line_state	_	0;"	F	class:buffer
 menu	_	0;"	f	class:gui
 menu	_	0;"	t	class:_M.textadept
 menubar	_	0;"	t	class:gui
-mime_types	_	0;"	t	class:_M.textadept
 min	_	0;"	f	class:math
 mkdir	_	0;"	f	class:lfs
 modf	_	0;"	f	class:math
@@ -1404,7 +1404,7 @@ para_up	_	0;"	f	class:buffer
 para_up_extend	_	0;"	f	class:buffer
 paste	_	0;"	f	class:buffer
 path	_	0;"	F	class:package
-patterns	_	0;"	t	class:_M.textadept.mime_types
+patterns	_	0;"	t	class:_M.textadept.file_types
 pcall	_	0;"	f	
 php	_	0;"	t	class:_M
 php	_	0;"	t	class:keys
@@ -1523,7 +1523,7 @@ select_all	_	0;"	f	class:buffer
 select_command	_	0;"	f	class:_M.textadept.menu
 select_enclosed	_	0;"	f	class:_M.textadept.editing
 select_indented_block	_	0;"	f	class:_M.textadept.editing
-select_lexer	_	0;"	f	class:_M.textadept.mime_types
+select_lexer	_	0;"	f	class:_M.textadept.file_types
 select_line	_	0;"	f	class:_M.textadept.editing
 select_paragraph	_	0;"	f	class:_M.textadept.editing
 select_word	_	0;"	f	class:_M.textadept.editing
@@ -1587,7 +1587,7 @@ setmode	_	0;"	f	class:lfs
 setupvalue	_	0;"	f	class:debug
 setuservalue	_	0;"	f	class:debug
 setvbuf	_	0;"	f	class:file
-shebangs	_	0;"	t	class:_M.textadept.mime_types
+shebangs	_	0;"	t	class:_M.textadept.file_types
 show_apidoc	_	0;"	f	class:_M.textadept.adeptsense
 show_completions	_	0;"	f	class:gui.command_entry
 show_lines	_	0;"	f	class:buffer
