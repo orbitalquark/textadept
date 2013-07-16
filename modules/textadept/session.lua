@@ -89,8 +89,9 @@ function M.load(filename)
     elseif line:find('^current_view:') then
       current_view = tonumber(line:match('^current_view: (%d+)')) or 1
     elseif line:find('^size:') then
-      local width, height = line:match('^size: (%d+) (%d+)$')
-      if width and height then gui.size = {width, height} end
+      local maximized, width, height = line:match('^size: (%l*) ?(%d+) (%d+)$')
+      maximized = maximized == 'true'
+      if maximized then gui.maximized = true else gui.size = {width, height} end
     elseif line:find('^recent:') then
       local filename = line:match('^recent: (.+)$')
       local recent, exists = io.recent_files, false
@@ -179,8 +180,8 @@ function M.save(filename)
   -- Write out the current focused view.
   session[#session + 1] = ("current_view: %d"):format(_VIEWS[view])
   -- Write out other things.
-  local size = gui.size
-  session[#session + 1] = ("size: %d %d"):format(size[1], size[2])
+  local maximized, size = tostring(gui.maximized), gui.size
+  session[#session + 1] = ("size: %s %d %d"):format(maximized, size[1], size[2])
   for i = 1, #io.recent_files do
     if i > M.MAX_RECENT_FILES then break end
     session[#session + 1] = ("recent: %s"):format(io.recent_files[i])
