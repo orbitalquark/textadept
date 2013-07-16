@@ -178,6 +178,7 @@ open                              |Changed |\_G.[io.snapopen()][]<sup>†</sup>
 **events**                        |        |
 handlers                          |Removed |N/A
 **gui**                           |        |
+N/A                               |New     |[maximized][]
 find.goto\_file\_in\_list()       |Renamed |find.[goto\_file\_found()][]
 select\_theme                     |Removed |N/A
 **io**                            |        |
@@ -199,6 +200,7 @@ try\_encodings                    |Renamed |[encodings][]
 [select\_enclosed()]: api/_M.textadept.editing.html#select_enclosed
 [ERROR\_COLOR]: api/_M.textadept.run.html#ERROR_COLOR
 [io.snapopen()]: api/io.html#snapopen
+[maximized]: api/gui.html#maximized
 [goto\_file\_found()]: api/gui.find.html#goto_file_found
 [encodings]: api/io.html#encodings
 

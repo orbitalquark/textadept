@@ -17,6 +17,8 @@ local gui = gui
 --   The text displayed by the statusbar.
 -- @field docstatusbar_text (string, Write-only)
 --   The text displayed by the buffer statusbar.
+-- @field maximized (bool)
+--   Whether or not the Textadept window is maximized.
 module('gui')]]
 
 local theme = package.searchpath(not CURSES and 'light' or 'term',
