@@ -989,12 +989,12 @@ static int lgui__newindex(lua_State *L) {
     gtk_widget_hide(new_menubar);
 #endif
 #endif
-  } else if (strcmp(key, "maximized") == 0)
+  } else if (strcmp(key, "maximized") == 0) {
 #if GTK
     lua_toboolean(L, 3) ? gtk_window_maximize(GTK_WINDOW(window))
                         : gtk_window_unmaximize(GTK_WINDOW(window));
 #endif
-  else if (strcmp(key, "size") == 0) {
+  } else if (strcmp(key, "size") == 0) {
 #if GTK
     luaL_argcheck(L, lua_istable(L, 3) && lua_rawlen(L, 3) == 2, 3,
                   "{ width, height } table expected");
