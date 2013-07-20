@@ -150,11 +150,11 @@ sci_flags = -pedantic -Os $(plat_flag) -DSCI_LEXER -DNDEBUG \
             -Iscintilla/lexlib -Wall -Wno-missing-braces -Wno-char-subscripts \
             -Wno-long-long
 
-sci_objs = AutoComplete.o CallTip.o Catalogue.o CellBuffer.o CharClassify.o \
-           ContractionState.o Decoration.o Document.o Editor.o ExternalLexer.o \
-           Indicator.o KeyMap.o LineMarker.o PerLine.o PositionCache.o \
-           RESearch.o RunStyles.o ScintillaBase.o Selection.o Style.o \
-           UniConversion.o ViewStyle.o XPM.o
+sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
+           CellBuffer.o CharClassify.o ContractionState.o Decoration.o \
+           Document.o Editor.o ExternalLexer.o Indicator.o KeyMap.o \
+           LineMarker.o PerLine.o PositionCache.o RESearch.o RunStyles.o \
+           ScintillaBase.o Selection.o Style.o UniConversion.o ViewStyle.o XPM.o
 sci_lex_objs = Accessor.o CharacterSet.o LexerBase.o LexerModule.o \
                LexerNoExceptions.o LexerSimple.o PropSetSimple.o \
                StyleContext.o WordList.o
@@ -412,7 +412,7 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 
 # External dependencies.
 
-scintilla_tgz = scintilla333.tgz?download
+scintilla_tgz = scintilla334.tgz?download
 scinterm_zip = scinterm.zip
 scintillua_zip = scintillua.zip
 lua_tgz = lua-5.2.2.tar.gz
