@@ -180,7 +180,7 @@ function gui.set_theme(name, ...)
          package.searchpath(name, _USERHOME..'/themes/?.lua;'..
                                   _HOME..'/themes/?.lua')
   if not name or not lfs.attributes(name) then return end
-  local buffer, props = buffer, {...}
+  local props = {...}
   local current_buffer, current_view = _BUFFERS[buffer], _VIEWS[view]
   for i = 1, #_BUFFERS do
     view:goto_buffer(i)
