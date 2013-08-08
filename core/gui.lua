@@ -24,6 +24,7 @@ module('gui')]]
 local theme = package.searchpath(not CURSES and 'light' or 'term',
                                  _USERHOME..'/themes/?.lua;'..
                                  _HOME..'/themes/?.lua')
+local theme_props = {}
 
 -- Helper function for printing messages to buffers.
 -- @see gui._print
@@ -194,7 +195,7 @@ function gui.set_theme(name, ...)
     for j = 1, #props, 2 do buffer.property[props[j]] = props[j + 1] end
   end
   gui.goto_view(current_view)
-  theme = name
+  theme, theme_props = name, props
 end
 
 local events, events_connect = events, events.connect
@@ -202,6 +203,8 @@ local events, events_connect = events, events.connect
 -- Loads the theme and properties files.
 local function load_theme_and_settings()
   dofile(theme)
+  local props = theme_props
+  for i = 1, #props, 2 do buffer.property[props[i]] = props[i + 1] end
   dofile(_HOME..'/properties.lua')
   if lfs.attributes(_USERHOME..'/properties.lua') then
     dofile(_USERHOME..'/properties.lua')
