@@ -64,7 +64,7 @@ parameters, or create an abbreviated *~/.textadept/themes/light.lua* using Lua's
     -- File *~/.textadept/themes/light.lua*
     dofile(_HOME..'/themes/light.lua')
     buffer.property['font'] = 'Monospace'
-    buffer.property['fontsize'] = size
+    buffer.property['fontsize'] = 12
 
 Either one loads Textadept's "light" theme, but applies your font preferences.
 The same techniques work for tweaking individual theme colors and/or styles, but

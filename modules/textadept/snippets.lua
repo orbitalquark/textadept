@@ -31,7 +31,7 @@ local M = {}
 --
 -- ### `%`*n*
 --
--- Represents a mirrors, where *n* is an integer. Mirrors with the same *n* as a
+-- Represents a mirror, where *n* is an integer. Mirrors with the same *n* as a
 -- placeholder mirror any user input in the placeholder. If no placeholder
 -- exists for *n*, the first occurrence of that mirror in the snippet becomes
 -- the placeholder, but with no default text. Examples are
@@ -41,7 +41,7 @@ local M = {}
 --
 -- ### `%`*n*`<`*Lua code*`>`<br/>`%`*n*`[`*Shell code*`]`
 --
--- Represents a transforms, where *n* is an integer, *Lua code* is arbitrary Lua
+-- Represents a transform, where *n* is an integer, *Lua code* is arbitrary Lua
 -- code, and *Shell code* is arbitrary Shell code. Textadept executes the code
 -- when the editor visits placeholder *n*. If the transform omits *n*, Textadept
 -- executes the transform's code the moment the editor inserts the snippet.
