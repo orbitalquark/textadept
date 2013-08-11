@@ -1356,6 +1356,7 @@ math	_	0;"	m
 math	_	0;"	t	
 max	_	0;"	f	class:math
 max_line_state	_	0;"	F	class:buffer
+maximized	_	0;"	F	class:gui
 menu	_	0;"	f	class:gui
 menu	_	0;"	t	class:_M.textadept
 menubar	_	0;"	t	class:gui
