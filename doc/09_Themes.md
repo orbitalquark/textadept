@@ -12,9 +12,9 @@ terminal version uses "term".
 &nbsp;&nbsp;
 ![Term Theme](images/termtheme.png)
 
-Each theme is a single Lua file. It contains color definitions and definitions
-for how to highlight (or "style") syntactic elements like comments, strings, and
-keywords in programming languages. These [definitions][] apply universally to
+Each theme is a single Lua file. It contains color and style definitions for
+displaying syntactic elements like comments, strings, and keywords in
+programming language source files. These [definitions][] apply universally to
 all programming language elements, resulting in a single, unified theme. Themes
 also set view-related editor properties like caret and selection colors.
 

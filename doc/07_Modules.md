@@ -7,7 +7,8 @@ functionality (find & replace, key bindings, menus, snippets, etc.) See the
 startup.
 
 Textadept also recognizes a special kind of module: a language module. Language
-modules provide functionality specific their respective programming languages.
+modules provide functionality specific to their respective programming
+languages.
 
 [textadept module]: api/_M.textadept.html
 [preferences]: 08_Preferences.html#Loading.Modules
