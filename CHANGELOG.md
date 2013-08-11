@@ -4,10 +4,40 @@
 
 [Atom Feed]: feed
 
-## 7.0 beta (11 Jul 2013)
+## 7.0 beta 2 (11 Aug 2013)
 
 Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to
 Textadept 7.
+
+Download:
+
+* [Textadept 7.0 beta 2 -- Win32][]
+* [Textadept 7.0 beta 2 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.0 beta 2 -- Linux][]
+* [Textadept 7.0 beta 2 -- Linux x86_64][]
+* [Textadept 7.0 beta 2 -- Modules][]
+
+Bugfixes:
+
+* Fixed bug with theme loading when resetting.
+* Fixed bug with property settings in [`gui.set_theme()`][] not persisting.
+
+Changes:
+
+* New [`gui.maximized`][] field so Textadept can remember its maximized state.
+* Updated to [Scintilla][] 3.3.4.
+
+[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
+[Textadept 7.0 beta 2 -- Win32]: download/textadept_7.0_beta_2.win32.zip
+[Textadept 7.0 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta_2.osx.zip
+[Textadept 7.0 beta 2 -- Linux]: download/textadept_7.0_beta_2.i386.tgz
+[Textadept 7.0 beta 2 -- Linux x86_64]: download/textadept_7.0_beta_2.x86_64.tgz
+[Textadept 7.0 beta 2 -- Modules]: download/textadept_7.0_beta_2.modules.zip
+[`gui.set_theme()`]: api/gui.html#set_theme
+[`gui.maximized`]: api/gui.html#maximized
+[Scintilla]: http://scintilla.org
+
+## 7.0 beta (11 Jul 2013)
 
 Download:
 
@@ -30,7 +60,6 @@ Changes:
   [directly][].
 * Changed scrollbar look and feel on Mac OSX.
 
-[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
 [Textadept 7.0 beta -- Win32]: download/textadept_7.0_beta.win32.zip
 [Textadept 7.0 beta -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta.osx.zip
 [Textadept 7.0 beta -- Linux]: download/textadept_7.0_beta.i386.tgz
