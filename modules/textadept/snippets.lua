@@ -17,46 +17,34 @@ local M = {}
 -- snippets with the same trigger word, Textadept inserts the one specific to
 -- the current lexer, not the global one.
 --
--- ## Snippet Syntax
+-- ## Special Sequences
 --
--- You may use any plain text characters except '%' in snippet text. Just like
--- in Lua patterns, '%' is an escape character. The sequence "%%" stands for a
--- single '%'. Also, try to use "\t" characters for indentation so Textadept can
--- make the necessary conversions to respect the user's indentation preference.
--- Using the '%' sequences described below, you can define placeholders,
--- mirrors, and transforms for user input.
+-- ### `%`*n*`(`*text*`)`
 --
--- ### Placeholders
---
--- Textadept calls `%`_`n`_`(`_`text`_`)` sequences, where _`n`_ is an integer,
--- placeholders. The editor visits placeholders in numeric order each time it
--- calls [`_insert()`](#_insert) and inserts the default text _`text`_ into the
--- placeholder. When there are no more placeholders left, Textadept places the
--- caret at either the `%0` placeholder if it exists or at the end of the
--- snippet. Examples are
+-- Represents a placeholder, where *n* is an integer and *text* is default
+-- placeholder text. Textadept moves the caret to placeholders in numeric order
+-- each time it calls [`_insert()`](#_insert), finishing at either the "%0"
+-- placeholder if it exists or at the end of the snippet. Examples are
 --
 --     snippets['foo'] = 'foobar%1(baz)'
 --     snippets['bar'] = 'start\n\t%0\nend'
 --
--- ### Mirrors
+-- ### `%`*n*
 --
--- Textadept calls `%`_`n`_ sequences, where _`n`_ is an integer, mirrors.
--- Mirrors with the same _`n`_ as a placeholder mirror any user input in the
--- placeholder. If no placeholder exists for _`n`_, the first occurrence of that
--- mirror in the snippet becomes the placeholder, but with no default text.
--- Examples are
+-- Represents a mirrors, where *n* is an integer. Mirrors with the same *n* as a
+-- placeholder mirror any user input in the placeholder. If no placeholder
+-- exists for *n*, the first occurrence of that mirror in the snippet becomes
+-- the placeholder, but with no default text. Examples are
 --
 --     snippets['foo'] = '%1(mirror), %1, on the wall'
 --     snippets['q'] = '"%1"'
 --
--- ### Transforms
+-- ### `%`*n*`<`*Lua code*`>`<br/>`%`*n*`[`*Shell code*`]`
 --
--- Textadept calls `%`_`n`_`<`_`Lua code`_`>` and `%`_`n`_`[`_`Shell code`_`]`
--- sequences, where _`n`_ is an integer, transforms. _`Lua code`_ is arbitrary
--- Lua code and _`Shell code`_ is arbitrary Shell code. Textadept executes the
--- code when the editor visits placeholder _`n`_. If the transform omits _`n`_,
--- Textadept executes the transform's code the moment the editor inserts the
--- snippet.
+-- Represents a transforms, where *n* is an integer, *Lua code* is arbitrary Lua
+-- code, and *Shell code* is arbitrary Shell code. Textadept executes the code
+-- when the editor visits placeholder *n*. If the transform omits *n*, Textadept
+-- executes the transform's code the moment the editor inserts the snippet.
 --
 -- Textadept runs Lua code in its Lua State and replaces the transform with the
 -- code's return text. The code may use a temporary `selected_text` global
@@ -71,6 +59,19 @@ local M = {}
 -- transform with the process' standard output (stdout). An example is
 --
 --     snippets['foo'] = '$%1(HOME) = %2[echo $%1]'
+--
+-- ### `%%`
+--
+-- Stands for a single '%' since '%' by itself has a special meaning in
+-- snippets.
+--
+-- ### `\t`
+--
+-- A single unit of indentation based on the user's indentation settings.
+--
+-- ### `\n`
+--
+-- A single set of line ending delimiters based on the user's end of line mode.
 --
 -- [`io.popen()`]: http://www.lua.org/manual/5.2/manual.html#pdf-io.popen
 module('_M.textadept.snippets')]=]

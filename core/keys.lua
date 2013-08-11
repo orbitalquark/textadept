@@ -26,18 +26,18 @@ local M = {}
 --
 -- ## Key Sequences
 --
--- Key sequences are strings built from a combination of modifier keys and the
--- key itself. Modifier keys are "Control", "Shift", and "Alt" on Windows,
--- Linux, BSD, and in curses. On Mac OSX they are "Command" (`⌘`), "Alt/Option"
--- (`⌥`), "Control" (`^`), and "Shift" (`⇧`). These modifiers have the following
--- string representations:
+-- Key sequences are strings built from an ordered combination of modifier keys
+-- and the key itself. Modifier keys are "Control", "Shift", and "Alt" on
+-- Windows, Linux, BSD, and in curses. On Mac OSX they are "Control" (`^`),
+-- "Alt/Option" (`⌥`), "Command" (`⌘`), and "Shift" (`⇧`). These modifiers have
+-- the following string representations:
 --
--- Modifier | Linux / Win32 | Mac OSX | Terminal |
+-- Modifier | Linux / Win32 | Mac OSX | curses   |
 -- ---------|---------------|---------|----------|
--- Control  | `'c'`         | `'m'`   | `'c'`    |
+-- Control  | `'c'`         | `'c'`   | `'c'`    |
 -- Alt      | `'a'`         | `'a'`   | `'m'`    |
+-- Command  | N/A           | `'m'`   | N/A      |
 -- Shift    | `'s'`         | `'s'`   | `'s'`    |
--- Command  | N/A           | `'c'`   | N/A      |
 --
 -- The string representation of key values less than 255 is the character that
 -- Textadept would normally insert if the "Control", "Alt", and "Command"
@@ -55,15 +55,13 @@ local M = {}
 -- ## Commands
 --
 -- A command bound to a key sequence is either a Lua function or a table
--- containing a Lua function with a set of arguments to pass. Examples are:
+-- containing a Lua function with a set of arguments to pass. They are
+-- functionally equivalent; you can use either. Examples are:
 --
 --     keys['cn'] = buffer.new
 --     keys['cs'] = buffer.save
 --     keys['a('] = {_M.textadept.editing.enclose, '(', ')'}
 --     keys['cu'] = function() io.snapopen(_USERHOME) end
---
--- (The function and function table syntax are functionally equivalent. You can
--- use either.)
 --
 -- Textadept handles [`buffer`][] references properly in static contexts.
 --
@@ -71,9 +69,9 @@ local M = {}
 --
 -- ## Modes
 --
--- You can group together sets of key bindings into modes. When a key
--- [mode](#MODE) is active, Textadept ignores all key bindings defined outside
--- the mode until the mode is unset. Here is a simple vi mode example:
+-- Modes are groups of key bindings such that when a key [mode](#MODE) is
+-- active, Textadept ignores all key bindings defined outside the mode until the
+-- mode is unset. Here is a simple vi mode example:
 --
 --     keys.command_mode = {
 --       ['h'] = buffer.char_left,

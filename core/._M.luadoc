@@ -4,13 +4,13 @@
 
 --[[ This comment is for LuaDoc.
 ---
--- A table of loaded modules.
+-- A table of loaded Lua modules used by Textadept.
 --
 -- ## Module Guidelines
 --
--- At the very least, modules consist of a single directory with an *init.lua*
--- script. However, the script may load additional Lua files present in the
--- directory. (For an example, see *modules/textadept/init.lua*.)
+-- Textadept modules are identical to Lua modules and behave in the same way.
+-- Modules consist of a single directory with an *init.lua* script and any
+-- necessary support files. (For an example, see *modules/textadept/init.lua*.)
 --
 -- Loaded modules, even language modules, persist in Textadept's Lua State;
 -- Textadept never unloads them. Therefore, modules should define functions or
@@ -19,22 +19,9 @@
 -- ### Language Modules
 --
 -- To fully take advantage of Textadept's features, language modules should have
--- at a minimum: a block comment string, run and/or compile commands, an event
--- handler for setting buffer properties like indentation, and if possible, an
--- Adeptsense. Optional features are extra snippets and commands and a context
--- menu.
---
--- #### Block Comment
---
--- The `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in curses) key binding toggles code
--- comments. In order for this to work for your language, the
--- [`_M.textadept.editing.comment_string`][] table must have a key with the
--- language's lexer name assigned to a comment prefix string. For Lua, it would
--- look like
---
---     _M.textadept.editing.comment_string.lua = '--'
---
--- [`_M.textadept.editing.comment_string`]: _M.textadept.editing.html#comment_string
+-- at a minimum: run and/or compile commands, an event handler for setting
+-- buffer properties like indentation, and if possible, an Adeptsense. Optional
+-- features are extra snippets and commands and a context menu.
 --
 -- #### Compile and Run
 --
@@ -127,17 +114,17 @@
 -- For Lua this might look like
 --
 --     M.context_menu = {
---       { _L['_Undo'], buffer.undo },
---       { _L['_Redo'], buffer.redo },
---       { '' },
---       { _L['Cu_t'], buffer.cut },
---       { _L['_Copy'], buffer.copy },
---       { _L['_Paste'], buffer.paste },
---       { _L['_Delete'], buffer.clear },
---       { '' },
---       { _L['Select _All'], buffer.select_all },
---       { '' },
---       { 'Autocomplete "end"', M.try_to_autocomplete_end }
+--       {_L['_Undo'], buffer.undo},
+--       {_L['_Redo'], buffer.redo},
+--       {''},
+--       {_L['Cu_t'], buffer.cut},
+--       {_L['_Copy'], buffer.copy},
+--       {_L['_Paste'], buffer.paste},
+--       {_L['_Delete'], buffer.clear},
+--       {''},
+--       {_L['Select _All'], buffer.select_all},
+--       {''},
+--       {'Autocomplete "end"', M.try_to_autocomplete_end}
 --     }
 --
 -- [context menus]: _M.textadept.menu.html#set_contextmenu
