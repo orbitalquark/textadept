@@ -174,7 +174,7 @@ contextmenu                       |Removed |N/A
 **_M.textadept.run**              |        |
 MARK\_ERROR\_BACK                 |Renamed |[ERROR\_COLOR][]
 **_M.textadept.snapopen**         |Removed |N/A
-open                              |Changed |\_G.[io.snapopen()][]<sup>†</sup>
+open                              |Changed |\_G.[io.snapopen()][]<sup>‡</sup>
 **events**                        |        |
 handlers                          |Removed |N/A
 **gui**                           |        |
