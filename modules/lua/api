@@ -809,7 +809,7 @@ _G _G._G (table)\nA global variable (not a function) that holds the global envir
 _HOME _G._HOME (string)\nThe path to the directory containing Textadept.
 _L _G._L (module)\nMap of all messages used by Textadept to their localized form.\nIf the table does not contain the localized version of a given message, it\nreturns a string that starts with "No Localization:" via a metamethod.
 _LEXBYLINE lexer.lexer._LEXBYLINE (table)\nIndicates the lexer matches text by whole lines instead of\n   arbitrary chunks.\n   The default value is `false`. Line lexers cannot look ahead to subsequent\n   lines.
-_M _G._M (module)\nA table of loaded modules.
+_M _G._M (module)\nA table of loaded Lua modules used by Textadept.
 _NAME lexer.lexer._NAME (table)\nThe string name of the lexer in lowercase.
 _RELEASE _G._RELEASE (string)\nThe Textadept release version string.
 _RULES lexer.lexer._RULES (table)\nA map of rule name keys with their associated LPeg pattern\n  values for the lexer.\n  This is constructed from the lexer's `_rules` table and accessible to other\n  lexers for embedded lexer applications like modifying parent or child\n  rules.
@@ -1318,6 +1318,7 @@ match_case_label_text gui.find.match_case_label_text (string, Write-only)\nThe t
 math _G.math (module)\nLua math module.
 max math.max(x, ···)\nReturns the maximum value among its arguments.
 max_line_state buffer.max_line_state (number, Read-only)\nThe last line number with a non-zero line state.
+maximized gui.maximized (bool)\nWhether or not the Textadept window is maximized.
 menu _M.textadept.menu (module)\nDefines the menus used by Textadept.\nIf applicable, load this module last in your *~/.textadept/init.lua*, after\n`_M.textadept.keys` since it looks up defined key commands to show them in\nmenus.
 menu gui.menu(menu_table)\nLow-level function for creating a menu from table *menu_table* and returning\nthe userdata.\nYou probably want to use the higher-level `_M.textadept.menu.set_menubar()`\nor `_M.textadept.menu.set_contextmenu()` functions. Emits a `MENU_CLICKED`\nevent when a menu item is selected.\n@param menu_table A table defining the menu. It is an ordered list of tables\n  with a string menu item, integer menu ID, and optional GDK keycode and\n  modifier mask. The latter two are used to display key shortcuts in the\n  menu. '_' characters are treated as a menu mnemonics. If the menu item is\n  empty, a menu separator item is created. Submenus are just nested\n  menu-structure tables. Their title text is defined with a `title` key.\n@usage gui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4}}\n@usage gui.menu{{'_New', 1, string.byte('n'), 4}} -- 'Ctrl+N'\n@see events.MENU_CLICKED\n@see _M.textadept.menu.set_menubar\n@see _M.textadept.menu.set_contextmenu
 menubar gui.menubar (table)\nA table of menus defining a menubar. (Write-only)\n@see _M.textadept.menu.set_menubar
