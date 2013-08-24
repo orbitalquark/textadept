@@ -169,14 +169,13 @@ function io.open_file(utf8_filenames)
       end
       if not buffer.encoding then error(_L['Encoding conversion failed.']) end
     end
-    buffer.code_page = buffer.encoding and _SCINTILLA.constants.SC_CP_UTF8 or 0
+    buffer.code_page = buffer.encoding and buffer.SC_CP_UTF8 or 0
     -- Detect EOL mode.
     local s, e = text:find('\r\n?')
     if s and e then
-      buffer.eol_mode = (s == e and _SCINTILLA.constants.SC_EOL_CR or
-                         _SCINTILLA.constants.SC_EOL_CRLF)
+      buffer.eol_mode = (s == e and buffer.SC_EOL_CR or buffer.SC_EOL_CRLF)
     else
-      buffer.eol_mode = _SCINTILLA.constants.SC_EOL_LF
+      buffer.eol_mode = buffer.SC_EOL_LF
     end
     buffer:add_text(text, #text)
     buffer:goto_pos(0)

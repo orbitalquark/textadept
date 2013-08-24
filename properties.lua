@@ -1,16 +1,15 @@
 -- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 local buffer = buffer
-local c = _SCINTILLA.constants
 
 -- Multiple Selection and Virtual Space
 buffer.multiple_selection = true
 buffer.additional_selection_typing = true
---buffer.multi_paste = c.SC_MULTIPASTE_EACH
---buffer.virtual_space_options = c.SCVS_RECTANGULARSELECTION +
---                               c.SCVS_USERACCESSIBLE
-buffer.rectangular_selection_modifier = (WIN32 or OSX) and c.SCMOD_ALT or
-                                                           c.SCMOD_SUPER
+--buffer.multi_paste = buffer.SC_MULTIPASTE_EACH
+--buffer.virtual_space_options = buffer.SCVS_RECTANGULARSELECTION +
+--                               buffer.SCVS_USERACCESSIBLE
+buffer.rectangular_selection_modifier = (WIN32 or OSX) and buffer.SCMOD_ALT or
+                                                           buffer.SCMOD_SUPER
 --buffer.additional_carets_blink = false
 --buffer.additional_carets_visible = false
 
@@ -26,7 +25,7 @@ buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
 --buffer.end_at_last_line = false
 
 -- Whitespace
---buffer.view_ws = c.SCWS_VISIBLEALWAYS
+--buffer.view_ws = buffer.SCWS_VISIBLEALWAYS
 --buffer.whitespace_size =
 --buffer.extra_ascent =
 --buffer.extra_descent =
@@ -39,12 +38,12 @@ buffer:set_y_caret_policy(13, 1) -- CARET_SLOP | CARET_STRICT | CARET_EVEN
 buffer.caret_line_visible = not CURSES
 --buffer.caret_line_visible_always = true
 --buffer.caret_period = 0
---buffer.caret_style = c.CARETSTYLE_BLOCK
+--buffer.caret_style = buffer.CARETSTYLE_BLOCK
 --buffer.caret_width =
---buffer.caret_sticky = c.SC_CARETSTICKY_ON
+--buffer.caret_sticky = buffer.SC_CARETSTICKY_ON
 
 -- Line Number Margin.
-local width = 4 * buffer:text_width(c.STYLE_LINENUMBER, '9')
+local width = 4 * buffer:text_width(buffer.STYLE_LINENUMBER, '9')
 buffer.margin_width_n[0] = width + (not CURSES and 4 or 0)
 
 -- Marker Margin.
@@ -52,13 +51,13 @@ buffer.margin_width_n[1] = not CURSES and 0 or 1
 
 -- Fold Margin.
 buffer.margin_width_n[2] = not CURSES and 10 or 1
-buffer.margin_mask_n[2] = c.SC_MASK_FOLDERS
+buffer.margin_mask_n[2] = buffer.SC_MASK_FOLDERS
 buffer.margin_sensitive_n[2] = true
 --buffer.margin_left =
 --buffer.margin_right =
 
 -- Annotations.
-buffer.annotation_visible = c.ANNOTATION_BOXED
+buffer.annotation_visible = buffer.ANNOTATION_BOXED
 
 -- Other.
 buffer.buffered_draw = not CURSES and not OSX -- Quartz buffers drawing on OSX
@@ -71,17 +70,17 @@ buffer.use_tabs = false
 --buffer.indent = 2
 buffer.tab_indents = true
 buffer.back_space_un_indents = true
-buffer.indentation_guides = c.SC_IV_LOOKBOTH
+buffer.indentation_guides = buffer.SC_IV_LOOKBOTH
 
 -- Fold Margin Markers.
 if not CURSES then
-  buffer:marker_define(c.SC_MARKNUM_FOLDEROPEN, c.SC_MARK_ARROWDOWN)
-  buffer:marker_define(c.SC_MARKNUM_FOLDER, c.SC_MARK_ARROW)
-  buffer:marker_define(c.SC_MARKNUM_FOLDERSUB, c.SC_MARK_EMPTY)
-  buffer:marker_define(c.SC_MARKNUM_FOLDERTAIL, c.SC_MARK_EMPTY)
-  buffer:marker_define(c.SC_MARKNUM_FOLDEREND, c.SC_MARK_EMPTY)
-  buffer:marker_define(c.SC_MARKNUM_FOLDEROPENMID, c.SC_MARK_EMPTY)
-  buffer:marker_define(c.SC_MARKNUM_FOLDERMIDTAIL, c.SC_MARK_EMPTY)
+  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPEN, buffer.SC_MARK_ARROWDOWN)
+  buffer:marker_define(buffer.SC_MARKNUM_FOLDER, buffer.SC_MARK_ARROW)
+  buffer:marker_define(buffer.SC_MARKNUM_FOLDERSUB, buffer.SC_MARK_EMPTY)
+  buffer:marker_define(buffer.SC_MARKNUM_FOLDERTAIL, buffer.SC_MARK_EMPTY)
+  buffer:marker_define(buffer.SC_MARKNUM_FOLDEREND, buffer.SC_MARK_EMPTY)
+  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPENMID, buffer.SC_MARK_EMPTY)
+  buffer:marker_define(buffer.SC_MARKNUM_FOLDERMIDTAIL, buffer.SC_MARK_EMPTY)
 end
 
 -- Autocompletion.
@@ -93,23 +92,24 @@ buffer.auto_c_choose_single = true
 
 -- Call Tips.
 buffer.call_tip_use_style = buffer.tab_width *
-                            buffer:text_width(c.STYLE_CALLTIP, ' ')
+                            buffer:text_width(buffer.STYLE_CALLTIP, ' ')
 
 -- Folding.
 buffer.property['fold'] = '1'
 buffer.property['fold.by.indentation'] = '1'
 buffer.property['fold.line.comments'] = '0'
-buffer.fold_flags = not CURSES and c.SC_FOLDFLAG_LINEAFTER_CONTRACTED or 0
-buffer.automatic_fold = c.SC_AUTOMATICFOLD_SHOW + c.SC_AUTOMATICFOLD_CLICK +
-                        c.SC_AUTOMATICFOLD_CHANGE
+buffer.fold_flags = not CURSES and buffer.SC_FOLDFLAG_LINEAFTER_CONTRACTED or 0
+buffer.automatic_fold = buffer.SC_AUTOMATICFOLD_SHOW +
+                        buffer.SC_AUTOMATICFOLD_CLICK +
+                        buffer.SC_AUTOMATICFOLD_CHANGE
 
 -- Line Wrapping.
---buffer.wrap_mode = c.SC_WRAP_WORD
---buffer.wrap_visual_flags = c.SC_WRAPVISUALFLAG_MARGIN
---buffer.wrap_visual_flags_location = c.SC_WRAPVISUALFLAGLOC_END_BY_TEXT
---buffer.wrap_indent_mode = c.SC_WRAPINDENT_SAME
+--buffer.wrap_mode = buffer.SC_WRAP_WORD
+--buffer.wrap_visual_flags = buffer.SC_WRAPVISUALFLAG_MARGIN
+--buffer.wrap_visual_flags_location = buffer.SC_WRAPVISUALFLAGLOC_END_BY_TEXT
+--buffer.wrap_indent_mode = buffer.SC_WRAPINDENT_SAME
 --buffer.wrap_start_indent =
 
 -- Long Lines.
---buffer.edge_mode = not CURSES and c.EDGE_LINE or c.EDGE_BACKGROUND
+--buffer.edge_mode = not CURSES and buffer.EDGE_LINE or buffer.EDGE_BACKGROUND
 --buffer.edge_column = 80

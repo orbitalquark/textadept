@@ -214,17 +214,17 @@ end
 -- Sets default properties for a Scintilla window.
 events_connect(events.VIEW_NEW, function()
   local buffer = buffer
-  local c = _SCINTILLA.constants
   -- Allow redefinitions of these Scintilla key commands.
   local ctrl_keys = {
     '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
   }
   local ctrl_shift_keys = {'L', 'T', 'U', 'Z'}
   for _, key in ipairs(ctrl_keys) do
-    buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL)
+    buffer:clear_cmd_key(string.byte(key), buffer.SCMOD_CTRL)
   end
   for _, key in ipairs(ctrl_shift_keys) do
-    buffer:clear_cmd_key(string.byte(key), c.SCMOD_CTRL + c.SCMOD_SHIFT)
+    buffer:clear_cmd_key(string.byte(key),
+                         buffer.SCMOD_CTRL + buffer.SCMOD_SHIFT)
   end
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for
   -- subsequent views.
@@ -237,7 +237,7 @@ local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 -- Sets default properties for a Scintilla document.
 events_connect(events.BUFFER_NEW, function()
-  buffer.code_page = _SCINTILLA.constants.SC_CP_UTF8
+  buffer.code_page = buffer.SC_CP_UTF8
   buffer.style_bits = 8
   buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)

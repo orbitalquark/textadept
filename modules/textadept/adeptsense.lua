@@ -826,7 +826,7 @@ function M.goto_ctag(sense, kind, title)
   if not tonumber(line) then
     -- /^ ... $/
     buffer.target_start, buffer.target_end = 0, buffer.length
-    buffer.search_flags = _SCINTILLA.constants.SCFIND_REGEXP
+    buffer.search_flags = buffer.SCFIND_REGEXP
     if buffer:search_in_target(line:sub(2, -2)) >= 0 then
       buffer:goto_pos(buffer.target_start)
     end

@@ -1293,6 +1293,14 @@ static int lbuf_property(lua_State *L) {
                            (!is_buffer || !newindex) ? 2 : 3);
   } else lua_pop(L, 2); // non-table, ta_properties
 
+  // If the key is a Scintilla constant, return its value.
+  if (!newindex) {
+    lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants");
+    lua_pushvalue(L, 2), lua_gettable(L, -2);
+    if (lua_isnumber(L, -1)) return 1;
+    lua_pop(L, 2); // non-number, ta_constants
+  }
+
   !newindex ? lua_rawget(L, 1) : lua_rawset(L, 1);
   return 1;
 }
