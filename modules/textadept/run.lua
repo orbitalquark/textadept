@@ -244,7 +244,7 @@ events.connect(events.DOUBLE_CLICK, function(pos, line)
   if is_msg_buf(buffer) then M.goto_error(line) end
 end)
 
-local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
+local CURSES_MARK = buffer.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for error markers.
 local function set_error_properties()
   if CURSES then buffer:marker_define(MARK_ERROR, CURSES_MARK) end

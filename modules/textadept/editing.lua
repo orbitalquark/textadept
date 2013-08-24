@@ -227,10 +227,9 @@ function M.autocomplete_word(default_words)
   end
   local patt = '^['..buffer.word_chars..']+'
   buffer.target_start, buffer.target_end = 0, buffer.length
-  buffer.search_flags = _SCINTILLA.constants.SCFIND_WORDSTART
+  buffer.search_flags = buffer.SCFIND_WORDSTART
   if not buffer.auto_c_ignore_case then
-    buffer.search_flags = buffer.search_flags +
-                          _SCINTILLA.constants.SCFIND_MATCHCASE
+    buffer.search_flags = buffer.search_flags + buffer.SCFIND_MATCHCASE
   end
   local match_pos = buffer:search_in_target(root)
   while match_pos ~= -1 do
@@ -495,8 +494,7 @@ function M.highlight_word()
   end
   if s == e then return end
   local word = buffer:text_range(s, e)
-  buffer.search_flags = _SCINTILLA.constants.SCFIND_WHOLEWORD +
-                        _SCINTILLA.constants.SCFIND_MATCHCASE
+  buffer.search_flags = buffer.SCFIND_WHOLEWORD + buffer.SCFIND_MATCHCASE
   buffer.target_start, buffer.target_end = 0, buffer.length
   while buffer:search_in_target(word) > -1 do
     local len = buffer.target_end - buffer.target_start
@@ -509,7 +507,7 @@ end
 -- Sets view properties for highlighted word indicators and markers.
 local function set_highlight_properties()
   buffer.indic_fore[INDIC_HIGHLIGHT] = buffer.property_int[M.HIGHLIGHT_COLOR]
-  buffer.indic_style[INDIC_HIGHLIGHT] = _SCINTILLA.constants.INDIC_ROUNDBOX
+  buffer.indic_style[INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
   buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
   if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
 end

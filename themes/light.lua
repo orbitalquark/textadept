@@ -108,11 +108,10 @@ buffer:set_fold_margin_colour(true, property_int['color.white'])
 buffer:set_fold_margin_hi_colour(true, property_int['color.white'])
 
 -- Fold Margin Markers.
-local c = _SCINTILLA.constants
-buffer.marker_fore[c.SC_MARKNUM_FOLDEROPEN] = property_int['color.grey']
-buffer.marker_back[c.SC_MARKNUM_FOLDEROPEN] = property_int['color.grey']
-buffer.marker_fore[c.SC_MARKNUM_FOLDER] = property_int['color.grey']
-buffer.marker_back[c.SC_MARKNUM_FOLDER] = property_int['color.grey']
+buffer.marker_fore[buffer.SC_MARKNUM_FOLDEROPEN] = property_int['color.grey']
+buffer.marker_back[buffer.SC_MARKNUM_FOLDEROPEN] = property_int['color.grey']
+buffer.marker_fore[buffer.SC_MARKNUM_FOLDER] = property_int['color.grey']
+buffer.marker_back[buffer.SC_MARKNUM_FOLDER] = property_int['color.grey']
 
 -- Long Lines.
 buffer.edge_colour = property_int['color.grey']

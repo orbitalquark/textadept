@@ -4,11 +4,13 @@
 
 ---
 -- A Textadept buffer object.
+-- In addition to these functions and fields, buffers also contain the constants
+-- within [`_SCINTILLA.constants`][], which are too numerous to list here.
 -- Be careful when storing references to a buffer object because if you attempt
 -- call a buffer function with a non-global buffer, you will get an error. See
 -- [`check_global()`](#check_global) for more information.
 --
--- [buffer]: _G.html#buffer
+-- [`_SCINTILLA.constants`]: _SCINTILLA.html#constants
 -- @field additional_caret_fore (number)
 --   The foreground color, in "0xBBGGRR" format, of additional carets.
 -- @field additional_carets_blink (bool)
@@ -20,11 +22,11 @@
 -- @field additional_sel_alpha (number)
 --   The alpha value, ranging from `0` (transparent) to `255` (opaque), of
 --   additional selections.
---   The default value is `256`, for no alpha.
--- @field additional_sel_back (number)
+--   The default value is `buffer.SC_ALPHA_NOALPHA`, for no alpha.
+-- @field additional_sel_back (number, Write-only)
 --   The background color, in "0xBBGGRR" format, of additional selections.
 --   This field has no effect when calling `buffer:set_sel_back(false, ...)`.
--- @field additional_sel_fore (number)
+-- @field additional_sel_fore (number, Write-only)
 --   The foreground color, in "0xBBGGRR" format, of additional selections.
 --   This field has no effect when calling `buffer:set_sel_fore(false, ...)`.
 -- @field additional_selection_typing (bool)
@@ -33,7 +35,7 @@
 -- @field all_lines_visible (bool, Read-only)
 --   Whether or not all lines in the buffer are visible.
 -- @field anchor (number)
---   The position of the beginning of the selected text.
+--   The position of the anchor.
 -- @field annotation_lines (table, Read-only)
 --   Table of the number of annotation lines for line numbers starting from
 --   zero.
@@ -56,33 +58,33 @@
 -- @field annotation_visible (number)
 --   The annotation visibility mode.
 --
---   * `_SCINTILLA.constants.ANNOTATION_HIDDEN` (0)
+--   * `buffer.ANNOTATION_HIDDEN`
 --     Annotations are invisible.
---   * `_SCINTILLA.constants.ANNOTATION_STANDARD` (1)
+--   * `buffer.ANNOTATION_STANDARD`
 --     Draw annotations left-justified with no decoration.
---   * `_SCINTILLA.constants.ANNOTATION_BOXED` (2)
---     Indent annotations to match the text and outline with a box.
+--   * `buffer.ANNOTATION_BOXED`
+--     Indent annotations to match the annotated text and outline them with a
+--     box.
 --
---   The default value is `0`.
+--   The default value is `buffer.ANNOTATION_HIDDEN`.
 -- @field auto_c_auto_hide (bool)
 --   Automatically hide the autocompletion list when no entries match typed
 --   text.
 --   The default value is `true`.
 -- @field auto_c_cancel_at_start (bool)
 --   Cancel autocompletion when backspacing to a position before where
---   autocompletion started or before the word being completed.
---   The default value is `true`, to cancel when backspacing before where
---   autocompletion started.
+--   autocompletion started, rather than before the word being completed.
+--   The default value is `true`.
 -- @field auto_c_case_insensitive_behaviour (number)
---   The behavior setting for case insensitive autocompletion when
+--   The behavior mode for case insensitive autocompletion when
 --   [`buffer.auto_c_ignore_case`](#auto_c_ignore_case) is `true`.
 --
---   * `_SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOR_RESPECTCASE` (0)
+--   * `buffer.SC_CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
 --     Prefer to select case-sensitive matches.
---   * `_SCINTILLA.constants.SC_CASEINSENSITIVEBEHAVIOR_IGNORECASE` (1)
+--   * `buffer.SC_CASEINSENSITIVEBEHAVIOR_IGNORECASE`
 --     No preference.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
 -- @field auto_c_choose_single (bool)
 --   Automatically choose the item in a single-item autocompletion list.
 --   The default value is `false`.
@@ -101,27 +103,26 @@
 --   Ignore case when searching an autocompletion list for matches.
 --   The default value is `false`.
 -- @field auto_c_max_height (number)
---   The maximum number of items to show in autocompletion and user lists. The
---   default value is `5`.
+--   The maximum number of items per page to show in autocompletion and user
+--   lists. The default value is `5`.
 -- @field auto_c_max_width (number)
---   The maximum number of characters per row to show in autocompletion and user
---   lists.
---   The default value is `0`, which automatically sizes the list to fit the
+--   The maximum number of characters per item to show in autocompletion and
+--   user lists.
+--   The default value is `0`, which automatically sizes the width to fit the
 --   longest item.
 -- @field auto_c_order (number)
 --   The order setting for autocompletion lists.
 --
---   * `_SCINTILLA.constants.SC_ORDER_PRESORTED` (0)
---     Autocompletion lists passed to [`buffer.auto_c_show`](#auto_c_show) are
---     in sorted alphabetical order.
---   * `_SCINTILLA.constants.SC_ORDER_PERFORMSORT` (1)
---     Scintilla should sort autocompletion lists passed to
---     [`buffer.auto_c_show`](#auto_c_show).
---   * `_SCINTILLA.constants.SC_ORDER_CUSTOM` (2)
---     Autocompletion lists passed to [`buffer.auto_c_show`](#auto_c_show) are
---     sorted in a custom order.
+--   * `buffer.SC_ORDER_PRESORTED`
+--     Lists passed to [`buffer.auto_c_show`](#auto_c_show) are in sorted,
+--     alphabetical order.
+--   * `buffer.SC_ORDER_PERFORMSORT`
+--     Sort autocompletion lists passed to [`buffer.auto_c_show`](#auto_c_show).
+--   * `buffer.SC_ORDER_CUSTOM`
+--     Lists passed to [`buffer.auto_c_show`](#auto_c_show) are already in a
+--     custom order.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_ORDER_PRESORTED`.
 -- @field auto_c_separator (number)
 --   The character byte that separates autocompletion list items.
 --   The default value is `32` (' ').
@@ -133,17 +134,6 @@
 --   or [`buffer:register_rgba_image()`](#register_rgba_image) before appending
 --   image types to list items after type separator characters.
 --   The default value is 63 ('?').
--- @field automatic_fold (number)
---   Bit-mask of options for automatic folding behavior.
---
---   * `_SCINTILLA.constants.SC_AUTOMATICFOLD_SHOW` (1)
---     Automatically show lines as needed.
---   * `_SCINTILLA.constants.SC_AUTOMATICFOLD_CLICK` (2)
---     Handle clicks in the fold margin automatically.
---   * `_SCINTILLA.constants.SC_AUTOMATICFOLD_CHANGE` (4)
---     Show lines as needed when the fold structure changes.
---
---   The default value is `0`.
 -- @field back_space_un_indents (bool)
 --   Un-indent text when backspacing within indentation.
 --   The default value is `false`.
@@ -153,20 +143,20 @@
 --   bitmap to the screen.
 --   The default value is `true`.
 -- @field call_tip_back (number, Write-only)
---   The background color, in "0xBBGGRR" format, for a call tip.
+--   The background color, in "0xBBGGRR" format, of call tips.
 -- @field call_tip_fore (number, Write-only)
---   The foreground color, in "0xBBGGRR" format, for a call tip.
+--   The foreground color, in "0xBBGGRR" format, of call tips.
 -- @field call_tip_fore_hlt (number, Write-only)
---   The foreground color, in "0xBBGGRR" format, for the highlighted part of a
---   call tip.
+--   The foreground color, in "0xBBGGRR" format, of the highlighted part of
+--   call tips.
 -- @field call_tip_position (boolean)
---   Display the call tip above or below the text.
---   The default value is `false` to display the call tip below the text.
+--   Display the call tip above, rather than below the text.
+--   The default value is `false`.
 -- @field call_tip_use_style (number)
 --   The size in pixels of tab characters in call tips.
---   When non-zero, also enables the use of `_SCINTILLA.constants.STYLE_CALLTIP`
---   instead of `_SCINTILLA.constants.STYLE_DEFAULT` for call tip styles.
---   The default value is `0`, which does not treat tab characters specially.
+--   When non-zero, also enables the use of style number `buffer.STYLE_CALLTIP`
+--   instead of `buffer.STYLE_DEFAULT` for call tip styles.
+--   The default value is `0`.
 -- @field caret_fore (number)
 --   The foreground color, in "0xBBGGRR" format, of the caret.
 -- @field caret_line_back (number)
@@ -175,7 +165,7 @@
 -- @field caret_line_back_alpha (number)
 --   The background alpha value, ranging from `0` (transparent) to `255`
 --   (opaque), of the caret line.
---   The default value is `256`, for no alpha.
+--   The default value is `buffer.SC_ALPHA_NOALPHA`, for no alpha.
 -- @field caret_line_visible (bool)
 --   Color the background of the line containing the caret a different color.
 --   The default value is `false`.
@@ -190,45 +180,33 @@
 -- @field caret_sticky (number)
 --   The preferred horizontal position of the caret when moving between lines.
 --
---   * `_SCINTILLA.constants.SC_CARETSTICKY_OFF` (0)
+--   * `buffer.SC_CARETSTICKY_OFF`
 --     Use the same position as on the previous line.
---   * `_SCINTILLA.constants.SC_CARETSTICKY_ON` (1)
+--   * `buffer.SC_CARETSTICKY_ON`
 --     Use the last position the caret was moved to via the mouse, left/right
 --     arrow keys, home/end keys, etc. Typing text does not affect the position.
---   * `_SCINTILLA.constants.SC_CARETSTICKY_WHITESPACE` (2)
+--   * `buffer.SC_CARETSTICKY_WHITESPACE`
 --     Use the same position as on the previous line, but prior to any inserted
 --     indentation.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_CARETSTICKY_OFF`.
 -- @field caret_style (number)
 --   The style of caret to draw.
 --
---   * `_SCINTILLA.constants.CARETSTYLE_INVISIBLE` (0)
+--   * `buffer.CARETSTYLE_INVISIBLE`
 --     No caret.
---   * `_SCINTILLA.constants.CARETSTYLE_LINE` (1)
+--   * `buffer.CARETSTYLE_LINE`
 --     A line caret.
---   * `_SCINTILLA.constants.CARETSTYLE_BLOCK` (2)
+--   * `buffer.CARETSTYLE_BLOCK`
 --     A block caret.
 --
---   The default value is `1`.
+--   The default value is `buffer.CARETSTYLE_LINE`.
 -- @field caret_width (number)
 --   The pixel width of the caret in insert mode, either `0`, `1`, `2`, or `3`,
 --   and only applicable to line carets.
 --   The default value is `1`.
 -- @field char_at (table, Read-only)
 --   Table of character bytes at positions in the buffer starting from zero.
--- @field code_page (number)
---   The code page used to interpret buffer bytes as characters.
---
---   + `0` None.
---   + `932` Japanese Shift-JIS.
---   + `936` Simplified Chinese GBK.
---   + `949` Korean Unified Hangul Code.
---   + `950` Traditional Chinese Big5.
---   + `1361` Korean Johab.
---   + `_SCINTILLA.constants.SC_CP_UTF8` (65001) UTF-8.
---
---   The default value is `0`.
 -- @field column (table, Read-only)
 --   Table of column numbers, taking tab widths into account, for positions in
 --   the buffer starting from zero.
@@ -243,29 +221,32 @@
 -- @field cursor (number)
 --   The cursor type.
 --
---   * `_SCINTILLA.constants.SC_CURSORNORMAL` (-1)
---     The normal cursor.
---   * `_SCINTILLA.constants.SC_CURSORWAIT` (4)
---     The wait cursor.
+--   * `buffer.SC_CURSORNORMAL`
+--     The normal text insert cursor.
+--   * `buffer.SC_CURSORARROW`
+--     The arrow cursor.
+--   * `buffer.SC_CURSORWAIT`
+--     The wait symbol cursor.
+--   * `buffer.SC_CURSORREVERSEARROW`
+--     The reversed arrow cursor.
 --
---   The default value is `-1`.
+--   The default value is `buffer.SC_CURSORNORMAL`.
 -- @field dirty (bool)
 --   Whether or not the buffer has unsaved changes.
---   Unlike [`buffer.modify`](#modify), this field is accessible from any
---   buffer, not just the global one.
+--   This field is accessible from any buffer, not just the global one.
 -- @field edge_colour (number)
---   The color, in "0xBBGGRR" format, used for the long line marker.
+--   The color, in "0xBBGGRR" format, of the long line marker.
 -- @field edge_column (number)
 --   The column number to display the long line marker at.
 -- @field edge_mode (number)
 --   The long line edge mode.
 --
---   * `_SCINTILLA.constants.EDGE_NONE` (0)
+--   * `buffer.EDGE_NONE`
 --     Long lines are not marked.
---   * `_SCINTILLA.constants.EDGE_LINE` (1)
+--   * `buffer.EDGE_LINE`
 --     Draw a vertical line whose color is [`buffer.edge_colour`](#edge_colour)
 --     at column [`buffer.edge_column`](#edge_column).
---   * `_SCINTILLA.constants.EDGE_BACKGROUND` (2)
+--   * `buffer.EDGE_BACKGROUND`
 --     Change the background color of characters after column
 --     [`buffer.edge_column`](#edge_column) to
 --     [`buffer.edge_colour`](#edge_colour).
@@ -280,16 +261,18 @@
 -- @field end_styled (number, Read-only)
 --   The position of the last correctly styled character.
 -- @field eol_mode (number)
---   The current end of line mode.
+--   The current end of line mode. Changing the mode does not convert existing
+--   line endings. Use [`buffer:convert_eo_ls()`](#convert_eo_ls) to do so.
 --
---   * `_SCINTILLA.constants.SC_EOL_CRLF` (0)
+--   * `buffer.SC_EOL_CRLF`
 --     "CR+LF" ("\r\n").
---   * `_SCINTILLA.constants.SC_EOL_CR` (1)
+--   * `buffer.SC_EOL_CR`
 --     "CR" ("\r").
---   * `_SCINTILLA.constants.SC_EOL_LF` (2)
+--   * `buffer.SC_EOL_LF`
 --     "LF" ("\n").
 --
---   The default value is `0` on Windows platforms, `2` otherwise.
+--   The default value is `buffer.SC_EOL_CRLF` on Windows platforms,
+--   `buffer.SC_EOL_LF` otherwise.
 -- @field extra_ascent (number)
 --   The amount of pixel padding above line text.
 --   The default value is `0`.
@@ -312,13 +295,13 @@
 -- @field fold_flags (number)
 --   Bit-mask of options for drawing folding lines.
 --
---   * `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_EXPANDED` (2)
+--   * `buffer.SC_FOLDFLAG_LINEBEFORE_EXPANDED`
 --     Draw lines above expanded folds.
---   * `_SCINTILLA.constants.SC_FOLDFLAG_LINEBEFORE_CONTRACTED` (4)
+--   * `buffer.SC_FOLDFLAG_LINEBEFORE_CONTRACTED`
 --     Draw lines above collapsed folds.
---   * `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_EXPANDED` (8)
+--   * `buffer.SC_FOLDFLAG_LINEAFTER_EXPANDED`
 --     Draw lines below expanded folds.
---   * `_SCINTILLA.constants.SC_FOLDFLAG_LINEAFTER_CONTRACTED` (16)
+--   * `buffer.SC_FOLDFLAG_LINEAFTER_CONTRACTED`
 --     Draw lines below collapsed folds.
 --
 --   The default value is `0`.
@@ -327,11 +310,11 @@
 --   Fold level masks are composed of an integer level combined with any of the
 --   following bits:
 --
---   * `_SCINTILLA.constants.SC_FOLDLEVELBASE` (0x400)
+--   * `buffer.SC_FOLDLEVELBASE`
 --     The initial fold level.
---   * `_SCINTILLA.constants.SC_FOLDLEVELWHITEFLAG` (0x1000)
+--   * `buffer.SC_FOLDLEVELWHITEFLAG`
 --     The line is blank.
---   * `_SCINTILLA.constants.SC_FOLDLEVELHEADERFLAG` (0x2000)
+--   * `buffer.SC_FOLDLEVELHEADERFLAG`
 --     The line is a header, or fold point.
 -- @field fold_parent (table, Read-only)
 --   Table of parent line numbers (fold points) for child line numbers starting
@@ -350,31 +333,31 @@
 --   Limit hotspots to a single line.
 --   The default value is `true`.
 -- @field indent (number)
---   The number of spaces used for one level of indentation.
---   The default value is `0`, which matches the tab size.
+--   The number of spaces of one level of indentation.
+--   The default value is `0`, which matches the tab width.
 -- @field indentation_guides (number)
 --   The indentation guide drawing mode.
 --   Indentation guides are dotted vertical lines that appear within indentation
 --   whitespace at each level of indentation.
 --
---   * `_SCINTILLA.constants.SC_IV_NONE` (0)
---     Guides are not drawn.
---   * `_SCINTILLA.constants.SC_IV_REAL` (1)
+--   * `buffer.SC_IV_NONE`
+--     Does not draw any guides.
+--   * `buffer.SC_IV_REAL`
 --     Draw guides only within indentation whitespace.
---   * `_SCINTILLA.constants.SC_IV_LOOKFORWARD` (2)
+--   * `buffer.SC_IV_LOOKFORWARD`
 --     Draw guides beyond the current line up to the level of the next non-empty
 --     line, but with an additional level if the previous non-empty line is a
 --     fold header.
---   * `_SCINTILLA.constants.SC_IV_LOOKBOTH` (3)
+--   * `buffer.SC_IV_LOOKBOTH`
 --     Draw guides beyond the current line up to either the level of the
 --     previous or next non-empty line, whichever is greater.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_IV_NONE`.
 -- @field indic_alpha (table)
 --   Table of fill color alpha values, ranging from `0` (transparent) to `255`
 --   (opaque), for indicator numbers from `0` to `31` whose styles are either
 --   `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
---   The default values are `256`, for no alpha.
+--   The default values are `buffer.SC_ALPHA_NOALPHA`, for no alpha.
 -- @field indic_fore (table)
 --   Table of foreground colors, in "0xBBGGRR" format, for indicator numbers
 --   from `0` to `31`.
@@ -382,47 +365,47 @@
 --   Table of outline color alpha values, ranging from `0` (transparent) to
 --   `255` (opaque), for indicator numbers from `0` to `31` whose styles are
 --   either `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
---   The default values are `256`, for no alpha.
+--   The default values are `buffer.SC_ALPHA_NOALPHA`, for no alpha.
 -- @field indic_style (table)
 --   Table of styles for indicator numbers from `0` to `31`.
 --
---   * `_SCINTILLA.constants.INDIC_PLAIN` (0)
+--   * `buffer.INDIC_PLAIN`
 --     An underline.
---   * `_SCINTILLA.constants.INDIC_SQUIGGLE` (1)
+--   * `buffer.INDIC_SQUIGGLE`
 --     A squiggly underline 3 pixels in height.
---   * `_SCINTILLA.constants.INDIC_TT` (2)
+--   * `buffer.INDIC_TT`
 --     A line of small 'T' shapes.
---   * `_SCINTILLA.constants.INDIC_DIAGONAL` (3)
+--   * `buffer.INDIC_DIAGONAL`
 --     Diagonal hatching.
---   * `_SCINTILLA.constants.INDIC_STRIKE` (4)
+--   * `buffer.INDIC_STRIKE`
 --     Strike out.
---   * `_SCINTILLA.constants.INDIC_HIDDEN` (5)
+--   * `buffer.INDIC_HIDDEN`
 --     Invisible.
---   * `_SCINTILLA.constants.INDIC_BOX` (6)
+--   * `buffer.INDIC_BOX`
 --     A rectangle around the text.
---   * `_SCINTILLA.constants.INDIC_ROUNDBOX` (7)
+--   * `buffer.INDIC_ROUNDBOX`
 --     A translucent rectangle with rounded corners around the text. Use
 --     [`buffer.indic_alpha`](#indic_alpha) and
 --     [`buffer.indic_outline_alpha`](#indic_outline_alpha) to set the fill and
 --     outline transparency, respectively. Their default values are `30` and
 --     `50`.
---   * `_SCINTILLA.constants.INDIC_STRAIGHTBOX` (8)
+--   * `buffer.INDIC_STRAIGHTBOX`
 --     Similar to `INDIC_ROUNDBOX` but with sharp corners.
---   * `_SCINTILLA.constants.INDIC_DASH` (9)
+--   * `buffer.INDIC_DASH`
 --     A dashed underline.
---   * `_SCINTILLA.constants.INDIC_DOTS` (10)
+--   * `buffer.INDIC_DOTS`
 --     A dotted underline.
---   * `_SCINTILLA.constants.INDIC_SQUIGGLELOW` (11)
+--   * `buffer.INDIC_SQUIGGLELOW`
 --     A squiggly underline 2 pixels in height.
---   * `_SCINTILLA.constants.INDIC_DOTBOX` (12)
+--   * `buffer.INDIC_DOTBOX`
 --     Similar to `INDIC_STRAIGHTBOX` but with a dotted outline.
 --     Translucency alternates between [`buffer.indic_alpha`](#indic_alpha) and
 --     [`buffer.indic_outline_alpha`](#indic_outline_alpha) starting with the
 --     top-left pixel.
---   * `_SCINTILLA.constants.INDIC_SQUIGGLEPIXMAP` (13)
+--   * `buffer.INDIC_SQUIGGLEPIXMAP`
 --     Identical to `INDIC_SQUIGGLE` but draws faster by using a pixmap instead
 --     of multiple line segments.
---   * `_SCINTILLA.constants.INDIC_COMPOSITIONTHICK` (14)
+--   * `buffer.INDIC_COMPOSITIONTHICK`
 --     A 2-pixel thick underline at the bottom of the line inset by 1 pixel on
 --     on either side. Similar in appearance to Asian language input
 --     composition.
@@ -431,8 +414,8 @@
 --
 --   [`_SCINTILLA.next_indic_number()`]: _SCINTILLA.html#next_indic_number
 -- @field indic_under (table)
---   Table of flags indicating whether or not to draw indicators over text or
---   under it for indicator numbers from `0` to `31`.
+--   Table of flags indicating whether or not to draw indicators behind text or
+--   over the top of it for indicator numbers from `0` to `31`.
 --   For values to be `true`, [`buffer.two_phase_draw`](#two_phase_draw) must be
 --   `true`.
 --   The default values are `false` for drawing indicators over text.
@@ -440,31 +423,8 @@
 --   The indicator number in the range of `0` to `31` used by
 --   [`buffer:indicator_fill_range()`](#indicator_fill_range) and
 --   [`buffer:indicator_clear_range()`](#indicator_clear_range).
--- @field indicator_value (number)
---   The indicator value used for
---   [`buffer:indicator_fill_range()`](#indicator_fill_range).
---   Currently, all values are drawn the same, but it may be possible to draw
---   different values in different styles in the future.
--- @field layout_cache (number)
---   The layout cache mode.
---
---   * `_SCINTILLA.constants.SC_CACHE_NONE` (0)
---     No lines are cached.
---   * `_SCINTILLA.constants.SC_CACHE_CARET` (1)
---     Cache the line containing the caret.
---   * `_SCINTILLA.constants.SC_CACHE_PAGE` (2)
---     Cache visible lines.
---   * `_SCINTILLA.constants.SC_CACHE_DOCUMENT` (3)
---     Cache all lines in the buffer.
---
---   The default value is `1`.
 -- @field length (number, Read-only)
 --   The number of bytes in the buffer.
--- @field lexer (number)
---   The numeric ID of the Scintilla lexer used by the buffer.
--- @field lexer_language (string)
---   The name of the Scintilla lexer used by the buffer.
---   You probably want to use [`buffer:get_lexer()`](#get_lexer) instead.
 -- @field line_count (number, Read-only)
 --   The number of lines in the buffer.
 --   There is always at least one.
@@ -472,10 +432,10 @@
 --   Table of positions at the ends of lines, but before any end of line
 --   characters, for line numbers starting from zero.
 -- @field line_indent_position (table, Read-only)
---   Table of positions at the ends of line indentation for line numbers
---   starting from zero.
+--   Table of positions at the ends of indentation for line numbers starting
+--   from zero.
 -- @field line_indentation (table)
---   Table of line indentation amounts, measured in character columns, for line
+--   Table of indentation amounts, measured in character columns, for line
 --   numbers starting from zero.
 -- @field line_state (table)
 --   Table of integer line states for line numbers starting from zero.
@@ -489,34 +449,37 @@
 --   The number of completely visible lines in the view.
 --   It is possible to have a partial line visible at the bottom of the view.
 -- @field main_selection (number)
---   The main, or most recent, selection.
+--   The number of the main, or most recent, selection.
 --   Only an existing selection can be made main.
 -- @field margin_cursor_n (table)
 --   Table of cursors shown for margin numbers from zero to four.
 --
---   * `_SCINTILLA.constants.SC_CURSORARROW` (2)
+--   * `buffer.SC_CURSORARROW`
 --     Normal arrow cursor.
---   * `_SCINTILLA.constants.SC_CURSORREVERSEARROW` (7)
+--   * `buffer.SC_CURSORREVERSEARROW`
 --     Reversed arrow cursor.
 --
---   The default values are `7`.
+--   The default values are `buffer.SC_CURSORREVERSEARROW`.
 -- @field margin_left (number)
 --   The size in pixels of the left margin of the buffer text.
 --   The default value is `1`.
 -- @field margin_mask_n (table)
---   Table of marker bit-masks for showing margin markers for margin numbers
---   from zero to four.
---   The default values are `0`, `0x1FFFFFF`, `0`, `0`, and `0`, for a line
---   margin and logical marker margin.
+--   Table of bit-masks of markers that symbol margins can display for margin
+--   numbers from zero to four.
+--   Bit-masks are 32-bit values whose bits correspond to the 32 available
+--   markers.
+--   The default values are `0`, `bit32.bnot(buffer.SC_MASK_FOLDERS)`, `0`, `0`,
+--   and `0`, for a line margin and logical marker margin.
 -- @field margin_options (number)
 --   A bit-mask of margin option settings.
 --
---   * `_SCINTILLA.constants.SC_MARGINOPTION_NONE` (0)
+--   * `buffer.SC_MARGINOPTION_NONE`
 --     None.
---   * `_SCINTILLA.constants.SC_MARGINOPTION_SUBLINESELECT` (1)
---     Select only the sub-line of the wrapped line on margin click.
+--   * `buffer.SC_MARGINOPTION_SUBLINESELECT`
+--     Select only the sub-line of the wrapped line, rather than the entire
+--     line, on margin click.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_MARGINOPTION_NONE`.
 -- @field margin_right (number)
 --   The size in pixels of the right margin of the buffer text.
 --   The default value is `1`.
@@ -525,9 +488,10 @@
 --   `MARGIN_CLICK` events for margin numbers from zero to four.
 --   The default values are `false`.
 -- @field margin_style (table)
---   Table of style numbers for text margin line numbers starting from zero.
---   Only some style attributes are active in text margins: font,
---   size/size_fractional, bold/weight, italics, fore, back, and character_set.
+--   Table of style numbers for line numbers starting from zero in the text
+--   margin.
+--   Only some style attributes are active in text margins: font, size, bold,
+--   italics, fore, and back.
 -- @field margin_style_offset (number)
 --   The beginning of the range of style numbers used for margin text.
 --   Always set this to the result of
@@ -537,24 +501,25 @@
 --   numbered from `256` upto `511` so they do not overlap styles set by lexers.
 --   Each style number set with `margin_style` has the offset added before
 --   looking up the style.
+--   The default value is `0`.
 -- @field margin_text (table)
 --   Table of text in the text margin for line numbers starting from zero.
 -- @field margin_type_n (table)
 --   Table of margin types for margin numbers from zero to four.
 --
---   * `_SCINTILLA.constants.SC_MARGIN_SYMBOL` (0)
+--   * `buffer.SC_MARGIN_SYMBOL`
 --     A symbol margin.
---   * `_SCINTILLA.constants.SC_MARGIN_NUMBER` (1)
+--   * `buffer.SC_MARGIN_NUMBER`
 --     A line number margin.
---   * `_SCINTILLA.constants.SC_MARGIN_BACK` (2)
+--   * `buffer.SC_MARGIN_BACK`
 --     A symbol margin whose background color matches the default text
 --     background color.
---   * `_SCINTILLA.constants.SC_MARGIN_FORE` (3)
+--   * `buffer.SC_MARGIN_FORE`
 --     A symbol margin whose foreground color matches the default text
 --     foreground color.
---   * `_SCINTILLA.constants.SC_MARGIN_TEXT` (4)
+--   * `buffer.SC_MARGIN_TEXT`
 --     A text margin.
---   * `_SCINTILLA.constants.SC_MARGIN_RTEXT` (5)
+--   * `buffer.SC_MARGIN_RTEXT`
 --     A right-justified text margin.
 --
 --   The default values are `true`, `false`, `false`, `false`, and `false`, for
@@ -563,78 +528,39 @@
 --   Table of margin widths in pixels for margin numbers from zero to four.
 -- @field marker_alpha (table, Write-only)
 --   Table of alpha values, ranging from `0` (transparent) to `255` (opaque),
---   used for markers drawn in the text area, not the margin, for markers
---   numbers from `0` to `31`.
---   The default values are `256`, for no alpha.
+--   of markers drawn in the text area, not the margin, for markers numbers from
+--   `0` to `31`.
+--   The default values are `buffer.SC_ALPHA_NOALPHA`, for no alpha.
 -- @field marker_back (table, Write-only)
---   Table of background colors, in "0xBBGGRR" format, used for marker numbers
---   from `0` to `31`.
+--   Table of background colors, in "0xBBGGRR" format, of marker numbers from
+--   `0` to `31`.
 -- @field marker_back_selected (table, Write-only)
---   Table of background colors, in "0xBBGGRR" format, used for markers whose
---   folding blocks are selected for marker numbers from `0` to `31`.
+--   Table of background colors, in "0xBBGGRR" format, of markers whose folding
+--   blocks are selected for marker numbers from `0` to `31`.
 --   The default values are `0x0000FF`.
 -- @field marker_fore (table, Write-only)
---   Table of foreground colors, in "0xBBGGRR" format, used for marker numbers
---   from `0` to `31`.
+--   Table of foreground colors, in "0xBBGGRR" format, of marker numbers from
+--   `0` to `31`.
 -- @field max_line_state (number, Read-only)
 --   The last line number with a non-zero line state.
--- @field modify (bool)
---   Whether or not the buffer has unsaved changes.
---   Unlike [`buffer.dirty`](#dirty), this field is accessible only from the
---   global buffer.
 -- @field mouse_dwell_time (number)
 --   The number of milliseconds the mouse must idle in order to generate a
---   `DWELL_START` event, or `_SCINTILLA.constants.SC_TIME_FOREVER` to never
---   generate one.
+--   `DWELL_START` event, or `buffer.SC_TIME_FOREVER` to never generate one.
 -- @field multi_paste (number)
 --   The multiple selection paste mode.
 --
---   * `_SCINTILLA.constants.SC_MULTIPASTE_ONCE` (0)
+--   * `buffer.SC_MULTIPASTE_ONCE`
 --     Paste into only the main selection.
---   * `_SCINTILLA.constants.SC_MULTIPASTE_EACH` (1)
+--   * `buffer.SC_MULTIPASTE_EACH`
 --     Paste into all selections.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_MULTIPASTE_ONCE`.
 -- @field multiple_selection (bool)
 --   Enable multiple selection.
 --   The default value is `false`.
 -- @field overtype (bool)
 --   Enable overtype mode, where typed characters overwrite existing ones.
 --   The default value is `false`.
--- @field position_cache (number)
---   The number of entries in the position cache.
---   The position cache stores position information for short runs of text so
---   that their layout can be determined more quickly if the run recurs.
---   The default value is `1024`.
--- @field print_colour_mode (number)
---   The print color mode.
---
---   * `_SCINTILLA.constants.SC_PRINT_NORMAL` (0)
---     Print with the current set of colors.
---   * `_SCINTILLA.constants.SC_PRINT_INVERTLIGHT` (1)
---     Print on a white background with the light values of the current color
---     set.
---     This mode is good for a dark background color.
---   * `_SCINTILLA.constants.SC_PRINT_BLACKONWHITE` (2)
---     Print black text on a white background.
---   * `_SCINTILLA.constants.SC_PRINT_COLOURONWHITE` (3)
---     Print on a white background with the current color set.
---   * `_SCINTILLA.constants.SC_PRINT_COLOURONWHITEDEFAULTBG` (4)
---     Print on a white background with the current color set except for line
---     numbers which use their own background color.
--- @field print_magnification (number)
---   The number of points to add to the size of each font when printing.
---   Negative values are allowed.
---   The default value is `0`.
--- @field print_wrap_mode (number)
---   The print line wrap mode.
---
---   * `_SCINTILLA.constants.SC_WRAP_NONE` (0)
---     Truncate long lines.
---   * `_SCINTILLA.constants.SC_WRAP_WORD` (1)
---     Wrap long lines at word boundaries if possible.
---   * `_SCINTILLA.constants.SC_WRAP_CHAR` (2)
---     Wrap long lines at character boundaries.
 -- @field property (table)
 --   Map of key-value string pairs used by lexers.
 -- @field property_expanded (table, Read-only)
@@ -663,27 +589,27 @@
 --   The modifier key used in combination with a mouse drag to create a
 --   rectangular selection.
 --
---   * `_SCINTILLA.constants.SCMOD_CTRL` (2)
+--   * `buffer.SCMOD_CTRL`
 --     The "Control" modifier key.
---   * `_SCINTILLA.constants.SCMOD_ALT` (4)
+--   * `buffer.SCMOD_ALT`
 --     The "Alt" modifier key.
---   * `_SCINTILLA.constants.SCMOD_SUPER` (8)
+--   * `buffer.SCMOD_SUPER`
 --     The "Super" modifier key, usually defined as the left "Windows" or
 --     "Command" key.
 --
---   The default value is `2`.
+--   The default value is `buffer.SCMOD_CTRL`.
 -- @field rgba_image_height (number)
---   The height for an RGBA image to be defined using
+--   The height for the RGBA image to be defined using
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
 -- @field rgba_image_scale (number)
---   The scale factor in percent for an RGBA image to be defined using
+--   The scale factor in percent for the RGBA image to be defined using
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
 --   This is useful on OSX with a retina display where each display unit is 2
---   pixels: use a factor of `200` so that each image pixel is dsplayed using a
+--   pixels: use a factor of `200` so that each image pixel is displayed using a
 --   screen pixel. The default scale, `100`, will stretch each image pixel to
 --   cover 4 screen pixels on a retina display.
 -- @field rgba_image_width (number)
---   The width for an RGBA image to be defined using
+--   The width for the RGBA image to be defined using
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image) and
 --   [`buffer:register_rgba_image()`](#register_rgba_image).
 -- @field scroll_width (number)
@@ -695,22 +621,22 @@
 --   [`buffer.scroll_width_tracking`](#scroll_width_tracking).
 --   The default value is `2000`.
 -- @field scroll_width_tracking (bool)
---   Set the scroll width to the maximum width of a displayed line beyond
---   [`buffer.scroll_width`](#scroll_width).
+--   Continuously update the scroll width to match the maximum width of a
+--   displayed line beyond [`buffer.scroll_width`](#scroll_width).
 --   The default value is `false`.
 -- @field search_flags (number)
 --   The bit-mask of search flags used by
 --   [`buffer:search_in_target()`](#search_in_target).
 --
---   * `_SCINTILLA.constants.SCFIND_WHOLEWORD` (2)
+--   * `buffer.SCFIND_WHOLEWORD`
 --     Match text surrounded by non-word characters.
---   * `_SCINTILLA.constants.SCFIND_MATCHCASE` (4)
+--   * `buffer.SCFIND_MATCHCASE`
 --     Match text case sensitively.
---   * `_SCINTILLA.constants.SCFIND_WORDSTART` (0x00100000)
+--   * `buffer.SCFIND_WORDSTART`
 --     Match text when the previous character is a non-word character.
---   * `_SCINTILLA.constants.SCFIND_REGEXP` (0x00200000)
+--   * `buffer.SCFIND_REGEXP`
 --     Interpret the search string as a regular expression.
---   * `_SCINTILLA.constants.SCFIND_POSIX` (0x00400000)
+--   * `buffer.SCFIND_POSIX`
 --     Interpret '(' and ')' as tags instead of "\\(" and "\\)" in a regular
 --     expression.
 --
@@ -751,7 +677,7 @@
 -- @field sel_alpha (number)
 --   The alpha value, ranging from `0` (transparent) to `255` (opaque), of the
 --   selection.
---   The default value is `256`, for no alpha.
+--   The default value is `buffer.SC_ALPHA_NOALPHA`, for no alpha.
 -- @field sel_eol_filled (bool)
 --   Extend the selection to the right margin of the view.
 --   The default value is `false`.
@@ -765,13 +691,13 @@
 -- @field selection_mode (number)
 --   The selection mode.
 --
---   * `_SCINTILLA.constants.SC_SEL_STREAM` (0)
+--   * `buffer.SC_SEL_STREAM`
 --     Character selection.
---   * `_SCINTILLA.constants.SC_SEL_RECTANGLE` (1)
+--   * `buffer.SC_SEL_RECTANGLE`
 --     Rectangular selection.
---   * `_SCINTILLA.constants.SC_SEL_LINES` (2)
+--   * `buffer.SC_SEL_LINES`
 --     Line selection.
---   * `_SCINTILLA.constants.SC_SEL_THIN` (3)
+--   * `buffer.SC_SEL_THIN`
 --     Thin rectangular selection. This is the mode after a rectangular
 --     selection has been typed into and ensures that no characters are
 --     selected.
@@ -779,17 +705,17 @@
 --   When set, caret movement alters the selected text until this field is set
 --   again to the same value or [`buffer:cancel()`](#cancel) is called.
 -- @field selection_n_anchor (table)
---   Table of anchor positions for existing selections numbered from zero, the
---   main selection.
+--   Table of positions at the beginning of existing selections numbered from
+--   zero, the main selection.
 -- @field selection_n_anchor_virtual_space (table)
---   Table of the amount of virtual space for anchors for existing selections
---   numbered from zero, the main selection.
+--   Table of positions at the beginning of virtual space selected in existing
+--   selections numbered from zero, the main selection.
 -- @field selection_n_caret (table)
---   Table of caret positions for existing selections numbered from zero, the
---   main selection.
+--   Table of positions at the end of existing selections numbered from zero,
+--   the main selection.
 -- @field selection_n_caret_virtual_space (table)
---   Table of the amount of virtual space for carets for existing selections
---   numbered from zero, the main selection.
+--   Table of positions at the end of virtual space selected in existing
+--   selections numbered from zero, the main selection.
 -- @field selection_n_end (table)
 --   Table of positions at the end of existing selections numbered from zero,
 --   the main selection.
@@ -802,17 +728,10 @@
 -- @field selections (number, Read-only)
 --   The number of active selections.
 -- @field style_at (table, Read-only)
---   Table of style bytes at positions in the buffer starting from zero.
+--   Table of style numbers at positions in the buffer starting from zero.
 -- @field style_back (table)
---   Table of background colors, in "0xBBGGRR" format, for style numbers from
---   `0` to `255`.
--- @field style_bits (number)
---   The number of bits in an 8-bit style byte to use for styling.
---   The number of styling bits required by the current lexer is
---   [`buffer.style_bits_needed`](#style_bits_needed).
---   The default value is `5`.
--- @field style_bits_needed (number, Read-only)
---   The number of styling bits required by the current lexer.
+--   Table of background colors, in "0xBBGGRR" format, for text within styles
+--   for style numbers from `0` to `255`.
 -- @field style_bold (table)
 --   Table of flags indicating whether or not text within styles has a bold font
 --   face for style numbers from `0` to `255`.
@@ -821,44 +740,31 @@
 --   Table of letter case modes for text within styles for style numbers from
 --   `0` to `255`.
 --
---   * `_SCINTILLA.constants.SC_CASE_MIXED` (0)
---     Display text in mixed case.
---   * `_SCINTILLA.constants.SC_CASE_UPPER` (1)
+--   * `buffer.SC_CASE_MIXED`
+--     Display text in normally.
+--   * `buffer.SC_CASE_UPPER`
 --     Display text in upper case.
---   * `_SCINTILLA.constants.SC_CASE_LOWER` (2)
+--   * `buffer.SC_CASE_LOWER`
 --     Display text in lower case.
 --
---   The default values are `0`.
+--   The default values are `buffer.SC_CASE_MIXED`.
 -- @field style_changeable (table)
 --   Table of flags indicating whether or not text within styles is changeable
 --   for style numbers from `0` to `255`.
 --   The default values are `true`.
 --   Currently, read-only styles do not allow the caret into the range of text,
 --   but ranges containing read-only text are deletable.
--- @field style_character_set (table)
---   Table of character sets for style numbers from `0` to `255`.
---
---   * `_SCINTILLA.constants.SC_CHARSET_ANSI` (0)
---   * `_SCINTILLA.constants.SC_CHARSET_DEFAULT` (1)
---   * `_SCINTILLA.constants.SC_CHARSET_CYRILLIC` (1251)
---   * `_SCINTILLA.constants.SC_CHARSET_EASTEUROPE` (238)
---   * `_SCINTILLA.constants.SC_CHARSET_GB2312` (134)
---   * `_SCINTILLA.constants.SC_CHARSET_HANGUL` (129)
---   * `_SCINTILLA.constants.SC_CHARSET_RUSSIAN` (204)
---   * `_SCINTILLA.constants.SC_CHARSET_SHIFTJIS` (128)
---   * `_SCINTILLA.constants.SC_CHARSET_8859_15` (1000)
---
---   The default values are `1`.
 -- @field style_eol_filled (table)
---   Table of flags indicating whether or not to extend the background colors of
---   styles whose characters occur last on lines all the way to the right margin
+--   Table of flags indicating whether or not the background colors of styles
+--   whose characters occur last on lines extend all the way to the right margin
 --   of the view for style numbers from `0` to `255`.
 --   The default values are `false`.
 -- @field style_font (table)
---   Table of font faces for style numbers from `0` to `255`.
--- @field style_fore (table)
---   Table of foreground colors, in "0xBBGGRR" format, for style numbers from
+--   Table of string font faces for text within styles for style numbers from
 --   `0` to `255`.
+-- @field style_fore (table)
+--   Table of foreground colors, in "0xBBGGRR" format, for text within styles
+--   for style numbers from `0` to `255`.
 -- @field style_hot_spot (table)
 --   Table of flags indicating whether or not text within styles is clickable
 --   for style numbers from `0` to `255`.
@@ -868,12 +774,8 @@
 --   font face for style numbers from `0` to `255`.
 --   The default values are `false`.
 -- @field style_size (table)
---   Table of font sizes, expressed in whole number points, for style numbers
---   from `0` to `255`.
--- @field style_size_fractional (table)
---   Table of character sizes, expressed in hundredths of a point, for style
---   numbers from `0` to `255`.
---   For example, a text size of 9.4 points is set using `940`.
+--   Table of font sizes, expressed in whole number points, for text within
+--   styles for style numbers from `0` to `255`.
 -- @field style_underline (table)
 --   Table of flags indicating whether or not text within styles has an
 --   underlined font face for style numbers from `0` to `255`.
@@ -882,26 +784,13 @@
 --   Table of flags indicating whether or not text within styles is visible for
 --   style numbers from `0` to `255`.
 --   The default values are `true`.
--- @field style_weight (table)
---   Table of character weights ranging from `1` (very light) to `999` (very
---   heavy) for text within styles for style numbers from `0` to `255`.
---   However, most fonts only support a small number of weights:
---
---   * `_SCINTILLA.constants.SC_WEIGHT_NORMAL` (400)
---     Normal.
---   * `_SCINTILLA.constants.SC_WEIGHT_SEMIBOLD` (600)
---     Semi-bold.
---   * `_SCINTILLA.constants.SC_WEIGHT_BOLD` (700)
---     Bold.
---
---   The default values are `400`.
 -- @field tab_indents (bool)
 --   Tabbing indents within indentation.
 --   The default value is `false`.
 -- @field tab_width (number)
 --   The number of space characters represented by a tab character.
 --   The default value is `8`.
--- @field tag (table)
+-- @field tag (table, Read-only)
 --   List of tag match values from a regular expression search.
 -- @field target_end (number)
 --   The position of the end of the target range.
@@ -912,10 +801,10 @@
 --   This is also set by a successful
 --   [`buffer:search_in_target()`](#search_in_target).
 -- @field text_length (number, Read-only)
---   The number of characters in the buffer.
+--   The number of bytes in the buffer.
 -- @field two_phase_draw (bool)
 --   Draw in two phases: first the background and then the foreground.
---   The default is `true`.
+--   The default value is `true`.
 -- @field undo_collection (bool)
 --   Collect undo information.
 --   When setting to `false`, call
@@ -923,8 +812,10 @@
 --   the undo buffer with the buffer text.
 --   The default value is `true`.
 -- @field use_tabs (bool)
---   Use tabs or spaces in indentation.
---   The default value is `true`, for using tabs.
+--   Use tabs, rather than spaces in indentation. Changing the setting does not
+--   convert existing indentation. Use
+--   [`_M.textadept.editing.convert_indentation()`][] to do so.
+--   The default value is `true`.
 -- @field v_scroll_bar (bool)
 --   Display the vertical scroll bar.
 --   The default value is `true`.
@@ -934,25 +825,25 @@
 -- @field view_ws (number)
 --   The whitespace character visibility mode.
 --
---   * `_SCINTILLA.constants.SCWS_INVISIBLE` (0)
+--   * `buffer.SCWS_INVISIBLE`
 --     Whitespace is invisible.
---   * `_SCINTILLA.constants.SCWS_VISIBLEALWAYS` (1)
---     Display whitespace as dots and arrows.
---   * `_SCINTILLA.constants.SCWS_VISIBLEAFTERINDENT` (2)
---     Display non-indentation whitespace as dots and arrows.
+--   * `buffer.SCWS_VISIBLEALWAYS`
+--     Display all whitespace as dots and arrows.
+--   * `buffer.SCWS_VISIBLEAFTERINDENT`
+--     Display only non-indentation whitespace as dots and arrows.
 --
---   The default value is `0`.
+--   The default value is `buffer.SCWS_INVISIBLE`.
 -- @field virtual_space_options (number)
 --   The virtual space mode.
 --
---   * `_SCINTILLA.constants.SCVS_NONE` (0)
+--   * `buffer.SCVS_NONE`
 --     Disable virtual space.
---   * `_SCINTILLA.constants.SCVS_RECTANGULARSELECTION` (1)
+--   * `buffer.SCVS_RECTANGULARSELECTION`
 --     Enable virtual space only for rectangular selections.
---   * `_SCINTILLA.constants.SCVS_USERACCESSIBLE` (2)
+--   * `buffer.SCVS_USERACCESSIBLE`
 --     Enable virtual space.
 --
---   The default value is `0`.
+--   The default value is `buffer.SCVS_NONE`.
 -- @field whitespace_chars (string)
 --   The set of characters considered to be whitespace characters when moving
 --   or selecting text by word.
@@ -960,8 +851,8 @@
 --   The default value is a string containing all non-newline characters less
 --   than ASCII value 33.
 -- @field whitespace_size (number)
---   The size of the dots in pixels used to represent space characters when
---   whitespace is visible.
+--   The pixel size of the dots in pixels used to represent space characters
+--   when whitespace is visible.
 --   The default value is `1`.
 -- @field word_chars (string)
 --   The set of characters considered to be word characters when moving or
@@ -971,54 +862,54 @@
 -- @field wrap_indent_mode (number)
 --   The wrapped line indent mode.
 --
---   * `_SCINTILLA.constants.SC_WRAP_INDENT_FIXED` (0)
+--   * `buffer.SC_WRAP_INDENT_FIXED`
 --     Indent wrapped lines by [`buffer.wrap_start_indent`](#wrap_start_indent).
---   * `_SCINTILLA.constants.SC_WRAP_INDENT_SAME` (1)
+--   * `buffer.SC_WRAP_INDENT_SAME`
 --     Indent wrapped lines the same as the first line.
---   * `_SCINTILLA.constants.SC_WRAP_INDENT_INDENT` (2)
+--   * `buffer.SC_WRAP_INDENT_INDENT`
 --     Indent wrapped lines one more level than the first line.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_WRAP_INDENT_FIXED`.
 -- @field wrap_mode (number)
 --   Long line wrap mode.
 --
---   * `_SCINTILLA.constants.SC_WRAP_NONE` (0)
+--   * `buffer.SC_WRAP_NONE`
 --     Long lines are not wrapped.
---   * `_SCINTILLA.constants.SC_WRAP_WORD` (1)
+--   * `buffer.SC_WRAP_WORD`
 --     Wrap long lines at word boundaries.
---   * `_SCINTILLA.constants.SC_WRAP_CHAR` (2)
+--   * `buffer.SC_WRAP_CHAR`
 --     Wrap long lines at character boundaries.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_WRAP_NONE`.
 -- @field wrap_start_indent (number)
 --   The number of spaces to indent wrapped lines by if
 --   [`buffer.wrap_indent_mode`](#wrap_indent_mode) is
---   `_SCINTILLA.constants.SC_WRAP_INDENT_FIXED`.
+--   `buffer.SC_WRAP_INDENT_FIXED`.
 --   The default value is `0`.
 -- @field wrap_visual_flags (number)
 --   The wrapped line visual display mode.
 --
---   * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_NONE` (0)
+--   * `buffer.SC_WRAPVISUALFLAG_NONE`
 --     No visual flags.
---   * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_END` (1)
+--   * `buffer.SC_WRAPVISUALFLAG_END`
 --     Show visual flag at the end of the line.
---   * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_START` (2)
+--   * `buffer.SC_WRAPVISUALFLAG_START`
 --     Show visual flag at the beginning of the sub-line.
---   * `_SCINTILLA.constants.SC_WRAPVISUALFLAG_MARGIN` (4)
+--   * `buffer.SC_WRAPVISUALFLAG_MARGIN`
 --     Show visual flag in the line number margin of the sub-line.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_WRAPVISUALFLAG_NONE`.
 -- @field wrap_visual_flags_location (number)
 --   The wrapped line visual flag drawing mode.
 --
---   * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_DEFAULT` (0)
+--   * `buffer.SC_WRAPVISUALFLAGLOC_DEFAULT`
 --     Draw the visual flag near the right border.
---   * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_END_BY_TEXT` (1)
+--   * `buffer.SC_WRAPVISUALFLAGLOC_END_BY_TEXT`
 --     Draw the visual flag near text at the end of the line.
---   * `_SCINTILLA.constants.SC_WRAPVISUALFLAGLOC_START_BY_TEXT` (2)
+--   * `buffer.SC_WRAPVISUALFLAGLOC_START_BY_TEXT`
 --     Draw the visual flag near text at the beginning of the subline.
 --
---   The default value is `0`.
+--   The default value is `buffer.SC_WRAPVISUALFLAGLOC_DEFAULT`.
 -- @field x_offset (number)
 --   The horizontal scroll position in pixels.
 --   A value of `0` is the normal position with the first text column visible at
@@ -1027,18 +918,21 @@
 --   The number of points to add to the size of all fonts.
 --   Negative values are allowed.
 --   The default value is `0`.
+--
+-- [`_M.textadept.editing.convert_indentation()`]: _M.textadept.editing.html#convert_indentation
 module('buffer')
 
 ---
--- Selects the change of text from *anchor* to *caret* as the main selection,
--- retaining all other selections as additional selections.
+-- Selects the change of text from *start_pos* to *end_pos* as the main
+-- selection, retaining all other selections as additional selections.
 -- Even if no text is selected, the current position counts as an empty
 -- selection. Use `buffer:set_selection()` first when setting a list of
 -- selections.
 -- @param buffer The global buffer.
--- @param caret The caret position of the range of text to select in *buffer*.
--- @param anchor The anchor position of the range of text to select in *buffer*.
-function add_selection(buffer, caret, anchor) end
+-- @param end_pos The caret position of the range of text to select in *buffer*.
+-- @param start_pos The anchor position of the range of text to select in
+--   *buffer*.
+function add_selection(buffer, end_pos, start_pos) end
 
 ---
 -- Adds string *text* to the buffer at the caret and moves the caret to the end
@@ -1046,13 +940,6 @@ function add_selection(buffer, caret, anchor) end
 -- @param buffer The global buffer.
 -- @param text The text to add.
 function add_text(buffer, text) end
-
----
--- Enlarges the buffer to store *bytes* number of bytes, but never shrinks it
--- beyond the size of its contents.
--- @param buffer The global buffer.
--- @param bytes The number of bytes *buffer* can store.
-function allocate(buffer, bytes) end
 
 ---
 -- Allocates an additional *num_styles* number of styles for use by margins or
@@ -1111,8 +998,8 @@ function auto_c_select(buffer, string) end
 -- are delimited by `buffer.auto_c_separator` characters, using *len_entered*
 -- number of characters behind the caret as the prefix of the word to
 -- autocomplete.
--- The sorted order of *item_list*, `buffer.auto_c_order`, must be already
--- defined.
+-- The sorted order of *item_list*, `buffer.auto_c_order`, must have already
+-- been defined.
 -- @param buffer The global buffer.
 -- @param len_entered The number of characters before the caret used to provide
 --   the context.
@@ -1141,8 +1028,8 @@ function back_tab(buffer) end
 function begin_undo_action(buffer) end
 
 ---
--- Highlights the character at position *pos* as an unmatched brace character in
--- the `_SCINTILLA.constants.STYLE_BRACEBAD` style.
+-- Highlights the character at position *pos* as an unmatched brace character
+-- using the `'style.bracebad'` style.
 -- Removes highlighting when *pos* is `-1`.
 -- @param buffer The global buffer.
 -- @param pos The position in *buffer* to highlight, or `-1` to remove the
@@ -1152,7 +1039,7 @@ function brace_bad_light(buffer, pos) end
 ---
 -- Highlights unmatched brace characters with indicator number *indic_num*, in
 -- the range of `0` to `31`, instead of the
--- `_SCINTILLA.constants.STYLE_BRACEBAD` style if *use_indicator* is `true`.
+-- `buffer.STYLE_BRACEBAD` style if *use_indicator* is `true`.
 -- @param buffer The global buffer.
 -- @param use_indicator Whether or not to use an indicator.
 -- @param indic_num The indicator number to use.
@@ -1160,9 +1047,9 @@ function brace_bad_light_indicator(buffer, use_indicator, indic_num) end
 
 ---
 -- Highlights the characters at positions *pos1* and *pos2* as matching braces
--- in the `_SCINTILLA.constants.STYLE_BRACELIGHT` style.
--- If indent guides are enabled, locate the column with `buffer.column` and
--- set `buffer.highlight_guide` in order to highlight the indent guide.
+-- using the `'style.bracelight'` style.
+-- If indent guides are enabled, locates the column with `buffer.column` and
+-- sets `buffer.highlight_guide` in order to highlight the indent guide.
 -- @param buffer The global buffer.
 -- @param pos1 The first position in *buffer* to highlight.
 -- @param pos2 The second position in *buffer* to highlight.
@@ -1171,7 +1058,7 @@ function brace_highlight(buffer, pos1, pos2) end
 ---
 -- Highlights matching brace characters with indicator number *indic_num*, in
 -- the range of `0` to `31`, instead of the
--- `_SCINTILLA.constants.STYLE_BRACELIGHT` style if *use_indicator* is `true`.
+-- `buffer.STYLE_BRACELIGHT` style if *use_indicator* is `true`.
 -- @param buffer The global buffer.
 -- @param use_indicator Whether or not to use an indicator.
 -- @param indic_num The indicator number to use.
@@ -1320,14 +1207,9 @@ function choose_caret_x(buffer) end
 function clear(buffer) end
 
 ---
--- Deletes all of the text in the buffer unless the buffer is read-only.
+-- Deletes all of the text in the buffer.
 -- @param buffer The global buffer.
 function clear_all(buffer) end
-
----
--- Clears Scintilla's internal key bindings.
--- @param buffer The global buffer.
-function clear_all_cmd_keys(buffer) end
 
 ---
 -- Clears all styling and folding information in the buffer.
@@ -1368,9 +1250,9 @@ function contracted_fold_next(buffer, line_start) end
 -- Converts all line endings to end of line mode *mode*.
 -- @param buffer The global buffer.
 -- @param mode The line ending mode to convert to. Valid values are:
---   * `_SCINTILLA.constants.SC_EOL_CRLF` (0)
---   * `_SCINTILLA.constants.SC_EOL_CR` (1)
---   * `_SCINTILLA.constants.SC_EOL_LF` (2)
+--   * `buffer.SC_EOL_CRLF`
+--   * `buffer.SC_EOL_CR`
+--   * `buffer.SC_EOL_LF`
 function convert_eo_ls(buffer, mode) end
 
 ---
@@ -1506,17 +1388,9 @@ function document_start_extend(buffer) end
 function edit_toggle_overtype(buffer) end
 
 ---
--- Deletes the undo and redo history and sets `buffer.modify` to `false`.
+-- Deletes the undo and redo history.
 -- @param buffer The global buffer.
 function empty_undo_buffer(buffer) end
-
----
--- Returns the result of UTF-8-encoded string *string* converted into the
--- buffer's encoding.
--- @param buffer The global buffer.
--- @param string The UTF-8-encoded string to convert.
--- @return number
-function encoded_from_utf8(buffer, string) end
 
 ---
 -- Ends a sequence of actions to undo or redo as a single action.
@@ -1564,9 +1438,9 @@ function find_column(buffer, line, column) end
 -- whether to expand or contract.
 -- @param buffer The global buffer.
 -- @param action The fold action to perform. Valid values are:
---   * `_SCINTILLA.constants.SC_FOLDACTION_CONTRACT` (0)
---   * `_SCINTILLA.constants.SC_FOLDACTION_EXPAND` (1)
---   * `_SCINTILLA.constants.SC_FOLDACTION_TOGGLE` (2)
+--   * `buffer.SC_FOLDACTION_CONTRACT`
+--   * `buffer.SC_FOLDACTION_EXPAND`
+--   * `buffer.SC_FOLDACTION_TOGGLE`
 function fold_all(buffer, action) end
 
 ---
@@ -1575,9 +1449,9 @@ function fold_all(buffer, action) end
 -- @param buffer The global buffer.
 -- @param line The line number in *buffer* to set the fold states for.
 -- @param action The fold action to perform. Valid values are:
---   * `_SCINTILLA.constants.SC_FOLDACTION_CONTRACT` (0)
---   * `_SCINTILLA.constants.SC_FOLDACTION_EXPAND` (1)
---   * `_SCINTILLA.constants.SC_FOLDACTION_TOGGLE` (2)
+--   * `buffer.SC_FOLDACTION_CONTRACT`
+--   * `buffer.SC_FOLDACTION_EXPAND`
+--   * `buffer.SC_FOLDACTION_TOGGLE`
 function fold_children(buffer, line, action) end
 
 ---
@@ -1586,9 +1460,9 @@ function fold_children(buffer, line, action) end
 -- @param buffer The global buffer.
 -- @param line The line number in *buffer* to set the fold state for.
 -- @param action The fold action to perform. Valid values are:
---   * `_SCINTILLA.constants.SC_FOLDACTION_CONTRACT` (0)
---   * `_SCINTILLA.constants.SC_FOLDACTION_EXPAND` (1)
---   * `_SCINTILLA.constants.SC_FOLDACTION_TOGGLE` (2)
+--   * `buffer.SC_FOLDACTION_CONTRACT`
+--   * `buffer.SC_FOLDACTION_EXPAND`
+--   * `buffer.SC_FOLDACTION_TOGGLE`
 function fold_line(buffer, line, action) end
 
 ---
@@ -1674,11 +1548,6 @@ function goto_line(buffer, line) end
 function goto_pos(buffer, pos) end
 
 ---
--- Sets the focus to the buffer's view.
--- @param buffer The global buffer.
-function grab_focus(buffer) end
-
----
 -- Hides the range of lines from line number *start_line* to *end_line*.
 -- This has no effect on fold levels or fold flags and the first line cannot be
 -- hidden.
@@ -1759,8 +1628,8 @@ function indicator_clear_range(buffer, pos, clear_length) end
 function indicator_end(buffer, indicator, pos) end
 
 ---
--- Sets indicator `buffer.indicator_value` or `buffer.indicator_current` over
--- the range of text from *pos* to *pos* + *fill_length*.
+-- Sets indicator `buffer.indicator_current` over the range of text from *pos*
+-- to *pos* + *fill_length*.
 -- @param buffer The global buffer.
 -- @param pos The start position of the range of text in *buffer* to set
 --   indicators over.
@@ -1775,15 +1644,6 @@ function indicator_fill_range(buffer, pos, fill_length) end
 -- @param indicator An indicator number in the range of `0` to `31`.
 -- @param pos The position in *buffer* of the indicator.
 function indicator_start(buffer, indicator, pos) end
-
----
--- Returns the value of indicator number *indicator*, in the range of `0` to
--- `31`, at position *pos*.
--- @param buffer The global buffer.
--- @param indicator The indicator number in the range of `0` to `31`.
--- @param pos The position in *buffer* of the indicator.
--- @return number
-function indicator_value_at(buffer, indicator, pos) end
 
 ---
 -- Inserts string *text* at position *pos* or the caret if *pos* is `-1`.
@@ -1955,7 +1815,7 @@ function lower_case(buffer) end
 function margin_text_clear_all(buffer) end
 
 ---
--- Adds marker number *marker_num*, in the range of `0` to `31`, on line number
+-- Adds marker number *marker_num*, in the range of `0` to `31`, to line number
 -- *line*, returning a marker handle which can be used in
 -- `buffer:marker_delete_handle()` and `buffer:marker_line_from_handle()`, or
 -- `-1` if the marker cannot be added.
@@ -1968,7 +1828,8 @@ function marker_add(buffer, line, marker_num) end
 ---
 -- Adds the markers specified in the marker bit-mask *marker_mask* to line
 -- number *line*.
--- Bit 0 is set to add marker 0, bit 1 for marker 1, etc., up to marker 31.
+-- The first bit is set to add marker number 0, the second bit for marker number
+-- 1, and so on up to marker number 31.
 -- @param buffer The global buffer.
 -- @param line The line number to add the markers on.
 -- @param marker_mask The mask of markers to set. Set bit 0 to set marker 0, bit
@@ -1976,19 +1837,22 @@ function marker_add(buffer, line, marker_num) end
 function marker_add_set(buffer, line, marker_mask) end
 
 ---
--- Sets the symbol *marker_symbol* shown in the margin for marker number
--- *marker_num*, in the range of `0` to `31`.
+-- Associates marker number *marker_num*, in the range of `0` to `31`, with
+-- symbol *marker_symbol*.
+-- *marker_symbol* is shown in symbol margins next to lines marked with
+-- *marker_num*.
 -- @param buffer The global buffer.
 -- @param marker_num The marker number in the range of `0` to `31` to set
 --   *marker_symbol* for.
--- @param marker_symbol The marker symbol: `_SCINTILLA.constants.SC_MARK_*`.
+-- @param marker_symbol The marker symbol: `buffer.SC_MARK_*`.
 -- @see _SCINTILLA.next_marker_number
 function marker_define(buffer, marker_num, marker_symbol) end
 
 ---
--- Defines XPM image *pixmap* for marker number *marker_num*, in the range of
--- `0` to `31`.
--- Pixmap markers use the `_SCINTILLA.constants.SC_MARK_PIXMAP` marker symbol.
+-- Associates marker number *marker_num*, in the range of `0` to `31`, with XPM
+-- image *pixmap*.
+-- The `buffer.SC_MARK_PIXMAP` symbol must be associated with *marker_num*.
+-- The image is shown in symbol margins next to lines marked with *marker_num*.
 -- @param buffer The global buffer.
 -- @param marker_num The marker number in the range of `0` to `31` to define
 --   pixmap *pixmap* for.
@@ -1996,13 +1860,15 @@ function marker_define(buffer, marker_num, marker_symbol) end
 function marker_define_pixmap(buffer, marker_num, pixmap) end
 
 ---
--- Defines RGBA image *pixels* for marker number *marker_num*, in the range of
--- `0` to `31`.
--- RGBA image markers use the `_SCINTILLA.constants.SC_MARK_RGBAIMAGE` marker
--- symbol. The dimensions for *pixels*, `buffer.rgba_image_width` and
--- `buffer.rgba_image_height`, must be already defined. *pixels* is a sequence
--- of 4 byte pixel values (red, blue, green, and alpha) defining the image line
--- by line starting at the top-left pixel.
+-- Associates marker number *marker_num*, in the range of `0` to `31`, with RGBA
+-- image *pixels*.
+-- The dimensions for *pixels*, `buffer.rgba_image_width` and
+-- `buffer.rgba_image_height`, must have already been defined. *pixels* is a
+-- sequence of 4 byte pixel values (red, blue, green, and alpha) defining the
+-- image line by line starting at the top-left pixel.
+-- The `buffer.SC_MARK_RGBAIMAGE` symbol must be associated with *marker_num*.
+-- The image is shown in symbol margins next to lines marked with *marker_num*.
+-- RGBA image markers use the `buffer.SC_MARK_RGBAIMAGE` marker symbol.
 -- @param buffer The global buffer.
 -- @param marker_num The marker number in the range of `0` to `31` to define
 --   RGBA data *pixels* for.
@@ -2046,16 +1912,18 @@ function marker_delete_handle(buffer, handle) end
 function marker_enable_highlight(buffer, enabled) end
 
 ---
--- Returns a bit-mask representing which markers are set line number *line*.
--- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc.
+-- Returns a bit-mask representing the markers that were added to line number
+-- *line*.
+-- The first bit is set if marker number 0 is present, the second bit for marker
+-- number 1, and so on.
 -- @param buffer The global buffer.
 -- @param line The line number to get markers on.
 -- @return number
 function marker_get(buffer, line) end
 
 ---
--- Returns the line number the marker with handle *handle*, returned by
--- `buffer:marker_add()`, is on, or `-1`.
+-- Returns the line number that marker handle *handle*, returned by
+-- `buffer:marker_add()`, was added to, or `-1`.
 -- @param buffer The global buffer.
 -- @param handle The identifier of a marker returned by `buffer:marker_add()`.
 -- @return number
@@ -2063,8 +1931,8 @@ function marker_line_from_handle(buffer, handle) end
 
 ---
 -- Returns the first line number starting at line number *start_line* that has
--- all of the markers represented by marker bit-mask *marker_mask* set on, or
--- `-1`.
+-- had all of the markers represented by marker bit-mask *marker_mask* added to
+-- it, or `-1` if no line was found.
 -- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc., up to marker 31.
 -- @param buffer The global buffer.
 -- @param start_line The start line to search from.
@@ -2075,8 +1943,8 @@ function marker_next(buffer, start_line, marker_mask) end
 
 ---
 -- Returns the last line number before or on line number *start_line* that has
--- all of the markers represented by marker bit-mask *marker_mask* set on, or
--- `-1`.
+-- had all of the markers represented by marker bit-mask *marker_mask* added to
+-- it, or `-1` if no line was found.
 -- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc., up to marker 31.
 -- @param buffer The global buffer.
 -- @param start_line The start line to search from.
@@ -2118,59 +1986,59 @@ function move_selected_lines_up(buffer) end
 function new_line(buffer) end
 
 ---
--- Moves the caret one page down.
+-- Moves the caret down one page.
 -- @param buffer The global buffer.
 function page_down(buffer) end
 
 ---
--- Moves the caret one page down, extending the selected text to the new
+-- Moves the caret down one page, extending the selected text to the new
 -- position.
 -- @param buffer The global buffer.
 function page_down_extend(buffer) end
 
 ---
--- Moves the caret one page down, extending the rectangular selection to the new
+-- Moves the caret down one page, extending the rectangular selection to the new
 -- position.
 -- @param buffer The global buffer.
 function page_down_rect_extend(buffer) end
 
 ---
--- Moves the caret one page up.
+-- Moves the caret up one page.
 -- @param buffer The global buffer.
 function page_up(buffer) end
 
 ---
--- Moves the caret one page up, extending the selected text to the new position.
+-- Moves the caret up one page, extending the selected text to the new position.
 -- @param buffer The global buffer.
 function page_up_extend(buffer) end
 
 ---
--- Moves the caret one page up, extending the rectangular selection to the new
+-- Moves the caret up one page, extending the rectangular selection to the new
 -- position.
 -- @param buffer The global buffer.
 function page_up_rect_extend(buffer) end
 
 ---
--- Moves the caret one paragraph down.
+-- Moves the caret down one paragraph.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @param buffer The global buffer.
 function para_down(buffer) end
 
 ---
--- Moves the caret one paragraph down, extending the selected text to the new
+-- Moves the caret down one paragraph, extending the selected text to the new
 -- position.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @param buffer The global buffer.
 function para_down_extend(buffer) end
 
 ---
--- Moves the caret one paragraph up.
+-- Moves the caret up one paragraph.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @param buffer The global buffer.
 function para_up(buffer) end
 
 ---
--- Moves the caret one paragraph up, extending the selected text to the new
+-- Moves the caret up one paragraph, extending the selected text to the new
 -- position.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @param buffer The global buffer.
@@ -2197,15 +2065,15 @@ function point_x_from_position(buffer, pos) end
 function point_y_from_position(buffer, pos) end
 
 ---
--- Returns the position of the next character after position *pos*, taking code
--- page into account, or `buffer.length - 1`.
+-- Returns the position of the next character after position *pos*, taking
+-- multi-byte characters into account, or `buffer.length - 1`.
 -- @param buffer The global buffer.
 -- @param pos The position in *buffer* to get the position after from.
 function position_after(buffer, pos) end
 
 ---
 -- Returns the position of the previous character before position *pos*, taking
--- code page into account, or `0`.
+-- multi-byte characters into account, or `0`.
 -- @param buffer The global buffer.
 -- @param pos The position in *buffer* to get the position before from.
 -- @return number
@@ -2255,9 +2123,9 @@ function register_image(buffer, type, xpm_data) end
 -- Registers RGBA image *pixels* to type number *type* for use in autocompletion
 -- lists.
 -- The dimensions for *pixels*, `buffer.rgba_image_width` and
--- `buffer.rgba_image_height`, must be already defined. *pixels* is a sequence
--- of 4 byte pixel values (red, blue, green, and alpha) defining the image line
--- by line starting at the top-left pixel.
+-- `buffer.rgba_image_height`, must have already been defined. *pixels* is a
+-- sequence of 4 byte pixel values (red, blue, green, and alpha) defining the
+-- image line by line starting at the top-left pixel.
 -- @param buffer The global buffer.
 -- @param type Integer type to register the image with.
 -- @param pixels The RGBA data as described in
@@ -2381,10 +2249,12 @@ function select_all(buffer) end
 function selection_duplicate(buffer) end
 
 ---
--- Resets the set of whitespace and word characters to their default characters.
+-- Resets the set of word, whitespace, and punctuation characters to their
+-- defaults.
 -- @param buffer The global buffer.
--- @see whitespace_chars
 -- @see word_chars
+-- @see whitespace_chars
+-- @see punctuation_chars
 function set_chars_default(buffer) end
 
 ---
@@ -2427,14 +2297,7 @@ function set_hotspot_active_back(buffer, use_setting, color) end
 function set_hotspot_active_fore(buffer, use_setting, color) end
 
 ---
--- Sets the length of *string* in `buffer:encoded_from_utf8()` to *bytes*.
--- @param buffer The global buffer.
--- @param bytes The number of bytes to encode, or `-1` for measuring to first
---   null byte.
-function set_length_for_encode(buffer, bytes) end
-
----
--- Tells Scintilla the buffer has no unsaved changes.
+-- Indicates the buffer has no unsaved changes.
 -- @param buffer The global buffer.
 function set_save_point(buffer) end
 
@@ -2466,12 +2329,13 @@ function set_sel_back(buffer, use_setting, color) end
 function set_sel_fore(buffer, use_setting, color) end
 
 ---
--- Selects the range of text from *anchor* to *caret* in the buffer, removing
--- all other selections.
+-- Selects the range of text from *start_pos* to *end_pos* in the buffer,
+-- removing all other selections.
 -- @param buffer The global buffer.
--- @param caret The caret position of the range of text to select in *buffer*.
--- @param anchor The anchor position of the range of text to select in *buffer*.
-function set_selection(buffer, caret, anchor) end
+-- @param end_pos The caret position of the range of text to select in *buffer*.
+-- @param start_pos The anchor position of the range of text to select in
+--   *buffer*.
+function set_selection(buffer, end_pos, start_pos) end
 
 ---
 -- Sets the style of the next *length* characters, from the current styling
@@ -2494,8 +2358,8 @@ function set_text(buffer, text) end
 -- from the bottom of the view.
 -- It is similar in operation to `buffer:set_y_caret_policy()`.
 -- @param buffer The global buffer.
--- @param visible_policy The combination of `_SCINTILLA.constants.VISIBLE_SLOP`
---   (0x01) and `_SCINTILLA.constants.VISIBLE_STRICT` (0x04) policy flags to set.
+-- @param visible_policy The combination of `buffer.VISIBLE_SLOP` and
+--   `buffer.VISIBLE_STRICT` policy flags to set.
 -- @param visible_slop The slop value to use.
 function set_visible_policy(buffer, visible_policy, visible_slop) end
 
@@ -2518,20 +2382,18 @@ function set_whitespace_fore(buffer, use_setting, color) end
 -- Set the way the caret is kept visible when going sideways.
 -- The exclusion zone is given in pixels.
 -- @param buffer The global buffer.
--- @param caret_policy The combination of `_SCINTILLA.constants.CARET_SLOP`
---   (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),
---   `_SCINTILLA.constants.CARET_EVEN` (0x08), and
---   `_SCINTILLA.constants.CARET_JUMPS` (0x10) policy flags to set.
+-- @param caret_policy The combination of `buffer.CARET_SLOP`,
+--   `buffer.CARET_STRICT`, `buffer.CARET_EVEN`, and `buffer.CARET_JUMPS` policy
+--   flags to set.
 -- @param caret_slop The slop value to use.
 function set_x_caret_policy(buffer, caret_policy, caret_slop) end
 
 ---
 -- Set the way the line the caret is on is kept visible.
 -- @param buffer The global buffer.
--- @param caret_policy The combination of `_SCINTILLA.constants.CARET_SLOP`
---   (0x01), `_SCINTILLA.constants.CARET_STRICT` (0x04),
---   `_SCINTILLA.constants.CARET_EVEN` (0x08), and
---   `_SCINTILLA.constants.CARET_JUMPS` (0x10) policy flags to set.
+-- @param caret_policy The combination of `buffer.CARET_SLOP`,
+--   `buffer.CARET_STRICT`, `buffer.CARET_EVEN`, and `buffer.CARET_JUMPS` policy
+--   flags to set.
 -- @param caret_slop The slop value to use.
 function set_y_caret_policy(buffer, caret_policy, caret_slop) end
 
@@ -2545,17 +2407,18 @@ function set_y_caret_policy(buffer, caret_policy, caret_slop) end
 function show_lines(buffer, start_line, end_line) end
 
 ---
--- Begin styling at position *position* with the 8-bit styling bit-mask *mask*
--- that determines which style bits can be set with `buffer:set_styling()`.
+-- Begin styling at position *position* with styling bit-mask *styling_mask*.
+-- *styling_mask* specifies which style bits can be set with
+-- `buffer:set_styling()`.
 -- @param buffer The global buffer.
 -- @param position The position in *buffer* to start styling at.
--- @param mask The bit mask of style bits that can be set when styling.
+-- @param styling_mask The bit mask of style bits that can be set when styling.
 -- @usage buffer:start_styling(0, 0xFF)
-function start_styling(buffer, position, mask) end
+function start_styling(buffer, position, style_mask) end
 
 ---
--- Moves the caret to the bottom of the page, or if already there, one page
--- down.
+-- Moves the caret to the bottom of the page, or if already there, down one
+-- page.
 -- @param buffer The global buffer.
 function stuttered_page_down(buffer) end
 
@@ -2566,7 +2429,7 @@ function stuttered_page_down(buffer) end
 function stuttered_page_down_extend(buffer) end
 
 ---
--- Moves the caret to the top of the page, or if already there, one page up.
+-- Moves the caret to the top of the page, or if already there, up one page.
 -- @param buffer The global buffer.
 function stuttered_page_up(buffer) end
 
@@ -2578,12 +2441,12 @@ function stuttered_page_up_extend(buffer) end
 
 ---
 -- Sets all styles to have the same properties as
--- `_SCINTILLA.constants.STYLE_DEFAULT`.
+-- `buffer.STYLE_DEFAULT`.
 -- @param buffer The global buffer.
 function style_clear_all(buffer) end
 
 ---
--- Resets `_SCINTILLA.constants.STYLE_DEFAULT` to its initial state.
+-- Resets `buffer.STYLE_DEFAULT` to its initial state.
 -- @param buffer The global buffer.
 function style_reset_default(buffer) end
 
@@ -2597,12 +2460,6 @@ function swap_main_anchor_caret(buffer) end
 -- character ("\t"), or inserts a Tab character at the caret.
 -- @param buffer The global buffer.
 function tab(buffer) end
-
----
--- Returns the result of the text in the target range converted from the
--- buffer's code page into UTF-8.
--- @param buffer The global buffer.
-function target_as_utf8(buffer) end
 
 ---
 -- Sets the beginning and end positions of the target range to be the beginning
@@ -2627,18 +2484,16 @@ function text_height(buffer, line) end
 function text_width(buffer, style_num, text) end
 
 ---
--- Cycles between caret sticky option settings
--- `_SCINTILLA.constants.SC_CARETSTICKY_ON`,
--- `_SCINTILLA.constants.SC_CARETSTICKY_WHITESPACE`, and
--- `_SCINTILLA.constants.SC_CARETSTICKY_OFF`.
+-- Cycles between caret sticky option settings `buffer.SC_CARETSTICKY_ON`,
+-- `buffer.SC_CARETSTICKY_WHITESPACE`, and `buffer.SC_CARETSTICKY_OFF`.
 -- @param buffer The global buffer.
 -- @see caret_sticky
 function toggle_caret_sticky(buffer) end
 
 ---
--- Toggles the fold state of a fold header line between expanded, where all
--- of its child lines are displayed, and contracted, where all of its child
--- lines are hidden.
+-- Toggles the fold state of the fold header on line number *line* between
+-- expanded, where all of its child lines are displayed, and contracted, where
+-- all of its child lines are hidden.
 -- @param buffer The global buffer.
 -- @param line The line number in *buffer* to toggle the fold on.
 function toggle_fold(buffer, line) end
@@ -2657,7 +2512,7 @@ function upper_case(buffer) end
 -- Displays a list from *item_list*, a sorted string whose items are delimited
 -- by `buffer.auto_c_separator` characters, using the list identifier number
 -- *list_type* which is greater than zero and sent in a `USER_LIST_SELECTION`
--- event after selecting an item.
+-- event after the user selects an item.
 -- @param buffer The global buffer.
 -- @param list_type The list identifier number greater than zero to use.
 -- @param item_list The sorted string of words to show, separated by
@@ -2695,8 +2550,8 @@ function vc_home_extend(buffer) end
 function vc_home_rect_extend(buffer) end
 
 ---
--- Moves the caret to the first visible character on the wrapped line, or if
--- already there, to the beginning of the actual line.
+-- Moves the caret to the first visible character on the current wrapped line,
+-- or if already there, to the beginning of the actual line.
 -- @param buffer The global buffer.
 function vc_home_wrap(buffer) end
 
@@ -2943,63 +2798,84 @@ function set_lexer(buffer, lang) end
 function get_style_name(buffer, style_num) end
 
 -- Unused Fields.
---   * status
---   * mouse_down_captures
---   * line_end_types_supported+
---   * line_end_types_allowed+
---   * line_end_types_active+
---   * focus
---   * use_palette
---   * font_quality
---   * keys_unicode
---   * doc_pointer
---   * mod_event_mask
---   * paste_convert_endings
+--   * annotation_styles
+--   * automatic_fold
+--   * character_pointer
+--   * code_page
 --   * direct_function
 --   * direct_pointer
---   * character_pointer
---   * get_range_pointer
---   * field gap_position
---   * identifier
---   * key_words
---   * sub_style_bases+
 --   * distance_to_secondary_styles+
---   * sub_styles_start+
---   * sub_styles_length+
+--   * doc_pointer
+--   * focus
+--   * font_quality
+--   * gap_position
+--   * identifier
 --   * identifiers+
+--   * indicator_value
+--   * keys_unicode
+--   * key_words
+--   * layout_cache
+--   * lexer
+--   * lexer_language
+--   * line_end_types_active+
+--   * line_end_types_allowed+
+--   * line_end_types_supported+
+--   * margin_styles
+--   * mod_event_mask
+--   * modify
+--   * mouse_down_captures
+--   * paste_convert_endings
+--   * position_cache
+--   * print_colour_mode
+--   * print_magnification
+--   * print_wrap_mode
+--   * status
+--   * style_bits
+--   * style_bits_needed
+--   * style_character_set
+--   * style_size_fractional
+--   * style_weight
+--   * sub_style_bases+
+--   * sub_styles_length+
+--   * sub_styles_start+
 --   * technology
+--   * use_palette
 
 -- Unused Functions.
+--   * add_ref_document
 --   * add_styled_text
---   * get_styled_text
+--   * add_undo_action
+--   * allocate
+--   * allocate_sub_styles+
 --   * assign_cmd_key
 --   * clear_cmd_key
---   * set_styling_ex
---   * find_text
---   * format_range
---   * null
---   * use_pop_up
---   * start_record
---   * stop_record
+--   * clear_all_cmd_keys
 --   * create_document
---   * add_ref_document
---   * release_document
---   * margin_set_styles
---   * margin_get_styles
---   * annotation_set_styles
---   * annotation_get_styles
---   * add_undo_action
---   * find_indicator_show
+--   * create_loader
+--   * describe_key_word_sets
+--   * describe_property
+--   * encoded_from_utf8
 --   * find_indicator_flash
 --   * find_indicator_hide
+--   * find_indicator_show
+--   * find_text
+--   * format_range
+--   * free_sub_styles+
+--   * get_range_pointer
+--   * get_styled_text
+--   * grab_focus
+--   * indicator_value_at
 --   * load_lexer_library
+--   * null
+--   * private_lexer_call
 --   * property_names
 --   * property_type
---   * describe_property
---   * describe_key_word_sets
---   * allocate_sub_styles+
---   * free_sub_styles+
---   * create_loader
---   * private_lexer_call
+--   * release_document
+--   * set_length_for_encode
+--   * set_styling_ex
+--   * start_record
+--   * stop_record
+--   * target_as_utf8
+--   * use_pop_up
 --
 --   + provisional features

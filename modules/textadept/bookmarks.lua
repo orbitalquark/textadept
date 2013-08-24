@@ -67,7 +67,7 @@ function M.goto_mark(next)
   end
 end
 
-local CURSES_MARK = _SCINTILLA.constants.SC_MARK_CHARACTER + string.byte(' ')
+local CURSES_MARK = buffer.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for bookmark markers.
 local function set_bookmark_properties()
   if CURSES then buffer:marker_define(MARK_BOOKMARK, CURSES_MARK) end

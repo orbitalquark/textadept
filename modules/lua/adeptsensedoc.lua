@@ -205,7 +205,8 @@ function M.start(doc)
     local module = m.name
     if not m.fake then
       -- Tag the module and write the apidoc.
-      write_tag(ctags, module, 'm', '')
+      local ext_fields = module ~= 'buffer' and '' or 'inherits:_SCINTILLA.constants'
+      write_tag(ctags, module, 'm', ext_fields)
       if module:find('%.') then
         -- Tag the last part of the module as a table of the first part.
         local parent, child = module:match('^(.-)%.([^%.]+)$')

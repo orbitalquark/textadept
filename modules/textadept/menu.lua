@@ -13,7 +13,7 @@ module('_M.textadept.menu')]]
 
 local _L, _M, buffer, view = _L, _M, buffer, view
 local m_editing, utils = _M.textadept.editing, _M.textadept.keys.utils
-local SEPARATOR, c = {''}, _SCINTILLA.constants
+local SEPARATOR = {''}
 
 -- The default main menubar.
 local menubar = {
@@ -145,9 +145,9 @@ local menubar = {
       {_L['_Convert Indentation'], m_editing.convert_indentation},
     },
     { title = _L['_EOL Mode'],
-      {_L['CRLF'], {utils.set_eol_mode, c.SC_EOL_CRLF}},
-      {_L['CR'], {utils.set_eol_mode, c.SC_EOL_CR}},
-      {_L['LF'], {utils.set_eol_mode, c.SC_EOL_LF}},
+      {_L['CRLF'], {utils.set_eol_mode, buffer.SC_EOL_CRLF}},
+      {_L['CR'], {utils.set_eol_mode, buffer.SC_EOL_CR}},
+      {_L['LF'], {utils.set_eol_mode, buffer.SC_EOL_LF}},
     },
     { title = _L['E_ncoding'],
       {_L['_UTF-8 Encoding'], {utils.set_encoding, 'UTF-8'}},
@@ -179,7 +179,8 @@ local menubar = {
       {utils.toggle_property, 'indentation_guides'}},
     {_L['Toggle View White_space'], {utils.toggle_property, 'view_ws'}},
     {_L['Toggle _Virtual Space'],
-      {utils.toggle_property, 'virtual_space_options', c.SCVS_USERACCESSIBLE}},
+      {utils.toggle_property, 'virtual_space_options',
+       buffer.SCVS_USERACCESSIBLE}},
     SEPARATOR,
     {_L['Zoom _In'], buffer.zoom_in},
     {_L['Zoom _Out'], buffer.zoom_out},
