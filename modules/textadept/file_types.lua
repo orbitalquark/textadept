@@ -5,8 +5,8 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Handles file type detection for Textadept.
--- @field _G.events.LANGUAGE_MODULE_LOADED (string)
---   Emitted after loading a language module.
+-- @field _G.events.LEXER_LOADED (string)
+--   Emitted after loading a language lexer.
 --   This is useful for overriding a language module's key bindings or other
 --   properties since the module is not loaded when Textadept starts.
 --   Arguments:
@@ -15,7 +15,7 @@ local M = {}
 module('_M.textadept.file_types')]]
 
 -- Events.
-events.LANGUAGE_MODULE_LOADED = 'language_module_loaded'
+events.LEXER_LOADED = 'lexer_loaded'
 
 ---
 -- Map of file extensions (excluding the leading '.') to their associated
@@ -88,11 +88,12 @@ local function set_lexer(buffer, lang)
   buffer._lexer = lang
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
-  _M[lang] = package.searchpath(lang, package.path) and require(lang) or {}
-  keys[lang], snippets[lang] = keys[lang] or {}, snippets[lang] or {}
-  local post_init = lang..'.post_init'
-  if package.searchpath(post_init, package.path) then require(post_init) end
-  events.emit(events.LANGUAGE_MODULE_LOADED, lang)
+  if package.searchpath(lang, package.path) then
+    _M[lang] = require(lang)
+    local post_init = lang..'.post_init'
+    if package.searchpath(post_init, package.path) then require(post_init) end
+  end
+  events.emit(events.LEXER_LOADED, lang)
   local last_line = buffer.first_visible_line + buffer.lines_on_screen
   buffer:colourise(0, buffer:position_from_line(last_line + 1))
 end

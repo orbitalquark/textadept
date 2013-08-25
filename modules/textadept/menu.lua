@@ -363,7 +363,7 @@ if not CURSES then
     local lang = _G.buffer:get_lexer()
     M.set_contextmenu(_M[lang] and _M[lang].context_menu or context_menu)
   end
-  events.connect(events.LANGUAGE_MODULE_LOADED, set_language_contextmenu)
+  events.connect(events.LEXER_LOADED, set_language_contextmenu)
   events.connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
   events.connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
   events.connect(events.BUFFER_NEW, set_lang_contextmenu)
