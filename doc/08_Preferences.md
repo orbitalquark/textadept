@@ -33,9 +33,9 @@ Many of Textadept's generic modules have configurable settings changeable from
 with typeover and stripping trailing whitespace on save, add the following to
 your *~/.textadept/init.lua*:
 
-    _M.textadept.editing.AUTOPAIR = false
-    _M.textadept.editing.TYPEOVER_CHARS = false
-    _M.textadept.editing.STRIP_TRAILING_SPACES = false
+    textadept.editing.AUTOPAIR = false
+    textadept.editing.TYPEOVER_CHARS = false
+    textadept.editing.STRIP_TRAILING_SPACES = false
 
 Now suppose you want to load all of Textadept's default modules except for the
 menu. You cannot do this after-the-fact from *~/.textadept/init.lua*. Instead
@@ -81,7 +81,7 @@ commands, load more [Adeptsense tags][], and add additional
 [key bindings](#Key.Bindings) and [snippets](#Snippets) (instead of in
 *~/.textadept/init.lua*). For example:
 
-    _M.textadept.run.run_command.lua = 'lua5.2'
+    textadept.run.run_command.lua = 'lua5.2'
     _M.lua.sense:load_ctags('/path/to/my/projects/tags')
     keys.lua['c\n'] = function()
       buffer:line_end() buffer:add_text('end') buffer:new_line()
@@ -89,7 +89,7 @@ commands, load more [Adeptsense tags][], and add additional
     snippets.lua['ver'] = '%<_VERSION>'
 
 [compile and run]: 07_Modules.html#Compile.and.Run
-[Adeptsense tags]: api/_M.textadept.adeptsense.html#load_ctags
+[Adeptsense tags]: api/textadept.adeptsense.html#load_ctags
 
 ### Loading Modules
 
@@ -97,7 +97,7 @@ After creating or downloading a generic module called `foo` that you want to
 load along with the default modules, simply add the following to your
 *~/.textadept/init.lua*:
 
-    _M.foo = require('foo')
+    foo = require('foo')
 
 Textadept automatically loads language modules when opening a source file of
 that language, so simply installing the language module is sufficient.
@@ -129,25 +129,25 @@ So typing `file` or `path` and then pressing `Tab` (`⇥` on Mac OSX | `Tab` in
 curses) inserts the snippet, regardless of the current programming language.
 Learn more about snippet syntax in the [snippets LuaDoc][].
 
-[snippets LuaDoc]: api/_M.textadept.snippets.html
+[snippets LuaDoc]: api/textadept.snippets.html
 
 ### File Types
 
 Textadept recognizes a wide range of programming language files either by file
 extension, by a keyword in the shebang ("#!/path/to/exe") line, or by a
 [Lua pattern][] that matches the text of the first line. The editor does this by
-consulting a set of tables in [`_M.textadept.file_types`][] that are modifiable
+consulting a set of tables in [`textadept.file_types`][] that are modifiable
 from *~/.textadept/init.lua*. For example:
 
     -- Recognize .luadoc files as Lua code.
-    _M.textadept.file_types.extensions.luadoc = 'lua'
+    textadept.file_types.extensions.luadoc = 'lua'
     -- Change .html files to be recognized as XML files.
-    _M.textadept.file_types.extensions.html = 'xml'
+    textadept.file_types.extensions.html = 'xml'
     -- Recognize a shebang line like "#!/usr/bin/zsh" as shell code.
-    _M.textadept.file_types.shebangs.zsh = 'bash'
+    textadept.file_types.shebangs.zsh = 'bash'
 
 [Lua pattern]: 14_Appendix.html#Lua.Patterns
-[`_M.textadept.file_types`]: api/_M.textadept.file_types.html
+[`textadept.file_types`]: api/textadept.file_types.html
 
 ## Buffer Properties
 

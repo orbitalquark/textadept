@@ -22,7 +22,7 @@ local M = {}
 --   The default value is `10`.
 --
 --   [`io.recent_files`]: io.html#recent_files
-module('_M.textadept.session')]]
+module('textadept.session')]]
 
 M.DEFAULT_SESSION = _USERHOME..(not CURSES and '/session' or '/session_term')
 M.SAVE_ON_QUIT = true
@@ -36,7 +36,7 @@ M.MAX_RECENT_FILES = 10
 -- @param filename Optional absolute path to the session file to load. If `nil`,
 --   the user is prompted for one.
 -- @return `true` if the session file was opened and read; `false` otherwise.
--- @usage _M.textadept.session.load(filename)
+-- @usage textadept.session.load(filename)
 -- @see DEFAULT_SESSION
 -- @name load
 function M.load(filename)
@@ -123,7 +123,7 @@ end)
 -- Saves split views, opened buffers, cursor information, and recent files.
 -- @param filename Optional absolute path to the session file to save. If `nil`,
 --   the user is prompted for one.
--- @usage _M.textadept.session.save(filename)
+-- @usage textadept.session.save(filename)
 -- @see DEFAULT_SESSION
 -- @name save
 function M.save(filename)

@@ -261,7 +261,7 @@ defined. [Language modules][] usually [define Adeptsenses][]. All of the
 ![Adeptsense Doc](images/adeptsense_doc.png)
 
 [Language modules]: 07_Modules.html#Language.Modules
-[Adeptsense]: api/_M.textadept.adeptsense.html
+[Adeptsense]: api/textadept.adeptsense.html
 [define Adeptsenses]: api/_M.html#Adeptsense
 [official]: http://foicica.com/hg
 

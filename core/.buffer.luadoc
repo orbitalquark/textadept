@@ -73,7 +73,7 @@
 --   The default value is `true`.
 -- @field auto_c_cancel_at_start (bool)
 --   Cancel autocompletion when backspacing to a position before where
---   autocompletion started, rather than before the word being completed.
+--   autocompletion started instead of before the word being completed.
 --   The default value is `true`.
 -- @field auto_c_case_insensitive_behaviour (number)
 --   The behavior mode for case insensitive autocompletion when
@@ -96,7 +96,7 @@
 --   Delete word characters after autocompleted text.
 --   The default value is `false`.
 -- @field auto_c_fill_ups (string, Write-only)
---   A set of characters that choose the currently selected item in an
+--   The set of characters that choose the currently selected item in an
 --   autocompletion list when typed.
 --   The default value is an empty string.
 -- @field auto_c_ignore_case (bool)
@@ -124,7 +124,7 @@
 --
 --   The default value is `buffer.SC_ORDER_PRESORTED`.
 -- @field auto_c_separator (number)
---   The character byte that separates autocompletion list items.
+--   The byte value of the character that separates autocompletion list items.
 --   The default value is `32` (' ').
 -- @field auto_c_type_separator (number)
 --   The character byte that separates autocompletion list items and their
@@ -150,10 +150,10 @@
 --   The foreground color, in "0xBBGGRR" format, of the highlighted part of
 --   call tips.
 -- @field call_tip_position (boolean)
---   Display the call tip above, rather than below the text.
+--   Display the call tip above instead of below the text.
 --   The default value is `false`.
 -- @field call_tip_use_style (number)
---   The size in pixels of tab characters in call tips.
+--   The pixel size of tab characters in call tips.
 --   When non-zero, also enables the use of style number `buffer.STYLE_CALLTIP`
 --   instead of `buffer.STYLE_DEFAULT` for call tip styles.
 --   The default value is `0`.
@@ -174,7 +174,7 @@
 --   The default value is `false`, showing the line only when the window is in
 --   focus.
 -- @field caret_period (number)
---   The time in milliseconds between caret blinks.
+--   The time between caret blinks in milliseconds.
 --   A value of `0` stops blinking.
 --   The default value is `500`.
 -- @field caret_sticky (number)
@@ -191,7 +191,7 @@
 --
 --   The default value is `buffer.SC_CARETSTICKY_OFF`.
 -- @field caret_style (number)
---   The style of caret to draw.
+--   The visual style of the caret.
 --
 --   * `buffer.CARETSTYLE_INVISIBLE`
 --     No caret.
@@ -219,14 +219,14 @@
 --   The position of the caret.
 --   When set, does not scroll the caret into view.
 -- @field cursor (number)
---   The cursor type.
+--   The display cursor type.
 --
 --   * `buffer.SC_CURSORNORMAL`
---     The normal text insert cursor.
+--     The text insert cursor.
 --   * `buffer.SC_CURSORARROW`
 --     The arrow cursor.
 --   * `buffer.SC_CURSORWAIT`
---     The wait symbol cursor.
+--     The wait cursor.
 --   * `buffer.SC_CURSORREVERSEARROW`
 --     The reversed arrow cursor.
 --
@@ -235,11 +235,11 @@
 --   Whether or not the buffer has unsaved changes.
 --   This field is accessible from any buffer, not just the global one.
 -- @field edge_colour (number)
---   The color, in "0xBBGGRR" format, of the long line marker.
+--   The color, in "0xBBGGRR" format, marking long lines.
 -- @field edge_column (number)
---   The column number to display the long line marker at.
+--   The column number to start marking long lines at.
 -- @field edge_mode (number)
---   The long line edge mode.
+--   The long line mark mode.
 --
 --   * `buffer.EDGE_NONE`
 --     Long lines are not marked.
@@ -265,11 +265,11 @@
 --   line endings. Use [`buffer:convert_eo_ls()`](#convert_eo_ls) to do so.
 --
 --   * `buffer.SC_EOL_CRLF`
---     "CR+LF" ("\r\n").
+--     Carriage return with line feed ("\r\n").
 --   * `buffer.SC_EOL_CR`
---     "CR" ("\r").
+--     Carriage return ("\r").
 --   * `buffer.SC_EOL_LF`
---     "LF" ("\n").
+--     Line feed ("\n").
 --
 --   The default value is `buffer.SC_EOL_CRLF` on Windows platforms,
 --   `buffer.SC_EOL_LF` otherwise.
@@ -333,8 +333,9 @@
 --   Limit hotspots to a single line.
 --   The default value is `true`.
 -- @field indent (number)
---   The number of spaces of one level of indentation.
---   The default value is `0`, which matches the tab width.
+--   The number of spaces in one level of indentation.
+--   The default value is `0`, which uses the value of
+--   [`buffer.tab_width`](#tab_width).
 -- @field indentation_guides (number)
 --   The indentation guide drawing mode.
 --   Indentation guides are dotted vertical lines that appear within indentation
@@ -414,11 +415,11 @@
 --
 --   [`_SCINTILLA.next_indic_number()`]: _SCINTILLA.html#next_indic_number
 -- @field indic_under (table)
---   Table of flags indicating whether or not to draw indicators behind text or
---   over the top of it for indicator numbers from `0` to `31`.
+--   Table of flags indicating whether or not to draw indicators behind text
+--   instead of over the top of it for indicator numbers from `0` to `31`.
 --   For values to be `true`, [`buffer.two_phase_draw`](#two_phase_draw) must be
 --   `true`.
---   The default values are `false` for drawing indicators over text.
+--   The default values are `false`.
 -- @field indicator_current (number)
 --   The indicator number in the range of `0` to `31` used by
 --   [`buffer:indicator_fill_range()`](#indicator_fill_range) and
@@ -435,8 +436,8 @@
 --   Table of positions at the ends of indentation for line numbers starting
 --   from zero.
 -- @field line_indentation (table)
---   Table of indentation amounts, measured in character columns, for line
---   numbers starting from zero.
+--   Table of indentation amounts in character columns, for line numbers
+--   starting from zero.
 -- @field line_state (table)
 --   Table of integer line states for line numbers starting from zero.
 --   Line states are used for storing longer lived parse states per line. They
@@ -452,7 +453,7 @@
 --   The number of the main, or most recent, selection.
 --   Only an existing selection can be made main.
 -- @field margin_cursor_n (table)
---   Table of cursors shown for margin numbers from zero to four.
+--   Table of cursor types shown over margin numbers from zero to four.
 --
 --   * `buffer.SC_CURSORARROW`
 --     Normal arrow cursor.
@@ -461,7 +462,7 @@
 --
 --   The default values are `buffer.SC_CURSORREVERSEARROW`.
 -- @field margin_left (number)
---   The size in pixels of the left margin of the buffer text.
+--   The pixel size of the left margin of the buffer text.
 --   The default value is `1`.
 -- @field margin_mask_n (table)
 --   Table of bit-masks of markers that symbol margins can display for margin
@@ -481,7 +482,7 @@
 --
 --   The default value is `buffer.SC_MARGINOPTION_NONE`.
 -- @field margin_right (number)
---   The size in pixels of the right margin of the buffer text.
+--   The pixel size of the right margin of the buffer text.
 --   The default value is `1`.
 -- @field margin_sensitive_n (table)
 --   Table of flags indicating whether or not mouse clicks in margins emit
@@ -503,7 +504,8 @@
 --   looking up the style.
 --   The default value is `0`.
 -- @field margin_text (table)
---   Table of text in the text margin for line numbers starting from zero.
+--   Table of text displayed in text margins for line numbers starting from
+--   zero.
 -- @field margin_type_n (table)
 --   Table of margin types for margin numbers from zero to four.
 --
@@ -525,7 +527,7 @@
 --   The default values are `true`, `false`, `false`, `false`, and `false`, for
 --   a line number margin and symbol margins.
 -- @field margin_width_n (table)
---   Table of margin widths in pixels for margin numbers from zero to four.
+--   Table of pixel margin widths for margin numbers from zero to four.
 -- @field marker_alpha (table, Write-only)
 --   Table of alpha values, ranging from `0` (transparent) to `255` (opaque),
 --   of markers drawn in the text area, not the margin, for markers numbers from
@@ -544,8 +546,9 @@
 -- @field max_line_state (number, Read-only)
 --   The last line number with a non-zero line state.
 -- @field mouse_dwell_time (number)
---   The number of milliseconds the mouse must idle in order to generate a
---   `DWELL_START` event, or `buffer.SC_TIME_FOREVER` to never generate one.
+--   The number of milliseconds the mouse must idle before generating a
+--   `DWELL_START` event. A time of `buffer.SC_TIME_FOREVER` will never generate
+--   one.
 -- @field multi_paste (number)
 --   The multiple selection paste mode.
 --
@@ -570,7 +573,7 @@
 --   Map of key-value pairs used by lexers with values interpreted as numbers,
 --   or `0` if not found.
 -- @field punctuation_chars (string)
---   The set of characters considered to be punctuation characters.
+--   The string set of characters recognized as punctuation characters.
 --   Set this only after setting [`buffer.word_chars`](#word_chars).
 --   The default value is a string containing all characters not considered to
 --   be whitespace or word characters.
@@ -633,7 +636,7 @@
 --   * `buffer.SCFIND_MATCHCASE`
 --     Match text case sensitively.
 --   * `buffer.SCFIND_WORDSTART`
---     Match text when the previous character is a non-word character.
+--     Match text only when the previous character is a non-word character.
 --   * `buffer.SCFIND_REGEXP`
 --     Interpret the search string as a regular expression.
 --   * `buffer.SCFIND_POSIX`
@@ -656,10 +659,8 @@
 --     Matches one or more of the previous match.
 --   * `\<`
 --     Matches the beginning of a word.
---     [`buffer.word_chars`](#word_chars) defines word characters.
 --   * `\>`
 --     Matches the end of a word.
---     [`buffer.word_chars`](#word_chars) defines word characters.
 --   * `^`
 --     Matches the start of a line unless inside a set.
 --   * `$`
@@ -730,15 +731,15 @@
 -- @field style_at (table, Read-only)
 --   Table of style numbers at positions in the buffer starting from zero.
 -- @field style_back (table)
---   Table of background colors, in "0xBBGGRR" format, for text within styles
---   for style numbers from `0` to `255`.
+--   Table of background colors, in "0xBBGGRR" format, of text within styles for
+--   style numbers from `0` to `255`.
 -- @field style_bold (table)
 --   Table of flags indicating whether or not text within styles has a bold font
 --   face for style numbers from `0` to `255`.
 --   The default values are `false`.
 -- @field style_case (table)
---   Table of letter case modes for text within styles for style numbers from
---   `0` to `255`.
+--   Table of letter case modes of text within styles for style numbers from `0`
+--   to `255`.
 --
 --   * `buffer.SC_CASE_MIXED`
 --     Display text in normally.
@@ -760,11 +761,11 @@
 --   of the view for style numbers from `0` to `255`.
 --   The default values are `false`.
 -- @field style_font (table)
---   Table of string font faces for text within styles for style numbers from
+--   Table of string font faces of text within styles for style numbers from
 --   `0` to `255`.
 -- @field style_fore (table)
---   Table of foreground colors, in "0xBBGGRR" format, for text within styles
---   for style numbers from `0` to `255`.
+--   Table of foreground colors, in "0xBBGGRR" format, of text within styles for
+--   style numbers from `0` to `255`.
 -- @field style_hot_spot (table)
 --   Table of flags indicating whether or not text within styles is clickable
 --   for style numbers from `0` to `255`.
@@ -774,8 +775,8 @@
 --   font face for style numbers from `0` to `255`.
 --   The default values are `false`.
 -- @field style_size (table)
---   Table of font sizes, expressed in whole number points, for text within
---   styles for style numbers from `0` to `255`.
+--   Table of font sizes of text within styles for style numbers from `0` to
+--   `255`.
 -- @field style_underline (table)
 --   Table of flags indicating whether or not text within styles has an
 --   underlined font face for style numbers from `0` to `255`.
@@ -791,7 +792,7 @@
 --   The number of space characters represented by a tab character.
 --   The default value is `8`.
 -- @field tag (table, Read-only)
---   List of tag match values from a regular expression search.
+--   List of values for tag match numbers from a regular expression search.
 -- @field target_end (number)
 --   The position of the end of the target range.
 --   This is also set by a successful
@@ -812,9 +813,9 @@
 --   the undo buffer with the buffer text.
 --   The default value is `true`.
 -- @field use_tabs (bool)
---   Use tabs, rather than spaces in indentation. Changing the setting does not
+--   Use tabs instead of spaces in indentation. Changing the setting does not
 --   convert existing indentation. Use
---   [`_M.textadept.editing.convert_indentation()`][] to do so.
+--   [`textadept.editing.convert_indentation()`][] to do so.
 --   The default value is `true`.
 -- @field v_scroll_bar (bool)
 --   Display the vertical scroll bar.
@@ -845,18 +846,16 @@
 --
 --   The default value is `buffer.SCVS_NONE`.
 -- @field whitespace_chars (string)
---   The set of characters considered to be whitespace characters when moving
---   or selecting text by word.
+--   The string set of characters recognized as whitespace characters.
 --   Set this only after setting [`buffer.word_chars`](#word_chars).
 --   The default value is a string containing all non-newline characters less
 --   than ASCII value 33.
 -- @field whitespace_size (number)
---   The pixel size of the dots in pixels used to represent space characters
---   when whitespace is visible.
+--   The pixel size of the dots representing space characters when whitespace is
+--   visible.
 --   The default value is `1`.
 -- @field word_chars (string)
---   The set of characters considered to be word characters when moving or
---   selecting text by word.
+--   The string set of characters recognized as word characters.
 --   The default value is a string containing alphanumeric characters, an
 --   underscore, and all characters greater than ASCII value 127.
 -- @field wrap_indent_mode (number)
@@ -919,15 +918,14 @@
 --   Negative values are allowed.
 --   The default value is `0`.
 --
--- [`_M.textadept.editing.convert_indentation()`]: _M.textadept.editing.html#convert_indentation
+-- [`textadept.editing.convert_indentation()`]: textadept.editing.html#convert_indentation
 module('buffer')
 
 ---
--- Selects the change of text from *start_pos* to *end_pos* as the main
--- selection, retaining all other selections as additional selections.
--- Even if no text is selected, the current position counts as an empty
--- selection. Use `buffer:set_selection()` first when setting a list of
--- selections.
+-- Selects the range of text between positions *start_pos* to *end_pos* as the
+-- main selection, retaining all other selections as additional selections.
+-- Since an empty selection still counts as a selection, use
+-- `buffer:set_selection()` first when setting a list of selections.
 -- @param buffer The global buffer.
 -- @param end_pos The caret position of the range of text to select in *buffer*.
 -- @param start_pos The anchor position of the range of text to select in
@@ -935,8 +933,8 @@ module('buffer')
 function add_selection(buffer, end_pos, start_pos) end
 
 ---
--- Adds string *text* to the buffer at the caret and moves the caret to the end
--- of the added text, but does not scroll it into view.
+-- Adds string *text* to the buffer at the caret position and moves the caret to
+-- the end of the added text without scrolling it into view.
 -- @param buffer The global buffer.
 -- @param text The text to add.
 function add_text(buffer, text) end
@@ -958,14 +956,14 @@ function allocate_extended_styles(buffer, num_styles) end
 function annotation_clear_all(buffer) end
 
 ---
--- Appends string *text* to the end of the buffer without changing the selected
--- text or scrolling the text into view.
+-- Appends string *text* to the end of the buffer without modifying any existing
+-- selections or scrolling the text into view.
 -- @param buffer The global buffer.
 -- @param text The text to append.
 function append_text(buffer, text) end
 
 ---
--- Returns whether or not an autocompletion list is visible.
+-- Returns whether or not the autocompletion list is visible.
 -- @param buffer The global buffer.
 -- @return bool
 function auto_c_active(buffer) end
@@ -976,7 +974,7 @@ function auto_c_active(buffer) end
 function auto_c_cancel(buffer) end
 
 ---
--- Autocompletes the selected word in the list.
+-- Autocompletes the selected word in the autocompletion list.
 -- @param buffer The global buffer.
 function auto_c_complete(buffer) end
 
@@ -988,16 +986,16 @@ function auto_c_pos_start(buffer) end
 
 ---
 -- Selects the first item in the autocompletion list that starts with *string*,
--- considering case sensitiveness depending on `buffer.auto_c_ignore_case`.
+-- considering case sensitiveness based on `buffer.auto_c_ignore_case`.
 -- @param buffer The global buffer.
 -- @param string The item in the list to select.
 function auto_c_select(buffer, string) end
 
 ---
--- Displays an autocompletion list from *item_list*, a sorted string whose items
--- are delimited by `buffer.auto_c_separator` characters, using *len_entered*
--- number of characters behind the caret as the prefix of the word to
--- autocomplete.
+-- Displays an autocompletion list constructed from string *item_list*, whose
+-- items are delimited by `buffer.auto_c_separator` characters, using
+-- *len_entered* number of characters behind the caret as the prefix of the word
+-- to autocomplete.
 -- The sorted order of *item_list*, `buffer.auto_c_order`, must have already
 -- been defined.
 -- @param buffer The global buffer.
@@ -1008,8 +1006,8 @@ function auto_c_select(buffer, string) end
 function auto_c_show(buffer, len_entered, item_list) end
 
 ---
--- Defines *chars* as the set of characters that cancel autocompletion when
--- typed.
+-- Defines string *chars* as the set of characters that cancel autocompletion
+-- when typed.
 -- The default set is an empty string.
 -- @param buffer The global buffer.
 -- @param chars The string of characters that cancel autocompletion. This string
@@ -1017,7 +1015,7 @@ function auto_c_show(buffer, len_entered, item_list) end
 function auto_c_stops(buffer, chars) end
 
 ---
--- Dedents the selected lines.
+-- Un-indents the text on the selected lines.
 -- @param buffer The global buffer.
 function back_tab(buffer) end
 
@@ -1075,7 +1073,7 @@ function brace_highlight_indicator(buffer, use_indicator, indic_num) end
 function brace_match(buffer, pos) end
 
 ---
--- Returns whether or not a call tip is visible.
+-- Returns whether or not the call tip is visible.
 -- @param buffer The global buffer.
 -- @return bool
 function call_tip_active(buffer) end
@@ -1092,8 +1090,8 @@ function call_tip_cancel(buffer) end
 function call_tip_pos_start(buffer) end
 
 ---
--- Highlights call tip text from *start_pos*, starting from zero, to *end_pos*
--- with the color `buffer.call_tip_fore_hlt`.
+-- Highlights the call tip text between positions *start_pos*, starting from
+-- zero, to *end_pos* with the color `buffer.call_tip_fore_hlt`.
 -- @param buffer The global buffer.
 -- @param start_pos The start position in the call tip text to highlight.
 -- @param end_pos The end position in the call tip text to highlight.
@@ -1134,7 +1132,7 @@ function can_undo(buffer) end
 function cancel(buffer) end
 
 ---
--- Tells the lexer to re-process the range of text from *start_pos* to
+-- Tells the lexer to re-process the range of text between *start_pos* and
 -- *end_pos*.
 -- @param buffer The global buffer.
 -- @param start_pos The start position of the range of text in *buffer* to
@@ -1161,7 +1159,7 @@ function char_left_extend(buffer) end
 function char_left_rect_extend(buffer) end
 
 ---
--- Returns the character position closest to view coordinates *x* and *y*.
+-- Returns the position closest to view coordinates *x* and *y*.
 -- @param buffer The global buffer.
 -- @param x The x-coordinate in the view to use.
 -- @param y The y-coordinate in the view to use.
@@ -1169,8 +1167,8 @@ function char_left_rect_extend(buffer) end
 function char_position_from_point(buffer, x, y) end
 
 ---
--- Returns the character position closest to view coordinates *x* and *y*, or
--- `-1` if the point is outside the window or not close to any text.
+-- Returns the position closest to view coordinates *x* and *y*, or `-1` if the
+-- point is outside the window or not close to any text.
 -- @param buffer The global buffer.
 -- @param x The x-coordinate in the view to use.
 -- @param y The y-coordinate in the view to use.
@@ -1228,7 +1226,7 @@ function clear_registered_images(buffer) end
 function clear_selections(buffer) end
 
 ---
--- Tells the lexer to style and fold the range of text from *start_pos* to
+-- Tells the lexer to style and fold the range of text between *start_pos* and
 -- *end_pos*.
 -- If *end_pos* is `-1`, styles and folds to the end of the buffer.
 -- @param buffer The global buffer.
@@ -1269,7 +1267,8 @@ function copy(buffer) end
 function copy_allow_line(buffer) end
 
 ---
--- Copies the range of text from *start_pos* to *end_pos* to the clipboard.
+-- Copies the range of text between positions *start_pos* and *end_pos* to the
+-- clipboard.
 -- @param buffer The global buffer.
 -- @param start_pos The start position of the range of text in *buffer* to copy.
 -- @param end_pos The end position of the range of text in *buffer* to copy.
@@ -1282,7 +1281,7 @@ function copy_range(buffer, start_pos, end_pos) end
 function copy_text(buffer, text) end
 
 ---
--- Returns the number of whole characters in-between positions *start_pos* and
+-- Returns the number of whole characters between positions *start_pos* and
 -- *end_pos*.
 -- @param buffer The global buffer.
 -- @param start_pos The start position of the range of text in *buffer* to start
@@ -1343,7 +1342,8 @@ function delete_back(buffer) end
 function delete_back_not_line(buffer) end
 
 ---
--- Deletes the range of text from *pos* to *pos* + *length* in the buffer.
+-- Deletes the range of text from position *pos* to *pos* + *length* in the
+-- buffer.
 -- @param buffer The global buffer.
 -- @param pos The start position of the range of text in *buffer* to delete.
 -- @param length The number of characters in the range of text to delete.
@@ -1466,7 +1466,7 @@ function fold_children(buffer, line, action) end
 function fold_line(buffer, line, action) end
 
 ---
--- Inserts a Form Feed ("\f") character at the caret.
+-- Inserts a Form Feed ("\f") character at the caret position.
 -- @param buffer The global buffer.
 function form_feed(buffer) end
 
@@ -1478,13 +1478,13 @@ function form_feed(buffer) end
 function get_cur_line(buffer) end
 
 ---
--- Returns the numeric background color for active hotspots.
+-- Returns the numeric background color of active hotspots.
 -- @param buffer The global buffer.
 -- @return number
 function get_hotspot_active_back(buffer) end
 
 ---
--- Returns the numeric foreground color for active hotspots.
+-- Returns the numeric foreground color of active hotspots.
 -- @param buffer The global buffer.
 -- @return number
 function get_hotspot_active_fore(buffer) end
@@ -1499,8 +1499,7 @@ function get_hotspot_active_fore(buffer) end
 function get_last_child(buffer, start_line, level) end
 
 ---
--- Returns the text on line number *line*, including end of line characters, and
--- the length of the line.
+-- Returns the text on line number *line*, including end of line characters.
 -- @param buffer The global buffer.
 -- @param line The line number in *buffer* to use.
 -- @return string, number
@@ -1521,7 +1520,7 @@ function get_line_sel_end_position(buffer, line) end
 function get_line_sel_start_position(buffer, line) end
 
 ---
--- Returns the selected text and its length.
+-- Returns the selected text.
 -- Multiple selections are included in order with no delimiters. Rectangular
 -- selections are included from top to bottom with line ending delimiters.
 -- Virtual space is not included.
@@ -1530,19 +1529,19 @@ function get_line_sel_start_position(buffer, line) end
 function get_sel_text(buffer) end
 
 ---
--- Returns all of the text in the buffer and its length.
+-- Returns all of the text in the buffer.
 -- @param buffer The global buffer.
 function get_text(buffer) end
 
 ---
--- Places the caret an anchor at the beginning of line number *line* and scrolls
--- them into view.
+-- Moves the caret to the beginning of line number *line* and scrolls it into
+-- view.
 -- @param buffer The global buffer.
 -- @param line The line number in *buffer* to go to.
 function goto_line(buffer, line) end
 
 ---
--- Places the caret and anchor at position *pos* and scrolls them into view.
+-- Moves the caret to position *pos* and scrolls it into view.
 -- @param buffer The global buffer.
 -- @param pos The position in *buffer* to go to.
 function goto_pos(buffer, pos) end
@@ -1557,10 +1556,10 @@ function goto_pos(buffer, pos) end
 function hide_lines(buffer, start_line, end_line) end
 
 ---
--- Do not highlight selected text if *normal* is `true`.
+-- Do not highlight selected text if *hide* is `true`.
 -- @param buffer The global buffer.
--- @param normal Whether or not to draw the normal selection.
-function hide_selection(buffer, normal) end
+-- @param hide Whether or not to hide the selection.
+function hide_selection(buffer, hide) end
 
 ---
 -- Moves the caret to the beginning of the current line.
@@ -1610,8 +1609,8 @@ function home_wrap_extend(buffer) end
 function indicator_all_on_for(buffer, pos) end
 
 ---
--- Clears indicator `buffer.indicator_current` over the range of text from *pos*
--- to *pos* + *clear_length*.
+-- Clears indicator `buffer.indicator_current` over the range of text from
+-- position *pos* to *pos* + *clear_length*.
 -- @param buffer The global buffer.
 -- @param pos The start position of the range of text in *buffer* to clear
 --   indicators over.
@@ -1628,8 +1627,8 @@ function indicator_clear_range(buffer, pos, clear_length) end
 function indicator_end(buffer, indicator, pos) end
 
 ---
--- Sets indicator `buffer.indicator_current` over the range of text from *pos*
--- to *pos* + *fill_length*.
+-- Sets indicator number `buffer.indicator_current` over the range of text from
+-- position *pos* to *pos* + *fill_length*.
 -- @param buffer The global buffer.
 -- @param pos The start position of the range of text in *buffer* to set
 --   indicators over.
@@ -1646,7 +1645,8 @@ function indicator_fill_range(buffer, pos, fill_length) end
 function indicator_start(buffer, indicator, pos) end
 
 ---
--- Inserts string *text* at position *pos* or the caret if *pos* is `-1`.
+-- Inserts string *text* at position *pos* or the caret position if *pos* is
+-- `-1`.
 -- If the caret is after the *pos*, it is moved appropriately, but not scrolled
 -- into view.
 -- @param buffer The global buffer.
@@ -1688,7 +1688,7 @@ function line_down_extend(buffer) end
 function line_down_rect_extend(buffer) end
 
 ---
--- Duplicates the current line below the line.
+-- Duplicates the current line on a new line below.
 -- @param buffer The global buffer.
 function line_duplicate(buffer) end
 
@@ -1770,7 +1770,7 @@ function line_scroll_down(buffer) end
 function line_scroll_up(buffer) end
 
 ---
--- Switch the current line with the previous one.
+-- Switches the current line with the previous one.
 -- @param buffer The global buffer.
 function line_transpose(buffer) end
 
@@ -1791,17 +1791,17 @@ function line_up_extend(buffer) end
 function line_up_rect_extend(buffer) end
 
 ---
--- Joins the lines in the target range, inserting spaces in-between joined
--- words.
+-- Joins the lines in the target range, inserting spaces between joined
+-- words at line boundaries.
 -- @param buffer The global buffer.
 function lines_join(buffer) end
 
 ---
--- Splits the lines in the target range into lines of width at most
--- *pixel_width* or the width of the view if *pixel_width* is `0`.
+-- Splits the lines in the target range into lines at most *width* pixels wide,
+-- or if *width* is `0`, lines as wide as the view.
 -- @param buffer The global buffer.
--- @param pixel_width The pixel width to split lines at. When `0`, uses the
---   width of the view.
+-- @param width The pixel width to split lines at. When `0`, uses the width of
+--   the view.
 function lines_split(buffer, pixel_width) end
 
 ---
@@ -1964,8 +1964,7 @@ function marker_previous(buffer, start_line, marker_mask) end
 function marker_symbol_defined(buffer, marker_num) end
 
 ---
--- Moves the caret to be visible inside the view if it is not already, removing
--- any selections.
+-- Moves the caret into view if it is not already, removing any selections.
 -- @param buffer The global buffer.
 function move_caret_inside_view(buffer) end
 
@@ -1980,8 +1979,8 @@ function move_selected_lines_down(buffer) end
 function move_selected_lines_up(buffer) end
 
 ---
--- Inserts a new line character(s) at the caret depending on the end of line
--- mode.
+-- Inserts a new line at the caret position based on
+-- [`buffer.eol_mode`](#eol_mode).
 -- @param buffer The global buffer.
 function new_line(buffer) end
 
@@ -2045,7 +2044,7 @@ function para_up(buffer) end
 function para_up_extend(buffer) end
 
 ---
--- Pastes the contents of the clipboard into the buffer, replacing the selected
+-- Pastes the contents of the clipboard into the buffer, replacing any selected
 -- text depending on `buffer.multi_paste`.
 -- @param buffer The global buffer.
 function paste(buffer) end
@@ -2088,25 +2087,6 @@ function position_before(buffer, pos) end
 function position_from_line(buffer, line) end
 
 ---
--- Returns the position closest to view coordinates *x* and *y*, which may be
--- in-between multi-byte characters.
--- @param buffer The global buffer.
--- @param x The x-coordinate in the view to use.
--- @param y The y-coordinate in the view to use.
--- @return number
-function position_from_point(buffer, x, y) end
-
----
--- Returns the position closest to view coordinates *x* and *y*, which may be
--- in-between multi-byte characters, or `-1` if the point is outside the window
--- or not close to any text.
--- @param buffer The global buffer.
--- @param x The x-coordinate in the view to use.
--- @param y The y-coordinate in the view to use.
--- @return number
-function position_from_point_close(buffer, x, y) end
-
----
 -- Redoes the next undone action.
 -- @param buffer The global buffer.
 function redo(buffer) end
@@ -2145,8 +2125,7 @@ function release_all_extended_styles(buffer) end
 function replace_sel(buffer, text) end
 
 ---
--- Replaces the text in the target range with string *text*, returning the
--- length of *text*.
+-- Replaces the text in the target range with string *text*.
 -- The recommended way to delete text in the buffer is to set the target to the
 -- text to be removed, and to call this function with an empty string.
 -- @param buffer The global buffer.
@@ -2155,10 +2134,10 @@ function replace_sel(buffer, text) end
 function replace_target(buffer, text) end
 
 ---
--- Replaces the text in the target range with string *text* after replacing any
--- "\d" sequences, where `d` is a number in the range of `1` to `9`, with the
--- tag match values from the regular expression or the entire match for "\0",
--- returning the length of the replacement text.
+-- Replaces the text in the target range with string *text* but first replaces
+-- any "\d" sequences with the value of tag match number *d* from the regular
+-- expression (or the entire match for *d* = 0), and then returns the length of
+-- the replacement text.
 -- @param buffer The global buffer.
 -- @param text The text to replace the target range with.
 -- @return number
@@ -2178,8 +2157,8 @@ function rotate_selection(buffer) end
 function scroll_caret(buffer) end
 
 ---
--- Scrolls the range between *primary_pos* and *secondary_pos* into view, with
--- priority given to *primary_pos*.
+-- Scrolls the range of text between positions *primary_pos* and *secondary_pos*
+-- into view, with priority given to *primary_pos*.
 -- Similar to `buffer:scroll_caret()`, but with *primary_pos* instead of
 -- `buffer.current_pos`.
 -- This is useful for scrolling search results into view.
@@ -2199,8 +2178,8 @@ function scroll_to_end(buffer) end
 function scroll_to_start(buffer) end
 
 ---
--- Sets the current position to anchor subsequent searches with
--- `buffer:search_next()` and `buffer:search_prev()`.
+-- Sets the position `buffer:search_next()` and `buffer:search_prev()` begin at
+-- to the caret position.
 -- @param buffer The global buffer.
 function search_anchor(buffer) end
 
@@ -2244,13 +2223,14 @@ function search_prev(buffer, flags, text) end
 function select_all(buffer) end
 
 ---
--- Duplicates the selected text or the current line.
+-- Duplicates the selected text to its right or the current line on a new line
+-- below.
 -- @param buffer The global buffer.
 function selection_duplicate(buffer) end
 
 ---
--- Resets the set of word, whitespace, and punctuation characters to their
--- defaults.
+-- Resets `buffer.word_chars`, `buffer.whitespace_chars`, and
+-- `buffer.punctuation_chars` to their respective defaults.
 -- @param buffer The global buffer.
 -- @see word_chars
 -- @see whitespace_chars
@@ -2258,8 +2238,8 @@ function selection_duplicate(buffer) end
 function set_chars_default(buffer) end
 
 ---
--- Sets the current position to position *pos* without scrolling the view,
--- removing any selections.
+-- Moves the caret to position *pos* without scrolling the view and removes any
+-- selections.
 -- @param buffer The buffer
 -- @param pos The position in *buffer* to move to.
 function set_empty_selection(buffer, pos) end
@@ -2302,8 +2282,8 @@ function set_hotspot_active_fore(buffer, use_setting, color) end
 function set_save_point(buffer) end
 
 ---
--- Selects the range of text from *start_pos* to *end_pos* in the buffer,
--- scrolling the selected text into view.
+-- Selects the range of text between positions *start_pos* and *end_pos* in the
+-- buffer, scrolling the selected text into view.
 -- @param buffer The global buffer.
 -- @param start_pos The start position of the range of text in *buffer* to
 --   select. If negative, it means the end of the buffer.
@@ -2313,7 +2293,7 @@ function set_save_point(buffer) end
 function set_sel(buffer, start_pos, end_pos) end
 
 ---
--- Overrides the default background color of all selected text with *color*, in
+-- Overrides the default background color of the selection with *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The global buffer.
 -- @param use_setting Whether or not to use *color*.
@@ -2321,7 +2301,7 @@ function set_sel(buffer, start_pos, end_pos) end
 function set_sel_back(buffer, use_setting, color) end
 
 ---
--- Overrides the default foreground color of all selected text with *color*, in
+-- Overrides the default foreground color of the selection with *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The global buffer.
 -- @param use_setting Whether or not to use *color*.
@@ -2329,8 +2309,8 @@ function set_sel_back(buffer, use_setting, color) end
 function set_sel_fore(buffer, use_setting, color) end
 
 ---
--- Selects the range of text from *start_pos* to *end_pos* in the buffer,
--- removing all other selections.
+-- Selects the range of text between positions *start_pos* to *end_pos* in the
+-- buffer, removing all other selections.
 -- @param buffer The global buffer.
 -- @param end_pos The caret position of the range of text to select in *buffer*.
 -- @param start_pos The anchor position of the range of text to select in
@@ -2451,13 +2431,13 @@ function style_clear_all(buffer) end
 function style_reset_default(buffer) end
 
 ---
--- Swaps the anchor and caret positions of the main selection.
+-- Swaps the beginning and end positions of the main selection.
 -- @param buffer The global buffer.
 function swap_main_anchor_caret(buffer) end
 
 ---
--- Indents the selected lines, replaces the selected text on a line with a Tab
--- character ("\t"), or inserts a Tab character at the caret.
+-- Indents the text on the selected lines or inserts a Tab character ("\t") at
+-- the caret position.
 -- @param buffer The global buffer.
 function tab(buffer) end
 
@@ -2468,14 +2448,14 @@ function tab(buffer) end
 function target_from_selection(buffer) end
 
 ---
--- Returns the height in pixels of line number *line*.
+-- Returns the pixel height of line number *line*.
 -- @param buffer The global buffer.
 -- @param line The line number in *buffer* to get the pixel height of.
 -- @return number
 function text_height(buffer, line) end
 
 ---
--- Returns the width in pixels of string *text* styled with style number
+-- Returns the pixel width of string *text* styled with style number
 -- *style_num*, in the range of `0` to `255`.
 -- @param buffer The global buffer.
 -- @param style_num The style number between `0` and `255` to use.
@@ -2509,10 +2489,12 @@ function undo(buffer) end
 function upper_case(buffer) end
 
 ---
--- Displays a list from *item_list*, a sorted string whose items are delimited
--- by `buffer.auto_c_separator` characters, using the list identifier number
--- *list_type* which is greater than zero and sent in a `USER_LIST_SELECTION`
--- event after the user selects an item.
+-- Displays a list constructed from string *item_list*, whose items are
+-- delimited by `buffer.auto_c_separator` characters, using the list identifier
+-- number *list_type* which is greater than zero and sent in a
+-- `USER_LIST_SELECTION` event after the user selects an item.
+-- The sorted order of *item_list*, `buffer.auto_c_order`, must have already
+-- been defined.
 -- @param buffer The global buffer.
 -- @param list_type The list identifier number greater than zero to use.
 -- @param item_list The sorted string of words to show, separated by
@@ -2597,8 +2579,8 @@ function word_end_position(buffer, pos, only_word_chars) end
 function word_left(buffer) end
 
 ---
--- Moves the caret left one word, positioning the caret at the end of the
--- previous word.
+-- Moves the caret left one word, positioning it at the end of the previous
+-- word.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_left_end(buffer) end
@@ -2617,29 +2599,29 @@ function word_left_end_extend(buffer) end
 function word_left_extend(buffer) end
 
 ---
--- Moves to the previous underscore or change in capitalization within the
--- current word.
+-- Moves the caret to the previous underscore or change in capitalization within
+-- the current word.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_part_left(buffer) end
 
 ---
--- Moves to the previous underscore or change in capitalization within the
--- current word, extending the selected text to the new position.
+-- Moves the caret to the previous underscore or change in capitalization within
+-- the current word, extending the selected text to the new position.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_part_left_extend(buffer) end
 
 ---
--- Moves to the next underscore or change in capitalization within the current
--- word.
+-- Moves the caret to the next underscore or change in capitalization within the
+-- current word.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_part_right(buffer) end
 
 ---
--- Moves to the next underscore or change in capitalization within the current
--- word, extending the selected text to the new position.
+-- Moves the caret to the next underscore or change in capitalization within the
+-- current word, extending the selected text to the new position.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_part_right_extend(buffer) end
@@ -2651,8 +2633,8 @@ function word_part_right_extend(buffer) end
 function word_right(buffer) end
 
 ---
--- Moves the caret right one word, positioning the cursor at the end of the
--- current word.
+-- Moves the caret right one word, positioning it at the end of the current
+-- word.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The global buffer.
 function word_right_end(buffer) end
@@ -2729,7 +2711,8 @@ function delete(buffer) end
 function new() end
 
 ---
--- Returns the range of text from *start_pos* to *end_pos* in the buffer.
+-- Returns the range of text between positions *start_pos* and *end_pos* in the
+-- buffer.
 -- @param buffer The global buffer.
 -- @param start_pos The start position of the range of text to get in *buffer*.
 -- @param end_pos The end position of the range of text to get in *buffer*.
@@ -2867,6 +2850,8 @@ function get_style_name(buffer, style_num) end
 --   * indicator_value_at
 --   * load_lexer_library
 --   * null
+--   * position_from_point
+--   * position_from_point_close
 --   * private_lexer_call
 --   * property_names
 --   * property_type

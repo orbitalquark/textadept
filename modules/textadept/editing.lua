@@ -30,7 +30,7 @@ local M = {}
 -- @field HIGHLIGHT_COLOR (string)
 --   The name of the color in the current theme to
 --   [highlight words](#highlight_word) with.
-module('_M.textadept.editing')]]
+module('textadept.editing')]]
 
 M.AUTOPAIR = true
 M.HIGHLIGHT_BRACES = true
@@ -58,7 +58,7 @@ M.comment_string = {actionscript='//',ada='--',antlr='//',adpl='!',applescript='
 -- "{}", "&apos;&apos;", and "&quot;&quot;".
 -- @class table
 -- @name char_matches
--- @usage _M.textadept.editing.char_matches.hypertext = {..., [60] = '>'}
+-- @usage textadept.editing.char_matches.hypertext = {..., [60] = '>'}
 -- @see AUTOPAIR
 M.char_matches = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 
@@ -69,7 +69,7 @@ M.char_matches = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 -- values. The default brace characters are '(', ')', '[', ']', '{', and '}'.
 -- @class table
 -- @name braces
--- @usage _M.textadept.editing.braces.hypertext = {..., [60] = 1, [62] = 1}
+-- @usage textadept.editing.braces.hypertext = {..., [60] = 1, [62] = 1}
 -- @see HIGHLIGHT_BRACES
 M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 
@@ -80,7 +80,7 @@ M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 -- The default characters are ')', ']', '}', '&apos;', and '&quot;'.
 -- @class table
 -- @name typeover_chars
--- @usage _M.textadept.editing.typeover_chars.hypertext = {..., [62] = 1}
+-- @usage textadept.editing.typeover_chars.hypertext = {..., [62] = 1}
 -- @see TYPEOVER_CHARS
 M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
 

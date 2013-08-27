@@ -4,7 +4,7 @@
 
 --[[ This comment is for LuaDoc.
 ---
--- A table of loaded Lua modules used by Textadept.
+-- A table of loaded Textadept language modules.
 --
 -- ## Module Guidelines
 --
@@ -27,27 +27,27 @@
 --
 -- The `Ctrl+Shift+R` and `Ctrl+R` (`⌘⇧R` and `⌘R` on Mac OSX | `M-^R` and `^R`
 -- in curses) key bindings compile and run code, respectively. In order for
--- these to work for your language, the [`_M.textadept.run.compile_command`][]
--- and [`_M.textadept.run.run_command`][] tables must have keys with the
--- language's lexer name assigned to compile and run shell commands,
--- respectively. Commands may contain [macros][]. For Lua, it would look like
+-- these to work for your language, the [`textadept.run.compile_command`][] and
+-- [`textadept.run.run_command`][] tables must have keys with the language's
+-- lexer name assigned to compile and run shell commands, respectively. Commands
+-- may contain [macros][]. For Lua, it would look like
 --
---     _M.textadept.run.compile_command.lua = 'luac %(filename)'
---     _M.textadept.run.run_command = 'lua %(filename)'
+--     textadept.run.compile_command.lua = 'luac %(filename)'
+--     textadept.run.run_command = 'lua %(filename)'
 --
 -- The module should also define error details in
--- [`_M.textadept.run.error_detail`][] so double-clicking on compile or runtime
+-- [`textadept.run.error_detail`][] so double-clicking on compile or runtime
 -- errors jumps to the error's location. The format for Lua errors looks like
 --
---     _M.textadept.run.error_detail.lua = {
+--     textadept.run.error_detail.lua = {
 --       pattern = '^lua: (.-):(%d+): (.+)$',
 --       filename = 1, line = 2, message = 3
 --     }
 --
--- [`_M.textadept.run.compile_command`]: _M.textadept.run.html#compile_command
--- [`_M.textadept.run.run_command`]: _M.textadept.run.html#run_command
--- [macros]: _M.textadept.run.html#execute
--- [`_M.textadept.run.error_detail`]: _M.textadept.run.html#error_detail
+-- [`textadept.run.compile_command`]: textadept.run.html#compile_command
+-- [`textadept.run.run_command`]: textadept.run.html#run_command
+-- [macros]: textadept.run.html#execute
+-- [`textadept.run.error_detail`]: textadept.run.html#error_detail
 --
 -- #### Buffer Properties
 --
@@ -70,7 +70,7 @@
 -- documentation, respectively, when editing code. In order for these to work
 -- for your language, you must create an [Adeptsense][].
 --
--- [Adeptsense]: _M.textadept.adeptsense.html
+-- [Adeptsense]: textadept.adeptsense.html
 --
 -- #### Snippets
 --
@@ -84,7 +84,7 @@
 --       forp = "for %1(k), %2(v) in pairs(%3(table)) do\n\t%0\nend",
 --     }
 --
--- [Snippets]: _M.textadept.snippets.html
+-- [Snippets]: textadept.snippets.html
 --
 -- #### Commands
 --
@@ -127,5 +127,5 @@
 --       {'Autocomplete "end"', M.try_to_autocomplete_end}
 --     }
 --
--- [context menus]: _M.textadept.menu.html#set_contextmenu
+-- [context menus]: textadept.menu.html#set_contextmenu
 module('_M')]]

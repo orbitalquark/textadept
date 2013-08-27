@@ -74,7 +74,7 @@ local M = {}
 -- A single set of line ending delimiters based on the user's end of line mode.
 --
 -- [`io.popen()`]: http://www.lua.org/manual/5.2/manual.html#pdf-io.popen
-module('_M.textadept.snippets')]=]
+module('textadept.snippets')]=]
 
 -- The stack of currently running snippets.
 local snippet_stack = {}
@@ -376,7 +376,7 @@ events.connect(events.VIEW_NEW,
 ---
 -- Map of snippet triggers with their snippet text, with language-specific
 -- snippets tables assigned to a lexer name key.
--- This table also contains the `_M.textadept.snippets` module.
+-- This table also contains the `textadept.snippets` module.
 -- @class table
 -- @name _G.snippets
 _G.snippets = M

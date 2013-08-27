@@ -10,7 +10,7 @@ by pages, etc. Mac OSX and curses also handle some Bash-style bindings like
 `^B`, `^F`, `^P`, `^N`, `^A`, and `^E`. The "Movement" section of the
 [key bindings list][] lists all movement bindings.
 
-[key bindings list]: api/_M.textadept.keys.html#Key.Bindings
+[key bindings list]: api/textadept.keys.html#Key.Bindings
 
 ## Brace Match
 

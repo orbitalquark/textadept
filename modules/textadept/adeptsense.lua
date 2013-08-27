@@ -46,7 +46,7 @@ local M = {}
 -- Creating a new instance of an Adeptsense from within a language module is
 -- easy. Just replace the '?' with the name of your language:
 --
---     M.sense = _M.textadept.adeptsense.new('?')
+--     M.sense = textadept.adeptsense.new('?')
 --
 -- ### Terminology
 --
@@ -89,7 +89,7 @@ local M = {}
 --     M.sense.syntax.type_declarations = {}
 --     M.sense.syntax.type_assignments = {
 --       ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
---       ['^([%w_%.]+)%s*$'] = '%1', -- foo = _M.textadept.adeptsense
+--       ['^([%w_%.]+)%s*$'] = '%1', -- foo = textadept.adeptsense
 --       ['^io%.p?open%s*%b()%s*$'] = 'file' -- f = io.open('foo')
 --     }
 --
@@ -142,7 +142,7 @@ local M = {}
 --
 -- **C/C++**
 --
---     local as = _M.textadept.adeptsense
+--     local as = textadept.adeptsense
 --     M.sense.ctags_kinds = {
 --       c = as.CLASS, d = as.FUNCTION, e = as.FIELD, f = as.FUNCTION,
 --       g = as.CLASS, m = as.FIELD, s = as.CLASS, t = as.CLASS
@@ -157,10 +157,10 @@ local M = {}
 -- table keys as `'t'`.
 --
 --     M.sense.ctags_kinds = {
---       f = _M.textadept.adeptsense.FUNCTION,
---       F = _M.textadept.adeptsense.FIELD,
---       m = _M.textadept.adeptsense.CLASS,
---       t = _M.textadept.adeptsense.FIELD,
+--       f = textadept.adeptsense.FUNCTION,
+--       F = textadept.adeptsense.FIELD,
+--       m = textadept.adeptsense.CLASS,
+--       t = textadept.adeptsense.FIELD,
 --     }
 --     M.sense:load_ctags(_HOME..'/modules/lua/tags', true)
 --
@@ -382,7 +382,7 @@ local M = {}
 --   Ctags kind for Adeptsense functions.
 -- @field FIELD (string)
 --   Ctags kind for Adeptsense fields.
-module('_M.textadept.adeptsense')]]
+module('textadept.adeptsense')]]
 
 local senses = {}
 
@@ -831,7 +831,7 @@ function M.goto_ctag(sense, kind, title)
       buffer:goto_pos(buffer.target_start)
     end
   else
-    _M.textadept.editing.goto_line(tonumber(line))
+    textadept.editing.goto_line(tonumber(line))
   end
 end
 
@@ -874,7 +874,7 @@ function M.handle_clear(sense) end
 -- Only one sense can exist per language.
 -- @param lang The lexer language name to create an Adeptsense for.
 -- @return adeptsense
--- @usage local lua_sense = _M.textadept.adeptsense.new('lua')
+-- @usage local lua_sense = textadept.adeptsense.new('lua')
 -- @name new
 function M.new(lang)
   local sense = senses[lang]
@@ -899,13 +899,13 @@ function M.new(lang)
 -- simply containers for functions and fields so Lua modules would count as
 -- classes. Any other kinds will be passed to `handle_ctag()` for user-defined
 -- handling.
--- @usage luasense.ctags_kinds = {f = _M.textadept.adeptsense.FUNCTION}
--- @usage csense.ctags_kinds = {m = _M.textadept.adeptsense.FIELD,
---   f = _M.textadept.adeptsense.FUNCTION, c = _M.textadept.adeptsense.CLASS,
---   s = _M.textadept.adeptsense.CLASS}
--- @usage javasense.ctags_kinds = {f = _M.textadept.adeptsense.FIELD,
---   m = _M.textadept.adeptsense.FUNCTION, c = _M.textadept.adeptsense.CLASS,
---   i = _M.textadept.adeptsense.CLASS}
+-- @usage luasense.ctags_kinds = {f = textadept.adeptsense.FUNCTION}
+-- @usage csense.ctags_kinds = {m = textadept.adeptsense.FIELD,
+--   f = textadept.adeptsense.FUNCTION, c = textadept.adeptsense.CLASS,
+--   s = textadept.adeptsense.CLASS}
+-- @usage javasense.ctags_kinds = {f = textadept.adeptsense.FIELD,
+--   m = textadept.adeptsense.FUNCTION, c = textadept.adeptsense.CLASS,
+--   i = textadept.adeptsense.CLASS}
 -- @class table
 -- @name ctags_kinds
 -- @see handle_ctag

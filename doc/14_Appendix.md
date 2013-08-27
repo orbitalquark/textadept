@@ -154,7 +154,7 @@ Old API                           |Change  |New API
 **_G**                            |        |
 RESETTING                         |Removed |N/A<sup>\*</sup>
 buffer\_new()                     |Renamed |\_G.[buffer.new()][]
-**_M.textadept**                  |        |
+**_M.textadept**                  |Renamed |[textadept][]
 filter\_through                   |Removed |N/A
 filter\_through.filter\_through() |Renamed |editing.[filter\_through()][]
 mime\_types                       |Renamed |[file\_types][]<sup>†</sup>
@@ -191,14 +191,15 @@ try\_encodings                    |Renamed |[encodings][]
 <sup>‡</sup>Changed arguments too.
 
 [buffer.new()]: api/buffer.html#new
-[filter\_through()]: api/_M.textadept.editing.html#filter_through
-[file\_types]: api/_M.textadept.file_types.html
-[goto\_mark()]: api/_M.textadept.bookmarks.html#goto_mark
-[BOOKMARK\_COLOR]: api/_M.textadept.bookmarks.html#BOOKMARK_COLOR
-[HIGHLIGHT\_COLOR]: api/_M.textadept.editing.html#HIGHLIGHT_COLOR
-[autocomplete\_word]: api/_M.textadept.editing.html#autocomplete_word
-[select\_enclosed()]: api/_M.textadept.editing.html#select_enclosed
-[ERROR\_COLOR]: api/_M.textadept.run.html#ERROR_COLOR
+[textadept]: api/textadept.html
+[filter\_through()]: api/textadept.editing.html#filter_through
+[file\_types]: api/textadept.file_types.html
+[goto\_mark()]: api/textadept.bookmarks.html#goto_mark
+[BOOKMARK\_COLOR]: api/textadept.bookmarks.html#BOOKMARK_COLOR
+[HIGHLIGHT\_COLOR]: api/textadept.editing.html#HIGHLIGHT_COLOR
+[autocomplete\_word]: api/textadept.editing.html#autocomplete_word
+[select\_enclosed()]: api/textadept.editing.html#select_enclosed
+[ERROR\_COLOR]: api/textadept.run.html#ERROR_COLOR
 [io.snapopen()]: api/io.html#snapopen
 [ui]: api/ui.html
 [maximized]: api/ui.html#maximized
@@ -345,14 +346,14 @@ prompt\_load()                       |Replaced|[load()][]
 prompt\_save()                       |Replaced|[save()][]
 
 [menu()]: api/ui.html#menu
-[complete()]: api/_M.textadept.adeptsense.html#complete
-[show\_apidoc()]: api/_M.textadept.adeptsense.html#show_apidoc
-[toggle()]: api/_M.textadept.bookmarks.html#toggle
-[set\_menubar()]: api/_M.textadept.menu.html#set_menubar
-[run()]: api/_M.textadept.run.html#run
-[compile()]: api/_M.textadept.run.html#compile
-[load()]: api/_M.textadept.session.html#load
-[save()]: api/_M.textadept.session.html#save
+[complete()]: api/textadept.adeptsense.html#complete
+[show\_apidoc()]: api/textadept.adeptsense.html#show_apidoc
+[toggle()]: api/textadept.bookmarks.html#toggle
+[set\_menubar()]: api/textadept.menu.html#set_menubar
+[run()]: api/textadept.run.html#run
+[compile()]: api/textadept.run.html#compile
+[load()]: api/textadept.session.html#load
+[save()]: api/textadept.session.html#save
 
 ### Textadept 4 to 5
 
@@ -400,7 +401,7 @@ your own:
     end
 
 [\_M]: api/_M.html
-[select\_word()]: api/_M.textadept.editing.html#select_word
+[select\_word()]: api/textadept.editing.html#select_word
 [\_L]: api/_L.html
 
 #### Module Changes
@@ -579,7 +580,7 @@ views                     |Renamed|\_G.[\_VIEWS][]
 [\_SCINTILLA]: api/_SCINTILLA.html
 [events]: api/events.html
 [gui]: api/ui.html
-[_m.textadept.snippets]: api/_M.textadept.snippets.html
+[_m.textadept.snippets]: api/textadept.snippets.html
 [gui.\_print()]: api/ui.html#_print
 [\_SCINTILLA.functions]: api/_SCINTILLA.html#functions
 [\_SCINTILLA.properties]: api/_SCINTILLA.html#properties

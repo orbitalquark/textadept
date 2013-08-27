@@ -33,7 +33,7 @@ local M = {}
 --
 --   * `lexer`: The lexer language name.
 --   * `output`: The string output from the command.
-module('_M.textadept.run')]]
+module('textadept.run')]]
 
 M.ERROR_COLOR = not CURSES and 'color.light_red' or 'color.red'
 
@@ -231,7 +231,7 @@ function M.goto_error(line, next)
   -- Goto the error and show an annotation.
   local err = get_error_details(buffer:get_line(line))
   if not err then if CURSES then view:goto_buffer(cur_buf) end return end
-  _M.textadept.editing.select_line()
+  textadept.editing.select_line()
   ui.goto_file(M.cwd..err.filename, true, preferred_view, true)
   local line, message = err.line, err.message
   buffer:goto_line(line - 1)
