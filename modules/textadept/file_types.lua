@@ -12,7 +12,7 @@ local M = {}
 --   Arguments:
 --
 --   * *`lang`*: The language lexer name.
-module('_M.textadept.file_types')]]
+module('textadept.file_types')]]
 
 -- Events.
 events.LEXER_LOADED = 'lexer_loaded'

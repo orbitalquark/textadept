@@ -60,7 +60,7 @@ local M = {}
 --
 --     keys['cn'] = buffer.new
 --     keys['cs'] = buffer.save
---     keys['a('] = {_M.textadept.editing.enclose, '(', ')'}
+--     keys['a('] = {textadept.editing.enclose, '(', ')'}
 --     keys['cu'] = function() io.snapopen(_USERHOME) end
 --
 -- Textadept handles [`buffer`][] references properly in static contexts.

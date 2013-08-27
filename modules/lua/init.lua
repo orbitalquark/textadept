@@ -19,28 +19,28 @@ local M = {}
 --   Autocomplete an `if`, `while`, `for`, etc. control structure with the `end`
 --   keyword.
 -- @field sense
---   The Lua [Adeptsense](_M.textadept.adeptsense.html).
+--   The Lua [Adeptsense](textadept.adeptsense.html).
 --   It loads user tags from *`_USERHOME`/modules/lua/tags* and user apidocs
 --   from *`_USERHOME`/modules/lua/api*.
 module('_M.lua')]]
 
 -- Compile and Run command tables use file extensions.
-_M.textadept.run.compile_command.lua = 'luac %(filename)'
-_M.textadept.run.run_command.lua = 'lua %(filename)'
-_M.textadept.run.error_detail.lua = {
+textadept.run.compile_command.lua = 'luac %(filename)'
+textadept.run.run_command.lua = 'lua %(filename)'
+textadept.run.error_detail.lua = {
   pattern = '^lua: (.-):(%d+): (.+)$',
   filename = 1, line = 2, message = 3
 }
 
 -- Adeptsense.
 
-M.sense = _M.textadept.adeptsense.new('lua')
+M.sense = textadept.adeptsense.new('lua')
 M.sense.syntax.class_definition = 'module%s*%(?%s*[\'"]([%w_%.]+)'
 M.sense.syntax.symbol_chars = '[%w_%.:]'
 M.sense.syntax.type_declarations = {}
 M.sense.syntax.type_assignments = {
   ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
-  ['^([%w_%.]+)%s*$'] = '%1', -- foo = _M.textadept.adeptsense
+  ['^([%w_%.]+)%s*$'] = '%1', -- foo = textadept.adeptsense
   ['^(_M%.textadept%.adeptsense)%.new'] = '%1',
   ['require%s*%(?%s*(["\'])([%w_%.]+)%1%)?'] = '%2',
   ['^io%.p?open%s*%b()%s*$'] = 'file'
@@ -50,7 +50,7 @@ M.sense:add_trigger('.')
 M.sense:add_trigger(':', false, true)
 
 -- script/update_doc generates a fake set of ctags used for autocompletion.
-local as = _M.textadept.adeptsense
+local as = textadept.adeptsense
 M.sense.ctags_kinds = {
   f = as.FUNCTION, F = as.FIELD, m = as.CLASS, t = as.FIELD
 }

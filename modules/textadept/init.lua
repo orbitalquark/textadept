@@ -1,13 +1,13 @@
 -- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 local M = {}
-_M.textadept = M
+textadept = M
 
 --[[ This comment is for LuaDoc.
 ---
 -- The textadept module.
 -- It provides utilities for editing text in Textadept.
-module('_M.textadept')]]
+module('textadept')]]
 
 M.adeptsense = require('textadept.adeptsense')
 M.bookmarks = require('textadept.bookmarks')

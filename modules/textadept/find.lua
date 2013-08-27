@@ -373,9 +373,9 @@ function M.goto_file_found(line, next)
   -- Goto the source of the search result.
   local file, line_num = buffer:get_cur_line():match('^(.+):(%d+):.+$')
   if not file then if CURSES then view:goto_buffer(cur_buf) end return end
-  _M.textadept.editing.select_line()
+  textadept.editing.select_line()
   ui.goto_file(file, true, preferred_view)
-  _M.textadept.editing.goto_line(line_num)
+  textadept.editing.goto_line(line_num)
 end
 events.connect(events.DOUBLE_CLICK, function(pos, line)
   if is_ff_buf(buffer) then M.goto_file_found(line) end

@@ -9,7 +9,7 @@ package.path = table.concat({
 local so = not WIN32 and '/?.so;' or '/?.dll;'
 package.cpath = _USERHOME..so.._USERHOME..'/modules'..so..package.cpath
 
-_M.textadept = require('textadept')
+textadept = require('textadept')
 local ok, err = pcall(dofile, _USERHOME..'/init.lua')
 if not ok and lfs.attributes(_USERHOME..'/init.lua') then ui.print(err) end
 

@@ -18,7 +18,7 @@ key bindings.
 
 [command selection]: 10_Advanced.html#Command.Selection
 [key preferences]: 08_Preferences.html#Key.Bindings
-[complete list]: api/_M.textadept.keys.html#Key.Bindings
+[complete list]: api/textadept.keys.html#Key.Bindings
 
 ## Editor View
 

@@ -13,7 +13,7 @@ require('lfs_ext')
 require('ui')
 keys = require('keys')
 
-_M = {} -- modules table
+_M = {} -- language modules table
 -- LuaJIT compatibility.
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 

@@ -7,7 +7,7 @@ local M = {}
 -- Bookmarks for Textadept.
 -- @field BOOKMARK_COLOR (string)
 --   The name of the color in the current theme to mark a bookmarked line with.
-module('_M.textadept.bookmarks')]]
+module('textadept.bookmarks')]]
 
 M.BOOKMARK_COLOR = not CURSES and 'color.dark_blue' or 'color.blue'
 
@@ -55,7 +55,7 @@ function M.goto_mark(next)
       line = buffer:marker_next(line + 1, 2^MARK_BOOKMARK)
     until line < 0
     local line = ui.filteredlist(_L['Select Bookmark'], _L['Bookmark'], marks)
-    if line then _M.textadept.editing.goto_line(line:match('^%d+')) end
+    if line then textadept.editing.goto_line(line:match('^%d+')) end
   else
     local f = next and buffer.marker_next or buffer.marker_previous
     local current_line = buffer:line_from_position(buffer.current_pos)
@@ -63,7 +63,7 @@ function M.goto_mark(next)
     if line == -1 then
       line = f(buffer, (next and 0 or buffer.line_count), 2^MARK_BOOKMARK)
     end
-    if line >= 0 then _M.textadept.editing.goto_line(line + 1) end
+    if line >= 0 then textadept.editing.goto_line(line + 1) end
   end
 end
 

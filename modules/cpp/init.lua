@@ -18,27 +18,27 @@ local M = {}
 -- + `Shift+Enter` (`⇧↩` | `S-Enter`)
 --   Add ';' to the end of the current line and insert a newline.
 -- @field sense
---   The C/C++ [Adeptsense](_M.textadept.adeptsense.html).
+--   The C/C++ [Adeptsense](textadept.adeptsense.html).
 --   It loads user tags from *`_USERHOME`/modules/cpp/tags* and user apidocs
 --   from *`_USERHOME`/modules/cpp/api*.
 module('_M.cpp')]]
 
 -- Compile and Run command tables use file extensions.
-_M.textadept.run.compile_command.c =
+textadept.run.compile_command.c =
   'gcc -pedantic -Os -o "%(filename_noext)" %(filename)'
-_M.textadept.run.compile_command.cpp =
+textadept.run.compile_command.cpp =
   'g++ -pedantic -Os -o "%(filename_noext)" %(filename)'
-_M.textadept.run.run_command.c = '%(filedir)%(filename_noext)'
-_M.textadept.run.run_command.cpp = '%(filedir)%(filename_noext)'
-_M.textadept.run.error_detail.c = {
+textadept.run.run_command.c = '%(filedir)%(filename_noext)'
+textadept.run.run_command.cpp = '%(filedir)%(filename_noext)'
+textadept.run.error_detail.c = {
   pattern = '^(.-):(%d+): (.+)$',
   filename = 1, line = 2, message = 3
 }
 
 -- Adeptsense.
 
-M.sense = _M.textadept.adeptsense.new('cpp')
-local as = _M.textadept.adeptsense
+M.sense = textadept.adeptsense.new('cpp')
+local as = textadept.adeptsense
 M.sense.ctags_kinds = {
   c = as.CLASS, d = as.FUNCTION, e = as.FIELD, f = as.FUNCTION, g = as.CLASS,
   m = as.FIELD, s = as.CLASS, t = as.CLASS
