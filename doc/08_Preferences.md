@@ -68,11 +68,10 @@ code in place of its own. However, if you make custom changes to that module and
 upgrade Textadept later, the module may no longer be compatible. Rather than
 potentially wasting time merging changes, run custom code independent of a
 module in the module's *post_init.lua* file. In this case, instead of copying
-the `lua` module and creating an `events.LANGUAGE_MODULE_LOADED` event handler
-to use tabs, simply put the event handler in
-*~/.textadept/modules/lua/post_init.lua*:
+the `lua` module and creating an `events.LEXER_LOADED` event handler to use
+tabs, simply put the event handler in *~/.textadept/modules/lua/post_init.lua*:
 
-    events.connect(events.LANGUAGE_MODULE_LOADED, function(lang)
+    events.connect(events.LEXER_LOADED, function(lang)
       if lang == 'lua' then buffer.use_tabs = true end
     end)
 
