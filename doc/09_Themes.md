@@ -75,10 +75,10 @@ managing more changes is probably easier with the latter.
 ### Language
 
 Textadept also allows you to customize themes per-language through the
-`events.LANGUAGE_MODULE_LOADED` event. For example, changing the color of
-functions in Java from orange to black in the "light" theme looks like this:
+`events.LEXER_LOADED` event. For example, changing the color of functions in
+Java from orange to black in the "light" theme looks like this:
 
-    events.connect(events.LANGUAGE_MODULE_LOADED, function(lang)
+    events.connect(events.LEXER_LOADED, function(lang)
       if lang == 'java' then
         buffer.property['style.function'] = 'fore:%(color.light_black)'
       end

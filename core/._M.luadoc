@@ -53,10 +53,9 @@
 --
 -- By default, Textadept uses 2 spaces as indentation. If your language has
 -- different indentation guidelines, change them from an
--- `events.LANGUAGE_MODULE_LOADED` event handler. Using tabs of width 8 would
--- look like
+-- `events.LEXER_LOADED` event handler. Using tabs of width 8 would look like
 --
---     events.connect(events.LANGUAGE_MODULE_LOADED, function(lang)
+--     events.connect(events.LEXER_LOADED, function(lang)
 --       if lang == 'lua' then
 --         buffer.tab_width = 8
 --         buffer.use_tabs = true
