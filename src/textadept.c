@@ -679,8 +679,8 @@ static int lce__newindex(lua_State *L) {
   return 0;
 }
 
-/** `gui.dialog()` Lua function. */
-static int lgui_dialog(lua_State *L) {
+/** `ui.dialog()` Lua function. */
+static int lui_dialog(lua_State *L) {
   GTDialogType type = gtdialog_type(luaL_checkstring(L, 1));
   int i, j, k, n = lua_gettop(L) - 1, argc = n;
   for (i = 2; i < n + 2; i++)
@@ -737,8 +737,8 @@ static void l_pushsplittable(lua_State *L, GtkWidget *c1, GtkWidget *c2) {
 }
 #endif
 
-/** `gui.get_split_table()` Lua function. */
-static int lgui_get_split_table(lua_State *L) {
+/** `ui.get_split_table()` Lua function. */
+static int lui_get_split_table(lua_State *L) {
 #if GTK
   GtkWidget *pane = gtk_widget_get_parent(focused_view);
   if (GTK_IS_PANED(pane)) {
@@ -790,8 +790,8 @@ static void goto_view(Scintilla *view) {
   if (!closing) lL_event(lua, "view_after_switch", -1);
 }
 
-/** `gui.goto_view()` Lua function. */
-static int lgui_goto_view(lua_State *L) {
+/** `ui.goto_view()` Lua function. */
+static int lui_goto_view(lua_State *L) {
   int n = luaL_checkinteger(L, 1), relative = lua_toboolean(L, 2);
   if (relative && n == 0) return 0;
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
@@ -811,7 +811,7 @@ static int lgui_goto_view(lua_State *L) {
   Scintilla *view = l_toview(L, -1);
   focus_view(view);
 #if GTK
-  // gui.dialog() interferes with focus so gtk_widget_grab_focus() does not
+  // ui.dialog() interferes with focus so gtk_widget_grab_focus() does not
   // always work. If this is the case, ensure goto_view() is called.
   if (!gtk_widget_has_focus(view)) goto_view(view);
 #endif
@@ -895,8 +895,8 @@ static void m_clicked(GtkWidget*_, void *id) {
 }
 #endif
 
-/** `gui.menu()` Lua function. */
-static int lgui_menu(lua_State *L) {
+/** `ui.menu()` Lua function. */
+static int lui_menu(lua_State *L) {
   luaL_checktype(L, 1, LUA_TTABLE);
 #if GTK
   return (l_pushmenu(L, -1, G_CALLBACK(m_clicked), FALSE), 1);
@@ -905,8 +905,8 @@ static int lgui_menu(lua_State *L) {
 #endif
 }
 
-/** `gui.__index` Lua metatable. */
-static int lgui__index(lua_State *L) {
+/** `ui.__index` Lua metatable. */
+static int lui__index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "clipboard_text") == 0) {
 #if GTK
@@ -952,8 +952,8 @@ static void set_statusbar_text(const char *text, int bar) {
 #endif
 }
 
-/** `gui.__newindex` Lua metatable. */
-static int lgui__newindex(lua_State *L) {
+/** `ui.__newindex` Lua metatable. */
+static int lui__newindex(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "title") == 0) {
 #if GTK
@@ -1528,12 +1528,12 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   l_setcfunction(L, -1, "show_completions", lce_show_completions);
   l_setmetatable(L, -1, "ta_command_entry", lce__index, lce__newindex);
   lua_setfield(L, -2, "command_entry");
-  l_setcfunction(L, -1, "dialog", lgui_dialog);
-  l_setcfunction(L, -1, "get_split_table", lgui_get_split_table);
-  l_setcfunction(L, -1, "goto_view", lgui_goto_view);
-  l_setcfunction(L, -1, "menu", lgui_menu);
-  l_setmetatable(L, -1, "ta_gui", lgui__index, lgui__newindex);
-  lua_setglobal(L, "gui");
+  l_setcfunction(L, -1, "dialog", lui_dialog);
+  l_setcfunction(L, -1, "get_split_table", lui_get_split_table);
+  l_setcfunction(L, -1, "goto_view", lui_goto_view);
+  l_setcfunction(L, -1, "menu", lui_menu);
+  l_setmetatable(L, -1, "ta_ui", lui__index, lui__newindex);
+  lua_setglobal(L, "ui");
 
   lua_getglobal(L, "_G");
   l_setcfunction(L, -1, "quit", lquit);
@@ -1818,7 +1818,7 @@ static int s_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
  * @param event An optional GTK mouse button event.
  */
 static void lL_showcontextmenu(lua_State *L, void *event) {
-  lua_getglobal(L, "gui");
+  lua_getglobal(L, "ui");
   if (lua_istable(L, -1)) {
     lua_getfield(L, -1, "context_menu");
     if (lua_isuserdata(L, -1)) {
@@ -1828,7 +1828,7 @@ static void lL_showcontextmenu(lua_State *L, void *event) {
                      event ? ((GdkEventButton *)event)->button : 0,
                      gdk_event_get_time((GdkEvent *)event));
     }
-    lua_pop(L, 1); // gui.context_menu
+    lua_pop(L, 1); // ui.context_menu
   } else lua_pop(L, 1); // non-table
 }
 

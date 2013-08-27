@@ -177,7 +177,7 @@ MARK\_ERROR\_BACK                 |Renamed |[ERROR\_COLOR][]
 open                              |Changed |\_G.[io.snapopen()][]<sup>‡</sup>
 **events**                        |        |
 handlers                          |Removed |N/A
-**gui**                           |        |
+**gui**                           |Renamed |[ui][]
 N/A                               |New     |[maximized][]
 find.goto\_file\_in\_list()       |Renamed |find.[goto\_file\_found()][]
 select\_theme                     |Removed |N/A
@@ -200,8 +200,9 @@ try\_encodings                    |Renamed |[encodings][]
 [select\_enclosed()]: api/_M.textadept.editing.html#select_enclosed
 [ERROR\_COLOR]: api/_M.textadept.run.html#ERROR_COLOR
 [io.snapopen()]: api/io.html#snapopen
-[maximized]: api/gui.html#maximized
-[goto\_file\_found()]: api/gui.find.html#goto_file_found
+[ui]: api/ui.html
+[maximized]: api/ui.html#maximized
+[goto\_file\_found()]: api/ui.find.html#goto_file_found
 [encodings]: api/io.html#encodings
 
 #### Theme Changes
@@ -287,7 +288,7 @@ that specified your preferred Textadept 6 theme. Use *~/.textadept/init.lua* to
 terminal themes:
 
     -- File *~/.textadept/init.lua*
-    gui.set_theme(not CURSES and 'custom' or 'custom_term')
+    ui.set_theme(not CURSES and 'custom' or 'custom_term')
 
 You may still use absolute paths for themes instead of names.
 
@@ -343,7 +344,7 @@ execute()                            |Replaced|[run()][] and [compile()][]
 prompt\_load()                       |Replaced|[load()][]
 prompt\_save()                       |Replaced|[save()][]
 
-[menu()]: api/gui.html#menu
+[menu()]: api/ui.html#menu
 [complete()]: api/_M.textadept.adeptsense.html#complete
 [show\_apidoc()]: api/_M.textadept.adeptsense.html#show_apidoc
 [toggle()]: api/_M.textadept.bookmarks.html#toggle
@@ -577,32 +578,32 @@ views                     |Renamed|\_G.[\_VIEWS][]
 [API]: api
 [\_SCINTILLA]: api/_SCINTILLA.html
 [events]: api/events.html
-[gui]: api/gui.html
+[gui]: api/ui.html
 [_m.textadept.snippets]: api/_M.textadept.snippets.html
-[gui.\_print()]: api/gui.html#_print
+[gui.\_print()]: api/ui.html#_print
 [\_SCINTILLA.functions]: api/_SCINTILLA.html#functions
 [\_SCINTILLA.properties]: api/_SCINTILLA.html#properties
 [\_BUFFERS]: api/_G.html#_BUFFERS
-[gui.clipboard\_text]: api/gui.html#clipboard_text
-[gui.command\_entry]: api/gui.command_entry.html
+[gui.clipboard\_text]: api/ui.html#clipboard_text
+[gui.command\_entry]: api/ui.command_entry.html
 [\_SCINTILLA.constants]: api/_SCINTILLA.html#constants
-[gui.context\_menu]: api/gui.html#context_menu
-[gui.dialog()]: api/gui.html#dialog
-[gui.docstatusbar\_text]: api/gui.html#docstatusbar_text
+[gui.context\_menu]: api/ui.html#context_menu
+[gui.dialog()]: api/ui.html#dialog
+[gui.docstatusbar\_text]: api/ui.html#docstatusbar_text
 [events.connect()]: api/events.html#connect
 [events.emit()]: api/events.html#emit
-[gui.find]: api/gui.find.html
-[gui.get\_split\_table()]: api/gui.html#get_split_table
-[gui.goto\_view()]: api/gui.html#goto_view
-[gui.gtkmenu()]: api/gui.html#gtkmenu
+[gui.find]: api/ui.find.html
+[gui.get\_split\_table()]: api/ui.html#get_split_table
+[gui.goto\_view()]: api/ui.html#goto_view
+[gui.gtkmenu()]: api/ui.html#gtkmenu
 [string.iconv()]: api/string.html#iconv
-[gui.menubar]: api/gui.html#menubar
+[gui.menubar]: api/ui.html#menubar
 [new\_buffer()]: api/_G.html#new_buffer
-[gui.print()]: api/gui.html#print
+[gui.print()]: api/ui.html#print
 [quit()]: api/_G.html#quit
 [reset()]: api/_G.html#reset
-[gui.size]: api/gui.html#size
-[gui.statusbar\_text]: api/gui.html#statusbar_text
-[gui.switch\_buffer()]: api/gui.html#switch_buffer
-[gui.title]: api/gui.html#title
+[gui.size]: api/ui.html#size
+[gui.statusbar\_text]: api/ui.html#statusbar_text
+[gui.switch\_buffer()]: api/ui.html#switch_buffer
+[gui.title]: api/ui.html#title
 [\_VIEWS]: api/_G.html#_VIEWS

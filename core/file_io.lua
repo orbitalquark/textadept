@@ -131,11 +131,11 @@ io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 -- @name open_file
 function io.open_file(utf8_filenames)
   utf8_filenames = utf8_filenames or
-                   gui.dialog('fileselect',
-                              '--title', _L['Open'],
-                              '--select-multiple',
-                              '--with-directory',
-                              (buffer.filename or ''):match('.+[/\\]') or '')
+                   ui.dialog('fileselect',
+                             '--title', _L['Open'],
+                             '--select-multiple',
+                             '--with-directory',
+                             (buffer.filename or ''):match('.+[/\\]') or '')
   for utf8_filename in utf8_filenames:gmatch('[^\n]+') do
     utf8_filename = utf8_filename:gsub('^file://', '')
     if WIN32 then utf8_filename = utf8_filename:gsub('/', '\\') end
@@ -259,13 +259,13 @@ local function save_as(buffer, utf8_filename)
   if not buffer and not utf8_filename then buffer = _G.buffer end
   buffer:check_global()
   if not utf8_filename then
-    utf8_filename = gui.dialog('filesave',
-                               '--title', _L['Save'],
-                               '--with-directory',
-                               (buffer.filename or ''):match('.+[/\\]') or '',
-                               '--with-file',
-                               (buffer.filename or ''):match('[^/\\]+$') or '',
-                               '--no-newline')
+    utf8_filename = ui.dialog('filesave',
+                              '--title', _L['Save'],
+                              '--with-directory',
+                              (buffer.filename or ''):match('.+[/\\]') or '',
+                              '--with-file',
+                              (buffer.filename or ''):match('[^/\\]+$') or '',
+                              '--no-newline')
   end
   if utf8_filename == '' then return end
   buffer.filename = utf8_filename
@@ -291,14 +291,14 @@ local function close(buffer)
   if not buffer then buffer = _G.buffer end
   buffer:check_global()
   local filename = buffer.filename or buffer._type or _L['Untitled']
-  if buffer.dirty and gui.dialog('msgbox',
-                                 '--title', _L['Close without saving?'],
-                                 '--text', _L['There are unsaved changes in'],
-                                 '--informative-text', filename,
-                                 '--icon', 'gtk-dialog-question',
-                                 '--button1', _L['_Cancel'],
-                                 '--button2', _L['Close _without saving'],
-                                 '--no-newline') ~= '2' then
+  if buffer.dirty and ui.dialog('msgbox',
+                                '--title', _L['Close without saving?'],
+                                '--text', _L['There are unsaved changes in'],
+                                '--informative-text', filename,
+                                '--icon', 'gtk-dialog-question',
+                                '--button1', _L['_Cancel'],
+                                '--button2', _L['Close _without saving'],
+                                '--no-newline') ~= '2' then
     return nil -- returning false can cause unwanted key command propagation
   end
   buffer:delete()
@@ -330,17 +330,17 @@ local function update_modified_file()
   if not mod_time or not buffer.mod_time then return end
   if buffer.mod_time < mod_time then
     buffer.mod_time = mod_time
-    if gui.dialog('yesno-msgbox',
-                  '--title', _L['Reload?'],
-                  '--text', _L['Reload modified file?'],
-                  '--informative-text',
-                  ('"%s"\n%s'):format(utf8_filename,
-                                      _L['has been modified. Reload it?']),
-                  '--icon', 'gtk-dialog-question',
-                  '--button1', _L['_Yes'],
-                  '--button2', _L['_No'],
-                  '--no-cancel',
-                  '--no-newline') == '1' then
+    if ui.dialog('yesno-msgbox',
+                 '--title', _L['Reload?'],
+                 '--text', _L['Reload modified file?'],
+                 '--informative-text',
+                 ('"%s"\n%s'):format(utf8_filename,
+                                     _L['has been modified. Reload it?']),
+                 '--icon', 'gtk-dialog-question',
+                 '--button1', _L['_Yes'],
+                 '--button2', _L['_No'],
+                 '--no-cancel',
+                 '--no-newline') == '1' then
       buffer:reload()
     end
   end
@@ -370,8 +370,8 @@ end)
 -- @see recent_files
 -- @name open_recent_file
 function io.open_recent_file()
-  local i = gui.filteredlist(_L['Open'], _L['File'], io.recent_files, true,
-                             CURSES and {'--width', gui.size[1] - 2} or '')
+  local i = ui.filteredlist(_L['Open'], _L['File'], io.recent_files, true,
+                            CURSES and {'--width', ui.size[1] - 2} or '')
   if i then io.open_file(io.recent_files[i + 1]) end
 end
 
@@ -393,7 +393,7 @@ end
 --   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
 --   *filter*.
 --   The default value is `false` to include the default filter.
--- @param ... Optional additional parameters to pass to `gui.dialog()`.
+-- @param ... Optional additional parameters to pass to `ui.dialog()`.
 -- @usage io.snapopen(buffer.filename:match('^.+/')) -- list all files in the
 --   current file's directory, subject to the default filter
 -- @usage io.snapopen('/project', '!%.lua$') -- list all Lua files in a project
@@ -412,16 +412,16 @@ function io.snapopen(utf8_paths, filter, exclude_FILTER, ...)
     end, filter, exclude_FILTER)
   end
   if #list >= io.SNAPOPEN_MAX then
-    gui.dialog('ok-msgbox',
-               '--title', _L['File Limit Exceeded'],
-               '--text',
-               string.format('%d %s %d', io.SNAPOPEN_MAX,
-                             _L['files or more were found. Showing the first'],
-                             io.SNAPOPEN_MAX),
-               '--icon', 'gtk-dialog-info',
-               '--button1', _L['_OK'])
+    ui.dialog('ok-msgbox',
+              '--title', _L['File Limit Exceeded'],
+              '--text',
+              string.format('%d %s %d', io.SNAPOPEN_MAX,
+                            _L['files or more were found. Showing the first'],
+                            io.SNAPOPEN_MAX),
+              '--icon', 'gtk-dialog-info',
+              '--button1', _L['_OK'])
   end
-  local width = CURSES and {'--width', gui.size[1] - 2} or ''
-  io.open_file(gui.filteredlist(_L['Open'], _L['File'], list, false,
-                                '--select-multiple', width, ...) or '')
+  local width = CURSES and {'--width', ui.size[1] - 2} or ''
+  io.open_file(ui.filteredlist(_L['Open'], _L['File'], list, false,
+                               '--select-multiple', width, ...) or '')
 end

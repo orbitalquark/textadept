@@ -1,6 +1,6 @@
 -- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-local gui = gui
+local ui = ui
 
 --[[ This comment is for LuaDoc.
 ---
@@ -8,7 +8,7 @@ local gui = gui
 -- @field title (string, Write-only)
 --   The title of the Textadept window.
 -- @field context_menu
---   The editor's context menu, a [`gui.menu()`](#menu).
+--   The editor's context menu, a [`ui.menu()`](#menu).
 --   This is a low-level field. You probably want to use the higher-level
 --   `_M.textadept.menu.set_contextmenu()`.
 -- @field clipboard_text (string, Read-only)
@@ -19,7 +19,7 @@ local gui = gui
 --   The text displayed by the buffer statusbar.
 -- @field maximized (bool)
 --   Whether or not the Textadept window is maximized.
-module('gui')]]
+module('ui')]]
 
 local theme = package.searchpath(not CURSES and 'light' or 'term',
                                  _USERHOME..'/themes/?.lua;'..
@@ -27,11 +27,11 @@ local theme = package.searchpath(not CURSES and 'light' or 'term',
 local theme_props = {}
 
 -- Helper function for printing messages to buffers.
--- @see gui._print
+-- @see ui._print
 local function _print(buffer_type, ...)
   if buffer._type ~= buffer_type then
     for i, view in ipairs(_VIEWS) do
-      if view.buffer._type == buffer_type then gui.goto_view(i) break end
+      if view.buffer._type == buffer_type then ui.goto_view(i) break end
     end
     if view.buffer._type ~= buffer_type then
       view:split()
@@ -59,19 +59,19 @@ end
 -- displayed before being printed to.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
--- @usage gui._print(_L['[Message Buffer]'], message)
+-- @usage ui._print(_L['[Message Buffer]'], message)
 -- @name _print
-function gui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
+function ui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 
 ---
 -- Prints messages to the Textadept message buffer.
 -- Opens a new buffer if one has not already been opened for printing messages.
 -- @param ... Message strings.
 -- @name print
-function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
+function ui.print(...) ui._print(_L['[Message Buffer]'], ...) end
 
 ---
--- Convenience function for `gui.dialog('filteredlist', ...)` with "Ok" and
+-- Convenience function for `ui.dialog('filteredlist', ...)` with "Ok" and
 -- "Cancel" buttons that returns the text or index of the selection depending on
 -- the boolean value of *int_return*.
 -- *title* is the title of the dialog, *columns* is a list of column names, and
@@ -83,24 +83,24 @@ function gui.print(...) gui._print(_L['[Message Buffer]'], ...) end
 --   index of the selected item in the filtered list or the string selected
 --   item. A `true` value is not compatible with the `'--select-multiple'`
 --   option. The default value is `false`.
--- @param ... Optional additional parameters to pass to `gui.dialog()`.
+-- @param ... Optional additional parameters to pass to `ui.dialog()`.
 -- @return Either a string or integer on success; `nil` otherwise. In strings,
 --   multiple items are separated by newlines.
--- @usage gui.filteredlist('Title', 'Foo', {'Bar', 'Baz'})
--- @usage gui.filteredlist('Title', {'Foo', 'Bar'}, {'a', 'b', 'c', 'd'}, false,
---                         '--output-column', '2')
+-- @usage ui.filteredlist('Title', 'Foo', {'Bar', 'Baz'})
+-- @usage ui.filteredlist('Title', {'Foo', 'Bar'}, {'a', 'b', 'c', 'd'}, false,
+--                        '--output-column', '2')
 -- @see dialog
 -- @name filteredlist
-function gui.filteredlist(title, columns, items, int_return, ...)
-  local out = gui.dialog('filteredlist',
-                         '--title', title,
-                         '--button1', _L['_OK'],
-                         '--button2', _L['_Cancel'],
-                         '--no-newline',
-                         int_return and '' or '--string-output',
-                         '--columns', columns,
-                         '--items', items,
-                         ...)
+function ui.filteredlist(title, columns, items, int_return, ...)
+  local out = ui.dialog('filteredlist',
+                        '--title', title,
+                        '--button1', _L['_OK'],
+                        '--button2', _L['_Cancel'],
+                        '--no-newline',
+                        int_return and '' or '--string-output',
+                        '--columns', columns,
+                        '--items', items,
+                        ...)
   local patt = int_return and '^(%-?%d+)\n(%d+)$' or '^([^\n]+)\n(.+)$'
   local response, value = out:match(patt)
   if response == (int_return and '1' or _L['_OK']) then
@@ -111,7 +111,7 @@ end
 ---
 -- Prompts the user to select a buffer to switch to.
 -- @name switch_buffer
-function gui.switch_buffer()
+function ui.switch_buffer()
   local columns, items = {_L['Name'], _L['File']}, {}
   for _, buffer in ipairs(_BUFFERS) do
     local filename = buffer.filename or buffer._type or _L['Untitled']
@@ -119,8 +119,8 @@ function gui.switch_buffer()
     items[#items + 1] = (buffer.dirty and '*' or '')..basename
     items[#items + 1] = filename
   end
-  local i = gui.filteredlist(_L['Switch Buffers'], columns, items, true,
-                             CURSES and {'--width', gui.size[1] - 2} or '--')
+  local i = ui.filteredlist(_L['Switch Buffers'], columns, items, true,
+                            CURSES and {'--width', ui.size[1] - 2} or '--')
   if i then view:goto_buffer(i + 1) end
 end
 
@@ -142,7 +142,7 @@ end
 --   likely that the file in question is already open. The default value is
 --   `false`.
 -- @name goto_file
-function gui.goto_file(filename, split, preferred_view, sloppy)
+function ui.goto_file(filename, split, preferred_view, sloppy)
   local patt = '^'..filename..'$'
   if sloppy then
     local i = filename:reverse():find('[/\\]%.%.?') -- ./ or ../
@@ -153,10 +153,10 @@ function gui.goto_file(filename, split, preferred_view, sloppy)
   else
     local other_view = _VIEWS[preferred_view]
     for i, v in ipairs(_VIEWS) do
-      if (v.buffer.filename or ''):find(patt) then gui.goto_view(i) return end
+      if (v.buffer.filename or ''):find(patt) then ui.goto_view(i) return end
       if not other_view and v ~= view then other_view = i end
     end
-    if other_view then gui.goto_view(other_view) end
+    if other_view then ui.goto_view(other_view) end
   end
   for i, buffer in ipairs(_BUFFERS) do
     if (buffer.filename or ''):find(patt) then view:goto_buffer(i) return end
@@ -173,9 +173,9 @@ end
 -- @param name The name or absolute path of a theme to set.
 -- @param ... Optional key-value argument pairs for theme properties to set.
 --   These override the theme's defaults.
--- @usage gui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)
+-- @usage ui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)
 -- @name set_theme
-function gui.set_theme(name, ...)
+function ui.set_theme(name, ...)
   if not name then return end
   name = name:find('[/\\]') and name or
          package.searchpath(name, _USERHOME..'/themes/?.lua;'..
@@ -190,11 +190,11 @@ function gui.set_theme(name, ...)
   end
   view:goto_buffer(current_buffer)
   for i = 1, #_VIEWS do
-    gui.goto_view(i)
+    ui.goto_view(i)
     dofile(name)
     for j = 1, #props, 2 do buffer.property[props[j]] = props[j + 1] end
   end
-  gui.goto_view(current_view)
+  ui.goto_view(current_view)
   theme, theme_props = name, props
 end
 
@@ -253,8 +253,8 @@ end)
 local function set_title()
   local filename = buffer.filename or buffer._type or _L['Untitled']
   local basename = buffer.filename and filename:match('[^/\\]+$') or filename
-  gui.title = string.format('%s %s Textadept (%s)', basename,
-                            buffer.dirty and '*' or '-', filename)
+  ui.title = string.format('%s %s Textadept (%s)', basename,
+                           buffer.dirty and '*' or '-', filename)
 end
 
 -- Changes Textadept title to show the buffer as being "clean".
@@ -301,8 +301,8 @@ events_connect(events.UPDATE_UI, function()
   local enc = buffer.encoding or ''
   local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
                               '%s %d/%d  %s %d  %s  %s  %s  %s'
-  gui.docstatusbar_text = string.format(text, _L['Line:'], line, max,
-                                        _L['Col:'], col, lexer, eol, tabs, enc)
+  ui.docstatusbar_text = string.format(text, _L['Line:'], line, max, _L['Col:'],
+                                       col, lexer, eol, tabs, enc)
 end)
 
 -- Updates the statusbar and titlebar for a new Scintilla document.
@@ -350,7 +350,7 @@ events_connect(events.VIEW_AFTER_SWITCH, function()
 end)
 
 events_connect(events.RESET_AFTER,
-               function() gui.statusbar_text = 'Lua reset' end)
+               function() ui.statusbar_text = 'Lua reset' end)
 
 -- Prompts for confirmation if any buffers are dirty.
 events_connect(events.QUIT, function()
@@ -360,18 +360,18 @@ events_connect(events.QUIT, function()
       list[#list + 1] = buffer.filename or buffer._type or _L['Untitled']
     end
   end
-  return #list < 1 or gui.dialog('msgbox',
-                                 '--title', _L['Quit without saving?'],
-                                 '--text',
-                                 _L['The following buffers are unsaved:'],
-                                 '--informative-text', table.concat(list, '\n'),
-                                 '--icon', 'gtk-dialog-question',
-                                 '--button1', _L['_Cancel'],
-                                 '--button2', _L['Quit _without saving'],
-                                 '--no-newline') == '2'
+  return #list < 1 or ui.dialog('msgbox',
+                                '--title', _L['Quit without saving?'],
+                                '--text',
+                                _L['The following buffers are unsaved:'],
+                                '--informative-text', table.concat(list, '\n'),
+                                '--icon', 'gtk-dialog-question',
+                                '--button1', _L['_Cancel'],
+                                '--button2', _L['Quit _without saving'],
+                                '--no-newline') == '2'
 end)
 
-events_connect(events.ERROR, gui.print)
+events_connect(events.ERROR, ui.print)
 
 --[[ The tables below were defined in C.
 
@@ -445,8 +445,8 @@ local goto_view
 --   menu. '_' characters are treated as a menu mnemonics. If the menu item is
 --   empty, a menu separator item is created. Submenus are just nested
 --   menu-structure tables. Their title text is defined with a `title` key.
--- @usage gui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4}}
--- @usage gui.menu{{'_New', 1, string.byte('n'), 4}} -- 'Ctrl+N'
+-- @usage ui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4}}
+-- @usage ui.menu{{'_New', 1, string.byte('n'), 4}} -- 'Ctrl+N'
 -- @see events.MENU_CLICKED
 -- @see _M.textadept.menu.set_menubar
 -- @see _M.textadept.menu.set_contextmenu

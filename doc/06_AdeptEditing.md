@@ -196,7 +196,7 @@ tool such as [ack][].
 
 ![Find in Files](images/findinfiles.png)
 
-[find API]: api/gui.find.html#FILTER
+[find API]: api/ui.find.html#FILTER
 [ack]: http://betterthangrep.com/
 
 ### Incremental Find
