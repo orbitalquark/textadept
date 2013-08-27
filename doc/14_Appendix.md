@@ -145,7 +145,8 @@ non-existant graphics capabilities:
 
 ### Textadept 6 to 7
 
-Textadept 7 introduces API changes and a completely new theme implementation.
+Textadept 7 introduces API changes, a change in module mentality, and a
+completely new theme implementation.
 
 #### API Changes
 
@@ -205,6 +206,19 @@ try\_encodings                    |Renamed |[encodings][]
 [maximized]: api/ui.html#maximized
 [goto\_file\_found()]: api/ui.find.html#goto_file_found
 [encodings]: api/io.html#encodings
+
+#### Module Mentality
+
+Prior to Textadept 7, the `_M` table held all loaded modules (regardless of
+whether they were generic modules or language modules) and Textadept encouraged
+users to load custom modules into `_M` even though Lua has no such restriction.
+The `_M` prefix no longer makes much sense for generic modules like
+[`textadept`][], so only language modules are automatically loaded into
+[`_M`][]. Textadept 7 does not encourage any prefix for custom, generic modules;
+the user is free to choose.
+
+[`textadept`]: api/textadept.html
+[`_M`]: api/_M.html
 
 #### Theme Changes
 
