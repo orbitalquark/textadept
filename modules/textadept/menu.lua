@@ -51,7 +51,7 @@ local menubar = {
     {_L['Toggle _Block Comment'], m_editing.block_comment},
     {_L['T_ranspose Characters'], m_editing.transpose_chars},
     {_L['_Join Lines'], m_editing.join_lines},
-    {_L['_Filter Through'], {gui.command_entry.enter_mode, 'filter_through'}},
+    {_L['_Filter Through'], {ui.command_entry.enter_mode, 'filter_through'}},
     { title = _L['_Select'],
       {_L['Select to _Matching Brace'], {m_editing.match_brace, 'select'}},
       {_L['Select between _XML Tags'], {m_editing.select_enclosed, '>', '<'}},
@@ -83,21 +83,21 @@ local menubar = {
     },
   },
   { title = _L['_Search'],
-    {_L['_Find'], gui.find.focus},
-    {_L['Find _Next'], gui.find.find_next},
-    {_L['Find _Previous'], gui.find.find_prev},
-    {_L['_Replace'], gui.find.replace},
-    {_L['Replace _All'], gui.find.replace_all},
-    {_L['Find _Incremental'], gui.find.find_incremental},
+    {_L['_Find'], ui.find.focus},
+    {_L['Find _Next'], ui.find.find_next},
+    {_L['Find _Previous'], ui.find.find_prev},
+    {_L['_Replace'], ui.find.replace},
+    {_L['Replace _All'], ui.find.replace_all},
+    {_L['Find _Incremental'], ui.find.find_incremental},
     SEPARATOR,
     {_L['Find in Fi_les'], utils.find_in_files},
-    {_L['Goto Nex_t File Found'], {gui.find.goto_file_found, false, true}},
-    {_L['Goto Previou_s File Found'], {gui.find.goto_file_found, false, false}},
+    {_L['Goto Nex_t File Found'], {ui.find.goto_file_found, false, true}},
+    {_L['Goto Previou_s File Found'], {ui.find.goto_file_found, false, false}},
     SEPARATOR,
     {_L['_Jump to'], m_editing.goto_line},
   },
   { title = _L['_Tools'],
-    {_L['Command _Entry'], {gui.command_entry.enter_mode, 'lua_command'}},
+    {_L['Command _Entry'], {ui.command_entry.enter_mode, 'lua_command'}},
     {_L['Select Co_mmand'], utils.select_command},
     SEPARATOR,
     {_L['_Run'], _M.textadept.run.run},
@@ -133,7 +133,7 @@ local menubar = {
   { title = _L['_Buffer'],
     {_L['_Next Buffer'], {view.goto_buffer, view, 1, true}},
     {_L['_Previous Buffer'], {view.goto_buffer, view, -1, true}},
-    {_L['_Switch to Buffer...'], gui.switch_buffer},
+    {_L['_Switch to Buffer...'], ui.switch_buffer},
     SEPARATOR,
     { title = _L['_Indentation'],
       {_L['Tab width: _2'], {utils.set_indentation, 2}},
@@ -161,8 +161,8 @@ local menubar = {
     {_L['_Refresh Syntax Highlighting'], {buffer.colourise, buffer, 0, -1}},
   },
   { title = _L['_View'],
-    {_L['_Next View'], {gui.goto_view, 1, true}},
-    {_L['_Previous View'], {gui.goto_view, -1, true}},
+    {_L['_Next View'], {ui.goto_view, 1, true}},
+    {_L['_Previous View'], {ui.goto_view, -1, true}},
     SEPARATOR,
     {_L['Split View _Horizontal'], {view.split, view}},
     {_L['Split View _Vertical'], {view.split, view, true}},
@@ -192,7 +192,7 @@ local menubar = {
     {_L['Show _LuaDoc'], {utils.open_webpage, _HOME..'/doc/api/index.html'}},
     SEPARATOR,
     {_L['_About'],
-      {gui.dialog, 'ok-msgbox', '--title', 'Textadept', '--text', _RELEASE,
+      {ui.dialog, 'ok-msgbox', '--title', 'Textadept', '--text', _RELEASE,
        '--informative-text', 'Copyright © 2007-2013 Mitchell. See LICENSE\n'..
        'http://foicica.com/textadept', '--button1', _L['_OK'], '--no-cancel',
        '--icon-file', _HOME..'/core/images/ta_64x64.png'}},
@@ -247,13 +247,13 @@ end
 
 local key_shortcuts, menu_actions, contextmenu_actions
 
--- Creates a menu suitable for `gui.menu()` from the menu table format.
+-- Creates a menu suitable for `ui.menu()` from the menu table format.
 -- Also assigns key commands.
 -- @param menu The menu to create a GTK+ menu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu.
 --   If so, menu_id offset is 1000. The default value is `false`.
--- @return GTK+ menu that can be passed to `gui.menu()`.
--- @see gui.menu
+-- @return GTK+ menu that can be passed to `ui.menu()`.
+-- @see ui.menu
 local function read_menu_table(menu, contextmenu)
   local gtkmenu = {}
   gtkmenu.title = menu.title
@@ -297,15 +297,15 @@ end
 local items, commands
 
 ---
--- Sets `gui.menubar` from *menubar*, a table of menus.
+-- Sets `ui.menubar` from *menubar*, a table of menus.
 -- Each menu is an ordered list of menu items and has a `title` key for the
 -- title text. Menu items are tables containing menu text and either a function
 -- to call or a table containing a function with its parameters to call when an
 -- item is clicked. Menu items may also be sub-menus, ordered lists of menu
 -- items with an additional `title` key for the sub-menu's title text.
 -- @param menubar The table of menu tables to create the menubar from.
--- @see gui.menubar
--- @see gui.menu
+-- @see ui.menubar
+-- @see ui.menu
 -- @name set_menubar
 function M.set_menubar(menubar)
   key_shortcuts = {}
@@ -313,27 +313,27 @@ function M.set_menubar(menubar)
   menu_actions = {}
   local _menubar = {}
   for i = 1, #menubar do
-    _menubar[#_menubar + 1] = gui.menu(read_menu_table(menubar[i]))
+    _menubar[#_menubar + 1] = ui.menu(read_menu_table(menubar[i]))
   end
-  gui.menubar = _menubar
+  ui.menubar = _menubar
   items, commands = {}, {}
   build_command_tables(menubar, nil, items, commands)
 end
 M.set_menubar(menubar)
 
 ---
--- Sets `gui.context_menu` from *menu*, an ordered list of menu items.
+-- Sets `ui.context_menu` from *menu*, an ordered list of menu items.
 -- Menu items are tables containing menu text and either a function to call or
 -- a table containing a function with its parameters to call when an item is
 -- clicked. Menu items may also be sub-menus, ordered lists of menu items with
 -- an additional `title` key for the sub-menu's title text.
 -- @param menu The menu table to create the context menu from.
--- @see gui.context_menu
--- @see gui.menu
+-- @see ui.context_menu
+-- @see ui.menu
 -- @name set_contextmenu
 function M.set_contextmenu(menu)
   contextmenu_actions = {}
-  gui.context_menu = gui.menu(read_menu_table(menu, true))
+  ui.context_menu = ui.menu(read_menu_table(menu, true))
 end
 if not CURSES then M.set_contextmenu(context_menu) end
 
@@ -341,9 +341,9 @@ if not CURSES then M.set_contextmenu(context_menu) end
 -- Prompts the user to select a menu command to run.
 -- @name select_command
 function M.select_command()
-  local i = gui.filteredlist(_L['Run Command'],
-                             {_L['Command'], _L['Key Command']}, items, true,
-                             CURSES and {'--width', gui.size[1] - 2} or '')
+  local i = ui.filteredlist(_L['Run Command'],
+                            {_L['Command'], _L['Key Command']}, items, true,
+                            CURSES and {'--width', ui.size[1] - 2} or '')
   if i then keys.run_command(commands[i + 1], type(commands[i + 1])) end
 end
 

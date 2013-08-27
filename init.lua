@@ -11,6 +11,6 @@ package.cpath = _USERHOME..so.._USERHOME..'/modules'..so..package.cpath
 
 _M.textadept = require('textadept')
 local ok, err = pcall(dofile, _USERHOME..'/init.lua')
-if not ok and lfs.attributes(_USERHOME..'/init.lua') then gui.print(err) end
+if not ok and lfs.attributes(_USERHOME..'/init.lua') then ui.print(err) end
 
 if arg then args.process(arg) end

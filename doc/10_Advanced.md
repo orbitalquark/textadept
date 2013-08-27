@@ -7,9 +7,9 @@ on Mac OSX | `M-C` in curses) to display the entry. It is useful for debugging,
 inspecting, and entering `buffer` or `view` commands. If you try to cause
 instability in Textadept's Lua state, you will probably succeed so be careful.
 The [Lua API][] lists available commands. The command entry provides abbreviated
-commands for [`buffer`][], [`view`][] and [`gui`][]: you may reduce the
+commands for [`buffer`][], [`view`][] and [`ui`][]: you may reduce the
 `buffer:append_text('foo')` command to `append_text('foo')`. Therefore, use
-`_G.print()` for Lua's `print()` since `print()` expands to [`gui.print()`][].
+`_G.print()` for Lua's `print()` since `print()` expands to [`ui.print()`][].
 These commands are runnable on startup using the `-e` and `--execute` command
 line switches.
 
@@ -18,8 +18,8 @@ line switches.
 [Lua API]: api/index.html
 [`buffer`]: api/buffer.html
 [`view`]: api/view.html
-[`gui`]: api/gui.html
-[`gui.print()`]: api/gui.html#print
+[`ui`]: api/ui.html
+[`ui.print()`]: api/ui.html#print
 
 ### Tab Completion
 
@@ -36,7 +36,7 @@ Executing Lua commands is just one of the many tools the command entry functions
 as. For example, *modules/textadept/find.lua* and *modules/textadept/keys.lua*
 extend it to implement [incremental search][].
 
-[incremental search]: api/gui.find.html#find_incremental
+[incremental search]: api/ui.find.html#find_incremental
 
 ## Command Selection
 

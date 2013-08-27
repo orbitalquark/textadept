@@ -106,9 +106,9 @@ local MARK_ERROR = _SCINTILLA.next_marker_number()
 -- @param lexer The current lexer.
 -- @param output The output to print.
 local function print_output(lexer, output)
-  gui.print(output)
+  ui.print(output)
   if get_error_details(output) then
-    -- Current position is one line below the error due to gui.print()'s '\n'.
+    -- Current position is one line below the error due to ui.print()'s '\n'.
     buffer:marker_add(buffer.line_count - 2, MARK_ERROR)
   end
 end
@@ -214,7 +214,7 @@ function M.goto_error(line, next)
     if is_msg_buf(_BUFFERS[i]) then msg_buf = i break end
   end
   if not msg_view and not msg_buf then return end
-  if msg_view then gui.goto_view(msg_view) else view:goto_buffer(msg_buf) end
+  if msg_view then ui.goto_view(msg_view) else view:goto_buffer(msg_buf) end
 
   -- If no line was given, find the next error marker.
   if not line and next ~= nil then
@@ -232,7 +232,7 @@ function M.goto_error(line, next)
   local err = get_error_details(buffer:get_line(line))
   if not err then if CURSES then view:goto_buffer(cur_buf) end return end
   _M.textadept.editing.select_line()
-  gui.goto_file(M.cwd..err.filename, true, preferred_view, true)
+  ui.goto_file(M.cwd..err.filename, true, preferred_view, true)
   local line, message = err.line, err.message
   buffer:goto_line(line - 1)
   if message then

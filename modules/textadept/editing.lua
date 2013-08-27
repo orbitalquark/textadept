@@ -184,7 +184,7 @@ events.connect(events.FILE_BEFORE_SAVE, function()
 end)
 
 ---
--- Goes to the current character's matching brace, selecting the text in-between
+-- Goes to the current character's matching brace, selecting the text in between
 -- if *select* is `true`.
 -- @param select Optional flag indicating whether or not to select the text
 --   between matching braces. The default value is `false`.
@@ -314,12 +314,12 @@ end
 -- @name goto_line
 function M.goto_line(line)
   if not line then
-    line = tonumber(gui.dialog('inputbox',
-                               '--title', _L['Go To'],
-                               '--text', _L['Line Number:'],
-                               '--button1', _L['_OK'],
-                               '--button2', _L['_Cancel'],
-                               '--no-newline'):match('%-?%d+$'))
+    line = tonumber(ui.dialog('inputbox',
+                              '--title', _L['Go To'],
+                              '--text', _L['Line Number:'],
+                              '--button1', _L['_OK'],
+                              '--button2', _L['_Cancel'],
+                              '--no-newline'):match('%-?%d+$'))
     if not line or line < 0 then return end
   end
   buffer:ensure_visible_enforce_policy(line - 1)
@@ -371,9 +371,8 @@ function M.enclose(left, right)
 end
 
 ---
--- Selects the text in-between strings *left* and *right* containing the caret.
--- If already selected, toggles between selecting the *left* and *right*
--- enclosures too.
+-- Selects the text between strings *left* and *right* containing the caret.
+-- If already selected, toggles between selecting *left* and *right* too.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
 -- @name select_enclosed
@@ -440,8 +439,7 @@ function M.select_indented_block()
 end
 
 ---
--- Converts indentation between tabs and spaces depending on the buffer's
--- indentation settings.
+-- Converts indentation between tabs and spaces based on `buffer.use_tabs`.
 -- If `buffer.use_tabs` is `true`, `buffer.tab_width` indenting spaces are
 -- converted to tabs. Otherwise, all indenting tabs are converted to
 -- `buffer.tab_width` spaces.
@@ -515,9 +513,9 @@ if buffer then set_highlight_properties() end
 events.connect(events.VIEW_NEW, set_highlight_properties)
 
 ---
--- Passes selected or all buffer text to string shell command *cmd* as standard
--- input (stdin) and replaces the input text with the command's standard output
--- (stdout).
+-- Passes selected or all buffer text to string shell command *command* as
+-- standard input (stdin) and replaces the input text with the command's
+-- standard output (stdout).
 -- Standard input is as follows:
 --
 -- 1. If text is selected and spans multiple lines, all text on the lines
@@ -527,10 +525,10 @@ events.connect(events.VIEW_NEW, set_highlight_properties)
 -- 2. If text is selected and spans a single line, only the selected text is
 -- used.
 -- 3. If no text is selected, the entire buffer is used.
--- @param cmd The Linux, BSD, Mac OSX, or Windows shell command to filter text
---   through.
+-- @param command The Linux, BSD, Mac OSX, or Windows shell command to filter
+--   text through.
 -- @name filter_through
-function M.filter_through(cmd)
+function M.filter_through(command)
   local s, e = buffer.selection_start, buffer.selection_end
   local input
   if s ~= e then -- use selected lines as input
@@ -547,7 +545,7 @@ function M.filter_through(cmd)
   local f = io.open(tmpfile, 'wb')
   f:write(input)
   f:close()
-  local cmd = (not WIN32 and 'cat' or 'type')..' "'..tmpfile..'" | '..cmd
+  local cmd = (not WIN32 and 'cat' or 'type')..' "'..tmpfile..'" | '..command
   if WIN32 then cmd = cmd:gsub('/', '\\') end
   local p = io.popen(cmd)
   if s ~= e then

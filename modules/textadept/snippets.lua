@@ -187,10 +187,10 @@ function M._select()
   for i = 1, #list do
     t[#t + 1], t[#t + 2], t[#t + 3] = list[i]:match('^(%Z+)%z(%Z+)%z(%Z+)$')
   end
-  local i = gui.filteredlist(_L['Select Snippet'],
-                             {_L['Trigger'], _L['Scope'], _L['Snippet Text']},
-                             t, true, '--output-column', '2',
-                             CURSES and {'--width', gui.size[1] - 2} or '')
+  local i = ui.filteredlist(_L['Select Snippet'],
+                            {_L['Trigger'], _L['Scope'], _L['Snippet Text']},
+                            t, true, '--output-column', '2',
+                            CURSES and {'--width', ui.size[1] - 2} or '')
   if i then M._insert(t[(i + 1) * 3]) end
 end
 

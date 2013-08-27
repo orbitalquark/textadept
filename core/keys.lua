@@ -80,13 +80,13 @@ local M = {}
 --       ['l'] = buffer.char_right,
 --       ['i'] = function()
 --         keys.MODE = nil
---         gui.statusbar_text = 'INSERT MODE'
+--         ui.statusbar_text = 'INSERT MODE'
 --       end
 --     }
 --     keys['esc'] = function() keys.MODE = 'command_mode' end
 --     events.connect(events.UPDATE_UI, function()
 --       if keys.MODE == 'command_mode' then return end
---       gui.statusbar_text = 'INSERT MODE'
+--       ui.statusbar_text = 'INSERT MODE'
 --     end)
 --     keys.MODE = 'command_mode' -- default mode
 --
@@ -221,7 +221,7 @@ local function key_command(prefix)
   local key_type = type(key)
   if key_type ~= 'function' and key_type ~= 'table' then return INVALID end
   if key_type == 'table' and #key == 0 and next(key) or getmetatable(key) then
-    gui.statusbar_text = _L['Keychain:']..' '..table.concat(keychain, ' ')
+    ui.statusbar_text = _L['Keychain:']..' '..table.concat(keychain, ' ')
     return CHAIN
   end
   return run_command(key, key_type) == false and PROPAGATE or HALT
@@ -246,8 +246,8 @@ local function keypress(code, shift, control, alt, meta)
                   (meta and OSX and META or '')..(shift and SHIFT or '')..key
   --print(key_seq)
 
-  gui.statusbar_text = ''
-  --if CURSES then gui.statusbar_text = '"'..key_seq..'"' end
+  ui.statusbar_text = ''
+  --if CURSES then ui.statusbar_text = '"'..key_seq..'"' end
   local keychain_size = #keychain
   if keychain_size > 0 and key_seq == M.CLEAR then
     clear_key_sequence()
@@ -265,7 +265,7 @@ local function keypress(code, shift, control, alt, meta)
   if status ~= CHAIN then clear_key_sequence() end
   if status > PROPAGATE then return true end -- CHAIN or HALT
   if status == INVALID and keychain_size > 0 then
-    gui.statusbar_text = _L['Invalid sequence']
+    ui.statusbar_text = _L['Invalid sequence']
     return true
   end
   -- PROPAGATE otherwise.

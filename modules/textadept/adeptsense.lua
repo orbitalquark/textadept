@@ -818,8 +818,8 @@ function M.goto_ctag(sense, kind, title)
   if kind == M.FUNCTION or kind == M.FIELD then
     table.insert(columns, 2, 'Class')
   end
-  local location = gui.filteredlist(title, columns, items, false,
-                                    '--output-column', '3')
+  local location = ui.filteredlist(title, columns, items, false,
+                                   '--output-column', '3')
   if not location then return end
   local path, line = location:match('^(%a?:?[^:]+):(.+)$')
   io.open_file(path)

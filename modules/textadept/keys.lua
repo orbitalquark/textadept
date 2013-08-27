@@ -230,8 +230,8 @@ M.utils = {
     buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
   end,
   find_in_files = function()
-    gui.find.in_files = true
-    gui.find.focus()
+    ui.find.in_files = true
+    ui.find.focus()
   end,
   select_command = function() _M.textadept.menu.select_command() end,
   snapopen_filedir = function()
@@ -399,7 +399,7 @@ keys[not OSX and not CURSES and 'c/' or 'm/'] = m_editing.block_comment
 keys.ct = m_editing.transpose_chars
 keys[not OSX and (not CURSES and 'cJ' or 'mj') or 'cj'] = m_editing.join_lines
 keys[not OSX and (not CURSES and 'c|' or 'c\\')
-             or 'm|'] = {gui.command_entry.enter_mode, 'filter_through'}
+             or 'm|'] = {ui.command_entry.enter_mode, 'filter_through'}
 -- Select.
 keys[not CURSES and 'cM' or 'mM'] = {m_editing.match_brace, 'select'}
 keys[not OSX and not CURSES and 'c<'
@@ -441,30 +441,30 @@ keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
 -- Search.
-keys[not OSX and not CURSES and 'cf' or 'mf'] = gui.find.focus
+keys[not OSX and not CURSES and 'cf' or 'mf'] = ui.find.focus
 if CURSES then keys.mF = keys.mf end -- in case mf is used by GUI terminals
-keys[not OSX and not CURSES and 'cg' or 'mg'] = gui.find.find_next
+keys[not OSX and not CURSES and 'cg' or 'mg'] = ui.find.find_next
 if not OSX and not CURSES then keys.f3 = keys.cg end
-keys[not OSX and not CURSES and 'cG' or 'mG'] = gui.find.find_prev
+keys[not OSX and not CURSES and 'cG' or 'mG'] = ui.find.find_prev
 if not OSX and not CURSES then keys.sf3 = keys.cG end
-keys[not OSX and (not CURSES and 'car' or 'mr') or 'cr'] = gui.find.replace
-keys[not OSX and (not CURSES and 'caR' or 'mR') or 'cR'] = gui.find.replace_all
+keys[not OSX and (not CURSES and 'car' or 'mr') or 'cr'] = ui.find.replace
+keys[not OSX and (not CURSES and 'caR' or 'mR') or 'cR'] = ui.find.replace_all
 -- Find Next is an when find pane is focused in GUI.
 -- Find Prev is ap when find pane is focused in GUI.
 -- Replace is ar when find pane is focused in GUI.
 -- Replace All is aa when find pane is focused in GUI.
-keys[not OSX and not CURSES and 'caf' or 'cmf'] = gui.find.find_incremental
+keys[not OSX and not CURSES and 'caf' or 'cmf'] = ui.find.find_incremental
 if not CURSES then keys[not OSX and 'cF' or 'mF'] = utils.find_in_files end
 -- Find in Files is ai when find pane is focused in GUI.
 if not CURSES then
-  keys[not OSX and 'cag' or 'cmg'] = {gui.find.goto_file_found, false, true}
-  keys[not OSX and 'caG' or 'cmG'] = {gui.find.goto_file_found, false, false}
+  keys[not OSX and 'cag' or 'cmg'] = {ui.find.goto_file_found, false, true}
+  keys[not OSX and 'caG' or 'cmG'] = {ui.find.goto_file_found, false, false}
 end
 keys[not OSX and 'cj' or 'mj'] = m_editing.goto_line
 
 -- Tools.
 keys[not OSX and (not CURSES and 'ce' or 'mc')
-             or 'me'] = {gui.command_entry.enter_mode, 'lua_command'}
+             or 'me'] = {ui.command_entry.enter_mode, 'lua_command'}
 keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
 keys[not OSX and 'cr' or 'mr'] = _M.textadept.run.run
 keys[not OSX and (not CURSES and 'cR' or 'cmr')
@@ -503,7 +503,7 @@ if not CURSES then keys[not OSX and 'ci' or 'mi'] = utils.show_style end
 -- Buffer.
 keys[not CURSES and 'c\t' or 'mn'] = {view.goto_buffer, view, 1, true}
 keys[not CURSES and 'cs\t' or 'mp'] = {view.goto_buffer, view, -1, true}
-keys[not OSX and not CURSES and 'cb' or 'mb'] = gui.switch_buffer
+keys[not OSX and not CURSES and 'cb' or 'mb'] = ui.switch_buffer
 if CURSES then keys.mB = keys.mb end -- in case mb is used by GUI terminals
 -- Indentation.
 -- TODO: {utils.set_indentation, 2}
@@ -532,8 +532,8 @@ if CURSES then keys.cl = keys.f5 end
 
 -- View.
 if not CURSES then
-  keys[not OSX and 'can' or 'ca\t'] = {gui.goto_view, 1, true}
-  keys[not OSX and 'cap' or 'cas\t'] = {gui.goto_view, -1, true}
+  keys[not OSX and 'can' or 'ca\t'] = {ui.goto_view, 1, true}
+  keys[not OSX and 'cap' or 'cas\t'] = {ui.goto_view, -1, true}
   keys[not OSX and 'cas' or 'cs'] = {view.split, view}
   if not OSX then keys.cah = keys.cas end
   keys[not OSX and 'cav' or 'cv'] = {view.split, view, true}
@@ -596,28 +596,28 @@ end
 
 -- Modes.
 keys.lua_command = {
-  ['\t'] = gui.command_entry.complete_lua,
-  ['\n'] = {gui.command_entry.finish_mode, gui.command_entry.execute_lua}
+  ['\t'] = ui.command_entry.complete_lua,
+  ['\n'] = {ui.command_entry.finish_mode, ui.command_entry.execute_lua}
 }
 keys.filter_through = {
-  ['\n'] = {gui.command_entry.finish_mode, m_editing.filter_through},
+  ['\n'] = {ui.command_entry.finish_mode, m_editing.filter_through},
 }
 keys.find_incremental = {
   ['\n'] = function()
-    gui.find.find_incremental(gui.command_entry.entry_text, true, true)
+    ui.find.find_incremental(ui.command_entry.entry_text, true, true)
   end,
   ['cr'] = function()
-    gui.find.find_incremental(gui.command_entry.entry_text, false, true)
+    ui.find.find_incremental(ui.command_entry.entry_text, false, true)
   end,
   ['\b'] = function()
-    gui.find.find_incremental(gui.command_entry.entry_text:sub(1, -2), true)
+    ui.find.find_incremental(ui.command_entry.entry_text:sub(1, -2), true)
     return false -- propagate
   end
 }
 -- Add the character for any key pressed without modifiers to incremental find.
 setmetatable(keys.find_incremental, {__index = function(t, k)
                if #k > 1 and k:find('^[cams]*.+$') then return end
-               gui.find.find_incremental(gui.command_entry.entry_text..k, true)
+               ui.find.find_incremental(ui.command_entry.entry_text..k, true)
              end})
 
 return M

@@ -40,13 +40,13 @@ M.MAX_RECENT_FILES = 10
 -- @see DEFAULT_SESSION
 -- @name load
 function M.load(filename)
-  filename = filename or gui.dialog('fileselect',
-                                    '--title', _L['Load Session'],
-                                    '--with-directory',
-                                    M.DEFAULT_SESSION:match('.+[/\\]') or '',
-                                    '--with-file',
-                                    M.DEFAULT_SESSION:match('[^/\\]+$') or '',
-                                    '--no-newline'):iconv(_CHARSET, 'UTF-8')
+  filename = filename or ui.dialog('fileselect',
+                                   '--title', _L['Load Session'],
+                                   '--with-directory',
+                                   M.DEFAULT_SESSION:match('.+[/\\]') or '',
+                                   '--with-file',
+                                   M.DEFAULT_SESSION:match('[^/\\]+$') or '',
+                                   '--no-newline'):iconv(_CHARSET, 'UTF-8')
   if filename == '' then return end
   local not_found = {}
   local f = io.open(filename, 'rb')
@@ -91,7 +91,7 @@ function M.load(filename)
     elseif line:find('^size:') then
       local maximized, width, height = line:match('^size: (%l*) ?(%d+) (%d+)$')
       maximized = maximized == 'true'
-      if maximized then gui.maximized = true else gui.size = {width, height} end
+      if maximized then ui.maximized = true else ui.size = {width, height} end
     elseif line:find('^recent:') then
       local filename = line:match('^recent: (.+)$')
       local recent, exists = io.recent_files, false
@@ -102,14 +102,14 @@ function M.load(filename)
     end
   end
   f:close()
-  gui.goto_view(current_view)
+  ui.goto_view(current_view)
   if #not_found > 0 then
-    gui.dialog('msgbox',
-               '--title', _L['Session Files Not Found'],
-               '--text', _L['The following session files were not found'],
-               '--informative-text', table.concat(not_found, '\n'),
-               '--icon', 'gtk-dialog-warning',
-               '--button1', _L['_OK'])
+    ui.dialog('msgbox',
+              '--title', _L['Session Files Not Found'],
+              '--text', _L['The following session files were not found'],
+              '--informative-text', table.concat(not_found, '\n'),
+              '--icon', 'gtk-dialog-warning',
+              '--button1', _L['_OK'])
   end
   return true
 end
@@ -127,13 +127,13 @@ end)
 -- @see DEFAULT_SESSION
 -- @name save
 function M.save(filename)
-  filename = filename or gui.dialog('filesave',
-                                    '--title', _L['Save Session'],
-                                    '--with-directory',
-                                    M.DEFAULT_SESSION:match('.+[/\\]') or '',
-                                    '--with-file',
-                                    M.DEFAULT_SESSION:match('[^/\\]+$') or '',
-                                    '--no-newline'):iconv(_CHARSET, 'UTF-8')
+  filename = filename or ui.dialog('filesave',
+                                   '--title', _L['Save Session'],
+                                   '--with-directory',
+                                   M.DEFAULT_SESSION:match('.+[/\\]') or '',
+                                   '--with-file',
+                                   M.DEFAULT_SESSION:match('[^/\\]+$') or '',
+                                   '--no-newline'):iconv(_CHARSET, 'UTF-8')
   if filename == '' then return end
   local session = {}
   local buffer_line = "buffer: %d %d %d %s" -- anchor, cursor, line, filename
@@ -171,7 +171,7 @@ function M.save(filename)
       session[#session + 1] = view_line:format(spaces, 2, _BUFFERS[c2.buffer])
     end
   end
-  local splits = gui.get_split_table()
+  local splits = ui.get_split_table()
   if splits[1] and splits[2] then
     write_split(splits, 0, 0)
   else
@@ -180,7 +180,7 @@ function M.save(filename)
   -- Write out the current focused view.
   session[#session + 1] = ("current_view: %d"):format(_VIEWS[view])
   -- Write out other things.
-  local maximized, size = tostring(gui.maximized), gui.size
+  local maximized, size = tostring(ui.maximized), ui.size
   session[#session + 1] = ("size: %s %d %d"):format(maximized, size[1], size[2])
   for i = 1, #io.recent_files do
     if i > M.MAX_RECENT_FILES then break end

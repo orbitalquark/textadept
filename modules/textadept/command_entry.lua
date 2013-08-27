@@ -1,7 +1,7 @@
 -- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- Abbreviated environment and commands from Jay Gould.
 
-local M = gui.command_entry
+local M = ui.command_entry
 
 --[[ This comment is for LuaDoc.
 ---
@@ -16,11 +16,11 @@ local M = gui.command_entry
 -- for looking up key bindings. An example mode is "lua_command" mode for
 -- executing Lua commands:
 --
---     local gui_ce = gui.command_entry
---     keys['ce'] = {gui_ce.enter_mode, 'lua_command'}
+--     local ui_ce = ui.command_entry
+--     keys['ce'] = {ui_ce.enter_mode, 'lua_command'}
 --     keys.lua_command = {
---       ['\t'] = gui_ce.complete_lua,
---       ['\n'] = {gui_ce.finish_mode, gui_ce.execute_lua}
+--       ['\t'] = ui_ce.complete_lua,
+--       ['\n'] = {ui_ce.finish_mode, ui_ce.execute_lua}
 --     }
 --
 -- In this case, `Ctrl+E` opens the command entry and enters "lua_command" key
@@ -33,7 +33,7 @@ local M = gui.command_entry
 -- [modes]: keys.html#Modes
 -- @field entry_text (string)
 --   The text in the entry.
-module('gui.command_entry')]]
+module('ui.command_entry')]]
 
 ---
 -- Opens the command entry in key mode *mode*.
@@ -42,7 +42,7 @@ module('gui.command_entry')]]
 -- command entry, and restores normal key lookup.
 -- This function is useful for binding keys to enter a command entry mode.
 -- @param mode The key mode to enter into, or `nil` to exit the current mode.
--- @usage keys['ce'] = {gui.command_entry.enter_mode, 'command_entry'}
+-- @usage keys['ce'] = {ui.command_entry.enter_mode, 'command_entry'}
 -- @see _G.keys.MODE
 -- @name enter_mode
 function M.enter_mode(mode)
@@ -61,7 +61,7 @@ end
 -- action with the entered text.
 -- @param f Optional function to call. It should accept the command entry text
 --   as an argument.
--- @usage keys['\n'] = {gui.command_entry.finish_mode, gui.print}
+-- @usage keys['\n'] = {ui.command_entry.finish_mode, ui.print}
 -- @name finish_mode
 function M.finish_mode(f)
   M.enter_mode(nil)
@@ -78,12 +78,12 @@ local env = setmetatable({}, {
     if f and type(f) == 'function' then
       f = function(...) buffer[k](buffer, ...) end
     elseif f == nil then
-      f = view[k] or gui[k] or _G[k]
+      f = view[k] or ui[k] or _G[k]
     end
     return f
   end,
   __newindex = function(t, k, v)
-    for _, t2 in ipairs{buffer, view, gui} do
+    for _, t2 in ipairs{buffer, view, ui} do
       if t2[k] ~= nil then t2[k] = v return end
     end
     rawset(t, k, v)
@@ -93,7 +93,7 @@ local env = setmetatable({}, {
 ---
 -- Executes string *code* as Lua code.
 -- Code is subject to an "abbreviated" environment where the `buffer`, `view`,
--- and `gui` tables are also considered as globals.
+-- and `ui` tables are also considered as globals.
 -- Prints the results of '=' expressions like in the Lua prompt.
 -- @param code The Lua code to execute.
 -- @name execute_lua
@@ -102,7 +102,7 @@ function M.execute_lua(code)
   local f, err = load(code, nil, 'bt', env)
   if err then error(err) end
   local result = f()
-  if result ~= nil then gui.print(result) end
+  if result ~= nil then ui.print(result) end
   events.emit(events.UPDATE_UI)
 end
 args.register('-e', '--execute', 1, M.execute_lua, 'Execute Lua code')
@@ -110,7 +110,7 @@ args.register('-e', '--execute', 1, M.execute_lua, 'Execute Lua code')
 ---
 -- Shows a set of Lua code completions for string *code* or `entry_text`.
 -- Completions are subject to an "abbreviated" environment where the `buffer`,
--- `view`, and `gui` tables are also considered as globals.
+-- `view`, and `ui` tables are also considered as globals.
 -- @param code The Lua code to complete. The default value is the value of
 --   `entry_text`.
 -- @name complete_lua
@@ -122,7 +122,7 @@ function M.complete_lua(code)
   local cmpls = {}
   prefix = '^'..prefix
   if not ok then -- shorthand notation
-    for _, t in ipairs{buffer, view, gui, _G} do
+    for _, t in ipairs{buffer, view, ui, _G} do
       for k in pairs(t) do
         if type(k) == 'string' and k:find(prefix) then cmpls[#cmpls + 1] = k end
       end

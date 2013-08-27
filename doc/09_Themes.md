@@ -28,15 +28,15 @@ display these standard colors.
 ## Setting Themes
 
 Override the default theme in your [*~/.textadept/init.lua*][] using the
-[`gui.set_theme()`][] function. For example:
+[`ui.set_theme()`][] function. For example:
 
-    gui.set_theme('dark')
+    ui.set_theme('dark')
 
 Either restart Textadept for changes to take effect or type [`reset()`][] in the
 [command entry][].
 
 [*~/.textadept/init.lua*]: 08_Preferences.html#User.Init
-[`gui.set_theme()`]: api/gui.html#set_theme
+[`ui.set_theme()`]: api/ui.html#set_theme
 [`reset()`]: api/_G.html#reset
 [command entry]: 10_Advanced.html#Command.Entry
 
@@ -54,12 +54,12 @@ scratch or tweak an existing one. Creating a new one is straightforward -- all
 you need to do is define a set of colors and a set of styles. Just follow the
 example of existing themes. If instead you want to use an existing theme like
 "light" but only change the font face and font size, you have two options: call
-[`gui.set_theme()`][] from your *~/.textadept/init.lua* with additional
+[`ui.set_theme()`][] from your *~/.textadept/init.lua* with additional
 parameters, or create an abbreviated *~/.textadept/themes/light.lua* using Lua's
 `dofile()` function. For example:
 
     -- File *~/.textadept/init.lua*
-    gui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)
+    ui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)
 
     -- File *~/.textadept/themes/light.lua*
     dofile(_HOME..'/themes/light.lua')
@@ -70,7 +70,7 @@ Either one loads Textadept's "light" theme, but applies your font preferences.
 The same techniques work for tweaking individual theme colors and/or styles, but
 managing more changes is probably easier with the latter.
 
-[`gui.set_theme()`]: api/gui.html#set_theme
+[`ui.set_theme()`]: api/ui.html#set_theme
 
 ### Language
 

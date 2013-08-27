@@ -191,7 +191,7 @@ local M = {}
 --   Emitted after selecting a menu item.
 --   Arguments:
 --
---   * _`menu_id`_: The numeric ID of the menu item set in [`gui.menu()`][].
+--   * _`menu_id`_: The numeric ID of the menu item set in [`ui.menu()`][].
 -- @field QUIT (string)
 --   Emitted when quitting Textadept.
 --   When connecting to this event, connect with an index of 1 or the handler
@@ -238,22 +238,22 @@ local M = {}
 --   Emitted on startup and by [`view:split()`][].
 -- @field VIEW_BEFORE_SWITCH (string)
 --   Emitted right before switching to another view.
---   Emitted by [`gui.goto_view()`][].
+--   Emitted by [`ui.goto_view()`][].
 -- @field VIEW_AFTER_SWITCH (string)
 --   Emitted right after switching to another view.
---   Emitted by [`gui.goto_view()`][].
+--   Emitted by [`ui.goto_view()`][].
 --
 -- [`buffer:auto_c_cancel()`]: buffer.html#auto_c_cancel
 -- [`view:goto_buffer()`]: view.html#goto_buffer
 -- [`buffer.new()`]: buffer.html#new
 -- [`buffer:delete()`]: buffer.html#delete
 -- [dwell period]: buffer.html#mouse_dwell_time
--- [`gui.menu()`]: gui.html#menu
+-- [`ui.menu()`]: ui.html#menu
 -- [`quit()`]: _G.html#quit
 -- [`reset()`]: _G.html#reset
 -- [`buffer:user_list_show()`]: buffer.html#user_list_show
 -- [`view:split()`]: view.html#split
--- [`gui.goto_view()`]: gui.html#goto_view
+-- [`ui.goto_view()`]: ui.html#goto_view
 module('events')]]
 
 local handlers = {}
@@ -266,7 +266,7 @@ local handlers = {}
 -- @param f The Lua function to connect to *event*.
 -- @param index Optional index to insert the handler into.
 -- @return handler ID.
--- @usage events.connect('my_event', function(msg) gui.print(msg) end)
+-- @usage events.connect('my_event', function(msg) ui.print(msg) end)
 -- @see disconnect
 -- @name connect
 function M.connect(event, f, index)

@@ -128,7 +128,7 @@ events.connect(events.RESET_AFTER, restore_lexer)
 -- @see buffer.set_lexer
 -- @name select_lexer
 function M.select_lexer()
-  local lexer = gui.filteredlist(_L['Select Lexer'], _L['Name'], M.lexers)
+  local lexer = ui.filteredlist(_L['Select Lexer'], _L['Name'], M.lexers)
   if lexer then buffer:set_lexer(lexer) end
 end
 

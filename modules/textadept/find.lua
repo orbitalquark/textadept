@@ -1,6 +1,6 @@
 -- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-local M = gui.find
+local M = ui.find
 
 --[[ This comment is for LuaDoc.
 ---
@@ -57,7 +57,7 @@ local M = gui.find
 --   previous occurrence.
 --   This is useful for implementing a more visual or audible notice when a
 --   search wraps in addition to the statusbar message.
-module('gui.find')]]
+module('ui.find')]]
 
 local _L = _L
 M.find_label_text = not CURSES and _L['_Find:'] or _L['Find:']
@@ -154,16 +154,16 @@ local function find_(text, next, flags, no_wrap, wrapped)
   if pos == -1 and not no_wrap then
     local anchor, pos = buffer.anchor, buffer.current_pos
     buffer:goto_pos(next and 0 or buffer.length)
-    gui.statusbar_text = _L['Search wrapped']
+    ui.statusbar_text = _L['Search wrapped']
     events.emit(events.FIND_WRAPPED)
     pos = find_(text, next, flags, true, true)
     if pos == -1 then
-      gui.statusbar_text = _L['No results found']
+      ui.statusbar_text = _L['No results found']
       buffer:line_scroll(0, first_visible_line - buffer.first_visible_line)
       buffer:goto_pos(anchor)
     end
   elseif not wrapped then
-    gui.statusbar_text = ''
+    ui.statusbar_text = ''
   end
 
   return pos
@@ -203,8 +203,8 @@ end
 function M.find_incremental(text, next, anchor)
   if text then find_incremental(text, next, anchor) return end
   M.incremental_start = buffer.current_pos
-  gui.command_entry.entry_text = ''
-  gui.command_entry.enter_mode('find_incremental')
+  ui.command_entry.entry_text = ''
+  ui.command_entry.enter_mode('find_incremental')
 end
 
 ---
@@ -219,12 +219,12 @@ end
 -- @name find_in_files
 function M.find_in_files(utf8_dir)
   if not utf8_dir then
-    utf8_dir = gui.dialog('fileselect',
-                          '--title', _L['Find in Files'],
-                          '--select-only-directories',
-                          '--with-directory',
-                          (buffer.filename or ''):match('^.+[/\\]') or '',
-                          '--no-newline')
+    utf8_dir = ui.dialog('fileselect',
+                         '--title', _L['Find in Files'],
+                         '--select-only-directories',
+                         '--with-directory',
+                         (buffer.filename or ''):match('^.+[/\\]') or '',
+                         '--no-newline')
   end
   if utf8_dir == '' then return end
 
@@ -247,7 +247,7 @@ function M.find_in_files(utf8_dir)
   if #matches == 1 then matches[2] = _L['No results found'] end
   matches[#matches + 1] = ''
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-  gui._print(_L['[Files Found Buffer]'], table.concat(matches, '\n'))
+  ui._print(_L['[Files Found Buffer]'], table.concat(matches, '\n'))
 end
 
 -- Replaces found text.
@@ -278,15 +278,15 @@ local function replace(rtext)
     buffer:replace_target(rtext:gsub('\\[abfnrtv\\]', escapes))
     buffer:goto_pos(buffer.target_end) -- 'find' text after this replacement
   else
-    gui.dialog('ok-msgbox',
-               '--title', _L['Error'],
-               '--text', _L['An error occured:'],
-               '--informative-text',
-               rtext:match(':1:(.+)$') or rtext:match(':%d+:(.+)$'),
-               '--icon', 'gtk-dialog-error',
-               '--button1', _L['_OK'],
-               '--button2', _L['_Cancel'],
-               '--no-cancel')
+    ui.dialog('ok-msgbox',
+              '--title', _L['Error'],
+              '--text', _L['An error occured:'],
+              '--informative-text',
+              rtext:match(':1:(.+)$') or rtext:match(':%d+:(.+)$'),
+              '--icon', 'gtk-dialog-error',
+              '--button1', _L['_OK'],
+              '--button2', _L['_Cancel'],
+              '--no-cancel')
     -- Since find is called after replace returns, have it 'find' the current
     -- text again, rather than the next occurance so the user can fix the error.
     buffer:goto_pos(buffer.current_pos)
@@ -327,7 +327,7 @@ local function replace_all(ftext, rtext)
     buffer:set_sel(s, e > 0 and e or buffer.length)
     buffer:indicator_clear_range(e, 1)
   end
-  gui.statusbar_text = ("%d %s"):format(count, _L['replacement(s) made'])
+  ui.statusbar_text = ("%d %s"):format(count, _L['replacement(s) made'])
   buffer:end_undo_action()
 end
 events.connect(events.REPLACE_ALL, replace_all)
@@ -352,7 +352,7 @@ function M.goto_file_found(line, next)
     if is_ff_buf(_BUFFERS[i]) then ff_buf = i break end
   end
   if not ff_view and not ff_buf then return end
-  if ff_view then gui.goto_view(ff_view) else view:goto_buffer(ff_buf) end
+  if ff_view then ui.goto_view(ff_view) else view:goto_buffer(ff_buf) end
 
   -- If not line was given, find the next search result.
   if not line and next ~= nil then
@@ -374,7 +374,7 @@ function M.goto_file_found(line, next)
   local file, line_num = buffer:get_cur_line():match('^(.+):(%d+):.+$')
   if not file then if CURSES then view:goto_buffer(cur_buf) end return end
   _M.textadept.editing.select_line()
-  gui.goto_file(file, true, preferred_view)
+  ui.goto_file(file, true, preferred_view)
   _M.textadept.editing.goto_line(line_num)
 end
 events.connect(events.DOUBLE_CLICK, function(pos, line)
