@@ -289,6 +289,11 @@ M.utils = {
     buffer:cut()
   end
 }
+
+local keys, buffer, view = keys, buffer, view
+local editing, utils = textadept.editing, M.utils
+local OSX, CURSES = OSX, CURSES
+
 -- The following buffer functions need to be constantized in order for menu
 -- items to identify the key associated with the functions.
 local menu_buffer_functions = {
@@ -296,16 +301,7 @@ local menu_buffer_functions = {
   'select_all', 'upper_case', 'lower_case', 'move_selected_lines_up',
   'move_selected_lines_down', 'zoom_in', 'zoom_out', 'colourise'
 }
-local function constantize_menu_buffer_functions()
-  local buffer = buffer
-  for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
-end
-events.connect(events.BUFFER_NEW, constantize_menu_buffer_functions)
-constantize_menu_buffer_functions() -- for the first buffer
-
-local keys, buffer, view = keys, buffer, view
-local editing, utils = textadept.editing, M.utils
-local OSX, CURSES = OSX, CURSES
+for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 
 -- Windows and Linux key bindings.
 --

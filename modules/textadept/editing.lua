@@ -509,7 +509,6 @@ local function set_highlight_properties()
   buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
   if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
 end
-if buffer then set_highlight_properties() end
 events.connect(events.VIEW_NEW, set_highlight_properties)
 
 ---

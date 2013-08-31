@@ -158,7 +158,7 @@ buffer\_new()                     |Renamed |\_G.[buffer.new()][]
 **_M.textadept**                  |Renamed |[textadept][]
 filter\_through                   |Removed |N/A
 filter\_through.filter\_through() |Renamed |editing.[filter\_through()][]
-mime\_types                       |Renamed |[file\_types][]<sup>†</sup>
+mime\_types                       |Renamed |[file\_types][]<sup>+</sup>
 **_M.textadept.bookmark**         |        |
 N/A                               |New     |[goto\_mark()][]
 MARK\_BOOKMARK\_COLOR             |Renamed |[BOOKMARK\_COLOR][]
@@ -175,8 +175,9 @@ contextmenu                       |Removed |N/A
 **_M.textadept.run**              |        |
 MARK\_ERROR\_BACK                 |Renamed |[ERROR\_COLOR][]
 **_M.textadept.snapopen**         |Removed |N/A
-open                              |Changed |\_G.[io.snapopen()][]<sup>‡</sup>
+open                              |Changed |\_G.[io.snapopen()][]<sup>†</sup>
 **events**                        |        |
+N/A                               |New     |[INITIALIZED][]<sup>‡</sup>
 handlers                          |Removed |N/A
 **gui**                           |Renamed |[ui][]
 N/A                               |New     |[maximized][]
@@ -187,9 +188,13 @@ try\_encodings                    |Renamed |[encodings][]
 
 <sup>\*</sup>`arg` is `nil` when resetting.
 
-<sup>†</sup>Removed *mime_types.conf* files. Interact with Lua tables directly.
+<sup>+</sup>Removed *mime_types.conf* files. Interact with Lua tables directly.
 
-<sup>‡</sup>Changed arguments too.
+<sup>†</sup>Changed arguments too.
+
+<sup>‡</sup>Custom menus and key bindings should take advantage of this since
+not all buffer functions are available at the `require()` stage. See
+*modules/textadept/init.lua* for an example.
 
 [buffer.new()]: api/buffer.html#new
 [textadept]: api/textadept.html
@@ -202,6 +207,7 @@ try\_encodings                    |Renamed |[encodings][]
 [select\_enclosed()]: api/textadept.editing.html#select_enclosed
 [ERROR\_COLOR]: api/textadept.run.html#ERROR_COLOR
 [io.snapopen()]: api/io.html#snapopen
+[INITIALIZED]: api/events.html#INITIALIZED
 [ui]: api/ui.html
 [maximized]: api/ui.html#maximized
 [goto\_file\_found()]: api/ui.find.html#goto_file_found

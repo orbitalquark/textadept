@@ -19,8 +19,10 @@ M.run = require('textadept.run')
 M.session = require('textadept.session')
 M.snippets = require('textadept.snippets')
 
--- These need to be loaded last.
-M.keys = require('textadept.keys')
-M.menu = require('textadept.menu')
+events.connect(events.INITIALIZED, function()
+  -- These need to be loaded last.
+  M.keys = require('textadept.keys')
+  M.menu = require('textadept.menu')
+end)
 
 return M

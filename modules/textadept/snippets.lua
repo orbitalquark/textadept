@@ -368,10 +368,9 @@ M._snippet_mt = {
   end,
 }
 
-local INDIC_HIDDEN = buffer.INDIC_HIDDEN
-if buffer then buffer.indic_style[INDIC_SNIPPET] = INDIC_HIDDEN end
-events.connect(events.VIEW_NEW,
-               function() buffer.indic_style[INDIC_SNIPPET] = INDIC_HIDDEN end)
+events.connect(events.VIEW_NEW, function()
+  buffer.indic_style[INDIC_SNIPPET] = buffer.INDIC_HIDDEN
+end)
 
 ---
 -- Map of snippet triggers with their snippet text, with language-specific
