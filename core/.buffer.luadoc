@@ -861,14 +861,14 @@
 -- @field wrap_indent_mode (number)
 --   The wrapped line indent mode.
 --
---   * `buffer.SC_WRAP_INDENT_FIXED`
+--   * `buffer.SC_WRAPINDENT_FIXED`
 --     Indent wrapped lines by [`buffer.wrap_start_indent`](#wrap_start_indent).
---   * `buffer.SC_WRAP_INDENT_SAME`
+--   * `buffer.SC_WRAPINDENT_SAME`
 --     Indent wrapped lines the same as the first line.
---   * `buffer.SC_WRAP_INDENT_INDENT`
+--   * `buffer.SC_WRAPINDENT_INDENT`
 --     Indent wrapped lines one more level than the first line.
 --
---   The default value is `buffer.SC_WRAP_INDENT_FIXED`.
+--   The default value is `buffer.SC_WRAPINDENT_FIXED`.
 -- @field wrap_mode (number)
 --   Long line wrap mode.
 --
