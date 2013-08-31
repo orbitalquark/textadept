@@ -127,7 +127,7 @@ static lua_State *lua;
 #if CURSES
 static int quit;
 #endif
-static int closing;
+static int initing, closing;
 static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
            tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 static int lL_init(lua_State *, int, char **, int);
@@ -784,10 +784,10 @@ static void l_pushdoc(lua_State *L, sptr_t doc) {
  * @param view The Scintilla view to focus.
  */
 static void goto_view(Scintilla *view) {
-  if (!closing) lL_event(lua, "view_before_switch", -1);
+  if (!initing && !closing) lL_event(lua, "view_before_switch", -1);
   l_setglobalview(lua, focused_view = view);
   l_setglobaldoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0));
-  if (!closing) lL_event(lua, "view_after_switch", -1);
+  if (!initing && !closing) lL_event(lua, "view_after_switch", -1);
 }
 
 /** `ui.goto_view()` Lua function. */
@@ -1346,7 +1346,7 @@ static void new_buffer(sptr_t doc) {
     SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
   }
   l_setglobaldoc(lua, doc);
-  lL_event(lua, "buffer_new", -1);
+  if (!initing) lL_event(lua, "buffer_new", -1);
 }
 
 /** `_G.quit()` Lua function. */
@@ -1865,9 +1865,9 @@ static int lview_goto_buffer(lua_State *L) {
   // to handlers will not throw 'indexed buffer is not the focused one' error.
   int switch_focus = (view != focused_view);
   if (switch_focus) SS(view, SCI_SETFOCUS, TRUE, 0);
-  lL_event(L, "buffer_before_switch", -1);
+  if (!initing) lL_event(L, "buffer_before_switch", -1);
   lL_gotodoc(L, view, n, relative);
-  lL_event(L, "buffer_after_switch", -1);
+  if (!initing) lL_event(L, "buffer_after_switch", -1);
   if (switch_focus) SS(view, SCI_SETFOCUS, FALSE, 0), focus_view(prev_view);
   return 0;
 }
@@ -2009,7 +2009,7 @@ static Scintilla *new_view(sptr_t doc) {
     SS(view, SCI_SETDOCPOINTER, 0, doc);
     l_setglobaldoc(lua, doc);
   } else new_buffer(SS(view, SCI_GETDOCPOINTER, 0, 0));
-  lL_event(lua, "view_new", -1);
+  if (!initing) lL_event(lua, "view_new", -1);
   return view;
 }
 
@@ -2320,8 +2320,7 @@ int main(int argc, char **argv) {
 
   setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C");
   if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
-  new_window();
-  lL_dofile(lua, "init.lua");
+  initing = TRUE, new_window(), lL_dofile(lua, "init.lua"), initing = FALSE;
 #if (__APPLE__ && !CURSES)
   gtkosx_application_ready(osxapp);
 #endif

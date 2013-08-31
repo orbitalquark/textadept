@@ -250,7 +250,6 @@ local function set_error_properties()
   if CURSES then buffer:marker_define(MARK_ERROR, CURSES_MARK) end
   buffer.marker_back[MARK_ERROR] = buffer.property_int[M.ERROR_COLOR]
 end
-if buffer then set_error_properties() end
 events.connect(events.VIEW_NEW, set_error_properties)
 
 return M

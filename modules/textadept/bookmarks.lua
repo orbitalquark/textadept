@@ -73,7 +73,6 @@ local function set_bookmark_properties()
   if CURSES then buffer:marker_define(MARK_BOOKMARK, CURSES_MARK) end
   buffer.marker_back[MARK_BOOKMARK] = buffer.property_int[M.BOOKMARK_COLOR]
 end
-if buffer then set_bookmark_properties() end
 events.connect(events.VIEW_NEW, set_bookmark_properties)
 
 return M

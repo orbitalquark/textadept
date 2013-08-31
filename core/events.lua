@@ -164,6 +164,8 @@ local M = {}
 --   Arguments:
 --
 --   * _`position`_: The position in the buffer unclicked.
+-- @field INITIALIZED (string)
+--   Emitted after Textadept finishes initializing.
 -- @field KEYPRESS (string)
 --   Emitted when pressing a key.
 --   If any handler returns `true`, the key is not inserted into the buffer.
@@ -367,9 +369,9 @@ for _, n in pairs(scnotifications) do M[n[1]:upper()] = n[1] end
 local ta_events = {
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
   'buffer_deleted', 'buffer_new', 'command_entry_command',
-  'command_entry_keypress', 'error', 'find', 'keypress', 'menu_clicked', 'quit',
-  'replace', 'replace_all', 'reset_after', 'reset_before', 'view_after_switch',
-  'view_before_switch', 'view_new'
+  'command_entry_keypress', 'error', 'find', 'initialized', 'keypress',
+  'menu_clicked', 'quit', 'replace', 'replace_all', 'reset_after',
+  'reset_before', 'view_after_switch', 'view_before_switch', 'view_new'
 }
 for _, e in pairs(ta_events) do M[e:upper()] = e end
 
