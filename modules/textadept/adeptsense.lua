@@ -470,7 +470,7 @@ function M.get_class(sense, symbol)
     if class then
       -- The type declaration should not be in a comment or string.
       local pos = buffer:position_from_line(i)
-      local style = buffer:get_style_name(buffer.style_at[pos + s - 1])
+      local style = buffer.style_name[buffer.style_at[pos + s - 1]]
       if style ~= 'comment' and style ~= 'string' then break end
       class = nil
     end

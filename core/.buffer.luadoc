@@ -774,6 +774,8 @@
 --   Table of flags indicating whether or not text within styles has an italic
 --   font face for style numbers from `0` to `255`.
 --   The default values are `false`.
+-- @field style_name (table, Read-only)
+--   Table of style names for style numbers from `0` to `255`.
 -- @field style_size (table)
 --   Table of font sizes of text within styles for style numbers from `0` to
 --   `255`.
@@ -2489,12 +2491,12 @@ function undo(buffer) end
 function upper_case(buffer) end
 
 ---
--- Displays a list constructed from string *item_list*, whose items are
--- delimited by `buffer.auto_c_separator` characters, using the list identifier
--- number *list_type* which is greater than zero and sent in a
--- `USER_LIST_SELECTION` event after the user selects an item.
+-- Displays a list identified by list identifier number *list_item* and
+-- constructed from string *item_list*, whose items are delimited by
+-- `buffer.auto_c_separator` characters.
 -- The sorted order of *item_list*, `buffer.auto_c_order`, must have already
--- been defined.
+-- been defined. When the user selects an item, *list_type* is sent in a
+-- `USER_LIST_SELECTION` event along with the selection.
 -- @param buffer The global buffer.
 -- @param list_type The list identifier number greater than zero to use.
 -- @param item_list The sorted string of words to show, separated by
@@ -2772,13 +2774,6 @@ function get_lexer(buffer, current) end
 --   auto-detect the buffer's language.
 -- @usage buffer.set_lexer(buffer, 'language_name')
 function set_lexer(buffer, lang) end
-
----
--- Returns the name of style number *style_num*, in the range of `0` to `255`.
--- @param buffer The global buffer.
--- @param style_num The style number from `0` to `255` to get the name of.
--- @see buffer.style_at
-function get_style_name(buffer, style_num) end
 
 -- Unused Fields.
 --   * annotation_styles
