@@ -176,6 +176,8 @@ contextmenu                       |Removed |N/A
 MARK\_ERROR\_BACK                 |Renamed |[ERROR\_COLOR][]
 **_M.textadept.snapopen**         |Removed |N/A
 open                              |Changed |\_G.[io.snapopen()][]<sup>†</sup>
+**buffer**                        |        |
+get\_style\_name(buffer, n)       |Renamed |[style\_name][]\[n\]
 **events**                        |        |
 N/A                               |New     |[INITIALIZED][]<sup>‡</sup>
 handlers                          |Removed |N/A
@@ -207,6 +209,7 @@ not all buffer functions are available at the `require()` stage. See
 [select\_enclosed()]: api/textadept.editing.html#select_enclosed
 [ERROR\_COLOR]: api/textadept.run.html#ERROR_COLOR
 [io.snapopen()]: api/io.html#snapopen
+[style\_name]: api/buffer.html#style_name
 [INITIALIZED]: api/events.html#INITIALIZED
 [ui]: api/ui.html
 [maximized]: api/ui.html#maximized

@@ -98,17 +98,16 @@ local function set_lexer(buffer, lang)
   buffer:colourise(0, buffer:position_from_line(last_line + 1))
 end
 
--- LuaDoc is in core/.buffer.luadoc.
-local function get_style_name(buffer, style_num)
-  buffer:check_global()
-  if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
-  return buffer:private_lexer_call(style_num)
-end
-
 -- Gives new buffers lexer-specific functions.
 local function set_lexer_functions()
   buffer.get_lexer, buffer.set_lexer = get_lexer, set_lexer
-  buffer.get_style_name = get_style_name
+  buffer.style_name = setmetatable({}, {
+    __index = function(t, style_num) -- LuaDoc is in core/.buffer.luadoc
+      if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
+      return buffer:private_lexer_call(style_num)
+    end,
+    __newindex = function() error('read-only property') end
+  })
 end
 events.connect(events.BUFFER_NEW, set_lexer_functions, 1)
 
