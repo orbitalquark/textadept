@@ -184,7 +184,7 @@ termkey_objs = termkey.o driver-ti.o driver-csi.o
 cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
            cdk_params.o cdkscreen.o debug.o draw.o entry.o fselect.o \
            itemlist.o label.o mentry.o menu.o popup_label.o position.o \
-           scroll.o select_file.o traverse.o version.o
+           scroll.o scroller.o select_file.o traverse.o version.o
 
 # Build.
 

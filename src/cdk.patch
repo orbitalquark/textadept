@@ -1,7 +1,7 @@
-diff -r fbcff989cc14 cdk.c
---- a/cdk.c	Thu Jun 13 12:05:08 2013 -0400
-+++ b/cdk.c	Thu Jun 13 12:10:44 2013 -0400
-@@ -1263,7 +1263,7 @@
+diff -r 9d0780ddcbab cdk.c
+--- a/cdk.c	Mon Sep 02 13:43:26 2013 -0400
++++ b/cdk.c	Mon Sep 02 13:46:55 2013 -0400
+@@ -1262,7 +1262,7 @@
  	  * less than the provided word.  At this point we will set the index
  	  * to the current position.  If 'ret' is greater than 0, then the
  	  * current word is alphabetically greater than the given word.  We
@@ -10,7 +10,7 @@ diff -r fbcff989cc14 cdk.c
  	  * If they are equal, then we've found it.
  	  */
  	 if (ret < 0)
-@@ -1335,7 +1335,7 @@
+@@ -1334,7 +1334,7 @@
  	 for (x = pathLen - 1; x != 0; --x)
  	 {
  	    /* Find the last '/' in the pathname. */
@@ -19,7 +19,7 @@ diff -r fbcff989cc14 cdk.c
  	    {
  	       strcpy (base, pathname + x + 1);
  	       break;
-@@ -1362,7 +1362,7 @@
+@@ -1361,7 +1361,7 @@
         && (pathLen = strlen (pathname)) != 0)
     {
        x = pathLen;
@@ -28,9 +28,9 @@ diff -r fbcff989cc14 cdk.c
        {
  	 dir[x--] = '\0';
        }
-diff -r fbcff989cc14 cdk.h
---- a/cdk.h	Thu Jun 13 12:05:08 2013 -0400
-+++ b/cdk.h	Thu Jun 13 12:10:44 2013 -0400
+diff -r 9d0780ddcbab cdk.h
+--- a/cdk.h	Mon Sep 02 13:43:26 2013 -0400
++++ b/cdk.h	Mon Sep 02 13:46:55 2013 -0400
 @@ -226,6 +226,10 @@
   */
  typedef enum {vEARLY_EXIT, vESCAPE_HIT, vNORMAL, vNEVER_ACTIVATED, vERROR} EExitType;
@@ -82,9 +82,9 @@ diff -r fbcff989cc14 cdk.h
  
  /*
   * Low-level object drawing
-diff -r fbcff989cc14 cdk_config.h
+diff -r 9d0780ddcbab cdk_config.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/cdk_config.h	Thu Jun 13 12:10:44 2013 -0400
++++ b/cdk_config.h	Mon Sep 02 13:46:55 2013 -0400
 @@ -0,0 +1,67 @@
 +/* include/cdk_config.h.  Generated automatically by configure.  */
 +/*
@@ -153,9 +153,9 @@ diff -r fbcff989cc14 cdk_config.h
 +#endif
 +
 +#endif /* CDK_CONFIG_H */
-diff -r fbcff989cc14 cdk_util.h
---- a/cdk_util.h	Thu Jun 13 12:05:08 2013 -0400
-+++ b/cdk_util.h	Thu Jun 13 12:10:44 2013 -0400
+diff -r 9d0780ddcbab cdk_util.h
+--- a/cdk_util.h	Mon Sep 02 13:43:26 2013 -0400
++++ b/cdk_util.h	Mon Sep 02 13:46:55 2013 -0400
 @@ -53,6 +53,10 @@
   * SUCH DAMAGE.
   */
@@ -167,9 +167,9 @@ diff -r fbcff989cc14 cdk_util.h
  /*
   * This beeps at the user. The standard curses beep() does not
   * flush the stream, so it will only beep until a force is made.
-diff -r fbcff989cc14 cdk_version.h
+diff -r 9d0780ddcbab cdk_version.h
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/cdk_version.h	Thu Jun 13 12:10:44 2013 -0400
++++ b/cdk_version.h	Mon Sep 02 13:46:55 2013 -0400
 @@ -0,0 +1,56 @@
 +/*
 + * $Id: cdk_version.hin,v 1.2 2012/03/20 22:10:36 tom Exp $
@@ -227,9 +227,9 @@ diff -r fbcff989cc14 cdk_version.h
 +#endif
 +
 +#endif /* CDK_VERSION_H */
-diff -r fbcff989cc14 fselect.c
---- a/fselect.c	Thu Jun 13 12:05:08 2013 -0400
-+++ b/fselect.c	Thu Jun 13 12:10:44 2013 -0400
+diff -r 9d0780ddcbab fselect.c
+--- a/fselect.c	Mon Sep 02 13:43:26 2013 -0400
++++ b/fselect.c	Mon Sep 02 13:46:55 2013 -0400
 @@ -1104,7 +1104,7 @@
  
  static char *make_pathname (const char *directory, const char *filename)
@@ -255,16 +255,16 @@ diff -r fbcff989cc14 fselect.c
  }
  
  /*
-diff -r fbcff989cc14 gen-scale.c
---- a/gen-scale.c	Thu Jun 13 12:05:08 2013 -0400
+diff -r 9d0780ddcbab gen-scale.c
+--- a/gen-scale.c	Mon Sep 02 13:43:26 2013 -0400
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
-@@ -1,817 +0,0 @@
+@@ -1,816 +0,0 @@
 -#include <cdk_int.h>
 -
 -/*
 - * $Author: tom $
-- * $Date: 2012/03/20 21:46:08 $
-- * $Revision: 1.23 $
+- * $Date: 2013/06/16 15:03:13 $
+- * $Revision: 1.24 $
 - */
 -
 -/*
@@ -325,7 +325,6 @@ diff -r fbcff989cc14 gen-scale.c
 -   setCDK<MIXED>Box (widget, Box);
 -
 -   boxHeight = (BorderOf (widget) * 2) + 1;
--   boxWidth = fieldWidth + 2 * BorderOf (widget);
 -
 -   /* Set some basic values of the widget's data field. */
 -   widget->label = 0;
@@ -1076,8 +1075,8 @@ diff -r fbcff989cc14 gen-scale.c
 -dummyRefreshData (<MIXED>)
 -
 -dummySaveData (<MIXED>)
-diff -r fbcff989cc14 gen-scale.h
---- a/gen-scale.h	Thu Jun 13 12:05:08 2013 -0400
+diff -r 9d0780ddcbab gen-scale.h
+--- a/gen-scale.h	Mon Sep 02 13:43:26 2013 -0400
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
 @@ -1,233 +0,0 @@
 -/*
@@ -1313,16 +1312,16 @@ diff -r fbcff989cc14 gen-scale.h
 -
 -#endif /* CDK<UPPER>_H */
 -#endif /* CDKINCLUDES */
-diff -r fbcff989cc14 gen-slider.c
---- a/gen-slider.c	Thu Jun 13 12:05:08 2013 -0400
+diff -r 9d0780ddcbab gen-slider.c
+--- a/gen-slider.c	Mon Sep 02 13:43:26 2013 -0400
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
 @@ -1,871 +0,0 @@
 -#include <cdk_int.h>
 -
 -/*
 - * $Author: tom $
-- * $Date: 2012/03/20 21:46:36 $
-- * $Revision: 1.24 $
+- * $Date: 2013/06/16 13:19:15 $
+- * $Revision: 1.25 $
 - */
 -
 -/*
@@ -1982,7 +1981,7 @@ diff -r fbcff989cc14 gen-slider.c
 -   /* Add the character to the window. */
 -   for (x = 0; x < fillerCharacters; x++)
 -   {
--      mvwaddch (widget->fieldWin, 0, x, widget->filler);
+-      (void)mvwaddch (widget->fieldWin, 0, x, widget->filler);
 -   }
 -
 -   /* Draw the value in the field. */
@@ -2188,8 +2187,8 @@ diff -r fbcff989cc14 gen-slider.c
 -dummyRefreshData (<MIXED>)
 -
 -dummySaveData (<MIXED>)
-diff -r fbcff989cc14 gen-slider.h
---- a/gen-slider.h	Thu Jun 13 12:05:08 2013 -0400
+diff -r 9d0780ddcbab gen-slider.h
+--- a/gen-slider.h	Mon Sep 02 13:43:26 2013 -0400
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
 @@ -1,233 +0,0 @@
 -/*
@@ -2425,16 +2424,16 @@ diff -r fbcff989cc14 gen-slider.h
 -
 -#endif /* CDK<UPPER>_H */
 -#endif /* CDKINCLUDES */
-diff -r fbcff989cc14 matrix.c
---- a/matrix.c	Thu Jun 13 12:05:08 2013 -0400
+diff -r 9d0780ddcbab matrix.c
+--- a/matrix.c	Mon Sep 02 13:43:26 2013 -0400
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
-@@ -1,1863 +0,0 @@
+@@ -1,1861 +0,0 @@
 -#include <cdk_int.h>
 -
 -/*
 - * $Author: tom $
-- * $Date: 2012/03/22 00:43:33 $
-- * $Revision: 1.192 $
+- * $Date: 2013/06/16 13:17:18 $
+- * $Revision: 1.193 $
 - */
 -
 -/*
@@ -2514,8 +2513,6 @@ diff -r fbcff989cc14 matrix.c
 -      { CDK_BACKCHAR,	KEY_PPAGE },
 -   };
 -   /* *INDENT-ON* */
--
--
 -
 -   if ((matrix = newCDKObject (CDKMATRIX, &my_funcs)) == 0)
 -   {
@@ -2917,8 +2914,8 @@ diff -r fbcff989cc14 matrix.c
 -	    else
 -	    {
 -	       charcount--;
--	       mvwdelch (CurMatrixCell (widget), 1, charcount + 1);
--	       mvwinsch (CurMatrixCell (widget), 1, charcount + 1, widget->filler);
+-	       (void)mvwdelch (CurMatrixCell (widget), 1, charcount + 1);
+-	       (void)mvwinsch (CurMatrixCell (widget), 1, charcount + 1, widget->filler);
 -	       wrefresh (CurMatrixCell (widget));
 -	       MATRIX_INFO (widget, widget->row, widget->col)[charcount] = '\0';
 -	    }
@@ -3390,7 +3387,7 @@ diff -r fbcff989cc14 matrix.c
 -					  matrix->col)[x - 1])
 -		   : matrix->filler);
 -
--      mvwaddch (CurMatrixCell (matrix), 1, x, ch | highlight);
+-      (void)mvwaddch (CurMatrixCell (matrix), 1, x, ch | highlight);
 -   }
 -   wmove (CurMatrixCell (matrix), 1, infolen + 1);
 -   wrefresh (CurMatrixCell (matrix));
@@ -3495,7 +3492,7 @@ diff -r fbcff989cc14 matrix.c
 -		   ? (CharOf (MATRIX_INFO (matrix, vrow, vcol)[x - 1]) | highlight)
 -		   : matrix->filler);
 -
--      mvwaddch (cell, 1, x, ch | highlight);
+-      (void)mvwaddch (cell, 1, x, ch | highlight);
 -   }
 -   wmove (cell, 1, infolen + 1);
 -   wrefresh (cell);
@@ -4292,16 +4289,17 @@ diff -r fbcff989cc14 matrix.c
 -dummyRefreshData (Matrix)
 -
 -dummySaveData (Matrix)
-diff -r fbcff989cc14 selection.c
---- a/selection.c	Thu Jun 13 12:05:08 2013 -0400
+diff -r 9d0780ddcbab selection.c
+--- a/selection.c	Mon Sep 02 13:43:26 2013 -0400
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
-@@ -1,1005 +0,0 @@
+@@ -1,999 +0,0 @@
 -#include <cdk_int.h>
+-#include <scroller.h>
 -
 -/*
-- * $Author: tom $
-- * $Date: 2012/03/21 21:01:23 $
-- * $Revision: 1.151 $
+- * $Author: Corentin.Delorme $
+- * $Date: 2013/09/01 17:45:00 $
+- * $Revision: 1.154 $
 - */
 -
 -/*
@@ -4348,8 +4346,8 @@ diff -r fbcff989cc14 selection.c
 -   int widestItem               = -1;
 -   int parentWidth              = getmaxx (cdkscreen->window);
 -   int parentHeight             = getmaxy (cdkscreen->window);
--   int boxWidth                 = width;
--   int boxHeight                = height;
+-   int boxWidth;
+-   int boxHeight;
 -   int xpos                     = xplace;
 -   int ypos                     = yplace;
 -   int j                        = 0;
@@ -4524,12 +4522,7 @@ diff -r fbcff989cc14 selection.c
 - */
 -static void fixCursorPosition (CDKSELECTION *selection)
 -{
--   int scrollbarAdj = (selection->scrollbarPlacement == LEFT) ? 1 : 0;
--   int ypos = SCREEN_YPOS (selection, selection->currentItem - selection->currentTop);
--   int xpos = SCREEN_XPOS (selection, 0) + scrollbarAdj;
--
--   wmove (InputWindowOf (selection), ypos, xpos);
--   wrefresh (InputWindowOf (selection));
+-   scroller_FixCursorPosition((CDKSCROLLER *)selection);
 -}
 -
 -/*
@@ -4586,7 +4579,8 @@ diff -r fbcff989cc14 selection.c
 - */
 -static int _injectCDKSelection (CDKOBJS *object, chtype input)
 -{
--   CDKSELECTION *widget = (CDKSELECTION *)object;
+-   CDKSELECTION *selection = (CDKSELECTION *)object;
+-   CDKSCROLLER *widget = (CDKSCROLLER *)object;
 -   int ppReturn = 1;
 -   int ret = unknownInt;
 -   bool complete = FALSE;
@@ -4595,7 +4589,7 @@ diff -r fbcff989cc14 selection.c
 -   setExitType (widget, 0);
 -
 -   /* Draw the widget list */
--   drawCDKSelectionList (widget, ObjOf (widget)->box);
+-   drawCDKSelectionList (selection, ObjOf (widget)->box);
 -
 -   /* Check if there is a pre-process function to be called. */
 -   if (PreProcessFuncOf (widget) != 0)
@@ -4661,16 +4655,16 @@ diff -r fbcff989cc14 selection.c
 -	    break;
 -
 -	 case SPACE:
--	    if (widget->mode[widget->currentItem] == 0)
+-	    if (selection->mode[widget->currentItem] == 0)
 -	    {
--	       if (widget->selections[widget->currentItem]
--		   == (widget->choiceCount - 1))
+-	       if (selection->selections[widget->currentItem]
+-		   == (selection->choiceCount - 1))
 -	       {
--		  widget->selections[widget->currentItem] = 0;
+-		  selection->selections[widget->currentItem] = 0;
 -	       }
 -	       else
 -	       {
--		  widget->selections[widget->currentItem]++;
+-		  selection->selections[widget->currentItem]++;
 -	       }
 -	    }
 -	    else
@@ -4718,12 +4712,12 @@ diff -r fbcff989cc14 selection.c
 -
 -   if (!complete)
 -   {
--      drawCDKSelectionList (widget, ObjOf (widget)->box);
+-      drawCDKSelectionList (selection, ObjOf (widget)->box);
 -      setExitType (widget, 0);
 -   }
 -
 -   ResultOf (widget).valueInt = ret;
--   fixCursorPosition (widget);
+-   fixCursorPosition (selection);
 -   return (ret != unknownInt);
 -}
 -
@@ -4798,7 +4792,7 @@ diff -r fbcff989cc14 selection.c
 -
 -static int maxViewSize (CDKSELECTION *widget)
 -{
--   return scroller_MaxViewSize (widget);
+-   return scroller_MaxViewSize ((CDKSCROLLER *)widget);
 -}
 -
 -/*
@@ -4806,7 +4800,7 @@ diff -r fbcff989cc14 selection.c
 - */
 -static void setViewSize (CDKSELECTION *widget, int listSize)
 -{
--   scroller_SetViewSize (widget, listSize);
+-   scroller_SetViewSize ((CDKSCROLLER *)widget, listSize);
 -}
 -
 -/*
@@ -4818,7 +4812,7 @@ diff -r fbcff989cc14 selection.c
 -   int scrollbarAdj     = (selection->scrollbarPlacement == LEFT) ? 1 : 0;
 -   int screenPos        = 0;
 -   int xpos, ypos;
--   int j;
+-   int j, k;
 -   int selItem          = -1;
 -
 -   /* If there is to be a highlight, assign it now */
@@ -4826,24 +4820,21 @@ diff -r fbcff989cc14 selection.c
 -      selItem = selection->currentItem;
 -
 -   /* draw the list... */
--   for (j = 0;
--	j < selection->viewSize
--	&& (j + selection->currentTop) < selection->listSize;
--	j++)
+-   for (j = 0; j < selection->viewSize; j++)
 -   {
--      int k = j + selection->currentTop;
+-      xpos = SCREEN_XPOS (selection, 0);
+-      ypos = SCREEN_YPOS (selection, j);
+-
+-      /* Draw the empty line. */
+-      writeBlanks (selection->win, xpos, ypos,
+-		   HORIZONTAL, 0, getmaxx (selection->win));
+-
+-      k = j + selection->currentTop;
+-
+-      /* Draw the element in the selection list. */
 -      if (k < selection->listSize)
 -      {
 -	 screenPos = SCREENPOS (selection, k);
--	 ypos = SCREEN_YPOS (selection, j);
--	 xpos = SCREEN_XPOS (selection, 0);
--
--	 /* Draw the empty line. */
--	 writeBlanks (selection->win,
--		      xpos,
--		      ypos,
--		      HORIZONTAL, 0,
--		      getmaxx (selection->win));
 -
 -	 /* Draw the selection item. */
 -	 writeChtypeAttrib (selection->win,
@@ -4875,11 +4866,11 @@ diff -r fbcff989cc14 selection.c
 -      selection->togglePos = MINIMUM (selection->togglePos,
 -				      (getmaxy (selection->scrollbarWin) - 1));
 -
--      mvwvline (selection->scrollbarWin, 0, 0, ACS_CKBOARD, getmaxy (selection->scrollbarWin));
--      mvwvline (selection->scrollbarWin,
--		selection->togglePos,
--		0,
--		' ' | A_REVERSE, selection->toggleSize);
+-      (void)mvwvline (selection->scrollbarWin, 0, 0, ACS_CKBOARD, getmaxy (selection->scrollbarWin));
+-      (void)mvwvline (selection->scrollbarWin,
+-		      selection->togglePos,
+-		      0,
+-		      ' ' | A_REVERSE, selection->toggleSize);
 -   }
 -
 -   /* Box it if needed */
@@ -5093,13 +5084,13 @@ diff -r fbcff989cc14 selection.c
 -   }
 -
 -   /* Make sure the index isn't out of range. */
--   if (Index < 0)
+-   if (correctIndex < 0)
 -   {
--      Index = 0;
+-      correctIndex = 0;
 -   }
--   else if (Index > selection->listSize)
+-   else if (correctIndex > selection->listSize)
 -   {
--      Index = selection->listSize - 1;
+-      correctIndex = selection->listSize - 1;
 -   }
 -
 -   /* Set the choice value. */
@@ -5207,7 +5198,7 @@ diff -r fbcff989cc14 selection.c
 - */
 -void setCDKSelectionCurrent (CDKSELECTION *selection, int item)
 -{
--   scroller_SetPosition (selection, item);
+-   scroller_SetPosition ((CDKSCROLLER *)selection, item);
 -}
 -
 -int getCDKSelectionCurrent (CDKSELECTION *selection)
@@ -5301,8 +5292,8 @@ diff -r fbcff989cc14 selection.c
 -dummyRefreshData (Selection)
 -
 -dummySaveData (Selection)
-diff -r fbcff989cc14 view_info.c
---- a/view_info.c	Thu Jun 13 12:05:08 2013 -0400
+diff -r 9d0780ddcbab view_info.c
+--- a/view_info.c	Mon Sep 02 13:43:26 2013 -0400
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
 @@ -1,45 +0,0 @@
 -#include <cdk_int.h>
@@ -5350,16 +5341,16 @@ diff -r fbcff989cc14 view_info.c
 -   destroyCDKViewer (viewer);
 -   return selected;
 -}
-diff -r fbcff989cc14 viewer.c
---- a/viewer.c	Thu Jun 13 12:05:08 2013 -0400
+diff -r 9d0780ddcbab viewer.c
+--- a/viewer.c	Mon Sep 02 13:43:26 2013 -0400
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
 @@ -1,1293 +0,0 @@
 -#include <cdk_int.h>
 -
 -/*
 - * $Author: tom $
-- * $Date: 2012/03/22 00:43:33 $
-- * $Revision: 1.162 $
+- * $Date: 2013/06/16 14:58:52 $
+- * $Revision: 1.164 $
 - */
 -
 -/*
@@ -5405,8 +5396,8 @@ diff -r fbcff989cc14 viewer.c
 -   CDKVIEWER *viewer = 0;
 -   int parentWidth   = getmaxx (cdkscreen->window);
 -   int parentHeight  = getmaxy (cdkscreen->window);
--   int boxWidth      = width;
--   int boxHeight     = height;
+-   int boxWidth;
+-   int boxHeight;
 -   int xpos          = xplace;
 -   int ypos          = yplace;
 -   int buttonWidth   = 0;
@@ -5646,7 +5637,7 @@ diff -r fbcff989cc14 viewer.c
 -   char filename[CDK_PATHMAX + 2];
 -   int currentLine      = 0;
 -   int x                = 0;
--   int viewerSize       = listSize;
+-   int viewerSize;
 -
 -   /*
 -    * If the list-size is negative, count the length of the null-terminated
@@ -6414,10 +6405,10 @@ diff -r fbcff989cc14 viewer.c
 -      character = CharOf (viewer->button[viewer->currentButton][x]);
 -
 -      /* Add the character into the window. */
--      mvwaddch (viewer->win,
--		viewer->boxHeight - 2,
--		viewer->buttonPos[viewer->currentButton] + x,
--		character | viewer->buttonHighlight);
+-      (void)mvwaddch (viewer->win,
+-		      viewer->boxHeight - 2,
+-		      viewer->buttonPos[viewer->currentButton] + x,
+-		      character | viewer->buttonHighlight);
 -   }
 -
 -   /* Refresh the window. */
@@ -6586,14 +6577,14 @@ diff -r fbcff989cc14 viewer.c
 -
 -      for (x = 1; x <= viewer->boxWidth; x++)
 -      {
--	 mvwaddch (viewer->win, viewer->boxHeight - 3, x,
--		   HZCharOf (viewer) | boxattr);
+-	 (void)mvwaddch (viewer->win, viewer->boxHeight - 3, x,
+-			 HZCharOf (viewer) | boxattr);
 -      }
--      mvwaddch (viewer->win, viewer->boxHeight - 3, 0,
--		ACS_LTEE | boxattr);
--      mvwaddch (viewer->win, viewer->boxHeight - 3,
--		getmaxx (viewer->win) - 1,
--		ACS_RTEE | boxattr);
+-      (void)mvwaddch (viewer->win, viewer->boxHeight - 3, 0,
+-		      ACS_LTEE | boxattr);
+-      (void)mvwaddch (viewer->win, viewer->boxHeight - 3,
+-		      getmaxx (viewer->win) - 1,
+-		      ACS_RTEE | boxattr);
 -   }
 -
 -   /* Draw the buttons. This will call refresh on the viewer win. */
