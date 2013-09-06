@@ -964,10 +964,10 @@ static int lui__newindex(lua_State *L) {
 #endif
   } else if (strcmp(key, "clipboard_text") == 0)
     luaL_argerror(L, 3, "read-only property");
-  else if (strcmp(key, "docstatusbar_text") == 0)
-    set_statusbar_text(lua_tostring(L, 3), 1);
   else if (strcmp(key, "statusbar_text") == 0)
     set_statusbar_text(lua_tostring(L, 3), 0);
+  else if (strcmp(key, "bufstatusbar_text") == 0)
+    set_statusbar_text(lua_tostring(L, 3), 1);
   else if (strcmp(key, "menubar") == 0) {
 #if GTK
     luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");

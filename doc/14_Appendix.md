@@ -182,6 +182,7 @@ get\_style\_name(buffer, n)       |Renamed |[style\_name][]\[n\]
 N/A                               |New     |[INITIALIZED][]<sup>‡</sup>
 handlers                          |Removed |N/A
 **gui**                           |Renamed |[ui][]
+docstatusbar\_text                |Renamed |[bufstatusbar\_text][]
 N/A                               |New     |[maximized][]
 find.goto\_file\_in\_list()       |Renamed |find.[goto\_file\_found()][]
 select\_theme                     |Removed |N/A
@@ -212,6 +213,7 @@ not all buffer functions are available at the `require()` stage. See
 [style\_name]: api/buffer.html#style_name
 [INITIALIZED]: api/events.html#INITIALIZED
 [ui]: api/ui.html
+[bufstatusbar\_text]: api/ui.html#bufstatusbar_text
 [maximized]: api/ui.html#maximized
 [goto\_file\_found()]: api/ui.find.html#goto_file_found
 [encodings]: api/io.html#encodings

@@ -6,7 +6,7 @@ local ui = ui
 ---
 -- Utilities for interacting with Textadept's user interface.
 -- @field title (string, Write-only)
---   The title of the Textadept window.
+--   The title text of the Textadept window.
 -- @field context_menu
 --   The editor's context menu, a [`ui.menu()`](#menu).
 --   This is a low-level field. You probably want to use the higher-level
@@ -15,7 +15,7 @@ local ui = ui
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
 --   The text displayed by the statusbar.
--- @field docstatusbar_text (string, Write-only)
+-- @field bufstatusbar_text (string, Write-only)
 --   The text displayed by the buffer statusbar.
 -- @field maximized (bool)
 --   Whether or not the Textadept window is maximized.
@@ -289,7 +289,7 @@ end)
 
 local EOLs = {_L['CRLF'], _L['CR'], _L['LF']}
 local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
--- Sets docstatusbar text.
+-- Sets buffer statusbar text.
 events_connect(events.UPDATE_UI, function()
   local pos = buffer.current_pos
   local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
@@ -301,7 +301,7 @@ events_connect(events.UPDATE_UI, function()
   local enc = buffer.encoding or ''
   local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
                               '%s %d/%d  %s %d  %s  %s  %s  %s'
-  ui.docstatusbar_text = string.format(text, _L['Line:'], line, max, _L['Col:'],
+  ui.bufstatusbar_text = string.format(text, _L['Line:'], line, max, _L['Col:'],
                                        col, lexer, eol, tabs, enc)
 end)
 
