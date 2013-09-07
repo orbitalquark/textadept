@@ -104,12 +104,12 @@ local M = {}
 --       c = {function3, arg1, arg2}
 --     }
 -- @field CLEAR (string)
---   The string representing the key sequence that clears the current key chain.
+--   The key that clears the current key chain.
 --   It cannot be part of a key chain.
 --   The default value is `'esc'` for the `Esc` (`⎋` on Mac OSX | `Esc` in
 --   curses) key.
 -- @field LANGUAGE_MODULE_PREFIX (string)
---   The starting key of the key chain reserved for language modules.
+--   The prefix key of the key chain reserved for language modules.
 --   The default value is `'cl'` on platforms other than Mac OSX, `'ml'`
 --   otherwise. Equivalent to `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in curses).
 -- @field MODE (string)

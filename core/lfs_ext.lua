@@ -6,7 +6,7 @@
 module('lfs')]]
 
 ---
--- Filter table containing common binary file extensions and version control
+-- The filter table containing common binary file extensions and version control
 -- folders to exclude when iterating over files and directories using
 -- `dir_foreach` when its `exclude_FILTER` argument is `false`.
 -- @see dir_foreach

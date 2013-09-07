@@ -52,7 +52,7 @@ local function _print(buffer_type, ...)
   buffer:set_save_point()
 end
 ---
--- Helper function for printing messages to buffers.
+-- Helper function for printing messages to the buffer of type *buffer_type*.
 -- Splits the view and opens a new buffer for printing messages to. If the
 -- message buffer is already open in a view, the message is printed to that
 -- view. Otherwise the view is split and the message buffer is opened or
@@ -383,7 +383,7 @@ events_connect(events.ERROR, ui.print)
 local menubar
 
 ---
--- A table containing the width and height values of the Textadept window.
+-- A table containing the width and height pixel values of the Textadept window.
 -- @class table
 -- @name size
 local size
@@ -391,8 +391,8 @@ local size
 The functions below are Lua C functions.
 
 ---
--- Displays a *kind* [gtdialog][] with the given string arguments to pass to
--- the dialog and returns a formatted string of the dialog's output.
+-- Displays a [gtdialog][] of kind *kind* with the given string arguments to
+-- pass to the dialog and returns a formatted string of the dialog's output.
 -- Table arguments containing strings are allowed and expanded in place. This is
 -- useful for filtered list dialogs with many items.
 -- For more information on gtdialog, see [http://foicica.com/gtdialog][].

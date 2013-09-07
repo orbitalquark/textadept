@@ -78,8 +78,8 @@ events.FIND_WRAPPED = 'find_wrapped'
 local preferred_view
 
 ---
--- Table of Lua patterns matching files and folders to exclude when finding in
--- files.
+-- The table of Lua patterns matching files and folders to exclude when finding
+-- in files.
 -- Each filter string is a pattern that matches filenames to exclude, with
 -- patterns matching folders to exclude listed in a `folders` sub-table.
 -- Patterns starting with '!' exclude files and folders that do not match the
@@ -208,8 +208,8 @@ function M.find_incremental(text, next, anchor)
 end
 
 ---
--- Searches the *utf8_dir* or user-specified directory for files that match
--- search text and options and prints the results to a buffer.
+-- Searches directory *utf8_dir* or user-specified directory for files that
+-- match search text and options and prints the results to a files found buffer.
 -- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
 -- search text and option flags, respectively. Use `FILTER` to set the search
 -- filter.

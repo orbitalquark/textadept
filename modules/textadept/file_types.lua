@@ -11,7 +11,7 @@ local M = {}
 --   properties since the module is not loaded when Textadept starts.
 --   Arguments:
 --
---   * *`lang`*: The language lexer name.
+--   * *`lexer`*: The language lexer name.
 module('textadept.file_types')]]
 
 -- Events.

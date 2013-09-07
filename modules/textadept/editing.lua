@@ -6,8 +6,8 @@ local M = {}
 ---
 -- Editing features for Textadept.
 -- @field AUTOPAIR (bool)
---   Automatically close opening '(', '[', '{', '&quot;', or '&apos;'
---   characters.
+--   Automatically close opening brace and quote characters with their
+--   complements.
 --   The default value is `true`.
 --   Auto-paired characters are defined in the [`char_matches`](#char_matches)
 --   table.
@@ -16,8 +16,8 @@ local M = {}
 --   The default value is `true`.
 --   Matching braces are defined in the [`braces`](#braces) table.
 -- @field TYPEOVER_CHARS (bool)
---   Move over the typeover character under the caret when typing it instead of
---   inserting it.
+--   Move over closing brace and quote characters under the caret when typing
+--   them instead of inserting them.
 --   The default value is `true`.
 --   Typeover characters are defined in the [`typeover_chars`](#typeover_chars)
 --   table.
@@ -43,7 +43,7 @@ M.HIGHLIGHT_COLOR = not CURSES and 'color.orange' or 'color.yellow'
 -- Map of lexer names to line comment strings for programming languages, used by
 -- the `block_comment()` function.
 -- Keys are lexer names and values are either the language's line comment
--- prefixes or block comment delimiters separated by a '|'.
+-- prefixes or block comment delimiters separated by a '|' character.
 -- @class table
 -- @name comment_string
 -- @see block_comment
@@ -261,13 +261,15 @@ function M.autocomplete_word(default_words)
 end
 
 ---
--- Comments or uncomments the selected lines with line comment string *comment*
--- or the comment from the `comment_string` table for the current lexer.
+-- Comments or uncomments the selected lines with line comment or block comment
+-- delimiters string *comment* or the comment from the `comment_string` table
+-- for the current lexer.
+-- Block comment delimiters are separated by a '|' character.
 -- As long as any part of a line is selected, the entire line is eligible for
 -- commenting/uncommenting.
 -- @param comment Optional comment string inserted or removed from each line in
---   the selection. Comment delimiters are separated by a '|'. The default value
---   is the comment in the `comment_string` table for the current lexer.
+--   the selection. The default value is the comment in the `comment_string`
+--   table for the current lexer.
 -- @see comment_string
 -- @name block_comment
 function M.block_comment(comment)

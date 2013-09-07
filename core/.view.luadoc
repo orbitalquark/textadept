@@ -5,7 +5,8 @@
 ---
 -- A Textadept view object.
 -- @field size (number)
---   The position of the split resizer (if this view is part of a split view).
+--   The pixel position of the split resizer if this view is part of a split
+--   view.
 module('view')
 
 ---
@@ -15,7 +16,7 @@ module('view')
 local buffer
 
 ---
--- Splits the view into top and bottom views, unless *vertical* is `true`,
+-- Splits the view into top and bottom views unless *vertical* is `true`,
 -- focuses the new view, and returns both the old and new views.
 -- If *vertical* is `false`, splits the view vertically into left and
 -- right views.

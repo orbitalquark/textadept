@@ -37,9 +37,10 @@ function M.clear()
 end
 
 ---
--- Prompts the user to select a bookmarked line to go to unless *next* is given.
--- If *next* is `true` or `false`, goes to the next or previous bookmark,
--- respectively.
+-- Prompts the user to select a bookmarked line to move the caret to the
+-- beginning of unless *next* is given.
+-- If *next* is `true` or `false`, moves the caret to the beginning of the next
+-- or previously bookmarked line, respectively.
 -- @param next Optional flag indicating whether to go to the next or previous
 --   bookmarked line relative to the current line. The default value is `nil`,
 --   prompting the user for a bookmarked line to go to.
