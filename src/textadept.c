@@ -1401,7 +1401,7 @@ static int lreset(lua_State *L) {
   l_setglobalview(L, focused_view);
   l_setglobaldoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
   lua_pushnil(L), lua_setglobal(L, "arg");
-  lL_dofile(L, "init.lua");
+  lL_dofile(L, "init.lua"), lL_event(L, "initialized", -1);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_arg"), lua_setglobal(L, "arg");
   lL_event(L, "reset_after", -1);
   return 0;
@@ -2321,6 +2321,8 @@ int main(int argc, char **argv) {
   setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C");
   if (lua = luaL_newstate(), !lL_init(lua, argc, argv, FALSE)) return 1;
   initing = TRUE, new_window(), lL_dofile(lua, "init.lua"), initing = FALSE;
+  lL_event(lua, "buffer_new", -1), lL_event(lua, "view_new", -1); // first ones
+  lL_event(lua, "initialized", -1);
 #if (__APPLE__ && !CURSES)
   gtkosx_application_ready(osxapp);
 #endif

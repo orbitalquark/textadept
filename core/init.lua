@@ -17,6 +17,9 @@ _M = {} -- language modules table
 -- LuaJIT compatibility.
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 
+events.connect(events.INITIALIZED,
+               function() if arg then args.process(arg) end end)
+
 --[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's _G table to provide extra functions and fields for Textadept.
