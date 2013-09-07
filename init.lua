@@ -12,10 +12,3 @@ package.cpath = _USERHOME..so.._USERHOME..'/modules'..so..package.cpath
 textadept = require('textadept')
 local ok, err = pcall(dofile, _USERHOME..'/init.lua')
 if not ok and lfs.attributes(_USERHOME..'/init.lua') then ui.print(err) end
-
-if arg then
-  events.emit(events.BUFFER_NEW) -- for the first buffer
-  events.emit(events.VIEW_NEW) -- for the first view
-  args.process(arg)
-end
-events.emit(events.INITIALIZED)
