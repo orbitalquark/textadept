@@ -17,7 +17,7 @@ local M = {}
 --   The default value is `true`, but is disabled when passing the command line
 --   switch `-n` or `--nosession` to Textadept.
 -- @field MAX_RECENT_FILES (number)
---   The maximum number of recent files to save to the session.
+--   The maximum number of recent files to save to session files.
 --   Recent files are stored in [`io.recent_files`][].
 --   The default value is `10`.
 --
@@ -29,8 +29,8 @@ M.SAVE_ON_QUIT = true
 M.MAX_RECENT_FILES = 10
 
 ---
--- Loads the Textadept session file *filename* or prompts the user to select
--- one, returning `true` if the session file was opened and read.
+-- Loads Textadept session file *filename* or prompts the user to selectone,
+-- returning `true` if the session file was opened and read.
 -- Textadept restores split views, opened buffers, cursor information, and
 -- recent files.
 -- @param filename Optional absolute path to the session file to load. If `nil`,

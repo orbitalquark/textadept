@@ -32,7 +32,7 @@ local M = ui.command_entry
 --
 -- [modes]: keys.html#Modes
 -- @field entry_text (string)
---   The text in the entry.
+--   The text in the command entry.
 module('ui.command_entry')]]
 
 ---

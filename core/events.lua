@@ -29,7 +29,7 @@ local M = {}
 -- handler handled it.
 --
 -- @field APPLEEVENT_ODOC (string)
---   Emitted when Mac OSX tells Textadept to open a document.
+--   Emitted when Mac OSX tells Textadept to open a file.
 --   Arguments:
 --
 --   * _`uri`_: The UTF-8-encoded URI to open.
@@ -45,8 +45,7 @@ local M = {}
 --   Arguments:
 --
 --   * _`text`_: The text of the selection.
---   * _`position`_: The position in the buffer of the beginning of the
---     autocompleted word.
+--   * _`position`_: The position of the beginning of the autocompleted word.
 -- @field BUFFER_AFTER_SWITCH (string)
 --   Emitted right after switching to another buffer.
 --   Emitted by [`view:goto_buffer()`][].
@@ -86,9 +85,8 @@ local M = {}
 --
 --   * _`position`_: The position in the buffer double-clicked.
 --   * _`line`_: The line number double-clicked.
---   * _`modifiers`_: A bit-mask of modifier keys held down. Modifiers are
---     `buffer.SCMOD_ALT`, `buffer.SCMOD_CTRL`, `buffer.SCMOD_SHIFT`, and
---     `buffer.SCMOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
+--     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
 --     "Control" and "Alt" due to a Scintilla limitation with GTK+.
@@ -123,9 +121,8 @@ local M = {}
 --   Arguments:
 --
 --   * _`position`_: The position in the buffer clicked.
---   * _`modifiers`_: A bit-mask of modifier keys held down. Modifiers are
---     `buffer.SCMOD_ALT`, `buffer.SCMOD_CTRL`, `buffer.SCMOD_SHIFT`, and
---     `buffer.SCMOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
+--     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
 --     "Control" and "Alt" due to a Scintilla limitation with GTK+.
@@ -135,9 +132,8 @@ local M = {}
 --   Arguments:
 --
 --   * _`position`_: The position in the buffer double-clicked.
---   * _`modifiers`_: A bit-mask of modifier keys held down. Modifiers are
---     `buffer.SCMOD_ALT`, `buffer.SCMOD_CTRL`, `buffer.SCMOD_SHIFT`, and
---     `buffer.SCMOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
+--     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
 --     "Control" and "Alt" due to a Scintilla limitation with GTK+.
@@ -148,22 +144,21 @@ local M = {}
 --
 --   * _`position`_: The position in the buffer unclicked.
 -- @field INDICATOR_CLICK (string)
---   Emitted when clicking the mouse on text that has an indicator.
+--   Emitted when clicking the mouse on text that has an indicator present.
 --   Arguments:
 --
---   * _`position`_: The position in the buffer clicked.
---   * _`modifiers`_: A bit-mask of modifier keys held down. Modifiers are
---     `buffer.SCMOD_ALT`, `buffer.SCMOD_CTRL`, `buffer.SCMOD_SHIFT`, and
---     `buffer.SCMOD_META`.
+--   * _`position`_: The position of the clicked text in the buffer.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
+--     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
 --     "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field INDICATOR_RELEASE (string)
---   Emitted after releasing the mouse after clicking on text that had an
---   indicator.
+--   Emitted when releasing the mouse after clicking on text that has an
+--   indicator present.
 --   Arguments:
 --
---   * _`position`_: The position in the buffer unclicked.
+--   * _`position`_: The position of the clicked text in the buffer.
 -- @field INITIALIZED (string)
 --   Emitted after Textadept finishes initializing.
 -- @field KEYPRESS (string)
@@ -182,10 +177,9 @@ local M = {}
 --
 --   * _`margin`_: The margin number clicked.
 --   * _`position`_: The position of the start of the line in the buffer whose
---     margin line was clicked.
---   * _`modifiers`_: A bit-mask of modifier keys held down. Modifiers are
---     `buffer.SCMOD_ALT`, `buffer.SCMOD_CTRL`, `buffer.SCMOD_SHIFT`, and
---     `buffer.SCMOD_META`.
+--     margin was clicked.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
+--     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
 --     "Control" and "Alt" due to a Scintilla limitation with GTK+.
@@ -261,9 +255,10 @@ module('events')]]
 local handlers = {}
 
 ---
--- Adds function *f* to the set of event handlers for *event* at position
--- *index*, returning a handler ID for *f*. *event* is an arbitrary event name
--- that does not need to have been previously defined.
+-- Adds function *f* to the set of event handlers for event *event* at position
+-- *index*, returning the handler identifier for *f*.
+-- *event* may be any arbitrary string and does not need to have been previously
+-- defined.
 -- @param event The string event name.
 -- @param f The Lua function to connect to *event*.
 -- @param index Optional index to insert the handler into.
@@ -280,8 +275,8 @@ function M.connect(event, f, index)
 end
 
 ---
--- Removes handler ID *id*, returned by `events.connect()`, from the set of
--- event handlers for *event*.
+-- Removes handler identifier *id*, returned by `events.connect()`, from the set
+-- of handlers for event *event*.
 -- @param event The string event name.
 -- @param id ID of the handler returned by `events.connect()`.
 -- @see connect
@@ -293,9 +288,9 @@ end
 
 local error_emitted = false
 ---
--- Sequentially calls all handler functions for *event* with the given
+-- Sequentially calls all handler functions for event *event* with the given
 -- arguments.
--- *event* is an arbitrary event name that does not need to have been previously
+-- *event* may be any arbitrary string and does not need to have been previously
 -- defined. If any handler explicitly returns `true` or `false`, the event is
 -- not propagated any further, iteration ceases, and `emit()` returns that
 -- value. This is useful for stopping the propagation of an event like a

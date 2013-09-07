@@ -188,7 +188,8 @@ function M.next_indic_number()
 end
 
 ---
--- Returns a unique user list type for use with `buffer.user_list_show()`.
+-- Returns a unique user list identier number for use with
+-- `buffer.user_list_show()`.
 -- Use this function for custom user lists in order to prevent clashes with
 -- list identifiers of other custom user lists.
 -- @usage local list_type = _SCINTILLA.next_user_list_type()

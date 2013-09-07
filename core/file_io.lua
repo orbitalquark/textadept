@@ -79,7 +79,7 @@ io.SNAPOPEN_MAX = 1000
 io.recent_files = {}
 
 ---
--- List of byte-order marks (BOMs) for identifying unicode file types.
+-- List of byte-order marks (BOMs) for identifying unicode file encodings.
 -- @class table
 -- @name boms
 io.boms = {
@@ -89,7 +89,7 @@ io.boms = {
 }
 
 ---
--- List of encodings to try to decode files as.
+-- List of encodings to attempt to decode files as.
 -- You should add to this list if you get a "Conversion failed" error when
 -- trying to open a file whose encoding is not recognized. Valid encodings are
 -- [GNU iconv's encodings][] and include:
