@@ -337,17 +337,13 @@ events_connect(events.BUFFER_AFTER_SWITCH, function()
 end)
 
 -- Updates titlebar and statusbar.
-events_connect(events.BUFFER_AFTER_SWITCH, function()
+local function update_bars()
   set_title()
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   events.emit(events.UPDATE_UI)
-end)
-
--- Updates titlebar and statusbar.
-events_connect(events.VIEW_AFTER_SWITCH, function()
-  set_title()
-  events.emit(events.UPDATE_UI)
-end)
+end
+events_connect(events.BUFFER_AFTER_SWITCH, update_bars)
+events_connect(events.VIEW_AFTER_SWITCH, update_bars)
 
 events_connect(events.RESET_AFTER,
                function() ui.statusbar_text = 'Lua reset' end)
