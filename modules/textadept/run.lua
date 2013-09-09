@@ -10,9 +10,8 @@ local M = {}
 -- extension.
 --
 -- [language modules]: _M.html#Compile.and.Run
--- @field ERROR_COLOR (string)
---   The name of the color in the current theme to mark a line containing a
---   recognized run or compile error.
+-- @field MARK_ERROR (number)
+--   The run or compile error marker number.
 -- @field cwd (string, Read-only)
 --   The working directory for the most recently executed compile or run
 --   command.
@@ -35,7 +34,7 @@ local M = {}
 --   * `output`: The string output from the command.
 module('textadept.run')]]
 
-M.ERROR_COLOR = not CURSES and 'color.light_red' or 'color.red'
+M.MARK_ERROR = _SCINTILLA.next_marker_number()
 
 -- Events.
 events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
@@ -99,8 +98,6 @@ local function get_error_details(message)
   return nil
 end
 
-local MARK_ERROR = _SCINTILLA.next_marker_number()
-
 -- Prints the output from a run or compile command.
 -- If the output is a recognized error message, mark it.
 -- @param lexer The current lexer.
@@ -109,7 +106,7 @@ local function print_output(lexer, output)
   ui.print(output)
   if get_error_details(output) then
     -- Current position is one line below the error due to ui.print()'s '\n'.
-    buffer:marker_add(buffer.line_count - 2, MARK_ERROR)
+    buffer:marker_add(buffer.line_count - 2, M.MARK_ERROR)
   end
 end
 
@@ -220,9 +217,9 @@ function M.goto_error(line, next)
   if not line and next ~= nil then
     local f = buffer['marker_'..(next and 'next' or 'previous')]
     line = f(buffer, buffer:line_from_position(buffer.current_pos) +
-                     (next and 1 or -1), 2^MARK_ERROR)
+                     (next and 1 or -1), 2^M.MARK_ERROR)
     if line == -1 then
-      line = f(buffer, next and 0 or buffer.line_count, 2^MARK_ERROR)
+      line = f(buffer, next and 0 or buffer.line_count, 2^M.MARK_ERROR)
       if line == -1 then if CURSES then view:goto_buffer(cur_buf) end return end
     end
   end
@@ -246,10 +243,9 @@ end)
 
 local CURSES_MARK = buffer.SC_MARK_CHARACTER + string.byte(' ')
 -- Sets view properties for error markers.
-local function set_error_properties()
-  if CURSES then buffer:marker_define(MARK_ERROR, CURSES_MARK) end
-  buffer.marker_back[MARK_ERROR] = buffer.property_int[M.ERROR_COLOR]
-end
-events.connect(events.VIEW_NEW, set_error_properties)
+events.connect(events.VIEW_NEW, function()
+  if CURSES then buffer:marker_define(M.MARK_ERROR, CURSES_MARK) end
+  buffer.marker_back[M.MARK_ERROR] = not CURSES and 0x8080CC or 0x000080
+end)
 
 return M
