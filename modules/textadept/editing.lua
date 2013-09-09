@@ -27,9 +27,8 @@ local M = {}
 -- @field STRIP_TRAILING_SPACES (bool)
 --   Strip trailing whitespace on file save.
 --   The default value is `true`.
--- @field HIGHLIGHT_COLOR (string)
---   The name of the color in the current theme to
---   [highlight words](#highlight_word) with.
+-- @field INDIC_HIGHLIGHT (number)
+--   The word highlight indicator number.
 module('textadept.editing')]]
 
 M.AUTOPAIR = true
@@ -37,7 +36,7 @@ M.HIGHLIGHT_BRACES = true
 M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
 M.STRIP_TRAILING_SPACES = true
-M.HIGHLIGHT_COLOR = not CURSES and 'color.orange' or 'color.yellow'
+M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 ---
 -- Map of lexer names to line comment strings for programming languages, used by
@@ -470,11 +469,9 @@ function M.convert_indentation()
   buffer:end_undo_action()
 end
 
-local INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
-
 -- Clears highlighted word indicators and markers.
 local function clear_highlighted_words()
-  buffer.indicator_current = INDIC_HIGHLIGHT
+  buffer.indicator_current = M.INDIC_HIGHLIGHT
   buffer:indicator_clear_range(0, buffer.length)
 end
 events.connect(events.KEYPRESS, function(code)
@@ -505,13 +502,12 @@ function M.highlight_word()
 end
 
 -- Sets view properties for highlighted word indicators and markers.
-local function set_highlight_properties()
-  buffer.indic_fore[INDIC_HIGHLIGHT] = buffer.property_int[M.HIGHLIGHT_COLOR]
-  buffer.indic_style[INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
-  buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
-  if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
-end
-events.connect(events.VIEW_NEW, set_highlight_properties)
+events.connect(events.VIEW_NEW, function()
+  buffer.indic_fore[M.INDIC_HIGHLIGHT] = not CURSES and 0x4D99E6 or 0x008080
+  buffer.indic_style[M.INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
+  buffer.indic_alpha[M.INDIC_HIGHLIGHT] = 255
+  if not CURSES then buffer.indic_under[M.INDIC_HIGHLIGHT] = true end
+end)
 
 ---
 -- Passes selected or all buffer text to string shell command *command* as

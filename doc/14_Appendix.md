@@ -153,33 +153,36 @@ completely new theme implementation.
 Old API                           |Change  |New API
 ----------------------------------|:------:|-------
 **_G**                            |        |
-RESETTING                         |Removed |N/A<sup>\*</sup>
+RESETTING                         |Removed |N/A<sup>a</sup>
 buffer\_new()                     |Renamed |\_G.[buffer.new()][]
 **_M.textadept**                  |Renamed |[textadept][]
 filter\_through                   |Removed |N/A
 filter\_through.filter\_through() |Renamed |editing.[filter\_through()][]
-mime\_types                       |Renamed |[file\_types][]<sup>+</sup>
+mime\_types                       |Renamed |[file\_types][]<sup>b</sup>
 **_M.textadept.bookmark**         |        |
 N/A                               |New     |[goto\_mark()][]
-MARK\_BOOKMARK\_COLOR             |Renamed |[BOOKMARK\_COLOR][]
+N/A                               |New     |[MARK\_BOOKMARK][]
+MARK\_BOOKMARK\_COLOR             |Removed |N/A<sup>c</sup>
 goto\_bookmark                    |Replaced|goto\_mark()
 goto\_next                        |Replaced|goto\_mark(true)
 goto\_prev                        |Replaced|goto\_mark(false)
 **_M.textadept.editing**          |        |
-INDIC\_HIGHLIGHT\_BACK            |Renamed |[HIGHLIGHT\_COLOR][]
+N/A                               |New     |[INDIC\_HIGHLIGHT][]
+INDIC\_HIGHLIGHT\_BACK            |Removed |N/A<sup>d</sup>
 autocomplete\_word(chars, default)|Changed |[autocomplete\_word][](default)
 grow\_selection()                 |Replaced|[select\_enclosed()][]
 **_M.textadept.menu**             |        |
 menubar                           |Removed |N/A
 contextmenu                       |Removed |N/A
 **_M.textadept.run**              |        |
-MARK\_ERROR\_BACK                 |Renamed |[ERROR\_COLOR][]
+N/A                               |New     |[MARK\_ERROR][]
+MARK\_ERROR\_BACK                 |Removed |N/A<sup>c</sup>
 **_M.textadept.snapopen**         |Removed |N/A
-open                              |Changed |\_G.[io.snapopen()][]<sup>†</sup>
+open                              |Changed |\_G.[io.snapopen()][]<sup>e</sup>
 **buffer**                        |        |
 get\_style\_name(buffer, n)       |Renamed |[style\_name][]\[n\]
 **events**                        |        |
-N/A                               |New     |[INITIALIZED][]<sup>‡</sup>
+N/A                               |New     |[INITIALIZED][]<sup>f</sup>
 handlers                          |Removed |N/A
 **gui**                           |Renamed |[ui][]
 docstatusbar\_text                |Renamed |[bufstatusbar\_text][]
@@ -189,13 +192,17 @@ select\_theme                     |Removed |N/A
 **io**                            |        |
 try\_encodings                    |Renamed |[encodings][]
 
-<sup>\*</sup>`arg` is `nil` when resetting.
+<sup>a</sup>`arg` is `nil` when resetting.
 
-<sup>+</sup>Removed *mime_types.conf* files. Interact with Lua tables directly.
+<sup>b</sup>Removed *mime_types.conf* files. Interact with Lua tables directly.
 
-<sup>†</sup>Changed arguments too.
+<sup>c</sup>Set [`buffer.marker_back`][] in [`events.VIEW_NEW`][].
 
-<sup>‡</sup>Custom menus and key bindings should take advantage of this since
+<sup>d</sup>Set [`buffer.indic_fore`][] in [`events.VIEW_NEW`][].
+
+<sup>e</sup>Changed arguments too.
+
+<sup>f</sup>Custom menus and key bindings should take advantage of this since
 not all buffer functions are available at the `require()` stage. See
 *modules/textadept/init.lua* for an example.
 
@@ -204,11 +211,11 @@ not all buffer functions are available at the `require()` stage. See
 [filter\_through()]: api/textadept.editing.html#filter_through
 [file\_types]: api/textadept.file_types.html
 [goto\_mark()]: api/textadept.bookmarks.html#goto_mark
-[BOOKMARK\_COLOR]: api/textadept.bookmarks.html#BOOKMARK_COLOR
-[HIGHLIGHT\_COLOR]: api/textadept.editing.html#HIGHLIGHT_COLOR
+[MARK\_BOOKMARK]: api/textadept.bookmarks.html#MARK_BOOKMARK
+[INDIC\_HIGHLIGHT]: api/textadept.editing.html#INDIC_HIGHLIGHT
 [autocomplete\_word]: api/textadept.editing.html#autocomplete_word
 [select\_enclosed()]: api/textadept.editing.html#select_enclosed
-[ERROR\_COLOR]: api/textadept.run.html#ERROR_COLOR
+[MARK\_ERROR]: api/textadept.run.html#MARK_ERROR
 [io.snapopen()]: api/io.html#snapopen
 [style\_name]: api/buffer.html#style_name
 [INITIALIZED]: api/events.html#INITIALIZED
@@ -217,6 +224,9 @@ not all buffer functions are available at the `require()` stage. See
 [maximized]: api/ui.html#maximized
 [goto\_file\_found()]: api/ui.find.html#goto_file_found
 [encodings]: api/io.html#encodings
+[`buffer.marker_back`]: api/buffer.html#marker_back
+[`events.VIEW_NEW`]: api/events.html#VIEW_NEW
+[`buffer.indic_fore`]: api/buffer.html#indic_fore
 
 #### Module Mentality
 
@@ -398,26 +408,26 @@ Old API        |Change  |New API
 getfenv(f)     |Removed |N/A. Use:<br/>debug.getupvalue(f, 1)
 loadstring()   |Replaced|load()
 module()       |Removed |N/A
-setfenv(f, env)|Removed |N/A. Use:<br/>debug.setupvalue(f, 1, env)<sup>\*</sup>
+setfenv(f, env)|Removed |N/A. Use:<br/>debug.setupvalue(f, 1, env)<sup>a</sup>
 unpack()       |Renamed |table.unpack()
 xpcall(f, msgh)|Changed |xpcall(f, msgh, ...)
-**\_m**        |Renamed |**[\_M][]**<sup>†</sup>
+**\_m**        |Renamed |**[\_M][]**<sup>b</sup>
 **_m.textadept.editing**|       |
-current\_word(action)   |Renamed|[select\_word()][]<sup>‡</sup>
+current\_word(action)   |Renamed|[select\_word()][]<sup>c</sup>
 **locale**              |Removed|N/A
 localize(message)       |Renamed|\_G.[\_L][][message]
 **os**                  |       |
 code = execute(cmd)     |Changed|ok, status, code = execute(cmd)
 
-<sup>\*</sup>In some cases, use `load()` with an environment instead:
+<sup>a</sup>In some cases, use `load()` with an environment instead:
 
     setfenv(loadstring(str), env)() --> load(str, nil, 'bt', env)()
 
-<sup>†</sup>In Textadept, search for "\_m" and replace with "\_M" with the
+<sup>b</sup>In Textadept, search for "\_m" and replace with "\_M" with the
 "Match Case" and "Whole Words" options checked -- this is what I did when
 upgrading Textadept's internals.
 
-<sup>‡</sup>To delete, call `_M.textadept.keys.utils.delete_word()` or define
+<sup>c</sup>To delete, call `_M.textadept.keys.utils.delete_word()` or define
 your own:
 
     local function delete_word()
