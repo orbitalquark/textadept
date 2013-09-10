@@ -21,12 +21,12 @@ local menubar = {
     {_L['_New'], buffer.new},
     {_L['_Open'], io.open_file},
     {_L['Open _Recent...'], io.open_recent_file},
-    {_L['Re_load'], buffer.reload},
-    {_L['_Save'], buffer.save},
-    {_L['Save _As'], buffer.save_as},
+    {_L['Re_load'], io.reload_file},
+    {_L['_Save'], io.save_file},
+    {_L['Save _As'], io.save_file_as},
     SEPARATOR,
-    {_L['_Close'], buffer.close},
-    {_L['Close All'], io.close_all},
+    {_L['_Close'], io.close_buffer},
+    {_L['Close All'], io.close_all_buffers},
     SEPARATOR,
     {_L['Loa_d Session...'], textadept.session.load},
     {_L['Sav_e Session...'], textadept.session.save},
@@ -366,7 +366,7 @@ if not CURSES then
   events.connect(events.LEXER_LOADED, set_language_contextmenu)
   events.connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
   events.connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
-  events.connect(events.BUFFER_NEW, set_lang_contextmenu)
+  events.connect(events.BUFFER_NEW, set_language_contextmenu)
 end
 
 return M

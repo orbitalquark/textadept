@@ -59,7 +59,7 @@ local M = {}
 -- functionally equivalent; you can use either. Examples are:
 --
 --     keys['cn'] = buffer.new
---     keys['cs'] = buffer.save
+--     keys['cz'] = buffer.undo
 --     keys['a('] = {textadept.editing.enclose, '(', ')'}
 --     keys['cu'] = function() io.snapopen(_USERHOME) end
 --

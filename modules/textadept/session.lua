@@ -50,7 +50,7 @@ function M.load(filename)
   if filename == '' then return end
   local not_found = {}
   local f = io.open(filename, 'rb')
-  if not f then io.close_all() return false end
+  if not f then io.close_all_buffers() return false end
   local current_view, splits = 1, {[0] = {}}
   local lfs_attributes = lfs.attributes
   for line in f:lines() do
