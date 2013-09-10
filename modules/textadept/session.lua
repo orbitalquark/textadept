@@ -114,7 +114,7 @@ function M.load(filename)
   return true
 end
 -- Load session when no args are present.
-events.connect('arg_none', function()
+events.connect(events.ARG_NONE, function()
   if M.SAVE_ON_QUIT then M.load(M.DEFAULT_SESSION) end
 end)
 

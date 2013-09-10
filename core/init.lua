@@ -5,9 +5,9 @@ _RELEASE = "Textadept 7.0 beta 3"
 package.path = _HOME..'/core/?.lua;'..package.path
 
 _SCINTILLA = require('iface')
-args = require('args')
 _L = require('locale')
 events = require('events')
+args = require('args')
 require('file_io')
 require('lfs_ext')
 require('ui')
@@ -16,9 +16,6 @@ keys = require('keys')
 _M = {} -- language modules table
 -- LuaJIT compatibility.
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
-
-events.connect(events.INITIALIZED,
-               function() if arg then args.process(arg) end end)
 
 --[[ This comment is for LuaDoc.
 ---

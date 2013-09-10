@@ -8,9 +8,11 @@ local M = {}
 --
 -- ## Arg Events
 --
--- + `'arg_none'`
+-- @field _G.events.ARG_NONE (string)
 --   Emitted when no command line arguments are passed to Textadept on startup.
 module('args')]]
+
+events.ARG_NONE = 'arg_none'
 
 -- Contains registered command line switches.
 -- @class table
@@ -38,7 +40,7 @@ end
 -- Processes command line argument table *arg*, handling switches previously
 -- defined using `args.register()` and treating unrecognized arguments as
 -- filenames to open.
--- Emits an `'arg_none'` event when no arguments are present.
+-- Emits an `ARG_NONE` event when no arguments are present.
 -- @param arg Argument table.
 -- @see register
 -- @see events
@@ -65,7 +67,7 @@ function M.process(arg)
     end
     i = i + 1
   end
-  if no_args then events.emit('arg_none') end
+  if no_args then events.emit(events.ARG_NONE) end
 end
 
 -- Shows all registered command line switches on the command line.
@@ -102,5 +104,8 @@ _G._USERHOME = userhome
 
 M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
 M.register('-f', '--force', 0, function() end, 'Forces unique instance')
+
+events.connect(events.INITIALIZED,
+               function() if arg then M.process(arg) end end)
 
 return M
