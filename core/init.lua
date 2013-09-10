@@ -5,9 +5,9 @@ _RELEASE = "Textadept 7.0 beta 3"
 package.path = _HOME..'/core/?.lua;'..package.path
 
 _SCINTILLA = require('iface')
-_L = require('locale')
 events = require('events')
 args = require('args')
+_L = require('locale')
 require('file_io')
 require('lfs_ext')
 require('ui')
