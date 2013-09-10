@@ -50,7 +50,7 @@ local preferred_view
 local function command(cmd_table, compiling)
   if not buffer.filename then return end
   buffer:annotation_clear_all()
-  buffer:save()
+  io.save_file()
   local command = cmd_table[buffer.filename:match('[^.]+$')]
   if not command then return end
   if type(command) == 'function' then command = command() end

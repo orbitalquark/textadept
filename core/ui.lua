@@ -249,7 +249,6 @@ events_connect(events.BUFFER_NEW, function()
 end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
--- @param buffer The global buffer.
 local function set_title()
   local filename = buffer.filename or buffer._type or _L['Untitled']
   local basename = buffer.filename and filename:match('[^/\\]+$') or filename
