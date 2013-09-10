@@ -79,8 +79,6 @@ local function show_help()
 end
 if not CURSES then M.register('-h', '--help', 0, show_help, 'Shows this') end
 
-local arg = arg
-
 -- For Windows, create arg table from single command line string (arg[0]).
 if WIN32 and not CURSES and #arg[0] > 0 then
   local P, C = lpeg.P, lpeg.C
