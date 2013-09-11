@@ -81,7 +81,7 @@ compiler flags do not include them by default.
 Textadept is self-contained, meaning you do not have to install it, and runs
 from its current location. Should you choose to install Textadept like a normal
 Linux application, run `make deps` and then the usual `make` and `make install`
-or `sudo make install` commands depending on your privilages. The default prefix
+or `sudo make install` commands depending on your privileges. The default prefix
 is */usr/local* but setting `DESTDIR` (e.g.
 `make install DESTDIR=/prefix/to/install/to`) changes it.
 
