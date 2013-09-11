@@ -2,13 +2,13 @@ ANNOTATION_BOXED	_	0;"	F	class:_SCINTILLA.constants
 ANNOTATION_HIDDEN	_	0;"	F	class:_SCINTILLA.constants
 ANNOTATION_STANDARD	_	0;"	F	class:_SCINTILLA.constants
 APPLEEVENT_ODOC	_	0;"	F	class:events
+ARG_NONE	_	0;"	F	class:events
 AUTOINDENT	_	0;"	F	class:textadept.editing
 AUTOPAIR	_	0;"	F	class:textadept.editing
 AUTO_C_CHAR_DELETED	_	0;"	F	class:events
 AUTO_C_RELEASE	_	0;"	F	class:events
 AUTO_C_SELECTION	_	0;"	F	class:events
 B	_	0;"	f	class:lpeg
-BOOKMARK_COLOR	_	0;"	F	class:textadept.bookmarks
 BUFFER_AFTER_SWITCH	_	0;"	F	class:events
 BUFFER_BEFORE_SWITCH	_	0;"	F	class:events
 BUFFER_DELETED	_	0;"	F	class:events
@@ -50,7 +50,6 @@ EDGE_LINE	_	0;"	F	class:_SCINTILLA.constants
 EDGE_NONE	_	0;"	F	class:_SCINTILLA.constants
 ERROR	_	0;"	F	class:events
 ERROR	_	0;"	F	class:lexer
-ERROR_COLOR	_	0;"	F	class:textadept.run
 FIELD	_	0;"	F	class:textadept.adeptsense
 FIELD_IMAGE	_	0;"	F	class:textadept.adeptsense
 FILE_AFTER_SAVE	_	0;"	F	class:events
@@ -68,7 +67,6 @@ FUNCTION	_	0;"	F	class:lexer
 FUNCTION	_	0;"	F	class:textadept.adeptsense
 FUNCTION_IMAGE	_	0;"	F	class:textadept.adeptsense
 HIGHLIGHT_BRACES	_	0;"	F	class:textadept.editing
-HIGHLIGHT_COLOR	_	0;"	F	class:textadept.editing
 HOTSPOT_CLICK	_	0;"	F	class:events
 HOTSPOT_DOUBLE_CLICK	_	0;"	F	class:events
 HOTSPOT_RELEASE_CLICK	_	0;"	F	class:events
@@ -87,6 +85,7 @@ INDIC_DIAGONAL	_	0;"	F	class:_SCINTILLA.constants
 INDIC_DOTBOX	_	0;"	F	class:_SCINTILLA.constants
 INDIC_DOTS	_	0;"	F	class:_SCINTILLA.constants
 INDIC_HIDDEN	_	0;"	F	class:_SCINTILLA.constants
+INDIC_HIGHLIGHT	_	0;"	F	class:textadept.editing
 INDIC_MAX	_	0;"	F	class:_SCINTILLA.constants
 INDIC_PLAIN	_	0;"	F	class:_SCINTILLA.constants
 INDIC_ROUNDBOX	_	0;"	F	class:_SCINTILLA.constants
@@ -107,6 +106,8 @@ LANGUAGE_MODULE_PREFIX	_	0;"	F	class:keys
 LEXER_LOADED	_	0;"	F	class:events
 MARGIN_CLICK	_	0;"	F	class:events
 MARKER_MAX	_	0;"	F	class:_SCINTILLA.constants
+MARK_BOOKMARK	_	0;"	F	class:textadept.bookmarks
+MARK_ERROR	_	0;"	F	class:textadept.run
 MAX_RECENT_FILES	_	0;"	F	class:textadept.session
 MENU_CLICKED	_	0;"	F	class:events
 MODE	_	0;"	F	class:keys
@@ -976,10 +977,10 @@ clear_registered_images	_	0;"	f	class:buffer
 clear_selections	_	0;"	f	class:buffer
 clipboard_text	_	0;"	F	class:ui
 clock	_	0;"	f	class:os
-close	_	0;"	f	class:buffer
 close	_	0;"	f	class:file
 close	_	0;"	f	class:io
-close_all	_	0;"	f	class:io
+close_all_buffers	_	0;"	f	class:io
+close_buffer	_	0;"	f	class:io
 cntrl	_	0;"	F	class:lexer
 collectgarbage	_	0;"	f	
 colourise	_	0;"	f	class:buffer
@@ -1431,7 +1432,7 @@ register	_	0;"	f	class:args
 register_image	_	0;"	f	class:buffer
 register_rgba_image	_	0;"	f	class:buffer
 release_all_extended_styles	_	0;"	f	class:buffer
-reload	_	0;"	f	class:buffer
+reload_file	_	0;"	f	class:io
 remove	_	0;"	f	class:os
 remove	_	0;"	f	class:table
 rename	_	0;"	f	class:os
@@ -1467,10 +1468,10 @@ run	_	0;"	f	class:textadept.run
 run	_	0;"	t	class:textadept
 run_command	_	0;"	t	class:textadept.run
 running	_	0;"	f	class:coroutine
-save	_	0;"	f	class:buffer
 save	_	0;"	f	class:textadept.session
-save_all	_	0;"	f	class:io
-save_as	_	0;"	f	class:buffer
+save_all_files	_	0;"	f	class:io
+save_file	_	0;"	f	class:io
+save_file_as	_	0;"	f	class:io
 scroll_caret	_	0;"	f	class:buffer
 scroll_range	_	0;"	f	class:buffer
 scroll_to_end	_	0;"	f	class:buffer
@@ -1521,10 +1522,10 @@ sense	_	0;"	F	class:_M.rails
 sense	_	0;"	F	class:_M.rhtml
 sense	_	0;"	F	class:_M.ruby
 session	_	0;"	t	class:textadept
+set_buffer_encoding	_	0;"	f	class:io
 set_chars_default	_	0;"	f	class:buffer
 set_contextmenu	_	0;"	f	class:textadept.menu
 set_empty_selection	_	0;"	f	class:buffer
-set_encoding	_	0;"	f	class:buffer
 set_fold_margin_colour	_	0;"	f	class:buffer
 set_fold_margin_hi_colour	_	0;"	f	class:buffer
 set_hotspot_active_back	_	0;"	f	class:buffer
