@@ -617,13 +617,13 @@ end
 function M.add_trigger(sense, c, only_fields, only_functions)
   if #c > 2 then return end -- TODO: warn
   local c1, c2 = c:match('.$'):byte(), #c > 1 and c:sub(1, 1):byte()
-  local i = events.connect(events.CHAR_ADDED, function(char)
+  sense.events[#sense.events + 1] = function(char)
     if char == c1 and buffer:get_lexer(true) == sense.lexer then
       if c2 and buffer.char_at[buffer.current_pos - 2] ~= c2 then return end
       sense:complete(only_fields, only_functions)
     end
-  end)
-  sense.events[#sense.events + 1] = i
+  end
+  events.connect(events.CHAR_ADDED, sense.events[#sense.events])
 end
 
 ---
@@ -881,8 +881,8 @@ function M.new(lang)
   if sense then
     sense.ctags_kinds = nil
     sense.api_files = nil
-    for _, i in ipairs(sense.events) do
-      events.disconnect(events.CHAR_ADDED, i)
+    for _, f in ipairs(sense.events) do
+      events.disconnect(events.CHAR_ADDED, f)
     end
     sense.events = nil
     sense:clear()
@@ -894,8 +894,8 @@ function M.new(lang)
     always_show_globals = true,
 
 ---
--- A map of Ctags kinds to Adeptsense kinds.
--- Recognized kinds are `FUNCTION`, `FIELD`, and `CLASS`. Classes are quite
+-- A map of Ctags kinds to Adeptsense types.
+-- Recognized types are `FUNCTION`, `FIELD`, and `CLASS`. Classes are quite
 -- simply containers for functions and fields so Lua modules would count as
 -- classes. Any other kinds will be passed to `handle_ctag()` for user-defined
 -- handling.
@@ -950,7 +950,7 @@ api_files = {},
 
 ---
 -- Map of language-specific syntax settings.
--- @field self The language's syntax-equivalent of `self`. The default value is
+-- @field self The language's syntax-equivalent of "self". The default value is
 --   `'self'`.
 -- @field class_definition A Lua pattern representing the language's class
 --   definition syntax. The first capture returned must be the class name. A
