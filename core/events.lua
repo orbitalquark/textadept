@@ -65,10 +65,10 @@ local M = {}
 --   * _`position`_: `1` if the up arrow was clicked, 2 if the down arrow was
 --     clicked, and 0 otherwise.
 -- @field CHAR_ADDED (string)
---   Emitted after adding an ordinary text character to the buffer.
+--   Emitted after adding a text character to the buffer.
 --   Arguments:
 --
---   * _`ch`_: The text character byte.
+--   * _`byte`_: The text character's byte.
 -- @field COMMAND_ENTRY_KEYPRESS (string)
 --   Emitted when pressing a key in the Command Entry.
 --   If any handler returns `true`, the key is not inserted into the entry.
@@ -83,7 +83,7 @@ local M = {}
 --   Emitted after double-clicking the mouse button.
 --   Arguments:
 --
---   * _`position`_: The position in the buffer double-clicked.
+--   * _`position`_: The position double-clicked.
 --   * _`line`_: The line number double-clicked.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
 --     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
@@ -91,24 +91,26 @@ local M = {}
 --     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
 --     "Control" and "Alt" due to a Scintilla limitation with GTK+.
 -- @field DWELL_END (string)
---   Emitted after a `DWELL_START` when the mouse moves, a key is pressed, etc.
+--   Emitted after a `DWELL_START` when the user moves the mouse, presses a key,
+--   etc.
 --   Arguments:
 --
---   * _`position`_: The position in the buffer closest to *x* and *y*.
+--   * _`position`_: The position closest to *x* and *y*.
 --   * _`x`_: The x-coordinate of the mouse in the view.
 --   * _`y`_: The y-coordinate of the mouse in the view.
 -- @field DWELL_START (string)
---   Emitted after keeping the mouse stationary for the [dwell period][]
+--   Emitted after keeping the mouse stationary for
+--   [`buffer.mouse_dwell_time`][] milliseconds.
 --   Arguments:
 --
---   * _`position`_: The position in the buffer closest to *x* and *y*.
+--   * _`position`_: The position closest to *x* and *y*.
 --   * _`x`_: The x-coordinate of the mouse in the view.
 --   * _`y`_: The y-coordinate of the mouse in the view.
 -- @field ERROR (string)
 --   Emitted when an error occurs.
 --   Arguments:
 --
---   * _`text`_: The error text.
+--   * _`text`_: The error message text.
 -- @field FIND (string)
 --   Emitted to find text via the Find dialog box.
 --   Arguments:
@@ -120,7 +122,7 @@ local M = {}
 --   set.
 --   Arguments:
 --
---   * _`position`_: The position in the buffer clicked.
+--   * _`position`_: The position clicked.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
 --     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
@@ -131,7 +133,7 @@ local M = {}
 --   attribute set.
 --   Arguments:
 --
---   * _`position`_: The position in the buffer double-clicked.
+--   * _`position`_: The position double-clicked.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
 --     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
@@ -142,12 +144,12 @@ local M = {}
 --   style with the hotspot attribute set.
 --   Arguments:
 --
---   * _`position`_: The position in the buffer unclicked.
+--   * _`position`_: The position unclicked.
 -- @field INDICATOR_CLICK (string)
 --   Emitted when clicking the mouse on text that has an indicator present.
 --   Arguments:
 --
---   * _`position`_: The position of the clicked text in the buffer.
+--   * _`position`_: The position of the clicked text.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
 --     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
@@ -158,7 +160,7 @@ local M = {}
 --   indicator present.
 --   Arguments:
 --
---   * _`position`_: The position of the clicked text in the buffer.
+--   * _`position`_: The position of the clicked text.
 -- @field INITIALIZED (string)
 --   Emitted after Textadept finishes initializing.
 -- @field KEYPRESS (string)
@@ -176,8 +178,8 @@ local M = {}
 --   Arguments:
 --
 --   * _`margin`_: The margin number clicked.
---   * _`position`_: The position of the start of the line in the buffer whose
---     margin was clicked.
+--   * _`position`_: The position of the start of the line whose margin was
+--     clicked.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
 --     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
@@ -215,20 +217,20 @@ local M = {}
 -- @field SAVE_POINT_REACHED (string)
 --   Emitted after reaching a save point.
 -- @field UPDATE_UI (string)
---   Emitted when the text, styling, or selection range in the buffer changes.
+--   Emitted when buffer content, styling, selection, or scroll position
+--   changes.
 -- @field URI_DROPPED (string)
---   Emitted after dragging and dropping a URI such as a file name onto the
---   view.
+--   Emitted after dragging and dropping a URI into the view.
 --   Arguments:
 --
---   * _`text`_: The UTF-8-encoded URI text.
+--   * _`text`_: The UTF-8-encoded URI dropped.
 -- @field USER_LIST_SELECTION (string)
 --   Emitted after selecting an item in a user list.
 --   Arguments:
 --
 --   * _`list_type`_: The *list_type* from [`buffer:user_list_show()`][].
 --   * _`text`_: The text of the selection.
---   * _`position`_: The position in the buffer the list was displayed at.
+--   * _`position`_: The position the list was displayed at.
 -- @field VIEW_NEW (string)
 --   Emitted after creating a new view.
 --   Emitted on startup and by [`view:split()`][].
@@ -243,7 +245,7 @@ local M = {}
 -- [`view:goto_buffer()`]: view.html#goto_buffer
 -- [`buffer.new()`]: buffer.html#new
 -- [`buffer:delete()`]: buffer.html#delete
--- [dwell period]: buffer.html#mouse_dwell_time
+-- [`buffer.mouse_dwell_time`]: buffer.html#mouse_dwell_time
 -- [`ui.menu()`]: ui.html#menu
 -- [`quit()`]: _G.html#quit
 -- [`reset()`]: _G.html#reset
@@ -256,34 +258,33 @@ local handlers = {}
 
 ---
 -- Adds function *f* to the set of event handlers for event *event* at position
--- *index*, returning the handler identifier for *f*.
+-- *index*.
 -- *event* may be any arbitrary string and does not need to have been previously
 -- defined.
 -- @param event The string event name.
 -- @param f The Lua function to connect to *event*.
 -- @param index Optional index to insert the handler into.
--- @return handler ID.
 -- @usage events.connect('my_event', function(msg) ui.print(msg) end)
 -- @see disconnect
 -- @name connect
 function M.connect(event, f, index)
   if not event then error(_L['Undefined event name']) end
   if not handlers[event] then handlers[event] = {} end
-  local h = handlers[event]
-  if index then table.insert(h, index, f) else h[#h + 1] = f end
-  return index or #h
+  if handlers[event][f] then M.disconnect(event, f) end
+  table.insert(handlers[event], index or #handlers[event] + 1, f)
+  handlers[event][f] = index or #handlers[event]
 end
 
 ---
--- Removes handler identifier *id*, returned by `events.connect()`, from the set
--- of handlers for event *event*.
+-- Removes function *f* from the set of handlers for event *event*.
 -- @param event The string event name.
--- @param id ID of the handler returned by `events.connect()`.
+-- @param f The Lua function connected to *event*.
 -- @see connect
 -- @name disconnect
-function M.disconnect(event, id)
-  if not handlers[event] then return end
-  table.remove(handlers[event], id)
+function M.disconnect(event, f)
+  if not handlers[event] or not handlers[event][f] then return end
+  table.remove(handlers[event], handlers[event][f])
+  handlers[event][f] = nil
 end
 
 local error_emitted = false
@@ -291,10 +292,10 @@ local error_emitted = false
 -- Sequentially calls all handler functions for event *event* with the given
 -- arguments.
 -- *event* may be any arbitrary string and does not need to have been previously
--- defined. If any handler explicitly returns `true` or `false`, the event is
--- not propagated any further, iteration ceases, and `emit()` returns that
--- value. This is useful for stopping the propagation of an event like a
--- keypress after it has been handled.
+-- defined. If any handler explicitly returns `true` or `false`, `emit()`
+-- returns that value and ceases to call subsequent handlers. This is useful for
+-- stopping the propagation of an event like a keypress after it has been
+-- handled.
 -- @param event The string event name.
 -- @param ... Arguments passed to the handler.
 -- @return `true` or `false` if any handler explicitly returned such; `nil`
