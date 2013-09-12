@@ -59,26 +59,6 @@ elseif OSX then
   property['font'], property['fontsize'] = 'Monaco', 12
 end
 
--- Token styles.
-property['style.nothing'] = ''
-property['style.class'] = 'fore:%(color.yellow)'
-property['style.comment'] = 'fore:%(color.grey)'
-property['style.constant'] = 'fore:%(color.red)'
-property['style.error'] = 'fore:%(color.red),italics'
-property['style.function'] = 'fore:%(color.dark_orange)'
-property['style.keyword'] = 'fore:%(color.dark_blue)'
-property['style.label'] = 'fore:%(color.dark_orange)'
-property['style.number'] = 'fore:%(color.teal)'
-property['style.operator'] = 'fore:%(color.purple)'
-property['style.regex'] = 'fore:%(color.dark_green)'
-property['style.string'] = 'fore:%(color.green)'
-property['style.preprocessor'] = 'fore:%(color.dark_yellow)'
-property['style.type'] = 'fore:%(color.lavender)'
-property['style.variable'] = 'fore:%(color.dark_lavender)'
-property['style.whitespace'] = ''
-property['style.embedded'] = '%(style.tag),back:%(color.dark_white)'
-property['style.identifier'] = '%(style.nothing)'
-
 -- Predefined styles.
 property['style.default'] = 'font:%(font),size:%(fontsize),'..
                             'fore:%(color.light_black),back:%(color.white)'
@@ -88,6 +68,25 @@ property['style.bracebad'] = 'fore:%(color.light_red)'
 property['style.controlchar'] = '%(style.nothing)'
 property['style.indentguide'] = 'fore:%(color.dark_white)'
 property['style.calltip'] = 'fore:%(color.light_black),back:%(color.dark_white)'
+
+-- Token styles.
+property['style.class'] = 'fore:%(color.yellow)'
+property['style.comment'] = 'fore:%(color.grey)'
+property['style.constant'] = 'fore:%(color.red)'
+property['style.embedded'] = '%(style.keyword),back:%(color.dark_white)'
+property['style.error'] = 'fore:%(color.red),italics'
+property['style.function'] = 'fore:%(color.dark_orange)'
+property['style.identifier'] = ''
+property['style.keyword'] = 'fore:%(color.dark_blue)'
+property['style.label'] = 'fore:%(color.dark_orange)'
+property['style.number'] = 'fore:%(color.teal)'
+property['style.operator'] = 'fore:%(color.purple)'
+property['style.preprocessor'] = 'fore:%(color.dark_yellow)'
+property['style.regex'] = 'fore:%(color.dark_green)'
+property['style.string'] = 'fore:%(color.green)'
+property['style.type'] = 'fore:%(color.lavender)'
+property['style.variable'] = 'fore:%(color.dark_lavender)'
+property['style.whitespace'] = ''
 
 -- Multiple Selection and Virtual Space
 --buffer.additional_sel_alpha =
