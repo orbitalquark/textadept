@@ -33,11 +33,21 @@ module('_SCINTILLA')]]
 
 ]=]
 
+-- Constants to ignore.
+local ignores = {
+  '^IDM_', '^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX',
+  '^SC_CACHE_', '^SC_CHARSET_', '^SC_EFF_', '^SC_FONT_SIZE_MULTIPLIER',
+  '^SC_LINE_END_TYPE_', -- provisional
+  '^SC_PRINT_', '^SC_STATUS_', '^SC_TECHNOLOGY_', '^SC_TYPE_', '^SC_WEIGHT_',
+  '^SCE_', '^SCEN_', '^SCI_', '^SCLEX_',
+  '^UNDO_MAY_COALESCE'
+}
 -- Constants ({"constant", value}).
 for item in iface:match('Constants%[%] = (%b{})'):sub(2, -2):gmatch('%b{}') do
   local name, value = item:match('^{"(.-)",(.-)}')
-  if not name:find('^IDM_') and not name:find('^SCE_') and
-     not name:find('^SCLEX_') then
+  local skip = false
+  for i = 1, #ignores do if name:find(ignores[i]) then skip = true break end end
+  if not skip then
     if name == 'SC_MASK_FOLDERS' then value = '-33554432' end
     constants[#constants + 1] = string_format('%s=%s', name, value)
     fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, name, value)
@@ -79,12 +89,7 @@ for event, value in pairs(events) do
   fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, event, value)
 end
 -- Lexers added to constants.
-local lexers = {
-  SCLEX_CONTAINER = 0,
-  SCLEX_NULL = 1,
-  SCLEX_LPEG = 999,
-  SCLEX_AUTOMATIC = 1000
-}
+local lexers = { SCLEX_LPEG = 999 }
 for lexer, value in pairs(lexers) do
   constants[#constants + 1] = string_format('%s=%d', lexer, value)
   fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, lexer, value)
@@ -161,7 +166,7 @@ f:write('}\n\n')
 
 -- Write footer.
 f:write [[
-local marker_number, indic_number, list_type = -1, 7, 0
+local marker_number, indic_number, list_type = -1, -1, 0
 
 ---
 -- Returns a unique marker number for use with `buffer.marker_define()`.
