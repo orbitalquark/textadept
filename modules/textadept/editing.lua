@@ -25,7 +25,7 @@ local M = {}
 --   Match the indentation level of the previous line when inserting a new line.
 --   The default value is `true`.
 -- @field STRIP_TRAILING_SPACES (bool)
---   Strip trailing whitespace on file save.
+--   Strip trailing whitespace before saving files.
 --   The default value is `true`.
 -- @field INDIC_HIGHLIGHT (number)
 --   The word highlight indicator number.
@@ -202,24 +202,24 @@ function M.match_brace(select)
 end
 
 ---
--- Displays an autocompletion list, built from the set of *default_words* and
--- existing words in the buffer, for the word behind the caret, returning `true`
--- if completions were found.
--- @param default_words Optional list of words considered to be in the buffer,
+-- Displays an autocompletion list, built from the set of string words *words*
+-- and existing words in the buffer, for the word behind the caret, returning
+-- `true` if completions were found.
+-- @param words Optional list of words considered to be in the buffer,
 --   even if they are not. Words may contain [registered images][].
 --
 -- [registered images]: buffer.html#register_image
 -- @return `true` if there were completions to show; `false` otherwise.
 -- @see buffer.word_chars
 -- @name autocomplete_word
-function M.autocomplete_word(default_words)
+function M.autocomplete_word(words)
   local buffer = buffer
   local pos, length = buffer.current_pos, buffer.length
   local completions, c_list = {}, {}
   local buffer_text = buffer:get_text()
   local root = buffer_text:sub(1, pos):match('['..buffer.word_chars..']+$')
   if not root or root == '' then return end
-  for _, word in ipairs(default_words or {}) do
+  for _, word in ipairs(words or {}) do
     if word:match('^'..root) then
       c_list[#c_list + 1], completions[word:match('^(.-)%??%d*$')] = word, true
     end

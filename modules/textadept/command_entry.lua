@@ -168,7 +168,7 @@ end)
 local focus
 
 ---
--- Shows the completion list *completions* for the current word prefix.
+-- Shows completion list *completions* for the current word prefix.
 -- Word prefix characters are alphanumerics and underscores. On selection, the
 -- word prefix is replaced with the completion.
 -- @param completions The table of completions to show. Non-string values are
