@@ -21,7 +21,7 @@ if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 ---
 -- Extends Lua's _G table to provide extra functions and fields for Textadept.
 -- @field _HOME (string)
---   The path to the directory containing Textadept.
+--   The path to Textadept's home, or installation directory.
 -- @field _RELEASE (string)
 --   The Textadept release version string.
 -- @field _USERHOME (string)
@@ -33,14 +33,14 @@ if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 --   machines *~/* is the value of "$HOME", typically */home/username/* and
 --   */Users/username/* respectively.
 -- @field _CHARSET (string)
---   The character set encoding of the filesystem.
+--   The character encoding of the filesystem.
 --   This is used when [working with files](io.html).
 -- @field WIN32 (bool)
---   If Textadept is running on Windows, this flag is `true`.
+--   Whether or not Textadept is running on Windows.
 -- @field OSX (bool)
---   If Textadept is running on Mac OSX, this flag is `true`.
+--   Whether or not Textadept is running on Mac OSX.
 -- @field CURSES (bool)
---   If Textadept is running in the terminal, this flag is `true`.
+--   Whether or not Textadept is running in the terminal.
 --   Curses feature incompatibilities are listed in the [Appendix][].
 --
 --   [Appendix]: ../14_Appendix.html#Curses.Compatibility
@@ -84,7 +84,7 @@ local _VIEWS
 local buffer
 
 ---
--- The currently focused [view](view.html).
+-- The current [view](view.html).
 -- @class table
 -- @name view
 local view

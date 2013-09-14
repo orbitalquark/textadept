@@ -68,15 +68,15 @@
 --
 --   The default value is `buffer.ANNOTATION_HIDDEN`.
 -- @field auto_c_auto_hide (bool)
---   Automatically hide the autocompletion list when no entries match typed
---   text.
+--   Automatically hide the autocompletion or user list when no entries match
+--   typed text.
 --   The default value is `true`.
 -- @field auto_c_cancel_at_start (bool)
---   Cancel autocompletion when backspacing to a position before where
---   autocompletion started instead of before the word being completed.
+--   Cancel an autocompletion or user list when backspacing to a position before
+--   where autocompletion started instead of before the word being completed.
 --   The default value is `true`.
 -- @field auto_c_case_insensitive_behaviour (number)
---   The behavior mode for case insensitive autocompletion when
+--   The behavior mode for a case insensitive autocompletion or user list when
 --   [`buffer.auto_c_ignore_case`](#auto_c_ignore_case) is `true`.
 --
 --   * `buffer.SC_CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
@@ -97,10 +97,11 @@
 --   The default value is `false`.
 -- @field auto_c_fill_ups (string, Write-only)
 --   The set of characters that choose the currently selected item in an
---   autocompletion list when typed.
+--   autocompletion or user list when typed.
 --   The default value is an empty string.
 -- @field auto_c_ignore_case (bool)
---   Ignore case when searching an autocompletion list for matches.
+--   Ignore case when searching an autocompletion or user list for
+--   matches.
 --   The default value is `false`.
 -- @field auto_c_max_height (number)
 --   The maximum number of items per page to show in autocompletion and user
@@ -127,7 +128,7 @@
 --   The byte value of the character that separates autocompletion list items.
 --   The default value is `32` (' ').
 -- @field auto_c_type_separator (number)
---   The character byte that separates autocompletion list items and their
+--   The character byte that separates autocompletion and list items and their
 --   image types.
 --   Autocompletion list items can display both an image and text. Register
 --   images and their types using [`buffer:register_image()`](#register_image)
@@ -142,10 +143,6 @@
 --   Buffering draws each line of text into a bitmap buffer before drawing the
 --   bitmap to the screen.
 --   The default value is `true`.
--- @field call_tip_back (number, Write-only)
---   The background color, in "0xBBGGRR" format, of call tips.
--- @field call_tip_fore (number, Write-only)
---   The foreground color, in "0xBBGGRR" format, of call tips.
 -- @field call_tip_fore_hlt (number, Write-only)
 --   The foreground color, in "0xBBGGRR" format, of the highlighted part of
 --   call tips.
@@ -567,7 +564,7 @@
 -- @field property (table)
 --   Map of key-value string pairs used by lexers.
 -- @field property_expanded (table, Read-only)
---   Map of key-value string pairs used by lexers with `$()` variable
+--   Map of key-value string pairs used by lexers with `%()` variable
 --   replacement performed in values.
 -- @field property_int (table, Read-only)
 --   Map of key-value pairs used by lexers with values interpreted as numbers,
@@ -1008,8 +1005,8 @@ function auto_c_select(buffer, string) end
 function auto_c_show(buffer, len_entered, item_list) end
 
 ---
--- Defines string *chars* as the set of characters that cancel autocompletion
--- when typed.
+-- Defines string *chars* as the set of characters that cancels an
+-- autocompletion or user list when typed.
 -- The default set is an empty string.
 -- @param buffer The global buffer.
 -- @param chars The string of characters that cancel autocompletion. This string
@@ -1128,7 +1125,7 @@ function can_redo(buffer) end
 function can_undo(buffer) end
 
 ---
--- Cancels the active call tip, autocompletion list, user list, selection mode,
+-- Cancels the active call tip, autocompletion or user list, selection mode,
 -- etc.
 -- @param buffer The global buffer.
 function cancel(buffer) end
@@ -2741,6 +2738,8 @@ function set_lexer(buffer, lang) end
 -- Unused Fields.
 --   * annotation_styles
 --   * automatic_fold
+--   * call_tip_back
+--   * call_tip_fore
 --   * character_pointer
 --   * code_page
 --   * direct_function
