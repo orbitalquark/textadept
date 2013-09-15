@@ -84,8 +84,7 @@ local preferred_view
 -- patterns matching folders to exclude listed in a `folders` sub-table.
 -- Patterns starting with '!' exclude files and folders that do not match the
 -- pattern that follows. Use a table of raw file extensions assigned to an
--- `extensions` key for fast filtering by extension. All strings must be encoded
--- in `_G._CHARSET`, not UTF-8.
+-- `extensions` key for fast filtering by extension.
 -- The default value is `lfs.FILTER`, a filter for common binary file extensions
 -- and version control folders.
 -- @see find_in_files
@@ -208,32 +207,30 @@ function M.find_incremental(text, next, anchor)
 end
 
 ---
--- Searches directory *utf8_dir* or user-specified directory for files that
--- match search text and options and prints the results to a files found buffer.
+-- Searches directory *dir* or user-specified directory for files that match
+-- search text and options and prints the results to a files found buffer.
 -- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
 -- search text and option flags, respectively. Use `FILTER` to set the search
 -- filter.
--- @param utf8_dir Optional UTF-8-encoded directory path to search. If `nil`,
---   the user is prompted for one.
+-- @param dir Optional directory path to search. If `nil`, the user is prompted
+--   for one.
 -- @see FILTER
 -- @name find_in_files
-function M.find_in_files(utf8_dir)
-  if not utf8_dir then
-    utf8_dir = ui.dialog('fileselect',
+function M.find_in_files(dir)
+  dir = dir or ui.dialog('fileselect',
                          '--title', _L['Find in Files'],
                          '--select-only-directories',
                          '--with-directory',
                          (buffer.filename or ''):match('^.+[/\\]') or '',
                          '--no-newline')
-  end
-  if utf8_dir == '' then return end
+  if dir == '' then return end
 
   local text = M.find_entry_text
   if not M.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
   if not M.match_case then text = text:lower() end
   if M.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
   local matches = {_L['Find:']..' '..text}
-  lfs.dir_foreach(utf8_dir, function(file)
+  lfs.dir_foreach(dir, function(file)
     local match_case = M.match_case
     local line_num = 1
     for line in io.lines(file) do
@@ -374,7 +371,7 @@ function M.goto_file_found(line, next)
   local file, line_num = buffer:get_cur_line():match('^(.+):(%d+):.+$')
   if not file then if CURSES then view:goto_buffer(cur_buf) end return end
   textadept.editing.select_line()
-  ui.goto_file(file, true, preferred_view)
+  ui.goto_file(file:iconv(_CHARSET, 'UTF-8'), true, preferred_view)
   textadept.editing.goto_line(line_num)
 end
 events.connect(events.DOUBLE_CLICK, function(pos, line)

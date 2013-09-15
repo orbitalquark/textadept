@@ -3,55 +3,30 @@
 --[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's `io` library with Textadept functions for working with files.
---
--- ## Working with UTF-8
---
--- Textadept encodes all of its filenames, like [`buffer.filename`][], in UTF-8.
--- If you try to use Lua to access the file associated with such a filename, you
--- may not get the right file if your filesystem's encoding is not UTF-8 (e.g.
--- Windows).
---
---     -- May not work on non-UTF-8 filesystems.
---     local f = io.open(buffer.filename, 'rb')
---
--- You need to convert the filename to the filesystem's encoding using
--- [`string.iconv()`][] along with [`_CHARSET`][]:
---
---     local name = string.iconv(buffer.filename,
---                               _CHARSET, 'UTF-8')
---     local f = io.open(name, 'rb')
---
--- Textadept automatically performs filename conversions for you when opening
--- and saving files through dialogs. You only need to do manual conversions when
--- working with the filesystem directly from Lua.
---
--- [`buffer.filename`]: buffer.html#filename
--- [`string.iconv()`]: string.html#iconv
--- [`_CHARSET`]: _G.html#_CHARSET
 -- @field _G.events.FILE_OPENED (string)
 --   Emitted when opening a file in a new buffer.
 --   Emitted by [`open_file()`](#open_file).
 --   Arguments:
 --
---   * _`filename`_: The UTF-8-encoded filename.
+--   * _`filename`_: The filename opened.
 -- @field _G.events.FILE_BEFORE_SAVE (string)
 --   Emitted right before saving a file to disk.
 --   Emitted by [`io.save_file()`](#save_file).
 --   Arguments:
 --
---   * _`filename`_: The UTF-8-encoded filename.
+--   * _`filename`_: The filename being saved.
 -- @field _G.events.FILE_AFTER_SAVE (string)
 --   Emitted right after saving a file to disk.
 --   Emitted by [`io.save_file()`](#save_file).
 --   Arguments:
 --
---   * _`filename`_: The UTF-8-encoded filename.
+--   * _`filename`_: The filename being saved.
 -- @field _G.events.FILE_SAVED_AS (string)
 --   Emitted after saving a file under a different filename.
 --   Emitted by [`io.save_file_as()`](#save_file_as).
 --   Arguments:
 --
---   * _`filename`_: The UTF-8-encoded filename.
+--   * _`filename`_: The new filename.
 -- @field SNAPOPEN_MAX (number)
 --   The maximum number of files to list in the snapopen dialog.
 --   The default value is `1000`.
@@ -116,28 +91,28 @@ io.boms = {
 io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
 ---
--- Opens *utf8_filenames*, a "\n" delimited string of UTF-8-encoded filenames,
--- or user-selected files.
+-- Opens *filenames*, a "\n" delimited string of filenames, or user-selected
+-- files.
 -- Emits a `FILE_OPENED` event.
--- @param utf8_filenames Optional string list of UTF-8-encoded filenames to
---   open. If `nil`, the user is prompted with a fileselect dialog.
+-- @param filenames Optional string list filenames to open. If `nil`, the user
+--   is prompted with a fileselect dialog.
 -- @see _G.events
 -- @name open_file
-function io.open_file(utf8_filenames)
-  utf8_filenames = utf8_filenames or
-                   ui.dialog('fileselect',
-                             '--title', _L['Open'],
-                             '--select-multiple',
-                             '--with-directory',
-                             (buffer.filename or ''):match('.+[/\\]') or '')
-  for utf8_filename in utf8_filenames:gmatch('[^\n]+') do
-    utf8_filename = utf8_filename:gsub('^file://', '')
-    if WIN32 then utf8_filename = utf8_filename:gsub('/', '\\') end
+function io.open_file(filenames)
+  filenames = filenames or
+              ui.dialog('fileselect',
+                        '--title', _L['Open'],
+                        '--select-multiple',
+                        '--with-directory',
+                        (buffer.filename or ''):match('^.+[/\\]') or '')
+  for filename in filenames:gmatch('[^\n]+') do
+    filename = filename:gsub('^file://', '')
+    if WIN32 then filename = filename:gsub('/', '\\') end
     for i, buffer in ipairs(_BUFFERS) do
-      if utf8_filename == buffer.filename then view:goto_buffer(i) return end
+      if filename == buffer.filename then view:goto_buffer(i) return end
     end
 
-    local filename, text = utf8_filename:iconv(_CHARSET, 'UTF-8'), ''
+    local text = ''
     local f, err = io.open(filename, 'rb')
     if f then
       text = f:read('*all')
@@ -175,15 +150,15 @@ function io.open_file(utf8_filenames)
     buffer:goto_pos(0)
     buffer:empty_undo_buffer()
     buffer.mod_time = lfs.attributes(filename, 'modification') or os.time()
-    buffer.filename = utf8_filename
+    buffer.filename = filename
     buffer:set_save_point()
-    events.emit(events.FILE_OPENED, utf8_filename)
+    events.emit(events.FILE_OPENED, filename)
 
     -- Add file to recent files list, eliminating duplicates.
     for i, file in ipairs(io.recent_files) do
-      if file == utf8_filename then table.remove(io.recent_files, i) break end
+      if file == filename then table.remove(io.recent_files, i) break end
     end
-    table.insert(io.recent_files, 1, utf8_filename)
+    table.insert(io.recent_files, 1, filename)
   end
 end
 
@@ -193,8 +168,7 @@ end
 function io.reload_file()
   if not buffer.filename then return end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
-  local filename = buffer.filename:iconv(_CHARSET, 'UTF-8')
-  local f, err = io.open(filename, 'rb')
+  local f, err = io.open(buffer.filename, 'rb')
   if not f then error(err) end
   local text = f:read('*all')
   f:close()
@@ -206,7 +180,7 @@ function io.reload_file()
   buffer:line_scroll(0, first_visible_line)
   buffer:goto_pos(pos)
   buffer:set_save_point()
-  buffer.mod_time = lfs.attributes(filename, 'modification')
+  buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
 end
 
 ---
@@ -244,37 +218,34 @@ function io.save_file()
   if buffer.encoding then
     text = (buffer.encoding_bom or '')..text:iconv(buffer.encoding, 'UTF-8')
   end
-  local filename = buffer.filename:iconv(_CHARSET, 'UTF-8')
-  local f, err = io.open(filename, 'wb')
+  local f, err = io.open(buffer.filename, 'wb')
   if not f then error(err) end
   f:write(text)
   f:close()
   buffer:set_save_point()
-  buffer.mod_time = lfs.attributes(filename, 'modification')
+  buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
   if buffer._type then buffer._type = nil end
   events.emit(events.FILE_AFTER_SAVE, buffer.filename)
 end
 
 ---
--- Saves the current buffer to file *utf8_filename* or user-specified filename.
+-- Saves the current buffer to file *filename* or user-specified filename.
 -- Emits a `FILE_SAVED_AS` event.
--- @param utf8_filename Optional new filepath to save the buffer to. Must be
---   UTF-8 encoded. If `nil`, the user is prompted for one.
+-- @param filename Optional new filepath to save the buffer to. If `nil`, the
+--   user is prompted for one.
 -- @name save_file_as
-function io.save_file_as(utf8_filename)
-  if not utf8_filename then
-    utf8_filename = ui.dialog('filesave',
-                              '--title', _L['Save'],
-                              '--with-directory',
-                              (buffer.filename or ''):match('.+[/\\]') or '',
-                              '--with-file',
-                              (buffer.filename or ''):match('[^/\\]+$') or '',
-                              '--no-newline')
-  end
-  if utf8_filename == '' then return end
-  buffer.filename = utf8_filename
+function io.save_file_as(filename)
+  local dir = (buffer.filename or ''):match('^.+[/\\]') or ''
+  local name = (buffer.filename or ''):match('[^/\\]+$') or ''
+  filename = filename or ui.dialog('filesave',
+                                   '--title', _L['Save'],
+                                   '--with-directory', dir,
+                                   '--with-file', name:iconv('UTF-8', _CHARSET),
+                                   '--no-newline')
+  if filename == '' then return end
+  buffer.filename = filename
   io.save_file()
-  events.emit(events.FILE_SAVED_AS, utf8_filename)
+  events.emit(events.FILE_SAVED_AS, filename)
 end
 
 ---
@@ -300,7 +271,8 @@ function io.close_buffer()
   if buffer.dirty and ui.dialog('msgbox',
                                 '--title', _L['Close without saving?'],
                                 '--text', _L['There are unsaved changes in'],
-                                '--informative-text', filename,
+                                '--informative-text',
+                                filename:iconv('UTF-8', _CHARSET),
                                 '--icon', 'gtk-dialog-question',
                                 '--button1', _L['_Cancel'],
                                 '--button2', _L['Close _without saving'],
@@ -330,9 +302,7 @@ end
 -- of Textadept.
 local function update_modified_file()
   if not buffer.filename then return end
-  local utf8_filename = buffer.filename
-  local filename = utf8_filename:iconv(_CHARSET, 'UTF-8')
-  local mod_time = lfs.attributes(filename, 'modification')
+  local mod_time = lfs.attributes(buffer.filename, 'modification')
   if not mod_time or not buffer.mod_time then return end
   if buffer.mod_time < mod_time then
     buffer.mod_time = mod_time
@@ -340,7 +310,7 @@ local function update_modified_file()
                  '--title', _L['Reload?'],
                  '--text', _L['Reload modified file?'],
                  '--informative-text',
-                 ('"%s"\n%s'):format(utf8_filename,
+                 ('"%s"\n%s'):format(buffer.filename:iconv('UTF-8', _CHARSET),
                                      _L['has been modified. Reload it?']),
                  '--icon', 'gtk-dialog-question',
                  '--button1', _L['_Yes'],
@@ -355,7 +325,7 @@ events_connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
 events_connect(events.VIEW_AFTER_SWITCH, update_modified_file)
 
 -- Closes the initial "Untitled" buffer.
-events_connect(events.FILE_OPENED, function(utf8_filename)
+events_connect(events.FILE_OPENED, function(filename)
   local buf = _BUFFERS[1]
   if #_BUFFERS == 2 and not (buf.filename or buf._type or buf.dirty) then
     view:goto_buffer(1)
@@ -368,24 +338,27 @@ end)
 -- @see recent_files
 -- @name open_recent_file
 function io.open_recent_file()
-  local i = ui.filteredlist(_L['Open'], _L['File'], io.recent_files, true,
+  local utf8_filenames = {}
+  for _, filename in ipairs(io.recent_files) do
+    utf8_filenames[#utf8_filenames + 1] = filename:iconv('UTF-8', _CHARSET)
+  end
+  local i = ui.filteredlist(_L['Open'], _L['File'], utf8_filenames, true,
                             CURSES and {'--width', ui.size[1] - 2} or '')
   if i then io.open_file(io.recent_files[i + 1]) end
 end
 
 ---
--- Quickly open files from *utf8_paths*, a "\n" delimited string of
--- UTF-8-encoded directory paths, using a filtered list dialog.
+-- Quickly open files from *paths*, a "\n" delimited string of directory paths,
+-- using a filtered list dialog.
 -- Files shown in the dialog do not match any pattern in string or table
 -- *filter*, and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A
 -- filter table contains Lua patterns that match filenames to exclude, with
 -- patterns matching folders to exclude listed in a `folders` sub-table.
 -- Patterns starting with '!' exclude files and folders that do not match the
 -- pattern that follows. Use a table of raw file extensions assigned to an
--- `extensions` key for fast filtering by extension. All strings must be encoded
--- in `_G._CHARSET`, not UTF-8. The number of files in the list is capped at
--- `SNAPOPEN_MAX`.
--- @param utf8_paths String list of UTF-8-encoded directory paths to search.
+-- `extensions` key for fast filtering by extension. The number of files in the
+-- list is capped at `SNAPOPEN_MAX`.
+-- @param paths String list of directory paths to search.
 -- @param filter Optional filter for files and folders to exclude.
 -- @param exclude_FILTER Optional flag indicating whether or not to exclude the
 --   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
@@ -401,15 +374,16 @@ end
 -- @see lfs.FILTER
 -- @see SNAPOPEN_MAX
 -- @name snapopen
-function io.snapopen(utf8_paths, filter, exclude_FILTER, ...)
-  local list = {}
-  for utf8_path in utf8_paths:gmatch('[^\n]+') do
-    lfs.dir_foreach(utf8_path, function(file)
-      if #list >= io.SNAPOPEN_MAX then return false end
-      list[#list + 1] = file:gsub('^%.[/\\]', '')
+function io.snapopen(paths, filter, exclude_FILTER, ...)
+  local utf8_list = {}
+  for path in paths:gmatch('[^\n]+') do
+    lfs.dir_foreach(path, function(file)
+      if #utf8_list >= io.SNAPOPEN_MAX then return false end
+      file = file:gsub('^%.[/\\]', ''):iconv('UTF-8', _CHARSET)
+      utf8_list[#utf8_list + 1] = file
     end, filter, exclude_FILTER)
   end
-  if #list >= io.SNAPOPEN_MAX then
+  if #utf8_list >= io.SNAPOPEN_MAX then
     ui.dialog('ok-msgbox',
               '--title', _L['File Limit Exceeded'],
               '--text',
@@ -420,6 +394,7 @@ function io.snapopen(utf8_paths, filter, exclude_FILTER, ...)
               '--button1', _L['_OK'])
   end
   local width = CURSES and {'--width', ui.size[1] - 2} or ''
-  io.open_file(ui.filteredlist(_L['Open'], _L['File'], list, false,
-                               '--select-multiple', width, ...) or '')
+  local files = ui.filteredlist(_L['Open'], _L['File'], utf8_list, false,
+                                '--select-multiple', width, ...) or ''
+  io.open_file(files:iconv(_CHARSET, 'UTF-8'))
 end

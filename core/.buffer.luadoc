@@ -277,11 +277,7 @@
 --   The amount of pixel padding below line text.
 --   The default is `0`.
 -- @field filename (string)
---   The UTF-8-encoded absolute path to the file associated with the buffer.
---   Use [`string.iconv()`][] and [`_G._CHARSET`][] for charset conversions.
---
---   [`string.iconv()`]: string.html#iconv
---   [`_G._CHARSET`]: _G.html#_CHARSET
+--   The absolute path to the file associated with the buffer.
 -- @field first_visible_line (number)
 --   The line number of the line at the top of the view, starting from zero.
 -- @field fold_expanded (table)
