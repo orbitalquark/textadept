@@ -145,8 +145,8 @@ non-existant graphics capabilities:
 
 ### Textadept 6 to 7
 
-Textadept 7 introduces API changes, a change in module mentality, and a
-completely new theme implementation.
+Textadept 7 introduces API changes, a change in module mentality and filename
+encodings, and a completely new theme implementation.
 
 #### API Changes
 
@@ -250,6 +250,16 @@ the user is free to choose.
 
 [`textadept`]: api/textadept.html
 [`_M`]: api/_M.html
+
+#### Filename Encodings
+
+Prior to Textadept 7, `buffer.filename` was encoded in UTF-8 and any functions
+that accepted filenames (such as `io.open_file()`) required the filenames to
+also be encoded in UTF-8. This is no longer the case in Textadept 7.
+`buffer.filename` is encoded in `_CHARSET` and any filenames passed to functions
+should also remain encoded in `_CHARSET`. No more superfluous encoding
+conversions. You should only convert to and from UTF-8 when displaying or
+retrieving displayed filenames from buffers and/or dialogs.
 
 #### Theme Changes
 

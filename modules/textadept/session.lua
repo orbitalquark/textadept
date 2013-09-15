@@ -40,13 +40,13 @@ M.MAX_RECENT_FILES = 10
 -- @see DEFAULT_SESSION
 -- @name load
 function M.load(filename)
+  local dir = M.DEFAULT_SESSION:match('^.+[/\\]') or ''
+  local name = M.DEFAULT_SESSION:match('[^/\\]+$') or ''
   filename = filename or ui.dialog('fileselect',
                                    '--title', _L['Load Session'],
-                                   '--with-directory',
-                                   M.DEFAULT_SESSION:match('.+[/\\]') or '',
-                                   '--with-file',
-                                   M.DEFAULT_SESSION:match('[^/\\]+$') or '',
-                                   '--no-newline'):iconv(_CHARSET, 'UTF-8')
+                                   '--with-directory', dir,
+                                   '--with-file', name,
+                                   '--no-newline')
   if filename == '' then return end
   local not_found = {}
   local f = io.open(filename, 'rb')
@@ -127,13 +127,13 @@ end)
 -- @see DEFAULT_SESSION
 -- @name save
 function M.save(filename)
+  local dir = M.DEFAULT_SESSION:match('^.+[/\\]') or ''
+  local name = M.DEFAULT_SESSION:match('[^/\\]+$') or ''
   filename = filename or ui.dialog('filesave',
                                    '--title', _L['Save Session'],
-                                   '--with-directory',
-                                   M.DEFAULT_SESSION:match('.+[/\\]') or '',
-                                   '--with-file',
-                                   M.DEFAULT_SESSION:match('[^/\\]+$') or '',
-                                   '--no-newline'):iconv(_CHARSET, 'UTF-8')
+                                   '--with-directory', dir,
+                                   '--with-file', name:iconv('UTF-8', _CHARSET),
+                                   '--no-newline')
   if filename == '' then return end
   local session = {}
   local buffer_line = "buffer: %d %d %d %s" -- anchor, cursor, line, filename

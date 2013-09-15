@@ -140,8 +140,7 @@ end)
 -- @name _G.keys.lua
 keys.lua = {
   [keys.LANGUAGE_MODULE_PREFIX] = {
-    m = {io.open_file,
-         (_HOME..'/modules/lua/init.lua'):iconv('UTF-8', _CHARSET)},
+    m = {io.open_file, _HOME..'/modules/lua/init.lua'},
   },
   ['s\n'] = M.try_to_autocomplete_end,
 }

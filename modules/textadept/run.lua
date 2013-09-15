@@ -56,8 +56,7 @@ local function command(cmd_table, compiling)
   if type(command) == 'function' then command = command() end
 
   preferred_view = view
-  local filepath = buffer.filename:iconv(_CHARSET, 'UTF-8')
-  local filedir, filename = '', filepath
+  local filepath, filedir, filename = buffer.filename, '', buffer.filename
   if filepath:find('[/\\]') then
     filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
   end
@@ -92,6 +91,7 @@ local function get_error_details(message)
     if #captures > 0 then
       local details = {}
       for detail, i in pairs(error_detail) do details[detail] = captures[i] end
+      details.filename = details.filename:iconv(_CHARSET, 'UTF-8')
       return details
     end
   end

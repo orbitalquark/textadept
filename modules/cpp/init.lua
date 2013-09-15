@@ -67,8 +67,7 @@ end
 -- @name _G.keys.cpp
 keys.cpp = {
   [keys.LANGUAGE_MODULE_PREFIX] = {
-    m = {io.open_file,
-         (_HOME..'/modules/cpp/init.lua'):iconv('UTF-8', _CHARSET)},
+    m = {io.open_file, _HOME..'/modules/cpp/init.lua'},
   },
   ['s\n'] = function()
     buffer:line_end()

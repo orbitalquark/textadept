@@ -115,6 +115,7 @@ function ui.switch_buffer()
   local columns, items = {_L['Name'], _L['File']}, {}
   for _, buffer in ipairs(_BUFFERS) do
     local filename = buffer.filename or buffer._type or _L['Untitled']
+    filename = filename:iconv('UTF-8', _CHARSET)
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
     items[#items + 1] = (buffer.dirty and '*' or '')..basename
     items[#items + 1] = filename
@@ -251,6 +252,7 @@ end)
 -- Sets the title of the Textadept window to the buffer's filename.
 local function set_title()
   local filename = buffer.filename or buffer._type or _L['Untitled']
+  filename = filename:iconv('UTF-8', _CHARSET)
   local basename = buffer.filename and filename:match('[^/\\]+$') or filename
   ui.title = string.format('%s %s Textadept (%s)', basename,
                            buffer.dirty and '*' or '-', filename)
@@ -272,13 +274,13 @@ end)
 events_connect(events.URI_DROPPED, function(utf8_uris)
   for utf8_uri in utf8_uris:gmatch('[^\r\n]+') do
     if utf8_uri:find('^file://') then
-      utf8_uri = utf8_uri:match('^file://([^\r\n]+)')
-      utf8_uri = utf8_uri:gsub('%%(%x%x)', function(hex)
+      local uri = utf8_uri:iconv(_CHARSET, 'UTF-8')
+      uri = uri:match('^file://([^\r\n]+)'):gsub('%%(%x%x)', function(hex)
         return string.char(tonumber(hex, 16))
       end)
-      if WIN32 then utf8_uri = utf8_uri:sub(2, -1) end -- ignore leading '/'
-      local mode = lfs.attributes(utf8_uri:iconv(_CHARSET, 'UTF-8'), 'mode')
-      if mode and mode ~= 'directory' then io.open_file(utf8_uri) end
+      if WIN32 then uri = uri:sub(2, -1) end -- ignore leading '/'
+      local mode = lfs.attributes(uri, 'mode')
+      if mode and mode ~= 'directory' then io.open_file(uri) end
     end
   end
 end)
@@ -352,7 +354,8 @@ events_connect(events.QUIT, function()
   local list = {}
   for _, buffer in ipairs(_BUFFERS) do
     if buffer.dirty then
-      list[#list + 1] = buffer.filename or buffer._type or _L['Untitled']
+      local filename = buffer.filename or buffer._type or _L['Untitled']
+      list[#list + 1] = filename:iconv('UTF-8', _CHARSET)
     end
   end
   return #list < 1 or ui.dialog('msgbox',

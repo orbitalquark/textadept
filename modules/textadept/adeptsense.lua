@@ -812,7 +812,7 @@ function M.goto_ctag(sense, kind, title)
     if kind == M.FUNCTION or kind == M.FIELD then
       items[#items + 1] = kind:match('^[^#]+') -- class name
     end
-    items[#items + 1] = v[1]..':'..v[2]
+    items[#items + 1] = v[1]:iconv('UTF-8', _CHARSET)..':'..v[2]
   end
   local columns = {'Name', 'Location'}
   if kind == M.FUNCTION or kind == M.FIELD then
@@ -822,7 +822,7 @@ function M.goto_ctag(sense, kind, title)
                                    '--output-column', '3')
   if not location then return end
   local path, line = location:match('^(%a?:?[^:]+):(.+)$')
-  io.open_file(path)
+  io.open_file(path:iconv(_CHARSET, 'UTF-8'))
   if not tonumber(line) then
     -- /^ ... $/
     buffer.target_start, buffer.target_end = 0, buffer.length
