@@ -115,8 +115,8 @@ local function find_(text, next, flags, no_wrap, wrapped)
   if text == '' then return end
   if not flags then
     flags = 0
-    if M.match_case then flags = flags + buffer.SCFIND_MATCHCASE end
-    if M.whole_word then flags = flags + buffer.SCFIND_WHOLEWORD end
+    if M.match_case then flags = flags + buffer.FIND_MATCHCASE end
+    if M.whole_word then flags = flags + buffer.FIND_WHOLEWORD end
     if M.lua then flags = flags + 8 end
     if M.in_files then flags = flags + 16 end
   end
@@ -171,7 +171,7 @@ events.connect(events.FIND, find_)
 
 -- Finds and selects text incrementally in the current buffer from a starting
 -- position.
--- Flags other than `SCFIND_MATCHCASE` are ignored.
+-- Flags other than `FIND_MATCHCASE` are ignored.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
 -- @param anchor Flag indicating whether or not to search from the current
@@ -181,7 +181,7 @@ local function find_incremental(text, next, anchor)
     M.incremental_start = buffer.current_pos + (next and 1 or -1)
   end
   buffer:goto_pos(M.incremental_start or 0)
-  find_(text, next, M.match_case and buffer.SCFIND_MATCHCASE or 0)
+  find_(text, next, M.match_case and buffer.FIND_MATCHCASE or 0)
 end
 
 ---
@@ -356,11 +356,11 @@ function M.goto_file_found(line, next)
     if next then buffer:line_end() else buffer:home() end
     buffer:search_anchor()
     local f = buffer['search_'..(next and 'next' or 'prev')]
-    local pos = f(buffer, buffer.SCFIND_REGEXP, '^.+:[0-9]+:.+$')
+    local pos = f(buffer, buffer.FIND_REGEXP, '^.+:[0-9]+:.+$')
     if pos == -1 then
       buffer:goto_line(next and 0 or buffer.line_count)
       buffer:search_anchor()
-      pos = f(buffer, buffer.SCFIND_REGEXP, '^.+:[0-9]+:.+$')
+      pos = f(buffer, buffer.FIND_REGEXP, '^.+:[0-9]+:.+$')
     end
     if pos == -1 then if CURSES then view:goto_buffer(cur_buf) end return end
     line = buffer:line_from_position(pos)

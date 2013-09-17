@@ -48,7 +48,7 @@ for item in iface:match('Constants%[%] = (%b{})'):sub(2, -2):gmatch('%b{}') do
   local skip = false
   for i = 1, #ignores do if name:find(ignores[i]) then skip = true break end end
   if not skip then
-    name = name:gsub('SC_', '')
+    name = name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1')
     if name == 'MASK_FOLDERS' then value = '-33554432' end
     constants[#constants + 1] = string_format('%s=%s', name, value)
     fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, name, value)
@@ -88,12 +88,6 @@ local events = {
 for event, value in pairs(events) do
   constants[#constants + 1] = string_format('%s=%d', event, value)
   fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, event, value)
-end
--- Lexers added to constants.
-local lexers = { SCLEX_LPEG = 999 }
-for lexer, value in pairs(lexers) do
-  constants[#constants + 1] = string_format('%s=%d', lexer, value)
-  fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, lexer, value)
 end
 
 -- Write constants.

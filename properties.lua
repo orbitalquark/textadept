@@ -6,10 +6,10 @@ local buffer = buffer
 buffer.multiple_selection = true
 buffer.additional_selection_typing = true
 --buffer.multi_paste = buffer.MULTIPASTE_EACH
---buffer.virtual_space_options = buffer.SCVS_RECTANGULARSELECTION +
---                               buffer.SCVS_USERACCESSIBLE
-buffer.rectangular_selection_modifier = (WIN32 or OSX) and buffer.SCMOD_ALT or
-                                                           buffer.SCMOD_SUPER
+--buffer.virtual_space_options = buffer.VS_RECTANGULARSELECTION +
+--                               buffer.VS_USERACCESSIBLE
+buffer.rectangular_selection_modifier = (WIN32 or OSX) and buffer.MOD_ALT or
+                                                           buffer.MOD_SUPER
 --buffer.additional_carets_blink = false
 --buffer.additional_carets_visible = false
 
@@ -25,7 +25,7 @@ buffer:set_y_caret_policy(buffer.CARET_SLOP + buffer.CARET_STRICT +
 --buffer.end_at_last_line = false
 
 -- Whitespace
---buffer.view_ws = buffer.SCWS_VISIBLEALWAYS
+--buffer.view_ws = buffer.WS_VISIBLEALWAYS
 --buffer.whitespace_size =
 --buffer.extra_ascent =
 --buffer.extra_descent =

@@ -85,11 +85,11 @@ local M = {}
 --
 --   * _`position`_: The position double-clicked.
 --   * _`line`_: The line number double-clicked.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
---     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
+--     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
---     "Control" and "Alt" due to a Scintilla limitation with GTK+.
+--     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
+--     and "Alt" due to a Scintilla limitation with GTK+.
 -- @field DWELL_END (string)
 --   Emitted after a `DWELL_START` when the user moves the mouse, presses a key,
 --   etc.
@@ -123,22 +123,22 @@ local M = {}
 --   Arguments:
 --
 --   * _`position`_: The position clicked.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
---     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
+--     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
---     "Control" and "Alt" due to a Scintilla limitation with GTK+.
+--     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
+--     and "Alt" due to a Scintilla limitation with GTK+.
 -- @field HOTSPOT_DOUBLE_CLICK (string)
 --   Emitted when double-clicking on text that is in a style with the hotspot
 --   attribute set.
 --   Arguments:
 --
 --   * _`position`_: The position double-clicked.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
---     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
+--     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
---     "Control" and "Alt" due to a Scintilla limitation with GTK+.
+--     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
+--     and "Alt" due to a Scintilla limitation with GTK+.
 -- @field HOTSPOT_RELEASE_CLICK (string)
 --   Emitted after releasing the mouse after clicking on text that was in a
 --   style with the hotspot attribute set.
@@ -150,11 +150,11 @@ local M = {}
 --   Arguments:
 --
 --   * _`position`_: The position of the clicked text.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
---     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
+--     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
---     "Control" and "Alt" due to a Scintilla limitation with GTK+.
+--     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
+--     and "Alt" due to a Scintilla limitation with GTK+.
 -- @field INDICATOR_RELEASE (string)
 --   Emitted when releasing the mouse after clicking on text that has an
 --   indicator present.
@@ -180,11 +180,11 @@ local M = {}
 --   * _`margin`_: The margin number clicked.
 --   * _`position`_: The position of the start of the line whose margin was
 --     clicked.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.SCMOD_CTRL`,
---     `buffer.SCMOD_SHIFT`, `buffer.SCMOD_ALT`, and `buffer.SCMOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
+--     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.SCMOD_CTRL`, the "Control" modifier is reported as *both*
---     "Control" and "Alt" due to a Scintilla limitation with GTK+.
+--     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
+--     and "Alt" due to a Scintilla limitation with GTK+.
 -- @field MENU_CLICKED (string)
 --   Emitted after selecting a menu item.
 --   Arguments:

@@ -547,7 +547,7 @@ if not CURSES then
     {utils.toggle_property, 'indentation_guides'}
   keys[not OSX and 'caS' or 'cS'] = {utils.toggle_property, 'view_ws'}
   keys[not OSX and 'caV' or 'cV'] =
-    {utils.toggle_property, 'virtual_space_options', buffer.SCVS_USERACCESSIBLE}
+    {utils.toggle_property, 'virtual_space_options', buffer.VS_USERACCESSIBLE}
 end
 keys[not OSX and not CURSES and 'c=' or 'm='] = buffer.zoom_in
 keys[not OSX and not CURSES and 'c-' or 'm-'] = buffer.zoom_out
