@@ -241,11 +241,4 @@ events.connect(events.DOUBLE_CLICK, function(pos, line)
   if is_msg_buf(buffer) then M.goto_error(line) end
 end)
 
-local CURSES_MARK = buffer.SC_MARK_CHARACTER + string.byte(' ')
--- Sets view properties for error markers.
-events.connect(events.VIEW_NEW, function()
-  if CURSES then buffer:marker_define(M.MARK_ERROR, CURSES_MARK) end
-  buffer.marker_back[M.MARK_ERROR] = not CURSES and 0x8080CC or 0x000080
-end)
-
 return M

@@ -73,5 +73,14 @@ property['style.whitespace'] = ''
 --buffer:set_fold_margin_colour(true, property_int['color.white'])
 --buffer:set_fold_margin_hi_colour(true, property_int['color.white'])
 
+-- Markers.
+local MARK_BOOKMARK = textadept.bookmarks.MARK_BOOKMARK
+buffer.marker_back[MARK_BOOKMARK] = property_int['color.blue']
+buffer.marker_back[textadept.run.MARK_ERROR] = property_int['color.red']
+
+-- Indicators.
+local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
+buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.yellow']
+
 -- Long Lines.
 buffer.edge_colour = property_int['color.white']
