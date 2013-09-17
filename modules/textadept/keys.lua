@@ -511,9 +511,9 @@ if CURSES then keys.mT = keys.mt end -- in case mt is used by GUI terminals
 keys[not OSX and (not CURSES and 'cai' or 'mi')
              or 'ci'] = editing.convert_indentation
 -- EOL Mode.
--- TODO: {utils.set_eol_mode, buffer.SC_EOL_CRLF}
--- TODO: {utils.set_eol_mode, buffer.SC_EOL_CR}
--- TODO: {utils.set_eol_mode, buffer.SC_EOL_LF}
+-- TODO: {utils.set_eol_mode, buffer.EOL_CRLF}
+-- TODO: {utils.set_eol_mode, buffer.EOL_CR}
+-- TODO: {utils.set_eol_mode, buffer.EOL_LF}
 -- Encoding.
 -- TODO: {utils.set_encoding, 'UTF-8'}
 -- TODO: {utils.set_encoding, 'ASCII'}

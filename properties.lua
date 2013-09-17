@@ -5,7 +5,7 @@ local buffer = buffer
 -- Multiple Selection and Virtual Space
 buffer.multiple_selection = true
 buffer.additional_selection_typing = true
---buffer.multi_paste = buffer.SC_MULTIPASTE_EACH
+--buffer.multi_paste = buffer.MULTIPASTE_EACH
 --buffer.virtual_space_options = buffer.SCVS_RECTANGULARSELECTION +
 --                               buffer.SCVS_USERACCESSIBLE
 buffer.rectangular_selection_modifier = (WIN32 or OSX) and buffer.SCMOD_ALT or
@@ -40,7 +40,7 @@ buffer.caret_line_visible_always = true
 --buffer.caret_period = 0
 --buffer.caret_style = buffer.CARETSTYLE_BLOCK
 --buffer.caret_width =
---buffer.caret_sticky = buffer.SC_CARETSTICKY_ON
+--buffer.caret_sticky = buffer.CARETSTICKY_ON
 
 -- Margins.
 --buffer.margin_left =
@@ -51,12 +51,12 @@ buffer.margin_width_n[0] = width + (not CURSES and 4 or 0)
 -- Marker Margin.
 buffer.margin_width_n[1] = not CURSES and 12 or 1
 buffer.margin_sensitive_n[1] = true
-buffer.margin_cursor_n[1] = buffer.SC_CURSORARROW
+buffer.margin_cursor_n[1] = buffer.CURSORARROW
 -- Fold Margin.
 buffer.margin_width_n[2] = not CURSES and 12 or 1
-buffer.margin_mask_n[2] = buffer.SC_MASK_FOLDERS
+buffer.margin_mask_n[2] = buffer.MASK_FOLDERS
 buffer.margin_sensitive_n[2] = true
-buffer.margin_cursor_n[2] = buffer.SC_CURSORARROW
+buffer.margin_cursor_n[2] = buffer.CURSORARROW
 
 -- Annotations.
 buffer.annotation_visible = buffer.ANNOTATION_BOXED
@@ -75,53 +75,49 @@ buffer.use_tabs = false
 --buffer.indent = 2
 buffer.tab_indents = true
 buffer.back_space_un_indents = true
-buffer.indentation_guides = buffer.SC_IV_LOOKBOTH
+buffer.indentation_guides = buffer.IV_LOOKBOTH
 
 -- Margin Markers.
-local symbol = not CURSES and buffer.SC_MARK_SMALLRECT or
-               buffer.SC_MARK_CHARACTER + string.byte(' ')
+local symbol = not CURSES and buffer.MARK_SMALLRECT or
+               buffer.MARK_CHARACTER + string.byte(' ')
 buffer:marker_define(textadept.bookmarks.MARK_BOOKMARK, symbol)
 buffer:marker_define(textadept.run.MARK_ERROR, symbol)
 if not CURSES then
   -- Arrow Folding Symbols.
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPEN, buffer.SC_MARK_ARROWDOWN)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDER, buffer.SC_MARK_ARROW)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDERSUB, buffer.SC_MARK_EMPTY)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDERTAIL, buffer.SC_MARK_EMPTY)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDEREND, buffer.SC_MARK_EMPTY)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPENMID, buffer.SC_MARK_EMPTY)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDERMIDTAIL, buffer.SC_MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_ARROWDOWN)
+--  buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_ARROW)
+--  buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_EMPTY)
   -- Plus/Minus Folding Symbols.
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPEN, buffer.SC_MARK_MINUS)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDER, buffer.SC_MARK_PLUS)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDERSUB, buffer.SC_MARK_EMPTY)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDERTAIL, buffer.SC_MARK_EMPTY)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDEREND, buffer.SC_MARK_EMPTY)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPENMID, buffer.SC_MARK_EMPTY)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDERMIDTAIL, buffer.SC_MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_MINUS)
+--  buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_PLUS)
+--  buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_EMPTY)
+--  buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_EMPTY)
   -- Circle Tree Folding Symbols.
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPEN,
---                       buffer.SC_MARK_CIRCLEMINUS)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDER, buffer.SC_MARK_CIRCLEPLUS)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDERSUB, buffer.SC_MARK_VLINE)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDERTAIL,
---                       buffer.SC_MARK_LCORNERCURVE)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDEREND,
---                       buffer.SC_MARK_CIRCLEPLUSCONNECTED)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPENMID,
---                       buffer.SC_MARK_CIRCLEMINUSCONNECTED)
---  buffer:marker_define(buffer.SC_MARKNUM_FOLDERMIDTAIL,
---                       buffer.SC_MARK_TCORNERCURVE)
+--  buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_CIRCLEMINUS)
+--  buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_CIRCLEPLUS)
+--  buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
+--  buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNERCURVE)
+--  buffer:marker_define(buffer.MARKNUM_FOLDEREND,
+--                       buffer.MARK_CIRCLEPLUSCONNECTED)
+--  buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID,
+--                       buffer.MARK_CIRCLEMINUSCONNECTED)
+--  buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNERCURVE)
   -- Box Tree Folding Symbols.
-  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPEN, buffer.SC_MARK_BOXMINUS)
-  buffer:marker_define(buffer.SC_MARKNUM_FOLDER, buffer.SC_MARK_BOXPLUS)
-  buffer:marker_define(buffer.SC_MARKNUM_FOLDERSUB, buffer.SC_MARK_VLINE)
-  buffer:marker_define(buffer.SC_MARKNUM_FOLDERTAIL, buffer.SC_MARK_LCORNER)
-  buffer:marker_define(buffer.SC_MARKNUM_FOLDEREND,
-                       buffer.SC_MARK_BOXPLUSCONNECTED)
-  buffer:marker_define(buffer.SC_MARKNUM_FOLDEROPENMID,
-                       buffer.SC_MARK_BOXMINUSCONNECTED)
-  buffer:marker_define(buffer.SC_MARKNUM_FOLDERMIDTAIL, buffer.SC_MARK_TCORNER)
+  buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_BOXMINUS)
+  buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_BOXPLUS)
+  buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
+  buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNER)
+  buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_BOXPLUSCONNECTED)
+  buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID,
+                       buffer.MARK_BOXMINUSCONNECTED)
+  buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNER)
 end
 --buffer:marker_enable_highlight(true)
 
@@ -137,7 +133,7 @@ end
 buffer.auto_c_choose_single = true
 --buffer.auto_c_ignore_case = true
 --buffer.auto_c_case_insensitive_behaviour =
---  buffer.SC_CASEINSENSITIVEBEHAVIOUR_IGNORECASE
+--  buffer.CASEINSENSITIVEBEHAVIOUR_IGNORECASE
 --buffer.auto_c_auto_hide = false
 --buffer.auto_c_drop_rest_of_word = true
 --buffer.auto_c_max_height =
@@ -152,16 +148,15 @@ buffer.call_tip_use_style = buffer.tab_width *
 buffer.property['fold'] = '1'
 buffer.property['fold.by.indentation'] = '0'
 buffer.property['fold.line.comments'] = '0'
-buffer.automatic_fold = buffer.SC_AUTOMATICFOLD_SHOW +
-                        buffer.SC_AUTOMATICFOLD_CLICK +
-                        buffer.SC_AUTOMATICFOLD_CHANGE
-buffer.fold_flags = not CURSES and buffer.SC_FOLDFLAG_LINEAFTER_CONTRACTED or 0
+buffer.automatic_fold = buffer.AUTOMATICFOLD_SHOW + buffer.AUTOMATICFOLD_CLICK +
+                        buffer.AUTOMATICFOLD_CHANGE
+buffer.fold_flags = not CURSES and buffer.FOLDFLAG_LINEAFTER_CONTRACTED or 0
 
 -- Line Wrapping.
---buffer.wrap_mode = buffer.SC_WRAP_WORD
---buffer.wrap_visual_flags = buffer.SC_WRAPVISUALFLAG_MARGIN
---buffer.wrap_visual_flags_location = buffer.SC_WRAPVISUALFLAGLOC_END_BY_TEXT
---buffer.wrap_indent_mode = buffer.SC_WRAPINDENT_SAME
+--buffer.wrap_mode = buffer.WRAP_WORD
+--buffer.wrap_visual_flags = buffer.WRAPVISUALFLAG_MARGIN
+--buffer.wrap_visual_flags_location = buffer.WRAPVISUALFLAGLOC_END_BY_TEXT
+--buffer.wrap_indent_mode = buffer.WRAPINDENT_SAME
 --buffer.wrap_start_indent =
 
 -- Long Lines.

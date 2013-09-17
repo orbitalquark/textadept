@@ -188,8 +188,8 @@ end
 -- Begins an incremental search using the command entry if *text* is `nil`;
 -- otherwise continues an incremental search by searching for the next or
 -- previous instance of string *text* depending on boolean *next*.
--- If *anchor* is `true`, searches for *text* starting from the current position
--- instead of the position where incremental search began at.
+-- *anchor* indicates whether or not to search for *text* starting from the
+-- current position instead of the position where incremental search began at.
 -- Only the `match_case` find option is recognized. Normal command entry
 -- functionality is unavailable until the search is finished by pressing `Esc`
 -- (`⎋` on Mac OSX | `Esc` in curses).

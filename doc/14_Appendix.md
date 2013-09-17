@@ -120,7 +120,7 @@ non-existant graphics capabilities:
   corners.
 * Insert mode caret renders improperly.
 * When scrolling to the right, long lines overwrite margins.
-* No marker symbols other than `SC_MARK_CHARACTER`.
+* No marker symbols other than `MARK_CHARACTER`.
 * No mouse interactions, cursor types, or hotspots.
 * Only up to 16 colors recognized: black (`0x000000`), red (`0x800000`), green
   (`0x008000`), yellow (`0x808000`), blue (`0x000080`), magenta (`0x800080`),
@@ -179,6 +179,8 @@ N/A                               |New     |[MARK\_ERROR][]
 MARK\_ERROR\_BACK                 |Removed |N/A<sup>c</sup>
 **_M.textadept.snapopen**         |Removed |N/A
 open                              |Changed |\_G.[io.snapopen()][]<sup>e</sup>
+**_SCINTILLA.constants**          |        |
+SC\_\*                            |Renamed |Removed "SC\_" prefix.
 **buffer**                        |        |
 get\_style\_name(buffer, n)       |Renamed |[style\_name][]\[n\]
 reload                            |Renamed |[io.reload\_file][]

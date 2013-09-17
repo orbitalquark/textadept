@@ -52,7 +52,7 @@ local function _print(buffer_type, ...)
   buffer:set_save_point()
 end
 ---
--- Helper function for printing messages to the buffer of type *buffer_type*.
+-- Prints the given string messages to the buffer of type *buffer_type*.
 -- Splits the view and opens a new buffer for printing messages to. If the
 -- message buffer is already open in a view, the message is printed to that
 -- view. Otherwise the view is split and the message buffer is opened or
@@ -64,7 +64,7 @@ end
 function ui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 
 ---
--- Prints messages to the Textadept message buffer.
+-- Prints the given string messages to the message buffer.
 -- Opens a new buffer if one has not already been opened for printing messages.
 -- @param ... Message strings.
 -- @name print
@@ -129,8 +129,8 @@ end
 -- Goes to the buffer whose filename is *filename* in an existing view,
 -- otherwise splitting the current view if *split* is `true` or going to the
 -- next or *preferred_view* view instead of staying in the current one.
--- If *sloppy* is `true`, only the last part of *filename* is matched to a
--- buffer's `filename`.
+-- *sloppy* indicates whether or not only the last part of *filename* is matched
+-- to a buffer's `filename`.
 -- @param filename The filename of the buffer to go to.
 -- @param split Optional flag indicating whether or not to open the buffer in a
 --   split view if there is only one view. The default value is `false`.
@@ -238,7 +238,7 @@ local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 -- Sets default properties for a Scintilla document.
 events_connect(events.BUFFER_NEW, function()
-  buffer.code_page = buffer.SC_CP_UTF8
+  buffer.code_page = buffer.CP_UTF8
   buffer.style_bits = 8
   buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
@@ -418,8 +418,8 @@ local get_split_table
 
 ---
 -- Goes to view number *n*.
--- If *relative* is `true`, *n* is an index relative to the index of the current
--- view in `_G._VIEWS` instead of an absolute index.
+-- *relative* indicates whether or not *n* is an index relative to the index of
+-- the current view in `_G._VIEWS` instead of an absolute index.
 -- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
 -- @param n A relative or absolute view index in `_G._VIEWS`.
 -- @param relative Optional flag indicating whether *n* is a relative or
