@@ -585,15 +585,15 @@
 --   The modifier key used in combination with a mouse drag to create a
 --   rectangular selection.
 --
---   * `buffer.SCMOD_CTRL`
+--   * `buffer.MOD_CTRL`
 --     The "Control" modifier key.
---   * `buffer.SCMOD_ALT`
+--   * `buffer.MOD_ALT`
 --     The "Alt" modifier key.
---   * `buffer.SCMOD_SUPER`
+--   * `buffer.MOD_SUPER`
 --     The "Super" modifier key, usually defined as the left "Windows" or
 --     "Command" key.
 --
---   The default value is `buffer.SCMOD_CTRL`.
+--   The default value is `buffer.MOD_CTRL`.
 -- @field rgba_image_height (number)
 --   The height for the RGBA image to be defined using
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
@@ -624,15 +624,15 @@
 --   The bit-mask of search flags used by
 --   [`buffer:search_in_target()`](#search_in_target).
 --
---   * `buffer.SCFIND_WHOLEWORD`
+--   * `buffer.FIND_WHOLEWORD`
 --     Match text surrounded by non-word characters.
---   * `buffer.SCFIND_MATCHCASE`
+--   * `buffer.FIND_MATCHCASE`
 --     Match text case sensitively.
---   * `buffer.SCFIND_WORDSTART`
+--   * `buffer.FIND_WORDSTART`
 --     Match text only when the previous character is a non-word character.
---   * `buffer.SCFIND_REGEXP`
+--   * `buffer.FIND_REGEXP`
 --     Interpret the search string as a regular expression.
---   * `buffer.SCFIND_POSIX`
+--   * `buffer.FIND_POSIX`
 --     Interpret '(' and ')' as tags instead of "\\(" and "\\)" in a regular
 --     expression.
 --
@@ -821,25 +821,25 @@
 -- @field view_ws (number)
 --   The whitespace character visibility mode.
 --
---   * `buffer.SCWS_INVISIBLE`
+--   * `buffer.WS_INVISIBLE`
 --     Whitespace is invisible.
---   * `buffer.SCWS_VISIBLEALWAYS`
+--   * `buffer.WS_VISIBLEALWAYS`
 --     Display all whitespace as dots and arrows.
---   * `buffer.SCWS_VISIBLEAFTERINDENT`
+--   * `buffer.WS_VISIBLEAFTERINDENT`
 --     Display only non-indentation whitespace as dots and arrows.
 --
---   The default value is `buffer.SCWS_INVISIBLE`.
+--   The default value is `buffer.WS_INVISIBLE`.
 -- @field virtual_space_options (number)
 --   The virtual space mode.
 --
---   * `buffer.SCVS_NONE`
+--   * `buffer.VS_NONE`
 --     Disable virtual space.
---   * `buffer.SCVS_RECTANGULARSELECTION`
+--   * `buffer.VS_RECTANGULARSELECTION`
 --     Enable virtual space only for rectangular selections.
---   * `buffer.SCVS_USERACCESSIBLE`
+--   * `buffer.VS_USERACCESSIBLE`
 --     Enable virtual space.
 --
---   The default value is `buffer.SCVS_NONE`.
+--   The default value is `buffer.VS_NONE`.
 -- @field whitespace_chars (string)
 --   The string set of characters recognized as whitespace characters.
 --   Set this only after setting [`buffer.word_chars`](#word_chars).

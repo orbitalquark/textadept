@@ -223,9 +223,9 @@ function M.autocomplete_word(words)
   end
   local patt = '^['..buffer.word_chars..']+'
   buffer.target_start, buffer.target_end = 0, buffer.length
-  buffer.search_flags = buffer.SCFIND_WORDSTART
+  buffer.search_flags = buffer.FIND_WORDSTART
   if not buffer.auto_c_ignore_case then
-    buffer.search_flags = buffer.search_flags + buffer.SCFIND_MATCHCASE
+    buffer.search_flags = buffer.search_flags + buffer.FIND_MATCHCASE
   end
   local match_pos = buffer:search_in_target(root)
   while match_pos ~= -1 do
@@ -489,7 +489,7 @@ function M.highlight_word()
   end
   if s == e then return end
   local word = buffer:text_range(s, e)
-  buffer.search_flags = buffer.SCFIND_WHOLEWORD + buffer.SCFIND_MATCHCASE
+  buffer.search_flags = buffer.FIND_WHOLEWORD + buffer.FIND_MATCHCASE
   buffer.target_start, buffer.target_end = 0, buffer.length
   while buffer:search_in_target(word) > -1 do
     local len = buffer.target_end - buffer.target_start

@@ -180,7 +180,7 @@ local menubar = {
     {_L['Toggle View White_space'], {utils.toggle_property, 'view_ws'}},
     {_L['Toggle _Virtual Space'],
       {utils.toggle_property, 'virtual_space_options',
-       buffer.SCVS_USERACCESSIBLE}},
+       buffer.VS_USERACCESSIBLE}},
     SEPARATOR,
     {_L['Zoom _In'], buffer.zoom_in},
     {_L['Zoom _Out'], buffer.zoom_out},

@@ -181,6 +181,7 @@ MARK\_ERROR\_BACK                 |Removed |N/A<sup>c</sup>
 open                              |Changed |\_G.[io.snapopen()][]<sup>e</sup>
 **_SCINTILLA.constants**          |        |
 SC\_\*                            |Renamed |Removed "SC\_" prefix.
+SC(FIND\|MOD\|VS\|WS)             |Renamed |Removed "SC" prefix.
 **buffer**                        |        |
 get\_style\_name(buffer, n)       |Renamed |[style\_name][]\[n\]
 reload                            |Renamed |[io.reload\_file][]
