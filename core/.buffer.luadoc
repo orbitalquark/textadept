@@ -22,7 +22,7 @@
 -- @field additional_sel_alpha (number)
 --   The alpha value, ranging from `0` (transparent) to `255` (opaque), of
 --   additional selections.
---   The default value is `buffer.SC_ALPHA_NOALPHA`, for no alpha.
+--   The default value is `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field additional_sel_back (number, Write-only)
 --   The background color, in "0xBBGGRR" format, of additional selections.
 --   This field has no effect when calling `buffer:set_sel_back(false, ...)`.
@@ -33,7 +33,7 @@
 --   Type into multiple selections.
 --   The default value is `false`.
 -- @field all_lines_visible (bool, Read-only)
---   Whether or not all lines in the buffer are visible.
+--   Whether or not all lines are visible.
 -- @field anchor (number)
 --   The position of the anchor.
 -- @field annotation_lines (table, Read-only)
@@ -79,12 +79,12 @@
 --   The behavior mode for a case insensitive autocompletion or user list when
 --   [`buffer.auto_c_ignore_case`](#auto_c_ignore_case) is `true`.
 --
---   * `buffer.SC_CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
+--   * `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
 --     Prefer to select case-sensitive matches.
---   * `buffer.SC_CASEINSENSITIVEBEHAVIOR_IGNORECASE`
+--   * `buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE`
 --     No preference.
 --
---   The default value is `buffer.SC_CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
+--   The default value is `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
 -- @field auto_c_choose_single (bool)
 --   Automatically choose the item in a single-item autocompletion list.
 --   The default value is `false`.
@@ -114,16 +114,16 @@
 -- @field auto_c_order (number)
 --   The order setting for autocompletion lists.
 --
---   * `buffer.SC_ORDER_PRESORTED`
+--   * `buffer.ORDER_PRESORTED`
 --     Lists passed to [`buffer.auto_c_show`](#auto_c_show) are in sorted,
 --     alphabetical order.
---   * `buffer.SC_ORDER_PERFORMSORT`
+--   * `buffer.ORDER_PERFORMSORT`
 --     Sort autocompletion lists passed to [`buffer.auto_c_show`](#auto_c_show).
---   * `buffer.SC_ORDER_CUSTOM`
+--   * `buffer.ORDER_CUSTOM`
 --     Lists passed to [`buffer.auto_c_show`](#auto_c_show) are already in a
 --     custom order.
 --
---   The default value is `buffer.SC_ORDER_PRESORTED`.
+--   The default value is `buffer.ORDER_PRESORTED`.
 -- @field auto_c_separator (number)
 --   The byte value of the character that separates autocompletion list items.
 --   The default value is `32` (' ').
@@ -162,7 +162,7 @@
 -- @field caret_line_back_alpha (number)
 --   The background alpha value, ranging from `0` (transparent) to `255`
 --   (opaque), of the caret line.
---   The default value is `buffer.SC_ALPHA_NOALPHA`, for no alpha.
+--   The default value is `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field caret_line_visible (bool)
 --   Color the background of the line containing the caret a different color.
 --   The default value is `false`.
@@ -177,16 +177,16 @@
 -- @field caret_sticky (number)
 --   The preferred horizontal position of the caret when moving between lines.
 --
---   * `buffer.SC_CARETSTICKY_OFF`
+--   * `buffer.CARETSTICKY_OFF`
 --     Use the same position as on the previous line.
---   * `buffer.SC_CARETSTICKY_ON`
+--   * `buffer.CARETSTICKY_ON`
 --     Use the last position the caret was moved to via the mouse, left/right
 --     arrow keys, home/end keys, etc. Typing text does not affect the position.
---   * `buffer.SC_CARETSTICKY_WHITESPACE`
+--   * `buffer.CARETSTICKY_WHITESPACE`
 --     Use the same position as on the previous line, but prior to any inserted
 --     indentation.
 --
---   The default value is `buffer.SC_CARETSTICKY_OFF`.
+--   The default value is `buffer.CARETSTICKY_OFF`.
 -- @field caret_style (number)
 --   The visual style of the caret.
 --
@@ -203,10 +203,10 @@
 --   and only applicable to line carets.
 --   The default value is `1`.
 -- @field char_at (table, Read-only)
---   Table of character bytes at positions in the buffer starting from zero.
+--   Table of character bytes at positions starting from zero.
 -- @field column (table, Read-only)
---   Table of column numbers, taking tab widths into account, for positions in
---   the buffer starting from zero.
+--   Table of column numbers, taking tab widths into account, for positions
+--   starting from zero.
 -- @field control_char_symbol (number)
 --   The byte value of the character displayed in place of control characters,
 --   characters whose byte values are less than 32. Values less than 32 dispay
@@ -218,16 +218,16 @@
 -- @field cursor (number)
 --   The display cursor type.
 --
---   * `buffer.SC_CURSORNORMAL`
+--   * `buffer.CURSORNORMAL`
 --     The text insert cursor.
---   * `buffer.SC_CURSORARROW`
+--   * `buffer.CURSORARROW`
 --     The arrow cursor.
---   * `buffer.SC_CURSORWAIT`
+--   * `buffer.CURSORWAIT`
 --     The wait cursor.
---   * `buffer.SC_CURSORREVERSEARROW`
+--   * `buffer.CURSORREVERSEARROW`
 --     The reversed arrow cursor.
 --
---   The default value is `buffer.SC_CURSORNORMAL`.
+--   The default value is `buffer.CURSORNORMAL`.
 -- @field dirty (bool)
 --   Whether or not the buffer has unsaved changes.
 --   This field is accessible from any buffer, not just the global one.
@@ -261,15 +261,15 @@
 --   The current end of line mode. Changing the mode does not convert existing
 --   line endings. Use [`buffer:convert_eo_ls()`](#convert_eo_ls) to do so.
 --
---   * `buffer.SC_EOL_CRLF`
+--   * `buffer.EOL_CRLF`
 --     Carriage return with line feed ("\r\n").
---   * `buffer.SC_EOL_CR`
+--   * `buffer.EOL_CR`
 --     Carriage return ("\r").
---   * `buffer.SC_EOL_LF`
+--   * `buffer.EOL_LF`
 --     Line feed ("\n").
 --
---   The default value is `buffer.SC_EOL_CRLF` on Windows platforms,
---   `buffer.SC_EOL_LF` otherwise.
+--   The default value is `buffer.EOL_CRLF` on Windows platforms,
+--   `buffer.EOL_LF` otherwise.
 -- @field extra_ascent (number)
 --   The amount of pixel padding above line text.
 --   The default value is `0`.
@@ -288,13 +288,13 @@
 -- @field fold_flags (number)
 --   Bit-mask of options for drawing folding lines.
 --
---   * `buffer.SC_FOLDFLAG_LINEBEFORE_EXPANDED`
+--   * `buffer.FOLDFLAG_LINEBEFORE_EXPANDED`
 --     Draw lines above expanded folds.
---   * `buffer.SC_FOLDFLAG_LINEBEFORE_CONTRACTED`
+--   * `buffer.FOLDFLAG_LINEBEFORE_CONTRACTED`
 --     Draw lines above collapsed folds.
---   * `buffer.SC_FOLDFLAG_LINEAFTER_EXPANDED`
+--   * `buffer.FOLDFLAG_LINEAFTER_EXPANDED`
 --     Draw lines below expanded folds.
---   * `buffer.SC_FOLDFLAG_LINEAFTER_CONTRACTED`
+--   * `buffer.FOLDFLAG_LINEAFTER_CONTRACTED`
 --     Draw lines below collapsed folds.
 --
 --   The default value is `0`.
@@ -303,11 +303,11 @@
 --   Fold level masks are composed of an integer level combined with any of the
 --   following bits:
 --
---   * `buffer.SC_FOLDLEVELBASE`
+--   * `buffer.FOLDLEVELBASE`
 --     The initial fold level.
---   * `buffer.SC_FOLDLEVELWHITEFLAG`
+--   * `buffer.FOLDLEVELWHITEFLAG`
 --     The line is blank.
---   * `buffer.SC_FOLDLEVELHEADERFLAG`
+--   * `buffer.FOLDLEVELHEADERFLAG`
 --     The line is a header, or fold point.
 -- @field fold_parent (table, Read-only)
 --   Table of parent line numbers (fold points) for child line numbers starting
@@ -334,24 +334,24 @@
 --   Indentation guides are dotted vertical lines that appear within indentation
 --   whitespace at each level of indentation.
 --
---   * `buffer.SC_IV_NONE`
+--   * `buffer.IV_NONE`
 --     Does not draw any guides.
---   * `buffer.SC_IV_REAL`
+--   * `buffer.IV_REAL`
 --     Draw guides only within indentation whitespace.
---   * `buffer.SC_IV_LOOKFORWARD`
+--   * `buffer.IV_LOOKFORWARD`
 --     Draw guides beyond the current line up to the level of the next non-empty
 --     line, but with an additional level if the previous non-empty line is a
 --     fold header.
---   * `buffer.SC_IV_LOOKBOTH`
+--   * `buffer.IV_LOOKBOTH`
 --     Draw guides beyond the current line up to either the level of the
 --     previous or next non-empty line, whichever is greater.
 --
---   The default value is `buffer.SC_IV_NONE`.
+--   The default value is `buffer.IV_NONE`.
 -- @field indic_alpha (table)
 --   Table of fill color alpha values, ranging from `0` (transparent) to `255`
 --   (opaque), for indicator numbers from `0` to `31` whose styles are either
 --   `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
---   The default values are `buffer.SC_ALPHA_NOALPHA`, for no alpha.
+--   The default values are `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field indic_fore (table)
 --   Table of foreground colors, in "0xBBGGRR" format, for indicator numbers
 --   from `0` to `31`.
@@ -359,7 +359,7 @@
 --   Table of outline color alpha values, ranging from `0` (transparent) to
 --   `255` (opaque), for indicator numbers from `0` to `31` whose styles are
 --   either `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
---   The default values are `buffer.SC_ALPHA_NOALPHA`, for no alpha.
+--   The default values are `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field indic_style (table)
 --   Table of styles for indicator numbers from `0` to `31`.
 --
@@ -448,12 +448,12 @@
 -- @field margin_cursor_n (table)
 --   Table of cursor types shown over margin numbers from zero to four.
 --
---   * `buffer.SC_CURSORARROW`
+--   * `buffer.CURSORARROW`
 --     Normal arrow cursor.
---   * `buffer.SC_CURSORREVERSEARROW`
+--   * `buffer.CURSORREVERSEARROW`
 --     Reversed arrow cursor.
 --
---   The default values are `buffer.SC_CURSORREVERSEARROW`.
+--   The default values are `buffer.CURSORREVERSEARROW`.
 -- @field margin_left (number)
 --   The pixel size of the left margin of the buffer text.
 --   The default value is `1`.
@@ -462,18 +462,18 @@
 --   numbers from zero to four.
 --   Bit-masks are 32-bit values whose bits correspond to the 32 available
 --   markers.
---   The default values are `0`, `bit32.bnot(buffer.SC_MASK_FOLDERS)`, `0`, `0`,
+--   The default values are `0`, `bit32.bnot(buffer.MASK_FOLDERS)`, `0`, `0`,
 --   and `0`, for a line margin and logical marker margin.
 -- @field margin_options (number)
 --   A bit-mask of margin option settings.
 --
---   * `buffer.SC_MARGINOPTION_NONE`
+--   * `buffer.MARGINOPTION_NONE`
 --     None.
---   * `buffer.SC_MARGINOPTION_SUBLINESELECT`
+--   * `buffer.MARGINOPTION_SUBLINESELECT`
 --     Select only the sub-line of the wrapped line, rather than the entire
 --     line, on margin click.
 --
---   The default value is `buffer.SC_MARGINOPTION_NONE`.
+--   The default value is `buffer.MARGINOPTION_NONE`.
 -- @field margin_right (number)
 --   The pixel size of the right margin of the buffer text.
 --   The default value is `1`.
@@ -502,19 +502,19 @@
 -- @field margin_type_n (table)
 --   Table of margin types for margin numbers from zero to four.
 --
---   * `buffer.SC_MARGIN_SYMBOL`
+--   * `buffer.MARGIN_SYMBOL`
 --     A symbol margin.
---   * `buffer.SC_MARGIN_NUMBER`
+--   * `buffer.MARGIN_NUMBER`
 --     A line number margin.
---   * `buffer.SC_MARGIN_BACK`
+--   * `buffer.MARGIN_BACK`
 --     A symbol margin whose background color matches the default text
 --     background color.
---   * `buffer.SC_MARGIN_FORE`
+--   * `buffer.MARGIN_FORE`
 --     A symbol margin whose foreground color matches the default text
 --     foreground color.
---   * `buffer.SC_MARGIN_TEXT`
+--   * `buffer.MARGIN_TEXT`
 --     A text margin.
---   * `buffer.SC_MARGIN_RTEXT`
+--   * `buffer.MARGIN_RTEXT`
 --     A right-justified text margin.
 --
 --   The default values are `true`, `false`, `false`, `false`, and `false`, for
@@ -525,7 +525,7 @@
 --   Table of alpha values, ranging from `0` (transparent) to `255` (opaque),
 --   of markers drawn in the text area, not the margin, for markers numbers from
 --   `0` to `31`.
---   The default values are `buffer.SC_ALPHA_NOALPHA`, for no alpha.
+--   The default values are `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field marker_back (table, Write-only)
 --   Table of background colors, in "0xBBGGRR" format, of marker numbers from
 --   `0` to `31`.
@@ -540,17 +540,17 @@
 --   The last line number with a non-zero line state.
 -- @field mouse_dwell_time (number)
 --   The number of milliseconds the mouse must idle before generating a
---   `DWELL_START` event. A time of `buffer.SC_TIME_FOREVER` will never generate
+--   `DWELL_START` event. A time of `buffer.TIME_FOREVER` will never generate
 --   one.
 -- @field multi_paste (number)
 --   The multiple selection paste mode.
 --
---   * `buffer.SC_MULTIPASTE_ONCE`
+--   * `buffer.MULTIPASTE_ONCE`
 --     Paste into only the main selection.
---   * `buffer.SC_MULTIPASTE_EACH`
+--   * `buffer.MULTIPASTE_EACH`
 --     Paste into all selections.
 --
---   The default value is `buffer.SC_MULTIPASTE_ONCE`.
+--   The default value is `buffer.MULTIPASTE_ONCE`.
 -- @field multiple_selection (bool)
 --   Enable multiple selection.
 --   The default value is `false`.
@@ -671,7 +671,7 @@
 -- @field sel_alpha (number)
 --   The alpha value, ranging from `0` (transparent) to `255` (opaque), of the
 --   selection.
---   The default value is `buffer.SC_ALPHA_NOALPHA`, for no alpha.
+--   The default value is `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field sel_eol_filled (bool)
 --   Extend the selection to the right margin of the view.
 --   The default value is `false`.
@@ -685,13 +685,13 @@
 -- @field selection_mode (number)
 --   The selection mode.
 --
---   * `buffer.SC_SEL_STREAM`
+--   * `buffer.SEL_STREAM`
 --     Character selection.
---   * `buffer.SC_SEL_RECTANGLE`
+--   * `buffer.SEL_RECTANGLE`
 --     Rectangular selection.
---   * `buffer.SC_SEL_LINES`
+--   * `buffer.SEL_LINES`
 --     Line selection.
---   * `buffer.SC_SEL_THIN`
+--   * `buffer.SEL_THIN`
 --     Thin rectangular selection. This is the mode after a rectangular
 --     selection has been typed into and ensures that no characters are
 --     selected.
@@ -722,7 +722,7 @@
 -- @field selections (number, Read-only)
 --   The number of active selections.
 -- @field style_at (table, Read-only)
---   Table of style numbers at positions in the buffer starting from zero.
+--   Table of style numbers at positions starting from zero.
 -- @field style_back (table)
 --   Table of background colors, in "0xBBGGRR" format, of text within styles for
 --   style numbers from `0` to `255`.
@@ -734,14 +734,14 @@
 --   Table of letter case modes of text within styles for style numbers from `0`
 --   to `255`.
 --
---   * `buffer.SC_CASE_MIXED`
+--   * `buffer.CASE_MIXED`
 --     Display text in normally.
---   * `buffer.SC_CASE_UPPER`
+--   * `buffer.CASE_UPPER`
 --     Display text in upper case.
---   * `buffer.SC_CASE_LOWER`
+--   * `buffer.CASE_LOWER`
 --     Display text in lower case.
 --
---   The default values are `buffer.SC_CASE_MIXED`.
+--   The default values are `buffer.CASE_MIXED`.
 -- @field style_changeable (table)
 --   Table of flags indicating whether or not text within styles is changeable
 --   for style numbers from `0` to `255`.
@@ -856,54 +856,54 @@
 -- @field wrap_indent_mode (number)
 --   The wrapped line indent mode.
 --
---   * `buffer.SC_WRAPINDENT_FIXED`
+--   * `buffer.WRAPINDENT_FIXED`
 --     Indent wrapped lines by [`buffer.wrap_start_indent`](#wrap_start_indent).
---   * `buffer.SC_WRAPINDENT_SAME`
+--   * `buffer.WRAPINDENT_SAME`
 --     Indent wrapped lines the same as the first line.
---   * `buffer.SC_WRAPINDENT_INDENT`
+--   * `buffer.WRAPINDENT_INDENT`
 --     Indent wrapped lines one more level than the first line.
 --
---   The default value is `buffer.SC_WRAPINDENT_FIXED`.
+--   The default value is `buffer.WRAPINDENT_FIXED`.
 -- @field wrap_mode (number)
 --   Long line wrap mode.
 --
---   * `buffer.SC_WRAP_NONE`
+--   * `buffer.WRAP_NONE`
 --     Long lines are not wrapped.
---   * `buffer.SC_WRAP_WORD`
+--   * `buffer.WRAP_WORD`
 --     Wrap long lines at word boundaries.
---   * `buffer.SC_WRAP_CHAR`
+--   * `buffer.WRAP_CHAR`
 --     Wrap long lines at character boundaries.
 --
---   The default value is `buffer.SC_WRAP_NONE`.
+--   The default value is `buffer.WRAP_NONE`.
 -- @field wrap_start_indent (number)
 --   The number of spaces to indent wrapped lines by if
 --   [`buffer.wrap_indent_mode`](#wrap_indent_mode) is
---   `buffer.SC_WRAP_INDENT_FIXED`.
+--   `buffer.WRAP_INDENT_FIXED`.
 --   The default value is `0`.
 -- @field wrap_visual_flags (number)
 --   The wrapped line visual display mode.
 --
---   * `buffer.SC_WRAPVISUALFLAG_NONE`
+--   * `buffer.WRAPVISUALFLAG_NONE`
 --     No visual flags.
---   * `buffer.SC_WRAPVISUALFLAG_END`
+--   * `buffer.WRAPVISUALFLAG_END`
 --     Show visual flag at the end of the line.
---   * `buffer.SC_WRAPVISUALFLAG_START`
+--   * `buffer.WRAPVISUALFLAG_START`
 --     Show visual flag at the beginning of the sub-line.
---   * `buffer.SC_WRAPVISUALFLAG_MARGIN`
+--   * `buffer.WRAPVISUALFLAG_MARGIN`
 --     Show visual flag in the line number margin of the sub-line.
 --
---   The default value is `buffer.SC_WRAPVISUALFLAG_NONE`.
+--   The default value is `buffer.WRAPVISUALFLAG_NONE`.
 -- @field wrap_visual_flags_location (number)
 --   The wrapped line visual flag drawing mode.
 --
---   * `buffer.SC_WRAPVISUALFLAGLOC_DEFAULT`
+--   * `buffer.WRAPVISUALFLAGLOC_DEFAULT`
 --     Draw the visual flag near the right border.
---   * `buffer.SC_WRAPVISUALFLAGLOC_END_BY_TEXT`
+--   * `buffer.WRAPVISUALFLAGLOC_END_BY_TEXT`
 --     Draw the visual flag near text at the end of the line.
---   * `buffer.SC_WRAPVISUALFLAGLOC_START_BY_TEXT`
+--   * `buffer.WRAPVISUALFLAGLOC_START_BY_TEXT`
 --     Draw the visual flag near text at the beginning of the subline.
 --
---   The default value is `buffer.SC_WRAPVISUALFLAGLOC_DEFAULT`.
+--   The default value is `buffer.WRAPVISUALFLAGLOC_DEFAULT`.
 -- @field x_offset (number)
 --   The horizontal scroll position in pixels.
 --   A value of `0` is the normal position with the first text column visible at
@@ -1200,12 +1200,12 @@ function choose_caret_x(buffer) end
 function clear(buffer) end
 
 ---
--- Deletes all of the text in the buffer.
+-- Deletes the buffer's text.
 -- @param buffer The global buffer.
 function clear_all(buffer) end
 
 ---
--- Clears all styling and folding information in the buffer.
+-- Clears all styling and folding information.
 -- @param buffer The global buffer.
 function clear_document_style(buffer) end
 
@@ -1243,9 +1243,9 @@ function contracted_fold_next(buffer, line_start) end
 -- Converts all line endings to end of line mode *mode*.
 -- @param buffer The global buffer.
 -- @param mode The line ending mode to convert to. Valid values are:
---   * `buffer.SC_EOL_CRLF`
---   * `buffer.SC_EOL_CR`
---   * `buffer.SC_EOL_LF`
+--   * `buffer.EOL_CRLF`
+--   * `buffer.EOL_CR`
+--   * `buffer.EOL_LF`
 function convert_eo_ls(buffer, mode) end
 
 ---
@@ -1337,8 +1337,7 @@ function delete_back(buffer) end
 function delete_back_not_line(buffer) end
 
 ---
--- Deletes the range of text from position *pos* to *pos* + *length* in the
--- buffer.
+-- Deletes the buffer's text from position *pos* to *pos* + *length*.
 -- @param buffer The global buffer.
 -- @param pos The start position of the range of text in *buffer* to delete.
 -- @param length The number of characters in the range of text to delete.
@@ -1427,15 +1426,15 @@ function expand_children(buffer, line, level) end
 function find_column(buffer, line, column) end
 
 ---
--- Expands, contracts, or toggles the fold states of all fold headers in the
--- buffer, depending on *action*.
--- When toggling, the state of the first fold header in the buffer determines
--- whether to expand or contract.
+-- Expands, contracts, or toggles the fold states of all fold headers, depending
+-- on *action*.
+-- When toggling, the state of the first fold header determines whether to
+-- expand or contract.
 -- @param buffer The global buffer.
 -- @param action The fold action to perform. Valid values are:
---   * `buffer.SC_FOLDACTION_CONTRACT`
---   * `buffer.SC_FOLDACTION_EXPAND`
---   * `buffer.SC_FOLDACTION_TOGGLE`
+--   * `buffer.FOLDACTION_CONTRACT`
+--   * `buffer.FOLDACTION_EXPAND`
+--   * `buffer.FOLDACTION_TOGGLE`
 function fold_all(buffer, action) end
 
 ---
@@ -1444,9 +1443,9 @@ function fold_all(buffer, action) end
 -- @param buffer The global buffer.
 -- @param line The line number in *buffer* to set the fold states for.
 -- @param action The fold action to perform. Valid values are:
---   * `buffer.SC_FOLDACTION_CONTRACT`
---   * `buffer.SC_FOLDACTION_EXPAND`
---   * `buffer.SC_FOLDACTION_TOGGLE`
+--   * `buffer.FOLDACTION_CONTRACT`
+--   * `buffer.FOLDACTION_EXPAND`
+--   * `buffer.FOLDACTION_TOGGLE`
 function fold_children(buffer, line, action) end
 
 ---
@@ -1455,13 +1454,13 @@ function fold_children(buffer, line, action) end
 -- @param buffer The global buffer.
 -- @param line The line number in *buffer* to set the fold state for.
 -- @param action The fold action to perform. Valid values are:
---   * `buffer.SC_FOLDACTION_CONTRACT`
---   * `buffer.SC_FOLDACTION_EXPAND`
---   * `buffer.SC_FOLDACTION_TOGGLE`
+--   * `buffer.FOLDACTION_CONTRACT`
+--   * `buffer.FOLDACTION_EXPAND`
+--   * `buffer.FOLDACTION_TOGGLE`
 function fold_line(buffer, line, action) end
 
 ---
--- Inserts a Form Feed ("\f") character at the caret position.
+-- Types a Form Feed ("\f") character at the caret position.
 -- @param buffer The global buffer.
 function form_feed(buffer) end
 
@@ -1524,7 +1523,7 @@ function get_line_sel_start_position(buffer, line) end
 function get_sel_text(buffer) end
 
 ---
--- Returns all of the text in the buffer.
+-- Returns the buffer's text.
 -- @param buffer The global buffer.
 function get_text(buffer) end
 
@@ -1641,7 +1640,7 @@ function indicator_start(buffer, indicator, pos) end
 
 ---
 -- Inserts string *text* at position *pos* or the caret position if *pos* is
--- `-1`.
+-- `-1`, removing any selections.
 -- If the caret is after the *pos*, it is moved appropriately, but not scrolled
 -- into view.
 -- @param buffer The global buffer.
@@ -1839,14 +1838,14 @@ function marker_add_set(buffer, line, marker_mask) end
 -- @param buffer The global buffer.
 -- @param marker_num The marker number in the range of `0` to `31` to set
 --   *marker_symbol* for.
--- @param marker_symbol The marker symbol: `buffer.SC_MARK_*`.
+-- @param marker_symbol The marker symbol: `buffer.MARK_*`.
 -- @see _SCINTILLA.next_marker_number
 function marker_define(buffer, marker_num, marker_symbol) end
 
 ---
 -- Associates marker number *marker_num*, in the range of `0` to `31`, with XPM
 -- image *pixmap*.
--- The `buffer.SC_MARK_PIXMAP` symbol must be associated with *marker_num*.
+-- The `buffer.MARK_PIXMAP` symbol must be associated with *marker_num*.
 -- The image is shown in symbol margins next to lines marked with *marker_num*.
 -- @param buffer The global buffer.
 -- @param marker_num The marker number in the range of `0` to `31` to define
@@ -1861,9 +1860,9 @@ function marker_define_pixmap(buffer, marker_num, pixmap) end
 -- `buffer.rgba_image_height`, must have already been defined. *pixels* is a
 -- sequence of 4 byte pixel values (red, blue, green, and alpha) defining the
 -- image line by line starting at the top-left pixel.
--- The `buffer.SC_MARK_RGBAIMAGE` symbol must be associated with *marker_num*.
+-- The `buffer.MARK_RGBAIMAGE` symbol must be associated with *marker_num*.
 -- The image is shown in symbol margins next to lines marked with *marker_num*.
--- RGBA image markers use the `buffer.SC_MARK_RGBAIMAGE` marker symbol.
+-- RGBA image markers use the `buffer.MARK_RGBAIMAGE` marker symbol.
 -- @param buffer The global buffer.
 -- @param marker_num The marker number in the range of `0` to `31` to define
 --   RGBA data *pixels* for.
@@ -1886,8 +1885,9 @@ function marker_define_rgba_image(buffer, marker_num, pixels) end
 function marker_delete(buffer, line, marker_num) end
 
 ---
--- Deletes marker number *marker_num*, in the range of `0` to `31` or `-1` for
--- all markers, from all lines in the buffer.
+-- Deletes marker number *marker_num*, in the range of `0` to `31`, from any
+-- line that has it.
+-- If *marker_num* is `-1`, deletes all markers from all lines.
 -- @param buffer The global buffer.
 -- @param marker_num The marker number in the range of `0` to `31` to delete
 --   from all lines, or `-1` to delete all markers from all lines.
@@ -1974,7 +1974,7 @@ function move_selected_lines_down(buffer) end
 function move_selected_lines_up(buffer) end
 
 ---
--- Inserts a new line at the caret position based on
+-- Types a new line at the caret position based on
 -- [`buffer.eol_mode`](#eol_mode).
 -- @param buffer The global buffer.
 function new_line(buffer) end
@@ -2120,9 +2120,10 @@ function release_all_extended_styles(buffer) end
 function replace_sel(buffer, text) end
 
 ---
--- Replaces the text in the target range with string *text*.
--- The recommended way to delete text in the buffer is to set the target to the
--- text to be removed, and to call this function with an empty string.
+-- Replaces the text in the target range with string *text* without modifying
+-- any selections or scrolling the view.
+-- Setting the target and calling this function with an empty string is another
+-- way to delete text.
 -- @param buffer The global buffer.
 -- @param text The text to replace the target range with.
 -- @return number
@@ -2213,7 +2214,7 @@ function search_next(buffer, flags, text) end
 function search_prev(buffer, flags, text) end
 
 ---
--- Selects all of the text in the buffer without scrolling the view.
+-- Selects all of the buffer's text without scrolling the view.
 -- @param buffer The global buffer.
 function select_all(buffer) end
 
@@ -2277,8 +2278,8 @@ function set_hotspot_active_fore(buffer, use_setting, color) end
 function set_save_point(buffer) end
 
 ---
--- Selects the range of text between positions *start_pos* and *end_pos* in the
--- buffer, scrolling the selected text into view.
+-- Selects the buffer's text between positions *start_pos* and *end_pos*,
+-- scrolling the selected text into view.
 -- @param buffer The global buffer.
 -- @param start_pos The start position of the range of text in *buffer* to
 --   select. If negative, it means the end of the buffer.
@@ -2304,8 +2305,8 @@ function set_sel_back(buffer, use_setting, color) end
 function set_sel_fore(buffer, use_setting, color) end
 
 ---
--- Selects the range of text between positions *start_pos* to *end_pos* in the
--- buffer, removing all other selections.
+-- Selects the buffer's text between positions *start_pos* to *end_pos*,
+-- removing all other selections.
 -- @param buffer The global buffer.
 -- @param end_pos The caret position of the range of text to select in *buffer*.
 -- @param start_pos The anchor position of the range of text to select in
@@ -2322,7 +2323,7 @@ function set_selection(buffer, end_pos, start_pos) end
 function set_styling(buffer, length, style) end
 
 ---
--- Replaces all of the text in the buffer with string *text*.
+-- Replaces the buffer's text with string *text*.
 -- @param buffer The global buffer.
 -- @param text The text to set.
 function set_text(buffer, text) end
@@ -2431,7 +2432,7 @@ function style_reset_default(buffer) end
 function swap_main_anchor_caret(buffer) end
 
 ---
--- Indents the text on the selected lines or inserts a Tab character ("\t") at
+-- Indents the text on the selected lines or types a Tab character ("\t") at
 -- the caret position.
 -- @param buffer The global buffer.
 function tab(buffer) end
@@ -2459,8 +2460,8 @@ function text_height(buffer, line) end
 function text_width(buffer, style_num, text) end
 
 ---
--- Cycles between caret sticky option settings `buffer.SC_CARETSTICKY_ON`,
--- `buffer.SC_CARETSTICKY_WHITESPACE`, and `buffer.SC_CARETSTICKY_OFF`.
+-- Cycles between caret sticky option settings `buffer.CARETSTICKY_ON`,
+-- `buffer.CARETSTICKY_WHITESPACE`, and `buffer.CARETSTICKY_OFF`.
 -- @param buffer The global buffer.
 -- @see caret_sticky
 function toggle_caret_sticky(buffer) end
@@ -2706,8 +2707,7 @@ function delete(buffer) end
 function new() end
 
 ---
--- Returns the range of text between positions *start_pos* and *end_pos* in the
--- buffer.
+-- Returns the buffer's text between positions *start_pos* and *end_pos*.
 -- @param buffer The global buffer.
 -- @param start_pos The start position of the range of text to get in *buffer*.
 -- @param end_pos The end position of the range of text to get in *buffer*.

@@ -36,8 +36,8 @@ function unsplit(view) end
 
 ---
 -- Goes to buffer number *n* in the view.
--- If *relative* is `true`, *n* is an index relative to the index of the current
--- buffer in `_G._BUFFERS` instead of an absolute index.
+-- *relative* indicates whether or not *n* is an index relative to the index of
+-- the current buffer in `_G._BUFFERS` instead of an absolute index.
 -- Emits `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
 -- @param view The view to switch buffers in.
 -- @param n A relative or absolute buffer index in `_G._BUFFERS`. An absolute

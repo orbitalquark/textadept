@@ -715,10 +715,11 @@ end)
 
 ---
 -- Loads the Ctags file *tag_file* for autocompletions.
--- If *nolocations* is `true`, `sense:goto_ctag()` cannot be used with this set
--- of tags. It is recommended to pass `-n` to `ctags` in order to use line
--- numbers instead of text patterns to locate tags. This will greatly reduce
--- memory usage for a large number of symbols if `nolocations` is `false`.
+-- *nolocations* indicates whether or not to store the location part of tags. If
+-- `true`, `sense:goto_ctag()` cannot be used with this set of tags. It is
+-- recommended to pass `-n` to `ctags` in order to use line numbers instead of
+-- text patterns to locate tags. This will greatly reduce memory usage for a
+-- large number of symbols if *nolocations* is `false`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param tag_file The path of the Ctags file to load.
 -- @param nolocations Optional flag indicating whether or not to discard the

@@ -48,7 +48,7 @@ local M = {}
 --
 -- Textadept runs Lua code in its Lua State and replaces the transform with the
 -- code's return text. The code may use a temporary `selected_text` global
--- variable that contains the current selection in the buffer. An example is
+-- variable that contains the currently selected text. An example is
 --
 --     snippets['foo'] = [[
 --     %2<('%1'):gsub('^.', function(c)
@@ -364,8 +364,7 @@ M._snippet_mt = {
     buffer.indicator_current = INDIC_SNIPPET
     e = snippet:get_end_position()
     buffer:indicator_clear_range(e, 1)
-    buffer.target_start, buffer.target_end = e, e + 1
-    buffer:replace_target('') -- clear initial padding space
+    buffer:delete_range(e, 1) -- clear initial padding space
     snippet_stack[#snippet_stack] = nil
   end,
 }

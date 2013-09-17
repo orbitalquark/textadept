@@ -45,7 +45,7 @@ characters. The caret also changes to an underline in overwrite mode.
 
 Textadept includes many ways of creating and working with selections. Creating
 basic selections entails holding down the "Shift" modifier key while pressing
-the arrow keys, clicking and dragging the mouse over a range of text, or
+the arrow keys, clicking and dragging the mouse cursor over a range of text, or
 pressing `Ctrl+A` (`⌘A` | `M-A`) to select all text. Creating more advanced
 selections like multiple and rectangular selections requires slightly more
 effort, but has powerful uses.
