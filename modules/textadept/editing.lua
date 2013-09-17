@@ -167,10 +167,7 @@ events.connect(events.FILE_BEFORE_SAVE, function()
     local s, e = buffer:position_from_line(line), line_end_position[line]
     local i, c = e - 1, char_at[e - 1]
     while i >= s and c == 9 or c == 32 do i, c = i - 1, char_at[i - 1] end
-    if i < e - 1 then
-      buffer.target_start, buffer.target_end = i + 1, e
-      buffer:replace_target('')
-    end
+    if i < e - 1 then buffer:delete_range(i + 1, e - i - 1) end
   end
   -- Ensure ending newline.
   local e = buffer:position_from_line(lines)
@@ -309,7 +306,8 @@ function M.block_comment(comment)
 end
 
 ---
--- Goes to line number *line* or the user-specified line in the buffer.
+-- Moves the caret to the beginning of line number *line* or the user-specified
+-- line, ensuring the line is visible.
 -- @param line Optional line number to go to. If `nil`, the user is prompted for
 --   one.
 -- @name goto_line
@@ -500,14 +498,6 @@ function M.highlight_word()
   end
   buffer:set_sel(s, e)
 end
-
--- Sets view properties for highlighted word indicators and markers.
-events.connect(events.VIEW_NEW, function()
-  buffer.indic_fore[M.INDIC_HIGHLIGHT] = not CURSES and 0x4D99E6 or 0x008080
-  buffer.indic_style[M.INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
-  buffer.indic_alpha[M.INDIC_HIGHLIGHT] = 255
-  if not CURSES then buffer.indic_under[M.INDIC_HIGHLIGHT] = true end
-end)
 
 ---
 -- Passes selected or all buffer text to string shell command *command* as

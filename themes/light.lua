@@ -106,11 +106,22 @@ buffer.caret_line_back = property_int['color.dark_white']
 buffer:set_fold_margin_colour(true, property_int['color.white'])
 buffer:set_fold_margin_hi_colour(true, property_int['color.white'])
 
--- Fold Margin Markers.
-buffer.marker_fore[buffer.SC_MARKNUM_FOLDEROPEN] = property_int['color.grey']
-buffer.marker_back[buffer.SC_MARKNUM_FOLDEROPEN] = property_int['color.grey']
-buffer.marker_fore[buffer.SC_MARKNUM_FOLDER] = property_int['color.grey']
-buffer.marker_back[buffer.SC_MARKNUM_FOLDER] = property_int['color.grey']
+-- Markers.
+local MARK_BOOKMARK = textadept.bookmarks.MARK_BOOKMARK
+buffer.marker_fore[MARK_BOOKMARK] = property_int['color.white']
+buffer.marker_back[MARK_BOOKMARK] = property_int['color.dark_blue']
+buffer.marker_fore[textadept.run.MARK_ERROR] = property_int['color.white']
+buffer.marker_back[textadept.run.MARK_ERROR] = property_int['color.light_red']
+for i = 25, 31 do -- fold margin markers
+  buffer.marker_fore[i] = property_int['color.white']
+  buffer.marker_back[i] = property_int['color.grey']
+  buffer.marker_back_selected[i] = property_int['color.grey_black']
+end
+
+-- Indicators.
+local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
+buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.orange']
+buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
 
 -- Long Lines.
 buffer.edge_colour = property_int['color.grey']

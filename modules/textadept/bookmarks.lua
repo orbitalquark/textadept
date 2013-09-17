@@ -66,11 +66,4 @@ function M.goto_mark(next)
   end
 end
 
-local CURSES_MARK = buffer.SC_MARK_CHARACTER + string.byte(' ')
--- Sets view properties for bookmark markers.
-events.connect(events.VIEW_NEW, function()
-  if CURSES then buffer:marker_define(M.MARK_BOOKMARK, CURSES_MARK) end
-  buffer.marker_back[M.MARK_BOOKMARK] = not CURSES and 0xB3661A or 0x800000
-end)
-
 return M
