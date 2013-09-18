@@ -49,7 +49,7 @@ buffer.caret_line_visible_always = true
 local width = 4 * buffer:text_width(buffer.STYLE_LINENUMBER, '9')
 buffer.margin_width_n[0] = width + (not CURSES and 4 or 0)
 -- Marker Margin.
-buffer.margin_width_n[1] = not CURSES and 12 or 1
+buffer.margin_width_n[1] = not CURSES and 4 or 1
 buffer.margin_sensitive_n[1] = true
 buffer.margin_cursor_n[1] = buffer.CURSORARROW
 -- Fold Margin.
@@ -78,7 +78,7 @@ buffer.back_space_un_indents = true
 buffer.indentation_guides = buffer.IV_LOOKBOTH
 
 -- Margin Markers.
-local symbol = not CURSES and buffer.MARK_SMALLRECT or
+local symbol = not CURSES and buffer.MARK_FULLRECT or
                buffer.MARK_CHARACTER + string.byte(' ')
 buffer:marker_define(textadept.bookmarks.MARK_BOOKMARK, symbol)
 buffer:marker_define(textadept.run.MARK_ERROR, symbol)
@@ -122,10 +122,9 @@ end
 --buffer:marker_enable_highlight(true)
 
 -- Indicators.
-buffer.indic_style[textadept.editing.INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
-if not CURSES then
-  buffer.indic_under[textadept.editing.INDIC_HIGHLIGHT] = true
-end
+local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
+buffer.indic_style[INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
+if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
 
 -- Autocompletion.
 --buffer.auto_c_cancel_at_start = false
