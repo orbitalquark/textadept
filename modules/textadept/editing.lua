@@ -257,20 +257,14 @@ function M.autocomplete_word(words)
 end
 
 ---
--- Comments or uncomments the selected lines with line comment or block comment
--- delimiters string *comment* or the comment from the `comment_string` table
--- for the current lexer.
--- Block comment delimiters are separated by a '|' character.
+-- Comments or uncomments the selected lines based on the current lexer.
 -- As long as any part of a line is selected, the entire line is eligible for
 -- commenting/uncommenting.
--- @param comment Optional comment string inserted or removed from each line in
---   the selection. The default value is the comment in the `comment_string`
---   table for the current lexer.
 -- @see comment_string
 -- @name block_comment
-function M.block_comment(comment)
+function M.block_comment()
   local buffer = buffer
-  comment = comment or M.comment_string[buffer:get_lexer(true)]
+  local comment = M.comment_string[buffer:get_lexer(true)]
   local prefix, suffix = comment:match('^([^|]+)|?([^|]*)$')
   if not prefix then return end
   local anchor, pos = buffer.selection_start, buffer.selection_end
@@ -388,11 +382,23 @@ end
 
 ---
 -- Selects the current word.
+-- If already selected, selects the next occurrence as a multiple selection.
 -- @see buffer.word_chars
 -- @name select_word
 function M.select_word()
-  buffer:set_sel(buffer:word_start_position(buffer.current_pos, true),
-                 buffer:word_end_position(buffer.current_pos, true))
+  if buffer:get_sel_text() == '' then
+    buffer:set_selection(buffer:word_start_position(buffer.current_pos, true),
+                         buffer:word_end_position(buffer.current_pos, true))
+  else
+    local word = buffer:text_range(buffer.selection_start, buffer.selection_end)
+    buffer.target_start = buffer.selection_n_end[buffer.selections - 1]
+    buffer.target_end = buffer.length - 1
+    buffer.search_flags = buffer.SCFIND_MATCHCASE + buffer.SCFIND_WHOLEWORD
+    if buffer:search_in_target(word) ~= -1 then
+      buffer:add_selection(buffer.target_start, buffer.target_end)
+      buffer.main_selection = 0
+    end
+  end
 end
 
 ---
