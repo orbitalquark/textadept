@@ -443,6 +443,7 @@ $(scintillua_zip):
 	wget "http://foicica.com/hg/scintillua/archive/tip.zip" && mv tip.zip $@
 ../lexers: | $(scintillua_zip)
 	mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
+	cp $@/LexLPeg.cxx $@/lexers/
 	ln -s $@/lexers/*.lua $@
 LexLPeg.cxx: | ../lexers ; ln -s $|/$@ $@
 $(lua_tgz): ; wget "http://www.lua.org/ftp/$@"
