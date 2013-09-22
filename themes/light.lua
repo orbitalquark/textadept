@@ -123,5 +123,8 @@ local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
 buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.orange']
 buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
 
+-- Call tips.
+--buffer.call_tip_fore_hlt = property_int['color.light_blue']
+
 -- Long Lines.
 buffer.edge_colour = property_int['color.grey']
