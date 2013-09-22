@@ -86,7 +86,8 @@
 --
 --   The default value is `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
 -- @field auto_c_choose_single (bool)
---   Automatically choose the item in a single-item autocompletion list.
+--   Automatically choose the item in a single-item autocompletion list. This
+--   option has no effect for a user list.
 --   The default value is `false`.
 -- @field auto_c_current (number, Read-only)
 --   The index of the currently selected item in the autocompletion list.
@@ -207,11 +208,6 @@
 -- @field column (table, Read-only)
 --   Table of column numbers, taking tab widths into account, for positions
 --   starting from zero.
--- @field control_char_symbol (number)
---   The byte value of the character displayed in place of control characters,
---   characters whose byte values are less than 32. Values less than 32 dispay
---   ASCII mnemonics instead.
---   The default value is `0`.
 -- @field current_pos (number)
 --   The position of the caret.
 --   When set, does not scroll the caret into view.
@@ -259,7 +255,7 @@
 --   The position of the last correctly styled character.
 -- @field eol_mode (number)
 --   The current end of line mode. Changing the mode does not convert existing
---   line endings. Use [`buffer:convert_eo_ls()`](#convert_eo_ls) to do so.
+--   line endings. Use [`buffer:convert_eols()`](#convert_eols) to do so.
 --
 --   * `buffer.EOL_CRLF`
 --     Carriage return with line feed ("\r\n").
@@ -532,7 +528,6 @@
 -- @field marker_back_selected (table, Write-only)
 --   Table of background colors, in "0xBBGGRR" format, of markers whose folding
 --   blocks are selected for marker numbers from `0` to `31`.
---   The default values are `0x0000FF`.
 -- @field marker_fore (table, Write-only)
 --   Table of foreground colors, in "0xBBGGRR" format, of marker numbers from
 --   `0` to `31`.
@@ -839,6 +834,8 @@
 --   * `buffer.VS_USERACCESSIBLE`
 --     Enable virtual space.
 --
+--   When virtual space is enabled, the caret may move into the space past the
+--   ends of lines.
 --   The default value is `buffer.VS_NONE`.
 -- @field whitespace_chars (string)
 --   The string set of characters recognized as whitespace characters.
@@ -1103,12 +1100,6 @@ function call_tip_set_hlt(buffer, start_pos, end_pos) end
 function call_tip_show(buffer, pos, text) end
 
 ---
--- Returns whether or not the clipboard has text to paste.
--- @param buffer The global buffer.
--- @return bool
-function can_paste(buffer) end
-
----
 -- Returns whether or not there is an action to redo.
 -- @param buffer The global buffer.
 -- @return bool
@@ -1246,7 +1237,7 @@ function contracted_fold_next(buffer, line_start) end
 --   * `buffer.EOL_CRLF`
 --   * `buffer.EOL_CR`
 --   * `buffer.EOL_LF`
-function convert_eo_ls(buffer, mode) end
+function convert_eols(buffer, mode) end
 
 ---
 -- Copies the selected text to the clipboard.
@@ -2738,6 +2729,7 @@ function set_lexer(buffer, lang) end
 --   * call_tip_fore
 --   * character_pointer
 --   * code_page
+--   * control_char_symbol
 --   * direct_function
 --   * direct_pointer
 --   * distance_to_secondary_styles+
@@ -2784,6 +2776,7 @@ function set_lexer(buffer, lang) end
 --   * allocate
 --   * allocate_sub_styles+
 --   * assign_cmd_key
+--   * can_paste
 --   * clear_cmd_key
 --   * clear_all_cmd_keys
 --   * create_document

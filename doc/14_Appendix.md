@@ -184,11 +184,12 @@ SC\_\*                            |Renamed |Removed "SC\_" prefix.
 SC(FIND\|MOD\|VS\|WS)             |Renamed |Removed "SC" prefix.
 **buffer**                        |        |
 get\_style\_name(buffer, n)       |Renamed |[style\_name][]\[n\]
-reload                            |Renamed |[io.reload\_file][]
-save                              |Renamed |[io.save\_file][]
-save\_as                          |Renamed |[io.save\_file\_as][]
-close                             |Renamed |[io.close\_buffer][]
-set\_encoding                     |Renamed |[io.set\_buffer\_encoding][]
+reload()                          |Renamed |[io.reload\_file()][]
+save()                            |Renamed |[io.save\_file()][]
+save\_as()                        |Renamed |[io.save\_file\_as()][]
+close()                           |Renamed |[io.close\_buffer()][]
+set\_encoding()                   |Renamed |[io.set\_buffer\_encoding()][]
+convert\_eo\_ls()                 |Renamed |[buffer.convert\_eols()][]
 **events**                        |        |
 N/A                               |New     |[INITIALIZED][]
 handlers                          |Removed |N/A
@@ -199,8 +200,8 @@ find.goto\_file\_in\_list()       |Renamed |find.[goto\_file\_found()][]
 select\_theme                     |Removed |N/A
 **io**                            |        |
 try\_encodings                    |Renamed |[encodings][]
-save\_all                         |Renamed |[save\_all\_files][]
-close\_all                        |Renamed |[close\_all\_buffers][]
+save\_all()                       |Renamed |[save\_all\_files()][]
+close\_all()                      |Renamed |[close\_all\_buffers()][]
 
 <sup>a</sup>`arg` is `nil` when resetting.
 
@@ -224,19 +225,20 @@ close\_all                        |Renamed |[close\_all\_buffers][]
 [MARK\_ERROR]: api/textadept.run.html#MARK_ERROR
 [io.snapopen()]: api/io.html#snapopen
 [style\_name]: api/buffer.html#style_name
-[io.reload\_file]: api/io.html#reload_file
-[io.save\_file]: api/io.html#save_file
-[io.save\_file\_as]: api/io.html#save_file_as
-[io.close\_buffer]: api/io.html#close_buffer
-[io.set\_buffer\_encoding]: api/io.html#set_buffer_encoding
+[io.reload\_file()]: api/io.html#reload_file
+[io.save\_file()]: api/io.html#save_file
+[io.save\_file\_as()]: api/io.html#save_file_as
+[io.close\_buffer()]: api/io.html#close_buffer
+[io.set\_buffer\_encoding()]: api/io.html#set_buffer_encoding
+[buffer.convert\_eols()]: api/buffer.html#convert_eols
 [INITIALIZED]: api/events.html#INITIALIZED
 [ui]: api/ui.html
 [bufstatusbar\_text]: api/ui.html#bufstatusbar_text
 [maximized]: api/ui.html#maximized
 [goto\_file\_found()]: api/ui.find.html#goto_file_found
 [encodings]: api/io.html#encodings
-[save\_all\_files]: api/io.html#save_all_files
-[close\_all\_buffers]: api/io.html#close_all_buffers
+[save\_all\_files()]: api/io.html#save_all_files
+[close\_all\_buffers()]: api/io.html#close_all_buffers
 [`buffer.marker_back`]: api/buffer.html#marker_back
 [`events.VIEW_NEW`]: api/events.html#VIEW_NEW
 [`buffer.indic_fore`]: api/buffer.html#indic_fore

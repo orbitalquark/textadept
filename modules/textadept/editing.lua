@@ -175,7 +175,7 @@ events.connect(events.FILE_BEFORE_SAVE, function()
     buffer:insert_text(e, '\n')
   end
   -- Convert non-consistent EOLs
-  buffer:convert_eo_ls(buffer.eol_mode)
+  buffer:convert_eols(buffer.eol_mode)
   buffer:end_undo_action()
 end)
 
@@ -300,7 +300,7 @@ function M.block_comment()
 end
 
 ---
--- Moves the caret to the beginning of line number *line* or the user-specified
+-- Moves the caret to the beginning of line number *line* or user-specified
 -- line, ensuring the line is visible.
 -- @param line Optional line number to go to. If `nil`, the user is prompted for
 --   one.

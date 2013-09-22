@@ -107,6 +107,7 @@ for item in iface:match('Functions%[%] = (%b{})'):sub(2, -2):gmatch('%b{}') do
   name = name:gsub('([a-z])([A-Z])', '%1_%2')
   name = name:gsub('([A-Z])([A-Z][a-z])', '%1_%2')
   name = name:lower()
+  if name == 'convert_eo_ls' then name = 'convert_eols' end
   local line = string_format('%s={%d,%d,%d,%d}', name, msg_id, types[rt_type],
                              types[p1_type], types[p2_type])
   functions[#functions + 1] = line
