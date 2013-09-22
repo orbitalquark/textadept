@@ -263,7 +263,7 @@ M.utils = {
   end,
   set_eol_mode = function(mode)
     buffer.eol_mode = mode
-    buffer:convert_eo_ls(mode)
+    buffer:convert_eols(mode)
     events.emit(events.UPDATE_UI) -- for updating statusbar
   end,
   unsplit_all = function() while view:unsplit() do end end,
