@@ -29,16 +29,16 @@ Textadept shows the name of the active buffer in its titlebar. Pressing
 
 Individual files have three configurable settings: indentation, line endings,
 and encoding. Indentation consists of an indentation character and an
-indentation size. Line endings are characters that separate lines. File
-encoding determines how text characters are displayed. Textadept shows these
+indentation size. Line endings are the characters that separate lines. File
+encoding specifies how to display text characters. Textadept shows these
 settings in the buffer status statusbar.
 
 ![Document Statusbar](images/docstatusbar.png)
 
 #### Indentation
 
-Usually, [language modules][] or [user settings][] dictate the buffer's
-indentation setting. By default, indentation is 2 spaces. Pressing
+Normally, a [language module][] or the [user settings][] dictate a buffer's
+indentation settings. By default, indentation is 2 spaces. Pressing
 `Ctrl+Alt+Shift+T` (`^⇧T` on Mac OSX | `M-T` or `M-S-T` in curses) manually
 toggles between using tabs and spaces, although this only affects future
 indentation. Existing indentation remains unchanged. `Ctrl+Alt+I` (`^I` | `M-I`)
@@ -46,25 +46,24 @@ performs the conversion. (If the buffer uses tabs, all indenting spaces convert
 to tabs. If the buffer uses spaces, all indenting tabs convert to spaces.)
 Similarly, the "Buffer -> Indentation" menu manually sets indentation size.
 
-[language modules]: 07_Modules.html#Buffer.Properties
+[language module]: 07_Modules.html#Buffer.Properties
 [user settings]: 08_Preferences.html#Buffer.Properties
 
 #### Line Endings
 
-The current platform determines which line endings, commonly known as
-end-of-line (EOL) markers, to use by default. On Windows it is CRLF ("\r\n"). On
-all other platforms it is LF ('\n'). Textadept first tries to auto-detect the
-EOL mode of opened files before falling back on the platform default. The
-"Buffer -> EOL Mode" menu manually changes line endings and, unlike indentation
-settings, automatically converts all existing EOLs.
+Textadept determines which default line endings, commonly known as end-of-line
+(EOL) markers, to use based on the current platform. On Windows it is CRLF
+("\r\n"). On all other platforms it is LF ('\n'). Textadept first tries to
+auto-detect the EOL mode of opened files before falling back on the platform
+default. The "Buffer -> EOL Mode" menu manually changes line endings and, unlike
+indentation settings, automatically converts all existing EOLs.
 
 #### Encodings
 
-Textadept represents all characters and strings internally as UTF-8. UTF-8 is
-compatible with ASCII so those files are always detected properly. Textadept
-also recognizes ISO-8859-1 and MacRoman, two common encodings used on Windows
-and Mac OSX respectively. If you work with files whose encodings Textadept does
-not recognize, add the encodings to [`io.encodings`][] in your [preferences][].
+Textadept has the ability to decode files encoded in many different encodings,
+but by default it only attempts to decode UTF-8, ASCII, ISO-8859-1, and
+MacRoman. If you work with files with encodings Textadept does not recognize,
+add those encodings to [`io.encodings`][] in your [preferences][].
 
 UTF-8 is the recommended file encoding because of its wide support by other text
 editors and operating systems. The "Buffer -> Encoding" menu changes the file

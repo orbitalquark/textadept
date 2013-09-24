@@ -10,12 +10,12 @@ manual discusses more elaborate editing features below.
 
 ### Autopaired Characters
 
-Usually, quote ('&apos;', '&quot;') and brace ('(', '[', '{') characters go
-together in pairs. By default, Textadept automatically inserts complement
-characters and allows you to type over them. Similarly, the editor deletes the
-complement when you press `Bksp` (`⌫` on Mac OSX | `Bksp` in curses) over the
-first. The [preferences][] page details how to disable these features if you
-find them unsuitable.
+Usually, brace ('(', '[', '{') and quote ('&apos;', '&quot;') characters go
+together in pairs. Textadept automatically inserts the complement character of
+any user-typed opening brace or quote character and allows the user to
+subsequently type over it. Similarly, the editor deletes the complement when
+you press `Bksp` (`⌫` on Mac OSX | `Bksp` in curses) over the first. The
+[preferences][] page details how to configure or disable these features.
 
 [preferences]: 08_Preferences.html#Generic
 
@@ -32,8 +32,8 @@ word.
 ### Virtual Space Mode
 
 Pressing `Ctrl+Alt+Shift+V` (`^⇧V` in Mac OSX | none in curses) enables and
-disables Virtual space (freehand) mode. When enabled, line endings do not
-restrict caret movement.
+disables Virtual space (freehand) mode. When virtual space is enabled, the caret
+may move into the space past the ends of lines.
 
 ### Overwrite Mode
 
@@ -44,7 +44,7 @@ characters. The caret also changes to an underline in overwrite mode.
 ## Selections
 
 Textadept includes many ways of creating and working with selections. Creating
-basic selections entails holding down the "Shift" modifier key while pressing
+basic selections entails holding down the "Shift" modifier key and then pressing
 the arrow keys, clicking and dragging the mouse cursor over a range of text, or
 pressing `Ctrl+A` (`⌘A` | `M-A`) to select all text. Creating more advanced
 selections like multiple and rectangular selections requires slightly more
@@ -52,20 +52,21 @@ effort, but has powerful uses.
 
 ### Multiple Selection
 
-Clicking the mouse at a point in the buffer while holding the "Control" modifier
-key places an additional caret at that point. Clicking and dragging while
-holding the same modifier creates multiple selections. Textadept will now mirror
-typed text at each selection.
+Holding down the "Control" modifier key and then clicking and dragging the mouse
+cursor over ranges of text creates multiple selections. Holding "Control" and
+then clicking without dragging places an additional caret at the clicked
+position. Textadept mirrors any typed text at each selection.
 
 Textadept curses does not support creating multiple selections with the mouse.
 
 ### Rectangular Selection
 
-Holding `Alt+Shift` (`⌥⇧` on Mac OSX | `M-S-` in curses) and pressing the arrow
-keys creates a rectangular selection. A rectangular selection spanning multiple
-lines allows typing on each line. Holding the `Alt` modifier key (`Super` on
-Linux) while clicking and dragging the mouse also creates a rectangular
-selection.
+Rectangular selections are a more structured form of multiple selections. A
+rectangular selection spanning multiple lines allows typing on each line.
+Holding `Alt+Shift` (`⌥⇧` on Mac OSX | `M-S-` in curses) and then pressing the
+arrow keys creates a rectangular selection. Holding the `Alt` modifier key
+(`Super` on Linux) and then clicking and dragging the mouse cursor also creates
+a rectangular selection.
 
 ![Rectangular Selection](images/rectangularselection.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -229,7 +230,7 @@ highlight syntax incorrectly. Pressing `F5` triggers a full redraw.
 ### Code Folding
 
 Some lexers support "code folding", the act of temporarily hiding blocks of code
-in order to make viewing easier. Arrows in the margin to the left of the code
+in order to make viewing easier. Markers in the margin to the left of the code
 denote fold points. Clicking on one toggles the folding for that block of code.
 Pressing `Ctrl+*` (`⌘*` on Mac OSX | `M-*` in curses) also toggles the fold
 point on the current line.
