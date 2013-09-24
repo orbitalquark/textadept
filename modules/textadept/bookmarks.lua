@@ -49,7 +49,7 @@ function M.goto_mark(next)
     local marks, line = {}, buffer:marker_next(0, 2^M.MARK_BOOKMARK)
     if line == -1 then return end
     repeat
-      local text = buffer:get_line(line):sub(1, -2) -- chop \n
+      local text = buffer:get_line(line):match('^[^\r\n]*')
       marks[#marks + 1] = tostring(line + 1)..': '..text
       line = buffer:marker_next(line + 1, 2^M.MARK_BOOKMARK)
     until line < 0

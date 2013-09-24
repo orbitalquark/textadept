@@ -119,7 +119,7 @@ events.connect(events.ARG_NONE, function()
 end)
 
 ---
--- Saves a Textadept session to file *filename* or a user-selected file.
+-- Saves a Textadept session to file *filename* or user-selected file.
 -- Saves split views, opened buffers, cursor information, and recent files.
 -- @param filename Optional absolute path to the session file to save. If `nil`,
 --   the user is prompted for one.

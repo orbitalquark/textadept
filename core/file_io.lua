@@ -184,7 +184,7 @@ function io.reload_file()
 end
 
 ---
--- Converts the current buffer's contents to string encoding *encoding*.
+-- Converts the current buffer's contents to encoding *encoding*.
 -- @param encoding The string encoding to set. Valid encodings are ones that GNU
 --   iconv accepts.
 -- @usage io.set_buffer_encoding('ASCII')

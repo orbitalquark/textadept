@@ -174,7 +174,7 @@ local M = {}
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
 --   * _`meta`_: The "Control" modifier key on Mac OSX is held down.
 -- @field MARGIN_CLICK (string)
---   Emitted when clicking the mouse inside a margin.
+--   Emitted when clicking the mouse inside a sensitive margin.
 --   Arguments:
 --
 --   * _`margin`_: The margin number clicked.

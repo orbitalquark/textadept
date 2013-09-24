@@ -36,7 +36,7 @@ buffer:set_y_caret_policy(buffer.CARET_SLOP + buffer.CARET_STRICT +
 -- Caret and Selection Styles.
 --buffer.sel_eol_filled = true
 buffer.caret_line_visible = not CURSES
-buffer.caret_line_visible_always = true
+--buffer.caret_line_visible_always = true
 --buffer.caret_period = 0
 --buffer.caret_style = buffer.CARETSTYLE_BLOCK
 --buffer.caret_width =
