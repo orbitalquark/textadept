@@ -393,7 +393,7 @@ function M.select_word()
     local word = buffer:text_range(buffer.selection_start, buffer.selection_end)
     buffer.target_start = buffer.selection_n_end[buffer.selections - 1]
     buffer.target_end = buffer.length - 1
-    buffer.search_flags = buffer.SCFIND_MATCHCASE + buffer.SCFIND_WHOLEWORD
+    buffer.search_flags = buffer.FIND_MATCHCASE + buffer.FIND_WHOLEWORD
     if buffer:search_in_target(word) ~= -1 then
       buffer:add_selection(buffer.target_start, buffer.target_end)
       buffer.main_selection = 0
