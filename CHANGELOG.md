@@ -1941,8 +1941,8 @@ Changes:
 [list of encodings]: api/io.html#try_encodings
 [events]: api/events.html
 [Scintilla]: http://scintilla.org
-[compile commands]: api/textadept.run.html#compile_command
-[run commands]: api/textadept.run.html#run_command
+[compile commands]: api/textadept.run.html#compile_commands
+[run commands]: api/textadept.run.html#run_commands
 [gtdialog]: http://foicica.com/gtdialog
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
 [cocoaDialog]: http://cocoadialog.sf.net

@@ -23,18 +23,6 @@ local M = {}
 --   from *`_USERHOME`/modules/cpp/api*.
 module('_M.cpp')]]
 
--- Compile and Run command tables use file extensions.
-textadept.run.compile_command.c =
-  'gcc -pedantic -Os -o "%(filename_noext)" %(filename)'
-textadept.run.compile_command.cpp =
-  'g++ -pedantic -Os -o "%(filename_noext)" %(filename)'
-textadept.run.run_command.c = '%(filedir)%(filename_noext)'
-textadept.run.run_command.cpp = '%(filedir)%(filename_noext)'
-textadept.run.error_detail.c = {
-  pattern = '^(.-):(%d+): (.+)$',
-  filename = 1, line = 2, message = 3
-}
-
 -- Adeptsense.
 
 M.sense = textadept.adeptsense.new('cpp')

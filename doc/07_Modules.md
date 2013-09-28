@@ -19,29 +19,9 @@ Language modules have a scope limited to a single programming language. The
 module's name matches the language's lexer in the *lexers/* directory. Textadept
 automatically loads the module when editing source code in that particular
 language. In addition to the source code editing features discussed previously,
-these kinds of modules typically also define shell commands for running and
-compiling code, indentation settings, custom key bindings, and perhaps a custom
-context menu. The manual discusses these features below.
-
-### Compile and Run
-
-Most language modules specify commands that compile and/or run the code in the
-current file. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in curses)
-executes the command for compiling code and `Ctrl+R` (`⌘R` | `^R`) executes the
-command for running code. A new buffer shows the output from the command and
-marks any recognized errors. Pressing `Ctrl+Alt+E` (`^⌘E` | `M-X`) attempts to
-jump to the source of the next recognized error and `Ctrl+Alt+Shift+E` (`^⌘⇧E` |
-`M-S-X`) attempts to jump to the previous one. Double-clicking on errors also
-jumps to their sources. Note: In order for these features to work, the language
-you are working with must have its compile and run commands and error format
-defined. If the language module does not exist or does not [define][] commands
-or an error format, you can do so [manually][] in your [user-init file][].
-
-![Runtime Error](images/runerror.png)
-
-[define]: api/_M.html#Compile.and.Run
-[manually]: http://foicica.com/wiki/run-supplemental
-[user-init file]: 08_Preferences.html#User.Init
+these kinds of modules typically also define indentation settings, custom key
+bindings, and perhaps a custom context menu. The manual discusses these features
+below.
 
 ### Buffer Properties
 

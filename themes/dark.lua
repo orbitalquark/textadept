@@ -108,9 +108,11 @@ buffer:set_fold_margin_hi_colour(true, property_int['color.black'])
 
 -- Markers.
 local MARK_BOOKMARK = textadept.bookmarks.MARK_BOOKMARK
-buffer.marker_fore[MARK_BOOKMARK] = property_int['color.black']
+--buffer.marker_fore[MARK_BOOKMARK] = property_int['color.black']
 buffer.marker_back[MARK_BOOKMARK] = property_int['color.dark_blue']
-buffer.marker_fore[textadept.run.MARK_ERROR] = property_int['color.black']
+--buffer.marker_fore[textadept.run.MARK_WARNING] = property_int['color.black']
+buffer.marker_back[textadept.run.MARK_WARNING] = property_int['color.yellow']
+--buffer.marker_fore[textadept.run.MARK_ERROR] = property_int['color.black']
 buffer.marker_back[textadept.run.MARK_ERROR] = property_int['color.red']
 for i = 25, 31 do -- fold margin markers
   buffer.marker_fore[i] = property_int['color.black']

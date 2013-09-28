@@ -76,6 +76,7 @@ property['style.whitespace'] = ''
 -- Markers.
 local MARK_BOOKMARK = textadept.bookmarks.MARK_BOOKMARK
 buffer.marker_back[MARK_BOOKMARK] = property_int['color.blue']
+buffer.marker_back[textadept.run.MARK_WARNING] = property_int['color.yellow']
 buffer.marker_back[textadept.run.MARK_ERROR] = property_int['color.red']
 
 -- Indicators.

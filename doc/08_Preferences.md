@@ -80,7 +80,7 @@ commands, load more [Adeptsense tags][], and add additional
 [key bindings](#Key.Bindings) and [snippets](#Snippets) (instead of in
 *~/.textadept/init.lua*). For example:
 
-    textadept.run.run_command.lua = 'lua5.2'
+    textadept.run.run_commands.lua = 'lua5.2'
     _M.lua.sense:load_ctags('/path/to/my/projects/tags')
     keys.lua['c\n'] = function()
       buffer:line_end() buffer:add_text('end') buffer:new_line()

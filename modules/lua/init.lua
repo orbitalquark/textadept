@@ -24,14 +24,6 @@ local M = {}
 --   from *`_USERHOME`/modules/lua/api*.
 module('_M.lua')]]
 
--- Compile and Run command tables use file extensions.
-textadept.run.compile_command.lua = 'luac %(filename)'
-textadept.run.run_command.lua = 'lua %(filename)'
-textadept.run.error_detail.lua = {
-  pattern = '^lua: (.-):(%d+): (.+)$',
-  filename = 1, line = 2, message = 3
-}
-
 -- Adeptsense.
 
 M.sense = textadept.adeptsense.new('lua')

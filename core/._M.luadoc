@@ -26,28 +26,27 @@
 -- #### Compile and Run
 --
 -- The `Ctrl+Shift+R` and `Ctrl+R` (`⌘⇧R` and `⌘R` on Mac OSX | `M-^R` and `^R`
--- in curses) key bindings compile and run code, respectively. In order for
--- these to work for your language, the [`textadept.run.compile_command`][] and
--- [`textadept.run.run_command`][] tables must have keys with the language's
--- lexer name assigned to compile and run shell commands, respectively. Commands
--- may contain [macros][]. For Lua, it would look like
+-- in curses) key bindings compile and run code, respectively. If Textadept does
+-- not execute the correct commands for your language, modify them in the
+-- [`textadept.run.compile_commands`][] and [`textadept.run.run_commands`][]
+-- tables using the appropriate lexer key. Commands may contain [macros][]. For
+-- Lua, it would look like
 --
---     textadept.run.compile_command.lua = 'luac %(filename)'
---     textadept.run.run_command = 'lua %(filename)'
+--     textadept.run.compile_commands.lua = 'luac "%(filename)"'
+--     textadept.run.run_commands.lua = 'lua "%(filename)"'
 --
--- The module should also define error details in
--- [`textadept.run.error_detail`][] so double-clicking on compile or runtime
--- errors jumps to the error's location. The format for Lua errors looks like
+-- Double-clicking on compile or runtime errors jumps to the error's location.
+-- If Textadept does not recognize your language's errors properly, add an error
+-- pattern to [`textadept.run.error_patterns`][]. The Lua error pattern looks
+-- like
 --
---     textadept.run.error_detail.lua = {
---       pattern = '^lua: (.-):(%d+): (.+)$',
---       filename = 1, line = 2, message = 3
---     }
+--     table.insert(textadept.run.error_patterns, 1,
+--                  '^luac?: (.-):(%d+): (.+)$')
 --
--- [`textadept.run.compile_command`]: textadept.run.html#compile_command
--- [`textadept.run.run_command`]: textadept.run.html#run_command
+-- [`textadept.run.compile_commands`]: textadept.run.html#compile_commands
+-- [`textadept.run.run_commands`]: textadept.run.html#run_commands
 -- [macros]: textadept.run.html#execute
--- [`textadept.run.error_detail`]: textadept.run.html#error_detail
+-- [`textadept.run.error_patterns`]: textadept.run.html#error_patterns
 --
 -- #### Buffer Properties
 --
