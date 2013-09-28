@@ -41,9 +41,9 @@ either nothing happens or the wrong command is executed. How can I tell
 Textadept which command to run?
 
 **A:**
-Take a look at these [commands][].
+Please see the LuaDoc on [compile and run commands][].
 
-[commands]: http://foicica.com/wiki/run-supplemental
+[compile and run commands]: api/_M.html#Compile.and.Run
 
 - - -
 

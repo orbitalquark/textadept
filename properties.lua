@@ -81,6 +81,7 @@ buffer.indentation_guides = buffer.IV_LOOKBOTH
 local symbol = not CURSES and buffer.MARK_FULLRECT or
                buffer.MARK_CHARACTER + string.byte(' ')
 buffer:marker_define(textadept.bookmarks.MARK_BOOKMARK, symbol)
+buffer:marker_define(textadept.run.MARK_WARNING, symbol)
 buffer:marker_define(textadept.run.MARK_ERROR, symbol)
 if not CURSES then
   -- Arrow Folding Symbols.

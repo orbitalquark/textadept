@@ -212,7 +212,8 @@ search.
 Being a programmer's editor, Textadept excels at editing source code. It
 understands the syntax and structure of more than 80 different programming
 languages and recognizes hundreds of file types. Textadept uses this knowledge
-to make viewing and editing code faster and easier.
+to make viewing and editing code faster and easier. It can also compile and run
+simple source files.
 
 ### Lexers
 
@@ -296,3 +297,22 @@ can define some too.
 Pressing `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in curses) comments or uncomments the
 code on the selected lines. Selecting any part of a line renders the entire line
 eligible for commenting or uncommenting.
+
+### Compile and Run
+
+Textadept knows most of the commands that compile and/or run code in source
+files. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in curses) executes
+the command for compiling code in the current file and `Ctrl+R` (`⌘R` | `^R`)
+executes the command for running code. A new buffer shows the output from the
+command and marks any recognized warnings and errors. Pressing `Ctrl+Alt+E`
+(`^⌘E` | `M-X`) attempts to jump to the source of the next recognized warning or
+error and `Ctrl+Alt+Shift+E` (`^⌘⇧E` | `M-S-X`) attempts to jump to the previous
+one. Double-clicking on warnings and errors also jumps to their sources. If
+Textadept does not know the correct commands for compiling and/or running your
+language's source code, or if it does not detect warning or error messages
+properly, you can [make changes][] in your [user-init file][].
+
+![Runtime Error](images/runerror.png)
+
+[make changes]: api/_M.html#Compile.and.Run
+[user-init file]: 08_Preferences.html#User.Init

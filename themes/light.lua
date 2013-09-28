@@ -42,7 +42,7 @@ property['color.lavender'] = 0xE69999
 
 -- Light colors.
 property['color.light_red'] = 0x8080CC
---property['color.light_yellow'] = 0x80CCCC
+property['color.light_yellow'] = 0x80CCCC
 --property['color.light_green'] = 0x80CC80
 --property['color.light_teal'] = 0xCCCC80
 --property['color.light_purple'] = 0xCC80CC
@@ -107,11 +107,13 @@ buffer:set_fold_margin_colour(true, property_int['color.white'])
 buffer:set_fold_margin_hi_colour(true, property_int['color.white'])
 
 -- Markers.
-local MARK_BOOKMARK = textadept.bookmarks.MARK_BOOKMARK
-buffer.marker_fore[MARK_BOOKMARK] = property_int['color.white']
+local MARK_BOOKMARK, t_run = textadept.bookmarks.MARK_BOOKMARK, textadept.run
+--buffer.marker_fore[MARK_BOOKMARK] = property_int['color.white']
 buffer.marker_back[MARK_BOOKMARK] = property_int['color.dark_blue']
-buffer.marker_fore[textadept.run.MARK_ERROR] = property_int['color.white']
-buffer.marker_back[textadept.run.MARK_ERROR] = property_int['color.light_red']
+--buffer.marker_fore[t_run.MARK_WARNING] = property_int['color.white']
+buffer.marker_back[t_run.MARK_WARNING] = property_int['color.light_yellow']
+--buffer.marker_fore[t_run.MARK_ERROR] = property_int['color.white']
+buffer.marker_back[t_run.MARK_ERROR] = property_int['color.light_red']
 for i = 25, 31 do -- fold margin markers
   buffer.marker_fore[i] = property_int['color.white']
   buffer.marker_back[i] = property_int['color.grey']

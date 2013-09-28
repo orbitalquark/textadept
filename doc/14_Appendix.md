@@ -175,10 +175,14 @@ grow\_selection()                 |Replaced|[select\_enclosed()][]
 menubar                           |Removed |N/A
 contextmenu                       |Removed |N/A
 **_M.textadept.run**              |        |
+N/A                               |New     |[MARK\_WARNING][]
 N/A                               |New     |[MARK\_ERROR][]
 MARK\_ERROR\_BACK                 |Removed |N/A<sup>c</sup>
+compile\_command                  |Renamed |[compile\_commands][]
+run\_command                      |Renamed |[run\_commands][]
+error\_detail                     |Renamed |[error\_patterns][]<sup>e</sup>
 **_M.textadept.snapopen**         |Removed |N/A
-open                              |Changed |\_G.[io.snapopen()][]<sup>e</sup>
+open                              |Changed |\_G.[io.snapopen()][]<sup>f</sup>
 **_SCINTILLA.constants**          |        |
 SC\_\*                            |Renamed |Removed "SC\_" prefix.
 SC(FIND\|MOD\|VS\|WS)             |Renamed |Removed "SC" prefix.
@@ -211,7 +215,9 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 
 <sup>d</sup>Set [`buffer.indic_fore`][] in [`events.VIEW_NEW`][].
 
-<sup>e</sup>Changed arguments too.
+<sup>e</sup>Changed structure too.
+
+<sup>f</sup>Changed arguments too.
 
 [buffer.new()]: api/buffer.html#new
 [textadept]: api/textadept.html
@@ -222,7 +228,11 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [INDIC\_HIGHLIGHT]: api/textadept.editing.html#INDIC_HIGHLIGHT
 [autocomplete\_word]: api/textadept.editing.html#autocomplete_word
 [select\_enclosed()]: api/textadept.editing.html#select_enclosed
+[MARK\_WARNING]: api/textadept.run.html#MARK_WARNING
 [MARK\_ERROR]: api/textadept.run.html#MARK_ERROR
+[compile\_commands]: api/textadept.run.html#compile_commands
+[run\_commands]: api/textadept.run.html#run_commands
+[error\_patterns]: api/textadept.run.html#error_patterns
 [io.snapopen()]: api/io.html#snapopen
 [style\_name]: api/buffer.html#style_name
 [io.reload\_file()]: api/io.html#reload_file
