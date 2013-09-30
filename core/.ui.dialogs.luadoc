@@ -1,0 +1,415 @@
+-- Copyright 2007-2013 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- This is a DUMMY FILE used for making LuaDoc for built-in functions in the
+-- ui.dialogs table.
+
+--- Provides a set of interactive dialog prompts for user input.
+module('ui.dialogs')
+
+---
+-- Prompts the user with a generic message box dialog defined by dialog options
+-- table *options*, returning the index of the selected button or, if
+-- *options*.`string_output` is `true`, the selected button's label.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the message box.
+--
+--   * `title`: The dialog's title text.
+--   * `text`: The dialog's main message text.
+--   * `informative_text`: The dialog's extra informative text.
+--   * `icon`: The dialog's GTK stock icon name. Examples are
+--     "gtk-dialog-error", "gtk-dialog-info", "gtk-dialog-question", and
+--     "gtk-dialog-warning". The dialog does not display an icon by default.
+--   * `icon_file`: The dialog's icon file path. This option has no effect when
+--     `icon` is set.
+--   * `button1`: The right-most button's label. The default value is
+--     `_L['_OK']`.
+--   * `button2`: The middle button's label.
+--   * `button3`: The left-most button's label. This option requires `button2`
+--     to be set.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code
+-- @usage ui.dialogs.msgbox{title = 'EOL Mode', text = 'Which EOL?',
+--   icon = 'gtk-dialog-question', button1 = 'CRLF', button2 = 'CR',
+--   button3 = 'LF'}
+function msgbox(options) end
+
+---
+-- Prompts the user with a generic message box dialog defined by dialog options
+-- table *options* and with localized "Ok" and "Cancel" buttons, returning the
+-- index of the selected button or, if *options*.`string_output` is `true`, the
+-- selected button's label.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the message box.
+--
+--   * `title`: The dialog's title text.
+--   * `text`: The dialog's main message text.
+--   * `informative_text`: The dialog's extra informative text.
+--   * `icon`: The dialog's GTK stock icon name. Examples are
+--     "gtk-dialog-error", "gtk-dialog-info", "gtk-dialog-question", and
+--     "gtk-dialog-warning". The dialog does not display an icon by default.
+--   * `icon_file`: The dialog's icon file path. This option has no effect when
+--     `icon` is set.
+--   * `no_cancel`: Do not display the "Cancel" button. The default value is
+--     `false`.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code
+function ok_msgbox(options) end
+
+---
+-- Prompts the user with a generic message box dialog defined by dialog options
+-- table *options* and with localized "Yes", "No", and "Cancel" buttons,
+-- returning the index of the selected button or, if *options*.`string_output`
+-- is `true`, the selected button's label.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the message box.
+--
+--   * `title`: The dialog's title text.
+--   * `text`: The dialog's main message text.
+--   * `informative_text`: The dialog's extra informative text.
+--   * `icon`: The dialog's GTK stock icon name. Examples are
+--     "gtk-dialog-error", "gtk-dialog-info", "gtk-dialog-question", and
+--     "gtk-dialog-warning". The dialog does not display an icon by default.
+--   * `icon_file`: The dialog's icon file path. This option has no effect when
+--     `icon` is set.
+--   * `no_cancel`: Do not display the "Cancel" button. The default value is
+--     `false`.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code
+function yesno_msgbox(options) end
+
+---
+-- Prompts the user with a one-line input box dialog defined by dialog options
+-- table *options*, returning the index of the selected button along with the
+-- input text or, if *options*.`string_output` is `true`, the selected button's
+-- label along with the input text.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the input box.
+--
+--   * `title`: The dialog's title text.
+--   * `informative_text`: The dialog's main message text.
+--   * `text`: The dialog's initial input text.
+--   * `button1`: The right-most button's label. The default value is
+--     `_L['_OK']`.
+--   * `button2`: The middle button's label.
+--   * `button3`: The left-most button's label. This option requires `button2`
+--     to be set.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, input text
+-- @usage ui.dialogs.inputbox{title = 'Goto Line', informative_text = 'Line:',
+--   text = '1'}
+function inputbox(options) end
+
+---
+-- Prompts the user with a one-line input box dialog defined by dialog options
+-- table *options* and with localized "Ok" and "Cancel" buttons, returning the
+-- index of the selected button along with the input text or, if
+-- *options*.`string_output` is `true`, the selected button's label along with
+-- the input text.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the input box.
+--
+--   * `title`: The dialog's title text.
+--   * `informative_text`: The dialog's main message text.
+--   * `text`: The dialog's initial input text.
+--   * `no_cancel`: Do not display the "Cancel" button. The default value is
+--     `false`.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, input text
+function standard_inputbux(options) end
+
+---
+-- Prompts the user with a one-line masked input box dialog defined by dialog
+-- options table *options*, returning the index of the selected button along
+-- with the input text or, if *options*.`string_output` is `true`, the selected
+-- button's label along with the input text.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the input box.
+--
+--   * `title`: The dialog's title text.
+--   * `informative_text`: The dialog's main message text.
+--   * `text`: The dialog's initial input text.
+--   * `button1`: The right-most button's label. The default value is
+--     `_L['_OK']`.
+--   * `button2`: The middle button's label.
+--   * `button3`: The left-most button's label. This option requires `button2`
+--     to be set.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, input text
+function secure_inputbox(options) end
+
+---
+-- Prompts the user with a one-line masked input box dialog defined by dialog
+-- options table *options* and with localized "Ok" and "Cancel" buttons,
+-- returning the index of the selected button along with the input text or, if
+-- *options*.`string_output` is `true`, the selected button's label along with
+-- the input text.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the input box.
+--
+--   * `title`: The dialog's title text.
+--   * `informative_text`: The dialog's main message text.
+--   * `text`: The dialog's initial input text.
+--   * `no_cancel`: Do not display the "Cancel" button. The default value is
+--     `false`.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, input text
+function secure_standard_inputbox(options) end
+
+---
+-- Prompts the user with a file selection dialog defined by dialog options
+-- table *options*, returning the string file selected or, if
+-- *options*.`select_multiple` is `true`, the list of files selected.
+-- If the user canceled the dialog, returns `nil`.
+-- @param options Table of key-value option pairs for the dialog.
+--
+--   * `title`: The dialog's title text.
+--   * `with_directory`: The initial filesystem directory to show.
+--   * `with_file`: The initially selected filename. This option requires
+--     `with_directory` to be set.
+--   * `with_extension`: The list of extensions selectable files must have.
+--   * `select_multiple`: Allow the user to select multiple files. The default
+--     value is `false`.
+--   * `select_only_directories`: Only allow the user to select directories. The
+--     default value is `false`.
+-- @return filename, list of filenames, or nil
+-- @usage ui.dialogs.fileselect{title = 'Open C File', with_directory = _HOME,
+--   with_extension = {'c', 'h'}, select_multiple = true}
+function fileselect(options) end
+
+---
+-- Prompts the user with a file save dialog defined by dialog options table
+-- *options*, returning the string file chosen.
+-- If the user canceled the dialog, returns `nil`.
+-- @param options Table of key-value option pairs for the dialog.
+--
+--   * `title`: The dialog's title text.
+--   * `with_directory`: The initial filesystem directory to show.
+--   * `with_file`: The initially chosen filename. This option requires
+--     `with_directory` to be set.
+--   * `with_extension`: The list of extensions selectable files must have.
+--   * `no_create_directories`: Prevent the user from creating new directories.
+--     The default value is `false`.
+-- @return filename or nil
+function filesave(options) end
+
+---
+-- Prompts the user with a multiple-line textbox dialog defined by dialog
+-- options table *options*, returning the index of the selected button along
+-- with the textbox text if *options*.`editable` is `true` or, if
+-- *options*.`string_output` is `true`, the selected button's label along with
+-- the textbox text if *options*.`editable` is also `true`.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the dialog.
+--
+--   * `title`: The dialog's title text.
+--   * `informative_text`: The dialog's main message text.
+--   * `text`: The dialog's initial textbox text.
+--   * `text_from_file`: The filename whose contents are loaded into the
+--     textbox. This option has no effect when `text` is given.
+--   * `button1`: The right-most button's label. The default value is
+--     `_L['_OK']`.
+--   * `button2`: The middle button's label.
+--   * `button3`: The left-most button's label. This option requires `button2`
+--     to be set.
+--   * `editable`: Allows the user to edit the text in the textbox. The default
+--     value is `false`.
+--   * `focus_textbox`: Focus the textbox instead of the dialog buttons. The
+--     default value is `false`.
+--   * `scroll_to`: Where to scroll the textbox text when it is not all visible.
+--     The available values are `"top"` and `"bottom"`. The default value is
+--     `"top"`.
+--   * `selected`: Select all textbox text. The default value is `false`.
+--   * `monospaced_font`: Use a monospaced font in the textbox instead of a
+--     proportional one. The default value is `false`.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, textbox text
+-- @usage ui.dialogs.textbox{title = 'License Agreement',
+--   informative_text = 'You agree to:', text_from_file = _HOME..'/LICENSE'}
+function textbox(options) end
+
+---
+-- Prompts the user with a drop down item selection dialog defined by dialog
+-- options table *options*, returning the index of the selected button along
+-- with the index of the selected item or, if *options*.`string_output` is
+-- `true`, the selected button's label along with the selected item's text.
+-- If *options*.`exit_onchange` closed the dialog, returns `4` along with either
+-- the index of the selected item or the selected item's text. If the dialog
+-- timed out, returns `0` or `"timeout"`. If the user canceled the dialog,
+-- returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the drop down dialog.
+--
+--   * `title`: The dialog's title text.
+--   * `text`: The dialog's main message text.
+--   * `items`: The list of string items to show in the drop down.
+--   * `button1`: The right-most button's label. The default value is
+--     `_L['_OK']`.
+--   * `button2`: The middle button's label.
+--   * `button3`: The left-most button's label. This option requires `button2`
+--     to be set.
+--   * `exit_onchange`: Close the dialog after selecting a new item. The default
+--     value is `false`.
+--   * `select`: The index of the initially selected list item. The default
+--     value is `1`.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status along with the selected item's text instead of the button's index
+--     or the exit code along with the item's index. The default value is
+--     `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, selected item
+-- @usage ui.dialogs.dropdown{title = 'Select Encoding', width = 200,
+--   items = io.encodings, string_output = true}
+function dropdown(options) end
+
+---
+-- Prompts the user with a drop down item selection dialog defined by dialog
+-- options table *options* and with localized "Ok" and "Cancel" buttons,
+-- returning the index of the selected button along with the index of the
+-- selected item or, if *options*.`string_output` is `true`, the selected
+-- button's label along with the selected item's text.
+-- If *options*.`exit_onchange` closed the dialog, returns `4` along with either
+-- the index of the selected item or the selected item's text. If the dialog
+-- timed out, returns `0` or `"timeout"`. If the user canceled the dialog,
+-- returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the drop down dialog.
+--
+--   * `title`: The dialog's title text.
+--   * `text`: The dialog's main message text.
+--   * `items`: The list of string items to show in the drop down.
+--   * `no_cancel`: Do not display the "Cancel" button. The default value is
+--     `false`.
+--   * `exit_onchange`: Close the dialog after selecting a new item. The default
+--     value is `false`.
+--   * `select`: The index of the initially selected list item. The default
+--     value is `1`.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status along with the selected item's text instead of the button's index
+--     or the exit code along with the item's index. The default value is
+--     `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, selected item
+function standard_dropdown(options) end
+
+---
+-- Prompts the user with a filtered list item selection dialog defined by dialog
+-- options table *options*, returning the index of the selected button along
+-- with the index(es) of the selected item(s) (depending on whether or not
+-- *options*.`select_multiple` is `true`) or, if *options*.`string_output` is
+-- `true`, the selected button's label along with the selected item's or items'
+-- text.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- Spaces in the filter text are treated as wildcards.
+-- @param options Table of key-value option pairs for the drop down dialog.
+--
+--   * `title`: The dialog's title text.
+--   * `text`: The dialog's main message text.
+--   * `columns`: The list of string column names for list rows.
+--   * `items`: The list of string items to show in the drop down.
+--   * `button1`: The right-most button's label. The default value is
+--     `_L['_OK']`.
+--   * `button2`: The middle button's label.
+--   * `button3`: The left-most button's label. This option requires `button2`
+--     to be set.
+--   * `select_multiple`: Allow the user to select multiple items. The default
+--     value is `false`.
+--   * `search_column`: The column number to filter the input text against. The
+--     default value is `1`. This option requires `columns` to be set and
+--     contain at least *n* column names.
+--   * `output_column`: The column number to use for `string_output`. The
+--     default value is `1`. This option requires `columns` to be set and
+--     contain at least *n* column names.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status along with the selected item's text instead of the button's index
+--     or the exit code along with the item's index. The default value is
+--     `false`.
+--   * `width`: The pixel width of the dialog.
+--   * `height`: The pixel height of the dialog.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, selected item or list of selected items
+-- @usage ui.dialogs.filteredlist{title = 'Title', columns = {'Foo', 'Bar'},
+--   items = {'a', 'b', 'c', 'd'}}
+function filteredlist(options) end

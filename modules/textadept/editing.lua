@@ -307,13 +307,12 @@ end
 -- @name goto_line
 function M.goto_line(line)
   if not line then
-    line = tonumber(ui.dialog('inputbox',
-                              '--title', _L['Go To'],
-                              '--text', _L['Line Number:'],
-                              '--button1', _L['_OK'],
-                              '--button2', _L['_Cancel'],
-                              '--no-newline'):match('%-?%d+$'))
-    if not line or line < 0 then return end
+    local button, value = ui.dialogs.inputbox{
+      title = _L['Go To'], informative_text = _L['Line Number:'],
+      button1 = _L['_OK'], button2 = _L['_Cancel']
+    }
+    line = tonumber(value)
+    if button ~= 1 or not line then return end
   end
   buffer:ensure_visible_enforce_policy(line - 1)
   buffer:goto_line(line - 1)

@@ -807,22 +807,24 @@ end
 function M.goto_ctag(sense, kind, title)
   if not sense.locations[kind] then return end -- no Ctags loaded
   local items = {}
-  local kind = sense.ctags_kinds[kind]
+  local adeptsense_kind = sense.ctags_kinds[kind]
   for kind, v in pairs(sense.locations[kind]) do
     items[#items + 1] = kind:match('[^#]+$') -- symbol name
-    if kind == M.FUNCTION or kind == M.FIELD then
-      items[#items + 1] = kind:match('^[^#]+') -- class name
+    if adeptsense_kind == M.FUNCTION or adeptsense_kind == M.FIELD then
+      items[#items + 1] = kind:match('^[^#]*') -- class name
     end
     items[#items + 1] = v[1]:iconv('UTF-8', _CHARSET)..':'..v[2]
   end
   local columns = {'Name', 'Location'}
-  if kind == M.FUNCTION or kind == M.FIELD then
+  if adeptsense_kind == M.FUNCTION or adeptsense_kind == M.FIELD then
     table.insert(columns, 2, 'Class')
   end
-  local location = ui.filteredlist(title, columns, items, false,
-                                   '--output-column', '3')
-  if not location then return end
-  local path, line = location:match('^(%a?:?[^:]+):(.+)$')
+  local button, i = ui.dialogs.filteredlist{
+    title = title, columns = columns, items = items,
+    width = CURSES and ui.size[1] - 2 or nil
+  }
+  if button ~= 1 or not i then return end
+  local path, line = items[i * #columns]:match('^(%a?:?[^:]+):(.+)$')
   io.open_file(path:iconv(_CHARSET, 'UTF-8'))
   if not tonumber(line) then
     -- /^ ... $/

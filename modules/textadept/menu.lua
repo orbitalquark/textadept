@@ -192,10 +192,10 @@ local menubar = {
     {_L['Show _LuaDoc'], {utils.open_webpage, _HOME..'/doc/api/index.html'}},
     SEPARATOR,
     {_L['_About'],
-      {ui.dialog, 'ok-msgbox', '--title', 'Textadept', '--text', _RELEASE,
-       '--informative-text', 'Copyright © 2007-2013 Mitchell. See LICENSE\n'..
-       'http://foicica.com/textadept', '--button1', _L['_OK'], '--no-cancel',
-       '--icon-file', _HOME..'/core/images/ta_64x64.png'}},
+      {ui.dialogs.msgbox, {title = 'Textadept', text = _RELEASE,
+       informative_text = 'Copyright © 2007-2013 Mitchell. See LICENSE\n'..
+                          'http://foicica.com/textadept',
+       icon_file = _HOME..'/core/images/ta_64x64.png'}}},
   },
 }
 
@@ -341,10 +341,12 @@ if not CURSES then M.set_contextmenu(context_menu) end
 -- Prompts the user to select a menu command to run.
 -- @name select_command
 function M.select_command()
-  local i = ui.filteredlist(_L['Run Command'],
-                            {_L['Command'], _L['Key Command']}, items, true,
-                            CURSES and {'--width', ui.size[1] - 2} or '')
-  if i then keys.run_command(commands[i + 1], type(commands[i + 1])) end
+  local button, i = ui.dialogs.filteredlist{
+    title = _L['Run Command'], columns = {_L['Command'], _L['Key Command']},
+    items = items, width = CURSES and ui.size[1] - 2 or nil
+  }
+  if button ~= 1 or not i then return end
+  keys.run_command(commands[i], type(commands[i]))
 end
 
 -- Performs the appropriate action when clicking a menu item.

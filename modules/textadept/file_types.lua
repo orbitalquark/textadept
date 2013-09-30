@@ -126,8 +126,10 @@ events.connect(events.RESET_AFTER, restore_lexer)
 -- @see buffer.set_lexer
 -- @name select_lexer
 function M.select_lexer()
-  local lexer = ui.filteredlist(_L['Select Lexer'], _L['Name'], M.lexers)
-  if lexer then buffer:set_lexer(lexer) end
+  local button, i = ui.dialogs.filteredlist{
+    title = _L['Select Lexer'], columns = _L['Name'], items = M.lexers
+  }
+  if button == 1 and i then buffer:set_lexer(M.lexers[i]) end
 end
 
 -- Generate lexer list.

@@ -70,43 +70,49 @@ function ui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 -- @name print
 function ui.print(...) ui._print(_L['[Message Buffer]'], ...) end
 
----
--- Convenience function for `ui.dialog('filteredlist', ...)` with "Ok" and
--- "Cancel" buttons that returns the text or index of the selection depending on
--- the boolean value of *int_return*.
--- *title* is the title of the dialog, *columns* is a list of column names, and
--- *items* is a list of items to show.
--- @param title The title for the filtered list dialog.
--- @param columns A column name or list of column names.
--- @param items An item or list of items.
--- @param int_return Optional flag indicating whether to return the integer
---   index of the selected item in the filtered list or the string selected
---   item. A `true` value is not compatible with the `'--select-multiple'`
---   option. The default value is `false`.
--- @param ... Optional additional parameters to pass to `ui.dialog()`.
--- @return Either a string or integer on success; `nil` otherwise. In strings,
---   multiple items are separated by newlines.
--- @usage ui.filteredlist('Title', 'Foo', {'Bar', 'Baz'})
--- @usage ui.filteredlist('Title', {'Foo', 'Bar'}, {'a', 'b', 'c', 'd'}, false,
---                        '--output-column', '2')
--- @see dialog
--- @name filteredlist
-function ui.filteredlist(title, columns, items, int_return, ...)
-  local out = ui.dialog('filteredlist',
-                        '--title', title,
-                        '--button1', _L['_OK'],
-                        '--button2', _L['_Cancel'],
-                        '--no-newline',
-                        int_return and '' or '--string-output',
-                        '--columns', columns,
-                        '--items', items,
-                        ...)
-  local patt = int_return and '^(%-?%d+)\n(%d+)$' or '^([^\n]+)\n(.+)$'
-  local response, value = out:match(patt)
-  if response == (int_return and '1' or _L['_OK']) then
-    return not int_return and value or tonumber(value)
+-- Documentation is in core/.ui.dialogs.luadoc.
+ui.dialogs = setmetatable({}, {__index = function(t, k)
+  -- Wrapper for `ui.dialog(k)`, transforming the given table of arguments into
+  -- a set of command line arguments and transforming the resulting standard
+  -- output into Lua objects.
+  -- @param options Table of key-value command line options for gtdialog.
+  -- @return Lua objects depending on the dialog kind
+  return function(options)
+    if not options.button1 then options.button1 = _L['_OK'] end
+    if options.select then options.select = options.select - 1 end
+    -- Transform key-value pairs into command line arguments.
+    local args = {}
+    for option, value in pairs(options) do
+      if value then
+        args[#args + 1] = '--'..option:gsub('_', '-')
+        if value ~= true then args[#args + 1] = value end
+      end
+    end
+    -- Call gtdialog, stripping any trailing newline in the standard output.
+    local result = ui.dialog(k:gsub('_', '-'), table.unpack(args))
+    result = result:match('^(.-)\n?$')
+    -- Depending on the dialog type, transform the result into Lua objects.
+    if k == 'fileselect' or k == 'filesave' then
+      if result == '' then return nil end
+      if k == 'filesave' or not options.select_multiple then return result end
+      local files = {}
+      for file in result:gmatch('[^\n]+') do files[#files + 1] = file end
+      return files
+    elseif k == 'filteredlist' then
+      local button, value = result:match('^([^\n]+)\n?(.*)$')
+      if not options.string_output then button = tonumber(button) end
+      local items = {}
+      for item in value:gmatch('[^\n]+') do
+        items[#items + 1] = options.string_output and item or tonumber(item) + 1
+      end
+      return button, options.select_multiple and items or items[1]
+    elseif not options.string_output then
+      local i, value = result:match('^(%-?%d+)\n?(.*)$')
+      return tonumber(i), k ~= 'dropdown' and value or tonumber(value) + 1
+    end
+    return result:match('([^\n]+)\n(.*)$')
   end
-end
+end})
 
 ---
 -- Prompts the user to select a buffer to switch to.
@@ -120,9 +126,11 @@ function ui.switch_buffer()
     items[#items + 1] = (buffer.dirty and '*' or '')..basename
     items[#items + 1] = filename
   end
-  local i = ui.filteredlist(_L['Switch Buffers'], columns, items, true,
-                            CURSES and {'--width', ui.size[1] - 2} or '--')
-  if i then view:goto_buffer(i + 1) end
+  local button, i = ui.dialogs.filteredlist{
+    title = _L['Switch Buffers'], columns = columns, items = items,
+    width = CURSES and ui.size[1] - 2 or nil
+  }
+  if button == 1 and i then view:goto_buffer(i) end
 end
 
 ---
@@ -357,15 +365,12 @@ events_connect(events.QUIT, function()
       list[#list + 1] = filename:iconv('UTF-8', _CHARSET)
     end
   end
-  return #list < 1 or ui.dialog('msgbox',
-                                '--title', _L['Quit without saving?'],
-                                '--text',
-                                _L['The following buffers are unsaved:'],
-                                '--informative-text', table.concat(list, '\n'),
-                                '--icon', 'gtk-dialog-question',
-                                '--button1', _L['_Cancel'],
-                                '--button2', _L['Quit _without saving'],
-                                '--no-newline') == '2'
+  return #list < 1 or ui.dialogs.msgbox{
+    title = _L['Quit without saving?'],
+    text = _L['The following buffers are unsaved:'],
+    informative_text = table.concat(list, '\n'), icon = 'gtk-dialog-question',
+    button1 = _L['_Cancel'], button2 = _L['Quit _without saving']
+  } == 2
 end)
 
 events_connect(events.ERROR, ui.print)
@@ -388,14 +393,16 @@ local size
 The functions below are Lua C functions.
 
 ---
--- Displays a [gtdialog][] of kind *kind* with the given string arguments to
--- pass to the dialog and returns a formatted string of the dialog's output.
+-- Low-level function for prompting the user with a [gtdialog][]s of kind *kind*
+-- with the given string and table arguments, returning a formatted string of
+-- the dialog's output.
+-- You probably want to use the higher-level functions in the [`ui.dialogs`][]
+-- module.
 -- Table arguments containing strings are allowed and expanded in place. This is
 -- useful for filtered list dialogs with many items.
--- For more information on gtdialog, see [http://foicica.com/gtdialog][].
 --
 -- [gtdialog]: http://foicica.com/gtdialog/02_Usage.html
--- [http://foicica.com/gtdialog]: http://foicica.com/gtdialog
+-- [`ui.dialogs`]: ui.dialogs.html
 -- @param kind The kind of gtdialog.
 -- @param ... Parameters to the gtdialog.
 -- @return string gtdialog result.

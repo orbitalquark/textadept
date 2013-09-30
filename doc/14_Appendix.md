@@ -202,8 +202,12 @@ docstatusbar\_text                |Renamed |[bufstatusbar\_text][]
 N/A                               |New     |[maximized][]
 find.goto\_file\_in\_list()       |Renamed |find.[goto\_file\_found()][]
 select\_theme                     |Removed |N/A
+N/A                               |New     |[dialogs][]
+filteredlist                      |Removed |N/A
 **io**                            |        |
 try\_encodings                    |Renamed |[encodings][]
+open\_file(string)                |Changed |[open\_file][](string or table)
+snapopen(string, ...)             |Changed |[snapopen][](string or table, ...)
 save\_all()                       |Renamed |[save\_all\_files()][]
 close\_all()                      |Renamed |[close\_all\_buffers()][]
 
@@ -246,7 +250,10 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [bufstatusbar\_text]: api/ui.html#bufstatusbar_text
 [maximized]: api/ui.html#maximized
 [goto\_file\_found()]: api/ui.find.html#goto_file_found
+[dialogs]: api/ui.dialogs.html
 [encodings]: api/io.html#encodings
+[open\_file]: api/io.html#open_file
+[snapopen]: api/io.html#snapopen
 [save\_all\_files()]: api/io.html#save_all_files
 [close\_all\_buffers()]: api/io.html#close_all_buffers
 [`buffer.marker_back`]: api/buffer.html#marker_back

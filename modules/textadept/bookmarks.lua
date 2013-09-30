@@ -53,8 +53,11 @@ function M.goto_mark(next)
       marks[#marks + 1] = tostring(line + 1)..': '..text
       line = buffer:marker_next(line + 1, 2^M.MARK_BOOKMARK)
     until line < 0
-    local line = ui.filteredlist(_L['Select Bookmark'], _L['Bookmark'], marks)
-    if line then textadept.editing.goto_line(line:match('^%d+')) end
+    local button, i = ui.dialogs.filteredlist{
+      title = _L['Select Bookmark'], columns = _L['Bookmark'], items = marks
+    }
+    if button ~= 1 or not i then return end
+    textadept.editing.goto_line(marks[i]:match('^%d+'))
   else
     local f = next and buffer.marker_next or buffer.marker_previous
     local current_line = buffer:line_from_position(buffer.current_pos)

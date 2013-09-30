@@ -40,14 +40,11 @@ M.MAX_RECENT_FILES = 10
 -- @see DEFAULT_SESSION
 -- @name load
 function M.load(filename)
-  local dir = M.DEFAULT_SESSION:match('^.+[/\\]') or ''
-  local name = M.DEFAULT_SESSION:match('[^/\\]+$') or ''
-  filename = filename or ui.dialog('fileselect',
-                                   '--title', _L['Load Session'],
-                                   '--with-directory', dir,
-                                   '--with-file', name,
-                                   '--no-newline')
-  if filename == '' then return end
+  local dir, name = M.DEFAULT_SESSION:match('^(.-[/\\]?)([^/\\]+)$')
+  filename = filename or ui.dialogs.fileselect{
+    title = _L['Load Session'], with_directory = dir, with_file = name
+  }
+  if not filename then return end
   local not_found = {}
   local f = io.open(filename, 'rb')
   if not f then io.close_all_buffers() return false end
@@ -104,12 +101,12 @@ function M.load(filename)
   f:close()
   ui.goto_view(current_view)
   if #not_found > 0 then
-    ui.dialog('msgbox',
-              '--title', _L['Session Files Not Found'],
-              '--text', _L['The following session files were not found'],
-              '--informative-text', table.concat(not_found, '\n'),
-              '--icon', 'gtk-dialog-warning',
-              '--button1', _L['_OK'])
+    ui.dialogs.msgbox{
+      title = _L['Session Files Not Found'],
+      text = _L['The following session files were not found'],
+      informative_text = table.concat(not_found, '\n'),
+      icon = 'gtk-dialog-warning'
+    }
   end
   return true
 end
@@ -127,14 +124,12 @@ end)
 -- @see DEFAULT_SESSION
 -- @name save
 function M.save(filename)
-  local dir = M.DEFAULT_SESSION:match('^.+[/\\]') or ''
-  local name = M.DEFAULT_SESSION:match('[^/\\]+$') or ''
-  filename = filename or ui.dialog('filesave',
-                                   '--title', _L['Save Session'],
-                                   '--with-directory', dir,
-                                   '--with-file', name:iconv('UTF-8', _CHARSET),
-                                   '--no-newline')
-  if filename == '' then return end
+  local dir, name = M.DEFAULT_SESSION:match('^(.-[/\\]?)([^/\\]+)$')
+  filename = filename or ui.dialogs.filesave{
+    title = _L['Save Session'], with_directory = dir,
+    with_file = name:iconv('UTF-8', _CHARSET)
+  }
+  if not filename then return end
   local session = {}
   local buffer_line = "buffer: %d %d %d %s" -- anchor, cursor, line, filename
   local split_line = "%ssplit%d: %s %d" -- level, number, type, size
