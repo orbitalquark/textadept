@@ -303,7 +303,7 @@ textadeptjit-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
 # Install/uninstall.
 
 install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
-                              ../modules ../themes
+                              ../modules ../properties.lua ../themes
 	install -d $(bin_dir) $(data_dir)
 	install $^ $(data_dir)
 	cp -r $| $(data_dir)
@@ -435,12 +435,11 @@ $(scintilla_tgz): ; wget "http://prdownloads.sourceforge.net/scintilla/$@"
 scintilla: scintilla.patch | $(scintilla_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
-$(scinterm_zip):
-	wget "http://foicica.com/hg/scinterm/archive/tip.zip" && mv tip.zip $@
+$(scinterm_zip): ; wget "http://foicica.com/hg/scinterm/archive/tip.zip" -O $@
 scintilla/term: | $(scinterm_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 scintillua: ../lexers LexLPeg.cxx
 $(scintillua_zip):
-	wget "http://foicica.com/hg/scintillua/archive/tip.zip" && mv tip.zip $@
+	wget "http://foicica.com/hg/scintillua/archive/tip.zip" -O $@
 ../lexers: | $(scintillua_zip)
 	mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 	cp $@/LexLPeg.cxx $@/lexers/
@@ -464,8 +463,7 @@ luajit: luajit.patch | $(luajit_tgz)
 	patch -d $@ -N -p1 < $<
 $(libluajit_tgz): ; wget "http://foicica.com/textadept/download/$@"
 libluajit64: | $(libluajit_tgz) ; tar xzf $|
-$(gtdialog_zip):
-	wget "http://foicica.com/hg/gtdialog/archive/tip.zip" && mv tip.zip $@
+$(gtdialog_zip): ; wget "http://foicica.com/hg/gtdialog/archive/tip.zip" -O $@
 gtdialog: | $(gtdialog_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 $(cdk_tgz): ; wget "http://invisible-island.net/datafiles/release/$@"
 cdk: cdk.patch | $(cdk_tgz)
@@ -498,8 +496,7 @@ win32curses: | $(win32curses_zip) $(pdcurses_zip)
 	cp $@/src/win32/pdcurses.a $@/lib/
 $(gtkosx_zip): ; wget "http://foicica.com/textadept/download/$@"
 gtkosx: | $(gtkosx_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
-$(bombay_zip):
-	wget "http://foicica.com/hg/bombay/archive/tip.zip" && mv tip.zip $@
+$(bombay_zip): ; wget "http://foicica.com/hg/bombay/archive/tip.zip" -O $@
 ../doc/bombay: | $(bombay_zip)
 	mkdir $(notdir $@) && unzip -d $(notdir $@) $| && \
 		mv $(notdir $@)/*/* $(dir $@)
