@@ -217,13 +217,11 @@ end
 -- @see FILTER
 -- @name find_in_files
 function M.find_in_files(dir)
-  dir = dir or ui.dialog('fileselect',
-                         '--title', _L['Find in Files'],
-                         '--select-only-directories',
-                         '--with-directory',
-                         (buffer.filename or ''):match('^.+[/\\]') or '',
-                         '--no-newline')
-  if dir == '' then return end
+  dir = dir or ui.dialogs.fileselect{
+    title = _L['Find in Files'], select_only_directories = true,
+    with_directory = (buffer.filename or ''):match('^.+[/\\]'),
+  }
+  if not dir then return end
 
   local text = M.find_entry_text
   if not M.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
@@ -275,15 +273,11 @@ local function replace(rtext)
     buffer:replace_target(rtext:gsub('\\[abfnrtv\\]', escapes))
     buffer:goto_pos(buffer.target_end) -- 'find' text after this replacement
   else
-    ui.dialog('ok-msgbox',
-              '--title', _L['Error'],
-              '--text', _L['An error occured:'],
-              '--informative-text',
-              rtext:match(':1:(.+)$') or rtext:match(':%d+:(.+)$'),
-              '--icon', 'gtk-dialog-error',
-              '--button1', _L['_OK'],
-              '--button2', _L['_Cancel'],
-              '--no-cancel')
+    ui.dialogs.msgbox{
+      title = _L['Error'], text = _L['An error occured:'],
+      informative_text = rtext:match(':1:(.+)$') or rtext:match(':%d+:(.+)$'),
+      icon = 'gtk-dialog-error'
+    }
     -- Since find is called after replace returns, have it 'find' the current
     -- text again, rather than the next occurance so the user can fix the error.
     buffer:goto_pos(buffer.current_pos)
