@@ -4,10 +4,68 @@
 
 [Atom Feed]: feed
 
-## 7.0 beta 3 (11 Sep 2013)
+## 7.0 beta 4 (01 Oct 2013)
 
 Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to
 Textadept 7.
+
+Download:
+
+* [Textadept 7.0 beta 4 -- Win32][]
+* [Textadept 7.0 beta 4 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.0 beta 4 -- Linux][]
+* [Textadept 7.0 beta 4 -- Linux x86_64][]
+* [Textadept 7.0 beta 4 -- Modules][]
+
+Bugfixes:
+
+* Fixed various compile and install errors.
+* Fixed error when block commenting plain text.
+
+Changes:
+
+* [`events.disconnect()`][] now accepts function argument instead of ID.
+* [`buffer.filename`][] and all internal filenames are no longer encoded in
+  UTF-8, but in [`_CHARSET`][].
+* Removed many unused Scintilla constants and stripped many constants of `SC`
+  and `SC_` prefixes.
+* Changed marker margin symbols via *properties.lua*.
+* Calling [`textadept.editing.select_word()`][] repeatedly makes multiple
+  selections.
+* Renamed `buffer:convert_eo_ls()` to [`convert_eols()`].
+* Added [`textadept.run.MARK_WARNING`][] marker.
+* Renamed `textadept.run.compile_command` and `textadept.run.run_command` to
+  [`compile_commands`][] and [`run_commands`][], respectively.
+* Renamed `textadept.run.error_detail` to [`error_patterns`][] and changed its
+  internal structure.
+* Compile and run commands for languages that support them are now built-in
+  along with their respective warning and error messages. The supplemental ones
+  on the wiki are no longer needed.
+* New [`ui.dialogs`][] module for more user-friendly dialog support. Removed
+  `ui.filteredlist()` as a result.
+* Changed [`io.open_file()`][] and [`io.snapopen()`][] to accept tables of files
+  and paths instead of "\n" delimited strings.
+
+[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
+[Textadept 7.0 beta 4 -- Win32]: download/textadept_7.0_beta_4.win32.zip
+[Textadept 7.0 beta 4 -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta_4.osx.zip
+[Textadept 7.0 beta 4 -- Linux]: download/textadept_7.0_beta_4.i386.tgz
+[Textadept 7.0 beta 4 -- Linux x86_64]: download/textadept_7.0_beta_4.x86_64.tgz
+[Textadept 7.0 beta 4 -- Modules]: download/textadept_7.0_beta_4.modules.zip
+[`events.disconnect()`]: api/events.html#disconnect
+[`buffer.filename`]: api/buffer.html#filename
+[`_CHARSET`]: api/_G.html#_CHARSET
+[`textadept.editing.select_word()`]: api/textadept.editing.html#select_word
+[`convert_eols()`]: api/buffer.html#convert_eols
+[`textadept.run.MARK_WARNING`]: api/textadept.run.html#MARK_WARNING
+[`compile_commands`]: api/textadept.run.html#compile_commands
+[`run_commands`]: api/textadept.run.html#run_commands
+[`error_patterns`]: api/textadept.run.html#error_patterns
+[`ui.dialogs`]: api/ui.dialogs.html
+[`io.open_file()`]: api/io.html#open_file
+[`io.snapopen()`]: api/io.html#snapopen
+
+## 7.0 beta 3 (11 Sep 2013)
 
 Download:
 
@@ -38,7 +96,6 @@ Changes:
 * Moved buffer IO functions into [`io`][].
 * Updated to [CDK][] 5.0-20130901.
 
-[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
 [Textadept 7.0 beta 3 -- Win32]: download/textadept_7.0_beta_3.win32.zip
 [Textadept 7.0 beta 3 -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta_3.osx.zip
 [Textadept 7.0 beta 3 -- Linux]: download/textadept_7.0_beta_3.i386.tgz
@@ -806,7 +863,7 @@ Download:
 
 Bugfixes:
 
-* Fixed crash caused by [`gui.filteredlist()`][] dialogs.
+* Fixed crash caused by `gui.filteredlist()` dialogs.
 * Support multiple `@return` tags in Lua Adeptsense.
 * Fixed display of `buffer._type` when it has slashes in its name.
 
@@ -823,7 +880,6 @@ Changes:
 [Textadept 5.1 -- Linux x86_64]: download/textadept_5.1.x86_64.tgz
 [Textadept 5.1 -- Source]: download/textadept_5.1.src.zip
 [Textadept 5.1 -- Modules]: download/textadept_5.1.modules.zip
-[`gui.filteredlist()`]: api/ui.html#filteredlist
 [GtkOSXApplication]: https://live.gnome.org/GTK%2B/OSX/Integration#Gtk-mac-integration.2BAC8-GtkOSXApplication
 
 ## 5.0 (01 Feb 2012)
@@ -1405,7 +1461,7 @@ Changes:
   languages.
 * Emit a `language_module_loaded` as appropriate.
 * Added indentation settings to "Buffer" menu (finally).
-* Added [`gui.filteredlist()`][] shortcut for `gui.dialog('filteredlist', ...)`.
+* Added `gui.filteredlist()` shortcut for `gui.dialog('filteredlist', ...)`.
 * Can navigate between bookmarks with a filteredlist.
 * Language-specific [`char_matches`][] and [`braces`][] can be defined.
 * `command_entry_keypress` event accepts modifier keys.
@@ -1416,7 +1472,6 @@ Changes:
 [Textadept 3.7 beta -- Linux x86_64]: download/textadept_3.7_beta.x86_64.tgz
 [Textadept 3.7 beta -- Source]: download/textadept_3.7_beta.src.zip
 [Adeptsense]: 6_AdeptEditing.html#Adeptsense
-[`gui.filteredlist()`]: api/ui.html#filteredlist
 [`char_matches`]: api/textadept.editing.html#char_matches
 [`braces`]: api/textadept.editing.html#braces
 
