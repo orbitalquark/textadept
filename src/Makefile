@@ -99,7 +99,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       GTK_CFLAGS = $(shell pkg-config --cflags gtk+-$(gtk_version) \
                            gmodule-$(gtk_version))
       GTK_LIBS = $(shell pkg-config --libs gtk+-$(gtk_version) \
-                         gmodule-$(gtk))
+                         gmodule-$(gtk_version))
       install_targets = ../textadept ../textadeptjit
     else
       plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
