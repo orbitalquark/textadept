@@ -20,12 +20,11 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>ada</string>
 				<string>adb</string>
 				<string>ads</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>ADA source</string>
+			<string>Ada source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -33,6 +32,7 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>g</string>
+				<string>g4</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>ANTLR source</string>
@@ -100,7 +100,7 @@
 				<string>bib</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Bibtex source</string>
+			<string>BibTeX source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -111,6 +111,16 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Boo source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>cs</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>C# source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -137,20 +147,10 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>cs</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>C# source</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
 				<string>ck</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Chuck source</string>
+			<string>ChucK source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -275,7 +275,6 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>f</string>
 				<string>forth</string>
 				<string>frt</string>
 				<string>fs</string>
@@ -288,8 +287,9 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>f</string>
 				<string>for</string>
-				<string>fort</string>
+				<string>ftn</string>
 				<string>fpp</string>
 				<string>f77</string>
 				<string>f90</string>
@@ -418,6 +418,7 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>inf</string>
+				<string>ni</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Inform source</string>
@@ -473,20 +474,20 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>jsp</string>
+				<string>json</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>JSP source</string>
+			<string>JSON source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>json</string>
+				<string>jsp</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>JSON source</string>
+			<string>JSP source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -501,7 +502,7 @@
 				<string>sty</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Latex source</string>
+			<string>LaTeX source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -511,7 +512,7 @@
 				<string>less</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Less source</string>
+			<string>LESS source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -522,7 +523,7 @@
 				<string>ly</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Lilypond source</string>
+			<string>LilyPond source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -627,7 +628,7 @@
 				<string>mly</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>OCAML source</string>
+			<string>OCaml source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -680,6 +681,16 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Pike source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>PKGBUILD</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>PKGBUILD source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -750,7 +761,7 @@
 				<string>reb</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Rebol source</string>
+			<string>REBOL source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -867,7 +878,7 @@
 				<string>tk</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>TCL source</string>
+			<string>Tcl source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
