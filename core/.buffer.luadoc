@@ -627,9 +627,6 @@
 --     Match text only when the previous character is a non-word character.
 --   * `buffer.FIND_REGEXP`
 --     Interpret the search string as a regular expression.
---   * `buffer.FIND_POSIX`
---     Interpret '(' and ')' as tags instead of "\\(" and "\\)" in a regular
---     expression.
 --
 --   The default value is `0`.
 --
@@ -653,9 +650,9 @@
 --     Matches the start of a line unless inside a set.
 --   * `$`
 --     Matches the end of a line unless inside a set.
---   * `\(`
+--   * `(`
 --     The beginning of a tagged matching region.
---   * `\)`
+--   * `)`
 --     The end of a tagged matching region.
 --   * `\n`
 --     The matched text of the *n*th tagged region. In replacement text, "\0" is
