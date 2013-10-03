@@ -59,7 +59,7 @@ parameters, or create an abbreviated *~/.textadept/themes/light.lua* using Lua's
 `dofile()` function. For example:
 
     -- File *~/.textadept/init.lua*
-    ui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)
+    ui.set_theme('light', {font = 'Monospace', fontsize = 12})
 
     -- File *~/.textadept/themes/light.lua*
     dofile(_HOME..'/themes/light.lua')

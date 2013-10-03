@@ -204,6 +204,7 @@ find.goto\_file\_in\_list()       |Renamed |find.[goto\_file\_found()][]
 select\_theme                     |Removed |N/A
 N/A                               |New     |[dialogs][]
 filteredlist                      |Removed |N/A
+set\_theme(name, ...)             |Changed |[set\_theme][](name, table)
 **io**                            |        |
 try\_encodings                    |Renamed |[encodings][]
 open\_file(string)                |Changed |[open\_file][](string or table)
@@ -251,6 +252,7 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [maximized]: api/ui.html#maximized
 [goto\_file\_found()]: api/ui.find.html#goto_file_found
 [dialogs]: api/ui.dialogs.html
+[set\_theme]: api/ui.html#set_theme
 [encodings]: api/io.html#encodings
 [open\_file]: api/io.html#open_file
 [snapopen]: api/io.html#snapopen

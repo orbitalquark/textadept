@@ -174,34 +174,34 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
 end
 
 ---
--- Sets the editor theme name to *name* and optionally sets key-value pair
--- argument properties.
+-- Sets the editor theme name to *name* and optionally assigns the properties
+-- contained in table *props*.
 -- User themes override Textadept's default themes when they have the same name.
 -- If *name* contains slashes, it is assumed to be an absolute path to a theme
 -- instead of a theme name.
 -- @param name The name or absolute path of a theme to set.
--- @param ... Optional key-value argument pairs for theme properties to set.
---   These override the theme's defaults.
--- @usage ui.set_theme('light', 'font', 'Monospace', 'fontsize', 12)
+-- @param props Optional table of theme property assignments that override the
+--   theme's defaults.
+-- @usage ui.set_theme('light', {font = 'Monospace', fontsize = 12})
 -- @name set_theme
-function ui.set_theme(name, ...)
+function ui.set_theme(name, props)
   if not name then return end
   name = name:find('[/\\]') and name or
          package.searchpath(name, _USERHOME..'/themes/?.lua;'..
                                   _HOME..'/themes/?.lua')
   if not name or not lfs.attributes(name) then return end
-  local props = {...}
+  props = props or {}
   local current_buffer, current_view = _BUFFERS[buffer], _VIEWS[view]
   for i = 1, #_BUFFERS do
     view:goto_buffer(i)
     dofile(name)
-    for j = 1, #props, 2 do buffer.property[props[j]] = props[j + 1] end
+    for prop, value in pairs(props) do buffer.property[prop] = value end
   end
   view:goto_buffer(current_buffer)
   for i = 1, #_VIEWS do
     ui.goto_view(i)
     dofile(name)
-    for j = 1, #props, 2 do buffer.property[props[j]] = props[j + 1] end
+    for prop, value in pairs(props) do buffer.property[prop] = value end
   end
   ui.goto_view(current_view)
   theme, theme_props = name, props
@@ -212,8 +212,7 @@ local events, events_connect = events, events.connect
 -- Loads the theme and properties files.
 local function load_theme_and_settings()
   dofile(theme)
-  local props = theme_props
-  for i = 1, #props, 2 do buffer.property[props[i]] = props[i + 1] end
+  for prop, value in pairs(theme_props) do buffer.property[prop] = value end
   dofile(_HOME..'/properties.lua')
   if lfs.attributes(_USERHOME..'/properties.lua') then
     dofile(_USERHOME..'/properties.lua')
