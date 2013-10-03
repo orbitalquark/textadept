@@ -39,7 +39,7 @@ local ignores = {
   '^SC_CACHE_', '^SC_CHARSET_', '^SC_EFF_', '^SC_FONT_SIZE_MULTIPLIER',
   '^SC_LINE_END_TYPE_', -- provisional
   '^SC_PRINT_', '^SC_STATUS_', '^SC_TECHNOLOGY_', '^SC_TYPE_', '^SC_WEIGHT_',
-  '^SCE_', '^SCEN_', '^SCI_', '^SCK_', '^SCLEX_',
+  '^SCE_', '^SCEN_', '^SCFIND_POSIX', '^SCI_', '^SCK_', '^SCLEX_',
   '^UNDO_MAY_COALESCE'
 }
 -- Constants ({"constant", value}).
@@ -49,7 +49,11 @@ for item in iface:match('Constants%[%] = (%b{})'):sub(2, -2):gmatch('%b{}') do
   for i = 1, #ignores do if name:find(ignores[i]) then skip = true break end end
   if not skip then
     name = name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1')
-    if name == 'MASK_FOLDERS' then value = '-33554432' end
+    if name == 'FIND_REGEXP' then
+      value = tostring(2^22) -- change to SCFIND_POSIX
+    elseif name == 'MASK_FOLDERS' then
+      value = '-33554432'
+    end
     constants[#constants + 1] = string_format('%s=%s', name, value)
     fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, name, value)
   end
