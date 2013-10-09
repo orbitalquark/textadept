@@ -29,8 +29,8 @@ M.SAVE_ON_QUIT = true
 M.MAX_RECENT_FILES = 10
 
 ---
--- Loads Textadept session file *filename* or prompts the user to selectone,
--- returning `true` if the session file was opened and read.
+-- Loads Textadept session file *filename* or user-selected file, returning
+-- `true` if the session file was opened and read.
 -- Textadept restores split views, opened buffers, cursor information, and
 -- recent files.
 -- @param filename Optional absolute path to the session file to load. If `nil`,

@@ -112,11 +112,12 @@ local M = {}
 -- ### Completion Lists
 --
 -- Even though your Adeptsense now understands the basic syntax of your
--- programming language, it is not smart enough to parse code to generate lists
--- of function and field completions for classes. Instead, you must supply this
--- information to your Adeptsense's [`completions`](#completions) table. The
--- table contains string class names assigned to tables that themselves contain
--- `functions` and `fields` completion tables. Here is the general form:
+-- programming language, it is not smart enough to parse code in order to
+-- generate lists of function and field completions for classes. Instead, you
+-- must supply this information to your Adeptsense's
+-- [`completions`](#completions) table. The table contains string class names
+-- assigned to tables that themselves contain `functions` and `fields`
+-- completion tables. Here is the general form:
 --
 --     M.sense.completions = {
 --       ['class1'] = {

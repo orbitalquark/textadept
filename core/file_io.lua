@@ -346,19 +346,21 @@ end
 -- directory paths, using a filtered list dialog.
 -- Files shown in the dialog do not match any pattern in string or table
 -- *filter*, and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A
--- filter table contains Lua patterns that match filenames to exclude, with
--- patterns matching folders to exclude listed in a `folders` sub-table.
--- Patterns starting with '!' exclude files and folders that do not match the
--- pattern that follows. Use a table of raw file extensions assigned to an
--- `extensions` key for fast filtering by extension. The number of files in the
--- list is capped at `SNAPOPEN_MAX`.
+-- filter table contains Lua patterns that match filenames to exclude, an
+-- optional `folders` sub-table that contains patterns matching folders to
+-- exclude, and an optional `extensions` sub-table that contains raw file
+-- extensions to exclude. Any patterns starting with '!' exclude files and
+-- folders that do not match the pattern that follows. The number of files in
+-- the list is capped at `SNAPOPEN_MAX`.
+-- *opts* is an optional table of additional options for
+-- `ui.dialogs.filteredlist()`.
 -- @param paths String directory path or table of directory paths to search.
 -- @param filter Optional filter for files and folders to exclude.
 -- @param exclude_FILTER Optional flag indicating whether or not to exclude the
 --   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
 --   *filter*.
 --   The default value is `false` to include the default filter.
--- @param opts Optional additional options to pass to
+-- @param opts Optional table of additional options for
 --   `ui.dialogs.filteredlist()`.
 -- @usage io.snapopen(buffer.filename:match('^.+/')) -- list all files in the
 --   current file's directory, subject to the default filter
@@ -368,6 +370,7 @@ end
 --   files in a project directory
 -- @see lfs.FILTER
 -- @see SNAPOPEN_MAX
+-- @see ui.dialogs.filteredlist
 -- @name snapopen
 function io.snapopen(paths, filter, exclude_FILTER, opts)
   if type(paths) == 'string' then paths = {paths} end

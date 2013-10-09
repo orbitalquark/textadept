@@ -44,11 +44,11 @@ end
 -- function *f* on each file found.
 -- Files *f* is called on do not match any pattern in string or table *filter*,
 -- and, unless *exclude_FILTER* is `true`, `FILTER` as well. A filter table
--- contains Lua patterns that match filenames to exclude, with patterns matching
--- folders to exclude listed in a `folders` sub-table. Patterns starting with
--- '!' exclude files and folders that do not match the pattern that follows. Use
--- a table of raw file extensions assigned to an `extensions` key for fast
--- filtering by extension.
+-- contains Lua patterns that match filenames to exclude, an optional `folders`
+-- sub-table that contains patterns matching folders to exclude, and an optional
+-- `extensions` sub-table that contains raw file extensions to exclude. Any
+-- patterns starting with '!' exclude files and folders that do not match the
+-- pattern that follows.
 -- @param dir The directory path to iterate over.
 -- @param f Function to call with each full file path found. If *f* returns
 --   `false` explicitly, iteration ceases.

@@ -73,7 +73,8 @@
 --   The default value is `true`.
 -- @field auto_c_cancel_at_start (bool)
 --   Cancel an autocompletion or user list when backspacing to a position before
---   where autocompletion started instead of before the word being completed.
+--   where autocompletion started (instead of before the word being completed)
+--   or where the user list was shown.
 --   The default value is `true`.
 -- @field auto_c_case_insensitive_behaviour (number)
 --   The behavior mode for a case insensitive autocompletion or user list when
@@ -90,9 +91,10 @@
 --   option has no effect for a user list.
 --   The default value is `false`.
 -- @field auto_c_current (number, Read-only)
---   The index of the currently selected item in the autocompletion list.
+--   The index of the currently selected item in the autocompletion or user
+--   list.
 -- @field auto_c_current_text (string, Read-only)
---   The text of the currently selected item in the autocompletion list.
+--   The text of the currently selected item in the autocompletion or user list.
 -- @field auto_c_drop_rest_of_word (bool)
 --   Delete word characters after autocompleted text.
 --   The default value is `false`.
@@ -113,7 +115,7 @@
 --   The default value is `0`, which automatically sizes the width to fit the
 --   longest item.
 -- @field auto_c_order (number)
---   The order setting for autocompletion lists.
+--   The order setting for autocompletion and user lists.
 --
 --   * `buffer.ORDER_PRESORTED`
 --     Lists passed to [`buffer.auto_c_show`](#auto_c_show) are in sorted,
@@ -126,14 +128,16 @@
 --
 --   The default value is `buffer.ORDER_PRESORTED`.
 -- @field auto_c_separator (number)
---   The byte value of the character that separates autocompletion list items.
+--   The byte value of the character that separates autocompletion and user list
+--   items.
 --   The default value is `32` (' ').
 -- @field auto_c_type_separator (number)
---   The character byte that separates autocompletion and list items and their
---   image types.
---   Autocompletion list items can display both an image and text. Register
---   images and their types using [`buffer:register_image()`](#register_image)
---   or [`buffer:register_rgba_image()`](#register_rgba_image) before appending
+--   The character byte that separates autocompletion and user list items and
+--   their image types.
+--   Autocompletion and user list items can display both an image and text.
+--   Register images and their types using
+--   [`buffer:register_image()`](#register_image) or
+--   [`buffer:register_rgba_image()`](#register_rgba_image) before appending
 --   image types to list items after type separator characters.
 --   The default value is 63 ('?').
 -- @field back_space_un_indents (bool)
@@ -425,8 +429,7 @@
 --   Table of positions at the ends of indentation for line numbers starting
 --   from zero.
 -- @field line_indentation (table)
---   Table of indentation amounts in character columns, for line numbers
---   starting from zero.
+--   Table of column indentation amounts, for line numbers starting from zero.
 -- @field line_state (table)
 --   Table of integer line states for line numbers starting from zero.
 --   Line states are used for storing longer lived parse states per line. They
@@ -604,7 +607,7 @@
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image) and
 --   [`buffer:register_rgba_image()`](#register_rgba_image).
 -- @field scroll_width (number)
---   The assumed buffer width for horizontal scrolling purposes.
+--   The horizontal scroll pixel width.
 --   For performance, the view does not measure the display width of the buffer
 --   to determine the properties of the horizontal scroll bar, but uses an
 --   assumed width instead. To ensure the width of the currently visible lines
@@ -620,13 +623,14 @@
 --   [`buffer:search_in_target()`](#search_in_target).
 --
 --   * `buffer.FIND_WHOLEWORD`
---     Match text surrounded by non-word characters.
+--     Match the search text surrounded by non-word characters.
 --   * `buffer.FIND_MATCHCASE`
---     Match text case sensitively.
+--     Match the search text case sensitively.
 --   * `buffer.FIND_WORDSTART`
---     Match text only when the previous character is a non-word character.
+--     Match the search text only when the previous character is a non-word
+--     character.
 --   * `buffer.FIND_REGEXP`
---     Interpret the search string as a regular expression.
+--     Interpret the search text as a regular expression.
 --
 --   The default value is `0`.
 --
@@ -952,13 +956,13 @@ function annotation_clear_all(buffer) end
 function append_text(buffer, text) end
 
 ---
--- Returns whether or not the autocompletion list is visible.
+-- Returns whether or not the autocompletion or user list is visible.
 -- @param buffer The global buffer.
 -- @return bool
 function auto_c_active(buffer) end
 
 ---
--- Cancels the autocompletion list.
+-- Cancels the autocompletion or user list.
 -- @param buffer The global buffer.
 function auto_c_cancel(buffer) end
 
@@ -968,14 +972,16 @@ function auto_c_cancel(buffer) end
 function auto_c_complete(buffer) end
 
 ---
--- Returns the position where autocompletion started at.
+-- Returns the position where autocompletion started or where the user list was
+-- shown.
 -- @param buffer The global buffer.
 -- @return number
 function auto_c_pos_start(buffer) end
 
 ---
--- Selects the first item in the autocompletion list that starts with *string*,
--- considering case sensitiveness based on `buffer.auto_c_ignore_case`.
+-- Selects the first item in the autocompletion or user list that starts with
+-- *string*, considering case sensitiveness based on
+-- `buffer.auto_c_ignore_case`.
 -- @param buffer The global buffer.
 -- @param string The item in the list to select.
 function auto_c_select(buffer, string) end
@@ -2076,7 +2082,7 @@ function redo(buffer) end
 
 ---
 -- Registers XPM image *xpm_data* to type number *type* for use in
--- autocompletion lists.
+-- autocompletion and user lists.
 -- @param buffer The global buffer.
 -- @param type Integer type to register the image with.
 -- @param xpm_data The XPM data as described in `buffer:marker_define_pixmap()`.
@@ -2084,7 +2090,7 @@ function register_image(buffer, type, xpm_data) end
 
 ---
 -- Registers RGBA image *pixels* to type number *type* for use in autocompletion
--- lists.
+-- and user lists.
 -- The dimensions for *pixels*, `buffer.rgba_image_width` and
 -- `buffer.rgba_image_height`, must have already been defined. *pixels* is a
 -- sequence of 4 byte pixel values (red, blue, green, and alpha) defining the
@@ -2473,7 +2479,7 @@ function undo(buffer) end
 function upper_case(buffer) end
 
 ---
--- Displays a list identified by list identifier number *list_item* and
+-- Displays a user list identified by list identifier number *list_item* and
 -- constructed from string *item_list*, whose items are delimited by
 -- `buffer.auto_c_separator` characters.
 -- The sorted order of *item_list*, `buffer.auto_c_order`, must have already
