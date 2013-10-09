@@ -21,19 +21,18 @@ property['color.white'] = 0xC0C0C0
 property['color.light_black'] = 0x404040
 property['color.light_red'] = 0x0000FF
 property['color.light_green'] = 0x00FF00
-property['color.light_yellow'] = 0x00FFFF
+--property['color.light_yellow'] = 0x00FFFF
 property['color.light_blue'] = 0xFF0000
 property['color.light_magenta'] = 0xFF00FF
-property['color.light_cyan'] = 0xFFFF00
+--property['color.light_cyan'] = 0xFFFF00
 property['color.light_white'] = 0xFFFFFF
 
 -- Predefined styles.
 property['style.default'] = 'fore:%(color.white),back:%(color.black)'
-property['style.linenumber'] = '%(style.default)'
+--property['style.linenumber'] =
 property['style.bracelight'] = 'fore:%(color.black),back:%(color.white)'
-property['style.bracebad'] = 'fore:%(color.red),bold'
-property['style.controlchar'] = '%(style.nothing)'
-property['style.indentguide'] = '%(style.nothing)'
+--property['style.controlchar'] =
+--property['style.indentguide'] =
 property['style.calltip'] = '%(style.default)'
 
 -- Token styles.
