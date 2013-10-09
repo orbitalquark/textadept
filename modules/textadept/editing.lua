@@ -27,6 +27,8 @@ local M = {}
 -- @field STRIP_TRAILING_SPACES (bool)
 --   Strip trailing whitespace before saving files.
 --   The default value is `true`.
+-- @field INDIC_BRACEMATCH (number)
+--   The matching brace highlight indicator number.
 -- @field INDIC_HIGHLIGHT (number)
 --   The word highlight indicator number.
 module('textadept.editing')]]
@@ -36,6 +38,7 @@ M.HIGHLIGHT_BRACES = true
 M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
 M.STRIP_TRAILING_SPACES = true
+M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 ---

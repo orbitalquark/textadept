@@ -123,6 +123,9 @@ end
 --buffer:marker_enable_highlight(true)
 
 -- Indicators.
+local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
+buffer.indic_style[INDIC_BRACEMATCH] = buffer.INDIC_BOX
+buffer:brace_highlight_indicator(not CURSES, INDIC_BRACEMATCH)
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
 buffer.indic_style[INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
 if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end

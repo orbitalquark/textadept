@@ -63,9 +63,7 @@ end
 property['style.default'] = 'font:%(font),size:%(fontsize),'..
                             'fore:%(color.light_black),back:%(color.white)'
 property['style.linenumber'] = 'fore:%(color.grey),back:%(color.white)'
-property['style.bracelight'] = 'fore:%(color.light_blue)'
-property['style.bracebad'] = 'fore:%(color.light_red)'
-property['style.controlchar'] = '%(style.nothing)'
+--property['style.controlchar'] = '%(style.nothing)'
 property['style.indentguide'] = 'fore:%(color.dark_white)'
 property['style.calltip'] = 'fore:%(color.light_black),back:%(color.dark_white)'
 
@@ -121,6 +119,8 @@ for i = 25, 31 do -- fold margin markers
 end
 
 -- Indicators.
+local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
+buffer.indic_fore[INDIC_BRACEMATCH] = property_int['color.grey']
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
 buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.orange']
 buffer.indic_alpha[INDIC_HIGHLIGHT] = 255

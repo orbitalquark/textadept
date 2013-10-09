@@ -41,7 +41,7 @@ property['color.lavender'] = 0xE69999
 property['color.blue'] = 0xE6994D
 
 -- Light colors.
-property['color.light_red'] = 0x8080CC
+--property['color.light_red'] = 0x8080CC
 property['color.light_yellow'] = 0x80CCCC
 property['color.light_green'] = 0x80CC80
 --property['color.light_teal'] = 0xCCCC80
@@ -63,9 +63,7 @@ end
 property['style.default'] = 'font:%(font),size:%(fontsize),'..
                             'fore:%(color.light_grey),back:%(color.black)'
 property['style.linenumber'] = 'fore:%(color.dark_grey),back:%(color.black)'
-property['style.bracelight'] = 'fore:%(color.light_blue)'
-property['style.bracebad'] = 'fore:%(color.light_red)'
-property['style.controlchar'] = '%(style.nothing)'
+--property['style.controlchar'] =
 property['style.indentguide'] = 'fore:%(color.light_black)'
 property['style.calltip'] = 'fore:%(color.light_grey),back:%(color.light_black)'
 
@@ -121,6 +119,8 @@ for i = 25, 31 do -- fold margin markers
 end
 
 -- Indicators.
+local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
+buffer.indic_fore[INDIC_BRACEMATCH] = property_int['color.light_grey']
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
 buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.orange']
 buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
