@@ -10,16 +10,16 @@ local M = ui.find
 -- @field replace_entry_text (string)
 --   The text in the replace entry.
 -- @field match_case (bool)
---   Searches are case-sensitive.
+--   Match the search text case sensitively.
 --   The default value is `false`.
 -- @field whole_word (bool)
---   Match only whole-words in searches.
+--   Match the search text surrounded by non-word characters in searches.
 --   The default value is `false`.
 -- @field lua (bool)
---   Interpret search text as a Lua pattern.
+--   Interpret the search text as a Lua pattern.
 --   The default value is `false`.
 -- @field in_files (bool)
---   Search for the text in a list of files.
+--   Find the search text in a list of files.
 --   The default value is `false`.
 -- @field find_label_text (string, Write-only)
 --   The text of the "Find" label.
@@ -80,11 +80,11 @@ local preferred_view
 ---
 -- The table of Lua patterns matching files and folders to exclude when finding
 -- in files.
--- Each filter string is a pattern that matches filenames to exclude, with
--- patterns matching folders to exclude listed in a `folders` sub-table.
--- Patterns starting with '!' exclude files and folders that do not match the
--- pattern that follows. Use a table of raw file extensions assigned to an
--- `extensions` key for fast filtering by extension.
+-- The filter contains Lua patterns that match filenames to exclude, an optional
+-- `folders` sub-table that contains patterns matching folders to exclude, and
+-- an optional `extensions` sub-table that contains raw file extensions to
+-- exclude. Any patterns starting with '!' exclude files and folders that do not
+-- match the pattern that follows.
 -- The default value is `lfs.FILTER`, a filter for common binary file extensions
 -- and version control folders.
 -- @see find_in_files
@@ -326,7 +326,7 @@ events.connect(events.REPLACE_ALL, replace_all)
 -- Returns whether or not the given buffer is a files found buffer.
 local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 ---
--- Goes to the source of the find in files search result on line number *line*
+-- Jumps to the source of the find in files search result on line number *line*
 -- in the files found buffer, or if `nil`, the next or previous search result
 -- depending on boolean *next*.
 -- @param line The line number in the files found buffer that contains the

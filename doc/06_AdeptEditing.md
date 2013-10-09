@@ -14,7 +14,7 @@ Usually, brace ('(', '[', '{') and quote ('&apos;', '&quot;') characters go
 together in pairs. Textadept automatically inserts the complement character of
 any user-typed opening brace or quote character and allows the user to
 subsequently type over it. Similarly, the editor deletes the complement when
-you press `Bksp` (`⌫` on Mac OSX | `Bksp` in curses) over the first. The
+you press `Bksp` (`⌫` on Mac OSX | `Bksp` in curses) over the typed one. The
 [preferences][] page details how to configure or disable these features.
 
 [preferences]: 08_Preferences.html#Generic

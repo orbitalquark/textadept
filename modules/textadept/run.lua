@@ -187,7 +187,7 @@ M.error_patterns = {--[[ANTLR]]'^error%(%d+%): (.-):(%d+):%d+: (.+)$','^warning%
 -- Returns whether or not the given buffer is a message buffer.
 local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 ---
--- Goes to the source of the recognized compile/run warning or error on line
+-- Jumps to the source of the recognized compile/run warning or error on line
 -- number *line* in the message buffer or the next or previous recognized
 -- warning or error depending on boolean *next*.
 -- Displays an annotation with the warning or error message, if available.

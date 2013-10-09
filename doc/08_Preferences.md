@@ -167,8 +167,8 @@ spaces by default, your *~/.textadept/properties.lua* would contain:
 (Remember that in order to have per-filetype properties, you need to have a
 [language module][].)
 
-Textadept's *properties.lua* is a good reference to see available properties to
-set. It also has many commented out properties that you can copy to your
+Textadept's *properties.lua* is a good "quick reference" for configurable
+properties. It also has many commented out properties that you can copy to your
 *~/.textadept/properties.lua* and uncomment to turn on or change the value of.
 Use [Adeptsense][] to view a property's documentation or read the [LuaDoc][].
 

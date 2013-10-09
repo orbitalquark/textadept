@@ -418,12 +418,9 @@ function M.select_paragraph()
 end
 
 ---
--- Selects indented text blocks intelligently.
--- If no block of text is selected, all text with the current level of
--- indentation is selected. If a block of text is selected and the lines
--- immediately above and below it are one indentation level lower, they are
--- added to the selection. In all other cases, the behavior is the same as if no
--- text is selected.
+-- Selects all text with the current level of indentation.
+-- If a text block is selected and the lines immediately above and below it are
+-- one indentation level lower, adds those lines to the selection.
 -- @name select_indented_block
 function M.select_indented_block()
   local buffer = buffer
@@ -505,15 +502,15 @@ function M.highlight_word()
 end
 
 ---
--- Passes selected or all buffer text to string shell command *command* as
--- standard input (stdin) and replaces the input text with the command's
+-- Passes the selected text or all buffer text to string shell command *command*
+-- as standard input (stdin) and replaces the input text with the command's
 -- standard output (stdout).
 -- Standard input is as follows:
 --
 -- 1. If text is selected and spans multiple lines, all text on the lines
--- containing the selection is used. However, if the end of the selection is at
--- the beginning of a line, only the EOL (end of line) characters from the
--- previous line are included as input. The rest of the line is excluded.
+-- containing the selection is passed as stdin. However, if the end of the
+-- selection is at the beginning of a line, only the line ending characters from
+-- the previous line are included. The rest of the line is excluded.
 -- 2. If text is selected and spans a single line, only the selected text is
 -- used.
 -- 3. If no text is selected, the entire buffer is used.
