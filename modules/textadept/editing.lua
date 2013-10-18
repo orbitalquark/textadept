@@ -416,6 +416,7 @@ end
 -- Paragraphs are surrounded by one or more blank lines.
 -- @name select_paragraph
 function M.select_paragraph()
+  buffer:line_down()
   buffer:para_up()
   buffer:para_down_extend()
 end
