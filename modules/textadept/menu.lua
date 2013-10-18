@@ -24,6 +24,7 @@ local menubar = {
     {_L['Re_load'], io.reload_file},
     {_L['_Save'], io.save_file},
     {_L['Save _As'], io.save_file_as},
+    {_L['Save All'], io.save_all_files},
     SEPARATOR,
     {_L['_Close'], io.close_buffer},
     {_L['Close All'], io.close_all_buffers},
