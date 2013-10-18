@@ -298,7 +298,9 @@ function M.block_comment()
   end
   buffer:end_undo_action()
   anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
-  anchor = math.max(anchor, buffer:position_from_line(s)) -- stay on first line
+  -- Keep the anchor and caret on the first line as necessary.
+  local start_pos = buffer:position_from_line(s)
+  anchor, pos = math.max(anchor, start_pos), math.max(pos, start_pos)
   if s ~= e then buffer:set_sel(anchor, pos) else buffer:goto_pos(pos) end
 end
 
