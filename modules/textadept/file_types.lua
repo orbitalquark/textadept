@@ -51,7 +51,6 @@ M.lexers = {}
 local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- LuaDoc is in core/.buffer.luadoc.
 local function get_lexer(buffer, current)
-  buffer:check_global()
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
   return current and lexer:match('[^/]+$') or lexer:match('^[^/]+')
 end
@@ -60,8 +59,6 @@ local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, lang)
-  buffer:check_global()
-
   -- If no language was given, attempt to detect it.
   if not lang then
     local line = buffer:get_line(0)
@@ -85,9 +82,9 @@ local function set_lexer(buffer, lang)
   end
 
   -- Set the lexer and load its language module.
-  buffer._lexer = lang
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
+  buffer._lexer = lang
   if package.searchpath(lang, package.path) then
     _M[lang] = require(lang)
     local post_init = lang..'.post_init'
