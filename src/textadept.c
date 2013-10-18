@@ -76,7 +76,7 @@ typedef GtkWidget Scintilla;
 
 // Window
 static char *textadept_home;
-static Scintilla *focused_view;
+static Scintilla *focused_view, *dummy_view;
 #if GTK
 static GtkWidget *window, *menubar, *statusbar[2];
 static GtkAccelGroup *accel;
@@ -230,8 +230,7 @@ static int a_command_line(GApplication*_, GApplicationCommandLine *cmdline,
     lua_pop(lua, 1); // args
   }
   g_strfreev(argv);
-  gtk_window_present(GTK_WINDOW(window));
-  return 0;
+  return (gtk_window_present(GTK_WINDOW(window)), 0);
 }
 #endif
 #endif
@@ -1006,26 +1005,29 @@ static int lui__newindex(lua_State *L) {
 }
 
 /**
- * Checks whether the function argument narg is a Scintilla document. If not,
- * raises an error.
+ * Compares the Scintilla document at the given index with the global one and
+ * returns 0 if they are equivalent, non-zero otherwise.
+ * If non-equivalent, loads the document in `dummy_view` for non-global document
+ * use. Raises and error if the value is not a Scintilla document or if the
+ * document no longer exists.
  * @param L The Lua state.
- * @param narg The stack index of the Scintilla document.
- * @return Scintilla document
+ * @param index The stack index of the Scintilla document.
+ * @return 0 or the Scintilla document's pointer
  */
-static void lL_globaldoccheck(lua_State *L, int narg) {
+static sptr_t l_globaldoccompare(lua_State *L, int index) {
   luaL_getmetatable(L, "ta_buffer");
-  lua_getmetatable(L, (narg > 0) ? narg : narg - 1);
-  luaL_argcheck(L, lua_compare(L, -1, -2, LUA_OPEQ), narg, "Buffer expected");
-  lua_getfield(L, (narg > 0) ? narg : narg - 2, "doc_pointer");
+  lua_getmetatable(L, (index > 0) ? index : index - 1);
+  luaL_argcheck(L, lua_compare(L, -1, -2, LUA_OPEQ), index, "Buffer expected");
+  lua_getfield(L, (index > 0) ? index : index - 2, "doc_pointer");
   sptr_t doc = (sptr_t)lua_touserdata(L, -1);
-  luaL_argcheck(L, doc == SS(focused_view, SCI_GETDOCPOINTER, 0, 0), narg,
-                "this buffer is not the current one");
   lua_pop(L, 3); // doc_pointer, metatable, metatable
-}
-
-/** `buffer.check_global()` Lua function. */
-static int lbuffer_check_global(lua_State *L) {
-  return (lL_globaldoccheck(L, 1), 0);
+  if (doc != SS(focused_view, SCI_GETDOCPOINTER, 0, 0)) {
+    lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
+    l_pushdoc(L, doc), lua_gettable(L, -2);
+    luaL_argcheck(L, !lua_isnil(L, -1), index, "this Buffer does not exist");
+    lua_pop(L, 2); // buffer, ta_buffers
+    return (SS(dummy_view, SCI_SETDOCPOINTER, 0, doc), doc);
+  } else return 0;
 }
 
 /**
@@ -1113,14 +1115,14 @@ static void lL_removedoc(lua_State *L, sptr_t doc) {
  * @see lL_removedoc
  */
 static void delete_buffer(sptr_t doc) {
-  lL_removedoc(lua, doc);
+  lL_removedoc(lua, doc), SS(dummy_view, SCI_SETDOCPOINTER, 0, 0);
   SS(focused_view, SCI_RELEASEDOCUMENT, 0, doc);
 }
 
 /** `buffer.delete()` Lua function. */
 static int lbuffer_delete(lua_State *L) {
-  lL_globaldoccheck(L, 1);
-  sptr_t doc = SS(focused_view, SCI_GETDOCPOINTER, 0, 0);
+  Scintilla *view = l_globaldoccompare(L, 1) == 0 ? focused_view : dummy_view;
+  sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
   if (lua_rawlen(L, -1) == 1) new_buffer(0);
   lL_gotodoc(L, focused_view, -1, TRUE);
@@ -1138,11 +1140,11 @@ static int lbuffer_new(lua_State *L) {
 
 /** `buffer.text_range()` Lua function. */
 static int lbuffer_text_range(lua_State *L) {
-  lL_globaldoccheck(L, 1);
+  Scintilla *view = l_globaldoccompare(L, 1) == 0 ? focused_view : dummy_view;
   long min = luaL_checklong(L, 2), max = luaL_checklong(L, 3);
   luaL_argcheck(L, min <= max, 3, "start > end");
   struct Sci_TextRange tr = { { min, max }, malloc(max - min + 1) };
-  SS(focused_view, SCI_GETTEXTRANGE, 0, (sptr_t)(&tr));
+  SS(view, SCI_GETTEXTRANGE, 0, (sptr_t)(&tr));
   lua_pushlstring(L, tr.lpstrText, max - min);
   if (tr.lpstrText) free(tr.lpstrText);
   return 1;
@@ -1175,6 +1177,7 @@ static sptr_t lL_checkscintillaparam(lua_State *L, int *narg, int type) {
  * Calls a function as a Scintilla function.
  * Does not remove any arguments from the stack, but does push results.
  * @param L The Lua state.
+ * @param view The Scintilla view to call.
  * @param msg The Scintilla message.
  * @param wtype The type of Scintilla wParam.
  * @param ltype The type of Scintilla lParam.
@@ -1184,8 +1187,8 @@ static sptr_t lL_checkscintillaparam(lua_State *L, int *narg, int type) {
  * @return number of results pushed onto the stack.
  * @see lL_checkscintillaparam
  */
-static int l_callscintilla(lua_State *L, int msg, int wtype, int ltype,
-                           int rtype, int arg) {
+static int l_callscintilla(lua_State *L, Scintilla *view, int msg, int wtype,
+                           int ltype, int rtype, int arg) {
   uptr_t wparam = 0;
   sptr_t lparam = 0, len = 0;
   int params_needed = 2, string_return = FALSE;
@@ -1213,7 +1216,7 @@ static int l_callscintilla(lua_State *L, int msg, int wtype, int ltype,
   if (params_needed > 0) wparam = lL_checkscintillaparam(L, &arg, wtype);
   if (params_needed > 1) lparam = lL_checkscintillaparam(L, &arg, ltype);
   if (string_return) { // create a buffer for the return string
-    len = SS(focused_view, msg, wparam, 0);
+    len = SS(view, msg, wparam, 0);
     if (wtype == tLENGTH) wparam = len;
     return_string = malloc(len + 1), return_string[len] = '\0';
     if (msg == SCI_GETTEXT || msg == SCI_GETSELTEXT || msg == SCI_GETCURLINE)
@@ -1222,7 +1225,7 @@ static int l_callscintilla(lua_State *L, int msg, int wtype, int ltype,
   }
 
   // Send the message to Scintilla and return the appropriate values.
-  sptr_t result = SS(focused_view, msg, wparam, lparam);
+  sptr_t result = SS(view, msg, wparam, lparam);
   arg = lua_gettop(L);
   if (string_return) lua_pushlstring(L, return_string, len);
   if (rtype == tBOOL) lua_pushboolean(L, result);
@@ -1232,10 +1235,11 @@ static int l_callscintilla(lua_State *L, int msg, int wtype, int ltype,
 }
 
 static int lbuf_closure(lua_State *L) {
+  Scintilla *view = focused_view;
   // If optional buffer argument is given, check it.
-  if (lua_istable(L, 1)) lL_globaldoccheck(L, 1);
+  if (lua_istable(L, 1) && l_globaldoccompare(L, 1) != 0) view = dummy_view;
   // Interface table is of the form { msg, rtype, wtype, ltype }.
-  return l_callscintilla(L, l_rawgetiint(L, lua_upvalueindex(1), 1),
+  return l_callscintilla(L, view, l_rawgetiint(L, lua_upvalueindex(1), 1),
                          l_rawgetiint(L, lua_upvalueindex(1), 3),
                          l_rawgetiint(L, lua_upvalueindex(1), 4),
                          l_rawgetiint(L, lua_upvalueindex(1), 2),
@@ -1266,11 +1270,11 @@ static int lbuf_property(lua_State *L) {
             : lua_getfield(L, 1, "property"); // indexible property
   lua_gettable(L, -2);
   if (lua_istable(L, -1)) {
+    Scintilla *view = focused_view;
     // Interface table is of the form { get_id, set_id, rtype, wtype }.
-    if (!is_buffer)
-      lua_getfield(L, 1, "buffer"), lL_globaldoccheck(L, -1), lua_pop(L, 1);
-    else
-      lL_globaldoccheck(L, 1);
+    if (!is_buffer) lua_getfield(L, 1, "buffer");
+    if (l_globaldoccompare(L, is_buffer ? 1 : -1) != 0) view = dummy_view;
+    if (!is_buffer) lua_pop(L, 1);
     if (is_buffer && l_rawgetiint(L, -1, 4) != tVOID) { // indexible property
       lua_newtable(L);
       lua_pushvalue(L, 2), lua_setfield(L, -2, "property");
@@ -1289,7 +1293,7 @@ static int lbuf_property(lua_State *L) {
     }
     luaL_argcheck(L, msg != 0, !newindex ? 2 : 3,
                   !newindex ? "write-only property" : "read-only property");
-    return l_callscintilla(L, msg, wtype, ltype, rtype,
+    return l_callscintilla(L, view, msg, wtype, ltype, rtype,
                            (!is_buffer || !newindex) ? 2 : 3);
   } else lua_pop(L, 2); // non-table, ta_properties
 
@@ -1301,8 +1305,7 @@ static int lbuf_property(lua_State *L) {
     lua_pop(L, 2); // non-number, ta_constants
   }
 
-  !newindex ? lua_rawget(L, 1) : lua_rawset(L, 1);
-  return 1;
+  return !newindex ? (lua_rawget(L, 1), 1) : (lua_rawset(L, 1), 0);
 }
 
 /**
@@ -1315,7 +1318,6 @@ static void lL_adddoc(lua_State *L, sptr_t doc) {
   lua_newtable(L);
   lua_pushlightuserdata(L, (sptr_t *)doc); // TODO: can this fail?
   lua_pushvalue(L, -1), lua_setfield(L, -3, "doc_pointer");
-  l_setcfunction(L, -2, "check_global", lbuffer_check_global);
   l_setcfunction(L, -2, "delete", lbuffer_delete);
   l_setcfunction(L, -2, "new", lbuffer_new);
   l_setcfunction(L, -2, "text_range", lbuffer_text_range);
@@ -2225,10 +2227,13 @@ static void new_window() {
   gtk_widget_hide(menubar); // hide initially
   gtk_widget_hide(findbox); // hide initially
   gtk_widget_hide(command_entry); // hide initially
+
+  dummy_view = scintilla_new();
 #elif CURSES
   Scintilla *view = new_view(0);
   wresize(scintilla_get_window(view), LINES - 2, COLS);
   mvwin(scintilla_get_window(view), 1, 0);
+  dummy_view = scintilla_new(NULL);
 #endif
 }
 

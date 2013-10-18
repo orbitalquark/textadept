@@ -254,7 +254,7 @@ function io.save_all_files()
   local current_buffer = _BUFFERS[buffer]
   for i, buffer in ipairs(_BUFFERS) do
     view:goto_buffer(i)
-    if buffer.filename and buffer.dirty then io.save_file() end
+    if buffer.filename and buffer.modify then io.save_file() end
   end
   view:goto_buffer(current_buffer)
 end
@@ -266,7 +266,7 @@ end
 -- @name close_buffer
 function io.close_buffer()
   local filename = buffer.filename or buffer._type or _L['Untitled']
-  if buffer.dirty and ui.dialogs.msgbox{
+  if buffer.modify and ui.dialogs.msgbox{
        title = _L['Close without saving?'],
        text = _L['There are unsaved changes in'],
        informative_text = filename:iconv('UTF-8', _CHARSET),
@@ -319,7 +319,7 @@ events_connect(events.VIEW_AFTER_SWITCH, update_modified_file)
 -- Closes the initial "Untitled" buffer.
 events_connect(events.FILE_OPENED, function(filename)
   local buf = _BUFFERS[1]
-  if #_BUFFERS == 2 and not (buf.filename or buf._type or buf.dirty) then
+  if #_BUFFERS == 2 and not (buf.filename or buf._type or buf.modify) then
     view:goto_buffer(1)
     io.close_buffer()
   end

@@ -123,7 +123,7 @@ function ui.switch_buffer()
     local filename = buffer.filename or buffer._type or _L['Untitled']
     filename = filename:iconv('UTF-8', _CHARSET)
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
-    items[#items + 1] = (buffer.dirty and '*' or '')..basename
+    items[#items + 1] = (buffer.modify and '*' or '')..basename
     items[#items + 1] = filename
   end
   local button, i = ui.dialogs.filteredlist{
@@ -261,20 +261,12 @@ local function set_title()
   filename = filename:iconv('UTF-8', _CHARSET)
   local basename = buffer.filename and filename:match('[^/\\]+$') or filename
   ui.title = string.format('%s %s Textadept (%s)', basename,
-                           buffer.dirty and '*' or '-', filename)
+                           buffer.modify and '*' or '-', filename)
 end
 
--- Changes Textadept title to show the buffer as being "clean".
-events_connect(events.SAVE_POINT_REACHED, function()
-  buffer.dirty = false
-  set_title()
-end)
-
--- Changes Textadept title to show thee buffer as "dirty".
-events_connect(events.SAVE_POINT_LEFT, function()
-  buffer.dirty = true
-  set_title()
-end)
+-- Changes Textadept title to show the buffer as being "clean" or "dirty".
+events_connect(events.SAVE_POINT_REACHED, set_title)
+events_connect(events.SAVE_POINT_LEFT, set_title)
 
 -- Open uri(s).
 events_connect(events.URI_DROPPED, function(utf8_uris)
@@ -355,11 +347,11 @@ events_connect(events.VIEW_AFTER_SWITCH, update_bars)
 events_connect(events.RESET_AFTER,
                function() ui.statusbar_text = 'Lua reset' end)
 
--- Prompts for confirmation if any buffers are dirty.
+-- Prompts for confirmation if any buffers are modified.
 events_connect(events.QUIT, function()
   local list = {}
   for _, buffer in ipairs(_BUFFERS) do
-    if buffer.dirty then
+    if buffer.modify then
       local filename = buffer.filename or buffer._type or _L['Untitled']
       list[#list + 1] = filename:iconv('UTF-8', _CHARSET)
     end
