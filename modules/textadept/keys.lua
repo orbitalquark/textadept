@@ -366,6 +366,7 @@ keys[not OSX and not CURSES and 'cao' or 'cmo'] = io.open_recent_file
 keys[not OSX and (not CURSES and 'cO' or 'mo') or 'mO'] = io.reload_file
 keys[not OSX and 'cs' or 'ms'] = io.save_file
 keys[not OSX and (not CURSES and 'cS' or 'cms') or 'mS'] = io.save_file_as
+-- TODO: io.save_all_files
 keys[not OSX and 'cw' or 'mw'] = io.close_buffer
 keys[not OSX and (not CURSES and 'cW' or 'cmw') or 'mW'] = io.close_all_buffers
 -- TODO: textadept.sessions.load
