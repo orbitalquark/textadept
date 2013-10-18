@@ -5,8 +5,7 @@
 ---
 -- A Textadept view object.
 -- @field size (number)
---   The pixel position of the split resizer if this view is part of a split
---   view.
+--   The split resizer's pixel position if the view is a split one.
 module('view')
 
 ---
@@ -35,9 +34,9 @@ function split(view, vertical) end
 function unsplit(view) end
 
 ---
--- Goes to buffer number *n* in the view.
--- *relative* indicates whether or not *n* is an index relative to the index of
--- the current buffer in `_G._BUFFERS` instead of an absolute index.
+-- Switches to buffer number *n* in the view.
+-- *relative* indicates whether or not *n* is an index relative to the current
+-- buffer's index in `_G._BUFFERS` instead of an absolute index.
 -- Emits `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
 -- @param view The view to switch buffers in.
 -- @param n A relative or absolute buffer index in `_G._BUFFERS`. An absolute

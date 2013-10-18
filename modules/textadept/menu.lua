@@ -297,7 +297,7 @@ end
 local items, commands
 
 ---
--- Sets `ui.menubar` from *menubar*, a table of menus.
+-- Sets `ui.menubar` from menu table *menubar*.
 -- Each menu is an ordered list of menu items and has a `title` key for the
 -- title text. Menu items are tables containing menu text and either a function
 -- to call or a table containing a function with its parameters to call when an
@@ -322,7 +322,7 @@ end
 M.set_menubar(menubar)
 
 ---
--- Sets `ui.context_menu` from *menu*, an ordered list of menu items.
+-- Sets `ui.context_menu` from menu item list *menu*.
 -- Menu items are tables containing menu text and either a function to call or
 -- a table containing a function with its parameters to call when an item is
 -- clicked. Menu items may also be sub-menus, ordered lists of menu items with

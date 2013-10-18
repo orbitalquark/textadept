@@ -29,8 +29,8 @@ M.SAVE_ON_QUIT = true
 M.MAX_RECENT_FILES = 10
 
 ---
--- Loads Textadept session file *filename* or user-selected file, returning
--- `true` if the session file was opened and read.
+-- Loads session file *filename* or user-selected file, returning `true` if the
+-- session file was opened and read.
 -- Textadept restores split views, opened buffers, cursor information, and
 -- recent files.
 -- @param filename Optional absolute path to the session file to load. If `nil`,
@@ -116,7 +116,7 @@ events.connect(events.ARG_NONE, function()
 end)
 
 ---
--- Saves a Textadept session to file *filename* or user-selected file.
+-- Saves the session to file *filename* or user-selected file.
 -- Saves split views, opened buffers, cursor information, and recent files.
 -- @param filename Optional absolute path to the session file to save. If `nil`,
 --   the user is prompted for one.

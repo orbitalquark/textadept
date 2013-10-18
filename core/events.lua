@@ -44,8 +44,8 @@ local M = {}
 --   [`buffer:auto_c_cancel()`][] before returning from the event handler.
 --   Arguments:
 --
---   * _`text`_: The text of the selection.
---   * _`position`_: The position of the beginning of the autocompleted word.
+--   * _`text`_: The selection's text.
+--   * _`position`_: The autocompleted word's beginning position.
 -- @field BUFFER_AFTER_SWITCH (string)
 --   Emitted right after switching to another buffer.
 --   Emitted by [`view:goto_buffer()`][].
@@ -65,7 +65,7 @@ local M = {}
 --   * _`position`_: `1` if the up arrow was clicked, 2 if the down arrow was
 --     clicked, and 0 otherwise.
 -- @field CHAR_ADDED (string)
---   Emitted after adding a text character to the buffer.
+--   Emitted after the user types a text character into the buffer.
 --   Arguments:
 --
 --   * _`byte`_: The text character's byte.
@@ -122,7 +122,7 @@ local M = {}
 --   set.
 --   Arguments:
 --
---   * _`position`_: The position clicked.
+--   * _`position`_: The clicked text's position.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
 --     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
@@ -133,7 +133,7 @@ local M = {}
 --   attribute set.
 --   Arguments:
 --
---   * _`position`_: The position double-clicked.
+--   * _`position`_: The double-clicked text's position.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
 --     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
@@ -144,12 +144,12 @@ local M = {}
 --   style with the hotspot attribute set.
 --   Arguments:
 --
---   * _`position`_: The position unclicked.
+--   * _`position`_: The clicked text's position.
 -- @field INDICATOR_CLICK (string)
 --   Emitted when clicking the mouse on text that has an indicator present.
 --   Arguments:
 --
---   * _`position`_: The position of the clicked text.
+--   * _`position`_: The clicked text's position.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
 --     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
@@ -160,7 +160,7 @@ local M = {}
 --   indicator present.
 --   Arguments:
 --
---   * _`position`_: The position of the clicked text.
+--   * _`position`_: The clicked text's position.
 -- @field INITIALIZED (string)
 --   Emitted after Textadept finishes initializing.
 -- @field KEYPRESS (string)
@@ -178,8 +178,7 @@ local M = {}
 --   Arguments:
 --
 --   * _`margin`_: The margin number clicked.
---   * _`position`_: The position of the start of the line whose margin was
---     clicked.
+--   * _`position`_: The position of the start of the clicked margin's line.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
 --     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
@@ -229,7 +228,7 @@ local M = {}
 --   Arguments:
 --
 --   * _`list_type`_: The *list_type* from [`buffer:user_list_show()`][].
---   * _`text`_: The text of the selection.
+--   * _`text`_: The selection's text.
 --   * _`position`_: The position the list was displayed at.
 -- @field VIEW_NEW (string)
 --   Emitted after creating a new view.

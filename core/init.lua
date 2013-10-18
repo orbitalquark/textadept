@@ -33,7 +33,7 @@ if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 --   machines *~/* is the value of "$HOME", typically */home/username/* and
 --   */Users/username/* respectively.
 -- @field _CHARSET (string)
---   The character encoding of the filesystem.
+--   The filesystem's character encoding.
 --   This is used when [working with files](io.html).
 -- @field WIN32 (bool)
 --   Whether or not Textadept is running on Windows.

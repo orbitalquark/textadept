@@ -16,13 +16,13 @@ local M = {}
 -- part of what is called a "key chain", to be discussed below. When searching
 -- for a command to run based on a key sequence, Textadept considers key
 -- bindings in the current key mode to have priority. If no key mode is active,
--- key bindings in the current lexer have priority, followed by the ones in the
+-- language-specific key bindings have priority, followed by the ones in the
 -- global table. This means if there are two commands with the same key
--- sequence, Textadept runs the one specific to the current lexer. However, if
--- the command returns the boolean value `false`, Textadept also runs the
--- lower-priority command. (This is useful for language modules to override
--- commands like Adeptsense autocompletion, but fall back to word autocompletion
--- if the first command fails.)
+-- sequence, Textadept runs the language-specific one. However, if the command
+-- returns the boolean value `false`, Textadept also runs the lower-priority
+-- command. (This is useful for language modules to override commands like
+-- Adeptsense autocompletion, but fall back to word autocompletion if the first
+-- command fails.)
 --
 -- ## Key Sequences
 --
