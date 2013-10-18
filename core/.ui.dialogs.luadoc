@@ -7,7 +7,7 @@ module('ui.dialogs')
 
 ---
 -- Prompts the user with a generic message box dialog defined by dialog options
--- table *options*, returning the index of the selected button or, if
+-- table *options*, returning the selected button's index or, if
 -- *options*.`string_output` is `true`, the selected button's label.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
@@ -29,8 +29,8 @@ module('ui.dialogs')
 --   * `string_output`: Return the selected button's label or the dialog's exit
 --     status instead of the button's index or the exit code. The default value
 --     is `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 --   * `timeout`: The number of seconds the dialog waits for the user to select
@@ -44,7 +44,7 @@ function msgbox(options) end
 ---
 -- Prompts the user with a generic message box dialog defined by dialog options
 -- table *options* and with localized "Ok" and "Cancel" buttons, returning the
--- index of the selected button or, if *options*.`string_output` is `true`, the
+-- selected button's index or, if *options*.`string_output` is `true`, the
 -- selected button's label.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
@@ -63,8 +63,8 @@ function msgbox(options) end
 --   * `string_output`: Return the selected button's label or the dialog's exit
 --     status instead of the button's index or the exit code. The default value
 --     is `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 --   * `timeout`: The number of seconds the dialog waits for the user to select
@@ -75,8 +75,8 @@ function ok_msgbox(options) end
 ---
 -- Prompts the user with a generic message box dialog defined by dialog options
 -- table *options* and with localized "Yes", "No", and "Cancel" buttons,
--- returning the index of the selected button or, if *options*.`string_output`
--- is `true`, the selected button's label.
+-- returning the selected button's index or, if *options*.`string_output` is
+-- `true`, the selected button's label.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
 -- @param options Table of key-value option pairs for the message box.
@@ -94,8 +94,8 @@ function ok_msgbox(options) end
 --   * `string_output`: Return the selected button's label or the dialog's exit
 --     status instead of the button's index or the exit code. The default value
 --     is `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 --   * `timeout`: The number of seconds the dialog waits for the user to select
@@ -105,7 +105,65 @@ function yesno_msgbox(options) end
 
 ---
 -- Prompts the user with a one-line input box dialog defined by dialog options
--- table *options*, returning the index of the selected button along with the
+-- table *options*, returning the selected button's index along with the input
+-- text or, if *options*.`string_output` is `true`, the selected button's label
+-- along with the input text.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the input box.
+--
+--   * `title`: The dialog's title text.
+--   * `informative_text`: The dialog's main message text.
+--   * `text`: The dialog's initial input text.
+--   * `button1`: The right-most button's label. The default value is
+--     `_L['_OK']`.
+--   * `button2`: The middle button's label.
+--   * `button3`: The left-most button's label. This option requires `button2`
+--     to be set.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, input text
+-- @usage ui.dialogs.inputbox{title = 'Goto Line', informative_text = 'Line:',
+--   text = '1'}
+function inputbox(options) end
+
+---
+-- Prompts the user with a one-line input box dialog defined by dialog options
+-- table *options* and with localized "Ok" and "Cancel" buttons, returning the
+-- selected button's index along with the input text or, if
+-- *options*.`string_output` is `true`, the selected button's label along with
+-- the input text.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the input box.
+--
+--   * `title`: The dialog's title text.
+--   * `informative_text`: The dialog's main message text.
+--   * `text`: The dialog's initial input text.
+--   * `no_cancel`: Do not display the "Cancel" button. The default value is
+--     `false`.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status instead of the button's index or the exit code. The default value
+--     is `false`.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: The number of seconds the dialog waits for the user to select
+--     a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, input text
+function standard_inputbox(options) end
+
+---
+-- Prompts the user with a one-line masked input box dialog defined by dialog
+-- options table *options*, returning the selected button's index along with the
 -- input text or, if *options*.`string_output` is `true`, the selected button's
 -- label along with the input text.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
@@ -123,66 +181,8 @@ function yesno_msgbox(options) end
 --   * `string_output`: Return the selected button's label or the dialog's exit
 --     status instead of the button's index or the exit code. The default value
 --     is `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
---   * `float`: Show the dialog on top of all desktop windows. The default value
---     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
--- @return selected button or exit code, input text
--- @usage ui.dialogs.inputbox{title = 'Goto Line', informative_text = 'Line:',
---   text = '1'}
-function inputbox(options) end
-
----
--- Prompts the user with a one-line input box dialog defined by dialog options
--- table *options* and with localized "Ok" and "Cancel" buttons, returning the
--- index of the selected button along with the input text or, if
--- *options*.`string_output` is `true`, the selected button's label along with
--- the input text.
--- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
--- dialog, returns `-1` or `"delete"`.
--- @param options Table of key-value option pairs for the input box.
---
---   * `title`: The dialog's title text.
---   * `informative_text`: The dialog's main message text.
---   * `text`: The dialog's initial input text.
---   * `no_cancel`: Do not display the "Cancel" button. The default value is
---     `false`.
---   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
---   * `float`: Show the dialog on top of all desktop windows. The default value
---     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
--- @return selected button or exit code, input text
-function standard_inputbux(options) end
-
----
--- Prompts the user with a one-line masked input box dialog defined by dialog
--- options table *options*, returning the index of the selected button along
--- with the input text or, if *options*.`string_output` is `true`, the selected
--- button's label along with the input text.
--- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
--- dialog, returns `-1` or `"delete"`.
--- @param options Table of key-value option pairs for the input box.
---
---   * `title`: The dialog's title text.
---   * `informative_text`: The dialog's main message text.
---   * `text`: The dialog's initial input text.
---   * `button1`: The right-most button's label. The default value is
---     `_L['_OK']`.
---   * `button2`: The middle button's label.
---   * `button3`: The left-most button's label. This option requires `button2`
---     to be set.
---   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 --   * `timeout`: The number of seconds the dialog waits for the user to select
@@ -193,7 +193,7 @@ function secure_inputbox(options) end
 ---
 -- Prompts the user with a one-line masked input box dialog defined by dialog
 -- options table *options* and with localized "Ok" and "Cancel" buttons,
--- returning the index of the selected button along with the input text or, if
+-- returning the selected button's index along with the input text or, if
 -- *options*.`string_output` is `true`, the selected button's label along with
 -- the input text.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
@@ -208,8 +208,8 @@ function secure_inputbox(options) end
 --   * `string_output`: Return the selected button's label or the dialog's exit
 --     status instead of the button's index or the exit code. The default value
 --     is `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 --   * `timeout`: The number of seconds the dialog waits for the user to select
@@ -256,8 +256,8 @@ function filesave(options) end
 
 ---
 -- Prompts the user with a multiple-line textbox dialog defined by dialog
--- options table *options*, returning the index of the selected button along
--- with the textbox text if *options*.`editable` is `true` or, if
+-- options table *options*, returning the selected button's index along with the
+-- textbox text if *options*.`editable` is `true` or, if
 -- *options*.`string_output` is `true`, the selected button's label along with
 -- the textbox text if *options*.`editable` is also `true`.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
@@ -287,8 +287,8 @@ function filesave(options) end
 --   * `string_output`: Return the selected button's label or the dialog's exit
 --     status instead of the button's index or the exit code. The default value
 --     is `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 --   * `timeout`: The number of seconds the dialog waits for the user to select
@@ -300,13 +300,13 @@ function textbox(options) end
 
 ---
 -- Prompts the user with a drop down item selection dialog defined by dialog
--- options table *options*, returning the index of the selected button along
--- with the index of the selected item or, if *options*.`string_output` is
--- `true`, the selected button's label along with the selected item's text.
--- If *options*.`exit_onchange` closed the dialog, returns `4` along with either
--- the index of the selected item or the selected item's text. If the dialog
--- timed out, returns `0` or `"timeout"`. If the user canceled the dialog,
--- returns `-1` or `"delete"`.
+-- options table *options*, returning the selected button's index along with the
+-- index of the selected item or, if *options*.`string_output` is `true`, the
+-- selected button's label along with the selected item's text.
+-- If *options*.`exit_onchange` caused the dialog to close, returns `4` along
+-- with either the selected item's index or text. If the dialog timed out,
+-- returns `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or
+-- `"delete"`.
 -- @param options Table of key-value option pairs for the drop down dialog.
 --
 --   * `title`: The dialog's title text.
@@ -325,8 +325,8 @@ function textbox(options) end
 --     status along with the selected item's text instead of the button's index
 --     or the exit code along with the item's index. The default value is
 --     `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 --   * `timeout`: The number of seconds the dialog waits for the user to select
@@ -339,13 +339,13 @@ function dropdown(options) end
 ---
 -- Prompts the user with a drop down item selection dialog defined by dialog
 -- options table *options* and with localized "Ok" and "Cancel" buttons,
--- returning the index of the selected button along with the index of the
--- selected item or, if *options*.`string_output` is `true`, the selected
--- button's label along with the selected item's text.
--- If *options*.`exit_onchange` closed the dialog, returns `4` along with either
--- the index of the selected item or the selected item's text. If the dialog
--- timed out, returns `0` or `"timeout"`. If the user canceled the dialog,
--- returns `-1` or `"delete"`.
+-- returning the selected button's index along with the selected item's index
+-- or, if *options*.`string_output` is `true`, the selected button's label along
+-- with the selected item's text.
+-- If *options*.`exit_onchange` caused the dialog to close, returns `4` along
+-- with either the selected item's index or text. If the dialog timed out,
+-- returns `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or
+-- `"delete"`.
 -- @param options Table of key-value option pairs for the drop down dialog.
 --
 --   * `title`: The dialog's title text.
@@ -361,8 +361,8 @@ function dropdown(options) end
 --     status along with the selected item's text instead of the button's index
 --     or the exit code along with the item's index. The default value is
 --     `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 --   * `timeout`: The number of seconds the dialog waits for the user to select
@@ -372,8 +372,8 @@ function standard_dropdown(options) end
 
 ---
 -- Prompts the user with a filtered list item selection dialog defined by dialog
--- options table *options*, returning the index of the selected button along
--- with the index(es) of the selected item(s) (depending on whether or not
+-- options table *options*, returning the selected button's index along with the
+-- index(es) of the selected item(s) (depending on whether or not
 -- *options*.`select_multiple` is `true`) or, if *options*.`string_output` is
 -- `true`, the selected button's label along with the selected item's or items'
 -- text.
@@ -403,8 +403,8 @@ function standard_dropdown(options) end
 --     status along with the selected item's text instead of the button's index
 --     or the exit code along with the item's index. The default value is
 --     `false`.
---   * `width`: The pixel width of the dialog.
---   * `height`: The pixel height of the dialog.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 --   * `timeout`: The number of seconds the dialog waits for the user to select

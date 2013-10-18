@@ -22,7 +22,7 @@ local M = {}
 --   Typeover characters are defined in the [`typeover_chars`](#typeover_chars)
 --   table.
 -- @field AUTOINDENT (bool)
---   Match the indentation level of the previous line when inserting a new line.
+--   Match the previous line's indentation level when inserting a new line.
 --   The default value is `true`.
 -- @field STRIP_TRAILING_SPACES (bool)
 --   Strip trailing whitespace before saving files.
@@ -512,7 +512,7 @@ end
 --
 -- 1. If text is selected and spans multiple lines, all text on the lines
 -- containing the selection is passed as stdin. However, if the end of the
--- selection is at the beginning of a line, only the line ending characters from
+-- selection is at the beginning of a line, only the line ending delimiters from
 -- the previous line are included. The rest of the line is excluded.
 -- 2. If text is selected and spans a single line, only the selected text is
 -- used.

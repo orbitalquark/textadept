@@ -122,9 +122,10 @@ non-existant graphics capabilities:
 * When scrolling to the right, long lines overwrite margins.
 * No marker symbols other than `MARK_CHARACTER`.
 * No mouse interactions, cursor types, or hotspots.
-* Only up to 16 colors recognized: black (`0x000000`), red (`0x800000`), green
-  (`0x008000`), yellow (`0x808000`), blue (`0x000080`), magenta (`0x800080`),
-  cyan (`0x008080`), white (`0xC0C0C0`), light black (`0x404040`), light red
+* Only up to 16 colors recognized, regardless of how many colors the terminal
+  supports. They are: black (`0x000000`), red (`0x800000`), green (`0x008000`),
+  yellow (`0x808000`), blue (`0x000080`), magenta (`0x800080`), cyan
+  (`0x008080`), white (`0xC0C0C0`), light black (`0x404040`), light red
   (`0xFF0000`), light green (`0x00FF00`), light yellow (`0xFFFF00`), light blue
   (`0x0000FF`), light magenta (`0xFF00FF`), light cyan (`0x00FFFF`), and light
   white (`0xFFFFFF`). Even if your terminal uses a different color map, you must

@@ -189,7 +189,7 @@ end
 -- otherwise continues an incremental search by searching for the next or
 -- previous instance of string *text* depending on boolean *next*.
 -- *anchor* indicates whether or not to search for *text* starting from the
--- current position instead of the position where incremental search began at.
+-- caret position instead of the position where incremental search began at.
 -- Only the `match_case` find option is recognized. Normal command entry
 -- functionality is unavailable until the search is finished by pressing `Esc`
 -- (`⎋` on Mac OSX | `Esc` in curses).
@@ -197,7 +197,7 @@ end
 --   incremental search.
 -- @param next Flag indicating whether or not the search direction is forward.
 -- @param anchor Optional flag indicating whether or not to start searching from
---   the current position. The default value is `false`.
+--   the caret position. The default value is `false`.
 -- @name find_incremental
 function M.find_incremental(text, next, anchor)
   if text then find_incremental(text, next, anchor) return end

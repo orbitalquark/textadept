@@ -50,10 +50,7 @@ local M = {}
 -- code's return text. The code may use a temporary `selected_text` global
 -- variable that contains the currently selected text. An example is
 --
---     snippets['foo'] = [[
---     %2<('%1'):gsub('^.', function(c)
---       return c:upper() -- capitalize the word
---     end)>, %1(mirror) on the wall.]]
+--     snippets['add'] = '%1(1) + %2(2) = %3<%1 + %2>'
 --
 -- Textadept executes shell code using Lua's [`io.popen()`][] and replaces the
 -- transform with the process' standard output (stdout). An example is
@@ -127,8 +124,8 @@ end
 
 ---
 -- Inserts snippet text *text* or the snippet associated with the trigger behind
--- the caret as a snippet, or goes to the next placeholder of the active
--- snippet, ultimately only returning `false` if no action was taken.
+-- the caret as a snippet, or goes to the active snippet's next placeholder,
+-- ultimately only returning `false` if no action was taken.
 -- @param text Optional snippet text to insert. If `nil`, attempts to insert a
 --   new snippet based on the trigger, the word behind caret, and the current
 --   lexer.
@@ -153,8 +150,8 @@ function M._insert(text)
 end
 
 ---
--- Goes back to the previous snippet placeholder, reverting any changes from the
--- current one, but returns `false` only if no snippet is active.
+-- Jumps back to the previous snippet placeholder, reverting any changes from
+-- the current one, but returns `false` only if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
 -- @name _previous
 function M._previous()
@@ -163,14 +160,14 @@ function M._previous()
 end
 
 ---
--- Cancels insertion of the active snippet.
+-- Cancels the active snippet, removing all inserted text.
 -- @name _cancel_current
 function M._cancel_current()
   if #snippet_stack > 0 then snippet_stack[#snippet_stack]:cancel() end
 end
 
 ---
--- Prompts the user for a snippet to insert from a list of global and
+-- Prompts the user to select a snippet to insert from a list of global and
 -- language-specific snippets.
 -- @name _select
 function M._select()

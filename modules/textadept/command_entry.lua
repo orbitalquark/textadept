@@ -91,9 +91,9 @@ local env = setmetatable({}, {
 })
 
 ---
--- Executes string *code* as Lua code.
--- Code is subject to an "abbreviated" environment where the contents of the
--- `buffer`, `view`, and `ui` tables are also considered as globals.
+-- Executes string *code* as Lua code subject to an "abbreviated" environment
+-- where the contents of the `buffer`, `view`, and `ui` tables are also
+-- considered as global functions and fields.
 -- Prints the results of '=' expressions like in the Lua prompt.
 -- @param code The Lua code to execute.
 -- @name execute_lua

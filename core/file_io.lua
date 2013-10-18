@@ -91,7 +91,7 @@ io.boms = {
 io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
 ---
--- Opens *filenames*, a string filename, table of filenames, or user-selected
+-- Opens *filenames*, a string filename or table of provided or user-selected
 -- filenames.
 -- Emits a `FILE_OPENED` event.
 -- @param filenames Optional string filename or table of filenames to open. If
@@ -326,7 +326,7 @@ events_connect(events.FILE_OPENED, function(filename)
 end)
 
 ---
--- Prompts the user to open a recently opened file.
+-- Prompts the user to select a recently opened file to reopen.
 -- @see recent_files
 -- @name open_recent_file
 function io.open_recent_file()
@@ -342,8 +342,8 @@ function io.open_recent_file()
 end
 
 ---
--- Quickly open files from *paths*, a string directory path or table of
--- directory paths, using a filtered list dialog.
+-- Prompts the user to select files to open from *paths*, a string directory
+-- path or table of directory paths, using a filtered list dialog.
 -- Files shown in the dialog do not match any pattern in string or table
 -- *filter*, and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A
 -- filter table contains Lua patterns that match filenames to exclude, an

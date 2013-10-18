@@ -6,19 +6,19 @@ local ui = ui
 ---
 -- Utilities for interacting with Textadept's user interface.
 -- @field title (string, Write-only)
---   The title text of the Textadept window.
+--   The title text of Textadept's window.
 -- @field context_menu
---   The editor's context menu, a [`ui.menu()`](#menu).
+--   The buffer's context menu, a [`ui.menu()`](#menu).
 --   This is a low-level field. You probably want to use the higher-level
 --   `textadept.menu.set_contextmenu()`.
 -- @field clipboard_text (string, Read-only)
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
---   The text displayed by the statusbar.
+--   The text displayed in the statusbar.
 -- @field bufstatusbar_text (string, Write-only)
---   The text displayed by the buffer statusbar.
+--   The text displayed in the buffer statusbar.
 -- @field maximized (bool)
---   Whether or not the Textadept window is maximized.
+--   Whether or not Textadept's window is maximized.
 module('ui')]]
 
 local theme = package.searchpath(not CURSES and 'light' or 'term',
@@ -134,8 +134,8 @@ function ui.switch_buffer()
 end
 
 ---
--- Goes to the buffer whose filename is *filename* in an existing view,
--- otherwise splitting the current view if *split* is `true` or going to the
+-- Switches to the buffer whose filename is *filename* in an existing view,
+-- otherwise splitting the current view if *split* is `true` or shifting to the
 -- next or *preferred_view* view instead of staying in the current one.
 -- *sloppy* indicates whether or not only the last part of *filename* is matched
 -- to a buffer's `filename`.
@@ -174,8 +174,8 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
 end
 
 ---
--- Sets the editor theme name to *name* and optionally assigns the properties
--- contained in table *props*.
+-- Switches the editor theme to name *name* and optionally assigns the
+-- properties contained in table *props*.
 -- User themes override Textadept's default themes when they have the same name.
 -- If *name* contains slashes, it is assumed to be an absolute path to a theme
 -- instead of a theme name.
@@ -384,7 +384,7 @@ events_connect(events.ERROR, ui.print)
 local menubar
 
 ---
--- A table containing the width and height pixel values of the Textadept window.
+-- A table containing the width and height pixel values of Textadept's window.
 -- @class table
 -- @name size
 local size
@@ -422,9 +422,9 @@ local dialog
 local get_split_table
 
 ---
--- Goes to view number *n*.
--- *relative* indicates whether or not *n* is an index relative to the index of
--- the current view in `_G._VIEWS` instead of an absolute index.
+-- Shifts to view number *n*.
+-- *relative* indicates whether or not *n* is an index relative to the current
+-- view's index in `_G._VIEWS` instead of an absolute index.
 -- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
 -- @param n A relative or absolute view index in `_G._VIEWS`.
 -- @param relative Optional flag indicating whether *n* is a relative or
