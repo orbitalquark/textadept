@@ -23,7 +23,7 @@ local M = {}
 --   this behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
---   * `lexer`: The lexer language name.
+--   * `lexer`: The language's lexer name.
 --   * `output`: The string output from the command.
 -- @field _G.events.RUN_OUTPUT (string)
 --   Emitted after executing a language's run command.
@@ -31,7 +31,7 @@ local M = {}
 --   behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
---   * `lexer`: The lexer language name.
+--   * `lexer`: The language's lexer name.
 --   * `output`: The string output from the command.
 module('textadept.run')]]
 
@@ -124,7 +124,7 @@ local function print_output(lexer, output)
 end
 
 ---
--- Map of file extensions (excluding the leading '.') or lexers to their
+-- Map of file extensions (excluding the leading '.') or lexer names to their
 -- associated "compile" shell command line strings or functions returning such
 -- strings.
 -- Command line strings may have the following macros:
@@ -138,8 +138,8 @@ end
 M.compile_commands = {actionscript='mxmlc "%(filename)"',ada='gnatmake "%(filename)"',antlr='antlr4 "%(filename)"',g='antlr3 "%(filename)"',applescript='osacompile "%(filename)" -o "%(filename_noext).scpt"',boo='booc "%(filename)"',caml='ocamlc -o "%(filename_noext)" "%(filename)"',csharp=WIN32 and 'csc "%(filename)"' or 'mcs "%(filename)"',cpp='g++ -o "%(filename_noext)" "%(filename)"',c='gcc -o "%(filename_noext)" "%(filename)"',coffeescript='coffee -c "%(filename)"',context='context --nonstopmode "%(filename)"',cuda=WIN32 and 'nvcc -o "%(filename_noext).exe" "%(filename)"' or 'nvcc -o "%(filename_noext)" "%(filename)"',dmd='dmd "%(filename)"',dot='dot -Tps "%(filename)" -o "%(filename_noext).ps"',eiffel='se c "%(filename)"',erlang='erl -compile "%(filename_noext)"',fsharp=WIN32 and 'fsc.exe "%(filename)"' or 'mono fsc.exe "%(filename)"',fortran='gfortran -o "%(filename_noext)" "%(filename)"',gap='gac -o "%(filename_noext)" "%(filename)"',go='go build "%(filename)"',groovy='groovyc "%(filename)"',haskell=WIN32 and 'ghc -o "%(filename_noext).exe" "%(filename)"' or 'ghc -o "%(filename_noext)" "%(filename)"',inform=function() return 'inform -c "'..buffer.filename:match('^(.+%.inform[/\\])Source')..'"' end,java='javac "%(filename)"',latex='pdflatex -file-line-error -halt-on-error "%(filename)"',less='lessc "%(filename)" "%(filename_noext).css"',lilypond='lilypond "%(filename)"',lisp='clisp -c "%(filename)"',litcoffee='coffee -c "%(filename)"',lua='luac -o "%(filename_noext).luac" "%(filename)"',markdown='markdown "%(filename)" > "%(filename_noext).html"',nemerle='ncc "%(filename)" -out:"%(filename_noext).exe"',nimrod='nimrod c "%(filename)"',nsis='MakeNSIS "%(filename)"',objective_c='gcc -o "%(filename_noext)" "%(filename)"',pascal='fpc "%(filename)"',perl='perl -c "%(filename)"',php='php -l "%(filename)"',prolog='gplc --no-top-level "%(filename)"',python='python -m py_compile "%(filename)"',ruby='ruby -c "%(filename)"',sass='sass "%(filename)" "%(filename_noext).css"',scala='scalac "%(filename)"',tex='pdftex -file-line-error -halt-on-error "%(filename)"',vala='valac "%(filename)"',vb=WIN32 and 'vbc "%(filename)"' or 'vbnc "%(filename)"',}
 
 ---
--- Compiles the file based on its extension or lexer, using the command from the
--- `compile_commands` table.
+-- Compiles the file based on its extension or language, using the command from
+-- the `compile_commands` table.
 -- Emits a `COMPILE_OUTPUT` event.
 -- @see compile_commands
 -- @see _G.events
@@ -148,7 +148,7 @@ function M.compile() command(M.compile_commands, true) end
 events.connect(events.COMPILE_OUTPUT, print_output)
 
 ---
--- Map of file extensions (excluding the leading '.') or lexers to their
+-- Map of file extensions (excluding the leading '.') or lexer names to their
 -- associated "run" shell command line strings or functions returning such
 -- strings.
 -- Command line strings may have the following macros:
@@ -162,7 +162,7 @@ events.connect(events.COMPILE_OUTPUT, print_output)
 M.run_commands = {actionscript=WIN32 and 'start "" "%(filename_noext).swf"' or OSX and 'open "file://%(filename_noext).swf"' or 'xdg-open "%(filename_noext).swf"',ada=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',applescript='osascript "%(filename)"',awk='awk -f "%(filename)"',batch='"%(filename)"',boo='booi "%(filename)"',caml='ocamlrun "%(filename_noext)"',csharp=WIN32 and '"%(filename_noext)"' or 'mono "%(filename_noext).exe"',cpp=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',chuck='chuck "%(filename)"',cmake='cmake -P "%(filename)"',coffeescript='coffee "%(filename)"',context=WIN32 and 'start "" "%(filename_noext).pdf"' or OSX and 'open "%(filename_noext).pdf"' or 'xdg-open "%(filename_noext).pdf"',cuda=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',dmd=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',eiffel="./a.out",fsharp=WIN32 and '"%(filename_noext)"' or 'mono "%(filename_noext).exe"',forth='gforth "%(filename)" -e bye',fortran=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',gnuplot='gnuplot "%(filename)"',go='go run "%(filename)"',groovy='groovy "%(filename)"',haskell=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',hypertext=WIN32 and 'start "" "%(filename)"' or OSX and 'open "file://%(filename)"' or 'xdg-open "%(filename)"',idl='idl -batch "%(filename)"',Io='io "%(filename)"',java='java "%(filename_noext)"',javascript='node "%(filename)"',latex=WIN32 and 'start "" "%(filename_noext).pdf"' or OSX and 'open "%(filename_noext).pdf"' or 'xdg-open "%(filename_noext).pdf"',less='lessc --no-color "%(filename)"',lilypond=WIN32 and 'start "" "%(filename_noext).pdf"' or OSX and 'open "%(filename_noext).pdf"' or 'xdg-open "%(filename_noext).pdf"',lisp='clisp "%(filename)"',litcoffee='coffee "%(filename)"',lua='lua -e "io.stdout:setvbuf(\'no\')" "%(filename)"',makefile=WIN32 and 'nmake -f "%(filename)"' or 'make -f "%(filename)"',markdown='markdown "%(filename)"',nemerle=WIN32 and '"%(filename_noext)"' or 'mono "%(filename_noext).exe"',nimrod=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',objective_c=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',pascal=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',perl='perl "%(filename)"',php='php "%(filename)"',pike='pike "%(filename)"',pkgbuild='makepkg -p "%(filename)"',prolog=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',python='python "%(filename)"',rstats=WIN32 and 'Rterm -f "%(filename)"' or 'R -f "%(filename)"',rebol='REBOL "%(filename)"',rexx=WIN32 and 'rexx "%(filename_noext)"' or 'regina "%(filename_noext)"',ruby='ruby "%(filename)"',sass='sass "%(filename)"',scala='scala "%(filename_noext)"',bash='bash "%(filename)"',csh='tcsh "%(filename)"',sh='sh "%(filename)"',zsh='zsh "%(filename)"',smalltalk='gst "%(filename)"',tcl='tclsh "%(filename)"',tex=WIN32 and 'start "" "%(filename_noext).pdf"' or OSX and 'open "%(filename_noext).pdf"' or 'xdg-open "%(filename_noext).pdf"',vala=WIN32 and '"%(filename_noext)"' or './"%(filename_noext)"',vb=WIN32 and '"%(filename_noext)"' or 'mono "%(filename_noext).exe"',}
 
 ---
--- Runs the file based on its extension or lexer, using the command from the
+-- Runs the file based on its extension or language, using the command from the
 -- `run_commands` table.
 -- Emits a `RUN_OUTPUT` event.
 -- @see run_commands

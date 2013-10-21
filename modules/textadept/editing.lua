@@ -260,7 +260,7 @@ function M.autocomplete_word(words)
 end
 
 ---
--- Comments or uncomments the selected lines based on the current lexer.
+-- Comments or uncomments the selected lines based on the current language.
 -- As long as any part of a line is selected, the entire line is eligible for
 -- commenting/uncommenting.
 -- @see comment_string

@@ -118,7 +118,6 @@ non-existant graphics capabilities:
 * No indicators other than `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX`, although
   neither has translucent drawing and `INDIC_ROUNDBOX` does not have rounded
   corners.
-* Insert mode caret renders improperly.
 * When scrolling to the right, long lines overwrite margins.
 * No marker symbols other than `MARK_CHARACTER`.
 * No mouse interactions, cursor types, or hotspots.
@@ -168,6 +167,7 @@ goto\_bookmark                    |Replaced|goto\_mark()
 goto\_next                        |Replaced|goto\_mark(true)
 goto\_prev                        |Replaced|goto\_mark(false)
 **_M.textadept.editing**          |        |
+N/A                               |New     |[INDIC\_BRACEMATCH][]
 N/A                               |New     |[INDIC\_HIGHLIGHT][]
 INDIC\_HIGHLIGHT\_BACK            |Removed |N/A<sup>d</sup>
 autocomplete\_word(chars, default)|Changed |[autocomplete\_word][](default)
@@ -188,6 +188,7 @@ open                              |Changed |\_G.[io.snapopen()][]<sup>f</sup>
 SC\_\*                            |Renamed |Removed "SC\_" prefix.
 SC(FIND\|MOD\|VS\|WS)             |Renamed |Removed "SC" prefix.
 **buffer**                        |        |
+check\_global()                   |Removed |
 get\_style\_name(buffer, n)       |Renamed |[style\_name][]\[n\]
 reload()                          |Renamed |[io.reload\_file()][]
 save()                            |Renamed |[io.save\_file()][]
@@ -195,6 +196,7 @@ save\_as()                        |Renamed |[io.save\_file\_as()][]
 close()                           |Renamed |[io.close\_buffer()][]
 set\_encoding()                   |Renamed |[io.set\_buffer\_encoding()][]
 convert\_eo\_ls()                 |Renamed |[buffer.convert\_eols()][]
+dirty                             |Replaced|[buffer.modify][]
 **events**                        |        |
 N/A                               |New     |[INITIALIZED][]
 handlers                          |Removed |N/A
@@ -231,6 +233,7 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [file\_types]: api/textadept.file_types.html
 [goto\_mark()]: api/textadept.bookmarks.html#goto_mark
 [MARK\_BOOKMARK]: api/textadept.bookmarks.html#MARK_BOOKMARK
+[INDIC\_BRACEMATCH]: api/textadept.editing.html#INDIC_BRACEMATCH
 [INDIC\_HIGHLIGHT]: api/textadept.editing.html#INDIC_HIGHLIGHT
 [autocomplete\_word]: api/textadept.editing.html#autocomplete_word
 [select\_enclosed()]: api/textadept.editing.html#select_enclosed
@@ -247,6 +250,7 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [io.close\_buffer()]: api/io.html#close_buffer
 [io.set\_buffer\_encoding()]: api/io.html#set_buffer_encoding
 [buffer.convert\_eols()]: api/buffer.html#convert_eols
+[buffer.modify]: api/buffer.html#modify
 [INITIALIZED]: api/events.html#INITIALIZED
 [ui]: api/ui.html
 [bufstatusbar\_text]: api/ui.html#bufstatusbar_text
