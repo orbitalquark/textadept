@@ -4,10 +4,46 @@
 
 [Atom Feed]: feed
 
-## 7.0 beta 4 (01 Oct 2013)
+## 7.0 beta 5 (21 Oct 2013)
 
 Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to
 Textadept 7.
+
+Download:
+
+* [Textadept 7.0 beta 5 -- Win32][]
+* [Textadept 7.0 beta 5 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.0 beta 5 -- Linux][]
+* [Textadept 7.0 beta 5 -- Linux x86_64][]
+* [Textadept 7.0 beta 5 -- Modules][]
+
+Bugfixes:
+
+* Show more helpful user-init startup error messages.
+* Lua run command buffers output correctly.
+* Fixed corner case in paragraph selection.
+* Fixed corner case in block uncommenting.
+
+Changes:
+
+* Changed [`ui.set_theme()`][] API to accept a table of property assignments.
+* Added Nimrod lexer and compile and run commands.
+* Use [`textadept.editing.INDIC_BRACEMATCH`][] indicator for brace highlighting
+  instead of styles.
+* The [`buffer`][] API applies to all buffers now, not just the global one.
+* Added "Save All" to the menu.
+
+[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
+[Textadept 7.0 beta 5 -- Win32]: download/textadept_7.0_beta_5.win32.zip
+[Textadept 7.0 beta 5 -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta_5.osx.zip
+[Textadept 7.0 beta 5 -- Linux]: download/textadept_7.0_beta_5.i386.tgz
+[Textadept 7.0 beta 5 -- Linux x86_64]: download/textadept_7.0_beta_5.x86_64.tgz
+[Textadept 7.0 beta 5 -- Modules]: download/textadept_7.0_beta_5.modules.zip
+[`ui.set_theme()`]: api/ui.html#set_theme
+[`textadept.editing.INDIC_BRACEMATCH`]: api/textadept.editing.html#INDIC_BRACEMATCH
+[`buffer`]: api/buffer.html
+
+## 7.0 beta 4 (01 Oct 2013)
 
 Download:
 
@@ -46,7 +82,6 @@ Changes:
 * Changed [`io.open_file()`][] and [`io.snapopen()`][] to accept tables of files
   and paths instead of "\n" delimited strings.
 
-[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
 [Textadept 7.0 beta 4 -- Win32]: download/textadept_7.0_beta_4.win32.zip
 [Textadept 7.0 beta 4 -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta_4.osx.zip
 [Textadept 7.0 beta 4 -- Linux]: download/textadept_7.0_beta_4.i386.tgz
