@@ -360,17 +360,17 @@
 --   * `buffer.INDIC_SQUIGGLE`
 --     A squiggly underline 3 pixels in height.
 --   * `buffer.INDIC_TT`
---     A line of small 'T' shapes.
+--     An underline of small 'T' shapes.
 --   * `buffer.INDIC_DIAGONAL`
---     Diagonal hatching.
+--     An underline of diagonal hatches.
 --   * `buffer.INDIC_STRIKE`
 --     Strike out.
 --   * `buffer.INDIC_HIDDEN`
 --     Invisible.
 --   * `buffer.INDIC_BOX`
---     A rectangle around the text.
+--     A bounding box.
 --   * `buffer.INDIC_ROUNDBOX`
---     A translucent rectangle with rounded corners around the text. Use
+--     A translucent box with rounded corners around the text. Use
 --     [`buffer.indic_alpha`](#indic_alpha) and
 --     [`buffer.indic_outline_alpha`](#indic_outline_alpha) to set the fill and
 --     outline transparency, respectively. Their default values are `30` and
@@ -1115,7 +1115,7 @@ function can_undo(buffer) end
 function cancel(buffer) end
 
 ---
--- Tells the lexer to reprocess the range of text between *start_pos* and
+-- Instructs the lexer to reprocess the range of text between *start_pos* and
 -- *end_pos*.
 -- @param buffer The buffer.
 -- @param start_pos The start position of the range of text in *buffer* to
@@ -1209,8 +1209,8 @@ function clear_registered_images(buffer) end
 function clear_selections(buffer) end
 
 ---
--- Tells the lexer to style and fold the range of text between *start_pos* and
--- *end_pos*.
+-- Instructs the lexer to style and fold the range of text between *start_pos*
+-- and *end_pos*.
 -- If *end_pos* is `-1`, styles and folds to the end of the buffer.
 -- @param buffer The buffer.
 -- @param start_pos The start position of the range of text in *buffer* to
@@ -2701,13 +2701,13 @@ function text_range(buffer, start_pos, end_pos) end
 function get_lexer(buffer, current) end
 
 ---
--- Changes the buffer's lexer name to *lang* or the auto-detected language and
+-- Associates lexer name *lexer* or auto-detected lexer name with the buffer and
 -- then loads the appropriate language module if the module exists.
 -- @param buffer The buffer.
--- @param lang Optional string language name to set. If `nil`, attempts to
---   auto-detect the buffer's language.
--- @usage buffer.set_lexer(buffer, 'language_name')
-function set_lexer(buffer, lang) end
+-- @param lexer Optional string lexer name to set. If `nil`, attempts to
+--   auto-detect the buffer's lexer.
+-- @usage buffer.set_lexer(buffer, 'lexer_name')
+function set_lexer(buffer, lexer) end
 
 -- Unused Fields.
 --   * annotation_styles
