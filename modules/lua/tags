@@ -82,7 +82,6 @@ FILTER	_	0;"	t	class:lfs
 FILTER	_	0;"	t	class:ui.find
 FIND	_	0;"	F	class:events
 FIND_MATCHCASE	_	0;"	F	class:_SCINTILLA.constants
-FIND_POSIX	_	0;"	F	class:_SCINTILLA.constants
 FIND_REGEXP	_	0;"	F	class:_SCINTILLA.constants
 FIND_WHOLEWORD	_	0;"	F	class:_SCINTILLA.constants
 FIND_WORDSTART	_	0;"	F	class:_SCINTILLA.constants
@@ -113,6 +112,7 @@ IDENTIFIER	_	0;"	F	class:lexer
 INDICATOR_CLICK	_	0;"	F	class:events
 INDICATOR_RELEASE	_	0;"	F	class:events
 INDIC_BOX	_	0;"	F	class:_SCINTILLA.constants
+INDIC_BRACEMATCH	_	0;"	F	class:textadept.editing
 INDIC_COMPOSITIONTHICK	_	0;"	F	class:_SCINTILLA.constants
 INDIC_CONTAINER	_	0;"	F	class:_SCINTILLA.constants
 INDIC_DASH	_	0;"	F	class:_SCINTILLA.constants
@@ -415,7 +415,6 @@ annotation_style_offset	_	0;"	F	class:buffer
 annotation_text	_	0;"	F	class:buffer
 annotation_visible	_	0;"	F	class:buffer
 any	_	0;"	F	class:lexer
-any_char	_	0;"	F	class:lexer
 api_files	_	0;"	t	class:textadept.adeptsense
 append_text	_	0;"	f	class:buffer
 arg	_	0;"	t	
@@ -509,7 +508,6 @@ char_right	_	0;"	f	class:buffer
 char_right_extend	_	0;"	f	class:buffer
 char_right_rect_extend	_	0;"	f	class:buffer
 chdir	_	0;"	f	class:lfs
-check_global	_	0;"	f	class:buffer
 choose_caret_x	_	0;"	f	class:buffer
 class_definition	_	0;"	F	class:textadept.adeptsense.syntax
 clear	_	0;"	f	class:buffer
@@ -591,7 +589,6 @@ difftime	_	0;"	f	class:os
 digit	_	0;"	F	class:lexer
 dir	_	0;"	f	class:lfs
 dir_foreach	_	0;"	f	class:lfs
-dirty	_	0;"	F	class:buffer
 disconnect	_	0;"	f	class:events
 doc_line_from_visible	_	0;"	f	class:buffer
 document_end	_	0;"	f	class:buffer
@@ -884,6 +881,7 @@ menubar	_	0;"	t	class:ui
 min	_	0;"	f	class:math
 mkdir	_	0;"	f	class:lfs
 modf	_	0;"	f	class:math
+modify	_	0;"	F	class:buffer
 mouse_dwell_time	_	0;"	F	class:buffer
 move_caret_inside_view	_	0;"	f	class:buffer
 move_selected_lines_down	_	0;"	f	class:buffer
@@ -1124,7 +1122,7 @@ space	_	0;"	F	class:lexer
 split	_	0;"	f	class:view
 sqrt	_	0;"	f	class:math
 standard_dropdown	_	0;"	f	class:ui.dialogs
-standard_inputbux	_	0;"	f	class:ui.dialogs
+standard_inputbox	_	0;"	f	class:ui.dialogs
 start_styling	_	0;"	f	class:buffer
 starts_line	_	0;"	f	class:lexer
 status	_	0;"	f	class:coroutine
