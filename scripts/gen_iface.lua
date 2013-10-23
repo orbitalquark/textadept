@@ -50,7 +50,7 @@ for item in iface:match('Constants%[%] = (%b{})'):sub(2, -2):gmatch('%b{}') do
   if not skip then
     name = name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1')
     if name == 'FIND_REGEXP' then
-      value = tostring(2^22) -- change to SCFIND_POSIX
+      value = tostring(tonumber(value) + 2^22) -- add SCFIND_POSIX
     elseif name == 'MASK_FOLDERS' then
       value = '-33554432'
     end
