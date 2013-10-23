@@ -18,7 +18,7 @@ local M = {}
 --     foo = "bar" | String foo = "bar";
 --     foo.upcase! | foo = foo.toUpperCase();
 --
--- In both cases, Adeptsense recognizes that the variable "foo" is of type
+-- In both cases, Adeptsense recognizes that the variable "foo" is of class type
 -- "String" and displays a list of known methods in the "String" class (which
 -- includes the appropriate one shown above) after the user types "foo.". Upon
 -- request, Adeptsense also displays any known documentation for the symbol
@@ -63,9 +63,9 @@ local M = {}
 --
 -- Take a moment to think about your programming language and its syntax. How
 -- do you declare "classes"? What characters can you use in identifiers? Is the
--- language statically typed? If so, how do you declare a variable's type? If
--- not, how might you infer a variable's type? You must answer all of these
--- questions in an Adeptsense's [`syntax`](#syntax) table. Please see its
+-- language statically typed? If so, how do you declare a variable's class type?
+-- If not, how might you infer a variable's class type? You must answer all of
+-- these questions in an Adeptsense's [`syntax`](#syntax) table. Please see its
 -- documentation for details.
 --
 -- #### Example Syntax Options
@@ -80,9 +80,9 @@ local M = {}
 -- as "classes" and thus uses Lua 5.1's `module()` as a "class" declaration. Lua
 -- allows alphanumerics and underscores in its identifiers and uses the '.' and
 -- ':' characters to access the functions and fields of "classes". Since the
--- language is dynamically typed, it has no type declaration and instead relies
--- on type inference through assignment to entities like strings, other tables,
--- or the result of a function call like `io.open()`.
+-- language is dynamically typed, it has no class type declaration and instead
+-- relies on type inference through assignment to entities like strings, other
+-- tables, or the result of a function call like `io.open()`.
 --
 --     M.sense.syntax.class_definition = 'module%s*%(?%s*[\'"]([%w_%.]+)'
 --     M.sense.syntax.symbol_chars = '[%w_%.:]'
@@ -95,13 +95,13 @@ local M = {}
 --
 -- The beginning '^' in these type assignment patterns is necessary since
 -- Adeptsense starts matching on the right-hand side of an assignment.
--- Otherwise, `local foo = bar('baz')` might infer an incorrect type.
+-- Otherwise, `local foo = bar('baz')` might infer an incorrect class type.
 --
 -- **Java**
 --
 -- Java is a statically typed, object-oriented language. It has most of the
 -- default syntax features that Adeptsense assumes except for parameterized list
--- types.
+-- class types.
 --
 --     local td = M.sense.syntax.type_declarations
 --     td[#td + 1] = '(%u[%w_%.]+)%b<>%s+%_' -- List<Foo> bar
@@ -348,8 +348,8 @@ local M = {}
 -- #### Module Fields
 --
 -- Not only does the Lua Adeptsense generator recognize functions and tables
--- within modules, but it also recognizes module fields and their types with a
--- certain syntax:
+-- within modules, but it also recognizes module fields and their class types
+-- with a certain syntax:
 --
 -- <pre><code>---
 -- -- Module documentation.
@@ -413,7 +413,7 @@ function M.get_symbol(sense)
 end
 
 ---
--- Returns the class name for *symbol* name.
+-- Returns the class type of *symbol* name.
 -- If *symbol* is `sense.syntax.self` and inside a class definition matching
 -- `sense.syntax.class_definition`, that class is returned. Otherwise the
 -- buffer is searched backwards for a type declaration of *symbol* according to
@@ -510,8 +510,9 @@ local function add_inherited(sense, class, only_fields, only_funcs, c, added)
 end
 
 ---
--- Returns a list of function (unless *only_fields* is `true`) and field (unless
--- *only_funcs* is `true`) completions for *symbol* name.
+-- Returns the list of completions for symbol *symbol*.
+-- If either *only_fields* or *only_functions* is `true`, returns the limited
+-- set of completions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol name to get completions for.
 -- @param only_fields Optional flag indicating whether or not to return a list
@@ -567,9 +568,10 @@ function M.get_completions(sense, symbol, only_fields, only_functions)
 end
 
 ---
--- Shows an autocompletion list of functions (unless *only_fields* is `true`)
--- and fields (unless *only_funcs* is `true`) for the symbol behind the caret,
--- returning `true` on success.
+-- Shows an autocompletion list for the symbol behind the caret, returning
+-- `true` on success.
+-- If either *only_fields* or *only_functions* is `true`, displays the limited
+-- set of completions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
 --   the current language's Adeptsense (if it exists).
 -- @param only_fields Optional flag indicating whether or not to return a list
@@ -601,9 +603,9 @@ function M.complete(sense, only_fields, only_functions)
 end
 
 ---
--- Sets the trigger character(s) *c* for autocompletion.
--- If *only_fields* is `true`, the trigger only completes fields. If
--- *only_functions* is `true`, the trigger only completes functions.
+-- Signals character(s) *c* to trigger autocompletion.
+-- If either *only_fields* or *only_functions* is `true`, displays the limited
+-- set of completions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param c The character(s) that triggers the autocompletion. You can have up
 --   to two characters.
@@ -628,8 +630,8 @@ function M.add_trigger(sense, c, only_fields, only_functions)
 end
 
 ---
--- Returns a list of apidocs for *symbol* name.
--- The list contains a `pos` key with the index of the apidoc to show.
+-- Returns the list of apidocs for symbol *symbol*.
+-- The list also holds a `pos` key with the index of the apidoc to show.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol name to get apidocs for.
 -- @return list of apidocs or `nil`
@@ -652,9 +654,9 @@ function M.get_apidoc(sense, symbol)
   end
   if #apidocs == 0 then return nil end
   -- Try to display the type-correct apidoc by getting the entity the function
-  -- is being called on and attempting to determine its type. Otherwise, fall
-  -- back to the entity itself. In order for this to work, the first line in the
-  -- apidoc must start with the entity (e.g. Class.function).
+  -- is being called on and attempting to determine its class type. Otherwise,
+  -- fall back to the entity itself. In order for this to work, the first line
+  -- in the apidoc must start with the entity (e.g. Class.function).
   local class = sense.completions[entity] or sense:get_class(entity)
   if entity == '' then class = sense:get_class(entity) end
   if type(class) ~= 'string' then class = entity end -- fall back to entity
@@ -798,40 +800,48 @@ function M.load_ctags(sense, tag_file, nolocations)
 end
 
 ---
--- Prompts the user to select a symbol to jump to from a list of all known
--- symbols of kind *kind* (classes, functions, fields, etc.) shown in a filtered
--- list dialog whose title text is *title*.
--- @param sense The Adeptsense returned by `adeptsense.new()`.
--- @param kind The Ctag character kind (e.g. `'f'` for a Lua function).
--- @param title The title for the filtered list dialog.
+-- Prompts the user to select a known symbol of kind *kind* to jump to.
+-- *title* is the filtered list dialog prompt's title.
+-- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
+--   the current language's Adeptsense (if it exists).
+-- @param kind Optional Ctag character kind (e.g. `'f'` for a Lua function).
+-- @param title Optional title for the filtered list dialog.
 -- @name goto_ctag
 function M.goto_ctag(sense, kind, title)
-  if not sense.locations[kind] then return end -- no Ctags loaded
-  local items = {}
-  local adeptsense_kind = sense.ctags_kinds[kind]
-  for kind, v in pairs(sense.locations[kind]) do
-    items[#items + 1] = kind:match('[^#]+$') -- symbol name
-    if adeptsense_kind == M.FUNCTION or adeptsense_kind == M.FIELD then
-      items[#items + 1] = kind:match('^[^#]*') -- class name
-    end
-    items[#items + 1] = v[1]:iconv('UTF-8', _CHARSET)..':'..v[2]
+  sense = sense or (_M[buffer:get_lexer(true)] or {}).sense
+  if not sense then return end
+  -- Get the tags for the given kind or all kinds.
+  local kinds, items = kind and {kind} or {}, {}
+  if #kinds == 0 then
+    for kind in pairs(sense.locations) do kinds[#kinds + 1] = kind end
   end
+  local adeptsense_kind = sense.ctags_kinds[kind] or M.FUNCTION
+  for i = 1, #kinds do
+    for kind, v in pairs(sense.locations[kinds[i]] or {}) do
+      items[#items + 1] = kind:match('[^#]+$') -- symbol name
+      if adeptsense_kind == M.FUNCTION or adeptsense_kind == M.FIELD then
+        items[#items + 1] = kind:match('^[^#]*') -- class name
+      end
+      items[#items + 1] = v[1]:iconv('UTF-8', _CHARSET)..':'..v[2]
+    end
+  end
+  -- Prompt the user to select a tag to jump to.
   local columns = {'Name', 'Location'}
   if adeptsense_kind == M.FUNCTION or adeptsense_kind == M.FIELD then
     table.insert(columns, 2, 'Class')
   end
   local button, i = ui.dialogs.filteredlist{
-    title = title, columns = columns, items = items,
+    title = title or _L['Go To'], columns = columns, items = items,
     width = CURSES and ui.size[1] - 2 or nil
   }
   if button ~= 1 or not i then return end
+  -- Jump to the tag.
   local path, line = items[i * #columns]:match('^(%a?:?[^:]+):(.+)$')
   io.open_file(path:iconv(_CHARSET, 'UTF-8'))
   if not tonumber(line) then
     -- /^ ... $/
     buffer.target_start, buffer.target_end = 0, buffer.length
-    buffer.search_flags = buffer.FIND_REGEXP
-    if buffer:search_in_target(line:sub(2, -2)) >= 0 then
+    if buffer:search_in_target(line:sub(3, -3)) >= 0 then
       buffer:goto_pos(buffer.target_start)
     end
   else
@@ -840,7 +850,7 @@ function M.goto_ctag(sense, kind, title)
 end
 
 ---
--- Called by `load_ctags()` when a Ctag kind is not recognized.
+-- Handles unrecognized Ctag kinds in `load_ctags()`.
 -- The parameters are extracted from Ctags' [tag format][]. This method should
 -- be replaced with your own that is specific to the language.
 --
@@ -866,7 +876,7 @@ function M.clear(sense)
 end
 
 ---
--- Called when clearing the Adeptsense.
+-- Helps clear the Adeptsense along with `clear()`.
 -- This function should be replaced with your own if you have any persistant
 -- objects that need to be deleted.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
@@ -874,7 +884,7 @@ end
 function M.handle_clear(sense) end
 
 ---
--- Creates and returns a new Adeptsense for *lang* name.
+-- Creates and returns a new Adeptsense for lexer name *lexer*.
 -- Only one sense can exist per language.
 -- @param lang The lexer language name to create an Adeptsense for.
 -- @return adeptsense
@@ -973,16 +983,17 @@ api_files = {},
 --   class type of a symbol. The first capture returned must be the class name.
 --   Use `%_` to match the symbol.
 --   The default value is `'(%u[%w_%.]+)%s+%_'`.
--- @field type_declarations_exclude A table of types to exclude, even if they
---   match a `type_declarations` pattern. Each excluded type is a table key and
---   has a `true` boolean value. For example, `{Foo = true}` excludes any type
---   whose name is `Foo`.
+-- @field type_declarations_exclude A table of class types to exclude, even if
+--   they match a `type_declarations` pattern. Each excluded type is a table key
+--   and has a `true` boolean value. For example, `{Foo = true}` excludes any
+--   class type whose name is `Foo`.
 --   The default value is `{}`.
 -- @field type_assignments A map of Lua patterns to class types for variable
 --   assignments, typically used for dynamically typed languages. For example,
 --   `sense.syntax.type_assignments['^"'] = 'string'`  would recognize string
 --   assignments in Lua so the `foo` in `foo = "bar"` would be recognized as
---   type `string`. The class type value may contain `%n` pattern captures.
+--   class type `string`. The class type value may contain `%n` pattern
+--   captures.
 -- @class table
 -- @name syntax
 -- @see get_class
