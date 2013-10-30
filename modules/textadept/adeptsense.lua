@@ -826,7 +826,7 @@ function M.goto_ctag(sense, kind, title)
     end
   end
   -- Prompt the user to select a tag to jump to.
-  local columns = {'Name', 'Location'}
+  local columns = {_L['Name'], 'Location'}
   if adeptsense_kind == M.FUNCTION or adeptsense_kind == M.FIELD then
     table.insert(columns, 2, 'Class')
   end

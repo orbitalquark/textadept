@@ -66,7 +66,7 @@
 --
 --   The default value is `buffer.ANNOTATION_HIDDEN`.
 -- @field auto_c_auto_hide (bool)
---   Automatically hide the autocompletion or user list when no entries match
+--   Automatically cancel the autocompletion or user list when no entries match
 --   typed text.
 --   The default value is `true`.
 -- @field auto_c_cancel_at_start (bool)
@@ -1448,7 +1448,7 @@ function fold_children(buffer, line, action) end
 function fold_line(buffer, line, action) end
 
 ---
--- Types a Form Feed ("\f") character at the caret position.
+-- Types a Form Feed character ("\f") at the caret position.
 -- @param buffer The buffer.
 function form_feed(buffer) end
 
