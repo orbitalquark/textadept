@@ -61,11 +61,15 @@ typedef GtkWidget Scintilla;
 #if GTK_CHECK_VERSION(3,0,0)
 #define GDK_Return GDK_KEY_Return
 #define GDK_Escape GDK_KEY_Escape
-#define gtk_statusbar_set_has_resize_grip(_,__)
+#define gtk_hpaned_new() gtk_paned_new(GTK_ORIENTATION_HORIZONTAL)
+#define gtk_vpaned_new() gtk_paned_new(GTK_ORIENTATION_VERTICAL)
 #define gtk_combo_box_entry_new_with_model(m,_) \
   gtk_combo_box_new_with_model_and_entry(m)
 #define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
+#define gtk_vbox_new(_,s) gtk_box_new(GTK_ORIENTATION_VERTICAL, s)
+#define gtk_hbox_new(_,s) gtk_box_new(GTK_ORIENTATION_HORIZONTAL, s)
+#define gtk_statusbar_set_has_resize_grip(_,__)
 #endif
 #elif CURSES
 #define SS(view, m, w, l) scintilla_send_message(view, m, w, l)
@@ -920,7 +924,7 @@ static int lui__index(lua_State *L) {
 #endif
   } else if (strcmp(key, "maximized") == 0)
 #if GTK
-    lua_pushboolean(L, gdk_window_get_state(window->window) &
+    lua_pushboolean(L, gdk_window_get_state(gtk_widget_get_window(window)) &
                        GDK_WINDOW_STATE_MAXIMIZED);
 #elif CURSES
     lua_pushboolean(L, FALSE);
