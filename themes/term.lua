@@ -55,7 +55,6 @@ property['style.variable'] = 'fore:%(color.blue),bold'
 property['style.whitespace'] = ''
 
 -- Multiple Selection and Virtual Space
---buffer.additional_sel_alpha =
 --buffer.additional_sel_fore =
 --buffer.additional_sel_back =
 --buffer.additional_caret_fore =
@@ -63,10 +62,8 @@ property['style.whitespace'] = ''
 -- Caret and Selection Styles.
 --buffer:set_sel_fore(true, property_int['color.white'])
 --buffer:set_sel_back(true, property_int['color.black'])
---buffer.sel_alpha =
 --buffer.caret_fore = property_int['color.black']
 --buffer.caret_line_back =
---buffer.caret_line_back_alpha =
 
 -- Fold Margin.
 --buffer:set_fold_margin_colour(true, property_int['color.white'])
