@@ -1,3 +1,16 @@
+diff -r e074c39456a7 gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Mon Jul 15 19:12:27 2013 +1000
++++ b/gtk/ScintillaGTK.cxx	Tue Oct 29 14:22:21 2013 -0400
+@@ -1778,7 +1778,8 @@
+ 			ButtonDown(pt, event->time,
+ 			        (event->state & GDK_SHIFT_MASK) != 0,
+ 			        (event->state & GDK_CONTROL_MASK) != 0,
+-			        (event->state & modifierTranslated(rectangularSelectionModifier)) != 0);
++			        (event->state & modifierTranslated(rectangularSelectionModifier)) != 0,
++			        (event->state & GDK_META_MASK) != 0);
+ 		} else if (event->button == 2) {
+ 			// Grab the primary selection if it exists
+ 			SelectionPosition pos = SPositionFromLocation(pt, false, false, UserVirtualSpace());
 diff -r 1cd0ebd58592 src/Catalogue.cxx
 --- a/src/Catalogue.cxx	Mon May 27 10:49:00 2013 +1000
 +++ b/src/Catalogue.cxx	Fri Jun 14 08:47:21 2013 -0400
@@ -18,3 +31,208 @@ diff -r 1cd0ebd58592 src/Catalogue.cxx
  
  	return 1;
  }
+diff -r e074c39456a7 src/Editor.cxx
+--- a/src/Editor.cxx	Mon Jul 15 19:12:27 2013 +1000
++++ b/src/Editor.cxx	Tue Oct 29 14:22:21 2013 -0400
+@@ -4464,40 +4464,40 @@
+ 	NotifyParent(scn);
+ }
+ 
+-void Editor::NotifyDoubleClick(Point pt, bool shift, bool ctrl, bool alt) {
++void Editor::NotifyDoubleClick(Point pt, bool shift, bool ctrl, bool alt, bool meta) {
+ 	SCNotification scn = {0};
+ 	scn.nmhdr.code = SCN_DOUBLECLICK;
+ 	scn.line = LineFromLocation(pt);
+ 	scn.position = PositionFromLocation(pt, true);
+ 	scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
+-	        (alt ? SCI_ALT : 0);
++	        (alt ? SCI_ALT : 0) | (meta ? SCI_META : 0);
+ 	NotifyParent(scn);
+ }
+ 
+-void Editor::NotifyHotSpotDoubleClicked(int position, bool shift, bool ctrl, bool alt) {
++void Editor::NotifyHotSpotDoubleClicked(int position, bool shift, bool ctrl, bool alt, bool meta) {
+ 	SCNotification scn = {0};
+ 	scn.nmhdr.code = SCN_HOTSPOTDOUBLECLICK;
+ 	scn.position = position;
+ 	scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
+-	        (alt ? SCI_ALT : 0);
++	        (alt ? SCI_ALT : 0) | (meta ? SCI_META : 0);
+ 	NotifyParent(scn);
+ }
+ 
+-void Editor::NotifyHotSpotClicked(int position, bool shift, bool ctrl, bool alt) {
++void Editor::NotifyHotSpotClicked(int position, bool shift, bool ctrl, bool alt, bool meta) {
+ 	SCNotification scn = {0};
+ 	scn.nmhdr.code = SCN_HOTSPOTCLICK;
+ 	scn.position = position;
+ 	scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
+-	        (alt ? SCI_ALT : 0);
++	        (alt ? SCI_ALT : 0) | (meta ? SCI_META : 0);
+ 	NotifyParent(scn);
+ }
+ 
+-void Editor::NotifyHotSpotReleaseClick(int position, bool shift, bool ctrl, bool alt) {
++void Editor::NotifyHotSpotReleaseClick(int position, bool shift, bool ctrl, bool alt, bool meta) {
+ 	SCNotification scn = {0};
+ 	scn.nmhdr.code = SCN_HOTSPOTRELEASECLICK;
+ 	scn.position = position;
+ 	scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
+-	        (alt ? SCI_ALT : 0);
++	        (alt ? SCI_ALT : 0) | (meta ? SCI_META : 0);
+ 	NotifyParent(scn);
+ }
+ 
+@@ -4519,19 +4519,19 @@
+ 	NotifyParent(scn);
+ }
+ 
+-void Editor::NotifyIndicatorClick(bool click, int position, bool shift, bool ctrl, bool alt) {
++void Editor::NotifyIndicatorClick(bool click, int position, bool shift, bool ctrl, bool alt, bool meta) {
+ 	int mask = pdoc->decorations.AllOnFor(position);
+ 	if ((click && mask) || pdoc->decorations.clickNotified) {
+ 		SCNotification scn = {0};
+ 		pdoc->decorations.clickNotified = click;
+ 		scn.nmhdr.code = click ? SCN_INDICATORCLICK : SCN_INDICATORRELEASE;
+-		scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) | (alt ? SCI_ALT : 0);
++		scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) | (alt ? SCI_ALT : 0) | (meta ? SCI_META : 0);
+ 		scn.position = position;
+ 		NotifyParent(scn);
+ 	}
+ }
+ 
+-bool Editor::NotifyMarginClick(Point pt, bool shift, bool ctrl, bool alt) {
++bool Editor::NotifyMarginClick(Point pt, bool shift, bool ctrl, bool alt, bool meta) {
+ 	int marginClicked = -1;
+ 	int x = vs.textStart - vs.fixedColumnWidth;
+ 	for (int margin = 0; margin <= SC_MAX_MARGIN; margin++) {
+@@ -4564,7 +4564,7 @@
+ 		SCNotification scn = {0};
+ 		scn.nmhdr.code = SCN_MARGINCLICK;
+ 		scn.modifiers = (shift ? SCI_SHIFT : 0) | (ctrl ? SCI_CTRL : 0) |
+-		        (alt ? SCI_ALT : 0);
++		        (alt ? SCI_ALT : 0) | (meta ? SCI_META : 0);
+ 		scn.position = position;
+ 		scn.margin = marginClicked;
+ 		NotifyParent(scn);
+@@ -6285,7 +6285,7 @@
+ 		|| (rectangular && ((virtualSpaceOptions & SCVS_RECTANGULARSELECTION) != 0));
+ }
+ 
+-void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt) {
++void Editor::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt, bool meta) {
+ 	//Platform::DebugPrintf("ButtonDown %d %d = %d alt=%d %d\n", curTime, lastClickTime, curTime - lastClickTime, alt, inDragDrop);
+ 	ptMouseLast = pt;
+ 	SelectionPosition newPos = SPositionFromLocation(pt, false, false, AllowVirtualSpace(virtualSpaceOptions, alt));
+@@ -6293,10 +6293,10 @@
+ 	inDragDrop = ddNone;
+ 	sel.SetMoveExtends(false);
+ 
+-	if (NotifyMarginClick(pt, shift, ctrl, alt))
++	if (NotifyMarginClick(pt, shift, ctrl, alt, meta))
+ 		return;
+ 
+-	NotifyIndicatorClick(true, newPos.Position(), shift, ctrl, alt);
++	NotifyIndicatorClick(true, newPos.Position(), shift, ctrl, alt, meta);
+ 
+ 	bool inSelMargin = PointInSelMargin(pt);
+ 	// In margin ctrl+(double)click should always select everything
+@@ -6379,9 +6379,9 @@
+ 		}
+ 		//Platform::DebugPrintf("Double click: %d - %d\n", anchor, currentPos);
+ 		if (doubleClick) {
+-			NotifyDoubleClick(pt, shift, ctrl, alt);
++			NotifyDoubleClick(pt, shift, ctrl, alt, meta);
+ 			if (PositionIsHotspot(newPos.Position()))
+-				NotifyHotSpotDoubleClicked(newPos.Position(), shift, ctrl, alt);
++				NotifyHotSpotDoubleClicked(newPos.Position(), shift, ctrl, alt, meta);
+ 		}
+ 	} else {	// Single click
+ 		if (inSelMargin) {
+@@ -6410,7 +6410,7 @@
+ 			SetMouseCapture(true);
+ 		} else {
+ 			if (PointIsHotspot(pt)) {
+-				NotifyHotSpotClicked(newPos.Position(), shift, ctrl, alt);
++				NotifyHotSpotClicked(newPos.Position(), shift, ctrl, alt, meta);
+ 				hotSpotClickPos = PositionFromLocation(pt,true,false);
+ 			}
+ 			if (!shift) {
+@@ -6628,7 +6628,7 @@
+ 	}
+ 	if (hotSpotClickPos != INVALID_POSITION && PointIsHotspot(pt)) {
+ 		hotSpotClickPos = INVALID_POSITION;
+-		NotifyHotSpotReleaseClick(newPos.Position(), false, ctrl, false);
++		NotifyHotSpotReleaseClick(newPos.Position(), false, ctrl, false, false);
+ 	}
+ 	if (HaveMouseCapture()) {
+ 		if (PointInSelMargin(pt)) {
+@@ -6639,7 +6639,7 @@
+ 		}
+ 		ptMouseLast = pt;
+ 		SetMouseCapture(false);
+-		NotifyIndicatorClick(false, newPos.Position(), false, false, false);
++		NotifyIndicatorClick(false, newPos.Position(), false, false, false, false);
+ 		if (inDragDrop == ddDragging) {
+ 			SelectionPosition selStart = SelectionStart();
+ 			SelectionPosition selEnd = SelectionEnd();
+diff -r e074c39456a7 src/Editor.h
+--- a/src/Editor.h	Mon Jul 15 19:12:27 2013 +1000
++++ b/src/Editor.h	Tue Oct 29 14:22:21 2013 -0400
+@@ -499,14 +499,14 @@
+ 	void NotifyChar(int ch);
+ 	void NotifySavePoint(bool isSavePoint);
+ 	void NotifyModifyAttempt();
+-	virtual void NotifyDoubleClick(Point pt, bool shift, bool ctrl, bool alt);
+-	void NotifyHotSpotClicked(int position, bool shift, bool ctrl, bool alt);
+-	void NotifyHotSpotDoubleClicked(int position, bool shift, bool ctrl, bool alt);
+-	void NotifyHotSpotReleaseClick(int position, bool shift, bool ctrl, bool alt);
++	virtual void NotifyDoubleClick(Point pt, bool shift, bool ctrl, bool alt, bool meta=false);
++	void NotifyHotSpotClicked(int position, bool shift, bool ctrl, bool alt, bool meta=false);
++	void NotifyHotSpotDoubleClicked(int position, bool shift, bool ctrl, bool alt, bool meta=false);
++	void NotifyHotSpotReleaseClick(int position, bool shift, bool ctrl, bool alt, bool meta=false);
+ 	bool NotifyUpdateUI();
+ 	void NotifyPainted();
+-	void NotifyIndicatorClick(bool click, int position, bool shift, bool ctrl, bool alt);
+-	bool NotifyMarginClick(Point pt, bool shift, bool ctrl, bool alt);
++	void NotifyIndicatorClick(bool click, int position, bool shift, bool ctrl, bool alt, bool meta=false);
++	bool NotifyMarginClick(Point pt, bool shift, bool ctrl, bool alt, bool meta=false);
+ 	void NotifyNeedShown(int pos, int len);
+ 	void NotifyDwelling(Point pt, bool state);
+ 	void NotifyZoom();
+@@ -568,7 +568,7 @@
+ 	void WordSelection(int pos);
+ 	void DwellEnd(bool mouseMoved);
+ 	void MouseLeave();
+-	virtual void ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
++	virtual void ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt, bool meta=false);
+ 	void ButtonMove(Point pt);
+ 	void ButtonUp(Point pt, unsigned int curTime, bool ctrl);
+ 
+diff -r e074c39456a7 src/ScintillaBase.cxx
+--- a/src/ScintillaBase.cxx	Mon Jul 15 19:12:27 2013 +1000
++++ b/src/ScintillaBase.cxx	Tue Oct 29 14:22:21 2013 -0400
+@@ -463,9 +463,9 @@
+ 	Editor::CancelModes();
+ }
+ 
+-void ScintillaBase::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt) {
++void ScintillaBase::ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt, bool meta) {
+ 	CancelModes();
+-	Editor::ButtonDown(pt, curTime, shift, ctrl, alt);
++	Editor::ButtonDown(pt, curTime, shift, ctrl, alt, meta);
+ }
+ 
+ #ifdef SCI_LEXER
+diff -r e074c39456a7 src/ScintillaBase.h
+--- a/src/ScintillaBase.h	Mon Jul 15 19:12:27 2013 +1000
++++ b/src/ScintillaBase.h	Tue Oct 29 14:22:21 2013 -0400
+@@ -83,7 +83,7 @@
+ 	virtual void AddToPopUp(const char *label, int cmd=0, bool enabled=true) = 0;
+ 	void ContextMenu(Point pt);
+ 
+-	virtual void ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
++	virtual void ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt, bool meta=false);
+ 
+ 	void NotifyStyleToNeeded(int endStyleNeeded);
+ 	void NotifyLexerChanged(Document *doc, void *userData);
