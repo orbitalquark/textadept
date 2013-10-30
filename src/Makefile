@@ -49,7 +49,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
     CXX = g++
     CXXFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
                -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk
-    LUAFLAGS = -DLUA_USE_MACOSX
+    LUA_CFLAGS = -DLUA_USE_MACOSX
     LDFLAGS = -liconv -rdynamic
     MAKE = make
 
@@ -73,7 +73,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
     # Build for Linux/BSD.
     CC = gcc
     CXX = g++
-    LUAFLAGS = -DLUA_USE_LINUX
+    LUA_CFLAGS = -DLUA_USE_LINUX
     LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
     ifeq (Linux, $(kernel))
       LDFLAGS += -ldl
@@ -96,10 +96,8 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       else
         gtk_version = 3.0
       endif
-      GTK_CFLAGS = $(shell pkg-config --cflags gtk+-$(gtk_version) \
-                           gmodule-$(gtk_version))
-      GTK_LIBS = $(shell pkg-config --libs gtk+-$(gtk_version) \
-                         gmodule-$(gtk_version))
+      GTK_CFLAGS = $(shell pkg-config --cflags gtk+-$(gtk_version) gmodule-2.0)
+      GTK_LIBS = $(shell pkg-config --libs gtk+-$(gtk_version) gmodule-2.0)
       install_targets = ../textadept ../textadeptjit
     else
       plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
@@ -118,7 +116,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
 #  CXX = g++
 #  CXXFLAGS = -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
 #             -isysroot /Developer/SDKs/MacOSX10.5.sdk
-#  LUAFLAGS = -DLUA_USE_MACOSX
+#  LUA_CFLAGS = -DLUA_USE_MACOSX
 #  LDFLAGS = -liconv -rdynamic
 #
 #  #ifeq (, $(findstring curses, $(MAKECMDGOALS)))
@@ -219,16 +217,16 @@ ScintillaTerm.o: scintilla/term/ScintillaTerm.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) -Iscintilla/term $(CURSES_CFLAGS) \
 		$< -o $@
 LexLPeg.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUAFLAGS) $(sci_flags) -DLPEG_LEXER \
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DLPEG_LEXER \
 		-DNO_SCITE -Ilua/src $< -o $@
 LexLPegjit.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUAFLAGS) $(sci_flags) -DLPEG_LEXER \
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DLPEG_LEXER \
 		-DNO_SCITE -Iluajit/src $< -o $@
 LexLPeg-curses.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUAFLAGS) $(sci_flags) -DLPEG_LEXER \
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DLPEG_LEXER \
 		-DNO_SCITE -DCURSES -Ilua/src $(CURSES_CFLAGS) $< -o $@
 LexLPegjit-curses.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUAFLAGS) $(sci_flags) -DLPEG_LEXER \
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DLPEG_LEXER \
 		-DNO_SCITE -DCURSES -Iluajit/src $(CURSES_CFLAGS) $< -o $@
 textadept.o: textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -Ilua/src $(GTK_CFLAGS) $< -o $@
@@ -242,11 +240,11 @@ textadeptjit-curses.o: textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src \
 		-Iscintilla/term -Itermkey -Icdk $(CURSES_CFLAGS) $< -o $@
 $(lua_objs): %.o: lua/src/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Ilua/src $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -Ilua/src $< -o $@
 $(lua_lib_objs): %.o: lua/src/lib/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Ilua/src $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -Ilua/src $< -o $@
 $(luajit_lib_objs): %jit.o: lua/src/lib/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUAFLAGS) -Iluajit/src $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -Iluajit/src $< -o $@
 luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC) $(CFLAGS)"
 luajit/src/lua51.dll:
 	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
@@ -361,7 +359,7 @@ release: $(basedir).i386 | $(build_dir)
 	make -C $|/src deps clean doc
 	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -C $|/src -j4 MAKE="make -j4"
 	make -C $|/src -j4 curses
-	cp -r $|/doc $|/lexers/lexers $|/textadept* $<
+	cp -r $|/doc $|/lexers $|/textadept* $<
 	tar czf /tmp/$<.tgz $< && rm -rf $<
 $(basedir).x86_64: | $(build_dir) ; hg archive $@ -X ".hg*"
 release64: $(basedir).x86_64 | $(build_dir)
@@ -371,7 +369,7 @@ release64: $(basedir).x86_64 | $(build_dir)
 	make -C $|/src -j4 CFLAGS=-m64 CXXFLAGS=-m64 \
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
-	cp -r $|/doc $|/lexers/lexers $|/textadept* $<
+	cp -r $|/doc $|/lexers $|/textadept* $<
 	tar czf /tmp/$<.tgz $< && rm -rf $<
 $(basedir).win32: | $(build_dir) ; hg archive $@ -X ".hg*"
 win32-release: $(basedir).win32 | $(build_dir)
@@ -381,7 +379,7 @@ win32-release: $(basedir).win32 | $(build_dir)
 	rm -r $</lib/*.a $</lib/glib-2.0 $</lib/gtk-2.0/include $</lib/pkgconfig
 	make -C $|/src -j4 CROSS=i586-mingw32msvc- MAKE="make -j4" win32
 	make -C $|/src -j4 CROSS=i586-mingw32msvc- win32-curses
-	cp -r $|/doc $|/lexers/lexers $|/textadept* $|/src/luajit/src/lua51.dll $<
+	cp -r $|/doc $|/lexers $|/textadept* $|/src/luajit/src/lua51.dll $<
 	zip -r /tmp/$<.zip $< && rm -rf $<
 $(basedir).osx: ; mkdir $@ && cp ../scripts/osx/ta $@
 osx-release: $(basedir).osx | $(build_dir)
@@ -405,7 +403,7 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 	cp Info.plist $(osxapp_bin)/../
 	cp $^ $(osxapp_bin)/
 	hg archive $(osxapp_res) -X ".hg*"
-	cp -r ../doc ../lexers/lexers $(osxapp_res)
+	cp -r ../doc ../lexers $(osxapp_res)
 	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
 	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
 	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
@@ -443,9 +441,7 @@ scintillua: ../lexers LexLPeg.cxx
 $(scintillua_zip):
 	wget "http://foicica.com/hg/scintillua/archive/tip.zip" -O $@
 ../lexers: | $(scintillua_zip)
-	mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
-	cp $@/LexLPeg.cxx $@/lexers/
-	ln -s $@/lexers/*.lua $@
+	mkdir $@ && unzip -d $@ -j $| "*/lexers/*.lua" "*.txt" "*.cxx" -x "*/themes/*"
 LexLPeg.cxx: | ../lexers ; ln -s $|/$@ $@
 $(lua_tgz): ; wget "http://www.lua.org/ftp/$@"
 $(lpeg_tgz): ; wget "http://www.inf.puc-rio.br/~roberto/lpeg/$@"
