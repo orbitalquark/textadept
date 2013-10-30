@@ -354,16 +354,20 @@ function M.join_lines()
 end
 
 ---
--- Encloses the selected text or the word behind the caret within strings *left*
--- and *right*.
+-- Encloses the selected text or the current word within strings *left* and
+-- *right*.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
 -- @name enclose
 function M.enclose(left, right)
   buffer:target_from_selection()
   local s, e = buffer.target_start, buffer.target_end
-  if s == e then buffer.target_start = buffer:word_start_position(s, true) end
-  buffer:replace_target(left..buffer:text_range(buffer.target_start, e)..right)
+  if s == e then
+    buffer.target_start = buffer:word_start_position(s, true)
+    buffer.target_end = buffer:word_end_position(e, true)
+    s, e = buffer.target_start, buffer.target_end
+  end
+  buffer:replace_target(left..buffer:text_range(s, e)..right)
   buffer:goto_pos(buffer.target_end)
 end
 
