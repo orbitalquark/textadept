@@ -34,9 +34,10 @@ local M = {}
 --
 --   * _`uri`_: The UTF-8-encoded URI to open.
 -- @field AUTO_C_CHAR_DELETED (string)
---   Emitted when deleting a character while the autocompletion list is active.
--- @field AUTO_C_RELEASE (string)
---   Emitted when canceling the autocompletion list.
+--   Emitted when deleting a character while the autocompletion or user list is
+--   active.
+-- @field AUTO_C_CANCELED (string)
+--   Emitted when canceling the autocompletion or user list.
 -- @field AUTO_C_SELECTION (string)
 --   Emitted when selecting an item in the autocompletion list and before
 --   inserting the selection.
@@ -76,9 +77,9 @@ local M = {}
 --
 --   * _`code`_: The numeric key code.
 --   * _`shift`_: The "Shift" modifier key is held down.
---   * _`ctrl`_: The "Control"/"Command" modifier key is held down.
+--   * _`ctrl`_: The "Control" modifier key is held down.
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
---   * _`meta`_: The "Control" modifier key on Mac OSX is held down.
+--   * _`meta`_: The "Command" modifier key on Mac OSX is held down.
 -- @field DOUBLE_CLICK (string)
 --   Emitted after double-clicking the mouse button.
 --   Arguments:
@@ -170,9 +171,9 @@ local M = {}
 --
 --   * _`code`_: The numeric key code.
 --   * _`shift`_: The "Shift" modifier key is held down.
---   * _`ctrl`_: The "Control"/"Command" modifier key is held down.
+--   * _`ctrl`_: The "Control" modifier key is held down.
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
---   * _`meta`_: The "Control" modifier key on Mac OSX is held down.
+--   * _`meta`_: The "Command" modifier key on Mac OSX is held down.
 -- @field MARGIN_CLICK (string)
 --   Emitted when clicking the mouse inside a sensitive margin.
 --   Arguments:

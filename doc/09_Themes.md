@@ -30,7 +30,7 @@ display these standard colors.
 Override the default theme in your [*~/.textadept/init.lua*][] using the
 [`ui.set_theme()`][] function. For example:
 
-    ui.set_theme('dark')
+    ui.set_theme(not CURSES and 'dark' or 'custom_term')
 
 Either restart Textadept for changes to take effect or type [`reset()`][] in the
 [command entry][].
