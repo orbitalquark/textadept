@@ -61,6 +61,9 @@ typedef GtkWidget Scintilla;
 #if GTK_CHECK_VERSION(3,0,0)
 #define GDK_Return GDK_KEY_Return
 #define GDK_Escape GDK_KEY_Escape
+#define gtk_container_add(p, w) \
+  GTK_IS_BOX(p) ? gtk_box_pack_start(GTK_BOX(p), w, TRUE, TRUE, 0) \
+                : gtk_container_add(p, w)
 #define gtk_hpaned_new() gtk_paned_new(GTK_ORIENTATION_HORIZONTAL)
 #define gtk_vpaned_new() gtk_paned_new(GTK_ORIENTATION_VERTICAL)
 #define gtk_combo_box_entry_new_with_model(m,_) \
