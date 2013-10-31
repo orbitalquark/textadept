@@ -64,6 +64,19 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>asm</string>
+				<string>ASM</string>
+				<string>s</string>
+				<string>S</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>ASM source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>asa</string>
 				<string>asp</string>
 				<string>hta</string>
@@ -597,6 +610,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>nim</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Nimrod source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>nsh</string>
 				<string>nsi</string>
 				<string>nsis</string>
@@ -988,7 +1011,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>7.0 beta 5</string>
+	<string>7.0</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
