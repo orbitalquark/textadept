@@ -4,10 +4,41 @@
 
 [Atom Feed]: feed
 
-## 7.0 beta 5 (21 Oct 2013)
+## 7.0 (01 Nov 2013)
 
 Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to
 Textadept 7.
+
+Download:
+
+* [Textadept 7.0 -- Win32][]
+* [Textadept 7.0 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.0 -- Linux][]
+* [Textadept 7.0 -- Linux x86_64][]
+* [Textadept 7.0 -- Modules][]
+
+Bugfixes:
+
+* Fixed bug with `buffer.SCFIND_REGEX` flag.
+* Fixed OSX Command key recognition for click events.
+* Fixed compile error with GTK3.
+
+Changes:
+
+* Added Assembly (NASM) lexer with compile and run commands.
+* [`textadept.adeptsense.goto_ctag()`][] can show all known tags now.
+* [`textadept.editing.enclose()`][] encloses the whole current word.
+
+[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
+[Textadept 7.0 -- Win32]: download/textadept_7.0.win32.zip
+[Textadept 7.0 -- Mac OSX Intel 10.5+]: download/textadept_7.0.osx.zip
+[Textadept 7.0 -- Linux]: download/textadept_7.0.i386.tgz
+[Textadept 7.0 -- Linux x86_64]: download/textadept_7.0.x86_64.tgz
+[Textadept 7.0 -- Modules]: download/textadept_7.0.modules.zip
+[`textadept.adeptsense.goto_ctag()`]: api/textadept.adeptsense.html#goto_ctag
+[`textadept.editing.enclose()`]: api/textadept.editing.html#enclose
+
+## 7.0 beta 5 (21 Oct 2013)
 
 Download:
 
@@ -33,7 +64,6 @@ Changes:
 * The [`buffer`][] API applies to all buffers now, not just the global one.
 * Added "Save All" to the menu.
 
-[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
 [Textadept 7.0 beta 5 -- Win32]: download/textadept_7.0_beta_5.win32.zip
 [Textadept 7.0 beta 5 -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta_5.osx.zip
 [Textadept 7.0 beta 5 -- Linux]: download/textadept_7.0_beta_5.i386.tgz
