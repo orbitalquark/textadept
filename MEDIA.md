@@ -13,6 +13,8 @@
 Released: December 2013<br/>
 Pages: 150 (est.)
 
+[Table of Contents][] (est.)
+
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text
 editor for programmers. This quick reference contains a wealth of knowledge on
 how to script and configure Textadept using the Lua programming language. It
@@ -31,6 +33,7 @@ This book covers how to:
 * And much more
 
 [Pre-order]: http://gum.co/ta_quickref
+[Table of Contents]: download/ta_quickref_toc.pdf
 
 ## Lua Workshop 2012
 
