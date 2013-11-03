@@ -4,7 +4,7 @@
 
 ![Textadept](images/textadept.png)
 
-Textadept is a fast, minimalist, and ridiculously extensible cross-platform text
+Textadept is a fast, minimalist, and remarkably extensible cross-platform text
 editor for programmers. Written in a combination of C and [Lua][] and
 relentlessly optimized for speed and minimalism over the years, Textadept is an
 ideal editor for programmers who want endless extensibility without sacrificing
@@ -29,9 +29,9 @@ code avoids going beyond 4000 lines. After more than 5 years of development,
 Textadept contains the same amount of code since its inception while evolving
 into a vastly superior editor.
 
-### Ridiculously Extensible
+### Remarkably Extensible
 
-Textadept is ridiculously extensible. Designed to be that way from the very
+Textadept is remarkably extensible. Designed to be that way from the very
 beginning, the editor's features came later. Most of Textadept's internals use
 Lua, from syntax highlighting to opening and saving files to searching and
 replacing and more. Textadept gives you complete control over the entire
