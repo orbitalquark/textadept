@@ -1,5 +1,37 @@
 # Media
 
+## Book
+
+<div style="float: left; margin: 0 1em 0 1em;">
+  <a href="book/ta_quickref.png">
+    <img src="book/ta_quickref_small.png" alt="" style="border-width: 1px;"/>
+  </a>
+</div>
+
+*Textadept Quick Reference* ([Pre-order][])
+
+Released: December 2013<br/>
+Pages: 150 (est.)
+
+Textadept is a fast, minimalist, and remarkably extensible cross-platform text
+editor for programmers. This quick reference contains a wealth of knowledge on
+how to script and configure Textadept using the Lua programming language. It
+groups the editor's rich API into a series of tasks in a convenient and
+easy-to-use manner.
+
+This book covers how to:
+
+* Leverage Textadept's important files and folders
+* Adeptly navigate and manipulate text
+* Mark lines and text visually
+* Show interactive lists and call tips
+* Prompt for user input in various ways
+* Configure colors, themes, and other settings
+* Define lexers for highlighting source code
+* And much more
+
+[Pre-order]: http://gum.co/ta_quickref
+
 ## Lua Workshop 2012
 
 *Textadept - Behind the Scenes* ([slides][])

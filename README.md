@@ -2,7 +2,7 @@
 
 ## Overview
 
-Textadept is a fast, minimalist, and ridiculously extensible cross-platform text
+Textadept is a fast, minimalist, and remarkably extensible cross-platform text
 editor for programmers. Written in a combination of C and [Lua][] and
 relentlessly optimized for speed and minimalism over the years, Textadept is an
 ideal editor for programmers who want endless extensibility without sacrificing
@@ -36,6 +36,8 @@ The terminal version of Textadept requires only an implementation of curses like
 
 ## Download
 
+**Please consider making a [donation][]. It really helps.**
+
 Download Textadept from the project's [download page][] or from these quick
 links:
 
@@ -59,6 +61,7 @@ _Warning_: nightly builds are untested, may have bugs, and are the absolute
 cutting-edge versions of Textadept. Do not use them in production, but for
 testing purposes only.
 
+[donation]: http://gum.co/textadept
 [download page]: http://foicica.com/textadept/download
 [Win32]: download/textadept_LATEST.win32.zip
 [Mac OSX]: download/textadept_LATEST.osx.zip
@@ -77,6 +80,28 @@ Textadept comes with a comprehensive manual and API documentation in the *doc/*
 directory. They are also available [online][].
 
 [online]: http://foicica.com/textadept
+
+## Buy the Book
+
+<div style="float: left; margin: 0 1em 0 1em;">
+  <a href="MEDIA.html#Book">
+    <img src="book/ta_quickref_small.png" alt="" style="border-width: 1px;"/>
+  </a>
+</div>
+
+[*Textadept Quick Reference*][]
+
+Released: December 2013<br/>
+Pages: 150 (est.)
+
+Textadept is a fast, minimalist, and remarkably extensible cross-platform text
+editor for programmers. This quick reference contains a wealth of knowledge on
+how to script and configure Textadept using the Lua programming language. It
+groups the editor's rich API into a series of tasks in a convenient and
+easy-to-use manner. [Read more...][]
+
+[*Textadept Quick Reference*]: MEDIA.html#Book
+[Read more...]: MEDIA.html#Book
 
 ## Contact
 

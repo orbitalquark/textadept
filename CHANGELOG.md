@@ -2,7 +2,10 @@
 
 [Atom Feed][]
 
+**Please consider making a [donation][]. It really helps.**
+
 [Atom Feed]: feed
+[donation]: http://gumroad.co/textadept
 
 ## 7.0 (01 Nov 2013)
 
