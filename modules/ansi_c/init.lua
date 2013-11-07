@@ -4,8 +4,8 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- The cpp module.
--- It provides utilities for editing C/C++ code.
+-- The ansi_c module.
+-- It provides utilities for editing C code.
 --
 -- ## Key Bindings
 --
@@ -18,21 +18,23 @@ local M = {}
 -- + `Shift+Enter` (`⇧↩` | `S-Enter`)
 --   Add ';' to the end of the current line and insert a newline.
 -- @field sense
---   The C/C++ [Adeptsense](textadept.adeptsense.html).
---   It loads user tags from *`_USERHOME`/modules/cpp/tags* and user apidocs
---   from *`_USERHOME`/modules/cpp/api*.
-module('_M.cpp')]]
+--   The C [Adeptsense](textadept.adeptsense.html).
+--   It loads user tags from *`_USERHOME`/modules/ansi_c/tags* and user apidocs
+--   from *`_USERHOME`/modules/ansi_c/api*.
+module('_M.ansi_c')]]
 
 -- Adeptsense.
 
-M.sense = textadept.adeptsense.new('cpp')
+M.sense = textadept.adeptsense.new('ansi_c')
 local as = textadept.adeptsense
 M.sense.ctags_kinds = {
   c = as.CLASS, d = as.FUNCTION, e = as.FIELD, f = as.FUNCTION, g = as.CLASS,
   m = as.FIELD, s = as.CLASS, t = as.CLASS
 }
-M.sense:load_ctags(_HOME..'/modules/cpp/tags', true)
-M.sense.api_files = {_HOME..'/modules/cpp/api', _HOME..'/modules/cpp/lua_api'}
+M.sense:load_ctags(_HOME..'/modules/ansi_c/tags', true)
+M.sense.api_files = {
+  _HOME..'/modules/ansi_c/api', _HOME..'/modules/ansi_c/lua_api'
+}
 M.sense.syntax.type_declarations = {
   '([%w_%.]+)[%s%*&]+%_[^%w_]', -- Foo bar, Foo *bar, Foo* bar, Foo &bar, etc.
 }
@@ -40,22 +42,22 @@ M.sense:add_trigger('.')
 M.sense:add_trigger('->')
 
 -- Load user tags and apidoc.
-if lfs.attributes(_USERHOME..'/modules/cpp/tags') then
-  M.sense:load_ctags(_USERHOME..'/modules/cpp/tags')
+if lfs.attributes(_USERHOME..'/modules/ansi_c/tags') then
+  M.sense:load_ctags(_USERHOME..'/modules/ansi_c/tags')
 end
-if lfs.attributes(_USERHOME..'/modules/cpp/api') then
-  M.sense.api_files[#M.sense.api_files + 1] = _USERHOME..'/modules/cpp/api'
+if lfs.attributes(_USERHOME..'/modules/ansi_c/api') then
+  M.sense.api_files[#M.sense.api_files + 1] = _USERHOME..'/modules/ansi_c/api'
 end
 
 -- Commands.
 
 ---
--- Table of C/C++-specific key bindings.
+-- Table of C-specific key bindings.
 -- @class table
--- @name _G.keys.cpp
-keys.cpp = {
+-- @name _G.keys.ansi_c
+keys.ansi_c = {
   [keys.LANGUAGE_MODULE_PREFIX] = {
-    m = {io.open_file, _HOME..'/modules/cpp/init.lua'},
+    m = {io.open_file, _HOME..'/modules/ansi_c/init.lua'},
   },
   ['s\n'] = function()
     buffer:line_end()
@@ -67,15 +69,11 @@ keys.cpp = {
 -- Snippets.
 
 ---
--- Table of C/C++-specific snippets.
+-- Table of C-specific snippets.
 -- @class table
--- @name _G.snippets.cpp
+-- @name _G.snippets.ansi_c
 if type(snippets) == 'table' then
-  snippets.cpp = {
-    rc = 'reinterpret_cast<%1>(%2(%<selected_text>))',
-    sc = 'static_cast<%1>(%2(%<selected_text>))',
-    cc = 'const_cast<%1>(%2(%<selected_text>))',
-
+  snippets.ansi_c = {
     -- Lua snippets
     lf = 'static int %1(function)(lua_State *%2(lua)) {\n\t%0\n\treturn 0;\n}',
     ls = 'lua_State',
