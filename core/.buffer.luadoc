@@ -773,6 +773,8 @@
 -- @field tab_indents (bool)
 --   Tabbing indents within indentation.
 --   The default value is `false`.
+-- @field tab_label (string)
+--   The buffer's tab label in the tab bar.
 -- @field tab_width (number)
 --   The number of space characters represented by a tab character.
 --   The default value is `8`.

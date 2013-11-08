@@ -20,6 +20,14 @@ key bindings.
 [key preferences]: 08_Preferences.html#Key.Bindings
 [complete list]: api/textadept.keys.html#Key.Bindings
 
+## Tab Bar
+
+The tab bar displays all of Textadept's open buffers, although it's only visible
+when two or more buffers are open. While only the GUI version supports tabs,
+Textadept's [buffer browser][] is always available and far more powerful.
+
+[buffer browser]: 04_WorkingWithFiles.html#Buffers
+
 ## Editor View
 
 Most of your time spent with Textadept is in the editor view. The GUI version

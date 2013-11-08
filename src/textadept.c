@@ -85,7 +85,7 @@ typedef GtkWidget Scintilla;
 static char *textadept_home;
 static Scintilla *focused_view, *dummy_view;
 #if GTK
-static GtkWidget *window, *menubar, *statusbar[2];
+static GtkWidget *window, *menubar, *tabbar, *statusbar[2];
 static GtkAccelGroup *accel;
 #if __APPLE__
 static GtkosxApplication *osxapp;
@@ -135,6 +135,7 @@ static lua_State *lua;
 static int quit;
 #endif
 static int initing, closing;
+static int show_tabs = TRUE, tab_sync;
 static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
            tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 static int lL_init(lua_State *, int, char **, int);
@@ -582,9 +583,7 @@ static int lce_focus(lua_State *L) {
   setCDKEntryValue(command_entry, command_text);
   char *clipboard = get_clipboard();
   GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer
-  curs_set(1);
-  activateCDKEntry(command_entry, NULL);
-  curs_set(0);
+  curs_set(1), activateCDKEntry(command_entry, NULL), curs_set(0);
   // Set Scintilla clipboard with new CDK paste buffer if necessary.
   if (strcmp(clipboard, GPasteBuffer)) set_clipboard(GPasteBuffer);
   free(clipboard), free(GPasteBuffer), GPasteBuffer = NULL;
@@ -785,13 +784,30 @@ static void l_pushdoc(lua_State *L, sptr_t doc) {
 }
 
 /**
+ * Synchronizes the tabbar after switching between Scintilla views or documents.
+ */
+static void sync_tabbar() {
+#if GTK
+  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers");
+  l_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
+  lua_gettable(lua, -2);
+  int i = lua_tointeger(lua, -1) - 1;
+  lua_pop(lua, 2); // buffers and index
+  GtkNotebook *tabs = GTK_NOTEBOOK(tabbar);
+  tab_sync = TRUE, gtk_notebook_set_current_page(tabs, i), tab_sync = FALSE;
+//#elif CURSES
+  // TODO: tabs
+#endif
+}
+
+/**
  * Change focus to the given Scintilla view.
  * Generates 'view_before_switch' and 'view_after_switch' events.
  * @param view The Scintilla view to focus.
  */
 static void goto_view(Scintilla *view) {
   if (!initing && !closing) lL_event(lua, "view_before_switch", -1);
-  l_setglobalview(lua, focused_view = view);
+  l_setglobalview(lua, focused_view = view), sync_tabbar();
   l_setglobaldoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0));
   if (!initing && !closing) lL_event(lua, "view_after_switch", -1);
 }
@@ -942,7 +958,10 @@ static int lui__index(lua_State *L) {
     lua_newtable(L);
     lua_pushinteger(L, width), lua_rawseti(L, -2, 1);
     lua_pushinteger(L, height), lua_rawseti(L, -2, 2);
-  } else lua_rawget(L, 1);
+  } else if (strcmp(key, "tabs") == 0)
+    lua_pushboolean(L, show_tabs);
+  else
+    lua_rawget(L, 1);
   return 1;
 }
 
@@ -1006,6 +1025,14 @@ static int lui__newindex(lua_State *L) {
                   "{ width, height } table expected");
     int w = l_rawgetiint(L, 3, 1), h = l_rawgetiint(L, 3, 2);
     if (w > 0 && h > 0) gtk_window_resize(GTK_WINDOW(window), w, h);
+#endif
+  } else if (strcmp(key, "tabs") == 0) {
+    show_tabs = lua_toboolean(L, 3);
+#if GTK
+    gtk_widget_set_visible(tabbar, show_tabs &&
+                           gtk_notebook_get_n_pages(GTK_NOTEBOOK(tabbar)) > 1);
+//#elif CURSES
+    // TODO: tabs
 #endif
   } else lua_rawset(L, 1);
   return 0;
@@ -1076,9 +1103,9 @@ static void lL_gotodoc(lua_State *L, Scintilla *view, int n, int relative) {
     lua_rawgeti(L, -1, (n > 0) ? n : lua_rawlen(L, -1));
   }
   sptr_t doc = l_todoc(L, -1);
-  SS(view, SCI_SETDOCPOINTER, 0, doc);
+  SS(view, SCI_SETDOCPOINTER, 0, doc), sync_tabbar();
   l_setglobaldoc(L, doc);
-  lua_pop(L, 2); // buffer table and buffers
+  lua_pop(L, 2); // buffer and buffers
 }
 
 /**
@@ -1109,7 +1136,16 @@ static void lL_removedoc(lua_State *L, sptr_t doc) {
       lua_pushvalue(L, -2), lua_rawseti(L, -5, lua_rawlen(L, -5) + 1);
       lua_pushvalue(L, -2), lua_settable(L, -5);
       lua_pushinteger(L, lua_rawlen(L, -3)), lua_settable(L, -4);
-    } else lua_pop(L, 1); // value
+    } else {
+#if GTK
+      // Remove the tab from the tabbar.
+      gtk_notebook_remove_page(GTK_NOTEBOOK(tabbar), i - 1);
+      gtk_widget_set_visible(tabbar, show_tabs && lua_rawlen(L, -2) > 2);
+//#elif CURSES
+      // TODO: tabs
+#endif
+      lua_pop(L, 1); // value
+    }
   }
   lua_pop(L, 1); // buffers
   lua_pushvalue(L, -1), lua_setfield(L, LUA_REGISTRYINDEX, "ta_buffers");
@@ -1304,8 +1340,21 @@ static int lbuf_property(lua_State *L) {
                            (!is_buffer || !newindex) ? 2 : 3);
   } else lua_pop(L, 2); // non-table, ta_properties
 
-  // If the key is a Scintilla constant, return its value.
-  if (!newindex) {
+  if (strcmp(lua_tostring(L, 2), "tab_label") == 0) {
+    // Return or update the buffer's tab label.
+    lua_getfield(L, 1, "tab_pointer");
+#if GTK
+    GtkNotebook *tabs = GTK_NOTEBOOK(tabbar);
+    GtkWidget *tab = (GtkWidget *)lua_touserdata(L, -1);
+    lua_pushstring(L, gtk_notebook_get_tab_label_text(tabs, tab));
+    if (newindex)
+      gtk_notebook_set_tab_label_text(tabs, tab, luaL_checkstring(L, 3));
+//#elif CURSES
+    // TODO: tabs
+#endif
+    return !newindex ? 1 : 0;
+  } else if (!newindex) {
+    // If the key is a Scintilla constant, return its value.
     lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants");
     lua_pushvalue(L, 2), lua_gettable(L, -2);
     if (lua_isnumber(L, -1)) return 1;
@@ -1325,6 +1374,12 @@ static void lL_adddoc(lua_State *L, sptr_t doc) {
   lua_newtable(L);
   lua_pushlightuserdata(L, (sptr_t *)doc); // TODO: can this fail?
   lua_pushvalue(L, -1), lua_setfield(L, -3, "doc_pointer");
+#if GTK
+  GtkWidget *tab = gtk_vbox_new(FALSE, 0); // placeholder in GtkNotebook
+  lua_pushlightuserdata(L, tab), lua_setfield(L, -3, "tab_pointer");
+//#elif CURSES
+  // TODO: tabs
+#endif
   l_setcfunction(L, -2, "delete", lbuffer_delete);
   l_setcfunction(L, -2, "new", lbuffer_new);
   l_setcfunction(L, -2, "text_range", lbuffer_text_range);
@@ -1354,6 +1409,20 @@ static void new_buffer(sptr_t doc) {
     lL_adddoc(lua, doc);
     SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
   }
+#if GTK
+  // Add a tab to the tabbar.
+  l_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
+  lua_getfield(lua, -1, "tab_pointer");
+  GtkWidget *tab = (GtkWidget *)lua_touserdata(lua, -1);
+  tab_sync = TRUE;
+  int i = gtk_notebook_append_page(GTK_NOTEBOOK(tabbar), tab, NULL);
+  gtk_widget_show(tab), gtk_widget_set_visible(tabbar, show_tabs && i > 0);
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(tabbar), i);
+  tab_sync = FALSE;
+  lua_pop(lua, 2); // buffer and tab_pointer
+//#elif CURSES
+  // TODO: tabs
+#endif
   l_setglobaldoc(lua, doc);
   if (!initing) lL_event(lua, "buffer_new", -1);
 }
@@ -1566,6 +1635,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
 #endif
 #if CURSES
   lua_pushboolean(L, 1), lua_setglobal(L, "CURSES");
+  show_tabs = 0; // TODO: tabs
 #endif
   const char *charset = NULL;
 #if GTK
@@ -1758,6 +1828,19 @@ static void w_quit_osx(GtkosxApplication*_, void*__) {
   gtk_main_quit();
 }
 #endif
+
+/**
+ * Signal for switching buffer tabs.
+ * When triggered by the user (i.e. not synchronizing the tabbar), switches to
+ * the specified buffer.
+ * Generates 'buffer_before_switch' and 'buffer_after_switch' events.
+ */
+static void t_tabchange(GtkNotebook*_, void*__, int page_num, void*___) {
+  if (tab_sync) return;
+  lL_event(lua, "buffer_before_switch", -1);
+  lL_gotodoc(lua, focused_view, page_num + 1, FALSE);
+  lL_event(lua, "buffer_after_switch", -1);
+}
 #endif // if GTK
 
 /**
@@ -1916,7 +1999,7 @@ static void split_view(Scintilla *view, int vertical) {
   SS(view2, SCI_SETSEL, anchor, current_pos);
   int new_first_line = SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0);
   SS(view2, SCI_LINESCROLL, first_line - new_first_line, 0);
-#elif CURSES
+//#elif CURSES
   // TODO: split.
 #endif
 }
@@ -1963,7 +2046,7 @@ static int lview__newindex(lua_State *L) {
     int size = luaL_checkinteger(L, 3);
     if (size < 0) size = 0;
     if (GTK_IS_PANED(pane)) gtk_paned_set_position(GTK_PANED(pane), size);
-#elif CURSES
+//#elif CURSES
     // TODO: set size.
 #endif
   } else lua_rawset(L, 1);
@@ -2192,6 +2275,12 @@ static void new_window() {
   menubar = gtk_menu_bar_new();
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
 
+  tabbar = gtk_notebook_new();
+  signal(tabbar, "switch-page", t_tabchange);
+  gtk_notebook_set_scrollable(GTK_NOTEBOOK(tabbar), TRUE);
+  gtk_box_pack_start(GTK_BOX(vbox), tabbar, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus(tabbar, FALSE);
+
   GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
@@ -2231,9 +2320,8 @@ static void new_window() {
   gtk_box_pack_start(GTK_BOX(hboxs), statusbar[1], FALSE, FALSE, 0);
 
   gtk_widget_show_all(window);
-  gtk_widget_hide(menubar); // hide initially
-  gtk_widget_hide(findbox); // hide initially
-  gtk_widget_hide(command_entry); // hide initially
+  gtk_widget_hide(menubar), gtk_widget_hide(tabbar); // hide initially
+  gtk_widget_hide(findbox), gtk_widget_hide(command_entry); // hide initially
 
   dummy_view = scintilla_new();
 #elif CURSES

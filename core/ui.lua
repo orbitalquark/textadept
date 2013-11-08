@@ -19,6 +19,9 @@ local ui = ui
 --   The text displayed in the buffer statusbar.
 -- @field maximized (bool)
 --   Whether or not Textadept's window is maximized.
+-- @field tabs (bool)
+--   Whether or not to display the tab bar when multiple buffers are open.
+--   The default value is `true`.
 module('ui')]]
 
 local theme = package.searchpath(not CURSES and 'light' or 'term',
@@ -262,6 +265,7 @@ local function set_title()
   local basename = buffer.filename and filename:match('[^/\\]+$') or filename
   ui.title = string.format('%s %s Textadept (%s)', basename,
                            buffer.modify and '*' or '-', filename)
+  buffer.tab_label = basename..(buffer.modify and '*' or '')
 end
 
 -- Changes Textadept title to show the buffer as being "clean" or "dirty".
