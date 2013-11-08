@@ -2,14 +2,10 @@
 
 ## Buffers
 
-One of the first things notably absent when opening multiple files in Textadept
-is the lack of a tab bar showing the open files. This design decision allowed
-Textadept to support unlimited split views from the very beginning. Having a
-single tab bar for multiple views causes confusion and having one tab bar per
-view clutters the interface.
-
-Instead of having tabs, Textadept has the buffer browser. Press `Ctrl+B` (`⌘B`
-on Mac OSX | `M-B` or `M-S-B` in curses) to open it.
+Despite the fact that Textadept can display multiple buffers with a tab bar, the
+buffer browser is usually a faster way to switch between buffers or quickly
+assess which files are open. Press `Ctrl+B` (`⌘B` on Mac OSX | `M-B` or `M-S-B`
+in curses) to display this browser.
 
 ![Buffer Browser](images/bufferbrowser.png)
 

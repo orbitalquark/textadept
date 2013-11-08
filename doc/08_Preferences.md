@@ -37,6 +37,10 @@ your *~/.textadept/init.lua*:
     textadept.editing.TYPEOVER_CHARS = false
     textadept.editing.STRIP_TRAILING_SPACES = false
 
+To always hide the tab bar:
+
+    ui.tabs = false
+
 Now suppose you want to load all of Textadept's default modules except for the
 menu. You cannot do this after-the-fact from *~/.textadept/init.lua*. Instead
 you need Textadept to load your own module rather than the default one. Copy the
