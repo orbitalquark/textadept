@@ -140,7 +140,7 @@ end
 -- Switches to the buffer whose filename is *filename* in an existing view,
 -- otherwise splitting the current view if *split* is `true` or shifting to the
 -- next or *preferred_view* view instead of staying in the current one.
--- *sloppy* indicates whether or not only the last part of *filename* is matched
+-- *sloppy* indicates whether or not to only match the last part of *filename*
 -- to a buffer's `filename`.
 -- @param filename The filename of the buffer to go to.
 -- @param split Optional flag indicating whether or not to open the buffer in a
@@ -177,7 +177,7 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
 end
 
 ---
--- Switches the editor theme to name *name* and optionally assigns the
+-- Switches the editor theme to string *name* and optionally assigns the
 -- properties contained in table *props*.
 -- User themes override Textadept's default themes when they have the same name.
 -- If *name* contains slashes, it is assumed to be an absolute path to a theme
@@ -406,7 +406,7 @@ The functions below are Lua C functions.
 local dialog
 
 ---
--- Returns the current split view structure.
+-- Returns a split table containing Textadept's current split view structure.
 -- This is primarily used in session saving.
 -- @return table of split views. Each split view entry is a table with 4
 --   fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either

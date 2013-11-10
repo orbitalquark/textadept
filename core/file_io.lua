@@ -4,7 +4,7 @@
 ---
 -- Extends Lua's `io` library with Textadept functions for working with files.
 -- @field _G.events.FILE_OPENED (string)
---   Emitted when opening a file in a new buffer.
+--   Emitted after opening a file in a new buffer.
 --   Emitted by [`open_file()`](#open_file).
 --   Arguments:
 --
@@ -91,8 +91,8 @@ io.boms = {
 io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
 ---
--- Opens *filenames*, a string filename or table of provided or user-selected
--- filenames.
+-- Opens *filenames*, a string filename or list of filenames, or the
+-- user-selected filenames.
 -- Emits a `FILE_OPENED` event.
 -- @param filenames Optional string filename or table of filenames to open. If
 --   `nil`, the user is prompted with a fileselect dialog.
@@ -229,7 +229,7 @@ function io.save_file()
 end
 
 ---
--- Saves the current buffer to file *filename* or user-specified filename.
+-- Saves the current buffer to file *filename* or the user-specified filename.
 -- Emits a `FILE_SAVED_AS` event.
 -- @param filename Optional new filepath to save the buffer to. If `nil`, the
 --   user is prompted for one.
@@ -280,8 +280,8 @@ function io.close_buffer()
 end
 
 ---
--- Closes all open buffers, prompting the user to continue with unsaved buffers,
--- and returning `true` if the user did not cancel.
+-- Closes all open buffers, prompting the user to continue if there are unsaved
+-- buffers, and returns `true` if the user did not cancel.
 -- No buffers are saved automatically. They must be saved manually.
 -- @return `true` if user did not cancel.
 -- @see io.close_buffer
@@ -343,19 +343,19 @@ end
 
 ---
 -- Prompts the user to select files to open from *paths*, a string directory
--- path or table of directory paths, using a filtered list dialog.
+-- path or list of directory paths, using a filtered list dialog.
 -- Files shown in the dialog do not match any pattern in string or table
 -- *filter*, and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A
 -- filter table contains Lua patterns that match filenames to exclude, an
--- optional `folders` sub-table that contains patterns matching folders to
+-- optional `folders` sub-table that contains patterns matching directories to
 -- exclude, and an optional `extensions` sub-table that contains raw file
 -- extensions to exclude. Any patterns starting with '!' exclude files and
--- folders that do not match the pattern that follows. The number of files in
--- the list is capped at `SNAPOPEN_MAX`.
+-- directories that do not match the pattern that follows. The number of files
+-- in the list is capped at `SNAPOPEN_MAX`.
 -- *opts* is an optional table of additional options for
 -- `ui.dialogs.filteredlist()`.
 -- @param paths String directory path or table of directory paths to search.
--- @param filter Optional filter for files and folders to exclude.
+-- @param filter Optional filter for files and directories to exclude.
 -- @param exclude_FILTER Optional flag indicating whether or not to exclude the
 --   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
 --   *filter*.

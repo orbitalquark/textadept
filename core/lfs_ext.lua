@@ -7,7 +7,7 @@ module('lfs')]]
 
 ---
 -- The filter table containing common binary file extensions and version control
--- folders to exclude when iterating over files and directories using
+-- directories to exclude when iterating over files and directories using
 -- `dir_foreach` when its `exclude_FILTER` argument is `false`.
 -- @see dir_foreach
 -- @class table
@@ -41,18 +41,18 @@ end
 
 ---
 -- Iterates over all files and sub-directories in directory *dir*, calling
--- function *f* on each file found.
--- Files *f* is called on do not match any pattern in string or table *filter*,
+-- function *f* with each file found.
+-- Files passed to *f* do not match any pattern in string or table *filter*,
 -- and, unless *exclude_FILTER* is `true`, `FILTER` as well. A filter table
 -- contains Lua patterns that match filenames to exclude, an optional `folders`
--- sub-table that contains patterns matching folders to exclude, and an optional
--- `extensions` sub-table that contains raw file extensions to exclude. Any
--- patterns starting with '!' exclude files and folders that do not match the
--- pattern that follows.
+-- sub-table that contains patterns matching directories to exclude, and an
+-- optional `extensions` sub-table that contains raw file extensions to exclude.
+-- Any patterns starting with '!' exclude files and directories that do not
+-- match the pattern that follows.
 -- @param dir The directory path to iterate over.
 -- @param f Function to call with each full file path found. If *f* returns
 --   `false` explicitly, iteration ceases.
--- @param filter Optional filter for files and folders to exclude.
+-- @param filter Optional filter for files and directories to exclude.
 -- @param exclude_FILTER Optional flag indicating whether or not to exclude the
 --   default filter `FILTER` in the search. If `false`, adds `FILTER` to
 --   *filter*.

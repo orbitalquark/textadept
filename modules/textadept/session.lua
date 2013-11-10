@@ -14,10 +14,10 @@ local M = {}
 --   Save the session when quitting.
 --   The session file saved is always `DEFAULT_SESSION`, even if a different
 --   session was loaded with [`load()`](#load).
---   The default value is `true`, but is disabled when passing the command line
---   switch `-n` or `--nosession` to Textadept.
+--   The default value is `true` unless the user passed the command line switch
+--   `-n` or `--nosession` to Textadept.
 -- @field MAX_RECENT_FILES (number)
---   The maximum number of recent files to save to session files.
+--   The maximum number of recent files to save in session files.
 --   Recent files are stored in [`io.recent_files`][].
 --   The default value is `10`.
 --
@@ -29,8 +29,8 @@ M.SAVE_ON_QUIT = true
 M.MAX_RECENT_FILES = 10
 
 ---
--- Loads session file *filename* or user-selected file, returning `true` if the
--- session file was opened and read.
+-- Loads session file *filename* or the user-selected file, returning `true` if
+-- the session file was opened and read.
 -- Textadept restores split views, opened buffers, cursor information, and
 -- recent files.
 -- @param filename Optional absolute path to the session file to load. If `nil`,
@@ -116,7 +116,7 @@ events.connect(events.ARG_NONE, function()
 end)
 
 ---
--- Saves the session to file *filename* or user-selected file.
+-- Saves the session to file *filename* or the user-selected file.
 -- Saves split views, opened buffers, cursor information, and recent files.
 -- @param filename Optional absolute path to the session file to save. If `nil`,
 --   the user is prompted for one.

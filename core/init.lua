@@ -113,9 +113,9 @@ local quit
 local reset
 
 ---
--- Calls function *f* with the given arguments after *interval* seconds and then
--- repeatedly while *f* returns `true`. A `nil` or `false` return value stops
--- repetition.
+-- Calls function *f* with the given arguments after number *interval* seconds
+-- and then repeatedly while *f* returns `true`. A `nil` or `false` return value
+-- stops repetition.
 -- @param interval The interval in seconds to call *f* after.
 -- @param f The function to call.
 -- @param ... Additional arguments to pass to *f*.

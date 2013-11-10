@@ -395,10 +395,8 @@ M.FUNCTION = 'functions'
 M.FIELD = 'fields'
 
 ---
--- Returns a full symbol (if any) and current symbol part (if any) behind the
--- caret.
--- For example: `buffer.cur` would return `'buffer'` and `'cur'`. Returns empty
--- strings instead of `nil`.
+-- Returns a full symbol or '' and current symbol part behind the caret or ''.
+-- For example: `buffer.cur` would return `'buffer'` and `'cur'`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @return symbol or `''`
 -- @return part or `''`
@@ -511,8 +509,8 @@ end
 
 ---
 -- Returns the list of completions for symbol *symbol*.
--- If either *only_fields* or *only_functions* is `true`, returns the limited
--- set of completions.
+-- If either *only_fields* or *only_functions* is `true`, returns the
+-- appropriate subset of completions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol name to get completions for.
 -- @param only_fields Optional flag indicating whether or not to return a list
@@ -570,8 +568,8 @@ end
 ---
 -- Shows an autocompletion list for the symbol behind the caret, returning
 -- `true` on success.
--- If either *only_fields* or *only_functions* is `true`, displays the limited
--- set of completions.
+-- If either *only_fields* or *only_functions* is `true`, displays the
+-- appropriate subset of completions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
 --   the current language's Adeptsense (if it exists).
 -- @param only_fields Optional flag indicating whether or not to return a list
@@ -604,8 +602,8 @@ end
 
 ---
 -- Signals character(s) *c* to trigger autocompletion.
--- If either *only_fields* or *only_functions* is `true`, displays the limited
--- set of completions.
+-- If either *only_fields* or *only_functions* is `true`, displays the
+-- appropriate subset of completions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param c The character(s) that triggers the autocompletion. You can have up
 --   to two characters.
@@ -717,7 +715,8 @@ events.connect(events.CALL_TIP_CLICK, function(position)
 end)
 
 ---
--- Loads the Ctags file *tag_file* for autocompletions.
+-- Generates a set of symbol completion lists from Ctags file *tag_file* and
+-- adds the set to the Adeptsense.
 -- *nolocations* indicates whether or not to store the location part of tags. If
 -- `true`, `sense:goto_ctag()` cannot be used with this set of tags. It is
 -- recommended to pass `-n` to `ctags` in order to use line numbers instead of
@@ -801,7 +800,8 @@ end
 
 ---
 -- Prompts the user to select a known symbol of kind *kind* to jump to.
--- *title* is the filtered list dialog prompt's title.
+-- If *kind* is `nil`, displays all known symbols. *title* is the filtered list
+-- dialog prompt's title.
 -- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
 --   the current language's Adeptsense (if it exists).
 -- @param kind Optional Ctag character kind (e.g. `'f'` for a Lua function).
