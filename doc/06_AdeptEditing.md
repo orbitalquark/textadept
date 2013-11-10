@@ -150,7 +150,7 @@ renders the entire line eligible for moving.
 Replace pane. In addition to offering the usual find and replace with "Match
 Case" and "Whole Word" options and find/replace history, Textadept supports
 finding with [Lua patterns][] and replacing with Lua captures and even Lua code!
-For example: replacing all `(%w+)` with `%(string.upper('%1'))` upper cases all
+For example: replacing all `%w+` with `%(string.upper('%0'))` upper cases all
 words in the buffer. Replacement text only recognizes Lua captures (`%`_`n`_)
 from a Lua pattern search, but always allows embedded Lua code enclosed in
 `%()`.
