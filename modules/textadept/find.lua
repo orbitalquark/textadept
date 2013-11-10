@@ -144,6 +144,7 @@ local function find_(text, next, flags, no_wrap, wrapped)
     M.captures = {table.unpack(caps, next and 3 or 4)}
     if #caps > 0 and caps[2] >= caps[1] then
       pos, e = s + caps[next and 1 or 3] - 1, s + caps[2]
+      M.captures[0] = buffer:text_range(pos, e)
       buffer:set_sel(e, pos)
     end
   end
@@ -259,7 +260,7 @@ local function replace(rtext)
   buffer:target_from_selection()
   rtext = rtext:gsub('%%%%', '\\037') -- escape '%%'
   if M.captures then
-    for i = 1, #M.captures do
+    for i = 0, #M.captures do
       rtext = rtext:gsub('%%'..i, (M.captures[i]:gsub('%%', '%%%%')))
     end
   end
