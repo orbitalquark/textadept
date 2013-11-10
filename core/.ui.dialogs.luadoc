@@ -27,14 +27,14 @@ module('ui.dialogs')
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
 --   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
+--     status instead of the button's index or the dialog's exit code. The
+--     default value is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code
 -- @usage ui.dialogs.msgbox{title = 'EOL Mode', text = 'Which EOL?',
 --   icon = 'gtk-dialog-question', button1 = 'CRLF', button2 = 'CR',
@@ -61,14 +61,14 @@ function msgbox(options) end
 --   * `no_cancel`: Do not display the "Cancel" button. The default value is
 --     `false`.
 --   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
+--     status instead of the button's index or the dialog's exit code. The
+--     default value is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code
 function ok_msgbox(options) end
 
@@ -92,14 +92,14 @@ function ok_msgbox(options) end
 --   * `no_cancel`: Do not display the "Cancel" button. The default value is
 --     `false`.
 --   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
+--     status instead of the button's index or the dialog's exit code. The
+--     default value is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code
 function yesno_msgbox(options) end
 
@@ -121,14 +121,14 @@ function yesno_msgbox(options) end
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
 --   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
+--     status instead of the button's index or the dialog's exit code. The
+--     default value is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, input text
 -- @usage ui.dialogs.inputbox{title = 'Goto Line', informative_text = 'Line:',
 --   text = '1'}
@@ -150,14 +150,14 @@ function inputbox(options) end
 --   * `no_cancel`: Do not display the "Cancel" button. The default value is
 --     `false`.
 --   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
+--     status instead of the button's index or the dialog's exit code. The
+--     default value is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, input text
 function standard_inputbox(options) end
 
@@ -179,14 +179,14 @@ function standard_inputbox(options) end
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
 --   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
+--     status instead of the button's index or the dialog's exit code. The
+--     default value is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, input text
 function secure_inputbox(options) end
 
@@ -206,14 +206,14 @@ function secure_inputbox(options) end
 --   * `no_cancel`: Do not display the "Cancel" button. The default value is
 --     `false`.
 --   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
+--     status instead of the button's index or the dialog's exit code. The
+--     default value is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, input text
 function secure_standard_inputbox(options) end
 
@@ -256,12 +256,11 @@ function filesave(options) end
 
 ---
 -- Prompts the user with a multiple-line textbox dialog defined by dialog
--- options table *options*, returning the selected button's index along with the
--- textbox text if *options*.`editable` is `true` or, if
--- *options*.`string_output` is `true`, the selected button's label along with
--- the textbox text if *options*.`editable` is also `true`.
--- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
--- dialog, returns `-1` or `"delete"`.
+-- options table *options*, returning the selected button's index or, if
+-- *options*.`string_output` is `true`, the selected button's label. If
+-- *options*.`editable` is `true`, also returns the textbox text. If the dialog
+-- timed out, returns `0` or `"timeout"`. If the user canceled the dialog,
+-- returns `-1` or `"delete"`.
 -- @param options Table of key-value option pairs for the dialog.
 --
 --   * `title`: The dialog's title text.
@@ -274,25 +273,26 @@ function filesave(options) end
 --   * `button2`: The middle button's label.
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
---   * `editable`: Allows the user to edit the text in the textbox. The default
+--   * `editable`: Allows the user to edit the textbox's text. The default value
+--     is `false`.
+--   * `focus_textbox`: Focus the textbox instead of the buttons. The default
 --     value is `false`.
---   * `focus_textbox`: Focus the textbox instead of the dialog buttons. The
---     default value is `false`.
 --   * `scroll_to`: Where to scroll the textbox text when it is not all visible.
 --     The available values are `"top"` and `"bottom"`. The default value is
 --     `"top"`.
---   * `selected`: Select all textbox text. The default value is `false`.
+--   * `selected`: Select all of the textbox's text. The default value is
+--     `false`.
 --   * `monospaced_font`: Use a monospaced font in the textbox instead of a
 --     proportional one. The default value is `false`.
 --   * `string_output`: Return the selected button's label or the dialog's exit
---     status instead of the button's index or the exit code. The default value
---     is `false`.
+--     status instead of the button's index or the dialog's exit code. The
+--     default value is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, textbox text
 -- @usage ui.dialogs.textbox{title = 'License Agreement',
 --   informative_text = 'You agree to:', text_from_file = _HOME..'/LICENSE'}
@@ -323,14 +323,14 @@ function textbox(options) end
 --     value is `1`.
 --   * `string_output`: Return the selected button's label or the dialog's exit
 --     status along with the selected item's text instead of the button's index
---     or the exit code along with the item's index. The default value is
---     `false`.
+--     or the dialog's exit code along with the item's index. The default value
+--     is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, selected item
 -- @usage ui.dialogs.dropdown{title = 'Select Encoding', width = 200,
 --   items = io.encodings, string_output = true}
@@ -359,14 +359,14 @@ function dropdown(options) end
 --     value is `1`.
 --   * `string_output`: Return the selected button's label or the dialog's exit
 --     status along with the selected item's text instead of the button's index
---     or the exit code along with the item's index. The default value is
---     `false`.
+--     or the dialog's exit code along with the item's index. The default value
+--     is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, selected item
 function standard_dropdown(options) end
 
@@ -401,14 +401,14 @@ function standard_dropdown(options) end
 --     contain at least *n* column names.
 --   * `string_output`: Return the selected button's label or the dialog's exit
 --     status along with the selected item's text instead of the button's index
---     or the exit code along with the item's index. The default value is
---     `false`.
+--     or the dialog's exit code along with the item's index. The default value
+--     is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: The number of seconds the dialog waits for the user to select
---     a button before timing out. Dialogs do not time out by default.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, selected item or list of selected items
 -- @usage ui.dialogs.filteredlist{title = 'Title', columns = {'Foo', 'Bar'},
 --   items = {'a', 'b', 'c', 'd'}}

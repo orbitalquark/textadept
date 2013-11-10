@@ -52,9 +52,9 @@ local M = ui.find
 --   The text of the "In files" label.
 --   This is primarily used for localization.
 -- @field _G.events.FIND_WRAPPED (string)
---   Emitted when a search for text wraps, either from bottom to top when
---   searching for a next occurrence, or from top to bottom when searching for a
---   previous occurrence.
+--   Emitted when a text search wraps, either from bottom to top when searching
+--   for a next occurrence, or from top to bottom when searching for a previous
+--   occurrence.
 --   This is useful for implementing a more visual or audible notice when a
 --   search wraps in addition to the statusbar message.
 module('ui.find')]]
@@ -78,15 +78,15 @@ events.FIND_WRAPPED = 'find_wrapped'
 local preferred_view
 
 ---
--- The table of Lua patterns matching files and folders to exclude when finding
--- in files.
+-- The table of Lua patterns matching files and directories to exclude when
+-- finding in files.
 -- The filter contains Lua patterns that match filenames to exclude, an optional
--- `folders` sub-table that contains patterns matching folders to exclude, and
--- an optional `extensions` sub-table that contains raw file extensions to
--- exclude. Any patterns starting with '!' exclude files and folders that do not
--- match the pattern that follows.
+-- `folders` sub-table that contains patterns matching directories to exclude,
+-- and an optional `extensions` sub-table that contains raw file extensions to
+-- exclude. Any patterns starting with '!' exclude files and directories that do
+-- not match the pattern that follows.
 -- The default value is `lfs.FILTER`, a filter for common binary file extensions
--- and version control folders.
+-- and version control directories.
 -- @see find_in_files
 -- @class table
 -- @name FILTER
@@ -207,8 +207,8 @@ function M.find_incremental(text, next, anchor)
 end
 
 ---
--- Searches directory *dir* or user-specified directory for files that match
--- search text and options and prints the results to a files found buffer.
+-- Searches directory *dir* or the user-specified directory for files that match
+-- search text and options and prints the results to a "Files Found" buffer.
 -- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
 -- search text and option flags, respectively. Use `FILTER` to set the search
 -- filter.
@@ -327,7 +327,7 @@ events.connect(events.REPLACE_ALL, replace_all)
 local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 ---
 -- Jumps to the source of the find in files search result on line number *line*
--- in the files found buffer, or if `nil`, the next or previous search result
+-- in the "Files Found" buffer, or if `nil`, the next or previous search result
 -- depending on boolean *next*.
 -- @param line The line number in the files found buffer that contains the
 --   search result to go to.

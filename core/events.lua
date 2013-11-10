@@ -71,7 +71,7 @@ local M = {}
 --
 --   * _`byte`_: The text character's byte.
 -- @field COMMAND_ENTRY_KEYPRESS (string)
---   Emitted when pressing a key in the Command Entry.
+--   Emitted when pressing a key in the command entry.
 --   If any handler returns `true`, the key is not inserted into the entry.
 --   Arguments:
 --
@@ -141,8 +141,8 @@ local M = {}
 --     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK+.
 -- @field HOTSPOT_RELEASE_CLICK (string)
---   Emitted after releasing the mouse after clicking on text that was in a
---   style with the hotspot attribute set.
+--   Emitted when releasing the mouse after clicking on text that is in a style
+--   with the hotspot attribute set.
 --   Arguments:
 --
 --   * _`position`_: The clicked text's position.
@@ -199,13 +199,13 @@ local M = {}
 --   Emitted to replace selected (found) text.
 --   Arguments:
 --
---   * _`text`_: The text to replace the selected text with.
+--   * _`text`_: The replacement text.
 -- @field REPLACE_ALL (string)
 --   Emitted to replace all occurrences of found text.
 --   Arguments:
 --
 --   * _`find_text`_: The text to search for.
---   * _`repl_text`_: The text to replace found text with.
+--   * _`repl_text`_: The replacement text.
 -- @field RESET_AFTER (string)
 --   Emitted after resetting the Lua state.
 --   Emitted by [`reset()`][].
@@ -220,12 +220,12 @@ local M = {}
 --   Emitted when buffer content, styling, selection, or scroll position
 --   changes.
 -- @field URI_DROPPED (string)
---   Emitted after dragging and dropping a URI into the view.
+--   Emitted after dragging and dropping a URI into a view.
 --   Arguments:
 --
 --   * _`text`_: The UTF-8-encoded URI dropped.
 -- @field USER_LIST_SELECTION (string)
---   Emitted after selecting an item in a user list.
+--   Emitted after selecting an item in the user list.
 --   Arguments:
 --
 --   * _`list_type`_: The *list_type* from [`buffer:user_list_show()`][].

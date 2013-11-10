@@ -35,10 +35,11 @@
 -- @field anchor (number)
 --   The anchor's position.
 -- @field annotation_lines (table, Read-only)
---   Table of the number of annotation lines for line numbers starting from
+--   Table of the number of annotation text lines for line numbers starting from
 --   zero.
 -- @field annotation_style (table)
---   Table of style numbers for annotations for line numbers starting from zero.
+--   Table of style numbers for annotation text for line numbers starting from
+--   zero.
 --   Only some style attributes are active in annotations: font,
 --   size/size_fractional, bold/weight, italics, fore, back, and character_set.
 -- @field annotation_style_offset (number)
@@ -127,7 +128,7 @@
 --   The default value is `buffer.ORDER_PRESORTED`.
 -- @field auto_c_separator (number)
 --   The byte value of the character that separates autocompletion and user list
---   items.
+--   list items.
 --   The default value is `32` (' ').
 -- @field auto_c_type_separator (number)
 --   The character byte that separates autocompletion and user list items and
@@ -149,7 +150,7 @@
 -- @field call_tip_fore_hlt (number, Write-only)
 --   The call tip's highlighted text foreground color, in "0xBBGGRR" format.
 -- @field call_tip_position (boolean)
---   Display the call tip above instead of below the text.
+--   Display the call tip above the current line instead of below it.
 --   The default value is `false`.
 -- @field call_tip_use_style (number)
 --   The pixel width of tab characters in call tips.
@@ -225,9 +226,10 @@
 --
 --   The default value is `buffer.CURSORNORMAL`.
 -- @field edge_colour (number)
---   The color, in "0xBBGGRR" format, marking long lines.
+--   The color, in "0xBBGGRR" format, of the edge or background for long lines
+--   based on `buffer.edge_mode`.
 -- @field edge_column (number)
---   The column number to start marking long lines at.
+--   The column number to mark long lines at.
 -- @field edge_mode (number)
 --   The long line mark mode.
 --
@@ -237,7 +239,7 @@
 --     Draw a vertical line whose color is [`buffer.edge_colour`](#edge_colour)
 --     at column [`buffer.edge_column`](#edge_column).
 --   * `buffer.EDGE_BACKGROUND`
---     Change the background color of characters after column
+--     Change the background color of text after column
 --     [`buffer.edge_column`](#edge_column) to
 --     [`buffer.edge_colour`](#edge_colour).
 -- @field encoding (string or nil)
@@ -248,10 +250,12 @@
 --   Disable scrolling past the last line.
 --   The default value is `true`.
 -- @field end_styled (number, Read-only)
---   The last correctly styled character's position.
+--   The current styling position or the last correctly styled character's
+--   position.
 -- @field eol_mode (number)
---   The current end of line mode. Changing the mode does not convert existing
---   line endings. Use [`buffer:convert_eols()`](#convert_eols) to do so.
+--   The current end of line mode. Changing the current mode does not convert
+--   existing line endings. Use [`buffer:convert_eols()`](#convert_eols) to do
+--   so.
 --
 --   * `buffer.EOL_CRLF`
 --     Carriage return with line feed ("\r\n").
@@ -263,17 +267,17 @@
 --   The default value is `buffer.EOL_CRLF` on Windows platforms,
 --   `buffer.EOL_LF` otherwise.
 -- @field extra_ascent (number)
---   The amount of pixel padding above line text.
+--   The amount of pixel padding above lines.
 --   The default value is `0`.
 -- @field extra_descent (number)
---   The amount of pixel padding below line text.
+--   The amount of pixel padding below lines.
 --   The default is `0`.
 -- @field filename (string)
 --   The absolute file path associated with the buffer.
 -- @field first_visible_line (number)
 --   The line number of the line at the top of the view, starting from zero.
 -- @field fold_expanded (table)
---   Table of flags indicating whether or not folds are expanded for line
+--   Table of flags indicating whether or not fold points are expanded for line
 --   numbers starting from zero.
 --   Setting expanded fold states does not toggle folds; it only updates fold
 --   margin markers. Use [`buffer:toggle_fold()`](#toggle_fold) instead.
@@ -293,7 +297,7 @@
 -- @field fold_level (table)
 --   Table of fold level bit-masks for line numbers starting from zero.
 --   Fold level masks comprise of an integer level combined with any of the
---   following bits:
+--   following bit flags:
 --
 --   * `buffer.FOLDLEVELBASE`
 --     The initial fold level.
@@ -302,8 +306,7 @@
 --   * `buffer.FOLDLEVELHEADERFLAG`
 --     The line is a header, or fold point.
 -- @field fold_parent (table, Read-only)
---   Table of parent line numbers (fold points) for child line numbers starting
---   from zero.
+--   Table of fold point line numbers for child line numbers starting from zero.
 --   A line number of `-1` means no line was found.
 -- @field h_scroll_bar (bool)
 --   Display the horizontal scroll bar.
@@ -333,7 +336,7 @@
 --   * `buffer.IV_LOOKFORWARD`
 --     Draw guides beyond the current line up to the next non-empty line's
 --     level, but with an additional level if the previous non-empty line is a
---     fold header.
+--     fold point.
 --   * `buffer.IV_LOOKBOTH`
 --     Draw guides beyond the current line up to either the level of the
 --     previous or next non-empty line, whichever is greater.
@@ -424,9 +427,8 @@
 --   Table of column indentation amounts, for line numbers starting from zero.
 -- @field line_state (table)
 --   Table of integer line states for line numbers starting from zero.
---   Line states are used for storing longer lived parse states per line. They
---   are available in addition to the 8 bits of styling information per
---   character.
+--   Line states are unaffected by changes in styling and are available in
+--   addition to the 8 bits of styling information per character.
 -- @field line_visible (table, Read-only)
 --   Table of flags indicating whether or not lines are visible for line numbers
 --   starting from zero.
@@ -449,8 +451,8 @@
 --   The pixel size of the left margin of the buffer text.
 --   The default value is `1`.
 -- @field margin_mask_n (table)
---   Table of bit-masks of markers that symbol margins can display for margin
---   numbers from zero to four.
+--   Table of bit-masks of markers whose symbols marker symbol margins can
+--   display for margin numbers from zero to four.
 --   Bit-masks are 32-bit values whose bits correspond to the 32 available
 --   markers.
 --   The default values are `0`, `bit32.bnot(buffer.MASK_FOLDERS)`, `0`, `0`,
@@ -494,14 +496,14 @@
 --   Table of margin types for margin numbers from zero to four.
 --
 --   * `buffer.MARGIN_SYMBOL`
---     A symbol margin.
+--     A marker symbol margin.
 --   * `buffer.MARGIN_NUMBER`
 --     A line number margin.
 --   * `buffer.MARGIN_BACK`
---     A symbol margin whose background color matches the default text
+--     A marker symbol margin whose background color matches the default text
 --     background color.
 --   * `buffer.MARGIN_FORE`
---     A symbol margin whose foreground color matches the default text
+--     A marker symbol margin whose foreground color matches the default text
 --     foreground color.
 --   * `buffer.MARGIN_TEXT`
 --     A text margin.
@@ -560,8 +562,8 @@
 -- @field punctuation_chars (string)
 --   The string set of characters recognized as punctuation characters.
 --   Set this only after setting [`buffer.word_chars`](#word_chars).
---   The default value is a string containing all characters not considered to
---   be whitespace or word characters.
+--   The default value is a string containing all non-word and non-whitespace
+--   characters.
 -- @field read_only (bool)
 --   Whether or not the buffer is read-only.
 --   The default value is `false`.
@@ -574,7 +576,7 @@
 -- @field rectangular_selection_caret_virtual_space (number)
 --   The amount of virtual space for the rectangular selection's caret.
 -- @field rectangular_selection_modifier (number)
---   The modifier key used in combination with a mouse drag to create a
+--   The modifier key used in combination with a mouse drag in order to create a
 --   rectangular selection.
 --
 --   * `buffer.MOD_CTRL`
@@ -587,17 +589,17 @@
 --
 --   The default value is `buffer.MOD_CTRL`.
 -- @field rgba_image_height (number)
---   The height for the RGBA image to be defined using
+--   The height of the RGBA image to be defined using
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
 -- @field rgba_image_scale (number)
---   The scale factor in percent for the RGBA image to be defined using
+--   The scale factor in percent of the RGBA image to be defined using
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
 --   This is useful on OSX with a retina display where each display unit is 2
 --   pixels: use a factor of `200` so that each image pixel is displayed using a
 --   screen pixel. The default scale, `100`, will stretch each image pixel to
 --   cover 4 screen pixels on a retina display.
 -- @field rgba_image_width (number)
---   The width for the RGBA image to be defined using
+--   The width of the RGBA image to be defined using
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image) and
 --   [`buffer:register_rgba_image()`](#register_rgba_image).
 -- @field scroll_width (number)
@@ -609,8 +611,8 @@
 --   [`buffer.scroll_width_tracking`](#scroll_width_tracking).
 --   The default value is `2000`.
 -- @field scroll_width_tracking (bool)
---   Continuously update the scroll width to match the maximum width of a
---   displayed line beyond [`buffer.scroll_width`](#scroll_width).
+--   Continuously update the horizontal scrolling width to match the maximum
+--   width of a displayed line beyond [`buffer.scroll_width`](#scroll_width).
 --   The default value is `false`.
 -- @field search_flags (number)
 --   The bit-mask of search flags used by
@@ -714,15 +716,14 @@
 -- @field style_at (table, Read-only)
 --   Table of style numbers at positions starting from zero.
 -- @field style_back (table)
---   Table of background colors, in "0xBBGGRR" format, of text within styles for
---   style numbers from `0` to `255`.
+--   Table of background colors, in "0xBBGGRR" format, of text for style numbers
+--   from `0` to `255`.
 -- @field style_bold (table)
---   Table of flags indicating whether or not text within styles has a bold font
---   face for style numbers from `0` to `255`.
+--   Table of flags indicating whether or not text is bold for style numbers
+--   from `0` to `255`.
 --   The default values are `false`.
 -- @field style_case (table)
---   Table of letter case modes of text within styles for style numbers from `0`
---   to `255`.
+--   Table of letter case modes of text for style numbers from `0` to `255`.
 --
 --   * `buffer.CASE_MIXED`
 --     Display text in normally.
@@ -733,8 +734,8 @@
 --
 --   The default values are `buffer.CASE_MIXED`.
 -- @field style_changeable (table)
---   Table of flags indicating whether or not text within styles is changeable
---   for style numbers from `0` to `255`.
+--   Table of flags indicating whether or not text is changeable for style
+--   numbers from `0` to `255`.
 --   The default values are `true`.
 --   Currently, read-only styles do not allow the caret into the range of text,
 --   but ranges containing read-only text are deletable.
@@ -744,34 +745,32 @@
 --   margin for style numbers from `0` to `255`.
 --   The default values are `false`.
 -- @field style_font (table)
---   Table of string font faces of text within styles for style numbers from
---   `0` to `255`.
+--   Table of string font names of text for style numbers from `0` to `255`.
 -- @field style_fore (table)
---   Table of foreground colors, in "0xBBGGRR" format, of text within styles for
---   style numbers from `0` to `255`.
+--   Table of foreground colors, in "0xBBGGRR" format, of text for style numbers
+--   from `0` to `255`.
 -- @field style_hot_spot (table)
---   Table of flags indicating whether or not text within styles is clickable
---   for style numbers from `0` to `255`.
+--   Table of flags indicating whether or not text is clickable for style
+--   numbers from `0` to `255`.
 --   The default values are `false`.
 -- @field style_italic (table)
---   Table of flags indicating whether or not text within styles has an italic
---   font face for style numbers from `0` to `255`.
+--   Table of flags indicating whether or not text is italic for style numbers
+--   from `0` to `255`.
 --   The default values are `false`.
 -- @field style_name (table, Read-only)
 --   Table of style names for style numbers from `0` to `255`.
 -- @field style_size (table)
---   Table of font sizes of text within styles for style numbers from `0` to
---   `255`.
+--   Table of font sizes of text for style numbers from `0` to `255`.
 -- @field style_underline (table)
---   Table of flags indicating whether or not text within styles has an
---   underlined font face for style numbers from `0` to `255`.
+--   Table of flags indicating whether or not text is underlined for style
+--   numbers from `0` to `255`.
 --   The default values are `false`.
 -- @field style_visible (table)
---   Table of flags indicating whether or not text within styles is visible for
---   style numbers from `0` to `255`.
+--   Table of flags indicating whether or not text is visible for style numbers
+--   from `0` to `255`.
 --   The default values are `true`.
 -- @field tab_indents (bool)
---   Tabbing indents within indentation.
+--   Indent text when tabbing within indentation.
 --   The default value is `false`.
 -- @field tab_label (string)
 --   The buffer's tab label in the tab bar.
@@ -779,7 +778,7 @@
 --   The number of space characters represented by a tab character.
 --   The default value is `8`.
 -- @field tag (table, Read-only)
---   List of values for tag match numbers from a regular expression search.
+--   List of capture text for capture numbers from a regular expression search.
 -- @field target_end (number)
 --   The position of the end of the target range.
 --   This is also set by a successful
@@ -800,8 +799,8 @@
 --   the undo buffer with the buffer text.
 --   The default value is `true`.
 -- @field use_tabs (bool)
---   Use tabs instead of spaces in indentation. Changing the setting does not
---   convert existing indentation. Use
+--   Use tabs instead of spaces in indentation. Changing the current setting
+--   does not convert existing indentation. Use
 --   [`textadept.editing.convert_indentation()`][] to do so.
 --   The default value is `true`.
 -- @field v_scroll_bar (bool)
@@ -811,14 +810,14 @@
 --   Display end of line characters.
 --   The default value is `false`.
 -- @field view_ws (number)
---   The whitespace character visibility mode.
+--   The whitespace visibility mode.
 --
 --   * `buffer.WS_INVISIBLE`
 --     Whitespace is invisible.
 --   * `buffer.WS_VISIBLEALWAYS`
---     Display all whitespace as dots and arrows.
+--     Display all space characters as dots and tab characters as arrows.
 --   * `buffer.WS_VISIBLEAFTERINDENT`
---     Display only non-indentation whitespace as dots and arrows.
+--     Display only non-indentation spaces and tabs as dots and arrows.
 --
 --   The default value is `buffer.WS_INVISIBLE`.
 -- @field virtual_space_options (number)
@@ -831,8 +830,8 @@
 --   * `buffer.VS_USERACCESSIBLE`
 --     Enable virtual space.
 --
---   When virtual space is enabled, the caret may move into the space past the
---   ends of lines.
+--   When virtual space is enabled, the caret may move into the space past end
+--   of line characters.
 --   The default value is `buffer.VS_NONE`.
 -- @field whitespace_chars (string)
 --   The string set of characters recognized as whitespace characters.
@@ -853,9 +852,9 @@
 --   * `buffer.WRAPINDENT_FIXED`
 --     Indent wrapped lines by [`buffer.wrap_start_indent`](#wrap_start_indent).
 --   * `buffer.WRAPINDENT_SAME`
---     Indent wrapped lines the same as the first line.
+--     Indent wrapped lines the same amount as the first line.
 --   * `buffer.WRAPINDENT_INDENT`
---     Indent wrapped lines one more level than the first line.
+--     Indent wrapped lines one more level than the level of the first line.
 --
 --   The default value is `buffer.WRAPINDENT_FIXED`.
 -- @field wrap_mode (number)
@@ -891,7 +890,7 @@
 --   The wrapped line visual flag drawing mode.
 --
 --   * `buffer.WRAPVISUALFLAGLOC_DEFAULT`
---     Draw the visual flag near the right border.
+--     Draw the visual flag near the view's right margin.
 --   * `buffer.WRAPVISUALFLAGLOC_END_BY_TEXT`
 --     Draw the visual flag near text at the end of the line.
 --   * `buffer.WRAPVISUALFLAGLOC_START_BY_TEXT`
@@ -899,7 +898,7 @@
 --
 --   The default value is `buffer.WRAPVISUALFLAGLOC_DEFAULT`.
 -- @field x_offset (number)
---   The horizontal scroll position in pixels.
+--   The horizontal scroll pixel position.
 --   A value of `0` is the normal position with the first text column visible at
 --   the left of the view.
 -- @field zoom (number)
@@ -952,7 +951,7 @@ function annotation_clear_all(buffer) end
 function append_text(buffer, text) end
 
 ---
--- Returns whether or not the autocompletion or user list is visible.
+-- Returns whether or not an autocompletion or user list is visible.
 -- @param buffer The buffer.
 -- @return bool
 function auto_c_active(buffer) end
@@ -976,11 +975,10 @@ function auto_c_pos_start(buffer) end
 
 ---
 -- Selects the first item in the autocompletion or user list that starts with
--- *string*, considering case sensitiveness based on
--- `buffer.auto_c_ignore_case`.
+-- string *prefix*, using case sensitivity setting `buffer.auto_c_ignore_case`.
 -- @param buffer The buffer.
--- @param string The item in the list to select.
-function auto_c_select(buffer, string) end
+-- @param prefix The item in the list to select.
+function auto_c_select(buffer, prefix) end
 
 ---
 -- Displays an autocompletion list constructed from string *item_list*, whose
@@ -1075,7 +1073,7 @@ function call_tip_active(buffer) end
 function call_tip_cancel(buffer) end
 
 ---
--- Returns the position where the call tip displayed at.
+-- Returns the call tip's display position.
 -- @param buffer The buffer.
 -- @return number
 function call_tip_pos_start(buffer) end
@@ -1091,8 +1089,8 @@ function call_tip_set_hlt(buffer, start_pos, end_pos) end
 ---
 -- Displays a call tip containing string *text* for the word behind position
 -- *pos*.
--- Any "\001" or "\002" bytes in *text* are replaced by arrow visuals,
--- indicating the word has more than one call tip.
+-- Any "\001" or "\002" bytes in *text* are replaced by up or down arrow
+-- visuals, respectively, indicating the word has more than one call tip.
 -- @param buffer The buffer.
 -- @param pos The position in *buffer* to show the call tip at.
 -- @param text The call tip text to show.
@@ -1111,14 +1109,14 @@ function can_redo(buffer) end
 function can_undo(buffer) end
 
 ---
--- Cancels the active call tip, autocompletion or user list, selection mode,
+-- Cancels the active selection mode, autocompletion or user list, call tip,
 -- etc.
 -- @param buffer The buffer.
 function cancel(buffer) end
 
 ---
 -- Instructs the lexer to reprocess the range of text between *start_pos* and
--- *end_pos*.
+-- *end_pos* due to a change in state.
 -- @param buffer The buffer.
 -- @param start_pos The start position of the range of text in *buffer* to
 --   reprocess.
@@ -1142,23 +1140,6 @@ function char_left_extend(buffer) end
 -- the new position.
 -- @param buffer The buffer.
 function char_left_rect_extend(buffer) end
-
----
--- Returns the position closest to view coordinates *x* and *y*.
--- @param buffer The buffer.
--- @param x The x-coordinate in the view to use.
--- @param y The y-coordinate in the view to use.
--- @return number
-function char_position_from_point(buffer, x, y) end
-
----
--- Returns the position closest to view coordinates *x* and *y*, or `-1` if the
--- point is outside the window or not close to any text.
--- @param buffer The buffer.
--- @param x The x-coordinate in the view to use.
--- @param y The y-coordinate in the view to use.
--- @return number
-function char_position_from_point_close(buffer, x, y) end
 
 ---
 -- Moves the caret right one character.
@@ -1222,8 +1203,8 @@ function clear_selections(buffer) end
 function colourise(buffer, start_pos, end_pos) end
 
 ---
--- Returns the line number of the next contracted fold header line starting at
--- *line_start*, or `-1`.
+-- Returns the line number of the next contracted fold point starting at line
+-- number *line_start*, or `-1`.
 -- @param buffer The buffer.
 -- @param line_start The line number in *buffer* to start at.
 -- @return number
@@ -1266,7 +1247,8 @@ function copy_range(buffer, start_pos, end_pos) end
 function copy_text(buffer, text) end
 
 ---
--- Returns the number of whole characters between positions *start_pos* and
+-- Returns the number of whole characters, taking multi-byte characters into
+-- account, between positions *start_pos* and
 -- *end_pos*.
 -- @param buffer The buffer.
 -- @param start_pos The start position of the range of text in *buffer* to start
@@ -1382,29 +1364,18 @@ function empty_undo_buffer(buffer) end
 function end_undo_action(buffer) end
 
 ---
--- Ensures line number *line* is visible by expanding any fold header lines
--- hiding it.
+-- Ensures line number *line* is visible by expanding any fold points hiding it.
 -- @param buffer The buffer.
 -- @param line The line number in *buffer* to ensure visible.
 function ensure_visible(buffer, line) end
 
 ---
--- Ensures line number *line* is visible by expanding any fold header lines
--- hiding it and applies the vertical caret policy set with
+-- Ensures line number *line* is visible by expanding any fold points hiding it
+-- based on the vertical caret policy previously defined in
 -- `buffer:set_visible_policy()`.
 -- @param buffer The buffer.
 -- @param line The line number in *buffer* to ensure visible.
 function ensure_visible_enforce_policy(buffer, line) end
-
----
--- Expands the fold states of the fold header on line number *line* and its
--- children with fold level *level*.
--- @param buffer The buffer.
--- @param line The line number in *buffer* to expand the folds for.
--- @param level The previous fold level of *line*, not the current one. This is
---   because this function is used to respond to changes in a line's fold level
---   or fold header status, so a new fold level has already been set.
-function expand_children(buffer, line, level) end
 
 ---
 -- Returns the position of column number *column* on line number *line*, taking
@@ -1416,9 +1387,8 @@ function expand_children(buffer, line, level) end
 function find_column(buffer, line, column) end
 
 ---
--- Expands, contracts, or toggles the fold states of all fold headers, depending
--- on *action*.
--- When toggling, the state of the first fold header determines whether to
+-- Expands, contracts, or toggles all fold points, depending on *action*.
+-- When toggling, the state of the first fold point determines whether to
 -- expand or contract.
 -- @param buffer The buffer.
 -- @param action The fold action to perform. Valid values are:
@@ -1428,8 +1398,8 @@ function find_column(buffer, line, column) end
 function fold_all(buffer, action) end
 
 ---
--- Expands, contracts, or toggles the fold states of the fold header on line
--- number *line* and its children, depending on *action*.
+-- Expands, contracts, or toggles the fold point on line number *line* as well
+-- as all of its children, depending on *action*.
 -- @param buffer The buffer.
 -- @param line The line number in *buffer* to set the fold states for.
 -- @param action The fold action to perform. Valid values are:
@@ -1439,8 +1409,8 @@ function fold_all(buffer, action) end
 function fold_children(buffer, line, action) end
 
 ---
--- Expands, contracts, or toggles the fold state of the fold header on line
--- number *line*, depending on *action*.
+-- Expands, contracts, or toggles the fold point on line number *line*,
+-- depending on *action*.
 -- @param buffer The buffer.
 -- @param line The line number in *buffer* to set the fold state for.
 -- @param action The fold action to perform. Valid values are:
@@ -1475,8 +1445,8 @@ function get_hotspot_active_fore(buffer) end
 
 ---
 -- Returns the line number of the last line after line number *start_line* whose
--- fold level is greater than *level* or the level of *start_line* if *level* is
--- `-1`.
+-- fold level is greater than *level* or, if *level* is `-1`, the level of
+-- *start_line*.
 -- @param buffer The buffer.
 -- @param start_line The line number in *buffer* of a header line.
 -- @param level The fold level, or `-1` for the level of *start_line*.
@@ -1629,8 +1599,8 @@ function indicator_fill_range(buffer, pos, fill_length) end
 function indicator_start(buffer, indicator, pos) end
 
 ---
--- Inserts string *text* at position *pos* or the caret position if *pos* is
--- `-1`, removing any selections.
+-- Inserts string *text* at position *pos*, removing any selections.
+-- If *pos* is `-1`, inserts *text* at the caret position.
 -- If the caret is after the *pos*, it is moved appropriately, but not scrolled
 -- into view.
 -- @param buffer The buffer.
@@ -1717,7 +1687,7 @@ function line_end_wrap(buffer) end
 function line_end_wrap_extend(buffer) end
 
 ---
--- Returns the line number containing position *pos*.
+-- Returns the line number of the line containing position *pos*.
 -- Returns `0` if *pos* is less than 0 or `buffer.line_count` if *pos* is
 -- greater than `buffer.length`.
 -- @param buffer The buffer.
@@ -1726,7 +1696,7 @@ function line_end_wrap_extend(buffer) end
 function line_from_position(buffer, pos) end
 
 ---
--- Returns the number of characters on line number *line*, including end of line
+-- Returns the number of bytes on line number *line*, including end of line
 -- characters.
 -- To get line length excluding end of line characters, use
 -- `buffer.line_end_position[line] - buffer:position_from_line(line)`.
@@ -1736,7 +1706,7 @@ function line_from_position(buffer, pos) end
 function line_length(buffer, line) end
 
 ---
--- Scroll right *columns* columns and down *lines* lines.
+-- Scrolls the buffer right *columns* columns and down *lines* lines.
 -- Negative values are allowed.
 -- @param buffer The buffer.
 -- @param columns The number of columns to scroll horizontally.
@@ -1744,12 +1714,12 @@ function line_length(buffer, line) end
 function line_scroll(buffer, columns, lines) end
 
 ---
--- Scroll the buffer down one line, keeping the caret visible.
+-- Scrolls the buffer down one line, keeping the caret visible.
 -- @param buffer The buffer.
 function line_scroll_down(buffer) end
 
 ---
--- Scroll the buffer up one line, keeping the caret visible.
+-- Scrolls the buffer up one line, keeping the caret visible.
 -- @param buffer The buffer.
 function line_scroll_up(buffer) end
 
@@ -1794,7 +1764,7 @@ function lines_split(buffer, pixel_width) end
 function lower_case(buffer) end
 
 ---
--- Clears the text in text margins on all lines.
+-- Clears all text in text margins.
 -- @param buffer The buffer.
 function margin_text_clear_all(buffer) end
 
@@ -1810,8 +1780,8 @@ function margin_text_clear_all(buffer) end
 function marker_add(buffer, line, marker_num) end
 
 ---
--- Adds the markers specified in the marker bit-mask *marker_mask* to line
--- number *line*.
+-- Adds the markers specified in marker bit-mask *marker_mask* to line number
+-- *line*.
 -- The first bit is set to add marker number 0, the second bit for marker number
 -- 1, and so on up to marker number 31.
 -- @param buffer The buffer.
@@ -1821,9 +1791,9 @@ function marker_add(buffer, line, marker_num) end
 function marker_add_set(buffer, line, marker_mask) end
 
 ---
--- Associates marker number *marker_num*, in the range of `0` to `31`, with
--- symbol *marker_symbol*.
--- *marker_symbol* is shown in symbol margins next to lines marked with
+-- Assigns marker symbol *marker_symbol* to marker number *marker_num*, in the
+-- range of `0` to `31`.
+-- *marker_symbol* is shown in marker symbol margins next to lines marked with
 -- *marker_num*.
 -- @param buffer The buffer.
 -- @param marker_num The marker number in the range of `0` to `31` to set
@@ -1835,8 +1805,9 @@ function marker_define(buffer, marker_num, marker_symbol) end
 ---
 -- Associates marker number *marker_num*, in the range of `0` to `31`, with XPM
 -- image *pixmap*.
--- The `buffer.MARK_PIXMAP` symbol must be associated with *marker_num*.
--- The image is shown in symbol margins next to lines marked with *marker_num*.
+-- The `buffer.MARK_PIXMAP` marker symbol must be assigned to *marker_num*.
+-- The image is shown in marker symbol margins next to lines marked with
+-- *marker_num*.
 -- @param buffer The buffer.
 -- @param marker_num The marker number in the range of `0` to `31` to define
 --   pixmap *pixmap* for.
@@ -1850,7 +1821,7 @@ function marker_define_pixmap(buffer, marker_num, pixmap) end
 -- `buffer.rgba_image_height`, must have already been defined. *pixels* is a
 -- sequence of 4 byte pixel values (red, blue, green, and alpha) defining the
 -- image line by line starting at the top-left pixel.
--- The `buffer.MARK_RGBAIMAGE` symbol must be associated with *marker_num*.
+-- The `buffer.MARK_RGBAIMAGE` marker symbol must be assigned to *marker_num*.
 -- The image is shown in symbol margins next to lines marked with *marker_num*.
 -- RGBA image markers use the `buffer.MARK_RGBAIMAGE` marker symbol.
 -- @param buffer The buffer.
@@ -1915,7 +1886,7 @@ function marker_get(buffer, line) end
 function marker_line_from_handle(buffer, handle) end
 
 ---
--- Returns the first line number starting at line number *start_line* that has
+-- Returns the first line number, starting at line number *start_line*, that has
 -- had all of the markers represented by marker bit-mask *marker_mask* added to
 -- it, or `-1` if no line was found.
 -- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc., up to marker 31.
@@ -1927,7 +1898,7 @@ function marker_line_from_handle(buffer, handle) end
 function marker_next(buffer, start_line, marker_mask) end
 
 ---
--- Returns the last line number before or on line number *start_line* that has
+-- Returns the last line number, before or on line number *start_line*, that has
 -- had all of the markers represented by marker bit-mask *marker_mask* added to
 -- it, or `-1` if no line was found.
 -- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc., up to marker 31.
@@ -1939,7 +1910,7 @@ function marker_next(buffer, start_line, marker_mask) end
 function marker_previous(buffer, start_line, marker_mask) end
 
 ---
--- Returns the symbol defined for marker number *marker_num*, in the range of
+-- Returns the symbol assigned to marker number *marker_num*, in the range of
 -- `0` to `31`, used in `buffer:marker_define()`,
 -- `buffer:marker_define_pixmap()`, or `buffer:marker_define_rgba_image()`.
 -- @param buffer The buffer.
@@ -2035,22 +2006,8 @@ function para_up_extend(buffer) end
 function paste(buffer) end
 
 ---
--- Returns the x-coordinate in the view of position *pos*.
--- @param buffer The buffer.
--- @param pos The position in *buffer* to get the x-coordinate in the view of.
--- @return number
-function point_x_from_position(buffer, pos) end
-
----
--- Returns the y-coordinate in the view of position *pos*.
--- @param buffer The buffer.
--- @param pos The position in *buffer* to get the y-coordinate in the view of.
--- @return number
-function point_y_from_position(buffer, pos) end
-
----
 -- Returns the position of the next character after position *pos*, taking
--- multi-byte characters into account, or `buffer.length - 1`.
+-- multi-byte characters into account, or `buffer.length`.
 -- @param buffer The buffer.
 -- @param pos The position in *buffer* to get the position after from.
 function position_after(buffer, pos) end
@@ -2110,8 +2067,8 @@ function release_all_extended_styles(buffer) end
 function replace_sel(buffer, text) end
 
 ---
--- Replaces the text in the target range with string *text* without modifying
--- any selections or scrolling the view.
+-- Replaces the text in the target range with string *text* sans modifying any
+-- selections or scrolling the view.
 -- Setting the target and calling this function with an empty string is another
 -- way to delete text.
 -- @param buffer The buffer.
@@ -2121,7 +2078,7 @@ function replace_target(buffer, text) end
 
 ---
 -- Replaces the text in the target range with string *text* but first replaces
--- any "\d" sequences with the value of tag match number *d* from the regular
+-- any "\d" sequences with the text of capture number *d* from the regular
 -- expression (or the entire match for *d* = 0), and then returns the
 -- replacement text's length.
 -- @param buffer The buffer.
@@ -2135,7 +2092,7 @@ function replace_target_re(buffer, text) end
 function rotate_selection(buffer) end
 
 ---
--- Scrolls the caret into view based on the policies set with
+-- Scrolls the caret into view based on the policies previously defined in
 -- `buffer:set_x_caret_policy()` and `buffer:set_y_caret_policy()`.
 -- @param buffer The buffer.
 -- @see set_x_caret_policy
@@ -2231,7 +2188,8 @@ function set_chars_default(buffer) end
 function set_empty_selection(buffer, pos) end
 
 ---
--- Overrides the fold margin's default color with *color*, in "0xBBGGRR" format,
+-- Overrides the fold margin's default color with color *color*, in "0xBBGGRR"
+-- format,
 -- if *use_setting* is `true`.
 -- @param buffer The buffer.
 -- @param use_setting Whether or not to use *color*.
@@ -2239,7 +2197,7 @@ function set_empty_selection(buffer, pos) end
 function set_fold_margin_colour(buffer, use_setting, color) end
 
 ---
--- Overrides the fold margin's default highlight color with *color*, in
+-- Overrides the fold margin's default highlight color with color *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The buffer.
 -- @param use_setting Whether or not to use *color*.
@@ -2247,16 +2205,16 @@ function set_fold_margin_colour(buffer, use_setting, color) end
 function set_fold_margin_hi_colour(buffer, use_setting, color) end
 
 ---
--- Overrides the default background color of active hotspots with *color*, in
--- "0xBBGGRR" format, if *use_setting* is `true`.
+-- Overrides the default background color of active hotspots with color *color*,
+-- in "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The buffer.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
 function set_hotspot_active_back(buffer, use_setting, color) end
 
 ---
--- Overrides the default foreground color of active hotspots with *color*, in
--- "0xBBGGRR" format, if *use_setting* is `true`.
+-- Overrides the default foreground color of active hotspots with color *color*,
+-- in "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The buffer.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
@@ -2279,7 +2237,7 @@ function set_save_point(buffer) end
 function set_sel(buffer, start_pos, end_pos) end
 
 ---
--- Overrides the selection's default background color with *color*, in
+-- Overrides the selection's default background color with color *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The buffer.
 -- @param use_setting Whether or not to use *color*.
@@ -2287,7 +2245,7 @@ function set_sel(buffer, start_pos, end_pos) end
 function set_sel_back(buffer, use_setting, color) end
 
 ---
--- Overrides the selection's default foreground color with *color*, in
+-- Overrides the selection's default foreground color with color *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The buffer.
 -- @param use_setting Whether or not to use *color*.
@@ -2319,9 +2277,9 @@ function set_styling(buffer, length, style) end
 function set_text(buffer, text) end
 
 ---
--- Sets the visible policy bit-mask *visible_policy* for displaying lines using
--- `buffer:ensure_visible_enforce_policy()` to *visible_slop* number of lines
--- from the bottom of the view.
+-- Sets the visible policy bit-mask *visible_policy* to *visible_slop* number of
+-- lines away from the vertical margins when redisplaying hidden or folded lines
+-- using `buffer:ensure_visible_enforce_policy()`.
 -- It is similar in operation to `buffer:set_y_caret_policy()`.
 -- @param buffer The buffer.
 -- @param visible_policy The combination of `buffer.VISIBLE_SLOP` and
@@ -2330,16 +2288,16 @@ function set_text(buffer, text) end
 function set_visible_policy(buffer, visible_policy, visible_slop) end
 
 ---
--- Overrides the background color of whitespace with *color*, in "0xBBGGRR"
--- format, if *use_setting* is `true`.
+-- Overrides the background color of whitespace with color *color*, in
+-- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param buffer The buffer.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
 function set_whitespace_back(buffer, use_setting, color) end
 
 ---
--- Overrides the foreground color of whitespace with *color*, in "0xBBGGRR"
--- format, if *use_setting* is `true`.
+-- Overrides the foreground color of whitespace with color *color*, in
+-- "0xBBGGRR" format, if *use_setting* is `true`.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
 function set_whitespace_fore(buffer, use_setting, color) end
@@ -2449,16 +2407,16 @@ function text_height(buffer, line) end
 function text_width(buffer, style_num, text) end
 
 ---
--- Cycles between caret sticky option settings `buffer.CARETSTICKY_ON`,
+-- Cycles between `buffer.caret_sticky` option settings `buffer.CARETSTICKY_ON`,
 -- `buffer.CARETSTICKY_WHITESPACE`, and `buffer.CARETSTICKY_OFF`.
 -- @param buffer The buffer.
 -- @see caret_sticky
 function toggle_caret_sticky(buffer) end
 
 ---
--- Toggles the fold state of the fold header on line number *line* between
--- expanded, where all of its child lines are displayed, and contracted, where
--- all of its child lines are hidden.
+-- Toggles the fold point on line number *line* between expanded, where all of
+-- its child lines are displayed, and contracted, where all of its child lines
+-- are hidden.
 -- @param buffer The buffer.
 -- @param line The line number in *buffer* to toggle the fold on.
 function toggle_fold(buffer, line) end
@@ -2652,7 +2610,8 @@ function word_right_extend(buffer) end
 function word_start_position(buffer, pos, only_word_chars) end
 
 ---
--- Returns the number of wrapped lines needed to display line number *line*.
+-- Returns the number of wrapped lines needed to fully display line number
+-- *line*.
 -- @param buffer The buffer.
 -- @param line The line number in *buffer* to use.
 -- @return number
@@ -2703,8 +2662,8 @@ function text_range(buffer, start_pos, end_pos) end
 function get_lexer(buffer, current) end
 
 ---
--- Associates lexer name *lexer* or auto-detected lexer name with the buffer and
--- then loads the appropriate language module if the module exists.
+-- Associates lexer name *lexer* or the auto-detected lexer name with the buffer
+-- and then loads the appropriate language module if the module exists.
 -- @param buffer The buffer.
 -- @param lexer Optional string lexer name to set. If `nil`, attempts to
 --   auto-detect the buffer's lexer.
@@ -2766,6 +2725,8 @@ function set_lexer(buffer, lexer) end
 --   * allocate_sub_styles+
 --   * assign_cmd_key
 --   * can_paste
+--   * char_position_from_point
+--   * char_position_from_point_close
 --   * clear_cmd_key
 --   * clear_all_cmd_keys
 --   * create_document
@@ -2773,6 +2734,7 @@ function set_lexer(buffer, lexer) end
 --   * describe_key_word_sets
 --   * describe_property
 --   * encoded_from_utf8
+--   * expand_children
 --   * find_indicator_flash
 --   * find_indicator_hide
 --   * find_indicator_show
@@ -2785,6 +2747,8 @@ function set_lexer(buffer, lexer) end
 --   * indicator_value_at
 --   * load_lexer_library
 --   * null
+--   * point_x_from_position
+--   * point_y_from_position
 --   * position_from_point
 --   * position_from_point_close
 --   * private_lexer_call

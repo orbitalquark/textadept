@@ -22,7 +22,7 @@ local M = {}
 --   Typeover characters are defined in the [`typeover_chars`](#typeover_chars)
 --   table.
 -- @field AUTOINDENT (bool)
---   Match the previous line's indentation level when inserting a new line.
+--   Match the previous line's indentation level after inserting a new line.
 --   The default value is `true`.
 -- @field STRIP_TRAILING_SPACES (bool)
 --   Strip trailing whitespace before saving files.
@@ -202,9 +202,9 @@ function M.match_brace(select)
 end
 
 ---
--- Displays an autocompletion list, built from the set of string words *words*
--- and existing words in the buffer, for the word behind the caret, returning
--- `true` if completions were found.
+-- Displays an autocompletion list, built from the set of words in string
+-- *words* and existing words in the buffer, for the word behind the caret,
+-- returning `true` if completions were found.
 -- @param words Optional list of words considered to be in the buffer,
 --   even if they are not. Words may contain [registered images][].
 --
@@ -305,7 +305,7 @@ function M.block_comment()
 end
 
 ---
--- Moves the caret to the beginning of line number *line* or user-specified
+-- Moves the caret to the beginning of line number *line* or the user-specified
 -- line, ensuring the line is visible.
 -- @param line Optional line number to go to. If `nil`, the user is prompted for
 --   one.
@@ -325,8 +325,8 @@ end
 
 ---
 -- Transposes characters intelligently.
--- If the caret is at the end of a line, the two characters before the caret are
--- transposed. Otherwise, the characters to the left and right are.
+-- If the caret is at the end of a line, transposes the two characters before
+-- the caret. Otherwise, the characters to the left and right are.
 -- @name transpose_chars
 function M.transpose_chars()
   if buffer.length == 0 then return end

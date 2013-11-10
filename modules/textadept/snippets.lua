@@ -123,9 +123,10 @@ local function new_snippet(text, trigger)
 end
 
 ---
--- Inserts snippet text *text* or the snippet associated with the trigger behind
--- the caret as a snippet, or goes to the active snippet's next placeholder,
--- ultimately only returning `false` if no action was taken.
+-- Inserts snippet text *text* or the snippet assigned to the trigger word
+-- behind the caret or, if a snippet is active, goes to the active snippet's
+-- next placeholder.
+-- Returns `false` if no action was taken.
 -- @param text Optional snippet text to insert. If `nil`, attempts to insert a
 --   new snippet based on the trigger, the word behind caret, and the current
 --   lexer.
@@ -151,7 +152,8 @@ end
 
 ---
 -- Jumps back to the previous snippet placeholder, reverting any changes from
--- the current one, but returns `false` only if no snippet is active.
+-- the current one.
+-- Returns `false` if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
 -- @name _previous
 function M._previous()
