@@ -27,6 +27,11 @@
 --   Arguments:
 --
 --   * _`filename`_: The new filename.
+-- @field _G.events.FILE_CHANGED (string)
+--   Emitted when Textadept detects that a file was externally modified.
+--   Arguments:
+--
+--   * _`filename`_: The filename externally modified.
 -- @field SNAPOPEN_MAX (number)
 --   The maximum number of files to list in the snapopen dialog.
 --   The default value is `1000`.
@@ -38,6 +43,7 @@ events.FILE_OPENED = 'file_opened'
 events.FILE_BEFORE_SAVE = 'file_before_save'
 events.FILE_AFTER_SAVE = 'file_after_save'
 events.FILE_SAVED_AS = 'file_saved_as'
+events.FILE_CHANGED = 'file_changed'
 
 io.SNAPOPEN_MAX = 1000
 
@@ -294,27 +300,33 @@ function io.close_all_buffers()
   return io.close_buffer() -- the last one
 end
 
--- Prompts the user to reload the current file if it has been modified outside
--- of Textadept.
+-- Detects if the current file has been externally modified and, if so, emits a
+-- `FILE_CHANGED` event.
 local function update_modified_file()
   if not buffer.filename then return end
   local mod_time = lfs.attributes(buffer.filename, 'modification')
   if not mod_time or not buffer.mod_time then return end
   if buffer.mod_time < mod_time then
     buffer.mod_time = mod_time
-    local msg = string.format('"%s"\n%s',
-                              buffer.filename:iconv('UTF-8', _CHARSET),
-                              _L['has been modified. Reload it?'])
-    local button = ui.dialogs.msgbox{
-      title = _L['Reload?'], text = _L['Reload modified file?'],
-      informative_text = msg, icon = 'gtk-dialog-question',
-      button1 = _L['_Yes'], button2 = _L['_No']
-    }
-    if button == 1 then io.reload_file() end
+    events.emit(events.FILE_CHANGED)
   end
 end
 events_connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
 events_connect(events.VIEW_AFTER_SWITCH, update_modified_file)
+
+-- Prompts the user to reload the current file if it has been externally
+-- modified.
+events_connect(events.FILE_CHANGED, function(filename)
+  local msg = string.format('"%s"\n%s',
+                            buffer.filename:iconv('UTF-8', _CHARSET),
+                            _L['has been modified. Reload it?'])
+  local button = ui.dialogs.msgbox{
+    title = _L['Reload?'], text = _L['Reload modified file?'],
+    informative_text = msg, icon = 'gtk-dialog-question',
+    button1 = _L['_Yes'], button2 = _L['_No']
+  }
+  if button == 1 then io.reload_file() end
+end)
 
 -- Closes the initial "Untitled" buffer.
 events_connect(events.FILE_OPENED, function(filename)
