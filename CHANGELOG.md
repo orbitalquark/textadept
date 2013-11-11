@@ -2,10 +2,48 @@
 
 [Atom Feed][]
 
-**Please consider making a [donation][]. It really helps.**
+**Please consider making a [donation][] or purchasing the [book][] to help fund
+Textadept's continuous development. It really helps.**
 
 [Atom Feed]: feed
 [donation]: http://gum.co/textadept
+[book]: MEDIA.html#Book
+
+## 7.1 (11 Nov 2013)
+
+Download:
+
+* [Textadept 7.1 -- Win32][]
+* [Textadept 7.1 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.1 -- Linux][]
+* [Textadept 7.1 -- Linux x86_64][]
+* [Textadept 7.1 -- Modules][]
+
+Bugfixes:
+
+* Textbox dialogs' `scroll_to` option works correctly.
+* Emit autocompletion and hotspot events properly.
+* Handle replacement captures with escapes properly.
+
+Changes:
+
+* Tabs for multiple buffers along with [`ui.tabs`][] API.
+* Split C/C++ lexer into separate lexers and replaced default "cpp" module with
+  "ansi\_c".
+* Find and replace text may utilize "%0" capture containing the entire match.
+* Disable [`textadept.editing.STRIP_TRAILING_SPACES`][] by default.
+* [`ui.clipboard_text`][] is no longer read-only.
+* Added [`events.FILE_CHANGED`][] event.
+
+[Textadept 7.1 -- Win32]: download/textadept_7.1.win32.zip
+[Textadept 7.1 -- Mac OSX Intel 10.5+]: download/textadept_7.1.osx.zip
+[Textadept 7.1 -- Linux]: download/textadept_7.1.i386.tgz
+[Textadept 7.1 -- Linux x86_64]: download/textadept_7.1.x86_64.tgz
+[Textadept 7.1 -- Modules]: download/textadept_7.1.modules.zip
+[`ui.tabs`]: api/ui.html#tabs
+[`textadept.editing.STRIP_TRAILING_SPACES`]: api/textadept.editing.html#STRIP_TRAILING_SPACES
+[`ui.clipboard_text`]: api/ui.html#clipboard_text
+[`events.FILE_CHANGED`]: api/io.html#_G.events.FILE_CHANGED
 
 ## 7.0 (01 Nov 2013)
 
