@@ -1544,7 +1544,7 @@ function home_extend(buffer) end
 function home_rect_extend(buffer) end
 
 ---
--- Moves the caret to beginning of the current wrapped line, or if already
+-- Moves the caret to beginning of the current wrapped line or, if already
 -- there, to the beginning of the actual line.
 -- @param buffer The buffer.
 function home_wrap(buffer) end
@@ -1675,7 +1675,7 @@ function line_end_extend(buffer) end
 function line_end_rect_extend(buffer) end
 
 ---
--- Moves the caret to the end of the current wrapped line, or if already there,
+-- Moves the caret to the end of the current wrapped line or, if already there,
 -- to the end of the actual line.
 -- @param buffer The buffer.
 function line_end_wrap(buffer) end
@@ -1751,8 +1751,8 @@ function line_up_rect_extend(buffer) end
 function lines_join(buffer) end
 
 ---
--- Splits the lines in the target range into lines at most *width* pixels wide,
--- or if *width* is `0`, lines as wide as the view.
+-- Splits the lines in the target range into lines at most *width* pixels wide
+-- or, if *width* is `0`, lines as wide as the view.
 -- @param buffer The buffer.
 -- @param width The pixel width to split lines at. When `0`, uses the width of
 --   the view.
@@ -2341,7 +2341,7 @@ function show_lines(buffer, start_line, end_line) end
 function start_styling(buffer, position, style_mask) end
 
 ---
--- Moves the caret to the bottom of the page, or if already there, down one
+-- Moves the caret to the bottom of the page or, if already there, down one
 -- page.
 -- @param buffer The buffer.
 function stuttered_page_down(buffer) end
@@ -2353,7 +2353,7 @@ function stuttered_page_down(buffer) end
 function stuttered_page_down_extend(buffer) end
 
 ---
--- Moves the caret to the top of the page, or if already there, up one page.
+-- Moves the caret to the top of the page or, if already there, up one page.
 -- @param buffer The buffer.
 function stuttered_page_up(buffer) end
 
@@ -2446,7 +2446,7 @@ function upper_case(buffer) end
 function user_list_show(buffer, list_type, item_list) end
 
 ---
--- Moves the caret to the first visible character on the current line, or if
+-- Moves the caret to the first visible character on the current line or, if
 -- already there, to the beginning of the current line.
 -- @param buffer The buffer.
 function vc_home(buffer) end

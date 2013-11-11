@@ -1,6 +1,21 @@
 # FAQ
 
 **Q:**
+I upgraded to Textadept 7 and the editor displays a strange error message on
+startup and/or exits. Also my themes do not seem to work anymore.
+
+**A:**
+Textadept 7 introduced API changes and a completely new theme implementation.
+Please see the [migration guide][] for more information. It may help to either
+delete your old `~/.textadept/` folder or move everything within it somewhere
+else before gradually copying those files back to see which of them causes an
+error.
+
+[migration guide]: 14_Appendix.html#Textadept.6.to.7
+
+- - -
+
+**Q:**
 What is the difference between *textadept* and *textadeptjit*? Which one should
 I use?
 
@@ -32,6 +47,17 @@ are needed for the GUI version. (A development library for a curses
 implementation is required for the terminal version.)
 
 [compiling]: 12_Compiling.html
+
+- - -
+
+**Q:**
+When I open a file in a non-English language, I see a lot of strange characters.
+
+**A:**
+Textadept does not detect the file's encoding correctly. You'll need to
+[help it][].
+
+[help it]: 04_WorkingWithFiles.html#Encodings
 
 - - -
 

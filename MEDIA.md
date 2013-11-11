@@ -32,6 +32,9 @@ This book covers how to:
 * Define lexers for highlighting source code
 * And much more
 
+It serves as the perfect complement to Textadept's comprehensive Manual and
+exhaustive API documentation.
+
 [Pre-order]: http://gum.co/ta_quickref
 [Table of Contents]: download/ta_quickref_toc.pdf
 

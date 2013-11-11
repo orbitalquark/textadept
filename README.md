@@ -36,7 +36,8 @@ The terminal version of Textadept requires only an implementation of curses like
 
 ## Download
 
-**Please consider making a [donation][]. It really helps.**
+**Please consider making a [donation][] or purchasing the [book][] to help fund
+Textadept's continuous development. It really helps.**
 
 Download Textadept from the project's [download page][] or from these quick
 links:
@@ -62,6 +63,7 @@ cutting-edge versions of Textadept. Do not use them in production, but for
 testing purposes only.
 
 [donation]: http://gum.co/textadept
+[book]: MEDIA.html#Book
 [download page]: http://foicica.com/textadept/download
 [Win32]: download/textadept_LATEST.win32.zip
 [Mac OSX]: download/textadept_LATEST.osx.zip
@@ -99,6 +101,9 @@ editor for programmers. This quick reference contains a wealth of knowledge on
 how to script and configure Textadept using the Lua programming language. It
 groups the editor's rich API into a series of tasks in a convenient and
 easy-to-use manner. [Read more...][]
+
+This book serves as the perfect complement to Textadept's Manual and exhaustive
+API documentation.
 
 [*Textadept Quick Reference*]: MEDIA.html#Book
 [Read more...]: MEDIA.html#Book
