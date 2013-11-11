@@ -37,7 +37,7 @@ M.AUTOPAIR = true
 M.HIGHLIGHT_BRACES = true
 M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
-M.STRIP_TRAILING_SPACES = true
+M.STRIP_TRAILING_SPACES = false
 M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
@@ -372,8 +372,8 @@ function M.enclose(left, right)
 end
 
 ---
--- Selects the text between strings *left* and *right* containing the caret.
--- If already selected, toggles between selecting *left* and *right* too.
+-- Selects the text between strings *left* and *right* containing the caret or,
+-- if already selected, toggles between selecting *left* and *right* too.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
 -- @name select_enclosed
