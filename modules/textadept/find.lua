@@ -92,13 +92,14 @@ local preferred_view
 -- @name FILTER
 M.FILTER = lfs.FILTER
 
--- Text escape sequences with their associated characters.
+-- Text escape sequences with their associated characters and vice-versa.
 -- @class table
 -- @name escapes
 local escapes = {
   ['\\a'] = '\a', ['\\b'] = '\b', ['\\f'] = '\f', ['\\n'] = '\n',
   ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
 }
+for k, v in pairs(escapes) do escapes[v] = k end
 
 -- Finds and selects text in the current buffer.
 -- @param text The text to find.
@@ -258,6 +259,7 @@ local function replace(rtext)
   if buffer:get_sel_text() == '' then return end
   if M.in_files then M.in_files = false end
   buffer:target_from_selection()
+  rtext = rtext:gsub('\\[abfnrtv\\]', escapes)
   rtext = rtext:gsub('%%%%', '\\037') -- escape '%%'
   if M.captures then
     for i = 0, #M.captures do
@@ -265,13 +267,13 @@ local function replace(rtext)
     end
   end
   local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', function(code)
+    code = code:gsub('[\a\b\f\n\r\t\v\\]', escapes)
     local ok, result = pcall(load('return '..code))
     if not ok then error(result) end
-    return result
+    return result:gsub('\\[abfnrtv\\]', escapes)
   end)
   if ok then
-    rtext = rtext:gsub('\\037', '%%') -- unescape '%'
-    buffer:replace_target(rtext:gsub('\\[abfnrtv\\]', escapes))
+    buffer:replace_target(rtext:gsub('\\037', '%%')) -- unescape '%'
     buffer:goto_pos(buffer.target_end) -- 'find' text after this replacement
   else
     ui.dialogs.msgbox{
@@ -328,8 +330,8 @@ events.connect(events.REPLACE_ALL, replace_all)
 local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 ---
 -- Jumps to the source of the find in files search result on line number *line*
--- in the "Files Found" buffer, or if `nil`, the next or previous search result
--- depending on boolean *next*.
+-- in the "Files Found" buffer or, if *line* is `nil`, the next or previous
+-- search result depending on boolean *next*.
 -- @param line The line number in the files found buffer that contains the
 --   search result to go to.
 -- @param next Optional flag indicating whether to go to the next search result
