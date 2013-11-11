@@ -76,6 +76,7 @@ FIELD	_	0;"	F	class:textadept.adeptsense
 FIELD_IMAGE	_	0;"	F	class:textadept.adeptsense
 FILE_AFTER_SAVE	_	0;"	F	class:events
 FILE_BEFORE_SAVE	_	0;"	F	class:events
+FILE_CHANGED	_	0;"	F	class:events
 FILE_OPENED	_	0;"	F	class:events
 FILE_SAVED_AS	_	0;"	F	class:events
 FILTER	_	0;"	t	class:lfs
@@ -361,7 +362,7 @@ _L	_	0;"	t
 _LEXBYLINE	_	0;"	F	class:lexer.lexer
 _M	_	0;"	m	
 _M	_	0;"	t	
-_M.cpp	_	0;"	m	
+_M.ansi_c	_	0;"	m	
 _M.css	_	0;"	m	
 _M.hypertext	_	0;"	m	
 _M.java	_	0;"	m	
@@ -414,6 +415,9 @@ annotation_style	_	0;"	F	class:buffer
 annotation_style_offset	_	0;"	F	class:buffer
 annotation_text	_	0;"	F	class:buffer
 annotation_visible	_	0;"	F	class:buffer
+ansi_c	_	0;"	t	class:_M
+ansi_c	_	0;"	t	class:keys
+ansi_c	_	0;"	t	class:snippets
 any	_	0;"	F	class:lexer
 api_files	_	0;"	t	class:textadept.adeptsense
 append_text	_	0;"	f	class:buffer
@@ -502,8 +506,6 @@ char_left	_	0;"	f	class:buffer
 char_left_extend	_	0;"	f	class:buffer
 char_left_rect_extend	_	0;"	f	class:buffer
 char_matches	_	0;"	t	class:textadept.editing
-char_position_from_point	_	0;"	f	class:buffer
-char_position_from_point_close	_	0;"	f	class:buffer
 char_right	_	0;"	f	class:buffer
 char_right_extend	_	0;"	f	class:buffer
 char_right_rect_extend	_	0;"	f	class:buffer
@@ -554,9 +556,6 @@ cos	_	0;"	f	class:math
 cosh	_	0;"	f	class:math
 count_characters	_	0;"	f	class:buffer
 cpath	_	0;"	F	class:package
-cpp	_	0;"	t	class:_M
-cpp	_	0;"	t	class:keys
-cpp	_	0;"	t	class:snippets
 create	_	0;"	f	class:coroutine
 css	_	0;"	t	class:_M
 css	_	0;"	t	class:keys
@@ -626,7 +625,6 @@ execute	_	0;"	f	class:os
 execute_lua	_	0;"	f	class:ui.command_entry
 exit	_	0;"	f	class:os
 exp	_	0;"	f	class:math
-expand_children	_	0;"	f	class:buffer
 extend	_	0;"	F	class:lexer
 extensions	_	0;"	t	class:textadept.file_types
 extra_ascent	_	0;"	F	class:buffer
@@ -931,8 +929,6 @@ php	_	0;"	t	class:_M
 php	_	0;"	t	class:keys
 php	_	0;"	t	class:snippets
 pi	_	0;"	F	class:math
-point_x_from_position	_	0;"	f	class:buffer
-point_y_from_position	_	0;"	f	class:buffer
 popen	_	0;"	f	class:io
 position_after	_	0;"	f	class:buffer
 position_before	_	0;"	f	class:buffer
@@ -1061,7 +1057,7 @@ selection_n_start	_	0;"	F	class:buffer
 selection_start	_	0;"	F	class:buffer
 selections	_	0;"	F	class:buffer
 self	_	0;"	F	class:textadept.adeptsense.syntax
-sense	_	0;"	F	class:_M.cpp
+sense	_	0;"	F	class:_M.ansi_c
 sense	_	0;"	F	class:_M.css
 sense	_	0;"	F	class:_M.hypertext
 sense	_	0;"	F	class:_M.java
@@ -1161,9 +1157,11 @@ symlinkattributes	_	0;"	f	class:lfs
 syntax	_	0;"	t	class:textadept.adeptsense
 tab	_	0;"	f	class:buffer
 tab_indents	_	0;"	F	class:buffer
+tab_label	_	0;"	F	class:buffer
 tab_width	_	0;"	F	class:buffer
 table	_	0;"	m	
 table	_	0;"	t	
+tabs	_	0;"	F	class:ui
 tag	_	0;"	F	class:buffer
 tan	_	0;"	f	class:math
 tanh	_	0;"	f	class:math
