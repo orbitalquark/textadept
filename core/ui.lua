@@ -11,7 +11,7 @@ local ui = ui
 --   The buffer's context menu, a [`ui.menu()`](#menu).
 --   This is a low-level field. You probably want to use the higher-level
 --   `textadept.menu.set_contextmenu()`.
--- @field clipboard_text (string, Read-only)
+-- @field clipboard_text (string)
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
 --   The text displayed in the statusbar.

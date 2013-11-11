@@ -369,8 +369,8 @@ static char *get_clipboard() {
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define bind(k, d) bindCDKObject(vENTRY, find_entry, k, entry_keypress, d), \
                    bindCDKObject(vENTRY, replace_entry, k, entry_keypress, d)
-#define set_clipboard(t) SS(focused_view, SCI_COPYTEXT, strlen(t), (sptr_t)t)
 #endif
+#define set_clipboard(t) SS(focused_view, SCI_COPYTEXT, strlen(t), (sptr_t)t)
 
 /** `find.focus()` Lua function. */
 static int lfind_focus(lua_State *L) {
@@ -988,7 +988,7 @@ static int lui__newindex(lua_State *L) {
     mvaddstr(0, 0, lua_tostring(L, 3)), refresh();
 #endif
   } else if (strcmp(key, "clipboard_text") == 0)
-    luaL_argerror(L, 3, "read-only property");
+    set_clipboard(luaL_checkstring(L, 3));
   else if (strcmp(key, "statusbar_text") == 0)
     set_statusbar_text(lua_tostring(L, 3), 0);
   else if (strcmp(key, "bufstatusbar_text") == 0)
