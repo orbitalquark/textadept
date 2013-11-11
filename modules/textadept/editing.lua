@@ -26,7 +26,7 @@ local M = {}
 --   The default value is `true`.
 -- @field STRIP_TRAILING_SPACES (bool)
 --   Strip trailing whitespace before saving files.
---   The default value is `true`.
+--   The default value is `false`.
 -- @field INDIC_BRACEMATCH (number)
 --   The matching brace highlight indicator number.
 -- @field INDIC_HIGHLIGHT (number)

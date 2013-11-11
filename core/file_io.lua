@@ -29,6 +29,8 @@
 --   * _`filename`_: The new filename.
 -- @field _G.events.FILE_CHANGED (string)
 --   Emitted when Textadept detects that a file was externally modified.
+--   When connecting to this event, connect with an index of 1 to override the
+--   default prompt to reload the file.
 --   Arguments:
 --
 --   * _`filename`_: The filename externally modified.
