@@ -30,12 +30,12 @@ language modules.
 Many of Textadept's generic modules have configurable settings changeable from
 *~/.textadept/init.lua* after Textadept loads the module. The module's
 [LuaDoc][] lists these settings. For example, to disable character autopairing
-with typeover and stripping trailing whitespace on save, add the following to
-your *~/.textadept/init.lua*:
+with typeover and strip trailing whitespace on save, add the
+following to your *~/.textadept/init.lua*:
 
     textadept.editing.AUTOPAIR = false
     textadept.editing.TYPEOVER_CHARS = false
-    textadept.editing.STRIP_TRAILING_SPACES = false
+    textadept.editing.STRIP_TRAILING_SPACES = true
 
 To always hide the tab bar:
 
