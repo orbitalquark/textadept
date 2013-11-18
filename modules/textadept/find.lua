@@ -191,7 +191,7 @@ end
 -- otherwise continues an incremental search by searching for the next or
 -- previous instance of string *text* depending on boolean *next*.
 -- *anchor* indicates whether or not to search for *text* starting from the
--- caret position instead of the position where incremental search began at.
+-- caret position instead of the position where the incremental search began at.
 -- Only the `match_case` find option is recognized. Normal command entry
 -- functionality is unavailable until the search is finished by pressing `Esc`
 -- (`⎋` on Mac OSX | `Esc` in curses).
@@ -378,7 +378,7 @@ end)
 --[[ The functions below are Lua C functions.
 
 ---
--- Displays and focuses the Find & Replace pane.
+-- Displays and focuses the Find & Replace Pane.
 -- @class function
 -- @name focus
 local focus

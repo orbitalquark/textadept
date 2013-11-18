@@ -254,8 +254,8 @@
 --   position.
 -- @field eol_mode (number)
 --   The current end of line mode. Changing the current mode does not convert
---   existing line endings. Use [`buffer:convert_eols()`](#convert_eols) to do
---   so.
+--   existing end of line characters.
+--   Use [`buffer:convert_eols()`](#convert_eols) to do so.
 --
 --   * `buffer.EOL_CRLF`
 --     Carriage return with line feed ("\r\n").
@@ -985,7 +985,7 @@ function auto_c_select(buffer, prefix) end
 -- items are delimited by `buffer.auto_c_separator` characters, using
 -- *len_entered* number of characters behind the caret as the prefix of the word
 -- to autocomplete.
--- The sorted order of *item_list*, `buffer.auto_c_order`, must have already
+-- `buffer.auto_c_order`, the sorted order of *item_list*, must have already
 -- been defined.
 -- @param buffer The buffer.
 -- @param len_entered The number of characters before the caret used to provide
@@ -1211,9 +1211,9 @@ function colourise(buffer, start_pos, end_pos) end
 function contracted_fold_next(buffer, line_start) end
 
 ---
--- Converts all line endings to end of line mode *mode*.
+-- Converts all end of line characters to the ones in end of line mode *mode*.
 -- @param buffer The buffer.
--- @param mode The line ending mode to convert to. Valid values are:
+-- @param mode The end of line mode to convert to. Valid values are:
 --   * `buffer.EOL_CRLF`
 --   * `buffer.EOL_CR`
 --   * `buffer.EOL_LF`
@@ -1222,7 +1222,7 @@ function convert_eols(buffer, mode) end
 ---
 -- Copies the selected text to the clipboard.
 -- Multiple selections are copied in order with no delimiters. Rectangular
--- selections are copied from top to bottom with line ending delimiters. Virtual
+-- selections are copied from top to bottom with end of line characters. Virtual
 -- space is not copied.
 -- @param buffer The buffer.
 function copy(buffer) end
@@ -1261,7 +1261,7 @@ function count_characters(buffer, start_pos, end_pos) end
 ---
 -- Cuts the selected text to the clipboard.
 -- Multiple selections are copied in order with no delimiters. Rectangular
--- selections are copied from top to bottom with line ending delimiters. Virtual
+-- selections are copied from top to bottom with end of line characters. Virtual
 -- space is not copied.
 -- @param buffer The buffer.
 function cut(buffer) end
@@ -1476,7 +1476,7 @@ function get_line_sel_start_position(buffer, line) end
 ---
 -- Returns the selected text.
 -- Multiple selections are included in order with no delimiters. Rectangular
--- selections are included from top to bottom with line ending delimiters.
+-- selections are included from top to bottom with end of line characters.
 -- Virtual space is not included.
 -- @param buffer The buffer.
 -- @return string, number
@@ -1538,13 +1538,13 @@ function home_display_extend(buffer) end
 function home_extend(buffer) end
 
 ---
--- Moves the caret to beginning of the current line, extending the rectangular
--- selection to the new position.
+-- Moves the caret to the beginning of the current line, extending the
+-- rectangular selection to the new position.
 -- @param buffer The buffer.
 function home_rect_extend(buffer) end
 
 ---
--- Moves the caret to beginning of the current wrapped line or, if already
+-- Moves the caret to the beginning of the current wrapped line or, if already
 -- there, to the beginning of the actual line.
 -- @param buffer The buffer.
 function home_wrap(buffer) end
@@ -2121,8 +2121,8 @@ function scroll_to_end(buffer) end
 function scroll_to_start(buffer) end
 
 ---
--- Anchors the position `buffer:search_next()` and `buffer:search_prev()` begin
--- at to the caret position.
+-- Anchors the position that `buffer:search_next()` and `buffer:search_prev()`
+-- begin at to the caret position.
 -- @param buffer The buffer.
 function search_anchor(buffer) end
 
@@ -2435,7 +2435,7 @@ function upper_case(buffer) end
 -- Displays a user list identified by list identifier number *list_item* and
 -- constructed from string *item_list*, whose items are delimited by
 -- `buffer.auto_c_separator` characters.
--- The sorted order of *item_list*, `buffer.auto_c_order`, must have already
+-- `buffer.auto_c_order`, the sorted order of *item_list*, must have already
 -- been defined. When the user selects an item, *list_type* is sent in a
 -- `USER_LIST_SELECTION` event along with the selection.
 -- @param buffer The buffer.
@@ -2542,29 +2542,35 @@ function word_left_end_extend(buffer) end
 function word_left_extend(buffer) end
 
 ---
--- Moves the caret to the previous underscore or change in capitalization within
--- the current word.
+-- Moves the caret to the previous part of the current word.
+-- Word parts are delimited by underscore characters or changes in
+-- capitalization.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The buffer.
 function word_part_left(buffer) end
 
 ---
--- Moves the caret to the previous underscore or change in capitalization within
--- the current word, extending the selected text to the new position.
+-- Moves the caret to the previous part of the current word, extending the
+-- selected text to the new position.
+-- Word parts are delimited by underscore characters or changes in
+-- capitalization.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The buffer.
 function word_part_left_extend(buffer) end
 
 ---
--- Moves the caret to the next underscore or change in capitalization within the
--- current word.
+-- Moves the caret to the next part of the current word.
+-- Word parts are delimited by underscore characters or changes in
+-- capitalization.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The buffer.
 function word_part_right(buffer) end
 
 ---
--- Moves the caret to the next underscore or change in capitalization within the
--- current word, extending the selected text to the new position.
+-- Moves the caret to the next part of the current word, extending the selected
+-- text to the new position.
+-- Word parts are delimited by underscore characters or changes in
+-- capitalization.
 -- `buffer.word_chars` contains word characters.
 -- @param buffer The buffer.
 function word_part_right_extend(buffer) end
