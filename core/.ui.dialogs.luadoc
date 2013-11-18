@@ -303,9 +303,9 @@ function textbox(options) end
 -- options table *options*, returning the selected button's index along with the
 -- index of the selected item or, if *options*.`string_output` is `true`, the
 -- selected button's label along with the selected item's text.
--- If *options*.`exit_onchange` caused the dialog to close, returns `4` along
--- with either the selected item's index or text. If the dialog timed out,
--- returns `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or
+-- If the dialog closed due to *options*.`exit_onchange`, returns `4` along with
+-- either the selected item's index or text. If the dialog timed out, returns
+-- `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or
 -- `"delete"`.
 -- @param options Table of key-value option pairs for the drop down dialog.
 --
@@ -342,9 +342,9 @@ function dropdown(options) end
 -- returning the selected button's index along with the selected item's index
 -- or, if *options*.`string_output` is `true`, the selected button's label along
 -- with the selected item's text.
--- If *options*.`exit_onchange` caused the dialog to close, returns `4` along
--- with either the selected item's index or text. If the dialog timed out,
--- returns `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or
+-- If the dialog closed due to *options*.`exit_onchange`, returns `4` along with
+-- either the selected item's index or text. If the dialog timed out, returns
+-- `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or
 -- `"delete"`.
 -- @param options Table of key-value option pairs for the drop down dialog.
 --
@@ -373,10 +373,10 @@ function standard_dropdown(options) end
 ---
 -- Prompts the user with a filtered list item selection dialog defined by dialog
 -- options table *options*, returning the selected button's index along with the
--- index(es) of the selected item(s) (depending on whether or not
+-- index or indices of the selected item or items (depending on whether or not
 -- *options*.`select_multiple` is `true`) or, if *options*.`string_output` is
--- `true`, the selected button's label along with the selected item's or items'
--- text.
+-- `true`, the selected button's label along with the text of the selected item
+-- or items.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
 -- Spaces in the filter text are treated as wildcards.

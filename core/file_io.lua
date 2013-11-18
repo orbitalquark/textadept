@@ -8,19 +8,19 @@
 --   Emitted by [`open_file()`](#open_file).
 --   Arguments:
 --
---   * _`filename`_: The filename opened.
+--   * _`filename`_: The opened file's filename.
 -- @field _G.events.FILE_BEFORE_SAVE (string)
 --   Emitted right before saving a file to disk.
 --   Emitted by [`io.save_file()`](#save_file).
 --   Arguments:
 --
---   * _`filename`_: The filename being saved.
+--   * _`filename`_: The filename of the file being saved.
 -- @field _G.events.FILE_AFTER_SAVE (string)
 --   Emitted right after saving a file to disk.
 --   Emitted by [`io.save_file()`](#save_file).
 --   Arguments:
 --
---   * _`filename`_: The filename being saved.
+--   * _`filename`_: The filename of the file being saved.
 -- @field _G.events.FILE_SAVED_AS (string)
 --   Emitted after saving a file under a different filename.
 --   Emitted by [`io.save_file_as()`](#save_file_as).
@@ -28,7 +28,7 @@
 --
 --   * _`filename`_: The new filename.
 -- @field _G.events.FILE_CHANGED (string)
---   Emitted when Textadept detects that a file was externally modified.
+--   Emitted when Textadept detects that an open file was modified externally.
 --   When connecting to this event, connect with an index of 1 to override the
 --   default prompt to reload the file.
 --   Arguments:
@@ -358,14 +358,14 @@ end
 ---
 -- Prompts the user to select files to open from *paths*, a string directory
 -- path or list of directory paths, using a filtered list dialog.
--- Files shown in the dialog do not match any pattern in string or table
--- *filter*, and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A
--- filter table contains Lua patterns that match filenames to exclude, an
--- optional `folders` sub-table that contains patterns matching directories to
--- exclude, and an optional `extensions` sub-table that contains raw file
--- extensions to exclude. Any patterns starting with '!' exclude files and
--- directories that do not match the pattern that follows. The number of files
--- in the list is capped at `SNAPOPEN_MAX`.
+-- Files shown in the dialog do not match any pattern in either string or table
+-- *filter* or, unless *exclude_FILTER* is `true`, in `lfs.FILTER`. A filter
+-- table contains Lua patterns that match filenames to exclude, an optional
+-- `folders` sub-table that contains patterns matching directories to exclude,
+-- and an optional `extensions` sub-table that contains raw file extensions to
+-- exclude. Any patterns starting with '!' exclude files and directories that do
+-- not match the pattern that follows. The number of files in the list is capped
+-- at `SNAPOPEN_MAX`.
 -- *opts* is an optional table of additional options for
 -- `ui.dialogs.filteredlist()`.
 -- @param paths String directory path or table of directory paths to search.

@@ -100,8 +100,8 @@ local M = {}
 --   * _`x`_: The x-coordinate of the mouse in the view.
 --   * _`y`_: The y-coordinate of the mouse in the view.
 -- @field DWELL_START (string)
---   Emitted after keeping the mouse stationary for
---   [`buffer.mouse_dwell_time`][] milliseconds.
+--   Emitted when the mouse is stationary for [`buffer.mouse_dwell_time`][]
+--   milliseconds.
 --   Arguments:
 --
 --   * _`position`_: The position closest to *x* and *y*.
@@ -113,7 +113,7 @@ local M = {}
 --
 --   * _`text`_: The error message text.
 -- @field FIND (string)
---   Emitted to find text via the Find dialog box.
+--   Emitted to find text via the Find & Replace Pane.
 --   Arguments:
 --
 --   * _`text`_: The text to search for.

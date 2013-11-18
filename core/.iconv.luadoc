@@ -6,7 +6,7 @@
 module('string')
 
 ---
--- Converts string *text* from encoding *from* to encoding *to* using iconv,
+-- Converts string *text* from encoding *old* to encoding *new* using iconv,
 -- returning the string result.
 -- Valid encodings are [GNU iconv's encodings][] and include:
 --
@@ -33,6 +33,6 @@ module('string')
 --
 -- [GNU iconv's encodings]: http://www.gnu.org/software/libiconv/
 -- @param text The text to convert.
--- @param to The string encoding to convert to.
--- @param from The string encoding to convert from.
-function iconv(text, to, from) end
+-- @param new The string encoding to convert to.
+-- @param old The string encoding to convert from.
+function iconv(text, new, old) end

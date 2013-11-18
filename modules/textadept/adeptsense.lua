@@ -395,7 +395,8 @@ M.FUNCTION = 'functions'
 M.FIELD = 'fields'
 
 ---
--- Returns a full symbol or '' and current symbol part behind the caret or ''.
+-- Returns the full symbol or '' and the current symbol part behind the caret or
+-- ''.
 -- For example: `buffer.cur` would return `'buffer'` and `'cur'`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @return symbol or `''`
