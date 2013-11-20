@@ -415,3 +415,31 @@ function io.snapopen(paths, filter, exclude_FILTER, opts)
   for i = 1, #files do files[i] = files[i]:iconv(_CHARSET, 'UTF-8') end
   io.open_file(files)
 end
+
+-- On Windows, override `io.popen` and `os.execute` to use winapi to prevent the
+-- flashing black box.
+if WIN32 then
+  local winapi = require('winapi')
+  io.popen = function(prog)
+    local code, output = winapi.execute(prog)
+    if not code then return code, output end
+    return {
+      read = function() return output end,
+      lines = function()
+        if not output:find('\r?\n$') then output = output..'\n' end
+        local pos = 1
+        return function()
+          local s, e, line = output:find('([^\r\n]*)\r?\n', pos)
+          if not s then return nil end
+          pos = e + 1
+          return line
+        end
+      end,
+      close = function() return true, 'exit', code end
+    }
+  end
+  os.execute = function(prog)
+    local code = winapi.execute(prog)
+    if code then return true, 'exit', code end
+  end
+end

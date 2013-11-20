@@ -180,6 +180,11 @@ lua_lib_objs = lpeg.o lfs.o
 luajit_lib_objs = lpegjit.o lfsjit.o
 #luajit_lib_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o \
 #                  lfsjit.o
+ifeq (win, $(findstring win, $(MAKECMDGOALS)))
+	# Compile in winapi module for Windows.
+	lua_lib_objs += wutils.o winapi.o
+	luajit_lib_objs += wutilsjit.o winapijit.o
+endif
 termkey_objs = termkey.o driver-ti.o driver-csi.o
 cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
            cdk_params.o cdkscreen.o debug.o draw.o entry.o fselect.o \
@@ -418,6 +423,7 @@ scintillua_zip = scintillua.zip
 lua_tgz = lua-5.2.2.tar.gz
 lpeg_tgz = lpeg-0.10.2.tar.gz
 lfs_zip = d71c63cdb776f7d25313f8fcd14f07512ba1f83e.zip
+lwinapi_zip = 23dd43141d04d010a9986cca9e5ecb9e598a2899.zip
 luajit_tgz = LuaJIT-2.0.2.tar.gz
 libluajit_tgz = libluajit_2.0.2.x86_64.tgz
 gtdialog_zip = gtdialog.zip
@@ -446,15 +452,19 @@ LexLPeg.cxx: | ../lexers ; ln -s $|/$@ $@
 $(lua_tgz): ; wget "http://www.lua.org/ftp/$@"
 $(lpeg_tgz): ; wget "http://www.inf.puc-rio.br/~roberto/lpeg/$@"
 $(lfs_zip): ; wget "https://github.com/keplerproject/luafilesystem/archive/$@"
+$(lwinapi_zip): ; wget "https://github.com/stevedonovan/winapi/archive/$@"
 lua: lua.patch | $(lua_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
-lualibs: lua/src/lib/lpeg lua/src/lib/lfs
+lualibs: lua/src/lib/lpeg lua/src/lib/lfs lua/src/lib/winapi
 lua/src/lib/lpeg: | $(lpeg_tgz)
 	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
 lua/src/lib/lfs: lfs.patch | $(lfs_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
 	patch -d $(dir $@) -N -p1 < $<
+lua/src/lib/winapi: winapi.patch | $(lwinapi_zip)
+	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.c $@/*/*.h $(dir $@)
+	patch -d $(dir $@) -N --binary -p1 < $<
 $(luajit_tgz): ; wget "http://luajit.org/download/$@"
 luajit: luajit.patch | $(luajit_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
