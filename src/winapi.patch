@@ -1,0 +1,458 @@
+--- a/winapi.c	2012-06-28 04:50:56.000000000 -0400
++++ b/winapi.c	2013-11-19 15:42:27.560539900 -0500
+@@ -20,7 +20,7 @@
+ #ifdef __GNUC__
+ #include <winable.h> /* GNU GCC specific */
+ #endif
+-#include "Winnetwk.h"
++#include "winnetwk.h"
+ #include <psapi.h>
+ 
+ 
+@@ -65,6 +65,7 @@
+   return wstring_buff(text,wbuff,sizeof(wbuff));
+ }
+ 
++#if 0
+ /// Text encoding.
+ // @section encoding
+ 
+@@ -768,7 +769,9 @@
+   return push_bool(L, MoveFile(src,dest));
+ }
+ 
++#endif
+ #define wconv(name) (name ? wstring_buff(name,w##name,sizeof(w##name)) : NULL)
++#if 0
+ 
+ /// execute a shell command.
+ // @param verb the action (e.g. 'open' or 'edit') can be nil.
+@@ -891,6 +894,7 @@
+   }
+   return push_new_File(L,hSerial,hSerial);
+ }
++#endif
+ 
+ static int push_wait_result(lua_State *L, DWORD res) {
+   if (res == WAIT_OBJECT_0) {
+@@ -918,6 +922,7 @@
+     return push_wait_result(L,wait_single(h,timeout));
+ }
+ 
++#if 0
+ static int push_wait_async(lua_State *L, HANDLE h, int timeout, int callback);
+ 
+ /// The Event class.
+@@ -1128,6 +1133,7 @@
+   #line 825 "winapi.l.c"
+   return push_new_Mutex(L,CreateMutex(NULL,FALSE,*name==0 ? NULL : name));
+ }
++#endif
+ 
+ /// A class representing a Windows process.
+ // this example was [helpful](http://msdn.microsoft.com/en-us/library/ms682623%28VS.85%29.aspx)
+@@ -1179,6 +1185,7 @@
+     }
+   }
+ 
++#if 0
+   /// get the name of the process.
+   // @param full true if you want the full path; otherwise returns the base name.
+   // @function get_process_name
+@@ -1280,6 +1287,7 @@
+     lua_pushnumber(L,fileTimeToMillisec(&kernel));
+     return 2;
+   }
++#endif
+ 
+   /// wait for this process to finish.
+   // @param timeout optional timeout in millisec; defaults to waiting indefinitely.
+@@ -1293,6 +1301,7 @@
+     return push_wait(L,this->hProcess, TIMEOUT(timeout));
+   }
+ 
++#if 0
+   /// run callback when this process is finished.
+   // @param callback the callback
+   // @param timeout optional timeout in millisec; defaults to waiting indefinitely.
+@@ -1320,6 +1329,7 @@
+     #line 968 "winapi.l.c"
+     return push_wait_result(L, WaitForInputIdle(this->hProcess, TIMEOUT(timeout)));
+   }
++#endif
+ 
+   /// exit code of this process.
+   // (Only makes sense if the process has in fact finished.)
+@@ -1354,15 +1364,19 @@
+ #line 995 "winapi.l.c"
+ 
+ static const struct luaL_Reg Process_methods [] = {
++#if 0
+      {"get_process_name",l_Process_get_process_name},
+    {"get_pid",l_Process_get_pid},
+    {"kill",l_Process_kill},
+    {"get_working_size",l_Process_get_working_size},
+    {"get_start_time",l_Process_get_start_time},
+    {"get_run_times",l_Process_get_run_times},
++#endif
+    {"wait",l_Process_wait},
++#if 0
+    {"wait_async",l_Process_wait_async},
+    {"wait_for_input_idle",l_Process_wait_for_input_idle},
++#endif
+    {"get_exit_code",l_Process_get_exit_code},
+    {"close",l_Process_close},
+    {"__gc",l_Process___gc},
+@@ -1388,6 +1402,7 @@
+ // @{readme.md.Creating_and_working_with_Processes}
+ // @section Processes
+ 
++#if 0
+ /// create a process object from the id.
+ // @param pid the process id
+ // @return @{Process}
+@@ -1477,6 +1492,7 @@
+     return 1;
+   }
+ }
++#endif
+ 
+ // These functions are all run in background threads, and a little bit of poor man's
+ // OOP helps here. This is the base struct for describing threads with callbacks,
+@@ -1493,6 +1509,7 @@
+   callback_data_
+ } LuaCallback, *PLuaCallback;
+ 
++#if 0
+ LuaCallback *lcb_callback(void *lcb, lua_State *L, int idx) {
+   LuaCallback *data;
+   if (lcb == NULL) {
+@@ -1510,6 +1527,7 @@
+   LuaCallback *lcb = (LuaCallback*)data;
+   return call_lua(lcb->L,lcb->callback,idx,text,persist);
+ }
++#endif
+ 
+ void lcb_allocate_buffer(void *data, int size) {
+   LuaCallback *lcb = (LuaCallback*)data;
+@@ -1535,6 +1553,7 @@
+ #define lcb_bufsz(data) ((LuaCallback *)data)->bufsz
+ #define lcb_handle(data) ((LuaCallback *)data)->handle
+ 
++#if 0
+ /// Thread object. This is returned by the @{File:read_async} method and the @{make_timer},
+ // @{make_pipe_server} and @{watch_for_file_changes} functions. Useful to kill a thread
+ // and free associated resources.
+@@ -1707,6 +1726,7 @@
+   lcb->bufsz = timeout;
+   return lcb_new_thread((TCB)handle_waiter,lcb);
+ }
++#endif
+ 
+ /// this represents a raw Windows file handle.
+ // The write handle may be distinct from the read handle.
+@@ -1748,6 +1768,7 @@
+     lcb_allocate_buffer(this,FILE_BUFF_SIZE);
+   }
+ 
++#if 0
+   /// write to a file.
+   // @param s text
+   // @return number of bytes written.
+@@ -1761,6 +1782,7 @@
+     lua_pushinteger(L,bytesWrote);
+     return 1;
+   }
++#endif
+ 
+   static BOOL raw_read (File *this) {
+     DWORD bytesRead = 0;
+@@ -1785,6 +1807,7 @@
+     }
+   }
+ 
++#if 0
+   static void file_reader (File *this) { // background reader thread
+     int n;
+     do {
+@@ -1806,6 +1829,7 @@
+     this->callback = make_ref(L,callback);
+     return lcb_new_thread((TCB)&file_reader,this);
+   }
++#endif
+ 
+   static int l_File_close(lua_State *L) {
+     File *this = File_arg(L,1);
+@@ -1825,9 +1849,13 @@
+ #line 1318 "winapi.l.c"
+ 
+ static const struct luaL_Reg File_methods [] = {
++#if 0
+      {"write",l_File_write},
++#endif
+    {"read",l_File_read},
++#if 0
+    {"read_async",l_File_read_async},
++#endif
+    {"close",l_File_close},
+    {"__gc",l_File___gc},
+   {NULL, NULL}  /* sentinel */
+@@ -1853,6 +1881,7 @@
+ /// Launching processes.
+ // @section Launch
+ 
++#if 0
+ /// set an environment variable for any child processes.
+ // @{setenv.lua} shows how this also affects processes
+ // launched with @{os.execute}
+@@ -1869,6 +1898,7 @@
+   WCHAR wname[256],wvalue[MAX_WPATH];
+   return push_bool(L, SetEnvironmentVariableW(wconv(name),wconv(value)));
+ }
++#endif
+ 
+ /// Spawn a process.
+ // @param program the command-line (program + parameters)
+@@ -1938,6 +1968,7 @@
+   }
+ }
+ 
++#if 0
+ /// execute a system command.
+ // This is like `os.execute()`, except that it works without ugly
+ // console flashing in Windows GUI applications. It additionally
+@@ -2564,11 +2595,28 @@
+     return push_error(L);
+   }
+ }
++#endif
+ 
+ #line 2005 "winapi.l.c"
+ static const char *lua_code_block = ""\
+   "function winapi.execute(cmd,unicode)\n"\
+   "  local comspec = os.getenv('COMSPEC')\n"\
++  "  cmd = comspec ..' /c '..cmd\n"\
++  "  local P,f = winapi.spawn_process(cmd)\n"\
++  "  if not P then return nil,f end\n"\
++  "  local txt = f:read()\n"\
++  "  local out = {}\n"\
++  "  while txt do\n"\
++  "    table.insert(out,txt)\n"\
++  "    txt = f:read()\n"\
++  "  end\n"\
++  "  return P:wait():get_exit_code(),table.concat(out,'')\n"\
++  "end\n"\
++;
++#if 0
++static const char *lua_code_block = ""\
++  "function winapi.execute(cmd,unicode)\n"\
++  "  local comspec = os.getenv('COMSPEC')\n"\
+   "  if unicode ~= 'unicode' then\n"\
+   "    cmd = comspec ..' /c '..cmd\n"\
+   "    local P,f = winapi.spawn_process(cmd)\n"\
+@@ -2638,11 +2686,13 @@
+   "end\n"\
+   "function winapi.dirs(mask,subdirs) return winapi.files(mask,subdirs,'D') end\n"\
+ ;
++#endif
+ static void load_lua_code (lua_State *L) {
+   luaL_dostring(L,lua_code_block);
+ }
+ 
+ 
++#if 0
+ #line 2010 "winapi.l.c"
+ int init_mutex(lua_State *L) {
+ setup_mutex();
+@@ -2769,9 +2819,11 @@
+  lua_pushinteger(L,REG_MULTI_SZ); lua_setfield(L,-2,"REG_MULTI_SZ");
+  lua_pushinteger(L,REG_EXPAND_SZ); lua_setfield(L,-2,"REG_EXPAND_SZ");
+ }
++#endif
+ 
+ #line 2126 "winapi.l.c"
+ static const luaL_Reg winapi_funs[] = {
++#if 0
+        {"set_encoding",l_set_encoding},
+    {"get_encoding",l_get_encoding},
+    {"encode",l_encode},
+@@ -2804,7 +2856,9 @@
+    {"get_processes",l_get_processes},
+    {"wait_for_processes",l_wait_for_processes},
+    {"setenv",l_setenv},
++#endif
+    {"spawn_process",l_spawn_process},
++#if 0
+    {"thread",l_thread},
+    {"make_timer",l_make_timer},
+    {"open_pipe",l_open_pipe},
+@@ -2817,6 +2871,7 @@
+    {"watch_for_file_changes",l_watch_for_file_changes},
+    {"open_reg_key",l_open_reg_key},
+    {"create_reg_key",l_create_reg_key},
++#endif
+     {NULL,NULL}
+ };
+ 
+@@ -2829,16 +2884,24 @@
+ #else
+     luaL_register(L,"winapi",winapi_funs);
+ #endif
++#if 0
+     Window_register(L);
+ Event_register(L);
+ Mutex_register(L);
++#endif
+ Process_register(L);
++#if 0
+ Thread_register(L);
++#endif
+ File_register(L);
++#if 0
+ Regkey_register(L);
++#endif
+ load_lua_code(L);
++#if 0
+ init_mutex(L);
+ set_winapi_constants(L);
++#endif
+     return 1;
+ }
+ 
+--- a/wutils.h	2012-06-28 04:50:56.000000000 -0400
++++ b/wutils.h	2013-11-19 22:59:15.224130460 -0500
+@@ -4,12 +4,17 @@
+ 
+ extern int mutex_locked;
+ 
++#if 0
+ Ref make_ref(lua_State *L, int idx);
++#endif
+ void release_ref(lua_State *L, Ref ref);
++#if 0
+ int push_ref(lua_State *L, Ref ref);
++#endif
+ const char *last_error(int err);
+ int push_error_msg(lua_State *L, LPCSTR msg) ;
+ int push_error(lua_State *L);
++#if 0
+ int push_error_code(lua_State *L, int err);
+ int push_ok(lua_State *L);
+ int push_bool(lua_State *L, int bval);
+@@ -17,15 +22,19 @@
+ BOOL call_lua_direct(lua_State *L, Ref ref, int idx, LPCSTR text, int discard);
+ void make_message_window();
+ BOOL call_lua(lua_State *L, Ref ref, int idx, LPCSTR text, int discard);
++#endif
+ void lock_mutex();
+ void release_mutex();
++#if 0
+ void setup_mutex();
+ 
+ // encoding and converting text
+ void set_encoding(int e);
+ int get_encoding();
++#endif
+ 
+ LPWSTR wstring_buff(LPCSTR text, LPWSTR wbuf, int bufsz);
++#if 0
+ int push_wstring_l(lua_State *L, LPCWSTR us, int len);
+ int push_wstring(lua_State *L, LPCWSTR us);
+ 
+@@ -33,5 +42,6 @@
+ 
+ int mb_const (LPCSTR name);
+ LPCSTR mb_result (int res);
++#endif
+ 
+ #endif
+--- a/wutils.c	2012-06-28 04:50:56.000000000 -0400
++++ b/wutils.c	2013-11-19 22:59:15.224130460 -0500
+@@ -12,6 +12,7 @@
+ 
+ typedef int Ref;
+ 
++#if 0
+ /// make a reference to a Lua object.
+ // @param L the state
+ // @param idx the index of the value on the stack.
+@@ -21,6 +22,7 @@
+   lua_pushvalue(L,idx);
+   return luaL_ref(L,LUA_REGISTRYINDEX);
+ }
++#endif
+ 
+ /// release a reference to a Lua value.
+ // @param L the state
+@@ -30,6 +32,7 @@
+   luaL_unref(L,LUA_REGISTRYINDEX,ref);
+ }
+ 
++#if 0
+ /// push a referenced value on the stack.
+ // @param L the state
+ // @param ref the reference
+@@ -39,6 +42,7 @@
+   lua_rawgeti(L,LUA_REGISTRYINDEX,ref);
+   return 1;
+ }
++#endif
+ 
+ const char *last_error(int err) {
+   static char errbuff[256];
+@@ -75,6 +79,7 @@
+   return push_error_msg(L,last_error(0));
+ }
+ 
++#if 0
+ /// push a particular Windows error.
+ // @param L the state
+ // @param err the error code
+@@ -192,6 +197,7 @@
+     SetWindowLongPtr(hMessageWin, GWLP_USERDATA, subclassedProc);
+   }
+ }
++#endif
+ 
+ static HANDLE hLuaMutex = NULL, hMutex = NULL;
+ int mutex_locked = 0;
+@@ -210,6 +216,7 @@
+   ReleaseMutex(hMutex);
+ }
+ 
++#if 0
+ // this is a useful function to call a Lua function within an exclusive
+ // mutex lock. There are two parameters:
+ //
+@@ -255,7 +262,9 @@
+   return res;
+ }
+ 
++#endif
+ static int current_encoding = CP_ACP;
++#if 0
+ 
+ /// set the encoding.
+ // Will be one of `CP_ACP` or `CP_UTF8`
+@@ -271,6 +280,7 @@
+ int get_encoding() {
+   return current_encoding;
+ }
++#endif
+ 
+ /// convert text to UTF-16 depending on encoding.
+ // @param text the input multi-byte text
+@@ -290,6 +300,7 @@
+   }
+ }
+ 
++#if 0
+ /// push a wide string on the Lua stack with given size.
+ // This converts to the current encoding first.
+ // @param L the State
+@@ -389,4 +400,5 @@
+   default: return "?";
+   }
+ }
++#endif
+ 

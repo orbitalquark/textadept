@@ -140,6 +140,9 @@ static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
            tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
 static int lL_init(lua_State *, int, char **, int);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
+#if _WIN32
+LUALIB_API int luaopen_winapi(lua_State *);
+#endif
 
 #define l_setglobalview(l, v) (l_pushview(l, v), lua_setglobal(l, "view"))
 #define l_setglobaldoc(l, d) (l_pushdoc(l, d), lua_setglobal(l, "buffer"))
@@ -1630,6 +1633,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   lua_pushstring(L, textadept_home), lua_setglobal(L, "_HOME");
 #if _WIN32
   lua_pushboolean(L, 1), lua_setglobal(L, "WIN32");
+  lL_openlib(L, "winapi", luaopen_winapi);
 #elif (__APPLE__ && !CURSES)
   lua_pushboolean(L, 1), lua_setglobal(L, "OSX");
 #endif
