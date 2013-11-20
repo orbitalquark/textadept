@@ -37,7 +37,7 @@ local function _print(buffer_type, ...)
       if view.buffer._type == buffer_type then ui.goto_view(i) break end
     end
     if view.buffer._type ~= buffer_type then
-      view:split()
+      if not ui.tabs then view:split() end
       for i, buffer in ipairs(_BUFFERS) do
         if buffer._type == buffer_type then view:goto_buffer(i) break end
       end
@@ -56,10 +56,10 @@ local function _print(buffer_type, ...)
 end
 ---
 -- Prints the given string messages to the buffer of type *buffer_type*.
--- Splits the view and opens a new buffer for printing messages to. If the
--- message buffer is already open in a view, the message is printed to that
--- view. Otherwise the view is split and the message buffer is opened or
--- displayed before being printed to.
+-- Opens a new buffer for printing messages to if necessary. If the message
+-- buffer is already open in a view, the message is printed to that view.
+-- Otherwise the view is split (unless `ui.tabs` is `true`) and the message
+-- buffer is displayed before being printed to.
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
 -- @usage ui._print(_L['[Message Buffer]'], message)
