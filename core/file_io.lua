@@ -440,6 +440,6 @@ if WIN32 then
   end
   os.execute = function(prog)
     local code = winapi.execute(prog)
-    if code then return true, 'exit', code end
+    if code then return code == 0 and true or nil, 'exit', code end
   end
 end
