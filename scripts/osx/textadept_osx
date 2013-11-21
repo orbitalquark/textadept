@@ -18,6 +18,10 @@ export CHARSETALIASDIR="$bundle_res/lib"
 # Strip out the argument added by OSX.
 if [ x`echo "x$1" | sed -e "s/^x-psn_.*//"` == x ]; then shift 1; fi
 
+# Source '~/.textadept/osx_env.sh' to set variables like $PATH when opening
+# Textadept.app from the Dock or the Finder.
+if [ -f $HOME/.textadept/osx_env.sh ]; then . $HOME/.textadept/osx_env.sh; fi
+
 # Run Textadept.
 textadept=textadept
 if [ ! -z $TEXTADEPTJIT ]; then textadept=textadeptjit; fi

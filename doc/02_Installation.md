@@ -144,13 +144,13 @@ dock.
 By default, Mac OSX GUI apps like Textadept do not see shell environment
 variables like "$PATH". Consequently, any [modules][] that utilize programs
 contained in "$PATH" (e.g. the progams in */usr/local/bin/*) for run and compile
-commands will not find those programs. Follow [these instructions][] to export
-the environment variables you need Textadept to see. At the very least, set
-"PATH" to be "$PATH". You must logout and log back in before the changes take
-effect.
+commands will not find those programs. The solution is to create a 
+*~/.textadept/osx_env.sh* file that exports all of the environment variables you
+need Textadept to see. For example:
+
+    export PATH=$PATH
 
 [modules]: 07_Modules.html
-[these instructions]: http://developer.apple.com/library/mac/#qa/qa1067/_index.html
 
 ### Windows
 
