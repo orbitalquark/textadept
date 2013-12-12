@@ -9,9 +9,9 @@ At this point the manual assumes you are at least familiar with the basics of
 
 Textadept executes a *~/.textadept/init.lua*, your user-init file, on startup.
 If this file does not exist, Textadept creates it for you. This file allows you
-to indicate what you want Textadept to do when the application starts, such as
-change the settings of existing modules, load new ones, and/or run plain Lua
-code.
+to indicate what you want Textadept to do when the application starts. Examples
+include changing the settings of existing modules, loading new modules, and
+running arbitrary Lua code.
 
 ### Modules
 
@@ -155,8 +155,8 @@ from *~/.textadept/init.lua*. For example:
 ## Buffer Properties
 
 Since Textadept runs *~/.textadept/init.lua* only once on startup, it is not the
-appropriate place to set per-buffer properties like indentation size or
-view-related properties like the behaviors for scrolling and autocompletion.
+appropriate place to set per-buffer properties (like indentation size) or
+view-related properties (like the behaviors for scrolling and autocompletion).
 If you do set such properties in *~/.textadept/init.lua*, those settings only
 apply to the first buffer and view -- subsequent buffers and split views will
 not inherit those settings. Instead, put your settings in a

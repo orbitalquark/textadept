@@ -124,9 +124,9 @@ end
 
 ---
 -- Inserts snippet text *text* or the snippet assigned to the trigger word
--- behind the caret or, if a snippet is active, goes to the active snippet's
--- next placeholder.
--- Returns `false` if no action was taken.
+-- behind the caret.
+-- Otherwise, if a snippet is active, goes to the active snippet's next
+-- placeholder. Returns `false` if no action was taken.
 -- @param text Optional snippet text to insert. If `nil`, attempts to insert a
 --   new snippet based on the trigger, the word behind caret, and the current
 --   lexer.
@@ -169,7 +169,7 @@ function M._cancel_current()
 end
 
 ---
--- Prompts the user to select a snippet to insert from a list of global and
+-- Prompts the user to select a snippet to be inserted from a list of global and
 -- language-specific snippets.
 -- @name _select
 function M._select()

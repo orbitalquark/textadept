@@ -18,8 +18,7 @@ module('textadept.file_types')]]
 events.LEXER_LOADED = 'lexer_loaded'
 
 ---
--- Map of file extensions (excluding the leading '.') to their associated
--- lexer names.
+-- Map of file extensions to their associated lexer names.
 -- If the file type is not recognized by shebang words or first-line patterns,
 -- each file extension is matched against the file's extension.
 -- @class table

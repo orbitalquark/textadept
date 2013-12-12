@@ -277,7 +277,7 @@ function filesave(options) end
 --     is `false`.
 --   * `focus_textbox`: Focus the textbox instead of the buttons. The default
 --     value is `false`.
---   * `scroll_to`: Where to scroll the textbox text when it is not all visible.
+--   * `scroll_to`: Where to scroll the textbox text.
 --     The available values are `"top"` and `"bottom"`. The default value is
 --     `"top"`.
 --   * `selected`: Select all of the textbox's text. The default value is

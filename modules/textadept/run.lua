@@ -14,24 +14,24 @@ local M = {}
 -- @field MARK_ERROR (number)
 --   The run or compile error marker number.
 -- @field cwd (string, Read-only)
---   The most recently executed compile or run command's working directory.
+--   The most recently executed compile or run shell command's working directory.
 --   It is used for going to error messages with relative file paths.
 -- @field _G.events.COMPILE_OUTPUT (string)
---   Emitted after executing a language's compile command.
+--   Emitted when executing a language's compile shell command.
 --   By default, compiler output is printed to the message buffer. To override
 --   this behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
 --   * `lexer`: The language's lexer name.
---   * `output`: The command's string output.
+--   * `output`: A line of string output from the command.
 -- @field _G.events.RUN_OUTPUT (string)
---   Emitted after executing a language's run command.
+--   Emitted when executing a language's run shell command.
 --   By default, output is printed to the message buffer. To override this
 --   behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
 --   * `lexer`: The language's lexer name.
---   * `output`: The command's string output.
+--   * `output`: A line of string output from the command.
 module('textadept.run')]]
 
 M.MARK_WARNING = _SCINTILLA.next_marker_number()
@@ -42,7 +42,7 @@ events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
 
 local preferred_view
 
--- Executes a compile or run command.
+-- Executes a compile or run shell command.
 -- Emits a `COMPILE_OUTPUT` or `RUN_OUTPUT` event based on the `compiling` flag.
 -- @param commands Either `compile_commands` or `run_commands`.
 -- @param compiling Flag indicating whether or not the command is a compiler
@@ -109,7 +109,7 @@ local function get_error(message)
   return nil
 end
 
--- Prints the output from a run or compile command.
+-- Prints the output from a run or compile shell command.
 -- If the output is a recognized warning or error message, mark it.
 -- @param lexer The current lexer.
 -- @param output The output to print.
@@ -123,22 +123,21 @@ local function print_output(lexer, output)
 end
 
 ---
--- Map of file extensions (excluding the leading '.') or lexer names to their
--- associated "compile" shell command line strings or functions returning such
--- strings.
+-- Map of file extensions or lexer names to their associated "compile" shell
+-- command line strings or functions returning such strings.
 -- Command line strings may have the following macros:
 --
---   + `%(filepath)`: The current file's full path.
---   + `%d` or `%(filedir)`: The current file's directory path.
 --   + `%f` or `%(filename)`: The file's name, including its extension.
 --   + `%e` or `%(filename_noext)`: The file's name, excluding its extension.
+--   + `%d` or `%(filedir)`: The current file's directory path.
+--   + `%(filepath)`: The current file's full path.
 -- @class table
 -- @name compile_commands
 M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc -o "%e" "%f"',antlr='antlr4 "%f"',g='antlr3 "%f"',applescript='osacompile "%f" -o "%e.scpt"',asm='nasm "%f" && ld "%e.o" -o "%e"',boo='booc "%f"',caml='ocamlc -o "%e" "%f"',csharp=WIN32 and 'csc "%f"' or 'mcs "%f"',cpp='g++ -o "%e" "%f"',coffeescript='coffee -c "%f"',context='context --nonstopmode "%f"',cuda=WIN32 and 'nvcc -o "%e.exe" "%f"' or 'nvcc -o "%e" "%f"',dmd='dmd "%f"',dot='dot -Tps "%f" -o "%e.ps"',eiffel='se c "%f"',erlang='erl -compile "%e"',fsharp=WIN32 and 'fsc.exe "%f"' or 'mono fsc.exe "%f"',fortran='gfortran -o "%e" "%f"',gap='gac -o "%e" "%f"',go='go build "%f"',groovy='groovyc "%f"',haskell=WIN32 and 'ghc -o "%e.exe" "%f"' or 'ghc -o "%e" "%f"',inform=function() return 'inform -c "'..buffer.filename:match('^(.+%.inform[/\\])Source')..'"' end,java='javac "%f"',ltx='pdflatex -file-line-error -halt-on-error "%f"',less='lessc "%f" "%e.css"',lilypond='lilypond "%f"',lisp='clisp -c "%f"',litcoffee='coffee -c "%f"',lua='luac -o "%e.luac" "%f"',markdown='markdown "%f" > "%e.html"',nemerle='ncc "%f" -out:"%e.exe"',nimrod='nimrod c "%f"',nsis='MakeNSIS "%f"',objective_c='gcc -o "%e" "%f"',pascal='fpc "%f"',perl='perl -c "%f"',php='php -l "%f"',prolog='gplc --no-top-level "%f"',python='python -m py_compile "%f"',ruby='ruby -c "%f"',sass='sass "%f" "%e.css"',scala='scalac "%f"',tex='pdflatex -file-line-error -halt-on-error "%f"',vala='valac "%f"',vb=WIN32 and 'vbc "%f"' or 'vbnc "%f"',}
 
 ---
 -- Compiles the current file based on its extension or language, using the
--- command from the `compile_commands` table.
+-- shell command from the `compile_commands` table.
 -- Emits a `COMPILE_OUTPUT` event.
 -- @see compile_commands
 -- @see _G.events
@@ -147,22 +146,21 @@ function M.compile() command(M.compile_commands, true) end
 events.connect(events.COMPILE_OUTPUT, print_output)
 
 ---
--- Map of file extensions (excluding the leading '.') or lexer names to their
--- associated "run" shell command line strings or functions returning such
--- strings.
+-- Map of file extensions or lexer names to their associated "run" shell command
+-- line strings or functions returning such strings.
 -- Command line strings may have the following macros:
 --
---   + `%(filepath)`: The full path of the current file.
---   + `%d` or `%(filedir)`: The current file's directory path.
 --   + `%f` or `%(filename)`: The file's name, including its extension.
 --   + `%e` or `%(filename_noext)`: The file's name, excluding its extension.
+--   + `%d` or `%(filedir)`: The current file's directory path.
+--   + `%(filepath)`: The full path of the current file.
 -- @class table
 -- @name run_commands
 M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "file://%e.swf"' or 'xdg-open "%e.swf"',ada=WIN32 and '"%e"' or './"%e"',ansi_c=WIN32 and '"%e"' or './"%e"',applescript='osascript "%f"',asm='./"%e"',awk='awk -f "%f"',batch='"%f"',boo='booi "%f"',caml='ocamlrun "%e"',csharp=WIN32 and '"%e"' or 'mono "%e.exe"',cpp=WIN32 and '"%e"' or './"%e"',chuck='chuck "%f"',cmake='cmake -P "%f"',coffeescript='coffee "%f"',context=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',cuda=WIN32 and '"%e"' or './"%e"',dmd=WIN32 and '"%e"' or './"%e"',eiffel="./a.out",fsharp=WIN32 and '"%e"' or 'mono "%e.exe"',forth='gforth "%f" -e bye',fortran=WIN32 and '"%e"' or './"%e"',gnuplot='gnuplot "%f"',go='go run "%f"',groovy='groovy "%f"',haskell=WIN32 and '"%e"' or './"%e"',hypertext=WIN32 and 'start "" "%f"' or OSX and 'open "file://%f"' or 'xdg-open "%f"',idl='idl -batch "%f"',Io='io "%f"',java='java "%e"',javascript='node "%f"',ltx=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',less='lessc --no-color "%f"',lilypond=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',lisp='clisp "%f"',litcoffee='coffee "%f"',lua='lua -e "io.stdout:setvbuf(\'no\')" "%f"',makefile=WIN32 and 'nmake -f "%f"' or 'make -f "%f"',markdown='markdown "%f"',nemerle=WIN32 and '"%e"' or 'mono "%e.exe"',nimrod=WIN32 and '"%e"' or './"%e"',objective_c=WIN32 and '"%e"' or './"%e"',pascal=WIN32 and '"%e"' or './"%e"',perl='perl "%f"',php='php "%f"',pike='pike "%f"',pkgbuild='makepkg -p "%f"',prolog=WIN32 and '"%e"' or './"%e"',python='python "%f"',rstats=WIN32 and 'Rterm -f "%f"' or 'R -f "%f"',rebol='REBOL "%f"',rexx=WIN32 and 'rexx "%e"' or 'regina "%e"',ruby='ruby "%f"',sass='sass "%f"',scala='scala "%e"',bash='bash "%f"',csh='tcsh "%f"',sh='sh "%f"',zsh='zsh "%f"',smalltalk='gst "%f"',tcl='tclsh "%f"',tex=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',vala=WIN32 and '"%e"' or './"%e"',vb=WIN32 and '"%e"' or 'mono "%e.exe"',}
 
 ---
--- Runs the current file based on its extension or language, using the command
--- from the `run_commands` table.
+-- Runs the current file based on its extension or language, using the shell
+-- command from the `run_commands` table.
 -- Emits a `RUN_OUTPUT` event.
 -- @see run_commands
 -- @see _G.events
@@ -187,9 +185,10 @@ M.error_patterns = {--[[ANTLR]]'^error%(%d+%): (.-):(%d+):%d+: (.+)$','^warning%
 local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 ---
 -- Jumps to the source of the recognized compile/run warning or error on line
--- number *line* in the message buffer or, if *line* is `nil`, the next or
--- previous warning or error depending on boolean *next*.
--- Displays an annotation with the warning or error message if possible.
+-- number *line* in the message buffer.
+-- If *line* is `nil`, jumps to the next or previous warning or error, depending
+-- on boolean *next*. Displays an annotation with the warning or error message
+-- if possible.
 -- @param line The line number in the message buffer that contains the
 --   compile/run warning/error to go to.
 -- @param next Optional flag indicating whether to go to the next recognized

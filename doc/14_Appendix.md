@@ -128,9 +128,9 @@ non-existant graphics capabilities:
   (`0xFF0000`), light green (`0x00FF00`), light yellow (`0xFFFF00`), light blue
   (`0x0000FF`), light magenta (`0xFF00FF`), light cyan (`0x00FFFF`), and light
   white (`0xFFFFFF`). Even if your terminal uses a different color map, you must
-  use these color values; unrecognized colors default to white. For some
-  terminals, you may need to set a lexer style's `bold` attribute to use the
-  light color variant.
+  use these color values. Your terminal will remap them automatically.
+  Unrecognized colors default to white. For some terminals, you may need to set
+  a lexer style's `bold` attribute to use the light color variant.
 * No scroll bars.
 * Not all key sequences recognized properly.
 * No style settings like font name, font size, or italics.

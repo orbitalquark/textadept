@@ -14,7 +14,7 @@ module('view')
 local buffer
 
 ---
--- Splits the view into top and bottom views unless *vertical* is `true`,
+-- Splits the view into top and bottom views (unless *vertical* is `true`),
 -- focuses the new view, and returns both the old and new views.
 -- If *vertical* is `false`, splits the view vertically into left and
 -- right views.
