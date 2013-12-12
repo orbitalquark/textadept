@@ -21,17 +21,17 @@ if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 ---
 -- Extends Lua's _G table to provide extra functions and fields for Textadept.
 -- @field _HOME (string)
---   The path to Textadept's home, or installation directory.
+--   The path to Textadept's home, or installation, directory.
 -- @field _RELEASE (string)
 --   The Textadept release version string.
 -- @field _USERHOME (string)
 --   The path to the user's *~/.textadept/* directory, where all preferences and
 --   user-data is stored.
 --   On Windows machines *~/* is the value of the "USERHOME" environment
---   variable, typically *C:\Users\username\\* or
---   *C:\Documents and Settings\username\\*. On Linux, BSD, and Mac OSX
---   machines *~/* is the value of "$HOME", typically */home/username/* and
---   */Users/username/* respectively.
+--   variable (typically *C:\Users\username\\* or
+--   *C:\Documents and Settings\username\\*). On Linux, BSD, and Mac OSX
+--   machines *~/* is the value of "$HOME" (typically */home/username/* and
+--   */Users/username/* respectively).
 -- @field _CHARSET (string)
 --   The filesystem's character encoding.
 --   This is used when [working with files](io.html).
@@ -113,9 +113,9 @@ local quit
 local reset
 
 ---
--- Calls function *f* with the given arguments after number *interval* seconds
--- and then repeatedly while *f* returns `true`. A `nil` or `false` return value
--- stops repetition.
+-- Calls function *f* with the given arguments after *interval* seconds.
+-- If *f* returns `true`, calls *f* repeatedly every *interval* seconds as long
+-- as *f* returns `true`. A `nil` or `false` return value stops repetition.
 -- @param interval The interval in seconds to call *f* after.
 -- @param f The function to call.
 -- @param ... Additional arguments to pass to *f*.

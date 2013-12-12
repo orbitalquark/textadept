@@ -6,20 +6,21 @@ local M = ui.find
 ---
 -- Textadept's Find & Replace pane.
 -- @field find_entry_text (string)
---   The text in the find entry.
+--   The text in the "Find" entry.
 -- @field replace_entry_text (string)
---   The text in the replace entry.
+--   The text in the "Replace" entry.
 -- @field match_case (bool)
---   Match the search text case sensitively.
+--   Match search text case sensitively.
 --   The default value is `false`.
 -- @field whole_word (bool)
---   Match the search text surrounded by non-word characters in searches.
+--   Match search text only when it is surrounded by non-word characters in
+--   searches.
 --   The default value is `false`.
 -- @field lua (bool)
---   Interpret the search text as a Lua pattern.
+--   Interpret search text as a Lua pattern.
 --   The default value is `false`.
 -- @field in_files (bool)
---   Find the search text in a list of files.
+--   Find search text in a list of files.
 --   The default value is `false`.
 -- @field find_label_text (string, Write-only)
 --   The text of the "Find" label.
@@ -52,9 +53,9 @@ local M = ui.find
 --   The text of the "In files" label.
 --   This is primarily used for localization.
 -- @field _G.events.FIND_WRAPPED (string)
---   Emitted when a text search wraps, either from bottom to top when searching
---   for a next occurrence, or from top to bottom when searching for a previous
---   occurrence.
+--   Emitted when a text search wraps, either from bottom to top (when searching
+--   for a next occurrence), or from top to bottom (when searching for a
+--   previous occurrence).
 --   This is useful for implementing a more visual or audible notice when a
 --   search wraps in addition to the statusbar message.
 module('ui.find')]]
@@ -187,11 +188,11 @@ local function find_incremental(text, next, anchor)
 end
 
 ---
--- Begins an incremental search using the command entry if *text* is `nil`;
--- otherwise continues an incremental search by searching for the next or
--- previous instance of string *text* depending on boolean *next*.
+-- Begins an incremental search using the command entry if *text* is `nil`.
+-- Otherwise, continues an incremental search by searching for the next or
+-- previous instance of string *text*, depending on boolean *next*.
 -- *anchor* indicates whether or not to search for *text* starting from the
--- caret position instead of the position where the incremental search began at.
+-- caret position instead of the position where the incremental search began.
 -- Only the `match_case` find option is recognized. Normal command entry
 -- functionality is unavailable until the search is finished by pressing `Esc`
 -- (`⎋` on Mac OSX | `Esc` in curses).
@@ -210,7 +211,8 @@ end
 
 ---
 -- Searches directory *dir* or the user-specified directory for files that match
--- search text and options and prints the results to a "Files Found" buffer.
+-- search text and search options, and prints the results to a buffer titled
+-- "Files Found".
 -- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
 -- search text and option flags, respectively. Use `FILTER` to set the search
 -- filter.
@@ -330,8 +332,8 @@ events.connect(events.REPLACE_ALL, replace_all)
 local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 ---
 -- Jumps to the source of the find in files search result on line number *line*
--- in the "Files Found" buffer or, if *line* is `nil`, the next or previous
--- search result depending on boolean *next*.
+-- in the buffer titled "Files Found" or, if *line* is `nil`, jumps to the next
+-- or previous search result, depending on boolean *next*.
 -- @param line The line number in the files found buffer that contains the
 --   search result to go to.
 -- @param next Optional flag indicating whether to go to the next search result

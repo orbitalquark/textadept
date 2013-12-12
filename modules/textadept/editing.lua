@@ -17,7 +17,7 @@ local M = {}
 --   Matching braces are defined in the [`braces`](#braces) table.
 -- @field TYPEOVER_CHARS (bool)
 --   Move over closing brace and quote characters under the caret when typing
---   them instead of inserting them.
+--   them.
 --   The default value is `true`.
 --   Typeover characters are defined in the [`typeover_chars`](#typeover_chars)
 --   table.
@@ -55,7 +55,7 @@ M.comment_string = {actionscript='//',ada='--',antlr='//',adpl='!',ansi_c='/*|*/
 -- Map of auto-paired characters like parentheses, brackets, braces, and quotes,
 -- with language-specific auto-paired character maps assigned to a lexer name
 -- key.
--- The ASCII values of opening characters are assigned to strings containing
+-- The ASCII values of opening characters are assigned to strings that contain
 -- complement characters. The default auto-paired characters are "()", "[]",
 -- "{}", "&apos;&apos;", and "&quot;&quot;".
 -- @class table
@@ -202,9 +202,10 @@ function M.match_brace(select)
 end
 
 ---
--- Displays an autocompletion list, built from the set of words in string
--- *words* and existing words in the buffer, for the word behind the caret,
--- returning `true` if completions were found.
+-- Displays an autocompletion list for the word behind the caret, returning
+-- `true` if completions were found.
+-- The displayed list is built from existing words in the buffer and the set of
+-- words in string *words*.
 -- @param words Optional list of words considered to be in the buffer,
 --   even if they are not. Words may contain [registered images][].
 --
@@ -306,7 +307,7 @@ end
 
 ---
 -- Moves the caret to the beginning of line number *line* or the user-specified
--- line, ensuring the line is visible.
+-- line, ensuring *line* is visible.
 -- @param line Optional line number to go to. If `nil`, the user is prompted for
 --   one.
 -- @name goto_line
@@ -372,8 +373,9 @@ function M.enclose(left, right)
 end
 
 ---
--- Selects the text between strings *left* and *right* containing the caret or,
--- if already selected, toggles between selecting *left* and *right* too.
+-- Selects the text between strings *left* and *right* that enclose the caret.
+-- If that range is already selected, toggles between selecting *left* and
+-- *right* as well.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
 -- @name select_enclosed
@@ -428,7 +430,8 @@ function M.select_paragraph()
 end
 
 ---
--- Selects all text with the current level of indentation.
+-- Selects the surrounding block of text whose lines' indentation levels are
+-- greater than or equal to the current line's level.
 -- If a text block is selected and the lines immediately above and below it are
 -- one indentation level lower, adds those lines to the selection.
 -- @name select_indented_block
@@ -450,7 +453,7 @@ function M.select_indented_block()
 end
 
 ---
--- Converts indentation between tabs and spaces based on `buffer.use_tabs`.
+-- Converts indentation between tabs and spaces according to `buffer.use_tabs`.
 -- If `buffer.use_tabs` is `true`, `buffer.tab_width` indenting spaces are
 -- converted to tabs. Otherwise, all indenting tabs are converted to
 -- `buffer.tab_width` spaces.
@@ -517,10 +520,10 @@ end
 -- standard output (stdout).
 -- Standard input is as follows:
 --
--- 1. If text is selected and spans multiple lines, all text on the lines
--- containing the selection is passed as stdin. However, if the end of the
--- selection is at the beginning of a line, only the line ending delimiters from
--- the previous line are included. The rest of the line is excluded.
+-- 1. If text is selected and spans multiple lines, all text on the lines that
+-- have text selected is passed as stdin. However, if the end of the selection
+-- is at the beginning of a line, only the line ending delimiters from the
+-- previous line are included. The rest of the line is excluded.
 -- 2. If text is selected and spans a single line, only the selected text is
 -- used.
 -- 3. If no text is selected, the entire buffer is used.

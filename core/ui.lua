@@ -137,22 +137,23 @@ function ui.switch_buffer()
 end
 
 ---
--- Switches to the buffer whose filename is *filename* in an existing view,
--- otherwise splitting the current view if *split* is `true` or shifting to the
--- next or *preferred_view* view instead of staying in the current one.
--- *sloppy* indicates whether or not to only match the last part of *filename*
--- to a buffer's `filename`.
+-- Switches to the existing view whose buffer's filename is *filename*.
+-- If no view was found and *split* is `true`, splits the current view in order
+-- to show the requested file. If *split* is `false`, shifts to the next or
+-- *preferred_view* view in order to show the requested file. If *sloppy* is
+-- `true`, requires only the last part of *filename* to match a buffer's
+-- `filename`.
 -- @param filename The filename of the buffer to go to.
--- @param split Optional flag indicating whether or not to open the buffer in a
---   split view if there is only one view. The default value is `false`.
+-- @param split Optional flag that indicates whether or not to open the buffer
+--   in a split view if there is only one view. The default value is `false`.
 -- @param preferred_view Optional view to open the desired buffer in if the
 --   buffer is not visible in any other view.
--- @param sloppy Optional flag indicating whether or not to not match *filename*
---   to `buffer.filename` exactly. When `true`, matches *filename* to only the
---   last part of `buffer.filename` This is useful for run and compile commands
---   which output relative filenames and paths instead of full ones and it is
---   likely that the file in question is already open. The default value is
---   `false`.
+-- @param sloppy Optional flag that indicates whether or not to not match
+--   *filename* to `buffer.filename` exactly. When `true`, matches *filename* to
+--   only the last part of `buffer.filename` This is useful for run and compile
+--   commands which output relative filenames and paths instead of full ones and
+--   it is likely that the file in question is already open. The default value
+--   is `false`.
 -- @name goto_file
 function ui.goto_file(filename, split, preferred_view, sloppy)
   local patt = '^'..filename..'$'
@@ -177,7 +178,7 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
 end
 
 ---
--- Switches the editor theme to string *name* and optionally assigns the
+-- Switches the editor theme to string *name* and (optionally) assigns the
 -- properties contained in table *props*.
 -- User themes override Textadept's default themes when they have the same name.
 -- If *name* contains slashes, it is assumed to be an absolute path to a theme
@@ -406,12 +407,12 @@ The functions below are Lua C functions.
 local dialog
 
 ---
--- Returns a split table containing Textadept's current split view structure.
+-- Returns a split table that contains Textadept's current split view structure.
 -- This is primarily used in session saving.
 -- @return table of split views. Each split view entry is a table with 4
 --   fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either
 --   nested split view entries or the views themselves; `vertical` is a flag
---   indicating if the split is vertical or not; and `size` is the integer
+--   that indicates if the split is vertical or not; and `size` is the integer
 --   position of the split resizer.
 -- @class function
 -- @name get_split_table
@@ -423,7 +424,7 @@ local get_split_table
 -- view's index in `_G._VIEWS` instead of an absolute index.
 -- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
 -- @param n A relative or absolute view index in `_G._VIEWS`.
--- @param relative Optional flag indicating whether *n* is a relative or
+-- @param relative Optional flag that indicates whether *n* is a relative or
 --   absolute index. The default value is `false`, for an absolute index.
 -- @see _G._G._VIEWS
 -- @see events.VIEW_BEFORE_SWITCH

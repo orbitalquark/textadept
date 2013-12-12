@@ -56,7 +56,7 @@ end
 
 ---
 -- Exits the current key mode, closes the command entry, and calls function *f*
--- (if given) with the command entry text as an argument.
+-- (if given) with the command entry's text as an argument.
 -- This is useful for binding keys to exit a command entry mode and perform an
 -- action with the entered text.
 -- @param f Optional function to call. It should accept the command entry text
@@ -91,9 +91,10 @@ local env = setmetatable({}, {
 })
 
 ---
--- Executes string *code* as Lua code subject to an "abbreviated" environment
--- where the contents of the `buffer`, `view`, and `ui` tables are also
--- considered as global functions and fields.
+-- Executes string *code* as Lua code that is subject to an "abbreviated"
+-- environment.
+-- In this environment, the contents of the `buffer`, `view`, and `ui` tables
+-- are also considered as global functions and fields.
 -- Prints the results of '=' expressions like in the Lua prompt.
 -- @param code The Lua code to execute.
 -- @name execute_lua

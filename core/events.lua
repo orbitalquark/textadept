@@ -34,13 +34,13 @@ local M = {}
 --
 --   * _`uri`_: The UTF-8-encoded URI to open.
 -- @field AUTO_C_CHAR_DELETED (string)
---   Emitted when deleting a character while the autocompletion or user list is
+--   Emitted after deleting a character while an autocompletion or user list is
 --   active.
 -- @field AUTO_C_CANCELED (string)
---   Emitted when canceling the autocompletion or user list.
+--   Emitted when canceling an autocompletion or user list.
 -- @field AUTO_C_SELECTION (string)
---   Emitted when selecting an item in the autocompletion list and before
---   inserting the selection.
+--   Emitted after selecting an item from an autocompletion list, but before
+--   inserting that item into the buffer.
 --   Automatic insertion can be cancelled by calling
 --   [`buffer:auto_c_cancel()`][] before returning from the event handler.
 --   Arguments:
@@ -85,15 +85,15 @@ local M = {}
 --   Arguments:
 --
 --   * _`position`_: The position double-clicked.
---   * _`line`_: The line number double-clicked.
+--   * _`line`_: The line number of the position double-clicked.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
 --     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK+.
 -- @field DWELL_END (string)
---   Emitted after a `DWELL_START` when the user moves the mouse, presses a key,
---   etc.
+--   Emitted after `DWELL_START` when the user moves the mouse, presses a key,
+--   or scrolls the view.
 --   Arguments:
 --
 --   * _`position`_: The position closest to *x* and *y*.
@@ -119,8 +119,8 @@ local M = {}
 --   * _`text`_: The text to search for.
 --   * _`next`_: Whether or not to search forward.
 -- @field HOTSPOT_CLICK (string)
---   Emitted when clicking on text that is in a style with the hotspot attribute
---   set.
+--   Emitted when clicking on text that is in a style that has the hotspot
+--   attribute set.
 --   Arguments:
 --
 --   * _`position`_: The clicked text's position.
@@ -130,8 +130,8 @@ local M = {}
 --     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK+.
 -- @field HOTSPOT_DOUBLE_CLICK (string)
---   Emitted when double-clicking on text that is in a style with the hotspot
---   attribute set.
+--   Emitted when double-clicking on text that is in a style that has the
+--   hotspot attribute set.
 --   Arguments:
 --
 --   * _`position`_: The double-clicked text's position.
@@ -142,7 +142,7 @@ local M = {}
 --     and "Alt" due to a Scintilla limitation with GTK+.
 -- @field HOTSPOT_RELEASE_CLICK (string)
 --   Emitted when releasing the mouse after clicking on text that is in a style
---   with the hotspot attribute set.
+--   that has the hotspot attribute set.
 --   Arguments:
 --
 --   * _`position`_: The clicked text's position.
@@ -179,7 +179,7 @@ local M = {}
 --   Arguments:
 --
 --   * _`margin`_: The margin number clicked.
---   * _`position`_: The position of the start of the clicked margin's line.
+--   * _`position`_: The beginning position of the clicked margin's line.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
 --     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
@@ -217,18 +217,17 @@ local M = {}
 -- @field SAVE_POINT_REACHED (string)
 --   Emitted after reaching a save point.
 -- @field UPDATE_UI (string)
---   Emitted when buffer content, styling, selection, or scroll position
---   changes.
+--   Emitted after the view is visually updated.
 -- @field URI_DROPPED (string)
 --   Emitted after dragging and dropping a URI into a view.
 --   Arguments:
 --
 --   * _`text`_: The UTF-8-encoded URI dropped.
 -- @field USER_LIST_SELECTION (string)
---   Emitted after selecting an item in the user list.
+--   Emitted after selecting an item in a user list.
 --   Arguments:
 --
---   * _`list_type`_: The *list_type* from [`buffer:user_list_show()`][].
+--   * _`id`_: The *id* from [`buffer:user_list_show()`][].
 --   * _`text`_: The selection's text.
 --   * _`position`_: The position the list was displayed at.
 -- @field VIEW_NEW (string)
@@ -259,8 +258,8 @@ local handlers = {}
 ---
 -- Adds function *f* to the set of event handlers for event *event* at position
 -- *index*.
--- *event* may be any arbitrary string and does not need to have been previously
--- defined.
+-- If *index* not given, appends *f* to the set of handlers. *event* may be any
+-- arbitrary string and does not need to have been previously defined.
 -- @param event The string event name.
 -- @param f The Lua function to connect to *event*.
 -- @param index Optional index to insert the handler into.

@@ -395,8 +395,7 @@ M.FUNCTION = 'functions'
 M.FIELD = 'fields'
 
 ---
--- Returns the full symbol or '' and the current symbol part behind the caret or
--- ''.
+-- Returns the full symbol and the current symbol part behind the caret.
 -- For example: `buffer.cur` would return `'buffer'` and `'cur'`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @return symbol or `''`
@@ -413,11 +412,12 @@ end
 
 ---
 -- Returns the class type of *symbol* name.
--- If *symbol* is `sense.syntax.self` and inside a class definition matching
--- `sense.syntax.class_definition`, that class is returned. Otherwise the
--- buffer is searched backwards for a type declaration of *symbol* according to
--- the patterns in `sense.syntax.type_declarations` or a type assignment of
--- *symbol* according to `sense.syntax.type_assignments`.
+-- If *symbol* is `sense.syntax.self` and occurs inside a class definition that
+-- matches `sense.syntax.class_definition`, that class is returned. Otherwise,
+-- the buffer is searched backwards for either a type declaration of *symbol*
+-- according to the patterns in `sense.syntax.type_declarations`, or for a type
+-- assignment of *symbol* according to `sense.syntax.type_assignments`,
+-- whichever comes first.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol name to get the class of.
 -- @return class or `nil`
@@ -509,7 +509,7 @@ local function add_inherited(sense, class, only_fields, only_funcs, c, added)
 end
 
 ---
--- Returns the list of completions for symbol *symbol*.
+-- Returns the list of completions for string *symbol*.
 -- If either *only_fields* or *only_functions* is `true`, returns the
 -- appropriate subset of completions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
@@ -602,7 +602,8 @@ function M.complete(sense, only_fields, only_functions)
 end
 
 ---
--- Signals character(s) *c* to trigger autocompletion.
+-- Allows the user to autocomplete the symbol behind the caret by typing
+-- character(s) *c*.
 -- If either *only_fields* or *only_functions* is `true`, displays the
 -- appropriate subset of completions.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
@@ -629,8 +630,9 @@ function M.add_trigger(sense, c, only_fields, only_functions)
 end
 
 ---
--- Returns the list of apidocs for symbol *symbol*.
--- The list also holds a `pos` key with the index of the apidoc to show.
+-- Returns the list of API documentation strings for string *symbol*.
+-- A `pos` key in that list holds the index of the documentation string that
+-- should be shown.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param symbol The symbol name to get apidocs for.
 -- @return list of apidocs or `nil`
@@ -669,7 +671,7 @@ local apidocs = nil
 
 ---
 -- Shows a call tip with API documentation for the symbol behind the caret.
--- If documentation is already being shown, cycles through multiple definitions.
+-- If a call tip is already shown, cycles to the next one if it exists.
 -- @param sense The Adeptsense returned by `adeptsense.new()`. If `nil`, uses
 --   the current language's Adeptsense (if it exists).
 -- @return list of apidocs on success or `nil`.
@@ -718,18 +720,18 @@ end)
 ---
 -- Generates a set of symbol completion lists from Ctags file *tag_file* and
 -- adds the set to the Adeptsense.
--- *nolocations* indicates whether or not to store the location part of tags. If
--- `true`, `sense:goto_ctag()` cannot be used with this set of tags. It is
+-- *no_locations* indicates whether or not to store the location part of tags.
+-- If `true`, `sense:goto_ctag()` cannot be used with this set of tags. It is
 -- recommended to pass `-n` to `ctags` in order to use line numbers instead of
 -- text patterns to locate tags. This will greatly reduce memory usage for a
--- large number of symbols if *nolocations* is `false`.
+-- large number of symbols if *no_locations* is `false`.
 -- @param sense The Adeptsense returned by `adeptsense.new()`.
 -- @param tag_file The path of the Ctags file to load.
--- @param nolocations Optional flag indicating whether or not to discard the
+-- @param no_locations Optional flag indicating whether or not to discard the
 --   locations of the tags for use by `sense:goto_ctag()`. The default value is
 --   `false`.
 -- @name load_ctags
-function M.load_ctags(sense, tag_file, nolocations)
+function M.load_ctags(sense, tag_file, no_locations)
   local ctags_kinds = sense.ctags_kinds
   local completions = sense.completions
   local locations = sense.locations
@@ -752,7 +754,7 @@ function M.load_ctags(sense, tag_file, nolocations)
             local t = completions[class][kind]
             t[#t + 1] = tag_name..(kind == M.FIELD and '?1' or '?2')
             -- Update locations.
-            if not nolocations then
+            if not no_locations then
               if not locations[k] then locations[k] = {} end
               locations[k][class..'#'..tag_name] = {file_name, ex_cmd}
             end
@@ -784,7 +786,7 @@ function M.load_ctags(sense, tag_file, nolocations)
         local t = completions[''].fields
         t[#t + 1] = tag_name..'?1'
         -- Update locations.
-        if not nolocations then
+        if not no_locations then
           if not locations[k] then locations[k] = {} end
           locations[k][tag_name] = {file_name, ex_cmd}
         end

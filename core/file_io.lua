@@ -35,7 +35,7 @@
 --
 --   * _`filename`_: The filename externally modified.
 -- @field SNAPOPEN_MAX (number)
---   The maximum number of files to list in the snapopen dialog.
+--   The maximum number of files listed in the snapopen dialog.
 --   The default value is `1000`.
 module('io')]]
 
@@ -340,7 +340,7 @@ events_connect(events.FILE_OPENED, function(filename)
 end)
 
 ---
--- Prompts the user to select a recently opened file to reopen.
+-- Prompts the user to select a recently opened file to be reopened.
 -- @see recent_files
 -- @name open_recent_file
 function io.open_recent_file()
@@ -356,8 +356,8 @@ function io.open_recent_file()
 end
 
 ---
--- Prompts the user to select files to open from *paths*, a string directory
--- path or list of directory paths, using a filtered list dialog.
+-- Prompts the user to select files to be opened from *paths*, a string
+-- directory path or list of directory paths, using a filtered list dialog.
 -- Files shown in the dialog do not match any pattern in either string or table
 -- *filter* or, unless *exclude_FILTER* is `true`, in `lfs.FILTER`. A filter
 -- table contains Lua patterns that match filenames to exclude, an optional
