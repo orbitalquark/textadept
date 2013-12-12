@@ -87,8 +87,8 @@ function M.load(filename)
       current_view = tonumber(line:match('^current_view: (%d+)')) or 1
     elseif line:find('^size:') then
       local maximized, width, height = line:match('^size: (%l*) ?(%d+) (%d+)$')
-      maximized = maximized == 'true'
-      if maximized then ui.maximized = true else ui.size = {width, height} end
+      ui.maximized = maximized == 'true'
+      if not ui.maximized then ui.size = {width, height} end
     elseif line:find('^recent:') then
       local filename = line:match('^recent: (.+)$')
       local recent, exists = io.recent_files, false
