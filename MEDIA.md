@@ -8,12 +8,15 @@
   </a>
 </div>
 
-*Textadept Quick Reference* ([Pre-order][])
+*Textadept Quick Reference*
+
+Order: [Ebook][] | [Print book][] | Amazon [US][], [UK][], [DE][], [FR][],
+[IT][], [ES][]
 
 Released: December 2013<br/>
-Pages: 150 (est.)
+Pages: 160
 
-[Table of Contents][] (est.)
+[Table of Contents][] | [Excerpt][]
 
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text
 editor for programmers. This quick reference contains a wealth of knowledge on
@@ -35,8 +38,16 @@ This book covers how to:
 It serves as the perfect complement to Textadept's comprehensive Manual and
 exhaustive API documentation.
 
-[Pre-order]: http://gum.co/ta_quickref
+[Ebook]: http://gum.co/textadept_ebook
+[Print book]: http://gum.co/textadept_book
+[US]: http://www.amazon.com/Textadept-Quick-Reference-Mitchell/dp/0991237900/
+[UK]: http://www.amazon.co.uk/Textadept-Quick-Reference-Mitchell/dp/0991237900/
+[DE]: http://www.amazon.de/Textadept-Quick-Reference-Mitchell/dp/0991237900/
+[FR]: http://www.amazon.fr/Textadept-Quick-Reference-Mitchell/dp/0991237900/
+[IT]: http://www.amazon.it/Textadept-Quick-Reference-Mitchell/dp/0991237900/
+[ES]: http://www.amazon.es/Textadept-Quick-Reference-Mitchell/dp/0991237900/
 [Table of Contents]: download/ta_quickref_toc.pdf
+[Excerpt]: download/ta_quickref_excerpt.pdf
 
 ## Lua Workshop 2012
 

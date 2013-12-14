@@ -94,7 +94,7 @@ directory. They are also available [online][].
 [*Textadept Quick Reference*][]
 
 Released: December 2013<br/>
-Pages: 150 (est.)
+Pages: 160
 
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text
 editor for programmers. This quick reference contains a wealth of knowledge on
