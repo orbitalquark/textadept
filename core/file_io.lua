@@ -421,13 +421,23 @@ end
 if WIN32 then
   local winapi = require('winapi')
   io.popen = function(prog)
-    local code, output = winapi.execute(prog)
-    if not code then return code, output end
-    return {
-      read = function() return output end,
+    local p, f = winapi.spawn_process(os.getenv('COMSPEC')..' /c '..prog)
+    if not p then return nil, f end
+    local file
+    file = {
+      read = function(self, format)
+        if not format or not format:find('^%*a') then return f:read() end
+        local chunk, text = f:read(), {}
+        while chunk do 
+          text[#text + 1] = chunk
+          chunk = f:read()
+        end
+        return table.concat(text, '')
+      end,
+      write = function(self, ...) f:write(...) end,
       lines = function()
+        local output, pos = file:read('*a'), 1
         if not output:find('\r?\n$') then output = output..'\n' end
-        local pos = 1
         return function()
           local s, e, line = output:find('([^\r\n]*)\r?\n', pos)
           if not s then return nil end
@@ -435,8 +445,13 @@ if WIN32 then
           return line
         end
       end,
-      close = function() return true, 'exit', code end
+      close = function()
+        local _, status = p:wait(100)
+        if status == 'TIMEOUT' then p:kill() end
+        return true, 'exit', p:get_exit_code()
+      end
     }
+    return file
   end
   os.execute = function(prog)
     local code = winapi.execute(prog)

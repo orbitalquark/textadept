@@ -1,5 +1,5 @@
 --- a/winapi.c	2012-06-28 04:50:56.000000000 -0400
-+++ b/winapi.c	2013-11-19 15:42:27.560539900 -0500
++++ b/winapi.c	2013-12-13 09:14:05.006746200 -0500
 @@ -20,7 +20,7 @@
  #ifdef __GNUC__
  #include <winable.h> /* GNU GCC specific */
@@ -59,7 +59,23 @@
    /// get the name of the process.
    // @param full true if you want the full path; otherwise returns the base name.
    // @function get_process_name
-@@ -1280,6 +1287,7 @@
+@@ -1210,6 +1217,7 @@
+     lua_pushnumber(L, this->pid);
+ 	return 1;
+   }
++#endif
+ 
+   /// kill the process.
+   // @{test-spawn.lua} kills a launched process after a certain amount of output.
+@@ -1221,6 +1229,7 @@
+     return 0;
+   }
+ 
++#if 0
+   /// get the working size of the process.
+   // @return minimum working set size
+   // @return maximum working set size.
+@@ -1280,6 +1289,7 @@
      lua_pushnumber(L,fileTimeToMillisec(&kernel));
      return 2;
    }
@@ -67,7 +83,7 @@
  
    /// wait for this process to finish.
    // @param timeout optional timeout in millisec; defaults to waiting indefinitely.
-@@ -1293,6 +1301,7 @@
+@@ -1293,6 +1303,7 @@
      return push_wait(L,this->hProcess, TIMEOUT(timeout));
    }
  
@@ -75,7 +91,7 @@
    /// run callback when this process is finished.
    // @param callback the callback
    // @param timeout optional timeout in millisec; defaults to waiting indefinitely.
-@@ -1320,6 +1329,7 @@
+@@ -1320,6 +1331,7 @@
      #line 968 "winapi.l.c"
      return push_wait_result(L, WaitForInputIdle(this->hProcess, TIMEOUT(timeout)));
    }
@@ -83,14 +99,16 @@
  
    /// exit code of this process.
    // (Only makes sense if the process has in fact finished.)
-@@ -1354,15 +1364,19 @@
+@@ -1354,15 +1366,21 @@
  #line 995 "winapi.l.c"
  
  static const struct luaL_Reg Process_methods [] = {
 +#if 0
       {"get_process_name",l_Process_get_process_name},
     {"get_pid",l_Process_get_pid},
++#endif
     {"kill",l_Process_kill},
++#if 0
     {"get_working_size",l_Process_get_working_size},
     {"get_start_time",l_Process_get_start_time},
     {"get_run_times",l_Process_get_run_times},
@@ -103,7 +121,7 @@
     {"get_exit_code",l_Process_get_exit_code},
     {"close",l_Process_close},
     {"__gc",l_Process___gc},
-@@ -1388,6 +1402,7 @@
+@@ -1388,6 +1406,7 @@
  // @{readme.md.Creating_and_working_with_Processes}
  // @section Processes
  
@@ -111,7 +129,7 @@
  /// create a process object from the id.
  // @param pid the process id
  // @return @{Process}
-@@ -1477,6 +1492,7 @@
+@@ -1477,6 +1496,7 @@
      return 1;
    }
  }
@@ -119,7 +137,7 @@
  
  // These functions are all run in background threads, and a little bit of poor man's
  // OOP helps here. This is the base struct for describing threads with callbacks,
-@@ -1493,6 +1509,7 @@
+@@ -1493,6 +1513,7 @@
    callback_data_
  } LuaCallback, *PLuaCallback;
  
@@ -127,7 +145,7 @@
  LuaCallback *lcb_callback(void *lcb, lua_State *L, int idx) {
    LuaCallback *data;
    if (lcb == NULL) {
-@@ -1510,6 +1527,7 @@
+@@ -1510,6 +1531,7 @@
    LuaCallback *lcb = (LuaCallback*)data;
    return call_lua(lcb->L,lcb->callback,idx,text,persist);
  }
@@ -135,7 +153,7 @@
  
  void lcb_allocate_buffer(void *data, int size) {
    LuaCallback *lcb = (LuaCallback*)data;
-@@ -1535,6 +1553,7 @@
+@@ -1535,6 +1557,7 @@
  #define lcb_bufsz(data) ((LuaCallback *)data)->bufsz
  #define lcb_handle(data) ((LuaCallback *)data)->handle
  
@@ -143,7 +161,7 @@
  /// Thread object. This is returned by the @{File:read_async} method and the @{make_timer},
  // @{make_pipe_server} and @{watch_for_file_changes} functions. Useful to kill a thread
  // and free associated resources.
-@@ -1707,6 +1726,7 @@
+@@ -1707,6 +1730,7 @@
    lcb->bufsz = timeout;
    return lcb_new_thread((TCB)handle_waiter,lcb);
  }
@@ -151,23 +169,7 @@
  
  /// this represents a raw Windows file handle.
  // The write handle may be distinct from the read handle.
-@@ -1748,6 +1768,7 @@
-     lcb_allocate_buffer(this,FILE_BUFF_SIZE);
-   }
- 
-+#if 0
-   /// write to a file.
-   // @param s text
-   // @return number of bytes written.
-@@ -1761,6 +1782,7 @@
-     lua_pushinteger(L,bytesWrote);
-     return 1;
-   }
-+#endif
- 
-   static BOOL raw_read (File *this) {
-     DWORD bytesRead = 0;
-@@ -1785,6 +1807,7 @@
+@@ -1785,6 +1809,7 @@
      }
    }
  
@@ -175,7 +177,7 @@
    static void file_reader (File *this) { // background reader thread
      int n;
      do {
-@@ -1806,6 +1829,7 @@
+@@ -1806,6 +1831,7 @@
      this->callback = make_ref(L,callback);
      return lcb_new_thread((TCB)&file_reader,this);
    }
@@ -183,13 +185,9 @@
  
    static int l_File_close(lua_State *L) {
      File *this = File_arg(L,1);
-@@ -1825,9 +1849,13 @@
- #line 1318 "winapi.l.c"
- 
+@@ -1827,7 +1853,9 @@
  static const struct luaL_Reg File_methods [] = {
-+#if 0
       {"write",l_File_write},
-+#endif
     {"read",l_File_read},
 +#if 0
     {"read_async",l_File_read_async},
