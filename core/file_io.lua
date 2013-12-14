@@ -117,7 +117,7 @@ function io.open_file(filenames)
     local filename = filenames[i]:gsub('^file://', '')
     if WIN32 then filename = filename:gsub('/', '\\') end
     for i, buffer in ipairs(_BUFFERS) do
-      if filename == buffer.filename then view:goto_buffer(i) return end
+      if filename == buffer.filename then view:goto_buffer(i) goto continue end
     end
 
     local text = ''
@@ -167,6 +167,7 @@ function io.open_file(filenames)
       if file == filename then table.remove(io.recent_files, i) break end
     end
     table.insert(io.recent_files, 1, filename)
+    ::continue::
   end
 end
 
@@ -428,7 +429,7 @@ if WIN32 then
       read = function(self, format)
         if not format or not format:find('^%*a') then return f:read() end
         local chunk, text = f:read(), {}
-        while chunk do 
+        while chunk do
           text[#text + 1] = chunk
           chunk = f:read()
         end
