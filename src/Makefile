@@ -420,7 +420,7 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 scintilla_tgz = scintilla334.tgz?download
 scinterm_zip = scinterm.zip
 scintillua_zip = scintillua.zip
-lua_tgz = lua-5.2.2.tar.gz
+lua_tgz = lua-5.2.3.tar.gz
 lpeg_tgz = lpeg-0.10.2.tar.gz
 lfs_zip = d71c63cdb776f7d25313f8fcd14f07512ba1f83e.zip
 lwinapi_zip = 23dd43141d04d010a9986cca9e5ecb9e598a2899.zip
