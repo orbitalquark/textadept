@@ -534,8 +534,8 @@
 --   `DWELL_START` event. A time of `buffer.TIME_FOREVER` will never generate
 --   one.
 -- @field mouse_selection_rectangular_switch (bool)
---   Whether or not pressing `buffer.rectangular_selection_modifier` while
---   selecting text switches to rectangular selection mode.
+--   Whether or not pressing `buffer.rectangular_selection_modifier` during
+--   normal text selection with the mouse turns on rectangular selection.
 --   The default value is `false`.
 -- @field modify (bool)
 --   Whether or not the buffer has unsaved changes.
@@ -591,6 +591,12 @@
 --     "Command" key.
 --
 --   The default value is `buffer.MOD_CTRL`.
+-- @field representation (table)
+--   The alternative string representations of characters.
+--   Representations are displayed in the same way control characters are. Use
+--   the empty string for the '\0' character when assigning its representation.
+--   Call [`buffer:clear_representation()`](#clear_representation) to remove a
+--   representation.
 -- @field rgba_image_height (number)
 --   The height of the RGBA image to be defined using
 --   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
@@ -1179,6 +1185,13 @@ function clear_document_style(buffer) end
 -- `buffer:register_rgba_image()`.
 -- @param buffer The buffer.
 function clear_registered_images(buffer) end
+
+---
+-- Removes the alternate string representation for character *char*.
+-- @param buffer The buffer.
+-- @param char The character in `buffer.representations` to remove the alternate
+--   string representation for.
+function clear_representation(buffer, char) end
 
 ---
 -- Removes all selections and moves the caret to the beginning of the buffer.
@@ -2029,16 +2042,17 @@ function position_before(buffer, pos) end
 function position_from_line(buffer, line) end
 
 ---
--- Returns the position *relative* number of characters before position *pos*
--- if *relative* is negative, or *relative* number of characters after *pos*
--- if *relative* is positive.
--- This function takes multi-byte characters into account and always returns a
--- position in the range of `0` to `buffer.length`.
+-- Returns the position *n* characters before or after position *pos*, taking
+-- multi-byte characters into account.
+-- Returns `0` if the position is less than 0 or `buffer.length` if the position
+-- is greater than `buffer.length`.
 -- @param buffer The buffer.
--- @param pos The position in *buffer* to get the position relative to.
--- @param relative The relative number of characters from *pos* to get the
---   position of.
-function position_relative(buffer, pos, relative) end
+-- @param pos The position in *buffer* to get the relative position from.
+-- @param n The relative number of characters to get the position for. A
+--   negative number indicates a position before while a positive number
+--   indicates a position after.
+-- @return number
+function position_relative(buffer, pos, n) end
 
 ---
 -- Redoes the next undone action.
@@ -2720,7 +2734,7 @@ function set_lexer(buffer, lexer) end
 --   * mouse_down_captures
 --   * paste_convert_endings
 --   * position_cache
---   * primary_style_from_style
+--   * primary_style_from_style+
 --   * print_colour_mode
 --   * print_magnification
 --   * print_wrap_mode
@@ -2728,7 +2742,7 @@ function set_lexer(buffer, lexer) end
 --   * style_bits
 --   * style_bits_needed
 --   * style_character_set
---   * style_from_sub_style
+--   * style_from_sub_style+
 --   * style_size_fractional
 --   * style_weight
 --   * sub_style_bases+
