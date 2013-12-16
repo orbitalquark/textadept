@@ -1887,18 +1887,10 @@ static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
     Scintilla *prev = focused_view;
     // Do not let a split view steal focus.
     goto_view(view), lL_notify(lua, n), goto_view(prev);
-  }
+  } else if (n->nmhdr.code == SCN_FOCUSIN) goto_view(view);
 }
 
 #if GTK
-/**
- * Signal for a Scintilla command.
- * Currently handles SCEN_SETFOCUS.
- */
-static void s_command(GtkWidget *view, int wParam, void*_, void*__) {
-  if (wParam >> 16 == SCEN_SETFOCUS) goto_view(view);
-}
-
 /** Signal for a Scintilla keypress. */
 static int s_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
   return lL_event(lua, "keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN,
@@ -2091,7 +2083,6 @@ static Scintilla *new_view(sptr_t doc) {
   Scintilla *view = scintilla_new();
   gtk_widget_set_size_request(view, 1, 1); // minimum size
   signal(view, SCINTILLA_NOTIFY, s_notify);
-  signal(view, "command", s_command);
   signal(view, "key-press-event", s_keypress);
   signal(view, "button-press-event", s_buttonpress);
 #elif CURSES
