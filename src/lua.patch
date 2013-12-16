@@ -1,6 +1,6 @@
-diff -r f63219ad645f src/loadlib.c
---- a/src/loadlib.c	Thu Jun 13 08:39:33 2013 -0400
-+++ b/src/loadlib.c	Thu Jun 13 08:41:55 2013 -0400
+diff -r 56f218b3289e src/loadlib.c
+--- a/src/loadlib.c	Sun Dec 15 21:08:47 2013 -0500
++++ b/src/loadlib.c	Sun Dec 15 21:11:23 2013 -0500
 @@ -35,11 +35,11 @@
  ** variables that Lua check to set its paths.
  */
@@ -15,12 +15,12 @@ diff -r f63219ad645f src/loadlib.c
  #endif
  
  #define LUA_PATHSUFFIX		"_" LUA_VERSION_MAJOR "_" LUA_VERSION_MINOR
-diff -r f63219ad645f src/lua.c
---- a/src/lua.c	Thu Jun 13 08:39:33 2013 -0400
+diff -r 56f218b3289e src/lua.c
+--- a/src/lua.c	Sun Dec 15 21:08:47 2013 -0500
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
 @@ -1,497 +0,0 @@
 -/*
--** $Id: lua.c,v 1.206 2012/09/29 20:07:06 roberto Exp $
+-** $Id: lua.c,v 1.206.1.1 2013/04/12 18:48:47 roberto Exp $
 -** Lua stand-alone interpreter
 -** See Copyright Notice in lua.h
 -*/
@@ -516,9 +516,9 @@ diff -r f63219ad645f src/lua.c
 -  return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 -}
 -
-diff -r f63219ad645f src/luaconf.h
---- a/src/luaconf.h	Thu Jun 13 08:39:33 2013 -0400
-+++ b/src/luaconf.h	Thu Jun 13 08:41:55 2013 -0400
+diff -r 56f218b3289e src/luaconf.h
+--- a/src/luaconf.h	Sun Dec 15 21:08:47 2013 -0500
++++ b/src/luaconf.h	Sun Dec 15 21:11:23 2013 -0500
 @@ -93,21 +93,21 @@
  #define LUA_CDIR	"!\\"
  #define LUA_PATH_DEFAULT  \
