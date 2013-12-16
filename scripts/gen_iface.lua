@@ -87,7 +87,9 @@ local events = {
   SCN_INDICATORRELEASE = 2024,
   SCN_AUTOCCANCELLED = 2025,
   SCN_AUTOCCHARDELETED = 2026,
-  SCN_HOTSPOTRELEASECLICK = 2027
+  SCN_HOTSPOTRELEASECLICK = 2027,
+  SCN_FOCUSIN = 2028,
+  SCN_FOCUSOUT = 2029
 }
 for event, value in pairs(events) do
   constants[#constants + 1] = string_format('%s=%d', event, value)

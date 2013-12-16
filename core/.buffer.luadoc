@@ -533,6 +533,10 @@
 --   The number of milliseconds the mouse must idle before generating a
 --   `DWELL_START` event. A time of `buffer.TIME_FOREVER` will never generate
 --   one.
+-- @field mouse_selection_rectangular_switch (bool)
+--   Whether or not pressing `buffer.rectangular_selection_modifier` while
+--   selecting text switches to rectangular selection mode.
+--   The default value is `false`.
 -- @field modify (bool)
 --   Whether or not the buffer has unsaved changes.
 -- @field multi_paste (number)
@@ -2025,6 +2029,18 @@ function position_before(buffer, pos) end
 function position_from_line(buffer, line) end
 
 ---
+-- Returns the position *relative* number of characters before position *pos*
+-- if *relative* is negative, or *relative* number of characters after *pos*
+-- if *relative* is positive.
+-- This function takes multi-byte characters into account and always returns a
+-- position in the range of `0` to `buffer.length`.
+-- @param buffer The buffer.
+-- @param pos The position in *buffer* to get the position relative to.
+-- @param relative The relative number of characters from *pos* to get the
+--   position of.
+function position_relative(buffer, pos, relative) end
+
+---
 -- Redoes the next undone action.
 -- @param buffer The buffer.
 function redo(buffer) end
@@ -2704,6 +2720,7 @@ function set_lexer(buffer, lexer) end
 --   * mouse_down_captures
 --   * paste_convert_endings
 --   * position_cache
+--   * primary_style_from_style
 --   * print_colour_mode
 --   * print_magnification
 --   * print_wrap_mode
@@ -2711,6 +2728,7 @@ function set_lexer(buffer, lexer) end
 --   * style_bits
 --   * style_bits_needed
 --   * style_character_set
+--   * style_from_sub_style
 --   * style_size_fractional
 --   * style_weight
 --   * sub_style_bases+
