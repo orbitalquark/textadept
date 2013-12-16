@@ -436,6 +436,7 @@ if WIN32 then
         return table.concat(text, '')
       end,
       write = function(self, ...) f:write(...) end,
+      flush = function() end,
       lines = function()
         local output, pos = file:read('*a'), 1
         if not output:find('\r?\n$') then output = output..'\n' end
