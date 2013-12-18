@@ -1540,7 +1540,7 @@ Changes:
 [`show_documentation()`]: api/textadept.adeptsense.html#show_documentation
 [`sense.syntax.word_chars`]: api/textadept.adeptsense.html#syntax
 [CSS]: api/_M.css.html
-[HTML]: api/_M.hypertext.html
+[HTML]: api/_M.html.html
 [Java]: api/_M.java.html
 [Ruby]: api/_M.ruby.html
 
@@ -1600,7 +1600,7 @@ Bugfixes:
 Changes:
 
 * [`buffer.rectangular_selection_modifier`][] on Linux is the Super/Windows key.
-* Improved Hypertext lexer.
+* Improved HTML lexer.
 * Added Markdown, BibTeX, CMake, CUDA, Desktop Entry, F#, GLSL, and Nemerle
   lexers.
 * Added [`_m.textadept.filter_through`][] module for [shell commands][].
@@ -1944,7 +1944,7 @@ Bugfixes:
 
 * Fixed transform bug in snippets.
 * Fixed bug with Io lexer mime-type.
-* Fixed embedded css/javascript bug in hypertext (HTML) lexer.
+* Fixed embedded css/javascript bug in HTML lexer.
 
 Changes:
 

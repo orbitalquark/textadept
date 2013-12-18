@@ -328,7 +328,7 @@ local M = {}
 -- user expects CSS completions. However, Textadept does not automatically load
 -- child language Adeptsenses. The parent language must do this. For example:
 --
---     -- In file *modules/hypertext/init.lua*.
+--     -- In file *modules/html/init.lua*.
 --     -- Load CSS Adeptsense.
 --     if not _M.css then _M.css = require('css') end
 --
