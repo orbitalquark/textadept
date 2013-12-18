@@ -172,6 +172,17 @@ M.KEYSYMS = {
 -- The current key sequence.
 local keychain = {}
 
+---
+-- The current chain of key sequences. (Read-only.)
+-- Use the '#' operator (instead of `ipairs()`) for iteration.
+-- @class table
+-- @name keychain
+M.keychain = setmetatable({}, {
+  __index = keychain,
+  __newindex = function() error("'keys.keychain' is read-only") end,
+  __len = function() return #keychain end
+})
+
 -- Clears the current key sequence.
 local function clear_key_sequence()
   -- Clearing a table is faster than re-creating one.
