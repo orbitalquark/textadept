@@ -49,7 +49,7 @@ M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 -- @class table
 -- @name comment_string
 -- @see block_comment
-M.comment_string = {actionscript='//',ada='--',antlr='//',adpl='!',ansi_c='/*|*/',applescript='--',asp='\'',awk='#',b_lang='//',bash='#',batch=':',bibtex='%',boo='#',chuck='//',cmake='#',coffeescript='#',context='%',cpp='//',csharp='//',css='/*|*/',cuda='//',desktop='#',django='{#|#}',dmd='//',dot='//',eiffel='--',erlang='%',forth='|\\',fortran='!',fsharp='//',gap='#',gettext='#',glsl='//',gnuplot='#',go='//',groovy='//',gtkrc='#',haskell='--',hypertext='<!--|-->',idl='//',inform='!',ini='#',Io='#',java='//',javascript='//',json='/*|*/',jsp='//',latex='%',less='//',lilypond='%',lisp=';',lua='--',makefile='#',matlab='#',nemerle='//',nsis='#',objective_c='//',pascal='//',perl='#',php='//',pike='//',pkgbuild='#',prolog='%',props='#',ps='%',python='#',rails='#',rebol=';',rexx='--',rhtml='<!--|-->',rstats='#',ruby='#',sass='//',scala='//',scheme=';',smalltalk='"|"',sql='#',tcl='#',tex='%',text='',vala='//',vb='\'',vbscript='\'',verilog='//',vhdl='--',xml='<!--|-->'}
+M.comment_string = {actionscript='//',ada='--',antlr='//',adpl='!',ansi_c='/*|*/',applescript='--',asp='\'',awk='#',b_lang='//',bash='#',batch=':',bibtex='%',boo='#',chuck='//',cmake='#',coffeescript='#',context='%',cpp='//',csharp='//',css='/*|*/',cuda='//',desktop='#',django='{#|#}',dmd='//',dot='//',eiffel='--',erlang='%',forth='|\\',fortran='!',fsharp='//',gap='#',gettext='#',glsl='//',gnuplot='#',go='//',groovy='//',gtkrc='#',haskell='--',html='<!--|-->',idl='//',inform='!',ini='#',Io='#',java='//',javascript='//',json='/*|*/',jsp='//',latex='%',less='//',lilypond='%',lisp=';',lua='--',makefile='#',matlab='#',nemerle='//',nsis='#',objective_c='//',pascal='//',perl='#',php='//',pike='//',pkgbuild='#',prolog='%',props='#',ps='%',python='#',rails='#',rebol=';',rexx='--',rhtml='<!--|-->',rstats='#',ruby='#',sass='//',scala='//',scheme=';',smalltalk='"|"',sql='#',tcl='#',tex='%',text='',vala='//',vb='\'',vbscript='\'',verilog='//',vhdl='--',xml='<!--|-->'}
 
 ---
 -- Map of auto-paired characters like parentheses, brackets, braces, and quotes,
@@ -60,7 +60,7 @@ M.comment_string = {actionscript='//',ada='--',antlr='//',adpl='!',ansi_c='/*|*/
 -- "{}", "&apos;&apos;", and "&quot;&quot;".
 -- @class table
 -- @name char_matches
--- @usage textadept.editing.char_matches.hypertext = {..., [60] = '>'}
+-- @usage textadept.editing.char_matches.html = {..., [60] = '>'}
 -- @see AUTOPAIR
 M.char_matches = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 
@@ -71,7 +71,7 @@ M.char_matches = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 -- values. The default brace characters are '(', ')', '[', ']', '{', and '}'.
 -- @class table
 -- @name braces
--- @usage textadept.editing.braces.hypertext = {..., [60] = 1, [62] = 1}
+-- @usage textadept.editing.braces.html = {..., [60] = 1, [62] = 1}
 -- @see HIGHLIGHT_BRACES
 M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 
@@ -82,7 +82,7 @@ M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 -- The default characters are ')', ']', '}', '&apos;', and '&quot;'.
 -- @class table
 -- @name typeover_chars
--- @usage textadept.editing.typeover_chars.hypertext = {..., [62] = 1}
+-- @usage textadept.editing.typeover_chars.html = {..., [62] = 1}
 -- @see TYPEOVER_CHARS
 M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
 
