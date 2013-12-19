@@ -265,7 +265,8 @@ gtdialog-curses.o: gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -DCURSES -DNOHELP -DLIBRARY -Icdk \
 		$(CURSES_CFLAGS) $< -o $@
 $(cdk_objs): %.o: cdk/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) -D_GNU_SOURCE -Icdk $(CURSES_CFLAGS) $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) -D_GNU_SOURCE -Itermkey -Icdk $(CURSES_CFLAGS) $< \
+		-o $@
 $(termkey_objs): %.o: termkey/%.c ; $(CROSS)$(CC) -c $(CFLAGS) -std=c99 $< -o $@
 textadept_rc.o: textadept.rc ; $(CROSS)$(WINDRES) $< $@
 

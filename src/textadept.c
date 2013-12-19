@@ -40,7 +40,6 @@
 #include "lualib.h"
 #include "lauxlib.h"
 #include "Scintilla.h"
-#include "SciLexer.h"
 #if GTK
 #include "ScintillaWidget.h"
 #elif CURSES
@@ -92,6 +91,7 @@ static GtkosxApplication *osxapp;
 #endif
 #elif (CURSES && !_WIN32)
 static struct termios term;
+TermKey *ta_tk; // global for CDK use
 #endif
 static void new_buffer(sptr_t);
 static Scintilla *new_view(sptr_t);
@@ -2353,7 +2353,7 @@ int main(int argc, char **argv) {
 #if !_WIN32
   static struct termios oldterm;
   tcgetattr(0, &oldterm); // save old terminal settings
-  TermKey *tk = termkey_new(0, TERMKEY_FLAG_NOTERMIOS);
+  ta_tk = termkey_new(0, TERMKEY_FLAG_NOTERMIOS);
 #endif
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
@@ -2478,7 +2478,7 @@ int main(int argc, char **argv) {
   TermKeyResult res;
   TermKeyKey key;
   int keysyms[] = {0,SCK_BACK,SCK_TAB,SCK_RETURN,SCK_ESCAPE,0,0,SCK_UP,SCK_DOWN,SCK_LEFT,SCK_RIGHT,0,0,SCK_INSERT,SCK_DELETE,0,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END};
-  while ((res = termkey_waitkey(tk, &key)) != TERMKEY_RES_EOF) {
+  while ((res = termkey_waitkey(ta_tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
     if (key.type == TERMKEY_TYPE_UNICODE)
       c = key.code.codepoint;
@@ -2515,7 +2515,7 @@ int main(int argc, char **argv) {
   }
   endwin();
 #if !_WIN32
-  termkey_destroy(tk);
+  termkey_destroy(ta_tk);
   tcsetattr(0, TCSANOW, &oldterm); // restore old terminal settings
 #endif
 #endif

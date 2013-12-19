@@ -1,3 +1,63 @@
+diff -r 9d0780ddcbab binding.c
+--- a/binding.c	2011-05-16 18:36:08.000000000 -0400
++++ b/binding.c	2013-12-18 11:51:43.781198100 -0500
+@@ -1,4 +1,8 @@
+ #include <cdk_int.h>
++#if !_WIN32
++#include "termkey.h"
++extern TermKey *ta_tk;
++#endif
+ 
+ /*
+  * $Author: tom $
+@@ -167,7 +171,47 @@
+ {
+    EObjectType cdktype = ObjTypeOf (obj);
+    CDKOBJS *test = bindableObject (&cdktype, obj);
++#if !_WIN32
++   int result = ERR;
++   TermKeyKey key;
++   int keysyms[] = {0,KEY_BACKSPACE,KEY_TAB,KEY_ENTER,KEY_ESC,0,0,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,0,0,KEY_IC,KEY_DC,0,KEY_PPAGE,KEY_NPAGE,KEY_HOME,KEY_END};
++   TermKeyResult res = termkey_waitkey(ta_tk, &key);
++   switch (res)
++   {
++   case TERMKEY_RES_KEY:
++      switch (key.type)
++      {
++      case TERMKEY_TYPE_UNICODE:
++         result = key.code.codepoint;
++         if ((key.modifiers & TERMKEY_KEYMOD_CTRL) &&
++             ((result >= 'a' && result <= 'z') || (result >= 'A' && result <= 'Z')))
++         {
++            result = (result & ~0x60);
++            key.modifiers &= ~TERMKEY_KEYMOD_CTRL;
++         }
++         break;
++      case TERMKEY_TYPE_FUNCTION:
++         result = KEY_F(key.code.number);
++         break;
++      case TERMKEY_TYPE_KEYSYM:
++         result = keysyms[key.code.sym];
++         break;
++      default:
++         result = ERR;
++      }
++      break;
++   case TERMKEY_RES_EOF:
++   case TERMKEY_RES_ERROR:
++      result = ERR;
++      break;
++   case TERMKEY_RES_NONE:
++   case TERMKEY_RES_AGAIN:
++      result = 0;
++      break;
++   }
++#else
+    int result = wgetch (InputWindowOf (obj));
++#endif
+ 
+    if (result >= 0
+        && test != 0
 diff -r 9d0780ddcbab cdk.c
 --- a/cdk.c	Mon Sep 02 13:43:26 2013 -0400
 +++ b/cdk.c	Mon Sep 02 13:46:55 2013 -0400
@@ -227,6 +287,25 @@ diff -r 9d0780ddcbab cdk_version.h
 +#endif
 +
 +#endif /* CDK_VERSION_H */
+diff -r 9d0780ddcbab entry.c
+--- a/entry.c	2013-06-16 09:12:32.000000000 -0400
++++ b/entry.c	2013-12-17 16:52:52.969973100 -0500
+@@ -332,6 +332,7 @@
+ 	    else
+ 	    {
+ 	       wmove (widget->fieldWin, 0, --widget->screenCol);
++	       drawCDKEntryField (widget);
+ 	    }
+ 	    break;
+ 
+@@ -350,6 +351,7 @@
+ 	    {
+ 	       /* Move right. */
+ 	       wmove (widget->fieldWin, 0, ++widget->screenCol);
++	       drawCDKEntryField (widget);
+ 	    }
+ 	    break;
+ 
 diff -r 9d0780ddcbab fselect.c
 --- a/fselect.c	Mon Sep 02 13:43:26 2013 -0400
 +++ b/fselect.c	Mon Sep 02 13:46:55 2013 -0400
