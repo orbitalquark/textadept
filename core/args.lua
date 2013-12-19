@@ -57,7 +57,7 @@ function M.process(arg)
       f(table.unpack(args))
       i = i + n
     else
-      if not arg[i]:find(not WIN32 and '^/' or '^%u:[/\\]') then
+      if not arg[i]:find(not WIN32 and '^/' or '^%a:[/\\]') then
         -- Convert relative path to absolute path.
         local cwd = arg[-1] or lfs.currentdir()
         arg[i] = cwd..(not WIN32 and '/' or '\\')..arg[i]
