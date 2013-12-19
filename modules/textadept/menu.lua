@@ -213,6 +213,16 @@ local context_menu = {
   {_L['Select _All'], buffer.select_all}
 }
 
+-- The default tabbar context menu.
+local tab_context_menu = {
+  {_L['_Close'], io.close_buffer},
+  SEPARATOR,
+  {_L['_Save'], io.save_file},
+  {_L['Save _As'], io.save_file_as},
+  SEPARATOR,
+  {_L['Re_load'], io.reload_file},
+}
+
 -- Returns the GDK integer keycode and modifier mask for a key sequence.
 -- This is used for creating menu accelerators.
 -- @param key_seq The string key sequence.
@@ -324,19 +334,34 @@ M.set_menubar(menubar)
 
 ---
 -- Sets `ui.context_menu` from menu item list *menu*.
+-- Deprecated in favor of `set_contextmenus()`.
+-- @param menu The menu table to create the context menu from.
+-- @see set_contextmenus
+-- @name set_contextmenu
+function M.set_contextmenu(menu) M.set_contextmenus(menu) end
+
+---
+-- Sets `ui.context_menu` and `ui.tab_context_menu` from menu item lists
+-- *buffer_menu* and *tab_menu*, respectively.
 -- Menu items are tables containing menu text and either a function to call or
 -- a table containing a function with its parameters to call when an item is
 -- clicked. Menu items may also be sub-menus, ordered lists of menu items with
 -- an additional `title` key for the sub-menu's title text.
--- @param menu The menu table to create the context menu from.
+-- @param buffer_menu Optional menu table to create the buffer context menu
+--   from. If `nil`, uses the default context menu.
+-- @param tab_menu Optional menu table to create the tabbar context menu from.
+--   If `nil`, uses the default tab context menu.
 -- @see ui.context_menu
+-- @see ui.tab_context_menu
 -- @see ui.menu
--- @name set_contextmenu
-function M.set_contextmenu(menu)
+-- @name set_contextmenus
+function M.set_contextmenus(buffer_menu, tab_menu)
   contextmenu_actions = {}
-  ui.context_menu = ui.menu(read_menu_table(menu, true))
+  ui.context_menu = ui.menu(read_menu_table(buffer_menu or context_menu, true))
+  ui.tab_context_menu = ui.menu(read_menu_table(tab_menu or tab_context_menu,
+                                                true))
 end
-if not CURSES then M.set_contextmenu(context_menu) end
+if not CURSES then M.set_contextmenus() end
 
 ---
 -- Prompts the user to select a menu command to run.
@@ -364,7 +389,8 @@ if not CURSES then
   -- Set a language-specific context menu or the default one.
   local function set_language_contextmenu()
     local lang = _G.buffer:get_lexer()
-    M.set_contextmenu(_M[lang] and _M[lang].context_menu or context_menu)
+    M.set_contextmenus(_M[lang] and _M[lang].context_menu,
+                       _M[lang] and _M[lang].tab_context_menu)
   end
   events.connect(events.LEXER_LOADED, set_language_contextmenu)
   events.connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
