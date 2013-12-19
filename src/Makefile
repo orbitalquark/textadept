@@ -438,7 +438,7 @@ pdcurses_zip = download
 gtkosx_zip = gtkosx-2.24.16.zip
 bombay_zip = bombay.zip
 
-$(scintilla_tgz): ; wget "http://prdownloads.sourceforge.net/scintilla/$@"
+$(scintilla_tgz): ; wget "http://prdownloads.sourceforge.net/scintilla/$@" -O $@
 scintilla: scintilla.patch | $(scintilla_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
@@ -452,8 +452,9 @@ $(scintillua_zip):
 LexLPeg.cxx: | ../lexers ; ln -s $|/$@ $@
 $(lua_tgz): ; wget "http://www.lua.org/ftp/$@"
 $(lpeg_tgz): ; wget "http://www.inf.puc-rio.br/~roberto/lpeg/$@"
-$(lfs_zip): ; wget "https://github.com/keplerproject/luafilesystem/archive/$@"
-$(lwinapi_zip): ; wget "https://github.com/stevedonovan/winapi/archive/$@"
+$(lfs_zip):
+	wget "https://github.com/keplerproject/luafilesystem/archive/$@" -O $@
+$(lwinapi_zip): ; wget "https://github.com/stevedonovan/winapi/archive/$@" -O $@
 lua: lua.patch | $(lua_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
