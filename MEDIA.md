@@ -14,6 +14,7 @@ Order: [Ebook][] | [Print book][] | Amazon [US][], [UK][], [DE][], [FR][],
 [IT][], [ES][]
 
 Released: December 2013<br/>
+ISBN: 978-0-9912379-0-6<br/>
 Pages: 160
 
 [Table of Contents][] | [Excerpt][]
