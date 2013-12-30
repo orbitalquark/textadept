@@ -136,8 +136,7 @@ static int quit;
 #endif
 static int initing, closing;
 static int show_tabs = TRUE, tab_sync;
-static int tVOID = 0, tINT = 1, tLENGTH = 2, /*tPOSITION = 3, tCOLOUR = 4,*/
-           tBOOL = 5, tKEYMOD = 6, tSTRING = 7, tSTRINGRESULT = 8;
+enum {SVOID, SINT, SLEN, SPOS, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET};
 static int lL_init(lua_State *, int, char **, int);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
 #if _WIN32
@@ -727,15 +726,14 @@ static void l_pushview(lua_State *L, Scintilla *view) {
 }
 
 #if GTK
-#define child1(p) gtk_paned_get_child1(GTK_PANED(p))
-#define child2(p) gtk_paned_get_child2(GTK_PANED(p))
+#define child(n, p) gtk_paned_get_child##n(GTK_PANED(p))
 
 static void l_pushsplittable(lua_State *L, GtkWidget *c1, GtkWidget *c2) {
   lua_newtable(L);
-  GTK_IS_PANED(c1) ? l_pushsplittable(L, child1(c1), child2(c1))
+  GTK_IS_PANED(c1) ? l_pushsplittable(L, child(1, c1), child(2, c1))
                    : l_pushview(L, c1);
   lua_rawseti(L, -2, 1);
-  GTK_IS_PANED(c2) ? l_pushsplittable(L, child1(c2), child2(c2))
+  GTK_IS_PANED(c2) ? l_pushsplittable(L, child(1, c2), child(2, c2))
                    : l_pushview(L, c2);
   lua_rawseti(L, -2, 2);
   lua_pushboolean(L, GTK_IS_HPANED(gtk_widget_get_parent(c1)));
@@ -752,7 +750,7 @@ static int lui_get_split_table(lua_State *L) {
   if (GTK_IS_PANED(pane)) {
     while (GTK_IS_PANED(gtk_widget_get_parent(pane)))
       pane = gtk_widget_get_parent(pane);
-    l_pushsplittable(L, child1(pane), child2(pane));
+    l_pushsplittable(L, child(1, pane), child(2, pane));
   } else l_pushview(L, focused_view);
 #elif CURSES
   l_pushview(L, focused_view); // TODO: push split table
@@ -1189,7 +1187,7 @@ static int lbuffer_text_range(lua_State *L) {
   Scintilla *view = l_globaldoccompare(L, 1) == 0 ? focused_view : dummy_view;
   long min = luaL_checklong(L, 2), max = luaL_checklong(L, 3);
   luaL_argcheck(L, min <= max, 3, "start > end");
-  struct Sci_TextRange tr = { { min, max }, malloc(max - min + 1) };
+  struct Sci_TextRange tr = {{min, max}, malloc(max - min + 1)};
   SS(view, SCI_GETTEXTRANGE, 0, (sptr_t)(&tr));
   lua_pushlstring(L, tr.lpstrText, max - min);
   if (tr.lpstrText) free(tr.lpstrText);
@@ -1205,18 +1203,17 @@ static int lbuffer_text_range(lua_State *L) {
  * @return Scintilla param
  */
 static sptr_t lL_checkscintillaparam(lua_State *L, int *narg, int type) {
-  if (type == tSTRING)
-    return (sptr_t)luaL_checkstring(L, (*narg)++);
-  else if (type == tBOOL)
-    return lua_toboolean(L, (*narg)++);
-  else if (type == tKEYMOD) {
-    int key = luaL_checkinteger(L, (*narg)++) & 0xFFFF;
-    return key | ((luaL_checkinteger(L, (*narg)++) &
-                  (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
-  } else if (type > tVOID && type < tBOOL)
-    return luaL_checklong(L, (*narg)++);
-  else
-    return 0;
+  switch (type) {
+    case SSTRING: return (sptr_t)luaL_checkstring(L, (*narg)++);
+    case SBOOL: return lua_toboolean(L, (*narg)++);
+    case SKEYMOD: {
+      int key = luaL_checkinteger(L, (*narg)++) & 0xFFFF;
+      return key | ((luaL_checkinteger(L, (*narg)++) &
+                    (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
+    } case SINT: case SLEN: case SPOS: case SCOLOR:
+      return luaL_checklong(L, (*narg)++);
+    default: return 0;
+  }
 }
 
 /**
@@ -1244,26 +1241,26 @@ static int l_callscintilla(lua_State *L, Scintilla *view, int msg, int wtype,
   // lexer API uses different types depending on wparam. Modify ltype
   // appropriately. See the LPeg lexer API for more information.
   if (msg == SCI_PRIVATELEXERCALL) {
-    ltype = tSTRINGRESULT;
+    ltype = SSTRINGRET;
     int c = luaL_checklong(L, arg);
     if (c == SCI_GETDIRECTFUNCTION || c == SCI_SETDOCPOINTER)
-      ltype = tINT;
+      ltype = SINT;
     else if (c == SCI_SETLEXERLANGUAGE)
-      ltype = tSTRING;
+      ltype = SSTRING;
   }
 
   // Set wParam and lParam appropriately for Scintilla based on wtype and ltype.
-  if (wtype == tLENGTH && ltype == tSTRING) {
+  if (wtype == SLEN && ltype == SSTRING) {
     wparam = (uptr_t)lua_rawlen(L, arg);
     lparam = (sptr_t)luaL_checkstring(L, arg);
     params_needed = 0;
-  } else if (ltype == tSTRINGRESULT || rtype == tSTRINGRESULT)
-    string_return = TRUE, params_needed = (wtype == tLENGTH) ? 0 : 1;
+  } else if (ltype == SSTRINGRET || rtype == SSTRINGRET)
+    string_return = TRUE, params_needed = (wtype == SLEN) ? 0 : 1;
   if (params_needed > 0) wparam = lL_checkscintillaparam(L, &arg, wtype);
   if (params_needed > 1) lparam = lL_checkscintillaparam(L, &arg, ltype);
   if (string_return) { // create a buffer for the return string
     len = SS(view, msg, wparam, 0);
-    if (wtype == tLENGTH) wparam = len;
+    if (wtype == SLEN) wparam = len;
     return_string = malloc(len + 1), return_string[len] = '\0';
     if (msg == SCI_GETTEXT || msg == SCI_GETSELTEXT || msg == SCI_GETCURLINE)
       len--; // Scintilla appends '\0' for these messages; compensate
@@ -1274,8 +1271,8 @@ static int l_callscintilla(lua_State *L, Scintilla *view, int msg, int wtype,
   sptr_t result = SS(view, msg, wparam, lparam);
   arg = lua_gettop(L);
   if (string_return) lua_pushlstring(L, return_string, len);
-  if (rtype == tBOOL) lua_pushboolean(L, result);
-  if (rtype > tVOID && rtype < tBOOL) lua_pushinteger(L, result);
+  if (rtype == SBOOL) lua_pushboolean(L, result);
+  if (rtype > SVOID && rtype < SBOOL) lua_pushinteger(L, result);
   if (return_string) free(return_string);
   return lua_gettop(L) - arg;
 }
@@ -1321,7 +1318,7 @@ static int lbuf_property(lua_State *L) {
     if (!is_buffer) lua_getfield(L, 1, "buffer");
     if (l_globaldoccompare(L, is_buffer ? 1 : -1) != 0) view = dummy_view;
     if (!is_buffer) lua_pop(L, 1);
-    if (is_buffer && l_rawgetiint(L, -1, 4) != tVOID) { // indexible property
+    if (is_buffer && l_rawgetiint(L, -1, 4) != SVOID) { // indexible property
       lua_newtable(L);
       lua_pushvalue(L, 2), lua_setfield(L, -2, "property");
       lua_pushvalue(L, 1), lua_setfield(L, -2, "buffer");
@@ -1330,11 +1327,11 @@ static int lbuf_property(lua_State *L) {
     }
     int msg = l_rawgetiint(L, -1, !newindex ? 1 : 2);
     int wtype = l_rawgetiint(L, -1, !newindex ? 4 : 3);
-    int ltype = !newindex ? tVOID : l_rawgetiint(L, -1, 4);
-    int rtype = !newindex ? l_rawgetiint(L, -1, 3) : tVOID;
+    int ltype = !newindex ? SVOID : l_rawgetiint(L, -1, 4);
+    int rtype = !newindex ? l_rawgetiint(L, -1, 3) : SVOID;
     if (newindex &&
-        (ltype != tVOID || wtype == tSTRING || wtype == tSTRINGRESULT)) {
-      int temp = (wtype != tSTRINGRESULT) ? wtype : tSTRING;
+        (ltype != SVOID || wtype == SSTRING || wtype == SSTRINGRET)) {
+      int temp = (wtype != SSTRINGRET) ? wtype : SSTRING;
       wtype = ltype, ltype = temp;
     }
     luaL_argcheck(L, msg != 0, !newindex ? 2 : 3,
@@ -1433,7 +1430,7 @@ static void new_buffer(sptr_t doc) {
 /** `_G.quit()` Lua function. */
 static int lquit(lua_State *L) {
 #if GTK
-  GdkEventAny event = { GDK_DELETE, gtk_widget_get_window(window), TRUE };
+  GdkEventAny event = {GDK_DELETE, gtk_widget_get_window(window), TRUE};
   gdk_event_put((GdkEvent *)(&event));
 #elif CURSES
   quit = TRUE;
@@ -1730,8 +1727,7 @@ static void delete_view(Scintilla *view) {
  * @see delete_view
  */
 static void remove_views_from_pane(GtkWidget *pane) {
-  GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane));
-  GtkWidget *child2 = gtk_paned_get_child2(GTK_PANED(pane));
+  GtkWidget *child1 = child(1, pane), *child2 = child(2, pane);
   GTK_IS_PANED(child1) ? remove_views_from_pane(child1) : delete_view(child1);
   GTK_IS_PANED(child2) ? remove_views_from_pane(child2) : delete_view(child2);
 }
@@ -1748,20 +1744,18 @@ static int unsplit_view(Scintilla *view) {
 #if GTK
   GtkWidget *pane = gtk_widget_get_parent(view);
   if (!GTK_IS_PANED(pane)) return FALSE;
-  GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane));
-  if (other == view) other = gtk_paned_get_child2(GTK_PANED(pane));
+  GtkWidget *other = (child(1, pane) != view) ? child(1, pane) : child(2, pane);
   g_object_ref(view), g_object_ref(other);
   gtk_container_remove(GTK_CONTAINER(pane), view);
   gtk_container_remove(GTK_CONTAINER(pane), other);
   GTK_IS_PANED(other) ? remove_views_from_pane(other) : delete_view(other);
   GtkWidget *parent = gtk_widget_get_parent(pane);
   gtk_container_remove(GTK_CONTAINER(parent), pane);
-  if (GTK_IS_PANED(parent)) {
-    if (!gtk_paned_get_child1(GTK_PANED(parent)))
-      gtk_paned_add1(GTK_PANED(parent), view);
-    else
-      gtk_paned_add2(GTK_PANED(parent), view);
-  } else gtk_container_add(GTK_CONTAINER(parent), view);
+  if (GTK_IS_PANED(parent))
+    !child(1, parent) ? gtk_paned_add1(GTK_PANED(parent), view)
+                      : gtk_paned_add2(GTK_PANED(parent), view);
+  else
+    gtk_container_add(GTK_CONTAINER(parent), view);
   gtk_widget_show_all(parent);
   gtk_widget_grab_focus(GTK_WIDGET(view));
   g_object_unref(view), g_object_unref(other);
@@ -2126,8 +2120,7 @@ static GtkWidget *new_findbox() {
   findbox = gtk_table_new(2, 6, FALSE);
 #define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
   gtk_table_attach(GTK_TABLE(findbox), w, x1, x2, y1, y2, xo, yo, xp, yp)
-#define EXPAND_FILL (GtkAttachOptions)(GTK_EXPAND | GTK_FILL)
-#define SHRINK_FILL (GtkAttachOptions)(GTK_SHRINK | GTK_FILL)
+#define FILL(o) (GtkAttachOptions)(GTK_FILL | GTK_##o)
 #else
   findbox = gtk_grid_new();
   gtk_grid_set_column_spacing(GTK_GRID(findbox), 5);
@@ -2164,18 +2157,18 @@ static GtkWidget *new_findbox() {
   gtk_label_set_mnemonic_widget(GTK_LABEL(flabel), find_entry);
   gtk_label_set_mnemonic_widget(GTK_LABEL(rlabel), replace_entry);
 
-  attach(find_combo, 1, 2, 0, 1, EXPAND_FILL, SHRINK_FILL, 5, 0);
-  attach(replace_combo, 1, 2, 1, 2, EXPAND_FILL, SHRINK_FILL, 5, 0);
-  attach(flabel, 0, 1, 0, 1, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(rlabel, 0, 1, 1, 2, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(fnext_button, 2, 3, 0, 1, SHRINK_FILL, SHRINK_FILL, 0, 0);
-  attach(fprev_button, 3, 4, 0, 1, SHRINK_FILL, SHRINK_FILL, 0, 0);
-  attach(r_button, 2, 3, 1, 2, SHRINK_FILL, SHRINK_FILL, 0, 0);
-  attach(ra_button, 3, 4, 1, 2, SHRINK_FILL, SHRINK_FILL, 0, 0);
-  attach(match_case, 4, 5, 0, 1, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(whole_word, 4, 5, 1, 2, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(lua_pattern, 5, 6, 0, 1, SHRINK_FILL, SHRINK_FILL, 5, 0);
-  attach(in_files, 5, 6, 1, 2, SHRINK_FILL, SHRINK_FILL, 5, 0);
+  attach(find_combo, 1, 2, 0, 1, FILL(EXPAND), FILL(SHRINK), 5, 0);
+  attach(replace_combo, 1, 2, 1, 2, FILL(EXPAND), FILL(SHRINK), 5, 0);
+  attach(flabel, 0, 1, 0, 1, FILL(SHRINK), FILL(SHRINK), 5, 0);
+  attach(rlabel, 0, 1, 1, 2, FILL(SHRINK), FILL(SHRINK), 5, 0);
+  attach(fnext_button, 2, 3, 0, 1, FILL(SHRINK), FILL(SHRINK), 0, 0);
+  attach(fprev_button, 3, 4, 0, 1, FILL(SHRINK), FILL(SHRINK), 0, 0);
+  attach(r_button, 2, 3, 1, 2, FILL(SHRINK), FILL(SHRINK), 0, 0);
+  attach(ra_button, 3, 4, 1, 2, FILL(SHRINK), FILL(SHRINK), 0, 0);
+  attach(match_case, 4, 5, 0, 1, FILL(SHRINK), FILL(SHRINK), 5, 0);
+  attach(whole_word, 4, 5, 1, 2, FILL(SHRINK), FILL(SHRINK), 5, 0);
+  attach(lua_pattern, 5, 6, 0, 1, FILL(SHRINK), FILL(SHRINK), 5, 0);
+  attach(in_files, 5, 6, 1, 2, FILL(SHRINK), FILL(SHRINK), 5, 0);
 
   signal(fnext_button, "clicked", f_clicked);
   signal(fprev_button, "clicked", f_clicked);
@@ -2255,7 +2248,7 @@ static int cc_matchfunc(GtkEntryCompletion*_, const char *__, GtkTreeIter*___,
 static void new_window() {
 #if GTK
   GList *icon_list = NULL;
-  const char *icons[] = { "16x16", "32x32", "48x48", "64x64", "128x128" };
+  const char *icons[] = {"16x16", "32x32", "48x48", "64x64", "128x128"};
   for (int i = 0; i < 5; i++) {
     char *icon_file = g_strconcat(textadept_home, "/core/images/ta_", icons[i],
                                   ".png", NULL);
@@ -2381,7 +2374,7 @@ int main(int argc, char **argv) {
 #if _WIN32
   raw(), noecho();
 #endif
-#ifdef NCURSES_REENTRANT
+#if NCURSES_REENTRANT
   ESCDELAY = getenv("ESCDELAY") ? atoi(getenv("ESCDELAY")) : 100;
 #endif
 #endif
@@ -2411,7 +2404,7 @@ int main(int argc, char **argv) {
   free(path);
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
   textadept_home = malloc(FILENAME_MAX);
-  int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
+  int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
   size_t cb = FILENAME_MAX;
   sysctl(mib, 4, textadept_home, &cb, NULL, 0);
   if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
