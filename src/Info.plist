@@ -225,6 +225,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>dart</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Dart source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>desktop</string>
 			</array>
 			<key>CFBundleTypeName</key>
@@ -1011,7 +1021,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>7.1</string>
+	<string>7.2 alpha</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
