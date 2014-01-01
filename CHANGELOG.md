@@ -9,6 +9,53 @@ Textadept's continuous development. It really helps.**
 [donation]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.2 alpha (01 Jan 2014)
+
+Download:
+
+* [Textadept 7.2 alpha -- Win32][]
+* [Textadept 7.2 alpha -- Mac OSX Intel 10.5+][]
+* [Textadept 7.2 alpha -- Linux][]
+* [Textadept 7.2 alpha -- Linux x86_64][]
+* [Textadept 7.2 alpha -- Modules][]
+
+Bugfixes:
+
+* Honor [`ui.maximized`][] setting in session files.
+* Do not halt opening files if one of them is already open.
+* Better key input handling in the terminal version.
+* Fixed Makefile bug in grabbing dependencies with older versions of wget.
+* Recognize lower-case drive letter names for files passed from external
+  programs in Windows.
+
+Changes:
+
+* Added Dart lexer.
+* Do not split the view when printing messages if tabs are enabled.
+* Look for *~/.textadept/osx_env.sh* for [OSX environment variables][] due to
+  changes in Mac OSX 10.9.
+* [Experimental] Replaced Lua's `io.popen()` and `os.execute()` with versions
+  that do not flash the "black box" on Windows.
+* Added read-only access to the current key chain via [`keys.keychain`][].
+* Renamed "hypertext" lexer and its corresponding module to "html".
+* Added configurable tab context menus via
+  [`textadept.menu.set_contextmenus()`][].
+* [Experimental] Merged separate lexer states into Textadept's Lua state.
+* Updated to [Lua][] 5.2.3.
+* Updated to [Scintilla][] 3.3.7.
+
+[Textadept 7.2 alpha -- Win32]: download/textadept_7.2_alpha.win32.zip
+[Textadept 7.2 alpha -- Mac OSX Intel 10.5+]: download/textadept_7.2_alpha.osx.zip
+[Textadept 7.2 alpha -- Linux]: download/textadept_7.2_alpha.i386.tgz
+[Textadept 7.2 alpha -- Linux x86_64]: download/textadept_7.2_alpha.x86_64.tgz
+[Textadept 7.2 alpha -- Modules]: download/textadept_7.2_alpha.modules.zip
+[`ui.maximized`]: api/ui.html#maximized
+[OSX environment variables]: 02_Installation.html#Environment.Variables
+[`keys.keychain`]: api/keys.html#keychain
+[`textadept.menu.set_contextmenus()`]: api/textadept.menu.html#set_contextmenus
+[Lua]: http://lua.org
+[Scintilla]: http://scintilla.org
+
 ## 7.1 (11 Nov 2013)
 
 Download:
