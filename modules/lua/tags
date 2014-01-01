@@ -142,6 +142,7 @@ KEYWORD	_	0;"	F	class:lexer
 LABEL	_	0;"	F	class:lexer
 LANGUAGE_MODULE_PREFIX	_	0;"	F	class:keys
 LASTSTEPINUNDOREDO	_	0;"	F	class:_SCINTILLA.constants
+LEXERPATH	_	0;"	F	class:lexer
 LEXER_LOADED	_	0;"	F	class:events
 MARGINOPTION_NONE	_	0;"	F	class:_SCINTILLA.constants
 MARGINOPTION_SUBLINESELECT	_	0;"	F	class:_SCINTILLA.constants
@@ -255,6 +256,8 @@ SCN_CHARADDED	_	0;"	F	class:_SCINTILLA.constants
 SCN_DOUBLECLICK	_	0;"	F	class:_SCINTILLA.constants
 SCN_DWELLEND	_	0;"	F	class:_SCINTILLA.constants
 SCN_DWELLSTART	_	0;"	F	class:_SCINTILLA.constants
+SCN_FOCUSIN	_	0;"	F	class:_SCINTILLA.constants
+SCN_FOCUSOUT	_	0;"	F	class:_SCINTILLA.constants
 SCN_HOTSPOTCLICK	_	0;"	F	class:_SCINTILLA.constants
 SCN_HOTSPOTDOUBLECLICK	_	0;"	F	class:_SCINTILLA.constants
 SCN_HOTSPOTRELEASECLICK	_	0;"	F	class:_SCINTILLA.constants
@@ -364,7 +367,7 @@ _M	_	0;"	m
 _M	_	0;"	t	
 _M.ansi_c	_	0;"	m	
 _M.css	_	0;"	m	
-_M.hypertext	_	0;"	m	
+_M.html	_	0;"	m	
 _M.java	_	0;"	m	
 _M.lua	_	0;"	m	
 _M.php	_	0;"	m	
@@ -499,7 +502,6 @@ caret_sticky	_	0;"	F	class:buffer
 caret_style	_	0;"	F	class:buffer
 caret_width	_	0;"	F	class:buffer
 ceil	_	0;"	f	class:math
-change_lexer_state	_	0;"	f	class:buffer
 char	_	0;"	f	class:string
 char_at	_	0;"	F	class:buffer
 char_left	_	0;"	f	class:buffer
@@ -518,6 +520,7 @@ clear	_	0;"	f	class:textadept.bookmarks
 clear_all	_	0;"	f	class:buffer
 clear_document_style	_	0;"	f	class:buffer
 clear_registered_images	_	0;"	f	class:buffer
+clear_representation	_	0;"	f	class:buffer
 clear_selections	_	0;"	f	class:buffer
 clipboard_text	_	0;"	F	class:ui
 clock	_	0;"	f	class:os
@@ -724,10 +727,10 @@ home_wrap	_	0;"	f	class:buffer
 home_wrap_extend	_	0;"	f	class:buffer
 hotspot_active_underline	_	0;"	F	class:buffer
 hotspot_single_line	_	0;"	F	class:buffer
+html	_	0;"	t	class:_M
+html	_	0;"	t	class:keys
+html	_	0;"	t	class:snippets
 huge	_	0;"	F	class:math
-hypertext	_	0;"	t	class:_M
-hypertext	_	0;"	t	class:keys
-hypertext	_	0;"	t	class:snippets
 iconv	_	0;"	f	class:string
 in_files	_	0;"	F	class:ui.find
 in_files_label_text	_	0;"	F	class:ui.find
@@ -758,6 +761,7 @@ java	_	0;"	t	class:_M
 java	_	0;"	t	class:keys
 java	_	0;"	t	class:snippets
 join_lines	_	0;"	f	class:textadept.editing
+keychain	_	0;"	t	class:keys
 keys	_	0;"	m	
 keys	_	0;"	t	
 keys	_	0;"	t	
@@ -881,6 +885,7 @@ mkdir	_	0;"	f	class:lfs
 modf	_	0;"	f	class:math
 modify	_	0;"	F	class:buffer
 mouse_dwell_time	_	0;"	F	class:buffer
+mouse_selection_rectangular_switch	_	0;"	F	class:buffer
 move_caret_inside_view	_	0;"	f	class:buffer
 move_selected_lines_down	_	0;"	f	class:buffer
 move_selected_lines_up	_	0;"	f	class:buffer
@@ -933,6 +938,7 @@ popen	_	0;"	f	class:io
 position_after	_	0;"	f	class:buffer
 position_before	_	0;"	f	class:buffer
 position_from_line	_	0;"	f	class:buffer
+position_relative	_	0;"	f	class:buffer
 pow	_	0;"	f	class:math
 preload	_	0;"	F	class:package
 print	_	0;"	F	class:lexer
@@ -991,6 +997,7 @@ replace_label_text	_	0;"	F	class:ui.find
 replace_sel	_	0;"	f	class:buffer
 replace_target	_	0;"	f	class:buffer
 replace_target_re	_	0;"	f	class:buffer
+representation	_	0;"	F	class:buffer
 require	_	0;"	f	
 reset	_	0;"	f	
 resume	_	0;"	f	class:coroutine
@@ -1059,7 +1066,7 @@ selections	_	0;"	F	class:buffer
 self	_	0;"	F	class:textadept.adeptsense.syntax
 sense	_	0;"	F	class:_M.ansi_c
 sense	_	0;"	F	class:_M.css
-sense	_	0;"	F	class:_M.hypertext
+sense	_	0;"	F	class:_M.html
 sense	_	0;"	F	class:_M.java
 sense	_	0;"	F	class:_M.lua
 sense	_	0;"	F	class:_M.php
@@ -1071,6 +1078,7 @@ session	_	0;"	t	class:textadept
 set_buffer_encoding	_	0;"	f	class:io
 set_chars_default	_	0;"	f	class:buffer
 set_contextmenu	_	0;"	f	class:textadept.menu
+set_contextmenus	_	0;"	f	class:textadept.menu
 set_empty_selection	_	0;"	f	class:buffer
 set_fold_margin_colour	_	0;"	f	class:buffer
 set_fold_margin_hi_colour	_	0;"	f	class:buffer
@@ -1156,6 +1164,7 @@ symbol_chars	_	0;"	F	class:textadept.adeptsense.syntax
 symlinkattributes	_	0;"	f	class:lfs
 syntax	_	0;"	t	class:textadept.adeptsense
 tab	_	0;"	f	class:buffer
+tab_context_menu	_	0;"	F	class:ui
 tab_indents	_	0;"	F	class:buffer
 tab_label	_	0;"	F	class:buffer
 tab_width	_	0;"	F	class:buffer
