@@ -249,6 +249,7 @@ events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
+local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 -- Sets default properties for a Scintilla document.
 events_connect(events.BUFFER_NEW, function()
@@ -257,6 +258,7 @@ events_connect(events.BUFFER_NEW, function()
   buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
+  buffer:private_lexer_call(SETLUASTATE, _LUA)
   buffer.property['lexer.lpeg.home'] = _USERHOME..'/lexers/?.lua;'..
                                        _HOME..'/lexers'
   load_theme_and_settings()
@@ -441,7 +443,7 @@ local goto_view
 -- Low-level function for creating a menu from table *menu_table* and returning
 -- the userdata.
 -- You probably want to use the higher-level `textadept.menu.set_menubar()`
--- or `textadept.menu.set_contextmenus()` functions. Emits a `MENU_CLICKED` 
+-- or `textadept.menu.set_contextmenus()` functions. Emits a `MENU_CLICKED`
 -- event when a menu item is selected.
 -- @param menu_table A table defining the menu. It is an ordered list of tables
 --   with a string menu item, integer menu ID, and optional GDK keycode and

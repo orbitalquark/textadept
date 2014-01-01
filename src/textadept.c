@@ -793,7 +793,7 @@ static void sync_tabbar() {
   l_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
   lua_gettable(lua, -2);
   int i = lua_tointeger(lua, -1) - 1;
-  lua_pop(lua, 2); // buffers and index
+  lua_pop(lua, 2); // index and buffers
   GtkNotebook *tabs = GTK_NOTEBOOK(tabbar);
   tab_sync = TRUE, gtk_notebook_set_current_page(tabs, i), tab_sync = FALSE;
 //#elif CURSES
@@ -1243,7 +1243,8 @@ static int l_callscintilla(lua_State *L, Scintilla *view, int msg, int wtype,
   if (msg == SCI_PRIVATELEXERCALL) {
     ltype = SSTRINGRET;
     int c = luaL_checklong(L, arg);
-    if (c == SCI_GETDIRECTFUNCTION || c == SCI_SETDOCPOINTER)
+    if (c == SCI_GETDIRECTFUNCTION || c == SCI_SETDOCPOINTER ||
+        c == SCI_CHANGELEXERSTATE)
       ltype = SINT;
     else if (c == SCI_SETLEXERLANGUAGE)
       ltype = SSTRING;
@@ -1419,7 +1420,7 @@ static void new_buffer(sptr_t doc) {
   gtk_widget_show(tab), gtk_widget_set_visible(tabbar, show_tabs && i > 0);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(tabbar), i);
   tab_sync = FALSE;
-  lua_pop(lua, 2); // buffer and tab_pointer
+  lua_pop(lua, 2); // tab_pointer and buffer
 //#elif CURSES
   // TODO: tabs
 #endif
@@ -1579,7 +1580,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   } else { // clear package.loaded and _G
     lua_getglobal(L, "package"), lua_getfield(L, -1, "loaded");
     lL_cleartable(L, -1);
-    lua_pop(L, 2); // package and package.loaded
+    lua_pop(L, 2); // package.loaded and package
 #if !LUAJIT
     lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
     lL_cleartable(L, -1);
@@ -1588,6 +1589,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
     lL_cleartable(L, LUA_GLOBALSINDEX);
 #endif
   }
+  lua_pushinteger(L, (sptr_t)L), lua_setglobal(L, "_LUA");
   luaL_openlibs(L);
   lL_openlib(L, "lpeg", luaopen_lpeg);
   lL_openlib(L, "lfs", luaopen_lfs);

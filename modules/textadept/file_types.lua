@@ -114,6 +114,7 @@ events.connect(events.FILE_SAVED_AS, function() buffer:set_lexer() end)
 -- Restores the buffer's lexer.
 local function restore_lexer() buffer:set_lexer(buffer._lexer) end
 events.connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
+events.connect(events.VIEW_AFTER_SWITCH, restore_lexer)
 events.connect(events.VIEW_NEW, restore_lexer)
 events.connect(events.RESET_AFTER, restore_lexer)
 
