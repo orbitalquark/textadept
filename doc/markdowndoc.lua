@@ -170,6 +170,7 @@ function M.start(doc)
   local p = io_popen('markdown "'..navfile..'"')
   local nav = p:read('*all')
   p:close()
+  os.remove(navfile)
 
   -- Write index.html.
   template.nav = nav

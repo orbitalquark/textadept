@@ -2,11 +2,10 @@
 
 [Atom Feed][]
 
-**Please consider making a [donation][] or purchasing the [book][] to help fund
-Textadept's continuous development. It really helps.**
+**Please [donate][] or purchase the [book][] to fund continuous development.**
 
 [Atom Feed]: feed
-[donation]: http://gum.co/textadept
+[donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
 ## 7.2 alpha (01 Jan 2014)
@@ -40,6 +39,7 @@ Changes:
 * Renamed "hypertext" lexer and its corresponding module to "html".
 * Added configurable tab context menus via
   [`textadept.menu.set_contextmenus()`][].
+* New GUI theme for Mac OSX.
 * [Experimental] Merged separate lexer states into Textadept's Lua state.
 * Updated to [Lua][] 5.2.3.
 * Updated to [Scintilla][] 3.3.7.

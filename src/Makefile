@@ -136,6 +136,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
 #
 #  luadoc = luadoc
 endif
+bombay = ../doc/bombay
 
 # No debugging unless DEBUG=1.
 ifdef DEBUG
@@ -147,8 +148,7 @@ endif
 
 sci_flags = -pedantic -Os $(plat_flag) -DSCI_LEXER -DNDEBUG \
             -DG_THREADS_IMPL_NONE -Iscintilla/include -Iscintilla/src \
-            -Iscintilla/lexlib -Wall -Wno-missing-braces -Wno-char-subscripts \
-            -Wno-long-long
+            -Iscintilla/lexlib -Wall -Wno-char-subscripts
 
 sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
            CellBuffer.o CharClassify.o ContractionState.o Decoration.o \
@@ -205,7 +205,7 @@ osx-curses: textadept-curses textadeptjit-curses
 # Dependencies.
 
 base_deps = scintilla scintilla/term scintillua lua lualibs luajit gtdialog \
-            cdk ../doc/bombay
+            cdk $(bombay)
 deps: $(base_deps) termkey
 win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
@@ -324,9 +324,11 @@ clean:
 
 # Documentation.
 
-doc: manual luadoc adeptsense
-manual: ../doc/*.md ../*.md | ../doc/bombay
-	$| -d ../doc -t ../doc --title Textadept --navtitle Manual $^
+doc: rootdoc manual luadoc adeptsense
+rootdoc: ../*.md
+	$(bombay) -d ../doc -t ../doc --title Textadept --navtitle '' $^
+manual: ../doc/*.md
+	$(bombay) -d ../doc -t ../doc --title Textadept --navtitle Manual $^
 luadoc: ../modules ../core ../lexers
 	cd ../doc && $(luadoc) -d . -t . --doclet markdowndoc $^/lexer.lua
 adeptsense: ../modules ../core ../lexers
@@ -418,7 +420,7 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 
 # External dependencies.
 
-scintilla_tgz = scintilla337.tgz?download
+scintilla_tgz = scintilla337.tgz
 scinterm_zip = scinterm.zip
 scintillua_zip = scintillua.zip
 lua_tgz = lua-5.2.3.tar.gz
@@ -437,6 +439,7 @@ win32curses_zip = win32curses.zip
 pdcurses_zip = download
 gtkosx_zip = gtkosx-2.24.16.zip
 bombay_zip = bombay.zip
+cloc = cloc-1.60.pl
 
 $(scintilla_tgz): ; wget "http://prdownloads.sourceforge.net/scintilla/$@" -O $@
 scintilla: scintilla.patch | $(scintilla_tgz)
@@ -507,6 +510,14 @@ win32curses: | $(win32curses_zip) $(pdcurses_zip)
 $(gtkosx_zip): ; wget "http://foicica.com/textadept/download/$@"
 gtkosx: | $(gtkosx_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 $(bombay_zip): ; wget "http://foicica.com/hg/bombay/archive/tip.zip" -O $@
-../doc/bombay: | $(bombay_zip)
+$(bombay): | $(bombay_zip)
 	mkdir $(notdir $@) && unzip -d $(notdir $@) $| && \
 		mv $(notdir $@)/*/* $(dir $@)
+$(cloc): ; wget "http://prdownloads.sourceforge.net/cloc/$@" -O $@
+
+# Count lines of code.
+
+sources = ../core ../modules/ansi_c ../modules/lua ../modules/textadept \
+          ../themes textadept.c Makefile ../init.lua ../properties.lua
+count: $(cloc)
+	perl $< $(sources) --not-match-f=adeptsensedoc.lua
