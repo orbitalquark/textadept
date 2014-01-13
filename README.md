@@ -36,8 +36,7 @@ The terminal version of Textadept requires only an implementation of curses like
 
 ## Download
 
-**Please consider making a [donation][] or purchasing the [book][] to help fund
-Textadept's continuous development. It really helps.**
+**Please [donate][] or purchase the [book][] to fund continuous development.**
 
 Download Textadept from the project's [download page][] or from these quick
 links:
