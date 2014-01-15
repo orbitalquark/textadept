@@ -11,7 +11,7 @@ module('_L')]]
 
 local f = io.open(_USERHOME..'/locale.conf', 'rb')
 if not f then
-  local lang = (os.getenv('LANG') or ''):match('^[^_.@]+')
+  local lang = (os.getenv('LANG') or ''):match('^[^_.@]+') -- TODO: LC_MESSAGES?
   if lang then f = io.open(_HOME..'/core/locales/locale.'..lang..'.conf') end
 end
 if not f then f = io.open(_HOME..'/core/locale.conf', 'rb') end
