@@ -19,6 +19,7 @@ Textadept the amazing editor that it is today.
 * Manuel Montenegro
 * Martin Morawetz
 * Neil Hodgson
+* Niklas Wallén
 * Nils Nordman
 * Patrick McMorris
 * Pedro Andres Aranda Gutierrez
