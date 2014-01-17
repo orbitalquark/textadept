@@ -71,7 +71,7 @@ typedef GtkWidget Scintilla;
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
 #define gtk_vbox_new(_,s) gtk_box_new(GTK_ORIENTATION_VERTICAL, s)
 #define gtk_hbox_new(_,s) gtk_box_new(GTK_ORIENTATION_HORIZONTAL, s)
-#define gtk_statusbar_set_has_resize_grip(_,__)
+#define gtk_statusbar_set_has_resize_grip(...)
 #endif
 #elif CURSES
 #define SS(view, m, w, l) scintilla_send_message(view, m, w, l)
@@ -1195,23 +1195,23 @@ static int lbuffer_text_range(lua_State *L) {
 }
 
 /**
- * Checks whether the function argument narg is the given Scintilla parameter
+ * Checks whether the function argument arg is the given Scintilla parameter
  * type and returns it cast to the proper type.
  * @param L The Lua state.
- * @param narg The stack index of the Scintilla parameter.
+ * @param arg The stack index of the Scintilla parameter.
  * @param type The Scintilla type to convert to.
  * @return Scintilla param
  */
-static sptr_t lL_checkscintillaparam(lua_State *L, int *narg, int type) {
+static sptr_t lL_checkscintillaparam(lua_State *L, int *arg, int type) {
   switch (type) {
-    case SSTRING: return (sptr_t)luaL_checkstring(L, (*narg)++);
-    case SBOOL: return lua_toboolean(L, (*narg)++);
+    case SSTRING: return (sptr_t)luaL_checkstring(L, (*arg)++);
+    case SBOOL: return lua_toboolean(L, (*arg)++);
     case SKEYMOD: {
-      int key = luaL_checkinteger(L, (*narg)++) & 0xFFFF;
-      return key | ((luaL_checkinteger(L, (*narg)++) &
+      int key = luaL_checkinteger(L, (*arg)++) & 0xFFFF;
+      return key | ((luaL_checkinteger(L, (*arg)++) &
                     (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
     } case SINT: case SLEN: case SPOS: case SCOLOR:
-      return luaL_checklong(L, (*narg)++);
+      return luaL_checklong(L, (*arg)++);
     default: return 0;
   }
 }
@@ -1947,14 +1947,14 @@ static int s_buttonpress(GtkWidget*_, GdkEventButton *event, void*__) {
  * Checks whether the function argument narg is a Scintilla view and returns
  * this view cast to a Scintilla.
  * @param L The Lua state.
- * @param narg The stack index of the Scintilla view.
+ * @param arg The stack index of the Scintilla view.
  * @return Scintilla view
  */
-static Scintilla *lL_checkview(lua_State *L, int narg) {
+static Scintilla *lL_checkview(lua_State *L, int arg) {
   luaL_getmetatable(L, "ta_view");
-  lua_getmetatable(L, narg);
-  luaL_argcheck(L, lua_compare(L, -1, -2, LUA_OPEQ), narg, "View expected");
-  lua_getfield(L, (narg > 0) ? narg : narg - 2, "widget_pointer");
+  lua_getmetatable(L, arg);
+  luaL_argcheck(L, lua_compare(L, -1, -2, LUA_OPEQ), arg, "View expected");
+  lua_getfield(L, (arg > 0) ? arg : arg - 2, "widget_pointer");
   Scintilla *view = (Scintilla *)lua_touserdata(L, -1);
   lua_pop(L, 3); // widget_pointer, metatable, metatable
   return view;
@@ -2120,13 +2120,12 @@ static Scintilla *new_view(sptr_t doc) {
 static GtkWidget *new_findbox() {
 #if !GTK_CHECK_VERSION(3,4,0)
   findbox = gtk_table_new(2, 6, FALSE);
-#define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
-  gtk_table_attach(GTK_TABLE(findbox), w, x1, x2, y1, y2, xo, yo, xp, yp)
+#define attach(...) gtk_table_attach(GTK_TABLE(findbox), __VA_ARGS__)
 #define FILL(o) (GtkAttachOptions)(GTK_FILL | GTK_##o)
 #else
   findbox = gtk_grid_new();
   gtk_grid_set_column_spacing(GTK_GRID(findbox), 5);
-#define attach(w, x1, x2, y1, y2, xo, yo, xp, yp) \
+#define attach(w, x1, _, y1, __, ...) \
   gtk_grid_attach(GTK_GRID(findbox), w, x1, y1, 1, 1)
 #endif
   find_store = gtk_list_store_new(1, G_TYPE_STRING);
