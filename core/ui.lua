@@ -105,9 +105,13 @@ ui.dialogs = setmetatable({}, {__index = function(t, k)
       local files = {}
       for file in result:gmatch('[^\n]+') do files[#files + 1] = file end
       return files
-    elseif k == 'filteredlist' then
+    elseif k == 'filteredlist' or
+           k:find('input') and result:match('^[^\n]+\n?(.*)$'):find('\n') then
       local button, value = result:match('^([^\n]+)\n?(.*)$')
       if not options.string_output then button = tonumber(button) end
+      if k:find('input') then
+        options.string_output, options.select_multiple = true, true
+      end
       local items = {}
       for item in value:gmatch('[^\n]+') do
         items[#items + 1] = options.string_output and item or tonumber(item) + 1
