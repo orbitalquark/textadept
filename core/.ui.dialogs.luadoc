@@ -113,8 +113,13 @@ function yesno_msgbox(options) end
 -- @param options Table of key-value option pairs for the input box.
 --
 --   * `title`: The dialog's title text.
---   * `informative_text`: The dialog's main message text.
---   * `text`: The dialog's initial input text.
+--   * `informative_text`: The dialog's main message text. If the value is a
+--     table, the first table value is the main message text and any subsequent
+--     values are used as the labels for multiple entry boxes. Providing a
+--     single label has no effect.
+--   * `text`: The dialog's initial input text. If the value is a table, the
+--     table values are used to populate the multiple entry boxes defined by
+--     `informative_text`.
 --   * `button1`: The right-most button's label. The default value is
 --     `_L['_OK']`.
 --   * `button2`: The middle button's label.
@@ -145,8 +150,13 @@ function inputbox(options) end
 -- @param options Table of key-value option pairs for the input box.
 --
 --   * `title`: The dialog's title text.
---   * `informative_text`: The dialog's main message text.
---   * `text`: The dialog's initial input text.
+--   * `informative_text`: The dialog's main message text. If the value is a
+--     table, the first table value is the main message text and any subsequent
+--     values are used as the labels for multiple entry boxes. Providing a
+--     single label has no effect.
+--   * `text`: The dialog's initial input text. If the value is a table, the
+--     table values are used to populate the multiple entry boxes defined by
+--     `informative_text`.
 --   * `no_cancel`: Do not display the "Cancel" button. The default value is
 --     `false`.
 --   * `string_output`: Return the selected button's label or the dialog's exit
@@ -171,8 +181,13 @@ function standard_inputbox(options) end
 -- @param options Table of key-value option pairs for the input box.
 --
 --   * `title`: The dialog's title text.
---   * `informative_text`: The dialog's main message text.
---   * `text`: The dialog's initial input text.
+--   * `informative_text`: The dialog's main message text. If the value is a
+--     table, the first table value is the main message text and any subsequent
+--     values are used as the labels for multiple entry boxes. Providing a
+--     single label has no effect.
+--   * `text`: The dialog's initial input text. If the value is a table, the
+--     table values are used to populate the multiple entry boxes defined by
+--     `informative_text`.
 --   * `button1`: The right-most button's label. The default value is
 --     `_L['_OK']`.
 --   * `button2`: The middle button's label.
@@ -201,8 +216,13 @@ function secure_inputbox(options) end
 -- @param options Table of key-value option pairs for the input box.
 --
 --   * `title`: The dialog's title text.
---   * `informative_text`: The dialog's main message text.
---   * `text`: The dialog's initial input text.
+--   * `informative_text`: The dialog's main message text. If the value is a
+--     table, the first table value is the main message text and any subsequent
+--     values are used as the labels for multiple entry boxes. Providing a
+--     single label has no effect.
+--   * `text`: The dialog's initial input text. If the value is a table, the
+--     table values are used to populate the multiple entry boxes defined by
+--     `informative_text`.
 --   * `no_cancel`: Do not display the "Cancel" button. The default value is
 --     `false`.
 --   * `string_output`: Return the selected button's label or the dialog's exit
