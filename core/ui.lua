@@ -328,7 +328,7 @@ events_connect(events.BUFFER_BEFORE_SWITCH, function()
   local buffer = buffer
   -- Save view state.
   buffer._anchor, buffer._current_pos = buffer.anchor, buffer.current_pos
-  buffer._first_visible_line = buffer.first_visible_line
+  buffer._top_line = buffer:doc_line_from_visible(buffer.first_visible_line)
   -- Save fold state.
   buffer._folds = {}
   local folds, i = buffer._folds, buffer:contracted_fold_next(0)
@@ -345,9 +345,8 @@ events_connect(events.BUFFER_AFTER_SWITCH, function()
   for i = 1, #buffer._folds do buffer:toggle_fold(buffer._folds[i]) end
   -- Restore view state.
   buffer:set_sel(buffer._anchor, buffer._current_pos)
-  buffer:line_scroll(0,
-                     buffer:visible_from_doc_line(buffer._first_visible_line) -
-                     buffer.first_visible_line)
+  buffer:line_scroll(0, buffer:visible_from_doc_line(buffer._top_line) -
+                        buffer.first_visible_line)
 end)
 
 -- Updates titlebar and statusbar.
