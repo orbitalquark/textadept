@@ -166,6 +166,7 @@ MARK_ARROWDOWN	_	0;"	F	class:_SCINTILLA.constants
 MARK_ARROWS	_	0;"	F	class:_SCINTILLA.constants
 MARK_AVAILABLE	_	0;"	F	class:_SCINTILLA.constants
 MARK_BACKGROUND	_	0;"	F	class:_SCINTILLA.constants
+MARK_BOOKMARK	_	0;"	F	class:_SCINTILLA.constants
 MARK_BOOKMARK	_	0;"	F	class:textadept.bookmarks
 MARK_BOXMINUS	_	0;"	F	class:_SCINTILLA.constants
 MARK_BOXMINUSCONNECTED	_	0;"	F	class:_SCINTILLA.constants
@@ -484,6 +485,7 @@ byte	_	0;"	f	class:string
 call_tip_active	_	0;"	f	class:buffer
 call_tip_cancel	_	0;"	f	class:buffer
 call_tip_fore_hlt	_	0;"	F	class:buffer
+call_tip_pos_start	_	0;"	F	class:buffer
 call_tip_pos_start	_	0;"	f	class:buffer
 call_tip_position	_	0;"	F	class:buffer
 call_tip_set_hlt	_	0;"	f	class:buffer
@@ -598,6 +600,7 @@ document_end_extend	_	0;"	f	class:buffer
 document_start	_	0;"	f	class:buffer
 document_start_extend	_	0;"	f	class:buffer
 dofile	_	0;"	f	
+drop_selection_n	_	0;"	f	class:buffer
 dropdown	_	0;"	f	class:ui.dialogs
 dump	_	0;"	f	class:string
 edge_colour	_	0;"	F	class:buffer

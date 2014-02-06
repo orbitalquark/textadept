@@ -420,7 +420,7 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 
 # External dependencies.
 
-scintilla_tgz = scintilla337.tgz
+scintilla_tgz = scintilla339.tgz
 scinterm_zip = scinterm.zip
 scintillua_zip = scintillua.zip
 lua_tgz = lua-5.2.3.tar.gz

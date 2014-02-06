@@ -108,6 +108,7 @@
 -- * `_G._SCINTILLA.constants.MARK_ARROWS` 24
 -- * `_G._SCINTILLA.constants.MARK_AVAILABLE` 28
 -- * `_G._SCINTILLA.constants.MARK_BACKGROUND` 22
+-- * `_G._SCINTILLA.constants.MARK_BOOKMARK` 31
 -- * `_G._SCINTILLA.constants.MARK_BOXMINUS` 14
 -- * `_G._SCINTILLA.constants.MARK_BOXMINUSCONNECTED` 15
 -- * `_G._SCINTILLA.constants.MARK_BOXPLUS` 12
