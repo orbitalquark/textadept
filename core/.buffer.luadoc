@@ -147,6 +147,10 @@
 --   The default value is `true`.
 -- @field call_tip_fore_hlt (number, Write-only)
 --   A call tip's highlighted text foreground color, in "0xBBGGRR" format.
+-- @field call_tip_pos_start (number, Write-only)
+--   The position to display a call tip at with
+--   [`buffer.call_tip_show()`](#call_tip_show). When a call tip is visible,
+--   this is the position where backspacing beyond it hides the call tip.
 -- @field call_tip_position (boolean)
 --   Display a call tip above the current line instead of below it.
 --   The default value is `false`.
@@ -1358,6 +1362,12 @@ function document_start(buffer) end
 function document_start_extend(buffer) end
 
 ---
+-- Drops existing selection number *n*.
+-- @param buffer The buffer.
+-- @param n The number of the existing selection.
+function drop_selection_n(buffer, n) end
+
+---
 -- Toggles `buffer.overtype`.
 -- @param buffer The buffer.
 function edit_toggle_overtype(buffer) end
@@ -2265,6 +2275,7 @@ function set_sel(buffer, start_pos, end_pos) end
 ---
 -- Overrides the selection's default background color with color *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
+-- Overwrites any existing `buffer.additional_sel_back` color.
 -- @param buffer The buffer.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
@@ -2273,6 +2284,7 @@ function set_sel_back(buffer, use_setting, color) end
 ---
 -- Overrides the selection's default foreground color with color *color*, in
 -- "0xBBGGRR" format, if *use_setting* is `true`.
+-- Overwrites any existing `buffer.additional_sel_fore` color.
 -- @param buffer The buffer.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
