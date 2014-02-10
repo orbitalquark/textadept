@@ -8,6 +8,35 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.2 beta (11 Feb 2014)
+
+Download:
+
+* [Textadept 7.2 beta -- Win32][]
+* [Textadept 7.2 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 7.2 beta -- Linux][]
+* [Textadept 7.2 beta -- Linux x86_64][]
+* [Textadept 7.2 beta -- Modules][]
+
+Bugfixes:
+
+* Handle *./* and *../* sequences in filepaths.
+* Correctly restore views with word wrap enabled.
+
+Changes:
+
+* Added Swedish translation.
+* Added support for multiple entry boxes in [inputdialogs][].
+* Updated to [Scintilla][] 3.3.9.
+
+[Textadept 7.2 beta -- Win32]: download/textadept_7.2_beta.win32.zip
+[Textadept 7.2 beta -- Mac OSX Intel 10.5+]: download/textadept_7.2_beta.osx.zip
+[Textadept 7.2 beta -- Linux]: download/textadept_7.2_beta.i386.tgz
+[Textadept 7.2 beta -- Linux x86_64]: download/textadept_7.2_beta.x86_64.tgz
+[Textadept 7.2 beta -- Modules]: download/textadept_7.2_beta.modules.zip
+[inputdialogs]: api/ui.dialogs.html#inputbox
+[Scintilla]: http://scintilla.org
+
 ## 7.2 alpha (01 Jan 2014)
 
 Download:
