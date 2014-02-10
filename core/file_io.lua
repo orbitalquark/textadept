@@ -460,7 +460,8 @@ if WIN32 then
     return file
   end
   os.execute = function(prog)
+    if not prog then return true end -- shell is available
     local code = winapi.execute(prog)
-    if code then return code == 0 and true or nil, 'exit', code end
+    return code == 0 and true or nil, 'exit', code
   end
 end
