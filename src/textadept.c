@@ -2535,7 +2535,6 @@ int main(int argc, char **argv) {
 #endif
 
   free(textadept_home);
-  return 0;
 }
 
 #if (_WIN32 && !CURSES)
