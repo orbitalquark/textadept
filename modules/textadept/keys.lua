@@ -118,24 +118,24 @@ local M = {}
 -- None            |None  |None         |UTF-16 encoding
 -- Ctrl+Shift+L    |⌘⇧L   |M-S-L        |Select lexer...
 -- F5              |F5    |^L<br/>F5    |Refresh syntax highlighting
--- **View**                 |         |     |
--- Ctrl+Alt+N               |^⌥⇥      |N/A  |Next view
--- Ctrl+Alt+P               |^⌥⇧⇥     |N/A  |Previous view
--- Ctrl+Alt+S<br/>Ctrl+Alt+H|^S       |N/A  |Split view horizontally
--- Ctrl+Alt+V               |^V       |N/A  |Split view vertically
--- Ctrl+Alt+W               |^W       |N/A  |Unsplit view
--- Ctrl+Alt+Shift+W         |^⇧W      |N/A  |Unsplit all views
--- Ctrl+Alt++<br/>Ctrl+Alt+=|^+<br/>^=|N/A  |Grow view
--- Ctrl+Alt+-               |^-       |N/A  |Shrink view
--- Ctrl+*                   |⌘*       |M-*  |Toggle current fold
--- Ctrl+Alt+Enter           |^↩       |None |Toggle view EOL
--- Ctrl+Alt+\\              |^\\      |None |Toggle wrap mode
--- Ctrl+Alt+Shift+I         |^⇧I      |N/A  |Toggle show indent guides
--- Ctrl+Alt+Shift+S         |^⇧S      |None |Toggle view whitespace
--- Ctrl+Alt+Shift+V         |^⇧V      |None |Toggle virtual space
--- Ctrl+=                   |⌘=       |N/A  |Zoom in
--- Ctrl+-                   |⌘-       |N/A  |Zoom out
--- Ctrl+0                   |⌘0       |N/A  |Reset zoom
+-- **View**                 |         |                 |
+-- Ctrl+Alt+N               |^⌥⇥      |M-^V N           |Next view
+-- Ctrl+Alt+P               |^⌥⇧⇥     |M-^V P           |Previous view
+-- Ctrl+Alt+S<br/>Ctrl+Alt+H|^S       |M-^V S<br/>M-^V H|Split view horizontal
+-- Ctrl+Alt+V               |^V       |M-^V V           |Split view vertical
+-- Ctrl+Alt+W               |^W       |M-^V W           |Unsplit view
+-- Ctrl+Alt+Shift+W         |^⇧W      |M-^V S-W         |Unsplit all views
+-- Ctrl+Alt++<br/>Ctrl+Alt+=|^+<br/>^=|M-^V +<br/>M-^V =|Grow view
+-- Ctrl+Alt+-               |^-       |M-^V -           |Shrink view
+-- Ctrl+*                   |⌘*       |M-*              |Toggle current fold
+-- Ctrl+Alt+Enter           |^↩       |None             |Toggle view EOL
+-- Ctrl+Alt+\\              |^\\      |None             |Toggle wrap mode
+-- Ctrl+Alt+Shift+I         |^⇧I      |N/A              |Toggle indent guides
+-- Ctrl+Alt+Shift+S         |^⇧S      |None             |Toggle view whitespace
+-- Ctrl+Alt+Shift+V         |^⇧V      |None             |Toggle virtual space
+-- Ctrl+=                   |⌘=       |N/A              |Zoom in
+-- Ctrl+-                   |⌘-       |N/A              |Zoom out
+-- Ctrl+0                   |⌘0       |N/A              |Reset zoom
 -- **Help**|    |    |
 -- F1      |F1  |None|Open manual
 -- Shift+F1|⇧F1 |None|Open LuaDoc
@@ -188,7 +188,7 @@ local M = {}
 -- N/A             |N/A         |^^          |Mark text at the caret position
 -- N/A             |N/A         |^]          |Swap caret and mark anchor
 -- **Other**                |    |    |
--- Ctrl+Shift+U, xxxx, Enter|None|None|Input Unicode character U-xxxx.
+-- Ctrl+Shift+U *xxxx* Enter|None|None|Input Unicode character U-*xxxx*.
 -- **Entry Fields**|               |            |
 -- Left            |⇠<br/>^B       |^B<br/>Left |Cursor left
 -- Right           |⇢<br/>^F       |^F<br/>Right|Cursor right
@@ -267,8 +267,8 @@ M.utils = {
     events.emit(events.UPDATE_UI) -- for updating statusbar
   end,
   unsplit_all = function() while view:unsplit() do end end,
-  grow = function() if view.size then view.size = view.size + 10 end end,
-  shrink = function() if view.size then view.size = view.size - 10 end end,
+  grow = function(i) if view.size then view.size = view.size + i end end,
+  shrink = function(i) if view.size then view.size = view.size - i end end,
   toggle_current_fold = function()
     buffer:toggle_fold(buffer:line_from_position(buffer.current_pos))
   end,
@@ -348,7 +348,7 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
--- cm:  bcd  g~~ k ~  pq  t v xyz
+-- cm:  bcd  g~~ k ~  pq  t   xyz
 -- m:          e          J            qQ  sS  u vVw   yYzZ_          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
@@ -527,17 +527,28 @@ keys.f5 = {buffer.colourise, buffer, 0, -1}
 if CURSES then keys.cl = keys.f5 end
 
 -- View.
+local view_next, view_prev = {ui.goto_view, 1, true}, {ui.goto_view, -1, true}
+local view_splith, view_splitv = {view.split, view}, {view.split, view, true}
+local view_unsplit = {view.unsplit, view}
 if not CURSES then
-  keys[not OSX and 'can' or 'ca\t'] = {ui.goto_view, 1, true}
-  keys[not OSX and 'cap' or 'cas\t'] = {ui.goto_view, -1, true}
-  keys[not OSX and 'cas' or 'cs'] = {view.split, view}
-  if not OSX then keys.cah = keys.cas end
-  keys[not OSX and 'cav' or 'cv'] = {view.split, view, true}
-  keys[not OSX and 'caw' or 'cw'] = {view.unsplit, view}
+  keys[not OSX and 'can' or 'ca\t'] = view_next
+  keys[not OSX and 'cap' or 'cas\t'] = view_prev
+  keys[not OSX and 'cas' or 'cs'] = view_splith
+  if not OSX then keys.cah = view_splith end
+  keys[not OSX and 'cav' or 'cv'] = view_splitv
+  keys[not OSX and 'caw' or 'cw'] = view_unsplit
   keys[not OSX and 'caW' or 'cW'] = utils.unsplit_all
   keys[not OSX and 'ca+' or 'c+'] = {utils.grow, 10}
   keys[not OSX and 'ca=' or 'c='] = {utils.grow, 10}
   keys[not OSX and 'ca-' or 'c-'] = {utils.shrink, 10}
+else
+  keys.cmv = {
+    n = view_next, p = view_prev,
+    s = view_splith, v = view_splitv,
+    w = view_unsplit, W = utils.unsplit_all,
+    ['+'] = {utils.grow, 1}, ['='] = {utils.grow, 1}, ['-'] = {utils.shrink, 1}
+  }
+  if not OSX then keys.cmv.h = view_splith end
 end
 keys[not OSX and not CURSES and 'c*' or 'm*'] = utils.toggle_current_fold
 if not CURSES then

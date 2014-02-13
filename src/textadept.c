@@ -46,6 +46,7 @@
 #include "ScintillaWidget.h"
 #elif CURSES
 #include "ScintillaTerm.h"
+#include "windowman.h"
 #include "cdk_int.h"
 #if !_WIN32
 #include "termkey.h"
@@ -147,6 +148,7 @@ static GtkListStore *cc_store;
 static GtkEntryCompletion *command_entry_completion;
 #elif CURSES
 // curses window.
+static struct WindowManager *wm;
 #if !_WIN32
 static struct termios term;
 TermKey *ta_tk; // global for CDK use
@@ -155,6 +157,9 @@ TermKey *ta_tk; // global for CDK use
 #define focus_view(view) \
   (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, \
    SS(view, SCI_SETFOCUS, 1, 0))
+/** Callback for refreshing a single Scintilla view. */
+static void r_cb(void *view, void*_) {scintilla_refresh((Scintilla *)view);}
+#define refresh_all() (wman_walk(wm, r_cb, NULL), wman_refresh(wm), refresh())
 #define flushch() (timeout(0), getch(), timeout(-1))
 // curses find & replace pane.
 static CDKSCREEN *findbox;
@@ -458,7 +463,7 @@ static int lfind_focus(lua_State *L) {
     fcopy(&repl_text, getCDKEntryValue(replace_entry));
     if (focused_entry->exitType == vNORMAL) {
       f_clicked(getCDKButtonboxCurrentButton(buttonbox), NULL);
-      scintilla_refresh(focused_view);
+      refresh_all();
     }
     find_entry->exitType = replace_entry->exitType = vNEVER_ACTIVATED;
     activateCDKEntry(focused_entry, NULL);
@@ -563,7 +568,7 @@ static int c_keypress(EObjectType _, void *object, void *data, chtype key) {
   if (key == 27) key = SCK_ESCAPE;
   int halt = lL_event(lua, "command_entry_keypress", LUA_TNUMBER, key,
                       LUA_TBOOLEAN, FALSE, LUA_TBOOLEAN, ctrl, -1);
-  scintilla_refresh(focused_view), drawCDKEntry((CDKENTRY *)object, FALSE);
+  refresh_all(), drawCDKEntry((CDKENTRY *)object, FALSE);
   return !halt || key == SCK_ESCAPE;
 }
 #endif
@@ -738,6 +743,16 @@ static void l_pushsplittable(lua_State *L, GtkWidget *w) {
     lua_pushinteger(L, size), lua_setfield(L, -2, "size");
   } else l_pushview(L, w);
 }
+#elif CURSES
+static void l_pushsplittable(lua_State *L, struct WindowManager *wm) {
+  if (wm->dir != SPLIT_LEAF) {
+    lua_newtable(L);
+    l_pushsplittable(L, wm->first), lua_rawseti(L, -2, 1);
+    l_pushsplittable(L, wm->second), lua_rawseti(L, -2, 2);
+    lua_pushboolean(L, wm->dir == SPLIT_VER), lua_setfield(L, -2, "vertical");
+    lua_pushinteger(L, wm->splitpos), lua_setfield(L, -2, "size");
+  } else l_pushview(L, wm->view);
+}
 #endif
 
 /** `ui.get_split_table()` Lua function. */
@@ -747,7 +762,7 @@ static int lui_get_split_table(lua_State *L) {
   while (GTK_IS_PANED(gtk_widget_get_parent(w))) w = gtk_widget_get_parent(w);
   l_pushsplittable(L, w);
 #elif CURSES
-  l_pushview(L, focused_view); // TODO: push split table
+  l_pushsplittable(L, wm);
 #endif
   return 1;
 }
@@ -1730,6 +1745,13 @@ static void remove_views_from_pane(GtkWidget *pane) {
   GTK_IS_PANED(child1) ? remove_views_from_pane(child1) : delete_view(child1);
   GTK_IS_PANED(child2) ? remove_views_from_pane(child2) : delete_view(child2);
 }
+#elif CURSES
+/**
+ * Signal that the curses window manager removed a view.
+ * @param view The view removed.
+ * @see delete_view
+ */
+static void view_removed(void *view, void*_) {delete_view((Scintilla *)view);}
 #endif
 
 /**
@@ -1759,7 +1781,8 @@ static int unsplit_view(Scintilla *view) {
   gtk_widget_grab_focus(GTK_WIDGET(view));
   g_object_unref(view), g_object_unref(other);
 #elif CURSES
-  return FALSE;
+  if (wm->dir == SPLIT_LEAF) return FALSE;
+  wman_unsplit_view(wm, view, view_removed), scintilla_refresh(view);
 #endif
   return TRUE;
 }
@@ -1977,12 +2000,12 @@ static int lview_goto_buffer(lua_State *L) {
  *   horozontally.
  */
 static void split_view(Scintilla *view, int vertical) {
-#if GTK
   sptr_t curdoc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0);
   int current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0);
   int anchor = SS(view, SCI_GETANCHOR, 0, 0);
 
+#if GTK
   GtkAllocation allocation;
   gtk_widget_get_allocation(view, &allocation);
   int middle = (vertical ? allocation.width : allocation.height) / 2;
@@ -1998,15 +2021,16 @@ static void split_view(Scintilla *view, int vertical) {
   gtk_paned_set_position(GTK_PANED(pane), middle);
   gtk_widget_show_all(pane);
   g_object_unref(view);
-  focus_view(view2);
 
   while (gtk_events_pending()) gtk_main_iteration(); // ensure view2 is painted
+#elif CURSES
+  Scintilla *view2 = new_view(curdoc);
+  wman_split_view(wm, vertical, view, view2, scintilla_get_window(view2));
+#endif
+  focus_view(view2);
   SS(view2, SCI_SETSEL, anchor, current_pos);
   int new_first_line = SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0);
   SS(view2, SCI_LINESCROLL, first_line - new_first_line, 0);
-//#elif CURSES
-  // TODO: split.
-#endif
 }
 
 /** `view.split()` Lua function. */
@@ -2034,7 +2058,8 @@ static int lview__index(lua_State *L) {
       lua_pushinteger(L, pos);
     } else lua_pushnil(L);
 #elif CURSES
-    lua_pushnil(L); // TODO: push size
+    struct WindowManager *parent = wman_parent(wm, wman_view_owner(wm, view));
+    parent ? lua_pushinteger(L, parent->splitpos) : lua_pushnil(L);
 #endif
   } else lua_rawget(L, 1);
   return 1;
@@ -2051,8 +2076,10 @@ static int lview__newindex(lua_State *L) {
 #if GTK
     GtkWidget *pane = gtk_widget_get_parent(lL_checkview(L, 1));
     if (GTK_IS_PANED(pane)) gtk_paned_set_position(GTK_PANED(pane), size);
-//#elif CURSES
-    // TODO: set size.
+#elif CURSES
+    Scintilla *view = lL_checkview(L, 1);
+    struct WindowManager *split = wman_parent(wm, wman_view_owner(wm, view));
+    if (split) wman_move_split(split, size);
 #endif
   } else lua_rawset(L, 1);
   return 0;
@@ -2316,8 +2343,8 @@ static void new_window() {
   dummy_view = scintilla_new();
 #elif CURSES
   Scintilla *view = new_view(0);
-  wresize(scintilla_get_window(view), LINES - 2, COLS);
-  mvwin(scintilla_get_window(view), 1, 0);
+  wm = wman_create(view, scintilla_get_window(view));
+  wman_resize(wm, LINES - 2, COLS, 1, 0);
   dummy_view = scintilla_new(NULL);
 #endif
 }
@@ -2328,9 +2355,9 @@ static void resize(int signal) {
   struct winsize win;
   ioctl(0, TIOCGWINSZ, &win);
   resizeterm(win.ws_row, win.ws_col);
-  wresize(scintilla_get_window(focused_view), LINES - 2, COLS);
+  wman_resize(wm, LINES - 2, COLS, 1, 0);
   lL_event(lua, "update_ui", -1);
-  scintilla_refresh(focused_view);
+  refresh_all();
 }
 #endif
 
@@ -2426,7 +2453,7 @@ int main(int argc, char **argv) {
   gtk_main();
 #endif
 #elif CURSES
-  scintilla_refresh(focused_view);
+  refresh_all();
 
 #if !_WIN32
   stderr = freopen("/dev/null", "w", stderr); // redirect stderr
@@ -2504,7 +2531,7 @@ int main(int argc, char **argv) {
       }
       break;
     } else quit = FALSE;
-    scintilla_refresh(focused_view);
+    refresh_all();
   }
   endwin();
 #if !_WIN32

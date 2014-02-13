@@ -11,6 +11,7 @@ Textadept the amazing editor that it is today.
 * Bill Meahan
 * Brian Schott
 * Callum Wilson
+* Chris Emerson
 * Gilles Grégoire
 * Jay Gould
 * Jeff Stone

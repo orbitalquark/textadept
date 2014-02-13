@@ -108,20 +108,22 @@ in [scripts][].
 Textadept allows you to split the editor window an unlimited number of times
 both horizontally and vertically. `Ctrl+Alt+S` or `Ctrl+Alt+H` splits
 horizontally into top and bottom views and `Ctrl+Alt+V` splits vertically (`^S`
-and `^V` respectively on Mac OSX | N/A in curses) into side-by-side views.
-Clicking and dragging on the splitter bar with the mouse or pressing
-`Ctrl+Alt++` and `Ctrl+Alt+-` (`^+` and `^-` | N/A) resizes the split. Textadept
-supports viewing a single buffer in two or more views.
+and `^V`, respectively on Mac OSX | `M-^V S` and `M-^V V` in curses) into
+side-by-side views. Clicking and dragging on the splitter bar with the mouse or
+pressing `Ctrl+Alt++` and `Ctrl+Alt+-` (`^+` and `^-` | `M-^V +` and `M-^V -`)
+resizes the split. Textadept supports viewing a single buffer in two or more
+views.
 
-Pressing `Ctrl+Alt+N` (`^⌥⇥` on Mac OSX | N/A in curses) jumps to the next view
-and `Ctrl+Alt+P` (`^⌥⇧⇥` | N/A) jumps the previous one. However, depending on
-the split sequence, the order when cycling between views may not be linear.
+Pressing `Ctrl+Alt+N` (`^⌥⇥` on Mac OSX | `M-^V N` in curses) jumps to the next
+view and `Ctrl+Alt+P` (`^⌥⇧⇥` | `M-^V P`) jumps the previous one. However,
+depending on the split sequence, the order when cycling between views may not be
+linear.
 
 To unsplit a view, enter the view to keep open and press `Ctrl+Alt+W` (`^W` on
-Mac OSX | N/A in curses). To unsplit all views, use `Ctrl+Alt+Shift+W` (`^⇧W` |
-N/A).
+Mac OSX | `M-^V W` in curses). To unsplit all views, use `Ctrl+Alt+Shift+W`
+(`^⇧W` | `M-^V S-W`).
 
-Textadept curses does not support split views.
+Note: Textadept curses uses the `M-^V` key prefix for split views.
 
 ### Settings
 

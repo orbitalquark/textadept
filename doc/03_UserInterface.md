@@ -30,9 +30,9 @@ Textadept's [buffer browser][] is always available and far more powerful.
 
 ## Editor View
 
-Most of your time spent with Textadept is in the editor view. The GUI version
-features unlimited view splitting both vertically and horizontally. Lua also has
-complete control over all views.
+Most of your time spent with Textadept is in the editor view. Both the GUI
+version and the terminal version feature unlimited vertical and horizontal view
+splitting. Lua also has complete control over all views.
 
 ## Find & Replace Pane
 
