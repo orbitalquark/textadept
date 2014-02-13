@@ -14,7 +14,7 @@ speed or succumbing to code bloat and featuritis.
 
 * Self-contained executable -- no installation necessary.
 * Entirely keyboard driven.
-* Unlimited split views (GUI version).
+* Unlimited split views.
 * Support for over 80 programming languages.
 * Powerful snippets and key commands.
 * Code autocompletion and API lookup.

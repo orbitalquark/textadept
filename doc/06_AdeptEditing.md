@@ -127,7 +127,7 @@ XML tags.
 
 Pressing `Ctrl+Alt+U` or `Ctrl+Alt+Shift+U` (`^U` or `^⇧U` on Mac OSX | `M-^U`
 or `M-^L` in curses) converts selected text to upper case letters or lower case
-letters respectively.
+letters, respectively.
 
 #### Change Indent Level
 
@@ -156,11 +156,11 @@ from a Lua pattern search, but always allows embedded Lua code enclosed in
 `%()`.
 
 Note the `Ctrl+G`, `Ctrl+Shift+G`, `Ctrl+Alt+R`, `Ctrl+Alt+Shift+R` key bindings
-for find next, find previous, replace, and replace all (`⌘G`, `⌘⇧G`, `^R`, `^⇧R`
-respectively on Mac OSX | `M-G`, `M-S-G`, `M-R`, `M-S-R` in curses) only work
-after hiding the Find & Replace pane. For at least the English locale in the GUI
-version, use the button mnemonics: `Alt+N`, `Alt+P`, `Alt+R`, and `Alt+A` (`⌘N`,
-`⌘P`, `⌘R`, `⌘A` | N/A) after bringing up the pane.
+for find next, find previous, replace, and replace all (`⌘G`, `⌘⇧G`, `^R`, and
+`^⇧R`, respectively on Mac OSX | `M-G`, `M-S-G`, `M-R`, `M-S-R` in curses) only
+work after hiding the Find & Replace pane. For at least the English locale in
+the GUI version, use the button mnemonics: `Alt+N`, `Alt+P`, `Alt+R`, and
+`Alt+A` (`⌘N`, `⌘P`, `⌘R`, `⌘A` | N/A) after bringing up the pane.
 
 In the curses version, `Tab` and `S-Tab` toggles between the find next, find
 previous, replace, and replace all buttons; `Up` and `Down` arrows switch
