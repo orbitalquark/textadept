@@ -112,8 +112,8 @@ ui.dialogs = setmetatable({}, {__index = function(t, k)
       if k:find('input') then
         options.string_output, options.select_multiple = true, true
       end
-      local items = {}
-      for item in (value..'\n'):gmatch('([^\n]*)\n') do
+      local items, patt = {}, not k:find('input') and '[^\n]+' or '([^\n]*)\n'
+      for item in (value..'\n'):gmatch(patt) do
         items[#items + 1] = options.string_output and item or tonumber(item) + 1
       end
       return button, options.select_multiple and items or items[1]
