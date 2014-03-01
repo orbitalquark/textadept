@@ -302,7 +302,7 @@ local error_emitted = false
 -- @usage events.emit('my_event', 'my message')
 -- @name emit
 function M.emit(event, ...)
-  if not event then error(_L['Undefined event name']) end
+  assert(event, _L['Undefined event name'])
   local h = handlers[event]
   if not h then return end
   local pcall, table_unpack, type = pcall, table.unpack, type

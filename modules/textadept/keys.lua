@@ -276,12 +276,12 @@ M.utils = {
   open_webpage = function(url)
     if WIN32 then
       local p = io.popen(string.format('start "" "%s"', url))
-      if not p then error(_L['Error loading webpage:']..url) end
+      assert(p, _L['Error loading webpage:']..url)
       p:close()
     else
       local _, _, code = os.execute(string.format(OSX and 'open "file://%s"' or
                                                   'xdg-open "%s" &', url))
-      if code ~= 0 then error(_L['Error loading webpage:']..url) end
+      assert(code == 0, _L['Error loading webpage:']..url)
     end
   end,
   cut_to_eol = function()

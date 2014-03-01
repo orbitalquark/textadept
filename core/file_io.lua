@@ -148,7 +148,7 @@ function io.open_file(filenames)
         local ok, conv = pcall(string.iconv, text, 'UTF-8', io.encodings[i])
         if ok then buffer.encoding, text = io.encodings[i], conv break end
       end
-      if not buffer.encoding then error(_L['Encoding conversion failed.']) end
+      assert(buffer.encoding, _L['Encoding conversion failed.'])
     end
     buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
     -- Detect EOL mode.
@@ -182,7 +182,7 @@ function io.reload_file()
   if not buffer.filename then return end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local f, err = io.open(buffer.filename, 'rb')
-  if not f then error(err) end
+  assert(f, err)
   local text = f:read('*all')
   f:close()
   local encoding, encoding_bom = buffer.encoding, buffer.encoding_bom
@@ -203,9 +203,7 @@ end
 -- @usage io.set_buffer_encoding('ASCII')
 -- @name set_buffer_encoding
 function io.set_buffer_encoding(encoding)
-  if not buffer.encoding then
-    error(_L['Cannot change binary file encoding'])
-  end
+  assert(buffer.encoding, _L['Cannot change binary file encoding'])
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local text = buffer:get_text()
   text = text:iconv(buffer.encoding, 'UTF-8')
@@ -232,7 +230,7 @@ function io.save_file()
     text = (buffer.encoding_bom or '')..text:iconv(buffer.encoding, 'UTF-8')
   end
   local f, err = io.open(buffer.filename, 'wb')
-  if not f then error(err) end
+  assert(f, err)
   f:write(text)
   f:close()
   buffer:set_save_point()

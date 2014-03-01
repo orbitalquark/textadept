@@ -379,9 +379,8 @@ end
 events.connect(events.MENU_CLICKED, function(menu_id)
   local actions = menu_id < 1000 and menu_actions or contextmenu_actions
   local action = actions[menu_id < 1000 and menu_id or menu_id - 1000]
-  if type(action) ~= 'function' and type(action) ~= 'table' then
-    error(_L['Unknown command:']..' '..tostring(action))
-  end
+  assert(type(action) == 'function' or type(action) == 'table',
+         _L['Unknown command:']..' '..tostring(action))
   keys.run_command(action, type(action))
 end)
 

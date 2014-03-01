@@ -15,7 +15,7 @@ if not f then
   if lang then f = io.open(_HOME..'/core/locales/locale.'..lang..'.conf') end
 end
 if not f then f = io.open(_HOME..'/core/locale.conf', 'rb') end
-if not f then error('"core/locale.conf" not found.') end
+assert(f, '"core/locale.conf" not found.')
 for line in f:lines() do
   if not line:find('^%s*%%') then
     local id, str = line:match('^(.-)%s*=%s*(.+)$')
