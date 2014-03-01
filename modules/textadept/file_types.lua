@@ -99,7 +99,7 @@ local function set_lexer_functions()
   buffer.get_lexer, buffer.set_lexer = get_lexer, set_lexer
   buffer.style_name = setmetatable({}, {
     __index = function(t, style_num) -- LuaDoc is in core/.buffer.luadoc
-      if style_num < 0 or style_num > 255 then error('0 <= style_num < 256') end
+      assert(style_num >= 0 and style_num <= 255, '0 <= style_num < 256')
       return buffer:private_lexer_call(style_num)
     end,
     __newindex = function() error('read-only property') end

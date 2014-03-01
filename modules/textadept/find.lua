@@ -271,7 +271,7 @@ local function replace(rtext)
   local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', function(code)
     code = code:gsub('[\a\b\f\n\r\t\v\\]', escapes)
     local ok, result = pcall(load('return '..code))
-    if not ok then error(result) end
+    assert(ok, result)
     return result:gsub('\\[abfnrtv\\]', escapes)
   end)
   if ok then

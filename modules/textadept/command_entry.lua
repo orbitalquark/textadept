@@ -101,7 +101,7 @@ local env = setmetatable({}, {
 function M.execute_lua(code)
   if code:sub(1, 1) == '=' then code = 'return '..code:sub(2) end
   local f, err = load(code, nil, 'bt', env)
-  if err then error(err) end
+  assert(f, err)
   local result = f()
   if result ~= nil then ui.print(result) end
   events.emit(events.UPDATE_UI)
