@@ -8,6 +8,30 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.2 beta 2 (01 Mar 2014)
+
+Download:
+
+* [Textadept 7.2 beta 2 -- Win32][]
+* [Textadept 7.2 beta 2 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.2 beta 2 -- Linux][]
+* [Textadept 7.2 beta 2 -- Linux x86_64][]
+* [Textadept 7.2 beta 2 -- Modules][]
+
+Bugfixes:
+
+* Fixed bug with empty entries in multiple entry inputboxes.
+
+Changes:
+
+* Terminal version now has split views along with key bindings for them.
+
+[Textadept 7.2 beta 2 -- Win32]: download/textadept_7.2_beta_2.win32.zip
+[Textadept 7.2 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_7.2_beta_2.osx.zip
+[Textadept 7.2 beta 2 -- Linux]: download/textadept_7.2_beta_2.i386.tgz
+[Textadept 7.2 beta 2 -- Linux x86_64]: download/textadept_7.2_beta_2.x86_64.tgz
+[Textadept 7.2 beta 2 -- Modules]: download/textadept_7.2_beta_2.modules.zip
+
 ## 7.2 beta (11 Feb 2014)
 
 Download:
