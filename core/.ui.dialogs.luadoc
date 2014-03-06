@@ -400,12 +400,12 @@ function standard_dropdown(options) end
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
 -- Spaces in the filter text are treated as wildcards.
--- @param options Table of key-value option pairs for the drop down dialog.
+-- @param options Table of key-value option pairs for the filtered list dialog.
 --
 --   * `title`: The dialog's title text.
 --   * `text`: The dialog's main message text.
 --   * `columns`: The list of string column names for list rows.
---   * `items`: The list of string items to show in the drop down.
+--   * `items`: The list of string items to show in the filtered list.
 --   * `button1`: The right-most button's label. The default value is
 --     `_L['_OK']`.
 --   * `button2`: The middle button's label.
@@ -433,3 +433,37 @@ function standard_dropdown(options) end
 -- @usage ui.dialogs.filteredlist{title = 'Title', columns = {'Foo', 'Bar'},
 --   items = {'a', 'b', 'c', 'd'}}
 function filteredlist(options) end
+
+---
+-- Prompts the user with an option selection dialog defined by dialog options 
+-- table *options*, returning the selected button's index along with the indices 
+-- of the selected options or, if *options*.`string_output` is `true`, the 
+-- selected button's label along with the text of the selected options.
+-- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
+-- dialog, returns `-1` or `"delete"`.
+-- @param options Table of key-value option pairs for the option select dialog.
+--
+--   * `title`: The dialog's title text.
+--   * `text`: The dialog's main message text.
+--   * `items`: The list of string options to show in the option group.
+--   * `button1`: The right-most button's label. The default value is
+--     `_L['_OK']`.
+--   * `button2`: The middle button's label.
+--   * `button3`: The left-most button's label. This option requires `button2`
+--     to be set.
+--   * `select`: The indices of initially selected options.
+--   * `string_output`: Return the selected button's label or the dialog's exit
+--     status along with the selected option's text instead of the button's 
+--     index or the dialog's exit code along with the option's index. The 
+--     default value is `false`.
+--   * `width`: The dialog's pixel width.
+--   * `height`: The dialog's pixel height.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+--   * `timeout`: the integer number of seconds the dialog waits for the user to
+--     select a button before timing out. Dialogs do not time out by default.
+-- @return selected button or exit code, list of selected options
+-- @usage ui.dialogs.optionselect{title = 'Language', 
+--   informative_text = 'Check the languages you understand'
+--   items = {'English', 'Romanian'}, select = 1, string_output = true}
+function optionselect(options) end
