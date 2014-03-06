@@ -51,6 +51,28 @@ implementation is required for the terminal version.)
 - - -
 
 **Q:**
+I'm trying to compile Textadept from one of the download packages, but get some
+obscure errors in the `scintilla/term/`, `gtdialog/`, or `scintillua/`
+directories. What happened?
+
+**A:**
+Some of the dependencies Textadept downloads are the latest archives in their
+respective version control repositories. Occasionally there are compile-time
+incompatibilities with these "bleeding-edge" downloads. The solution is to go to
+the appropriate repository and download the archive tagged for the version of
+Textadept you downloaded.
+
+For example, if you have Textadept 7.1 and cannot build the terminal version due
+to a file in the `scintilla/term/` directory, go to [scinterm hg][] and look for
+the "for\_textadept\_7.1" tag, click on it, download the [zip][], and replace
+the problematic file.
+
+[scinterm hg]: http://foicica.com/hg/scinterm
+[zip]: http://foicica.com/hg/scinterm/archive/ea13ae30cfab.zip
+
+- - -
+
+**Q:**
 When I open a file in a non-English language, I see a lot of strange characters.
 
 **A:**
