@@ -86,7 +86,12 @@ ui.dialogs = setmetatable({}, {__index = function(t, k)
   -- @return Lua objects depending on the dialog kind
   return function(options)
     if not options.button1 then options.button1 = _L['_OK'] end
-    if options.select then options.select = options.select - 1 end
+    local select = options.select
+    if type(select) == 'number' then 
+      options.select = select - 1 
+    elseif type(select) == 'table' then
+      for i = 1, #select do select[i] = select[i] - 1 end
+    end
     -- Transform key-value pairs into command line arguments.
     local args = {}
     for option, value in pairs(options) do
