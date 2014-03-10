@@ -2496,6 +2496,7 @@ int main(int argc, char **argv) {
     int shift = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_SHIFT;
     int ctrl = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_CONTROL;
     int alt = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_ALT;
+    if (c >= 32 && c <= 127) shift = 0; // do not shift printable keys
 #else
   TermKeyResult res;
   TermKeyKey key;
