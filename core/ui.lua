@@ -26,7 +26,13 @@ local ui = ui
 -- @field tabs (bool)
 --   Whether or not to display the tab bar when multiple buffers are open.
 --   The default value is `true`.
+-- @field SILENT_PRINT (bool)
+--   Whether or not to print messages to buffers silently.
+--   The default value is `false`, and focuses buffers when messages are printed 
+--   to them.
 module('ui')]]
+
+ui.SILENT_PRINT = false
 
 local theme = package.searchpath(not CURSES and 'light' or 'term',
                                  _USERHOME..'/themes/?.lua;'..
@@ -36,27 +42,28 @@ local theme_props = {}
 -- Helper function for printing messages to buffers.
 -- @see ui._print
 local function _print(buffer_type, ...)
-  if buffer._type ~= buffer_type then
+  local print_buffer
+  for i, buffer in ipairs(_BUFFERS) do
+    if buffer._type == buffer_type then print_buffer = buffer break end
+  end
+  if not print_buffer then
+    if not ui.tabs then view:split() end
+    print_buffer = buffer.new()
+    print_buffer._type = buffer_type
+    events.emit(events.FILE_OPENED)
+  elseif not ui.SILENT_PRINT then
+    local index = _BUFFERS[print_buffer]
     for i, view in ipairs(_VIEWS) do
       if view.buffer._type == buffer_type then ui.goto_view(i) break end
     end
-    if view.buffer._type ~= buffer_type then
-      if not ui.tabs then view:split() end
-      for i, buffer in ipairs(_BUFFERS) do
-        if buffer._type == buffer_type then view:goto_buffer(i) break end
-      end
-      if buffer._type ~= buffer_type then
-        buffer.new()._type = buffer_type
-        events.emit(events.FILE_OPENED)
-      end
-    end
+    if view.buffer._type ~= buffer_type then view:goto_buffer(index) end
   end
   local args, n = {...}, select('#', ...)
   for i = 1, n do args[i] = tostring(args[i]) end
-  buffer:append_text(table.concat(args, '\t'))
-  buffer:append_text('\n')
-  buffer:goto_pos(buffer.length)
-  buffer:set_save_point()
+  print_buffer:append_text(table.concat(args, '\t'))
+  print_buffer:append_text('\n')
+  print_buffer:goto_pos(buffer.length)
+  print_buffer:set_save_point()
 end
 ---
 -- Prints the given string messages to the buffer of type *buffer_type*.
