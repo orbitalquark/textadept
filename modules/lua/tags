@@ -281,6 +281,7 @@ SEL_LINES	_	0;"	F	class:_SCINTILLA.constants
 SEL_RECTANGLE	_	0;"	F	class:_SCINTILLA.constants
 SEL_STREAM	_	0;"	F	class:_SCINTILLA.constants
 SEL_THIN	_	0;"	F	class:_SCINTILLA.constants
+SILENT_PRINT	_	0;"	F	class:ui
 SNAPOPEN_MAX	_	0;"	F	class:io
 STARTACTION	_	0;"	F	class:_SCINTILLA.constants
 STRING	_	0;"	F	class:lexer
@@ -352,6 +353,7 @@ WRAPVISUALFLAG_NONE	_	0;"	F	class:_SCINTILLA.constants
 WRAPVISUALFLAG_START	_	0;"	F	class:_SCINTILLA.constants
 WRAP_CHAR	_	0;"	F	class:_SCINTILLA.constants
 WRAP_NONE	_	0;"	F	class:_SCINTILLA.constants
+WRAP_WHITESPACE	_	0;"	F	class:_SCINTILLA.constants
 WRAP_WORD	_	0;"	F	class:_SCINTILLA.constants
 WS_INVISIBLE	_	0;"	F	class:_SCINTILLA.constants
 WS_VISIBLEAFTERINDENT	_	0;"	F	class:_SCINTILLA.constants
@@ -911,6 +913,7 @@ ok_msgbox	_	0;"	f	class:ui.dialogs
 open	_	0;"	f	class:io
 open_file	_	0;"	f	class:io
 open_recent_file	_	0;"	f	class:io
+optionselect	_	0;"	f	class:ui.dialogs
 os	_	0;"	m	
 os	_	0;"	t	
 output	_	0;"	f	class:io

@@ -184,6 +184,7 @@
 -- * `_G._SCINTILLA.constants.WRAPVISUALFLAG_START` 2
 -- * `_G._SCINTILLA.constants.WRAP_CHAR` 2
 -- * `_G._SCINTILLA.constants.WRAP_NONE` 0
+-- * `_G._SCINTILLA.constants.WRAP_WHITESPACE` 3
 -- * `_G._SCINTILLA.constants.WRAP_WORD` 1
 -- * `_G._SCINTILLA.constants.STYLE_BRACEBAD` 35
 -- * `_G._SCINTILLA.constants.STYLE_BRACELIGHT` 34

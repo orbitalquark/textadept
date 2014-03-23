@@ -425,15 +425,15 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 
 # External dependencies.
 
-scintilla_tgz = scintilla339.tgz
+scintilla_tgz = scintilla340.tgz
 scinterm_zip = scinterm.zip
 scintillua_zip = scintillua.zip
 lua_tgz = lua-5.2.3.tar.gz
 lpeg_tgz = lpeg-0.10.2.tar.gz
 lfs_zip = d71c63cdb776f7d25313f8fcd14f07512ba1f83e.zip
 lwinapi_zip = 23dd43141d04d010a9986cca9e5ecb9e598a2899.zip
-luajit_tgz = LuaJIT-2.0.2.tar.gz
-libluajit_tgz = libluajit_2.0.2.x86_64.tgz
+luajit_tgz = LuaJIT-2.0.3.tar.gz
+libluajit_tgz = libluajit_2.0.3.x86_64.tgz
 gtdialog_zip = gtdialog.zip
 windowman_zip = windowman.zip
 cdk_tgz = cdk.tar.gz
