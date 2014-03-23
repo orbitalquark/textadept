@@ -10,10 +10,10 @@ diff -r a7133e1798ac src/Makefile
  #
  # Disable the JIT compiler, i.e. turn LuaJIT into a pure interpreter.
  #XCFLAGS+= -DLUAJIT_DISABLE_JIT
-diff -r a7133e1798ac src/luaconf.h
---- a/src/luaconf.h	Thu Jun 13 08:39:50 2013 -0400
-+++ b/src/luaconf.h	Thu Jun 13 08:43:22 2013 -0400
-@@ -18,15 +18,11 @@
+diff -r 509ca9567f6f src/luaconf.h
+--- a/src/luaconf.h	Wed Mar 19 23:15:13 2014 -0400
++++ b/src/luaconf.h	Wed Mar 19 23:22:19 2014 -0400
+@@ -21,9 +21,9 @@
  #define LUA_LDIR	"!\\lua\\"
  #define LUA_CDIR	"!\\"
  #define LUA_PATH_DEFAULT \
@@ -23,24 +23,34 @@ diff -r a7133e1798ac src/luaconf.h
 -  ".\\?.dll;" LUA_CDIR"?.dll;" LUA_CDIR"loadall.dll"
 +  LUA_CDIR"?.dll;" LUA_CDIR"loadall.dll"
  #else
--/*
--** Note to distribution maintainers: do NOT patch the following line!
--** Please read ../doc/install.html#distro and pass PREFIX=/usr instead.
--*/
--#define LUA_ROOT	"/usr/local/"
-+#define LUA_ROOT	"/usr/"
- #define LUA_LDIR	LUA_ROOT "share/lua/5.1/"
- #define LUA_CDIR	LUA_ROOT "lib/lua/5.1/"
- #ifdef LUA_XROOT
-@@ -40,14 +36,14 @@
- #define LUA_XCPATH
+ /*
+ ** Note to distribution maintainers: do NOT patch the following lines!
+@@ -35,7 +35,7 @@
+ #ifndef LUA_LMULTILIB
+ #define LUA_LMULTILIB	"lib"
  #endif
- #define LUA_PATH_DEFAULT \
--  "./?.lua;" LUA_JDIR"?.lua;" LUA_LDIR"?.lua;" LUA_LDIR"?/init.lua" LUA_XPATH
-+  LUA_JDIR"?.lua;" LUA_LDIR"?.lua;" LUA_LDIR"?/init.lua" LUA_XPATH
- #define LUA_CPATH_DEFAULT \
--  "./?.so;" LUA_CDIR"?.so;" LUA_XCPATH LUA_CDIR"loadall.so"
-+  LUA_CDIR"?.so;" LUA_XCPATH LUA_CDIR"loadall.so"
+-#define LUA_LROOT	"/usr/local"
++#define LUA_LROOT	"/usr/"
+ #define LUA_LUADIR	"/lua/5.1/"
+ #define LUA_LJDIR	"/luajit-2.0.3/"
+ 
+@@ -51,20 +51,20 @@
+ #define LUA_RCPATH
+ #endif
+ 
+-#define LUA_JPATH	";" LUA_JROOT "/share" LUA_LJDIR "?.lua"
++#define LUA_JPATH	LUA_JROOT "/share" LUA_LJDIR "?.lua"
+ #define LUA_LLDIR	LUA_LROOT "/share" LUA_LUADIR
+ #define LUA_LCDIR	LUA_LROOT "/" LUA_LMULTILIB LUA_LUADIR
+ #define LUA_LLPATH	";" LUA_LLDIR "?.lua;" LUA_LLDIR "?/init.lua"
+-#define LUA_LCPATH1	";" LUA_LCDIR "?.so"
++#define LUA_LCPATH1	LUA_LCDIR "?.so"
+ #define LUA_LCPATH2	";" LUA_LCDIR "loadall.so"
+ 
+-#define LUA_PATH_DEFAULT	"./?.lua" LUA_JPATH LUA_LLPATH LUA_RLPATH
+-#define LUA_CPATH_DEFAULT	"./?.so" LUA_LCPATH1 LUA_RCPATH LUA_LCPATH2
++#define LUA_PATH_DEFAULT	LUA_JPATH LUA_LLPATH LUA_RLPATH
++#define LUA_CPATH_DEFAULT	LUA_LCPATH1 LUA_RCPATH LUA_LCPATH2
  #endif
  
  /* Environment variable names for path overrides and initialization code. */
