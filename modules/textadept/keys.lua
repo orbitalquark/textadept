@@ -36,7 +36,7 @@ local M = {}
 -- Alt+Del                 |^⌦       |M-Del<br/>M-D|Delete word
 -- Ctrl+A                  |⌘A       |M-A          |Select all
 -- Ctrl+M                  |^M       |M-M          |Match brace
--- Ctrl+Enter              |^⎋       |M-Enter^(†)  |Complete word
+-- Ctrl+Enter              |^Esc     |M-Enter^(†)  |Complete word
 -- Ctrl+Alt+Shift+H        |⌘⇧H      |None         |Highlight word
 -- Ctrl+/                  |^/       |M-/          |Toggle block comment
 -- Ctrl+T                  |^T       |^T           |Transpose characters
@@ -83,7 +83,7 @@ local M = {}
 -- Ctrl+Shift+R    |⌘⇧R    |M-^R         |Compile
 -- Ctrl+Alt+E      |^⌘E    |M-X          |Next Error
 -- Ctrl+Alt+Shift+E|^⌘⇧E   |M-S-X        |Previous Error
--- Ctrl+Space      |⌥⎋     |^Space       |Complete symbol
+-- Ctrl+Space      |⌥Esc   |^Space       |Complete symbol
 -- Ctrl+H          |^H     |M-H<br/>M-S-H|Show documentation
 -- Tab             |⇥      |Tab          |Expand snippet or next placeholder
 -- Ctrl+K          |⌥⇥     |M-K          |Insert snippet...
