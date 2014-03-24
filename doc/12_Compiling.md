@@ -169,8 +169,8 @@ made to CDK are in *src/cdk.patch* and listed as follows:
   *cdk_compat.{c,h}*, *cdk_test.h*, *dialog.c*, *{d,f}scale.{c,h}*,
   *fslider.{c,h}*, *gen-{scale,slider}.{c,h}*, *get_index.c*, *get_string.c*,
   *graph.c*, *histogram.c*, *marquee.c*, *matrix.c*, *popup_dialog.c*,
-  *radio.c*, *scale.{c,h}*, *selection.c*, *slider.{c,h}*, *swindow.c*,
-  *template.c*, *u{scale,slider}.{c,h}*, *view_{file,info}.c*, and *viewer.c*.
+  *radio.c*, *scale.{c,h}*, *slider.{c,h}*, *swindow.c*, *template.c*,
+  *u{scale,slider}.{c,h}*, *view_{file,info}.c*, and *viewer.c*.
 * *cdk.h* does not `#include` "matrix.h", "viewer.h", and any headers labeled
   "Generated headers" due to their machine-dependence. It also `#define`s
   `boolean` as `CDKboolean` on Windows platforms since the former is already
