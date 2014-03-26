@@ -103,6 +103,7 @@ local menubar = {
     SEPARATOR,
     {_L['_Run'], textadept.run.run},
     {_L['_Compile'], textadept.run.compile},
+    {_L['S_top'], textadept.run.stop},
     {_L['_Next Error'], {textadept.run.goto_error, false, true}},
     {_L['_Previous Error'], {textadept.run.goto_error, false, false}},
     SEPARATOR,

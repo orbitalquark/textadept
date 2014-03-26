@@ -35,7 +35,8 @@ M.sense.syntax.type_assignments = {
   ['^([%w_%.]+)%s*$'] = '%1', -- foo = textadept.adeptsense
   ['^(_M%.textadept%.adeptsense)%.new'] = '%1',
   ['require%s*%(?%s*(["\'])([%w_%.]+)%1%)?'] = '%2',
-  ['^io%.p?open%s*%b()%s*$'] = 'file'
+  ['^io%.p?open%s*%b()%s*$'] = 'file',
+  ['^spawn%s*%b()%s*$'] = 'proc'
 }
 M.sense.api_files = {_HOME..'/modules/lua/api'}
 M.sense:add_trigger('.')

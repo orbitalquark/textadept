@@ -1,0 +1,29 @@
+-- Copyright 2012-2014 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- This is a DUMMY FILE used for making LuaDoc for functions in the proc
+-- userdata defined by the lspawn module.
+
+---
+-- Userdata representing a process created by `spawn()`.
+module('proc')
+
+---
+-- Returns the status of `proc`, which is either "running" or "terminated".
+-- @param proc A process created by `spawn()`.
+-- @return "running" or "terminated"
+function status(proc) end
+
+---
+-- Blocks until `proc` finishes.
+-- @param proc A process created by `spawn()`.
+function wait(proc) end
+
+---
+-- Writes string `input` to the stdin of `proc`.
+-- @param proc A process created by `spawn()`.
+-- @param ... Standard input for `proc`.
+function write(proc, ...) end
+
+---
+-- Kills running `proc`.
+-- @param proc A running process created by `spawn()`.
+function kill(proc) end

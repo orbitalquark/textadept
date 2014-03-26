@@ -771,6 +771,7 @@ keys	_	0;"	m
 keys	_	0;"	t	
 keys	_	0;"	t	
 keys	_	0;"	t	class:textadept
+kill	_	0;"	f	class:proc
 last_char_includes	_	0;"	f	class:lexer
 ldexp	_	0;"	f	class:math
 len	_	0;"	f	class:string
@@ -950,6 +951,9 @@ preload	_	0;"	F	class:package
 print	_	0;"	F	class:lexer
 print	_	0;"	f	
 print	_	0;"	f	class:ui
+proc	_	0;"	F	class:textadept.run
+proc	_	0;"	m	
+proc	_	0;"	t	
 process	_	0;"	f	class:args
 properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
@@ -1129,6 +1133,7 @@ snippets	_	0;"	t
 snippets	_	0;"	t	class:textadept
 sort	_	0;"	f	class:table
 space	_	0;"	F	class:lexer
+spawn	_	0;"	f	
 split	_	0;"	f	class:view
 sqrt	_	0;"	f	class:math
 standard_dropdown	_	0;"	f	class:ui.dialogs
@@ -1136,10 +1141,12 @@ standard_inputbox	_	0;"	f	class:ui.dialogs
 start_styling	_	0;"	f	class:buffer
 starts_line	_	0;"	f	class:lexer
 status	_	0;"	f	class:coroutine
+status	_	0;"	f	class:proc
 statusbar_text	_	0;"	F	class:ui
 stderr	_	0;"	F	class:io
 stdin	_	0;"	F	class:io
 stdout	_	0;"	F	class:io
+stop	_	0;"	f	class:textadept.run
 string	_	0;"	m	
 string	_	0;"	t	
 stuttered_page_down	_	0;"	f	class:buffer
@@ -1258,6 +1265,7 @@ view_eol	_	0;"	F	class:buffer
 view_ws	_	0;"	F	class:buffer
 virtual_space_options	_	0;"	F	class:buffer
 visible_from_doc_line	_	0;"	f	class:buffer
+wait	_	0;"	f	class:proc
 whitespace_chars	_	0;"	F	class:buffer
 whitespace_size	_	0;"	F	class:buffer
 whole_word	_	0;"	F	class:ui.find
@@ -1289,6 +1297,7 @@ wrap_visual_flags	_	0;"	F	class:buffer
 wrap_visual_flags_location	_	0;"	F	class:buffer
 write	_	0;"	f	class:file
 write	_	0;"	f	class:io
+write	_	0;"	f	class:proc
 x_offset	_	0;"	F	class:buffer
 xdigit	_	0;"	F	class:lexer
 xor	_	0;"	f	class:bit32

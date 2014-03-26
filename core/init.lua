@@ -122,4 +122,33 @@ local reset
 -- @class function
 -- @name timeout
 local timeout
+
+-- The function below comes from the lspawn module.
+
+---
+-- Spawns an interactive child process *argv* in a separate thread with the help
+-- of GLib.
+-- @param argv A UTF-8-encoded command line string containing the program's name
+--   followed by arguments to pass to it. `PATH` is searched for program names.
+-- @param working_dir The child's UTF-8 current working directory (cwd) or `nil`
+--   to inherit the parent's.
+-- @param stdout_cb A Lua function that accepts a string parameter for a block
+--   of standard output read from the child. Stdout is read asynchronously in
+--   1KB or 0.5KB blocks (depending on the platform), or however much data is
+--   available at the time. All text is encoded in `_CHARSET`.
+-- @param stderr_cb A Lua function that accepts a string parameter for a block
+--   of standard error read from the child. Stderr is read asynchronously in 1KB
+--   or 0.5kB blocks (depending on the platform), or however much data is
+--   available at the time. All text is encoded in `_CHARSET`.
+-- @param exit_cb A Lua function that is called when the child process finishes.
+--   The child's exit status is passed.
+-- @return proc
+-- @usage spawn('lua buffer.filename', nil, print)
+-- @usage proc = spawn('lua -e "print(io.read())", nil, print)
+--        proc:write('foo\\n')
+-- @see _G._CHARSET
+-- @see _G.proc
+-- @class function
+-- @name spawn
+local spawn
 ]]

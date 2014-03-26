@@ -14,8 +14,11 @@ local M = {}
 -- @field MARK_ERROR (number)
 --   The run or compile error marker number.
 -- @field cwd (string, Read-only)
---   The most recently executed compile or run shell command's working directory.
+--   The most recently executed compile or run shell command's working
+--   directory.
 --   It is used for going to error messages with relative file paths.
+-- @field proc (process)
+--   The currently running process or the most recent process run.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Emitted when executing a language's compile shell command.
 --   By default, compiler output is printed to the message buffer. To override
@@ -56,8 +59,6 @@ local function command(commands, compiling)
                   commands[buffer:get_lexer()]
   if not command then return end
   if type(command) == 'function' then command = command() end
-
-  preferred_view = view
   local filepath, filedir, filename = buffer.filename, '', buffer.filename
   if filepath:find('[/\\]') then
     filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
@@ -67,20 +68,23 @@ local function command(commands, compiling)
     ['%(filepath)'] = filepath, ['%(filedir)'] = filedir,
     ['%(filename)'] = filename, ['%(filename_noext)'] = filename_noext,
   }):gsub('%%([dfe])', {d = filedir, f = filename, e = filename_noext})
-  local current_dir = lfs.currentdir()
-  lfs.chdir(filedir)
-  local event = compiling and events.COMPILE_OUTPUT or events.RUN_OUTPUT
+
+  preferred_view = view
   local events_emit = events.emit
+  local event = compiling and events.COMPILE_OUTPUT or events.RUN_OUTPUT
   local lexer = buffer:get_lexer()
-  events_emit(event, lexer, '> '..command:iconv('UTF-8', _CHARSET))
-  local p = io.popen(command..' 2>&1')
-  for line in p:lines() do
-    events_emit(event, lexer, line:iconv('UTF-8', _CHARSET))
+  local function emit_output(output)
+    events_emit(event, lexer, output:iconv('UTF-8', _CHARSET))
   end
-  local ok, status, code = p:close()
-  if ok and code then events_emit(event, lexer, status..': '..code) end
+
+  emit_output('> '..command)
+  ui.SILENT_PRINT = true
+  proc = spawn(command, filedir, emit_output, emit_output, function(status)
+    emit_output('> exit status: '..status)
+    ui.SILENT_PRINT = false
+  end)
+
   M.cwd = filedir
-  lfs.chdir(current_dir)
 end
 
 -- Parses the given message for a warning or error message and returns a table
@@ -167,6 +171,11 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 -- @name run
 function M.run() command(M.run_commands) end
 events.connect(events.RUN_OUTPUT, print_output)
+
+---
+-- Stops the currently running process, if any.
+-- @name stop
+function M.stop() if proc then proc:kill() end end
 
 ---
 -- List of warning and error string patterns that match various compile and run
