@@ -13,9 +13,7 @@
 #elif _WIN32
 #include <windows.h>
 #define main main_
-#elif (__APPLE__ && !CURSES)
-#include <gtkmacintegration/gtkosxapplication.h>
-#elif (__APPLE__ && CURSES)
+#elif __APPLE__
 #include <mach-o/dyld.h>
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
 #define u_int unsigned int // 'u_int' undefined when _POSIX_SOURCE is defined
@@ -25,6 +23,9 @@
 #if GTK
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#if __APPLE__
+#include <gtkmacintegration/gtkosxapplication.h>
+#endif
 #elif CURSES
 #if !_WIN32
 #include <signal.h>
@@ -92,7 +93,6 @@ typedef GtkWidget Scintilla;
 #define LUA_OK 0
 #define lua_rawlen lua_objlen
 #define LUA_OPEQ 0
-#define lua_compare(l, a, b, _) lua_equal(l, a, b)
 #define lL_openlib(l, n, f) \
   (lua_pushcfunction(l, f), lua_pushstring(l, n), lua_call(l, 1, 0))
 #else
@@ -210,9 +210,7 @@ static void new_buffer(sptr_t);
 static Scintilla *new_view(sptr_t);
 static int lL_init(lua_State *, int, char **, int);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
-#if _WIN32
-LUALIB_API int luaopen_winapi(lua_State *);
-#endif
+LUALIB_API int luaopen_spawn(lua_State *);
 
 /**
  * Emits an event.
@@ -1061,7 +1059,7 @@ static int lui__newindex(lua_State *L) {
 static sptr_t l_globaldoccompare(lua_State *L, int index) {
   luaL_getmetatable(L, "ta_buffer");
   lua_getmetatable(L, (index > 0) ? index : index - 1);
-  luaL_argcheck(L, lua_compare(L, -1, -2, LUA_OPEQ), index, "Buffer expected");
+  luaL_argcheck(L, lua_rawequal(L, -1, -2), index, "Buffer expected");
   lua_getfield(L, (index > 0) ? index : index - 2, "doc_pointer");
   sptr_t doc = (sptr_t)lua_touserdata(L, -1);
   lua_pop(L, 3); // doc_pointer, metatable, metatable
@@ -1305,7 +1303,7 @@ static int lbuf_property(lua_State *L) {
   int newindex = (lua_gettop(L) == 3);
   luaL_getmetatable(L, "ta_buffer");
   lua_getmetatable(L, 1); // metatable can be either ta_buffer or ta_bufferp
-  int is_buffer = lua_compare(L, -1, -2, LUA_OPEQ);
+  int is_buffer = lua_rawequal(L, -1, -2);
   lua_pop(L, 2); // metatable, metatable
 
   // If the key is a Scintilla function, return a callable closure.
@@ -1605,6 +1603,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   luaL_openlibs(L);
   lL_openlib(L, "lpeg", luaopen_lpeg);
   lL_openlib(L, "lfs", luaopen_lfs);
+  lL_openlib(L, "spawn", luaopen_spawn);
 
   lua_newtable(L);
   lua_newtable(L);
@@ -1644,7 +1643,6 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   lua_pushstring(L, textadept_home), lua_setglobal(L, "_HOME");
 #if _WIN32
   lua_pushboolean(L, 1), lua_setglobal(L, "WIN32");
-  lL_openlib(L, "winapi", luaopen_winapi);
 #elif (__APPLE__ && !CURSES)
   lua_pushboolean(L, 1), lua_setglobal(L, "OSX");
 #endif
@@ -1970,7 +1968,7 @@ static int s_buttonpress(GtkWidget*_, GdkEventButton *event, void*__) {
 static Scintilla *lL_checkview(lua_State *L, int arg) {
   luaL_getmetatable(L, "ta_view");
   lua_getmetatable(L, arg);
-  luaL_argcheck(L, lua_compare(L, -1, -2, LUA_OPEQ), arg, "View expected");
+  luaL_argcheck(L, lua_rawequal(L, -1, -2), arg, "View expected");
   lua_getfield(L, (arg > 0) ? arg : arg - 2, "widget_pointer");
   Scintilla *view = (Scintilla *)lua_touserdata(L, -1);
   lua_pop(L, 3); // widget_pointer, metatable, metatable
@@ -2398,19 +2396,16 @@ int main(int argc, char **argv) {
   textadept_home = malloc(FILENAME_MAX);
   GetModuleFileName(0, textadept_home, FILENAME_MAX);
   if ((last_slash = strrchr(textadept_home, '\\'))) *last_slash = '\0';
-#elif (__APPLE__ && !CURSES)
-  osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
-  char *path = gtkosx_application_get_resource_path();
-  textadept_home = g_filename_from_utf8((const char *)path, -1, NULL, NULL,
-                                        NULL);
-  g_free(path);
-#elif (__APPLE__ && CURSES)
+#elif __APPLE__
   char *path = malloc(FILENAME_MAX), *p = NULL;
   uint32_t size = FILENAME_MAX;
   _NSGetExecutablePath(path, &size);
   textadept_home = realpath(path, NULL);
   p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
   free(path);
+#if !CURSES
+  osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
+#endif
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
   textadept_home = malloc(FILENAME_MAX);
   int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
