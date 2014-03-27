@@ -210,7 +210,9 @@ static void new_buffer(sptr_t);
 static Scintilla *new_view(sptr_t);
 static int lL_init(lua_State *, int, char **, int);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
+#if !CURSES
 LUALIB_API int luaopen_spawn(lua_State *);
+#endif
 
 /**
  * Emits an event.
@@ -1603,7 +1605,9 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   luaL_openlibs(L);
   lL_openlib(L, "lpeg", luaopen_lpeg);
   lL_openlib(L, "lfs", luaopen_lfs);
+#if !CURSES
   lL_openlib(L, "spawn", luaopen_spawn);
+#endif
 
   lua_newtable(L);
   lua_newtable(L);
@@ -2125,11 +2129,9 @@ static Scintilla *new_view(sptr_t doc) {
   SS(view, SCI_USEPOPUP, 0, 0);
   lL_addview(lua, view);
   l_setglobalview(lua, view);
+  if (doc) SS(view, SCI_SETDOCPOINTER, 0, doc);
   focus_view(view), focused_view = view;
-  if (doc) {
-    SS(view, SCI_SETDOCPOINTER, 0, doc);
-    l_setglobaldoc(lua, doc);
-  } else new_buffer(SS(view, SCI_GETDOCPOINTER, 0, 0));
+  if (!doc) new_buffer(SS(view, SCI_GETDOCPOINTER, 0, 0));
   if (!initing) lL_event(lua, "view_new", -1);
   return view;
 }

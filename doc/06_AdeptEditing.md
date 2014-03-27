@@ -298,13 +298,16 @@ Pressing `Ctrl+/` (`⌘/` on Mac OSX | `M-/` in curses) comments or uncomments t
 code on the selected lines. Selecting any part of a line renders the entire line
 eligible for commenting or uncommenting.
 
-### Compile and Run
+### Compile, Run, and Build
 
 Textadept knows most of the commands that compile and/or run code in source
-files. Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in curses) executes
-the command for compiling code in the current file and `Ctrl+R` (`⌘R` | `^R`)
-executes the command for running code. A new buffer shows the output from the
-command and marks any recognized warnings and errors. Pressing `Ctrl+Alt+E`
+files. It can also sometimes detect your project's build file and run that.
+Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in curses) executes the
+command for compiling code in the current file, `Ctrl+R` (`⌘R` | `^R`) executes
+the command for running code, and `Ctrl+Shift+B` (`⌘⇧B` on Mac OSX | `M-^B` in
+curses) executes the command for building a project. `Ctrl+Shift+X` (`⌘⇧X` |
+`N/A`) stops the currently running process. A new buffer shows the output from
+the command and marks any recognized warnings and errors. Pressing `Ctrl+Alt+E`
 (`^⌘E` | `M-X`) attempts to jump to the source of the next recognized warning or
 error and `Ctrl+Alt+Shift+E` (`^⌘⇧E` | `M-S-X`) attempts to jump to the previous
 one. Double-clicking on warnings and errors also jumps to their sources. If
