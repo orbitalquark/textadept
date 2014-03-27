@@ -182,11 +182,16 @@ lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
            lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
            lmathlib.o loadlib.o loslib.o ltablib.o lstrlib.o
-lua_lib_objs = lpeg.o lfs.o lspawn.o
+lua_lib_objs = lpeg.o lfs.o
 #lua_lib_objs = lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
-luajit_lib_objs = lpegjit.o lfsjit.o lspawnjit.o
+luajit_lib_objs = lpegjit.o lfsjit.o
 #luajit_lib_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o \
 #                  lfsjit.o
+ifneq (curses, $(findstring curses, $(MAKECMDGOALS)))
+  # Compile in lspawn module.
+  lua_lib_objs += lspawn.o
+  luajit_lib_objs += lspawnjit.o
+endif
 termkey_objs = termkey.o driver-ti.o driver-csi.o
 windowman_objs = windowman.o
 cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \

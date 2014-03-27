@@ -81,6 +81,8 @@ local M = {}
 -- Ctrl+Shift+E    |⌘⇧E    |M-S-C        |Select command
 -- Ctrl+R          |⌘R     |^R           |Run
 -- Ctrl+Shift+R    |⌘⇧R    |M-^R         |Compile
+-- Ctrl+Shift+B    |⌘⇧B    |M-^B         |Build
+-- Ctrl+Shift+X    |⌘⇧X    |N/A          |Stop
 -- Ctrl+Alt+E      |^⌘E    |M-X          |Next Error
 -- Ctrl+Alt+Shift+E|^⌘⇧E   |M-S-X        |Previous Error
 -- Ctrl+Space      |⌥Esc   |^Space       |Complete symbol
@@ -97,6 +99,7 @@ local M = {}
 -- Ctrl+U          |⌘U     |^U           |Snapopen `_USERHOME`
 -- None            |None   |None         |Snapopen `_HOME`
 -- Ctrl+Alt+Shift+O|^⌘⇧O   |M-S-O        |Snapopen current directory
+-- Ctrl+Alt+Shift+P|^⌘⇧P   |M-^P         |Snapopen current project
 -- Ctrl+I          |⌘I     |None         |Show style
 -- **Buffer**      |      |             |
 -- Ctrl+Tab        |^⇥    |M-N          |Next buffer
@@ -306,9 +309,9 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:   A B C         H              p  Q     T ~ V   X Y  _   ) ] }   +
+-- c:   A   C         H              p  Q     T ~ V     Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
--- ca: aAbBcCdD   F      jJkKlLmM N   PqQ    t       xXy zZ_"'()[]{}<>*  /   \s
+-- ca: aAbBcCdD   F      jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
 -- CTRL = 'c' (Control ^)
 -- ALT = 'a' (Alt)
@@ -321,9 +324,9 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 -- Mac OSX key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- m:   A B C        ~    JkK  ~M    p  ~    tT U V   XyY  _   ) ] }   +   ~~\n
+-- m:   A   C        ~    JkK  ~M    p  ~    tT U V    yY  _   ) ] }   +   ~~\n
 -- c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /
--- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  pPq~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
+-- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  p q~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
 -- CTRL = 'c' (Control ^)
 -- ALT = 'a' (Alt/option ⌥)
@@ -348,7 +351,7 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
--- cm:  bcd  g~~ k ~  pq  t   xyz
+-- cm:   cd  g~~ k ~   q  t   xyz
 -- m:          e          J            qQ  sS  u vVw   yYzZ_          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
@@ -465,6 +468,8 @@ keys[not OSX and (not CURSES and 'ce' or 'mc')
 keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
 keys[not OSX and 'cr' or 'mr'] = textadept.run.run
 keys[not OSX and (not CURSES and 'cR' or 'cmr') or 'mR'] = textadept.run.compile
+keys[not OSX and (not CURSES and 'cB' or 'cmb') or 'mB'] = textadept.run.build
+if not CURSES then keys[not OSX and 'cX' or 'mX'] = textadept.run.stop end
 keys[not OSX and (not CURSES and 'cae' or 'mx')
              or 'cme'] = {textadept.run.goto_error, false, true}
 keys[not OSX and (not CURSES and 'caE' or 'mX')
@@ -494,6 +499,7 @@ keys[not OSX and 'cu' or 'mu'] = {io.snapopen, _USERHOME}
 -- TODO: {io.snapopen, _HOME}
 keys[not OSX and (not CURSES and 'caO' or 'mO')
              or 'cmO'] = utils.snapopen_filedir
+keys[not OSX and (not CURSES and 'caP' or 'cmp') or 'cmP'] = io.snapopen
 if not CURSES then keys[not OSX and 'ci' or 'mi'] = utils.show_style end
 
 -- Buffer.

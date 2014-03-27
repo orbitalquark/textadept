@@ -93,9 +93,10 @@ A quicker, though slightly more limited alternative to the standard file
 selection dialog is snapopen. It too behaves like the buffer browser, but
 displays a list of files to open, including files in sub-directories. Pressing
 `Ctrl+Alt+Shift+O` (`^⌘⇧O` on Mac OSX | `M-S-O` in curses) snaps open the
-current file's directory and `Ctrl+U` (`⌘U` | `^U`) snaps open *~/.textadept/*.
-Snapopen is pretty limited from the "Tools -> Snapopen" menu, but more versatile
-in [scripts][].
+current file's directory, `Ctrl+U` (`⌘U` | `^U`) snaps open *~/.textadept/*, and
+`Ctrl+Alt+Shift+P` (`^⌘⇧P` | `M-^P`) snaps open the current project (which must
+be under version control). Snapopen is pretty limited from the
+"Tools -> Snapopen" menu, but more versatile in [scripts][].
 
 [scripts]: api/io.html#snapopen
 

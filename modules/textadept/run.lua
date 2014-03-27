@@ -19,6 +19,7 @@ local M = {}
 --   It is used for going to error messages with relative file paths.
 -- @field proc (process)
 --   The currently running process or the most recent process run.
+--   This field does not exist in the terminal version.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Emitted when executing a language's compile shell command.
 --   By default, compiler output is printed to the message buffer. To override
@@ -35,6 +36,14 @@ local M = {}
 --
 --   * `lexer`: The language's lexer name.
 --   * `output`: A line of string output from the command.
+-- @field _G.events.BUILD_OUTPUT (string)
+--   Emitted when executing a project's build shell command.
+--   By default, output is printed to the message buffer. To override this
+--   behavior, connect to the event with an index of `1` and return `true`.
+--   Arguments:
+--
+--   * `project`: The path to the project being built.
+--   * `output`: A line of string output from the command.
 module('textadept.run')]]
 
 M.MARK_WARNING = _SCINTILLA.next_marker_number()
@@ -42,49 +51,76 @@ M.MARK_ERROR = _SCINTILLA.next_marker_number()
 
 -- Events.
 events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
+events.BUILD_OUTPUT = 'build_output'
 
 local preferred_view
 
--- Executes a compile or run shell command.
--- Emits a `COMPILE_OUTPUT` or `RUN_OUTPUT` event based on the `compiling` flag.
--- @param commands Either `compile_commands` or `run_commands`.
--- @param compiling Flag indicating whether or not the command is a compiler
---   command. The default value is `false`.
+-- Executes compile, run, or build shell command *command*.
+-- Emits events named *event*.
+-- @param commands Either `compile_commands`, `run_commands`, or
+-- `build_commands`.
+-- @param event Event to emit upon command output.
 -- @see _G.events
-local function command(commands, compiling)
-  if not buffer.filename then return end
-  buffer:annotation_clear_all()
-  io.save_file()
-  local command = commands[buffer.filename:match('[^.]+$')] or
-                  commands[buffer:get_lexer()]
-  if not command then return end
-  if type(command) == 'function' then command = command() end
-  local filepath, filedir, filename = buffer.filename, '', buffer.filename
-  if filepath:find('[/\\]') then
-    filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
+local function command(commands, event)
+  local command, cwd, data
+  if commands ~= M.build_commands then
+    if not buffer.filename then return end
+    buffer:annotation_clear_all()
+    io.save_file()
+    command = commands[buffer.filename:match('[^.]+$')] or
+              commands[buffer:get_lexer()]
+    cwd = buffer.filename:match('^(.+[/\\])[^/\\]+$') or ''
+    data = buffer:get_lexer()
+  else
+    cwd = io.get_project_root()
+    command = commands[cwd]
+    if not command then
+      local lfs_attributes = lfs.attributes
+      for build_file, build_command in pairs(commands) do
+        if lfs_attributes(cwd..'/'..build_file) then
+          local button, cmd = ui.dialogs.standard_inputbox{
+            title = _L['Command'], informative_text = cwd, text = build_command
+          }
+          if button == 1 then command = cmd end
+          break
+        end
+      end
+    end
+    data = cwd
   end
-  local filename_noext = filename:match('^(.+)%.')
-  command = command:gsub('%%%b()', {
-    ['%(filepath)'] = filepath, ['%(filedir)'] = filedir,
-    ['%(filename)'] = filename, ['%(filename_noext)'] = filename_noext,
-  }):gsub('%%([dfe])', {d = filedir, f = filename, e = filename_noext})
+  if type(command) == 'function' then command = command() end
+  if not command then return end
+  if buffer.filename then
+    local filepath, filedir, filename = buffer.filename, '', buffer.filename
+    if filepath:find('[/\\]') then
+      filedir, filename = filepath:match('^(.+[/\\])([^/\\]+)$')
+    end
+    local filename_noext = filename:match('^(.+)%.')
+    command = command:gsub('%%%b()', {
+      ['%(filepath)'] = filepath, ['%(filedir)'] = filedir,
+      ['%(filename)'] = filename, ['%(filename_noext)'] = filename_noext,
+    }):gsub('%%([dfe])', {d = filedir, f = filename, e = filename_noext})
+  end
 
   preferred_view = view
   local events_emit = events.emit
-  local event = compiling and events.COMPILE_OUTPUT or events.RUN_OUTPUT
-  local lexer = buffer:get_lexer()
   local function emit_output(output)
-    events_emit(event, lexer, output:iconv('UTF-8', _CHARSET))
+    ui.SILENT_PRINT = true
+    for line in output:gmatch('[^\r\n]+') do
+      events_emit(event, data, line:iconv('UTF-8', _CHARSET))
+    end
+    ui.SILENT_PRINT = false
   end
 
+  command, cwd = command:iconv('UTF-8', _CHARSET), cwd:iconv('UTF-8', _CHARSET)
+  if commands == M.build_commands then emit_output('> cd '..cwd) end
   emit_output('> '..command)
-  ui.SILENT_PRINT = true
-  proc = spawn(command, filedir, emit_output, emit_output, function(status)
+  local p, err = spawn(command, cwd, emit_output, emit_output, function(status)
     emit_output('> exit status: '..status)
-    ui.SILENT_PRINT = false
   end)
+  if not p then error(err) end
 
-  M.cwd = filedir
+  M.proc, M.cwd = p, cwd
 end
 
 -- Parses the given message for a warning or error message and returns a table
@@ -128,7 +164,7 @@ end
 
 ---
 -- Map of file extensions or lexer names to their associated "compile" shell
--- command line strings or functions returning such strings.
+-- command line strings or functions that return such strings.
 -- Command line strings may have the following macros:
 --
 --   + `%f` or `%(filename)`: The file's name, including its extension.
@@ -142,16 +178,16 @@ M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc 
 ---
 -- Compiles the current file based on its extension or language, using the
 -- shell command from the `compile_commands` table.
--- Emits a `COMPILE_OUTPUT` event.
+-- Emits `COMPILE_OUTPUT` events.
 -- @see compile_commands
 -- @see _G.events
 -- @name compile
-function M.compile() command(M.compile_commands, true) end
+function M.compile() command(M.compile_commands, events.COMPILE_OUTPUT) end
 events.connect(events.COMPILE_OUTPUT, print_output)
 
 ---
 -- Map of file extensions or lexer names to their associated "run" shell command
--- line strings or functions returning such strings.
+-- line strings or functions that return strings.
 -- Command line strings may have the following macros:
 --
 --   + `%f` or `%(filename)`: The file's name, including its extension.
@@ -165,17 +201,35 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 ---
 -- Runs the current file based on its extension or language, using the shell
 -- command from the `run_commands` table.
--- Emits a `RUN_OUTPUT` event.
+-- Emits `RUN_OUTPUT` events.
 -- @see run_commands
 -- @see _G.events
 -- @name run
-function M.run() command(M.run_commands) end
+function M.run() command(M.run_commands, events.RUN_OUTPUT) end
 events.connect(events.RUN_OUTPUT, print_output)
+
+---
+-- Map of project root paths and "makefiles" to their associated "build" shell
+-- command line strings or functions that return such strings.
+-- @class table
+-- @name build_commands
+M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}
+
+---
+-- Builds the current project based on the buffer's filename or the current
+-- working directory.
+-- If a "makefile" type of build file is found, prompts the user for the full
+-- build command.
+-- Emits `BUILD_OUTPUT` events.
+-- @see _G.events
+-- @name build
+function M.build() command(M.build_commands, events.BUILD_OUTPUT) end
+events.connect(events.BUILD_OUTPUT, print_output)
 
 ---
 -- Stops the currently running process, if any.
 -- @name stop
-function M.stop() if proc then proc:kill() end end
+function M.stop() if M.proc then M.proc:kill() end end
 
 ---
 -- List of warning and error string patterns that match various compile and run

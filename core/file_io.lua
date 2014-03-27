@@ -358,9 +358,46 @@ function io.open_recent_file()
   if button == 1 and i then io.open_file(io.recent_files[i]) end
 end
 
+-- List of version control directories.
+local vcs = {'.bzr', '.git', '.hg', '.svn', 'CVS'}
+
+---
+-- Returns the root directory of the project that contains filesystem path
+-- *path*.
+-- @param path Optional filesystem path to a project or a file contained within
+--   a project. The default value is the buffer's filename or the current
+--   working directory.
+-- @return string root
+-- @name get_project_root
+function io.get_project_root(path)
+  local root
+  local lfs_attributes = lfs.attributes
+  local dir = path or (buffer.filename or lfs.currentdir()):match('^(.+)[/\\]')
+  while dir do
+    for i = 1, #vcs do
+      if lfs_attributes(dir..'/'..vcs[i], 'mode') == 'directory' then
+        if vcs[i] ~= '.svn' and vcs[i] ~= 'CVS' then return dir end
+        root = dir
+        break
+      end
+    end
+    dir = dir:match('^(.+)[/\\]')
+  end
+  return root
+end
+
+---
+-- Map of file paths to filters used by `io.snapopen()`.
+-- @class table
+-- @name snapopen_filters
+-- @see snapopen
+io.snapopen_filters = {}
+
 ---
 -- Prompts the user to select files to be opened from *paths*, a string
 -- directory path or list of directory paths, using a filtered list dialog.
+-- If *paths* is `nil`, uses the current project's root directory, which is
+-- obtained from `io.get_project_root()`.
 -- Files shown in the dialog do not match any pattern in either string or table
 -- *filter* or, unless *exclude_FILTER* is `true`, in `lfs.FILTER`. A filter
 -- table contains Lua patterns that match filenames to exclude, an optional
@@ -368,15 +405,22 @@ end
 -- and an optional `extensions` sub-table that contains raw file extensions to
 -- exclude. Any patterns starting with '!' exclude files and directories that do
 -- not match the pattern that follows. The number of files in the list is capped
--- at `SNAPOPEN_MAX`.
+-- at `SNAPOPEN_MAX`. If *filter* is `nil` and *paths* is ultimately a string,
+-- the filter from the `io.snapopen_filters` table is used. In that case, unless
+-- explicitly specified, *exclude_FILTER* becomes `true`.
 -- *opts* is an optional table of additional options for
 -- `ui.dialogs.filteredlist()`.
--- @param paths String directory path or table of directory paths to search.
--- @param filter Optional filter for files and directories to exclude.
+-- @param paths Optional string directory path or table of directory paths to
+--   search. The default value is the current project's root directory, if
+--   available.
+-- @param filter Optional filter for files and directories to exclude. The
+--   default value comes from `io.snapopen_filters` if *paths* is a string.
 -- @param exclude_FILTER Optional flag indicating whether or not to exclude the
 --   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
 --   *filter*.
---   The default value is `false` to include the default filter.
+--   Normally, the default value is `false` to include the default filter.
+--   However, in the instances where *filter* comes from `io.snapopen_filters`,
+--   the default value is `true`.
 -- @param opts Optional table of additional options for
 --   `ui.dialogs.filteredlist()`.
 -- @usage io.snapopen(buffer.filename:match('^.+/')) -- list all files in the
@@ -385,12 +429,22 @@ end
 --    directory
 -- @usage io.snapopen('/project', {folders = {'build'}}) -- list all source
 --   files in a project directory
+-- @see io.snapopen_filters
 -- @see lfs.FILTER
 -- @see SNAPOPEN_MAX
 -- @see ui.dialogs.filteredlist
 -- @name snapopen
 function io.snapopen(paths, filter, exclude_FILTER, opts)
-  if type(paths) == 'string' then paths = {paths} end
+  if not paths then paths = io.get_project_root() end
+  if type(paths) == 'string' then
+    if not filter then
+      filter = io.snapopen_filters[paths]
+      if filter and type(exclude_FILTER) == "nil" then
+        exclude_FILTER = filter ~= lfs.FILTER
+      end
+    end
+    paths = {paths}
+  end
   local utf8_list = {}
   for i = 1, #paths do
     lfs.dir_foreach(paths[i], function(file)

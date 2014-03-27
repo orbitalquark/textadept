@@ -28,7 +28,7 @@ local ui = ui
 --   The default value is `true`.
 -- @field SILENT_PRINT (bool)
 --   Whether or not to print messages to buffers silently.
---   The default value is `false`, and focuses buffers when messages are printed 
+--   The default value is `false`, and focuses buffers when messages are printed
 --   to them.
 module('ui')]]
 
@@ -94,8 +94,8 @@ ui.dialogs = setmetatable({}, {__index = function(t, k)
   return function(options)
     if not options.button1 then options.button1 = _L['_OK'] end
     local select = options.select
-    if type(select) == 'number' then 
-      options.select = select - 1 
+    if type(select) == 'number' then
+      options.select = select - 1
     elseif type(select) == 'table' then
       for i = 1, #select do select[i] = select[i] - 1 end
     end
