@@ -19,6 +19,7 @@ BUFFER_AFTER_SWITCH	_	0;"	F	class:events
 BUFFER_BEFORE_SWITCH	_	0;"	F	class:events
 BUFFER_DELETED	_	0;"	F	class:events
 BUFFER_NEW	_	0;"	F	class:events
+BUILD_OUTPUT	_	0;"	F	class:events
 C	_	0;"	f	class:lpeg
 CALL_TIP_CLICK	_	0;"	F	class:events
 CARETSTICKY_OFF	_	0;"	F	class:_SCINTILLA.constants
@@ -483,6 +484,8 @@ buffer	_	0;"	t
 buffer	_	0;"	t	class:view
 buffered_draw	_	0;"	F	class:buffer
 bufstatusbar_text	_	0;"	F	class:ui
+build	_	0;"	f	class:textadept.run
+build_commands	_	0;"	t	class:textadept.run
 byte	_	0;"	f	class:string
 call_tip_active	_	0;"	f	class:buffer
 call_tip_cancel	_	0;"	f	class:buffer
@@ -689,6 +692,7 @@ get_lexer	_	0;"	f	class:buffer
 get_line	_	0;"	f	class:buffer
 get_line_sel_end_position	_	0;"	f	class:buffer
 get_line_sel_start_position	_	0;"	f	class:buffer
+get_project_root	_	0;"	f	class:io
 get_sel_text	_	0;"	f	class:buffer
 get_split_table	_	0;"	f	class:ui
 get_symbol	_	0;"	f	class:textadept.adeptsense
@@ -955,6 +959,7 @@ proc	_	0;"	F	class:textadept.run
 proc	_	0;"	m	
 proc	_	0;"	t	
 process	_	0;"	f	class:args
+project	_	0;"	t	class:textadept
 properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
 property	_	0;"	F	class:lexer
@@ -1129,6 +1134,7 @@ sinh	_	0;"	f	class:math
 size	_	0;"	F	class:view
 size	_	0;"	t	class:ui
 snapopen	_	0;"	f	class:io
+snapopen_filters	_	0;"	t	class:io
 snippets	_	0;"	t	
 snippets	_	0;"	t	class:textadept
 sort	_	0;"	f	class:table
@@ -1202,6 +1208,7 @@ textadept.editing	_	0;"	m
 textadept.file_types	_	0;"	m	
 textadept.keys	_	0;"	m	
 textadept.menu	_	0;"	m	
+textadept.project	_	0;"	m	
 textadept.run	_	0;"	m	
 textadept.session	_	0;"	m	
 textadept.snippets	_	0;"	m	
