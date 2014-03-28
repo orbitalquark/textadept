@@ -78,8 +78,9 @@ local function command(commands, event)
       local lfs_attributes = lfs.attributes
       for build_file, build_command in pairs(commands) do
         if lfs_attributes(cwd..'/'..build_file) then
-          local button, cmd = ui.dialogs.standard_inputbox{
-            title = _L['Command'], informative_text = cwd, text = build_command
+          local button, cmd = ui.dialogs.inputbox{
+            title = _L['Command'], informative_text = cwd, text = build_command,
+            button1 = _L['_OK'], button2 = _L['_Cancel']
           }
           if button == 1 then command = cmd end
           break
