@@ -20,8 +20,8 @@ if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 if CURSES then
   function spawn(argv, working_dir, stdout_cb, stderr_cb, exit_cb)
     local current_dir = lfs.currentdir()
-    lfs.chdir(working_dir:iconv(_CHARSET, 'UTF-8'))
-    local p = io.popen(argv:iconv(_CHARSET, 'UTF-8')..' 2>&1')
+    lfs.chdir(working_dir)
+    local p = io.popen(argv..' 2>&1')
     stdout_cb(p:read('*all'))
     exit_cb(select(3, p:close()))
     lfs.chdir(current_dir)
@@ -137,31 +137,28 @@ local timeout
 -- The function below comes from the lspawn module.
 
 ---
--- Spawns an interactive child process *argv* in a separate thread with the help
--- of GLib.
--- The terminal version spawns processes in the same thread and does not use
--- GLib.
--- @param argv A UTF-8-encoded command line string containing the program's name
---   followed by arguments to pass to it. `PATH` is searched for program names.
--- @param working_dir The child's UTF-8 current working directory (cwd) or `nil`
---   to inherit the parent's.
+-- Spawns an interactive child process *argv* in a separate thread.
+-- The terminal version spawns processes in the same thread.
+-- @param argv A command line string containing the program's name followed by
+--   arguments to pass to it. `PATH` is searched for program names.
+-- @param working_dir The child's current working directory (cwd) or `nil` to
+--   inherit the parent's.
 -- @param stdout_cb A Lua function that accepts a string parameter for a block
 --   of standard output read from the child. Stdout is read asynchronously in
 --   1KB or 0.5KB blocks (depending on the platform), or however much data is
---   available at the time. All text is encoded in `_CHARSET`.
---   The terminal version sends all output, whether it be stdout or stderr to
---   this callback.
+--   available at the time.
+--   The terminal version sends all output, whether it be stdout or stderr, to
+--   this callback after the process finishes.
 -- @param stderr_cb A Lua function that accepts a string parameter for a block
 --   of standard error read from the child. Stderr is read asynchronously in 1KB
 --   or 0.5kB blocks (depending on the platform), or however much data is
---   available at the time. All text is encoded in `_CHARSET`.
+--   available at the time.
 -- @param exit_cb A Lua function that is called when the child process finishes.
 --   The child's exit status is passed.
 -- @return proc
 -- @usage spawn('lua buffer.filename', nil, print)
 -- @usage proc = spawn('lua -e "print(io.read())", nil, print)
 --        proc:write('foo\\n')
--- @see _G._CHARSET
 -- @see _G.proc
 -- @class function
 -- @name spawn
