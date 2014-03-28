@@ -113,7 +113,6 @@ local function command(commands, event)
     ui.SILENT_PRINT = false
   end
 
-  command, cwd = command:iconv('UTF-8', _CHARSET), cwd:iconv('UTF-8', _CHARSET)
   if commands == M.build_commands then emit_output('> cd '..cwd) end
   emit_output('> '..command)
   local p, err = spawn(command, cwd, emit_output, emit_output, function(status)
