@@ -48,6 +48,30 @@
 -- [macros]: textadept.run.html#execute
 -- [`textadept.run.error_patterns`]: textadept.run.html#error_patterns
 --
+-- #### Build a Project
+--
+-- The `Ctrl+Shift+B` (`⌘⇧B` on Mac OSX | `M-^B` in curses) key bindings build
+-- the current project. Textadept can only detect projects under version
+-- control, and uses [`io.get_project_root()`][] to do so. The editor looks in
+-- the detected project's root directory for some sort of "makefile" (GNU
+-- Makefiles, Ruby Rakefiles, etc.) and prompts the user for any additional
+-- arguments to pass to that makefile's run command. Textadept references
+-- [`textadept.run.build_commands`][] for makefiles and their associated run
+-- commands. Per-project build commands may also be defined. For example, the
+-- following command builds Textadept after prompting for makefile targets:
+--
+--     textadept.run.build_commands[_HOME] = function()
+--       local button, target = ui.dialogs.standard_inputbox{
+--         title = _L['Command'], informative_text = 'make -C src'
+--       }
+--       if button == 1 then return 'make -C src '..target end
+--     end
+--
+-- As with compile and run commands, any recognized errors are flagged.
+--
+-- [`io.get_project_root()`]: io.html#get_project_root
+-- [`textadept.run.build_commands`]: textadept.run.html#build_commands
+--
 -- #### Buffer Properties
 --
 -- By default, Textadept uses 2 spaces as indentation. If your language has

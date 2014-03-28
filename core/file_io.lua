@@ -364,6 +364,8 @@ local vcs = {'.bzr', '.git', '.hg', '.svn', 'CVS'}
 ---
 -- Returns the root directory of the project that contains filesystem path
 -- *path*.
+-- In order to be recognized, projects must be under version control. Recognized
+-- VCSes are Bazaar, Git, Mercurial, SVN, and CVS.
 -- @param path Optional filesystem path to a project or a file contained within
 --   a project. The default value is the buffer's filename or the current
 --   working directory.

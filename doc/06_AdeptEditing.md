@@ -312,8 +312,9 @@ the command and marks any recognized warnings and errors. Pressing `Ctrl+Alt+E`
 error and `Ctrl+Alt+Shift+E` (`^⌘⇧E` | `M-S-X`) attempts to jump to the previous
 one. Double-clicking on warnings and errors also jumps to their sources. If
 Textadept does not know the correct commands for compiling and/or running your
-language's source code, or if it does not detect warning or error messages
-properly, you can [make changes][] in your [user-init file][].
+language's source code, if it does not know how to build your project, or if it
+does not detect warning or error messages properly, you can [make changes][] in
+your [user-init file][].
 
 ![Runtime Error](images/runerror.png)
 
