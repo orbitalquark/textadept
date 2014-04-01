@@ -8,6 +8,45 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.2 beta 3 (01 Apr 2014)
+
+Download:
+
+* [Textadept 7.2 beta 3 -- Win32][]
+* [Textadept 7.2 beta 3 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.2 beta 3 -- Linux][]
+* [Textadept 7.2 beta 3 -- Linux x86_64][]
+* [Textadept 7.2 beta 3 -- Modules][]
+
+Bugfixes:
+
+* Fixed bug in Win32 terminal version with "shifted" character input.
+
+Changes:
+
+* New [optionselect][] dialog.
+* Added [`ui.SILENT_PRINT`][] option for printing messages.
+* The GUI version can [spawn processes][] in separate threads.
+* Removed experimental Windows `io.popen()` and `os.execute()` replacements due
+  to spawning support.
+* [Snapopen][] now supports projects; added new menu entry and key command.
+* Added support for [building projects][].
+* Updated to [LuaJIT][] 2.0.3.
+* Updated to [Scintilla][] 3.4.1.
+
+[Textadept 7.2 beta 3 -- Win32]: download/textadept_7.2_beta_3.win32.zip
+[Textadept 7.2 beta 3 -- Mac OSX Intel 10.5+]: download/textadept_7.2_beta_3.osx.zip
+[Textadept 7.2 beta 3 -- Linux]: download/textadept_7.2_beta_3.i386.tgz
+[Textadept 7.2 beta 3 -- Linux x86_64]: download/textadept_7.2_beta_3.x86_64.tgz
+[Textadept 7.2 beta 3 -- Modules]: download/textadept_7.2_beta_3.modules.zip
+[optionselect]: api/ui.dialogs.html#optionselect
+[`ui.SILENT_PRINT`]: api/ui.html#SILENT_PRINT
+[spawn processes]: api/_G.html#spawn
+[Snapopen]: 04_WorkingWithFiles.html#Snapopen
+[building projects]: api/_M.html#Build.a.Project
+[LuaJIT]: http://luajit.org
+[Scintilla]: http://scintilla.org
+
 ## 7.2 beta 2 (01 Mar 2014)
 
 Download:
