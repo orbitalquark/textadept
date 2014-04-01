@@ -112,13 +112,20 @@ local function command(commands, event)
     end
     ui.SILENT_PRINT = false
   end
+  local function emit_status(status) emit_output('> exit status: '..status) end
 
   if commands == M.build_commands then emit_output('> cd '..cwd) end
   emit_output('> '..command)
-  local p, err = spawn(command, cwd, emit_output, emit_output, function(status)
-    emit_output('> exit status: '..status)
-  end)
+  local p, err = spawn(command, cwd, emit_output, emit_output,
+                       not OSX and emit_status or nil)
   if not p then error(err) end
+  if OSX then
+    -- Workaround for GTKOSX abort caused by failed assertion.
+    timeout(1, function()
+      if p:status() == 'running' then return true end
+      emit_status('Process completed')
+    end)
+  end
 
   M.proc, M.cwd = p, cwd
 end
