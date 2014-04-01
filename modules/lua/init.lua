@@ -33,7 +33,7 @@ M.sense.syntax.type_declarations = {}
 M.sense.syntax.type_assignments = {
   ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
   ['^([%w_%.]+)%s*$'] = '%1', -- foo = textadept.adeptsense
-  ['^(_M%.textadept%.adeptsense)%.new'] = '%1',
+  ['^(textadept%.adeptsense)%.new'] = '%1',
   ['require%s*%(?%s*(["\'])([%w_%.]+)%1%)?'] = '%2',
   ['^io%.p?open%s*%b()%s*$'] = 'file',
   ['^spawn%s*%b()%s*$'] = 'proc'
