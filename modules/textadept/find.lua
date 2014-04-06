@@ -53,9 +53,9 @@ local M = ui.find
 --   The text of the "In files" label.
 --   This is primarily used for localization.
 -- @field _G.events.FIND_WRAPPED (string)
---   Emitted when a text search wraps, either from bottom to top (when searching
---   for a next occurrence), or from top to bottom (when searching for a
---   previous occurrence).
+--   Emitted when a text search wraps (passes through the beginning of the
+--   buffer), either from bottom to top (when searching for a next occurrence),
+--   or from top to bottom (when searching for a previous occurrence).
 --   This is useful for implementing a more visual or audible notice when a
 --   search wraps in addition to the statusbar message.
 module('ui.find')]]
