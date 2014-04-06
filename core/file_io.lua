@@ -114,12 +114,7 @@ function io.open_file(filenames)
   }
   if not filenames then return end
   for i = 1, #filenames do
-    local filename = filenames[i]:gsub('^file://', '')
-    if WIN32 then filename = filename:gsub('/', '\\') end
-    filename = filename:gsub('%f[^/\\]%.[/\\]', '') -- clean up './'
-    while filename:find('[^/\\]+[/\\]%.%.[/\\]') do
-      filename = filename:gsub('[^/\\]+[/\\]%.%.[/\\]', '') -- clean up '../'
-    end
+    local filename = lfs.abspath(filenames[i]:gsub('^file://', ''))
     for i, buffer in ipairs(_BUFFERS) do
       if filename == buffer.filename then view:goto_buffer(i) goto continue end
     end
