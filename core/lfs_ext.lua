@@ -2,7 +2,8 @@
 
 --[[ This comment is for LuaDoc.
 ---
--- Extends the `lfs` library to find files in directories.
+-- Extends the `lfs` library to find files in directories and determine absolute
+-- file paths.
 module('lfs')]]
 
 ---
@@ -91,4 +92,21 @@ function lfs.dir_foreach(dir, f, filter, exclude_FILTER, recursing)
       end
     end
   end
+end
+
+---
+-- Returns the absolute path to string *filename*.
+-- `lfs.currentdir()` is prepended to a relative filename. The returned path is
+-- not guaranteed to exist.
+-- @param filename The relative or absolute path to a file.
+-- @return string absolute path
+function lfs.abspath(filename)
+  if filename:find(not WIN32 and '^/' or '^%a:[/\\]') then return filename end
+  if WIN32 then filename = filename:gsub('/', '\\') end
+  filename = lfs.currentdir()..(not WIN32 and '/' or '\\')..filename
+  filename = filename:gsub('%f[^/\\]%.[/\\]', '') -- clean up './'
+  while filename:find('[^/\\]+[/\\]%.%.[/\\]') do
+    filename = filename:gsub('[^/\\]+[/\\]%.%.[/\\]', '') -- clean up '../'
+  end
+  return filename
 end
