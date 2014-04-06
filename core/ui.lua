@@ -131,7 +131,9 @@ ui.dialogs = setmetatable({}, {__index = function(t, k)
       return button, options.select_multiple and items or items[1]
     elseif not options.string_output then
       local i, value = result:match('^(%-?%d+)\n?(.*)$')
-      return tonumber(i), k ~= 'dropdown' and value or tonumber(value) + 1
+      i = tonumber(i)
+      if k == 'dropdown' then value = i > 0 and tonumber(value) + 1 or nil end
+      return i, value
     end
     return result:match('([^\n]+)\n(.*)$')
   end
