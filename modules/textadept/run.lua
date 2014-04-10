@@ -106,7 +106,7 @@ local function command(commands, event)
   preferred_view = view
   local events_emit = events.emit
   local function emit_output(output)
-    ui.SILENT_PRINT = true
+    ui.SILENT_PRINT = not OSX and true
     for line in output:gmatch('[^\r\n]+') do
       events_emit(event, data, line:iconv('UTF-8', _CHARSET))
     end
@@ -116,16 +116,8 @@ local function command(commands, event)
 
   if commands == M.build_commands then emit_output('> cd '..cwd) end
   emit_output('> '..command)
-  local p, err = spawn(command, cwd, emit_output, emit_output,
-                       not OSX and emit_status or nil)
+  local p, err = spawn(command, cwd, emit_output, emit_output, emit_status)
   if not p then error(err) end
-  if OSX then
-    -- Workaround for GTKOSX abort caused by failed assertion.
-    timeout(1, function()
-      if p:status() == 'running' then return true end
-      emit_status('Process completed')
-    end)
-  end
 
   M.proc, M.cwd = p, cwd
 end
