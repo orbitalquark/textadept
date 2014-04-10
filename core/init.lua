@@ -16,15 +16,27 @@ keys = require('keys')
 _M = {} -- language modules table
 -- LuaJIT compatibility.
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
--- curses compatibility.
-if CURSES then
+-- curses and OSX compatibility.
+if CURSES or OSX then
+  local spawn_ = spawn
   function spawn(argv, working_dir, stdout_cb, stderr_cb, exit_cb)
-    local current_dir = lfs.currentdir()
-    lfs.chdir(working_dir)
-    local p = io.popen(argv..' 2>&1')
-    stdout_cb(p:read('*all'))
-    exit_cb(select(3, p:close()))
-    lfs.chdir(current_dir)
+--    if OSX then
+--      -- Workaround for GLib abort caused by failed assertion.
+--      local p, err = spawn_(argv, working_dir, stdout_cb, stderr_cb)
+--      if not p then return p, err end
+--      timeout(1, function()
+--        if p:status() == 'running' then return true end
+--        exit_cb('Process completed')
+--      end)
+--    else
+      local current_dir = lfs.currentdir()
+      lfs.chdir(working_dir)
+      local p = io.popen(argv..' 2>&1')
+      stdout_cb(p:read('*all'))
+      exit_cb(select(3, p:close()))
+      lfs.chdir(current_dir)
+      return p
+--    end
   end
 end
 
