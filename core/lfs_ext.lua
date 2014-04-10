@@ -96,14 +96,16 @@ end
 
 ---
 -- Returns the absolute path to string *filename*.
--- `lfs.currentdir()` is prepended to a relative filename. The returned path is
--- not guaranteed to exist.
+-- *prefix* or `lfs.currentdir()` is prepended to a relative filename. The
+-- returned path is not guaranteed to exist.
 -- @param filename The relative or absolute path to a file.
 -- @return string absolute path
-function lfs.abspath(filename)
-  if filename:find(not WIN32 and '^/' or '^%a:[/\\]') then return filename end
+function lfs.abspath(filename, prefix)
   if WIN32 then filename = filename:gsub('/', '\\') end
-  filename = lfs.currentdir()..(not WIN32 and '/' or '\\')..filename
+  if not filename:find(not WIN32 and '^/' or '^%a:[/\\]') then
+    prefix = prefix or lfs.currentdir()
+    filename = prefix..(not WIN32 and '/' or '\\')..filename
+  end
   filename = filename:gsub('%f[^/\\]%.[/\\]', '') -- clean up './'
   while filename:find('[^/\\]+[/\\]%.%.[/\\]') do
     filename = filename:gsub('[^/\\]+[/\\]%.%.[/\\]', '') -- clean up '../'

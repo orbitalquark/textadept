@@ -57,7 +57,7 @@ function M.process(arg)
       f(table.unpack(args))
       i = i + n
     else
-      io.open_file(lfs.abspath(arg[i]))
+      io.open_file(lfs.abspath(arg[i], arg[-1]))
       no_args = false
     end
     i = i + 1
