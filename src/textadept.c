@@ -2071,7 +2071,7 @@ static int lview__index(lua_State *L) {
 static int lview__newindex(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "buffer") == 0)
-    luaL_argerror(L, 3, "read-only property");
+    luaL_argerror(L, 2, "read-only property");
   else if (strcmp(key, "size") == 0) {
     int size = luaL_checkinteger(L, 3);
     if (size < 0) size = 0;
