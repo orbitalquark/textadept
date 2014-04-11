@@ -398,6 +398,7 @@ _rules	_	0;"	F	class:lexer.lexer
 _select	_	0;"	f	class:textadept.snippets
 _tokenstyles	_	0;"	F	class:lexer.lexer
 abs	_	0;"	f	class:math
+abspath	_	0;"	f	class:lfs
 acos	_	0;"	f	class:math
 add_selection	_	0;"	f	class:buffer
 add_text	_	0;"	f	class:buffer
