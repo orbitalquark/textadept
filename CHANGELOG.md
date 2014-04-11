@@ -8,6 +8,32 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.2 beta 4 (11 Apr 2014)
+
+Download:
+
+* [Textadept 7.2 beta 4 -- Win32][]
+* [Textadept 7.2 beta 4 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.2 beta 4 -- Linux][]
+* [Textadept 7.2 beta 4 -- Linux x86_64][]
+* [Textadept 7.2 beta 4 -- Modules][]
+
+Bugfixes:
+
+* Fixed bug in parsing output from a cancelled dropdown dialog.
+* Always use absolute file paths so sessions are saved and reloaded properly.
+* Temporarily disabled asynchronous spawning on OSX due to GLib crashes.
+
+Changes:
+
+* None.
+
+[Textadept 7.2 beta 4 -- Win32]: download/textadept_7.2_beta_4.win32.zip
+[Textadept 7.2 beta 4 -- Mac OSX Intel 10.5+]: download/textadept_7.2_beta_4.osx.zip
+[Textadept 7.2 beta 4 -- Linux]: download/textadept_7.2_beta_4.i386.tgz
+[Textadept 7.2 beta 4 -- Linux x86_64]: download/textadept_7.2_beta_4.x86_64.tgz
+[Textadept 7.2 beta 4 -- Modules]: download/textadept_7.2_beta_4.modules.zip
+
 ## 7.2 beta 3 (01 Apr 2014)
 
 Download:
