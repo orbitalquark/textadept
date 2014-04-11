@@ -87,7 +87,7 @@ FIND_MATCHCASE _SCINTILLA.constants.FIND_MATCHCASE\n4
 FIND_REGEXP _SCINTILLA.constants.FIND_REGEXP\n6291456
 FIND_WHOLEWORD _SCINTILLA.constants.FIND_WHOLEWORD\n2
 FIND_WORDSTART _SCINTILLA.constants.FIND_WORDSTART\n1048576
-FIND_WRAPPED events.FIND_WRAPPED (string)\nEmitted when a text search wraps, either from bottom to top (when searching\nfor a next occurrence), or from top to bottom (when searching for a\nprevious occurrence).\nThis is useful for implementing a more visual or audible notice when a\nsearch wraps in addition to the statusbar message.
+FIND_WRAPPED events.FIND_WRAPPED (string)\nEmitted when a text search wraps (passes through the beginning of the\nbuffer), either from bottom to top (when searching for a next occurrence),\nor from top to bottom (when searching for a previous occurrence).\nThis is useful for implementing a more visual or audible notice when a\nsearch wraps in addition to the statusbar message.
 FOLDACTION_CONTRACT _SCINTILLA.constants.FOLDACTION_CONTRACT\n0
 FOLDACTION_EXPAND _SCINTILLA.constants.FOLDACTION_EXPAND\n1
 FOLDACTION_TOGGLE _SCINTILLA.constants.FOLDACTION_TOGGLE\n2
@@ -385,6 +385,7 @@ _rules lexer.lexer._rules (table)\nAn ordered list of rules for a lexer grammar.
 _select textadept.snippets._select()\nPrompts the user to select a snippet to be inserted from a list of global and\nlanguage-specific snippets.
 _tokenstyles lexer.lexer._tokenstyles (table)\nA map of non-predefined token names to styles.\n  Remember to use token names, not rule names. It is recommended to use\n  predefined styles or color-agnostic styles derived from predefined styles\n  to ensure compatibility with user color themes.
 abs math.abs(x)\nReturns the absolute value of `x`.
+abspath lfs.abspath(filename, prefix)\nReturns the absolute path to string *filename*.\n*prefix* or `lfs.currentdir()` is prepended to a relative filename. The\nreturned path is not guaranteed to exist.\n@param filename The relative or absolute path to a file.\n@return string absolute path
 acos math.acos(x)\nReturns the arc cosine of `x` (in radians).
 add_selection buffer.add_selection(buffer, end_pos, start_pos)\nSelects the range of text between positions *start_pos* to *end_pos* as the\nmain selection, retaining all other selections as additional selections.\nSince an empty selection still counts as a selection, use\n`buffer:set_selection()` first when setting a list of selections.\n@param buffer A buffer.\n@param end_pos The caret position of the range of text to select in *buffer*.\n@param start_pos The anchor position of the range of text to select in\n  *buffer*.
 add_text buffer.add_text(buffer, text)\nAdds string *text* to the buffer at the caret position and moves the caret to\nthe end of the added text without scrolling it into view.\n@param buffer A buffer.\n@param text The text to add.
