@@ -2676,7 +2676,7 @@ function zoom_out(buffer) end
 
 ---
 -- Deletes the buffer.
--- **Do not call this function.** Call `buffer:close()` instead. Emits a
+-- **Do not call this function.** Call `io.close_buffer()` instead. Emits a
 -- `BUFFER_DELETED` event.
 -- @param buffer A buffer.
 -- @see events.BUFFER_DELETED
