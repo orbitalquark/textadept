@@ -8,6 +8,30 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.2 (01 May 2014)
+
+Download:
+
+* [Textadept 7.2 -- Win32][]
+* [Textadept 7.2 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.2 -- Linux][]
+* [Textadept 7.2 -- Linux x86_64][]
+* [Textadept 7.2 -- Modules][]
+
+Bugfixes:
+
+* None.
+
+Changes:
+
+* Message buffer can send input to spawned processes.
+
+[Textadept 7.2 -- Win32]: download/textadept_7.2.win32.zip
+[Textadept 7.2 -- Mac OSX Intel 10.5+]: download/textadept_7.2.osx.zip
+[Textadept 7.2 -- Linux]: download/textadept_7.2.i386.tgz
+[Textadept 7.2 -- Linux x86_64]: download/textadept_7.2.x86_64.tgz
+[Textadept 7.2 -- Modules]: download/textadept_7.2.modules.zip
+
 ## 7.2 beta 4 (11 Apr 2014)
 
 Download:
