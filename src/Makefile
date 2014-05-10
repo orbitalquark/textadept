@@ -17,6 +17,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
     CFLAGS = -mms-bitfields
     CXX = g++
     CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++
+    LUA_CFLAGS = -DLUA_BUILD_AS_DLL
     LDFLAGS = -Wl,--retain-symbols-file -Wl,lua.sym
     ifeq (, $(findstring curses, $(MAKECMDGOALS)))
       CXXFLAGS += -mwindows
@@ -41,6 +42,7 @@ ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
       CURSES_CFLAGS = -DLIBICONV_STATIC -I$(arch)curses/include
       CURSES_LIBS = $(arch)curses/lib/pdcurses.a $(arch)curses/lib/libiconv.a
     endif
+    lua_api = -DLUA_LIB
 
     luadoc = luadoc_start.bat
   else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
@@ -170,7 +172,7 @@ sci_gtk_objs = PlatGTK.o ScintillaGTK.o
 # Textadept.
 
 ta_flags = -std=c99 -O -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE \
-           $(plat_flag) -Iscintilla/include -Igtdialog -W -Wall \
+           $(plat_flag) $(lua_api) -Iscintilla/include -Igtdialog -W -Wall \
            -Wno-sign-compare -Wno-unused
 ifndef NO_SINGLE_INSTANCE
   # Single instance unless NO_SINGLE_INSTANCE=1
@@ -230,34 +232,37 @@ ScintillaTerm.o: scintilla/term/ScintillaTerm.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) -Iscintilla/term $(CURSES_CFLAGS) \
 		$< -o $@
 LexLPeg.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DLPEG_LEXER \
-		-DNO_SCITE -Ilua/src $< -o $@
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $(lua_api) \
+		-DLPEG_LEXER -DNO_SCITE -Ilua/src $< -o $@
 LexLPegjit.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DLPEG_LEXER \
-		-DNO_SCITE -Iluajit/src $< -o $@
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $(lua_api) \
+		-DLPEG_LEXER -DNO_SCITE -Iluajit/src $< -o $@
 LexLPeg-curses.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DLPEG_LEXER \
-		-DNO_SCITE -DCURSES -Ilua/src $(CURSES_CFLAGS) $< -o $@
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $(lua_api) \
+		-DLPEG_LEXER -DNO_SCITE -DCURSES -Ilua/src $(CURSES_CFLAGS) $< -o $@
 LexLPegjit-curses.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DLPEG_LEXER \
-		-DNO_SCITE -DCURSES -Iluajit/src $(CURSES_CFLAGS) $< -o $@
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $(lua_api) \
+		-DLPEG_LEXER -DNO_SCITE -DCURSES -Iluajit/src $(CURSES_CFLAGS) $< -o $@
 textadept.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -Ilua/src $(GTK_CFLAGS) $< -o $@
-textadeptjit.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src $(GTK_CFLAGS) \
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Ilua/src $(GTK_CFLAGS) \
 		$< -o $@
+textadeptjit.o: textadept.c
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src \
+		$(GTK_CFLAGS) $< -o $@
 textadept-curses.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -Ilua/src -Iscintilla/term -Itermkey \
-		-Iwindowman -Icdk $(CURSES_CFLAGS) $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Ilua/src \
+		-Iscintilla/term -Itermkey -Iwindowman -Icdk $(CURSES_CFLAGS) $< -o $@
 textadeptjit-curses.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src \
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src \
 		-Iscintilla/term -Itermkey -Iwindowman -Icdk $(CURSES_CFLAGS) $< -o $@
 $(lua_objs): %.o: lua/src/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -Ilua/src $< -o $@
 $(lua_lib_objs): %.o: lua/src/lib/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -Ilua/src $(GLIB_CFLAGS) $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(lua_api) -Ilua/src $(GLIB_CFLAGS) \
+		$< -o $@
 $(luajit_lib_objs): %jit.o: lua/src/lib/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -Iluajit/src $(GLIB_CFLAGS) $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(lua_api) -Iluajit/src \
+		$(GLIB_CFLAGS) $< -o $@
 luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC) $(CFLAGS)"
 luajit/src/lua51.dll:
 	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows

@@ -36,7 +36,7 @@ luaL_optlstring
 luaL_optnumber
 luaL_optunsigned
 luaL_prepbuffer
-luaL_prepbuffersize
+luaL_prepbuffsize
 luaL_pushresult
 luaL_pushresultsize
 luaL_ref
