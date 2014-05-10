@@ -6,8 +6,10 @@ package.path = table.concat({
   _HOME..'/modules/?.lua', _HOME..'/modules/?/init.lua',
   package.path
 }, ';');
-local so = not WIN32 and '/?.so;' or '/?.dll;'
-package.cpath = _USERHOME..so.._USERHOME..'/modules'..so..package.cpath
+local so = not WIN32 and '/?.so' or '/?.dll'
+package.cpath = table.concat({
+  _USERHOME..so, _USERHOME..'/modules'..so, _HOME..'/modules'..so, package.cpath
+}, ';')
 
 textadept = require('textadept')
 local user_init = _USERHOME..'/init.lua'
