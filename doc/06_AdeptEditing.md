@@ -210,7 +210,7 @@ search.
 ## Source Code Editing
 
 Being a programmer's editor, Textadept excels at editing source code. It
-understands the syntax and structure of more than 80 different programming
+understands the syntax and structure of more than 90 different programming
 languages and recognizes hundreds of file types. Textadept uses this knowledge
 to make viewing and editing code faster and easier. It can also compile and run
 simple source files.
