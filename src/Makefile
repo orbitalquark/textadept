@@ -373,7 +373,7 @@ osxapp_libs = libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib \
               libintl.8.dylib libpango-1.0.0.dylib libpangocairo-1.0.0.dylib \
               libpangoft2-1.0.0.dylib libpixman-1.0.dylib libpng14.14.dylib \
               charset.alias gdk-pixbuf-2.0 gtk-2.0 pango
-modules = css html java rails rhtml ruby php python
+modules = css html java rails rest rhtml ruby php python yaml
 
 release-all: release release64 win32-release osx-release modules-release \
              cleanup-release
