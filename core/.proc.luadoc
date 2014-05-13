@@ -7,23 +7,39 @@
 module('proc')
 
 ---
--- Returns the status of `proc`, which is either "running" or "terminated".
+-- Returns the status of process *proc*, which is either "running" or
+-- "terminated".
 -- @param proc A process created by `spawn()`.
 -- @return "running" or "terminated"
 function status(proc) end
 
 ---
--- Blocks until `proc` finishes.
+-- Blocks until process *proc* finishes.
 -- @param proc A process created by `spawn()`.
 function wait(proc) end
 
 ---
--- Writes string `input` to the stdin of `proc`.
+-- Reads and returns stdout from process *proc*, according to string format or
+-- number *arg*.
+-- Similar to Lua's `io.read()` and blocks for input. *proc* must still be
+-- running. If an error occurs while reading, returns `nil`, an error code, and
+-- an error message.
+-- Ensure any read operations read all stdout available. The stdout callback
+-- function passed to `spawn()` will not be called until the stdout buffer is
+-- clear.
 -- @param proc A process created by `spawn()`.
--- @param ... Standard input for `proc`.
+-- @param arg Optional argument similar to those in Lua's `io.read()`, but "*n"
+--   is not supported. The default value is "*l", which reads a line.
+-- @return string of bytes read
+function read(proc, arg) end
+
+---
+-- Writes string input to the stdin of process *proc*.
+-- @param proc A process created by `spawn()`.
+-- @param ... Standard input for *proc*.
 function write(proc, ...) end
 
 ---
--- Kills running `proc`.
+-- Kills running process *proc*.
 -- @param proc A running process created by `spawn()`.
 function kill(proc) end
