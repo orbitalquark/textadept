@@ -192,7 +192,7 @@ local menubar = {
   },
   { title = _L['_Help'],
     {_L['Show _Manual'],
-      {utils.open_webpage, _HOME..'/doc/01_Introduction.html'}},
+      {utils.open_webpage, _HOME..'/doc/manual/01_Introduction.html'}},
     {_L['Show _LuaDoc'], {utils.open_webpage, _HOME..'/doc/api/index.html'}},
     SEPARATOR,
     {_L['_About'],
