@@ -310,7 +310,7 @@ function M.goto_error(line, next)
   end
 end
 events.connect(events.DOUBLE_CLICK, function(pos, line)
-  if is_msg_buf(buffer) then M.goto_error(line) end
+  if is_msg_buf(buffer) and M.cwd then M.goto_error(line) end
 end)
 
 return M
