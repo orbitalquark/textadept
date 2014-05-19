@@ -277,15 +277,13 @@ M.utils = {
   end,
   reset_zoom = function() buffer.zoom = 0 end,
   open_webpage = function(url)
+    local cmd = 'xdg-open "%s"'
     if WIN32 then
-      local p = io.popen(string.format('start "" "%s"', url))
-      assert(p, _L['Error loading webpage:']..url)
-      p:close()
-    else
-      local _, _, code = os.execute(string.format(OSX and 'open "file://%s"' or
-                                                  'xdg-open "%s" &', url))
-      assert(code == 0, _L['Error loading webpage:']..url)
+      cmd = 'start "" "%s"'
+    elseif OSX then
+      cmd = 'open "file://%s"'
     end
+    spawn(cmd:format(url))
   end,
   cut_to_eol = function()
     buffer:line_end_extend()
