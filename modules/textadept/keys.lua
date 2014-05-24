@@ -226,6 +226,9 @@ M.utils = {
     textadept.editing.select_word()
     buffer:delete_back()
   end,
+  autocomplete_symbol = function()
+    textadept.editing.autocomplete(buffer:get_lexer(true))
+  end,
   enclose_as_xml_tags = function()
     textadept.editing.enclose('<', '>')
     local pos = buffer.current_pos
@@ -472,11 +475,6 @@ keys[not OSX and (not CURSES and 'cae' or 'mx')
              or 'cme'] = {textadept.run.goto_error, false, true}
 keys[not OSX and (not CURSES and 'caE' or 'mX')
              or 'cmE'] = {textadept.run.goto_error, false, false}
--- Adeptsense.
-keys[not OSX and ((not CURSES or WIN32) and 'c ' or 'c@')
-             or 'aesc'] = textadept.adeptsense.complete
-keys[not CURSES and 'ch' or 'mh'] = textadept.adeptsense.show_apidoc
-if CURSES then keys.mH = keys.mh end -- in case mh is used by GUI terminals
 -- Snippets.
 keys[not OSX and (not CURSES and 'ck' or 'mk')
              or 'a\t'] = textadept.snippets._select
@@ -498,6 +496,11 @@ keys[not OSX and 'cu' or 'mu'] = {io.snapopen, _USERHOME}
 keys[not OSX and (not CURSES and 'caO' or 'mO')
              or 'cmO'] = utils.snapopen_filedir
 keys[not OSX and (not CURSES and 'caP' or 'cmp') or 'cmP'] = io.snapopen
+-- Other.
+keys[not OSX and ((not CURSES or WIN32) and 'c ' or 'c@')
+             or 'aesc'] = utils.autocomplete_symbol
+keys[not CURSES and 'ch' or 'mh'] = textadept.editing.show_documentation
+if CURSES then keys.mH = keys.mh end -- in case mh is used by GUI terminals
 if not CURSES then keys[not OSX and 'ci' or 'mi'] = utils.show_style end
 
 -- Buffer.

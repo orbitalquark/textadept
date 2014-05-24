@@ -85,14 +85,15 @@
 --       end
 --     end
 --
--- #### Adeptsense
+-- #### Autocompletion and Documentation
 --
 -- The `Ctrl+Space` and `Ctrl+H` (`⌥⎋` and `^H` on Mac OSX | `^Space` and `M-H`
 -- or `M-S-H` in curses) key bindings autocomplete symbols and show API
 -- documentation, respectively, when editing code. In order for these to work
--- for your language, you must create an [Adeptsense][].
+-- for your language, you must create an [autocompleter][] and [API file(s)][].
 --
--- [Adeptsense]: textadept.adeptsense.html
+-- [autocompleter]: textadept.editing.html#autocompleters
+-- [API file(s)]: textadept.editing.html#api_files
 --
 -- #### Snippets
 --

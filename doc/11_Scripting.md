@@ -5,9 +5,9 @@ for editing Lua code. Textadept provides syntax autocompletion and documentation
 for the Lua and Textadept APIs. The [`lua` module][] also has more tools for
 working with Lua code.
 
-![Adeptsense ta](images/adeptsense_ta.png)
+![ta Autocompletion](images/adeptsense_ta.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
-![Adeptsense tadoc](images/adeptsense_tadoc.png)
+![ta Documentation](images/adeptsense_tadoc.png)
 
 [`lua` module]: api/_M.lua.html
 

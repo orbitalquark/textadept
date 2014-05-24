@@ -246,25 +246,27 @@ curses). This feature also works for plain text.
 
 ![Word Highlight](images/wordhighlight.png)
 
-### Adeptsense
+### Autocompletion and Documentation
 
 Textadept has the capability to autocomplete symbols for programming languages
 and display API documentation. Pressing `Ctrl+Space` (`⌥⎋` on Mac OSX | `^Space`
 in curses) completes the current symbol and `Ctrl+H` (`^H` | `M-H` or `M-S-H`)
-shows any known documentation on the current symbol. Note: In order for this
-feature to work, the language you are working with must have an [Adeptsense][]
-defined. [Language modules][] usually [define Adeptsenses][]. All of the
-[official][] Textadept language modules have Adeptsenses.
+shows any known documentation on the current symbol. Note: In order for these
+features to work, the language you are working with must have an
+[autocompleter][] and [API file(s)][], respectively. [Language modules][]
+usually [define these][]. Most of the [official][] Textadept language modules
+support autocompletion and documentation.
 
-![Adeptsense Lua](images/adeptsense_lua.png)
+![Autocomplete Lua](images/adeptsense_lua.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
-![Adeptsense Lua String](images/adeptsense_string.png)
+![Autocomplete Lua String](images/adeptsense_string.png)
 
-![Adeptsense Doc](images/adeptsense_doc.png)
+![Documentation](images/adeptsense_doc.png)
 
 [Language modules]: 07_Modules.html#Language.Modules
-[Adeptsense]: api/textadept.adeptsense.html
-[define Adeptsenses]: api/_M.html#Adeptsense
+[autocompleter]: api/textadept.editing.html#autocompleters
+[API file(s)]: api/textadept.editing.html#api_files
+[define these]: api/_M.html#Autocompletion.and.Documentation
 [official]: http://foicica.com/hg
 
 ### Snippets

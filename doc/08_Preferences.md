@@ -80,19 +80,18 @@ tabs, simply put the event handler in *~/.textadept/modules/lua/post_init.lua*:
     end)
 
 Similarly, use *post_init.lua* to change the module's [compile and run][]
-commands, load more [Adeptsense tags][], and add additional
+commands, load more Autocompletion tags, and add additional
 [key bindings](#Key.Bindings) and [snippets](#Snippets) (instead of in
 *~/.textadept/init.lua*). For example:
 
     textadept.run.run_commands.lua = 'lua5.2'
-    _M.lua.sense:load_ctags('/path/to/my/projects/tags')
+    _M.lua.tags[#_M.lua.tags + 1] = '/path/to/my/projects/tags'
     keys.lua['c\n'] = function()
       buffer:line_end() buffer:add_text('end') buffer:new_line()
     end
     snippets.lua['ver'] = '%<_VERSION>'
 
 [compile and run]: 07_Modules.html#Compile.and.Run
-[Adeptsense tags]: api/textadept.adeptsense.html#load_ctags
 
 ### Loading Modules
 
@@ -174,10 +173,10 @@ spaces by default, your *~/.textadept/properties.lua* would contain:
 Textadept's *properties.lua* is a good "quick reference" for configurable
 properties. It also has many commented out properties that you can copy to your
 *~/.textadept/properties.lua* and uncomment to turn on or change the value of.
-Use [Adeptsense][] to view a property's documentation or read the [LuaDoc][].
+You can view a property's documentation by pressing `Ctrl+H` (`^H` on Mac OSX |
+`M-H` or `M-S-H` in curses) or by reading the [LuaDoc][].
 
 [language module]: 07_Modules.html#Buffer.Properties
-[Adeptsense]: 06_AdeptEditing.html#Adeptsense
 [LuaDoc]: api/buffer.html
 
 ## Locale
