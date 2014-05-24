@@ -137,6 +137,7 @@ local function find_(text, next, flags, no_wrap, wrapped)
     -- Scintilla search.
     buffer:search_anchor()
     pos = buffer['search_'..(next and 'next' or 'prev')](buffer, flags, text)
+    M.captures = nil -- clear captures from any previous Lua pattern searches
   elseif flags < 16 then
     -- Lua pattern search.
     local patt = text:gsub('\\[abfnrtv\\]', escapes)
