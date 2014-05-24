@@ -612,7 +612,7 @@ Changes:
 * Renamed `_G.buffer_new()` to [`buffer.new()`][].
 * Changed the display of highlighted words, including removing
   `_M.textadept.editing.INDIC_HIGHLIGHT_ALPHA`.
-* Changed [`_M.textadept.editing.autocomplete_word()`][] API.
+* Changed `_M.textadept.editing.autocomplete_word()` API.
 * Removed `_M.textadept.menu.menubar`, `_M.textadept.menu.contextmenu`, and
   `events.handlers` tables from the API.
 * Moved `_M.textadept.filter_through` module functionality into
@@ -634,7 +634,6 @@ Changes:
 [key modes]: api/keys.html#Modes
 [Scintilla]: http://scintilla.org
 [`buffer.new()`]: api/buffer.html#new
-[`_M.textadept.editing.autocomplete_word()`]: api/textadept.editing.html#autocomplete_word
 [`_M.textadept.editing.filter_through()`]: api/textadept.editing.html#filter_through
 [`_M.textadept.run.goto_error()`]: api/textadept.run.html#goto_error
 [`gui.find.goto_file_found()`]: api/gui.find.html#goto_file_found
@@ -1121,7 +1120,7 @@ Changes:
 * [`_G.timeout()`][] accepts fractional seconds.
 * Replaced `scripts/update_doc` with `src/Makefile` targets.
 * New Manual and LuaDoc HTML page formatting.
-* [`_M.textadept.editing.autocomplete_word()`][] accepts default words.
+* `_M.textadept.editing.autocomplete_word()` accepts default words.
 * Added documentation on [generating LuaDoc][] and [Lua Adeptsense][].
 * Moved `Markdown:` comments into LuaDoc.
 * Added Spanish and German translations.
@@ -1139,7 +1138,6 @@ Changes:
 [`_M.set_buffer_properties()`]: api/_M.html#Buffer.Properties
 [`keys.KEYSYMS`]: api/keys.html#KEYSYMS
 [`_G.timeout()`]: api/_G.html#timeout
-[`_M.textadept.editing.autocomplete_word()`]: api/textadept.editing.html#autocomplete_word
 [generating LuaDoc]: 11_Scripting.html#Generating.LuaDoc
 [Lua Adeptsense]: api/textadept.adeptsense.html#Generating.Lua.Adeptsense
 [GTK]: http://gtk.org
