@@ -137,6 +137,7 @@ buffer.auto_c_choose_single = true
 --buffer.auto_c_ignore_case = true
 --buffer.auto_c_case_insensitive_behaviour =
 --  buffer.CASEINSENSITIVEBEHAVIOUR_IGNORECASE
+buffer.auto_c_multi = buffer.MULTIAUTOC_EACH
 --buffer.auto_c_auto_hide = false
 --buffer.auto_c_drop_rest_of_word = true
 --buffer.auto_c_max_height =
