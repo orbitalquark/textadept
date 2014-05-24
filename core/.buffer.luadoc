@@ -2698,6 +2698,14 @@ function new() end
 function text_range(buffer, start_pos, end_pos) end
 
 ---
+-- Converts the current buffer's contents to encoding *encoding*.
+-- @param buffer A buffer.
+-- @param encoding The string encoding to set. Valid encodings are ones that GNU
+--   iconv accepts.
+-- @usage io.set_buffer_encoding('ASCII')
+function set_encoding(buffer, encoding) end
+
+---
 -- Returns the buffer's lexer name.
 -- If *current* is `true`, returns the name of the lexer under the caret in
 -- a multiple-language lexer.
