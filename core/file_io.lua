@@ -191,13 +191,8 @@ function io.reload_file()
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
 end
 
----
--- Converts the current buffer's contents to encoding *encoding*.
--- @param encoding The string encoding to set. Valid encodings are ones that GNU
---   iconv accepts.
--- @usage io.set_buffer_encoding('ASCII')
--- @name set_buffer_encoding
-function io.set_buffer_encoding(encoding)
+-- LuaDoc is in core/.buffer.luadoc.
+local function set_encoding(buffer, encoding)
   assert(buffer.encoding, _L['Cannot change binary file encoding'])
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local text = buffer:get_text()
@@ -211,7 +206,9 @@ function io.set_buffer_encoding(encoding)
   buffer.encoding, buffer.encoding_bom = encoding, io.boms[encoding]
 end
 -- Sets the default buffer encoding.
-events_connect(events.BUFFER_NEW, function() buffer.encoding = 'UTF-8' end)
+events_connect(events.BUFFER_NEW, function() 
+  buffer.set_encoding, buffer.encoding = set_encoding, 'UTF-8'
+end)
 
 ---
 -- Saves the current buffer to its file.
