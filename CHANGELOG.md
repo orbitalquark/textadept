@@ -256,7 +256,7 @@ Bugfixes:
 Changes:
 
 * Added Assembly (NASM) lexer with compile and run commands.
-* [`textadept.adeptsense.goto_ctag()`][] can show all known tags now.
+* `textadept.adeptsense.goto_ctag()` can show all known tags now.
 * [`textadept.editing.enclose()`][] encloses the whole current word.
 
 [6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
@@ -265,7 +265,6 @@ Changes:
 [Textadept 7.0 -- Linux]: download/textadept_7.0.i386.tgz
 [Textadept 7.0 -- Linux x86_64]: download/textadept_7.0.x86_64.tgz
 [Textadept 7.0 -- Modules]: download/textadept_7.0.modules.zip
-[`textadept.adeptsense.goto_ctag()`]: api/textadept.adeptsense.html#goto_ctag
 [`textadept.editing.enclose()`]: api/textadept.editing.html#enclose
 
 ## 7.0 beta 5 (21 Oct 2013)
@@ -973,8 +972,7 @@ Changes:
 * Removed `_G.user_dofile()`.
 * Converted some `buffer` "get" and "set" functions into properties.
 * Moved `_M.textadept.adeptsense.complete_symbol()` and `show_documentation()`
-  functionality into [`_M.textadept.adeptsense.complete()`][] and
-  [`show_apidoc()`][].
+  functionality into `_M.textadept.adeptsense.complete()` and `show_apidoc()`.
 * New 64-bit Windows version (note: without LuaJIT).
 * Updated to [Scintilla][] 3.2.1.
 
@@ -986,8 +984,6 @@ Changes:
 [Textadept 6.0 beta -- Modules]: download/textadept_6.0_beta.modules.zip
 [`_M.textadept.session.load()`]: api/textadept.session.html#load
 [`_M.textadept.session.save()`]: api/textadept.session.html#save
-[`_M.textadept.adeptsense.complete()`]: api/textadept.adeptsense.html#complete
-[`show_apidoc()`]: api/textadept.adeptsense.html#show_apidoc
 [Scintilla]: http://scintilla.org
 
 ## 5.5 beta (01 Jul 2012)
@@ -1121,7 +1117,7 @@ Changes:
 * Replaced `scripts/update_doc` with `src/Makefile` targets.
 * New Manual and LuaDoc HTML page formatting.
 * `_M.textadept.editing.autocomplete_word()` accepts default words.
-* Added documentation on [generating LuaDoc][] and [Lua Adeptsense][].
+* Added documentation on [generating LuaDoc][] and Lua Adeptsense.
 * Moved `Markdown:` comments into LuaDoc.
 * Added Spanish and German translations.
 * Use [GTK][] 2.24 on Windows.
@@ -1139,7 +1135,6 @@ Changes:
 [`keys.KEYSYMS`]: api/keys.html#KEYSYMS
 [`_G.timeout()`]: api/_G.html#timeout
 [generating LuaDoc]: 11_Scripting.html#Generating.LuaDoc
-[Lua Adeptsense]: api/textadept.adeptsense.html#Generating.Lua.Adeptsense
 [GTK]: http://gtk.org
 [Scintilla]: http://scintilla.org
 
@@ -1686,7 +1681,7 @@ Download:
 
 Bugfixes:
 
-* Fixed bug with Win32 paths in Adeptsense [`goto_ctag()`][].
+* Fixed bug with Win32 paths in Adeptsense `goto_ctag()`.
 * Adeptsense could not recognize some symbols.
 * Handle `\n` sequences correctly in Adeptsense apidoc.
 * Fixed bug with Adeptsense C/C++ type declarations.
@@ -1702,15 +1697,15 @@ Changes:
 * Adeptsense completion list images are accessible via scripts.
 * Added class context completion to Adeptsense.
 * Added class type-inference through variable assignment to Adeptsense.
-* Added Adeptsense [tutorial][].
-* Added [`_m.textadept.adeptsense.always_show_globals`][] setting for showing
+* Added Adeptsense tutorial.
+* Added `_m.textadept.adeptsense.always_show_globals` setting for showing
   globals in completion lists.
 * `Ctrl+H` (highlight word) is now `Ctrl+Shift+H`.
 * `Ctrl+H` now shows Adeptsense documentation.
-* Added Adeptsense [`complete()`][] and [`show_documentation()`][] functions to
-  the menu.
+* Added Adeptsense `complete()` and `show_documentation()` functions to the
+  menu.
 * Language modules condensed into single `init.lua` file.
-* Added [`sense.syntax.word_chars`][] to Adeptsense.
+* Added `sense.syntax.word_chars` to Adeptsense.
 * Included libpng12 build for 64-bit Debian-based Linux distros (Ubuntu).
 * Added [CSS][], [HTML][], [Java][], and [Ruby][] modules with Adeptsenses.
 
@@ -1719,13 +1714,7 @@ Changes:
 [Textadept 3.7 beta 2 -- Linux]: download/textadept_3.7_beta_2.tgz
 [Textadept 3.7 beta 2 -- Linux x86_64]: download/textadept_3.7_beta_2.x86_64.tgz
 [Textadept 3.7 beta 2 -- Source]: download/textadept_3.7_beta_2.src.zip
-[`goto_ctag()`]: api/textadept.adeptsense.html#goto_ctag
 [Scintilla]: http://scintilla.org
-[tutorial]: api/textadept.adeptsense.html
-[`_m.textadept.adeptsense.always_show_globals`]: api/textadept.adeptsense.html#always_show_globals
-[`complete()`]: api/textadept.adeptsense.html#complete
-[`show_documentation()`]: api/textadept.adeptsense.html#show_documentation
-[`sense.syntax.word_chars`]: api/textadept.adeptsense.html#syntax
 [CSS]: api/_M.css.html
 [HTML]: api/_M.html.html
 [Java]: api/_M.java.html
@@ -1750,8 +1739,7 @@ Bugfixes:
 Changes:
 
 * More informative error message for unfocused buffer.
-* Added [Adeptsense][], a smarter form of autocompletion for programming
-  languages.
+* Added Adeptsense, a smarter form of autocompletion for programming languages.
 * Emit a `language_module_loaded` as appropriate.
 * Added indentation settings to "Buffer" menu (finally).
 * Added `gui.filteredlist()` shortcut for `gui.dialog('filteredlist', ...)`.
@@ -1764,7 +1752,6 @@ Changes:
 [Textadept 3.7 beta -- Linux]: download/textadept_3.7_beta.tgz
 [Textadept 3.7 beta -- Linux x86_64]: download/textadept_3.7_beta.x86_64.tgz
 [Textadept 3.7 beta -- Source]: download/textadept_3.7_beta.src.zip
-[Adeptsense]: 6_AdeptEditing.html#Adeptsense
 [`char_matches`]: api/textadept.editing.html#char_matches
 [`braces`]: api/textadept.editing.html#braces
 

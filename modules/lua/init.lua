@@ -11,68 +11,73 @@ local M = {}
 --
 -- + `Ctrl+L, M` (`⌘L, M` on Mac OSX | `M-L, M` in curses)
 --   Open this module for editing.
--- + `.`
---   Show an autocompletion list of fields for the symbol behind the caret.
--- + `:`
---   Show an autocompletion list of functions for the symbol behind the caret.
 -- + `Shift+Enter` (`⇧↩` | `S-Enter`)
 --   Autocomplete an `if`, `while`, `for`, etc. control structure with the `end`
 --   keyword.
--- @field sense
---   The Lua [Adeptsense](textadept.adeptsense.html).
---   It loads user tags from *`_USERHOME`/modules/lua/tags* and user apidocs
---   from *`_USERHOME`/modules/lua/api*.
 module('_M.lua')]]
 
--- Adeptsense.
+-- Autocompletion and documentation.
 
-M.sense = textadept.adeptsense.new('lua')
-M.sense.syntax.class_definition = 'module%s*%(?%s*[\'"]([%w_%.]+)'
-M.sense.syntax.symbol_chars = '[%w_%.:]'
-M.sense.syntax.type_declarations = {}
-M.sense.syntax.type_assignments = {
-  ['^[\'"]'] = 'string', -- foo = 'bar' or foo = "bar"
-  ['^([%w_%.]+)%s*$'] = '%1', -- foo = textadept.adeptsense
-  ['^(textadept%.adeptsense)%.new'] = '%1',
-  ['require%s*%(?%s*(["\'])([%w_%.]+)%1%)?'] = '%2',
-  ['^io%.p?open%s*%b()%s*$'] = 'file',
-  ['^spawn%s*%b()%s*$'] = 'proc'
-}
-M.sense.api_files = {_HOME..'/modules/lua/api'}
-M.sense:add_trigger('.')
-M.sense:add_trigger(':', false, true)
+---
+-- List of "fake" ctags files to use for autocompletion.
+-- The kind 'm' is recognized a module, 'f' as a function, 't' as a table and 
+-- 'F' as a module or table field.
+-- @class table
+-- @name tags
+-- @see textadept.editing.autocomplete
+M.tags = {_HOME..'/modules/lua/tags', _USERHOME..'/modules/lua/tags'}
 
--- script/update_doc generates a fake set of ctags used for autocompletion.
-local as = textadept.adeptsense
-M.sense.ctags_kinds = {
-  f = as.FUNCTION, F = as.FIELD, m = as.CLASS, t = as.FIELD
-}
-M.sense:load_ctags(_HOME..'/modules/lua/tags', true)
+---
+-- Map of expression patterns to their types.
+-- Expressions are expected to match after the '=' sign of a statement.
+-- @class table
+-- @name expr_types
+-- @usage _M.lua.expr_types['^spawn%b()%s*$'] = 'proc'
+M.expr_types = {['^[\'"]'] = 'string', ['^io%.p?open%s*%b()%s*$'] = 'file'}
 
--- Strips '_G' from symbols since it's implied.
-function M.sense:get_symbol()
-  local symbol, part = self.super.get_symbol(self)
-  if symbol:find('^_G') then symbol = symbol:gsub('_G%.?', '') end
-  if part == '_G' then part = '' end
-  return symbol, part
-end
+local XPM = textadept.editing.XPM_IMAGES
+local xpms = {m = XPM.CLASS, f = XPM.METHOD, F = XPM.VARIABLE, t = XPM.TYPEDEF}
 
--- Shows an autocompletion list for the symbol behind the caret.
--- If the symbol contains a ':', only display functions. Otherwise, display
--- both functions and fields.
-function M.sense:complete(only_fields, only_functions)
+textadept.editing.autocompleters.lua = function()
+  local list = {}
+  -- Retrieve the symbol behind the caret.
   local line, pos = buffer:get_cur_line()
-  local symbol = line:sub(1, pos):match(self.syntax.symbol_chars..'*$')
-  return self.super.complete(self, false, symbol:find(':'))
+  local symbol, op, part = line:sub(1, pos):match('([%w_%.]-)([%.:]?)([%w_]*)$')
+  if symbol == '' and part == '' and op ~= '' then return nil end -- lone .
+  symbol, part = symbol:gsub('^_G%.?', ''), part ~= '_G' and part or ''
+  -- Attempt to identify string type and file type symbols.
+  local buffer = buffer
+  local assignment = '%f[%w_]'..symbol:gsub('(%p)', '%%%1')..'%s*=%s*(.*)$'
+  for i = buffer:line_from_position(buffer.current_pos) - 1, 0, -1 do
+    local expr = buffer:get_line(i):match(assignment)
+    if expr then
+      for patt, type in pairs(M.expr_types) do
+        if expr:find(patt) then symbol = type break end
+      end
+    end
+  end
+  -- Search through ctags for completions for that symbol.
+  local name_patt = '^'..part
+  for i = 1, #M.tags do
+    if lfs.attributes(M.tags[i]) then
+      for line in io.lines(M.tags[i]) do
+        local name = line:match('^%S+')
+        if name:find(name_patt) and not list[name] then
+          local fields = line:match(';"\t(.*)$')
+          local k, class = fields:sub(1, 1), fields:match('class:(%S+)') or ''
+          if class == symbol and (op ~= ':' or k == 'f') then
+            list[#list + 1], list[name] = ("%s?%d"):format(name, xpms[k]), true
+          end
+        end
+      end
+    end
+  end
+  return #part, list
 end
 
--- Load user tags and apidoc.
-if lfs.attributes(_USERHOME..'/modules/lua/tags') then
-  M.sense:load_ctags(_USERHOME..'/modules/lua/tags')
-end
-if lfs.attributes(_USERHOME..'/modules/lua/api') then
-  M.sense.api_files[#M.sense.api_files + 1] = _USERHOME..'/modules/lua/api'
-end
+textadept.editing.api_files.lua = {
+  _HOME..'/modules/lua/api', _USERHOME..'/modules/lua/api'
+}
 
 -- Commands.
 
@@ -146,12 +151,7 @@ if type(snippets) == 'table' then
 -- @class table
 -- @name _G.snippets.lua
   snippets.lua = {
-    l = "local %1(expr)%2( = %3(value))",
-    p = "print(%0)",
-    f = "function %1(name)(%2(args))\n\t%0\nend",
-    ['for'] = "for i = %1(1), %2(10)%3(, -1) do\n\t%0\nend",
-    fori = "for %1(i), %2(val) in ipairs(%3(table)) do\n\t%0\nend",
-    forp = "for %1(k), %2(v) in pairs(%3(table)) do\n\t%0\nend",
+
   }
 end
 

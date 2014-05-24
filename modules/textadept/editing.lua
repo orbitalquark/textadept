@@ -47,6 +47,36 @@ M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 ---
+-- Map of image names to registered image numbers.
+-- @field CLASS The image number for classes.
+-- @field NAMESPACE The image number for namespaces.
+-- @field METHOD The image number for methods.
+-- @field SIGNAL The image number for signals.
+-- @field SLOT The image number for slots.
+-- @field VARIABLE The image number for variables.
+-- @field STRUCT The image number for structures.
+-- @field TYPEDEF The image number for type definitions.
+-- @class table
+-- @name XPM_IMAGES
+M.XPM_IMAGES = {
+  '/* XPM */static char *class[] = {/* columns rows colors chars-per-pixel */"16 16 10 1 ","  c #000000",". c #001CD0","X c #008080","o c #0080E8","O c #00C0C0","+ c #24D0FC","@ c #00FFFF","# c #A4E8FC","$ c #C0FFFF","% c None",/* pixels */"%%%%%  %%%%%%%%%","%%%% ##  %%%%%%%","%%% ###++ %%%%%%","%% +++++.   %%%%","%% oo++.. $$  %%","%% ooo.. $$$@@ %","%% ooo. @@@@@X %","%%%   . OO@@XX %","%%% ##  OOOXXX %","%% ###++ OOXX %%","% +++++.  OX %%%","% oo++.. %  %%%%","% ooo... %%%%%%%","% ooo.. %%%%%%%%","%%  o. %%%%%%%%%","%%%%  %%%%%%%%%%"};',
+  '/* XPM */static char *namespace[] = {/* columns rows colors chars-per-pixel */"16 16 7 1 ","  c #000000",". c #1D1D1D","X c #393939","o c #555555","O c #A8A8A8","+ c #AAAAAA","@ c None",/* pixels */"@@@@@@@@@@@@@@@@","@@@@+@@@@@@@@@@@","@@@.o@@@@@@@@@@@","@@@ +@@@@@@@@@@@","@@@ +@@@@@@@@@@@","@@+.@@@@@@@+@@@@","@@+ @@@@@@@o.@@@","@@@ +@@@@@@+ @@@","@@@ +@@@@@@+ @@@","@@@.X@@@@@@@.+@@","@@@@+@@@@@@@ @@@","@@@@@@@@@@@+ @@@","@@@@@@@@@@@+ @@@","@@@@@@@@@@@X.@@@","@@@@@@@@@@@+@@@@","@@@@@@@@@@@@@@@@"};',
+  '/* XPM */static char *method[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #E0BC38","X c #F0DC5C","o c #FCFC80","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOO  OOOO","OOOOOOOOO oo  OO","OOOOOOOO ooooo O","OOOOOOO ooooo. O","OOOO  O XXoo.. O","OOO oo  XXX... O","OO ooooo XX.. OO","O ooooo.  X. OOO","O XXoo.. O  OOOO","O XXX... OOOOOOO","O XXX.. OOOOOOOO","OO  X. OOOOOOOOO","OOOO  OOOOOOOOOO"};',
+  '/* XPM */static char *signal[] = {/* columns rows colors chars-per-pixel */"16 16 6 1 ","  c #000000",". c #FF0000","X c #E0BC38","o c #F0DC5C","O c #FCFC80","+ c None",/* pixels */"++++++++++++++++","++++++++++++++++","++++++++++++++++","++++++++++  ++++","+++++++++ OO  ++","++++++++ OOOOO +","+++++++ OOOOOX +","++++  + ooOOXX +","+++ OO  oooXXX +","++ OOOOO ooXX ++","+ OOOOOX  oX +++","+ ooOOXX +  ++++","+ oooXXX +++++++","+ oooXX +++++..+","++  oX ++++++..+","++++  ++++++++++"};',
+  '/* XPM */static char *slot[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #E0BC38","X c #F0DC5C","o c #FCFC80","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOO  OOOO","OOOOOOOOO oo  OO","OOOOOOOO ooooo O","OOOOOOO ooooo. O","OOOO  O XXoo.. O","OOO oo  XXX... O","OO ooooo XX.. OO","O ooooo.  X. OOO","O XXoo.. O  OOOO","O XXX... OOOOOOO","O XXX.. OOOOO   ","OO  X. OOOOOO O ","OOOO  OOOOOOO   "};',
+  '/* XPM */static char *variable[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #8C748C","X c #9C94A4","o c #ACB4C0","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOO  OOOOO","OOOOOOOO oo  OOO","OOOOOOO ooooo OO","OOOOOO ooooo. OO","OOOOOO XXoo.. OO","OOOOOO XXX... OO","OOOOOO XXX.. OOO","OOOOOOO  X. OOOO","OOOOOOOOO  OOOOO","OOOOOOOOOOOOOOOO"};',
+  '/* XPM */static char *struct[] = {/* columns rows colors chars-per-pixel */"16 16 14 1 ","  c #000000",". c #008000","X c #00C000","o c #00FF00","O c #808000","+ c #C0C000","@ c #FFFF00","# c #008080","$ c #00C0C0","% c #00FFFF","& c #C0FFC0","* c #FFFFC0","= c #C0FFFF","- c None",/* pixels */"-----  ---------","---- &&  -------","--- &&&oo ------","-- ooooo.   ----","-- XXoo.. ==  --","-- XXX.. ===%% -","-- XXX. %%%%%# -","---   . $$%%## -","--- **  $$$### -","-- ***@@ $$## --","- @@@@@O  $# ---","- ++@@OO -  ----","- +++OOO -------","- +++OO --------","--  +O ---------","----  ----------"};',
+  '/* XPM */static char *typedef[] = {/* columns rows colors chars-per-pixel */"16 16 10 1 ","  c #000000",". c #404040","X c #6D6D6D","o c #777777","O c #949494","+ c #ACACAC","@ c #BBBBBB","# c #DBDBDB","$ c #EEEEEE","% c None",/* pixels */"%%%%%  %%%%%%%%%","%%%% ##  %%%%%%%","%%% ###++ %%%%%%","%% +++++.   %%%%","%% oo++.. $$  %%","%% ooo.. $$$@@ %","%% ooo. @@@@@X %","%%%   . OO@@XX %","%%% ##  OOOXXX %","%% ###++ OOXX %%","% +++++.  OX %%%","% oo++.. %  %%%%","% ooo... %%%%%%%","% ooo.. %%%%%%%%","%%  o. %%%%%%%%%","%%%%  %%%%%%%%%%"};',
+  CLASS = 1, NAMESPACE = 2, METHOD = 3, SIGNAL = 4, SLOT = 5, VARIABLE = 6,
+  STRUCT = 7, TYPEDEF = 8
+}
+events.connect(events.VIEW_NEW, function()
+  for name, i in pairs(M.XPM_IMAGES) do
+    if type(name) == 'string' then buffer:register_image(i, M.XPM_IMAGES[i]) end
+  end
+end)
+
+---
 -- Map of lexer names to line comment strings for programming languages, used by
 -- the `block_comment()` function.
 -- Keys are lexer names and values are either the language's line comment
@@ -93,14 +123,26 @@ M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
 
 ---
 -- Map of autocompleter names to autocompletion functions.
+-- Names are typically lexer names and autocompletion functions typically
+-- autocomplete symbols.
 -- Autocompletion functions must return two values: the number of characters
 -- behind the caret that are used as the prefix of the entity to autocomplete,
--- and a list of completions to show. Autocompletion lists are automatically
--- sorted.
+-- and a list of completions to show. Autocompletion lists are sorted
+-- automatically.
 -- @class table
 -- @name autocompleters
 -- @see autocomplete
 M.autocompleters = {}
+
+---
+-- Map of lexer names to API documentation file tables.
+-- Each line in an API file consists of the name of a symbol (not the full
+-- symbol), a space character, and that symbol's documentation. '\n' represents
+-- a newline character.
+-- @class table
+-- @name api_files
+-- @see show_documentation
+M.api_files = {}
 
 -- Matches characters specified in char_matches.
 events.connect(events.CHAR_ADDED, function(c)
@@ -546,5 +588,55 @@ M.autocompleters.word = function()
   if #list == 0 then return nil end
   return #word, list
 end
+
+local api_docs
+---
+-- Displays a call tip with documentation for the symbol under or directly
+-- behind the caret.
+-- If a call tip is already shown, cycles to the next one if it exists.
+-- Documentation is stored in API files in the `api_files` table.
+-- Symbols are determined by using `buffer.word_chars`.
+-- @name show_documentation
+-- @see api_files
+-- @see buffer.word_chars
+function M.show_documentation()
+  if buffer:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
+  local lang = buffer:get_lexer(true)
+  if not M.api_files[lang] then return end
+  local s = buffer:word_start_position(buffer.current_pos, true)
+  local e = buffer:word_end_position(buffer.current_pos, true)
+  local symbol = buffer:text_range(s, e)
+  if symbol == '' then return nil end
+  api_docs = {}
+  local symbol_patt = '^'..symbol:gsub('(%p)', '%%%1')
+  for i = 1, #M.api_files[lang] do
+    if lfs.attributes(M.api_files[lang][i]) then
+      for line in io.lines(M.api_files[lang][i]) do
+        if line:find(symbol_patt) then
+          api_docs[#api_docs + 1] = line:match(symbol_patt..'%s+(.+)$')
+        end
+      end
+    end
+  end
+  if #api_docs == 0 then return end
+  for i = 1, #api_docs do
+    local doc = api_docs[i]:gsub('%f[\\]\\n', '\n'):gsub('\\\\', '\\')
+    if #api_docs > 1 then
+      if not doc:find('\n') then doc = doc..'\n' end
+      doc = '\001'..doc:gsub('\n', '\n\002', 1)
+    end
+    api_docs[i] = doc
+  end
+  if not api_docs.pos then api_docs.pos = 1 end
+  buffer:call_tip_show(buffer.current_pos, api_docs[api_docs.pos])
+end
+-- Cycle through apidoc calltips.
+events.connect(events.CALL_TIP_CLICK, function(position)
+  if not api_docs then return end
+  api_docs.pos = api_docs.pos + (position == 1 and -1 or 1)
+  if api_docs.pos > #api_docs then api_docs.pos = 1 end
+  if api_docs.pos < 1 then api_docs.pos = #api_docs end
+  buffer:call_tip_show(buffer.current_pos, api_docs[api_docs.pos])
+end)
 
 return M

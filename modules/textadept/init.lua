@@ -9,7 +9,6 @@ textadept = M
 -- It provides utilities for editing text in Textadept.
 module('textadept')]]
 
-M.adeptsense = require('textadept.adeptsense')
 M.bookmarks = require('textadept.bookmarks')
 require('textadept.command_entry')
 M.editing = require('textadept.editing')

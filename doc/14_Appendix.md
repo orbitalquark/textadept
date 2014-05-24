@@ -413,8 +413,8 @@ lua.goto\_required()                 |Removed |N/A
 php.goto\_required()                 |Removed |N/A
 ruby.goto\_required()                |Removed |N/A
 **_M.textadept.adeptsense**          |        |
-complete\_symbol()                   |Replaced|[complete()][]
-show\_documentation()                |Replaced|[show\_apidoc()][]
+complete\_symbol()                   |Replaced|complete()
+show\_documentation()                |Replaced|show\_apidoc()
 **_M.textadept.bookmarks**           |        |
 N/A                                  |New     |[toggle()][]
 add()                                |Renamed |toggle(true)
@@ -430,8 +430,6 @@ prompt\_load()                       |Replaced|[load()][]
 prompt\_save()                       |Replaced|[save()][]
 
 [menu()]: api/ui.html#menu
-[complete()]: api/textadept.adeptsense.html#complete
-[show\_apidoc()]: api/textadept.adeptsense.html#show_apidoc
 [toggle()]: api/textadept.bookmarks.html#toggle
 [set\_menubar()]: api/textadept.menu.html#set_menubar
 [run()]: api/textadept.run.html#run
