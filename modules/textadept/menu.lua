@@ -47,7 +47,7 @@ local menubar = {
     {_L['Select _All'], buffer.select_all},
     SEPARATOR,
     {_L['_Match Brace'], editing.match_brace},
-    {_L['Complete _Word'], editing.autocomplete_word},
+    {_L['Complete _Word'], {editing.autocomplete, 'word'}},
     {_L['_Highlight Word'], editing.highlight_word},
     {_L['Toggle _Block Comment'], editing.block_comment},
     {_L['T_ranspose Characters'], editing.transpose_chars},

@@ -27,6 +27,10 @@ local M = {}
 -- @field STRIP_TRAILING_SPACES (bool)
 --   Strip trailing whitespace before saving files.
 --   The default value is `false`.
+-- @field AUTOCOMPLETE_ALL (bool)
+--   Autocomplete the current word using words from all open buffers.
+--   If `true`, performance may be slow when many buffers are open.
+--   The default value is `false`.
 -- @field INDIC_BRACEMATCH (number)
 --   The matching brace highlight indicator number.
 -- @field INDIC_HIGHLIGHT (number)
@@ -38,6 +42,7 @@ M.HIGHLIGHT_BRACES = true
 M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
 M.STRIP_TRAILING_SPACES = false
+M.AUTOCOMPLETE_ALL = false
 M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
@@ -85,6 +90,17 @@ M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 -- @usage textadept.editing.typeover_chars.html = {..., [62] = 1}
 -- @see TYPEOVER_CHARS
 M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
+
+---
+-- Map of autocompleter names to autocompletion functions.
+-- Autocompletion functions must return two values: the number of characters
+-- behind the caret that are used as the prefix of the entity to autocomplete,
+-- and a list of completions to show. Autocompletion lists are automatically
+-- sorted.
+-- @class table
+-- @name autocompleters
+-- @see autocomplete
+M.autocompleters = {}
 
 -- Matches characters specified in char_matches.
 events.connect(events.CHAR_ADDED, function(c)
@@ -198,65 +214,6 @@ function M.match_brace(select)
     buffer:set_sel(pos, match_pos + 1)
   else
     buffer:set_sel(pos + 1, match_pos)
-  end
-end
-
----
--- Displays an autocompletion list for the word behind the caret, returning
--- `true` if completions were found.
--- The displayed list is built from existing words in the buffer and the set of
--- words in string *words*.
--- @param words Optional list of words considered to be in the buffer,
---   even if they are not. Words may contain [registered images][].
---
--- [registered images]: buffer.html#register_image
--- @return `true` if there were completions to show; `false` otherwise.
--- @see buffer.word_chars
--- @name autocomplete_word
-function M.autocomplete_word(words)
-  local buffer = buffer
-  local pos, length = buffer.current_pos, buffer.length
-  local completions, c_list = {}, {}
-  local buffer_text = buffer:get_text()
-  local root = buffer_text:sub(1, pos):match('['..buffer.word_chars..']+$')
-  if not root or root == '' then return end
-  for _, word in ipairs(words or {}) do
-    if word:match('^'..root) then
-      c_list[#c_list + 1], completions[word:match('^(.-)%??%d*$')] = word, true
-    end
-  end
-  local patt = '^['..buffer.word_chars..']+'
-  buffer.target_start, buffer.target_end = 0, buffer.length
-  buffer.search_flags = buffer.FIND_WORDSTART
-  if not buffer.auto_c_ignore_case then
-    buffer.search_flags = buffer.search_flags + buffer.FIND_MATCHCASE
-  end
-  local match_pos = buffer:search_in_target(root)
-  while match_pos ~= -1 do
-    local s, e = buffer_text:find(patt, match_pos + 1)
-    local match = buffer_text:sub(s, e)
-    if not completions[match] and #match > #root then
-      c_list[#c_list + 1], completions[match] = match, true
-    end
-    buffer.target_start, buffer.target_end = match_pos + 1, buffer.length
-    match_pos = buffer:search_in_target(root)
-  end
-  if not buffer.auto_c_ignore_case then
-    table.sort(c_list)
-  else
-    table.sort(c_list, function(a, b) return a:upper() < b:upper() end)
-  end
-  if #c_list > 0 then
-    if not buffer.auto_c_choose_single or #c_list ~= 1 then
-      buffer.auto_c_order = 0 -- pre-sorted
-      buffer:auto_c_show(#root, table.concat(c_list, ' '))
-    else
-      -- Scintilla does not emit AUTO_C_SELECTION in this case. This is
-      -- necessary for autocompletion with multiple selections.
-      local text = c_list[1]:match('^(.-)%??%d*$')
-      events.emit(events.AUTO_C_SELECTION, text, pos - #root)
-    end
-    return true
   end
 end
 
@@ -560,6 +517,57 @@ function M.filter_through(command)
   end
   p:close()
   os.remove(tmpfile)
+end
+
+---
+-- Displays an autocompletion list provided by the autocompleter function
+-- associated with string *name*, and returns `true` if completions were found.
+-- @param name The name of an autocompleter function in the `autocompleters`
+--   table to use for providing autocompletions.
+-- @name autocomplete
+-- @see autocompleters
+function M.autocomplete(name)
+  if not M.autocompleters[name] then return end
+  local len_entered, list = M.autocompleters[name]()
+  if not len_entered or not list or #list == 0 then return end
+  if not buffer.auto_c_choose_single or #list ~= 1 then
+    buffer.auto_c_order = buffer.ORDER_PERFORMSORT
+    buffer:auto_c_show(len_entered, table.concat(list, ' '))
+  else
+    -- Scintilla does not emit AUTO_C_SELECTION in this case. This is
+    -- necessary for autocompletion with multiple selections.
+    local text = list[1]:match('^(.-)%??%d*$')
+    events.emit(events.AUTO_C_SELECTION, text, buffer.current_pos - len_entered)
+  end
+  return true
+end
+
+-- Returns for the word behind the caret a list of completions constructed from
+-- the current buffer or all open buffers (depending on `M.AUTOCOMPLETE_ALL`).
+-- @see buffer.word_chars
+-- @see autocomplete
+M.autocompleters.word = function()
+  local list, ignore_case = {}, buffer.auto_c_ignore_case
+  local line, pos = buffer:get_cur_line()
+  local word_char = '['..buffer.word_chars:gsub('(%p)', '%%%1')..']'
+  local word = line:sub(1, pos):match(word_char..'*$')
+  if word == '' then return nil end
+  if ignore_case then word = word:lower() end
+  for i = 1, #_BUFFERS do
+    if _BUFFERS[i] == buffer or M.AUTOCOMPLETE_ALL then
+      local text = _BUFFERS[i]:get_text()
+      -- Frontier pattern (%f) is too slow, so check prior char after a match.
+      local patt = '()('..word:gsub('(%p)', '%%%1')..word_char..'+)'
+      local nonword_char = '^[^'..buffer.word_chars:gsub('(%p)', '%%%1')..']'
+      for i, word in (not ignore_case and text or text:lower()):gmatch(patt) do
+        if (i == 1 or text:find(nonword_char, i - 1)) and not list[word] then
+          list[#list + 1], list[word] = word, true
+        end
+      end
+    end
+  end
+  if #list == 0 then return nil end
+  return #word, list
 end
 
 return M

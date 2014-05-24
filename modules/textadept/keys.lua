@@ -261,7 +261,7 @@ M.utils = {
     events.emit(events.UPDATE_UI) -- for updating statusbar
   end,
   set_encoding = function(encoding)
-    io.set_buffer_encoding(encoding)
+    buffer:set_encoding(encoding)
     events.emit(events.UPDATE_UI) -- for updating statusbar
   end,
   set_eol_mode = function(mode)
@@ -388,7 +388,7 @@ keys[not OSX and (not CURSES and 'adel' or 'mdel')
 keys[not OSX and not CURSES and 'ca' or 'ma'] = buffer.select_all
 keys[not CURSES and 'cm' or 'mm'] = editing.match_brace
 keys[not OSX and (not CURSES and 'c\n' or 'cmj')
-             or 'cesc'] = editing.autocomplete_word
+             or 'cesc'] = {editing.autocomplete, 'word'}
 if CURSES and WIN32 then keys['c\r'] = keys['cmj'] end
 if not CURSES then
   keys[not OSX and 'caH' or 'mH'] = editing.highlight_word
