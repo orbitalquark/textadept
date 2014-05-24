@@ -158,22 +158,6 @@ events.connect(events.CHAR_ADDED, function(char)
   end
 end)
 
--- Autocomplete multiple selections.
-events.connect(events.AUTO_C_SELECTION, function(text, position)
-  local buffer = buffer
-  local pos = buffer.selection_n_caret[buffer.main_selection]
-  buffer:begin_undo_action()
-  for i = 0, buffer.selections - 1 do
-    buffer.target_start = buffer.selection_n_anchor[i] - (pos - position)
-    buffer.target_end = buffer.selection_n_caret[i]
-    buffer:replace_target(text)
-    buffer.selection_n_anchor[i] = buffer.selection_n_anchor[i] + #text
-    buffer.selection_n_caret[i] = buffer.selection_n_caret[i] + #text
-  end
-  buffer:end_undo_action()
-  buffer:auto_c_cancel() -- tell Scintilla not to handle autocompletion normally
-end)
-
 -- Prepares the buffer for saving to a file.
 events.connect(events.FILE_BEFORE_SAVE, function()
   if not M.STRIP_TRAILING_SPACES then return end
@@ -530,15 +514,8 @@ function M.autocomplete(name)
   if not M.autocompleters[name] then return end
   local len_entered, list = M.autocompleters[name]()
   if not len_entered or not list or #list == 0 then return end
-  if not buffer.auto_c_choose_single or #list ~= 1 then
-    buffer.auto_c_order = buffer.ORDER_PERFORMSORT
-    buffer:auto_c_show(len_entered, table.concat(list, ' '))
-  else
-    -- Scintilla does not emit AUTO_C_SELECTION in this case. This is
-    -- necessary for autocompletion with multiple selections.
-    local text = list[1]:match('^(.-)%??%d*$')
-    events.emit(events.AUTO_C_SELECTION, text, buffer.current_pos - len_entered)
-  end
+  buffer.auto_c_order = buffer.ORDER_PERFORMSORT
+  buffer:auto_c_show(len_entered, table.concat(list, ' '))
   return true
 end
 
