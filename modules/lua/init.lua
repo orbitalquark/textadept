@@ -20,7 +20,7 @@ module('_M.lua')]]
 
 ---
 -- List of "fake" ctags files to use for autocompletion.
--- The kind 'm' is recognized a module, 'f' as a function, 't' as a table and 
+-- The kind 'm' is recognized as a module, 'f' as a function, 't' as a table and
 -- 'F' as a module or table field.
 -- @class table
 -- @name tags

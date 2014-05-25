@@ -67,7 +67,8 @@ textadept.editing.autocompleters.ansi_c = function()
 end
 
 textadept.editing.api_files.ansi_c = {
-  _HOME..'/modules/ansi_c/api', _USERHOME..'/modules/ansi_c/api'
+  _HOME..'/modules/ansi_c/api', _HOME..'/modules/ansi_c/lua_api',
+  _USERHOME..'/modules/ansi_c/api'
 }
 
 -- Commands.
