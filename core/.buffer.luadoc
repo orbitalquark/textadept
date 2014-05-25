@@ -111,6 +111,15 @@
 --   user lists.
 --   The default value is `0`, which automatically sizes the width to fit the
 --   longest item.
+-- @field auto_c_multi (number)
+--   The multiple selection autocomplete mode.
+--
+--   * `buffer.MULTIAUTOC_ONCE`
+--     Autocomplete into only the main selection.
+--   * `buffer.MULTIAUTOC_EACH`
+--     Autocomplete into all selections.
+--
+--   The default value is `buffer.MULTIAUTOC_ONCE`.
 -- @field auto_c_order (number)
 --   The order setting for autocompletion and user lists.
 --
@@ -2781,6 +2790,7 @@ function set_lexer(buffer, lexer) end
 --   * allocate_sub_styles
 --   * assign_cmd_key
 --   * can_paste
+--   * change_insertion
 --   * change_lexer_state
 --   * char_position_from_point
 --   * char_position_from_point_close
