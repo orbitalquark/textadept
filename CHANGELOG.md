@@ -179,8 +179,7 @@ Changes:
   that do not flash the "black box" on Windows.
 * Added read-only access to the current key chain via [`keys.keychain`][].
 * Renamed "hypertext" lexer and its corresponding module to "html".
-* Added configurable tab context menus via
-  [`textadept.menu.set_contextmenus()`][].
+* Added configurable tab context menus via `textadept.menu.set_contextmenus()`.
 * New GUI theme for Mac OSX.
 * [Experimental] Merged separate lexer states into Textadept's Lua state.
 * Updated to [Lua][] 5.2.3.
@@ -194,7 +193,6 @@ Changes:
 [`ui.maximized`]: api/ui.html#maximized
 [OSX environment variables]: 02_Installation.html#Environment.Variables
 [`keys.keychain`]: api/keys.html#keychain
-[`textadept.menu.set_contextmenus()`]: api/textadept.menu.html#set_contextmenus
 [Lua]: http://lua.org
 [Scintilla]: http://scintilla.org
 

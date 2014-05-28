@@ -422,7 +422,7 @@ remove()                             |Renamed |toggle(false)
 **_M.textadept.editing**             |        |
 prepare\_for\_save()                 |Removed |N/A
 **_M.textadept.menu**                |        |
-rebuild\_command\_tables()           |Replaced|[set\_menubar()][]
+rebuild\_command\_tables()           |Replaced|set\_menubar()
 **_M.textadept.run**                 |        |
 execute()                            |Replaced|[run()][] and [compile()][]
 **_M.textadept.session**             |        |
@@ -431,7 +431,6 @@ prompt\_save()                       |Replaced|[save()][]
 
 [menu()]: api/ui.html#menu
 [toggle()]: api/textadept.bookmarks.html#toggle
-[set\_menubar()]: api/textadept.menu.html#set_menubar
 [run()]: api/textadept.run.html#run
 [compile()]: api/textadept.run.html#compile
 [load()]: api/textadept.session.html#load
