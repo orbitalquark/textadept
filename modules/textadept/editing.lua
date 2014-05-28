@@ -557,7 +557,8 @@ function M.autocomplete(name)
   local len_entered, list = M.autocompleters[name]()
   if not len_entered or not list or #list == 0 then return end
   buffer.auto_c_order = buffer.ORDER_PERFORMSORT
-  buffer:auto_c_show(len_entered, table.concat(list, ' '))
+  buffer:auto_c_show(len_entered, 
+                     table.concat(list, string.char(buffer.auto_c_separator)))
   return true
 end
 

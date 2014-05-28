@@ -58,6 +58,7 @@ textadept.editing.autocompleters.lua = function()
   end
   -- Search through ctags for completions for that symbol.
   local name_patt = '^'..part
+  local sep = string.char(buffer.auto_c_type_separator)
   for i = 1, #M.tags do
     if lfs.attributes(M.tags[i]) then
       for line in io.lines(M.tags[i]) do
@@ -66,7 +67,8 @@ textadept.editing.autocompleters.lua = function()
           local fields = line:match(';"\t(.*)$')
           local k, class = fields:sub(1, 1), fields:match('class:(%S+)') or ''
           if class == symbol and (op ~= ':' or k == 'f') then
-            list[#list + 1], list[name] = ("%s?%d"):format(name, xpms[k]), true
+            list[#list + 1] = ("%s%s%d"):format(name, sep, xpms[k])
+            list[name] = true
           end
         end
       end

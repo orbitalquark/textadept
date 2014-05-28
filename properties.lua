@@ -131,6 +131,7 @@ buffer.indic_style[INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
 if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
 
 -- Autocompletion.
+--buffer.auto_c_separator =
 --buffer.auto_c_cancel_at_start = false
 --buffer.auto_c_fill_ups = '('
 buffer.auto_c_choose_single = true
@@ -140,6 +141,7 @@ buffer.auto_c_choose_single = true
 buffer.auto_c_multi = buffer.MULTIAUTOC_EACH
 --buffer.auto_c_auto_hide = false
 --buffer.auto_c_drop_rest_of_word = true
+--buffer.auto_c_type_separator =
 --buffer.auto_c_max_height =
 --buffer.auto_c_max_width =
 
