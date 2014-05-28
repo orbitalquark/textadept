@@ -53,7 +53,6 @@ local M = {}
 -- Ctrl+Shift+D            |⌘⇧D      |M-S-W        |Select word
 -- Ctrl+Shift+N            |⌘⇧N      |M-S-N        |Select line
 -- Ctrl+Shift+P            |⌘⇧P      |M-S-P        |Select paragraph
--- Ctrl+Shift+I            |⌘⇧I      |M-S-I        |Select indented block
 -- Ctrl+Alt+U              |^U       |M-^U         |Upper case selection
 -- Ctrl+Alt+Shift+U        |^⇧U      |M-^L         |Lower case selection
 -- Alt+<                   |^<       |M->          |Enclose as XML tags
@@ -310,7 +309,7 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:   A   C         H              p  Q     T ~ V     Y  _   ) ] }   +
+-- c:   A   C         H I            p  Q     T ~ V     Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdD   F      jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
@@ -325,7 +324,7 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 -- Mac OSX key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- m:   A   C        ~    JkK  ~M    p  ~    tT U V    yY  _   ) ] }   +   ~~\n
+-- m:   A   C        ~  I JkK  ~M    p  ~    tT U V    yY  _   ) ] }   +   ~~\n
 -- c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  p q~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
@@ -353,7 +352,7 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
 -- cm:   cd  g~~ k ~   q  t   xyz
--- m:          e          J            qQ  sS  u vVw   yYzZ_          +
+-- m:          e        I J            qQ  sS  u vVw   yYzZ_          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- CTRL = 'c' (Control ^)
@@ -421,7 +420,6 @@ keys[not OSX and not CURSES and 'c{'
 keys[not OSX and (not CURSES and 'cD' or 'mW') or 'mD'] = editing.select_word
 keys[not OSX and not CURSES and 'cN' or 'mN'] = editing.select_line
 keys[not OSX and not CURSES and 'cP' or 'mP'] = editing.select_paragraph
-keys[not OSX and not CURSES and 'cI' or 'mI'] = editing.select_indented_block
 -- Selection.
 keys[not OSX and (not CURSES and 'cau' or 'cmu') or 'cu'] = buffer.upper_case
 keys[not OSX and (not CURSES and 'caU' or 'cml') or 'cU'] = buffer.lower_case
