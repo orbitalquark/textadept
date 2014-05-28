@@ -406,29 +406,6 @@ function M.select_paragraph()
 end
 
 ---
--- Selects the surrounding block of text whose lines' indentation levels are
--- greater than or equal to the current line's level.
--- If a text block is selected and the lines immediately above and below it are
--- one indentation level lower, adds those lines to the selection.
--- @name select_indented_block
-function M.select_indented_block()
-  local buffer = buffer
-  local s = buffer:line_from_position(buffer.selection_start)
-  local e = buffer:line_from_position(buffer.selection_end)
-  local indent = buffer.line_indentation[s] - buffer.tab_width
-  if indent < 0 then return end
-  if buffer:get_sel_text() ~= '' and
-     buffer.line_indentation[s - 1] == indent and
-     buffer.line_indentation[e + 1] == indent then
-    s, e, indent = s - 1, e + 1, indent + buffer.tab_width
-  end
-  while buffer.line_indentation[s - 1] > indent do s = s - 1 end
-  while buffer.line_indentation[e + 1] > indent do e = e + 1 end
-  s, e = buffer:position_from_line(s), buffer.line_end_position[e]
-  buffer:set_sel(s, e)
-end
-
----
 -- Converts indentation between tabs and spaces according to `buffer.use_tabs`.
 -- If `buffer.use_tabs` is `true`, `buffer.tab_width` indenting spaces are
 -- converted to tabs. Otherwise, all indenting tabs are converted to

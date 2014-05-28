@@ -2649,7 +2649,7 @@ Download:
 
 Bugfixes:
 
-* Fixed bug in editing module's [`select_indented_block()`][].
+* Fixed bug in editing module's `select_indented_block()`.
 * Fixed empty [`buffer.filename`][] bug in `textadept.io.save_as()`.
 * Fixed setting of Ruby lexer after detecting filetype.
 
@@ -2664,7 +2664,6 @@ Updates:
 * Fixed some code redundancy and typos in documentation.
 
 [Textadept 0.3 -- Linux]: download/ta_beta_r3.tgz
-[`select_indented_block()`]: api/textadept.editing.html#select_indented_block
 [`buffer.filename`]: api/buffer.html#filename
 [Zenity]: http://live.gnome.org/Zenity
 [lua_dialog]: http://luaforge.net/projects/lua-dialog

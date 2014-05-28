@@ -65,7 +65,6 @@ local menubar = {
       {_L['Select _Word'], editing.select_word},
       {_L['Select _Line'], editing.select_line},
       {_L['Select Para_graph'], editing.select_paragraph},
-      {_L['Select _Indented Block'], editing.select_indented_block},
     },
     { title = _L['Selectio_n'],
       {_L['_Upper Case Selection'], buffer.upper_case},
