@@ -7,14 +7,6 @@ local ui = ui
 -- Utilities for interacting with Textadept's user interface.
 -- @field title (string, Write-only)
 --   The title text of Textadept's window.
--- @field context_menu
---   The buffer's context menu, a [`ui.menu()`](#menu).
---   This is a low-level field. You probably want to use the higher-level
---   `textadept.menu.set_contextmenus()`.
--- @field tab_context_menu
---   The context menu for the buffer's tab, a [`ui.menu()`](#menu).
---   This is a low-level field. You probably want to use the higher-level
---   `textadept.menu.set_contextmenus()`.
 -- @field clipboard_text (string)
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
@@ -397,11 +389,31 @@ events_connect(events.ERROR, ui.print)
 --[[ The tables below were defined in C.
 
 ---
--- A table of menus defining a menubar. (Write-only)
--- @see textadept.menu.set_menubar
+-- A table of menus defining a menubar.
+-- This is a low-level field. You probably want to use the higher-level
+-- `textadept.menu.menubar`.
+-- @see textadept.menu.menubar
 -- @class table
 -- @name menubar
 local menubar
+
+---
+-- A menu userdata that defines the buffer's context menu.
+-- This is a low-level field. You probably want to use the higher-level
+-- `textadept.menu.context_menu`.
+-- @see textadept.menu.context_menu
+-- @class table
+-- @name context_menu
+local context_menu
+
+---
+-- A menu userdata that defines the context menu for the buffer's tab.
+-- This is a low-level field. You probably want to use the higher-level
+-- `textadept.menu.tab_context_menu`.
+-- @see textadept.menu.tab_context_menu
+-- @class table
+-- @name tab_context_menu
+local tab_context_menu
 
 ---
 -- A table containing the width and height pixel values of Textadept's window.
@@ -459,9 +471,9 @@ local goto_view
 ---
 -- Low-level function for creating a menu from table *menu_table* and returning
 -- the userdata.
--- You probably want to use the higher-level `textadept.menu.set_menubar()`
--- or `textadept.menu.set_contextmenus()` functions. Emits a `MENU_CLICKED`
--- event when a menu item is selected.
+-- You probably want to use the higher-level `textadept.menu.menubar`,
+-- `textadept.menu.context_menu`, or `textadept.menu.tab_context_menu` tables.
+-- Emits a `MENU_CLICKED` event when a menu item is selected.
 -- @param menu_table A table defining the menu. It is an ordered list of tables
 --   with a string menu item, integer menu ID, and optional GDK keycode and
 --   modifier mask. The latter two are used to display key shortcuts in the
@@ -471,8 +483,9 @@ local goto_view
 -- @usage ui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4}}
 -- @usage ui.menu{{'_New', 1, string.byte('n'), 4}} -- 'Ctrl+N'
 -- @see events.MENU_CLICKED
--- @see textadept.menu.set_menubar
--- @see textadept.menu.set_contextmenus
+-- @see textadept.menu.menubar
+-- @see textadept.menu.context_menu
+-- @see textadept.menu.tab_context_menu
 -- @class function
 -- @name menu
 local menu

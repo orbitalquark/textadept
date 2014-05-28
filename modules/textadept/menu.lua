@@ -6,6 +6,8 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Defines the menus used by Textadept.
+-- Menus are simply tables and may be edited in place. Use the '#' operator
+-- (instead of `ipairs()`) for iteration.
 -- If applicable, load this module last in your *~/.textadept/init.lua*, after
 -- `textadept.keys` since it looks up defined key commands to show them in
 -- menus.
@@ -15,7 +17,10 @@ local _L, buffer, view = _L, buffer, view
 local editing, utils = textadept.editing, textadept.keys.utils
 local SEPARATOR = {''}
 
+---
 -- The default main menubar.
+-- @class table
+-- @name menubar
 local menubar = {
   { title = _L['_File'],
     {_L['_New'], buffer.new},
@@ -200,7 +205,10 @@ local menubar = {
   },
 }
 
+---
 -- The default right-click context menu.
+-- @class table
+-- @name context_menu
 local context_menu = {
   {_L['_Undo'], buffer.undo},
   {_L['_Redo'], buffer.redo},
@@ -213,7 +221,10 @@ local context_menu = {
   {_L['Select _All'], buffer.select_all}
 }
 
+---
 -- The default tabbar context menu.
+-- @class table
+-- @name tab_context_menu
 local tab_context_menu = {
   {_L['_Close'], io.close_buffer},
   SEPARATOR,
@@ -222,6 +233,11 @@ local tab_context_menu = {
   SEPARATOR,
   {_L['Re_load'], io.reload_file},
 }
+
+-- Table of proxy tables for menus.
+local proxies = {}
+
+local key_shortcuts, menu_actions, contextmenu_actions, items, commands
 
 -- Returns the GDK integer keycode and modifier mask for a key sequence.
 -- This is used for creating menu accelerators.
@@ -255,8 +271,6 @@ local function get_id(f)
   end
   return id
 end
-
-local key_shortcuts, menu_actions, contextmenu_actions
 
 -- Creates a menu suitable for `ui.menu()` from the menu table format.
 -- Also assigns key commands.
@@ -305,9 +319,27 @@ local function build_command_tables(menu, title, items, commands)
   end
 end
 
-local items, commands
+-- Returns a proxy table for menu table *menu* such that when a menu item is
+-- changed or added, *update* is called to update the menu in the UI.
+-- @param menu The menu or table of menus to create a proxy for.
+-- @param update The function to call to update the menu in the UI when a menu
+--   item is changed or added.
+-- @param menubar Used internally to keep track of the top-level menu for
+--   calling *update* with.
+local function proxy_menu(menu, update, menubar)
+  return setmetatable({}, {
+    __index = function(t, k)
+      local v = menu[k]
+      return type(v) == 'table' and proxy_menu(v, update, menubar or menu) or v
+    end,
+    __newindex = function(t, k, v)
+      menu[k] = v
+      update(menubar or menu)
+    end,
+    __len = function(t) return #menu end,
+  })
+end
 
----
 -- Sets `ui.menubar` from menu table *menubar*.
 -- Each menu is an ordered list of menu items and has a `title` key for the
 -- title text. Menu items are tables containing menu text and either a function
@@ -317,8 +349,7 @@ local items, commands
 -- @param menubar The table of menu tables to create the menubar from.
 -- @see ui.menubar
 -- @see ui.menu
--- @name set_menubar
-function M.set_menubar(menubar)
+local function set_menubar(menubar)
   key_shortcuts = {}
   for key, f in pairs(keys) do key_shortcuts[get_id(f)] = key end
   menu_actions = {}
@@ -329,18 +360,10 @@ function M.set_menubar(menubar)
   ui.menubar = _menubar
   items, commands = {}, {}
   build_command_tables(menubar, nil, items, commands)
+  proxies.menubar = proxy_menu(menubar, set_menubar)
 end
-M.set_menubar(menubar)
+set_menubar(menubar)
 
----
--- Sets `ui.context_menu` from menu item list *menu*.
--- Deprecated in favor of `set_contextmenus()`.
--- @param menu The menu table to create the context menu from.
--- @see set_contextmenus
--- @name set_contextmenu
-function M.set_contextmenu(menu) M.set_contextmenus(menu) end
-
----
 -- Sets `ui.context_menu` and `ui.tab_context_menu` from menu item lists
 -- *buffer_menu* and *tab_menu*, respectively.
 -- Menu items are tables containing menu text and either a function to call or
@@ -354,14 +377,18 @@ function M.set_contextmenu(menu) M.set_contextmenus(menu) end
 -- @see ui.context_menu
 -- @see ui.tab_context_menu
 -- @see ui.menu
--- @name set_contextmenus
-function M.set_contextmenus(buffer_menu, tab_menu)
+local function set_contextmenus(buffer_menu, tab_menu)
   contextmenu_actions = {}
-  ui.context_menu = ui.menu(read_menu_table(buffer_menu or context_menu, true))
-  ui.tab_context_menu = ui.menu(read_menu_table(tab_menu or tab_context_menu,
-                                                true))
+  local menu = buffer_menu or context_menu
+  ui.context_menu = ui.menu(read_menu_table(menu, true))
+  proxies.context_menu = proxy_menu(menu, set_contextmenus)
+  menu = tab_menu or tab_context_menu
+  ui.tab_context_menu = ui.menu(read_menu_table(menu, true))
+  proxies.tab_context_menu = proxy_menu(menu, function()
+    set_contextmenus(nil, menu)
+  end)
 end
-if not CURSES then M.set_contextmenus() end
+if not CURSES then set_contextmenus() end
 
 ---
 -- Prompts the user to select a menu command to run.
@@ -388,8 +415,8 @@ if not CURSES then
   -- Set a language-specific context menu or the default one.
   local function set_language_contextmenu()
     local lang = _G.buffer:get_lexer()
-    M.set_contextmenus(_M[lang] and _M[lang].context_menu,
-                       _M[lang] and _M[lang].tab_context_menu)
+    set_contextmenus(_M[lang] and _M[lang].context_menu,
+                     _M[lang] and _M[lang].tab_context_menu)
   end
   events.connect(events.LEXER_LOADED, set_language_contextmenu)
   events.connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
@@ -397,4 +424,17 @@ if not CURSES then
   events.connect(events.BUFFER_NEW, set_language_contextmenu)
 end
 
-return M
+return setmetatable(M, {
+  __index = function(t, k) return proxies[k] or M[k] end,
+  __newindex = function(t, k, v)
+    if k == 'menubar' then
+      set_menubar(v)
+    elseif k == 'context_menu' then
+      set_contextmenus(v)
+    elseif k == 'tab_context_menu' then
+      set_contextmenus(nil, v)
+    else
+      M[k] = v
+    end
+  end
+})
