@@ -476,7 +476,8 @@ function M.highlight_word()
   local buffer = buffer
   local s, e = buffer.selection_start, buffer.selection_end
   if s == e then
-    s, e = buffer:word_start_position(s, true), buffer:word_end_position(s)
+    s = buffer:word_start_position(s, true)
+    e = buffer:word_end_position(s, true)
   end
   if s == e then return end
   local word = buffer:text_range(s, e)
