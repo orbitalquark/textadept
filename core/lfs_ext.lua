@@ -100,6 +100,7 @@ end
 -- returned path is not guaranteed to exist.
 -- @param filename The relative or absolute path to a file.
 -- @return string absolute path
+-- @name abspath
 function lfs.abspath(filename, prefix)
   if WIN32 then filename = filename:gsub('/', '\\') end
   if not filename:find(not WIN32 and '^/' or '^%a:[/\\]') then

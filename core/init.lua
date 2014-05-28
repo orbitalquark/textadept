@@ -149,7 +149,8 @@ local timeout
 -- The function below comes from the lspawn module.
 
 ---
--- Spawns an interactive child process *argv* in a separate thread.
+-- Spawns an interactive child process *argv* in a separate thread, returning
+-- a handle to that process.
 -- The terminal version spawns processes in the same thread.
 -- @param argv A command line string containing the program's name followed by
 --   arguments to pass to it. `PATH` is searched for program names.
@@ -171,8 +172,40 @@ local timeout
 -- @usage spawn('lua buffer.filename', nil, print)
 -- @usage proc = spawn('lua -e "print(io.read())", nil, print)
 --        proc:write('foo\\n')
--- @see _G.proc
 -- @class function
 -- @name spawn
 local spawn
+
+---
+-- Returns the status of process *proc*, which is either "running" or
+-- "terminated".
+-- @return "running" or "terminated"
+function spawn_proc:status() end
+
+---
+-- Blocks until process *proc* finishes.
+function spawn_proc:wait() end
+
+---
+-- Reads and returns stdout from process *proc*, according to string format or
+-- number *arg*.
+-- Similar to Lua's `io.read()` and blocks for input. *proc* must still be
+-- running. If an error occurs while reading, returns `nil`, an error code, and
+-- an error message.
+-- Ensure any read operations read all stdout available. The stdout callback
+-- function passed to `spawn()` will not be called until the stdout buffer is
+-- clear.
+-- @param arg Optional argument similar to those in Lua's `io.read()`, but "*n"
+--   is not supported. The default value is "*l", which reads a line.
+-- @return string of bytes read
+function spawn_proc:read(arg) end
+
+---
+-- Writes string input to the stdin of process *proc*.
+-- @param ... Standard input for *proc*.
+function spawn_proc:write(...) end
+
+---
+-- Kills running process *proc*.
+function spawn_proc:kill() end
 ]]
