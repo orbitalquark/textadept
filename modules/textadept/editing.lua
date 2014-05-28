@@ -11,10 +11,6 @@ local M = {}
 --   The default value is `true`.
 --   Auto-paired characters are defined in the [`char_matches`](#char_matches)
 --   table.
--- @field HIGHLIGHT_BRACES (bool)
---   Highlight matching brace characters like "()[]{}".
---   The default value is `true`.
---   Matching braces are defined in the [`braces`](#braces) table.
 -- @field TYPEOVER_CHARS (bool)
 --   Move over closing brace and quote characters under the caret when typing
 --   them.
@@ -38,7 +34,6 @@ local M = {}
 module('textadept.editing')]]
 
 M.AUTOPAIR = true
-M.HIGHLIGHT_BRACES = true
 M.TYPEOVER_CHARS = true
 M.AUTOINDENT = true
 M.STRIP_TRAILING_SPACES = false
@@ -107,7 +102,6 @@ M.char_matches = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 -- @class table
 -- @name braces
 -- @usage textadept.editing.braces.html = {..., [60] = 1, [62] = 1}
--- @see HIGHLIGHT_BRACES
 M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 
 ---
@@ -163,7 +157,6 @@ end)
 
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function()
-  if not M.HIGHLIGHT_BRACES then return end
   local pos = buffer.current_pos
   if (M.braces[buffer:get_lexer(true)] or M.braces)[buffer.char_at[pos]] then
     local match = buffer:brace_match(pos)
@@ -557,7 +550,7 @@ function M.autocomplete(name)
   local len_entered, list = M.autocompleters[name]()
   if not len_entered or not list or #list == 0 then return end
   buffer.auto_c_order = buffer.ORDER_PERFORMSORT
-  buffer:auto_c_show(len_entered, 
+  buffer:auto_c_show(len_entered,
                      table.concat(list, string.char(buffer.auto_c_separator)))
   return true
 end
