@@ -47,6 +47,7 @@ textadept.editing.autocompleters.ansi_c = function()
   end
   -- Search through ctags for completions for that symbol.
   local name_patt = '^'..part
+  local sep = string.char(buffer.auto_c_type_separator)
   for i = 1, #M.tags do
     if lfs.attributes(M.tags[i]) then
       for line in io.lines(M.tags[i]) do
@@ -56,7 +57,8 @@ textadept.editing.autocompleters.ansi_c = function()
           if (fields:match('class:(%S+)') or fields:match('enum:(%S+)') or
               fields:match('struct:(%S+)') or fields:match('typedef:(%S+)') or
               '') == symbol then
-            list[#list + 1] = ("%s?%d"):format(name, xpms[fields:sub(1, 1)])
+            local k = xpms[fields:sub(1, 1)]
+            list[#list + 1] = ("%s%s%d"):format(name, sep, xpms[k])
             list[name] = true
           end
         end
