@@ -612,6 +612,7 @@ keys.filter_through = {
 }
 keys.find_incremental = {
   ['\n'] = function()
+    ui.find.find_entry_text = ui.command_entry.entry_text -- save
     ui.find.find_incremental(ui.command_entry.entry_text, true, true)
   end,
   ['cr'] = function()
