@@ -153,7 +153,10 @@ if type(snippets) == 'table' then
 -- @class table
 -- @name _G.snippets.lua
   snippets.lua = {
-
+    f = "function %1(name)(%2(args))\n\t%0\nend",
+    ['for'] = "for %1(i) = %2(1), %3(10)%4(, %5(-1)) do\n\t%0\nend",
+    fori = "for %1(i), %2(v) in ipairs(%3(t)) do\n\t%0\nend",
+    forp = "for %1(k), %2(v) in pairs(%3(t)) do\n\t%0\nend"
   }
 end
 

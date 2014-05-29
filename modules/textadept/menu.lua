@@ -6,8 +6,9 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Defines the menus used by Textadept.
--- Menus are simply tables and may be edited in place. Use the '#' operator
--- (instead of `ipairs()`) for iteration.
+-- Menus are simply tables and may be edited in place. Submenus have `title`
+-- keys with string text. Use the '#' operator (instead of `ipairs()`) for
+-- iteration.
 -- If applicable, load this module last in your *~/.textadept/init.lua*, after
 -- `textadept.keys` since it looks up defined key commands to show them in
 -- menus.
