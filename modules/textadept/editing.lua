@@ -189,7 +189,7 @@ events.connect(events.CHAR_ADDED, function(char)
   while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
   if i >= 0 then
     buffer.line_indentation[line] = buffer.line_indentation[i]
-    buffer:goto_pos(buffer.line_indent_position[line])
+    buffer:vc_home()
   end
 end)
 

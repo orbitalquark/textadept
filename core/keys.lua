@@ -183,12 +183,11 @@ M.keychain = setmetatable({}, {
 })
 
 -- Clears the current key sequence.
-local function clear_key_sequence()
+-- This is also used by *modules/textadept/command_entry.lua*.
+M.clear_key_sequence = function()
   -- Clearing a table is faster than re-creating one.
   if #keychain == 1 then keychain[1] = nil else keychain = {} end
 end
--- Export for command_entry.lua without creating LuaDoc.
-if CURSES then M.clear_key_sequence = clear_key_sequence end
 
 local none = {}
 local function key_error(e) events.emit(events.ERROR, e) end
@@ -197,7 +196,7 @@ local function key_error(e) events.emit(events.ERROR, e) end
 -- @param command A function or table as described above.
 -- @param command_type Equivalent to `type(command)`.
 -- @return the value the command returns.
-local function run_command(command, command_type)
+M.run_command = function(command, command_type)
   local f, args = command_type == 'function' and command or command[1], none
   if command_type == 'table' then
     args = command
@@ -214,7 +213,6 @@ local function run_command(command, command_type)
   local _, result = xpcall(f, key_error, table.unpack(args, 2))
   return result
 end
-M.run_command = run_command -- export for menu.lua without creating LuaDoc
 
 -- Return codes for `key_command()`.
 local INVALID, PROPAGATE, CHAIN, HALT = -1, 0, 1, 2
@@ -234,7 +232,7 @@ local function key_command(prefix)
     ui.statusbar_text = _L['Keychain:']..' '..table.concat(keychain, ' ')
     return CHAIN
   end
-  return run_command(key, key_type) == false and PROPAGATE or HALT
+  return M.run_command(key, key_type) == false and PROPAGATE or HALT
 end
 
 -- Handles Textadept keypresses.
@@ -260,7 +258,7 @@ local function keypress(code, shift, control, alt, meta)
   --if CURSES then ui.statusbar_text = '"'..key_seq..'"' end
   local keychain_size = #keychain
   if keychain_size > 0 and key_seq == M.CLEAR then
-    clear_key_sequence()
+    M.clear_key_sequence()
     return true
   end
   keychain[keychain_size + 1] = key_seq
@@ -272,7 +270,7 @@ local function keypress(code, shift, control, alt, meta)
   else
     status = key_command(M.MODE)
   end
-  if status ~= CHAIN then clear_key_sequence() end
+  if status ~= CHAIN then M.clear_key_sequence() end
   if status > PROPAGATE then return true end -- CHAIN or HALT
   if status == INVALID and keychain_size > 0 then
     ui.statusbar_text = _L['Invalid sequence']
