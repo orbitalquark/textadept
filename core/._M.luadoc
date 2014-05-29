@@ -20,8 +20,8 @@
 --
 -- To fully take advantage of Textadept's features, language modules should have
 -- at a minimum: run and/or compile commands, an event handler for setting
--- buffer properties like indentation, and if possible, an Adeptsense. Optional
--- features are extra snippets and commands and a context menu.
+-- buffer properties like indentation, and if possible, an autocompleter.
+-- Optional features are extra snippets and commands and a context menu.
 --
 -- #### Compile and Run
 --
@@ -150,5 +150,5 @@
 --       {'Autocomplete "end"', M.try_to_autocomplete_end}
 --     }
 --
--- [context menus]: textadept.menu.html#set_contextmenu
+-- [context menus]: textadept.menu.html#context_menu
 module('_M')]]

@@ -99,6 +99,7 @@ end
 -- *prefix* or `lfs.currentdir()` is prepended to a relative filename. The
 -- returned path is not guaranteed to exist.
 -- @param filename The relative or absolute path to a file.
+-- @param prefix Optional prefix path prepended to a relative filename.
 -- @return string absolute path
 -- @name abspath
 function lfs.abspath(filename, prefix)

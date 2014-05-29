@@ -106,8 +106,7 @@ local M = {}
 -- @field CLEAR (string)
 --   The key that clears the current key chain.
 --   It cannot be part of a key chain.
---   The default value is `'esc'` for the `Esc` (`⎋` on Mac OSX | `Esc` in
---   curses) key.
+--   The default value is `'esc'` for the `Esc` key.
 -- @field LANGUAGE_MODULE_PREFIX (string)
 --   The prefix key of the key chain reserved for language modules.
 --   The default value is `'cl'` on platforms other than Mac OSX, `'ml'`
