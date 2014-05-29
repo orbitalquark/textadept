@@ -607,10 +607,6 @@ elseif CURSES then
 end
 
 -- Modes.
-keys.lua_command = {
-  ['\t'] = ui.command_entry.complete_lua,
-  ['\n'] = {ui.command_entry.finish_mode, ui.command_entry.execute_lua}
-}
 keys.filter_through = {
   ['\n'] = {ui.command_entry.finish_mode, editing.filter_through},
 }

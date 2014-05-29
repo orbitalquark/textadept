@@ -16,11 +16,12 @@ local M = ui.command_entry
 -- for looking up key bindings. An example mode is "lua_command" mode for
 -- executing Lua commands:
 --
---     local ui_ce = ui.command_entry
---     keys['ce'] = {ui_ce.enter_mode, 'lua_command'}
+--     local function complete_lua() ... end
+--     local function execute_lua() ... end
+--     keys['ce'] = {ui.command_entry.enter_mode, 'lua_command'}
 --     keys.lua_command = {
---       ['\t'] = ui_ce.complete_lua,
---       ['\n'] = {ui_ce.finish_mode, ui_ce.execute_lua}
+--       ['\t'] = complete_lua,
+--       ['\n'] = {ui.command_entry.finish_mode, execute_lua}
 --     }
 --
 -- In this case, `Ctrl+E` opens the command entry and enters "lua_command" key
@@ -38,8 +39,8 @@ module('ui.command_entry')]]
 ---
 -- Opens the command entry in key mode *mode*.
 -- Key bindings will be looked up in `keys[mode]` instead of `keys`. The `Esc`
--- (`⎋` on Mac OSX | `Esc` in curses) key exits the current mode, closes the
--- command entry, and restores normal key lookup.
+-- key exits the current mode, closes the command entry, and restores normal key
+-- lookup.
 -- This function is useful for binding keys to enter a command entry mode.
 -- @param mode The key mode to enter into, or `nil` to exit the current mode.
 -- @usage keys['ce'] = {ui.command_entry.enter_mode, 'command_entry'}
@@ -90,15 +91,13 @@ local env = setmetatable({}, {
   end,
 })
 
----
 -- Executes string *code* as Lua code that is subject to an "abbreviated"
 -- environment.
 -- In this environment, the contents of the `buffer`, `view`, and `ui` tables
 -- are also considered as global functions and fields.
 -- Prints the results of '=' expressions like in the Lua prompt.
 -- @param code The Lua code to execute.
--- @name execute_lua
-function M.execute_lua(code)
+local function execute_lua(code)
   if code:sub(1, 1) == '=' then code = 'return '..code:sub(2) end
   local f, err = load(code, nil, 'bt', env)
   assert(f, err)
@@ -106,16 +105,14 @@ function M.execute_lua(code)
   if result ~= nil then ui.print(result) end
   events.emit(events.UPDATE_UI)
 end
-args.register('-e', '--execute', 1, M.execute_lua, 'Execute Lua code')
+args.register('-e', '--execute', 1, execute_lua, 'Execute Lua code')
 
----
 -- Shows a set of Lua code completions for string *code* or `entry_text`.
 -- Completions are subject to an "abbreviated" environment where the `buffer`,
 -- `view`, and `ui` tables are also considered as globals.
 -- @param code The Lua code to complete. The default value is the value of
 --   `entry_text`.
--- @name complete_lua
-function M.complete_lua(code)
+local function complete_lua(code)
   local substring = (code or M.entry_text):match('[%w_.:]+$') or ''
   local path, op, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
   local f, err = load('return ('..path..')', nil, 'bt', env)
@@ -152,6 +149,12 @@ function M.complete_lua(code)
   table.sort(cmpls)
   M.show_completions(cmpls)
 end
+
+-- Define key mode for entering Lua commands.
+keys.lua_command = {
+  ['\t'] = complete_lua,
+  ['\n'] = {M.finish_mode, execute_lua}
+}
 
 -- Pass command entry keys to the default keypress handler.
 -- Since the command entry is designed to be modal, command entry key bindings
