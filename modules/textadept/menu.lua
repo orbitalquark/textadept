@@ -334,10 +334,11 @@ local function proxy_menu(menu, update, menubar)
       return type(v) == 'table' and proxy_menu(v, update, menubar or menu) or v
     end,
     __newindex = function(t, k, v)
-      menu[k] = v
+      menu[k] = getmetatable(v) and getmetatable(v).menu or v
       update(menubar or menu)
     end,
     __len = function(t) return #menu end,
+    menu = menu -- store existing menu for copying (e.g. m[#m + 1] = m[#m])
   })
 end
 
