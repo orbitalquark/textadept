@@ -7,6 +7,14 @@ local ui = ui
 -- Utilities for interacting with Textadept's user interface.
 -- @field title (string, Write-only)
 --   The title text of Textadept's window.
+-- @field context_menu (userdata)
+--   The buffer's context menu, a [`ui.menu()`](#menu).
+--   This is a low-level field. You probably want to use the higher-level
+--   `textadept.menu.context_menu`.
+-- @field tab_context_menu (userdata)
+--   The context menu for the buffer's tab, a [`ui.menu()`](#menu).
+--   This is a low-level field. You probably want to use the higher-level
+--   `textadept.menu.tab_context_menu`.
 -- @field clipboard_text (string)
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
@@ -396,24 +404,6 @@ events_connect(events.ERROR, ui.print)
 -- @class table
 -- @name menubar
 local menubar
-
----
--- A menu userdata that defines the buffer's context menu.
--- This is a low-level field. You probably want to use the higher-level
--- `textadept.menu.context_menu`.
--- @see textadept.menu.context_menu
--- @class table
--- @name context_menu
-local context_menu
-
----
--- A menu userdata that defines the context menu for the buffer's tab.
--- This is a low-level field. You probably want to use the higher-level
--- `textadept.menu.tab_context_menu`.
--- @see textadept.menu.tab_context_menu
--- @class table
--- @name tab_context_menu
-local tab_context_menu
 
 ---
 -- A table containing the width and height pixel values of Textadept's window.
