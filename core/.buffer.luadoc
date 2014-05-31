@@ -2711,7 +2711,7 @@ function text_range(buffer, start_pos, end_pos) end
 -- @param buffer A buffer.
 -- @param encoding The string encoding to set. Valid encodings are ones that GNU
 --   iconv accepts.
--- @usage io.set_buffer_encoding('ASCII')
+-- @usage buffer:set_encoding('ASCII')
 function set_encoding(buffer, encoding) end
 
 ---
