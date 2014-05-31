@@ -106,7 +106,6 @@ FOLD_BASE	_	0;"	F	class:lexer
 FOLD_BLANK	_	0;"	F	class:lexer
 FOLD_HEADER	_	0;"	F	class:lexer
 FUNCTION	_	0;"	F	class:lexer
-HIGHLIGHT_BRACES	_	0;"	F	class:textadept.editing
 HOTSPOT_CLICK	_	0;"	F	class:events
 HOTSPOT_DOUBLE_CLICK	_	0;"	F	class:events
 HOTSPOT_RELEASE_CLICK	_	0;"	F	class:events
@@ -383,13 +382,9 @@ _M	_	0;"	t
 _M.ansi_c	_	0;"	m	
 _M.css	_	0;"	m	
 _M.html	_	0;"	m	
-_M.java	_	0;"	m	
 _M.lua	_	0;"	m	
-_M.php	_	0;"	m	
 _M.python	_	0;"	m	
-_M.rails	_	0;"	m	
 _M.rest	_	0;"	m	
-_M.rhtml	_	0;"	m	
 _M.ruby	_	0;"	m	
 _M.yaml	_	0;"	m	
 _NAME	_	0;"	F	class:lexer.lexer
@@ -463,6 +458,7 @@ auto_c_fill_ups	_	0;"	F	class:buffer
 auto_c_ignore_case	_	0;"	F	class:buffer
 auto_c_max_height	_	0;"	F	class:buffer
 auto_c_max_width	_	0;"	F	class:buffer
+auto_c_multi	_	0;"	F	class:buffer
 auto_c_order	_	0;"	F	class:buffer
 auto_c_pos_start	_	0;"	f	class:buffer
 auto_c_select	_	0;"	f	class:buffer
@@ -553,12 +549,12 @@ command_entry	_	0;"	t	class:ui
 comment_string	_	0;"	t	class:textadept.editing
 compile	_	0;"	f	class:textadept.run
 compile_commands	_	0;"	t	class:textadept.run
-complete_lua	_	0;"	f	class:ui.command_entry
 concat	_	0;"	f	class:table
 config	_	0;"	F	class:package
 connect	_	0;"	f	class:events
 constants	_	0;"	t	class:_SCINTILLA
 context_menu	_	0;"	F	class:ui
+context_menu	_	0;"	t	class:textadept.menu
 contracted_fold_next	_	0;"	f	class:buffer
 control_structure_patterns	_	0;"	t	class:_M.lua
 control_structure_patterns	_	0;"	t	class:_M.ruby
@@ -640,10 +636,11 @@ error_patterns	_	0;"	t	class:textadept.run
 events	_	0;"	m	
 events	_	0;"	t	
 execute	_	0;"	f	class:os
-execute_lua	_	0;"	f	class:ui.command_entry
 exit	_	0;"	f	class:os
 exp	_	0;"	f	class:math
 expr_types	_	0;"	t	class:_M.lua
+expr_types	_	0;"	t	class:_M.python
+expr_types	_	0;"	t	class:_M.ruby
 extend	_	0;"	F	class:lexer
 extensions	_	0;"	t	class:textadept.file_types
 extra_ascent	_	0;"	F	class:buffer
@@ -768,9 +765,6 @@ integer	_	0;"	F	class:lexer
 io	_	0;"	m	
 io	_	0;"	t	
 ipairs	_	0;"	f	
-java	_	0;"	t	class:_M
-java	_	0;"	t	class:keys
-java	_	0;"	t	class:snippets
 join_lines	_	0;"	f	class:textadept.editing
 keychain	_	0;"	t	class:keys
 keys	_	0;"	m	
@@ -826,7 +820,6 @@ lines_split	_	0;"	f	class:buffer
 load	_	0;"	f	
 load	_	0;"	f	class:lexer
 load	_	0;"	f	class:textadept.session
-load_project	_	0;"	f	class:_M.rails
 loaded	_	0;"	F	class:package
 loadfile	_	0;"	f	
 loadlib	_	0;"	f	class:package
@@ -889,6 +882,7 @@ max_line_state	_	0;"	F	class:buffer
 maximized	_	0;"	F	class:ui
 menu	_	0;"	f	class:ui
 menu	_	0;"	t	class:textadept
+menubar	_	0;"	t	class:textadept.menu
 menubar	_	0;"	t	class:ui
 min	_	0;"	f	class:math
 mkdir	_	0;"	f	class:lfs
@@ -941,9 +935,6 @@ paste	_	0;"	f	class:buffer
 path	_	0;"	F	class:package
 patterns	_	0;"	t	class:textadept.file_types
 pcall	_	0;"	f	
-php	_	0;"	t	class:_M
-php	_	0;"	t	class:keys
-php	_	0;"	t	class:snippets
 pi	_	0;"	F	class:math
 popen	_	0;"	f	class:io
 position_after	_	0;"	f	class:buffer
@@ -959,7 +950,6 @@ proc	_	0;"	F	class:textadept.run
 proc	_	0;"	m	
 proc	_	0;"	t	
 process	_	0;"	f	class:args
-project	_	0;"	t	class:textadept
 properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
 property	_	0;"	F	class:lexer
@@ -974,9 +964,6 @@ python	_	0;"	t	class:keys
 python	_	0;"	t	class:snippets
 quit	_	0;"	f	
 rad	_	0;"	f	class:math
-rails	_	0;"	t	class:_M
-rails	_	0;"	t	class:keys
-rails	_	0;"	t	class:snippets
 random	_	0;"	f	class:math
 randomseed	_	0;"	f	class:math
 rawequal	_	0;"	f	
@@ -1024,9 +1011,6 @@ reverse	_	0;"	f	class:string
 rgba_image_height	_	0;"	F	class:buffer
 rgba_image_scale	_	0;"	F	class:buffer
 rgba_image_width	_	0;"	F	class:buffer
-rhtml	_	0;"	t	class:_M
-rhtml	_	0;"	t	class:keys
-rhtml	_	0;"	t	class:snippets
 rmdir	_	0;"	f	class:lfs
 rotate_selection	_	0;"	f	class:buffer
 rrotate	_	0;"	f	class:bit32
@@ -1064,7 +1048,6 @@ select	_	0;"	f
 select_all	_	0;"	f	class:buffer
 select_command	_	0;"	f	class:textadept.menu
 select_enclosed	_	0;"	f	class:textadept.editing
-select_indented_block	_	0;"	f	class:textadept.editing
 select_lexer	_	0;"	f	class:textadept.file_types
 select_line	_	0;"	f	class:textadept.editing
 select_paragraph	_	0;"	f	class:textadept.editing
@@ -1082,18 +1065,8 @@ selection_n_end	_	0;"	F	class:buffer
 selection_n_start	_	0;"	F	class:buffer
 selection_start	_	0;"	F	class:buffer
 selections	_	0;"	F	class:buffer
-sense	_	0;"	F	class:_M.css
-sense	_	0;"	F	class:_M.html
-sense	_	0;"	F	class:_M.java
-sense	_	0;"	F	class:_M.php
-sense	_	0;"	F	class:_M.python
-sense	_	0;"	F	class:_M.rails
-sense	_	0;"	F	class:_M.rhtml
-sense	_	0;"	F	class:_M.ruby
 session	_	0;"	t	class:textadept
 set_chars_default	_	0;"	f	class:buffer
-set_contextmenu	_	0;"	f	class:textadept.menu
-set_contextmenus	_	0;"	f	class:textadept.menu
 set_empty_selection	_	0;"	f	class:buffer
 set_encoding	_	0;"	f	class:buffer
 set_fold_margin_colour	_	0;"	f	class:buffer
@@ -1101,7 +1074,6 @@ set_fold_margin_hi_colour	_	0;"	f	class:buffer
 set_hotspot_active_back	_	0;"	f	class:buffer
 set_hotspot_active_fore	_	0;"	f	class:buffer
 set_lexer	_	0;"	f	class:buffer
-set_menubar	_	0;"	f	class:textadept.menu
 set_save_point	_	0;"	f	class:buffer
 set_sel	_	0;"	f	class:buffer
 set_sel_back	_	0;"	f	class:buffer
@@ -1130,7 +1102,6 @@ show_completions	_	0;"	f	class:ui.command_entry
 show_documentation	_	0;"	f	class:textadept.editing
 show_lines	_	0;"	f	class:buffer
 sin	_	0;"	f	class:math
-singular	_	0;"	F	class:_M.rails
 sinh	_	0;"	f	class:math
 size	_	0;"	F	class:view
 size	_	0;"	t	class:ui
@@ -1183,6 +1154,7 @@ switch_buffer	_	0;"	f	class:ui
 symlinkattributes	_	0;"	f	class:lfs
 tab	_	0;"	f	class:buffer
 tab_context_menu	_	0;"	F	class:ui
+tab_context_menu	_	0;"	t	class:textadept.menu
 tab_indents	_	0;"	F	class:buffer
 tab_label	_	0;"	F	class:buffer
 tab_width	_	0;"	F	class:buffer
@@ -1192,6 +1164,8 @@ tabs	_	0;"	F	class:ui
 tag	_	0;"	F	class:buffer
 tags	_	0;"	t	class:_M.ansi_c
 tags	_	0;"	t	class:_M.lua
+tags	_	0;"	t	class:_M.python
+tags	_	0;"	t	class:_M.ruby
 tan	_	0;"	f	class:math
 tanh	_	0;"	f	class:math
 target_end	_	0;"	F	class:buffer
@@ -1208,7 +1182,6 @@ textadept.editing	_	0;"	m
 textadept.file_types	_	0;"	m	
 textadept.keys	_	0;"	m	
 textadept.menu	_	0;"	m	
-textadept.project	_	0;"	m	
 textadept.run	_	0;"	m	
 textadept.session	_	0;"	m	
 textadept.snippets	_	0;"	m	
