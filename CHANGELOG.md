@@ -8,6 +8,62 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.3 (01 Jun 2014)
+
+Download:
+
+* [Textadept 7.3 -- Win32][]
+* [Textadept 7.3 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.3 -- Linux][]
+* [Textadept 7.3 -- Linux x86_64][]
+* [Textadept 7.3 -- Modules][]
+
+Bugfixes:
+
+* Export Lua symbols correctly on Windows.
+* Fixed occasional bug when double-clicking in the message buffer.
+* Fixed an edge-case in word highlighting.
+
+Changes:
+
+* Added reST and YAML lexers and official language modules for each.
+* Use [`spawn()`][] for launching help.
+* Renamed `io.set_buffer_encoding()` to [`buffer:set_encoding()`][].
+* Removed Adeptsense in favor of [autocompleter functions][], but kept existing
+  [api file format][].
+* Renamed `textadept.editing.autocomplete_word()` to
+  [`textadept.editing.autocomplete`][]`('word')`.
+* New [`textadept.editing.AUTOCOMPLETE_ALL`][] field for autocompleting words
+  from all open buffers.
+* Dropped support for official java, php, rails, and rhtml modules; they are
+  on the wiki now.
+* Removed `textadept.editing.HIGHLIGHT_BRACES` option, as indicator style can be
+  changed to hide highlighting.
+* Removed `textadept.editing.select_indented_block()`.
+* In-place menu editing via [`textadept.menu.menubar`][],
+  [`textadept.menu.context_menu`][], and [`textadept.menu.tab_context_menu`][]
+  tables.
+* Removed `textadept.command_entry.complete_lua()` and
+  `textadept.command_entry.execute_lua()` and moved their key bindings into
+  their module.
+* Updated to [Scintilla][] 3.4.2.
+
+[Textadept 7.3 -- Win32]: download/textadept_7.3.win32.zip
+[Textadept 7.3 -- Mac OSX Intel 10.5+]: download/textadept_7.3.osx.zip
+[Textadept 7.3 -- Linux]: download/textadept_7.3.i386.tgz
+[Textadept 7.3 -- Linux x86_64]: download/textadept_7.3.x86_64.tgz
+[Textadept 7.3 -- Modules]: download/textadept_7.3.modules.zip
+[`spawn()`]: api/_G.html#spawn
+[`buffer:set_encoding()`]: api/buffer.html#set_encoding
+[autocompleter functions]: api/textadept.editing.html#autocompleters
+[api file format]: api/textadept.editing.html#api_files
+[`textadept.editing.autocomplete`]: api/textadept.editing.html#autocomplete
+[`textadept.editing.AUTOCOMPLETE_ALL`]: api/textadept.editing.html#AUTOCOMPLETE_ALL
+[`textadept.menu.menubar`]: api/textadept.menu.html#menubar
+[`textadept.menu.context_menu`]: api/textadept.menu.html#context_menu
+[`textadept.menu.tab_context_menu`]: api/textadept.menu.html#tab_context_menu
+[Scintilla]: http://scintilla.org
+
 ## 7.2 (01 May 2014)
 
 Download:
