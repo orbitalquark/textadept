@@ -105,8 +105,8 @@ local function command(commands, event)
 
   preferred_view = view
   local events_emit = events.emit
-  local function emit_output(output)
-    ui.SILENT_PRINT = not OSX and true
+  local function emit_output(output, focus)
+    ui.SILENT_PRINT = not focus and not OSX and true
     for line in output:gmatch('[^\r\n]+') do
       events_emit(event, data, line:iconv('UTF-8', _CHARSET))
     end
@@ -115,7 +115,7 @@ local function command(commands, event)
   local function emit_status(status) emit_output('> exit status: '..status) end
 
   if commands == M.build_commands then emit_output('> cd '..cwd) end
-  emit_output('> '..command)
+  emit_output('> '..command, true)
   local p, err = spawn(command, cwd, emit_output, emit_output, emit_status)
   if not p then error(err) end
 
