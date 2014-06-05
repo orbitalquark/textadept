@@ -154,20 +154,20 @@ local timeout
 -- The terminal version spawns processes in the same thread.
 -- @param argv A command line string containing the program's name followed by
 --   arguments to pass to it. `PATH` is searched for program names.
--- @param working_dir The child's current working directory (cwd) or `nil` to
---   inherit the parent's.
--- @param stdout_cb A Lua function that accepts a string parameter for a block
---   of standard output read from the child. Stdout is read asynchronously in
---   1KB or 0.5KB blocks (depending on the platform), or however much data is
+-- @param working_dir Optional current working directory (cwd) for the child
+--   process. The default value is `nil`, which inherits the parent's cwd.
+-- @param stdout_cb Optional Lua function that accepts a string parameter for a
+--   block of standard output read from the child. Stdout is read asynchronously
+--   in 1KB or 0.5KB blocks (depending on the platform), or however much data is
 --   available at the time.
 --   The terminal version sends all output, whether it be stdout or stderr, to
 --   this callback after the process finishes.
--- @param stderr_cb A Lua function that accepts a string parameter for a block
---   of standard error read from the child. Stderr is read asynchronously in 1KB
---   or 0.5kB blocks (depending on the platform), or however much data is
+-- @param stderr_cb Optional Lua function that accepts a string parameter for a
+--   block of standard error read from the child. Stderr is read asynchronously
+--   in 1KB or 0.5kB blocks (depending on the platform), or however much data is
 --   available at the time.
--- @param exit_cb A Lua function that is called when the child process finishes.
---   The child's exit status is passed.
+-- @param exit_cb Optional Lua function that is called when the child process
+--   finishes. The child's exit status is passed.
 -- @return proc
 -- @usage spawn('lua buffer.filename', nil, print)
 -- @usage proc = spawn('lua -e "print(io.read())", nil, print)
