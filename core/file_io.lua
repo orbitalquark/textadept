@@ -206,7 +206,7 @@ local function set_encoding(buffer, encoding)
   buffer.encoding, buffer.encoding_bom = encoding, io.boms[encoding]
 end
 -- Sets the default buffer encoding.
-events_connect(events.BUFFER_NEW, function() 
+events_connect(events.BUFFER_NEW, function()
   buffer.set_encoding, buffer.encoding = set_encoding, 'UTF-8'
 end)
 
@@ -361,7 +361,7 @@ local vcs = {'.bzr', '.git', '.hg', '.svn', 'CVS'}
 -- @param path Optional filesystem path to a project or a file contained within
 --   a project. The default value is the buffer's filename or the current
 --   working directory.
--- @return string root
+-- @return string root or nil
 -- @name get_project_root
 function io.get_project_root(path)
   local root

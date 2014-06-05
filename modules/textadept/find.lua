@@ -374,6 +374,12 @@ function M.goto_file_found(line, next)
   ui.goto_file(file:iconv(_CHARSET, 'UTF-8'), true, preferred_view)
   textadept.editing.goto_line(line_num)
 end
+events.connect(events.KEYPRESS, function(code)
+  if keys.KEYSYMS[code] == '\n' and is_ff_buf(buffer) then
+    M.goto_file_found(buffer:line_from_position(buffer.current_pos))
+    return true
+  end
+end)
 events.connect(events.DOUBLE_CLICK, function(pos, line)
   if is_ff_buf(buffer) then M.goto_file_found(line) end
 end)
