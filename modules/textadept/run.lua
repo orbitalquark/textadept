@@ -298,7 +298,7 @@ function M.goto_error(line, next)
   buffer:goto_line(line)
 
   -- Goto the warning or error and show an annotation.
-  local error = get_error(buffer:get_line(line):match('^[^\r\n]+'))
+  local error = get_error(buffer:get_line(line):match('^[^\r\n]*'))
   if not error then if CURSES then view:goto_buffer(cur_buf) end return end
   textadept.editing.select_line()
   ui.goto_file(M.cwd..error.filename, true, preferred_view, true)
@@ -309,6 +309,13 @@ function M.goto_error(line, next)
     if not error.warning then buffer.annotation_style[line - 1] = 8 end -- error
   end
 end
+events.connect(events.KEYPRESS, function(code)
+  if keys.KEYSYMS[code] == '\n' and is_msg_buf(buffer) and M.cwd and
+     get_error(buffer:get_cur_line():match('^[^\r\n]*')) then
+    M.goto_error(buffer:line_from_position(buffer.current_pos))
+    return true
+  end
+end)
 events.connect(events.DOUBLE_CLICK, function(pos, line)
   if is_msg_buf(buffer) and M.cwd then M.goto_error(line) end
 end)
