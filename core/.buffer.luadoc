@@ -3,12 +3,9 @@
 
 ---
 -- A Textadept buffer object.
--- In addition to these functions and fields, buffers also contain the constants
--- within [`_SCINTILLA.constants`][], which are too numerous to list here.
+-- Constants are documented in the fields they apply to.
 -- While you can work with individual buffer instances, it is really only useful
 -- to work with the global one.
---
--- [`_SCINTILLA.constants`]: _SCINTILLA.html#constants
 -- @field additional_caret_fore (number)
 --   The foreground color, in "0xBBGGRR" format, of additional carets.
 -- @field additional_carets_blink (bool)
@@ -304,6 +301,12 @@
 --     Draw lines below expanded folds.
 --   * `buffer.FOLDFLAG_LINEAFTER_CONTRACTED`
 --     Draw lines below collapsed folds.
+--   * `buffer.FOLDFLAG_LEVELNUMBERS`
+--     Show hexadecimal fold levels in line margins.
+--     This option cannot be combined with `FOLDFLAG_LINESTATE`.
+--   * `buffer.FOLDFLAG_LINESTATE`
+--     Show line state in line margins.
+--     This option cannot be combined with `FOLDFLAG_LEVELNUMBERS`.
 --
 --   The default value is `0`.
 -- @field fold_level (table)
@@ -825,6 +828,8 @@
 --   does not convert any of the buffer's existing indentation. Use
 --   [`textadept.editing.convert_indentation()`][] to do so.
 --   The default value is `true`.
+--
+--   [`textadept.editing.convert_indentation()`]: textadept.editing.html#convert_indentation
 -- @field v_scroll_bar (bool)
 --   Display the vertical scroll bar.
 --   The default value is `true`.
@@ -929,8 +934,350 @@
 --   The number of points to add to the size of all fonts.
 --   Negative values are allowed.
 --   The default value is `0`.
+-- @field ANNOTATION_BOXED (number, Read-only)
 --
--- [`textadept.editing.convert_indentation()`]: textadept.editing.html#convert_indentation
+-- @field ANNOTATION_HIDDEN (number, Read-only)
+--
+-- @field ANNOTATION_STANDARD (number, Read-only)
+--
+-- @field CARETSTYLE_BLOCK (number, Read-only)
+--
+-- @field CARETSTYLE_INVISIBLE (number, Read-only)
+--
+-- @field CARETSTYLE_LINE (number, Read-only)
+--
+-- @field CARET_EVEN (number, Read-only)
+--
+-- @field CARET_JUMPS (number, Read-only)
+--
+-- @field CARET_SLOP (number, Read-only)
+--
+-- @field CARET_STRICT (number, Read-only)
+--
+-- @field EDGE_BACKGROUND (number, Read-only)
+--
+-- @field EDGE_LINE (number, Read-only)
+--
+-- @field EDGE_NONE (number, Read-only)
+--
+-- @field INDIC_BOX (number, Read-only)
+--
+-- @field INDIC_COMPOSITIONTHICK (number, Read-only)
+--
+-- @field INDIC_DASH (number, Read-only)
+--
+-- @field INDIC_DIAGONAL (number, Read-only)
+--
+-- @field INDIC_DOTBOX (number, Read-only)
+--
+-- @field INDIC_DOTS (number, Read-only)
+--
+-- @field INDIC_HIDDEN (number, Read-only)
+--
+-- @field INDIC_MAX (number, Read-only)
+--
+-- @field INDIC_PLAIN (number, Read-only)
+--
+-- @field INDIC_ROUNDBOX (number, Read-only)
+--
+-- @field INDIC_SQUIGGLE (number, Read-only)
+--
+-- @field INDIC_SQUIGGLELOW (number, Read-only)
+--
+-- @field INDIC_SQUIGGLEPIXMAP (number, Read-only)
+--
+-- @field INDIC_STRAIGHTBOX (number, Read-only)
+--
+-- @field INDIC_STRIKE (number, Read-only)
+--
+-- @field INDIC_TT (number, Read-only)
+--
+-- @field FIND_MATCHCASE (number, Read-only)
+--
+-- @field FIND_REGEXP (number, Read-only)
+--
+-- @field FIND_WHOLEWORD (number, Read-only)
+--
+-- @field FIND_WORDSTART (number, Read-only)
+--
+-- @field MOD_ALT (number, Read-only)
+--
+-- @field MOD_CTRL (number, Read-only)
+--
+-- @field MOD_META (number, Read-only)
+--
+-- @field MOD_SHIFT (number, Read-only)
+--
+-- @field MOD_SUPER (number, Read-only)
+--
+-- @field VS_NONE (number, Read-only)
+--
+-- @field VS_RECTANGULARSELECTION (number, Read-only)
+--
+-- @field VS_USERACCESSIBLE (number, Read-only)
+--
+-- @field WS_INVISIBLE (number, Read-only)
+--
+-- @field WS_VISIBLEAFTERINDENT (number, Read-only)
+--
+-- @field WS_VISIBLEALWAYS (number, Read-only)
+--
+-- @field ALPHA_NOALPHA (number, Read-only)
+--
+-- @field ALPHA_OPAQUE (number, Read-only)
+--
+-- @field ALPHA_TRANSPARENT (number, Read-only)
+--
+-- @field AUTOMATICFOLD_CHANGE (number, Read-only)
+--
+-- @field AUTOMATICFOLD_CLICK (number, Read-only)
+--
+-- @field AUTOMATICFOLD_SHOW (number, Read-only)
+--
+-- @field CARETSTICKY_OFF (number, Read-only)
+--
+-- @field CARETSTICKY_ON (number, Read-only)
+--
+-- @field CARETSTICKY_WHITESPACE (number, Read-only)
+--
+-- @field CASEINSENSITIVEBEHAVIOUR_IGNORECASE (number, Read-only)
+--
+-- @field CASEINSENSITIVEBEHAVIOUR_RESPECTCASE (number, Read-only)
+--
+-- @field CASE_LOWER (number, Read-only)
+--
+-- @field CASE_MIXED (number, Read-only)
+--
+-- @field CASE_UPPER (number, Read-only)
+--
+-- @field CURSORARROW (number, Read-only)
+--
+-- @field CURSORNORMAL (number, Read-only)
+--
+-- @field CURSORREVERSEARROW (number, Read-only)
+--
+-- @field CURSORWAIT (number, Read-only)
+--
+-- @field EOL_CR (number, Read-only)
+--
+-- @field EOL_CRLF (number, Read-only)
+--
+-- @field EOL_LF (number, Read-only)
+--
+-- @field FOLDACTION_CONTRACT (number, Read-only)
+--
+-- @field FOLDACTION_EXPAND (number, Read-only)
+--
+-- @field FOLDACTION_TOGGLE (number, Read-only)
+--
+-- @field FOLDFLAG_LEVELNUMBERS (number, Read-only)
+--
+-- @field FOLDFLAG_LINEAFTER_CONTRACTED (number, Read-only)
+--
+-- @field FOLDFLAG_LINEAFTER_EXPANDED (number, Read-only)
+--
+-- @field FOLDFLAG_LINEBEFORE_CONTRACTED (number, Read-only)
+--
+-- @field FOLDFLAG_LINEBEFORE_EXPANDED (number, Read-only)
+--
+-- @field FOLDFLAG_LINESTATE (number, Read-only)
+--
+-- @field FOLDLEVELBASE (number, Read-only)
+--
+-- @field FOLDLEVELHEADERFLAG (number, Read-only)
+--
+-- @field FOLDLEVELNUMBERMASK (number, Read-only)
+--
+-- @field FOLDLEVELWHITEFLAG (number, Read-only)
+--
+-- @field IV_LOOKBOTH (number, Read-only)
+--
+-- @field IV_LOOKFORWARD (number, Read-only)
+--
+-- @field IV_NONE (number, Read-only)
+--
+-- @field IV_REAL (number, Read-only)
+--
+-- @field MARGINOPTION_NONE (number, Read-only)
+--
+-- @field MARGINOPTION_SUBLINESELECT (number, Read-only)
+--
+-- @field MARGIN_BACK (number, Read-only)
+--
+-- @field MARGIN_FORE (number, Read-only)
+--
+-- @field MARGIN_NUMBER (number, Read-only)
+--
+-- @field MARGIN_RTEXT (number, Read-only)
+--
+-- @field MARGIN_SYMBOL (number, Read-only)
+--
+-- @field MARGIN_TEXT (number, Read-only)
+--
+-- @field MARKER_MAX (number, Read-only)
+--
+-- @field MARKNUM_FOLDER (number, Read-only)
+--
+-- @field MARKNUM_FOLDEREND (number, Read-only)
+--
+-- @field MARKNUM_FOLDERMIDTAIL (number, Read-only)
+--
+-- @field MARKNUM_FOLDEROPEN (number, Read-only)
+--
+-- @field MARKNUM_FOLDEROPENMID (number, Read-only)
+--
+-- @field MARKNUM_FOLDERSUB (number, Read-only)
+--
+-- @field MARKNUM_FOLDERTAIL (number, Read-only)
+--
+-- @field MARK_ARROW (number, Read-only)
+--
+-- @field MARK_ARROWDOWN (number, Read-only)
+--
+-- @field MARK_ARROWS (number, Read-only)
+--
+-- @field MARK_AVAILABLE (number, Read-only)
+--
+-- @field MARK_BACKGROUND (number, Read-only)
+--
+-- @field MARK_BOOKMARK (number, Read-only)
+--
+-- @field MARK_BOXMINUS (number, Read-only)
+--
+-- @field MARK_BOXMINUSCONNECTED (number, Read-only)
+--
+-- @field MARK_BOXPLUS (number, Read-only)
+--
+-- @field MARK_BOXPLUSCONNECTED (number, Read-only)
+--
+-- @field MARK_CHARACTER (number, Read-only)
+--
+-- @field MARK_CIRCLE (number, Read-only)
+--
+-- @field MARK_CIRCLEMINUS (number, Read-only)
+--
+-- @field MARK_CIRCLEMINUSCONNECTED (number, Read-only)
+--
+-- @field MARK_CIRCLEPLUS (number, Read-only)
+--
+-- @field MARK_CIRCLEPLUSCONNECTED (number, Read-only)
+--
+-- @field MARK_DOTDOTDOT (number, Read-only)
+--
+-- @field MARK_EMPTY (number, Read-only)
+--
+-- @field MARK_FULLRECT (number, Read-only)
+--
+-- @field MARK_LCORNER (number, Read-only)
+--
+-- @field MARK_LCORNERCURVE (number, Read-only)
+--
+-- @field MARK_LEFTRECT (number, Read-only)
+--
+-- @field MARK_MINUS (number, Read-only)
+--
+-- @field MARK_PIXMAP (number, Read-only)
+--
+-- @field MARK_PLUS (number, Read-only)
+--
+-- @field MARK_RGBAIMAGE (number, Read-only)
+--
+-- @field MARK_ROUNDRECT (number, Read-only)
+--
+-- @field MARK_SHORTARROW (number, Read-only)
+--
+-- @field MARK_SMALLRECT (number, Read-only)
+--
+-- @field MARK_TCORNER (number, Read-only)
+--
+-- @field MARK_TCORNERCURVE (number, Read-only)
+--
+-- @field MARK_UNDERLINE (number, Read-only)
+--
+-- @field MARK_VLINE (number, Read-only)
+--
+-- @field MASK_FOLDERS (number, Read-only)
+--
+-- @field MULTIAUTOC_EACH (number, Read-only)
+--
+-- @field MULTIAUTOC_ONCE (number, Read-only)
+--
+-- @field MULTIPASTE_EACH (number, Read-only)
+--
+-- @field MULTIPASTE_ONCE (number, Read-only)
+--
+-- @field ORDER_CUSTOM (number, Read-only)
+--
+-- @field ORDER_PERFORMSORT (number, Read-only)
+--
+-- @field ORDER_PRESORTED (number, Read-only)
+--
+-- @field SEL_LINES (number, Read-only)
+--
+-- @field SEL_RECTANGLE (number, Read-only)
+--
+-- @field SEL_STREAM (number, Read-only)
+--
+-- @field SEL_THIN (number, Read-only)
+--
+-- @field TIME_FOREVER (number, Read-only)
+--
+-- @field UPDATE_CONTENT (number, Read-only)
+--
+-- @field UPDATE_H_SCROLL (number, Read-only)
+--
+-- @field UPDATE_SELECTION (number, Read-only)
+--
+-- @field UPDATE_V_SCROLL (number, Read-only)
+--
+-- @field WRAPINDENT_FIXED (number, Read-only)
+--
+-- @field WRAPINDENT_INDENT (number, Read-only)
+--
+-- @field WRAPINDENT_SAME (number, Read-only)
+--
+-- @field WRAPVISUALFLAGLOC_DEFAULT (number, Read-only)
+--
+-- @field WRAPVISUALFLAGLOC_END_BY_TEXT (number, Read-only)
+--
+-- @field WRAPVISUALFLAGLOC_START_BY_TEXT (number, Read-only)
+--
+-- @field WRAPVISUALFLAG_END (number, Read-only)
+--
+-- @field WRAPVISUALFLAG_MARGIN (number, Read-only)
+--
+-- @field WRAPVISUALFLAG_NONE (number, Read-only)
+--
+-- @field WRAPVISUALFLAG_START (number, Read-only)
+--
+-- @field WRAP_CHAR (number, Read-only)
+--
+-- @field WRAP_NONE (number, Read-only)
+--
+-- @field WRAP_WHITESPACE (number, Read-only)
+--
+-- @field WRAP_WORD (number, Read-only)
+--
+-- @field STYLE_BRACEBAD (number, Read-only)
+--
+-- @field STYLE_BRACELIGHT (number, Read-only)
+--
+-- @field STYLE_CALLTIP (number, Read-only)
+--
+-- @field STYLE_CONTROLCHAR (number, Read-only)
+--
+-- @field STYLE_DEFAULT (number, Read-only)
+--
+-- @field STYLE_INDENTGUIDE (number, Read-only)
+--
+-- @field STYLE_LINENUMBER (number, Read-only)
+--
+-- @field STYLE_MAX (number, Read-only)
+--
+-- @field VISIBLE_SLOP (number, Read-only)
+--
+-- @field VISIBLE_STRICT (number, Read-only)
+--
 module('buffer')
 
 ---
@@ -2781,6 +3128,33 @@ function set_lexer(buffer, lexer) end
 --   * sub_styles_start
 --   * technology
 --   * use_palette
+--   * INDIC_CONTAINER
+--   * MOD_NORM
+--   * CP_UTF8
+--   * LASTSTEPINUNDOREDO
+--   * MAX_MARGIN
+--   * MODEVENTMASKALL
+--   * MOD_BEFOREDELETE
+--   * MOD_BEFOREINSERT
+--   * MOD_CHANGEANNOTATION
+--   * MOD_CHANGEFOLD
+--   * MOD_CHANGEINDICATOR
+--   * MOD_CHANGELINESTATE
+--   * MOD_CHANGEMARGIN
+--   * MOD_CHANGEMARKER
+--   * MOD_CHANGESTYLE
+--   * MOD_CONTAINER
+--   * MOD_DELETETEXT
+--   * MOD_INSERTCHECK
+--   * MOD_INSERTTEXT
+--   * MOD_LEXERSTATE
+--   * MULTILINEUNDOREDO
+--   * MULTISTEPUNDOREDO
+--   * PERFORMED_REDO
+--   * PERFORMED_UNDO
+--   * PERFORMED_USER
+--   * STARTACTION
+--   * STYLE_LASTPREDEFINED
 
 -- Unused Functions.
 --   * add_ref_document

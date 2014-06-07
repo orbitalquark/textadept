@@ -341,15 +341,15 @@ clean:
 
 # Documentation.
 
-doc: rootdoc manual luadoc adeptsense
+doc: rootdoc manual luadoc tadoc
 rootdoc: ../*.md
 	$(bombay) -d ../doc -t ../doc --title Textadept --navtitle '' $^
 manual: ../doc/*.md
 	$(bombay) -d ../doc -t ../doc --title Textadept --navtitle Manual $^
 luadoc: ../modules ../core ../lexers
 	cd ../doc && $(luadoc) -d . -t . --doclet markdowndoc $^/lexer.lua
-adeptsense: ../modules ../core ../lexers
-	cd ../modules && $(luadoc) -d lua --doclet lua/adeptsensedoc $^/lexer.lua
+tadoc: ../modules ../core ../lexers
+	cd ../modules && $(luadoc) -d lua --doclet lua/tadoc $^/lexer.lua
 cleandoc: ; rm -rf ../doc/*.html ../doc/api
 
 # Releases.
