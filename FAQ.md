@@ -73,10 +73,19 @@ the problematic file.
 - - -
 
 **Q:**
+Why can't Textadept handle HUGE files very well?
+
+**A:**
+Textadept is an editor for programmers. It is unlikely a programmer would be
+editing a gigantic log file. There are other tools for that case.
+
+- - -
+
+**Q:**
 When I open a file in a non-English language, I see a lot of strange characters.
 
 **A:**
-Textadept does not detect the file's encoding correctly. You'll need to
+Textadept was not able to detect the file's encoding correctly. You'll need to
 [help it][].
 
 [help it]: 04_WorkingWithFiles.html#Encodings
