@@ -218,6 +218,18 @@ local M = {}
 --   Emitted after reaching a save point.
 -- @field UPDATE_UI (string)
 --   Emitted after the view is visually updated.
+--   Arguments:
+--
+--   * _`updated`_: A bitmask of changes since the last update.
+--
+--     + `buffer.UPDATE_CONTENT`
+--       Buffer contents, styling, or markers have changed.
+--     + `buffer.UPDATE_SELECTION`
+--       Buffer selection has changed.
+--     + `buffer.UPDATE_V_SCROLL`
+--       Buffer has scrolled vertically.
+--     + `buffer.UPDATE_H_SCROLL`
+--       Buffer has scrolled horizontally.
 -- @field URI_DROPPED (string)
 --   Emitted after dragging and dropping a URI into a view.
 --   Arguments:
@@ -328,7 +340,7 @@ local scnotifications = {
   [c.SCN_SAVEPOINTREACHED] = {'save_point_reached'},
   [c.SCN_SAVEPOINTLEFT] = {'save_point_left'},
   [c.SCN_DOUBLECLICK] = {'double_click', 'position', 'line', 'modifiers'},
-  [c.SCN_UPDATEUI] = {'update_ui'},
+  [c.SCN_UPDATEUI] = {'update_ui', 'updated'},
   [c.SCN_MODIFIED] = {'modified', 'modification_type'}, -- undocumented
   [c.SCN_MARGINCLICK] = {'margin_click', 'margin', 'position', 'modifiers'},
   [c.SCN_USERLISTSELECTION] = {
