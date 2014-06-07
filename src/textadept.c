@@ -1931,6 +1931,10 @@ static void lL_notify(lua_State *L, struct SCNotification *n) {
   lua_pushinteger(L, n->margin), lua_setfield(L, -2, "margin");
   lua_pushinteger(L, n->x), lua_setfield(L, -2, "x");
   lua_pushinteger(L, n->y), lua_setfield(L, -2, "y");
+  //lua_pushinteger(L, n->token), lua_setfield(L, -2, "token");
+  //lua_pushinteger(L, n->annotationLinesAdded);
+  //lua_setfield(L, -2, "annotation_lines_added");
+  lua_pushinteger(L, n->updated), lua_setfield(L, -2, "updated");
   lL_event(L, "SCN", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
 }
 
