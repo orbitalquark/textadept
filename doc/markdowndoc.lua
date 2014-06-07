@@ -269,6 +269,9 @@ function M.start(doc)
     p:close()
     template.toc = template.toc:gsub('(<a.-)%b()(</a>)', '%1%2') -- strip params
                                :gsub('<code>([^<]+)</code>', '%1') -- sans serif
+                               :gsub('>CASEINSEN[%w_]+', '><small%0</small>')
+                               :gsub('>FOLDFLAG_[%w_]+', '><small%0</small>')
+                               :gsub('>WRAPVISUAL[%w_]+', '><small%0</small>')
                                :gsub('>rectangular_[%w_]+', '><small%0</small>')
                                :gsub('>_G.(events.[%w_]+)',
                                      '><small>%1</small>')

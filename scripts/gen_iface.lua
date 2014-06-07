@@ -93,7 +93,6 @@ local events = {
 }
 for event, value in pairs(events) do
   constants[#constants + 1] = string_format('%s=%d', event, value)
-  fielddoc[#fielddoc + 1] = string_format('-- * `%s.%s` %d', s, event, value)
 end
 
 -- Write constants.
@@ -102,6 +101,7 @@ f:write [[
 -- Map of Scintilla constant names to their numeric values.
 -- @class table
 -- @name constants
+-- @see _G.buffer
 M.constants = {]]
 f:write(table.concat(constants, ','))
 f:write('}\n\n')
@@ -210,15 +210,4 @@ end
 return M
 ]]
 
-f:close()
-
-f = io.open('../core/._SCINTILLA.luadoc', 'wb')
-f:write [[
--- Copyright 2007-2014 Mitchell mitchell.att.foicica.com. See LICENSE.
--- This is a DUMMY FILE used for making Adeptsense for built-in constants in the
--- global _SCINTILLA.constants table.
-
-]]
-f:write(table.concat(fielddoc, '\n'))
-f:write('\n')
 f:close()

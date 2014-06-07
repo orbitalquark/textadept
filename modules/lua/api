@@ -1,16 +1,16 @@
-ALPHA_NOALPHA _SCINTILLA.constants.ALPHA_NOALPHA\n256
-ALPHA_OPAQUE _SCINTILLA.constants.ALPHA_OPAQUE\n255
-ALPHA_TRANSPARENT _SCINTILLA.constants.ALPHA_TRANSPARENT\n0
-ANNOTATION_BOXED _SCINTILLA.constants.ANNOTATION_BOXED\n2
-ANNOTATION_HIDDEN _SCINTILLA.constants.ANNOTATION_HIDDEN\n0
-ANNOTATION_STANDARD _SCINTILLA.constants.ANNOTATION_STANDARD\n1
+ALPHA_NOALPHA buffer.ALPHA_NOALPHA (number, Read-only)\n
+ALPHA_OPAQUE buffer.ALPHA_OPAQUE (number, Read-only)\n
+ALPHA_TRANSPARENT buffer.ALPHA_TRANSPARENT (number, Read-only)\n
+ANNOTATION_BOXED buffer.ANNOTATION_BOXED (number, Read-only)\n
+ANNOTATION_HIDDEN buffer.ANNOTATION_HIDDEN (number, Read-only)\n
+ANNOTATION_STANDARD buffer.ANNOTATION_STANDARD (number, Read-only)\n
 APPLEEVENT_ODOC events.APPLEEVENT_ODOC (string)\nEmitted when Mac OSX tells Textadept to open a file.\nArguments:\n\n* _`uri`_: The UTF-8-encoded URI to open.
 ARG_NONE events.ARG_NONE (string)\nEmitted when no command line arguments are passed to Textadept on startup.
 AUTOCOMPLETE_ALL textadept.editing.AUTOCOMPLETE_ALL (bool)\nAutocomplete the current word using words from all open buffers.\nIf `true`, performance may be slow when many buffers are open.\nThe default value is `false`.
 AUTOINDENT textadept.editing.AUTOINDENT (bool)\nMatch the previous line's indentation level after inserting a new line.\nThe default value is `true`.
-AUTOMATICFOLD_CHANGE _SCINTILLA.constants.AUTOMATICFOLD_CHANGE\n4
-AUTOMATICFOLD_CLICK _SCINTILLA.constants.AUTOMATICFOLD_CLICK\n2
-AUTOMATICFOLD_SHOW _SCINTILLA.constants.AUTOMATICFOLD_SHOW\n1
+AUTOMATICFOLD_CHANGE buffer.AUTOMATICFOLD_CHANGE (number, Read-only)\n
+AUTOMATICFOLD_CLICK buffer.AUTOMATICFOLD_CLICK (number, Read-only)\n
+AUTOMATICFOLD_SHOW buffer.AUTOMATICFOLD_SHOW (number, Read-only)\n
 AUTOPAIR textadept.editing.AUTOPAIR (bool)\nAutomatically close opening brace and quote characters with their\ncomplements.\nThe default value is `true`.\nAuto-paired characters are defined in the `char_matches`\ntable.
 AUTO_C_CANCELED events.AUTO_C_CANCELED (string)\nEmitted when canceling an autocompletion or user list.
 AUTO_C_CHAR_DELETED events.AUTO_C_CHAR_DELETED (string)\nEmitted after deleting a character while an autocompletion or user list is\nactive.
@@ -23,21 +23,21 @@ BUFFER_NEW events.BUFFER_NEW (string)\nEmitted after creating a new buffer.\nEmi
 BUILD_OUTPUT events.BUILD_OUTPUT (string)\nEmitted when executing a project's build shell command.\nBy default, output is printed to the message buffer. To override this\nbehavior, connect to the event with an index of `1` and return `true`.\nArguments:\n\n* `project`: The path to the project being built.\n* `output`: A line of string output from the command.
 C lpeg.C(patt)\nCreates a simple capture, which captures the substring of the subject that\nmatches `patt`. The captured value is a string. If `patt` has other captures,\ntheir values are returned after this one.
 CALL_TIP_CLICK events.CALL_TIP_CLICK (string)\nEmitted when clicking on a calltip.\nArguments:\n\n* _`position`_: `1` if the up arrow was clicked, 2 if the down arrow was\n  clicked, and 0 otherwise.
-CARETSTICKY_OFF _SCINTILLA.constants.CARETSTICKY_OFF\n0
-CARETSTICKY_ON _SCINTILLA.constants.CARETSTICKY_ON\n1
-CARETSTICKY_WHITESPACE _SCINTILLA.constants.CARETSTICKY_WHITESPACE\n2
-CARETSTYLE_BLOCK _SCINTILLA.constants.CARETSTYLE_BLOCK\n2
-CARETSTYLE_INVISIBLE _SCINTILLA.constants.CARETSTYLE_INVISIBLE\n0
-CARETSTYLE_LINE _SCINTILLA.constants.CARETSTYLE_LINE\n1
-CARET_EVEN _SCINTILLA.constants.CARET_EVEN\n8
-CARET_JUMPS _SCINTILLA.constants.CARET_JUMPS\n16
-CARET_SLOP _SCINTILLA.constants.CARET_SLOP\n1
-CARET_STRICT _SCINTILLA.constants.CARET_STRICT\n4
-CASEINSENSITIVEBEHAVIOUR_IGNORECASE _SCINTILLA.constants.CASEINSENSITIVEBEHAVIOUR_IGNORECASE\n1
-CASEINSENSITIVEBEHAVIOUR_RESPECTCASE _SCINTILLA.constants.CASEINSENSITIVEBEHAVIOUR_RESPECTCASE\n0
-CASE_LOWER _SCINTILLA.constants.CASE_LOWER\n2
-CASE_MIXED _SCINTILLA.constants.CASE_MIXED\n0
-CASE_UPPER _SCINTILLA.constants.CASE_UPPER\n1
+CARETSTICKY_OFF buffer.CARETSTICKY_OFF (number, Read-only)\n
+CARETSTICKY_ON buffer.CARETSTICKY_ON (number, Read-only)\n
+CARETSTICKY_WHITESPACE buffer.CARETSTICKY_WHITESPACE (number, Read-only)\n
+CARETSTYLE_BLOCK buffer.CARETSTYLE_BLOCK (number, Read-only)\n
+CARETSTYLE_INVISIBLE buffer.CARETSTYLE_INVISIBLE (number, Read-only)\n
+CARETSTYLE_LINE buffer.CARETSTYLE_LINE (number, Read-only)\n
+CARET_EVEN buffer.CARET_EVEN (number, Read-only)\n
+CARET_JUMPS buffer.CARET_JUMPS (number, Read-only)\n
+CARET_SLOP buffer.CARET_SLOP (number, Read-only)\n
+CARET_STRICT buffer.CARET_STRICT (number, Read-only)\n
+CASEINSENSITIVEBEHAVIOUR_IGNORECASE buffer.CASEINSENSITIVEBEHAVIOUR_IGNORECASE (number, Read-only)\n
+CASEINSENSITIVEBEHAVIOUR_RESPECTCASE buffer.CASEINSENSITIVEBEHAVIOUR_RESPECTCASE (number, Read-only)\n
+CASE_LOWER buffer.CASE_LOWER (number, Read-only)\n
+CASE_MIXED buffer.CASE_MIXED (number, Read-only)\n
+CASE_UPPER buffer.CASE_UPPER (number, Read-only)\n
 CHAR_ADDED events.CHAR_ADDED (string)\nEmitted after the user types a text character into the buffer.\nArguments:\n\n* _`byte`_: The text character's byte.
 CHECK_SYNTAX _M.python.CHECK_SYNTAX (bool)\nWhether or not to invoke Python to check the syntax of the current file\nwhen saving it.\nThe default value is `true`.
 CLASS lexer.CLASS (string)\nThe token name for class tokens.
@@ -47,12 +47,11 @@ COMMAND_ENTRY_KEYPRESS events.COMMAND_ENTRY_KEYPRESS (string)\nEmitted when pres
 COMMENT lexer.COMMENT (string)\nThe token name for comment tokens.
 COMPILE_OUTPUT events.COMPILE_OUTPUT (string)\nEmitted when executing a language's compile shell command.\nBy default, compiler output is printed to the message buffer. To override\nthis behavior, connect to the event with an index of `1` and return `true`.\nArguments:\n\n* `lexer`: The language's lexer name.\n* `output`: A line of string output from the command.
 CONSTANT lexer.CONSTANT (string)\nThe token name for constant tokens.
-CP_UTF8 _SCINTILLA.constants.CP_UTF8\n65001
 CURSES _G.CURSES (bool)\nWhether or not Textadept is running in the terminal.\nCurses feature incompatibilities are listed in the Appendix.
-CURSORARROW _SCINTILLA.constants.CURSORARROW\n2
-CURSORNORMAL _SCINTILLA.constants.CURSORNORMAL\n-1
-CURSORREVERSEARROW _SCINTILLA.constants.CURSORREVERSEARROW\n7
-CURSORWAIT _SCINTILLA.constants.CURSORWAIT\n4
+CURSORARROW buffer.CURSORARROW (number, Read-only)\n
+CURSORNORMAL buffer.CURSORNORMAL (number, Read-only)\n
+CURSORREVERSEARROW buffer.CURSORREVERSEARROW (number, Read-only)\n
+CURSORWAIT buffer.CURSORWAIT (number, Read-only)\n
 Carg lpeg.Carg(n)\nCreates an argument capture. This pattern matches the empty string and\nproduces the value given as the nth extra argument given in the call to\n`lpeg.match`.
 Cb lpeg.Cb(name)\nCreates a back capture. This pattern matches the empty string and produces\nthe values produced by the most recent group capture named `name`.\n\nMost recent means the last complete outermost group capture with the given\nname. A Complete capture means that the entire pattern corresponding to the\ncapture has matched. An Outermost capture means that the capture is not\ninside another complete capture.
 Cc lpeg.Cc([value, ...])\nCreates a constant capture. This pattern matches the empty string and\nproduces all given values as its captured values.
@@ -68,12 +67,12 @@ DOCUTILS_PATH _M.rest.DOCUTILS_PATH (string)\nThe absolute path to the directory
 DOUBLE_CLICK events.DOUBLE_CLICK (string)\nEmitted after double-clicking the mouse button.\nArguments:\n\n* _`position`_: The position double-clicked.\n* _`line`_: The line number of the position double-clicked.\n* _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,\n  `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.\n  Note: If you set `buffer.rectangular_selection_modifier` to\n  `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"\n  and "Alt" due to a Scintilla limitation with GTK+.
 DWELL_END events.DWELL_END (string)\nEmitted after `DWELL_START` when the user moves the mouse, presses a key,\nor scrolls the view.\nArguments:\n\n* _`position`_: The position closest to *x* and *y*.\n* _`x`_: The x-coordinate of the mouse in the view.\n* _`y`_: The y-coordinate of the mouse in the view.
 DWELL_START events.DWELL_START (string)\nEmitted when the mouse is stationary for `buffer.mouse_dwell_time`\nmilliseconds.\nArguments:\n\n* _`position`_: The position closest to *x* and *y*.\n* _`x`_: The x-coordinate of the mouse in the view.\n* _`y`_: The y-coordinate of the mouse in the view.
-EDGE_BACKGROUND _SCINTILLA.constants.EDGE_BACKGROUND\n2
-EDGE_LINE _SCINTILLA.constants.EDGE_LINE\n1
-EDGE_NONE _SCINTILLA.constants.EDGE_NONE\n0
-EOL_CR _SCINTILLA.constants.EOL_CR\n1
-EOL_CRLF _SCINTILLA.constants.EOL_CRLF\n0
-EOL_LF _SCINTILLA.constants.EOL_LF\n2
+EDGE_BACKGROUND buffer.EDGE_BACKGROUND (number, Read-only)\n
+EDGE_LINE buffer.EDGE_LINE (number, Read-only)\n
+EDGE_NONE buffer.EDGE_NONE (number, Read-only)\n
+EOL_CR buffer.EOL_CR (number, Read-only)\n
+EOL_CRLF buffer.EOL_CRLF (number, Read-only)\n
+EOL_LF buffer.EOL_LF (number, Read-only)\n
 ERROR events.ERROR (string)\nEmitted when an error occurs.\nArguments:\n\n* _`text`_: The error message text.
 ERROR lexer.ERROR (string)\nThe token name for error tokens.
 FILE_AFTER_SAVE events.FILE_AFTER_SAVE (string)\nEmitted right after saving a file to disk.\nEmitted by `io.save_file()`.\nArguments:\n\n* _`filename`_: The filename of the file being saved.
@@ -84,24 +83,24 @@ FILE_SAVED_AS events.FILE_SAVED_AS (string)\nEmitted after saving a file under a
 FILTER lfs.FILTER (table)\nThe filter table containing common binary file extensions and version control\ndirectories to exclude when iterating over files and directories using\n`dir_foreach` when its `exclude_FILTER` argument is `false`.\n@see dir_foreach
 FILTER ui.find.FILTER (table)\nThe table of Lua patterns matching files and directories to exclude when\nfinding in files.\nThe filter contains Lua patterns that match filenames to exclude, an optional\n`folders` sub-table that contains patterns matching directories to exclude,\nand an optional `extensions` sub-table that contains raw file extensions to\nexclude. Any patterns starting with '!' exclude files and directories that do\nnot match the pattern that follows.\nThe default value is `lfs.FILTER`, a filter for common binary file extensions\nand version control directories.\n@see find_in_files
 FIND events.FIND (string)\nEmitted to find text via the Find & Replace Pane.\nArguments:\n\n* _`text`_: The text to search for.\n* _`next`_: Whether or not to search forward.
-FIND_MATCHCASE _SCINTILLA.constants.FIND_MATCHCASE\n4
-FIND_REGEXP _SCINTILLA.constants.FIND_REGEXP\n6291456
-FIND_WHOLEWORD _SCINTILLA.constants.FIND_WHOLEWORD\n2
-FIND_WORDSTART _SCINTILLA.constants.FIND_WORDSTART\n1048576
+FIND_MATCHCASE buffer.FIND_MATCHCASE (number, Read-only)\n
+FIND_REGEXP buffer.FIND_REGEXP (number, Read-only)\n
+FIND_WHOLEWORD buffer.FIND_WHOLEWORD (number, Read-only)\n
+FIND_WORDSTART buffer.FIND_WORDSTART (number, Read-only)\n
 FIND_WRAPPED events.FIND_WRAPPED (string)\nEmitted when a text search wraps (passes through the beginning of the\nbuffer), either from bottom to top (when searching for a next occurrence),\nor from top to bottom (when searching for a previous occurrence).\nThis is useful for implementing a more visual or audible notice when a\nsearch wraps in addition to the statusbar message.
-FOLDACTION_CONTRACT _SCINTILLA.constants.FOLDACTION_CONTRACT\n0
-FOLDACTION_EXPAND _SCINTILLA.constants.FOLDACTION_EXPAND\n1
-FOLDACTION_TOGGLE _SCINTILLA.constants.FOLDACTION_TOGGLE\n2
-FOLDFLAG_LEVELNUMBERS _SCINTILLA.constants.FOLDFLAG_LEVELNUMBERS\n64
-FOLDFLAG_LINEAFTER_CONTRACTED _SCINTILLA.constants.FOLDFLAG_LINEAFTER_CONTRACTED\n16
-FOLDFLAG_LINEAFTER_EXPANDED _SCINTILLA.constants.FOLDFLAG_LINEAFTER_EXPANDED\n8
-FOLDFLAG_LINEBEFORE_CONTRACTED _SCINTILLA.constants.FOLDFLAG_LINEBEFORE_CONTRACTED\n4
-FOLDFLAG_LINEBEFORE_EXPANDED _SCINTILLA.constants.FOLDFLAG_LINEBEFORE_EXPANDED\n2
-FOLDFLAG_LINESTATE _SCINTILLA.constants.FOLDFLAG_LINESTATE\n128
-FOLDLEVELBASE _SCINTILLA.constants.FOLDLEVELBASE\n1024
-FOLDLEVELHEADERFLAG _SCINTILLA.constants.FOLDLEVELHEADERFLAG\n8192
-FOLDLEVELNUMBERMASK _SCINTILLA.constants.FOLDLEVELNUMBERMASK\n4095
-FOLDLEVELWHITEFLAG _SCINTILLA.constants.FOLDLEVELWHITEFLAG\n4096
+FOLDACTION_CONTRACT buffer.FOLDACTION_CONTRACT (number, Read-only)\n
+FOLDACTION_EXPAND buffer.FOLDACTION_EXPAND (number, Read-only)\n
+FOLDACTION_TOGGLE buffer.FOLDACTION_TOGGLE (number, Read-only)\n
+FOLDFLAG_LEVELNUMBERS buffer.FOLDFLAG_LEVELNUMBERS (number, Read-only)\n
+FOLDFLAG_LINEAFTER_CONTRACTED buffer.FOLDFLAG_LINEAFTER_CONTRACTED (number, Read-only)\n
+FOLDFLAG_LINEAFTER_EXPANDED buffer.FOLDFLAG_LINEAFTER_EXPANDED (number, Read-only)\n
+FOLDFLAG_LINEBEFORE_CONTRACTED buffer.FOLDFLAG_LINEBEFORE_CONTRACTED (number, Read-only)\n
+FOLDFLAG_LINEBEFORE_EXPANDED buffer.FOLDFLAG_LINEBEFORE_EXPANDED (number, Read-only)\n
+FOLDFLAG_LINESTATE buffer.FOLDFLAG_LINESTATE (number, Read-only)\n
+FOLDLEVELBASE buffer.FOLDLEVELBASE (number, Read-only)\n
+FOLDLEVELHEADERFLAG buffer.FOLDLEVELHEADERFLAG (number, Read-only)\n
+FOLDLEVELNUMBERMASK buffer.FOLDLEVELNUMBERMASK (number, Read-only)\n
+FOLDLEVELWHITEFLAG buffer.FOLDLEVELWHITEFLAG (number, Read-only)\n
 FOLD_BASE lexer.FOLD_BASE (number)\nThe initial (root) fold level.
 FOLD_BLANK lexer.FOLD_BLANK (number)\nFlag indicating that the line is blank.
 FOLD_HEADER lexer.FOLD_HEADER (number)\nFlag indicating the line is fold point.
@@ -112,135 +111,111 @@ HOTSPOT_RELEASE_CLICK events.HOTSPOT_RELEASE_CLICK (string)\nEmitted when releas
 IDENTIFIER lexer.IDENTIFIER (string)\nThe token name for identifier tokens.
 INDICATOR_CLICK events.INDICATOR_CLICK (string)\nEmitted when clicking the mouse on text that has an indicator present.\nArguments:\n\n* _`position`_: The clicked text's position.\n* _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,\n  `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.\n  Note: If you set `buffer.rectangular_selection_modifier` to\n  `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"\n  and "Alt" due to a Scintilla limitation with GTK+.
 INDICATOR_RELEASE events.INDICATOR_RELEASE (string)\nEmitted when releasing the mouse after clicking on text that has an\nindicator present.\nArguments:\n\n* _`position`_: The clicked text's position.
-INDIC_BOX _SCINTILLA.constants.INDIC_BOX\n6
+INDIC_BOX buffer.INDIC_BOX (number, Read-only)\n
 INDIC_BRACEMATCH textadept.editing.INDIC_BRACEMATCH (number)\nThe matching brace highlight indicator number.
-INDIC_COMPOSITIONTHICK _SCINTILLA.constants.INDIC_COMPOSITIONTHICK\n14
-INDIC_CONTAINER _SCINTILLA.constants.INDIC_CONTAINER\n8
-INDIC_DASH _SCINTILLA.constants.INDIC_DASH\n9
-INDIC_DIAGONAL _SCINTILLA.constants.INDIC_DIAGONAL\n3
-INDIC_DOTBOX _SCINTILLA.constants.INDIC_DOTBOX\n12
-INDIC_DOTS _SCINTILLA.constants.INDIC_DOTS\n10
-INDIC_HIDDEN _SCINTILLA.constants.INDIC_HIDDEN\n5
+INDIC_COMPOSITIONTHICK buffer.INDIC_COMPOSITIONTHICK (number, Read-only)\n
+INDIC_DASH buffer.INDIC_DASH (number, Read-only)\n
+INDIC_DIAGONAL buffer.INDIC_DIAGONAL (number, Read-only)\n
+INDIC_DOTBOX buffer.INDIC_DOTBOX (number, Read-only)\n
+INDIC_DOTS buffer.INDIC_DOTS (number, Read-only)\n
+INDIC_HIDDEN buffer.INDIC_HIDDEN (number, Read-only)\n
 INDIC_HIGHLIGHT textadept.editing.INDIC_HIGHLIGHT (number)\nThe word highlight indicator number.
-INDIC_MAX _SCINTILLA.constants.INDIC_MAX\n31
-INDIC_PLAIN _SCINTILLA.constants.INDIC_PLAIN\n0
-INDIC_ROUNDBOX _SCINTILLA.constants.INDIC_ROUNDBOX\n7
-INDIC_SQUIGGLE _SCINTILLA.constants.INDIC_SQUIGGLE\n1
-INDIC_SQUIGGLELOW _SCINTILLA.constants.INDIC_SQUIGGLELOW\n11
-INDIC_SQUIGGLEPIXMAP _SCINTILLA.constants.INDIC_SQUIGGLEPIXMAP\n13
-INDIC_STRAIGHTBOX _SCINTILLA.constants.INDIC_STRAIGHTBOX\n8
-INDIC_STRIKE _SCINTILLA.constants.INDIC_STRIKE\n4
-INDIC_TT _SCINTILLA.constants.INDIC_TT\n2
+INDIC_MAX buffer.INDIC_MAX (number, Read-only)\n
+INDIC_PLAIN buffer.INDIC_PLAIN (number, Read-only)\n
+INDIC_ROUNDBOX buffer.INDIC_ROUNDBOX (number, Read-only)\n
+INDIC_SQUIGGLE buffer.INDIC_SQUIGGLE (number, Read-only)\n
+INDIC_SQUIGGLELOW buffer.INDIC_SQUIGGLELOW (number, Read-only)\n
+INDIC_SQUIGGLEPIXMAP buffer.INDIC_SQUIGGLEPIXMAP (number, Read-only)\n
+INDIC_STRAIGHTBOX buffer.INDIC_STRAIGHTBOX (number, Read-only)\n
+INDIC_STRIKE buffer.INDIC_STRIKE (number, Read-only)\n
+INDIC_TT buffer.INDIC_TT (number, Read-only)\n
 INITIALIZED events.INITIALIZED (string)\nEmitted after Textadept finishes initializing.
-IV_LOOKBOTH _SCINTILLA.constants.IV_LOOKBOTH\n3
-IV_LOOKFORWARD _SCINTILLA.constants.IV_LOOKFORWARD\n2
-IV_NONE _SCINTILLA.constants.IV_NONE\n0
-IV_REAL _SCINTILLA.constants.IV_REAL\n1
+IV_LOOKBOTH buffer.IV_LOOKBOTH (number, Read-only)\n
+IV_LOOKFORWARD buffer.IV_LOOKFORWARD (number, Read-only)\n
+IV_NONE buffer.IV_NONE (number, Read-only)\n
+IV_REAL buffer.IV_REAL (number, Read-only)\n
 KEYPRESS events.KEYPRESS (string)\nEmitted when pressing a key.\nIf any handler returns `true`, the key is not inserted into the buffer.\nArguments:\n\n* _`code`_: The numeric key code.\n* _`shift`_: The "Shift" modifier key is held down.\n* _`ctrl`_: The "Control" modifier key is held down.\n* _`alt`_: The "Alt"/"Option" modifier key is held down.\n* _`meta`_: The "Command" modifier key on Mac OSX is held down.
 KEYSYMS keys.KEYSYMS (table)\nLookup table for string representations of key codes higher than 255.\nKey codes can be identified by temporarily uncommenting the `print()`\nstatements in *core/keys.lua*.
 KEYWORD lexer.KEYWORD (string)\nThe token name for keyword tokens.
 LABEL lexer.LABEL (string)\nThe token name for label tokens.
 LANGUAGE_MODULE_PREFIX keys.LANGUAGE_MODULE_PREFIX (string)\nThe prefix key of the key chain reserved for language modules.\nThe default value is `'cl'` on platforms other than Mac OSX, `'ml'`\notherwise. Equivalent to `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in curses).
-LASTSTEPINUNDOREDO _SCINTILLA.constants.LASTSTEPINUNDOREDO\n256
 LEXERPATH lexer.LEXERPATH (string)\nThe path used to search for a lexer to load.\nIdentical in format to Lua's `package.path` string.\nThe default value is `package.path`.
 LEXER_LOADED events.LEXER_LOADED (string)\nEmitted after loading a language lexer.\nThis is useful for overriding a language module's key bindings or other\nproperties since the module is not loaded when Textadept starts.\nArguments:\n\n* *`lexer`*: The language lexer's name.
-MARGINOPTION_NONE _SCINTILLA.constants.MARGINOPTION_NONE\n0
-MARGINOPTION_SUBLINESELECT _SCINTILLA.constants.MARGINOPTION_SUBLINESELECT\n1
-MARGIN_BACK _SCINTILLA.constants.MARGIN_BACK\n2
+MARGINOPTION_NONE buffer.MARGINOPTION_NONE (number, Read-only)\n
+MARGINOPTION_SUBLINESELECT buffer.MARGINOPTION_SUBLINESELECT (number, Read-only)\n
+MARGIN_BACK buffer.MARGIN_BACK (number, Read-only)\n
 MARGIN_CLICK events.MARGIN_CLICK (string)\nEmitted when clicking the mouse inside a sensitive margin.\nArguments:\n\n* _`margin`_: The margin number clicked.\n* _`position`_: The beginning position of the clicked margin's line.\n* _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,\n  `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.\n  Note: If you set `buffer.rectangular_selection_modifier` to\n  `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"\n  and "Alt" due to a Scintilla limitation with GTK+.
-MARGIN_FORE _SCINTILLA.constants.MARGIN_FORE\n3
-MARGIN_NUMBER _SCINTILLA.constants.MARGIN_NUMBER\n1
-MARGIN_RTEXT _SCINTILLA.constants.MARGIN_RTEXT\n5
-MARGIN_SYMBOL _SCINTILLA.constants.MARGIN_SYMBOL\n0
-MARGIN_TEXT _SCINTILLA.constants.MARGIN_TEXT\n4
-MARKER_MAX _SCINTILLA.constants.MARKER_MAX\n31
-MARKNUM_FOLDER _SCINTILLA.constants.MARKNUM_FOLDER\n30
-MARKNUM_FOLDEREND _SCINTILLA.constants.MARKNUM_FOLDEREND\n25
-MARKNUM_FOLDERMIDTAIL _SCINTILLA.constants.MARKNUM_FOLDERMIDTAIL\n27
-MARKNUM_FOLDEROPEN _SCINTILLA.constants.MARKNUM_FOLDEROPEN\n31
-MARKNUM_FOLDEROPENMID _SCINTILLA.constants.MARKNUM_FOLDEROPENMID\n26
-MARKNUM_FOLDERSUB _SCINTILLA.constants.MARKNUM_FOLDERSUB\n29
-MARKNUM_FOLDERTAIL _SCINTILLA.constants.MARKNUM_FOLDERTAIL\n28
-MARK_ARROW _SCINTILLA.constants.MARK_ARROW\n2
-MARK_ARROWDOWN _SCINTILLA.constants.MARK_ARROWDOWN\n6
-MARK_ARROWS _SCINTILLA.constants.MARK_ARROWS\n24
-MARK_AVAILABLE _SCINTILLA.constants.MARK_AVAILABLE\n28
-MARK_BACKGROUND _SCINTILLA.constants.MARK_BACKGROUND\n22
-MARK_BOOKMARK _SCINTILLA.constants.MARK_BOOKMARK\n31
+MARGIN_FORE buffer.MARGIN_FORE (number, Read-only)\n
+MARGIN_NUMBER buffer.MARGIN_NUMBER (number, Read-only)\n
+MARGIN_RTEXT buffer.MARGIN_RTEXT (number, Read-only)\n
+MARGIN_SYMBOL buffer.MARGIN_SYMBOL (number, Read-only)\n
+MARGIN_TEXT buffer.MARGIN_TEXT (number, Read-only)\n
+MARKER_MAX buffer.MARKER_MAX (number, Read-only)\n
+MARKNUM_FOLDER buffer.MARKNUM_FOLDER (number, Read-only)\n
+MARKNUM_FOLDEREND buffer.MARKNUM_FOLDEREND (number, Read-only)\n
+MARKNUM_FOLDERMIDTAIL buffer.MARKNUM_FOLDERMIDTAIL (number, Read-only)\n
+MARKNUM_FOLDEROPEN buffer.MARKNUM_FOLDEROPEN (number, Read-only)\n
+MARKNUM_FOLDEROPENMID buffer.MARKNUM_FOLDEROPENMID (number, Read-only)\n
+MARKNUM_FOLDERSUB buffer.MARKNUM_FOLDERSUB (number, Read-only)\n
+MARKNUM_FOLDERTAIL buffer.MARKNUM_FOLDERTAIL (number, Read-only)\n
+MARK_ARROW buffer.MARK_ARROW (number, Read-only)\n
+MARK_ARROWDOWN buffer.MARK_ARROWDOWN (number, Read-only)\n
+MARK_ARROWS buffer.MARK_ARROWS (number, Read-only)\n
+MARK_AVAILABLE buffer.MARK_AVAILABLE (number, Read-only)\n
+MARK_BACKGROUND buffer.MARK_BACKGROUND (number, Read-only)\n
+MARK_BOOKMARK buffer.MARK_BOOKMARK (number, Read-only)\n
 MARK_BOOKMARK textadept.bookmarks.MARK_BOOKMARK (number)\nThe bookmark mark number.
-MARK_BOXMINUS _SCINTILLA.constants.MARK_BOXMINUS\n14
-MARK_BOXMINUSCONNECTED _SCINTILLA.constants.MARK_BOXMINUSCONNECTED\n15
-MARK_BOXPLUS _SCINTILLA.constants.MARK_BOXPLUS\n12
-MARK_BOXPLUSCONNECTED _SCINTILLA.constants.MARK_BOXPLUSCONNECTED\n13
-MARK_CHARACTER _SCINTILLA.constants.MARK_CHARACTER\n10000
-MARK_CIRCLE _SCINTILLA.constants.MARK_CIRCLE\n0
-MARK_CIRCLEMINUS _SCINTILLA.constants.MARK_CIRCLEMINUS\n20
-MARK_CIRCLEMINUSCONNECTED _SCINTILLA.constants.MARK_CIRCLEMINUSCONNECTED\n21
-MARK_CIRCLEPLUS _SCINTILLA.constants.MARK_CIRCLEPLUS\n18
-MARK_CIRCLEPLUSCONNECTED _SCINTILLA.constants.MARK_CIRCLEPLUSCONNECTED\n19
-MARK_DOTDOTDOT _SCINTILLA.constants.MARK_DOTDOTDOT\n23
-MARK_EMPTY _SCINTILLA.constants.MARK_EMPTY\n5
+MARK_BOXMINUS buffer.MARK_BOXMINUS (number, Read-only)\n
+MARK_BOXMINUSCONNECTED buffer.MARK_BOXMINUSCONNECTED (number, Read-only)\n
+MARK_BOXPLUS buffer.MARK_BOXPLUS (number, Read-only)\n
+MARK_BOXPLUSCONNECTED buffer.MARK_BOXPLUSCONNECTED (number, Read-only)\n
+MARK_CHARACTER buffer.MARK_CHARACTER (number, Read-only)\n
+MARK_CIRCLE buffer.MARK_CIRCLE (number, Read-only)\n
+MARK_CIRCLEMINUS buffer.MARK_CIRCLEMINUS (number, Read-only)\n
+MARK_CIRCLEMINUSCONNECTED buffer.MARK_CIRCLEMINUSCONNECTED (number, Read-only)\n
+MARK_CIRCLEPLUS buffer.MARK_CIRCLEPLUS (number, Read-only)\n
+MARK_CIRCLEPLUSCONNECTED buffer.MARK_CIRCLEPLUSCONNECTED (number, Read-only)\n
+MARK_DOTDOTDOT buffer.MARK_DOTDOTDOT (number, Read-only)\n
+MARK_EMPTY buffer.MARK_EMPTY (number, Read-only)\n
 MARK_ERROR textadept.run.MARK_ERROR (number)\nThe run or compile error marker number.
-MARK_FULLRECT _SCINTILLA.constants.MARK_FULLRECT\n26
-MARK_LCORNER _SCINTILLA.constants.MARK_LCORNER\n10
-MARK_LCORNERCURVE _SCINTILLA.constants.MARK_LCORNERCURVE\n16
-MARK_LEFTRECT _SCINTILLA.constants.MARK_LEFTRECT\n27
-MARK_MINUS _SCINTILLA.constants.MARK_MINUS\n7
-MARK_PIXMAP _SCINTILLA.constants.MARK_PIXMAP\n25
-MARK_PLUS _SCINTILLA.constants.MARK_PLUS\n8
-MARK_RGBAIMAGE _SCINTILLA.constants.MARK_RGBAIMAGE\n30
-MARK_ROUNDRECT _SCINTILLA.constants.MARK_ROUNDRECT\n1
-MARK_SHORTARROW _SCINTILLA.constants.MARK_SHORTARROW\n4
-MARK_SMALLRECT _SCINTILLA.constants.MARK_SMALLRECT\n3
-MARK_TCORNER _SCINTILLA.constants.MARK_TCORNER\n11
-MARK_TCORNERCURVE _SCINTILLA.constants.MARK_TCORNERCURVE\n17
-MARK_UNDERLINE _SCINTILLA.constants.MARK_UNDERLINE\n29
-MARK_VLINE _SCINTILLA.constants.MARK_VLINE\n9
+MARK_FULLRECT buffer.MARK_FULLRECT (number, Read-only)\n
+MARK_LCORNER buffer.MARK_LCORNER (number, Read-only)\n
+MARK_LCORNERCURVE buffer.MARK_LCORNERCURVE (number, Read-only)\n
+MARK_LEFTRECT buffer.MARK_LEFTRECT (number, Read-only)\n
+MARK_MINUS buffer.MARK_MINUS (number, Read-only)\n
+MARK_PIXMAP buffer.MARK_PIXMAP (number, Read-only)\n
+MARK_PLUS buffer.MARK_PLUS (number, Read-only)\n
+MARK_RGBAIMAGE buffer.MARK_RGBAIMAGE (number, Read-only)\n
+MARK_ROUNDRECT buffer.MARK_ROUNDRECT (number, Read-only)\n
+MARK_SHORTARROW buffer.MARK_SHORTARROW (number, Read-only)\n
+MARK_SMALLRECT buffer.MARK_SMALLRECT (number, Read-only)\n
+MARK_TCORNER buffer.MARK_TCORNER (number, Read-only)\n
+MARK_TCORNERCURVE buffer.MARK_TCORNERCURVE (number, Read-only)\n
+MARK_UNDERLINE buffer.MARK_UNDERLINE (number, Read-only)\n
+MARK_VLINE buffer.MARK_VLINE (number, Read-only)\n
 MARK_WARNING textadept.run.MARK_WARNING (number)\nThe run or compile warning marker number.
-MASK_FOLDERS _SCINTILLA.constants.MASK_FOLDERS\n-33554432
-MAX_MARGIN _SCINTILLA.constants.MAX_MARGIN\n4
+MASK_FOLDERS buffer.MASK_FOLDERS (number, Read-only)\n
 MAX_RECENT_FILES textadept.session.MAX_RECENT_FILES (number)\nThe maximum number of recent files to save in session files.\nRecent files are stored in `io.recent_files`.\nThe default value is `10`.
 MENU_CLICKED events.MENU_CLICKED (string)\nEmitted after selecting a menu item.\nArguments:\n\n* _`menu_id`_: The numeric ID of the menu item set in `ui.menu()`.
 METHOD textadept.editing.XPM_IMAGES.METHOD (table)\nThe image number for methods.
 MODE keys.MODE (string)\nThe current key mode.\nWhen non-`nil`, all key bindings defined outside of `keys[MODE]` are\nignored.\nThe default value is `nil`.
-MODEVENTMASKALL _SCINTILLA.constants.MODEVENTMASKALL\n2097151
-MOD_ALT _SCINTILLA.constants.MOD_ALT\n4
-MOD_BEFOREDELETE _SCINTILLA.constants.MOD_BEFOREDELETE\n2048
-MOD_BEFOREINSERT _SCINTILLA.constants.MOD_BEFOREINSERT\n1024
-MOD_CHANGEANNOTATION _SCINTILLA.constants.MOD_CHANGEANNOTATION\n131072
-MOD_CHANGEFOLD _SCINTILLA.constants.MOD_CHANGEFOLD\n8
-MOD_CHANGEINDICATOR _SCINTILLA.constants.MOD_CHANGEINDICATOR\n16384
-MOD_CHANGELINESTATE _SCINTILLA.constants.MOD_CHANGELINESTATE\n32768
-MOD_CHANGEMARGIN _SCINTILLA.constants.MOD_CHANGEMARGIN\n65536
-MOD_CHANGEMARKER _SCINTILLA.constants.MOD_CHANGEMARKER\n512
-MOD_CHANGESTYLE _SCINTILLA.constants.MOD_CHANGESTYLE\n4
-MOD_CONTAINER _SCINTILLA.constants.MOD_CONTAINER\n262144
-MOD_CTRL _SCINTILLA.constants.MOD_CTRL\n2
-MOD_DELETETEXT _SCINTILLA.constants.MOD_DELETETEXT\n2
-MOD_INSERTCHECK _SCINTILLA.constants.MOD_INSERTCHECK\n1048576
-MOD_INSERTTEXT _SCINTILLA.constants.MOD_INSERTTEXT\n1
-MOD_LEXERSTATE _SCINTILLA.constants.MOD_LEXERSTATE\n524288
-MOD_META _SCINTILLA.constants.MOD_META\n16
-MOD_NORM _SCINTILLA.constants.MOD_NORM\n0
-MOD_SHIFT _SCINTILLA.constants.MOD_SHIFT\n1
-MOD_SUPER _SCINTILLA.constants.MOD_SUPER\n8
-MULTIAUTOC_EACH _SCINTILLA.constants.MULTIAUTOC_EACH\n1
-MULTIAUTOC_ONCE _SCINTILLA.constants.MULTIAUTOC_ONCE\n0
-MULTILINEUNDOREDO _SCINTILLA.constants.MULTILINEUNDOREDO\n4096
-MULTIPASTE_EACH _SCINTILLA.constants.MULTIPASTE_EACH\n1
-MULTIPASTE_ONCE _SCINTILLA.constants.MULTIPASTE_ONCE\n0
-MULTISTEPUNDOREDO _SCINTILLA.constants.MULTISTEPUNDOREDO\n128
+MOD_ALT buffer.MOD_ALT (number, Read-only)\n
+MOD_CTRL buffer.MOD_CTRL (number, Read-only)\n
+MOD_META buffer.MOD_META (number, Read-only)\n
+MOD_SHIFT buffer.MOD_SHIFT (number, Read-only)\n
+MOD_SUPER buffer.MOD_SUPER (number, Read-only)\n
+MULTIAUTOC_EACH buffer.MULTIAUTOC_EACH (number, Read-only)\n
+MULTIAUTOC_ONCE buffer.MULTIAUTOC_ONCE (number, Read-only)\n
+MULTIPASTE_EACH buffer.MULTIPASTE_EACH (number, Read-only)\n
+MULTIPASTE_ONCE buffer.MULTIPASTE_ONCE (number, Read-only)\n
 NAMESPACE textadept.editing.XPM_IMAGES.NAMESPACE (table)\nThe image number for namespaces.
 NUMBER lexer.NUMBER (string)\nThe token name for number tokens.
 OPERATOR lexer.OPERATOR (string)\nThe token name for operator tokens.
-ORDER_CUSTOM _SCINTILLA.constants.ORDER_CUSTOM\n2
-ORDER_PERFORMSORT _SCINTILLA.constants.ORDER_PERFORMSORT\n1
-ORDER_PRESORTED _SCINTILLA.constants.ORDER_PRESORTED\n0
+ORDER_CUSTOM buffer.ORDER_CUSTOM (number, Read-only)\n
+ORDER_PERFORMSORT buffer.ORDER_PERFORMSORT (number, Read-only)\n
+ORDER_PRESORTED buffer.ORDER_PRESORTED (number, Read-only)\n
 OSX _G.OSX (bool)\nWhether or not Textadept is running on Mac OSX.
 P lpeg.P(value)\nConverts the given value into a proper pattern, according to the following\nrules:\n  * If the argument is a pattern, it is returned unmodified.\n  * If the argument is a string, it is translated to a pattern that matches\n    the string literally.\n  * If the argument is a non-negative number n, the result is a pattern that\n    matches exactly n characters.\n  * If the argument is a negative number -n, the result is a pattern that\n    succeeds only if the input string has less than n characters left:\n    `lpeg.P(-n)` is equivalent to `-lpeg.P(n)` (see the unary minus\n    operation).\n  * If the argument is a boolean, the result is a pattern that always\n    succeeds or always fails (according to the boolean value), without\n    consuming any input.\n  * If the argument is a table, it is interpreted as a grammar (see\n    Grammars).\n  * If the argument is a function, returns a pattern equivalent to a\n    match-time capture over the empty string.
-PERFORMED_REDO _SCINTILLA.constants.PERFORMED_REDO\n64
-PERFORMED_UNDO _SCINTILLA.constants.PERFORMED_UNDO\n32
-PERFORMED_USER _SCINTILLA.constants.PERFORMED_USER\n16
 PREPROCESSOR lexer.PREPROCESSOR (string)\nThe token name for preprocessor tokens.
 QUIT events.QUIT (string)\nEmitted when quitting Textadept.\nWhen connecting to this event, connect with an index of 1 or the handler\nwill be ignored.\nEmitted by `quit()`.
 R lpeg.R({range})\nReturns a pattern that matches any single character belonging to one of the\ngiven ranges. Each `range` is a string xy of length 2, representing all\ncharacters with code between the codes of x and y (both inclusive).\n\nAs an example, the pattern `lpeg.R("09")` matches any digit, and\n`lpeg.R("az", "AZ")` matches any ASCII letter.
@@ -254,71 +229,41 @@ S lpeg.S(string)\nReturns a pattern that matches any single character that appea
 SAVE_ON_QUIT textadept.session.SAVE_ON_QUIT (bool)\nSave the session when quitting.\nThe session file saved is always `DEFAULT_SESSION`, even if a different\nsession was loaded with `load()`.\nThe default value is `true` unless the user passed the command line switch\n`-n` or `--nosession` to Textadept.
 SAVE_POINT_LEFT events.SAVE_POINT_LEFT (string)\nEmitted after leaving a save point.
 SAVE_POINT_REACHED events.SAVE_POINT_REACHED (string)\nEmitted after reaching a save point.
-SCN_AUTOCCANCELLED _SCINTILLA.constants.SCN_AUTOCCANCELLED\n2025
-SCN_AUTOCCHARDELETED _SCINTILLA.constants.SCN_AUTOCCHARDELETED\n2026
-SCN_AUTOCSELECTION _SCINTILLA.constants.SCN_AUTOCSELECTION\n2022
-SCN_CALLTIPCLICK _SCINTILLA.constants.SCN_CALLTIPCLICK\n2021
-SCN_CHARADDED _SCINTILLA.constants.SCN_CHARADDED\n2001
-SCN_DOUBLECLICK _SCINTILLA.constants.SCN_DOUBLECLICK\n2006
-SCN_DWELLEND _SCINTILLA.constants.SCN_DWELLEND\n2017
-SCN_DWELLSTART _SCINTILLA.constants.SCN_DWELLSTART\n2016
-SCN_FOCUSIN _SCINTILLA.constants.SCN_FOCUSIN\n2028
-SCN_FOCUSOUT _SCINTILLA.constants.SCN_FOCUSOUT\n2029
-SCN_HOTSPOTCLICK _SCINTILLA.constants.SCN_HOTSPOTCLICK\n2019
-SCN_HOTSPOTDOUBLECLICK _SCINTILLA.constants.SCN_HOTSPOTDOUBLECLICK\n2020
-SCN_HOTSPOTRELEASECLICK _SCINTILLA.constants.SCN_HOTSPOTRELEASECLICK\n2027
-SCN_INDICATORCLICK _SCINTILLA.constants.SCN_INDICATORCLICK\n2023
-SCN_INDICATORRELEASE _SCINTILLA.constants.SCN_INDICATORRELEASE\n2024
-SCN_KEY _SCINTILLA.constants.SCN_KEY\n2005
-SCN_MACRORECORD _SCINTILLA.constants.SCN_MACRORECORD\n2009
-SCN_MARGINCLICK _SCINTILLA.constants.SCN_MARGINCLICK\n2010
-SCN_MODIFIED _SCINTILLA.constants.SCN_MODIFIED\n2008
-SCN_NEEDSHOWN _SCINTILLA.constants.SCN_NEEDSHOWN\n2011
-SCN_PAINTED _SCINTILLA.constants.SCN_PAINTED\n2013
-SCN_SAVEPOINTLEFT _SCINTILLA.constants.SCN_SAVEPOINTLEFT\n2003
-SCN_SAVEPOINTREACHED _SCINTILLA.constants.SCN_SAVEPOINTREACHED\n2002
-SCN_STYLENEEDED _SCINTILLA.constants.SCN_STYLENEEDED\n2000
-SCN_UPDATEUI _SCINTILLA.constants.SCN_UPDATEUI\n2007
-SCN_URIDROPPED _SCINTILLA.constants.SCN_URIDROPPED\n2015
-SCN_USERLISTSELECTION _SCINTILLA.constants.SCN_USERLISTSELECTION\n2014
-SCN_ZOOM _SCINTILLA.constants.SCN_ZOOM\n2018
-SEL_LINES _SCINTILLA.constants.SEL_LINES\n2
-SEL_RECTANGLE _SCINTILLA.constants.SEL_RECTANGLE\n1
-SEL_STREAM _SCINTILLA.constants.SEL_STREAM\n0
-SEL_THIN _SCINTILLA.constants.SEL_THIN\n3
+SEL_LINES buffer.SEL_LINES (number, Read-only)\n
+SEL_RECTANGLE buffer.SEL_RECTANGLE (number, Read-only)\n
+SEL_STREAM buffer.SEL_STREAM (number, Read-only)\n
+SEL_THIN buffer.SEL_THIN (number, Read-only)\n
 SIGNAL textadept.editing.XPM_IMAGES.SIGNAL (table)\nThe image number for signals.
 SILENT_PRINT ui.SILENT_PRINT (bool)\nWhether or not to print messages to buffers silently.\nThe default value is `false`, and focuses buffers when messages are printed\nto them.
 SLOT textadept.editing.XPM_IMAGES.SLOT (table)\nThe image number for slots.
 SNAPOPEN_MAX io.SNAPOPEN_MAX (number)\nThe maximum number of files listed in the snapopen dialog.\nThe default value is `1000`.
-STARTACTION _SCINTILLA.constants.STARTACTION\n8192
 STRING lexer.STRING (string)\nThe token name for string tokens.
 STRIP_TRAILING_SPACES textadept.editing.STRIP_TRAILING_SPACES (bool)\nStrip trailing whitespace before saving files.\nThe default value is `false`.
 STRUCT textadept.editing.XPM_IMAGES.STRUCT (table)\nThe image number for structures.
-STYLE_BRACEBAD _SCINTILLA.constants.STYLE_BRACEBAD\n35
+STYLE_BRACEBAD buffer.STYLE_BRACEBAD (number, Read-only)\n
 STYLE_BRACEBAD lexer.STYLE_BRACEBAD (string)\nThe style used for unmatched brace characters.
-STYLE_BRACELIGHT _SCINTILLA.constants.STYLE_BRACELIGHT\n34
+STYLE_BRACELIGHT buffer.STYLE_BRACELIGHT (number, Read-only)\n
 STYLE_BRACELIGHT lexer.STYLE_BRACELIGHT (string)\nThe style used for highlighted brace characters.
-STYLE_CALLTIP _SCINTILLA.constants.STYLE_CALLTIP\n38
+STYLE_CALLTIP buffer.STYLE_CALLTIP (number, Read-only)\n
 STYLE_CALLTIP lexer.STYLE_CALLTIP (string)\nThe style used by call tips if `buffer.call_tip_use_style` is set.\nOnly the font name, size, and color attributes are used.
 STYLE_CLASS lexer.STYLE_CLASS (string)\nThe style typically used for class definitions.
 STYLE_COMMENT lexer.STYLE_COMMENT (string)\nThe style typically used for code comments.
 STYLE_CONSTANT lexer.STYLE_CONSTANT (string)\nThe style typically used for constants.
-STYLE_CONTROLCHAR _SCINTILLA.constants.STYLE_CONTROLCHAR\n36
+STYLE_CONTROLCHAR buffer.STYLE_CONTROLCHAR (number, Read-only)\n
 STYLE_CONTROLCHAR lexer.STYLE_CONTROLCHAR (string)\nThe style used for control characters.\nColor attributes are ignored.
-STYLE_DEFAULT _SCINTILLA.constants.STYLE_DEFAULT\n32
+STYLE_DEFAULT buffer.STYLE_DEFAULT (number, Read-only)\n
 STYLE_DEFAULT lexer.STYLE_DEFAULT (string)\nThe style all styles are based off of.
 STYLE_EMBEDDED lexer.STYLE_EMBEDDED (string)\nThe style typically used for embedded code.
 STYLE_ERROR lexer.STYLE_ERROR (string)\nThe style typically used for erroneous syntax.
 STYLE_FUNCTION lexer.STYLE_FUNCTION (string)\nThe style typically used for function definitions.
 STYLE_IDENTIFIER lexer.STYLE_IDENTIFIER (string)\nThe style typically used for identifier words.
-STYLE_INDENTGUIDE _SCINTILLA.constants.STYLE_INDENTGUIDE\n37
+STYLE_INDENTGUIDE buffer.STYLE_INDENTGUIDE (number, Read-only)\n
 STYLE_INDENTGUIDE lexer.STYLE_INDENTGUIDE (string)\nThe style used for indentation guides.
 STYLE_KEYWORD lexer.STYLE_KEYWORD (string)\nThe style typically used for language keywords.
 STYLE_LABEL lexer.STYLE_LABEL (string)\nThe style typically used for labels.
-STYLE_LASTPREDEFINED _SCINTILLA.constants.STYLE_LASTPREDEFINED\n39
-STYLE_LINENUMBER _SCINTILLA.constants.STYLE_LINENUMBER\n33
+STYLE_LINENUMBER buffer.STYLE_LINENUMBER (number, Read-only)\n
 STYLE_LINENUMBER lexer.STYLE_LINENUMBER (string)\nThe style used for all margins except fold margins.
-STYLE_MAX _SCINTILLA.constants.STYLE_MAX\n255
+STYLE_MAX buffer.STYLE_MAX (number, Read-only)\n
 STYLE_NUMBER lexer.STYLE_NUMBER (string)\nThe style typically used for numbers.
 STYLE_OPERATOR lexer.STYLE_OPERATOR (string)\nThe style typically used for operators.
 STYLE_PREPROCESSOR lexer.STYLE_PREPROCESSOR (string)\nThe style typically used for preprocessor statements.
@@ -327,15 +272,15 @@ STYLE_STRING lexer.STYLE_STRING (string)\nThe style typically used for strings.
 STYLE_TYPE lexer.STYLE_TYPE (string)\nThe style typically used for static types.
 STYLE_VARIABLE lexer.STYLE_VARIABLE (string)\nThe style typically used for variables.
 STYLE_WHITESPACE lexer.STYLE_WHITESPACE (string)\nThe style typically used for whitespace.
-TIME_FOREVER _SCINTILLA.constants.TIME_FOREVER\n10000000
+TIME_FOREVER buffer.TIME_FOREVER (number, Read-only)\n
 TYPE lexer.TYPE (string)\nThe token name for type tokens.
 TYPEDEF textadept.editing.XPM_IMAGES.TYPEDEF (table)\nThe image number for type definitions.
 TYPEOVER_CHARS textadept.editing.TYPEOVER_CHARS (bool)\nMove over closing brace and quote characters under the caret when typing\nthem.\nThe default value is `true`.\nTypeover characters are defined in the `typeover_chars`\ntable.
-UPDATE_CONTENT _SCINTILLA.constants.UPDATE_CONTENT\n1
-UPDATE_H_SCROLL _SCINTILLA.constants.UPDATE_H_SCROLL\n8
-UPDATE_SELECTION _SCINTILLA.constants.UPDATE_SELECTION\n2
-UPDATE_UI events.UPDATE_UI (string)\nEmitted after the view is visually updated.
-UPDATE_V_SCROLL _SCINTILLA.constants.UPDATE_V_SCROLL\n4
+UPDATE_CONTENT buffer.UPDATE_CONTENT (number, Read-only)\n
+UPDATE_H_SCROLL buffer.UPDATE_H_SCROLL (number, Read-only)\n
+UPDATE_SELECTION buffer.UPDATE_SELECTION (number, Read-only)\n
+UPDATE_UI events.UPDATE_UI (string)\nEmitted after the view is visually updated.\nArguments:\n\n* _`updated`_: A bitmask of changes since the last update.\n\n  + `buffer.UPDATE_CONTENT`\n    Buffer contents, styling, or markers have changed.\n  + `buffer.UPDATE_SELECTION`\n    Buffer selection has changed.\n  + `buffer.UPDATE_V_SCROLL`\n    Buffer has scrolled vertically.\n  + `buffer.UPDATE_H_SCROLL`\n    Buffer has scrolled horizontally.
+UPDATE_V_SCROLL buffer.UPDATE_V_SCROLL (number, Read-only)\n
 URI_DROPPED events.URI_DROPPED (string)\nEmitted after dragging and dropping a URI into a view.\nArguments:\n\n* _`text`_: The UTF-8-encoded URI dropped.
 USER_LIST_SELECTION events.USER_LIST_SELECTION (string)\nEmitted after selecting an item in a user list.\nArguments:\n\n* _`id`_: The *id* from `buffer:user_list_show()`.\n* _`text`_: The selection's text.\n* _`position`_: The position the list was displayed at.
 V lpeg.V(v)\nThis operation creates a non-terminal (a variable) for a grammar. The created\nnon-terminal refers to the rule indexed by `v` in the enclosing grammar. (See\nGrammars for details.)
@@ -344,30 +289,30 @@ VARIABLE textadept.editing.XPM_IMAGES.VARIABLE (table)\nThe image number for var
 VIEW_AFTER_SWITCH events.VIEW_AFTER_SWITCH (string)\nEmitted right after switching to another view.\nEmitted by `ui.goto_view()`.
 VIEW_BEFORE_SWITCH events.VIEW_BEFORE_SWITCH (string)\nEmitted right before switching to another view.\nEmitted by `ui.goto_view()`.
 VIEW_NEW events.VIEW_NEW (string)\nEmitted after creating a new view.\nEmitted on startup and by `view:split()`.
-VISIBLE_SLOP _SCINTILLA.constants.VISIBLE_SLOP\n1
-VISIBLE_STRICT _SCINTILLA.constants.VISIBLE_STRICT\n4
-VS_NONE _SCINTILLA.constants.VS_NONE\n0
-VS_RECTANGULARSELECTION _SCINTILLA.constants.VS_RECTANGULARSELECTION\n1
-VS_USERACCESSIBLE _SCINTILLA.constants.VS_USERACCESSIBLE\n2
+VISIBLE_SLOP buffer.VISIBLE_SLOP (number, Read-only)\n
+VISIBLE_STRICT buffer.VISIBLE_STRICT (number, Read-only)\n
+VS_NONE buffer.VS_NONE (number, Read-only)\n
+VS_RECTANGULARSELECTION buffer.VS_RECTANGULARSELECTION (number, Read-only)\n
+VS_USERACCESSIBLE buffer.VS_USERACCESSIBLE (number, Read-only)\n
 WHITESPACE lexer.WHITESPACE (string)\nThe token name for whitespace tokens.
 WIN32 _G.WIN32 (bool)\nWhether or not Textadept is running on Windows.
-WRAPINDENT_FIXED _SCINTILLA.constants.WRAPINDENT_FIXED\n0
-WRAPINDENT_INDENT _SCINTILLA.constants.WRAPINDENT_INDENT\n2
-WRAPINDENT_SAME _SCINTILLA.constants.WRAPINDENT_SAME\n1
-WRAPVISUALFLAGLOC_DEFAULT _SCINTILLA.constants.WRAPVISUALFLAGLOC_DEFAULT\n0
-WRAPVISUALFLAGLOC_END_BY_TEXT _SCINTILLA.constants.WRAPVISUALFLAGLOC_END_BY_TEXT\n1
-WRAPVISUALFLAGLOC_START_BY_TEXT _SCINTILLA.constants.WRAPVISUALFLAGLOC_START_BY_TEXT\n2
-WRAPVISUALFLAG_END _SCINTILLA.constants.WRAPVISUALFLAG_END\n1
-WRAPVISUALFLAG_MARGIN _SCINTILLA.constants.WRAPVISUALFLAG_MARGIN\n4
-WRAPVISUALFLAG_NONE _SCINTILLA.constants.WRAPVISUALFLAG_NONE\n0
-WRAPVISUALFLAG_START _SCINTILLA.constants.WRAPVISUALFLAG_START\n2
-WRAP_CHAR _SCINTILLA.constants.WRAP_CHAR\n2
-WRAP_NONE _SCINTILLA.constants.WRAP_NONE\n0
-WRAP_WHITESPACE _SCINTILLA.constants.WRAP_WHITESPACE\n3
-WRAP_WORD _SCINTILLA.constants.WRAP_WORD\n1
-WS_INVISIBLE _SCINTILLA.constants.WS_INVISIBLE\n0
-WS_VISIBLEAFTERINDENT _SCINTILLA.constants.WS_VISIBLEAFTERINDENT\n2
-WS_VISIBLEALWAYS _SCINTILLA.constants.WS_VISIBLEALWAYS\n1
+WRAPINDENT_FIXED buffer.WRAPINDENT_FIXED (number, Read-only)\n
+WRAPINDENT_INDENT buffer.WRAPINDENT_INDENT (number, Read-only)\n
+WRAPINDENT_SAME buffer.WRAPINDENT_SAME (number, Read-only)\n
+WRAPVISUALFLAGLOC_DEFAULT buffer.WRAPVISUALFLAGLOC_DEFAULT (number, Read-only)\n
+WRAPVISUALFLAGLOC_END_BY_TEXT buffer.WRAPVISUALFLAGLOC_END_BY_TEXT (number, Read-only)\n
+WRAPVISUALFLAGLOC_START_BY_TEXT buffer.WRAPVISUALFLAGLOC_START_BY_TEXT (number, Read-only)\n
+WRAPVISUALFLAG_END buffer.WRAPVISUALFLAG_END (number, Read-only)\n
+WRAPVISUALFLAG_MARGIN buffer.WRAPVISUALFLAG_MARGIN (number, Read-only)\n
+WRAPVISUALFLAG_NONE buffer.WRAPVISUALFLAG_NONE (number, Read-only)\n
+WRAPVISUALFLAG_START buffer.WRAPVISUALFLAG_START (number, Read-only)\n
+WRAP_CHAR buffer.WRAP_CHAR (number, Read-only)\n
+WRAP_NONE buffer.WRAP_NONE (number, Read-only)\n
+WRAP_WHITESPACE buffer.WRAP_WHITESPACE (number, Read-only)\n
+WRAP_WORD buffer.WRAP_WORD (number, Read-only)\n
+WS_INVISIBLE buffer.WS_INVISIBLE (number, Read-only)\n
+WS_VISIBLEAFTERINDENT buffer.WS_VISIBLEAFTERINDENT (number, Read-only)\n
+WS_VISIBLEALWAYS buffer.WS_VISIBLEALWAYS (number, Read-only)\n
 XPM_IMAGES textadept.editing.XPM_IMAGES (table)\nMap of image names to registered image numbers.
 _BUFFERS _G._BUFFERS (table)\nTable of all open buffers in Textadept.\nNumeric keys have buffer values and buffer keys have their associated numeric\nkeys.\n@see _G.buffer
 _CHARSET _G._CHARSET (string)\nThe filesystem's character encoding.\nThis is used when working with files.
@@ -473,7 +418,7 @@ brace_highlight_indicator buffer.brace_highlight_indicator(buffer, use_indicator
 brace_match buffer.brace_match(buffer, pos)\nReturns the position of the matching brace for the brace character at\nposition *pos*, taking nested braces into account, or `-1`.\nThe brace characters recognized are '(', ')', '[', ']', '{', '}', '<', and\n'>' and must have the same style.\n@param buffer A buffer.\n@param pos The position of the brace in *buffer* to match.\n@return number
 braces textadept.editing.braces (table)\nTable of brace characters to highlight, with language-specific brace\ncharacter tables assigned to a lexer name key.\nThe ASCII values of brace characters are keys and are assigned non-`nil`\nvalues. The default brace characters are '(', ')', '[', ']', '{', and '}'.
 btest bit32.btest(...)\nReturns a boolean signaling whether the bitwise "and" of its operands is\ndifferent from zero.
-buffer _G.buffer (module)\nA Textadept buffer object.\nIn addition to these functions and fields, buffers also contain the constants\nwithin `_SCINTILLA.constants`, which are too numerous to list here.\nWhile you can work with individual buffer instances, it is really only useful\nto work with the global one.
+buffer _G.buffer (module)\nA Textadept buffer object.\nConstants are documented in the fields they apply to.\nWhile you can work with individual buffer instances, it is really only useful\nto work with the global one.
 buffer _G.buffer (table)\nThe current buffer in the current view.
 buffer view.buffer (table)\nThe buffer the view contains. (Read-only)
 buffered_draw buffer.buffered_draw (bool)\nBuffer drawing to avoid flickering.\nBuffering draws each line of text into a bitmap buffer before drawing the\nbitmap to the screen.\nThe default value is `true`.
@@ -659,7 +604,7 @@ fold lexer.fold(lexer, text, start_pos, start_line, start_level)\nFolds a chunk 
 fold_all buffer.fold_all(buffer, action)\nContracts, expands, or toggles all fold points, depending on *action*.\nWhen toggling, the state of the first fold point determines whether to\nexpand or contract.\n@param buffer A buffer.\n@param action The fold action to perform. Valid values are:\n  * `buffer.FOLDACTION_CONTRACT`\n  * `buffer.FOLDACTION_EXPAND`\n  * `buffer.FOLDACTION_TOGGLE`
 fold_children buffer.fold_children(buffer, line, action)\nContracts, expands, or toggles the fold point on line number *line*, as well\nas all of its children, depending on *action*.\n@param buffer A buffer.\n@param line The line number in *buffer* to set the fold states for.\n@param action The fold action to perform. Valid values are:\n  * `buffer.FOLDACTION_CONTRACT`\n  * `buffer.FOLDACTION_EXPAND`\n  * `buffer.FOLDACTION_TOGGLE`
 fold_expanded buffer.fold_expanded (table)\nTable of flags that indicate whether or not fold points are expanded for\nline numbers starting from zero.\nSetting expanded fold states does not toggle folds; it only updates fold\nmargin markers. Use `buffer:toggle_fold()` instead.
-fold_flags buffer.fold_flags (number)\nBit-mask of folding lines to draw in the buffer.\n\n* `buffer.FOLDFLAG_LINEBEFORE_EXPANDED`\n  Draw lines above expanded folds.\n* `buffer.FOLDFLAG_LINEBEFORE_CONTRACTED`\n  Draw lines above collapsed folds.\n* `buffer.FOLDFLAG_LINEAFTER_EXPANDED`\n  Draw lines below expanded folds.\n* `buffer.FOLDFLAG_LINEAFTER_CONTRACTED`\n  Draw lines below collapsed folds.\n\nThe default value is `0`.
+fold_flags buffer.fold_flags (number)\nBit-mask of folding lines to draw in the buffer.\n\n* `buffer.FOLDFLAG_LINEBEFORE_EXPANDED`\n  Draw lines above expanded folds.\n* `buffer.FOLDFLAG_LINEBEFORE_CONTRACTED`\n  Draw lines above collapsed folds.\n* `buffer.FOLDFLAG_LINEAFTER_EXPANDED`\n  Draw lines below expanded folds.\n* `buffer.FOLDFLAG_LINEAFTER_CONTRACTED`\n  Draw lines below collapsed folds.\n* `buffer.FOLDFLAG_LEVELNUMBERS`\n  Show hexadecimal fold levels in line margins.\n  This option cannot be combined with `FOLDFLAG_LINESTATE`.\n* `buffer.FOLDFLAG_LINESTATE`\n  Show line state in line margins.\n  This option cannot be combined with `FOLDFLAG_LEVELNUMBERS`.\n\nThe default value is `0`.
 fold_level buffer.fold_level (table)\nTable of fold level bit-masks for line numbers starting from zero.\nFold level masks comprise of an integer level combined with any of the\nfollowing bit flags:\n\n* `buffer.FOLDLEVELBASE`\n  The initial fold level.\n* `buffer.FOLDLEVELWHITEFLAG`\n  The line is blank.\n* `buffer.FOLDLEVELHEADERFLAG`\n  The line is a header, or fold point.
 fold_level lexer.fold_level (table, Read-only)\nTable of fold level bit-masks for line numbers starting from zero.\nFold level masks are composed of an integer level combined with any of the\nfollowing bits:\n\n* `lexer.FOLDBASE`\n  The initial fold level.\n* `lexer.FOLD_BLANK`\n  The line is blank.\n* `lexer.FOLD_HEADER`\n  The line is a header, or fold point.
 fold_line buffer.fold_line(buffer, line, action)\nContracts, expands, or toggles the fold point on line number *line*,\ndepending on *action*.\n@param buffer A buffer.\n@param line The line number in *buffer* to set the fold state for.\n@param action The fold action to perform. Valid values are:\n  * `buffer.FOLDACTION_CONTRACT`\n  * `buffer.FOLDACTION_EXPAND`\n  * `buffer.FOLDACTION_TOGGLE`
@@ -677,7 +622,7 @@ get_lexer buffer.get_lexer(buffer, current)\nReturns the buffer's lexer name.\nI
 get_line buffer.get_line(buffer, line)\nReturns the text on line number *line*, including end of line characters.\n@param buffer A buffer.\n@param line The line number in *buffer* to use.\n@return string, number
 get_line_sel_end_position buffer.get_line_sel_end_position(buffer, line)\nReturns the position of the end of the selected text on line number *line*,\nor `-1` if *line* has no selection.\n@param buffer A buffer.\n@param line The line number in *buffer* to use.
 get_line_sel_start_position buffer.get_line_sel_start_position(buffer, line)\nReturns the position of the beginning of the selected text on line number\n*line*, or `-1` if *line* has no selection.\n@param buffer A buffer.\n@param line The line number in *buffer* to use.
-get_project_root io.get_project_root(path)\nReturns the root directory of the project that contains filesystem path\n*path*.\nIn order to be recognized, projects must be under version control. Recognized\nVCSes are Bazaar, Git, Mercurial, SVN, and CVS.\n@param path Optional filesystem path to a project or a file contained within\n  a project. The default value is the buffer's filename or the current\n  working directory.\n@return string root
+get_project_root io.get_project_root(path)\nReturns the root directory of the project that contains filesystem path\n*path*.\nIn order to be recognized, projects must be under version control. Recognized\nVCSes are Bazaar, Git, Mercurial, SVN, and CVS.\n@param path Optional filesystem path to a project or a file contained within\n  a project. The default value is the buffer's filename or the current\n  working directory.\n@return string root or nil
 get_sel_text buffer.get_sel_text(buffer)\nReturns the selected text.\nMultiple selections are included in order with no delimiters. Rectangular\nselections are included from top to bottom with end of line characters.\nVirtual space is not included.\n@param buffer A buffer.\n@return string, number
 get_split_table ui.get_split_table()\nReturns a split table that contains Textadept's current split view structure.\nThis is primarily used in session saving.\n@return table of split views. Each split view entry is a table with 4\n  fields: `1`, `2`, `vertical`, and `size`. `1` and `2` have values of either\n  nested split view entries or the views themselves; `vertical` is a flag\n  that indicates if the split is vertical or not; and `size` is the integer\n  position of the split resizer.
 get_text buffer.get_text(buffer)\nReturns the buffer's text.\n@param buffer A buffer.
@@ -1084,7 +1029,7 @@ snippets _G.snippets (table)\nMap of snippet triggers with their snippet text, w
 snippets textadept.snippets (module)\nSnippets for Textadept.
 sort table.sort(list [, comp])\nSorts list elements in a given order, *in-place*, from `list[1]` to\n`list[#list]`. If `comp` is given, then it must be a function that receives\ntwo list elements and returns true when the first element must come before\nthe second in the final order (so that `not comp(list[i+1],list[i])` will be\ntrue after the sort). If `comp` is not given, then the standard Lua operator\n`<` is used instead.\n\nThe sort algorithm is not stable; that is, elements considered equal by the\ngiven order may have their relative positions changed by the sort.
 space lexer.space (pattern)\nA pattern that matches any whitespace character ('\t', '\v', '\f', '\n',\n'\r', space).
-spawn _G.spawn(argv, working_dir, stdout_cb, stderr_cb, exit_cb)\nSpawns an interactive child process *argv* in a separate thread, returning\na handle to that process.\nThe terminal version spawns processes in the same thread.\n@param argv A command line string containing the program's name followed by\n  arguments to pass to it. `PATH` is searched for program names.\n@param working_dir The child's current working directory (cwd) or `nil` to\n  inherit the parent's.\n@param stdout_cb A Lua function that accepts a string parameter for a block\n  of standard output read from the child. Stdout is read asynchronously in\n  1KB or 0.5KB blocks (depending on the platform), or however much data is\n  available at the time.\n  The terminal version sends all output, whether it be stdout or stderr, to\n  this callback after the process finishes.\n@param stderr_cb A Lua function that accepts a string parameter for a block\n  of standard error read from the child. Stderr is read asynchronously in 1KB\n  or 0.5kB blocks (depending on the platform), or however much data is\n  available at the time.\n@param exit_cb A Lua function that is called when the child process finishes.\n  The child's exit status is passed.\n@usage spawn('lua buffer.filename', nil, print)\n@usage proc = spawn('lua -e "print(io.read())", nil, print)\n       proc:write('foo\\n')\n@return proc
+spawn _G.spawn(argv, working_dir, stdout_cb, stderr_cb, exit_cb)\nSpawns an interactive child process *argv* in a separate thread, returning\na handle to that process.\nThe terminal version spawns processes in the same thread.\n@param argv A command line string containing the program's name followed by\n  arguments to pass to it. `PATH` is searched for program names.\n@param working_dir Optional current working directory (cwd) for the child\n  process. The default value is `nil`, which inherits the parent's cwd.\n@param stdout_cb Optional Lua function that accepts a string parameter for a\n  block of standard output read from the child. Stdout is read asynchronously\n  in 1KB or 0.5KB blocks (depending on the platform), or however much data is\n  available at the time.\n  The terminal version sends all output, whether it be stdout or stderr, to\n  this callback after the process finishes.\n@param stderr_cb Optional Lua function that accepts a string parameter for a\n  block of standard error read from the child. Stderr is read asynchronously\n  in 1KB or 0.5kB blocks (depending on the platform), or however much data is\n  available at the time.\n@param exit_cb Optional Lua function that is called when the child process\n  finishes. The child's exit status is passed.\n@usage spawn('lua buffer.filename', nil, print)\n@usage proc = spawn('lua -e "print(io.read())", nil, print)\n       proc:write('foo\\n')\n@return proc
 split view.split(view, vertical)\nSplits the view into top and bottom views (unless *vertical* is `true`),\nfocuses the new view, and returns both the old and new views.\nIf *vertical* is `false`, splits the view vertically into left and\nright views.\nEmits a `VIEW_NEW` event.\n@param view The view to split.\n@param vertical Optional flag indicating whether or not to split the view\n  vertically. The default value is `false`, for horizontal.\n@return old view and new view.\n@see events.VIEW_NEW
 sqrt math.sqrt(x)\nReturns the square root of `x`. (You can also use the expression `x^0.5`\nto compute this value.)
 standard_dropdown ui.dialogs.standard_dropdown(options)\nPrompts the user with a drop down item selection dialog defined by dialog\noptions table *options* and with localized "Ok" and "Cancel" buttons,\nreturning the selected button's index along with the selected item's index\nor, if *options*.`string_output` is `true`, the selected button's label along\nwith the selected item's text.\nIf the dialog closed due to *options*.`exit_onchange`, returns `4` along with\neither the selected item's index or text. If the dialog timed out, returns\n`0` or `"timeout"`. If the user canceled the dialog, returns `-1` or\n`"delete"`.\n@param options Table of key-value option pairs for the drop down dialog.\n\n  * `title`: The dialog's title text.\n  * `text`: The dialog's main message text.\n  * `items`: The list of string items to show in the drop down.\n  * `no_cancel`: Do not display the "Cancel" button. The default value is\n    `false`.\n  * `exit_onchange`: Close the dialog after selecting a new item. The default\n    value is `false`.\n  * `select`: The index of the initially selected list item. The default\n    value is `1`.\n  * `string_output`: Return the selected button's label or the dialog's exit\n    status along with the selected item's text instead of the button's index\n    or the dialog's exit code along with the item's index. The default value\n    is `false`.\n  * `width`: The dialog's pixel width.\n  * `height`: The dialog's pixel height.\n  * `float`: Show the dialog on top of all desktop windows. The default value\n    is `false`.\n  * `timeout`: the integer number of seconds the dialog waits for the user to\n    select a button before timing out. Dialogs do not time out by default.\n@return selected button or exit code, selected item

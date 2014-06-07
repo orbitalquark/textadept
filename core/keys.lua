@@ -21,8 +21,8 @@ local M = {}
 -- sequence, Textadept runs the language-specific one. However, if the command
 -- returns the boolean value `false`, Textadept also runs the lower-priority
 -- command. (This is useful for language modules to override commands like
--- Adeptsense autocompletion, but fall back to word autocompletion if the first
--- command fails.)
+-- autocompletion, but fall back to word autocompletion if the first command
+-- fails.)
 --
 -- ## Key Sequences
 --
