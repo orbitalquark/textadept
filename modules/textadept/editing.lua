@@ -543,14 +543,19 @@ M.autocompleters.word = function()
   local word_char = '['..buffer.word_chars:gsub('(%p)', '%%%1')..']'
   local word = line:sub(1, pos):match(word_char..'*$')
   if word == '' then return nil end
-  if ignore_case then word = word:lower() end
+  local word_patt = word:gsub('(%p)', '%%%1')
+  if ignore_case then
+    word_patt = word_patt:lower():gsub('%l', function(c)
+      return string.format('[%s%s]', string.upper(c), c)
+    end)
+  end
+  word_patt = '()('..word_patt..word_char..'+)'
+  local nonword_char = '^[^'..buffer.word_chars:gsub('(%p)', '%%%1')..']'
   for i = 1, #_BUFFERS do
     if _BUFFERS[i] == buffer or M.AUTOCOMPLETE_ALL then
       local text = _BUFFERS[i]:get_text()
-      -- Frontier pattern (%f) is too slow, so check prior char after a match.
-      local patt = '()('..word:gsub('(%p)', '%%%1')..word_char..'+)'
-      local nonword_char = '^[^'..buffer.word_chars:gsub('(%p)', '%%%1')..']'
-      for i, word in (not ignore_case and text or text:lower()):gmatch(patt) do
+      for i, word in text:gmatch(word_patt) do
+        -- Frontier pattern (%f) is too slow, so check prior char after a match.
         if (i == 1 or text:find(nonword_char, i - 1)) and not list[word] then
           list[#list + 1], list[word] = word, true
         end
