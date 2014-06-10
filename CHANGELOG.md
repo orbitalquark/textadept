@@ -8,6 +8,34 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.4 (11 Jun 2014)
+
+Download:
+
+* [Textadept 7.4 -- Win32][]
+* [Textadept 7.4 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.4 -- Linux][]
+* [Textadept 7.4 -- Linux x86_64][]
+* [Textadept 7.4 -- Modules][]
+
+Bugfixes:
+
+* Fix crash in Windows with sending input to spawned processes.
+* Fix compile, run, and build command output with split views.
+* Fix `#RRGGBB` color interpretation for styles.
+* Fix word autocompletion when ignoring case.
+
+Changes:
+
+* Pressing the Enter key in the message buffer and find in files buffer
+  simulates a double-click.
+
+[Textadept 7.4 -- Win32]: download/textadept_7.4.win32.zip
+[Textadept 7.4 -- Mac OSX Intel 10.5+]: download/textadept_7.4.osx.zip
+[Textadept 7.4 -- Linux]: download/textadept_7.4.i386.tgz
+[Textadept 7.4 -- Linux x86_64]: download/textadept_7.4.x86_64.tgz
+[Textadept 7.4 -- Modules]: download/textadept_7.4.modules.zip
+
 ## 7.3 (01 Jun 2014)
 
 Download:
