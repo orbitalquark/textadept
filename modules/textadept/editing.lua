@@ -506,10 +506,10 @@ function M.filter_through(command)
   local p = io.popen(cmd)
   if s ~= e then
     buffer.target_start, buffer.target_end = s, e
-    buffer:replace_target(p:read('*all'))
+    buffer:replace_target(p:read('*a'))
     buffer:set_sel(buffer.target_start, buffer.target_end)
   else
-    buffer:set_text(p:read('*all'))
+    buffer:set_text(p:read('*a'))
     buffer:goto_pos(s)
   end
   p:close()

@@ -98,6 +98,8 @@ io.boms = {
 -- @name encodings
 io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
+local c = _SCINTILLA.constants
+local EOLs = {['\r\n'] = c.EOL_CRLF, ['\r'] = c.EOL_CR, ['\n'] = c.EOL_LF}
 ---
 -- Opens *filenames*, a string filename or list of filenames, or the
 -- user-selected filenames.
@@ -122,7 +124,7 @@ function io.open_file(filenames)
     local text = ''
     local f, err = io.open(filename, 'rb')
     if f then
-      text = f:read('*all')
+      text = f:read('*a')
       f:close()
       if not text then return end -- filename exists, but cannot read it
     elseif lfs.attributes(filename) then
@@ -147,12 +149,8 @@ function io.open_file(filenames)
     end
     buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
     -- Detect EOL mode.
-    local s, e = text:find('\r\n?')
-    if s and e then
-      buffer.eol_mode = (s == e and buffer.EOL_CR or buffer.EOL_CRLF)
-    else
-      buffer.eol_mode = buffer.EOL_LF
-    end
+    buffer.eol_mode = EOLs[text:match('\r\n?')] or buffer.EOL_LF
+    -- Insert buffer text and set properties.
     buffer:add_text(text, #text)
     buffer:goto_pos(0)
     buffer:empty_undo_buffer()
@@ -176,9 +174,8 @@ end
 function io.reload_file()
   if not buffer.filename then return end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
-  local f, err = io.open(buffer.filename, 'rb')
-  assert(f, err)
-  local text = f:read('*all')
+  local f = assert(io.open(buffer.filename, 'rb'))
+  local text = f:read('*a')
   f:close()
   local encoding, encoding_bom = buffer.encoding, buffer.encoding_bom
   if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
@@ -221,8 +218,7 @@ function io.save_file()
   if buffer.encoding then
     text = (buffer.encoding_bom or '')..text:iconv(buffer.encoding, 'UTF-8')
   end
-  local f, err = io.open(buffer.filename, 'wb')
-  assert(f, err)
+  local f = assert(io.open(buffer.filename, 'wb'))
   f:write(text)
   f:close()
   buffer:set_save_point()
@@ -269,15 +265,14 @@ end
 -- @name close_buffer
 function io.close_buffer()
   local filename = buffer.filename or buffer._type or _L['Untitled']
-  if buffer.modify and ui.dialogs.msgbox{
-       title = _L['Close without saving?'],
-       text = _L['There are unsaved changes in'],
-       informative_text = filename:iconv('UTF-8', _CHARSET),
-       icon = 'gtk-dialog-question', button1 = _L['_Cancel'],
-       button2 = _L['Close _without saving']
-     } ~= 2 then
-    return nil -- returning false can cause unwanted key command propagation
-  end
+  local confirm = not buffer.modify or ui.dialogs.msgbox{
+    title = _L['Close without saving?'],
+    text = _L['There are unsaved changes in'],
+    informative_text = filename:iconv('UTF-8', _CHARSET),
+    icon = 'gtk-dialog-question', button1 = _L['_Cancel'],
+    button2 = _L['Close _without saving']
+  } == 2
+  if not confirm then return nil end -- nil return won't propagate a key command
   buffer:delete()
   return true
 end

@@ -211,7 +211,6 @@ end
 -- @usage ui.set_theme('light', {font = 'Monospace', fontsize = 12})
 -- @name set_theme
 function ui.set_theme(name, props)
-  if not name then return end
   name = name:find('[/\\]') and name or
          package.searchpath(name, _USERHOME..'/themes/?.lua;'..
                                   _HOME..'/themes/?.lua')

@@ -231,7 +231,7 @@ function M.find_in_files(dir)
   local text = M.find_entry_text
   if not M.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
   if not M.match_case then text = text:lower() end
-  if M.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end
+  if M.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end -- TODO: wordchars
   local matches = {_L['Find:']..' '..text}
   lfs.dir_foreach(dir, function(file)
     local match_case = M.match_case
@@ -271,8 +271,7 @@ local function replace(rtext)
   end
   local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', function(code)
     code = code:gsub('[\a\b\f\n\r\t\v\\]', escapes)
-    local ok, result = pcall(load('return '..code))
-    assert(ok, result)
+    local result = assert(load('return '..code))()
     return result:gsub('\\[abfnrtv\\]', escapes)
   end)
   if ok then

@@ -98,11 +98,9 @@ local env = setmetatable({}, {
 -- Prints the results of '=' expressions like in the Lua prompt.
 -- @param code The Lua code to execute.
 local function execute_lua(code)
-  if code:sub(1, 1) == '=' then code = 'return '..code:sub(2) end
-  local f, err = load(code, nil, 'bt', env)
-  assert(f, err)
-  local result = f()
-  if result ~= nil then ui.print(result) end
+  if code:find('^=') then code = 'return '..code:sub(2) end
+  local result = assert(load(code, nil, 'bt', env))()
+  if result ~= nil or code:find('^return ') then ui.print(result) end
   events.emit(events.UPDATE_UI)
 end
 args.register('-e', '--execute', 1, execute_lua, 'Execute Lua code')
@@ -113,36 +111,32 @@ args.register('-e', '--execute', 1, execute_lua, 'Execute Lua code')
 -- @param code The Lua code to complete. The default value is the value of
 --   `entry_text`.
 local function complete_lua(code)
-  local substring = (code or M.entry_text):match('[%w_.:]+$') or ''
-  local path, op, prefix = substring:match('^([%w_.:]-)([.:]?)([%w_]*)$')
-  local f, err = load('return ('..path..')', nil, 'bt', env)
-  local ok, result = pcall(f)
+  if not code then code = M.entry_text end
+  local symbol, op, part = code:match('([%w_.]-)([%.:]?)([%w_]*)$')
+  local ok, result = pcall((load('return ('..symbol..')', nil, 'bt', env)))
   local cmpls = {}
-  prefix = '^'..prefix
+  part = '^'..part
+  if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
   if not ok then -- shorthand notation
-    for _, t in ipairs{buffer, view, ui, _G} do
-      for k in pairs(t) do
-        if type(k) == 'string' and k:find(prefix) then cmpls[#cmpls + 1] = k end
+    local pool = {
+      buffer, view, ui, _G, _SCINTILLA.functions, _SCINTILLA.properties
+    }
+    for i = 1, #pool do
+      for k in pairs(pool[i]) do
+        if type(k) == 'string' and k:find(part) then cmpls[#cmpls + 1] = k end
       end
-    end
-    for f in pairs(_SCINTILLA.functions) do
-      if f:find(prefix) then cmpls[#cmpls + 1] = f end
-    end
-    for p in pairs(_SCINTILLA.properties) do
-      if p:find(prefix) then cmpls[#cmpls + 1] = p end
     end
   else
-    if type(result) ~= 'table' then return end
     for k in pairs(result) do
-      if type(k) == 'string' and k:find(prefix) then cmpls[#cmpls + 1] = k end
+      if type(k) == 'string' and k:find(part) then cmpls[#cmpls + 1] = k end
     end
-    if path == 'buffer' and op == ':' then
+    if symbol == 'buffer' and op == ':' then
       for f in pairs(_SCINTILLA.functions) do
-        if f:find(prefix) then cmpls[#cmpls + 1] = f end
+        if f:find(part) then cmpls[#cmpls + 1] = f end
       end
-    elseif path == 'buffer' and op == '.' then
+    elseif symbol == 'buffer' and op == '.' then
       for p in pairs(_SCINTILLA.properties) do
-        if p:find(prefix) then cmpls[#cmpls + 1] = p end
+        if p:find(part) then cmpls[#cmpls + 1] = p end
       end
     end
   end
@@ -152,8 +146,7 @@ end
 
 -- Define key mode for entering Lua commands.
 keys.lua_command = {
-  ['\t'] = complete_lua,
-  ['\n'] = {M.finish_mode, execute_lua}
+  ['\t'] = complete_lua, ['\n'] = {M.finish_mode, execute_lua}
 }
 
 -- Pass command entry keys to the default keypress handler.

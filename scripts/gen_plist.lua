@@ -8,7 +8,7 @@ local languages, extensions = {}, {}
 
 -- Read languages and extensions.
 local f = io.open('../modules/textadept/file_types.lua')
-local types = f:read('*all'):match('M.extensions = (%b{})'):sub(2)
+local types = f:read('*a'):match('M.extensions = (%b{})'):sub(2)
 f:close()
 for type in types:gmatch('(.-)[%],}]+') do
   if type:find('^%-%-') then
