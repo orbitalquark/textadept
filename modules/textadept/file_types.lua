@@ -54,33 +54,32 @@ local function get_lexer(buffer, current)
   return current and lexer:match('[^/]+$') or lexer:match('^[^/]+')
 end
 
+-- Attempts to detect the language based on a buffer's first line of text or
+-- that buffer's filename.
+-- @param buffer The buffer to detect the language of.
+-- @return lexer language
+local function detect_language(buffer)
+  local line = buffer:get_line(0)
+  -- Detect from shebang line.
+  if line:find('^#!') then
+    for word in line:gsub('[/\\]', ' '):gmatch('%S+') do
+      if M.shebangs[word] then return M.shebangs[word] end
+    end
+  end
+  -- Detect from first line.
+  for patt, lexer in pairs(M.patterns) do
+    if line:find(patt) then return lexer end
+  end
+  -- Detect from file extension.
+  return buffer.filename and M.extensions[buffer.filename:match('[^/\\.]+$')] or
+         'text'
+end
+
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, lang)
-  -- If no language was given, attempt to detect it.
-  if not lang then
-    local line = buffer:get_line(0)
-    -- Detect from shebang line.
-    if line:find('^#!') then
-      for word in line:gsub('[/\\]', ' '):gmatch('%S+') do
-        if M.shebangs[word] then lang = M.shebangs[word] break end
-      end
-    end
-    -- Detect from first line.
-    if not lang then
-      for patt, lexer in pairs(M.patterns) do
-        if line:find(patt) then lang = lexer break end
-      end
-    end
-    -- Detect from file extension.
-    if not lang and buffer.filename then
-      lang = M.extensions[buffer.filename:match('[^/\\.]+$')]
-    end
-    if not lang then lang = 'text' end
-  end
-
-  -- Set the lexer and load its language module.
+  if not lang then lang = detect_language(buffer) end
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
   buffer._lexer = lang

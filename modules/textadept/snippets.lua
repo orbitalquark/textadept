@@ -86,9 +86,7 @@ local newlines = {[0] = '\r\n', '\r', '\n'}
 -- @param trigger The trigger text used to expand the snippet, if any.
 local function new_snippet(text, trigger)
   local snippet = setmetatable({
-    trigger = trigger,
-    original_sel_text = buffer:get_sel_text(),
-    snapshots = {}
+    trigger = trigger, original_sel_text = buffer:get_sel_text(), snapshots = {}
   }, {__index = M._snippet_mt})
   snippet_stack[#snippet_stack + 1] = snippet
 
@@ -139,13 +137,10 @@ function M._insert(text)
     local lexer = buffer:get_lexer(true)
     trigger = buffer:text_range(buffer:word_start_position(buffer.current_pos),
                                 buffer.current_pos)
-    local snip = snippets
-    text = snip[trigger]
-    if type(snip) == 'table' and snip[lexer] then snip = snip[lexer] end
-    text = snip[trigger] or text
+    text = type(M[lexer]) == 'table' and M[lexer][trigger] or M[trigger]
   end
-  local snippet = snippet_stack[#snippet_stack]
-  if type(text) == 'string' then snippet = new_snippet(text, trigger) end
+  local snippet = text and new_snippet(text, trigger) or
+                  snippet_stack[#snippet_stack]
   if not snippet then return false end
   snippet:next()
 end
@@ -174,7 +169,6 @@ end
 -- @name _select
 function M._select()
   local list, t = {}, {}
-  local type = type
   for trigger, text in pairs(snippets) do
     if type(text) == 'string' then list[#list + 1] = trigger..'\0 \0'..text end
   end
@@ -214,17 +208,13 @@ M._snippet_mt = {
   -- Gets a snippet's end position in the buffer.
   -- @param snippet The snippet returned by `new_snippet()`.
   get_end_position = function(snippet)
-    local e = buffer:indicator_end(INDIC_SNIPPET, snippet.start_position + 1)
-    if e == 0 then e = snippet.start_position end
-    return e
+    return buffer:indicator_end(INDIC_SNIPPET, snippet.start_position + 1)
   end,
 
   -- Gets the text for a snippet.
   -- @param snippet The snippet returned by `new_snippet()`.
   get_text = function(snippet)
-    local s, e = snippet.start_position, snippet:get_end_position()
-    local ok, text = pcall(buffer.text_range, buffer, s, e)
-    return ok and text or ''
+    return buffer:text_range(snippet.start_position, snippet:get_end_position())
   end,
 
   -- Sets the text for a snippet.
@@ -272,7 +262,7 @@ M._snippet_mt = {
     -- Shell code.
     escaped_text = escaped_text:gsub('%%'..index..'%[([^%]]*)%]', function(code)
       local p = io.popen(snippet.unescape_text(code, true))
-      local result = p:read('*all'):sub(1, -2) -- chop '\n'
+      local result = p:read('*a'):sub(1, -2) -- chop '\n'
       p:close()
       return result
     end)

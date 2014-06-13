@@ -32,7 +32,7 @@ if CURSES or OSX then
       local current_dir = lfs.currentdir()
       lfs.chdir(working_dir)
       local p = io.popen(argv..' 2>&1')
-      stdout_cb(p:read('*all'))
+      stdout_cb(p:read('*a'))
       exit_cb(select(3, p:close()))
       lfs.chdir(current_dir)
       return p

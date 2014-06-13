@@ -144,10 +144,10 @@ function M.start(doc)
   local header, footer = '', ''
   if M.options.template_dir ~= 'luadoc/doclet/html/' then
     local p = io.popen('markdown "'..M.options.template_dir..'.header.md"')
-    template.header = p:read('*all')
+    template.header = p:read('*a')
     p:close()
     p = io.popen('markdown "'..M.options.template_dir..'.footer.md"')
-    template.footer = p:read('*all')
+    template.footer = p:read('*a')
     p:close()
   end
 
@@ -168,7 +168,7 @@ function M.start(doc)
   write_nav(f, hierarchy)
   f:close()
   local p = io_popen('markdown "'..navfile..'"')
-  local nav = p:read('*all')
+  local nav = p:read('*a')
   p:close()
   os.remove(navfile)
 
@@ -177,7 +177,7 @@ function M.start(doc)
   local api_index = M.options.output_dir..'/.api_index.md'
   if require('lfs').attributes(api_index) then
     local p = io_popen('markdown -f toc -T "'..api_index..'"')
-    template.toc, template.main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
+    template.toc, template.main = p:read('*a'):match('^(.-\n</ul>\n)(.+)$')
     p:close()
   end
   f = io_open(M.options.output_dir..'/api/index.html', 'wb')
@@ -265,7 +265,7 @@ function M.start(doc)
     template.title = name..' - Textadept API'
     template.nav = nav:gsub('<a[^>]+>('..name:match('[^%.]+$')..')</a>', '%1')
     local p = io_popen('markdown -f toc -T "'..mdfile..'"')
-    template.toc, template.main = p:read('*all'):match('^(.-\n</ul>\n)(.+)$')
+    template.toc, template.main = p:read('*a'):match('^(.-\n</ul>\n)(.+)$')
     p:close()
     template.toc = template.toc:gsub('(<a.-)%b()(</a>)', '%1%2') -- strip params
                                :gsub('<code>([^<]+)</code>', '%1') -- sans serif

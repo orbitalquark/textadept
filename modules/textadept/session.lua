@@ -52,8 +52,8 @@ function M.load(filename)
   local lfs_attributes = lfs.attributes
   for line in f:lines() do
     if line:find('^buffer:') then
-      local anchor, current_pos, first_visible_line, filename =
-        line:match('^buffer: (%d+) (%d+) (%d+) (.+)$')
+      local patt = '^buffer: (%d+) (%d+) (%d+) (.+)$'
+      local anchor, current_pos, first_visible_line, filename = line:match(patt)
       if not filename:find('^%[.+%]$') then
         if lfs_attributes(filename) then
           io.open_file(filename)
@@ -65,9 +65,8 @@ function M.load(filename)
         events.emit(events.FILE_OPENED, filename)
       end
       -- Restore saved buffer selection and view.
-      local anchor = tonumber(anchor) or 0
-      local current_pos = tonumber(current_pos) or 0
-      local first_visible_line = tonumber(first_visible_line) or 0
+      anchor, current_pos = tonumber(anchor) or 0, tonumber(current_pos) or 0
+      first_visible_line = tonumber(first_visible_line) or 0
       buffer._anchor, buffer._current_pos = anchor, current_pos
       buffer._first_visible_line = first_visible_line
       buffer:line_scroll(0, buffer:visible_from_doc_line(first_visible_line))
