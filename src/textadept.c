@@ -1687,7 +1687,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
 static int w_focus(GtkWidget*_, GdkEventFocus*__, void*___) {
   if (focused_view && !gtk_widget_has_focus(focused_view))
     gtk_widget_grab_focus(focused_view);
-  return FALSE;
+  return (lL_event(lua, "focus", -1), FALSE);
 }
 
 /** Signal for a Textadept keypress. */

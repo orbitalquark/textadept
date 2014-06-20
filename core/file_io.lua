@@ -305,6 +305,7 @@ local function update_modified_file()
 end
 events_connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
 events_connect(events.VIEW_AFTER_SWITCH, update_modified_file)
+events_connect(events.FOCUS, update_modified_file)
 
 -- Prompts the user to reload the current file if it has been externally
 -- modified.
