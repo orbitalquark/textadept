@@ -118,6 +118,9 @@ local M = {}
 --
 --   * _`text`_: The text to search for.
 --   * _`next`_: Whether or not to search forward.
+-- @field FOCUS (string)
+--   Emitted when Textadept receives focus.
+--   This event is never emitted when Textadept is running in the terminal.
 -- @field HOTSPOT_CLICK (string)
 --   Emitted when clicking on text that is in a style that has the hotspot
 --   attribute set.
@@ -376,7 +379,7 @@ for _, n in pairs(scnotifications) do M[n[1]:upper()] = n[1] end
 local ta_events = {
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
   'buffer_deleted', 'buffer_new', 'command_entry_command',
-  'command_entry_keypress', 'error', 'find', 'initialized', 'keypress',
+  'command_entry_keypress', 'error', 'find', 'focus', 'initialized', 'keypress',
   'menu_clicked', 'quit', 'replace', 'replace_all', 'reset_after',
   'reset_before', 'view_after_switch', 'view_before_switch', 'view_new'
 }
