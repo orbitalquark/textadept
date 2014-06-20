@@ -3,6 +3,25 @@
 Thank you everyone for your contributions and feedback. They have helped make
 Textadept the amazing editor that it is today.
 
+## Sponsors
+
+=[The Library of the University of Antwerp][]=
+    reST and YAML lexers and modules
+
+[The Library of the University of Antwerp]: http://www.uantwerpen.be
+
+### Become a Sponsor
+
+You, your company, or your organization may sponsor a feature in Textadept. The
+feature will be included in subsequent releases of Textadept and will also be
+available under Textadept's open source license. Sponsors are credited on this
+page along with an optional link to their website. They also receive a proper
+receipt or invoice for recording and/or tax-related purposes.
+
+Please send any inquiries to mitchell.att.foicica.com. All correspondence is
+kept strictly confidential. You may also contact me for private contract work
+related to Textadept.
+
 ## Code and Documentation Contributors
 
 * Alex Bepple
