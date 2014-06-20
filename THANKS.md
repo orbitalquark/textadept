@@ -14,13 +14,13 @@ Textadept the amazing editor that it is today.
 
 You, your company, or your organization may sponsor a feature in Textadept. The
 feature will be included in subsequent releases of Textadept and will also be
-available under Textadept's open source license. Sponsors are credited on this
-page along with an optional link to their website. They also receive a proper
-receipt or invoice for recording and/or tax-related purposes.
+available under Textadept's open source license. You will be credited on this
+page with an optional link to your website, and will receive a proper receipt or
+invoice for recording and/or tax-related purposes.
 
-Please send any inquiries to mitchell.att.foicica.com. All correspondence is
-kept strictly confidential. You may also contact me for private contract work
-related to Textadept.
+Please send any inquiries by e-mail to mitchell.att.foicica.com. All
+correspondence is kept strictly confidential. You may also contact me for
+private contract work related to Textadept.
 
 ## Code and Documentation Contributors
 
