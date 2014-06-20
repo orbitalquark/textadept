@@ -419,16 +419,15 @@ function M.convert_indentation()
   buffer:begin_undo_action()
   for line = 0, buffer.line_count do
     local s = buffer:position_from_line(line)
-    local indent = line_indentation[line]
-    local indent_pos = line_indent_position[line]
-    current_indentation = buffer:text_range(s, indent_pos)
+    local indent, e = line_indentation[line], line_indent_position[line]
+    current_indentation = buffer:text_range(s, e)
     if buffer.use_tabs then
       new_indentation = ('\t'):rep(indent / buffer.tab_width)
     else
       new_indentation = (' '):rep(indent)
     end
     if current_indentation ~= new_indentation then
-      buffer.target_start, buffer.target_end = s, indent_pos
+      buffer.target_start, buffer.target_end = s, e
       buffer:replace_target(new_indentation)
     end
   end
