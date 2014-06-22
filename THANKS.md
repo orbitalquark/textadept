@@ -43,6 +43,7 @@ private contract work related to Textadept.
 * Nils Nordman
 * Patrick McMorris
 * Pedro Andres Aranda Gutierrez
+* Piotr Orzechowski
 * Richard Philips
 * Robert Gieseke
 * Russell Dickenson
