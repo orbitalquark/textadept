@@ -28,35 +28,30 @@
 -- The `Ctrl+Shift+R` and `Ctrl+R` (`⌘⇧R` and `⌘R` on Mac OSX | `M-^R` and `^R`
 -- in curses) key bindings compile and run code, respectively. If Textadept does
 -- not execute the correct commands for your language, modify them in the
--- [`textadept.run.compile_commands`][] and [`textadept.run.run_commands`][]
--- tables using the appropriate lexer key. Commands may contain [macros][]. For
--- Lua, it would look like
+-- [`textadept.run.compile_commands`]() and [`textadept.run.run_commands`]()
+-- tables using the appropriate lexer key. Commands may contain macros. For Lua,
+-- it would look like:
 --
---     textadept.run.compile_commands.lua = 'luac "%(filename)"'
---     textadept.run.run_commands.lua = 'lua "%(filename)"'
+--     textadept.run.compile_commands.lua = 'luac "%f"'
+--     textadept.run.run_commands.lua = 'lua "%f"'
 --
 -- Double-clicking on compile or runtime errors jumps to the error's location.
 -- If Textadept does not recognize your language's errors properly, add an error
--- pattern to [`textadept.run.error_patterns`][]. The Lua error pattern looks
+-- pattern to [`textadept.run.error_patterns`](). The Lua error pattern looks
 -- like
 --
 --     table.insert(textadept.run.error_patterns, 1,
 --                  '^luac?: (.-):(%d+): (.+)$')
 --
--- [`textadept.run.compile_commands`]: textadept.run.html#compile_commands
--- [`textadept.run.run_commands`]: textadept.run.html#run_commands
--- [macros]: textadept.run.html#execute
--- [`textadept.run.error_patterns`]: textadept.run.html#error_patterns
---
 -- #### Build a Project
 --
 -- The `Ctrl+Shift+B` (`⌘⇧B` on Mac OSX | `M-^B` in curses) key bindings build
 -- the current project. Textadept can only detect projects under version
--- control, and uses [`io.get_project_root()`][] to do so. The editor looks in
+-- control, and uses [`io.get_project_root()`]() to do so. The editor looks in
 -- the detected project's root directory for some sort of "makefile" (GNU
 -- Makefiles, Ruby Rakefiles, etc.) and prompts the user for any additional
 -- arguments to pass to that makefile's run command. Textadept references
--- [`textadept.run.build_commands`][] for makefiles and their associated run
+-- [`textadept.run.build_commands`]() for makefiles and their associated run
 -- commands. Per-project build commands may also be defined. For example, the
 -- following command builds Textadept after prompting for makefile targets:
 --
@@ -69,8 +64,6 @@
 --
 -- As with compile and run commands, any recognized errors are flagged.
 --
--- [`io.get_project_root()`]: io.html#get_project_root
--- [`textadept.run.build_commands`]: textadept.run.html#build_commands
 --
 -- #### Buffer Properties
 --
@@ -90,15 +83,14 @@
 -- The `Ctrl+Space` and `Ctrl+H` (`⌥⎋` and `^H` on Mac OSX | `^Space` and `M-H`
 -- or `M-S-H` in curses) key bindings autocomplete symbols and show API
 -- documentation, respectively, when editing code. In order for these to work
--- for your language, you must create an [autocompleter][] and [API file(s)][].
---
--- [autocompleter]: textadept.editing.html#autocompleters
--- [API file(s)]: textadept.editing.html#api_files
+-- for your language, you must create an
+-- [autocompleter](#textadept.editing.autocompleters) and
+-- [API file(s)](#textadept.editing.api_files).
 --
 -- #### Snippets
 --
--- [Snippets][] for common language constructs are useful. Some snippets for
--- common Lua control structures look like
+-- [Snippets](#textadept.snippets) for common language constructs are useful.
+-- Some snippets for common Lua control structures look like
 --
 --     snippets.lua = {
 --       f = "function %1(name)(%2(args))\n\t%0\nend",
@@ -107,15 +99,13 @@
 --       forp = "for %1(k), %2(v) in pairs(%3(table)) do\n\t%0\nend",
 --     }
 --
--- [Snippets]: textadept.snippets.html
---
 -- #### Commands
 --
 -- Additional editing features for the language can be useful. For example, the
--- [Lua][] module has a feature to autocomplete the `end` keyword in a control
--- structure and the [C/C++][] module has a feature to add a ';' to the end of
--- the current line and insert a new line. Both are bound to the `Shift+Enter`
--- (`⇧↩` on Mac OSX | `S-Enter` in curses) key for easy access.
+-- [Lua](#_M.lua) module has a feature to autocomplete the `end` keyword in a
+-- control structure and the [C](#_M.ansi_c) module has a feature to add a ';'
+-- to the end of the current line and insert a new line. Both are bound to the
+-- `Shift+Enter` (`⇧↩` on Mac OSX | `S-Enter` in curses) key for easy access.
 --
 --     -- In file *lua/init.lua*             | -- In file *cpp/init.lua*
 --                                           |
@@ -127,12 +117,9 @@
 --       ['s\n'] = M.try_to_autocomplete_end |   end
 --     }                                     | }
 --
--- [Lua]: _M.lua.html
--- [C/C++]: _M.cpp.html
---
 -- #### Context Menu
 --
--- Language-specific [context menus][], accessible by right-clicking inside the
+-- Language-specific context menus, accessible by right-clicking inside the
 -- view, are useful for accessing module features without using key bindings.
 -- For Lua this might look like
 --
@@ -149,6 +136,4 @@
 --       {''},
 --       {'Autocomplete "end"', M.try_to_autocomplete_end}
 --     }
---
--- [context menus]: textadept.menu.html#context_menu
 module('_M')]]

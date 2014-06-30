@@ -61,7 +61,7 @@ _Warning_: nightly builds are untested, may have bugs, and are the absolute
 cutting-edge versions of Textadept. Do not use them in production, but for
 testing purposes only.
 
-[donation]: http://gum.co/textadept
+[donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 [download page]: http://foicica.com/textadept/download
 [Win32]: download/textadept_LATEST.win32.zip

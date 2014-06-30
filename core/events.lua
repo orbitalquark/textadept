@@ -13,7 +13,7 @@ local M = {}
 -- event has a set of event handlers, which are simply Lua functions called in
 -- the order they were connected to an event. For example, if you created a
 -- module that needs to do something each time Textadept creates a new buffer,
--- connect a Lua function to the [BUFFER_NEW](#BUFFER_NEW) event:
+-- connect a Lua function to the [`events.BUFFER_NEW`]() event:
 --
 --     events.connect(events.BUFFER_NEW, function()
 --       -- Do something here.
@@ -42,23 +42,23 @@ local M = {}
 --   Emitted after selecting an item from an autocompletion list, but before
 --   inserting that item into the buffer.
 --   Automatic insertion can be cancelled by calling
---   [`buffer:auto_c_cancel()`][] before returning from the event handler.
+--   [`buffer:auto_c_cancel()`]() before returning from the event handler.
 --   Arguments:
 --
 --   * _`text`_: The selection's text.
 --   * _`position`_: The autocompleted word's beginning position.
 -- @field BUFFER_AFTER_SWITCH (string)
 --   Emitted right after switching to another buffer.
---   Emitted by [`view:goto_buffer()`][].
+--   Emitted by [`view.goto_buffer()`]().
 -- @field BUFFER_BEFORE_SWITCH (string)
 --   Emitted right before switching to another buffer.
---   Emitted by [`view:goto_buffer()`][].
+--   Emitted by [`view.goto_buffer()`]().
 -- @field BUFFER_DELETED (string)
 --   Emitted after deleting a buffer.
---   Emitted by [`buffer:delete()`][].
+--   Emitted by [`buffer.delete()`]().
 -- @field BUFFER_NEW (string)
 --   Emitted after creating a new buffer.
---   Emitted on startup and by [`buffer.new()`][].
+--   Emitted on startup and by [`buffer.new()`]().
 -- @field CALL_TIP_CLICK (string)
 --   Emitted when clicking on a calltip.
 --   Arguments:
@@ -100,7 +100,7 @@ local M = {}
 --   * _`x`_: The x-coordinate of the mouse in the view.
 --   * _`y`_: The y-coordinate of the mouse in the view.
 -- @field DWELL_START (string)
---   Emitted when the mouse is stationary for [`buffer.mouse_dwell_time`][]
+--   Emitted when the mouse is stationary for [`buffer.mouse_dwell_time`]()
 --   milliseconds.
 --   Arguments:
 --
@@ -192,12 +192,12 @@ local M = {}
 --   Emitted after selecting a menu item.
 --   Arguments:
 --
---   * _`menu_id`_: The numeric ID of the menu item set in [`ui.menu()`][].
+--   * _`menu_id`_: The numeric ID of the menu item set in [`ui.menu()`]().
 -- @field QUIT (string)
 --   Emitted when quitting Textadept.
 --   When connecting to this event, connect with an index of 1 or the handler
 --   will be ignored.
---   Emitted by [`quit()`][].
+--   Emitted by [`quit()`]().
 -- @field REPLACE (string)
 --   Emitted to replace selected (found) text.
 --   Arguments:
@@ -211,10 +211,10 @@ local M = {}
 --   * _`repl_text`_: The replacement text.
 -- @field RESET_AFTER (string)
 --   Emitted after resetting the Lua state.
---   Emitted by [`reset()`][].
+--   Emitted by [`reset()`]().
 -- @field RESET_BEFORE (string)
 --   Emitted before resetting the Lua state.
---   Emitted by [`reset()`][].
+--   Emitted by [`reset()`]().
 -- @field SAVE_POINT_LEFT (string)
 --   Emitted after leaving a save point.
 -- @field SAVE_POINT_REACHED (string)
@@ -242,30 +242,18 @@ local M = {}
 --   Emitted after selecting an item in a user list.
 --   Arguments:
 --
---   * _`id`_: The *id* from [`buffer:user_list_show()`][].
+--   * _`id`_: The *id* from [`buffer.user_list_show()`]().
 --   * _`text`_: The selection's text.
 --   * _`position`_: The position the list was displayed at.
 -- @field VIEW_NEW (string)
 --   Emitted after creating a new view.
---   Emitted on startup and by [`view:split()`][].
+--   Emitted on startup and by [`view.split()`]().
 -- @field VIEW_BEFORE_SWITCH (string)
 --   Emitted right before switching to another view.
---   Emitted by [`ui.goto_view()`][].
+--   Emitted by [`ui.goto_view()`]().
 -- @field VIEW_AFTER_SWITCH (string)
 --   Emitted right after switching to another view.
---   Emitted by [`ui.goto_view()`][].
---
--- [`buffer:auto_c_cancel()`]: buffer.html#auto_c_cancel
--- [`view:goto_buffer()`]: view.html#goto_buffer
--- [`buffer.new()`]: buffer.html#new
--- [`buffer:delete()`]: buffer.html#delete
--- [`buffer.mouse_dwell_time`]: buffer.html#mouse_dwell_time
--- [`ui.menu()`]: ui.html#menu
--- [`quit()`]: _G.html#quit
--- [`reset()`]: _G.html#reset
--- [`buffer:user_list_show()`]: buffer.html#user_list_show
--- [`view:split()`]: view.html#split
--- [`ui.goto_view()`]: ui.html#goto_view
+--   Emitted by [`ui.goto_view()`]().
 module('events')]]
 
 local handlers = {}

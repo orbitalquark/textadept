@@ -89,6 +89,7 @@ local preferred_view
 -- The default value is `lfs.FILTER`, a filter for common binary file extensions
 -- and version control directories.
 -- @see find_in_files
+-- @see lfs.FILTER
 -- @class table
 -- @name FILTER
 M.FILTER = lfs.FILTER

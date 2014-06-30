@@ -5,25 +5,25 @@
 -- Extends Lua's `io` library with Textadept functions for working with files.
 -- @field _G.events.FILE_OPENED (string)
 --   Emitted after opening a file in a new buffer.
---   Emitted by [`open_file()`](#open_file).
+--   Emitted by [`io.open_file()`]().
 --   Arguments:
 --
 --   * _`filename`_: The opened file's filename.
 -- @field _G.events.FILE_BEFORE_SAVE (string)
 --   Emitted right before saving a file to disk.
---   Emitted by [`io.save_file()`](#save_file).
+--   Emitted by [`io.save_file()`]().
 --   Arguments:
 --
 --   * _`filename`_: The filename of the file being saved.
 -- @field _G.events.FILE_AFTER_SAVE (string)
 --   Emitted right after saving a file to disk.
---   Emitted by [`io.save_file()`](#save_file).
+--   Emitted by [`io.save_file()`]().
 --   Arguments:
 --
 --   * _`filename`_: The filename of the file being saved.
 -- @field _G.events.FILE_SAVED_AS (string)
 --   Emitted after saving a file under a different filename.
---   Emitted by [`io.save_file_as()`](#save_file_as).
+--   Emitted by [`io.save_file_as()`]().
 --   Arguments:
 --
 --   * _`filename`_: The new filename.

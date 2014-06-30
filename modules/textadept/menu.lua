@@ -10,7 +10,7 @@ local M = {}
 -- keys with string text. Use the '#' operator (instead of `ipairs()`) for
 -- iteration.
 -- If applicable, load this module last in your *~/.textadept/init.lua*, after
--- `textadept.keys` since it looks up defined key commands to show them in
+-- [`textadept.keys`]() since it looks up defined key commands to show them in
 -- menus.
 module('textadept.menu')]]
 
@@ -194,9 +194,8 @@ local menubar = {
     {_L['_Reset Zoom'], utils.reset_zoom},
   },
   { title = _L['_Help'],
-    {_L['Show _Manual'],
-      {utils.open_webpage, _HOME..'/doc/manual/01_Introduction.html'}},
-    {_L['Show _LuaDoc'], {utils.open_webpage, _HOME..'/doc/api/index.html'}},
+    {_L['Show _Manual'], {utils.open_webpage, _HOME..'/doc/manual.html'}},
+    {_L['Show _LuaDoc'], {utils.open_webpage, _HOME..'/doc/api.html'}},
     SEPARATOR,
     {_L['_About'],
       {ui.dialogs.msgbox, {title = 'Textadept', text = _RELEASE,

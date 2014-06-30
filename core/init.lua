@@ -57,7 +57,7 @@ end
 --   */Users/username/* respectively).
 -- @field _CHARSET (string)
 --   The filesystem's character encoding.
---   This is used when [working with files](io.html).
+--   This is used when [working with files](#io).
 -- @field WIN32 (bool)
 --   Whether or not Textadept is running on Windows.
 -- @field OSX (bool)
@@ -66,7 +66,7 @@ end
 --   Whether or not Textadept is running in the terminal.
 --   Curses feature incompatibilities are listed in the [Appendix][].
 --
---   [Appendix]: ../14_Appendix.html#Curses.Compatibility
+--   [Appendix]: manual.html#Curses.Compatibility
 module('_G')]]
 
 --[[ The tables below were defined in C.
@@ -74,7 +74,7 @@ module('_G')]]
 ---
 -- Table of command line parameters passed to Textadept.
 -- @class table
--- @see _G.args
+-- @see args
 -- @name arg
 local arg
 
@@ -101,13 +101,13 @@ local _BUFFERS
 local _VIEWS
 
 ---
--- The current [buffer](buffer.html) in the current [view](#view).
+-- The current [buffer](#buffer) in the [current view](#_G.view).
 -- @class table
 -- @name buffer
 local buffer
 
 ---
--- The current [view](view.html).
+-- The current [view](#view).
 -- @class table
 -- @name view
 local view

@@ -44,7 +44,7 @@ end
 -- Iterates over all files and sub-directories in directory *dir*, calling
 -- function *f* with each file found.
 -- Files passed to *f* do not match any pattern in string or table *filter*,
--- and, unless *exclude_FILTER* is `true`, `FILTER` as well. A filter table
+-- and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A filter table
 -- contains Lua patterns that match filenames to exclude, an optional `folders`
 -- sub-table that contains patterns matching directories to exclude, and an
 -- optional `extensions` sub-table that contains raw file extensions to exclude.
@@ -55,7 +55,7 @@ end
 --   `false` explicitly, iteration ceases.
 -- @param filter Optional filter for files and directories to exclude.
 -- @param exclude_FILTER Optional flag indicating whether or not to exclude the
---   default filter `FILTER` in the search. If `false`, adds `FILTER` to
+--   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
 --   *filter*.
 --   The default value is `false` to include the default filter.
 -- @param recursing Utility flag indicating whether or not this function has

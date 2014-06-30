@@ -43,7 +43,7 @@ end
 -- Emits an `ARG_NONE` event when no arguments are present.
 -- @param arg Argument table.
 -- @see register
--- @see events
+-- @see _G.events
 -- @name process
 function M.process(arg)
   local no_args = true
