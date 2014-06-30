@@ -20,10 +20,10 @@
 --   The default value is `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field additional_sel_back (number, Write-only)
 --   The background color, in "0xBBGGRR" format, of additional selections.
---   This field has no effect when calling `buffer:set_sel_back(false, ...)`.
+--   This field has no effect when calling `buffer.set_sel_back(false, ...)`.
 -- @field additional_sel_fore (number, Write-only)
 --   The foreground color, in "0xBBGGRR" format, of additional selections.
---   This field has no effect when calling `buffer:set_sel_fore(false, ...)`.
+--   This field has no effect when calling `buffer.set_sel_fore(false, ...)`.
 -- @field additional_selection_typing (bool)
 --   Type into multiple selections.
 --   The default value is `false`.
@@ -41,8 +41,7 @@
 --   size/size_fractional, bold/weight, italics, fore, back, and character_set.
 -- @field annotation_style_offset (number)
 --   The beginning of the range of style numbers used for annotations.
---   Always set this to the result of
---   [`buffer.allocate_extended_styles`](#allocate_extended_styles).
+--   Always set this to the result of [`buffer.allocate_extended_styles()`]().
 --   Annotation styles may be completely separated from standard text styles by
 --   setting a style offset. For example, when set to `512`, annotation styles
 --   are numbered from `512` upto `767` so they do not overlap styles set by
@@ -74,7 +73,7 @@
 --   The default value is `true`.
 -- @field auto_c_case_insensitive_behaviour (number)
 --   The behavior mode for a case insensitive autocompletion or user list when
---   [`buffer.auto_c_ignore_case`](#auto_c_ignore_case) is `true`.
+--   [`buffer.auto_c_ignore_case`]() is `true`.
 --
 --   * `buffer.CASEINSENSITIVEBEHAVIOUR_RESPECTCASE`
 --     Prefer to select case-sensitive matches.
@@ -121,13 +120,12 @@
 --   The order setting for autocompletion and user lists.
 --
 --   * `buffer.ORDER_PRESORTED`
---     Lists passed to [`buffer.auto_c_show`](#auto_c_show) are in sorted,
---     alphabetical order.
+--     Lists passed to [`buffer.auto_c_show()`]() are in sorted, alphabetical
+--     order.
 --   * `buffer.ORDER_PERFORMSORT`
---     Sort autocompletion lists passed to [`buffer.auto_c_show`](#auto_c_show).
+--     Sort autocompletion lists passed to [`buffer.auto_c_show()`]().
 --   * `buffer.ORDER_CUSTOM`
---     Lists passed to [`buffer.auto_c_show`](#auto_c_show) are already in a
---     custom order.
+--     Lists passed to [`buffer.auto_c_show()`]() are already in a custom order.
 --
 --   The default value is `buffer.ORDER_PRESORTED`.
 -- @field auto_c_separator (number)
@@ -138,10 +136,9 @@
 --   The character byte that separates autocompletion and user list items and
 --   their image types.
 --   Autocompletion and user list items can display both an image and text.
---   Register images and their types using
---   [`buffer:register_image()`](#register_image) or
---   [`buffer:register_rgba_image()`](#register_rgba_image) before appending
---   image types to list items after type separator characters.
+--   Register images and their types using [`buffer.register_image()`]() or
+--   [`buffer.register_rgba_image()`]() before appending image types to list
+--   items after type separator characters.
 --   The default value is 63 ('?').
 -- @field back_space_un_indents (bool)
 --   Un-indent text when backspacing within indentation.
@@ -154,9 +151,9 @@
 -- @field call_tip_fore_hlt (number, Write-only)
 --   A call tip's highlighted text foreground color, in "0xBBGGRR" format.
 -- @field call_tip_pos_start (number, Write-only)
---   The position to display a call tip at with
---   [`buffer.call_tip_show()`](#call_tip_show). When a call tip is visible,
---   this is the position where backspacing beyond it hides the call tip.
+--   The position to display a call tip at with [`buffer.call_tip_show()`]().
+--   When a call tip is visible, this is the position where backspacing beyond
+--   it hides the call tip.
 -- @field call_tip_position (boolean)
 --   Display a call tip above the current line instead of below it.
 --   The default value is `false`.
@@ -245,12 +242,11 @@
 --   * `buffer.EDGE_NONE`
 --     Long lines are not marked.
 --   * `buffer.EDGE_LINE`
---     Draw a vertical line whose color is [`buffer.edge_colour`](#edge_colour)
---     at column [`buffer.edge_column`](#edge_column).
+--     Draw a vertical line whose color is [`buffer.edge_colour`]() at column
+--     [`buffer.edge_column`]().
 --   * `buffer.EDGE_BACKGROUND`
---     Change the background color of text after column
---     [`buffer.edge_column`](#edge_column) to
---     [`buffer.edge_colour`](#edge_colour).
+--     Change the background color of text after column [`buffer.edge_column`]()
+--     to [`buffer.edge_colour`]().
 -- @field encoding (string or nil)
 --   The string encoding of the file, or `nil` for binary files.
 -- @field encoding_bom (string)
@@ -264,7 +260,7 @@
 -- @field eol_mode (number)
 --   The current end of line mode. Changing the current mode does not convert
 --   any of the buffer's existing end of line characters.
---   Use [`buffer:convert_eols()`](#convert_eols) to do so.
+--   Use [`buffer.convert_eols()`]() to do so.
 --
 --   * `buffer.EOL_CRLF`
 --     Carriage return with line feed ("\r\n").
@@ -289,7 +285,7 @@
 --   Table of flags that indicate whether or not fold points are expanded for
 --   line numbers starting from zero.
 --   Setting expanded fold states does not toggle folds; it only updates fold
---   margin markers. Use [`buffer:toggle_fold()`](#toggle_fold) instead.
+--   margin markers. Use [`buffer.toggle_fold()`]() instead.
 -- @field fold_flags (number)
 --   Bit-mask of folding lines to draw in the buffer.
 --
@@ -337,8 +333,7 @@
 --   The default value is `true`.
 -- @field indent (number)
 --   The number of spaces in one level of indentation.
---   The default value is `0`, which uses the value of
---   [`buffer.tab_width`](#tab_width).
+--   The default value is `0`, which uses the value of [`buffer.tab_width`]().
 -- @field indentation_guides (number)
 --   The indentation guide drawing mode.
 --   Indentation guides are dotted vertical lines that appear within indentation
@@ -389,10 +384,9 @@
 --     A bounding box.
 --   * `buffer.INDIC_ROUNDBOX`
 --     A translucent box with rounded corners around the text. Use
---     [`buffer.indic_alpha`](#indic_alpha) and
---     [`buffer.indic_outline_alpha`](#indic_outline_alpha) to set the fill and
---     outline transparency, respectively. Their default values are `30` and
---     `50`.
+--     [`buffer.indic_alpha`]() and [`buffer.indic_outline_alpha`]() to set the
+--     fill and outline transparency, respectively. Their default values are
+--     `30` and `50`.
 --   * `buffer.INDIC_STRAIGHTBOX`
 --     Similar to `INDIC_ROUNDBOX` but with sharp corners.
 --   * `buffer.INDIC_DASH`
@@ -403,9 +397,8 @@
 --     A squiggly underline 2 pixels in height.
 --   * `buffer.INDIC_DOTBOX`
 --     Similar to `INDIC_STRAIGHTBOX` but with a dotted outline.
---     Translucency alternates between [`buffer.indic_alpha`](#indic_alpha) and
---     [`buffer.indic_outline_alpha`](#indic_outline_alpha) starting with the
---     top-left pixel.
+--     Translucency alternates between [`buffer.indic_alpha`]() and
+--     [`buffer.indic_outline_alpha`]() starting with the top-left pixel.
 --   * `buffer.INDIC_SQUIGGLEPIXMAP`
 --     Identical to `INDIC_SQUIGGLE` but draws faster by using a pixmap instead
 --     of multiple line segments.
@@ -414,19 +407,16 @@
 --     on either side. Similar in appearance to Asian language input
 --     composition.
 --
---   Use [`_SCINTILLA.next_indic_number()`][] for custom indicators.
---
---   [`_SCINTILLA.next_indic_number()`]: _SCINTILLA.html#next_indic_number
+--   Use [`_SCINTILLA.next_indic_number()`]() for custom indicators.
 -- @field indic_under (table)
 --   Table of flags that indicate whether or not to draw indicators behind text
 --   instead of over the top of it for indicator numbers from `0` to `31`.
---   For values to be `true`, [`buffer.two_phase_draw`](#two_phase_draw) must be
---   `true`.
+--   For values to be `true`, [`buffer.two_phase_draw`]() must be `true`.
 --   The default values are `false`.
 -- @field indicator_current (number)
 --   The indicator number in the range of `0` to `31` used by
---   [`buffer:indicator_fill_range()`](#indicator_fill_range) and
---   [`buffer:indicator_clear_range()`](#indicator_clear_range).
+--   [`buffer.indicator_fill_range()`]() and
+--   [`buffer.indicator_clear_range()`]().
 -- @field length (number, Read-only)
 --   The number of bytes in the buffer.
 -- @field line_count (number, Read-only)
@@ -496,8 +486,7 @@
 --   italics, fore, and back.
 -- @field margin_style_offset (number)
 --   The beginning of the range of style numbers used for margin text.
---   Always set this to the result of
---   [`buffer.allocate_extended_styles`](#allocate_extended_styles).
+--   Always set this to the result of [`buffer.allocate_extended_styles()`]().
 --   Margin styles may be completely separated from standard text styles by
 --   setting a style offset. For example, when set to `256`, margin styles are
 --   numbered from `256` upto `511` so they do not overlap styles set by lexers.
@@ -550,7 +539,7 @@
 --   `DWELL_START` event. A time of `buffer.TIME_FOREVER` will never generate
 --   one.
 -- @field mouse_selection_rectangular_switch (bool)
---   Whether or not pressing `buffer.rectangular_selection_modifier` during
+--   Whether or not pressing [`buffer.rectangular_selection_modifier`]() during
 --   normal text selection with the mouse turns on rectangular selection.
 --   The default value is `false`.
 -- @field modify (bool)
@@ -580,7 +569,7 @@
 --   or `0` if not found.
 -- @field punctuation_chars (string)
 --   The string set of characters recognized as punctuation characters.
---   Set this only after setting [`buffer.word_chars`](#word_chars).
+--   Set this only after setting [`buffer.word_chars`]().
 --   The default value is a string that contains all non-word and non-whitespace
 --   characters.
 -- @field read_only (bool)
@@ -611,37 +600,34 @@
 --   The alternative string representations of characters.
 --   Representations are displayed in the same way control characters are. Use
 --   the empty string for the '\0' character when assigning its representation.
---   Call [`buffer:clear_representation()`](#clear_representation) to remove a
---   representation.
+--   Call [`buffer.clear_representation()`]() to remove a representation.
 -- @field rgba_image_height (number)
 --   The height of the RGBA image to be defined using
---   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
+--   [`buffer.marker_define_rgba_image()`]().
 -- @field rgba_image_scale (number)
 --   The scale factor in percent of the RGBA image to be defined using
---   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image).
+--   [`buffer.marker_define_rgba_image()`]().
 --   This is useful on OSX with a retina display where each display unit is 2
 --   pixels: use a factor of `200` so that each image pixel is displayed using a
 --   screen pixel. The default scale, `100`, will stretch each image pixel to
 --   cover 4 screen pixels on a retina display.
 -- @field rgba_image_width (number)
 --   The width of the RGBA image to be defined using
---   [`buffer:marker_define_rgba_image()`](#marker_define_rgba_image) and
---   [`buffer:register_rgba_image()`](#register_rgba_image).
+--   [`buffer.marker_define_rgba_image()`]() and
+--   [`buffer.register_rgba_image()`]().
 -- @field scroll_width (number)
 --   The horizontal scrolling pixel width.
 --   For performance, the view does not measure the display width of the buffer
 --   to determine the properties of the horizontal scroll bar, but uses an
 --   assumed width instead. To ensure the width of the currently visible lines
---   can be scrolled use
---   [`buffer.scroll_width_tracking`](#scroll_width_tracking).
+--   can be scrolled use [`buffer.scroll_width_tracking`]().
 --   The default value is `2000`.
 -- @field scroll_width_tracking (bool)
 --   Continuously update the horizontal scrolling width to match the maximum
---   width of a displayed line beyond [`buffer.scroll_width`](#scroll_width).
+--   width of a displayed line beyond [`buffer.scroll_width`]().
 --   The default value is `false`.
 -- @field search_flags (number)
---   The bit-mask of search flags used by
---   [`buffer:search_in_target()`](#search_in_target).
+--   The bit-mask of search flags used by [`buffer.search_in_target()`]().
 --
 --   * `buffer.FIND_WHOLEWORD`
 --     Match search text only when it is surrounded by non-word characters.
@@ -714,7 +700,7 @@
 --     selected.
 --
 --   When set, caret movement alters the selected text until this field is set
---   again to the same value or until [`buffer:cancel()`](#cancel) is called.
+--   again to the same value or until [`buffer.cancel()`]() is called.
 -- @field selection_n_anchor (table)
 --   Table of positions at the beginning of existing selections numbered from
 --   zero, the main selection.
@@ -806,12 +792,10 @@
 --   List of capture text for capture numbers from a regular expression search.
 -- @field target_end (number)
 --   The position of the end of the target range.
---   This is also set by a successful
---   [`buffer:search_in_target()`](#search_in_target).
+--   This is also set by a successful [`buffer.search_in_target()`]().
 -- @field target_start (number)
 --   The position of the beginning of the target range.
---   This is also set by a successful
---   [`buffer:search_in_target()`](#search_in_target).
+--   This is also set by a successful [`buffer.search_in_target()`]().
 -- @field text_length (number, Read-only)
 --   The number of bytes in the buffer.
 -- @field two_phase_draw (bool)
@@ -819,17 +803,14 @@
 --   The default value is `true`.
 -- @field undo_collection (bool)
 --   Collect undo information.
---   When setting to `false`, call
---   [`buffer:empty_undo_buffer()`](#empty_undo_buffer) to synchronize the undo
---   buffer with the buffer text.
+--   When setting to `false`, call [`buffer.empty_undo_buffer()`]() to
+--   synchronize the undo buffer with the buffer text.
 --   The default value is `true`.
 -- @field use_tabs (bool)
 --   Use tabs instead of spaces in indentation. Changing the current setting
 --   does not convert any of the buffer's existing indentation. Use
---   [`textadept.editing.convert_indentation()`][] to do so.
+--   [`textadept.editing.convert_indentation()`]() to do so.
 --   The default value is `true`.
---
---   [`textadept.editing.convert_indentation()`]: textadept.editing.html#convert_indentation
 -- @field v_scroll_bar (bool)
 --   Display the vertical scroll bar.
 --   The default value is `true`.
@@ -862,7 +843,7 @@
 --   The default value is `buffer.VS_NONE`.
 -- @field whitespace_chars (string)
 --   The string set of characters recognized as whitespace characters.
---   Set this only after setting [`buffer.word_chars`](#word_chars).
+--   Set this only after setting [`buffer.word_chars`]().
 --   The default value is a string that contains all non-newline characters less
 --   than ASCII value 33.
 -- @field whitespace_size (number)
@@ -877,7 +858,7 @@
 --   The wrapped line indent mode.
 --
 --   * `buffer.WRAPINDENT_FIXED`
---     Indent wrapped lines by [`buffer.wrap_start_indent`](#wrap_start_indent).
+--     Indent wrapped lines by [`buffer.wrap_start_indent`]().
 --   * `buffer.WRAPINDENT_SAME`
 --     Indent wrapped lines the same amount as the first line.
 --   * `buffer.WRAPINDENT_INDENT`
@@ -899,8 +880,7 @@
 --   The default value is `buffer.WRAP_NONE`.
 -- @field wrap_start_indent (number)
 --   The number of spaces of indentation to display wrapped lines with if
---   [`buffer.wrap_indent_mode`](#wrap_indent_mode) is
---   `buffer.WRAP_INDENT_FIXED`.
+--   [`buffer.wrap_indent_mode`]() is `buffer.WRAP_INDENT_FIXED`.
 --   The default value is `0`.
 -- @field wrap_visual_flags (number)
 --   The wrapped line visual flag display mode.
@@ -1284,11 +1264,12 @@ module('buffer')
 -- Selects the range of text between positions *start_pos* to *end_pos* as the
 -- main selection, retaining all other selections as additional selections.
 -- Since an empty selection still counts as a selection, use
--- `buffer:set_selection()` first when setting a list of selections.
+-- `buffer.set_selection()` first when setting a list of selections.
 -- @param buffer A buffer.
 -- @param end_pos The caret position of the range of text to select in *buffer*.
 -- @param start_pos The anchor position of the range of text to select in
 --   *buffer*.
+-- @see set_selection
 function add_selection(buffer, end_pos, start_pos) end
 
 ---
@@ -1363,6 +1344,8 @@ function auto_c_select(buffer, prefix) end
 --   the context.
 -- @param items The sorted string of words to show, separated by
 --   `buffer.auto_c_separator` characters (initially spaces).
+-- @see auto_c_separator
+-- @see auto_c_order
 function auto_c_show(buffer, len_entered, items) end
 
 ---
@@ -1543,8 +1526,8 @@ function clear_all(buffer) end
 function clear_document_style(buffer) end
 
 ---
--- Clears all images registered using `buffer:register_image()` and
--- `buffer:register_rgba_image()`.
+-- Clears all images registered using `buffer.register_image()` and
+-- `buffer.register_rgba_image()`.
 -- @param buffer A buffer.
 function clear_registered_images(buffer) end
 
@@ -1749,7 +1732,7 @@ function ensure_visible(buffer, line) end
 ---
 -- Ensures line number *line* is visible by expanding any fold points hiding it
 -- based on the vertical caret policy previously defined in
--- `buffer:set_visible_policy()`.
+-- `buffer.set_visible_policy()`.
 -- @param buffer A buffer.
 -- @param line The line number in *buffer* to ensure visible.
 function ensure_visible_enforce_policy(buffer, line) end
@@ -1927,7 +1910,7 @@ function home_rect_extend(buffer) end
 function home_wrap(buffer) end
 
 ---
--- Like `buffer:home_wrap()`, but extends the selected text to the new position.
+-- Like `buffer.home_wrap()`, but extends the selected text to the new position.
 -- @param buffer A buffer.
 function home_wrap_extend(buffer) end
 
@@ -2060,7 +2043,7 @@ function line_end_rect_extend(buffer) end
 function line_end_wrap(buffer) end
 
 ---
--- Like `buffer:line_end_wrap()`, but extends the selected text to the new
+-- Like `buffer.line_end_wrap()`, but extends the selected text to the new
 -- position.
 -- @param buffer A buffer.
 function line_end_wrap_extend(buffer) end
@@ -2078,7 +2061,7 @@ function line_from_position(buffer, pos) end
 -- Returns the number of bytes on line number *line*, including end of line
 -- characters.
 -- To get line length excluding end of line characters, use
--- `buffer.line_end_position[line] - buffer:position_from_line(line)`.
+-- `buffer.line_end_position[line] - buffer.position_from_line(line)`.
 -- @param buffer A buffer.
 -- @param line The line number in *buffer* to get the length of.
 -- @return number
@@ -2151,7 +2134,7 @@ function margin_text_clear_all(buffer) end
 ---
 -- Adds marker number *marker*, in the range of `0` to `31`, to line number
 -- *line*, returning the added marker's handle which can be used in
--- `buffer:marker_delete_handle()` and `buffer:marker_line_from_handle()`, or
+-- `buffer.marker_delete_handle()` and `buffer.marker_line_from_handle()`, or
 -- `0` if *line* is invalid.
 -- @param buffer A buffer.
 -- @param line The line number to add the marker on.
@@ -2234,9 +2217,9 @@ function marker_delete(buffer, line, marker) end
 function marker_delete_all(buffer, marker) end
 
 ---
--- Deletes the marker with handle *handle* returned by `buffer:marker_add()`.
+-- Deletes the marker with handle *handle* returned by `buffer.marker_add()`.
 -- @param buffer A buffer.
--- @param handle The identifier of a marker returned by `buffer:marker_add()`.
+-- @param handle The identifier of a marker returned by `buffer.marker_add()`.
 function marker_delete_handle(buffer, handle) end
 
 ---
@@ -2258,9 +2241,9 @@ function marker_get(buffer, line) end
 
 ---
 -- Returns the line number that marker handle *handle*, returned by
--- `buffer:marker_add()`, was added to, or `-1` if the line was not found.
+-- `buffer.marker_add()`, was added to, or `-1` if the line was not found.
 -- @param buffer A buffer.
--- @param handle The identifier of a marker returned by `buffer:marker_add()`.
+-- @param handle The identifier of a marker returned by `buffer.marker_add()`.
 -- @return number
 function marker_line_from_handle(buffer, handle) end
 
@@ -2290,8 +2273,8 @@ function marker_previous(buffer, line, marker_mask) end
 
 ---
 -- Returns the symbol assigned to marker number *marker*, in the range of `0` to
--- `31`, used in `buffer:marker_define()`,
--- `buffer:marker_define_pixmap()`, or `buffer:marker_define_rgba_image()`.
+-- `31`, used in `buffer.marker_define()`,
+-- `buffer.marker_define_pixmap()`, or `buffer.marker_define_rgba_image()`.
 -- @param buffer A buffer.
 -- @param marker The marker number in the range of `0` to `31` to get the symbol
 --   of.
@@ -2314,8 +2297,7 @@ function move_selected_lines_down(buffer) end
 function move_selected_lines_up(buffer) end
 
 ---
--- Types a new line at the caret position according to
--- [`buffer.eol_mode`](#eol_mode).
+-- Types a new line at the caret position according to [`buffer.eol_mode`]().
 -- @param buffer A buffer.
 function new_line(buffer) end
 
@@ -2432,7 +2414,7 @@ function redo(buffer) end
 -- autocompletion and user lists.
 -- @param buffer A buffer.
 -- @param type Integer type to register the image with.
--- @param xpm_data The XPM data as described in `buffer:marker_define_pixmap()`.
+-- @param xpm_data The XPM data as described in `buffer.marker_define_pixmap()`.
 function register_image(buffer, type, xpm_data) end
 
 ---
@@ -2445,11 +2427,11 @@ function register_image(buffer, type, xpm_data) end
 -- @param buffer A buffer.
 -- @param type Integer type to register the image with.
 -- @param pixels The RGBA data as described in
---   `buffer:marker_define_rgba_image()`.
+--   `buffer.marker_define_rgba_image()`.
 function register_rgba_image(buffer, type, pixels) end
 
 ---
--- Releases all styles allocated with `buffer:allocate_extended_styles()`.
+-- Releases all styles allocated with `buffer.allocate_extended_styles()`.
 -- @param buffer A buffer.
 -- @see allocate_extended_styles
 function release_all_extended_styles(buffer) end
@@ -2487,7 +2469,7 @@ function rotate_selection(buffer) end
 
 ---
 -- Scrolls the caret into view based on the policies previously defined in
--- `buffer:set_x_caret_policy()` and `buffer:set_y_caret_policy()`.
+-- `buffer.set_x_caret_policy()` and `buffer.set_y_caret_policy()`.
 -- @param buffer A buffer.
 -- @see set_x_caret_policy
 -- @see set_y_caret_policy
@@ -2496,7 +2478,7 @@ function scroll_caret(buffer) end
 ---
 -- Scrolls into view the range of text between positions *primary_pos* and
 -- *secondary_pos*, with priority given to *primary_pos*.
--- Similar to `buffer:scroll_caret()`, but with *primary_pos* instead of
+-- Similar to `buffer.scroll_caret()`, but with *primary_pos* instead of
 -- `buffer.current_pos`.
 -- This is useful for scrolling search results into view.
 -- @param buffer A buffer.
@@ -2515,7 +2497,7 @@ function scroll_to_end(buffer) end
 function scroll_to_start(buffer) end
 
 ---
--- Anchors the position that `buffer:search_next()` and `buffer:search_prev()`
+-- Anchors the position that `buffer.search_next()` and `buffer.search_prev()`
 -- start at to the caret position.
 -- @param buffer A buffer.
 function search_anchor(buffer) end
@@ -2675,8 +2657,8 @@ function set_text(buffer, text) end
 ---
 -- Defines scrolling policy bit-mask *policy* as the policy for keeping the
 -- caret *y* number of lines away from the vertical margins as
--- `buffer:ensure_visible_enforce_policy()` redisplays hidden or folded lines.
--- It is similar in operation to `buffer:set_y_caret_policy()`.
+-- `buffer.ensure_visible_enforce_policy()` redisplays hidden or folded lines.
+-- It is similar in operation to `buffer.set_y_caret_policy()`.
 -- @param buffer A buffer.
 -- @param policy The combination of `buffer.VISIBLE_SLOP` and
 --   `buffer.VISIBLE_STRICT` policy flags to set.
@@ -2728,7 +2710,7 @@ function show_lines(buffer, start_line, end_line) end
 ---
 -- Begins styling at position *position* with styling bit-mask *styling_mask*.
 -- *styling_mask* specifies which style bits can be set with
--- `buffer:set_styling()`.
+-- `buffer.set_styling()`.
 -- @param buffer A buffer.
 -- @param position The position in *buffer* to start styling at.
 -- @param styling_mask The bit mask of style bits that can be set when styling.
@@ -2742,7 +2724,7 @@ function start_styling(buffer, position, style_mask) end
 function stuttered_page_down(buffer) end
 
 ---
--- Like `buffer:stuttered_page_down()`, but extends the selected text to the new
+-- Like `buffer.stuttered_page_down()`, but extends the selected text to the new
 -- position.
 -- @param buffer A buffer.
 function stuttered_page_down_extend(buffer) end
@@ -2753,7 +2735,7 @@ function stuttered_page_down_extend(buffer) end
 function stuttered_page_up(buffer) end
 
 ---
--- Like `buffer:stuttered_page_up()`, but extends the selected text to the new
+-- Like `buffer.stuttered_page_up()`, but extends the selected text to the new
 -- position.
 -- @param buffer A buffer.
 function stuttered_page_up_extend(buffer) end
@@ -2853,18 +2835,18 @@ function vc_home(buffer) end
 function vc_home_display(buffer) end
 
 ---
--- Like `buffer:vc_home_display()`, but extends the selected text to the new
+-- Like `buffer.vc_home_display()`, but extends the selected text to the new
 -- position.
 -- @param buffer A buffer.
 function vc_home_display_extend(buffer) end
 
 ---
--- Like `buffer:vc_home()`, but extends the selected text to the new position.
+-- Like `buffer.vc_home()`, but extends the selected text to the new position.
 -- @param buffer A buffer.
 function vc_home_extend(buffer) end
 
 ---
--- Like `buffer:vc_home()`, but extends the rectangular selection to the new
+-- Like `buffer.vc_home()`, but extends the rectangular selection to the new
 -- position.
 -- @param buffer A buffer.
 function vc_home_rect_extend(buffer) end
@@ -2876,7 +2858,7 @@ function vc_home_rect_extend(buffer) end
 function vc_home_wrap(buffer) end
 
 ---
--- Like `buffer:vc_home_wrap()`, but extends the selected text to the new
+-- Like `buffer.vc_home_wrap()`, but extends the selected text to the new
 -- position.
 -- @param buffer A buffer.
 function vc_home_wrap_extend(buffer) end
@@ -2924,7 +2906,7 @@ function word_left(buffer) end
 function word_left_end(buffer) end
 
 ---
--- Like `buffer:word_left_end()`, but extends the selected text to the new
+-- Like `buffer.word_left_end()`, but extends the selected text to the new
 -- position.
 -- @param buffer A buffer.
 function word_left_end_extend(buffer) end
@@ -2984,7 +2966,7 @@ function word_right(buffer) end
 function word_right_end(buffer) end
 
 ---
--- Like `buffer:word_right_end()`, but extends the selected text to the new
+-- Like `buffer.word_right_end()`, but extends the selected text to the new
 -- position.
 -- @param buffer A buffer.
 function word_right_end_extend(buffer) end
@@ -3077,7 +3059,7 @@ function get_lexer(buffer, current) end
 -- @param buffer A buffer.
 -- @param lexer Optional string lexer name to set. If `nil`, attempts to
 --   auto-detect the buffer's lexer.
--- @usage buffer.set_lexer(buffer, 'lexer_name')
+-- @usage buffer:set_lexer('lexer_name')
 function set_lexer(buffer, lexer) end
 
 -- Unused Fields.

@@ -21,7 +21,6 @@ module('_M.ansi_c')]]
 -- List of ctags files to use for autocompletion.
 -- @class table
 -- @name tags
--- @see textadept.editing.autocomplete
 M.tags = {_HOME..'/modules/ansi_c/tags', _USERHOME..'/modules/ansi_c/tags'}
 
 local XPM = textadept.editing.XPM_IMAGES

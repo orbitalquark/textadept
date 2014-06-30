@@ -11,7 +11,7 @@ delete your old `~/.textadept/` folder or move everything within it somewhere
 else before gradually copying those files back to see which of them causes an
 error.
 
-[migration guide]: 14_Appendix.html#Textadept.6.to.7
+[migration guide]: manual.html#Textadept.6.to.7
 
 - - -
 
@@ -41,12 +41,12 @@ It is difficult to provide a binary that runs on all Linux platforms since the
 library versions installed vary widely from distribution to distribution. For
 example, "libpng14" has been available for many distributions since late 2009
 while the latest 2012 Ubuntu still uses "libpng12". Unfortunately in these
-cases, the best idea is to compile Textadept. This process is actually very
-simple though. See the [compiling][] page. Only the GTK+ development libraries
-are needed for the GUI version. (A development library for a curses
-implementation is required for the terminal version.)
+cases, the best idea is to [compile][] Textadept. This process is actually very
+simple though. Only the GTK+ development libraries are needed for the GUI
+version. (A development library for a curses implementation is required for the
+terminal version.)
 
-[compiling]: 12_Compiling.html
+[compile]: manual.html#Compiling
 
 - - -
 
@@ -88,7 +88,7 @@ When I open a file in a non-English language, I see a lot of strange characters.
 Textadept was not able to detect the file's encoding correctly. You'll need to
 [help it][].
 
-[help it]: 04_WorkingWithFiles.html#Encodings
+[help it]: manual.html#Buffer.Encodings
 
 - - -
 
@@ -100,7 +100,7 @@ Textadept which command to run?
 **A:**
 Please see the LuaDoc on [compile and run commands][].
 
-[compile and run commands]: api/_M.html#Compile.and.Run
+[compile and run commands]: api.html#_M.Compile.and.Run
 
 - - -
 
@@ -119,7 +119,7 @@ Please see the [curses compatibility][] section of the appendix. If the feature
 in question is not listed there, it may be a bug. Please [contact][] me with any
 bug reports.
 
-[curses compatibility]: 14_Appendix.html#Curses.Compatibility
+[curses compatibility]: manual.html#Curses.Compatibility
 [contact]: README.html#Contact
 
 - - -

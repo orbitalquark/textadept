@@ -8,13 +8,13 @@ local ui = ui
 -- @field title (string, Write-only)
 --   The title text of Textadept's window.
 -- @field context_menu (userdata)
---   The buffer's context menu, a [`ui.menu()`](#menu).
+--   The buffer's context menu, a [`ui.menu()`]().
 --   This is a low-level field. You probably want to use the higher-level
---   `textadept.menu.context_menu`.
+--   [`textadept.menu.context_menu`]().
 -- @field tab_context_menu (userdata)
---   The context menu for the buffer's tab, a [`ui.menu()`](#menu).
+--   The context menu for the buffer's tab, a [`ui.menu()`]().
 --   This is a low-level field. You probably want to use the higher-level
---   `textadept.menu.tab_context_menu`.
+--   [`textadept.menu.tab_context_menu`]().
 -- @field clipboard_text (string)
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
@@ -413,16 +413,15 @@ local size
 The functions below are Lua C functions.
 
 ---
--- Low-level function for prompting the user with a [gtdialog][]s of kind *kind*
+-- Low-level function for prompting the user with a [gtdialog][] of kind *kind*
 -- with the given string and table arguments, returning a formatted string of
 -- the dialog's output.
--- You probably want to use the higher-level functions in the [`ui.dialogs`][]
+-- You probably want to use the higher-level functions in the [`ui.dialogs`]()
 -- module.
 -- Table arguments containing strings are allowed and expanded in place. This is
 -- useful for filtered list dialogs with many items.
 --
 -- [gtdialog]: http://foicica.com/gtdialog/02_Usage.html
--- [`ui.dialogs`]: ui.dialogs.html
 -- @param kind The kind of gtdialog.
 -- @param ... Parameters to the gtdialog.
 -- @return string gtdialog result.
@@ -445,12 +444,12 @@ local get_split_table
 ---
 -- Shifts to view number *n*.
 -- *relative* indicates whether or not *n* is an index relative to the current
--- view's index in `_G._VIEWS` instead of an absolute index.
+-- view's index in `_VIEWS` instead of an absolute index.
 -- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
--- @param n A relative or absolute view index in `_G._VIEWS`.
+-- @param n A relative or absolute view index in `_VIEWS`.
 -- @param relative Optional flag that indicates whether *n* is a relative or
 --   absolute index. The default value is `false`, for an absolute index.
--- @see _G._G._VIEWS
+-- @see _G._VIEWS
 -- @see events.VIEW_BEFORE_SWITCH
 -- @see events.VIEW_AFTER_SWITCH
 -- @class function

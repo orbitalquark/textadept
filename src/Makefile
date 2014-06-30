@@ -343,14 +343,14 @@ clean:
 
 doc: rootdoc manual luadoc tadoc
 rootdoc: ../*.md
-	$(bombay) -d ../doc -t ../doc --title Textadept --navtitle '' $^
-manual: ../doc/*.md
-	$(bombay) -d ../doc -t ../doc --title Textadept --navtitle Manual $^
+	$(bombay) -d ../doc -t ../doc --title Textadept $^
+manual: ../doc/manual.md
+	$(bombay) -d ../doc -t ../doc --title Textadept $^
 luadoc: ../modules ../core ../lexers
 	cd ../doc && $(luadoc) -d . -t . --doclet markdowndoc $^/lexer.lua
 tadoc: ../modules ../core ../lexers
 	cd ../modules && $(luadoc) -d lua --doclet lua/tadoc $^/lexer.lua
-cleandoc: ; rm -rf ../doc/*.html ../doc/api
+cleandoc: ; rm -rf ../doc/manual.html ../doc/api.html
 
 # Releases.
 

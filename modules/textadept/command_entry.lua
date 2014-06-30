@@ -9,11 +9,11 @@ local M = ui.command_entry
 --
 -- ## Modes
 --
--- The command entry supports multiple [modes][] that have their own sets of key
--- bindings stored in a separate table in `_G.keys` under a mode prefix key.
--- Mode names are arbitrary, but cannot conflict with lexer names or key
--- sequence strings (e.g. `'lua'` or `'send'`) due to the method Textadept uses
--- for looking up key bindings. An example mode is "lua_command" mode for
+-- The command entry supports multiple [modes](#keys.Modes) that have their own
+-- sets of key bindings stored in a separate table in `_G.keys` under a mode
+-- prefix key. Mode names are arbitrary, but cannot conflict with lexer names or
+-- key sequence strings (e.g. `'lua'` or `'send'`) due to the method Textadept
+-- uses for looking up key bindings. An example mode is "lua_command" mode for
 -- executing Lua commands:
 --
 --     local function complete_lua() ... end
@@ -30,8 +30,6 @@ local M = ui.command_entry
 -- `Tab` shows a list of Lua completions for the entry text and `Enter` exits
 -- "lua_command" key mode and executes the entered code. The command entry
 -- handles all other keys normally.
---
--- [modes]: keys.html#Modes
 -- @field entry_text (string)
 --   The text in the command entry.
 module('ui.command_entry')]]

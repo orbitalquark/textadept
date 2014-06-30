@@ -8,7 +8,7 @@
 module('view')
 
 ---
--- The [buffer](buffer.html) the view contains. (Read-only)
+-- The [buffer](#buffer) the view contains. (Read-only)
 -- @class table
 -- @name buffer
 local buffer
@@ -35,14 +35,14 @@ function unsplit(view) end
 ---
 -- Switches to buffer number *n* in the view.
 -- *relative* indicates whether or not *n* is an index relative to the current
--- buffer's index in `_G._BUFFERS` instead of an absolute index.
+-- buffer's index in `_BUFFERS` instead of an absolute index.
 -- Emits `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
 -- @param view The view to switch buffers in.
--- @param n A relative or absolute buffer index in `_G._BUFFERS`. An absolute
---   index of `-1` goes to the last buffer.
+-- @param n A relative or absolute buffer index in `_BUFFERS`. An absolute index
+--   of `-1` goes to the last buffer.
 -- @param relative Optional flag indicating whether *n* is a relative or
 --   absolute index. The default value is `false`, for an absolute index.
--- @see _G._G._BUFFERS
+-- @see _G._BUFFERS
 -- @see events.BUFFER_BEFORE_SWITCH
 -- @see events.BUFFER_AFTER_SWITCH
 function goto_buffer(view, n, relative) end

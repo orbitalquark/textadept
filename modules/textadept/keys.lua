@@ -572,8 +572,8 @@ keys[not OSX and not CURSES and 'c0' or 'm0'] = utils.reset_zoom
 
 -- Help.
 if not CURSES then
-  keys.f1 = {utils.open_webpage, _HOME..'/doc/01_Introduction.html'}
-  keys.sf1 = {utils.open_webpage, _HOME..'/doc/api/index.html'}
+  keys.f1 = {utils.open_webpage, _HOME..'/doc/manual.html'}
+  keys.sf1 = {utils.open_webpage, _HOME..'/doc/api.html'}
 end
 
 -- Movement commands.

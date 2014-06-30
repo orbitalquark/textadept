@@ -81,15 +81,15 @@ Changes:
 [Textadept 7.3 -- Linux]: download/textadept_7.3.i386.tgz
 [Textadept 7.3 -- Linux x86_64]: download/textadept_7.3.x86_64.tgz
 [Textadept 7.3 -- Modules]: download/textadept_7.3.modules.zip
-[`spawn()`]: api/_G.html#spawn
-[`buffer:set_encoding()`]: api/buffer.html#set_encoding
-[autocompleter functions]: api/textadept.editing.html#autocompleters
-[api file format]: api/textadept.editing.html#api_files
-[`textadept.editing.autocomplete`]: api/textadept.editing.html#autocomplete
-[`textadept.editing.AUTOCOMPLETE_ALL`]: api/textadept.editing.html#AUTOCOMPLETE_ALL
-[`textadept.menu.menubar`]: api/textadept.menu.html#menubar
-[`textadept.menu.context_menu`]: api/textadept.menu.html#context_menu
-[`textadept.menu.tab_context_menu`]: api/textadept.menu.html#tab_context_menu
+[`spawn()`]: api.html#spawn
+[`buffer:set_encoding()`]: api.html#buffer.set_encoding
+[autocompleter functions]: api.html#textadept.editing.autocompleters
+[api file format]: api.html#textadept.editing.api_files
+[`textadept.editing.autocomplete`]: api.html#textadept.editing.autocomplete
+[`textadept.editing.AUTOCOMPLETE_ALL`]: api.html#textadept.editing.AUTOCOMPLETE_ALL
+[`textadept.menu.menubar`]: api.html#textadept.menu.menubar
+[`textadept.menu.context_menu`]: api.html#textadept.menu.context_menu
+[`textadept.menu.tab_context_menu`]: api.html#textadept.menu.tab_context_menu
 [Scintilla]: http://scintilla.org
 
 ## 7.2 (01 May 2014)
@@ -173,11 +173,11 @@ Changes:
 [Textadept 7.2 beta 3 -- Linux]: download/textadept_7.2_beta_3.i386.tgz
 [Textadept 7.2 beta 3 -- Linux x86_64]: download/textadept_7.2_beta_3.x86_64.tgz
 [Textadept 7.2 beta 3 -- Modules]: download/textadept_7.2_beta_3.modules.zip
-[optionselect]: api/ui.dialogs.html#optionselect
-[`ui.SILENT_PRINT`]: api/ui.html#SILENT_PRINT
-[spawn processes]: api/_G.html#spawn
-[Snapopen]: 04_WorkingWithFiles.html#Snapopen
-[building projects]: api/_M.html#Build.a.Project
+[optionselect]: api.html#ui.dialogs.optionselect
+[`ui.SILENT_PRINT`]: api.html#ui.SILENT_PRINT
+[spawn processes]: api.html#spawn
+[Snapopen]: manual.html#Snapopen
+[building projects]: api.html#_M.Build.a.Project
 [LuaJIT]: http://luajit.org
 [Scintilla]: http://scintilla.org
 
@@ -231,7 +231,7 @@ Changes:
 [Textadept 7.2 beta -- Linux]: download/textadept_7.2_beta.i386.tgz
 [Textadept 7.2 beta -- Linux x86_64]: download/textadept_7.2_beta.x86_64.tgz
 [Textadept 7.2 beta -- Modules]: download/textadept_7.2_beta.modules.zip
-[inputdialogs]: api/ui.dialogs.html#inputbox
+[inputdialogs]: api.html#ui.dialogs.inputbox
 [Scintilla]: http://scintilla.org
 
 ## 7.2 alpha (01 Jan 2014)
@@ -258,7 +258,7 @@ Changes:
 * Added Dart lexer.
 * Do not split the view when printing messages if tabs are enabled.
 * Look for *~/.textadept/osx_env.sh* for [OSX environment variables][] due to
-  changes in Mac OSX 10.9.
+  changes in Mac OSX 1n0.9.
 * [Experimental] Replaced Lua's `io.popen()` and `os.execute()` with versions
   that do not flash the "black box" on Windows.
 * Added read-only access to the current key chain via [`keys.keychain`][].
@@ -274,9 +274,9 @@ Changes:
 [Textadept 7.2 alpha -- Linux]: download/textadept_7.2_alpha.i386.tgz
 [Textadept 7.2 alpha -- Linux x86_64]: download/textadept_7.2_alpha.x86_64.tgz
 [Textadept 7.2 alpha -- Modules]: download/textadept_7.2_alpha.modules.zip
-[`ui.maximized`]: api/ui.html#maximized
-[OSX environment variables]: 02_Installation.html#Environment.Variables
-[`keys.keychain`]: api/keys.html#keychain
+[`ui.maximized`]: api.html#ui.maximized
+[OSX environment variables]: manual.html#Mac.OSX.Environment.Variables
+[`keys.keychain`]: api.html#keys.keychain
 [Lua]: http://lua.org
 [Scintilla]: http://scintilla.org
 
@@ -311,10 +311,10 @@ Changes:
 [Textadept 7.1 -- Linux]: download/textadept_7.1.i386.tgz
 [Textadept 7.1 -- Linux x86_64]: download/textadept_7.1.x86_64.tgz
 [Textadept 7.1 -- Modules]: download/textadept_7.1.modules.zip
-[`ui.tabs`]: api/ui.html#tabs
-[`textadept.editing.STRIP_TRAILING_SPACES`]: api/textadept.editing.html#STRIP_TRAILING_SPACES
-[`ui.clipboard_text`]: api/ui.html#clipboard_text
-[`events.FILE_CHANGED`]: api/io.html#_G.events.FILE_CHANGED
+[`ui.tabs`]: api.html#ui.tabs
+[`textadept.editing.STRIP_TRAILING_SPACES`]: api.html#textadept.editing.STRIP_TRAILING_SPACES
+[`ui.clipboard_text`]: api.html#ui.clipboard_text
+[`events.FILE_CHANGED`]: api.html#events.FILE_CHANGED
 
 ## 7.0 (01 Nov 2013)
 
@@ -341,13 +341,13 @@ Changes:
 * `textadept.adeptsense.goto_ctag()` can show all known tags now.
 * [`textadept.editing.enclose()`][] encloses the whole current word.
 
-[6 to 7 migration guide]: 14_Appendix.html#Textadept.6.to.7
+[6 to 7 migration guide]: manual.html#Textadept.6.to.7
 [Textadept 7.0 -- Win32]: download/textadept_7.0.win32.zip
 [Textadept 7.0 -- Mac OSX Intel 10.5+]: download/textadept_7.0.osx.zip
 [Textadept 7.0 -- Linux]: download/textadept_7.0.i386.tgz
 [Textadept 7.0 -- Linux x86_64]: download/textadept_7.0.x86_64.tgz
 [Textadept 7.0 -- Modules]: download/textadept_7.0.modules.zip
-[`textadept.editing.enclose()`]: api/textadept.editing.html#enclose
+[`textadept.editing.enclose()`]: api.html#textadept.editing.enclose
 
 ## 7.0 beta 5 (21 Oct 2013)
 
@@ -380,9 +380,9 @@ Changes:
 [Textadept 7.0 beta 5 -- Linux]: download/textadept_7.0_beta_5.i386.tgz
 [Textadept 7.0 beta 5 -- Linux x86_64]: download/textadept_7.0_beta_5.x86_64.tgz
 [Textadept 7.0 beta 5 -- Modules]: download/textadept_7.0_beta_5.modules.zip
-[`ui.set_theme()`]: api/ui.html#set_theme
-[`textadept.editing.INDIC_BRACEMATCH`]: api/textadept.editing.html#INDIC_BRACEMATCH
-[`buffer`]: api/buffer.html
+[`ui.set_theme()`]: api.html#ui.set_theme
+[`textadept.editing.INDIC_BRACEMATCH`]: api.html#textadept.editing.INDIC_BRACEMATCH
+[`buffer`]: api.html#buffer
 
 ## 7.0 beta 4 (01 Oct 2013)
 
@@ -428,18 +428,18 @@ Changes:
 [Textadept 7.0 beta 4 -- Linux]: download/textadept_7.0_beta_4.i386.tgz
 [Textadept 7.0 beta 4 -- Linux x86_64]: download/textadept_7.0_beta_4.x86_64.tgz
 [Textadept 7.0 beta 4 -- Modules]: download/textadept_7.0_beta_4.modules.zip
-[`events.disconnect()`]: api/events.html#disconnect
-[`buffer.filename`]: api/buffer.html#filename
-[`_CHARSET`]: api/_G.html#_CHARSET
-[`textadept.editing.select_word()`]: api/textadept.editing.html#select_word
-[`convert_eols()`]: api/buffer.html#convert_eols
-[`textadept.run.MARK_WARNING`]: api/textadept.run.html#MARK_WARNING
-[`compile_commands`]: api/textadept.run.html#compile_commands
-[`run_commands`]: api/textadept.run.html#run_commands
-[`error_patterns`]: api/textadept.run.html#error_patterns
-[`ui.dialogs`]: api/ui.dialogs.html
-[`io.open_file()`]: api/io.html#open_file
-[`io.snapopen()`]: api/io.html#snapopen
+[`events.disconnect()`]: api.html#events.disconnect
+[`buffer.filename`]: api.html#buffer.filename
+[`_CHARSET`]: api.html#_CHARSET
+[`textadept.editing.select_word()`]: api.html#textadept.editing.select_word
+[`convert_eols()`]: api.html#buffer.convert_eols
+[`textadept.run.MARK_WARNING`]: api.html#textadept.run.MARK_WARNING
+[`compile_commands`]: api.html#textadept.run.compile_commands
+[`run_commands`]: api.html#textadept.run.run_commands
+[`error_patterns`]: api.html#textadept.run.error_patterns
+[`ui.dialogs`]: api.html#ui.dialogs
+[`io.open_file()`]: api.html#io.open_file
+[`io.snapopen()`]: api.html#io.snapopen
 
 ## 7.0 beta 3 (11 Sep 2013)
 
@@ -469,7 +469,7 @@ Changes:
 * Removed `textadept.bookmarks.BOOKMARK_COLOR`,
   `textadept.editing.HIGHLIGHT_COLOR`, and `textadept.run.ERROR_COLOR` while
   exposing their respective marker and indicator numbers for customization.
-* Moved buffer IO functions into [`io`][].
+* Moved buffer IO functions into [`io` module][].
 * Updated to [CDK][] 5.0-20130901.
 
 [Textadept 7.0 beta 3 -- Win32]: download/textadept_7.0_beta_3.win32.zip
@@ -477,13 +477,13 @@ Changes:
 [Textadept 7.0 beta 3 -- Linux]: download/textadept_7.0_beta_3.i386.tgz
 [Textadept 7.0 beta 3 -- Linux x86_64]: download/textadept_7.0_beta_3.x86_64.tgz
 [Textadept 7.0 beta 3 -- Modules]: download/textadept_7.0_beta_3.modules.zip
-[`events.LEXER_LOADED`]: api/textadept.file_types.html#_G.events.LEXER_LOADED
-[`ui`]: api/ui.html
-[`textadept`]: api/textadept.html
-[`events.INITIALIZED`]: api/events.html#INITIALIZED
-[`buffer.style_name`]: api/buffer.html#style_name
-[`ui.bufstatusbar_text`]: api/ui.html#bufstatusbar_text
-[`io`]: api/io.html
+[`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
+[`ui`]: api.html#ui
+[`textadept`]: api.html#textadept
+[`events.INITIALIZED`]: api.html#events.INITIALIZED
+[`buffer.style_name`]: api.html#buffer.style_name
+[`ui.bufstatusbar_text`]: api.html#ui.bufstatusbar_text
+[`io` module]: api.html#io
 [CDK]: http://invisible-island.net/cdk/cdk.html
 
 ## 7.0 beta 2 (11 Aug 2013)
@@ -511,8 +511,8 @@ Changes:
 [Textadept 7.0 beta 2 -- Linux]: download/textadept_7.0_beta_2.i386.tgz
 [Textadept 7.0 beta 2 -- Linux x86_64]: download/textadept_7.0_beta_2.x86_64.tgz
 [Textadept 7.0 beta 2 -- Modules]: download/textadept_7.0_beta_2.modules.zip
-[`gui.set_theme()`]: api/ui.html#set_theme
-[`gui.maximized`]: api/ui.html#maximized
+[`gui.set_theme()`]: api.html#ui.set_theme
+[`gui.maximized`]: api.html#ui.maximized
 [Scintilla]: http://scintilla.org
 
 ## 7.0 beta (11 Jul 2013)
@@ -543,8 +543,8 @@ Changes:
 [Textadept 7.0 beta -- Linux]: download/textadept_7.0_beta.i386.tgz
 [Textadept 7.0 beta -- Linux x86_64]: download/textadept_7.0_beta.x86_64.tgz
 [Textadept 7.0 beta -- Modules]: download/textadept_7.0_beta.modules.zip
-[`_M.textadept.file_types`]: api/textadept.file_types.html
-[directly]: 08_Preferences.html#File.Types
+[`_M.textadept.file_types`]: api.html#textadept.file_types
+[directly]: manual.html#File.Types
 
 ## 7.0 alpha 2 (01 Jul 2013)
 
@@ -565,8 +565,8 @@ Bugfixes:
 
 Changes:
 
-* Makefile improvements. See the [compiling][] page for more information. The
-  source release is no longer necessary.
+* Makefile improvements. See [compiling][] for more information. The source
+  release is no longer necessary.
 * Removed `_G._LEXERPATH` and `_L._EXISTS()`.
 * Renamed Adeptsense image fields.
 * Renamed `_M.textadept.editing.STRIP_WHITESPACE_ON_SAVE` to
@@ -588,10 +588,10 @@ Changes:
 [Textadept 7.0 alpha 2 -- Linux]: download/textadept_7.0_alpha_2.i386.tgz
 [Textadept 7.0 alpha 2 -- Linux x86_64]: download/textadept_7.0_alpha_2.x86_64.tgz
 [Textadept 7.0 alpha 2 -- Modules]: download/textadept_7.0_alpha_2.modules.zip
-[compiling]: 12_Compiling.html
-[`_M.textadept.editing.block_comment()`]: api/textadept.editing.html#block_comment
-[`gui.set_theme()`]: api/ui.html#set_theme
-[`_M.textadept.bookmarks.goto_mark()`]: api/textadept.bookmarks.html#goto_mark
+[compiling]: manual.html#Compiling
+[`_M.textadept.editing.block_comment()`]: api.html#textadept.editing.block_comment
+[`gui.set_theme()`]: api.html#ui.set_theme
+[`_M.textadept.bookmarks.goto_mark()`]: api.html#textadept.bookmarks.goto_mark
 [LuaJIT]: http://luajit.org
 [nightly builds]: README.html#Download
 
@@ -622,8 +622,8 @@ Changes:
 [Textadept 7.0 alpha -- Linux x86_64]: download/textadept_7.0_alpha.x86_64.tgz
 [Textadept 7.0 alpha -- Source]: download/textadept_7.0_alpha.src.zip
 [Textadept 7.0 alpha -- Modules]: download/textadept_7.0_alpha.modules.zip
-[theme implementation]: 09_Themes.html
-[*properties.lua*]: 08_Preferences.html#Buffer.Properties
+[theme implementation]: manual.html#Themes
+[*properties.lua*]: manual.html#Buffer.Settings
 [Scintilla]: http://scintilla.org
 
 ## 6.6 (01 Jun 2013)
@@ -712,14 +712,14 @@ Changes:
 [Textadept 6.6 beta -- Source]: download/textadept_6.6_beta.src.zip
 [Textadept 6.6 beta -- Modules]: download/textadept_6.6_beta.modules.zip
 [Messagebox]: http://foicica.com/gtdialog/02_Usage.html#Messageboxes
-[key modes]: api/keys.html#Modes
+[key modes]: api.html#keys.Modes
 [Scintilla]: http://scintilla.org
-[`buffer.new()`]: api/buffer.html#new
-[`_M.textadept.editing.filter_through()`]: api/textadept.editing.html#filter_through
-[`_M.textadept.run.goto_error()`]: api/textadept.run.html#goto_error
-[`gui.find.goto_file_found()`]: api/gui.find.html#goto_file_found
-[`_M.textadept.editing.select_enclosed()`]: api/textadept.editing.html#select_enclosed
-[`io.encodings`]: api/io.html#encodings
+[`buffer.new()`]: api.html#buffer.new
+[`_M.textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
+[`_M.textadept.run.goto_error()`]: api.html#textadept.run.goto_error
+[`gui.find.goto_file_found()`]: api.html#ui.find.goto_file_found
+[`_M.textadept.editing.select_enclosed()`]: api.html#textadept.editing.select_enclosed
+[`io.encodings`]: api.html#io.encodings
 
 ## 6.5 (01 Apr 2013)
 
@@ -757,11 +757,11 @@ Changes:
 [Textadept 6.5 -- Linux x86_64]: download/textadept_6.5.x86_64.tgz
 [Textadept 6.5 -- Source]: download/textadept_6.5.src.zip
 [Textadept 6.5 -- Modules]: download/textadept_6.5.modules.zip
-[`_M.textadept.run.cwd`]: api/textadept.run.html#cwd
-[`lfs.dir_foreach()`]: api/lfs.html#dir_foreach
-[filtering]: api/gui.find.html#FILTER
-[`io`]: api/io.html#snapopen
-[`lexer` constants]: api/lexer.html#FOLD_BASE
+[`_M.textadept.run.cwd`]: api.html#textadept.run.cwd
+[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
+[filtering]: api.html#ui.find.FILTER
+[`io`]: api.html#io.snapopen
+[`lexer` constants]: api.html#lexer.FOLD_BASE
 [Scintilla]: http://scintilla.org
 [Lua]: http://lua.org
 
@@ -795,7 +795,7 @@ Changes:
 [Textadept 6.4 -- Linux x86_64]: download/textadept_6.4.x86_64.tgz
 [Textadept 6.4 -- Source]: download/textadept_6.4.src.zip
 [Textadept 6.4 -- Modules]: download/textadept_6.4.modules.zip
-[command line switches]: 13_Help.html#Command.Line.Parameters
+[command line switches]: manual.html#Command.Line.Parameters
 [Scintilla]: http://scintilla.org
 [LuaJIT]: http://luajit.org
 
@@ -828,7 +828,7 @@ Changes:
 [Textadept 6.3 -- Source]: download/textadept_6.3.src.zip
 [Textadept 6.3 -- Modules]: download/textadept_6.3.modules.zip
 [Scintilla]: http://scintilla.org
-[typeover characters]: api/textadept.editing.html#TYPEOVER_CHARS
+[typeover characters]: api.html#textadept.editing.TYPEOVER_CHARS
 
 ## 6.2 (01 Jan 2013)
 
@@ -857,7 +857,7 @@ Changes:
 [Textadept 6.2 -- Linux x86_64]: download/textadept_6.2.x86_64.tgz
 [Textadept 6.2 -- Source]: download/textadept_6.2.src.zip
 [Textadept 6.2 -- Modules]: download/textadept_6.2.modules.zip
-[`_M.textadept.snapopen.open()`]: api/textadept.snapopen.html#open
+[`_M.textadept.snapopen.open()`]: api.html#io.snapopen
 
 ## 6.1 (11 Dec 2012)
 
@@ -893,7 +893,7 @@ Changes:
 [Textadept 6.1 -- Linux x86_64]: download/textadept_6.1.x86_64.tgz
 [Textadept 6.1 -- Source]: download/textadept_6.1.src.zip
 [Textadept 6.1 -- Modules]: download/textadept_6.1.modules.zip
-[API documentation]: api/index.html
+[API documentation]: api.html
 [LuaJIT]: http://luajit.org
 
 ## 6.0 (01 Nov 2012)
@@ -930,15 +930,15 @@ Changes:
 * Updated to [Scintilla][] 3.2.3.
 * Updated to [LuaJIT][] 2.0.0-beta11.
 
-[5 to 6 migration guide]: 14_Appendix.html#Textadept.5.to.6
+[5 to 6 migration guide]: manual.html#Textadept.5.to.6
 [Textadept 6.0 -- Win32]: download/textadept_6.0.win32.zip
 [Textadept 6.0 -- Mac OSX Intel 10.5+]: download/textadept_6.0.osx.zip
 [Textadept 6.0 -- Linux]: download/textadept_6.0.i386.tgz
 [Textadept 6.0 -- Linux x86_64]: download/textadept_6.0.x86_64.tgz
 [Textadept 6.0 -- Source]: download/textadept_6.0.src.zip
 [Textadept 6.0 -- Modules]: download/textadept_6.0.modules.zip
-[`event.FIND_WRAPPED`]: api/gui.find.html#_G.events.FIND_WRAPPED
-[Python module]: api/_M.python.html
+[`event.FIND_WRAPPED`]: api.html#events.FIND_WRAPPED
+[Python module]: api.html#_M.python
 [Scintilla]: http://scintilla.org
 [LuaJIT]: http://luajit.org
 
@@ -982,10 +982,10 @@ Changes:
 [Textadept 6.0 beta 3 -- Linux x86_64]: download/textadept_6.0_beta_3.x86_64.tgz
 [Textadept 6.0 beta 3 -- Source]: download/textadept_6.0_beta_3.src.zip
 [Textadept 6.0 beta 3 -- Modules]: download/textadept_6.0_beta_3.modules.zip
-[`buffer:close()`]: api/buffer.html#close
-[`RUN_OUTPUT` events]: api/textadept.run.html#Run.Events
-[`string.iconv()`]: api/string.html#iconv
-[`_M.textadept.keys`]: api/textadept.keys.html
+[`buffer:close()`]: api.html#buffer.close
+[`RUN_OUTPUT` events]: api.html#textadept.run.Run.Events
+[`string.iconv()`]: api.html#string.iconv
+[`_M.textadept.keys`]: api.html#textadept.keys
 
 ## 6.0 beta 2 (01 Sep 2012)
 
@@ -1013,7 +1013,7 @@ Changes:
 * Consolidated `_M.textadept.bookmarks.add()` and
   `_M.textadept.bookmarks.remove()` into [`_M.textadept.bookmarks.toggle()`][].
 * Updated manual images.
-* [`_M.textadept.snapopen.DEFAULT_DEPTH`][] is now `99` since [`MAX`][] is the
+* `_M.textadept.snapopen.DEFAULT_DEPTH` is now `99` since [`MAX`][] is the
   limiting factor.
 * Use constant names in theme options instead of nondescript integers.
 * Updated to [Scintilla][] 3.2.2.
@@ -1024,10 +1024,9 @@ Changes:
 [Textadept 6.0 beta 2 -- Linux x86_64]: download/textadept_6.0_beta_2.x86_64.tgz
 [Textadept 6.0 beta 2 -- Source]: download/textadept_6.0_beta_2.src.zip
 [Textadept 6.0 beta 2 -- Modules]: download/textadept_6.0_beta_2.modules.zip
-[`_M.textadept.menu.select_command()`]: api/textadept.menu.html#select_command
-[`_M.textadept.bookmarks.toggle()`]: api/textadept.bookmarks.html#toggle
-[`_M.textadept.snapopen.DEFAULT_DEPTH`]: api/textadept.snapopen.html#DEFAULT_DEPTH
-[`MAX`]: api/textadept.snapopen.html#MAX
+[`_M.textadept.menu.select_command()`]: api.html#textadept.menu.select_command
+[`_M.textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
+[`MAX`]: api.html#io.SNAPOPEN_MAX
 [Scintilla]: http://scintilla.org
 
 ## 6.0 beta (01 Aug 2012)
@@ -1064,8 +1063,8 @@ Changes:
 [Textadept 6.0 beta -- Linux x86_64]: download/textadept_6.0_beta.x86_64.tgz
 [Textadept 6.0 beta -- Source]: download/textadept_6.0_beta.src.zip
 [Textadept 6.0 beta -- Modules]: download/textadept_6.0_beta.modules.zip
-[`_M.textadept.session.load()`]: api/textadept.session.html#load
-[`_M.textadept.session.save()`]: api/textadept.session.html#save
+[`_M.textadept.session.load()`]: api.html#textadept.session.load
+[`_M.textadept.session.save()`]: api.html#textadept.session.save
 [Scintilla]: http://scintilla.org
 
 ## 5.5 beta (01 Jul 2012)
@@ -1103,9 +1102,9 @@ Changes:
 [Textadept 5.5 beta -- Linux x86_64]: download/textadept_5.5_beta.x86_64.tgz
 [Textadept 5.5 beta -- Source]: download/textadept_5.5_beta.src.zip
 [Textadept 5.5 beta -- Modules]: download/textadept_5.5_beta.modules.zip
-[`gui.menu()`]: api/ui.html#menu
-[`gui.statusbar_text`]: api/ui.html#statusbar_text
-[compiling]: 12_Compiling.html
+[`gui.menu()`]: api.html#ui.menu
+[`gui.statusbar_text`]: api.html#ui.statusbar_text
+[compiling]: manual.html#Compiling
 [Lua 5.2.1]: http://www.lua.org/manual/5.2/
 [LuaJIT]: http://luajit.org
 
@@ -1167,9 +1166,9 @@ Changes:
 [Textadept 5.3 -- Linux x86_64]: download/textadept_5.3.x86_64.tgz
 [Textadept 5.3 -- Source]: download/textadept_5.3.src.zip
 [Textadept 5.3 -- Modules]: download/textadept_5.3.modules.zip
-[single-instance]: 02_Installation.html#Single.Instance
+[single-instance]: manual.html#Single.Instance
 [GTK]: http://gtk.org
-[require]: 02_Installation.html#Requirements
+[require]: manual.html#Requirements
 [GLib]: http://gtk.org/download/linux.php
 [Scintilla]: http://scintilla.org
 
@@ -1211,12 +1210,12 @@ Changes:
 [Textadept 5.2 -- Linux x86_64]: download/textadept_5.2.x86_64.tgz
 [Textadept 5.2 -- Source]: download/textadept_5.2.src.zip
 [Textadept 5.2 -- Modules]: download/textadept_5.2.modules.zip
-[`buffer:get_lexer()`]: api/buffer.html#buffer.get_lexer
-[`buffer:get_lexer(true)`]: api/buffer.html#buffer.get_lexer
-[`_M.set_buffer_properties()`]: api/_M.html#Buffer.Properties
-[`keys.KEYSYMS`]: api/keys.html#KEYSYMS
-[`_G.timeout()`]: api/_G.html#timeout
-[generating LuaDoc]: 11_Scripting.html#Generating.LuaDoc
+[`buffer:get_lexer()`]: api.html#buffer.get_lexer
+[`buffer:get_lexer(true)`]: api.html#buffer.get_lexer
+[`_M.set_buffer_properties()`]: api.html#_M.Buffer.Properties
+[`keys.KEYSYMS`]: api.html#keys.KEYSYMS
+[`_G.timeout()`]: api.html#timeout
+[generating LuaDoc]: manual.html#Generating.LuaDoc
 [GTK]: http://gtk.org
 [Scintilla]: http://scintilla.org
 
@@ -1278,7 +1277,7 @@ Changes:
 * Updated to [Scintilla][] 3.0.3.
 * Also include [LuaJIT][] executables in releases.
 
-[4 to 5 migration guide]: 14_Appendix.html#Textadept.4.to.5
+[4 to 5 migration guide]: manual.html#Textadept.4.to.5
 [Textadept 5.0 -- Win32]: download/textadept_5.0.win32.zip
 [Textadept 5.0 -- Mac OSX Intel 10.5+]: download/textadept_5.0.osx.zip
 [Textadept 5.0 -- Linux]: download/textadept_5.0.tgz
@@ -1318,11 +1317,11 @@ Changes:
 [Textadept 5.0 beta -- Linux x86_64]: download/textadept_5.0_beta.x86_64.tgz
 [Textadept 5.0 beta -- Source]: download/textadept_5.0_beta.src.zip
 [Textadept 5.0 beta -- Modules]: download/textadept_5.0_beta.modules.zip
-[`reset()`]: api/_G.html#reset
-[`_L`]: api/_L.html
-[`_M`]: api/_M.html
-[manual]: ./
-[`select_word()`]: api/textadept.editing.html#select_word
+[`reset()`]: api.html#reset
+[`_L`]: api.html#_L
+[`_M`]: api.html#_M
+[manual]: manual.html
+[`select_word()`]: api.html#textadept.editing.select_word
 
 ## 5.0 alpha (21 Dec 2011)
 
@@ -1352,7 +1351,7 @@ Changes:
 [Textadept 5.0 alpha -- Source]: download/textadept_5.0_alpha.src.zip
 [Textadept 5.0 alpha -- Modules]: download/textadept_5.0_alpha.modules.zip
 [Lua 5.2]: http://www.lua.org/manual/5.2/
-[manual]: ./
+[manual]: manual.html
 [LuaJIT]: http://luajit.org
 
 ## 4.3 (01 Dec 2011)
@@ -1385,8 +1384,8 @@ Changes:
 [Textadept 4.3 -- Linux x86_64]: download/textadept_4.3.x86_64.tgz
 [Textadept 4.3 -- Source]: download/textadept_4.3.src.zip
 [Textadept 4.3 -- Modules]: download/textadept_4.3.modules.zip
-[theme switching]: api/ui.html#set_theme
-[gtkrc]: 8_Themes.html#Theming.the.GUI
+[theme switching]: api.html#ui.set_theme
+[gtkrc]: manual.html#GUI.Theme
 [Scintilla]: http://scintilla.org
 
 ## 4.2 (01 Nov 2011)
@@ -1442,7 +1441,7 @@ Changes:
   + [`_BUFFERS`][] and [`_VIEWS`][] structure changed.
   + Removed `buffer.doc_pointer` and `view.doc_pointer`.
   + Added [`view.buffer`][] field.
-  + Renamed `gui.check_focused_buffer()` to [`buffer:check_global()`][].
+  + Renamed `gui.check_focused_buffer()` to `buffer:check_global()`.
   + [`view:goto_buffer()`][] and [`gui.goto_view()`] arguments make sense now.
     (May require changes to custom key commands.)
 * Directory is remembered in file chooser dialog after open or save as.
@@ -1457,14 +1456,13 @@ Changes:
 [Textadept 4.1 -- Linux x86_64]: download/textadept_4.1.x86_64.tgz
 [Textadept 4.1 -- Source]: download/textadept_4.1.src.zip
 [Textadept 4.1 -- Modules]: download/textadept_4.1.modules.zip
-[dwell events]: api/events.html
-[`_BUFFERS`]: api/_G.html#_BUFFERS
-[`_VIEWS`]: api/_G.html#_VIEWS
-[`view.buffer`]: api/view.html#buffer
-[`buffer:check_global()`]: api/buffer.html#buffer.check_global
-[`view:goto_buffer()`]: api/view.html#view:goto_buffer
-[`gui.goto_view()`]: api/ui.html#goto_view
-[context menu]: api/_M.html#Context.Menu
+[dwell events]: api.html#events
+[`_BUFFERS`]: api.html#_BUFFERS
+[`_VIEWS`]: api.html#_VIEWS
+[`view.buffer`]: api.html#view.buffer
+[`view:goto_buffer()`]: api.html#view.goto_buffer
+[`gui.goto_view()`]: api.html#ui.goto_view
+[context menu]: api.html#_M.Context.Menu
 [LuaCoco]: http://coco.luajit.org/
 [Scintilla]: http://scintilla.org
 
@@ -1496,15 +1494,15 @@ Changes:
 * Changed some key commands from 4.0 beta 2.
 * Do not hide the statusbar when the command entry has focus.
 
-[3 to 4 migration guide]: 14_Appendix.html#Textadept.3.to.4
+[3 to 4 migration guide]: manual.html#Textadept.3.to.4
 [Textadept 4.0 -- Win32]: download/textadept_4.0.win32.zip
 [Textadept 4.0 -- Mac OSX Intel 10.5+]: download/textadept_4.0.osx.zip
 [Textadept 4.0 -- Linux]: download/textadept_4.0.tgz
 [Textadept 4.0 -- Linux x86_64]: download/textadept_4.0.x86_64.tgz
 [Textadept 4.0 -- Source]: download/textadept_4.0.src.zip
 [Textadept 4.0 -- Modules]: download/textadept_4.0.modules.zip
-[`gui.dialog()`]: api/ui.html#dialog
-[`buffer.auto_c_ignore_case`]: api/buffer.html#auto_c_ignore_case
+[`gui.dialog()`]: api.html#ui.dialog
+[`buffer.auto_c_ignore_case`]: api.html#buffer.auto_c_ignore_case
 
 ## 4.0 beta 2 (11 Aug 2011)
 
@@ -1538,7 +1536,7 @@ Changes:
 [Textadept 4.0 beta 2 -- Linux x86_64]: download/textadept_4.0_beta_2.x86_64.tgz
 [Textadept 4.0 beta 2 -- Source]: download/textadept_4.0_beta_2.src.zip
 [Textadept 4.0 beta 2 -- Modules]: download/textadept_4.0_beta_2.modules.zip
-[recent file list]: api/io.html#recent_files
+[recent file list]: api.html#io.recent_files
 
 ## 4.0 beta (01 Aug 2011)
 
@@ -1560,7 +1558,7 @@ Changes:
 * Mac OSX uses GTK 2.24.
 * Added [`io.open_recent_file()`][].
 * Changes to localization file again.
-* [`buffer` functions][] may omit the first `buffer` argument (e.g.
+* [`buffer`][] functions may omit the first `buffer` argument (e.g.
   `buffer.line_down()` is allowed).
 * Complete overhaul of menus and added accelerators to [menu][] items.
 * Renamed `_m.textadept.editing.SAVE_STRIPS_WS` to
@@ -1576,10 +1574,10 @@ Changes:
 [Textadept 4.0 beta -- Linux x86_64]: download/textadept_4.0_beta.x86_64.tgz
 [Textadept 4.0 beta -- Source]: download/textadept_4.0_beta.src.zip
 [Textadept 4.0 beta -- Modules]: download/textadept_4.0_beta.modules.zip
-[`io.open_recent_file()`]: api/io.html#open_recent_file
-[`buffer` functions]: api/buffer.html#Functions
-[`_m.textadept.editing.STRIP_WHITESPACE_ON_SAVE`]: api/textadept.editing.html#STRIP_WHITESPACE_ON_SAVE
-[menu]: api/ui.html#gtkmenu
+[`io.open_recent_file()`]: api.html#io.open_recent_file
+[`buffer`]: api.html#buffer
+[`_m.textadept.editing.STRIP_WHITESPACE_ON_SAVE`]: api.html#textadept.editing.STRIP_WHITESPACE_ON_SAVE
+[menu]: api.html#ui.menu
 [Scintilla]: http://scintilla.org
 
 ## 3.9 (01 Jul 2011)
@@ -1617,11 +1615,11 @@ Changes:
 [Textadept 3.9 -- Source]: download/textadept_3.9.src.zip
 [Textadept 3.9 -- Modules]: download/textadept_3.9.modules.zip
 [GTK]: http://gtk.org
-[`gui.dialog`]: api/ui.html#dialog
-[functions]: api/_SCINTILLA.html#Functions
+[`gui.dialog`]: api.html#ui.dialog
+[functions]: api.html#_SCINTILLA
 [Scintilla]: http://scintilla.org
-[emit events]: api/textadept.run.html#Run.Events
-[find]: api/gui.find.html
+[emit events]: api.html#events.COMPILE_OUTPUT
+[find]: api.html#ui.find
 
 ## 3.8 (11 Jun 2011)
 
@@ -1642,7 +1640,7 @@ Bugfixes:
 Changes:
 
 * Updated Adeptsense and documentation.
-* [`events.handlers`][] is accessible.
+* `events.handlers` is accessible.
 * Added menu mnemonics for indentation size.
 * Added support for indicator and hotspot [events][].
 * Updated [documentation][] for installing [official modules][].
@@ -1657,12 +1655,11 @@ Changes:
 [Textadept 3.8 -- Linux x86_64]: download/textadept_3.8.x86_64.tgz
 [Textadept 3.8 -- Source]: download/textadept_3.8.src.zip
 [Textadept 3.8 -- Modules]: download/textadept_3.8.modules.zip
-[`events.handlers`]: api/events.html#handlers
-[events]: api/events.html
-[documentation]: 7_Modules.html#Getting.Modules
+[events]: api.html#events
+[documentation]: manual.html#Getting.Modules
 [official modules]: http://foicica.com/hg
 [Scintilla]: http://scintilla.org
-[easier]: api/lexer.html#Simple.Folding
+[easier]: api.html#lexer.Code.Folding
 
 ## 3.7 (01 May 2011)
 
@@ -1682,7 +1679,7 @@ Bugfixes:
 Changes:
 
 * Changed Mac OSX Adeptsense complete key command from `~` to `Ctrl+Escape`.
-* Added [PHP module][].
+* Added PHP module.
 
 [Textadept 3.7 -- Win32]: download/textadept_3.7.win32.zip
 [Textadept 3.7 -- Mac OSX Intel 10.5+]: download/textadept_3.7.osx.zip
@@ -1690,8 +1687,7 @@ Changes:
 [Textadept 3.7 -- Linux x86_64]: download/textadept_3.7.x86_64.tgz
 [Textadept 3.7 -- Source]: download/textadept_3.7.src.zip
 [Textadept 3.7 -- Modules]: download/textadept_3.7.modules.zip
-[`buffer:get_lexer()`]: api/buffer.html#buffer.get_lexer
-[PHP module]: api/_M.php.html
+[`buffer:get_lexer()`]: api.html#buffer.get_lexer
 
 ## 3.7 beta 3 (01 Apr 2011)
 
@@ -1714,8 +1710,8 @@ Changes:
 
 * Adeptsense tweaks for better completion and apidoc support.
 * Language modules load a user [`post_init.lua`][] script if it exists.
-* Added Ruby on Rails lexer and [module][].
-* Added [RHTML module][].
+* Added Ruby on Rails lexer and module.
+* Added RHTML module.
 * Updated mime-types and prioritize by shebang, pattern, and then file
   extension.
 * [`buffer:get_lexer(true)`] returns the lexer at the caret position.
@@ -1742,13 +1738,11 @@ Changes:
 [Textadept 3.7 beta 3 -- Linux x86_64]: download/textadept_3.7_beta_3.x86_64.tgz
 [Textadept 3.7 beta 3 -- Source]: download/textadept_3.7_beta_3.src.zip
 [Textadept 3.7 beta 3 -- Modules]: download/textadept_3.7_beta_3.modules.zip
-[`post_init.lua`]: 7_Modules.html#Customizing.Modules
-[module]: api/_M.rails.html
-[RHTML module]: api/_M.rhtml.html
-[`buffer:get_lexer(true)`]: api/buffer.html#buffer.get_lexer
+[`post_init.lua`]: manual.html#Language.Module.Preferences
+[`buffer:get_lexer(true)`]: api.html#buffer.get_lexer
 [Scintilla]: http://scintilla.org
-[`_m.textadept.snippets`]: api/textadept.snippets.html
-[`gui.print()`]: api/ui.html#print
+[`_m.textadept.snippets`]: api.html#textadept.snippets
+[`gui.print()`]: api.html#ui.print
 [repositories]: http://foicica.com/hg
 
 ## 3.7 beta 2 (01 Mar 2011)
@@ -1789,7 +1783,7 @@ Changes:
 * Language modules condensed into single `init.lua` file.
 * Added `sense.syntax.word_chars` to Adeptsense.
 * Included libpng12 build for 64-bit Debian-based Linux distros (Ubuntu).
-* Added [CSS][], [HTML][], [Java][], and [Ruby][] modules with Adeptsenses.
+* Added [CSS][], [HTML][], Java, and [Ruby][] modules with Adeptsenses.
 
 [Textadept 3.7 beta 2 -- Win32]: download/textadept_3.7_beta_2.win32.zip
 [Textadept 3.7 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_3.7_beta_2.osx.zip
@@ -1797,10 +1791,9 @@ Changes:
 [Textadept 3.7 beta 2 -- Linux x86_64]: download/textadept_3.7_beta_2.x86_64.tgz
 [Textadept 3.7 beta 2 -- Source]: download/textadept_3.7_beta_2.src.zip
 [Scintilla]: http://scintilla.org
-[CSS]: api/_M.css.html
-[HTML]: api/_M.html.html
-[Java]: api/_M.java.html
-[Ruby]: api/_M.ruby.html
+[CSS]: api.html#_M.css
+[HTML]: api.html#_M.html
+[Ruby]: api.html#_M.ruby
 
 ## 3.7 beta (01 Feb 2011)
 
@@ -1834,8 +1827,8 @@ Changes:
 [Textadept 3.7 beta -- Linux]: download/textadept_3.7_beta.tgz
 [Textadept 3.7 beta -- Linux x86_64]: download/textadept_3.7_beta.x86_64.tgz
 [Textadept 3.7 beta -- Source]: download/textadept_3.7_beta.src.zip
-[`char_matches`]: api/textadept.editing.html#char_matches
-[`braces`]: api/textadept.editing.html#braces
+[`char_matches`]: api.html#textadept.editing.char_matches
+[`braces`]: api.html#textadept.editing.braces
 
 ## 3.6 (01 Jan 2011)
 
@@ -1868,9 +1861,9 @@ Changes:
 [Textadept 3.6 -- Linux]: download/textadept_3.6.tgz
 [Textadept 3.6 -- Linux x86_64]: download/textadept_3.6.x86_64.tgz
 [Textadept 3.6 -- Source]: download/textadept_3.6.src.zip
-[`buffer.rectangular_selection_modifier`]: api/buffer.html#rectangular_selection_modifier
-[`_m.textadept.filter_through`]: api/textadept.filter_through.html
-[shell commands]: 10_Advanced.html#Shell.Commands.and.Filtering.Text
+[`buffer.rectangular_selection_modifier`]: api.html#buffer.rectangular_selection_modifier
+[`_m.textadept.filter_through`]: api.html#textadept.editing.filter_through
+[shell commands]: manual.html#Shell.Commands.and.Filtering.Text
 
 ## 3.5 (01 Dec 2010)
 
@@ -1894,17 +1887,17 @@ Changes:
 * Win32 and Mac OSX packages are all-in-one bundles; GTK is no longer an
   external dependency.
 * New [manual][].
-* Added `file_after_save` [event][].
+* Added [`file_after_save`][] event.
 
 [Textadept 3.5 -- Win32]: download/textadept_3.5.win32.zip
 [Textadept 3.5 -- Mac OSX Intel 10.5+]: download/textadept_3.5.osx.zip
 [Textadept 3.5 -- Linux]: download/textadept_3.5.tgz
 [Textadept 3.5 -- Linux x86_64]: download/textadept_3.5.x86_64.tgz
 [Textadept 3.5 -- Source]: download/textadept_3.5.src.zip
-[Menus]: api/textadept.menu.html
-[`_m.textadept.editing.enclose()`]: api/textadept.editing.html#enclose
-[manual]: ./
-[event]: api/io.html#File.Events
+[Menus]: api.html#textadept.menu
+[`_m.textadept.editing.enclose()`]: api.html#textadept.editing.enclose
+[manual]: manual.html
+[`file_after_save`]: api.html#events.FILE_AFTER_SAVE
 
 ## 3.4 (01 Nov 2010)
 
@@ -1932,7 +1925,7 @@ Changes:
 * An `update_ui` event is triggered after a Lua command is entered.
 * [`gui.dialog()`][] can take tables of strings as arguments now.
 * [`_m.textadept.snapopen.open()`][] takes a recursion depth as a parameter and
-  falls back on a [`DEFAULT_DEPTH`][] if necessary.
+  falls back on a `DEFAULT_DEPTH` if necessary.
 * Removed `_m.textadept.editing.smart_cutcopy()` and
   `_m.textadept.editing.squeeze()` functions.
 * Added `_m.textadept.editing.SAVE_STRIPS_WS` option to disable strip whitespace
@@ -1955,16 +1948,15 @@ Changes:
 [Textadept 3.4 -- Linux]: download/textadept_3.4.tgz
 [Textadept 3.4 -- Linux x86_64]: download/textadept_3.4.x86_64.tgz
 [Textadept 3.4 -- Source]: download/textadept_3.4.src.zip
-[Switch Buffers]: 4_WorkingWithFiles.html#Buffer.Browser
-[`gui.dialog()`]: api/ui.html#dialog
-[`_m.textadept.snapopen.open()`]: api/textadept.snapopen.html#open
-[`DEFAULT_DEPTH`]: api/textadept.snapopen.html#DEFAULT_DEPTH
-[`gui.statusbar_text`]: api/ui.html#statusbar_text
-[highlight]: 6_AdeptEditing.html#Word.Highlight
-[`_G.timeout()`]: api/_G.html#timeout
-[find API]: api/gui.find.html#find_in_files
+[Switch Buffers]: manual.html#Buffers
+[`gui.dialog()`]: api.html#ui.dialog
+[`_m.textadept.snapopen.open()`]: api.html#io.snapopen
+[`gui.statusbar_text`]: api.html#ui.statusbar_text
+[highlight]: manual.html#Word.Highlight
+[`_G.timeout()`]: api.html#timeout
+[find API]: api.html#ui.find.find_in_files
 [Scintilla]: http://scintilla.org
-[`_G.OSX`]: api/_G.html#OSX
+[`_G.OSX`]: api.html#OSX
 
 ## 3.3 (01 Oct 2010)
 
@@ -1990,7 +1982,7 @@ Changes:
 [Textadept 3.3 -- Linux]: download/textadept_3.3.tgz
 [Textadept 3.3 -- Linux x86_64]: download/textadept_3.3.x86_64.tgz
 [Textadept 3.3 -- Source]: download/textadept_3.3.src.zip
-[`_m.textadept.snapopen`]: api/textadept.snapopen.html
+[`_m.textadept.snapopen`]: api.html#io.snapopen
 
 ## 3.2 (01 Sep 2010)
 
@@ -2035,7 +2027,7 @@ Bugfixes:
 
 Changes:
 
-* Refactored key commands to support [propagation][].
+* Refactored key commands to support propagation.
 * Updated to [Scintilla][] 2.20.
 * Added Lua autocompletion.
 
@@ -2044,7 +2036,6 @@ Changes:
 [Textadept 3.1 -- Linux]: download/textadept_3.1.tgz
 [Textadept 3.1 -- Linux x86_64]: download/textadept_3.1.x86_64.tgz
 [Textadept 3.1 -- Source]: download/textadept_3.1.src.zip
-[propagation]: api/keys.html#Propagation
 [Scintilla]: http://scintilla.org
 
 ## 3.0 (01 Jul 2010)
@@ -2068,7 +2059,7 @@ Changes:
 
 * More accurate CSS and Diff lexers.
 
-[2 to 3 migration guide]: 14_Appendix.html#Textadept.2.to.3
+[2 to 3 migration guide]: manual.html#Textadept.2.to.3
 [Textadept 3.0 -- Win32]: download/textadept_3.0.win32.zip
 [Textadept 3.0 -- Mac OSX Intel 10.5+]: download/textadept_3.0.osx.zip
 [Textadept 3.0 -- Linux]: download/textadept_3.0.tgz
@@ -2109,13 +2100,13 @@ Changes:
 [Textadept 3.0 beta -- Linux]: download/textadept_3.0_beta.tgz
 [Textadept 3.0 beta -- Linux x86_64]: download/textadept_3.0_beta.x86_64.tgz
 [Textadept 3.0 beta -- Source]: download/textadept_3.0_beta.src.zip
-[`buffer:text_range()`]: api/buffer.html#buffer.text_range
-[`textadept`]: api/textadept.html
-[API]: api
+[`buffer:text_range()`]: api.html#buffer.text_range
+[`textadept`]: api.html#textadept
+[API]: api.html
 [Scintilla]: http://scintilla.org
-[Abbreviated]: 10_Advanced.html#Command.Entry
-[arguments]: api/args.html
-[`reset()`]: api/_G.html#reset
+[Abbreviated]: manual.html#Lua.Command.Entry
+[arguments]: api.html#args
+[`reset()`]: api.html#reset
 
 ## 2.2 (11 May 2010)
 
@@ -2143,8 +2134,8 @@ Changes:
 [Textadept 2.2 -- Linux]: download/textadept_2.2.tgz
 [Textadept 2.2 -- Linux x86_64]: download/textadept_2.2.x86_64.tgz
 [Textadept 2.2 -- Source]: download/textadept_2.2.src.zip
-[`_USERHOME`]: api/_G.html#_USERHOME
-[`_HOME`]: api/_G.html#_HOME
+[`_USERHOME`]: api.html#_USERHOME
+[`_HOME`]: api.html#_HOME
 
 ## 2.2 beta 2 (01 May 2010)
 
@@ -2168,7 +2159,7 @@ Changes:
 
 * Added BSD support.
 * Removed kill-ring from editing module.
-* [Run][] and [compile][] commands are in language modules.
+* [Compile and Run][] commands are in language modules.
 * [Block comment][] strings are in language modules now.
 * Remove "Untitled" buffer when necessary.
 * Moved "Search" menu into "Tools" menu to prevent `Alt+S` key conflict.
@@ -2181,10 +2172,9 @@ Changes:
 [Textadept 2.2 beta 2 -- Linux]: download/textadept_2.2_beta2.tgz
 [Textadept 2.2 beta 2 -- Linux x86_64]: download/textadept_2.2_beta2.x86_64.tgz
 [Textadept 2.2 beta 2 -- Source]: download/textadept_2.2_beta2.src.zip
-[`buffer:text_range()`]: api/buffer.html#buffer.text_range
-[run]: api/_M.html#Run
-[compile]: api/_M.html#Compile
-[Block comment]: api/_M.html#Block.Comment
+[`buffer:text_range()`]: api.html#buffer.text_range
+[Compile and run]: api.html#_M.Compile.and.Run
+[Block comment]: api.html#textadept.editing.comment_string
 
 ## 2.2 beta (01 Apr 2010)
 
@@ -2224,7 +2214,7 @@ Changes:
 [Textadept 2.2 beta -- Linux x86_64]: download/textadept_2.2_beta.x86_64.tgz
 [Textadept 2.2 beta -- Source]: download/textadept_2.2_beta.src.zip
 [gtdialog]: http://foicica.com/gtdialog
-[`gui.dialog('filteredlist', ...)]: api/ui.html#dialog
+[`gui.dialog('filteredlist', ...)]: api.html#ui.dialog
 
 ## 2.1 (01 Mar 2010)
 
@@ -2263,8 +2253,8 @@ Changes:
 [Textadept 2.1 -- Linux]: download/textadept_2.1.tgz
 [Textadept 2.1 -- Linux x86_64]: download/textadept_2.1.x86_64.tgz
 [Textadept 2.1 -- Source]: download/textadept_2.1.src.zip
-[`_USERHOME`]: api/_G.html#_USERHOME
-[`_HOME`]: api/_G.html#_HOME
+[`_USERHOME`]: api.html#_USERHOME
+[`_HOME`]: api.html#_HOME
 [Scintilla]: http://scintilla.org
 
 ## 2.0 (01 Oct 2009)
@@ -2300,8 +2290,8 @@ Changes:
 [Textadept 2.0 -- Linux]: download/textadept_2.0.tgz
 [Textadept 2.0 -- Linux x86_64]: download/textadept_2.0.x86_64.tgz
 [Textadept 2.0 -- Source]: download/textadept_2.0.src.zip
-[`style_whitespace`]: api/lexer.html#style_whitespace
-[lexers]: api/lexer.html
+[`style_whitespace`]: api.html#lexer.STYLE_WHITESPACE
+[lexers]: api.html#lexer
 
 ## 2.0 beta (31 Jul 2009)
 
@@ -2355,15 +2345,15 @@ Changes:
 [Textadept 2.0 beta -- Linux]: download/textadept_2.0_beta.tgz
 [Textadept 2.0 beta -- Linux x86_64]: download/textadept_2.0_beta.x86_64.tgz
 [Textadept 2.0 beta -- Source]: download/textadept_2.0_beta.src.zip
-[list of encodings]: api/io.html#try_encodings
-[events]: api/events.html
+[list of encodings]: api.html#io.encodings
+[events]: api.html#events
 [Scintilla]: http://scintilla.org
-[compile commands]: api/textadept.run.html#compile_commands
-[run commands]: api/textadept.run.html#run_commands
+[compile commands]: api.html#textadept.run.compile_commands
+[run commands]: api.html#textadept.run.run_commands
 [gtdialog]: http://foicica.com/gtdialog
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
 [cocoaDialog]: http://cocoadialog.sf.net
-[Incremental find]: 6_AdeptEditing.html#Find.Incremental
+[Incremental find]: manual.html#Incremental.Find
 [GTK]: http://gtk.org
 
 ## 1.6 (01 Apr 2009)
@@ -2387,14 +2377,14 @@ Bugfixes:
 Updates:
 
 * Trimmed theme files.
-* Added `file_before_save` [event][].
+* Added [`file_before_save`][] event.
 
 [Textadept 1.6 -- Win32]: download/textadept_1.6.win32.zip
 [Textadept 1.6 -- Mac OSX Intel 10.5+]: download/textadept_1.6.dmg
 [Textadept 1.6 -- Linux]: download/textadept_1.6.tgz
 [Textadept 1.6 -- Linux x86_64]: download/textadept_1.6.x86_64.tgz
 [Textadept 1.6 -- Source]: download/textadept_1.6.src.zip
-[event]: api/io.html#File.Events
+[`file_before_save`]: api.html#events.FILE_BEFORE_SAVE
 
 ## 1.6 beta (01 Mar 2009)
 
@@ -2432,7 +2422,7 @@ Updates:
 [Textadept 1.6 beta -- Linux]: download/textadept_1.6beta.tgz
 [Textadept 1.6 beta -- Linux x86_64]: download/textadept_1.6beta.x86_64.tgz
 [Textadept 1.6 beta -- Source]: download/textadept_1.6beta.src.zip
-[`_m.textadept.run`]: api/textadept.run.html
+[`_m.textadept.run`]: api.html#textadept.run
 
 ## 1.5 (20 Feb 2009)
 
@@ -2571,7 +2561,7 @@ Updates:
 [Textadept 1.2 -- Win32]: download/textadept_1.2.win32.zip
 [Textadept 1.2 -- Mac OSX Intel 10.5+]: download/textadept_1.2.dmg
 [Textadept 1.2 -- Linux]: download/textadept_1.2.tgz
-[`_m.textadept.run`]: api/textadept.run.html
+[`_m.textadept.run`]: api.html#textadept.run
 
 ## 1.1 (11 Jan 2009)
 
@@ -2598,8 +2588,8 @@ Updates:
 [Textadept 1.1 -- Win32]: download/textadept_1.1_win32.zip
 [Textadept 1.1 -- Mac OSX Intel 10.5+]: download/textadept_1.1.dmg
 [Textadept 1.1 -- Linux]: download/textadept_1.1.tgz
-[localization]: api/_L.html
-[bookmarks]: api/textadept.bookmarks.html
+[localization]: api.html#_L
+[bookmarks]: api.html#textadept.bookmarks
 
 ## 1.0 (01 Jan 2009)
 
@@ -2631,7 +2621,7 @@ Updates:
 [Textadept 1.0 -- Win32]: download/textadept_1.0_win32.zip
 [Textadept 1.0 -- Mac OSX Intel 10.5+]: download/textadept_1.0.dmg
 [Textadept 1.0 -- Linux]: download/textadept_1.0.tgz
-[find]: api/gui.find.html
+[find]: api.html#ui.find
 [GTK-OSX]: http://www.gtk.org/download/macos.php
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: http://keplerproject.github.com/luafilesystem/
@@ -2663,9 +2653,9 @@ Updates:
 [Textadept 0.6 -- Win32]: download/ta_beta_r6_win32.zip
 [Textadept 0.6 -- Linux]: download/ta_beta_r6.tgz
 [Textadept 0.6 -- Linux x86_64]: download/ta_beta_r6_x86_64.tgz
-[Theming]: 8_Themes.html
-[manual]: ./
-[pattern matching]: 9_Preferences.html#Detect.by.Pattern
+[Theming]: manual.html#Themes
+[manual]: manual.html
+[pattern matching]: manual.html#File.Types
 
 ## 0.5 (23 Jul 2008)
 
@@ -2720,8 +2710,8 @@ Updates:
 [Textadept 0.4 -- Mac OSX Intel 10.5+]: download/ta_beta_r4_osx.tgz
 [Textadept 0.4 -- Linux]: download/ta_beta_r4.tgz
 [Textadept 0.4 -- Linux x86_64]: download/ta_beta_r4_x86_64.tgz
-[bookmark]: api/textadept.bookmarks.html
-[tab-completion]: 10_Advanced.html#Tab.Completion
+[bookmark]: api.html#textadept.bookmarks
+[tab-completion]: manual.html#Command.Entry.Tab.Completion
 
 ## 0.3 (04 Mar 2008)
 
@@ -2746,7 +2736,7 @@ Updates:
 * Fixed some code redundancy and typos in documentation.
 
 [Textadept 0.3 -- Linux]: download/ta_beta_r3.tgz
-[`buffer.filename`]: api/buffer.html#filename
+[`buffer.filename`]: api.html#buffer.filename
 [Zenity]: http://live.gnome.org/Zenity
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
 

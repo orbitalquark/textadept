@@ -47,7 +47,7 @@ local M = {}
 -- keyboard, since the combination of `Ctrl+Shift+,` has the key sequence `c<`
 -- (`Shift+,` inserts a `<`), Textadept recognizes the key binding as `Ctrl+<`.
 -- This allows key bindings to be language and layout agnostic. For key values
--- greater than 255, Textadept uses the [`KEYSYMS`](#KEYSYMS) lookup table.
+-- greater than 255, Textadept uses the [`keys.KEYSYMS`]() lookup table.
 -- Therefore, `Ctrl+Right Arrow` has the key sequence `cright`. Uncommenting the
 -- `print()` statements in *core/keys.lua* causes Textadept to print key
 -- sequences to standard out (stdout) for inspection.
@@ -63,13 +63,11 @@ local M = {}
 --     keys['a('] = {textadept.editing.enclose, '(', ')'}
 --     keys['cu'] = function() io.snapopen(_USERHOME) end
 --
--- Textadept handles [`buffer`][] references properly in static contexts.
---
--- [`buffer`]: buffer.html
+-- Textadept handles [`buffer`]() references properly in static contexts.
 --
 -- ## Modes
 --
--- Modes are groups of key bindings such that when a key [mode](#MODE) is
+-- Modes are groups of key bindings such that when a key [mode](#keys.MODE) is
 -- active, Textadept ignores all key bindings defined outside the mode until the
 -- mode is unset. Here is a simple vi mode example:
 --
@@ -94,9 +92,10 @@ local M = {}
 --
 -- Key chains are a powerful concept. They allow you to assign multiple key
 -- bindings to one key sequence. Language modules
--- [use key chains](#LANGUAGE_MODULE_PREFIX) for their functions. By default,
--- the `Esc` (`⎋` on Mac OSX | `Esc` in curses) key cancels a key chain, but you
--- can redefine it via [`CLEAR`](#CLEAR). An example key chain looks like:
+-- [use key chains](#keys.LANGUAGE_MODULE_PREFIX) for their functions. By
+-- default, the `Esc` (`⎋` on Mac OSX | `Esc` in curses) key cancels a key
+-- chain, but you can redefine it via [`keys.CLEAR`](). An example key chain
+-- looks like:
 --
 --     keys['aa'] = {
 --       a = function1,

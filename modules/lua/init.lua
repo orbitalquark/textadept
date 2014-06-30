@@ -24,7 +24,6 @@ module('_M.lua')]]
 -- 'F' as a module or table field.
 -- @class table
 -- @name tags
--- @see textadept.editing.autocomplete
 M.tags = {_HOME..'/modules/lua/tags', _USERHOME..'/modules/lua/tags'}
 
 ---
@@ -96,8 +95,8 @@ local control_structure_patterns = {
 ---
 -- Tries to autocomplete control structures like `if`, `while`, `for`, etc. with
 -- the `end` keyword.
--- @see control_structure_patterns
 -- @name try_to_autocomplete_end
+-- @see control_structure_patterns
 function M.try_to_autocomplete_end()
   local line_num = buffer:line_from_position(buffer.current_pos)
   local line = buffer:get_line(line_num)

@@ -5,10 +5,8 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Compile and run source code files with Textadept.
--- [Language modules][] may tweak the `compile_commands`, `run_commands`, and/or
--- `error_patterns` tables for particular languages.
---
--- [Language modules]: _M.html#Compile.and.Run
+-- [Language modules](#_M.Compile.and.Run) may tweak the `compile_commands`,
+-- `run_commands`, and/or `error_patterns` tables for particular languages.
 -- @field MARK_WARNING (number)
 --   The run or compile warning marker number.
 -- @field MARK_ERROR (number)

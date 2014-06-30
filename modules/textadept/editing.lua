@@ -9,14 +9,14 @@ local M = {}
 --   Automatically close opening brace and quote characters with their
 --   complements.
 --   The default value is `true`.
---   Auto-paired characters are defined in the [`char_matches`](#char_matches)
---   table.
+--   Auto-paired characters are defined in the
+--   [`textadept.editing.char_matches`]() table.
 -- @field TYPEOVER_CHARS (bool)
 --   Move over closing brace and quote characters under the caret when typing
 --   them.
 --   The default value is `true`.
---   Typeover characters are defined in the [`typeover_chars`](#typeover_chars)
---   table.
+--   Typeover characters are defined in the
+--   [`textadept.editing.typeover_chars`]() table.
 -- @field AUTOINDENT (bool)
 --   Match the previous line's indentation level after inserting a new line.
 --   The default value is `true`.
