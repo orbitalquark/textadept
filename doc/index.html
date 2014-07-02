@@ -5,6 +5,40 @@
     <link rel="stylesheet" href="style.css" type="text/css" />
     <link rel="icon" href="icon.png" type="image/png" />
     <meta charset="utf-8" />
+    <style type="text/css">
+      #left, #right {
+        margin: -1em 0 1em 0;
+        width: 10em;
+      }
+      #left { float: left; }
+      #right { float: right; }
+      #left h2, #right h2 {
+        font-size: 0.9em;
+        margin: 0;
+        padding-left: 0.5em;
+      }
+      #left ul, #right ul {
+        list-style-type: none;
+        margin: 0.25em 0.25em 0.25em 0.75em;
+      }
+      #main div.head-col hr {
+        clear: both;
+        margin: 0;
+      }
+      #main div.head-col h2 {
+        font-size: 1.5em;
+        margin: 0.5em;
+        text-align: center;
+      }
+      #main div.left-col, #main div.right-col { width: 500px; }
+      #main div.left-col { float: left; }
+      #main div.right-col { float: right; }
+      #main div.clear-col { clear: both; }
+      #main div.left-col h3, #main div.right-col h3 { text-align: center; }
+      #main div.left-col .center, #main div.right-col .center {
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
     <div id="content">
@@ -19,7 +53,7 @@
         </p>
       </div>
 
-      <div id="nav">
+      <div id="left">
         <a id="download"></a>
         <h2>Download (v7.4)</h2>
         <a href="feed">
@@ -53,7 +87,7 @@
         </ul>
       </div>
 
-      <div id="toc" style="width: 10em;">
+      <div id="right">
         <h2>Support</h2>
         <ul>
           <li><a href="manual.html">Manual</a></li>
@@ -63,7 +97,7 @@
         </ul>
 
         <h2>Quick Reference</h2>
-        <p style="margin: 0.25em 0 0.25em 0; text-align: center;">
+        <p style="margin: 0.25em 0 0.25em 0.5em;">
           <a href="MEDIA.html#Book">
             <img src="book/ta_quickref_small.png" alt="Cover"
                  style="border-width: 1px; margin-top: 0.25em;" />
