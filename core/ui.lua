@@ -421,7 +421,7 @@ The functions below are Lua C functions.
 -- Table arguments containing strings are allowed and expanded in place. This is
 -- useful for filtered list dialogs with many items.
 --
--- [gtdialog]: http://foicica.com/gtdialog/02_Usage.html
+-- [gtdialog]: http://foicica.com/gtdialog/manual.html#Usage
 -- @param kind The kind of gtdialog.
 -- @param ... Parameters to the gtdialog.
 -- @return string gtdialog result.

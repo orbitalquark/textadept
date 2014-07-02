@@ -258,7 +258,7 @@ Changes:
 * Added Dart lexer.
 * Do not split the view when printing messages if tabs are enabled.
 * Look for *~/.textadept/osx_env.sh* for [OSX environment variables][] due to
-  changes in Mac OSX 1n0.9.
+  changes in Mac OSX 10.9.
 * [Experimental] Replaced Lua's `io.popen()` and `os.execute()` with versions
   that do not flash the "black box" on Windows.
 * Added read-only access to the current key chain via [`keys.keychain`][].
@@ -711,7 +711,7 @@ Changes:
 [Textadept 6.6 beta -- Linux x86_64]: download/textadept_6.6_beta.x86_64.tgz
 [Textadept 6.6 beta -- Source]: download/textadept_6.6_beta.src.zip
 [Textadept 6.6 beta -- Modules]: download/textadept_6.6_beta.modules.zip
-[Messagebox]: http://foicica.com/gtdialog/02_Usage.html#Messageboxes
+[Messagebox]: http://foicica.com/gtdialog/manual.html#Messageboxes
 [key modes]: api.html#keys.Modes
 [Scintilla]: http://scintilla.org
 [`buffer.new()`]: api.html#buffer.new
