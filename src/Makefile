@@ -1,151 +1,99 @@
 # Copyright 2007-2014 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-kernel = $(shell uname -s)
-ifneq (, $(or $(findstring Linux, $(kernel)), $(findstring BSD, $(kernel))))
-  ifeq (win, $(findstring win, $(MAKECMDGOALS)))
-    # Cross-compile for Win32.
-    ifeq (win32, $(findstring win32, $(MAKECMDGOALS)))
-      arch = win32
-      CROSS = i686-w64-mingw32-
-      lua_dll = luajit/src/lua51.dll
-    else ifeq (win64, $(findstring win64, $(MAKECMDGOALS)))
-      arch = win64
-      CROSS = x86_64-w64-mingw32-
-      lua_dll = luajit/src/lua51_64.dll
-    endif
-    CC = gcc
-    CFLAGS = -mms-bitfields
-    CXX = g++
-    CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++
-    LUA_CFLAGS = -DLUA_BUILD_AS_DLL
-    LDFLAGS = -Wl,--retain-symbols-file -Wl,lua.sym
-    ifeq (, $(findstring curses, $(MAKECMDGOALS)))
-      CXXFLAGS += -mwindows
+CC = gcc
+CXX = g++
+ifeq (win, $(findstring win, $(MAKECMDGOALS)))
+  # Cross-compile for Win32.
+  CROSS = i686-w64-mingw32-
+  CFLAGS = -mms-bitfields
+  CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++
+  LUA_CFLAGS = -DLUA_BUILD_AS_DLL
+  LDFLAGS = -Wl,--retain-symbols-file -Wl,lua.sym
+  ifeq (, $(findstring curses, $(MAKECMDGOALS)))
+    CXXFLAGS += -mwindows
+    LDFLAGS += -liconv
+  endif
+  WINDRES = windres
+  MAKE = make
+  ifeq (, $(findstring curses, $(MAKECMDGOALS)))
+    plat_flag = -DGTK
+    GTK_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
+                         pkg-config --define-variable=prefix=win32gtk \
+                         --cflags gtk+-2.0)
+    GTK_LIBS = $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
+                       pkg-config --define-variable=prefix=win32gtk \
+                       --libs gtk+-2.0)
+    GLIB_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
+                          pkg-config --define-variable=prefix=win32gtk \
+                          --cflags glib-2.0)
+  else
+    plat_flag = -DCURSES
+    CURSES_CFLAGS = -DLIBICONV_STATIC -Iwin32curses/include
+    CURSES_LIBS = win32curses/lib/pdcurses.a win32curses/lib/libiconv.a
+  endif
+  lua_api = -DLUA_LIB
+  libluajit = luajit/src/lua51.dll
+else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
+  # Cross-compile for Mac OSX.
+  CROSS = i686-apple-darwin10-
+  CFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
+           -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk
+  CXXFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
+             -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk
+  LUA_CFLAGS = -DLUA_USE_MACOSX
+  LDFLAGS = -liconv -rdynamic
+  MAKE = make
+  ifeq (, $(findstring curses, $(MAKECMDGOALS)))
+    plat_flag = -DGTK
+    GTK_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
+                         pkg-config --define-variable=prefix=gtkosx \
+                         --cflags gtk+-2.0)
+    GTK_LIBS = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
+                       pkg-config --define-variable=prefix=gtkosx \
+                       --libs gtk+-2.0 gmodule-2.0 gtk-mac-integration) \
+                       -framework Cocoa
+    GLIB_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
+                          pkg-config --define-variable=prefix=gtkosx \
+                          --cflags glib-2.0)
+  else
+    plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
+    CURSES_LIBS = -lncurses
+  endif
+  libluajit = luajit/src/libluajit.osx.a
+else
+  # Build for Linux/BSD.
+  LUA_CFLAGS = -DLUA_USE_LINUX
+  LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
+  ifeq (Linux, $(shell uname -s))
+    LDFLAGS += -ldl
+    MAKE = make
+  else
+    ifeq (curses, $(findstring curses, $(MAKECMDGOALS)))
       LDFLAGS += -liconv
     endif
-    WINDRES = windres
-    MAKE = make
-
-    ifeq (, $(findstring curses, $(MAKECMDGOALS)))
-      plat_flag = -DGTK
-      GTK_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/$(arch)gtk/lib/pkgconfig \
-                           pkg-config --define-variable=prefix=$(arch)gtk \
-                           --cflags gtk+-2.0)
-      GTK_LIBS = $(shell PKG_CONFIG_PATH=`pwd`/$(arch)gtk/lib/pkgconfig \
-                         pkg-config --define-variable=prefix=$(arch)gtk \
-                         --libs gtk+-2.0)
-      GLIB_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/$(arch)gtk/lib/pkgconfig \
-                            pkg-config --define-variable=prefix=$(arch)gtk \
-                            --cflags glib-2.0)
-    else
-      plat_flag = -DCURSES
-      CURSES_CFLAGS = -DLIBICONV_STATIC -I$(arch)curses/include
-      CURSES_LIBS = $(arch)curses/lib/pdcurses.a $(arch)curses/lib/libiconv.a
-    endif
-    lua_api = -DLUA_LIB
-
-    luadoc = luadoc_start.bat
-  else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
-    # Cross-compile for Mac OSX.
-    CROSS = i686-apple-darwin10-
-    CC = gcc
-    CFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
-             -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk
-    CXX = g++
-    CXXFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
-               -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk
-    LUA_CFLAGS = -DLUA_USE_MACOSX
-    LDFLAGS = -liconv -rdynamic
-    MAKE = make
-
-    ifeq (, $(findstring curses, $(MAKECMDGOALS)))
-      plat_flag = -DGTK
-      GTK_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-                           pkg-config --define-variable=prefix=gtkosx \
-                           --cflags gtk+-2.0)
-      GTK_LIBS = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-                         pkg-config --define-variable=prefix=gtkosx \
-                         --libs gtk+-2.0 gmodule-2.0 gtk-mac-integration) \
-                         -framework Cocoa
-      GLIB_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-                            pkg-config --define-variable=prefix=gtkosx \
-                            --cflags glib-2.0)
-    else
-      plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
-      CURSES_LIBS = -lncurses
-    endif
-    libluajit = luajit/src/libluajit.osx.a
-
-    luadoc = luadoc
-  else
-    # Build for Linux/BSD.
-    CC = gcc
-    CXX = g++
-    LUA_CFLAGS = -DLUA_USE_LINUX
-    LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
-    ifeq (Linux, $(kernel))
-      LDFLAGS += -ldl
-      MAKE = make
-    else
-      ifeq (curses, $(findstring curses, $(MAKECMDGOALS)))
-        LDFLAGS += -liconv
-      endif
-      MAKE = gmake
-    endif
-    PREFIX ?= /usr/local
-
-    bin_dir = $(DESTDIR)$(PREFIX)/bin
-    data_dir = $(DESTDIR)$(PREFIX)/share/textadept
-
-    ifeq (, $(findstring curses, $(MAKECMDGOALS)))
-      plat_flag = -DGTK
-      ifndef GTK3
-        gtk_version = 2.0
-      else
-        gtk_version = 3.0
-      endif
-      GTK_CFLAGS = $(shell pkg-config --cflags gtk+-$(gtk_version) gmodule-2.0)
-      GTK_LIBS = $(shell pkg-config --libs gtk+-$(gtk_version) gmodule-2.0)
-      GLIB_CFLAGS = $(shell pkg-config --cflags glib-2.0)
-      install_targets = ../textadept ../textadeptjit
-    else
-      plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
-      CURSES_LIBS = -lncursesw
-      install_targets = ../textadept-curses ../textadeptjit-curses
-    endif
-    x64 = $(shell echo "" | $(CC) -E -dM - | grep __x86_64__ | cut -d ' ' -f 3)
-    libluajit = luajit/src/libluajit.a
-
-    luadoc = luadoc
+    MAKE = gmake
   endif
-#else ifeq (Darwin, $(shell uname -s))
-#  CC = gcc
-#  CFLAGS = -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
-#           -isysroot /Developer/SDKs/MacOSX10.5.sdk
-#  CXX = g++
-#  CXXFLAGS = -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
-#             -isysroot /Developer/SDKs/MacOSX10.5.sdk
-#  LUA_CFLAGS = -DLUA_USE_MACOSX
-#  LDFLAGS = -liconv -rdynamic
-#
-#  #ifeq (, $(findstring curses, $(MAKECMDGOALS)))
-#    plat_flag = -DGTK
-#    GTK_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-#                         gtkosx/bin/pkg-config --define-variable=prefix=gtkosx\
-#                         --cflags gtk+-2.0)
-#    GTK_LIBS = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-#                       gtkosx/bin/pkg-config --define-variable=prefix=gtkosx \
-#                       --libs gtk+-2.0) -framework Cocoa -lgtkmacintegration
-#    .DEFAULT_GOAL := osx
-#  #else
-#  #  plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
-#  #  CURSES_LIBS = -lncurses
-#  #  .DEFAULT_GOAL := osx-curses
-#  #endif
-#
-#  luadoc = luadoc
+  PREFIX ?= /usr/local
+  bin_dir = $(DESTDIR)$(PREFIX)/bin
+  data_dir = $(DESTDIR)$(PREFIX)/share/textadept
+  ifeq (, $(findstring curses, $(MAKECMDGOALS)))
+    plat_flag = -DGTK
+    ifndef GTK3
+      gtk_version = 2.0
+    else
+      gtk_version = 3.0
+    endif
+    GTK_CFLAGS = $(shell pkg-config --cflags gtk+-$(gtk_version) gmodule-2.0)
+    GTK_LIBS = $(shell pkg-config --libs gtk+-$(gtk_version) gmodule-2.0)
+    GLIB_CFLAGS = $(shell pkg-config --cflags glib-2.0)
+    install_targets = ../textadept ../textadeptjit
+  else
+    plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
+    CURSES_LIBS = -lncursesw
+    install_targets = ../textadept-curses ../textadeptjit-curses
+  endif
+  libluajit = luajit/src/libluajit.a
 endif
-bombay = ../doc/bombay
 
 # No debugging unless DEBUG=1.
 ifdef DEBUG
@@ -174,10 +122,6 @@ sci_gtk_objs = PlatGTK.o ScintillaGTK.o
 ta_flags = -std=c99 -O -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE \
            $(plat_flag) $(lua_api) -Iscintilla/include -Igtdialog -W -Wall \
            -Wno-sign-compare -Wno-unused
-ifndef NO_SINGLE_INSTANCE
-  # Single instance unless NO_SINGLE_INSTANCE=1
-  ta_flags += -DSINGLE_INSTANCE
-endif
 
 lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            linit.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o \
@@ -207,18 +151,8 @@ all: textadept textadeptjit
 curses: textadept-curses textadeptjit-curses
 win32: textadept.exe textadeptjit.exe
 win32-curses: textadept-curses.exe textadeptjit-curses.exe
-win64: textadept.exe #textadeptjit.exe
-win64-curses: textadept-curses.exe #textadeptjit-curses.exe
 osx: textadept textadeptjit
 osx-curses: textadept-curses textadeptjit-curses
-
-# Dependencies.
-
-base_deps = scintilla scintilla/term scintillua lua lualibs luajit gtdialog \
-            windowman cdk $(bombay)
-deps: $(base_deps) termkey
-win32-deps: $(base_deps) win32gtk win32curses
-osx-deps: $(base_deps) gtkosx termkey
 
 $(sci_objs): %.o: scintilla/src/%.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $< -o $@
@@ -266,9 +200,6 @@ $(luajit_lib_objs): %jit.o: lua/src/lib/%.c
 luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC) $(CFLAGS)"
 luajit/src/lua51.dll:
 	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
-luajit/src/lua51_64.dll:
-	$(MAKE) -C luajit HOST_CC="$(CC)" CROSS=$(CROSS) TARGET_SYS=Windows \
-		TARGET_DLLNAME=$(notdir $@)
 luajit/src/libluajit.osx.a:
 	$(MAKE) -C luajit CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin \
 		LUAJIT_A=$(notdir $@) || return 0
@@ -307,10 +238,10 @@ textadeptjit-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
 textadept.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
                LexLPeg.o textadept.o textadept_rc.o $(lua_objs) \
                $(lua_lib_objs) gtdialog.o
-	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
+	$(CROSS)$(CXX) $(CXXFLAGS) -o $@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadeptjit.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) \
                   scintilla-marshal.o LexLPegjit.o textadeptjit.o \
-                  textadept_rc.o $(luajit_lib_objs) $(lua_dll) gtdialog.o
+                  textadept_rc.o $(luajit_lib_objs) $(libluajit) gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadept-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                       LexLPeg-curses.o textadept-curses.o textadept_rc.o \
@@ -319,7 +250,7 @@ textadept-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadeptjit-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                          LexLPegjit-curses.o textadeptjit-curses.o \
-                         textadept_rc.o $(luajit_lib_objs) $(lua_dll) \
+                         textadept_rc.o $(luajit_lib_objs) $(libluajit) \
                          gtdialog-curses.o $(windowman_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 
@@ -341,23 +272,19 @@ clean:
 
 # Documentation.
 
-doc: rootdoc manual luadoc tadoc
-rootdoc: ../*.md
-	$(bombay) -d ../doc -t ../doc --title Textadept $^
-manual: ../doc/manual.md
-	$(bombay) -d ../doc -t ../doc --title Textadept $^
+doc: manual luadoc
+manual: ../*.md ../doc/manual.md
+	../doc/bombay -d ../doc -t ../doc --title Textadept $^
 luadoc: ../modules ../core ../lexers
-	cd ../doc && $(luadoc) -d . -t . --doclet markdowndoc $^/lexer.lua
-tadoc: ../modules ../core ../lexers
-	cd ../modules && $(luadoc) -d lua --doclet lua/tadoc $^/lexer.lua
-cleandoc: ; rm -rf ../doc/manual.html ../doc/api.html
+	cd ../doc && luadoc -d . -t . --doclet markdowndoc $^/lexer.lua
+	cd ../modules && luadoc -d lua --doclet lua/tadoc $^/lexer.lua
 
 # Releases.
 
 build_dir = /tmp/tabuild
 ifndef NIGHTLY
-  basedir = textadept_$(shell grep "_RELEASE =" ../core/init.lua | \
-                              cut -d ' ' -f 4- | sed -e 's/"//; s/ /_/g;')
+  basedir = textadept_$(shell grep -m 1 _RELEASE ../core/init.lua | \
+                              cut -d ' ' -f4- | tr ' ' '_' | tr -d '"')
 else
   basedir = textadept_NIGHTLY_$(shell date +"%F")
 endif
@@ -437,78 +364,93 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 
 # External dependencies.
 
+base_deps = scintilla scintilla/term scintillua lua lualibs luajit gtdialog \
+            windowman cdk ../doc/bombay
+deps: $(base_deps) termkey
+win32-deps: $(base_deps) win32gtk win32curses
+osx-deps: $(base_deps) gtkosx termkey
+
+ifndef NIGHTLY
+  scinterm_url = http://foicica.com/scinterm/download/$@
+  scintillua_url = http://foicica.com/scintillua/download/$@
+  gtdialog_url = http://foicica.com/gtdialog/download/$@
+  lspawn_url = http://foicica.com/hg/lspawn/archive/$@
+else
+  scinterm_url = http://foicica.com/hg/scinterm/archive/tip.zip
+  scintillua_url = http://foicica.com/hg/scintillua/archive/tip.zip
+  gtdialog_url = http://foicica.com/hg/gtdialog/archive/tip.zip
+  lspawn_url = http://foicica.com/hg/lspawn/archive/tip.zip
+endif
+
 scintilla_tgz = scintilla344.tgz
-scinterm_zip = scinterm.zip
-scintillua_zip = scintillua.zip
+scinterm_zip = scinterm_1.3.zip
+scintillua_zip = scintillua_3.4.4-1.zip
 lua_tgz = lua-5.2.3.tar.gz
 lpeg_tgz = lpeg-0.10.2.tar.gz
-lfs_zip = d71c63cdb776f7d25313f8fcd14f07512ba1f83e.zip
-lspawn_zip = lspawn.zip
+lfs_zip = v1_6_2.zip
+lspawn_zip = d3dda27a0a0c.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
-gtdialog_zip = gtdialog.zip
-windowman_zip = windowman.zip
+gtdialog_zip = gtdialog_1.1.zip
+windowman_zip = 4a75ba194792.zip
 cdk_tgz = cdk.tar.gz
-termkey_tgz = libtermkey-0.16.tar.gz
+termkey_tgz = libtermkey-0.17.tar.gz
 win32gtk_zip = gtk+-bundle_2.24.10-20120208_win32.zip
 win32iconv_bin_zip = libiconv-bin-zip.php
 win32iconv_lib_zip = libiconv-lib-zip.php
 win32curses_zip = win32curses.zip
-pdcurses_zip = download
+pdcurses_zip = pdcurs34.zip
 gtkosx_zip = gtkosx-2.24.16.zip
 bombay_zip = bombay.zip
 cloc = cloc-1.60.pl
 
-$(scintilla_tgz): ; wget "http://prdownloads.sourceforge.net/scintilla/$@" -O $@
+$(scintilla_tgz): ; wget http://prdownloads.sourceforge.net/scintilla/$@ -O $@
 scintilla: scintilla.patch | $(scintilla_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
-$(scinterm_zip): ; wget "http://foicica.com/hg/scinterm/archive/tip.zip" -O $@
+$(scinterm_zip): ; wget $(scinterm_url) -O $@
 scintilla/term: | $(scinterm_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 scintillua: ../lexers LexLPeg.cxx
-$(scintillua_zip):
-	wget "http://foicica.com/hg/scintillua/archive/tip.zip" -O $@
+$(scintillua_zip): ; wget $(scintillua_url) -O $@
 ../lexers: | $(scintillua_zip)
 	mkdir $@ && unzip -d $@ -j $| "*/lexers/*.lua" "*.txt" "*.cxx" -x "*/themes/*"
 LexLPeg.cxx: | ../lexers ; ln -s $|/$@ $@
-$(lua_tgz): ; wget "http://www.lua.org/ftp/$@"
-$(lpeg_tgz): ; wget "http://www.inf.puc-rio.br/~roberto/lpeg/$@"
-$(lfs_zip):
-	wget "https://github.com/keplerproject/luafilesystem/archive/$@" -O $@
-$(lspawn_zip): ; wget "http://foicica.com/hg/lspawn/archive/tip.zip" -O $@
+$(lua_tgz): ; wget http://www.lua.org/ftp/$@
+$(lpeg_tgz): ; wget http://www.inf.puc-rio.br/~roberto/lpeg/$@
+$(lfs_zip): ; wget https://github.com/keplerproject/luafilesystem/archive/$@
+$(lspawn_zip): ; wget $(lspawn_url) -O $@
 lua: lua.patch | $(lua_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
 lualibs: lua/src/lib/lpeg lua/src/lib/lfs lua/src/lib/lspawn
 lua/src/lib/lpeg: | $(lpeg_tgz)
 	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
-lua/src/lib/lfs: lfs.patch | $(lfs_zip)
+lua/src/lib/lfs: | $(lfs_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
-	patch -d $(dir $@) -N -p1 < $<
 lua/src/lib/lspawn: | $(lspawn_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.c $(dir $@)
-$(luajit_tgz): ; wget "http://luajit.org/download/$@"
+$(luajit_tgz): ; wget http://luajit.org/download/$@
 luajit: luajit.patch | $(luajit_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
-$(libluajit_tgz): ; wget "http://foicica.com/textadept/download/$@"
+$(libluajit_tgz): ; wget http://foicica.com/textadept/download/$@
 libluajit64: | $(libluajit_tgz) ; tar xzf $|
-$(gtdialog_zip): ; wget "http://foicica.com/hg/gtdialog/archive/tip.zip" -O $@
+$(gtdialog_zip): ; wget $(gtdialog_url) -O $@
 gtdialog: | $(gtdialog_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 $(windowman_zip):
-	wget "https://bitbucket.org/jugglerchris/curses-windowman/get/tip.zip" -O $@
+	wget https://bitbucket.org/jugglerchris/curses-windowman/get/$@
 windowman: | $(windowman_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
-$(cdk_tgz): ; wget "http://invisible-island.net/datafiles/release/$@"
+$(cdk_tgz): ; wget http://invisible-island.net/datafiles/release/$@
 cdk: cdk.patch | $(cdk_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	mv $@/include/*.h $@
 	patch -d $@ -N -p1 < $<
-$(termkey_tgz): ; wget "http://www.leonerd.org.uk/code/libtermkey/$@"
+$(termkey_tgz): ; wget http://www.leonerd.org.uk/code/libtermkey/$@
 termkey: | $(termkey_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(win32gtk_zip):
-	wget "http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/$@"
-$(win32iconv_bin_zip): ; wget "http://gnuwin32.sourceforge.net/downlinks/$@"
-$(win32iconv_lib_zip): ; wget "http://gnuwin32.sourceforge.net/downlinks/$@"
+	wget http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/$@
+$(win32iconv_bin_zip): ; wget http://gnuwin32.sourceforge.net/downlinks/$@
+$(win32iconv_lib_zip): ; wget http://gnuwin32.sourceforge.net/downlinks/$@
 win32gtk: | $(win32gtk_zip) $(win32iconv_bin_zip) $(win32iconv_lib_zip)
 	mkdir $@
 	unzip -d $@ $(win32gtk_zip)
@@ -517,9 +459,8 @@ win32gtk: | $(win32gtk_zip) $(win32iconv_bin_zip) $(win32iconv_lib_zip)
 	done
 	rm -r $@/etc/bash_completion.d $@/lib/gtk-2.0/modules $@/lib/*.def
 	cd $@/share && rm -r aclocal doc glib-2.0 gtk-2.0 gtk-doc locale man
-$(win32curses_zip): ; wget "http://foicica.com/textadept/download/$@"
-$(pdcurses_zip):
-	wget "http://sf.net/projects/pdcurses/files/pdcurses/3.4/pdcurs34.zip/$@"
+$(win32curses_zip): ; wget http://foicica.com/textadept/download/$@
+$(pdcurses_zip): ; wget http://prdownloads.sourceforge.net/pdcurses/$@
 win32curses: | $(win32curses_zip) $(pdcurses_zip)
 	unzip $(win32curses_zip)
 	mkdir $@/src && unzip -d $@/src $(pdcurses_zip)
@@ -527,17 +468,16 @@ win32curses: | $(win32curses_zip) $(pdcurses_zip)
 	cd $@/src/win32 && $(MAKE) -f gccwin32.mak CC="$(CROSS)$(CC) $(CFLAGS)" \
 		LIBEXE=$(CROSS)ar LINK="$(CROSS)$(CC) $(CFLAGS)" WIDE=Y UTF8=Y
 	cp $@/src/win32/pdcurses.a $@/lib/
-$(gtkosx_zip): ; wget "http://foicica.com/textadept/download/$@"
+$(gtkosx_zip): ; wget http://foicica.com/textadept/download/$@
 gtkosx: | $(gtkosx_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
-$(bombay_zip): ; wget "http://foicica.com/hg/bombay/archive/tip.zip" -O $@
-$(bombay): | $(bombay_zip)
+$(bombay_zip): ; wget http://foicica.com/hg/bombay/archive/tip.zip -O $@
+../doc/bombay: | $(bombay_zip)
 	mkdir $(notdir $@) && unzip -d $(notdir $@) $| && \
 		mv $(notdir $@)/*/* $(dir $@)
-$(cloc): ; wget "http://prdownloads.sourceforge.net/cloc/$@" -O $@
+$(cloc): ; wget http://prdownloads.sourceforge.net/cloc/$@ -O $@
 
 # Count lines of code.
 
 sources = ../core ../modules/ansi_c ../modules/lua ../modules/textadept \
           ../themes textadept.c Makefile ../init.lua ../properties.lua
-count: $(cloc)
-	perl $< $(sources) --not-match-f=adeptsensedoc.lua
+count: $(cloc) ; perl $< $(sources) --not-match-f=tadoc.lua

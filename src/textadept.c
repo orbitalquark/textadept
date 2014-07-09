@@ -263,7 +263,7 @@ static int lL_event(lua_State *L, const char *name, ...) {
 }
 
 #if GTK
-#if (GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE)
+#if GLIB_CHECK_VERSION(2,28,0)
 /** Processes a remote Textadept's command line arguments. */
 static int a_command_line(GApplication*_, GApplicationCommandLine *cmdline,
                           void*__) {
@@ -2421,7 +2421,7 @@ int main(int argc, char **argv) {
 #endif
 
 #if GTK
-#if (GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE)
+#if GLIB_CHECK_VERSION(2,28,0)
   int force = FALSE;
   for (int i = 0; i < argc; i++)
     if (strcmp("-f", argv[i]) == 0 || strcmp("--force", argv[i]) == 0) {
@@ -2446,7 +2446,7 @@ int main(int argc, char **argv) {
 #endif
 
 #if GTK
-#if (GLIB_CHECK_VERSION(2,28,0) && SINGLE_INSTANCE)
+#if GLIB_CHECK_VERSION(2,28,0)
     gtk_main();
   } else g_application_run(app, argc, argv);
   g_object_unref(app);
