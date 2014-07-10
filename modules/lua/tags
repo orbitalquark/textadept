@@ -88,6 +88,7 @@ FIND_REGEXP	_	0;"	F	class:buffer
 FIND_WHOLEWORD	_	0;"	F	class:buffer
 FIND_WORDSTART	_	0;"	F	class:buffer
 FIND_WRAPPED	_	0;"	F	class:events
+FOCUS	_	0;"	F	class:events
 FOLDACTION_CONTRACT	_	0;"	F	class:buffer
 FOLDACTION_EXPAND	_	0;"	F	class:buffer
 FOLDACTION_TOGGLE	_	0;"	F	class:buffer
@@ -653,7 +654,7 @@ goto_line	_	0;"	f	class:buffer
 goto_line	_	0;"	f	class:textadept.editing
 goto_mark	_	0;"	f	class:textadept.bookmarks
 goto_pos	_	0;"	f	class:buffer
-goto_section	_	0;"	f	class:M
+goto_section	_	0;"	f	class:_M.rest
 goto_view	_	0;"	f	class:ui
 graph	_	0;"	F	class:lexer
 gsub	_	0;"	f	class:string
@@ -840,7 +841,7 @@ oct_num	_	0;"	F	class:lexer
 ok_msgbox	_	0;"	f	class:ui.dialogs
 open	_	0;"	f	class:io
 open_file	_	0;"	f	class:io
-open_image	_	0;"	f	class:M
+open_image	_	0;"	f	class:_M.rest
 open_recent_file	_	0;"	f	class:io
 optionselect	_	0;"	f	class:ui.dialogs
 os	_	0;"	m	
