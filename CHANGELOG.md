@@ -8,6 +8,35 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.5 (11 Jul 2014)
+
+Download:
+
+* [Textadept 7.5 -- Win32][]
+* [Textadept 7.5 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.5 -- Linux][]
+* [Textadept 7.5 -- Linux x86_64][]
+* [Textadept 7.5 -- Modules][]
+
+Bugfixes:
+
+* None.
+
+Changes:
+
+* New [events.FOCUS][] event for when Textadept's window receives focus.
+* Condensed manual and API documentation into single files.
+* Added Polish translation.
+* Updated to [Scintilla][] 3.4.4.
+
+[Textadept 7.5 -- Win32]: download/textadept_7.5.win32.zip
+[Textadept 7.5 -- Mac OSX Intel 10.5+]: download/textadept_7.5.osx.zip
+[Textadept 7.5 -- Linux]: download/textadept_7.5.i386.tgz
+[Textadept 7.5 -- Linux x86_64]: download/textadept_7.5.x86_64.tgz
+[Textadept 7.5 -- Modules]: download/textadept_7.5.modules.zip
+[events.FOCUS]: api.html#events.FOCUS
+[Scintilla]: http://scintilla.org
+
 ## 7.4 (11 Jun 2014)
 
 Download:
