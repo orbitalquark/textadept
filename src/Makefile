@@ -273,8 +273,8 @@ clean:
 # Documentation.
 
 doc: manual luadoc
-manual: ../*.md ../doc/manual.md
-	../doc/bombay -d ../doc -t ../doc --title Textadept $^
+manual: ../*.md ../doc/manual.md | ../doc/bombay
+	$| -d ../doc -t ../doc --title Textadept $^
 luadoc: ../modules ../core ../lexers
 	cd ../doc && luadoc -d . -t . --doclet markdowndoc $^/lexer.lua
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $^/lexer.lua
