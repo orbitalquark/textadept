@@ -7,7 +7,7 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   CROSS = i686-w64-mingw32-
   CFLAGS = -mms-bitfields
   CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++
-  LUA_CFLAGS = -DLUA_BUILD_AS_DLL
+  LUA_CFLAGS = -DLUA_BUILD_AS_DLL -DLUA_LIB
   LDFLAGS = -Wl,--retain-symbols-file -Wl,lua.sym
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     CXXFLAGS += -mwindows
@@ -31,7 +31,6 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
     CURSES_CFLAGS = -DLIBICONV_STATIC -Iwin32curses/include
     CURSES_LIBS = win32curses/lib/pdcurses.a win32curses/lib/libiconv.a
   endif
-  lua_api = -DLUA_LIB
   libluajit = luajit/src/lua51.dll
 else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
   # Cross-compile for Mac OSX.
@@ -116,23 +115,29 @@ sci_lex_objs = Accessor.o CharacterSet.o LexerBase.o LexerModule.o \
                LexerNoExceptions.o LexerSimple.o PropSetSimple.o \
                StyleContext.o WordList.o
 sci_gtk_objs = PlatGTK.o ScintillaGTK.o
+lexlpeg_objs = LexLPeg.o LexLPegjit.o LexLPeg-curses.o LexLPegjit-curses.o
 
 # Textadept.
 
 ta_flags = -std=c99 -O -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE \
-           $(plat_flag) $(lua_api) -Iscintilla/include -Igtdialog -W -Wall \
+           $(plat_flag) -Iscintilla/include -Igtdialog -W -Wall \
            -Wno-sign-compare -Wno-unused
 
+textadept_gtk_objs = textadept.o textadeptjit.o
+textadept_curses_objs = textadept-curses.o textadeptjit-curses.o
+textadept_objs = $(textadept_gtk_objs) $(textadept_curses_objs)
 lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            linit.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
            lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
            lmathlib.o loadlib.o loslib.o ltablib.o lstrlib.o
 lua_lib_objs = lpeg.o lfs.o
+lua_spawn_objs = spawn.o spawnjit.o spawn-curses.o spawnjit-curses.o
 #lua_lib_objs = lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
 luajit_lib_objs = lpegjit.o lfsjit.o
 #luajit_lib_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o \
 #                  lfsjit.o
+gtdialog_objs = gtdialog.o gtdialog-curses.o
 termkey_objs = termkey.o driver-ti.o driver-csi.o
 windowman_objs = windowman.o
 cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
@@ -158,63 +163,27 @@ $(sci_gtk_objs): %.o: scintilla/gtk/%.cxx
 scintilla-marshal.o: scintilla/gtk/scintilla-marshal.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(GTK_CFLAGS) $< -o $@
 ScintillaTerm.o: scintilla/term/ScintillaTerm.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) -Iscintilla/term $(CURSES_CFLAGS) \
-		$< -o $@
-LexLPeg.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $(lua_api) \
-		-DLPEG_LEXER -DNO_SCITE -Ilua/src $< -o $@
-LexLPegjit.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $(lua_api) \
-		-DLPEG_LEXER -DNO_SCITE -Iluajit/src $< -o $@
-LexLPeg-curses.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $(lua_api) \
-		-DLPEG_LEXER -DNO_SCITE -DCURSES -Ilua/src $(CURSES_CFLAGS) $< -o $@
-LexLPegjit-curses.o: LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $(lua_api) \
-		-DLPEG_LEXER -DNO_SCITE -DCURSES -Iluajit/src $(CURSES_CFLAGS) $< -o $@
-textadept.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Ilua/src $(GTK_CFLAGS) \
-		$< -o $@
-textadeptjit.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Iluajit/src \
-		$(GTK_CFLAGS) $< -o $@
-textadept-curses.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Ilua/src \
-		-Iscintilla/term -Itermkey -Iwindowman -Icdk $(CURSES_CFLAGS) $< -o $@
-textadeptjit-curses.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Iluajit/src \
-		-Iscintilla/term -Itermkey -Iwindowman -Icdk $(CURSES_CFLAGS) $< -o $@
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $(CURSES_CFLAGS) $< -o $@
+$(lexlpeg_objs): LexLPeg.cxx
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $< -o $@
+$(textadept_objs): textadept.c
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) $< -o $@
 $(lua_objs): %.o: lua/src/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -Ilua/src $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -ULUA_LIB $< -o $@
 $(lua_lib_objs): %.o: lua/src/lib/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(lua_api) -Ilua/src $(GLIB_CFLAGS) \
-		$< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $< -o $@
 $(luajit_lib_objs): %jit.o: lua/src/lib/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(lua_api) -Iluajit/src \
-		$(GLIB_CFLAGS) $< -o $@
-spawn.o: lua/src/lib/lspawn.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(plat_flag) $(lua_api) -Ilua/src \
-		$(GLIB_CFLAGS) $< -o $@
-spawnjit.o: lua/src/lib/lspawn.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(plat_flag) $(lua_api) \
-		-Iluajit/src $(GLIB_CFLAGS) $< -o $@
-spawn-curses.o: lua/src/lib/lspawn.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(plat_flag) $(lua_api) -Ilua/src \
-		$< -o $@
-spawnjit-curses.o: lua/src/lib/lspawn.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(plat_flag) $(lua_api) \
-		-Iluajit/src $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $< -o $@
+$(lua_spawn_objs): lua/src/lib/lspawn.c
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(spawn_flags) $< -o $@
 luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC) $(CFLAGS)"
 luajit/src/lua51.dll:
 	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
 luajit/src/libluajit.osx.a:
 	$(MAKE) -C luajit CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin \
 		LUAJIT_A=$(notdir $@) || return 0
-gtdialog.o: gtdialog/gtdialog.c
-	$(CROSS)$(CC) -c $(CFLAGS) -DGTK -DNOHELP -DLIBRARY $(GTK_CFLAGS) $< -o $@
-gtdialog-curses.o: gtdialog/gtdialog.c
-	$(CROSS)$(CC) -c $(CFLAGS) -DCURSES -DNOHELP -DLIBRARY -Icdk \
-		$(CURSES_CFLAGS) $< -o $@
+$(gtdialog_objs): gtdialog/gtdialog.c
+	$(CROSS)$(CC) -c $(CFLAGS) $(gtdialog_flags) $< -o $@
 $(windowman_objs): %.o: windowman/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) -Iwindowman $(CURSES_CFLAGS) $< -o $@
 $(cdk_objs): %.o: cdk/%.c
@@ -222,6 +191,25 @@ $(cdk_objs): %.o: cdk/%.c
 		-o $@
 $(termkey_objs): %.o: termkey/%.c ; $(CROSS)$(CC) -c $(CFLAGS) -std=c99 $< -o $@
 textadept_rc.o: textadept.rc ; $(CROSS)$(WINDRES) $< $@
+
+# Target-specific variables.
+
+$(lexlpeg_objs): sci_flags += -DLPEG_LEXER -DNO_SCITE
+LexLPeg-curses.o LexLPegjit-curses.o: sci_flags += -DCURSES $(CURSES_CFLAGS)
+lua_dep_objs = LexLPeg.o LexLPeg-curses.o textadept.o textadept-curses.o \
+               $(lua_objs) $(lua_lib_objs) spawn.o spawn-curses.o
+luajit_dep_objs = LexLPegjit.o LexLPegjit-curses.o textadeptjit.o \
+                  textadeptjit-curses.o $(luajit_lib_objs) spawnjit.o \
+                  spawnjit-curses.o
+$(lua_dep_objs): LUA_CFLAGS += -Ilua/src
+$(luajit_dep_objs): LUA_CFLAGS += -Iluajit/src
+$(textadept_gtk_objs): ta_flags += $(GTK_CFLAGS)
+$(textadept_curses_objs): \
+  ta_flags += -Iscintilla/term -Itermkey -Iwindowman -Icdk $(CURSES_CFLAGS)
+spawn.o spawnjit.o: spawn_flags = -DGTK $(GLIB_CFLAGS)
+$(gtdialog_objs): gtdialog_flags = $(plat_flag) -DNOHELP -DLIBRARY
+gtdialog.o: gtdialog_flags += $(GTK_CFLAGS)
+gtdialog-curses.o: gtdialog_flags += -Icdk $(CURSES_CFLAGS)
 
 # Executables.
 
@@ -246,7 +234,7 @@ textadeptjit-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
 textadept.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
                LexLPeg.o textadept.o textadept_rc.o $(lua_objs) \
                $(lua_lib_objs) spawn.o gtdialog.o
-	$(CROSS)$(CXX) $(CXXFLAGS) -o $@ $^ $(GTK_LIBS) $(LDFLAGS)
+	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadeptjit.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) \
                   scintilla-marshal.o LexLPegjit.o textadeptjit.o \
                   textadept_rc.o $(luajit_lib_objs) $(libluajit) spawnjit.o \
