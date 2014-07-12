@@ -133,11 +133,6 @@ lua_lib_objs = lpeg.o lfs.o
 luajit_lib_objs = lpegjit.o lfsjit.o
 #luajit_lib_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o \
 #                  lfsjit.o
-ifneq (curses, $(findstring curses, $(MAKECMDGOALS)))
-  # Compile in lspawn module.
-  lua_lib_objs += lspawn.o
-  luajit_lib_objs += lspawnjit.o
-endif
 termkey_objs = termkey.o driver-ti.o driver-csi.o
 windowman_objs = windowman.o
 cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
@@ -181,13 +176,13 @@ textadept.o: textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Ilua/src $(GTK_CFLAGS) \
 		$< -o $@
 textadeptjit.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src \
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Iluajit/src \
 		$(GTK_CFLAGS) $< -o $@
 textadept-curses.o: textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Ilua/src \
 		-Iscintilla/term -Itermkey -Iwindowman -Icdk $(CURSES_CFLAGS) $< -o $@
 textadeptjit-curses.o: textadept.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -DLUAJIT -Iluajit/src \
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) -Iluajit/src \
 		-Iscintilla/term -Itermkey -Iwindowman -Icdk $(CURSES_CFLAGS) $< -o $@
 $(lua_objs): %.o: lua/src/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -Ilua/src $< -o $@
@@ -197,6 +192,18 @@ $(lua_lib_objs): %.o: lua/src/lib/%.c
 $(luajit_lib_objs): %jit.o: lua/src/lib/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(lua_api) -Iluajit/src \
 		$(GLIB_CFLAGS) $< -o $@
+spawn.o: lua/src/lib/lspawn.c
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(plat_flag) $(lua_api) -Ilua/src \
+		$(GLIB_CFLAGS) $< -o $@
+spawnjit.o: lua/src/lib/lspawn.c
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(plat_flag) $(lua_api) \
+		-Iluajit/src $(GLIB_CFLAGS) $< -o $@
+spawn-curses.o: lua/src/lib/lspawn.c
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(plat_flag) $(lua_api) -Ilua/src \
+		$< -o $@
+spawnjit-curses.o: lua/src/lib/lspawn.c
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(plat_flag) $(lua_api) \
+		-Iluajit/src $< -o $@
 luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC) $(CFLAGS)"
 luajit/src/lua51.dll:
 	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
@@ -219,39 +226,42 @@ textadept_rc.o: textadept.rc ; $(CROSS)$(WINDRES) $< $@
 # Executables.
 
 textadept: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
-           LexLPeg.o textadept.o $(lua_objs) $(lua_lib_objs) gtdialog.o
+           LexLPeg.o textadept.o $(lua_objs) $(lua_lib_objs) spawn.o gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadeptjit: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
               LexLPegjit.o textadeptjit.o $(luajit_lib_objs) $(libluajit) \
-              gtdialog.o
+              spawnjit.o gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadept-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o LexLPeg-curses.o \
                   textadept-curses.o $(lua_objs) $(lua_lib_objs) \
-                  gtdialog-curses.o $(termkey_objs) $(windowman_objs) \
-                  $(cdk_objs)
+                  spawn-curses.o gtdialog-curses.o $(termkey_objs) \
+                  $(windowman_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadeptjit-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                      LexLPegjit-curses.o textadeptjit-curses.o \
-                     $(luajit_lib_objs) $(libluajit) gtdialog-curses.o \
-                     $(termkey_objs) $(windowman_objs) $(cdk_objs)
+                     $(luajit_lib_objs) $(libluajit) spawnjit-curses.o \
+                     gtdialog-curses.o $(termkey_objs) $(windowman_objs) \
+                     $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadept.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
                LexLPeg.o textadept.o textadept_rc.o $(lua_objs) \
-               $(lua_lib_objs) gtdialog.o
+               $(lua_lib_objs) spawn.o gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o $@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadeptjit.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) \
                   scintilla-marshal.o LexLPegjit.o textadeptjit.o \
-                  textadept_rc.o $(luajit_lib_objs) $(libluajit) gtdialog.o
+                  textadept_rc.o $(luajit_lib_objs) $(libluajit) spawnjit.o \
+                  gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadept-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                       LexLPeg-curses.o textadept-curses.o textadept_rc.o \
-                      $(lua_objs) $(lua_lib_objs) gtdialog-curses.o \
-                      $(windowman_objs) $(cdk_objs)
+                      $(lua_objs) $(lua_lib_objs) spawn-curses.o \
+                      gtdialog-curses.o $(windowman_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadeptjit-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                          LexLPegjit-curses.o textadeptjit-curses.o \
                          textadept_rc.o $(luajit_lib_objs) $(libluajit) \
-                         gtdialog-curses.o $(windowman_objs) $(cdk_objs)
+                         spawnjit-curses.o gtdialog-curses.o $(windowman_objs) \
+                         $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 
 # Install/uninstall.

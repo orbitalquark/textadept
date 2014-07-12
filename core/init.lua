@@ -16,27 +16,24 @@ keys = require('keys')
 _M = {} -- language modules table
 -- LuaJIT compatibility.
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
--- curses and OSX compatibility.
-if CURSES or OSX then
-  local spawn_ = spawn
+-- OSX and pdcurses compatibility.
+if OSX or (CURSES and WIN32) then
+--  local spawn_ = spawn
   function spawn(argv, working_dir, stdout_cb, stderr_cb, exit_cb)
---    if OSX then
---      -- Workaround for GLib abort caused by failed assertion.
---      local p, err = spawn_(argv, working_dir, stdout_cb, stderr_cb)
---      if not p then return p, err end
---      timeout(1, function()
---        if p:status() == 'running' then return true end
---        exit_cb('Process completed')
---      end)
---    else
-      local current_dir = lfs.currentdir()
-      lfs.chdir(working_dir)
-      local p = io.popen(argv..' 2>&1')
-      stdout_cb(p:read('*a'))
-      exit_cb(select(3, p:close()))
-      lfs.chdir(current_dir)
-      return p
---    end
+--    -- Workaround for GLib abort caused by failed assertion.
+--    local p, err = spawn_(argv, working_dir, stdout_cb, stderr_cb)
+--    if not p then return p, err end
+--    timeout(1, function()
+--      if p:status() == 'running' then return true end
+--      exit_cb('Process completed')
+--    end)
+    local current_dir = lfs.currentdir()
+    lfs.chdir(working_dir)
+    local p = io.popen(argv..' 2>&1')
+    stdout_cb(p:read('*a'))
+    exit_cb(select(3, p:close()))
+    lfs.chdir(current_dir)
+    return p
   end
 end
 
@@ -151,7 +148,8 @@ local timeout
 ---
 -- Spawns an interactive child process *argv* in a separate thread, returning
 -- a handle to that process.
--- The terminal version spawns processes in the same thread.
+-- At the moment, the Mac OSX GUI version and Win32 terminal version spawn
+-- processes in the same thread.
 -- @param argv A command line string containing the program's name followed by
 --   arguments to pass to it. `PATH` is searched for program names.
 -- @param working_dir Optional current working directory (cwd) for the child
@@ -160,8 +158,9 @@ local timeout
 --   block of standard output read from the child. Stdout is read asynchronously
 --   in 1KB or 0.5KB blocks (depending on the platform), or however much data is
 --   available at the time.
---   The terminal version sends all output, whether it be stdout or stderr, to
---   this callback after the process finishes.
+--   At the moment, the Mac OSX GUI version and Win32 terminal version send all
+--   output, whether it be stdout or stderr, to this callback after the process
+--   finishes.
 -- @param stderr_cb Optional Lua function that accepts a string parameter for a
 --   block of standard error read from the child. Stderr is read asynchronously
 --   in 1KB or 0.5kB blocks (depending on the platform), or however much data is
@@ -170,8 +169,8 @@ local timeout
 --   finishes. The child's exit status is passed.
 -- @return proc
 -- @usage spawn('lua buffer.filename', nil, print)
--- @usage proc = spawn('lua -e "print(io.read())", nil, print)
---        proc:write('foo\\n')
+-- @usage proc = spawn('lua -e "print(io.read())"', nil, print)
+--        proc:write('foo\n')
 -- @class function
 -- @name spawn
 local spawn
