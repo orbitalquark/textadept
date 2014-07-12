@@ -30,6 +30,7 @@
 #if !_WIN32
 #include <signal.h>
 #include <sys/ioctl.h>
+#include <sys/select.h>
 #include <termios.h>
 #else
 #undef main
@@ -89,7 +90,7 @@ typedef GtkWidget Scintilla;
   lua_setmetatable(l, (n > 0) ? n : n - 1); \
 }
 // Translate Lua 5.2 API to LuaJIT API (Lua 5.1) for compatibility.
-#if LUAJIT
+#if LUA_VERSION_NUM == 501
 #define LUA_OK 0
 #define lua_rawlen lua_objlen
 #define LUA_OPEQ 0
@@ -210,9 +211,8 @@ static void new_buffer(sptr_t);
 static Scintilla *new_view(sptr_t);
 static int lL_init(lua_State *, int, char **, int);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
-#if !CURSES
 LUALIB_API int luaopen_spawn(lua_State *);
-#endif
+LUALIB_API int lspawn_pushfds(lua_State *), lspawn_readfds(lua_State *);
 
 /**
  * Emits an event.
@@ -1593,7 +1593,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
     lua_getglobal(L, "package"), lua_getfield(L, -1, "loaded");
     lL_cleartable(L, -1);
     lua_pop(L, 2); // package.loaded and package
-#if !LUAJIT
+#if LUA_VERSION_NUM >= 502
     lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
     lL_cleartable(L, -1);
     lua_pop(L, 1); // _G
@@ -1605,9 +1605,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   luaL_openlibs(L);
   lL_openlib(L, "lpeg", luaopen_lpeg);
   lL_openlib(L, "lfs", luaopen_lfs);
-#if !CURSES
   lL_openlib(L, "spawn", luaopen_spawn);
-#endif
 
   lua_newtable(L);
   lua_newtable(L);
@@ -2363,6 +2361,27 @@ static void resize(int signal) {
   lL_event(lua, "update_ui", -1);
   refresh_all();
 }
+
+/** Replacement for `termkey_waitkey()` that handles asynchronous I/O. */
+static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
+  int force = FALSE;
+  struct timeval timeout = {0, termkey_get_waittime(tk)};
+  while (1) {
+    TermKeyResult res = !force ? termkey_getkey(tk, key)
+                               : termkey_getkey_force(tk, key);
+    if (res != TERMKEY_RES_AGAIN && res != TERMKEY_RES_NONE) return res;
+    if (res == TERMKEY_RES_AGAIN) force = TRUE;
+    // Wait for input.
+    int nfds = lspawn_pushfds(lua);
+    fd_set *fds = (fd_set *)lua_touserdata(lua, -1);
+    FD_SET(0, fds); // monitor stdin
+    if (select(nfds, fds, NULL, NULL, force ? &timeout : NULL) > 0) {
+      if (FD_ISSET(0, fds)) termkey_advisereadable(tk);
+      if (lspawn_readfds(lua) > 0) refresh_all();
+    }
+    lua_pop(lua, 1); // fd_set
+  }
+}
 #endif
 
 /**
@@ -2502,7 +2521,7 @@ int main(int argc, char **argv) {
   TermKeyResult res;
   TermKeyKey key;
   int keysyms[] = {0,SCK_BACK,SCK_TAB,SCK_RETURN,SCK_ESCAPE,0,0,SCK_UP,SCK_DOWN,SCK_LEFT,SCK_RIGHT,0,0,SCK_INSERT,SCK_DELETE,0,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END};
-  while ((res = termkey_waitkey(ta_tk, &key)) != TERMKEY_RES_EOF) {
+  while ((res = textadept_waitkey(ta_tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
     if (key.type == TERMKEY_TYPE_UNICODE)
       c = key.code.codepoint;
