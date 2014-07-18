@@ -307,7 +307,7 @@ $(build_dir): ; hg clone -r tip /home/mitchell/code/textadept $@
 $(basedir).i386: | $(build_dir) ; hg archive $@ -X ".hg*"
 release: $(basedir).i386 | $(build_dir)
 	make -C $|/src deps clean doc
-	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -C $|/src -j4 MAKE="make -j4"
+	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -C $|/src -j4
 	make -C $|/src -j4 curses
 	cp -r $|/doc $|/lexers $|/textadept* $<
 	tar czf /tmp/$<.tgz $< && rm -rf $<
@@ -315,7 +315,7 @@ $(basedir).x86_64: | $(build_dir) ; hg archive $@ -X ".hg*"
 release64: $(basedir).x86_64 | $(build_dir)
 	make -C $|/src clean libluajit64
 	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -C $|/src -j4 CFLAGS=-m64 \
-		CXXFLAGS=-m64 MAKE="make -j4" || return 0
+		CXXFLAGS=-m64 || return 0
 	make -C $|/src -j4 CFLAGS=-m64 CXXFLAGS=-m64 \
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
@@ -327,14 +327,14 @@ win32-release: $(basedir).win32 | $(build_dir)
 	cp $|/src/win32gtk/bin/*.dll $< && cp -r $|/src/win32gtk/etc \
 		$|/src/win32gtk/lib $|/src/win32gtk/share $<
 	rm -r $</lib/*.a $</lib/glib-2.0 $</lib/gtk-2.0/include $</lib/pkgconfig
-	make -C $|/src -j4 CROSS=i586-mingw32msvc- MAKE="make -j4" win32
+	make -C $|/src -j4 CROSS=i586-mingw32msvc- win32
 	make -C $|/src -j4 CROSS=i586-mingw32msvc- win32-curses
 	cp -r $|/doc $|/lexers $|/textadept* $|/src/luajit/src/lua51.dll $<
 	zip -r /tmp/$<.zip $< && rm -rf $<
 $(basedir).osx: ; mkdir $@ && cp ../scripts/osx/ta $@
 osx-release: $(basedir).osx | $(build_dir)
 	make -C $|/src clean osx-deps
-	make -C $|/src -j4 MAKE="make -j4" osx
+	make -C $|/src -j4 osx
 	make -C $|/src -j4 osx-curses
 	make -C $|/src osx-app && mv $|/src/$(osxapp) $<
 	zip -r /tmp/$<.zip $< && rm -rf $<
