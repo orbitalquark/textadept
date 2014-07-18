@@ -5,7 +5,7 @@
 1. [Introduction](#Introduction)
 2. [Installation](#Installation)
 3. [User Interface](#User.Interface)
-4. [Working with Files](#Working.With.Files)
+4. [Working with Files](#Working.with.Files)
 5. [File Navigation](#File.Navigation)
 6. [Adept Editing](#Adept.Editing)
 7. [Modules](#Modules)
