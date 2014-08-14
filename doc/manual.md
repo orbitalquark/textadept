@@ -1645,6 +1645,7 @@ made to CDK are in *src/cdk.patch* and listed as follows:
 * The `baseName` and `dirName` functions in *cdk.c* recognize Window's '\'
   directory separator.
 * Deactivated the `deleteFileCB` function in *fselect.c*.
+* Removed some of CDK's initial screen handling code.
 
 [CDK]: http://invisible-island.net/cdk/
 

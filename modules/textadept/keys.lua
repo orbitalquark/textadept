@@ -602,8 +602,8 @@ elseif CURSES then
   keys.mA, keys.mE = buffer.vc_home_extend, buffer.line_end_extend
   keys.mU, keys.mD = buffer.page_up_extend, buffer.page_down_extend
   keys.cma, keys.cme = buffer.document_start, buffer.document_end
-  keys.cd, keys.md = buffer.clear, utils.delete_word
-  keys.ck = utils.cut_to_eol
+  keys.cd, keys.ch = buffer.clear, buffer.delete_back
+  keys.md, keys.ck = utils.delete_word, utils.cut_to_eol
 end
 
 -- Modes.

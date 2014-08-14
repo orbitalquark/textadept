@@ -51,7 +51,7 @@
 #include "windowman.h"
 #include "cdk_int.h"
 #if !_WIN32
-#include "termkey.h"
+#include "termkey-internal.h"
 #endif
 #endif
 
@@ -151,7 +151,6 @@ static GtkEntryCompletion *command_entry_completion;
 // curses window.
 static struct WindowManager *wm;
 #if !_WIN32
-static struct termios term;
 TermKey *ta_tk; // global for CDK use
 #endif
 #define SS(view, msg, w, l) scintilla_send_message(view, msg, w, l)
@@ -423,9 +422,6 @@ static int lfind_focus(lua_State *L) {
   if (findbox) return 0; // already active
   wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
   findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0)), eraseCDKScreen(findbox);
-#if !_WIN32
-  tcsetattr(0, TCSANOW, &term);
-#endif
   int b_width = max(strlen(button_labels[0]), strlen(button_labels[1])) +
                 max(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
   int o_width = max(strlen(option_labels[0]), strlen(option_labels[1])) +
@@ -583,9 +579,6 @@ static int lce_focus(lua_State *L) {
 #elif CURSES
   if (command_entry) return 0; // already active
   CDKSCREEN *screen = initCDKScreen(newwin(1, 0, LINES - 2, 0));
-#if !_WIN32
-  tcsetattr(0, TCSANOW, &term);
-#endif
   command_entry = newCDKEntry(screen, LEFT, TOP, NULL, NULL, A_NORMAL, '_',
                               vMIXED, 0, 0, 256, FALSE, FALSE);
   bindCDKObject(vENTRY, command_entry, KEY_TAB, c_keypress, NULL);
@@ -2396,9 +2389,8 @@ int main(int argc, char **argv) {
   gtk_init(&argc, &argv);
 #elif CURSES
 #if !_WIN32
-  struct termios oldterm;
-  tcgetattr(0, &oldterm); // save old terminal settings
-  ta_tk = termkey_new(0, TERMKEY_FLAG_NOTERMIOS);
+  ta_tk = termkey_new(0, 0);
+  ta_tk->c0[0x08].sym = TERMKEY_SYM_UNKNOWN; // prevent Backspace to ^H mapping
 #endif
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
@@ -2477,12 +2469,10 @@ int main(int argc, char **argv) {
 
 #if !_WIN32
   stderr = freopen("/dev/null", "w", stderr); // redirect stderr
-  // Ignore some termios (from GNU Nano).
-  tcgetattr(0, &term);
-  term.c_iflag &= ~IEXTEN, term.c_iflag &= ~IXON;
-  term.c_oflag &= ~OPOST;
-  term.c_lflag &= ~ISIG;
-  tcsetattr(0, TCSANOW, &term);
+  // Prevent ^C from generating SIGINT. TERMKEY_FLAG_CTRLC is ineffective since
+  // initscr() overrides it.
+  struct termios term;
+  tcgetattr(0, &term), term.c_lflag &= ~ISIG, tcsetattr(0, TCSANOW, &term);
   // Set terminal resize handler.
   struct sigaction act;
   memset(&act, 0, sizeof(struct sigaction));
@@ -2557,7 +2547,6 @@ int main(int argc, char **argv) {
   endwin();
 #if !_WIN32
   termkey_destroy(ta_tk);
-  tcsetattr(0, TCSANOW, &oldterm); // restore old terminal settings
 #endif
 #endif
 
