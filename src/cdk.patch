@@ -287,6 +287,27 @@ diff -r 9d0780ddcbab cdk_version.h
 +#endif
 +
 +#endif /* CDK_VERSION_H */
+diff -r ea979bb3ae11 cdkscreen.c
+--- a/cdkscreen.c	Wed Aug 13 13:55:58 2014 -0400
++++ b/cdkscreen.c	Wed Aug 13 16:14:54 2014 -0400
+@@ -180,17 +180,6 @@
+    ALL_SCREENS *item;
+    CDKSCREEN *screen = 0;
+ 
+-   /* initialization, for the first time */
+-   if (all_screens == 0)
+-   {
+-      /* Set up basic curses settings. */
+-#ifdef HAVE_SETLOCALE
+-      setlocale (LC_ALL, "");
+-#endif
+-      noecho ();
+-      cbreak ();
+-   }
+-
+    if ((item = typeMalloc (ALL_SCREENS)) != 0)
+    {
+       if ((screen = typeCalloc (CDKSCREEN)) != 0)
 diff -r 9d0780ddcbab entry.c
 --- a/entry.c	2013-06-16 09:12:32.000000000 -0400
 +++ b/entry.c	2013-12-17 16:52:52.969973100 -0500
