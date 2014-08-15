@@ -51,7 +51,7 @@
 #include "windowman.h"
 #include "cdk_int.h"
 #if !_WIN32
-#include "termkey-internal.h"
+#include "termkey.h"
 #endif
 #endif
 
@@ -2390,7 +2390,6 @@ int main(int argc, char **argv) {
 #elif CURSES
 #if !_WIN32
   ta_tk = termkey_new(0, 0);
-  ta_tk->c0[0x08].sym = TERMKEY_SYM_UNKNOWN; // prevent Backspace to ^H mapping
 #endif
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
