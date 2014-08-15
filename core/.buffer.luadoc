@@ -2708,13 +2708,14 @@ function set_y_caret_policy(buffer, policy, y) end
 function show_lines(buffer, start_line, end_line) end
 
 ---
--- Begins styling at position *position* with styling bit-mask *styling_mask*.
--- *styling_mask* specifies which style bits can be set with
+-- Begins styling at position *position* with styling bit-mask *style_mask*.
+-- *style_mask* specifies which style bits can be set with
 -- `buffer.set_styling()`.
 -- @param buffer A buffer.
 -- @param position The position in *buffer* to start styling at.
--- @param styling_mask The bit mask of style bits that can be set when styling.
+-- @param style_mask The bit mask of style bits that can be set when styling.
 -- @usage buffer:start_styling(0, 0xFF)
+-- @see set_styling
 function start_styling(buffer, position, style_mask) end
 
 ---
