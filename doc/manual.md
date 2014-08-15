@@ -1520,10 +1520,11 @@ binaries.
 
 ### Compiling on Linux and BSD
 
-For Linux and BSD systems, simply run `make deps` in the *src/* directory to
-prepare the build environment followed by `make` to build the *textadept* and
-*textadeptjit* executables in the root directory. Make a symlink from them to
-*/usr/bin/* or elsewhere in your `PATH`.
+For Linux and BSD systems, simply run `make deps` (or `make deps NIGHTLY=1` when
+compiling Textadept from the latest source rather than from a tagged release) in
+the *src/* directory to prepare the build environment, followed by `make` to
+build the *textadept* and *textadeptjit* executables in the root directory. Make
+a symlink from them to */usr/bin/* or elsewhere in your `PATH`.
 
 Similarly, `make curses` builds *textadept-curses* and *textadeptjit-curses*.
 
@@ -1539,9 +1540,10 @@ compiler flags do not include them by default.
 
 Textadept is self-contained, meaning you do not have to install it, and runs
 from its current location. Should you choose to install Textadept like a normal
-Linux application, run `make deps` and then the usual `make` and `make install`
-or `sudo make install` commands depending on your privileges. The default prefix
-is */usr/local* but setting `DESTDIR` (e.g.
+Linux application, run `make deps` (or `make deps NIGHTLY=1` as noted in the
+previous section) and then the usual `make` and `make install` or
+`sudo make install` commands depending on your privileges. The default prefix is
+*/usr/local* but setting `DESTDIR` (e.g.
 `make install DESTDIR=/prefix/to/install/to`) changes it.
 
 Similarly, `make curses` and `make curses install` installs the curses version.
