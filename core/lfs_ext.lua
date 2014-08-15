@@ -41,8 +41,8 @@ local function exclude(file, filter)
 end
 
 ---
--- Iterates over all files and sub-directories in directory *dir*, calling
--- function *f* with each file found.
+-- Iterates over all files and sub-directories (up to level number *n*) in
+-- directory *dir*, calling function *f* with each file found.
 -- Files passed to *f* do not match any pattern in string or table *filter*,
 -- and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A filter table
 -- contains Lua patterns that match filenames to exclude, an optional `folders`
@@ -58,13 +58,19 @@ end
 --   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
 --   *filter*.
 --   The default value is `false` to include the default filter.
--- @param recursing Utility flag indicating whether or not this function has
---   been recursively called. This flag is used and set internally, and should
---   not be set otherwise.
+-- @param n Optional maximum number of directory levels to descend into.
+--   The default value is `nil`, which indicates no limit.
+-- @param include_dirs Optional flag indicating whether or not to call *f* with
+--   directory names too. Directory names are passed with a trailing '/' or '\',
+--   depending on the current platform.
+--   The default value is `false`.
+-- @param level Utility value indicating the directory level this function is
+--   at. This value is used and set internally, and should not be set otherwise.
 -- @see FILTER
 -- @name dir_foreach
-function lfs.dir_foreach(dir, f, filter, exclude_FILTER, recursing)
-  if not recursing then
+function lfs.dir_foreach(dir, f, filter, exclude_FILTER, n, include_dirs, level)
+  if not level then level = 0 end
+  if level == 0 then
     -- Convert filter to a table from nil or string arguments.
     if not filter then filter = {} end
     if type(filter) == 'string' then filter = {filter} end
@@ -80,13 +86,16 @@ function lfs.dir_foreach(dir, f, filter, exclude_FILTER, recursing)
     local ext = filter.extensions
     if ext then for i = 1, #ext do ext[ext[i]] = true end end
   end
-  local lfs_attributes = lfs.attributes
+  local dir_sep, lfs_attributes = not WIN32 and '/' or '\\', lfs.attributes
   for file in lfs.dir(dir) do
     if not file:find('^%.%.?$') then -- ignore . and ..
-      file = dir..(not WIN32 and '/' or '\\')..file
+      file = dir..dir_sep..file
       local type = lfs_attributes(file, 'mode')
       if type == 'directory' and not exclude(file, filter.folders) then
-        lfs.dir_foreach(file, f, filter, nil, true)
+        if include_dirs and f(file..dir_sep) == false then return end
+        if not n or level < n then
+          lfs.dir_foreach(file, f, filter, nil, n, include_dirs, level + 1)
+        end
       elseif type == 'file' and not exclude(file, filter) then
         if f(file) == false then return end
       end
