@@ -108,9 +108,10 @@ sci_flags = -pedantic -Os $(plat_flag) -DSCI_LEXER -DNDEBUG \
 
 sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
            CellBuffer.o CharClassify.o ContractionState.o Decoration.o \
-           Document.o Editor.o ExternalLexer.o Indicator.o KeyMap.o \
-           LineMarker.o PerLine.o PositionCache.o RESearch.o RunStyles.o \
-           ScintillaBase.o Selection.o Style.o UniConversion.o ViewStyle.o XPM.o
+           Document.o EditModel.o Editor.o EditView.o ExternalLexer.o \
+           Indicator.o KeyMap.o LineMarker.o MarginView.o PerLine.o \
+           PositionCache.o RESearch.o RunStyles.o ScintillaBase.o Selection.o \
+           Style.o UniConversion.o ViewStyle.o XPM.o
 sci_lex_objs = Accessor.o CharacterSet.o LexerBase.o LexerModule.o \
                LexerNoExceptions.o LexerSimple.o PropSetSimple.o \
                StyleContext.o WordList.o
@@ -378,7 +379,7 @@ else
   lspawn_url = http://foicica.com/hg/lspawn/archive/tip.zip
 endif
 
-scintilla_tgz = scintilla344.tgz
+scintilla_tgz = scintilla350.tgz
 scinterm_zip = scinterm_1.3.zip
 scintillua_zip = scintillua_3.4.4-1.zip
 lua_tgz = lua-5.2.3.tar.gz
