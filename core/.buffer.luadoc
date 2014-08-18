@@ -559,6 +559,20 @@
 -- @field overtype (bool)
 --   Enable overtype mode, where typed characters overwrite existing ones.
 --   The default value is `false`.
+-- @field phases_draw (number)
+--   The number of phases drawing is performed in.
+--
+--   * `buffer.PHASES_ONE`
+--     For each line, draw the background and text at the same time. (No
+--     character overlapping.)
+--   * `buffer.PHASES_TWO`
+--     For each line, draw the background first and then text on top of it. (No
+--     line overlapping.)
+--   * `buffer.PHASES_MULTIPLE`
+--     Similar to `buffer.PHASES_TWO`, but allows lines to overlap.
+--     Incompatible with `buffer.buffered_draw = true`.
+--
+--   The default value is `buffer.PHASES_TWO`.
 -- @field property (table)
 --   Map of key-value string pairs used by lexers.
 -- @field property_expanded (table, Read-only)
@@ -3142,6 +3156,7 @@ function set_lexer(buffer, lexer) end
 -- Unused Functions.
 --   * add_ref_document
 --   * add_styled_text
+--   * add_tab_stop
 --   * add_undo_action
 --   * allocate
 --   * allocate_sub_styles
@@ -3153,6 +3168,7 @@ function set_lexer(buffer, lexer) end
 --   * char_position_from_point_close
 --   * clear_cmd_key
 --   * clear_all_cmd_keys
+--   * clear_tab_stops
 --   * create_document
 --   * create_loader
 --   * describe_key_word_sets
@@ -3165,6 +3181,7 @@ function set_lexer(buffer, lexer) end
 --   * find_text
 --   * format_range
 --   * free_sub_styles
+--   * get_next_tab_stop
 --   * get_range_pointer
 --   * get_styled_text
 --   * grab_focus
