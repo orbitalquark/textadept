@@ -8,6 +8,38 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.6 (01 Sep 2014)
+
+Download:
+
+* [Textadept 7.6 -- Win32][]
+* [Textadept 7.6 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.6 -- Linux][]
+* [Textadept 7.6 -- Linux x86_64][]
+* [Textadept 7.6 -- Modules][]
+
+Bugfixes:
+
+* Recognize DEL when emitted by the Backspace key in the terminal version.
+
+Changes:
+
+* Terminal version can truly [`spawn()`][] processes now.
+* Added Linux .desktop files for menus and launchers.
+* Indicate presence of a BOM in the statusbar.
+* Switch to previous buffer after closing a buffer.
+* More options for [`lfs.dir_foreach()`][].
+* Updated to [Scintilla][] 3.5.0.
+
+[Textadept 7.6 -- Win32]: download/textadept_7.6.win32.zip
+[Textadept 7.6 -- Mac OSX Intel 10.5+]: download/textadept_7.6.osx.zip
+[Textadept 7.6 -- Linux]: download/textadept_7.6.i386.tgz
+[Textadept 7.6 -- Linux x86_64]: download/textadept_7.6.x86_64.tgz
+[Textadept 7.6 -- Modules]: download/textadept_7.6.modules.zip
+[`spawn()`]: api.html#spawn
+[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
+[Scintilla]: http://scintilla.org
+
 ## 7.5 (11 Jul 2014)
 
 Download:
