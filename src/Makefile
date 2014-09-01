@@ -380,8 +380,8 @@ else
 endif
 
 scintilla_tgz = scintilla350.tgz
-scinterm_zip = scinterm_1.3.zip
-scintillua_zip = scintillua_3.4.4-1.zip
+scinterm_zip = scinterm_1.4.zip
+scintillua_zip = scintillua_3.5.0-1.zip
 lua_tgz = lua-5.2.3.tar.gz
 lpeg_tgz = lpeg-0.12.tar.gz
 lfs_zip = v1_6_2.zip
