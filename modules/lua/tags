@@ -864,6 +864,7 @@ paste	_	0;"	f	class:buffer
 path	_	0;"	F	class:package
 patterns	_	0;"	t	class:textadept.file_types
 pcall	_	0;"	f	
+phases_draw	_	0;"	F	class:buffer
 pi	_	0;"	F	class:math
 popen	_	0;"	f	class:io
 position_after	_	0;"	f	class:buffer
