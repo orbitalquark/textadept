@@ -16,22 +16,14 @@ keys = require('keys')
 _M = {} -- language modules table
 -- LuaJIT compatibility.
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
--- OSX and pdcurses compatibility.
-if OSX or (CURSES and WIN32) then
---  local spawn_ = spawn
+-- pdcurses compatibility.
+if CURSES and WIN32 then
   function spawn(argv, working_dir, stdout_cb, stderr_cb, exit_cb)
---    -- Workaround for GLib abort caused by failed assertion.
---    local p, err = spawn_(argv, working_dir, stdout_cb, stderr_cb)
---    if not p then return p, err end
---    timeout(1, function()
---      if p:status() == 'running' then return true end
---      exit_cb('Process completed')
---    end)
     local current_dir = lfs.currentdir()
-    lfs.chdir(working_dir)
+    if working_dir then lfs.chdir(working_dir) end
     local p = io.popen(argv..' 2>&1')
-    stdout_cb(p:read('*a'))
-    exit_cb(select(3, p:close()))
+    if stdout_cb then stdout_cb(p:read('*a')) end
+    if exit_cb then exit_cb(select(3, p:close())) else p:close() end
     lfs.chdir(current_dir)
     return p
   end
@@ -148,8 +140,8 @@ local timeout
 ---
 -- Spawns an interactive child process *argv* in a separate thread, returning
 -- a handle to that process.
--- At the moment, the Mac OSX GUI version and Win32 terminal version spawn
--- processes in the same thread.
+-- At the moment, only the Win32 terminal version spawns processes in the same
+-- thread.
 -- @param argv A command line string containing the program's name followed by
 --   arguments to pass to it. `PATH` is searched for program names.
 -- @param working_dir Optional current working directory (cwd) for the child
@@ -158,9 +150,8 @@ local timeout
 --   block of standard output read from the child. Stdout is read asynchronously
 --   in 1KB or 0.5KB blocks (depending on the platform), or however much data is
 --   available at the time.
---   At the moment, the Mac OSX GUI version and Win32 terminal version send all
---   output, whether it be stdout or stderr, to this callback after the process
---   finishes.
+--   At the moment, only the Win32 terminal version sends all output, whether it
+--   be stdout or stderr, to this callback after the process finishes.
 -- @param stderr_cb Optional Lua function that accepts a string parameter for a
 --   block of standard error read from the child. Stderr is read asynchronously
 --   in 1KB or 0.5kB blocks (depending on the platform), or however much data is
