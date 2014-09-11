@@ -398,7 +398,7 @@ events_connect(events.BUFFER_BEFORE_SWITCH, function()
 end)
 events_connect(events.BUFFER_DELETED, function()
   local i = _BUFFERS[view._prev_buffer]
-  if i then view:goto_buffer(i) end
+  if i and _BUFFERS[buffer] ~= i then view:goto_buffer(i) end
 end)
 
 events_connect(events.ERROR, ui.print)
