@@ -186,13 +186,13 @@
 --   The caret's preferred horizontal position when moving between lines.
 --
 --   * `buffer.CARETSTICKY_OFF`
---     Use the same position as on the previous line.
+--     Use the same position the caret had on the previous line.
 --   * `buffer.CARETSTICKY_ON`
 --     Use the last position the caret was moved to via the mouse, left/right
 --     arrow keys, home/end keys, etc. Typing text does not affect the position.
 --   * `buffer.CARETSTICKY_WHITESPACE`
---     Use the same position as on the previous line, but prior to any inserted
---     indentation.
+--     Use the position the caret had on the previous line, but prior to any
+--     inserted indentation.
 --
 --   The default value is `buffer.CARETSTICKY_OFF`.
 -- @field caret_style (number)
