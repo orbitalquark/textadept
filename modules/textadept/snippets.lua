@@ -64,12 +64,12 @@ local M = {}
 --
 -- ### `\t`
 --
--- A single unit of indentation based on the user's indentation settings
+-- A single unit of indentation based on the buffer's indentation settings
 -- ([`buffer.use_tabs`]() and [`buffer.tab_width`]()).
 --
 -- ### `\n`
 --
--- A single set of line ending delimiters based on the user's end of line mode
+-- A single set of line ending delimiters based on the buffer's end of line mode
 -- ([`buffer.eol_mode`]()).
 --
 -- [`io.popen()`]: http://www.lua.org/manual/5.2/manual.html#pdf-io.popen
