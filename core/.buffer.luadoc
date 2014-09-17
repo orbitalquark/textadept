@@ -151,9 +151,7 @@
 -- @field call_tip_fore_hlt (number, Write-only)
 --   A call tip's highlighted text foreground color, in "0xBBGGRR" format.
 -- @field call_tip_pos_start (number, Write-only)
---   The position to display a call tip at with [`buffer.call_tip_show()`]().
---   When a call tip is visible, this is the position where backspacing beyond
---   it hides the call tip.
+--   The position in which backspacing beyond it hides a visible call tip.
 -- @field call_tip_position (boolean)
 --   Display a call tip above the current line instead of below it.
 --   The default value is `false`.
@@ -539,8 +537,8 @@
 --   `DWELL_START` event. A time of `buffer.TIME_FOREVER` will never generate
 --   one.
 -- @field mouse_selection_rectangular_switch (bool)
---   Whether or not pressing [`buffer.rectangular_selection_modifier`]() during
---   normal text selection with the mouse turns on rectangular selection.
+--   Whether or not pressing [`buffer.rectangular_selection_modifier`]() when
+--   selecting text normally with the mouse turns on rectangular selection.
 --   The default value is `false`.
 -- @field modify (bool)
 --   Whether or not the buffer has unsaved changes.
@@ -885,11 +883,11 @@
 --   * `buffer.WRAP_NONE`
 --     Long lines are not wrapped.
 --   * `buffer.WRAP_WORD`
---     Wrap long lines at word and style boundaries.
+--     Wrap long lines at word (and style) boundaries.
 --   * `buffer.WRAP_CHAR`
 --     Wrap long lines at character boundaries.
 --   * `buffer.WRAP_WHITESPACE`
---     Wrap long lines at word boundaries, ignoring style boundaries.
+--     Wrap long lines at word boundaries (ignoring style boundaries).
 --
 --   The default value is `buffer.WRAP_NONE`.
 -- @field wrap_start_indent (number)
@@ -2406,8 +2404,8 @@ function position_before(buffer, pos) end
 function position_from_line(buffer, line) end
 
 ---
--- Returns the position *n* characters before or after position *pos*, taking
--- multi-byte characters into account.
+-- Returns the position *n* characters before or after position *pos* (taking
+-- multi-byte characters into account).
 -- Returns `0` if the position is less than 0 or `buffer.length` if the position
 -- is greater than `buffer.length`.
 -- @param buffer A buffer.
