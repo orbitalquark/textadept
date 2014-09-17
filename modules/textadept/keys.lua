@@ -81,7 +81,7 @@ local M = {}
 -- Ctrl+R          |⌘R     |^R           |Run
 -- Ctrl+Shift+R    |⌘⇧R    |M-^R         |Compile
 -- Ctrl+Shift+B    |⌘⇧B    |M-^B         |Build
--- Ctrl+Shift+X    |⌘⇧X    |N/A          |Stop
+-- Ctrl+Shift+X    |⌘⇧X    |M-^X         |Stop
 -- Ctrl+Alt+E      |^⌘E    |M-X          |Next Error
 -- Ctrl+Alt+Shift+E|^⌘⇧E   |M-S-X        |Previous Error
 -- Ctrl+Space      |⌥Esc   |^Space       |Complete symbol
@@ -351,7 +351,7 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
--- cm:   cd  g~~ k ~   q  t   xyz
+-- cm:   cd  g~~ k ~   q  t    yz
 -- m:          e        I J            qQ  sS  u vVw   yYzZ_          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
@@ -468,7 +468,7 @@ keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
 keys[not OSX and 'cr' or 'mr'] = textadept.run.run
 keys[not OSX and (not CURSES and 'cR' or 'cmr') or 'mR'] = textadept.run.compile
 keys[not OSX and (not CURSES and 'cB' or 'cmb') or 'mB'] = textadept.run.build
-if not CURSES then keys[not OSX and 'cX' or 'mX'] = textadept.run.stop end
+keys[not OSX and (not CURSES and 'cX' or 'cmx') or 'mX'] = textadept.run.stop
 keys[not OSX and (not CURSES and 'cae' or 'mx')
              or 'cme'] = {textadept.run.goto_error, false, true}
 keys[not OSX and (not CURSES and 'caE' or 'mX')

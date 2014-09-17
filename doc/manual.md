@@ -855,7 +855,7 @@ Pressing `Ctrl+Shift+R` (`⌘⇧R` on Mac OSX | `M-^R` in curses) executes the
 command for compiling code in the current file, `Ctrl+R` (`⌘R` | `^R`) executes
 the command for running code, and `Ctrl+Shift+B` (`⌘⇧B` on Mac OSX | `M-^B` in
 curses) executes the command for building a project. `Ctrl+Shift+X` (`⌘⇧X` |
-`N/A`) stops the currently running process. A new buffer shows the output from
+`M-^X`) stops the currently running process. A new buffer shows the output from
 the command and marks any recognized warnings and errors. Pressing `Ctrl+Alt+E`
 (`^⌘E` | `M-X`) attempts to jump to the source of the next recognized warning or
 error and `Ctrl+Alt+Shift+E` (`^⌘⇧E` | `M-S-X`) attempts to jump to the previous
