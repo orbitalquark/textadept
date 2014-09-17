@@ -18,9 +18,9 @@ _M = {} -- language modules table
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 -- pdcurses compatibility.
 if CURSES and WIN32 then
-  function spawn(argv, working_dir, stdout_cb, stderr_cb, exit_cb)
+  function spawn(argv, cwd, stdout_cb, stderr_cb, exit_cb)
     local current_dir = lfs.currentdir()
-    if working_dir then lfs.chdir(working_dir) end
+    if cwd then lfs.chdir(cwd) end
     local p = io.popen(argv..' 2>&1')
     if stdout_cb then stdout_cb(p:read('*a')) end
     if exit_cb then exit_cb(select(3, p:close())) else p:close() end
@@ -144,7 +144,7 @@ local timeout
 -- thread.
 -- @param argv A command line string containing the program's name followed by
 --   arguments to pass to it. `PATH` is searched for program names.
--- @param working_dir Optional current working directory (cwd) for the child
+-- @param cwd Optional current working directory (cwd) for the child
 --   process. The default value is `nil`, which inherits the parent's cwd.
 -- @param stdout_cb Optional Lua function that accepts a string parameter for a
 --   block of standard output read from the child. Stdout is read asynchronously

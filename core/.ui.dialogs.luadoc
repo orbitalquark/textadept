@@ -104,14 +104,15 @@ function ok_msgbox(options) end
 function yesno_msgbox(options) end
 
 ---
--- Prompts the user with a one-line input-box dialog defined by dialog options
--- table *options*, returning the selected button's index along with the user's
--- input text.
+-- Prompts the user with an inputbox dialog defined by dialog options table
+-- *options*, returning the selected button's index along with the user's
+-- input text (the latter as a string or table, depending on the type of
+-- *options*.`informative_text`).
 -- If *options*.`string_output` is `true`, returns the selected button's label
 -- along with the user's input text.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
--- @param options Table of key-value option pairs for the input-box.
+-- @param options Table of key-value option pairs for the inputbox.
 --
 --   * `title`: The dialog's title text.
 --   * `informative_text`: The dialog's main message text. If the value is a
@@ -141,14 +142,15 @@ function yesno_msgbox(options) end
 function inputbox(options) end
 
 ---
--- Prompts the user with a one-line input-box dialog defined by dialog options
--- table *options* and with localized "Ok" and "Cancel" buttons, returning the
--- selected button's index along with the user's input text.
+-- Prompts the user with an inputbox dialog defined by dialog options table
+-- *options* and with localized "Ok" and "Cancel" buttons, returning the
+-- selected button's index along with the user's input text (the latter as a
+-- string or table, depending on the type of *options*.`informative_text`).
 -- If *options*.`string_output` is `true`, returns the selected button's label
 -- along with the user's input text.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
--- @param options Table of key-value option pairs for the input-box.
+-- @param options Table of key-value option pairs for the inputbox.
 --
 --   * `title`: The dialog's title text.
 --   * `informative_text`: The dialog's main message text. If the value is a
@@ -173,14 +175,15 @@ function inputbox(options) end
 function standard_inputbox(options) end
 
 ---
--- Prompts the user with a one-line masked input-box dialog defined by dialog
--- options table *options*, returning the selected button's index along with the
--- user's input text.
+-- Prompts the user with a masked inputbox dialog defined by dialog options
+-- table *options*, returning the selected button's index along with the user's
+-- input text (the latter as a string or table, depending on the type of
+-- *options*.`informative_text`).
 -- If *options*.`string_output` is `true`, returns the selected button's label
 -- along with the user's input text.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
--- @param options Table of key-value option pairs for the input-box.
+-- @param options Table of key-value option pairs for the inputbox.
 --
 --   * `title`: The dialog's title text.
 --   * `informative_text`: The dialog's main message text. If the value is a
@@ -208,14 +211,15 @@ function standard_inputbox(options) end
 function secure_inputbox(options) end
 
 ---
--- Prompts the user with a one-line masked input-box dialog defined by dialog
--- options table *options* and with localized "Ok" and "Cancel" buttons,
--- returning the selected button's index along with the user's input text.
+-- Prompts the user with a masked inputbox dialog defined by dialog options
+-- table *options* and with localized "Ok" and "Cancel" buttons, returning the
+-- selected button's index along with the user's input text (the latter as a
+-- string or table, depending on the type of *options*.`informative_text`).
 -- If *options*.`string_output` is `true`, returns the selected button's label
 -- along with the user's input text.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
--- @param options Table of key-value option pairs for the input-box.
+-- @param options Table of key-value option pairs for the inputbox.
 --
 --   * `title`: The dialog's title text.
 --   * `informative_text`: The dialog's main message text. If the value is a
@@ -440,8 +444,9 @@ function filteredlist(options) end
 ---
 -- Prompts the user with an option selection dialog defined by dialog options
 -- table *options*, returning the selected button's index along with the indices
--- of the selected options or, if *options*.`string_output` is `true`, the
--- selected button's label along with the text of the selected options.
+-- of the selected options.
+-- If *options*.`string_output` is `true`, returns the selected button's label
+-- along with the text of the selected options.
 -- If the dialog timed out, returns `0` or `"timeout"`. If the user canceled the
 -- dialog, returns `-1` or `"delete"`.
 -- @param options Table of key-value option pairs for the option select dialog.
@@ -456,8 +461,8 @@ function filteredlist(options) end
 --     to be set.
 --   * `select`: The indices of initially selected options.
 --   * `string_output`: Return the selected button's label or the dialog's exit
---     status along with the selected option's text instead of the button's
---     index or the dialog's exit code along with the option's index. The
+--     status along with the selected options' text instead of the button's
+--     index or the dialog's exit code along with the options' indices. The
 --     default value is `false`.
 --   * `width`: The dialog's pixel width.
 --   * `height`: The dialog's pixel height.

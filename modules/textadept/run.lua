@@ -17,7 +17,6 @@ local M = {}
 --   It is used for going to error messages with relative file paths.
 -- @field proc (process)
 --   The currently running process or the most recent process run.
---   This field does not exist in the terminal version.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Emitted when executing a language's compile shell command.
 --   By default, compiler output is printed to the message buffer. To override
@@ -173,7 +172,7 @@ end
 M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc -o "%e" "%f"',antlr='antlr4 "%f"',g='antlr3 "%f"',applescript='osacompile "%f" -o "%e.scpt"',asm='nasm "%f" && ld "%e.o" -o "%e"',boo='booc "%f"',caml='ocamlc -o "%e" "%f"',csharp=WIN32 and 'csc "%f"' or 'mcs "%f"',cpp='g++ -o "%e" "%f"',coffeescript='coffee -c "%f"',context='context --nonstopmode "%f"',cuda=WIN32 and 'nvcc -o "%e.exe" "%f"' or 'nvcc -o "%e" "%f"',dmd='dmd "%f"',dot='dot -Tps "%f" -o "%e.ps"',eiffel='se c "%f"',erlang='erl -compile "%e"',fsharp=WIN32 and 'fsc.exe "%f"' or 'mono fsc.exe "%f"',fortran='gfortran -o "%e" "%f"',gap='gac -o "%e" "%f"',go='go build "%f"',groovy='groovyc "%f"',haskell=WIN32 and 'ghc -o "%e.exe" "%f"' or 'ghc -o "%e" "%f"',inform=function() return 'inform -c "'..buffer.filename:match('^(.+%.inform[/\\])Source')..'"' end,java='javac "%f"',ltx='pdflatex -file-line-error -halt-on-error "%f"',less='lessc "%f" "%e.css"',lilypond='lilypond "%f"',lisp='clisp -c "%f"',litcoffee='coffee -c "%f"',lua='luac -o "%e.luac" "%f"',markdown='markdown "%f" > "%e.html"',nemerle='ncc "%f" -out:"%e.exe"',nimrod='nimrod c "%f"',nsis='MakeNSIS "%f"',objective_c='gcc -o "%e" "%f"',pascal='fpc "%f"',perl='perl -c "%f"',php='php -l "%f"',prolog='gplc --no-top-level "%f"',python='python -m py_compile "%f"',ruby='ruby -c "%f"',sass='sass "%f" "%e.css"',scala='scalac "%f"',tex='pdflatex -file-line-error -halt-on-error "%f"',vala='valac "%f"',vb=WIN32 and 'vbc "%f"' or 'vbnc "%f"',}
 
 ---
--- Compiles the current file based on its extension or language, using the
+-- Compiles the current file based on its extension or language using the
 -- shell command from the `compile_commands` table.
 -- Emits `COMPILE_OUTPUT` events.
 -- @see compile_commands
@@ -196,7 +195,7 @@ events.connect(events.COMPILE_OUTPUT, print_output)
 M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "file://%e.swf"' or 'xdg-open "%e.swf"',ada=WIN32 and '"%e"' or './"%e"',ansi_c=WIN32 and '"%e"' or './"%e"',applescript='osascript "%f"',asm='./"%e"',awk='awk -f "%f"',batch='"%f"',boo='booi "%f"',caml='ocamlrun "%e"',csharp=WIN32 and '"%e"' or 'mono "%e.exe"',cpp=WIN32 and '"%e"' or './"%e"',chuck='chuck "%f"',cmake='cmake -P "%f"',coffeescript='coffee "%f"',context=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',cuda=WIN32 and '"%e"' or './"%e"',dmd=WIN32 and '"%e"' or './"%e"',eiffel="./a.out",fsharp=WIN32 and '"%e"' or 'mono "%e.exe"',forth='gforth "%f" -e bye',fortran=WIN32 and '"%e"' or './"%e"',gnuplot='gnuplot "%f"',go='go run "%f"',groovy='groovy "%f"',haskell=WIN32 and '"%e"' or './"%e"',html=WIN32 and 'start "" "%f"' or OSX and 'open "file://%f"' or 'xdg-open "%f"',idl='idl -batch "%f"',Io='io "%f"',java='java "%e"',javascript='node "%f"',ltx=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',less='lessc --no-color "%f"',lilypond=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',lisp='clisp "%f"',litcoffee='coffee "%f"',lua='lua -e "io.stdout:setvbuf(\'no\')" "%f"',makefile=WIN32 and 'nmake -f "%f"' or 'make -f "%f"',markdown='markdown "%f"',nemerle=WIN32 and '"%e"' or 'mono "%e.exe"',nimrod=WIN32 and '"%e"' or './"%e"',objective_c=WIN32 and '"%e"' or './"%e"',pascal=WIN32 and '"%e"' or './"%e"',perl='perl "%f"',php='php "%f"',pike='pike "%f"',pkgbuild='makepkg -p "%f"',prolog=WIN32 and '"%e"' or './"%e"',python='python -u "%f"',rstats=WIN32 and 'Rterm -f "%f"' or 'R -f "%f"',rebol='REBOL "%f"',rexx=WIN32 and 'rexx "%e"' or 'regina "%e"',ruby='ruby "%f"',sass='sass "%f"',scala='scala "%e"',bash='bash "%f"',csh='tcsh "%f"',sh='sh "%f"',zsh='zsh "%f"',smalltalk='gst "%f"',tcl='tclsh "%f"',tex=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',vala=WIN32 and '"%e"' or './"%e"',vb=WIN32 and '"%e"' or 'mono "%e.exe"',}
 
 ---
--- Runs the current file based on its extension or language, using the shell
+-- Runs the current file based on its extension or language using the shell
 -- command from the `run_commands` table.
 -- Emits `RUN_OUTPUT` events.
 -- @see run_commands
@@ -213,11 +212,12 @@ events.connect(events.RUN_OUTPUT, print_output)
 M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}
 
 ---
--- Builds the current project based on the buffer's filename or the current
--- working directory.
+-- Builds the current project (based on the buffer's filename or the current
+-- working directory) using the shell command from the `build_commands` table.
 -- If a "makefile" type of build file is found, prompts the user for the full
 -- build command.
 -- Emits `BUILD_OUTPUT` events.
+-- @see build_commands
 -- @see _G.events
 -- @name build
 function M.build() command(M.build_commands, events.BUILD_OUTPUT) end
