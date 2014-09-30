@@ -3092,6 +3092,7 @@ function set_lexer(buffer, lexer) end
 --   * gap_position
 --   * identifier
 --   * identifiers
+--   * ime_interaction
 --   * indicator_value
 --   * keys_unicode
 --   * key_words

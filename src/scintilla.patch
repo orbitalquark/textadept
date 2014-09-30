@@ -18,15 +18,3 @@ diff -r 5693714a8b0b src/Catalogue.cxx
  
  	return 1;
  }
-diff -r a431f85e13c9 src/EditView.h
---- a/src/EditView.h	Mon Aug 11 14:20:07 2014 +1000
-+++ b/src/EditView.h	Sat Aug 23 19:15:03 2014 -0400
-@@ -32,7 +32,7 @@
- 	drawLineTranslucent = 0x40,
- 	drawFoldLines = 0x80,
- 	drawCarets = 0x100,
--	drawAll = 0x1FF,
-+	drawAll = 0x1FF
- };
- 
- bool ValidStyledText(const ViewStyle &vs, size_t styleOffset, const StyledText &st);
