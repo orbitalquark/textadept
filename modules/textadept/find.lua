@@ -273,7 +273,7 @@ local function replace(rtext)
   local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', function(code)
     code = code:gsub('[\a\b\f\n\r\t\v\\]', escapes)
     local result = assert(load('return '..code))()
-    return result:gsub('\\[abfnrtv\\]', escapes)
+    return tostring(result):gsub('\\[abfnrtv\\]', escapes)
   end)
   if ok then
     buffer:replace_target(rtext:gsub('\\037', '%%')) -- unescape '%'
