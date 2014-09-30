@@ -371,7 +371,7 @@ ifndef NIGHTLY
   scinterm_url = http://foicica.com/scinterm/download/$@
   scintillua_url = http://foicica.com/scintillua/download/$@
   gtdialog_url = http://foicica.com/gtdialog/download/$@
-  lspawn_url = http://foicica.com/hg/lspawn/archive/$@
+  lspawn_url = http://foicica.com/lspawn/download/$@
 else
   scinterm_url = http://foicica.com/hg/scinterm/archive/tip.zip
   scintillua_url = http://foicica.com/hg/scintillua/archive/tip.zip
@@ -385,7 +385,7 @@ scintillua_zip = scintillua_3.5.0-1.zip
 lua_tgz = lua-5.2.3.tar.gz
 lpeg_tgz = lpeg-0.12.tar.gz
 lfs_zip = v1_6_2.zip
-lspawn_zip = 0999f00e2255.zip
+lspawn_zip = lspawn_1.0.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
 gtdialog_zip = gtdialog_1.1.zip
