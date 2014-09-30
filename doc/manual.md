@@ -723,8 +723,9 @@ Pressing `Esc` (`⎋` | `Esc`) hides the pane after you finish with it.
 
 ### Replace in Selection
 
-By default, "Replace All" replaces all text in the buffer. Selecting a block of
-text and then "Replace All" replaces all text in the selection.
+By default, "Replace All" replaces all text in the buffer. Selecting a
+contiguous block of text and then "Replace All" replaces all text in the
+selection.
 
 ### Find in Files
 
