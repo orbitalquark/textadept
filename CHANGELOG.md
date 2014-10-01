@@ -8,6 +8,33 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.7 (01 Oct 2014)
+
+Download:
+
+* [Textadept 7.7 -- Win32][]
+* [Textadept 7.7 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.7 -- Linux][]
+* [Textadept 7.7 -- Linux x86_64][]
+* [Textadept 7.7 -- Modules][]
+
+Bugfixes:
+
+* Fixed corner-case in switching to most recent buffer after closing.
+* Fixed find/replace bug when embedded Lua code evaluates to a number.
+
+Changes:
+
+* Mac OSX GUI version can truly [`spawn()`][] processes now.
+* Updated to [Scintilla][] 3.5.1.
+
+[Textadept 7.7 -- Win32]: download/textadept_7.7.win32.zip
+[Textadept 7.7 -- Mac OSX Intel 10.5+]: download/textadept_7.7.osx.zip
+[Textadept 7.7 -- Linux]: download/textadept_7.7.i386.tgz
+[Textadept 7.7 -- Linux x86_64]: download/textadept_7.7.x86_64.tgz
+[Textadept 7.7 -- Modules]: download/textadept_7.7.modules.zip
+[Scintilla]: http://scintilla.org
+
 ## 7.6 (01 Sep 2014)
 
 Download:
