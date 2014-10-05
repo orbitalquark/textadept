@@ -94,7 +94,7 @@ local function set_lexer(buffer, lang)
 end
 
 -- Gives new buffers lexer-specific functions.
-local function set_lexer_functions()
+events.connect(events.BUFFER_NEW, function()
   buffer.get_lexer, buffer.set_lexer = get_lexer, set_lexer
   buffer.style_name = setmetatable({}, {
     __index = function(t, style_num) -- LuaDoc is in core/.buffer.luadoc
@@ -103,8 +103,7 @@ local function set_lexer_functions()
     end,
     __newindex = function() error('read-only property') end
   })
-end
-events.connect(events.BUFFER_NEW, set_lexer_functions, 1)
+end, 1)
 
 -- Auto-detect lexer on file open or save as.
 events.connect(events.FILE_OPENED, function() buffer:set_lexer() end)

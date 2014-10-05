@@ -512,8 +512,8 @@
 --   * `buffer.MARGIN_RTEXT`
 --     A right-justified text margin.
 --
---   The default values are `true`, `false`, `false`, `false`, and `false`, for
---   a line number margin and symbol margins.
+--   The default value for the first margin is `buffer.MARGIN_NUMBER`, followed
+--   by `buffer.MARGIN_SYMBOL` for the rest.
 -- @field margin_width_n (table)
 --   Table of pixel margin widths for margin numbers from zero to four.
 -- @field marker_alpha (table, Write-only)

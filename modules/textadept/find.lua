@@ -207,7 +207,7 @@ end
 function M.find_incremental(text, next, anchor)
   if text then find_incremental(text, next, anchor) return end
   M.incremental_start = buffer.current_pos
-  ui.command_entry.entry_text = ''
+  ui.command_entry:set_text('')
   ui.command_entry.enter_mode('find_incremental')
 end
 
