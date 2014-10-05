@@ -612,21 +612,21 @@ keys.filter_through = {
 }
 keys.find_incremental = {
   ['\n'] = function()
-    ui.find.find_entry_text = ui.command_entry.entry_text -- save
-    ui.find.find_incremental(ui.command_entry.entry_text, true, true)
+    ui.find.find_entry_text = ui.command_entry:get_text() -- save
+    ui.find.find_incremental(ui.command_entry:get_text(), true, true)
   end,
   ['cr'] = function()
-    ui.find.find_incremental(ui.command_entry.entry_text, false, true)
+    ui.find.find_incremental(ui.command_entry:get_text(), false, true)
   end,
   ['\b'] = function()
-    ui.find.find_incremental(ui.command_entry.entry_text:sub(1, -2), true)
+    ui.find.find_incremental(ui.command_entry:get_text():sub(1, -2), true)
     return false -- propagate
   end
 }
 -- Add the character for any key pressed without modifiers to incremental find.
 setmetatable(keys.find_incremental, {__index = function(t, k)
                if #k > 1 and k:find('^[cams]*.+$') then return end
-               ui.find.find_incremental(ui.command_entry.entry_text..k, true)
+               ui.find.find_incremental(ui.command_entry:get_text()..k, true)
              end})
 
 return M

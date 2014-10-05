@@ -167,9 +167,8 @@ M.keychain = setmetatable({}, {
 })
 
 -- Clears the current key sequence.
--- This is also used by *modules/textadept/command_entry.lua*.
-M.clear_key_sequence = function()
-  -- Clearing a table is faster than re-creating one.
+local function clear_key_sequence()
+  -- Clearing a table is sometimes faster than re-creating one.
   if #keychain == 1 then keychain[1] = nil else keychain = {} end
 end
 
@@ -187,7 +186,7 @@ M.run_command = function(command, command_type)
     -- If the argument is a view or buffer, use the current one instead.
     if type(args[2]) == 'table' then
       local mt, buffer, view = getmetatable(args[2]), buffer, view
-      if mt == getmetatable(buffer) then
+      if mt == getmetatable(buffer) and args[2] ~= ui.command_entry then
         args[2] = buffer
       elseif mt == getmetatable(view) then
         args[2] = view
@@ -242,7 +241,7 @@ local function keypress(code, shift, control, alt, meta)
   --if CURSES then ui.statusbar_text = '"'..key_seq..'"' end
   local keychain_size = #keychain
   if keychain_size > 0 and key_seq == M.CLEAR then
-    M.clear_key_sequence()
+    clear_key_sequence()
     return true
   end
   keychain[keychain_size + 1] = key_seq
@@ -254,7 +253,7 @@ local function keypress(code, shift, control, alt, meta)
   else
     status = key_command(M.MODE)
   end
-  if status ~= CHAIN then M.clear_key_sequence() end
+  if status ~= CHAIN then clear_key_sequence() end
   if status > PROPAGATE then return true end -- CHAIN or HALT
   if status == INVALID and keychain_size > 0 then
     ui.statusbar_text = _L['Invalid sequence']
