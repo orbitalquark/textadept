@@ -19,20 +19,41 @@ local M = ui.command_entry
 --     local function complete_lua() ... end
 --     local function execute_lua() ... end
 --     keys['ce'] = {ui.command_entry.enter_mode, 'lua_command'}
---     keys.lua_command = {
+--     keys.lua_command = setmetatable({
 --       ['\t'] = complete_lua,
 --       ['\n'] = {ui.command_entry.finish_mode, execute_lua}
---     }
+--     }, ui.command_entry.editing_keys)
 --
 -- In this case, `Ctrl+E` opens the command entry and enters "lua_command" key
 -- mode where the `Tab` and `Enter` keys have special, defined functionality.
 -- (By default, Textadept pre-defines `Esc` to exit any command entry mode.)
 -- `Tab` shows a list of Lua completions for the entry text and `Enter` exits
 -- "lua_command" key mode and executes the entered code. The command entry
--- handles all other keys normally.
+-- handles all other editing and movement keys normally.
 -- @field height (number)
 --   The height in pixels of the command entry.
 module('ui.command_entry')]]
+
+---
+-- A metatable with typical platform-specific key bindings for text entries.
+-- This metatable may be used to add basic editing keys to command entry modes.
+-- @usage setmetatable(keys.my_mode, ui.command_entry.editing_keys)
+-- @class table
+-- @name editing_keys
+M.editing_keys = {__index = {
+  [not OSX and 'cx' or 'mx'] = {buffer.cut, M},
+  [not OSX and 'cc' or 'mc'] = {buffer.copy, M},
+  [not OSX and 'cv' or 'mv'] = {buffer.paste, M},
+  [not OSX and not CURSES and 'ca' or 'ma'] = {buffer.select_all, M},
+  [not OSX and 'cz' or 'mz'] = {buffer.undo, M},
+  [not OSX and 'cZ' or 'mZ'] = {buffer.redo, M}, cy = {buffer.redo, M},
+  -- Movement keys.
+  [(OSX or CURSES) and 'cf' or '\0'] = {buffer.char_right, M},
+  [(OSX or CURSES) and 'cb' or '\0'] = {buffer.char_left, M},
+  [(OSX or CURSES) and 'ca' or '\0'] = {buffer.vc_home, M},
+  [(OSX or CURSES) and 'ce' or '\0'] = {buffer.line_end, M},
+  [(OSX or CURSES) and 'cd' or '\0'] = {buffer.clear, M}
+}}
 
 ---
 -- Opens the command entry in key mode *mode*.
@@ -66,7 +87,7 @@ function M.finish_mode(f)
   if f then f(M:get_text()) end
 end
 
--- Environment for abbreviated commands.
+-- Environment for abbreviated Lua commands.
 -- @class table
 -- @name env
 local env = setmetatable({}, {
@@ -140,16 +161,9 @@ local function complete_lua(code)
 end
 
 -- Define key mode for entering Lua commands.
-keys.lua_command = {
+keys.lua_command = setmetatable({
   ['\t'] = complete_lua, ['\n'] = {M.finish_mode, execute_lua},
-  [not OSX and 'cx' or 'mx'] = {buffer.cut, M},
-  [not OSX and 'cc' or 'mc'] = {buffer.copy, M},
-  [not OSX and 'cv' or 'mv'] = {buffer.paste, M},
-  [not OSX and not CURSES and 'ca' or 'ma'] = {buffer.select_all, M},
-  [not OSX and 'cz' or 'mz'] = {buffer.undo, M},
-  [not OSX and 'cy' or 'mZ'] = {buffer.redo, M},
-  [not OSX and 'cZ' or 'mZ'] = {buffer.redo, M},
-}
+}, M.editing_keys)
 
 -- Configure the command entry's default properties.
 events.connect(events.INITIALIZED, function()
