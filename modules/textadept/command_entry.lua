@@ -66,6 +66,7 @@ M.editing_keys = {__index = {
 -- @see _G.keys.MODE
 -- @name enter_mode
 function M.enter_mode(mode)
+  if M:auto_c_active() then M:auto_c_cancel() end -- may happen in curses
   keys.MODE = mode
   if mode and not keys[mode]['esc'] then keys[mode]['esc'] = M.enter_mode end
   M:select_all()
@@ -122,13 +123,11 @@ local function execute_lua(code)
 end
 args.register('-e', '--execute', 1, execute_lua, 'Execute Lua code')
 
--- Shows a set of Lua code completions for string *code* or the entry's text.
--- Completions are subject to an "abbreviated" environment where the `buffer`,
--- `view`, and `ui` tables are also considered as globals.
--- @param code The Lua code to complete. The default value is the entry's text.
-local function complete_lua(code)
-  if not code then code = M:get_text() end
-  local symbol, op, part = code:match('([%w_.]-)([%.:]?)([%w_]*)$')
+-- Shows a set of Lua code completions for the entry's text, subject to an
+-- "abbreviated" environment where the `buffer`, `view`, and `ui` tables are
+-- also considered as globals.
+local function complete_lua()
+  local symbol, op, part = M:get_text():match('([%w_.]-)([%.:]?)([%w_]*)$')
   local ok, result = pcall((load('return ('..symbol..')', nil, 'bt', env)))
   local cmpls = {}
   part = '^'..part
