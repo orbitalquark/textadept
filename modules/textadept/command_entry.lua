@@ -17,12 +17,12 @@ local M = ui.command_entry
 -- executing Lua commands:
 --
 --     local function complete_lua() ... end
---     local function execute_lua() ... end
+--     local function run_lua() ... end
 --     keys['ce'] = {ui.command_entry.enter_mode, 'lua_command'}
---     keys.lua_command = setmetatable({
+--     keys.lua_command = {
 --       ['\t'] = complete_lua,
---       ['\n'] = {ui.command_entry.finish_mode, execute_lua}
---     }, ui.command_entry.editing_keys)
+--       ['\n'] = {ui.command_entry.finish_mode, run_lua}
+--     }
 --
 -- In this case, `Ctrl+E` opens the command entry and enters "lua_command" key
 -- mode where the `Tab` and `Enter` keys have special, defined functionality.
@@ -37,6 +37,8 @@ module('ui.command_entry')]]
 ---
 -- A metatable with typical platform-specific key bindings for text entries.
 -- This metatable may be used to add basic editing keys to command entry modes.
+-- It is automatically added to command entry modes unless a metatable was
+-- previously set.
 -- @usage setmetatable(keys.my_mode, ui.command_entry.editing_keys)
 -- @class table
 -- @name editing_keys
@@ -68,7 +70,11 @@ M.editing_keys = {__index = {
 function M.enter_mode(mode)
   if M:auto_c_active() then M:auto_c_cancel() end -- may happen in curses
   keys.MODE = mode
-  if mode and not keys[mode]['esc'] then keys[mode]['esc'] = M.enter_mode end
+  if mode then
+    local mkeys = keys[mode]
+    if not mkeys['esc'] then mkeys['esc'] = M.enter_mode end
+    if not getmetatable(mkeys) then setmetatable(mkeys, M.editing_keys) end
+  end
   M:select_all()
   M.focus()
 end
@@ -115,13 +121,13 @@ local env = setmetatable({}, {
 -- are also considered as global functions and fields.
 -- Prints the results of '=' expressions like in the Lua prompt.
 -- @param code The Lua code to execute.
-local function execute_lua(code)
+local function run_lua(code)
   if code:find('^=') then code = 'return '..code:sub(2) end
   local result = assert(load(code, nil, 'bt', env))()
   if result ~= nil or code:find('^return ') then ui.print(result) end
   events.emit(events.UPDATE_UI)
 end
-args.register('-e', '--execute', 1, execute_lua, 'Execute Lua code')
+args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
 
 -- Shows a set of Lua code completions for the entry's text, subject to an
 -- "abbreviated" environment where the `buffer`, `view`, and `ui` tables are
@@ -160,9 +166,7 @@ local function complete_lua()
 end
 
 -- Define key mode for entering Lua commands.
-keys.lua_command = setmetatable({
-  ['\t'] = complete_lua, ['\n'] = {M.finish_mode, execute_lua},
-}, M.editing_keys)
+keys.lua_command = {['\t'] = complete_lua, ['\n'] = {M.finish_mode, run_lua}}
 
 -- Configure the command entry's default properties.
 events.connect(events.INITIALIZED, function()
