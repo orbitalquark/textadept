@@ -18,3 +18,20 @@ diff -r 5693714a8b0b src/Catalogue.cxx
  
  	return 1;
  }
+diff -r 326449de45d0 gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Thu Sep 25 09:48:50 2014 +1000
++++ b/gtk/ScintillaGTK.cxx	Tue Oct 07 12:28:16 2014 -0400
+@@ -1563,6 +1563,13 @@
+ 		len--;	// Forget the extra '\0'
+ #endif
+ 
++#if PLAT_GTK_WIN32
++  // Win32 includes an ending '\0' byte in 'len' for clipboard text from
++  // external applications; ignore it.
++  if (len > 0 && data[len - 1] == '\0')
++    len--;
++#endif
++
+ 	std::string dest(data, len);
+ 	if (selectionTypeData == GDK_TARGET_STRING) {
+ 		if (IsUnicodeMode()) {
