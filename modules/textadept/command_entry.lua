@@ -77,6 +77,7 @@ function M.enter_mode(mode)
   end
   M:select_all()
   M.focus()
+  if not CURSES then M.height = M:text_height(0) end
 end
 
 ---
@@ -173,7 +174,6 @@ events.connect(events.INITIALIZED, function()
   if not arg then return end -- no need to reconfigure on reset
   M.h_scroll_bar, M.v_scroll_bar = false, false
   M.margin_width_n[0], M.margin_width_n[1], M.margin_width_n[2] = 0, 0, 0
-  if not CURSES then M.height = M:text_height(1) end
   M:set_lexer('lua')
 end)
 
