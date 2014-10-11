@@ -272,8 +272,12 @@ M.utils = {
     events.emit(events.UPDATE_UI) -- for updating statusbar
   end,
   unsplit_all = function() while view:unsplit() do end end,
-  grow = function(i) if view.size then view.size = view.size + i end end,
-  shrink = function(i) if view.size then view.size = view.size - i end end,
+  grow = function()
+    if view.size then view.size = view.size + buffer:text_height(0) end
+  end,
+  shrink = function()
+    if view.size then view.size = view.size - buffer:text_height(0) end
+  end,
   toggle_current_fold = function()
     buffer:toggle_fold(buffer:line_from_position(buffer.current_pos))
   end,
@@ -543,15 +547,15 @@ if not CURSES then
   keys[not OSX and 'cav' or 'cv'] = view_splitv
   keys[not OSX and 'caw' or 'cw'] = view_unsplit
   keys[not OSX and 'caW' or 'cW'] = utils.unsplit_all
-  keys[not OSX and 'ca+' or 'c+'] = {utils.grow, 10}
-  keys[not OSX and 'ca=' or 'c='] = {utils.grow, 10}
-  keys[not OSX and 'ca-' or 'c-'] = {utils.shrink, 10}
+  keys[not OSX and 'ca+' or 'c+'] = utils.grow
+  keys[not OSX and 'ca=' or 'c='] = utils.grow
+  keys[not OSX and 'ca-' or 'c-'] = utils.shrink
 else
   keys.cmv = {
     n = view_next, p = view_prev,
     s = view_splith, v = view_splitv,
     w = view_unsplit, W = utils.unsplit_all,
-    ['+'] = {utils.grow, 1}, ['='] = {utils.grow, 1}, ['-'] = {utils.shrink, 1}
+    ['+'] = utils.grow, ['='] = utils.grow, ['-'] = utils.shrink
   }
   if not OSX then keys.cmv.h = view_splith end
 end
