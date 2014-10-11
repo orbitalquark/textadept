@@ -1267,20 +1267,21 @@ static int lbuf_property(lua_State *L) {
              l_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
     // Return or set the command entry's pixel height.
     int height = luaL_optint(L, 3, 0);
+    int min_height = SS(command_entry, SCI_TEXTHEIGHT, 0, 0);
+    if (height < min_height) height = min_height;
 #if GTK
+    GtkWidget *paned = gtk_widget_get_parent(command_entry);
     GtkAllocation allocation;
-    gtk_widget_get_allocation(command_entry, &allocation);
+    gtk_widget_get_allocation(newindex ? paned : command_entry, &allocation);
     if (newindex) {
-      int min_height = SS(command_entry, SCI_TEXTHEIGHT, 0, 0);
-      if (height < min_height) height = min_height;
-      gtk_widget_set_size_request(command_entry, allocation.width, height);
-    } else lua_pushnumber(L, allocation.height);
+      gtk_widget_set_size_request(command_entry, -1, height);
+      gtk_paned_set_position(GTK_PANED(paned), allocation.height - height);
+      //while (gtk_events_pending()) gtk_main_iteration(); // update immediately
+    } else lua_pushinteger(L, allocation.height);
 #elif CURSES
     WINDOW *win = scintilla_get_window(command_entry);
-    if (newindex) {
-      if (height < 1) height = 1;
-      wresize(win, height, COLS), mvwin(win, LINES - 1 - height, 0);
-    } else lua_pushinteger(L, getmaxy(win));
+    lua_pushinteger(L, getmaxy(win));
+    if (newindex) wresize(win, height, COLS), mvwin(win, LINES - 1 - height, 0);
 #endif
     return !newindex ? 1 : 0;
   } else if (!newindex) {
@@ -2178,18 +2179,26 @@ static void new_window() {
   gtk_box_pack_start(GTK_BOX(vbox), tabbar, FALSE, FALSE, 0);
   gtk_widget_set_can_focus(tabbar, FALSE);
 
+  GtkWidget *paned = gtk_vpaned_new();
+  gtk_box_pack_start(GTK_BOX(vbox), paned, TRUE, TRUE, 0);
+
+  GtkWidget *vboxp = gtk_vbox_new(FALSE, 0);
+  gtk_paned_add1(GTK_PANED(paned), vboxp);
+
   GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(vboxp), hbox, TRUE, TRUE, 0);
 
   gtk_box_pack_start(GTK_BOX(hbox), new_view(0), TRUE, TRUE, 0);
 
-  gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), FALSE, FALSE, 5);
+  gtk_box_pack_start(GTK_BOX(vboxp), new_findbox(), FALSE, FALSE, 5);
 
   command_entry = scintilla_new();
-  gtk_widget_set_size_request(command_entry, 1, 20);
+  gtk_widget_set_size_request(command_entry, 1, 1);
   signal(command_entry, "key-press-event", s_keypress);
   signal(command_entry, "focus-out-event", c_focusout);
-  gtk_box_pack_start(GTK_BOX(vbox), command_entry, FALSE, FALSE, 0);
+  gtk_paned_add2(GTK_PANED(paned), command_entry);
+  gtk_container_child_set(GTK_CONTAINER(paned), command_entry, "shrink", FALSE,
+                          NULL);
 
   GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
