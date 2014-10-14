@@ -103,7 +103,7 @@ local menubar = {
     {_L['_Jump to'], editing.goto_line},
   },
   { title = _L['_Tools'],
-    {_L['Command _Entry'], {ui.command_entry.enter_mode, 'lua_command'}},
+    {_L['Command _Entry'], {ui.command_entry.enter_mode, 'lua_command', 'lua'}},
     {_L['Select Co_mmand'], utils.select_command},
     SEPARATOR,
     {_L['_Run'], textadept.run.run},

@@ -58,16 +58,21 @@ M.editing_keys = {__index = {
 }}
 
 ---
--- Opens the command entry in key mode *mode*.
+-- Opens the command entry in key mode *mode*, highlighting text with lexer name
+-- *lexer*, and displaying *height* number of lines at a time.
 -- Key bindings will be looked up in `keys[mode]` instead of `keys`. The `Esc`
 -- key exits the current mode, closes the command entry, and restores normal key
 -- lookup.
 -- This function is useful for binding keys to enter a command entry mode.
 -- @param mode The key mode to enter into, or `nil` to exit the current mode.
+-- @param lexer Optional string lexer name to use for command entry text. The
+--   default value is `'text'`.
+-- @param height Optional number of lines to display in the command entry. The
+--   default value is `1`.
 -- @usage keys['ce'] = {ui.command_entry.enter_mode, 'command_entry'}
 -- @see _G.keys.MODE
 -- @name enter_mode
-function M.enter_mode(mode)
+function M.enter_mode(mode, lexer, height)
   if M:auto_c_active() then M:auto_c_cancel() end -- may happen in curses
   keys.MODE = mode
   if mode then
@@ -77,7 +82,8 @@ function M.enter_mode(mode)
   end
   M:select_all()
   M.focus()
-  if not CURSES then M.height = M:text_height(0) end
+  M:set_lexer(lexer or 'text')
+  M.height = M:text_height(0) * (height or 1)
 end
 
 ---
@@ -134,7 +140,8 @@ args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
 -- "abbreviated" environment where the `buffer`, `view`, and `ui` tables are
 -- also considered as globals.
 local function complete_lua()
-  local symbol, op, part = M:get_text():match('([%w_.]-)([%.:]?)([%w_]*)$')
+  local line, pos = M:get_cur_line()
+  local symbol, op, part = line:sub(1, pos):match('([%w_.]-)([%.:]?)([%w_]*)$')
   local ok, result = pcall((load('return ('..symbol..')', nil, 'bt', env)))
   local cmpls = {}
   part = '^'..part
@@ -174,7 +181,6 @@ events.connect(events.INITIALIZED, function()
   if not arg then return end -- no need to reconfigure on reset
   M.h_scroll_bar, M.v_scroll_bar = false, false
   M.margin_width_n[0], M.margin_width_n[1], M.margin_width_n[2] = 0, 0, 0
-  M:set_lexer('lua')
 end)
 
 --[[ The function below is a Lua C function.
