@@ -467,7 +467,7 @@ keys[not OSX and 'cj' or 'mj'] = editing.goto_line
 
 -- Tools.
 keys[not OSX and (not CURSES and 'ce' or 'mc')
-             or 'me'] = {ui.command_entry.enter_mode, 'lua_command'}
+             or 'me'] = {ui.command_entry.enter_mode, 'lua_command', 'lua'}
 keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
 keys[not OSX and 'cr' or 'mr'] = textadept.run.run
 keys[not OSX and (not CURSES and 'cR' or 'cmr') or 'mR'] = textadept.run.compile
