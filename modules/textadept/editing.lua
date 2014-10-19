@@ -193,6 +193,27 @@ events.connect(events.CHAR_ADDED, function(char)
   end
 end)
 
+-- Enables and disables bracketed paste mode in curses and disables auto-pair
+-- and auto-indent while pasting.
+if CURSES and not WIN32 then
+  io.stdout:write('\x1b[?2004h') -- enable bracketed paste mode
+  io.stdout:flush()
+  events.connect(events.QUIT, function()
+    io.stdout:write('\x1b[?2004l') -- disable bracketed paste mode
+    io.stdout:flush()
+  end, 1)
+  local reenable_autopair, reenable_autoindent
+  events.connect('csi', function(cmd, args)
+    if cmd ~= string.byte('~') then return end
+    if args[1] == 200 then
+      reenable_autopair, M.AUTOPAIR = M.AUTOPAIR, false
+      reenable_autoindent, M.AUTOINDENT = M.AUTOINDENT, false
+    elseif args[1] == 201 then
+      M.AUTOPAIR, M.AUTOINDENT = reenable_autopair, reenable_autoindent
+    end
+  end)
+end
+
 -- Prepares the buffer for saving to a file.
 events.connect(events.FILE_BEFORE_SAVE, function()
   if not M.STRIP_TRAILING_SPACES then return end

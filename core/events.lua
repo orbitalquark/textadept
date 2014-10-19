@@ -70,16 +70,6 @@ local M = {}
 --   Arguments:
 --
 --   * _`byte`_: The text character's byte.
--- @field COMMAND_ENTRY_KEYPRESS (string)
---   Emitted when pressing a key in the command entry.
---   If any handler returns `true`, the key is not inserted into the entry.
---   Arguments:
---
---   * _`code`_: The numeric key code.
---   * _`shift`_: The "Shift" modifier key is held down.
---   * _`ctrl`_: The "Control" modifier key is held down.
---   * _`alt`_: The "Alt"/"Option" modifier key is held down.
---   * _`meta`_: The "Command" modifier key on Mac OSX is held down.
 -- @field DOUBLE_CLICK (string)
 --   Emitted after double-clicking the mouse button.
 --   Arguments:
@@ -91,6 +81,15 @@ local M = {}
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK+.
+-- @field CSI (string)
+--   Emitted when the terminal version receives an unrecognized CSI sequence.
+--   Arguments:
+--
+--   * _`cmd`_: The 24-bit CSI command value. The lowest byte contains the
+--     command byte. The second lowest byte contains the leading byte, if any
+--     (e.g. '?'). The third lowest byte contains the intermediate byte, if any
+--     (e.g. '$').
+--   * _`args`_: Table of numeric arguments of the CSI sequence.
 -- @field DWELL_END (string)
 --   Emitted after `DWELL_START` when the user moves the mouse, presses a key,
 --   or scrolls the view.
@@ -366,10 +365,10 @@ end)
 for _, n in pairs(scnotifications) do M[n[1]:upper()] = n[1] end
 local ta_events = {
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
-  'buffer_deleted', 'buffer_new', 'command_entry_command',
-  'command_entry_keypress', 'error', 'find', 'focus', 'initialized', 'keypress',
-  'menu_clicked', 'quit', 'replace', 'replace_all', 'reset_after',
-  'reset_before', 'view_after_switch', 'view_before_switch', 'view_new'
+  'buffer_deleted', 'buffer_new', 'csi', 'error', 'find', 'focus',
+  'initialized', 'keypress', 'menu_clicked', 'quit', 'replace', 'replace_all',
+  'reset_after', 'reset_before', 'view_after_switch', 'view_before_switch',
+  'view_new'
 }
 for _, e in pairs(ta_events) do M[e:upper()] = e end
 
