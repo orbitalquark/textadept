@@ -2409,6 +2409,19 @@ int main(int argc, char **argv) {
     else if (key.type == TERMKEY_TYPE_KEYSYM &&
              key.code.sym >= 0 && key.code.sym <= TERMKEY_SYM_END)
       c = keysyms[key.code.sym];
+    else if (key.type == TERMKEY_TYPE_UNKNOWN_CSI) {
+      long args[16];
+      size_t nargs = 16;
+      unsigned long cmd;
+      termkey_interpret_csi(ta_tk, &key, args, &nargs, &cmd);
+      lua_newtable(lua);
+      for (int i = 0; i < nargs; i++)
+        lua_pushinteger(lua, args[i]), lua_rawseti(lua, -2, i + 1);
+      lL_event(lua, "csi", LUA_TNUMBER, cmd, LUA_TTABLE,
+               luaL_ref(lua, LUA_REGISTRYINDEX), -1);
+      refresh_all();
+      continue;
+    } else continue; // skip unknown types
     int shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
     int ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
     int alt = key.modifiers & TERMKEY_KEYMOD_ALT;
