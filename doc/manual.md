@@ -610,16 +610,14 @@ cursor over ranges of text creates multiple selections. Holding "Control" and
 then clicking without dragging places an additional caret at the clicked
 position. Textadept mirrors any typed text at each selection.
 
-Textadept curses does not support creating multiple selections with the mouse.
-
 ### Rectangular Selection
 
 Rectangular selections are a more structured form of multiple selections. A
 rectangular selection spanning multiple lines allows typing on each line.
 Holding `Alt+Shift` (`⌥⇧` on Mac OSX | `M-S-` in curses) and then pressing the
 arrow keys creates a rectangular selection. Holding the `Alt` modifier key
-(`Super` on Linux) and then clicking and dragging the mouse cursor also creates
-a rectangular selection.
+(`Super` on Linux, and `Ctrl+Alt` in curses) and then clicking and dragging the
+mouse cursor also creates a rectangular selection.
 
 ![Rectangular Selection](images/rectangularselection.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -631,9 +629,6 @@ combinations so Textadept may need reconfiguring. Also, Textadept uses
 usually defines the `Super` modifier key as the left "Windows" key.) If you
 prefer to use `Alt`, change [`buffer.rectangular_selection_modifier`][] in your
 [preferences](#Buffer.Settings).
-
-Textadept curses does not support creating rectangular selections with the
-mouse.
 
 [`buffer.rectangular_selection_modifier`]: api.html#buffer.rectangular_selection_modifier
 
@@ -1803,13 +1798,14 @@ non-existant graphics capabilities:
 * Edge lines may be obscured by text.
 * Extra line ascent or descent renders improperly.
 * No fold lines.
+* No hotspot underlines on mouse hover.
 * No indentation guides.
 * No indicators other than `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX`, although
   neither has translucent drawing and `INDIC_ROUNDBOX` does not have rounded
   corners.
 * When scrolling to the right, long lines overwrite margins.
 * No marker symbols other than `MARK_CHARACTER`.
-* No mouse interactions, cursor types, or hotspots.
+* No mouse cursor types.
 * Only up to 16 colors recognized, regardless of how many colors the terminal
   supports. They are: black (`0x000000`), red (`0x800000`), green (`0x008000`),
   yellow (`0x808000`), blue (`0x000080`), magenta (`0x800080`), cyan

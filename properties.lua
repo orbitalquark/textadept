@@ -10,6 +10,7 @@ buffer.additional_selection_typing = true
 --                               buffer.VS_USERACCESSIBLE
 buffer.rectangular_selection_modifier = (WIN32 or OSX) and buffer.MOD_ALT or
                                                            buffer.MOD_SUPER
+-- Note: rectangular selection modifier for CURSES is always ctrl + alt.
 --buffer.additional_carets_blink = false
 --buffer.additional_carets_visible = false
 

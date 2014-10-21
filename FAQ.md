@@ -107,6 +107,18 @@ Please see the LuaDoc on [compile and run commands][].
 - - -
 
 **Q:**
+In Linux, middle-clicking in the curses version does not paste the primary
+selection and selecting text does copy to the primary selection. All other
+terminal apps support this functionality, why not Textadept?
+
+**A:**
+It does; use the `Shift` modifier key with your middle-clicking and text
+selecting. Textadept interprets non-`Shift`ed mouse events like a GUI
+application.
+
+- - -
+
+**Q:**
 The curses version does not support feature _x_ the GUI version does. Is this a
 bug?
 
