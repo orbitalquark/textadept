@@ -31,6 +31,7 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
+#include <sys/time.h>
 #include <termios.h>
 #else
 #undef main
@@ -2276,6 +2277,7 @@ int main(int argc, char **argv) {
 #elif CURSES
 #if !_WIN32
   ta_tk = termkey_new(0, 0);
+  printf("\033[?1003h"); // enable mouse mode
 #endif
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
@@ -2371,7 +2373,7 @@ int main(int argc, char **argv) {
 #endif
 
   Scintilla *view = focused_view;
-  int c = 0;
+  int c = 0, button = 0, event = 0, y = 0, x = 0, millis = 0;
 #if _WIN32
   int keysyms[] = {0,SCK_DOWN,SCK_UP,SCK_LEFT,SCK_RIGHT,SCK_HOME,SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,SCK_INSERT,0,0,0,0,0,0,SCK_NEXT,SCK_PRIOR,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_END};
   int shift_keysyms[] = {SCK_TAB,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,0,0,SCK_END,0,0,0,SCK_HOME,SCK_INSERT,0,SCK_LEFT,0,0,0,0,0,0,0,0,SCK_RIGHT,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_UP,SCK_DOWN};
@@ -2400,7 +2402,7 @@ int main(int argc, char **argv) {
   TermKeyResult res;
   TermKeyKey key;
   int keysyms[] = {0,SCK_BACK,SCK_TAB,SCK_RETURN,SCK_ESCAPE,0,SCK_BACK,SCK_UP,SCK_DOWN,SCK_LEFT,SCK_RIGHT,0,0,SCK_INSERT,SCK_DELETE,0,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END};
-  while ((res = textadept_waitkey(ta_tk, &key)) != TERMKEY_RES_EOF) {
+  while ((c = 0, res = textadept_waitkey(ta_tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
     if (key.type == TERMKEY_TYPE_UNICODE)
       c = key.code.codepoint;
@@ -2419,15 +2421,21 @@ int main(int argc, char **argv) {
         lua_pushinteger(lua, args[i]), lua_rawseti(lua, -2, i + 1);
       lL_event(lua, "csi", LUA_TNUMBER, cmd, LUA_TTABLE,
                luaL_ref(lua, LUA_REGISTRYINDEX), -1);
-      refresh_all();
-      continue;
+    } else if (key.type == TERMKEY_TYPE_MOUSE) {
+      termkey_interpret_mouse(ta_tk, &key, (TermKeyMouseEvent*)&event, &button,
+                              &y, &x), y--, x--;
+      struct timeval time = {0, 0};
+      gettimeofday(&time, NULL);
+      millis = time.tv_sec * 1000 + time.tv_usec / 1000;
     } else continue; // skip unknown types
     int shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
     int ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
     int alt = key.modifiers & TERMKEY_KEYMOD_ALT;
 #endif
-    if (!lL_event(lua, "keypress", LUA_TNUMBER, c, LUA_TBOOLEAN, shift,
-                  LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
+    if (!c || c == KEY_MOUSE)
+      scintilla_send_mouse(view, event, millis, button, y, x, shift, ctrl, alt);
+    else if (!lL_event(lua, "keypress", LUA_TNUMBER, c, LUA_TBOOLEAN, shift,
+                       LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
       scintilla_send_key(view, c, shift, ctrl, alt);
     if (quit && lL_event(lua, "quit", -1)) {
       l_close(lua);
@@ -2449,6 +2457,7 @@ int main(int argc, char **argv) {
   }
   endwin();
 #if !_WIN32
+  printf("\033[?1003l"); // disable mouse mode
   termkey_destroy(ta_tk);
 #endif
 #endif
