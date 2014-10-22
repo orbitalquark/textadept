@@ -2369,35 +2369,53 @@ int main(int argc, char **argv) {
   act.sa_handler = resize, sigaction(SIGWINCH, &act, NULL);
 #else
   freopen("NUL", "w", stderr); // redirect stderr
-  PDC_save_key_modifiers(TRUE);
+  PDC_save_key_modifiers(TRUE), mouse_set(ALL_MOUSE_EVENTS), mouseinterval(0);
 #endif
 
   Scintilla *view = focused_view;
-  int c = 0, button = 0, event = 0, y = 0, x = 0, millis = 0;
+  int c = 0, shift = 0, ctrl = 0, alt = 0; // key info
+  int event = 0, button = 0, y = 0, x = 0, millis = 0; // mouse info
 #if _WIN32
   int keysyms[] = {0,SCK_DOWN,SCK_UP,SCK_LEFT,SCK_RIGHT,SCK_HOME,SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,SCK_INSERT,0,0,0,0,0,0,SCK_NEXT,SCK_PRIOR,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_END};
   int shift_keysyms[] = {SCK_TAB,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,0,0,SCK_END,0,0,0,SCK_HOME,SCK_INSERT,0,SCK_LEFT,0,0,0,0,0,0,0,0,SCK_RIGHT,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_UP,SCK_DOWN};
   int ctrl_keysyms[] = {SCK_LEFT,SCK_RIGHT,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_INSERT,0,0,SCK_UP,SCK_DOWN,SCK_TAB,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,0,SCK_RETURN};
   int alt_keysyms[] = {SCK_DELETE,SCK_INSERT,0,0,0,SCK_TAB,'-','=',SCK_HOME,SCK_PRIOR,SCK_NEXT,SCK_END,SCK_UP,SCK_DOWN,SCK_RIGHT,SCK_LEFT,SCK_RETURN,SCK_ESCAPE,'`','[',']',';','\'',',','.','/',SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'\\'}; // SCK_RETURN, '\\' do not work for me
+  int mousesyms[] = {SCM_RELEASE,SCM_PRESS,0,SCM_PRESS,0,SCM_DRAG,0};
   while ((c = wgetch(scintilla_get_window(view))) != ERR) {
-    if (c < 0x20 && c != 8 && c != 9 && c != 13 && c != 27)
-      c = tolower(c ^ 0x40);
-    else if (c == 27)
-      c = SCK_ESCAPE;
-    else if (c >= KEY_MIN && c <= KEY_END && keysyms[c - KEY_MIN])
-      c = keysyms[c - KEY_MIN];
-    else if (c >= KEY_F(1) && c <= KEY_F(48))
-      c = 0xFFBE + (c - KEY_F(1)) % 12; // use GDK keysym values for now
-    else if (c >= KEY_BTAB && c <= KEY_SDOWN && shift_keysyms[c - KEY_BTAB])
-      c = shift_keysyms[c - KEY_BTAB];
-    else if (c >= CTL_LEFT && c <= CTL_ENTER && ctrl_keysyms[c - CTL_LEFT])
-      c = ctrl_keysyms[c - CTL_LEFT];
-    else if (c >= ALT_DEL && c <= ALT_BSLASH && alt_keysyms[c - ALT_DEL])
-      c = alt_keysyms[c - ALT_DEL];
-    int shift = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_SHIFT;
-    int ctrl = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_CONTROL;
-    int alt = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_ALT;
-    if (c >= 32 && c <= 127) shift = 0; // do not shift printable keys
+    if (c != KEY_MOUSE) {
+      if (c < 0x20 && c != 8 && c != 9 && c != 13 && c != 27)
+        c = tolower(c ^ 0x40);
+      else if (c == 27)
+        c = SCK_ESCAPE;
+      else if (c >= KEY_MIN && c <= KEY_END && keysyms[c - KEY_MIN])
+        c = keysyms[c - KEY_MIN];
+      else if (c >= KEY_F(1) && c <= KEY_F(48))
+        c = 0xFFBE + (c - KEY_F(1)) % 12; // use GDK keysym values for now
+      else if (c >= KEY_BTAB && c <= KEY_SDOWN && shift_keysyms[c - KEY_BTAB])
+        c = shift_keysyms[c - KEY_BTAB];
+      else if (c >= CTL_LEFT && c <= CTL_ENTER && ctrl_keysyms[c - CTL_LEFT])
+        c = ctrl_keysyms[c - CTL_LEFT];
+      else if (c >= ALT_DEL && c <= ALT_BSLASH && alt_keysyms[c - ALT_DEL])
+        c = alt_keysyms[c - ALT_DEL];
+      shift = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_SHIFT;
+      ctrl = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_CONTROL;
+      alt = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_ALT;
+      if (c >= 32 && c <= 127) shift = 0; // do not shift printable keys
+    } else {
+      request_mouse_pos(), button = 0, y = MOUSE_Y_POS, x = MOUSE_X_POS;
+      if (BUTTON_CHANGED(1)) {
+        event = mousesyms[BUTTON_STATUS(1) & BUTTON_ACTION_MASK], button = 1;
+        shift = BUTTON_STATUS(1) & PDC_BUTTON_SHIFT;
+        ctrl = BUTTON_STATUS(1) & PDC_BUTTON_CONTROL;
+        alt = BUTTON_STATUS(1) & PDC_BUTTON_ALT;
+      } else if (MOUSE_WHEEL_UP || MOUSE_WHEEL_DOWN)
+        event = SCM_PRESS, button = MOUSE_WHEEL_UP ? 4 : 5;
+      FILETIME time;
+      GetSystemTimeAsFileTime(&time);
+      ULARGE_INTEGER ticks;
+      ticks.LowPart = time.dwLowDateTime, ticks.HighPart = time.dwHighDateTime;
+      millis = ticks.QuadPart / 10000; // each tick is a 100-nanosecond interval
+    }
 #else
   TermKeyResult res;
   TermKeyKey key;
@@ -2428,9 +2446,9 @@ int main(int argc, char **argv) {
       gettimeofday(&time, NULL);
       millis = time.tv_sec * 1000 + time.tv_usec / 1000;
     } else continue; // skip unknown types
-    int shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
-    int ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
-    int alt = key.modifiers & TERMKEY_KEYMOD_ALT;
+    shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
+    ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
+    alt = key.modifiers & TERMKEY_KEYMOD_ALT;
 #endif
     if (!c || c == KEY_MOUSE)
       scintilla_send_mouse(view, event, millis, button, y, x, shift, ctrl, alt);
