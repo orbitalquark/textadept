@@ -35,3 +35,48 @@ diff -r 326449de45d0 gtk/ScintillaGTK.cxx
  	std::string dest(data, len);
  	if (selectionTypeData == GDK_TARGET_STRING) {
  		if (IsUnicodeMode()) {
+diff -r 01c4696a39a9 src/Editor.cxx
+--- a/src/Editor.cxx	Tue Sep 30 09:58:13 2014 +1000
++++ b/src/Editor.cxx	Wed Oct 22 13:22:55 2014 -0400
+@@ -112,6 +112,7 @@
+ 	mouseDownCaptures = true;
+ 
+ 	lastClickTime = 0;
++	clickCloseThreshold = 3;
+ 	dwellDelay = SC_TIME_FOREVER;
+ 	ticksToDwell = SC_TIME_FOREVER;
+ 	dwelling = false;
+@@ -3757,10 +3758,10 @@
+ 	EnsureCaretVisible();
+ }
+ 
+-static bool Close(Point pt1, Point pt2) {
+-	if (abs(pt1.x - pt2.x) > 3)
++static bool Close(Point pt1, Point pt2, int threshold) {
++	if (abs(pt1.x - pt2.x) > threshold)
+ 		return false;
+-	if (abs(pt1.y - pt2.y) > 3)
++	if (abs(pt1.y - pt2.y) > threshold)
+ 		return false;
+ 	return true;
+ }
+@@ -4116,7 +4117,7 @@
+ 	if (shift && !inSelMargin) {
+ 		SetSelection(newPos);
+ 	}
+-	if (((curTime - lastClickTime) < Platform::DoubleClickTime()) && Close(pt, lastClick)) {
++	if (((curTime - lastClickTime) < Platform::DoubleClickTime()) && Close(pt, lastClick, clickCloseThreshold)) {
+ 		//Platform::DebugPrintf("Double click %d %d = %d\n", curTime, lastClickTime, curTime - lastClickTime);
+ 		SetMouseCapture(true);
+ 		if (FineTickerAvailable()) {
+diff -r 01c4696a39a9 src/Editor.h
+--- a/src/Editor.h	Tue Sep 30 09:58:13 2014 +1000
++++ b/src/Editor.h	Wed Oct 22 13:22:55 2014 -0400
+@@ -203,6 +203,7 @@
+ 
+ 	Point lastClick;
+ 	unsigned int lastClickTime;
++	int clickCloseThreshold;
+ 	int dwellDelay;
+ 	int ticksToDwell;
+ 	bool dwelling;
