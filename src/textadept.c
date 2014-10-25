@@ -51,9 +51,7 @@
 #include "ScintillaTerm.h"
 #include "windowman.h"
 #include "cdk_int.h"
-#if !_WIN32
 #include "termkey.h"
-#endif
 #endif
 
 // GTK definitions and macros.
@@ -148,9 +146,7 @@ static ListStore *find_store, *repl_store;
 // curses window.
 static struct WindowManager *wm;
 static int command_entry_focused;
-#if !_WIN32
 TermKey *ta_tk; // global for CDK use
-#endif
 #define SS(view, msg, w, l) scintilla_send_message(view, msg, w, l)
 #define focus_view(view) \
   (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, \
@@ -192,6 +188,10 @@ static ListStore find_store[10], repl_store[10];
   fcopy(&option_labels[i], lua_tostring(L, -1)); \
   if (!*option) option_labels[i] += 4; \
 }
+#if _WIN32
+#define textadept_waitkey(tk, key) \
+  (termkey_set_fd(tk, scintilla_get_window(view)), termkey_getkey(tk, key))
+#endif
 #endif
 #define set_clipboard(s) SS(focused_view, SCI_COPYTEXT, strlen(s), (sptr_t)s)
 
@@ -2275,16 +2275,10 @@ int main(int argc, char **argv) {
 #if GTK
   gtk_init(&argc, &argv);
 #elif CURSES
-#if !_WIN32
   ta_tk = termkey_new(0, 0);
-  printf("\033[?1003h"); // enable mouse mode
-#endif
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
   curs_set(0); // disable cursor when Scintilla has focus
-#if _WIN32
-  raw(), noecho();
-#endif
 #if NCURSES_REENTRANT
   ESCDELAY = getenv("ESCDELAY") ? atoi(getenv("ESCDELAY")) : 100;
 #endif
@@ -2369,66 +2363,22 @@ int main(int argc, char **argv) {
   act.sa_handler = resize, sigaction(SIGWINCH, &act, NULL);
 #else
   freopen("NUL", "w", stderr); // redirect stderr
-  PDC_save_key_modifiers(TRUE), mouse_set(ALL_MOUSE_EVENTS), mouseinterval(0);
 #endif
 
   Scintilla *view = focused_view;
-  int c = 0, shift = 0, ctrl = 0, alt = 0; // key info
-  int event = 0, button = 0, y = 0, x = 0, millis = 0; // mouse info
-#if _WIN32
-  int keysyms[] = {0,SCK_DOWN,SCK_UP,SCK_LEFT,SCK_RIGHT,SCK_HOME,SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,SCK_INSERT,0,0,0,0,0,0,SCK_NEXT,SCK_PRIOR,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_END};
-  int shift_keysyms[] = {SCK_TAB,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,0,0,SCK_END,0,0,0,SCK_HOME,SCK_INSERT,0,SCK_LEFT,0,0,0,0,0,0,0,0,SCK_RIGHT,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_UP,SCK_DOWN};
-  int ctrl_keysyms[] = {SCK_LEFT,SCK_RIGHT,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_INSERT,0,0,SCK_UP,SCK_DOWN,SCK_TAB,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,SCK_DELETE,0,SCK_RETURN};
-  int alt_keysyms[] = {SCK_DELETE,SCK_INSERT,0,0,0,SCK_TAB,'-','=',SCK_HOME,SCK_PRIOR,SCK_NEXT,SCK_END,SCK_UP,SCK_DOWN,SCK_RIGHT,SCK_LEFT,SCK_RETURN,SCK_ESCAPE,'`','[',']',';','\'',',','.','/',SCK_BACK,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'\\'}; // SCK_RETURN, '\\' do not work for me
-  int mousesyms[] = {SCM_RELEASE,SCM_PRESS,0,SCM_PRESS,0,SCM_DRAG,0};
-  while ((c = wgetch(scintilla_get_window(view))) != ERR) {
-    if (c != KEY_MOUSE) {
-      if (c < 0x20 && c != 8 && c != 9 && c != 13 && c != 27)
-        c = tolower(c ^ 0x40);
-      else if (c == 27)
-        c = SCK_ESCAPE;
-      else if (c >= KEY_MIN && c <= KEY_END && keysyms[c - KEY_MIN])
-        c = keysyms[c - KEY_MIN];
-      else if (c >= KEY_F(1) && c <= KEY_F(48))
-        c = 0xFFBE + (c - KEY_F(1)) % 12; // use GDK keysym values for now
-      else if (c >= KEY_BTAB && c <= KEY_SDOWN && shift_keysyms[c - KEY_BTAB])
-        c = shift_keysyms[c - KEY_BTAB];
-      else if (c >= CTL_LEFT && c <= CTL_ENTER && ctrl_keysyms[c - CTL_LEFT])
-        c = ctrl_keysyms[c - CTL_LEFT];
-      else if (c >= ALT_DEL && c <= ALT_BSLASH && alt_keysyms[c - ALT_DEL])
-        c = alt_keysyms[c - ALT_DEL];
-      shift = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_SHIFT;
-      ctrl = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_CONTROL;
-      alt = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_ALT;
-      if (c >= 32 && c <= 127) shift = 0; // do not shift printable keys
-    } else {
-      request_mouse_pos(), button = 0, y = MOUSE_Y_POS, x = MOUSE_X_POS;
-      if (BUTTON_CHANGED(1)) {
-        event = mousesyms[BUTTON_STATUS(1) & BUTTON_ACTION_MASK], button = 1;
-        shift = BUTTON_STATUS(1) & PDC_BUTTON_SHIFT;
-        ctrl = BUTTON_STATUS(1) & PDC_BUTTON_CONTROL;
-        alt = BUTTON_STATUS(1) & PDC_BUTTON_ALT;
-      } else if (MOUSE_WHEEL_UP || MOUSE_WHEEL_DOWN)
-        event = SCM_PRESS, button = MOUSE_WHEEL_UP ? 4 : 5;
-      FILETIME time;
-      GetSystemTimeAsFileTime(&time);
-      ULARGE_INTEGER ticks;
-      ticks.LowPart = time.dwLowDateTime, ticks.HighPart = time.dwHighDateTime;
-      millis = ticks.QuadPart / 10000; // each tick is a 100-nanosecond interval
-    }
-#else
+  int ch = 0, event = 0, button = 0, y = 0, x = 0, millis = 0;
   TermKeyResult res;
   TermKeyKey key;
   int keysyms[] = {0,SCK_BACK,SCK_TAB,SCK_RETURN,SCK_ESCAPE,0,SCK_BACK,SCK_UP,SCK_DOWN,SCK_LEFT,SCK_RIGHT,0,0,SCK_INSERT,SCK_DELETE,0,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END};
-  while ((c = 0, res = textadept_waitkey(ta_tk, &key)) != TERMKEY_RES_EOF) {
+  while ((ch = 0, res = textadept_waitkey(ta_tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
     if (key.type == TERMKEY_TYPE_UNICODE)
-      c = key.code.codepoint;
+      ch = key.code.codepoint;
     else if (key.type == TERMKEY_TYPE_FUNCTION)
-      c = 0xFFBD + key.code.number; // use GDK keysym values for now
+      ch = 0xFFBD + key.code.number; // use GDK keysym values for now
     else if (key.type == TERMKEY_TYPE_KEYSYM &&
              key.code.sym >= 0 && key.code.sym <= TERMKEY_SYM_END)
-      c = keysyms[key.code.sym];
+      ch = keysyms[key.code.sym];
     else if (key.type == TERMKEY_TYPE_UNKNOWN_CSI) {
       long args[16];
       size_t nargs = 16;
@@ -2442,19 +2392,29 @@ int main(int argc, char **argv) {
     } else if (key.type == TERMKEY_TYPE_MOUSE) {
       termkey_interpret_mouse(ta_tk, &key, (TermKeyMouseEvent*)&event, &button,
                               &y, &x), y--, x--;
+#if !_WIN32
       struct timeval time = {0, 0};
       gettimeofday(&time, NULL);
       millis = time.tv_sec * 1000 + time.tv_usec / 1000;
-    } else continue; // skip unknown types
-    shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
-    ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
-    alt = key.modifiers & TERMKEY_KEYMOD_ALT;
+#else
+      FILETIME time;
+      GetSystemTimeAsFileTime(&time);
+      ULARGE_INTEGER ticks;
+      ticks.LowPart = time.dwLowDateTime, ticks.HighPart = time.dwHighDateTime;
+      millis = ticks.QuadPart / 10000; // each tick is a 100-nanosecond interval
 #endif
-    if (!c || c == KEY_MOUSE)
-      scintilla_send_mouse(view, event, millis, button, y, x, shift, ctrl, alt);
-    else if (!lL_event(lua, "keypress", LUA_TNUMBER, c, LUA_TBOOLEAN, shift,
-                       LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
-      scintilla_send_key(view, c, shift, ctrl, alt);
+    } else continue; // skip unknown types
+    int shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
+    int ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
+    int alt = key.modifiers & TERMKEY_KEYMOD_ALT;
+    if (ch && !lL_event(lua, "keypress", LUA_TNUMBER, ch, LUA_TBOOLEAN, shift,
+                        LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
+      scintilla_send_key(view, ch, shift, ctrl, alt);
+    else if (!ch && !scintilla_send_mouse(view, event, millis, button, y, x,
+                                          shift, ctrl, alt))
+      lL_event(lua, "mouse", LUA_TNUMBER, event, LUA_TNUMBER, button,
+               LUA_TNUMBER, y, LUA_TNUMBER, x, LUA_TBOOLEAN, shift,
+               LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1);
     if (quit && lL_event(lua, "quit", -1)) {
       l_close(lua);
       // Free some memory.
@@ -2474,10 +2434,7 @@ int main(int argc, char **argv) {
     view = !command_entry_focused ? focused_view : command_entry;
   }
   endwin();
-#if !_WIN32
-  printf("\033[?1003l"); // disable mouse mode
   termkey_destroy(ta_tk);
-#endif
 #endif
 
   free(textadept_home);

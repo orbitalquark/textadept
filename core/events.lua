@@ -192,6 +192,18 @@ local M = {}
 --   Arguments:
 --
 --   * _`menu_id`_: The numeric ID of the menu item set in [`ui.menu()`]().
+-- @field MOUSE (string)
+--   Emitted by the terminal version for an unhandled mouse event.
+--   Arguments:
+--
+--   * _`event`_: The mouse event: `buffer.MOUSE_PRESS`, `buffer.MOUSE_DRAG`, or
+--     `buffer.MOUSE_RELEASE`.
+--   * _`button`_: The mouse button number.
+--   * _`y`_: The y-coordinate of the mouse event, starting from 1.
+--   * _`x`_: The x-coordinate of the mouse event, starting from 1.
+--   * _`shift`_: The "Shift" modifier key is held down.
+--   * _`ctrl`_: The "Control" modifier key is held down.
+--   * _`alt`_: The "Alt"/"Option" modifier key is held down.
 -- @field QUIT (string)
 --   Emitted when quitting Textadept.
 --   When connecting to this event, connect with an index of 1 or the handler
@@ -366,9 +378,9 @@ for _, n in pairs(scnotifications) do M[n[1]:upper()] = n[1] end
 local ta_events = {
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
   'buffer_deleted', 'buffer_new', 'csi', 'error', 'find', 'focus',
-  'initialized', 'keypress', 'menu_clicked', 'quit', 'replace', 'replace_all',
-  'reset_after', 'reset_before', 'view_after_switch', 'view_before_switch',
-  'view_new'
+  'initialized', 'keypress', 'menu_clicked', 'mouse', 'quit', 'replace',
+  'replace_all', 'reset_after', 'reset_before', 'view_after_switch',
+  'view_before_switch', 'view_new'
 }
 for _, e in pairs(ta_events) do M[e:upper()] = e end
 

@@ -8,9 +8,11 @@ buffer.additional_selection_typing = true
 --buffer.multi_paste = buffer.MULTIPASTE_EACH
 --buffer.virtual_space_options = buffer.VS_RECTANGULARSELECTION +
 --                               buffer.VS_USERACCESSIBLE
-buffer.rectangular_selection_modifier = (WIN32 or OSX) and buffer.MOD_ALT or
-                                                           buffer.MOD_SUPER
--- Note: rectangular selection modifier for CURSES is always ctrl + alt.
+if not CURSES then
+  -- Note: Always Ctrl+Alt on non-Win32 curses and always Alt on Win32 curses.
+  buffer.rectangular_selection_modifier = (WIN32 or OSX) and buffer.MOD_ALT or
+                                                             buffer.MOD_SUPER
+end
 --buffer.additional_carets_blink = false
 --buffer.additional_carets_visible = false
 

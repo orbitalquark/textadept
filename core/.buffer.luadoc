@@ -1002,6 +1002,12 @@
 --
 -- @field MOD_SUPER (number, Read-only)
 --
+-- @field MOUSE_DRAG (number, Read-only)
+--
+-- @field MOUSE_PRESS (number, Read-only)
+--
+-- @field MOUSE_RELEASE (number, Read-only)
+--
 -- @field VS_NONE (number, Read-only)
 --
 -- @field VS_RECTANGULARSELECTION (number, Read-only)

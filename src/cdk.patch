@@ -1,24 +1,24 @@
 diff -r 9d0780ddcbab binding.c
 --- a/binding.c	2011-05-16 18:36:08.000000000 -0400
 +++ b/binding.c	2013-12-18 11:51:43.781198100 -0500
-@@ -1,4 +1,8 @@
+@@ -1,4 +1,6 @@
  #include <cdk_int.h>
-+#if !_WIN32
 +#include "termkey.h"
 +extern TermKey *ta_tk;
-+#endif
  
  /*
   * $Author: tom $
-@@ -167,7 +171,47 @@
+@@ -167,7 +169,47 @@
  {
     EObjectType cdktype = ObjTypeOf (obj);
     CDKOBJS *test = bindableObject (&cdktype, obj);
-+#if !_WIN32
+-   int result = wgetch (InputWindowOf (obj));
 +   int result = ERR;
 +   TermKeyKey key;
 +   int keysyms[] = {0,KEY_BACKSPACE,KEY_TAB,KEY_ENTER,KEY_ESC,0,0,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,0,0,KEY_IC,KEY_DC,0,KEY_PPAGE,KEY_NPAGE,KEY_HOME,KEY_END};
-+   TermKeyResult res = termkey_waitkey(ta_tk, &key);
++   TermKeyResult res;
++retry:
++   res = termkey_waitkey(ta_tk, &key);
 +   switch (res)
 +   {
 +   case TERMKEY_RES_KEY:
@@ -39,6 +39,8 @@ diff -r 9d0780ddcbab binding.c
 +      case TERMKEY_TYPE_KEYSYM:
 +         result = keysyms[key.code.sym];
 +         break;
++      case TERMKEY_TYPE_MOUSE:
++         goto retry;
 +      default:
 +         result = ERR;
 +      }
@@ -52,9 +54,6 @@ diff -r 9d0780ddcbab binding.c
 +      result = 0;
 +      break;
 +   }
-+#else
-    int result = wgetch (InputWindowOf (obj));
-+#endif
  
     if (result >= 0
         && test != 0
