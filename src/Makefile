@@ -137,7 +137,9 @@ luajit_lib_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o \
                   lfsjit.o
 lua_spawn_objs = lspawn.o lspawnjit.o lspawn-curses.o lspawnjit-curses.o
 gtdialog_objs = gtdialog.o gtdialog-curses.o
-termkey_objs = termkey.o driver-ti.o driver-csi.o
+termkey_unix_objs = driver-ti.o driver-csi.o
+termkey_win32_objs = driver-win32-pdcurses.o
+termkey_objs = termkey.o $(termkey_unix_objs) $(termkey_win32_objs)
 windowman_objs = windowman.o
 cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
            cdk_params.o cdkscreen.o debug.o draw.o entry.o fselect.o \
@@ -188,7 +190,8 @@ $(windowman_objs): %.o: windowman/%.c
 $(cdk_objs): %.o: cdk/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) -D_GNU_SOURCE -Itermkey -Icdk $(CURSES_CFLAGS) $< \
 		-o $@
-$(termkey_objs): %.o: termkey/%.c ; $(CROSS)$(CC) -c $(CFLAGS) -std=c99 $< -o $@
+$(termkey_objs): %.o: termkey/%.c
+	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 $(termkey_flags) $< -o $@
 textadept_rc.o: textadept.rc ; $(CROSS)$(WINDRES) $< $@
 
 # Target-specific variables.
@@ -209,6 +212,7 @@ lspawn.o lspawnjit.o: spawn_flags = -DGTK $(GLIB_CFLAGS)
 $(gtdialog_objs): gtdialog_flags = $(plat_flag) -DNOHELP -DLIBRARY
 gtdialog.o: gtdialog_flags += $(GTK_CFLAGS)
 gtdialog-curses.o: gtdialog_flags += -Icdk $(CURSES_CFLAGS)
+$(termkey_win32_objs): termkey_flags += $(CURSES_CFLAGS)
 
 # Executables.
 
@@ -221,14 +225,14 @@ textadeptjit: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadept-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o LexLPeg-curses.o \
                   textadept-curses.o $(lua_objs) $(lua_lib_objs) \
-                  lspawn-curses.o gtdialog-curses.o $(termkey_objs) \
-                  $(windowman_objs) $(cdk_objs)
+                  lspawn-curses.o gtdialog-curses.o termkey.o \
+                  $(termkey_unix_objs) $(windowman_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadeptjit-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                      LexLPegjit-curses.o textadeptjit-curses.o \
                      $(luajit_lib_objs) $(libluajit) lspawnjit-curses.o \
-                     gtdialog-curses.o $(termkey_objs) $(windowman_objs) \
-                     $(cdk_objs)
+                     gtdialog-curses.o termkey.o $(termkey_unix_objs) \
+                     $(windowman_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadept.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
                LexLPeg.o textadept.o textadept_rc.o $(lua_objs) \
@@ -242,13 +246,14 @@ textadeptjit.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) \
 textadept-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                       LexLPeg-curses.o textadept-curses.o textadept_rc.o \
                       $(lua_objs) $(lua_lib_objs) lspawn-curses.o \
-                      gtdialog-curses.o $(windowman_objs) $(cdk_objs)
+                      gtdialog-curses.o termkey.o $(termkey_win32_objs) \
+                      $(windowman_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadeptjit-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                          LexLPegjit-curses.o textadeptjit-curses.o \
                          textadept_rc.o $(luajit_lib_objs) $(libluajit) \
-                         lspawnjit-curses.o gtdialog-curses.o \
-                         $(windowman_objs) $(cdk_objs)
+                         lspawnjit-curses.o gtdialog-curses.o termkey.o \
+                         $(termkey_win32_objs) $(windowman_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 
 # Install/uninstall.
@@ -443,7 +448,9 @@ cdk: cdk.patch | $(cdk_tgz)
 	mv $@/include/*.h $@
 	patch -d $@ -N -p1 < $<
 $(termkey_tgz): ; wget http://www.leonerd.org.uk/code/libtermkey/$@
-termkey: | $(termkey_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
+termkey: termkey.patch | $(termkey_tgz)
+	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
+	patch -d $@ -N -p1 < $<
 $(win32gtk_zip):
 	wget http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/$@
 $(win32iconv_bin_zip): ; wget http://gnuwin32.sourceforge.net/downlinks/$@

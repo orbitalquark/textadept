@@ -401,6 +401,55 @@ events_connect(events.BUFFER_DELETED, function()
   if i and _BUFFERS[buffer] ~= i then view:goto_buffer(i) end
 end)
 
+-- Enables and disables mouse mode in curses and focuses and resizes views based
+-- on mouse events.
+if CURSES then
+  if not WIN32 then
+    io.stdout:write("\x1b[?1002h") -- enable mouse mode
+    io.stdout:flush()
+    events.connect(events.QUIT, function()
+      io.stdout:write("\x1b[?1002l") -- disable mouse mode
+      io.stdout:flush()
+    end, 1)
+  end
+
+  -- Retrieves the view or split at the given terminal coordinates.
+  -- @param view View or split to test for coordinates within.
+  -- @param y The y terminal coordinate.
+  -- @param x The x terminal coordinate.
+  local function get_view(view, y, x)
+    if not view[1] and not view[2] then return view end
+    local vertical, size = view.vertical, view.size
+    if vertical and x < size or not vertical and y < size then
+      return get_view(view[1], y, x)
+    elseif vertical and x > size or not vertical and y > size then
+      -- Zero y or x relative to the other view based on split orientation.
+      return get_view(view[2], vertical and y or y - size - 1,
+                      vertical and x - size - 1 or x)
+    else
+      return view -- in-between views; return the split itself
+    end
+  end
+
+  local resize
+  events.connect(events.MOUSE, function(event, button, y, x)
+    if event == buffer.MOUSE_RELEASE or button ~= 1 then return end
+    if event == buffer.MOUSE_PRESS then
+      local view = get_view(ui.get_split_table(), y - 1, x) -- title is at y=1
+      if not view[1] and not view[2] then
+        ui.goto_view(_VIEWS[view])
+        resize = nil
+      else
+        resize = function(y2, x2)
+          view[1].size = view.size + (view.vertical and x2 - x or y2 - y)
+        end
+      end
+    elseif resize then
+      resize(y, x)
+    end
+  end)
+end
+
 events_connect(events.ERROR, ui.print)
 
 --[[ The tables below were defined in C.

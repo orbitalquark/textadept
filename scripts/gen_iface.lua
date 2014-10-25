@@ -77,6 +77,11 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
   ::continue::
 end
 
+-- Add mouse events from Scinterm manually.
+constants[#constants + 1] = 'MOUSE_PRESS=1'
+constants[#constants + 1] = 'MOUSE_DRAG=2'
+constants[#constants + 1] = 'MOUSE_RELEASE=3'
+
 table.sort(constants)
 table.sort(functions)
 table.sort(properties)

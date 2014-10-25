@@ -1,0 +1,339 @@
+diff -r a94d84bdd4a6 driver-win32-pdcurses.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/driver-win32-pdcurses.c	Fri Oct 24 21:59:44 2014 -0400
+@@ -0,0 +1,106 @@
++// Copyright 2014 Mitchell mitchell.att.foicica.com. See LICENSE.
++
++#include "termkey.h"
++#include "termkey-internal.h"
++
++#include <ctype.h>
++#include <curses.h>
++
++static void *new_driver(TermKey *tk, const char *term) { return tk; }
++static void free_driver(void *info) {}
++
++static int initialized;
++
++// Lookup tables for keysyms and characters.
++static int keysyms[] = {0,TERMKEY_SYM_DOWN,TERMKEY_SYM_UP,TERMKEY_SYM_LEFT,TERMKEY_SYM_RIGHT,TERMKEY_SYM_HOME,TERMKEY_SYM_BACKSPACE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,TERMKEY_SYM_DELETE,TERMKEY_SYM_INSERT,0,0,0,0,0,0,TERMKEY_SYM_PAGEDOWN,TERMKEY_SYM_PAGEUP,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,TERMKEY_SYM_END};
++static int shift_keysyms[] = {TERMKEY_SYM_TAB,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,TERMKEY_SYM_DELETE,0,0,TERMKEY_SYM_END,0,0,0,TERMKEY_SYM_HOME,TERMKEY_SYM_INSERT,0,TERMKEY_SYM_LEFT,0,0,0,0,0,0,0,0,TERMKEY_SYM_RIGHT,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,TERMKEY_SYM_UP,TERMKEY_SYM_DOWN};
++static int ctrl_keysyms[] = {TERMKEY_SYM_LEFT,TERMKEY_SYM_RIGHT,TERMKEY_SYM_PAGEUP,TERMKEY_SYM_PAGEDOWN,TERMKEY_SYM_HOME,TERMKEY_SYM_END,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,TERMKEY_SYM_INSERT,0,0,TERMKEY_SYM_UP,TERMKEY_SYM_DOWN,TERMKEY_SYM_TAB,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,TERMKEY_SYM_BACKSPACE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,TERMKEY_SYM_DELETE,0,TERMKEY_SYM_ENTER};
++static int alt_keysyms[] = {TERMKEY_SYM_DELETE,TERMKEY_SYM_INSERT,0,0,0,TERMKEY_SYM_TAB,0,0,TERMKEY_SYM_HOME,TERMKEY_SYM_PAGEUP,TERMKEY_SYM_PAGEDOWN,TERMKEY_SYM_END,TERMKEY_SYM_UP,TERMKEY_SYM_DOWN,TERMKEY_SYM_RIGHT,TERMKEY_SYM_LEFT,TERMKEY_SYM_ENTER,TERMKEY_SYM_ESCAPE,0,0,0,0,0,0,0,0,TERMKEY_SYM_BACKSPACE}; // TERMKEY_SYM_RETURN does not work for me
++static int alt_keychars[] = {'-','=',0,0,0,0,0,0,0,0,0,0,'`','[',']',';','\'',',','.','/',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'\\'}; // -=`;,./ do not work for me
++static int mousesyms[] = {TERMKEY_MOUSE_RELEASE,TERMKEY_MOUSE_PRESS,0,TERMKEY_MOUSE_PRESS,0,TERMKEY_MOUSE_DRAG,0};
++
++static TermKeyResult peekkey(TermKey *tk, void *info, TermKeyKey *key, int force, size_t *nbytep) {
++  if (!initialized) {
++    raw(), noecho();
++    PDC_save_key_modifiers(TRUE), mouse_set(ALL_MOUSE_EVENTS), mouseinterval(0);
++    initialized = TRUE;
++  }
++
++  int c = wgetch((WINDOW *)tk->fd), shift = 0, ctrl = 0, alt = 0;
++  if (c == ERR) return TERMKEY_RES_EOF;
++  int codepoint = c, number = 0, button = 0;
++  TermKeyType type = TERMKEY_TYPE_UNICODE;
++  TermKeySym sym = TERMKEY_SYM_UNKNOWN;
++  TermKeyMouseEvent event = TERMKEY_MOUSE_UNKNOWN;
++  if (c != KEY_MOUSE) {
++    if (c < 0x20 && c != 8 && c != 9 && c != 13 && c != 27)
++      type = TERMKEY_TYPE_UNICODE, codepoint = tolower(c ^ 0x40);
++    else if (c == 27)
++      type = TERMKEY_TYPE_KEYSYM, sym = TERMKEY_SYM_ESCAPE;
++    else if (c >= KEY_MIN && c <= KEY_END && keysyms[c - KEY_MIN])
++      type = TERMKEY_TYPE_KEYSYM, sym = keysyms[c - KEY_MIN];
++    else if (c >= KEY_F(1) && c <= KEY_F(48))
++      type = TERMKEY_TYPE_FUNCTION, number = (c - KEY_F(1)) % 12 + 1;
++    else if (c >= KEY_BTAB && c <= KEY_SDOWN && shift_keysyms[c - KEY_BTAB])
++      type = TERMKEY_TYPE_KEYSYM, sym = shift_keysyms[c - KEY_BTAB];
++    else if (c >= CTL_LEFT && c <= CTL_ENTER && ctrl_keysyms[c - CTL_LEFT])
++      type = TERMKEY_TYPE_KEYSYM, sym = ctrl_keysyms[c - CTL_LEFT];
++    else if (c >= ALT_DEL && c <= ALT_BKSP && alt_keysyms[c - ALT_DEL])
++      type = TERMKEY_TYPE_KEYSYM, sym = alt_keysyms[c - ALT_DEL];
++    else if (c >= ALT_MINUS && c <= ALT_BSLASH && alt_keychars[c - ALT_MINUS])
++      type = TERMKEY_TYPE_UNICODE, codepoint = alt_keychars[c - ALT_MINUS];
++    shift = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_SHIFT;
++    ctrl = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_CONTROL;
++    alt = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_ALT;
++    // Do not shift printable keys.
++    if (shift && codepoint >= 32 && codepoint <= 127) shift = 0;
++    key->type = type;
++    if (type == TERMKEY_TYPE_UNICODE) {
++      key->code.codepoint = codepoint;
++      key->utf8[0] = key->code.codepoint, key->utf8[1] = '\0';
++    } else if (type == TERMKEY_TYPE_FUNCTION)
++      key->code.number = number;
++    else if (type == TERMKEY_TYPE_KEYSYM)
++      key->code.sym = sym;
++  } else {
++    request_mouse_pos();
++    if (A_BUTTON_CHANGED) {
++      for (int i = 1; i <= 3; i++)
++        if (BUTTON_CHANGED(i)) {
++          event = mousesyms[BUTTON_STATUS(i) & BUTTON_ACTION_MASK], button = i;
++          shift = BUTTON_STATUS(i) & PDC_BUTTON_SHIFT;
++          ctrl = BUTTON_STATUS(i) & PDC_BUTTON_CONTROL;
++          alt = BUTTON_STATUS(i) & PDC_BUTTON_ALT;
++          break;
++        }
++    } else if (MOUSE_WHEEL_UP || MOUSE_WHEEL_DOWN)
++      event = TERMKEY_MOUSE_PRESS, button = MOUSE_WHEEL_UP ? 4 : 5;
++    key->type = TERMKEY_TYPE_MOUSE;
++    key->code.mouse[0] = button | (event << 4);
++    termkey_key_set_linecol(key, MOUSE_X_POS + 1, MOUSE_Y_POS + 1);
++  }
++  key->modifiers = (shift ? TERMKEY_KEYMOD_SHIFT : 0) |
++                   (ctrl ? TERMKEY_KEYMOD_CTRL : 0) |
++                   (alt ? TERMKEY_KEYMOD_ALT : 0);
++  return TERMKEY_RES_KEY;
++}
++
++TermKeyResult termkey_interpret_mouse(TermKey *tk, const TermKeyKey *key, TermKeyMouseEvent *event, int *button, int *line, int *col) {
++  if (key->type != TERMKEY_TYPE_MOUSE) return TERMKEY_RES_NONE;
++  if (event) *event = (key->code.mouse[0] & 0xF0) >> 4;
++  if (button) *button = key->code.mouse[0] & 0xF;
++  termkey_key_get_linecol(key, line, col);
++  return TERMKEY_RES_KEY;
++}
++
++// Unimplemented.
++TermKeyResult termkey_interpret_modereport(TermKey *tk, const TermKeyKey *key, int *initial, int *mode, int *value) { return TERMKEY_RES_ERROR; }
++TermKeyResult termkey_interpret_position(TermKey *tk, const TermKeyKey *key, int *line, int *col) { return TERMKEY_RES_ERROR; }
++TermKeyResult termkey_interpret_csi(TermKey *tk, const TermKeyKey *key, long args[], size_t *nargs, unsigned long *cmd) { return TERMKEY_RES_ERROR; }
++
++struct TermKeyDriver termkey_driver_win32_pdcurses = {
++  .name = "win32-pdcurses",
++  .new_driver = new_driver,
++  .free_driver = free_driver,
++  .peekkey = peekkey,
++};
+diff -r a94d84bdd4a6 termkey-internal.h
+--- a/termkey-internal.h	Fri Oct 24 21:58:29 2014 -0400
++++ b/termkey-internal.h	Fri Oct 24 21:59:44 2014 -0400
+@@ -4,7 +4,9 @@
+ #include "termkey.h"
+ 
+ #include <stdint.h>
++#if !_WIN32
+ #include <termios.h>
++#endif
+ 
+ struct TermKeyDriver
+ {
+@@ -31,7 +33,7 @@
+ };
+ 
+ struct TermKey {
+-  int    fd;
++  termkey_fd_t fd;
+   int    flags;
+   int    canonflags;
+   unsigned char *buffer;
+@@ -41,7 +43,9 @@
+   size_t hightide; /* Position beyond buffstart at which peekkey() should next start
+                     * normally 0, but see also termkey_interpret_csi */
+ 
++#if !_WIN32
+   struct termios restore_termios;
++#endif
+   char restore_termios_valid;
+ 
+   int waittime; // msec
+@@ -88,7 +92,11 @@
+   key->code.mouse[3] = (line & 0xf00) >> 8 | (col & 0x300) >> 4;
+ }
+ 
++#if !_WIN32
+ extern struct TermKeyDriver termkey_driver_csi;
+ extern struct TermKeyDriver termkey_driver_ti;
++#else
++extern struct TermKeyDriver termkey_driver_win32_pdcurses;
++#endif
+ 
+ #endif
+diff -r a94d84bdd4a6 termkey.c
+--- a/termkey.c	Fri Oct 24 21:58:29 2014 -0400
++++ b/termkey.c	Fri Oct 24 21:59:44 2014 -0400
+@@ -3,8 +3,12 @@
+ 
+ #include <ctype.h>
+ #include <errno.h>
++#if !_WIN32
+ #include <poll.h>
+ #include <unistd.h>
++#else
++#define ssize_t int
++#endif
+ #include <string.h>
+ 
+ #include <stdio.h>
+@@ -27,8 +31,12 @@
+ }
+ 
+ static struct TermKeyDriver *drivers[] = {
++#if !_WIN32
+   &termkey_driver_ti,
+   &termkey_driver_csi,
++#else
++  &termkey_driver_win32_pdcurses,
++#endif
+   NULL,
+ };
+ 
+@@ -263,7 +271,7 @@
+ 
+   /* Default all the object fields but don't allocate anything */
+ 
+-  tk->fd         = -1;
++  tk->fd         = FD_NONE;
+   tk->flags      = 0;
+   tk->canonflags = 0;
+ 
+@@ -373,7 +381,7 @@
+   return 0;
+ }
+ 
+-TermKey *termkey_new(int fd, int flags)
++TermKey *termkey_new(termkey_fd_t fd, int flags)
+ {
+   TermKey *tk = termkey_alloc();
+   if(!tk)
+@@ -414,7 +422,7 @@
+   if(!tk)
+     return NULL;
+ 
+-  tk->fd = -1;
++  tk->fd = FD_NONE;
+ 
+   termkey_set_flags(tk, flags);
+ 
+@@ -457,6 +465,7 @@
+   if(tk->is_started)
+     return 1;
+ 
++#if !_WIN32
+   if(tk->fd != -1 && !(tk->flags & TERMKEY_FLAG_NOTERMIOS)) {
+     struct termios termios;
+     if(tcgetattr(tk->fd, &termios) == 0) {
+@@ -487,6 +496,7 @@
+       tcsetattr(tk->fd, TCSANOW, &termios);
+     }
+   }
++#endif
+ 
+   struct TermKeyDriverNode *p;
+   for(p = tk->drivers; p; p = p->next)
+@@ -512,8 +522,10 @@
+     if(p->driver->stop_driver)
+       (*p->driver->stop_driver)(tk, p->info);
+ 
++#if !_WIN32
+   if(tk->restore_termios_valid)
+     tcsetattr(tk->fd, TCSANOW, &tk->restore_termios);
++#endif
+ 
+   tk->is_started = 0;
+ 
+@@ -525,11 +537,18 @@
+   return tk->is_started;
+ }
+ 
+-int termkey_get_fd(TermKey *tk)
++termkey_fd_t termkey_get_fd(TermKey *tk)
+ {
+   return tk->fd;
+ }
+ 
++#if _WIN32
++void termkey_set_fd(TermKey *tk, termkey_fd_t fd)
++{
++  tk->fd = fd;
++}
++#endif
++
+ int termkey_get_flags(TermKey *tk)
+ {
+   return tk->flags;
+@@ -1012,7 +1031,7 @@
+ 
+ TermKeyResult termkey_waitkey(TermKey *tk, TermKeyKey *key)
+ {
+-  if(tk->fd == -1) {
++  if(tk->fd == FD_NONE) {
+     errno = EBADF;
+     return TERMKEY_RES_ERROR;
+   }
+@@ -1026,6 +1045,7 @@
+       case TERMKEY_RES_ERROR:
+         return ret;
+ 
++#if !_WIN32
+       case TERMKEY_RES_NONE:
+         ret = termkey_advisereadable(tk);
+         if(ret == TERMKEY_RES_ERROR)
+@@ -1064,6 +1084,7 @@
+             return termkey_getkey_force(tk, key);
+         }
+         break;
++#endif
+     }
+   }
+ 
+@@ -1072,6 +1093,7 @@
+ 
+ TermKeyResult termkey_advisereadable(TermKey *tk)
+ {
++#if !_WIN32
+   ssize_t len;
+ 
+   if(tk->fd == -1) {
+@@ -1109,6 +1131,9 @@
+     tk->buffcount += len;
+     return TERMKEY_RES_AGAIN;
+   }
++#else
++  return TERMKEY_RES_NONE;
++#endif
+ }
+ 
+ size_t termkey_push_bytes(TermKey *tk, const char *bytes, size_t len)
+diff -r a94d84bdd4a6 termkey.h
+--- a/termkey.h	Fri Oct 24 21:58:29 2014 -0400
++++ b/termkey.h	Fri Oct 24 21:59:44 2014 -0400
+@@ -14,6 +14,14 @@
+ #define TERMKEY_CHECK_VERSION \
+         termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR)
+ 
++#if !_WIN32
++#define termkey_fd_t int
++#define FD_NONE -1
++#else
++#define termkey_fd_t void*
++#define FD_NONE NULL
++#endif
++
+ typedef enum {
+   TERMKEY_SYM_UNKNOWN = -1,
+   TERMKEY_SYM_NONE = 0,
+@@ -161,7 +169,7 @@
+ 
+ void termkey_check_version(int major, int minor);
+ 
+-TermKey *termkey_new(int fd, int flags);
++TermKey *termkey_new(termkey_fd_t fd, int flags);
+ TermKey *termkey_new_abstract(const char *term, int flags);
+ void     termkey_free(TermKey *tk);
+ void     termkey_destroy(TermKey *tk);
+@@ -170,7 +178,10 @@
+ int termkey_stop(TermKey *tk);
+ int termkey_is_started(TermKey *tk);
+ 
+-int termkey_get_fd(TermKey *tk);
++termkey_fd_t termkey_get_fd(TermKey *tk);
++#if _WIN32
++void termkey_set_fd(TermKey *tk, termkey_fd_t fd);
++#endif
+ 
+ int  termkey_get_flags(TermKey *tk);
+ void termkey_set_flags(TermKey *tk, int newflags);
