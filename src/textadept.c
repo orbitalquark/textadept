@@ -239,9 +239,9 @@ static int lL_event(lua_State *L, const char *name, ...) {
         if (type == LUA_TNIL)
           lua_pushnil(L);
         else if (type == LUA_TBOOLEAN)
-          lua_pushboolean(L, va_arg(ap, sptr_t));
+          lua_pushboolean(L, va_arg(ap, int));
         else if (type == LUA_TNUMBER)
-          lua_pushinteger(L, va_arg(ap, sptr_t));
+          lua_pushinteger(L, va_arg(ap, int));
         else if (type == LUA_TSTRING)
           lua_pushstring(L, va_arg(ap, char *));
         else if (type == LUA_TLIGHTUSERDATA || type == LUA_TTABLE) {
