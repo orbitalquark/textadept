@@ -1795,6 +1795,7 @@ non-existant graphics capabilities:
 * No buffered or two-phase drawing.
 * No arrows on call tips.
 * Carets cannot have a period, line style, or width.
+* No drag and drop.
 * Edge lines may be obscured by text.
 * Extra line ascent or descent renders improperly.
 * No fold lines.
