@@ -38,11 +38,13 @@ textadept.editing.autocompleters.ansi_c = function()
   if symbol == '' and part == '' and op ~= '' then return nil end -- lone ., ->
   if op ~= '' and op ~= '.' and op ~= '->' then return nil end
   -- Attempt to identify the symbol type.
-  local buffer = buffer
-  local declaration = '([%w_]+)[%s%*&]+'..symbol:gsub('(%p)', '%%%1')..'[^%w_]'
-  for i = buffer:line_from_position(buffer.current_pos) - 1, 0, -1 do
-    local class = buffer:get_line(i):match(declaration)
-    if class then symbol = class break end
+  if symbol ~= '' then
+    local buffer = buffer
+    local declaration = '([%w_]+)[%s%*&]+'..symbol:gsub('(%p)', '%%%1')..'[^%w_]'
+    for i = buffer:line_from_position(buffer.current_pos) - 1, 0, -1 do
+      local class = buffer:get_line(i):match(declaration)
+      if class then symbol = class break end
+    end
   end
   -- Search through ctags for completions for that symbol.
   local name_patt = '^'..part
