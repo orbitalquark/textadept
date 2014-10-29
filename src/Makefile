@@ -5,8 +5,8 @@ CXX = g++
 ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   # Cross-compile for Win32.
   CROSS = i686-w64-mingw32-
-  CFLAGS = -mms-bitfields
-  CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++
+  CFLAGS = -mms-bitfields -Os
+  CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++ -Os
   LUA_CFLAGS = -DLUA_BUILD_AS_DLL -DLUA_LIB
   LDFLAGS = -Wl,--retain-symbols-file -Wl,lua.sym
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
@@ -36,9 +36,9 @@ else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
   # Cross-compile for Mac OSX.
   CROSS = i686-apple-darwin10-
   CFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
-           -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk
+           -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk -Os
   CXXFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
-             -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk
+             -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk -Os
   LUA_CFLAGS = -DLUA_USE_MACOSX
   LDFLAGS = -liconv -rdynamic
   MAKE = make
@@ -61,6 +61,8 @@ else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
   libluajit = luajit/src/libluajit.osx.a
 else
   # Build for Linux/BSD.
+  CFLAGS = -Os
+  CXXFLAGS = -Os
   LUA_CFLAGS = -DLUA_USE_LINUX
   LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
   ifeq (Linux, $(shell uname -s))
@@ -96,9 +98,8 @@ endif
 
 # Scintilla.
 
-sci_flags = -pedantic -Os $(plat_flag) -DSCI_LEXER -DNDEBUG \
-            -DG_THREADS_IMPL_NONE -Iscintilla/include -Iscintilla/src \
-            -Iscintilla/lexlib -Wall -Wno-char-subscripts
+sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG -DG_THREADS_IMPL_NONE \
+            -Iscintilla/include -Iscintilla/src -Iscintilla/lexlib -Wall
 
 sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
            CellBuffer.o CharClassify.o ContractionState.o Decoration.o \
@@ -114,9 +115,8 @@ lexlpeg_objs = LexLPeg.o LexLPegjit.o LexLPeg-curses.o LexLPegjit-curses.o
 
 # Textadept.
 
-ta_flags = -std=c99 -Os -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE \
-           $(plat_flag) -Iscintilla/include -Igtdialog -W -Wall \
-           -Wno-sign-compare -Wno-unused
+ta_flags = -std=c99 -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE $(plat_flag) \
+           -Iscintilla/include -Igtdialog -W -Wall -Wno-unused
 
 textadept_gtk_objs = textadept.o textadeptjit.o
 textadept_curses_objs = textadept-curses.o textadeptjit-curses.o
@@ -142,10 +142,8 @@ cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
 
 # Add debugging symbols and disable optimizations when DEBUG=1.
 ifdef DEBUG
-  CFLAGS += -g
-  CXXFLAGS += -g
-  sci_flags += -O0
-  ta_flags += -O0
+  CFLAGS += -g -O0
+  CXXFLAGS += -g -O0
 endif
 
 # Build.

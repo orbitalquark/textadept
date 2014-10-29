@@ -701,13 +701,13 @@ static int lui_goto_view(lua_State *L) {
   if (relative) {
     l_pushview(L, focused_view), lua_gettable(L, -2);
     n = lua_tointeger(L, -1) + n;
-    if (n > lua_rawlen(L, -2))
+    if (n > (int)lua_rawlen(L, -2))
       n = 1;
     else if (n < 1)
       n = lua_rawlen(L, -2);
     lua_rawgeti(L, -2, n);
   } else {
-    luaL_argcheck(L, n > 0 && n <= lua_rawlen(L, -1), 1,
+    luaL_argcheck(L, n > 0 && n <= (int)lua_rawlen(L, -1), 1,
                   "no View exists at that index");
     lua_rawgeti(L, -1, n);
   }
@@ -759,7 +759,7 @@ static void l_pushmenu(lua_State *L, int index, GCallback callback,
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(submenu_root), menu);
   }
   lua_pop(L, 1); // title
-  for (int i = 1; i <= lua_rawlen(L, -1); i++) {
+  for (size_t i = 1; i <= lua_rawlen(L, -1); i++) {
     lua_rawgeti(L, -1, i);
     if (lua_istable(L, -1)) {
       lua_getfield(L, -1, "title");
@@ -878,7 +878,7 @@ static int lui__newindex(lua_State *L) {
 #if GTK
     luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");
     GtkWidget *new_menubar = gtk_menu_bar_new(); // TODO: this leaks on error
-    for (int i = 1; i <= lua_rawlen(L, 3); i++) {
+    for (size_t i = 1; i <= lua_rawlen(L, 3); i++) {
       lua_rawgeti(L, 3, i);
       luaL_argcheck(L, lua_isuserdata(L, -1), 3, "table of menus expected");
       GtkWidget *menu_item = (GtkWidget *)lua_touserdata(L, -1);
@@ -974,15 +974,15 @@ static void lL_gotodoc(lua_State *L, Scintilla *view, int n, int relative) {
     l_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_gettable(L, -2);
     n = lua_tointeger(L, -1) + n;
     lua_pop(L, 1); // index
-    if (n > lua_rawlen(L, -1))
+    if (n > (int)lua_rawlen(L, -1))
       n = 1;
     else if (n < 1)
       n = lua_rawlen(L, -1);
     lua_rawgeti(L, -1, n);
   } else {
-    luaL_argcheck(L, (n > 0 && n <= lua_rawlen(L, -1)) || n == -1, 2,
+    luaL_argcheck(L, (n > 0 && n <= (int)lua_rawlen(L, -1)) || n == -1, 2,
                   "no Buffer exists at that index");
-    lua_rawgeti(L, -1, (n > 0) ? n : lua_rawlen(L, -1));
+    lua_rawgeti(L, -1, (n > 0) ? n : (int)lua_rawlen(L, -1));
   }
   sptr_t doc = l_todoc(L, -1);
   SS(view, SCI_SETDOCPOINTER, 0, doc), sync_tabbar();
@@ -1020,7 +1020,7 @@ static void register_command_entry_doc() {
  */
 static void lL_removedoc(lua_State *L, sptr_t doc) {
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
-  for (int i = 1; i <= lua_rawlen(L, -1); i++) {
+  for (size_t i = 1; i <= lua_rawlen(L, -1); i++) {
     lua_rawgeti(L, -1, i);
     Scintilla *view = l_toview(L, -1);
     if (doc == SS(view, SCI_GETDOCPOINTER, 0, 0)) lL_gotodoc(L, view, -1, TRUE);
@@ -1029,7 +1029,7 @@ static void lL_removedoc(lua_State *L, sptr_t doc) {
   lua_pop(L, 1); // views
   lua_newtable(L);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  for (int i = 1; i <= lua_rawlen(L, -1); i++) {
+  for (size_t i = 1; i <= lua_rawlen(L, -1); i++) {
     lua_rawgeti(L, -1, i);
     if (doc != l_todoc(L, -1)) {
       lua_getfield(L, -1, "doc_pointer");
@@ -1451,24 +1451,28 @@ static int ltimeout(lua_State *L) {
 /** `string.iconv()` Lua function. */
 static int lstring_iconv(lua_State *L) {
   size_t inbytesleft = 0;
+#if !_WIN32
   char *inbuf = (char *)luaL_checklstring(L, 1, &inbytesleft);
+#else
+  const char *inbuf = luaL_checklstring(L, 1, &inbytesleft);
+#endif
   const char *to = luaL_checkstring(L, 2), *from = luaL_checkstring(L, 3);
   iconv_t cd = iconv_open(to, from);
   if (cd != (iconv_t)-1) {
-    char *outbuf = malloc(inbytesleft + 1), *outbufp = outbuf;
+    char *outbuf = malloc(inbytesleft + 1), *p = outbuf;
     size_t outbytesleft = inbytesleft, bufsize = inbytesleft;
     int n = 1; // concat this many converted strings
-    while (iconv(cd, &inbuf, &inbytesleft, &outbufp, &outbytesleft) == -1)
+    while (iconv(cd, &inbuf, &inbytesleft, &p, &outbytesleft) == (size_t)-1)
       if (errno == E2BIG) {
         // Buffer was too small to store converted string. Push the partially
         // converted string for later concatenation.
-        lua_checkstack(L, 2), lua_pushlstring(L, outbuf, outbufp - outbuf), n++;
-        outbufp = outbuf, outbytesleft = bufsize;
+        lua_checkstack(L, 2), lua_pushlstring(L, outbuf, p - outbuf), n++;
+        p = outbuf, outbytesleft = bufsize;
       } else {
         free(outbuf), iconv_close(cd);
         luaL_error(L, "conversion failed");
       }
-    lua_pushlstring(L, outbuf, outbufp - outbuf);
+    lua_pushlstring(L, outbuf, p - outbuf);
     lua_concat(L, n);
     free(outbuf), iconv_close(cd);
   } else luaL_error(L, "invalid encoding(s)");
@@ -1629,7 +1633,7 @@ static int w_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
 static void lL_removeview(lua_State *L, Scintilla *view) {
   lua_newtable(L);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
-  for (int i = 1; i <= lua_rawlen(L, -1); i++) {
+  for (size_t i = 1; i <= lua_rawlen(L, -1); i++) {
     lua_rawgeti(L, -1, i);
     if (view != l_toview(L, -1)) {
       lua_getfield(L, -1, "widget_pointer");
@@ -1717,7 +1721,7 @@ static void l_close(lua_State *L) {
   closing = TRUE;
   while (unsplit_view(focused_view)) ; // need space to fix compiler warning
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  for (int i = 1; i <= lua_rawlen(L, -1); i++)
+  for (size_t i = 1; i <= lua_rawlen(L, -1); i++)
     lua_rawgeti(L, -1, i), delete_buffer(l_todoc(L, -1)), lua_pop(L, 1);
   lua_pop(L, 1); // buffers
   scintilla_delete(focused_view), scintilla_delete(dummy_view);
@@ -2385,7 +2389,7 @@ int main(int argc, char **argv) {
       unsigned long cmd;
       termkey_interpret_csi(ta_tk, &key, args, &nargs, &cmd);
       lua_newtable(lua);
-      for (int i = 0; i < nargs; i++)
+      for (size_t i = 0; i < nargs; i++)
         lua_pushinteger(lua, args[i]), lua_rawseti(lua, -2, i + 1);
       lL_event(lua, "csi", LUA_TNUMBER, cmd, LUA_TTABLE,
                luaL_ref(lua, LUA_REGISTRYINDEX), -1);
@@ -2438,6 +2442,7 @@ int main(int argc, char **argv) {
 #endif
 
   free(textadept_home);
+  return 0;
 }
 
 #if (_WIN32 && !CURSES)
