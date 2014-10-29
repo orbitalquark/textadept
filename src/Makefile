@@ -94,12 +94,6 @@ else
   libluajit = luajit/src/libluajit.a
 endif
 
-# No debugging unless DEBUG=1.
-ifdef DEBUG
-  CFLAGS += -g
-  CXXFLAGS += -g
-endif
-
 # Scintilla.
 
 sci_flags = -pedantic -Os $(plat_flag) -DSCI_LEXER -DNDEBUG \
@@ -120,7 +114,7 @@ lexlpeg_objs = LexLPeg.o LexLPegjit.o LexLPeg-curses.o LexLPegjit-curses.o
 
 # Textadept.
 
-ta_flags = -std=c99 -O -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE \
+ta_flags = -std=c99 -Os -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE \
            $(plat_flag) -Iscintilla/include -Igtdialog -W -Wall \
            -Wno-sign-compare -Wno-unused
 
@@ -145,6 +139,14 @@ cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
            cdk_params.o cdkscreen.o debug.o draw.o entry.o fselect.o \
            itemlist.o label.o mentry.o menu.o popup_label.o position.o \
            scroll.o scroller.o select_file.o selection.o traverse.o version.o
+
+# Add debugging symbols and disable optimizations when DEBUG=1.
+ifdef DEBUG
+  CFLAGS += -g
+  CXXFLAGS += -g
+  sci_flags += -O0
+  ta_flags += -O0
+endif
 
 # Build.
 
