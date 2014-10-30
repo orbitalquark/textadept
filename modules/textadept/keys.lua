@@ -234,8 +234,8 @@ M.utils = {
     while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
     buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
   end,
-  find_in_files = function()
-    ui.find.in_files = true
+  find = function(in_files)
+    ui.find.in_files = in_files
     ui.find.focus()
   end,
   select_command = function() textadept.menu.select_command() end,
@@ -444,7 +444,7 @@ keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
 -- Search.
-keys[not OSX and not CURSES and 'cf' or 'mf'] = ui.find.focus
+keys[not OSX and not CURSES and 'cf' or 'mf'] = utils.find
 if CURSES then keys.mF = keys.mf end -- in case mf is used by GUI terminals
 keys[not OSX and not CURSES and 'cg' or 'mg'] = ui.find.find_next
 if not OSX and not CURSES then keys.f3 = keys.cg end
@@ -457,7 +457,7 @@ keys[not OSX and (not CURSES and 'caR' or 'mR') or 'cR'] = ui.find.replace_all
 -- Replace is ar when find pane is focused in GUI.
 -- Replace All is aa when find pane is focused in GUI.
 keys[not OSX and not CURSES and 'caf' or 'cmf'] = ui.find.find_incremental
-if not CURSES then keys[not OSX and 'cF' or 'mF'] = utils.find_in_files end
+if not CURSES then keys[not OSX and 'cF' or 'mF'] = {utils.find, true} end
 -- Find in Files is ai when find pane is focused in GUI.
 if not CURSES then
   keys[not OSX and 'cag' or 'cmg'] = {ui.find.goto_file_found, false, true}
