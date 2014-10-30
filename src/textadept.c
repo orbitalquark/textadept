@@ -99,7 +99,7 @@ typedef GtkWidget Scintilla;
 #define lL_openlib(l, n, f) (luaL_requiref(l, n, f, 1), lua_pop(l, 1))
 #endif
 
-static char *textadept_home;
+static char *textadept_home, *platform;
 
 // User interface objects and related macros.
 static Scintilla *focused_view, *dummy_view, *command_entry;
@@ -1567,11 +1567,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   lua_setglobal(L, "_BUFFERS");
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_views"), lua_setglobal(L, "_VIEWS");
   lua_pushstring(L, textadept_home), lua_setglobal(L, "_HOME");
-#if _WIN32
-  lua_pushboolean(L, 1), lua_setglobal(L, "WIN32");
-#elif (__APPLE__ && !CURSES)
-  lua_pushboolean(L, 1), lua_setglobal(L, "OSX");
-#endif
+  if (platform) lua_pushboolean(L, 1), lua_setglobal(L, platform);
 #if CURSES
   lua_pushboolean(L, 1), lua_setglobal(L, "CURSES");
   show_tabs = 0; // TODO: tabs
@@ -2294,10 +2290,12 @@ int main(int argc, char **argv) {
   int len = readlink("/proc/self/exe", textadept_home, FILENAME_MAX);
   textadept_home[len] = '\0';
   if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
+  platform = "LINUX";
 #elif _WIN32
   textadept_home = malloc(FILENAME_MAX);
   GetModuleFileName(0, textadept_home, FILENAME_MAX);
   if ((last_slash = strrchr(textadept_home, '\\'))) *last_slash = '\0';
+  platform = "WIN32";
 #elif __APPLE__
   char *path = malloc(FILENAME_MAX), *p = NULL;
   uint32_t size = FILENAME_MAX;
@@ -2307,6 +2305,7 @@ int main(int argc, char **argv) {
   free(path);
 #if !CURSES
   osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
+  platform = "OSX"; // OSX is only set for GUI version
 #endif
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
   textadept_home = malloc(FILENAME_MAX);
@@ -2314,6 +2313,7 @@ int main(int argc, char **argv) {
   size_t cb = FILENAME_MAX;
   sysctl(mib, 4, textadept_home, &cb, NULL, 0);
   if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
+  platform = "BSD";
 #endif
 
 #if GTK
