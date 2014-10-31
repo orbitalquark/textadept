@@ -615,22 +615,19 @@ position. Textadept mirrors any typed text at each selection.
 Rectangular selections are a more structured form of multiple selections. A
 rectangular selection spanning multiple lines allows typing on each line.
 Holding `Alt+Shift` (`⌥⇧` on Mac OSX | `M-S-` in curses) and then pressing the
-arrow keys creates a rectangular selection. Holding the `Alt` modifier key
-(`Super` on Linux, and `Ctrl+Alt` in curses) and then clicking and dragging the
-mouse cursor also creates a rectangular selection.
+arrow keys creates a rectangular selection. Holding the `Alt` modifier key and
+then clicking and dragging the mouse cursor also creates a rectangular
+selection.
 
 ![Rectangular Selection](images/rectangularselection.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Rectangular Edit](images/rectangularselection2.png)
 
 Note: In some Linux environments, the window manager consumes `Alt+Shift+Arrow`
-combinations so Textadept may need reconfiguring. Also, Textadept uses
-`Super+Mouse` because `Alt+Mouse` generally moves windows. (Your window manager
-usually defines the `Super` modifier key as the left "Windows" key.) If you
-prefer to use `Alt`, change [`buffer.rectangular_selection_modifier`][] in your
-[preferences](#Buffer.Settings).
-
-[`buffer.rectangular_selection_modifier`]: api.html#buffer.rectangular_selection_modifier
+combinations, so Textadept's keys may need reconfiguring. Similarly, the window
+manager may also consume `Alt+Mouse` in order to move windows. In that case, a
+normal text selection may be changed into a rectangular selection by tapping the
+`Alt` modifier key.
 
 ### Select to Matching Brace
 
