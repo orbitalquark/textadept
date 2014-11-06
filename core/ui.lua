@@ -117,11 +117,13 @@ ui.dialogs = setmetatable({}, {__index = function(t, k)
       local files = {}
       for file in result:gmatch('[^\n]+') do files[#files + 1] = file end
       return files
-    elseif k == 'filteredlist' or
+    elseif k == 'filteredlist' or k == 'optionselect' or
            k:find('input') and result:match('^[^\n]+\n?(.*)$'):find('\n') then
       local button, value = result:match('^([^\n]+)\n?(.*)$')
       if not options.string_output then button = tonumber(button) end
-      if k:find('input') then
+      if k == 'optionselect' then
+        options.select_multiple = true
+      elseif k:find('input') then
         options.string_output, options.select_multiple = true, true
       end
       local items, patt = {}, not k:find('input') and '[^\n]+' or '([^\n]*)\n'
@@ -164,7 +166,8 @@ end
 -- to show the requested file. If *split* is `false`, shifts to the next or
 -- *preferred_view* view in order to show the requested file. If *sloppy* is
 -- `true`, requires only the last part of *filename* to match a buffer's
--- `filename`.
+-- `filename`. If the requested file was not found, it is opened in the desired
+-- view.
 -- @param filename The filename of the buffer to go to.
 -- @param split Optional flag that indicates whether or not to open the buffer
 --   in a split view if there is only one view. The default value is `false`.
