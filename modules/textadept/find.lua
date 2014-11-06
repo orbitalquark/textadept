@@ -225,7 +225,8 @@ end
 function M.find_in_files(dir)
   dir = dir or ui.dialogs.fileselect{
     title = _L['Find in Files'], select_only_directories = true,
-    with_directory = (buffer.filename or ''):match('^.+[/\\]'),
+    with_directory = (buffer.filename or ''):match('^.+[/\\]') or
+                     lfs.currentdir()..'/'
   }
   if not dir then return end
 

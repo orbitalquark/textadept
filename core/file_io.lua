@@ -112,7 +112,8 @@ function io.open_file(filenames)
   if type(filenames) == 'string' then filenames = {filenames} end
   filenames = filenames or ui.dialogs.fileselect{
     title = _L['Open'], select_multiple = true,
-    with_directory = (buffer.filename or ''):match('^.+[/\\]')
+    with_directory = (buffer.filename or ''):match('^.+[/\\]') or
+                     lfs.currentdir()..'/'
   }
   if not filenames then return end
   for i = 1, #filenames do
