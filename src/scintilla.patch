@@ -80,3 +80,51 @@ diff -r 01c4696a39a9 src/Editor.h
  	int dwellDelay;
  	int ticksToDwell;
  	bool dwelling;
+diff -r 326449de45d0 src/EditView.cxx
+--- a/src/EditView.cxx	Thu Sep 25 09:48:50 2014 +1000
++++ b/src/EditView.cxx	Fri Nov 07 22:12:15 2014 -0500
+@@ -185,6 +185,7 @@
+ 	pixmapIndentGuideHighlight = 0;
+ 	llc.SetLevel(LineLayoutCache::llcCaret);
+ 	posCache.SetSize(0x400);
++	customDrawTabArrow = NULL;
+ }
+ 
+ EditView::~EditView() {
+@@ -1465,7 +1466,10 @@
+ 							surface->PenColour(textFore);
+ 							PRectangle rcTab(rcSegment.left + 1, rcSegment.top + 4,
+ 								rcSegment.right - 1, rcSegment.bottom - vsDraw.maxDescent);
+-							DrawTabArrow(surface, rcTab, static_cast<int>(rcSegment.top + vsDraw.lineHeight / 2));
++							if (customDrawTabArrow == NULL)
++								DrawTabArrow(surface, rcTab, static_cast<int>(rcSegment.top + vsDraw.lineHeight / 2));
++							else
++								customDrawTabArrow(surface, rcTab, static_cast<int>(rcSegment.top + vsDraw.lineHeight / 2));
+ 						}
+ 					}
+ 				} else {
+diff -r 326449de45d0 src/EditView.h
+--- a/src/EditView.h	Thu Sep 25 09:48:50 2014 +1000
++++ b/src/EditView.h	Fri Nov 07 22:12:15 2014 -0500
+@@ -42,6 +42,8 @@
+ void DrawStyledText(Surface *surface, const ViewStyle &vs, int styleOffset, PRectangle rcText,
+ 	const StyledText &st, size_t start, size_t length, DrawPhase phase);
+ 
++typedef void (*DrawTabArrowFn)(Surface *, PRectangle, int);
++
+ /**
+ * EditView draws the main text area.
+ */
+@@ -78,6 +80,12 @@
+ 	LineLayoutCache llc;
+ 	PositionCache posCache;
+ 
++	/** Some platforms, notably PLAT_CURSES, do not support Scintilla's native
++	 * DrawTabArrow function for drawing tab characters. Allow those platforms to
++	 * override it instead of creating a new method in the Surface class that
++	 * existing platforms must implement as empty. */
++	DrawTabArrowFn customDrawTabArrow;
++
+ 	EditView();
+ 	virtual ~EditView();
+ 
