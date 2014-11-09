@@ -82,18 +82,58 @@ diff -r 01c4696a39a9 src/Editor.h
  	bool dwelling;
 diff -r 326449de45d0 src/EditView.cxx
 --- a/src/EditView.cxx	Thu Sep 25 09:48:50 2014 +1000
-+++ b/src/EditView.cxx	Fri Nov 07 22:12:15 2014 -0500
-@@ -185,6 +185,7 @@
++++ b/src/EditView.cxx	Sat Nov 08 21:00:02 2014 -0500
+@@ -185,6 +185,9 @@
  	pixmapIndentGuideHighlight = 0;
  	llc.SetLevel(LineLayoutCache::llcCaret);
  	posCache.SetSize(0x400);
++	tabArrowPaddingTop = 4;
 +	customDrawTabArrow = NULL;
++	customDrawWrapMarker = NULL;
  }
  
  EditView::~EditView() {
-@@ -1465,7 +1466,10 @@
+@@ -927,7 +930,11 @@
+ 			rcPlace.right = rcLine.right;
+ 			rcPlace.left = rcPlace.right - vsDraw.aveCharWidth;
+ 		}
+-		DrawWrapMarker(surface, rcPlace, true, vsDraw.WrapColour());
++		if (customDrawWrapMarker == NULL) {
++			DrawWrapMarker(surface, rcPlace, true, vsDraw.WrapColour());
++		} else {
++			customDrawWrapMarker(surface, rcPlace, true, vsDraw.WrapColour());
++		}
+ 	}
+ }
+ 
+@@ -1201,7 +1208,7 @@
+ }
+ 
+ static void DrawWrapIndentAndMarker(Surface *surface, const ViewStyle &vsDraw, const LineLayout *ll,
+-	int xStart, PRectangle rcLine, ColourOptional background) {
++	int xStart, PRectangle rcLine, ColourOptional background, DrawWrapMarkerFn customDrawWrapMarker) {
+ 	// default bgnd here..
+ 	surface->FillRectangle(rcLine, background.isSet ? background :
+ 		vsDraw.styles[STYLE_DEFAULT].back);
+@@ -1219,7 +1226,11 @@
+ 		else
+ 			rcPlace.right = rcPlace.left + vsDraw.aveCharWidth;
+ 
+-		DrawWrapMarker(surface, rcPlace, false, vsDraw.WrapColour());
++		if (customDrawWrapMarker == NULL) {
++			DrawWrapMarker(surface, rcPlace, false, vsDraw.WrapColour());
++		} else {
++			customDrawWrapMarker(surface, rcPlace, false, vsDraw.WrapColour());
++		}
+ 	}
+ }
+ 
+@@ -1463,9 +1474,12 @@
+ 							if (vsDraw.whitespaceColours.fore.isSet)
+ 								textFore = vsDraw.whitespaceColours.fore;
  							surface->PenColour(textFore);
- 							PRectangle rcTab(rcSegment.left + 1, rcSegment.top + 4,
+-							PRectangle rcTab(rcSegment.left + 1, rcSegment.top + 4,
++							PRectangle rcTab(rcSegment.left + 1, rcSegment.top + tabArrowPaddingTop,
  								rcSegment.right - 1, rcSegment.bottom - vsDraw.maxDescent);
 -							DrawTabArrow(surface, rcTab, static_cast<int>(rcSegment.top + vsDraw.lineHeight / 2));
 +							if (customDrawTabArrow == NULL)
@@ -103,9 +143,18 @@ diff -r 326449de45d0 src/EditView.cxx
  						}
  					}
  				} else {
+@@ -1632,7 +1646,7 @@
+ 
+ 	if ((ll->wrapIndent != 0) && (subLine > 0)) {
+ 		if (phase & drawBack) {
+-			DrawWrapIndentAndMarker(surface, vsDraw, ll, xStart, rcLine, background);
++			DrawWrapIndentAndMarker(surface, vsDraw, ll, xStart, rcLine, background, customDrawWrapMarker);
+ 		}
+ 		xStart += static_cast<int>(ll->wrapIndent);
+ 	}
 diff -r 326449de45d0 src/EditView.h
 --- a/src/EditView.h	Thu Sep 25 09:48:50 2014 +1000
-+++ b/src/EditView.h	Fri Nov 07 22:12:15 2014 -0500
++++ b/src/EditView.h	Sat Nov 08 21:00:02 2014 -0500
 @@ -42,6 +42,8 @@
  void DrawStyledText(Surface *surface, const ViewStyle &vs, int styleOffset, PRectangle rcText,
  	const StyledText &st, size_t start, size_t length, DrawPhase phase);
@@ -115,16 +164,72 @@ diff -r 326449de45d0 src/EditView.h
  /**
  * EditView draws the main text area.
  */
-@@ -78,6 +80,12 @@
+@@ -78,6 +80,14 @@
  	LineLayoutCache llc;
  	PositionCache posCache;
  
++	int tabArrowPaddingTop; // draw arrows this many pixels below line top
 +	/** Some platforms, notably PLAT_CURSES, do not support Scintilla's native
 +	 * DrawTabArrow function for drawing tab characters. Allow those platforms to
 +	 * override it instead of creating a new method in the Surface class that
 +	 * existing platforms must implement as empty. */
 +	DrawTabArrowFn customDrawTabArrow;
++	DrawWrapMarkerFn customDrawWrapMarker;
 +
  	EditView();
  	virtual ~EditView();
  
+diff -r 326449de45d0 src/MarginView.cxx
+--- a/src/MarginView.cxx	Thu Sep 25 09:48:50 2014 +1000
++++ b/src/MarginView.cxx	Sat Nov 08 21:00:02 2014 -0500
+@@ -102,6 +102,8 @@
+ 	pixmapSelMargin = 0;
+ 	pixmapSelPattern = 0;
+ 	pixmapSelPatternOffset1 = 0;
++	wrapMarkerPaddingRight = 3;
++	customDrawWrapMarker = NULL;
+ }
+ 
+ void MarginView::DropGraphics(bool freeObjects) {
+@@ -391,9 +393,13 @@
+ 							rcNumber.top + vs.maxAscent, number, static_cast<int>(strlen(number)), drawAll);
+ 					} else if (vs.wrapVisualFlags & SC_WRAPVISUALFLAG_MARGIN) {
+ 						PRectangle rcWrapMarker = rcMarker;
+-						rcWrapMarker.right -= 3;
++						rcWrapMarker.right -= wrapMarkerPaddingRight;
+ 						rcWrapMarker.left = rcWrapMarker.right - vs.styles[STYLE_LINENUMBER].aveCharWidth;
+-						DrawWrapMarker(surface, rcWrapMarker, false, vs.styles[STYLE_LINENUMBER].fore);
++						if (customDrawWrapMarker == NULL) {
++							DrawWrapMarker(surface, rcWrapMarker, false, vs.styles[STYLE_LINENUMBER].fore);
++						} else {
++							customDrawWrapMarker(surface, rcWrapMarker, false, vs.styles[STYLE_LINENUMBER].fore);
++						}
+ 					}
+ 				} else if (vs.ms[margin].style == SC_MARGIN_TEXT || vs.ms[margin].style == SC_MARGIN_RTEXT) {
+ 					if (firstSubLine) {
+diff -r 326449de45d0 src/MarginView.h
+--- a/src/MarginView.h	Thu Sep 25 09:48:50 2014 +1000
++++ b/src/MarginView.h	Sat Nov 08 21:00:02 2014 -0500
+@@ -14,6 +14,8 @@
+ 
+ void DrawWrapMarker(Surface *surface, PRectangle rcPlace, bool isEndMarker, ColourDesired wrapColour);
+ 
++typedef void (*DrawWrapMarkerFn)(Surface *, PRectangle, bool, ColourDesired);
++
+ /**
+ * MarginView draws the margins.
+ */
+@@ -25,6 +27,13 @@
+ 	// Highlight current folding block
+ 	HighlightDelimiter highlightDelimiter;
+ 
++	int wrapMarkerPaddingRight; // right-most pixel padding of wrap markers
++	/** Some platforms, notably PLAT_CURSES, do not support Scintilla's native
++	 * DrawWrapMarker function for drawing wrap markers. Allow those platforms to
++	 * override it instead of creating a new method in the Surface class that
++	 * existing platforms must implement as empty. */
++	DrawWrapMarkerFn customDrawWrapMarker;
++
+ 	MarginView();
+ 
+ 	void DropGraphics(bool freeObjects);
