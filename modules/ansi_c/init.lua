@@ -55,8 +55,8 @@ textadept.editing.autocompleters.ansi_c = function()
         local name = line:match('^%S+')
         if name:find(name_patt) and not name:find('^!') and not list[name] then
           local fields = line:match(';"\t(.*)$')
-          if (fields:match('class:(%S+)') or fields:match('enum:(%S+)') or
-              fields:match('struct:(%S+)') or fields:match('typedef:(%S+)') or
+          if (fields:find('class:%S+') or fields:find('enum:%S+') or
+              fields:find('struct:%S+') or fields:find('typedef:%S+') or
               '') == symbol then
             local k = xpms[fields:sub(1, 1)]
             list[#list + 1] = ("%s%s%d"):format(name, sep, xpms[k])

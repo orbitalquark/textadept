@@ -186,7 +186,7 @@ end)
 --[[ The function below is a Lua C function.
 
 ---
--- Opens the Lua command entry.
+-- Opens the command entry.
 -- @class function
 -- @name focus
 local focus
