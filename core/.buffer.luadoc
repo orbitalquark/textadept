@@ -1649,21 +1649,21 @@ function del_line_right(buffer) end
 ---
 -- Deletes the word to the left of the caret, including any leading non-word
 -- characters.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function del_word_left(buffer) end
 
 ---
 -- Deletes the word to the right of the caret, including any trailing non-word
 -- characters.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function del_word_right(buffer) end
 
 ---
 -- Deletes the word to the right of the caret, excluding any trailing non-word
 -- characters.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function del_word_right_end(buffer) end
 
@@ -2899,9 +2899,9 @@ function visible_from_doc_line(buffer, line) end
 
 ---
 -- Returns the position of the end of the word at position *pos*.
--- `buffer.word_chars` contains word characters. If *pos* has a non-word
--- character to its right and *only_word_chars* is `false`, returns the first
--- word character's position.
+-- `buffer.word_chars` contains the set of characters that constitute words. If
+-- *pos* has a non-word character to its right and *only_word_chars* is `false`,
+-- returns the first word character's position.
 -- @param buffer A buffer.
 -- @param pos The position in *buffer* of the word.
 -- @param only_word_chars If `true`, stops searching at the first non-word
@@ -2913,14 +2913,14 @@ function word_end_position(buffer, pos, only_word_chars) end
 
 ---
 -- Moves the caret left one word.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_left(buffer) end
 
 ---
 -- Moves the caret left one word, positioning it at the end of the previous
 -- word.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_left_end(buffer) end
 
@@ -2933,7 +2933,7 @@ function word_left_end_extend(buffer) end
 ---
 -- Moves the caret left one word, extending the selected text to the new
 -- position.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_left_extend(buffer) end
 
@@ -2941,7 +2941,7 @@ function word_left_extend(buffer) end
 -- Moves the caret to the previous part of the current word.
 -- Word parts are delimited by underscore characters or changes in
 -- capitalization.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_part_left(buffer) end
 
@@ -2950,7 +2950,7 @@ function word_part_left(buffer) end
 -- selected text to the new position.
 -- Word parts are delimited by underscore characters or changes in
 -- capitalization.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_part_left_extend(buffer) end
 
@@ -2958,7 +2958,7 @@ function word_part_left_extend(buffer) end
 -- Moves the caret to the next part of the current word.
 -- Word parts are delimited by underscore characters or changes in
 -- capitalization.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_part_right(buffer) end
 
@@ -2967,20 +2967,20 @@ function word_part_right(buffer) end
 -- text to the new position.
 -- Word parts are delimited by underscore characters or changes in
 -- capitalization.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_part_right_extend(buffer) end
 
 ---
 -- Moves the caret right one word.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_right(buffer) end
 
 ---
 -- Moves the caret right one word, positioning it at the end of the current
 -- word.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_right_end(buffer) end
 
@@ -2993,15 +2993,15 @@ function word_right_end_extend(buffer) end
 ---
 -- Moves the caret right one word, extending the selected text to the new
 -- position.
--- `buffer.word_chars` contains word characters.
+-- `buffer.word_chars` contains the set of characters that constitute words.
 -- @param buffer A buffer.
 function word_right_extend(buffer) end
 
 ---
 -- Returns the position of the beginning of the word at position *pos*.
--- `buffer.word_chars` contains word characters. If *pos* has a non-word
--- character to its left and *only_word_chars* is `false`, returns the last word
--- character's position.
+-- `buffer.word_chars` contains the set of characters that constitute words. If
+-- *pos* has a non-word character to its left and *only_word_chars* is `false`,
+-- returns the last word character's position.
 -- @param buffer A buffer.
 -- @param pos The position in *buffer* of the word.
 -- @param only_word_chars If `true`, stops searching at the first non-word
