@@ -18,7 +18,7 @@ buffer:set_x_caret_policy(buffer.CARET_SLOP, 20)
 buffer:set_y_caret_policy(buffer.CARET_SLOP + buffer.CARET_STRICT +
                           buffer.CARET_EVEN, 1)
 --buffer:set_visible_policy()
---buffer.h_scroll_bar = false
+--buffer.h_scroll_bar = CURSES
 --buffer.v_scroll_bar = false
 --buffer.scroll_width =
 --buffer.scroll_width_tracking = true
@@ -75,51 +75,47 @@ buffer.use_tabs = false
 --buffer.indent = 2
 buffer.tab_indents = true
 buffer.back_space_un_indents = true
-buffer.indentation_guides = buffer.IV_LOOKBOTH
+buffer.indentation_guides = not CURSES and buffer.IV_LOOKBOTH or buffer.IV_NONE
 
 -- Margin Markers.
-local symbol = not CURSES and buffer.MARK_FULLRECT or
-               buffer.MARK_CHARACTER + string.byte(' ')
-buffer:marker_define(textadept.bookmarks.MARK_BOOKMARK, symbol)
-buffer:marker_define(textadept.run.MARK_WARNING, symbol)
-buffer:marker_define(textadept.run.MARK_ERROR, symbol)
-if not CURSES then
-  -- Arrow Folding Symbols.
---  buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_ARROWDOWN)
---  buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_ARROW)
---  buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_EMPTY)
---  buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_EMPTY)
---  buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_EMPTY)
---  buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_EMPTY)
---  buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_EMPTY)
-  -- Plus/Minus Folding Symbols.
---  buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_MINUS)
---  buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_PLUS)
---  buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_EMPTY)
---  buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_EMPTY)
---  buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_EMPTY)
---  buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_EMPTY)
---  buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_EMPTY)
-  -- Circle Tree Folding Symbols.
---  buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_CIRCLEMINUS)
---  buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_CIRCLEPLUS)
---  buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
---  buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNERCURVE)
---  buffer:marker_define(buffer.MARKNUM_FOLDEREND,
---                       buffer.MARK_CIRCLEPLUSCONNECTED)
---  buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID,
---                       buffer.MARK_CIRCLEMINUSCONNECTED)
---  buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNERCURVE)
-  -- Box Tree Folding Symbols.
-  buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_BOXMINUS)
-  buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_BOXPLUS)
-  buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
-  buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNER)
-  buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_BOXPLUSCONNECTED)
-  buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID,
-                       buffer.MARK_BOXMINUSCONNECTED)
-  buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNER)
-end
+buffer:marker_define(textadept.bookmarks.MARK_BOOKMARK, buffer.MARK_FULLRECT)
+buffer:marker_define(textadept.run.MARK_WARNING, buffer.MARK_FULLRECT)
+buffer:marker_define(textadept.run.MARK_ERROR, buffer.MARK_FULLRECT)
+-- Arrow Folding Symbols.
+--buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_ARROWDOWN)
+--buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_ARROW)
+--buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_EMPTY)
+--buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_EMPTY)
+--buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_EMPTY)
+--buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_EMPTY)
+--buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_EMPTY)
+-- Plus/Minus Folding Symbols.
+--buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_MINUS)
+--buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_PLUS)
+--buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_EMPTY)
+--buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_EMPTY)
+--buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_EMPTY)
+--buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_EMPTY)
+--buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_EMPTY)
+-- Circle Tree Folding Symbols.
+--buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_CIRCLEMINUS)
+--buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_CIRCLEPLUS)
+--buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
+--buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNERCURVE)
+--buffer:marker_define(buffer.MARKNUM_FOLDEREND,
+--                     buffer.MARK_CIRCLEPLUSCONNECTED)
+--buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID,
+--                     buffer.MARK_CIRCLEMINUSCONNECTED)
+--buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNERCURVE)
+-- Box Tree Folding Symbols.
+buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_BOXMINUS)
+buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_BOXPLUS)
+buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
+buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNER)
+buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_BOXPLUSCONNECTED)
+buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID,
+                     buffer.MARK_BOXMINUSCONNECTED)
+buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNER)
 --buffer:marker_enable_highlight(true)
 
 -- Indicators.

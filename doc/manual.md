@@ -1783,26 +1783,23 @@ As a special case, the empty capture `()` captures the current string position
 ## Curses Compatibility
 
 Textadept 5.5 beta introduced a curses version that is capable of running in a
-terminal emulator. However, it lacks some GUI features due to curses'
-non-existant graphics capabilities:
+terminal emulator. However, it lacks some GUI features due to the terminal's
+constraints:
 
 * No alpha values or transparency.
 * No images in autocompletion lists. Instead, autocompletion lists show the
   first character in the string passed to [`buffer.register_image()`][].
 * No buffered or two-phase drawing.
-* No arrows on call tips.
 * Carets cannot have a period, line style, or width.
 * No drag and drop.
 * Edge lines may be obscured by text.
-* Extra line ascent or descent renders improperly.
-* No fold lines.
+* No extra line ascent or descent.
+* No fold lines above and below lines.
 * No hotspot underlines on mouse hover.
-* No indentation guides.
 * No indicators other than `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX`, although
   neither has translucent drawing and `INDIC_ROUNDBOX` does not have rounded
   corners.
-* When scrolling to the right, long lines overwrite margins.
-* No marker symbols other than `MARK_CHARACTER`.
+* Some complex marker symbols are not drawn properly or at all.
 * No mouse cursor types.
 * Only up to 16 colors recognized, regardless of how many colors the terminal
   supports. They are: black (`0x000000`), red (`0x800000`), green (`0x008000`),
@@ -1814,11 +1811,8 @@ non-existant graphics capabilities:
   use these color values. Your terminal will remap them automatically.
   Unrecognized colors default to white. For some terminals, you may need to set
   a lexer style's `bold` attribute to use the light color variant.
-* No scroll bars.
 * Not all key sequences recognized properly.
 * No style settings like font name, font size, or italics.
-* No tab character arrows when viewing whitespace.
-* No visual wrap flags.
 * No X selection, primary or secondary, integration with the clipboard.
 * No zoom.
 
