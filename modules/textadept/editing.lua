@@ -70,6 +70,7 @@ events.connect(events.VIEW_NEW, function()
     if type(name) == 'string' then buffer:register_image(i, M.XPM_IMAGES[i]) end
   end
 end)
+for i = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
 
 ---
 -- Map of lexer names to line comment strings for programming languages, used by

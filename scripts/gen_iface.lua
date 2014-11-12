@@ -147,7 +147,7 @@ for i = 1, #properties do
 end
 f:write('}\n\n')
 f:write([[
-local marker_number, indic_number, list_type = -1, -1, 0
+local marker_number, indic_number, list_type, image_type = -1, -1, 0, 0
 
 ---
 -- Returns a unique marker number for use with `buffer.marker_define()`.
@@ -184,6 +184,20 @@ end
 function M.next_user_list_type()
   list_type = list_type + 1
   return list_type
+end
+
+---
+-- Returns a unique image type identier number for use with
+-- `buffer.register_image()` and `buffer.register_rgba_image()`.
+-- Use this function for custom image types in order to prevent clashes with
+-- identifiers of other custom image types.
+-- @usage local image_type = _SCINTILLA.next_image_type()
+-- @see buffer.register_image
+-- @see buffer.register_rgba_image
+-- @name next_image_type
+function M.next_image_type()
+  image_type = image_type + 1
+  return image_type
 end
 
 return M
