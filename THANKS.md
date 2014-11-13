@@ -24,6 +24,7 @@ private contract work related to Textadept.
 
 ## Code and Documentation Contributors
 
+* Ahed Eid
 * Alex Bepple
 * Ana Balan
 * Anton Verbitski
