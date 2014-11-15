@@ -178,7 +178,16 @@ keys.lua_command = {['\t'] = complete_lua, ['\n'] = {M.finish_mode, run_lua}}
 
 -- Configure the command entry's default properties.
 events.connect(events.INITIALIZED, function()
-  if not arg then return end -- no need to reconfigure on reset
+  if not arg then
+    -- The buffers in `_BUFFERS` do not get wiped out during a reset. However,
+    -- `ui.command_entry` is not a normal buffer and does get wiped out. When
+    -- resetting, re-emit `events.BUFFER_NEW` in order to re-add buffer
+    -- functions like `set_lexer()`.
+    local buffer = _G.buffer
+    _G.buffer = M -- make event handlers believe M is the global buffer for now
+    events.emit(events.BUFFER_NEW)
+    _G.buffer = buffer
+  end
   M.h_scroll_bar, M.v_scroll_bar = false, false
   M.margin_width_n[0], M.margin_width_n[1], M.margin_width_n[2] = 0, 0, 0
 end)

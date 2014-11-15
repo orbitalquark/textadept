@@ -152,7 +152,7 @@ TermKey *ta_tk; // global for CDK use
   (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, \
    SS(view, SCI_SETFOCUS, 1, 0))
 /** Callback for refreshing a single Scintilla view. */
-static void r_cb(void *view, void*_) {scintilla_refresh((Scintilla *)view);}
+static void r_cb(void *view, void*_) { scintilla_refresh((Scintilla *)view); }
 #define refresh_all() { \
   wman_walk(wm, r_cb, NULL), wman_refresh(wm); \
   if (command_entry_focused) scintilla_refresh(command_entry); \
@@ -1407,7 +1407,7 @@ static int lL_dofile(lua_State *L, const char *filename) {
 /** `_G.reset()` Lua function. */
 static int lreset(lua_State *L) {
   lL_event(L, "reset_before", -1);
-  lL_init(L, 0, NULL, TRUE);
+  lL_init(L, 0, NULL, TRUE), register_command_entry_doc();
   l_setglobalview(L, focused_view);
   l_setglobaldoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
   lua_pushnil(L), lua_setglobal(L, "arg");
