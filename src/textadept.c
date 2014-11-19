@@ -72,7 +72,6 @@ typedef GtkWidget Scintilla;
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
 #define gtk_vbox_new(_,s) gtk_box_new(GTK_ORIENTATION_VERTICAL, s)
 #define gtk_hbox_new(_,s) gtk_box_new(GTK_ORIENTATION_HORIZONTAL, s)
-#define gtk_statusbar_set_has_resize_grip(...)
 #endif
 #endif
 
@@ -145,7 +144,7 @@ static ListStore *find_store, *repl_store;
 #elif CURSES
 // curses window.
 static struct WindowManager *wm;
-static int command_entry_focused;
+static int statusbar_length[2], command_entry_focused;
 TermKey *ta_tk; // global for CDK use
 #define SS(view, msg, w, l) scintilla_send_message(view, msg, w, l)
 #define focus_view(view) \
@@ -848,13 +847,13 @@ static int lui__index(lua_State *L) {
 
 static void set_statusbar_text(const char *text, int bar) {
 #if GTK
-  if (!statusbar[0] || !statusbar[1]) return; // unavailable on startup
-  gtk_statusbar_pop(GTK_STATUSBAR(statusbar[bar]), 0);
-  gtk_statusbar_push(GTK_STATUSBAR(statusbar[bar]), 0, text);
+  if (statusbar[bar]) gtk_label_set_text(GTK_LABEL(statusbar[bar]), text);
 #elif CURSES
-  for (int i = ((bar == 0) ? 0 : 20); i < ((bar == 0) ? 20 : COLS); i++)
-    mvaddch(LINES - 1, i, ' '); // clear statusbar
+  int start = (bar == 0) ? 0 : statusbar_length[0];
+  int end = (bar == 0) ? COLS - statusbar_length[1] : COLS;
+  for (int i = start; i < end; i++) mvaddch(LINES - 1, i, ' '); // clear
   mvaddstr(LINES - 1, (bar == 0) ? 0 : COLS - strlen(text), text), refresh();
+  statusbar_length[bar] = strlen(text);
 #endif
 }
 
@@ -2202,15 +2201,13 @@ static void new_window() {
                           NULL);
 
   GtkWidget *hboxs = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hboxs, FALSE, FALSE, 1);
 
-  statusbar[0] = gtk_statusbar_new(), statusbar[1] = gtk_statusbar_new();
-  gtk_statusbar_push(GTK_STATUSBAR(statusbar[0]), 0, "");
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(statusbar[0]), FALSE);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[0], TRUE, TRUE, 0);
-  gtk_statusbar_push(GTK_STATUSBAR(statusbar[1]), 0, "");
-  g_object_set(G_OBJECT(statusbar[1]), "width-request", 400, NULL);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[1], FALSE, FALSE, 0);
+  statusbar[0] = gtk_label_new(NULL), statusbar[1] = gtk_label_new(NULL);
+  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[0], TRUE, TRUE, 5);
+  gtk_misc_set_alignment(GTK_MISC(statusbar[0]), 0, 0);
+  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[1], TRUE, TRUE, 5);
+  gtk_misc_set_alignment(GTK_MISC(statusbar[1]), 1, 0);
 
   gtk_widget_show_all(window);
   gtk_widget_hide(menubar), gtk_widget_hide(tabbar); // hide initially
