@@ -42,7 +42,7 @@ diff -r 01c4696a39a9 src/Editor.cxx
  	mouseDownCaptures = true;
  
  	lastClickTime = 0;
-+	clickCloseThreshold = 3;
++	doubleClickCloseThreshold = Point(3, 3);
  	dwellDelay = SC_TIME_FOREVER;
  	ticksToDwell = SC_TIME_FOREVER;
  	dwelling = false;
@@ -52,11 +52,11 @@ diff -r 01c4696a39a9 src/Editor.cxx
  
 -static bool Close(Point pt1, Point pt2) {
 -	if (abs(pt1.x - pt2.x) > 3)
-+static bool Close(Point pt1, Point pt2, int threshold) {
-+	if (abs(pt1.x - pt2.x) > threshold)
++static bool Close(Point pt1, Point pt2, Point threshold) {
++	if (abs(pt1.x - pt2.x) > threshold.x)
  		return false;
 -	if (abs(pt1.y - pt2.y) > 3)
-+	if (abs(pt1.y - pt2.y) > threshold)
++	if (abs(pt1.y - pt2.y) > threshold.y)
  		return false;
  	return true;
  }
@@ -65,7 +65,7 @@ diff -r 01c4696a39a9 src/Editor.cxx
  		SetSelection(newPos);
  	}
 -	if (((curTime - lastClickTime) < Platform::DoubleClickTime()) && Close(pt, lastClick)) {
-+	if (((curTime - lastClickTime) < Platform::DoubleClickTime()) && Close(pt, lastClick, clickCloseThreshold)) {
++	if (((curTime - lastClickTime) < Platform::DoubleClickTime()) && Close(pt, lastClick, doubleClickCloseThreshold)) {
  		//Platform::DebugPrintf("Double click %d %d = %d\n", curTime, lastClickTime, curTime - lastClickTime);
  		SetMouseCapture(true);
  		if (FineTickerAvailable()) {
@@ -76,7 +76,7 @@ diff -r 01c4696a39a9 src/Editor.h
  
  	Point lastClick;
  	unsigned int lastClickTime;
-+	int clickCloseThreshold;
++	Point doubleClickCloseThreshold;
  	int dwellDelay;
  	int ticksToDwell;
  	bool dwelling;
@@ -87,7 +87,7 @@ diff -r 326449de45d0 src/EditView.cxx
  	pixmapIndentGuideHighlight = 0;
  	llc.SetLevel(LineLayoutCache::llcCaret);
  	posCache.SetSize(0x400);
-+	tabArrowPaddingTop = 4;
++	tabArrowHeight = 4;
 +	customDrawTabArrow = NULL;
 +	customDrawWrapMarker = NULL;
  }
@@ -133,7 +133,7 @@ diff -r 326449de45d0 src/EditView.cxx
  								textFore = vsDraw.whitespaceColours.fore;
  							surface->PenColour(textFore);
 -							PRectangle rcTab(rcSegment.left + 1, rcSegment.top + 4,
-+							PRectangle rcTab(rcSegment.left + 1, rcSegment.top + tabArrowPaddingTop,
++							PRectangle rcTab(rcSegment.left + 1, rcSegment.top + tabArrowHeight,
  								rcSegment.right - 1, rcSegment.bottom - vsDraw.maxDescent);
 -							DrawTabArrow(surface, rcTab, static_cast<int>(rcSegment.top + vsDraw.lineHeight / 2));
 +							if (customDrawTabArrow == NULL)
@@ -159,7 +159,7 @@ diff -r 326449de45d0 src/EditView.h
  void DrawStyledText(Surface *surface, const ViewStyle &vs, int styleOffset, PRectangle rcText,
  	const StyledText &st, size_t start, size_t length, DrawPhase phase);
  
-+typedef void (*DrawTabArrowFn)(Surface *, PRectangle, int);
++typedef void (*DrawTabArrowFn)(Surface *surface, PRectangle rcTab, int ymid);
 +
  /**
  * EditView draws the main text area.
@@ -168,7 +168,7 @@ diff -r 326449de45d0 src/EditView.h
  	LineLayoutCache llc;
  	PositionCache posCache;
  
-+	int tabArrowPaddingTop; // draw arrows this many pixels below line top
++	int tabArrowHeight; // draw arrow heads this many pixels above/below line midpoint
 +	/** Some platforms, notably PLAT_CURSES, do not support Scintilla's native
 +	 * DrawTabArrow function for drawing tab characters. Allow those platforms to
 +	 * override it instead of creating a new method in the Surface class that
@@ -214,7 +214,7 @@ diff -r 326449de45d0 src/MarginView.h
  
  void DrawWrapMarker(Surface *surface, PRectangle rcPlace, bool isEndMarker, ColourDesired wrapColour);
  
-+typedef void (*DrawWrapMarkerFn)(Surface *, PRectangle, bool, ColourDesired);
++typedef void (*DrawWrapMarkerFn)(Surface *surface, PRectangle rcPlace, bool isEndMarker, ColourDesired wrapColour);
 +
  /**
  * MarginView draws the margins.
@@ -255,7 +255,7 @@ diff -r 326449de45d0 src/LineMarker.h
  namespace Scintilla {
  #endif
  
-+typedef void (*DrawLineMarkerFn)(Surface *, PRectangle &, Font &, int, int, const void *);
++typedef void (*DrawLineMarkerFn)(Surface *surface, PRectangle &rcWhole, Font &fontForCharacter, int tFold, int marginStyle, const void *lineMarker);
 +
  /**
   */
