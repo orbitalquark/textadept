@@ -115,8 +115,8 @@ lexlpeg_objs = LexLPeg.o LexLPegjit.o LexLPeg-curses.o LexLPegjit-curses.o
 
 # Textadept.
 
-ta_flags = -std=c99 -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE $(plat_flag) \
-           -Iscintilla/include -Igtdialog -W -Wall -Wno-unused
+ta_flags = -std=c99 -pedantic -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE \
+           $(plat_flag) -Iscintilla/include -Igtdialog -W -Wall -Wno-unused
 
 textadept_gtk_objs = textadept.o textadeptjit.o
 textadept_curses_objs = textadept-curses.o textadeptjit-curses.o
@@ -135,9 +135,8 @@ termkey_unix_objs = driver-ti.o driver-csi.o
 termkey_win32_objs = driver-win32-pdcurses.o
 termkey_objs = termkey.o $(termkey_unix_objs) $(termkey_win32_objs)
 windowman_objs = windowman.o
-cdk_objs = binding.o buttonbox.o button.o cdk.o cdk_display.o cdk_objs.o \
-           cdk_params.o cdkscreen.o debug.o draw.o entry.o fselect.o \
-           itemlist.o label.o mentry.o menu.o popup_label.o position.o \
+cdk_objs = binding.o buttonbox.o cdk.o cdk_display.o cdk_objs.o cdkscreen.o \
+           draw.o entry.o fselect.o itemlist.o label.o mentry.o popup_label.o \
            scroll.o scroller.o select_file.o selection.o traverse.o version.o
 
 # Add debugging symbols and disable optimizations when DEBUG=1.
@@ -176,7 +175,8 @@ $(lua_lib_objs): %.o: lua/src/lib/%.c
 $(luajit_lib_objs): %jit.o: lua/src/lib/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $< -o $@
 $(lua_spawn_objs): lua/src/lib/lspawn.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(spawn_flags) $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -std=c99 -pedantic -D_XOPEN_SOURCE \
+		$(spawn_flags) $< -o $@
 luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC) $(CFLAGS)"
 luajit/src/lua51.dll:
 	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
@@ -184,7 +184,8 @@ luajit/src/libluajit.osx.a:
 	$(MAKE) -C luajit CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin \
 		LUAJIT_A=$(notdir $@) || return 0
 $(gtdialog_objs): gtdialog/gtdialog.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(gtdialog_flags) $< -o $@
+	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 -pedantic -D_POSIX_C_SOURCE=200809L \
+		$(gtdialog_flags) $< -o $@
 $(windowman_objs): %.o: windowman/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) -Iwindowman $(CURSES_CFLAGS) $< -o $@
 $(cdk_objs): %.o: cdk/%.c
