@@ -1619,12 +1619,14 @@ non-Lua, libraries.
 includes a slightly modified, stripped down version of this library. The changes
 made to CDK are in *src/cdk.patch* and listed as follows:
 
-* Excluded the following source files: *alphalist.c*, *calendar.c*,
-  *cdk_compat.{c,h}*, *cdk_test.h*, *dialog.c*, *{d,f}scale.{c,h}*,
-  *fslider.{c,h}*, *gen-{scale,slider}.{c,h}*, *get_index.c*, *get_string.c*,
-  *graph.c*, *histogram.c*, *marquee.c*, *matrix.c*, *popup_dialog.c*,
-  *radio.c*, *scale.{c,h}*, *slider.{c,h}*, *swindow.c*, *template.c*,
+* Excluded the following source files: *alphalist.c*, *button.c*, *calendar.c*,
+  *cdk_compat.{c,h}*, *cdk_params.c*, *cdk_test.h*, *debug.c*, *dialog.c*,
+  *{d,f}scale.{c,h}*, *fslider.{c,h}*, *gen-{scale,slider}.{c,h}*,
+  *get_index.c*, *get_string.c*, *graph.c*, *histogram.c*, *marquee.c*,
+  *matrix.c*, *menu.c*, *popup_dialog.c*, *position.c*, *radio.c*,
+  *scale.{c,h}*, *slider.{c,h}*, *swindow.c*, *template.c*,
   *u{scale,slider}.{c,h}*, *view_{file,info}.c*, and *viewer.c*.
+* *binding.c* utilizes libtermkey for universal input.
 * *cdk.h* does not `#include` "matrix.h", "viewer.h", and any headers labeled
   "Generated headers" due to their machine-dependence. It also `#define`s
   `boolean` as `CDKboolean` on Windows platforms since the former is already
@@ -1641,6 +1643,9 @@ made to CDK are in *src/cdk.patch* and listed as follows:
   directory separator.
 * Deactivated the `deleteFileCB` function in *fselect.c*.
 * Removed some of CDK's initial screen handling code.
+* *cdk.c* has some basic UTF-8 handling functions and *draw.c*, *entry.c*, and
+  *itemlist.c* use them for UTF-8 drawing and character handling. (Note:
+  *mentry.c* cannot handle UTF-8.)
 
 [CDK]: http://invisible-island.net/cdk/
 
