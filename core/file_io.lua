@@ -113,7 +113,8 @@ function io.open_file(filenames)
   filenames = filenames or ui.dialogs.fileselect{
     title = _L['Open'], select_multiple = true,
     with_directory = (buffer.filename or ''):match('^.+[/\\]') or
-                     lfs.currentdir()
+                     lfs.currentdir(),
+    width = CURSES and ui.size[1] - 2 or nil
   }
   if not filenames then return end
   for i = 1, #filenames do
@@ -238,7 +239,8 @@ function io.save_file_as(filename)
   local dir, name = (buffer.filename or ''):match('^(.-[/\\]?)([^/\\]*)$')
   filename = filename or ui.dialogs.filesave{
     title = _L['Save'], with_directory = dir,
-    with_file = name:iconv('UTF-8', _CHARSET)
+    with_file = name:iconv('UTF-8', _CHARSET),
+    width = CURSES and ui.size[1] - 2 or nil
   }
   if not filename then return end
   buffer.filename = filename
