@@ -852,8 +852,9 @@ static void set_statusbar_text(const char *text, int bar) {
   int start = (bar == 0) ? 0 : statusbar_length[0];
   int end = (bar == 0) ? COLS - statusbar_length[1] : COLS;
   for (int i = start; i < end; i++) mvaddch(LINES - 1, i, ' '); // clear
-  mvaddstr(LINES - 1, (bar == 0) ? 0 : COLS - strlen(text), text), refresh();
-  statusbar_length[bar] = strlen(text);
+  int len = utf8strlen(text);
+  mvaddstr(LINES - 1, (bar == 0) ? 0 : COLS - len, text), refresh();
+  statusbar_length[bar] = len;
 #endif
 }
 
