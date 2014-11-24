@@ -284,7 +284,6 @@ luadoc: ../modules ../core ../lexers
 
 # Releases.
 
-build_dir = /tmp/tabuild
 ifndef NIGHTLY
   basedir = textadept_$(shell grep -m 1 _RELEASE ../core/init.lua | \
                               cut -d ' ' -f4- | tr ' ' '_' | tr -d '"')
@@ -305,52 +304,46 @@ osxapp_libs = libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib \
               charset.alias gdk-pixbuf-2.0 gtk-2.0 pango
 modules = css html rest ruby python yaml
 
-release-all: release release64 win32-release osx-release modules-release \
-             cleanup-release
+release-all: release release64 win32-release osx-release modules-release
 
-$(build_dir): ; hg clone -r tip /home/mitchell/code/textadept $@
 $(basedir).i386: | $(build_dir) ; hg archive $@ -X ".hg*"
-release: $(basedir).i386 | $(build_dir)
-	make -C $|/src deps clean doc
-	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -C $|/src -j4
-	make -C $|/src -j4 curses
-	cp -r $|/doc $|/lexers $|/textadept* $<
+release: $(basedir).i386
+	make deps clean doc
+	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -j4
+	make -j4 curses
+	cp -r ../doc ../lexers ../textadept* $<
 	tar czf /tmp/$<.tgz $< && rm -rf $<
-$(basedir).x86_64: | $(build_dir) ; hg archive $@ -X ".hg*"
-release64: $(basedir).x86_64 | $(build_dir)
-	make -C $|/src clean libluajit64
-	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -C $|/src -j4 CFLAGS=-m64 \
+$(basedir).x86_64: ; hg archive $@ -X ".hg*"
+release64: $(basedir).x86_64
+	make clean libluajit64
+	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -j4 CFLAGS=-m64 \
 		CXXFLAGS=-m64 || return 0
-	make -C $|/src -j4 CFLAGS=-m64 CXXFLAGS=-m64 \
+	make -j4 CFLAGS=-m64 CXXFLAGS=-m64 \
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
-	cp -r $|/doc $|/lexers $|/textadept* $<
+	cp -r ../doc ../lexers ../textadept* $<
 	tar czf /tmp/$<.tgz $< && rm -rf $<
-$(basedir).win32: | $(build_dir) ; hg archive $@ -X ".hg*"
-win32-release: $(basedir).win32 | $(build_dir)
-	make -C $|/src -j4 clean CROSS=i586-mingw32msvc- win32-deps
-	cp $|/src/win32gtk/bin/*.dll $< && cp -r $|/src/win32gtk/etc \
-		$|/src/win32gtk/lib $|/src/win32gtk/share $<
+$(basedir).win32: ; hg archive $@ -X ".hg*"
+win32-release: $(basedir).win32
+	make -j4 clean CROSS=i586-mingw32msvc- win32-deps
+	cp win32gtk/bin/*.dll $< && cp -r win32gtk/etc \
+		win32gtk/lib win32gtk/share $<
 	rm -r $</lib/*.a $</lib/glib-2.0 $</lib/gtk-2.0/include $</lib/pkgconfig
-	make -C $|/src -j4 CROSS=i586-mingw32msvc- win32
-	make -C $|/src -j4 CROSS=i586-mingw32msvc- win32-curses
-	cp -r $|/doc $|/lexers $|/textadept* $|/src/luajit/src/lua51.dll $<
+	make -j4 CROSS=i586-mingw32msvc- win32
+	make -j4 CROSS=i586-mingw32msvc- win32-curses
+	cp -r ../doc ../lexers ../textadept* luajit/src/lua51.dll $<
 	zip -r /tmp/$<.zip $< && rm -rf $<
 $(basedir).osx: ; mkdir $@ && cp ../scripts/osx/ta $@
-osx-release: $(basedir).osx | $(build_dir)
-	make -C $|/src clean osx-deps
-	make -C $|/src -j4 osx
-	make -C $|/src -j4 osx-curses
-	make -C $|/src osx-app && mv $|/src/$(osxapp) $<
+osx-release: $(basedir).osx
+	make clean osx-deps
+	make -j4 osx
+	make -j4 osx-curses
+	make osx-app && mv $(osxapp) $<
 	zip -r /tmp/$<.zip $< && rm -rf $<
 $(basedir).modules:
 	mkdir -p $@/modules
 	for m in $(modules); do hg clone /home/mitchell/code/$$m $@/modules/$$m; done
 modules-release: $(basedir).modules ; zip -r /tmp/$<.zip $< && rm -r $<
-cleanup-release: /tmp/$(basedir).x86_64.tgz /tmp/$(basedir).i386.tgz \
-                 /tmp/$(basedir).win32.zip /tmp/$(basedir).osx.zip \
-                 /tmp/$(basedir).modules.zip | $(build_dir)
-	rm -rf $|
 
 osx-app: ../textadept ../textadeptjit ../textadept-curses \
          ../textadeptjit-curses ../scripts/osx/textadept_osx
