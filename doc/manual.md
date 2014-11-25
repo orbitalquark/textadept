@@ -1788,8 +1788,9 @@ As a special case, the empty capture `()` captures the current string position
 ## Curses Compatibility
 
 Textadept 5.5 beta introduced a curses version that is capable of running in a
-terminal emulator. However, it lacks some GUI features due to the terminal's
-constraints:
+terminal emulator. However, it requires a font with good glyph support (like
+DejaVu Sans Mono or Liberation Mono), and lacks some GUI features due to the 
+terminal's constraints:
 
 * No alpha values or transparency.
 * No images in autocompletion lists. Instead, autocompletion lists show the
