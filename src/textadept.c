@@ -1603,6 +1603,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
 #if GTK
 /** Signal for a Textadept window focus change. */
 static int w_focus(GtkWidget*_, GdkEventFocus*__, void*___) {
+  if (command_entry_focused) return FALSE; // keep command entry focused
   if (focused_view && !gtk_widget_has_focus(focused_view))
     gtk_widget_grab_focus(focused_view);
   return (lL_event(lua, "focus", -1), FALSE);
@@ -2125,7 +2126,8 @@ static GtkWidget *new_findbox() {
 }
 
 /** Emit "Escape" key for the command entry on focus lost. */
-static int c_focusout(GtkWidget*_, GdkEvent *__, void*___) {
+static int wc_focusout(GtkWidget *widget, GdkEvent*_, void*__) {
+  if (widget == window) return TRUE; // keep focus if window is losing focus
   return (lL_event(lua, "keypress", LUA_TNUMBER, GDK_Escape, -1), FALSE);
 }
 #endif // if GTK
@@ -2156,6 +2158,7 @@ static void new_window() {
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
   signal(window, "delete-event", w_exit);
   signal(window, "focus-in-event", w_focus);
+  signal(window, "focus-out-event", wc_focusout);
   signal(window, "key-press-event", w_keypress);
   gtdialog_set_parent(GTK_WINDOW(window));
   accel = gtk_accel_group_new();
@@ -2196,7 +2199,7 @@ static void new_window() {
   command_entry = scintilla_new();
   gtk_widget_set_size_request(command_entry, 1, 1);
   signal(command_entry, "key-press-event", s_keypress);
-  signal(command_entry, "focus-out-event", c_focusout);
+  signal(command_entry, "focus-out-event", wc_focusout);
   gtk_paned_add2(GTK_PANED(paned), command_entry);
   gtk_container_child_set(GTK_CONTAINER(paned), command_entry, "shrink", FALSE,
                           NULL);
