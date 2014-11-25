@@ -403,7 +403,7 @@ keys[not OSX and not CURSES and 'c/' or 'm/'] = editing.block_comment
 keys.ct = editing.transpose_chars
 keys[not OSX and (not CURSES and 'cJ' or 'mj') or 'cj'] = editing.join_lines
 keys[not OSX and (not CURSES and 'c|' or 'c\\')
-             or 'm|'] = {ui.command_entry.enter_mode, 'filter_through'}
+             or 'm|'] = {ui.command_entry.enter_mode, 'filter_through', 'bash'}
 -- Select.
 keys[not CURSES and 'cM' or 'mM'] = {editing.match_brace, 'select'}
 keys[not OSX and not CURSES and 'c<'
