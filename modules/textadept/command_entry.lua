@@ -164,8 +164,8 @@ local function complete_lua()
         if f:find(part) then cmpls[#cmpls + 1] = f end
       end
     elseif symbol == 'buffer' and op == '.' then
-      for p in pairs(_SCINTILLA.properties) do
-        if p:find(part) then cmpls[#cmpls + 1] = p end
+      for _, t in ipairs{_SCINTILLA.properties, _SCINTILLA.constants} do
+        for p in pairs(t) do if p:find(part) then cmpls[#cmpls + 1] = p end end
       end
     end
   end
