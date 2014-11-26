@@ -202,7 +202,7 @@ if CURSES and not WIN32 then
   events.connect(events.QUIT, function()
     io.stdout:write('\x1b[?2004l') -- disable bracketed paste mode
     io.stdout:flush()
-  end, 1)
+  end)
   local reenable_autopair, reenable_autoindent
   events.connect('csi', function(cmd, args)
     if cmd ~= string.byte('~') then return end
