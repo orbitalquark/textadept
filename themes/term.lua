@@ -83,4 +83,4 @@ buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.yellow']
 --buffer.call_tip_fore_hlt = property_int['color.blue']
 
 -- Long Lines.
-buffer.edge_colour = property_int['color.white']
+buffer.edge_colour = property_int['color.red']
