@@ -89,7 +89,7 @@ function lfs.dir_foreach(dir, f, filter, exclude_FILTER, n, include_dirs, level)
   local dir_sep, lfs_attributes = not WIN32 and '/' or '\\', lfs.attributes
   for file in lfs.dir(dir) do
     if not file:find('^%.%.?$') then -- ignore . and ..
-      file = dir..dir_sep..file
+      file = dir..(dir ~= '/' and dir_sep or '')..file
       local type = lfs_attributes(file, 'mode')
       if type == 'directory' and not exclude(file, filter.folders) then
         if include_dirs and f(file..dir_sep) == false then return end
