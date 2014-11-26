@@ -151,7 +151,7 @@ TermKey *ta_tk; // global for CDK use
   (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, \
    SS(view, SCI_SETFOCUS, 1, 0))
 /** Callback for refreshing a single Scintilla view. */
-static void r_cb(void *view, void*_) { scintilla_refresh((Scintilla *)view); }
+static void r_cb(void *view, void*_) {scintilla_refresh((Scintilla *)view);}
 #define refresh_all() { \
   wman_walk(wm, r_cb, NULL), wman_refresh(wm); \
   if (command_entry_focused) scintilla_refresh(command_entry); \
@@ -1189,7 +1189,7 @@ static int lbuf_closure(lua_State *L) {
     int result = l_globaldoccompare(L, 1);
     if (result != 0) view = (result > 0) ? dummy_view : command_entry;
   }
-  // Interface table is of the form { msg, rtype, wtype, ltype }.
+  // Interface table is of the form {msg, rtype, wtype, ltype}.
   return l_callscintilla(L, view, l_rawgetiint(L, lua_upvalueindex(1), 1),
                          l_rawgetiint(L, lua_upvalueindex(1), 3),
                          l_rawgetiint(L, lua_upvalueindex(1), 4),
@@ -1734,7 +1734,7 @@ static void l_close(lua_State *L) {
  * @see l_close
  */
 static int w_exit(GtkWidget*_, GdkEventAny*__, void*___) {
-  if (!lL_event(lua, "quit", -1)) return TRUE;
+  if (lL_event(lua, "quit", -1)) return TRUE;
   l_close(lua);
   scintilla_release_resources();
   gtk_main_quit();
@@ -1755,7 +1755,7 @@ static int w_open_osx(GtkosxApplication*_, char *path, void*__) {
  * Generates a 'quit' event.
  */
 static int w_exit_osx(GtkosxApplication*_, void*__) {
-  return !lL_event(lua, "quit", -1);
+  return lL_event(lua, "quit", -1);
 }
 
 /**
@@ -2420,7 +2420,7 @@ int main(int argc, char **argv) {
       lL_event(lua, "mouse", LUA_TNUMBER, event, LUA_TNUMBER, button,
                LUA_TNUMBER, y, LUA_TNUMBER, x, LUA_TBOOLEAN, shift,
                LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1);
-    if (quit && lL_event(lua, "quit", -1)) {
+    if (quit && !lL_event(lua, "quit", -1)) {
       l_close(lua);
       // Free some memory.
       free(flabel), free(rlabel);

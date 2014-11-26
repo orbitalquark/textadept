@@ -386,12 +386,13 @@ events_connect(events.QUIT, function()
       list[#list + 1] = filename:iconv('UTF-8', _CHARSET)
     end
   end
-  return #list < 1 or ui.dialogs.msgbox{
+  local cancel = #list > 0 and ui.dialogs.msgbox{
     title = _L['Quit without saving?'],
     text = _L['The following buffers are unsaved:'],
     informative_text = table.concat(list, '\n'), icon = 'gtk-dialog-question',
     button1 = _L['_Cancel'], button2 = _L['Quit _without saving']
-  } == 2
+  } ~= 2
+  if cancel then return true end -- prevent quit
 end)
 
 -- Keeps track of and switches back to the previous buffer after buffer close.
@@ -412,7 +413,7 @@ if CURSES then
     events.connect(events.QUIT, function()
       io.stdout:write("\x1b[?1002l") -- disable mouse mode
       io.stdout:flush()
-    end, 1)
+    end)
   end
 
   -- Retrieves the view or split at the given terminal coordinates.

@@ -206,8 +206,11 @@ local M = {}
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
 -- @field QUIT (string)
 --   Emitted when quitting Textadept.
---   When connecting to this event, connect with an index of 1 or the handler
---   will be ignored.
+--   When connecting to this event, connect with an index of 1 if the handler
+--   needs to run before Textadept closes all open buffers. If a handler returns
+--   `true`, Textadept does not quit. It is not recommended to return `false`
+--   from a quit handler, as that may interfere with Textadept's normal shutdown
+--   procedure.
 --   Emitted by [`quit()`]().
 -- @field REPLACE (string)
 --   Emitted to replace selected (found) text.
