@@ -49,7 +49,6 @@
 #include "ScintillaWidget.h"
 #elif CURSES
 #include "ScintillaTerm.h"
-#include "windowman.h"
 #include "cdk_int.h"
 #include "termkey.h"
 #endif
@@ -143,17 +142,22 @@ static ListStore *find_store, *repl_store;
 #define command_entry_focused gtk_widget_has_focus(command_entry)
 #elif CURSES
 // curses window.
-static struct WindowManager *wm;
+typedef struct Pane {
+  int y, x, rows, cols, split_size; // dimensions
+  enum {SINGLE, VSPLIT, HSPLIT} type; // pane type
+  WINDOW *win; // either the Scintilla curses window or the split bar's window
+  Scintilla *view; // Scintilla view for a non-split view
+  struct Pane *child1, *child2; // each pane in a split view
+} Pane; // Pane implementation based on code by Chris Emerson.
+static Pane *pane;
 static int statusbar_length[2], command_entry_focused;
 TermKey *ta_tk; // global for CDK use
 #define SS(view, msg, w, l) scintilla_send_message(view, msg, w, l)
 #define focus_view(view) \
   (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, \
    SS(view, SCI_SETFOCUS, 1, 0))
-/** Callback for refreshing a single Scintilla view. */
-static void r_cb(void *view, void*_) {scintilla_refresh((Scintilla *)view);}
 #define refresh_all() { \
-  wman_walk(wm, r_cb, NULL), wman_refresh(wm); \
+  pane_refresh(pane); \
   if (command_entry_focused) scintilla_refresh(command_entry); \
   refresh(); \
 }
@@ -162,8 +166,7 @@ static void r_cb(void *view, void*_) {scintilla_refresh((Scintilla *)view);}
 static CDKSCREEN *findbox;
 static CDKENTRY *find_entry, *replace_entry, *focused_entry;
 static char *find_text, *repl_text, *flabel, *rlabel;
-typedef int FindButton;
-enum FindButton {fnext_button, r_button, fprev_button, ra_button};
+typedef enum {fnext_button, r_button, fprev_button, ra_button} FindButton;
 static int find_options[4];
 static int *match_case = &find_options[0], *whole_word = &find_options[1],
            *lua_pattern = &find_options[2], *in_files = &find_options[3];
@@ -403,6 +406,20 @@ static char *get_clipboard() {
   char *text = malloc(scintilla_get_clipboard(focused_view, NULL));
   return (scintilla_get_clipboard(focused_view, text), text);
 }
+
+/**
+ * Redraws an entire pane and its children.
+ * @param pane The pane to redraw.
+ */
+static void pane_refresh(Pane *pane) {
+  if (pane->type == VSPLIT) {
+    mvwvline(pane->win, 0, 0, 0, pane->rows), wrefresh(pane->win);
+    pane_refresh(pane->child1), pane_refresh(pane->child2);
+  } else if (pane->type == HSPLIT) {
+    mvwhline(pane->win, 0, 0, 0, pane->cols), wrefresh(pane->win);
+    pane_refresh(pane->child1), pane_refresh(pane->child2);
+  } else scintilla_refresh(pane->view);
+}
 #endif
 
 /** `find.focus()` Lua function. */
@@ -614,14 +631,14 @@ static void l_pushsplittable(lua_State *L, GtkWidget *w) {
   } else l_pushview(L, w);
 }
 #elif CURSES
-static void l_pushsplittable(lua_State *L, struct WindowManager *wm) {
-  if (wm->dir != SPLIT_LEAF) {
+static void l_pushsplittable(lua_State *L, Pane *pane) {
+  if (pane->type != SINGLE) {
     lua_newtable(L);
-    l_pushsplittable(L, wm->first), lua_rawseti(L, -2, 1);
-    l_pushsplittable(L, wm->second), lua_rawseti(L, -2, 2);
-    lua_pushboolean(L, wm->dir == SPLIT_VER), lua_setfield(L, -2, "vertical");
-    lua_pushinteger(L, wm->splitpos), lua_setfield(L, -2, "size");
-  } else l_pushview(L, wm->view);
+    l_pushsplittable(L, pane->child1), lua_rawseti(L, -2, 1);
+    l_pushsplittable(L, pane->child2), lua_rawseti(L, -2, 2);
+    lua_pushboolean(L, pane->type == VSPLIT), lua_setfield(L, -2, "vertical");
+    lua_pushinteger(L, pane->split_size), lua_setfield(L, -2, "size");
+  } else l_pushview(L, pane->view);
 }
 #endif
 
@@ -632,7 +649,7 @@ static int lui_get_split_table(lua_State *L) {
   while (GTK_IS_PANED(gtk_widget_get_parent(w))) w = gtk_widget_get_parent(w);
   l_pushsplittable(L, w);
 #elif CURSES
-  l_pushsplittable(L, wm);
+  l_pushsplittable(L, pane);
 #endif
   return 1;
 }
@@ -1657,7 +1674,7 @@ static void delete_view(Scintilla *view) {
 
 #if GTK
 /**
- * Remove all Scintilla views from the given pane and delete them.
+ * Removes all Scintilla views from the given pane and deletes them.
  * @param pane The GTK pane to remove Scintilla views from.
  * @see delete_view
  */
@@ -1668,15 +1685,74 @@ static void remove_views_from_pane(GtkWidget *pane) {
 }
 #elif CURSES
 /**
- * Signal that the curses window manager removed a view.
- * @param view The view removed.
+ * Removes all Scintilla views from the given pane and deletes them along with
+ * the child panes themselves.
+ * @param pane The pane to remove Scintilla views from.
  * @see delete_view
  */
-static void view_removed(void *view, void*_) {delete_view((Scintilla *)view);}
+static void remove_views_from_pane(Pane *pane) {
+  if (pane->type == VSPLIT || pane->type == HSPLIT) {
+    remove_views_from_pane(pane->child1), remove_views_from_pane(pane->child2);
+    delwin(pane->win), pane->win = NULL; // delete split bar
+  } else delete_view(pane->view);
+  free(pane);
+}
+
+/**
+ * Resizes and repositions a pane.
+ * @param pane the pane to resize and move.
+ * @param rows The number of rows the pane should show.
+ * @param cols The number of columns the pane should show.
+ * @param y The y-coordinate to place the pane at.
+ * @param x The x-coordinate to place the pane at.
+ */
+static void pane_resize(Pane *pane, int rows, int cols, int y, int x) {
+  if (pane->type == VSPLIT) {
+    int ssize = pane->split_size * cols / max(pane->cols, 1);
+    if (ssize < 1 || ssize >= cols - 1) ssize = (ssize < 1) ? 1 : cols - 2;
+    pane->split_size = ssize;
+    pane_resize(pane->child1, rows, ssize, y, x);
+    pane_resize(pane->child2, rows, cols - ssize - 1, y, x + ssize + 1);
+    wresize(pane->win, rows, 1), mvwin(pane->win, y, x + ssize); // split bar
+  } else if (pane->type == HSPLIT) {
+    int ssize = pane->split_size * rows / max(pane->rows, 1);
+    if (ssize < 1 || ssize >= rows - 1) ssize = (ssize < 1) ? 1 : rows - 2;
+    pane->split_size = ssize;
+    pane_resize(pane->child1, ssize, cols, y, x);
+    pane_resize(pane->child2, rows - ssize - 1, cols, y + ssize + 1, x);
+    wresize(pane->win, 1, cols), mvwin(pane->win, y + ssize, x); // split bar
+  } else wresize(pane->win, rows, cols), mvwin(pane->win, y, x);
+  pane->rows = rows, pane->cols = cols, pane->y = y, pane->x = x;
+}
+
+/**
+ * Helper for unsplitting a view.
+* @param pane The pane that contains the view to unsplit.
+ * @param view The view to unsplit.
+ * @param parent The parent of pane. Used recursively.
+ * @see unsplit_view
+ */
+static int pane_unsplit_view(Pane *pane, Scintilla *view, Pane *parent) {
+  if (pane->type == SINGLE) {
+    if (pane->view != view) return FALSE;
+    remove_views_from_pane((pane == parent->child1) ? parent->child2
+                                                    : parent->child1);
+    delwin(parent->win); // delete split bar
+    // Inherit child's properties.
+    parent->type = pane->type, parent->split_size = pane->split_size;
+    parent->win = pane->win, parent->view = pane->view;
+    parent->child1 = pane->child1, parent->child2 = pane->child2;
+    free(pane);
+    // Update.
+    pane_resize(parent, parent->rows, parent->cols, parent->y, parent->x);
+    return TRUE;
+  } else return pane_unsplit_view(pane->child1, view, pane) ||
+                pane_unsplit_view(pane->child2, view, pane);
+}
 #endif
 
 /**
- * Unsplits the pane a given Scintilla view is in and keeps the view.
+ * Unsplits the pane the given Scintilla view is in and keeps the view.
  * All views in the other pane are deleted.
  * @param view The Scintilla view to keep when unsplitting.
  * @see remove_views_from_pane
@@ -1702,8 +1778,8 @@ static int unsplit_view(Scintilla *view) {
   gtk_widget_grab_focus(GTK_WIDGET(view));
   g_object_unref(view), g_object_unref(other);
 #elif CURSES
-  if (wm->dir == SPLIT_LEAF) return FALSE;
-  wman_unsplit_view(wm, view, view_removed), scintilla_refresh(view);
+  if (pane->type == SINGLE) return FALSE;
+  pane_unsplit_view(pane, view, NULL), scintilla_refresh(view);
 #endif
   return TRUE;
 }
@@ -1918,6 +1994,54 @@ static int lview_goto_buffer(lua_State *L) {
   return 0;
 }
 
+#if CURSES
+/**
+ * Creates a new pane that contains a Scintilla view.
+ * @param view The Scintilla view to place in the pane.
+ */
+static Pane *pane_new(Scintilla *view) {
+  Pane *p = (Pane *)calloc(1, sizeof(Pane));
+  p->type = SINGLE, p->win = scintilla_get_window(view), p->view = view;
+  return p;
+}
+
+/**
+ * Helper for splitting a view.
+ * Recursively propagates a split to child panes.
+ * @param pane The pane to split.
+ * @param vertical Whether to split the pane vertically or horizontally.
+ * @param view The first Scintilla view to place in the split view.
+ * @param view2 The second Scintilla view to place in the split view.
+ * @see split_view
+ */
+static int pane_split_view(Pane *pane, int vertical, Scintilla *view,
+                           Scintilla *view2) {
+  if (pane->type == SINGLE) {
+    if (view != pane->view) return FALSE;
+    Pane *child1 = pane_new(view), *child2 = pane_new(view2);
+    pane->type = vertical ? VSPLIT : HSPLIT;
+    pane->child1 = child1, pane->child2 = child2, pane->view = NULL;
+    // Resize children and create a split bar.
+    if (vertical) {
+      pane->split_size = pane->cols / 2;
+      pane_resize(child1, pane->rows, pane->split_size, pane->y, pane->x);
+      pane_resize(child2, pane->rows, pane->cols - pane->split_size - 1,
+                  pane->y, pane->x + pane->split_size + 1);
+      pane->win = newwin(pane->rows, 1, pane->y, pane->x + pane->split_size);
+    } else {
+      pane->split_size = pane->rows / 2;
+      pane_resize(child1, pane->split_size, pane->cols, pane->y, pane->x);
+      pane_resize(child2, pane->rows - pane->split_size - 1, pane->cols,
+                  pane->y + pane->split_size + 1, pane->x);
+      pane->win = newwin(1, pane->cols, pane->y + pane->split_size, pane->x);
+    }
+    pane_refresh(pane);
+    return TRUE;
+  } else return pane_split_view(pane->child1, vertical, view, view2) ||
+                pane_split_view(pane->child2, vertical, view, view2);
+}
+#endif
+
 /**
  * Splits the given Scintilla view into two views.
  * The new view shows the same document as the original one.
@@ -1951,7 +2075,7 @@ static void split_view(Scintilla *view, int vertical) {
   while (gtk_events_pending()) gtk_main_iteration(); // ensure view2 is painted
 #elif CURSES
   Scintilla *view2 = new_view(curdoc);
-  wman_split_view(wm, vertical, view, view2, scintilla_get_window(view2));
+  pane_split_view(pane, vertical, view, view2);
 #endif
   focus_view(view2);
   SS(view2, SCI_SETSEL, anchor, current_pos);
@@ -1971,6 +2095,20 @@ static int lview_unsplit(lua_State *L) {
   return (lua_pushboolean(L, unsplit_view(lL_checkview(L, 1))), 1);
 }
 
+#if CURSES
+/**
+ * Searches for the given view and returns its parent pane.
+ * @param pane The pane that contains the desired view.
+ * @param view The view to get the parent pane of.
+ */
+static Pane *pane_get_parent(Pane *pane, Scintilla *view) {
+  if (pane->type == SINGLE) return NULL;
+  if (pane->child1->view == view || pane->child2->view == view) return pane;
+  Pane *parent = pane_get_parent(pane->child1, view);
+  return parent ? parent : pane_get_parent(pane->child2, view);
+}
+#endif
+
 /** `view.__index` Lua metatable. */
 static int lview__index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
@@ -1984,8 +2122,8 @@ static int lview__index(lua_State *L) {
       lua_pushinteger(L, pos);
     } else lua_pushnil(L);
 #elif CURSES
-    struct WindowManager *parent = wman_parent(wm, wman_view_owner(wm, view));
-    parent ? lua_pushinteger(L, parent->splitpos) : lua_pushnil(L);
+    Pane *parent = pane_get_parent(pane, view);
+    parent ? lua_pushinteger(L, parent->split_size) : lua_pushnil(L);
 #endif
   } else lua_rawget(L, 1);
   return 1;
@@ -2003,9 +2141,8 @@ static int lview__newindex(lua_State *L) {
     GtkWidget *pane = gtk_widget_get_parent(lL_checkview(L, 1));
     if (GTK_IS_PANED(pane)) gtk_paned_set_position(GTK_PANED(pane), size);
 #elif CURSES
-    Scintilla *view = lL_checkview(L, 1);
-    struct WindowManager *split = wman_parent(wm, wman_view_owner(wm, view));
-    if (split) wman_move_split(split, size);
+    Pane *p = pane_get_parent(pane, lL_checkview(L, 1));
+    if (p) p->split_size = size, pane_resize(p, p->rows, p->cols, p->y, p->x);
 #endif
   } else lua_rawset(L, 1);
   return 0;
@@ -2219,9 +2356,7 @@ static void new_window() {
 
   dummy_view = scintilla_new();
 #elif CURSES
-  Scintilla *view = new_view(0);
-  wm = wman_create(view, scintilla_get_window(view));
-  wman_resize(wm, LINES - 2, COLS, 1, 0);
+  pane = pane_new(new_view(0)), pane_resize(pane, LINES - 2, COLS, 1, 0);
   command_entry = scintilla_new(NULL);
   wresize(scintilla_get_window(command_entry), 1, COLS);
   mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
@@ -2235,8 +2370,7 @@ static void new_window() {
 static void resize(int signal) {
   struct winsize win;
   ioctl(0, TIOCGWINSZ, &win);
-  resizeterm(win.ws_row, win.ws_col);
-  wman_resize(wm, LINES - 2, COLS, 1, 0);
+  resizeterm(win.ws_row, win.ws_col), pane_resize(pane, LINES - 2, COLS, 1, 0);
   WINDOW *ce_win = scintilla_get_window(command_entry);
   wresize(ce_win, 1, COLS), mvwin(ce_win, LINES - 1 - getmaxy(ce_win), 0);
   lL_event(lua, "update_ui", -1);
@@ -2423,7 +2557,7 @@ int main(int argc, char **argv) {
     if (quit && !lL_event(lua, "quit", -1)) {
       l_close(lua);
       // Free some memory.
-      free(flabel), free(rlabel);
+      free(pane), free(flabel), free(rlabel);
       if (find_text) free(find_text);
       if (repl_text) free(repl_text);
       for (int i = 0; i < 10; i++) {

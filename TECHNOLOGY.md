@@ -21,10 +21,6 @@ terminal user interface (TUI).
 =[cdk][] - Widget library for terminal applications=
     Textadept uses cdk for drawing terminal UI widgets.
 
-=[curses-windowman][] - Library to manage split views in curses applications=
-    Textadept uses curses-windowman for handling split views in the terminal
-    version.
-
 =[libtermkey][] - Library for processing keyboard entry for terminal apps=
     Textadept uses libtermkey for advanced keyboard entry handling.
 
@@ -75,7 +71,6 @@ Lua and includes a few external libraries.
 [LuaFileSystem]: http://keplerproject.github.io/luafilesystem/
 [lspawn]: http://foicica.com/hg/lspawn
 [gtDialog]: http://foicica.com/gtdialog/
-[curses-windowman]: https://bitbucket.org/jugglerchris/curses-windowman
 [ncurses]: http://invisible-island.net/ncurses/
 [pdcurses]: http://pdcurses.sourceforge.net/
 [cdk]: http://invisible-island.net/cdk/

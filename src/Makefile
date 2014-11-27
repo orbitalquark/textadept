@@ -134,7 +134,6 @@ gtdialog_objs = gtdialog.o gtdialog-curses.o
 termkey_unix_objs = driver-ti.o driver-csi.o
 termkey_win32_objs = driver-win32-pdcurses.o
 termkey_objs = termkey.o $(termkey_unix_objs) $(termkey_win32_objs)
-windowman_objs = windowman.o
 cdk_objs = binding.o buttonbox.o cdk.o cdk_display.o cdk_objs.o cdkscreen.o \
            draw.o entry.o fselect.o itemlist.o label.o mentry.o popup_label.o \
            scroll.o scroller.o select_file.o selection.o traverse.o version.o
@@ -186,8 +185,6 @@ luajit/src/libluajit.osx.a:
 $(gtdialog_objs): gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 -pedantic -D_POSIX_C_SOURCE=200809L \
 		$(gtdialog_flags) $< -o $@
-$(windowman_objs): %.o: windowman/%.c
-	$(CROSS)$(CC) -c $(CFLAGS) -Iwindowman $(CURSES_CFLAGS) $< -o $@
 $(cdk_objs): %.o: cdk/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) -D_GNU_SOURCE -Itermkey -Icdk $(CURSES_CFLAGS) $< \
 		-o $@
@@ -208,7 +205,7 @@ $(lua_dep_objs): LUA_CFLAGS += -Ilua/src
 $(luajit_dep_objs): LUA_CFLAGS += -Iluajit/src
 $(textadept_gtk_objs): ta_flags += $(GTK_CFLAGS)
 $(textadept_curses_objs): \
-  ta_flags += -Iscintilla/term -Itermkey -Iwindowman -Icdk $(CURSES_CFLAGS)
+  ta_flags += -Iscintilla/term -Itermkey -Icdk $(CURSES_CFLAGS)
 lspawn.o lspawnjit.o: spawn_flags = -DGTK $(GLIB_CFLAGS)
 $(gtdialog_objs): gtdialog_flags = $(plat_flag) -DNOHELP -DLIBRARY
 gtdialog.o: gtdialog_flags += $(GTK_CFLAGS)
@@ -227,13 +224,13 @@ textadeptjit: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
 textadept-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o LexLPeg-curses.o \
                   textadept-curses.o $(lua_objs) $(lua_lib_objs) \
                   lspawn-curses.o gtdialog-curses.o termkey.o \
-                  $(termkey_unix_objs) $(windowman_objs) $(cdk_objs)
+                  $(termkey_unix_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadeptjit-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                      LexLPegjit-curses.o textadeptjit-curses.o \
                      $(luajit_lib_objs) $(libluajit) lspawnjit-curses.o \
                      gtdialog-curses.o termkey.o $(termkey_unix_objs) \
-                     $(windowman_objs) $(cdk_objs)
+                     $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadept.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
                LexLPeg.o textadept.o textadept_rc.o $(lua_objs) \
@@ -248,13 +245,13 @@ textadept-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                       LexLPeg-curses.o textadept-curses.o textadept_rc.o \
                       $(lua_objs) $(lua_lib_objs) lspawn-curses.o \
                       gtdialog-curses.o termkey.o $(termkey_win32_objs) \
-                      $(windowman_objs) $(cdk_objs)
+                      $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadeptjit-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
                          LexLPegjit-curses.o textadeptjit-curses.o \
                          textadept_rc.o $(luajit_lib_objs) $(libluajit) \
                          lspawnjit-curses.o gtdialog-curses.o termkey.o \
-                         $(termkey_win32_objs) $(windowman_objs) $(cdk_objs)
+                         $(termkey_win32_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 
 # Install/uninstall.
@@ -361,7 +358,7 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 # External dependencies.
 
 base_deps = scintilla scintilla/term scintillua lua lualibs luajit gtdialog \
-            windowman cdk ../doc/bombay
+            cdk ../doc/bombay
 deps: $(base_deps) termkey
 win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
@@ -388,7 +385,6 @@ lspawn_zip = lspawn_1.0.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
 gtdialog_zip = gtdialog_1.1.zip
-windowman_zip = 4a75ba194792.zip
 cdk_tgz = cdk.tar.gz
 termkey_tgz = libtermkey-0.17.tar.gz
 win32gtk_zip = gtk+-bundle_2.24.10-20120208_win32.zip
@@ -433,9 +429,6 @@ $(libluajit_tgz): ; wget http://foicica.com/textadept/download/$@
 libluajit64: | $(libluajit_tgz) ; tar xzf $|
 $(gtdialog_zip): ; wget $(gtdialog_url) -O $@
 gtdialog: | $(gtdialog_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
-$(windowman_zip):
-	wget https://bitbucket.org/jugglerchris/curses-windowman/get/$@
-windowman: | $(windowman_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 $(cdk_tgz): ; wget http://invisible-island.net/datafiles/release/$@
 cdk: cdk.patch | $(cdk_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
