@@ -183,7 +183,7 @@ end
 function ui.goto_file(filename, split, preferred_view, sloppy)
   local patt = '^'..filename..'$'
   if sloppy then
-    local i = filename:reverse():find('[/\\]%.%.?') -- ./ or ../
+    local i = filename:reverse():find('[/\\]%.?%.?') -- ./ or ../
     patt = i and filename:sub(-i + 1, -1)..'$' or filename..'$'
   end
   if #_VIEWS == 1 and split and not (view.buffer.filename or ''):find(patt) then
@@ -438,7 +438,7 @@ if CURSES then
   events.connect(events.MOUSE, function(event, button, y, x)
     if event == buffer.MOUSE_RELEASE or button ~= 1 then return end
     if event == buffer.MOUSE_PRESS then
-      local view = get_view(ui.get_split_table(), y - 1, x) -- title is at y=1
+      local view = get_view(ui.get_split_table(), y - 1, x) -- title is at y = 1
       if not view[1] and not view[2] then
         ui.goto_view(_VIEWS[view])
         resize = nil
