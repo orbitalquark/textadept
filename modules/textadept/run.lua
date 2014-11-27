@@ -66,9 +66,10 @@ local function command(commands, event)
     io.save_file()
     command = commands[buffer.filename:match('[^.]+$')] or
               commands[buffer:get_lexer()]
-    cwd = buffer.filename:match('^(.+[/\\])[^/\\]+$') or ''
+    cwd = buffer.filename:match('^(.+)[/\\][^/\\]+$') or ''
     data = buffer:get_lexer()
   else
+    for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
     cwd = io.get_project_root()
     command = commands[cwd]
     if not command then
@@ -299,7 +300,7 @@ function M.goto_error(line, next)
   local error = get_error(buffer:get_line(line):match('^[^\r\n]*'))
   if not error then if CURSES then view:goto_buffer(cur_buf) end return end
   textadept.editing.select_line()
-  ui.goto_file(M.cwd..error.filename, true, preferred_view, true)
+  ui.goto_file(M.cwd..'/'..error.filename, true, preferred_view, true)
   local line, message = error.line, error.message
   buffer:goto_line(line - 1)
   if message then
