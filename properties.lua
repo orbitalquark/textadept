@@ -162,5 +162,7 @@ buffer.fold_flags = not CURSES and buffer.FOLDFLAG_LINEAFTER_CONTRACTED or 0
 --buffer.wrap_start_indent =
 
 -- Long Lines.
---buffer.edge_mode = not CURSES and buffer.EDGE_LINE or buffer.EDGE_BACKGROUND
---buffer.edge_column = 80
+--if buffer ~= ui.command_entry then
+--  buffer.edge_mode = not CURSES and buffer.EDGE_LINE or buffer.EDGE_BACKGROUND
+--  buffer.edge_column = 80
+--end
