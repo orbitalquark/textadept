@@ -632,5 +632,13 @@ setmetatable(keys.find_incremental, {__index = function(t, k)
                if #k > 1 and k:find('^[cams]*.+$') then return end
                ui.find.find_incremental(ui.command_entry:get_text()..k, true)
              end})
+-- Show documentation for symbols in the Lua command entry.
+keys.lua_command[not CURSES and 'ch' or 'mh'] = function()
+  -- Temporarily change _G.buffer since ui.command_entry is the "active" buffer.
+  local buffer = _G.buffer
+  _G.buffer = ui.command_entry
+  textadept.editing.show_documentation()
+  _G.buffer = buffer
+end
 
 return M
