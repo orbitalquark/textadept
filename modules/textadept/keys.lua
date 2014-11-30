@@ -99,7 +99,7 @@ local M = {}
 -- None            |None   |None         |Snapopen `_HOME`
 -- Ctrl+Alt+Shift+O|^⌘⇧O   |M-S-O        |Snapopen current directory
 -- Ctrl+Alt+Shift+P|^⌘⇧P   |M-^P         |Snapopen current project
--- Ctrl+I          |⌘I     |None         |Show style
+-- Ctrl+I          |⌘I     |M-S-I        |Show style
 -- **Buffer**      |      |             |
 -- Ctrl+Tab        |^⇥    |M-N          |Next buffer
 -- Ctrl+Shift+Tab  |^⇧⇥   |M-P          |Previous buffer
@@ -219,6 +219,14 @@ local M = {}
 -- †: Ctrl+Enter in Win32 curses.
 module('textadept.keys')]]
 
+-- UTF-8 handling tables.
+local utf8_lengths = { -- {max code point, UTF-8 length}
+  {0x80, 1}, {0x800, 2}, {0x10000, 3}, {0x200000, 4}, {0x4000000, 5}
+}
+local lead_bytes = { -- [UTF-8 length] = {UTF-8 lead bits, remaining mask}
+  {0, 0x7F}, {0xC0, 0x1F}, {0xE0, 0x0F}, {0xF0, 0x7}, {0xF8, 0x3}, {0xFC, 0x1}
+}
+
 -- Utility functions.
 M.utils = {
   delete_word = function()
@@ -243,10 +251,18 @@ M.utils = {
     if buffer.filename then io.snapopen(buffer.filename:match('^(.+)[/\\]')) end
   end,
   show_style = function()
-    local style = buffer.style_at[buffer.current_pos]
-    local text = string.format("%s %s\n%s %s (%d)", _L['Lexer'],
-                               buffer:get_lexer(true), _L['Style'],
-                               buffer.style_name[style], style)
+    local pos = buffer.current_pos
+    local char = buffer:text_range(pos, buffer:position_after(pos))
+    if char == '' then char = '\0' end
+    local code = bit32.band(char:byte(), lead_bytes[#char][2])
+    for i = 2, #char do
+      code = bit32.bor(bit32.lshift(code, 6), bit32.band(char:byte(i), 0x3F))
+    end
+    local bytes = string.rep(' 0x%X', #char):format(char:byte(1, #char))
+    local style = buffer.style_at[pos]
+    local text = string.format("'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char,
+                               code, bytes, _L['Lexer'], buffer:get_lexer(true),
+                               _L['Style'], buffer.style_name[style], style)
     buffer:call_tip_show(buffer.current_pos, text)
   end,
   set_indentation = function(i)
@@ -356,7 +372,7 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
 -- cm:   cd  g~~ k ~   q  t    yz
--- m:          e        I J            qQ  sS    vVw   yYzZ_          +
+-- m:          e          J            qQ  sS    vVw   yYzZ_          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- CTRL = 'c' (Control ^)
@@ -503,7 +519,7 @@ keys[not OSX and ((not CURSES or WIN32) and 'c ' or 'c@')
              or 'aesc'] = utils.autocomplete_symbol
 keys[not CURSES and 'ch' or 'mh'] = textadept.editing.show_documentation
 if CURSES then keys.mH = keys.mh end -- in case mh is used by GUI terminals
-if not CURSES then keys[not OSX and 'ci' or 'mi'] = utils.show_style end
+keys[not OSX and (not CURSES and 'ci' or 'mI') or 'mi'] = utils.show_style
 
 -- Buffer.
 keys[not CURSES and 'c\t' or 'mn'] = {view.goto_buffer, view, 1, true}
@@ -642,13 +658,6 @@ keys.lua_command[not CURSES and 'ch' or 'mh'] = function()
 end
 if OSX or CURSES then
   -- UTF-8 input.
-  local utf8_lengths = { -- {max code point, UTF-8 length}
-    {0x80, 1}, {0x800, 2}, {0x10000, 3}, {0x200000, 4}, {0x4000000, 5}
-  }
-  local lead_bytes = { -- [UTF-8 length] = {UTF-8 lead bits, remaining mask}
-    {0, 0x7F}, {0xC0, 0x1F}, {0xE0, 0x0F}, {0xF0, 0x07}, {0xF8, 0x03},
-    {0xFC, 0x01}
-  }
   keys.utf8_input = {['\n'] = {ui.command_entry.finish_mode, function(code)
     local c = tonumber(code, 16)
     -- Determine the number of bytes in UTF-8 character to insert.
