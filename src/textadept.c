@@ -1424,7 +1424,7 @@ static int lL_dofile(lua_State *L, const char *filename) {
 /** `_G.reset()` Lua function. */
 static int lreset(lua_State *L) {
   lL_event(L, "reset_before", -1);
-  lL_init(L, 0, NULL, TRUE), register_command_entry_doc();
+  lL_init(L, 0, NULL, TRUE);
   l_setglobalview(L, focused_view);
   l_setglobaldoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
   lua_pushnil(L), lua_setglobal(L, "arg");
@@ -1557,10 +1557,15 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   l_setcfunction(L, -1, "replace_all", lfind_replace_all);
   l_setmetatable(L, -1, "ta_find", lfind__index, lfind__newindex);
   lua_setfield(L, -2, "find");
-  lua_newtable(L);
-  l_setcfunction(L, -1, "focus", lce_focus);
-  l_setcfunction(L, -1, "text_range", lbuffer_text_range);
-  l_setmetatable(L, -1, "ta_buffer", lbuf_property, lbuf_property);
+  if (!reinit) {
+    lua_newtable(L);
+    l_setcfunction(L, -1, "focus", lce_focus);
+    l_setcfunction(L, -1, "text_range", lbuffer_text_range);
+    l_setmetatable(L, -1, "ta_buffer", lbuf_property, lbuf_property);
+  } else {
+    lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
+    lua_rawgeti(L, -1, 0), lua_replace(L, -2); // _BUFFERS[0]
+  }
   lua_setfield(L, -2, "command_entry");
   l_setcfunction(L, -1, "dialog", lui_dialog);
   l_setcfunction(L, -1, "get_split_table", lui_get_split_table);
@@ -1727,7 +1732,7 @@ static void pane_resize(Pane *pane, int rows, int cols, int y, int x) {
 
 /**
  * Helper for unsplitting a view.
-* @param pane The pane that contains the view to unsplit.
+ * @param pane The pane that contains the view to unsplit.
  * @param view The view to unsplit.
  * @param parent The parent of pane. Used recursively.
  * @see unsplit_view
