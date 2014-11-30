@@ -189,8 +189,8 @@ local M = {}
 -- None            |^L          |None        |Center line vertically
 -- N/A             |N/A         |^^          |Mark text at the caret position
 -- N/A             |N/A         |^]          |Swap caret and mark anchor
--- **Other**                |    |    |
--- Ctrl+Shift+U *xxxx* Enter|None|None|Input Unicode character U-*xxxx*.
+-- **UTF-8 Input**          |            |                |
+-- Ctrl+Shift+U *xxxx* Enter|⌘⇧U *xxxx* ↩|M-U *xxxx* Enter|Insert U-*xxxx* char.
 -- **Entry Fields**|               |            |
 -- Left            |⇠<br/>^B       |^B<br/>Left |Cursor left
 -- Right           |⇢<br/>^F       |^F<br/>Right|Cursor right
@@ -328,7 +328,7 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 -- Mac OSX key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- m:   A   C        ~  I JkK  ~M    p  ~    tT U V    yY  _   ) ] }   +   ~~\n
+-- m:   A   C        ~  I JkK  ~M    p  ~    tT   V    yY  _   ) ] }   +   ~~\n
 -- c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  p q~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
@@ -356,7 +356,7 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~
 -- cm:   cd  g~~ k ~   q  t    yz
--- m:          e        I J            qQ  sS  u vVw   yYzZ_          +
+-- m:          e        I J            qQ  sS    vVw   yYzZ_          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- CTRL = 'c' (Control ^)
@@ -639,6 +639,34 @@ keys.lua_command[not CURSES and 'ch' or 'mh'] = function()
   _G.buffer = ui.command_entry
   textadept.editing.show_documentation()
   _G.buffer = buffer
+end
+if OSX or CURSES then
+  -- UTF-8 input.
+  local utf8_lengths = { -- {max code point, UTF-8 length}
+    {0x80, 1}, {0x800, 2}, {0x10000, 3}, {0x200000, 4}, {0x4000000, 5}
+  }
+  local lead_bytes = { -- [UTF-8 length] = {UTF-8 lead bits, remaining mask}
+    {0, 0x7F}, {0xC0, 0x1F}, {0xE0, 0x0F}, {0xF0, 0x07}, {0xF8, 0x03},
+    {0xFC, 0x01}
+  }
+  keys.utf8_input = {['\n'] = {ui.command_entry.finish_mode, function(code)
+    local c = tonumber(code, 16)
+    -- Determine the number of bytes in UTF-8 character to insert.
+    local buf, len = {}, 6
+    for i = 1, #utf8_lengths do
+      if c < utf8_lengths[i][1] then len = utf8_lengths[i][2] break end
+    end
+    -- Produce UTF-8 bytes.
+    for i = len, 2, -1 do
+      buf[i], c = bit32.bor(0x80, bit32.band(c, 0x3F)), bit32.rshift(c, 6)
+    end
+    -- Construct the lead UTF-8 byte.
+    buf[1] = bit32.bor(lead_bytes[len][1], bit32.band(c, lead_bytes[len][2]))
+    -- Transform bytes into strings and perform the insertion.
+    for i = 1, #buf do buf[i] = string.char(buf[i]) end
+    _G.buffer:add_text(table.concat(buf))
+  end}}
+  keys[OSX and 'mU' or 'mu'] = {ui.command_entry.enter_mode, 'utf8_input'}
 end
 
 return M
