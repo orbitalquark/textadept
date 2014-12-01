@@ -296,3 +296,21 @@ diff -r 326449de45d0 src/LineMarker.h
  		}
  		return *this;
  	}
+diff -r 326449de45d0 src/ScintillaBase.cxx
+--- a/src/ScintillaBase.cxx	Thu Sep 25 09:48:50 2014 +1000
++++ b/src/ScintillaBase.cxx	Sun Nov 30 23:25:36 2014 -0500
+@@ -448,12 +448,12 @@
+ 	PRectangle rcClient = GetClientRectangle();
+ 	int offset = vs.lineHeight + static_cast<int>(rc.Height());
+ 	// adjust so it displays above the text.
+-	if (rc.bottom > rcClient.bottom) {
++	if (rc.bottom > rcClient.bottom && rc.Height() < rcClient.Height()) {
+ 		rc.top -= offset;
+ 		rc.bottom -= offset;
+ 	}
+ 	// adjust so it displays below the text.
+-	if (rc.top < rcClient.top) {
++	if (rc.top < rcClient.top && rc.Height() < rcClient.Height()) {
+ 		rc.top += offset;
+ 		rc.bottom += offset;
+ 	}
