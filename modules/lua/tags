@@ -16,6 +16,7 @@ AUTO_C_CANCELED	_	0;"	F	class:events
 AUTO_C_CHAR_DELETED	_	0;"	F	class:events
 AUTO_C_SELECTION	_	0;"	F	class:events
 B	_	0;"	f	class:lpeg
+BSD	_	0;"	F	
 BUFFER_AFTER_SWITCH	_	0;"	F	class:events
 BUFFER_BEFORE_SWITCH	_	0;"	F	class:events
 BUFFER_DELETED	_	0;"	F	class:events
@@ -43,10 +44,10 @@ CHECK_SYNTAX	_	0;"	F	class:_M.python
 CLASS	_	0;"	F	class:lexer
 CLASS	_	0;"	F	class:textadept.editing.XPM_IMAGES
 CLEAR	_	0;"	F	class:keys
-COMMAND_ENTRY_KEYPRESS	_	0;"	F	class:events
 COMMENT	_	0;"	F	class:lexer
 COMPILE_OUTPUT	_	0;"	F	class:events
 CONSTANT	_	0;"	F	class:lexer
+CSI	_	0;"	F	class:events
 CURSES	_	0;"	F	
 CURSORARROW	_	0;"	F	class:buffer
 CURSORNORMAL	_	0;"	F	class:buffer
@@ -142,6 +143,7 @@ LABEL	_	0;"	F	class:lexer
 LANGUAGE_MODULE_PREFIX	_	0;"	F	class:keys
 LEXERPATH	_	0;"	F	class:lexer
 LEXER_LOADED	_	0;"	F	class:events
+LINUX	_	0;"	F	
 MARGINOPTION_NONE	_	0;"	F	class:buffer
 MARGINOPTION_SUBLINESELECT	_	0;"	F	class:buffer
 MARGIN_BACK	_	0;"	F	class:buffer
@@ -205,6 +207,10 @@ MOD_CTRL	_	0;"	F	class:buffer
 MOD_META	_	0;"	F	class:buffer
 MOD_SHIFT	_	0;"	F	class:buffer
 MOD_SUPER	_	0;"	F	class:buffer
+MOUSE	_	0;"	F	class:events
+MOUSE_DRAG	_	0;"	F	class:buffer
+MOUSE_PRESS	_	0;"	F	class:buffer
+MOUSE_RELEASE	_	0;"	F	class:buffer
 MULTIAUTOC_EACH	_	0;"	F	class:buffer
 MULTIAUTOC_ONCE	_	0;"	F	class:buffer
 MULTIPASTE_EACH	_	0;"	F	class:buffer
@@ -554,6 +560,7 @@ edge_column	_	0;"	F	class:buffer
 edge_mode	_	0;"	F	class:buffer
 edit_toggle_overtype	_	0;"	f	class:buffer
 editing	_	0;"	m	class:textadept
+editing_keys	_	0;"	t	class:ui.command_entry
 embed_lexer	_	0;"	f	class:lexer
 emit	_	0;"	f	class:events
 empty_undo_buffer	_	0;"	f	class:buffer
@@ -567,7 +574,6 @@ end_undo_action	_	0;"	f	class:buffer
 ensure_visible	_	0;"	f	class:buffer
 ensure_visible_enforce_policy	_	0;"	f	class:buffer
 enter_mode	_	0;"	f	class:ui.command_entry
-entry_text	_	0;"	F	class:ui.command_entry
 eol_mode	_	0;"	F	class:buffer
 error	_	0;"	f	
 error_patterns	_	0;"	t	class:textadept.run
@@ -659,6 +665,7 @@ goto_view	_	0;"	f	class:ui
 graph	_	0;"	F	class:lexer
 gsub	_	0;"	f	class:string
 h_scroll_bar	_	0;"	F	class:buffer
+height	_	0;"	F	class:ui.command_entry
 hex_num	_	0;"	F	class:lexer
 hide_lines	_	0;"	f	class:buffer
 hide_selection	_	0;"	f	class:buffer
@@ -832,6 +839,7 @@ new	_	0;"	f	class:buffer
 new_line	_	0;"	f	class:buffer
 newline	_	0;"	F	class:lexer
 next	_	0;"	f	
+next_image_type	_	0;"	f	class:_SCINTILLA
 next_indic_number	_	0;"	f	class:_SCINTILLA
 next_marker_number	_	0;"	f	class:_SCINTILLA
 next_user_list_type	_	0;"	f	class:_SCINTILLA
@@ -1026,7 +1034,6 @@ setupvalue	_	0;"	f	class:debug
 setuservalue	_	0;"	f	class:debug
 setvbuf	_	0;"	f	class:file
 shebangs	_	0;"	t	class:textadept.file_types
-show_completions	_	0;"	f	class:ui.command_entry
 show_documentation	_	0;"	f	class:textadept.editing
 show_lines	_	0;"	f	class:buffer
 sin	_	0;"	f	class:math
