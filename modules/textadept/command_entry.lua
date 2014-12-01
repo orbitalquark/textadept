@@ -180,6 +180,7 @@ keys.lua_command = {['\t'] = complete_lua, ['\n'] = {M.finish_mode, run_lua}}
 events.connect(events.INITIALIZED, function()
   M.h_scroll_bar, M.v_scroll_bar = false, false
   M.margin_width_n[0], M.margin_width_n[1], M.margin_width_n[2] = 0, 0, 0
+  M.call_tip_position = true
 end)
 
 --[[ The function below is a Lua C function.
