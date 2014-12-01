@@ -8,6 +8,67 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.8 beta (01 Dec 2014)
+
+Download:
+
+* [Textadept 7.8 beta -- Win32][]
+* [Textadept 7.8 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 7.8 beta -- Linux][]
+* [Textadept 7.8 beta -- Linux x86_64][]
+* [Textadept 7.8 beta -- Modules][]
+
+Bugfixes:
+
+* Fixed extra space pasting from external Win32 apps.
+* Fixed bug in C autocompletion.
+* Disable GCC optimizations when compiling with debug symbols.
+* Ensure "find in files" is off when activating normal find.
+* Fixed return values from [`ui.dialogs.optionselect()`][].
+* The command entry does not hide when the window loses focus.
+* Fixed '//' bug when iterating over root directory with [`lfs.dir_foreach()`].
+* Fixed bug in jumping to compile/run errors and clear annotations before
+  building projects.
+
+Changes:
+
+* Replaced the command entry text field with a Scintilla buffer and added
+  [`ui.command_entry.editing_keys`][] for changing the editing keys in all
+  modes.
+* Added lexer and height parameters to [`ui.command_entry.enter_mode()`][].
+* Support bracketed paste in the terminal version.
+* Allow handling of unknown [CSI events][].
+* Added mouse support for buffers and eliminated many
+  [curses incompatibilities][].
+* Added [`_G.LINUX`][] and [`_G.BSD`][] platform flags for the sake of
+  completeness.
+* [Rectangular selections][] with the mouse on Linux use the `Alt` modifier key
+  instead of `Super`.
+* Display the current working directory in fileselect dialogs.
+* Added [`_SCINTILLA.next_image_type()`][] for registering images.
+* Added Arabic translation.
+* File dialogs in the terminal span the whole view.
+* Added basic UTF-8 support for terminal widgets -- locales such as Russian now
+  display properly.
+* Added UTF-8 input mode for Mac OSX (`⌘⇧U`) and the terminal version (`M-U`).
+* Show character information in "Show Style" popup.
+
+[Textadept 7.8 beta -- Win32]: download/textadept_7.8_beta.win32.zip
+[Textadept 7.8 beta -- Mac OSX Intel 10.5+]: download/textadept_7.8_beta.osx.zip
+[Textadept 7.8 beta -- Linux]: download/textadept_7.8_beta.i386.tgz
+[Textadept 7.8 beta -- Linux x86_64]: download/textadept_7.8_beta.x86_64.tgz
+[Textadept 7.8 beta -- Modules]: download/textadept_7.8_beta.modules.zip
+[`ui.command_entry.editing_keys`]: api.html#ui.command_entry.editing_keys
+[`ui.command_entry.enter_mode()`]: api.html#ui.command_entry.enter_mode
+[CSI events]: api.html#events.CSI
+[curses incompatibilities]: manual.html#Curses.Compatibility
+[`_G.LINUX`]: api.html#LINUX
+[`_G.BSD`]: api.html#BSD
+[Rectangular selections]: manual.html#Rectangular.Selection
+[`ui.dialogs.optionselect()`]: api.html#ui.dialogs.optionselect
+[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
+[`_SCINTILLA.next_image_type()`]: api.html#_SCINTILLA.next_image_type
+
 ## 7.7 (01 Oct 2014)
 
 Download:
