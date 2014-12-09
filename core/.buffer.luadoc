@@ -60,6 +60,8 @@
 --   * `buffer.ANNOTATION_BOXED`
 --     Indent annotations to match the annotated text and outline them with a
 --     box.
+--   * `buffer.ANNOTATION_INDENTED`
+--     Indent non-decorated annotations to match the annotated text.
 --
 --   The default value is `buffer.ANNOTATION_HIDDEN`.
 -- @field auto_c_auto_hide (bool)
