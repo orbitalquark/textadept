@@ -303,7 +303,7 @@ modules = css html rest ruby python yaml
 
 release-all: release release64 win32-release osx-release modules-release
 
-$(basedir).i386: | $(build_dir) ; hg archive $@ -X ".hg*"
+$(basedir).i386: ; hg archive $@ -X ".hg*"
 release: $(basedir).i386
 	make deps clean doc
 	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -j4
