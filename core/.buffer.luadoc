@@ -286,7 +286,7 @@
 --   line numbers starting from zero.
 --   Setting expanded fold states does not toggle folds; it only updates fold
 --   margin markers. Use [`buffer.toggle_fold()`]() instead.
--- @field fold_flags (number)
+-- @field fold_flags (number, Read-only)
 --   Bit-mask of folding lines to draw in the buffer.
 --
 --   * `buffer.FOLDFLAG_LINEBEFORE_EXPANDED`
