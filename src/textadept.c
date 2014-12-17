@@ -178,7 +178,8 @@ static ListStore find_store[10], repl_store[10];
                     bindCDKObject(vENTRY, replace_entry, k, entry_keypress, d))
 #define toggled(find_option) *find_option
 // Use pointer arithmetic to highlight/unhighlight options as necessary.
-#define toggle(o, on) (*o = on, option_labels[o - match_case] += *o ? -4 : 4)
+#define toggle(o, on) \
+  if (*o != on) *o = on, option_labels[o - match_case] += *o ? -4 : 4;
 #define set_label_text(label, text) fcopy(&label, text)
 #define set_button_label(button, label) fcopy(&button_labels[button], label)
 // Prepend "</R>" to each option label because pointer arithmetic will be used
@@ -534,15 +535,15 @@ static int lfind__newindex(lua_State *L) {
 #elif CURSES
     fcopy(&repl_text, lua_tostring(L, 3));
 #endif
-  else if (strcmp(key, "match_case") == 0)
+  else if (strcmp(key, "match_case") == 0) {
     toggle(match_case, lua_toboolean(L, -1));
-  else if (strcmp(key, "whole_word") == 0)
+  } else if (strcmp(key, "whole_word") == 0) {
     toggle(whole_word, lua_toboolean(L, -1));
-  else if (strcmp(key, "lua") == 0)
+  } else if (strcmp(key, "lua") == 0) {
     toggle(lua_pattern, lua_toboolean(L, -1));
-  else if (strcmp(key, "in_files") == 0)
+  } else if (strcmp(key, "in_files") == 0) {
     toggle(in_files, lua_toboolean(L, -1));
-  else if (strcmp(key, "find_label_text") == 0)
+  } else if (strcmp(key, "find_label_text") == 0)
     set_label_text(flabel, lua_tostring(L, 3));
   else if (strcmp(key, "replace_label_text") == 0)
     set_label_text(rlabel, lua_tostring(L, 3));
