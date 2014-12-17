@@ -400,7 +400,7 @@ diff -r c40f79827990 draw.c
 +      for (x = 0; x < display; x++, p+=charlen)
        {
 -	 (void)mvwaddch (window, ypos + x, xpos, string[x + start] | attr);
-+         charlen = utf8charlen(p);
++         charlen = utf8charlen(*p);
 +	 (void)mvwaddnstr (window, ypos + x, xpos, (const char *)p, charlen);
        }
     }
