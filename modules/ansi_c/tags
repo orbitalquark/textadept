@@ -127,7 +127,7 @@ ptrdiff_t	_	0;"	t
 size_t	_	0;"	t
 BUFSIZ	_	0;"	m
 EOF	_	0;"	m
-FILENAME_MA	_	0;"	mX
+FILENAME_MAX	_	0;"	m
 FOPEN_MAX	_	0;"	m
 L_tmpnam	_	0;"	m
 NULL	_	0;"	m
