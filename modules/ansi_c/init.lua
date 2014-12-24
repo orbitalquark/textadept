@@ -18,7 +18,8 @@ module('_M.ansi_c')]]
 -- Autocompletion and documentation.
 
 ---
--- List of ctags files to use for autocompletion.
+-- List of ctags files to use for autocompletion in addition to the current
+-- project's top-level *tags* file or the current directory's *tags* file.
 -- @class table
 -- @name tags
 M.tags = {_HOME..'/modules/ansi_c/tags', _USERHOME..'/modules/ansi_c/tags'}
@@ -40,26 +41,30 @@ textadept.editing.autocompleters.ansi_c = function()
   -- Attempt to identify the symbol type.
   if symbol ~= '' then
     local buffer = buffer
-    local declaration = '([%w_]+)[%s%*&]+'..symbol:gsub('(%p)', '%%%1')..'[^%w_]'
+    local decl = '([%w_]+)[%s%*&]+'..symbol:gsub('(%p)', '%%%1')..'[^%w_]'
     for i = buffer:line_from_position(buffer.current_pos) - 1, 0, -1 do
-      local class = buffer:get_line(i):match(declaration)
+      local class = buffer:get_line(i):match(decl)
       if class then symbol = class break end
     end
   end
   -- Search through ctags for completions for that symbol.
+  local tags_files = {}
+  for i = 1, #M.tags do tags_files[#tags_files + 1] = M.tags[i] end
+  tags_files[#tags_files + 1] = (io.get_project_root(buffer.filename) or
+                                 lfs.currentdir())..'/tags'
   local name_patt = '^'..part
   local sep = string.char(buffer.auto_c_type_separator)
-  for i = 1, #M.tags do
-    if lfs.attributes(M.tags[i]) then
-      for line in io.lines(M.tags[i]) do
+  for i = 1, #tags_files do
+    if lfs.attributes(tags_files[i]) then
+      for line in io.lines(tags_files[i]) do
         local name = line:match('^%S+')
         if name:find(name_patt) and not name:find('^!') and not list[name] then
           local fields = line:match(';"\t(.*)$')
-          if (fields:find('class:%S+') or fields:find('enum:%S+') or
-              fields:find('struct:%S+') or fields:find('typedef:%S+') or
+          if (fields:match('class:(%S+)') or fields:match('enum:(%S+)') or
+              fields:match('struct:(%S+)') or fields:match('typedef:(%S+)') or
               '') == symbol then
-            local k = xpms[fields:sub(1, 1)]
-            list[#list + 1] = ("%s%s%d"):format(name, sep, xpms[k])
+            list[#list + 1] = ("%s%s%d"):format(name, sep,
+                                                xpms[fields:sub(1, 1)])
             list[name] = true
           end
         end
