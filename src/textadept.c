@@ -2372,15 +2372,22 @@ static void new_window() {
 }
 
 #if (CURSES && !_WIN32)
-/** Signal for a terminal resize. */
-static void resize(int signal) {
-  struct winsize win;
-  ioctl(0, TIOCGWINSZ, &win);
-  resizeterm(win.ws_row, win.ws_col), pane_resize(pane, LINES - 2, COLS, 1, 0);
-  WINDOW *ce_win = scintilla_get_window(command_entry);
-  wresize(ce_win, 1, COLS), mvwin(ce_win, LINES - 1 - getmaxy(ce_win), 0);
-  lL_event(lua, "update_ui", -1);
-  refresh_all();
+/**
+ * Signal for a terminal suspend, continue, and resize.
+ * libtermkey has been patched to enable suspend as well as enable/disable mouse
+ * mode (1002).
+ */
+static void t_signal(int signal) {
+  if (signal != SIGTSTP) {
+    if (signal == SIGCONT) termkey_start(ta_tk);
+    struct winsize w;
+    ioctl(0, TIOCGWINSZ, &w);
+    resizeterm(w.ws_row, w.ws_col), pane_resize(pane, LINES - 2, COLS, 1, 0);
+    WINDOW *ce_win = scintilla_get_window(command_entry);
+    wresize(ce_win, 1, COLS), mvwin(ce_win, LINES - 1 - getmaxy(ce_win), 0);
+    lL_event(lua, "update_ui", -1);
+    refresh_all();
+  } else endwin(), termkey_stop(ta_tk), kill(0, SIGSTOP);
 }
 
 /** Replacement for `termkey_waitkey()` that handles asynchronous I/O. */
@@ -2416,7 +2423,7 @@ int main(int argc, char **argv) {
 #if GTK
   gtk_init(&argc, &argv);
 #elif CURSES
-  ta_tk = termkey_new(0, 0);
+  ta_tk = termkey_new(0, 0); // patched to auto-enable mouse mode (1002)
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
   curs_set(0); // disable cursor when Scintilla has focus
@@ -2498,14 +2505,13 @@ int main(int argc, char **argv) {
 
 #if !_WIN32
   stderr = freopen("/dev/null", "w", stderr); // redirect stderr
-  // Prevent ^C from generating SIGINT. TERMKEY_FLAG_CTRLC is ineffective since
-  // initscr() overrides it.
-  struct termios term;
-  tcgetattr(0, &term), term.c_lflag &= ~ISIG, tcsetattr(0, TCSANOW, &term);
-  // Set terminal resize handler.
+  // Set terminal suspend, resume, and resize handlers, preventing any signals
+  // in them from causing interrupts.
   struct sigaction act;
   memset(&act, 0, sizeof(struct sigaction));
-  act.sa_handler = resize, sigaction(SIGWINCH, &act, NULL);
+  act.sa_handler = t_signal, sigfillset(&act.sa_mask);
+  sigaction(SIGTSTP, &act, NULL), sigaction(SIGCONT, &act, NULL);
+  sigaction(SIGWINCH, &act, NULL);
 #else
   freopen("NUL", "w", stderr); // redirect stderr
 #endif

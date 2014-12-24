@@ -1,6 +1,6 @@
-diff -r a94d84bdd4a6 driver-win32-pdcurses.c
+diff -r 49c8684413c0 driver-win32-pdcurses.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/driver-win32-pdcurses.c	Fri Oct 24 21:59:44 2014 -0400
++++ b/driver-win32-pdcurses.c	Tue Dec 23 13:31:50 2014 -0500
 @@ -0,0 +1,106 @@
 +// Copyright 2014 Mitchell mitchell.att.foicica.com. See LICENSE.
 +
@@ -108,9 +108,9 @@ diff -r a94d84bdd4a6 driver-win32-pdcurses.c
 +  .free_driver = free_driver,
 +  .peekkey = peekkey,
 +};
-diff -r a94d84bdd4a6 termkey-internal.h
---- a/termkey-internal.h	Fri Oct 24 21:58:29 2014 -0400
-+++ b/termkey-internal.h	Fri Oct 24 21:59:44 2014 -0400
+diff -r 49c8684413c0 termkey-internal.h
+--- a/termkey-internal.h	Tue Dec 23 10:36:54 2014 -0500
++++ b/termkey-internal.h	Tue Dec 23 13:31:50 2014 -0500
 @@ -4,7 +4,9 @@
  #include "termkey.h"
  
@@ -152,9 +152,9 @@ diff -r a94d84bdd4a6 termkey-internal.h
 +#endif
  
  #endif
-diff -r a94d84bdd4a6 termkey.c
---- a/termkey.c	Fri Oct 24 21:58:29 2014 -0400
-+++ b/termkey.c	Fri Oct 24 21:59:44 2014 -0400
+diff -r 49c8684413c0 termkey.c
+--- a/termkey.c	Tue Dec 23 10:36:54 2014 -0500
++++ b/termkey.c	Tue Dec 23 13:31:50 2014 -0500
 @@ -3,8 +3,12 @@
  
  #include <ctype.h>
@@ -216,26 +216,40 @@ diff -r a94d84bdd4a6 termkey.c
    if(tk->fd != -1 && !(tk->flags & TERMKEY_FLAG_NOTERMIOS)) {
      struct termios termios;
      if(tcgetattr(tk->fd, &termios) == 0) {
-@@ -487,6 +496,7 @@
+@@ -472,9 +481,9 @@
+         /* want no signal keys at all, so just disable ISIG */
+         termios.c_lflag &= ~ISIG;
+       else {
+-        /* Disable Ctrl-\==VQUIT and Ctrl-D==VSUSP but leave Ctrl-C as SIGINT */
++        /* Disable Ctrl-\==VQUIT and Ctrl-C==VINTR but leave Ctrl-Z as SIGTSTP */
+         termios.c_cc[VQUIT] = _POSIX_VDISABLE;
+-        termios.c_cc[VSUSP] = _POSIX_VDISABLE;
++        termios.c_cc[VINTR] = _POSIX_VDISABLE;
+         /* Some OSes have Ctrl-Y==VDSUSP */
+ #ifdef VDSUSP
+         termios.c_cc[VDSUSP] = _POSIX_VDISABLE;
+@@ -487,6 +496,8 @@
        tcsetattr(tk->fd, TCSANOW, &termios);
      }
    }
++  printf("\033[?1002h"), fflush(stdout); // enable mouse mode
 +#endif
  
    struct TermKeyDriverNode *p;
    for(p = tk->drivers; p; p = p->next)
-@@ -512,8 +522,10 @@
+@@ -512,8 +523,11 @@
      if(p->driver->stop_driver)
        (*p->driver->stop_driver)(tk, p->info);
  
 +#if !_WIN32
    if(tk->restore_termios_valid)
      tcsetattr(tk->fd, TCSANOW, &tk->restore_termios);
++  printf("\033[?1002l"), fflush(stdout); // disable mouse mode
 +#endif
  
    tk->is_started = 0;
  
-@@ -525,11 +537,18 @@
+@@ -525,11 +539,18 @@
    return tk->is_started;
  }
  
@@ -255,7 +269,7 @@ diff -r a94d84bdd4a6 termkey.c
  int termkey_get_flags(TermKey *tk)
  {
    return tk->flags;
-@@ -1012,7 +1031,7 @@
+@@ -1012,7 +1033,7 @@
  
  TermKeyResult termkey_waitkey(TermKey *tk, TermKeyKey *key)
  {
@@ -264,7 +278,7 @@ diff -r a94d84bdd4a6 termkey.c
      errno = EBADF;
      return TERMKEY_RES_ERROR;
    }
-@@ -1026,6 +1045,7 @@
+@@ -1026,6 +1047,7 @@
        case TERMKEY_RES_ERROR:
          return ret;
  
@@ -272,7 +286,7 @@ diff -r a94d84bdd4a6 termkey.c
        case TERMKEY_RES_NONE:
          ret = termkey_advisereadable(tk);
          if(ret == TERMKEY_RES_ERROR)
-@@ -1064,6 +1084,7 @@
+@@ -1064,6 +1086,7 @@
              return termkey_getkey_force(tk, key);
          }
          break;
@@ -280,7 +294,7 @@ diff -r a94d84bdd4a6 termkey.c
      }
    }
  
-@@ -1072,6 +1093,7 @@
+@@ -1072,6 +1095,7 @@
  
  TermKeyResult termkey_advisereadable(TermKey *tk)
  {
@@ -288,7 +302,7 @@ diff -r a94d84bdd4a6 termkey.c
    ssize_t len;
  
    if(tk->fd == -1) {
-@@ -1109,6 +1131,9 @@
+@@ -1109,6 +1133,9 @@
      tk->buffcount += len;
      return TERMKEY_RES_AGAIN;
    }
@@ -298,9 +312,9 @@ diff -r a94d84bdd4a6 termkey.c
  }
  
  size_t termkey_push_bytes(TermKey *tk, const char *bytes, size_t len)
-diff -r a94d84bdd4a6 termkey.h
---- a/termkey.h	Fri Oct 24 21:58:29 2014 -0400
-+++ b/termkey.h	Fri Oct 24 21:59:44 2014 -0400
+diff -r 49c8684413c0 termkey.h
+--- a/termkey.h	Tue Dec 23 10:36:54 2014 -0500
++++ b/termkey.h	Tue Dec 23 13:31:50 2014 -0500
 @@ -14,6 +14,14 @@
  #define TERMKEY_CHECK_VERSION \
          termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR)
