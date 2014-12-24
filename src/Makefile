@@ -473,8 +473,17 @@ $(bombay_zip): ; wget http://foicica.com/hg/bombay/archive/tip.zip -O $@
 		mv $(notdir $@)/*/* $(dir $@)
 $(cloc): ; wget http://prdownloads.sourceforge.net/cloc/$@ -O $@
 
-# Count lines of code.
+# Count lines of code and generate ctags.
 
 sources = ../core ../modules/ansi_c ../modules/lua ../modules/textadept \
           ../themes textadept.c Makefile ../init.lua ../properties.lua
 count: $(cloc) ; perl $< $(sources) --not-match-f=tadoc.lua
+ctags:
+	ctags -R --langdef=luax --langmap=luax:.lua --exclude="*doc*" \
+		--exclude=scintilla/cocoa --exclude=scintilla/lexers \
+		--exclude=scintilla/qt --exclude=scintilla/scripts \
+		--exclude=scintilla/test --exclude=scintilla/win32 \
+		--regex-luax="/^\s*function\s+[^[:space:]\.]*\.?([[:alnum:]_]+)\(/\1/f/" \
+		--regex-luax="/^\s*local\s+function\s+([[:alnum:]_]+)\(/\1/F/" \
+		--regex-luax="/^[^[:space:]\.]*\.?([[:alnum:]_]+)\s*=\s*[{]/\1/t/" \
+		$(sources) LexLPeg.cxx scintilla gtdialog/gtdialog.c
