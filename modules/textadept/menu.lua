@@ -58,7 +58,7 @@ local menubar = {
     {_L['Toggle _Block Comment'], editing.block_comment},
     {_L['T_ranspose Characters'], editing.transpose_chars},
     {_L['_Join Lines'], editing.join_lines},
-    {_L['_Filter Through'], 
+    {_L['_Filter Through'],
       {ui.command_entry.enter_mode, 'filter_through', 'bash'}},
     { title = _L['_Select'],
       {_L['Select to _Matching Brace'], {editing.match_brace, 'select'}},

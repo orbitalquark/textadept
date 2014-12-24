@@ -410,7 +410,8 @@ function standard_dropdown(options) end
 -- @param options Table of key-value option pairs for the filtered list dialog.
 --
 --   * `title`: The dialog's title text.
---   * `text`: The dialog's main message text.
+--   * `informative_text`: The dialog's main message text.
+--   * `text`: The dialog's initial input text.
 --   * `columns`: The list of string column names for list rows.
 --   * `items`: The list of string items to show in the filtered list.
 --   * `button1`: The right-most button's label. The default value is
