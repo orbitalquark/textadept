@@ -401,18 +401,8 @@ events_connect(events.BUFFER_DELETED, function()
   if i and _BUFFERS[buffer] ~= i then view:goto_buffer(i) end
 end)
 
--- Enables and disables mouse mode in curses and focuses and resizes views based
--- on mouse events.
+-- Focuses and resizes views based on mouse events in curses.
 if CURSES then
-  if not WIN32 then
-    io.stdout:write("\x1b[?1002h") -- enable mouse mode
-    io.stdout:flush()
-    events.connect(events.QUIT, function()
-      io.stdout:write("\x1b[?1002l") -- disable mouse mode
-      io.stdout:flush()
-    end)
-  end
-
   -- Retrieves the view or split at the given terminal coordinates.
   -- @param view View or split to test for coordinates within.
   -- @param y The y terminal coordinate.

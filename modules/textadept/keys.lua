@@ -26,8 +26,8 @@ local M = {}
 -- None          |None     |None      |Load session...
 -- Ctrl+Q        |⌘Q       |^Q        |Quit
 -- **Edit**                |         |             |
--- Ctrl+Z<br/>Alt+Bksp     |⌘Z       |^Z           |Undo
--- Ctrl+Y<br/>Ctrl+Shift+Z |⌘⇧Z      |^Y           |Redo
+-- Ctrl+Z<br/>Alt+Bksp     |⌘Z       |M-Z          |Undo
+-- Ctrl+Y<br/>Ctrl+Shift+Z |⌘⇧Z      |M-S-Z<br/>^Y |Redo
 -- Ctrl+X<br/>Shift+Del    |⌘X<br/>⇧⌦|^X           |Cut
 -- Ctrl+C<br/>Ctrl+Ins     |⌘C       |^C           |Copy
 -- Ctrl+V<br/>Shift+Ins    |⌘V       |^V           |Paste
@@ -191,30 +191,28 @@ local M = {}
 -- N/A             |N/A         |^]          |Swap caret and mark anchor
 -- **UTF-8 Input**          |            |                |
 -- Ctrl+Shift+U *xxxx* Enter|⌘⇧U *xxxx* ↩|M-U *xxxx* Enter|Insert U-*xxxx* char.
--- **Entry Fields**|               |            |
--- Left            |⇠<br/>^B       |^B<br/>Left |Cursor left
--- Right           |⇢<br/>^F       |^F<br/>Right|Cursor right
--- Del             |⌦              |Del         |Delete forward
--- Bksp            |⌫              |^H<br/>Bksp |Delete back
--- Ctrl+V          |⌘V             |^V          |Paste
--- N/A             |N/A            |^X          |Cut all
--- N/A             |N/A            |^Y          |Copy all
--- N/A             |N/A            |^U          |Erase all
--- Home            |↖<br/>⌘⇠<br/>^A|^A          |Home
--- End             |↘<br/>⌘⇢<br/>^E|^E          |End
--- N/A             |N/A            |^T          |Transpose characters
--- N/A             |N/A            |^L          |Refresh
--- **Find Fields**|   |     |
--- N/A            |N/A|Tab  |Focus find buttons
--- N/A            |N/A|S-Tab|Focus replace buttons
--- Tab            |⇥  |Down |Focus replace field
--- Shift+Tab      |⇧⇥ |Up   |Focus find field
--- Down           |⇣  |^P   |Cycle back through find/replace history
--- Up             |⇡  |^N   |Cycle forward through find/replace history
--- N/A            |N/A|F1   |Toggle "Match Case"
--- N/A            |N/A|F2   |Toggle "Whole Word"
--- N/A            |N/A|F3   |Toggle "Lua Pattern"
--- N/A            |N/A|F4   |Toggle "Find in Files"
+-- **Find Fields**|               |            |
+-- Left           |⇠<br/>^B       |^B<br/>Left |Cursor left
+-- Right          |⇢<br/>^F       |^F<br/>Right|Cursor right
+-- Del            |⌦              |Del         |Delete forward
+-- Bksp           |⌫              |^H<br/>Bksp |Delete back
+-- Ctrl+V         |⌘V             |^V          |Paste
+-- N/A            |N/A            |^X          |Cut all
+-- N/A            |N/A            |^Y          |Copy all
+-- N/A            |N/A            |^U          |Erase all
+-- Home           |↖<br/>⌘⇠<br/>^A|^A          |Home
+-- End            |↘<br/>⌘⇢<br/>^E|^E          |End
+-- N/A            |N/A            |^T          |Transpose characters
+-- N/A            |N/A            |Tab         |Focus find buttons
+-- N/A            |N/A            |S-Tab       |Focus replace buttons
+-- Tab            |⇥              |Down        |Focus replace field
+-- Shift+Tab      |⇧⇥             |Up          |Focus find field
+-- Down           |⇣              |^P          |Cycle back through history
+-- Up             |⇡              |^N          |Cycle forward through history
+-- N/A            |N/A            |F1          |Toggle "Match Case"
+-- N/A            |N/A            |F2          |Toggle "Whole Word"
+-- N/A            |N/A            |F3          |Toggle "Lua Pattern"
+-- N/A            |N/A            |F4          |Toggle "Find in Files"
 --
 -- †: Ctrl+Enter in Win32 curses.
 module('textadept.keys')]]
@@ -370,9 +368,9 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 --     are.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:        g~~   ~
+-- c:        g~~   ~            ~
 -- cm:   cd  g~~ k ~   q  t    yz
--- m:          e          J            qQ  sS    vVw   yYzZ_          +
+-- m:          e          J            qQ  sS    vVw   yY  _          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- CTRL = 'c' (Control ^)
@@ -397,9 +395,9 @@ keys[not OSX and (not CURSES and 'cW' or 'cmw') or 'mW'] = io.close_all_buffers
 keys[not OSX and 'cq' or 'mq'] = quit
 
 -- Edit.
-keys[not OSX and 'cz' or 'mz'] = buffer.undo
+keys[not OSX and not CURSES and 'cz' or 'mz'] = buffer.undo
 if not OSX then keys.cy = buffer.redo end
-if not CURSES then keys[not OSX and 'cZ' or 'mZ'] = buffer.redo end
+keys[not OSX and not CURSES and 'cZ' or 'mZ'] = buffer.redo
 keys[not OSX and 'cx' or 'mx'] = buffer.cut
 keys[not OSX and 'cc' or 'mc'] = buffer.copy
 keys[not OSX and 'cv' or 'mv'] = buffer.paste
