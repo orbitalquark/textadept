@@ -1,4 +1,4 @@
--- Copyright 2007-2014 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2015 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- Contributions from Robert Gieseke.
 
 local M = {}
@@ -200,7 +200,7 @@ local menubar = {
     SEPARATOR,
     {_L['_About'],
       {ui.dialogs.msgbox, {title = 'Textadept', text = _RELEASE,
-       informative_text = 'Copyright © 2007-2014 Mitchell. See LICENSE\n'..
+       informative_text = 'Copyright © 2007-2015 Mitchell. See LICENSE\n'..
                           'http://foicica.com/textadept',
        icon_file = _HOME..'/core/images/ta_64x64.png'}}},
   },

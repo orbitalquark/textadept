@@ -1,4 +1,4 @@
--- Copyright 2007-2014 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2015 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 _RELEASE = "Textadept 7.8 beta"
 

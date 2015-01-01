@@ -1,4 +1,4 @@
--- Copyright 2007-2014 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2015 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 local ipairs, type = ipairs, type
 local io_open, io_popen = io.open, io.popen

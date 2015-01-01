@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright 2007-2014 Mitchell mitchell.att.foicica.com. See LICENSE.
+# Copyright 2007-2015 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 # Set the GTK environment variables of resources within Textadept.app.
 bundle=$(cd "$(dirname "$0")/../../" && pwd)
