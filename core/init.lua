@@ -171,19 +171,19 @@ local timeout
 local spawn
 
 ---
--- Returns the status of process *proc*, which is either "running" or
+-- Returns the status of process *spawn_proc*, which is either "running" or
 -- "terminated".
 -- @return "running" or "terminated"
 function spawn_proc:status() end
 
 ---
--- Blocks until process *proc* finishes.
+-- Blocks until process *spawn_proc* finishes.
 function spawn_proc:wait() end
 
 ---
--- Reads and returns stdout from process *proc*, according to string format or
--- number *arg*.
--- Similar to Lua's `io.read()` and blocks for input. *proc* must still be
+-- Reads and returns stdout from process *spawn_proc*, according to string
+-- format or number *arg*.
+-- Similar to Lua's `io.read()` and blocks for input. *spawn_proc* must still be
 -- running. If an error occurs while reading, returns `nil`, an error code, and
 -- an error message.
 -- Ensure any read operations read all stdout available. The stdout callback
@@ -195,11 +195,16 @@ function spawn_proc:wait() end
 function spawn_proc:read(arg) end
 
 ---
--- Writes string input to the stdin of process *proc*.
--- @param ... Standard input for *proc*.
+-- Writes string input to the stdin of process *spawn_proc*.
+-- @param ... Standard input for *spawn_proc*.
 function spawn_proc:write(...) end
 
 ---
--- Kills running process *proc*.
+-- Closes standard input for process *spawn_proc*, effectively sending an EOF
+-- (end of file) to it.
+function spawn_proc:close() end
+
+---
+-- Kills running process *spawn_proc*.
 function spawn_proc:kill() end
 ]]
