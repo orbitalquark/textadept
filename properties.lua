@@ -19,7 +19,8 @@ buffer:set_y_caret_policy(buffer.CARET_SLOP + buffer.CARET_STRICT +
                           buffer.CARET_EVEN, 1)
 --buffer:set_visible_policy()
 --buffer.h_scroll_bar = CURSES
-buffer.v_scroll_bar = not OSX or not CURSES -- disable on OSX curses
+--buffer.v_scroll_bar = false
+if CURSES and not (WIN32 or LINUX or BSD) then buffer.v_scroll_bar = false end
 --buffer.scroll_width =
 --buffer.scroll_width_tracking = true
 --buffer.end_at_last_line = false
