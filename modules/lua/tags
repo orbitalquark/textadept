@@ -485,6 +485,7 @@ clipboard_text	_	0;"	F	class:ui
 clock	_	0;"	f	class:os
 close	_	0;"	f	class:file
 close	_	0;"	f	class:io
+close	_	0;"	f	class:spawn_proc
 close_all_buffers	_	0;"	f	class:io
 close_buffer	_	0;"	f	class:io
 cntrl	_	0;"	F	class:lexer
