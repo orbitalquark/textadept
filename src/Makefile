@@ -364,16 +364,10 @@ win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
 
 ifndef NIGHTLY
-  # Release URLs.
-#  scinterm_url = http://foicica.com/scinterm/download/$@
-#  scintillua_url = http://foicica.com/scintillua/download/$@
-#  gtdialog_url = http://foicica.com/gtdialog/download/$@
-#  lspawn_url = http://foicica.com/lspawn/download/$@
-  # Alpha and Beta URLs.
-  scinterm_url = http://foicica.com/hg/scinterm/archive/$@
-  scintillua_url = http://foicica.com/hg/scintillua/archive/$@
-  gtdialog_url = http://foicica.com/hg/gtdialog/archive/$@
-  lspawn_url = http://foicica.com/hg/lspawn/archive/$@
+  scinterm_url = http://foicica.com/scinterm/download/$@
+  scintillua_url = http://foicica.com/scintillua/download/$@
+  gtdialog_url = http://foicica.com/gtdialog/download/$@
+  lspawn_url = http://foicica.com/lspawn/download/$@
 else
   scinterm_url = http://foicica.com/hg/scinterm/archive/tip.zip
   scintillua_url = http://foicica.com/hg/scintillua/archive/tip.zip
@@ -382,15 +376,15 @@ else
 endif
 
 scintilla_tgz = scintilla352.tgz
-scinterm_zip = 4f22b02fb536.zip
-scintillua_zip = 7ad2658b4ae3.zip
+scinterm_zip = scinterm_1.5.zip
+scintillua_zip = scintillua_3.5.2-1.zip
 lua_tgz = lua-5.2.3.tar.gz
 lpeg_tgz = lpeg-0.12.tar.gz
 lfs_zip = v1_6_2.zip
-lspawn_zip = d80b5b7af544.zip
+lspawn_zip = lspawn_1.1.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
-gtdialog_zip = 129dc12932b7.zip
+gtdialog_zip = gtdialog_1.2.zip
 cdk_tgz = cdk.tar.gz
 termkey_tgz = libtermkey-0.17.tar.gz
 win32gtk_zip = gtk+-bundle_2.24.10-20120208_win32.zip
