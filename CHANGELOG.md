@@ -8,6 +8,38 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.8 beta 2 (11 Jan 2015)
+
+Download:
+
+* [Textadept 7.8 beta 2 -- Win32][]
+* [Textadept 7.8 beta 2 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.8 beta 2 -- Linux][]
+* [Textadept 7.8 beta 2 -- Linux x86_64][]
+* [Textadept 7.8 beta 2 -- Modules][]
+
+Bugfixes:
+
+* Improved C module's ctags lookups and autocompletion.
+* Do not select a line when clicking on its first character in the terminal
+  version.
+* Fixed some cases of toggling find options via API in the terminal version.
+
+Changes:
+
+* The terminal version can suspend via `^Z` (changed "undo" key binding to
+  `M-Z` and added additional `M-S-Z` "redo" binding).
+* Added [`spawn_proc:close()`][] for sending EOF to spawned processes.
+* Updated to [Scintilla][] 3.5.2.
+
+[Textadept 7.8 beta 2 -- Win32]: download/textadept_7.8_beta_2.win32.zip
+[Textadept 7.8 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_7.8_beta_2.osx.zip
+[Textadept 7.8 beta 2 -- Linux]: download/textadept_7.8_beta_2.i386.tgz
+[Textadept 7.8 beta 2 -- Linux x86_64]: download/textadept_7.8_beta_2.x86_64.tgz
+[Textadept 7.8 beta 2 -- Modules]: download/textadept_7.8_beta_2.modules.zip
+[`spawn_proc:close()`]: api.html#spawn_proc:close
+[Scintilla]: http://scintilla.org
+
 ## 7.8 beta (01 Dec 2014)
 
 Download:
