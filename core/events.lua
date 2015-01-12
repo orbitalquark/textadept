@@ -119,7 +119,8 @@ local M = {}
 --   * _`next`_: Whether or not to search forward.
 -- @field FOCUS (string)
 --   Emitted when Textadept receives focus.
---   This event is never emitted when Textadept is running in the terminal.
+--   In the terminal, this event is only emitted after resuming from a suspended
+--   state.
 -- @field HOTSPOT_CLICK (string)
 --   Emitted when clicking on text that is in a style that has the hotspot
 --   attribute set.
