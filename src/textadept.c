@@ -626,9 +626,11 @@ static void l_pushsplittable(lua_State *L, GtkWidget *w) {
     lua_newtable(L);
     l_pushsplittable(L, child(1, w)), lua_rawseti(L, -2, 1);
     l_pushsplittable(L, child(2, w)), lua_rawseti(L, -2, 2);
-    lua_pushboolean(L, GTK_IS_HPANED(w)), lua_setfield(L, -2, "vertical");
-    int size = gtk_paned_get_position(GTK_PANED(w));
-    lua_pushinteger(L, size), lua_setfield(L, -2, "size");
+    lua_pushboolean(L, gtk_orientable_get_orientation(GTK_ORIENTABLE(w)) ==
+                       GTK_ORIENTATION_HORIZONTAL);
+    lua_setfield(L, -2, "vertical");
+    lua_pushinteger(L, gtk_paned_get_position(GTK_PANED(w)));
+    lua_setfield(L, -2, "size");
   } else l_pushview(L, w);
 }
 #elif CURSES
