@@ -25,45 +25,45 @@ local M = {}
 -- None          |None     |None      |Load session...
 -- None          |None     |None      |Load session...
 -- Ctrl+Q        |⌘Q       |^Q        |Quit
--- **Edit**                |         |             |
--- Ctrl+Z<br/>Alt+Bksp     |⌘Z       |M-Z          |Undo
--- Ctrl+Y<br/>Ctrl+Shift+Z |⌘⇧Z      |M-S-Z<br/>^Y |Redo
--- Ctrl+X<br/>Shift+Del    |⌘X<br/>⇧⌦|^X           |Cut
--- Ctrl+C<br/>Ctrl+Ins     |⌘C       |^C           |Copy
--- Ctrl+V<br/>Shift+Ins    |⌘V       |^V           |Paste
--- Ctrl+D                  |⌘D       |None         |Duplicate line
--- Del                     |⌦<br/>^D |Del<br/>^D   |Delete
--- Alt+Del                 |^⌦       |M-Del<br/>M-D|Delete word
--- Ctrl+A                  |⌘A       |M-A          |Select all
--- Ctrl+M                  |^M       |M-M          |Match brace
--- Ctrl+Enter              |^Esc     |M-Enter^(†)  |Complete word
--- Ctrl+Alt+Shift+H        |⌘⇧H      |None         |Highlight word
--- Ctrl+/                  |^/       |M-/          |Toggle block comment
--- Ctrl+T                  |^T       |^T           |Transpose characters
--- Ctrl+Shift+J            |^J       |M-J          |Join lines
--- Ctrl+&#124;             |⌘&#124;  |^\           |Filter text through
--- Ctrl+Shift+M            |^⇧M      |M-S-M        |Select to matching brace
--- Ctrl+<                  |⌘<       |M-<          |Select between XML tags
--- Ctrl+>                  |⌘>       |None         |Select in XML tag
--- Ctrl+"                  |⌘"       |M-"          |Select in double quotes
--- Ctrl+'                  |⌘'       |M-'          |Select in single quotes
--- Ctrl+(                  |⌘(       |M-(          |Select in parentheses
--- Ctrl+[                  |⌘[       |M-[          |Select in brackets
--- Ctrl+{                  |⌘{       |M-{          |Select in braces
--- Ctrl+Shift+D            |⌘⇧D      |M-S-W        |Select word
--- Ctrl+Shift+N            |⌘⇧N      |M-S-N        |Select line
--- Ctrl+Shift+P            |⌘⇧P      |M-S-P        |Select paragraph
--- Ctrl+Alt+U              |^U       |M-^U         |Upper case selection
--- Ctrl+Alt+Shift+U        |^⇧U      |M-^L         |Lower case selection
--- Alt+<                   |^<       |M->          |Enclose as XML tags
--- Alt+>                   |^>       |None         |Enclose as single XML tag
--- Alt+"                   |^"       |None         |Enclose in double quotes
--- Alt+'                   |^'       |None         |Enclose in single quotes
--- Alt+(                   |^(       |M-)          |Enclose in parentheses
--- Alt+[                   |^[       |M-]          |Enclose in brackets
--- Alt+{                   |^{       |M-}          |Enclose in braces
--- Ctrl+Shift+Up           |^⇧⇡      |S-^Up        |Move selected lines up
--- Ctrl+Shift+Down         |^⇧⇣      |S-^Down      |Move selected lines down
+-- **Edit**                |         |              |
+-- Ctrl+Z<br/>Alt+Bksp     |⌘Z       |^Z^(†)<br/>M-Z|Undo
+-- Ctrl+Y<br/>Ctrl+Shift+Z |⌘⇧Z      |^Y<br/>M-S-Z  |Redo
+-- Ctrl+X<br/>Shift+Del    |⌘X<br/>⇧⌦|^X            |Cut
+-- Ctrl+C<br/>Ctrl+Ins     |⌘C       |^C            |Copy
+-- Ctrl+V<br/>Shift+Ins    |⌘V       |^V            |Paste
+-- Ctrl+D                  |⌘D       |None          |Duplicate line
+-- Del                     |⌦<br/>^D |Del<br/>^D    |Delete
+-- Alt+Del                 |^⌦       |M-Del<br/>M-D |Delete word
+-- Ctrl+A                  |⌘A       |M-A           |Select all
+-- Ctrl+M                  |^M       |M-M           |Match brace
+-- Ctrl+Enter              |^Esc     |M-Enter^(‡)   |Complete word
+-- Ctrl+Alt+Shift+H        |⌘⇧H      |None          |Highlight word
+-- Ctrl+/                  |^/       |M-/           |Toggle block comment
+-- Ctrl+T                  |^T       |^T            |Transpose characters
+-- Ctrl+Shift+J            |^J       |M-J           |Join lines
+-- Ctrl+&#124;             |⌘&#124;  |^\            |Filter text through
+-- Ctrl+Shift+M            |^⇧M      |M-S-M         |Select to matching brace
+-- Ctrl+<                  |⌘<       |M-<           |Select between XML tags
+-- Ctrl+>                  |⌘>       |None          |Select in XML tag
+-- Ctrl+"                  |⌘"       |M-"           |Select in double quotes
+-- Ctrl+'                  |⌘'       |M-'           |Select in single quotes
+-- Ctrl+(                  |⌘(       |M-(           |Select in parentheses
+-- Ctrl+[                  |⌘[       |M-[           |Select in brackets
+-- Ctrl+{                  |⌘{       |M-{           |Select in braces
+-- Ctrl+Shift+D            |⌘⇧D      |M-S-W         |Select word
+-- Ctrl+Shift+N            |⌘⇧N      |M-S-N         |Select line
+-- Ctrl+Shift+P            |⌘⇧P      |M-S-P         |Select paragraph
+-- Ctrl+Alt+U              |^U       |M-^U          |Upper case selection
+-- Ctrl+Alt+Shift+U        |^⇧U      |M-^L          |Lower case selection
+-- Alt+<                   |^<       |M->           |Enclose as XML tags
+-- Alt+>                   |^>       |None          |Enclose as single XML tag
+-- Alt+"                   |^"       |None          |Enclose in double quotes
+-- Alt+'                   |^'       |None          |Enclose in single quotes
+-- Alt+(                   |^(       |M-)           |Enclose in parentheses
+-- Alt+[                   |^[       |M-]           |Enclose in brackets
+-- Alt+{                   |^{       |M-}           |Enclose in braces
+-- Ctrl+Shift+Up           |^⇧⇡      |S-^Up         |Move selected lines up
+-- Ctrl+Shift+Down         |^⇧⇣      |S-^Down       |Move selected lines down
 -- **Search**               |    |             |
 -- Ctrl+F                   |⌘F  |M-F<br/>M-S-F|Find
 -- Ctrl+G<br/>F3            |⌘G  |M-G          |Find next
@@ -214,7 +214,9 @@ local M = {}
 -- N/A            |N/A            |F3          |Toggle "Lua Pattern"
 -- N/A            |N/A            |F4          |Toggle "Find in Files"
 --
--- †: Ctrl+Enter in Win32 curses.
+-- †: Some terminals interpret ^Z as suspend.
+--
+-- ‡: Ctrl+Enter in Win32 curses.
 module('textadept.keys')]]
 
 -- UTF-8 handling tables.
@@ -395,7 +397,8 @@ keys[not OSX and (not CURSES and 'cW' or 'cmw') or 'mW'] = io.close_all_buffers
 keys[not OSX and 'cq' or 'mq'] = quit
 
 -- Edit.
-keys[not OSX and not CURSES and 'cz' or 'mz'] = buffer.undo
+keys[not OSX and 'cz' or 'mz'] = buffer.undo
+if CURSES then keys.mz = keys.cz end -- ^Z suspends in some terminals
 if not OSX then keys.cy = buffer.redo end
 keys[not OSX and not CURSES and 'cZ' or 'mZ'] = buffer.redo
 keys[not OSX and 'cx' or 'mx'] = buffer.cut
