@@ -32,6 +32,7 @@ private contract work related to Textadept.
 * Brian Schott
 * Callum Wilson
 * Chris Emerson
+* Daniel Wutke
 * Gilles Grégoire
 * Jay Gould
 * Jeff Stone

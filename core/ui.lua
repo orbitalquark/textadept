@@ -303,7 +303,8 @@ events_connect(events.URI_DROPPED, function(utf8_uris)
       uri = uri:match('^file://([^\r\n]+)'):gsub('%%(%x%x)', function(hex)
         return string.char(tonumber(hex, 16))
       end)
-      if WIN32 then uri = uri:sub(2, -1) end -- ignore leading '/'
+      -- In WIN32, ignore a leading '/', but not '//' (network path).
+      if WIN32 and not uri:match('^//') then uri = uri:sub(2, -1) end
       local mode = lfs.attributes(uri, 'mode')
       if mode and mode ~= 'directory' then io.open_file(uri) end
     end
