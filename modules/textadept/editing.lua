@@ -197,12 +197,19 @@ end)
 -- Enables and disables bracketed paste mode in curses and disables auto-pair
 -- and auto-indent while pasting.
 if CURSES and not WIN32 then
-  io.stdout:write('\x1b[?2004h') -- enable bracketed paste mode
-  io.stdout:flush()
-  events.connect(events.QUIT, function()
-    io.stdout:write('\x1b[?2004l') -- disable bracketed paste mode
+  local function enable_bracketed_paste_mode()
+    io.stdout:write('\x1b[?2004h')
     io.stdout:flush()
-  end)
+  end
+  enable_bracketed_paste_mode()
+  local function disable_bracketed_paste_mode()
+    io.stdout:write('\x1b[?2004l')
+    io.stdout:flush()
+  end
+  events.connect(events.SUSPEND, disable_bracketed_paste_mode)
+  events.connect(events.RESUME, enable_bracketed_paste_mode)
+  events.connect(events.QUIT, disable_bracketed_paste_mode)
+  
   local reenable_autopair, reenable_autoindent
   events.connect('csi', function(cmd, args)
     if cmd ~= string.byte('~') then return end

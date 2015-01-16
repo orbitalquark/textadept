@@ -2387,10 +2387,11 @@ static void t_signal(int signal) {
     resizeterm(w.ws_row, w.ws_col), pane_resize(pane, LINES - 2, COLS, 1, 0);
     WINDOW *ce_win = scintilla_get_window(command_entry);
     wresize(ce_win, 1, COLS), mvwin(ce_win, LINES - 1 - getmaxy(ce_win), 0);
-    if (signal == SIGCONT) lL_event(lua, "focus", -1);
+    if (signal == SIGCONT) lL_event(lua, "resume", -1);
     lL_event(lua, "update_ui", -1);
-    refresh_all();
-  } else endwin(), termkey_stop(ta_tk), kill(0, SIGSTOP);
+  } else if (!lL_event(lua, "suspend", -1))
+    endwin(), termkey_stop(ta_tk), kill(0, SIGSTOP);
+  refresh_all();
 }
 
 /** Replacement for `termkey_waitkey()` that handles asynchronous I/O. */

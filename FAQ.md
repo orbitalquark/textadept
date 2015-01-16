@@ -51,30 +51,6 @@ terminal version.)
 - - -
 
 **Q:**
-I'm trying to compile Textadept from one of the download packages, but get some
-obscure errors in the `scintilla/term/`, `gtdialog/`, or `scintillua/`
-directories. What happened?
-
-**A:**
-Prior to Textadept 7.5, some of the dependencies Textadept downloads are the
-latest archives in their respective version control repositories. Occasionally
-there are compile-time incompatibilities with these "bleeding-edge" downloads.
-The solution is to go to the appropriate repository, identify the last revision
-whose date is before the release date of your Textadept version, and download
-the archive for that revision.
-
-For example, if you have Textadept 7.1 and cannot build the terminal version due
-to a file in the `scintilla/term/` directory, go to [scinterm hg][] and look for
-the revision before 11 November 2013 (which happens to be [changeset 60][] from
-23 October 2013), click on it, download the zip from the link near the top of
-the page, and replace the problematic file.
-
-[scinterm hg]: http://foicica.com/hg/scinterm
-[changeset 60]: http://foicica.com/hg/scinterm/rev/ea13ae30cfab
-
-- - -
-
-**Q:**
 Why can't Textadept handle HUGE files very well?
 
 **A:**
@@ -103,6 +79,20 @@ Textadept which command to run?
 Please see the LuaDoc on [compile and run commands][].
 
 [compile and run commands]: api.html#_M.Compile.and.Run
+
+- - -
+
+**Q:**
+In Linux, pressing `^Z` suspends Textadept instead of performing an "Undo"
+action. How can I disable suspend and perform "Undo" instead?
+
+**A:**
+Place the following in your `~/.textadept/init.lua` file:
+
+    events.connect(events.SUSPEND, function()
+      buffer:undo()
+      return true
+    end, 1)
 
 - - -
 
@@ -163,5 +153,29 @@ Why does Textadept remember its window size but not its window position?
 **A:**
 Your window manager is to blame. Textadept is not responsible for, and should
 never attempt to set its window position.
+
+- - -
+
+**Q:**
+I'm trying to compile Textadept from one of the download packages, but get some
+obscure errors in the `scintilla/term/`, `gtdialog/`, or `scintillua/`
+directories. What happened?
+
+**A:**
+Prior to Textadept 7.5, some of the dependencies Textadept downloads are the
+latest archives in their respective version control repositories. Occasionally
+there are compile-time incompatibilities with these "bleeding-edge" downloads.
+The solution is to go to the appropriate repository, identify the last revision
+whose date is before the release date of your Textadept version, and download
+the archive for that revision.
+
+For example, if you have Textadept 7.1 and cannot build the terminal version due
+to a file in the `scintilla/term/` directory, go to [scinterm hg][] and look for
+the revision before 11 November 2013 (which happens to be [changeset 60][] from
+23 October 2013), click on it, download the zip from the link near the top of
+the page, and replace the problematic file.
+
+[scinterm hg]: http://foicica.com/hg/scinterm
+[changeset 60]: http://foicica.com/hg/scinterm/rev/ea13ae30cfab
 
 - - -

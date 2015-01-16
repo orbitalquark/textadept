@@ -119,8 +119,7 @@ local M = {}
 --   * _`next`_: Whether or not to search forward.
 -- @field FOCUS (string)
 --   Emitted when Textadept receives focus.
---   In the terminal, this event is only emitted after resuming from a suspended
---   state.
+--   This event is never emitted when Textadept is running in the terminal.
 -- @field HOTSPOT_CLICK (string)
 --   Emitted when clicking on text that is in a style that has the hotspot
 --   attribute set.
@@ -230,10 +229,17 @@ local M = {}
 -- @field RESET_BEFORE (string)
 --   Emitted before resetting the Lua state.
 --   Emitted by [`reset()`]().
+-- @field RESUME (string)
+--   Emitted when resuming Textadept from a suspended state.
+--   This event is only emitted by the terminal version.
 -- @field SAVE_POINT_LEFT (string)
 --   Emitted after leaving a save point.
 -- @field SAVE_POINT_REACHED (string)
 --   Emitted after reaching a save point.
+-- @field SUSPEND (string)
+--   Emitted when suspending Textadept. If a handler returns `true`, Textadept
+--   does not suspend.
+--   This event is only emitted by the terminal version.
 -- @field UPDATE_UI (string)
 --   Emitted after the view is visually updated.
 --   Arguments:
@@ -383,8 +389,8 @@ local ta_events = {
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
   'buffer_deleted', 'buffer_new', 'csi', 'error', 'find', 'focus',
   'initialized', 'keypress', 'menu_clicked', 'mouse', 'quit', 'replace',
-  'replace_all', 'reset_after', 'reset_before', 'view_after_switch',
-  'view_before_switch', 'view_new'
+  'replace_all', 'reset_after', 'reset_before', 'resume', 'suspend',
+  'view_after_switch', 'view_before_switch', 'view_new'
 }
 for _, e in pairs(ta_events) do M[e:upper()] = e end
 
