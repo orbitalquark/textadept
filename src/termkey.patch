@@ -228,28 +228,26 @@ diff -r 49c8684413c0 termkey.c
          /* Some OSes have Ctrl-Y==VDSUSP */
  #ifdef VDSUSP
          termios.c_cc[VDSUSP] = _POSIX_VDISABLE;
-@@ -487,6 +496,8 @@
+@@ -487,6 +496,7 @@
        tcsetattr(tk->fd, TCSANOW, &termios);
      }
    }
-+  printf("\033[?1002h"), fflush(stdout); // enable mouse mode
 +#endif
  
    struct TermKeyDriverNode *p;
    for(p = tk->drivers; p; p = p->next)
-@@ -512,8 +523,11 @@
+@@ -512,8 +522,10 @@
      if(p->driver->stop_driver)
        (*p->driver->stop_driver)(tk, p->info);
  
 +#if !_WIN32
    if(tk->restore_termios_valid)
      tcsetattr(tk->fd, TCSANOW, &tk->restore_termios);
-+  printf("\033[?1002l"), fflush(stdout); // disable mouse mode
 +#endif
  
    tk->is_started = 0;
  
-@@ -525,11 +539,18 @@
+@@ -525,11 +537,18 @@
    return tk->is_started;
  }
  
@@ -269,7 +267,7 @@ diff -r 49c8684413c0 termkey.c
  int termkey_get_flags(TermKey *tk)
  {
    return tk->flags;
-@@ -1012,7 +1033,7 @@
+@@ -1012,7 +1031,7 @@
  
  TermKeyResult termkey_waitkey(TermKey *tk, TermKeyKey *key)
  {
@@ -278,7 +276,7 @@ diff -r 49c8684413c0 termkey.c
      errno = EBADF;
      return TERMKEY_RES_ERROR;
    }
-@@ -1026,6 +1047,7 @@
+@@ -1026,6 +1045,7 @@
        case TERMKEY_RES_ERROR:
          return ret;
  
@@ -286,7 +284,7 @@ diff -r 49c8684413c0 termkey.c
        case TERMKEY_RES_NONE:
          ret = termkey_advisereadable(tk);
          if(ret == TERMKEY_RES_ERROR)
-@@ -1064,6 +1086,7 @@
+@@ -1064,6 +1084,7 @@
              return termkey_getkey_force(tk, key);
          }
          break;
@@ -294,7 +292,7 @@ diff -r 49c8684413c0 termkey.c
      }
    }
  
-@@ -1072,6 +1095,7 @@
+@@ -1072,6 +1093,7 @@
  
  TermKeyResult termkey_advisereadable(TermKey *tk)
  {
@@ -302,7 +300,7 @@ diff -r 49c8684413c0 termkey.c
    ssize_t len;
  
    if(tk->fd == -1) {
-@@ -1109,6 +1133,9 @@
+@@ -1109,6 +1131,9 @@
      tk->buffcount += len;
      return TERMKEY_RES_AGAIN;
    }
