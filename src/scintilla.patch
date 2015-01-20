@@ -18,33 +18,3 @@ diff -r 5693714a8b0b src/Catalogue.cxx
  
  	return 1;
  }
-diff -r 326449de45d0 src/ScintillaBase.cxx
---- a/src/ScintillaBase.cxx	Thu Sep 25 09:48:50 2014 +1000
-+++ b/src/ScintillaBase.cxx	Sun Nov 30 23:25:36 2014 -0500
-@@ -448,12 +448,12 @@
- 	PRectangle rcClient = GetClientRectangle();
- 	int offset = vs.lineHeight + static_cast<int>(rc.Height());
- 	// adjust so it displays above the text.
--	if (rc.bottom > rcClient.bottom) {
-+	if (rc.bottom > rcClient.bottom && rc.Height() < rcClient.Height()) {
- 		rc.top -= offset;
- 		rc.bottom -= offset;
- 	}
- 	// adjust so it displays below the text.
--	if (rc.top < rcClient.top) {
-+	if (rc.top < rcClient.top && rc.Height() < rcClient.Height()) {
- 		rc.top += offset;
- 		rc.bottom += offset;
- 	}
-diff -r a797ff255bdf src/Editor.cxx
---- a/src/Editor.cxx	Sat Nov 29 12:42:58 2014 +1100
-+++ b/src/Editor.cxx	Wed Dec 17 09:54:10 2014 -0500
-@@ -3998,7 +3998,7 @@
- 	// Really means: "Point in a margin"
- 	if (vs.fixedColumnWidth > 0) {	// There is a margin
- 		PRectangle rcSelMargin = GetClientRectangle();
--		rcSelMargin.right = static_cast<XYPOSITION>(vs.textStart - vs.leftMarginWidth);
-+		rcSelMargin.right = static_cast<XYPOSITION>(vs.textStart - (vs.leftMarginWidth > 0 ? vs.leftMarginWidth : 1));
- 		rcSelMargin.left = static_cast<XYPOSITION>(vs.textStart - vs.fixedColumnWidth);
- 		return rcSelMargin.Contains(pt);
- 	} else {
