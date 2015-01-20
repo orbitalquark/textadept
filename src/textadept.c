@@ -91,10 +91,10 @@ typedef GtkWidget Scintilla;
 #define LUA_OK 0
 #define lua_rawlen lua_objlen
 #define LUA_OPEQ 0
-#define lL_openlib(l, n, f) \
-  (lua_pushcfunction(l, f), lua_pushstring(l, n), lua_call(l, 1, 0))
+#define lL_openlib(l, n) \
+  (lua_pushcfunction(l, luaopen_##n), lua_pushstring(l, #n), lua_call(l, 1, 0))
 #else
-#define lL_openlib(l, n, f) (luaL_requiref(l, n, f, 1), lua_pop(l, 1))
+#define lL_openlib(l, n) (luaL_requiref(l, #n, luaopen_##n, 1), lua_pop(l, 1))
 #endif
 
 static char *textadept_home, *platform;
@@ -691,8 +691,7 @@ static void sync_tabbar() {
 #if GTK
   lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers");
   l_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
-  lua_gettable(lua, -2);
-  int i = lua_tointeger(lua, -1) - 1;
+  int i = (lua_gettable(lua, -2), lua_tointeger(lua, -1) - 1);
   lua_pop(lua, 2); // index and buffers
   GtkNotebook *tabs = GTK_NOTEBOOK(tabbar);
   tab_sync = TRUE, gtk_notebook_set_current_page(tabs, i), tab_sync = FALSE;
@@ -751,8 +750,7 @@ static int lui_goto_view(lua_State *L) {
  * @return integer
  */
 static int l_rawgetiint(lua_State *L, int index, int n) {
-  lua_rawgeti(L, index, n);
-  int i = lua_tointeger(L, -1);
+  int i = (lua_rawgeti(L, index, n), lua_tointeger(L, -1));
   lua_pop(L, 1); // integer
   return i;
 }
@@ -1050,9 +1048,8 @@ static void lL_removedoc(lua_State *L, sptr_t doc) {
   lua_pop(L, 1); // views
   lua_newtable(L);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  for (size_t i = 1; i <= lua_rawlen(L, -1); i++) {
-    lua_rawgeti(L, -1, i);
-    if (doc != l_todoc(L, -1)) {
+  for (size_t i = 1; i <= lua_rawlen(L, -1); i++)
+    if (doc != (lua_rawgeti(L, -1, i), l_todoc(L, -1))) {
       lua_getfield(L, -1, "doc_pointer");
       // t[doc_pointer] = buffer, t[#t + 1] = buffer, t[buffer] = #t
       lua_pushvalue(L, -2), lua_rawseti(L, -5, lua_rawlen(L, -5) + 1);
@@ -1066,9 +1063,8 @@ static void lL_removedoc(lua_State *L, sptr_t doc) {
 //#elif CURSES
       // TODO: tabs
 #endif
-      lua_pop(L, 1); // value
+      lua_pop(L, 1); // buffer
     }
-  }
   lua_pop(L, 1); // buffers
   lua_pushvalue(L, -1), lua_setfield(L, LUA_REGISTRYINDEX, "ta_buffers");
   register_command_entry_doc();
@@ -1127,17 +1123,15 @@ static int lbuffer_text_range(lua_State *L) {
  * @return Scintilla param
  */
 static sptr_t lL_checkscintillaparam(lua_State *L, int *arg, int type) {
-  switch (type) {
-    case SSTRING: return (sptr_t)luaL_checkstring(L, (*arg)++);
-    case SBOOL: return lua_toboolean(L, (*arg)++);
-    case SKEYMOD: {
-      int key = luaL_checkinteger(L, (*arg)++) & 0xFFFF;
-      return key | ((luaL_checkinteger(L, (*arg)++) &
-                    (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
-    } case SINT: case SLEN: case SPOS: case SCOLOR:
-      return luaL_checklong(L, (*arg)++);
-    default: return 0;
+  if (type == SSTRING) return (sptr_t)luaL_checkstring(L, (*arg)++);
+  if (type == SBOOL) return lua_toboolean(L, (*arg)++);
+  if (type >= SINT && type <= SCOLOR) return luaL_checkinteger(L, (*arg)++);
+  if (type == SKEYMOD) {
+    int key = luaL_checkinteger(L, (*arg)++) & 0xFFFF;
+    return key | ((luaL_checkinteger(L, (*arg)++) &
+                  (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
   }
+  return 0;
 }
 
 /**
@@ -1348,20 +1342,17 @@ static void lL_adddoc(lua_State *L, sptr_t doc) {
  * Creates a new Scintilla document and adds it to the Lua state.
  * Generates 'buffer_before_switch' and 'buffer_new' events.
  * @param doc Almost always zero, except for the first Scintilla view created,
- *   in which its doc pointer would be given here.
+ *   in which its doc pointer would be given here since it already has a
+ *   pre-created buffer.
  * @see lL_adddoc
  */
 static void new_buffer(sptr_t doc) {
-  if (!doc) { // create the new document
-    doc = SS(focused_view, SCI_CREATEDOCUMENT, 0, 0);
+  if (!doc) {
+    doc = SS(focused_view, SCI_CREATEDOCUMENT, 0, 0); // create the new document
     lL_event(lua, "buffer_before_switch", -1);
     lL_adddoc(lua, doc);
     lL_gotodoc(lua, focused_view, -1, FALSE);
-  } else {
-    // The first Scintilla window already has a pre-created buffer.
-    lL_adddoc(lua, doc);
-    SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
-  }
+  } else lL_adddoc(lua, doc), SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
 #if GTK
   // Add a tab to the tabbar.
   l_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
@@ -1489,10 +1480,7 @@ static int lstring_iconv(lua_State *L) {
         // converted string for later concatenation.
         lua_checkstack(L, 2), lua_pushlstring(L, outbuf, p - outbuf), n++;
         p = outbuf, outbytesleft = bufsize;
-      } else {
-        free(outbuf), iconv_close(cd);
-        luaL_error(L, "conversion failed");
-      }
+      } else free(outbuf), iconv_close(cd), luaL_error(L, "conversion failed");
     lua_pushlstring(L, outbuf, p - outbuf);
     lua_concat(L, n);
     free(outbuf), iconv_close(cd);
@@ -1507,12 +1495,8 @@ static int lstring_iconv(lua_State *L) {
  */
 static void lL_cleartable(lua_State *L, int index) {
   lua_pushvalue(L, index); // copy to stack top so relative indices can be used
-  lua_pushnil(L);
-  while (lua_next(L, -2)) {
-    lua_pop(L, 1); // value
-    lua_pushnil(L), lua_rawset(L, -3);
-    lua_pushnil(L); // key for lua_next
-  }
+  while (lua_pushnil(L), lua_next(L, -2))
+    lua_pushnil(L), lua_replace(L, -2), lua_rawset(L, -3);
   lua_pop(L, 1); // table copy
 }
 
@@ -1548,9 +1532,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   }
   lua_pushinteger(L, (sptr_t)L), lua_setglobal(L, "_LUA");
   luaL_openlibs(L);
-  lL_openlib(L, "lpeg", luaopen_lpeg);
-  lL_openlib(L, "lfs", luaopen_lfs);
-  lL_openlib(L, "spawn", luaopen_spawn);
+  lL_openlib(L, lpeg), lL_openlib(L, lfs), lL_openlib(L, spawn);
 
   lua_newtable(L);
   lua_newtable(L);
@@ -1657,14 +1639,13 @@ static void lL_removeview(lua_State *L, Scintilla *view) {
   lua_newtable(L);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
   for (size_t i = 1; i <= lua_rawlen(L, -1); i++) {
-    lua_rawgeti(L, -1, i);
-    if (view != l_toview(L, -1)) {
+    if (view != (lua_rawgeti(L, -1, i), l_toview(L, -1))) {
       lua_getfield(L, -1, "widget_pointer");
       // vs[userdata] = v, vs[#vs + 1] = v, vs[v] = #vs
       lua_pushvalue(L, -2), lua_rawseti(L, -5, lua_rawlen(L, -5) + 1);
       lua_pushvalue(L, -2), lua_settable(L, -5);
       lua_pushinteger(L, lua_rawlen(L, -3)), lua_settable(L, -4);
-    } else lua_pop(L, 1); // value
+    } else lua_pop(L, 1); // view
   }
   lua_pop(L, 1); // views
   lua_pushvalue(L, -1), lua_setfield(L, LUA_REGISTRYINDEX, "ta_views");
@@ -1953,7 +1934,8 @@ static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
     Scintilla *prev = focused_view;
     // Do not let a split view steal focus.
     goto_view(view), lL_notify(lua, n), goto_view(prev);
-  } else if (n->nmhdr.code == SCN_FOCUSIN) goto_view(view);
+  } else if (n->nmhdr.code == SCN_FOCUSIN)
+    goto_view(view);
 }
 
 #if GTK
@@ -2428,7 +2410,7 @@ int main(int argc, char **argv) {
 #if GTK
   gtk_init(&argc, &argv);
 #elif CURSES
-  ta_tk = termkey_new(0, 0); // patched to auto-enable mouse mode (1002)
+  ta_tk = termkey_new(0, 0);
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
   curs_set(0); // disable cursor when Scintilla has focus
