@@ -131,14 +131,15 @@ static ListStore *find_store, *repl_store;
 #define set_option_label(o, _, l) gtk_button_set_label(GTK_BUTTON(o), l)
 #if !GTK_CHECK_VERSION(3,4,0)
 #define attach(...) gtk_table_attach(GTK_TABLE(findbox), __VA_ARGS__)
-#define FILL(option) (GtkAttachOptions)(GTK_FILL | GTK_##option)
 #else
 // GTK 3.4 deprecated tables; translate from 2.x for compatibility.
 #define gtk_table_new(...) \
   gtk_grid_new(), gtk_grid_set_column_spacing(GTK_GRID(findbox), 5)
-#define attach(w, x1, _, y1, __, ...) \
-  gtk_grid_attach(GTK_GRID(findbox), w, x1, y1, 1, 1)
+#define attach(w, x1, _, y1, __, xo, ...) \
+  (gtk_widget_set_hexpand(w, xo & GTK_EXPAND), \
+   gtk_grid_attach(GTK_GRID(findbox), w, x1, y1, 1, 1))
 #endif
+#define FILL(option) (GtkAttachOptions)(GTK_FILL | GTK_##option)
 #define command_entry_focused gtk_widget_has_focus(command_entry)
 #elif CURSES
 // curses window.
