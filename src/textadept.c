@@ -2253,9 +2253,12 @@ static GtkWidget *new_findbox() {
   return findbox;
 }
 
-/** Emit "Escape" key for the command entry on focus lost. */
+/**
+ * Emit "Escape" key for the command entry on focus lost unless the window is
+ * losing focus.
+ */
 static int wc_focusout(GtkWidget *widget, GdkEvent*_, void*__) {
-  if (widget == window) return TRUE; // keep focus if window is losing focus
+  if (widget == window && command_entry_focused) return TRUE;
   return (lL_event(lua, "keypress", LUA_TNUMBER, GDK_Escape, -1), FALSE);
 }
 #endif // if GTK
