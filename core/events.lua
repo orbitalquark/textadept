@@ -123,6 +123,8 @@ local M = {}
 -- @field HOTSPOT_CLICK (string)
 --   Emitted when clicking on text that is in a style that has the hotspot
 --   attribute set.
+--   Event handlers should avoid calling any function that modifies the current
+--   selection or caret position.
 --   Arguments:
 --
 --   * _`position`_: The clicked text's position.
@@ -134,6 +136,8 @@ local M = {}
 -- @field HOTSPOT_DOUBLE_CLICK (string)
 --   Emitted when double-clicking on text that is in a style that has the
 --   hotspot attribute set.
+--   Event handlers should avoid calling any function that modifies the current
+--   selection or caret position.
 --   Arguments:
 --
 --   * _`position`_: The double-clicked text's position.
@@ -145,6 +149,8 @@ local M = {}
 -- @field HOTSPOT_RELEASE_CLICK (string)
 --   Emitted when releasing the mouse after clicking on text that is in a style
 --   that has the hotspot attribute set.
+--   Event handlers should avoid calling any function that modifies the current
+--   selection or caret position.
 --   Arguments:
 --
 --   * _`position`_: The clicked text's position.
