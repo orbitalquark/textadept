@@ -231,6 +231,7 @@ REPLACE	_	0;"	F	class:events
 REPLACE_ALL	_	0;"	F	class:events
 RESET_AFTER	_	0;"	F	class:events
 RESET_BEFORE	_	0;"	F	class:events
+RESUME	_	0;"	F	class:events
 RUN_OUTPUT	_	0;"	F	class:events
 S	_	0;"	f	class:lpeg
 SAVE_ON_QUIT	_	0;"	F	class:textadept.session
@@ -279,6 +280,7 @@ STYLE_STRING	_	0;"	F	class:lexer
 STYLE_TYPE	_	0;"	F	class:lexer
 STYLE_VARIABLE	_	0;"	F	class:lexer
 STYLE_WHITESPACE	_	0;"	F	class:lexer
+SUSPEND	_	0;"	F	class:events
 TIME_FOREVER	_	0;"	F	class:buffer
 TYPE	_	0;"	F	class:lexer
 TYPEDEF	_	0;"	F	class:textadept.editing.XPM_IMAGES
