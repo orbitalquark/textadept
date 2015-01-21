@@ -131,9 +131,9 @@ M.autocompleters = {}
 
 ---
 -- Map of lexer names to API documentation file tables.
--- Each line in an API file consists of the name of a symbol (not the full
--- symbol), a space character, and that symbol's documentation. '\n' represents
--- a newline character.
+-- Each line in an API file consists of a symbol name (not a fully qualified
+-- symbol name), a space character, and that symbol's documentation. '\n'
+-- represents a newline character.
 -- @class table
 -- @name api_files
 -- @see show_documentation
@@ -209,7 +209,7 @@ if CURSES and not WIN32 then
   events.connect(events.SUSPEND, disable_bracketed_paste_mode)
   events.connect(events.RESUME, enable_bracketed_paste_mode)
   events.connect(events.QUIT, disable_bracketed_paste_mode)
-  
+
   local reenable_autopair, reenable_autoindent
   events.connect('csi', function(cmd, args)
     if cmd ~= string.byte('~') then return end
