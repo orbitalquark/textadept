@@ -8,6 +8,38 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.8 beta 3 (21 Jan 2015)
+
+Download:
+
+* [Textadept 7.8 beta 3 -- Win32][]
+* [Textadept 7.8 beta 3 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.8 beta 3 -- Linux][]
+* [Textadept 7.8 beta 3 -- Linux x86_64][]
+* [Textadept 7.8 beta 3 -- Modules][]
+
+Bugfixes:
+
+* Fixed opening files with network paths on Win32.
+* Fixed minor GTK 3 issues.
+* Fixed bug in hiding caret when Textadept loses focus.
+
+Changes:
+
+* Restore `^Z` key binding as "undo" if terminal suspend is disabled.
+* Added [`events.SUSPEND`][] and [`events.RESUME`][] events for terminal suspend
+  and resume.
+* Updated to [Scintilla][] 3.5.3.
+
+[Textadept 7.8 beta 3 -- Win32]: download/textadept_7.8_beta_3.win32.zip
+[Textadept 7.8 beta 3 -- Mac OSX Intel 10.5+]: download/textadept_7.8_beta_3.osx.zip
+[Textadept 7.8 beta 3 -- Linux]: download/textadept_7.8_beta_3.i386.tgz
+[Textadept 7.8 beta 3 -- Linux x86_64]: download/textadept_7.8_beta_3.x86_64.tgz
+[Textadept 7.8 beta 3 -- Modules]: download/textadept_7.8_beta_3.modules.zip
+[`events.SUSPEND`]: api.html#events.SUSPEND
+[`events.RESUME`]: api.html#events.RESUME
+[Scintilla]: http://scintilla.org
+
 ## 7.8 beta 2 (11 Jan 2015)
 
 Download:
