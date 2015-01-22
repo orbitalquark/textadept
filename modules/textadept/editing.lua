@@ -211,7 +211,7 @@ if CURSES and not WIN32 then
   events.connect(events.QUIT, disable_bracketed_paste_mode)
 
   local reenable_autopair, reenable_autoindent
-  events.connect('csi', function(cmd, args)
+  events.connect(events.CSI, function(cmd, args)
     if cmd ~= string.byte('~') then return end
     if args[1] == 200 then
       reenable_autopair, M.AUTOPAIR = M.AUTOPAIR, false
