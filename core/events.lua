@@ -243,7 +243,7 @@ local M = {}
 -- @field SAVE_POINT_REACHED (string)
 --   Emitted after reaching a save point.
 -- @field SUSPEND (string)
---   Emitted when suspending Textadept. If a handler returns `true`, Textadept
+--   Emitted when suspending Textadept. If any handler returns `true`, Textadept
 --   does not suspend.
 --   This event is only emitted by the terminal version.
 -- @field UPDATE_UI (string)

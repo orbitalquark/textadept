@@ -462,7 +462,7 @@ events_connect(events.ERROR, ui.print)
 --[[ The tables below were defined in C.
 
 ---
--- A table of menus defining a menubar.
+-- A table of menus defining a menubar. (Write-only).
 -- This is a low-level field. You probably want to use the higher-level
 -- `textadept.menu.menubar`.
 -- @see textadept.menu.menubar
