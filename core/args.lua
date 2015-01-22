@@ -36,7 +36,6 @@ function M.register(short, long, narg, f, description)
   switches[short], switches[long] = t, t
 end
 
----
 -- Processes command line argument table *arg*, handling switches previously
 -- defined using `args.register()` and treating unrecognized arguments as
 -- filenames to open.
@@ -44,8 +43,7 @@ end
 -- @param arg Argument table.
 -- @see register
 -- @see _G.events
--- @name process
-function M.process(arg)
+local function process(arg)
   local no_args = true
   local i = 1
   while i <= #arg do
@@ -64,6 +62,8 @@ function M.process(arg)
   end
   if no_args then events.emit(events.ARG_NONE) end
 end
+events.connect(events.INITIALIZED, function() if arg then process(arg) end end)
+events.connect('cmd_line', process) -- undocumented, single-instance event
 
 -- Shows all registered command line switches on the command line.
 local function show_help()
@@ -97,8 +97,5 @@ _G._USERHOME = userhome
 
 M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
 M.register('-f', '--force', 0, function() end, 'Forces unique instance')
-
-events.connect(events.INITIALIZED,
-               function() if arg then M.process(arg) end end)
 
 return M
