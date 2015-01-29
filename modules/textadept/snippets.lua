@@ -139,7 +139,7 @@ function M._insert(text)
                                 buffer.current_pos)
     text = type(M[lexer]) == 'table' and M[lexer][trigger] or M[trigger]
   end
-  local snippet = text and new_snippet(text, trigger) or
+  local snippet = type(text) == 'string' and new_snippet(text, trigger) or
                   snippet_stack[#snippet_stack]
   if not snippet then return false end
   snippet:next()
