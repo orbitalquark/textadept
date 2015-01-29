@@ -413,19 +413,6 @@ events.connect(events.MENU_CLICKED, function(menu_id)
   keys.run_command(action, type(action))
 end)
 
-if not CURSES then
-  -- Set a language-specific context menu or the default one.
-  local function set_language_contextmenu()
-    local lang = _G.buffer:get_lexer()
-    set_contextmenus(_M[lang] and _M[lang].context_menu,
-                     _M[lang] and _M[lang].tab_context_menu)
-  end
-  events.connect(events.LEXER_LOADED, set_language_contextmenu)
-  events.connect(events.BUFFER_AFTER_SWITCH, set_language_contextmenu)
-  events.connect(events.VIEW_AFTER_SWITCH, set_language_contextmenu)
-  events.connect(events.BUFFER_NEW, set_language_contextmenu)
-end
-
 return setmetatable(M, {
   __index = function(t, k) return proxies[k] or M[k] end,
   __newindex = function(t, k, v)

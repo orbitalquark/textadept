@@ -10,7 +10,8 @@
 --
 -- Textadept modules are identical to Lua modules and behave in the same way.
 -- Modules consist of a single directory with an *init.lua* script and any
--- necessary support files. (For an example, see *modules/textadept/init.lua*.)
+-- necessary support files. (For an example, see *modules/textadept/init.lua*,
+-- which is a module that provides most of Textadept's functionality.)
 --
 -- Loaded modules, even language modules, persist in Textadept's Lua State;
 -- Textadept never unloads them. Therefore, modules should define functions or
@@ -18,10 +19,13 @@
 --
 -- ### Language Modules
 --
--- To fully take advantage of Textadept's features, language modules should have
--- at a minimum: run and/or compile commands, an event handler for setting
--- buffer properties like indentation, and if possible, an autocompleter.
--- Optional features are extra snippets and commands and a context menu.
+-- Language modules are a special kind of module that Textadept automatically
+-- loads when editing source code in a particular programming language. When
+-- writing a language module, and in order to fully take advantage of
+-- Textadept's features, you should include at a minimum: run and/or compile
+-- commands, an event handler for setting buffer properties like indentation,
+-- and if possible, an autocompleter. Optional features are extra snippets,
+-- commands, and context menu items.
 --
 -- #### Compile and Run
 --
@@ -67,7 +71,7 @@
 --
 -- #### Buffer Properties
 --
--- By default, Textadept uses 2 spaces as indentation. If your language has
+-- By default, Textadept uses 2 spaces for indentation. If your language has
 -- different indentation guidelines, change them from an
 -- `events.LEXER_LOADED` event handler. Using tabs of width 8 would look like
 --
@@ -85,7 +89,8 @@
 -- documentation, respectively, when editing code. In order for these to work
 -- for your language, you must create an
 -- [autocompleter](#textadept.editing.autocompleters) and
--- [API file(s)](#textadept.editing.api_files).
+-- [API file(s)](#textadept.editing.api_files). All of Textadept's included
+-- language modules have examples of autocompleters and API documentation.
 --
 -- #### Snippets
 --
@@ -107,9 +112,9 @@
 -- to the end of the current line and insert a new line. Both are bound to the
 -- `Shift+Enter` (`⇧↩` on Mac OSX | `S-Enter` in curses) key for easy access.
 --
---     -- In file *lua/init.lua*             | -- In file *cpp/init.lua*
+--     -- In file *lua/init.lua*             | -- In file *ansi_c/init.lua*
 --                                           |
---     function M.try_to_autocomplete_end()  | keys.cpp = {
+--     function M.try_to_autocomplete_end()  | keys.ansi_c = {
 --       ...                                 |   ['s\n'] = function()
 --     end                                   |     buffer:line_end()
 --                                           |     buffer:add_text(';')
@@ -119,21 +124,12 @@
 --
 -- #### Context Menu
 --
--- Language-specific context menus, accessible by right-clicking inside the
--- view, are useful for accessing module features without using key bindings.
+-- It may be useful to add language-specific menu options to the right-click
+-- context menu in order to access module features without using key bindings.
 -- For Lua this might look like
 --
---     M.context_menu = {
---       {_L['_Undo'], buffer.undo},
---       {_L['_Redo'], buffer.redo},
---       {''},
---       {_L['Cu_t'], buffer.cut},
---       {_L['_Copy'], buffer.copy},
---       {_L['_Paste'], buffer.paste},
---       {_L['_Delete'], buffer.clear},
---       {''},
---       {_L['Select _All'], buffer.select_all},
---       {''},
+--     textadept.menu.context_menu[#textadept.menu.context_menu + 1] = {
+--       title = 'Lua',
 --       {'Autocomplete "end"', M.try_to_autocomplete_end}
 --     }
 module('_M')]]
