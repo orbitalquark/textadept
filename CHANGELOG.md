@@ -8,6 +8,32 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.8 (01 Feb 2015)
+
+Download:
+
+* [Textadept 7.8 -- Win32][]
+* [Textadept 7.8 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.8 -- Linux][]
+* [Textadept 7.8 -- Linux x86_64][]
+* [Textadept 7.8 -- Modules][]
+
+Bugfixes:
+
+* Fixed snippets bug where name matches lexer name.
+
+Changes:
+
+* Removed language-specific context menus; manipulate
+  [`textadept.menu.context_menu`][] directly from language modules.
+
+[Textadept 7.8 -- Win32]: download/textadept_7.8.win32.zip
+[Textadept 7.8 -- Mac OSX Intel 10.5+]: download/textadept_7.8.osx.zip
+[Textadept 7.8 -- Linux]: download/textadept_7.8.i386.tgz
+[Textadept 7.8 -- Linux x86_64]: download/textadept_7.8.x86_64.tgz
+[Textadept 7.8 -- Modules]: download/textadept_7.8.modules.zip
+[`textadept.menu.context_menu`]: api.html#textadept.menu.context_menu
+
 ## 7.8 beta 3 (21 Jan 2015)
 
 Download:
