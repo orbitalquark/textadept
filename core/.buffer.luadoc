@@ -2518,7 +2518,7 @@ function scroll_to_start(buffer) end
 
 ---
 -- Anchors the position that `buffer.search_next()` and `buffer.search_prev()`
--- start at to the caret position.
+-- start at to the beginning of the current selection or caret position.
 -- @param buffer A buffer.
 function search_anchor(buffer) end
 
