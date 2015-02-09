@@ -108,7 +108,7 @@ local env = setmetatable({}, {
   __index = function(t, k)
     local f = buffer[k]
     if f and type(f) == 'function' then
-      f = function(...) buffer[k](buffer, ...) end
+      f = function(...) return buffer[k](buffer, ...) end
     elseif f == nil then
       f = view[k] or ui[k] or _G[k]
     end
