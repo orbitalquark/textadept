@@ -343,6 +343,13 @@ events_connect(events.BUFFER_BEFORE_SWITCH, function()
   -- Save view state.
   buffer._anchor, buffer._current_pos = buffer.anchor, buffer.current_pos
   buffer._top_line = buffer:doc_line_from_visible(buffer.first_visible_line)
+  buffer._view_eol, buffer._view_ws = buffer.view_eol, buffer.view_ws
+  buffer._wrap_mode = buffer.wrap_mode
+  buffer._margin_type_n, buffer._margin_width_n = {}, {}
+  for i = 0, 4 do
+    buffer._margin_type_n[i] = buffer.margin_type_n[i]
+    buffer._margin_width_n[i] = buffer.margin_width_n[i]
+  end
   -- Save fold state.
   buffer._folds = {}
   local folds, i = buffer._folds, buffer:contracted_fold_next(0)
@@ -361,6 +368,12 @@ events_connect(events.BUFFER_AFTER_SWITCH, function()
   buffer:set_sel(buffer._anchor, buffer._current_pos)
   buffer:line_scroll(0, buffer:visible_from_doc_line(buffer._top_line) -
                         buffer.first_visible_line)
+  buffer.view_eol, buffer.view_ws = buffer._view_eol, buffer._view_ws
+  buffer.wrap_mode = buffer._wrap_mode
+  for i = 0, 4 do
+    buffer.margin_type_n[i] = buffer._margin_type_n[i]
+    buffer.margin_width_n[i] = buffer._margin_width_n[i]
+  end
 end)
 
 -- Updates titlebar and statusbar.

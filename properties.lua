@@ -26,13 +26,13 @@ if CURSES and not (WIN32 or LINUX or BSD) then buffer.v_scroll_bar = false end
 --buffer.end_at_last_line = false
 
 -- Whitespace
---buffer.view_ws = buffer.WS_VISIBLEALWAYS
+buffer.view_ws = buffer.WS_INVISIBLE
 --buffer.whitespace_size =
 --buffer.extra_ascent =
 --buffer.extra_descent =
 
 -- Line Endings
---buffer.view_eol = true
+buffer.view_eol = false
 
 -- Caret and Selection Styles.
 --buffer.sel_eol_filled = true
@@ -47,17 +47,21 @@ buffer.caret_line_visible = not CURSES and buffer ~= ui.command_entry
 --buffer.margin_left =
 --buffer.margin_right =
 -- Line Number Margin.
+buffer.margin_type_n[0] = buffer.MARGIN_NUMBER
 local width = 4 * buffer:text_width(buffer.STYLE_LINENUMBER, '9')
 buffer.margin_width_n[0] = width + (not CURSES and 4 or 0)
 -- Marker Margin.
 buffer.margin_width_n[1] = not CURSES and 4 or 1
-buffer.margin_sensitive_n[1] = true
-buffer.margin_cursor_n[1] = buffer.CURSORARROW
 -- Fold Margin.
 buffer.margin_width_n[2] = not CURSES and 12 or 1
 buffer.margin_mask_n[2] = buffer.MASK_FOLDERS
-buffer.margin_sensitive_n[2] = true
-buffer.margin_cursor_n[2] = buffer.CURSORARROW
+-- Other Margins.
+for i = 1, 4 do
+  buffer.margin_type_n[i] = buffer.MARGIN_SYMBOL
+  buffer.margin_sensitive_n[i] = true
+  buffer.margin_cursor_n[i] = buffer.CURSORARROW
+  if i > 2 then buffer.margin_width_n[i] = 0 end
+end
 
 -- Annotations.
 buffer.annotation_visible = buffer.ANNOTATION_BOXED
@@ -157,7 +161,7 @@ buffer.automatic_fold = buffer.AUTOMATICFOLD_SHOW + buffer.AUTOMATICFOLD_CLICK +
 buffer.fold_flags = not CURSES and buffer.FOLDFLAG_LINEAFTER_CONTRACTED or 0
 
 -- Line Wrapping.
---buffer.wrap_mode = buffer.WRAP_WORD
+buffer.wrap_mode = buffer.WRAP_NONE
 --buffer.wrap_visual_flags = buffer.WRAPVISUALFLAG_MARGIN
 --buffer.wrap_visual_flags_location = buffer.WRAPVISUALFLAGLOC_END_BY_TEXT
 --buffer.wrap_indent_mode = buffer.WRAPINDENT_SAME
