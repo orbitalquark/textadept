@@ -299,7 +299,6 @@ osxapp_libs = libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib \
               libintl.8.dylib libpango-1.0.0.dylib libpangocairo-1.0.0.dylib \
               libpangoft2-1.0.0.dylib libpixman-1.0.dylib libpng14.14.dylib \
               charset.alias gdk-pixbuf-2.0 gtk-2.0 pango
-modules = css html rest ruby python yaml
 
 release-all: release release64 win32-release osx-release modules-release
 
@@ -339,7 +338,7 @@ osx-release: $(basedir).osx
 	zip -r /tmp/$<.zip $< && rm -rf $<
 $(basedir).modules:
 	mkdir -p $@/modules
-	for m in $(modules); do hg clone /home/mitchell/code/$$m $@/modules/$$m; done
+	hg archive -R /home/mitchell/code/ta_modules/ $@/modules
 modules-release: $(basedir).modules ; zip -r /tmp/$<.zip $< && rm -r $<
 
 osx-app: ../textadept ../textadeptjit ../textadept-curses \
