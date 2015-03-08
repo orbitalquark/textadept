@@ -338,7 +338,7 @@ osx-release: $(basedir).osx
 	zip -r /tmp/$<.zip $< && rm -rf $<
 $(basedir).modules:
 	mkdir -p $@/modules
-	hg archive -R /home/mitchell/code/ta_modules/ $@/modules
+	hg archive -R /home/mitchell/code/textadept_modules/ $@/modules
 modules-release: $(basedir).modules ; zip -r /tmp/$<.zip $< && rm -r $<
 
 osx-app: ../textadept ../textadeptjit ../textadept-curses \
