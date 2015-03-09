@@ -325,12 +325,6 @@
 -- @field highlight_guide (number)
 --   The indentation guide column number to highlight, or `0` to stop
 --   highlighting.
--- @field hotspot_active_underline (bool)
---   Underline active hotspots.
---   The default value is `true`.
--- @field hotspot_single_line (bool)
---   Limit hotspots to a single line.
---   The default value is `true`.
 -- @field indent (number)
 --   The number of spaces in one level of indentation.
 --   The default value is `0`, which uses the value of [`buffer.tab_width`]().
@@ -1835,18 +1829,6 @@ function form_feed(buffer) end
 function get_cur_line(buffer) end
 
 ---
--- Returns the numeric background color of active hotspots.
--- @param buffer A buffer.
--- @return number
-function get_hotspot_active_back(buffer) end
-
----
--- Returns the numeric foreground color of active hotspots.
--- @param buffer A buffer.
--- @return number
-function get_hotspot_active_fore(buffer) end
-
----
 -- Returns the line number of the last line after line number *line* whose fold
 -- level is greater than *level*.
 -- If *level* is `-1`, returns the level of *line*.
@@ -2624,22 +2606,6 @@ function set_fold_margin_colour(buffer, use_setting, color) end
 function set_fold_margin_hi_colour(buffer, use_setting, color) end
 
 ---
--- Overrides the default background color of active hotspots with color *color*,
--- in "0xBBGGRR" format, if *use_setting* is `true`.
--- @param buffer A buffer.
--- @param use_setting Whether or not to use *color*.
--- @param color The color in "0xBBGGRR" format.
-function set_hotspot_active_back(buffer, use_setting, color) end
-
----
--- Overrides the default foreground color of active hotspots with color *color*,
--- in "0xBBGGRR" format, if *use_setting* is `true`.
--- @param buffer A buffer.
--- @param use_setting Whether or not to use *color*.
--- @param color The color in "0xBBGGRR" format.
-function set_hotspot_active_fore(buffer, use_setting, color) end
-
----
 -- Indicates the buffer has no unsaved changes.
 -- @param buffer A buffer.
 function set_save_point(buffer) end
@@ -3129,6 +3095,8 @@ function set_lexer(buffer, lexer) end
 --   * focus
 --   * font_quality
 --   * gap_position
+--   * hotspot_active_underline
+--   * hotspot_single_line
 --   * identifier
 --   * identifiers
 --   * ime_interaction
@@ -3220,6 +3188,8 @@ function set_lexer(buffer, lexer) end
 --   * find_text
 --   * format_range
 --   * free_sub_styles
+--   * get_hotspot_active_back
+--   * get_hotspot_active_fore
 --   * get_next_tab_stop
 --   * get_range_pointer
 --   * get_styled_text
@@ -3235,6 +3205,8 @@ function set_lexer(buffer, lexer) end
 --   * property_names
 --   * property_type
 --   * release_document
+--   * set_hotspot_active_back
+--   * set_hotspot_active_fore
 --   * set_length_for_encode
 --   * set_styling_ex
 --   * start_record
