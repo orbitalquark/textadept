@@ -120,40 +120,6 @@ local M = {}
 -- @field FOCUS (string)
 --   Emitted when Textadept receives focus.
 --   This event is never emitted when Textadept is running in the terminal.
--- @field HOTSPOT_CLICK (string)
---   Emitted when clicking on text that is in a style that has the hotspot
---   attribute set.
---   Event handlers should avoid calling any function that modifies the current
---   selection or caret position.
---   Arguments:
---
---   * _`position`_: The clicked text's position.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
---     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
---     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
---     and "Alt" due to a Scintilla limitation with GTK+.
--- @field HOTSPOT_DOUBLE_CLICK (string)
---   Emitted when double-clicking on text that is in a style that has the
---   hotspot attribute set.
---   Event handlers should avoid calling any function that modifies the current
---   selection or caret position.
---   Arguments:
---
---   * _`position`_: The double-clicked text's position.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
---     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
---     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
---     and "Alt" due to a Scintilla limitation with GTK+.
--- @field HOTSPOT_RELEASE_CLICK (string)
---   Emitted when releasing the mouse after clicking on text that is in a style
---   that has the hotspot attribute set.
---   Event handlers should avoid calling any function that modifies the current
---   selection or caret position.
---   Arguments:
---
---   * _`position`_: The clicked text's position.
 -- @field INDICATOR_CLICK (string)
 --   Emitted when clicking the mouse on text that has an indicator present.
 --   Arguments:
@@ -367,17 +333,12 @@ local scnotifications = {
   [c.SCN_URIDROPPED] = {'uri_dropped', 'text'},
   [c.SCN_DWELLSTART] = {'dwell_start', 'position', 'x', 'y'},
   [c.SCN_DWELLEND] = {'dwell_end', 'position', 'x', 'y'},
-  [c.SCN_HOTSPOTCLICK] = {'hotspot_click', 'position', 'modifiers'},
-  [c.SCN_HOTSPOTDOUBLECLICK] = {
-    'hotspot_double_click', 'position', 'modifiers'
-  },
   [c.SCN_CALLTIPCLICK] = {'call_tip_click', 'position'},
   [c.SCN_AUTOCSELECTION] = {'auto_c_selection', 'text', 'position'},
   [c.SCN_INDICATORCLICK] = {'indicator_click', 'position', 'modifiers'},
   [c.SCN_INDICATORRELEASE] = {'indicator_release', 'position'},
   [c.SCN_AUTOCCANCELLED] = {'auto_c_cancelled'},
   [c.SCN_AUTOCCHARDELETED] = {'auto_c_char_deleted'},
-  [c.SCN_HOTSPOTRELEASECLICK] = {'hotspot_release_click', 'position'},
 }
 
 -- Handles Scintilla notifications.
