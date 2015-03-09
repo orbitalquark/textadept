@@ -222,8 +222,7 @@ M._snippet_mt = {
   -- @param snippet The snippet returned by `new_snippet()`.
   -- @param text The snippet's text.
   set_text = function(snippet, text)
-    buffer.target_start = snippet.start_position
-    buffer.target_end = snippet:get_end_position()
+    buffer:set_target_range(snippet.start_position, snippet:get_end_position())
     buffer:replace_target(text)
   end,
 
@@ -298,16 +297,16 @@ M._snippet_mt = {
         placeholder = (placeholder or ''):sub(2, -2)
 
         -- Place the caret at the placeholder.
-        buffer.target_start, buffer.target_end = start + s - 1, start + e - 1
+        buffer:set_target_range(start + s - 1, start + e - 1)
         buffer:replace_target(snippet.unescape_text(placeholder))
         buffer:set_sel(buffer.target_start, buffer.target_end)
 
         -- Add additional carets at mirrors.
         escaped_text = snippet:get_escaped_text()..' '
-        offset = 0
+        local offset = 0
         for s, e in escaped_text:gmatch('()%%'..index..'()[^(]') do
-          buffer.target_start = start + s - 1 + offset
-          buffer.target_end = start + e - 1 + offset
+          buffer:set_target_range(start + s - 1 + offset, 
+                                  start + e - 1 + offset)
           buffer:replace_target(placeholder)
           buffer:add_selection(buffer.target_start, buffer.target_end)
           offset = offset + (#placeholder - (e - s))
