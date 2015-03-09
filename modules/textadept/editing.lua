@@ -338,8 +338,8 @@ function M.transpose_chars()
   if buffer.length == 0 then return end
   local pos, char = buffer.current_pos, buffer.char_at[buffer.current_pos]
   if char == 10 or char == 13 or pos == buffer.length then pos = pos - 1 end
-  buffer.target_start, buffer.target_end = pos - 1, pos + 1
-  buffer:replace_target(buffer:text_range(pos - 1, pos + 1):reverse())
+  buffer:set_target_range(pos - 1, pos + 1)
+  buffer:replace_target(buffer.target_text:reverse())
   buffer:goto_pos(pos + 1)
 end
 
@@ -369,11 +369,10 @@ function M.enclose(left, right)
   buffer:target_from_selection()
   local s, e = buffer.target_start, buffer.target_end
   if s == e then
-    buffer.target_start = buffer:word_start_position(s, true)
-    buffer.target_end = buffer:word_end_position(e, true)
-    s, e = buffer.target_start, buffer.target_end
+    buffer:set_target_range(buffer:word_start_position(s, true),
+                            buffer:word_end_position(e, true))
   end
-  buffer:replace_target(left..buffer:text_range(s, e)..right)
+  buffer:replace_target(left..buffer.target_text..right)
   buffer:goto_pos(buffer.target_end)
 end
 
@@ -406,8 +405,8 @@ function M.select_word()
                          buffer:word_end_position(buffer.current_pos, true))
   else
     local word = buffer:text_range(buffer.selection_start, buffer.selection_end)
-    buffer.target_start = buffer.selection_n_end[buffer.selections - 1]
-    buffer.target_end = buffer.length - 1
+    buffer:set_target_range(buffer.selection_n_end[buffer.selections - 1],
+                            buffer.length - 1)
     buffer.search_flags = buffer.FIND_MATCHCASE + buffer.FIND_WHOLEWORD
     if buffer:search_in_target(word) ~= -1 then
       buffer:add_selection(buffer.target_start, buffer.target_end)
@@ -456,7 +455,7 @@ function M.convert_indentation()
       new_indentation = (' '):rep(indent)
     end
     if current_indentation ~= new_indentation then
-      buffer.target_start, buffer.target_end = s, e
+      buffer:set_target_range(s, e)
       buffer:replace_target(new_indentation)
     end
   end
@@ -487,11 +486,11 @@ function M.highlight_word()
   if s == e then return end
   local word = buffer:text_range(s, e)
   buffer.search_flags = buffer.FIND_WHOLEWORD + buffer.FIND_MATCHCASE
-  buffer.target_start, buffer.target_end = 0, buffer.length
+  buffer:set_target_range(0, buffer.length)
   while buffer:search_in_target(word) > -1 do
     local len = buffer.target_end - buffer.target_start
     buffer:indicator_fill_range(buffer.target_start, len)
-    buffer.target_start, buffer.target_end = buffer.target_end, buffer.length
+    buffer:set_target_range(buffer.target_end, buffer.length)
   end
   buffer:set_sel(s, e)
 end
@@ -533,7 +532,7 @@ function M.filter_through(command)
   if WIN32 then cmd = cmd:gsub('/', '\\') end
   local p = io.popen(cmd)
   if s ~= e then
-    buffer.target_start, buffer.target_end = s, e
+    buffer:set_target_range(s, e)
     buffer:replace_target(p:read('*a'))
     buffer:set_sel(buffer.target_start, buffer.target_end)
   else

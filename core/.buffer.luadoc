@@ -360,6 +360,17 @@
 -- @field indic_fore (table)
 --   Table of foreground colors, in "0xBBGGRR" format, for indicator numbers
 --   from `0` to `31`.
+--   Changing an indicator's foreground color resets that indicator's hover
+--   foreground color.
+-- @field indic_hover_fore (table)
+--   Table of hover foreground colors, in "0xBBGGRR" format, for indicator
+--   numbers from `0` to `31`.
+--   The default values are the respective indicator foreground colors.
+-- @field indic_hover_style (table)
+--   Table of hover styles for indicators numbers from `0` to `31`. An
+--   indicator's hover style drawn when either the cursor hovers over that
+--   indicator or the caret is within that indicator.
+--   The default values are the respective indicator styles.
 -- @field indic_outline_alpha (table)
 --   Table of outline color alpha values, ranging from `0` (transparent) to
 --   `255` (opaque), for indicator numbers from `0` to `31` whose styles are
@@ -404,10 +415,20 @@
 --     of multiple line segments.
 --   * `buffer.INDIC_COMPOSITIONTHICK`
 --     A 2-pixel thick underline at the bottom of the line inset by 1 pixel on
---     on either side. Similar in appearance to Asian language input
---     composition.
+--     on either side. Similar in appearance to the target in Asian language
+--     input composition.
+--   * `buffer.INDIC_COMPOSITIONTHIN`
+--     A 1-pixel thick underline just before the bottom of the line inset by 1
+--     pixel on either side. Similar in appearance to the non-target ranges in
+--     Asian language input composition.
+--   * `buffer.INDIC_FULLBOX`
+--     Similar to `INDIC_STRAIGHTBOX` but extends to the top of its line, 
+--     potentially touching any similar indicators on the line above.
+--   * `buffer.INDIC_TEXTFORE`
+--     Changes the color of text to an indicator's foreground color.
 --
 --   Use [`_SCINTILLA.next_indic_number()`]() for custom indicators.
+--   Changing an indicator's style resets that indicator's hover style.
 -- @field indic_under (table)
 --   Table of flags that indicate whether or not to draw indicators behind text
 --   instead of over the top of it for indicator numbers from `0` to `31`.
@@ -810,6 +831,8 @@
 -- @field target_start (number)
 --   The position of the beginning of the target range.
 --   This is also set by a successful [`buffer.search_in_target()`]().
+-- @field target_text (string, Read-only)
+--   The text in the target range.
 -- @field text_length (number, Read-only)
 --   The number of bytes in the buffer.
 -- @field two_phase_draw (bool)
@@ -2669,6 +2692,14 @@ function set_selection(buffer, end_pos, start_pos) end
 function set_styling(buffer, length, style) end
 
 ---
+-- Defines the target range's beginning and end positions as *start_pos* and 
+-- *end_pos*, respectively.
+-- @param buffer A buffer.
+-- @param start_pos The position of the beginning of the target range.
+-- @param end_pos The position of the end of the target range.
+function set_target_range(buffer, start_pos, end_pos) end
+
+---
 -- Replaces the buffer's text with string *text*.
 -- @param buffer A buffer.
 -- @param text The text to set.
@@ -3101,6 +3132,7 @@ function set_lexer(buffer, lexer) end
 --   * identifier
 --   * identifiers
 --   * ime_interaction
+--   * indic_flags
 --   * indicator_value
 --   * keys_unicode
 --   * key_words
