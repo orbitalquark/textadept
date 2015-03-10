@@ -2248,7 +2248,9 @@ static GtkWidget *new_findbox() {
  */
 static int wc_focusout(GtkWidget *widget, GdkEvent*_, void*__) {
   if (widget == window && command_entry_focused) return TRUE;
-  return (lL_event(lua, "keypress", LUA_TNUMBER, GDK_Escape, -1), FALSE);
+  if (widget == command_entry) 
+    lL_event(lua, "keypress", LUA_TNUMBER, GDK_Escape, -1);
+  return FALSE;
 }
 #endif // if GTK
 
