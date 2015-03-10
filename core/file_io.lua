@@ -17,16 +17,12 @@
 --   * _`filename`_: The filename of the file being saved.
 -- @field _G.events.FILE_AFTER_SAVE (string)
 --   Emitted right after saving a file to disk.
---   Emitted by [`io.save_file()`]().
+--   Emitted by [`io.save_file()`]() and [`io.save_file_as()`]().
 --   Arguments:
 --
 --   * _`filename`_: The filename of the file being saved.
--- @field _G.events.FILE_SAVED_AS (string)
---   Emitted after saving a file under a different filename.
---   Emitted by [`io.save_file_as()`]().
---   Arguments:
---
---   * _`filename`_: The new filename.
+--   * _`saved_as`_: Whether or not the file was saved under a different 
+--     filename.
 -- @field _G.events.FILE_CHANGED (string)
 --   Emitted when Textadept detects that an open file was modified externally.
 --   When connecting to this event, connect with an index of 1 to override the
@@ -44,7 +40,6 @@ local events, events_connect = events, events.connect
 events.FILE_OPENED = 'file_opened'
 events.FILE_BEFORE_SAVE = 'file_before_save'
 events.FILE_AFTER_SAVE = 'file_after_save'
-events.FILE_SAVED_AS = 'file_saved_as'
 events.FILE_CHANGED = 'file_changed'
 
 io.SNAPOPEN_MAX = 1000
@@ -231,7 +226,7 @@ end
 
 ---
 -- Saves the current buffer to file *filename* or the user-specified filename.
--- Emits a `FILE_SAVED_AS` event.
+-- Emits a `FILE_AFTER_SAVE` event.
 -- @param filename Optional new filepath to save the buffer to. If `nil`, the
 --   user is prompted for one.
 -- @name save_file_as
@@ -245,7 +240,7 @@ function io.save_file_as(filename)
   if not filename then return end
   buffer.filename = filename
   io.save_file()
-  events.emit(events.FILE_SAVED_AS, filename)
+  events.emit(events.FILE_AFTER_SAVE, filename, true)
 end
 
 ---
