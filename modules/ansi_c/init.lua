@@ -9,8 +9,6 @@ local M = {}
 --
 -- ## Key Bindings
 --
--- + `Ctrl+L, M` (`⌘L, M` on Mac OSX | `M-L, M` in curses)
---   Open this module for editing.
 -- + `Shift+Enter` (`⇧↩` | `S-Enter`)
 --   Add ';' to the end of the current line and insert a newline.
 module('_M.ansi_c')]]
@@ -86,9 +84,6 @@ textadept.editing.api_files.ansi_c = {
 -- @class table
 -- @name _G.keys.ansi_c
 keys.ansi_c = {
-  [keys.LANGUAGE_MODULE_PREFIX] = {
-    m = {io.open_file, _HOME..'/modules/ansi_c/init.lua'},
-  },
   ['s\n'] = function()
     buffer:line_end()
     buffer:add_text(';')
