@@ -8,6 +8,48 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 7.9 (11 Mar 2015)
+
+Download:
+
+* [Textadept 7.9 -- Win32][]
+* [Textadept 7.9 -- Mac OSX Intel 10.5+][]
+* [Textadept 7.9 -- Linux][]
+* [Textadept 7.9 -- Linux x86_64][]
+* [Textadept 7.9 -- Modules][]
+
+Bugfixes:
+
+* Fixed command entry's abbreviated environment to allow functions to return
+  values.
+* Fixed accidental firing of "Escape" key on window focus lost.
+* Fixed tab stop calculation in the terminal version.
+
+Changes:
+
+* The following view-specific properties are now considered buffer-specific:
+  "view EOL", "view whitespace", "wrap mode", "margin type", and "margin width";
+  updated the "Buffer" and "View" menus appropriately.
+* Officially supported language modules moved to a [new repository][].
+* Added Fish lexer.
+* Merged `events.FILE_SAVED_AS` into [`events.FILE_AFTER_SAVE`][] as a new 
+  parameter.
+* Removed `keys.LANGUAGE_MODULE_PREFIX` field, but left the prefix unbound.
+* Merged `textadept.file_types.shebangs` into 
+  [`textadept.file_types.patterns`][].
+* Removed `io.boms`.
+* Updated to [Scintilla][] 3.5.4.
+
+[Textadept 7.9 -- Win32]: download/textadept_7.9.win32.zip
+[Textadept 7.9 -- Mac OSX Intel 10.5+]: download/textadept_7.9.osx.zip
+[Textadept 7.9 -- Linux]: download/textadept_7.9.i386.tgz
+[Textadept 7.9 -- Linux x86_64]: download/textadept_7.9.x86_64.tgz
+[Textadept 7.9 -- Modules]: download/textadept_7.9.modules.zip
+[new repository]: http://foicica.com/hg/textadept_modules
+[`textadept.file_types.patterns`]: api.html#textadept.file_types.patterns
+[`events.FILE_AFTER_SAVE`]: api.html#events.FILE_AFTER_SAVE
+[Scintilla]: http://scintilla.org
+
 ## 7.8 (01 Feb 2015)
 
 Download:
