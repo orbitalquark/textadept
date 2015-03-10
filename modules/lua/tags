@@ -3,6 +3,7 @@ ALPHA_OPAQUE	_	0;"	F	class:buffer
 ALPHA_TRANSPARENT	_	0;"	F	class:buffer
 ANNOTATION_BOXED	_	0;"	F	class:buffer
 ANNOTATION_HIDDEN	_	0;"	F	class:buffer
+ANNOTATION_INDENTED	_	0;"	F	class:buffer
 ANNOTATION_STANDARD	_	0;"	F	class:buffer
 APPLEEVENT_ODOC	_	0;"	F	class:events
 ARG_NONE	_	0;"	F	class:events
@@ -80,7 +81,6 @@ FILE_AFTER_SAVE	_	0;"	F	class:events
 FILE_BEFORE_SAVE	_	0;"	F	class:events
 FILE_CHANGED	_	0;"	F	class:events
 FILE_OPENED	_	0;"	F	class:events
-FILE_SAVED_AS	_	0;"	F	class:events
 FILTER	_	0;"	t	class:lfs
 FILTER	_	0;"	t	class:ui.find
 FIND	_	0;"	F	class:events
@@ -107,19 +107,18 @@ FOLD_BASE	_	0;"	F	class:lexer
 FOLD_BLANK	_	0;"	F	class:lexer
 FOLD_HEADER	_	0;"	F	class:lexer
 FUNCTION	_	0;"	F	class:lexer
-HOTSPOT_CLICK	_	0;"	F	class:events
-HOTSPOT_DOUBLE_CLICK	_	0;"	F	class:events
-HOTSPOT_RELEASE_CLICK	_	0;"	F	class:events
 IDENTIFIER	_	0;"	F	class:lexer
 INDICATOR_CLICK	_	0;"	F	class:events
 INDICATOR_RELEASE	_	0;"	F	class:events
 INDIC_BOX	_	0;"	F	class:buffer
 INDIC_BRACEMATCH	_	0;"	F	class:textadept.editing
 INDIC_COMPOSITIONTHICK	_	0;"	F	class:buffer
+INDIC_COMPOSITIONTHIN	_	0;"	F	class:buffer
 INDIC_DASH	_	0;"	F	class:buffer
 INDIC_DIAGONAL	_	0;"	F	class:buffer
 INDIC_DOTBOX	_	0;"	F	class:buffer
 INDIC_DOTS	_	0;"	F	class:buffer
+INDIC_FULLBOX	_	0;"	F	class:buffer
 INDIC_HIDDEN	_	0;"	F	class:buffer
 INDIC_HIGHLIGHT	_	0;"	F	class:textadept.editing
 INDIC_MAX	_	0;"	F	class:buffer
@@ -130,6 +129,7 @@ INDIC_SQUIGGLELOW	_	0;"	F	class:buffer
 INDIC_SQUIGGLEPIXMAP	_	0;"	F	class:buffer
 INDIC_STRAIGHTBOX	_	0;"	F	class:buffer
 INDIC_STRIKE	_	0;"	F	class:buffer
+INDIC_TEXTFORE	_	0;"	F	class:buffer
 INDIC_TT	_	0;"	F	class:buffer
 INITIALIZED	_	0;"	F	class:events
 IV_LOOKBOTH	_	0;"	F	class:buffer
@@ -140,7 +140,6 @@ KEYPRESS	_	0;"	F	class:events
 KEYSYMS	_	0;"	t	class:keys
 KEYWORD	_	0;"	F	class:lexer
 LABEL	_	0;"	F	class:lexer
-LANGUAGE_MODULE_PREFIX	_	0;"	F	class:keys
 LEXERPATH	_	0;"	F	class:lexer
 LEXER_LOADED	_	0;"	F	class:events
 LINUX	_	0;"	F	
@@ -369,14 +368,12 @@ additional_sel_back	_	0;"	F	class:buffer
 additional_sel_fore	_	0;"	F	class:buffer
 additional_selection_typing	_	0;"	F	class:buffer
 all_lines_visible	_	0;"	F	class:buffer
-allocate_extended_styles	_	0;"	f	class:buffer
 alnum	_	0;"	F	class:lexer
 alpha	_	0;"	F	class:lexer
 anchor	_	0;"	F	class:buffer
 annotation_clear_all	_	0;"	f	class:buffer
 annotation_lines	_	0;"	F	class:buffer
 annotation_style	_	0;"	F	class:buffer
-annotation_style_offset	_	0;"	F	class:buffer
 annotation_text	_	0;"	F	class:buffer
 annotation_visible	_	0;"	F	class:buffer
 ansi_c	_	0;"	m	class:_M
@@ -425,7 +422,6 @@ begin_undo_action	_	0;"	f	class:buffer
 bit32	_	0;"	m	
 block_comment	_	0;"	f	class:textadept.editing
 bnot	_	0;"	f	class:bit32
-boms	_	0;"	t	class:io
 bookmarks	_	0;"	m	class:textadept
 bor	_	0;"	f	class:bit32
 brace_bad_light	_	0;"	f	class:buffer
@@ -628,13 +624,10 @@ fold_level	_	0;"	F	class:lexer
 fold_line	_	0;"	f	class:buffer
 fold_line_comments	_	0;"	f	class:lexer
 fold_parent	_	0;"	F	class:buffer
-form_feed	_	0;"	f	class:buffer
 format	_	0;"	f	class:string
 frexp	_	0;"	f	class:math
 functions	_	0;"	t	class:_SCINTILLA
 get_cur_line	_	0;"	f	class:buffer
-get_hotspot_active_back	_	0;"	f	class:buffer
-get_hotspot_active_fore	_	0;"	f	class:buffer
 get_last_child	_	0;"	f	class:buffer
 get_lexer	_	0;"	f	class:buffer
 get_line	_	0;"	f	class:buffer
@@ -671,7 +664,6 @@ h_scroll_bar	_	0;"	F	class:buffer
 height	_	0;"	F	class:ui.command_entry
 hex_num	_	0;"	F	class:lexer
 hide_lines	_	0;"	f	class:buffer
-hide_selection	_	0;"	f	class:buffer
 highlight_guide	_	0;"	F	class:buffer
 highlight_word	_	0;"	f	class:textadept.editing
 home	_	0;"	f	class:buffer
@@ -681,8 +673,6 @@ home_extend	_	0;"	f	class:buffer
 home_rect_extend	_	0;"	f	class:buffer
 home_wrap	_	0;"	f	class:buffer
 home_wrap_extend	_	0;"	f	class:buffer
-hotspot_active_underline	_	0;"	F	class:buffer
-hotspot_single_line	_	0;"	F	class:buffer
 html	_	0;"	m	class:_M
 html	_	0;"	t	class:keys
 html	_	0;"	t	class:snippets
@@ -695,6 +685,8 @@ indent_amount	_	0;"	F	class:lexer
 indentation_guides	_	0;"	F	class:buffer
 indic_alpha	_	0;"	F	class:buffer
 indic_fore	_	0;"	F	class:buffer
+indic_hover_fore	_	0;"	F	class:buffer
+indic_hover_style	_	0;"	F	class:buffer
 indic_outline_alpha	_	0;"	F	class:buffer
 indic_style	_	0;"	F	class:buffer
 indic_under	_	0;"	F	class:buffer
@@ -749,7 +741,6 @@ line_length	_	0;"	f	class:buffer
 line_scroll	_	0;"	f	class:buffer
 line_scroll_down	_	0;"	f	class:buffer
 line_scroll_up	_	0;"	f	class:buffer
-line_state	_	0;"	F	class:buffer
 line_transpose	_	0;"	f	class:buffer
 line_up	_	0;"	f	class:buffer
 line_up_extend	_	0;"	f	class:buffer
@@ -789,7 +780,6 @@ margin_options	_	0;"	F	class:buffer
 margin_right	_	0;"	F	class:buffer
 margin_sensitive_n	_	0;"	F	class:buffer
 margin_style	_	0;"	F	class:buffer
-margin_style_offset	_	0;"	F	class:buffer
 margin_text	_	0;"	F	class:buffer
 margin_text_clear_all	_	0;"	f	class:buffer
 margin_type_n	_	0;"	F	class:buffer
@@ -819,7 +809,6 @@ match_case	_	0;"	F	class:ui.find
 match_case_label_text	_	0;"	F	class:ui.find
 math	_	0;"	m	
 max	_	0;"	f	class:math
-max_line_state	_	0;"	F	class:buffer
 maximized	_	0;"	F	class:ui
 menu	_	0;"	f	class:ui
 menu	_	0;"	m	class:textadept
@@ -875,7 +864,6 @@ paste	_	0;"	f	class:buffer
 path	_	0;"	F	class:package
 patterns	_	0;"	t	class:textadept.file_types
 pcall	_	0;"	f	
-phases_draw	_	0;"	F	class:buffer
 pi	_	0;"	F	class:math
 popen	_	0;"	f	class:io
 position_after	_	0;"	f	class:buffer
@@ -888,7 +876,6 @@ print	_	0;"	F	class:lexer
 print	_	0;"	f	
 print	_	0;"	f	class:ui
 proc	_	0;"	F	class:textadept.run
-process	_	0;"	f	class:args
 properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
 property	_	0;"	F	class:lexer
@@ -923,7 +910,6 @@ redo	_	0;"	f	class:buffer
 register	_	0;"	f	class:args
 register_image	_	0;"	f	class:buffer
 register_rgba_image	_	0;"	f	class:buffer
-release_all_extended_styles	_	0;"	f	class:buffer
 reload_file	_	0;"	f	class:io
 remove	_	0;"	f	class:os
 remove	_	0;"	f	class:table
@@ -1010,8 +996,6 @@ set_empty_selection	_	0;"	f	class:buffer
 set_encoding	_	0;"	f	class:buffer
 set_fold_margin_colour	_	0;"	f	class:buffer
 set_fold_margin_hi_colour	_	0;"	f	class:buffer
-set_hotspot_active_back	_	0;"	f	class:buffer
-set_hotspot_active_fore	_	0;"	f	class:buffer
 set_lexer	_	0;"	f	class:buffer
 set_save_point	_	0;"	f	class:buffer
 set_sel	_	0;"	f	class:buffer
@@ -1019,6 +1003,7 @@ set_sel_back	_	0;"	f	class:buffer
 set_sel_fore	_	0;"	f	class:buffer
 set_selection	_	0;"	f	class:buffer
 set_styling	_	0;"	f	class:buffer
+set_target_range	_	0;"	f	class:buffer
 set_text	_	0;"	f	class:buffer
 set_theme	_	0;"	f	class:ui
 set_visible_policy	_	0;"	f	class:buffer
@@ -1036,7 +1021,6 @@ setmode	_	0;"	f	class:lfs
 setupvalue	_	0;"	f	class:debug
 setuservalue	_	0;"	f	class:debug
 setvbuf	_	0;"	f	class:file
-shebangs	_	0;"	t	class:textadept.file_types
 show_documentation	_	0;"	f	class:textadept.editing
 show_lines	_	0;"	f	class:buffer
 sin	_	0;"	f	class:math
@@ -1107,6 +1091,7 @@ tanh	_	0;"	f	class:math
 target_end	_	0;"	F	class:buffer
 target_from_selection	_	0;"	f	class:buffer
 target_start	_	0;"	F	class:buffer
+target_text	_	0;"	F	class:buffer
 text_height	_	0;"	f	class:buffer
 text_length	_	0;"	F	class:buffer
 text_range	_	0;"	f	class:buffer
@@ -1138,7 +1123,6 @@ traceback	_	0;"	f	class:debug
 transpose_chars	_	0;"	f	class:textadept.editing
 try_to_autocomplete_end	_	0;"	f	class:_M.lua
 try_to_autocomplete_end	_	0;"	f	class:_M.ruby
-two_phase_draw	_	0;"	F	class:buffer
 type	_	0;"	f	
 type	_	0;"	f	class:io
 type	_	0;"	f	class:lpeg
@@ -1148,7 +1132,6 @@ ui.command_entry	_	0;"	m
 ui.dialogs	_	0;"	m	
 ui.find	_	0;"	m	
 undo	_	0;"	f	class:buffer
-undo_collection	_	0;"	F	class:buffer
 unlock	_	0;"	f	class:lfs
 unpack	_	0;"	f	class:table
 unsplit	_	0;"	f	class:view
