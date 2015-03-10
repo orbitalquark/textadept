@@ -51,16 +51,6 @@ io.SNAPOPEN_MAX = 1000
 io.recent_files = {}
 
 ---
--- List of byte-order marks (BOMs) for identifying unicode file encodings.
--- @class table
--- @name boms
-io.boms = {
-  ['UTF-8'] = '\239\187\191',
-  ['UTF-16BE'] = '\254\255', ['UTF-16LE'] = '\255\254',
-  ['UTF-32BE'] = '\0\0\254\255', ['UTF-32LE'] = '\255\254\0\0'
-}
-
----
 -- List of encodings to attempt to decode files as.
 -- You should add to this list if you get a "Conversion failed" error when
 -- trying to open a file whose encoding is not recognized. Valid encodings are
@@ -93,6 +83,11 @@ io.boms = {
 -- @name encodings
 io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
+local BOMs = {
+  ['UTF-8'] = '\239\187\191',
+  ['UTF-16BE'] = '\254\255', ['UTF-16LE'] = '\255\254',
+  ['UTF-32BE'] = '\0\0\254\255', ['UTF-32LE'] = '\255\254\0\0'
+}
 local c = _SCINTILLA.constants
 local EOLs = {['\r\n'] = c.EOL_CRLF, ['\r'] = c.EOL_CR, ['\n'] = c.EOL_LF}
 ---
@@ -130,7 +125,7 @@ function io.open_file(filenames)
     local buffer = buffer.new()
     buffer.encoding, buffer.encoding_bom = nil, nil
     -- Try to detect character encoding and convert to UTF-8.
-    for encoding, bom in pairs(io.boms) do
+    for encoding, bom in pairs(BOMs) do
       if text:sub(1, #bom) == bom then
         buffer.encoding, buffer.encoding_bom = encoding, bom
         text = text:sub(#bom + 1, -1):iconv('UTF-8', encoding)
@@ -197,7 +192,7 @@ local function set_encoding(buffer, encoding)
   buffer:add_text(text, #text)
   buffer:line_scroll(0, first_visible_line)
   buffer:goto_pos(pos)
-  buffer.encoding, buffer.encoding_bom = encoding, io.boms[encoding]
+  buffer.encoding, buffer.encoding_bom = encoding, BOMs[encoding]
 end
 -- Sets the default buffer encoding.
 events_connect(events.BUFFER_NEW, function()
