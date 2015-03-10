@@ -39,15 +39,6 @@
 --   zero.
 --   Only some style attributes are active in annotations: font,
 --   size/size_fractional, bold/weight, italics, fore, back, and character_set.
--- @field annotation_style_offset (number)
---   The beginning of the range of style numbers used for annotations.
---   Always set this to the result of [`buffer.allocate_extended_styles()`]().
---   Annotation styles may be completely separated from standard text styles by
---   setting a style offset. For example, when set to `512`, annotation styles
---   are numbered from `512` upto `767` so they do not overlap styles set by
---   lexers (or margins if margins offset is `256`). Each style number set with
---   `annotation_style` has the offset added before looking up the style.
---   The default value is `0`.
 -- @field annotation_text (table)
 --   Table of annotation text for line numbers starting from zero.
 -- @field annotation_visible (number)
@@ -426,7 +417,6 @@
 -- @field indic_under (table)
 --   Table of flags that indicate whether or not to draw indicators behind text
 --   instead of over the top of it for indicator numbers from `0` to `31`.
---   For values to be `true`, [`buffer.two_phase_draw`]() must be `true`.
 --   The default values are `false`.
 -- @field indicator_current (number)
 --   The indicator number in the range of `0` to `31` used by
@@ -445,10 +435,6 @@
 --   from zero.
 -- @field line_indentation (table)
 --   Table of column indentation amounts, for line numbers starting from zero.
--- @field line_state (table)
---   Table of integer line states for line numbers starting from zero.
---   Line states are unaffected by changes in styling and are available in
---   addition to the 8 bits of styling information per character.
 -- @field line_visible (table, Read-only)
 --   Table of flags that indicate whether or not lines are visible for line
 --   numbers starting from zero.
@@ -499,15 +485,6 @@
 --   margin.
 --   Only some style attributes are active in text margins: font, size, bold,
 --   italics, fore, and back.
--- @field margin_style_offset (number)
---   The beginning of the range of style numbers used for margin text.
---   Always set this to the result of [`buffer.allocate_extended_styles()`]().
---   Margin styles may be completely separated from standard text styles by
---   setting a style offset. For example, when set to `256`, margin styles are
---   numbered from `256` upto `511` so they do not overlap styles set by lexers.
---   Each style number set with `margin_style` has the offset added before
---   looking up the style.
---   The default value is `0`.
 -- @field margin_text (table)
 --   Table of text displayed in text margins for line numbers starting from
 --   zero.
@@ -547,8 +524,6 @@
 -- @field marker_fore (table, Write-only)
 --   Table of foreground colors, in "0xBBGGRR" format, of marker numbers from
 --   `0` to `31`.
--- @field max_line_state (number, Read-only)
---   The last line number with a non-zero line state.
 -- @field mouse_dwell_time (number)
 --   The number of milliseconds the mouse must idle before generating a
 --   `DWELL_START` event. A time of `buffer.TIME_FOREVER` will never generate
@@ -574,20 +549,6 @@
 -- @field overtype (bool)
 --   Enable overtype mode, where typed characters overwrite existing ones.
 --   The default value is `false`.
--- @field phases_draw (number)
---   The number of phases drawing is performed in.
---
---   * `buffer.PHASES_ONE`
---     For each line, draw the background and text at the same time. (No
---     character overlapping.)
---   * `buffer.PHASES_TWO`
---     For each line, draw the background first and then text on top of it. (No
---     line overlapping.)
---   * `buffer.PHASES_MULTIPLE`
---     Similar to `buffer.PHASES_TWO`, but allows lines to overlap.
---     Incompatible with `buffer.buffered_draw = true`.
---
---   The default value is `buffer.PHASES_TWO`.
 -- @field property (table)
 --   Map of key-value string pairs used by lexers.
 -- @field property_expanded (table, Read-only)
@@ -829,14 +790,6 @@
 --   The text in the target range.
 -- @field text_length (number, Read-only)
 --   The number of bytes in the buffer.
--- @field two_phase_draw (bool)
---   Draw in two phases: first the background and then the foreground.
---   The default value is `true`.
--- @field undo_collection (bool)
---   Collect undo information.
---   When setting to `false`, call [`buffer.empty_undo_buffer()`]() to
---   synchronize the undo buffer with the buffer text.
---   The default value is `true`.
 -- @field use_tabs (bool)
 --   Use tabs instead of spaces in indentation. Changing the current setting
 --   does not convert any of the buffer's existing indentation. Use
@@ -951,6 +904,8 @@
 --
 -- @field ANNOTATION_STANDARD (number, Read-only)
 --
+-- @field ANNOTATION_INDENTED (number, Read-only)
+--
 -- @field CARETSTYLE_BLOCK (number, Read-only)
 --
 -- @field CARETSTYLE_INVISIBLE (number, Read-only)
@@ -975,6 +930,8 @@
 --
 -- @field INDIC_COMPOSITIONTHICK (number, Read-only)
 --
+-- @field INDIC_COMPOSITIONTHIN (number, Read-only)
+--
 -- @field INDIC_DASH (number, Read-only)
 --
 -- @field INDIC_DIAGONAL (number, Read-only)
@@ -982,6 +939,8 @@
 -- @field INDIC_DOTBOX (number, Read-only)
 --
 -- @field INDIC_DOTS (number, Read-only)
+--
+-- @field INDIC_FULLBOX (number, Read-only)
 --
 -- @field INDIC_HIDDEN (number, Read-only)
 --
@@ -1000,6 +959,8 @@
 -- @field INDIC_STRAIGHTBOX (number, Read-only)
 --
 -- @field INDIC_STRIKE (number, Read-only)
+--
+-- @field INDIC_TEXTFORE (number, Read-only)
 --
 -- @field INDIC_TT (number, Read-only)
 --
@@ -1315,17 +1276,6 @@ function add_selection(buffer, end_pos, start_pos) end
 -- @param buffer A buffer.
 -- @param text The text to add.
 function add_text(buffer, text) end
-
----
--- Allocates an additional *num_styles* number of styles for use by margins or
--- annotations and returns the starting style number of the new range.
--- These styles are outside the 0..255 range used by lexers.
--- @param buffer A buffer
--- @param num_styles The number of additional styles to allocate.
--- @return number
--- @see annotation_style_offset
--- @see margin_style_offset
-function allocate_extended_styles(buffer, num_styles) end
 
 ---
 -- Clears annotations from all lines.
@@ -1817,11 +1767,6 @@ function fold_children(buffer, line, action) end
 function fold_line(buffer, line, action) end
 
 ---
--- Types a Form Feed character ("\f") at the caret position.
--- @param buffer A buffer.
-function form_feed(buffer) end
-
----
 -- Returns the current line's text and the caret's position on that line,
 -- starting from zero.
 -- @param buffer A buffer.
@@ -1893,12 +1838,6 @@ function goto_pos(buffer, pos) end
 -- @param start_line The start line of the range of lines in *buffer* to hide.
 -- @param end_line The end line of the range of lines in *buffer* to hide.
 function hide_lines(buffer, start_line, end_line) end
-
----
--- Do not highlight selected text if *hide* is `true`.
--- @param buffer A buffer.
--- @param hide Whether or not to hide the selection.
-function hide_selection(buffer, hide) end
 
 ---
 -- Moves the caret to the beginning of the current line.
@@ -2454,12 +2393,6 @@ function register_image(buffer, type, xpm_data) end
 -- @param pixels The RGBA data as described in
 --   `buffer.marker_define_rgba_image()`.
 function register_rgba_image(buffer, type, pixels) end
-
----
--- Releases all styles allocated with `buffer.allocate_extended_styles()`.
--- @param buffer A buffer.
--- @see allocate_extended_styles
-function release_all_extended_styles(buffer) end
 
 ---
 -- Replaces the selected text with string *text*, scrolling the caret into view.
@@ -3081,6 +3014,7 @@ function get_lexer(buffer, current) end
 function set_lexer(buffer, lexer) end
 
 -- Unused Fields.
+--   * annotation_style_offset
 --   * annotation_styles
 --   * automatic_fold
 --   * call_tip_back
@@ -3110,11 +3044,15 @@ function set_lexer(buffer, lexer) end
 --   * line_end_types_active
 --   * line_end_types_allowed
 --   * line_end_types_supported
+--   * line_state
+--   * margin_style_offset
 --   * margin_styles
+--   * max_line_state
 --   * mod_event_mask
 --   * modify
 --   * mouse_down_captures
 --   * paste_convert_endings
+--   * phases_draw
 --   * position_cache
 --   * primary_style_from_style
 --   * print_colour_mode
@@ -3125,12 +3063,15 @@ function set_lexer(buffer, lexer) end
 --   * style_bits_needed
 --   * style_character_set
 --   * style_from_sub_style
+--   * style_hotspot
 --   * style_size_fractional
 --   * style_weight
 --   * sub_style_bases
 --   * sub_styles_length
 --   * sub_styles_start
 --   * technology
+--   * two_phase_draw
+--   * undo_collection
 --   * use_palette
 --   * INDIC_CONTAINER
 --   * MOD_NORM
@@ -3166,6 +3107,7 @@ function set_lexer(buffer, lexer) end
 --   * add_tab_stop
 --   * add_undo_action
 --   * allocate
+--   * allocate_extended_styles
 --   * allocate_sub_styles
 --   * assign_cmd_key
 --   * can_paste
@@ -3186,6 +3128,7 @@ function set_lexer(buffer, lexer) end
 --   * find_indicator_hide
 --   * find_indicator_show
 --   * find_text
+--   * form_feed
 --   * format_range
 --   * free_sub_styles
 --   * get_hotspot_active_back
@@ -3194,6 +3137,7 @@ function set_lexer(buffer, lexer) end
 --   * get_range_pointer
 --   * get_styled_text
 --   * grab_focus
+--   * hide_selection
 --   * indicator_value_at
 --   * load_lexer_library
 --   * null
@@ -3204,6 +3148,7 @@ function set_lexer(buffer, lexer) end
 --   * private_lexer_call
 --   * property_names
 --   * property_type
+--   * release_all_extended_styles
 --   * release_document
 --   * set_hotspot_active_back
 --   * set_hotspot_active_fore
