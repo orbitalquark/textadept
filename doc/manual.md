@@ -1088,17 +1088,17 @@ Learn more about snippet syntax in the [snippets documentation][].
 ### File Types
 
 Textadept recognizes a wide range of programming language files either by file
-extension, by a keyword in the shebang ("#!/path/to/exe") line, or by a
-[Lua pattern](#Lua.Patterns) that matches the text of the first line. The editor
-does this by consulting a set of tables in [`textadept.file_types`][] that are
-modifiable from *~/.textadept/init.lua*. For example:
+extension or by a [Lua pattern](#Lua.Patterns) that matches the text of the 
+first line. The editor does this by consulting a set of tables in 
+[`textadept.file_types`][] that are modifiable from *~/.textadept/init.lua*. For 
+example:
 
     -- Recognize .luadoc files as Lua code.
     textadept.file_types.extensions.luadoc = 'lua'
     -- Change .html files to be recognized as XML files.
     textadept.file_types.extensions.html = 'xml'
     -- Recognize a shebang line like "#!/usr/bin/zsh" as shell code.
-    textadept.file_types.shebangs.zsh = 'bash'
+    textadept.file_types.patterns['^#!.+/zsh'] = 'bash'
 
 [`textadept.file_types`]: api.html#textadept.file_types
 
