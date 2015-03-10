@@ -91,11 +91,9 @@ local M = {}
 -- ## Key Chains
 --
 -- Key chains are a powerful concept. They allow you to assign multiple key
--- bindings to one key sequence. Language modules
--- [use key chains](#keys.LANGUAGE_MODULE_PREFIX) for their functions. By
--- default, the `Esc` (`⎋` on Mac OSX | `Esc` in curses) key cancels a key
--- chain, but you can redefine it via [`keys.CLEAR`](). An example key chain
--- looks like:
+-- bindings to one key sequence. By default, the `Esc` (`⎋` on Mac OSX | `Esc` 
+-- in curses) key cancels a key chain, but you can redefine it via 
+-- [`keys.CLEAR`](). An example key chain looks like:
 --
 --     keys['aa'] = {
 --       a = function1,
@@ -106,10 +104,6 @@ local M = {}
 --   The key that clears the current key chain.
 --   It cannot be part of a key chain.
 --   The default value is `'esc'` for the `Esc` key.
--- @field LANGUAGE_MODULE_PREFIX (string)
---   The prefix key of the key chain reserved for language modules.
---   The default value is `'cl'` on platforms other than Mac OSX, `'ml'`
---   otherwise. Equivalent to `Ctrl+L` (`⌘L` on Mac OSX | `M-L` in curses).
 -- @field MODE (string)
 --   The current key mode.
 --   When non-`nil`, all key bindings defined outside of `keys[MODE]` are
@@ -119,7 +113,6 @@ module('keys')]]
 
 local CTRL, ALT, META, SHIFT = 'c', not CURSES and 'a' or 'm', 'm', 's'
 M.CLEAR = 'esc'
-M.LANGUAGE_MODULE_PREFIX = (not OSX and not CURSES and CTRL or META)..'l'
 
 ---
 -- Lookup table for string representations of key codes higher than 255.
