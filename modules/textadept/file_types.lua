@@ -107,7 +107,9 @@ end, 1)
 
 -- Auto-detect lexer on file open or save as.
 events.connect(events.FILE_OPENED, function() buffer:set_lexer() end)
-events.connect(events.FILE_SAVED_AS, function() buffer:set_lexer() end)
+events.connect(events.FILE_AFTER_SAVE, function(filename, saved_as) 
+  if saved_as then buffer:set_lexer() end 
+end)
 
 -- Restores the buffer's lexer.
 local function restore_lexer() buffer:set_lexer(buffer._lexer) end
