@@ -298,6 +298,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>fish</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Fish source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>forth</string>
 				<string>frt</string>
 				<string>fs</string>
@@ -928,10 +938,31 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>texi</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Texinfo source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>vala</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Vala source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>vcf</string>
+				<string>vcard</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>vCard source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -998,6 +1029,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>xtend</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Xtend source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>yaml</string>
 			</array>
 			<key>CFBundleTypeName</key>
@@ -1041,7 +1082,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>7.8</string>
+	<string>7.9</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
