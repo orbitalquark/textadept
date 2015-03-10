@@ -122,6 +122,16 @@
 --       ['s\n'] = M.try_to_autocomplete_end |   end
 --     }                                     | }
 --
+-- When defining key bindings for other commands, you may make use of a `Ctrl+L` 
+-- (`⌘L` on Mac OSX | `M-L` in curses) keychain. Traditionally this prefix has 
+-- been reserved for use by language modules (although neither Textadept nor its 
+-- modules utilize it at the moment). Users may define this keychain for new or 
+-- existing modules and it will not conflict with any default key bindings.
+--
+--     keys.lua[not OSX and not CURSES and 'cl' or 'ml'] = {
+--       ...
+--     }
+--
 -- #### Context Menu
 --
 -- It may be useful to add language-specific menu options to the right-click
