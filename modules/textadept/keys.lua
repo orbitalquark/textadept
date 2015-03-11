@@ -219,14 +219,6 @@ local M = {}
 -- ‡: Ctrl+Enter in Win32 curses.
 module('textadept.keys')]]
 
--- UTF-8 handling tables.
-local utf8_lengths = { -- {max code point, UTF-8 length}
-  {0x80, 1}, {0x800, 2}, {0x10000, 3}, {0x200000, 4}, {0x4000000, 5}
-}
-local lead_bytes = { -- [UTF-8 length] = {UTF-8 lead bits, remaining mask}
-  {0, 0x7F}, {0xC0, 0x1F}, {0xE0, 0x0F}, {0xF0, 0x7}, {0xF8, 0x3}, {0xFC, 0x1}
-}
-
 -- Utility functions.
 M.utils = {
   delete_word = function()
@@ -253,11 +245,7 @@ M.utils = {
   show_style = function()
     local pos = buffer.current_pos
     local char = buffer:text_range(pos, buffer:position_after(pos))
-    if char == '' then char = '\0' end
-    local code = bit32.band(char:byte(), lead_bytes[#char][2])
-    for i = 2, #char do
-      code = bit32.bor(bit32.lshift(code, 6), bit32.band(char:byte(i), 0x3F))
-    end
+    local code = utf8.codepoint(char)
     local bytes = string.rep(' 0x%X', #char):format(char:byte(1, #char))
     local style = buffer.style_at[pos]
     local text = string.format("'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char,
@@ -660,21 +648,7 @@ end
 if OSX or CURSES then
   -- UTF-8 input.
   keys.utf8_input = {['\n'] = {ui.command_entry.finish_mode, function(code)
-    local c = tonumber(code, 16)
-    -- Determine the number of bytes in UTF-8 character to insert.
-    local buf, len = {}, 6
-    for i = 1, #utf8_lengths do
-      if c < utf8_lengths[i][1] then len = utf8_lengths[i][2] break end
-    end
-    -- Produce UTF-8 bytes.
-    for i = len, 2, -1 do
-      buf[i], c = bit32.bor(0x80, bit32.band(c, 0x3F)), bit32.rshift(c, 6)
-    end
-    -- Construct the lead UTF-8 byte.
-    buf[1] = bit32.bor(lead_bytes[len][1], bit32.band(c, lead_bytes[len][2]))
-    -- Transform bytes into strings and perform the insertion.
-    for i = 1, #buf do buf[i] = string.char(buf[i]) end
-    _G.buffer:add_text(table.concat(buf))
+    _G.buffer:add_text(utf8.char(tonumber(code, 16)))
   end}}
   keys[OSX and 'mU' or 'mu'] = {ui.command_entry.enter_mode, 'utf8_input'}
 end

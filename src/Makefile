@@ -98,8 +98,9 @@ endif
 
 # Scintilla.
 
-sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG -DG_THREADS_IMPL_NONE \
-            -Iscintilla/include -Iscintilla/src -Iscintilla/lexlib -Wall
+sci_flags = -std=c++0x -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG \
+            -DG_THREADS_IMPL_NONE -Iscintilla/include -Iscintilla/src \
+            -Iscintilla/lexlib -Wall
 
 sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
            CellBuffer.o CharClassify.o ContractionState.o Decoration.o \
@@ -125,10 +126,10 @@ lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            linit.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
            lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
-           lmathlib.o loadlib.o loslib.o ltablib.o lstrlib.o
+           lmathlib.o loadlib.o loslib.o lstrlib.o ltablib.o lutf8lib.o
 lua_lib_objs = lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
 luajit_lib_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o \
-                  lfsjit.o
+                  lfsjit.o lutf8libjit.o
 lua_spawn_objs = lspawn.o lspawnjit.o lspawn-curses.o lspawnjit-curses.o
 gtdialog_objs = gtdialog.o gtdialog-curses.o
 termkey_unix_objs = driver-ti.o driver-csi.o
@@ -211,6 +212,9 @@ $(gtdialog_objs): gtdialog_flags = $(plat_flag) -DNOHELP -DLIBRARY
 gtdialog.o: gtdialog_flags += $(GTK_CFLAGS)
 gtdialog-curses.o: gtdialog_flags += -Icdk $(CURSES_CFLAGS)
 $(termkey_win32_objs): termkey_flags += $(CURSES_CFLAGS)
+# Lua 5.3 compatibility with LuaJIT.
+lbitlib.o linit.o: LUA_CFLAGS += -DLUA_COMPAT_BITLIB -DLUA_COMPAT_APIINTCASTS
+lutf8libjit.o: LUA_CFLAGS += -Ilua/src
 
 # Executables.
 
@@ -378,9 +382,9 @@ endif
 scintilla_tgz = scintilla354.tgz
 scinterm_zip = 068d4a448eb3.zip
 scintillua_zip = scintillua_3.5.4-1.zip
-lua_tgz = lua-5.2.3.tar.gz
-lpeg_tgz = lpeg-0.12.tar.gz
-lfs_zip = v1_6_2.zip
+lua_tgz = lua-5.3.0.tar.gz
+lpeg_tgz = lpeg-0.12.2.tar.gz
+lfs_zip = v1_6_3.zip
 lspawn_zip = lspawn_1.1.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
@@ -421,6 +425,9 @@ lua/src/lib/lfs: | $(lfs_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
 lua/src/lib/lspawn: | $(lspawn_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.c $(dir $@)
+lua/src/lib/lutf8lib.c: lutf8libjit.patch
+	cp lua/src/$(notdir $@) $@
+	patch -d $(dir $@) -N -p1 < $<
 $(luajit_tgz): ; wget http://luajit.org/download/$@
 luajit: luajit.patch | $(luajit_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@

@@ -7,8 +7,7 @@ local M = {}
 ---
 -- Defines the menus used by Textadept.
 -- Menus are simply tables and may be edited in place. Submenus have `title`
--- keys with string text. Use the '#' operator (instead of `ipairs()`) for
--- iteration.
+-- keys with string text.
 -- If applicable, load this module last in your *~/.textadept/init.lua*, after
 -- [`textadept.keys`]() since it looks up defined key commands to show them in
 -- menus.

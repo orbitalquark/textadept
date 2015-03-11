@@ -86,13 +86,21 @@ typedef GtkWidget Scintilla;
   } \
   lua_setmetatable(l, (n > 0) ? n : n - 1); \
 }
-// Translate Lua 5.2 API to LuaJIT API (Lua 5.1) for compatibility.
+// Translate Lua 5.3 API to LuaJIT API (Lua 5.1) for compatibility.
 #if LUA_VERSION_NUM == 501
 #define LUA_OK 0
 #define lua_rawlen lua_objlen
 #define LUA_OPEQ 0
+#undef lua_getglobal
+#define lua_getglobal(l, n) \
+  (lua_getfield(l, LUA_GLOBALSINDEX, (n)), lua_type(l, -1))
+#define lua_getfield(l, t, k) (lua_getfield(l, t, k), lua_type(l, -1))
+#define lua_rawgeti(l, i, n) (lua_rawgeti(l, i, n), lua_type(l, -1))
+#define lua_gettable(l, i) (lua_gettable(l, i), lua_type(l, -1))
+#define luaL_openlibs(l) luaL_openlibs(l), luaopen_utf8(l)
 #define lL_openlib(l, n) \
   (lua_pushcfunction(l, luaopen_##n), lua_pushstring(l, #n), lua_call(l, 1, 0))
+LUALIB_API int luaopen_utf8(lua_State *);
 #else
 #define lL_openlib(l, n) (luaL_requiref(l, #n, luaopen_##n, 1), lua_pop(l, 1))
 #endif
@@ -230,11 +238,8 @@ LUALIB_API int lspawn_pushfds(lua_State *), lspawn_readfds(lua_State *);
  */
 static int lL_event(lua_State *L, const char *name, ...) {
   int ret = FALSE;
-  lua_getglobal(L, "events");
-  if (lua_istable(L, -1)) {
-    lua_getfield(L, -1, "emit");
-    lua_remove(L, -2); // events table
-    if (lua_isfunction(L, -1)) {
+  if (lua_getglobal(L, "events") == LUA_TTABLE) {
+    if (lua_getfield(L, -1, "emit") == LUA_TFUNCTION) {
       lua_pushstring(L, name);
       int n = 1, type;
       va_list ap;
@@ -258,8 +263,8 @@ static int lL_event(lua_State *L, const char *name, ...) {
         ret = lua_toboolean(L, -1);
       else
         lL_event(L, "error", LUA_TSTRING, lua_tostring(L, -1), -1);
-      lua_pop(L, 1); // result
-    } else lua_pop(L, 1); // non-function
+      lua_pop(L, 2); // result, events
+    } else lua_pop(L, 2); // non-function, events
   } else lua_pop(L, 1); // non-table
   return ret;
 }
@@ -759,18 +764,15 @@ static void l_pushmenu(lua_State *L, int index, GCallback callback,
   GtkWidget *menu = gtk_menu_new(), *menu_item = NULL, *submenu_root = NULL;
   const char *label;
   lua_pushvalue(L, index); // copy to stack top so relative indices can be used
-  lua_getfield(L, -1, "title");
-  if (!lua_isnil(L, -1) || submenu) { // title required for submenu
+  if (lua_getfield(L, -1, "title") != LUA_TNIL || submenu) { // submenu title
     label = !lua_isnil(L, -1) ? lua_tostring(L, -1) : "notitle";
     submenu_root = gtk_menu_item_new_with_mnemonic(label);
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(submenu_root), menu);
   }
   lua_pop(L, 1); // title
   for (size_t i = 1; i <= lua_rawlen(L, -1); i++) {
-    lua_rawgeti(L, -1, i);
-    if (lua_istable(L, -1)) {
-      lua_getfield(L, -1, "title");
-      int is_submenu = !lua_isnil(L, -1);
+    if (lua_rawgeti(L, -1, i) == LUA_TTABLE) {
+      int is_submenu = lua_getfield(L, -1, "title") != LUA_TNIL;
       lua_pop(L, 1); // title
       if (is_submenu) {
         l_pushmenu(L, -1, callback, TRUE);
@@ -887,8 +889,8 @@ static int lui__newindex(lua_State *L) {
     luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");
     GtkWidget *new_menubar = gtk_menu_bar_new(); // TODO: this leaks on error
     for (size_t i = 1; i <= lua_rawlen(L, 3); i++) {
-      lua_rawgeti(L, 3, i);
-      luaL_argcheck(L, lua_isuserdata(L, -1), 3, "table of menus expected");
+      luaL_argcheck(L, lua_rawgeti(L, 3, i) == LUA_TLIGHTUSERDATA, 3,
+                    "table of menus expected");
       GtkWidget *menu_item = (GtkWidget *)lua_touserdata(L, -1);
       gtk_menu_shell_append(GTK_MENU_SHELL(new_menubar), menu_item);
       lua_pop(L, 1); // value
@@ -959,8 +961,8 @@ static sptr_t l_globaldoccompare(lua_State *L, int index) {
   lua_pop(L, 2); // metatable, metatable
   if (doc != SS(focused_view, SCI_GETDOCPOINTER, 0, 0)) {
     lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-    l_pushdoc(L, doc), lua_gettable(L, -2);
-    luaL_argcheck(L, !lua_isnil(L, -1), index, "this Buffer does not exist");
+    luaL_argcheck(L, (l_pushdoc(L, doc), lua_gettable(L, -2) != LUA_TNIL),
+                  index, "this Buffer does not exist");
     lua_pop(L, 2); // buffer, ta_buffers
     if (doc == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) return -1;
     return (SS(dummy_view, SCI_SETDOCPOINTER, 0, doc), doc);
@@ -1094,7 +1096,7 @@ static int lbuffer_text_range(lua_State *L) {
   Scintilla *view = focused_view;
   int result = l_globaldoccompare(L, 1);
   if (result != 0) view = (result > 0) ? dummy_view : command_entry;
-  long min = luaL_checklong(L, 2), max = luaL_checklong(L, 3);
+  long min = luaL_checkinteger(L, 2), max = luaL_checkinteger(L, 3);
   luaL_argcheck(L, min <= max, 3, "start > end");
   struct Sci_TextRange tr = {{min, max}, malloc(max - min + 1)};
   SS(view, SCI_GETTEXTRANGE, 0, (sptr_t)&tr);
@@ -1149,7 +1151,7 @@ static int l_callscintilla(lua_State *L, Scintilla *view, int msg, int wtype,
   // appropriately. See the LPeg lexer API for more information.
   if (msg == SCI_PRIVATELEXERCALL) {
     ltype = SSTRINGRET;
-    int c = luaL_checklong(L, arg);
+    int c = luaL_checkinteger(L, arg);
     if (c == SCI_GETDIRECTFUNCTION || c == SCI_SETDOCPOINTER ||
         c == SCI_CHANGELEXERSTATE)
       ltype = SINT;
@@ -1212,8 +1214,8 @@ static int lbuf_property(lua_State *L) {
   // If the key is a Scintilla function, return a callable closure.
   if (is_buffer && !newindex) {
     lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions");
-    lua_pushvalue(L, 2), lua_gettable(L, -2);
-    if (lua_istable(L, -1)) return (lua_pushcclosure(L, lbuf_closure, 1), 1);
+    if (lua_pushvalue(L, 2), lua_gettable(L, -2) == LUA_TTABLE)
+      return (lua_pushcclosure(L, lbuf_closure, 1), 1);
     lua_pop(L, 2); // non-table, ta_functions
   }
 
@@ -1223,9 +1225,8 @@ static int lbuf_property(lua_State *L) {
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties");
   // If the table is a buffer, the key is given; otherwise the table is an
   // indexible property.
-  is_buffer ? lua_pushvalue(L, 2) : lua_getfield(L, 1, "property");
-  lua_gettable(L, -2);
-  if (lua_istable(L, -1)) {
+  is_buffer ? lua_pushvalue(L, 2) : (void)lua_getfield(L, 1, "property");
+  if (lua_gettable(L, -2) == LUA_TTABLE) {
     Scintilla *view = focused_view;
     // Interface table is of the form {get_id, set_id, rtype, wtype}.
     if (!is_buffer) lua_getfield(L, 1, "buffer");
@@ -1271,7 +1272,7 @@ static int lbuf_property(lua_State *L) {
   } else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
              l_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
     // Return or set the command entry's pixel height.
-    int height = luaL_optint(L, 3, 0);
+    int height = luaL_optinteger(L, 3, 0);
     int min_height = SS(command_entry, SCI_TEXTHEIGHT, 0, 0);
     if (height < min_height) height = min_height;
 #if GTK
@@ -1292,8 +1293,7 @@ static int lbuf_property(lua_State *L) {
   } else if (!newindex) {
     // If the key is a Scintilla constant, return its value.
     lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants");
-    lua_pushvalue(L, 2), lua_gettable(L, -2);
-    if (lua_isnumber(L, -1)) return 1;
+    if (lua_pushvalue(L, 2), lua_gettable(L, -2) == LUA_TNUMBER) return 1;
     lua_pop(L, 2); // non-number, ta_constants
   }
 
@@ -1846,10 +1846,8 @@ static void t_tabchange(GtkNotebook*_, GtkWidget*__, int page_num, void*___) {
  * @param field The ui table field that contains the context menu.
  */
 static void lL_showcontextmenu(lua_State *L, void *event, char *field) {
-  lua_getglobal(L, "ui");
-  if (lua_istable(L, -1)) {
-    lua_getfield(L, -1, field);
-    if (lua_isuserdata(L, -1)) {
+  if (lua_getglobal(L, "ui") == LUA_TTABLE) {
+    if (lua_getfield(L, -1, field) == LUA_TLIGHTUSERDATA) {
       GtkWidget *menu = (GtkWidget *)lua_touserdata(L, -1);
       gtk_widget_show_all(menu);
       gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,

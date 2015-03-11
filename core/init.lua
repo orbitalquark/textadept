@@ -189,8 +189,8 @@ function spawn_proc:wait() end
 -- Ensure any read operations read all stdout available. The stdout callback
 -- function passed to `spawn()` will not be called until the stdout buffer is
 -- clear.
--- @param arg Optional argument similar to those in Lua's `io.read()`, but "*n"
---   is not supported. The default value is "*l", which reads a line.
+-- @param arg Optional argument similar to those in Lua's `io.read()`, but "n"
+--   is not supported. The default value is "l", which reads a line.
 -- @return string of bytes read
 function spawn_proc:read(arg) end
 
