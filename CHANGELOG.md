@@ -34,7 +34,6 @@ Changes:
 * Added Fish lexer.
 * Merged `events.FILE_SAVED_AS` into [`events.FILE_AFTER_SAVE`][] as a new 
   parameter.
-* Removed `keys.LANGUAGE_MODULE_PREFIX` field, but left the prefix unbound.
 * Merged `textadept.file_types.shebangs` into 
   [`textadept.file_types.patterns`][].
 * Removed `io.boms`.
