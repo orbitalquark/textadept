@@ -152,7 +152,6 @@ local keychain = {}
 
 ---
 -- The current chain of key sequences. (Read-only.)
--- Use the '#' operator (instead of `ipairs()`) for iteration.
 -- @class table
 -- @name keychain
 M.keychain = setmetatable({}, {

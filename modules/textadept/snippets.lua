@@ -102,7 +102,9 @@ local function new_snippet(text, trigger)
   if #lines > 1 then
     -- Match indentation on all lines after the first.
     local indent_size = #buffer:get_cur_line():match('^%s*')
-    if not use_tabs then indent_size = indent_size / buffer.tab_width end
+    if not use_tabs then 
+      indent_size = math.floor(indent_size / buffer.tab_width) -- for Lua 5.3
+    end
     local additional_indent = indent[use_tabs]:rep(indent_size)
     for i = 2, #lines do lines[i] = additional_indent..lines[i] end
   end

@@ -1710,8 +1710,8 @@ combinations are allowed in describing a character class:
 * **`%x`:** represents all hexadecimal digits.
 * **`%`_`x`_:** (where _x_ is any non-alphanumeric character) represents the
   character _x_. This is the standard way to escape the magic characters. Any
-  punctuation character (even the non magic) can be preceded by a '`%`' when
-  used to represent itself in a pattern.
+  non-alphanumeric character (including all punctuations, even the non magical)
+  can be preceded by a '`%`' when used to represent itself in a pattern.
 * **`[set]`:** represents the class which is the union of all characters in set.
   A range of characters can be specified by separating the end characters of the
   range with a '`-`'. All classes `%`_x_ described above can also be used as
@@ -1737,17 +1737,18 @@ _Pattern Item:_
 A _pattern item_ can be
 
 * a single character class, which matches any single character in the class;
-* a single character class followed by '`*`', which matches 0 or more
+* a single character class followed by '`*`', which matches zero or more
   repetitions of characters in the class. These repetition items will always
   match the longest possible sequence;
-* a single character class followed by '`+`', which matches 1 or more
+* a single character class followed by '`+`', which matches one or more
   repetitions of characters in the class. These repetition items will always
   match the longest possible sequence;
-* a single character class followed by '`-`', which also matches 0 or more
+* a single character class followed by '`-`', which also matches zero or more
   repetitions of characters in the class. Unlike '`*`', these repetition items
   will always match the _shortest_ possible sequence;
-* a single character class followed by '`?`', which matches 0 or 1 occurrence of
-  a character in the class;
+* a single character class followed by '`?`', which matches zero or one
+  occurrence of a character in the class. It always matches one occurrence if
+  possible.
 * `%n`, for _n_ between 1 and 9; such item matches a substring equal to the
   _n_-th captured string (see below);
 * `%bxy`, where _x_ and _y_ are two distinct characters; such item matches

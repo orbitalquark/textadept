@@ -462,6 +462,7 @@ caret_style	_	0;"	F	class:buffer
 caret_width	_	0;"	F	class:buffer
 ceil	_	0;"	f	class:math
 char	_	0;"	f	class:string
+char	_	0;"	f	class:utf8
 char_at	_	0;"	F	class:buffer
 char_left	_	0;"	f	class:buffer
 char_left_extend	_	0;"	f	class:buffer
@@ -470,6 +471,7 @@ char_matches	_	0;"	t	class:textadept.editing
 char_right	_	0;"	f	class:buffer
 char_right_extend	_	0;"	f	class:buffer
 char_right_rect_extend	_	0;"	f	class:buffer
+charpattern	_	0;"	F	class:utf8
 chdir	_	0;"	f	class:lfs
 choose_caret_x	_	0;"	f	class:buffer
 clear	_	0;"	f	class:buffer
@@ -487,6 +489,8 @@ close	_	0;"	f	class:spawn_proc
 close_all_buffers	_	0;"	f	class:io
 close_buffer	_	0;"	f	class:io
 cntrl	_	0;"	F	class:lexer
+codepoint	_	0;"	f	class:utf8
+codes	_	0;"	f	class:utf8
 collectgarbage	_	0;"	f	
 colourise	_	0;"	f	class:buffer
 column	_	0;"	F	class:buffer
@@ -638,6 +642,8 @@ get_sel_text	_	0;"	f	class:buffer
 get_split_table	_	0;"	f	class:ui
 get_text	_	0;"	f	class:buffer
 getenv	_	0;"	f	class:os
+getfenv	_	0;"	f	
+getfenv	_	0;"	f	class:debug
 gethook	_	0;"	f	class:debug
 getinfo	_	0;"	f	class:debug
 getlocal	_	0;"	f	class:debug
@@ -703,6 +709,7 @@ insert_text	_	0;"	f	class:buffer
 integer	_	0;"	F	class:lexer
 io	_	0;"	m	
 ipairs	_	0;"	f	
+isyieldable	_	0;"	f	class:coroutine
 join_lines	_	0;"	f	class:textadept.editing
 keychain	_	0;"	t	class:keys
 keys	_	0;"	m	
@@ -712,6 +719,7 @@ kill	_	0;"	f	class:spawn_proc
 last_char_includes	_	0;"	f	class:lexer
 ldexp	_	0;"	f	class:math
 len	_	0;"	f	class:string
+len	_	0;"	f	class:utf8
 length	_	0;"	F	class:buffer
 lex	_	0;"	f	class:lexer
 lexer	_	0;"	m	
@@ -755,12 +763,15 @@ load	_	0;"	f
 load	_	0;"	f	class:lexer
 load	_	0;"	f	class:textadept.session
 loaded	_	0;"	F	class:package
+loaders	_	0;"	F	class:package
 loadfile	_	0;"	f	
 loadlib	_	0;"	f	class:package
+loadstring	_	0;"	f	
 locale	_	0;"	f	class:lpeg
 lock	_	0;"	f	class:lfs
 lock_dir	_	0;"	f	class:lfs
 log	_	0;"	f	class:math
+log10	_	0;"	f	class:math
 lower	_	0;"	F	class:lexer
 lower	_	0;"	f	class:string
 lower_case	_	0;"	f	class:buffer
@@ -810,16 +821,21 @@ match_case_label_text	_	0;"	F	class:ui.find
 math	_	0;"	m	
 max	_	0;"	f	class:math
 maximized	_	0;"	F	class:ui
+maxinteger	_	0;"	F	class:math
+maxn	_	0;"	f	class:table
 menu	_	0;"	f	class:ui
 menu	_	0;"	m	class:textadept
 menubar	_	0;"	t	class:textadept.menu
 menubar	_	0;"	t	class:ui
 min	_	0;"	f	class:math
+mininteger	_	0;"	F	class:math
 mkdir	_	0;"	f	class:lfs
 modf	_	0;"	f	class:math
 modify	_	0;"	F	class:buffer
+module	_	0;"	f	
 mouse_dwell_time	_	0;"	F	class:buffer
 mouse_selection_rectangular_switch	_	0;"	F	class:buffer
+move	_	0;"	f	class:table
 move_caret_inside_view	_	0;"	f	class:buffer
 move_selected_lines_down	_	0;"	f	class:buffer
 move_selected_lines_up	_	0;"	f	class:buffer
@@ -838,6 +854,7 @@ next_user_list_type	_	0;"	f	class:_SCINTILLA
 nonnewline	_	0;"	F	class:lexer
 nonnewline_esc	_	0;"	F	class:lexer
 oct_num	_	0;"	F	class:lexer
+offset	_	0;"	f	class:utf8
 ok_msgbox	_	0;"	f	class:ui.dialogs
 open	_	0;"	f	class:io
 open_file	_	0;"	f	class:io
@@ -847,8 +864,10 @@ optionselect	_	0;"	f	class:ui.dialogs
 os	_	0;"	m	
 output	_	0;"	f	class:io
 overtype	_	0;"	F	class:buffer
+pack	_	0;"	f	class:string
 pack	_	0;"	f	class:table
 package	_	0;"	m	
+packsize	_	0;"	f	class:string
 page_down	_	0;"	f	class:buffer
 page_down_extend	_	0;"	f	class:buffer
 page_down_rect_extend	_	0;"	f	class:buffer
@@ -966,6 +985,7 @@ searchers	_	0;"	F	class:package
 searchpath	_	0;"	f	class:package
 secure_inputbox	_	0;"	f	class:ui.dialogs
 secure_standard_inputbox	_	0;"	f	class:ui.dialogs
+seeall	_	0;"	f	class:package
 seek	_	0;"	f	class:file
 sel_alpha	_	0;"	F	class:buffer
 sel_eol_filled	_	0;"	F	class:buffer
@@ -1011,6 +1031,8 @@ set_whitespace_back	_	0;"	f	class:buffer
 set_whitespace_fore	_	0;"	f	class:buffer
 set_x_caret_policy	_	0;"	f	class:buffer
 set_y_caret_policy	_	0;"	f	class:buffer
+setfenv	_	0;"	f	
+setfenv	_	0;"	f	class:debug
 sethook	_	0;"	f	class:debug
 setlocal	_	0;"	f	class:debug
 setlocale	_	0;"	f	class:os
@@ -1115,6 +1137,7 @@ toggle	_	0;"	f	class:textadept.bookmarks
 toggle_block	_	0;"	f	class:_M.ruby
 toggle_caret_sticky	_	0;"	f	class:buffer
 toggle_fold	_	0;"	f	class:buffer
+tointeger	_	0;"	f	class:math
 token	_	0;"	f	class:lexer
 tonumber	_	0;"	f	
 tostring	_	0;"	f	
@@ -1126,13 +1149,17 @@ try_to_autocomplete_end	_	0;"	f	class:_M.ruby
 type	_	0;"	f	
 type	_	0;"	f	class:io
 type	_	0;"	f	class:lpeg
+type	_	0;"	f	class:math
 typeover_chars	_	0;"	t	class:textadept.editing
 ui	_	0;"	m	
 ui.command_entry	_	0;"	m	
 ui.dialogs	_	0;"	m	
 ui.find	_	0;"	m	
+ult	_	0;"	f	class:math
 undo	_	0;"	f	class:buffer
 unlock	_	0;"	f	class:lfs
+unpack	_	0;"	f	
+unpack	_	0;"	f	class:string
 unpack	_	0;"	f	class:table
 unsplit	_	0;"	f	class:view
 upper	_	0;"	F	class:lexer
@@ -1142,6 +1169,7 @@ upvalueid	_	0;"	f	class:debug
 upvaluejoin	_	0;"	f	class:debug
 use_tabs	_	0;"	F	class:buffer
 user_list_show	_	0;"	f	class:buffer
+utf8	_	0;"	m	
 v_scroll_bar	_	0;"	F	class:buffer
 vc_home	_	0;"	f	class:buffer
 vc_home_display	_	0;"	f	class:buffer

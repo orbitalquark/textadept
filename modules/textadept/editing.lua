@@ -450,7 +450,8 @@ function M.convert_indentation()
     local indent, e = line_indentation[line], line_indent_position[line]
     current_indentation = buffer:text_range(s, e)
     if buffer.use_tabs then
-      new_indentation = ('\t'):rep(indent / buffer.tab_width)
+      -- Need integer division and LuaJIT does not have // operator.
+      new_indentation = ('\t'):rep(math.floor(indent / buffer.tab_width))
     else
       new_indentation = (' '):rep(indent)
     end
