@@ -389,7 +389,7 @@ events_connect(events.VIEW_BEFORE_SWITCH, save_view_state)
 -- Restore view state.
 local function restore_view_state()
   local buffer = buffer
-  if not buffer._view_eol then return end
+  if not buffer._margin_type_n then return end
   buffer.view_eol, buffer.view_ws = buffer._view_eol, buffer._view_ws
   buffer.wrap_mode = buffer._wrap_mode
   for i = 0, 4 do
