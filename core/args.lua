@@ -83,17 +83,16 @@ if WIN32 and not CURSES and #arg[0] > 0 then
 end
 
 -- Set `_G._USERHOME`.
-local userhome = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'
+_USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'
 for i = 1, #arg do
   if (arg[i] == '-u' or arg[i] == '--userhome') and arg[i + 1] then
-    userhome = arg[i + 1]
+    _USERHOME = arg[i + 1]
     break
   end
 end
-if not lfs.attributes(userhome) then lfs.mkdir(userhome) end
-local f = io.open(userhome..'/init.lua', 'a+') -- ensure existence
+if not lfs.attributes(_USERHOME) then lfs.mkdir(_USERHOME) end
+local f = io.open(_USERHOME..'/init.lua', 'a+') -- ensure existence
 if f then f:close() end
-_G._USERHOME = userhome
 
 M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
 M.register('-f', '--force', 0, function() end, 'Forces unique instance')

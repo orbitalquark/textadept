@@ -183,9 +183,7 @@ end)
 -- Auto-indent on return.
 events.connect(events.CHAR_ADDED, function(char)
   if not M.AUTOINDENT or char ~= 10 then return end
-  local buffer = buffer
-  local pos = buffer.current_pos
-  local line = buffer:line_from_position(pos)
+  local line = buffer:line_from_position(buffer.current_pos)
   local i = line - 1
   while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
   if i >= 0 then
@@ -228,12 +226,13 @@ events.connect(events.FILE_BEFORE_SAVE, function()
   local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
-  local line_end_position, char_at = buffer.line_end_position, buffer.char_at
   local lines = buffer.line_count
   for line = 0, lines - 1 do
-    local s, e = buffer:position_from_line(line), line_end_position[line]
-    local i, c = e - 1, char_at[e - 1]
-    while i >= s and c == 9 or c == 32 do i, c = i - 1, char_at[i - 1] end
+    local s, e = buffer:position_from_line(line), buffer.line_end_position[line]
+    local i, c = e - 1, buffer.char_at[e - 1]
+    while i >= s and (c == 9 or c == 32) do
+      i, c = i - 1, buffer.char_at[i - 1]
+    end
     if i < e - 1 then buffer:delete_range(i + 1, e - i - 1) end
   end
   -- Ensure ending newline.
@@ -284,12 +283,10 @@ function M.block_comment()
   for line = s, not ignore_last_line and e or e - 1 do
     local p = buffer:position_from_line(line)
     if buffer:text_range(p, p + #prefix) == prefix then
-      buffer:set_sel(p, p + #prefix)
-      buffer:replace_sel('')
+      buffer:delete_range(p, #prefix)
       if suffix ~= '' then
         p = buffer.line_end_position[line]
-        buffer:set_sel(p - #suffix, p)
-        buffer:replace_sel('')
+        buffer:delete_range(p - #suffix, #suffix)
         if line == s then anchor = anchor - #suffix end
         if line == e then pos = pos - #suffix end
       end
@@ -442,12 +439,11 @@ end
 -- @name convert_indentation
 function M.convert_indentation()
   local buffer = buffer
-  local line_indentation = buffer.line_indentation
-  local line_indent_position = buffer.line_indent_position
   buffer:begin_undo_action()
   for line = 0, buffer.line_count do
     local s = buffer:position_from_line(line)
-    local indent, e = line_indentation[line], line_indent_position[line]
+    local indent = buffer.line_indentation[line]
+    local e = buffer.line_indent_position[line]
     current_indentation = buffer:text_range(s, e)
     if buffer.use_tabs then
       -- Need integer division and LuaJIT does not have // operator.

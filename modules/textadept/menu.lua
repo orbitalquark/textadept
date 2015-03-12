@@ -250,7 +250,7 @@ local function get_gdk_key(key_seq)
   if not mods or not key then return nil end
   local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
                     (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
-                    (mods:find('m') and 268435456 or 0)
+                    (mods:find('m') and 0x10000000 or 0)
   local byte = string.byte(key)
   if #key > 1 or byte < 32 then
     for i, s in pairs(keys.KEYSYMS) do
@@ -352,9 +352,8 @@ end
 -- @see ui.menubar
 -- @see ui.menu
 local function set_menubar(menubar)
-  key_shortcuts = {}
+  key_shortcuts, menu_actions = {}, {}
   for key, f in pairs(keys) do key_shortcuts[get_id(f)] = key end
-  menu_actions = {}
   local _menubar = {}
   for i = 1, #menubar do
     _menubar[#_menubar + 1] = ui.menu(read_menu_table(menubar[i]))
@@ -423,7 +422,7 @@ return setmetatable(M, {
     elseif k == 'tab_context_menu' then
       set_contextmenus(nil, v)
     else
-      M[k] = v
+      rawset(M, k, v)
     end
   end
 })
