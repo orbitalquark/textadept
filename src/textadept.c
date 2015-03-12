@@ -1080,7 +1080,7 @@ static int lbuffer_delete(lua_State *L) {
   if (lua_rawlen(L, -1) == 1) new_buffer(0);
   lL_gotodoc(L, focused_view, -1, TRUE);
   delete_buffer(doc);
-  lL_event(L, "buffer_deleted", -1), lL_event(L, "buffer_after_switch", -1);
+  lL_event(L, "buffer_after_switch", -1), lL_event(L, "buffer_deleted", -1);
   return 0;
 }
 
@@ -2246,7 +2246,7 @@ static GtkWidget *new_findbox() {
  */
 static int wc_focusout(GtkWidget *widget, GdkEvent*_, void*__) {
   if (widget == window && command_entry_focused) return TRUE;
-  if (widget == command_entry) 
+  if (widget == command_entry)
     lL_event(lua, "keypress", LUA_TNUMBER, GDK_Escape, -1);
   return FALSE;
 }
