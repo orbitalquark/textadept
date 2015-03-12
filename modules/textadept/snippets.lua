@@ -102,8 +102,9 @@ local function new_snippet(text, trigger)
   if #lines > 1 then
     -- Match indentation on all lines after the first.
     local indent_size = #buffer:get_cur_line():match('^%s*')
-    if not use_tabs then 
-      indent_size = math.floor(indent_size / buffer.tab_width) -- for Lua 5.3
+    if not use_tabs then
+      -- Need integer division and LuaJIT does not have // operator.
+      indent_size = math.floor(indent_size / buffer.tab_width)
     end
     local additional_indent = indent[use_tabs]:rep(indent_size)
     for i = 2, #lines do lines[i] = additional_indent..lines[i] end
@@ -273,7 +274,6 @@ M._snippet_mt = {
   -- Goes to the next placeholder in a snippet.
   -- @param snippet The snippet returned by `new_snippet()`.
   next = function(snippet)
-    local buffer = buffer
     -- If the snippet was just initialized, determine how many placeholders it
     -- has.
     if not snippet.index then
@@ -307,7 +307,7 @@ M._snippet_mt = {
         escaped_text = snippet:get_escaped_text()..' '
         local offset = 0
         for s, e in escaped_text:gmatch('()%%'..index..'()[^(]') do
-          buffer:set_target_range(start + s - 1 + offset, 
+          buffer:set_target_range(start + s - 1 + offset,
                                   start + e - 1 + offset)
           buffer:replace_target(placeholder)
           buffer:add_selection(buffer.target_start, buffer.target_end)

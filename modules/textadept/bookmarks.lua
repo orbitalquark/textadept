@@ -30,9 +30,7 @@ end
 ---
 -- Clears all bookmarks in the current buffer.
 -- @name clear
-function M.clear()
-  buffer:marker_delete_all(M.MARK_BOOKMARK)
-end
+function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end
 
 ---
 -- Prompts the user to select a bookmarked line to move the caret to the
@@ -45,14 +43,13 @@ end
 -- @name goto_mark
 function M.goto_mark(next)
   if next == nil then
-    local buffer = buffer
     local marks, line = {}, buffer:marker_next(0, 2^M.MARK_BOOKMARK)
     if line == -1 then return end
-    repeat
+    while line >= 0 do
       local text = buffer:get_line(line):match('^[^\r\n]*')
       marks[#marks + 1] = tostring(line + 1)..': '..text
       line = buffer:marker_next(line + 1, 2^M.MARK_BOOKMARK)
-    until line < 0
+    end
     local button, i = ui.dialogs.filteredlist{
       title = _L['Select Bookmark'], columns = _L['Bookmark'], items = marks
     }

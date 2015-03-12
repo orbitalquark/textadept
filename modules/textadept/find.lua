@@ -156,7 +156,7 @@ local function find_(text, next, flags, no_wrap, wrapped)
 
   -- If nothing was found, wrap the search.
   if pos == -1 and not no_wrap then
-    local anchor, pos = buffer.anchor, buffer.current_pos
+    local anchor = buffer.anchor
     buffer:goto_pos(next and 0 or buffer.length)
     ui.statusbar_text = _L['Search wrapped']
     events.emit(events.FIND_WRAPPED)
@@ -264,20 +264,19 @@ local function replace(rtext)
   if buffer:get_sel_text() == '' then return end
   if M.in_files then M.in_files = false end
   buffer:target_from_selection()
-  rtext = rtext:gsub('\\[abfnrtv\\]', escapes)
-  rtext = rtext:gsub('%%%%', '\\037') -- escape '%%'
+  rtext = rtext:gsub('\\[abfnrtv\\]', escapes):gsub('%%%%', '\\037')
   if M.captures then
     for i = 0, #M.captures do
       rtext = rtext:gsub('%%'..i, (M.captures[i]:gsub('%%', '%%%%')))
     end
   end
-  local ok, rtext = pcall(rtext.gsub, rtext, '%%(%b())', function(code)
+  local ok, rtext = pcall(string.gsub, rtext, '%%(%b())', function(code)
     code = code:gsub('[\a\b\f\n\r\t\v\\]', escapes)
     local result = assert(load('return '..code))()
     return tostring(result):gsub('\\[abfnrtv\\]', escapes)
   end)
   if ok then
-    buffer:replace_target(rtext:gsub('\\037', '%%')) -- unescape '%'
+    buffer:replace_target(rtext:gsub('\\037', '%%'))
     buffer:goto_pos(buffer.target_end) -- 'find' text after this replacement
   else
     ui.dialogs.msgbox{
@@ -306,7 +305,7 @@ local function replace_all(ftext, rtext)
   local count = 0
   if buffer:get_sel_text() == '' then
     buffer:goto_pos(0)
-    while(find_(ftext, true, nil, true) ~= -1) do
+    while find_(ftext, true, nil, true) ~= -1 do
       replace(rtext)
       count = count + 1
     end
@@ -352,7 +351,7 @@ function M.goto_file_found(line, next)
   if not ff_view and not ff_buf then return end
   if ff_view then ui.goto_view(ff_view) else view:goto_buffer(ff_buf) end
 
-  -- If not line was given, find the next search result.
+  -- If no line was given, find the next search result.
   if not line and next ~= nil then
     if next then buffer:line_end() else buffer:home() end
     buffer:search_anchor()

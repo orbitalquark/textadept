@@ -91,8 +91,8 @@ local M = {}
 -- ## Key Chains
 --
 -- Key chains are a powerful concept. They allow you to assign multiple key
--- bindings to one key sequence. By default, the `Esc` (`⎋` on Mac OSX | `Esc` 
--- in curses) key cancels a key chain, but you can redefine it via 
+-- bindings to one key sequence. By default, the `Esc` (`⎋` on Mac OSX | `Esc`
+-- in curses) key cancels a key chain, but you can redefine it via
 -- [`keys.CLEAR`](). An example key chain looks like:
 --
 --     keys['aa'] = {
@@ -186,8 +186,7 @@ M.run_command = function(command, command_type)
       end
     end
   end
-  local _, result = xpcall(f, key_error, table.unpack(args, 2))
-  return result
+  return select(2, xpcall(f, key_error, table.unpack(args, 2)))
 end
 
 -- Return codes for `key_command()`.

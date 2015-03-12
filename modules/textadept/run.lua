@@ -103,11 +103,10 @@ local function command(commands, event)
   end
 
   preferred_view = view
-  local events_emit = events.emit
   local function emit_output(output, focus)
     ui.SILENT_PRINT = not focus
     for line in output:gmatch('[^\r\n]+') do
-      events_emit(event, data, line:iconv('UTF-8', _CHARSET))
+      events.emit(event, data, line:iconv('UTF-8', _CHARSET))
     end
     ui.SILENT_PRINT = false
   end

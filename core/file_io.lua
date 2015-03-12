@@ -21,7 +21,7 @@
 --   Arguments:
 --
 --   * _`filename`_: The filename of the file being saved.
---   * _`saved_as`_: Whether or not the file was saved under a different 
+--   * _`saved_as`_: Whether or not the file was saved under a different
 --     filename.
 -- @field _G.events.FILE_CHANGED (string)
 --   Emitted when Textadept detects that an open file was modified externally.
@@ -304,9 +304,8 @@ events_connect(events.RESUME, update_modified_file)
 -- Prompts the user to reload the current file if it has been externally
 -- modified.
 events_connect(events.FILE_CHANGED, function(filename)
-  local msg = string.format('"%s"\n%s',
-                            buffer.filename:iconv('UTF-8', _CHARSET),
-                            _L['has been modified. Reload it?'])
+  local msg = ('"%s"\n%s'):format(buffer.filename:iconv('UTF-8', _CHARSET),
+                                  _L['has been modified. Reload it?'])
   local button = ui.dialogs.msgbox{
     title = _L['Reload?'], text = _L['Reload modified file?'],
     informative_text = msg, icon = 'gtk-dialog-question',
@@ -423,7 +422,7 @@ function io.snapopen(paths, filter, exclude_FILTER, opts)
   if type(paths) == 'string' then
     if not filter then
       filter = io.snapopen_filters[paths]
-      if filter and type(exclude_FILTER) == "nil" then
+      if filter and exclude_FILTER == nil then
         exclude_FILTER = filter ~= lfs.FILTER
       end
     end

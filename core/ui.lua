@@ -422,9 +422,8 @@ events_connect(events.QUIT, function()
 end)
 
 -- Keeps track of and switches back to the previous buffer after buffer close.
-events_connect(events.BUFFER_BEFORE_SWITCH, function()
-  view._prev_buffer = buffer
-end)
+events_connect(events.BUFFER_BEFORE_SWITCH,
+               function() view._prev_buffer = buffer end)
 events_connect(events.BUFFER_DELETED, function()
   local i = _BUFFERS[view._prev_buffer]
   if i and _BUFFERS[buffer] ~= i then view:goto_buffer(i) end

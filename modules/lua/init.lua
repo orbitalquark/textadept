@@ -98,15 +98,14 @@ local control_structure_patterns = {
 function M.try_to_autocomplete_end()
   local line_num = buffer:line_from_position(buffer.current_pos)
   local line = buffer:get_line(line_num)
-  local line_indentation = buffer.line_indentation
   for _, patt in ipairs(control_structure_patterns) do
     if line:find(patt) then
-      local indent = line_indentation[line_num]
+      local indent = buffer.line_indentation[line_num]
       buffer:begin_undo_action()
       buffer:new_line()
       buffer:new_line()
       buffer:add_text(patt:find('repeat') and 'until' or 'end')
-      line_indentation[line_num + 1] = indent + buffer.tab_width
+      buffer.line_indentation[line_num + 1] = indent + buffer.tab_width
       buffer:line_up()
       buffer:line_end()
       buffer:end_undo_action()
