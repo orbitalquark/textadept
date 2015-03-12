@@ -113,7 +113,6 @@ module('keys')]]
 
 local CTRL, ALT, META, SHIFT = 'c', not CURSES and 'a' or 'm', 'm', 's'
 M.CLEAR = 'esc'
-M.LANGUAGE_MODULE_PREFIX = (not OSX and not CURSES and CTRL or META)..'l'
 
 ---
 -- Lookup table for string representations of key codes higher than 255.
