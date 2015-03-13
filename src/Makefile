@@ -62,7 +62,7 @@ else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
 else
   # Build for Linux/BSD.
   CFLAGS = -Os
-  CXXFLAGS = -Os
+  CXXFLAGS = -Os -std=c++0x
   LUA_CFLAGS = -DLUA_USE_LINUX
   LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
   ifeq (Linux, $(shell uname -s))
@@ -98,9 +98,8 @@ endif
 
 # Scintilla.
 
-sci_flags = -std=c++0x -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG \
-            -DG_THREADS_IMPL_NONE -Iscintilla/include -Iscintilla/src \
-            -Iscintilla/lexlib -Wall
+sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG -DG_THREADS_IMPL_NONE \
+            -Iscintilla/include -Iscintilla/src -Iscintilla/lexlib -Wall
 
 sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
            CellBuffer.o CharClassify.o ContractionState.o Decoration.o \
@@ -195,7 +194,7 @@ textadept_rc.o: textadept.rc ; $(CROSS)$(WINDRES) $< $@
 
 # Target-specific variables.
 
-$(lexlpeg_objs): sci_flags += -DLPEG_LEXER -DNO_SCITE
+$(lexlpeg_objs): sci_flags += -DLPEG_LEXER -DNO_SCITE -Wno-long-long
 LexLPeg-curses.o LexLPegjit-curses.o: sci_flags += -DCURSES $(CURSES_CFLAGS)
 lua_dep_objs = LexLPeg.o LexLPeg-curses.o textadept.o textadept-curses.o \
                $(lua_objs) $(lua_lib_objs) lspawn.o lspawn-curses.o
