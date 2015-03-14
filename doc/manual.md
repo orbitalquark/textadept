@@ -1088,9 +1088,9 @@ Learn more about snippet syntax in the [snippets documentation][].
 ### File Types
 
 Textadept recognizes a wide range of programming language files either by file
-extension or by a [Lua pattern](#Lua.Patterns) that matches the text of the 
-first line. The editor does this by consulting a set of tables in 
-[`textadept.file_types`][] that are modifiable from *~/.textadept/init.lua*. For 
+extension or by a [Lua pattern](#Lua.Patterns) that matches the text of the
+first line. The editor does this by consulting a set of tables in
+[`textadept.file_types`][] that are modifiable from *~/.textadept/init.lua*. For
 example:
 
     -- Recognize .luadoc files as Lua code.
@@ -1459,11 +1459,11 @@ as running it.
 
 ### Requirements for Linux and BSD
 
-First, Linux and BSD systems need the [GNU C compiler][] (*gcc*) and
-[GNU Make][] (*make*). BSD users additionally need to have [libiconv][]
-installed. These should be available for your distribution through a package
-manager. For example, Ubuntu includes these tools in the "build-essential"
-package.
+First, Linux and BSD systems need either the [GNU C compiler][] (*gcc*) or
+[Clang][] (*clang*), as well as [GNU Make][] (*make* or *gmake*). BSD users
+additionally need to have [pkg-config][] and [libiconv][] installed. All of
+these should be available for your distribution through a package manager. For
+example, Ubuntu includes these tools in the "build-essential" package.
 
 Next, the GUI version of Textadept requires the GTK+ development libraries.
 Again, your package manager should allow you to install them. Debian-based Linux
@@ -1479,7 +1479,9 @@ of ncurses installed, which handles multibyte sequences. (Therefore, Debian
 users _also_ need "libncursesw5-dev".)
 
 [GNU C compiler]: http://gcc.gnu.org
+[Clang]: http://clang.llvm.org/
 [GNU Make]: http://www.gnu.org/software/make/
+[pkg-config]: http://www.freedesktop.org/wiki/Software/pkg-config/
 [libiconv]: http://www.gnu.org/software/libiconv/
 [GTK+ website]: http://www.gtk.org/download/linux.php
 [ncurses website]: http://invisible-island.net/ncurses/#download_ncurses
@@ -1512,6 +1514,8 @@ binaries.
 ## Compiling
 
 ### Compiling on Linux and BSD
+
+Note: for BSD systems, replace the `make` commands below with `gmake`.
 
 For Linux and BSD systems, simply run `make deps` (or `make deps NIGHTLY=1` when
 compiling Textadept from the latest source rather than from a tagged release) in
