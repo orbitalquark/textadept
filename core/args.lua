@@ -72,7 +72,14 @@ local function show_help()
   for k, v in pairs(switches) do print(line:format(k, table.unpack(v, 2))) end
   os.exit()
 end
-if not CURSES then M.register('-h', '--help', 0, show_help, 'Shows this') end
+if not CURSES then
+  M.register('-h', '--help', 0, show_help, 'Shows this')
+  -- After Textadept finishes initializing and processes arguments, remove the
+  -- help switches to prevent another instance from sending '-h' and '--help' to
+  -- the first instance, killing the latter.
+  events.connect(events.INITIALIZED,
+                 function() switches['-h'], switches['--help'] = nil, nil end)
+end
 
 -- For Windows, create arg table from single command line string (arg[0]).
 if WIN32 and not CURSES and #arg[0] > 0 then
