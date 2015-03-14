@@ -412,7 +412,7 @@ $(scintillua_zip): ; wget $(scintillua_url) -O $@
 LexLPeg.cxx: | ../lexers ; ln -s $|/$@ $@
 $(lua_tgz): ; wget http://www.lua.org/ftp/$@
 $(lpeg_tgz): ; wget http://www.inf.puc-rio.br/~roberto/lpeg/$@
-$(lfs_zip): ; wget https://github.com/keplerproject/luafilesystem/archive/$@
+$(lfs_zip): ; wget http://github.com/keplerproject/luafilesystem/archive/$@
 $(lspawn_zip): ; wget $(lspawn_url) -O $@
 lua: lua.patch | $(lua_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
