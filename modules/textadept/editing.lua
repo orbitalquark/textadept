@@ -521,13 +521,9 @@ function M.filter_through(command)
   else -- use whole buffer as input
     input = buffer:get_text()
   end
-  local tmpfile = _USERHOME..'/.ft'
-  local f = io.open(tmpfile, 'wb')
-  f:write(input)
-  f:close()
-  local cmd = (not WIN32 and 'cat' or 'type')..' "'..tmpfile..'" | '..command
-  if WIN32 then cmd = cmd:gsub('/', '\\') end
-  local p = io.popen(cmd)
+  local p = spawn(command)
+  p:write(input)
+  p:close()
   if s ~= e then
     buffer:set_target_range(s, e)
     buffer:replace_target(p:read('*a'))
@@ -536,8 +532,6 @@ function M.filter_through(command)
     buffer:set_text(p:read('*a'))
     buffer:goto_pos(s)
   end
-  p:close()
-  os.remove(tmpfile)
 end
 
 ---
