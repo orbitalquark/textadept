@@ -315,9 +315,9 @@ release: $(basedir).i386
 $(basedir).x86_64: ; hg archive $@ -X ".hg*"
 release64: $(basedir).x86_64
 	make clean libluajit64
-	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -j4 CFLAGS=-m64 \
-		CXXFLAGS=-m64 || return 0
-	make -j4 CFLAGS=-m64 CXXFLAGS=-m64 \
+	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -j4 CFLAGS='$(CFLAGS) -m64' \
+		CXXFLAGS='$(CXXFLAGS) -m64' || return 0
+	make -j4 CFLAGS='$(CFLAGS) -m64' CXXFLAGS='$(CXXFLAGS) -m64' \
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
 	cp -r ../doc ../lexers ../textadept* $<
