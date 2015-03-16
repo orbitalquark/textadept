@@ -27,7 +27,7 @@ local xpms = setmetatable({
   c = XPM.CLASS, d = XPM.SLOT, e = XPM.VARIABLE, f = XPM.METHOD,
   g = XPM.TYPEDEF, m = XPM.VARIABLE, s = XPM.STRUCT, t = XPM.TYPEDEF,
   v = XPM.VARIABLE
-}, {__index = function(t, k) return 0 end})
+}, {__index = function() return 0 end})
 
 textadept.editing.autocompleters.ansi_c = function()
   local list = {}
@@ -54,10 +54,10 @@ textadept.editing.autocompleters.ansi_c = function()
   local sep = string.char(buffer.auto_c_type_separator)
   for i = 1, #tags_files do
     if lfs.attributes(tags_files[i]) then
-      for line in io.lines(tags_files[i]) do
-        local name = line:match('^%S+')
+      for tag_line in io.lines(tags_files[i]) do
+        local name = tag_line:match('^%S+')
         if name:find(name_patt) and not name:find('^!') and not list[name] then
-          local fields = line:match(';"\t(.*)$')
+          local fields = tag_line:match(';"\t(.*)$')
           if (fields:match('class:(%S+)') or fields:match('enum:(%S+)') or
               fields:match('struct:(%S+)') or fields:match('typedef:(%S+)') or
               '') == symbol then

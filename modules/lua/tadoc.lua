@@ -176,16 +176,16 @@ function M.start(doc)
       write_apidoc(apidoc, {name = '_G'}, m)
     end
     -- Tag and document the functions.
-    for i = 1, #m.functions do
-      local module_name, name = m.functions[i]:match('^(.-)[%.:]?([^.:]+)$')
+    for j = 1, #m.functions do
+      local module_name, name = m.functions[j]:match('^(.-)[%.:]?([^.:]+)$')
       if module_name == '' then module_name = m.name end
       write_tag(ctags, name, 'f', 'class:'..module_name)
-      write_apidoc(apidoc, m, m.functions[m.functions[i]])
+      write_apidoc(apidoc, m, m.functions[m.functions[j]])
     end
     if m.tables then
       -- Document the tables.
-      for i = 1, #m.tables do
-        local table_name, table = m.tables[i], m.tables[m.tables[i]]
+      for j = 1, #m.tables do
+        local table_name, table = m.tables[j], m.tables[m.tables[j]]
         local module_name = m.name
         if table_name:find('^_G%.') then
           module_name, table_name = table_name:match('^_G%.(.-)%.?([^%.]+)$')
@@ -200,11 +200,11 @@ function M.start(doc)
         if table.field then
           -- Tag and document the table's fields.
           table_name = module_name..'.'..table_name
-          for j = 1, #table.field do
-            write_tag(ctags, table.field[j], 'F', 'class:'..table_name)
+          for k = 1, #table.field do
+            write_tag(ctags, table.field[k], 'F', 'class:'..table_name)
             write_apidoc(apidoc, {name = table_name}, {
-                           name = table.field[j],
-                           description = table.field[table.field[j]],
+                           name = table.field[k],
+                           description = table.field[table.field[k]],
                            class = 'table'
                          })
           end
@@ -213,8 +213,8 @@ function M.start(doc)
     end
     if m.fields then
       -- Tag and document the fields.
-      for i = 1, #m.fields do
-        local field_name, field = m.fields[i], m.fields[m.fields[i]]
+      for j = 1, #m.fields do
+        local field_name, field = m.fields[j], m.fields[m.fields[j]]
         local module_name = m.name
         if field_name:find('^_G%.') then
           module_name, field_name = field_name:match('^_G%.(.-)%.?([^%.]+)$')

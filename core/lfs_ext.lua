@@ -41,7 +41,7 @@ local function exclude(file, filter)
 end
 
 ---
--- Iterates over all files and sub-directories (up to level number *n*) in
+-- Iterates over all files and sub-directories (up to *n* levels deep) in
 -- directory *dir*, calling function *f* with each file found.
 -- Files passed to *f* do not match any pattern in string or table *filter*,
 -- and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A filter table

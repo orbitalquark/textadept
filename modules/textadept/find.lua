@@ -270,7 +270,8 @@ local function replace(rtext)
       rtext = rtext:gsub('%%'..i, (M.captures[i]:gsub('%%', '%%%%')))
     end
   end
-  local ok, rtext = pcall(string.gsub, rtext, '%%(%b())', function(code)
+  local ok
+  ok, rtext = pcall(string.gsub, rtext, '%%(%b())', function(code)
     code = code:gsub('[\a\b\f\n\r\t\v\\]', escapes)
     local result = assert(load('return '..code))()
     return tostring(result):gsub('\\[abfnrtv\\]', escapes)
@@ -380,7 +381,7 @@ events.connect(events.KEYPRESS, function(code)
     return true
   end
 end)
-events.connect(events.DOUBLE_CLICK, function(pos, line)
+events.connect(events.DOUBLE_CLICK, function(_, line)
   if is_ff_buf(buffer) then M.goto_file_found(line) end
 end)
 

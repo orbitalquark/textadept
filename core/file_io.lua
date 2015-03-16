@@ -109,8 +109,8 @@ function io.open_file(filenames)
   if not filenames then return end
   for i = 1, #filenames do
     local filename = lfs.abspath((filenames[i]:gsub('^file://', '')))
-    for i, buffer in ipairs(_BUFFERS) do
-      if filename == buffer.filename then view:goto_buffer(i) goto continue end
+    for j, buffer in ipairs(_BUFFERS) do
+      if filename == buffer.filename then view:goto_buffer(j) goto continue end
     end
 
     local text = ''
@@ -133,9 +133,9 @@ function io.open_file(filenames)
       end
     end
     if not buffer.encoding and not text:sub(1, 65536):find('\0') then
-      for i = 1, #io.encodings do
-        local ok, conv = pcall(string.iconv, text, 'UTF-8', io.encodings[i])
-        if ok then buffer.encoding, text = io.encodings[i], conv break end
+      for j = 1, #io.encodings do
+        local ok, conv = pcall(string.iconv, text, 'UTF-8', io.encodings[j])
+        if ok then buffer.encoding, text = io.encodings[j], conv break end
       end
       assert(buffer.encoding, _L['Encoding conversion failed.'])
     end
@@ -152,8 +152,8 @@ function io.open_file(filenames)
     events.emit(events.FILE_OPENED, filename)
 
     -- Add file to recent files list, eliminating duplicates.
-    for i, file in ipairs(io.recent_files) do
-      if file == filename then table.remove(io.recent_files, i) break end
+    for j, file in ipairs(io.recent_files) do
+      if file == filename then table.remove(io.recent_files, j) break end
     end
     table.insert(io.recent_files, 1, filename)
     ::continue::
@@ -303,7 +303,7 @@ events_connect(events.RESUME, update_modified_file)
 
 -- Prompts the user to reload the current file if it has been externally
 -- modified.
-events_connect(events.FILE_CHANGED, function(filename)
+events_connect(events.FILE_CHANGED, function()
   local msg = ('"%s"\n%s'):format(buffer.filename:iconv('UTF-8', _CHARSET),
                                   _L['has been modified. Reload it?'])
   local button = ui.dialogs.msgbox{
@@ -315,7 +315,7 @@ events_connect(events.FILE_CHANGED, function(filename)
 end)
 
 -- Closes the initial "Untitled" buffer.
-events_connect(events.FILE_OPENED, function(filename)
+events_connect(events.FILE_OPENED, function()
   local buf = _BUFFERS[1]
   if #_BUFFERS == 2 and not (buf.filename or buf._type or buf.modify) then
     view:goto_buffer(1)

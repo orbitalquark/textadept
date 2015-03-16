@@ -49,16 +49,16 @@ function M.load(filename)
   for line in f:lines() do
     if line:find('^buffer:') then
       local patt = '^buffer: (%d+) (%d+) (%d+) (.+)$'
-      local anchor, current_pos, first_visible_line, filename = line:match(patt)
-      if not filename:find('^%[.+%]$') then
-        if lfs_attributes(filename) then
-          io.open_file(filename)
+      local anchor, current_pos, first_visible_line, file = line:match(patt)
+      if not file:find('^%[.+%]$') then
+        if lfs_attributes(file) then
+          io.open_file(file)
         else
-          not_found[#not_found + 1] = filename
+          not_found[#not_found + 1] = file
         end
       else
-        buffer.new()._type = filename
-        events.emit(events.FILE_OPENED, filename)
+        buffer.new()._type = file
+        events.emit(events.FILE_OPENED, file)
       end
       -- Restore saved buffer selection and view.
       anchor, current_pos = tonumber(anchor) or 0, tonumber(current_pos) or 0
@@ -85,12 +85,12 @@ function M.load(filename)
       ui.maximized = maximized == 'true'
       if not ui.maximized then ui.size = {width, height} end
     elseif line:find('^recent:') then
-      local filename = line:match('^recent: (.+)$')
+      local file = line:match('^recent: (.+)$')
       local recent, exists = io.recent_files, false
-      for i, file in ipairs(recent) do
-        if filename == file then exists = true break end
+      for i = 1, #recent do
+        if file == recent[i] then exists = true break end
       end
-      if not exists then recent[#recent + 1] = filename end
+      if not exists then recent[#recent + 1] = file end
     end
   end
   f:close()
@@ -131,16 +131,15 @@ function M.save(filename)
   local view_line = "%sview%d: %d" -- level, number, doc index
   -- Write out opened buffers.
   for _, buffer in ipairs(_BUFFERS) do
-    local filename = buffer.filename or buffer._type
-    if filename then
+    local file = buffer.filename or buffer._type
+    if file then
       local current = buffer == view.buffer
       local anchor = current and 'anchor' or '_anchor'
       local current_pos = current and 'current_pos' or '_current_pos'
       local top_line = current and 'first_visible_line' or '_first_visible_line'
       session[#session + 1] = buffer_line:format(buffer[anchor] or 0,
                                                  buffer[current_pos] or 0,
-                                                 buffer[top_line] or 0,
-                                                 filename)
+                                                 buffer[top_line] or 0, file)
     end
   end
   -- Write out split views.

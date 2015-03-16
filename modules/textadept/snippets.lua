@@ -258,7 +258,7 @@ M._snippet_mt = {
                                {__index = _G})
       local f, result = load('return '..snippet.unescape_text(code, true), nil,
                              'bt', env)
-      if f then f, result = pcall(f) end
+      if f then result = select(2, pcall(f)) end
       return result or ''
     end)
     -- Shell code.
@@ -306,12 +306,12 @@ M._snippet_mt = {
         -- Add additional carets at mirrors.
         escaped_text = snippet:get_escaped_text()..' '
         local offset = 0
-        for s, e in escaped_text:gmatch('()%%'..index..'()[^(]') do
-          buffer:set_target_range(start + s - 1 + offset,
-                                  start + e - 1 + offset)
+        for s2, e2 in escaped_text:gmatch('()%%'..index..'()[^(]') do
+          buffer:set_target_range(start + s2 - 1 + offset,
+                                  start + e2 - 1 + offset)
           buffer:replace_target(placeholder)
           buffer:add_selection(buffer.target_start, buffer.target_end)
-          offset = offset + (#placeholder - (e - s))
+          offset = offset + (#placeholder - (e2 - s2))
         end
         buffer.main_selection = 0
       end

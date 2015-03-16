@@ -105,7 +105,7 @@ end
 -- @class table
 -- @name env
 local env = setmetatable({}, {
-  __index = function(t, k)
+  __index = function(_, k)
     local f = buffer[k]
     if f and type(f) == 'function' then
       f = function(...) return buffer[k](buffer, ...) end

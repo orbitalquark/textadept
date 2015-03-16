@@ -18,7 +18,7 @@ _M = {} -- language modules table
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 -- pdcurses compatibility.
 if CURSES and WIN32 then
-  function spawn(argv, cwd, stdout_cb, stderr_cb, exit_cb)
+  function spawn(argv, cwd, stdout_cb, _, exit_cb)
     local current_dir = lfs.currentdir()
     if cwd then lfs.chdir(cwd) end
     local p = io.popen(argv..' 2>&1')
