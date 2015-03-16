@@ -70,7 +70,7 @@ events.connect(events.VIEW_NEW, function()
     if type(name) == 'string' then buffer:register_image(i, M.XPM_IMAGES[i]) end
   end
 end)
-for i = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
+for _ = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
 
 ---
 -- Map of lexer names to line comment strings for programming languages, used by
@@ -444,7 +444,7 @@ function M.convert_indentation()
     local s = buffer:position_from_line(line)
     local indent = buffer.line_indentation[line]
     local e = buffer.line_indent_position[line]
-    current_indentation = buffer:text_range(s, e)
+    local current_indentation, new_indentation = buffer:text_range(s, e), nil
     if buffer.use_tabs then
       -- Need integer division and LuaJIT does not have // operator.
       new_indentation = ('\t'):rep(math.floor(indent / buffer.tab_width))
@@ -572,10 +572,11 @@ M.autocompleters.word = function()
   for i = 1, #_BUFFERS do
     if _BUFFERS[i] == buffer or M.AUTOCOMPLETE_ALL then
       local text = _BUFFERS[i]:get_text()
-      for i, word in text:gmatch(word_patt) do
+      for match_pos, match in text:gmatch(word_patt) do
         -- Frontier pattern (%f) is too slow, so check prior char after a match.
-        if (i == 1 or text:find(nonword_char, i - 1)) and not list[word] then
-          list[#list + 1], list[word] = word, true
+        if (match_pos == 1 or text:find(nonword_char, match_pos - 1)) and
+           not list[match] then
+          list[#list + 1], list[match] = match, true
         end
       end
     end
@@ -588,8 +589,8 @@ local api_docs
 ---
 -- Displays a call tip with documentation for the symbol under or directly
 -- behind the caret.
+-- Documentation is read from API files in the `api_files` table.
 -- If a call tip is already shown, cycles to the next one if it exists.
--- Documentation is stored in API files in the `api_files` table.
 -- Symbols are determined by using `buffer.word_chars`.
 -- @name show_documentation
 -- @see api_files

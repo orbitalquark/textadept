@@ -19,7 +19,7 @@ events.LEXER_LOADED = 'lexer_loaded'
 
 ---
 -- Map of file extensions to their associated lexer names.
--- If the file type is not recognized by its first-line, each file extension is 
+-- If the file type is not recognized by its first-line, each file extension is
 -- matched against the file's extension.
 -- @class table
 -- @name extensions
@@ -82,7 +82,7 @@ end
 events.connect(events.BUFFER_NEW, function()
   buffer.get_lexer, buffer.set_lexer = get_lexer, set_lexer
   buffer.style_name = setmetatable({}, {
-    __index = function(t, style_num) -- LuaDoc is in core/.buffer.luadoc
+    __index = function(_, style_num) -- LuaDoc is in core/.buffer.luadoc
       assert(style_num >= 0 and style_num <= 255, '0 <= style_num < 256')
       return buffer:private_lexer_call(style_num)
     end,
@@ -92,8 +92,8 @@ end, 1)
 
 -- Auto-detect lexer on file open or save as.
 events.connect(events.FILE_OPENED, function() buffer:set_lexer() end)
-events.connect(events.FILE_AFTER_SAVE, function(filename, saved_as) 
-  if saved_as then buffer:set_lexer() end 
+events.connect(events.FILE_AFTER_SAVE, function(_, saved_as)
+  if saved_as then buffer:set_lexer() end
 end)
 
 -- Restores the buffer's lexer.

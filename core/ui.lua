@@ -43,7 +43,7 @@ local theme_props = {}
 -- @see ui._print
 local function _print(buffer_type, ...)
   local print_buffer
-  for i, buffer in ipairs(_BUFFERS) do
+  for _, buffer in ipairs(_BUFFERS) do
     if buffer._type == buffer_type then print_buffer = buffer break end
   end
   if not print_buffer then
@@ -85,7 +85,7 @@ function ui._print(buffer_type, ...) pcall(_print, buffer_type, ...) end
 function ui.print(...) ui._print(_L['[Message Buffer]'], ...) end
 
 -- Documentation is in core/.ui.dialogs.luadoc.
-ui.dialogs = setmetatable({}, {__index = function(t, k)
+ui.dialogs = setmetatable({}, {__index = function(_, k)
   -- Wrapper for `ui.dialog(k)`, transforming the given table of arguments into
   -- a set of command line arguments and transforming the resulting standard
   -- output into Lua objects.

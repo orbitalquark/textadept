@@ -25,4 +25,4 @@ end
 f:close()
 
 return setmetatable(M,
-                    {__index = function(t, k) return 'No Localization:'..k end})
+                    {__index = function(_, k) return 'No Localization:'..k end})

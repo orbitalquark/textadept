@@ -53,13 +53,13 @@ events.BUILD_OUTPUT = 'build_output'
 
 local preferred_view
 
--- Executes compile, run, or build shell command *command*.
+-- Executes a compile, run, or build shell command from *commands*.
 -- Emits events named *event*.
 -- @param commands Either `compile_commands`, `run_commands`, or
 -- `build_commands`.
 -- @param event Event to emit upon command output.
 -- @see _G.events
-local function command(commands, event)
+local function run_command(commands, event)
   local command, cwd, data
   if commands ~= M.build_commands then
     if not buffer.filename then return end
@@ -147,9 +147,9 @@ end
 
 -- Prints the output from a run or compile shell command.
 -- If the output is a recognized warning or error message, mark it.
--- @param lexer The current lexer.
+-- @param _ The current lexer.
 -- @param output The output to print.
-local function print_output(lexer, output)
+local function print_output(_, output)
   ui.print(output)
   local error = get_error(output)
   if not error then return end
@@ -178,7 +178,7 @@ M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc 
 -- @see compile_commands
 -- @see _G.events
 -- @name compile
-function M.compile() command(M.compile_commands, events.COMPILE_OUTPUT) end
+function M.compile() run_command(M.compile_commands, events.COMPILE_OUTPUT) end
 events.connect(events.COMPILE_OUTPUT, print_output)
 
 ---
@@ -201,7 +201,7 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 -- @see run_commands
 -- @see _G.events
 -- @name run
-function M.run() command(M.run_commands, events.RUN_OUTPUT) end
+function M.run() run_command(M.run_commands, events.RUN_OUTPUT) end
 events.connect(events.RUN_OUTPUT, print_output)
 
 ---
@@ -220,7 +220,7 @@ M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Make]]Makefile='make',GNUma
 -- @see build_commands
 -- @see _G.events
 -- @name build
-function M.build() command(M.build_commands, events.BUILD_OUTPUT) end
+function M.build() run_command(M.build_commands, events.BUILD_OUTPUT) end
 events.connect(events.BUILD_OUTPUT, print_output)
 
 ---
@@ -300,11 +300,12 @@ function M.goto_error(line, next)
   if not error then if CURSES then view:goto_buffer(cur_buf) end return end
   textadept.editing.select_line()
   ui.goto_file(M.cwd..'/'..error.filename, true, preferred_view, true)
-  local line, message = error.line, error.message
-  buffer:goto_line(line - 1)
+  local line_num, message = error.line, error.message
+  buffer:goto_line(line_num - 1)
   if message then
-    buffer.annotation_text[line - 1] = message
-    if not error.warning then buffer.annotation_style[line - 1] = 8 end -- error
+    buffer.annotation_text[line_num - 1] = message
+    -- Style number 8 is the error style.
+    if not error.warning then buffer.annotation_style[line_num - 1] = 8 end
   end
 end
 events.connect(events.KEYPRESS, function(code)
@@ -314,7 +315,7 @@ events.connect(events.KEYPRESS, function(code)
     return true
   end
 end)
-events.connect(events.DOUBLE_CLICK, function(pos, line)
+events.connect(events.DOUBLE_CLICK, function(_, line)
   if is_msg_buf(buffer) and M.cwd then M.goto_error(line) end
 end)
 

@@ -21,7 +21,7 @@ local SEPARATOR = {''}
 -- The default main menubar.
 -- @class table
 -- @name menubar
-local menubar = {
+local default_menubar = {
   { title = _L['_File'],
     {_L['_New'], buffer.new},
     {_L['_Open'], io.open_file},
@@ -210,7 +210,7 @@ local menubar = {
 -- The default right-click context menu.
 -- @class table
 -- @name context_menu
-local context_menu = {
+local default_context_menu = {
   {_L['_Undo'], buffer.undo},
   {_L['_Redo'], buffer.redo},
   SEPARATOR,
@@ -226,7 +226,7 @@ local context_menu = {
 -- The default tabbar context menu.
 -- @class table
 -- @name tab_context_menu
-local tab_context_menu = {
+local default_tab_context_menu = {
   {_L['_Close'], io.close_buffer},
   SEPARATOR,
   {_L['_Save'], io.save_file},
@@ -238,7 +238,7 @@ local tab_context_menu = {
 -- Table of proxy tables for menus.
 local proxies = {}
 
-local key_shortcuts, menu_actions, contextmenu_actions, items, commands
+local key_shortcuts, menu_actions, contextmenu_actions
 
 -- Returns the GDK integer keycode and modifier mask for a key sequence.
 -- This is used for creating menu accelerators.
@@ -320,6 +320,8 @@ local function build_command_tables(menu, title, items, commands)
   end
 end
 
+local items, commands
+
 -- Returns a proxy table for menu table *menu* such that when a menu item is
 -- changed or added, *update* is called to update the menu in the UI.
 -- @param menu The menu or table of menus to create a proxy for.
@@ -329,15 +331,15 @@ end
 --   calling *update* with.
 local function proxy_menu(menu, update, menubar)
   return setmetatable({}, {
-    __index = function(t, k)
+    __index = function(_, k)
       local v = menu[k]
       return type(v) == 'table' and proxy_menu(v, update, menubar or menu) or v
     end,
-    __newindex = function(t, k, v)
+    __newindex = function(_, k, v)
       menu[k] = getmetatable(v) and getmetatable(v).menu or v
       update(menubar or menu)
     end,
-    __len = function(t) return #menu end,
+    __len = function() return #menu end,
     menu = menu -- store existing menu for copying (e.g. m[#m + 1] = m[#m])
   })
 end
@@ -363,7 +365,7 @@ local function set_menubar(menubar)
   build_command_tables(menubar, nil, items, commands)
   proxies.menubar = proxy_menu(menubar, set_menubar)
 end
-set_menubar(menubar)
+set_menubar(default_menubar)
 
 -- Sets `ui.context_menu` and `ui.tab_context_menu` from menu item lists
 -- *buffer_menu* and *tab_menu*, respectively.
@@ -380,10 +382,10 @@ set_menubar(menubar)
 -- @see ui.menu
 local function set_contextmenus(buffer_menu, tab_menu)
   contextmenu_actions = {}
-  local menu = buffer_menu or context_menu
+  local menu = buffer_menu or default_context_menu
   ui.context_menu = ui.menu(read_menu_table(menu, true))
   proxies.context_menu = proxy_menu(menu, set_contextmenus)
-  menu = tab_menu or tab_context_menu
+  menu = tab_menu or default_tab_context_menu
   ui.tab_context_menu = ui.menu(read_menu_table(menu, true))
   proxies.tab_context_menu = proxy_menu(menu, function()
     set_contextmenus(nil, menu)
@@ -413,8 +415,8 @@ events.connect(events.MENU_CLICKED, function(menu_id)
 end)
 
 return setmetatable(M, {
-  __index = function(t, k) return proxies[k] or M[k] end,
-  __newindex = function(t, k, v)
+  __index = function(_, k) return proxies[k] or M[k] end,
+  __newindex = function(_, k, v)
     if k == 'menubar' then
       set_menubar(v)
     elseif k == 'context_menu' then
