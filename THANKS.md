@@ -37,6 +37,7 @@ private contract work related to Textadept.
 * Jay Gould
 * Jeff Stone
 * John Benediktsson
+* Lance Larsen
 * M Rawash
 * Manuel Montenegro
 * Martin Morawetz
