@@ -12,13 +12,16 @@ module('textadept.bookmarks')]]
 M.MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 
 ---
--- Toggles the bookmark on the current line unless *on* is given.
+-- Toggles the bookmark on line number *line* or the current line, unless *on*
+-- is given.
 -- If *on* is `true` or `false`, adds or removes the bookmark, respectively.
--- @param on Optional flag indicating whether to add or remove a bookmark on the
---   current line. The default value is `nil`, toggling a bookmark.
+-- @param on Optional flag indicating whether to add or remove a bookmark on
+--   line *line* or the current line. The default value is `nil`, toggling a
+--   bookmark.
+-- @param line Optional line number to add or remove a bookmark on.
 -- @name toggle
-function M.toggle(on)
-  local line = buffer:line_from_position(buffer.current_pos)
+function M.toggle(on, line)
+  line = line or buffer:line_from_position(buffer.current_pos)
   local f = on and buffer.marker_add or buffer.marker_delete
   if on == nil then -- toggle
     local bit, marker_mask = 2^M.MARK_BOOKMARK, buffer:marker_get(line)
