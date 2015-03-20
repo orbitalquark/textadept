@@ -407,7 +407,7 @@
 --     pixel on either side. Similar in appearance to the non-target ranges in
 --     Asian language input composition.
 --   * `buffer.INDIC_FULLBOX`
---     Similar to `INDIC_STRAIGHTBOX` but extends to the top of its line, 
+--     Similar to `INDIC_STRAIGHTBOX` but extends to the top of its line,
 --     potentially touching any similar indicators on the line above.
 --   * `buffer.INDIC_TEXTFORE`
 --     Changes the color of text to an indicator's foreground color.
@@ -1819,7 +1819,7 @@ function get_text(buffer) end
 
 ---
 -- Moves the caret to the beginning of line number *line* and scrolls it into
--- view.
+-- view, regardless of whether *line* is hidden or not.
 -- @param buffer A buffer.
 -- @param line The line number in *buffer* to go to.
 function goto_line(buffer, line) end
@@ -2591,7 +2591,7 @@ function set_selection(buffer, end_pos, start_pos) end
 function set_styling(buffer, length, style) end
 
 ---
--- Defines the target range's beginning and end positions as *start_pos* and 
+-- Defines the target range's beginning and end positions as *start_pos* and
 -- *end_pos*, respectively.
 -- @param buffer A buffer.
 -- @param start_pos The position of the beginning of the target range.

@@ -121,9 +121,9 @@ M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
 -- Names are typically lexer names and autocompletion functions typically
 -- autocomplete symbols.
 -- Autocompletion functions must return two values: the number of characters
--- behind the caret that are used as the prefix of the entity to autocomplete,
--- and a list of completions to show. Autocompletion lists are sorted
--- automatically.
+-- behind the caret that are used as the prefix of the entity to be
+-- autocompleted, and a list of completions to be shown. Autocompletion lists
+-- are sorted automatically.
 -- @class table
 -- @name autocompleters
 -- @see autocomplete
@@ -469,7 +469,8 @@ events.connect(events.KEYPRESS, function(code)
 end)
 
 ---
--- Highlights all occurrences of the selected text or the current word.
+-- Highlights all occurrences of the selected text or all occurrences of the
+-- current word.
 -- @see buffer.word_chars
 -- @name highlight_word
 function M.highlight_word()
