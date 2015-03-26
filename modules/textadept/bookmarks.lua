@@ -46,18 +46,32 @@ function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end
 -- @name goto_mark
 function M.goto_mark(next)
   if next == nil then
-    local marks, line = {}, buffer:marker_next(0, 2^M.MARK_BOOKMARK)
-    if line == -1 then return end
-    while line >= 0 do
-      local text = buffer:get_line(line):match('^[^\r\n]*')
-      marks[#marks + 1] = tostring(line + 1)..': '..text
-      line = buffer:marker_next(line + 1, 2^M.MARK_BOOKMARK)
+    local marks = {}
+    -- List the current buffer's marks, and then all other buffers' marks.
+    for _, current_buffer_first in ipairs{true, false} do
+      for i, buffer in ipairs(_BUFFERS) do
+        if current_buffer_first and buffer == _G.buffer or
+           not current_buffer_first and buffer ~= _G.buffer then
+          local filename = (buffer.filename or buffer._type or
+                            _L['Untitled']):match('[^/\\]+$')
+          local line = buffer:marker_next(0, 2^M.MARK_BOOKMARK)
+          while line >= 0 do
+            local text = filename..':'..tostring(line + 1)..': '..
+                         buffer:get_line(line):match('^[^\r\n]*')
+            marks[#marks + 1], marks[text] = text, i
+            line = buffer:marker_next(line + 1, 2^M.MARK_BOOKMARK)
+          end
+        end
+      end
     end
-    local button, i = ui.dialogs.filteredlist{
-      title = _L['Select Bookmark'], columns = _L['Bookmark'], items = marks
+    if #marks == 0 then return end
+    local button, mark = ui.dialogs.filteredlist{
+      title = _L['Select Bookmark'], columns = _L['Bookmark'], items = marks,
+      string_output = true
     }
-    if button ~= 1 or not i then return end
-    textadept.editing.goto_line(marks[i]:match('^%d+'))
+    if button ~= _L['_OK'] or not mark then return end
+    view:goto_buffer(marks[mark])
+    textadept.editing.goto_line(mark:match('^[^:]+:(%d+):'))
   else
     local f = next and buffer.marker_next or buffer.marker_previous
     local current_line = buffer:line_from_position(buffer.current_pos)
