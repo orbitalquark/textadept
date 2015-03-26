@@ -205,6 +205,8 @@ function spawn_proc:write(...) end
 function spawn_proc:close() end
 
 ---
--- Kills running process *spawn_proc*.
+-- Kills running process *spawn_proc*, or sends it Unix signal *signal*.
+-- @param signal Optional Unix signal to send to *spawn_proc*. The default value
+--   is 9 (`SIGKILL`), which kills the process.
 function spawn_proc:kill() end
 ]]
