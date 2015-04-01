@@ -369,7 +369,8 @@ osx-deps: $(base_deps) gtkosx termkey
 ifndef NIGHTLY
   #scinterm_url = http://foicica.com/scinterm/download/$@
   scinterm_url = http://foicica.com/hg/scinterm/archive/$@
-  scintillua_url = http://foicica.com/scintillua/download/$@
+  #scintillua_url = http://foicica.com/scintillua/download/$@
+  scintillua_url = http://foicica.com/hg/scintillua/archive/$@
   gtdialog_url = http://foicica.com/gtdialog/download/$@
   lspawn_url = http://foicica.com/lspawn/download/$@
 else
@@ -380,12 +381,12 @@ else
 endif
 
 scintilla_tgz = scintilla354.tgz
-scinterm_zip = 068d4a448eb3.zip
-scintillua_zip = scintillua_3.5.4-1.zip
+scinterm_zip = b28151b7d49c.zip
+scintillua_zip = 0f3ec073af47.zip
 lua_tgz = lua-5.3.0.tar.gz
 lpeg_tgz = lpeg-0.12.2.tar.gz
 lfs_zip = v_1_6_3.zip
-lspawn_zip = lspawn_1.1.zip
+lspawn_zip = lspawn_1.2.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
 gtdialog_zip = gtdialog_1.2.zip
