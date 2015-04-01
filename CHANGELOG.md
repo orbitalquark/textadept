@@ -8,6 +8,51 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 8.0 alpha (01 Apr 2015)
+
+Please see the [7 to 8 migration guide][] for upgrading from Textadept 7 to
+Textadept 8.
+
+Download:
+
+* [Textadept 8.0 alpha -- Win32][]
+* [Textadept 8.0 alpha -- Mac OSX Intel 10.5+][]
+* [Textadept 8.0 alpha -- Linux][]
+* [Textadept 8.0 alpha -- Linux x86_64][]
+* [Textadept 8.0 alpha -- Modules][]
+
+Bugfixes:
+
+* Ensure `events.BUFFER_AFTER_SWITCH` is fired before `events.BUFFER_DELETED`.
+* Prevent command line help switches from exiting an open instance of Textadept.
+
+Changes:
+
+* Upgraded to Lua 5.3, LPeg 0.12.2, lfs 1.6.3, and lspawn 1.2.
+* Removed `keys.LANGUAGE_MODULE_PREFIX`, but left that prefix unused on all
+  platforms.
+* [`textadept.editing.filter_through()`][] now uses [`spawn()`][].
+* Removed long-hand [compile and run macros][] in favor of shorter ones.
+* [`textadept.bookmarks.toggle()`][] accepts an optional line to bookmark.
+* Added support for Rust and TOML.
+* "Goto Bookmark" now lists bookmarks in all open buffers.
+* [`spawn_proc:kill()`][] can send signals to processes.
+* New [`lexer._FOLDBYINDENTATION`][] field for lexers that fold based on
+  indentation.
+
+[7 to 8 migration guide]: manual.html#Textadept.7.to.8
+[Textadept 8.0 alpha -- Win32]: download/textadept_8.0_alpha.win32.zip
+[Textadept 8.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_8.0_alpha.osx.zip
+[Textadept 8.0 alpha -- Linux]: download/textadept_8.0_alpha.i386.tgz
+[Textadept 8.0 alpha -- Linux x86_64]: download/textadept_8.0_alpha.x86_64.tgz
+[Textadept 8.0 alpha -- Modules]: download/textadept_8.0_alpha.modules.zip
+[`textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
+[`spawn()`]: api.html#spawn
+[compile and run macros]: api.html#textadept.run.compile\_commands
+[`textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
+[`spawn_proc:kill()`]: api.html#spawn_proc:kill
+[`lexer._FOLDBYINDENTATION`]: api.html#lexer.Fold.by.Indentation
+
 ## 7.9 (11 Mar 2015)
 
 Download:
@@ -32,9 +77,9 @@ Changes:
   updated the "Buffer" and "View" menus appropriately.
 * Officially supported language modules moved to a [new repository][].
 * Added Fish lexer.
-* Merged `events.FILE_SAVED_AS` into [`events.FILE_AFTER_SAVE`][] as a new 
+* Merged `events.FILE_SAVED_AS` into [`events.FILE_AFTER_SAVE`][] as a new
   parameter.
-* Merged `textadept.file_types.shebangs` into 
+* Merged `textadept.file_types.shebangs` into
   [`textadept.file_types.patterns`][].
 * Removed `io.boms`.
 * Updated to [Scintilla][] 3.5.4.
@@ -157,7 +202,8 @@ Bugfixes:
 * Ensure "find in files" is off when activating normal find.
 * Fixed return values from [`ui.dialogs.optionselect()`][].
 * The command entry does not hide when the window loses focus.
-* Fixed '//' bug when iterating over root directory with [`lfs.dir_foreach()`].
+* Fixed '//' bug when iterating over root directory with
+  [`lfs.dir_foreach()`][].
 * Fixed bug in jumping to compile/run errors and clear annotations before
   building projects.
 
