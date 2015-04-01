@@ -2,7 +2,7 @@
 
 local ipairs, type = ipairs, type
 local io_open, io_popen = io.open, io.popen
-local string_format, string_rep = string.format, string.rep
+local string_format = string.format
 local table_concat = table.concat
 
 -- Markdown doclet for Luadoc.
@@ -149,10 +149,9 @@ function M.start(doc)
 
   -- Loop over modules, creating Markdown documents.
   local mdfile = M.options.output_dir..'/api.md'
-  local f = io_open(mdfile, 'wb')
+  f = io_open(mdfile, 'wb')
   for _, name in ipairs(modules) do
     local module = modules[name]
-    local filename = filedocs[module.doc]
 
     -- Write the header and description.
     f:write(string_format(MODULE, name, name))
@@ -228,7 +227,7 @@ function M.start(doc)
   -- Write HTML.
   template.title = 'Textadept API'
   template.toc = toc
-  local p = io_popen('markdown "'..mdfile..'"')
+  p = io_popen('markdown "'..mdfile..'"')
   template.main = p:read('*a')
   p:close()
   f = io_open(M.options.output_dir..'/api.html', 'wb')
