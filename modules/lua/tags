@@ -324,6 +324,7 @@ WS_VISIBLEALWAYS	_	0;"	F	class:buffer
 XPM_IMAGES	_	0;"	t	class:textadept.editing
 _BUFFERS	_	0;"	t	
 _CHARSET	_	0;"	F	
+_FOLDBYINDENTATION	_	0;"	F	class:lexer.lexer
 _G	_	0;"	F	
 _G	_	0;"	m	
 _HOME	_	0;"	F	
