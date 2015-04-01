@@ -716,7 +716,7 @@ Pressing `Esc` (`⎋` | `Esc`) hides the pane after you finish with it.
 ### Replace in Selection
 
 By default, "Replace All" replaces all text in the buffer. Selecting a
-contiguous block of text and then "Replace All" replaces all text in the
+continuous block of text and then "Replace All" replaces all text in the
 selection.
 
 ### Find in Files
@@ -1692,7 +1692,7 @@ Textadept has a [mailing list][] and a [wiki][].
 
 ## Lua Patterns
 
-The following is from the [Lua 5.2 Reference Manual][].
+The following is from the [Lua 5.3 Reference Manual][].
 
 _Character Class:_
 
@@ -1788,7 +1788,7 @@ As a special case, the empty capture `()` captures the current string position
 (a number). For instance, if we apply the pattern `"()aa()"` on the string
 `"flaaap"`, there will be two captures: 3 and 5.
 
-[Lua 5.2 Reference Manual]: http://www.lua.org/manual/5.2/manual.html#6.4.1
+[Lua 5.3 Reference Manual]: http://www.lua.org/manual/5.3/manual.html#6.4.1
 
 ## Curses Compatibility
 
@@ -1832,6 +1832,143 @@ terminal's constraints:
 
 ## Migration Guides
 
+### Textadept 7 to 8
+
+Textadept 8 upgraded its internal copy of Lua from [5.2 to 5.3][]. Nearly all
+user scripts will continue to function properly without modification --
+Textadept itself only needed to update some instances of numeric division to
+account for Lua's new integer/float distinction.
+
+Textadept 8 has no major API changes of note. Instead, the table below lists all
+API changes during the 7.x cycle. Please consult this table when upgrading from
+your particular version of Textadept 7.
+
+Textadept 8 did introduce changes in language-specific keybindings and macros
+for compile and run commands, which are described in the sections below.
+
+[5.2 to 5.3]: http://www.lua.org/manual/5.3/manual.html#8
+
+#### API Changes
+
+Old API                    |Change  |New API                             |Since
+---------------------------|:------:|------------------------------------|-----
+**_G**                     |        |                                    |
+N/A                        |Added   |[spawn()][]                         |7.2
+N/A                        |Added   |[LINUX][]                           |7.8
+N/A                        |Added   |[BSD][]                             |7.8
+**_M**                     |        |                                    |
+_lang_.context\_menu       |Removed |                                    |7.8
+**_SCINTILLA**             |        |                                    |
+N/A                        |Added   |[next\_image\_type()][]             |7.8
+**events**                 |        |                                    |
+N/A                        |Added   |[FILE\_OPENED][]                    |7.1
+N/A                        |Added   |[FOCUS][]                           |7.5
+N/A                        |Added   |[CSI][]                             |7.8
+N/A                        |Added   |[SUSPEND][]                         |7.8
+N/A                        |Added   |[RESUME][]                          |7.8
+FILE\_SAVED\_AS            |Replaced|[FILE\_AFTER\_SAVE][]               |7.9
+**io**                     |        |                                    |
+set\_buffer\_encoding()    |Renamed |[buffer:set\_encoding()]            |7.3
+boms                       |Removed |                                    |7.9
+**lexer**                  |        |                                    |
+N/A                        |Added   |[\_FOLDBYINDENTATION][]             |8.0
+**lfs**                    |        |                                    |
+dir\_foreach(...)          |Changed |[dir\_foreach][](..., n, incl\_dirs)|7.6
+**textadept.adeptsense**   |Removed |                                    |
+complete()                 |Replaced|editing.[autocomplete()][]          |7.3
+show\_apidoc()             |Replaced|editing.[show\_documentation()][]   |7.3
+**textadept.bookmarks**    |        |                                    |
+toggle(on)                 |Changed |[toggle][](on, line)                |8.0
+**textadept.command_entry**|        |                                    |
+complete\_lua()            |Removed |                                    |7.3
+execute\_lua()             |Removed |                                    |7.3
+**textadept.editing**      |        |                                    |
+N/A                        |Added   |[AUTOCOMPLETE\_ALL][]               |7.3
+N/A                        |Added   |[autocompleters][]                  |7.3
+autocomplete\_word()       |Replaced|autocomplete('word')                |7.3
+HIGHLIGHT\_BRACES          |Removed |                                    |7.3
+selecte\_indented\_block() |Removed |                                    |7.3
+**textadept.file_types**   |        |                                    |
+shebangs                   |Replaced|[patterns][]<sup>a</sup>            |7.9
+**textadept.menu**         |        |                                    |
+set\_menubar(menubar)      |Replaced|[menubar][] = menubar               |7.3
+set\_contextmenu(menu)     |Replaced|[context_menu][] = menu             |7.3
+set\_tabcontextmenu(menu)  |Replaced|[tab_context_menu][] = menu         |7.3
+**textadept.run**          |        |                                    |
+N/A                        |Added   |[build()][]                         |7.2
+N/A                        |Added   |[build_commands][]                  |7.2
+N/A                        |Added   |[stop()][]                          |7.2
+**ui**                     |        |                                    |
+N/A                        |Added   |[tabs][]                            |7.1
+N/A                        |Added   |[SILENT\_PRINT][]                   |7.2
+**ui.command_entry**       |        |                                    |
+N/A                        |Added   |[editing\_keys][]                   |7.8
+enter\_mode(mode)          |Changed |[enter\_mode][](mode, lexer, height)|7.8
+**ui.dialogs**             |        |                                    |
+N/A                        |Added   |[optionselect()][]                  |7.2
+
+<sup>a</sup>`shebangs.lua = 'lua'` converts to `patterns['^#!.+/lua'] = 'lua'`
+
+[spawn()]: api.html#spawn
+[LINUX]: api.html#LINUX
+[BSD]: api.html#BSD
+[next\_image\_type()]: api.html#_SCINTILLA.next_image_type
+[FILE\_OPENED]: api.html#events.FILE_OPENED
+[FOCUS]: api.html#events.FOCUS
+[CSI]: api.html#events.CSI
+[SUSPEND]: api.html#events.SUSPEND
+[RESUME]: api.html#events.RESUME
+[FILE\_AFTER\_SAVE]: api.html#events.FILE_AFTER_SAVE
+[buffer:set\_encoding()]: api.html#buffer.set_encoding
+[\_FOLDBYINDENTATION]: api.html#lexer.Fold.by.Indentation
+[dir\_foreach]: api.html#lfs.dir_foreach
+[autocomplete()]: api.html#textadept.editing.autocomplete
+[show\_documentation()]: api.html#textadept.editing.show_documentation
+[toggle]: api.html#textadept.bookmarks.toggle
+[AUTOCOMPLETE\_ALL]: api.html#textadept.editing.AUTOCOMPLETE_ALL
+[autocompleters]: api.html#textadept.editing.autocompleters
+[patterns]: api.html#textadept.file_types.patterns
+[menubar]: api.html#textadept.menu.menubar
+[context_menu]: api.html#textadept.menu.context_menu
+[tab_context_menu]: api.html#textadept.menu.tab_context_menu
+[build()]: api.html#textadept.run.build
+[build_commands]: api.html#textadept.run.build_commands
+[stop()]: api.html#textadept.run.stop
+[tabs]: api.html#ui.tabs
+[SILENT\_PRINT]: api.html#ui.SILENT_PRINT
+[editing\_keys]: api.html#ui.command_entry.editing_keys
+[enter\_mode]: api.html#ui.command_entry.enter_mode
+[optionselect()]: api.html#ui.dialogs.optionselect
+
+#### Language-specific Key Changes
+
+Textadept 8 removed the `keys.LANGUAGE_MODULE_PREFIX` key binding (which has
+been `Ctrl+L` for Win32 and Linux, `⌘L` on Mac OSX, and `M-L` in curses), but
+only in name. Textadept 8 does not make use of this key, and it is still
+traditionally reserved for use by language-specific modules. You can use as such
+from your language module like this:
+
+    keys.lua[not OSX and not CURSES and 'cl' or 'ml'] = {
+      ...
+    }
+
+#### Compile and Run Macro Changes
+
+Textadept 8 removed the long-hand macros for [compile and run commands][] in
+favor or shorthand ones (most of which have been available since 7.1).
+
+Old Macro         |New Macro
+------------------|---------
+%(filename)       |%f
+%(filename\_noext)|%e
+%(filedir)        |%d
+%(filepath)       |%p
+
+Any modules and language-specific modules using the long-hand notation must be
+updated.
+
+[compile and run commands]: api.html#_M.Compile.and.Run
+
 ### Textadept 6 to 7
 
 Textadept 7 introduces API changes, a change in module mentality and filename
@@ -1859,7 +1996,7 @@ goto\_prev                        |Replaced|goto\_mark(false)
 N/A                               |New     |[INDIC\_BRACEMATCH][]
 N/A                               |New     |[INDIC\_HIGHLIGHT][]
 INDIC\_HIGHLIGHT\_BACK            |Removed |N/A<sup>d</sup>
-autocomplete\_word(chars, default)|Changed |[autocomplete\_word][](default)
+autocomplete\_word(chars, default)|Changed |autocomplete\_word(default)
 grow\_selection()                 |Replaced|[select\_enclosed()][]
 **_M.textadept.menu**             |        |
 menubar                           |Removed |N/A
@@ -1924,7 +2061,6 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [MARK\_BOOKMARK]: api.html#textadept.bookmarks.MARK_BOOKMARK
 [INDIC\_BRACEMATCH]: api.html#textadept.editing.INDIC_BRACEMATCH
 [INDIC\_HIGHLIGHT]: api.html#textadept.editing.INDIC_HIGHLIGHT
-[autocomplete\_word]: api.html#textadept.editing.autocomplete_word
 [select\_enclosed()]: api.html#textadept.editing.select_enclosed
 [MARK\_WARNING]: api.html#textadept.run.MARK_WARNING
 [MARK\_ERROR]: api.html#textadept.run.MARK_ERROR
