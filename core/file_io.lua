@@ -383,10 +383,19 @@ io.snapopen_filters = {}
 -- obtained from `io.get_project_root()`.
 -- Files shown in the dialog do not match any pattern in either string or table
 -- *filter* or, unless *exclude_FILTER* is `true`, in `lfs.FILTER`. A filter
--- table contains Lua patterns that match filenames to exclude, an optional
--- `folders` sub-table that contains patterns matching directories to exclude,
--- and an optional `extensions` sub-table that contains raw file extensions to
--- exclude. Any patterns starting with '!' exclude files and directories that do
+-- table contains:
+--
+--   + Lua patterns that match filenames to exclude.
+--   + Optional `folders` sub-table that contains patterns matching directories
+--     to exclude.
+--   + Optional `extensions` sub-table that contains raw file extensions to
+--     exclude.
+--   + Optional `symlink` flag that when `true`, excludes symlinked files (but
+--     not symlinked directories).
+--   + Optional `folders.symlink` flag that when `true`, excludes symlinked
+--     directories.
+--
+-- Any filter patterns starting with '!' exclude files and directories that do
 -- not match the pattern that follows. The number of files in the list is capped
 -- at `SNAPOPEN_MAX`. If *filter* is `nil` and *paths* is ultimately a string,
 -- the filter from the `io.snapopen_filters` table is used. In that case, unless

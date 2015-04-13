@@ -21,6 +21,7 @@ lfs.FILTER = {
   folders = {'%.bzr$', '%.git$', '%.hg$', '%.svn$', 'CVS$'}
 }
 
+local lfs_symlinkattributes = lfs.symlinkattributes
 -- Determines whether or not the given file matches the given filter.
 -- @param file The filename.
 -- @param filter The filter table.
@@ -37,7 +38,7 @@ local function exclude(file, filter)
       if not file:find(patt:sub(2)) then return true end
     end
   end
-  return false
+  return filter.symlink and lfs_symlinkattributes(file, 'mode') == 'link'
 end
 
 ---
@@ -45,11 +46,20 @@ end
 -- directory *dir*, calling function *f* with each file found.
 -- Files passed to *f* do not match any pattern in string or table *filter*,
 -- and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A filter table
--- contains Lua patterns that match filenames to exclude, an optional `folders`
--- sub-table that contains patterns matching directories to exclude, and an
--- optional `extensions` sub-table that contains raw file extensions to exclude.
--- Any patterns starting with '!' exclude files and directories that do not
--- match the pattern that follows.
+-- contains:
+--
+--   + Lua patterns that match filenames to exclude.
+--   + Optional `folders` sub-table that contains patterns matching directories
+--     to exclude.
+--   + Optional `extensions` sub-table that contains raw file extensions to
+--     exclude.
+--   + Optional `symlink` flag that when `true`, excludes symlinked files (but
+--     not symlinked directories).
+--   + Optional `folders.symlink` flag that when `true`, excludes symlinked
+--     directories.
+--
+-- Any filter patterns starting with '!' exclude files and directories that do
+-- not match the pattern that follows.
 -- @param dir The directory path to iterate over.
 -- @param f Function to call with each full file path found. If *f* returns
 --   `false` explicitly, iteration ceases.
@@ -77,9 +87,15 @@ function lfs.dir_foreach(dir, f, filter, exclude_FILTER, n, include_dirs, level)
     -- Add FILTER to filter unless specified otherwise.
     if not exclude_FILTER then
       for k, v in pairs(lfs.FILTER) do
-        if not filter[k] then filter[k] = {} end
-        local filter_k = filter[k]
-        for i = 1, #v do filter_k[#filter_k + 1] = v[i] end
+        if type(v) == 'table' then
+          if not filter[k] then filter[k] = {} end
+          local filter_k = filter[k]
+          for k2, v2 in pairs(v) do
+            filter_k[tonumber(k2) and #filter_k + 1 or k2] = v2
+          end
+        else
+          filter[tonumber(k) and #filter + 1 or k] = v
+        end
       end
     end
     -- Create file extension filter hash table for quick lookups.

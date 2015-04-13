@@ -81,11 +81,20 @@ local preferred_view
 ---
 -- The table of Lua patterns matching files and directories to exclude when
 -- finding in files.
--- The filter contains Lua patterns that match filenames to exclude, an optional
--- `folders` sub-table that contains patterns matching directories to exclude,
--- and an optional `extensions` sub-table that contains raw file extensions to
--- exclude. Any patterns starting with '!' exclude files and directories that do
--- not match the pattern that follows.
+-- The filter table contains:
+--
+--   + Lua patterns that match filenames to exclude.
+--   + Optional `folders` sub-table that contains patterns matching directories
+--     to exclude.
+--   + Optional `extensions` sub-table that contains raw file extensions to
+--     exclude.
+--   + Optional `symlink` flag that when `true`, excludes symlinked files (but
+--     not symlinked directories).
+--   + Optional `folders.symlink` flag that when `true`, excludes symlinked
+--     directories.
+--
+-- Any patterns starting with '!' exclude files and directories that do not
+-- match the pattern that follows.
 -- The default value is `lfs.FILTER`, a filter for common binary file extensions
 -- and version control directories.
 -- @see find_in_files
