@@ -378,7 +378,7 @@ else
   lspawn_url = http://foicica.com/hg/lspawn/archive/tip.zip
 endif
 
-scintilla_tgz = scintilla354.tgz
+scintilla_tgz = scintilla355.tgz
 scinterm_zip = scinterm_1.6.zip
 scintillua_zip = scintillua_3.5.5-1.zip
 lua_tgz = lua-5.3.0.tar.gz
