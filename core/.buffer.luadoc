@@ -3036,7 +3036,6 @@ function set_lexer(buffer, lexer) end
 --   * ime_interaction
 --   * indic_flags
 --   * indicator_value
---   * keys_unicode
 --   * key_words
 --   * layout_cache
 --   * lexer
