@@ -7,7 +7,7 @@
 -LUAMOD_API int luaopen_utf8 (lua_State *L) {
 -  luaL_newlib(L, funcs);
 +int luaopen_utf8 (lua_State *L) {
-+  lua_newtable(L), luaL_register(L, NULL, funcs);
++  lua_newtable(L), luaL_register(L, "utf8", funcs);
 +  lua_pushvalue(L, -1), lua_setglobal(L, "utf8");
    lua_pushliteral(L, UTF8PATT);
    lua_setfield(L, -2, "charpattern");
