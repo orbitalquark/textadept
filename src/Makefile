@@ -422,8 +422,9 @@ lua: lua.patch | $(lua_tgz)
 lualibs: lua/src/lib/lpeg lua/src/lib/lfs lua/src/lib/lspawn
 lua/src/lib/lpeg: | $(lpeg_tgz)
 	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
-lua/src/lib/lfs: | $(lfs_zip)
+lua/src/lib/lfs: lfs.patch | $(lfs_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
+	patch -d $(dir $@) -N -p1 < $<
 lua/src/lib/lspawn: | $(lspawn_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.c $(dir $@)
 lua/src/lib/lutf8lib.c: lutf8libjit.patch
