@@ -8,10 +8,41 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 8.0 alpha (01 Apr 2015)
+## 8.0 beta (21 Apr 2015)
 
 Please see the [7 to 8 migration guide][] for upgrading from Textadept 7 to
 Textadept 8.
+
+Download:
+
+* [Textadept 8.0 beta -- Win32][]
+* [Textadept 8.0 beta -- Mac OSX Intel 10.5+][]
+* [Textadept 8.0 beta -- Linux][]
+* [Textadept 8.0 beta -- Linux x86_64][]
+* [Textadept 8.0 beta -- Modules][]
+
+Bugfixes:
+
+* Fixed `require()` bug with lfs and utf8 libraries in LuaJIT version.
+
+Changes:
+
+* Added `symlink` filter option for ignoring symlinked files and folders to
+  [`io.snapopen()`][], [`lfs.dir_foreach()`][], and [`ui.find.FILTER`][].
+* Updated to [Scintilla][] 3.5.5.
+
+[7 to 8 migration guide]: manual.html#Textadept.7.to.8
+[Textadept 8.0 beta -- Win32]: download/textadept_8.0_beta.win32.zip
+[Textadept 8.0 beta -- Mac OSX Intel 10.5+]: download/textadept_8.0_beta.osx.zip
+[Textadept 8.0 beta -- Linux]: download/textadept_8.0_beta.i386.tgz
+[Textadept 8.0 beta -- Linux x86_64]: download/textadept_8.0_beta.x86_64.tgz
+[Textadept 8.0 beta -- Modules]: download/textadept_8.0_beta.modules.zip
+[`io.snapopen()`]: api.html#io.snapopen
+[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
+[`ui.find.FILTER`]: api.html#ui.find.FILTER
+[Scintilla]: http://scintilla.org
+
+## 8.0 alpha (01 Apr 2015)
 
 Download:
 
@@ -40,7 +71,6 @@ Changes:
 * New [`lexer._FOLDBYINDENTATION`][] field for lexers that fold based on
   indentation.
 
-[7 to 8 migration guide]: manual.html#Textadept.7.to.8
 [Textadept 8.0 alpha -- Win32]: download/textadept_8.0_alpha.win32.zip
 [Textadept 8.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_8.0_alpha.osx.zip
 [Textadept 8.0 alpha -- Linux]: download/textadept_8.0_alpha.i386.tgz
