@@ -8,6 +8,11 @@ local M = {}
 -- [Language modules](#_M.Compile.and.Run) may tweak the `compile_commands`,
 -- `run_commands`, and/or `error_patterns` tables for particular languages.
 -- The user may tweak `build_commands` for particular projects.
+-- @field RUN_IN_BACKGROUND (bool)
+--   Run shell commands silently in the background.
+--   This only applies when the message buffer is open, though it does not have
+--   to be visible.
+--   The default value is `false`.
 -- @field MARK_WARNING (number)
 --   The run or compile warning marker number.
 -- @field MARK_ERROR (number)
@@ -43,6 +48,8 @@ local M = {}
 --   * `project`: The path to the project being built.
 --   * `output`: A line of string output from the command.
 module('textadept.run')]]
+
+M.RUN_IN_BACKGROUND = false
 
 M.MARK_WARNING = _SCINTILLA.next_marker_number()
 M.MARK_ERROR = _SCINTILLA.next_marker_number()
@@ -112,7 +119,7 @@ local function run_command(commands, event)
   local function emit_status(status) emit_output('> exit status: '..status) end
 
   if commands == M.build_commands then emit_output('> cd '..cwd) end
-  emit_output('> '..command, true)
+  emit_output('> '..command, not M.RUN_IN_BACKGROUND)
   local p, err = spawn(command, cwd, emit_output, emit_output, emit_status)
   if not p then error(err) end
 
