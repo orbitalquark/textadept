@@ -113,6 +113,7 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
     -- Depending on the dialog type, transform the result into Lua objects.
     if k == 'fileselect' or k == 'filesave' then
       if result == '' then return nil end
+      if not CURSES then result = result:iconv(_CHARSET, 'UTF-8') end
       if k == 'filesave' or not options.select_multiple then return result end
       local files = {}
       for file in result:gmatch('[^\n]+') do files[#files + 1] = file end
