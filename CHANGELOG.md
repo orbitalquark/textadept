@@ -8,10 +8,36 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 8.0 beta (21 Apr 2015)
+## 8.0 (01 May 2015)
 
 Please see the [7 to 8 migration guide][] for upgrading from Textadept 7 to
 Textadept 8.
+
+Download:
+
+* [Textadept 8.0 -- Win32][]
+* [Textadept 8.0 -- Mac OSX Intel 10.5+][]
+* [Textadept 8.0 -- Linux][]
+* [Textadept 8.0 -- Linux x86_64][]
+* [Textadept 8.0 -- Modules][]
+
+Bugfixes:
+
+* Fixed filename encoding issues on Windows.
+
+Changes:
+
+* Added [`textadept.run.RUN_IN_BACKGROUND`][] for shell commands.
+
+[7 to 8 migration guide]: manual.html#Textadept.7.to.8
+[Textadept 8.0 -- Win32]: download/textadept_8.0.win32.zip
+[Textadept 8.0 -- Mac OSX Intel 10.5+]: download/textadept_8.0.osx.zip
+[Textadept 8.0 -- Linux]: download/textadept_8.0.i386.tgz
+[Textadept 8.0 -- Linux x86_64]: download/textadept_8.0.x86_64.tgz
+[Textadept 8.0 -- Modules]: download/textadept_8.0.modules.zip
+[`textadept.run.RUN_IN_BACKGROUND`]: api.html#textadept.run.RUN_IN_BACKGROUND
+
+## 8.0 beta (21 Apr 2015)
 
 Download:
 
@@ -31,7 +57,6 @@ Changes:
   [`io.snapopen()`][], [`lfs.dir_foreach()`][], and [`ui.find.FILTER`][].
 * Updated to [Scintilla][] 3.5.5.
 
-[7 to 8 migration guide]: manual.html#Textadept.7.to.8
 [Textadept 8.0 beta -- Win32]: download/textadept_8.0_beta.win32.zip
 [Textadept 8.0 beta -- Mac OSX Intel 10.5+]: download/textadept_8.0_beta.osx.zip
 [Textadept 8.0 beta -- Linux]: download/textadept_8.0_beta.i386.tgz
