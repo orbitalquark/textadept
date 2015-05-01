@@ -231,6 +231,7 @@ REPLACE_ALL	_	0;"	F	class:events
 RESET_AFTER	_	0;"	F	class:events
 RESET_BEFORE	_	0;"	F	class:events
 RESUME	_	0;"	F	class:events
+RUN_IN_BACKGROUND	_	0;"	F	class:textadept.run
 RUN_OUTPUT	_	0;"	F	class:events
 S	_	0;"	f	class:lpeg
 SAVE_ON_QUIT	_	0;"	F	class:textadept.session
