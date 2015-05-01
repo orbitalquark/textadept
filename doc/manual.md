@@ -1898,6 +1898,7 @@ set\_tabcontextmenu(menu)  |Replaced|[tab_context_menu][] = menu         |7.3
 N/A                        |Added   |[build()][]                         |7.2
 N/A                        |Added   |[build_commands][]                  |7.2
 N/A                        |Added   |[stop()][]                          |7.2
+N/A                        |Added   |[RUN\_IN\_BACKGROUND][]             |8.0
 **ui**                     |        |                                    |
 N/A                        |Added   |[tabs][]                            |7.1
 N/A                        |Added   |[SILENT\_PRINT][]                   |7.2
@@ -1934,6 +1935,7 @@ N/A                        |Added   |[optionselect()][]                  |7.2
 [build()]: api.html#textadept.run.build
 [build_commands]: api.html#textadept.run.build_commands
 [stop()]: api.html#textadept.run.stop
+[RUN\_IN\_BACKGROUND]: api.html#textadept.run.RUN_IN_BACKGROUND
 [tabs]: api.html#ui.tabs
 [SILENT\_PRINT]: api.html#ui.SILENT_PRINT
 [editing\_keys]: api.html#ui.command_entry.editing_keys
