@@ -8,16 +8,17 @@
   </a>
 </div>
 
-*Textadept Quick Reference*
+*Textadept Quick Reference*<br/>
+Second Edition
 
-Order: [Ebook][] | [Print book][] | Amazon [US][], [UK][], [DE][], [FR][],
-[IT][], [ES][]
+Order: [Ebook][] | Print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][],
+[ES][]
 
-Released: December 2013<br/>
-ISBN: 978-0-9912379-0-6<br/>
-Pages: 160
+Published: May 2015 <span style="color: #ef373a;">[New!]</span><br/>
+ISBN: 978-0-9912379-1-3<br/>
+Pages: 167
 
-[Table of Contents][] | [Excerpt][]
+[Excerpt][]
 
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text
 editor for programmers. This quick reference contains a wealth of knowledge on
@@ -32,6 +33,7 @@ This book covers how to:
 * Mark lines and text visually
 * Show interactive lists and call tips
 * Prompt for user input in various ways
+* Spawn asynchronous, interactive child processes
 * Configure colors, themes, and other settings
 * Define lexers for highlighting source code
 * And much more
@@ -39,16 +41,14 @@ This book covers how to:
 It serves as the perfect complement to Textadept's comprehensive Manual and
 exhaustive API documentation.
 
-[Ebook]: http://gum.co/textadept_ebook
-[Print book]: http://gum.co/textadept_book
-[US]: http://www.amazon.com/Textadept-Quick-Reference-Mitchell/dp/0991237900/
-[UK]: http://www.amazon.co.uk/Textadept-Quick-Reference-Mitchell/dp/0991237900/
-[DE]: http://www.amazon.de/Textadept-Quick-Reference-Mitchell/dp/0991237900/
-[FR]: http://www.amazon.fr/Textadept-Quick-Reference-Mitchell/dp/0991237900/
-[IT]: http://www.amazon.it/Textadept-Quick-Reference-Mitchell/dp/0991237900/
-[ES]: http://www.amazon.es/Textadept-Quick-Reference-Mitchell/dp/0991237900/
-[Table of Contents]: download/ta_quickref_toc.pdf
-[Excerpt]: download/ta_quickref_excerpt.pdf
+[Ebook]: http://gum.co/textadept2_ebook
+[US]: http://www.amazon.com/Textadept-Quick-Reference-Mitchell/dp/0991237919/
+[UK]: http://www.amazon.co.uk/Textadept-Quick-Reference-Mitchell/dp/0991237919/
+[DE]: http://www.amazon.de/Textadept-Quick-Reference-Mitchell/dp/0991237919/
+[FR]: http://www.amazon.fr/Textadept-Quick-Reference-Mitchell/dp/0991237919/
+[IT]: http://www.amazon.it/Textadept-Quick-Reference-Mitchell/dp/0991237919/
+[ES]: http://www.amazon.es/Textadept-Quick-Reference-Mitchell/dp/0991237919/
+[Excerpt]: download/ta_quickref2_excerpt.pdf
 
 ## Lua Workshop 2012
 
