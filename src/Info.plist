@@ -633,7 +633,7 @@
 				<string>nim</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Nimrod source</string>
+			<string>Nim source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -856,6 +856,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>rs</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Rust source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>sass</string>
 				<string>scss</string>
 			</array>
@@ -942,6 +952,16 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Texinfo source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>toml</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>TOML source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -1082,7 +1102,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>8.0 beta</string>
+	<string>8.0</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
