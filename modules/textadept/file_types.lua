@@ -30,7 +30,7 @@ M.extensions = {--[[Actionscript]]as='actionscript',asc='actionscript',--[[Ada]]
 -- Each pattern is matched against the first line in the file.
 -- @class table
 -- @name patterns
-M.patterns = {['^#!.+awk']='awk',['^#!.+lua']='lua',['^#!.+octave']='matlab',['^#!.+perl']='perl',['^#!.+php']='php',['^#!.+python']='python',['^#!.+ruby']='ruby',['^#!.+bash']='bash',['^#!.+/sh']='bash',['^%s*class%s+%S+%s*<%s*ApplicationController']='rails',['^%s*class%s+%S+%s*<%s*ActionController::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Migration']='rails',['^%s*<%?xml%s']='xml'}
+M.patterns = {['^#!.+[/ ][gm]?awk']='awk',['^#!.+[/ ]lua']='lua',['^#!.+[/ ]octave']='matlab',['^#!.+[/ ]perl']='perl',['^#!.+[/ ]php']='php',['^#!.+[/ ]python']='python',['^#!.+[/ ]ruby']='ruby',['^#!.+[/ ]bash']='bash',['^#!.+/sh']='bash',['^%s*class%s+%S+%s*<%s*ApplicationController']='rails',['^%s*class%s+%S+%s*<%s*ActionController::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Migration']='rails',['^%s*<%?xml%s']='xml'}
 
 ---
 -- List of available lexer names.
