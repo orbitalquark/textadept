@@ -1843,15 +1843,15 @@ static void t_tabchange(GtkNotebook*_, GtkWidget*__, int page_num, void*___) {
  * Shows the context menu for a widget based on a mouse event.
  * @param L The Lua state.
  * @param event An optional GTK mouse button event.
- * @param field The ui table field that contains the context menu.
+ * @param k The ui table field that contains the context menu.
  */
-static void lL_showcontextmenu(lua_State *L, void *event, char *field) {
+static void lL_showcontextmenu(lua_State *L, GdkEventButton *event, char *k) {
   if (lua_getglobal(L, "ui") == LUA_TTABLE) {
-    if (lua_getfield(L, -1, field) == LUA_TLIGHTUSERDATA) {
+    if (lua_getfield(L, -1, k) == LUA_TLIGHTUSERDATA) {
       GtkWidget *menu = (GtkWidget *)lua_touserdata(L, -1);
       gtk_widget_show_all(menu);
       gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
-                     event ? ((GdkEventButton *)event)->button : 0,
+                     event ? event->button : 0,
                      gdk_event_get_time((GdkEvent *)event));
     }
     lua_pop(L, 1); // ui context menu field
@@ -1871,7 +1871,7 @@ static int t_tabbuttonpress(GtkWidget*_, GdkEventButton *event, void*__) {
     gtk_widget_get_allocation(label, &allocation);
     if (event->x_root > x0 + allocation.x + allocation.width) continue;
     gtk_notebook_set_current_page(tabs, i);
-    return (lL_showcontextmenu(lua, (void *)event, "tab_context_menu"), TRUE);
+    return (lL_showcontextmenu(lua, event, "tab_context_menu"), TRUE);
   }
   return FALSE;
 }
@@ -1935,7 +1935,7 @@ static int s_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
 /** Signal for a Scintilla mouse click. */
 static int s_buttonpress(GtkWidget*_, GdkEventButton *event, void*__) {
   if (event->type == GDK_BUTTON_PRESS && event->button == 3)
-    return (lL_showcontextmenu(lua, (void *)event, "context_menu"), TRUE);
+    return (lL_showcontextmenu(lua, event, "context_menu"), TRUE);
   return FALSE;
 }
 #endif
