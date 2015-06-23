@@ -713,7 +713,7 @@
 --   The position of the beginning of the selected text.
 --   When set, becomes the anchor, but is not scrolled into view.
 -- @field selections (number, Read-only)
---   The number of active selections.
+--   The number of active selections. There is always at least one selection.
 -- @field style_at (table, Read-only)
 --   Table of style numbers at positions starting from zero.
 -- @field style_back (table)
@@ -1936,6 +1936,16 @@ function indicator_start(buffer, indicator, pos) end
 function insert_text(buffer, pos, text) end
 
 ---
+-- Returns whether or not the the positions *start_pos* and *end_pos* are at
+-- word boundaries.
+-- @param buffer A buffer.
+-- @param start_pos The start position of the range of text in *buffer* to
+--   check for a word boundary at.
+-- @param end_pos The end position of the range of text in *buffer* to check for
+--   a word boundary at.
+function is_range_word(buffer, start_pos, end_pos) end
+
+---
 -- Copies the current line to the clipboard.
 -- @param buffer A buffer.
 function line_copy(buffer) end
@@ -2259,6 +2269,21 @@ function move_selected_lines_down(buffer) end
 -- Shifts the selected lines up one line.
 -- @param buffer A buffer.
 function move_selected_lines_up(buffer) end
+
+---
+-- Adds to the set of selections each occurrence of the main selection within
+-- the target range.
+-- If there is no selected text, the current word is used.
+-- @param buffer A buffer.
+function multiple_select_add_each(buffer) end
+
+---
+-- Adds to the set of selections the next occurrence of the main selection
+-- within the target range, makes that occurrence the new main selection, and
+-- scrolls it into view.
+-- If there is no selected text, the current word is used.
+-- @param buffer A buffer.
+function multiple_select_add_next(buffer) end
 
 ---
 -- Types a new line at the caret position according to [`buffer.eol_mode`]().
@@ -2585,6 +2610,7 @@ function set_selection(buffer, end_pos, start_pos) end
 -- Assigns style number *style*, in the range from `0` to `255`, to the next
 -- *length* characters, starting from the current styling position, and
 -- increments the styling position by *length*.
+-- [`buffer:start_styling`]() should be called before `buffer:set_styling()`.
 -- @param buffer A buffer.
 -- @param length The number of characters to style.
 -- @param style The style number to set.
@@ -2719,6 +2745,12 @@ function tab(buffer) end
 function target_from_selection(buffer) end
 
 ---
+-- Defines the target range's beginning and end positions as the beginning and
+-- end positions of the document, respectively.
+-- @param buffer A buffer.
+function target_whole_document(buffer) end
+
+---
 -- Returns the pixel height of line number *line*.
 -- @param buffer A buffer.
 -- @param line The line number in *buffer* to get the pixel height of.
@@ -2780,8 +2812,8 @@ function user_list_show(buffer, id, items) end
 function vc_home(buffer) end
 
 ---
--- Moves the caret to the first visible character on the current wrapped line,
--- or if already there, to the beginning of the current wrapped line.
+-- Moves the caret to the first visible character on the current wrapped line
+-- or, if already there, to the beginning of the current wrapped line.
 -- @param buffer A buffer.
 function vc_home_display(buffer) end
 
@@ -2803,8 +2835,8 @@ function vc_home_extend(buffer) end
 function vc_home_rect_extend(buffer) end
 
 ---
--- Moves the caret to the first visible character on the current wrapped line,
--- or if already there, to the beginning of the actual line.
+-- Moves the caret to the first visible character on the current wrapped line
+-- or, if already there, to the beginning of the actual line.
 -- @param buffer A buffer.
 function vc_home_wrap(buffer) end
 
