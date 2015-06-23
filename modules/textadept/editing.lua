@@ -392,24 +392,23 @@ function M.select_enclosed(left, right)
 end
 
 ---
--- Selects the current word.
--- If already selected, selects the next occurrence as a multiple selection.
+-- Selects the current word or, if *all* is `true`, all occurrences of the
+-- current word.
+-- If a word is already selected, selects the next occurrence as a multiple
+-- selection.
+-- @param all Whether or not to select all occurrences of the current word.
+--   The default value is `false`.
 -- @see buffer.word_chars
 -- @name select_word
-function M.select_word()
-  if buffer:get_sel_text() == '' then
-    buffer:set_selection(buffer:word_start_position(buffer.current_pos, true),
-                         buffer:word_end_position(buffer.current_pos, true))
-  else
-    local word = buffer:text_range(buffer.selection_start, buffer.selection_end)
-    buffer:set_target_range(buffer.selection_n_end[buffer.selections - 1],
-                            buffer.length - 1)
-    buffer.search_flags = buffer.FIND_MATCHCASE + buffer.FIND_WHOLEWORD
-    if buffer:search_in_target(word) ~= -1 then
-      buffer:add_selection(buffer.target_start, buffer.target_end)
-      buffer.main_selection = 0
-    end
+function M.select_word(all)
+  buffer:target_whole_document()
+  buffer.search_flags = buffer.FIND_MATCHCASE
+  if buffer.selection_empty or
+     buffer:is_range_word(buffer.selection_start, buffer.selection_end) then
+    buffer.search_flags = buffer.search_flags + buffer.FIND_WHOLEWORD
+    if all then buffer:multiple_select_add_next() end -- select word first
   end
+  buffer['multiple_select_add_'..(not all and 'next' or 'each')](buffer)
 end
 
 ---
@@ -484,7 +483,7 @@ function M.highlight_word()
   if s == e then return end
   local word = buffer:text_range(s, e)
   buffer.search_flags = buffer.FIND_WHOLEWORD + buffer.FIND_MATCHCASE
-  buffer:set_target_range(0, buffer.length)
+  buffer:target_whole_document()
   while buffer:search_in_target(word) > -1 do
     local len = buffer.target_end - buffer.target_start
     buffer:indicator_fill_range(buffer.target_start, len)
