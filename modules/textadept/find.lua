@@ -270,7 +270,7 @@ end
 --   sequences for embedding Lua code for any search.
 -- @see find
 local function replace(rtext)
-  if buffer:get_sel_text() == '' then return end
+  if buffer.selection_empty then return end
   if M.in_files then M.in_files = false end
   buffer:target_from_selection()
   rtext = rtext:gsub('\\[abfnrtv\\]', escapes):gsub('%%%%', '\\037')
@@ -313,7 +313,7 @@ local function replace_all(ftext, rtext)
   if M.in_files then M.in_files = false end
   buffer:begin_undo_action()
   local count = 0
-  if buffer:get_sel_text() == '' then
+  if buffer.selection_empty then
     buffer:goto_pos(0)
     while find_(ftext, true, nil, true) ~= -1 do
       replace(rtext)
