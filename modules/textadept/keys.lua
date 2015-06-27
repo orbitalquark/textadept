@@ -400,7 +400,7 @@ keys[not OSX and not CURSES and 'ca' or 'ma'] = buffer.select_all
 keys[not CURSES and 'cm' or 'mm'] = editing.match_brace
 keys[not OSX and (not CURSES and 'c\n' or 'cmj')
              or 'cesc'] = {editing.autocomplete, 'word'}
-if CURSES and WIN32 then keys['c\r'] = keys['cmj'] end
+if CURSES and WIN32 then keys['c\n'] = keys['cmj'] end
 if not CURSES then
   keys[not OSX and 'caH' or 'mH'] = editing.highlight_word
 end
@@ -567,7 +567,6 @@ end
 keys[not OSX and not CURSES and 'c*' or 'm*'] = utils.toggle_current_fold
 if not CURSES then
   keys[not OSX and 'ca\n' or 'c\n'] = {utils.toggle_property, 'view_eol'}
-  if not OSX then keys['ca\n\r'] = keys['ca\n'] end
   keys[not OSX and 'ca\\' or 'c\\'] = {utils.toggle_property, 'wrap_mode'}
   keys[not OSX and 'caI' or 'cI'] =
     {utils.toggle_property, 'indentation_guides'}
