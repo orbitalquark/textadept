@@ -277,6 +277,17 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>ex</string>
+				<string>exs</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Elixir source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>erl</string>
 				<string>hrl</string>
 			</array>
@@ -1033,6 +1044,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>wsf</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>WSF source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>dtd</string>
 				<string>svg</string>
 				<string>xml</string>
@@ -1102,7 +1123,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>8.0</string>
+	<string>8.1</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>

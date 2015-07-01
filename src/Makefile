@@ -139,6 +139,7 @@ cdk_objs = binding.o buttonbox.o cdk.o cdk_display.o cdk_objs.o cdkscreen.o \
            scroll.o scroller.o select_file.o selection.o traverse.o version.o
 
 # Add debugging symbols and disable optimizations when DEBUG=1.
+# Note: In order to profile with gprof (-pg), do not retain symbols in LDFLAGS.
 ifdef DEBUG
   CFLAGS += -g -O0
   CXXFLAGS += -g -O0
