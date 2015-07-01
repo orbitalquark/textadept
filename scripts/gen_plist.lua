@@ -83,7 +83,7 @@ xml[#xml + 1] = [[
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>7.9</string>
+	<string>8.1</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
