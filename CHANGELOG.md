@@ -8,6 +8,38 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 8.1 (01 Jul 2015)
+
+Download:
+
+* [Textadept 8.1 -- Win32][]
+* [Textadept 8.1 -- Mac OSX Intel 10.5+][]
+* [Textadept 8.1 -- Linux][]
+* [Textadept 8.1 -- Linux x86_64][]
+* [Textadept 8.1 -- Modules][]
+
+Bugfixes:
+
+* Detect `#!/usr/bin/env ...` properly.
+* Fix incorrect menu shortcut key display on Windows.
+
+Changes:
+
+* Added support for Elixir and Windows Script Files (WSF).
+* Added parameter to [`textadept.editing.select_word()`][] for selecting all
+  occurrences.
+* Updated to [Scintilla][] 3.5.7.
+* Updated to [Lua][] 5.3.1.
+
+[Textadept 8.1 -- Win32]: download/textadept_8.1.win32.zip
+[Textadept 8.1 -- Mac OSX Intel 10.5+]: download/textadept_8.1.osx.zip
+[Textadept 8.1 -- Linux]: download/textadept_8.1.i386.tgz
+[Textadept 8.1 -- Linux x86_64]: download/textadept_8.1.x86_64.tgz
+[Textadept 8.1 -- Modules]: download/textadept_8.1.modules.zip
+[`textadept.editing.select_word()`]: api.html#textadept.editing.select_word
+[Scintilla]: http://scintilla.org
+[Lua]: http://lua.org
+
 ## 8.0 (01 May 2015)
 
 Please see the [7 to 8 migration guide][] for upgrading from Textadept 7 to
