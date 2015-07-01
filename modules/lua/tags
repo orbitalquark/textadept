@@ -711,6 +711,7 @@ insert_text	_	0;"	f	class:buffer
 integer	_	0;"	F	class:lexer
 io	_	0;"	m	
 ipairs	_	0;"	f	
+is_range_word	_	0;"	f	class:buffer
 isyieldable	_	0;"	f	class:coroutine
 join_lines	_	0;"	f	class:textadept.editing
 keychain	_	0;"	t	class:keys
@@ -843,6 +844,8 @@ move_selected_lines_down	_	0;"	f	class:buffer
 move_selected_lines_up	_	0;"	f	class:buffer
 msgbox	_	0;"	f	class:ui.dialogs
 multi_paste	_	0;"	F	class:buffer
+multiple_select_add_each	_	0;"	f	class:buffer
+multiple_select_add_next	_	0;"	f	class:buffer
 multiple_selection	_	0;"	F	class:buffer
 nested_pair	_	0;"	f	class:lexer
 new	_	0;"	f	class:buffer
@@ -1116,6 +1119,7 @@ target_end	_	0;"	F	class:buffer
 target_from_selection	_	0;"	f	class:buffer
 target_start	_	0;"	F	class:buffer
 target_text	_	0;"	F	class:buffer
+target_whole_document	_	0;"	f	class:buffer
 text_height	_	0;"	f	class:buffer
 text_length	_	0;"	F	class:buffer
 text_range	_	0;"	f	class:buffer
