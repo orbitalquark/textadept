@@ -332,7 +332,7 @@ end
 -- the caret. Otherwise, the characters to the left and right are.
 -- @name transpose_chars
 function M.transpose_chars()
-  if buffer.length == 0 then return end
+  if buffer.length == 0 or buffer.current_pos == 0 then return end
   local pos, char = buffer.current_pos, buffer.char_at[buffer.current_pos]
   if char == 10 or char == 13 or pos == buffer.length then pos = pos - 1 end
   buffer:set_target_range(pos - 1, pos + 1)
