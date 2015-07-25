@@ -28,6 +28,9 @@ local ui = ui
 --   The default value is `true`.
 -- @field SILENT_PRINT (bool)
 --   Whether or not to print messages to buffers silently.
+--   This is not guaranteed to be a constant value, as Textadept may change it
+--   for the editor's own purposes. This flag should be used only in conjunction
+--   with a group of [`ui.print()`]() and [`ui._print()`]() function calls.
 --   The default value is `false`, and focuses buffers when messages are printed
 --   to them.
 module('ui')]]

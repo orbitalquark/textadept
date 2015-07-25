@@ -119,6 +119,8 @@ for i = 25, 31 do -- fold margin markers
 end
 
 -- Indicators.
+buffer.indic_fore[ui.find.INDIC_FIND] = property_int['color.yellow']
+buffer.indic_alpha[ui.find.INDIC_FIND] = 255
 local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
 buffer.indic_fore[INDIC_BRACEMATCH] = property_int['color.grey']
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
