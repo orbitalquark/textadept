@@ -76,6 +76,7 @@ buffer.marker_back[textadept.run.MARK_WARNING] = property_int['color.yellow']
 buffer.marker_back[textadept.run.MARK_ERROR] = property_int['color.red']
 
 -- Indicators.
+buffer.indic_fore[ui.find.INDIC_FIND] = property_int['color.yellow']
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
 buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.yellow']
 

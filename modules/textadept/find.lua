@@ -52,6 +52,8 @@ local M = ui.find
 -- @field in_files_label_text (string, Write-only)
 --   The text of the "In files" label.
 --   This is primarily used for localization.
+-- @field INDIC_FIND (number)
+--   The find in files highlight indicator number.
 -- @field _G.events.FIND_WRAPPED (string)
 --   Emitted when a text search wraps (passes through the beginning of the
 --   buffer), either from bottom to top (when searching for a next occurrence),
@@ -72,6 +74,8 @@ M.whole_word_label_text = not CURSES and _L['_Whole word'] or _L['Word(F2)']
 M.lua_pattern_label_text = not CURSES and _L['_Lua pattern'] or
                            _L['Pattern(F3)']
 M.in_files_label_text = not CURSES and _L['_In files'] or _L['Files(F4)']
+
+M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
 -- Events.
 events.FIND_WRAPPED = 'find_wrapped'
@@ -243,22 +247,31 @@ function M.find_in_files(dir)
   if not M.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
   if not M.match_case then text = text:lower() end
   if M.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end -- TODO: wordchars
-  local matches = {_L['Find:']..' '..text}
+
+  if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
+  ui.SILENT_PRINT = false
+  ui._print(_L['[Files Found Buffer]'], _L['Find:']..' '..text)
+  buffer.indicator_current = M.INDIC_FIND
+
+  local found = false
   lfs.dir_foreach(dir, function(file)
     local match_case = M.match_case
     local line_num = 1
     for line in io.lines(file) do
-      if (match_case and line or line:lower()):find(text) then
+      local s, e = (match_case and line or line:lower()):find(text)
+      if s and e then
         file = file:iconv('UTF-8', _CHARSET)
-        matches[#matches + 1] = ('%s:%s:%s'):format(file, line_num, line)
+        buffer:append_text(('%s:%d:%s\n'):format(file, line_num, line))
+        local pos = buffer:position_from_line(buffer.line_count - 2) +
+                    #file + #tostring(line_num) + 2
+        buffer:indicator_fill_range(pos + s - 1, e - s + 1)
+        found = true
       end
       line_num = line_num + 1
     end
   end, M.FILTER, true)
-  if #matches == 1 then matches[2] = _L['No results found'] end
-  matches[#matches + 1] = ''
-  if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-  ui._print(_L['[Files Found Buffer]'], table.concat(matches, '\n'))
+  if not found then buffer:append_text(_L['No results found']) end
+  ui._print(_L['[Files Found Buffer]'], '') -- goto end, set save pos, etc.
 end
 
 -- Replaces found text.

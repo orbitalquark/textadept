@@ -20,7 +20,7 @@ property['color.dark_white'] = 0xCCCCCC
 
 -- Dark colors.
 --property['color.dark_red'] = 0x1A1A66
---property['color.dark_yellow'] = 0x1A6666
+property['color.dark_yellow'] = 0x1A6666
 --property['color.dark_green'] = 0x1A661A
 --property['color.dark_teal'] = 0x66661A
 --property['color.dark_purple'] = 0x661A66
@@ -119,6 +119,8 @@ for i = 25, 31 do -- fold margin markers
 end
 
 -- Indicators.
+buffer.indic_fore[ui.find.INDIC_FIND] = property_int['color.dark_yellow']
+buffer.indic_alpha[ui.find.INDIC_FIND] = 255
 local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
 buffer.indic_fore[INDIC_BRACEMATCH] = property_int['color.light_grey']
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT

@@ -123,6 +123,8 @@ buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNER)
 --buffer:marker_enable_highlight(true)
 
 -- Indicators.
+buffer.indic_style[ui.find.INDIC_FIND] = buffer.INDIC_ROUNDBOX
+if not CURSES then buffer.indic_under[ui.find.INDIC_FIND] = true end
 local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
 buffer.indic_style[INDIC_BRACEMATCH] = buffer.INDIC_BOX
 buffer:brace_highlight_indicator(not CURSES, INDIC_BRACEMATCH)
