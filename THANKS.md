@@ -34,6 +34,7 @@ private contract work related to Textadept.
 * Chris Emerson
 * Daniel Wutke
 * Gilles Grégoire
+* Giovanni Salmeri
 * Jay Gould
 * Jeff Stone
 * John Benediktsson
