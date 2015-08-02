@@ -1908,6 +1908,8 @@ static void lL_notify(lua_State *L, struct SCNotification *n) {
   //lua_pushinteger(L, n->annotationLinesAdded);
   //lua_setfield(L, -2, "annotation_lines_added");
   lua_pushinteger(L, n->updated), lua_setfield(L, -2, "updated");
+  //lua_pushinteger(L, n->listCompletionMethod);
+  //lua_setfield(L, -2, "list_completion_method");
   lL_event(L, "SCN", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
 }
 

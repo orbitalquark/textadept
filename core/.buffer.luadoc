@@ -732,6 +732,8 @@
 --     Display text in upper case.
 --   * `buffer.CASE_LOWER`
 --     Display text in lower case.
+--   * `buffer.CASE_CAMEL`
+--     Display text in camel case.
 --
 --   The default values are `buffer.CASE_MIXED`.
 -- @field style_changeable (table)
