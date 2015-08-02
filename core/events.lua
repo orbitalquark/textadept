@@ -38,6 +38,13 @@ local M = {}
 --   active.
 -- @field AUTO_C_CANCELED (string)
 --   Emitted when canceling an autocompletion or user list.
+-- @field AUTO_C_COMPLETED (string)
+--   Emitted after inserting an item from an autocompletion list into the
+--   buffer.
+--   Arguments:
+--
+--   * _`text`_: The selection's text.
+--   * _`position`_: The autocompleted word's beginning position.
 -- @field AUTO_C_SELECTION (string)
 --   Emitted after selecting an item from an autocompletion list, but before
 --   inserting that item into the buffer.
@@ -340,6 +347,7 @@ local scnotifications = {
   [c.SCN_INDICATORRELEASE] = {'indicator_release', 'position'},
   [c.SCN_AUTOCCANCELLED] = {'auto_c_cancelled'},
   [c.SCN_AUTOCCHARDELETED] = {'auto_c_char_deleted'},
+  [c.SCN_AUTOCCOMPLETED] = {'auto_c_completed', 'text', 'position'},
 }
 
 -- Handles Scintilla notifications.
