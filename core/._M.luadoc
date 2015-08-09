@@ -25,7 +25,7 @@
 -- Textadept's features, you should include at a minimum: run and/or compile
 -- commands, an event handler for setting buffer properties like indentation,
 -- and if possible, an autocompleter. Optional features are extra snippets,
--- commands, and context menu items.
+-- commands, context menu items, and a syntax checking command.
 --
 -- #### Compile and Run
 --
@@ -122,10 +122,10 @@
 --       ['s\n'] = M.try_to_autocomplete_end |   end
 --     }                                     | }
 --
--- When defining key bindings for other commands, you may make use of a `Ctrl+L` 
--- (`⌘L` on Mac OSX | `M-L` in curses) keychain. Traditionally this prefix has 
--- been reserved for use by language modules (although neither Textadept nor its 
--- modules utilize it at the moment). Users may define this keychain for new or 
+-- When defining key bindings for other commands, you may make use of a `Ctrl+L`
+-- (`⌘L` on Mac OSX | `M-L` in curses) keychain. Traditionally this prefix has
+-- been reserved for use by language modules (although neither Textadept nor its
+-- modules utilize it at the moment). Users may define this keychain for new or
 -- existing modules and it will not conflict with any default key bindings.
 --
 --     keys.lua[not OSX and not CURSES and 'cl' or 'ml'] = {
@@ -142,4 +142,20 @@
 --       title = 'Lua',
 --       {'Autocomplete "end"', M.try_to_autocomplete_end}
 --     }
+--
+-- #### Syntax Checking
+--
+-- Textadept has the ability to run a syntax checking tool on source files
+-- immediately after saving them, and automatically does this for a number of
+-- interpreted languages and markup languages. If your language is not supported
+-- (properly or at all), you will have to update the
+-- [`textadept.run.syntax_commands`]() and
+-- [`textadept.run.syntax_error_patterns`]() tables. For Lua, this looks like
+--
+--     textadept.run.syntax_commands.lua = 'luac -p "%f"'
+--     textadept.run.syntax_error_patterns.lua = ':(%d+): ([^\r\n]+)'
+--
+-- This feature really only makes sense for interpreted and markup languages.
+-- Compiled languages should make use of Textadept's "Compile and Run" and error
+-- recognition facilities.
 module('_M')]]

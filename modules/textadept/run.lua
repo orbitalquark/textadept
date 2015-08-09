@@ -4,15 +4,25 @@ local M = {}
 
 --[[ This comment is for LuaDoc.
 ---
--- Compile and run source code files with Textadept.
+-- Compile, run, and check the syntax of source code files with Textadept.
 -- [Language modules](#_M.Compile.and.Run) may tweak the `compile_commands`,
--- `run_commands`, and/or `error_patterns` tables for particular languages.
+-- `run_commands`, `error_patterns`, `syntax_commands`, and
+-- `syntax_error_patterns` tables for particular languages.
 -- The user may tweak `build_commands` for particular projects.
 -- @field RUN_IN_BACKGROUND (bool)
 --   Run shell commands silently in the background.
 --   This only applies when the message buffer is open, though it does not have
 --   to be visible.
 --   The default value is `false`.
+-- @field CHECK_SYNTAX (bool)
+--   Check the syntax of sources files upon saving them.
+--   This applies only to languages that have syntax-checking commands and error
+--   message patterns defined in the `syntax_commands` and
+--   `syntax_error_patterns` tables, respectively.
+--   The default value is `true`.
+-- @field GOTO_SYNTAX_ERRORS (bool)
+--   Immediately jump to recognized syntax errors after saving a source file.
+--   The default value is `true`.
 -- @field MARK_WARNING (number)
 --   The run or compile warning marker number.
 -- @field MARK_ERROR (number)
@@ -50,6 +60,8 @@ local M = {}
 module('textadept.run')]]
 
 M.RUN_IN_BACKGROUND = false
+M.CHECK_SYNTAX = true
+M.GOTO_SYNTAX_ERRORS = true
 
 M.MARK_WARNING = _SCINTILLA.next_marker_number()
 M.MARK_ERROR = _SCINTILLA.next_marker_number()
@@ -172,8 +184,8 @@ end
 --
 --   + `%f`: The file's name, including its extension.
 --   + `%e`: The file's name, excluding its extension.
---   + `%d`: The current file's directory path.
---   + `%p`: The current file's full path.
+--   + `%d`: The file's directory path.
+--   + `%p`: The file's full path.
 -- @class table
 -- @name compile_commands
 M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc -o "%e" "%f"',antlr='antlr4 "%f"',g='antlr3 "%f"',applescript='osacompile "%f" -o "%e.scpt"',asm='nasm "%f" && ld "%e.o" -o "%e"',boo='booc "%f"',caml='ocamlc -o "%e" "%f"',csharp=WIN32 and 'csc "%f"' or 'mcs "%f"',cpp='g++ -o "%e" "%f"',coffeescript='coffee -c "%f"',context='context --nonstopmode "%f"',cuda=WIN32 and 'nvcc -o "%e.exe" "%f"' or 'nvcc -o "%e" "%f"',dmd='dmd "%f"',dot='dot -Tps "%f" -o "%e.ps"',eiffel='se c "%f"',elixir='elixirc "%f"',erlang='erl -compile "%e"',fsharp=WIN32 and 'fsc.exe "%f"' or 'mono fsc.exe "%f"',fortran='gfortran -o "%e" "%f"',gap='gac -o "%e" "%f"',go='go build "%f"',groovy='groovyc "%f"',haskell=WIN32 and 'ghc -o "%e.exe" "%f"' or 'ghc -o "%e" "%f"',inform=function() return 'inform -c "'..buffer.filename:match('^(.+%.inform[/\\])Source')..'"' end,java='javac "%f"',ltx='pdflatex -file-line-error -halt-on-error "%f"',less='lessc "%f" "%e.css"',lilypond='lilypond "%f"',lisp='clisp -c "%f"',litcoffee='coffee -c "%f"',lua='luac -o "%e.luac" "%f"',markdown='markdown "%f" > "%e.html"',nemerle='ncc "%f" -out:"%e.exe"',nim='nim c "%f"',nsis='MakeNSIS "%f"',objective_c='gcc -o "%e" "%f"',pascal='fpc "%f"',perl='perl -c "%f"',php='php -l "%f"',prolog='gplc --no-top-level "%f"',python='python -m py_compile "%f"',ruby='ruby -c "%f"',rust='rustc "%f"',sass='sass "%f" "%e.css"',scala='scalac "%f"',tex='pdflatex -file-line-error -halt-on-error "%f"',vala='valac "%f"',vb=WIN32 and 'vbc "%f"' or 'vbnc "%f"',}
@@ -195,8 +207,8 @@ events.connect(events.COMPILE_OUTPUT, print_output)
 --
 --   + `%f`: The file's name, including its extension.
 --   + `%e`: The file's name, excluding its extension.
---   + `%d`: The current file's directory path.
---   + `%p`: The full path of the current file.
+--   + `%d`: The file's directory path.
+--   + `%p`: The file's full path.
 -- @class table
 -- @name run_commands
 M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "file://%e.swf"' or 'xdg-open "%e.swf"',ada=WIN32 and '"%e"' or './"%e"',ansi_c=WIN32 and '"%e"' or './"%e"',applescript='osascript "%f"',asm='./"%e"',awk='awk -f "%f"',batch='"%f"',boo='booi "%f"',caml='ocamlrun "%e"',csharp=WIN32 and '"%e"' or 'mono "%e.exe"',cpp=WIN32 and '"%e"' or './"%e"',chuck='chuck "%f"',cmake='cmake -P "%f"',coffeescript='coffee "%f"',context=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',cuda=WIN32 and '"%e"' or './"%e"',dmd=WIN32 and '"%e"' or './"%e"',eiffel="./a.out",elixir='elixir "%f"',fsharp=WIN32 and '"%e"' or 'mono "%e.exe"',forth='gforth "%f" -e bye',fortran=WIN32 and '"%e"' or './"%e"',gnuplot='gnuplot "%f"',go='go run "%f"',groovy='groovy "%f"',haskell=WIN32 and '"%e"' or './"%e"',html=WIN32 and 'start "" "%f"' or OSX and 'open "file://%f"' or 'xdg-open "%f"',idl='idl -batch "%f"',Io='io "%f"',java='java "%e"',javascript='node "%f"',ltx=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',less='lessc --no-color "%f"',lilypond=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',lisp='clisp "%f"',litcoffee='coffee "%f"',lua='lua -e "io.stdout:setvbuf(\'no\')" "%f"',makefile=WIN32 and 'nmake -f "%f"' or 'make -f "%f"',markdown='markdown "%f"',nemerle=WIN32 and '"%e"' or 'mono "%e.exe"',nim='nim c -r "%f"',objective_c=WIN32 and '"%e"' or './"%e"',pascal=WIN32 and '"%e"' or './"%e"',perl='perl "%f"',php='php "%f"',pike='pike "%f"',pkgbuild='makepkg -p "%f"',prolog=WIN32 and '"%e"' or './"%e"',python='python -u "%f"',rstats=WIN32 and 'Rterm -f "%f"' or 'R -f "%f"',rebol='REBOL "%f"',rexx=WIN32 and 'rexx "%e"' or 'regina "%e"',ruby='ruby "%f"',rust=WIN32 and '"%e"' or './"%e"',sass='sass "%f"',scala='scala "%e"',bash='bash "%f"',csh='tcsh "%f"',sh='sh "%f"',zsh='zsh "%f"',smalltalk='gst "%f"',tcl='tclsh "%f"',tex=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',vala=WIN32 and '"%e"' or './"%e"',vb=WIN32 and '"%e"' or 'mono "%e.exe"',}
@@ -324,6 +336,73 @@ events.connect(events.KEYPRESS, function(code)
 end)
 events.connect(events.DOUBLE_CLICK, function(_, line)
   if is_msg_buf(buffer) and M.cwd then M.goto_error(line) end
+end)
+
+---
+-- Map of file extensions or lexer names to their associated syntax checker
+-- command line strings or functions that return such strings.
+-- `%f` in command line strings represents the file to check the syntax of.
+-- Upon saving a source file, this table is consulted for potentially running a
+-- syntax checking utility on that file. This usually only makes sense for
+-- interpreted languages and markup languages.
+-- @class table
+-- @name syntax_commands
+M.syntax_commands = {awk='gawk --source "BEGIN{exit(0)} END{exit(0)}" --file "%f"',bash = function() return (buffer:get_line(0):match('^#!.+/([^/%s]+)') or 'bash')..' -n "%f"' end,coffeescript='coffee -cp "%f"',css='csslint --format=compact --quiet "%f"',fish='fish -n "%f"',go='gofmt -l "%f"',html='tidy -e -q -utf8 "%f"',javascript='jshint "%f"',less='lessc --lint --no-color "%f"',litcoffee='coffee -cp "%f"',lua='luac -p "%f"',perl='perl -c -X "%f"',php='php -l "%f"',python=[[python -c 'compile(open("%f").read(),"%f","exec",0,1)']],ruby='ruby -c "%f"',sass='sass -c -q "%f"',xml='xmllint "%f"',}
+
+---
+-- Map of file extensions or lexer names to patterns that match their respective
+-- syntax-checkers' error messages or functions that return such patterns.
+-- Patterns contain line number, optional column number, and error message
+-- captures.
+-- When adding to this map, use `(%d+)` to match line and column numbers.
+-- `(%s*)` may also be used to match column numbers for visual error messages.
+-- @class table
+-- @name syntax_error_patterns
+M.syntax_error_patterns = {awk=':(%d+): (%s*)^ ([^\r\n]+)',bash='[:%s](%d+): ([^\r\n]+)',coffeescript='In [^,]+, (.-) on line (%d+):?([^\r\n]*)',css='line (%d+), col (%d+), ([^\r\n]+)',fish='fish: ([^\r\n]+).-line (%d+).:',go=':(%d+):(%d+): ([^\r\n]+)',html='line (%d+) column (%d+) %- Error: ([^\r\n]+)',javascript='line (%d+), col (%d+), ([^\r\n]+)',less='^(.-) in .- on line (%d+), column (%d+):',litcoffee='In [^,]+, (.-) on line (%d+):?([^\r\n]*)',lua=':(%d+): ([^\r\n]+)',perl='^(.-) at .- line (%d+)',php='^(.-) in .- on line (%d+)',python='", line (%d+)[\r\n]+.-(%w+: [^\r\n]+)',ruby=':(%d+): ([^\r\n]+).-[\r\n]+(%s*)^',sass='^([^\r\n]+).-on line (%d+)',xml=':(%d+): ([^\r\n]+).-[\r\n]+(%s*)^',}
+
+-- Check syntax upon saving a file.
+events.connect(events.FILE_AFTER_SAVE, function(filename)
+  if not M.CHECK_SYNTAX then return end
+  -- Determine the syntax checker command.
+  local ext, lexer = buffer.filename:match('[^.]+$'), buffer:get_lexer()
+  local command = M.syntax_commands[ext] or M.syntax_commands[lexer]
+  local patt = M.syntax_error_patterns[ext] or M.syntax_error_patterns[lexer]
+  if type(command) == 'function' then command = command() end
+  if type(patt) == 'function' then patt = patt() end
+  if not command or not patt then return end
+  -- Run the syntax checker command and look for errors.
+  buffer:annotation_clear_all()
+  local p = io.popen(command:gsub('%%f', filename)..' 2>&1')
+  local out = p:read('*a')
+  p:close()
+  local captures = {message = '', out:match(patt)}
+  if #captures == 0 then return end
+  -- Parse out the line, column, and error message.
+  for detail in patt:gmatch('[^%%](%b())') do
+    if detail == '(%d+)' then
+      local source = not captures.line and 'line' or 'column'
+      captures[source] = tonumber(table.remove(captures, 1)) - 1
+    elseif detail == '(%s*)' then
+      captures.column = #table.remove(captures, 1)
+    else
+      captures.message = captures.message..table.remove(captures, 1)
+    end
+  end
+  if not captures.line or not captures.message then return end
+  -- Display the annotation and either jump to, or note the position.
+  buffer.annotation_text[captures.line] = captures.message
+  buffer.annotation_style[captures.line] = 8 -- error style number
+  local top_line = buffer:doc_line_from_visible(buffer.first_visible_line)
+  local bottom_line = buffer:doc_line_from_visible(buffer.first_visible_line +
+                                                   buffer.lines_on_screen) - 1
+  if M.GOTO_SYNTAX_ERRORS then
+    buffer:goto_pos(buffer:find_column(captures.line, captures.column or 0))
+  elseif captures.line < top_line or captures.line > bottom_line then
+    local line = buffer:line_from_position(buffer.current_pos)
+    buffer.annotation_text[line] = 'Line '..(captures.line + 1)..'\n'..
+                                   captures.message
+    buffer.annotation_style[line] = 8 -- error style number
+  end
 end)
 
 return M
