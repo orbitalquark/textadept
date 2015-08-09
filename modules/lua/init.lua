@@ -115,21 +115,6 @@ function M.try_to_autocomplete_end()
   return false
 end
 
--- Show syntax errors as annotations.
-events.connect(events.FILE_AFTER_SAVE, function()
-  if buffer:get_lexer() ~= 'lua' then return end
-  buffer:annotation_clear_all()
-  local text = buffer:get_text():gsub('^#![^\n]+', '') -- ignore shebang line
-  local f, err = load(text)
-  if f then return end
-  local line, msg = err:match('^.-:(%d+):%s*(.+)$')
-  if line then
-    buffer.annotation_text[line - 1] = msg
-    buffer.annotation_style[line - 1] = 8 -- error style number
-    buffer:goto_line(line - 1)
-  end
-end)
-
 ---
 -- Container for Lua-specific key bindings.
 -- @class table
