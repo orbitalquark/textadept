@@ -281,7 +281,7 @@ function M.block_comment()
   anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
   buffer:begin_undo_action()
   for line = s, not ignore_last_line and e or e - 1 do
-    local p = buffer:position_from_line(line)
+    local p = buffer.line_indent_position[line]
     if buffer:text_range(p, p + #prefix) == prefix then
       buffer:delete_range(p, #prefix)
       if suffix ~= '' then
