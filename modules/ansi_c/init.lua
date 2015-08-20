@@ -30,7 +30,6 @@ local xpms = setmetatable({
 }, {__index = function() return 0 end})
 
 textadept.editing.autocompleters.ansi_c = function()
-  local list = {}
   -- Retrieve the symbol behind the caret.
   local line, pos = buffer:get_cur_line()
   local symbol, op, part = line:sub(1, pos):match('([%w_]-)([%.%->]*)([%w_]*)$')
@@ -52,18 +51,25 @@ textadept.editing.autocompleters.ansi_c = function()
                                  lfs.currentdir())..'/tags'
   local name_patt = '^'..part
   local sep = string.char(buffer.auto_c_type_separator)
+  ::rescan::
+  local list = {}
   for i = 1, #tags_files do
     if lfs.attributes(tags_files[i]) then
       for tag_line in io.lines(tags_files[i]) do
         local name = tag_line:match('^%S+')
-        if name:find(name_patt) and not name:find('^!') and not list[name] then
+        if (name:find(name_patt) and not name:find('^!') and not list[name]) or
+           name == symbol then
           local fields = tag_line:match(';"\t(.*)$')
           if (fields:match('class:(%S+)') or fields:match('enum:(%S+)') or
-              fields:match('struct:(%S+)') or fields:match('typedef:(%S+)') or
-              '') == symbol then
+              fields:match('struct:(%S+)') or '') == symbol then
             list[#list + 1] = ("%s%s%d"):format(name, sep,
                                                 xpms[fields:sub(1, 1)])
             list[name] = true
+          elseif name == symbol and fields:match('typeref:') then
+            -- For typeref, change the lookup symbol to the referenced name and
+            -- rescan tags files.
+            symbol = fields:match('[^:]+$')
+            goto rescan
           end
         end
       end
