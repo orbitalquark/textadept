@@ -272,7 +272,7 @@ end
 -- @name block_comment
 function M.block_comment()
   local buffer = buffer
-  local comment = M.comment_string[buffer:get_lexer(true)]
+  local comment = M.comment_string[buffer:get_lexer(true)] or ''
   local prefix, suffix = comment:match('^([^|]+)|?([^|]*)$')
   if not prefix then return end
   local anchor, pos = buffer.selection_start, buffer.selection_end
