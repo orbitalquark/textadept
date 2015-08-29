@@ -15,6 +15,7 @@ AUTOMATICFOLD_SHOW buffer.AUTOMATICFOLD_SHOW (number, Read-only)\n
 AUTOPAIR textadept.editing.AUTOPAIR (bool)\nAutomatically close opening brace and quote characters with their\ncomplements.\nThe default value is `true`.\nAuto-paired characters are defined in the\n`textadept.editing.char_matches` table.
 AUTO_C_CANCELED events.AUTO_C_CANCELED (string)\nEmitted when canceling an autocompletion or user list.
 AUTO_C_CHAR_DELETED events.AUTO_C_CHAR_DELETED (string)\nEmitted after deleting a character while an autocompletion or user list is\nactive.
+AUTO_C_COMPLETED events.AUTO_C_COMPLETED (string)\nEmitted after inserting an item from an autocompletion list into the\nbuffer.\nArguments:\n\n* _`text`_: The selection's text.\n* _`position`_: The autocompleted word's beginning position.
 AUTO_C_SELECTION events.AUTO_C_SELECTION (string)\nEmitted after selecting an item from an autocompletion list, but before\ninserting that item into the buffer.\nAutomatic insertion can be cancelled by calling\n`buffer:auto_c_cancel()` before returning from the event handler.\nArguments:\n\n* _`text`_: The selection's text.\n* _`position`_: The autocompleted word's beginning position.
 B lpeg.B(patt)\nReturns a pattern that matches only if the input string at the current\nposition is preceded by `patt`. Pattern `patt` must match only strings with\nsome fixed length, and it cannot contain captures.\n\nLike the and predicate, this pattern never consumes any input, independently\nof success or failure.
 BSD _G.BSD (bool)\nWhether or not Textadept is running on BSD.
@@ -41,7 +42,7 @@ CASE_LOWER buffer.CASE_LOWER (number, Read-only)\n
 CASE_MIXED buffer.CASE_MIXED (number, Read-only)\n
 CASE_UPPER buffer.CASE_UPPER (number, Read-only)\n
 CHAR_ADDED events.CHAR_ADDED (string)\nEmitted after the user types a text character into the buffer.\nArguments:\n\n* _`byte`_: The text character's byte.
-CHECK_SYNTAX _M.python.CHECK_SYNTAX (bool)\nWhether or not to invoke Python to check the syntax of the current file\nwhen saving it.\nThe default value is `true`.
+CHECK_SYNTAX textadept.run.CHECK_SYNTAX (bool)\nCheck the syntax of sources files upon saving them.\nThis applies only to languages that have syntax-checking commands and error\nmessage patterns defined in the `syntax_commands` and\n`syntax_error_patterns` tables, respectively.\nThe default value is `true`.
 CLASS lexer.CLASS (string)\nThe token name for class tokens.
 CLASS textadept.editing.XPM_IMAGES.CLASS (table)\nThe image number for classes.
 CLEAR keys.CLEAR (string)\nThe key that clears the current key chain.\nIt cannot be part of a key chain.\nThe default value is `'esc'` for the `Esc` key.
@@ -107,6 +108,7 @@ FOLD_BASE lexer.FOLD_BASE (number)\nThe initial (root) fold level.
 FOLD_BLANK lexer.FOLD_BLANK (number)\nFlag indicating that the line is blank.
 FOLD_HEADER lexer.FOLD_HEADER (number)\nFlag indicating the line is fold point.
 FUNCTION lexer.FUNCTION (string)\nThe token name for function tokens.
+GOTO_SYNTAX_ERRORS textadept.run.GOTO_SYNTAX_ERRORS (bool)\nImmediately jump to recognized syntax errors after saving a source file.\nThe default value is `true`.
 IDENTIFIER lexer.IDENTIFIER (string)\nThe token name for identifier tokens.
 INDICATOR_CLICK events.INDICATOR_CLICK (string)\nEmitted when clicking the mouse on text that has an indicator present.\nArguments:\n\n* _`position`_: The clicked text's position.\n* _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,\n  `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.\n  Note: If you set `buffer.rectangular_selection_modifier` to\n  `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"\n  and "Alt" due to a Scintilla limitation with GTK+.
 INDICATOR_RELEASE events.INDICATOR_RELEASE (string)\nEmitted when releasing the mouse after clicking on text that has an\nindicator present.\nArguments:\n\n* _`position`_: The clicked text's position.
@@ -118,6 +120,7 @@ INDIC_DASH buffer.INDIC_DASH (number, Read-only)\n
 INDIC_DIAGONAL buffer.INDIC_DIAGONAL (number, Read-only)\n
 INDIC_DOTBOX buffer.INDIC_DOTBOX (number, Read-only)\n
 INDIC_DOTS buffer.INDIC_DOTS (number, Read-only)\n
+INDIC_FIND ui.find.INDIC_FIND (number)\nThe find in files highlight indicator number.
 INDIC_FULLBOX buffer.INDIC_FULLBOX (number, Read-only)\n
 INDIC_HIDDEN buffer.INDIC_HIDDEN (number, Read-only)\n
 INDIC_HIGHLIGHT textadept.editing.INDIC_HIGHLIGHT (number)\nThe word highlight indicator number.
@@ -242,7 +245,7 @@ SEL_RECTANGLE buffer.SEL_RECTANGLE (number, Read-only)\n
 SEL_STREAM buffer.SEL_STREAM (number, Read-only)\n
 SEL_THIN buffer.SEL_THIN (number, Read-only)\n
 SIGNAL textadept.editing.XPM_IMAGES.SIGNAL (table)\nThe image number for signals.
-SILENT_PRINT ui.SILENT_PRINT (bool)\nWhether or not to print messages to buffers silently.\nThe default value is `false`, and focuses buffers when messages are printed\nto them.
+SILENT_PRINT ui.SILENT_PRINT (bool)\nWhether or not to print messages to buffers silently.\nThis is not guaranteed to be a constant value, as Textadept may change it\nfor the editor's own purposes. This flag should be used only in conjunction\nwith a group of `ui.print()` and `ui._print()` function calls.\nThe default value is `false`, and focuses buffers when messages are printed\nto them.
 SLOT textadept.editing.XPM_IMAGES.SLOT (table)\nThe image number for slots.
 SNAPOPEN_MAX io.SNAPOPEN_MAX (number)\nThe maximum number of files listed in the snapopen dialog.\nThe default value is `1000`.
 STRING lexer.STRING (string)\nThe token name for string tokens.
@@ -491,7 +494,7 @@ column buffer.column (table, Read-only)\nTable of column numbers (taking tab wid
 command_entry ui.command_entry (module)\nTextadept's Command Entry.
 comment_string textadept.editing.comment_string (table)\nMap of lexer names to line comment strings for programming languages, used by\nthe `block_comment()` function.\nKeys are lexer names and values are either the language's line comment\nprefixes or block comment delimiters separated by a '|' character.\n@see block_comment
 compile textadept.run.compile()\nCompiles the current file based on its extension or language using the\nshell command from the `compile_commands` table.\nEmits `COMPILE_OUTPUT` events.\n@see compile_commands\n@see _G.events
-compile_commands textadept.run.compile_commands (table)\nMap of file extensions or lexer names to their associated "compile" shell\ncommand line strings or functions that return such strings.\nCommand line strings may have the following macros:\n\n  + `%f`: The file's name, including its extension.\n  + `%e`: The file's name, excluding its extension.\n  + `%d`: The current file's directory path.\n  + `%p`: The current file's full path.
+compile_commands textadept.run.compile_commands (table)\nMap of file extensions or lexer names to their associated "compile" shell\ncommand line strings or functions that return such strings.\nCommand line strings may have the following macros:\n\n  + `%f`: The file's name, including its extension.\n  + `%e`: The file's name, excluding its extension.\n  + `%d`: The file's directory path.\n  + `%p`: The file's full path.
 concat table.concat(list [, sep [, i [, j]]])\nGiven a list where all elements are strings or numbers, returns the string\n`list[i]..sep..list[i+1] ··· sep..list[j]`. The default value for `sep` is\nthe empty string, the default for `i` is 1, and the default for `j` is\n`#list`. If `i` is greater than `j`, returns the empty string.
 config package.config (string)\nA string describing some compile-time configurations for packages. This\nstring is a sequence of lines:\n  The first line is the directory separator string. Default is '`\`' for\n  Windows and '`/`' for all other systems.\n  The second line is the character that separates templates in a path.\n  Default is '`;`'.\n  The third line is the string that marks the substitution points in a\n  template. Default is '`?`'.\n  The fourth line is a string that, in a path in Windows, is replaced by\n  the executable's directory. Default is '`!`'.\n  The fifth line is a mark to ignore all text after it when building the\n  `luaopen_` function name. Default is '`-`'.\n\nNew in Lua 5.2.
 connect events.connect(event, f, index)\nAdds function *f* to the set of event handlers for event *event* at position\n*index*.\nIf *index* not given, appends *f* to the set of handlers. *event* may be any\narbitrary string and does not need to have been previously defined.\n@param event The string event name.\n@param f The Lua function to connect to *event*.\n@param index Optional index to insert the handler into.\n@usage events.connect('my_event', function(msg) ui.print(msg) end)\n@see disconnect
@@ -959,9 +962,9 @@ rshift bit32.rshift(x, disp)\nReturns the number `x` shifted `disp` bits to the 
 ruby _G.keys.ruby (table)\nContainer for Ruby-specific key bindings.
 ruby _G.snippets.ruby (table)\nContainer for Ruby-specific snippets.
 ruby _M.ruby (module)\nThe ruby module.\nIt provides utilities for editing Ruby code.
-run textadept.run (module)\nCompile and run source code files with Textadept.\nLanguage modules may tweak the `compile_commands`,\n`run_commands`, and/or `error_patterns` tables for particular languages.\nThe user may tweak `build_commands` for particular projects.
+run textadept.run (module)\nCompile, run, and check the syntax of source code files with Textadept.\nLanguage modules may tweak the `compile_commands`,\n`run_commands`, `error_patterns`, `syntax_commands`, and\n`syntax_error_patterns` tables for particular languages.\nThe user may tweak `build_commands` for particular projects.
 run textadept.run.run()\nRuns the current file based on its extension or language using the shell\ncommand from the `run_commands` table.\nEmits `RUN_OUTPUT` events.\n@see run_commands\n@see _G.events
-run_commands textadept.run.run_commands (table)\nMap of file extensions or lexer names to their associated "run" shell command\nline strings or functions that return strings.\nCommand line strings may have the following macros:\n\n  + `%f`: The file's name, including its extension.\n  + `%e`: The file's name, excluding its extension.\n  + `%d`: The current file's directory path.\n  + `%p`: The full path of the current file.
+run_commands textadept.run.run_commands (table)\nMap of file extensions or lexer names to their associated "run" shell command\nline strings or functions that return strings.\nCommand line strings may have the following macros:\n\n  + `%f`: The file's name, including its extension.\n  + `%e`: The file's name, excluding its extension.\n  + `%d`: The file's directory path.\n  + `%p`: The file's full path.
 running coroutine.running()\nReturns the running coroutine plus a boolean, true when the running coroutine\nis the main one.
 save textadept.session.save(filename)\nSaves the session to file *filename* or the user-selected file.\nSaves split views, opened buffers, cursor information, and recent files.\n@param filename Optional absolute path to the session file to save. If `nil`,\n  the user is prompted for one.\n@usage textadept.session.save(filename)\n@see DEFAULT_SESSION
 save_all_files io.save_all_files()\nSaves all unsaved buffers to their respective files.\n@see io.save_file
@@ -1075,7 +1078,7 @@ style_at buffer.style_at (table, Read-only)\nTable of style numbers at positions
 style_at lexer.style_at (table, Read-only)\nTable of style names at positions in the buffer starting from zero.
 style_back buffer.style_back (table)\nTable of background colors, in "0xBBGGRR" format, of text for style numbers\nfrom `0` to `255`.
 style_bold buffer.style_bold (table)\nTable of flags that indicate whether or not text is bold for style numbers\nfrom `0` to `255`.\nThe default values are `false`.
-style_case buffer.style_case (table)\nTable of letter case modes of text for style numbers from `0` to `255`.\n\n* `buffer.CASE_MIXED`\n  Display text in normally.\n* `buffer.CASE_UPPER`\n  Display text in upper case.\n* `buffer.CASE_LOWER`\n  Display text in lower case.\n\nThe default values are `buffer.CASE_MIXED`.
+style_case buffer.style_case (table)\nTable of letter case modes of text for style numbers from `0` to `255`.\n\n* `buffer.CASE_MIXED`\n  Display text in normally.\n* `buffer.CASE_UPPER`\n  Display text in upper case.\n* `buffer.CASE_LOWER`\n  Display text in lower case.\n* `buffer.CASE_CAMEL`\n  Display text in camel case.\n\nThe default values are `buffer.CASE_MIXED`.
 style_changeable buffer.style_changeable (table)\nTable of flags that indicate whether or not text is changeable for style\nnumbers from `0` to `255`.\nThe default values are `true`.\nCurrently, read-only styles do not allow the caret into the range of text,\nbut ranges that contain read-only text are deletable.
 style_clear_all buffer.style_clear_all(buffer)\nReverts all styles to having the same properties as `buffer.STYLE_DEFAULT`.\n@param buffer A buffer.
 style_eol_filled buffer.style_eol_filled (table)\nTable of flags that indicate whether or not the background colors of styles\nwhose characters occur last on lines extend all the way to the view's right\nmargin for style numbers from `0` to `255`.\nThe default values are `false`.
@@ -1092,6 +1095,8 @@ sub string.sub(s, i [, j])\nReturns the substring of `s` that starts at `i` and 
 swap_main_anchor_caret buffer.swap_main_anchor_caret(buffer)\nSwaps the main selection's beginning and end positions.\n@param buffer A buffer.
 switch_buffer ui.switch_buffer()\nPrompts the user to select a buffer to switch to.
 symlinkattributes lfs.symlinkattributes(filepath [, aname])\nIdentical to lfs.attributes except that it obtains information about the link\nitself (not the file it refers to). This function is not available in Windows\nso you may want to make sure that lfs.symlinkattributes exists before using\nit.
+syntax_commands textadept.run.syntax_commands (table)\nMap of file extensions or lexer names to their associated syntax checker\ncommand line strings or functions that return such strings.\n`%f` in command line strings represents the file to check the syntax of.\nUpon saving a source file, this table is consulted for potentially running a\nsyntax checking utility on that file. This usually only makes sense for\ninterpreted languages and markup languages.
+syntax_error_patterns textadept.run.syntax_error_patterns (table)\nMap of file extensions or lexer names to patterns that match their respective\nsyntax-checkers' error messages or functions that return such patterns.\nPatterns contain line number, optional column number, and error message\ncaptures.\nWhen adding to this map, use `(%d+)` to match line and column numbers.\n`(%s*)` may also be used to match column numbers for visual error messages.
 tab buffer.tab(buffer)\nIndents the text on the selected lines or types a Tab character ("\t") at\nthe caret position.\n@param buffer A buffer.
 tab_context_menu textadept.menu.tab_context_menu (table)\nThe default tabbar context menu.
 tab_context_menu ui.tab_context_menu (userdata)\nThe context menu for the buffer's tab, a `ui.menu()`.\nThis is a low-level field. You probably want to use the higher-level\n`textadept.menu.tab_context_menu`.
