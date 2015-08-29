@@ -333,6 +333,7 @@ Bugfixes:
   [`lfs.dir_foreach()`][].
 * Fixed bug in jumping to compile/run errors and clear annotations before
   building projects.
+* Fixed memory leaks in [`ui.dialog()`][].
 
 Changes:
 
@@ -362,6 +363,7 @@ Changes:
 [Textadept 7.8 beta -- Linux]: download/textadept_7.8_beta.i386.tgz
 [Textadept 7.8 beta -- Linux x86_64]: download/textadept_7.8_beta.x86_64.tgz
 [Textadept 7.8 beta -- Modules]: download/textadept_7.8_beta.modules.zip
+[`ui.dialog()`]: api.html#ui.dialog
 [`ui.command_entry.editing_keys`]: api.html#ui.command_entry.editing_keys
 [`ui.command_entry.enter_mode()`]: api.html#ui.command_entry.enter_mode
 [CSI events]: api.html#events.CSI
@@ -1290,6 +1292,7 @@ Bugfixes:
 * Fixed disorienting scrolling when wrapping only one search result.
 * Fixed crash when attempting to load a non-existant lexer.
 * Fixed CSS preprocessor styling.
+* Fixed labels for inputbox dialogs.
 * Scintilla: fixed some instances of incorrect folded text display.
 * Scintilla: fixed [`buffer:visible_from_doc_line()`][] to never return a line
   beyond the end of the buffer.
@@ -1339,6 +1342,7 @@ Download:
 Bugfixes:
 
 * Dialogs belong to the Textadept window.
+* Double-clicking a filteredlist item selects it.
 * Fixed bug in documentation link generator.
 * Fixed bug with indexable buffer properties that return strings.
 * Scintilla: fixed scrollbar drawing when toggling visibility.
@@ -1490,6 +1494,7 @@ Bugfixes:
 * Fixed GUI menu key shortcut handling.
 * Fixed string collation bug in ncurses due to CDK.
 * Pass `Esc` to Scintilla correctly in ncurses.
+* Fix errors when specifying directories and files for file dialogs.
 * Fixed some operators in Bash lexer.
 * Scintilla: fixed hang when removing all characters from an indicator at the
   the end of a buffer.
@@ -2115,6 +2120,8 @@ Changes:
 * Added language-specific [context menu][] support.
 * Use [LuaCoco][] patch for Lua 5.1.4.
 * Use lexer at the caret for key commands and snippets.
+* Added `selected` and `monospaced-font` options for dropdown and textbox
+  dialogs, respectively.
 * Updated to [Scintilla][] 2.29.
 
 [Textadept 4.1 -- Win32]: download/textadept_4.1.win32.zip
@@ -2220,6 +2227,7 @@ Download:
 Bugfixes:
 
 * Fixed Markdown lexer styles.
+* Fixed bug when setting both dialog with and height.
 * Scintilla: fixed incorrect mouse cursor changes.
 * Scintilla: fixed bug with annotations beyond the document end.
 * Scintilla: fixed incorrect drawing of background colors and translucent
@@ -2445,6 +2453,7 @@ Changes:
 * [`gui.print()`][] handles `nil` and non-string arguments properly.
 * Officially supported modules have their own [repositories][] and are available
   as a separate download.
+* Added cancel button to standard dialogs.
 
 [Textadept 3.7 beta 3 -- Win32]: download/textadept_3.7_beta_3.win32.zip
 [Textadept 3.7 beta 3 -- Mac OSX Intel 10.5+]: download/textadept_3.7_beta_3.osx.zip
@@ -2676,6 +2685,7 @@ Changes:
   period of time.
 * Find in files is accessible through [find API][].
 * Updated XML lexer.
+* Added `search-column` and `output-column` options for filteredlist dialogs.
 * Scintilla: added [`buffer:contracted_fold_next()`][] for retrieving fold
   states.
 * Scintilla: added [`buffer:vertical_centre_caret()`][].
