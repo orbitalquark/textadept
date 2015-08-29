@@ -15,6 +15,7 @@ AUTOMATICFOLD_SHOW	_	0;"	F	class:buffer
 AUTOPAIR	_	0;"	F	class:textadept.editing
 AUTO_C_CANCELED	_	0;"	F	class:events
 AUTO_C_CHAR_DELETED	_	0;"	F	class:events
+AUTO_C_COMPLETED	_	0;"	F	class:events
 AUTO_C_SELECTION	_	0;"	F	class:events
 B	_	0;"	f	class:lpeg
 BSD	_	0;"	F	
@@ -41,7 +42,7 @@ CASE_LOWER	_	0;"	F	class:buffer
 CASE_MIXED	_	0;"	F	class:buffer
 CASE_UPPER	_	0;"	F	class:buffer
 CHAR_ADDED	_	0;"	F	class:events
-CHECK_SYNTAX	_	0;"	F	class:_M.python
+CHECK_SYNTAX	_	0;"	F	class:textadept.run
 CLASS	_	0;"	F	class:lexer
 CLASS	_	0;"	F	class:textadept.editing.XPM_IMAGES
 CLEAR	_	0;"	F	class:keys
@@ -107,6 +108,7 @@ FOLD_BASE	_	0;"	F	class:lexer
 FOLD_BLANK	_	0;"	F	class:lexer
 FOLD_HEADER	_	0;"	F	class:lexer
 FUNCTION	_	0;"	F	class:lexer
+GOTO_SYNTAX_ERRORS	_	0;"	F	class:textadept.run
 IDENTIFIER	_	0;"	F	class:lexer
 INDICATOR_CLICK	_	0;"	F	class:events
 INDICATOR_RELEASE	_	0;"	F	class:events
@@ -118,6 +120,7 @@ INDIC_DASH	_	0;"	F	class:buffer
 INDIC_DIAGONAL	_	0;"	F	class:buffer
 INDIC_DOTBOX	_	0;"	F	class:buffer
 INDIC_DOTS	_	0;"	F	class:buffer
+INDIC_FIND	_	0;"	F	class:ui.find
 INDIC_FULLBOX	_	0;"	F	class:buffer
 INDIC_HIDDEN	_	0;"	F	class:buffer
 INDIC_HIGHLIGHT	_	0;"	F	class:textadept.editing
@@ -1100,6 +1103,8 @@ sub	_	0;"	f	class:string
 swap_main_anchor_caret	_	0;"	f	class:buffer
 switch_buffer	_	0;"	f	class:ui
 symlinkattributes	_	0;"	f	class:lfs
+syntax_commands	_	0;"	t	class:textadept.run
+syntax_error_patterns	_	0;"	t	class:textadept.run
 tab	_	0;"	f	class:buffer
 tab_context_menu	_	0;"	F	class:ui
 tab_context_menu	_	0;"	t	class:textadept.menu
