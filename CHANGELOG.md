@@ -22,6 +22,8 @@ Bugfixes:
 
 * Detect `#!/usr/bin/env ...` properly.
 * Fix incorrect menu shortcut key display on Windows.
+* Fixed ASP, Applescript, and Perl lexers.
+* Fixed segfault in parsing some instances of style definitions.
 * Scintilla: fixed performance when deleting markers from many lines.
 * Scintilla: fixed scrollbar drawing on GTK 3.4+.
 * Scintilla: respect encoding for margin text.
@@ -94,11 +96,14 @@ Download:
 Bugfixes:
 
 * Fixed `require()` bug with lfs and utf8 libraries in LuaJIT version.
+* Fixed Perl lexer corner-case.
+* VB lexer keywords are case-insensitive now.
 
 Changes:
 
 * Added `symlink` filter option for ignoring symlinked files and folders to
   [`io.snapopen()`][], [`lfs.dir_foreach()`][], and [`ui.find.FILTER`][].
+* Added [`_FOLDBYINDENTATION`][] field for lexers that fold by indentation.
 * Updated to [Scintilla][] 3.5.5.
 
 [Textadept 8.0 beta -- Win32]: download/textadept_8.0_beta.win32.zip
@@ -109,6 +114,7 @@ Changes:
 [`io.snapopen()`]: api.html#io.snapopen
 [`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [`ui.find.FILTER`]: api.html#ui.find.FILTER
+[`_FOLDBYINDENTATION`]: api.html#lexer.Fold.by.Indentation
 [Scintilla]: http://scintilla.org
 
 ## 8.0 alpha (01 Apr 2015)
@@ -168,6 +174,7 @@ Bugfixes:
   values.
 * Fixed accidental firing of "Escape" key on window focus lost.
 * Fixed tab stop calculation in the terminal version.
+* Improved performance of lexers that fold by indentation.
 * Scintilla: fixed adaptive scrolling on Mac OSX.
 
 Changes:
@@ -176,7 +183,7 @@ Changes:
   "view EOL", "view whitespace", "wrap mode", "margin type", and "margin width";
   updated the "Buffer" and "View" menus appropriately.
 * Officially supported language modules moved to a [new repository][].
-* Added Fish lexer.
+* Added Fish lexer and updated PHP and Python lexers.
 * Merged `events.FILE_SAVED_AS` into [`events.FILE_AFTER_SAVE`][] as a new
   parameter.
 * Merged `textadept.file_types.shebangs` into
@@ -242,6 +249,7 @@ Bugfixes:
 * Fixed opening files with network paths on Win32.
 * Fixed minor GTK 3 issues.
 * Fixed bug in hiding caret when Textadept loses focus.
+* Fixed bug in overwriting fold levels set by custom fold functions.
 * Scintilla: fixed placement of large call tips.
 * Scintilla: fixed background color of annotation lines with text margins.
 * Scintilla: fixed some instances of paste on Mac OSX.
@@ -279,6 +287,7 @@ Bugfixes:
 * Do not select a line when clicking on its first character in the terminal
   version.
 * Fixed some cases of toggling find options via API in the terminal version.
+* Improved folding by indentation.
 * Scintilla: fixed caret blinking when holding down `Del`.
 * Scintilla: avoid extra space when pasting from external applications.
 
@@ -287,6 +296,7 @@ Changes:
 * The terminal version can suspend via `^Z` (changed "undo" key binding to
   `M-Z` and added additional `M-S-Z` "redo" binding).
 * Added [`spawn_proc:close()`][] for sending EOF to spawned processes.
+* Updated Tcl lexer.
 * Scintilla: Added `buffer.ANNOTATION_INDENTED` for indented, non-bordered
   annotations.
 * Scintilla: tab arrows, wrap markers, and line markers are now drawn in the
@@ -383,6 +393,7 @@ Bugfixes:
 Changes:
 
 * Mac OSX GUI version can truly [`spawn()`][] processes now.
+* Improved performance for lexers with no grammars and no fold rules.
 * Updated to [Scintilla][] 3.5.1.
 
 [Textadept 7.7 -- Win32]: download/textadept_7.7.win32.zip
@@ -440,6 +451,7 @@ Download:
 
 Bugfixes:
 
+* Fixed Bash heredoc highlighting.
 * Scintilla: fixed some instances of indicators not being removed properly.
 * Scintilla: fixed crash with Ubuntu's overlay scrollbars.
 
@@ -504,6 +516,7 @@ Bugfixes:
 * Export Lua symbols correctly on Windows.
 * Fixed occasional bug when double-clicking in the message buffer.
 * Fixed an edge-case in word highlighting.
+* Fixed some folding by indentation edge cases.
 * Scintilla: fixed caret invisibility when its period is zero.
 * Scintilla: fixed flickering when scrolling in GTK 3.10+.
 
@@ -529,6 +542,7 @@ Changes:
 * Removed `textadept.command_entry.complete_lua()` and
   `textadept.command_entry.execute_lua()` and moved their key bindings into
   their module.
+* Updated D lexer.
 * Scintilla: added `buffer.FOLDFLAG_LINESTATE` for lexer debugging aid.
 * Updated to [Scintilla][] 3.4.2.
 
@@ -560,7 +574,7 @@ Download:
 
 Bugfixes:
 
-* None.
+* Fixed cases of incorrect Markdown header highlighting.
 
 Changes:
 
@@ -689,6 +703,7 @@ Changes:
 
 * Added Swedish translation.
 * Added support for multiple entry boxes in [inputdialogs][].
+* Updated LaTeX and Go lexers.
 * Scintilla: added [`buffer:drop_selection_n()`][] for dropping a multiple
   selection.
 * Scintilla: added [`buffer.call_tip_pos_start`][] for altering call tip
@@ -744,6 +759,7 @@ Changes:
 * Added configurable tab context menus via `textadept.menu.set_contextmenus()`.
 * New GUI theme for Mac OSX.
 * [Experimental] Merged separate lexer states into Textadept's Lua state.
+* Updated HTML lexer.
 * Scintilla: the `Ctrl` modifier in Mac OSX mouse clicks is recognized as
   `buffer.MOD_META`.
 * Scintilla: added [`buffer.representation`][] for changing the representation
@@ -783,6 +799,8 @@ Bugfixes:
 * Textbox dialogs' `scroll_to` option works correctly.
 * Emit autocompletion and hotspot events properly.
 * Handle replacement captures with escapes properly.
+* Fixed slowdown in processing long lines for folding.
+* Fixed slowdown with large HTML files.
 
 Changes:
 
@@ -822,6 +840,7 @@ Bugfixes:
 * Fixed bug with `buffer.SCFIND_REGEX` flag.
 * Fixed OSX Command key recognition for click events.
 * Fixed compile error with GTK3.
+* HTML and XML lexers maintain their states better.
 
 Changes:
 
@@ -853,6 +872,7 @@ Bugfixes:
 * Lua run command buffers output correctly.
 * Fixed corner case in paragraph selection.
 * Fixed corner case in block uncommenting.
+* Disable folding when `fold` property is `0`.
 
 Changes:
 
@@ -862,6 +882,12 @@ Changes:
   instead of styles.
 * The [`buffer`][] API applies to all buffers now, not just the global one.
 * Added "Save All" to the menu.
+* Updated D lexer.
+* Added additional parameter to [`lexer.load()`][] to allow child lexers to be
+  embedded multiple times with different start/end tokens.
+* Lexers do not need an "any\_char" [rule][] anymore; it is included by default.
+* [Child lexers][] do not need an explicit `M._lexer = parent` declaration
+  anymore; it is done automatically.
 
 [Textadept 7.0 beta 5 -- Win32]: download/textadept_7.0_beta_5.win32.zip
 [Textadept 7.0 beta 5 -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta_5.osx.zip
@@ -871,6 +897,9 @@ Changes:
 [`ui.set_theme()`]: api.html#ui.set_theme
 [`textadept.editing.INDIC_BRACEMATCH`]: api.html#textadept.editing.INDIC_BRACEMATCH
 [`buffer`]: api.html#buffer
+[`lexer.load()`]: api.html#lexer.load
+[rule]: api.html#lexer.Rules
+[Child lexers]: api.html#lexer.Child.Lexer
 
 ## 7.0 beta 4 (01 Oct 2013)
 
@@ -886,6 +915,7 @@ Bugfixes:
 
 * Fixed various compile and install errors.
 * Fixed error when block commenting plain text.
+* Fixed occasional crash when getting the lexer name in a multi-language lexer.
 
 Changes:
 
@@ -910,6 +940,14 @@ Changes:
   `ui.filteredlist()` as a result.
 * Changed [`io.open_file()`][] and [`io.snapopen()`][] to accept tables of files
   and paths instead of "\n" delimited strings.
+* Changed `lexer.get_fold_level()`, `lexer.get_indent_amount()`,
+  `lexer.get_property()`, and `lexer.get_style_at()` functions to be
+  [`lexer.fold_level`][], [`lexer.indent_amount`][], [`lexer.property`][], and
+  [`lexer.style_at`][] tables, respectively.
+* Added [`lexer.property_int`][] and [`lexer.property_expanded`][] tables.
+* Changed API for [`lexer.delimited_range()`][] and [`lexer.nested_pair()`][].
+* Only enable `fold.by.indentation` property by default in
+  whitespace-significant languages.
 
 [Textadept 7.0 beta 4 -- Win32]: download/textadept_7.0_beta_4.win32.zip
 [Textadept 7.0 beta 4 -- Mac OSX Intel 10.5+]: download/textadept_7.0_beta_4.osx.zip
@@ -928,6 +966,14 @@ Changes:
 [`ui.dialogs`]: api.html#ui.dialogs
 [`io.open_file()`]: api.html#io.open_file
 [`io.snapopen()`]: api.html#io.snapopen
+[`lexer.fold_level`]: api.html#lexer.fold_level
+[`lexer.indent_amount`]: api.html#lexer.indent_amount
+[`lexer.property`]: api.html#lexer.property
+[`lexer.style_at`]: api.html#lexer.style_at
+[`lexer.property_int`]: api.html#lexer.property_int
+[`lexer.property_expanded`]: api.html#lexer.property_expanded
+[`lexer.delimited_range()`]: api.html#lexer.delimited_range
+[`lexer.nested_pair()`]: api.html#lexer.nested_pair
 
 ## 7.0 beta 3 (11 Sep 2013)
 
@@ -995,6 +1041,7 @@ Bugfixes:
 Changes:
 
 * New [`gui.maximized`][] field so Textadept can remember its maximized state.
+* Changed [`lexer._tokenstyles`][] to be a map instead of a list.
 * Scintilla: improved UTF-8 case-insensitive searching.
 * Updated to [Scintilla][] 3.3.4.
 
@@ -1005,6 +1052,7 @@ Changes:
 [Textadept 7.0 beta 2 -- Modules]: download/textadept_7.0_beta_2.modules.zip
 [`gui.set_theme()`]: api.html#ui.set_theme
 [`gui.maximized`]: api.html#ui.maximized
+[`lexer._tokenstyles`]: api.html#lexer.Token.Styles
 [Scintilla]: http://scintilla.org
 
 ## 7.0 beta (11 Jul 2013)
@@ -1147,6 +1195,7 @@ Changes:
 * Removed `_M[lang].set_buffer_properties()` functions. Set properties through
   `events.LANGUAGE_MODULE_LOADED` instead.
 * Print the results of '=' Lua commands.
+* Updated D lexer.
 * Scintilla: added `buffer.INDIC_COMPOSITIONTHICK` indicator.
 * Updated to [Scintilla][] 3.3.2.
 
@@ -1202,6 +1251,7 @@ Changes:
 * Consolidated `_M.textadept.editing.grow_selection()` functionality into
   [`_M.textadept.editing.select_enclosed()`][].
 * Renamed `io.try_encodings` to [`io.encodings`][].
+* No need for '!' in front of font faces anymore.
 
 [Textadept 6.6 beta -- Win32]: download/textadept_6.6_beta.win32.zip
 [Textadept 6.6 beta -- Mac OSX Intel 10.5+]: download/textadept_6.6_beta.osx.zip
@@ -1238,6 +1288,8 @@ Bugfixes:
 * Improved message double-clicking behavior for compile and run commands by
   adding [`_M.textadept.run.cwd`][].
 * Fixed disorienting scrolling when wrapping only one search result.
+* Fixed crash when attempting to load a non-existant lexer.
+* Fixed CSS preprocessor styling.
 * Scintilla: fixed some instances of incorrect folded text display.
 * Scintilla: fixed [`buffer:visible_from_doc_line()`][] to never return a line
   beyond the end of the buffer.
@@ -1295,6 +1347,7 @@ Changes:
 
 * Added [command line switches][] for loading sessions on startup.
 * Added [command line switches][] for running Lua code on startup.
+* Updated AWK lexer.
 * Updated to [Scintilla][] 3.2.5.
 * Updated to [LuaJIT][] 2.0.1.
 
@@ -1403,6 +1456,8 @@ Changes:
 * Rewrote LuaDoc [API documentation][].
 * Added French translation.
 * Updated to [LuaJIT][] 2.0.0.
+* Improved speed and memory usage of lexers.
+* Updated Java lexer.
 
 [Textadept 6.1 -- Win32]: download/textadept_6.1.win32.zip
 [Textadept 6.1 -- Mac OSX Intel 10.5+]: download/textadept_6.1.osx.zip
@@ -1435,6 +1490,7 @@ Bugfixes:
 * Fixed GUI menu key shortcut handling.
 * Fixed string collation bug in ncurses due to CDK.
 * Pass `Esc` to Scintilla correctly in ncurses.
+* Fixed some operators in Bash lexer.
 * Scintilla: fixed hang when removing all characters from an indicator at the
   the end of a buffer.
 * Scintilla: fixed crash when drawing margins in GTK 3.
@@ -1449,6 +1505,7 @@ Changes:
 * Removed `_M.textadept.run.execute()`.
 * Updated documentation and documentation formatting.
 * Added [Python module][].
+* Rewrote Makefile lexer.
 * Scintilla: improved performance when performing multiple searches.
 * Updated to [Scintilla][] 3.2.3.
 * Updated to [LuaJIT][] 2.0.0-beta11.
@@ -1486,6 +1543,7 @@ Bugfixes:
 * Keep termios disabled in ncurses CDK widgets.
 * Do not write ncurses initialization errors over titlebar.
 * Fixed bug in [`string.iconv()`][].
+* Include `_` as identifier char in Desktop lexer.
 
 Changes:
 
@@ -1541,6 +1599,9 @@ Changes:
 * `_M.textadept.snapopen.DEFAULT_DEPTH` is now `99` since [`MAX`][] is the
   limiting factor.
 * Use constant names in theme options instead of nondescript integers.
+* Added new [`lexer.last_char_includes()`][] function for better regex
+  detection.
+* Updated AWK lexer.
 * Scintilla: added [`buffer.selection_empty`][].
 * Scintilla: added [`buffer:vc_home_display()`][] and
   [`buffer:vc_home_display_extend()`][] for navigating wrapped lines.
@@ -1555,6 +1616,7 @@ Changes:
 [`_M.textadept.menu.select_command()`]: api.html#textadept.menu.select_command
 [`_M.textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
 [`MAX`]: api.html#io.SNAPOPEN_MAX
+[`lexer.last_char_includes()`]: api.html#lexer.last_char_includes
 [`buffer.selection_empty`]: api.html#buffer.selection_empty
 [`buffer:vc_home_display()`]: api.html#buffer.vc_home_display
 [`buffer:vc_home_display_extend()`]: api.html#buffer.vc_home_display_extend
@@ -1574,6 +1636,7 @@ Download:
 Bugfixes:
 
 * Lots of bugfixes to the experimental ncurses version.
+* Fixed bug with `$$` variables in Perl lexer.
 * Scintilla: do not show empty autocompletion list if
   [`buffer.auto_c_choose_single`][] is set.
 * Scintilla: fixed [`buffer:marker_delete()`][] to only delete one marker per
@@ -1597,6 +1660,7 @@ Changes:
 * Moved `_M.textadept.adeptsense.complete_symbol()` and `show_documentation()`
   functionality into `_M.textadept.adeptsense.complete()` and `show_apidoc()`.
 * New 64-bit Windows version (note: without LuaJIT).
+* Updated Perl lexer.
 * Scintilla: added [`buffer.punctuation_chars`][], [`buffer.word_chars`][], and
   [`buffer.whitespace_chars`][] for manipulating character sets.
 * Updated to [Scintilla][] 3.2.1.
@@ -1643,6 +1707,8 @@ Changes:
 * Changed `make` commands for [compiling][] Textadept.
 * x86\_64 binary provides `libpng12` executables by default.
 * Can cross compile to Mac OSX from Linux.
+* Updated AWK lexer.
+* Updated HTML lexer to recognize HTML5 'script' and 'style' tags.
 * Updated to [Lua 5.2.1][].
 * Updated to [LuaJIT][] 2.0.0-beta10.
 
@@ -1680,6 +1746,8 @@ Bugfixes:
 
 Changes:
 
+* Identify more file extensions.
+* Updated Batch lexer.
 * Scintilla: `Ctrl+Double Click` and `Ctrl+Triple Click` adds words and lines,
   respectively, to selections.
 * Scintilla: added [`buffer:delete_range()`][] for deleting ranges of text.
@@ -1781,6 +1849,8 @@ Changes:
 * Added documentation on [generating LuaDoc][] and Lua Adeptsense.
 * Moved `Markdown:` comments into LuaDoc.
 * Added Spanish and German translations.
+* Updated VB and VBScript lexers.
+* Improved the speed of simple code folding.
 * Use [GTK][] 2.24 on Windows.
 * Updated to [Scintilla][] 3.0.4.
 
@@ -1856,6 +1926,7 @@ Changes:
 * Added default extension and folder filters in
   `modules/textadept/snapopen.lua`.
 * Added ChucK lexer.
+* Updated Lua lexer.
 * Updated to [Scintilla][] 3.0.3.
 * Also include [LuaJIT][] executables in releases.
 
@@ -1892,6 +1963,7 @@ Changes:
 * Do not clear registered images when autocompleting with Adeptsense.
 * Renamed editing module's `current_word()` to [`select_word()`][].
 * Updated [manual][].
+* Updated D lexer.
 
 [Textadept 5.0 beta -- Win32]: download/textadept_5.0_beta.win32.zip
 [Textadept 5.0 beta -- Mac OSX Intel 10.5+]: download/textadept_5.0_beta.osx.zip
@@ -1918,7 +1990,9 @@ Download:
 
 Bugfixes:
 
-* None.
+* Fixed bug in Matlab lexer for operators.
+* Fixed highlighting of variables in Bash.
+* Fixed multi-line delimited and token strings in D lexer.
 
 Changes:
 
@@ -1951,6 +2025,7 @@ Bugfixes:
 
 * Fixed bug with opening files in the current directory from the command line.
 * Fixed erroneous charset conversion.
+* Fixed bug with folding line comments.
 * Scintilla: fixed drawing at style boundaries on Mac OSX.
 * Scintilla: fixed crash when painting uninitialized pixmaps.
 
@@ -1960,6 +2035,7 @@ Changes:
 * All new `light` and `dark` themes.
 * Removed `_m.textadept.editing.select_style()`.
 * Simplify theming via [gtkrc][] by naming `GtkWindow` only.
+* Added [`lexer.REGEX`][] and [`lexer.LABEL`][] tokens.
 * Updated to [Scintilla][] 3.0.1.
 
 [Textadept 4.3 -- Win32]: download/textadept_4.3.win32.zip
@@ -1970,6 +2046,8 @@ Changes:
 [Textadept 4.3 -- Modules]: download/textadept_4.3.modules.zip
 [theme switching]: api.html#ui.set_theme
 [gtkrc]: manual.html#GUI.Theme
+[`lexer.REGEX`]: api.html#lexer.REGEX
+[`lexer.LABEL`]: api.html#lexer.LABEL
 [Scintilla]: http://scintilla.org
 
 ## 4.2 (01 Nov 2011)
@@ -2076,6 +2154,7 @@ Bugfixes:
 * Autocompletion list sort order respects [`buffer.auto_c_ignore_case`][] now.
 * Fixed split view focus bug with the same buffer in two views.
 * Set new buffer EOL mode properly on Mac OSX.
+* Fixed some general bugs in folding.
 
 Changes:
 
@@ -2140,6 +2219,7 @@ Download:
 
 Bugfixes:
 
+* Fixed Markdown lexer styles.
 * Scintilla: fixed incorrect mouse cursor changes.
 * Scintilla: fixed bug with annotations beyond the document end.
 * Scintilla: fixed incorrect drawing of background colors and translucent
@@ -2194,6 +2274,7 @@ Download:
 Bugfixes:
 
 * Fixed bug for when [`gui.dialog`][] steals focus.
+* Colors are now styled correctly in the Properties lexer.
 * Scintilla: fixed bug with wrong colors being drawn.
 * Scintilla: fixed font leak.
 * Scintilla: fixed automatic scrolling for wrapped lines.
@@ -2219,7 +2300,9 @@ Changes:
 * Added `fold.line.comments` property for folding multiple single-line comments.
 * Use [GTK][] 2.22 on Windows.
 * Can localize the labels and buttons in the GUI [find][] frame.
-* Added ConTeXt lexer.
+* Added ConTeXt lexer and updated Coffeescript, HTML, LaTeX, and TeX lexers.
+* Multiple single-line comments can be folded with the `fold.line.comments`
+  property set to `1`.
 
 [Textadept 3.9 -- Win32]: download/textadept_3.9.win32.zip
 [Textadept 3.9 -- Mac OSX Intel 10.5+]: download/textadept_3.9.osx.zip
@@ -2251,6 +2334,7 @@ Bugfixes:
 
 * Removed non-existant key chain.
 * Fixed bug in snippets.
+* Fixed bug in lexers that fold by indentation.
 * Scintilla: fixed indentation guide drawing on the first line.
 * Scintilla: fixed display of folds for wrapped lines.
 * Scintilla: fixed various GTK-related bugs.
@@ -2273,6 +2357,8 @@ Changes:
 * Writing custom folding for lexers is much [easier][] now.
 * Added native folding for more than 60% of existing lexers. The rest still use
   folding by indentation by default.
+* Added regex support for Coffeescript lexer.
+* Embed Coffeescript lexer in HTML lexer.
 
 [Textadept 3.8 -- Win32]: download/textadept_3.8.win32.zip
 [Textadept 3.8 -- Mac OSX Intel 10.5+]: download/textadept_3.8.osx.zip
@@ -2392,6 +2478,7 @@ Bugfixes:
 * Adeptsense can now recognize more than 1 level of inheritence.
 * Keychain is cleared on key command error.
 * Fixed infinite loop bug in `_m.textadept.editing.select_scope()`.
+* Fixed bug with nested embedded lexers.
 * Scintilla: fixed memory leak.
 * Scintilla: fixed double-click behavior around word boundaries.
 * Scintilla: right-click cancels autocompletion.
@@ -2420,6 +2507,7 @@ Changes:
 * Added `sense.syntax.word_chars` to Adeptsense.
 * Included libpng12 build for 64-bit Debian-based Linux distros (Ubuntu).
 * Added [CSS][], [HTML][], Java, and [Ruby][] modules with Adeptsenses.
+* Updated BibTeX lexer.
 
 [Textadept 3.7 beta 2 -- Win32]: download/textadept_3.7_beta_2.win32.zip
 [Textadept 3.7 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_3.7_beta_2.osx.zip
@@ -2458,6 +2546,7 @@ Changes:
 * Can navigate between bookmarks with a filteredlist.
 * Language-specific [`char_matches`][] and [`braces`][] can be defined.
 * `command_entry_keypress` event accepts modifier keys.
+* Updated BibTeX and Lua lexers.
 
 [Textadept 3.7 beta -- Win32]: download/textadept_3.7_beta.win32.zip
 [Textadept 3.7 beta -- Mac OSX Intel 10.5+]: download/textadept_3.7_beta.osx.zip
@@ -2482,6 +2571,7 @@ Bugfixes:
 * Fixed infinite recursion errors caused in events.
 * Fix statusbar update bug with key chains.
 * Do not emit `buffer_new` event when splitting the view.
+* Fixed comment bug in Caml lexer.
 
 Changes:
 
@@ -2515,6 +2605,7 @@ Download:
 Bugfixes:
 
 * Fixed bug introduced when exposing Find in Files API.
+* Fixed bug in Tcl lexer with comments.
 
 Changes:
 
@@ -2584,6 +2675,7 @@ Changes:
 * Added [`_G.timeout()`][] function for calling functions and/or events after a
   period of time.
 * Find in files is accessible through [find API][].
+* Updated XML lexer.
 * Scintilla: added [`buffer:contracted_fold_next()`][] for retrieving fold
   states.
 * Scintilla: added [`buffer:vertical_centre_caret()`][].
@@ -2622,11 +2714,14 @@ Download:
 Bugfixes:
 
 * Fixed buggy snippet menu.
+* Comments do not need to begin the line in Properties lexer.
 
 Changes:
 
 * Added [`_m.textadept.snapopen`][] module with menu options for rapidly opening
   files.
+* Added coffeescript lexer.
+* Updated D and Java lexers.
 
 [Textadept 3.3 -- Win32]: download/textadept_3.3.win32.zip
 [Textadept 3.3 -- Mac OSX Intel 10.5+]: download/textadept_3.3.osx.zip
@@ -2648,6 +2743,7 @@ Download:
 Bugfixes:
 
 * Fixed "Replace All" infinite loop bug.
+* Handle strings properly in Groovy and Vala lexers.
 * Scintilla: fixed drawing bug after horizontally scrolling too much.
 * Scintilla: fixed various folding bugs.
 
@@ -2688,6 +2784,8 @@ Bugfixes:
 Changes:
 
 * Refactored key commands to support propagation.
+* Updated TeX lexer.
+* Only highlight C/C++ preprocessor words, not the whole line.
 * Scintilla: added new `buffer.CARETSTICKY_WHITESPACE` caret sticky option.
 * Scintilla: lexing improvements.
 * Updated to [Scintilla][] 2.20.
@@ -2742,6 +2840,8 @@ Bugfixes:
 
 * Fixed Mac OSX paste issue.
 * Fixed [`buffer:text_range()`][] argcheck problem.
+* Differentiate between division and regex in Javascript lexer.
+* Fixed bug with child's main lexer not having a `_tokenstyles` table.
 * Scintilla: fixed flashing while scrolling.
 * Scintilla: fixed marker movement when inserting newlines.
 * Scintilla: fixed middle-click paste in block-selection mode.
@@ -2764,6 +2864,7 @@ Changes:
 * `~/.textadept/init.lua` is created for you if one does not exist.
 * No more autoload of `~/.textadept/key_commands.lua` and
   `~/.textadept/snippets.lua`
+* Updated Java and D lexers.
 * Scintilla: added [`buffer.multi_paste`][] for pasting into multiple
   selections.
 * Updated to [Scintilla][] 2.12.
@@ -2832,6 +2933,8 @@ Bugfixes:
 * Respect tab settings for snippets.
 * Fixed help hanging bug in Win32.
 * Fixed Lua module commands bug.
+* Fixed bug with style metatables.
+* Fixed bug with XML namespaces.
 
 Changes:
 
@@ -2844,6 +2947,7 @@ Changes:
 * Rewrote lexers implementation.
 * Added Inform, Lilypond, and NSIS lexers.
 * `_m.textadept.editing.enclosure` is now an accessible table.
+* Updated D, Java, and LaTeX lexers.
 
 [Textadept 2.2 beta 2 -- Win32]: download/textadept_2.2_beta2.win32.zip
 [Textadept 2.2 beta 2 -- Mac OSX Intel 10.5+]: download/textadept_2.2_beta2.osx.zip
@@ -2869,6 +2973,7 @@ Bugfixes:
 * Fixed transform bug in snippets.
 * Fixed bug with Io lexer mime-type.
 * Fixed embedded css/javascript bug in HTML lexer.
+* Fixed bug in multi-language lexer detection.
 
 Changes:
 
@@ -2880,7 +2985,7 @@ Changes:
 * Can select lexer from filteredlist dialog.
 * Can have user `key_commands.lua`, `snippets.lua`, `mime_types.conf`,
   `locale.conf` that are loaded by their respective modules.
-* Added Matlab/Octave lexer.
+* Added Matlab/Octave lexer and updated Haskell lexer.
 * Backspace deletes auto-inserted character pairs.
 * Added notification for session files not found.
 * Snippets use multiple carets.
