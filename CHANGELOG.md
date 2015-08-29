@@ -22,12 +22,20 @@ Bugfixes:
 
 * Detect `#!/usr/bin/env ...` properly.
 * Fix incorrect menu shortcut key display on Windows.
+* Scintilla: fixed performance when deleting markers from many lines.
+* Scintilla: fixed scrollbar drawing on GTK 3.4+.
+* Scintilla: respect encoding for margin text.
 
 Changes:
 
 * Added support for Elixir and Windows Script Files (WSF).
 * Added parameter to [`textadept.editing.select_word()`][] for selecting all
   occurrences.
+* Scintilla: added [`buffer:multiple_select_add_next()`][] and
+  [`buffer:multiple_select_add_each()`][] for creating multiple selections from
+  selected text.
+* Scintilla: added [`buffer:is_range_word()`][] and
+  [`buffer:target_whole_document()`][] helper functions for search and replace.
 * Updated to [Scintilla][] 3.5.7.
 * Updated to [Lua][] 5.3.1.
 
@@ -37,6 +45,10 @@ Changes:
 [Textadept 8.1 -- Linux x86_64]: download/textadept_8.1.x86_64.tgz
 [Textadept 8.1 -- Modules]: download/textadept_8.1.modules.zip
 [`textadept.editing.select_word()`]: api.html#textadept.editing.select_word
+[`buffer:multiple_select_add_next()`]: api.html#buffer.multiple_select_add_next
+[`buffer:multiple_select_add_each()`]: api.html#buffer.multiple_select_add_each
+[`buffer:is_range_word()`]: api.html#buffer.is_range_word
+[`buffer:target_whole_document()`]: api.html#buffer.target_whole_document
 [Scintilla]: http://scintilla.org
 [Lua]: http://lua.org
 
@@ -156,6 +168,7 @@ Bugfixes:
   values.
 * Fixed accidental firing of "Escape" key on window focus lost.
 * Fixed tab stop calculation in the terminal version.
+* Scintilla: fixed adaptive scrolling on Mac OSX.
 
 Changes:
 
@@ -169,6 +182,11 @@ Changes:
 * Merged `textadept.file_types.shebangs` into
   [`textadept.file_types.patterns`][].
 * Removed `io.boms`.
+* Scintilla: added [`buffer.indic_hover_fore`][] and
+  [`buffer.indic_hover_style`][] for styling indicators differently when the
+  mouse is over them.
+* Added new `buffer.INDIC_COMPOSITIONTHIN`, `buffer.INDIC_FULLBOX`, and
+  `buffer.INDIC_TEXTFORE` indicators.
 * Updated to [Scintilla][] 3.5.4.
 
 [Textadept 7.9 -- Win32]: download/textadept_7.9.win32.zip
@@ -179,6 +197,8 @@ Changes:
 [new repository]: http://foicica.com/hg/textadept_modules
 [`textadept.file_types.patterns`]: api.html#textadept.file_types.patterns
 [`events.FILE_AFTER_SAVE`]: api.html#events.FILE_AFTER_SAVE
+[`buffer.indic_hover_fore`]: api.html#buffer.indic_hover_fore
+[`buffer.indic_hover_style`]: api.html#buffer.indic_hover_style
 [Scintilla]: http://scintilla.org
 
 ## 7.8 (01 Feb 2015)
@@ -222,6 +242,10 @@ Bugfixes:
 * Fixed opening files with network paths on Win32.
 * Fixed minor GTK 3 issues.
 * Fixed bug in hiding caret when Textadept loses focus.
+* Scintilla: fixed placement of large call tips.
+* Scintilla: fixed background color of annotation lines with text margins.
+* Scintilla: fixed some instances of paste on Mac OSX.
+* Scintilla: fixed incorrect margin click handling in the terminal version.
 
 Changes:
 
@@ -255,12 +279,18 @@ Bugfixes:
 * Do not select a line when clicking on its first character in the terminal
   version.
 * Fixed some cases of toggling find options via API in the terminal version.
+* Scintilla: fixed caret blinking when holding down `Del`.
+* Scintilla: avoid extra space when pasting from external applications.
 
 Changes:
 
 * The terminal version can suspend via `^Z` (changed "undo" key binding to
   `M-Z` and added additional `M-S-Z` "redo" binding).
 * Added [`spawn_proc:close()`][] for sending EOF to spawned processes.
+* Scintilla: Added `buffer.ANNOTATION_INDENTED` for indented, non-bordered
+  annotations.
+* Scintilla: tab arrows, wrap markers, and line markers are now drawn in the
+  terminal version.
 * Updated to [Scintilla][] 3.5.2.
 
 [Textadept 7.8 beta 2 -- Win32]: download/textadept_7.8_beta_2.win32.zip
@@ -347,6 +377,8 @@ Bugfixes:
 
 * Fixed corner-case in switching to most recent buffer after closing.
 * Fixed find/replace bug when embedded Lua code evaluates to a number.
+* Scintilla: fixed some instances of the autocompletion window not showing up.
+* Scintilla: fixed sizing of the autocompletion window.
 
 Changes:
 
@@ -373,6 +405,9 @@ Download:
 Bugfixes:
 
 * Recognize DEL when emitted by the Backspace key in the terminal version.
+* Scintilla: fixed [`buffer:del_word_right()`][] selection redrawing bug.
+* Scintilla: fixed autocompletion list memory leak.
+* Scintilla: fixed overtype caret when it is over multi-byte characters.
 
 Changes:
 
@@ -388,6 +423,7 @@ Changes:
 [Textadept 7.6 -- Linux]: download/textadept_7.6.i386.tgz
 [Textadept 7.6 -- Linux x86_64]: download/textadept_7.6.x86_64.tgz
 [Textadept 7.6 -- Modules]: download/textadept_7.6.modules.zip
+[`buffer:del_word_right()`]: api.html#buffer.del_word_right
 [`spawn()`]: api.html#spawn
 [`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [Scintilla]: http://scintilla.org
@@ -404,13 +440,16 @@ Download:
 
 Bugfixes:
 
-* None.
+* Scintilla: fixed some instances of indicators not being removed properly.
+* Scintilla: fixed crash with Ubuntu's overlay scrollbars.
 
 Changes:
 
-* New [events.FOCUS][] event for when Textadept's window receives focus.
+* New [`events.FOCUS`][] event for when Textadept's window receives focus.
 * Condensed manual and API documentation into single files.
 * Added Polish translation.
+* Scintilla: added [`buffer.auto_c_multi`][] for autocompleting into multiple
+  selections.
 * Updated to [Scintilla][] 3.4.4.
 
 [Textadept 7.5 -- Win32]: download/textadept_7.5.win32.zip
@@ -418,7 +457,8 @@ Changes:
 [Textadept 7.5 -- Linux]: download/textadept_7.5.i386.tgz
 [Textadept 7.5 -- Linux x86_64]: download/textadept_7.5.x86_64.tgz
 [Textadept 7.5 -- Modules]: download/textadept_7.5.modules.zip
-[events.FOCUS]: api.html#events.FOCUS
+[`events.FOCUS`]: api.html#events.FOCUS
+[`buffer.auto_c_multi`]: api.html#buffer.auto_c_multi
 [Scintilla]: http://scintilla.org
 
 ## 7.4 (11 Jun 2014)
@@ -464,6 +504,8 @@ Bugfixes:
 * Export Lua symbols correctly on Windows.
 * Fixed occasional bug when double-clicking in the message buffer.
 * Fixed an edge-case in word highlighting.
+* Scintilla: fixed caret invisibility when its period is zero.
+* Scintilla: fixed flickering when scrolling in GTK 3.10+.
 
 Changes:
 
@@ -487,6 +529,7 @@ Changes:
 * Removed `textadept.command_entry.complete_lua()` and
   `textadept.command_entry.execute_lua()` and moved their key bindings into
   their module.
+* Scintilla: added `buffer.FOLDFLAG_LINESTATE` for lexer debugging aid.
 * Updated to [Scintilla][] 3.4.2.
 
 [Textadept 7.3 -- Win32]: download/textadept_7.3.win32.zip
@@ -568,6 +611,11 @@ Download:
 Bugfixes:
 
 * Fixed bug in Win32 terminal version with "shifted" character input.
+* Scintilla: fixed bug when moving caret down on wrapped lines.
+* Scintilla: fixed instances of bad caret positioning within characters.
+* Scintilla: fixed automatic indentation when the caret is within virtual space.
+* Scintilla: fixed annotation deletion from lines.
+* Scintilla: fixed placement of large call tips.
 
 Changes:
 
@@ -578,6 +626,9 @@ Changes:
   to spawning support.
 * [Snapopen][] now supports projects; added new menu entry and key command.
 * Added support for [building projects][].
+* Scintilla: draw unicode line ends as blobs.
+* Scintilla: added `buffer.WRAP_WHITESPACE` for wrapping on whitespace, not
+  style changes.
 * Updated to [LuaJIT][] 2.0.3.
 * Updated to [Scintilla][] 3.4.1.
 
@@ -632,11 +683,18 @@ Bugfixes:
 
 * Handle *./* and *../* sequences in filepaths.
 * Correctly restore views with word wrap enabled.
+* Scintilla: fixed some instances of caret placement when scrolling.
 
 Changes:
 
 * Added Swedish translation.
 * Added support for multiple entry boxes in [inputdialogs][].
+* Scintilla: added [`buffer:drop_selection_n()`][] for dropping a multiple
+  selection.
+* Scintilla: added [`buffer.call_tip_pos_start`][] for altering call tip
+  backspace behavior.
+* Scintilla: added `buffer.MARK_BOOKMARK` marker symbol.
+* Scintilla: better marker drawing.
 * Updated to [Scintilla][] 3.3.9.
 
 [Textadept 7.2 beta -- Win32]: download/textadept_7.2_beta.win32.zip
@@ -645,6 +703,8 @@ Changes:
 [Textadept 7.2 beta -- Linux x86_64]: download/textadept_7.2_beta.x86_64.tgz
 [Textadept 7.2 beta -- Modules]: download/textadept_7.2_beta.modules.zip
 [inputdialogs]: api.html#ui.dialogs.inputbox
+[`buffer:drop_selection_n()`]: api.html#buffer.drop_selection_n
+[`buffer.call_tip_pos_start`]: api.html#buffer.call_tip_pos_start
 [Scintilla]: http://scintilla.org
 
 ## 7.2 alpha (01 Jan 2014)
@@ -665,6 +725,11 @@ Bugfixes:
 * Fixed Makefile bug in grabbing dependencies with older versions of wget.
 * Recognize lower-case drive letter names for files passed from external
   programs in Windows.
+* Scintilla: fixed some instances of adjacent indicator drawing.
+* Scintilla: fixed scroll width tracking for annotated lines.
+* Scintilla: fixed horizontal scroll bar range.
+* Scintilla: fixed caret placement when margins change.
+* Scintilla: fixed some instances of incorrect selection redrawing.
 
 Changes:
 
@@ -679,6 +744,13 @@ Changes:
 * Added configurable tab context menus via `textadept.menu.set_contextmenus()`.
 * New GUI theme for Mac OSX.
 * [Experimental] Merged separate lexer states into Textadept's Lua state.
+* Scintilla: the `Ctrl` modifier in Mac OSX mouse clicks is recognized as
+  `buffer.MOD_META`.
+* Scintilla: added [`buffer.representation`][] for changing the representation
+  of characters.
+* Scintilla: added [`buffer:position_relative()`][] for character navigation.
+* Scintilla: added [`buffer.mouse_selection_rectangular_switch`][] for aiding in
+  rectangular selection creation.
 * Updated to [Lua][] 5.2.3.
 * Updated to [Scintilla][] 3.3.7.
 
@@ -690,6 +762,9 @@ Changes:
 [`ui.maximized`]: api.html#ui.maximized
 [OSX environment variables]: manual.html#Mac.OSX.Environment.Variables
 [`keys.keychain`]: api.html#keys.keychain
+[`buffer.representation`]: api.html#buffer.representation
+[`buffer:position_relative()`]: api.html#buffer.position_relative
+[`buffer.mouse_selection_rectangular_switch`]: api.html#buffer.mouse_selection_rectangular_switch
 [Lua]: http://lua.org
 [Scintilla]: http://scintilla.org
 
@@ -913,10 +988,14 @@ Bugfixes:
 
 * Fixed bug with theme loading when resetting.
 * Fixed bug with property settings in [`gui.set_theme()`][] not persisting.
+* Scintilla: fixed some instances of case conversions.
+* Scintilla: fixed some instances of word wrapping and improved performance.
+* Scintilla: fixed minor memory leak.
 
 Changes:
 
 * New [`gui.maximized`][] field so Textadept can remember its maximized state.
+* Scintilla: improved UTF-8 case-insensitive searching.
 * Updated to [Scintilla][] 3.3.4.
 
 [Textadept 7.0 beta 2 -- Win32]: download/textadept_7.0_beta_2.win32.zip
@@ -1021,7 +1100,10 @@ Download:
 
 Bugfixes:
 
-* None.
+* Scintilla: fixed memory access bug.
+* Scintilla: fixed crash when pasting in Windows.
+* Scintilla: fixed some event reporting in GTK 3.x.
+* Scintilla: fixed undo grouping with tab and backtab.
 
 Changes:
 
@@ -1058,12 +1140,14 @@ Bugfixes:
 * Fixed caret placement in block comment/uncomment.
 * Use '\n' keycode in curses instead of '\r'.
 * Fixed crash caused by split views.
+* Scintilla: fixed typing into multiple carets in virtual space.
 
 Changes:
 
 * Removed `_M[lang].set_buffer_properties()` functions. Set properties through
   `events.LANGUAGE_MODULE_LOADED` instead.
 * Print the results of '=' Lua commands.
+* Scintilla: added `buffer.INDIC_COMPOSITIONTHICK` indicator.
 * Updated to [Scintilla][] 3.3.2.
 
 [Textadept 6.6 -- Win32]: download/textadept_6.6.win32.zip
@@ -1102,6 +1186,7 @@ Changes:
 * [Messagebox][] dialogs can show icons via `--icon` and `--icon-file`.
 * New Win32 terminal version.
 * New [key modes][] functionality.
+* Scintilla: added [`buffer.auto_c_order`][] for sorting autocompletion lists.
 * Updated to [Scintilla][] 3.3.1.
 * Renamed `_G.buffer_new()` to [`buffer.new()`][].
 * Changed the display of highlighted words, including removing
@@ -1126,6 +1211,7 @@ Changes:
 [Textadept 6.6 beta -- Modules]: download/textadept_6.6_beta.modules.zip
 [Messagebox]: http://foicica.com/gtdialog/manual.html#Messageboxes
 [key modes]: api.html#keys.Modes
+[`buffer.auto_c_order`]: api.html#buffer.auto_c_order
 [Scintilla]: http://scintilla.org
 [`buffer.new()`]: api.html#buffer.new
 [`_M.textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
@@ -1152,6 +1238,11 @@ Bugfixes:
 * Improved message double-clicking behavior for compile and run commands by
   adding [`_M.textadept.run.cwd`][].
 * Fixed disorienting scrolling when wrapping only one search result.
+* Scintilla: fixed some instances of incorrect folded text display.
+* Scintilla: fixed [`buffer:visible_from_doc_line()`][] to never return a line
+  beyond the end of the buffer.
+* Scintilla: fixed [`buffer:line_scroll()`][] for negative columns.
+* Scintilla: fixed tab marker display when indentation lines are visible.
 
 Changes:
 
@@ -1161,6 +1252,7 @@ Changes:
 * Moved `_M.textadept.snapopen` into [`io`][].
 * Renamed some [`lexer` constants][].
 * Added Less, Literal Coffeescript, and Sass lexers.
+* Scintilla: added [`buffer:scroll_range()`][] for scrolling ranges into view.
 * Updated to [Scintilla][] 3.3.0.
 * Updated to [Lua][] 5.2.2.
 
@@ -1171,10 +1263,13 @@ Changes:
 [Textadept 6.5 -- Source]: download/textadept_6.5.src.zip
 [Textadept 6.5 -- Modules]: download/textadept_6.5.modules.zip
 [`_M.textadept.run.cwd`]: api.html#textadept.run.cwd
+[`buffer:visible_from_doc_line()`]: api.html#buffer.visible_from_doc_line
+[`buffer:line_scroll()`]: api.html#buffer.line_scroll
 [`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [filtering]: api.html#ui.find.FILTER
 [`io`]: api.html#io.snapopen
 [`lexer` constants]: api.html#lexer.FOLD_BASE
+[`buffer:scroll_range()`]: api.html#buffer.scroll_range
 [Scintilla]: http://scintilla.org
 [Lua]: http://lua.org
 
@@ -1194,6 +1289,7 @@ Bugfixes:
 * Dialogs belong to the Textadept window.
 * Fixed bug in documentation link generator.
 * Fixed bug with indexable buffer properties that return strings.
+* Scintilla: fixed scrollbar drawing when toggling visibility.
 
 Changes:
 
@@ -1227,10 +1323,17 @@ Bugfixes:
 
 * Do not error on non-existant dropped URIs.
 * Fixed crash in Python module when parsing some syntax error messages.
+* Scintilla: fixed pasting with NULL bytes.
+* Scintilla: autocompletion should only have one undo step.
+* Scintilla: fixed crash when drawing very long lines.
+* Scintilla: fixed unexpected collapse of selections when extending by
+  character.
 
 Changes:
 
 * Use Scintilla API for ncurses mark mode.
+* Scintilla: added [`buffer.caret_line_visible_always`][] for showing the caret
+  line despite not having focus.
 * Updated to [Scintilla][] 3.2.4.
 * Added [typeover characters][].
 
@@ -1240,6 +1343,7 @@ Changes:
 [Textadept 6.3 -- Linux x86_64]: download/textadept_6.3.x86_64.tgz
 [Textadept 6.3 -- Source]: download/textadept_6.3.src.zip
 [Textadept 6.3 -- Modules]: download/textadept_6.3.modules.zip
+[`buffer.caret_line_visible_always`]: api.html#buffer.caret_line_visible_always
 [Scintilla]: http://scintilla.org
 [typeover characters]: api.html#textadept.editing.TYPEOVER_CHARS
 
@@ -1331,6 +1435,11 @@ Bugfixes:
 * Fixed GUI menu key shortcut handling.
 * Fixed string collation bug in ncurses due to CDK.
 * Pass `Esc` to Scintilla correctly in ncurses.
+* Scintilla: fixed hang when removing all characters from an indicator at the
+  the end of a buffer.
+* Scintilla: fixed crash when drawing margins in GTK 3.
+* Scintilla: do not draw spaces after an italic style at the end of a line in
+  the terminal version.
 
 Changes:
 
@@ -1340,6 +1449,7 @@ Changes:
 * Removed `_M.textadept.run.execute()`.
 * Updated documentation and documentation formatting.
 * Added [Python module][].
+* Scintilla: improved performance when performing multiple searches.
 * Updated to [Scintilla][] 3.2.3.
 * Updated to [LuaJIT][] 2.0.0-beta11.
 
@@ -1418,6 +1528,8 @@ Bugfixes:
 * Fixed ncurses memory leaks.
 * Fixed multiple selection in Mac OSX.
 * Show key shortcuts in ncurses [`_M.textadept.menu.select_command()`][].
+* Scintilla: fixed rectangular selection range after backspacing.
+* Scintilla: fixed bug with negative ranges in call tip highlighting.
 
 Changes:
 
@@ -1429,6 +1541,9 @@ Changes:
 * `_M.textadept.snapopen.DEFAULT_DEPTH` is now `99` since [`MAX`][] is the
   limiting factor.
 * Use constant names in theme options instead of nondescript integers.
+* Scintilla: added [`buffer.selection_empty`][].
+* Scintilla: added [`buffer:vc_home_display()`][] and
+  [`buffer:vc_home_display_extend()`][] for navigating wrapped lines.
 * Updated to [Scintilla][] 3.2.2.
 
 [Textadept 6.0 beta 2 -- Win32]: download/textadept_6.0_beta_2.win32.zip
@@ -1440,6 +1555,9 @@ Changes:
 [`_M.textadept.menu.select_command()`]: api.html#textadept.menu.select_command
 [`_M.textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
 [`MAX`]: api.html#io.SNAPOPEN_MAX
+[`buffer.selection_empty`]: api.html#buffer.selection_empty
+[`buffer:vc_home_display()`]: api.html#buffer.vc_home_display
+[`buffer:vc_home_display_extend()`]: api.html#buffer.vc_home_display_extend
 [Scintilla]: http://scintilla.org
 
 ## 6.0 beta (01 Aug 2012)
@@ -1456,6 +1574,17 @@ Download:
 Bugfixes:
 
 * Lots of bugfixes to the experimental ncurses version.
+* Scintilla: do not show empty autocompletion list if
+  [`buffer.auto_c_choose_single`][] is set.
+* Scintilla: fixed [`buffer:marker_delete()`][] to only delete one marker per
+  call.
+* Scintilla: fixed caret positioning after undoing multiple deletions.
+* Scintilla: fixed margin drawing after [`buffer.margin_style`][] is altered.
+* Scintilla: fixed margin click handling.
+* Scintilla: fixed hang when drawing block carets on a zero-width space at the
+  beginning of a buffer.
+* Scintilla: fixed crash deleting negative ranges.
+* Scintilla: fixed drawing of overlapping characters.
 
 Changes:
 
@@ -1468,6 +1597,8 @@ Changes:
 * Moved `_M.textadept.adeptsense.complete_symbol()` and `show_documentation()`
   functionality into `_M.textadept.adeptsense.complete()` and `show_apidoc()`.
 * New 64-bit Windows version (note: without LuaJIT).
+* Scintilla: added [`buffer.punctuation_chars`][], [`buffer.word_chars`][], and
+  [`buffer.whitespace_chars`][] for manipulating character sets.
 * Updated to [Scintilla][] 3.2.1.
 
 [Textadept 6.0 beta -- Win32]: download/textadept_6.0_beta.win32.zip
@@ -1476,8 +1607,14 @@ Changes:
 [Textadept 6.0 beta -- Linux x86_64]: download/textadept_6.0_beta.x86_64.tgz
 [Textadept 6.0 beta -- Source]: download/textadept_6.0_beta.src.zip
 [Textadept 6.0 beta -- Modules]: download/textadept_6.0_beta.modules.zip
+[`buffer.auto_c_choose_single`]: api.html#buffer.auto_c_choose_single
+[`buffer:marker_delete()`]: api.html#buffer.marker_delete
+[`buffer.margin_style`]: api.html#buffer.margin_style
 [`_M.textadept.session.load()`]: api.html#textadept.session.load
 [`_M.textadept.session.save()`]: api.html#textadept.session.save
+[`buffer.punctuation_chars`]: api.html#buffer.punctuation_chars
+[`buffer.word_chars`]: api.html#buffer.word_chars
+[`buffer.whitespace_chars`]: api.html#buffer.whitespace_chars
 [Scintilla]: http://scintilla.org
 
 ## 5.5 beta (01 Jul 2012)
@@ -1534,10 +1671,21 @@ Download:
 
 Bugfixes:
 
-* None.
+* Scintilla: fixed boxed annotation drawing.
+* Scintilla: fixed virtual space selection bug in rectangular selections.
+* Scintilla: replacing multiple selections with newlines is a single undo
+  action.
+* Scintilla: fixed autocompletion list height in GTK 3.
+* Scintilla: fixed mouse scrolling due to recent GTK changes.
 
 Changes:
 
+* Scintilla: `Ctrl+Double Click` and `Ctrl+Triple Click` adds words and lines,
+  respectively, to selections.
+* Scintilla: added [`buffer:delete_range()`][] for deleting ranges of text.
+* Scintilla: added `buffer.WRAPVISUALFLAG_MARGIN` for drawing wrap markers in
+  margins.
+* Scintilla: improved UTF-8 validity checks.
 * Updated to [Scintilla][] 3.2.0.
 
 [Textadept 5.4 -- Win32]: download/textadept_5.4.win32.zip
@@ -1546,6 +1694,7 @@ Changes:
 [Textadept 5.4 -- Linux x86_64]: download/textadept_5.4.x86_64.tgz
 [Textadept 5.4 -- Source]: download/textadept_5.4.src.zip
 [Textadept 5.4 -- Modules]: download/textadept_5.4.modules.zip
+[`buffer:delete_range()`]: api.html#buffer.delete_range
 [Scintilla]: http://scintilla.org
 
 ## 5.3 (01 May 2012)
@@ -1564,6 +1713,12 @@ Bugfixes:
 * Fixed bug with run/compile commands in LuaJIT version.
 * User annotation preferences are preserved.
 * Fixed bug with number representation in some locales.
+* Scintilla: fixed selection drawing in word wrap indentation.
+* Scintilla: fixed styling bug.
+* Scintilla: fixed problems with drawing in margins.
+* Scintilla: fixed corner case in `buffer:move_selected_lines_*()`.
+* Scintilla: fixed scrolling with mousewheel.
+* Scintilla: fixed column calculations to count tabs correctly.
 
 Changes:
 
@@ -1571,6 +1726,9 @@ Changes:
 * Textadept is [single-instance][] by default on Linux and Mac OSX.
 * Textadept requires [GTK][] 2.18 or higher now instead of 2.16.
 * The provided Textadept binaries [require][] [GLib][] 2.28 or higher.
+* Scintilla: added [`buffer.auto_c_case_insensitive_behaviour`][] for
+  controlling case sensitivity in autocompletion lists.
+* Scintilla: `\0` in regex replacements represents the full found text.
 * Updated to [Scintilla][] 3.1.0.
 
 [Textadept 5.3 -- Win32]: download/textadept_5.3.win32.zip
@@ -1583,6 +1741,7 @@ Changes:
 [GTK]: http://gtk.org
 [require]: manual.html#Requirements
 [GLib]: http://gtk.org/download/linux.php
+[`buffer.auto_c_case_insensitive_behaviour`]: api.html#buffer.auto_c_case_insensitive_behaviour
 [Scintilla]: http://scintilla.org
 
 ## 5.2 (01 Apr 2012)
@@ -1602,6 +1761,14 @@ Bugfixes:
 * Fixed bug with relative paths from command line files.
 * [`buffer:get_lexer(true)`][] is used more often when it should be.
 * Improved message double-clicking behavior for run and compile commands.
+* Scintilla: line and selection duplication is one undo action.
+* Scintilla: allow indicators to be set for entire document.
+* Scintilla: fixed crash in `buffer:move_selected_lines_*()`.
+* Scintilla: fixed image and fold marker drawing.
+* Scintilla: fixed some instances of multiple clicks in margins.
+* Scintilla: fixed `buffer:page_*()` not returning to the original line.
+* Scintilla: fixed various issues with wrapped lines.
+* Scintilla: fixed line end selection drawing.
 
 Changes:
 
@@ -1681,6 +1848,8 @@ Download:
 Bugfixes:
 
 * Fixed bug with recent files in sessions.
+* Scintilla: fixed page up/down in autocompletion lists.
+* Scintilla: fixed fold highlighting.
 
 Changes:
 
@@ -1782,6 +1951,8 @@ Bugfixes:
 
 * Fixed bug with opening files in the current directory from the command line.
 * Fixed erroneous charset conversion.
+* Scintilla: fixed drawing at style boundaries on Mac OSX.
+* Scintilla: fixed crash when painting uninitialized pixmaps.
 
 Changes:
 
@@ -1816,9 +1987,12 @@ Bugfixes:
 
 * Fixed bug with `%n` in Replace introduced in 4.1.
 * Fixed Adeptsense autocomplete for single item.
+* Scintilla: fixed annotation drawing in multiple, wrapped views.
 
 Changes:
 
+* Scintilla: drawing improvements and various optimizations.
+* Scintilla: call tips can be displayed above text.
 * Updated to [Scintilla][] 3.0.0.
 
 [Textadept 4.2 -- Win32]: download/textadept_4.2.win32.zip
@@ -1845,6 +2019,8 @@ Bugfixes:
 * Only fold when clicking on fold margin, not any sensitive one.
 * Fixed bug with `CALL_TIP_CLICK` event disconnect in Adeptsense.
 * Fixed bug with autocomplete and capitalization.
+* Scintilla: fixed incorrect mouse cursor changes.
+* Scintilla: fixed end-of-document indicator growth.
 
 Changes:
 
@@ -1964,7 +2140,13 @@ Download:
 
 Bugfixes:
 
-* None.
+* Scintilla: fixed incorrect mouse cursor changes.
+* Scintilla: fixed bug with annotations beyond the document end.
+* Scintilla: fixed incorrect drawing of background colors and translucent
+  selection.
+* Scintilla: fixed lexer initialization.
+* Scintilla: fixed some instances of fold highlight drawing.
+* Scintilla: fixed some cases of case insensitive searching.
 
 Changes:
 
@@ -1979,6 +2161,11 @@ Changes:
 * Renamed `_m.textadept.editing.select_scope()` to
   `_m.textadept.editing.select_style()`.
 * *Completely new set of key commands.*
+* Scintilla: translucent RGBA images can be used in margins and autocompletion
+  and user lists.
+* Scintilla: added new `buffer.INDIC_DOTBOX` indicator.
+* Scintilla: IME input now works.
+* Scintilla: `Ctrl+Shift+U` used for Unicode input.
 * Updated to [Scintilla][] 2.28.
 
 [Textadept 4.0 beta -- Win32]: download/textadept_4.0_beta.win32.zip
@@ -2007,11 +2194,24 @@ Download:
 Bugfixes:
 
 * Fixed bug for when [`gui.dialog`][] steals focus.
+* Scintilla: fixed bug with wrong colors being drawn.
+* Scintilla: fixed font leak.
+* Scintilla: fixed automatic scrolling for wrapped lines.
+* Scintilla: fixed multiple selection typing when selections collapse.
+* Scintilla: expand folds when needed in word wrap mode.
+* Scintilla: fixed edge line drawing for wrapped lines.
+* Scintilla: fixed unnecessary scrolling in [`buffer:goto_line()`][].
+* Scintilla: fixed undo functionality when deleting within virtual space.
 
 Changes:
 
 * Added support for [GTK][] 3.0.
 * Use ID generator [functions][] for marker, indicator, and user list IDs.
+* Scintilla: added [`buffer:set_empty_selection()`][] for setting selections
+  without scrolling or redrawing.
+* Scintilla: added new `buffer.INDIC_DASH`, `buffer.INDIC_DOTS`, and
+  `buffer.INDIC_SQUIGGLELOW` indicators.
+* Scintilla: added option to allow margin clicks to select wrapped lines.
 * Updated to [Scintilla][] 2.27.
 * Use string constants for event names.
 * Compile and run commands [emit events][].
@@ -2030,6 +2230,8 @@ Changes:
 [GTK]: http://gtk.org
 [`gui.dialog`]: api.html#ui.dialog
 [functions]: api.html#_SCINTILLA
+[`buffer:set_empty_selection()`]: api.html#buffer.set_empty_selection
+[`buffer:goto_line()`]: api.html#buffer.goto_line
 [Scintilla]: http://scintilla.org
 [emit events]: api.html#events.COMPILE_OUTPUT
 [find]: api.html#ui.find
@@ -2049,6 +2251,9 @@ Bugfixes:
 
 * Removed non-existant key chain.
 * Fixed bug in snippets.
+* Scintilla: fixed indentation guide drawing on the first line.
+* Scintilla: fixed display of folds for wrapped lines.
+* Scintilla: fixed various GTK-related bugs.
 
 Changes:
 
@@ -2057,6 +2262,13 @@ Changes:
 * Added menu mnemonics for indentation size.
 * Added support for indicator and hotspot [events][].
 * Updated [documentation][] for installing [official modules][].
+* Scintilla: allow highlighting of margin symbols for the current folding block.
+* Scintilla: added [`buffer:move_selected_lines_up()`][] and
+  [`buffer:move_selected_lines_down()`][] for moving lines.
+* Scintilla: added new `buffer.INDIC_STRAIGHTBOX` indicator.
+* Scintilla: indicators can be used for brace matching.
+* Scintilla: translucency can be changed for `buffer.INDIC_*BOX` indicators.
+* Scintilla: improved text drawing and measuring.
 * Updated to [Scintilla][] 2.26.
 * Writing custom folding for lexers is much [easier][] now.
 * Added native folding for more than 60% of existing lexers. The rest still use
@@ -2071,6 +2283,8 @@ Changes:
 [events]: api.html#events
 [documentation]: manual.html#Getting.Modules
 [official modules]: http://foicica.com/hg
+[`buffer:move_selected_lines_up()`]: api.html#buffer.move_selected_lines_up
+[`buffer:move_selected_lines_down()`]: api.html#buffer.move_selected_lines_down
 [Scintilla]: http://scintilla.org
 [easier]: api.html#lexer.Code.Folding
 
@@ -2118,6 +2332,7 @@ Bugfixes:
 * Small Adeptsense bugfixes.
 * Snapopen respects filesystem encoding.
 * Standard input dialogs have "Cancel" button by default.
+* Scintilla: fixed performance with the caret on a long line.
 
 Changes:
 
@@ -2177,9 +2392,17 @@ Bugfixes:
 * Adeptsense can now recognize more than 1 level of inheritence.
 * Keychain is cleared on key command error.
 * Fixed infinite loop bug in `_m.textadept.editing.select_scope()`.
+* Scintilla: fixed memory leak.
+* Scintilla: fixed double-click behavior around word boundaries.
+* Scintilla: right-click cancels autocompletion.
+* Scintilla: fixed some virtual space problems.
+* Scintilla: fixed unnecessary redrawing.
+* Scintilla: fixed rectangular selection creation performance.
 
 Changes:
 
+* Scintilla: [`events.UPDATE_UI`][] now occurs when scrolling.
+* Scintilla: added per-margin mouse cursors.
 * Updated to [Scintilla][] 2.24.
 * Updated mime-types.
 * Line margin width is now `4`.
@@ -2203,6 +2426,7 @@ Changes:
 [Textadept 3.7 beta 2 -- Linux]: download/textadept_3.7_beta_2.tgz
 [Textadept 3.7 beta 2 -- Linux x86_64]: download/textadept_3.7_beta_2.x86_64.tgz
 [Textadept 3.7 beta 2 -- Source]: download/textadept_3.7_beta_2.src.zip
+[`events.UPDATE_UI`]: api.html#events.UPDATE_UI
 [Scintilla]: http://scintilla.org
 [CSS]: api.html#_M.css
 [HTML]: api.html#_M.html
@@ -2330,6 +2554,13 @@ Bugfixes:
 * Autocomplete lists sort properly for machines with a different locale.
 * Statusbar is not cleared when set from a key command.
 * Unreadable files are handled appropriately.
+* Scintilla: fixed scrolling bug where caret was not kept visible.
+* Scintilla: fixed caret position caching after autocompletion.
+* Scintilla: fixed paging up/down in virtual space.
+* Scintilla: fixed crash with negative arguments passed to
+  [`buffer:marker_add()`][] and [`buffer:marker_add_set()`][].
+* Scintilla: dwell notifications are not emitted when the mouse is outside the
+  view.
 
 Changes:
 
@@ -2353,6 +2584,9 @@ Changes:
 * Added [`_G.timeout()`][] function for calling functions and/or events after a
   period of time.
 * Find in files is accessible through [find API][].
+* Scintilla: added [`buffer:contracted_fold_next()`][] for retrieving fold
+  states.
+* Scintilla: added [`buffer:vertical_centre_caret()`][].
 * Updated to [Scintilla][] 2.22.
 * Renamed `_G.MAC` to [`_G.OSX`][].
 
@@ -2362,12 +2596,16 @@ Changes:
 [Textadept 3.4 -- Linux x86_64]: download/textadept_3.4.x86_64.tgz
 [Textadept 3.4 -- Source]: download/textadept_3.4.src.zip
 [Switch Buffers]: manual.html#Buffers
+[`buffer:marker_add()`]: api.html#buffer.marker_add
+[`buffer:marker_add_set()`]: api.html#buffer.marker_add_set
 [`gui.dialog()`]: api.html#ui.dialog
 [`_m.textadept.snapopen.open()`]: api.html#io.snapopen
 [`gui.statusbar_text`]: api.html#ui.statusbar_text
 [highlight]: manual.html#Word.Highlight
 [`_G.timeout()`]: api.html#timeout
 [find API]: api.html#ui.find.find_in_files
+[`buffer:contracted_fold_next()`]: api.html#buffer.contracted_fold_next
+[`buffer:vertical_centre_caret()`]: api.html#buffer.vertical_centre_caret
 [Scintilla]: http://scintilla.org
 [`_G.OSX`]: api.html#OSX
 
@@ -2410,6 +2648,8 @@ Download:
 Bugfixes:
 
 * Fixed "Replace All" infinite loop bug.
+* Scintilla: fixed drawing bug after horizontally scrolling too much.
+* Scintilla: fixed various folding bugs.
 
 Changes:
 
@@ -2437,10 +2677,19 @@ Download:
 Bugfixes:
 
 * Fixed memory leak in Mac OSX.
+* Scintilla: fixed crash when searching for empty strings.
+* Scintilla: fixed lexing and folding bugs when pressing enter at the beginning
+  of a line.
+* Scintilla: fixed bug in line selection mode.
+* Scintilla: fixed alpha indicator value ranges.
+* Scintilla: fixed compiler errors for some compilers.
+* Scintilla: fixed memory leak in autocompletion and user lists.
 
 Changes:
 
 * Refactored key commands to support propagation.
+* Scintilla: added new `buffer.CARETSTICKY_WHITESPACE` caret sticky option.
+* Scintilla: lexing improvements.
 * Updated to [Scintilla][] 2.20.
 * Added Lua autocompletion.
 
@@ -2493,6 +2742,19 @@ Bugfixes:
 
 * Fixed Mac OSX paste issue.
 * Fixed [`buffer:text_range()`][] argcheck problem.
+* Scintilla: fixed flashing while scrolling.
+* Scintilla: fixed marker movement when inserting newlines.
+* Scintilla: fixed middle-click paste in block-selection mode.
+* Scintilla: fixed selection bounds returned for rectangular selections.
+* Scintilla: fixed case-insensitive searching for non-ASCII characters.
+* Scintilla: fixed bad-UTF-8 byte handling.
+* Scintilla: fixed bug when rectangular selections were extended into multiple
+  selections.
+* Scintilla: fixed incorrect caret placement after scrolling.
+* Scintilla: fixed text disappearing after wrapping bug.
+* Scintilla: fixed various regex search bugs.
+* Scintilla: improved scrolling performance.
+* Scintilla: fixed `Shift+Tab` handling for rectangular selection.
 
 Changes:
 
@@ -2502,6 +2764,8 @@ Changes:
 * `~/.textadept/init.lua` is created for you if one does not exist.
 * No more autoload of `~/.textadept/key_commands.lua` and
   `~/.textadept/snippets.lua`
+* Scintilla: added [`buffer.multi_paste`][] for pasting into multiple
+  selections.
 * Updated to [Scintilla][] 2.12.
 * [Abbreviated][] Lua commands in the command entry.
 * Dynamic command line [arguments][].
@@ -2516,6 +2780,7 @@ Changes:
 [`buffer:text_range()`]: api.html#buffer.text_range
 [`textadept`]: api.html#textadept
 [API]: api.html
+[`buffer.multi_paste`]: api.html#buffer.multi_paste
 [Scintilla]: http://scintilla.org
 [Abbreviated]: manual.html#Lua.Command.Entry
 [arguments]: api.html#args
@@ -2647,6 +2912,18 @@ Bugfixes:
 * Fixed key command for word autocomplete on Win32.
 * Changed conflicting menu shortcut for Lexers menu.
 * Fixed typos in templates generated by modules PM browser.
+* Scintilla: fixed crash after adding an annotation and then adding a new line
+  below it.
+* Scintilla: fixed [`buffer:get_sel_text()`][].
+* Scintilla: fixed some instances of text positioning.
+* Scintilla: fixed various problems with rectangular selections and rectangular
+  pastes.
+* Scintilla: fixed some instances of navigation through and display of wrapped
+  lines.
+* Scintilla: fixed drag and drop.
+* Scintilla: fixed extra background styling at the end of the buffer.
+* Scintilla: fixed crash when adding markers to non-existant lines.
+* Scintilla: fixed indentation guide drawing over text in some cases.
 
 Changes:
 
@@ -2658,6 +2935,12 @@ Changes:
   being run.
 * Reload current lexer module after `textadept.reset()`.
 * Added `~/.textadept/modules/` to `package.path`.
+* Scintilla: added support for multiple selections and virtual space.
+* Scintilla: [`buffer.first_visible_line`][] is no longer read-only.
+* Scintilla: added [`buffer.whitespace_size`][] for changing the size of visible
+  whitespace.
+* Scintilla: added [`buffer.auto_c_current_text`][] for retrieving the currently
+  selected autocompletion text.
 * Updated to [Scintilla][] 2.03.
 * Modified quit and close dialogs to be more readable.
 
@@ -2666,8 +2949,12 @@ Changes:
 [Textadept 2.1 -- Linux]: download/textadept_2.1.tgz
 [Textadept 2.1 -- Linux x86_64]: download/textadept_2.1.x86_64.tgz
 [Textadept 2.1 -- Source]: download/textadept_2.1.src.zip
+[`buffer:get_sel_text()`]: api.html#buffer.get_sel_text
 [`_USERHOME`]: api.html#_USERHOME
 [`_HOME`]: api.html#_HOME
+[`buffer.first_visible_line`]: api.html#buffer.first_visible_line
+[`buffer.whitespace_size`]: api.html#buffer.whitespace_size
+[`buffer.auto_c_current_text`]: api.html#buffer.auto_c_current_text
 [Scintilla]: http://scintilla.org
 
 ## 2.0 (01 Oct 2009)
