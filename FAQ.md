@@ -1,21 +1,6 @@
 # FAQ
 
 **Q:**
-I upgraded to Textadept 7 and the editor displays a strange error message on
-startup and/or exits. Also my themes do not seem to work anymore.
-
-**A:**
-Textadept 7 introduced API changes and a completely new theme implementation.
-Please see the [migration guide][] for more information. It may help to either
-delete your old `~/.textadept/` folder or move everything within it somewhere
-else before gradually copying those files back to see which of them causes an
-error.
-
-[migration guide]: manual.html#Textadept.6.to.7
-
-- - -
-
-**Q:**
 What is the difference between *textadept* and *textadeptjit*? Which one should
 I use?
 
@@ -179,3 +164,14 @@ the page, and replace the problematic file.
 [changeset 60]: http://foicica.com/hg/scinterm/rev/ea13ae30cfab
 
 - - -
+
+**Q:**
+I am not able to use the "Consolas" or [insert other Windows font package here]
+on Windows. Textadept just uses a default font. How can I get it to use my font?
+
+**A:**
+You'll have to provide the full name of the font, such as "Consolas Regular",
+rather than just the name of the "ttf" file in your Fonts directory.
+
+- - -
+
