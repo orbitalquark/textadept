@@ -8,6 +8,48 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 8.2 (01 Sep 2015)
+
+Download:
+
+* [Textadept 8.2 -- Win32][]
+* [Textadept 8.2 -- Mac OSX Intel 10.5+][]
+* [Textadept 8.2 -- Linux][]
+* [Textadept 8.2 -- Linux x86_64][]
+* [Textadept 8.2 -- Modules][]
+
+Bugfixes:
+
+* Fixed crash when quitting while the command entry is open.
+* Block commenting respects indentation levels.
+* Handle `typeref` in ansi\_c module's ctags support.
+* Do not error when block commenting in an unsupported language.
+* Scintilla: fix scrollbar memory leaks.
+
+Changes:
+
+* Highlight found text in "Find in Files" searches.
+* Added Italian translation and updated French translation.
+* Added [automatic syntax checking][] as source files are saved, along with
+  [`textadept.run.CHECK_SYNTAX`][] and [`textadept.run.GOTO_SYNTAX_ERRORS`][]
+  configuration fields.
+* Scintilla: multiple selection works over more key commands like caret
+  movement, selections, and word and line deletions.
+* Scintilla: new [`events.AUTO_C_COMPLETED`][] event for when autocompleted text
+  has been inserted.
+* Updated to [Scintilla][] 3.6.0.
+
+[Textadept 8.2 -- Win32]: download/textadept_8.2.win32.zip
+[Textadept 8.2 -- Mac OSX Intel 10.5+]: download/textadept_8.2.osx.zip
+[Textadept 8.2 -- Linux]: download/textadept_8.2.i386.tgz
+[Textadept 8.2 -- Linux x86_64]: download/textadept_8.2.x86_64.tgz
+[Textadept 8.2 -- Modules]: download/textadept_8.2.modules.zip
+[automatic syntax checking]: api.html#_M.Syntax.Checking
+[`textadept.run.CHECK_SYNTAX`]: api.html#textadept.run.CHECK_SYNTAX
+[`textadept.run.GOTO_SYNTAX_ERRORS`]: api.html#textadept.run.GOTO_SYNTAX_ERRORS
+[`events.AUTO_C_COMPLETED`]: api.html#events.AUTO_C_COMPLETED
+[Scintilla]: http://scintilla.org
+
 ## 8.1 (01 Jul 2015)
 
 Download:
