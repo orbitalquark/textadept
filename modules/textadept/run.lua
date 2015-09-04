@@ -372,37 +372,38 @@ events.connect(events.FILE_AFTER_SAVE, function(filename)
   if not command or not patt then return end
   -- Run the syntax checker command and look for errors.
   buffer:annotation_clear_all()
-  local p = io.popen(command:gsub('%%f', filename)..' 2>&1')
-  local out = p:read('*a')
-  p:close()
-  local captures = {message = '', out:match(patt)}
-  if #captures == 0 then return end
-  -- Parse out the line, column, and error message.
-  for detail in patt:gmatch('[^%%](%b())') do
-    if detail == '(%d+)' then
-      local source = not captures.line and 'line' or 'column'
-      captures[source] = tonumber(table.remove(captures, 1)) - 1
-    elseif detail == '(%s*)' then
-      captures.column = #table.remove(captures, 1)
-    else
-      captures.message = captures.message..table.remove(captures, 1)
+  local out = {}
+  local output = function(output) out[#out + 1] = output end
+  spawn(command:gsub('%%f', filename), nil, output, output, function()
+    local captures = {message = '', table.concat(out):match(patt)}
+    if #captures == 0 then return end
+    -- Parse out the line, column, and error message.
+    for detail in patt:gmatch('[^%%](%b())') do
+      if detail == '(%d+)' then
+        local source = not captures.line and 'line' or 'column'
+        captures[source] = tonumber(table.remove(captures, 1)) - 1
+      elseif detail == '(%s*)' then
+        captures.column = #table.remove(captures, 1)
+      else
+        captures.message = captures.message..table.remove(captures, 1)
+      end
     end
-  end
-  if not captures.line or not captures.message then return end
-  -- Display the annotation and either jump to, or note the position.
-  buffer.annotation_text[captures.line] = captures.message
-  buffer.annotation_style[captures.line] = 8 -- error style number
-  local top_line = buffer:doc_line_from_visible(buffer.first_visible_line)
-  local bottom_line = buffer:doc_line_from_visible(buffer.first_visible_line +
-                                                   buffer.lines_on_screen) - 1
-  if M.GOTO_SYNTAX_ERRORS then
-    buffer:goto_pos(buffer:find_column(captures.line, captures.column or 0))
-  elseif captures.line < top_line or captures.line > bottom_line then
-    local line = buffer:line_from_position(buffer.current_pos)
-    buffer.annotation_text[line] = 'Line '..(captures.line + 1)..'\n'..
-                                   captures.message
-    buffer.annotation_style[line] = 8 -- error style number
-  end
+    if not captures.line or not captures.message then return end
+    -- Display the annotation and either jump to, or note the position.
+    buffer.annotation_text[captures.line] = captures.message
+    buffer.annotation_style[captures.line] = 8 -- error style number
+    local top_line = buffer:doc_line_from_visible(buffer.first_visible_line)
+    local bottom_line = buffer:doc_line_from_visible(buffer.first_visible_line +
+                                                     buffer.lines_on_screen) - 1
+    if M.GOTO_SYNTAX_ERRORS then
+      buffer:goto_pos(buffer:find_column(captures.line, captures.column or 0))
+    elseif captures.line < top_line or captures.line > bottom_line then
+      local line = buffer:line_from_position(buffer.current_pos)
+      buffer.annotation_text[line] = 'Line '..(captures.line + 1)..'\n'..
+                                     captures.message
+      buffer.annotation_style[line] = 8 -- error style number
+    end
+  end)
 end)
 
 return M
