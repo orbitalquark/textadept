@@ -358,7 +358,7 @@ M.syntax_commands = {awk='gawk --source "BEGIN{exit(0)} END{exit(0)}" --file "%f
 -- `(%s*)` may also be used to match column numbers for visual error messages.
 -- @class table
 -- @name syntax_error_patterns
-M.syntax_error_patterns = {awk=':(%d+): (%s*)^ ([^\r\n]+)',bash='[:%s](%d+): ([^\r\n]+)',coffeescript='In [^,]+, (.-) on line (%d+):?([^\r\n]*)',css='line (%d+), col (%d+), ([^\r\n]+)',fish='fish: ([^\r\n]+).-line (%d+).:',go=':(%d+):(%d+): ([^\r\n]+)',html='line (%d+) column (%d+) %- Error: ([^\r\n]+)',javascript='line (%d+), col (%d+), ([^\r\n]+)',less='^(.-) in .- on line (%d+), column (%d+):',litcoffee='In [^,]+, (.-) on line (%d+):?([^\r\n]*)',lua=':(%d+): ([^\r\n]+)',perl='^(.-) at .- line (%d+)',php='^(.-) in .- on line (%d+)',python='", line (%d+)[\r\n]+.-(%w+: [^\r\n]+)',ruby=':(%d+): ([^\r\n]+).-[\r\n]+(%s*)^',sass='^([^\r\n]+).-on line (%d+)',xml=':(%d+): ([^\r\n]+).-[\r\n]+(%s*)^',}
+M.syntax_error_patterns = {awk=':(%d+): (%s*)^ ([^\r\n]+)',bash='[:%s](%d+): ([^\r\n]+)',coffeescript='In [^,]+, (.-) on line (%d+):?([^\r\n]*)',css='line (%d+), col (%d+), ([^\r\n]+)',fish='fish: ([^\r\n]+).-line (%d+).:',go=':(%d+):(%d+): ([^\r\n]+)',html='line (%d+) column (%d+) %- Error: ([^\r\n]+)',javascript='line (%d+), col (%d+), ([^\r\n]+)',less='^(.-) in .- on line (%d+), column (%d+):',litcoffee='In [^,]+, (.-) on line (%d+):?([^\r\n]*)',lua=':(%d+): ([^\r\n]+)',perl='^(.-) at .- line (%d+)',php='^(.-) in .- on line (%d+)',python='", line (%d+)[\r\n]+.-(%w+: [^\r\n]+)',ruby=':(%d+): ([^\r\n]+).-[\r\n]+(%s*)^?[\r\n]*$',sass='^([^\r\n]+).-on line (%d+)',xml=':(%d+): ([^\r\n]+).-[\r\n]+(%s*)^',}
 
 -- Check syntax upon saving a file.
 events.connect(events.FILE_AFTER_SAVE, function(filename)
