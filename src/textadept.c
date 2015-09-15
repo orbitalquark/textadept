@@ -1096,7 +1096,7 @@ static int lbuffer_text_range(lua_State *L) {
   Scintilla *view = focused_view;
   int result = l_globaldoccompare(L, 1);
   if (result != 0) view = (result > 0) ? dummy_view : command_entry;
-  long min = luaL_checkinteger(L, 2), max = luaL_checkinteger(L, 3);
+  Sci_PositionCR min = luaL_checkinteger(L, 2), max = luaL_checkinteger(L, 3);
   luaL_argcheck(L, min <= max, 3, "start > end");
   struct Sci_TextRange tr = {{min, max}, malloc(max - min + 1)};
   SS(view, SCI_GETTEXTRANGE, 0, (sptr_t)&tr);
