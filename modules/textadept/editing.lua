@@ -602,18 +602,32 @@ function M.show_documentation()
   local s = buffer:word_start_position(buffer.current_pos, true)
   local e = buffer:word_end_position(buffer.current_pos, true)
   local symbol = buffer:text_range(s, e)
-  if symbol == '' then return nil end
+
   api_docs = {}
-  local symbol_patt = '^'..symbol:gsub('(%p)', '%%%1')
-  for i = 1, #M.api_files[lang] do
-    if lfs.attributes(M.api_files[lang][i]) then
-      for line in io.lines(M.api_files[lang][i]) do
-        if line:find(symbol_patt) then
-          api_docs[#api_docs + 1] = line:match(symbol_patt..'%s+(.+)$')
+  ::lookup::
+  if symbol ~= '' then
+    local symbol_patt = '^'..symbol:gsub('(%p)', '%%%1')
+    for i = 1, #M.api_files[lang] do
+      if lfs.attributes(M.api_files[lang][i]) then
+        for line in io.lines(M.api_files[lang][i]) do
+          if line:find(symbol_patt) then
+            api_docs[#api_docs + 1] = line:match(symbol_patt..'%s+(.+)$')
+          end
         end
       end
     end
   end
+  -- Search backwards for an open function call and show API documentation for
+  -- that function as well.
+  local char_at = buffer.char_at
+  while s >= 0 and char_at[s] ~= 40 do s = s - 1 end
+  e = buffer:brace_match(s)
+  if s > 0 and (e == -1 or e >= buffer.current_pos) then
+    s, e = buffer:word_start_position(s - 1, true), s - 1
+    symbol = buffer:text_range(s, e + 1)
+    goto lookup
+  end
+
   if #api_docs == 0 then return end
   for i = 1, #api_docs do
     local doc = api_docs[i]:gsub('%f[\\]\\n', '\n'):gsub('\\\\', '\\')
