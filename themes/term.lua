@@ -79,6 +79,8 @@ buffer.marker_back[textadept.run.MARK_ERROR] = property_int['color.red']
 buffer.indic_fore[ui.find.INDIC_FIND] = property_int['color.yellow']
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
 buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.yellow']
+local INDIC_PLACEHOLDER = textadept.snippets.INDIC_PLACEHOLDER
+buffer.indic_fore[INDIC_PLACEHOLDER] = property_int['color.magenta']
 
 -- Call tips.
 --buffer.call_tip_fore_hlt = property_int['color.blue']

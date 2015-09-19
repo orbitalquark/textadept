@@ -126,6 +126,8 @@ buffer.indic_fore[INDIC_BRACEMATCH] = property_int['color.light_grey']
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
 buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.orange']
 buffer.indic_alpha[INDIC_HIGHLIGHT] = 255
+local INDIC_PLACEHOLDER = textadept.snippets.INDIC_PLACEHOLDER
+buffer.indic_fore[INDIC_PLACEHOLDER] = property_int['color.grey']
 
 -- Call tips.
 --buffer.call_tip_fore_hlt = property_int['color.light_blue']

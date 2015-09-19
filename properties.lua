@@ -131,6 +131,9 @@ buffer:brace_highlight_indicator(not CURSES, INDIC_BRACEMATCH)
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
 buffer.indic_style[INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
 if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
+local INDIC_PLACEHOLDER = textadept.snippets.INDIC_PLACEHOLDER
+buffer.indic_style[INDIC_PLACEHOLDER] = not CURSES and buffer.INDIC_DOTBOX or
+                                        buffer.INDIC_STRAIGHTBOX
 
 -- Autocompletion.
 --buffer.auto_c_separator =
