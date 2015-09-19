@@ -41,21 +41,33 @@ local M = {}
 --
 -- ### `%`*n*`<`*Lua code*`>`<br/>`%`*n*`[`*Shell code*`]`
 --
--- Represents a transform, where *n* is an integer, *Lua code* is arbitrary Lua
--- code, and *Shell code* is arbitrary Shell code. Textadept executes the code
--- when the editor visits placeholder *n*. If the transform omits *n*, Textadept
--- executes the transform's code the moment the editor inserts the snippet.
+-- Represents a transform, where *n* is an integer that has an associated
+-- placeholder, *Lua code* is arbitrary Lua code, and *Shell code* is arbitrary
+-- Shell code. Textadept executes the code as text is typed into placeholder
+-- *n*. If the transform omits *n*, Textadept executes the transform's code the
+-- moment the editor inserts the snippet.
 --
 -- Textadept runs Lua code in its Lua State and replaces the transform with the
--- code's return text. The code may use a temporary `selected_text` global
--- variable that contains the currently selected text. An example is
+-- code's return text. The code may use the temporary `text` and `selected_text`
+-- global variables which contain placeholder *n*'s text and the text originally
+-- selected when the snippet was inserted, respectively. An example is
 --
---     snippets['add'] = '%1(1) + %2(2) = %3<%1 + %2>'
+--     snippets['attr'] = [[
+--     %1(int) %2(foo) = %3;
+--
+--     %1 get%2<text:gsub('^.', function(c) return c:upper() end)>() {
+--     	return %2;
+--     }
+--     void set%2<text:gsub('^.', function(c) return c:upper() end)>(%1 value) {
+--     	%2 = value;
+--     }
+--     ]]
 --
 -- Textadept executes shell code using Lua's [`io.popen()`][] and replaces the
--- transform with the process' standard output (stdout). An example is
+-- transform with the process' standard output (stdout). The code may use a `%`
+-- character to represent placeholder *n*'s text. An example is
 --
---     snippets['foo'] = '$%1(HOME) = %2[echo $%1]'
+--     snippets['env'] = '$%1(HOME) = %1[echo $%]'
 --
 -- ### `%%`
 --
@@ -72,22 +84,63 @@ local M = {}
 -- A single set of line ending delimiters based on the buffer's end of line mode
 -- ([`buffer.eol_mode`]()).
 --
--- [`io.popen()`]: http://www.lua.org/manual/5.2/manual.html#pdf-io.popen
+-- [`io.popen()`]: http://www.lua.org/manual/5.3/manual.html#pdf-io.popen
+--
+-- @fields INDIC_PLACEHOLDER (number)
+--   The snippet placeholder indicator number.
 module('textadept.snippets')]=]
+
+M.INDIC_PLACEHOLDER = _SCINTILLA.next_indic_number()
+
+local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
+local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.next_indic_number()
 
 -- The stack of currently running snippets.
 local snippet_stack = {}
 
-local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
-
-local newlines = {[0] = '\r\n', '\r', '\n'}
--- Inserts a new snippet.
+-- Inserts a new snippet, adds it to the snippet stack, and returns the snippet.
 -- @param text The new snippet to insert.
 -- @param trigger The trigger text used to expand the snippet, if any.
 local function new_snippet(text, trigger)
+  -- An inserted snippet.
+  -- @field trigger The word that triggered this snippet.
+  -- @field original_sel_text The text originally selected when this snippet was
+  --   inserted.
+  -- @field start_pos This snippet's start position.
+  -- @field end_pos This snippet's end position. This is a metafield that is
+  --   computed based on the `INDIC_SNIPPET` sentinel.
+  -- @field placeholder_pos The beginning of the current placeholder in this
+  --   snippet. This is used by transforms to identify text to transform. This
+  --   is a metafield that is computed based on `INDIC_CURRENTPLACEHOLDER`.
+  -- @field index This snippet's current placeholder index.
+  -- @field max_index The number of different placeholders in this snippet.
+  -- @field snapshots A record of this snippet's text over time. The snapshot
+  --   for a given placeholder index contains the state of the snippet with all
+  --   placeholders of that index filled in (prior to moving to the next
+  --   placeholder index). Snippet state consists of a `text` string field and a
+  --   `placeholders` table field.
+  -- @class table
+  -- @name snippet
   local snippet = setmetatable({
-    trigger = trigger, original_sel_text = buffer:get_sel_text(), snapshots = {}
-  }, {__index = M._snippet_mt})
+    trigger = trigger, original_sel_text = buffer:get_sel_text(),
+    start_pos = buffer.current_pos - (trigger and #trigger or 0),
+    index = 0, max_index = 0, snapshots = {},
+  }, {__index = function(self, k)
+    if k == 'end_pos' then
+      return buffer:indicator_end(INDIC_SNIPPET, self.start_pos)
+    elseif k == 'placeholder_pos' then
+      -- Normally the marker is one character behind the placeholder. However
+      -- it will not exist at all if the placeholder is at the beginning of the
+      -- snippet. Also account for the marker being at the beginning of the
+      -- snippet. (If so, pos will point to the correct position.)
+      local pos = buffer:indicator_end(INDIC_CURRENTPLACEHOLDER, self.start_pos)
+      if pos == 0 then pos = self.start_pos end
+      return bit32.band(buffer:indicator_all_on_for(pos),
+                        2^INDIC_CURRENTPLACEHOLDER) > 0 and pos + 1 or pos
+    else
+      return M._snippet_mt[k]
+    end
+  end})
   snippet_stack[#snippet_stack + 1] = snippet
 
   -- Convert and match indentation.
@@ -109,17 +162,107 @@ local function new_snippet(text, trigger)
     local additional_indent = indent[use_tabs]:rep(indent_size)
     for i = 2, #lines do lines[i] = additional_indent..lines[i] end
   end
-  text = table.concat(lines, newlines[buffer.eol_mode])
+  text = table.concat(lines, ({[0] = '\r\n', '\r', '\n'})[buffer.eol_mode])
 
-  -- Insert the snippet and its mark into the buffer.
-  buffer:target_from_selection()
-  if trigger then buffer.target_start = buffer.current_pos - #trigger end
-  snippet.start_position = buffer.target_start
-  buffer:replace_target(text..' ')
+  -- Parse placeholders and generate initial snapshot.
+  local snapshot = {text = '', placeholders = {}}
+  local P, S, R, V = lpeg.P, lpeg.S, lpeg.R, lpeg.V
+  local C, Cp, Ct, Cg, Cc = lpeg.C, lpeg.Cp, lpeg.Ct, lpeg.Cg, lpeg.Cc
+  local patt = P{
+    V('plain_text') * V('placeholder') * Cp() + V('plain_text') * -1,
+    plain_text = C(((P(1) - '%')^1 + '%%')^0),
+    placeholder = Ct('%' * (V('index')^-1 * (V('angles') + V('brackets')) *
+                            V('transform') +
+                            V('index') * (V('parens') + V('simple')))),
+    index = Cg(R('09') / tonumber, 'index'),
+    parens = '(' * Cg((1 - S('()') + V('parens'))^0, 'default') * ')',
+    simple = Cg(Cc(true), 'simple'), transform = Cg(Cc(true), 'transform'),
+    angles = '<' * Cg((1 - S('<>') + V('angles'))^0, 'lua_code') * '>',
+    brackets = '[' * Cg((1 - S('[]') + V('brackets'))^0, 'sh_code') * ']'
+  }
+  -- A snippet placeholder.
+  -- Each placeholder is stored in a snippet snapshot.
+  -- @field id This placeholder's unique ID. This field is used as an
+  --   indicator's value for identification purposes.
+  -- @field index This placeholder's index.
+  -- @field default This placeholder's default text, if any.
+  -- @field transform Whether or not this placeholder is a transform (containing
+  --   either Lua or Shell code).
+  -- @field lua_code The Lua code of this transform.
+  -- @field sh_code The Shell code of this transform.
+  -- @field position This placeholder's initial position in its snapshot. This
+  --   field will not update until the next snapshot is taken. Use
+  --   `snippet:each_placeholder()` to determine a placeholder's current
+  --   position.
+  -- @field length This placeholder's initial length in its snapshot. This field
+  --   will never update. Use `buffer:indicator_end()` in conjunction with
+  --   `snippet:each_placeholder()` to determine a placeholder's current length.
+  -- @class table
+  -- @name placeholder
+  local text_part, placeholder, e = lpeg.match(patt, text)
+  while placeholder do
+    if placeholder.index then
+      local i = placeholder.index
+      if i > snippet.max_index then snippet.max_index = i end
+      placeholder.id = #snapshot.placeholders + 1
+      snapshot.placeholders[#snapshot.placeholders + 1] = placeholder
+    end
+    if text_part ~= '' then snapshot.text = snapshot.text..text_part end
+    placeholder.position = #snapshot.text
+    if placeholder.default then
+      -- Execute any embedded code first.
+      placeholder.default = placeholder.default:gsub('%%%b<>', function(s)
+        return snippet:execute_code{lua_code = s:sub(3, -2)}
+      end):gsub('%%%b[]', function(s)
+        return snippet:execute_code{sh_code = s:sub(3, -2)}
+      end)
+      if placeholder.default:find('%%%d+%b()') then
+        -- Parses out embedded placeholders, adding them to this snippet's
+        -- snapshot.
+        -- @param s The placeholder string to parse.
+        -- @param start_pos The absolute position in the snippet `s` starts
+        --   from. All computed positions are anchored from here.
+        -- @return plain text from `s` (i.e. no placeholder markup)
+        local function process_placeholders(s, start_pos)
+          return s:gsub('()%%(%d+)(%b())', function(position, index, default)
+            position = start_pos + position - 1
+            default = process_placeholders(default:sub(2, -2),
+                                           position + #index + 2) -- skip '%n('
+            index = tonumber(index)
+            if index > snippet.max_index then snippet.max_index = index end
+            snapshot.placeholders[#snapshot.placeholders + 1] = {
+              id = #snapshot.placeholders + 1,
+              index = index, default = default,
+              position = snippet.start_pos + position, length = #default
+            }
+            return default
+          end)
+        end
+        placeholder.default = process_placeholders(placeholder.default,
+                                                   placeholder.position)
+      end
+      snapshot.text = snapshot.text..placeholder.default
+    elseif placeholder.transform and not placeholder.index then
+      snapshot.text = snapshot.text..snippet:execute_code(placeholder)
+    else
+      snapshot.text = snapshot.text..' ' -- fill empty placeholders for display
+    end
+    placeholder.length = #snapshot.text - placeholder.position
+    placeholder.position = snippet.start_pos + placeholder.position -- absolute
+    text_part, placeholder, e = lpeg.match(patt, text, e)
+  end
+  if text_part ~= '' then snapshot.text = snapshot.text..text_part end
+  snippet.snapshots[0] = snapshot
+
+  -- Insert the snippet into the buffer and mark its end position.
+  buffer:begin_undo_action()
+  buffer:set_target_range(snippet.start_pos, buffer.selection_end)
+  buffer:replace_target('  ') -- placeholder for snippet text
   buffer.indicator_current = INDIC_SNIPPET
-  buffer:indicator_fill_range(buffer.target_end - 1, 1)
+  buffer:indicator_fill_range(snippet.start_pos + 1, 1)
+  snippet:insert() -- insert into placeholder
+  buffer:end_undo_action()
 
-  snippet:execute_code('')
   return snippet
 end
 
@@ -144,8 +287,7 @@ function M._insert(text)
   end
   local snippet = type(text) == 'string' and new_snippet(text, trigger) or
                   snippet_stack[#snippet_stack]
-  if not snippet then return false end
-  snippet:next()
+  if snippet then snippet:next() else return false end
 end
 
 ---
@@ -163,7 +305,7 @@ end
 -- Cancels the active snippet, removing all inserted text.
 -- @name _cancel_current
 function M._cancel_current()
-  if #snippet_stack > 0 then snippet_stack[#snippet_stack]:cancel() end
+  if #snippet_stack > 0 then snippet_stack[#snippet_stack]:finish(true) end
 end
 
 ---
@@ -193,175 +335,207 @@ function M._select()
   if button == 1 and i then M._insert(t[i * 3]) end
 end
 
--- Table of escape sequences.
--- @class table
--- @name escapes
-local escapes = {
-  ['%%'] = '\027\027', ['\027\027'] = '%%',
-  ['%('] = '\027\017', ['\027\017'] = '%(',
-  ['%)'] = '\027\018', ['\027\018'] = '%)',
-  ['%>'] = '\027\019', ['\027\019'] = '%>',
-  ['%]'] = '\027\020', ['\027\020'] = '%]'
-}
-
 -- Metatable for a snippet object.
 -- @class table
 -- @name _snippet_mt
 M._snippet_mt = {
-  -- Gets a snippet's end position in the buffer.
-  -- @param snippet The snippet returned by `new_snippet()`.
-  get_end_position = function(snippet)
-    return buffer:indicator_end(INDIC_SNIPPET, snippet.start_position + 1)
+  -- Inserts the current snapshot (based on `self.index`) of this snippet into
+  -- the buffer and marks placeholders.
+  insert = function(self)
+    buffer:set_target_range(self.start_pos, self.end_pos)
+    buffer:replace_target(self.snapshots[self.index].text)
+    buffer.indicator_current = M.INDIC_PLACEHOLDER
+    for id, placeholder in pairs(self.snapshots[self.index].placeholders) do
+      buffer.indicator_value = id
+      buffer:indicator_fill_range(placeholder.position, placeholder.length)
+    end
   end,
 
-  -- Gets the text for a snippet.
-  -- @param snippet The snippet returned by `new_snippet()`.
-  get_text = function(snippet)
-    return buffer:text_range(snippet.start_position, snippet:get_end_position())
+  -- Jumps to the next placeholder in this snippet and adds additional carets
+  -- at mirrors.
+  next = function(self)
+    -- Take a snapshot of the current state in order to restore it later if
+    -- necessary.
+    if self.index > 0 then
+      local text = buffer:text_range(self.start_pos, self.end_pos)
+      local placeholders = {}
+      for pos, ph in self:each_placeholder() do
+        -- Only the position of placeholders changes between snapshots; save it
+        -- and keep all other existing properties.
+        -- Note that nested placeholders will return the same placeholder id
+        -- twice: once before a nested placeholder, and again after. (e.g.
+        -- [foo[bar]baz] will will return the '[foo' and 'baz]' portions of the
+        -- same placeholder.) Only process the first occurrence.
+        if not placeholders[ph.id] then
+          placeholders[ph.id] = setmetatable({position = pos}, {
+            __index = self.snapshots[self.index - 1].placeholders[ph.id]
+          })
+        end
+      end
+      self.snapshots[self.index] = {text = text, placeholders = placeholders}
+    end
+    self.index = self.index < self.max_index and self.index + 1 or 0
+
+    -- Find the default placeholder, which may be the first mirror.
+    local ph = select(2, self:each_placeholder(self.index, 'default')()) or
+               select(2, self:each_placeholder(self.index, 'simple')()) or
+               self.index == 0 and {position = self.end_pos, length = 0}
+    if not ph then self:next() return end -- try next placeholder
+
+    -- Mark the position of the placeholder so transforms can identify it.
+    buffer.indicator_current = INDIC_CURRENTPLACEHOLDER
+    buffer:indicator_clear_range(self.placeholder_pos - 1, 1)
+    if ph.position > self.start_pos and self.index > 0 then
+      -- Place it directly behind the placeholder so it will be preserved.
+      buffer:indicator_fill_range(ph.position - 1, 1)
+    end
+
+    buffer:begin_undo_action()
+
+    -- Jump to the default placeholder and clear its marker.
+    buffer:set_sel(ph.position, ph.position + ph.length)
+    local e = buffer:indicator_end(M.INDIC_PLACEHOLDER, ph.position)
+    buffer.indicator_current = M.INDIC_PLACEHOLDER
+    buffer:indicator_clear_range(ph.position, e - ph.position)
+    if not ph.default then buffer:replace_sel('') end -- delete filler ' '
+
+    -- Add additional carets at mirrors and clear their markers.
+    local text = ph.default or ''
+    ::redo::
+    for pos in self:each_placeholder(self.index, 'simple') do
+      local e = buffer:indicator_end(M.INDIC_PLACEHOLDER, pos)
+      buffer:indicator_clear_range(pos, e - pos)
+      buffer:set_target_range(pos, pos + 1)
+      buffer:replace_target(text)
+      buffer:add_selection(pos, pos + #text)
+      goto redo -- indicator positions have changed
+    end
+    buffer.main_selection = 0
+
+    -- Update transforms.
+    self:update_transforms()
+
+    buffer:end_undo_action()
+
+    if self.index == 0 then self:finish() end
   end,
 
-  -- Sets the text for a snippet.
-  -- This text will be displayed immediately in the buffer.
-  -- @param snippet The snippet returned by `new_snippet()`.
-  -- @param text The snippet's text.
-  set_text = function(snippet, text)
-    buffer:set_target_range(snippet.start_position, snippet:get_end_position())
-    buffer:replace_target(text)
+  -- Jumps to the previous placeholder in this snippet and restores the state
+  -- associated with that placeholder.
+  previous = function(self)
+    if self.index < 2 then self:finish(true) return end
+    self.index = self.index - 2
+    self:insert()
+    self:next()
   end,
 
-  -- Returns the escaped form of the snippet's text.
-  -- @param snippet The snippet returned by `new_snippet()`.
-  -- @see escapes
-  get_escaped_text = function(snippet)
-    return snippet:get_text():gsub('%%[%%%(%)>%]]', escapes)
+  -- Finishes or cancels this snippet depending on boolean *canceling*.
+  -- The snippet cleans up after itself regardless.
+  -- @param canceling Whether or not to cancel inserting this snippet. When
+  --   `true`, the buffer is restored to its state prior to snippet expansion.
+  finish = function(self, canceling)
+    if canceling then
+      buffer:set_sel(self.start_pos, self.end_pos)
+      buffer:replace_sel(self.trigger or self.original_sel_text)
+    end
+    buffer:delete_range(self.end_pos, 1) -- clear initial padding space
+    snippet_stack[#snippet_stack] = nil
   end,
 
-  -- Returns the unescaped form of the given text.
-  -- This does the opposite of `get_escaped_text()` by default. The behaviour is
-  -- slightly different when `complete` true.
-  -- @param text Text to unescape.
-  -- @param complete Flag indicating whether or not to also remove the extra
-  --   escape character '%'. The default value is `false`.
-  unescape_text = function(text, complete)
-    text = text:gsub('\027.', escapes)
-    return complete and text:gsub('%%([%%%(%)>%]])', '%1') or text
+  -- Returns a generator that returns each placeholder's position and state for
+  -- all placeholders in this snippet.
+  -- DO NOT modify the buffer while this generator is running. Doing so will
+  -- affect the generator's state and cause errors. Re-run the generator each
+  -- time a buffer edit is made (e.g. via `goto`).
+  -- @param index Optional placeholder index to constrain results to.
+  -- @param type Optional placeholder type to constrain results to.
+  each_placeholder = function(self, index, type)
+    local snapshot = self.snapshots[self.index > 0 and self.index - 1 or
+                                    #self.snapshots]
+    local i = self.start_pos
+    return function()
+      local s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
+      while s > 0 and s <= self.end_pos do
+        if bit32.band(buffer:indicator_all_on_for(i),
+                      2^M.INDIC_PLACEHOLDER) > 0 then
+          -- This next indicator comes directly after the previous one; adjust
+          -- start and end positions to compensate.
+          s, i = buffer:indicator_start(M.INDIC_PLACEHOLDER, i), s
+        else
+          i = buffer:indicator_end(M.INDIC_PLACEHOLDER, s)
+        end
+        local id = buffer:indicator_value_at(M.INDIC_PLACEHOLDER, s)
+        local ph = snapshot.placeholders[id]
+        if (not index or ph.index == index) and (not type or ph[type]) then
+          return s, ph
+        end
+        s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
+      end
+    end
   end,
 
-  -- Executes code in the snippet for the given index.
-  -- @param snippet The snippet returned by `new_snippet()`.
-  -- @param index Execute code with this index.
-  execute_code = function(snippet, index)
-    local escaped_text = snippet:get_escaped_text()
-    -- Lua code.
-    escaped_text = escaped_text:gsub('%%'..index..'<([^>]*)>', function(code)
-      local env = setmetatable({selected_text = snippet.original_sel_text},
-                               {__index = _G})
-      local f, result = load('return '..snippet.unescape_text(code, true), nil,
-                             'bt', env)
-      if f then result = select(2, pcall(f)) end
-      return result or ''
-    end)
-    -- Shell code.
-    escaped_text = escaped_text:gsub('%%'..index..'%[([^%]]*)%]', function(code)
-      local p = io.popen(snippet.unescape_text(code, true))
+  -- Returns the result of executing Lua or Shell code, in placeholder table
+  -- *placeholder*, in the context of this snippet.
+  -- @param placeholder The placeholder that contains code to execute.
+  execute_code = function(self, placeholder)
+    local text = buffer:text_range(self.placeholder_pos, buffer.selection_end)
+    if not self.index then text = '' end -- %<...> or %[...]
+    if placeholder.lua_code then
+      local env = {text = text, selected_text = self.original_sel_text}
+      local f, result = load('return '..placeholder.lua_code, nil, 'bt',
+                             setmetatable(env, {__index = _G}))
+      return f and select(2, pcall(f)) or result or ''
+    elseif placeholder.sh_code then
+      local command = placeholder.sh_code:gsub('%f[%%]%%%f[^%%]', text)
+      local p = io.popen(command)
       local result = p:read('*a'):sub(1, -2) -- chop '\n'
       p:close()
       return result
-    end)
-    snippet:set_text(snippet.unescape_text(escaped_text))
+    end
   end,
 
-  -- Goes to the next placeholder in a snippet.
-  -- @param snippet The snippet returned by `new_snippet()`.
-  next = function(snippet)
-    -- If the snippet was just initialized, determine how many placeholders it
-    -- has.
-    if not snippet.index then
-      snippet.index, snippet.max_index = 1, 0
-      for i in snippet:get_escaped_text():gmatch('%%(%d+)') do
-        i = tonumber(i)
-        if i > snippet.max_index then snippet.max_index = i end
-      end
-    end
-    local index = snippet.index
-    snippet.snapshots[index] = snippet:get_text()
-
-    if index <= snippet.max_index then
-      -- Execute shell and Lua code.
-      snippet:execute_code(index)
-      local escaped_text = snippet:get_escaped_text()..' '
-
-      -- Find the next placeholder.
-      local s, _, placeholder, e = escaped_text:find('%%'..index..'(%b())()')
-      if not s then s, _, e = escaped_text:find('%%'..index..'()[^(]') end
-      if s then
-        local start = snippet.start_position
-        placeholder = (placeholder or ''):sub(2, -2)
-
-        -- Place the caret at the placeholder.
-        buffer:set_target_range(start + s - 1, start + e - 1)
-        buffer:replace_target(snippet.unescape_text(placeholder))
-        buffer:set_sel(buffer.target_start, buffer.target_end)
-
-        -- Add additional carets at mirrors.
-        escaped_text = snippet:get_escaped_text()..' '
-        local offset = 0
-        for s2, e2 in escaped_text:gmatch('()%%'..index..'()[^(]') do
-          buffer:set_target_range(start + s2 - 1 + offset,
-                                  start + e2 - 1 + offset)
-          buffer:replace_target(placeholder)
-          buffer:add_selection(buffer.target_start, buffer.target_end)
-          offset = offset + (#placeholder - (e2 - s2))
+  -- Updates transforms in place based on the current placeholder's text.
+  update_transforms = function(self)
+    buffer.indicator_current = M.INDIC_PLACEHOLDER
+    local processed = {}
+    ::redo::
+    for s, ph in self:each_placeholder(nil, 'transform') do
+      if ph.index == self.index and not processed[ph] then
+        -- Execute the code and replace any existing transform text.
+        local result = self:execute_code(ph)
+        if result == '' then result = ' ' end -- fill for display
+        local id = buffer:indicator_value_at(M.INDIC_PLACEHOLDER, s)
+        buffer:set_target_range(s, buffer:indicator_end(M.INDIC_PLACEHOLDER, s))
+        buffer:replace_target(result)
+        buffer.indicator_value = id
+        buffer:indicator_fill_range(s, #result) -- re-mark
+        processed[ph] = true
+        goto redo -- indicator positions have changed
+      elseif ph.index < self.index or self.index == 0 then
+        -- Clear obsolete transforms, deleting filler text if necessary.
+        local e = buffer:indicator_end(M.INDIC_PLACEHOLDER, s)
+        buffer:indicator_clear_range(s, e - s)
+        if buffer:text_range(s, e) == ' ' then
+          buffer:set_target_range(s, e)
+          buffer:replace_target('')
+          goto redo
         end
-        buffer.main_selection = 0
       end
-      snippet.index = index + 1
-      if not s then snippet:next() end
-    else
-      snippet:finish()
+      -- TODO: insert initial transform for ph.index > self.index
     end
-  end,
-
-  -- Goes to the previous placeholder in a snippet.
-  -- @param snippet The snippet returned by `new_snippet()`.
-  previous = function(snippet)
-    if snippet.index <= 2 then snippet:cancel() return end
-    snippet:set_text(snippet.snapshots[snippet.index - 2])
-    snippet.index = snippet.index - 2
-    snippet:next()
-  end,
-
-  -- Cancels a snippet.
-  -- @param snippet The snippet returned by `new_snippet()`.
-  cancel = function(snippet)
-    buffer:set_sel(snippet.start_position, snippet:get_end_position())
-    buffer:replace_sel(snippet.trigger or snippet.original_sel_text)
-    buffer.indicator_current = INDIC_SNIPPET
-    buffer:indicator_clear_range(snippet:get_end_position(), 1)
-    snippet_stack[#snippet_stack] = nil
-  end,
-
-  -- Finishes a snippet by going to its "%0" placeholder and cleaning up.
-  -- @param snippet The snippet returned by `new_snippet()`.
-  finish = function(snippet)
-    snippet:set_text(snippet.unescape_text(snippet:get_text(), true))
-    local s, e = snippet:get_text():find('%%0')
-    if s and e then
-      buffer:set_sel(snippet.start_position + s - 1, snippet.start_position + e)
-      buffer:replace_sel('')
-    else
-      buffer:goto_pos(snippet:get_end_position())
-    end
-    buffer.indicator_current = INDIC_SNIPPET
-    e = snippet:get_end_position()
-    buffer:indicator_clear_range(e, 1)
-    buffer:delete_range(e, 1) -- clear initial padding space
-    snippet_stack[#snippet_stack] = nil
   end,
 }
 
+-- Update snippet transforms when text is added or deleted.
+events.connect(events.UPDATE_UI, function(updated)
+  if #snippet_stack > 0 and bit32.band(updated, buffer.UPDATE_CONTENT) > 0 then
+    snippet_stack[#snippet_stack]:update_transforms()
+  end
+end)
+
 events.connect(events.VIEW_NEW, function()
   buffer.indic_style[INDIC_SNIPPET] = buffer.INDIC_HIDDEN
+  buffer.indic_style[INDIC_CURRENTPLACEHOLDER] = buffer.INDIC_HIDDEN
 end)
 
 ---
