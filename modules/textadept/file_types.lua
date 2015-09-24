@@ -73,7 +73,7 @@ local function set_lexer(buffer, lang)
     local post_init = lang..'.post_init'
     if package.searchpath(post_init, package.path) then require(post_init) end
   end
-  events.emit(events.LEXER_LOADED, lang)
+  if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, lang) end
   local last_line = buffer.first_visible_line + buffer.lines_on_screen
   buffer:colourise(0, buffer:position_from_line(last_line + 1))
 end
