@@ -18,10 +18,12 @@ _M = {} -- language modules table
 if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
 -- pdcurses compatibility.
 if CURSES and WIN32 then
-  function spawn(argv, cwd, stdout_cb, _, exit_cb)
+  function spawn(argv, cwd, ...)
     local current_dir = lfs.currentdir()
     if cwd then lfs.chdir(cwd) end
     local p = io.popen(argv..' 2>&1')
+    local cb_index = type(select(1, ...)) ~= 'table' and 1 or 2 -- ignore env
+    local stdout_cb, exit_cb = select(cb_index, ...), select(cb_index + 2, ...)
     if stdout_cb then stdout_cb(p:read('*a')) end
     if exit_cb then exit_cb(select(3, p:close())) else p:close() end
     lfs.chdir(current_dir)
@@ -150,6 +152,10 @@ local timeout
 --   arguments to pass to it. `PATH` is searched for program names.
 -- @param cwd Optional current working directory (cwd) for the child
 --   process. The default value is `nil`, which inherits the parent's cwd.
+-- @param env Optional list of environment variables for the child process.
+--   Each element in the list is a 'KEY=VALUE' string. The default value is
+--   `nil`, which inherits the parent's environment.
+--   This parameter should be omitted completely instead of specifying `nil`.
 -- @param stdout_cb Optional Lua function that accepts a string parameter for a
 --   block of standard output read from the child. Stdout is read asynchronously
 --   in 1KB or 0.5KB blocks (depending on the platform), or however much data is
