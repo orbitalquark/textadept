@@ -347,7 +347,7 @@ end)
 -- interpreted languages and markup languages.
 -- @class table
 -- @name syntax_commands
-M.syntax_commands = {awk='gawk --source "BEGIN{exit(0)} END{exit(0)}" --file "%f"',bash = function() return (buffer:get_line(0):match('^#!.+/([^/%s]+)') or 'bash')..' -n "%f"' end,coffeescript='coffee -cp "%f"',css='csslint --format=compact --quiet "%f"',fish='fish -n "%f"',go='gofmt -l "%f"',html='tidy -e -q -utf8 "%f"',javascript='jshint "%f"',less='lessc --lint --no-color "%f"',litcoffee='coffee -cp "%f"',lua='luac -p "%f"',perl='perl -c -X "%f"',php='php -l "%f"',python=[[python -c 'compile(open("%f").read(),"%f","exec",0,1)']],ruby='ruby -c "%f"',sass='sass -c -q "%f"',xml='xmllint "%f"',}
+M.syntax_commands = {awk='gawk --source "BEGIN{exit(0)} END{exit(0)}" --file "%f"',bash = function() return (buffer:get_line(0):match('^#!.+/([^/%s]+)') or 'bash')..' -n "%f"' end,coffeescript='coffee -cp "%f"',css='csslint --format=compact --quiet "%f"',fish='fish -n "%f"',go='gofmt -l "%f"',html='tidy -e -q -utf8 "%f"',javascript='jshint "%f"',less='lessc --lint --no-color "%f"',litcoffee='coffee -cp "%f"',lua='luac -p "%f"',perl='perl -c -X "%f"',php='php -l "%f"',python=function() return ([[python -c "compile(open('%f').read(),'%f','exec',0,1)"]]):gsub('%%f', (buffer.filename:gsub('\\', '\\\\\\\\'))) end,ruby='ruby -c "%f"',sass='sass -c -q "%f"',xml='xmllint "%f"',}
 
 ---
 -- Map of file extensions or lexer names to patterns that match their respective
