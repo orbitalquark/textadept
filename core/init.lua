@@ -168,7 +168,7 @@ local timeout
 --   available at the time.
 -- @param exit_cb Optional Lua function that is called when the child process
 --   finishes. The child's exit status is passed.
--- @return proc
+-- @return proc or nil plus an error message on failure
 -- @usage spawn('lua buffer.filename', nil, print)
 -- @usage proc = spawn('lua -e "print(io.read())"', nil, print)
 --        proc:write('foo\n')
