@@ -8,6 +8,43 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 8.3 (01 Oct 2015)
+
+Download:
+
+* [Textadept 8.3 -- Win32][]
+* [Textadept 8.3 -- Mac OSX Intel 10.5+][]
+* [Textadept 8.3 -- Linux][]
+* [Textadept 8.3 -- Linux x86_64][]
+* [Textadept 8.3 -- Modules][]
+
+Bugfixes:
+
+* Stop annoying black box from flashing when saving some files on Win32.
+* Fixed bug in parsing Ruby error output.
+* Do not emit `events.LEXER_LOADED` for the command entry.
+* Fixed bug with Python syntax checking on Win32.
+* Scintilla: fixed bug in [`buffer:count_characters()`][].
+* Scintilla: small GTK fixes.
+
+Changes:
+
+* Improved API documentation lookup behind the caret.
+* [Refactored snippets][] to longer display placeholder text.
+* [`spawn()`][] can now optionally specify the child's environment.
+* Added Gherkin lexer.
+* Updated to [Scintilla][] 3.6.1.
+
+[Textadept 8.3 -- Win32]: download/textadept_8.3.win32.zip
+[Textadept 8.3 -- Mac OSX Intel 10.5+]: download/textadept_8.3.osx.zip
+[Textadept 8.3 -- Linux]: download/textadept_8.3.i386.tgz
+[Textadept 8.3 -- Linux x86_64]: download/textadept_8.3.x86_64.tgz
+[Textadept 8.3 -- Modules]: download/textadept_8.3.modules.zip
+[`buffer:count_characters()`]: api.html#buffer.count_characters
+[Refactored snippets]: http://foicica.com/lists/code/201509/2687.html
+[`spawn()`]: api.html#spawn
+[Scintilla]: http://scintilla.org
+
 ## 8.2 (01 Sep 2015)
 
 Download:
