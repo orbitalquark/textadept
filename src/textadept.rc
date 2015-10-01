@@ -3,8 +3,8 @@
 textadept ICON "../core/images/textadept.ico\0"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION	8, 2, 0, 0
-PRODUCTVERSION	8, 2, 0, 0
+FILEVERSION	8, 3, 0, 0
+PRODUCTVERSION	8, 3, 0, 0
 FILEFLAGSMASK	0x3fL
 FILEFLAGS 0
 FILEOS VOS_NT_WINDOWS32
@@ -17,12 +17,12 @@ BEGIN
 		BEGIN
 			VALUE	"CompanyName",	"Mitchell\0"
 			VALUE	"FileDescription",	"textadept\0"
-			VALUE	"FileVersion",	"8.2\0"
+			VALUE	"FileVersion",	"8.3\0"
 			VALUE	"InternalName",	"textadept\0"
 			VALUE	"LegalCopyright",	"Copyright 2006-2015 by Mitchell\0"
 			VALUE	"OriginalFilename",	"textadept.exe\0"
 			VALUE	"ProductName",	"textadept\0"
-			VALUE	"ProductVersion",	"8.2\0"
+			VALUE	"ProductVersion",	"8.3\0"
 		END
 	END
 END

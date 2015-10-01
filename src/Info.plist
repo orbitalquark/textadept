@@ -373,6 +373,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>feature</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Gherkin source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>glslf</string>
 				<string>glslv</string>
 			</array>
@@ -1123,7 +1133,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>8.2</string>
+	<string>8.3</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
