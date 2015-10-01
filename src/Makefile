@@ -382,11 +382,11 @@ endif
 
 scintilla_tgz = scintilla361.tgz
 scinterm_zip = scinterm_1.6.zip
-scintillua_zip = 8bce8ef421d7.zip
+scintillua_zip = 719d5dfdeae2.zip
 lua_tgz = lua-5.3.1.tar.gz
 lpeg_tgz = lpeg-0.12.2.tar.gz
 lfs_zip = v_1_6_3.zip
-lspawn_zip = lspawn_1.2.zip
+lspawn_zip = lspawn_1.3.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
 gtdialog_zip = gtdialog_1.2.zip
