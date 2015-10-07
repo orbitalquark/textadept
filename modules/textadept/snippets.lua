@@ -530,7 +530,8 @@ M._snippet_mt = {
 
 -- Update snippet transforms when text is added or deleted.
 events.connect(events.UPDATE_UI, function(updated)
-  if #snippet_stack > 0 and bit32.band(updated, buffer.UPDATE_CONTENT) > 0 then
+  if #snippet_stack > 0 and updated and
+     bit32.band(updated, buffer.UPDATE_CONTENT) > 0 then
     snippet_stack[#snippet_stack]:update_transforms()
   end
 end)
