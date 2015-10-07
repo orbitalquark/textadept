@@ -207,7 +207,9 @@ local function new_snippet(text, trigger)
       placeholder.id = #snapshot.placeholders + 1
       snapshot.placeholders[#snapshot.placeholders + 1] = placeholder
     end
-    if text_part ~= '' then snapshot.text = snapshot.text..text_part end
+    if text_part ~= '' then
+      snapshot.text = snapshot.text..text_part:gsub('%%(%p)', '%1')
+    end
     placeholder.position = #snapshot.text
     if placeholder.default then
       -- Execute any embedded code first.
