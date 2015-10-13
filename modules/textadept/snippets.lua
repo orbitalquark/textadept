@@ -177,8 +177,8 @@ local function new_snippet(text, trigger)
     index = Cg(R('09') / tonumber, 'index'),
     parens = '(' * Cg((1 - S('()') + V('parens'))^0, 'default') * ')',
     simple = Cg(Cc(true), 'simple'), transform = Cg(Cc(true), 'transform'),
-    angles = '<' * Cg((1 - S('<>') + V('angles'))^0, 'lua_code') * '>',
-    brackets = '[' * Cg((1 - S('[]') + V('brackets'))^0, 'sh_code') * ']'
+    brackets = '[' * Cg((1 - S('[]') + V('brackets'))^0, 'sh_code') * ']',
+    angles = '<' * -P('/') * Cg((1 - S('<>') + V('angles'))^0, 'lua_code') * '>'
   }
   -- A snippet placeholder.
   -- Each placeholder is stored in a snippet snapshot.
