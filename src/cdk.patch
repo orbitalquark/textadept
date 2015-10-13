@@ -8,7 +8,7 @@ diff -r c40f79827990 binding.c
  
  /*
   * $Author: tom $
-@@ -167,7 +169,48 @@
+@@ -167,7 +169,50 @@
  {
     EObjectType cdktype = ObjTypeOf (obj);
     CDKOBJS *test = bindableObject (&cdktype, obj);
@@ -38,6 +38,8 @@ diff -r c40f79827990 binding.c
 +         break;
 +      case TERMKEY_TYPE_KEYSYM:
 +         result = keysyms[key.code.sym];
++         if (key.code.sym == TERMKEY_SYM_TAB && key.modifiers & TERMKEY_KEYMOD_SHIFT)
++            result = KEY_BTAB;
 +         break;
 +      case TERMKEY_TYPE_UNKNOWN_CSI:
 +      case TERMKEY_TYPE_MOUSE:
