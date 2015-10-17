@@ -428,6 +428,7 @@ io.snapopen_filters = {}
 -- @name snapopen
 function io.snapopen(paths, filter, exclude_FILTER, opts)
   if not paths then paths = io.get_project_root() end
+  if not paths then return end
   if type(paths) == 'string' then
     if not filter then
       filter = io.snapopen_filters[paths]
