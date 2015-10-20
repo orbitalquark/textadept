@@ -29,6 +29,14 @@ local M = {}
 --     snippets['foo'] = 'foobar%1(baz)'
 --     snippets['bar'] = 'start\n\t%0\nend'
 --
+-- ### `%`*n*`{`*list*`}`
+--
+-- Also represents a placeholder (where *n* is an integer), but presents a list
+-- of choices for placeholder text constructed from comma-separated *list*.
+-- Examples are
+--
+--     snippets['op'] = 'operator(%1(1), %2(1), "%3{add,sub,mul,div}")'
+--
 -- ### `%`*n*
 --
 -- Represents a mirror, where *n* is an integer. Mirrors with the same *n* as a
@@ -171,13 +179,15 @@ local function new_snippet(text, trigger)
   local patt = P{
     V('plain_text') * V('placeholder') * Cp() + V('plain_text') * -1,
     plain_text = C(((P(1) - '%')^1 + '%%')^0),
-    placeholder = Ct('%' * (V('index')^-1 * (V('angles') + V('brackets')) *
+    placeholder = Ct('%' * (V('index')^-1 * (V('angles') + V('brackets') +
+                                             V('braces')) *
                             V('transform') +
                             V('index') * (V('parens') + V('simple')))),
     index = Cg(R('09') / tonumber, 'index'),
     parens = '(' * Cg((1 - S('()') + V('parens'))^0, 'default') * ')',
     simple = Cg(Cc(true), 'simple'), transform = Cg(Cc(true), 'transform'),
     brackets = '[' * Cg((1 - S('[]') + V('brackets'))^0, 'sh_code') * ']',
+    braces = '{' * Cg((1 - S('{}') + V('braces'))^0, 'choice') * '}',
     angles = '<' * -P('/') * Cg((1 - S('<>') + V('angles'))^0, 'lua_code') * '>'
   }
   -- A snippet placeholder.
@@ -190,6 +200,7 @@ local function new_snippet(text, trigger)
   --   either Lua or Shell code).
   -- @field lua_code The Lua code of this transform.
   -- @field sh_code The Shell code of this transform.
+  -- @field choice A list of options to insert from an autocompletion list.
   -- @field position This placeholder's initial position in its snapshot. This
   --   field will not update until the next snapshot is taken. Use
   --   `snippet:each_placeholder()` to determine a placeholder's current
@@ -380,6 +391,7 @@ M._snippet_mt = {
 
     -- Find the default placeholder, which may be the first mirror.
     local ph = select(2, self:each_placeholder(self.index, 'default')()) or
+               select(2, self:each_placeholder(self.index, 'choice')()) or
                select(2, self:each_placeholder(self.index, 'simple')()) or
                self.index == 0 and {position = self.end_pos, length = 0}
     if not ph then self:next() return end -- try next placeholder
@@ -400,6 +412,12 @@ M._snippet_mt = {
     buffer.indicator_current = M.INDIC_PLACEHOLDER
     buffer:indicator_clear_range(ph.position, e - ph.position)
     if not ph.default then buffer:replace_sel('') end -- delete filler ' '
+    if ph.choice then
+      local sep = buffer.auto_c_separator
+      buffer.auto_c_separator = string.byte(',')
+      buffer:auto_c_show(0, ph.choice)
+      buffer.auto_c_separator = sep -- restore
+    end
 
     -- Add additional carets at mirrors and clear their markers.
     local text = ph.default or ''
