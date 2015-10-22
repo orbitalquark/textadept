@@ -20,7 +20,10 @@ module('_M.ansi_c')]]
 -- project's top-level *tags* file or the current directory's *tags* file.
 -- @class table
 -- @name tags
-M.tags = {_HOME..'/modules/ansi_c/tags', _USERHOME..'/modules/ansi_c/tags'}
+M.tags = {
+  _HOME..'/modules/ansi_c/tags', _HOME..'/modules/ansi_c/lua_tags',
+  _USERHOME..'/modules/ansi_c/tags'
+}
 
 local XPM = textadept.editing.XPM_IMAGES
 local xpms = setmetatable({
