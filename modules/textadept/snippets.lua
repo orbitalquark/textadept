@@ -298,7 +298,7 @@ function M._insert(text)
                                 buffer.current_pos)
     text = type(M[lexer]) == 'table' and M[lexer][trigger] or M[trigger]
   end
-  if type(text) == 'function' then text = text() end
+  if type(text) == 'function' and not trigger:find('^_') then text = text() end
   local snippet = type(text) == 'string' and new_snippet(text, trigger) or
                   snippet_stack[#snippet_stack]
   if snippet then snippet:next() else return false end
