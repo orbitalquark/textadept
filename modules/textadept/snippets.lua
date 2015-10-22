@@ -94,7 +94,7 @@ local M = {}
 --
 -- [`io.popen()`]: http://www.lua.org/manual/5.3/manual.html#pdf-io.popen
 --
--- @fields INDIC_PLACEHOLDER (number)
+-- @field INDIC_PLACEHOLDER (number)
 --   The snippet placeholder indicator number.
 module('textadept.snippets')]=]
 
@@ -298,6 +298,7 @@ function M._insert(text)
                                 buffer.current_pos)
     text = type(M[lexer]) == 'table' and M[lexer][trigger] or M[trigger]
   end
+  if type(text) == 'function' then text = text() end
   local snippet = type(text) == 'string' and new_snippet(text, trigger) or
                   snippet_stack[#snippet_stack]
   if snippet then snippet:next() else return false end
@@ -499,7 +500,8 @@ M._snippet_mt = {
   -- *placeholder*, in the context of this snippet.
   -- @param placeholder The placeholder that contains code to execute.
   execute_code = function(self, placeholder)
-    local text = buffer:text_range(self.placeholder_pos, buffer.selection_end)
+    local s, e = self.placeholder_pos, buffer.selection_end
+    local text = s < e and buffer:text_range(s, e) or buffer:text_range(e, s)
     if not self.index then text = '' end -- %<...> or %[...]
     if placeholder.lua_code then
       local env = {text = text, selected_text = self.original_sel_text}
@@ -561,8 +563,8 @@ events.connect(events.VIEW_NEW, function()
 end)
 
 ---
--- Map of snippet triggers with their snippet text, with language-specific
--- snippets tables assigned to a lexer name key.
+-- Map of snippet triggers with their snippet text or functions that return such
+-- text, with language-specific snippets tables assigned to a lexer name key.
 -- This table also contains the `textadept.snippets` module.
 -- @class table
 -- @name _G.snippets
