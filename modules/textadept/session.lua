@@ -67,6 +67,11 @@ function M.load(filename)
       buffer._first_visible_line = first_visible_line
       buffer:line_scroll(0, buffer:visible_from_doc_line(first_visible_line))
       buffer:set_sel(anchor, current_pos)
+    elseif line:find('^bookmarks:') then
+      local lines = line:match('^bookmarks: (.*)$')
+      for line in lines:gmatch('%d+') do
+        buffer:marker_add(tonumber(line), textadept.bookmarks.MARK_BOOKMARK)
+      end
     elseif line:find('^%s*split%d:') then
       local level, num, type, size = line:match('^(%s*)split(%d): (%S+) (%d+)')
       local view = splits[#level] and splits[#level][tonumber(num)] or view
@@ -91,12 +96,6 @@ function M.load(filename)
         if file == recent[i] then exists = true break end
       end
       if not exists then recent[#recent + 1] = file end
-    elseif line:find('^bookmarks:') then
-      local i, lines = line:match('^bookmarks: (%d+) (.*)$')
-      local buffer = _BUFFERS[tonumber(i)]
-      for line in lines:gmatch('%d+') do
-        buffer:marker_add(tonumber(line), textadept.bookmarks.MARK_BOOKMARK)
-      end
     end
   end
   f:close()
@@ -146,6 +145,14 @@ function M.save(filename)
       session[#session + 1] = buffer_line:format(buffer[anchor] or 0,
                                                  buffer[current_pos] or 0,
                                                  buffer[top_line] or 0, file)
+      -- Write out bookmarks.
+      local lines = {}
+      local line = buffer:marker_next(0, 2^textadept.bookmarks.MARK_BOOKMARK)
+      while line >= 0 do
+        lines[#lines + 1] = line
+        line = buffer:marker_next(line + 1, 2^textadept.bookmarks.MARK_BOOKMARK)
+      end
+      session[#session + 1] = 'bookmarks: '..table.concat(lines, ' ')
     end
   end
   -- Write out split views.
@@ -180,16 +187,6 @@ function M.save(filename)
   for i = 1, #io.recent_files do
     if i > M.MAX_RECENT_FILES then break end
     session[#session + 1] = ("recent: %s"):format(io.recent_files[i])
-  end
-  for i, buffer in ipairs(_BUFFERS) do
-    local lines = {}
-    local line = buffer:marker_next(0, 2^textadept.bookmarks.MARK_BOOKMARK)
-    while line >= 0 do
-      lines[#lines + 1] = line
-      line = buffer:marker_next(line + 1, 2^textadept.bookmarks.MARK_BOOKMARK)
-    end
-    lines = table.concat(lines, ' ')
-    session[#session + 1] = ("bookmarks: %d %s"):format(i, lines)
   end
   -- Write the session.
   local f = io.open(filename, 'wb')
