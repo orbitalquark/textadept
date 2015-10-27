@@ -183,7 +183,7 @@ local function new_snippet(text, trigger)
                                              V('braces')) *
                             V('transform') +
                             V('index') * (V('parens') + V('simple')))),
-    index = Cg(R('09') / tonumber, 'index'),
+    index = Cg(R('09')^1 / tonumber, 'index'),
     parens = '(' * Cg((1 - S('()') + V('parens'))^0, 'default') * ')',
     simple = Cg(Cc(true), 'simple'), transform = Cg(Cc(true), 'transform'),
     brackets = '[' * Cg((1 - S('[]') + V('brackets'))^0, 'sh_code') * ']',
@@ -210,7 +210,7 @@ local function new_snippet(text, trigger)
   --   `snippet:each_placeholder()` to determine a placeholder's current length.
   -- @class table
   -- @name placeholder
-  local text_part, placeholder, e = lpeg.match(patt, text)
+  local text_part, placeholder, e = patt:match(text)
   while placeholder do
     if placeholder.index then
       local i = placeholder.index
@@ -229,7 +229,7 @@ local function new_snippet(text, trigger)
       end):gsub('%%%b[]', function(s)
         return snippet:execute_code{sh_code = s:sub(3, -2)}
       end)
-      if placeholder.default:find('%%%d+%b()') then
+      if placeholder.default:find('%%%d+') then
         -- Parses out embedded placeholders, adding them to this snippet's
         -- snapshot.
         -- @param s The placeholder string to parse.
@@ -237,19 +237,32 @@ local function new_snippet(text, trigger)
         --   from. All computed positions are anchored from here.
         -- @return plain text from `s` (i.e. no placeholder markup)
         local function process_placeholders(s, start_pos)
-          return s:gsub('()%%(%d+)(%b())', function(position, index, default)
+          -- Processes a placeholder capture from LPeg.
+          -- @param position The position a the beginning of the placeholder.
+          -- @param index The placeholder index.
+          -- @param default The default placeholder text, if any.
+          local function ph(position, index, default)
             position = start_pos + position - 1
-            default = process_placeholders(default:sub(2, -2),
-                                           position + #index + 2) -- skip '%n('
+            if default then
+              -- Process sub-placeholders starting at the index after '%n('.
+              default = process_placeholders(default:sub(2, -2),
+                                             position + #index + 2)
+            end
             index = tonumber(index)
             if index > snippet.max_index then snippet.max_index = index end
             snapshot.placeholders[#snapshot.placeholders + 1] = {
-              id = #snapshot.placeholders + 1,
-              index = index, default = default,
-              position = snippet.start_pos + position, length = #default
+              id = #snapshot.placeholders + 1, index = index,
+              default = default, simple = not default or nil,
+              length = #(default or ' '),
+              position = snippet.start_pos + position,
             }
-            return default
-          end)
+            return default or ' '
+          end
+          local ph_patt = P{
+            lpeg.Cs((Cp() * '%' * C(R('09')^1) * C(V('parens'))^-1 / ph + 1)^0),
+            parens = '(' * (1 - S('()') + V('parens'))^0 * ')'
+          }
+          return ph_patt:match(s)
         end
         placeholder.default = process_placeholders(placeholder.default,
                                                    placeholder.position)
@@ -262,7 +275,7 @@ local function new_snippet(text, trigger)
     end
     placeholder.length = #snapshot.text - placeholder.position
     placeholder.position = snippet.start_pos + placeholder.position -- absolute
-    text_part, placeholder, e = lpeg.match(patt, text, e)
+    text_part, placeholder, e = patt:match(text, e)
   end
   if text_part ~= '' then snapshot.text = snapshot.text..text_part end
   snippet.snapshots[0] = snapshot
