@@ -469,11 +469,15 @@ M._snippet_mt = {
   -- @param canceling Whether or not to cancel inserting this snippet. When
   --   `true`, the buffer is restored to its state prior to snippet expansion.
   finish = function(self, canceling)
-    if canceling then
-      buffer:set_sel(self.start_pos, self.end_pos)
+    local s, e = self.start_pos, self.end_pos
+    if not canceling then
+      buffer.indicator_current = M.INDIC_PLACEHOLDER
+      buffer:indicator_clear_range(s, e - s)
+    else
+      buffer:set_sel(s, e)
       buffer:replace_sel(self.trigger or self.original_sel_text)
     end
-    buffer:delete_range(self.end_pos, 1) -- clear initial padding space
+    buffer:delete_range(e, 1) -- clear initial padding space
     snippet_stack[#snippet_stack] = nil
   end,
 
