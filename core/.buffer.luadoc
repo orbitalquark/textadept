@@ -812,6 +812,8 @@
 --     Display all space characters as dots and tab characters as arrows.
 --   * `buffer.WS_VISIBLEAFTERINDENT`
 --     Display only non-indentation spaces and tabs as dots and arrows.
+--   * `buffer.WS_VISIBLEONLYININDENT`
+--     Display only indentation spaces and tabs as dots and arrows.
 --
 --   The default value is `buffer.WS_INVISIBLE`.
 -- @field virtual_space_options (number)
