@@ -125,6 +125,7 @@ INDIC_FULLBOX	_	0;"	F	class:buffer
 INDIC_HIDDEN	_	0;"	F	class:buffer
 INDIC_HIGHLIGHT	_	0;"	F	class:textadept.editing
 INDIC_MAX	_	0;"	F	class:buffer
+INDIC_PLACEHOLDER	_	0;"	F	class:textadept.snippets
 INDIC_PLAIN	_	0;"	F	class:buffer
 INDIC_ROUNDBOX	_	0;"	F	class:buffer
 INDIC_SQUIGGLE	_	0;"	F	class:buffer
@@ -510,7 +511,6 @@ constants	_	0;"	t	class:_SCINTILLA
 context_menu	_	0;"	F	class:ui
 context_menu	_	0;"	t	class:textadept.menu
 contracted_fold_next	_	0;"	f	class:buffer
-control_structure_patterns	_	0;"	t	class:_M.lua
 control_structure_patterns	_	0;"	t	class:_M.ruby
 convert_eols	_	0;"	f	class:buffer
 convert_indentation	_	0;"	f	class:textadept.editing
@@ -1155,7 +1155,6 @@ tostring	_	0;"	f
 touch	_	0;"	f	class:lfs
 traceback	_	0;"	f	class:debug
 transpose_chars	_	0;"	f	class:textadept.editing
-try_to_autocomplete_end	_	0;"	f	class:_M.lua
 try_to_autocomplete_end	_	0;"	f	class:_M.ruby
 type	_	0;"	f	
 type	_	0;"	f	class:io
