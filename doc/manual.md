@@ -150,6 +150,11 @@ You also have the option of downloading an official set of
 [language modules](#Language.Modules) from the download page. Textadept itself
 includes C/C++ and Lua language modules by default.
 
+If necessary, you can obtain PGP signatures from the [download page][] along
+with a public key in order to verify download integrity. For example on Linux,
+after importing the public key via `gpg --import foicica.pgp` and downloading
+the appropriate signature, run `gpg --verify [signature]`.
+
 [download page]: http://foicica.com/textadept/download
 
 ## Installation
@@ -1532,6 +1537,9 @@ Note: you may have to run
 
 if the prefix where any dependencies are installed is */usr/local/* and your
 compiler flags do not include them by default.
+
+If it matters, running `make verify-deps` after `make deps` will compare the
+downloaded dependencies with the ones Textadept was compiled against.
 
 #### Installing on Linux and BSD
 

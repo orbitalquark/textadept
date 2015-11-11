@@ -61,6 +61,11 @@ _Warning_: nightly builds are untested, may have bugs, and are the absolute
 cutting-edge versions of Textadept. Do not use them in production, but for
 testing purposes only.
 
+If necessary, you can obtain PGP signatures from the [download page][] along
+with a public key in order to verify download integrity. For example on Linux,
+after importing the public key via `gpg --import foicica.pgp` and downloading
+the appropriate signature, run `gpg --verify [signature]`.
+
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 [download page]: http://foicica.com/textadept/download
