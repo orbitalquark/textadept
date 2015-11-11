@@ -8,6 +8,46 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 8.4 (11 Nov 2015)
+
+Download:
+
+* [Textadept 8.4 -- Win32][]
+* [Textadept 8.4 -- Mac OSX Intel 10.5+][]
+* [Textadept 8.4 -- Linux][]
+* [Textadept 8.4 -- Linux x86_64][]
+* [Textadept 8.4 -- Modules][]
+
+Bugfixes:
+
+* Various fixes for snippet bugs introduced in the refactoring.
+* Fixed `S-Tab` in Find & Replace pane in the terminal version.
+* Do not error when attempting to snapopen a non-existant project.
+* Scintilla: fixed height of lines in autocompletion lists.
+* Scintilla: fixed bug in [`buffer:line_end_display()`][].
+
+Changes:
+
+* Bookmarks are saved in sessions.
+* New snippet placeholder for a list of options (`%`_`n`_`{`_`list`_`}`).
+* Snippets can now be functions that return snippet text.
+* Added Lua API tags to the "ansi\_c" module.
+* Updated Swedish translation.
+* Added support for Gherkin.
+* Scintilla: whitespace can be shown only in indentation.
+* Scintilla: optimized marker redrawing.
+* Updated to [Scintilla][] 3.6.2.
+* Updated to [LPeg][] 1.0.
+
+[Textadept 8.4 -- Win32]: download/textadept_8.4.win32.zip
+[Textadept 8.4 -- Mac OSX Intel 10.5+]: download/textadept_8.4.osx.zip
+[Textadept 8.4 -- Linux]: download/textadept_8.4.i386.tgz
+[Textadept 8.4 -- Linux x86_64]: download/textadept_8.4.x86_64.tgz
+[Textadept 8.4 -- Modules]: download/textadept_8.4.modules.zip
+[`buffer:line_end_display()`]: api.html#buffer.line_end_display
+[Scintilla]: http://scintilla.org
+[LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/
+
 ## 8.3 (01 Oct 2015)
 
 Download:
