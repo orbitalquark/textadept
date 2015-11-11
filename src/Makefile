@@ -308,12 +308,12 @@ release-all: release release64 win32-release osx-release modules-release
 
 $(basedir).i386: ; hg archive $@ -X ".hg*"
 release: $(basedir).i386
-	make deps clean doc
+	make deps clean doc sign-deps
 	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -j4
 	make -j4 CURSES_CFLAGS=-I/opt/ncursesw/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw/lib -lncursesw" curses
-	cp -r ../doc ../lexers ../textadept* $<
-	tar czf /tmp/$<.tgz $< && rm -rf $<
+	cp -r ../doc ../lexers ../textadept* $< && cp *.asc $</src
+	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg -ab /tmp/$<.tgz
 $(basedir).x86_64: ; hg archive $@ -X ".hg*"
 release64: $(basedir).x86_64
 	make clean libluajit64
@@ -322,8 +322,8 @@ release64: $(basedir).x86_64
 	make -j4 CFLAGS="$(CFLAGS) -m64" CXXFLAGS="$(CXXFLAGS) -m64" \
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
-	cp -r ../doc ../lexers ../textadept* $<
-	tar czf /tmp/$<.tgz $< && rm -rf $<
+	cp -r ../doc ../lexers ../textadept* $< && cp *.asc $</src
+	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg -ab /tmp/$<.tgz
 $(basedir).win32: ; hg archive $@ -X ".hg*"
 win32-release: $(basedir).win32
 	make -j4 clean CROSS=i586-mingw32msvc- win32-deps
@@ -333,18 +333,20 @@ win32-release: $(basedir).win32
 	make -j4 CROSS=i586-mingw32msvc- win32
 	make -j4 CROSS=i586-mingw32msvc- win32-curses
 	cp -r ../doc ../lexers ../textadept* luajit/src/lua51.dll $<
-	zip -r /tmp/$<.zip $< && rm -rf $<
+	cp *.asc $</src
+	zip -r /tmp/$<.zip $< && rm -rf $< && gpg -ab /tmp/$<.zip
 $(basedir).osx: ; mkdir $@ && cp ../scripts/osx/ta $@
 osx-release: $(basedir).osx
 	make clean osx-deps
 	make -j4 osx
 	make -j4 osx-curses
 	make osx-app && mv $(osxapp) $<
-	zip -r /tmp/$<.zip $< && rm -rf $<
+	zip -r /tmp/$<.zip $< && rm -rf $< && gpg -ab /tmp/$<.zip
 $(basedir).modules:
 	mkdir -p $@/modules
 	hg archive -R /home/mitchell/code/textadept_modules/ -r tip $@/modules
-modules-release: $(basedir).modules ; zip -r /tmp/$<.zip $< && rm -r $<
+modules-release: $(basedir).modules
+	zip -r /tmp/$<.zip $< && rm -r $< && gpg -ab /tmp/$<.zip
 
 osx-app: ../textadept ../textadeptjit ../textadept-curses \
          ../textadeptjit-curses ../scripts/osx/textadept_osx
@@ -352,7 +354,7 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 	cp Info.plist $(osxapp_bin)/../
 	cp $^ $(osxapp_bin)/
 	hg archive $(osxapp_res) -X ".hg*"
-	cp -r ../doc ../lexers $(osxapp_res)
+	cp -r ../doc ../lexers $(osxapp_res) && cp *.asc $(osxapp_res)/src
 	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
 	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
 	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
@@ -474,6 +476,14 @@ $(bombay_zip): ; wget http://foicica.com/hg/bombay/archive/tip.zip -O $@
 	mkdir $(notdir $@) && unzip -d $(notdir $@) $| && \
 		mv $(notdir $@)/*/* $(dir $@)
 $(cloc): ; wget http://prdownloads.sourceforge.net/cloc/$@ -O $@
+sign-deps: | $(scintilla_tgz) $(scinterm_zip) $(scintillua_zip) $(lua_tgz) \
+             $(lpeg_tgz) $(lfs_zip) $(lspawn_zip) $(luajit_tgz) \
+             $(libluajit_tgz) $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) \
+             $(win32gtk_zip) $(win32iconv_bin_zip) $(win32iconv_lib_zip) \
+             $(win32curses_zip) $(pdcurses_zip) $(gtkosx_zip) $(bombay_zip)
+	@for file in $|; do gpg -ab $$file; done
+verify-deps: | $(wildcard $(basename $(wildcard *.asc)))
+	@for file in $|; do echo "$$file"; gpg --verify $$file.asc || return 1; done
 
 # Count lines of code and generate ctags.
 

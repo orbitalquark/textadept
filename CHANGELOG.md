@@ -1,10 +1,11 @@
 # Changelog
 
-[Atom Feed][]
+[Atom Feed][] | [PGP Public Key][]
 
 **Please [donate][] or purchase the [book][] to fund continuous development.**
 
 [Atom Feed]: feed
+[PGP Public Key]: https://foicica.com/foicica.pgp
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
@@ -12,11 +13,11 @@
 
 Download:
 
-* [Textadept 8.4 -- Win32][]
-* [Textadept 8.4 -- Mac OSX Intel 10.5+][]
-* [Textadept 8.4 -- Linux][]
-* [Textadept 8.4 -- Linux x86_64][]
-* [Textadept 8.4 -- Modules][]
+* [Textadept 8.4 -- Win32][] | [PGP -- 8.4 Win32][]
+* [Textadept 8.4 -- Mac OSX Intel 10.5+][] | [PGP -- 8.4 OSX][]
+* [Textadept 8.4 -- Linux][] | [PGP -- 8.4 Linux][]
+* [Textadept 8.4 -- Linux x86_64][] | [PGP -- 8.4 Linux x86_64][]
+* [Textadept 8.4 -- Modules][] | [PGP -- 8.4 Modules][]
 
 Bugfixes:
 
@@ -44,6 +45,11 @@ Changes:
 [Textadept 8.4 -- Linux]: download/textadept_8.4.i386.tgz
 [Textadept 8.4 -- Linux x86_64]: download/textadept_8.4.x86_64.tgz
 [Textadept 8.4 -- Modules]: download/textadept_8.4.modules.zip
+[PGP -- 8.4 Win32]: download/textadept_8.4.win32.zip.asc
+[PGP -- 8.4 OSX]: download/textadept_8.4.osx.zip.asc
+[PGP -- 8.4 Linux]: download/textadept_8.4.i386.tgz.asc
+[PGP -- 8.4 Linux x86_64]: download/textadept_8.4.x86_64.tgz.asc
+[PGP -- 8.4 Modules]: download/textadept_8.4.modules.zip.asc
 [`buffer:line_end_display()`]: api.html#buffer.line_end_display
 [Scintilla]: http://scintilla.org
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/
@@ -52,11 +58,11 @@ Changes:
 
 Download:
 
-* [Textadept 8.3 -- Win32][]
-* [Textadept 8.3 -- Mac OSX Intel 10.5+][]
-* [Textadept 8.3 -- Linux][]
-* [Textadept 8.3 -- Linux x86_64][]
-* [Textadept 8.3 -- Modules][]
+* [Textadept 8.3 -- Win32][] | [PGP -- 8.3 Win32][]
+* [Textadept 8.3 -- Mac OSX Intel 10.5+][] | [PGP -- 8.3 OSX][]
+* [Textadept 8.3 -- Linux][] | [PGP -- 8.3 Linux][]
+* [Textadept 8.3 -- Linux x86_64][] | [PGP -- 8.3 Linux x86_64][]
+* [Textadept 8.3 -- Modules][] | [PGP -- 8.3 Modules][]
 
 Bugfixes:
 
@@ -80,6 +86,11 @@ Changes:
 [Textadept 8.3 -- Linux]: download/textadept_8.3.i386.tgz
 [Textadept 8.3 -- Linux x86_64]: download/textadept_8.3.x86_64.tgz
 [Textadept 8.3 -- Modules]: download/textadept_8.3.modules.zip
+[PGP -- 8.3 Win32]: download/textadept_8.3.win32.zip.asc
+[PGP -- 8.3 OSX]: download/textadept_8.3.osx.zip.asc
+[PGP -- 8.3 Linux]: download/textadept_8.3.i386.tgz.asc
+[PGP -- 8.3 Linux x86_64]: download/textadept_8.3.x86_64.tgz.asc
+[PGP -- 8.3 Modules]: download/textadept_8.3.modules.zip.asc
 [`buffer:count_characters()`]: api.html#buffer.count_characters
 [Refactored snippets]: http://foicica.com/lists/code/201509/2687.html
 [`spawn()`]: api.html#spawn
@@ -89,11 +100,11 @@ Changes:
 
 Download:
 
-* [Textadept 8.2 -- Win32][]
-* [Textadept 8.2 -- Mac OSX Intel 10.5+][]
-* [Textadept 8.2 -- Linux][]
-* [Textadept 8.2 -- Linux x86_64][]
-* [Textadept 8.2 -- Modules][]
+* [Textadept 8.2 -- Win32][] | [PGP -- 8.2 Win32][]
+* [Textadept 8.2 -- Mac OSX Intel 10.5+][] | [PGP -- 8.2 OSX][]
+* [Textadept 8.2 -- Linux][] | [PGP -- 8.2 Linux][]
+* [Textadept 8.2 -- Linux x86_64][] | [PGP -- 8.2 Linux x86_64][]
+* [Textadept 8.2 -- Modules][] | [PGP -- 8.2 Modules][]
 
 Bugfixes:
 
@@ -121,6 +132,11 @@ Changes:
 [Textadept 8.2 -- Linux]: download/textadept_8.2.i386.tgz
 [Textadept 8.2 -- Linux x86_64]: download/textadept_8.2.x86_64.tgz
 [Textadept 8.2 -- Modules]: download/textadept_8.2.modules.zip
+[PGP -- 8.2 Win32]: download/textadept_8.2.win32.zip.asc
+[PGP -- 8.2 OSX]: download/textadept_8.2.osx.zip.asc
+[PGP -- 8.2 Linux]: download/textadept_8.2.i386.tgz.asc
+[PGP -- 8.2 Linux x86_64]: download/textadept_8.2.x86_64.tgz.asc
+[PGP -- 8.2 Modules]: download/textadept_8.2.modules.zip.asc
 [automatic syntax checking]: api.html#_M.Syntax.Checking
 [`textadept.run.CHECK_SYNTAX`]: api.html#textadept.run.CHECK_SYNTAX
 [`textadept.run.GOTO_SYNTAX_ERRORS`]: api.html#textadept.run.GOTO_SYNTAX_ERRORS
@@ -131,11 +147,11 @@ Changes:
 
 Download:
 
-* [Textadept 8.1 -- Win32][]
-* [Textadept 8.1 -- Mac OSX Intel 10.5+][]
-* [Textadept 8.1 -- Linux][]
-* [Textadept 8.1 -- Linux x86_64][]
-* [Textadept 8.1 -- Modules][]
+* [Textadept 8.1 -- Win32][] | [PGP -- 8.1 Win32][]
+* [Textadept 8.1 -- Mac OSX Intel 10.5+][] | [PGP -- 8.1 OSX][]
+* [Textadept 8.1 -- Linux][] | [PGP -- 8.1 Linux][]
+* [Textadept 8.1 -- Linux x86_64][] | [PGP -- 8.1 Linux x86_64][]
+* [Textadept 8.1 -- Modules][] | [PGP -- 8.1 Modules][]
 
 Bugfixes:
 
@@ -165,6 +181,11 @@ Changes:
 [Textadept 8.1 -- Linux]: download/textadept_8.1.i386.tgz
 [Textadept 8.1 -- Linux x86_64]: download/textadept_8.1.x86_64.tgz
 [Textadept 8.1 -- Modules]: download/textadept_8.1.modules.zip
+[PGP -- 8.1 Win32]: download/textadept_8.1.win32.zip.asc
+[PGP -- 8.1 OSX]: download/textadept_8.1.osx.zip.asc
+[PGP -- 8.1 Linux]: download/textadept_8.1.i386.tgz.asc
+[PGP -- 8.1 Linux x86_64]: download/textadept_8.1.x86_64.tgz.asc
+[PGP -- 8.1 Modules]: download/textadept_8.1.modules.zip.asc
 [`textadept.editing.select_word()`]: api.html#textadept.editing.select_word
 [`buffer:multiple_select_add_next()`]: api.html#buffer.multiple_select_add_next
 [`buffer:multiple_select_add_each()`]: api.html#buffer.multiple_select_add_each
@@ -180,11 +201,11 @@ Textadept 8.
 
 Download:
 
-* [Textadept 8.0 -- Win32][]
-* [Textadept 8.0 -- Mac OSX Intel 10.5+][]
-* [Textadept 8.0 -- Linux][]
-* [Textadept 8.0 -- Linux x86_64][]
-* [Textadept 8.0 -- Modules][]
+* [Textadept 8.0 -- Win32][] | [PGP -- 8.0 Win32][]
+* [Textadept 8.0 -- Mac OSX Intel 10.5+][] | [PGP -- 8.0 OSX][]
+* [Textadept 8.0 -- Linux][] | [PGP -- 8.0 Linux][]
+* [Textadept 8.0 -- Linux x86_64][] | [PGP -- 8.0 Linux x86_64][]
+* [Textadept 8.0 -- Modules][] | [PGP -- 8.0 Modules][]
 
 Bugfixes:
 
@@ -200,17 +221,22 @@ Changes:
 [Textadept 8.0 -- Linux]: download/textadept_8.0.i386.tgz
 [Textadept 8.0 -- Linux x86_64]: download/textadept_8.0.x86_64.tgz
 [Textadept 8.0 -- Modules]: download/textadept_8.0.modules.zip
+[PGP -- 8.0 Win32]: download/textadept_8.0.win32.zip.asc
+[PGP -- 8.0 OSX]: download/textadept_8.0.osx.zip.asc
+[PGP -- 8.0 Linux]: download/textadept_8.0.i386.tgz.asc
+[PGP -- 8.0 Linux x86_64]: download/textadept_8.0.x86_64.tgz.asc
+[PGP -- 8.0 Modules]: download/textadept_8.0.modules.zip.asc
 [`textadept.run.RUN_IN_BACKGROUND`]: api.html#textadept.run.RUN_IN_BACKGROUND
 
 ## 8.0 beta (21 Apr 2015)
 
 Download:
 
-* [Textadept 8.0 beta -- Win32][]
-* [Textadept 8.0 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 8.0 beta -- Linux][]
-* [Textadept 8.0 beta -- Linux x86_64][]
-* [Textadept 8.0 beta -- Modules][]
+* [Textadept 8.0 beta -- Win32][] | [PGP -- 8.0 beta Win32][]
+* [Textadept 8.0 beta -- Mac OSX Intel 10.5+][] | [PGP -- 8.0 beta OSX][]
+* [Textadept 8.0 beta -- Linux][] | [PGP -- 8.0 beta Linux][]
+* [Textadept 8.0 beta -- Linux x86_64][] | [PGP -- 8.0 beta Linux x86_64][]
+* [Textadept 8.0 beta -- Modules][] | [PGP -- 8.0 beta Modules][]
 
 Bugfixes:
 
@@ -230,6 +256,11 @@ Changes:
 [Textadept 8.0 beta -- Linux]: download/textadept_8.0_beta.i386.tgz
 [Textadept 8.0 beta -- Linux x86_64]: download/textadept_8.0_beta.x86_64.tgz
 [Textadept 8.0 beta -- Modules]: download/textadept_8.0_beta.modules.zip
+[PGP -- 8.0 beta Win32]: download/textadept_8.0_beta.win32.zip.asc
+[PGP -- 8.0 beta OSX]: download/textadept_8.0_beta.osx.zip.asc
+[PGP -- 8.0 beta Linux]: download/textadept_8.0_beta.i386.tgz.asc
+[PGP -- 8.0 beta Linux x86_64]: download/textadept_8.0_beta.x86_64.tgz.asc
+[PGP -- 8.0 beta Modules]: download/textadept_8.0_beta.modules.zip.asc
 [`io.snapopen()`]: api.html#io.snapopen
 [`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [`ui.find.FILTER`]: api.html#ui.find.FILTER
@@ -240,11 +271,11 @@ Changes:
 
 Download:
 
-* [Textadept 8.0 alpha -- Win32][]
-* [Textadept 8.0 alpha -- Mac OSX Intel 10.5+][]
-* [Textadept 8.0 alpha -- Linux][]
-* [Textadept 8.0 alpha -- Linux x86_64][]
-* [Textadept 8.0 alpha -- Modules][]
+* [Textadept 8.0 alpha -- Win32][] | [PGP -- 8.0 alpha Win32][]
+* [Textadept 8.0 alpha -- Mac OSX Intel 10.5+][] | [PGP -- 8.0 alpha OSX][]
+* [Textadept 8.0 alpha -- Linux][] | [PGP -- 8.0 alpha Linux][]
+* [Textadept 8.0 alpha -- Linux x86_64][] | [PGP -- 8.0 alpha Linux x86_64][]
+* [Textadept 8.0 alpha -- Modules][] | [PGP -- 8.0 alpha Modules][]
 
 Bugfixes:
 
@@ -270,6 +301,11 @@ Changes:
 [Textadept 8.0 alpha -- Linux]: download/textadept_8.0_alpha.i386.tgz
 [Textadept 8.0 alpha -- Linux x86_64]: download/textadept_8.0_alpha.x86_64.tgz
 [Textadept 8.0 alpha -- Modules]: download/textadept_8.0_alpha.modules.zip
+[PGP -- 8.0 alpha Win32]: download/textadept_8.0_alpha.win32.zip.asc
+[PGP -- 8.0 alpha OSX]: download/textadept_8.0_alpha.osx.zip.asc
+[PGP -- 8.0 alpha Linux]: download/textadept_8.0_alpha.i386.tgz.asc
+[PGP -- 8.0 alpha Linux x86_64]: download/textadept_8.0_alpha.x86_64.tgz.asc
+[PGP -- 8.0 alpha Modules]: download/textadept_8.0_alpha.modules.zip.asc
 [`textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
 [`spawn()`]: api.html#spawn
 [compile and run macros]: api.html#textadept.run.compile\_commands
@@ -281,11 +317,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.9 -- Win32][]
-* [Textadept 7.9 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.9 -- Linux][]
-* [Textadept 7.9 -- Linux x86_64][]
-* [Textadept 7.9 -- Modules][]
+* [Textadept 7.9 -- Win32][] | [PGP -- 7.9 Win32][]
+* [Textadept 7.9 -- Mac OSX Intel 10.5+][] | [PGP -- 7.9 OSX][]
+* [Textadept 7.9 -- Linux][] | [PGP -- 7.9 Linux][]
+* [Textadept 7.9 -- Linux x86_64][] | [PGP -- 7.9 Linux x86_64][]
+* [Textadept 7.9 -- Modules][] | [PGP -- 7.9 Modules][]
 
 Bugfixes:
 
@@ -320,6 +356,11 @@ Changes:
 [Textadept 7.9 -- Linux]: download/textadept_7.9.i386.tgz
 [Textadept 7.9 -- Linux x86_64]: download/textadept_7.9.x86_64.tgz
 [Textadept 7.9 -- Modules]: download/textadept_7.9.modules.zip
+[PGP -- 7.9 Win32]: download/textadept_7.9.win32.zip.asc
+[PGP -- 7.9 OSX]: download/textadept_7.9.osx.zip.asc
+[PGP -- 7.9 Linux]: download/textadept_7.9.i386.tgz.asc
+[PGP -- 7.9 Linux x86_64]: download/textadept_7.9.x86_64.tgz.asc
+[PGP -- 7.9 Modules]: download/textadept_7.9.modules.zip.asc
 [new repository]: http://foicica.com/hg/textadept_modules
 [`textadept.file_types.patterns`]: api.html#textadept.file_types.patterns
 [`events.FILE_AFTER_SAVE`]: api.html#events.FILE_AFTER_SAVE
@@ -331,11 +372,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.8 -- Win32][]
-* [Textadept 7.8 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.8 -- Linux][]
-* [Textadept 7.8 -- Linux x86_64][]
-* [Textadept 7.8 -- Modules][]
+* [Textadept 7.8 -- Win32][] | [PGP -- 7.8 Win32][]
+* [Textadept 7.8 -- Mac OSX Intel 10.5+][] | [PGP -- 7.8 OSX][]
+* [Textadept 7.8 -- Linux][] | [PGP -- 7.8 Linux][]
+* [Textadept 7.8 -- Linux x86_64][] | [PGP -- 7.8 Linux x86_64][]
+* [Textadept 7.8 -- Modules][] | [PGP -- 7.8 Modules][]
 
 Bugfixes:
 
@@ -351,17 +392,22 @@ Changes:
 [Textadept 7.8 -- Linux]: download/textadept_7.8.i386.tgz
 [Textadept 7.8 -- Linux x86_64]: download/textadept_7.8.x86_64.tgz
 [Textadept 7.8 -- Modules]: download/textadept_7.8.modules.zip
+[PGP -- 7.8 Win32]: download/textadept_7.8.win32.zip.asc
+[PGP -- 7.8 OSX]: download/textadept_7.8.osx.zip.asc
+[PGP -- 7.8 Linux]: download/textadept_7.8.i386.tgz.asc
+[PGP -- 7.8 Linux x86_64]: download/textadept_7.8.x86_64.tgz.asc
+[PGP -- 7.8 Modules]: download/textadept_7.8.modules.zip.asc
 [`textadept.menu.context_menu`]: api.html#textadept.menu.context_menu
 
 ## 7.8 beta 3 (21 Jan 2015)
 
 Download:
 
-* [Textadept 7.8 beta 3 -- Win32][]
-* [Textadept 7.8 beta 3 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.8 beta 3 -- Linux][]
-* [Textadept 7.8 beta 3 -- Linux x86_64][]
-* [Textadept 7.8 beta 3 -- Modules][]
+* [Textadept 7.8 beta 3 -- Win32][] | [PGP -- 7.8 beta 3 Win32][]
+* [Textadept 7.8 beta 3 -- Mac OSX Intel 10.5+][] | [PGP -- 7.8 beta 3 OSX][]
+* [Textadept 7.8 beta 3 -- Linux][] | [PGP -- 7.8 beta 3 Linux][]
+* [Textadept 7.8 beta 3 -- Linux x86_64][] | [PGP -- 7.8 beta 3 Linux x86_64][]
+* [Textadept 7.8 beta 3 -- Modules][] | [PGP -- 7.8 beta 3 Modules][]
 
 Bugfixes:
 
@@ -386,6 +432,11 @@ Changes:
 [Textadept 7.8 beta 3 -- Linux]: download/textadept_7.8_beta_3.i386.tgz
 [Textadept 7.8 beta 3 -- Linux x86_64]: download/textadept_7.8_beta_3.x86_64.tgz
 [Textadept 7.8 beta 3 -- Modules]: download/textadept_7.8_beta_3.modules.zip
+[PGP -- 7.8 beta 3 Win32]: download/textadept_7.8_beta_3.win32.zip.asc
+[PGP -- 7.8 beta 3 OSX]: download/textadept_7.8_beta_3.osx.zip.asc
+[PGP -- 7.8 beta 3 Linux]: download/textadept_7.8_beta_3.i386.tgz.asc
+[PGP -- 7.8 beta 3 Linux x86_64]: download/textadept_7.8_beta_3.x86_64.tgz.asc
+[PGP -- 7.8 beta 3 Modules]: download/textadept_7.8_beta_3.modules.zip.asc
 [`events.SUSPEND`]: api.html#events.SUSPEND
 [`events.RESUME`]: api.html#events.RESUME
 [Scintilla]: http://scintilla.org
@@ -394,11 +445,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.8 beta 2 -- Win32][]
-* [Textadept 7.8 beta 2 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.8 beta 2 -- Linux][]
-* [Textadept 7.8 beta 2 -- Linux x86_64][]
-* [Textadept 7.8 beta 2 -- Modules][]
+* [Textadept 7.8 beta 2 -- Win32][] | [PGP -- 7.8 beta 2 Win32][]
+* [Textadept 7.8 beta 2 -- Mac OSX Intel 10.5+][] | [PGP -- 7.8 beta 2 OSX][]
+* [Textadept 7.8 beta 2 -- Linux][] | [PGP -- 7.8 beta 2 Linux][]
+* [Textadept 7.8 beta 2 -- Linux x86_64][] | [PGP -- 7.8 beta 2 Linux x86_64][]
+* [Textadept 7.8 beta 2 -- Modules][] | [PGP -- 7.8 beta 2 Modules][]
 
 Bugfixes:
 
@@ -427,6 +478,11 @@ Changes:
 [Textadept 7.8 beta 2 -- Linux]: download/textadept_7.8_beta_2.i386.tgz
 [Textadept 7.8 beta 2 -- Linux x86_64]: download/textadept_7.8_beta_2.x86_64.tgz
 [Textadept 7.8 beta 2 -- Modules]: download/textadept_7.8_beta_2.modules.zip
+[PGP -- 7.8 beta 2 Win32]: download/textadept_7.8_beta_2.win32.zip.asc
+[PGP -- 7.8 beta 2 OSX]: download/textadept_7.8_beta_2.osx.zip.asc
+[PGP -- 7.8 beta 2 Linux]: download/textadept_7.8_beta_2.i386.tgz.asc
+[PGP -- 7.8 beta 2 Linux x86_64]: download/textadept_7.8_beta_2.x86_64.tgz.asc
+[PGP -- 7.8 beta 2 Modules]: download/textadept_7.8_beta_2.modules.zip.asc
 [`spawn_proc:close()`]: api.html#spawn_proc:close
 [Scintilla]: http://scintilla.org
 
@@ -434,11 +490,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.8 beta -- Win32][]
-* [Textadept 7.8 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 7.8 beta -- Linux][]
-* [Textadept 7.8 beta -- Linux x86_64][]
-* [Textadept 7.8 beta -- Modules][]
+* [Textadept 7.8 beta -- Win32][] | [PGP -- 7.8 beta Win32][]
+* [Textadept 7.8 beta -- Mac OSX Intel 10.5+][] | [PGP -- 7.8 beta OSX][]
+* [Textadept 7.8 beta -- Linux][] | [PGP -- 7.8 beta Linux][]
+* [Textadept 7.8 beta -- Linux x86_64][] | [PGP -- 7.8 beta Linux x86_64][]
+* [Textadept 7.8 beta -- Modules][] | [PGP -- 7.8 beta Modules][]
 
 Bugfixes:
 
@@ -482,6 +538,11 @@ Changes:
 [Textadept 7.8 beta -- Linux]: download/textadept_7.8_beta.i386.tgz
 [Textadept 7.8 beta -- Linux x86_64]: download/textadept_7.8_beta.x86_64.tgz
 [Textadept 7.8 beta -- Modules]: download/textadept_7.8_beta.modules.zip
+[PGP -- 7.8 beta Win32]: download/textadept_7.8_beta.win32.zip.asc
+[PGP -- 7.8 beta OSX]: download/textadept_7.8_beta.osx.zip.asc
+[PGP -- 7.8 beta Linux]: download/textadept_7.8_beta.i386.tgz.asc
+[PGP -- 7.8 beta Linux x86_64]: download/textadept_7.8_beta.x86_64.tgz.asc
+[PGP -- 7.8 beta Modules]: download/textadept_7.8_beta.modules.zip.asc
 [`ui.dialog()`]: api.html#ui.dialog
 [`ui.command_entry.editing_keys`]: api.html#ui.command_entry.editing_keys
 [`ui.command_entry.enter_mode()`]: api.html#ui.command_entry.enter_mode
@@ -498,11 +559,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.7 -- Win32][]
-* [Textadept 7.7 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.7 -- Linux][]
-* [Textadept 7.7 -- Linux x86_64][]
-* [Textadept 7.7 -- Modules][]
+* [Textadept 7.7 -- Win32][] | [PGP -- 7.7 Win32][]
+* [Textadept 7.7 -- Mac OSX Intel 10.5+][] | [PGP -- 7.7 OSX][]
+* [Textadept 7.7 -- Linux][] | [PGP -- 7.7 Linux][]
+* [Textadept 7.7 -- Linux x86_64][] | [PGP -- 7.7 Linux x86_64][]
+* [Textadept 7.7 -- Modules][] | [PGP -- 7.7 Modules][]
 
 Bugfixes:
 
@@ -522,17 +583,22 @@ Changes:
 [Textadept 7.7 -- Linux]: download/textadept_7.7.i386.tgz
 [Textadept 7.7 -- Linux x86_64]: download/textadept_7.7.x86_64.tgz
 [Textadept 7.7 -- Modules]: download/textadept_7.7.modules.zip
+[PGP -- 7.7 Win32]: download/textadept_7.7.win32.zip.asc
+[PGP -- 7.7 OSX]: download/textadept_7.7.osx.zip.asc
+[PGP -- 7.7 Linux]: download/textadept_7.7.i386.tgz.asc
+[PGP -- 7.7 Linux x86_64]: download/textadept_7.7.x86_64.tgz.asc
+[PGP -- 7.7 Modules]: download/textadept_7.7.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
 ## 7.6 (01 Sep 2014)
 
 Download:
 
-* [Textadept 7.6 -- Win32][]
-* [Textadept 7.6 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.6 -- Linux][]
-* [Textadept 7.6 -- Linux x86_64][]
-* [Textadept 7.6 -- Modules][]
+* [Textadept 7.6 -- Win32][] | [PGP -- 7.6 Win32][]
+* [Textadept 7.6 -- Mac OSX Intel 10.5+][] | [PGP -- 7.6 OSX][]
+* [Textadept 7.6 -- Linux][] | [PGP -- 7.6 Linux][]
+* [Textadept 7.6 -- Linux x86_64][] | [PGP -- 7.6 Linux x86_64][]
+* [Textadept 7.6 -- Modules][] | [PGP -- 7.6 Modules][]
 
 Bugfixes:
 
@@ -555,6 +621,11 @@ Changes:
 [Textadept 7.6 -- Linux]: download/textadept_7.6.i386.tgz
 [Textadept 7.6 -- Linux x86_64]: download/textadept_7.6.x86_64.tgz
 [Textadept 7.6 -- Modules]: download/textadept_7.6.modules.zip
+[PGP -- 7.6 Win32]: download/textadept_7.6.win32.zip.asc
+[PGP -- 7.6 OSX]: download/textadept_7.6.osx.zip.asc
+[PGP -- 7.6 Linux]: download/textadept_7.6.i386.tgz.asc
+[PGP -- 7.6 Linux x86_64]: download/textadept_7.6.x86_64.tgz.asc
+[PGP -- 7.6 Modules]: download/textadept_7.6.modules.zip.asc
 [`buffer:del_word_right()`]: api.html#buffer.del_word_right
 [`spawn()`]: api.html#spawn
 [`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
@@ -564,11 +635,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.5 -- Win32][]
-* [Textadept 7.5 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.5 -- Linux][]
-* [Textadept 7.5 -- Linux x86_64][]
-* [Textadept 7.5 -- Modules][]
+* [Textadept 7.5 -- Win32][] | [PGP -- 7.5 Win32][]
+* [Textadept 7.5 -- Mac OSX Intel 10.5+][] | [PGP -- 7.5 OSX][]
+* [Textadept 7.5 -- Linux][] | [PGP -- 7.5 Linux][]
+* [Textadept 7.5 -- Linux x86_64][] | [PGP -- 7.5 Linux x86_64][]
+* [Textadept 7.5 -- Modules][] | [PGP -- 7.5 Modules][]
 
 Bugfixes:
 
@@ -590,6 +661,11 @@ Changes:
 [Textadept 7.5 -- Linux]: download/textadept_7.5.i386.tgz
 [Textadept 7.5 -- Linux x86_64]: download/textadept_7.5.x86_64.tgz
 [Textadept 7.5 -- Modules]: download/textadept_7.5.modules.zip
+[PGP -- 7.5 Win32]: download/textadept_7.5.win32.zip.asc
+[PGP -- 7.5 OSX]: download/textadept_7.5.osx.zip.asc
+[PGP -- 7.5 Linux]: download/textadept_7.5.i386.tgz.asc
+[PGP -- 7.5 Linux x86_64]: download/textadept_7.5.x86_64.tgz.asc
+[PGP -- 7.5 Modules]: download/textadept_7.5.modules.zip.asc
 [`events.FOCUS`]: api.html#events.FOCUS
 [`buffer.auto_c_multi`]: api.html#buffer.auto_c_multi
 [Scintilla]: http://scintilla.org
@@ -598,11 +674,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.4 -- Win32][]
-* [Textadept 7.4 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.4 -- Linux][]
-* [Textadept 7.4 -- Linux x86_64][]
-* [Textadept 7.4 -- Modules][]
+* [Textadept 7.4 -- Win32][] | [PGP -- 7.4 Win32][]
+* [Textadept 7.4 -- Mac OSX Intel 10.5+][] | [PGP -- 7.4 OSX][]
+* [Textadept 7.4 -- Linux][] | [PGP -- 7.4 Linux][]
+* [Textadept 7.4 -- Linux x86_64][] | [PGP -- 7.4 Linux x86_64][]
+* [Textadept 7.4 -- Modules][] | [PGP -- 7.4 Modules][]
 
 Bugfixes:
 
@@ -621,16 +697,21 @@ Changes:
 [Textadept 7.4 -- Linux]: download/textadept_7.4.i386.tgz
 [Textadept 7.4 -- Linux x86_64]: download/textadept_7.4.x86_64.tgz
 [Textadept 7.4 -- Modules]: download/textadept_7.4.modules.zip
+[PGP -- 7.4 Win32]: download/textadept_7.4.win32.zip.asc
+[PGP -- 7.4 OSX]: download/textadept_7.4.osx.zip.asc
+[PGP -- 7.4 Linux]: download/textadept_7.4.i386.tgz.asc
+[PGP -- 7.4 Linux x86_64]: download/textadept_7.4.x86_64.tgz.asc
+[PGP -- 7.4 Modules]: download/textadept_7.4.modules.zip.asc
 
 ## 7.3 (01 Jun 2014)
 
 Download:
 
-* [Textadept 7.3 -- Win32][]
-* [Textadept 7.3 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.3 -- Linux][]
-* [Textadept 7.3 -- Linux x86_64][]
-* [Textadept 7.3 -- Modules][]
+* [Textadept 7.3 -- Win32][] | [PGP -- 7.3 Win32][]
+* [Textadept 7.3 -- Mac OSX Intel 10.5+][] | [PGP -- 7.3 OSX][]
+* [Textadept 7.3 -- Linux][] | [PGP -- 7.3 Linux][]
+* [Textadept 7.3 -- Linux x86_64][] | [PGP -- 7.3 Linux x86_64][]
+* [Textadept 7.3 -- Modules][] | [PGP -- 7.3 Modules][]
 
 Bugfixes:
 
@@ -672,6 +753,11 @@ Changes:
 [Textadept 7.3 -- Linux]: download/textadept_7.3.i386.tgz
 [Textadept 7.3 -- Linux x86_64]: download/textadept_7.3.x86_64.tgz
 [Textadept 7.3 -- Modules]: download/textadept_7.3.modules.zip
+[PGP -- 7.3 Win32]: download/textadept_7.3.win32.zip.asc
+[PGP -- 7.3 OSX]: download/textadept_7.3.osx.zip.asc
+[PGP -- 7.3 Linux]: download/textadept_7.3.i386.tgz.asc
+[PGP -- 7.3 Linux x86_64]: download/textadept_7.3.x86_64.tgz.asc
+[PGP -- 7.3 Modules]: download/textadept_7.3.modules.zip.asc
 [`spawn()`]: api.html#spawn
 [`buffer:set_encoding()`]: api.html#buffer.set_encoding
 [autocompleter functions]: api.html#textadept.editing.autocompleters
@@ -687,11 +773,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.2 -- Win32][]
-* [Textadept 7.2 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.2 -- Linux][]
-* [Textadept 7.2 -- Linux x86_64][]
-* [Textadept 7.2 -- Modules][]
+* [Textadept 7.2 -- Win32][] | [PGP -- 7.2 Win32][]
+* [Textadept 7.2 -- Mac OSX Intel 10.5+][] | [PGP -- 7.2 OSX][]
+* [Textadept 7.2 -- Linux][] | [PGP -- 7.2 Linux][]
+* [Textadept 7.2 -- Linux x86_64][] | [PGP -- 7.2 Linux x86_64][]
+* [Textadept 7.2 -- Modules][] | [PGP -- 7.2 Modules][]
 
 Bugfixes:
 
@@ -706,16 +792,21 @@ Changes:
 [Textadept 7.2 -- Linux]: download/textadept_7.2.i386.tgz
 [Textadept 7.2 -- Linux x86_64]: download/textadept_7.2.x86_64.tgz
 [Textadept 7.2 -- Modules]: download/textadept_7.2.modules.zip
+[PGP -- 7.2 Win32]: download/textadept_7.2.win32.zip.asc
+[PGP -- 7.2 OSX]: download/textadept_7.2.osx.zip.asc
+[PGP -- 7.2 Linux]: download/textadept_7.2.i386.tgz.asc
+[PGP -- 7.2 Linux x86_64]: download/textadept_7.2.x86_64.tgz.asc
+[PGP -- 7.2 Modules]: download/textadept_7.2.modules.zip.asc
 
 ## 7.2 beta 4 (11 Apr 2014)
 
 Download:
 
-* [Textadept 7.2 beta 4 -- Win32][]
-* [Textadept 7.2 beta 4 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.2 beta 4 -- Linux][]
-* [Textadept 7.2 beta 4 -- Linux x86_64][]
-* [Textadept 7.2 beta 4 -- Modules][]
+* [Textadept 7.2 beta 4 -- Win32][] | [PGP -- 7.2 beta 4 Win32][]
+* [Textadept 7.2 beta 4 -- Mac OSX Intel 10.5+][] | [PGP -- 7.2 beta 4 OSX][]
+* [Textadept 7.2 beta 4 -- Linux][] | [PGP -- 7.2 beta 4 Linux][]
+* [Textadept 7.2 beta 4 -- Linux x86_64][] | [PGP -- 7.2 beta 4 Linux x86_64][]
+* [Textadept 7.2 beta 4 -- Modules][] | [PGP -- 7.2 beta 4 Modules][]
 
 Bugfixes:
 
@@ -732,16 +823,21 @@ Changes:
 [Textadept 7.2 beta 4 -- Linux]: download/textadept_7.2_beta_4.i386.tgz
 [Textadept 7.2 beta 4 -- Linux x86_64]: download/textadept_7.2_beta_4.x86_64.tgz
 [Textadept 7.2 beta 4 -- Modules]: download/textadept_7.2_beta_4.modules.zip
+[PGP -- 7.2 beta 4 Win32]: download/textadept_7.2_beta_4.win32.zip.asc
+[PGP -- 7.2 beta 4 OSX]: download/textadept_7.2_beta_4.osx.zip.asc
+[PGP -- 7.2 beta 4 Linux]: download/textadept_7.2_beta_4.i386.tgz.asc
+[PGP -- 7.2 beta 4 Linux x86_64]: download/textadept_7.2_beta_4.x86_64.tgz.asc
+[PGP -- 7.2 beta 4 Modules]: download/textadept_7.2_beta_4.modules.zip.asc
 
 ## 7.2 beta 3 (01 Apr 2014)
 
 Download:
 
-* [Textadept 7.2 beta 3 -- Win32][]
-* [Textadept 7.2 beta 3 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.2 beta 3 -- Linux][]
-* [Textadept 7.2 beta 3 -- Linux x86_64][]
-* [Textadept 7.2 beta 3 -- Modules][]
+* [Textadept 7.2 beta 3 -- Win32][] | [PGP -- 7.2 beta 3 Win32][]
+* [Textadept 7.2 beta 3 -- Mac OSX Intel 10.5+][] | [PGP -- 7.2 beta 3 OSX][]
+* [Textadept 7.2 beta 3 -- Linux][] | [PGP -- 7.2 beta 3 Linux][]
+* [Textadept 7.2 beta 3 -- Linux x86_64][] | [PGP -- 7.2 beta 3 Linux x86_64][]
+* [Textadept 7.2 beta 3 -- Modules][] | [PGP -- 7.2 beta 3 Modules][]
 
 Bugfixes:
 
@@ -772,6 +868,11 @@ Changes:
 [Textadept 7.2 beta 3 -- Linux]: download/textadept_7.2_beta_3.i386.tgz
 [Textadept 7.2 beta 3 -- Linux x86_64]: download/textadept_7.2_beta_3.x86_64.tgz
 [Textadept 7.2 beta 3 -- Modules]: download/textadept_7.2_beta_3.modules.zip
+[PGP -- 7.2 beta 3 Win32]: download/textadept_7.2_beta_3.win32.zip.asc
+[PGP -- 7.2 beta 3 OSX]: download/textadept_7.2_beta_3.osx.zip.asc
+[PGP -- 7.2 beta 3 Linux]: download/textadept_7.2_beta_3.i386.tgz.asc
+[PGP -- 7.2 beta 3 Linux x86_64]: download/textadept_7.2_beta_3.x86_64.tgz.asc
+[PGP -- 7.2 beta 3 Modules]: download/textadept_7.2_beta_3.modules.zip.asc
 [optionselect]: api.html#ui.dialogs.optionselect
 [`ui.SILENT_PRINT`]: api.html#ui.SILENT_PRINT
 [spawn processes]: api.html#spawn
@@ -784,11 +885,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.2 beta 2 -- Win32][]
-* [Textadept 7.2 beta 2 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.2 beta 2 -- Linux][]
-* [Textadept 7.2 beta 2 -- Linux x86_64][]
-* [Textadept 7.2 beta 2 -- Modules][]
+* [Textadept 7.2 beta 2 -- Win32][] | [PGP -- 7.2 beta 2 Win32][]
+* [Textadept 7.2 beta 2 -- Mac OSX Intel 10.5+][] | [PGP -- 7.2 beta 2 OSX][]
+* [Textadept 7.2 beta 2 -- Linux][] | [PGP -- 7.2 beta 2 Linux][]
+* [Textadept 7.2 beta 2 -- Linux x86_64][] | [PGP -- 7.2 beta 2 Linux x86_64][]
+* [Textadept 7.2 beta 2 -- Modules][] | [PGP -- 7.2 beta 2 Modules][]
 
 Bugfixes:
 
@@ -803,16 +904,21 @@ Changes:
 [Textadept 7.2 beta 2 -- Linux]: download/textadept_7.2_beta_2.i386.tgz
 [Textadept 7.2 beta 2 -- Linux x86_64]: download/textadept_7.2_beta_2.x86_64.tgz
 [Textadept 7.2 beta 2 -- Modules]: download/textadept_7.2_beta_2.modules.zip
+[PGP -- 7.2 beta 2 Win32]: download/textadept_7.2_beta_2.win32.zip.asc
+[PGP -- 7.2 beta 2 OSX]: download/textadept_7.2_beta_2.osx.zip.asc
+[PGP -- 7.2 beta 2 Linux]: download/textadept_7.2_beta_2.i386.tgz.asc
+[PGP -- 7.2 beta 2 Linux x86_64]: download/textadept_7.2_beta_2.x86_64.tgz.asc
+[PGP -- 7.2 beta 2 Modules]: download/textadept_7.2_beta_2.modules.zip.asc
 
 ## 7.2 beta (11 Feb 2014)
 
 Download:
 
-* [Textadept 7.2 beta -- Win32][]
-* [Textadept 7.2 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 7.2 beta -- Linux][]
-* [Textadept 7.2 beta -- Linux x86_64][]
-* [Textadept 7.2 beta -- Modules][]
+* [Textadept 7.2 beta -- Win32][] | [PGP -- 7.2 beta Win32][]
+* [Textadept 7.2 beta -- Mac OSX Intel 10.5+][] | [PGP -- 7.2 beta OSX][]
+* [Textadept 7.2 beta -- Linux][] | [PGP -- 7.2 beta Linux][]
+* [Textadept 7.2 beta -- Linux x86_64][] | [PGP -- 7.2 beta Linux x86_64][]
+* [Textadept 7.2 beta -- Modules][] | [PGP -- 7.2 beta Modules][]
 
 Bugfixes:
 
@@ -838,6 +944,11 @@ Changes:
 [Textadept 7.2 beta -- Linux]: download/textadept_7.2_beta.i386.tgz
 [Textadept 7.2 beta -- Linux x86_64]: download/textadept_7.2_beta.x86_64.tgz
 [Textadept 7.2 beta -- Modules]: download/textadept_7.2_beta.modules.zip
+[PGP -- 7.2 beta Win32]: download/textadept_7.2_beta.win32.zip.asc
+[PGP -- 7.2 beta OSX]: download/textadept_7.2_beta.osx.zip.asc
+[PGP -- 7.2 beta Linux]: download/textadept_7.2_beta.i386.tgz.asc
+[PGP -- 7.2 beta Linux x86_64]: download/textadept_7.2_beta.x86_64.tgz.asc
+[PGP -- 7.2 beta Modules]: download/textadept_7.2_beta.modules.zip.asc
 [inputdialogs]: api.html#ui.dialogs.inputbox
 [`buffer:drop_selection_n()`]: api.html#buffer.drop_selection_n
 [`buffer.call_tip_pos_start`]: api.html#buffer.call_tip_pos_start
@@ -847,11 +958,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.2 alpha -- Win32][]
-* [Textadept 7.2 alpha -- Mac OSX Intel 10.5+][]
-* [Textadept 7.2 alpha -- Linux][]
-* [Textadept 7.2 alpha -- Linux x86_64][]
-* [Textadept 7.2 alpha -- Modules][]
+* [Textadept 7.2 alpha -- Win32][] | [PGP -- 7.2 alpha Win32][]
+* [Textadept 7.2 alpha -- Mac OSX Intel 10.5+][] | [PGP -- 7.2 alpha OSX][]
+* [Textadept 7.2 alpha -- Linux][] | [PGP -- 7.2 alpha Linux][]
+* [Textadept 7.2 alpha -- Linux x86_64][] | [PGP -- 7.2 alpha Linux x86_64][]
+* [Textadept 7.2 alpha -- Modules][] | [PGP -- 7.2 alpha Modules][]
 
 Bugfixes:
 
@@ -896,6 +1007,11 @@ Changes:
 [Textadept 7.2 alpha -- Linux]: download/textadept_7.2_alpha.i386.tgz
 [Textadept 7.2 alpha -- Linux x86_64]: download/textadept_7.2_alpha.x86_64.tgz
 [Textadept 7.2 alpha -- Modules]: download/textadept_7.2_alpha.modules.zip
+[PGP -- 7.2 alpha Win32]: download/textadept_7.2_alpha.win32.zip.asc
+[PGP -- 7.2 alpha OSX]: download/textadept_7.2_alpha.osx.zip.asc
+[PGP -- 7.2 alpha Linux]: download/textadept_7.2_alpha.i386.tgz.asc
+[PGP -- 7.2 alpha Linux x86_64]: download/textadept_7.2_alpha.x86_64.tgz.asc
+[PGP -- 7.2 alpha Modules]: download/textadept_7.2_alpha.modules.zip.asc
 [`ui.maximized`]: api.html#ui.maximized
 [OSX environment variables]: manual.html#Mac.OSX.Environment.Variables
 [`keys.keychain`]: api.html#keys.keychain
@@ -909,11 +1025,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.1 -- Win32][]
-* [Textadept 7.1 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.1 -- Linux][]
-* [Textadept 7.1 -- Linux x86_64][]
-* [Textadept 7.1 -- Modules][]
+* [Textadept 7.1 -- Win32][] | [PGP -- 7.1 Win32][]
+* [Textadept 7.1 -- Mac OSX Intel 10.5+][] | [PGP -- 7.1 OSX][]
+* [Textadept 7.1 -- Linux][] | [PGP -- 7.1 Linux][]
+* [Textadept 7.1 -- Linux x86_64][] | [PGP -- 7.1 Linux x86_64][]
+* [Textadept 7.1 -- Modules][] | [PGP -- 7.1 Modules][]
 
 Bugfixes:
 
@@ -938,6 +1054,11 @@ Changes:
 [Textadept 7.1 -- Linux]: download/textadept_7.1.i386.tgz
 [Textadept 7.1 -- Linux x86_64]: download/textadept_7.1.x86_64.tgz
 [Textadept 7.1 -- Modules]: download/textadept_7.1.modules.zip
+[PGP -- 7.1 Win32]: download/textadept_7.1.win32.zip.asc
+[PGP -- 7.1 OSX]: download/textadept_7.1.osx.zip.asc
+[PGP -- 7.1 Linux]: download/textadept_7.1.i386.tgz.asc
+[PGP -- 7.1 Linux x86_64]: download/textadept_7.1.x86_64.tgz.asc
+[PGP -- 7.1 Modules]: download/textadept_7.1.modules.zip.asc
 [`ui.tabs`]: api.html#ui.tabs
 [`textadept.editing.STRIP_TRAILING_SPACES`]: api.html#textadept.editing.STRIP_TRAILING_SPACES
 [`ui.clipboard_text`]: api.html#ui.clipboard_text
@@ -950,11 +1071,11 @@ Textadept 7.
 
 Download:
 
-* [Textadept 7.0 -- Win32][]
-* [Textadept 7.0 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.0 -- Linux][]
-* [Textadept 7.0 -- Linux x86_64][]
-* [Textadept 7.0 -- Modules][]
+* [Textadept 7.0 -- Win32][] | [PGP -- 7.0 Win32][]
+* [Textadept 7.0 -- Mac OSX Intel 10.5+][] | [PGP -- 7.0 OSX][]
+* [Textadept 7.0 -- Linux][] | [PGP -- 7.0 Linux][]
+* [Textadept 7.0 -- Linux x86_64][] | [PGP -- 7.0 Linux x86_64][]
+* [Textadept 7.0 -- Modules][] | [PGP -- 7.0 Modules][]
 
 Bugfixes:
 
@@ -975,17 +1096,22 @@ Changes:
 [Textadept 7.0 -- Linux]: download/textadept_7.0.i386.tgz
 [Textadept 7.0 -- Linux x86_64]: download/textadept_7.0.x86_64.tgz
 [Textadept 7.0 -- Modules]: download/textadept_7.0.modules.zip
+[PGP -- 7.0 Win32]: download/textadept_7.0.win32.zip.asc
+[PGP -- 7.0 OSX]: download/textadept_7.0.osx.zip.asc
+[PGP -- 7.0 Linux]: download/textadept_7.0.i386.tgz.asc
+[PGP -- 7.0 Linux x86_64]: download/textadept_7.0.x86_64.tgz.asc
+[PGP -- 7.0 Modules]: download/textadept_7.0.modules.zip.asc
 [`textadept.editing.enclose()`]: api.html#textadept.editing.enclose
 
 ## 7.0 beta 5 (21 Oct 2013)
 
 Download:
 
-* [Textadept 7.0 beta 5 -- Win32][]
-* [Textadept 7.0 beta 5 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.0 beta 5 -- Linux][]
-* [Textadept 7.0 beta 5 -- Linux x86_64][]
-* [Textadept 7.0 beta 5 -- Modules][]
+* [Textadept 7.0 beta 5 -- Win32][] | [PGP -- 7.0 beta 5 Win32][]
+* [Textadept 7.0 beta 5 -- Mac OSX Intel 10.5+][] | [PGP -- 7.0 beta 5 OSX][]
+* [Textadept 7.0 beta 5 -- Linux][] | [PGP -- 7.0 beta 5 Linux][]
+* [Textadept 7.0 beta 5 -- Linux x86_64][] | [PGP -- 7.0 beta 5 Linux x86_64][]
+* [Textadept 7.0 beta 5 -- Modules][] | [PGP -- 7.0 beta 5 Modules][]
 
 Bugfixes:
 
@@ -1015,6 +1141,11 @@ Changes:
 [Textadept 7.0 beta 5 -- Linux]: download/textadept_7.0_beta_5.i386.tgz
 [Textadept 7.0 beta 5 -- Linux x86_64]: download/textadept_7.0_beta_5.x86_64.tgz
 [Textadept 7.0 beta 5 -- Modules]: download/textadept_7.0_beta_5.modules.zip
+[PGP -- 7.0 beta 5 Win32]: download/textadept_7.0_beta_5.win32.zip.asc
+[PGP -- 7.0 beta 5 OSX]: download/textadept_7.0_beta_5.osx.zip.asc
+[PGP -- 7.0 beta 5 Linux]: download/textadept_7.0_beta_5.i386.tgz.asc
+[PGP -- 7.0 beta 5 Linux x86_64]: download/textadept_7.0_beta_5.x86_64.tgz.asc
+[PGP -- 7.0 beta 5 Modules]: download/textadept_7.0_beta_5.modules.zip.asc
 [`ui.set_theme()`]: api.html#ui.set_theme
 [`textadept.editing.INDIC_BRACEMATCH`]: api.html#textadept.editing.INDIC_BRACEMATCH
 [`buffer`]: api.html#buffer
@@ -1026,11 +1157,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.0 beta 4 -- Win32][]
-* [Textadept 7.0 beta 4 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.0 beta 4 -- Linux][]
-* [Textadept 7.0 beta 4 -- Linux x86_64][]
-* [Textadept 7.0 beta 4 -- Modules][]
+* [Textadept 7.0 beta 4 -- Win32][] | [PGP -- 7.0 beta 4 Win32][]
+* [Textadept 7.0 beta 4 -- Mac OSX Intel 10.5+][] | [PGP -- 7.0 beta 4 OSX][]
+* [Textadept 7.0 beta 4 -- Linux][] | [PGP -- 7.0 beta 4 Linux][]
+* [Textadept 7.0 beta 4 -- Linux x86_64][] | [PGP -- 7.0 beta 4 Linux x86_64][]
+* [Textadept 7.0 beta 4 -- Modules][] | [PGP -- 7.0 beta 4 Modules][]
 
 Bugfixes:
 
@@ -1075,6 +1206,11 @@ Changes:
 [Textadept 7.0 beta 4 -- Linux]: download/textadept_7.0_beta_4.i386.tgz
 [Textadept 7.0 beta 4 -- Linux x86_64]: download/textadept_7.0_beta_4.x86_64.tgz
 [Textadept 7.0 beta 4 -- Modules]: download/textadept_7.0_beta_4.modules.zip
+[PGP -- 7.0 beta 4 Win32]: download/textadept_7.0_beta_4.win32.zip.asc
+[PGP -- 7.0 beta 4 OSX]: download/textadept_7.0_beta_4.osx.zip.asc
+[PGP -- 7.0 beta 4 Linux]: download/textadept_7.0_beta_4.i386.tgz.asc
+[PGP -- 7.0 beta 4 Linux x86_64]: download/textadept_7.0_beta_4.x86_64.tgz.asc
+[PGP -- 7.0 beta 4 Modules]: download/textadept_7.0_beta_4.modules.zip.asc
 [`events.disconnect()`]: api.html#events.disconnect
 [`buffer.filename`]: api.html#buffer.filename
 [`_CHARSET`]: api.html#_CHARSET
@@ -1100,11 +1236,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.0 beta 3 -- Win32][]
-* [Textadept 7.0 beta 3 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.0 beta 3 -- Linux][]
-* [Textadept 7.0 beta 3 -- Linux x86_64][]
-* [Textadept 7.0 beta 3 -- Modules][]
+* [Textadept 7.0 beta 3 -- Win32][] | [PGP -- 7.0 beta 3 Win32][]
+* [Textadept 7.0 beta 3 -- Mac OSX Intel 10.5+][] | [PGP -- 7.0 beta 3 OSX][]
+* [Textadept 7.0 beta 3 -- Linux][] | [PGP -- 7.0 beta 3 Linux][]
+* [Textadept 7.0 beta 3 -- Linux x86_64][] | [PGP -- 7.0 beta 3 Linux x86_64][]
+* [Textadept 7.0 beta 3 -- Modules][] | [PGP -- 7.0 beta 3 Modules][]
 
 Bugfixes:
 
@@ -1132,6 +1268,11 @@ Changes:
 [Textadept 7.0 beta 3 -- Linux]: download/textadept_7.0_beta_3.i386.tgz
 [Textadept 7.0 beta 3 -- Linux x86_64]: download/textadept_7.0_beta_3.x86_64.tgz
 [Textadept 7.0 beta 3 -- Modules]: download/textadept_7.0_beta_3.modules.zip
+[PGP -- 7.0 beta 3 Win32]: download/textadept_7.0_beta_3.win32.zip.asc
+[PGP -- 7.0 beta 3 OSX]: download/textadept_7.0_beta_3.osx.zip.asc
+[PGP -- 7.0 beta 3 Linux]: download/textadept_7.0_beta_3.i386.tgz.asc
+[PGP -- 7.0 beta 3 Linux x86_64]: download/textadept_7.0_beta_3.x86_64.tgz.asc
+[PGP -- 7.0 beta 3 Modules]: download/textadept_7.0_beta_3.modules.zip.asc
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
 [`ui`]: api.html#ui
 [`textadept`]: api.html#textadept
@@ -1145,11 +1286,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.0 beta 2 -- Win32][]
-* [Textadept 7.0 beta 2 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.0 beta 2 -- Linux][]
-* [Textadept 7.0 beta 2 -- Linux x86_64][]
-* [Textadept 7.0 beta 2 -- Modules][]
+* [Textadept 7.0 beta 2 -- Win32][] | [PGP -- 7.0 beta 2 Win32][]
+* [Textadept 7.0 beta 2 -- Mac OSX Intel 10.5+][] | [PGP -- 7.0 beta 2 OSX][]
+* [Textadept 7.0 beta 2 -- Linux][] | [PGP -- 7.0 beta 2 Linux][]
+* [Textadept 7.0 beta 2 -- Linux x86_64][] | [PGP -- 7.0 beta 2 Linux x86_64][]
+* [Textadept 7.0 beta 2 -- Modules][] | [PGP -- 7.0 beta 2 Modules][]
 
 Bugfixes:
 
@@ -1171,6 +1312,11 @@ Changes:
 [Textadept 7.0 beta 2 -- Linux]: download/textadept_7.0_beta_2.i386.tgz
 [Textadept 7.0 beta 2 -- Linux x86_64]: download/textadept_7.0_beta_2.x86_64.tgz
 [Textadept 7.0 beta 2 -- Modules]: download/textadept_7.0_beta_2.modules.zip
+[PGP -- 7.0 beta 2 Win32]: download/textadept_7.0_beta_2.win32.zip.asc
+[PGP -- 7.0 beta 2 OSX]: download/textadept_7.0_beta_2.osx.zip.asc
+[PGP -- 7.0 beta 2 Linux]: download/textadept_7.0_beta_2.i386.tgz.asc
+[PGP -- 7.0 beta 2 Linux x86_64]: download/textadept_7.0_beta_2.x86_64.tgz.asc
+[PGP -- 7.0 beta 2 Modules]: download/textadept_7.0_beta_2.modules.zip.asc
 [`gui.set_theme()`]: api.html#ui.set_theme
 [`gui.maximized`]: api.html#ui.maximized
 [`lexer._tokenstyles`]: api.html#lexer.Token.Styles
@@ -1180,11 +1326,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.0 beta -- Win32][]
-* [Textadept 7.0 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 7.0 beta -- Linux][]
-* [Textadept 7.0 beta -- Linux x86_64][]
-* [Textadept 7.0 beta -- Modules][]
+* [Textadept 7.0 beta -- Win32][] | [PGP -- 7.0 beta Win32][]
+* [Textadept 7.0 beta -- Mac OSX Intel 10.5+][] | [PGP -- 7.0 beta OSX][]
+* [Textadept 7.0 beta -- Linux][] | [PGP -- 7.0 beta Linux][]
+* [Textadept 7.0 beta -- Linux x86_64][] | [PGP -- 7.0 beta Linux x86_64][]
+* [Textadept 7.0 beta -- Modules][] | [PGP -- 7.0 beta Modules][]
 
 Bugfixes:
 
@@ -1204,6 +1350,11 @@ Changes:
 [Textadept 7.0 beta -- Linux]: download/textadept_7.0_beta.i386.tgz
 [Textadept 7.0 beta -- Linux x86_64]: download/textadept_7.0_beta.x86_64.tgz
 [Textadept 7.0 beta -- Modules]: download/textadept_7.0_beta.modules.zip
+[PGP -- 7.0 beta Win32]: download/textadept_7.0_beta.win32.zip.asc
+[PGP -- 7.0 beta OSX]: download/textadept_7.0_beta.osx.zip.asc
+[PGP -- 7.0 beta Linux]: download/textadept_7.0_beta.i386.tgz.asc
+[PGP -- 7.0 beta Linux x86_64]: download/textadept_7.0_beta.x86_64.tgz.asc
+[PGP -- 7.0 beta Modules]: download/textadept_7.0_beta.modules.zip.asc
 [`_M.textadept.file_types`]: api.html#textadept.file_types
 [directly]: manual.html#File.Types
 
@@ -1211,11 +1362,11 @@ Changes:
 
 Download:
 
-* [Textadept 7.0 alpha 2 -- Win32][]
-* [Textadept 7.0 alpha 2 -- Mac OSX Intel 10.5+][]
-* [Textadept 7.0 alpha 2 -- Linux][]
-* [Textadept 7.0 alpha 2 -- Linux x86_64][]
-* [Textadept 7.0 alpha 2 -- Modules][]
+* [Textadept 7.0 alpha 2 -- Win32][] | [PGP -- 7.0 alpha 2 Win32][]
+* [Textadept 7.0 alpha 2 -- Mac OSX Intel 10.5+][] | [PGP -- 7.0 alpha 2 OSX][]
+* [Textadept 7.0 alpha 2 -- Linux][] | [PGP -- 7.0 alpha 2 Linux][]
+* [Textadept 7.0 alpha 2 -- Linux x86_64][] | [PGP -- 7.0 alpha 2 Linux x86_64][]
+* [Textadept 7.0 alpha 2 -- Modules][] | [PGP -- 7.0 alpha 2 Modules][]
 
 Bugfixes:
 
@@ -1249,6 +1400,11 @@ Changes:
 [Textadept 7.0 alpha 2 -- Linux]: download/textadept_7.0_alpha_2.i386.tgz
 [Textadept 7.0 alpha 2 -- Linux x86_64]: download/textadept_7.0_alpha_2.x86_64.tgz
 [Textadept 7.0 alpha 2 -- Modules]: download/textadept_7.0_alpha_2.modules.zip
+[PGP -- 7.0 alpha 2 Win32]: download/textadept_7.0_alpha_2.win32.zip.asc
+[PGP -- 7.0 alpha 2 OSX]: download/textadept_7.0_alpha_2.osx.zip.asc
+[PGP -- 7.0 alpha 2 Linux]: download/textadept_7.0_alpha_2.i386.tgz.asc
+[PGP -- 7.0 alpha 2 Linux x86_64]: download/textadept_7.0_alpha_2.x86_64.tgz.asc
+[PGP -- 7.0 alpha 2 Modules]: download/textadept_7.0_alpha_2.modules.zip.asc
 [compiling]: manual.html#Compiling
 [`_M.textadept.editing.block_comment()`]: api.html#textadept.editing.block_comment
 [`gui.set_theme()`]: api.html#ui.set_theme
@@ -1260,12 +1416,12 @@ Changes:
 
 Download:
 
-* [Textadept 7.0 alpha -- Win32][]
-* [Textadept 7.0 alpha -- Mac OSX Intel 10.5+][]
-* [Textadept 7.0 alpha -- Linux][]
-* [Textadept 7.0 alpha -- Linux x86_64][]
-* [Textadept 7.0 alpha -- Source][]
-* [Textadept 7.0 alpha -- Modules][]
+* [Textadept 7.0 alpha -- Win32][] | [PGP -- 7.0 alpha Win32][]
+* [Textadept 7.0 alpha -- Mac OSX Intel 10.5+][] | [PGP -- 7.0 alpha OSX][]
+* [Textadept 7.0 alpha -- Linux][] | [PGP -- 7.0 alpha Linux][]
+* [Textadept 7.0 alpha -- Linux x86_64][] | [PGP -- 7.0 alpha Linux x86_64][]
+* [Textadept 7.0 alpha -- Source][] | [PGP -- 7.0 alpha Source][]
+* [Textadept 7.0 alpha -- Modules][] | [PGP -- 7.0 alpha Modules][]
 
 Bugfixes:
 
@@ -1286,6 +1442,12 @@ Changes:
 [Textadept 7.0 alpha -- Linux x86_64]: download/textadept_7.0_alpha.x86_64.tgz
 [Textadept 7.0 alpha -- Source]: download/textadept_7.0_alpha.src.zip
 [Textadept 7.0 alpha -- Modules]: download/textadept_7.0_alpha.modules.zip
+[PGP -- 7.0 alpha Win32]: download/textadept_7.0_alpha.win32.zip.asc
+[PGP -- 7.0 alpha OSX]: download/textadept_7.0_alpha.osx.zip.asc
+[PGP -- 7.0 alpha Linux]: download/textadept_7.0_alpha.i386.tgz.asc
+[PGP -- 7.0 alpha Linux x86_64]: download/textadept_7.0_alpha.x86_64.tgz.asc
+[PGP -- 7.0 alpha Source]: download/textadept_7.0_alpha.src.zip.asc
+[PGP -- 7.0 alpha Modules]: download/textadept_7.0_alpha.modules.zip.asc
 [theme implementation]: manual.html#Themes
 [*properties.lua*]: manual.html#Buffer.Settings
 [Scintilla]: http://scintilla.org
@@ -1294,12 +1456,12 @@ Changes:
 
 Download:
 
-* [Textadept 6.6 -- Win32][]
-* [Textadept 6.6 -- Mac OSX Intel 10.5+][]
-* [Textadept 6.6 -- Linux][]
-* [Textadept 6.6 -- Linux x86_64][]
-* [Textadept 6.6 -- Source][]
-* [Textadept 6.6 -- Modules][]
+* [Textadept 6.6 -- Win32][] | [PGP -- 6.6 Win32][]
+* [Textadept 6.6 -- Mac OSX Intel 10.5+][] | [PGP -- 6.6 OSX][]
+* [Textadept 6.6 -- Linux][] | [PGP -- 6.6 Linux][]
+* [Textadept 6.6 -- Linux x86_64][] | [PGP -- 6.6 Linux x86_64][]
+* [Textadept 6.6 -- Source][] | [PGP -- 6.6 Source][]
+* [Textadept 6.6 -- Modules][] | [PGP -- 6.6 Modules][]
 
 Bugfixes:
 
@@ -1326,18 +1488,24 @@ Changes:
 [Textadept 6.6 -- Linux x86_64]: download/textadept_6.6.x86_64.tgz
 [Textadept 6.6 -- Source]: download/textadept_6.6.src.zip
 [Textadept 6.6 -- Modules]: download/textadept_6.6.modules.zip
+[PGP -- 6.6 Win32]: download/textadept_6.6.win32.zip.asc
+[PGP -- 6.6 OSX]: download/textadept_6.6.osx.zip.asc
+[PGP -- 6.6 Linux]: download/textadept_6.6.i386.tgz.asc
+[PGP -- 6.6 Linux x86_64]: download/textadept_6.6.x86_64.tgz.asc
+[PGP -- 6.6 Source]: download/textadept_6.6.src.zip.asc
+[PGP -- 6.6 Modules]: download/textadept_6.6.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
 ## 6.6 beta (01 May 2013)
 
 Download:
 
-* [Textadept 6.6 beta -- Win32][]
-* [Textadept 6.6 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 6.6 beta -- Linux][]
-* [Textadept 6.6 beta -- Linux x86_64][]
-* [Textadept 6.6 beta -- Source][]
-* [Textadept 6.6 beta -- Modules][]
+* [Textadept 6.6 beta -- Win32][] | [PGP -- 6.6 beta Win32][]
+* [Textadept 6.6 beta -- Mac OSX Intel 10.5+][] | [PGP -- 6.6 beta OSX][]
+* [Textadept 6.6 beta -- Linux][] | [PGP -- 6.6 beta Linux][]
+* [Textadept 6.6 beta -- Linux x86_64][] | [PGP -- 6.6 beta Linux x86_64][]
+* [Textadept 6.6 beta -- Source][] | [PGP -- 6.6 beta Source][]
+* [Textadept 6.6 beta -- Modules][] | [PGP -- 6.6 beta Modules][]
 
 Bugfixes:
 
@@ -1380,6 +1548,12 @@ Changes:
 [Textadept 6.6 beta -- Linux x86_64]: download/textadept_6.6_beta.x86_64.tgz
 [Textadept 6.6 beta -- Source]: download/textadept_6.6_beta.src.zip
 [Textadept 6.6 beta -- Modules]: download/textadept_6.6_beta.modules.zip
+[PGP -- 6.6 beta Win32]: download/textadept_6.6_beta.win32.zip.asc
+[PGP -- 6.6 beta OSX]: download/textadept_6.6_beta.osx.zip.asc
+[PGP -- 6.6 beta Linux]: download/textadept_6.6_beta.i386.tgz.asc
+[PGP -- 6.6 beta Linux x86_64]: download/textadept_6.6_beta.x86_64.tgz.asc
+[PGP -- 6.6 beta Source]: download/textadept_6.6_beta.src.zip.asc
+[PGP -- 6.6 beta Modules]: download/textadept_6.6_beta.modules.zip.asc
 [Messagebox]: http://foicica.com/gtdialog/manual.html#Messageboxes
 [key modes]: api.html#keys.Modes
 [`buffer.auto_c_order`]: api.html#buffer.auto_c_order
@@ -1395,12 +1569,12 @@ Changes:
 
 Download:
 
-* [Textadept 6.5 -- Win32][]
-* [Textadept 6.5 -- Mac OSX Intel 10.5+][]
-* [Textadept 6.5 -- Linux][]
-* [Textadept 6.5 -- Linux x86_64][]
-* [Textadept 6.5 -- Source][]
-* [Textadept 6.5 -- Modules][]
+* [Textadept 6.5 -- Win32][] | [PGP -- 6.5 Win32][]
+* [Textadept 6.5 -- Mac OSX Intel 10.5+][] | [PGP -- 6.5 OSX][]
+* [Textadept 6.5 -- Linux][] | [PGP -- 6.5 Linux][]
+* [Textadept 6.5 -- Linux x86_64][] | [PGP -- 6.5 Linux x86_64][]
+* [Textadept 6.5 -- Source][] | [PGP -- 6.5 Source][]
+* [Textadept 6.5 -- Modules][] | [PGP -- 6.5 Modules][]
 
 Bugfixes:
 
@@ -1436,6 +1610,12 @@ Changes:
 [Textadept 6.5 -- Linux x86_64]: download/textadept_6.5.x86_64.tgz
 [Textadept 6.5 -- Source]: download/textadept_6.5.src.zip
 [Textadept 6.5 -- Modules]: download/textadept_6.5.modules.zip
+[PGP -- 6.5 Win32]: download/textadept_6.5.win32.zip.asc
+[PGP -- 6.5 OSX]: download/textadept_6.5.osx.zip.asc
+[PGP -- 6.5 Linux]: download/textadept_6.5.i386.tgz.asc
+[PGP -- 6.5 Linux x86_64]: download/textadept_6.5.x86_64.tgz.asc
+[PGP -- 6.5 Source]: download/textadept_6.5.src.zip.asc
+[PGP -- 6.5 Modules]: download/textadept_6.5.modules.zip.asc
 [`_M.textadept.run.cwd`]: api.html#textadept.run.cwd
 [`buffer:visible_from_doc_line()`]: api.html#buffer.visible_from_doc_line
 [`buffer:line_scroll()`]: api.html#buffer.line_scroll
@@ -1451,12 +1631,12 @@ Changes:
 
 Download:
 
-* [Textadept 6.4 -- Win32][]
-* [Textadept 6.4 -- Mac OSX Intel 10.5+][]
-* [Textadept 6.4 -- Linux][]
-* [Textadept 6.4 -- Linux x86_64][]
-* [Textadept 6.4 -- Source][]
-* [Textadept 6.4 -- Modules][]
+* [Textadept 6.4 -- Win32][] | [PGP -- 6.4 Win32][]
+* [Textadept 6.4 -- Mac OSX Intel 10.5+][] | [PGP -- 6.4 OSX][]
+* [Textadept 6.4 -- Linux][] | [PGP -- 6.4 Linux][]
+* [Textadept 6.4 -- Linux x86_64][] | [PGP -- 6.4 Linux x86_64][]
+* [Textadept 6.4 -- Source][] | [PGP -- 6.4 Source][]
+* [Textadept 6.4 -- Modules][] | [PGP -- 6.4 Modules][]
 
 Bugfixes:
 
@@ -1480,6 +1660,12 @@ Changes:
 [Textadept 6.4 -- Linux x86_64]: download/textadept_6.4.x86_64.tgz
 [Textadept 6.4 -- Source]: download/textadept_6.4.src.zip
 [Textadept 6.4 -- Modules]: download/textadept_6.4.modules.zip
+[PGP -- 6.4 Win32]: download/textadept_6.4.win32.zip.asc
+[PGP -- 6.4 OSX]: download/textadept_6.4.osx.zip.asc
+[PGP -- 6.4 Linux]: download/textadept_6.4.i386.tgz.asc
+[PGP -- 6.4 Linux x86_64]: download/textadept_6.4.x86_64.tgz.asc
+[PGP -- 6.4 Source]: download/textadept_6.4.src.zip.asc
+[PGP -- 6.4 Modules]: download/textadept_6.4.modules.zip.asc
 [command line switches]: manual.html#Command.Line.Parameters
 [Scintilla]: http://scintilla.org
 [LuaJIT]: http://luajit.org
@@ -1488,12 +1674,12 @@ Changes:
 
 Download:
 
-* [Textadept 6.3 -- Win32][]
-* [Textadept 6.3 -- Mac OSX Intel 10.5+][]
-* [Textadept 6.3 -- Linux][]
-* [Textadept 6.3 -- Linux x86_64][]
-* [Textadept 6.3 -- Source][]
-* [Textadept 6.3 -- Modules][]
+* [Textadept 6.3 -- Win32][] | [PGP -- 6.3 Win32][]
+* [Textadept 6.3 -- Mac OSX Intel 10.5+][] | [PGP -- 6.3 OSX][]
+* [Textadept 6.3 -- Linux][] | [PGP -- 6.3 Linux][]
+* [Textadept 6.3 -- Linux x86_64][] | [PGP -- 6.3 Linux x86_64][]
+* [Textadept 6.3 -- Source][] | [PGP -- 6.3 Source][]
+* [Textadept 6.3 -- Modules][] | [PGP -- 6.3 Modules][]
 
 Bugfixes:
 
@@ -1519,6 +1705,12 @@ Changes:
 [Textadept 6.3 -- Linux x86_64]: download/textadept_6.3.x86_64.tgz
 [Textadept 6.3 -- Source]: download/textadept_6.3.src.zip
 [Textadept 6.3 -- Modules]: download/textadept_6.3.modules.zip
+[PGP -- 6.3 Win32]: download/textadept_6.3.win32.zip.asc
+[PGP -- 6.3 OSX]: download/textadept_6.3.osx.zip.asc
+[PGP -- 6.3 Linux]: download/textadept_6.3.i386.tgz.asc
+[PGP -- 6.3 Linux x86_64]: download/textadept_6.3.x86_64.tgz.asc
+[PGP -- 6.3 Source]: download/textadept_6.3.src.zip.asc
+[PGP -- 6.3 Modules]: download/textadept_6.3.modules.zip.asc
 [`buffer.caret_line_visible_always`]: api.html#buffer.caret_line_visible_always
 [Scintilla]: http://scintilla.org
 [typeover characters]: api.html#textadept.editing.TYPEOVER_CHARS
@@ -1527,12 +1719,12 @@ Changes:
 
 Download:
 
-* [Textadept 6.2 -- Win32][]
-* [Textadept 6.2 -- Mac OSX Intel 10.5+][]
-* [Textadept 6.2 -- Linux][]
-* [Textadept 6.2 -- Linux x86_64][]
-* [Textadept 6.2 -- Source][]
-* [Textadept 6.2 -- Modules][]
+* [Textadept 6.2 -- Win32][] | [PGP -- 6.2 Win32][]
+* [Textadept 6.2 -- Mac OSX Intel 10.5+][] | [PGP -- 6.2 OSX][]
+* [Textadept 6.2 -- Linux][] | [PGP -- 6.2 Linux][]
+* [Textadept 6.2 -- Linux x86_64][] | [PGP -- 6.2 Linux x86_64][]
+* [Textadept 6.2 -- Source][] | [PGP -- 6.2 Source][]
+* [Textadept 6.2 -- Modules][] | [PGP -- 6.2 Modules][]
 
 Bugfixes:
 
@@ -1550,18 +1742,24 @@ Changes:
 [Textadept 6.2 -- Linux x86_64]: download/textadept_6.2.x86_64.tgz
 [Textadept 6.2 -- Source]: download/textadept_6.2.src.zip
 [Textadept 6.2 -- Modules]: download/textadept_6.2.modules.zip
+[PGP -- 6.2 Win32]: download/textadept_6.2.win32.zip.asc
+[PGP -- 6.2 OSX]: download/textadept_6.2.osx.zip.asc
+[PGP -- 6.2 Linux]: download/textadept_6.2.i386.tgz.asc
+[PGP -- 6.2 Linux x86_64]: download/textadept_6.2.x86_64.tgz.asc
+[PGP -- 6.2 Source]: download/textadept_6.2.src.zip.asc
+[PGP -- 6.2 Modules]: download/textadept_6.2.modules.zip.asc
 [`_M.textadept.snapopen.open()`]: api.html#io.snapopen
 
 ## 6.1 (11 Dec 2012)
 
 Download:
 
-* [Textadept 6.1 -- Win32][]
-* [Textadept 6.1 -- Mac OSX Intel 10.5+][]
-* [Textadept 6.1 -- Linux][]
-* [Textadept 6.1 -- Linux x86_64][]
-* [Textadept 6.1 -- Source][]
-* [Textadept 6.1 -- Modules][]
+* [Textadept 6.1 -- Win32][] | [PGP -- 6.1 Win32][]
+* [Textadept 6.1 -- Mac OSX Intel 10.5+][] | [PGP -- 6.1 OSX][]
+* [Textadept 6.1 -- Linux][] | [PGP -- 6.1 Linux][]
+* [Textadept 6.1 -- Linux x86_64][] | [PGP -- 6.1 Linux x86_64][]
+* [Textadept 6.1 -- Source][] | [PGP -- 6.1 Source][]
+* [Textadept 6.1 -- Modules][] | [PGP -- 6.1 Modules][]
 
 Bugfixes:
 
@@ -1588,6 +1786,12 @@ Changes:
 [Textadept 6.1 -- Linux x86_64]: download/textadept_6.1.x86_64.tgz
 [Textadept 6.1 -- Source]: download/textadept_6.1.src.zip
 [Textadept 6.1 -- Modules]: download/textadept_6.1.modules.zip
+[PGP -- 6.1 Win32]: download/textadept_6.1.win32.zip.asc
+[PGP -- 6.1 OSX]: download/textadept_6.1.osx.zip.asc
+[PGP -- 6.1 Linux]: download/textadept_6.1.i386.tgz.asc
+[PGP -- 6.1 Linux x86_64]: download/textadept_6.1.x86_64.tgz.asc
+[PGP -- 6.1 Source]: download/textadept_6.1.src.zip.asc
+[PGP -- 6.1 Modules]: download/textadept_6.1.modules.zip.asc
 [API documentation]: api.html
 [LuaJIT]: http://luajit.org
 
@@ -1598,12 +1802,12 @@ Textadept 6.
 
 Download:
 
-* [Textadept 6.0 -- Win32][]
-* [Textadept 6.0 -- Mac OSX Intel 10.5+][]
-* [Textadept 6.0 -- Linux][]
-* [Textadept 6.0 -- Linux x86_64][]
-* [Textadept 6.0 -- Source][]
-* [Textadept 6.0 -- Modules][]
+* [Textadept 6.0 -- Win32][] | [PGP -- 6.0 Win32][]
+* [Textadept 6.0 -- Mac OSX Intel 10.5+][] | [PGP -- 6.0 OSX][]
+* [Textadept 6.0 -- Linux][] | [PGP -- 6.0 Linux][]
+* [Textadept 6.0 -- Linux x86_64][] | [PGP -- 6.0 Linux x86_64][]
+* [Textadept 6.0 -- Source][] | [PGP -- 6.0 Source][]
+* [Textadept 6.0 -- Modules][] | [PGP -- 6.0 Modules][]
 
 Bugfixes:
 
@@ -1641,6 +1845,12 @@ Changes:
 [Textadept 6.0 -- Linux x86_64]: download/textadept_6.0.x86_64.tgz
 [Textadept 6.0 -- Source]: download/textadept_6.0.src.zip
 [Textadept 6.0 -- Modules]: download/textadept_6.0.modules.zip
+[PGP -- 6.0 Win32]: download/textadept_6.0.win32.zip.asc
+[PGP -- 6.0 OSX]: download/textadept_6.0.osx.zip.asc
+[PGP -- 6.0 Linux]: download/textadept_6.0.i386.tgz.asc
+[PGP -- 6.0 Linux x86_64]: download/textadept_6.0.x86_64.tgz.asc
+[PGP -- 6.0 Source]: download/textadept_6.0.src.zip.asc
+[PGP -- 6.0 Modules]: download/textadept_6.0.modules.zip.asc
 [`event.FIND_WRAPPED`]: api.html#events.FIND_WRAPPED
 [Python module]: api.html#_M.python
 [Scintilla]: http://scintilla.org
@@ -1650,12 +1860,12 @@ Changes:
 
 Download:
 
-* [Textadept 6.0 beta 3 -- Win32][]
-* [Textadept 6.0 beta 3 -- Mac OSX Intel 10.5+][]
-* [Textadept 6.0 beta 3 -- Linux][]
-* [Textadept 6.0 beta 3 -- Linux x86_64][]
-* [Textadept 6.0 beta 3 -- Source][]
-* [Textadept 6.0 beta 3 -- Modules][]
+* [Textadept 6.0 beta 3 -- Win32][] | [PGP -- 6.0 beta 3 Win32][]
+* [Textadept 6.0 beta 3 -- Mac OSX Intel 10.5+][] | [PGP -- 6.0 beta 3 OSX][]
+* [Textadept 6.0 beta 3 -- Linux][] | [PGP -- 6.0 beta 3 Linux][]
+* [Textadept 6.0 beta 3 -- Linux x86_64][] | [PGP -- 6.0 beta 3 Linux x86_64][]
+* [Textadept 6.0 beta 3 -- Source][] | [PGP -- 6.0 beta 3 Source][]
+* [Textadept 6.0 beta 3 -- Modules][] | [PGP -- 6.0 beta 3 Modules][]
 
 Bugfixes:
 
@@ -1687,6 +1897,12 @@ Changes:
 [Textadept 6.0 beta 3 -- Linux x86_64]: download/textadept_6.0_beta_3.x86_64.tgz
 [Textadept 6.0 beta 3 -- Source]: download/textadept_6.0_beta_3.src.zip
 [Textadept 6.0 beta 3 -- Modules]: download/textadept_6.0_beta_3.modules.zip
+[PGP -- 6.0 beta 3 Win32]: download/textadept_6.0_beta_3.win32.zip.asc
+[PGP -- 6.0 beta 3 OSX]: download/textadept_6.0_beta_3.osx.zip.asc
+[PGP -- 6.0 beta 3 Linux]: download/textadept_6.0_beta_3.i386.tgz.asc
+[PGP -- 6.0 beta 3 Linux x86_64]: download/textadept_6.0_beta_3.x86_64.tgz.asc
+[PGP -- 6.0 beta 3 Source]: download/textadept_6.0_beta_3.src.zip.asc
+[PGP -- 6.0 beta 3 Modules]: download/textadept_6.0_beta_3.modules.zip.asc
 [`buffer:close()`]: api.html#buffer.close
 [`RUN_OUTPUT` events]: api.html#textadept.run.Run.Events
 [`string.iconv()`]: api.html#string.iconv
@@ -1696,12 +1912,12 @@ Changes:
 
 Download:
 
-* [Textadept 6.0 beta 2 -- Win32][]
-* [Textadept 6.0 beta 2 -- Mac OSX Intel 10.5+][]
-* [Textadept 6.0 beta 2 -- Linux][]
-* [Textadept 6.0 beta 2 -- Linux x86_64][]
-* [Textadept 6.0 beta 2 -- Source][]
-* [Textadept 6.0 beta 2 -- Modules][]
+* [Textadept 6.0 beta 2 -- Win32][] | [PGP -- 6.0 beta 2 Win32][]
+* [Textadept 6.0 beta 2 -- Mac OSX Intel 10.5+][] | [PGP -- 6.0 beta 2 OSX][]
+* [Textadept 6.0 beta 2 -- Linux][] | [PGP -- 6.0 beta 2 Linux][]
+* [Textadept 6.0 beta 2 -- Linux x86_64][] | [PGP -- 6.0 beta 2 Linux x86_64][]
+* [Textadept 6.0 beta 2 -- Source][] | [PGP -- 6.0 beta 2 Source][]
+* [Textadept 6.0 beta 2 -- Modules][] | [PGP -- 6.0 beta 2 Modules][]
 
 Bugfixes:
 
@@ -1737,6 +1953,12 @@ Changes:
 [Textadept 6.0 beta 2 -- Linux x86_64]: download/textadept_6.0_beta_2.x86_64.tgz
 [Textadept 6.0 beta 2 -- Source]: download/textadept_6.0_beta_2.src.zip
 [Textadept 6.0 beta 2 -- Modules]: download/textadept_6.0_beta_2.modules.zip
+[PGP -- 6.0 beta 2 Win32]: download/textadept_6.0_beta_2.win32.zip.asc
+[PGP -- 6.0 beta 2 OSX]: download/textadept_6.0_beta_2.osx.zip.asc
+[PGP -- 6.0 beta 2 Linux]: download/textadept_6.0_beta_2.i386.tgz.asc
+[PGP -- 6.0 beta 2 Linux x86_64]: download/textadept_6.0_beta_2.x86_64.tgz.asc
+[PGP -- 6.0 beta 2 Source]: download/textadept_6.0_beta_2.src.zip.asc
+[PGP -- 6.0 beta 2 Modules]: download/textadept_6.0_beta_2.modules.zip.asc
 [`_M.textadept.menu.select_command()`]: api.html#textadept.menu.select_command
 [`_M.textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
 [`MAX`]: api.html#io.SNAPOPEN_MAX
@@ -1750,12 +1972,12 @@ Changes:
 
 Download:
 
-* [Textadept 6.0 beta -- Win32][]
-* [Textadept 6.0 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 6.0 beta -- Linux][]
-* [Textadept 6.0 beta -- Linux x86_64][]
-* [Textadept 6.0 beta -- Source][]
-* [Textadept 6.0 beta -- Modules][]
+* [Textadept 6.0 beta -- Win32][] | [PGP -- 6.0 beta Win32][]
+* [Textadept 6.0 beta -- Mac OSX Intel 10.5+][] | [PGP -- 6.0 beta OSX][]
+* [Textadept 6.0 beta -- Linux][] | [PGP -- 6.0 beta Linux][]
+* [Textadept 6.0 beta -- Linux x86_64][] | [PGP -- 6.0 beta Linux x86_64][]
+* [Textadept 6.0 beta -- Source][] | [PGP -- 6.0 beta Source][]
+* [Textadept 6.0 beta -- Modules][] | [PGP -- 6.0 beta Modules][]
 
 Bugfixes:
 
@@ -1795,6 +2017,12 @@ Changes:
 [Textadept 6.0 beta -- Linux x86_64]: download/textadept_6.0_beta.x86_64.tgz
 [Textadept 6.0 beta -- Source]: download/textadept_6.0_beta.src.zip
 [Textadept 6.0 beta -- Modules]: download/textadept_6.0_beta.modules.zip
+[PGP -- 6.0 beta Win32]: download/textadept_6.0_beta.win32.zip.asc
+[PGP -- 6.0 beta OSX]: download/textadept_6.0_beta.osx.zip.asc
+[PGP -- 6.0 beta Linux]: download/textadept_6.0_beta.i386.tgz.asc
+[PGP -- 6.0 beta Linux x86_64]: download/textadept_6.0_beta.x86_64.tgz.asc
+[PGP -- 6.0 beta Source]: download/textadept_6.0_beta.src.zip.asc
+[PGP -- 6.0 beta Modules]: download/textadept_6.0_beta.modules.zip.asc
 [`buffer.auto_c_choose_single`]: api.html#buffer.auto_c_choose_single
 [`buffer:marker_delete()`]: api.html#buffer.marker_delete
 [`buffer.margin_style`]: api.html#buffer.margin_style
@@ -1809,12 +2037,12 @@ Changes:
 
 Download:
 
-* [Textadept 5.5 beta -- Win32][]
-* [Textadept 5.5 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 5.5 beta -- Linux][]
-* [Textadept 5.5 beta -- Linux x86_64][]
-* [Textadept 5.5 beta -- Source][]
-* [Textadept 5.5 beta -- Modules][]
+* [Textadept 5.5 beta -- Win32][] | [PGP -- 5.5 beta Win32][]
+* [Textadept 5.5 beta -- Mac OSX Intel 10.5+][] | [PGP -- 5.5 beta OSX][]
+* [Textadept 5.5 beta -- Linux][] | [PGP -- 5.5 beta Linux][]
+* [Textadept 5.5 beta -- Linux x86_64][] | [PGP -- 5.5 beta Linux x86_64][]
+* [Textadept 5.5 beta -- Source][] | [PGP -- 5.5 beta Source][]
+* [Textadept 5.5 beta -- Modules][] | [PGP -- 5.5 beta Modules][]
 
 Bugfixes:
 
@@ -1842,6 +2070,12 @@ Changes:
 [Textadept 5.5 beta -- Linux x86_64]: download/textadept_5.5_beta.x86_64.tgz
 [Textadept 5.5 beta -- Source]: download/textadept_5.5_beta.src.zip
 [Textadept 5.5 beta -- Modules]: download/textadept_5.5_beta.modules.zip
+[PGP -- 5.5 beta Win32]: download/textadept_5.5_beta.win32.zip.asc
+[PGP -- 5.5 beta OSX]: download/textadept_5.5_beta.osx.zip.asc
+[PGP -- 5.5 beta Linux]: download/textadept_5.5_beta.i386.tgz.asc
+[PGP -- 5.5 beta Linux x86_64]: download/textadept_5.5_beta.x86_64.tgz.asc
+[PGP -- 5.5 beta Source]: download/textadept_5.5_beta.src.zip.asc
+[PGP -- 5.5 beta Modules]: download/textadept_5.5_beta.modules.zip.asc
 [`gui.menu()`]: api.html#ui.menu
 [`gui.statusbar_text`]: api.html#ui.statusbar_text
 [compiling]: manual.html#Compiling
@@ -1852,12 +2086,12 @@ Changes:
 
 Download:
 
-* [Textadept 5.4 -- Win32][]
-* [Textadept 5.4 -- Mac OSX Intel 10.5+][]
-* [Textadept 5.4 -- Linux][]
-* [Textadept 5.4 -- Linux x86_64][]
-* [Textadept 5.4 -- Source][]
-* [Textadept 5.4 -- Modules][]
+* [Textadept 5.4 -- Win32][] | [PGP -- 5.4 Win32][]
+* [Textadept 5.4 -- Mac OSX Intel 10.5+][] | [PGP -- 5.4 OSX][]
+* [Textadept 5.4 -- Linux][] | [PGP -- 5.4 Linux][]
+* [Textadept 5.4 -- Linux x86_64][] | [PGP -- 5.4 Linux x86_64][]
+* [Textadept 5.4 -- Source][] | [PGP -- 5.4 Source][]
+* [Textadept 5.4 -- Modules][] | [PGP -- 5.4 Modules][]
 
 Bugfixes:
 
@@ -1886,6 +2120,12 @@ Changes:
 [Textadept 5.4 -- Linux x86_64]: download/textadept_5.4.x86_64.tgz
 [Textadept 5.4 -- Source]: download/textadept_5.4.src.zip
 [Textadept 5.4 -- Modules]: download/textadept_5.4.modules.zip
+[PGP -- 5.4 Win32]: download/textadept_5.4.win32.zip.asc
+[PGP -- 5.4 OSX]: download/textadept_5.4.osx.zip.asc
+[PGP -- 5.4 Linux]: download/textadept_5.4.tgz.asc
+[PGP -- 5.4 Linux x86_64]: download/textadept_5.4.x86_64.tgz.asc
+[PGP -- 5.4 Source]: download/textadept_5.4.src.zip.asc
+[PGP -- 5.4 Modules]: download/textadept_5.4.modules.zip.asc
 [`buffer:delete_range()`]: api.html#buffer.delete_range
 [Scintilla]: http://scintilla.org
 
@@ -1893,12 +2133,12 @@ Changes:
 
 Download:
 
-* [Textadept 5.3 -- Win32][]
-* [Textadept 5.3 -- Mac OSX Intel 10.5+][]
-* [Textadept 5.3 -- Linux][]
-* [Textadept 5.3 -- Linux x86_64][]
-* [Textadept 5.3 -- Source][]
-* [Textadept 5.3 -- Modules][]
+* [Textadept 5.3 -- Win32][] | [PGP -- 5.3 Win32][]
+* [Textadept 5.3 -- Mac OSX Intel 10.5+][] | [PGP -- 5.3 OSX][]
+* [Textadept 5.3 -- Linux][] | [PGP -- 5.3 Linux][]
+* [Textadept 5.3 -- Linux x86_64][] | [PGP -- 5.3 Linux x86_64][]
+* [Textadept 5.3 -- Source][] | [PGP -- 5.3 Source][]
+* [Textadept 5.3 -- Modules][] | [PGP -- 5.3 Modules][]
 
 Bugfixes:
 
@@ -1929,6 +2169,12 @@ Changes:
 [Textadept 5.3 -- Linux x86_64]: download/textadept_5.3.x86_64.tgz
 [Textadept 5.3 -- Source]: download/textadept_5.3.src.zip
 [Textadept 5.3 -- Modules]: download/textadept_5.3.modules.zip
+[PGP -- 5.3 Win32]: download/textadept_5.3.win32.zip.asc
+[PGP -- 5.3 OSX]: download/textadept_5.3.osx.zip.asc
+[PGP -- 5.3 Linux]: download/textadept_5.3.tgz.asc
+[PGP -- 5.3 Linux x86_64]: download/textadept_5.3.x86_64.tgz.asc
+[PGP -- 5.3 Source]: download/textadept_5.3.src.zip.asc
+[PGP -- 5.3 Modules]: download/textadept_5.3.modules.zip.asc
 [single-instance]: manual.html#Single.Instance
 [GTK]: http://gtk.org
 [require]: manual.html#Requirements
@@ -1940,12 +2186,12 @@ Changes:
 
 Download:
 
-* [Textadept 5.2 -- Win32][]
-* [Textadept 5.2 -- Mac OSX Intel 10.5+][]
-* [Textadept 5.2 -- Linux][]
-* [Textadept 5.2 -- Linux x86_64][]
-* [Textadept 5.2 -- Source][]
-* [Textadept 5.2 -- Modules][]
+* [Textadept 5.2 -- Win32][] | [PGP -- 5.2 Win32][]
+* [Textadept 5.2 -- Mac OSX Intel 10.5+][] | [PGP -- 5.2 OSX][]
+* [Textadept 5.2 -- Linux][] | [PGP -- 5.2 Linux][]
+* [Textadept 5.2 -- Linux x86_64][] | [PGP -- 5.2 Linux x86_64][]
+* [Textadept 5.2 -- Source][] | [PGP -- 5.2 Source][]
+* [Textadept 5.2 -- Modules][] | [PGP -- 5.2 Modules][]
 
 Bugfixes:
 
@@ -1984,6 +2230,12 @@ Changes:
 [Textadept 5.2 -- Linux x86_64]: download/textadept_5.2.x86_64.tgz
 [Textadept 5.2 -- Source]: download/textadept_5.2.src.zip
 [Textadept 5.2 -- Modules]: download/textadept_5.2.modules.zip
+[PGP -- 5.2 Win32]: download/textadept_5.2.win32.zip.asc
+[PGP -- 5.2 OSX]: download/textadept_5.2.osx.zip.asc
+[PGP -- 5.2 Linux]: download/textadept_5.2.tgz.asc
+[PGP -- 5.2 Linux x86_64]: download/textadept_5.2.x86_64.tgz.asc
+[PGP -- 5.2 Source]: download/textadept_5.2.src.zip.asc
+[PGP -- 5.2 Modules]: download/textadept_5.2.modules.zip.asc
 [`buffer:get_lexer()`]: api.html#buffer.get_lexer
 [`buffer:get_lexer(true)`]: api.html#buffer.get_lexer
 [`_M.set_buffer_properties()`]: api.html#_M.Buffer.Properties
@@ -1997,12 +2249,12 @@ Changes:
 
 Download:
 
-* [Textadept 5.1 -- Win32][]
-* [Textadept 5.1 -- Mac OSX Intel 10.5+][]
-* [Textadept 5.1 -- Linux][]
-* [Textadept 5.1 -- Linux x86_64][]
-* [Textadept 5.1 -- Source][]
-* [Textadept 5.1 -- Modules][]
+* [Textadept 5.1 -- Win32][] | [PGP -- 5.1 Win32][]
+* [Textadept 5.1 -- Mac OSX Intel 10.5+][] | [PGP -- 5.1 OSX][]
+* [Textadept 5.1 -- Linux][] | [PGP -- 5.1 Linux][]
+* [Textadept 5.1 -- Linux x86_64][] | [PGP -- 5.1 Linux x86_64][]
+* [Textadept 5.1 -- Source][] | [PGP -- 5.1 Source][]
+* [Textadept 5.1 -- Modules][] | [PGP -- 5.1 Modules][]
 
 Bugfixes:
 
@@ -2023,6 +2275,12 @@ Changes:
 [Textadept 5.1 -- Linux x86_64]: download/textadept_5.1.x86_64.tgz
 [Textadept 5.1 -- Source]: download/textadept_5.1.src.zip
 [Textadept 5.1 -- Modules]: download/textadept_5.1.modules.zip
+[PGP -- 5.1 Win32]: download/textadept_5.1.win32.zip.asc
+[PGP -- 5.1 OSX]: download/textadept_5.1.osx.zip.asc
+[PGP -- 5.1 Linux]: download/textadept_5.1.tgz.asc
+[PGP -- 5.1 Linux x86_64]: download/textadept_5.1.x86_64.tgz.asc
+[PGP -- 5.1 Source]: download/textadept_5.1.src.zip.asc
+[PGP -- 5.1 Modules]: download/textadept_5.1.modules.zip.asc
 [GtkOSXApplication]: https://live.gnome.org/GTK%2B/OSX/Integration#Gtk-mac-integration.2BAC8-GtkOSXApplication
 
 ## 5.0 (01 Feb 2012)
@@ -2032,12 +2290,12 @@ Textadept 5.
 
 Download:
 
-* [Textadept 5.0 -- Win32][]
-* [Textadept 5.0 -- Mac OSX Intel 10.5+][]
-* [Textadept 5.0 -- Linux][]
-* [Textadept 5.0 -- Linux x86_64][]
-* [Textadept 5.0 -- Source][]
-* [Textadept 5.0 -- Modules][]
+* [Textadept 5.0 -- Win32][] | [PGP -- 5.0 Win32][]
+* [Textadept 5.0 -- Mac OSX Intel 10.5+][] | [PGP -- 5.0 OSX][]
+* [Textadept 5.0 -- Linux][] | [PGP -- 5.0 Linux][]
+* [Textadept 5.0 -- Linux x86_64][] | [PGP -- 5.0 Linux x86_64][]
+* [Textadept 5.0 -- Source][] | [PGP -- 5.0 Source][]
+* [Textadept 5.0 -- Modules][] | [PGP -- 5.0 Modules][]
 
 Bugfixes:
 
@@ -2061,6 +2319,12 @@ Changes:
 [Textadept 5.0 -- Linux x86_64]: download/textadept_5.0.x86_64.tgz
 [Textadept 5.0 -- Source]: download/textadept_5.0.src.zip
 [Textadept 5.0 -- Modules]: download/textadept_5.0.modules.zip
+[PGP -- 5.0 Win32]: download/textadept_5.0.win32.zip.asc
+[PGP -- 5.0 OSX]: download/textadept_5.0.osx.zip.asc
+[PGP -- 5.0 Linux]: download/textadept_5.0.tgz.asc
+[PGP -- 5.0 Linux x86_64]: download/textadept_5.0.x86_64.tgz.asc
+[PGP -- 5.0 Source]: download/textadept_5.0.src.zip.asc
+[PGP -- 5.0 Modules]: download/textadept_5.0.modules.zip.asc
 [Scintilla]: http://scintilla.org
 [LuaJIT]: http://luajit.org
 
@@ -2068,12 +2332,12 @@ Changes:
 
 Download:
 
-* [Textadept 5.0 beta -- Win32][]
-* [Textadept 5.0 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 5.0 beta -- Linux][]
-* [Textadept 5.0 beta -- Linux x86_64][]
-* [Textadept 5.0 beta -- Source][]
-* [Textadept 5.0 beta -- Modules][]
+* [Textadept 5.0 beta -- Win32][] | [PGP -- 5.0 beta Win32][]
+* [Textadept 5.0 beta -- Mac OSX Intel 10.5+][] | [PGP -- 5.0 beta OSX][]
+* [Textadept 5.0 beta -- Linux][] | [PGP -- 5.0 beta Linux][]
+* [Textadept 5.0 beta -- Linux x86_64][] | [PGP -- 5.0 beta Linux x86_64][]
+* [Textadept 5.0 beta -- Source][] | [PGP -- 5.0 beta Source][]
+* [Textadept 5.0 beta -- Modules][] | [PGP -- 5.0 beta Modules][]
 
 Bugfixes:
 
@@ -2095,6 +2359,12 @@ Changes:
 [Textadept 5.0 beta -- Linux x86_64]: download/textadept_5.0_beta.x86_64.tgz
 [Textadept 5.0 beta -- Source]: download/textadept_5.0_beta.src.zip
 [Textadept 5.0 beta -- Modules]: download/textadept_5.0_beta.modules.zip
+[PGP -- 5.0 beta Win32]: download/textadept_5.0_beta.win32.zip.asc
+[PGP -- 5.0 beta OSX]: download/textadept_5.0_beta.osx.zip.asc
+[PGP -- 5.0 beta Linux]: download/textadept_5.0_beta.tgz.asc
+[PGP -- 5.0 beta Linux x86_64]: download/textadept_5.0_beta.x86_64.tgz.asc
+[PGP -- 5.0 beta Source]: download/textadept_5.0_beta.src.zip.asc
+[PGP -- 5.0 beta Modules]: download/textadept_5.0_beta.modules.zip.asc
 [`reset()`]: api.html#reset
 [`_L`]: api.html#_L
 [`_M`]: api.html#_M
@@ -2105,12 +2375,12 @@ Changes:
 
 Download:
 
-* [Textadept 5.0 alpha -- Win32][]
-* [Textadept 5.0 alpha -- Mac OSX Intel 10.5+][]
-* [Textadept 5.0 alpha -- Linux][]
-* [Textadept 5.0 alpha -- Linux x86_64][]
-* [Textadept 5.0 alpha -- Source][]
-* [Textadept 5.0 alpha -- Modules][]
+* [Textadept 5.0 alpha -- Win32][] | [PGP -- 5.0 alpha Win32][]
+* [Textadept 5.0 alpha -- Mac OSX Intel 10.5+][] | [PGP -- 5.0 alpha OSX][]
+* [Textadept 5.0 alpha -- Linux][] | [PGP -- 5.0 alpha Linux][]
+* [Textadept 5.0 alpha -- Linux x86_64][] | [PGP -- 5.0 alpha Linux x86_64][]
+* [Textadept 5.0 alpha -- Source][] | [PGP -- 5.0 alpha Source][]
+* [Textadept 5.0 alpha -- Modules][] | [PGP -- 5.0 alpha Modules][]
 
 Bugfixes:
 
@@ -2130,6 +2400,12 @@ Changes:
 [Textadept 5.0 alpha -- Linux x86_64]: download/textadept_5.0_alpha.x86_64.tgz
 [Textadept 5.0 alpha -- Source]: download/textadept_5.0_alpha.src.zip
 [Textadept 5.0 alpha -- Modules]: download/textadept_5.0_alpha.modules.zip
+[PGP -- 5.0 alpha Win32]: download/textadept_5.0_alpha.win32.zip.asc
+[PGP -- 5.0 alpha OSX]: download/textadept_5.0_alpha.osx.zip.asc
+[PGP -- 5.0 alpha Linux]: download/textadept_5.0_alpha.tgz.asc
+[PGP -- 5.0 alpha Linux x86_64]: download/textadept_5.0_alpha.x86_64.tgz.asc
+[PGP -- 5.0 alpha Source]: download/textadept_5.0_alpha.src.zip.asc
+[PGP -- 5.0 alpha Modules]: download/textadept_5.0_alpha.modules.zip.asc
 [Lua 5.2]: http://www.lua.org/manual/5.2/
 [manual]: manual.html
 [LuaJIT]: http://luajit.org
@@ -2138,12 +2414,12 @@ Changes:
 
 Download:
 
-* [Textadept 4.3 -- Win32][]
-* [Textadept 4.3 -- Mac OSX Intel 10.5+][]
-* [Textadept 4.3 -- Linux][]
-* [Textadept 4.3 -- Linux x86_64][]
-* [Textadept 4.3 -- Source][]
-* [Textadept 4.3 -- Modules][]
+* [Textadept 4.3 -- Win32][] | [PGP -- 4.3 Win32][]
+* [Textadept 4.3 -- Mac OSX Intel 10.5+][] | [PGP -- 4.3 OSX][]
+* [Textadept 4.3 -- Linux][] | [PGP -- 4.3 Linux][]
+* [Textadept 4.3 -- Linux x86_64][] | [PGP -- 4.3 Linux x86_64][]
+* [Textadept 4.3 -- Source][] | [PGP -- 4.3 Source][]
+* [Textadept 4.3 -- Modules][] | [PGP -- 4.3 Modules][]
 
 Bugfixes:
 
@@ -2168,6 +2444,12 @@ Changes:
 [Textadept 4.3 -- Linux x86_64]: download/textadept_4.3.x86_64.tgz
 [Textadept 4.3 -- Source]: download/textadept_4.3.src.zip
 [Textadept 4.3 -- Modules]: download/textadept_4.3.modules.zip
+[PGP -- 4.3 Win32]: download/textadept_4.3.win32.zip.asc
+[PGP -- 4.3 OSX]: download/textadept_4.3.osx.zip.asc
+[PGP -- 4.3 Linux]: download/textadept_4.3.tgz.asc
+[PGP -- 4.3 Linux x86_64]: download/textadept_4.3.x86_64.tgz.asc
+[PGP -- 4.3 Source]: download/textadept_4.3.src.zip.asc
+[PGP -- 4.3 Modules]: download/textadept_4.3.modules.zip.asc
 [theme switching]: api.html#ui.set_theme
 [gtkrc]: manual.html#GUI.Theme
 [`lexer.REGEX`]: api.html#lexer.REGEX
@@ -2178,12 +2460,12 @@ Changes:
 
 Download:
 
-* [Textadept 4.2 -- Win32][]
-* [Textadept 4.2 -- Mac OSX Intel 10.5+][]
-* [Textadept 4.2 -- Linux][]
-* [Textadept 4.2 -- Linux x86_64][]
-* [Textadept 4.2 -- Source][]
-* [Textadept 4.2 -- Modules][]
+* [Textadept 4.2 -- Win32][] | [PGP -- 4.2 Win32][]
+* [Textadept 4.2 -- Mac OSX Intel 10.5+][] | [PGP -- 4.2 OSX][]
+* [Textadept 4.2 -- Linux][] | [PGP -- 4.2 Linux][]
+* [Textadept 4.2 -- Linux x86_64][] | [PGP -- 4.2 Linux x86_64][]
+* [Textadept 4.2 -- Source][] | [PGP -- 4.2 Source][]
+* [Textadept 4.2 -- Modules][] | [PGP -- 4.2 Modules][]
 
 Bugfixes:
 
@@ -2203,18 +2485,24 @@ Changes:
 [Textadept 4.2 -- Linux x86_64]: download/textadept_4.2.x86_64.tgz
 [Textadept 4.2 -- Source]: download/textadept_4.2.src.zip
 [Textadept 4.2 -- Modules]: download/textadept_4.2.modules.zip
+[PGP -- 4.2 Win32]: download/textadept_4.2.win32.zip.asc
+[PGP -- 4.2 OSX]: download/textadept_4.2.osx.zip.asc
+[PGP -- 4.2 Linux]: download/textadept_4.2.tgz.asc
+[PGP -- 4.2 Linux x86_64]: download/textadept_4.2.x86_64.tgz.asc
+[PGP -- 4.2 Source]: download/textadept_4.2.src.zip.asc
+[PGP -- 4.2 Modules]: download/textadept_4.2.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
 ## 4.1 (01 Oct 2011)
 
 Download:
 
-* [Textadept 4.1 -- Win32][]
-* [Textadept 4.1 -- Mac OSX Intel 10.5+][]
-* [Textadept 4.1 -- Linux][]
-* [Textadept 4.1 -- Linux x86_64][]
-* [Textadept 4.1 -- Source][]
-* [Textadept 4.1 -- Modules][]
+* [Textadept 4.1 -- Win32][] | [PGP -- 4.1 Win32][]
+* [Textadept 4.1 -- Mac OSX Intel 10.5+][] | [PGP -- 4.1 OSX][]
+* [Textadept 4.1 -- Linux][] | [PGP -- 4.1 Linux][]
+* [Textadept 4.1 -- Linux x86_64][] | [PGP -- 4.1 Linux x86_64][]
+* [Textadept 4.1 -- Source][] | [PGP -- 4.1 Source][]
+* [Textadept 4.1 -- Modules][] | [PGP -- 4.1 Modules][]
 
 Bugfixes:
 
@@ -2249,6 +2537,12 @@ Changes:
 [Textadept 4.1 -- Linux x86_64]: download/textadept_4.1.x86_64.tgz
 [Textadept 4.1 -- Source]: download/textadept_4.1.src.zip
 [Textadept 4.1 -- Modules]: download/textadept_4.1.modules.zip
+[PGP -- 4.1 Win32]: download/textadept_4.1.win32.zip.asc
+[PGP -- 4.1 OSX]: download/textadept_4.1.osx.zip.asc
+[PGP -- 4.1 Linux]: download/textadept_4.1.tgz.asc
+[PGP -- 4.1 Linux x86_64]: download/textadept_4.1.x86_64.tgz.asc
+[PGP -- 4.1 Source]: download/textadept_4.1.src.zip.asc
+[PGP -- 4.1 Modules]: download/textadept_4.1.modules.zip.asc
 [dwell events]: api.html#events
 [`_BUFFERS`]: api.html#_BUFFERS
 [`_VIEWS`]: api.html#_VIEWS
@@ -2266,12 +2560,12 @@ Textadept 4.
 
 Download:
 
-* [Textadept 4.0 -- Win32][]
-* [Textadept 4.0 -- Mac OSX Intel 10.5+][]
-* [Textadept 4.0 -- Linux][]
-* [Textadept 4.0 -- Linux x86_64][]
-* [Textadept 4.0 -- Source][]
-* [Textadept 4.0 -- Modules][]
+* [Textadept 4.0 -- Win32][] | [PGP -- 4.0 Win32][]
+* [Textadept 4.0 -- Mac OSX Intel 10.5+][] | [PGP -- 4.0 OSX][]
+* [Textadept 4.0 -- Linux][] | [PGP -- 4.0 Linux][]
+* [Textadept 4.0 -- Linux x86_64][] | [PGP -- 4.0 Linux x86_64][]
+* [Textadept 4.0 -- Source][] | [PGP -- 4.0 Source][]
+* [Textadept 4.0 -- Modules][] | [PGP -- 4.0 Modules][]
 
 Bugfixes:
 
@@ -2295,6 +2589,12 @@ Changes:
 [Textadept 4.0 -- Linux x86_64]: download/textadept_4.0.x86_64.tgz
 [Textadept 4.0 -- Source]: download/textadept_4.0.src.zip
 [Textadept 4.0 -- Modules]: download/textadept_4.0.modules.zip
+[PGP -- 4.0 Win32]: download/textadept_4.0.win32.zip.asc
+[PGP -- 4.0 OSX]: download/textadept_4.0.osx.zip.asc
+[PGP -- 4.0 Linux]: download/textadept_4.0.tgz.asc
+[PGP -- 4.0 Linux x86_64]: download/textadept_4.0.x86_64.tgz.asc
+[PGP -- 4.0 Source]: download/textadept_4.0.src.zip.asc
+[PGP -- 4.0 Modules]: download/textadept_4.0.modules.zip.asc
 [`gui.dialog()`]: api.html#ui.dialog
 [`buffer.auto_c_ignore_case`]: api.html#buffer.auto_c_ignore_case
 
@@ -2302,12 +2602,12 @@ Changes:
 
 Download:
 
-* [Textadept 4.0 beta 2 -- Win32][]
-* [Textadept 4.0 beta 2 -- Mac OSX Intel 10.5+][]
-* [Textadept 4.0 beta 2 -- Linux][]
-* [Textadept 4.0 beta 2 -- Linux x86_64][]
-* [Textadept 4.0 beta 2 -- Source][]
-* [Textadept 4.0 beta 2 -- Modules][]
+* [Textadept 4.0 beta 2 -- Win32][] | [PGP -- 4.0 beta 2 Win32][]
+* [Textadept 4.0 beta 2 -- Mac OSX Intel 10.5+][] | [PGP -- 4.0 beta 2 OSX][]
+* [Textadept 4.0 beta 2 -- Linux][] | [PGP -- 4.0 beta 2 Linux][]
+* [Textadept 4.0 beta 2 -- Linux x86_64][] | [PGP -- 4.0 beta 2 Linux x86_64][]
+* [Textadept 4.0 beta 2 -- Source][] | [PGP -- 4.0 beta 2 Source][]
+* [Textadept 4.0 beta 2 -- Modules][] | [PGP -- 4.0 beta 2 Modules][]
 
 Bugfixes:
 
@@ -2330,18 +2630,24 @@ Changes:
 [Textadept 4.0 beta 2 -- Linux x86_64]: download/textadept_4.0_beta_2.x86_64.tgz
 [Textadept 4.0 beta 2 -- Source]: download/textadept_4.0_beta_2.src.zip
 [Textadept 4.0 beta 2 -- Modules]: download/textadept_4.0_beta_2.modules.zip
+[PGP -- 4.0 beta 2 Win32]: download/textadept_4.0_beta_2.win32.zip.asc
+[PGP -- 4.0 beta 2 OSX]: download/textadept_4.0_beta_2.osx.zip.asc
+[PGP -- 4.0 beta 2 Linux]: download/textadept_4.0_beta_2.tgz.asc
+[PGP -- 4.0 beta 2 Linux x86_64]: download/textadept_4.0_beta_2.x86_64.tgz.asc
+[PGP -- 4.0 beta 2 Source]: download/textadept_4.0_beta_2.src.zip.asc
+[PGP -- 4.0 beta 2 Modules]: download/textadept_4.0_beta_2.modules.zip.asc
 [recent file list]: api.html#io.recent_files
 
 ## 4.0 beta (01 Aug 2011)
 
 Download:
 
-* [Textadept 4.0 beta -- Win32][]
-* [Textadept 4.0 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 4.0 beta -- Linux][]
-* [Textadept 4.0 beta -- Linux x86_64][]
-* [Textadept 4.0 beta -- Source][]
-* [Textadept 4.0 beta -- Modules][]
+* [Textadept 4.0 beta -- Win32][] | [PGP -- 4.0 beta Win32][]
+* [Textadept 4.0 beta -- Mac OSX Intel 10.5+][] | [PGP -- 4.0 beta OSX][]
+* [Textadept 4.0 beta -- Linux][] | [PGP -- 4.0 beta Linux][]
+* [Textadept 4.0 beta -- Linux x86_64][] | [PGP -- 4.0 beta Linux x86_64][]
+* [Textadept 4.0 beta -- Source][] | [PGP -- 4.0 beta Source][]
+* [Textadept 4.0 beta -- Modules][] | [PGP -- 4.0 beta Modules][]
 
 Bugfixes:
 
@@ -2381,6 +2687,12 @@ Changes:
 [Textadept 4.0 beta -- Linux x86_64]: download/textadept_4.0_beta.x86_64.tgz
 [Textadept 4.0 beta -- Source]: download/textadept_4.0_beta.src.zip
 [Textadept 4.0 beta -- Modules]: download/textadept_4.0_beta.modules.zip
+[PGP -- 4.0 beta Win32]: download/textadept_4.0_beta.win32.zip.asc
+[PGP -- 4.0 beta OSX]: download/textadept_4.0_beta.osx.zip.asc
+[PGP -- 4.0 beta Linux]: download/textadept_4.0_beta.tgz.asc
+[PGP -- 4.0 beta Linux x86_64]: download/textadept_4.0_beta.x86_64.tgz.asc
+[PGP -- 4.0 beta Source]: download/textadept_4.0_beta.src.zip.asc
+[PGP -- 4.0 beta Modules]: download/textadept_4.0_beta.modules.zip.asc
 [`io.open_recent_file()`]: api.html#io.open_recent_file
 [`buffer`]: api.html#buffer
 [`_m.textadept.editing.STRIP_WHITESPACE_ON_SAVE`]: api.html#textadept.editing.STRIP_WHITESPACE_ON_SAVE
@@ -2391,12 +2703,12 @@ Changes:
 
 Download:
 
-* [Textadept 3.9 -- Win32][]
-* [Textadept 3.9 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.9 -- Linux][]
-* [Textadept 3.9 -- Linux x86_64][]
-* [Textadept 3.9 -- Source][]
-* [Textadept 3.9 -- Modules][]
+* [Textadept 3.9 -- Win32][] | [PGP -- 3.9 Win32][]
+* [Textadept 3.9 -- Mac OSX Intel 10.5+][] | [PGP -- 3.9 OSX][]
+* [Textadept 3.9 -- Linux][] | [PGP -- 3.9 Linux][]
+* [Textadept 3.9 -- Linux x86_64][] | [PGP -- 3.9 Linux x86_64][]
+* [Textadept 3.9 -- Source][] | [PGP -- 3.9 Source][]
+* [Textadept 3.9 -- Modules][] | [PGP -- 3.9 Modules][]
 
 Bugfixes:
 
@@ -2437,6 +2749,12 @@ Changes:
 [Textadept 3.9 -- Linux x86_64]: download/textadept_3.9.x86_64.tgz
 [Textadept 3.9 -- Source]: download/textadept_3.9.src.zip
 [Textadept 3.9 -- Modules]: download/textadept_3.9.modules.zip
+[PGP -- 3.9 Win32]: download/textadept_3.9.win32.zip.asc
+[PGP -- 3.9 OSX]: download/textadept_3.9.osx.zip.asc
+[PGP -- 3.9 Linux]: download/textadept_3.9.tgz.asc
+[PGP -- 3.9 Linux x86_64]: download/textadept_3.9.x86_64.tgz.asc
+[PGP -- 3.9 Source]: download/textadept_3.9.src.zip.asc
+[PGP -- 3.9 Modules]: download/textadept_3.9.modules.zip.asc
 [GTK]: http://gtk.org
 [`gui.dialog`]: api.html#ui.dialog
 [functions]: api.html#_SCINTILLA
@@ -2450,12 +2768,12 @@ Changes:
 
 Download:
 
-* [Textadept 3.8 -- Win32][]
-* [Textadept 3.8 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.8 -- Linux][]
-* [Textadept 3.8 -- Linux x86_64][]
-* [Textadept 3.8 -- Source][]
-* [Textadept 3.8 -- Modules][]
+* [Textadept 3.8 -- Win32][] | [PGP -- 3.8 Win32][]
+* [Textadept 3.8 -- Mac OSX Intel 10.5+][] | [PGP -- 3.8 OSX][]
+* [Textadept 3.8 -- Linux][] | [PGP -- 3.8 Linux][]
+* [Textadept 3.8 -- Linux x86_64][] | [PGP -- 3.8 Linux x86_64][]
+* [Textadept 3.8 -- Source][] | [PGP -- 3.8 Source][]
+* [Textadept 3.8 -- Modules][] | [PGP -- 3.8 Modules][]
 
 Bugfixes:
 
@@ -2493,6 +2811,12 @@ Changes:
 [Textadept 3.8 -- Linux x86_64]: download/textadept_3.8.x86_64.tgz
 [Textadept 3.8 -- Source]: download/textadept_3.8.src.zip
 [Textadept 3.8 -- Modules]: download/textadept_3.8.modules.zip
+[PGP -- 3.8 Win32]: download/textadept_3.8.win32.zip.asc
+[PGP -- 3.8 OSX]: download/textadept_3.8.osx.zip.asc
+[PGP -- 3.8 Linux]: download/textadept_3.8.tgz.asc
+[PGP -- 3.8 Linux x86_64]: download/textadept_3.8.x86_64.tgz.asc
+[PGP -- 3.8 Source]: download/textadept_3.8.src.zip.asc
+[PGP -- 3.8 Modules]: download/textadept_3.8.modules.zip.asc
 [events]: api.html#events
 [documentation]: manual.html#Getting.Modules
 [official modules]: http://foicica.com/hg
@@ -2505,12 +2829,12 @@ Changes:
 
 Download:
 
-* [Textadept 3.7 -- Win32][]
-* [Textadept 3.7 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.7 -- Linux][]
-* [Textadept 3.7 -- Linux x86_64][]
-* [Textadept 3.7 -- Source][]
-* [Textadept 3.7 -- Modules][]
+* [Textadept 3.7 -- Win32][] | [PGP -- 3.7 Win32][]
+* [Textadept 3.7 -- Mac OSX Intel 10.5+][] | [PGP -- 3.7 OSX][]
+* [Textadept 3.7 -- Linux][] | [PGP -- 3.7 Linux][]
+* [Textadept 3.7 -- Linux x86_64][] | [PGP -- 3.7 Linux x86_64][]
+* [Textadept 3.7 -- Source][] | [PGP -- 3.7 Source][]
+* [Textadept 3.7 -- Modules][] | [PGP -- 3.7 Modules][]
 
 Bugfixes:
 
@@ -2527,18 +2851,24 @@ Changes:
 [Textadept 3.7 -- Linux x86_64]: download/textadept_3.7.x86_64.tgz
 [Textadept 3.7 -- Source]: download/textadept_3.7.src.zip
 [Textadept 3.7 -- Modules]: download/textadept_3.7.modules.zip
+[PGP -- 3.7 Win32]: download/textadept_3.7.win32.zip.asc
+[PGP -- 3.7 OSX]: download/textadept_3.7.osx.zip.asc
+[PGP -- 3.7 Linux]: download/textadept_3.7.tgz.asc
+[PGP -- 3.7 Linux x86_64]: download/textadept_3.7.x86_64.tgz.asc
+[PGP -- 3.7 Source]: download/textadept_3.7.src.zip.asc
+[PGP -- 3.7 Modules]: download/textadept_3.7.modules.zip.asc
 [`buffer:get_lexer()`]: api.html#buffer.get_lexer
 
 ## 3.7 beta 3 (01 Apr 2011)
 
 Download:
 
-* [Textadept 3.7 beta 3 -- Win32][]
-* [Textadept 3.7 beta 3 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.7 beta 3 -- Linux][]
-* [Textadept 3.7 beta 3 -- Linux x86_64][]
-* [Textadept 3.7 beta 3 -- Source][]
-* [Textadept 3.7 beta 3 -- Modules][]
+* [Textadept 3.7 beta 3 -- Win32][] | [PGP -- 3.7 beta 3 Win32][]
+* [Textadept 3.7 beta 3 -- Mac OSX Intel 10.5+][] | [PGP -- 3.7 beta 3 OSX][]
+* [Textadept 3.7 beta 3 -- Linux][] | [PGP -- 3.7 beta 3 Linux][]
+* [Textadept 3.7 beta 3 -- Linux x86_64][] | [PGP -- 3.7 beta 3 Linux x86_64][]
+* [Textadept 3.7 beta 3 -- Source][] | [PGP -- 3.7 beta 3 Source][]
+* [Textadept 3.7 beta 3 -- Modules][] | [PGP -- 3.7 beta 3 Modules][]
 
 Bugfixes:
 
@@ -2580,6 +2910,12 @@ Changes:
 [Textadept 3.7 beta 3 -- Linux x86_64]: download/textadept_3.7_beta_3.x86_64.tgz
 [Textadept 3.7 beta 3 -- Source]: download/textadept_3.7_beta_3.src.zip
 [Textadept 3.7 beta 3 -- Modules]: download/textadept_3.7_beta_3.modules.zip
+[PGP -- 3.7 beta 3 Win32]: download/textadept_3.7_beta_3.win32.zip.asc
+[PGP -- 3.7 beta 3 OSX]: download/textadept_3.7_beta_3.osx.zip.asc
+[PGP -- 3.7 beta 3 Linux]: download/textadept_3.7_beta_3.tgz.asc
+[PGP -- 3.7 beta 3 Linux x86_64]: download/textadept_3.7_beta_3.x86_64.tgz.asc
+[PGP -- 3.7 beta 3 Source]: download/textadept_3.7_beta_3.src.zip.asc
+[PGP -- 3.7 beta 3 Modules]: download/textadept_3.7_beta_3.modules.zip.asc
 [`post_init.lua`]: manual.html#Language.Module.Preferences
 [`buffer:get_lexer(true)`]: api.html#buffer.get_lexer
 [Scintilla]: http://scintilla.org
@@ -2591,11 +2927,11 @@ Changes:
 
 Download:
 
-* [Textadept 3.7 beta 2 -- Win32][]
-* [Textadept 3.7 beta 2 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.7 beta 2 -- Linux][]
-* [Textadept 3.7 beta 2 -- Linux x86_64][]
-* [Textadept 3.7 beta 2 -- Source][]
+* [Textadept 3.7 beta 2 -- Win32][] | [PGP -- 3.7 beta 2 Win32][]
+* [Textadept 3.7 beta 2 -- Mac OSX Intel 10.5+][] | [PGP -- 3.7 beta 2 OSX][]
+* [Textadept 3.7 beta 2 -- Linux][] | [PGP -- 3.7 beta 2 Linux][]
+* [Textadept 3.7 beta 2 -- Linux x86_64][] | [PGP -- 3.7 beta 2 Linux x86_64][]
+* [Textadept 3.7 beta 2 -- Source][] | [PGP -- 3.7 beta 2 Source][]
 
 Bugfixes:
 
@@ -2642,6 +2978,11 @@ Changes:
 [Textadept 3.7 beta 2 -- Linux]: download/textadept_3.7_beta_2.tgz
 [Textadept 3.7 beta 2 -- Linux x86_64]: download/textadept_3.7_beta_2.x86_64.tgz
 [Textadept 3.7 beta 2 -- Source]: download/textadept_3.7_beta_2.src.zip
+[PGP -- 3.7 beta 2 Win32]: download/textadept_3.7_beta_2.win32.zip.asc
+[PGP -- 3.7 beta 2 OSX]: download/textadept_3.7_beta_2.osx.zip.asc
+[PGP -- 3.7 beta 2 Linux]: download/textadept_3.7_beta_2.tgz.asc
+[PGP -- 3.7 beta 2 Linux x86_64]: download/textadept_3.7_beta_2.x86_64.tgz.asc
+[PGP -- 3.7 beta 2 Source]: download/textadept_3.7_beta_2.src.zip.asc
 [`events.UPDATE_UI`]: api.html#events.UPDATE_UI
 [Scintilla]: http://scintilla.org
 [CSS]: api.html#_M.css
@@ -2652,11 +2993,11 @@ Changes:
 
 Download:
 
-* [Textadept 3.7 beta -- Win32][]
-* [Textadept 3.7 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 3.7 beta -- Linux][]
-* [Textadept 3.7 beta -- Linux x86_64][]
-* [Textadept 3.7 beta -- Source][]
+* [Textadept 3.7 beta -- Win32][] | [PGP -- 3.7 beta Win32][]
+* [Textadept 3.7 beta -- Mac OSX Intel 10.5+][] | [PGP -- 3.7 beta OSX][]
+* [Textadept 3.7 beta -- Linux][] | [PGP -- 3.7 beta Linux][]
+* [Textadept 3.7 beta -- Linux x86_64][] | [PGP -- 3.7 beta Linux x86_64][]
+* [Textadept 3.7 beta -- Source][] | [PGP -- 3.7 beta Source][]
 
 Bugfixes:
 
@@ -2681,6 +3022,11 @@ Changes:
 [Textadept 3.7 beta -- Linux]: download/textadept_3.7_beta.tgz
 [Textadept 3.7 beta -- Linux x86_64]: download/textadept_3.7_beta.x86_64.tgz
 [Textadept 3.7 beta -- Source]: download/textadept_3.7_beta.src.zip
+[PGP -- 3.7 beta Win32]: download/textadept_3.7_beta.win32.zip.asc
+[PGP -- 3.7 beta OSX]: download/textadept_3.7_beta.osx.zip.asc
+[PGP -- 3.7 beta Linux]: download/textadept_3.7_beta.tgz.asc
+[PGP -- 3.7 beta Linux x86_64]: download/textadept_3.7_beta.x86_64.tgz.asc
+[PGP -- 3.7 beta Source]: download/textadept_3.7_beta.src.zip.asc
 [`char_matches`]: api.html#textadept.editing.char_matches
 [`braces`]: api.html#textadept.editing.braces
 
@@ -2688,11 +3034,11 @@ Changes:
 
 Download:
 
-* [Textadept 3.6 -- Win32][]
-* [Textadept 3.6 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.6 -- Linux][]
-* [Textadept 3.6 -- Linux x86_64][]
-* [Textadept 3.6 -- Source][]
+* [Textadept 3.6 -- Win32][] | [PGP -- 3.6 Win32][]
+* [Textadept 3.6 -- Mac OSX Intel 10.5+][] | [PGP -- 3.6 OSX][]
+* [Textadept 3.6 -- Linux][] | [PGP -- 3.6 Linux][]
+* [Textadept 3.6 -- Linux x86_64][] | [PGP -- 3.6 Linux x86_64][]
+* [Textadept 3.6 -- Source][] | [PGP -- 3.6 Source][]
 
 Bugfixes:
 
@@ -2716,6 +3062,11 @@ Changes:
 [Textadept 3.6 -- Linux]: download/textadept_3.6.tgz
 [Textadept 3.6 -- Linux x86_64]: download/textadept_3.6.x86_64.tgz
 [Textadept 3.6 -- Source]: download/textadept_3.6.src.zip
+[PGP -- 3.6 Win32]: download/textadept_3.6.win32.zip.asc
+[PGP -- 3.6 OSX]: download/textadept_3.6.osx.zip.asc
+[PGP -- 3.6 Linux]: download/textadept_3.6.tgz.asc
+[PGP -- 3.6 Linux x86_64]: download/textadept_3.6.x86_64.tgz.asc
+[PGP -- 3.6 Source]: download/textadept_3.6.src.zip.asc
 [`buffer.rectangular_selection_modifier`]: api.html#buffer.rectangular_selection_modifier
 [`_m.textadept.filter_through`]: api.html#textadept.editing.filter_through
 [shell commands]: manual.html#Shell.Commands.and.Filtering.Text
@@ -2724,11 +3075,11 @@ Changes:
 
 Download:
 
-* [Textadept 3.5 -- Win32][]
-* [Textadept 3.5 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.5 -- Linux][]
-* [Textadept 3.5 -- Linux x86_64][]
-* [Textadept 3.5 -- Source][]
+* [Textadept 3.5 -- Win32][] | [PGP -- 3.5 Win32][]
+* [Textadept 3.5 -- Mac OSX Intel 10.5+][] | [PGP -- 3.5 OSX][]
+* [Textadept 3.5 -- Linux][] | [PGP -- 3.5 Linux][]
+* [Textadept 3.5 -- Linux x86_64][] | [PGP -- 3.5 Linux x86_64][]
+* [Textadept 3.5 -- Source][] | [PGP -- 3.5 Source][]
 
 Bugfixes:
 
@@ -2750,6 +3101,11 @@ Changes:
 [Textadept 3.5 -- Linux]: download/textadept_3.5.tgz
 [Textadept 3.5 -- Linux x86_64]: download/textadept_3.5.x86_64.tgz
 [Textadept 3.5 -- Source]: download/textadept_3.5.src.zip
+[PGP -- 3.5 Win32]: download/textadept_3.5.win32.zip.asc
+[PGP -- 3.5 OSX]: download/textadept_3.5.osx.zip.asc
+[PGP -- 3.5 Linux]: download/textadept_3.5.tgz.asc
+[PGP -- 3.5 Linux x86_64]: download/textadept_3.5.x86_64.tgz.asc
+[PGP -- 3.5 Source]: download/textadept_3.5.src.zip.asc
 [Menus]: api.html#textadept.menu
 [`_m.textadept.editing.enclose()`]: api.html#textadept.editing.enclose
 [manual]: manual.html
@@ -2759,11 +3115,11 @@ Changes:
 
 Download:
 
-* [Textadept 3.4 -- Win32][]
-* [Textadept 3.4 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.4 -- Linux][]
-* [Textadept 3.4 -- Linux x86_64][]
-* [Textadept 3.4 -- Source][]
+* [Textadept 3.4 -- Win32][] | [PGP -- 3.4 Win32][]
+* [Textadept 3.4 -- Mac OSX Intel 10.5+][] | [PGP -- 3.4 OSX][]
+* [Textadept 3.4 -- Linux][] | [PGP -- 3.4 Linux][]
+* [Textadept 3.4 -- Linux x86_64][] | [PGP -- 3.4 Linux x86_64][]
+* [Textadept 3.4 -- Source][] | [PGP -- 3.4 Source][]
 
 Bugfixes:
 
@@ -2816,6 +3172,11 @@ Changes:
 [Textadept 3.4 -- Linux]: download/textadept_3.4.tgz
 [Textadept 3.4 -- Linux x86_64]: download/textadept_3.4.x86_64.tgz
 [Textadept 3.4 -- Source]: download/textadept_3.4.src.zip
+[PGP -- 3.4 Win32]: download/textadept_3.4.win32.zip.asc
+[PGP -- 3.4 OSX]: download/textadept_3.4.osx.zip.asc
+[PGP -- 3.4 Linux]: download/textadept_3.4.tgz.asc
+[PGP -- 3.4 Linux x86_64]: download/textadept_3.4.x86_64.tgz.asc
+[PGP -- 3.4 Source]: download/textadept_3.4.src.zip.asc
 [Switch Buffers]: manual.html#Buffers
 [`buffer:marker_add()`]: api.html#buffer.marker_add
 [`buffer:marker_add_set()`]: api.html#buffer.marker_add_set
@@ -2834,11 +3195,11 @@ Changes:
 
 Download:
 
-* [Textadept 3.3 -- Win32][]
-* [Textadept 3.3 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.3 -- Linux][]
-* [Textadept 3.3 -- Linux x86_64][]
-* [Textadept 3.3 -- Source][]
+* [Textadept 3.3 -- Win32][] | [PGP -- 3.3 Win32][]
+* [Textadept 3.3 -- Mac OSX Intel 10.5+][] | [PGP -- 3.3 OSX][]
+* [Textadept 3.3 -- Linux][] | [PGP -- 3.3 Linux][]
+* [Textadept 3.3 -- Linux x86_64][] | [PGP -- 3.3 Linux x86_64][]
+* [Textadept 3.3 -- Source][] | [PGP -- 3.3 Source][]
 
 Bugfixes:
 
@@ -2857,17 +3218,22 @@ Changes:
 [Textadept 3.3 -- Linux]: download/textadept_3.3.tgz
 [Textadept 3.3 -- Linux x86_64]: download/textadept_3.3.x86_64.tgz
 [Textadept 3.3 -- Source]: download/textadept_3.3.src.zip
+[PGP -- 3.3 Win32]: download/textadept_3.3.win32.zip.asc
+[PGP -- 3.3 OSX]: download/textadept_3.3.osx.zip.asc
+[PGP -- 3.3 Linux]: download/textadept_3.3.tgz.asc
+[PGP -- 3.3 Linux x86_64]: download/textadept_3.3.x86_64.tgz.asc
+[PGP -- 3.3 Source]: download/textadept_3.3.src.zip.asc
 [`_m.textadept.snapopen`]: api.html#io.snapopen
 
 ## 3.2 (01 Sep 2010)
 
 Download:
 
-* [Textadept 3.2 -- Win32][]
-* [Textadept 3.2 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.2 -- Linux][]
-* [Textadept 3.2 -- Linux x86_64][]
-* [Textadept 3.2 -- Source][]
+* [Textadept 3.2 -- Win32][] | [PGP -- 3.2 Win32][]
+* [Textadept 3.2 -- Mac OSX Intel 10.5+][] | [PGP -- 3.2 OSX][]
+* [Textadept 3.2 -- Linux][] | [PGP -- 3.2 Linux][]
+* [Textadept 3.2 -- Linux x86_64][] | [PGP -- 3.2 Linux x86_64][]
+* [Textadept 3.2 -- Source][] | [PGP -- 3.2 Source][]
 
 Bugfixes:
 
@@ -2886,6 +3252,11 @@ Changes:
 [Textadept 3.2 -- Linux]: download/textadept_3.2.tgz
 [Textadept 3.2 -- Linux x86_64]: download/textadept_3.2.x86_64.tgz
 [Textadept 3.2 -- Source]: download/textadept_3.2.src.zip
+[PGP -- 3.2 Win32]: download/textadept_3.2.win32.zip.asc
+[PGP -- 3.2 OSX]: download/textadept_3.2.osx.zip.asc
+[PGP -- 3.2 Linux]: download/textadept_3.2.tgz.asc
+[PGP -- 3.2 Linux x86_64]: download/textadept_3.2.x86_64.tgz.asc
+[PGP -- 3.2 Source]: download/textadept_3.2.src.zip.asc
 [Scintillua]: http://foicica.com/scintillua
 [Scintilla]: http://scintilla.org
 
@@ -2893,11 +3264,11 @@ Changes:
 
 Download:
 
-* [Textadept 3.1 -- Win32][]
-* [Textadept 3.1 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.1 -- Linux][]
-* [Textadept 3.1 -- Linux x86_64][]
-* [Textadept 3.1 -- Source][]
+* [Textadept 3.1 -- Win32][] | [PGP -- 3.1 Win32][]
+* [Textadept 3.1 -- Mac OSX Intel 10.5+][] | [PGP -- 3.1 OSX][]
+* [Textadept 3.1 -- Linux][] | [PGP -- 3.1 Linux][]
+* [Textadept 3.1 -- Linux x86_64][] | [PGP -- 3.1 Linux x86_64][]
+* [Textadept 3.1 -- Source][] | [PGP -- 3.1 Source][]
 
 Bugfixes:
 
@@ -2925,6 +3296,11 @@ Changes:
 [Textadept 3.1 -- Linux]: download/textadept_3.1.tgz
 [Textadept 3.1 -- Linux x86_64]: download/textadept_3.1.x86_64.tgz
 [Textadept 3.1 -- Source]: download/textadept_3.1.src.zip
+[PGP -- 3.1 Win32]: download/textadept_3.1.win32.zip.asc
+[PGP -- 3.1 OSX]: download/textadept_3.1.osx.zip.asc
+[PGP -- 3.1 Linux]: download/textadept_3.1.tgz.asc
+[PGP -- 3.1 Linux x86_64]: download/textadept_3.1.x86_64.tgz.asc
+[PGP -- 3.1 Source]: download/textadept_3.1.src.zip.asc
 [Scintilla]: http://scintilla.org
 
 ## 3.0 (01 Jul 2010)
@@ -2934,11 +3310,11 @@ Textadept 3.
 
 Download:
 
-* [Textadept 3.0 -- Win32][]
-* [Textadept 3.0 -- Mac OSX Intel 10.5+][]
-* [Textadept 3.0 -- Linux][]
-* [Textadept 3.0 -- Linux x86_64][]
-* [Textadept 3.0 -- Source][]
+* [Textadept 3.0 -- Win32][] | [PGP -- 3.0 Win32][]
+* [Textadept 3.0 -- Mac OSX Intel 10.5+][] | [PGP -- 3.0 OSX][]
+* [Textadept 3.0 -- Linux][] | [PGP -- 3.0 Linux][]
+* [Textadept 3.0 -- Linux x86_64][] | [PGP -- 3.0 Linux x86_64][]
+* [Textadept 3.0 -- Source][] | [PGP -- 3.0 Source][]
 
 Bugfixes:
 
@@ -2954,16 +3330,21 @@ Changes:
 [Textadept 3.0 -- Linux]: download/textadept_3.0.tgz
 [Textadept 3.0 -- Linux x86_64]: download/textadept_3.0.x86_64.tgz
 [Textadept 3.0 -- Source]: download/textadept_3.0.src.zip
+[PGP -- 3.0 Win32]: download/textadept_3.0.win32.zip.asc
+[PGP -- 3.0 OSX]: download/textadept_3.0.osx.zip.asc
+[PGP -- 3.0 Linux]: download/textadept_3.0.tgz.asc
+[PGP -- 3.0 Linux x86_64]: download/textadept_3.0.x86_64.tgz.asc
+[PGP -- 3.0 Source]: download/textadept_3.0.src.zip.asc
 
 ## 3.0 beta (21 Jun 2010)
 
 Download:
 
-* [Textadept 3.0 beta -- Win32][]
-* [Textadept 3.0 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 3.0 beta -- Linux][]
-* [Textadept 3.0 beta -- Linux x86_64][]
-* [Textadept 3.0 beta -- Source][]
+* [Textadept 3.0 beta -- Win32][] | [PGP -- 3.0 beta Win32][]
+* [Textadept 3.0 beta -- Mac OSX Intel 10.5+][] | [PGP -- 3.0 beta OSX][]
+* [Textadept 3.0 beta -- Linux][] | [PGP -- 3.0 beta Linux][]
+* [Textadept 3.0 beta -- Linux x86_64][] | [PGP -- 3.0 beta Linux x86_64][]
+* [Textadept 3.0 beta -- Source][] | [PGP -- 3.0 beta Source][]
 
 Bugfixes:
 
@@ -3007,6 +3388,11 @@ Changes:
 [Textadept 3.0 beta -- Linux]: download/textadept_3.0_beta.tgz
 [Textadept 3.0 beta -- Linux x86_64]: download/textadept_3.0_beta.x86_64.tgz
 [Textadept 3.0 beta -- Source]: download/textadept_3.0_beta.src.zip
+[PGP -- 3.0 beta Win32]: download/textadept_3.0_beta.win32.zip.asc
+[PGP -- 3.0 beta OSX]: download/textadept_3.0_beta.osx.zip.asc
+[PGP -- 3.0 beta Linux]: download/textadept_3.0_beta.tgz.asc
+[PGP -- 3.0 beta Linux x86_64]: download/textadept_3.0_beta.x86_64.tgz.asc
+[PGP -- 3.0 beta Source]: download/textadept_3.0_beta.src.zip.asc
 [`buffer:text_range()`]: api.html#buffer.text_range
 [`textadept`]: api.html#textadept
 [API]: api.html
@@ -3020,11 +3406,11 @@ Changes:
 
 Download:
 
-* [Textadept 2.2 -- Win32][]
-* [Textadept 2.2 -- Mac OSX Intel 10.5+][]
-* [Textadept 2.2 -- Linux][]
-* [Textadept 2.2 -- Linux x86_64][]
-* [Textadept 2.2 -- Source][]
+* [Textadept 2.2 -- Win32][] | [PGP -- 2.2 Win32][]
+* [Textadept 2.2 -- Mac OSX Intel 10.5+][] | [PGP -- 2.2 OSX][]
+* [Textadept 2.2 -- Linux][] | [PGP -- 2.2 Linux][]
+* [Textadept 2.2 -- Linux x86_64][] | [PGP -- 2.2 Linux x86_64][]
+* [Textadept 2.2 -- Source][] | [PGP -- 2.2 Source][]
 
 Bugfixes:
 
@@ -3042,6 +3428,11 @@ Changes:
 [Textadept 2.2 -- Linux]: download/textadept_2.2.tgz
 [Textadept 2.2 -- Linux x86_64]: download/textadept_2.2.x86_64.tgz
 [Textadept 2.2 -- Source]: download/textadept_2.2.src.zip
+[PGP -- 2.2 Win32]: download/textadept_2.2.win32.zip.asc
+[PGP -- 2.2 OSX]: download/textadept_2.2.osx.zip.asc
+[PGP -- 2.2 Linux]: download/textadept_2.2.tgz.asc
+[PGP -- 2.2 Linux x86_64]: download/textadept_2.2.x86_64.tgz.asc
+[PGP -- 2.2 Source]: download/textadept_2.2.src.zip.asc
 [`_USERHOME`]: api.html#_USERHOME
 [`_HOME`]: api.html#_HOME
 
@@ -3049,11 +3440,11 @@ Changes:
 
 Download:
 
-* [Textadept 2.2 beta 2 -- Win32][]
-* [Textadept 2.2 beta 2 -- Mac OSX Intel 10.5+][]
-* [Textadept 2.2 beta 2 -- Linux][]
-* [Textadept 2.2 beta 2 -- Linux x86_64][]
-* [Textadept 2.2 beta 2 -- Source][]
+* [Textadept 2.2 beta 2 -- Win32][] | [PGP -- 2.2 beta 2 Win32][]
+* [Textadept 2.2 beta 2 -- Mac OSX Intel 10.5+][] | [PGP -- 2.2 beta 2 OSX][]
+* [Textadept 2.2 beta 2 -- Linux][] | [PGP -- 2.2 beta 2 Linux][]
+* [Textadept 2.2 beta 2 -- Linux x86_64][] | [PGP -- 2.2 beta 2 Linux x86_64][]
+* [Textadept 2.2 beta 2 -- Source][] | [PGP -- 2.2 beta 2 Source][]
 
 Bugfixes:
 
@@ -3083,6 +3474,11 @@ Changes:
 [Textadept 2.2 beta 2 -- Linux]: download/textadept_2.2_beta2.tgz
 [Textadept 2.2 beta 2 -- Linux x86_64]: download/textadept_2.2_beta2.x86_64.tgz
 [Textadept 2.2 beta 2 -- Source]: download/textadept_2.2_beta2.src.zip
+[PGP -- 2.2 beta 2 Win32]: download/textadept_2.2_beta_2.win32.zip.asc
+[PGP -- 2.2 beta 2 OSX]: download/textadept_2.2_beta_2.osx.zip.asc
+[PGP -- 2.2 beta 2 Linux]: download/textadept_2.2_beta_2.tgz.asc
+[PGP -- 2.2 beta 2 Linux x86_64]: download/textadept_2.2_beta_2.x86_64.tgz.asc
+[PGP -- 2.2 beta 2 Source]: download/textadept_2.2_beta_2.src.zip.asc
 [`buffer:text_range()`]: api.html#buffer.text_range
 [Compile and run]: api.html#_M.Compile.and.Run
 [Block comment]: api.html#textadept.editing.comment_string
@@ -3091,11 +3487,11 @@ Changes:
 
 Download:
 
-* [Textadept 2.2 beta -- Win32][]
-* [Textadept 2.2 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 2.2 beta -- Linux][]
-* [Textadept 2.2 beta -- Linux x86_64][]
-* [Textadept 2.2 beta -- Source][]
+* [Textadept 2.2 beta -- Win32][] | [PGP -- 2.2 beta Win32][]
+* [Textadept 2.2 beta -- Mac OSX Intel 10.5+][] | [PGP -- 2.2 beta OSX][]
+* [Textadept 2.2 beta -- Linux][] | [PGP -- 2.2 beta Linux][]
+* [Textadept 2.2 beta -- Linux x86_64][] | [PGP -- 2.2 beta Linux x86_64][]
+* [Textadept 2.2 beta -- Source][] | [PGP -- 2.2 beta Source][]
 
 Bugfixes:
 
@@ -3125,6 +3521,11 @@ Changes:
 [Textadept 2.2 beta -- Linux]: download/textadept_2.2_beta.tgz
 [Textadept 2.2 beta -- Linux x86_64]: download/textadept_2.2_beta.x86_64.tgz
 [Textadept 2.2 beta -- Source]: download/textadept_2.2_beta.src.zip
+[PGP -- 2.2 beta Win32]: download/textadept_2.2_beta.win32.zip.asc
+[PGP -- 2.2 beta OSX]: download/textadept_2.2_beta.osx.zip.asc
+[PGP -- 2.2 beta Linux]: download/textadept_2.2_beta.tgz.asc
+[PGP -- 2.2 beta Linux x86_64]: download/textadept_2.2_beta.x86_64.tgz.asc
+[PGP -- 2.2 beta Source]: download/textadept_2.2_beta.src.zip.asc
 [gtdialog]: http://foicica.com/gtdialog
 [`gui.dialog('filteredlist', ...)]: api.html#ui.dialog
 
@@ -3132,11 +3533,11 @@ Changes:
 
 Download:
 
-* [Textadept 2.1 -- Win32][]
-* [Textadept 2.1 -- Mac OSX Intel 10.5+][]
-* [Textadept 2.1 -- Linux][]
-* [Textadept 2.1 -- Linux x86_64][]
-* [Textadept 2.1 -- Source][]
+* [Textadept 2.1 -- Win32][] | [PGP -- 2.1 Win32][]
+* [Textadept 2.1 -- Mac OSX Intel 10.5+][] | [PGP -- 2.1 OSX][]
+* [Textadept 2.1 -- Linux][] | [PGP -- 2.1 Linux][]
+* [Textadept 2.1 -- Linux x86_64][] | [PGP -- 2.1 Linux x86_64][]
+* [Textadept 2.1 -- Source][] | [PGP -- 2.1 Source][]
 
 Bugfixes:
 
@@ -3183,6 +3584,11 @@ Changes:
 [Textadept 2.1 -- Linux]: download/textadept_2.1.tgz
 [Textadept 2.1 -- Linux x86_64]: download/textadept_2.1.x86_64.tgz
 [Textadept 2.1 -- Source]: download/textadept_2.1.src.zip
+[PGP -- 2.1 Win32]: download/textadept_2.1.win32.zip.asc
+[PGP -- 2.1 OSX]: download/textadept_2.1.osx.zip.asc
+[PGP -- 2.1 Linux]: download/textadept_2.1.tgz.asc
+[PGP -- 2.1 Linux x86_64]: download/textadept_2.1.x86_64.tgz.asc
+[PGP -- 2.1 Source]: download/textadept_2.1.src.zip.asc
 [`buffer:get_sel_text()`]: api.html#buffer.get_sel_text
 [`_USERHOME`]: api.html#_USERHOME
 [`_HOME`]: api.html#_HOME
@@ -3195,11 +3601,11 @@ Changes:
 
 Download:
 
-* [Textadept 2.0 -- Win32][]
-* [Textadept 2.0 -- Mac OSX Intel 10.5+][]
-* [Textadept 2.0 -- Linux][]
-* [Textadept 2.0 -- Linux x86_64][]
-* [Textadept 2.0 -- Source][]
+* [Textadept 2.0 -- Win32][] | [PGP -- 2.0 Win32][]
+* [Textadept 2.0 -- Mac OSX Intel 10.5+][] | [PGP -- 2.0 OSX][]
+* [Textadept 2.0 -- Linux][] | [PGP -- 2.0 Linux][]
+* [Textadept 2.0 -- Linux x86_64][] | [PGP -- 2.0 Linux x86_64][]
+* [Textadept 2.0 -- Source][] | [PGP -- 2.0 Source][]
 
 Bugfixes:
 
@@ -3224,6 +3630,11 @@ Changes:
 [Textadept 2.0 -- Linux]: download/textadept_2.0.tgz
 [Textadept 2.0 -- Linux x86_64]: download/textadept_2.0.x86_64.tgz
 [Textadept 2.0 -- Source]: download/textadept_2.0.src.zip
+[PGP -- 2.0 Win32]: download/textadept_2.0.win32.zip.asc
+[PGP -- 2.0 OSX]: download/textadept_2.0.dmg.asc
+[PGP -- 2.0 Linux]: download/textadept_2.0.tgz.asc
+[PGP -- 2.0 Linux x86_64]: download/textadept_2.0.x86_64.tgz.asc
+[PGP -- 2.0 Source]: download/textadept_2.0.src.zip.asc
 [`style_whitespace`]: api.html#lexer.STYLE_WHITESPACE
 [lexers]: api.html#lexer
 
@@ -3231,10 +3642,10 @@ Changes:
 
 Download:
 
-* [Textadept 2.0 beta -- Win32][]
-* [Textadept 2.0 beta -- Linux][]
-* [Textadept 2.0 beta -- Linux x86_64][]
-* [Textadept 2.0 beta -- Source][]
+* [Textadept 2.0 beta -- Win32][] | [PGP -- 2.0 beta Win32][]
+* [Textadept 2.0 beta -- Linux][] | [PGP -- 2.0 beta Linux][]
+* [Textadept 2.0 beta -- Linux x86_64][] | [PGP -- 2.0 beta Linux x86_64][]
+* [Textadept 2.0 beta -- Source][] | [PGP -- 2.0 beta Source][]
 
 Bugfixes:
 
@@ -3279,6 +3690,10 @@ Changes:
 [Textadept 2.0 beta -- Linux]: download/textadept_2.0_beta.tgz
 [Textadept 2.0 beta -- Linux x86_64]: download/textadept_2.0_beta.x86_64.tgz
 [Textadept 2.0 beta -- Source]: download/textadept_2.0_beta.src.zip
+[PGP -- 2.0 beta Win32]: download/textadept_2.0_beta.win32.zip.asc
+[PGP -- 2.0 beta Linux]: download/textadept_2.0_beta.tgz.asc
+[PGP -- 2.0 beta Linux x86_64]: download/textadept_2.0_beta.x86_64.tgz.asc
+[PGP -- 2.0 beta Source]: download/textadept_2.0_beta.src.zip.asc
 [list of encodings]: api.html#io.encodings
 [events]: api.html#events
 [Scintilla]: http://scintilla.org
@@ -3294,11 +3709,11 @@ Changes:
 
 Download:
 
-* [Textadept 1.6 -- Win32][]
-* [Textadept 1.6 -- Mac OSX Intel 10.5+][]
-* [Textadept 1.6 -- Linux][]
-* [Textadept 1.6 -- Linux x86_64][]
-* [Textadept 1.6 -- Source][]
+* [Textadept 1.6 -- Win32][] | [PGP -- 1.6 Win32][]
+* [Textadept 1.6 -- Mac OSX Intel 10.5+][] | [PGP -- 1.6 OSX][]
+* [Textadept 1.6 -- Linux][] | [PGP -- 1.6 Linux][]
+* [Textadept 1.6 -- Linux x86_64][] | [PGP -- 1.6 Linux x86_64][]
+* [Textadept 1.6 -- Source][] | [PGP -- 1.6 Source][]
 
 Bugfixes:
 
@@ -3318,17 +3733,22 @@ Updates:
 [Textadept 1.6 -- Linux]: download/textadept_1.6.tgz
 [Textadept 1.6 -- Linux x86_64]: download/textadept_1.6.x86_64.tgz
 [Textadept 1.6 -- Source]: download/textadept_1.6.src.zip
+[PGP -- 1.6 Win32]: download/textadept_1.6.win32.zip.asc
+[PGP -- 1.6 OSX]: download/textadept_1.6.dmg.asc
+[PGP -- 1.6 Linux]: download/textadept_1.6.tgz.asc
+[PGP -- 1.6 Linux x86_64]: download/textadept_1.6.x86_64.tgz.asc
+[PGP -- 1.6 Source]: download/textadept_1.6.src.zip.asc
 [`file_before_save`]: api.html#events.FILE_BEFORE_SAVE
 
 ## 1.6 beta (01 Mar 2009)
 
 Download:
 
-* [Textadept 1.6 beta -- Win32][]
-* [Textadept 1.6 beta -- Mac OSX Intel 10.5+][]
-* [Textadept 1.6 beta -- Linux][]
-* [Textadept 1.6 beta -- Linux x86_64][]
-* [Textadept 1.6 beta -- Source][]
+* [Textadept 1.6 beta -- Win32][] | [PGP -- 1.6 beta Win32][]
+* [Textadept 1.6 beta -- Mac OSX Intel 10.5+][] | [PGP -- 1.6 beta OSX][]
+* [Textadept 1.6 beta -- Linux][] | [PGP -- 1.6 beta Linux][]
+* [Textadept 1.6 beta -- Linux x86_64][] | [PGP -- 1.6 beta Linux x86_64][]
+* [Textadept 1.6 beta -- Source][] | [PGP -- 1.6 beta Source][]
 
 Bugfixes:
 
@@ -3356,17 +3776,22 @@ Updates:
 [Textadept 1.6 beta -- Linux]: download/textadept_1.6beta.tgz
 [Textadept 1.6 beta -- Linux x86_64]: download/textadept_1.6beta.x86_64.tgz
 [Textadept 1.6 beta -- Source]: download/textadept_1.6beta.src.zip
+[PGP -- 1.6 beta Win32]: download/textadept_1.6beta.win32.zip.asc
+[PGP -- 1.6 beta OSX]: download/textadept_1.6beta.dmg.asc
+[PGP -- 1.6 beta Linux]: download/textadept_1.6beta.tgz.asc
+[PGP -- 1.6 beta Linux x86_64]: download/textadept_1.6beta.x86_64.tgz.asc
+[PGP -- 1.6 beta Source]: download/textadept_1.6beta.src.zip.asc
 [`_m.textadept.run`]: api.html#textadept.run
 
 ## 1.5 (20 Feb 2009)
 
 Download:
 
-* [Textadept 1.5 -- Win32][]
-* [Textadept 1.5 -- Mac OSX Intel 10.5+][]
-* [Textadept 1.5 -- Linux][]
-* [Textadept 1.5 -- Linux x86_64][]
-* [Textadept 1.5 -- Source][]
+* [Textadept 1.5 -- Win32][] | [PGP -- 1.5 Win32][]
+* [Textadept 1.5 -- Mac OSX Intel 10.5+][] | [PGP -- 1.5 OSX][]
+* [Textadept 1.5 -- Linux][] | [PGP -- 1.5 Linux][]
+* [Textadept 1.5 -- Linux x86_64][] | [PGP -- 1.5 Linux x86_64][]
+* [Textadept 1.5 -- Source][] | [PGP -- 1.5 Source][]
 
 Bugfixes:
 
@@ -3397,16 +3822,21 @@ Updates:
 [Textadept 1.5 -- Linux]: download/textadept_1.5.tgz
 [Textadept 1.5 -- Linux x86_64]: download/textadept_1.5.x86_64.tgz
 [Textadept 1.5 -- Source]: download/textadept_1.5.src.zip
+[PGP -- 1.5 Win32]: download/textadept_1.5.win32.zip.asc
+[PGP -- 1.5 OSX]: download/textadept_1.5.dmg.asc
+[PGP -- 1.5 Linux]: download/textadept_1.5.tgz.asc
+[PGP -- 1.5 Linux x86_64]: download/textadept_1.5.x86_64.tgz.asc
+[PGP -- 1.5 Source]: download/textadept_1.5.src.zip.asc
 
 ## 1.4 (10 Feb 2009)
 
 Download:
 
-* [Textadept 1.4 -- Win32][]
-* [Textadept 1.4 -- Mac OSX Intel 10.5+][]
-* [Textadept 1.4 -- Linux][]
-* [Textadept 1.4 -- Linux x86_64][]
-* [Textadept 1.4 -- Source][]
+* [Textadept 1.4 -- Win32][] | [PGP -- 1.4 Win32][]
+* [Textadept 1.4 -- Mac OSX Intel 10.5+][] | [PGP -- 1.4 OSX][]
+* [Textadept 1.4 -- Linux][] | [PGP -- 1.4 Linux][]
+* [Textadept 1.4 -- Linux x86_64][] | [PGP -- 1.4 Linux x86_64][]
+* [Textadept 1.4 -- Source][] | [PGP -- 1.4 Source][]
 
 Bugfixes:
 
@@ -3429,16 +3859,21 @@ Updates:
 [Textadept 1.4 -- Linux]: download/textadept_1.4.tgz
 [Textadept 1.4 -- Linux x86_64]: download/textadept_1.4.x86_64.tgz
 [Textadept 1.4 -- Source]: download/textadept_1.4.src.zip
+[PGP -- 1.4 Win32]: download/textadept_1.4.win32.zip.asc
+[PGP -- 1.4 OSX]: download/textadept_1.4.dmg.asc
+[PGP -- 1.4 Linux]: download/textadept_1.4.tgz.asc
+[PGP -- 1.4 Linux x86_64]: download/textadept_1.4.x86_64.tgz.asc
+[PGP -- 1.4 Source]: download/textadept_1.4.src.zip.asc
 
 ## 1.3 (30 Jan 2009)
 
 Download:
 
-* [Textadept 1.3 -- Win32][]
-* [Textadept 1.3 -- Mac OSX Intel 10.5+][]
-* [Textadept 1.3 -- Linux][]
-* [Textadept 1.3 -- Linux x86_64][]
-* [Textadept 1.3 -- Source][]
+* [Textadept 1.3 -- Win32][] | [PGP -- 1.3 Win32][]
+* [Textadept 1.3 -- Mac OSX Intel 10.5+][] | [PGP -- 1.3 OSX][]
+* [Textadept 1.3 -- Linux][] | [PGP -- 1.3 Linux][]
+* [Textadept 1.3 -- Linux x86_64][] | [PGP -- 1.3 Linux x86_64][]
+* [Textadept 1.3 -- Source][] | [PGP -- 1.3 Source][]
 
 Bugfixes:
 
@@ -3472,14 +3907,19 @@ Updates:
 [Textadept 1.3 -- Linux]: download/textadept_1.3.tgz
 [Textadept 1.3 -- Linux x86_64]: download/textadept_1.3.x86_64.tgz
 [Textadept 1.3 -- Source]: download/textadept_1.3.src.zip
+[PGP -- 1.3 Win32]: download/textadept_1.3.win32.zip.asc
+[PGP -- 1.3 OSX]: download/textadept_1.3.dmg.asc
+[PGP -- 1.3 Linux]: download/textadept_1.3.tgz.asc
+[PGP -- 1.3 Linux x86_64]: download/textadept_1.3.x86_64.tgz.asc
+[PGP -- 1.3 Source]: download/textadept_1.3.src.zip.asc
 
 ## 1.2 (21 Jan 2009)
 
 Download:
 
-* [Textadept 1.2 -- Win32][]
-* [Textadept 1.2 -- Mac OSX Intel 10.5+][]
-* [Textadept 1.2 -- Linux][]
+* [Textadept 1.2 -- Win32][] | [PGP -- 1.2 Win32][]
+* [Textadept 1.2 -- Mac OSX Intel 10.5+][] | [PGP -- 1.2 OSX][]
+* [Textadept 1.2 -- Linux][] | [PGP -- 1.2 Linux][]
 
 Bugfixes:
 
@@ -3495,15 +3935,18 @@ Updates:
 [Textadept 1.2 -- Win32]: download/textadept_1.2.win32.zip
 [Textadept 1.2 -- Mac OSX Intel 10.5+]: download/textadept_1.2.dmg
 [Textadept 1.2 -- Linux]: download/textadept_1.2.tgz
+[PGP -- 1.2 Win32]: download/textadept_1.2.win32.zip.asc
+[PGP -- 1.2 OSX]: download/textadept_1.2.dmg.asc
+[PGP -- 1.2 Linux]: download/textadept_1.2.tgz.asc
 [`_m.textadept.run`]: api.html#textadept.run
 
 ## 1.1 (11 Jan 2009)
 
 Download:
 
-* [Textadept 1.1 -- Win32][]
-* [Textadept 1.1 -- Mac OSX Intel 10.5+][]
-* [Textadept 1.1 -- Linux][]
+* [Textadept 1.1 -- Win32][] | [PGP -- 1.1 Win32][]
+* [Textadept 1.1 -- Mac OSX Intel 10.5+][] | [PGP -- 1.1 OSX][]
+* [Textadept 1.1 -- Linux][] | [PGP -- 1.1 Linux][]
 
 Bugfixes:
 
@@ -3522,6 +3965,9 @@ Updates:
 [Textadept 1.1 -- Win32]: download/textadept_1.1_win32.zip
 [Textadept 1.1 -- Mac OSX Intel 10.5+]: download/textadept_1.1.dmg
 [Textadept 1.1 -- Linux]: download/textadept_1.1.tgz
+[PGP -- 1.1 Win32]: download/textadept_1.1.win32.zip.asc
+[PGP -- 1.1 OSX]: download/textadept_1.1.dmg.asc
+[PGP -- 1.1 Linux]: download/textadept_1.1.tgz.asc
 [localization]: api.html#_L
 [bookmarks]: api.html#textadept.bookmarks
 
@@ -3529,9 +3975,9 @@ Updates:
 
 Download:
 
-* [Textadept 1.0 -- Win32][]
-* [Textadept 1.0 -- Mac OSX Intel 10.5+][]
-* [Textadept 1.0 -- Linux][]
+* [Textadept 1.0 -- Win32][] | [PGP -- 1.0 Win32][]
+* [Textadept 1.0 -- Mac OSX Intel 10.5+][] | [PGP -- 1.0 OSX][]
+* [Textadept 1.0 -- Linux][] | [PGP -- 1.0 Linux][]
 
 Bugfixes:
 
@@ -3555,6 +4001,9 @@ Updates:
 [Textadept 1.0 -- Win32]: download/textadept_1.0_win32.zip
 [Textadept 1.0 -- Mac OSX Intel 10.5+]: download/textadept_1.0.dmg
 [Textadept 1.0 -- Linux]: download/textadept_1.0.tgz
+[PGP -- 1.0 Win32]: download/textadept_1.0.win32.zip.asc
+[PGP -- 1.0 OSX]: download/textadept_1.0.dmg.asc
+[PGP -- 1.0 Linux]: download/textadept_1.0.tgz.asc
 [find]: api.html#ui.find
 [GTK-OSX]: http://www.gtk.org/download/macos.php
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
@@ -3564,9 +4013,9 @@ Updates:
 
 Download:
 
-* [Textadept 0.6 -- Win32][]
-* [Textadept 0.6 -- Linux][]
-* [Textadept 0.6 -- Linux x86_64][]
+* [Textadept 0.6 -- Win32][] | [PGP -- 0.6 Win32][]
+* [Textadept 0.6 -- Linux][] | [PGP -- 0.6 Linux][]
+* [Textadept 0.6 -- Linux x86_64][] | [PGP -- 0.6 Linux x86_64][]
 
 Bugfixes:
 
@@ -3587,6 +4036,9 @@ Updates:
 [Textadept 0.6 -- Win32]: download/ta_beta_r6_win32.zip
 [Textadept 0.6 -- Linux]: download/ta_beta_r6.tgz
 [Textadept 0.6 -- Linux x86_64]: download/ta_beta_r6_x86_64.tgz
+[PGP -- 0.6 Win32]: download/ta_beta_r6_win32.zip.asc
+[PGP -- 0.6 Linux]: download/ta_beta_r6.tgz.asc
+[PGP -- 0.6 Linux x86_64]: download/ta_beta_r6_x86_64.tgz.asc
 [Theming]: manual.html#Themes
 [manual]: manual.html
 [pattern matching]: manual.html#File.Types
@@ -3595,8 +4047,8 @@ Updates:
 
 Download:
 
-* [Textadept 0.5 -- Linux][]
-* [Textadept 0.5 -- Linux x86_64][]
+* [Textadept 0.5 -- Linux][] | [PGP -- 0.5 Linux][]
+* [Textadept 0.5 -- Linux x86_64][] | [PGP -- 0.5 Linux x86_64][]
 
 Bugfixes:
 
@@ -3612,14 +4064,16 @@ Updates:
 
 [Textadept 0.5 -- Linux]: download/ta_beta_r5.tgz
 [Textadept 0.5 -- Linux x86_64]: download/ta_beta_r5_x86_64.tgz
+[PGP -- 0.5 Linux]: download/ta_beta_r5.tgz.asc
+[PGP -- 0.5 Linux x86_64]: download/ta_beta_r5_x86_64.tgz.asc
 
 ## 0.4 (25 Jun 2008)
 
 Download:
 
-* [Textadept 0.4 -- Mac OSX Intel 10.5+][]
-* [Textadept 0.4 -- Linux][]
-* [Textadept 0.4 -- Linux x86_64][]
+* [Textadept 0.4 -- Mac OSX Intel 10.5+][] | [PGP -- 0.4 OSX][]
+* [Textadept 0.4 -- Linux][] | [PGP -- 0.4 Linux][]
+* [Textadept 0.4 -- Linux x86_64][] | [PGP -- 0.4 Linux x86_64][]
 
 Bugfixes:
 
@@ -3644,6 +4098,9 @@ Updates:
 [Textadept 0.4 -- Mac OSX Intel 10.5+]: download/ta_beta_r4_osx.tgz
 [Textadept 0.4 -- Linux]: download/ta_beta_r4.tgz
 [Textadept 0.4 -- Linux x86_64]: download/ta_beta_r4_x86_64.tgz
+[PGP -- 0.4 OSX]: download/ta_beta_r4_osx.tgz.asc
+[PGP -- 0.4 Linux]: download/ta_beta_r4.tgz.asc
+[PGP -- 0.4 Linux x86_64]: download/ta_beta_r4_x86_64.tgz.asc
 [bookmark]: api.html#textadept.bookmarks
 [tab-completion]: manual.html#Command.Entry.Tab.Completion
 
@@ -3651,7 +4108,7 @@ Updates:
 
 Download:
 
-* [Textadept 0.3 -- Linux][]
+* [Textadept 0.3 -- Linux][] | [PGP -- 0.3 Linux][]
 
 Bugfixes:
 
@@ -3670,6 +4127,7 @@ Updates:
 * Fixed some code redundancy and typos in documentation.
 
 [Textadept 0.3 -- Linux]: download/ta_beta_r3.tgz
+[PGP -- 0.3 Linux]: download/ta_beta_r3.tgz.asc
 [`buffer.filename`]: api.html#buffer.filename
 [Zenity]: http://live.gnome.org/Zenity
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
@@ -3678,8 +4136,8 @@ Updates:
 
 Download:
 
-* [Textadept 0.2 -- Mac OSX Intel 10.5+][]
-* [Textadept 0.2 -- Linux][]
+* [Textadept 0.2 -- Mac OSX Intel 10.5+][] | [PGP -- 0.2 OSX][]
+* [Textadept 0.2 -- Linux][] | [PGP -- 0.2 Linux][]
 
 Bugfixes:
 
@@ -3695,15 +4153,19 @@ Updates:
 
 [Textadept 0.2 -- Mac OSX Intel 10.5+]: download/ta_beta_r2.1_osx.tgz
 [Textadept 0.2 -- Linux]: download/ta_beta_r2.tgz
+[PGP -- 0.2 OSX]: download/ta_beta_r2.1_osx.tgz.asc
+[PGP -- 0.2 Linux]: download/ta_beta_r2.tgz.asc
 
 ## 0.1 (01 Dec 2007)
 
 Download:
 
-* [Textadept 0.1 -- Mac OSX Intel 10.5+][]
-* [Textadept 0.1 -- Linux][]
+* [Textadept 0.1 -- Mac OSX Intel 10.5+][] | [PGP -- 0.1 OSX][]
+* [Textadept 0.1 -- Linux][] | [PGP -- 0.1 Linux][]
 
 Initial Release
 
 [Textadept 0.1 -- Mac OSX Intel 10.5+]: download/ta_beta_r1_osx.tgz
 [Textadept 0.1 -- Linux]: download/ta_beta_r1.tgz
+[PGP -- 0.1 OSX]: download/ta_beta_r1_osx.tgz.asc
+[PGP -- 0.1 Linux]: download/ta_beta_r1.tgz.asc
