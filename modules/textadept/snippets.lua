@@ -277,7 +277,9 @@ local function new_snippet(text, trigger)
     placeholder.position = snippet.start_pos + placeholder.position -- absolute
     text_part, placeholder, e = patt:match(text, e)
   end
-  if text_part ~= '' then snapshot.text = snapshot.text..text_part end
+  if text_part ~= '' then
+    snapshot.text = snapshot.text..text_part:gsub('%%(%p)', '%1')
+  end
   snippet.snapshots[0] = snapshot
 
   -- Insert the snippet into the buffer and mark its end position.
