@@ -480,7 +480,7 @@ sign-deps: | $(scintilla_tgz) $(scinterm_zip) $(scintillua_zip) $(lua_tgz) \
              $(lpeg_tgz) $(lfs_zip) $(lspawn_zip) $(luajit_tgz) \
              $(libluajit_tgz) $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) \
              $(win32gtk_zip) $(win32iconv_bin_zip) $(win32iconv_lib_zip) \
-             $(win32curses_zip) $(pdcurses_zip) $(gtkosx_zip) $(bombay_zip)
+             $(win32curses_zip) $(pdcurses_zip) $(gtkosx_zip)
 	@for file in $|; do gpg -ab $$file; done
 verify-deps: | $(wildcard $(basename $(wildcard *.asc)))
 	@for file in $|; do echo "$$file"; gpg --verify $$file.asc || return 1; done
