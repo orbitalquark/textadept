@@ -42,6 +42,7 @@ private contract work related to Textadept.
 * M Rawash
 * Manuel Montenegro
 * Martin Morawetz
+* Michael T. Richter
 * Neil Hodgson
 * Niklas Wallén
 * Nils Nordman
