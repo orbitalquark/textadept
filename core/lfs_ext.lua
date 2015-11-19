@@ -136,7 +136,7 @@ function lfs.abspath(filename, prefix)
   end
   filename = filename:gsub('%f[^/\\]%.[/\\]', '') -- clean up './'
   while filename:find('[^/\\]+[/\\]%.%.[/\\]') do
-    filename = filename:gsub('[^/\\]+[/\\]%.%.[/\\]', '') -- clean up '../'
+    filename = filename:gsub('[^/\\]+[/\\]%.%.[/\\]', '', 1) -- clean up '../'
   end
   return filename
 end
