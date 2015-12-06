@@ -8,8 +8,7 @@
 --   not affect any environment, nor vice versa.
 -- @field _VERSION (string)
 --   A global variable (not a function) that holds a string containing the
---   current interpreter version. The current value of this variable is
---   "`Lua 5.3`".
+--   running Lua version. The current value of this variable is "`Lua 5.3`".
 local _G
 
 ---
@@ -249,10 +248,10 @@ function setfenv(f, table) end
 function select(index, ···) end
 
 ---
--- Sets the metatable for the given table. (You cannot change the metatable
--- of other types from Lua, only from C.) If `metatable` is nil, removes the
--- metatable of the given table. If the original metatable has a `"__metatable"`
--- field, raises an error.
+-- Sets the metatable for the given table. (To change the metatable of other
+-- types from Lua code, you must use the debug library.) If `metatable` is nil,
+-- removes the metatable of the given table. If the original metatable has a
+-- `"__metatable"` field, raises an error.
 --
 -- This function returns `table`.
 function setmetatable(table, metatable) end
@@ -592,9 +591,10 @@ function string.find(s, pattern [, init [, plain]]) end
 --
 -- Options `A` and `a` (when available), `E`, `e`, `f`, `G`, and `g` all expect
 -- a number as argument. Options `c`, `d`, `i`, `o`, `u`, `X`, and `x` expect an
--- integer. Option `q` expects a string; option `s` expects a string without
--- embedded zeros. If the argument to option `s` is not a string, it is
--- converted to one following the same rules of `tostring`.
+-- integer. Option `q` expects a string. Option `s` expects a string; if its
+-- argument is not a string, it is converted to one following the same rules of
+-- `tostring`. If the option has any modifier (flags, width, length), the string
+-- argument should not contain zeros.
 function string.format(formatstring, ···) end
 
 ---
@@ -709,6 +709,9 @@ function string.packsize(fmt) end
 -- separated by the string `sep`. The default value for `sep` is the empty
 -- string (that is, no separator). Returns the empty string if `n` is not
 -- positive.
+--
+-- (Note that it is very easy to exhaust the memory of your machine with a
+-- single call to this function.)
 function string.rep(s, n [, sep]) end
 
 ---
@@ -861,12 +864,17 @@ function table.remove(list [, pos]) end
 -- Sorts list elements in a given order, *in-place*, from `list[1]` to
 -- `list[#list]`. If `comp` is given, then it must be a function that receives
 -- two list elements and returns true when the first element must come before
--- the second in the final order (so that `not comp(list[i+1],list[i])` will be
--- true after the sort). If `comp` is not given, then the standard Lua operator
--- `<` is used instead.
+-- the second in the final order (so that, after the sort, `i < j` implies
+-- `not comp(list[j],list[i])` will be true after the sort). If `comp` is not
+-- given, then the standard Lua operator `<` is used instead.
 --
--- The sort algorithm is not stable; that is, elements considered equal by the
--- given order may have their relative positions changed by the sort.
+-- Note that the `comp` function must not define a string partial order over the
+-- elements in the list; that is, it must be asymmetric and transitive.
+-- Otherwise, no valid sort may be possible.
+--
+-- The sort algorithm is not stable; that is, elements not comparable by the
+-- given order (e.g., equal elements) may have their relative positions changed
+-- by the sort.
 function table.sort(list [, comp]) end
 
 ---
@@ -1011,12 +1019,11 @@ function math.rad(x) end
 -- When called without arguments, returns a pseudo-random float with uniform
 -- distribution in the range [0,1). When called with two integers `m` and `n`,
 -- `math.random` returns a pseudo-random integer with uniform distribution in
--- the range `[m, n]. (The value `m-n` cannot be negative and must fit in a Lua
+-- the range `[m, n]. (The value `n-m` cannot be negative and must fit in a Lua
 -- integer.) The call `math.random(n)` is equivalent to `math.random(1, n)`.
 --
 -- This function is an interface to the underling pseudo-random generator
--- function provided by C. No guarantees can be given for its statistical
--- properties.
+-- function provided by C.
 function math.random([m [, n]]) end
 
 ---
@@ -1245,7 +1252,7 @@ function io.input([file]) end
 --
 -- In case of errors this function raises the error, instead of returning an
 -- error code.
-function io.lines([filename ···]) end
+function io.lines([filename, ···]) end
 
 ---
 -- This function opens a file, in the mode specified in the string `mode`. It
@@ -1408,9 +1415,9 @@ function os.clock() end
 --
 -- If `format` starts with '`!`', then the date is formatted in Coordinated
 -- Universal Time. After this optional character, if `format` is the string
--- "`*t`", then `date` returns a table with the following fields: `year` (four
--- digits), `month` (1-12), `day` (1-31), `hour` (0-23), `min` (0-59), `sec`
--- (0-61), `wday` (weekday, Sunday is 1), `yday` (day of the year), and `isdst`
+-- "`*t`", then `date` returns a table with the following fields: `year`,
+-- `month` (1-12), `day` (1-31), `hour` (0-23), `min` (0-59), `sec` (0-61),
+-- `wday` (weekday, Sunday is 1), `yday` (day of the year), and `isdst`
 -- (daylight saving flag, a boolean). This last field may be absent if the
 -- information is not available.
 --
@@ -1418,8 +1425,8 @@ function os.clock() end
 -- formatted according to the same rules as the ISO C function `strftime`.
 --
 -- When called without arguments, `date` returns a reasonable date and time
--- representation that depends on the host system and on the current locale
--- (that is, `os.date()` is equivalent to `os.date("%c")`).
+-- representation that depends on the host system and on the current locale.
+-- (More specifically, `os.date()` is equivalent to `os.date("%c")`.)
 --
 -- On non-POSIX systems, this function may be not thread safe because of its
 -- reliance on C function `gmtime` and C function `localtime`.

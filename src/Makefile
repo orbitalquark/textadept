@@ -384,7 +384,7 @@ endif
 scintilla_tgz = scintilla362.tgz
 scinterm_zip = scinterm_1.6.zip
 scintillua_zip = scintillua_3.6.2-1.zip
-lua_tgz = lua-5.3.1.tar.gz
+lua_tgz = lua-5.3.2.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
 lspawn_zip = lspawn_1.3.zip
