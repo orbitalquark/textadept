@@ -245,8 +245,10 @@ end
 function io.save_all_files()
   local current_buffer = _BUFFERS[buffer]
   for i, buffer in ipairs(_BUFFERS) do
-    view:goto_buffer(i)
-    if buffer.filename and buffer.modify then io.save_file() end
+    if buffer.filename and buffer.modify then
+      view:goto_buffer(i)
+      io.save_file()
+    end
   end
   view:goto_buffer(current_buffer)
 end
