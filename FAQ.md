@@ -36,6 +36,17 @@ terminal version.)
 - - -
 
 **Q:**
+On Windows my anti-virus software says Textadept contains a virus. Does it? Or
+is this a false-positive?
+
+**A:**
+Textadept does not contain any viruses and it certainly is a false positive.
+The likely culprits are the `textadept-curses.exe` and `textadeptjit-curses.exe`
+executables, which run in the Windows command prompt.
+
+- - -
+
+**Q:**
 Why can't Textadept handle HUGE files very well?
 
 **A:**
