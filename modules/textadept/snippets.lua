@@ -386,7 +386,7 @@ M._snippet_mt = {
     if buffer:auto_c_active() then buffer:auto_c_complete() end
     -- Take a snapshot of the current state in order to restore it later if
     -- necessary.
-    if self.index > 0 then
+    if self.index > 0 and self.start_pos < self.end_pos then
       local text = buffer:text_range(self.start_pos, self.end_pos)
       local placeholders = {}
       for pos, ph in self:each_placeholder() do
