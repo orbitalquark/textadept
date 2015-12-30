@@ -472,6 +472,7 @@ M._snippet_mt = {
   --   `true`, the buffer is restored to its state prior to snippet expansion.
   finish = function(self, canceling)
     local s, e = self.start_pos, self.end_pos
+    buffer:delete_range(e, 1) -- clear initial padding space
     if not canceling then
       buffer.indicator_current = M.INDIC_PLACEHOLDER
       buffer:indicator_clear_range(s, e - s)
@@ -479,7 +480,6 @@ M._snippet_mt = {
       buffer:set_sel(s, e)
       buffer:replace_sel(self.trigger or self.original_sel_text)
     end
-    buffer:delete_range(e, 1) -- clear initial padding space
     snippet_stack[#snippet_stack] = nil
   end,
 
