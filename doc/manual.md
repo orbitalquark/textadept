@@ -1386,7 +1386,7 @@ API documentation HTML files.
 
 ## Lua Configuration
 
-Textadept contains its own copy of [Lua 5.2][] which has the same configuration
+Textadept contains its own copy of [Lua 5.3][] which has the same configuration
 (*luaconf.h*) as vanilla Lua with the following exceptions:
 
 * `TA_LUA_PATH` and `TA_LUA_CPATH` replace the `LUA_PATH` and `LUA_CPATH`
@@ -1395,13 +1395,14 @@ Textadept contains its own copy of [Lua 5.2][] which has the same configuration
 * `LUA_PATH` and `LUA_CPATH` do not have "./?.lua" and "./?.so" in them.
 * No Lua 5.1 compatibility flags are set.
 
-[Lua 5.2]: http://www.lua.org/manual/5.2/
+[Lua 5.3]: http://www.lua.org/manual/5.3/
 
 ### LuaJIT
 
 Even though Textadept runs with [LuaJIT][], LuaJIT does not fully support
-Lua 5.2. Therefore, try to write your modules and scripts to be compatible with
-both versions. For the most part, LuaJIT only lacks Lua 5.2's new `_ENV`.
+Lua 5.3. Therefore, try to write your modules and scripts to be compatible with
+both versions. For the most part, LuaJIT only lacks Lua 5.2's `_ENV` and Lua
+5.3's new bitwise operators and some new integer operations.
 
 [LuaJIT]: http://luajit.org
 
