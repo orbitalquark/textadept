@@ -89,6 +89,17 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>au3</string>
+				<string>a3x</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>AutoIt source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>awk</string>
 			</array>
 			<key>CFBundleTypeName</key>
@@ -460,6 +471,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>icn</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Icon source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>idl</string>
 				<string>odl</string>
 			</array>
@@ -772,6 +793,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>ps1</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>PowerShell source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>prolog</string>
 			</array>
 			<key>CFBundleTypeName</key>
@@ -941,6 +972,17 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Smalltalk source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sno</string>
+				<string>SNO</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>SNOBOL4 source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -1133,7 +1175,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>8.4</string>
+	<string>8.5</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
