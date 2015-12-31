@@ -9,6 +9,48 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 8.5 (01 Jan 2016)
+
+Download:
+
+* [Textadept 8.5 -- Win32][] | [PGP -- 8.5 Win32][]
+* [Textadept 8.5 -- Mac OSX Intel 10.5+][] | [PGP -- 8.5 OSX][]
+* [Textadept 8.5 -- Linux][] | [PGP -- 8.5 Linux][]
+* [Textadept 8.5 -- Linux x86_64][] | [PGP -- 8.5 Linux x86_64][]
+* [Textadept 8.5 -- Modules][] | [PGP -- 8.5 Modules][]
+
+Bugfixes:
+
+* Fixed some '%' escape sequences in snippets.
+* Fixed bug resolving relative paths with multiple '../' components.
+* Do not visit buffers that do not need saving in [`io.save_all_files()`][].
+* Fixed various small bugs in snippets.
+* Fixed restoration of split view sizes in large windows.
+* Lua: Fixed potential crash in `io.lines()` with too many arguments.
+
+Changes:
+
+* Allow [compile, run, and build commands][] functions to specify a working
+  directory.
+* Added support for SNOBOL4.
+* Added support for Icon.
+* Added support for AutoIt.
+* Updated to [Lua][] 5.3.2.
+
+[Textadept 8.5 -- Win32]: download/textadept_8.5.win32.zip
+[Textadept 8.5 -- Mac OSX Intel 10.5+]: download/textadept_8.5.osx.zip
+[Textadept 8.5 -- Linux]: download/textadept_8.5.i386.tgz
+[Textadept 8.5 -- Linux x86_64]: download/textadept_8.5.x86_64.tgz
+[Textadept 8.5 -- Modules]: download/textadept_8.5.modules.zip
+[PGP -- 8.5 Win32]: download/textadept_8.5.win32.zip.asc
+[PGP -- 8.5 OSX]: download/textadept_8.5.osx.zip.asc
+[PGP -- 8.5 Linux]: download/textadept_8.5.i386.tgz.asc
+[PGP -- 8.5 Linux x86_64]: download/textadept_8.5.x86_64.tgz.asc
+[PGP -- 8.5 Modules]: download/textadept_8.5.modules.zip.asc
+[`io.save_all_files()`]: api.html#io.save_all_files
+[compile, run, and build commands]: api.html#textadept.run.build_commands
+[Lua]: http://www.lua.org
+
 ## 8.4 (11 Nov 2015)
 
 Download:
