@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2015 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2016 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 -- This script generates the "Info.plist" file for the Mac OSX App bundle.
 
@@ -83,7 +83,7 @@ xml[#xml + 1] = [[
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>8.1</string>
+	<string>8.5</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>

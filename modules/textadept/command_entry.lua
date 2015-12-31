@@ -1,4 +1,4 @@
--- Copyright 2007-2015 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2016 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- Abbreviated environment and commands from Jay Gould.
 
 local M = ui.command_entry
