@@ -1,4 +1,4 @@
--- Copyright 2007-2015 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2016 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 -- Textadept autocompletions and API documentation doclet for LuaDoc.
 -- This module is used by LuaDoc to create Lua autocompletion and API
