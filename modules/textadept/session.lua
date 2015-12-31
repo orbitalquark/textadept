@@ -155,6 +155,10 @@ function M.save(filename)
       session[#session + 1] = 'bookmarks: '..table.concat(lines, ' ')
     end
   end
+  -- Write out window size. Do this before writing split views since split view
+  -- size depends on the window size.
+  local maximized, size = tostring(ui.maximized), ui.size
+  session[#session + 1] = ("size: %s %d %d"):format(maximized, size[1], size[2])
   -- Write out split views.
   local function write_split(split, level, number)
     local c1, c2 = split[1], split[2]
@@ -182,8 +186,6 @@ function M.save(filename)
   -- Write out the current focused view.
   session[#session + 1] = ("current_view: %d"):format(_VIEWS[view])
   -- Write out other things.
-  local maximized, size = tostring(ui.maximized), ui.size
-  session[#session + 1] = ("size: %s %d %d"):format(maximized, size[1], size[2])
   for i = 1, #io.recent_files do
     if i > M.MAX_RECENT_FILES then break end
     session[#session + 1] = ("recent: %s"):format(io.recent_files[i])
