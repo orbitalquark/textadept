@@ -202,6 +202,11 @@ function spawn_proc:read(arg) end
 
 ---
 -- Writes string input to the stdin of process *spawn_proc*.
+-- Note: On Linux, if more than 65536 bytes (64K) are to be written, it is
+-- possible those bytes need to be written in 65536-byte (64K) chunks, or the
+-- process may not receive all input. However, it is also possible that there is
+-- a limit on how many bytes can be written in a short period of time, perhaps
+-- 196608 bytes (192K).
 -- @param ... Standard input for *spawn_proc*.
 function spawn_proc:write(...) end
 
