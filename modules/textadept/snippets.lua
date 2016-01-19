@@ -82,6 +82,12 @@ local M = {}
 -- Stands for a single '%' since '%' by itself has a special meaning in
 -- snippets.
 --
+-- ### `%(`<br/>`%{`<br/>`%<`<br/>`%[`
+--
+-- Stands for a single '(', '{', '<', or '[', respectively, after a `%`*n*
+-- mirror. Otherwise, the mirror would be interpreted as a placeholder or
+-- transform.
+--
 -- ### `\t`
 --
 -- A single unit of indentation based on the buffer's indentation settings
@@ -178,7 +184,7 @@ local function new_snippet(text, trigger)
   local C, Cp, Ct, Cg, Cc = lpeg.C, lpeg.Cp, lpeg.Ct, lpeg.Cg, lpeg.Cc
   local patt = P{
     V('plain_text') * V('placeholder') * Cp() + V('plain_text') * -1,
-    plain_text = C(((P(1) - '%')^1 + '%%')^0),
+    plain_text = C(((P(1) - '%' + '%' * S('([{<'))^1 + '%%')^0),
     placeholder = Ct('%' * (V('index')^-1 * (V('angles') + V('brackets') +
                                              V('braces')) *
                             V('transform') +
