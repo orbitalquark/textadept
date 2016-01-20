@@ -316,6 +316,21 @@
 -- @field highlight_guide (number)
 --   The indentation guide column number to highlight, or `0` to stop
 --   highlighting.
+-- @field idle_styling (number)
+--   The idle styling mode.
+--   This mode has no effect when `buffer.wrap_mode` is on.
+--
+--   * `buffer.IDLESTYLING_NONE`
+--     Style all the currently visible text before displaying it.
+--   * `buffer.IDLESTYLING_TOVISIBLE`
+--     Style some text before displaying it and then style the rest
+--     incrementally in the background as an idle-time task.
+--   * `buffer.IDLESTYLING_AFTERVISIBLE`
+--     Style text after the currently visible portion in the background.
+--   * `buffer.IDLESTYLING_ALL`
+--     Style text both before and after the visible text in the background.
+--
+--   The default value is `buffer.IDLESTYLING_NONE`.
 -- @field indent (number)
 --   The number of spaces in one level of indentation.
 --   The default value is `0`, which uses the value of [`buffer.tab_width`]().
@@ -2387,8 +2402,7 @@ function position_from_line(buffer, line) end
 ---
 -- Returns the position *n* characters before or after position *pos* (taking
 -- multi-byte characters into account).
--- Returns `0` if the position is less than 0 or `buffer.length` if the position
--- is greater than `buffer.length`.
+-- Returns `0` if the position is less than 0 or greater than `buffer.length`.
 -- @param buffer A buffer.
 -- @param pos The position in *buffer* to get the relative position from.
 -- @param n The relative number of characters to get the position for. A

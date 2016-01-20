@@ -34,6 +34,9 @@ buffer.view_ws = buffer.WS_INVISIBLE
 -- Line Endings
 buffer.view_eol = false
 
+-- Styling.
+buffer.idle_styling = buffer.IDLESTYLING_ALL
+
 -- Caret and Selection Styles.
 --buffer.sel_eol_filled = true
 buffer.caret_line_visible = not CURSES and buffer ~= ui.command_entry
