@@ -18,3 +18,15 @@ diff -r 5693714a8b0b src/Catalogue.cxx
  
  	return 1;
  }
+diff -r eb69b2b4bb85 gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Mon Jan 18 09:02:53 2016 +1100
++++ b/gtk/ScintillaGTK.cxx	Wed Jan 20 00:52:11 2016 -0500
+@@ -3110,7 +3110,7 @@
+ 	// of the signal handlers here (those that currently attached to wDraw
+ 	// in Initialise() may require coordinate translation?)
+ 
+-	object_class->dispose = Dispose;
++	//object_class->dispose = Dispose;
+ 	object_class->finalize = Destroy;
+ #if GTK_CHECK_VERSION(3,0,0)
+ 	widget_class->get_preferred_width = GetPreferredWidth;
