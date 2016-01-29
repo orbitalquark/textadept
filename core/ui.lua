@@ -257,10 +257,11 @@ events_connect(events.VIEW_NEW, function()
   }
   local ctrl_shift_keys = {'L', 'T', 'U', 'Z'}
   for _, key in ipairs(ctrl_keys) do
-    buffer:clear_cmd_key(string.byte(key), buffer.MOD_CTRL)
+    buffer:clear_cmd_key(string.byte(key) + bit32.lshift(buffer.MOD_CTRL, 16))
   end
   for _, key in ipairs(ctrl_shift_keys) do
-    buffer:clear_cmd_key(string.byte(key), buffer.MOD_CTRL + buffer.MOD_SHIFT)
+    buffer:clear_cmd_key(string.byte(key) +
+                         bit32.lshift(buffer.MOD_CTRL + buffer.MOD_SHIFT, 16))
   end
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for
   -- subsequent views.
