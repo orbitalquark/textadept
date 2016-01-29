@@ -65,15 +65,15 @@ end
 events.connect(events.INITIALIZED, function() if arg then process(arg) end end)
 events.connect('cmd_line', process) -- undocumented, single-instance event
 
--- Shows all registered command line switches on the command line.
-local function show_help()
-  print('Usage: textadept [args] [filenames]')
-  local line = "  %s [%d args]: %s"
-  for k, v in pairs(switches) do print(line:format(k, table.unpack(v, 2))) end
-  os.exit()
-end
 if not CURSES then
-  M.register('-h', '--help', 0, show_help, 'Shows this')
+  -- Shows all registered command line switches on the command line.
+  M.register('-h', '--help', 0, function()
+    print('Usage: textadept [args] [filenames]')
+    local line = "  %s [%d args]: %s"
+    for k, v in pairs(switches) do print(line:format(k, table.unpack(v, 2))) end
+    os.exit()
+  end, 'Shows this')
+  -- Shows Textadept version and copyright on the command line.
   M.register('-v', '--version', 0, function()
     print(_RELEASE..'\n'.._COPYRIGHT)
     quit()
