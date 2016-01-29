@@ -1116,12 +1116,7 @@ static int lbuffer_text_range(lua_State *L) {
 static sptr_t lL_checkscintillaparam(lua_State *L, int *arg, int type) {
   if (type == SSTRING) return (sptr_t)luaL_checkstring(L, (*arg)++);
   if (type == SBOOL) return lua_toboolean(L, (*arg)++);
-  if (type >= SINT && type <= SCOLOR) return luaL_checkinteger(L, (*arg)++);
-  if (type == SKEYMOD) {
-    int key = luaL_checkinteger(L, (*arg)++) & 0xFFFF;
-    return key | ((luaL_checkinteger(L, (*arg)++) &
-                  (SCMOD_SHIFT | SCMOD_CTRL | SCMOD_ALT)) << 16);
-  }
+  if (type >= SINT && type <= SKEYMOD) return luaL_checkinteger(L, (*arg)++);
   return 0;
 }
 
