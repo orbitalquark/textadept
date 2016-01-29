@@ -200,8 +200,7 @@ local default_menubar = {
     SEPARATOR,
     {_L['_About'],
       {ui.dialogs.msgbox, {title = 'Textadept', text = _RELEASE,
-       informative_text = 'Copyright © 2007-2016 Mitchell. See LICENSE\n'..
-                          'http://foicica.com/textadept',
+       informative_text = _COPYRIGHT,
        icon_file = _HOME..'/core/images/ta_64x64.png'}}},
   },
 }
