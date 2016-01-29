@@ -1958,14 +1958,13 @@ static Scintilla *lL_checkview(lua_State *L, int arg) {
 static int lview_goto_buffer(lua_State *L) {
   Scintilla *view = lL_checkview(L, 1), *prev_view = focused_view;
   int n = luaL_checkinteger(L, 2), relative = lua_toboolean(L, 3);
-  // If the indexed view is not currently focused, temporarily focus it so calls
-  // to handlers will not throw 'indexed buffer is not the focused one' error.
-  int switch_focus = (view != focused_view);
-  if (switch_focus) SS(view, SCI_SETFOCUS, TRUE, 0);
+  // If the indexed view is not currently focused, temporarily focus it so
+  // `_G.buffer` in handlers is accurate.
+  if (view != focused_view) focus_view(view);
   if (!initing) lL_event(L, "buffer_before_switch", -1);
   lL_gotodoc(L, view, n, relative);
   if (!initing) lL_event(L, "buffer_after_switch", -1);
-  if (switch_focus) SS(view, SCI_SETFOCUS, FALSE, 0), focus_view(prev_view);
+  if (focused_view != prev_view) focus_view(prev_view);
   return 0;
 }
 
