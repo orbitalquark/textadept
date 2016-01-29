@@ -74,11 +74,18 @@ local function show_help()
 end
 if not CURSES then
   M.register('-h', '--help', 0, show_help, 'Shows this')
+  M.register('-v', '--version', 0, function()
+    print(_RELEASE..'\n'.._COPYRIGHT)
+    quit()
+  end, 'Prints Textadept version and copyright')
   -- After Textadept finishes initializing and processes arguments, remove the
-  -- help switches to prevent another instance from sending '-h' and '--help' to
-  -- the first instance, killing the latter.
-  events.connect(events.INITIALIZED,
-                 function() switches['-h'], switches['--help'] = nil, nil end)
+  -- help and version switches in order to prevent another instance from sending
+  -- '-h', '--help', '-v', and '--version' to the first instance, killing the
+  -- latter.
+  events.connect(events.INITIALIZED, function()
+    switches['-h'], switches['--help'] = nil, nil
+    switches['-v'], switches['--version'] = nil, nil
+  end)
 end
 
 -- For Windows, create arg table from single command line string (arg[0]).

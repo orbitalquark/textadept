@@ -1681,6 +1681,7 @@ Switch             |Arguments|Description
 `-n`, `--nosession`|    0    |No [session](#Sessions) functionality.
 `-s`, `--session`  |    1    |Loads [session](#Sessions) on startup.
 `-u`, `--userhome` |    1    |Sets alternate [`_USERHOME`][].
+`-v`, `--version`  |    0    |Prints Textadept version and copyright
 
 Textadept curses does not support the help switch.
 
