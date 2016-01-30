@@ -79,13 +79,12 @@ typedef GtkWidget Scintilla;
 #define l_setglobaldoc(l, doc) (l_pushdoc(l, doc), lua_setglobal(l, "buffer"))
 #define l_setcfunction(l, n, name, f) \
   (lua_pushcfunction(l, f), lua_setfield(l, (n > 0) ? n : n - 1, name))
-#define l_setmetatable(l, n, name, __index, __newindex) { \
+#define l_setmetatable(l, n, name, __index, __newindex) \
   if (luaL_newmetatable(l, name)) { \
     l_setcfunction(l, -1, "__index", __index); \
     l_setcfunction(l, -1, "__newindex", __newindex); \
   } \
-  lua_setmetatable(l, (n > 0) ? n : n - 1); \
-}
+  lua_setmetatable(l, (n > 0) ? n : n - 1);
 // Translate Lua 5.3 API to LuaJIT API (Lua 5.1) for compatibility.
 #if LUA_VERSION_NUM == 501
 #define LUA_OK 0
@@ -165,11 +164,11 @@ TermKey *ta_tk; // global for CDK use
 #define focus_view(view) \
   (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, \
    SS(view, SCI_SETFOCUS, 1, 0))
-#define refresh_all() { \
+#define refresh_all() do { \
   pane_refresh(pane); \
   if (command_entry_focused) scintilla_refresh(command_entry); \
   refresh(); \
-}
+} while (0)
 #define flushch() (timeout(0), getch(), timeout(-1))
 // curses find & replace pane.
 static CDKSCREEN *findbox;
@@ -187,19 +186,20 @@ static ListStore find_store[10], repl_store[10];
                     bindCDKObject(vENTRY, replace_entry, k, entry_keypress, d))
 #define toggled(find_option) *find_option
 // Use pointer arithmetic to highlight/unhighlight options as necessary.
-#define toggle(o, on) \
-  if (*o != on) *o = on, option_labels[o - match_case] += *o ? -4 : 4;
+#define toggle(o, on) do { \
+  if (*o != on) *o = on, option_labels[o - match_case] += *o ? -4 : 4; \
+} while (0)
 #define set_label_text(label, text) fcopy(&label, text)
 #define set_button_label(button, label) fcopy(&button_labels[button], label)
 // Prepend "</R>" to each option label because pointer arithmetic will be used
 // to make the "</R>" visible or invisible (thus highlighting or unhighlighting
 // the label) depending on whether or not the option is enabled by the user.
-#define set_option_label(option, i, label) { \
+#define set_option_label(option, i, label) do { \
   lua_pushstring(L, "</R>"), lua_pushstring(L, label), lua_concat(L, 2); \
   if (option_labels[i] && !*option) option_labels[i] -= 4; \
   fcopy(&option_labels[i], lua_tostring(L, -1)); \
   if (!*option) option_labels[i] += 4; \
-}
+} while (0)
 #if _WIN32
 #define textadept_waitkey(tk, key) \
   (termkey_set_fd(tk, scintilla_get_window(view)), termkey_getkey(tk, key))
@@ -530,15 +530,15 @@ static int lfind__newindex(lua_State *L) {
 #elif CURSES
     fcopy(&repl_text, lua_tostring(L, 3));
 #endif
-  else if (strcmp(key, "match_case") == 0) {
+  else if (strcmp(key, "match_case") == 0)
     toggle(match_case, lua_toboolean(L, -1));
-  } else if (strcmp(key, "whole_word") == 0) {
+  else if (strcmp(key, "whole_word") == 0)
     toggle(whole_word, lua_toboolean(L, -1));
-  } else if (strcmp(key, "lua") == 0) {
+  else if (strcmp(key, "lua") == 0)
     toggle(lua_pattern, lua_toboolean(L, -1));
-  } else if (strcmp(key, "in_files") == 0) {
+  else if (strcmp(key, "in_files") == 0)
     toggle(in_files, lua_toboolean(L, -1));
-  } else if (strcmp(key, "find_label_text") == 0)
+  else if (strcmp(key, "find_label_text") == 0)
     set_label_text(flabel, lua_tostring(L, 3));
   else if (strcmp(key, "replace_label_text") == 0)
     set_label_text(rlabel, lua_tostring(L, 3));
@@ -550,15 +550,16 @@ static int lfind__newindex(lua_State *L) {
     set_button_label(r_button, lua_tostring(L, 3));
   else if (strcmp(key, "replace_all_button_text") == 0)
     set_button_label(ra_button, lua_tostring(L, 3));
-  else if (strcmp(key, "match_case_label_text") == 0) {
+  else if (strcmp(key, "match_case_label_text") == 0)
     set_option_label(match_case, 0, lua_tostring(L, 3));
-  } else if (strcmp(key, "whole_word_label_text") == 0) {
+  else if (strcmp(key, "whole_word_label_text") == 0)
     set_option_label(whole_word, 1, lua_tostring(L, 3));
-  } else if (strcmp(key, "lua_pattern_label_text") == 0) {
+  else if (strcmp(key, "lua_pattern_label_text") == 0)
     set_option_label(lua_pattern, 2, lua_tostring(L, 3));
-  } else if (strcmp(key, "in_files_label_text") == 0) {
+  else if (strcmp(key, "in_files_label_text") == 0)
     set_option_label(in_files, 3, lua_tostring(L, 3));
-  } else lua_rawset(L, 1);
+  else
+    lua_rawset(L, 1);
   return 0;
 }
 
@@ -645,11 +646,10 @@ static int lui_get_split_table(lua_State *L) {
 #if GTK
   GtkWidget *w = focused_view;
   while (GTK_IS_PANED(gtk_widget_get_parent(w))) w = gtk_widget_get_parent(w);
-  l_pushsplittable(L, w);
+  return (l_pushsplittable(L, w), 1);
 #elif CURSES
-  l_pushsplittable(L, pane);
+  return (l_pushsplittable(L, pane), 1);
 #endif
-  return 1;
 }
 
 /**
@@ -900,7 +900,7 @@ static int lui__newindex(lua_State *L) {
     gtk_box_pack_start(GTK_BOX(vbox), menubar = new_menubar, FALSE, FALSE, 0);
     gtk_box_reorder_child(GTK_BOX(vbox), new_menubar, 0);
     gtk_widget_show_all(new_menubar);
-#if (__APPLE__ && !CURSES)
+#if __APPLE__
     gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(new_menubar));
     gtk_widget_hide(new_menubar);
 #endif
@@ -1437,11 +1437,10 @@ static int ltimeout(lua_State *L) {
   int n = lua_gettop(L), *refs = (int *)calloc(n, sizeof(int));
   for (int i = 2; i <= n; i++)
     lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
-  g_timeout_add(timeout * 1000, emit_timeout, (void *)refs);
+  return (g_timeout_add(timeout * 1000, emit_timeout, (void *)refs), 0);
 #elif CURSES
-  luaL_error(L, "not implemented in this environment");
+  return luaL_error(L, "not implemented in this environment");
 #endif
-  return 0;
 }
 
 /** `string.iconv()` Lua function. */
@@ -1475,13 +1474,11 @@ static int lstring_iconv(lua_State *L) {
 /**
  * Clears a table at the given valid index by setting all of its keys to nil.
  * @param L The Lua state.
- * @param index The stack index of the table.
+ * @param index The absolute stack index of the table.
  */
 static void lL_cleartable(lua_State *L, int index) {
-  lua_pushvalue(L, index); // copy to stack top so relative indices can be used
-  while (lua_pushnil(L), lua_next(L, -2))
-    lua_pushnil(L), lua_replace(L, -2), lua_rawset(L, -3);
-  lua_pop(L, 1); // table copy
+  while (lua_pushnil(L), lua_next(L, index))
+    lua_pushnil(L), lua_replace(L, -2), lua_rawset(L, index);
 }
 
 /**
@@ -1504,11 +1501,11 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
     lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_views");
   } else { // clear package.loaded and _G
     lua_getglobal(L, "package"), lua_getfield(L, -1, "loaded");
-    lL_cleartable(L, -1);
+    lL_cleartable(L, lua_gettop(L));
     lua_pop(L, 2); // package.loaded and package
 #if LUA_VERSION_NUM >= 502
     lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
-    lL_cleartable(L, -1);
+    lL_cleartable(L, lua_gettop(L));
     lua_pop(L, 1); // _G
 #else
     lL_cleartable(L, LUA_GLOBALSINDEX);
@@ -1787,8 +1784,7 @@ static int w_exit(GtkWidget*_, GdkEventAny*__, void*___) {
   if (lL_event(lua, "quit", -1)) return TRUE;
   l_close(lua);
   scintilla_release_resources();
-  gtk_main_quit();
-  return FALSE;
+  return (gtk_main_quit(), FALSE);
 }
 
 #if (__APPLE__ && !CURSES)
