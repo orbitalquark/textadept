@@ -33,6 +33,18 @@ if CURSES and WIN32 then
   end
 end
 
+-- Replacement for original `buffer:text_range()`, which has a C struct for an
+-- argument.
+-- Documentation is in core/.buffer.luadoc.
+local function text_range(buffer, start_pos, end_pos)
+  local target_start, target_end = buffer.target_start, buffer.target_end
+  buffer:set_target_range(start_pos, end_pos)
+  local text = buffer.target_text
+  buffer:set_target_range(target_start, target_end) -- reset
+  return text
+end
+events.connect(events.BUFFER_NEW, function() buffer.text_range = text_range end)
+
 --[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's _G table to provide extra functions and fields for Textadept.

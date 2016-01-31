@@ -1107,20 +1107,6 @@ static int lbuffer_new(lua_State *L) {
   return (lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);
 }
 
-/** `buffer.text_range()` Lua function. */
-static int lbuffer_text_range(lua_State *L) {
-  Scintilla *view = focused_view;
-  int result = l_globaldoccompare(L, 1);
-  if (result != 0) view = (result > 0) ? dummy_view : command_entry;
-  Sci_PositionCR min = luaL_checkinteger(L, 2), max = luaL_checkinteger(L, 3);
-  luaL_argcheck(L, min <= max, 3, "start > end");
-  struct Sci_TextRange tr = {{min, max}, malloc(max - min + 1)};
-  SS(view, SCI_GETTEXTRANGE, 0, (sptr_t)&tr);
-  lua_pushlstring(L, tr.lpstrText, max - min);
-  if (tr.lpstrText) free(tr.lpstrText);
-  return 1;
-}
-
 /**
  * Checks whether the function argument arg is the given Scintilla parameter
  * type and returns it cast to the proper type.
@@ -1329,7 +1315,6 @@ static void lL_adddoc(lua_State *L, sptr_t doc) {
 #endif
   l_setcfunction(L, -2, "delete", lbuffer_delete);
   l_setcfunction(L, -2, "new", lbuffer_new);
-  l_setcfunction(L, -2, "text_range", lbuffer_text_range);
   l_setmetatable(L, -2, "ta_buffer", lbuf_property, lbuf_property);
   // t[doc_pointer] = buffer, t[#t + 1] = buffer, t[buffer] = #t
   lua_pushvalue(L, -2), lua_settable(L, -4);
@@ -1543,7 +1528,6 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   if (!reinit) {
     lua_newtable(L);
     l_setcfunction(L, -1, "focus", lce_focus);
-    l_setcfunction(L, -1, "text_range", lbuffer_text_range);
     l_setmetatable(L, -1, "ta_buffer", lbuf_property, lbuf_property);
   } else {
     lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
