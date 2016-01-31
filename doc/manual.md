@@ -117,10 +117,9 @@ Most Linux and BSD systems already have GTK+ installed. If not, your package
 manager probably makes it available. Otherwise, compile and install GTK+from the
 [GTK+ website][].
 
-The Linux binaries for the GUI versions of Textadept require GLib version 2.28
-or later to support [single-instance](#Single.Instance) functionality. However,
-Textadept compiles with versions of GLib as early as 2.22. For reference, Ubuntu
-11.04, Debian Wheezy, Fedora 15, and openSUSE 11.4 support GLib 2.28 or later.
+The GUI versions of Textadept require GLib version 2.28 or later to support
+[single-instance](#Single.Instance) functionality. For reference, Ubuntu 11.04,
+Debian Wheezy, Fedora 15, and openSUSE 11.4 support GLib 2.28 or later.
 
 Most Linux and BSD systems already have a curses implementation like ncurses
 installed. If not, look for one in your package manager, or compile and install
@@ -265,16 +264,17 @@ The manual gives more information on this folder later.
 
 ## Single Instance
 
-Textadept is a single-instance application on Linux, BSD, and Mac OSX. This
-means that after starting Textadept, running `textadept file.ext` (`ta file.ext`
-on Mac OSX) from the command line or opening a file with Textadept from a file
-manager opens *file.ext* in the original Textadept instance. Passing a `-f` or
-`--force` switch to Textadept overrides this behavior and opens the file in a
-new instance: `textadept -f file.ext` (`ta -f file.ext`). Without the force
-switch, the original Textadept instance opens files, regardless of the number of
-instances open.
+Textadept is a single-instance application. This means that after starting
+Textadept, running `textadept file.ext` on Linux or BSD (`ta file.ext` on Mac
+OSX) from the command line or opening a file with Textadept from a file manager
+(e.g. Windows) opens *file.ext* in the original Textadept instance. Passing a
+`-f` or `--force` switch to Textadept overrides this behavior and opens the file
+in a new instance: `textadept -f file.ext` (`ta -f file.ext`); on Windows, you
+can create a separate shortcut to *textadept.exe* that passes the switch.
+Without the force switch, the original Textadept instance opens files,
+regardless of the number of instances open.
 
-The Windows and terminal versions of Textadept do not support single instance.
+The terminal versions of Textadept do not support single instance.
 
 <span style="display: block; text-align: right; margin-left: -10em;">
 ![Linux](images/linux.png)
