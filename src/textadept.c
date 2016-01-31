@@ -12,6 +12,7 @@
 #include <unistd.h>
 #elif _WIN32
 #include <windows.h>
+#include <fcntl.h>
 #define main main_
 #elif __APPLE__
 #include <mach-o/dyld.h>
@@ -71,6 +72,23 @@ typedef GtkWidget Scintilla;
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
 #define gtk_vbox_new(_,s) gtk_box_new(GTK_ORIENTATION_VERTICAL, s)
 #define gtk_hbox_new(_,s) gtk_box_new(GTK_ORIENTATION_HORIZONTAL, s)
+#endif
+// Win32 single-instance functionality.
+#if _WIN32
+#define g_application_command_line_get_arguments(_,__) \
+  g_strsplit((char *)data, "\n", 0); argc = g_strv_length(argv);
+#define g_application_command_line_get_cwd(_) argv[0]
+#define g_application_register(_,__,___) TRUE
+#define g_application_get_is_remote(_) \
+  (WaitNamedPipe("\\\\.\\pipe\\textadept.editor", NMPWAIT_WAIT_FOREVER) != 0)
+#define g_application_run(_,__,___) win32_application_run()
+#define gtk_main() \
+  HANDLE pipe = CreateNamedPipe("\\\\.\\pipe\\textadept.editor", \
+                                PIPE_ACCESS_INBOUND, PIPE_WAIT, 1, 0, 0, \
+                                INFINITE, NULL); \
+  HANDLE thread = CreateThread(NULL, 0, &pipe_listener, pipe, 0, NULL); \
+  gtk_main(); \
+  CloseHandle(thread), CloseHandle(pipe);
 #endif
 #endif
 
@@ -270,10 +288,9 @@ static int lL_event(lua_State *L, const char *name, ...) {
 }
 
 #if GTK
-#if GLIB_CHECK_VERSION(2,28,0)
 /** Processes a remote Textadept's command line arguments. */
 static int a_command_line(GApplication*_, GApplicationCommandLine *cmdline,
-                          void*__) {
+                          void *data) {
   if (!lua) return 0; // only process argv for secondary/remote instances
   int argc = 0;
   char **argv = g_application_command_line_get_arguments(cmdline, &argc);
@@ -287,7 +304,6 @@ static int a_command_line(GApplication*_, GApplicationCommandLine *cmdline,
   g_strfreev(argv);
   return (gtk_window_present(GTK_WINDOW(window)), 0);
 }
-#endif
 #endif
 
 #if CURSES
@@ -2340,6 +2356,44 @@ static void new_window() {
   register_command_entry_doc();
 }
 
+#if GTK && _WIN32
+/** Reads and processes a remote Textadept's command line arguments. */
+static int pipe_read(GIOChannel *source, GIOCondition _, HANDLE pipe) {
+  char *buf;
+  size_t len;
+  g_io_channel_read_to_end(source, &buf, &len, NULL);
+  for (char *p = buf; p < buf + len - 2; p++) if (!*p) *p = '\n'; // '\0\0' end
+  a_command_line(NULL, NULL, buf);
+  g_free(buf), DisconnectNamedPipe(pipe);
+  return FALSE;
+}
+
+/** Listens for remote Textadept communications. */
+static DWORD WINAPI pipe_listener(HANDLE pipe) {
+  while (1)
+    if (pipe != INVALID_HANDLE_VALUE && ConnectNamedPipe(pipe, NULL)) {
+      int fd = _open_osfhandle((intptr_t)pipe, _O_RDONLY);
+      GIOChannel *channel = g_io_channel_win32_new_fd(fd);
+      g_io_add_watch(channel, G_IO_IN, pipe_read, pipe);
+      g_io_channel_unref(channel);
+    }
+  return 0;
+}
+
+/** Replacement for `g_application_run()` that handles multiple instances. */
+static void win32_application_run() {
+  HANDLE pipe = CreateFile("\\\\.\\pipe\\textadept.editor", GENERIC_WRITE, 0,
+                           NULL, OPEN_EXISTING, 0, NULL);
+  char cwd[FILENAME_MAX + 1];
+  GetCurrentDirectory(FILENAME_MAX + 1, cwd);
+  DWORD len_written;
+  WriteFile(pipe, cwd, strlen(cwd) + 1, &len_written, NULL);
+  for (int i = 1; i < __argc; i++)
+    WriteFile(pipe, __argv[i], strlen(__argv[i]) + 1, &len_written, NULL);
+  CloseHandle(pipe);
+}
+#endif
+
 #if (CURSES && !_WIN32)
 /**
  * Signal for a terminal suspend, continue, and resize.
@@ -2387,6 +2441,8 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
  * Runs Textadept.
  * Initializes the Lua state, creates the user interface, and then runs
  * `core/init.lua` followed by `init.lua`.
+ * On Windows, creates a pipe and thread for communication with remote
+ * instances.
  * @param argc The number of command line params.
  * @param argv The array of command line params.
  */
@@ -2412,7 +2468,7 @@ int main(int argc, char **argv) {
   platform = "LINUX";
 #elif _WIN32
   textadept_home = malloc(FILENAME_MAX);
-  GetModuleFileName(0, textadept_home, FILENAME_MAX);
+  GetModuleFileName(NULL, textadept_home, FILENAME_MAX);
   if ((last_slash = strrchr(textadept_home, '\\'))) *last_slash = '\0';
   platform = "WIN32";
 #elif __APPLE__
@@ -2436,7 +2492,6 @@ int main(int argc, char **argv) {
 #endif
 
 #if GTK
-#if GLIB_CHECK_VERSION(2,28,0)
   int force = FALSE;
   for (int i = 0; i < argc; i++)
     if (strcmp("-f", argv[i]) == 0 || strcmp("--force", argv[i]) == 0) {
@@ -2448,7 +2503,6 @@ int main(int argc, char **argv) {
   g_signal_connect(app, "command-line", G_CALLBACK(a_command_line), 0);
   int registered = g_application_register(app, NULL, NULL);
   if (!registered || !g_application_get_is_remote(app) || force) {
-#endif
 #endif
 
   setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
@@ -2464,13 +2518,9 @@ int main(int argc, char **argv) {
 #endif
 
 #if GTK
-#if GLIB_CHECK_VERSION(2,28,0)
     gtk_main();
   } else g_application_run(app, argc, argv);
   g_object_unref(app);
-#else
-  gtk_main();
-#endif
 #elif CURSES
   refresh_all();
 
@@ -2568,7 +2618,7 @@ int main(int argc, char **argv) {
  * Runs Textadept in Windows.
  * @see main
  */
-int WINAPI WinMain(HINSTANCE _, HINSTANCE __, LPSTR lpCmdLine, int ___) {
-  return main(1, &lpCmdLine);
+int WINAPI WinMain(HINSTANCE _, HINSTANCE __, LPSTR ___, int ____) {
+  return main(__argc, __argv); // MSVC extensions
 }
 #endif

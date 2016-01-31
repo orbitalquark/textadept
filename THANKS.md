@@ -31,6 +31,7 @@ private contract work related to Textadept.
 * Bill Meahan
 * Brian Schott
 * Callum Wilson
+* Carl Sturtivant
 * Chris Emerson
 * Daniel Wutke
 * Gilles Grégoire
