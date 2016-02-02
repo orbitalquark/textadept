@@ -391,7 +391,7 @@ lspawn_zip = lspawn_1.3.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
 gtdialog_zip = gtdialog_1.2.zip
-cdk_tgz = cdk.tar.gz
+cdk_tgz = cdk-5.0-20150928.tgz
 termkey_tgz = libtermkey-0.17.tar.gz
 win32gtk_zip = gtk+-bundle_2.24.10-20120208_win32.zip
 win32iconv_bin_zip = libiconv-bin-zip.php
@@ -439,7 +439,7 @@ $(libluajit_tgz): ; wget http://foicica.com/textadept/download/$@
 libluajit64: | $(libluajit_tgz) ; tar xzf $|
 $(gtdialog_zip): ; wget $(gtdialog_url) -O $@
 gtdialog: | $(gtdialog_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
-$(cdk_tgz): ; wget http://invisible-island.net/datafiles/release/$@
+$(cdk_tgz): ; wget http://invisible-mirror.net/archives/cdk/$@
 cdk: cdk.patch | $(cdk_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	mv $@/include/*.h $@
