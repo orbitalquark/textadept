@@ -340,7 +340,7 @@ end)
 
 -- Updates the statusbar and titlebar for a new Scintilla document.
 events_connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
-events_connect(events.BUFFER_NEW, function() set_title() end)
+events_connect(events.BUFFER_NEW, set_title)
 
 -- Save buffer properties.
 events_connect(events.BUFFER_BEFORE_SWITCH, function()
@@ -447,9 +447,9 @@ if CURSES then
       io.stdout:write("\x1b[?1002l") -- disable mouse mode
       io.stdout:flush()
     end
-    events.connect(events.SUSPEND, disable_mouse_mode)
-    events.connect(events.RESUME, enable_mouse_mode)
-    events.connect(events.QUIT, disable_mouse_mode)
+    events_connect(events.SUSPEND, disable_mouse_mode)
+    events_connect(events.RESUME, enable_mouse_mode)
+    events_connect(events.QUIT, disable_mouse_mode)
   end
 
   -- Retrieves the view or split at the given terminal coordinates.
@@ -471,7 +471,7 @@ if CURSES then
   end
 
   local resize
-  events.connect(events.MOUSE, function(event, button, y, x)
+  events_connect(events.MOUSE, function(event, button, y, x)
     if event == buffer.MOUSE_RELEASE or button ~= 1 then return end
     if event == buffer.MOUSE_PRESS then
       local view = get_view(ui.get_split_table(), y - 1, x) -- title is at y = 1
