@@ -382,7 +382,7 @@ else
 endif
 
 scintilla_tgz = scintilla363.tgz
-scinterm_zip = scinterm_1.6.zip
+scinterm_zip = scinterm_1.7.zip
 scintillua_zip = scintillua_3.6.3-1.zip
 lua_tgz = lua-5.3.2.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
