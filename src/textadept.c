@@ -88,7 +88,7 @@ typedef GtkWidget Scintilla;
                                 INFINITE, NULL); \
   HANDLE thread = CreateThread(NULL, 0, &pipe_listener, pipe, 0, NULL); \
   gtk_main(); \
-  CloseHandle(thread), CloseHandle(pipe);
+  TerminateThread(thread, 0), CloseHandle(thread), CloseHandle(pipe);
 #endif
 #endif
 
