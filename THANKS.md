@@ -43,6 +43,7 @@ private contract work related to Textadept.
 * Lance Larsen
 * M Rawash
 * Manuel Montenegro
+* Markus F.X.J. Oberhume
 * Martin Morawetz
 * Michael T. Richter
 * Neil Hodgson

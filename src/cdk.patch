@@ -432,7 +432,7 @@ diff -r c40f79827990 entry.c
     }
  }
  
-+inline int isUtf8CharPart(unsigned int ch) { return (ch >= 0x80) && (ch < 0xc0); }
++static inline int isUtf8CharPart(unsigned int ch) { return (ch >= 0x80) && (ch < 0xc0); }
 +
  /*
   * This injects a single character into the widget.
