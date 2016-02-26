@@ -75,6 +75,7 @@ function M.load(filename)
     elseif line:find('^%s*split%d:') then
       local level, num, type, size = line:match('^(%s*)split(%d): (%S+) (%d+)')
       local view = splits[#level] and splits[#level][tonumber(num)] or view
+      ui.goto_view(_VIEWS[view])
       splits[#level + 1] = {view:split(type == 'true')}
       splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
     elseif line:find('^%s*view%d:') then
@@ -99,6 +100,7 @@ function M.load(filename)
     end
   end
   f:close()
+_G.print('loaded')
   ui.goto_view(current_view)
   if #not_found > 0 then
     ui.dialogs.msgbox{
