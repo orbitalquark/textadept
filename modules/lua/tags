@@ -356,6 +356,7 @@ _fold	_	0;"	F	class:lexer.lexer
 _foldsymbols	_	0;"	F	class:lexer.lexer
 _insert	_	0;"	f	class:textadept.snippets
 _lexer	_	0;"	F	class:lexer.lexer
+_paths	_	0;"	t	class:textadept.snippets
 _previous	_	0;"	f	class:textadept.snippets
 _print	_	0;"	f	class:ui
 _rules	_	0;"	F	class:lexer.lexer
@@ -689,6 +690,7 @@ html	_	0;"	t	class:keys
 html	_	0;"	t	class:snippets
 huge	_	0;"	F	class:math
 iconv	_	0;"	f	class:string
+idle_styling	_	0;"	F	class:buffer
 in_files	_	0;"	F	class:ui.find
 in_files_label_text	_	0;"	F	class:ui.find
 indent	_	0;"	F	class:buffer
@@ -749,12 +751,14 @@ line_end_rect_extend	_	0;"	f	class:buffer
 line_end_wrap	_	0;"	f	class:buffer
 line_end_wrap_extend	_	0;"	f	class:buffer
 line_from_position	_	0;"	f	class:buffer
+line_from_position	_	0;"	f	class:lexer
 line_indent_position	_	0;"	F	class:buffer
 line_indentation	_	0;"	F	class:buffer
 line_length	_	0;"	f	class:buffer
 line_scroll	_	0;"	f	class:buffer
 line_scroll_down	_	0;"	f	class:buffer
 line_scroll_up	_	0;"	f	class:buffer
+line_state	_	0;"	F	class:lexer
 line_transpose	_	0;"	f	class:buffer
 line_up	_	0;"	f	class:buffer
 line_up_extend	_	0;"	f	class:buffer
