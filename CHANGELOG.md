@@ -9,6 +9,67 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 8.6 (01 Mar 2016)
+
+Download:
+
+* [Textadept 8.6 -- Win32][] | [PGP -- 8.6 Win32][]
+* [Textadept 8.6 -- Mac OSX Intel 10.5+][] | [PGP -- 8.6 OSX][]
+* [Textadept 8.6 -- Linux][] | [PGP -- 8.6 Linux][]
+* [Textadept 8.6 -- Linux x86_64][] | [PGP -- 8.6 Linux x86_64][]
+* [Textadept 8.6 -- Modules][] | [PGP -- 8.6 Modules][]
+
+Bugfixes:
+
+* Prevent silent crash reports from being generated on Mac OSX when child
+  processes fail to be spawned.
+* Do not "busy wait" for spawned process stdout or stderr on Mac OSX.
+* Fixed bug in escaping `([{<` after mirrors in snippets.
+* Only change spawned process environment if one was specified on Mac OSX.
+* Fixed focus bug in [`view:goto_buffer()`][] with non-focused view.
+* Fixed building the terminal version in debug mode.
+* Recognize the `weight` [style property][].
+* Fixed potential crash with malformed style properties.
+* Fixed unlikely buffer overflow in messages coming from Scintilla.
+* Fixed potential memory access error when closing Textadept while a spawned
+  process is still alive.
+* Fixed bug in setting view properties when restoring sessions with nested
+  splits.
+
+Changes:
+
+* Added support for APL, Docker, Faust, Ledger, MoonScript, man/roff, PICO-8,
+  and Pure.
+* Enabled idle-styling of buffers in the background in the GUI version.
+* Undocumented `buffer:clear_cmd_key()` only takes one argument now.
+* Added `-v` and `--version` command line parameters.
+* Added single-instance functionality on Win32.
+* Require GLib 2.28+.
+* Added [`lexer.line_state`][] and [`lexer.line_from_position()`][] for
+  [stateful lexers][].
+* Updated to [lspawn][] 1.4.
+* Updated to [Scintilla][] 3.6.3.
+* Updated to [Scinterm][] 1.7.
+
+[Textadept 8.6 -- Win32]: download/textadept_8.6.win32.zip
+[Textadept 8.6 -- Mac OSX Intel 10.5+]: download/textadept_8.6.osx.zip
+[Textadept 8.6 -- Linux]: download/textadept_8.6.i386.tgz
+[Textadept 8.6 -- Linux x86_64]: download/textadept_8.6.x86_64.tgz
+[Textadept 8.6 -- Modules]: download/textadept_8.6.modules.zip
+[PGP -- 8.6 Win32]: download/textadept_8.6.win32.zip.asc
+[PGP -- 8.6 OSX]: download/textadept_8.6.osx.zip.asc
+[PGP -- 8.6 Linux]: download/textadept_8.6.i386.tgz.asc
+[PGP -- 8.6 Linux x86_64]: download/textadept_8.6.x86_64.tgz.asc
+[PGP -- 8.6 Modules]: download/textadept_8.6.modules.zip.asc
+[`view:goto_buffer()`]: api.html#view.goto_buffer
+[style property]: api.html#lexer.Styles.and.Styling
+[`lexer.line_state`]: api.html#lexer.line_state
+[`lexer.line_from_position()`]: api.html#lexer.line_from_position
+[stateful lexers]: api.html#lexer.Lexers.with.Complex.State
+[lspawn]: http://foicica.com/hg/lspawn
+[Scintilla]: http://scintilla.org
+[Scinterm]: http://foicica.com/scinterm
+
 ## 8.5 (01 Jan 2016)
 
 Download:
