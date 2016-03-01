@@ -100,7 +100,6 @@ function M.load(filename)
     end
   end
   f:close()
-_G.print('loaded')
   ui.goto_view(current_view)
   if #not_found > 0 then
     ui.dialogs.msgbox{
