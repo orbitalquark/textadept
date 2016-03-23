@@ -915,7 +915,7 @@ static int lui__newindex(lua_State *L) {
     gtk_container_remove(GTK_CONTAINER(vbox), menubar);
     gtk_box_pack_start(GTK_BOX(vbox), menubar = new_menubar, FALSE, FALSE, 0);
     gtk_box_reorder_child(GTK_BOX(vbox), new_menubar, 0);
-    gtk_widget_show_all(new_menubar);
+    if (lua_rawlen(L, 3) > 0) gtk_widget_show_all(new_menubar);
 #if __APPLE__
     gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(new_menubar));
     gtk_widget_hide(new_menubar);
