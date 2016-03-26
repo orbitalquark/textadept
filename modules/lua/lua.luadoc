@@ -2046,3 +2046,39 @@ function lfs.touch(filepath [, atime [, mtime]]) end
 -- Returns true if the operation was successful; in case of error, it returns
 -- nil plus an error string.
 function lfs.unlock(filehandle[, start[, length]]) end
+
+---
+-- UTF-8 version of `string.byte`.
+function utf8.byte(s [, i [, j]]) end
+
+---
+-- UTF-8 version of `string.find`.
+function utf8.find(s, pattern [, init [, plain]]) end
+
+---
+-- UTF-8 version of `string.gmatch`.
+function utf8.gmatch(s, pattern) end
+
+---
+-- UTF-8 version of `string.gsub`.
+function utf8.gsub(s, pattern, repl [, n]) end
+
+---
+-- UTF-8 version of `string.lower`.
+function utf8.lower(s) end
+
+---
+-- UTF-8 version of `string.match`.
+function utf8.match(s, pattern [, init]) end
+
+---
+-- UTF-8 version of `string.reverse`.
+function utf8.reverse(s) end
+
+---
+-- UTF-8 version of `string.sub`.
+function utf8.sub(s, i [, j]) end
+
+---
+-- UTF-8 version of `string.upper`.
+function utf8.upper(s) end

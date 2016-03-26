@@ -239,7 +239,7 @@ static void new_buffer(sptr_t);
 static Scintilla *new_view(sptr_t);
 static int lL_init(lua_State *, int, char **, int);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
-LUALIB_API int luaopen_spawn(lua_State *);
+LUALIB_API int luaopen_utf8_ext(lua_State *), luaopen_spawn(lua_State *);
 LUALIB_API int lspawn_pushfds(lua_State *), lspawn_readfds(lua_State *);
 
 /**
@@ -1513,7 +1513,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
 #endif
   }
   lua_pushinteger(L, (sptr_t)L), lua_setglobal(L, "_LUA");
-  luaL_openlibs(L);
+  luaL_openlibs(L), lL_openlib(L, utf8_ext);
   lL_openlib(L, lpeg), lL_openlib(L, lfs), lL_openlib(L, spawn);
 
   lua_newtable(L);
