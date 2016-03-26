@@ -1,0 +1,173 @@
+--- lutf8libext.c	2016-03-26 09:39:32.469103890 -0400
++++ lib/lutf8libext.c	2016-03-26 13:29:06.770738807 -0400
+@@ -199,8 +199,10 @@
+ define_category(space)
+ define_converter(tolower)
+ define_converter(toupper)
++#if 0
+ define_converter(totitle)
+ define_converter(tofold)
++#endif
+ 
+ #undef define_category
+ #undef define_converter
+@@ -223,6 +225,7 @@
+   return 0;
+ }
+ 
++#if 0
+ static int utf8_width(unsigned ch, int ambi_is_single) {
+   if (find_in_range(doublewidth_table, table_size(doublewidth_table), ch))
+     return 2;
+@@ -234,6 +237,7 @@
+     return 0;
+   return 1;
+ }
++#endif
+ 
+ 
+ /* string module compatible interface */
+@@ -258,11 +262,13 @@
+   luaL_addlstring(b, buff, n);
+ }
+ 
++#if 0
+ static lua_Integer byterelat(lua_Integer pos, size_t len) {
+   if (pos >= 0) return pos;
+   else if (0u - (size_t)pos > len) return 0;
+   else return (lua_Integer)len + pos + 1;
+ }
++#endif
+ 
+ static int u_posrange(const char **ps, const char **pe,
+     lua_Integer posi, lua_Integer posj) {
+@@ -281,6 +287,7 @@
+   return *ps < *pe;
+ }
+ 
++#if 0
+ static int Lutf8_len(lua_State *L) {
+   size_t len;
+   const char *s = luaL_checklstring(L, 1, &len);
+@@ -292,6 +299,7 @@
+   lua_pushinteger(L, (lua_Integer)utf8_length(s+posi, s+posj+1));
+   return 1;
+ }
++#endif
+ 
+ static int Lutf8_sub(lua_State *L) {
+   const char *e, *s = check_utf8(L, 1, &e);
+@@ -344,11 +352,13 @@
+ static int Lutf8_upper(lua_State *L)
+ { return convert(L, utf8_toupper); }
+ 
++#if 0
+ static int Lutf8_title(lua_State *L)
+ { return convert(L, utf8_totitle); }
+ 
+ static int Lutf8_fold(lua_State *L)
+ { return convert(L, utf8_tofold); }
++#endif
+ 
+ static int Lutf8_byte(lua_State *L) {
+   size_t n = 0;
+@@ -367,6 +377,7 @@
+   return n;
+ }
+ 
++#if 0
+ static int Lutf8_codepoint(lua_State *L) {
+   const char *e, *s = check_utf8(L, 1, &e);
+   size_t len = e-s;
+@@ -643,6 +654,7 @@
+   lua_pushinteger(L, 0);
+   return 1;
+ }
++#endif
+ 
+ 
+ /* utf8 pattern matching implement */
+@@ -1265,21 +1277,26 @@
+ 
+ #define UTF8PATT	"[\0-\x7F\xC2-\xF4][\x80-\xBF]*"
+ 
+-LUALIB_API int luaopen_utf8(lua_State *L) {
++LUALIB_API int luaopen_utf8_ext(lua_State *L) {
+   luaL_Reg libs[] = {
+ #define ENTRY(name) { #name, Lutf8_##name }
++#if 0
+     ENTRY(offset),
+     ENTRY(codes),
+     ENTRY(codepoint),
+ 
+     ENTRY(len),
++#endif
+     ENTRY(sub),
+     ENTRY(reverse),
+     ENTRY(lower),
+     ENTRY(upper),
++#if 0
+     ENTRY(title),
+     ENTRY(fold),
++#endif
+     ENTRY(byte),
++#if 0
+     ENTRY(char),
+     ENTRY(escape),
+     ENTRY(insert),
+@@ -1289,6 +1306,7 @@
+     ENTRY(width),
+     ENTRY(widthindex),
+     ENTRY(ncasecmp),
++#endif
+     ENTRY(find),
+     ENTRY(gmatch),
+     ENTRY(gsub),
+@@ -1301,11 +1319,13 @@
+   luaL_newlib(L, libs);
+ #else
+   lua_createtable(L, 0, sizeof(libs)/sizeof(libs[0]));
+-  luaL_register(L, NULL, libs);
++  luaL_register(L, "utf8_ext", libs);
+ #endif
+ 
++#if 0
+   lua_pushliteral(L, UTF8PATT);
+   lua_setfield(L, -2, "charpattern");
++#endif
+ 
+   return 1;
+ }
+--- unidata.h	2015-05-31 04:48:35.000000000 -0400
++++ lib/unidata.h	2016-03-26 13:01:16.951664669 -0400
+@@ -904,6 +904,7 @@
+     { 0x3000, 0x3000, 1 },
+ };
+ 
++#if 0
+ static struct range_table unprintable_table[] = {
+     { 0xAD, 0x34F, 674 },
+     { 0x61C, 0x115F, 2883 },
+@@ -921,6 +922,7 @@
+     { 0x1D173, 0x1D17A, 1 },
+     { 0xE0000, 0xE0FFF, 1 },
+ };
++#endif
+ 
+ static struct range_table graph_table[] = {
+     { 0x20, 0x7E, 1 },
+@@ -2547,6 +2549,7 @@
+     { 0x118C0, 0x118DF, 1, -32 },
+ };
+ 
++#if 0
+ static struct conv_table totitle_table[] = {
+     { 0x61, 0x7A, 1, -32 },
+     { 0xB5, 0xB5, 1, 743 },
+@@ -3060,5 +3063,6 @@
+     { 0xF0000, 0xFFFFD, 1 },
+     { 0x100000, 0x10FFFD, 1 },
+ };
++#endif
+ 
+ #endif /* unidata_h */

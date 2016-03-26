@@ -126,9 +126,9 @@ lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
            lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
            lmathlib.o loadlib.o loslib.o lstrlib.o ltablib.o lutf8lib.o
-lua_lib_objs = lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
+lua_lib_objs = lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o lutf8libext.o
 luajit_lib_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o \
-                  lfsjit.o lutf8libjit.o
+                  lfsjit.o lutf8libjit.o lutf8libextjit.o
 lua_spawn_objs = lspawn.o lspawnjit.o lspawn-curses.o lspawnjit-curses.o
 gtdialog_objs = gtdialog.o gtdialog-curses.o
 termkey_unix_objs = driver-ti.o driver-csi.o
@@ -387,6 +387,7 @@ scintillua_zip = scintillua_3.6.4-1.zip
 lua_tgz = lua-5.3.2.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
+luautf8_zip = 0.1.1.zip
 lspawn_zip = lspawn_1.4.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
@@ -416,15 +417,23 @@ LexLPeg.cxx: | ../lexers ; ln -s $|/$@ $@
 $(lua_tgz): ; wget http://www.lua.org/ftp/$@
 $(lpeg_tgz): ; wget http://www.inf.puc-rio.br/~roberto/lpeg/$@
 $(lfs_zip): ; wget http://github.com/keplerproject/luafilesystem/archive/$@
+$(luautf8_zip): ; wget https://github.com/starwing/luautf8/archive/$@
 $(lspawn_zip): ; wget $(lspawn_url) -O $@
 lua: lua.patch | $(lua_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
-lualibs: lua/src/lib/lpeg lua/src/lib/lfs lua/src/lib/lspawn
+lualibs: lua/src/lib/lpeg lua/src/lib/lfs lua/src/lib/lutf8libext \
+         lua/src/lib/lspawn
 lua/src/lib/lpeg: | $(lpeg_tgz)
 	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
 lua/src/lib/lfs: lfs.patch | $(lfs_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
+	patch -d $(dir $@) -N -p1 < $<
+lua/src/lib/lutf8libext: lutf8libext.patch | $(luautf8_zip)
+	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.h $(dir $@)
+	# Rename lutf8lib.c in order to prevent conflicts with Lua's lutf8lib.c,
+	# needed by LuaJIT.
+	mv $@/*/lutf8lib.c $(dir $@)lutf8libext.c
 	patch -d $(dir $@) -N -p1 < $<
 lua/src/lib/lspawn: | $(lspawn_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.c $(dir $@)

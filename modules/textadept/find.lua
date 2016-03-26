@@ -154,14 +154,21 @@ local function find_(text, next, flags, no_wrap, wrapped)
     M.captures = nil -- clear captures from any previous Lua pattern searches
   elseif flags < 16 then
     -- Lua pattern search.
+    -- Note: I do not trust utf8.find completely, so only use it if there are
+    -- UTF-8 characters in patt. Otherwise default to string.find.
     local patt = text:gsub('\\[abfnrtv\\]', escapes)
     local s = next and buffer.current_pos or 0
     local e = next and buffer.length or buffer.current_pos
-    local caps = {buffer:text_range(s, e):find(next and patt or '^.*()'..patt)}
+    local find = not patt:find('[\xC2-\xF4]') and string.find or utf8.find
+    local caps = {find(buffer:text_range(s, e), next and patt or '^.*()'..patt)}
     M.captures = {table.unpack(caps, next and 3 or 4)}
     if #caps > 0 and caps[2] >= caps[1] then
-      pos = buffer:position_relative(s, caps[next and 1 or 3] - 1)
-      e = buffer:position_relative(s, caps[2])
+      if find == string.find then
+        pos, e = s + caps[next and 1 or 3] - 1, s + caps[2]
+      else
+        pos = buffer:position_relative(s, caps[next and 1 or 3] - 1)
+        e = buffer:position_relative(s, caps[2])
+      end
       M.captures[0] = buffer:text_range(pos, e)
       buffer:set_sel(e, pos)
     end

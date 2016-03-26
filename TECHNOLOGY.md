@@ -56,6 +56,10 @@ Lua and includes a few external libraries.
 =[LuaFileSystem][] - Library for accessing directories and file attributes=
     Textadept uses LFS for accessing the host filesystem.
 
+=[luautf8][] - Library for additional UTF-8 string utilities=
+    Textadept uses a subset of luautf8 for Lua pattern matching with UTF-8
+    patterns.
+
 =[lspawn][]\* - Lua module for spawning processes=
     Textadept uses lspawn for spawning asynchronous processes.
 
@@ -69,6 +73,7 @@ Lua and includes a few external libraries.
 [Scinterm]: http://foicica.com/scinterm
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: http://keplerproject.github.io/luafilesystem/
+[luautf8]: https://github.com/starwing/luautf8/
 [lspawn]: http://foicica.com/hg/lspawn
 [gtDialog]: http://foicica.com/gtdialog/
 [ncurses]: http://invisible-island.net/ncurses/
