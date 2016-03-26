@@ -69,9 +69,7 @@ else
     LDFLAGS += -ldl
     MAKE = make
   else
-    ifeq (curses, $(findstring curses, $(MAKECMDGOALS)))
-      LDFLAGS += -liconv
-    endif
+    LDFLAGS += -liconv
     MAKE = gmake
   endif
   PREFIX ?= /usr/local
