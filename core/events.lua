@@ -308,9 +308,8 @@ function M.emit(event, ...)
   assert(event, _L['Undefined event name'])
   local h = handlers[event]
   if not h then return end
-  local pcall, table_unpack, type = pcall, table.unpack, type
   for i = 1, #h do
-    local ok, result = pcall(h[i], table_unpack{...})
+    local ok, result = pcall(h[i], ...)
     if not ok then
       if not error_emitted then
         error_emitted = true
