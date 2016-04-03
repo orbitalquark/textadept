@@ -226,8 +226,7 @@ events.connect(events.FILE_BEFORE_SAVE, function()
   local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
-  local lines = buffer.line_count
-  for line = 0, lines - 1 do
+  for line = 0, buffer.line_count - 1 do
     local s, e = buffer:position_from_line(line), buffer.line_end_position[line]
     local i, c = e - 1, buffer.char_at[e - 1]
     while i >= s and (c == 9 or c == 32) do
@@ -236,8 +235,9 @@ events.connect(events.FILE_BEFORE_SAVE, function()
     if i < e - 1 then buffer:delete_range(i + 1, e - i - 1) end
   end
   -- Ensure ending newline.
-  local e = buffer:position_from_line(lines)
-  if lines == 1 or e > buffer:position_from_line(lines - 1) then
+  local e = buffer:position_from_line(buffer.line_count)
+  if buffer.line_count == 1 or
+     e > buffer:position_from_line(buffer.line_count - 1) then
     buffer:insert_text(e, '\n')
   end
   -- Convert non-consistent EOLs
@@ -332,7 +332,7 @@ end
 -- the caret. Otherwise, the characters to the left and right are.
 -- @name transpose_chars
 function M.transpose_chars()
-  if buffer.length == 0 or buffer.current_pos == 0 then return end
+  if buffer.current_pos == 0 then return end
   local pos, char = buffer.current_pos, buffer.char_at[buffer.current_pos]
   if char == 10 or char == 13 or pos == buffer.length then pos = pos - 1 end
   buffer:set_target_range(pos - 1, pos + 1)
@@ -363,14 +363,8 @@ end
 -- @param right The right part of the enclosure.
 -- @name enclose
 function M.enclose(left, right)
-  buffer:target_from_selection()
-  local s, e = buffer.target_start, buffer.target_end
-  if s == e then
-    buffer:set_target_range(buffer:word_start_position(s, true),
-                            buffer:word_end_position(e, true))
-  end
-  buffer:replace_target(left..buffer.target_text..right)
-  buffer:goto_pos(buffer.target_end)
+  if buffer.selection_empty then M.select_word() end
+  buffer:replace_sel(left..buffer:get_sel_text()..right)
 end
 
 ---
@@ -439,16 +433,16 @@ end
 function M.convert_indentation()
   local buffer = buffer
   buffer:begin_undo_action()
-  for line = 0, buffer.line_count do
+  for line = 0, buffer.line_count - 1 do
     local s = buffer:position_from_line(line)
     local indent = buffer.line_indentation[line]
     local e = buffer.line_indent_position[line]
     local current_indentation, new_indentation = buffer:text_range(s, e), nil
     if buffer.use_tabs then
       -- Need integer division and LuaJIT does not have // operator.
-      new_indentation = ('\t'):rep(math.floor(indent / buffer.tab_width))
+      new_indentation = string.rep('\t', math.floor(indent / buffer.tab_width))
     else
-      new_indentation = (' '):rep(indent)
+      new_indentation = string.rep(' ', indent)
     end
     if current_indentation ~= new_indentation then
       buffer:set_target_range(s, e)
@@ -510,26 +504,25 @@ end
 -- @name filter_through
 function M.filter_through(command)
   local s, e = buffer.selection_start, buffer.selection_end
-  local input
-  if s ~= e then -- use selected lines as input
+  if s ~= e then
+    -- Use the selected lines as input.
     local i, j = buffer:line_from_position(s), buffer:line_from_position(e)
     if i < j then
       s = buffer:position_from_line(i)
       if buffer.column[e] > 0 then e = buffer:position_from_line(j + 1) end
     end
-    input = buffer:text_range(s, e)
-  else -- use whole buffer as input
-    input = buffer:get_text()
+    buffer:set_target_range(s, e)
+  else
+    -- Use the whole buffer as input.
+    buffer:target_whole_document()
   end
   local p = spawn(command)
-  p:write(input)
+  p:write(buffer.target_text)
   p:close()
+  buffer:replace_target(p:read('*a'))
   if s ~= e then
-    buffer:set_target_range(s, e)
-    buffer:replace_target(p:read('*a'))
     buffer:set_sel(buffer.target_start, buffer.target_end)
   else
-    buffer:set_text(p:read('*a'))
     buffer:goto_pos(s)
   end
 end
@@ -644,8 +637,11 @@ end
 events.connect(events.CALL_TIP_CLICK, function(position)
   if not api_docs then return end
   api_docs.pos = api_docs.pos + (position == 1 and -1 or 1)
-  if api_docs.pos > #api_docs then api_docs.pos = 1 end
-  if api_docs.pos < 1 then api_docs.pos = #api_docs end
+  if api_docs.pos > #api_docs then
+    api_docs.pos = 1
+  elseif api_docs.pos < 1 then
+    api_docs.pos = #api_docs
+  end
   buffer:call_tip_show(buffer.current_pos, api_docs[api_docs.pos])
 end)
 

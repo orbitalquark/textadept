@@ -103,17 +103,17 @@ function lfs.dir_foreach(dir, f, filter, exclude_FILTER, n, include_dirs, level)
     if ext then for i = 1, #ext do ext[ext[i]] = true end end
   end
   local dir_sep, lfs_attributes = not WIN32 and '/' or '\\', lfs.attributes
-  for file in lfs.dir(dir) do
-    if not file:find('^%.%.?$') then -- ignore . and ..
-      file = dir..(dir ~= '/' and dir_sep or '')..file
-      local type = lfs_attributes(file, 'mode')
-      if type == 'directory' and not exclude(file, filter.folders) then
-        if include_dirs and f(file..dir_sep) == false then return end
+  for basename in lfs.dir(dir) do
+    if not basename:find('^%.%.?$') then -- ignore . and ..
+      local filename = dir..(dir ~= '/' and dir_sep or '')..basename
+      local mode = lfs_attributes(filename, 'mode')
+      if mode == 'directory' and not exclude(filename, filter.folders) then
+        if include_dirs and f(filename..dir_sep) == false then return end
         if not n or level < n then
-          lfs.dir_foreach(file, f, filter, nil, n, include_dirs, level + 1)
+          lfs.dir_foreach(filename, f, filter, nil, n, include_dirs, level + 1)
         end
-      elseif type == 'file' and not exclude(file, filter) then
-        if f(file) == false then return end
+      elseif mode == 'file' and not exclude(filename, filter) then
+        if f(filename) == false then return end
       end
     end
   end

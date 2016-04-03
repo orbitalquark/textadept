@@ -115,9 +115,9 @@ local env = setmetatable({}, {
     return f
   end,
   __newindex = function(t, k, v)
-    for _, t2 in ipairs{buffer, view, ui} do
-      if t2[k] ~= nil then t2[k] = v return end
-    end
+    if buffer[k] ~= nil then buffer[k] = v return end
+    if view[k] ~= nil then view[k] = v return end
+    if ui[k] ~= nil then ui[k] = v return end
     rawset(t, k, v)
   end,
 })
@@ -143,9 +143,9 @@ local function complete_lua()
   local line, pos = M:get_cur_line()
   local symbol, op, part = line:sub(1, pos):match('([%w_.]-)([%.:]?)([%w_]*)$')
   local ok, result = pcall((load('return ('..symbol..')', nil, 'bt', env)))
+  if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
   local cmpls = {}
   part = '^'..part
-  if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
   if not ok then -- shorthand notation
     local pool = {
       buffer, view, ui, _G, _SCINTILLA.functions, _SCINTILLA.properties

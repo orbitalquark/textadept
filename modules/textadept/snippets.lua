@@ -159,7 +159,7 @@ local function new_snippet(text, trigger)
 
   -- Convert and match indentation.
   local lines = {}
-  local indent = {[true] = '\t', [false] = (' '):rep(buffer.tab_width)}
+  local indent = {[true] = '\t', [false] = string.rep(' ', buffer.tab_width)}
   local use_tabs = buffer.use_tabs
   for line in (text..'\n'):gmatch('([^\r\n]*)\r?\n') do
     lines[#lines + 1] = line:gsub('^(%s*)', function(indentation)
@@ -355,7 +355,7 @@ function M._select()
   local lexer = buffer:get_lexer(true)
   for trigger, text in pairs(snippets[lexer] or {}) do
     if type(text) == 'string' then
-      list[#list + 1] = trigger..'\0'..lexer..'\0'..text
+      list[#list + 1] = string.format('%s\0%s\0%s', trigger, lexer, text)
     end
   end
   table.sort(list)

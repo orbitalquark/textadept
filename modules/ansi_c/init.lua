@@ -65,8 +65,8 @@ textadept.editing.autocompleters.ansi_c = function()
           local fields = tag_line:match(';"\t(.*)$')
           if (fields:match('class:(%S+)') or fields:match('enum:(%S+)') or
               fields:match('struct:(%S+)') or '') == symbol then
-            list[#list + 1] = ("%s%s%d"):format(name, sep,
-                                                xpms[fields:sub(1, 1)])
+            list[#list + 1] = string.format('%s%s%d', name, sep,
+                                            xpms[fields:sub(1, 1)])
             list[name] = true
           elseif name == symbol and fields:match('typeref:') then
             -- For typeref, change the lookup symbol to the referenced name and

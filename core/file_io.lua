@@ -109,8 +109,11 @@ function io.open_file(filenames)
   if not filenames then return end
   for i = 1, #filenames do
     local filename = lfs.abspath((filenames[i]:gsub('^file://', '')))
-    for j, buffer in ipairs(_BUFFERS) do
-      if filename == buffer.filename then view:goto_buffer(j) goto continue end
+    for j = 1, #_BUFFERS do
+      if filename == _BUFFERS[j].filename then
+        view:goto_buffer(j) -- already open
+        goto continue
+      end
     end
 
     local text = ''
@@ -118,7 +121,7 @@ function io.open_file(filenames)
     if f then
       text = f:read('*a')
       f:close()
-      if not text then return end -- filename exists, but cannot read it
+      if not text then goto continue end -- filename exists, but cannot read it
     elseif lfs.attributes(filename) then
       error(err)
     end
@@ -152,10 +155,13 @@ function io.open_file(filenames)
     events.emit(events.FILE_OPENED, filename)
 
     -- Add file to recent files list, eliminating duplicates.
-    for j, file in ipairs(io.recent_files) do
-      if file == filename then table.remove(io.recent_files, j) break end
-    end
     table.insert(io.recent_files, 1, filename)
+    for j = 2, #io.recent_files do
+      if io.recent_files[j] == filename then
+        table.remove(io.recent_files, j)
+        break
+      end
+    end
     ::continue::
   end
 end
@@ -244,8 +250,8 @@ end
 -- @name save_all_files
 function io.save_all_files()
   local current_buffer = _BUFFERS[buffer]
-  for i, buffer in ipairs(_BUFFERS) do
-    if buffer.filename and buffer.modify then
+  for i = 1, #_BUFFERS do
+    if _BUFFERS[i].filename and _BUFFERS[i].modify then
       view:goto_buffer(i)
       io.save_file()
     end
@@ -306,17 +312,17 @@ events_connect(events.RESUME, update_modified_file)
 -- Prompts the user to reload the current file if it has been externally
 -- modified.
 events_connect(events.FILE_CHANGED, function()
-  local msg = ('"%s"\n%s'):format(buffer.filename:iconv('UTF-8', _CHARSET),
-                                  _L['has been modified. Reload it?'])
   local button = ui.dialogs.msgbox{
     title = _L['Reload?'], text = _L['Reload modified file?'],
-    informative_text = msg, icon = 'gtk-dialog-question',
-    button1 = _L['_Yes'], button2 = _L['_No']
+    informative_text = string.format('"%s"\n%s',
+                                     buffer.filename:iconv('UTF-8', _CHARSET),
+                                     _L['has been modified. Reload it?']),
+    icon = 'gtk-dialog-question', button1 = _L['_Yes'], button2 = _L['_No']
   }
   if button == 1 then io.reload_file() end
 end)
 
--- Closes the initial "Untitled" buffer.
+-- Closes the initial "Untitled" buffer when another buffer is opened.
 events_connect(events.FILE_OPENED, function()
   local buf = _BUFFERS[1]
   if #_BUFFERS == 2 and not (buf.filename or buf._type or buf.modify) then
@@ -330,12 +336,12 @@ end)
 -- @see recent_files
 -- @name open_recent_file
 function io.open_recent_file()
-  local utf8_filenames = {}
-  for _, filename in ipairs(io.recent_files) do
-    utf8_filenames[#utf8_filenames + 1] = filename:iconv('UTF-8', _CHARSET)
+  local utf8_list = {}
+  for i = 1, #io.recent_files do
+    utf8_list[#utf8_list + 1] = io.recent_files[i]:iconv('UTF-8', _CHARSET)
   end
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Open'], columns = _L['File'], items = utf8_filenames,
+    title = _L['Open'], columns = _L['File'], items = utf8_list,
     width = CURSES and ui.size[1] - 2 or nil
   }
   if button == 1 and i then io.open_file(io.recent_files[i]) end
@@ -442,10 +448,10 @@ function io.snapopen(paths, filter, exclude_FILTER, opts)
   end
   local utf8_list = {}
   for i = 1, #paths do
-    lfs.dir_foreach(paths[i], function(file)
+    lfs.dir_foreach(paths[i], function(filename)
       if #utf8_list >= io.SNAPOPEN_MAX then return false end
-      file = file:gsub('^%.[/\\]', ''):iconv('UTF-8', _CHARSET)
-      utf8_list[#utf8_list + 1] = file
+      filename = filename:gsub('^%.[/\\]', '')
+      utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
     end, filter, exclude_FILTER)
   end
   if #utf8_list >= io.SNAPOPEN_MAX then
@@ -462,8 +468,11 @@ function io.snapopen(paths, filter, exclude_FILTER, opts)
     string_output = true, width = CURSES and ui.size[1] - 2 or nil
   }
   if opts then for k, v in pairs(opts) do options[k] = v end end
-  local button, files = ui.dialogs.filteredlist(options)
-  if button ~= _L['_OK'] or not files then return end
-  for i = 1, #files do files[i] = files[i]:iconv(_CHARSET, 'UTF-8') end
-  io.open_file(files)
+  local button, utf8_filenames = ui.dialogs.filteredlist(options)
+  if button ~= _L['_OK'] or not utf8_filenames then return end
+  local filenames = {}
+  for i = 1, #utf8_filenames do
+    filenames[i] = utf8_filenames[i]:iconv(_CHARSET, 'UTF-8')
+  end
+  io.open_file(filenames)
 end

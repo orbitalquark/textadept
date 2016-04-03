@@ -155,7 +155,7 @@ local keychain = {}
 -- @name keychain
 M.keychain = setmetatable({}, {
   __index = keychain,
-  __newindex = function() error("'keys.keychain' is read-only") end,
+  __newindex = function() error("read-only table") end,
   __len = function() return #keychain end
 })
 
@@ -253,7 +253,7 @@ local function keypress(code, shift, control, alt, meta)
   end
   -- PROPAGATE otherwise.
 end
-events.connect(events.KEYPRESS, keypress, 1)
+events.connect(events.KEYPRESS, keypress)
 
 ---
 -- Map of key bindings to commands, with language-specific key tables assigned

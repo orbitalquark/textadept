@@ -49,16 +49,16 @@ function M.load(filename)
   for line in f:lines() do
     if line:find('^buffer:') then
       local patt = '^buffer: (%d+) (%d+) (%d+) (.+)$'
-      local anchor, current_pos, first_visible_line, file = line:match(patt)
-      if not file:find('^%[.+%]$') then
-        if lfs_attributes(file) then
-          io.open_file(file)
+      local anchor, current_pos, first_visible_line, filename = line:match(patt)
+      if not filename:find('^%[.+%]$') then
+        if lfs_attributes(filename) then
+          io.open_file(filename)
         else
-          not_found[#not_found + 1] = file
+          not_found[#not_found + 1] = filename
         end
       else
-        buffer.new()._type = file
-        events.emit(events.FILE_OPENED, file)
+        buffer.new()._type = filename
+        events.emit(events.FILE_OPENED, filename) -- close initial untitled buf
       end
       -- Restore saved buffer selection and view.
       anchor, current_pos = tonumber(anchor) or 0, tonumber(current_pos) or 0
@@ -72,6 +72,10 @@ function M.load(filename)
       for line in lines:gmatch('%d+') do
         buffer:marker_add(tonumber(line), textadept.bookmarks.MARK_BOOKMARK)
       end
+    elseif line:find('^size:') then
+      local maximized, width, height = line:match('^size: (%l+) (%d+) (%d+)$')
+      ui.maximized = maximized == 'true'
+      if not ui.maximized then ui.size = {width, height} end
     elseif line:find('^%s*split%d:') then
       local level, num, type, size = line:match('^(%s*)split(%d): (%S+) (%d+)')
       local view = splits[#level] and splits[#level][tonumber(num)] or view
@@ -86,10 +90,6 @@ function M.load(filename)
       view:goto_buffer(buf_idx)
     elseif line:find('^current_view:') then
       current_view = tonumber(line:match('^current_view: (%d+)')) or 1
-    elseif line:find('^size:') then
-      local maximized, width, height = line:match('^size: (%l*) ?(%d+) (%d+)$')
-      ui.maximized = maximized == 'true'
-      if not ui.maximized then ui.size = {width, height} end
     elseif line:find('^recent:') then
       local file = line:match('^recent: (.+)$')
       local recent, exists = io.recent_files, false
@@ -105,7 +105,7 @@ function M.load(filename)
     ui.dialogs.msgbox{
       title = _L['Session Files Not Found'],
       text = _L['The following session files were not found'],
-      informative_text = table.concat(not_found, '\n'),
+      informative_text = table.concat(not_found, '\n'):iconv('UTF-8', _CHARSET),
       icon = 'gtk-dialog-warning'
     }
   end
@@ -132,20 +132,22 @@ function M.save(filename)
   }
   if not filename then return end
   local session = {}
-  local buffer_line = "buffer: %d %d %d %s" -- anchor, cursor, line, filename
-  local split_line = "%ssplit%d: %s %d" -- level, number, type, size
-  local view_line = "%sview%d: %d" -- level, number, doc index
+  local buffer_line = 'buffer: %d %d %d %s' -- anchor, cursor, line, filename
+  local split_line = '%ssplit%d: %s %d' -- level, number, type, size
+  local view_line = '%sview%d: %d' -- level, number, doc index
   -- Write out opened buffers.
-  for _, buffer in ipairs(_BUFFERS) do
-    local file = buffer.filename or buffer._type
-    if file then
+  for i = 1, #_BUFFERS do
+    local buffer = _BUFFERS[i]
+    local filename = buffer.filename or buffer._type
+    if filename then
       local current = buffer == view.buffer
       local anchor = current and 'anchor' or '_anchor'
       local current_pos = current and 'current_pos' or '_current_pos'
       local top_line = current and 'first_visible_line' or '_first_visible_line'
       session[#session + 1] = buffer_line:format(buffer[anchor] or 0,
                                                  buffer[current_pos] or 0,
-                                                 buffer[top_line] or 0, file)
+                                                 buffer[top_line] or 0,
+                                                 filename)
       -- Write out bookmarks.
       local lines = {}
       local line = buffer:marker_next(0, 2^textadept.bookmarks.MARK_BOOKMARK)
@@ -159,14 +161,15 @@ function M.save(filename)
   -- Write out window size. Do this before writing split views since split view
   -- size depends on the window size.
   local maximized, size = tostring(ui.maximized), ui.size
-  session[#session + 1] = ("size: %s %d %d"):format(maximized, size[1], size[2])
+  session[#session + 1] = string.format('size: %s %d %d', maximized, size[1],
+                                        size[2])
   -- Write out split views.
   local function write_split(split, level, number)
     local c1, c2 = split[1], split[2]
     local vertical, size = tostring(split.vertical), split.size
-    local spaces = (' '):rep(level)
+    local spaces = string.rep(' ', level)
     session[#session + 1] = split_line:format(spaces, number, vertical, size)
-    spaces = (' '):rep(level + 1)
+    spaces = string.rep(' ', level + 1)
     if c1[1] and c1[2] then
       write_split(c1, level + 1, 1)
     else
@@ -185,11 +188,11 @@ function M.save(filename)
     session[#session + 1] = view_line:format('', 1, _BUFFERS[splits.buffer])
   end
   -- Write out the current focused view.
-  session[#session + 1] = ("current_view: %d"):format(_VIEWS[view])
+  session[#session + 1] = string.format('current_view: %d', _VIEWS[view])
   -- Write out other things.
   for i = 1, #io.recent_files do
     if i > M.MAX_RECENT_FILES then break end
-    session[#session + 1] = ("recent: %s"):format(io.recent_files[i])
+    session[#session + 1] = string.format('recent: %s', io.recent_files[i])
   end
   -- Write the session.
   local f = io.open(filename, 'wb')
@@ -208,8 +211,8 @@ args.register('-n', '--nosession', 0,
               function() M.SAVE_ON_QUIT = false end, 'No session functionality')
 -- Loads the given session on startup.
 args.register('-s', '--session', 1, function(name)
-  if lfs.attributes(name) then M.load(name) return end
-  M.load(_USERHOME..'/'..name)
+  if not lfs.attributes(name) then name = _USERHOME..'/'..name end
+  M.load(name)
 end, 'Load session')
 
 return M

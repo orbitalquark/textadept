@@ -127,7 +127,7 @@ for k, v in pairs(escapes) do escapes[v] = k end
 --   for displaying useful statusbar information. This flag is used and set
 --   internally, and should not be set otherwise.
 -- @return position of the found text or `-1`
-local function find_(text, next, flags, no_wrap, wrapped)
+local function find(text, next, flags, no_wrap, wrapped)
   if text == '' then return end
   if not flags then
     flags = 0
@@ -141,9 +141,9 @@ local function find_(text, next, flags, no_wrap, wrapped)
 
   -- If text is selected, assume it is from the current search and increment the
   -- caret appropriately for the next search.
-  if buffer:get_sel_text() ~= '' then
-    buffer:goto_pos(buffer[next and 'current_pos' or 'anchor'] +
-                    (next and 1 or -1))
+  if not buffer.selection_empty then
+    local pos = buffer[next and 'current_pos' or 'anchor']
+    buffer:goto_pos(buffer:position_relative(pos, next and 1 or -1))
   end
 
   local pos = -1
@@ -155,17 +155,20 @@ local function find_(text, next, flags, no_wrap, wrapped)
   elseif flags < 16 then
     -- Lua pattern search.
     -- Note: I do not trust utf8.find completely, so only use it if there are
-    -- UTF-8 characters in patt. Otherwise default to string.find.
-    local patt = text:gsub('\\[abfnrtv\\]', escapes)
+    -- UTF-8 characters in the pattern. Otherwise default to string.find.
+    local lib_find = not text:find('[\xC2-\xF4]') and string.find or utf8.find
     local s = next and buffer.current_pos or 0
     local e = next and buffer.length or buffer.current_pos
-    local find = not patt:find('[\xC2-\xF4]') and string.find or utf8.find
-    local caps = {find(buffer:text_range(s, e), next and patt or '^.*()'..patt)}
+    local patt = text:gsub('\\[abfnrtv\\]', escapes)
+    if not next then patt = '^.*()'..patt end
+    local caps = {lib_find(buffer:text_range(s, e), patt)}
     M.captures = {table.unpack(caps, next and 3 or 4)}
     if #caps > 0 and caps[2] >= caps[1] then
-      if find == string.find then
+      if lib_find == string.find then
+        -- Positions are bytes.
         pos, e = s + caps[next and 1 or 3] - 1, s + caps[2]
       else
+        -- Positions are characters, which may be multiple bytes.
         pos = buffer:position_relative(s, caps[next and 1 or 3] - 1)
         e = buffer:position_relative(s, caps[2])
       end
@@ -181,7 +184,7 @@ local function find_(text, next, flags, no_wrap, wrapped)
     buffer:goto_pos(next and 0 or buffer.length)
     ui.statusbar_text = _L['Search wrapped']
     events.emit(events.FIND_WRAPPED)
-    pos = find_(text, next, flags, true, true)
+    pos = find(text, next, flags, true, true)
     if pos == -1 then
       ui.statusbar_text = _L['No results found']
       buffer:line_scroll(0, first_visible_line - buffer.first_visible_line)
@@ -193,7 +196,7 @@ local function find_(text, next, flags, no_wrap, wrapped)
 
   return pos
 end
-events.connect(events.FIND, find_)
+events.connect(events.FIND, find)
 
 -- Finds and selects text incrementally in the current buffer from a starting
 -- position.
@@ -204,10 +207,11 @@ events.connect(events.FIND, find_)
 --   position.
 local function find_incremental(text, next, anchor)
   if anchor then
-    M.incremental_start = buffer.current_pos + (next and 1 or -1)
+    M._incremental_start = buffer:position_relative(buffer.current_pos,
+                                                    next and 1 or -1)
   end
-  buffer:goto_pos(M.incremental_start or 0)
-  find_(text, next, M.match_case and buffer.FIND_MATCHCASE or 0)
+  buffer:goto_pos(M._incremental_start or 0)
+  find(text, next, M.match_case and buffer.FIND_MATCHCASE or 0)
 end
 
 ---
@@ -227,7 +231,7 @@ end
 -- @name find_incremental
 function M.find_incremental(text, next, anchor)
   if text then find_incremental(text, next, anchor) return end
-  M.incremental_start = buffer.current_pos
+  M._incremental_start = buffer.current_pos
   ui.command_entry:set_text('')
   ui.command_entry.enter_mode('find_incremental')
 end
@@ -262,16 +266,17 @@ function M.find_in_files(dir)
   buffer.indicator_current = M.INDIC_FIND
 
   local found = false
-  lfs.dir_foreach(dir, function(file)
+  lfs.dir_foreach(dir, function(filename)
     local match_case = M.match_case
     local line_num = 1
-    for line in io.lines(file) do
+    for line in io.lines(filename) do
       local s, e = (match_case and line or line:lower()):find(text)
       if s and e then
-        file = file:iconv('UTF-8', _CHARSET)
-        buffer:append_text(('%s:%d:%s\n'):format(file, line_num, line))
+        local utf8_filename = filename:iconv('UTF-8', _CHARSET)
+        buffer:append_text(string.format('%s:%d:%s\n', utf8_filename, line_num,
+                                         line))
         local pos = buffer:position_from_line(buffer.line_count - 2) +
-                    #file + #tostring(line_num) + 2
+                    #utf8_filename + #tostring(line_num) + 2
         buffer:indicator_fill_range(pos + s - 1, e - s + 1)
         found = true
       end
@@ -283,7 +288,7 @@ function M.find_in_files(dir)
 end
 
 -- Replaces found text.
--- `find_()` is called first, to select any found text. The selected text is
+-- `find()` is called first, to select any found text. The selected text is
 -- then replaced by the specified replacement text.
 -- This function ignores "Find in Files".
 -- @param rtext The text to replace found text with. It can contain both Lua
@@ -336,7 +341,7 @@ local function replace_all(ftext, rtext)
   local count = 0
   if buffer.selection_empty then
     buffer:goto_pos(0)
-    while find_(ftext, true, nil, true) ~= -1 do
+    while find(ftext, true, nil, true) ~= -1 do
       replace(rtext)
       count = count + 1
     end
@@ -345,17 +350,17 @@ local function replace_all(ftext, rtext)
     buffer.indicator_current = INDIC_REPLACE
     buffer:indicator_fill_range(e, 1)
     buffer:goto_pos(s)
-    local pos = find_(ftext, true, nil, true)
+    local pos = find(ftext, true, nil, true)
     while pos ~= -1 and pos <= buffer:indicator_end(INDIC_REPLACE, s) do
       replace(rtext)
       count = count + 1
-      pos = find_(ftext, true, nil, true)
+      pos = find(ftext, true, nil, true)
     end
     e = buffer:indicator_end(INDIC_REPLACE, s)
     buffer:set_sel(s, e > 0 and e or buffer.length)
     buffer:indicator_clear_range(e, 1)
   end
-  ui.statusbar_text = ("%d %s"):format(count, _L['replacement(s) made'])
+  ui.statusbar_text = string.format('%d %s', count, _L['replacement(s) made'])
   buffer:end_undo_action()
 end
 events.connect(events.REPLACE_ALL, replace_all)
@@ -372,7 +377,7 @@ local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 --   or the previous one. Only applicable when *line* is `nil` or `false`.
 -- @name goto_file_found
 function M.goto_file_found(line, next)
-  local cur_buf, ff_view, ff_buf = _BUFFERS[buffer], nil, nil
+  local ff_view, ff_buf = nil, nil
   for i = 1, #_VIEWS do
     if is_ff_buf(_VIEWS[i].buffer) then ff_view = i break end
   end
@@ -393,16 +398,16 @@ function M.goto_file_found(line, next)
       buffer:search_anchor()
       pos = f(buffer, buffer.FIND_REGEXP, '^.+:[0-9]+:.+$')
     end
-    if pos == -1 then if CURSES then view:goto_buffer(cur_buf) end return end
+    if pos == -1 then return end
     line = buffer:line_from_position(pos)
   end
   buffer:goto_line(line)
 
   -- Goto the source of the search result.
-  local file, line_num = buffer:get_cur_line():match('^(.+):(%d+):.+$')
-  if not file then if CURSES then view:goto_buffer(cur_buf) end return end
+  local utf8_filename, line_num = buffer:get_cur_line():match('^(.+):(%d+):.+$')
+  if not utf8_filename then return end
   textadept.editing.select_line()
-  ui.goto_file(file:iconv(_CHARSET, 'UTF-8'), true, preferred_view)
+  ui.goto_file(utf8_filename:iconv(_CHARSET, 'UTF-8'), true, preferred_view)
   textadept.editing.goto_line(line_num)
 end
 events.connect(events.KEYPRESS, function(code)
