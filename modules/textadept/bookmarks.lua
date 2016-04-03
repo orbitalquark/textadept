@@ -21,7 +21,7 @@ M.MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 -- @param line Optional line number to add or remove a bookmark on.
 -- @name toggle
 function M.toggle(on, line)
-  line = line or buffer:line_from_position(buffer.current_pos)
+  if not line then line = buffer:line_from_position(buffer.current_pos) end
   local f = on and buffer.marker_add or buffer.marker_delete
   if on == nil then -- toggle
     local bit, marker_mask = 2^M.MARK_BOOKMARK, buffer:marker_get(line)
@@ -46,32 +46,34 @@ function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end
 -- @name goto_mark
 function M.goto_mark(next)
   if next == nil then
-    local marks = {}
+    local utf8_list, buffers = {}, {}
     -- List the current buffer's marks, and then all other buffers' marks.
     for _, current_buffer_first in ipairs{true, false} do
-      for i, buffer in ipairs(_BUFFERS) do
-        if current_buffer_first and buffer == _G.buffer or
-           not current_buffer_first and buffer ~= _G.buffer then
+      for i = 1, #_BUFFERS do
+        if current_buffer_first and _BUFFERS[i] == buffer or
+           not current_buffer_first and _BUFFERS[i] ~= buffer then
+          local buffer = _BUFFERS[i]
           local filename = (buffer.filename or buffer._type or
                             _L['Untitled']):match('[^/\\]+$')
           local line = buffer:marker_next(0, 2^M.MARK_BOOKMARK)
           while line >= 0 do
-            local text = filename..':'..tostring(line + 1)..': '..
-                         buffer:get_line(line):match('^[^\r\n]*')
-            marks[#marks + 1], marks[text] = text, i
+            local mark = string.format('%s:%d: %s',
+                                       filename:iconv('UTF-8', _CHARSET),
+                                       line + 1,
+                                       buffer:get_line(line):match('^[^\r\n]*'))
+            utf8_list[#utf8_list + 1], buffers[#utf8_list + 1] = mark, i
             line = buffer:marker_next(line + 1, 2^M.MARK_BOOKMARK)
           end
         end
       end
     end
-    if #marks == 0 then return end
+    if #utf8_list == 0 then return end
     local button, mark = ui.dialogs.filteredlist{
-      title = _L['Select Bookmark'], columns = _L['Bookmark'], items = marks,
-      string_output = true
+      title = _L['Select Bookmark'], columns = _L['Bookmark'], items = utf8_list
     }
-    if button ~= _L['_OK'] or not mark then return end
-    view:goto_buffer(marks[mark])
-    textadept.editing.goto_line(mark:match('^[^:]+:(%d+):'))
+    if button ~= 1 or not mark then return end
+    view:goto_buffer(buffers[mark])
+    textadept.editing.goto_line(utf8_list[mark]:match('^[^:]+:(%d+):'))
   else
     local f = next and buffer.marker_next or buffer.marker_previous
     local current_line = buffer:line_from_position(buffer.current_pos)

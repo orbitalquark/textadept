@@ -83,8 +83,8 @@ events.connect(events.BUFFER_NEW, function()
   buffer.get_lexer, buffer.set_lexer = get_lexer, set_lexer
   buffer.style_name = setmetatable({}, {
     __index = function(_, style_num) -- LuaDoc is in core/.buffer.luadoc
-      assert(style_num >= 0 and style_num <= 255, '0 <= style_num < 256')
-      return buffer:private_lexer_call(style_num)
+      return style_num >= 0 and style_num <= 255 and
+             buffer:private_lexer_call(style_num) or nil
     end,
     __newindex = function() error('read-only property') end
   })
@@ -96,23 +96,13 @@ events.connect(events.FILE_AFTER_SAVE, function(_, saved_as)
   if saved_as then buffer:set_lexer() end
 end)
 
--- Restores the buffer's lexer.
+-- Restores the buffer's lexer, primarily for the side-effect of emitting
+-- `events.LEXER_LOADED`.
 local function restore_lexer() buffer:set_lexer(buffer._lexer) end
 events.connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
 events.connect(events.VIEW_AFTER_SWITCH, restore_lexer)
 events.connect(events.VIEW_NEW, restore_lexer)
 events.connect(events.RESET_AFTER, restore_lexer)
-
----
--- Prompts the user to select a lexer for the current buffer.
--- @see buffer.set_lexer
--- @name select_lexer
-function M.select_lexer()
-  local button, i = ui.dialogs.filteredlist{
-    title = _L['Select Lexer'], columns = _L['Name'], items = M.lexers
-  }
-  if button == 1 and i then buffer:set_lexer(M.lexers[i]) end
-end
 
 -- Generate lexer list.
 local lexers_found = {}
@@ -125,7 +115,20 @@ for _, dir in ipairs{_HOME..'/lexers', _USERHOME..'/lexers'} do
     end
   end
 end
-for lexer in pairs(lexers_found) do M.lexers[#M.lexers + 1] = lexer end
+for lexer in pairs(lexers_found) do
+  M.lexers[#M.lexers + 1] = lexer:iconv('UTF-8', _CHARSET)
+end
 table.sort(M.lexers)
+
+---
+-- Prompts the user to select a lexer for the current buffer.
+-- @see buffer.set_lexer
+-- @name select_lexer
+function M.select_lexer()
+  local button, i = ui.dialogs.filteredlist{
+    title = _L['Select Lexer'], columns = _L['Name'], items = M.lexers
+  }
+  if button == 1 and i then buffer:set_lexer(M.lexers[i]) end
+end
 
 return M

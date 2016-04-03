@@ -46,8 +46,11 @@ local theme_props = {}
 -- @see ui._print
 local function _print(buffer_type, ...)
   local print_buffer
-  for _, buffer in ipairs(_BUFFERS) do
-    if buffer._type == buffer_type then print_buffer = buffer break end
+  for i = 1, #_BUFFERS do
+    if _BUFFERS[i]._type == buffer_type then
+      print_buffer = _BUFFERS[i]
+      break
+    end
   end
   if not print_buffer then
     if not ui.tabs then view:split() end
@@ -55,11 +58,12 @@ local function _print(buffer_type, ...)
     print_buffer._type = buffer_type
     events.emit(events.FILE_OPENED)
   elseif not ui.SILENT_PRINT then
-    local index = _BUFFERS[print_buffer]
-    for i, view in ipairs(_VIEWS) do
-      if view.buffer._type == buffer_type then ui.goto_view(i) break end
+    for i = 1, #_VIEWS do
+      if _VIEWS[i].buffer._type == buffer_type then ui.goto_view(i) break end
     end
-    if view.buffer._type ~= buffer_type then view:goto_buffer(index) end
+    if view.buffer._type ~= buffer_type then
+      view:goto_buffer(_BUFFERS[print_buffer])
+    end
   end
   local args, n = {...}, select('#', ...)
   for i = 1, n do args[i] = tostring(args[i]) end
@@ -95,6 +99,7 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
   -- @param options Table of key-value command line options for gtdialog.
   -- @return Lua objects depending on the dialog kind
   return function(options)
+    -- Set up dialog defaults and convert any 1-based indices to 0-based ones.
     if not options.button1 then options.button1 = _L['_OK'] end
     local select = options.select
     if type(select) == 'number' then
@@ -107,7 +112,7 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
     for option, value in pairs(options) do
       if value then
         args[#args + 1] = '--'..option:gsub('_', '-')
-        if value ~= true then args[#args + 1] = value end
+        if type(value) ~= 'boolean' then args[#args + 1] = value end
       end
     end
     -- Call gtdialog, stripping any trailing newline in the standard output.
@@ -118,9 +123,11 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
       if result == '' then return nil end
       if not CURSES then result = result:iconv(_CHARSET, 'UTF-8') end
       if k == 'filesave' or not options.select_multiple then return result end
-      local files = {}
-      for file in result:gmatch('[^\n]+') do files[#files + 1] = file end
-      return files
+      local filenames = {}
+      for filename in result:gmatch('[^\n]+') do
+        filenames[#filenames + 1] = filename
+      end
+      return filenames
     elseif k == 'filteredlist' or k == 'optionselect' or
            k:find('input') and result:match('^[^\n]+\n?(.*)$'):find('\n') then
       local button, value = result:match('^([^\n]+)\n?(.*)$')
@@ -149,16 +156,17 @@ end})
 -- Prompts the user to select a buffer to switch to.
 -- @name switch_buffer
 function ui.switch_buffer()
-  local columns, items = {_L['Name'], _L['File']}, {}
-  for _, buffer in ipairs(_BUFFERS) do
+  local columns, utf8_list = {_L['Name'], _L['File']}, {}
+  for i = 1, #_BUFFERS do
+    local buffer = _BUFFERS[i]
     local filename = buffer.filename or buffer._type or _L['Untitled']
     filename = filename:iconv('UTF-8', _CHARSET)
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
-    items[#items + 1] = (buffer.modify and '*' or '')..basename
-    items[#items + 1] = filename
+    utf8_list[#utf8_list + 1] = (buffer.modify and '*' or '')..basename
+    utf8_list[#utf8_list + 1] = filename
   end
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Switch Buffers'], columns = columns, items = items,
+    title = _L['Switch Buffers'], columns = columns, items = utf8_list,
     width = CURSES and ui.size[1] - 2 or nil
   }
   if button == 1 and i then view:goto_buffer(i) end
@@ -185,20 +193,26 @@ end
 --   is `false`.
 -- @name goto_file
 function ui.goto_file(filename, split, preferred_view, sloppy)
-  local patt = '^'..filename..'$'
+  local patt = '^'..filename..'$' -- TODO: escape filename properly
   if sloppy then patt = filename:match('[^/\\]+$')..'$' end
   if #_VIEWS == 1 and split and not (view.buffer.filename or ''):find(patt) then
     view:split()
   else
     local other_view = _VIEWS[preferred_view]
-    for i, v in ipairs(_VIEWS) do
-      if (v.buffer.filename or ''):find(patt) then ui.goto_view(i) return end
-      if not other_view and v ~= view then other_view = i end
+    for i = 1, #_VIEWS do
+      if (_VIEWS[i].buffer.filename or ''):find(patt) then
+        ui.goto_view(i)
+        return
+      end
+      if not other_view and _VIEWS[i] ~= view then other_view = i end
     end
     if other_view then ui.goto_view(other_view) end
   end
-  for i, buffer in ipairs(_BUFFERS) do
-    if (buffer.filename or ''):find(patt) then view:goto_buffer(i) return end
+  for i = 1, #_BUFFERS do
+    if (_BUFFERS[i].filename or ''):find(patt) then
+      view:goto_buffer(i)
+      return
+    end
   end
   io.open_file(filename)
 end
@@ -256,11 +270,12 @@ events_connect(events.VIEW_NEW, function()
     '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
   }
   local ctrl_shift_keys = {'L', 'T', 'U', 'Z'}
-  for _, key in ipairs(ctrl_keys) do
-    buffer:clear_cmd_key(string.byte(key) + bit32.lshift(buffer.MOD_CTRL, 16))
+  for i = 1, #ctrl_keys do
+    buffer:clear_cmd_key(string.byte(ctrl_keys[i]) +
+                         bit32.lshift(buffer.MOD_CTRL, 16))
   end
-  for _, key in ipairs(ctrl_shift_keys) do
-    buffer:clear_cmd_key(string.byte(key) +
+  for i = 1, #ctrl_shift_keys do
+    buffer:clear_cmd_key(string.byte(ctrl_shift_keys[i]) +
                          bit32.lshift(buffer.MOD_CTRL + buffer.MOD_SHIFT, 16))
   end
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for
@@ -338,10 +353,6 @@ events_connect(events.UPDATE_UI, function()
                                        col, lexer, eol, tabs, enc, bom)
 end)
 
--- Updates the statusbar and titlebar for a new Scintilla document.
-events_connect(events.BUFFER_NEW, function() events.emit(events.UPDATE_UI) end)
-events_connect(events.BUFFER_NEW, set_title)
-
 -- Save buffer properties.
 events_connect(events.BUFFER_BEFORE_SWITCH, function()
   local buffer = buffer
@@ -374,6 +385,7 @@ local function update_bars()
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   events.emit(events.UPDATE_UI)
 end
+events_connect(events.BUFFER_NEW, update_bars)
 events_connect(events.BUFFER_AFTER_SWITCH, update_bars)
 events_connect(events.VIEW_AFTER_SWITCH, update_bars)
 
@@ -410,18 +422,20 @@ events_connect(events.RESET_AFTER,
 
 -- Prompts for confirmation if any buffers are modified.
 events_connect(events.QUIT, function()
-  local list = {}
-  for _, buffer in ipairs(_BUFFERS) do
-    if buffer.modify then
-      local filename = buffer.filename or buffer._type or _L['Untitled']
-      list[#list + 1] = filename:iconv('UTF-8', _CHARSET)
+  local utf8_list = {}
+  for i = 1, #_BUFFERS do
+    if _BUFFERS[i].modify then
+      local filename = _BUFFERS[i].filename or _BUFFERS[i]._type or
+                       _L['Untitled']
+      utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
     end
   end
-  local cancel = #list > 0 and ui.dialogs.msgbox{
+  local cancel = #utf8_list > 0 and ui.dialogs.msgbox{
     title = _L['Quit without saving?'],
     text = _L['The following buffers are unsaved:'],
-    informative_text = table.concat(list, '\n'), icon = 'gtk-dialog-question',
-    button1 = _L['_Cancel'], button2 = _L['Quit _without saving']
+    informative_text = table.concat(utf8_list, '\n'),
+    icon = 'gtk-dialog-question', button1 = _L['_Cancel'],
+    button2 = _L['Quit _without saving']
   } ~= 2
   if cancel then return true end -- prevent quit
 end)

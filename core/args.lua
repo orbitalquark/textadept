@@ -50,9 +50,7 @@ local function process(arg)
     local switch = switches[arg[i]]
     if switch then
       local f, n = table.unpack(switch)
-      local args = {}
-      for j = i + 1, i + n do args[#args + 1] = arg[j] end
-      f(table.unpack(args))
+      f(table.unpack(arg, i + 1, i + n))
       i = i + n
     else
       io.open_file(lfs.abspath(arg[i], arg[-1]))

@@ -270,6 +270,7 @@ local handlers = {}
 -- @see disconnect
 -- @name connect
 function M.connect(event, f, index)
+  -- Note: cannot assert() here since _L is undefined early in init process.
   if not event then error(_L['Undefined event name']) end
   if not handlers[event] then handlers[event] = {} end
   if handlers[event][f] then M.disconnect(event, f) end

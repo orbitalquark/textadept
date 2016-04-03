@@ -250,13 +250,13 @@ local function get_gdk_key(key_seq)
   local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
                     (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
                     (mods:find('m') and 0x10000000 or 0)
-  local byte = string.byte(key)
-  if #key > 1 or byte < 32 then
+  local code = string.byte(key)
+  if #key > 1 or code < 32 then
     for i, s in pairs(keys.KEYSYMS) do
-      if s == key and i > 0xFE20 then byte = i break end
+      if s == key and i > 0xFE20 then code = i break end
     end
   end
-  return byte, modifiers
+  return code, modifiers
 end
 
 -- Get a string uniquely identifying a key binding.
@@ -282,11 +282,11 @@ end
 local function read_menu_table(menu, contextmenu)
   local gtkmenu = {}
   gtkmenu.title = menu.title
-  for _, menuitem in ipairs(menu) do
-    if menuitem.title then
-      gtkmenu[#gtkmenu + 1] = read_menu_table(menuitem, contextmenu)
+  for i = 1, #menu do
+    if menu[i].title then
+      gtkmenu[#gtkmenu + 1] = read_menu_table(menu[i], contextmenu)
     else
-      local label, f = menuitem[1], menuitem[2]
+      local label, f = menu[i][1], menu[i][2]
       local menu_id = not contextmenu and #menu_actions + 1 or
                       #contextmenu_actions + 1000 + 1
       local key, mods = get_gdk_key(key_shortcuts[get_id(f)])
@@ -306,11 +306,11 @@ end
 -- @param items The current list of items.
 -- @param commands The current list of commands.
 local function build_command_tables(menu, title, items, commands)
-  for _, menuitem in ipairs(menu) do
-    if menuitem.title then
-      build_command_tables(menuitem, menuitem.title, items, commands)
-    elseif menuitem[1] ~= '' then
-      local label, f = menuitem[1], menuitem[2]
+  for i = 1, #menu do
+    if menu[i].title then
+      build_command_tables(menu[i], menu[i].title, items, commands)
+    elseif menu[i][1] ~= '' then
+      local label, f = menu[i][1], menu[i][2]
       if title then label = title..': '..label end
       items[#items + 1] = label:gsub('_([^_])', '%1')
       items[#items + 1] = key_shortcuts[get_id(f)] or ''
@@ -390,7 +390,7 @@ local function set_contextmenus(buffer_menu, tab_menu)
     set_contextmenus(nil, menu)
   end)
 end
-if not CURSES then set_contextmenus() end
+set_contextmenus()
 
 ---
 -- Prompts the user to select a menu command to run.

@@ -58,7 +58,7 @@ textadept.editing.autocompleters.lua = function()
           local fields = tag_line:match(';"\t(.*)$')
           local k, class = fields:sub(1, 1), fields:match('class:(%S+)') or ''
           if class == symbol and (op ~= ':' or k == 'f') then
-            list[#list + 1] = ("%s%s%d"):format(name, sep, xpms[k])
+            list[#list + 1] = string.format('%s%s%d', name, sep, xpms[k])
             list[name] = true
           end
         end

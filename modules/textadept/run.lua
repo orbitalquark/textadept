@@ -299,7 +299,7 @@ local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 -- @see cwd
 -- @name goto_error
 function M.goto_error(line, next)
-  local cur_buf, msg_view, msg_buf = _BUFFERS[buffer], nil, nil
+  local msg_view, msg_buf = nil, nil
   for i = 1, #_VIEWS do
     if is_msg_buf(_VIEWS[i].buffer) then msg_view = i break end
   end
@@ -322,17 +322,17 @@ function M.goto_error(line, next)
       if wline == -1 then wline = eline else eline = wline end
     end
     line = (next and math.min or math.max)(wline, eline)
-    if line == -1 then if CURSES then view:goto_buffer(cur_buf) end return end
+    if line == -1 then return end
   end
   buffer:goto_line(line)
 
   -- Goto the warning or error and show an annotation.
   local error = get_error(buffer:get_line(line):match('^[^\r\n]*'))
-  if not error then if CURSES then view:goto_buffer(cur_buf) end return end
+  if not error then return end
   textadept.editing.select_line()
   ui.goto_file(M.cwd..'/'..error.filename, true, preferred_view, true)
   local line_num, message = error.line, error.message
-  buffer:goto_line(line_num - 1)
+  textadept.editing.goto_line(line_num)
   if message then
     buffer.annotation_text[line_num - 1] = message
     -- Style number 8 is the error style.
@@ -411,8 +411,9 @@ events.connect(events.FILE_AFTER_SAVE, function(filename)
       buffer:goto_pos(buffer:find_column(captures.line, captures.column or 0))
     elseif captures.line < top_line or captures.line > bottom_line then
       local line = buffer:line_from_position(buffer.current_pos)
-      buffer.annotation_text[line] = 'Line '..(captures.line + 1)..'\n'..
-                                     captures.message
+      buffer.annotation_text[line] = string.format('%s %d\n%s', _L['Line:'],
+                                                   captures.line + 1,
+                                                   captures.message)
       buffer.annotation_style[line] = 8 -- error style number
     end
   end)
