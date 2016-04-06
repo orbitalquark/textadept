@@ -160,7 +160,7 @@ function ui.switch_buffer()
   for i = 1, #_BUFFERS do
     local buffer = _BUFFERS[i]
     local filename = buffer.filename or buffer._type or _L['Untitled']
-    filename = filename:iconv('UTF-8', _CHARSET)
+    if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
     utf8_list[#utf8_list + 1] = (buffer.modify and '*' or '')..basename
     utf8_list[#utf8_list + 1] = filename
@@ -304,7 +304,7 @@ end)
 -- Sets the title of the Textadept window to the buffer's filename.
 local function set_title()
   local filename = buffer.filename or buffer._type or _L['Untitled']
-  filename = filename:iconv('UTF-8', _CHARSET)
+  if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
   local basename = buffer.filename and filename:match('[^/\\]+$') or filename
   ui.title = string.format('%s %s Textadept (%s)', basename,
                            buffer.modify and '*' or '-', filename)
@@ -427,7 +427,10 @@ events_connect(events.QUIT, function()
     if _BUFFERS[i].modify then
       local filename = _BUFFERS[i].filename or _BUFFERS[i]._type or
                        _L['Untitled']
-      utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
+      if _BUFFERS[i].filename then
+        filename = filename:iconv('UTF-8', _CHARSET)
+      end
+      utf8_list[#utf8_list + 1] = filename
     end
   end
   local cancel = #utf8_list > 0 and ui.dialogs.msgbox{

@@ -53,13 +53,14 @@ function M.goto_mark(next)
         if current_buffer_first and _BUFFERS[i] == buffer or
            not current_buffer_first and _BUFFERS[i] ~= buffer then
           local buffer = _BUFFERS[i]
-          local filename = (buffer.filename or buffer._type or
-                            _L['Untitled']):match('[^/\\]+$')
+          local basename = (buffer.filename or ''):match('[^/\\]+$') or
+                           buffer._type or _L['Untitled']
+          if buffer.filename then
+            basename = basename:iconv('UTF-8', _CHARSET)
+          end
           local line = buffer:marker_next(0, 2^M.MARK_BOOKMARK)
           while line >= 0 do
-            local mark = string.format('%s:%d: %s',
-                                       filename:iconv('UTF-8', _CHARSET),
-                                       line + 1,
+            local mark = string.format('%s:%d: %s', basename, line + 1,
                                        buffer:get_line(line):match('^[^\r\n]*'))
             utf8_list[#utf8_list + 1], buffers[#utf8_list + 1] = mark, i
             line = buffer:marker_next(line + 1, 2^M.MARK_BOOKMARK)
