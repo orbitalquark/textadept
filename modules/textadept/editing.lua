@@ -140,9 +140,9 @@ M.autocompleters = {}
 M.api_files = {}
 
 -- Matches characters specified in char_matches.
-events.connect(events.CHAR_ADDED, function(c)
+events.connect(events.CHAR_ADDED, function(byte)
   if not M.AUTOPAIR then return end
-  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[c]
+  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[byte]
   if match and buffer.selections == 1 then buffer:insert_text(-1, match) end
 end)
 
@@ -151,8 +151,8 @@ events.connect(events.KEYPRESS, function(code)
   if not M.AUTOPAIR or keys.KEYSYMS[code] ~= '\b' or buffer.selections ~= 1 then
     return
   end
-  local pos, char = buffer.current_pos, buffer.char_at[buffer.current_pos - 1]
-  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[char]
+  local pos, byte = buffer.current_pos, buffer.char_at[buffer.current_pos - 1]
+  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[byte]
   if match and buffer.char_at[pos] == string.byte(match) then buffer:clear() end
 end)
 
@@ -182,8 +182,8 @@ events.connect(events.KEYPRESS, function(code)
 end)
 
 -- Auto-indent on return.
-events.connect(events.CHAR_ADDED, function(char)
-  if not M.AUTOINDENT or char ~= 10 then return end
+events.connect(events.CHAR_ADDED, function(byte)
+  if not M.AUTOINDENT or byte ~= 10 then return end
   local line = buffer:line_from_position(buffer.current_pos)
   local i = line - 1
   while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
@@ -229,9 +229,9 @@ events.connect(events.FILE_BEFORE_SAVE, function()
   -- Strip trailing whitespace.
   for line = 0, buffer.line_count - 1 do
     local s, e = buffer:position_from_line(line), buffer.line_end_position[line]
-    local i, c = e - 1, buffer.char_at[e - 1]
-    while i >= s and (c == 9 or c == 32) do
-      i, c = i - 1, buffer.char_at[i - 1]
+    local i, byte = e - 1, buffer.char_at[e - 1]
+    while i >= s and (byte == 9 or byte == 32) do
+      i, byte = i - 1, buffer.char_at[i - 1]
     end
     if i < e - 1 then buffer:delete_range(i + 1, e - i - 1) end
   end
@@ -334,8 +334,8 @@ end
 -- @name transpose_chars
 function M.transpose_chars()
   if buffer.current_pos == 0 then return end
-  local pos, char = buffer.current_pos, buffer.char_at[buffer.current_pos]
-  if char == 10 or char == 13 or pos == buffer.length then pos = pos - 1 end
+  local pos, byte = buffer.current_pos, buffer.char_at[buffer.current_pos]
+  if byte == 10 or byte == 13 or pos == buffer.length then pos = pos - 1 end
   buffer:set_target_range(pos - 1, pos + 1)
   buffer:replace_target(buffer.target_text:reverse())
   buffer:goto_pos(pos + 1)
