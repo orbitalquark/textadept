@@ -441,7 +441,9 @@ function M.convert_indentation()
     local current_indentation, new_indentation = buffer:text_range(s, e), nil
     if buffer.use_tabs then
       -- Need integer division and LuaJIT does not have // operator.
-      new_indentation = string.rep('\t', math.floor(indent / buffer.tab_width))
+      local tabs = math.floor(indent / buffer.tab_width)
+      local spaces = math.fmod(indent, buffer.tab_width)
+      new_indentation = string.rep('\t', tabs)..string.rep(' ', spaces)
     else
       new_indentation = string.rep(' ', indent)
     end
