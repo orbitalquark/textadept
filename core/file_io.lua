@@ -266,10 +266,10 @@ end
 -- @name close_buffer
 function io.close_buffer()
   local filename = buffer.filename or buffer._type or _L['Untitled']
+  if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
   local confirm = not buffer.modify or ui.dialogs.msgbox{
     title = _L['Close without saving?'],
-    text = _L['There are unsaved changes in'],
-    informative_text = filename:iconv('UTF-8', _CHARSET),
+    text = _L['There are unsaved changes in'], informative_text = filename,
     icon = 'gtk-dialog-question', button1 = _L['_Cancel'],
     button2 = _L['Close _without saving']
   } == 2
