@@ -12,7 +12,6 @@ args = require('args')
 _L = require('locale')
 require('file_io')
 require('lfs_ext')
-for k, v in pairs(require('utf8_ext')) do utf8[k] = v end
 require('ui')
 keys = require('keys')
 
