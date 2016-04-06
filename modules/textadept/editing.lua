@@ -157,7 +157,8 @@ events.connect(events.KEYPRESS, function(code)
 end)
 
 -- Highlights matching braces.
-events.connect(events.UPDATE_UI, function()
+events.connect(events.UPDATE_UI, function(updated)
+  if updated and bit32.band(updated, 3) == 0 then return end -- ignore scrolling
   local pos = buffer.current_pos
   if (M.braces[buffer:get_lexer(true)] or M.braces)[buffer.char_at[pos]] then
     local match = buffer:brace_match(pos)
