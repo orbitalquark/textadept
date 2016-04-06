@@ -123,12 +123,17 @@
      ENTRY(find),
      ENTRY(gmatch),
      ENTRY(gsub),
-@@ -1301,11 +1319,13 @@
-   luaL_newlib(L, libs);
+@@ -1297,15 +1315,17 @@
+     { NULL, NULL }
+   };
+ 
++lua_getglobal(L, "utf8");
+ #if LUA_VERSION_NUM >= 502
+-  luaL_newlib(L, libs);
++  luaL_setfuncs(L, libs, 0);
  #else
-   lua_createtable(L, 0, sizeof(libs)/sizeof(libs[0]));
--  luaL_register(L, NULL, libs);
-+  luaL_register(L, "utf8_ext", libs);
+-  lua_createtable(L, 0, sizeof(libs)/sizeof(libs[0]));
+   luaL_register(L, NULL, libs);
  #endif
  
 +#if 0
