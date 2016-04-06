@@ -265,19 +265,30 @@ function M.find_in_files(dir)
   ui._print(_L['[Files Found Buffer]'], _L['Find:']..' '..text)
   buffer.indicator_current = M.INDIC_FIND
 
+  -- Note: I do not trust utf8.find completely, so only use it if there are
+  -- UTF-8 characters in the pattern. Otherwise default to string.find.
+  local lib_find = not text:find('[\xC2-\xF4]') and string.find or utf8.find
   local found = false
   lfs.dir_foreach(dir, function(filename)
     local match_case = M.match_case
     local line_num = 1
     for line in io.lines(filename) do
-      local s, e = (match_case and line or line:lower()):find(text)
+      local s, e = lib_find(match_case and line or line:lower(), text)
       if s and e then
         local utf8_filename = filename:iconv('UTF-8', _CHARSET)
         buffer:append_text(string.format('%s:%d:%s\n', utf8_filename, line_num,
                                          line))
         local pos = buffer:position_from_line(buffer.line_count - 2) +
                     #utf8_filename + #tostring(line_num) + 2
-        buffer:indicator_fill_range(pos + s - 1, e - s + 1)
+        if lib_find == string.find then
+          -- Positions are bytes.
+          buffer:indicator_fill_range(pos + s - 1, e - s + 1)
+        else
+          -- Positions are characters, which may be multiple bytes.
+          s = buffer:position_relative(pos, s - 1)
+          e = buffer:position_relative(pos, e)
+          buffer:indicator_fill_range(s, e - s)
+        end
         found = true
       end
       line_num = line_num + 1
