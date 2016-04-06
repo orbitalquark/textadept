@@ -963,8 +963,8 @@ static sptr_t l_todoc(lua_State *L, int index) {
  * returns 0 if they are equivalent, less than zero if that document belongs to
  * the command entry, and greater than zero otherwise.
  * In the last case, loads the document in `dummy_view` for non-global document
- * use. Raises and error if the value is not a Scintilla document or if the
- * document no longer exists.
+ * use (unless it is already loaded). Raises and error if the value is not a
+ * Scintilla document or if the document no longer exists.
  * @param L The Lua state.
  * @param index The stack index of the Scintilla document.
  * @return 0, -1, or the Scintilla document's pointer
@@ -981,6 +981,7 @@ static sptr_t l_globaldoccompare(lua_State *L, int index) {
                   index, "this Buffer does not exist");
     lua_pop(L, 2); // buffer, ta_buffers
     if (doc == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) return -1;
+    if (doc == SS(dummy_view, SCI_GETDOCPOINTER, 0, 0)) return doc; // keep
     return (SS(dummy_view, SCI_SETDOCPOINTER, 0, doc), doc);
   } else return 0;
 }

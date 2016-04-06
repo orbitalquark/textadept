@@ -552,28 +552,25 @@ end
 -- @see buffer.word_chars
 -- @see autocomplete
 M.autocompleters.word = function()
-  local list, ignore_case = {}, buffer.auto_c_ignore_case
-  local line, pos = buffer:get_cur_line()
-  local word_char = '['..buffer.word_chars:gsub('(%p)', '%%%1')..']'
-  local word = line:sub(1, pos):match(word_char..'*$')
-  if word == '' then return nil end
-  local word_patt = word:gsub('(%p)', '%%%1')
-  if ignore_case then
-    word_patt = word_patt:lower():gsub('%l', function(c)
-      return string.format('[%s%s]', string.upper(c), c)
-    end)
-  end
-  word_patt = '()('..word_patt..word_char..'+)'
-  local nonword_char = '^[^'..buffer.word_chars:gsub('(%p)', '%%%1')..']'
+  local list, matches = {}, {}
+  local s = buffer:word_start_position(buffer.current_pos, true)
+  if s == buffer.current_pos then return end
+  local word = buffer:text_range(s, buffer.current_pos)
   for i = 1, #_BUFFERS do
     if _BUFFERS[i] == buffer or M.AUTOCOMPLETE_ALL then
-      local text = _BUFFERS[i]:get_text()
-      for match_pos, match in text:gmatch(word_patt) do
-        -- Frontier pattern (%f) is too slow, so check prior char after a match.
-        if (match_pos == 1 or text:find(nonword_char, match_pos - 1)) and
-           not list[match] then
-          list[#list + 1], list[match] = match, true
+      local buffer = _BUFFERS[i]
+      buffer.search_flags = buffer.FIND_WORDSTART
+      if not buffer.auto_c_ignore_case then
+        buffer.search_flags = buffer.search_flags + buffer.FIND_MATCHCASE
+      end
+      buffer:target_whole_document()
+      while buffer:search_in_target(word) > -1 do
+        local e = buffer:word_end_position(buffer.target_end, true)
+        local match = buffer:text_range(buffer.target_start, e)
+        if #match > #word and not matches[match] then
+          list[#list + 1], matches[match] = match, true
         end
+        buffer:set_target_range(e, buffer.length)
       end
     end
   end
