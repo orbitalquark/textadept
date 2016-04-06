@@ -146,26 +146,26 @@ local function complete_lua()
   if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
   local cmpls = {}
   part = '^'..part
-  if not ok then -- shorthand notation
-    local pool = {
-      buffer, view, ui, _G, _SCINTILLA.functions, _SCINTILLA.properties
-    }
+  if not ok or symbol == 'buffer' then
+    local pool
+    if not ok then
+      -- Consider `buffer`, `view`, `ui` as globals too.
+      pool = {buffer, view, ui, _G, _SCINTILLA.functions, _SCINTILLA.properties}
+    else
+      pool = op == ':' and {_SCINTILLA.functions} or
+                           {_SCINTILLA.properties, _SCINTILLA.constants}
+    end
     for i = 1, #pool do
       for k in pairs(pool[i]) do
         if type(k) == 'string' and k:find(part) then cmpls[#cmpls + 1] = k end
       end
     end
-  else
-    for k in pairs(result) do
-      if type(k) == 'string' and k:find(part) then cmpls[#cmpls + 1] = k end
-    end
-    if symbol == 'buffer' and op == ':' then
-      for f in pairs(_SCINTILLA.functions) do
-        if f:find(part) then cmpls[#cmpls + 1] = f end
-      end
-    elseif symbol == 'buffer' and op == '.' then
-      for _, t in ipairs{_SCINTILLA.properties, _SCINTILLA.constants} do
-        for p in pairs(t) do if p:find(part) then cmpls[#cmpls + 1] = p end end
+  end
+  if ok then
+    for k, v in pairs(result) do
+      if type(k) == 'string' and k:find(part) and
+         (op == '.' or type(v) == 'function') then
+        cmpls[#cmpls + 1] = k
       end
     end
   end
