@@ -627,7 +627,8 @@ keys.find_incremental = {
     ui.find.find_incremental(ui.command_entry:get_text(), false, true)
   end,
   ['\b'] = function()
-    ui.find.find_incremental(ui.command_entry:get_text():sub(1, -2), true)
+    local e = ui.command_entry:position_before(ui.command_entry.length)
+    ui.find.find_incremental(ui.command_entry:text_range(0, e), true)
     return false -- propagate
   end
 }
