@@ -79,38 +79,39 @@ local preferred_view
 -- @param event Event to emit upon command output.
 -- @see _G.events
 local function run_command(commands, event)
-  local command, cwd, data
+  local command, data
   if commands ~= M.build_commands then
     if not buffer.filename then return end
     buffer:annotation_clear_all()
     io.save_file()
     command = commands[buffer.filename:match('[^.]+$')] or
               commands[buffer:get_lexer()]
-    cwd = buffer.filename:match('^(.+)[/\\][^/\\]+$') or ''
+    M.cwd = buffer.filename:match('^(.+)[/\\][^/\\]+$') or ''
     data = buffer:get_lexer()
   else
     for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
-    cwd = io.get_project_root()
-    command = commands[cwd]
+    M.cwd = io.get_project_root()
+    if not M.cwd then return end
+    command = commands[M.cwd]
     if not command then
       local lfs_attributes = lfs.attributes
       for build_file, build_command in pairs(commands) do
-        if lfs_attributes(cwd..'/'..build_file) then
+        if lfs_attributes(M.cwd..'/'..build_file) then
           local button, cmd = ui.dialogs.inputbox{
-            title = _L['Command'], informative_text = cwd, text = build_command,
-            button1 = _L['_OK'], button2 = _L['_Cancel']
+            title = _L['Command'], informative_text = M.cwd,
+            text = build_command, button1 = _L['_OK'], button2 = _L['_Cancel']
           }
           if button == 1 then command = cmd end
           break
         end
       end
     end
-    data = cwd
+    data = M.cwd
   end
   if type(command) == 'function' then
     local wd
     command, wd = command()
-    if wd then cwd, data = wd, commands ~= M.build_commands and data or wd end
+    if wd then M.cwd, data = wd, commands ~= M.build_commands and data or wd end
   end
   if not command then return end
   if buffer.filename then
@@ -127,24 +128,20 @@ local function run_command(commands, event)
   preferred_view = view
   local function emit_output(output, focus)
     ui.SILENT_PRINT = not focus
-    for line in output:gmatch('[^\r\n]+') do
-      events.emit(event, data, line:iconv('UTF-8', _CHARSET))
-    end
+    for line in output:gmatch('[^\r\n]+') do events.emit(event, data, line) end
     ui.SILENT_PRINT = false
   end
   local function emit_status(status) emit_output('> exit status: '..status) end
 
-  if commands == M.build_commands then emit_output('> cd '..cwd) end
-  emit_output('> '..command, not M.RUN_IN_BACKGROUND)
-  local p, err = spawn(command, cwd, emit_output, emit_output, emit_status)
-  if not p then error(err) end
-
-  M.proc, M.cwd = p, cwd
+  if commands == M.build_commands then emit_output('> cd '..M.cwd) end
+  emit_output('> '..command:iconv('UTF-8', _CHARSET), not M.RUN_IN_BACKGROUND)
+  M.proc = assert(spawn(command, M.cwd, emit_output, emit_output, emit_status))
 end
 
 -- Parses the given message for a warning or error message and returns a table
 -- of the warning/error's details.
--- @param message The message to parse for warnings or errors.
+-- @param message The message to parse for warnings or errors. The message
+--   is assumed to be encoded in _CHARSET.
 -- @see error_patterns
 local function get_error(message)
   for i = 1, #M.error_patterns do
@@ -153,7 +150,7 @@ local function get_error(message)
       local captures = {message:match(patt)}
       for detail in patt:gmatch('[^%%](%b())') do
         if detail == '(.-)' then
-          captures.filename = table.remove(captures, 1):iconv(_CHARSET, 'UTF-8')
+          captures.filename = table.remove(captures, 1)
         elseif detail == '(%d+)' then
           captures.line = tonumber(table.remove(captures, 1))
         else
@@ -169,12 +166,13 @@ local function get_error(message)
 end
 
 -- Prints the output from a run or compile shell command.
--- If the output is a recognized warning or error message, mark it.
+-- Assume output is UTF-8 unless there's a recognized warning or error message.
+-- In that case assume it is encoded in _CHARSET and mark it.
 -- @param _ The current lexer.
 -- @param output The output to print.
 local function print_output(_, output)
-  ui.print(output)
   local error = get_error(output)
+  ui.print(not error and output or output:iconv('UTF-8', _CHARSET))
   if not error then return end
   -- Current position is one line below the error due to ui.print()'s '\n'.
   buffer:marker_add(buffer.line_count - 2,
@@ -327,7 +325,8 @@ function M.goto_error(line, next)
   buffer:goto_line(line)
 
   -- Goto the warning or error and show an annotation.
-  local error = get_error(buffer:get_line(line):match('^[^\r\n]*'))
+  local line = buffer:get_line(line):match('^[^\r\n]*')
+  local error = get_error(line:iconv(_CHARSET, 'UTF-8'))
   if not error then return end
   textadept.editing.select_line()
   ui.goto_file(M.cwd..'/'..error.filename, true, preferred_view, true)
