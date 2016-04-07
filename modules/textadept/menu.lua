@@ -6,8 +6,10 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Defines the menus used by Textadept.
--- Menus are simply tables and may be edited in place. Submenus have `title`
--- keys with string text.
+-- Menus are simply tables of menu items and submenus and may be edited in
+-- place. A menu item itself is a table whose first element is a menu label and
+-- whose second element is a menu command to run. Submenus have `title` keys
+-- assigned to string text.
 -- If applicable, load this module last in your *~/.textadept/init.lua*, after
 -- [`textadept.keys`]() since it looks up defined key commands to show them in
 -- menus.
@@ -19,8 +21,12 @@ local SEPARATOR = {''}
 
 ---
 -- The default main menubar.
+-- Individual menus, submenus, and menu items can be retrieved by name in
+-- addition to table index number.
 -- @class table
 -- @name menubar
+-- @usage textadept.menubar[_L['_File']]['_New'] -- returns {'_New', buffer.new}
+-- @usage textadept.menubar[_L['_File']]['_New'][2] = function() ... end
 local default_menubar = {
   { title = _L['_File'],
     {_L['_New'], buffer.new},
@@ -207,8 +213,11 @@ local default_menubar = {
 
 ---
 -- The default right-click context menu.
+-- Submenus, and menu items can be retrieved by name in addition to table index
+-- number.
 -- @class table
 -- @name context_menu
+-- @usage textadept.menu.context_menu[#textadept.menu.context_menu + 1] = {...}
 local default_context_menu = {
   {_L['_Undo'], buffer.undo},
   {_L['_Redo'], buffer.redo},
@@ -223,6 +232,8 @@ local default_context_menu = {
 
 ---
 -- The default tabbar context menu.
+-- Submenus, and menu items can be retrieved by name in addition to table index
+-- number.
 -- @class table
 -- @name tab_context_menu
 local default_tab_context_menu = {
@@ -331,7 +342,14 @@ local items, commands
 local function proxy_menu(menu, update, menubar)
   return setmetatable({}, {
     __index = function(_, k)
-      local v = menu[k]
+      local v
+      if type(k) == 'number' then
+        v = menu[k]
+      elseif type(k) == 'string' then
+        for i = 1, #menu do
+          if menu[i].title == k or menu[i][1] == k then v = menu[i] break end
+        end
+      end
       return type(v) == 'table' and proxy_menu(v, update, menubar or menu) or v
     end,
     __newindex = function(_, k, v)
