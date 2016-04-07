@@ -75,7 +75,7 @@ local M = {}
 -- transform with the process' standard output (stdout). The code may use a `%`
 -- character to represent placeholder *n*'s text. An example is
 --
---     snippets['env'] = '$%1(HOME) = %1[echo $%]'
+--     snippets['env'] = '$%1(HOME) = %1[echo $%1]'
 --
 -- ### `%%`
 --
@@ -168,12 +168,10 @@ local function new_snippet(text, trigger)
   end
   if #lines > 1 then
     -- Match indentation on all lines after the first.
-    local indent_size = #buffer:get_cur_line():match('^%s*')
-    if not use_tabs then
-      -- Need integer division and LuaJIT does not have // operator.
-      indent_size = math.floor(indent_size / buffer.tab_width)
-    end
-    local additional_indent = indent[use_tabs]:rep(indent_size)
+    local line = buffer:line_from_position(buffer.current_pos)
+    -- Need integer division and LuaJIT does not have // operator.
+    local level = math.floor(buffer.line_indentation[line] / buffer.tab_width)
+    local additional_indent = indent[use_tabs]:rep(level)
     for i = 2, #lines do lines[i] = additional_indent..lines[i] end
   end
   text = table.concat(lines, ({[0] = '\r\n', '\r', '\n'})[buffer.eol_mode])
@@ -348,26 +346,22 @@ end
 -- language-specific snippets.
 -- @name _select
 function M._select()
-  local list, t = {}, {}
+  local list, items = {}, {}
   for trigger, text in pairs(snippets) do
-    if type(text) == 'string' then list[#list + 1] = trigger..'\0 \0'..text end
+    if type(text) == 'string' then list[#list + 1] = trigger..'|'..text end
   end
-  local lexer = buffer:get_lexer(true)
-  for trigger, text in pairs(snippets[lexer] or {}) do
-    if type(text) == 'string' then
-      list[#list + 1] = string.format('%s\0%s\0%s', trigger, lexer, text)
-    end
+  for trigger, text in pairs(snippets[buffer:get_lexer(true)] or {}) do
+    if type(text) == 'string' then list[#list + 1] = trigger..'|'..text end
   end
   table.sort(list)
   for i = 1, #list do
-    t[#t + 1], t[#t + 2], t[#t + 3] = list[i]:match('^(%Z+)%z(%Z+)%z(%Z+)$')
+    items[#items + 1], items[#items + 2] = list[i]:match('^([^|]+)|(.+)$')
   end
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Select Snippet'],
-    columns = {_L['Trigger'], _L['Scope'], _L['Snippet Text']}, items = t,
-    width = CURSES and ui.size[1] - 2 or nil
+    title = _L['Select Snippet'], columns = {_L['Trigger'], _L['Snippet Text']}, 
+    items = items, width = CURSES and ui.size[1] - 2 or nil
   }
-  if button == 1 and i then M._insert(t[i * 3]) end
+  if button == 1 and i then M._insert(items[i * 2]) end
 end
 
 -- Metatable for a snippet object.
@@ -534,6 +528,7 @@ M._snippet_mt = {
                              setmetatable(env, {__index = _G}))
       return f and select(2, pcall(f)) or result or ''
     elseif placeholder.sh_code then
+      -- Note: cannot use spawn since $env variables are not expanded.
       local command = placeholder.sh_code:gsub('%f[%%]%%%f[^%%]', text)
       local p = io.popen(command)
       local result = p:read('*a'):sub(1, -2) -- chop '\n'
