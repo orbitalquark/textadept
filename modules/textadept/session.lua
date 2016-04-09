@@ -43,15 +43,15 @@ function M.load(filename)
   if not filename then return end
   local not_found = {}
   local f = io.open(filename, 'rb')
-  if not f then io.close_all_buffers() return false end
+  if not f or not io.close_all_buffers() then return false end
+  io.recent_files = {}
   local current_view, splits = 1, {[0] = {}}
-  local lfs_attributes = lfs.attributes
   for line in f:lines() do
     if line:find('^buffer:') then
       local patt = '^buffer: (%d+) (%d+) (%d+) (.+)$'
-      local anchor, current_pos, first_visible_line, filename = line:match(patt)
+      local anchor, current_pos, top_line, filename = line:match(patt)
       if not filename:find('^%[.+%]$') then
-        if lfs_attributes(filename) then
+        if lfs.attributes(filename) then
           io.open_file(filename)
         else
           not_found[#not_found + 1] = filename
@@ -61,12 +61,9 @@ function M.load(filename)
         events.emit(events.FILE_OPENED, filename) -- close initial untitled buf
       end
       -- Restore saved buffer selection and view.
-      anchor, current_pos = tonumber(anchor) or 0, tonumber(current_pos) or 0
-      first_visible_line = tonumber(first_visible_line) or 0
-      buffer._anchor, buffer._current_pos = anchor, current_pos
-      buffer._first_visible_line = first_visible_line
-      buffer:line_scroll(0, buffer:visible_from_doc_line(first_visible_line))
-      buffer:set_sel(anchor, current_pos)
+      buffer:set_sel(tonumber(anchor), tonumber(current_pos))
+      buffer:line_scroll(0, buffer:visible_from_doc_line(tonumber(top_line)) -
+                            buffer.first_visible_line)
     elseif line:find('^bookmarks:') then
       local lines = line:match('^bookmarks: (.*)$')
       for line in lines:gmatch('%d+') do
@@ -91,12 +88,7 @@ function M.load(filename)
     elseif line:find('^current_view:') then
       current_view = tonumber(line:match('^current_view: (%d+)')) or 1
     elseif line:find('^recent:') then
-      local file = line:match('^recent: (.+)$')
-      local recent, exists = io.recent_files, false
-      for i = 1, #recent do
-        if file == recent[i] then exists = true break end
-      end
-      if not exists then recent[#recent + 1] = file end
+      io.recent_files[#io.recent_files + 1] = line:match('^recent: (.+)$')
     end
   end
   f:close()
@@ -143,7 +135,7 @@ function M.save(filename)
       local current = buffer == view.buffer
       local anchor = current and 'anchor' or '_anchor'
       local current_pos = current and 'current_pos' or '_current_pos'
-      local top_line = current and 'first_visible_line' or '_first_visible_line'
+      local top_line = current and 'first_visible_line' or '_top_line'
       session[#session + 1] = buffer_line:format(buffer[anchor] or 0,
                                                  buffer[current_pos] or 0,
                                                  buffer[top_line] or 0,
