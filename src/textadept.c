@@ -184,7 +184,7 @@ TermKey *ta_tk; // global for CDK use
    SS(view, SCI_SETFOCUS, 1, 0))
 #define refresh_all() do { \
   pane_refresh(pane); \
-  if (command_entry_focused) scintilla_refresh(command_entry); \
+  if (command_entry_focused) scintilla_noutrefresh(command_entry); \
   refresh(); \
 } while (0)
 #define flushch() (timeout(0), getch(), timeout(-1))
@@ -430,7 +430,7 @@ static void pane_refresh(Pane *pane) {
   } else if (pane->type == HSPLIT) {
     mvwhline(pane->win, 0, 0, 0, pane->cols), wrefresh(pane->win);
     pane_refresh(pane->child1), pane_refresh(pane->child2);
-  } else scintilla_refresh(pane->view);
+  } else scintilla_noutrefresh(pane->view);
 }
 #endif
 
@@ -1751,7 +1751,7 @@ static int unsplit_view(Scintilla *view) {
   g_object_unref(view), g_object_unref(other);
 #elif CURSES
   if (pane->type == SINGLE) return FALSE;
-  pane_unsplit_view(pane, view, NULL), scintilla_refresh(view);
+  pane_unsplit_view(pane, view, NULL), scintilla_noutrefresh(view);
 #endif
   return TRUE;
 }
