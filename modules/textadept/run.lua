@@ -55,7 +55,8 @@ local M = {}
 --   behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
---   * `project`: The path to the project being built.
+--   * `project`: The path to the project being built or the current working
+--     directory of the project being built.
 --   * `output`: A line of string output from the command.
 module('textadept.run')]]
 
@@ -70,6 +71,8 @@ M.MARK_ERROR = _SCINTILLA.next_marker_number()
 events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
 events.BUILD_OUTPUT = 'build_output'
 
+-- When running commands, note the current view since output is shown in a split
+-- view. Jumping to any warnings or errors should be done in the original view.
 local preferred_view
 
 -- Executes a compile, run, or build shell command from *commands*.
