@@ -80,6 +80,8 @@ M.INDIC_FIND = _SCINTILLA.next_indic_number()
 -- Events.
 events.FIND_WRAPPED = 'find_wrapped'
 
+-- When finding in files, note the current view since results are shown in a
+-- split view. Jumping between results should be done in the original view.
 local preferred_view
 
 ---
