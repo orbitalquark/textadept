@@ -137,7 +137,6 @@ local function find(text, next, flags, no_wrap, wrapped)
     if M.in_files then flags = flags + 16 end
   end
   if flags >= 16 then M.find_in_files() return end -- not performed here
-  local first_visible_line = buffer.first_visible_line -- for 'no results found'
 
   -- If text is selected, assume it is from the current search and increment the
   -- caret appropriately for the next search.
@@ -176,7 +175,6 @@ local function find(text, next, flags, no_wrap, wrapped)
       buffer:set_sel(e, pos)
     end
   end
-  buffer:scroll_range(buffer.anchor, buffer.current_pos)
 
   -- If nothing was found, wrap the search.
   if pos == -1 and not no_wrap then
@@ -187,12 +185,14 @@ local function find(text, next, flags, no_wrap, wrapped)
     pos = find(text, next, flags, true, true)
     if pos == -1 then
       ui.statusbar_text = _L['No results found']
-      buffer:line_scroll(0, first_visible_line - buffer.first_visible_line)
       buffer:goto_pos(anchor)
     end
   elseif not wrapped then
     ui.statusbar_text = ''
   end
+
+  buffer:vertical_centre_caret()
+  buffer:scroll_range(buffer.anchor, buffer.current_pos)
 
   return pos
 end
