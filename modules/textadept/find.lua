@@ -363,7 +363,7 @@ local function replace_all(ftext, rtext)
     buffer:indicator_fill_range(e, 1)
     buffer:goto_pos(s)
     local pos = find(ftext, true, nil, true)
-    while pos ~= -1 and pos <= buffer:indicator_end(INDIC_REPLACE, s) do
+    while pos ~= -1 and pos < buffer:indicator_end(INDIC_REPLACE, s) do
       replace(rtext)
       count = count + 1
       pos = find(ftext, true, nil, true)
