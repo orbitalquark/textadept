@@ -82,11 +82,13 @@ local M = {}
 -- Stands for a single '%' since '%' by itself has a special meaning in
 -- snippets.
 --
--- ### `%(`<br/>`%{`<br/>`%<`<br/>`%[`
+-- ### `%(`<br/>`%{`
 --
--- Stands for a single '(', '{', '<', or '[', respectively, after a `%`*n*
--- mirror. Otherwise, the mirror would be interpreted as a placeholder or
--- transform.
+-- Stands for a single '(' or '{', respectively, after a `%`*n* mirror.
+-- Otherwise, the mirror would be interpreted as a placeholder or transform.
+-- Note: it is currently not possible to escape a '<' or '[' immediately after
+-- a `%`*n* mirror due to `%<...>` and `%[...]` sequences being interpreted as
+-- code to execute.
 --
 -- ### `\t`
 --
@@ -182,7 +184,7 @@ local function new_snippet(text, trigger)
   local C, Cp, Ct, Cg, Cc = lpeg.C, lpeg.Cp, lpeg.Ct, lpeg.Cg, lpeg.Cc
   local patt = P{
     V('plain_text') * V('placeholder') * Cp() + V('plain_text') * -1,
-    plain_text = C(((P(1) - '%' + '%' * S('([{<'))^1 + '%%')^0),
+    plain_text = C(((P(1) - '%' + '%' * S('({'))^1 + '%%')^0),
     placeholder = Ct('%' * (V('index')^-1 * (V('angles') + V('brackets') +
                                              V('braces')) *
                             V('transform') +
@@ -358,7 +360,7 @@ function M._select()
     items[#items + 1], items[#items + 2] = list[i]:match('^([^|]+)|(.+)$')
   end
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Select Snippet'], columns = {_L['Trigger'], _L['Snippet Text']}, 
+    title = _L['Select Snippet'], columns = {_L['Trigger'], _L['Snippet Text']},
     items = items, width = CURSES and ui.size[1] - 2 or nil
   }
   if button == 1 and i then M._insert(items[i * 2]) end
