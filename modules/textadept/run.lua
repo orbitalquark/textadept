@@ -136,7 +136,10 @@ local function run_command(commands, event)
   end
   local function emit_status(status) emit_output('> exit status: '..status) end
 
-  if commands == M.build_commands then emit_output('> cd '..M.cwd) end
+  if commands == M.build_commands or
+     M.cwd ~= (buffer.filename:match('^(.+)[/\\][^/\\]+$') or '') then
+    emit_output('> cd '..M.cwd)
+  end
   emit_output('> '..command:iconv('UTF-8', _CHARSET), not M.RUN_IN_BACKGROUND)
   M.proc = assert(spawn(command, M.cwd, emit_output, emit_output, emit_status))
 end
