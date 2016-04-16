@@ -18,10 +18,10 @@ local M = ui.command_entry
 --
 --     local function complete_lua() ... end
 --     local function run_lua() ... end
---     keys['ce'] = {ui.command_entry.enter_mode, 'lua_command'}
+--     keys['ce'] = function() ui.command_entry.enter_mode('lua_command') end
 --     keys.lua_command = {
 --       ['\t'] = complete_lua,
---       ['\n'] = {ui.command_entry.finish_mode, run_lua}
+--       ['\n'] = function() return ui.command_entry.finish_mode(run_lua) end
 --     }
 --
 -- In this case, `Ctrl+E` opens the command entry and enters "lua_command" key
@@ -43,18 +43,21 @@ module('ui.command_entry')]]
 -- @class table
 -- @name editing_keys
 M.editing_keys = {__index = {
-  [not OSX and 'cx' or 'mx'] = {buffer.cut, M},
-  [not OSX and 'cc' or 'mc'] = {buffer.copy, M},
-  [not OSX and 'cv' or 'mv'] = {buffer.paste, M},
-  [not OSX and not CURSES and 'ca' or 'ma'] = {buffer.select_all, M},
-  [not OSX and 'cz' or 'mz'] = {buffer.undo, M},
-  [not OSX and 'cZ' or 'mZ'] = {buffer.redo, M}, cy = {buffer.redo, M},
+  -- Note: cannot use `M.cut`, `M.copy`, etc. since M is never considered the
+  -- global buffer.
+  [not OSX and 'cx' or 'mx'] = function() M:cut() end,
+  [not OSX and 'cc' or 'mc'] = function() M:copy() end,
+  [not OSX and 'cv' or 'mv'] = function() M:paste() end,
+  [not OSX and not CURSES and 'ca' or 'ma'] = function() M:select_all() end,
+  [not OSX and 'cz' or 'mz'] = function() M:undo() end,
+  [not OSX and 'cZ' or 'mZ'] = function() M:redo() end,
+  [not OSX and 'cy' or '\0'] = function() M:redo() end,
   -- Movement keys.
-  [(OSX or CURSES) and 'cf' or '\0'] = {buffer.char_right, M},
-  [(OSX or CURSES) and 'cb' or '\0'] = {buffer.char_left, M},
-  [(OSX or CURSES) and 'ca' or '\0'] = {buffer.vc_home, M},
-  [(OSX or CURSES) and 'ce' or '\0'] = {buffer.line_end, M},
-  [(OSX or CURSES) and 'cd' or '\0'] = {buffer.clear, M}
+  [(OSX or CURSES) and 'cf' or '\0'] = function() M:char_right() end,
+  [(OSX or CURSES) and 'cb' or '\0'] = function() M:char_left() end,
+  [(OSX or CURSES) and 'ca' or '\0'] = function() M:vc_home() end,
+  [(OSX or CURSES) and 'ce' or '\0'] = function() M:line_end() end,
+  [(OSX or CURSES) and 'cd' or '\0'] = function() M:clear() end
 }}
 
 ---
@@ -69,7 +72,8 @@ M.editing_keys = {__index = {
 --   default value is `'text'`.
 -- @param height Optional number of lines to display in the command entry. The
 --   default value is `1`.
--- @usage keys['ce'] = {ui.command_entry.enter_mode, 'command_entry'}
+-- @usage keys['ce'] =
+--   function() ui.command_entry.enter_mode('command_entry') end
 -- @see _G.keys.MODE
 -- @name enter_mode
 function M.enter_mode(mode, lexer, height)
@@ -93,7 +97,8 @@ end
 -- action with the entered text.
 -- @param f Optional function to call. It should accept the command entry text
 --   as an argument.
--- @usage keys['\n'] = {ui.command_entry.finish_mode, ui.print}
+-- @usage keys['\n'] =
+--   function() return ui.command_entry.finish_mode(ui.print) end
 -- @name finish_mode
 function M.finish_mode(f)
   if M:auto_c_active() then return false end -- allow Enter to autocomplete
@@ -174,7 +179,10 @@ local function complete_lua()
 end
 
 -- Define key mode for entering Lua commands.
-keys.lua_command = {['\t'] = complete_lua, ['\n'] = {M.finish_mode, run_lua}}
+keys.lua_command = {
+  ['\t'] = complete_lua,
+  ['\n'] = function() return M.finish_mode(run_lua) end
+}
 
 -- Configure the command entry's default properties.
 events.connect(events.INITIALIZED, function()

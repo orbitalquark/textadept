@@ -5,9 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Defines key commands for Textadept.
--- This set of key commands is pretty standard among other text editors. If
--- applicable, load this module second to last in your *~/.textadept/init.lua*,
--- before `textadept.menu`.
+-- This set of key commands is pretty standard among other text editors.
 --
 -- ## Key Bindings
 --
@@ -219,101 +217,6 @@ local M = {}
 -- ‡: Ctrl+Enter in Win32 curses.
 module('textadept.keys')]]
 
--- Utility functions.
-M.utils = {
-  delete_word = function()
-    textadept.editing.select_word()
-    buffer:delete_back()
-  end,
-  autocomplete_symbol = function()
-    textadept.editing.autocomplete(buffer:get_lexer(true))
-  end,
-  enclose_as_xml_tags = function()
-    textadept.editing.enclose('<', '>')
-    local pos = buffer.current_pos
-    while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
-    buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
-  end,
-  find = function(in_files)
-    ui.find.in_files = in_files
-    ui.find.focus()
-  end,
-  select_command = function() textadept.menu.select_command() end,
-  snapopen_filedir = function()
-    if buffer.filename then io.snapopen(buffer.filename:match('^(.+)[/\\]')) end
-  end,
-  show_style = function()
-    local pos = buffer.current_pos
-    local char = buffer:text_range(pos, buffer:position_after(pos))
-    local code = utf8.codepoint(char)
-    local bytes = string.rep(' 0x%X', #char):format(char:byte(1, #char))
-    local style = buffer.style_at[pos]
-    local text = string.format("'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char,
-                               code, bytes, _L['Lexer'], buffer:get_lexer(true),
-                               _L['Style'], buffer.style_name[style], style)
-    buffer:call_tip_show(buffer.current_pos, text)
-  end,
-  set_indentation = function(i)
-    buffer.tab_width = i
-    events.emit(events.UPDATE_UI) -- for updating statusbar
-  end,
-  toggle_property = function(property, i)
-    local state = buffer[property]
-    if type(state) == 'boolean' then
-      buffer[property] = not state
-    elseif type(state) == 'number' then
-      buffer[property] = state == 0 and (i or 1) or 0
-    end
-    events.emit(events.UPDATE_UI) -- for updating statusbar
-  end,
-  set_encoding = function(encoding)
-    buffer:set_encoding(encoding)
-    events.emit(events.UPDATE_UI) -- for updating statusbar
-  end,
-  set_eol_mode = function(mode)
-    buffer.eol_mode = mode
-    buffer:convert_eols(mode)
-    events.emit(events.UPDATE_UI) -- for updating statusbar
-  end,
-  unsplit_all = function() while view:unsplit() do end end,
-  grow = function()
-    if view.size then view.size = view.size + buffer:text_height(0) end
-  end,
-  shrink = function()
-    if view.size then view.size = view.size - buffer:text_height(0) end
-  end,
-  toggle_current_fold = function()
-    buffer:toggle_fold(buffer:line_from_position(buffer.current_pos))
-  end,
-  reset_zoom = function() buffer.zoom = 0 end,
-  open_webpage = function(url)
-    local cmd = 'xdg-open "%s"'
-    if WIN32 then
-      cmd = 'start "" "%s"'
-    elseif OSX then
-      cmd = 'open "file://%s"'
-    end
-    spawn(cmd:format(url))
-  end,
-  cut_to_eol = function()
-    buffer:line_end_extend()
-    buffer:cut()
-  end
-}
-
-local keys, buffer, view = keys, buffer, view
-local editing, utils = textadept.editing, M.utils
-local OSX, CURSES = OSX, CURSES
-
--- The following buffer functions need to be constantized in order for menu
--- items to identify the key associated with the functions.
-local menu_buffer_functions = {
-  'undo', 'redo', 'cut', 'copy', 'paste', 'line_duplicate', 'clear',
-  'select_all', 'upper_case', 'lower_case', 'move_selected_lines_up',
-  'move_selected_lines_down', 'zoom_in', 'zoom_out', 'colourise'
-}
-for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
-
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
@@ -370,218 +273,228 @@ for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 -- ADD = ''
 -- Control, Meta, and 'a' = 'cma'
 
+local keys, OSX, GUI, CURSES, _L = keys, OSX, not CURSES, CURSES, _L
+
 -- File.
-keys[not OSX and (not CURSES and 'cn' or 'cmn') or 'mn'] = buffer.new
+keys[not OSX and (GUI and 'cn' or 'cmn') or 'mn'] = buffer.new
 keys[not OSX and 'co' or 'mo'] = io.open_file
-keys[not OSX and not CURSES and 'cao' or 'cmo'] = io.open_recent_file
-keys[not OSX and (not CURSES and 'cO' or 'mo') or 'mO'] = io.reload_file
+keys[not OSX and GUI and 'cao' or 'cmo'] = io.open_recent_file
+keys[not OSX and (GUI and 'cO' or 'mo') or 'mO'] = io.reload_file
 keys[not OSX and 'cs' or 'ms'] = io.save_file
-keys[not OSX and (not CURSES and 'cS' or 'cms') or 'mS'] = io.save_file_as
+keys[not OSX and (GUI and 'cS' or 'cms') or 'mS'] = io.save_file_as
 -- TODO: io.save_all_files
 keys[not OSX and 'cw' or 'mw'] = io.close_buffer
-keys[not OSX and (not CURSES and 'cW' or 'cmw') or 'mW'] = io.close_all_buffers
+keys[not OSX and (GUI and 'cW' or 'cmw') or 'mW'] = io.close_all_buffers
 -- TODO: textadept.sessions.load
 -- TODO: textadept.sessions.save
 keys[not OSX and 'cq' or 'mq'] = quit
 
 -- Edit.
+local m_edit = textadept.menu.menubar[_L['_Edit']]
 keys[not OSX and 'cz' or 'mz'] = buffer.undo
 if CURSES then keys.mz = keys.cz end -- ^Z suspends in some terminals
 if not OSX then keys.cy = buffer.redo end
-keys[not OSX and not CURSES and 'cZ' or 'mZ'] = buffer.redo
+keys[not OSX and GUI and 'cZ' or 'mZ'] = buffer.redo
 keys[not OSX and 'cx' or 'mx'] = buffer.cut
 keys[not OSX and 'cc' or 'mc'] = buffer.copy
 keys[not OSX and 'cv' or 'mv'] = buffer.paste
-if not CURSES then keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate end
+if GUI then keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate end
 keys.del = buffer.clear
-keys[not OSX and (not CURSES and 'adel' or 'mdel')
-             or 'cdel'] = utils.delete_word
-keys[not OSX and not CURSES and 'ca' or 'ma'] = buffer.select_all
-keys[not CURSES and 'cm' or 'mm'] = editing.match_brace
-keys[not OSX and (not CURSES and 'c\n' or 'cmj')
-             or 'cesc'] = {editing.autocomplete, 'word'}
-if CURSES and WIN32 then keys['c\n'] = keys['cmj'] end
-if not CURSES then
-  keys[not OSX and 'caH' or 'mH'] = editing.highlight_word
+keys[not OSX and (GUI and 'adel' or 'mdel')
+             or 'cdel'] = m_edit[_L['D_elete Word']][2]
+keys[not OSX and GUI and 'ca' or 'ma'] = buffer.select_all
+keys[GUI and 'cm' or 'mm'] = textadept.editing.match_brace
+keys[not OSX and ((GUI or WIN32) and 'c\n' or 'cmj')
+             or 'cesc'] = m_edit[_L['Complete _Word']][2]
+if GUI then
+  keys[not OSX and 'caH' or 'mH'] = textadept.editing.highlight_word
 end
-keys[not OSX and not CURSES and 'c/' or 'm/'] = editing.block_comment
-keys.ct = editing.transpose_chars
-keys[not OSX and (not CURSES and 'cJ' or 'mj') or 'cj'] = editing.join_lines
-keys[not OSX and (not CURSES and 'c|' or 'c\\')
-             or 'm|'] = {ui.command_entry.enter_mode, 'filter_through', 'bash'}
+keys[not OSX and GUI and 'c/' or 'm/'] = textadept.editing.block_comment
+keys.ct = textadept.editing.transpose_chars
+keys[not OSX and (GUI and 'cJ' or 'mj') or 'cj'] = textadept.editing.join_lines
+keys[not OSX and (GUI and 'c|' or 'c\\')
+             or 'm|'] = m_edit[_L['_Filter Through']][2]
 -- Select.
-keys[not CURSES and 'cM' or 'mM'] = {editing.match_brace, 'select'}
-keys[not OSX and not CURSES and 'c<'
-                            or 'm<'] = {editing.select_enclosed, '>', '<'}
-if not CURSES then
-  keys[not OSX and 'c>' or 'm>'] = {editing.select_enclosed, '<', '>'}
+local m_sel = m_edit[_L['_Select']]
+keys[GUI and 'cM' or 'mM'] = m_sel[_L['Select to _Matching Brace']][2]
+keys[not OSX and GUI and 'c<'
+                     or 'm<'] = m_sel[_L['Select between _XML Tags']][2]
+if GUI then
+  keys[not OSX and 'c>' or 'm>'] = m_sel[_L['Select in XML _Tag']][2]
 end
-keys[not OSX and not CURSES and "c'"
-                            or "m'"] = {editing.select_enclosed, "'", "'"}
-keys[not OSX and not CURSES and 'c"'
-                            or 'm"'] = {editing.select_enclosed, '"', '"'}
-keys[not OSX and not CURSES and 'c('
-                            or 'm('] = {editing.select_enclosed, '(', ')'}
-keys[not OSX and not CURSES and 'c['
-                            or 'm['] = {editing.select_enclosed, '[', ']'}
-keys[not OSX and not CURSES and 'c{'
-                            or 'm{'] = {editing.select_enclosed, '{', '}'}
-keys[not OSX and (not CURSES and 'cD' or 'mW') or 'mD'] = editing.select_word
-keys[not OSX and not CURSES and 'cN' or 'mN'] = editing.select_line
-keys[not OSX and not CURSES and 'cP' or 'mP'] = editing.select_paragraph
+keys[not OSX and GUI and "c'"
+                     or "m'"] = m_sel[_L['Select in _Single Quotes']][2]
+keys[not OSX and GUI and 'c"'
+                     or 'm"'] = m_sel[_L['Select in _Double Quotes']][2]
+keys[not OSX and GUI and 'c(' or 'm('] = m_sel[_L['Select in _Parentheses']][2]
+keys[not OSX and GUI and 'c[' or 'm['] = m_sel[_L['Select in _Brackets']][2]
+keys[not OSX and GUI and 'c{' or 'm{'] = m_sel[_L['Select in B_races']][2]
+keys[not OSX and (GUI and 'cD' or 'mW') or 'mD'] = textadept.editing.select_word
+keys[not OSX and GUI and 'cN' or 'mN'] = textadept.editing.select_line
+keys[not OSX and GUI and 'cP' or 'mP'] = textadept.editing.select_paragraph
 -- Selection.
-keys[not OSX and (not CURSES and 'cau' or 'cmu') or 'cu'] = buffer.upper_case
-keys[not OSX and (not CURSES and 'caU' or 'cml') or 'cU'] = buffer.lower_case
-keys[not OSX and (not CURSES and 'a<' or 'm>')
-             or 'c<'] = utils.enclose_as_xml_tags
-if not CURSES then
-  keys[not OSX and 'a>' or 'c>'] = {editing.enclose, '<', ' />'}
-  keys[not OSX and "a'" or "c'"] = {editing.enclose, "'", "'"}
-  keys[not OSX and 'a"' or 'c"'] = {editing.enclose, '"', '"'}
+m_sel = m_edit[_L['Selectio_n']]
+keys[not OSX and (GUI and 'cau' or 'cmu') or 'cu'] = buffer.upper_case
+keys[not OSX and (GUI and 'caU' or 'cml') or 'cU'] = buffer.lower_case
+keys[not OSX and (GUI and 'a<' or 'm>')
+             or 'c<'] = m_sel[_L['Enclose as _XML Tags']][2]
+if GUI then
+  keys[not OSX and 'a>' or 'c>'] = m_sel[_L['Enclose as Single XML _Tag']][2]
+  keys[not OSX and "a'" or "c'"] = m_sel[_L['Enclose in Single _Quotes']][2]
+  keys[not OSX and 'a"' or 'c"'] = m_sel[_L['Enclose in _Double Quotes']][2]
 end
-keys[not OSX and (not CURSES and 'a(' or 'm)')
-             or 'c('] = {editing.enclose, '(', ')'}
-keys[not OSX and (not CURSES and 'a[' or 'm]')
-             or 'c['] = {editing.enclose, '[', ']'}
-keys[not OSX and (not CURSES and 'a{' or 'm}')
-             or 'c{'] = {editing.enclose, '{', '}'}
+keys[not OSX and (GUI and 'a(' or 'm)')
+             or 'c('] = m_sel[_L['Enclose in _Parentheses']][2]
+keys[not OSX and (GUI and 'a[' or 'm]')
+             or 'c['] = m_sel[_L['Enclose in _Brackets']][2]
+keys[not OSX and (GUI and 'a{' or 'm}')
+             or 'c{'] = m_sel[_L['Enclose in B_races']][2]
 keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
 -- Search.
-keys[not OSX and not CURSES and 'cf' or 'mf'] = utils.find
-if CURSES then keys.mF = keys.mf end -- in case mf is used by GUI terminals
-keys[not OSX and not CURSES and 'cg' or 'mg'] = ui.find.find_next
-if not OSX and not CURSES then keys.f3 = keys.cg end
-keys[not OSX and not CURSES and 'cG' or 'mG'] = ui.find.find_prev
-if not OSX and not CURSES then keys.sf3 = keys.cG end
-keys[not OSX and (not CURSES and 'car' or 'mr') or 'cr'] = ui.find.replace
-keys[not OSX and (not CURSES and 'caR' or 'mR') or 'cR'] = ui.find.replace_all
+local m_search = textadept.menu.menubar[_L['_Search']]
+keys[not OSX and GUI and 'cf' or 'mf'] = m_search[_L['_Find']][2]
+if CURSES then keys.mF = keys.mf end -- mf is used by some GUI terminals
+keys[not OSX and GUI and 'cg' or 'mg'] = ui.find.find_next
+if not OSX and GUI then keys.f3 = keys.cg end
+keys[not OSX and GUI and 'cG' or 'mG'] = ui.find.find_prev
+if not OSX and GUI then keys.sf3 = keys.cG end
+keys[not OSX and (GUI and 'car' or 'mr') or 'cr'] = ui.find.replace
+keys[not OSX and (GUI and 'caR' or 'mR') or 'cR'] = ui.find.replace_all
 -- Find Next is an when find pane is focused in GUI.
 -- Find Prev is ap when find pane is focused in GUI.
 -- Replace is ar when find pane is focused in GUI.
 -- Replace All is aa when find pane is focused in GUI.
-keys[not OSX and not CURSES and 'caf' or 'cmf'] = ui.find.find_incremental
-if not CURSES then keys[not OSX and 'cF' or 'mF'] = {utils.find, true} end
--- Find in Files is ai when find pane is focused in GUI.
-if not CURSES then
-  keys[not OSX and 'cag' or 'cmg'] = {ui.find.goto_file_found, false, true}
-  keys[not OSX and 'caG' or 'cmG'] = {ui.find.goto_file_found, false, false}
+keys[not OSX and GUI and 'caf' or 'cmf'] = ui.find.find_incremental
+if GUI then
+  keys[not OSX and 'cF' or 'mF'] = m_search[_L['Find in Fi_les']][2]
 end
-keys[not OSX and 'cj' or 'mj'] = editing.goto_line
+-- Find in Files is ai when find pane is focused in GUI.
+if GUI then
+  keys[not OSX and 'cag' or 'cmg'] = m_search[_L['Goto Nex_t File Found']][2]
+  keys[not OSX and 'caG'
+               or 'cmG'] = m_search[_L['Goto Previou_s File Found']][2]
+end
+keys[not OSX and 'cj' or 'mj'] = textadept.editing.goto_line
 
 -- Tools.
-keys[not OSX and (not CURSES and 'ce' or 'mc')
-             or 'me'] = {ui.command_entry.enter_mode, 'lua_command', 'lua'}
-keys[not OSX and (not CURSES and 'cE' or 'mC') or 'mE'] = utils.select_command
+local m_tools = textadept.menu.menubar[_L['_Tools']]
+keys[not OSX and (GUI and 'ce' or 'mc')
+             or 'me'] = m_tools[_L['Command _Entry']][2]
+keys[not OSX and (GUI and 'cE' or 'mC')
+             or 'mE'] = m_tools[_L['Select Co_mmand']][2]
 keys[not OSX and 'cr' or 'mr'] = textadept.run.run
-keys[not OSX and (not CURSES and 'cR' or 'cmr') or 'mR'] = textadept.run.compile
-keys[not OSX and (not CURSES and 'cB' or 'cmb') or 'mB'] = textadept.run.build
-keys[not OSX and (not CURSES and 'cX' or 'cmx') or 'mX'] = textadept.run.stop
-keys[not OSX and (not CURSES and 'cae' or 'mx')
-             or 'cme'] = {textadept.run.goto_error, false, true}
-keys[not OSX and (not CURSES and 'caE' or 'mX')
-             or 'cmE'] = {textadept.run.goto_error, false, false}
+keys[not OSX and (GUI and 'cR' or 'cmr') or 'mR'] = textadept.run.compile
+keys[not OSX and (GUI and 'cB' or 'cmb') or 'mB'] = textadept.run.build
+keys[not OSX and (GUI and 'cX' or 'cmx') or 'mX'] = textadept.run.stop
+keys[not OSX and (GUI and 'cae' or 'mx')
+             or 'cme'] = m_tools[_L['_Next Error']][2]
+keys[not OSX and (GUI and 'caE' or 'mX')
+             or 'cmE'] = m_tools[_L['_Previous Error']][2]
+-- Bookmark.
+local m_bookmark = m_tools[_L['_Bookmark']]
+keys[not OSX and (GUI and 'cf2' or 'f1') or 'mf2'] = textadept.bookmarks.toggle
+keys[not OSX and (GUI and 'csf2' or 'f6') or 'msf2'] = textadept.bookmarks.clear
+keys.f2 = m_bookmark[_L['_Next Bookmark']][2]
+keys[GUI and 'sf2' or 'f3'] = m_bookmark[_L['_Previous Bookmark']][2]
+keys[GUI and 'af2' or 'f4'] = textadept.bookmarks.goto_mark
+-- Snapopen.
+local m_snapopen = m_tools[_L['Snap_open']]
+keys[not OSX and 'cu' or 'mu'] = m_snapopen[_L['Snapopen _User Home']][2]
+-- TODO: m_snapopen[_L['Snapopen _Textadept Home']][2]
+keys[not OSX and (GUI and 'caO' or 'mO')
+             or 'cmO'] = m_snapopen[_L['Snapopen _Current Directory']][2]
+keys[not OSX and (GUI and 'caP' or 'cmp') or 'cmP'] = io.snapopen
 -- Snippets.
-keys[not OSX and (not CURSES and 'ck' or 'mk')
-             or 'a\t'] = textadept.snippets._select
+keys[not OSX and (GUI and 'ck' or 'mk') or 'a\t'] = textadept.snippets._select
 keys['\t'] = textadept.snippets._insert
 keys['s\t'] = textadept.snippets._previous
-keys[not OSX and (not CURSES and 'cK' or 'mK')
+keys[not OSX and (GUI and 'cK' or 'mK')
              or 'as\t'] = textadept.snippets._cancel_current
--- Bookmark.
-keys[not OSX and (not CURSES and 'cf2' or 'f1')
-             or 'mf2'] = textadept.bookmarks.toggle
-keys[not OSX and (not CURSES and 'csf2' or 'f6')
-             or 'msf2'] = textadept.bookmarks.clear
-keys.f2 = {textadept.bookmarks.goto_mark, true}
-keys[not CURSES and 'sf2' or 'f3'] = {textadept.bookmarks.goto_mark, false}
-keys[not CURSES and 'af2' or 'f4'] = textadept.bookmarks.goto_mark
--- Snapopen.
-keys[not OSX and 'cu' or 'mu'] = {io.snapopen, _USERHOME}
--- TODO: {io.snapopen, _HOME}
-keys[not OSX and (not CURSES and 'caO' or 'mO')
-             or 'cmO'] = utils.snapopen_filedir
-keys[not OSX and (not CURSES and 'caP' or 'cmp') or 'cmP'] = io.snapopen
 -- Other.
-keys[not OSX and ((not CURSES or WIN32) and 'c ' or 'c@')
-             or 'aesc'] = utils.autocomplete_symbol
-keys[not CURSES and 'ch' or 'mh'] = textadept.editing.show_documentation
-if CURSES then keys.mH = keys.mh end -- in case mh is used by GUI terminals
-keys[not OSX and (not CURSES and 'ci' or 'mI') or 'mi'] = utils.show_style
+keys[not OSX and ((GUI or WIN32) and 'c ' or 'c@')
+             or 'aesc'] = m_tools[_L['_Complete Symbol']][2]
+keys[GUI and 'ch' or 'mh'] = textadept.editing.show_documentation
+if CURSES then keys.mH = keys.mh end -- mh is used by some GUI terminals
+keys[not OSX and (GUI and 'ci' or 'mI') or 'mi'] = m_tools[_L['Show St_yle']][2]
 
 -- Buffer.
-keys[not CURSES and 'c\t' or 'mn'] = {view.goto_buffer, view, 1, true}
-keys[not CURSES and 'cs\t' or 'mp'] = {view.goto_buffer, view, -1, true}
-keys[not OSX and not CURSES and 'cb' or 'mb'] = ui.switch_buffer
-if CURSES then keys.mB = keys.mb end -- in case mb is used by GUI terminals
+local m_buffer = textadept.menu.menubar[_L['_Buffer']]
+keys[GUI and 'c\t' or 'mn'] = m_buffer[_L['_Next Buffer']][2]
+keys[GUI and 'cs\t' or 'mp'] = m_buffer[_L['_Previous Buffer']][2]
+keys[not OSX and GUI and 'cb' or 'mb'] = ui.switch_buffer
+if CURSES then keys.mB = keys.mb end -- mb is used by some GUI terminals
 -- Indentation.
--- TODO: {utils.set_indentation, 2}
--- TODO: {utils.set_indentation, 3}
--- TODO: {utils.set_indentation, 4}
--- TODO: {utils.set_indentation, 8}
-keys[not OSX and (not CURSES and 'caT' or 'mt')
-             or 'cT'] = {utils.toggle_property, 'use_tabs'}
-if CURSES then keys.mT = keys.mt end -- in case mt is used by GUI terminals
-keys[not OSX and (not CURSES and 'cai' or 'mi')
-             or 'ci'] = editing.convert_indentation
+local m_indentation = m_buffer[_L['_Indentation']]
+-- TODO: m_indentation[_L['Tab width: _2']][2]
+-- TODO: m_indentation[_L['Tab width: _3']][2]
+-- TODO: m_indentation[_L['Tab width: _4']][2]
+-- TODO: m_indentation[_L['Tab width: _8']][2]
+keys[not OSX and (GUI and 'caT' or 'mt')
+             or 'cT'] = m_indentation[_L['_Toggle Use Tabs']][2]
+if CURSES then keys.mT = keys.mt end -- mt is used by some GUI terminals
+keys[not OSX and (GUI and 'cai' or 'mi')
+             or 'ci'] = textadept.editing.convert_indentation
 -- EOL Mode.
--- TODO: {utils.set_eol_mode, buffer.EOL_CRLF}
--- TODO: {utils.set_eol_mode, buffer.EOL_CR}
--- TODO: {utils.set_eol_mode, buffer.EOL_LF}
+-- TODO: m_buffer[_L['_EOL Mode']][_L['CRLF']][2]
+-- TODO: m_buffer[_L['_EOL Mode']][_L['CR']][2]
+-- TODO: m_buffer[_L['_EOL Mode']][_L['LF']][2]
 -- Encoding.
--- TODO: {utils.set_encoding, 'UTF-8'}
--- TODO: {utils.set_encoding, 'ASCII'}
--- TODO: {utils.set_encoding, 'ISO-8859-1'}
--- TODO: {utils.set_encoding, 'MacRoman'}
--- TODO: {utils.set_encoding, 'UTF-16LE'}
-keys[not OSX and not CURSES and 'cL'
-                            or 'mL'] = textadept.file_types.select_lexer
-keys.f5 = {buffer.colourise, buffer, 0, -1}
+-- TODO: m_buffer[_L['E_ncoding']][_L['_UTF-8 Encoding']][2]
+-- TODO: m_buffer[_L['E_ncoding']][_L['_ASCII Encoding']][2]
+-- TODO: m_buffer[_L['E_ncoding']][_L['_ISO-8859-1 Encoding']][2]
+-- TODO: m_buffer[_L['E_ncoding']][_L['_MacRoman Encoding']][2]
+-- TODO: m_buffer[_L['E_ncoding']][_L['UTF-1_6 Encoding']][2]
+if GUI then
+  keys[not OSX and 'ca\n' or 'c\n'] = m_buffer[_L['Toggle View _EOL']][2]
+  keys[not OSX and 'ca\\' or 'c\\'] = m_buffer[_L['Toggle _Wrap Mode']][2]
+  keys[not OSX and 'caS' or 'cS'] = m_buffer[_L['Toggle View White_space']][2]
+end
+keys[not OSX and GUI and 'cL' or 'mL'] = textadept.file_types.select_lexer
+keys.f5 = m_buffer[_L['_Refresh Syntax Highlighting']][2]
 if CURSES then keys.cl = keys.f5 end
 
 -- View.
-local view_next, view_prev = {ui.goto_view, 1, true}, {ui.goto_view, -1, true}
-local view_splith, view_splitv = {view.split, view}, {view.split, view, true}
-local view_unsplit = {view.unsplit, view}
-if not CURSES then
-  keys[not OSX and 'can' or 'ca\t'] = view_next
-  keys[not OSX and 'cap' or 'cas\t'] = view_prev
-  keys[not OSX and 'cas' or 'cs'] = view_splith
-  if not OSX then keys.cah = view_splith end
-  keys[not OSX and 'cav' or 'cv'] = view_splitv
-  keys[not OSX and 'caw' or 'cw'] = view_unsplit
-  keys[not OSX and 'caW' or 'cW'] = utils.unsplit_all
-  keys[not OSX and 'ca+' or 'c+'] = utils.grow
-  keys[not OSX and 'ca=' or 'c='] = utils.grow
-  keys[not OSX and 'ca-' or 'c-'] = utils.shrink
+local m_view = textadept.menu.menubar[_L['_View']]
+if GUI then
+  keys[not OSX and 'can' or 'ca\t'] = m_view[_L['_Next View']][2]
+  keys[not OSX and 'cap' or 'cas\t'] = m_view[_L['_Previous View']][2]
+  keys[not OSX and 'cas' or 'cs'] = m_view[_L['Split View _Horizontal']][2]
+  if not OSX then keys.cah = keys.cas end
+  keys[not OSX and 'cav' or 'cv'] = m_view[_L['Split View _Vertical']][2]
+  keys[not OSX and 'caw' or 'cw'] = m_view[_L['_Unsplit View']][2]
+  keys[not OSX and 'caW' or 'cW'] = m_view[_L['Unsplit _All Views']][2]
+  keys[not OSX and 'ca+' or 'c+'] = m_view[_L['_Grow View']][2]
+  keys[not OSX and 'ca=' or 'c='] = keys[not OSX and 'ca+' or 'c+']
+  keys[not OSX and 'ca-' or 'c-'] = m_view[_L['Shrin_k View']][2]
 else
   keys.cmv = {
-    n = view_next, p = view_prev,
-    s = view_splith, v = view_splitv,
-    w = view_unsplit, W = utils.unsplit_all,
-    ['+'] = utils.grow, ['='] = utils.grow, ['-'] = utils.shrink
+    n = m_view[_L['_Next View']][2],
+    p = m_view[_L['_Previous View']][2],
+    s = m_view[_L['Split View _Horizontal']][2],
+    v = m_view[_L['Split View _Vertical']][2],
+    w = m_view[_L['_Unsplit View']][2],
+    W = m_view[_L['Unsplit _All Views']][2],
+    ['+'] = m_view[_L['_Grow View']][2],
+    ['-'] = m_view[_L['Shrin_k View']][2]
   }
-  if not OSX then keys.cmv.h = view_splith end
+  if not OSX then keys.cmv.h = keys.cmv.s end
+  keys.cmv['='] = keys.cmv['+']
 end
-keys[not OSX and not CURSES and 'c*' or 'm*'] = utils.toggle_current_fold
-if not CURSES then
-  keys[not OSX and 'ca\n' or 'c\n'] = {utils.toggle_property, 'view_eol'}
-  keys[not OSX and 'ca\\' or 'c\\'] = {utils.toggle_property, 'wrap_mode'}
-  keys[not OSX and 'caI' or 'cI'] =
-    {utils.toggle_property, 'indentation_guides'}
-  keys[not OSX and 'caS' or 'cS'] = {utils.toggle_property, 'view_ws'}
-  keys[not OSX and 'caV' or 'cV'] =
-    {utils.toggle_property, 'virtual_space_options', buffer.VS_USERACCESSIBLE}
+keys[not OSX and GUI and 'c*' or 'm*'] = m_view[_L['Toggle Current _Fold']][2]
+if GUI then
+  keys[not OSX and 'caI' or 'cI'] = m_view[_L['Toggle Show In_dent Guides']][2]
+  keys[not OSX and 'caV' or 'cV'] = m_view[_L['Toggle _Virtual Space']][2]
 end
-keys[not OSX and not CURSES and 'c=' or 'm='] = buffer.zoom_in
-keys[not OSX and not CURSES and 'c-' or 'm-'] = buffer.zoom_out
-keys[not OSX and not CURSES and 'c0' or 'm0'] = utils.reset_zoom
+keys[not OSX and GUI and 'c=' or 'm='] = buffer.zoom_in
+keys[not OSX and GUI and 'c-' or 'm-'] = buffer.zoom_out
+keys[not OSX and GUI and 'c0' or 'm0'] = m_view[_L['_Reset Zoom']][2]
 
 -- Help.
-if not CURSES then
-  keys.f1 = {utils.open_webpage, _HOME..'/doc/manual.html'}
-  keys.sf1 = {utils.open_webpage, _HOME..'/doc/api.html'}
+if GUI then
+  keys.f1 = textadept.menu.menubar[_L['_Help']][_L['Show _Manual']][2]
+  keys.sf1 = textadept.menu.menubar[_L['_Help']][_L['Show _LuaDoc']][2]
 end
 
 -- Movement commands.
@@ -596,13 +509,16 @@ if OSX then
   keys.ce, keys.cE = buffer.line_end, buffer.line_end_extend
   keys.aright, keys.aleft = buffer.word_right, buffer.word_left
   keys.cd = buffer.clear
-  keys.ck = utils.cut_to_eol
+  keys.ck = function()
+    buffer:line_end_extend()
+    buffer:cut()
+  end
   keys.cl = buffer.vertical_centre_caret
-  -- GTKOSX reports Fn-key as a single keycode which confuses Scintilla. Do
+  -- GTK-OSX reports Fn-key as a single keycode which confuses Scintilla. Do
   -- not propagate it.
   keys.fn = function() return true end
 elseif CURSES then
-  keys['c^'] = function() _G.buffer.selection_mode = 0 end
+  keys['c^'] = function() buffer.selection_mode = 0 end
   keys['c]'] = buffer.swap_main_anchor_caret
   keys.cf, keys.cb = buffer.char_right, buffer.char_left
   keys.cn, keys.cp = buffer.line_down, buffer.line_up
@@ -610,13 +526,18 @@ elseif CURSES then
   keys.mA, keys.mE = buffer.vc_home_extend, buffer.line_end_extend
   keys.mU, keys.mD = buffer.page_up_extend, buffer.page_down_extend
   keys.cma, keys.cme = buffer.document_start, buffer.document_end
-  keys.cd, keys.md = buffer.clear, utils.delete_word
-  keys.ck = utils.cut_to_eol
+  keys.cd, keys.md = buffer.clear, keys.mdel
+  keys.ck = function()
+    buffer:line_end_extend()
+    buffer:cut()
+  end
 end
 
 -- Modes.
 keys.filter_through = {
-  ['\n'] = {ui.command_entry.finish_mode, editing.filter_through},
+  ['\n'] = function()
+    return ui.command_entry.finish_mode(textadept.editing.filter_through)
+  end,
 }
 keys.find_incremental = {
   ['\n'] = function()
@@ -638,7 +559,7 @@ setmetatable(keys.find_incremental, {__index = function(_, k)
                ui.find.find_incremental(ui.command_entry:get_text()..k, true)
              end})
 -- Show documentation for symbols in the Lua command entry.
-keys.lua_command[not CURSES and 'ch' or 'mh'] = function()
+keys.lua_command[GUI and 'ch' or 'mh'] = function()
   -- Temporarily change _G.buffer since ui.command_entry is the "active" buffer.
   local orig_buffer = _G.buffer
   _G.buffer = ui.command_entry
@@ -647,10 +568,16 @@ keys.lua_command[not CURSES and 'ch' or 'mh'] = function()
 end
 if OSX or CURSES then
   -- UTF-8 input.
-  keys.utf8_input = {['\n'] = {ui.command_entry.finish_mode, function(code)
-    _G.buffer:add_text(utf8.char(tonumber(code, 16)))
-  end}}
-  keys[OSX and 'mU' or 'mu'] = {ui.command_entry.enter_mode, 'utf8_input'}
+  keys.utf8_input = {
+    ['\n'] = function()
+      return ui.command_entry.finish_mode(function(code)
+        buffer:add_text(utf8.char(tonumber(code, 16)))
+      end)
+    end
+  }
+  keys[OSX and 'mU' or 'mu'] = function()
+    ui.command_entry.enter_mode('utf8_input')
+  end
 end
 
 return M
