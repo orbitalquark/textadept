@@ -456,11 +456,14 @@ end
 -- to call or a table containing a function with its parameters to call when an
 -- item is clicked. Menu items may also be sub-menus, ordered lists of menu
 -- items with an additional `title` key for the sub-menu's title text.
--- @param menubar The table of menu tables to create the menubar from.
+-- @param menubar The table of menu tables to create the menubar from. If `nil`,
+--   clears the menubar from view, but keeps it intact in order for
+--   `M.select_command()` to function properly.
 -- @see ui.menubar
 -- @see ui.menu
 local function set_menubar(menubar)
-  key_shortcuts, menu_actions = {}, {}
+  if not menubar then ui.menubar = {} return end
+  key_shortcuts, menu_actions = {}, {} -- reset
   for key, f in pairs(keys) do key_shortcuts[get_id(f)] = key end
   local _menubar = {}
   for i = 1, #menubar do
@@ -486,7 +489,7 @@ events.connect(events.INITIALIZED, function() set_menubar(default_menubar) end)
 -- @see ui.tab_context_menu
 -- @see ui.menu
 local function set_contextmenus(buffer_menu, tab_menu)
-  contextmenu_actions = {}
+  contextmenu_actions = {} -- reset
   local menu = buffer_menu or default_context_menu
   ui.context_menu = ui.menu(read_menu_table(menu, true))
   proxies.context_menu = proxy_menu(menu, set_contextmenus)
