@@ -274,28 +274,42 @@ function M.find_in_files(dir)
   local found = false
   lfs.dir_foreach(dir, function(filename)
     local match_case = M.match_case
-    local line_num = 1
-    for line in io.lines(filename) do
+    local f = io.open(filename, 'rb')
+    local binary, line_num = nil, 1
+    for line in f:lines() do
       local s, e = lib_find(match_case and line or line:lower(), text)
       if s and e then
-        local utf8_filename = filename:iconv('UTF-8', _CHARSET)
-        buffer:append_text(string.format('%s:%d:%s\n', utf8_filename, line_num,
-                                         line))
-        local pos = buffer:position_from_line(buffer.line_count - 2) +
-                    #utf8_filename + #tostring(line_num) + 2
-        if lib_find == string.find then
-          -- Positions are bytes.
-          buffer:indicator_fill_range(pos + s - 1, e - s + 1)
-        else
-          -- Positions are characters, which may be multiple bytes.
-          s = buffer:position_relative(pos, s - 1)
-          e = buffer:position_relative(pos, e)
-          buffer:indicator_fill_range(s, e - s)
-        end
         found = true
+        if binary == nil then
+          local pos = f:seek()
+          f:seek('set') -- rewind
+          binary = f:read(65536):find('\0')
+          f:seek('set', pos) -- restore
+        end
+        local utf8_filename = filename:iconv('UTF-8', _CHARSET)
+        if not binary then
+          buffer:append_text(string.format('%s:%d:%s\n', utf8_filename,
+                                           line_num, line))
+          local pos = buffer:position_from_line(buffer.line_count - 2) +
+                      #utf8_filename + #tostring(line_num) + 2
+          if lib_find == string.find then
+            -- Positions are bytes.
+            buffer:indicator_fill_range(pos + s - 1, e - s + 1)
+          else
+            -- Positions are characters, which may be multiple bytes.
+            s = buffer:position_relative(pos, s - 1)
+            e = buffer:position_relative(pos, e)
+            buffer:indicator_fill_range(s, e - s)
+          end
+        else
+          buffer:append_text(string.format('%s:1:%s\n', utf8_filename,
+                                           _L['Binary file matches.']))
+          break
+        end
       end
       line_num = line_num + 1
     end
+    f:close()
   end, M.FILTER, true)
   if not found then buffer:append_text(_L['No results found']) end
   ui._print(_L['[Files Found Buffer]'], '') -- goto end, set save pos, etc.
