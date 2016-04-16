@@ -76,7 +76,7 @@ local M = {}
 --   Emitted after the user types a text character into the buffer.
 --   Arguments:
 --
---   * _`byte`_: The text character's byte.
+--   * _`code`_: The text character's character code.
 -- @field DOUBLE_CLICK (string)
 --   Emitted after double-clicking the mouse button.
 --   Arguments:

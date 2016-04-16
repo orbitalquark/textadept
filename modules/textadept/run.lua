@@ -264,9 +264,9 @@ events.connect(events.BUILD_OUTPUT, print_output)
 function M.stop() if M.proc then M.proc:kill() end end
 
 -- Send line as input to process stdin on return.
-events.connect(events.CHAR_ADDED, function(byte)
+events.connect(events.CHAR_ADDED, function(code)
   local proc = M.proc
-  if byte == 10 and proc and proc.status and proc:status() == 'running' and
+  if code == 10 and proc and proc.status and proc:status() == 'running' and
      buffer._type == _L['[Message Buffer]'] then
     local line_num = buffer:line_from_position(buffer.current_pos) - 1
     proc:write((buffer:get_line(line_num)))

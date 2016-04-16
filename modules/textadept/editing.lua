@@ -140,9 +140,9 @@ M.autocompleters = {}
 M.api_files = {}
 
 -- Matches characters specified in char_matches.
-events.connect(events.CHAR_ADDED, function(byte)
+events.connect(events.CHAR_ADDED, function(code)
   if not M.AUTOPAIR then return end
-  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[byte]
+  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[code]
   if match and buffer.selections == 1 then buffer:insert_text(-1, match) end
 end)
 
@@ -182,8 +182,8 @@ events.connect(events.KEYPRESS, function(code)
 end)
 
 -- Auto-indent on return.
-events.connect(events.CHAR_ADDED, function(byte)
-  if not M.AUTOINDENT or byte ~= 10 then return end
+events.connect(events.CHAR_ADDED, function(code)
+  if not M.AUTOINDENT or code ~= 10 then return end
   local line = buffer:line_from_position(buffer.current_pos)
   local i = line - 1
   while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
