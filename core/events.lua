@@ -361,13 +361,13 @@ end)
 
 -- Set event constants.
 for _, n in pairs(scnotifications) do M[n[1]:upper()] = n[1] end
-local ta_events = {
+local textadept_events = {
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
   'buffer_deleted', 'buffer_new', 'csi', 'error', 'find', 'focus',
   'initialized', 'keypress', 'menu_clicked', 'mouse', 'quit', 'replace',
   'replace_all', 'reset_after', 'reset_before', 'resume', 'suspend',
   'view_after_switch', 'view_before_switch', 'view_new'
 }
-for _, e in pairs(ta_events) do M[e:upper()] = e end
+for _, e in pairs(textadept_events) do M[e:upper()] = e end
 
 return M
