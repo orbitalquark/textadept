@@ -421,7 +421,7 @@ events_connect(events.BUFFER_AFTER_SWITCH, restore_view_state)
 events_connect(events.VIEW_AFTER_SWITCH, restore_view_state)
 
 events_connect(events.RESET_AFTER,
-               function() ui.statusbar_text = 'Lua reset' end)
+               function() ui.statusbar_text = _L['Lua reset'] end)
 
 -- Prompts for confirmation if any buffers are modified.
 events_connect(events.QUIT, function()
