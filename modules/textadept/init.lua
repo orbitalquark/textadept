@@ -19,7 +19,7 @@ M.session = require('textadept.session')
 M.snippets = require('textadept.snippets')
 
 -- These need to be loaded last.
-M.keys = require('textadept.keys')
 M.menu = require('textadept.menu')
+M.keys = require('textadept.keys')
 
 return M
