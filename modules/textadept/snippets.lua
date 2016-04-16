@@ -352,8 +352,10 @@ function M._select()
   for trigger, text in pairs(snippets) do
     if type(text) == 'string' then list[#list + 1] = trigger..'|'..text end
   end
-  for trigger, text in pairs(snippets[buffer:get_lexer(true)] or {}) do
-    if type(text) == 'string' then list[#list + 1] = trigger..'|'..text end
+  if snippets[buffer:get_lexer(true)] then
+    for trigger, text in pairs(snippets[buffer:get_lexer(true)]) do
+      if type(text) == 'string' then list[#list + 1] = trigger..'|'..text end
+    end
   end
   table.sort(list)
   for i = 1, #list do
