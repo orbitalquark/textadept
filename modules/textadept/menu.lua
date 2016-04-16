@@ -218,6 +218,7 @@ local default_menubar = {
     {_L['Show St_yle'], function()
       local char = buffer:text_range(buffer.current_pos,
                                      buffer:position_after(buffer.current_pos))
+      if char == '' then return end -- end of buffer
       local bytes = string.rep(' 0x%X', #char):format(char:byte(1, #char))
       local style = buffer.style_at[buffer.current_pos]
       local text = string.format("'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char,
