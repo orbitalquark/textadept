@@ -87,7 +87,8 @@ local function run_command(commands, event)
     if not buffer.filename then return end
     buffer:annotation_clear_all()
     io.save_file()
-    command = commands[buffer.filename:match('[^.]+$')] or
+    command = commands[buffer.filename] or
+              commands[buffer.filename:match('[^.]+$')] or
               commands[buffer:get_lexer()]
     M.cwd = buffer.filename:match('^(.+)[/\\][^/\\]+$') or ''
     data = buffer:get_lexer()
@@ -100,11 +101,11 @@ local function run_command(commands, event)
       local lfs_attributes = lfs.attributes
       for build_file, build_command in pairs(commands) do
         if lfs_attributes(M.cwd..'/'..build_file) then
-          local button, cmd = ui.dialogs.inputbox{
+          local button, utf8_cmd = ui.dialogs.inputbox{
             title = _L['Command'], informative_text = M.cwd,
             text = build_command, button1 = _L['_OK'], button2 = _L['_Cancel']
           }
-          if button == 1 then command = cmd end
+          if button == 1 then command = utf8_cmd:iconv(_CHARSET, 'UTF-8') end
           break
         end
       end
@@ -186,8 +187,8 @@ local function print_output(_, output)
 end
 
 ---
--- Map of file extensions or lexer names to their associated "compile" shell
--- command line strings or functions that return such strings.
+-- Map of filenames, file extensions, and lexer names to their associated
+-- "compile" shell command line strings or functions that return such strings.
 -- Command line strings may have the following macros:
 --
 --   + `%f`: The file's name, including its extension.
@@ -202,8 +203,8 @@ end
 M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc -o "%e" "%f"',antlr='antlr4 "%f"',g='antlr3 "%f"',applescript='osacompile "%f" -o "%e.scpt"',asm='nasm "%f" && ld "%e.o" -o "%e"',boo='booc "%f"',caml='ocamlc -o "%e" "%f"',csharp=WIN32 and 'csc "%f"' or 'mcs "%f"',cpp='g++ -o "%e" "%f"',coffeescript='coffee -c "%f"',context='context --nonstopmode "%f"',cuda=WIN32 and 'nvcc -o "%e.exe" "%f"' or 'nvcc -o "%e" "%f"',dmd='dmd "%f"',dot='dot -Tps "%f" -o "%e.ps"',eiffel='se c "%f"',elixir='elixirc "%f"',erlang='erl -compile "%e"',fsharp=WIN32 and 'fsc.exe "%f"' or 'mono fsc.exe "%f"',fortran='gfortran -o "%e" "%f"',gap='gac -o "%e" "%f"',go='go build "%f"',groovy='groovyc "%f"',haskell=WIN32 and 'ghc -o "%e.exe" "%f"' or 'ghc -o "%e" "%f"',inform=function() return 'inform -c "'..buffer.filename:match('^(.+%.inform[/\\])Source')..'"' end,java='javac "%f"',ltx='pdflatex -file-line-error -halt-on-error "%f"',less='lessc "%f" "%e.css"',lilypond='lilypond "%f"',lisp='clisp -c "%f"',litcoffee='coffee -c "%f"',lua='luac -o "%e.luac" "%f"',moon='moonc "%f"',markdown='markdown "%f" > "%e.html"',nemerle='ncc "%f" -out:"%e.exe"',nim='nim c "%f"',nsis='MakeNSIS "%f"',objective_c='gcc -o "%e" "%f"',pascal='fpc "%f"',perl='perl -c "%f"',php='php -l "%f"',prolog='gplc --no-top-level "%f"',python='python -m py_compile "%f"',ruby='ruby -c "%f"',rust='rustc "%f"',sass='sass "%f" "%e.css"',scala='scalac "%f"',tex='pdflatex -file-line-error -halt-on-error "%f"',vala='valac "%f"',vb=WIN32 and 'vbc "%f"' or 'vbnc "%f"',}
 
 ---
--- Compiles the current file based on its extension or language using the
--- shell command from the `compile_commands` table.
+-- Compiles the current file based on its filename, extension, or language using
+-- the shell command from the `compile_commands` table.
 -- Emits `COMPILE_OUTPUT` events.
 -- @see compile_commands
 -- @see _G.events
@@ -212,8 +213,8 @@ function M.compile() run_command(M.compile_commands, events.COMPILE_OUTPUT) end
 events.connect(events.COMPILE_OUTPUT, print_output)
 
 ---
--- Map of file extensions or lexer names to their associated "run" shell command
--- line strings or functions that return strings.
+-- Map of filenames, file extensions, and lexer names to their associated "run"
+-- shell command line strings or functions that return strings.
 -- Command line strings may have the following macros:
 --
 --   + `%f`: The file's name, including its extension.
@@ -228,8 +229,8 @@ events.connect(events.COMPILE_OUTPUT, print_output)
 M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "file://%e.swf"' or 'xdg-open "%e.swf"',ada=WIN32 and '"%e"' or './"%e"',ansi_c=WIN32 and '"%e"' or './"%e"',applescript='osascript "%f"',asm='./"%e"',awk='awk -f "%f"',batch='"%f"',boo='booi "%f"',caml='ocamlrun "%e"',csharp=WIN32 and '"%e"' or 'mono "%e.exe"',cpp=WIN32 and '"%e"' or './"%e"',chuck='chuck "%f"',cmake='cmake -P "%f"',coffeescript='coffee "%f"',context=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',cuda=WIN32 and '"%e"' or './"%e"',dmd=WIN32 and '"%e"' or './"%e"',eiffel="./a.out",elixir='elixir "%f"',fsharp=WIN32 and '"%e"' or 'mono "%e.exe"',forth='gforth "%f" -e bye',fortran=WIN32 and '"%e"' or './"%e"',gnuplot='gnuplot "%f"',go='go run "%f"',groovy='groovy "%f"',haskell=WIN32 and '"%e"' or './"%e"',html=WIN32 and 'start "" "%f"' or OSX and 'open "file://%f"' or 'xdg-open "%f"',icon='icont "%e" -x',idl='idl -batch "%f"',Io='io "%f"',java='java "%e"',javascript='node "%f"',ltx=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',less='lessc --no-color "%f"',lilypond=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',lisp='clisp "%f"',litcoffee='coffee "%f"',lua='lua -e "io.stdout:setvbuf(\'no\')" "%f"',makefile=WIN32 and 'nmake -f "%f"' or 'make -f "%f"',markdown='markdown "%f"',moon='moon "%f"',nemerle=WIN32 and '"%e"' or 'mono "%e.exe"',nim='nim c -r "%f"',objective_c=WIN32 and '"%e"' or './"%e"',pascal=WIN32 and '"%e"' or './"%e"',perl='perl "%f"',php='php "%f"',pike='pike "%f"',pkgbuild='makepkg -p "%f"',prolog=WIN32 and '"%e"' or './"%e"',pure='pure "%f"',python='python -u "%f"',rstats=WIN32 and 'Rterm -f "%f"' or 'R -f "%f"',rebol='REBOL "%f"',rexx=WIN32 and 'rexx "%e"' or 'regina "%e"',ruby='ruby "%f"',rust=WIN32 and '"%e"' or './"%e"',sass='sass "%f"',scala='scala "%e"',bash='bash "%f"',csh='tcsh "%f"',sh='sh "%f"',zsh='zsh "%f"',smalltalk='gst "%f"',snobol4='snobol4 -b "%f"',tcl='tclsh "%f"',tex=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',vala=WIN32 and '"%e"' or './"%e"',vb=WIN32 and '"%e"' or 'mono "%e.exe"',}
 
 ---
--- Runs the current file based on its extension or language using the shell
--- command from the `run_commands` table.
+-- Runs the current file based on its filename, extension, or language using the
+-- shell command from the `run_commands` table.
 -- Emits `RUN_OUTPUT` events.
 -- @see run_commands
 -- @see _G.events
