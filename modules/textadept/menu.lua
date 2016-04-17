@@ -173,6 +173,33 @@ local default_menubar = {
     SEPARATOR,
     {_L['_Run'], textadept.run.run},
     {_L['_Compile'], textadept.run.compile},
+    {_L['Set _Arguments...'], function()
+      if not buffer.filename then return end
+      local run_commands = textadept.run.run_commands
+      local compile_commands = textadept.run.compile_commands
+      local base_commands, utf8_args = {}, {}
+      for i, commands in ipairs{run_commands, compile_commands} do
+        -- Compare the base run/compile command with the one for the current
+        -- file. The difference is any additional arguments set previously.
+        base_commands[i] = commands[buffer.filename:match('[^.]+$')] or
+                           commands[buffer:get_lexer()]
+        local current_command = (commands[buffer.filename] or '')
+        local args = current_command:sub(#base_commands[i] + 2)
+        utf8_args[i] = args:iconv('UTF-8', _CHARSET)
+      end
+      local button, utf8_args = ui.dialogs.inputbox{
+        title = _L['Set _Arguments...']:gsub('_', ''), informative_text = {
+          _L['Command line arguments'], _L['For Run:'], _L['For Compile:']
+        }, text = utf8_args, width = not CURSES and 400 or nil
+      }
+      if button ~= 1 then return end
+      for i, commands in ipairs{run_commands, compile_commands} do
+        -- Add the additional arguments to the base run/compile command and set
+        -- the new command to be the one used for the current file.
+        commands[buffer.filename] = base_commands[i]..' '..
+                                    utf8_args[i]:iconv(_CHARSET, 'UTF-8')
+      end
+    end},
     {_L['Buil_d'], textadept.run.build},
     {_L['S_top'], textadept.run.stop},
     {_L['_Next Error'], function() textadept.run.goto_error(false, true) end},
