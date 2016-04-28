@@ -359,13 +359,25 @@ end
 
 ---
 -- Encloses the selected text or the current word within strings *left* and
--- *right*.
+-- *right*, taking multiple selections into account.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
 -- @name enclose
 function M.enclose(left, right)
-  if buffer.selection_empty then M.select_word() end
-  buffer:replace_sel(left..buffer:get_sel_text()..right)
+  buffer:begin_undo_action()
+  for i = 0, buffer.selections - 1 do
+    local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
+    if s == e then
+      buffer:set_target_range(buffer:word_start_position(s, true),
+                              buffer:word_end_position(e, true))
+    else
+      buffer:set_target_range(s, e)
+    end
+    buffer:replace_target(left..buffer.target_text..right)
+    buffer.selection_n_start[i] = buffer.target_end
+    buffer.selection_n_end[i] = buffer.target_end
+  end
+  buffer:end_undo_action()
 end
 
 ---
