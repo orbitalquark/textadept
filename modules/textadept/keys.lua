@@ -220,7 +220,7 @@ module('textadept.keys')]]
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:   A   C         H I            p  Q     T ~ V     Y  _   ) ] }   +
+-- c:       C         H I            p  Q     T ~ V     Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdD   F      jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
@@ -235,7 +235,7 @@ module('textadept.keys')]]
 -- Mac OSX key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- m:   A   C        ~  I JkK  ~M    p  ~    tT   V    yY  _   ) ] }   +   ~~\n
+-- m:       C        ~  I JkK  ~M    p  ~    tT   V    yY  _   ) ] }   +   ~~\n
 -- c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  p q~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
@@ -387,6 +387,9 @@ keys[not OSX and (GUI and 'cE' or 'mC')
 keys[not OSX and 'cr' or 'mr'] = textadept.run.run
 keys[not OSX and (GUI and 'cR' or 'cmr') or 'mR'] = textadept.run.compile
 keys[not OSX and (GUI and 'cB' or 'cmb') or 'mB'] = textadept.run.build
+if GUI then
+  keys[not OSX and 'cA' or 'mA'] = m_tools[_L['Set _Arguments...']][2]
+end
 keys[not OSX and (GUI and 'cX' or 'cmx') or 'mX'] = textadept.run.stop
 keys[not OSX and (GUI and 'cae' or 'mx')
              or 'cme'] = m_tools[_L['_Next Error']][2]
