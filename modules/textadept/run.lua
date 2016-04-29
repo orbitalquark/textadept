@@ -19,7 +19,7 @@ local M = {}
 --   This applies only to languages that have syntax-checking commands and error
 --   message patterns defined in the `syntax_commands` and
 --   `syntax_error_patterns` tables, respectively.
---   The default value is `true`.
+--   The default value is `false`.
 -- @field GOTO_SYNTAX_ERRORS (bool)
 --   Immediately jump to recognized syntax errors after saving a source file.
 --   The default value is `true`.
@@ -61,7 +61,7 @@ local M = {}
 module('textadept.run')]]
 
 M.RUN_IN_BACKGROUND = false
-M.CHECK_SYNTAX = true
+M.CHECK_SYNTAX = false
 M.GOTO_SYNTAX_ERRORS = true
 
 M.MARK_WARNING = _SCINTILLA.next_marker_number()
