@@ -48,9 +48,9 @@ Textadept runs faster than ever before.
 
 Textadept is minimalist. Not only does its appearance exhibit this, but the
 editor's C core pledges to never exceed 2000 lines of code and its Lua extension
-code avoids going beyond 4000 lines. After more than 5 years of development,
-Textadept contains the same amount of code since its inception while evolving
-into a vastly superior editor.
+code avoids going beyond 4000 lines. After more than 8 years of development,
+Textadept contains roughly the same amount of code since its inception while
+evolving into a vastly superior editor.
 
 ### Remarkably Extensible
 
