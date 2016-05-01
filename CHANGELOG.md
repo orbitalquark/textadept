@@ -9,6 +9,85 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 8.7 (01 May 2016)
+
+Download:
+
+* [Textadept 8.7 -- Win32][] | [PGP -- 8.7 Win32][]
+* [Textadept 8.7 -- Mac OSX Intel 10.5+][] | [PGP -- 8.7 OSX][]
+* [Textadept 8.7 -- Linux][] | [PGP -- 8.7 Linux][]
+* [Textadept 8.7 -- Linux x86_64][] | [PGP -- 8.7 Linux x86_64][]
+* [Textadept 8.7 -- Modules][] | [PGP -- 8.7 Modules][]
+
+Bugfixes:
+
+* Much better UTF-8 support in the terminal version.
+* Completely hide the menubar if it is empty.
+* Fix building for some BSDs.
+* Added some block comment strings for languages lacking them.
+* Fixed a number of small encoding issues in various corner cases.
+* Fixed bug in [`textadept.editing.convert_indentation()`][] with mixed
+  indentation.
+* Fixed an obscure side-effect that reset buffer properties when working with
+  non-focused buffers.
+* Fixed incremental find with UTF-8 characters.
+* Fixed bug in session restoration of scroll and caret positions in multiple
+  views.
+* Fixed bug where existing files were not closed when a session is loaded.
+* Fixed corner case in "replace within selection".
+* Fixed regression for `%<...>` and `%[...]` in snippets.
+* When executing compile/run commands from a different directory, indicate it.
+* Fixed error when showing style popup at the end of a buffer.
+* "Find in Files" should not print the contents of binary files.
+* Fixed lack of environment in spawned processes on Linux.
+* Scintilla: Support longer regexes in searches.
+
+Changes:
+
+* Support UTF-8 pattern matching in "Lua Pattern" searches by incorporating bits
+  of [luautf8][].
+* Improved efficiency of autocompleting words from all open buffers.
+* "Find in Files" defaults to the current project's root directory.
+* Submenus and menu items can be accessed by name. (See
+  [`textadept.menu.menubar`][] for an example.)
+* Only show snippet trigger and text when selecting from a dialog.
+* More efficient screen refreshes in the terminal version.
+* Save and restore horizontal scroll position when switching buffers.
+* The undocumented `keys.utils` was removed. This will break custom key bindings
+  that depend on it. See [this mailing list post][] for more information.
+* The menubar is loaded on [`events.INITIALIZED`][] now. See the above mailing
+  list post for more information.
+* Allow file-specific [compile commands][] and [run commands][].
+* Added new dialog for specifying compile/run command arguments to "Tools" menu.
+* [`textadept.editing.enclose()`][] works with multiple selections.
+* Disabled [`textadept.run.CHECK_SYNTAX`][] by default.
+* Updated to [lspawn][] 1.5.
+* Updated to [Scintilla][] 3.6.5.
+* Updated to [Scinterm][] 1.8.
+
+[Textadept 8.7 -- Win32]: download/textadept_8.7.win32.zip
+[Textadept 8.7 -- Mac OSX Intel 10.5+]: download/textadept_8.7.osx.zip
+[Textadept 8.7 -- Linux]: download/textadept_8.7.i386.tgz
+[Textadept 8.7 -- Linux x86_64]: download/textadept_8.7.x86_64.tgz
+[Textadept 8.7 -- Modules]: download/textadept_8.7.modules.zip
+[PGP -- 8.7 Win32]: download/textadept_8.7.win32.zip.asc
+[PGP -- 8.7 OSX]: download/textadept_8.7.osx.zip.asc
+[PGP -- 8.7 Linux]: download/textadept_8.7.i386.tgz.asc
+[PGP -- 8.7 Linux x86_64]: download/textadept_8.7.x86_64.tgz.asc
+[PGP -- 8.7 Modules]: download/textadept_8.7.modules.zip.asc
+[`textadept.editing.convert_indentation()`]: api.html#textadept.editing.convert_indentation
+[luautf8]: https://github.com/starwing/luautf8
+[`textadept.menu.menubar`]: api.html#textadept.menu.menubar
+[this mailing list post]: http://foicica.com/lists/code/201604/3171.html
+[`events.INITIALIZED`]: api.html#events.INITIALIZED
+[compile commands]: api.html#textadept.run.compile_commands
+[run commands]: api.html#textadept.run.run_commands
+[`textadept.editing.enclose()`]: api.html#textadept.editing.enclose
+[`textadept.run.CHECK_SYNTAX`]: api.html#textadept.run.CHECK_SYNTAX
+[lspawn]: http://foicica.com/hg/lspawn
+[Scintilla]: http://scintilla.org
+[Scinterm]: http://foicica.com/scinterm
+
 ## 8.6 (01 Mar 2016)
 
 Download:
@@ -28,7 +107,6 @@ Bugfixes:
 * Only change spawned process environment if one was specified on Mac OSX.
 * Fixed focus bug in [`view:goto_buffer()`][] with non-focused view.
 * Fixed building the terminal version in debug mode.
-* Recognize the `weight` [style property][].
 * Fixed potential crash with malformed style properties.
 * Fixed unlikely buffer overflow in messages coming from Scintilla.
 * Fixed potential memory access error when closing Textadept while a spawned
@@ -45,6 +123,7 @@ Changes:
 * Added `-v` and `--version` command line parameters.
 * Added single-instance functionality on Win32.
 * Require GLib 2.28+.
+* Recognize the `weight` [style property][].
 * Added [`lexer.line_state`][] and [`lexer.line_from_position()`][] for
   [stateful lexers][].
 * Updated to [lspawn][] 1.4.
