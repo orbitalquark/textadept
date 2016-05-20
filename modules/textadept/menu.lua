@@ -567,7 +567,7 @@ function M.select_command()
 end
 
 return setmetatable(M, {
-  __index = function(_, k) return proxies[k] or M[k] end,
+  __index = function(_, k) return proxies[k] or rawget(M, k) end,
   __newindex = function(_, k, v)
     if k == 'menubar' then
       set_menubar(v)
