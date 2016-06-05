@@ -96,7 +96,7 @@ endif
 
 # Scintilla.
 
-sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG -DG_THREADS_IMPL_NONE \
+sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG -DNO_CXX11_REGEX \
             -Iscintilla/include -Iscintilla/src -Iscintilla/lexlib -Wall
 
 sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
@@ -296,7 +296,7 @@ osxapp_libs = libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib \
               libffi.5.dylib libfontconfig.1.dylib libfreetype.6.dylib \
               libgdk_pixbuf-2.0.0.dylib libgdk-quartz-2.0.0.dylib \
               libgio-2.0.0.dylib libglib-2.0.0.dylib libgmodule-2.0.0.dylib \
-              libgobject-2.0.0.dylib libgthread-2.0.0.dylib \
+              libgobject-2.0.0.dylib \
               libgtkmacintegration.2.dylib libgtk-quartz-2.0.0.dylib \
               libintl.8.dylib libpango-1.0.0.dylib libpangocairo-1.0.0.dylib \
               libpangoft2-1.0.0.dylib libpixman-1.0.dylib libpng14.14.dylib \
@@ -379,7 +379,7 @@ else
   lspawn_url = http://foicica.com/hg/lspawn/archive/tip.zip
 endif
 
-scintilla_tgz = scintilla365.tgz
+scintilla_tgz = scintilla366.tgz
 scinterm_zip = scinterm_1.8.zip
 scintillua_zip = scintillua_3.6.5-1.zip
 lua_tgz = lua-5.3.2.tar.gz
