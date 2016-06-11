@@ -74,7 +74,7 @@ function getfenv([f]) end
 
 ---
 -- If `object` does not have a metatable, returns nil. Otherwise, if the
--- object's metatable has a `"__metatable"` field, returns the associated
+-- object's metatable has a `__metatable` field, returns the associated
 -- value. Otherwise, returns the metatable of the given object.
 function getmetatable(object) end
 
@@ -204,28 +204,28 @@ function pcall(f [, arg1, ···]) end
 function print(···) end
 
 ---
--- Checks whether `v1` is equal to `v2`, without invoking any
+-- Checks whether `v1` is equal to `v2`, without invoking the `__eq`
 -- metamethod. Returns a boolean.
 function rawequal(v1, v2) end
 
 ---
--- Gets the real value of `table[index]`, without invoking any
+-- Gets the real value of `table[index]`, without invoking the `__index`
 -- metamethod. `table` must be a table; `index` may be any value.
 function rawget(table, index) end
 
 ---
 -- Returns the length of the object `v`,
 -- which must be a table or a string,
--- without invoking any metamethod.
+-- without invoking the `__len` metamethod.
 -- Returns an integer.
 --
 -- New in Lua 5.2.
 function rawlen(v) end
 
 ---
--- Sets the real value of `table[index]` to `value`, without invoking any
--- metamethod. `table` must be a table, `index` any value different from nil and
--- NaN, and `value` any Lua value.
+-- Sets the real value of `table[index]` to `value`, without invoking the
+-- `__newindex` metamethod. `table` must be a table, `index` any value different
+-- from nil and NaN, and `value` any Lua value.
 --
 -- This function returns `table`.
 function rawset(table, index, value) end
@@ -251,7 +251,7 @@ function select(index, ···) end
 -- Sets the metatable for the given table. (To change the metatable of other
 -- types from Lua code, you must use the debug library.) If `metatable` is nil,
 -- removes the metatable of the given table. If the original metatable has a
--- `"__metatable"` field, raises an error.
+-- `__metatable` field, raises an error.
 --
 -- This function returns `table`.
 function setmetatable(table, metatable) end
@@ -280,7 +280,7 @@ function tonumber(e [, base]) end
 -- (either a decimal dot or an exponent). (For complete control of how numbers
 -- are converted, use `string.format`.)
 --
--- If the metatable of `v` has a `"__tostring"` field, then `tostring` calls the
+-- If the metatable of `v` has a `__tostring` field, then `tostring` calls the
 -- corresponding value with `v` as argument, and uses the result of the call as
 -- its result.
 function tostring(v) end
@@ -577,10 +577,11 @@ function string.find(s, pattern [, init [, plain]]) end
 -- description given in its first argument (which must be a string). The format
 -- string follows the same rules as the ISO C function `sprintf`. The only
 -- differences are that the options/modifiers `*`, `h`, `L`, `l`, `n`, and `p`
--- are not supported and that there is an extra option, `q`. The `q` option
--- formats a string between double quotes, using escape sequences when necessary
--- to ensure that it can safely be read back by the Lua interpreter. For
--- instance, the call
+-- are not supported and that there is an extra option, `q`.
+--
+-- The `q` option formats a string between double quotes, using escape sequences
+-- when necessary to ensure that it can safely be read back by the Lua
+-- interpreter. For instance, the call
 --
 --   string.format('%q', 'a string with "quotes" and \n new line')
 --
@@ -833,10 +834,12 @@ function table.insert(list, [pos,] value) end
 function table.maxn(table) end
 
 ---
--- Moves elements from table `a1` to table `a2`. This function performs the
--- equivalent to the following multiple assignment: `a2[t], ··· = a1[f], ···,
--- a1[e]`. The default for `a2` is `a1`. The destination range can overlap with
--- the source range. Index `f` must be positive.
+-- Moves elements from table `a1` to table `a2`, performing the equivalent to
+-- the following multiple assignment: `a2[t], ··· = a1[f], ···, a1[e]`. The
+-- default for `a2` is `a1`. The destination range can overlap with the source
+-- range. Index `f` must be positive.
+--
+-- Returns the destination table `a2`.
 --
 -- New in Lua 5.3.
 function table.move(a1, f, e, t [,a2]) end
@@ -1288,8 +1291,8 @@ function io.popen(prog [, mode]) end
 function io.read(···) end
 
 ---
--- Returns a handle for a temporary file. This file is opened in update
--- mode and it is automatically removed when the program ends.
+-- In case of success, returns a handle for a temporary file. This file is
+-- opened in update mode and it is automatically removed when the program ends.
 function io.tmpfile() end
 
 ---
@@ -1417,9 +1420,9 @@ function os.clock() end
 -- Universal Time. After this optional character, if `format` is the string
 -- "`*t`", then `date` returns a table with the following fields: `year`,
 -- `month` (1-12), `day` (1-31), `hour` (0-23), `min` (0-59), `sec` (0-61),
--- `wday` (weekday, Sunday is 1), `yday` (day of the year), and `isdst`
--- (daylight saving flag, a boolean). This last field may be absent if the
--- information is not available.
+-- `wday` (weekday, 1-7, Sunday is 1), `yday` (day of the year, 1-366), and
+-- `isdst` (daylight saving flag, a boolean). This last field may be absent if
+-- the information is not available.
 --
 -- If `format` is not "`*t`", then `date` returns the date as a string,
 -- formatted according to the same rules as the ISO C function `strftime`.

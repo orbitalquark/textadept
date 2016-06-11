@@ -1734,6 +1734,11 @@ combinations are allowed in describing a character class:
   underscore, `[0-7]` represents the octal digits, and `[0-7%l%-]` represents
   the octal digits plus the lowercase letters plus the '`-`' character.
   <br /><br />
+  You can put a closing square bracket in a set by positioning it as the first
+  character in the set. You can put an hyphen in a set by positioning it as the
+  first or the last character in the set. (You can also use an escape for both
+  cases.)
+  <br /><br />
   The interaction between ranges and classes is not defined. Therefore, patterns
   like `[%a-z]` or `[a-%%]` have no meaning.
 * **`[^set]`:** represents the complement of _set_, where _set_ is interpreted
