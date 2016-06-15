@@ -1027,20 +1027,26 @@ For example, copying the default Lua language module from *modules/lua/* to
 *~/.textadept/modules/* results in Textadept loading that module for editing Lua
 code in place of its own. However, if you make custom changes to that module and
 upgrade Textadept later, the module may no longer be compatible. Rather than
-potentially wasting time merging changes, run custom code independent of a
-module in the module's *post_init.lua* file. In this case, instead of copying
-the `lua` module and creating an `events.LEXER_LOADED` event handler to use
-tabs, simply put the event handler in *~/.textadept/modules/lua/post_init.lua*:
+potentially wasting time merging changes, create a new "sub-module" for the
+language (e.g. *~/.textadept/modules/lua/mine.lua*) and in
+*~/.textadept/init.lua*, `require()` your sub-module from an
+`events.LEXER_LOADED` event handler:
 
     events.connect(events.LEXER_LOADED, function(lang)
-      if lang == 'lua' then buffer.use_tabs = true end
+      if lang == 'lua' then require('lua.mine') end
     end)
 
-Similarly, use *post_init.lua* to change the module's [compile and run][]
-commands, load more Autocompletion tags, and add additional
+(Lua's `require()` function will not run code in *mine.lua* more than once.)
+
+Similarly, you can use your sub-module to change the main language module's
+[compile and run][] commands, load more Autocompletion tags, and add additional
 [key bindings](#Key.Bindings) and [snippets](#Snippet.Preferences) (instead of
 in *~/.textadept/init.lua*). For example:
 
+    -- In ~/.textadept/modules/lua/mine.lua.
+    events.connect(events.LEXER_LOADED, function(lang)
+      if lang == 'lua' then buffer.use_tabs = true end
+    end)
     textadept.run.run_commands.lua = 'lua5.2'
     _M.lua.tags[#_M.lua.tags + 1] = '/path/to/my/projects/tags'
     keys.lua['c\n'] = function()
@@ -1883,6 +1889,18 @@ braces                            |Replaced|[brace\_matches][]
 [strip\_trailing\_spaces]: api.html#textadept.editing.strip_trailing_spaces
 [autocomplete\_all\_words]: api.html#textadept.editing.autocomplete_all_words
 [brace\_matches]: api.html#textadept.editing.brace_matches
+
+#### Language Module Handling Changes
+
+Textadept 9 no longer auto-loads a *post_init.lua* in language modules. Instead,
+it must be loaded manually from an `events.LEXER_LOADED` event. For example:
+
+    events.connect(events.LEXER_LOADED, function()
+      if lang == 'lua' then require('lua.mine') end
+    end)
+
+will load a *~/.textadept/modules/lua/mine.lua* "sub-module" for Lua files. Keep
+in mind that Lua's `require()` function will only execute module code once.
 
 ### Textadept 7 to 8
 

@@ -68,11 +68,7 @@ local function set_lexer(buffer, lang)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
   buffer._lexer = lang
-  if package.searchpath(lang, package.path) then
-    _M[lang] = require(lang)
-    local post_init = lang..'.post_init'
-    if package.searchpath(post_init, package.path) then require(post_init) end
-  end
+  if package.searchpath(lang, package.path) then _M[lang] = require(lang) end
   if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, lang) end
   local last_line = buffer.first_visible_line + buffer.lines_on_screen
   buffer:colourise(0, buffer:position_from_line(last_line + 1))
