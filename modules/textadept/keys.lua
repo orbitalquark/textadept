@@ -93,10 +93,10 @@ local M = {}
 -- F2              |F2     |F2           |Next bookmark
 -- Shift+F2        |⇧F2    |F3           |Previous bookmark
 -- Alt+F2          |⌥F2    |F4           |Goto bookmark...
--- Ctrl+U          |⌘U     |^U           |Snapopen `_USERHOME`
--- None            |None   |None         |Snapopen `_HOME`
--- Ctrl+Alt+Shift+O|^⌘⇧O   |M-S-O        |Snapopen current directory
--- Ctrl+Alt+Shift+P|^⌘⇧P   |M-^P         |Snapopen current project
+-- Ctrl+U          |⌘U     |^U           |Quickly open `_USERHOME`
+-- None            |None   |None         |Quickly open `_HOME`
+-- Ctrl+Alt+Shift+O|^⌘⇧O   |M-S-O        |Quickly open current directory
+-- Ctrl+Alt+Shift+P|^⌘⇧P   |M-^P         |Quickly open current project
 -- Ctrl+I          |⌘I     |M-S-I        |Show style
 -- **Buffer**      |      |             |
 -- Ctrl+Tab        |^⇥    |M-N          |Next buffer
@@ -402,13 +402,13 @@ keys[not OSX and (GUI and 'csf2' or 'f6') or 'msf2'] = textadept.bookmarks.clear
 keys.f2 = m_bookmark[_L['_Next Bookmark']][2]
 keys[GUI and 'sf2' or 'f3'] = m_bookmark[_L['_Previous Bookmark']][2]
 keys[GUI and 'af2' or 'f4'] = textadept.bookmarks.goto_mark
--- Snapopen.
-local m_snapopen = m_tools[_L['Snap_open']]
-keys[not OSX and 'cu' or 'mu'] = m_snapopen[_L['Snapopen _User Home']][2]
--- TODO: m_snapopen[_L['Snapopen _Textadept Home']][2]
+-- Quick Open.
+local m_quick_open = m_tools[_L['Quick _Open']]
+keys[not OSX and 'cu' or 'mu'] = m_quick_open[_L['Quickly Open _User Home']][2]
+-- TODO: m_quick_open[_L['Quickly Open _Textadept Home']][2]
 keys[not OSX and (GUI and 'caO' or 'mO')
-             or 'cmO'] = m_snapopen[_L['Snapopen _Current Directory']][2]
-keys[not OSX and (GUI and 'caP' or 'cmp') or 'cmP'] = io.snapopen
+             or 'cmO'] = m_quick_open[_L['Quickly Open _Current Directory']][2]
+keys[not OSX and (GUI and 'caP' or 'cmp') or 'cmP'] = io.quick_open
 -- Snippets.
 keys[not OSX and (GUI and 'ck' or 'mk') or 'a\t'] = textadept.snippets._select
 keys['\t'] = textadept.snippets._insert

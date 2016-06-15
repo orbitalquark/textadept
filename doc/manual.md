@@ -1847,6 +1847,17 @@ terminal's constraints:
 
 ## Migration Guides
 
+### Textadept 8 to 9
+
+#### API Changes
+
+Old API                           |Change  |New API
+----------------------------------|:------:|-------
+**textadept.editing**             |        |
+snapopen                          |Renamed |[quick\_open()][]
+SNAPOPEN\_MAX                     |Renamed |[quick\_open\_max][]
+snapopen\_filters                 |Renamed |[quick\_open\_filters][]
+
 ### Textadept 7 to 8
 
 Textadept 8 upgraded its internal copy of Lua from [5.2 to 5.3][]. Nearly all

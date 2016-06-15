@@ -30,8 +30,8 @@
 --   Arguments:
 --
 --   * _`filename`_: The filename externally modified.
--- @field SNAPOPEN_MAX (number)
---   The maximum number of files listed in the snapopen dialog.
+-- @field quick_open_max (number)
+--   The maximum number of files listed in the quick open dialog.
 --   The default value is `1000`.
 module('io')]]
 
@@ -42,7 +42,7 @@ events.FILE_BEFORE_SAVE = 'file_before_save'
 events.FILE_AFTER_SAVE = 'file_after_save'
 events.FILE_CHANGED = 'file_changed'
 
-io.SNAPOPEN_MAX = 1000
+io.quick_open_max = 1000
 
 ---
 -- List of recently opened files, the most recent being towards the top.
@@ -378,11 +378,11 @@ function io.get_project_root(path)
 end
 
 ---
--- Map of file paths to filters used by `io.snapopen()`.
+-- Map of file paths to filters used by `io.quick_open()`.
 -- @class table
--- @name snapopen_filters
--- @see snapopen
-io.snapopen_filters = {}
+-- @name quick_open_filters
+-- @see quick_open
+io.quick_open_filters = {}
 
 ---
 -- Prompts the user to select files to be opened from *paths*, a string
@@ -405,41 +405,41 @@ io.snapopen_filters = {}
 --
 -- Any filter patterns starting with '!' exclude files and directories that do
 -- not match the pattern that follows. The number of files in the list is capped
--- at `SNAPOPEN_MAX`. If *filter* is `nil` and *paths* is ultimately a string,
--- the filter from the `io.snapopen_filters` table is used. In that case, unless
--- explicitly specified, *exclude_FILTER* becomes `true`.
+-- at `quick_open_max`. If *filter* is `nil` and *paths* is ultimately a string,
+-- the filter from the `io.quick_open_filters` table is used. In that case,
+-- unless explicitly specified, *exclude_FILTER* becomes `true`.
 -- *opts* is an optional table of additional options for
 -- `ui.dialogs.filteredlist()`.
 -- @param paths Optional string directory path or table of directory paths to
 --   search. The default value is the current project's root directory, if
 --   available.
 -- @param filter Optional filter for files and directories to exclude. The
---   default value comes from `io.snapopen_filters` if *paths* is a string.
+--   default value comes from `io.quick_open_filters` if *paths* is a string.
 -- @param exclude_FILTER Optional flag indicating whether or not to exclude the
 --   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
 --   *filter*.
 --   Normally, the default value is `false` to include the default filter.
---   However, in the instances where *filter* comes from `io.snapopen_filters`,
---   the default value is `true`.
+--   However, in the instances where *filter* comes from
+--   `io.quick_open_filters`, the default value is `true`.
 -- @param opts Optional table of additional options for
 --   `ui.dialogs.filteredlist()`.
--- @usage io.snapopen(buffer.filename:match('^.+/')) -- list all files in the
+-- @usage io.quick_open(buffer.filename:match('^.+/')) -- list all files in the
 --   current file's directory, subject to the default filter
--- @usage io.snapopen('/project', '!%.lua$') -- list all Lua files in a project
---    directory
--- @usage io.snapopen('/project', {folders = {'build'}}) -- list all source
+-- @usage io.quick_open('/project', '!%.lua$') -- list all Lua files in a
+--    project directory
+-- @usage io.quick_open('/project', {folders = {'build'}}) -- list all source
 --   files in a project directory
--- @see io.snapopen_filters
+-- @see io.quick_open_filters
 -- @see lfs.FILTER
--- @see SNAPOPEN_MAX
+-- @see quick_open_max
 -- @see ui.dialogs.filteredlist
--- @name snapopen
-function io.snapopen(paths, filter, exclude_FILTER, opts)
+-- @name quick_open
+function io.quick_open(paths, filter, exclude_FILTER, opts)
   if not paths then paths = io.get_project_root() end
   if not paths then return end
   if type(paths) == 'string' then
     if not filter then
-      filter = io.snapopen_filters[paths]
+      filter = io.quick_open_filters[paths]
       if filter and exclude_FILTER == nil then
         exclude_FILTER = filter ~= lfs.FILTER
       end
@@ -449,15 +449,15 @@ function io.snapopen(paths, filter, exclude_FILTER, opts)
   local utf8_list = {}
   for i = 1, #paths do
     lfs.dir_foreach(paths[i], function(filename)
-      if #utf8_list >= io.SNAPOPEN_MAX then return false end
+      if #utf8_list >= io.quick_open_max then return false end
       filename = filename:gsub('^%.[/\\]', '')
       utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
     end, filter, exclude_FILTER)
   end
-  if #utf8_list >= io.SNAPOPEN_MAX then
-    local msg = string.format('%d %s %d', io.SNAPOPEN_MAX,
+  if #utf8_list >= io.quick_open_max then
+    local msg = string.format('%d %s %d', io.quick_open_max,
                               _L['files or more were found. Showing the first'],
-                              io.SNAPOPEN_MAX)
+                              io.quick_open_max)
     ui.dialogs.msgbox{
       title = _L['File Limit Exceeded'], text = msg, icon = 'gtk-dialog-info'
     }
