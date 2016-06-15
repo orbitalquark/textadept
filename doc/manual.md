@@ -1868,6 +1868,9 @@ FILTER                            |Renamed |[default\_filter][]
 dir\_foreach()                    |Changed |[dir\_foreach()][] _(changed args)_
 **ui**                            |        |
 SILENT\_PRINT                     |Renamed |[silent\_print][]
+**ui.find**                       |        |
+FILTER                            |Renamed |[find\_in\_files\_filter][]
+find\_in\_files(dir)              |Changed |[find\_in\_files][](dir, filter)
 **textadept.editing**             |        |
 AUTOPAIR                          |Replaced|[auto\_pairs][]
 TYPEOVER\_CHARS                   |Replaced|[typeover\_chars][]
@@ -1880,6 +1883,8 @@ braces                            |Replaced|[brace\_matches][]
 [default\_filter]: api.html#lfs.default_filter
 [dir\_foreach()]: api.html#lfs.dir_foreach
 [silent\_print]: api.html#ui.silent_print
+[find\_in\_files\_filter]: api.html#ui.find.find_in_files_filter
+[find\_in\_files]: api.html#ui.find.find_in_files
 [quick\_open]: api.html#io.quick_open
 [quick\_open\_filters]: api.html#io.quick_open_filters
 [quick\_open\_max]: api.html#io.quick_open_max
