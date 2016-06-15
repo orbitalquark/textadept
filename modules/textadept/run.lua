@@ -131,9 +131,9 @@ local function run_command(commands, event)
 
   preferred_view = view
   local function emit_output(output, focus)
-    ui.SILENT_PRINT = not focus
+    ui.silent_print = not focus
     for line in output:gmatch('[^\r\n]+') do events.emit(event, data, line) end
-    ui.SILENT_PRINT = false
+    ui.silent_print = false
   end
   local function emit_status(status) emit_output('> exit status: '..status) end
 

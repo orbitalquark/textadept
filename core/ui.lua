@@ -26,7 +26,7 @@ local ui = ui
 -- @field tabs (bool)
 --   Whether or not to display the tab bar when multiple buffers are open.
 --   The default value is `true`.
--- @field SILENT_PRINT (bool)
+-- @field silent_print (bool)
 --   Whether or not to print messages to buffers silently.
 --   This is not guaranteed to be a constant value, as Textadept may change it
 --   for the editor's own purposes. This flag should be used only in conjunction
@@ -35,7 +35,7 @@ local ui = ui
 --   to them.
 module('ui')]]
 
-ui.SILENT_PRINT = false
+ui.silent_print = false
 
 local theme = package.searchpath(not CURSES and 'light' or 'term',
                                  _USERHOME..'/themes/?.lua;'..
@@ -57,7 +57,7 @@ local function _print(buffer_type, ...)
     print_buffer = buffer.new()
     print_buffer._type = buffer_type
     events.emit(events.FILE_OPENED)
-  elseif not ui.SILENT_PRINT then
+  elseif not ui.silent_print then
     for i = 1, #_VIEWS do
       if _VIEWS[i].buffer._type == buffer_type then ui.goto_view(i) break end
     end
