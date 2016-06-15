@@ -75,7 +75,7 @@ local M = {}
 -- transform with the process' standard output (stdout). The code may use a `%`
 -- character to represent placeholder *n*'s text. An example is
 --
---     snippets['env'] = '$%1(HOME) = %1[echo $%1]'
+--     snippets['env'] = '$%1(HOME) = %1[echo $%]'
 --
 -- ### `%%`
 --
@@ -344,7 +344,7 @@ function M._cancel_current()
 end
 
 ---
--- Prompts the user to select a snippet to be inserted from a list of global and
+-- Prompts the user to select a snippet to insert from a list of global and
 -- language-specific snippets.
 -- @name _select
 function M._select()

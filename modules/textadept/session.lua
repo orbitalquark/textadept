@@ -27,8 +27,8 @@ M.max_recent_files = 10
 ---
 -- Loads session file *filename* or the user-selected session, returning `true`
 -- if a session file was opened and read.
--- Textadept restores split views, opened buffers, cursor information, and
--- recent files.
+-- Textadept restores split views, opened buffers, cursor information, recent
+-- files, and bookmarks.
 -- @param filename Optional absolute path to the session file to load. If `nil`,
 --   the user is prompted for one.
 -- @return `true` if the session file was opened and read; `false` otherwise.
@@ -110,7 +110,8 @@ end)
 
 ---
 -- Saves the session to file *filename* or the user-selected file.
--- Saves split views, opened buffers, cursor information, and recent files.
+-- Saves split views, opened buffers, cursor information, recent files, and
+-- bookmarks.
 -- @param filename Optional absolute path to the session file to save. If `nil`,
 --   the user is prompted for one.
 -- @usage textadept.session.save(filename)

@@ -6,11 +6,6 @@ local M = {}
 ---
 -- The ansi_c module.
 -- It provides utilities for editing C code.
---
--- ## Key Bindings
---
--- + `Shift+Enter` (`⇧↩` | `S-Enter`)
---   Add ';' to the end of the current line and insert a newline.
 module('_M.ansi_c')]]
 
 -- Autocompletion and documentation.
@@ -90,6 +85,9 @@ textadept.editing.api_files.ansi_c = {
 
 ---
 -- Table of C-specific key bindings.
+--
+-- + `Shift+Enter` (`⇧↩` | `S-Enter`)
+--   Add ';' to the end of the current line and insert a newline.
 -- @class table
 -- @name _G.keys.ansi_c
 keys.ansi_c = {

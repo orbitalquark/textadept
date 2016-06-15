@@ -6,8 +6,6 @@ local M = {}
 ---
 -- Textadept's core event structure and handlers.
 --
--- ## Overview
---
 -- Textadept emits events when you do things like create a new buffer, press a
 -- key, click on a menu, etc. You can even emit events yourself using Lua. Each
 -- event has a set of event handlers, which are simply Lua functions called in
@@ -119,7 +117,7 @@ local M = {}
 --
 --   * _`text`_: The error message text.
 -- @field FIND (string)
---   Emitted to find text via the Find & Replace Pane.
+--   Emitted in order to find text via the Find & Replace Pane.
 --   Arguments:
 --
 --   * _`text`_: The text to search for.
@@ -170,7 +168,8 @@ local M = {}
 --   Emitted after selecting a menu item.
 --   Arguments:
 --
---   * _`menu_id`_: The numeric ID of the menu item set in [`ui.menu()`]().
+--   * _`menu_id`_: The numeric ID of the menu item, which was defined in
+--     [`ui.menu()`]().
 -- @field MOUSE (string)
 --   Emitted by the terminal version for an unhandled mouse event.
 --   Arguments:
@@ -192,7 +191,7 @@ local M = {}
 --   procedure.
 --   Emitted by [`quit()`]().
 -- @field REPLACE (string)
---   Emitted to replace selected (found) text.
+--   Emitted in order to replace selected (found) text.
 --   Arguments:
 --
 --   * _`text`_: The replacement text.

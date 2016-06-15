@@ -20,6 +20,7 @@ M.tags = {_HOME..'/modules/lua/tags', _USERHOME..'/modules/lua/tags'}
 
 ---
 -- Map of expression patterns to their types.
+-- Used for type-hinting when showing autocompletions for variables.
 -- Expressions are expected to match after the '=' sign of a statement.
 -- @class table
 -- @name expr_types

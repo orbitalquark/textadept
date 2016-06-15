@@ -5,7 +5,8 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Defines key commands for Textadept.
--- This set of key commands is pretty standard among other text editors.
+-- This set of key commands is pretty standard among other text editors, at
+-- least for basic editing commands and movements.
 --
 -- ## Key Bindings
 --

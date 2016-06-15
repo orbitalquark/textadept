@@ -19,8 +19,9 @@ local M = {}
 --   The run or compile error marker number.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Emitted when executing a language's compile shell command.
---   By default, compiler output is printed to the message buffer. To override
---   this behavior, connect to the event with an index of `1` and return `true`.
+--   By default, compiler output is printed to the message buffer. In order to
+--   override this behavior, connect to the event with an index of `1` and
+--   return `true`.
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
@@ -28,8 +29,8 @@ local M = {}
 --     executed compile command.
 -- @field _G.events.RUN_OUTPUT (string)
 --   Emitted when executing a language's run shell command.
---   By default, output is printed to the message buffer. To override this
---   behavior, connect to the event with an index of `1` and return `true`.
+--   By default, output is printed to the message buffer. In order to override
+--   this behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
@@ -37,8 +38,8 @@ local M = {}
 --     executed run command.
 -- @field _G.events.BUILD_OUTPUT (string)
 --   Emitted when executing a project's build shell command.
---   By default, output is printed to the message buffer. To override this
---   behavior, connect to the event with an index of `1` and return `true`.
+--   By default, output is printed to the message buffer. In order to override
+--   this behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
@@ -316,9 +317,9 @@ end)
 -- patterns that match warning and error messages emitted by compile and run
 -- commands for those file extensions and lexers.
 -- Patterns match single lines and contain captures for a filename, line number,
--- column number (optional), and warning or error message (optional). When a
--- warning or error message is double-clicked, the user is taken to the source
--- of that warning/error.
+-- column number (optional), and warning or error message (optional).
+-- Double-clicking a warning or error message takes the user to the source of
+-- that warning/error.
 -- Note: `(.-)` captures in patterns are interpreted as filenames; `(%d+)`
 -- captures are interpreted as line numbers first, and then column numbers; and
 -- any other capture is treated as warning/error message text.
