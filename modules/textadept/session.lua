@@ -5,24 +5,24 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Session support for Textadept.
--- @field DEFAULT_SESSION (string)
+-- @field default_session (string)
 --   The path to the default session file, *`_USERHOME`/session*, or
 --   *`_USERHOME`/session_term* if [`CURSES`]() is `true`.
--- @field SAVE_ON_QUIT (bool)
+-- @field save_on_quit (bool)
 --   Save the session when quitting.
---   The session file saved is always `textadept.session.DEFAULT_SESSION`, even
+--   The session file saved is always `textadept.session.default_session`, even
 --   if a different session was loaded with [`textadept.session.load()`]().
 --   The default value is `true` unless the user passed the command line switch
 --   `-n` or `--nosession` to Textadept.
--- @field MAX_RECENT_FILES (number)
+-- @field max_recent_files (number)
 --   The maximum number of recent files to save in session files.
 --   Recent files are stored in [`io.recent_files`]().
 --   The default value is `10`.
 module('textadept.session')]]
 
-M.DEFAULT_SESSION = _USERHOME..(not CURSES and '/session' or '/session_term')
-M.SAVE_ON_QUIT = true
-M.MAX_RECENT_FILES = 10
+M.default_session = _USERHOME..(not CURSES and '/session' or '/session_term')
+M.save_on_quit = true
+M.max_recent_files = 10
 
 ---
 -- Loads session file *filename* or the user-selected session, returning `true`
@@ -33,10 +33,10 @@ M.MAX_RECENT_FILES = 10
 --   the user is prompted for one.
 -- @return `true` if the session file was opened and read; `false` otherwise.
 -- @usage textadept.session.load(filename)
--- @see DEFAULT_SESSION
+-- @see default_session
 -- @name load
 function M.load(filename)
-  local dir, name = M.DEFAULT_SESSION:match('^(.-[/\\]?)([^/\\]+)$')
+  local dir, name = M.default_session:match('^(.-[/\\]?)([^/\\]+)$')
   filename = filename or ui.dialogs.fileselect{
     title = _L['Load Session'], with_directory = dir, with_file = name
   }
@@ -105,7 +105,7 @@ function M.load(filename)
 end
 -- Load session when no args are present.
 events.connect(events.ARG_NONE, function()
-  if M.SAVE_ON_QUIT then M.load(M.DEFAULT_SESSION) end
+  if M.save_on_quit then M.load(M.default_session) end
 end)
 
 ---
@@ -114,10 +114,10 @@ end)
 -- @param filename Optional absolute path to the session file to save. If `nil`,
 --   the user is prompted for one.
 -- @usage textadept.session.save(filename)
--- @see DEFAULT_SESSION
+-- @see default_session
 -- @name save
 function M.save(filename)
-  local dir, name = M.DEFAULT_SESSION:match('^(.-[/\\]?)([^/\\]+)$')
+  local dir, name = M.default_session:match('^(.-[/\\]?)([^/\\]+)$')
   filename = filename or ui.dialogs.filesave{
     title = _L['Save Session'], with_directory = dir,
     with_file = name:iconv('UTF-8', _CHARSET)
@@ -183,7 +183,7 @@ function M.save(filename)
   session[#session + 1] = string.format('current_view: %d', _VIEWS[view])
   -- Write out other things.
   for i = 1, #io.recent_files do
-    if i > M.MAX_RECENT_FILES then break end
+    if i > M.max_recent_files then break end
     session[#session + 1] = string.format('recent: %s', io.recent_files[i])
   end
   -- Write the session.
@@ -195,12 +195,12 @@ function M.save(filename)
 end
 -- Saves session on quit.
 events.connect(events.QUIT, function()
-  if M.SAVE_ON_QUIT then M.save(M.DEFAULT_SESSION) end
+  if M.save_on_quit then M.save(M.default_session) end
 end, 1)
 
 -- Does not save session on quit.
 args.register('-n', '--nosession', 0,
-              function() M.SAVE_ON_QUIT = false end, 'No session functionality')
+              function() M.save_on_quit = false end, 'No session functionality')
 -- Loads the given session on startup.
 args.register('-s', '--session', 1, function(name)
   if not lfs.attributes(name) then name = _USERHOME..'/'..name end
