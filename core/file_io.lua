@@ -83,11 +83,6 @@ io.recent_files = {}
 -- @name encodings
 io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
-local BOMs = {
-  ['UTF-8'] = '\239\187\191',
-  ['UTF-16BE'] = '\254\255', ['UTF-16LE'] = '\255\254',
-  ['UTF-32BE'] = '\0\0\254\255', ['UTF-32LE'] = '\255\254\0\0'
-}
 local c = _SCINTILLA.constants
 local EOLs = {['\r\n'] = c.EOL_CRLF, ['\r'] = c.EOL_CR, ['\n'] = c.EOL_LF}
 ---
@@ -126,21 +121,15 @@ function io.open_file(filenames)
       error(err)
     end
     local buffer = buffer.new()
-    buffer.encoding, buffer.encoding_bom = nil, nil
     -- Try to detect character encoding and convert to UTF-8.
-    for encoding, bom in pairs(BOMs) do
-      if text:sub(1, #bom) == bom then
-        buffer.encoding, buffer.encoding_bom = encoding, bom
-        text = text:sub(#bom + 1, -1):iconv('UTF-8', encoding)
-        break
-      end
-    end
-    if not buffer.encoding and not text:sub(1, 65536):find('\0') then
+    if not text:sub(1, 65536):find('\0') then
       for j = 1, #io.encodings do
         local ok, conv = pcall(string.iconv, text, 'UTF-8', io.encodings[j])
         if ok then buffer.encoding, text = io.encodings[j], conv break end
       end
       assert(buffer.encoding, _L['Encoding conversion failed.'])
+    else
+      buffer.encoding = nil -- binary (default was 'UTF-8')
     end
     buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
     -- Detect EOL mode.
@@ -175,9 +164,7 @@ function io.reload_file()
   local f = assert(io.open(buffer.filename, 'rb'))
   local text = f:read('*a')
   f:close()
-  local encoding, encoding_bom = buffer.encoding, buffer.encoding_bom
-  if encoding_bom then text = text:sub(#encoding_bom + 1, -1) end
-  if encoding then text = text:iconv('UTF-8', encoding) end
+  if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
   buffer:clear_all()
   buffer:add_text(text, #text)
   buffer:line_scroll(0, first_visible_line)
@@ -198,7 +185,7 @@ local function set_encoding(buffer, encoding)
   buffer:add_text(text, #text)
   buffer:line_scroll(0, first_visible_line)
   buffer:goto_pos(pos)
-  buffer.encoding, buffer.encoding_bom = encoding, BOMs[encoding]
+  buffer.encoding = encoding
 end
 -- Sets the default buffer encoding.
 events_connect(events.BUFFER_NEW, function()
@@ -213,9 +200,7 @@ function io.save_file()
   if not buffer.filename then io.save_file_as() return end
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
   local text = buffer:get_text()
-  if buffer.encoding then
-    text = (buffer.encoding_bom or '')..text:iconv(buffer.encoding, 'UTF-8')
-  end
+  if buffer.encoding then text = text:iconv(buffer.encoding, 'UTF-8') end
   local f = assert(io.open(buffer.filename, 'wb'))
   f:write(text)
   f:close()
