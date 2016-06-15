@@ -106,8 +106,8 @@ local preferred_view
 -- @see find_in_files
 -- @see lfs.default_filter
 -- @class table
--- @name FILTER
-M.FILTER = lfs.default_filter
+-- @name find_in_files_filter
+M.find_in_files_filter = lfs.default_filter
 
 -- Text escape sequences with their associated characters and vice-versa.
 -- @class table
@@ -240,16 +240,17 @@ end
 
 ---
 -- Searches directory *dir* or the user-specified directory for files that match
--- search text and search options, and prints the results to a buffer titled
--- "Files Found".
+-- search text and search options (subject to optional filter *filter*), and
+-- prints the results to a buffer titled "Files Found".
 -- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
--- search text and option flags, respectively. Use `FILTER` to set the search
--- filter.
+-- search text and option flags, respectively.
 -- @param dir Optional directory path to search. If `nil`, the user is prompted
 --   for one.
--- @see FILTER
+-- @param filter Optional filter for files and directories to exclude. The
+--   default value is `ui.find.find_in_files_filter`.
+-- @see find_in_files_filter
 -- @name find_in_files
-function M.find_in_files(dir)
+function M.find_in_files(dir, filter)
   dir = dir or ui.dialogs.fileselect{
     title = _L['Find in Files'], select_only_directories = true,
     with_directory = io.get_project_root() or
@@ -310,7 +311,7 @@ function M.find_in_files(dir)
       line_num = line_num + 1
     end
     f:close()
-  end, M.FILTER)
+  end, filter or M.find_in_files_filter)
   if not found then buffer:append_text(_L['No results found']) end
   ui._print(_L['[Files Found Buffer]'], '') -- goto end, set save pos, etc.
 end
