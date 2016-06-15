@@ -173,17 +173,19 @@ end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_encoding(buffer, encoding)
-  assert(buffer.encoding, _L['Cannot change binary file encoding'])
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local text = buffer:get_text()
-  text = text:iconv(buffer.encoding, 'UTF-8')
-  text = text:iconv(encoding, buffer.encoding)
-  text = text:iconv('UTF-8', encoding)
+  if buffer.encoding then
+    text = text:iconv(buffer.encoding, 'UTF-8')
+    if encoding then text = text:iconv(encoding, buffer.encoding) end
+  end
+  if encoding then text = text:iconv('UTF-8', encoding) end
   buffer:clear_all()
   buffer:add_text(text, #text)
   buffer:line_scroll(0, first_visible_line)
   buffer:goto_pos(pos)
   buffer.encoding = encoding
+  buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
 end
 -- Sets the default buffer encoding.
 events_connect(events.BUFFER_NEW, function()
