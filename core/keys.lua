@@ -54,13 +54,10 @@ local M = {}
 --
 -- ## Commands
 --
--- A command bound to a key sequence is either a Lua function or a table
--- containing a Lua function with a set of arguments to pass. They are
--- functionally equivalent; you can use either. Examples are:
+-- A command bound to a key sequence is simply a Lua function. For example:
 --
 --     keys['cn'] = buffer.new
 --     keys['cz'] = buffer.undo
---     keys['a('] = {textadept.editing.enclose, '(', ')'}
 --     keys['cu'] = function() io.quick_open(_USERHOME) end
 --
 -- Textadept handles [`buffer`]() references properly in static contexts.
@@ -98,7 +95,7 @@ local M = {}
 --     keys['aa'] = {
 --       a = function1,
 --       b = function2,
---       c = {function3, arg1, arg2}
+--       c = {...}
 --     }
 -- @field CLEAR (string)
 --   The key that clears the current key chain.
@@ -165,32 +162,13 @@ local function clear_key_sequence()
   if #keychain == 1 then keychain[1] = nil else keychain = {} end
 end
 
-local none = {}
-local function key_error(e) events.emit(events.ERROR, e) end
--- Runs a given command.
--- This is also used by *modules/textadept/menu.lua*.
--- @param command A function or table as described above.
--- @param command_type Equivalent to `type(command)`.
--- @return the value the command returns.
-M.run_command = function(command, command_type)
-  local f, args = command_type == 'function' and command or command[1], none
-  if command_type == 'table' then
-    args = command
-    -- If the argument is a view or buffer, use the current one instead.
-    if type(args[2]) == 'table' then
-      local mt, buffer, view = getmetatable(args[2]), buffer, view
-      if mt == getmetatable(buffer) and args[2] ~= ui.command_entry then
-        args[2] = buffer
-      elseif mt == getmetatable(view) then
-        args[2] = view
-      end
-    end
-  end
-  return select(2, xpcall(f, key_error, table.unpack(args, 2)))
-end
-
 -- Return codes for `key_command()`.
 local INVALID, PROPAGATE, CHAIN, HALT = -1, 0, 1, 2
+
+-- Error handler for key commands that simply emits the error. This is needed
+-- so `key_command()` can return `HALT` instead of never returning due to the
+-- error.
+local function key_error(e) events.emit(events.ERROR, e) end
 
 -- Runs a key command associated with the current keychain.
 -- @param prefix Optional prefix name for mode/lexer-specific commands.
@@ -201,13 +179,12 @@ local function key_command(prefix)
     if type(key) ~= 'table' then return INVALID end
     key = key[keychain[i]]
   end
-  local key_type = type(key)
-  if key_type ~= 'function' and key_type ~= 'table' then return INVALID end
-  if key_type == 'table' and #key == 0 and next(key) or getmetatable(key) then
+  if type(key) ~= 'function' and type(key) ~= 'table' then return INVALID end
+  if type(key) == 'table' then
     ui.statusbar_text = _L['Keychain:']..' '..table.concat(keychain, ' ')
     return CHAIN
   end
-  return M.run_command(key, key_type) == false and PROPAGATE or HALT
+  return select(2, xpcall(key, key_error)) == false and PROPAGATE or HALT
 end
 
 -- Handles Textadept keypresses.

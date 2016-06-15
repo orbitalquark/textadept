@@ -407,19 +407,6 @@ local function get_gdk_key(key_seq)
   return code, modifiers
 end
 
--- Get a string uniquely identifying a key binding.
--- This is used to match menu items with key bindings to show the key shortcut.
--- @param f A value in the `keys` table.
-local function get_id(f)
-  local id = ''
-  if type(f) == 'function' then
-    id = tostring(f)
-  elseif type(f) == 'table' then
-    for i = 1, #f do id = id..tostring(f[i]) end
-  end
-  return id
-end
-
 -- Creates a menu suitable for `ui.menu()` from the menu table format.
 -- Also assigns key commands.
 -- @param menu The menu to create a GTK+ menu from.
@@ -437,7 +424,7 @@ local function read_menu_table(menu, contextmenu)
       local label, f = menu[i][1], menu[i][2]
       local menu_id = not contextmenu and #menu_actions + 1 or
                       #contextmenu_actions + 1000 + 1
-      local key, mods = get_gdk_key(key_shortcuts[get_id(f)])
+      local key, mods = get_gdk_key(key_shortcuts[tostring(f)])
       gtkmenu[#gtkmenu + 1] = {label, menu_id, key, mods}
       if f then
         local actions = not contextmenu and menu_actions or contextmenu_actions
@@ -491,7 +478,7 @@ end
 local function set_menubar(menubar)
   if not menubar then ui.menubar = {} return end
   key_shortcuts, menu_actions = {}, {} -- reset
-  for key, f in pairs(keys) do key_shortcuts[get_id(f)] = key end
+  for key, f in pairs(keys) do key_shortcuts[tostring(f)] = key end
   local _menubar = {}
   for i = 1, #menubar do
     _menubar[#_menubar + 1] = ui.menu(read_menu_table(menubar[i]))
@@ -532,9 +519,9 @@ events.connect(events.INITIALIZED, set_contextmenus)
 events.connect(events.MENU_CLICKED, function(menu_id)
   local actions = menu_id < 1000 and menu_actions or contextmenu_actions
   local action = actions[menu_id < 1000 and menu_id or menu_id - 1000]
-  assert(type(action) == 'function' or type(action) == 'table',
+  assert(type(action) == 'function',
          _L['Unknown command:']..' '..tostring(action))
-  keys.run_command(action, type(action))
+  action()
 end)
 
 ---
@@ -551,7 +538,7 @@ function M.select_command()
       elseif menu[i][1] ~= '' then
         local label = menu.title and menu.title..': '..menu[i][1] or menu[i][1]
         items[#items + 1] = label:gsub('_([^_])', '%1')
-        items[#items + 1] = key_shortcuts[get_id(menu[i][2])] or ''
+        items[#items + 1] = key_shortcuts[tostring(menu[i][2])] or ''
         commands[#commands + 1] = menu[i][2]
       end
     end
@@ -562,7 +549,9 @@ function M.select_command()
     items = items, width = CURSES and ui.size[1] - 2 or nil
   }
   if button ~= 1 or not i then return end
-  keys.run_command(commands[i], type(commands[i]))
+  assert(type(commands[i]) == 'function',
+         _L['Unknown command:']..' '..tostring(commands[i]))
+  commands[i]()
 end
 
 return setmetatable(M, {
