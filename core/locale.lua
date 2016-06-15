@@ -17,7 +17,9 @@ end
 if not f then f = io.open(_HOME..'/core/locale.conf', 'rb') end
 assert(f, '"core/locale.conf" not found.')
 for line in f:lines() do
-  if not line:find('^%s*%%') then
+  -- Any line that starts with a non-word character except '[' is considered a
+  -- comment.
+  if not line:find('^%s*[^%w_%[]') then
     local id, str = line:match('^(.-)%s*=%s*(.+)$')
     if id and str then M[id] = not CURSES and str or str:gsub('_', '') end
   end
