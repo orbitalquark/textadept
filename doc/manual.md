@@ -1442,6 +1442,42 @@ since the editor's internals consist primarily of Lua.
 
 [API documentation]: api.html
 
+### Getting Started
+
+When it comes to scripting Textadept, what exactly does that mean? Being an
+event-driven application, Textadept simply responds to input like keypresses and
+mouse clicks. By responding, Textadept just executes Lua functions. For example,
+pressing `Ctrl+O` (`⌘O` on Mac OSX | `M-O` on curses) executes the
+[`io.open_file()`][] function because a default keybinding in 
+*modules/textadept/keys.lua* says so (you could change this in your 
+[preferences](#Key.Bindings)). Subsequently, when Textadept opens a file, a 
+syntax highlighting lexer is applied because `io.open_file()` emitted a 
+[`events.FILE_OPENED`][] event that *modules/textadept/file_types.lua* was 
+listening for.
+
+Not only can you define your own key bindings that can do pretty much anything
+with Textadept (interact with and manipulate buffer contents, prompt for input 
+with dialogs, spawn processes, etc.), but you can also listen in on the plethora
+of [events][] Textadept emits in order to script nearly every aspect of the 
+editor's behavior. Not a fan of Lua patterns in buffer searches? Textadept emits 
+an [`events.FIND`][] event every time the "Find Next" and "Find Prev" buttons 
+are clicked. You can listen for that event and perform your own searches with 
+regex, PEGs, or any other search format you can think of. Would you rather have
+the "Search -> Find" menu option (or key binding) start a search with the word 
+under the caret already in the find & replace pane's search box? Create a Lua 
+function that populates [`ui.find.find_entry_text`][] and [shows the pane][], 
+and then re-assign the "Search -> Find" [menu action][]'s existing function to 
+the one you just created. "Textadept gives you complete control over the entire 
+application using Lua" is not an exaggeration!
+
+[`io.open_file()`]: api.html#io.open_file
+[`events.FILE_OPENED`]: api.html#events.FILE_OPENED
+[event]: api.html#events
+[`events.FIND`]: api.html#events.FIND
+[`ui.find.find_entry_text`]: api.html#ui.find.find_entry_text
+[shows the pane]: api.html#ui.find.focus
+[menu action]: api.html#textadept.menu.menubar
+
 ### Generating LuaDoc
 
 Generate Textadept-like API documentation for your own modules using the
@@ -1689,13 +1725,9 @@ libraries. After uncommenting the "Darwin" block mentioned above, simply run
 ### Notes on LuaJIT
 
 [LuaJIT][] is a Just-In-Time Compiler for Lua and can boost the speed of Lua
-programs. I have noticed that syntax highlighting can be up to 2 times faster
-with LuaJIT than with vanilla Lua. This difference is largely unnoticable on
-modern computers and usually only discernable when initially loading large
-files. Other than syntax highlighting, LuaJIT offers no real benefit
-performance-wise to justify it being Textadept's default runtime. LuaJIT's
-[ffi library][], however, appears to be useful for interfacing with external,
-non-Lua, libraries.
+programs. LuaJIT offers no real benefit performance-wise to justify it being 
+Textadept's default runtime. LuaJIT's [ffi library][], however, appears to be 
+useful for interfacing with external, non-Lua, libraries.
 
 [LuaJIT]: http://luajit.org
 [ffi library]: http://luajit.org/ext_ffi.html
