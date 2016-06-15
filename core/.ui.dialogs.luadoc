@@ -67,7 +67,7 @@ function msgbox(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code
 function ok_msgbox(options) end
@@ -98,7 +98,7 @@ function ok_msgbox(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code
 function yesno_msgbox(options) end
@@ -134,7 +134,7 @@ function yesno_msgbox(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, input text
 -- @usage ui.dialogs.inputbox{title = 'Goto Line', informative_text = 'Line:',
@@ -169,7 +169,7 @@ function inputbox(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, input text
 function standard_inputbox(options) end
@@ -205,7 +205,7 @@ function standard_inputbox(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, input text
 function secure_inputbox(options) end
@@ -238,7 +238,7 @@ function secure_inputbox(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, input text
 function secure_standard_inputbox(options) end
@@ -317,7 +317,7 @@ function filesave(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, textbox text
 -- @usage ui.dialogs.textbox{title = 'License Agreement',
@@ -356,7 +356,7 @@ function textbox(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, selected item
 -- @usage ui.dialogs.dropdown{title = 'Select Encoding', width = 200,
@@ -392,7 +392,7 @@ function dropdown(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, selected item
 function standard_dropdown(options) end
@@ -435,7 +435,7 @@ function standard_dropdown(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, selected item or list of selected items
 -- @usage ui.dialogs.filteredlist{title = 'Title', columns = {'Foo', 'Bar'},
@@ -469,7 +469,7 @@ function filteredlist(options) end
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
---   * `timeout`: the integer number of seconds the dialog waits for the user to
+--   * `timeout`: The integer number of seconds the dialog waits for the user to
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, list of selected options
 -- @usage ui.dialogs.optionselect{title = 'Language',

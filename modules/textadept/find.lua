@@ -223,8 +223,8 @@ end
 -- *anchor* indicates whether or not to search for *text* starting from the
 -- caret position instead of the position where the incremental search began.
 -- Only the `match_case` find option is recognized. Normal command entry
--- functionality is unavailable until the search is finished by pressing `Esc`
--- (`⎋` on Mac OSX | `Esc` in curses).
+-- functionality is unavailable until the search is finished or by pressing
+-- `Esc` (`⎋` on Mac OSX | `Esc` in curses).
 -- @param text The text to incrementally search for, or `nil` to begin an
 --   incremental search.
 -- @param next Flag indicating whether or not the search direction is forward.

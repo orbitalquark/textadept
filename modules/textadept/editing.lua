@@ -84,8 +84,8 @@ M.auto_pairs = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 -- values. The default brace characters are '(', ')', '[', ']', '{', and '}'.
 -- @class table
 -- @name brace_matches
--- @usage textadept.editing.brace_matches[60] = 1 -- '<'
--- @usage textadept.editing.brace_matches[62] = 1 -- '>'
+-- @usage textadept.editing.brace_matches[60] = true -- '<'
+-- @usage textadept.editing.brace_matches[62] = true -- '>'
 M.brace_matches = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 
 ---
@@ -94,7 +94,7 @@ M.brace_matches = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 -- The default characters are ')', ']', '}', '&apos;', and '&quot;'.
 -- @class table
 -- @name typeover_chars
--- @usage textadept.editing.typeover_chars[62] = 1 -- '>'
+-- @usage textadept.editing.typeover_chars[62] = true -- '>'
 M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
 
 ---
@@ -113,7 +113,7 @@ M.autocompleters = {}
 ---
 -- Map of lexer names to API documentation file tables.
 -- Each line in an API file consists of a symbol name (not a fully qualified
--- symbol name), a space character, and that symbol's documentation. '\n'
+-- symbol name), a space character, and that symbol's documentation. "\n"
 -- represents a newline character.
 -- @class table
 -- @name api_files

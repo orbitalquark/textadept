@@ -138,7 +138,7 @@ local quit
 -- This function is useful for modifying user scripts (such as
 -- *~/.textadept/init.lua* and *~/.textadept/modules/textadept/keys.lua*) on
 -- the fly without having to restart Textadept. `arg` is set to `nil` when
--- reinitializing the Lua State. Any scripts that need to differentiate between
+-- reinitializing the Lua state. Any scripts that need to differentiate between
 -- startup and reset can test `arg`.
 -- @class function
 -- @name reset
@@ -162,8 +162,8 @@ local timeout
 -- a handle to that process.
 -- At the moment, only the Win32 terminal version spawns processes in the same
 -- thread.
--- @param argv A command line string containing the program's name followed by
---   arguments to pass to it. `PATH` is searched for program names.
+-- @param argv A command line string that contains the program's name followed
+--   by arguments to pass to it. `PATH` is searched for program names.
 -- @param cwd Optional current working directory (cwd) for the child
 --   process. The default value is `nil`, which inherits the parent's cwd.
 -- @param env Optional list of environment variables for the child process.
@@ -206,7 +206,7 @@ function spawn_proc:wait() end
 -- Similar to Lua's `io.read()` and blocks for input. *spawn_proc* must still be
 -- running. If an error occurs while reading, returns `nil`, an error code, and
 -- an error message.
--- Ensure any read operations read all stdout available. The stdout callback
+-- Ensure any read operations read all stdout available, as the stdout callback
 -- function passed to `spawn()` will not be called until the stdout buffer is
 -- clear.
 -- @param arg Optional argument similar to those in Lua's `io.read()`, but "n"

@@ -5,9 +5,6 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Processes command line arguments for Textadept.
---
--- ## Arg Events
---
 -- @field _G.events.ARG_NONE (string)
 --   Emitted when no command line arguments are passed to Textadept on startup.
 module('args')]]
