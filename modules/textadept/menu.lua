@@ -277,7 +277,6 @@ local default_menubar = {
     {
       title = _L['_EOL Mode'],
       {_L['CRLF'], function() set_eol_mode(buffer.EOL_CRLF) end},
-      {_L['CR'], function() set_eol_mode(buffer.EOL_CR) end},
       {_L['LF'], function() set_eol_mode(buffer.EOL_LF) end}
     },
     {

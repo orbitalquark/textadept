@@ -83,8 +83,6 @@ io.recent_files = {}
 -- @name encodings
 io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
 
-local c = _SCINTILLA.constants
-local EOLs = {['\r\n'] = c.EOL_CRLF, ['\r'] = c.EOL_CR, ['\n'] = c.EOL_LF}
 ---
 -- Opens *filenames*, a string filename or list of filenames, or the
 -- user-selected filenames.
@@ -133,7 +131,7 @@ function io.open_file(filenames)
     end
     buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
     -- Detect EOL mode.
-    buffer.eol_mode = EOLs[text:match('\r\n?')] or buffer.EOL_LF
+    buffer.eol_mode = text:find('\r\n') and buffer.EOL_CRLF or buffer.EOL_LF
     -- Insert buffer text and set properties.
     buffer:add_text(text, #text)
     buffer:goto_pos(0)

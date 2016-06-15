@@ -334,7 +334,6 @@ events_connect(events.APPLEEVENT_ODOC, function(uri)
   return events.emit(events.URI_DROPPED, 'file://'..uri)
 end)
 
-local EOLs = {_L['CRLF'], _L['CR'], _L['LF']}
 local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- Sets buffer statusbar text.
 events_connect(events.UPDATE_UI, function(updated)
@@ -343,7 +342,7 @@ events_connect(events.UPDATE_UI, function(updated)
   local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
   local col = buffer.column[pos] + 1
   local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE):match('^[^/]+')
-  local eol = EOLs[buffer.eol_mode + 1]
+  local eol = buffer.eol_mode == buffer.EOL_CRLF and _L['CRLF'] or _L['LF']
   local tabs = string.format('%s %d', buffer.use_tabs and _L['Tabs:'] or
                                       _L['Spaces:'], buffer.tab_width)
   local enc = buffer.encoding or ''
