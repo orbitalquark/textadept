@@ -5,25 +5,13 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Editing features for Textadept.
--- @field AUTOPAIR (bool)
---   Automatically close opening brace and quote characters with their
---   complements.
---   The default value is `true`.
---   Auto-paired characters are defined in the
---   [`textadept.editing.char_matches`]() table.
--- @field TYPEOVER_CHARS (bool)
---   Move over closing brace and quote characters under the caret when typing
---   them.
---   The default value is `true`.
---   Typeover characters are defined in the
---   [`textadept.editing.typeover_chars`]() table.
--- @field AUTOINDENT (bool)
+-- @field auto_indent (bool)
 --   Match the previous line's indentation level after inserting a new line.
 --   The default value is `true`.
--- @field STRIP_TRAILING_SPACES (bool)
+-- @field strip_trailing_spaces (bool)
 --   Strip trailing whitespace before saving files.
 --   The default value is `false`.
--- @field AUTOCOMPLETE_ALL (bool)
+-- @field autocomplete_all_words (bool)
 --   Autocomplete the current word using words from all open buffers.
 --   If `true`, performance may be slow when many buffers are open.
 --   The default value is `false`.
@@ -33,11 +21,9 @@ local M = {}
 --   The word highlight indicator number.
 module('textadept.editing')]]
 
-M.AUTOPAIR = true
-M.TYPEOVER_CHARS = true
-M.AUTOINDENT = true
-M.STRIP_TRAILING_SPACES = false
-M.AUTOCOMPLETE_ALL = false
+M.auto_indent = true
+M.strip_trailing_spaces = false
+M.autocomplete_all_words = false
 M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
@@ -83,37 +69,32 @@ for _ = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
 M.comment_string = {actionscript='//',ada='--',adpl='!',ansi_c='/*|*/',antlr='//',apl='#',applescript='--',asp='\'',autoit=';',awk='#',b_lang='//',bash='#',batch=':',bibtex='%',boo='#',chuck='//',cmake='#',coffeescript='#',context='%',cpp='//',csharp='//',css='/*|*/',cuda='//',desktop='#',django='{#|#}',dmd='//',dockerfile='#',dot='//',eiffel='--',elixir='#',erlang='%',faust='//',fish='#',forth='|\\',fortran='!',fsharp='//',gap='#',gettext='#',gherkin='#',glsl='//',gnuplot='#',go='//',groovy='//',gtkrc='#',haskell='--',html='<!--|-->',icon='#',idl='//',inform='!',ini='#',Io='#',java='//',javascript='//',json='/*|*/',jsp='//',latex='%',ledger='#',less='//',lilypond='%',lisp=';',lua='--',makefile='#',matlab='#',moonscript='--',nemerle='//',nsis='#',objective_c='//',pascal='//',perl='#',php='//',pico8='//',pike='//',pkgbuild='#',prolog='%',props='#',ps='%',pure='//',python='#',rails='#',rebol=';',rest='.. ',rexx='--',rhtml='<!--|-->',rstats='#',ruby='#',rust='//',sass='//',scala='//',scheme=';',smalltalk='"|"',snobol4='#',sql='#',tcl='#',tex='%',text='',toml='#',vala='//',vb='\'',vbscript='\'',verilog='//',vhdl='--',wsf='<!--|-->',xml='<!--|-->',yaml='#'}
 
 ---
--- Map of auto-paired characters like parentheses, brackets, braces, and quotes,
--- with language-specific auto-paired character maps assigned to a lexer name
--- key.
+-- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
 -- The ASCII values of opening characters are assigned to strings that contain
 -- complement characters. The default auto-paired characters are "()", "[]",
 -- "{}", "&apos;&apos;", and "&quot;&quot;".
 -- @class table
--- @name char_matches
--- @usage textadept.editing.char_matches.html = {..., [60] = '>'}
--- @see AUTOPAIR
-M.char_matches = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
+-- @name auto_pairs
+-- @usage textadept.editing.auto_pairs[60] = '>' -- pair '<' and '>'
+M.auto_pairs = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 
 ---
--- Table of brace characters to highlight, with language-specific brace
--- character tables assigned to a lexer name key.
+-- Table of brace characters to highlight.
 -- The ASCII values of brace characters are keys and are assigned non-`nil`
 -- values. The default brace characters are '(', ')', '[', ']', '{', and '}'.
 -- @class table
--- @name braces
--- @usage textadept.editing.braces.html = {..., [60] = 1, [62] = 1}
-M.braces = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
+-- @name brace_matches
+-- @usage textadept.editing.brace_matches[60] = 1 -- '<'
+-- @usage textadept.editing.brace_matches[62] = 1 -- '>'
+M.brace_matches = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 
 ---
--- Table of characters to move over when typed, with language-specific typeover
--- character tables assigned to a lexer name key.
+-- Table of characters to move over when typed.
 -- The ASCII values of characters are keys and are assigned non-`nil` values.
 -- The default characters are ')', ']', '}', '&apos;', and '&quot;'.
 -- @class table
 -- @name typeover_chars
--- @usage textadept.editing.typeover_chars.html = {..., [62] = 1}
--- @see TYPEOVER_CHARS
+-- @usage textadept.editing.typeover_chars[62] = 1 -- '>'
 M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
 
 ---
@@ -139,33 +120,35 @@ M.autocompleters = {}
 -- @see show_documentation
 M.api_files = {}
 
--- Matches characters specified in char_matches.
+-- Matches characters specified in auto_pairs.
 events.connect(events.CHAR_ADDED, function(code)
-  if not M.AUTOPAIR then return end
-  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[code]
-  if match and buffer.selections == 1 then buffer:insert_text(-1, match) end
+  if M.auto_pairs and M.auto_pairs[code] and buffer.selections == 1 then
+    buffer:insert_text(-1, M.auto_pairs[code])
+  end
 end)
 
 -- Removes matched chars on backspace.
 events.connect(events.KEYPRESS, function(code)
-  if not M.AUTOPAIR or keys.KEYSYMS[code] ~= '\b' or buffer.selections ~= 1 then
+  if not M.auto_pairs or keys.KEYSYMS[code] ~= '\b' or
+     buffer.selections ~= 1 then
     return
   end
-  local pos, byte = buffer.current_pos, buffer.char_at[buffer.current_pos - 1]
-  local match = (M.char_matches[buffer:get_lexer(true)] or M.char_matches)[byte]
-  if match and buffer.char_at[pos] == string.byte(match) then buffer:clear() end
+  local byte = buffer.char_at[buffer.current_pos - 1]
+  if M.auto_pairs[byte] and
+     buffer.char_at[buffer.current_pos] == string.byte(M.auto_pairs[byte]) then
+    buffer:clear()
+  end
 end)
 
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function(updated)
   if updated and bit32.band(updated, 3) == 0 then return end -- ignore scrolling
-  local pos = buffer.current_pos
-  if (M.braces[buffer:get_lexer(true)] or M.braces)[buffer.char_at[pos]] then
-    local match = buffer:brace_match(pos)
+  if M.brace_matches[buffer.char_at[buffer.current_pos]] then
+    local match = buffer:brace_match(buffer.current_pos)
     if match ~= -1 then
-      buffer:brace_highlight(pos, match)
+      buffer:brace_highlight(buffer.current_pos, match)
     else
-      buffer:brace_bad_light(pos)
+      buffer:brace_bad_light(buffer.current_pos)
     end
   else
     buffer:brace_bad_light(-1)
@@ -174,8 +157,8 @@ end)
 
 -- Moves over typeover characters when typed.
 events.connect(events.KEYPRESS, function(code)
-  if not M.TYPEOVER_CHARS then return end
-  if M.typeover_chars[code] and buffer.char_at[buffer.current_pos] == code then
+  if M.typeover_chars and M.typeover_chars[code] and
+     buffer.char_at[buffer.current_pos] == code then
     buffer:char_right()
     return true
   end
@@ -183,7 +166,7 @@ end)
 
 -- Auto-indent on return.
 events.connect(events.CHAR_ADDED, function(code)
-  if not M.AUTOINDENT or code ~= 10 then return end
+  if not M.auto_indent or code ~= 10 then return end
   local line = buffer:line_from_position(buffer.current_pos)
   local i = line - 1
   while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
@@ -209,21 +192,21 @@ if CURSES and not WIN32 then
   events.connect(events.RESUME, enable_bracketed_paste_mode)
   events.connect(events.QUIT, disable_bracketed_paste_mode)
 
-  local reenable_autopair, reenable_autoindent
+  local auto_pairs, auto_indent
   events.connect(events.CSI, function(cmd, args)
     if cmd ~= string.byte('~') then return end
     if args[1] == 200 then
-      reenable_autopair, M.AUTOPAIR = M.AUTOPAIR, false
-      reenable_autoindent, M.AUTOINDENT = M.AUTOINDENT, false
+      auto_pairs, M.auto_pairs = M.auto_pairs, nil
+      auto_indent, M.auto_indent = M.auto_indent, false
     elseif args[1] == 201 then
-      M.AUTOPAIR, M.AUTOINDENT = reenable_autopair, reenable_autoindent
+      M.auto_pairs, M.auto_indent = auto_pairs, auto_indent
     end
   end)
 end
 
 -- Prepares the buffer for saving to a file.
 events.connect(events.FILE_BEFORE_SAVE, function()
-  if not M.STRIP_TRAILING_SPACES then return end
+  if not M.strip_trailing_spaces then return end
   local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
@@ -494,8 +477,8 @@ function M.highlight_word()
   buffer.search_flags = buffer.FIND_WHOLEWORD + buffer.FIND_MATCHCASE
   buffer:target_whole_document()
   while buffer:search_in_target(word) > -1 do
-    local len = buffer.target_end - buffer.target_start
-    buffer:indicator_fill_range(buffer.target_start, len)
+    buffer:indicator_fill_range(buffer.target_start,
+                                buffer.target_end - buffer.target_start)
     buffer:set_target_range(buffer.target_end, buffer.length)
   end
   buffer:set_sel(s, e)
@@ -560,7 +543,8 @@ function M.autocomplete(name)
 end
 
 -- Returns for the word behind the caret a list of completions constructed from
--- the current buffer or all open buffers (depending on `M.AUTOCOMPLETE_ALL`).
+-- the current buffer or all open buffers (depending on
+-- `M.autocomplete_all_words`).
 -- @see buffer.word_chars
 -- @see autocomplete
 M.autocompleters.word = function()
@@ -569,7 +553,7 @@ M.autocompleters.word = function()
   if s == buffer.current_pos then return end
   local word = buffer:text_range(s, buffer.current_pos)
   for i = 1, #_BUFFERS do
-    if _BUFFERS[i] == buffer or M.AUTOCOMPLETE_ALL then
+    if _BUFFERS[i] == buffer or M.autocomplete_all_words then
       local buffer = _BUFFERS[i]
       buffer.search_flags = buffer.FIND_WORDSTART
       if not buffer.auto_c_ignore_case then

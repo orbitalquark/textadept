@@ -990,9 +990,9 @@ Many of Textadept's generic modules have configurable settings changeable from
 autopairing with typeover and strip trailing whitespace on save, add the
 following to your *~/.textadept/init.lua*:
 
-    textadept.editing.AUTOPAIR = false
-    textadept.editing.TYPEOVER_CHARS = false
-    textadept.editing.STRIP_TRAILING_SPACES = true
+    textadept.editing.auto_pair = nil
+    textadept.editing.typeover_chars = nil
+    textadept.editing.strip_trailing_spaces = true
 
 To always hide the tab bar:
 
@@ -1853,15 +1853,23 @@ terminal's constraints:
 
 Old API                           |Change  |New API
 ----------------------------------|:------:|-------
-**lfs**                           |        |
-FILTER                            |Renamed |[default\_filter][]
-dir\_foreach()                    |Changed |[dir\_foreach()][] _(Changed args)_
-**ui**                            |        |
-SILENT\_PRINT                     |Renamed |[silent\_print][]
-**textadept.editing**             |        |
+**io**                            |        |
 snapopen(...)                     |Changed |[quick\_open][](paths, filter, opts)
 snapopen\_filters                 |Renamed |[quick\_open\_filters][]
 SNAPOPEN\_MAX                     |Renamed |[quick\_open\_max][]
+**lfs**                           |        |
+FILTER                            |Renamed |[default\_filter][]
+dir\_foreach()                    |Changed |[dir\_foreach()][] _(changed args)_
+**ui**                            |        |
+SILENT\_PRINT                     |Renamed |[silent\_print][]
+**textadept.editing**             |        |
+AUTOPAIR                          |Replaced|[auto\_pairs][]
+TYPEOVER\_CHARS                   |Replaced|[typeover\_chars][]
+AUTOINDENT                        |Renamed |[auto\_indent][]
+STRIP\_TRAILING\_SPACES           |Replaced|[strip\_trailing\_spaces][]
+AUTOCOMPLETE\_ALL                 |Replaced|[autocomplete\_all\_words][]
+char\_matches                     |Replaced|[auto\_pairs][]
+braces                            |Replaced|[brace\_matches][]
 
 [default\_filter]: api.html#lfs.default_filter
 [dir\_foreach()]: api.html#lfs.dir_foreach
@@ -1869,6 +1877,12 @@ SNAPOPEN\_MAX                     |Renamed |[quick\_open\_max][]
 [quick\_open]: api.html#io.quick_open
 [quick\_open\_filters]: api.html#io.quick_open_filters
 [quick\_open\_max]: api.html#io.quick_open_max
+[auto\_pairs]: api.html#textadept.editing.auto_pairs
+[typeover\_chars]: api.html#textadept.editing.typeover_chars
+[auto\_indent]: api.html#textadept.editing.auto_indent
+[strip\_trailing\_spaces]: api.html#textadept.editing.strip_trailing_spaces
+[autocomplete\_all\_words]: api.html#textadept.editing.autocomplete_all_words
+[brace\_matches]: api.html#textadept.editing.brace_matches
 
 ### Textadept 7 to 8
 
