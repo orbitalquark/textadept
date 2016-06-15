@@ -101,13 +101,13 @@ local preferred_view
 --
 -- Any patterns starting with '!' exclude files and directories that do not
 -- match the pattern that follows.
--- The default value is `lfs.FILTER`, a filter for common binary file extensions
--- and version control directories.
+-- The default value is `lfs.default_filter`, a filter for common binary file
+-- extensions and version control directories.
 -- @see find_in_files
--- @see lfs.FILTER
+-- @see lfs.default_filter
 -- @class table
 -- @name FILTER
-M.FILTER = lfs.FILTER
+M.FILTER = lfs.default_filter
 
 -- Text escape sequences with their associated characters and vice-versa.
 -- @class table
@@ -310,7 +310,7 @@ function M.find_in_files(dir)
       line_num = line_num + 1
     end
     f:close()
-  end, M.FILTER, true)
+  end, M.FILTER)
   if not found then buffer:append_text(_L['No results found']) end
   ui._print(_L['[Files Found Buffer]'], '') -- goto end, set save pos, etc.
 end

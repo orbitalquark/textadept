@@ -9,14 +9,14 @@ module('lfs')]]
 ---
 -- The filter table containing common binary file extensions and version control
 -- directories to exclude when iterating over files and directories using
--- `dir_foreach` when its `exclude_FILTER` argument is `false`.
+-- `dir_foreach`.
 -- @see dir_foreach
 -- @class table
--- @name FILTER
-lfs.FILTER = {
+-- @name default_filter
+lfs.default_filter = {
   extensions = {
     'a', 'bmp', 'bz2', 'class', 'dll', 'exe', 'gif', 'gz', 'jar', 'jpeg', 'jpg',
-    'o', 'png', 'so', 'tar', 'tgz', 'tif', 'tiff', 'zip'
+    'o', 'pdf', 'png', 'so', 'tar', 'tgz', 'tif', 'tiff', 'xz', 'zip'
   },
   folders = {'%.bzr$', '%.git$', '%.hg$', '%.svn$'}
 }
@@ -44,9 +44,8 @@ end
 ---
 -- Iterates over all files and sub-directories (up to *n* levels deep) in
 -- directory *dir*, calling function *f* with each file found.
--- Files passed to *f* do not match any pattern in string or table *filter*,
--- and, unless *exclude_FILTER* is `true`, `lfs.FILTER` as well. A filter table
--- contains:
+-- Files passed to *f* do not match any pattern in string or table *filter*
+-- (or `lfs.default_filter` when *filter* is `nil`). A filter table contains:
 --
 --   + Lua patterns that match filenames to exclude.
 --   + Optional `folders` sub-table that contains patterns matching directories
@@ -63,11 +62,8 @@ end
 -- @param dir The directory path to iterate over.
 -- @param f Function to call with each full file path found. If *f* returns
 --   `false` explicitly, iteration ceases.
--- @param filter Optional filter for files and directories to exclude.
--- @param exclude_FILTER Optional flag indicating whether or not to exclude the
---   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
---   *filter*.
---   The default value is `false` to include the default filter.
+-- @param filter Optional filter for files and directories to exclude. The
+--   default value is `lfs.default_filter`.
 -- @param n Optional maximum number of directory levels to descend into.
 --   The default value is `nil`, which indicates no limit.
 -- @param include_dirs Optional flag indicating whether or not to call *f* with
@@ -76,28 +72,14 @@ end
 --   The default value is `false`.
 -- @param level Utility value indicating the directory level this function is
 --   at. This value is used and set internally, and should not be set otherwise.
--- @see FILTER
+-- @see filter
 -- @name dir_foreach
-function lfs.dir_foreach(dir, f, filter, exclude_FILTER, n, include_dirs, level)
+function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
   if not level then level = 0 end
   if level == 0 then
     -- Convert filter to a table from nil or string arguments.
-    if not filter then filter = {} end
+    if not filter then filter = lfs.default_filter end
     if type(filter) == 'string' then filter = {filter} end
-    -- Add FILTER to filter unless specified otherwise.
-    if not exclude_FILTER then
-      for k, v in pairs(lfs.FILTER) do
-        if type(v) == 'table' then
-          if not filter[k] then filter[k] = {} end
-          local filter_k = filter[k]
-          for k2, v2 in pairs(v) do
-            filter_k[tonumber(k2) and #filter_k + 1 or k2] = v2
-          end
-        else
-          filter[tonumber(k) and #filter + 1 or k] = v
-        end
-      end
-    end
     -- Create file extension filter hash table for quick lookups.
     local ext = filter.extensions
     if ext then for i = 1, #ext do ext[ext[i]] = true end end
@@ -110,7 +92,7 @@ function lfs.dir_foreach(dir, f, filter, exclude_FILTER, n, include_dirs, level)
       if mode == 'directory' and not exclude(filename, filter.folders) then
         if include_dirs and f(filename..dir_sep) == false then return end
         if not n or level < n then
-          lfs.dir_foreach(filename, f, filter, nil, n, include_dirs, level + 1)
+          lfs.dir_foreach(filename, f, filter, n, include_dirs, level + 1)
         end
       elseif mode == 'file' and not exclude(filename, filter) then
         if f(filename) == false then return end
