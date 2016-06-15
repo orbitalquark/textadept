@@ -6,35 +6,44 @@
 ---
 -- A table of loaded Textadept language modules.
 --
--- ## Module Guidelines
---
--- Textadept modules are identical to Lua modules and behave in the same way.
--- Modules consist of a single directory with an *init.lua* script and any
--- necessary support files. (For an example, see *modules/textadept/init.lua*,
--- which is a module that provides most of Textadept's functionality.)
---
--- Loaded modules, even language modules, persist in Textadept's Lua State;
--- Textadept never unloads them. Therefore, modules should define functions or
--- variables within the module itself, not globally.
---
--- ### Language Modules
---
 -- Language modules are a special kind of module that Textadept automatically
--- loads when editing source code in a particular programming language. When
--- writing a language module, and in order to fully take advantage of
--- Textadept's features, you should include at a minimum: run and/or compile
--- commands, an event handler for setting buffer properties like indentation,
--- and if possible, an autocompleter. Optional features are extra snippets,
--- commands, context menu items, and a syntax checking command.
+-- loads when editing source code in a particular programming language. The only
+-- thing "special" about them is they are named after a lexer. Otherwise they
+-- are plain Lua modules. The *~/.textadept/modules/* directory houses language
+-- modules (along with other modules).
 --
--- #### Compile and Run
+-- A language module is designed to provide extra functionality for a single
+-- programming language. Some examples of what language modules can do:
 --
--- The `Ctrl+Shift+R` and `Ctrl+R` (`⌘⇧R` and `⌘R` on Mac OSX | `M-^R` and `^R`
--- in curses) key bindings compile and run code, respectively. If Textadept does
--- not execute the correct commands for your language, modify them in the
--- [`textadept.run.compile_commands`]() and [`textadept.run.run_commands`]()
--- tables using the appropriate lexer key. Commands may contain macros. For Lua,
--- it would look like:
+--   * Specify block comment syntax for lines of code
+--   * Define compile and run commands for source files
+--   * Set language-specific editor properties like indentation rules
+--   * Specify code autocompletion routines
+--   * Declare snippets
+--   * Define commands and key bindings for them
+--   * Add to the top-level menu or right-click editor context menu
+--
+-- Examples of these features are described in the sections below.
+--
+-- ## Block Comment
+--
+-- Many languages have different syntaxes for single line comments and
+-- multi-line comments in source code. Textadept's block comment feature only
+-- uses one of those syntaxes for a given language. If you prefer the other
+-- syntax, or if Textadept does not support block comments for a particular
+-- language, modify the [`textadept.editing.comment_string`]() table. For
+-- example:
+--
+--     textadept.editing.comment_string.ansi_c = '//' -- change from /* ... */
+--
+-- ## Compile and Run
+--
+-- Textadept knows most of the commands that compile and/or run code in source
+-- files. However, it does not know all of them, and the ones that it does know
+-- may not be completely accurate in all cases. Compile and run commands are
+-- read from the [`textadept.run.compile_commands`]() and
+-- [`textadept.run.run_commands`]() tables using the appropriate lexer key, and
+-- thus can be defined or modified. For Lua, it would look like:
 --
 --     textadept.run.compile_commands.lua = 'luac "%f"'
 --     textadept.run.run_commands.lua = 'lua "%f"'
@@ -42,60 +51,40 @@
 -- Double-clicking on compile or runtime errors jumps to the error's location.
 -- If Textadept does not recognize your language's errors properly, add an error
 -- pattern to [`textadept.run.error_patterns`](). The Lua error pattern looks
--- like
+-- like:
 --
---     table.insert(textadept.run.error_patterns, 1,
---                  '^luac?: (.-):(%d+): (.+)$')
+--     local patterns = textadept.run.error_patterns
+--     if not patterns.lua then patterns.lua = {} end
+--     patterns.lua[#patterns.lua + 1] = '^luac?: (.-):(%d+): (.+)$'
 --
--- #### Build a Project
+-- ## Buffer Properties
 --
--- The `Ctrl+Shift+B` (`⌘⇧B` on Mac OSX | `M-^B` in curses) key bindings build
--- the current project. Textadept can only detect projects under version
--- control, and uses [`io.get_project_root()`]() to do so. The editor looks in
--- the detected project's root directory for some sort of "makefile" (GNU
--- Makefiles, Ruby Rakefiles, etc.) and prompts the user for any additional
--- arguments to pass to that makefile's run command. Textadept references
--- [`textadept.run.build_commands`]() for makefiles and their associated run
--- commands. Per-project build commands may also be defined. For example, the
--- following command builds Textadept after prompting for makefile targets:
+-- By default, Textadept uses 2 spaces for indentation. Some languages have
+-- different indentation guidelines, however. As described in the manual, use
+-- `events.LEXER_LOADED` to change this and any other language-specific editor
+-- properties. For example:
 --
---     textadept.run.build_commands[_HOME] = function()
---       local button, target = ui.dialogs.standard_inputbox{
---         title = _L['Command'], informative_text = 'make -C src'
---       }
---       if button == 1 then return 'make -C src '..target end
---     end
---
--- As with compile and run commands, any recognized errors are flagged.
---
---
--- #### Buffer Properties
---
--- By default, Textadept uses 2 spaces for indentation. If your language has
--- different indentation guidelines, change them from an
--- `events.LEXER_LOADED` event handler. Using tabs of width 8 would look like
---
---     events.connect(events.LEXER_LOADED, function(lang)
---       if lang == 'lua' then
---         buffer.tab_width = 8
---         buffer.use_tabs = true
+--     events.connect(events.LEXER_LOADED, function(lexer)
+--       if lexer == 'python' then
+--         buffer.tab_width = 4
+--         buffer.use_tabs = false
+--         buffer.view_ws = buffer.WS_VISIBLEALWAYS
 --       end
 --     end
 --
--- #### Autocompletion and Documentation
+-- ## Autocompletion and Documentation
 --
--- The `Ctrl+Space` and `Ctrl+H` (`⌥⎋` and `^H` on Mac OSX | `^Space` and `M-H`
--- or `M-S-H` in curses) key bindings autocomplete symbols and show API
--- documentation, respectively, when editing code. In order for these to work
--- for your language, you must create an
--- [autocompleter](#textadept.editing.autocompleters) and
--- [API file(s)](#textadept.editing.api_files). All of Textadept's included
--- language modules have examples of autocompleters and API documentation.
+-- Textadept has the capability to autocomplete symbols for programming
+-- languages and display API documentation. In order for these to work for a
+-- given language, an [autocompleter](#textadept.editing.autocompleters) and
+-- [API file(s)](#textadept.editing.api_files) must exist. All of Textadept's
+-- included language modules have examples of autocompleters and API
+-- documentation, as well as most of its officially supported language modules.
 --
--- #### Snippets
+-- ## Snippets
 --
 -- [Snippets](#textadept.snippets) for common language constructs are useful.
--- Some snippets for common Lua control structures look like
+-- Some snippets for common Lua control structures look like this:
 --
 --     snippets.lua = {
 --       f = "function %1(name)(%2(args))\n\t%0\nend",
@@ -104,58 +93,44 @@
 --       forp = "for %1(k), %2(v) in pairs(%3(table)) do\n\t%0\nend",
 --     }
 --
--- #### Commands
+-- ## Commands
 --
 -- Additional editing features for the language can be useful. For example, the
--- [Lua](#_M.lua) module has a feature to autocomplete the `end` keyword in a
--- control structure and the [C](#_M.ansi_c) module has a feature to add a ';'
--- to the end of the current line and insert a new line. Both are bound to the
--- `Shift+Enter` (`⇧↩` on Mac OSX | `S-Enter` in curses) key for easy access.
+-- [C](#_M.ansi_c) module has a feature to add a ';' to the end of the current
+-- line and insert a new line. This command is bound to the `Shift+Enter` (`⇧↩`
+-- on Mac OSX | `S-Enter` in curses) key for easy access:
 --
---     -- In file *lua/init.lua*             | -- In file *ansi_c/init.lua*
---                                           |
---     function M.try_to_autocomplete_end()  | keys.ansi_c = {
---       ...                                 |   ['s\n'] = function()
---     end                                   |     buffer:line_end()
---                                           |     buffer:add_text(';')
---     keys.lua = {                          |     buffer:new_line()
---       ['s\n'] = M.try_to_autocomplete_end |   end
---     }                                     | }
+--     keys.ansi_c = {
+--       ['s\n'] = function()
+--         buffer:line_end()
+--         buffer:add_text(';')
+--         buffer:new_line()
+--       end
+--     }
 --
 -- When defining key bindings for other commands, you may make use of a `Ctrl+L`
 -- (`⌘L` on Mac OSX | `M-L` in curses) keychain. Traditionally this prefix has
 -- been reserved for use by language modules (although neither Textadept nor its
 -- modules utilize it at the moment). Users may define this keychain for new or
 -- existing modules and it will not conflict with any default key bindings.
+-- For example:
 --
 --     keys.lua[not OSX and not CURSES and 'cl' or 'ml'] = {
 --       ...
 --     }
 --
--- #### Context Menu
+-- ## Menus
 --
--- It may be useful to add language-specific menu options to the right-click
--- context menu in order to access module features without using key bindings.
--- For Lua this might look like
+-- It may be useful to add language-specific menu options to the top-level menu
+-- and/or right-click context menu in order to access module features without
+-- using key bindings. For example:
 --
---     textadept.menu.context_menu[#textadept.menu.context_menu + 1] = {
+--     local lua_menu = {
 --       title = 'Lua',
---       {'Autocomplete "end"', M.try_to_autocomplete_end}
+--       {'Item 1', function() ... end},
+--       {'Item 2', function() ... end}
 --     }
---
--- #### Syntax Checking
---
--- Textadept has the ability to run a syntax checking tool on source files
--- immediately after saving them, and automatically does this for a number of
--- interpreted languages and markup languages. If your language is not supported
--- (properly or at all), you will have to update the
--- [`textadept.run.syntax_commands`]() and
--- [`textadept.run.syntax_error_patterns`]() tables. For Lua, this looks like
---
---     textadept.run.syntax_commands.lua = 'luac -p "%f"'
---     textadept.run.syntax_error_patterns.lua = ':(%d+): ([^\r\n]+)'
---
--- This feature really only makes sense for interpreted and markup languages.
--- Compiled languages should make use of Textadept's "Compile and Run" and error
--- recognition facilities.
+--     local tools = textadept.menu.menubar[_L['_Tools']]
+--     tools[#tools + 1] = lua_menu
+--     textadept.menu.context_menu[#textadept.menu.context_menu + 1] = lua_menu
 module('_M')]]
