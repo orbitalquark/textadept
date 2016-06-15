@@ -1859,6 +1859,10 @@ terminal's constraints:
 
 Old API                           |Change  |New API
 ----------------------------------|:------:|-------
+**events**                        |        |
+COMPILE\_OUTPUT lexer, output     |Changed |[COMPILE\_OUTPUT][] output, ext/lex
+RUN\_OUTPUT lexer, output         |Changed |[RUN\_OUTPUT][] output, ext/lexer
+BUILD\_OUTPUT project, output     |Changed |[BUILD\_OUTPUT][] output
 **io**                            |        |
 snapopen(...)                     |Changed |[quick\_open][](paths, filter, opts)
 snapopen\_filters                 |Renamed |[quick\_open\_filters][]
@@ -1879,11 +1883,26 @@ STRIP\_TRAILING\_SPACES           |Replaced|[strip\_trailing\_spaces][]
 AUTOCOMPLETE\_ALL                 |Replaced|[autocomplete\_all\_words][]
 char\_matches                     |Replaced|[auto\_pairs][]
 braces                            |Replaced|[brace\_matches][]
+**textadept.run**                 |        |
+RUN\_IN\_BACKGROUND               |Renamed |[run\_in\_background][]
+CHECK\_SYNTAX                     |Removed |
+GOTO\_SYNTAX\_ERRORS              |Removed |
+cwd                               |Removed |
+proc                              |Removed |
+compile()                         |Changed |[compile][](filename)
+run()                             |Changed |[run][](filename)
+build()                           |Changed |[build][](root\_directory)
+[error\_patterns][]               |Changed |_(changed format)_
+syntax\_commands                  |Removed |
+syntax\_error\_patterns           |Removed |
 **textadept.session**             |        |
 DEFAULT\_SESSION                  |Renamed |[default\_session][]
 SAVE\_ON\_QUIT                    |Renamed |[save\_on\_quit][]
 MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 
+[COMPILE\_OUTPUT]: api.html#events.COMPILE_OUTPUT
+[RUN\_OUTPUT]: api.html#events.RUN_OUTPUT
+[BUILD\_OUTPUT]: api.html#events.BUILD_OUTPUT
 [default\_filter]: api.html#lfs.default_filter
 [dir\_foreach()]: api.html#lfs.dir_foreach
 [silent\_print]: api.html#ui.silent_print
@@ -1898,6 +1917,11 @@ MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 [strip\_trailing\_spaces]: api.html#textadept.editing.strip_trailing_spaces
 [autocomplete\_all\_words]: api.html#textadept.editing.autocomplete_all_words
 [brace\_matches]: api.html#textadept.editing.brace_matches
+[run\_in\_background]: api.html#textadept.run.run_in_background
+[compile]: api.html#textadept.run.compile
+[run]: api.html#textadept.run.run
+[build]: api.html#textadept.run.build
+[error\_patterns]: api.html#textadept.run.error_patterns
 [default\_session]: api.html#textadept.session.default_session
 [save\_on\_quit]: api.html#textadept.session.save_on_quit
 [max\_recent\_files]: api.html#textadept.session.max_recent_files
