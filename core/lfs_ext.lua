@@ -18,7 +18,7 @@ lfs.FILTER = {
     'a', 'bmp', 'bz2', 'class', 'dll', 'exe', 'gif', 'gz', 'jar', 'jpeg', 'jpg',
     'o', 'png', 'so', 'tar', 'tgz', 'tif', 'tiff', 'zip'
   },
-  folders = {'%.bzr$', '%.git$', '%.hg$', '%.svn$', 'CVS$'}
+  folders = {'%.bzr$', '%.git$', '%.hg$', '%.svn$'}
 }
 
 local lfs_symlinkattributes = lfs.symlinkattributes

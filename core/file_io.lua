@@ -331,33 +331,30 @@ function io.open_recent_file()
 end
 
 -- List of version control directories.
-local vcs = {'.bzr', '.git', '.hg', '.svn', 'CVS'}
+local vcs = {'.bzr', '.git', '.hg', '.svn'}
 
 ---
 -- Returns the root directory of the project that contains filesystem path
 -- *path*.
 -- In order to be recognized, projects must be under version control. Recognized
--- VCSes are Bazaar, Git, Mercurial, SVN, and CVS.
+-- VCSes are Bazaar, Git, Mercurial, and SVN.
 -- @param path Optional filesystem path to a project or a file contained within
 --   a project. The default value is the buffer's filename or the current
 --   working directory.
 -- @return string root or nil
 -- @name get_project_root
 function io.get_project_root(path)
-  local root
   local lfs_attributes = lfs.attributes
   local dir = path or (buffer.filename or lfs.currentdir()):match('^(.+)[/\\]')
   while dir do
     for i = 1, #vcs do
       if lfs_attributes(dir..'/'..vcs[i], 'mode') == 'directory' then
-        if vcs[i] ~= '.svn' and vcs[i] ~= 'CVS' then return dir end
-        root = dir
-        break
+        return dir
       end
     end
     dir = dir:match('^(.+)[/\\]')
   end
-  return root
+  return nil
 end
 
 ---
