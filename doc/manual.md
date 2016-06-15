@@ -1856,6 +1856,8 @@ Old API                           |Change  |New API
 **lfs**                           |        |
 FILTER                            |Renamed |[default\_filter][]
 dir\_foreach()                    |Changed |[dir\_foreach()][] _(Changed args)_
+**ui**                            |        |
+SILENT\_PRINT                     |Renamed |[silent\_print][]
 **textadept.editing**             |        |
 snapopen(...)                     |Changed |[quick\_open][](paths, filter, opts)
 snapopen\_filters                 |Renamed |[quick\_open\_filters][]
@@ -1863,6 +1865,7 @@ SNAPOPEN\_MAX                     |Renamed |[quick\_open\_max][]
 
 [default\_filter]: api.html#lfs.default_filter
 [dir\_foreach()]: api.html#lfs.dir_foreach
+[silent\_print]: api.html#ui.silent_print
 [quick\_open]: api.html#io.quick_open
 [quick\_open\_filters]: api.html#io.quick_open_filters
 [quick\_open\_max]: api.html#io.quick_open_max

@@ -264,7 +264,7 @@ function M.find_in_files(dir)
   if M.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end -- TODO: wordchars
 
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-  ui.SILENT_PRINT = false
+  ui.silent_print = false
   ui._print(_L['[Files Found Buffer]'], _L['Find:']..' '..text)
   buffer.indicator_current = M.INDIC_FIND
 
