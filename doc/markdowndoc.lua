@@ -66,7 +66,7 @@ local function write_description(f, description, name)
     -- Add anchors for module description headers.
     description = description:gsub('\n(#+%s+([^\n]+))', function(header, text)
       return string_format("\n\n<a id=\"%s.%s\"></a>\n\n%s", name,
-                           text:gsub(' ', '.'), header)
+                           text:gsub('[%s%p]', '.'), header)
     end)
   end
   -- Substitute custom [`code`]() link convention with [`code`](#code) links.
