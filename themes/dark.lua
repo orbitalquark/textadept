@@ -60,30 +60,30 @@ elseif OSX then
 end
 
 -- Predefined styles.
-property['style.default'] = 'font:%(font),size:%(fontsize),'..
-                            'fore:%(color.light_grey),back:%(color.black)'
-property['style.linenumber'] = 'fore:%(color.dark_grey),back:%(color.black)'
+property['style.default'] = 'font:$(font),size:$(fontsize),'..
+                            'fore:$(color.light_grey),back:$(color.black)'
+property['style.linenumber'] = 'fore:$(color.dark_grey),back:$(color.black)'
 --property['style.controlchar'] =
-property['style.indentguide'] = 'fore:%(color.light_black)'
-property['style.calltip'] = 'fore:%(color.light_grey),back:%(color.light_black)'
+property['style.indentguide'] = 'fore:$(color.light_black)'
+property['style.calltip'] = 'fore:$(color.light_grey),back:$(color.light_black)'
 
 -- Token styles.
-property['style.class'] = 'fore:%(color.light_yellow)'
-property['style.comment'] = 'fore:%(color.dark_grey)'
-property['style.constant'] = 'fore:%(color.red)'
-property['style.embedded'] = '%(style.keyword),back:%(color.light_black)'
-property['style.error'] = 'fore:%(color.red),italics'
-property['style.function'] = 'fore:%(color.blue)'
+property['style.class'] = 'fore:$(color.light_yellow)'
+property['style.comment'] = 'fore:$(color.dark_grey)'
+property['style.constant'] = 'fore:$(color.red)'
+property['style.embedded'] = '$(style.keyword),back:$(color.light_black)'
+property['style.error'] = 'fore:$(color.red),italics'
+property['style.function'] = 'fore:$(color.blue)'
 property['style.identifier'] = ''
-property['style.keyword'] = 'fore:%(color.dark_white)'
-property['style.label'] = 'fore:%(color.orange)'
-property['style.number'] = 'fore:%(color.teal)'
-property['style.operator'] = 'fore:%(color.yellow)'
-property['style.preprocessor'] = 'fore:%(color.purple)'
-property['style.regex'] = 'fore:%(color.light_green)'
-property['style.string'] = 'fore:%(color.green)'
-property['style.type'] = 'fore:%(color.lavender)'
-property['style.variable'] = 'fore:%(color.light_blue)'
+property['style.keyword'] = 'fore:$(color.dark_white)'
+property['style.label'] = 'fore:$(color.orange)'
+property['style.number'] = 'fore:$(color.teal)'
+property['style.operator'] = 'fore:$(color.yellow)'
+property['style.preprocessor'] = 'fore:$(color.purple)'
+property['style.regex'] = 'fore:$(color.light_green)'
+property['style.string'] = 'fore:$(color.green)'
+property['style.type'] = 'fore:$(color.lavender)'
+property['style.variable'] = 'fore:$(color.light_blue)'
 property['style.whitespace'] = ''
 
 -- Multiple Selection and Virtual Space

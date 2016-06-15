@@ -28,30 +28,30 @@ property['color.light_magenta'] = 0xFF00FF
 property['color.light_white'] = 0xFFFFFF
 
 -- Predefined styles.
-property['style.default'] = 'fore:%(color.white),back:%(color.black)'
+property['style.default'] = 'fore:$(color.white),back:$(color.black)'
 --property['style.linenumber'] =
-property['style.bracelight'] = 'fore:%(color.black),back:%(color.white)'
+property['style.bracelight'] = 'fore:$(color.black),back:$(color.white)'
 --property['style.controlchar'] =
 --property['style.indentguide'] =
-property['style.calltip'] = '%(style.default)'
+property['style.calltip'] = '$(style.default)'
 
 -- Token styles.
-property['style.class'] = 'fore:%(color.yellow)'
-property['style.comment'] = 'fore:%(color.black),bold'
-property['style.constant'] = 'fore:%(color.red)'
-property['style.embedded'] = '%(style.keyword),back:%(color.black)'
-property['style.error'] = 'fore:%(color.red),bold'
-property['style.function'] = 'fore:%(color.blue)'
+property['style.class'] = 'fore:$(color.yellow)'
+property['style.comment'] = 'fore:$(color.black),bold'
+property['style.constant'] = 'fore:$(color.red)'
+property['style.embedded'] = '$(style.keyword),back:$(color.black)'
+property['style.error'] = 'fore:$(color.red),bold'
+property['style.function'] = 'fore:$(color.blue)'
 property['style.identifier'] = ''
-property['style.keyword'] = 'fore:%(color.white),bold'
-property['style.label'] = 'fore:%(color.red),bold'
-property['style.number'] = 'fore:%(color.cyan)'
-property['style.operator'] = 'fore:%(color.yellow)'
-property['style.preprocessor'] = 'fore:%(color.magenta)'
-property['style.regex'] = 'fore:%(color.green),bold'
-property['style.string'] = 'fore:%(color.green)'
-property['style.type'] = 'fore:%(color.magenta),bold'
-property['style.variable'] = 'fore:%(color.blue),bold'
+property['style.keyword'] = 'fore:$(color.white),bold'
+property['style.label'] = 'fore:$(color.red),bold'
+property['style.number'] = 'fore:$(color.cyan)'
+property['style.operator'] = 'fore:$(color.yellow)'
+property['style.preprocessor'] = 'fore:$(color.magenta)'
+property['style.regex'] = 'fore:$(color.green),bold'
+property['style.string'] = 'fore:$(color.green)'
+property['style.type'] = 'fore:$(color.magenta),bold'
+property['style.variable'] = 'fore:$(color.blue),bold'
 property['style.whitespace'] = ''
 
 -- Multiple Selection and Virtual Space
