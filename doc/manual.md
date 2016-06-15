@@ -1854,7 +1854,7 @@ terminal's constraints:
 Old API                           |Change  |New API
 ----------------------------------|:------:|-------
 **textadept.editing**             |        |
-snapopen                          |Renamed |[quick\_open()][]
+snapopen(...)                     |Changed |[quick\_open(paths, filter, opts)][]
 SNAPOPEN\_MAX                     |Renamed |[quick\_open\_max][]
 snapopen\_filters                 |Renamed |[quick\_open\_filters][]
 

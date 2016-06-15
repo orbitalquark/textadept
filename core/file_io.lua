@@ -370,8 +370,7 @@ io.quick_open_filters = {}
 -- If *paths* is `nil`, uses the current project's root directory, which is
 -- obtained from `io.get_project_root()`.
 -- Files shown in the dialog do not match any pattern in either string or table
--- *filter* or, unless *exclude_FILTER* is `true`, in `lfs.FILTER`. A filter
--- table contains:
+-- *filter* (or `lfs.FILTER` if *filter* is `nil`). A filter table contains:
 --
 --   + Lua patterns that match filenames to exclude.
 --   + Optional `folders` sub-table that contains patterns matching directories
@@ -385,45 +384,36 @@ io.quick_open_filters = {}
 --
 -- Any filter patterns starting with '!' exclude files and directories that do
 -- not match the pattern that follows. The number of files in the list is capped
--- at `quick_open_max`. If *filter* is `nil` and *paths* is ultimately a string,
--- the filter from the `io.quick_open_filters` table is used. In that case,
--- unless explicitly specified, *exclude_FILTER* becomes `true`.
+-- at `quick_open_max`.
+-- If *filter* is `nil` and *paths* is ultimately a string, the filter from the
+-- `io.quick_open_filters` table is used in place of `lfs.FILTER` if the former
+-- exists.
 -- *opts* is an optional table of additional options for
 -- `ui.dialogs.filteredlist()`.
 -- @param paths Optional string directory path or table of directory paths to
 --   search. The default value is the current project's root directory, if
 --   available.
 -- @param filter Optional filter for files and directories to exclude. The
---   default value comes from `io.quick_open_filters` if *paths* is a string.
--- @param exclude_FILTER Optional flag indicating whether or not to exclude the
---   default filter `lfs.FILTER` in the search. If `false`, adds `lfs.FILTER` to
---   *filter*.
---   Normally, the default value is `false` to include the default filter.
---   However, in the instances where *filter* comes from
---   `io.quick_open_filters`, the default value is `true`.
+--   default value is `lfs.FILTER` unless *paths* is a string and a filter for
+--   it is defined in `io.quick_open_filters`.
 -- @param opts Optional table of additional options for
 --   `ui.dialogs.filteredlist()`.
 -- @usage io.quick_open(buffer.filename:match('^.+/')) -- list all files in the
 --   current file's directory, subject to the default filter
 -- @usage io.quick_open('/project', '!%.lua$') -- list all Lua files in a
 --    project directory
--- @usage io.quick_open('/project', {folders = {'build'}}) -- list all source
+-- @usage io.quick_open('/project', {folders = {'build'}}) -- list all non-built
 --   files in a project directory
 -- @see io.quick_open_filters
 -- @see lfs.FILTER
 -- @see quick_open_max
 -- @see ui.dialogs.filteredlist
 -- @name quick_open
-function io.quick_open(paths, filter, exclude_FILTER, opts)
+function io.quick_open(paths, filter, opts)
   if not paths then paths = io.get_project_root() end
   if not paths then return end
   if type(paths) == 'string' then
-    if not filter then
-      filter = io.quick_open_filters[paths]
-      if filter and exclude_FILTER == nil then
-        exclude_FILTER = filter ~= lfs.FILTER
-      end
-    end
+    if not filter then filter = io.quick_open_filters[paths] end
     paths = {paths}
   end
   local utf8_list = {}
@@ -432,7 +422,7 @@ function io.quick_open(paths, filter, exclude_FILTER, opts)
       if #utf8_list >= io.quick_open_max then return false end
       filename = filename:gsub('^%.[/\\]', '')
       utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
-    end, filter, exclude_FILTER)
+    end, filter or lfs.FILTER)
   end
   if #utf8_list >= io.quick_open_max then
     local msg = string.format('%d %s %d', io.quick_open_max,
