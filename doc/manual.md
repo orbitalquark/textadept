@@ -1879,6 +1879,10 @@ STRIP\_TRAILING\_SPACES           |Replaced|[strip\_trailing\_spaces][]
 AUTOCOMPLETE\_ALL                 |Replaced|[autocomplete\_all\_words][]
 char\_matches                     |Replaced|[auto\_pairs][]
 braces                            |Replaced|[brace\_matches][]
+**textadept.session**             |        |
+DEFAULT\_SESSION                  |Renamed |[default\_session][]
+SAVE\_ON\_QUIT                    |Renamed |[save\_on\_quit][]
+MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 
 [default\_filter]: api.html#lfs.default_filter
 [dir\_foreach()]: api.html#lfs.dir_foreach
@@ -1894,6 +1898,9 @@ braces                            |Replaced|[brace\_matches][]
 [strip\_trailing\_spaces]: api.html#textadept.editing.strip_trailing_spaces
 [autocomplete\_all\_words]: api.html#textadept.editing.autocomplete_all_words
 [brace\_matches]: api.html#textadept.editing.brace_matches
+[default\_session]: api.html#textadept.session.default_session
+[save\_on\_quit]: api.html#textadept.session.save_on_quit
+[max\_recent\_files]: api.html#textadept.session.max_recent_files
 
 #### Language Module Handling Changes
 
