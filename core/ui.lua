@@ -347,11 +347,10 @@ events_connect(events.UPDATE_UI, function(updated)
   local tabs = string.format('%s %d', buffer.use_tabs and _L['Tabs:'] or
                                       _L['Spaces:'], buffer.tab_width)
   local enc = buffer.encoding or ''
-  local bom = buffer.encoding_bom and '(BOM)' or ''
-  local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s%s' or
-                              '%s %d/%d  %s %d  %s  %s  %s  %s%s'
+  local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
+                              '%s %d/%d  %s %d  %s  %s  %s  %s'
   ui.bufstatusbar_text = string.format(text, _L['Line:'], line, max, _L['Col:'],
-                                       col, lexer, eol, tabs, enc, bom)
+                                       col, lexer, eol, tabs, enc)
 end)
 
 -- Save buffer properties.
