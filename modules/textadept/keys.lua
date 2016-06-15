@@ -109,7 +109,6 @@ local M = {}
 -- Ctrl+Alt+Shift+T|^⇧T   |M-T<br/>M-S-T|Toggle use tabs
 -- Ctrl+Alt+I      |^I    |M-I          |Convert indentation
 -- None            |None  |None         |CR+LF EOL mode
--- None            |None  |None         |CR EOL mode
 -- None            |None  |None         |LF EOL mode
 -- None            |None  |None         |UTF-8 encoding
 -- None            |None  |None         |ASCII encoding
@@ -441,7 +440,6 @@ keys[not OSX and (GUI and 'cai' or 'mi')
              or 'ci'] = textadept.editing.convert_indentation
 -- EOL Mode.
 -- TODO: m_buffer[_L['_EOL Mode']][_L['CRLF']][2]
--- TODO: m_buffer[_L['_EOL Mode']][_L['CR']][2]
 -- TODO: m_buffer[_L['_EOL Mode']][_L['LF']][2]
 -- Encoding.
 -- TODO: m_buffer[_L['E_ncoding']][_L['_UTF-8 Encoding']][2]
