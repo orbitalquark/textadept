@@ -61,7 +61,7 @@ local M = {}
 --     keys['cn'] = buffer.new
 --     keys['cz'] = buffer.undo
 --     keys['a('] = {textadept.editing.enclose, '(', ')'}
---     keys['cu'] = function() io.snapopen(_USERHOME) end
+--     keys['cu'] = function() io.quick_open(_USERHOME) end
 --
 -- Textadept handles [`buffer`]() references properly in static contexts.
 --

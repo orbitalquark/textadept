@@ -220,15 +220,15 @@ local default_menubar = {
       {_L['_Goto Bookmark...'], textadept.bookmarks.goto_mark},
     },
     {
-      title = _L['Snap_open'],
-      {_L['Snapopen _User Home'], function() io.snapopen(_USERHOME) end},
-      {_L['Snapopen _Textadept Home'], function() io.snapopen(_HOME) end},
-      {_L['Snapopen _Current Directory'], function()
+      title = _L['Quick _Open'],
+      {_L['Quickly Open _User Home'], function() io.quick_open(_USERHOME) end},
+      {_L['Quickly Open _Textadept Home'], function() io.quick_open(_HOME) end},
+      {_L['Quickly Open _Current Directory'], function()
         if buffer.filename then
-          io.snapopen(buffer.filename:match('^(.+)[/\\]'))
+          io.quick_open(buffer.filename:match('^(.+)[/\\]'))
         end
       end},
-      {_L['Snapopen Current _Project'], io.snapopen},
+      {_L['Quickly Open Current _Project'], io.quick_open},
     },
     {
       title = _L['_Snippets'],
