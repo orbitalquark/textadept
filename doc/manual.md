@@ -1987,6 +1987,7 @@ STRIP\_TRAILING\_SPACES           |Renamed |[strip\_trailing\_spaces][]
 AUTOCOMPLETE\_ALL                 |Renamed |[autocomplete\_all\_words][]
 char\_matches                     |Replaced|[auto\_pairs][]
 braces                            |Renamed |[brace\_matches][]
+[goto\_line][](line)              |Changed |_line argument is 0-based_
 **textadept.run**                 |        |
 RUN\_IN\_BACKGROUND               |Renamed |[run\_in\_background][]
 CHECK\_SYNTAX                     |Removed |
@@ -2021,6 +2022,7 @@ MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 [strip\_trailing\_spaces]: api.html#textadept.editing.strip_trailing_spaces
 [autocomplete\_all\_words]: api.html#textadept.editing.autocomplete_all_words
 [brace\_matches]: api.html#textadept.editing.brace_matches
+[goto\_line]: api.html#textadept.editing.goto_line
 [run\_in\_background]: api.html#textadept.run.run_in_background
 [compile]: api.html#textadept.run.compile
 [run]: api.html#textadept.run.run

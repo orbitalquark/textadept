@@ -372,7 +372,7 @@ function M.goto_error(line, next)
     line = (next and math.min or math.max)(wline, eline)
     if line == -1 then return end
   end
-  textadept.editing.goto_line(line + 1) -- ensure visible
+  textadept.editing.goto_line(line) -- ensure visible
 
   -- Goto the warning or error and show an annotation.
   local line = buffer:get_line(line):match('^[^\r\n]*')
@@ -381,7 +381,7 @@ function M.goto_error(line, next)
   textadept.editing.select_line()
   ui.goto_file(cwd..(not WIN32 and '/' or '\\')..error.filename, true,
                preferred_view, true)
-  textadept.editing.goto_line(error.line)
+  textadept.editing.goto_line(error.line - 1)
   if error.column then
     buffer:goto_pos(buffer:find_column(error.line - 1, error.column - 1))
   end
