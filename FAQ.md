@@ -5,7 +5,7 @@ What is the difference between *textadept* and *textadeptjit*? Which one should
 I use?
 
 **A:**
-*textadept* uses Lua 5.2 while *textadeptjit* uses [LuaJIT][], which is based on
+*textadept* uses Lua 5.3 while *textadeptjit* uses [LuaJIT][], which is based on
 Lua 5.1. Other than access to the [FFI Library][], *textadeptjit* does not
 provide any noteworthy benefits. It used to be the case that *textadeptjit* was
 slightly faster when loading large files, but Textadept 6.1 was the last version
@@ -24,12 +24,13 @@ How do I fix it?
 **A:**
 It is difficult to provide a binary that runs on all Linux platforms since the
 library versions installed vary widely from distribution to distribution. For
-example, "libpng14" has been available for many distributions since late 2009
-while the latest 2012 Ubuntu still uses "libpng12". Unfortunately in these
-cases, the best idea is to [compile][] Textadept. This process is actually very
-simple though. Only the GTK+ development libraries are needed for the GUI
-version. (A development library for a curses implementation is required for the
-terminal version.)
+example, "libpng14" was available for many distributions starting in late 2009
+while Ubuntu 12.04 (circa 2012) used "libpng12". More recently, some
+distributions have started using "libncurses6" while many distributions are
+still on "libncurses5". Unfortunately in these cases, the best idea is to
+[compile][] Textadept. This process is actually very simple though. Only the
+GTK+ development libraries are needed for the GUI version. (A development
+library for a curses implementation is required for the terminal version.)
 
 [compile]: manual.html#Compiling
 
@@ -72,9 +73,11 @@ either nothing happens or the wrong command is executed. How can I tell
 Textadept which command to run?
 
 **A:**
-Please see the LuaDoc on [compile and run commands][].
+The LuaDoc describes [compile and run commands][] and you can configure them in
+your [preferences][].
 
 [compile and run commands]: api.html#_M.Compile.and.Run
+[preferences]: manual.html#Preferences
 
 - - -
 

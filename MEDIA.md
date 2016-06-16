@@ -14,7 +14,7 @@ Second Edition
 Order: [Ebook][] | Print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][],
 [ES][]
 
-Published: May 2015 <span style="color: #ef373a;">[New!]</span><br/>
+Published: May 2015
 ISBN: 978-0-9912379-1-3<br/>
 Pages: 167
 
