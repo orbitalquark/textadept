@@ -60,7 +60,7 @@ Changes:
 * Allow file-specific [compile commands][] and [run commands][].
 * Added new dialog for specifying compile/run command arguments to "Tools" menu.
 * [`textadept.editing.enclose()`][] works with multiple selections.
-* Disabled [`textadept.run.CHECK_SYNTAX`][] by default.
+* Disabled `textadept.run.CHECK_SYNTAX` by default.
 * Updated to [lspawn][] 1.5.
 * Updated to [Scintilla][] 3.6.5.
 * Updated to [Scinterm][] 1.8.
@@ -83,7 +83,6 @@ Changes:
 [compile commands]: api.html#textadept.run.compile_commands
 [run commands]: api.html#textadept.run.run_commands
 [`textadept.editing.enclose()`]: api.html#textadept.editing.enclose
-[`textadept.run.CHECK_SYNTAX`]: api.html#textadept.run.CHECK_SYNTAX
 [lspawn]: http://foicica.com/hg/lspawn
 [Scintilla]: http://scintilla.org
 [Scinterm]: http://foicica.com/scinterm
@@ -301,7 +300,7 @@ Changes:
 * Highlight found text in "Find in Files" searches.
 * Added Italian translation and updated French translation.
 * Added [automatic syntax checking][] as source files are saved, along with
-  [`textadept.run.CHECK_SYNTAX`][] and [`textadept.run.GOTO_SYNTAX_ERRORS`][]
+  `textadept.run.CHECK_SYNTAX` and `textadept.run.GOTO_SYNTAX_ERRORS`
   configuration fields.
 * Scintilla: multiple selection works over more key commands like caret
   movement, selections, and word and line deletions.
@@ -320,8 +319,6 @@ Changes:
 [PGP -- 8.2 Linux x86_64]: download/textadept_8.2.x86_64.tgz.asc
 [PGP -- 8.2 Modules]: download/textadept_8.2.modules.zip.asc
 [automatic syntax checking]: api.html#_M.Syntax.Checking
-[`textadept.run.CHECK_SYNTAX`]: api.html#textadept.run.CHECK_SYNTAX
-[`textadept.run.GOTO_SYNTAX_ERRORS`]: api.html#textadept.run.GOTO_SYNTAX_ERRORS
 [`events.AUTO_C_COMPLETED`]: api.html#events.AUTO_C_COMPLETED
 [Scintilla]: http://scintilla.org
 
@@ -408,7 +405,7 @@ Changes:
 [PGP -- 8.0 Linux]: download/textadept_8.0.i386.tgz.asc
 [PGP -- 8.0 Linux x86_64]: download/textadept_8.0.x86_64.tgz.asc
 [PGP -- 8.0 Modules]: download/textadept_8.0.modules.zip.asc
-[`textadept.run.RUN_IN_BACKGROUND`]: api.html#textadept.run.RUN_IN_BACKGROUND
+[`textadept.run.RUN_IN_BACKGROUND`]: api.html#textadept.run.run_in_background
 
 ## 8.0 beta (21 Apr 2015)
 
@@ -443,9 +440,9 @@ Changes:
 [PGP -- 8.0 beta Linux]: download/textadept_8.0_beta.i386.tgz.asc
 [PGP -- 8.0 beta Linux x86_64]: download/textadept_8.0_beta.x86_64.tgz.asc
 [PGP -- 8.0 beta Modules]: download/textadept_8.0_beta.modules.zip.asc
-[`io.snapopen()`]: api.html#io.snapopen
+[`io.snapopen()`]: api.html#io.quick_open
 [`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
-[`ui.find.FILTER`]: api.html#ui.find.FILTER
+[`ui.find.FILTER`]: api.html#ui.find.find_in_files_filter
 [`_FOLDBYINDENTATION`]: api.html#lexer.Fold.by.Indentation
 [Scintilla]: http://scintilla.org
 
@@ -945,7 +942,7 @@ Changes:
 [autocompleter functions]: api.html#textadept.editing.autocompleters
 [api file format]: api.html#textadept.editing.api_files
 [`textadept.editing.autocomplete`]: api.html#textadept.editing.autocomplete
-[`textadept.editing.AUTOCOMPLETE_ALL`]: api.html#textadept.editing.AUTOCOMPLETE_ALL
+[`textadept.editing.AUTOCOMPLETE_ALL`]: api.html#textadept.editing.autocomplete_all_words
 [`textadept.menu.menubar`]: api.html#textadept.menu.menubar
 [`textadept.menu.context_menu`]: api.html#textadept.menu.context_menu
 [`textadept.menu.tab_context_menu`]: api.html#textadept.menu.tab_context_menu
@@ -1056,9 +1053,9 @@ Changes:
 [PGP -- 7.2 beta 3 Linux x86_64]: download/textadept_7.2_beta_3.x86_64.tgz.asc
 [PGP -- 7.2 beta 3 Modules]: download/textadept_7.2_beta_3.modules.zip.asc
 [optionselect]: api.html#ui.dialogs.optionselect
-[`ui.SILENT_PRINT`]: api.html#ui.SILENT_PRINT
+[`ui.SILENT_PRINT`]: api.html#ui.silent_print
 [spawn processes]: api.html#spawn
-[Snapopen]: manual.html#Snapopen
+[Snapopen]: manual.html#Quick.Open
 [building projects]: api.html#_M.Build.a.Project
 [LuaJIT]: http://luajit.org
 [Scintilla]: http://scintilla.org
@@ -1242,7 +1239,7 @@ Changes:
 [PGP -- 7.1 Linux x86_64]: download/textadept_7.1.x86_64.tgz.asc
 [PGP -- 7.1 Modules]: download/textadept_7.1.modules.zip.asc
 [`ui.tabs`]: api.html#ui.tabs
-[`textadept.editing.STRIP_TRAILING_SPACES`]: api.html#textadept.editing.STRIP_TRAILING_SPACES
+[`textadept.editing.STRIP_TRAILING_SPACES`]: api.html#textadept.editing.strip_trailing_spaces
 [`ui.clipboard_text`]: api.html#ui.clipboard_text
 [`events.FILE_CHANGED`]: api.html#events.FILE_CHANGED
 
@@ -1404,7 +1401,7 @@ Changes:
 [`error_patterns`]: api.html#textadept.run.error_patterns
 [`ui.dialogs`]: api.html#ui.dialogs
 [`io.open_file()`]: api.html#io.open_file
-[`io.snapopen()`]: api.html#io.snapopen
+[`io.snapopen()`]: api.html#io.quick_open
 [`lexer.fold_level`]: api.html#lexer.fold_level
 [`lexer.indent_amount`]: api.html#lexer.indent_amount
 [`lexer.property`]: api.html#lexer.property
@@ -1763,7 +1760,7 @@ Bugfixes:
 * Only consider visible directories in *_USERHOME/themes/* as themes.
 * Indicator for highlighted words works in ncurses.
 * Improved message double-clicking behavior for compile and run commands by
-  adding [`_M.textadept.run.cwd`][].
+  adding `_M.textadept.run.cwd`.
 * Fixed disorienting scrolling when wrapping only one search result.
 * Fixed crash when attempting to load a non-existant lexer.
 * Fixed CSS preprocessor styling.
@@ -1798,12 +1795,11 @@ Changes:
 [PGP -- 6.5 Linux x86_64]: download/textadept_6.5.x86_64.tgz.asc
 [PGP -- 6.5 Source]: download/textadept_6.5.src.zip.asc
 [PGP -- 6.5 Modules]: download/textadept_6.5.modules.zip.asc
-[`_M.textadept.run.cwd`]: api.html#textadept.run.cwd
 [`buffer:visible_from_doc_line()`]: api.html#buffer.visible_from_doc_line
 [`buffer:line_scroll()`]: api.html#buffer.line_scroll
 [`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
-[filtering]: api.html#ui.find.FILTER
-[`io`]: api.html#io.snapopen
+[filtering]: api.html#ui.find.find_in_files_filter
+[`io`]: api.html#io.quick_open
 [`lexer` constants]: api.html#lexer.FOLD_BASE
 [`buffer:scroll_range()`]: api.html#buffer.scroll_range
 [Scintilla]: http://scintilla.org
@@ -1895,7 +1891,7 @@ Changes:
 [PGP -- 6.3 Modules]: download/textadept_6.3.modules.zip.asc
 [`buffer.caret_line_visible_always`]: api.html#buffer.caret_line_visible_always
 [Scintilla]: http://scintilla.org
-[typeover characters]: api.html#textadept.editing.TYPEOVER_CHARS
+[typeover characters]: api.html#textadept.editing.typeover_chars
 
 ## 6.2 (01 Jan 2013)
 
@@ -1930,7 +1926,7 @@ Changes:
 [PGP -- 6.2 Linux x86_64]: download/textadept_6.2.x86_64.tgz.asc
 [PGP -- 6.2 Source]: download/textadept_6.2.src.zip.asc
 [PGP -- 6.2 Modules]: download/textadept_6.2.modules.zip.asc
-[`_M.textadept.snapopen.open()`]: api.html#io.snapopen
+[`_M.textadept.snapopen.open()`]: api.html#io.quick_open
 
 ## 6.1 (11 Dec 2012)
 
@@ -2143,7 +2139,7 @@ Changes:
 [PGP -- 6.0 beta 2 Modules]: download/textadept_6.0_beta_2.modules.zip.asc
 [`_M.textadept.menu.select_command()`]: api.html#textadept.menu.select_command
 [`_M.textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
-[`MAX`]: api.html#io.SNAPOPEN_MAX
+[`MAX`]: api.html#io.quick_open_max
 [`lexer.last_char_includes()`]: api.html#lexer.last_char_includes
 [`buffer.selection_empty`]: api.html#buffer.selection_empty
 [`buffer:vc_home_display()`]: api.html#buffer.vc_home_display
@@ -3062,7 +3058,7 @@ Bugfixes:
 Changes:
 
 * Adeptsense tweaks for better completion and apidoc support.
-* Language modules load a user [`post_init.lua`][] script if it exists.
+* Language modules load a user `post_init.lua` script if it exists.
 * Added Ruby on Rails lexer and module.
 * Added RHTML module.
 * Updated mime-types and prioritize by shebang, pattern, and then file
@@ -3098,7 +3094,6 @@ Changes:
 [PGP -- 3.7 beta 3 Linux x86_64]: download/textadept_3.7_beta_3.x86_64.tgz.asc
 [PGP -- 3.7 beta 3 Source]: download/textadept_3.7_beta_3.src.zip.asc
 [PGP -- 3.7 beta 3 Modules]: download/textadept_3.7_beta_3.modules.zip.asc
-[`post_init.lua`]: manual.html#Language.Module.Preferences
 [`buffer:get_lexer(true)`]: api.html#buffer.get_lexer
 [Scintilla]: http://scintilla.org
 [`_m.textadept.snippets`]: api.html#textadept.snippets
@@ -3209,8 +3204,8 @@ Changes:
 [PGP -- 3.7 beta Linux]: download/textadept_3.7_beta.tgz.asc
 [PGP -- 3.7 beta Linux x86_64]: download/textadept_3.7_beta.x86_64.tgz.asc
 [PGP -- 3.7 beta Source]: download/textadept_3.7_beta.src.zip.asc
-[`char_matches`]: api.html#textadept.editing.char_matches
-[`braces`]: api.html#textadept.editing.braces
+[`char_matches`]: api.html#textadept.editing.auto_pairs
+[`braces`]: api.html#textadept.editing.brace_matches
 
 ## 3.6 (01 Jan 2011)
 
@@ -3363,7 +3358,7 @@ Changes:
 [`buffer:marker_add()`]: api.html#buffer.marker_add
 [`buffer:marker_add_set()`]: api.html#buffer.marker_add_set
 [`gui.dialog()`]: api.html#ui.dialog
-[`_m.textadept.snapopen.open()`]: api.html#io.snapopen
+[`_m.textadept.snapopen.open()`]: api.html#io.quick_open
 [`gui.statusbar_text`]: api.html#ui.statusbar_text
 [highlight]: manual.html#Word.Highlight
 [`_G.timeout()`]: api.html#timeout
@@ -3405,7 +3400,7 @@ Changes:
 [PGP -- 3.3 Linux]: download/textadept_3.3.tgz.asc
 [PGP -- 3.3 Linux x86_64]: download/textadept_3.3.x86_64.tgz.asc
 [PGP -- 3.3 Source]: download/textadept_3.3.src.zip.asc
-[`_m.textadept.snapopen`]: api.html#io.snapopen
+[`_m.textadept.snapopen`]: api.html#io.quick_open
 
 ## 3.2 (01 Sep 2010)
 
