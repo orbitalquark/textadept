@@ -74,7 +74,7 @@ function M.goto_mark(next)
     }
     if button ~= 1 or not mark then return end
     view:goto_buffer(buffers[mark])
-    textadept.editing.goto_line(utf8_list[mark]:match('^[^:]+:(%d+):'))
+    textadept.editing.goto_line(utf8_list[mark]:match('^[^:]+:(%d+):') - 1)
   else
     local f = next and buffer.marker_next or buffer.marker_previous
     local current_line = buffer:line_from_position(buffer.current_pos)
@@ -82,7 +82,7 @@ function M.goto_mark(next)
     if line == -1 then
       line = f(buffer, (next and 0 or buffer.line_count), 2^M.MARK_BOOKMARK)
     end
-    if line >= 0 then textadept.editing.goto_line(line + 1) end
+    if line >= 0 then textadept.editing.goto_line(line) end
   end
 end
 

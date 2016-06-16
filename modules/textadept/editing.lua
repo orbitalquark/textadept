@@ -305,9 +305,10 @@ function M.goto_line(line)
     }
     line = tonumber(value)
     if button ~= 1 or not line then return end
+    line = line - 1
   end
-  buffer:ensure_visible_enforce_policy(line - 1)
-  buffer:goto_line(line - 1)
+  buffer:ensure_visible_enforce_policy(line)
+  buffer:goto_line(line)
 end
 
 ---

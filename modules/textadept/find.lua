@@ -437,7 +437,7 @@ function M.goto_file_found(line, next)
   if not utf8_filename then return end
   textadept.editing.select_line()
   ui.goto_file(utf8_filename:iconv(_CHARSET, 'UTF-8'), true, preferred_view)
-  textadept.editing.goto_line(line_num)
+  textadept.editing.goto_line(line_num - 1)
 end
 events.connect(events.KEYPRESS, function(code)
   if keys.KEYSYMS[code] == '\n' and is_ff_buf(buffer) then
