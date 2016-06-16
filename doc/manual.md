@@ -1448,26 +1448,26 @@ When it comes to scripting Textadept, what exactly does that mean? Being an
 event-driven application, Textadept simply responds to input like keypresses and
 mouse clicks. By responding, Textadept just executes Lua functions. For example,
 pressing `Ctrl+O` (`⌘O` on Mac OSX | `M-O` on curses) executes the
-[`io.open_file()`][] function because a default keybinding in 
-*modules/textadept/keys.lua* says so (you could change this in your 
-[preferences](#Key.Bindings)). Subsequently, when Textadept opens a file, a 
-syntax highlighting lexer is applied because `io.open_file()` emitted a 
-[`events.FILE_OPENED`][] event that *modules/textadept/file_types.lua* was 
+[`io.open_file()`][] function because a default keybinding in
+*modules/textadept/keys.lua* says so (you could change this in your
+[preferences](#Key.Bindings)). Subsequently, when Textadept opens a file, a
+syntax highlighting lexer is applied because `io.open_file()` emitted a
+[`events.FILE_OPENED`][] event that *modules/textadept/file_types.lua* was
 listening for.
 
 Not only can you define your own key bindings that can do pretty much anything
-with Textadept (interact with and manipulate buffer contents, prompt for input 
+with Textadept (interact with and manipulate buffer contents, prompt for input
 with dialogs, spawn processes, etc.), but you can also listen in on the plethora
-of [events][] Textadept emits in order to script nearly every aspect of the 
-editor's behavior. Not a fan of Lua patterns in buffer searches? Textadept emits 
-an [`events.FIND`][] event every time the "Find Next" and "Find Prev" buttons 
-are clicked. You can listen for that event and perform your own searches with 
+of [events][] Textadept emits in order to script nearly every aspect of the
+editor's behavior. Not a fan of Lua patterns in buffer searches? Textadept emits
+an [`events.FIND`][] event every time the "Find Next" and "Find Prev" buttons
+are clicked. You can listen for that event and perform your own searches with
 regex, PEGs, or any other search format you can think of. Would you rather have
-the "Search -> Find" menu option (or key binding) start a search with the word 
-under the caret already in the find & replace pane's search box? Create a Lua 
-function that populates [`ui.find.find_entry_text`][] and [shows the pane][], 
-and then re-assign the "Search -> Find" [menu action][]'s existing function to 
-the one you just created. "Textadept gives you complete control over the entire 
+the "Search -> Find" menu option (or key binding) start a search with the word
+under the caret already in the find & replace pane's search box? Create a Lua
+function that populates [`ui.find.find_entry_text`][] and [shows the pane][],
+and then re-assign the "Search -> Find" [menu action][]'s existing function to
+the one you just created. "Textadept gives you complete control over the entire
 application using Lua" is not an exaggeration!
 
 [`io.open_file()`]: api.html#io.open_file
@@ -1725,8 +1725,8 @@ libraries. After uncommenting the "Darwin" block mentioned above, simply run
 ### Notes on LuaJIT
 
 [LuaJIT][] is a Just-In-Time Compiler for Lua and can boost the speed of Lua
-programs. LuaJIT offers no real benefit performance-wise to justify it being 
-Textadept's default runtime. LuaJIT's [ffi library][], however, appears to be 
+programs. LuaJIT offers no real benefit performance-wise to justify it being
+Textadept's default runtime. LuaJIT's [ffi library][], however, appears to be
 useful for interfacing with external, non-Lua, libraries.
 
 [LuaJIT]: http://luajit.org
@@ -1955,6 +1955,10 @@ terminal's constraints:
 
 ### Textadept 8 to 9
 
+Textadept 9 introduces minor API changes (mostly renames of existing functions
+and fields) along with some backwards-incompatible simplifications of key
+commands, menu commands, and language module handling.
+
 #### API Changes
 
 Old API                           |Change  |New API
@@ -1979,10 +1983,10 @@ find\_in\_files(dir)              |Changed |[find\_in\_files][](dir, filter)
 AUTOPAIR                          |Replaced|[auto\_pairs][]
 TYPEOVER\_CHARS                   |Replaced|[typeover\_chars][]
 AUTOINDENT                        |Renamed |[auto\_indent][]
-STRIP\_TRAILING\_SPACES           |Replaced|[strip\_trailing\_spaces][]
-AUTOCOMPLETE\_ALL                 |Replaced|[autocomplete\_all\_words][]
+STRIP\_TRAILING\_SPACES           |Renamed |[strip\_trailing\_spaces][]
+AUTOCOMPLETE\_ALL                 |Renamed |[autocomplete\_all\_words][]
 char\_matches                     |Replaced|[auto\_pairs][]
-braces                            |Replaced|[brace\_matches][]
+braces                            |Renamed |[brace\_matches][]
 **textadept.run**                 |        |
 RUN\_IN\_BACKGROUND               |Renamed |[run\_in\_background][]
 CHECK\_SYNTAX                     |Removed |
@@ -2025,6 +2029,21 @@ MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 [default\_session]: api.html#textadept.session.default_session
 [save\_on\_quit]: api.html#textadept.session.save_on_quit
 [max\_recent\_files]: api.html#textadept.session.max_recent_files
+
+#### Key and Menu Command Changes
+
+Key commands and menu commands can no longer be tables. Instead they must be Lua
+functions. Check your *~/.textadept/init.lua* and custom modules and transform
+any applicable key bindings or menu items. For example:
+
+    keys.ca = {func, args}       =>  keys.ca = function() func(args) end
+    {'Menu Item', {func, args}}  =>  {'Menu Item', function() func(args) end}
+
+Note: If *`func`* returns `true` or `false`, make sure you use
+`function() return func(args) end`.
+
+Textadept's own *modules/textadept/keys.lua* and *modules/textadept/menu.lua*
+have been updated appropriately.
 
 #### Language Module Handling Changes
 
