@@ -33,16 +33,12 @@ function split(view, vertical) end
 function unsplit(view) end
 
 ---
--- Switches to buffer number *n* in the view.
--- *relative* indicates whether or not *n* is an index relative to the current
--- buffer's index in `_BUFFERS` instead of an absolute index.
+-- Switches to buffer *buffer* or the buffer *buffer* number of buffers relative
+-- to the current one.
 -- Emits `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
 -- @param view The view to switch buffers in.
--- @param n A relative or absolute buffer index in `_BUFFERS`. An absolute index
---   of `-1` goes to the last buffer.
--- @param relative Optional flag indicating whether *n* is a relative or
---   absolute index. The default value is `false`, for an absolute index.
+-- @param buffer A buffer or relative buffer number (typically 1 or -1).
 -- @see _G._BUFFERS
 -- @see events.BUFFER_BEFORE_SWITCH
 -- @see events.BUFFER_AFTER_SWITCH
-function goto_buffer(view, n, relative) end
+function goto_buffer(view, buffer) end

@@ -104,7 +104,7 @@ function io.open_file(filenames)
     local filename = lfs.abspath((filenames[i]:gsub('^file://', '')))
     for j = 1, #_BUFFERS do
       if filename == _BUFFERS[j].filename then
-        view:goto_buffer(j) -- already open
+        view:goto_buffer(_BUFFERS[j]) -- already open
         goto continue
       end
     end
@@ -234,10 +234,10 @@ end
 -- @see io.save_file
 -- @name save_all_files
 function io.save_all_files()
-  local current_buffer = _BUFFERS[buffer]
+  local current_buffer = buffer
   for i = 1, #_BUFFERS do
     if _BUFFERS[i].filename and _BUFFERS[i].modify then
-      view:goto_buffer(i)
+      view:goto_buffer(_BUFFERS[i])
       io.save_file()
     end
   end
@@ -272,7 +272,7 @@ end
 -- @name close_all_buffers
 function io.close_all_buffers()
   while #_BUFFERS > 1 do
-    view:goto_buffer(#_BUFFERS)
+    view:goto_buffer(_BUFFERS[#_BUFFERS])
     if not io.close_buffer() then return false end
   end
   return io.close_buffer() -- the last one
@@ -311,7 +311,7 @@ end)
 events_connect(events.FILE_OPENED, function()
   local buf = _BUFFERS[1]
   if #_BUFFERS == 2 and not (buf.filename or buf._type or buf.modify) then
-    view:goto_buffer(1)
+    view:goto_buffer(_BUFFERS[1])
     io.close_buffer()
   end
 end)

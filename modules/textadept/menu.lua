@@ -257,8 +257,8 @@ local default_menubar = {
   },
   {
     title = _L['_Buffer'],
-    {_L['_Next Buffer'], function() view:goto_buffer(1, true) end},
-    {_L['_Previous Buffer'], function() view:goto_buffer(-1, true) end},
+    {_L['_Next Buffer'], function() view:goto_buffer(1) end},
+    {_L['_Previous Buffer'], function() view:goto_buffer(-1) end},
     {_L['_Switch to Buffer...'], ui.switch_buffer},
     SEPARATOR,
     {
@@ -303,8 +303,8 @@ local default_menubar = {
   },
   {
     title = _L['_View'],
-    {_L['_Next View'], function() ui.goto_view(1, true) end},
-    {_L['_Previous View'], function() ui.goto_view(-1, true) end},
+    {_L['_Next View'], function() ui.goto_view(1) end},
+    {_L['_Previous View'], function() ui.goto_view(-1) end},
     SEPARATOR,
     {_L['Split View _Horizontal'], function() view:split() end},
     {_L['Split View _Vertical'], function() view:split(true) end},

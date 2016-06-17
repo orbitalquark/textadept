@@ -62,7 +62,7 @@ function M.goto_mark(next)
           while line >= 0 do
             local mark = string.format('%s:%d: %s', basename, line + 1,
                                        buffer:get_line(line):match('^[^\r\n]*'))
-            utf8_list[#utf8_list + 1], buffers[#utf8_list + 1] = mark, i
+            utf8_list[#utf8_list + 1], buffers[#utf8_list + 1] = mark, buffer
             line = buffer:marker_next(line + 1, 2^M.MARK_BOOKMARK)
           end
         end

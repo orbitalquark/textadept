@@ -722,25 +722,36 @@ static void goto_view(Scintilla *view) {
   if (!initing && !closing) lL_event(lua, "view_after_switch", -1);
 }
 
+/**
+ * Checks whether the function argument narg is a Scintilla view and returns
+ * this view cast to a Scintilla.
+ * @param L The Lua state.
+ * @param arg The stack index of the Scintilla view.
+ * @return Scintilla view
+ */
+static Scintilla *lL_checkview(lua_State *L, int arg) {
+  luaL_getmetatable(L, "ta_view");
+  lua_getmetatable(L, arg);
+  luaL_argcheck(L, lua_rawequal(L, -1, -2), arg, "View expected");
+  lua_getfield(L, (arg > 0) ? arg : arg - 2, "widget_pointer");
+  Scintilla *view = (Scintilla *)lua_touserdata(L, -1);
+  lua_pop(L, 3); // widget_pointer, metatable, metatable
+  return view;
+}
+
 /** `ui.goto_view()` Lua function. */
 static int lui_goto_view(lua_State *L) {
-  int n = luaL_checkinteger(L, 1), relative = lua_toboolean(L, 2);
-  if (relative && n == 0) return 0;
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
-  if (relative) {
+  if (lua_isnumber(L, 1)) {
+    lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
     l_pushview(L, focused_view), lua_gettable(L, -2);
-    n = lua_tointeger(L, -1) + n;
+    int n = lua_tointeger(L, -1) + lua_tointeger(L, 1);
     if (n > (int)lua_rawlen(L, -2))
       n = 1;
     else if (n < 1)
       n = lua_rawlen(L, -2);
-    lua_rawgeti(L, -2, n);
-  } else {
-    luaL_argcheck(L, n > 0 && n <= (int)lua_rawlen(L, -1), 1,
-                  "no View exists at that index");
-    lua_rawgeti(L, -1, n);
+    lua_rawgeti(L, -2, n), lua_replace(L, 1);
   }
-  Scintilla *view = l_toview(L, -1);
+  Scintilla *view = lL_checkview(L, 1);
   focus_view(view);
 #if GTK
   // ui.dialog() interferes with focus so gtk_widget_grab_focus() does not
@@ -1937,32 +1948,22 @@ static int s_buttonpress(GtkWidget*_, GdkEventButton *event, void*__) {
 }
 #endif
 
-/**
- * Checks whether the function argument narg is a Scintilla view and returns
- * this view cast to a Scintilla.
- * @param L The Lua state.
- * @param arg The stack index of the Scintilla view.
- * @return Scintilla view
- */
-static Scintilla *lL_checkview(lua_State *L, int arg) {
-  luaL_getmetatable(L, "ta_view");
-  lua_getmetatable(L, arg);
-  luaL_argcheck(L, lua_rawequal(L, -1, -2), arg, "View expected");
-  lua_getfield(L, (arg > 0) ? arg : arg - 2, "widget_pointer");
-  Scintilla *view = (Scintilla *)lua_touserdata(L, -1);
-  lua_pop(L, 3); // widget_pointer, metatable, metatable
-  return view;
-}
-
 /** `view.goto_buffer()` Lua function. */
 static int lview_goto_buffer(lua_State *L) {
   Scintilla *view = lL_checkview(L, 1), *prev_view = focused_view;
-  int n = luaL_checkinteger(L, 2), relative = lua_toboolean(L, 3);
+  luaL_argcheck(L, lua_istable(L, 2) || lua_isnumber(L, 2), 2,
+                "Buffer or relative index expected");
+  int relative = lua_isnumber(L, 2);
+  if (!relative) {
+    lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
+    lua_pushvalue(L, 2), lua_gettable(L, -2), lua_replace(L, 2);
+    luaL_argcheck(L, lua_isnumber(L, 2), 2, "Buffer expected");
+  }
   // If the indexed view is not currently focused, temporarily focus it so
   // `_G.buffer` in handlers is accurate.
   if (view != focused_view) focus_view(view);
   if (!initing) lL_event(L, "buffer_before_switch", -1);
-  lL_gotodoc(L, view, n, relative);
+  lL_gotodoc(L, view, lua_tointeger(L, 2), relative);
   if (!initing) lL_event(L, "buffer_after_switch", -1);
   if (focused_view != prev_view) focus_view(prev_view);
   return 0;
