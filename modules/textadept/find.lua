@@ -408,10 +408,10 @@ local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 function M.goto_file_found(line, next)
   local ff_view, ff_buf = nil, nil
   for i = 1, #_VIEWS do
-    if is_ff_buf(_VIEWS[i].buffer) then ff_view = i break end
+    if is_ff_buf(_VIEWS[i].buffer) then ff_view = _VIEWS[i] break end
   end
   for i = 1, #_BUFFERS do
-    if is_ff_buf(_BUFFERS[i]) then ff_buf = i break end
+    if is_ff_buf(_BUFFERS[i]) then ff_buf = _BUFFERS[i] break end
   end
   if not ff_view and not ff_buf then return end
   if ff_view then ui.goto_view(ff_view) else view:goto_buffer(ff_buf) end

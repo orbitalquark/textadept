@@ -349,10 +349,10 @@ function M.goto_error(line, next)
   if not cwd then return end -- no previously run command
   local msg_view, msg_buf = nil, nil
   for i = 1, #_VIEWS do
-    if is_msg_buf(_VIEWS[i].buffer) then msg_view = i break end
+    if is_msg_buf(_VIEWS[i].buffer) then msg_view = _VIEWS[i] break end
   end
   for i = 1, #_BUFFERS do
-    if is_msg_buf(_BUFFERS[i]) then msg_buf = i break end
+    if is_msg_buf(_BUFFERS[i]) then msg_buf = _BUFFERS[i] break end
   end
   if not msg_view and not msg_buf then return end
   if msg_view then ui.goto_view(msg_view) else view:goto_buffer(msg_buf) end

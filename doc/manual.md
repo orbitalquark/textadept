@@ -1976,9 +1976,12 @@ FILTER                            |Renamed |[default\_filter][]
 dir\_foreach()                    |Changed |[dir\_foreach()][] _(changed args)_
 **ui**                            |        |
 SILENT\_PRINT                     |Renamed |[silent\_print][]
+goto\_view(n, relative)           |Changed |[goto\_view][](view)
 **ui.find**                       |        |
 FILTER                            |Renamed |[find\_in\_files\_filter][]
 find\_in\_files(dir)              |Changed |[find\_in\_files][](dir, filter)
+**view**                          |        |
+goto\_buffer(n, relative)         |Changed |[goto\_buffer][](buffer)
 **textadept.editing**             |        |
 AUTOPAIR                          |Replaced|[auto\_pairs][]
 TYPEOVER\_CHARS                   |Replaced|[typeover\_chars][]
@@ -2008,14 +2011,16 @@ MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 [COMPILE\_OUTPUT]: api.html#events.COMPILE_OUTPUT
 [RUN\_OUTPUT]: api.html#events.RUN_OUTPUT
 [BUILD\_OUTPUT]: api.html#events.BUILD_OUTPUT
-[default\_filter]: api.html#lfs.default_filter
-[dir\_foreach()]: api.html#lfs.dir_foreach
-[silent\_print]: api.html#ui.silent_print
-[find\_in\_files\_filter]: api.html#ui.find.find_in_files_filter
-[find\_in\_files]: api.html#ui.find.find_in_files
 [quick\_open]: api.html#io.quick_open
 [quick\_open\_filters]: api.html#io.quick_open_filters
 [quick\_open\_max]: api.html#io.quick_open_max
+[default\_filter]: api.html#lfs.default_filter
+[dir\_foreach()]: api.html#lfs.dir_foreach
+[silent\_print]: api.html#ui.silent_print
+[goto\_view]: api.html#ui.goto_view
+[find\_in\_files\_filter]: api.html#ui.find.find_in_files_filter
+[find\_in\_files]: api.html#ui.find.find_in_files
+[goto\_buffer]: api.html#view.goto_buffer
 [auto\_pairs]: api.html#textadept.editing.auto_pairs
 [typeover\_chars]: api.html#textadept.editing.typeover_chars
 [auto\_indent]: api.html#textadept.editing.auto_indent

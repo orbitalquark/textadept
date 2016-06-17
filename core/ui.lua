@@ -59,10 +59,11 @@ local function _print(buffer_type, ...)
     events.emit(events.FILE_OPENED)
   elseif not ui.silent_print then
     for i = 1, #_VIEWS do
-      if _VIEWS[i].buffer._type == buffer_type then ui.goto_view(i) break end
+      local view = _VIEWS[i]
+      if view.buffer._type == buffer_type then ui.goto_view(view) break end
     end
     if view.buffer._type ~= buffer_type then
-      view:goto_buffer(_BUFFERS[print_buffer])
+      view:goto_buffer(print_buffer)
     end
   end
   local args, n = {...}, select('#', ...)
@@ -169,7 +170,7 @@ function ui.switch_buffer()
     title = _L['Switch Buffers'], columns = columns, items = utf8_list,
     width = CURSES and ui.size[1] - 2 or nil
   }
-  if button == 1 and i then view:goto_buffer(i) end
+  if button == 1 and i then view:goto_buffer(_BUFFERS[i]) end
 end
 
 ---
@@ -201,16 +202,16 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
     local other_view = _VIEWS[preferred_view]
     for i = 1, #_VIEWS do
       if (_VIEWS[i].buffer.filename or ''):find(patt) then
-        ui.goto_view(i)
+        ui.goto_view(_VIEWS[i])
         return
       end
-      if not other_view and _VIEWS[i] ~= view then other_view = i end
+      if not other_view and _VIEWS[i] ~= view then other_view = _VIEWS[i] end
     end
     if other_view then ui.goto_view(other_view) end
   end
   for i = 1, #_BUFFERS do
     if (_BUFFERS[i].filename or ''):find(patt) then
-      view:goto_buffer(i)
+      view:goto_buffer(_BUFFERS[i])
       return
     end
   end
@@ -234,15 +235,15 @@ function ui.set_theme(name, props)
                                   _HOME..'/themes/?.lua')
   if not name or not lfs.attributes(name) then return end
   props = props or {}
-  local current_buffer, current_view = _BUFFERS[buffer], _VIEWS[view]
+  local current_buffer, current_view = buffer, view
   for i = 1, #_BUFFERS do
-    view:goto_buffer(i)
+    view:goto_buffer(_BUFFERS[i])
     dofile(name)
     for prop, value in pairs(props) do buffer.property[prop] = value end
   end
   view:goto_buffer(current_buffer)
   for i = 1, #_VIEWS do
-    ui.goto_view(i)
+    ui.goto_view(_VIEWS[i])
     dofile(name)
     for prop, value in pairs(props) do buffer.property[prop] = value end
   end
@@ -448,8 +449,9 @@ end)
 events_connect(events.BUFFER_BEFORE_SWITCH,
                function() view._prev_buffer = buffer end)
 events_connect(events.BUFFER_DELETED, function()
-  local i = _BUFFERS[view._prev_buffer]
-  if i and _BUFFERS[buffer] ~= i then view:goto_buffer(i) end
+  if _BUFFERS[view._prev_buffer] and buffer ~= view._prev_buffer then
+    view:goto_buffer(view._prev_buffer)
+  end
 end)
 
 -- Enables and disables mouse mode in curses and focuses and resizes views based
@@ -494,7 +496,7 @@ if CURSES then
     if event == buffer.MOUSE_PRESS then
       local view = get_view(ui.get_split_table(), y - 1, x) -- title is at y = 1
       if not view[1] and not view[2] then
-        ui.goto_view(_VIEWS[view])
+        ui.goto_view(view)
         resize = nil
       else
         resize = function(y2, x2)
@@ -558,13 +560,10 @@ local dialog
 local get_split_table
 
 ---
--- Shifts to view number *n*.
--- *relative* indicates whether or not *n* is an index relative to the current
--- view's index in `_VIEWS` instead of an absolute index.
+-- Shifts to view *view* or the view *view* number of views relative to the
+-- current one.
 -- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
--- @param n A relative or absolute view index in `_VIEWS`.
--- @param relative Optional flag that indicates whether *n* is a relative or
---   absolute index. The default value is `false`, for an absolute index.
+-- @param view A view or relative view number (typically 1 or -1).
 -- @see _G._VIEWS
 -- @see events.VIEW_BEFORE_SWITCH
 -- @see events.VIEW_AFTER_SWITCH

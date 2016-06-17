@@ -45,7 +45,7 @@ function M.load(filename)
   local f = io.open(filename, 'rb')
   if not f or not io.close_all_buffers() then return false end
   io.recent_files = {}
-  local current_view, splits = 1, {[0] = {}}
+  local current_view, splits = view, {[0] = {}}
   for line in f:lines() do
     if line:find('^buffer:') then
       local patt = '^buffer: (%d+) (%d+) (%d+) (.+)$'
@@ -76,7 +76,7 @@ function M.load(filename)
     elseif line:find('^%s*split%d:') then
       local level, num, type, size = line:match('^(%s*)split(%d): (%S+) (%d+)')
       local view = splits[#level] and splits[#level][tonumber(num)] or view
-      ui.goto_view(_VIEWS[view])
+      ui.goto_view(view)
       splits[#level + 1] = {view:split(type == 'true')}
       splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
     elseif line:find('^%s*view%d:') then
@@ -84,9 +84,9 @@ function M.load(filename)
       local view = splits[#level][tonumber(num)] or view
       buf_idx = tonumber(buf_idx)
       if buf_idx > #_BUFFERS then buf_idx = #_BUFFERS end
-      view:goto_buffer(buf_idx)
+      view:goto_buffer(_BUFFERS[buf_idx])
     elseif line:find('^current_view:') then
-      current_view = tonumber(line:match('^current_view: (%d+)')) or 1
+      current_view = _VIEWS[tonumber(line:match('^current_view: (%d+)')) or 1]
     elseif line:find('^recent:') then
       io.recent_files[#io.recent_files + 1] = line:match('^recent: (.+)$')
     end
