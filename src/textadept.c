@@ -511,7 +511,7 @@ static int lfind_replace_all(lua_State *L) {
   return (f_clicked(ra_button, NULL), 0);
 }
 
-/** `find.__index` Lua metatable. */
+/** `find.__index` Lua metamethod. */
 static int lfind__index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "find_entry_text") == 0)
@@ -711,15 +711,17 @@ static void sync_tabbar() {
 }
 
 /**
- * Change focus to the given Scintilla view.
- * Generates 'view_before_switch' and 'view_after_switch' events.
- * @param view The Scintilla view to focus.
+ * Returns whether or not the value at the given index has a given metatable.
+ * @param L The Lua state.
+ * @param index The stack index of the value to test.
+ * @param tname The name of the expected metatable.
  */
-static void goto_view(Scintilla *view) {
-  if (!initing && !closing) lL_event(lua, "view_before_switch", -1);
-  l_setglobalview(lua, focused_view = view), sync_tabbar();
-  l_setglobaldoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0));
-  if (!initing && !closing) lL_event(lua, "view_after_switch", -1);
+static int lL_hasmetatable(lua_State *L, int index, const char *tname) {
+  luaL_getmetatable(L, tname);
+  lua_getmetatable(L, (index > 0) ? index : index - 1);
+  int has_metatable = lua_rawequal(L, -1, -2);
+  lua_pop(L, 2); // metatable, metatable
+  return has_metatable;
 }
 
 /**
@@ -730,13 +732,23 @@ static void goto_view(Scintilla *view) {
  * @return Scintilla view
  */
 static Scintilla *lL_checkview(lua_State *L, int arg) {
-  luaL_getmetatable(L, "ta_view");
-  lua_getmetatable(L, arg);
-  luaL_argcheck(L, lua_rawequal(L, -1, -2), arg, "View expected");
-  lua_getfield(L, (arg > 0) ? arg : arg - 2, "widget_pointer");
+  luaL_argcheck(L, lL_hasmetatable(L, arg, "ta_view"), arg, "View expected");
+  lua_getfield(L, arg, "widget_pointer");
   Scintilla *view = (Scintilla *)lua_touserdata(L, -1);
-  lua_pop(L, 3); // widget_pointer, metatable, metatable
+  lua_pop(L, 1); // widget_pointer
   return view;
+}
+
+/**
+ * Change focus to the given Scintilla view.
+ * Generates 'view_before_switch' and 'view_after_switch' events.
+ * @param view The Scintilla view to focus.
+ */
+static void goto_view(Scintilla *view) {
+  if (!initing && !closing) lL_event(lua, "view_before_switch", -1);
+  l_setglobalview(lua, focused_view = view), sync_tabbar();
+  l_setglobaldoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0));
+  if (!initing && !closing) lL_event(lua, "view_after_switch", -1);
 }
 
 /** `ui.goto_view()` Lua function. */
@@ -844,7 +856,7 @@ static int lui_menu(lua_State *L) {
 #endif
 }
 
-/** `ui.__index` Lua metatable. */
+/** `ui.__index` Lua metamethod. */
 static int lui__index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "clipboard_text") == 0) {
@@ -981,11 +993,9 @@ static sptr_t l_todoc(lua_State *L, int index) {
  * @return 0, -1, or the Scintilla document's pointer
  */
 static sptr_t l_globaldoccompare(lua_State *L, int index) {
-  luaL_getmetatable(L, "ta_buffer");
-  lua_getmetatable(L, (index > 0) ? index : index - 1);
-  luaL_argcheck(L, lua_rawequal(L, -1, -2), index, "Buffer expected");
-  sptr_t doc = l_todoc(L, (index > 0) ? index : index - 2);
-  lua_pop(L, 2); // metatable, metatable
+  luaL_argcheck(L, lL_hasmetatable(L, index, "ta_buffer"), index,
+                "Buffer expected");
+  sptr_t doc = l_todoc(L, index);
   if (doc != SS(focused_view, SCI_GETDOCPOINTER, 0, 0)) {
     lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
     luaL_argcheck(L, (l_pushdoc(L, doc), lua_gettable(L, -2) != LUA_TNIL),
@@ -1199,8 +1209,10 @@ static int l_callscintilla(lua_State *L, Scintilla *view, int msg, int wtype,
 
 static int lbuf_closure(lua_State *L) {
   Scintilla *view = focused_view;
-  // If optional buffer argument is given, check it.
+  // If optional buffer/view argument is given, check it.
   if (lua_istable(L, 1)) {
+    //if (lL_hasmetatable(L, 1, "ta_view"))
+    //  lua_getfield(L, 1, "buffer"), lua_replace(L, 1); // use view.buffer
     int result = l_globaldoccompare(L, 1);
     if (result != 0) view = (result > 0) ? dummy_view : command_entry;
   }
@@ -1212,13 +1224,10 @@ static int lbuf_closure(lua_State *L) {
                          lua_istable(L, 1) ? 2 : 1);
 }
 
-/** `buffer.__index` Lua metatable. */
+/** `buffer.__index` and `buffer.__newindex` Lua metamethods. */
 static int lbuf_property(lua_State *L) {
   int newindex = (lua_gettop(L) == 3);
-  luaL_getmetatable(L, "ta_buffer");
-  lua_getmetatable(L, 1); // metatable can be either ta_buffer or ta_bufferp
-  int is_buffer = lua_rawequal(L, -1, -2);
-  lua_pop(L, 2); // metatable, metatable
+  int is_buffer = lL_hasmetatable(L, 1, "ta_buffer"); // ta_buffer or ta_bufferp
 
   // If the key is a Scintilla function, return a callable closure.
   if (is_buffer && !newindex) {
@@ -2084,43 +2093,48 @@ static Pane *pane_get_parent(Pane *pane, Scintilla *view) {
 }
 #endif
 
-/** `view.__index` Lua metatable. */
-static int lview__index(lua_State *L) {
-  const char *key = lua_tostring(L, 2);
-  if (strcmp(key, "buffer") == 0)
-    l_pushdoc(L, SS(lL_checkview(L, 1), SCI_GETDOCPOINTER, 0, 0));
-  else if (strcmp(key, "size") == 0) {
-    Scintilla *view = lL_checkview(L, 1);
-#if GTK
-    if (GTK_IS_PANED(gtk_widget_get_parent(view))) {
-      int pos = gtk_paned_get_position(GTK_PANED(gtk_widget_get_parent(view)));
-      lua_pushinteger(L, pos);
-    } else lua_pushnil(L);
-#elif CURSES
-    Pane *parent = pane_get_parent(pane, view);
-    parent ? lua_pushinteger(L, parent->split_size) : lua_pushnil(L);
-#endif
-  } else lua_rawget(L, 1);
-  return 1;
-}
-
-/** `view.__newindex` Lua metatable. */
-static int lview__newindex(lua_State *L) {
-  const char *key = lua_tostring(L, 2);
-  if (strcmp(key, "buffer") == 0)
-    luaL_argerror(L, 2, "read-only property");
-  else if (strcmp(key, "size") == 0) {
-    int size = luaL_checkinteger(L, 3);
+/** `view.__index` and `view.__newindex` Lua metamethods. */
+static int lview_property(lua_State *L) {
+  int newindex = (lua_gettop(L) == 3);
+  Scintilla *view = lL_checkview(L, 1);
+  if (strcmp(lua_tostring(L, 2), "buffer") == 0) {
+    luaL_argcheck(L, !newindex, 2, "read-only property");
+    return (l_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0)), 1);
+  } else if (strcmp(lua_tostring(L, 2), "size") == 0) {
+    int size = newindex ? luaL_checkinteger(L, 3) : 0;
     if (size < 0) size = 0;
 #if GTK
-    GtkWidget *pane = gtk_widget_get_parent(lL_checkview(L, 1));
-    if (GTK_IS_PANED(pane)) gtk_paned_set_position(GTK_PANED(pane), size);
+    GtkWidget *pane = gtk_widget_get_parent(view);
+    if (GTK_IS_PANED(pane) && !newindex)
+      lua_pushinteger(L, gtk_paned_get_position(GTK_PANED(pane)));
+    else if (!newindex)
+      lua_pushnil(L);
+    else if (GTK_IS_PANED(pane) && newindex)
+      gtk_paned_set_position(GTK_PANED(pane), size);
 #elif CURSES
-    Pane *p = pane_get_parent(pane, lL_checkview(L, 1));
-    if (p) p->split_size = size, pane_resize(p, p->rows, p->cols, p->y, p->x);
+    Pane *p = pane_get_parent(pane, view);
+    if (!newindex)
+      p ? lua_pushinteger(L, parent->split_size) : lua_pushnil(L);
+    else if (p)
+      p->split_size = size, pane_resize(p, p->rows, p->cols, p->y, p->x);
 #endif
-  } else lua_rawset(L, 1);
-  return 0;
+    return !newindex ? 1 : 0;
+  //} else {
+  //  // Emulate view-specific Scintilla properties by replacing `view[k]` with
+  //  // `view.buffer[k]` as necessary.
+  //  lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties");
+  //  lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions");
+  //  lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants");
+  //  if ((lua_pushvalue(L, 2), lua_gettable(L, -4) == LUA_TTABLE) ||
+  //      (!newindex &&
+  //       ((lua_pushvalue(L, 2), lua_gettable(L, -4) == LUA_TTABLE) ||
+  //        (lua_pushvalue(L, 2), lua_gettable(L, -4) == LUA_TNUMBER)))) {
+  //    lua_settop(L, !newindex ? 2 : 3);
+  //    l_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_replace(L, 1);
+  //    return lbuf_property(L);
+  //  } else lua_settop(L, !newindex ? 2 : 3);
+  }
+  return !newindex ? (lua_rawget(L, 1), 1) : (lua_rawset(L, 1), 0);
 }
 
 /**
@@ -2136,7 +2150,7 @@ static void lL_addview(lua_State *L, Scintilla *view) {
   l_setcfunction(L, -2, "goto_buffer", lview_goto_buffer);
   l_setcfunction(L, -2, "split", lview_split);
   l_setcfunction(L, -2, "unsplit", lview_unsplit);
-  l_setmetatable(L, -2, "ta_view", lview__index, lview__newindex);
+  l_setmetatable(L, -2, "ta_view", lview_property, lview_property);
   // vs[userdata] = v, vs[#vs + 1] = v, vs[v] = #vs
   lua_pushvalue(L, -2), lua_settable(L, -4);
   lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_rawlen(L, -3) + 1);
