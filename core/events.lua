@@ -117,7 +117,7 @@ local M = {}
 --
 --   * _`text`_: The error message text.
 -- @field FIND (string)
---   Emitted in order to find text via the Find & Replace Pane.
+--   Emitted to find text via the Find & Replace Pane.
 --   Arguments:
 --
 --   * _`text`_: The text to search for.
@@ -191,7 +191,7 @@ local M = {}
 --   procedure.
 --   Emitted by [`quit()`]().
 -- @field REPLACE (string)
---   Emitted in order to replace selected (found) text.
+--   Emitted to replace selected (found) text.
 --   Arguments:
 --
 --   * _`text`_: The replacement text.
@@ -227,7 +227,7 @@ local M = {}
 --     + `buffer.UPDATE_CONTENT`
 --       Buffer contents, styling, or markers have changed.
 --     + `buffer.UPDATE_SELECTION`
---       Buffer selection has changed.
+--       Buffer selection has changed (including caret movement).
 --     + `buffer.UPDATE_V_SCROLL`
 --       Buffer has scrolled vertically.
 --     + `buffer.UPDATE_H_SCROLL`
