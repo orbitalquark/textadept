@@ -2064,6 +2064,15 @@ it must be loaded manually from an `events.LEXER_LOADED` event. For example:
 will load a *~/.textadept/modules/lua/extras.lua* "sub-module" for Lua files.
 Keep in mind that Lua's `require()` function will only execute module code once.
 
+If you have a number of *post_init.lua* files that you want Textadept 9 to make
+use of, you can put the following in your *~/.textadept/init.lua*:
+
+    events.connect(events.LEXER_LOADED, function(lexer)
+      if lfs.attributes(_USERHOME..'/modules/'..lexer..'/post_init.lua') then
+        require(lexer..'/post_init')
+      end
+    end)
+
 ### Textadept 7 to 8
 
 Textadept 8 upgraded its internal copy of Lua from [5.2 to 5.3][]. Nearly all
