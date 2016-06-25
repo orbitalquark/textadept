@@ -200,6 +200,8 @@ local function find(text, next, flags, no_wrap, wrapped)
 end
 events.connect(events.FIND, find)
 
+local incremental_start
+
 -- Finds and selects text incrementally in the current buffer from a starting
 -- position.
 -- Flags other than `FIND_MATCHCASE` are ignored.
@@ -209,10 +211,10 @@ events.connect(events.FIND, find)
 --   position.
 local function find_incremental(text, next, anchor)
   if anchor then
-    M._incremental_start = buffer:position_relative(buffer.current_pos,
-                                                    next and 1 or -1)
+    incremental_start = buffer:position_relative(buffer.current_pos,
+                                                 next and 1 or -1)
   end
-  buffer:goto_pos(M._incremental_start or 0)
+  buffer:goto_pos(incremental_start or 0)
   find(text, next, M.match_case and buffer.FIND_MATCHCASE or 0)
 end
 
@@ -233,7 +235,7 @@ end
 -- @name find_incremental
 function M.find_incremental(text, next, anchor)
   if text then find_incremental(text, next, anchor) return end
-  M._incremental_start = buffer.current_pos
+  incremental_start = buffer.current_pos
   ui.command_entry:set_text('')
   ui.command_entry.enter_mode('find_incremental')
 end
