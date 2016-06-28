@@ -379,9 +379,20 @@ function M._select()
   for trigger, text in pairs(snippets) do
     if type(text) == 'string' then list[#list + 1] = trigger..'|'..text end
   end
-  if snippets[buffer:get_lexer(true)] then
-    for trigger, text in pairs(snippets[buffer:get_lexer(true)]) do
+  local lexer = buffer:get_lexer(true)
+  if snippets[lexer] then
+    for trigger, text in pairs(snippets[lexer]) do
       if type(text) == 'string' then list[#list + 1] = trigger..'|'..text end
+    end
+  end
+  for i = 1, #M._paths do
+    for basename in lfs.dir(M._paths[i]) do
+      local first, second = basename:match('^([^.]+)%.?([^.]*)')
+      if second == '' or first == lexer then
+        local f = io.open(M._paths[i]..'/'..basename)
+        list[#list + 1] = (second ~= '' and second or first)..'|'..f:read('*a')
+        f:close()
+      end
     end
   end
   table.sort(list)
