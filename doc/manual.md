@@ -1159,7 +1159,14 @@ via a global `snippets` table:
       end
     end)
 
-Learn more about snippets and snippet syntax in the [snippets documentation][].
+You may also have a directory of snippet files where each file is its own
+snippet: filenames emulate the keys in the `snippets` table and file contents
+are the snippet text. Adding such snippet directories looks like this:
+
+    textadept.snippets._paths[#textadept.snippets._paths + 1] = '/path/to/dir'
+
+Learn more about snippets, snippet syntax, and snippet files in the
+[snippets documentation][].
 
 [snippets documentation]: api.html#textadept.snippets
 
