@@ -1474,14 +1474,18 @@ the "Search -> Find" menu option (or key binding) start a search with the word
 under the caret already in the find & replace pane's search box? Create a Lua
 function that populates [`ui.find.find_entry_text`][] and [shows the pane][],
 and then re-assign the "Search -> Find" [menu action][]'s existing function to
-the one you just created. "Textadept gives you complete control over the entire
-application using Lua" is not an exaggeration!
+the one you just created. Would you like to have Textadept auto-save files as
+you switch between buffers? Connect the [`io.save_file()`][] function to the
+[`events.BUFFER_BEFORE_SWITCH`][] event. "Textadept gives you complete control
+over the entire application using Lua" is not an exaggeration!
 
 [`io.open_file()`]: api.html#io.open_file
 [`events.FILE_OPENED`]: api.html#events.FILE_OPENED
 [event]: api.html#events
 [`events.FIND`]: api.html#events.FIND
 [`ui.find.find_entry_text`]: api.html#ui.find.find_entry_text
+[`io.save_file()`]: api.html#io.save_file
+[`events.BUFFER_BEFORE_SWITCH`]: api.html#events.BUFFER_BEFORE_SWITCH
 [shows the pane]: api.html#ui.find.focus
 [menu action]: api.html#textadept.menu.menubar
 
