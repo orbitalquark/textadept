@@ -2058,10 +2058,10 @@ Textadept 9 no longer auto-loads a *post_init.lua* in language modules. Instead,
 it must be loaded manually from an `events.LEXER_LOADED` event. For example:
 
     events.connect(events.LEXER_LOADED, function()
-      if lang == 'lua' then require('lua.extras') end
+      if lang == 'ansi_c' then require('ansi_c.extras') end
     end)
 
-will load a *~/.textadept/modules/lua/extras.lua* "sub-module" for Lua files.
+will load a *~/.textadept/modules/ansi_c/extras.lua* "sub-module" for C files.
 Keep in mind that Lua's `require()` function will only execute module code once.
 
 If you have a number of *post_init.lua* files that you want Textadept 9 to make
