@@ -2003,6 +2003,8 @@ build()                           |Changed |[build][](root\_directory)
 [error\_patterns][]               |Changed |_(changed format)_
 syntax\_commands                  |Removed |
 syntax\_error\_patterns           |Removed |
+**textadept.snippets**            |        |
+N/A                               |Added   |[\_paths][]
 **textadept.session**             |        |
 DEFAULT\_SESSION                  |Renamed |[default\_session][]
 SAVE\_ON\_QUIT                    |Renamed |[save\_on\_quit][]
@@ -2033,6 +2035,7 @@ MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 [run]: api.html#textadept.run.run
 [build]: api.html#textadept.run.build
 [error\_patterns]: api.html#textadept.run.error_patterns
+[\_paths]: api.html#textadept.snippets._paths
 [default\_session]: api.html#textadept.session.default_session
 [save\_on\_quit]: api.html#textadept.session.save_on_quit
 [max\_recent\_files]: api.html#textadept.session.max_recent_files

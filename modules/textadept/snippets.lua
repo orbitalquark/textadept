@@ -108,6 +108,18 @@ module('textadept.snippets')]=]
 
 M.INDIC_PLACEHOLDER = _SCINTILLA.next_indic_number()
 
+---
+-- List of directory paths to look for snippet files in.
+-- Filenames are of the form *lexer.trigger.ext* or *trigger.ext* (*.ext* is an
+-- optional, arbitrary file extension). If the global `snippets` table does not
+-- contain a snippet for a given trigger, this table is consulted for a matching
+-- filename, and the contents of that file is inserted as a snippet.
+-- Note: If a directory has multiple snippets with the same trigger, the snippet
+-- chosen for insertion is not defined and may not be constant.
+-- @class table
+-- @name _paths
+M._paths = {}
+
 local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
 local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.next_indic_number()
 
@@ -318,6 +330,21 @@ function M._insert(text)
     trigger = buffer:text_range(buffer:word_start_position(buffer.current_pos),
                                 buffer.current_pos)
     text = type(M[lexer]) == 'table' and M[lexer][trigger] or M[trigger]
+    if not text then
+      for i = 1, #M._paths do
+        for basename in lfs.dir(M._paths[i]) do
+          -- Snippet files are either of the form "lexer.trigger.ext" or
+          -- "trigger.ext". Prefer "lexer."-prefixed snippets.
+          local first, second = basename:match('^([^.]+)%.?([^.]*)')
+          if first == lexer and second == trigger or
+             first == trigger and second == '' and not text then
+            local f = io.open(M._paths[i]..'/'..basename)
+            text = f:read('*a')
+            f:close()
+          end
+        end
+      end
+    end
   end
   if type(text) == 'function' and not trigger:find('^_') then text = text() end
   local snippet = type(text) == 'string' and new_snippet(text, trigger) or
