@@ -119,11 +119,11 @@ local env = setmetatable({}, {
     end
     return f
   end,
-  __newindex = function(t, k, v)
+  __newindex = function(self, k, v)
     if buffer[k] ~= nil then buffer[k] = v return end
     if view[k] ~= nil then view[k] = v return end
     if ui[k] ~= nil then ui[k] = v return end
-    rawset(t, k, v)
+    rawset(self, k, v)
   end,
 })
 

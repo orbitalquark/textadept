@@ -403,10 +403,10 @@ io.quick_open_filters = {}
 --   `ui.dialogs.filteredlist()`.
 -- @usage io.quick_open(buffer.filename:match('^.+/')) -- list all files in the
 --   current file's directory, subject to the default filter
--- @usage io.quick_open('/project', '!%.lua$') -- list all Lua files in a
---    project directory
--- @usage io.quick_open('/project', {folders = {'build'}}) -- list all non-built
---   files in a project directory
+-- @usage io.quick_open(io.get_current_project(), '!%.lua$') -- list all Lua
+--    files in the current project
+-- @usage io.quick_open(io.get_current_project(), {folders = {'build'}}) -- list
+--   all non-built files in the current project
 -- @see io.quick_open_filters
 -- @see lfs.default_filter
 -- @see quick_open_max
