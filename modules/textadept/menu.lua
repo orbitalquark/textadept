@@ -560,9 +560,9 @@ return setmetatable(M, {
     if k == 'menubar' then
       set_menubar(v)
     elseif k == 'context_menu' then
-      set_contextmenus(v)
+      set_contextmenus(v) -- TODO: this can reset tab_context_menu
     elseif k == 'tab_context_menu' then
-      set_contextmenus(nil, v)
+      set_contextmenus(nil, v) -- TODO: this can reset context_menu
     else
       rawset(M, k, v)
     end
