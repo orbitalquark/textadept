@@ -240,8 +240,6 @@
 --     to [`buffer.edge_colour`]().
 -- @field encoding (string or nil)
 --   The string encoding of the file, or `nil` for binary files.
--- @field encoding_bom (string)
---   The byte-order mark (if any) of the file.
 -- @field end_at_last_line (bool)
 --   Disable scrolling past the last line.
 --   The default value is `true`.
@@ -767,10 +765,6 @@
 -- @field style_fore (table)
 --   Table of foreground colors, in "0xBBGGRR" format, of text for style numbers
 --   from `0` to `255`.
--- @field style_hot_spot (table)
---   Table of flags that indicate whether or not text is clickable for style
---   numbers from `0` to `255`.
---   The default values are `false`.
 -- @field style_italic (table)
 --   Table of flags that indicate whether or not text is italic for style
 --   numbers from `0` to `255`.
