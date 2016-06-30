@@ -1350,6 +1350,8 @@ commands for [`buffer`][], [`view`][] and [`ui`][]: for example you may reduce
 the `buffer:append_text('foo')` command to `append_text('foo')`. These commands
 are runnable on startup using the `-e` and `--execute` command line switches.
 
+Pressing `Ctrl+H` (`^H` | `M-H` or `M-S-H`) shows help for the current command.
+
 ![Command Entry](images/commandentry.png)
 
 [Lua API]: api.html
