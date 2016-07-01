@@ -7,12 +7,9 @@ ANNOTATION_INDENTED	_	0;"	F	class:buffer
 ANNOTATION_STANDARD	_	0;"	F	class:buffer
 APPLEEVENT_ODOC	_	0;"	F	class:events
 ARG_NONE	_	0;"	F	class:events
-AUTOCOMPLETE_ALL	_	0;"	F	class:textadept.editing
-AUTOINDENT	_	0;"	F	class:textadept.editing
 AUTOMATICFOLD_CHANGE	_	0;"	F	class:buffer
 AUTOMATICFOLD_CLICK	_	0;"	F	class:buffer
 AUTOMATICFOLD_SHOW	_	0;"	F	class:buffer
-AUTOPAIR	_	0;"	F	class:textadept.editing
 AUTO_C_CANCELED	_	0;"	F	class:events
 AUTO_C_CHAR_DELETED	_	0;"	F	class:events
 AUTO_C_COMPLETED	_	0;"	F	class:events
@@ -42,7 +39,6 @@ CASE_LOWER	_	0;"	F	class:buffer
 CASE_MIXED	_	0;"	F	class:buffer
 CASE_UPPER	_	0;"	F	class:buffer
 CHAR_ADDED	_	0;"	F	class:events
-CHECK_SYNTAX	_	0;"	F	class:textadept.run
 CLASS	_	0;"	F	class:lexer
 CLASS	_	0;"	F	class:textadept.editing.XPM_IMAGES
 CLEAR	_	0;"	F	class:keys
@@ -65,7 +61,6 @@ Cp	_	0;"	f	class:lpeg
 Cs	_	0;"	f	class:lpeg
 Ct	_	0;"	f	class:lpeg
 DEFAULT	_	0;"	F	class:lexer
-DEFAULT_SESSION	_	0;"	F	class:textadept.session
 DOCUTILS_PATH	_	0;"	F	class:_M.rest
 DOUBLE_CLICK	_	0;"	F	class:events
 DWELL_END	_	0;"	F	class:events
@@ -82,8 +77,6 @@ FILE_AFTER_SAVE	_	0;"	F	class:events
 FILE_BEFORE_SAVE	_	0;"	F	class:events
 FILE_CHANGED	_	0;"	F	class:events
 FILE_OPENED	_	0;"	F	class:events
-FILTER	_	0;"	t	class:lfs
-FILTER	_	0;"	t	class:ui.find
 FIND	_	0;"	F	class:events
 FIND_MATCHCASE	_	0;"	F	class:buffer
 FIND_REGEXP	_	0;"	F	class:buffer
@@ -108,7 +101,6 @@ FOLD_BASE	_	0;"	F	class:lexer
 FOLD_BLANK	_	0;"	F	class:lexer
 FOLD_HEADER	_	0;"	F	class:lexer
 FUNCTION	_	0;"	F	class:lexer
-GOTO_SYNTAX_ERRORS	_	0;"	F	class:textadept.run
 IDENTIFIER	_	0;"	F	class:lexer
 INDICATOR_CLICK	_	0;"	F	class:events
 INDICATOR_RELEASE	_	0;"	F	class:events
@@ -201,7 +193,6 @@ MARK_UNDERLINE	_	0;"	F	class:buffer
 MARK_VLINE	_	0;"	F	class:buffer
 MARK_WARNING	_	0;"	F	class:textadept.run
 MASK_FOLDERS	_	0;"	F	class:buffer
-MAX_RECENT_FILES	_	0;"	F	class:textadept.session
 MENU_CLICKED	_	0;"	F	class:events
 METHOD	_	0;"	F	class:textadept.editing.XPM_IMAGES
 MODE	_	0;"	F	class:keys
@@ -235,10 +226,8 @@ REPLACE_ALL	_	0;"	F	class:events
 RESET_AFTER	_	0;"	F	class:events
 RESET_BEFORE	_	0;"	F	class:events
 RESUME	_	0;"	F	class:events
-RUN_IN_BACKGROUND	_	0;"	F	class:textadept.run
 RUN_OUTPUT	_	0;"	F	class:events
 S	_	0;"	f	class:lpeg
-SAVE_ON_QUIT	_	0;"	F	class:textadept.session
 SAVE_POINT_LEFT	_	0;"	F	class:events
 SAVE_POINT_REACHED	_	0;"	F	class:events
 SEL_LINES	_	0;"	F	class:buffer
@@ -246,11 +235,8 @@ SEL_RECTANGLE	_	0;"	F	class:buffer
 SEL_STREAM	_	0;"	F	class:buffer
 SEL_THIN	_	0;"	F	class:buffer
 SIGNAL	_	0;"	F	class:textadept.editing.XPM_IMAGES
-SILENT_PRINT	_	0;"	F	class:ui
 SLOT	_	0;"	F	class:textadept.editing.XPM_IMAGES
-SNAPOPEN_MAX	_	0;"	F	class:io
 STRING	_	0;"	F	class:lexer
-STRIP_TRAILING_SPACES	_	0;"	F	class:textadept.editing
 STRUCT	_	0;"	F	class:textadept.editing.XPM_IMAGES
 STYLE_BRACEBAD	_	0;"	F	class:buffer
 STYLE_BRACEBAD	_	0;"	F	class:lexer
@@ -288,7 +274,6 @@ SUSPEND	_	0;"	F	class:events
 TIME_FOREVER	_	0;"	F	class:buffer
 TYPE	_	0;"	F	class:lexer
 TYPEDEF	_	0;"	F	class:textadept.editing.XPM_IMAGES
-TYPEOVER_CHARS	_	0;"	F	class:textadept.editing
 UPDATE_CONTENT	_	0;"	F	class:buffer
 UPDATE_H_SCROLL	_	0;"	F	class:buffer
 UPDATE_SELECTION	_	0;"	F	class:buffer
@@ -356,6 +341,7 @@ _fold	_	0;"	F	class:lexer.lexer
 _foldsymbols	_	0;"	F	class:lexer.lexer
 _insert	_	0;"	f	class:textadept.snippets
 _lexer	_	0;"	F	class:lexer.lexer
+_paths	_	0;"	t	class:textadept.snippets
 _previous	_	0;"	f	class:textadept.snippets
 _print	_	0;"	f	class:ui
 _rules	_	0;"	F	class:lexer.lexer
@@ -419,7 +405,10 @@ auto_c_separator	_	0;"	F	class:buffer
 auto_c_show	_	0;"	f	class:buffer
 auto_c_stops	_	0;"	f	class:buffer
 auto_c_type_separator	_	0;"	F	class:buffer
+auto_indent	_	0;"	F	class:textadept.editing
+auto_pairs	_	0;"	t	class:textadept.editing
 autocomplete	_	0;"	f	class:textadept.editing
+autocomplete_all_words	_	0;"	F	class:textadept.editing
 autocompleters	_	0;"	t	class:textadept.editing
 back_space_un_indents	_	0;"	F	class:buffer
 back_tab	_	0;"	f	class:buffer
@@ -435,7 +424,7 @@ brace_bad_light_indicator	_	0;"	f	class:buffer
 brace_highlight	_	0;"	f	class:buffer
 brace_highlight_indicator	_	0;"	f	class:buffer
 brace_match	_	0;"	f	class:buffer
-braces	_	0;"	t	class:textadept.editing
+brace_matches	_	0;"	t	class:textadept.editing
 btest	_	0;"	f	class:bit32
 buffer	_	0;"	m	
 buffer	_	0;"	t	
@@ -474,7 +463,6 @@ char_at	_	0;"	F	class:buffer
 char_left	_	0;"	f	class:buffer
 char_left_extend	_	0;"	f	class:buffer
 char_left_rect_extend	_	0;"	f	class:buffer
-char_matches	_	0;"	t	class:textadept.editing
 char_right	_	0;"	f	class:buffer
 char_right_extend	_	0;"	f	class:buffer
 char_right_rect_extend	_	0;"	f	class:buffer
@@ -532,11 +520,12 @@ current_pos	_	0;"	F	class:buffer
 currentdir	_	0;"	f	class:lfs
 cursor	_	0;"	F	class:buffer
 cut	_	0;"	f	class:buffer
-cwd	_	0;"	F	class:textadept.run
 date	_	0;"	f	class:os
 debug	_	0;"	f	class:debug
 debug	_	0;"	m	
 dec_num	_	0;"	F	class:lexer
+default_filter	_	0;"	t	class:lfs
+default_session	_	0;"	F	class:textadept.session
 deg	_	0;"	f	class:math
 del_line_left	_	0;"	f	class:buffer
 del_line_right	_	0;"	f	class:buffer
@@ -575,7 +564,6 @@ emit	_	0;"	f	class:events
 empty_undo_buffer	_	0;"	f	class:buffer
 enclose	_	0;"	f	class:textadept.editing
 encoding	_	0;"	F	class:buffer
-encoding_bom	_	0;"	F	class:buffer
 encodings	_	0;"	t	class:io
 end_at_last_line	_	0;"	F	class:buffer
 end_styled	_	0;"	F	class:buffer
@@ -610,6 +598,7 @@ find	_	0;"	m	class:ui
 find_column	_	0;"	f	class:buffer
 find_entry_text	_	0;"	F	class:ui.find
 find_in_files	_	0;"	f	class:ui.find
+find_in_files_filter	_	0;"	t	class:ui.find
 find_incremental	_	0;"	f	class:ui.find
 find_label_text	_	0;"	F	class:ui.find
 find_next	_	0;"	f	class:ui.find
@@ -835,6 +824,7 @@ match_case	_	0;"	F	class:ui.find
 match_case_label_text	_	0;"	F	class:ui.find
 math	_	0;"	m	
 max	_	0;"	f	class:math
+max_recent_files	_	0;"	F	class:textadept.session
 maximized	_	0;"	F	class:ui
 maxinteger	_	0;"	F	class:math
 maxn	_	0;"	f	class:table
@@ -911,7 +901,6 @@ preload	_	0;"	F	class:package
 print	_	0;"	F	class:lexer
 print	_	0;"	f	
 print	_	0;"	f	class:ui
-proc	_	0;"	F	class:textadept.run
 properties	_	0;"	t	class:_SCINTILLA
 property	_	0;"	F	class:buffer
 property	_	0;"	F	class:lexer
@@ -924,6 +913,9 @@ punctuation_chars	_	0;"	F	class:buffer
 python	_	0;"	m	class:_M
 python	_	0;"	t	class:keys
 python	_	0;"	t	class:snippets
+quick_open	_	0;"	f	class:io
+quick_open_filters	_	0;"	t	class:io
+quick_open_max	_	0;"	F	class:io
 quit	_	0;"	f	
 rad	_	0;"	f	class:math
 random	_	0;"	f	class:math
@@ -983,11 +975,13 @@ ruby	_	0;"	t	class:snippets
 run	_	0;"	f	class:textadept.run
 run	_	0;"	m	class:textadept
 run_commands	_	0;"	t	class:textadept.run
+run_in_background	_	0;"	F	class:textadept.run
 running	_	0;"	f	class:coroutine
 save	_	0;"	f	class:textadept.session
 save_all_files	_	0;"	f	class:io
 save_file	_	0;"	f	class:io
 save_file_as	_	0;"	f	class:io
+save_on_quit	_	0;"	F	class:textadept.session
 scroll_caret	_	0;"	f	class:buffer
 scroll_range	_	0;"	f	class:buffer
 scroll_to_end	_	0;"	f	class:buffer
@@ -1063,12 +1057,11 @@ setuservalue	_	0;"	f	class:debug
 setvbuf	_	0;"	f	class:file
 show_documentation	_	0;"	f	class:textadept.editing
 show_lines	_	0;"	f	class:buffer
+silent_print	_	0;"	F	class:ui
 sin	_	0;"	f	class:math
 sinh	_	0;"	f	class:math
 size	_	0;"	F	class:view
 size	_	0;"	t	class:ui
-snapopen	_	0;"	f	class:io
-snapopen_filters	_	0;"	t	class:io
 snippets	_	0;"	m	class:textadept
 snippets	_	0;"	t	
 sort	_	0;"	f	class:table
@@ -1088,6 +1081,7 @@ stdin	_	0;"	F	class:io
 stdout	_	0;"	F	class:io
 stop	_	0;"	f	class:textadept.run
 string	_	0;"	m	
+strip_trailing_spaces	_	0;"	F	class:textadept.editing
 stuttered_page_down	_	0;"	f	class:buffer
 stuttered_page_down_extend	_	0;"	f	class:buffer
 stuttered_page_up	_	0;"	f	class:buffer
@@ -1102,7 +1096,6 @@ style_clear_all	_	0;"	f	class:buffer
 style_eol_filled	_	0;"	F	class:buffer
 style_font	_	0;"	F	class:buffer
 style_fore	_	0;"	F	class:buffer
-style_hot_spot	_	0;"	F	class:buffer
 style_italic	_	0;"	F	class:buffer
 style_name	_	0;"	F	class:buffer
 style_reset_default	_	0;"	f	class:buffer
@@ -1114,8 +1107,6 @@ sub	_	0;"	f	class:utf8
 swap_main_anchor_caret	_	0;"	f	class:buffer
 switch_buffer	_	0;"	f	class:ui
 symlinkattributes	_	0;"	f	class:lfs
-syntax_commands	_	0;"	t	class:textadept.run
-syntax_error_patterns	_	0;"	t	class:textadept.run
 tab	_	0;"	f	class:buffer
 tab_context_menu	_	0;"	F	class:ui
 tab_context_menu	_	0;"	t	class:textadept.menu
