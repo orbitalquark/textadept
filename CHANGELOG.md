@@ -9,6 +9,106 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 9.0 alpha (01 Jul 2016)
+
+Please see the [8 to 9 migration guide][] for upgrading from Textadept 8 to
+Textadept 9.
+
+Download:
+
+* [Textadept 9.0 alpha -- Win32][] | [PGP -- 9.0 alpha Win32][]
+* [Textadept 9.0 alpha -- Mac OSX Intel 10.5+][] | [PGP -- 9.0 alpha OSX][]
+* [Textadept 9.0 alpha -- Linux][] | [PGP -- 9.0 alpha Linux][]
+* [Textadept 9.0 alpha -- Linux x86_64][] | [PGP -- 9.0 alpha Linux x86_64][]
+* [Textadept 9.0 alpha -- Modules][] | [PGP -- 9.0 alpha Modules][]
+
+Bugfixes:
+
+* Fixed stack overflow when accessing `nil` keys in [`textadept.menu`][].
+* Fixed inability to re-encode files incorrectly detected as binary.
+* Scintilla: Fixed crash when idle styling is active upon closing Textadept.
+* Scintilla: Fixed various bugs on GTK 3.20.
+* Lua: Fixed potential crash with four or more expressions in a `for` loop.
+
+Changes:
+
+* Renamed `io.snapopen()` to [`io.quick_open()`][] and tweaked its arguments,
+  renamed `io.SNAPOPEN_MAX` to [`io.quick_open_max`][], and renamed
+  `io.snapopen_filters` to [`io.quick_open_filters`][].
+* Removed BOM (byte order mark) encoding detection. (BOM use is legacy and
+  discouraged.)
+* Removed detection and use of extinct `\r` (CR) line endings.
+* Removed project support for CVS and assume Subversion v1.8+.
+* Key and menu commands [must be Lua functions][]; the table syntax is no longer
+  recognized.
+* Renamed `lfs.FILTER` to [`lfs.default_filter`][] and tweaked arguments to
+  [`lfs.dir_foreach()`][].
+* Locale files can optionally use `#` for comments instead of `%`.
+* Renamed `ui.SILENT_PRINT` to [`ui.silent_print`][].
+* Renamed all [`textadept.editing`]`.[A-Z]+` options to their lower-case
+  equivalents and renamed `textadept.editing.braces` to
+  [`textadept.editing.brace_matches`][].
+* *post_init.lua* files for language modules are [no longer auto-loaded][]; use
+  [`events.LEXER_LOADED`][] to load additional bits instead.
+* Renamed `ui.find.FILTER` to [`ui.find.find_in_files_filter`][] and added an
+  optional argument to [`ui.find.find_in_files()`][].
+* Renamed all [`textadept.session`]`.[A-Z]+` options to their lower-case
+  equivalents.
+* Removed syntax checking support, renamed `textadept.run.RUN_IN_BACKGROUND` to
+  [`textadept.run.run_in_background`][], removed `textadept.run.cwd` and
+  `textadept.run.proc`, added optional arguments to
+  [`textadept.run.compile()`][], [`textadept.run.run()`][], and
+  [`textadept.run.build()`][], and changed the format of
+  [`textadept.run.error_patterns`][].
+* Rewrote sections 7-9 in the [manual][] and added a new part to section 11.
+  Understanding how to configure and script Textadept should be easier now.
+* [`textadept.editing.goto_line()`] takes a 0-based line number like all
+  Scintilla functions.
+* [`ui.goto_view()`][] and [`view:goto_buffer()`][] now take actual `view` and
+  `buffer` arguments, respectively, or a relative number.
+* Added [file-based snippet][] capabilities.
+* Updated to [Scintilla][] 3.6.6.
+* Updated to [Lua][] 5.3.3
+
+[8 to 9 migration guide]: manual.html#Textadept.8.to.9
+[Textadept 9.0 alpha -- Win32]: download/textadept_9.0_alpha.win32.zip
+[Textadept 9.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_9.0_alpha.osx.zip
+[Textadept 9.0 alpha -- Linux]: download/textadept_9.0_alpha.i386.tgz
+[Textadept 9.0 alpha -- Linux x86_64]: download/textadept_9.0_alpha.x86_64.tgz
+[Textadept 9.0 alpha -- Modules]: download/textadept_9.0_alpha.modules.zip
+[PGP -- 9.0 alpha Win32]: download/textadept_9.0_alpha.win32.zip.asc
+[PGP -- 9.0 alpha OSX]: download/textadept_9.0_alpha.osx.zip.asc
+[PGP -- 9.0 alpha Linux]: download/textadept_9.0_alpha.i386.tgz.asc
+[PGP -- 9.0 alpha Linux x86_64]: download/textadept_9.0_alpha.x86_64.tgz.asc
+[PGP -- 9.0 alpha Modules]: download/textadept_9.0_alpha.modules.zip.asc
+[`textadept.menu`]: api.html#textadept.menu
+[`io.quick_open()`]: api.html#io.quick_open
+[`io.quick_open_max`]: api.html#io.quick_open_max
+[`io.quick_open_filters`]: api.html#io.quick_open_filters
+[must be Lua functions]: manual.html#Key.and.Menu.Command.Changes
+[`lfs.default_filter`]: api.html#lfs.default_filter
+[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
+[`ui.silent_print`]: api.html#ui.silent_print
+[`textadept.editing`]: api.html#textadept.editing
+[`textadept.editing.brace_matches`]: api.html#textadept.editing.brace_matches
+[no longer auto-loaded]: manual.html#Language.Module.Handling.Changes
+[`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
+[`ui.find.find_in_files_filter`]: api.html#ui.find.find_in_files_filter
+[`ui.find.find_in_files()`]: api.html#ui.find.find_in_files
+[`textadept.session`]: api.html#textadept.session
+[`textadept.run.run_in_background`]: api.html#textadept.run.run_in_background
+[`textadept.run.compile()`]: api.html#textadept.run.compile
+[`textadept.run.run()`]: api.html#textadept.run.run
+[`textadept.run.build()`]: api.html#textadept.run.build
+[`textadept.run.error_patterns`]: api.html#textadept.run.error_patterns
+[manual]: manual.html
+[`textadept.editing.goto_line()`]: api.html#textadept.editing.goto_line
+[`ui.goto_view()`]: api.html#ui.goto_view
+[`view:goto_buffer()`]: api.html#view.goto_buffer
+[file-based snippet]: manual.html#Snippet.Preferences
+[Scintilla]: http://scintilla.org
+[Lua]: http://www.lua.org
+
 ## 8.7 (01 May 2016)
 
 Download:
