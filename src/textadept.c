@@ -2114,7 +2114,7 @@ static int lview_property(lua_State *L) {
 #elif CURSES
     Pane *p = pane_get_parent(pane, view);
     if (!newindex)
-      p ? lua_pushinteger(L, parent->split_size) : lua_pushnil(L);
+      p ? lua_pushinteger(L, p->split_size) : lua_pushnil(L);
     else if (p)
       p->split_size = size, pane_resize(p, p->rows, p->cols, p->y, p->x);
 #endif
