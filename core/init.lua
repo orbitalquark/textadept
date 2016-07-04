@@ -38,6 +38,8 @@ end
 -- Documentation is in core/.buffer.luadoc.
 local function text_range(buffer, start_pos, end_pos)
   local target_start, target_end = buffer.target_start, buffer.target_end
+  if start_pos < 0 then start_pos = 0 end
+  if end_pos > buffer.length then end_pos = buffer.length end
   buffer:set_target_range(start_pos, end_pos)
   local text = buffer.target_text
   buffer:set_target_range(target_start, target_end) -- reset
