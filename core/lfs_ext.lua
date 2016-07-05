@@ -18,7 +18,7 @@ lfs.default_filter = {
     'a', 'bmp', 'bz2', 'class', 'dll', 'exe', 'gif', 'gz', 'jar', 'jpeg', 'jpg',
     'o', 'pdf', 'png', 'so', 'tar', 'tgz', 'tif', 'tiff', 'xz', 'zip'
   },
-  folders = {'%.bzr$', '%.git$', '%.hg$', '%.svn$'}
+  folders = {'%.bzr$', '%.git$', '%.hg$', '%.svn$', 'node_modules'}
 }
 
 local lfs_symlinkattributes = lfs.symlinkattributes
@@ -92,10 +92,12 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
       if mode == 'directory' and not exclude(filename, filter.folders) then
         if include_dirs and f(filename..dir_sep) == false then return end
         if not n or level < n then
-          lfs.dir_foreach(filename, f, filter, n, include_dirs, level + 1)
+          local halt = lfs.dir_foreach(filename, f, filter, n, include_dirs,
+                                       level + 1) == false
+          if halt then return false end
         end
       elseif mode == 'file' and not exclude(filename, filter) then
-        if f(filename) == false then return end
+        if f(filename) == false then return false end
       end
     end
   end
