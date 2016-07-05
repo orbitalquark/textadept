@@ -97,7 +97,8 @@ endif
 # Scintilla.
 
 sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG -DNO_CXX11_REGEX \
-            -Iscintilla/include -Iscintilla/src -Iscintilla/lexlib -Wall
+            -DSCI_OWNREGEX -Iscintilla/include -Iscintilla/src \
+            -Iscintilla/lexlib -Itre/lib -Wall
 
 sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
            CellBuffer.o CharClassify.o ContractionState.o Decoration.o \
@@ -109,6 +110,9 @@ sci_lex_objs = Accessor.o CharacterSet.o LexerBase.o LexerModule.o \
                LexerNoExceptions.o LexerSimple.o PropSetSimple.o \
                StyleContext.o WordList.o
 sci_gtk_objs = PlatGTK.o ScintillaGTK.o
+regex_objs = regcomp.o regerror.o regexec.o tre-ast.o tre-compile.o \
+             tre-filter.o tre-match-backtrack.o tre-match-parallel.o tre-mem.o \
+             tre-parse.o tre-stack.o xmalloc.o
 lexlpeg_objs = LexLPeg.o LexLPegjit.o LexLPeg-curses.o LexLPegjit-curses.o
 
 # Textadept.
@@ -124,9 +128,9 @@ lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
            lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
            lmathlib.o loadlib.o loslib.o lstrlib.o ltablib.o lutf8lib.o
-lua_lib_objs = lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o lutf8libext.o
+lua_lib_objs = lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
 luajit_lib_objs = lpcapjit.o lpcodejit.o lpprintjit.o lptreejit.o lpvmjit.o \
-                  lfsjit.o lutf8libjit.o lutf8libextjit.o
+                  lfsjit.o lutf8libjit.o
 lua_spawn_objs = lspawn.o lspawnjit.o lspawn-curses.o lspawnjit-curses.o
 gtdialog_objs = gtdialog.o gtdialog-curses.o
 termkey_unix_objs = driver-ti.o driver-csi.o
@@ -160,6 +164,8 @@ $(sci_gtk_objs): %.o: scintilla/gtk/%.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $(GTK_CFLAGS) $< -o $@
 scintilla-marshal.o: scintilla/gtk/scintilla-marshal.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(GTK_CFLAGS) $< -o $@
+$(regex_objs): %.o: tre/lib/%.c
+	$(CROSS)$(CC) -c $(CFLAGS) -Itre/lib $< -o $@
 ScintillaTerm.o: scintilla/term/ScintillaTerm.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $(CURSES_CFLAGS) $< -o $@
 $(lexlpeg_objs): LexLPeg.cxx
@@ -217,43 +223,45 @@ lutf8libjit.o: LUA_CFLAGS += -Ilua/src
 # Executables.
 
 textadept: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
-           LexLPeg.o textadept.o $(lua_objs) $(lua_lib_objs) lspawn.o gtdialog.o
+           $(regex_objs) LexLPeg.o textadept.o $(lua_objs) $(lua_lib_objs) \
+           lspawn.o gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadeptjit: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
-              LexLPegjit.o textadeptjit.o $(luajit_lib_objs) $(libluajit) \
-              lspawnjit.o gtdialog.o
+              $(regex_objs) LexLPegjit.o textadeptjit.o $(luajit_lib_objs) \
+              $(libluajit) lspawnjit.o gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
-textadept-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o LexLPeg-curses.o \
-                  textadept-curses.o $(lua_objs) $(lua_lib_objs) \
-                  lspawn-curses.o gtdialog-curses.o termkey.o \
+textadept-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o $(regex_objs) \
+                  LexLPeg-curses.o textadept-curses.o $(lua_objs) \
+                  $(lua_lib_objs) lspawn-curses.o gtdialog-curses.o termkey.o \
                   $(termkey_unix_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
-textadeptjit-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
+textadeptjit-curses: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o $(regex_objs) \
                      LexLPegjit-curses.o textadeptjit-curses.o \
                      $(luajit_lib_objs) $(libluajit) lspawnjit-curses.o \
                      gtdialog-curses.o termkey.o $(termkey_unix_objs) \
                      $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadept.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) scintilla-marshal.o \
-               LexLPeg.o textadept.o textadept_rc.o $(lua_objs) \
+               $(regex_objs) LexLPeg.o textadept.o textadept_rc.o $(lua_objs) \
                $(lua_lib_objs) lspawn.o gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadeptjit.exe: $(sci_objs) $(sci_lex_objs) $(sci_gtk_objs) \
-                  scintilla-marshal.o LexLPegjit.o textadeptjit.o \
-                  textadept_rc.o $(luajit_lib_objs) $(libluajit) lspawnjit.o \
-                  gtdialog.o
+                  scintilla-marshal.o $(regex_objs) LexLPegjit.o \
+                  textadeptjit.o textadept_rc.o $(luajit_lib_objs) \
+                  $(libluajit) lspawnjit.o gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadept-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
-                      LexLPeg-curses.o textadept-curses.o textadept_rc.o \
-                      $(lua_objs) $(lua_lib_objs) lspawn-curses.o \
-                      gtdialog-curses.o termkey.o $(termkey_win32_objs) \
-                      $(cdk_objs)
+                      $(regex_objs) LexLPeg-curses.o textadept-curses.o \
+                      textadept_rc.o $(lua_objs) $(lua_lib_objs) \
+                      lspawn-curses.o gtdialog-curses.o termkey.o \
+                      $(termkey_win32_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadeptjit-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
-                         LexLPegjit-curses.o textadeptjit-curses.o \
-                         textadept_rc.o $(luajit_lib_objs) $(libluajit) \
-                         lspawnjit-curses.o gtdialog-curses.o termkey.o \
-                         $(termkey_win32_objs) $(cdk_objs)
+                         $(regex_objs) LexLPegjit-curses.o \
+                         textadeptjit-curses.o textadept_rc.o \
+                         $(luajit_lib_objs) $(libluajit) lspawnjit-curses.o \
+                         gtdialog-curses.o termkey.o $(termkey_win32_objs) \
+                         $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 
 # Install/uninstall.
@@ -361,8 +369,8 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 
 # External dependencies.
 
-base_deps = scintilla scintilla/term scintillua lua lualibs luajit gtdialog \
-            cdk ../doc/bombay
+base_deps = scintilla tre scintilla/term scintillua lua lualibs luajit \
+            gtdialog cdk ../doc/bombay
 deps: $(base_deps) termkey
 win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
@@ -380,12 +388,12 @@ else
 endif
 
 scintilla_tgz = scintilla366.tgz
+tre_zip = cdce45e8dd7a3b36954022b4a4d3570e1ac5a4f8.zip
 scinterm_zip = scinterm_1.8.zip
 scintillua_zip = scintillua_3.6.5-1.zip
 lua_tgz = lua-5.3.3.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
-luautf8_zip = 0.1.1.zip
 lspawn_zip = lspawn_1.5.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
@@ -405,6 +413,10 @@ $(scintilla_tgz): ; wget http://prdownloads.sourceforge.net/scintilla/$@ -O $@
 scintilla: scintilla.patch | $(scintilla_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
+$(tre_zip): ; wget https://github.com/laurikari/tre/archive/$@ -O $@
+tre: tre.patch | $(tre_zip)
+	mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
+	patch -d $@ -N -p1 < $<
 $(scinterm_zip): ; wget $(scinterm_url) -O $@
 scintilla/term: | $(scinterm_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 scintillua: ../lexers LexLPeg.cxx
@@ -415,23 +427,15 @@ LexLPeg.cxx: | ../lexers ; ln -s $|/$@ $@
 $(lua_tgz): ; wget http://www.lua.org/ftp/$@
 $(lpeg_tgz): ; wget http://www.inf.puc-rio.br/~roberto/lpeg/$@
 $(lfs_zip): ; wget http://github.com/keplerproject/luafilesystem/archive/$@
-$(luautf8_zip): ; wget https://github.com/starwing/luautf8/archive/$@
 $(lspawn_zip): ; wget $(lspawn_url) -O $@
 lua: lua.patch | $(lua_tgz)
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
-lualibs: lua/src/lib/lpeg lua/src/lib/lfs lua/src/lib/lutf8libext \
-         lua/src/lib/lspawn
+lualibs: lua/src/lib/lpeg lua/src/lib/lfs lua/src/lib/lspawn
 lua/src/lib/lpeg: | $(lpeg_tgz)
 	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
 lua/src/lib/lfs: lfs.patch | $(lfs_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
-	patch -d $(dir $@) -N -p1 < $<
-lua/src/lib/lutf8libext: lutf8libext.patch | $(luautf8_zip)
-	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.h $(dir $@)
-	# Rename lutf8lib.c in order to prevent conflicts with Lua's lutf8lib.c,
-	# needed by LuaJIT.
-	mv $@/*/lutf8lib.c $(dir $@)lutf8libext.c
 	patch -d $(dir $@) -N -p1 < $<
 lua/src/lib/lspawn: | $(lspawn_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.c $(dir $@)

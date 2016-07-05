@@ -146,7 +146,7 @@ static GtkWidget *findbox, *find_entry, *replace_entry, *flabel, *rlabel;
 #define repl_text gtk_entry_get_text(GTK_ENTRY(replace_entry))
 typedef GtkWidget * FindButton;
 static FindButton fnext_button, fprev_button, r_button, ra_button;
-static GtkWidget *match_case, *whole_word, *lua_pattern, *in_files;
+static GtkWidget *match_case, *whole_word, *regex, *in_files;
 typedef GtkListStore ListStore;
 static ListStore *find_store, *repl_store;
 #define toggled(w) gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))
@@ -195,7 +195,7 @@ static char *find_text, *repl_text, *flabel, *rlabel;
 typedef enum {fnext_button, r_button, fprev_button, ra_button} FindButton;
 static int find_options[4];
 static int *match_case = &find_options[0], *whole_word = &find_options[1],
-           *lua_pattern = &find_options[2], *in_files = &find_options[3];
+           *regex = &find_options[2], *in_files = &find_options[3];
 static char *button_labels[4], *option_labels[4];
 typedef char * ListStore;
 static ListStore find_store[10], repl_store[10];
@@ -239,7 +239,7 @@ static void new_buffer(sptr_t);
 static Scintilla *new_view(sptr_t);
 static int lL_init(lua_State *, int, char **, int);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
-LUALIB_API int luaopen_utf8_ext(lua_State *), luaopen_spawn(lua_State *);
+LUALIB_API int luaopen_spawn(lua_State *);
 LUALIB_API int lspawn_pushfds(lua_State *), lspawn_readfds(lua_State *);
 
 /**
@@ -522,8 +522,8 @@ static int lfind__index(lua_State *L) {
     lua_pushboolean(L, toggled(match_case));
   else if (strcmp(key, "whole_word") == 0)
     lua_pushboolean(L, toggled(whole_word));
-  else if (strcmp(key, "lua") == 0)
-    lua_pushboolean(L, toggled(lua_pattern));
+  else if (strcmp(key, "regex") == 0)
+    lua_pushboolean(L, toggled(regex));
   else if (strcmp(key, "in_files") == 0)
     lua_pushboolean(L, toggled(in_files));
   else
@@ -550,8 +550,8 @@ static int lfind__newindex(lua_State *L) {
     toggle(match_case, lua_toboolean(L, -1));
   else if (strcmp(key, "whole_word") == 0)
     toggle(whole_word, lua_toboolean(L, -1));
-  else if (strcmp(key, "lua") == 0)
-    toggle(lua_pattern, lua_toboolean(L, -1));
+  else if (strcmp(key, "regex") == 0)
+    toggle(regex, lua_toboolean(L, -1));
   else if (strcmp(key, "in_files") == 0)
     toggle(in_files, lua_toboolean(L, -1));
   else if (strcmp(key, "find_label_text") == 0)
@@ -570,8 +570,8 @@ static int lfind__newindex(lua_State *L) {
     set_option_label(match_case, 0, lua_tostring(L, 3));
   else if (strcmp(key, "whole_word_label_text") == 0)
     set_option_label(whole_word, 1, lua_tostring(L, 3));
-  else if (strcmp(key, "lua_pattern_label_text") == 0)
-    set_option_label(lua_pattern, 2, lua_tostring(L, 3));
+  else if (strcmp(key, "regex_label_text") == 0)
+    set_option_label(regex, 2, lua_tostring(L, 3));
   else if (strcmp(key, "in_files_label_text") == 0)
     set_option_label(in_files, 3, lua_tostring(L, 3));
   else
@@ -1534,7 +1534,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
 #endif
   }
   lua_pushinteger(L, (sptr_t)L), lua_setglobal(L, "_LUA");
-  luaL_openlibs(L), lL_openlib(L, utf8_ext);
+  luaL_openlibs(L);
   lL_openlib(L, lpeg), lL_openlib(L, lfs), lL_openlib(L, spawn);
 
   lua_newtable(L);
@@ -2214,7 +2214,7 @@ static GtkWidget *new_findbox() {
   ra_button = gtk_button_new_with_mnemonic("Replace _All");
   match_case = gtk_check_button_new_with_mnemonic("_Match case");
   whole_word = gtk_check_button_new_with_mnemonic("_Whole word");
-  lua_pattern = gtk_check_button_new_with_mnemonic("_Lua pattern");
+  regex = gtk_check_button_new_with_mnemonic("Rege_x");
   in_files = gtk_check_button_new_with_mnemonic("_In files");
 
   gtk_label_set_mnemonic_widget(GTK_LABEL(flabel), find_entry);
@@ -2230,7 +2230,7 @@ static GtkWidget *new_findbox() {
   attach(ra_button, 3, 4, 1, 2, FILL(SHRINK), FILL(SHRINK), 0, 0);
   attach(match_case, 4, 5, 0, 1, FILL(SHRINK), FILL(SHRINK), 5, 0);
   attach(whole_word, 4, 5, 1, 2, FILL(SHRINK), FILL(SHRINK), 5, 0);
-  attach(lua_pattern, 5, 6, 0, 1, FILL(SHRINK), FILL(SHRINK), 5, 0);
+  attach(regex, 5, 6, 0, 1, FILL(SHRINK), FILL(SHRINK), 5, 0);
   attach(in_files, 5, 6, 1, 2, FILL(SHRINK), FILL(SHRINK), 5, 0);
 
   signal(fnext_button, "clicked", f_clicked);
@@ -2245,7 +2245,7 @@ static GtkWidget *new_findbox() {
   gtk_widget_set_can_focus(ra_button, FALSE);
   gtk_widget_set_can_focus(match_case, FALSE);
   gtk_widget_set_can_focus(whole_word, FALSE);
-  gtk_widget_set_can_focus(lua_pattern, FALSE);
+  gtk_widget_set_can_focus(regex, FALSE);
   gtk_widget_set_can_focus(in_files, FALSE);
 
   return findbox;
