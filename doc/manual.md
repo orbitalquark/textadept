@@ -333,9 +333,8 @@ splitting. Lua also has complete control over all views.
 ## Find & Replace Pane
 
 This compact pane is a great way to slice and dice through your document or a
-directory of files. It even supports finding and replacing text using Lua
-patterns and Lua code. The pane is available only when you need it and quickly
-gets out of your way when you do not, minimizing distractions.
+directory of files. The pane is available only when you need it and quickly gets
+out of your way when you do not, minimizing distractions.
 
 ## Command Entry
 
@@ -705,13 +704,8 @@ renders the entire line eligible for moving.
 ## Find & Replace
 
 `Ctrl+F` (`⌘F` on Mac OSX | `M-F` or `M-S-F` in curses) brings up the Find &
-Replace pane. In addition to offering the usual find and replace with "Match
-Case" and "Whole Word" options and find/replace history, Textadept supports
-finding with [Lua patterns](#Lua.Patterns) and replacing with Lua captures and
-even Lua code! For example: replacing all `%w+` with `%(string.upper('%0'))`
-upper-cases all words in the buffer. Replacement text only recognizes Lua
-captures (`%`_`n`_) from a Lua pattern search, but always allows embedded Lua
-code enclosed in `%()`.
+Replace pane. It has the usual find and replace with "Match Case", "Whole Word",
+and "[Regex](#Regular.Expressions)" options, along with find/replace history
 
 Note the `Ctrl+G`, `Ctrl+Shift+G`, `Ctrl+Alt+R`, `Ctrl+Alt+Shift+R` key bindings
 for find next, find previous, replace, and replace all (`⌘G`, `⌘⇧G`, `^R`, and
@@ -741,7 +735,7 @@ Double-clicking a search result jumps to it in the file, as do the the
 `Ctrl+Alt+G` and `Ctrl+Alt+Shift+G` (`^⌘G` and `^⌘⇧G` | none) key bindings for
 cycling through results. Textadept does not support replacing in files directly.
 You must "Find in Files" first, and then "Replace All" for each file containing
-a result. The "Match Case", "Whole Word", and "Lua pattern" flags still apply.
+a result. The "Match Case", "Whole Word", and "Regex" flags still apply.
 
 _Warning_: currently, the [find API][] provides the only means to specify a
 file-type filter. While the default filter excludes many common binary files
@@ -1468,26 +1462,27 @@ Not only can you define your own key bindings that can do pretty much anything
 with Textadept (interact with and manipulate buffer contents, prompt for input
 with dialogs, spawn processes, etc.), but you can also listen in on the plethora
 of [events][] Textadept emits in order to script nearly every aspect of the
-editor's behavior. Not a fan of Lua patterns in buffer searches? Textadept emits
-an [`events.FIND`][] event every time the "Find Next" and "Find Prev" buttons
-are clicked. You can listen for that event and perform your own searches with
-regex, PEGs, or any other search format you can think of. Would you rather have
-the "Search -> Find" menu option (or key binding) start a search with the word
-under the caret already in the find & replace pane's search box? Create a Lua
-function that populates [`ui.find.find_entry_text`][] and [shows the pane][],
-and then re-assign the "Search -> Find" [menu action][]'s existing function to
-the one you just created. Would you like to have Textadept auto-save files as
-you switch between buffers? Connect the [`io.save_file()`][] function to the
-[`events.BUFFER_BEFORE_SWITCH`][] event. "Textadept gives you complete control
-over the entire application using Lua" is not an exaggeration!
+editor's behavior. Would you rather have the "Search -> Find" menu option (or
+key binding) start a search with the word under the caret already in the find &
+replace pane's search box? Create a Lua function that populates
+[`ui.find.find_entry_text`][] and [shows the pane][], and then re-assign the
+"Search -> Find" [menu action][]'s existing function to the one you just
+created. Would you like to have Textadept auto-save files as you switch between
+buffers? Connect the [`io.save_file()`][] function to the
+[`events.BUFFER_BEFORE_SWITCH`][] event. Would you like the ability to execute
+arbitrary code in order to transform replacement text while performing find &
+replace? Textadept emits an [`events.REPLACE`][] event every time the "Replace"
+button is clicked. You can listen for that event and perform your own
+replacements. "Textadept gives you complete control over the entire application
+using Lua" is not an exaggeration!
 
 [`io.open_file()`]: api.html#io.open_file
 [`events.FILE_OPENED`]: api.html#events.FILE_OPENED
 [event]: api.html#events
-[`events.FIND`]: api.html#events.FIND
 [`ui.find.find_entry_text`]: api.html#ui.find.find_entry_text
 [`io.save_file()`]: api.html#io.save_file
 [`events.BUFFER_BEFORE_SWITCH`]: api.html#events.BUFFER_BEFORE_SWITCH
+[`events.REPLACE`]: api.html#events.REPLACE
 [shows the pane]: api.html#ui.find.focus
 [menu action]: api.html#textadept.menu.menubar
 
@@ -1819,6 +1814,213 @@ Textadept has a [mailing list][] and a [wiki][].
 
 - - -
 
+## Regular Expressions
+
+Textadept uses [TRE][] as its regular expression library. TRE is a "lightweight,
+robust, and efficient POSIX compliant regexp matching library".
+
+The following is from the [TRE Regexp Syntax][].
+
+This section describes the POSIX 1003.2 extended RE (ERE) syntax as implemented
+by TRE, and the TRE extensions to the ERE syntax. A simple Extended Backus-Naur
+Form (EBNF) style notation is used to describe the grammar.
+
+**Alternation operator**
+
+    extended-regexp ::= branch
+                    |   extended-regexp "|" branch
+
+An extended regexp (ERE) is one or more branches, separated by `|`. An ERE
+matches anything that matches one or more of the branches.
+
+**Catenation of REs**
+
+    branch ::= piece
+           |   branch piece
+
+A branch is one or more pieces concatenated. It matches a match for the first
+piece, followed by a match for the second piece, and so on.
+
+    piece ::= atom
+          |   atom repeat-operator
+          |   atom approx-settings
+
+A piece is an atom possibly followed by a repeat operator or an expression
+controlling approximate matching parameters for the atom.
+
+    atom ::= "(" extended-regexp ")"
+         |   bracket-expression
+         |   "."
+         |   assertion
+         |   literal
+         |   back-reference
+         |   "(?#" comment-text ")"
+         |   "(?" options ")" extended-regexp
+         |   "(?" options ":" extended-regexp ")"
+
+An atom is either an ERE enclosed in parenthesis, a bracket expression, a `.`
+(period), an assertion, or a literal.
+
+The dot (`.`) matches any single character.
+
+Comment-text can contain any characters except for a closing parenthesis `)`.
+The text in the comment is completely ignored by the regex parser and it used
+solely for readability purposes.
+
+**Repeat operators**
+
+    repeat-operator ::= "*"
+                    |   "+"
+                    |   "?"
+                    |   bound
+                    |   "*?"
+                    |   "+?"
+                    |   "??"
+                    |   bound ?
+
+An atom followed by `*` matches a sequence of 0 or more matches of the atom. `+`
+is similar to `*`, matching a sequence of 1 or more matches of the atom. An atom
+followed by `?` matches a sequence of 0 or 1 matches of the atom.
+
+A bound is one of the following, where *m* and *n* are unsigned decimal integers
+between 0 and `RE_DUP_MAX`:
+
+1. {*m*,*n*}
+2. {*m*,}
+3. {*m*}
+
+An atom followed by [1] matches a sequence of *m* through *n* (inclusive)
+matches of the atom. An atom followed by [2] matches a sequence of *m* or more
+matches of the atom. An atom followed by [3] matches a sequence of exactly *m*
+matches of the atom.
+
+Adding a `?` to a repeat operator makes the subexpression minimal, or
+non-greedy. Normally a repeated expression is greedy, that is, it matches as
+many characters as possible. A non-greedy subexpression matches as few
+characters as possible. Note that this does not (always) mean the same thing as
+matching as many or few repetitions as possible.
+
+**Bracket expressions**
+
+    bracket-expression ::= "[" item+ "]"
+                       |   "[^" item+ "]"
+
+A bracket expression specifies a set of characters by enclosing a nonempty list
+of items in brackets. Normally anything matching any item in the list is
+matched. If the list begins with `^` the meaning is negated; any character
+matching no item in the list is matched.
+
+An item is any of the following:
+
+* A single character, matching that character.
+* Two characters separated by `-`. This is shorthand for the full range of
+  characters between those two (inclusive) in the collating sequence. For
+  example, `[0-9]` in ASCII matches any decimal digit.
+* A collating element enclosed in `[.` and `.]`, matching the collating element.
+  This can be used to include a literal `-` or a multi-character collating
+  element in the list.
+* A collating element enclosed in `[=` and `=]` (an equivalence class), matching
+  all collating elements with the same primary collation weight as that element,
+  including the element itself.
+* The name of a character class enclosed in `[:` and `:]`, matching any
+  character belonging to the class. The set of valid names depends on the
+  `LC_CTYPE` category of the current locale, but the following names are valid
+  in all locales:
+  + `alnum` -- alphanumeric characters
+  + `alpha` -- alphabetic characters
+  + `blank` -- blank characters
+  + `cntrl` -- control characters
+  + `digit` -- decimal digits (0 through 9)
+  + `graph` -- all printable characters except space
+  + `lower` -- lower-case letters
+  + `print` -- printable characters including space
+  + `punct` -- printable characters not space or alphanumeric
+  + `space` -- white-space characters
+  + `upper` -- upper case letters
+  + `xdigit` -- hexadecimal digits
+
+To include a literal `-` in the list, make it either the first or last item, the
+second endpoint of a range, or enclose it in `[.` and `.]` to make it a
+collating element. To include a literal `]` in the list, make it either the
+first item, the second endpoint of a range, or enclose it in `[.` and `.]`. To
+use a literal `-` as the first endpoint of a range, enclose it in `[.` and `.].`
+
+**Assertions**
+
+    assertion ::= "^"
+              |   "$"
+              |   "\" assertion-character
+
+The expressions `^` and `$` are called "left anchor" and "right anchor",
+respectively. The left anchor matches the empty string at the beginning of the
+string. The right anchor matches the empty string at the end of the string.
+
+An assertion-character can be any of the following:
+
+* `<` -- Beginning of word
+* `>` -- End of word
+* `b` -- Word boundary
+* `B` -- Non-word boundary
+* `d` -- Digit character (equivalent to `[[:digit:]]`)
+* `D` -- Non-digit character (equivalent to `[^[:digit:]]`)
+* `s` -- Space character (equivalent to `[[:space:]]`)
+* `S` -- Non-space character (equivalent to `[^[:space:]]`)
+* `w` -- Word character (equivalent to `[[:alnum:]_]`)
+* `W` -- Non-word character (equivalent to `[^[:alnum:]_]`)
+
+**Literals**
+
+    literal ::= ordinary-character
+            |   "\x" ["1"-"9" "a"-"f" "A"-"F"]{0,2}
+            |   "\x{" ["1"-"9" "a"-"f" "A"-"F"]* "}"
+            |  "\" character
+
+A literal is either an ordinary character (a character that has no other
+significance in the context), an 8 bit hexadecimal encoded character (e.g.
+`\x1B`), a wide hexadecimal encoded character (e.g. `\x{263a}`), or an escaped
+character. An escaped character is a `\` followed by any character, and matches
+that character. Escaping can be used to match characters which have a special
+meaning in regexp syntax. A `\` cannot be the last character of an ERE. Escaping
+also allows you to include a few non-printable characters in the regular
+expression. These special escape sequences include:
+
+* `\a` -- Bell character (ASCII code 7)
+* `\e` -- Escape character (ASCII code 27)
+* `\f` -- Form-feed character (ASCII code 12)
+* `\n` -- New-line/line-feed character (ASCII code 10)
+* `\r` -- Carriage return character (ASCII code 13)
+* `\t` -- Horizontal tab character (ASCII code 9)
+
+An ordinary character is just a single character with no other significance, and
+matches that character. A `{` followed by something else than a digit is
+considered an ordinary character.
+
+**Back references**
+
+    back-reference ::= "\" ["1"-"9"]
+
+A back reference is a backslash followed by a single non-zero decimal digit *d*.
+It matches the same sequence of characters matched by the *d*th parenthesized
+subexpression.
+
+**Options**
+
+    options ::= ["i" "n" "r" "U"]* ("-" ["i" "n" "r" "U"]*)?
+
+Options allow compile time options to be turned on/off for particular parts of
+the regular expression. If the option is specified in the first section, it is
+turned on. If it is specified in the second section (after the `-`), it is
+turned off.
+
+* `i` -- Case insensitive.
+* `n` -- Forces special handling of the new line character.
+* `r` -- Causes the regex to be matched in a right associative manner rather than
+        the normal left associative manner.
+* `U` -- Forces repetition operators to be non-greedy unless a `?` is appended.
+
+[TRE]: https://github.com/laurikari/tre
+[TRE Regexp Syntax]: http://laurikari.net/tre/documentation/regex-syntax/
+
 ## Lua Patterns
 
 The following is from the [Lua 5.3 Reference Manual][].
@@ -1993,6 +2195,8 @@ goto\_view(n, relative)           |Changed |[goto\_view][](view)
 **ui.find**                       |        |
 FILTER                            |Renamed |[find\_in\_files\_filter][]
 find\_in\_files(dir)              |Changed |[find\_in\_files][](dir, filter)
+lua                               |Changed |[regex][]
+lua\_pattern\_label\_text         |Changed |[regex\_label\_text][]
 **view**                          |        |
 goto\_buffer(n, relative)         |Changed |[goto\_buffer][](buffer)
 **textadept.editing**             |        |
@@ -2035,6 +2239,8 @@ MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 [goto\_view]: api.html#ui.goto_view
 [find\_in\_files\_filter]: api.html#ui.find.find_in_files_filter
 [find\_in\_files]: api.html#ui.find.find_in_files
+[regex]: api.html#ui.find.regex
+[regex\_label\_text]: api.html#ui.find.regex_label_text
 [goto\_buffer]: api.html#view.goto_buffer
 [auto\_pairs]: api.html#textadept.editing.auto_pairs
 [typeover\_chars]: api.html#textadept.editing.typeover_chars
@@ -2088,6 +2294,12 @@ use of, you can put the following in your *~/.textadept/init.lua*:
         require(lexer..'/post_init')
       end
     end)
+
+#### Find & Replace Changes
+
+Find & replace with Lua patterns has been superceded by find & replace with
+Regular Expressions (regex). The [Regular Expressions](#Regular.Expressions)
+section above covers the regex syntax that Textadept supports.
 
 ### Textadept 7 to 8
 

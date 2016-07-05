@@ -16,8 +16,8 @@ local M = ui.find
 --   Match search text only when it is surrounded by non-word characters in
 --   searches.
 --   The default value is `false`.
--- @field lua (bool)
---   Interpret search text as a Lua pattern.
+-- @field regex (bool)
+--   Interpret search text as a Regular Expression.
 --   The default value is `false`.
 -- @field in_files (bool)
 --   Find search text in a list of files.
@@ -46,8 +46,8 @@ local M = ui.find
 -- @field whole_word_label_text (string, Write-only)
 --   The text of the "Whole word" label.
 --   This is primarily used for localization.
--- @field lua_pattern_label_text (string, Write-only)
---   The text of the "Lua pattern" label.
+-- @field regex_label_text (string, Write-only)
+--   The text of the "Regex" label.
 --   This is primarily used for localization.
 -- @field in_files_label_text (string, Write-only)
 --   The text of the "In files" label.
@@ -71,8 +71,7 @@ M.replace_button_text = not CURSES and _L['_Replace'] or _L['[Replace]']
 M.replace_all_button_text = not CURSES and _L['Replace _All'] or _L['[All]']
 M.match_case_label_text = not CURSES and _L['_Match case'] or _L['Case(F1)']
 M.whole_word_label_text = not CURSES and _L['_Whole word'] or _L['Word(F2)']
-M.lua_pattern_label_text = not CURSES and _L['_Lua pattern'] or
-                           _L['Pattern(F3)']
+M.regex_label_text = not CURSES and _L['Rege_x'] or _L['Regex(F3)']
 M.in_files_label_text = not CURSES and _L['_In files'] or _L['Files(F4)']
 
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
@@ -135,10 +134,10 @@ local function find(text, next, flags, no_wrap, wrapped)
     flags = 0
     if M.match_case then flags = flags + buffer.FIND_MATCHCASE end
     if M.whole_word then flags = flags + buffer.FIND_WHOLEWORD end
-    if M.lua then flags = flags + 8 end
-    if M.in_files then flags = flags + 16 end
+    if M.regex then flags = flags + buffer.FIND_REGEXP end
+    if M.in_files then flags = flags + 0x1000000 end -- next after 0x800000
   end
-  if flags >= 16 then M.find_in_files() return end -- not performed here
+  if flags >= 0x1000000 then M.find_in_files() return end -- not performed here
   local first_visible_line = buffer.first_visible_line -- for 'no results found'
 
   -- If text is selected, assume it is from the current search and increment the
@@ -148,36 +147,10 @@ local function find(text, next, flags, no_wrap, wrapped)
     buffer:goto_pos(buffer:position_relative(pos, next and 1 or -1))
   end
 
-  local pos = -1
-  if flags < 8 then
-    -- Scintilla search.
-    buffer:search_anchor()
-    pos = buffer['search_'..(next and 'next' or 'prev')](buffer, flags, text)
-    M.captures = nil -- clear captures from any previous Lua pattern searches
-  elseif flags < 16 then
-    -- Lua pattern search.
-    -- Note: I do not trust utf8.find completely, so only use it if there are
-    -- UTF-8 characters in the pattern. Otherwise default to string.find.
-    local lib_find = not text:find('[\xC2-\xF4]') and string.find or utf8.find
-    local s = next and buffer.current_pos or 0
-    local e = next and buffer.length or buffer.current_pos
-    local patt = text:gsub('\\[abfnrtv\\]', escapes)
-    if not next then patt = '^.*()'..patt end
-    local caps = {lib_find(buffer:text_range(s, e), patt)}
-    M.captures = {table.unpack(caps, next and 3 or 4)}
-    if #caps > 0 and caps[2] >= caps[1] then
-      if lib_find == string.find then
-        -- Positions are bytes.
-        pos, e = s + caps[next and 1 or 3] - 1, s + caps[2]
-      else
-        -- Positions are characters, which may be multiple bytes.
-        pos = buffer:position_relative(s, caps[next and 1 or 3] - 1)
-        e = buffer:position_relative(s, caps[2])
-      end
-      M.captures[0] = buffer:text_range(pos, e)
-      buffer:set_sel(e, pos)
-    end
-  end
+  -- Scintilla search.
+  buffer:search_anchor()
+  local f = buffer['search_'..(next and 'next' or 'prev')]
+  local pos = f(buffer, flags, text)
   buffer:scroll_range(buffer.anchor, buffer.current_pos)
 
   -- If nothing was found, wrap the search.
@@ -243,9 +216,9 @@ end
 ---
 -- Searches directory *dir* or the user-specified directory for files that match
 -- search text and search options (subject to optional filter *filter*), and
--- prints the results to a buffer titled "Files Found".
--- Use the `find_text`, `match_case`, `whole_word`, and `lua` fields to set the
--- search text and option flags, respectively.
+-- prints the results to a buffer titled "Files Found", highlighting found text.
+-- Use the `find_text`, `match_case`, `whole_word`, and `regex` fields to set
+-- the search text and option flags, respectively.
 -- @param dir Optional directory path to search. If `nil`, the user is prompted
 --   for one.
 -- @param filter Optional filter for files and directories to exclude. The
@@ -261,60 +234,53 @@ function M.find_in_files(dir, filter)
   }
   if not dir then return end
 
-  local text = M.find_entry_text
-  if not M.lua then text = text:gsub('([().*+?^$%%[%]-])', '%%%1') end
-  if not M.match_case then text = text:lower() end
-  if M.whole_word then text = '%f[%w_]'..text..'%f[^%w_]' end -- TODO: wordchars
-
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
   ui.silent_print = false
-  ui._print(_L['[Files Found Buffer]'], _L['Find:']..' '..text)
+  ui._print(_L['[Files Found Buffer]'], _L['Find:']..' '..M.find_entry_text)
   buffer.indicator_current = M.INDIC_FIND
+  local ff_buffer = buffer
 
-  -- Note: I do not trust utf8.find completely, so only use it if there are
-  -- UTF-8 characters in the pattern. Otherwise default to string.find.
-  local lib_find = not text:find('[\xC2-\xF4]') and string.find or utf8.find
+  local buffer = buffer.new() -- temporary buffer
+  local flags = 0
+  if M.match_case then flags = flags + buffer.FIND_MATCHCASE end
+  if M.whole_word then flags = flags + buffer.FIND_WHOLEWORD end
+  if M.regex then flags = flags + buffer.FIND_REGEXP end
+  buffer.search_flags = flags
+  local text = M.find_entry_text
   local found = false
   lfs.dir_foreach(dir, function(filename)
-    local match_case = M.match_case
+    buffer:clear_all()
+    buffer:empty_undo_buffer()
     local f = io.open(filename, 'rb')
-    local binary, line_num = nil, 1
-    for line in f:lines() do
-      local s, e = lib_find(match_case and line or line:lower(), text)
-      if s and e then
-        found = true
-        if binary == nil then
-          local pos = f:seek()
-          f:seek('set') -- rewind
-          binary = f:read(65536):find('\0')
-          f:seek('set', pos) -- restore
-        end
-        local utf8_filename = filename:iconv('UTF-8', _CHARSET)
-        if not binary then
-          buffer:append_text(string.format('%s:%d:%s\n', utf8_filename,
-                                           line_num, line))
-          local pos = buffer:position_from_line(buffer.line_count - 2) +
-                      #utf8_filename + #tostring(line_num) + 2
-          if lib_find == string.find then
-            -- Positions are bytes.
-            buffer:indicator_fill_range(pos + s - 1, e - s + 1)
-          else
-            -- Positions are characters, which may be multiple bytes.
-            s = buffer:position_relative(pos, s - 1)
-            e = buffer:position_relative(pos, e)
-            buffer:indicator_fill_range(s, e - s)
-          end
-        else
-          buffer:append_text(string.format('%s:1:%s\n', utf8_filename,
-                                           _L['Binary file matches.']))
-          break
-        end
-      end
-      line_num = line_num + 1
-    end
+    while f:read(0) do buffer:append_text(f:read(1048576)) end
+    --buffer:set_text(f:read('*a'))
     f:close()
+    local binary = nil -- determine lazily for performance reasons
+    buffer:target_whole_document()
+    while buffer:search_in_target(text) > -1 do
+      found = true
+      if binary == nil then binary = buffer:text_range(0, 65536):find('\0') end
+      local utf8_filename = filename:iconv('UTF-8', _CHARSET)
+      if not binary then
+        local line_num = buffer:line_from_position(buffer.target_start)
+        local line = buffer:get_line(line_num)
+        ff_buffer:append_text(string.format('%s:%d:%s', utf8_filename,
+                                            line_num + 1, line))
+        local pos = ff_buffer.length - #line +
+                    buffer.target_start - buffer:position_from_line(line_num)
+        ff_buffer:indicator_fill_range(pos,
+                                       buffer.target_end - buffer.target_start)
+        if not line:find('\n$') then ff_buffer:append_text('\n') end
+      else
+        ff_buffer:append_text(string.format('%s:1:%s\n', utf8_filename,
+                                            _L['Binary file matches.']))
+        break
+      end
+      buffer:set_target_range(buffer.target_end, buffer.length)
+    end
   end, filter or M.find_in_files_filter)
-  if not found then buffer:append_text(_L['No results found']) end
+  if not found then ff_buffer:append_text(_L['No results found']) end
+  buffer:delete() -- delete temporary buffer
   ui._print(_L['[Files Found Buffer]'], '') -- goto end, set save pos, etc.
 end
 
@@ -322,39 +288,14 @@ end
 -- `find()` is called first, to select any found text. The selected text is
 -- then replaced by the specified replacement text.
 -- This function ignores "Find in Files".
--- @param rtext The text to replace found text with. It can contain both Lua
---   capture items (`%n` where 1 <= `n` <= 9) for Lua pattern searches and `%()`
---   sequences for embedding Lua code for any search.
+-- @param rtext The text to replace found text with. It can contain regex
+--   capture groups (`\d` where 0 <= `d` <= 9).
 -- @see find
 local function replace(rtext)
   if buffer.selection_empty then return end
   if M.in_files then M.in_files = false end
   buffer:target_from_selection()
-  rtext = rtext:gsub('\\[abfnrtv\\]', escapes):gsub('%%%%', '\\037')
-  if M.captures then
-    for i = 0, #M.captures do
-      rtext = rtext:gsub('%%'..i, (M.captures[i]:gsub('%%', '%%%%')))
-    end
-  end
-  local ok
-  ok, rtext = pcall(string.gsub, rtext, '%%(%b())', function(code)
-    code = code:gsub('[\a\b\f\n\r\t\v\\]', escapes)
-    local result = assert(load('return '..code))()
-    return tostring(result):gsub('\\[abfnrtv\\]', escapes)
-  end)
-  if ok then
-    buffer:replace_target(rtext:gsub('\\037', '%%'))
-    buffer:goto_pos(buffer.target_end) -- 'find' text after this replacement
-  else
-    ui.dialogs.msgbox{
-      title = _L['Error'], text = _L['An error occured:'],
-      informative_text = rtext:match(':1:(.+)$') or rtext:match(':%d+:(.+)$'),
-      icon = 'gtk-dialog-error'
-    }
-    -- Since find is called after replace returns, have it 'find' the current
-    -- text again, rather than the next occurance so the user can fix the error.
-    buffer:goto_pos(buffer.current_pos)
-  end
+  buffer[not M.regex and 'replace_target' or 'replace_target_re'](buffer, rtext)
 end
 events.connect(events.REPLACE, replace)
 
@@ -399,15 +340,15 @@ events.connect(events.REPLACE_ALL, replace_all)
 -- Returns whether or not the given buffer is a files found buffer.
 local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 ---
--- Jumps to the source of the find in files search result on line number *line*
--- in the buffer titled "Files Found" or, if *line* is `nil`, jumps to the next
--- or previous search result, depending on boolean *next*.
--- @param line The line number in the files found buffer that contains the
+-- Jumps to the source of the find in files search result on line number
+-- *line_num* in the buffer titled "Files Found" or, if *line_num* is `nil`,
+-- jumps to the next or previous search result, depending on boolean *next*.
+-- @param line_num The line number in the files found buffer that contains the
 --   search result to go to.
 -- @param next Optional flag indicating whether to go to the next search result
---   or the previous one. Only applicable when *line* is `nil` or `false`.
+--   or the previous one. Only applicable when *line_num* is `nil` or `false`.
 -- @name goto_file_found
-function M.goto_file_found(line, next)
+function M.goto_file_found(line_num, next)
   local ff_view, ff_buf = nil, nil
   for i = 1, #_VIEWS do
     if is_ff_buf(_VIEWS[i].buffer) then ff_view = _VIEWS[i] break end
@@ -419,27 +360,40 @@ function M.goto_file_found(line, next)
   if ff_view then ui.goto_view(ff_view) else view:goto_buffer(ff_buf) end
 
   -- If no line was given, find the next search result.
-  if not line and next ~= nil then
+  if not line_num and next ~= nil then
     if next then buffer:line_end() else buffer:home() end
     buffer:search_anchor()
     local f = buffer['search_'..(next and 'next' or 'prev')]
-    local pos = f(buffer, buffer.FIND_REGEXP, '^.+:[0-9]+:.+$')
+    local pos = f(buffer, buffer.FIND_REGEXP, '^.+:\\d+:.+$')
     if pos == -1 then
       buffer:goto_line(next and 0 or buffer.line_count)
       buffer:search_anchor()
-      pos = f(buffer, buffer.FIND_REGEXP, '^.+:[0-9]+:.+$')
+      pos = f(buffer, buffer.FIND_REGEXP, '^.+:\\d+:.+$')
     end
     if pos == -1 then return end
-    line = buffer:line_from_position(pos)
+    line_num = buffer:line_from_position(pos)
   end
-  buffer:goto_line(line)
+  buffer:goto_line(line_num)
 
   -- Goto the source of the search result.
-  local utf8_filename, line_num = buffer:get_cur_line():match('^(.+):(%d+):.+$')
+  local line = buffer:get_cur_line()
+  local utf8_filename, pos
+  utf8_filename, line_num, pos = line:match('^(.+):(%d+):().+$')
   if not utf8_filename then return end
   textadept.editing.select_line()
+  pos = buffer.anchor + pos - 1 -- absolute position of result text on line
+  local s = buffer:indicator_end(M.INDIC_FIND, pos)
+  local e = buffer:indicator_end(M.INDIC_FIND, s + 1)
+  if buffer:line_from_position(s) == buffer:line_from_position(pos) then
+    s, e = s - pos, e - pos -- relative to line start
+  else
+    s, e = 0, 0 -- binary file notice, or highlighting was somehow removed
+  end
   ui.goto_file(utf8_filename:iconv(_CHARSET, 'UTF-8'), true, preferred_view)
   textadept.editing.goto_line(line_num - 1)
+  if buffer:line_from_position(buffer.current_pos + s) == line_num - 1 then
+    buffer:set_sel(buffer.current_pos + e, buffer.current_pos + s)
+  end
 end
 events.connect(events.KEYPRESS, function(code)
   if keys.KEYSYMS[code] == '\n' and is_ff_buf(buffer) then

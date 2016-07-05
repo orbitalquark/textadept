@@ -209,7 +209,7 @@ local M = {}
 -- Up             |⇡              |^N          |Cycle forward through history
 -- N/A            |N/A            |F1          |Toggle "Match Case"
 -- N/A            |N/A            |F2          |Toggle "Whole Word"
--- N/A            |N/A            |F3          |Toggle "Lua Pattern"
+-- N/A            |N/A            |F3          |Toggle "Regex"
 -- N/A            |N/A            |F4          |Toggle "Find in Files"
 --
 -- †: Some terminals interpret ^Z as suspend.
