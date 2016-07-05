@@ -52,6 +52,10 @@ local M = ui.find
 -- @field in_files_label_text (string, Write-only)
 --   The text of the "In files" label.
 --   This is primarily used for localization.
+-- @field find_in_files_timeout (number)
+--   The approximate interval in seconds between prompts for continuing an
+--   "In files" search.
+--   The default value is 10 seconds.
 -- @field INDIC_FIND (number)
 --   The find in files highlight indicator number.
 -- @field _G.events.FIND_WRAPPED (string)
@@ -74,6 +78,7 @@ M.whole_word_label_text = not CURSES and _L['_Whole word'] or _L['Word(F2)']
 M.regex_label_text = not CURSES and _L['Rege_x'] or _L['Regex(F3)']
 M.in_files_label_text = not CURSES and _L['_In files'] or _L['Files(F4)']
 
+M.find_in_files_timeout = 10
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
 -- Events.
@@ -241,13 +246,12 @@ function M.find_in_files(dir, filter)
   local ff_buffer = buffer
 
   local buffer = buffer.new() -- temporary buffer
-  local flags = 0
+  buffer.code_page = 0
+  local text, flags, found, ref_time = M.find_entry_text, 0, false, os.time()
   if M.match_case then flags = flags + buffer.FIND_MATCHCASE end
   if M.whole_word then flags = flags + buffer.FIND_WHOLEWORD end
   if M.regex then flags = flags + buffer.FIND_REGEXP end
   buffer.search_flags = flags
-  local text = M.find_entry_text
-  local found = false
   lfs.dir_foreach(dir, function(filename)
     buffer:clear_all()
     buffer:empty_undo_buffer()
@@ -277,6 +281,18 @@ function M.find_in_files(dir, filter)
         break
       end
       buffer:set_target_range(buffer.target_end, buffer.length)
+    end
+    if os.difftime(os.time(), ref_time) >= M.find_in_files_timeout then
+      local continue = ui.dialogs.yesno_msgbox{
+        title = _L['Continue?'],
+        text = _L['Still searching in files... Continue waiting?'],
+        icon = 'gtk-dialog-question', no_cancel = true
+      } == 1
+      if not continue then
+        ff_buffer:append_text(_L['Find in Files aborted']..'\n')
+        return false
+      end
+      ref_time = os.time()
     end
   end, filter or M.find_in_files_filter)
   if not found then ff_buffer:append_text(_L['No results found']) end

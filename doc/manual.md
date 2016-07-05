@@ -742,14 +742,14 @@ file-type filter. While the default filter excludes many common binary files
 and version control folders from searches, Find in Files could still scan
 unrecognized binary files or large, unwanted sub-directories. Searches also
 block Textadept from receiving additional input, making the interface
-temporarily unresponsive. Searching large directories or projects can be very
-time consuming and frustrating, so you may prefer to use a specialized, external
-tool such as [ack][].
+temporarily unresponsive. By default, every 10 seconds or so, Textadept will
+prompt you to continue a "Find in Files" search, allowing you to cancel one that
+is taking too long. You can change this timeout in your
+[preferences](#Module.Preferences).
 
 ![Find in Files](images/findinfiles.png)
 
 [find API]: api.html#ui.find.find_in_files_filter
-[ack]: http://betterthangrep.com/
 
 ### Incremental Find
 
@@ -999,11 +999,13 @@ the sections below. Theming is covered in a later section.
 Many of Textadept's default modules come with configurable settings that can be
 changed from your *~/.textadept/init.lua* (which is executed after those modules
 are loaded). Each module's [API documentation][] lists any configurable settings
-it has. For example, in order to always hide the tab bar, disable character
-autopairing with typeover, strip trailing whitespace on save, and use C99-style
-line comments in C code, add the following to *~/.textadept/init.lua*:
+it has. For example, in order to always hide the tab bar, shorten the "Find in
+Files" timeout prompt, disable character autopairing with typeover, strip
+trailing whitespace on save, and use C99-style line comments in C code, add the
+following to *~/.textadept/init.lua*:
 
     ui.tabs = false
+    ui.find.find_in_files_timeout = 5
     textadept.editing.auto_pair = nil
     textadept.editing.typeover_chars = nil
     textadept.editing.strip_trailing_spaces = true
@@ -1023,6 +1025,10 @@ under version control in order to be recognized as one), you can tell it how to
 do so:
 
     textadept.run.build_commands['/path/to/project'] = 'shell command'
+
+**Tip:** You can quickly view the documentation for the setting under the caret
+by pressing `Ctrl+H` (`^H` on Mac OSX | `M-H` or `M-S-H` in curses). This
+applies to pretty much any Lua identifier, not just settings.
 
 [API documentation]: api.html
 
@@ -2195,6 +2201,7 @@ goto\_view(n, relative)           |Changed |[goto\_view][](view)
 **ui.find**                       |        |
 FILTER                            |Renamed |[find\_in\_files\_filter][]
 find\_in\_files(dir)              |Changed |[find\_in\_files][](dir, filter)
+N/A                               |Added   |[find\_in\_files\_timeout][]
 lua                               |Changed |[regex][]
 lua\_pattern\_label\_text         |Changed |[regex\_label\_text][]
 **view**                          |        |
@@ -2239,6 +2246,7 @@ MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 [goto\_view]: api.html#ui.goto_view
 [find\_in\_files\_filter]: api.html#ui.find.find_in_files_filter
 [find\_in\_files]: api.html#ui.find.find_in_files
+[find\_in\_files\_timeout]: api.html#ui.find.find_in_files_timeout
 [regex]: api.html#ui.find.regex
 [regex\_label\_text]: api.html#ui.find.regex_label_text
 [goto\_buffer]: api.html#view.goto_buffer
