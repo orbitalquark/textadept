@@ -14,6 +14,8 @@ module('_M.lua')]]
 -- List of "fake" ctags files to use for autocompletion.
 -- The kind 'm' is recognized as a module, 'f' as a function, 't' as a table and
 -- 'F' as a module or table field.
+-- The *modules/lua/tadoc.lua* script can generate *tags* and
+-- [*api*](#textadept.editing.api_files) files for Lua modules via LuaDoc.
 -- @class table
 -- @name tags
 M.tags = {_HOME..'/modules/lua/tags', _USERHOME..'/modules/lua/tags'}

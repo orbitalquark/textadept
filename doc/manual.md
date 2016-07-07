@@ -1492,6 +1492,33 @@ using Lua" is not an exaggeration!
 [shows the pane]: api.html#ui.find.focus
 [menu action]: api.html#textadept.menu.menubar
 
+### Generating Autocompletions and Documentation
+
+Generate Lua
+[autocompletion and documentation](#Autocompletion.and.Documentation) files for
+your own modules using the *modules/lua/tadoc.lua* [LuaDoc][] module:
+
+    luadoc -d [output_path] --doclet _HOME/modules/lua/tadoc.lua [module(s)]
+
+where `_HOME` is the path where you installed Textadept and `output_path` is
+an arbitrary path to write the generated *tags* and *api* files to. You can then
+use your *~/.textadept/init.lua* file to load those completions and API docs for
+use within Textadept when editing [Lua files][]:
+
+    events.connect(events.LEXER_LOADED, function(lexer)
+      if lexer == 'lua' then
+        _M.lua.tags[#_M.lua.tags + 1] = '/path/to/tags'
+        local lua_api_files = textadept.editing.api_files.lua
+        lua_api_files[#lua_api_files + 1] = '/path/to/api'
+      end
+    end)
+
+Textadept uses this script to generate its own *tags* and *api* files for its
+Lua API.
+
+[LuaDoc]: http://keplerproject.github.com/luadoc/
+[Lua files]: api.html#_M.lua
+
 ### Generating LuaDoc
 
 Generate Textadept-like API documentation for your own modules using the
