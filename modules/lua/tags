@@ -434,7 +434,6 @@ bufstatusbar_text	_	0;"	F	class:ui
 build	_	0;"	f	class:textadept.run
 build_commands	_	0;"	t	class:textadept.run
 byte	_	0;"	f	class:string
-byte	_	0;"	f	class:utf8
 call_tip_active	_	0;"	f	class:buffer
 call_tip_cancel	_	0;"	f	class:buffer
 call_tip_fore_hlt	_	0;"	F	class:buffer
@@ -593,12 +592,12 @@ fileselect	_	0;"	f	class:ui.dialogs
 filter_through	_	0;"	f	class:textadept.editing
 filteredlist	_	0;"	f	class:ui.dialogs
 find	_	0;"	f	class:string
-find	_	0;"	f	class:utf8
 find	_	0;"	m	class:ui
 find_column	_	0;"	f	class:buffer
 find_entry_text	_	0;"	F	class:ui.find
 find_in_files	_	0;"	f	class:ui.find
 find_in_files_filter	_	0;"	t	class:ui.find
+find_in_files_timeout	_	0;"	F	class:ui.find
 find_incremental	_	0;"	f	class:ui.find
 find_label_text	_	0;"	F	class:ui.find
 find_next	_	0;"	f	class:ui.find
@@ -649,7 +648,6 @@ getregistry	_	0;"	f	class:debug
 getupvalue	_	0;"	f	class:debug
 getuservalue	_	0;"	f	class:debug
 gmatch	_	0;"	f	class:string
-gmatch	_	0;"	f	class:utf8
 goto_anchor	_	0;"	f	class:_M.yaml
 goto_buffer	_	0;"	f	class:view
 goto_error	_	0;"	f	class:textadept.run
@@ -663,7 +661,6 @@ goto_section	_	0;"	f	class:_M.rest
 goto_view	_	0;"	f	class:ui
 graph	_	0;"	F	class:lexer
 gsub	_	0;"	f	class:string
-gsub	_	0;"	f	class:utf8
 h_scroll_bar	_	0;"	F	class:buffer
 height	_	0;"	F	class:ui.command_entry
 hex_num	_	0;"	F	class:lexer
@@ -776,16 +773,13 @@ log	_	0;"	f	class:math
 log10	_	0;"	f	class:math
 lower	_	0;"	F	class:lexer
 lower	_	0;"	f	class:string
-lower	_	0;"	f	class:utf8
 lower_case	_	0;"	f	class:buffer
 lpeg	_	0;"	m	
 lrotate	_	0;"	f	class:bit32
 lshift	_	0;"	f	class:bit32
-lua	_	0;"	F	class:ui.find
 lua	_	0;"	m	class:_M
 lua	_	0;"	t	class:keys
 lua	_	0;"	t	class:snippets
-lua_pattern_label_text	_	0;"	F	class:ui.find
 main_selection	_	0;"	F	class:buffer
 margin_cursor_n	_	0;"	F	class:buffer
 margin_left	_	0;"	F	class:buffer
@@ -818,7 +812,6 @@ marker_previous	_	0;"	f	class:buffer
 marker_symbol_defined	_	0;"	f	class:buffer
 match	_	0;"	f	class:lpeg
 match	_	0;"	f	class:string
-match	_	0;"	f	class:utf8
 match_brace	_	0;"	f	class:textadept.editing
 match_case	_	0;"	F	class:ui.find
 match_case_label_text	_	0;"	F	class:ui.find
@@ -935,6 +928,8 @@ rectangular_selection_caret	_	0;"	F	class:buffer
 rectangular_selection_caret_virtual_space	_	0;"	F	class:buffer
 rectangular_selection_modifier	_	0;"	F	class:buffer
 redo	_	0;"	f	class:buffer
+regex	_	0;"	F	class:ui.find
+regex_label_text	_	0;"	F	class:ui.find
 register	_	0;"	f	class:args
 register_image	_	0;"	f	class:buffer
 register_rgba_image	_	0;"	f	class:buffer
@@ -961,7 +956,6 @@ rest	_	0;"	t	class:keys
 rest	_	0;"	t	class:snippets
 resume	_	0;"	f	class:coroutine
 reverse	_	0;"	f	class:string
-reverse	_	0;"	f	class:utf8
 rgba_image_height	_	0;"	F	class:buffer
 rgba_image_scale	_	0;"	F	class:buffer
 rgba_image_width	_	0;"	F	class:buffer
@@ -1103,7 +1097,6 @@ style_size	_	0;"	F	class:buffer
 style_underline	_	0;"	F	class:buffer
 style_visible	_	0;"	F	class:buffer
 sub	_	0;"	f	class:string
-sub	_	0;"	f	class:utf8
 swap_main_anchor_caret	_	0;"	f	class:buffer
 switch_buffer	_	0;"	f	class:ui
 symlinkattributes	_	0;"	f	class:lfs
@@ -1176,7 +1169,6 @@ unpack	_	0;"	f	class:table
 unsplit	_	0;"	f	class:view
 upper	_	0;"	F	class:lexer
 upper	_	0;"	f	class:string
-upper	_	0;"	f	class:utf8
 upper_case	_	0;"	f	class:buffer
 upvalueid	_	0;"	f	class:debug
 upvaluejoin	_	0;"	f	class:debug
