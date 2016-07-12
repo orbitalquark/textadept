@@ -9,10 +9,47 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 9.0 alpha (01 Jul 2016)
+## 9.0 alpha 2 (11 Jul 2016)
 
 Please see the [8 to 9 migration guide][] for upgrading from Textadept 8 to
 Textadept 9.
+
+Download:
+
+* [Textadept 9.0 alpha 2 -- Win32][] | [PGP -- 9.0 alpha 2 Win32][]
+* [Textadept 9.0 alpha 2 -- Mac OSX Intel 10.5+][] | [PGP -- 9.0 alpha 2 OSX][]
+* [Textadept 9.0 alpha 2 -- Linux][] | [PGP -- 9.0 alpha 2 Linux][]
+* [Textadept 9.0 alpha 2 -- Linux x86_64][] | [PGP -- 9.0 alpha 2 Linux x86_64][]
+* [Textadept 9.0 alpha 2 -- Modules][] | [PGP -- 9.0 alpha 2 Modules][]
+
+Bugfixes:
+
+* Check range bounds for [`buffer:text_range()`][].
+* Fixed inability to properly halt [`lfs.dir_foreach()`][].
+
+Changes:
+
+* Replaced Lua pattern searches with [regular expressions][].
+* Added [timeout prompt][] to Find in Files. (10 second default.)
+* Better differentiation between Python 2 and 3 run commands.
+
+[8 to 9 migration guide]: manual.html#Textadept.8.to.9
+[Textadept 9.0 alpha 2 -- Win32]: download/textadept_9.0_alpha_2.win32.zip
+[Textadept 9.0 alpha 2 -- Mac OSX Intel 10.5+]: download/textadept_9.0_alpha_2.osx.zip
+[Textadept 9.0 alpha 2 -- Linux]: download/textadept_9.0_alpha_2.i386.tgz
+[Textadept 9.0 alpha 2 -- Linux x86_64]: download/textadept_9.0_alpha_2.x86_64.tgz
+[Textadept 9.0 alpha 2 -- Modules]: download/textadept_9.0_alpha_2.modules.zip
+[PGP -- 9.0 alpha 2 Win32]: download/textadept_9.0_alpha_2.win32.zip.asc
+[PGP -- 9.0 alpha 2 OSX]: download/textadept_9.0_alpha_2.osx.zip.asc
+[PGP -- 9.0 alpha 2 Linux]: download/textadept_9.0_alpha_2.i386.tgz.asc
+[PGP -- 9.0 alpha 2 Linux x86_64]: download/textadept_9.0_alpha_2.x86_64.tgz.asc
+[PGP -- 9.0 alpha 2 Modules]: download/textadept_9.0_alpha_2.modules.zip.asc
+[`buffer:text_range()`]: api.html#buffer.text_range
+[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
+[regular expressions]: manual.html#Regular.Expressions
+[timeout prompt]: api.html#ui.find.find_in_files_timeout
+
+## 9.0 alpha (01 Jul 2016)
 
 Download:
 
@@ -62,7 +99,7 @@ Changes:
   [`textadept.run.error_patterns`][].
 * Rewrote sections 7-9 in the [manual][] and added a new part to section 11.
   Understanding how to configure and script Textadept should be easier now.
-* [`textadept.editing.goto_line()`] takes a 0-based line number like all
+* [`textadept.editing.goto_line()`][] takes a 0-based line number like all
   Scintilla functions.
 * [`ui.goto_view()`][] and [`view:goto_buffer()`][] now take actual `view` and
   `buffer` arguments, respectively, or a relative number.
@@ -70,7 +107,6 @@ Changes:
 * Updated to [Scintilla][] 3.6.6.
 * Updated to [Lua][] 5.3.3
 
-[8 to 9 migration guide]: manual.html#Textadept.8.to.9
 [Textadept 9.0 alpha -- Win32]: download/textadept_9.0_alpha.win32.zip
 [Textadept 9.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_9.0_alpha.osx.zip
 [Textadept 9.0 alpha -- Linux]: download/textadept_9.0_alpha.i386.tgz
