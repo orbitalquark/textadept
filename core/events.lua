@@ -272,9 +272,8 @@ function M.connect(event, f, index)
   -- Note: cannot assert() here since _L is undefined early in init process.
   if not event then error(_L['Undefined event name']) end
   if not handlers[event] then handlers[event] = {} end
-  if handlers[event][f] then M.disconnect(event, f) end
+  M.disconnect(event, f) -- in case it already exists
   table.insert(handlers[event], index or #handlers[event] + 1, f)
-  handlers[event][f] = index or #handlers[event]
 end
 
 ---
@@ -284,9 +283,10 @@ end
 -- @see connect
 -- @name disconnect
 function M.disconnect(event, f)
-  if not handlers[event] or not handlers[event][f] then return end
-  table.remove(handlers[event], handlers[event][f])
-  handlers[event][f] = nil
+  if not handlers[event] then return end
+  for i = 1, #handlers[event] do
+    if handlers[event][i] == f then table.remove(handlers[event], i) break end
+  end
 end
 
 local error_emitted = false
@@ -309,6 +309,7 @@ function M.emit(event, ...)
   local h = handlers[event]
   if not h then return end
   for i = 1, #h do
+    if not h[i] then break end -- M.disconnect() for this event was called
     local ok, result = pcall(h[i], ...)
     if not ok then
       if not error_emitted then
