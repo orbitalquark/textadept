@@ -148,7 +148,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   -- If text is selected, assume it is from the current search and increment the
   -- caret appropriately for the next search.
   if not buffer.selection_empty then
-    local pos = buffer[next and 'current_pos' or 'anchor']
+    local pos = buffer[next and 'selection_end' or 'selection_start']
     buffer:goto_pos(buffer:position_relative(pos, next and 1 or -1))
   end
 
@@ -312,6 +312,7 @@ local function replace(rtext)
   if M.in_files then M.in_files = false end
   buffer:target_from_selection()
   buffer[not M.regex and 'replace_target' or 'replace_target_re'](buffer, rtext)
+  buffer:set_sel(buffer.target_start, buffer.target_end)
 end
 events.connect(events.REPLACE, replace)
 
