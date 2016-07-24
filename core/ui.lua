@@ -302,6 +302,10 @@ events_connect(events.BUFFER_NEW, function()
   buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
 end)
 
+-- Switches between buffers when a tab is clicked.
+events_connect(events.TAB_CLICKED,
+               function(index) view:goto_buffer(_BUFFERS[index]) end)
+
 -- Sets the title of the Textadept window to the buffer's filename.
 local function set_title()
   local filename = buffer.filename or buffer._type or _L['Untitled']

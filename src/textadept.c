@@ -1846,9 +1846,7 @@ static void w_quit_osx(GtkosxApplication*_, void*__) {
  */
 static void t_tabchange(GtkNotebook*_, GtkWidget*__, int page_num, void*___) {
   if (tab_sync) return;
-  lL_event(lua, "buffer_before_switch", -1);
-  lL_gotodoc(lua, focused_view, page_num + 1, FALSE);
-  lL_event(lua, "buffer_after_switch", -1);
+  lL_event(lua, "tab_clicked", LUA_TNUMBER, page_num + 1, -1);
 }
 
 /**
