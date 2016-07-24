@@ -218,6 +218,13 @@ local M = {}
 --   Emitted when suspending Textadept. If any handler returns `true`, Textadept
 --   does not suspend.
 --   This event is only emitted by the terminal version.
+-- @field TAB_CLICKED (string)
+--   Emitted when the user clicks on a buffer tab.
+--   When connecting to this event, connect with an index of 1 if the handler
+--   needs to run before Textadept switches between buffers.
+--   Arguments:
+--
+--   * _`index`_: The numeric index of the clicked tab.
 -- @field UPDATE_UI (string)
 --   Emitted after the view is visually updated.
 --   Arguments:
@@ -366,7 +373,7 @@ local textadept_events = {
   'buffer_deleted', 'buffer_new', 'csi', 'error', 'find', 'focus',
   'initialized', 'keypress', 'menu_clicked', 'mouse', 'quit', 'replace',
   'replace_all', 'reset_after', 'reset_before', 'resume', 'suspend',
-  'view_after_switch', 'view_before_switch', 'view_new'
+  'tab_clicked', 'view_after_switch', 'view_before_switch', 'view_new'
 }
 for _, e in pairs(textadept_events) do M[e:upper()] = e end
 
