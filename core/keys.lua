@@ -195,9 +195,13 @@ end
 -- @param control Whether or not the Control modifier is pressed.
 -- @param alt Whether or not the Alt/option modifier is pressed.
 -- @param meta Whether or not the Command modifier on Mac OSX is pressed.
+-- @param caps_lock Whether or not Caps Lock is enabled.
 -- @return `true` to stop handling the key; `nil` otherwise.
-local function keypress(code, shift, control, alt, meta)
-  --print(code, M.KEYSYMS[code], shift, control, alt, meta)
+local function keypress(code, shift, control, alt, meta, caps_lock)
+  --print(code, M.KEYSYMS[code], shift, control, alt, meta, caps_lock)
+  if caps_lock and (shift or control or alt or meta) and code < 256 then
+    code = string[shift and 'upper' or 'lower'](string.char(code)):byte()
+  end
   local key = code < 256 and (not CURSES or (code ~= 7 and code ~= 13)) and
               string.char(code) or M.KEYSYMS[code]
   if not key then return end

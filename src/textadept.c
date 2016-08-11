@@ -1944,7 +1944,8 @@ static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
 /** Signal for a Scintilla keypress. */
 static int s_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
   return lL_event(lua, "keypress", LUA_TNUMBER, event->keyval, event_mod(SHIFT),
-                  event_mod(CONTROL), event_mod(MOD1), event_mod(META), -1);
+                  event_mod(CONTROL), event_mod(MOD1), event_mod(META),
+                  event_mod(LOCK), -1);
 }
 
 /** Signal for a Scintilla mouse click. */
