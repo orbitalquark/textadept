@@ -17,12 +17,12 @@ BEGIN
 		BEGIN
 			VALUE	"CompanyName",	"Mitchell\0"
 			VALUE	"FileDescription",	"textadept\0"
-			VALUE	"FileVersion",	"9.0 alpha 2\0"
+			VALUE	"FileVersion",	"9.0 beta\0"
 			VALUE	"InternalName",	"textadept\0"
 			VALUE	"LegalCopyright",	"Copyright 2006-2016 by Mitchell\0"
 			VALUE	"OriginalFilename",	"textadept.exe\0"
 			VALUE	"ProductName",	"textadept\0"
-			VALUE	"ProductVersion",	"9.0 alpha 2\0"
+			VALUE	"ProductVersion",	"9.0 beta\0"
 		END
 	END
 END
