@@ -271,6 +271,7 @@ STYLE_TYPE	_	0;"	F	class:lexer
 STYLE_VARIABLE	_	0;"	F	class:lexer
 STYLE_WHITESPACE	_	0;"	F	class:lexer
 SUSPEND	_	0;"	F	class:events
+TAB_CLICKED	_	0;"	F	class:events
 TIME_FOREVER	_	0;"	F	class:buffer
 TYPE	_	0;"	F	class:lexer
 TYPEDEF	_	0;"	F	class:textadept.editing.XPM_IMAGES
