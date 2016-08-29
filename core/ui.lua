@@ -74,7 +74,7 @@ local function _print(buffer_type, ...)
   print_buffer:set_save_point()
 end
 ---
--- Prints the given string messages to the buffer of type *buffer_type*.
+-- Prints the given string messages to the buffer of string type *buffer_type*.
 -- Opens a new buffer for printing messages to if necessary. If the message
 -- buffer is already open in a view, the message is printed to that view.
 -- Otherwise the view is split (unless `ui.tabs` is `true`) and the message

@@ -312,8 +312,8 @@
 --   Display the horizontal scroll bar.
 --   The default value is `true`.
 -- @field highlight_guide (number)
---   The indentation guide column number to highlight, or `0` to stop
---   highlighting.
+--   The indentation guide column number to also highlight when highlighting
+--   matching braces, or `0` to stop indentation guide highlighting.
 -- @field idle_styling (number)
 --   The idle styling mode.
 --   This mode has no effect when `buffer.wrap_mode` is on.
