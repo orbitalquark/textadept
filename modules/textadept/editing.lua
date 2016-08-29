@@ -518,7 +518,7 @@ function M.filter_through(command)
   local p = spawn(command)
   p:write(buffer.target_text)
   p:close()
-  buffer:replace_target(p:read('*a'))
+  buffer:replace_target(p:read('*a'):iconv('UTF-8', _CHARSET))
   if s ~= e then
     buffer:set_sel(buffer.target_start, buffer.target_end)
   else
