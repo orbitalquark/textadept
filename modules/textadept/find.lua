@@ -331,6 +331,7 @@ local function replace_all(ftext, rtext)
   if buffer.selection_empty then
     buffer:goto_pos(0)
     while find(ftext, true, nil, true) ~= -1 do
+      if buffer.selection_empty then break end -- prevent infinite loops
       replace(rtext)
       count = count + 1
     end
