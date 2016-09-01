@@ -9,10 +9,50 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 9.0 alpha 2 (11 Jul 2016)
+## 9.0 beta (01 Sep 2016)
 
 Please see the [8 to 9 migration guide][] for upgrading from Textadept 8 to
 Textadept 9.
+
+Download:
+
+* [Textadept 9.0 beta -- Win32][] | [PGP -- 9.0 beta Win32][]
+* [Textadept 9.0 beta -- Mac OSX Intel 10.5+][] | [PGP -- 9.0 beta OSX][]
+* [Textadept 9.0 beta -- Linux][] | [PGP -- 9.0 beta Linux][]
+* [Textadept 9.0 beta -- Linux x86_64][] | [PGP -- 9.0 beta Linux x86_64][]
+* [Textadept 9.0 beta -- Modules][] | [PGP -- 9.0 beta Modules][]
+
+Bugfixes:
+
+* Fixed potential bug with [`events.disconnect()`][].
+* Fixed potential infinite loop with "Replace All" in selection.
+* Fixed passing of quoted arguments to OSX `ta` script.
+* Fixed CapsLock key handling.
+* Fixed button order in the terminal version's dialogs.
+* Fixed potential crash on Windows with [`textadept.editing.filter_through()`][]
+  and some locales.
+* Fixed infinite loop in "Replace All" with zero-length regex matches.
+
+Changes:
+
+* Added [`events.TAB_CLICKED`][] event.
+
+[8 to 9 migration guide]: manual.html#Textadept.8.to.9
+[Textadept 9.0 beta -- Win32]: download/textadept_9.0_beta.win32.zip
+[Textadept 9.0 beta -- Mac OSX Intel 10.5+]: download/textadept_9.0_beta.osx.zip
+[Textadept 9.0 beta -- Linux]: download/textadept_9.0_beta.i386.tgz
+[Textadept 9.0 beta -- Linux x86_64]: download/textadept_9.0_beta.x86_64.tgz
+[Textadept 9.0 beta -- Modules]: download/textadept_9.0_beta.modules.zip
+[PGP -- 9.0 beta Win32]: download/textadept_9.0_beta.win32.zip.asc
+[PGP -- 9.0 beta OSX]: download/textadept_9.0_beta.osx.zip.asc
+[PGP -- 9.0 beta Linux]: download/textadept_9.0_beta.i386.tgz.asc
+[PGP -- 9.0 beta Linux x86_64]: download/textadept_9.0_beta.x86_64.tgz.asc
+[PGP -- 9.0 beta Modules]: download/textadept_9.0_beta.modules.zip.asc
+[`events.disconnect()`]: api.html#events.disconnect
+[`textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
+[`events.TAB_CLICKED`]: api.html#events.TAB_CLICKED
+
+## 9.0 alpha 2 (11 Jul 2016)
 
 Download:
 
@@ -33,7 +73,6 @@ Changes:
 * Added [timeout prompt][] to Find in Files. (10 second default.)
 * Better differentiation between Python 2 and 3 run commands.
 
-[8 to 9 migration guide]: manual.html#Textadept.8.to.9
 [Textadept 9.0 alpha 2 -- Win32]: download/textadept_9.0_alpha_2.win32.zip
 [Textadept 9.0 alpha 2 -- Mac OSX Intel 10.5+]: download/textadept_9.0_alpha_2.osx.zip
 [Textadept 9.0 alpha 2 -- Linux]: download/textadept_9.0_alpha_2.i386.tgz
@@ -435,7 +474,7 @@ Changes:
 
 * Highlight found text in "Find in Files" searches.
 * Added Italian translation and updated French translation.
-* Added [automatic syntax checking][] as source files are saved, along with
+* Added automatic syntax checking as source files are saved, along with
   `textadept.run.CHECK_SYNTAX` and `textadept.run.GOTO_SYNTAX_ERRORS`
   configuration fields.
 * Scintilla: multiple selection works over more key commands like caret
@@ -454,7 +493,6 @@ Changes:
 [PGP -- 8.2 Linux]: download/textadept_8.2.i386.tgz.asc
 [PGP -- 8.2 Linux x86_64]: download/textadept_8.2.x86_64.tgz.asc
 [PGP -- 8.2 Modules]: download/textadept_8.2.modules.zip.asc
-[automatic syntax checking]: api.html#_M.Syntax.Checking
 [`events.AUTO_C_COMPLETED`]: api.html#events.AUTO_C_COMPLETED
 [Scintilla]: http://scintilla.org
 
