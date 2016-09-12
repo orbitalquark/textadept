@@ -37,6 +37,7 @@ private contract work related to Textadept.
 * Gabriel Dubatti
 * Gilles Grégoire
 * Giovanni Salmeri
+* Heck Fy
 * Ivan Baidakou
 * Jay Gould
 * Jeff Stone

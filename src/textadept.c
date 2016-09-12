@@ -596,7 +596,6 @@ static int lce_focus(lua_State *L) {
 
 /** `ui.dialog()` Lua function. */
 static int lui_dialog(lua_State *L) {
-  GTDialogType type = gtdialog_type(luaL_checkstring(L, 1));
   int i, j, k, n = lua_gettop(L) - 1, argc = n;
   for (i = 2; i < n + 2; i++)
     if (lua_istable(L, i)) argc += lua_rawlen(L, i) - 1;
@@ -611,7 +610,7 @@ static int lui_dialog(lua_State *L) {
       }
     } else argv[i++] = luaL_checkstring(L, j);
   argv[argc] = NULL;
-  char *out = gtdialog(type, argc, argv);
+  char *out = gtdialog(gtdialog_type(luaL_checkstring(L, 1)), argc, argv);
   lua_pushstring(L, out);
   free(out), free(argv);
 #if (CURSES && _WIN32)
@@ -1941,8 +1940,18 @@ static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
 }
 
 #if GTK
-/** Signal for a Scintilla keypress. */
+/**
+ * Signal for a Scintilla keypress.
+ * Translate Ctrl-, Alt-, or Meta-modified keys to their group 0 key values
+ * (which are typically ASCII values) as necessary in order for bindings like
+ * Ctrl+Z to work on international keyboards.
+ */
 static int s_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
+  if (event->group > 0 &&
+      (event->state & (GDK_CONTROL_MASK | GDK_MOD1_MASK | GDK_META_MASK)))
+    gdk_keymap_translate_keyboard_state(gdk_keymap_get_default(),
+                                        event->hardware_keycode, 0, 0,
+                                        &event->keyval, NULL, NULL, NULL);
   return lL_event(lua, "keypress", LUA_TNUMBER, event->keyval, event_mod(SHIFT),
                   event_mod(CONTROL), event_mod(MOD1), event_mod(META),
                   event_mod(LOCK), -1);
