@@ -290,10 +290,10 @@ function M.build(root_directory)
   end
   -- Run the command.
   cwd = working_dir or root_directory
-  events.emit(event, '> cd '..cwd)
-  events.emit(event, '> '..command:iconv('UTF-8', _CHARSET))
+  events.emit(events.BUILD_OUTPUT, '> cd '..cwd)
+  events.emit(events.BUILD_OUTPUT, '> '..command:iconv('UTF-8', _CHARSET))
   proc = assert(spawn(command, cwd, emit_output, emit_output, function(status)
-    events.emit(event, '> exit status: '..status)
+    events.emit(events.BUILD_OUTPUT, '> exit status: '..status)
   end))
 end
 events.connect(events.BUILD_OUTPUT, print_output)
