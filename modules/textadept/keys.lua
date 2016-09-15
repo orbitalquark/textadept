@@ -79,6 +79,7 @@ local M = {}
 -- Ctrl+Shift+E    |⌘⇧E    |M-S-C        |Select command
 -- Ctrl+R          |⌘R     |^R           |Run
 -- Ctrl+Shift+R    |⌘⇧R    |M-^R         |Compile
+-- Ctrl+Shift+A    |⌘⇧A    |None         |Set Arguments...
 -- Ctrl+Shift+B    |⌘⇧B    |M-^B         |Build
 -- Ctrl+Shift+X    |⌘⇧X    |M-^X         |Stop
 -- Ctrl+Alt+E      |^⌘E    |M-X          |Next Error
