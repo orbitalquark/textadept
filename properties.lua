@@ -70,7 +70,6 @@ end
 buffer.annotation_visible = buffer.ANNOTATION_BOXED
 
 -- Other.
-buffer.buffered_draw = not CURSES and not OSX -- Quartz buffers drawing on OSX
 --buffer.word_chars =
 --buffer.whitespace_chars =
 --buffer.punctuation_chars =

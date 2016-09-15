@@ -136,11 +136,6 @@
 -- @field back_space_un_indents (bool)
 --   Un-indent text when backspacing within indentation.
 --   The default value is `false`.
--- @field buffered_draw (bool)
---   Buffer drawing to avoid flickering.
---   Buffering draws each line of text into a bitmap buffer before drawing the
---   bitmap to the screen.
---   The default value is `true`.
 -- @field call_tip_fore_hlt (number, Write-only)
 --   A call tip's highlighted text foreground color, in "0xBBGGRR" format.
 -- @field call_tip_pos_start (number, Write-only)
@@ -803,6 +798,10 @@
 --     Enable virtual space only for rectangular selections.
 --   * `buffer.VS_USERACCESSIBLE`
 --     Enable virtual space.
+--   * `buffer.VS_NOWRAPLINESTART`
+--     Prevent the caret from wrapping to the previous line via
+--     `buffer:char_left()` and `buffer:char_left_extend()`. This option is not
+--     restricted to virtual space.
 --
 --   When virtual space is enabled, the caret may move into the space past end
 --   of line characters.
@@ -3123,6 +3122,7 @@ function set_lexer(buffer, lexer) end
 --   * allocate_extended_styles
 --   * allocate_sub_styles
 --   * assign_cmd_key
+--   * buffered_draw
 --   * can_paste
 --   * change_insertion
 --   * change_lexer_state
