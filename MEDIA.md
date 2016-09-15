@@ -11,8 +11,13 @@
 *Textadept Quick Reference*<br/>
 Second Edition
 
-Order: [Ebook][] | Print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][],
-[ES][]
+<script src="https://gumroad.com/js/gumroad.js"></script>
+<p>
+  <a target="_blank" class="gumroad-button"
+     href="https://gum.co/textadept2_ebook?wanted=true">Order the Ebook</a>
+</p>
+
+Order the print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][], [ES][]
 
 Published: May 2015
 ISBN: 978-0-9912379-1-3<br/>
@@ -41,7 +46,6 @@ This book covers how to:
 It serves as the perfect complement to Textadept's comprehensive Manual and
 exhaustive API documentation.
 
-[Ebook]: http://gum.co/textadept2_ebook
 [US]: http://www.amazon.com/Textadept-Quick-Reference-Mitchell/dp/0991237919/
 [UK]: http://www.amazon.co.uk/Textadept-Quick-Reference-Mitchell/dp/0991237919/
 [DE]: http://www.amazon.de/Textadept-Quick-Reference-Mitchell/dp/0991237919/
