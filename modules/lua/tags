@@ -430,7 +430,6 @@ btest	_	0;"	f	class:bit32
 buffer	_	0;"	m	
 buffer	_	0;"	t	
 buffer	_	0;"	t	class:view
-buffered_draw	_	0;"	F	class:buffer
 bufstatusbar_text	_	0;"	F	class:ui
 build	_	0;"	f	class:textadept.run
 build_commands	_	0;"	t	class:textadept.run
