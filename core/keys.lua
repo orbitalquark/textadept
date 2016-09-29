@@ -206,6 +206,7 @@ local function keypress(code, shift, control, alt, meta, caps_lock)
               string.char(code) or M.KEYSYMS[code]
   if not key then return end
   shift = shift and (code >= 256 or code == 9) -- printable chars are uppercased
+  if OSX and alt and code < 256 then alt = false end -- composed key; ignore alt
   local key_seq = (control and CTRL or '')..(alt and ALT or '')..
                   (meta and OSX and META or '')..(shift and SHIFT or '')..key
   --print(key_seq)
