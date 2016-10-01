@@ -1942,13 +1942,14 @@ static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
 #if GTK
 /**
  * Signal for a Scintilla keypress.
- * Translate Ctrl-, Alt-, or Meta-modified keys to their group 0 key values
- * (which are typically ASCII values) as necessary in order for bindings like
- * Ctrl+Z to work on international keyboards.
+ * Translate Ctrl-, or Meta-modified keys to their group 0 key values (which are
+ * typically ASCII values) as necessary in order for bindings like Ctrl+Z to
+ * work on international keyboards.
+ * Do not modify Alt- keys since they may be composed.
  */
 static int s_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
   if (event->group > 0 &&
-      (event->state & (GDK_CONTROL_MASK | GDK_MOD1_MASK | GDK_META_MASK)))
+      (event->state & (GDK_CONTROL_MASK | GDK_META_MASK)))
     gdk_keymap_translate_keyboard_state(gdk_keymap_get_default(),
                                         event->hardware_keycode, 0, 0,
                                         &event->keyval, NULL, NULL, NULL);
