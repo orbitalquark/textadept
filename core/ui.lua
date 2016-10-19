@@ -401,7 +401,7 @@ local function save_view_state()
   buffer._view_eol, buffer._view_ws = buffer.view_eol, buffer.view_ws
   buffer._wrap_mode = buffer.wrap_mode
   buffer._margin_type_n, buffer._margin_width_n = {}, {}
-  for i = 0, 4 do
+  for i = 0, buffer.margins - 1 do
     buffer._margin_type_n[i] = buffer.margin_type_n[i]
     buffer._margin_width_n[i] = buffer.margin_width_n[i]
   end
@@ -415,7 +415,7 @@ local function restore_view_state()
   if not buffer._margin_type_n then return end
   buffer.view_eol, buffer.view_ws = buffer._view_eol, buffer._view_ws
   buffer.wrap_mode = buffer._wrap_mode
-  for i = 0, 4 do
+  for i = 0, buffer.margins - 1 do
     buffer.margin_type_n[i] = buffer._margin_type_n[i]
     buffer.margin_width_n[i] = buffer._margin_width_n[i]
   end

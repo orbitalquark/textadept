@@ -47,6 +47,16 @@ local function text_range(buffer, start_pos, end_pos)
 end
 events.connect(events.BUFFER_NEW, function() buffer.text_range = text_range end)
 
+local _brace_match
+-- Compatibility function for Scintilla's current `buffer:brace_match()`, which
+-- has an extra, required `0` parameter (introduced in 3.7.0).
+-- Documentation is in core/.buffer.luadoc.
+local function brace_match(buffer, pos) return _brace_match(buffer, pos, 0) end
+events.connect(events.BUFFER_NEW, function()
+  if not _brace_match then _brace_match = buffer.brace_match end
+  buffer.brace_match = brace_match
+end)
+
 --[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's _G table to provide extra functions and fields for Textadept.
