@@ -218,8 +218,8 @@
 --
 --   The default value is `buffer.CURSORNORMAL`.
 -- @field edge_colour (number)
---   The color, in "0xBBGGRR" format, of the edge or background for long lines
---   according to `buffer.edge_mode`.
+--   The color, in "0xBBGGRR" format, of the single edge or background for long
+--   lines according to `buffer.edge_mode`.
 -- @field edge_column (number)
 --   The column number to mark long lines at.
 -- @field edge_mode (number)
@@ -228,11 +228,14 @@
 --   * `buffer.EDGE_NONE`
 --     Long lines are not marked.
 --   * `buffer.EDGE_LINE`
---     Draw a vertical line whose color is [`buffer.edge_colour`]() at column
---     [`buffer.edge_column`]().
+--     Draw a single vertical line whose color is [`buffer.edge_colour`]() at
+--     column [`buffer.edge_column`]().
 --   * `buffer.EDGE_BACKGROUND`
 --     Change the background color of text after column [`buffer.edge_column`]()
 --     to [`buffer.edge_colour`]().
+--   * `buffer.EDGE_MULTILINE`
+--     Draw vertical lines whose colors and columns are defined by calls to
+--     [`buffer:multi_edge_add_line()`]().
 -- @field encoding (string or nil)
 --   The string encoding of the file, or `nil` for binary files.
 -- @field end_at_last_line (bool)
@@ -452,8 +455,16 @@
 -- @field main_selection (number)
 --   The number of the main, or most recent, selection.
 --   Only an existing selection can be made main.
+-- @field margins (number)
+--   The number of margins.
+--   The default value is `5`.
+-- @field margin_back_n (table)
+--   Table of background colors, in "0xBBGGRR" format, of margin numbers from
+--   `0` to `buffer.margins - 1` (`4` by default).
+--   Only affects margins of type `buffer.MARGIN_COLOUR`.
 -- @field margin_cursor_n (table)
---   Table of cursor types shown over margin numbers from zero to four.
+--   Table of cursor types shown over margin numbers from `0` to
+--   `buffer.margins - 1` (`4` by default).
 --
 --   * `buffer.CURSORARROW`
 --     Normal arrow cursor.
@@ -466,7 +477,8 @@
 --   The default value is `1`.
 -- @field margin_mask_n (table)
 --   Table of bit-masks of markers whose symbols marker symbol margins can
---   display for margin numbers from zero to four.
+--   display for margin numbers from `0` to `buffer.margins - 1` (`4` by
+--   default).
 --   Bit-masks are 32-bit values whose bits correspond to the 32 available
 --   markers.
 --   The default values are `0`, `bit32.bnot(buffer.MASK_FOLDERS)`, `0`, `0`,
@@ -486,7 +498,8 @@
 --   The default value is `1`.
 -- @field margin_sensitive_n (table)
 --   Table of flags that indicate whether or not mouse clicks in margins emit
---   `MARGIN_CLICK` events for margin numbers from zero to four.
+--   `MARGIN_CLICK` events for margin numbers from `0` to `buffer.margins - 1`
+--   (`4` by default).
 --   The default values are `false`.
 -- @field margin_style (table)
 --   Table of style numbers for line numbers starting from zero in the text
@@ -497,7 +510,8 @@
 --   Table of text displayed in text margins for line numbers starting from
 --   zero.
 -- @field margin_type_n (table)
---   Table of margin types for margin numbers from zero to four.
+--   Table of margin types for margin numbers from `0` to `buffer.margins - 1`
+--   (`4` by default).
 --
 --   * `buffer.MARGIN_SYMBOL`
 --     A marker symbol margin.
@@ -507,17 +521,20 @@
 --     A marker symbol margin whose background color matches the default text
 --     background color.
 --   * `buffer.MARGIN_FORE`
---     A marker symbol margin whose foreground color matches the default text
+--     A marker symbol margin whose background color matches the default text
 --     foreground color.
 --   * `buffer.MARGIN_TEXT`
 --     A text margin.
 --   * `buffer.MARGIN_RTEXT`
 --     A right-justified text margin.
+--   * `buffer.MARGIN_COLOUR`
+--     A marker symbol margin whose background color is configurable.
 --
 --   The default value for the first margin is `buffer.MARGIN_NUMBER`, followed
 --   by `buffer.MARGIN_SYMBOL` for the rest.
 -- @field margin_width_n (table)
---   Table of pixel margin widths for margin numbers from zero to four.
+--   Table of pixel margin widths for margin numbers from `0` to
+--   `buffer.margins - 1` (`4` by default).
 -- @field marker_alpha (table, Write-only)
 --   Table of alpha values, ranging from `0` (transparent) to `255` (opaque),
 --   of markers drawn in the text area (not the margin) for markers numbers from
@@ -905,6 +922,8 @@
 --
 -- @field EDGE_LINE (number, Read-only)
 --
+-- @field EDGE_MULTILINE (number, Read-only)
+--
 -- @field EDGE_NONE (number, Read-only)
 --
 -- @field INDIC_BOX (number, Read-only)
@@ -1062,6 +1081,8 @@
 -- @field MARGINOPTION_SUBLINESELECT (number, Read-only)
 --
 -- @field MARGIN_BACK (number, Read-only)
+--
+-- @field MARGIN_COLOUR (number, Read-only)
 --
 -- @field MARGIN_FORE (number, Read-only)
 --
@@ -2267,6 +2288,19 @@ function multiple_select_add_each(buffer) end
 function multiple_select_add_next(buffer) end
 
 ---
+-- Adds a new vertical line at column number *column* with color *color*, in
+-- "0xBBGGRR" format.
+-- @param buffer A buffer.
+-- @param column The column number to add a vertical line at.
+-- @param color The color in "0xBBGGRR" format.
+function multi_edge_add_line(buffer, column, color) end
+
+---
+-- Clears all vertical lines created by `buffer:multi_edge_add_line()`.
+-- @param buffer A buffer.
+function multi_edge_clear_all(buffer) end
+
+---
 -- Types a new line at the caret position according to [`buffer.eol_mode`]().
 -- @param buffer A buffer.
 function new_line(buffer) end
@@ -3153,6 +3187,7 @@ function set_lexer(buffer, lexer) end
 --   * hide_selection
 --   * indicator_value_at
 --   * load_lexer_library
+--   * mouse_wheel_captures
 --   * null
 --   * point_x_from_position
 --   * point_y_from_position

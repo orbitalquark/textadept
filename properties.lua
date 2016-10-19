@@ -59,7 +59,7 @@ buffer.margin_width_n[1] = not CURSES and 4 or 1
 buffer.margin_width_n[2] = not CURSES and 12 or 1
 buffer.margin_mask_n[2] = buffer.MASK_FOLDERS
 -- Other Margins.
-for i = 1, 4 do
+for i = 1, buffer.margins - 1 do
   buffer.margin_type_n[i] = buffer.MARGIN_SYMBOL
   buffer.margin_sensitive_n[i] = true
   buffer.margin_cursor_n[i] = buffer.CURSORARROW
