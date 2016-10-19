@@ -145,11 +145,10 @@ local function find(text, next, flags, no_wrap, wrapped)
   if flags >= 0x1000000 then M.find_in_files() return end -- not performed here
   local first_visible_line = buffer.first_visible_line -- for 'no results found'
 
-  -- If text is selected, assume it is from the current search and increment the
+  -- If text is selected, assume it is from the current search and move the
   -- caret appropriately for the next search.
   if not buffer.selection_empty then
-    local pos = buffer[next and 'selection_end' or 'selection_start']
-    buffer:goto_pos(buffer:position_relative(pos, next and 1 or -1))
+    buffer:goto_pos(buffer[next and 'selection_end' or 'selection_start'])
   end
 
   -- Scintilla search.
