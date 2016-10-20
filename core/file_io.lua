@@ -120,15 +120,19 @@ function io.open_file(filenames)
     end
     local buffer = buffer.new()
     -- Try to detect character encoding and convert to UTF-8.
-    if not text:sub(1, 65536):find('\0') then
-      for j = 1, #io.encodings do
+    local has_zeroes = text:sub(1, 65536):find('\0')
+    for j = 1, #io.encodings do
+      if not has_zeroes or io.encodings[j]:find('^UTF%-[13][62]') then
         local ok, conv = pcall(string.iconv, text, 'UTF-8', io.encodings[j])
-        if ok then buffer.encoding, text = io.encodings[j], conv break end
+        if ok then
+          buffer.encoding, text = io.encodings[j], conv
+          goto encoding_detected
+        end
       end
-      assert(buffer.encoding, _L['Encoding conversion failed.'])
-    else
-      buffer.encoding = nil -- binary (default was 'UTF-8')
     end
+    assert(has_zeroes, _L['Encoding conversion failed.'])
+    buffer.encoding = nil -- binary (default was 'UTF-8')
+    ::encoding_detected::
     buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
     -- Detect EOL mode.
     buffer.eol_mode = text:find('\r\n') and buffer.EOL_CRLF or buffer.EOL_LF
