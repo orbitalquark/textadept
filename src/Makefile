@@ -73,8 +73,11 @@ else
     MAKE = gmake
   endif
   PREFIX ?= /usr/local
+  XDG_DATA_DIR ?= $(PREFIX)/share/applications
   bin_dir = $(DESTDIR)$(PREFIX)/bin
   data_dir = $(DESTDIR)$(PREFIX)/share/textadept
+  xdg_data_dir = $(DESTDIR)$(XDG_DATA_DIR)
+  svg_file = $(data_dir)/core/images/textadept.svg
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     plat_flag = -DGTK
     ifndef GTK3
@@ -272,7 +275,16 @@ install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
 	install $^ $(data_dir)
 	cp -r $| $(data_dir)
 	ln -s $(subst .., $(subst $(DESTDIR),, $(data_dir)), $^) $(bin_dir)
-uninstall: ; rm -r $(bin_dir)/textadept* $(data_dir)
+	if [ -d $(XDG_DATA_DIR) ]; then \
+		mkdir -p $(xdg_data_dir); \
+		for desktop_file in `ls *.desktop`; do \
+			sed -e 's|Icon=textadept.svg|Icon=$(svg_file)|' $$desktop_file > \
+			$(xdg_data_dir)/$$desktop_file; \
+		done; \
+	fi
+uninstall:
+	rm -r $(bin_dir)/textadept* $(data_dir)
+	if [ -d $(XDG_DATA_DIR) ]; then rm $(xdg_data_dir)/textadept*.desktop; fi
 
 # Clean.
 
