@@ -73,11 +73,11 @@ else
     MAKE = gmake
   endif
   PREFIX ?= /usr/local
+  bin_dir = $(PREFIX)/bin
+  data_dir = $(PREFIX)/share/textadept
   XDG_DATA_DIR ?= $(PREFIX)/share/applications
-  bin_dir = $(DESTDIR)$(PREFIX)/bin
-  data_dir = $(DESTDIR)$(PREFIX)/share/textadept
-  xdg_data_dir = $(DESTDIR)$(XDG_DATA_DIR)
   svg_file = $(data_dir)/core/images/textadept.svg
+  desktop_files := $(wildcard *.desktop)
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     plat_flag = -DGTK
     ifndef GTK3
@@ -271,20 +271,22 @@ textadeptjit-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
 
 install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
                               ../modules ../properties.lua ../themes
-	install -d $(bin_dir) $(data_dir)
-	install $^ $(data_dir)
-	cp -r $| $(data_dir)
-	ln -s $(subst .., $(subst $(DESTDIR),, $(data_dir)), $^) $(bin_dir)
-	if [ -d $(XDG_DATA_DIR) ]; then \
-		mkdir -p $(xdg_data_dir); \
-		for desktop_file in `ls *.desktop`; do \
+	install -d $(DESTDIR)$(bin_dir) $(DESTDIR)$(data_dir)
+	install $^ $(DESTDIR)$(data_dir)
+	cp -r $| $(DESTDIR)$(data_dir)
+	ln -s $(subst .., $(data_dir), $^) $(DESTDIR)$(bin_dir)
+	if [ -d "$(XDG_DATA_DIR)" ]; then \
+		install -d $(DESTDIR)$(XDG_DATA_DIR); \
+		for desktop_file in $(desktop_files); do \
 			sed -e 's|Icon=textadept.svg|Icon=$(svg_file)|' $$desktop_file > \
-			$(xdg_data_dir)/$$desktop_file; \
+			$(DESTDIR)$(XDG_DATA_DIR)/$$desktop_file; \
 		done; \
 	fi
 uninstall:
-	rm -r $(bin_dir)/textadept* $(data_dir)
-	if [ -d $(XDG_DATA_DIR) ]; then rm $(xdg_data_dir)/textadept*.desktop; fi
+	rm -r $(DESTDIR)$(bin_dir)/textadept* $(DESTDIR)$(data_dir)
+	if [ -d "$(XDG_DATA_DIR)" ]; then \
+		rm $(DESTDIR)$(XDG_DATA_DIR)/textadept*.desktop; \
+	fi
 
 # Clean.
 
