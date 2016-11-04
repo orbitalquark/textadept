@@ -284,7 +284,6 @@ local default_menubar = {
       {_L['_UTF-8 Encoding'], function() set_encoding('UTF-8') end},
       {_L['_ASCII Encoding'], function() set_encoding('ASCII') end},
       {_L['_ISO-8859-1 Encoding'], function() set_encoding('ISO-8859-1') end},
-      {_L['_MacRoman Encoding'], function() set_encoding('MacRoman') end},
       {_L['UTF-1_6 Encoding'], function() set_encoding('UTF-16LE') end}
     },
     SEPARATOR,
