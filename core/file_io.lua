@@ -81,7 +81,7 @@ io.recent_files = {}
 -- @usage io.encodings[#io.encodings + 1] = 'UTF-16'
 -- @class table
 -- @name encodings
-io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'MacRoman'}
+io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1'}
 
 ---
 -- Opens *filenames*, a string filename or list of filenames, or the

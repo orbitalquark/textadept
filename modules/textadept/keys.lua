@@ -115,7 +115,6 @@ local M = {}
 -- None            |None  |None         |UTF-8 encoding
 -- None            |None  |None         |ASCII encoding
 -- None            |None  |None         |ISO-8859-1 encoding
--- None            |None  |None         |MacRoman encoding
 -- None            |None  |None         |UTF-16 encoding
 -- Ctrl+Shift+L    |⌘⇧L   |M-S-L        |Select lexer...
 -- F5              |F5    |^L<br/>F5    |Refresh syntax highlighting
@@ -447,7 +446,6 @@ keys[not OSX and (GUI and 'cai' or 'mi')
 -- TODO: m_buffer[_L['E_ncoding']][_L['_UTF-8 Encoding']][2]
 -- TODO: m_buffer[_L['E_ncoding']][_L['_ASCII Encoding']][2]
 -- TODO: m_buffer[_L['E_ncoding']][_L['_ISO-8859-1 Encoding']][2]
--- TODO: m_buffer[_L['E_ncoding']][_L['_MacRoman Encoding']][2]
 -- TODO: m_buffer[_L['E_ncoding']][_L['UTF-1_6 Encoding']][2]
 if GUI then
   keys[not OSX and 'ca\n' or 'c\n'] = m_buffer[_L['Toggle View _EOL']][2]
