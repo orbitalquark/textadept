@@ -384,7 +384,7 @@ local default_tab_context_menu = {
 -- Table of proxy tables for menus.
 local proxies = {}
 
-local key_shortcuts, menu_actions, contextmenu_actions
+local key_shortcuts, menu_items, contextmenu_items
 
 -- Returns the GDK integer keycode and modifier mask for a key sequence.
 -- This is used for creating menu accelerators.
@@ -421,13 +421,13 @@ local function read_menu_table(menu, contextmenu)
       gtkmenu[#gtkmenu + 1] = read_menu_table(menu[i], contextmenu)
     else
       local label, f = menu[i][1], menu[i][2]
-      local menu_id = not contextmenu and #menu_actions + 1 or
-                      #contextmenu_actions + 1000 + 1
+      local menu_id = not contextmenu and #menu_items + 1 or
+                      #contextmenu_items + 1000 + 1
       local key, mods = get_gdk_key(key_shortcuts[tostring(f)])
       gtkmenu[#gtkmenu + 1] = {label, menu_id, key, mods}
       if f then
-        local actions = not contextmenu and menu_actions or contextmenu_actions
-        actions[menu_id < 1000 and menu_id or menu_id - 1000] = f
+        local menu_items = not contextmenu and menu_items or contextmenu_items
+        menu_items[menu_id < 1000 and menu_id or menu_id - 1000] = menu[i]
       end
     end
   end
@@ -456,7 +456,9 @@ local function proxy_menu(menu, update, menubar)
     end,
     __newindex = function(_, k, v)
       menu[k] = getmetatable(v) and getmetatable(v).menu or v
-      update(menubar or menu)
+      -- After adding or removing menus or menu items, update the menubar or
+      -- context menu. When updating a menu item's function, do nothing extra.
+      if not type(v) == 'function' then update(menubar or menu) end
     end,
     __len = function() return #menu end,
     menu = menu -- store existing menu for copying (e.g. m[#m + 1] = m[#m])
@@ -476,7 +478,7 @@ end
 -- @see ui.menu
 local function set_menubar(menubar)
   if not menubar then ui.menubar = {} return end
-  key_shortcuts, menu_actions = {}, {} -- reset
+  key_shortcuts, menu_items = {}, {} -- reset
   for key, f in pairs(keys) do key_shortcuts[tostring(f)] = key end
   local _menubar = {}
   for i = 1, #menubar do
@@ -502,7 +504,7 @@ events.connect(events.INITIALIZED, function() set_menubar(default_menubar) end)
 -- @see ui.tab_context_menu
 -- @see ui.menu
 local function set_contextmenus(buffer_menu, tab_menu)
-  contextmenu_actions = {} -- reset
+  contextmenu_items = {} -- reset
   local menu = buffer_menu or default_context_menu
   ui.context_menu = ui.menu(read_menu_table(menu, true))
   proxies.context_menu = proxy_menu(menu, set_contextmenus)
@@ -516,8 +518,8 @@ events.connect(events.INITIALIZED, set_contextmenus)
 
 -- Performs the appropriate action when clicking a menu item.
 events.connect(events.MENU_CLICKED, function(menu_id)
-  local actions = menu_id < 1000 and menu_actions or contextmenu_actions
-  local action = actions[menu_id < 1000 and menu_id or menu_id - 1000]
+  local menu_item = menu_id < 1000 and menu_items or contextmenu_items
+  local action = menu_item[menu_id < 1000 and menu_id or menu_id - 1000][2]
   assert(type(action) == 'function',
          _L['Unknown command:']..' '..tostring(action))
   action()
