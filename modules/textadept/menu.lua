@@ -458,7 +458,7 @@ local function proxy_menu(menu, update, menubar)
       menu[k] = getmetatable(v) and getmetatable(v).menu or v
       -- After adding or removing menus or menu items, update the menubar or
       -- context menu. When updating a menu item's function, do nothing extra.
-      if not type(v) == 'function' then update(menubar or menu) end
+      if type(v) ~= 'function' then update(menubar or menu) end
     end,
     __len = function() return #menu end,
     menu = menu -- store existing menu for copying (e.g. m[#m + 1] = m[#m])
