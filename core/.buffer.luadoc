@@ -268,6 +268,17 @@
 --   The absolute file path associated with the buffer.
 -- @field first_visible_line (number)
 --   The line number of the line at the top of the view, starting from zero.
+-- @field fold_display_text_style (number)
+--   The fold display text mode.
+--
+--   * `buffer.FOLDDISPLAYTEXT_HIDDEN`
+--     Fold display text is not shown.
+--   * `buffer.FOLDDISPLAYTEXT_STANDARD`
+--     Fold display text is shown with no decoration.
+--   * `buffer.FOLDDISPLAYTEXT_BOXED`
+--     Fold display text is shown outlined with a box.
+--
+--   The default value is `buffer.FOLDDISPLAYTEXT_HIDDEN`.
 -- @field fold_expanded (table)
 --   Table of flags that indicate whether or not fold points are expanded for
 --   line numbers starting from zero.
@@ -422,6 +433,11 @@
 --     potentially touching any similar indicators on the line above.
 --   * `buffer.INDIC_TEXTFORE`
 --     Changes the color of text to an indicator's foreground color.
+--   * `buffer.INDIC_POINT`
+--     A triangle below the start of the indicator range.
+--   * `buffer.INDIC_POINTCHARACTER`
+--     A triangle below the centre of the first character of the indicator
+--     range.
 --
 --   Use [`_SCINTILLA.next_indic_number()`]() for custom indicators.
 --   Changing an indicator's style resets that indicator's hover style.
@@ -762,6 +778,15 @@
 --   Table of flags that indicate whether or not text is visible for style
 --   numbers from `0` to `255`.
 --   The default values are `true`.
+-- @field tab_draw_mode (number)
+--   The draw mode of visible tabs.
+--
+--   * `buffer.TD_LONGARROW`
+--     An arrow that stretches until the tabstop.
+--   * `buffer.TD_STRIKEOUT`
+--     A horizontal line that stretches until the tabstop.
+--
+--   The default value is `buffer.TD_LONGARROW`.
 -- @field tab_indents (bool)
 --   Indent text when tabbing within indentation.
 --   The default value is `false`.
@@ -1247,6 +1272,8 @@
 -- @field STYLE_CONTROLCHAR (number, Read-only)
 --
 -- @field STYLE_DEFAULT (number, Read-only)
+--
+-- @field STYLE_FOLDDISPLAYTEXT (number, Read-only)
 --
 -- @field STYLE_INDENTGUIDE (number, Read-only)
 --
@@ -2796,6 +2823,17 @@ function toggle_caret_sticky(buffer) end
 function toggle_fold(buffer, line) end
 
 ---
+-- Toggles a fold point on line number *line* between expanded (where all of
+-- its child lines are displayed) and contracted (where all of its child lines
+-- are hidden), and shows string *text* after the line.
+-- *text* is drawn with style number `buffer.STYLE_FOLDDISPLAYTEXT`.
+-- @param buffer A buffer.
+-- @param line The line number in *buffer* to toggle the fold on and display
+--   *text* after.
+-- @param text The text to display after the line.
+function toggle_fold_display_text(buffer, line, text) end
+
+---
 -- Undoes the most recent action.
 -- @param buffer A buffer.
 function undo(buffer) end
@@ -3118,7 +3156,6 @@ function set_lexer(buffer, lexer) end
 --   * technology
 --   * two_phase_draw
 --   * undo_collection
---   * use_palette
 --   * INDIC_CONTAINER
 --   * MOD_NORM
 --   * CP_UTF8

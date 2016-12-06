@@ -165,6 +165,7 @@ buffer.property['fold'] = '1'
 buffer.automatic_fold = buffer.AUTOMATICFOLD_SHOW + buffer.AUTOMATICFOLD_CLICK +
                         buffer.AUTOMATICFOLD_CHANGE
 buffer.fold_flags = not CURSES and buffer.FOLDFLAG_LINEAFTER_CONTRACTED or 0
+buffer.fold_display_text_style = buffer.FOLDDISPLAYTEXT_BOXED
 
 -- Line Wrapping.
 buffer.wrap_mode = buffer.WRAP_NONE

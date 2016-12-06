@@ -112,7 +112,7 @@ sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
 sci_lex_objs = Accessor.o CharacterCategory.o CharacterSet.o LexerBase.o \
                LexerModule.o LexerNoExceptions.o LexerSimple.o PropSetSimple.o \
                StyleContext.o WordList.o
-sci_gtk_objs = PlatGTK.o ScintillaGTK.o
+sci_gtk_objs = PlatGTK.o ScintillaGTK.o ScintillaGTKAccessible.o
 regex_objs = regcomp.o regerror.o regexec.o tre-ast.o tre-compile.o \
              tre-filter.o tre-match-backtrack.o tre-match-parallel.o tre-mem.o \
              tre-parse.o tre-stack.o xmalloc.o
@@ -401,10 +401,10 @@ else
   lspawn_url = http://foicica.com/hg/lspawn/archive/tip.zip
 endif
 
-scintilla_tgz = scintilla370.tgz
+scintilla_tgz = scintilla371.tgz
 tre_zip = cdce45e8dd7a3b36954022b4a4d3570e1ac5a4f8.zip
 scinterm_zip = scinterm_1.8.zip
-scintillua_zip = scintillua_3.7.0-1.zip
+scintillua_zip = scintillua_3.7.1-1.zip
 lua_tgz = lua-5.3.3.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
