@@ -2185,7 +2185,7 @@ static Scintilla *new_view(sptr_t doc) {
 #elif CURSES
   Scintilla *view = scintilla_new(s_notify);
 #endif
-  SS(view, SCI_USEPOPUP, 0, 0);
+  SS(view, SCI_USEPOPUP, SC_POPUP_NEVER, 0);
   lL_addview(lua, view);
   l_setglobalview(lua, view);
   if (doc) SS(view, SCI_SETDOCPOINTER, 0, doc);

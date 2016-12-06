@@ -66,6 +66,7 @@ property['style.linenumber'] = 'fore:$(color.dark_grey),back:$(color.black)'
 --property['style.controlchar'] =
 property['style.indentguide'] = 'fore:$(color.light_black)'
 property['style.calltip'] = 'fore:$(color.light_grey),back:$(color.light_black)'
+property['style.folddisplaytext'] = 'fore:$(color.dark_grey)'
 
 -- Token styles.
 property['style.class'] = 'fore:$(color.light_yellow)'

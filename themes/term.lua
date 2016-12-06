@@ -34,6 +34,7 @@ property['style.bracelight'] = 'fore:$(color.black),back:$(color.white)'
 --property['style.controlchar'] =
 --property['style.indentguide'] =
 property['style.calltip'] = '$(style.default)'
+property['style.folddisplaytext'] = 'fore:$(color.black),bold'
 
 -- Token styles.
 property['style.class'] = 'fore:$(color.yellow)'
