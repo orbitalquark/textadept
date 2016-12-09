@@ -67,6 +67,7 @@ DWELL_END	_	0;"	F	class:events
 DWELL_START	_	0;"	F	class:events
 EDGE_BACKGROUND	_	0;"	F	class:buffer
 EDGE_LINE	_	0;"	F	class:buffer
+EDGE_MULTILINE	_	0;"	F	class:buffer
 EDGE_NONE	_	0;"	F	class:buffer
 EOL_CR	_	0;"	F	class:buffer
 EOL_CRLF	_	0;"	F	class:buffer
@@ -143,6 +144,7 @@ MARGINOPTION_NONE	_	0;"	F	class:buffer
 MARGINOPTION_SUBLINESELECT	_	0;"	F	class:buffer
 MARGIN_BACK	_	0;"	F	class:buffer
 MARGIN_CLICK	_	0;"	F	class:events
+MARGIN_COLOUR	_	0;"	F	class:buffer
 MARGIN_FORE	_	0;"	F	class:buffer
 MARGIN_NUMBER	_	0;"	F	class:buffer
 MARGIN_RTEXT	_	0;"	F	class:buffer
@@ -253,6 +255,8 @@ STYLE_DEFAULT	_	0;"	F	class:buffer
 STYLE_DEFAULT	_	0;"	F	class:lexer
 STYLE_EMBEDDED	_	0;"	F	class:lexer
 STYLE_ERROR	_	0;"	F	class:lexer
+STYLE_FOLDDISPLAYTEXT	_	0;"	F	class:buffer
+STYLE_FOLDDISPLAYTEXT	_	0;"	F	class:lexer
 STYLE_FUNCTION	_	0;"	F	class:lexer
 STYLE_IDENTIFIER	_	0;"	F	class:lexer
 STYLE_INDENTGUIDE	_	0;"	F	class:buffer
@@ -616,6 +620,7 @@ focus	_	0;"	f	class:ui.find
 fold	_	0;"	f	class:lexer
 fold_all	_	0;"	f	class:buffer
 fold_children	_	0;"	f	class:buffer
+fold_display_text_style	_	0;"	F	class:buffer
 fold_expanded	_	0;"	F	class:buffer
 fold_flags	_	0;"	F	class:buffer
 fold_level	_	0;"	F	class:buffer
@@ -781,6 +786,7 @@ lua	_	0;"	m	class:_M
 lua	_	0;"	t	class:keys
 lua	_	0;"	t	class:snippets
 main_selection	_	0;"	F	class:buffer
+margin_back_n	_	0;"	F	class:buffer
 margin_cursor_n	_	0;"	F	class:buffer
 margin_left	_	0;"	F	class:buffer
 margin_mask_n	_	0;"	F	class:buffer
@@ -792,6 +798,7 @@ margin_text	_	0;"	F	class:buffer
 margin_text_clear_all	_	0;"	f	class:buffer
 margin_type_n	_	0;"	F	class:buffer
 margin_width_n	_	0;"	F	class:buffer
+margins	_	0;"	F	class:buffer
 marker_add	_	0;"	f	class:buffer
 marker_add_set	_	0;"	f	class:buffer
 marker_alpha	_	0;"	F	class:buffer
@@ -838,6 +845,8 @@ move_caret_inside_view	_	0;"	f	class:buffer
 move_selected_lines_down	_	0;"	f	class:buffer
 move_selected_lines_up	_	0;"	f	class:buffer
 msgbox	_	0;"	f	class:ui.dialogs
+multi_edge_add_line	_	0;"	f	class:buffer
+multi_edge_clear_all	_	0;"	f	class:buffer
 multi_paste	_	0;"	F	class:buffer
 multiple_select_add_each	_	0;"	f	class:buffer
 multiple_select_add_next	_	0;"	f	class:buffer
@@ -1103,6 +1112,7 @@ symlinkattributes	_	0;"	f	class:lfs
 tab	_	0;"	f	class:buffer
 tab_context_menu	_	0;"	F	class:ui
 tab_context_menu	_	0;"	t	class:textadept.menu
+tab_draw_mode	_	0;"	F	class:buffer
 tab_indents	_	0;"	F	class:buffer
 tab_label	_	0;"	F	class:buffer
 tab_width	_	0;"	F	class:buffer
@@ -1143,6 +1153,7 @@ toggle	_	0;"	f	class:textadept.bookmarks
 toggle_block	_	0;"	f	class:_M.ruby
 toggle_caret_sticky	_	0;"	f	class:buffer
 toggle_fold	_	0;"	f	class:buffer
+toggle_fold_display_text	_	0;"	f	class:buffer
 tointeger	_	0;"	f	class:math
 token	_	0;"	f	class:lexer
 tonumber	_	0;"	f	
