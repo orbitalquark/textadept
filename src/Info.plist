@@ -54,6 +54,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>apl</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>APL source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>applescript</string>
 			</array>
 			<key>CFBundleTypeName</key>
@@ -204,6 +214,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>cr</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Crystal source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>css</string>
 			</array>
 			<key>CFBundleTypeName</key>
@@ -267,6 +287,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>Dockerfile</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Dockerfile source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>dot</string>
 			</array>
 			<key>CFBundleTypeName</key>
@@ -314,6 +344,16 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>F# source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>dsp</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Faust source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -584,6 +624,17 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>ledger</string>
+				<string>journal</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Ledger source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>less</string>
 			</array>
 			<key>CFBundleTypeName</key>
@@ -652,10 +703,47 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>1</string>
+				<string>2</string>
+				<string>3</string>
+				<string>4</string>
+				<string>5</string>
+				<string>6</string>
+				<string>7</string>
+				<string>8</string>
+				<string>9</string>
+				<string>1x</string>
+				<string>2x</string>
+				<string>3x</string>
+				<string>4x</string>
+				<string>5x</string>
+				<string>6x</string>
+				<string>7x</string>
+				<string>8x</string>
+				<string>9x</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Man source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>md</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Markdown source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>moon</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>MoonScript source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -761,6 +849,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>p8</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>PICO-8 source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>pike</string>
 				<string>pmod</string>
 			</array>
@@ -818,6 +916,26 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Properties source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>proto</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Protobuf source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>pure</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Pure source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
@@ -994,6 +1112,16 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>SQL source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>taskpaper</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>TaskPaper source</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
