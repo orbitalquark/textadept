@@ -88,7 +88,12 @@ function M.load(filename)
     elseif line:find('^current_view:') then
       current_view = _VIEWS[tonumber(line:match('^current_view: (%d+)')) or 1]
     elseif line:find('^recent:') then
-      io.recent_files[#io.recent_files + 1] = line:match('^recent: (.+)$')
+      -- If a recent file is already open, do not add it to the list again.
+      local recent_file, exists = line:match('^recent: (.+)$'), false
+      for i = 1, #io.recent_files do
+        if io.recent_files[i] == recent_file then exists = true break end
+      end
+      if not exists then io.recent_files[#io.recent_files + 1] = recent_file end
     end
   end
   f:close()
