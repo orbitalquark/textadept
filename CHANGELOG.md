@@ -9,6 +9,71 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 9.1 (11 Dec 2016)
+
+Download:
+
+* [Textadept 9.1 -- Win32][] | [PGP -- 9.1 Win32][]
+* [Textadept 9.1 -- Mac OSX Intel 10.5+][] | [PGP -- 9.1 OSX][]
+* [Textadept 9.1 -- Linux][] | [PGP -- 9.1 Linux][]
+* [Textadept 9.1 -- Linux x86_64][] | [PGP -- 9.1 Linux x86_64][]
+* [Textadept 9.1 -- Modules][] | [PGP -- 9.1 Modules][]
+
+Bugfixes:
+
+* Fixed bug in find/replace with consecutive matches.
+* Fixed encoding detection for encodings with NUL bytes (e.g. UTF-16).
+* Fixed duplicate entries in `io.recent_files` when loading sessions.
+* Scintilla: Fixed caret placement after left or right movement with rectangular
+  selection.
+* Scintilla: Fixed GTK 3 incorrect font size in autocompletion list.
+* Scintilla: Fixed various minor GTK bugs.
+
+Changes:
+
+* Added support for Protobuf and Crystal.
+* On Linux systems that support it, `make install` installs `.desktop` files
+  too.
+* Removed MacRoman encoding detection and options.
+* Scintilla: Character-based word selection, navigation, and manipulation.
+* Scintilla: Added [`buffer.EDGE_MULTILINE`][],
+  [`buffer:multi_edge_add_line()`][], and [`buffer:multi_edge_clear_all()`][]
+  for multiple edge lines.
+* Scintilla: Added [`buffer.MARGIN_COLOUR`][] and [`buffer.margin_back_n`][] for
+  setting arbitrary margin background colors.
+* Scintilla: Added [`buffer.margins`][] for more margins.
+* Scintilla: Added accessibility support for GTK on Linux.
+* Scintilla: Added [`buffer:toggle_fold_display_text()`][] and
+  [`buffer.fold_display_text_style`][] for showing text next to folded lines.
+* Scintilla: Added new `buffer.INDIC_POINT` and `buffer.INDIC_POINTCHARACTER`
+  indicators.
+* Scintilla: Added [`buffer.tab_draw_mode`][] for changing the appearance of
+  visible tabs.
+* Scintilla: Margin click line selection clears rectangular and multiple
+  selection.
+* Updated to [Scintilla][] 3.7.1.
+
+[Textadept 9.1 -- Win32]: download/textadept_9.1.win32.zip
+[Textadept 9.1 -- Mac OSX Intel 10.5+]: download/textadept_9.1.osx.zip
+[Textadept 9.1 -- Linux]: download/textadept_9.1.i386.tgz
+[Textadept 9.1 -- Linux x86_64]: download/textadept_9.1.x86_64.tgz
+[Textadept 9.1 -- Modules]: download/textadept_9.1.modules.zip
+[PGP -- 9.1 Win32]: download/textadept_9.1.win32.zip.asc
+[PGP -- 9.1 OSX]: download/textadept_9.1.osx.zip.asc
+[PGP -- 9.1 Linux]: download/textadept_9.1.i386.tgz.asc
+[PGP -- 9.1 Linux x86_64]: download/textadept_9.1.x86_64.tgz.asc
+[PGP -- 9.1 Modules]: download/textadept_9.1.modules.zip.asc
+[`buffer.EDGE_MULTILINE`]: api.html#buffer.EDGE_MULTILINE
+[`buffer:multi_edge_add_line()`]: api.html#buffer.multi_edge_add_line
+[`buffer:multi_edge_clear_all()`]: api.html#buffer.multi_edge_clear_all
+[`buffer.MARGIN_COLOUR`]: api.html#buffer.MARGIN_COLOUR
+[`buffer.margin_back_n`]: api.html#buffer.margin_back_n
+[`buffer.margins`]: api.html#buffer.margins
+[`buffer:toggle_fold_display_text()`]: api.html#buffer.toggle_fold_display_text
+[`buffer.fold_display_text_style`]: api.html#buffer.fold_display_text_style
+[`buffer.tab_draw_mode`]: api.html#buffer.tab_draw_mode
+[Scintilla]: http://scintilla.org
+
 ## 9.0 (01 Oct 2016)
 
 Please see the [8 to 9 migration guide][] for upgrading from Textadept 8 to
