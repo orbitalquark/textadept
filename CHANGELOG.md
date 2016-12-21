@@ -9,6 +9,35 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 9.2 (21 Dec 2016)
+
+Download:
+
+* [Textadept 9.2 -- Win32][] | [PGP -- 9.2 Win32][]
+* [Textadept 9.2 -- Mac OSX Intel 10.5+][] | [PGP -- 9.2 OSX][]
+* [Textadept 9.2 -- Linux][] | [PGP -- 9.2 Linux][]
+* [Textadept 9.2 -- Linux x86_64][] | [PGP -- 9.2 Linux x86_64][]
+* [Textadept 9.2 -- Modules][] | [PGP -- 9.2 Modules][]
+
+Bugfixes:
+
+* Scintilla: Fixed crash when destroying Scintilla objects.
+
+Changes:
+
+* None.
+
+[Textadept 9.2 -- Win32]: download/textadept_9.2.win32.zip
+[Textadept 9.2 -- Mac OSX Intel 10.5+]: download/textadept_9.2.osx.zip
+[Textadept 9.2 -- Linux]: download/textadept_9.2.i386.tgz
+[Textadept 9.2 -- Linux x86_64]: download/textadept_9.2.x86_64.tgz
+[Textadept 9.2 -- Modules]: download/textadept_9.2.modules.zip
+[PGP -- 9.2 Win32]: download/textadept_9.2.win32.zip.asc
+[PGP -- 9.2 OSX]: download/textadept_9.2.osx.zip.asc
+[PGP -- 9.2 Linux]: download/textadept_9.2.i386.tgz.asc
+[PGP -- 9.2 Linux x86_64]: download/textadept_9.2.x86_64.tgz.asc
+[PGP -- 9.2 Modules]: download/textadept_9.2.modules.zip.asc
+
 ## 9.1 (11 Dec 2016)
 
 Download:
