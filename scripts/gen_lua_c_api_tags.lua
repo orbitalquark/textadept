@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2016 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2017 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 local f = io.open('../modules/ansi_c/lua_tags', 'w')
 -- Lua header files define API functions in a way ctags cannot detect.
