@@ -1,7 +1,7 @@
--- Copyright 2007-2016 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2017 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 _RELEASE = "Textadept 9.2"
-_COPYRIGHT = 'Copyright © 2007-2016 Mitchell. See LICENSE.\n'..
+_COPYRIGHT = 'Copyright © 2007-2017 Mitchell. See LICENSE.\n'..
              'http://foicica.com/textadept'
 
 package.path = _HOME..'/core/?.lua;'..package.path
