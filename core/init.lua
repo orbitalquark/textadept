@@ -17,7 +17,16 @@ keys = require('keys')
 
 _M = {} -- language modules table
 -- LuaJIT compatibility.
-if jit then module, package.searchers, bit32 = nil, package.loaders, bit end
+if jit then
+  module, package.searchers, bit32 = nil, package.loaders, bit
+  -- In Lua 5.3, the `table` library respects metamethods. Redefine at least the
+  -- functions Textadept may depend on.
+  table.insert = function(list, pos, value)
+    if not value then value, pos = pos, #list + 1 end
+    for i = #list, pos, -1 do list[i + 1] = list[i] end
+    list[pos] = value
+  end
+end
 -- pdcurses compatibility.
 if CURSES and WIN32 then
   function spawn(argv, cwd, ...)
