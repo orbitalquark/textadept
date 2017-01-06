@@ -1006,7 +1006,7 @@ following to *~/.textadept/init.lua*:
 
     ui.tabs = false
     ui.find.find_in_files_timeout = 5
-    textadept.editing.auto_pair = nil
+    textadept.editing.auto_pairs = nil
     textadept.editing.typeover_chars = nil
     textadept.editing.strip_trailing_spaces = true
     textadept.editing.comment_string.ansi_c = '//'
