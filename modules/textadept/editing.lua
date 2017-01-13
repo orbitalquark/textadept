@@ -76,6 +76,7 @@ M.comment_string = {actionscript='//',ada='--',adpl='!',ansi_c='/*|*/',antlr='//
 -- @class table
 -- @name auto_pairs
 -- @usage textadept.editing.auto_pairs[60] = '>' -- pair '<' and '>'
+-- @usage textadept.editing.auto_pairs = nil -- disable completely
 M.auto_pairs = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 
 ---
