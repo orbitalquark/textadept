@@ -159,6 +159,7 @@ end)
 -- Moves over typeover characters when typed.
 events.connect(events.KEYPRESS, function(code)
   if M.typeover_chars and M.typeover_chars[code] and
+     buffer.selection_start == buffer.selection_end and
      buffer.char_at[buffer.current_pos] == code then
     buffer:char_right()
     return true
