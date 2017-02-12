@@ -62,11 +62,18 @@ end
 
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
+local GETERROR = _SCINTILLA.properties.status[1]
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, lang)
   if not lang then lang = detect_language(buffer) end
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
+  local errmsg = buffer:private_lexer_call(GETERROR)
+  if #errmsg > 0 then
+    buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
+    ui.print(errmsg)
+    return -- do not error() since the stack trace implicates this function
+  end
   buffer._lexer = lang
   if package.searchpath(lang, package.path) then _M[lang] = require(lang) end
   if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, lang) end
