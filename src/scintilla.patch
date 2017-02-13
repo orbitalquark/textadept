@@ -42,7 +42,7 @@ diff -r bfdfb44eb777 src/Document.cxx
 +
 +class TreRegex : public RegexSearchBase {
 +public:
-+	explicit TreRegex() : lastS(NULL), lastSLen(0) {}
++	explicit TreRegex() : lastS(NULL), lastSLen(0), lastSFlags(0) {}
 +	virtual ~TreRegex() { if (lastS) free(lastS), tre_regfree(&preg); }
 +	virtual long FindText(Document *doc, int minPos, int maxPos, const char *s,
 +	                      bool caseSensitive, bool word, bool wordStart, int flags,
@@ -51,7 +51,7 @@ diff -r bfdfb44eb777 src/Document.cxx
 +	                                         int *length);
 +private:
 +	char *lastS;
-+	int lastSLen;
++	int lastSLen, lastSFlags;
 +	regex_t preg;
 +	regmatch_t pmatch[10];
 +	std::string substituted;
@@ -85,14 +85,14 @@ diff -r bfdfb44eb777 src/Document.cxx
 +	}
 +
 +	// Compile the regex or used the cached one.
-+	if (!lastS || lastSLen != *length || strncmp(lastS, s, *length) != 0) {
-+		int cflags = REG_EXTENDED | (!caseSensitive ? REG_ICASE : 0) | REG_NEWLINE;
++	int cflags = REG_EXTENDED | (!caseSensitive ? REG_ICASE : 0) | REG_NEWLINE;
++	if (!lastS || lastSLen != *length || lastSFlags != cflags || strncmp(lastS, s, *length) != 0) {
 +		if (tre_regncomp(&preg, s, *length, cflags) != REG_OK) return -1;
 +		if (lastS) free(lastS);
 +		lastS = static_cast<char *>(malloc(*length + 1));
 +		strncpy(lastS, s, *length);
 +		lastS[*length] = '\0';
-+		lastSLen = *length;
++		lastSLen = *length, lastSFlags = cflags;
 +	}
 +
 +	// Perform the matching.
