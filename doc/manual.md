@@ -1670,6 +1670,24 @@ cross-compiling from Linux. In order to do so, you need the
 
 ## Compiling
 
+### Makefile Command Summary
+
+The following table provides a brief summary of `make` or `gmake` rules for
+building Textadept. Subsequent sections contain more detailed descriptions,
+including platform-specific rules and options.
+
+Command              |Description
+---------------------|-----------
+`make deps`          |Downloads and builds all of Textadept's core dependencies
+`make verify-deps`   |Verifies integrity of downloads (for optional security)
+`make`               |Builds Textadept, provided all dependencies are in place
+`make install`       |Installs Textadept (to */usr/local* by default)
+`make curses`        |Builds the terminal version of Textadept
+`make curses install`|Installs the terminal version of Textadept
+`make uninstall`     |Uninstalls Textadept (from */usr/local* by default)
+`make clean`         |Deletes all compiled files, leaving only source files
+`make clean-deps`    |Deletes all unpacked dependencies, leaving only downloads
+
 ### Compiling on Linux and BSD
 
 Note: for BSD systems, replace the `make` commands below with `gmake`.
