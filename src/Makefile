@@ -519,7 +519,7 @@ verify-deps: | $(wildcard $(basename $(wildcard *.asc)))
 
 clean-deps:
 	rm -rf scintilla tre ../lexers LexLPeg.cxx lua luajit gtdialog cdk termkey \
-		win32gtk win32curses gtkosx ../doc/bombay
+		win32gtk win32curses gtkosx $(notdir ../doc/bombay)
 
 # Count lines of code and generate ctags.
 
