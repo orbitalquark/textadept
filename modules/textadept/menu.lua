@@ -546,7 +546,7 @@ function M.select_command()
   end
   build_command_tables(getmetatable(M.menubar).menu)
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Run Command'], columns = {_L['Command'], _L['Key Command']},
+    title = _L['Run Command'], columns = {_L['Command'], _L['Key Binding']},
     items = items, width = CURSES and ui.size[1] - 2 or nil
   }
   if button ~= 1 or not i then return end
