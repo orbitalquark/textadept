@@ -1096,6 +1096,18 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>sml</string>
+				<string>fun</string>
+				<string>sig</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>SML source</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>sno</string>
 				<string>SNO</string>
 			</array>
@@ -1303,7 +1315,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>9.2</string>
+	<string>9.3</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
