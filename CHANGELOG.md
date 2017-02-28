@@ -9,6 +9,56 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 9.3 (01 Mar 2017)
+
+Download:
+
+* [Textadept 9.3 -- Win32][] | [PGP -- 9.3 Win32][]
+* [Textadept 9.3 -- Mac OSX Intel 10.5+][] | [PGP -- 9.3 OSX][]
+* [Textadept 9.3 -- Linux][] | [PGP -- 9.3 Linux][]
+* [Textadept 9.3 -- Linux x86_64][] | [PGP -- 9.3 Linux x86_64][]
+* [Textadept 9.3 -- Modules][] | [PGP -- 9.3 Modules][]
+
+Bugfixes:
+
+* Improved LuaJIT compatibility with 3rd-party modules.
+* Do not move over selected typeover characters.
+* Fixed "Match Case" toggling during "Regex" searches.
+* Fixed building from the source when dependencies are updated.
+* Fixed folding in multiple-language lexers.
+* Fixed accidental editing of cached lexers.
+* Scintilla: Minimize redrawing for `buffer.selection_n_*` settings.
+* Scintilla: Fixed individual line selection in files with more than 16.7
+  million lines.
+* Scintilla: Various accessibility fixes for GTK on Linux.
+* Scintilla: Fixed a couple of folding regressions.
+* Scintilla: Fixed various issues on GTK 3.22.
+* Scintilla: Fixed inability to extend selection up or down in stream selection
+  mode.
+
+Changes:
+
+* Lexer initialization errors are printed to the Message Buffer.
+* Updated Polish locale.
+* Updated C, C++, Scheme, Shell, and JavaScript lexers.
+* Added support for rc and Standard ML.
+* Scintilla: Block caret appears on selection end instead of after it.
+* Updated to [Scintilla][] 3.7.3.
+* Updated to [Lua][] 5.3.4.
+
+[Textadept 9.3 -- Win32]: download/textadept_9.3.win32.zip
+[Textadept 9.3 -- Mac OSX Intel 10.5+]: download/textadept_9.3.osx.zip
+[Textadept 9.3 -- Linux]: download/textadept_9.3.i386.tgz
+[Textadept 9.3 -- Linux x86_64]: download/textadept_9.3.x86_64.tgz
+[Textadept 9.3 -- Modules]: download/textadept_9.3.modules.zip
+[PGP -- 9.3 Win32]: download/textadept_9.3.win32.zip.asc
+[PGP -- 9.3 OSX]: download/textadept_9.3.osx.zip.asc
+[PGP -- 9.3 Linux]: download/textadept_9.3.i386.tgz.asc
+[PGP -- 9.3 Linux x86_64]: download/textadept_9.3.x86_64.tgz.asc
+[PGP -- 9.3 Modules]: download/textadept_9.3.modules.zip.asc
+[Scintilla]: http://scintilla.org
+[Lua]: http://lua.org
+
 ## 9.2 (21 Dec 2016)
 
 Download:
