@@ -479,7 +479,7 @@ cdk: cdk.patch | $(cdk_tgz)
 $(termkey_tgz): ; wget http://www.leonerd.org.uk/code/libtermkey/$@
 termkey: termkey.patch | $(termkey_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
-	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
+	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@ && chmod +w $@/termkey.h
 	patch -d $@ -N -p1 < $<
 $(win32gtk_zip):
 	wget http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/$@
