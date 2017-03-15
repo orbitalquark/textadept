@@ -181,7 +181,8 @@ local timeout
 ---
 -- Spawns an interactive child process *argv* in a separate thread, returning
 -- a handle to that process.
--- At the moment, only the Win32 terminal version spawns processes in the same
+-- On Windows, *argv* is passed to `cmd.exe`: `%COMSPEC% /c [argv]`.
+-- At the moment, only the Windows terminal version spawns processes in the same
 -- thread.
 -- @param argv A command line string that contains the program's name followed
 --   by arguments to pass to it. `PATH` is searched for program names.
