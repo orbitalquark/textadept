@@ -587,7 +587,7 @@ disable these features.
 ### Word Completion
 
 Textadept provides buffer-based word completion. Start typing a word and press
-`Ctrl+Enter` (`^⎋` on Mac OSX | `M-Enter` in curses) to display a list of
+`Ctrl+Enter` (`^Esc` on Mac OSX | `M-Enter` in curses) to display a list of
 suggested completions based on words in the current buffer. Continuing to type
 changes the suggestion. Press `Enter` (`↩` | `Enter`) to complete the selected
 word.
@@ -719,7 +719,7 @@ previous, replace, and replace all buttons; `Up` and `Down` arrows switch
 between the find and replace text fields; `^P` and `^N` cycles through history;
 and `F1-F4` toggles find options.
 
-Pressing `Esc` (`⎋` | `Esc`) hides the pane after you finish with it.
+Pressing `Esc` (`Esc` | `Esc`) hides the pane after you finish with it.
 
 ### Replace in Selection
 
@@ -757,7 +757,7 @@ Start an incremental search by pressing `Ctrl+Alt+F` (`^⌘F` on Mac OSX | `M-^F
 in curses). Incremental search searches the buffer as you type, but only
 recognizes the "Match Case" find option. `Enter` cycles through subsequent
 matches and `Ctrl+R` (`⌘R` | `^R`) cycles through matches in reverse. Pressing
-`Esc` (`⎋` | `Esc`) stops the search.
+`Esc` (`Esc` | `Esc`) stops the search.
 
 ## Source Code Editing
 
@@ -799,10 +799,10 @@ N/A in curses). This feature also works for plain text.
 ### Autocompletion and Documentation
 
 Textadept has the capability to autocomplete symbols for programming languages
-and display API documentation. Pressing `Ctrl+Space` (`⌥⎋` on Mac OSX | `^Space`
-in curses) completes the current symbol and `Ctrl+H` (`^H` | `M-H` or `M-S-H`)
-shows any known documentation on the current symbol. Note: In order for these
-features to work, the language you are working with must have an
+and display API documentation. Pressing `Ctrl+Space` (`⌥Esc` on Mac OSX |
+`^Space` in curses) completes the current symbol and `Ctrl+H` (`^H` | `M-H` or
+`M-S-H`) shows any known documentation on the current symbol. Note: In order for
+these features to work, the language you are working with must have an
 [autocompleter][] and [API file(s)][], respectively.
 [Language modules](#Language.Modules) usually [define these][]. Most of the
 [official][] Textadept language modules support autocompletion and
