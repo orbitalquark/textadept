@@ -2537,7 +2537,7 @@ int main(int argc, char **argv) {
   refresh_all();
 
 #if !_WIN32
-  stderr = freopen("/dev/null", "w", stderr); // redirect stderr
+  freopen("/dev/null", "w", stderr); // redirect stderr
   // Set terminal suspend, resume, and resize handlers, preventing any signals
   // in them from causing interrupts.
   struct sigaction act;
