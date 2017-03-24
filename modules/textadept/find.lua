@@ -122,6 +122,11 @@ local escapes = {
 }
 for k, v in pairs(escapes) do escapes[v] = k end
 
+-- Keep track of find text and found text so that "replace all" works as
+-- expected during a find session ("replace all" with selected text normally
+-- does "replace in selection").
+local find_text, found_text
+
 -- Finds and selects text in the current buffer.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
@@ -156,6 +161,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   local f = buffer['search_'..(next and 'next' or 'prev')]
   local pos = f(buffer, flags, text)
   buffer:scroll_range(buffer.anchor, buffer.current_pos)
+  find_text, found_text = text, buffer:get_sel_text() -- track for "replace all"
 
   -- If nothing was found, wrap the search.
   if pos == -1 and not no_wrap then
@@ -317,7 +323,8 @@ events.connect(events.REPLACE, replace)
 
 local INDIC_REPLACE = _SCINTILLA.next_indic_number()
 -- Replaces all found text.
--- If any text is selected, all found text in that selection is replaced.
+-- If any text is selected (other than text just found), all found text in that
+-- selection is replaced.
 -- This function ignores "Find in Files".
 -- @param ftext The text to find.
 -- @param rtext The text to replace found text with.
@@ -327,7 +334,8 @@ local function replace_all(ftext, rtext)
   if M.in_files then M.in_files = false end
   buffer:begin_undo_action()
   local count = 0
-  if buffer.selection_empty then
+  if buffer.selection_empty or
+     ftext == find_text and buffer:get_sel_text() == found_text then
     buffer:goto_pos(0)
     while find(ftext, true, nil, true) ~= -1 do
       if buffer.selection_empty then break end -- prevent infinite loops
@@ -338,9 +346,10 @@ local function replace_all(ftext, rtext)
     local s, e = buffer.selection_start, buffer.selection_end
     buffer.indicator_current = INDIC_REPLACE
     buffer:indicator_fill_range(e, 1)
+    local EOF = buffer.selection_end == buffer.length -- no indic at EOF
     buffer:goto_pos(s)
     local pos = find(ftext, true, nil, true)
-    while pos ~= -1 and pos < buffer:indicator_end(INDIC_REPLACE, s) do
+    while pos ~= -1 and (pos < buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
       replace(rtext)
       count = count + 1
       pos = find(ftext, true, nil, true)
