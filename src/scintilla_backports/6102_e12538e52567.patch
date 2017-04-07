@@ -1,0 +1,61 @@
+# HG changeset patch
+# User Colomban Wendling <ban@herbesfolles.org>
+# Date 1487712605 -3600
+# Node ID e12538e52567bc5fc011448f42689ac52434f1fd
+# Parent  b82fe8d33961050a7905d6588eef858b85ca804c
+Bug [#1910]. GTK a11y: Speed up converting byte offsets to character offsets
+
+Use a per-line cache to avoid re-computing the offset from the start of
+the buffer each time. This dramatically speeds up multiple replacements
+on large files.
+
+diff -r b82fe8d33961 -r e12538e52567 gtk/ScintillaGTKAccessible.cxx
+--- a/gtk/ScintillaGTKAccessible.cxx	Thu Mar 02 09:41:01 2017 +1100
++++ b/gtk/ScintillaGTKAccessible.cxx	Tue Feb 21 22:30:05 2017 +0100
+@@ -856,6 +856,13 @@
+ void ScintillaGTKAccessible::Notify(GtkWidget *, gint, SCNotification *nt) {
+ 	switch (nt->nmhdr.code) {
+ 		case SCN_MODIFIED: {
++			if (nt->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)) {
++				// invalidate character offset cache if applicable
++				const Position line = sci->pdoc->LineFromPosition(nt->position);
++				if (character_offsets.size() > static_cast<size_t>(line + 1)) {
++					character_offsets.resize(line + 1);
++				}
++			}
+ 			if (nt->modificationType & SC_MOD_INSERTTEXT) {
+ 				int startChar = CharacterOffsetFromByteOffset(nt->position);
+ 				int lengthChar = sci->pdoc->CountCharacters(nt->position, nt->position + nt->length);
+diff -r b82fe8d33961 -r e12538e52567 gtk/ScintillaGTKAccessible.h
+--- a/gtk/ScintillaGTKAccessible.h	Thu Mar 02 09:41:01 2017 +1100
++++ b/gtk/ScintillaGTKAccessible.h	Tue Feb 21 22:30:05 2017 +0100
+@@ -20,6 +20,9 @@
+ 	GtkAccessible *accessible;
+ 	ScintillaGTK *sci;
+ 
++	// cache holding character offset for each line start, see CharacterOffsetFromByteOffset()
++	std::vector<Position> character_offsets;
++
+ 	// cached length of the deletion, in characters (see Notify())
+ 	int deletionLengthChar;
+ 	// local state for comparing
+@@ -52,7 +55,18 @@
+ 	}
+ 
+ 	int CharacterOffsetFromByteOffset(Position byteOffset) {
+-		return sci->pdoc->CountCharacters(0, byteOffset);
++		const Position line = sci->pdoc->LineFromPosition(byteOffset);
++		if (character_offsets.size() <= static_cast<size_t>(line)) {
++			if (character_offsets.empty())
++				character_offsets.push_back(0);
++			for (Position i = character_offsets.size(); i <= line; i++) {
++				const Position start = sci->pdoc->LineStart(i - 1);
++				const Position end = sci->pdoc->LineStart(i);
++				character_offsets.push_back(character_offsets[i - 1] + sci->pdoc->CountCharacters(start, end));
++			}
++		}
++		const Position lineStart = sci->pdoc->LineStart(line);
++		return character_offsets[line] + sci->pdoc->CountCharacters(lineStart, byteOffset);
+ 	}
+ 
+ 	void CharacterRangeFromByteRange(Position startByte, Position endByte, int *startChar, int *endChar) {

@@ -1,0 +1,45 @@
+# HG changeset patch
+# User Colomban Wendling <ban@herbesfolles.org>
+# Date 1488136706 -3600
+# Node ID 809112c8119696afcefdcb145e04ade832fcbe0b
+# Parent  4d2ba76f394abe85ce97ae7037db34bdae452dd1
+Bug [#1907]. GTK: Fix crash after destroying the widget on GTK < 3.3.6
+
+On GTK2 and GTK3 < 3.3.6 there is no GtkAccessibleClass::widget_unset()
+method, so we can't destroy our accessible object right away.  So, to
+avoid accessing a destroyed widget, we need to check whether the widget
+still exists in the the ScintillaGTKAccessible destructor.
+
+In other methods it's not necessary because the wrapping GObject class
+makes sure not to forward other when the widget has been destroyed, but
+we still have to destroy the C++ instance no matter what, so the check
+has to be on this side.
+
+diff -r 4d2ba76f394a -r 809112c81196 doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Sat Feb 25 09:13:40 2017 +1100
++++ b/doc/ScintillaHistory.html	Sun Feb 26 20:18:26 2017 +0100
+@@ -535,6 +535,10 @@
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1915/">Bug #1915</a>.
+ 	</li>
+ 	<li>
++	Fix crash in accessibility code on GTK+ &lt; 3.3.6 caused by previous bug fix.
++	<a href="http://sourceforge.net/p/scintilla/bugs/1907/">Bug #1907</a>.
++	</li>
++	<li>
+ 	Fix to prevent double scrolling on GTK+ with X11.
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1901/">Bug #1901</a>.
+ 	</li>
+diff -r 4d2ba76f394a -r 809112c81196 gtk/ScintillaGTKAccessible.cxx
+--- a/gtk/ScintillaGTKAccessible.cxx	Sat Feb 25 09:13:40 2017 +1100
++++ b/gtk/ScintillaGTKAccessible.cxx	Sun Feb 26 20:18:26 2017 +0100
+@@ -162,7 +162,9 @@
+ }
+ 
+ ScintillaGTKAccessible::~ScintillaGTKAccessible() {
+-	g_signal_handlers_disconnect_matched(sci->sci, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, this);
++	if (gtk_accessible_get_widget(accessible)) {
++		g_signal_handlers_disconnect_matched(sci->sci, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, this);
++	}
+ }
+ 
+ gchar *ScintillaGTKAccessible::GetTextRangeUTF8(Position startByte, Position endByte) {

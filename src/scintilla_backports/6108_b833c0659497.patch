@@ -1,0 +1,74 @@
+# HG changeset patch
+# User Neil Hodgson <nyamatongwe@gmail.com>
+# Date 1488583798 -39600
+# Node ID b833c0659497438d3638a1a30ef4c604123f9e3e
+# Parent  d4f7d1439daa636ffe50cec516667627e04174a7
+Fix minor issues in interface definitions.
+
+diff -r d4f7d1439daa -r b833c0659497 include/Scintilla.iface
+--- a/include/Scintilla.iface	Sat Mar 04 10:28:39 2017 +1100
++++ b/include/Scintilla.iface	Sat Mar 04 10:29:58 2017 +1100
+@@ -415,8 +415,7 @@
+ # How many margins are there?.
+ get int GetMargins=2253(,)
+ 
+-# Styles in range 32..38 are predefined for parts of the UI and are not used as normal styles.
+-# Style 39 is for future use.
++# Styles in range 32..39 are predefined for parts of the UI and are not used as normal styles.
+ enu StylesCommon=STYLE_
+ val STYLE_DEFAULT=32
+ val STYLE_LINENUMBER=33
+@@ -1215,7 +1214,7 @@
+ # Switch a header line between expanded and contracted and show some text after the line.
+ fun void ToggleFoldShowText=2700(int line, string text)
+ 
+-enu foldDisplayTextStyle=SC_FOLDDISPLAYTEXTSTYLE_
++enu FoldDisplayTextStyle=SC_FOLDDISPLAYTEXT_
+ val SC_FOLDDISPLAYTEXT_HIDDEN=0
+ val SC_FOLDDISPLAYTEXT_STANDARD=1
+ val SC_FOLDDISPLAYTEXT_BOXED=2
+@@ -1832,6 +1831,7 @@
+ fun void WordPartRightExtend=2393(,)
+ 
+ # Constants for use with SetVisiblePolicy, similar to SetCaretPolicy.
++enu VisiblePolicy=VISIBLE_
+ val VISIBLE_SLOP=0x01
+ val VISIBLE_STRICT=0x04
+ # Set the way the display area is determined when a particular line
+@@ -1844,8 +1844,10 @@
+ # Delete forwards from the current position to the end of the line.
+ fun void DelLineRight=2396(,)
+ 
+-# Get and Set the xOffset (ie, horizontal scroll position).
++# Set the xOffset (ie, horizontal scroll position).
+ set void SetXOffset=2397(int xOffset,)
++
++# Get the xOffset (ie, horizontal scroll position).
+ get int GetXOffset=2398(,)
+ 
+ # Set the last x chosen value to be the caret x position.
+@@ -2117,6 +2119,7 @@
+ # Duplicate the selection. If selection empty duplicate the line containing the caret.
+ fun void SelectionDuplicate=2469(,)
+ 
++enu Alpha=SC_ALPHA_
+ val SC_ALPHA_TRANSPARENT=0
+ val SC_ALPHA_OPAQUE=255
+ val SC_ALPHA_NOALPHA=256
+@@ -2515,6 +2518,7 @@
+ # Scroll to end of document.
+ fun void ScrollToEnd=2629(,)
+ 
++enu Technology=SC_TECHNOLOGY_
+ val SC_TECHNOLOGY_DEFAULT=0
+ val SC_TECHNOLOGY_DIRECTWRITE=1
+ val SC_TECHNOLOGY_DIRECTWRITERETAIN=2
+@@ -4811,7 +4815,7 @@
+ evt void MarginClick=2010(int modifiers, int position, int margin)
+ evt void NeedShown=2011(int position, int length)
+ evt void Painted=2013(void)
+-evt void UserListSelection=2014(int listType, string text, int positionint, int ch, CompletionMethods listCompletionMethod)
++evt void UserListSelection=2014(int listType, string text, int position, int ch, CompletionMethods listCompletionMethod)
+ evt void URIDropped=2015(string text)
+ evt void DwellStart=2016(int position, int x, int y)
+ evt void DwellEnd=2017(int position, int x, int y)
