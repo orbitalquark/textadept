@@ -1,0 +1,19 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1489631977 -39600
+# Node ID 6cf19f2bf214b1d1dc0ba05412a6659142c772ec
+# Parent  a78e38849624fca65cd615da3f976d22db03a48b
+Fix difference between right of line end and left of fold tag.
+
+diff -r a78e38849624 -r 6cf19f2bf214 src/EditView.cxx
+--- a/src/EditView.cxx	Thu Mar 16 10:16:39 2017 +1100
++++ b/src/EditView.cxx	Thu Mar 16 13:39:37 2017 +1100
+@@ -1087,7 +1087,7 @@
+ 
+ 	const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
+ 	XYPOSITION virtualSpace = model.sel.VirtualSpaceFor(model.pdoc->LineEnd(line)) * spaceWidth;
+-	rcSegment.left = xStart + static_cast<XYPOSITION>(ll->positions[ll->numCharsInLine] - subLineStart) + spaceWidth + virtualSpace;
++	rcSegment.left = xStart + static_cast<XYPOSITION>(ll->positions[ll->numCharsInLine] - subLineStart) + virtualSpace + vsDraw.aveCharWidth;
+ 	rcSegment.right = rcSegment.left + static_cast<XYPOSITION>(widthFoldDisplayText);
+ 
+ 	ColourOptional background = vsDraw.Background(model.pdoc->GetMark(line), model.caret.active, ll->containsCaret);

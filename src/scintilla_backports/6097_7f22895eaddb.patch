@@ -1,0 +1,34 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1487827984 -39600
+# Node ID 7f22895eaddb6584d488ed2e606d5d0e930db22c
+# Parent  cc79ed8e4f8274ba1242150f36e2ab0b40ed68f4
+Bug [#1905]. Fix stream selection mode when moving caret up or down.
+
+diff -r cc79ed8e4f82 -r 7f22895eaddb doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Wed Feb 22 16:35:01 2017 +1100
++++ b/doc/ScintillaHistory.html	Thu Feb 23 16:33:04 2017 +1100
+@@ -527,6 +527,10 @@
+ 	Released 19 February 2017.
+ 	</li>
+ 	<li>
++	Fix to stream selection mode when moving caret up or down.
++	<a href="http://sourceforge.net/p/scintilla/bugs/1905/">Bug #1905</a>.
++	</li>
++	<li>
+ 	Fix to prevent double scrolling on GTK+ with X11.
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1901/">Bug #1901</a>.
+ 	</li>
+diff -r cc79ed8e4f82 -r 7f22895eaddb src/Editor.cxx
+--- a/src/Editor.cxx	Wed Feb 22 16:35:01 2017 +1100
++++ b/src/Editor.cxx	Thu Feb 23 16:33:04 2017 +1100
+@@ -3111,6 +3111,9 @@
+ }
+ 
+ void Editor::CursorUpOrDown(int direction, Selection::selTypes selt) {
++	if ((selt == Selection::noSel) && sel.MoveExtends()) {
++		selt = Selection::selStream;
++	}
+ 	SelectionPosition caretToUse = sel.Range(sel.Main()).caret;
+ 	if (sel.IsRectangular()) {
+ 		if (selt ==  Selection::noSel) {

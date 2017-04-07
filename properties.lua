@@ -179,3 +179,6 @@ buffer.wrap_mode = buffer.WRAP_NONE
 --  buffer.edge_mode = not CURSES and buffer.EDGE_LINE or buffer.EDGE_BACKGROUND
 --  buffer.edge_column = 80
 --end
+
+-- Accessibility.
+buffer.accessibility = buffer.ACCESSIBILITY_DISABLED

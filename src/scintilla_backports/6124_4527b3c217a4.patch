@@ -1,0 +1,43 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1488955608 -39600
+# Node ID 4527b3c217a44e45e4714c2a302f124df7109b2f
+# Parent  0fd4b41bcec612df9a3e8204399d0acde55194ce
+Fix warnings from Visual Studio 2017.
+
+diff -r 0fd4b41bcec6 -r 4527b3c217a4 src/PositionCache.cxx
+--- a/src/PositionCache.cxx	Wed Mar 08 16:36:39 2017 +1100
++++ b/src/PositionCache.cxx	Wed Mar 08 17:46:48 2017 +1100
+@@ -392,7 +392,7 @@
+ }
+ 
+ SpecialRepresentations::SpecialRepresentations() {
+-	std::fill(startByteHasReprs, startByteHasReprs+0x100, 0);
++	std::fill(startByteHasReprs, startByteHasReprs+0x100, static_cast<short>(0));
+ }
+ 
+ void SpecialRepresentations::SetRepresentation(const char *charBytes, const char *value) {
+@@ -433,7 +433,7 @@
+ 
+ void SpecialRepresentations::Clear() {
+ 	mapReprs.clear();
+-	std::fill(startByteHasReprs, startByteHasReprs+0x100, 0);
++	std::fill(startByteHasReprs, startByteHasReprs+0x100, static_cast<short>(0));
+ }
+ 
+ void BreakFinder::Insert(int val) {
+diff -r 0fd4b41bcec6 -r 4527b3c217a4 src/RESearch.cxx
+--- a/src/RESearch.cxx	Wed Mar 08 16:36:39 2017 +1100
++++ b/src/RESearch.cxx	Wed Mar 08 17:46:48 2017 +1100
+@@ -256,9 +256,9 @@
+ 	charClass = charClassTable;
+ 	sta = NOP;                  /* status of lastpat */
+ 	bol = 0;
+-	std::fill(bittab, bittab + BITBLK, 0);
++	std::fill(bittab, bittab + BITBLK, static_cast<unsigned char>(0));
+ 	std::fill(tagstk, tagstk + MAXTAG, 0);
+-	std::fill(nfa, nfa + MAXNFA, 0);
++	std::fill(nfa, nfa + MAXNFA, '\0');
+ 	Clear();
+ }
+ 

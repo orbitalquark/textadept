@@ -3185,6 +3185,7 @@ function set_lexer(buffer, lexer) end
 --   * STYLE_LASTPREDEFINED
 
 -- Unused Functions.
+--   * accessibility
 --   * add_ref_document
 --   * add_styled_text
 --   * add_tab_stop

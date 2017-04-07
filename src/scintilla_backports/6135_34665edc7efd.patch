@@ -1,0 +1,20 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1489632594 -39600
+# Node ID 34665edc7efdd526c62e426bb0f6267f64e156e7
+# Parent  0253f113f22359c009f415099cf635b2637def1e
+For multiphase drawing ensure edges and mark underline drawn over fold tags by
+moving background drawing of fold tags before edge line and mark underline.
+
+diff -r 0253f113f223 -r 34665edc7efd src/EditView.cxx
+--- a/src/EditView.cxx	Fri Mar 17 09:49:55 2017 +1100
++++ b/src/EditView.cxx	Thu Mar 16 13:49:54 2017 +1100
+@@ -1849,6 +1849,8 @@
+ 	if ((phasesDraw != phasesOne) && (phase & drawBack)) {
+ 		DrawBackground(surface, model, vsDraw, ll, rcLine, lineRange, posLineStart, xStart,
+ 			subLine, background);
++		DrawFoldDisplayText(surface, model, vsDraw, ll, line, xStart, rcLine, subLine, subLineStart, drawBack);
++		phase = static_cast<DrawPhase>(phase & ~drawBack);
+ 		DrawEOL(surface, model, vsDraw, ll, rcLine, line, lineRange.end,
+ 			xStart, subLine, subLineStart, background);
+ 	}

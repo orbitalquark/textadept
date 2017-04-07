@@ -425,10 +425,15 @@ bombay_zip = bombay.zip
 cloc = cloc-1.60.pl
 
 $(scintilla_tgz): ; wget http://prdownloads.sourceforge.net/scintilla/$@ -O $@
-scintilla: scintilla.patch | $(scintilla_tgz)
-	if [ -d $@ ]; then rm -r $@; fi
-	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
-	patch -d $@ -N -p1 < $<
+scintilla: $(wildcard scintilla_backports/*.patch) scintilla.patch | \
+           $(scintilla_tgz)
+	if [ -d $@/.hg ]; then \
+		hg --cwd $@ update -C -r rel-3-7-3; \
+	else \
+		if [ -d $@ ]; then rm -r $@; fi; \
+		mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@; \
+	fi
+	for patch in $^; do echo Applying $$patch; patch -d $@ -N -p1 < $$patch; done
 $(tre_zip): ; wget https://github.com/laurikari/tre/archive/$@ -O $@
 tre: tre.patch | $(tre_zip)
 	if [ -d $@ ]; then rm -r $@; fi

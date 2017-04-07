@@ -1,0 +1,59 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1488862473 -39600
+# Node ID 6c62b379a52e1d4a2feda80bcec9b352f120dcb6
+# Parent  313a4618efd5ac735a669f923293f296c0e90886
+Avoid potential problems with memcmp reading past end of object.
+
+diff -r 313a4618efd5 -r 6c62b379a52e lexers/LexErrorList.cxx
+--- a/lexers/LexErrorList.cxx	Tue Mar 07 12:05:15 2017 +1100
++++ b/lexers/LexErrorList.cxx	Tue Mar 07 15:54:33 2017 +1100
+@@ -106,7 +106,8 @@
+ 		// perl error message:
+ 		// <message> at <file> line <line>
+ 		return SCE_ERR_PERL;
+-	} else if ((memcmp(lineBuffer, "   at ", 6) == 0) &&
++	} else if ((lengthLine >= 6) && 
++	           (memcmp(lineBuffer, "   at ", 6) == 0) &&
+ 	           strstr(lineBuffer, ":line ")) {
+ 		// A .NET traceback
+ 		return SCE_ERR_NET;
+diff -r 313a4618efd5 -r 6c62b379a52e src/Document.cxx
+--- a/src/Document.cxx	Tue Mar 07 12:05:15 2017 +1100
++++ b/src/Document.cxx	Tue Mar 07 15:54:33 2017 +1100
+@@ -1887,7 +1887,7 @@
+ 			}
+ 		} else if (SC_CP_UTF8 == dbcsCodePage) {
+ 			const size_t maxFoldingExpansion = 4;
+-			std::vector<char> searchThing(lengthFind * UTF8MaxBytes * maxFoldingExpansion + 1);
++			std::vector<char> searchThing((lengthFind+1) * UTF8MaxBytes * maxFoldingExpansion + 1);
+ 			const int lenSearch = static_cast<int>(
+ 				pcf->Fold(&searchThing[0], searchThing.size(), search, lengthFind));
+ 			char bytes[UTF8MaxBytes + 1];
+@@ -1914,6 +1914,8 @@
+ 						break;
+ 					const int lenFlat = static_cast<int>(pcf->Fold(folded, sizeof(folded), bytes, widthChar));
+ 					folded[lenFlat] = 0;
++					// memcmp may examine lenFlat bytes in both arguments so assert it doesn't read past end of searchThing
++					assert(static_cast<size_t>(indexSearch + lenFlat) <= searchThing.size());
+ 					// Does folded match the buffer
+ 					characterMatches = 0 == memcmp(folded, &searchThing[0] + indexSearch, lenFlat);
+ 					if (!characterMatches)
+@@ -1939,7 +1941,7 @@
+ 		} else if (dbcsCodePage) {
+ 			const size_t maxBytesCharacter = 2;
+ 			const size_t maxFoldingExpansion = 4;
+-			std::vector<char> searchThing(lengthFind * maxBytesCharacter * maxFoldingExpansion + 1);
++			std::vector<char> searchThing((lengthFind+1) * maxBytesCharacter * maxFoldingExpansion + 1);
+ 			const int lenSearch = static_cast<int>(
+ 				pcf->Fold(&searchThing[0], searchThing.size(), search, lengthFind));
+ 			while (forward ? (pos < endPos) : (pos >= endPos)) {
+@@ -1959,6 +1961,8 @@
+ 					char folded[maxBytesCharacter * maxFoldingExpansion + 1];
+ 					const int lenFlat = static_cast<int>(pcf->Fold(folded, sizeof(folded), bytes, widthChar));
+ 					folded[lenFlat] = 0;
++					// memcmp may examine lenFlat bytes in both arguments so assert it doesn't read past end of searchThing
++					assert(static_cast<size_t>(indexSearch + lenFlat) <= searchThing.size());
+ 					// Does folded match the buffer
+ 					characterMatches = 0 == memcmp(folded, &searchThing[0] + indexSearch, lenFlat);
+ 					indexDocument += widthChar;

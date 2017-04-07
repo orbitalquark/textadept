@@ -1,0 +1,101 @@
+# HG changeset patch
+# User johnsonj
+# Date 1488691711 -39600
+# Node ID 225f39cfd93159c37966d50db15db7fdb894a503
+# Parent  a3894ee30cdba2c1ced617f80bc6eb900e5cbb42
+For IMEs, do not clear selected text when there is no composition text to show.
+
+diff -r a3894ee30cdb -r 225f39cfd931 doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Sat Mar 04 14:32:28 2017 +1100
++++ b/doc/ScintillaHistory.html	Sun Mar 05 16:28:31 2017 +1100
+@@ -527,6 +527,9 @@
+ 	Released 19 February 2017.
+ 	</li>
+ 	<li>
++	For IMEs, do not clear selected text when there is no composition text to show.
++	</li>
++	<li>
+ 	Fix to stream selection mode when moving caret up or down.
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1905/">Bug #1905</a>.
+ 	</li>
+diff -r a3894ee30cdb -r 225f39cfd931 gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Sat Mar 04 14:32:28 2017 +1100
++++ b/gtk/ScintillaGTK.cxx	Sun Mar 05 16:28:31 2017 +1100
+@@ -2323,12 +2323,13 @@
+ 
+ 		view.imeCaretBlockOverride = false; // If backspace.
+ 
++		bool initialCompose = false;
+ 		if (pdoc->TentativeActive()) {
+ 			pdoc->TentativeUndo();
+ 		} else {
+ 			// No tentative undo means start of this composition so
+ 			// fill in any virtual spaces.
+-			ClearBeforeTentativeStart();
++			initialCompose = true;
+ 		}
+ 
+ 		PreEditString preeditStr(im_context);
+@@ -2345,6 +2346,8 @@
+ 			return;
+ 		}
+ 
++		if (initialCompose)
++			ClearBeforeTentativeStart();
+ 		pdoc->TentativeStart(); // TentativeActive() from now on
+ 
+ 		std::vector<int> indicator = MapImeIndicators(preeditStr.attrs, preeditStr.str);
+diff -r a3894ee30cdb -r 225f39cfd931 qt/ScintillaEditBase/ScintillaEditBase.cpp
+--- a/qt/ScintillaEditBase/ScintillaEditBase.cpp	Sat Mar 04 14:32:28 2017 +1100
++++ b/qt/ScintillaEditBase/ScintillaEditBase.cpp	Sun Mar 05 16:28:31 2017 +1100
+@@ -525,12 +525,13 @@
+ 		return;
+ 	}
+ 
++	bool initialCompose = false;
+ 	if (sqt->pdoc->TentativeActive()) {
+ 		sqt->pdoc->TentativeUndo();
+ 	} else {
+ 		// No tentative undo means start of this composition so
+ 		// Fill in any virtual spaces.
+-		sqt->ClearBeforeTentativeStart();
++		initialCompose = true;
+ 	}
+ 
+ 	sqt->view.imeCaretBlockOverride = false;
+@@ -557,6 +558,8 @@
+ 			return;
+ 		}
+ 
++		if (initialCompose)
++			sqt->ClearBeforeTentativeStart();
+ 		sqt->pdoc->TentativeStart(); // TentativeActive() from now on.
+ 
+ 		std::vector<int> imeIndicator = MapImeIndicators(event);
+diff -r a3894ee30cdb -r 225f39cfd931 win32/ScintillaWin.cxx
+--- a/win32/ScintillaWin.cxx	Sat Mar 04 14:32:28 2017 +1100
++++ b/win32/ScintillaWin.cxx	Sun Mar 05 16:28:31 2017 +1100
+@@ -1061,12 +1061,13 @@
+ 		return 0;
+ 	}
+ 
++	bool initialCompose = false;
+ 	if (pdoc->TentativeActive()) {
+ 		pdoc->TentativeUndo();
+ 	} else {
+ 		// No tentative undo means start of this composition so
+ 		// fill in any virtual spaces.
+-		ClearBeforeTentativeStart();
++		initialCompose = true;
+ 	}
+ 
+ 	view.imeCaretBlockOverride = false;
+@@ -1078,6 +1079,8 @@
+ 			return 0;
+ 		}
+ 
++		if (initialCompose)
++			ClearBeforeTentativeStart();
+ 		pdoc->TentativeStart(); // TentativeActive from now on.
+ 
+ 		std::vector<int> imeIndicator = MapImeIndicators(imc.GetImeAttributes());
