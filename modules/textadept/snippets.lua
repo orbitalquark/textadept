@@ -151,7 +151,7 @@ local function new_snippet(text, trigger)
   -- @name snippet
   local snippet = setmetatable({
     trigger = trigger, original_sel_text = buffer:get_sel_text(),
-    start_pos = buffer.current_pos - (trigger and #trigger or 0),
+    start_pos = buffer.selection_start - (trigger and #trigger or 0),
     index = 0, max_index = 0, snapshots = {},
   }, {__index = function(self, k)
     if k == 'end_pos' then
