@@ -76,7 +76,6 @@ else
   bin_dir = $(PREFIX)/bin
   data_dir = $(PREFIX)/share/textadept
   XDG_DATA_DIR ?= $(PREFIX)/share/applications
-  svg_file = $(data_dir)/core/images/textadept.svg
   desktop_files := $(wildcard *.desktop)
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     plat_flag = -DGTK
@@ -278,8 +277,8 @@ install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
 	if [ -d "$(XDG_DATA_DIR)" ]; then \
 		install -d $(DESTDIR)$(XDG_DATA_DIR); \
 		for desktop_file in $(desktop_files); do \
-			sed -e 's|Icon=textadept.svg|Icon=$(svg_file)|' $$desktop_file > \
-			$(DESTDIR)$(XDG_DATA_DIR)/$$desktop_file; \
+			sed -e 's|Icon=textadept|Icon=$(data_dir)/core/images/textadept|' \
+			$$desktop_file > $(DESTDIR)$(XDG_DATA_DIR)/$$desktop_file; \
 		done; \
 	fi
 uninstall:
