@@ -76,6 +76,7 @@ else
   bin_dir = $(PREFIX)/bin
   data_dir = $(PREFIX)/share/textadept
   XDG_DATA_DIR ?= $(PREFIX)/share/applications
+  PIXMAPS_DIR ?= /usr/share/pixmaps
   desktop_files := $(wildcard *.desktop)
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     plat_flag = -DGTK
@@ -276,16 +277,20 @@ install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
 	ln -s $(subst .., $(data_dir), $^) $(DESTDIR)$(bin_dir)
 	if [ -d "$(XDG_DATA_DIR)" ]; then \
 		install -d $(DESTDIR)$(XDG_DATA_DIR); \
-		for desktop_file in $(desktop_files); do \
-			sed -e 's|Icon=textadept|Icon=$(data_dir)/core/images/textadept|' \
-			$$desktop_file > $(DESTDIR)$(XDG_DATA_DIR)/$$desktop_file; \
-		done; \
+		install -t $(DESTDIR)$(XDG_DATA_DIR) $(desktop_files); \
+	fi
+	if [ -d "$(PIXMAPS_DIR)" ]; then \
+		install -d $(DESTDIR)$(PIXMAPS_DIR); \
+		ln -s $(data_dir)/core/images/textadept.svg $(DESTDIR)$(PIXMAPS_DIR); \
+		ln -s $(data_dir)/core/images/ta_48x48.png \
+			$(DESTDIR)$(PIXMAPS_DIR)/textadept.png; \
 	fi
 uninstall:
 	rm -r $(DESTDIR)$(bin_dir)/textadept* $(DESTDIR)$(data_dir)
 	if [ -d "$(XDG_DATA_DIR)" ]; then \
 		rm $(DESTDIR)$(XDG_DATA_DIR)/textadept*.desktop; \
 	fi
+	if [ -d "$(PIXMAPS_DIR)" ]; then rm $(DESTDIR)$(PIXMAPS_DIR)/textadept*; fi
 
 # Clean.
 
@@ -403,7 +408,7 @@ endif
 scintilla_tgz = scintilla373.tgz
 tre_zip = cdce45e8dd7a3b36954022b4a4d3570e1ac5a4f8.zip
 scinterm_zip = scinterm_1.8.zip
-scintillua_zip = scintillua-3.7.4-1.zip
+scintillua_zip = scintillua_3.7.4-1.zip
 lua_tgz = lua-5.3.4.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
