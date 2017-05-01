@@ -35,8 +35,8 @@ Bugfixes:
 Changes:
 
 * Added support for Logtalk.
-* Effectively updated to [Scintilla][] 3.7.4.
 * Scintilla: Accessibility improvements including the ability to turn it off.
+* Effectively updated to [Scintilla][] 3.7.4.
 
 [Textadept 9.4 -- Win32]: download/textadept_9.4.win32.zip
 [Textadept 9.4 -- Mac OSX Intel 10.5+]: download/textadept_9.4.osx.zip
