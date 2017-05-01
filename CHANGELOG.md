@@ -9,6 +9,47 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 9.4 (01 May 2017)
+
+Download:
+
+* [Textadept 9.4 -- Win32][] | [PGP -- 9.4 Win32][]
+* [Textadept 9.4 -- Mac OSX Intel 10.5+][] | [PGP -- 9.4 OSX][]
+* [Textadept 9.4 -- Linux][] | [PGP -- 9.4 Linux][]
+* [Textadept 9.4 -- Linux x86_64][] | [PGP -- 9.4 Linux x86_64][]
+* [Textadept 9.4 -- Modules][] | [PGP -- 9.4 Modules][]
+
+Bugfixes:
+
+* Scintilla: Fixed crash in edge-case for fold tags (text shown next to folds).
+* Scintilla: Fixed stream selection collapsing when caret is moved up/down.
+* Scintilla: Fixed bugs in fold tag drawing.
+* Scintilla: Fixed crash in GTK accessibility (for screen readers) code.
+* Scintilla: Only allow smooth scrolling in Wayland.
+* Scintilla: Fixed popup positioning on a multi-monitor setup.
+* Fixed some C++ and Moonscript file associations.
+* Fixed some bugs in "Replace All".
+* Fixed some instances of snippet insertion with selected text.
+* Fixed `make install` for desktop files and icons.
+
+Changes:
+
+* Scintilla: Accessibility improvements including the ability to turn it off.
+* Added support for Logtalk.
+* Effectively updated to [Scintilla][] 3.7.4.
+
+[Textadept 9.4 -- Win32]: download/textadept_9.4.win32.zip
+[Textadept 9.4 -- Mac OSX Intel 10.5+]: download/textadept_9.4.osx.zip
+[Textadept 9.4 -- Linux]: download/textadept_9.4.i386.tgz
+[Textadept 9.4 -- Linux x86_64]: download/textadept_9.4.x86_64.tgz
+[Textadept 9.4 -- Modules]: download/textadept_9.4.modules.zip
+[PGP -- 9.4 Win32]: download/textadept_9.4.win32.zip.asc
+[PGP -- 9.4 OSX]: download/textadept_9.4.osx.zip.asc
+[PGP -- 9.4 Linux]: download/textadept_9.4.i386.tgz.asc
+[PGP -- 9.4 Linux x86_64]: download/textadept_9.4.x86_64.tgz.asc
+[PGP -- 9.4 Modules]: download/textadept_9.4.modules.zip.asc
+[Scintilla]: http://scintilla.org
+
 ## 9.3 (01 Mar 2017)
 
 Download:
