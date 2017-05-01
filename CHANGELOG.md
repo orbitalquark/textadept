@@ -21,22 +21,22 @@ Download:
 
 Bugfixes:
 
+* Fixed some C++ and Moonscript file associations.
+* Fixed some bugs in "Replace All".
+* Fixed some instances of snippet insertion with selected text.
+* Fixed `make install` for desktop files and icons.
 * Scintilla: Fixed crash in edge-case for fold tags (text shown next to folds).
 * Scintilla: Fixed stream selection collapsing when caret is moved up/down.
 * Scintilla: Fixed bugs in fold tag drawing.
 * Scintilla: Fixed crash in GTK accessibility (for screen readers) code.
 * Scintilla: Only allow smooth scrolling in Wayland.
 * Scintilla: Fixed popup positioning on a multi-monitor setup.
-* Fixed some C++ and Moonscript file associations.
-* Fixed some bugs in "Replace All".
-* Fixed some instances of snippet insertion with selected text.
-* Fixed `make install` for desktop files and icons.
 
 Changes:
 
-* Scintilla: Accessibility improvements including the ability to turn it off.
 * Added support for Logtalk.
 * Effectively updated to [Scintilla][] 3.7.4.
+* Scintilla: Accessibility improvements including the ability to turn it off.
 
 [Textadept 9.4 -- Win32]: download/textadept_9.4.win32.zip
 [Textadept 9.4 -- Mac OSX Intel 10.5+]: download/textadept_9.4.osx.zip
