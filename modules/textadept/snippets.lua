@@ -155,7 +155,8 @@ local function new_snippet(text, trigger)
     index = 0, max_index = 0, snapshots = {},
   }, {__index = function(self, k)
     if k == 'end_pos' then
-      return buffer:indicator_end(INDIC_SNIPPET, self.start_pos)
+      local end_pos = buffer:indicator_end(INDIC_SNIPPET, self.start_pos)
+      return end_pos > self.start_pos and end_pos or self.start_pos
     elseif k == 'placeholder_pos' then
       -- Normally the marker is one character behind the placeholder. However
       -- it will not exist at all if the placeholder is at the beginning of the
