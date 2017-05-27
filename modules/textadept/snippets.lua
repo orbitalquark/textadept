@@ -366,9 +366,12 @@ end
 
 ---
 -- Cancels the active snippet, removing all inserted text.
+-- Returns `false` if no snippet is active.
+-- @return `false` if no snippet is active; `nil` otherwise.
 -- @name _cancel_current
 function M._cancel_current()
-  if #snippet_stack > 0 then snippet_stack[#snippet_stack]:finish(true) end
+  if #snippet_stack == 0 then return false end
+  snippet_stack[#snippet_stack]:finish(true)
 end
 
 ---

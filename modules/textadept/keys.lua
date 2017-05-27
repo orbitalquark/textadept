@@ -89,7 +89,7 @@ local M = {}
 -- Tab             |⇥      |Tab          |Expand snippet or next placeholder
 -- Ctrl+K          |⌥⇥     |M-K          |Insert snippet...
 -- Shift+Tab       |⇧⇥     |S-Tab        |Previous snippet placeholder
--- Ctrl+Shift+K    |⌥⇧⇥    |M-S-K        |Cancel snippet
+-- Esc             |Esc    |Esc          |Cancel snippet
 -- Ctrl+F2         |⌘F2    |F1           |Toggle bookmark
 -- Ctrl+Shift+F2   |⌘⇧F2   |F6           |Clear bookmarks
 -- F2              |F2     |F2           |Next bookmark
@@ -220,7 +220,7 @@ module('textadept.keys')]]
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:       C         H I            p  Q     T ~ V     Y  _   ) ] }   +
+-- c:       C         H I   K        p  Q     T ~ V     Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdD   F      jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
@@ -263,7 +263,7 @@ module('textadept.keys')]]
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~            ~
 -- cm:   cd  g~~ k ~   q  t    yz
--- m:          e          J            qQ  sS    vVw   yY  _          +
+-- m:          e          J K          qQ  sS    vVw   yY  _          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- CTRL = 'c' (Control ^)
@@ -413,8 +413,7 @@ keys[not OSX and (GUI and 'caP' or 'cmp') or 'cmP'] = io.quick_open
 keys[not OSX and (GUI and 'ck' or 'mk') or 'a\t'] = textadept.snippets._select
 keys['\t'] = textadept.snippets._insert
 keys['s\t'] = textadept.snippets._previous
-keys[not OSX and (GUI and 'cK' or 'mK')
-             or 'as\t'] = textadept.snippets._cancel_current
+keys.esc = textadept.snippets._cancel_current
 -- Other.
 keys[not OSX and ((GUI or WIN32) and 'c ' or 'c@')
              or 'aesc'] = m_tools[_L['_Complete Symbol']][2]
