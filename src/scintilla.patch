@@ -111,7 +111,7 @@ diff -r bfdfb44eb777 src/Document.cxx
 +			int repetitions = 1000; // break out of infinite loop
 +			while (success && pmatch[0].rm_eo <= endPos && repetitions--) {
 +				success = tre_regnexec(&preg, string + pos + 1, len - (pos + 1), 10,
-+				                       pmatch, eflags) == REG_OK;
++				                       pmatch, eflags | REG_NOTBOL) == REG_OK;
 +				if (success) {
 +					for (int i = 0; i < 10 && pmatch[i].rm_so != -1; i++)
 +						pmatch[i].rm_so += pos + 1, pmatch[i].rm_eo += pos + 1; // adjust
