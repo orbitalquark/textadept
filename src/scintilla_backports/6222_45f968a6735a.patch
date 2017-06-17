@@ -1,0 +1,222 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1493717258 -36000
+# Node ID 45f968a6735a89a219c8461ea3312655cc15da83
+# Parent  da6b7ddd88fe823d0e4b985ace8903ccf304d573
+More consistent use of size_t when converting Unicode formats.
+
+diff -r da6b7ddd88fe -r 45f968a6735a src/Document.cxx
+--- a/src/Document.cxx	Tue May 02 11:16:00 2017 +1000
++++ b/src/Document.cxx	Tue May 02 19:27:38 2017 +1000
+@@ -2883,7 +2883,7 @@
+ 
+ 		bool matched = false;
+ 		if (SC_CP_UTF8 == doc->dbcsCodePage) {
+-			unsigned int lenS = static_cast<unsigned int>(strlen(s));
++			size_t lenS = strlen(s);
+ 			std::vector<wchar_t> ws(lenS + 1);
+ #if WCHAR_T_IS_16
+ 			size_t outLen = UTF16FromUTF8(s, lenS, &ws[0], lenS);
+diff -r da6b7ddd88fe -r 45f968a6735a src/UniConversion.cxx
+--- a/src/UniConversion.cxx	Tue May 02 11:16:00 2017 +1000
++++ b/src/UniConversion.cxx	Tue May 02 19:27:38 2017 +1000
+@@ -20,9 +20,9 @@
+ namespace Scintilla {
+ #endif
+ 
+-unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen) {
+-	unsigned int len = 0;
+-	for (unsigned int i = 0; i < tlen && uptr[i];) {
++size_t UTF8Length(const wchar_t *uptr, size_t tlen) {
++	size_t len = 0;
++	for (size_t i = 0; i < tlen && uptr[i];) {
+ 		const unsigned int uch = uptr[i];
+ 		if (uch < 0x80) {
+ 			len++;
+@@ -40,9 +40,9 @@
+ 	return len;
+ }
+ 
+-void UTF8FromUTF16(const wchar_t *uptr, unsigned int tlen, char *putf, unsigned int len) {
+-	unsigned int k = 0;
+-	for (unsigned int i = 0; i < tlen && uptr[i];) {
++void UTF8FromUTF16(const wchar_t *uptr, size_t tlen, char *putf, size_t len) {
++	size_t k = 0;
++	for (size_t i = 0; i < tlen && uptr[i];) {
+ 		const unsigned int uch = uptr[i];
+ 		if (uch < 0x80) {
+ 			putf[k++] = static_cast<char>(uch);
+@@ -138,10 +138,10 @@
+ 	return ui;
+ }
+ 
+-unsigned int UTF32FromUTF8(const char *s, unsigned int len, unsigned int *tbuf, unsigned int tlen) {
+-	unsigned int ui=0;
++size_t UTF32FromUTF8(const char *s, size_t len, unsigned int *tbuf, size_t tlen) {
++	size_t ui=0;
+ 	const unsigned char *us = reinterpret_cast<const unsigned char *>(s);
+-	unsigned int i=0;
++	size_t i=0;
+ 	while ((i<len) && (ui<tlen)) {
+ 		unsigned char ch = us[i++];
+ 		unsigned int value = 0;
+diff -r da6b7ddd88fe -r 45f968a6735a src/UniConversion.h
+--- a/src/UniConversion.h	Tue May 02 11:16:00 2017 +1000
++++ b/src/UniConversion.h	Tue May 02 19:27:38 2017 +1000
+@@ -16,12 +16,12 @@
+ 
+ const int unicodeReplacementChar = 0xFFFD;
+ 
+-unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
+-void UTF8FromUTF16(const wchar_t *uptr, unsigned int tlen, char *putf, unsigned int len);
++size_t UTF8Length(const wchar_t *uptr, size_t tlen);
++void UTF8FromUTF16(const wchar_t *uptr, size_t tlen, char *putf, size_t len);
+ unsigned int UTF8CharLength(unsigned char ch);
+ size_t UTF16Length(const char *s, size_t len);
+ size_t UTF16FromUTF8(const char *s, size_t len, wchar_t *tbuf, size_t tlen);
+-unsigned int UTF32FromUTF8(const char *s, unsigned int len, unsigned int *tbuf, unsigned int tlen);
++size_t UTF32FromUTF8(const char *s, size_t len, unsigned int *tbuf, size_t tlen);
+ unsigned int UTF16FromUTF32Character(unsigned int val, wchar_t *tbuf);
+ std::string FixInvalidUTF8(const std::string &text);
+ 
+diff -r da6b7ddd88fe -r 45f968a6735a win32/PlatWin.cxx
+--- a/win32/PlatWin.cxx	Tue May 02 11:16:00 2017 +1000
++++ b/win32/PlatWin.cxx	Tue May 02 19:27:38 2017 +1000
+@@ -481,7 +481,7 @@
+ const int stackBufferLength = 1000;
+ class TextWide : public VarBuffer<wchar_t, stackBufferLength> {
+ public:
+-	int tlen;
++	int tlen;	// Using int instead of size_t as most Win32 APIs take int.
+ 	TextWide(const char *s, int len, bool unicodeMode, int codePage=0) :
+ 		VarBuffer<wchar_t, stackBufferLength>(len) {
+ 		if (unicodeMode) {
+diff -r da6b7ddd88fe -r 45f968a6735a win32/ScintillaWin.cxx
+--- a/win32/ScintillaWin.cxx	Tue May 02 11:16:00 2017 +1000
++++ b/win32/ScintillaWin.cxx	Tue May 02 19:27:38 2017 +1000
+@@ -782,10 +782,10 @@
+ void ScintillaWin::AddCharUTF16(wchar_t const *wcs, unsigned int wclen) {
+ 	if (IsUnicodeMode()) {
+ 		char utfval[maxLenInputIME * 3];
+-		unsigned int len = UTF8Length(wcs, wclen);
++		size_t len = UTF8Length(wcs, wclen);
+ 		UTF8FromUTF16(wcs, wclen, utfval, len);
+ 		utfval[len] = '\0';
+-		AddCharUTF(utfval, len);
++		AddCharUTF(utfval, static_cast<unsigned int>(len));
+ 	} else {
+ 		UINT cpDest = CodePageOfDocument();
+ 		char inBufferCP[maxLenInputIME * 2];
+@@ -1178,7 +1178,7 @@
+ 	std::vector<char> docBytes(pdoc->Length(), '\0');
+ 	pdoc->GetCharRange(&docBytes[0], 0, pdoc->Length());
+ 	if (IsUnicodeMode()) {
+-		return UTF16Length(&docBytes[0], static_cast<unsigned int>(docBytes.size()));
++		return UTF16Length(&docBytes[0], docBytes.size());
+ 	} else {
+ 		return ::MultiByteToWideChar(CodePageOfDocument(), 0, &docBytes[0],
+ 			static_cast<int>(docBytes.size()), NULL, 0);
+@@ -1200,7 +1200,7 @@
+ 		if (wParam == 0)
+ 			return 0;
+ 		size_t uLen = UTF16FromUTF8(&docBytes[0], docBytes.size(),
+-			ptr, static_cast<int>(wParam) - 1);
++			ptr, wParam - 1);
+ 		ptr[uLen] = L'\0';
+ 		return uLen;
+ 	} else {
+@@ -2231,11 +2231,11 @@
+ 	if (memUSelection) {
+ 		wchar_t *uptr = static_cast<wchar_t *>(memUSelection.ptr);
+ 		if (uptr) {
+-			unsigned int len;
++			size_t len;
+ 			std::vector<char> putf;
+ 			// Default Scintilla behaviour in Unicode mode
+ 			if (IsUnicodeMode()) {
+-				const unsigned int bytes = static_cast<unsigned int>(memUSelection.Size());
++				const size_t bytes = memUSelection.Size();
+ 				len = UTF8Length(uptr, bytes / 2);
+ 				putf.resize(len + 1);
+ 				UTF8FromUTF16(uptr, bytes / 2, &putf[0], len);
+@@ -2247,10 +2247,10 @@
+ 				                            NULL, 0, NULL, NULL) - 1; // subtract 0 terminator
+ 				putf.resize(len + 1);
+ 				::WideCharToMultiByte(cpDest, 0, uptr, -1,
+-					                      &putf[0], len + 1, NULL, NULL);
++					                      &putf[0], static_cast<int>(len) + 1, NULL, NULL);
+ 			}
+ 
+-			InsertPasteShape(&putf[0], len, pasteShape);
++			InsertPasteShape(&putf[0], static_cast<int>(len), pasteShape);
+ 		}
+ 		memUSelection.Unlock();
+ 	} else {
+@@ -2259,27 +2259,28 @@
+ 		if (memSelection) {
+ 			char *ptr = static_cast<char *>(memSelection.ptr);
+ 			if (ptr) {
+-				const unsigned int bytes = static_cast<unsigned int>(memSelection.Size());
+-				unsigned int len = bytes;
+-				for (unsigned int i = 0; i < bytes; i++) {
++				const size_t bytes = memSelection.Size();
++				size_t len = bytes;
++				for (size_t i = 0; i < bytes; i++) {
+ 					if ((len == bytes) && (0 == ptr[i]))
+ 						len = i;
+ 				}
++				const int ilen = static_cast<int>(len);
+ 
+ 				// In Unicode mode, convert clipboard text to UTF-8
+ 				if (IsUnicodeMode()) {
+ 					std::vector<wchar_t> uptr(len+1);
+ 
+-					const unsigned int ulen = ::MultiByteToWideChar(CP_ACP, 0,
+-					                    ptr, len, &uptr[0], len+1);
+-
+-					unsigned int mlen = UTF8Length(&uptr[0], ulen);
++					const size_t ulen = ::MultiByteToWideChar(CP_ACP, 0,
++					                    ptr, ilen, &uptr[0], ilen +1);
++
++					const size_t mlen = UTF8Length(&uptr[0], ulen);
+ 					std::vector<char> putf(mlen+1);
+ 					UTF8FromUTF16(&uptr[0], ulen, &putf[0], mlen);
+ 
+-					InsertPasteShape(&putf[0], mlen, pasteShape);
++					InsertPasteShape(&putf[0], static_cast<int>(mlen), pasteShape);
+ 				} else {
+-					InsertPasteShape(ptr, len, pasteShape);
++					InsertPasteShape(ptr, ilen, pasteShape);
+ 				}
+ 			}
+ 			memSelection.Unlock();
+@@ -2770,7 +2771,7 @@
+ 	// Default Scintilla behaviour in Unicode mode
+ 	if (IsUnicodeMode()) {
+ 		size_t uchars = UTF16Length(selectedText.Data(),
+-			static_cast<int>(selectedText.LengthWithTerminator()));
++			selectedText.LengthWithTerminator());
+ 		uniText.Allocate(2 * uchars);
+ 		if (uniText) {
+ 			UTF16FromUTF8(selectedText.Data(), selectedText.LengthWithTerminator(),
+@@ -3069,9 +3070,9 @@
+ 			wchar_t *udata = static_cast<wchar_t *>(memUDrop.ptr);
+ 			if (udata) {
+ 				if (IsUnicodeMode()) {
+-					const int tlen = static_cast<int>(memUDrop.Size());
++					const size_t tlen = memUDrop.Size();
+ 					// Convert UTF-16 to UTF-8
+-					int dataLen = UTF8Length(udata, tlen/2);
++					const size_t dataLen = UTF8Length(udata, tlen/2);
+ 					data.resize(dataLen+1);
+ 					UTF8FromUTF16(udata, tlen/2, &data[0], dataLen);
+ 				} else {
+@@ -3146,7 +3147,7 @@
+ 
+ 	GlobalMemory text;
+ 	if (pFEIn->cfFormat == CF_UNICODETEXT) {
+-		size_t uchars = UTF16Length(drag.Data(), static_cast<int>(drag.LengthWithTerminator()));
++		size_t uchars = UTF16Length(drag.Data(), drag.LengthWithTerminator());
+ 		text.Allocate(2 * uchars);
+ 		if (text) {
+ 			UTF16FromUTF8(drag.Data(), drag.LengthWithTerminator(),

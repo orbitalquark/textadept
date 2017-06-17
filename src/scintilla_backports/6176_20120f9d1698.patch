@@ -1,0 +1,19 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1491606364 -36000
+# Node ID 20120f9d1698f2a5b36ca9fa2e01ed08fa9776fd
+# Parent  d742ec177a7eab50fa56cf453d32ed211f767365
+Use reference for efficiency.
+
+diff -r d742ec177a7e -r 20120f9d1698 src/Editor.cxx
+--- a/src/Editor.cxx	Fri Apr 07 19:44:59 2017 +1000
++++ b/src/Editor.cxx	Sat Apr 08 09:06:04 2017 +1000
+@@ -4301,7 +4301,7 @@
+ 	const SelectionPosition pos = SPositionFromLocation(pt, false, true);
+ 	const Point ptPos = LocationFromPosition(pos);
+ 	for (size_t r=0; r<sel.Count(); r++) {
+-		const SelectionRange range = sel.Range(r);
++		const SelectionRange &range = sel.Range(r);
+ 		if (range.Contains(pos)) {
+ 			bool hit = true;
+ 			if (pos == range.Start()) {

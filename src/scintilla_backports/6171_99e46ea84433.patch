@@ -1,0 +1,25 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1491548935 -36000
+# Node ID 99e46ea84433f95e568fb9fdc7d4a92869e823ab
+# Parent  df221375187cab18a3e1c73ae83fa46805bf98db
+Check index before checking value at index.
+
+diff -r df221375187c -r 99e46ea84433 src/CellBuffer.cxx
+--- a/src/CellBuffer.cxx	Fri Apr 07 17:08:12 2017 +1000
++++ b/src/CellBuffer.cxx	Fri Apr 07 17:08:55 2017 +1000
+@@ -348,12 +348,12 @@
+ 
+ int UndoHistory::StartRedo() {
+ 	// Drop any leading startAction
+-	if (actions[currentAction].at == startAction && currentAction < maxAction)
++	if (currentAction < maxAction && actions[currentAction].at == startAction)
+ 		currentAction++;
+ 
+ 	// Count the steps in this action
+ 	int act = currentAction;
+-	while (actions[act].at != startAction && act < maxAction) {
++	while (act < maxAction && actions[act].at != startAction) {
+ 		act++;
+ 	}
+ 	return act - currentAction;

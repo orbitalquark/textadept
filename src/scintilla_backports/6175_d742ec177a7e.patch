@@ -1,0 +1,167 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1491558299 -36000
+# Node ID d742ec177a7eab50fa56cf453d32ed211f767365
+# Parent  150bdfbe2b5a267eb53a67850d478d311ccd34b6
+Prefer C++ static cast over C-style casts.
+
+diff -r 150bdfbe2b5a -r d742ec177a7e include/Platform.h
+--- a/include/Platform.h	Fri Apr 07 19:44:24 2017 +1000
++++ b/include/Platform.h	Fri Apr 07 19:44:59 2017 +1000
+@@ -78,7 +78,7 @@
+ typedef float XYPOSITION;
+ typedef double XYACCUMULATOR;
+ inline int RoundXYPosition(XYPOSITION xyPos) {
+-	return int(xyPos + 0.5);
++	return static_cast<int>(xyPos + 0.5);
+ }
+ 
+ // Underlying the implementation of the platform classes are platform specific types.
+diff -r 150bdfbe2b5a -r d742ec177a7e lexers/LexCPP.cxx
+--- a/lexers/LexCPP.cxx	Fri Apr 07 19:44:24 2017 +1000
++++ b/lexers/LexCPP.cxx	Fri Apr 07 19:44:59 2017 +1000
+@@ -54,7 +54,7 @@
+ // Putting a space between the '++' post-inc operator and the '+' binary op
+ // fixes this, and is highly recommended for readability anyway.
+ bool FollowsPostfixOperator(StyleContext &sc, LexAccessor &styler) {
+-	Sci_Position pos = (Sci_Position) sc.currentPos;
++	Sci_Position pos = static_cast<Sci_Position>(sc.currentPos);
+ 	while (--pos > 0) {
+ 		const char ch = styler[pos];
+ 		if (ch == '+' || ch == '-') {
+@@ -66,7 +66,7 @@
+ 
+ bool followsReturnKeyword(StyleContext &sc, LexAccessor &styler) {
+ 	// Don't look at styles, so no need to flush.
+-	Sci_Position pos = (Sci_Position) sc.currentPos;
++	Sci_Position pos = static_cast<Sci_Position>(sc.currentPos);
+ 	Sci_Position currentLine = styler.GetLine(pos);
+ 	const Sci_Position lineStartPos = styler.LineStart(currentLine);
+ 	while (--pos > lineStartPos) {
+@@ -145,7 +145,7 @@
+ 	if ((isoperator(sc.chPrev) || IsASpace(sc.chPrev)) && markerList.Length()) {
+ 		const int lengthMarker = 50;
+ 		char marker[lengthMarker+1];
+-		Sci_Position currPos = (Sci_Position) sc.currentPos;
++		Sci_Position currPos = static_cast<Sci_Position>(sc.currentPos);
+ 		int i = 0;
+ 		while (i < lengthMarker) {
+ 			const char ch = styler.SafeGetCharAt(currPos + i);
+diff -r 150bdfbe2b5a -r d742ec177a7e lexers/LexPython.cxx
+--- a/lexers/LexPython.cxx	Fri Apr 07 19:44:24 2017 +1000
++++ b/lexers/LexPython.cxx	Fri Apr 07 19:44:59 2017 +1000
+@@ -435,7 +435,7 @@
+ 
+ 	if (deepestSingleStateIndex != -1) {
+ 		sc.SetState(fstringStateStack[deepestSingleStateIndex].state);
+-		while (fstringStateStack.size() > (unsigned long)deepestSingleStateIndex) {
++		while (fstringStateStack.size() > static_cast<unsigned long>(deepestSingleStateIndex)) {
+ 			PopFromStateStack(fstringStateStack, currentFStringExp);
+ 		}
+ 	}
+@@ -714,7 +714,7 @@
+ 				sc.ForwardSetState(SCE_P_DEFAULT);
+ 				needEOLCheck = true;
+ 
+-				while (fstringStateStack.size() > (unsigned long)matching_stack_i) {
++				while (fstringStateStack.size() > static_cast<unsigned long>(matching_stack_i)) {
+ 					PopFromStateStack(fstringStateStack, currentFStringExp);
+ 				}
+ 			}
+diff -r 150bdfbe2b5a -r d742ec177a7e src/AutoComplete.cxx
+--- a/src/AutoComplete.cxx	Fri Apr 07 19:44:24 2017 +1000
++++ b/src/AutoComplete.cxx	Fri Apr 07 19:44:59 2017 +1000
+@@ -156,7 +156,7 @@
+ 
+ 	Sorter IndexSort(this, list);
+ 	sortMatrix.clear();
+-	for (int i = 0; i < (int)IndexSort.indices.size() / 2; ++i)
++	for (int i = 0; i < static_cast<int>(IndexSort.indices.size()) / 2; ++i)
+ 		sortMatrix.push_back(i);
+ 	std::sort(sortMatrix.begin(), sortMatrix.end(), IndexSort);
+ 	if (autoSort == SC_ORDER_CUSTOM || sortMatrix.size() < 2) {
+@@ -186,7 +186,7 @@
+ 		item[wordLen] = '\0';
+ 		sortedList += item;
+ 	}
+-	for (int i = 0; i < (int)sortMatrix.size(); ++i)
++	for (int i = 0; i < static_cast<int>(sortMatrix.size()); ++i)
+ 		sortMatrix[i] = i;
+ 	lb->SetList(sortedList.c_str(), separator, typesep);
+ }
+diff -r 150bdfbe2b5a -r d742ec177a7e src/Indicator.cxx
+--- a/src/Indicator.cxx	Fri Apr 07 19:44:24 2017 +1000
++++ b/src/Indicator.cxx	Fri Apr 07 19:44:59 2017 +1000
+@@ -21,7 +21,8 @@
+ 
+ static PRectangle PixelGridAlign(const PRectangle &rc) {
+ 	// Move left and right side to nearest pixel to avoid blurry visuals
+-	return PRectangle::FromInts(int(rc.left + 0.5), int(rc.top), int(rc.right + 0.5), int(rc.bottom));
++	return PRectangle::FromInts(static_cast<int>(rc.left + 0.5), static_cast<int>(rc.top),
++		static_cast<int>(rc.right + 0.5), static_cast<int>(rc.bottom));
+ }
+ 
+ void Indicator::Draw(Surface *surface, const PRectangle &rc, const PRectangle &rcLine, const PRectangle &rcCharacter, DrawState drawState, int value) const {
+@@ -35,8 +36,8 @@
+ 	surface->PenColour(sacDraw.fore);
+ 	int ymid = static_cast<int>(rc.bottom + rc.top) / 2;
+ 	if (sacDraw.style == INDIC_SQUIGGLE) {
+-		int x = int(rc.left+0.5);
+-		const int xLast = int(rc.right+0.5);
++		int x = static_cast<int>(rc.left+0.5);
++		const int xLast = static_cast<int>(rc.right+0.5);
+ 		int y = 0;
+ 		surface->MoveTo(x, static_cast<int>(rc.top) + y);
+ 		while (x < xLast) {
+diff -r 150bdfbe2b5a -r d742ec177a7e win32/PlatWin.cxx
+--- a/win32/PlatWin.cxx	Fri Apr 07 19:44:24 2017 +1000
++++ b/win32/PlatWin.cxx	Fri Apr 07 19:44:59 2017 +1000
+@@ -1292,7 +1292,7 @@
+ }
+ 
+ static float RoundFloat(float f) {
+-	return float(int(f+0.5f));
++	return static_cast<float>(static_cast<int>(f+0.5f));
+ }
+ 
+ void SurfaceD2D::LineTo(int x_, int y_) {
+@@ -1899,7 +1899,7 @@
+ 				FlipBitmap(info.hbmMask, bmp.bmWidth, bmp.bmHeight);
+ 				if (info.hbmColor != NULL)
+ 					FlipBitmap(info.hbmColor, bmp.bmWidth, bmp.bmHeight);
+-				info.xHotspot = (DWORD)bmp.bmWidth - 1 - info.xHotspot;
++				info.xHotspot = static_cast<DWORD>(bmp.bmWidth) - 1 - info.xHotspot;
+ 
+ 				reverseArrowCursor = ::CreateIconIndirect(&info);
+ 				if (reverseArrowCursor != NULL)
+diff -r 150bdfbe2b5a -r d742ec177a7e win32/ScintillaWin.cxx
+--- a/win32/ScintillaWin.cxx	Fri Apr 07 19:44:24 2017 +1000
++++ b/win32/ScintillaWin.cxx	Fri Apr 07 19:44:59 2017 +1000
+@@ -2689,11 +2689,11 @@
+ 	const int rcFeedLen = static_cast<int>(rcFeed.length()) * sizeof(wchar_t);
+ 	const int rcSize = sizeof(RECONVERTSTRING) + rcFeedLen + sizeof(wchar_t);
+ 
+-	RECONVERTSTRING *rc = (RECONVERTSTRING *)lParam;
++	RECONVERTSTRING *rc = reinterpret_cast<RECONVERTSTRING *>(lParam);
+ 	if (!rc)
+ 		return rcSize; // Immediately be back with rcSize of memory block.
+ 
+-	wchar_t *rcFeedStart = (wchar_t*)(rc + 1);
++	wchar_t *rcFeedStart = reinterpret_cast<wchar_t*>(rc + 1);
+ 	memcpy(rcFeedStart, &rcFeed[0], rcFeedLen);
+ 
+ 	std::string rcCompString = RangeText(mainStart, mainEnd);
+@@ -2704,10 +2704,10 @@
+ 	// Map selection to dwCompStr.
+ 	// No selection assumes current caret as rcCompString without length.
+ 	rc->dwVersion = 0; // It should be absolutely 0.
+-	rc->dwStrLen = (DWORD)static_cast<int>(rcFeed.length());
++	rc->dwStrLen = static_cast<DWORD>(rcFeed.length());
+ 	rc->dwStrOffset = sizeof(RECONVERTSTRING);
+-	rc->dwCompStrLen = (DWORD)static_cast<int>(rcCompWstring.length());
+-	rc->dwCompStrOffset = (DWORD)static_cast<int>(rcCompWstart.length()) * sizeof(wchar_t);
++	rc->dwCompStrLen = static_cast<DWORD>(rcCompWstring.length());
++	rc->dwCompStrOffset = static_cast<DWORD>(rcCompWstart.length()) * sizeof(wchar_t);
+ 	rc->dwTargetStrLen = rc->dwCompStrLen;
+ 	rc->dwTargetStrOffset =rc->dwCompStrOffset;
+ 

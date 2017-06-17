@@ -1,0 +1,18 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1490950601 -39600
+# Node ID 284cc3b0e7544e9894323fd07e038fdec383b836
+# Parent  a0f26eaf474d98cb999629f79a3d082c0028925b
+Delete declaration of unimplemented method.
+
+diff -r a0f26eaf474d -r 284cc3b0e754 src/Document.h
+--- a/src/Document.h	Fri Mar 31 18:19:38 2017 +1100
++++ b/src/Document.h	Fri Mar 31 19:56:41 2017 +1100
+@@ -379,7 +379,6 @@
+ 	Sci::Line GetFoldParent(Sci::Line line) const;
+ 	void GetHighlightDelimiters(HighlightDelimiter &hDelimiter, Sci::Line line, Sci::Line lastLine);
+ 
+-	void Indent(bool forwards);
+ 	Sci::Position ExtendWordSelect(Sci::Position pos, int delta, bool onlyWordCharacters=false) const;
+ 	Sci::Position NextWordStart(Sci::Position pos, int delta) const;
+ 	Sci::Position NextWordEnd(Sci::Position pos, int delta) const;

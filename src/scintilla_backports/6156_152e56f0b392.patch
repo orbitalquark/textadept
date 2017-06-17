@@ -1,0 +1,239 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1490962865 -39600
+# Node ID 152e56f0b392ab3143b697c8a057ac1d79533366
+# Parent  c105254dae66064fe4898cc13f409c7abfc1edab
+Prefer standard min/max over Platform's as adapts to changed types.
+
+diff -r c105254dae66 -r 152e56f0b392 cocoa/ScintillaCocoa.mm
+--- a/cocoa/ScintillaCocoa.mm	Fri Mar 31 23:07:29 2017 +1100
++++ b/cocoa/ScintillaCocoa.mm	Fri Mar 31 23:21:05 2017 +1100
+@@ -1263,7 +1263,7 @@
+   // TODO: does not work for wrapped lines, fix it.
+   Sci::Line line = pdoc->LineFromPosition(posDrag.Position());
+   Sci::Line currentVisibleLine = cs.DisplayFromDoc(line);
+-  Sci::Line lastVisibleLine = Platform::Minimum(topLine + LinesOnScreen(), cs.LinesDisplayed()) - 2;
++  Sci::Line lastVisibleLine = std::min(topLine + LinesOnScreen(), cs.LinesDisplayed()) - 2;
+ 
+   if (currentVisibleLine <= topLine && topLine > 0)
+     ScrollTo(topLine - scrollSpeed);
+diff -r c105254dae66 -r 152e56f0b392 src/CallTip.cxx
+--- a/src/CallTip.cxx	Fri Mar 31 23:07:29 2017 +1100
++++ b/src/CallTip.cxx	Fri Mar 31 23:21:05 2017 +1100
+@@ -11,6 +11,7 @@
+ 
+ #include <stdexcept>
+ #include <string>
++#include <algorithm>
+ 
+ #include "Platform.h"
+ 
+@@ -191,11 +192,11 @@
+ 		int chunkOffset = static_cast<int>(chunkVal - val.c_str());
+ 		int chunkLength = static_cast<int>(chunkEnd - chunkVal);
+ 		int chunkEndOffset = chunkOffset + chunkLength;
+-		int thisStartHighlight = Platform::Maximum(startHighlight, chunkOffset);
+-		thisStartHighlight = Platform::Minimum(thisStartHighlight, chunkEndOffset);
++		int thisStartHighlight = std::max(startHighlight, chunkOffset);
++		thisStartHighlight = std::min(thisStartHighlight, chunkEndOffset);
+ 		thisStartHighlight -= chunkOffset;
+-		int thisEndHighlight = Platform::Maximum(endHighlight, chunkOffset);
+-		thisEndHighlight = Platform::Minimum(thisEndHighlight, chunkEndOffset);
++		int thisEndHighlight = std::max(endHighlight, chunkOffset);
++		thisEndHighlight = std::min(thisEndHighlight, chunkEndOffset);
+ 		thisEndHighlight -= chunkOffset;
+ 		rcClient.top = static_cast<XYPOSITION>(ytext - ascent - 1);
+ 
+@@ -211,7 +212,7 @@
+ 		chunkVal = chunkEnd + 1;
+ 		ytext += lineHeight;
+ 		rcClient.bottom += lineHeight;
+-		maxWidth = Platform::Maximum(maxWidth, x);
++		maxWidth = std::max(maxWidth, x);
+ 	}
+ 	return maxWidth;
+ }
+diff -r c105254dae66 -r 152e56f0b392 src/Document.cxx
+--- a/src/Document.cxx	Fri Mar 31 23:07:29 2017 +1100
++++ b/src/Document.cxx	Fri Mar 31 23:21:05 2017 +1100
+@@ -448,7 +448,7 @@
+ 	if (level == -1)
+ 		level = LevelNumber(GetLevel(lineParent));
+ 	Sci::Line maxLine = LinesTotal();
+-	Sci::Line lookLastLine = (lastLine != -1) ? Platform::Minimum(LinesTotal() - 1, lastLine) : -1;
++	Sci::Line lookLastLine = (lastLine != -1) ? std::min(LinesTotal() - 1, lastLine) : -1;
+ 	Sci::Line lineMaxSubord = lineParent;
+ 	while (lineMaxSubord < maxLine - 1) {
+ 		EnsureStyledTo(LineStart(lineMaxSubord + 2));
+@@ -488,7 +488,7 @@
+ 
+ void Document::GetHighlightDelimiters(HighlightDelimiter &highlightDelimiter, Sci::Line line, Sci::Line lastLine) {
+ 	int level = GetLevel(line);
+-	Sci::Line lookLastLine = Platform::Maximum(line, lastLine) + 1;
++	Sci::Line lookLastLine = std::max(line, lastLine) + 1;
+ 
+ 	Sci::Line lookLine = line;
+ 	int lookLineLevel = level;
+@@ -1863,7 +1863,7 @@
+ 		const Sci::Position lengthFind = *length;
+ 
+ 		//Platform::DebugPrintf("Find %d %d %s %d\n", startPos, endPos, ft->lpstrText, lengthFind);
+-		const Sci::Position limitPos = Platform::Maximum(startPos, endPos);
++		const Sci::Position limitPos = std::max(startPos, endPos);
+ 		Sci::Position pos = startPos;
+ 		if (!forward) {
+ 			// Back all of a character
+diff -r c105254dae66 -r 152e56f0b392 src/EditView.cxx
+--- a/src/EditView.cxx	Fri Mar 31 23:07:29 2017 +1100
++++ b/src/EditView.cxx	Fri Mar 31 23:21:05 2017 +1100
+@@ -1780,7 +1780,7 @@
+ 		// Find the most recent line with some text
+ 
+ 		Sci::Line lineLastWithText = line;
+-		while (lineLastWithText > Platform::Maximum(line - 20, 0) && model.pdoc->IsWhiteLine(lineLastWithText)) {
++		while (lineLastWithText > std::max(line - 20, 0) && model.pdoc->IsWhiteLine(lineLastWithText)) {
+ 			lineLastWithText--;
+ 		}
+ 		if (lineLastWithText < line) {
+@@ -1795,21 +1795,21 @@
+ 			if (vsDraw.viewIndentationGuides == ivLookForward) {
+ 				// In viLookForward mode, previous line only used if it is a fold header
+ 				if (isFoldHeader) {
+-					indentSpace = Platform::Maximum(indentSpace, indentLastWithText);
++					indentSpace = std::max(indentSpace, indentLastWithText);
+ 				}
+ 			} else {	// viLookBoth
+-				indentSpace = Platform::Maximum(indentSpace, indentLastWithText);
++				indentSpace = std::max(indentSpace, indentLastWithText);
+ 			}
+ 		}
+ 
+ 		Sci::Line lineNextWithText = line;
+-		while (lineNextWithText < Platform::Minimum(line + 20, model.pdoc->LinesTotal()) && model.pdoc->IsWhiteLine(lineNextWithText)) {
++		while (lineNextWithText < std::min(line + 20, model.pdoc->LinesTotal()) && model.pdoc->IsWhiteLine(lineNextWithText)) {
+ 			lineNextWithText++;
+ 		}
+ 		if (lineNextWithText > line) {
+ 			xStartText = 100000;	// Don't limit to visible indentation on empty line
+ 			// This line is empty, so use indentation of first next line with text
+-			indentSpace = Platform::Maximum(indentSpace,
++			indentSpace = std::max(indentSpace,
+ 				model.pdoc->GetLineIndentation(lineNextWithText));
+ 		}
+ 
+@@ -2050,7 +2050,7 @@
+ 						surfaceWindow->Copy(rcCopyArea, from, *pixmapLine);
+ 					}
+ 
+-					lineWidthMaxSeen = Platform::Maximum(
++					lineWidthMaxSeen = std::max(
+ 						lineWidthMaxSeen, static_cast<int>(ll->positions[ll->numCharsInLine]));
+ 					//durCopy += et.Duration(true);
+ 				}
+@@ -2140,7 +2140,7 @@
+ 	r = r * il / l;
+ 	g = g * il / l;
+ 	b = b * il / l;
+-	return ColourDesired(Platform::Minimum(r, 0xff), Platform::Minimum(g, 0xff), Platform::Minimum(b, 0xff));
++	return ColourDesired(std::min(r, 0xffu), std::min(g, 0xffu), std::min(b, 0xffu));
+ }
+ 
+ long EditView::FormatRange(bool draw, Sci_RangeToFormat *pfr, Surface *surface, Surface *surfaceMeasure,
+diff -r c105254dae66 -r 152e56f0b392 src/Editor.cxx
+--- a/src/Editor.cxx	Fri Mar 31 23:07:29 2017 +1100
++++ b/src/Editor.cxx	Fri Mar 31 23:21:05 2017 +1100
+@@ -600,16 +600,16 @@
+ 	if (sel.Count() > 1 || !(sel.RangeMain().anchor == newMain.anchor) || sel.IsRectangular()) {
+ 		invalidateWholeSelection = true;
+ 	}
+-	Sci::Position firstAffected = Platform::Minimum(sel.RangeMain().Start().Position(), newMain.Start().Position());
++	Sci::Position firstAffected = std::min(sel.RangeMain().Start().Position(), newMain.Start().Position());
+ 	// +1 for lastAffected ensures caret repainted
+-	Sci::Position lastAffected = Platform::Maximum(newMain.caret.Position()+1, newMain.anchor.Position());
+-	lastAffected = Platform::Maximum(lastAffected, sel.RangeMain().End().Position());
++	Sci::Position lastAffected = std::max(newMain.caret.Position()+1, newMain.anchor.Position());
++	lastAffected = std::max(lastAffected, sel.RangeMain().End().Position());
+ 	if (invalidateWholeSelection) {
+ 		for (size_t r=0; r<sel.Count(); r++) {
+-			firstAffected = Platform::Minimum(firstAffected, sel.Range(r).caret.Position());
+-			firstAffected = Platform::Minimum(firstAffected, sel.Range(r).anchor.Position());
+-			lastAffected = Platform::Maximum(lastAffected, sel.Range(r).caret.Position()+1);
+-			lastAffected = Platform::Maximum(lastAffected, sel.Range(r).anchor.Position());
++			firstAffected = std::min(firstAffected, sel.Range(r).caret.Position());
++			firstAffected = std::min(firstAffected, sel.Range(r).anchor.Position());
++			lastAffected = std::max(lastAffected, sel.Range(r).caret.Position()+1);
++			lastAffected = std::max(lastAffected, sel.Range(r).anchor.Position());
+ 		}
+ 	}
+ 	ContainerNeedsUpdate(SC_UPDATE_SELECTION);
+@@ -1132,7 +1132,7 @@
+ 	if ((options & xysVertical) && (pt.y < rcClient.top || ptBottomCaret.y >= rcClient.bottom || (caretYPolicy & CARET_STRICT) != 0)) {
+ 		const Sci::Line lineCaret = DisplayFromPosition(range.caret.Position());
+ 		const Sci::Line linesOnScreen = LinesOnScreen();
+-		const Sci::Line halfScreen = Platform::Maximum(linesOnScreen - 1, 2) / 2;
++		const Sci::Line halfScreen = std::max(linesOnScreen - 1, 2) / 2;
+ 		const bool bSlop = (caretYPolicy & CARET_SLOP) != 0;
+ 		const bool bStrict = (caretYPolicy & CARET_STRICT) != 0;
+ 		const bool bJump = (caretYPolicy & CARET_JUMPS) != 0;
+@@ -1231,7 +1231,7 @@
+ 
+ 	// Horizontal positioning
+ 	if ((options & xysHorizontal) && !Wrapping()) {
+-		const int halfScreen = Platform::Maximum(static_cast<int>(rcClient.Width()) - 4, 4) / 2;
++		const int halfScreen = std::max(static_cast<int>(rcClient.Width()) - 4, 4) / 2;
+ 		const bool bSlop = (caretXPolicy & CARET_SLOP) != 0;
+ 		const bool bStrict = (caretXPolicy & CARET_STRICT) != 0;
+ 		const bool bJump = (caretXPolicy & CARET_JUMPS) != 0;
+@@ -2101,7 +2101,7 @@
+ 		// Save next in case deco deleted
+ 		Decoration *decoNext = deco->next;
+ 		if (deco->indicator < INDIC_CONTAINER) {
+-			pdoc->decorations.SetCurrentIndicator(deco->indicator);
++			pdoc->DecorationSetCurrentIndicator(deco->indicator);
+ 			pdoc->DecorationFillRange(0, 0, pdoc->Length());
+ 		}
+ 		deco = decoNext;
+@@ -3906,8 +3906,8 @@
+ 			Sci::Position anchorPosOnLine = sel.Range(r).anchor.Position() - pdoc->LineStart(lineOfAnchor);
+ 			Sci::Position currentPosPosOnLine = caretPosition - pdoc->LineStart(lineCurrentPos);
+ 			// Multiple lines selected so indent / dedent
+-			Sci::Line lineTopSel = Platform::Minimum(lineOfAnchor, lineCurrentPos);
+-			Sci::Line lineBottomSel = Platform::Maximum(lineOfAnchor, lineCurrentPos);
++			Sci::Line lineTopSel = std::min(lineOfAnchor, lineCurrentPos);
++			Sci::Line lineBottomSel = std::max(lineOfAnchor, lineCurrentPos);
+ 			if (pdoc->LineStart(lineBottomSel) == sel.Range(r).anchor.Position() || pdoc->LineStart(lineBottomSel) == caretPosition)
+ 				lineBottomSel--;  	// If not selecting any characters on a line, do not indent
+ 			pdoc->Indent(forwards, lineBottomSel, lineTopSel);
+@@ -6262,7 +6262,7 @@
+ 		return sel.LimitsForRectangularElseMain().start.Position();
+ 
+ 	case SCI_SETSELECTIONEND:
+-		SetSelection(static_cast<Sci::Position>(wParam), Platform::Minimum(sel.MainAnchor(), static_cast<Sci::Position>(wParam)));
++		SetSelection(static_cast<Sci::Position>(wParam), std::min(sel.MainAnchor(), static_cast<Sci::Position>(wParam)));
+ 		break;
+ 
+ 	case SCI_GETSELECTIONEND:
+diff -r c105254dae66 -r 152e56f0b392 src/ScintillaBase.cxx
+--- a/src/ScintillaBase.cxx	Fri Mar 31 23:07:29 2017 +1100
++++ b/src/ScintillaBase.cxx	Fri Mar 31 23:21:05 2017 +1100
+@@ -288,7 +288,7 @@
+ 		rcac.top = pt.y + vs.lineHeight;
+ 	}
+ 	rcac.right = rcac.left + widthLB;
+-	rcac.bottom = static_cast<XYPOSITION>(Platform::Minimum(static_cast<int>(rcac.top) + heightLB, static_cast<int>(rcPopupBounds.bottom)));
++	rcac.bottom = static_cast<XYPOSITION>(std::min(static_cast<int>(rcac.top) + heightLB, static_cast<int>(rcPopupBounds.bottom)));
+ 	ac.lb->SetPositionRelative(rcac, wMain);
+ 	ac.lb->SetFont(vs.styles[STYLE_DEFAULT].font);
+ 	unsigned int aveCharWidth = static_cast<unsigned int>(vs.styles[STYLE_DEFAULT].aveCharWidth);
+@@ -300,9 +300,9 @@
+ 	// Fiddle the position of the list so it is right next to the target and wide enough for all its strings
+ 	PRectangle rcList = ac.lb->GetDesiredRect();
+ 	int heightAlloced = static_cast<int>(rcList.bottom - rcList.top);
+-	widthLB = Platform::Maximum(widthLB, static_cast<int>(rcList.right - rcList.left));
++	widthLB = std::max(widthLB, static_cast<int>(rcList.right - rcList.left));
+ 	if (maxListWidth != 0)
+-		widthLB = Platform::Minimum(widthLB, aveCharWidth*maxListWidth);
++		widthLB = std::min(widthLB, static_cast<int>(aveCharWidth)*maxListWidth);
+ 	// Make an allowance for large strings in list
+ 	rcList.left = pt.x - ac.lb->CaretFromEdge();
+ 	rcList.right = rcList.left + widthLB;

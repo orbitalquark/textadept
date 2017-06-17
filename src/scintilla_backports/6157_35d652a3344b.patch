@@ -1,0 +1,881 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1491003839 -39600
+# Node ID 35d652a3344bede120f1c59d9dc0b453a11c736b
+# Parent  152e56f0b392ab3143b697c8a057ac1d79533366
+Standardize on C++ headers, remove headers that aren't needed and add <cstddef>
+where it may be needed in the future.
+
+diff -r 152e56f0b392 -r 35d652a3344b cocoa/PlatCocoa.h
+--- a/cocoa/PlatCocoa.h	Fri Mar 31 23:21:05 2017 +1100
++++ b/cocoa/PlatCocoa.h	Sat Apr 01 10:43:59 2017 +1100
+@@ -7,11 +7,10 @@
+ #ifndef PLATCOCOA_H
+ #define PLATCOCOA_H
+ 
+-#include <assert.h>
+-
+ #include <sys/time.h>
+ 
+ #include <cstdlib>
++#include <cassert>
+ #include <cstring>
+ #include <cstdio>
+ 
+diff -r 152e56f0b392 -r 35d652a3344b cocoa/PlatCocoa.mm
+--- a/cocoa/PlatCocoa.mm	Fri Mar 31 23:21:05 2017 +1100
++++ b/cocoa/PlatCocoa.mm	Sat Apr 01 10:43:59 2017 +1100
+@@ -12,10 +12,11 @@
+  * This file is dual licensed under LGPL v2.1 and the Scintilla license (http://www.scintilla.org/License.txt).
+  */
+ 
+-#include <assert.h>
+ #include <sys/time.h>
+ 
++#include <cstddef>
+ #include <cstdlib>
++#include <cassert>
+ #include <cstring>
+ #include <cstdio>
+ 
+diff -r 152e56f0b392 -r 35d652a3344b cocoa/ScintillaCocoa.h
+--- a/cocoa/ScintillaCocoa.h	Fri Mar 31 23:21:05 2017 +1100
++++ b/cocoa/ScintillaCocoa.h	Sat Apr 01 10:43:59 2017 +1100
+@@ -13,10 +13,11 @@
+  * This file is dual licensed under LGPL v2.1 and the Scintilla license (http://www.scintilla.org/License.txt).
+  */
+ 
+-#include <stdlib.h>
+-#include <stdio.h>
+-#include <time.h>
+-#include <ctype.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cctype>
++#include <cstdio>
++#include <ctime>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b gtk/PlatGTK.cxx
+--- a/gtk/PlatGTK.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/gtk/PlatGTK.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -3,11 +3,11 @@
+ // Copyright 1998-2004 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stddef.h>
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <math.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cstring>
++#include <cstdio>
++#include <cmath>
+ 
+ #include <string>
+ #include <vector>
+diff -r 152e56f0b392 -r 35d652a3344b gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/gtk/ScintillaGTK.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -3,13 +3,14 @@
+ // Copyright 1998-2004 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <time.h>
+-#include <math.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
++#include <cctype>
++#include <cstdio>
++#include <ctime>
++#include <cmath>
+ 
+ #include <stdexcept>
+ #include <new>
+diff -r 152e56f0b392 -r 35d652a3344b gtk/ScintillaGTKAccessible.cxx
+--- a/gtk/ScintillaGTKAccessible.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/gtk/ScintillaGTKAccessible.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -51,8 +51,9 @@
+ 
+ // FIXME: optimize character/byte offset conversion (with a cache?)
+ 
+-#include <stdlib.h>
+-#include <string.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <new>
+diff -r 152e56f0b392 -r 35d652a3344b lexlib/Accessor.cxx
+--- a/lexlib/Accessor.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/lexlib/Accessor.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,12 +5,8 @@
+ // Copyright 1998-2002 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cassert>
+ 
+ #include "ILexer.h"
+ #include "Scintilla.h"
+diff -r 152e56f0b392 -r 35d652a3344b lexlib/CharacterSet.cxx
+--- a/lexlib/CharacterSet.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/lexlib/CharacterSet.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -6,11 +6,8 @@
+ // Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cassert>
+ 
+ #include "CharacterSet.h"
+ 
+diff -r 152e56f0b392 -r 35d652a3344b lexlib/LexerBase.cxx
+--- a/lexlib/LexerBase.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/lexlib/LexerBase.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,12 +5,9 @@
+ // Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
+ 
+ #include "ILexer.h"
+ #include "Scintilla.h"
+diff -r 152e56f0b392 -r 35d652a3344b lexlib/LexerModule.cxx
+--- a/lexlib/LexerModule.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/lexlib/LexerModule.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,12 +5,8 @@
+ // Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cassert>
+ 
+ #include <string>
+ 
+diff -r 152e56f0b392 -r 35d652a3344b lexlib/LexerNoExceptions.cxx
+--- a/lexlib/LexerNoExceptions.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/lexlib/LexerNoExceptions.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,12 +5,8 @@
+ // Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cassert>
+ 
+ #include "ILexer.h"
+ #include "Scintilla.h"
+diff -r 152e56f0b392 -r 35d652a3344b lexlib/LexerSimple.cxx
+--- a/lexlib/LexerSimple.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/lexlib/LexerSimple.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,12 +5,8 @@
+ // Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cassert>
+ 
+ #include <string>
+ 
+diff -r 152e56f0b392 -r 35d652a3344b lexlib/PropSetSimple.cxx
+--- a/lexlib/PropSetSimple.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/lexlib/PropSetSimple.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -7,9 +7,8 @@
+ 
+ // Maintain a dictionary of properties
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
++#include <cstdlib>
++#include <cstring>
+ 
+ #include <string>
+ #include <map>
+diff -r 152e56f0b392 -r 35d652a3344b lexlib/StyleContext.cxx
+--- a/lexlib/StyleContext.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/lexlib/StyleContext.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,11 +5,9 @@
+ // Copyright 1998-2004 by Neil Hodgson <neilh@scintilla.org>
+ // This file is in the public domain.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cassert>
++#include <cctype>
+ 
+ #include "ILexer.h"
+ 
+diff -r 152e56f0b392 -r 35d652a3344b lexlib/WordList.cxx
+--- a/lexlib/WordList.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/lexlib/WordList.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,11 +5,8 @@
+ // Copyright 1998-2002 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cstring>
+ 
+ #include <algorithm>
+ 
+diff -r 152e56f0b392 -r 35d652a3344b qt/ScintillaEditBase/ScintillaQt.h
+--- a/qt/ScintillaEditBase/ScintillaQt.h	Fri Mar 31 23:21:05 2017 +1100
++++ b/qt/ScintillaEditBase/ScintillaQt.h	Sat Apr 01 10:43:59 2017 +1100
+@@ -11,12 +11,13 @@
+ #ifndef SCINTILLAQT_H
+ #define SCINTILLAQT_H
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <assert.h>
+-#include <ctype.h>
+-#include <time.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
++#include <cctype>
++#include <cstdio>
++#include <ctime>
+ #include <cmath>
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b scripts/HeaderOrder.txt
+--- a/scripts/HeaderOrder.txt	Fri Mar 31 23:21:05 2017 +1100
++++ b/scripts/HeaderOrder.txt	Sat Apr 01 10:43:59 2017 +1100
+@@ -17,13 +17,17 @@
+ #include <sys/time.h>
+ 
+ // C++ wrappers of C standard library
++#include <cstddef>
+ #include <cstdlib>
++#include <cstdint>
+ #include <cassert>
+ #include <cstring>
+ #include <cctype>
+ #include <cstdio>
+ #include <cstdarg>
++#include <ctime>
+ #include <cmath>
++#include <climits>
+ 
+ // C++ standard library
+ #include <stdexcept>
+diff -r 152e56f0b392 -r 35d652a3344b src/AutoComplete.cxx
+--- a/src/AutoComplete.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/AutoComplete.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,10 +5,10 @@
+ // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <assert.h>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
++#include <cstdio>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/CallTip.cxx
+--- a/src/CallTip.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/CallTip.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,9 +5,9 @@
+ // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
++#include <cstdlib>
++#include <cstring>
++#include <cstdio>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/Catalogue.cxx
+--- a/src/Catalogue.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/Catalogue.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,12 +5,9 @@
+ // Copyright 1998-2002 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <vector>
+diff -r 152e56f0b392 -r 35d652a3344b src/CellBuffer.cxx
+--- a/src/CellBuffer.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/CellBuffer.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,10 +5,11 @@
+ // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cstring>
++#include <cstdio>
++#include <cstdarg>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b src/CharClassify.cxx
+--- a/src/CharClassify.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/CharClassify.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,8 +5,8 @@
+ // Copyright 2006 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cctype>
+ 
+ #include <stdexcept>
+ 
+diff -r 152e56f0b392 -r 35d652a3344b src/ContractionState.cxx
+--- a/src/ContractionState.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/ContractionState.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,8 +5,9 @@
+ // Copyright 1998-2007 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <string.h>
+-#include <assert.h>
++#include <cstddef>
++#include <cassert>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b src/Decoration.cxx
+--- a/src/Decoration.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/Decoration.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -4,10 +4,11 @@
+ // Copyright 1998-2007 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cstring>
++#include <cstdio>
++#include <cstdarg>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b src/Document.cxx
+--- a/src/Document.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/Document.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,11 +5,11 @@
+ // Copyright 1998-2011 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
++#include <cstdio>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/EditModel.cxx
+--- a/src/EditModel.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/EditModel.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,12 +5,10 @@
+ // Copyright 1998-2014 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <math.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cassert>
++#include <cmath>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/EditView.cxx
+--- a/src/EditView.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/EditView.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,12 +5,13 @@
+ // Copyright 1998-2014 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <math.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
++#include <cctype>
++#include <cstdio>
++#include <cmath>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/Editor.cxx
+--- a/src/Editor.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/Editor.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,11 +5,12 @@
+ // Copyright 1998-2011 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
++#include <cctype>
++#include <cstdio>
+ 
+ #include <cmath>
+ #include <stdexcept>
+diff -r 152e56f0b392 -r 35d652a3344b src/ExternalLexer.cxx
+--- a/src/ExternalLexer.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/ExternalLexer.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,11 +5,9 @@
+ // Copyright 2001 Simon Steele <ss@pnotepad.org>, portions copyright Neil Hodgson.
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/KeyMap.cxx
+--- a/src/KeyMap.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/KeyMap.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,7 +5,7 @@
+ // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
++#include <cstdlib>
+ 
+ #include <stdexcept>
+ #include <vector>
+diff -r 152e56f0b392 -r 35d652a3344b src/LineMarker.cxx
+--- a/src/LineMarker.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/LineMarker.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,8 +5,8 @@
+ // Copyright 1998-2011 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <string.h>
+-#include <math.h>
++#include <cstring>
++#include <cmath>
+ 
+ #include <stdexcept>
+ #include <vector>
+diff -r 152e56f0b392 -r 35d652a3344b src/MarginView.cxx
+--- a/src/MarginView.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/MarginView.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,12 +5,13 @@
+ // Copyright 1998-2014 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <math.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
++#include <cctype>
++#include <cstdio>
++#include <cmath>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/PerLine.cxx
+--- a/src/PerLine.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/PerLine.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,7 +5,8 @@
+ // Copyright 1998-2009 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <string.h>
++#include <cstddef>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <vector>
+diff -r 152e56f0b392 -r 35d652a3344b src/PositionCache.cxx
+--- a/src/PositionCache.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/PositionCache.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,10 +5,9 @@
+ // Copyright 1998-2007 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <ctype.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/RESearch.cxx
+--- a/src/RESearch.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/RESearch.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -200,7 +200,7 @@
+  *  matches:    foo-foo fo-fo fob-fob foobar-foobar ...
+  */
+ 
+-#include <stdlib.h>
++#include <cstdlib>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/RunStyles.cxx
+--- a/src/RunStyles.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/RunStyles.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -4,10 +4,11 @@
+ // Copyright 1998-2007 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cstring>
++#include <cstdio>
++#include <cstdarg>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b src/ScintillaBase.cxx
+--- a/src/ScintillaBase.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/ScintillaBase.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,11 +5,10 @@
+ // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <assert.h>
+-#include <ctype.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/Selection.cxx
+--- a/src/Selection.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/Selection.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,7 +5,7 @@
+ // Copyright 2009 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
++#include <cstdlib>
+ 
+ #include <stdexcept>
+ #include <vector>
+diff -r 152e56f0b392 -r 35d652a3344b src/Style.cxx
+--- a/src/Style.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/Style.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,8 +5,6 @@
+ // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <string.h>
+-
+ #include <stdexcept>
+ 
+ #include "Platform.h"
+diff -r 152e56f0b392 -r 35d652a3344b src/UniConversion.cxx
+--- a/src/UniConversion.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/UniConversion.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,7 +5,7 @@
+ // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
++#include <cstdlib>
+ 
+ #include <stdexcept>
+ #include <string>
+diff -r 152e56f0b392 -r 35d652a3344b src/ViewStyle.cxx
+--- a/src/ViewStyle.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/ViewStyle.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,8 +5,9 @@
+ // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <string.h>
+-#include <assert.h>
++#include <cstddef>
++#include <cassert>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <vector>
+diff -r 152e56f0b392 -r 35d652a3344b src/XPM.cxx
+--- a/src/XPM.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/src/XPM.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,8 +5,8 @@
+ // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
++#include <cstdlib>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <vector>
+diff -r 152e56f0b392 -r 35d652a3344b test/unit/testCharClassify.cxx
+--- a/test/unit/testCharClassify.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/test/unit/testCharClassify.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -1,6 +1,6 @@
+ // Unit Tests for Scintilla internal data structures
+ 
+-#include <string.h>
++#include <cstring>
+ 
+ #include <algorithm>
+ #include <iostream>
+diff -r 152e56f0b392 -r 35d652a3344b test/unit/testContractionState.cxx
+--- a/test/unit/testContractionState.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/test/unit/testContractionState.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -1,6 +1,6 @@
+ // Unit Tests for Scintilla internal data structures
+ 
+-#include <string.h>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b test/unit/testDecoration.cxx
+--- a/test/unit/testDecoration.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/test/unit/testDecoration.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -1,6 +1,6 @@
+ // Unit Tests for Scintilla internal data structures
+ 
+-#include <string.h>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b test/unit/testPartitioning.cxx
+--- a/test/unit/testPartitioning.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/test/unit/testPartitioning.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -1,6 +1,6 @@
+ // Unit Tests for Scintilla internal data structures
+ 
+-#include <string.h>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b test/unit/testRunStyles.cxx
+--- a/test/unit/testRunStyles.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/test/unit/testRunStyles.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -1,6 +1,6 @@
+ // Unit Tests for Scintilla internal data structures
+ 
+-#include <string.h>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b test/unit/testSparseVector.cxx
+--- a/test/unit/testSparseVector.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/test/unit/testSparseVector.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -1,8 +1,7 @@
+ // Unit Tests for Scintilla internal data structures
+ 
+-#include <string.h>
+-
+ #include <cassert>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b test/unit/testSplitVector.cxx
+--- a/test/unit/testSplitVector.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/test/unit/testSplitVector.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -1,6 +1,6 @@
+ // Unit Tests for Scintilla internal data structures
+ 
+-#include <string.h>
++#include <cstring>
+ 
+ #include <stdexcept>
+ #include <algorithm>
+diff -r 152e56f0b392 -r 35d652a3344b test/unit/testUnicodeFromUTF8.cxx
+--- a/test/unit/testUnicodeFromUTF8.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/test/unit/testUnicodeFromUTF8.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -1,6 +1,6 @@
+ // Unit Tests for Scintilla internal data structures
+ 
+-#include <string.h>
++#include <cstring>
+ 
+ #include <algorithm>
+ 
+diff -r 152e56f0b392 -r 35d652a3344b win32/PlatWin.cxx
+--- a/win32/PlatWin.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/win32/PlatWin.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,15 +5,15 @@
+ // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stddef.h>
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <stdarg.h>
+-#include <time.h>
+-#include <math.h>
+-#include <ctype.h>
+-#include <limits.h>
++#include <cstddef>
++#include <cstdlib>
++#include <cstring>
++#include <cctype>
++#include <cstdio>
++#include <cstdarg>
++#include <ctime>
++#include <cmath>
++#include <climits>
+ 
+ #include <vector>
+ #include <map>
+diff -r 152e56f0b392 -r 35d652a3344b win32/ScintillaWin.cxx
+--- a/win32/ScintillaWin.cxx	Fri Mar 31 23:21:05 2017 +1100
++++ b/win32/ScintillaWin.cxx	Sat Apr 01 10:43:59 2017 +1100
+@@ -5,14 +5,15 @@
+ // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
+ // The License.txt file describes the conditions under which this software may be distributed.
+ 
+-#include <stdlib.h>
+-#include <string.h>
+-#include <stdio.h>
+-#include <assert.h>
+-#include <ctype.h>
+-#include <limits.h>
+-
++#include <cstddef>
++#include <cstdlib>
++#include <cassert>
++#include <cstring>
++#include <cctype>
++#include <cstdio>
+ #include <cmath>
++#include <climits>
++
+ #include <stdexcept>
+ #include <new>
+ #include <string>

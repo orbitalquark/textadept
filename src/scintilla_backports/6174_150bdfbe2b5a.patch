@@ -1,0 +1,28 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1491558264 -36000
+# Node ID 150bdfbe2b5a267eb53a67850d478d311ccd34b6
+# Parent  c9dcde8a91d3c5d9f28ba3a7cead581ff880e818
+Remove unnecessary casts.
+
+diff -r c9dcde8a91d3 -r 150bdfbe2b5a src/PositionCache.cxx
+--- a/src/PositionCache.cxx	Fri Apr 07 18:02:19 2017 +1000
++++ b/src/PositionCache.cxx	Fri Apr 07 19:44:24 2017 +1000
+@@ -575,7 +575,7 @@
+ 		for (unsigned int i=0; i<len; i++) {
+ 			positions[i] = positions_[i];
+ 		}
+-		memcpy(reinterpret_cast<char *>(reinterpret_cast<void *>(positions + len)), s_, len);
++		memcpy(reinterpret_cast<void *>(positions + len), s_, len);
+ 	}
+ }
+ 
+@@ -594,7 +594,7 @@
+ bool PositionCacheEntry::Retrieve(unsigned int styleNumber_, const char *s_,
+ 	unsigned int len_, XYPOSITION *positions_) const {
+ 	if ((styleNumber == styleNumber_) && (len == len_) &&
+-		(memcmp(reinterpret_cast<char *>(reinterpret_cast<void *>(positions + len)), s_, len)== 0)) {
++		(memcmp(reinterpret_cast<void *>(positions + len), s_, len)== 0)) {
+ 		for (unsigned int i=0; i<len; i++) {
+ 			positions_[i] = positions[i];
+ 		}

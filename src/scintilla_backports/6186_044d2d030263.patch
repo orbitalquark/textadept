@@ -1,0 +1,218 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1492238872 -36000
+# Node ID 044d2d0302639d08d3e0aa72886afcbd47fa39f8
+# Parent  b8379bec8e70bf09df25f01d0a78a53cf61b1827
+Avoid calling virtual functions in constructors and destructors.
+
+diff -r b8379bec8e70 -r 044d2d030263 cocoa/ScintillaCocoa.h
+--- a/cocoa/ScintillaCocoa.h	Sat Apr 15 15:00:28 2017 +1000
++++ b/cocoa/ScintillaCocoa.h	Sat Apr 15 16:47:52 2017 +1000
+@@ -128,7 +128,7 @@
+   void DiscardOverdraw() override;
+   void Redraw() override;
+ 
+-  void Initialise() override;
++  void Init();
+   void Finalise() override;
+   CaseFolder *CaseFolderForEncoding() override;
+   std::string CaseMapString(const std::string &s, int caseMapping) override;
+diff -r b8379bec8e70 -r 044d2d030263 cocoa/ScintillaCocoa.mm
+--- a/cocoa/ScintillaCocoa.mm	Sat Apr 15 15:00:28 2017 +1000
++++ b/cocoa/ScintillaCocoa.mm	Sat Apr 15 16:47:52 2017 +1000
+@@ -422,7 +422,7 @@
+   {
+     timers[tr] = nil;
+   }
+-  Initialise();
++  Init();
+ }
+ 
+ //--------------------------------------------------------------------------------------------------
+@@ -439,7 +439,7 @@
+ /**
+  * Core initialization of the control. Everything that needs to be set up happens here.
+  */
+-void ScintillaCocoa::Initialise()
++void ScintillaCocoa::Init()
+ {
+   Scintilla_LinkLexers();
+ 
+diff -r b8379bec8e70 -r 044d2d030263 gtk/PlatGTK.cxx
+--- a/gtk/PlatGTK.cxx	Sat Apr 15 15:00:28 2017 +1000
++++ b/gtk/PlatGTK.cxx	Sat Apr 15 16:47:52 2017 +1000
+@@ -168,6 +168,7 @@
+ 	void Init(SurfaceID sid, WindowID wid) override;
+ 	void InitPixMap(int width, int height, Surface *surface_, WindowID wid) override;
+ 
++	void Clear();
+ 	void Release();
+ 	bool Initialised();
+ 	void PenColour(ColourDesired fore);
+@@ -276,10 +277,10 @@
+ }
+ 
+ SurfaceImpl::~SurfaceImpl() {
+-	Release();
++	Clear();
+ }
+ 
+-void SurfaceImpl::Release() {
++void SurfaceImpl::Clear() {
+ 	et = singleByte;
+ 	if (createdGC) {
+ 		createdGC = false;
+@@ -303,6 +304,10 @@
+ 	createdGC = false;
+ }
+ 
++void SurfaceImpl::Release() {
++	Clear();
++}
++
+ bool SurfaceImpl::Initialised() {
+ #if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 8, 0)
+ 	if (inited && context) {
+diff -r b8379bec8e70 -r 044d2d030263 gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Sat Apr 15 15:00:28 2017 +1000
++++ b/gtk/ScintillaGTK.cxx	Sat Apr 15 16:47:52 2017 +1000
+@@ -205,7 +205,7 @@
+ 	lastWheelMouseTime.tv_sec = 0;
+ 	lastWheelMouseTime.tv_usec = 0;
+ 
+-	Initialise();
++	Init();
+ }
+ 
+ ScintillaGTK::~ScintillaGTK() {
+@@ -549,8 +549,7 @@
+ 	}
+ }
+ 
+-void ScintillaGTK::Initialise() {
+-	//Platform::DebugPrintf("ScintillaGTK::Initialise\n");
++void ScintillaGTK::Init() {
+ 	parentClass = reinterpret_cast<GtkWidgetClass *>(
+ 	                  g_type_class_ref(gtk_container_get_type()));
+ 
+@@ -3044,7 +3043,7 @@
+ 
+ 	// Define default signal handlers for the class:  Could move more
+ 	// of the signal handlers here (those that currently attached to wDraw
+-	// in Initialise() may require coordinate translation?)
++	// in Init() may require coordinate translation?)
+ 
+ 	object_class->dispose = Dispose;
+ 	object_class->finalize = Destroy;
+diff -r b8379bec8e70 -r 044d2d030263 gtk/ScintillaGTK.h
+--- a/gtk/ScintillaGTK.h	Sat Apr 15 15:00:28 2017 +1000
++++ b/gtk/ScintillaGTK.h	Sat Apr 15 16:47:52 2017 +1000
+@@ -81,7 +81,7 @@
+ 	static ScintillaGTK *FromWidget(GtkWidget *widget);
+ 	static void ClassInit(OBJECT_CLASS* object_class, GtkWidgetClass *widget_class, GtkContainerClass *container_class);
+ private:
+-	virtual void Initialise();
++	void Init();
+ 	virtual void Finalise();
+ 	virtual bool AbandonPaint();
+ 	virtual void DisplayCursor(Window::Cursor c);
+diff -r b8379bec8e70 -r 044d2d030263 qt/ScintillaEditBase/ScintillaQt.cpp
+--- a/qt/ScintillaEditBase/ScintillaQt.cpp	Sat Apr 15 15:00:28 2017 +1000
++++ b/qt/ScintillaEditBase/ScintillaQt.cpp	Sat Apr 15 16:47:52 2017 +1000
+@@ -45,7 +45,7 @@
+ 	// Buffered drawing turned off by default to avoid this.
+ 	WndProc(SCI_SETBUFFEREDDRAW, false, 0);
+ 
+-	Initialise();
++	Init();
+ 
+ 	for (TickReason tr = tickCaret; tr <= tickDwell; tr = static_cast<TickReason>(tr + 1)) {
+ 		timers[tr] = 0;
+@@ -128,7 +128,7 @@
+ 
+ #endif
+ 
+-void ScintillaQt::Initialise()
++void ScintillaQt::Init()
+ {
+ #if defined(Q_OS_WIN) || defined(Q_OS_MAC)
+ 	rectangularSelectionModifier = SCMOD_ALT;
+diff -r b8379bec8e70 -r 044d2d030263 qt/ScintillaEditBase/ScintillaQt.h
+--- a/qt/ScintillaEditBase/ScintillaQt.h	Sat Apr 15 15:00:28 2017 +1000
++++ b/qt/ScintillaEditBase/ScintillaQt.h	Sat Apr 15 16:47:52 2017 +1000
+@@ -99,7 +99,7 @@
+ 	void SelectionChanged();
+ 
+ private:
+-	virtual void Initialise();
++	void Init();
+ 	virtual void Finalise();
+ 	virtual bool DragThreshold(Point ptStart, Point ptNow);
+ 	virtual bool ValidCodePage(int codePage) const;
+diff -r b8379bec8e70 -r 044d2d030263 src/PerLine.cxx
+--- a/src/PerLine.cxx	Sat Apr 15 15:00:28 2017 +1000
++++ b/src/PerLine.cxx	Sat Apr 15 16:47:52 2017 +1000
+@@ -121,7 +121,11 @@
+ }
+ 
+ LineMarkers::~LineMarkers() {
+-	Init();
++	for (int line = 0; line < markers.Length(); line++) {
++		delete markers[line];
++		markers[line] = 0;
++	}
++	markers.DeleteAll();
+ }
+ 
+ void LineMarkers::Init() {
+@@ -490,7 +494,10 @@
+ }
+ 
+ LineTabstops::~LineTabstops() {
+-	Init();
++	for (int line = 0; line < tabstops.Length(); line++) {
++		delete tabstops[line];
++	}
++	tabstops.DeleteAll();
+ }
+ 
+ void LineTabstops::Init() {
+diff -r b8379bec8e70 -r 044d2d030263 src/ScintillaBase.h
+--- a/src/ScintillaBase.h	Sat Apr 15 15:00:28 2017 +1000
++++ b/src/ScintillaBase.h	Sat Apr 15 16:47:52 2017 +1000
+@@ -59,7 +59,7 @@
+ 
+ 	ScintillaBase();
+ 	virtual ~ScintillaBase();
+-	virtual void Initialise() = 0;
++	void Initialise() {}
+ 	virtual void Finalise();
+ 
+ 	virtual void AddCharUTF(const char *s, unsigned int len, bool treatAsDBCS=false);
+diff -r b8379bec8e70 -r 044d2d030263 win32/ScintillaWin.cxx
+--- a/win32/ScintillaWin.cxx	Sat Apr 15 15:00:28 2017 +1000
++++ b/win32/ScintillaWin.cxx	Sat Apr 15 16:47:52 2017 +1000
+@@ -276,7 +276,7 @@
+ 	~ScintillaWin() override;
+ 	ScintillaWin &operator=(const ScintillaWin &);
+ 
+-	void Initialise() override;
++	void Init();
+ 	void Finalise() override;
+ #if defined(USE_D2D)
+ 	void EnsureRenderTarget(HDC hdc);
+@@ -459,12 +459,12 @@
+ 	if (caret.period < 0)
+ 		caret.period = 0;
+ 
+-	Initialise();
++	Init();
+ }
+ 
+ ScintillaWin::~ScintillaWin() {}
+ 
+-void ScintillaWin::Initialise() {
++void ScintillaWin::Init() {
+ 	// Initialize COM.  If the app has already done this it will have
+ 	// no effect.  If the app hasn't, we really shouldn't ask them to call
+ 	// it just so this internal feature works.
