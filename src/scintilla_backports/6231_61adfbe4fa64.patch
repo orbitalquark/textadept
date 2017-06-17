@@ -1,0 +1,44 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1494389973 -36000
+# Node ID 61adfbe4fa64ed5ad99e36dc7220cd3c6f9b7659
+# Parent  6c164ebad8b9b40d9e757d49f37a4354f3c7fc03
+Feature [feature-requests:#1187]. Update scroll bar when annotations added,
+removed, or visibility changed.
+
+diff -r 6c164ebad8b9 -r 61adfbe4fa64 doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Wed May 10 14:15:16 2017 +1000
++++ b/doc/ScintillaHistory.html	Wed May 10 14:19:33 2017 +1000
+@@ -571,6 +571,10 @@
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1931/">Bug #1931</a>.
+ 	</li>
+ 	<li>
++	Update scroll bar when annotations added, removed, or visibility changed.
++	<a href="http://sourceforge.net/p/scintilla/feature-requests/1187/">Feature #1187.</a>
++	</li>
++	<li>
+ 	Canceling modes with the Esc key preserves a rectangular selection.
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1940/">Bug #1940</a>.
+ 	</li>
+diff -r 6c164ebad8b9 -r 61adfbe4fa64 src/Editor.cxx
+--- a/src/Editor.cxx	Wed May 10 14:15:16 2017 +1000
++++ b/src/Editor.cxx	Wed May 10 14:19:33 2017 +1000
+@@ -2629,7 +2629,9 @@
+ 		if (mh.modificationType & SC_MOD_CHANGEANNOTATION) {
+ 			Sci::Line lineDoc = pdoc->LineFromPosition(mh.position);
+ 			if (vs.annotationVisible) {
+-				cs.SetHeight(lineDoc, cs.GetHeight(lineDoc) + mh.annotationLinesAdded);
++				if (cs.SetHeight(lineDoc, cs.GetHeight(lineDoc) + mh.annotationLinesAdded)) {
++					SetScrollBars();
++				}
+ 				Redraw();
+ 			}
+ 		}
+@@ -5276,6 +5278,7 @@
+ 					cs.SetHeight(line, cs.GetHeight(line) + annotationLines * dir);
+ 				}
+ 			}
++			SetScrollBars();
+ 		}
+ 		Redraw();
+ 	}

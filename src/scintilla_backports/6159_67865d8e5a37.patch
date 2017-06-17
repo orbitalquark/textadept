@@ -1,0 +1,31 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1491013858 -39600
+# Node ID 67865d8e5a374e2cf9468e9b2638901342b1dca0
+# Parent  47fa874827a53ca2595aab2df1efa17834f24e06
+Fix DisplayFromPosition pos argument to be correct type.
+
+diff -r 47fa874827a5 -r 67865d8e5a37 src/EditView.cxx
+--- a/src/EditView.cxx	Sat Apr 01 13:16:24 2017 +1100
++++ b/src/EditView.cxx	Sat Apr 01 13:30:58 2017 +1100
+@@ -720,7 +720,7 @@
+ 	return SelectionPosition(0);
+ }
+ 
+-Sci::Line EditView::DisplayFromPosition(Surface *surface, const EditModel &model, int pos, const ViewStyle &vs) {
++Sci::Line EditView::DisplayFromPosition(Surface *surface, const EditModel &model, Sci::Position pos, const ViewStyle &vs) {
+ 	Sci::Line lineDoc = model.pdoc->LineFromPosition(pos);
+ 	Sci::Line lineDisplay = model.cs.DisplayFromDoc(lineDoc);
+ 	AutoLineLayout ll(llc, RetrieveLineLayout(lineDoc, model));
+diff -r 47fa874827a5 -r 67865d8e5a37 src/EditView.h
+--- a/src/EditView.h	Sat Apr 01 13:16:24 2017 +1100
++++ b/src/EditView.h	Sat Apr 01 13:30:58 2017 +1100
+@@ -117,7 +117,7 @@
+ 	SelectionPosition SPositionFromLocation(Surface *surface, const EditModel &model, PointDocument pt, bool canReturnInvalid,
+ 		bool charPosition, bool virtualSpace, const ViewStyle &vs);
+ 	SelectionPosition SPositionFromLineX(Surface *surface, const EditModel &model, Sci::Line lineDoc, int x, const ViewStyle &vs);
+-	Sci::Line DisplayFromPosition(Surface *surface, const EditModel &model, int pos, const ViewStyle &vs);
++	Sci::Line DisplayFromPosition(Surface *surface, const EditModel &model, Sci::Position pos, const ViewStyle &vs);
+ 	Sci::Position StartEndDisplayLine(Surface *surface, const EditModel &model, Sci::Position pos, bool start, const ViewStyle &vs);
+ 
+ 	void DrawIndentGuide(Surface *surface, Sci::Line lineVisible, int lineHeight, Sci::Position start, PRectangle rcSegment, bool highlight);

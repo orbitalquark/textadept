@@ -1,0 +1,18 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1492139205 -36000
+# Node ID 3e2dd597007504f8745a3fed53ccba9bbe611265
+# Parent  7c132e9340ce3425120c0c84820461d238f0560a
+Ensure capitalHeight initialised.
+
+diff -r 7c132e9340ce -r 3e2dd5970075 src/Style.cxx
+--- a/src/Style.cxx	Wed Apr 12 17:37:25 2017 +1000
++++ b/src/Style.cxx	Fri Apr 14 13:06:45 2017 +1000
+@@ -68,6 +68,7 @@
+ void FontMeasurements::Clear() {
+ 	ascent = 1;
+ 	descent = 1;
++	capitalHeight = 1;
+ 	aveCharWidth = 1;
+ 	spaceWidth = 1;
+ 	sizeZoomed = 2;

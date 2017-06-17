@@ -1,0 +1,296 @@
+# HG changeset patch
+# User A-R-C-A
+# Date 1491473963 -36000
+# Node ID 797ed6c538fdb3de395888cf46e847a617c48f60
+# Parent  4e0ed8a19851652ab7210bdc797d974447d82554
+Added a caret line frame as an alternative visual for highlighting the caret line.
+
+diff -r 4e0ed8a19851 -r 797ed6c538fd doc/ScintillaDoc.html
+--- a/doc/ScintillaDoc.html	Thu Apr 06 09:23:14 2017 +1000
++++ b/doc/ScintillaDoc.html	Thu Apr 06 20:19:23 2017 +1000
+@@ -3069,6 +3069,8 @@
+     <a class="message" href="#SCI_GETCARETLINEBACK">SCI_GETCARETLINEBACK &rarr; colour</a><br />
+     <a class="message" href="#SCI_SETCARETLINEBACKALPHA">SCI_SETCARETLINEBACKALPHA(alpha alpha)</a><br />
+     <a class="message" href="#SCI_GETCARETLINEBACKALPHA">SCI_GETCARETLINEBACKALPHA &rarr; int</a><br />
++    <a class="message" href="#SCI_SETCARETLINEFRAME">SCI_SETCARETLINEFRAME(int width)</a><br />
++    <a class="message" href="#SCI_GETCARETLINEFRAME">SCI_GETCARETLINEFRAME &rarr; int</a><br />
+     <a class="message" href="#SCI_SETCARETLINEVISIBLEALWAYS">SCI_SETCARETLINEVISIBLEALWAYS(bool alwaysVisible)</a><br />
+     <a class="message" href="#SCI_GETCARETLINEVISIBLEALWAYS">SCI_GETCARETLINEVISIBLEALWAYS &rarr; bool</a><br />
+     <a class="message" href="#SCI_SETCARETPERIOD">SCI_SETCARETPERIOD(int periodMilliseconds)</a><br />
+@@ -3117,6 +3119,8 @@
+      <b id="SCI_GETCARETLINEBACK">SCI_GETCARETLINEBACK &rarr; colour</b><br />
+      <b id="SCI_SETCARETLINEBACKALPHA">SCI_SETCARETLINEBACKALPHA(<a class="jump" href="#alpha">alpha</a> alpha)</b><br />
+      <b id="SCI_GETCARETLINEBACKALPHA">SCI_GETCARETLINEBACKALPHA &rarr; int</b><br />
++     <b id="SCI_SETCARETLINEFRAME">SCI_SETCARETLINEFRAME(int width)</b><br />
++     <b id="SCI_GETCARETLINEFRAME">SCI_GETCARETLINEFRAME &rarr; int</b><br />
+      You can choose to make the background colour of the line containing the caret different with
+     these messages. To do this, set the desired background colour with
+     <code>SCI_SETCARETLINEBACK</code>, then use <code>SCI_SETCARETLINEVISIBLE(true)</code> to
+@@ -3128,6 +3132,8 @@
+            through. This is done by setting the alpha (translucency) value by calling
+            SCI_SETCARETLINEBACKALPHA. When the alpha is not SC_ALPHA_NOALPHA,
+            the caret line is drawn after all other features so will affect the colour of all other features.
++           Alternatively <code>SCI_SETCARETLINEFRAME</code> can be used to display the caret line framed
++           instead of filling the whole background. Set width != 0 to enable this option and width = 0 to disable it.
+           </p>
+ 
+     <p><b id="SCI_SETCARETLINEVISIBLEALWAYS">SCI_SETCARETLINEVISIBLEALWAYS(bool alwaysVisible)</b><br />
+diff -r 4e0ed8a19851 -r 797ed6c538fd doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Thu Apr 06 09:23:14 2017 +1000
++++ b/doc/ScintillaHistory.html	Thu Apr 06 20:19:23 2017 +1000
+@@ -527,6 +527,9 @@
+ 	Released 21 March 2017.
+ 	</li>
+ 	<li>
++	Added a caret line frame as an alternative visual for highlighting the caret line.
++	</li>
++	<li>
+ 	Added "Reverse Selected Lines" feature.
+ 	</li>
+ 	<li>
+diff -r 4e0ed8a19851 -r 797ed6c538fd include/Scintilla.h
+--- a/include/Scintilla.h	Thu Apr 06 09:23:14 2017 +1000
++++ b/include/Scintilla.h	Thu Apr 06 20:19:23 2017 +1000
+@@ -329,6 +329,8 @@
+ #define SCI_SETCARETLINEVISIBLE 2096
+ #define SCI_GETCARETLINEBACK 2097
+ #define SCI_SETCARETLINEBACK 2098
++#define SCI_GETCARETLINEFRAME 2704
++#define SCI_SETCARETLINEFRAME 2705
+ #define SCI_STYLESETCHANGEABLE 2099
+ #define SCI_AUTOCSHOW 2100
+ #define SCI_AUTOCCANCEL 2101
+diff -r 4e0ed8a19851 -r 797ed6c538fd include/Scintilla.iface
+--- a/include/Scintilla.iface	Thu Apr 06 09:23:14 2017 +1000
++++ b/include/Scintilla.iface	Thu Apr 06 20:19:23 2017 +1000
+@@ -731,6 +731,14 @@
+ # Set the colour of the background of the line containing the caret.
+ set void SetCaretLineBack=2098(colour back,)
+ 
++# Retrieve the caret line frame width.
++# Width = 0 means this option is disabled.
++get int GetCaretLineFrame=2704(,)
++
++# Display the caret line framed.
++# Set width != 0 to enable this option and width = 0 to disable it.
++set void SetCaretLineFrame=2705(int width,)
++
+ # Set a style to be changeable or not (read only).
+ # Experimental feature, currently buggy.
+ set void StyleSetChangeable=2099(int style, bool changeable)
+diff -r 4e0ed8a19851 -r 797ed6c538fd src/EditView.cxx
+--- a/src/EditView.cxx	Thu Apr 06 09:23:14 2017 +1000
++++ b/src/EditView.cxx	Thu Apr 06 20:19:23 2017 +1000
+@@ -836,6 +836,37 @@
+ 		textBack, textFore);
+ }
+ 
++static void DrawFrame(Surface *surface, ColourDesired colour, int alpha, PRectangle rcFrame) {
++	if (alpha != SC_ALPHA_NOALPHA)
++		surface->AlphaRectangle(rcFrame, 0, colour, alpha, colour, alpha, 0);
++	else
++		surface->FillRectangle(rcFrame, colour);
++}
++
++static void DrawCaretLineFramed(Surface *surface, const ViewStyle &vsDraw, const LineLayout *ll, PRectangle rcLine, int subLine) {
++	const int width = vsDraw.GetFrameWidth();
++	if (subLine == 0 || ll->wrapIndent == 0 || vsDraw.caretLineAlpha != SC_ALPHA_NOALPHA) {
++		// Left
++		DrawFrame(surface, vsDraw.caretLineBackground, vsDraw.caretLineAlpha,
++			PRectangle(rcLine.left, rcLine.top, rcLine.left + width, rcLine.bottom));
++	}
++	if (subLine == 0) {
++		// Top
++		DrawFrame(surface, vsDraw.caretLineBackground, vsDraw.caretLineAlpha,
++			PRectangle(rcLine.left + width, rcLine.top, rcLine.right - width, rcLine.top + width));
++	}
++	if (subLine == ll->lines - 1 || vsDraw.caretLineAlpha != SC_ALPHA_NOALPHA) {
++		// Right
++		DrawFrame(surface, vsDraw.caretLineBackground, vsDraw.caretLineAlpha,
++			PRectangle(rcLine.right - width, rcLine.top, rcLine.right, rcLine.bottom));
++	}
++	if (subLine == ll->lines - 1) {
++		// Bottom
++		DrawFrame(surface, vsDraw.caretLineBackground, vsDraw.caretLineAlpha,
++			PRectangle(rcLine.left + width, rcLine.bottom - width, rcLine.right - width, rcLine.bottom));
++	}
++}
++
+ void EditView::DrawEOL(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
+ 	PRectangle rcLine, Sci::Line line, Sci::Position lineEnd, int xStart, int subLine, XYACCUMULATOR subLineStart,
+ 	ColourOptional background) {
+@@ -963,10 +994,16 @@
+ 
+ 	bool drawWrapMarkEnd = false;
+ 
+-	if (vsDraw.wrapVisualFlags & SC_WRAPVISUALFLAG_END) {
+-		if (subLine + 1 < ll->lines) {
++	if (subLine + 1 < ll->lines) {
++		if (vsDraw.wrapVisualFlags & SC_WRAPVISUALFLAG_END) {
+ 			drawWrapMarkEnd = ll->LineStart(subLine + 1) != 0;
+ 		}
++		if (vsDraw.IsLineFrameOpaque(model.caret.active, ll->containsCaret)) {
++			const int width = vsDraw.GetFrameWidth();
++			// Draw right of frame under marker
++			DrawFrame(surface, vsDraw.caretLineBackground, vsDraw.caretLineAlpha,
++				PRectangle(rcLine.right - width, rcLine.top, rcLine.right, rcLine.bottom));
++		}
+ 	}
+ 
+ 	if (drawWrapMarkEnd) {
+@@ -1373,11 +1410,19 @@
+ }
+ 
+ static void DrawWrapIndentAndMarker(Surface *surface, const ViewStyle &vsDraw, const LineLayout *ll,
+-	int xStart, PRectangle rcLine, ColourOptional background, DrawWrapMarkerFn customDrawWrapMarker) {
++	int xStart, PRectangle rcLine, ColourOptional background, DrawWrapMarkerFn customDrawWrapMarker,
++	bool caretActive) {
+ 	// default bgnd here..
+ 	surface->FillRectangle(rcLine, background.isSet ? background :
+ 		vsDraw.styles[STYLE_DEFAULT].back);
+ 
++	if (vsDraw.IsLineFrameOpaque(caretActive, ll->containsCaret)) {
++		const int width = vsDraw.GetFrameWidth();
++		// Draw left of frame under marker
++		DrawFrame(surface, vsDraw.caretLineBackground, vsDraw.caretLineAlpha,
++			PRectangle(rcLine.left, rcLine.top, rcLine.left + width, rcLine.bottom));
++	}
++
+ 	if (vsDraw.wrapVisualFlags & SC_WRAPVISUALFLAG_START) {
+ 
+ 		// draw continuation rect
+@@ -1551,9 +1596,14 @@
+ 
+ // Draw any translucent whole line states
+ static void DrawTranslucentLineState(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
+-	Sci::Line line, PRectangle rcLine) {
+-	if ((model.caret.active || vsDraw.alwaysShowCaretLineBackground) && vsDraw.showCaretLineBackground && ll->containsCaret) {
+-		SimpleAlphaRectangle(surface, rcLine, vsDraw.caretLineBackground, vsDraw.caretLineAlpha);
++	Sci::Line line, PRectangle rcLine, int subLine) {
++	if ((model.caret.active || vsDraw.alwaysShowCaretLineBackground) && vsDraw.showCaretLineBackground && ll->containsCaret &&
++		vsDraw.caretLineAlpha != SC_ALPHA_NOALPHA) {
++		if (vsDraw.caretLineFrame) {
++			DrawCaretLineFramed(surface, vsDraw, ll, rcLine, subLine);
++		} else {
++			SimpleAlphaRectangle(surface, rcLine, vsDraw.caretLineBackground, vsDraw.caretLineAlpha);
++		}
+ 	}
+ 	const int marksOfLine = model.pdoc->GetMark(line);
+ 	int marksDrawnInText = marksOfLine & vsDraw.maskDrawInText;
+@@ -1842,7 +1892,7 @@
+ 
+ 	if ((ll->wrapIndent != 0) && (subLine > 0)) {
+ 		if (phase & drawBack) {
+-			DrawWrapIndentAndMarker(surface, vsDraw, ll, xStart, rcLine, background, customDrawWrapMarker);
++			DrawWrapIndentAndMarker(surface, vsDraw, ll, xStart, rcLine, background, customDrawWrapMarker, model.caret.active);
+ 		}
+ 		xStart += static_cast<int>(ll->wrapIndent);
+ 	}
+@@ -1855,6 +1905,8 @@
+ 			phase = static_cast<DrawPhase>(phase & ~drawBack);	// Remove drawBack to not draw again in DrawFoldDisplayText
+ 			DrawEOL(surface, model, vsDraw, ll, rcLine, line, lineRange.end,
+ 				xStart, subLine, subLineStart, background);
++			if (vsDraw.IsLineFrameOpaque(model.caret.active, ll->containsCaret))
++				DrawCaretLineFramed(surface, vsDraw, ll, rcLine, subLine);
+ 		}
+ 
+ 		if (phase & drawIndicatorsBack) {
+@@ -1882,6 +1934,8 @@
+ 	if (phasesDraw == phasesOne) {
+ 		DrawEOL(surface, model, vsDraw, ll, rcLine, line, lineRange.end,
+ 			xStart, subLine, subLineStart, background);
++		if (vsDraw.IsLineFrameOpaque(model.caret.active, ll->containsCaret))
++			DrawCaretLineFramed(surface, vsDraw, ll, rcLine, subLine);
+ 		DrawEdgeLine(surface, vsDraw, ll, rcLine, lineRange, xStart);
+ 		DrawMarkUnderline(surface, model, vsDraw, line, rcLine);
+ 	}
+@@ -1891,7 +1945,7 @@
+ 	}
+ 
+ 	if (phase & drawLineTranslucent) {
+-		DrawTranslucentLineState(surface, model, vsDraw, ll, line, rcLine);
++		DrawTranslucentLineState(surface, model, vsDraw, ll, line, rcLine, subLine);
+ 	}
+ }
+ 
+diff -r 4e0ed8a19851 -r 797ed6c538fd src/Editor.cxx
+--- a/src/Editor.cxx	Thu Apr 06 09:23:14 2017 +1000
++++ b/src/Editor.cxx	Thu Apr 06 20:19:23 2017 +1000
+@@ -7067,6 +7067,12 @@
+ 		InvalidateStyleRedraw();
+ 		break;
+ 
++	case SCI_GETCARETLINEFRAME:
++		return vs.caretLineFrame;
++	case SCI_SETCARETLINEFRAME:
++		vs.caretLineFrame = static_cast<int>(wParam);
++		InvalidateStyleRedraw();
++		break;
+ 	case SCI_GETCARETLINEBACK:
+ 		return vs.caretLineBackground.AsLong();
+ 	case SCI_SETCARETLINEBACK:
+diff -r 4e0ed8a19851 -r 797ed6c538fd src/ViewStyle.cxx
+--- a/src/ViewStyle.cxx	Thu Apr 06 09:23:14 2017 +1000
++++ b/src/ViewStyle.cxx	Thu Apr 06 20:19:23 2017 +1000
+@@ -136,6 +136,7 @@
+ 	selbarlight = source.selbarlight;
+ 	caretcolour = source.caretcolour;
+ 	additionalCaretColour = source.additionalCaretColour;
++	caretLineFrame = source.caretLineFrame;
+ 	showCaretLineBackground = source.showCaretLineBackground;
+ 	alwaysShowCaretLineBackground = source.alwaysShowCaretLineBackground;
+ 	caretLineBackground = source.caretLineBackground;
+@@ -264,6 +265,7 @@
+ 	styles[STYLE_LINENUMBER].back = Platform::Chrome();
+ 	caretcolour = ColourDesired(0, 0, 0);
+ 	additionalCaretColour = ColourDesired(0x7f, 0x7f, 0x7f);
++	caretLineFrame = 0;
+ 	showCaretLineBackground = false;
+ 	alwaysShowCaretLineBackground = false;
+ 	caretLineBackground = ColourDesired(0xff, 0xff, 0);
+@@ -479,6 +481,15 @@
+ 	}
+ }
+ 
++int ViewStyle::GetFrameWidth() const {
++	return Platform::Clamp(caretLineFrame, 1, lineHeight / 3);
++}
++
++bool ViewStyle::IsLineFrameOpaque(bool caretActive, bool lineContainsCaret) const {
++	return caretLineFrame && (caretActive || alwaysShowCaretLineBackground) && showCaretLineBackground &&
++		(caretLineAlpha == SC_ALPHA_NOALPHA) && lineContainsCaret;
++}
++
+ // See if something overrides the line background color:  Either if caret is on the line
+ // and background color is set for that, or if a marker is defined that forces its background
+ // color onto the line, or if a marker is defined but has no selection margin in which to
+@@ -487,7 +498,8 @@
+ // the color for the highest numbered one is used.
+ ColourOptional ViewStyle::Background(int marksOfLine, bool caretActive, bool lineContainsCaret) const {
+ 	ColourOptional background;
+-	if ((caretActive || alwaysShowCaretLineBackground) && showCaretLineBackground && (caretLineAlpha == SC_ALPHA_NOALPHA) && lineContainsCaret) {
++	if (!caretLineFrame && (caretActive || alwaysShowCaretLineBackground) && showCaretLineBackground &&
++		(caretLineAlpha == SC_ALPHA_NOALPHA) && lineContainsCaret) {
+ 		background = ColourOptional(caretLineBackground, true);
+ 	}
+ 	if (!background.isSet && marksOfLine) {
+diff -r 4e0ed8a19851 -r 797ed6c538fd src/ViewStyle.h
+--- a/src/ViewStyle.h	Thu Apr 06 09:23:14 2017 +1000
++++ b/src/ViewStyle.h	Thu Apr 06 20:19:23 2017 +1000
+@@ -141,6 +141,7 @@
+ 	bool viewEOL;
+ 	ColourDesired caretcolour;
+ 	ColourDesired additionalCaretColour;
++	int caretLineFrame;
+ 	bool showCaretLineBackground;
+ 	bool alwaysShowCaretLineBackground;
+ 	ColourDesired caretLineBackground;
+@@ -190,6 +191,8 @@
+ 	int MarginFromLocation(Point pt) const;
+ 	bool ValidStyle(size_t styleIndex) const;
+ 	void CalcLargestMarkerHeight();
++	int GetFrameWidth() const;
++	bool IsLineFrameOpaque(bool caretActive, bool lineContainsCaret) const;
+ 	ColourOptional Background(int marksOfLine, bool caretActive, bool lineContainsCaret) const;
+ 	bool SelectionBackgroundDrawn() const;
+ 	bool WhitespaceBackgroundDrawn() const;

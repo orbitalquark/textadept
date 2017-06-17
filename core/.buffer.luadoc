@@ -157,6 +157,12 @@
 --   The caret line's background alpha value, ranging from `0` (transparent) to
 --   `255` (opaque).
 --   The default value is `buffer.ALPHA_NOALPHA`, for no alpha.
+-- @field caret_line_frame (number)
+--   The caret line's frame width in pixels.
+--   When non-zero, the line that contains the caret is framed instead of 
+--   colored in. The `buffer.caret_line_back` and `buffer.caret_line_back_alpha`
+--   properties apply to the frame.
+--   The default value is `0`.
 -- @field caret_line_visible (bool)
 --   Color the background of the line that contains the caret a different color.
 --   The default value is `false`.
@@ -750,8 +756,7 @@
 --   Table of flags that indicate whether or not text is changeable for style
 --   numbers from `0` to `255`.
 --   The default values are `true`.
---   Currently, read-only styles do not allow the caret into the range of text,
---   but ranges that contain read-only text are deletable.
+--   Read-only styles do not allow the caret into the range of text.
 -- @field style_eol_filled (table)
 --   Table of flags that indicate whether or not the background colors of styles
 --   whose characters occur last on lines extend all the way to the view's right
@@ -2069,6 +2074,11 @@ function line_from_position(buffer, pos) end
 -- @param line The line number in *buffer* to get the length of.
 -- @return number
 function line_length(buffer, line) end
+
+---
+-- Reverses the order of the selected lines.
+-- @param buffer A buffer.
+function line_reverse(buffer) end
 
 ---
 -- Scrolls the buffer right *columns* columns and down *lines* lines.
