@@ -498,3 +498,23 @@ function optionselect(options) end
 -- @usage ui.dialogs.colorselect{title = 'Foreground color', color = 0x000000,
 --   palette = {'#000000', 0x0000FF, '#00FF00', 0xFF0000}}
 function colorselect(options) end
+
+---
+-- Prompts the user with a font selection dialog defined by dialog options
+-- table *options*, returning the font selected (including style and size).
+-- If the user canceled the dialog, returns `nil`.
+-- @param options Table of key-value option pairs for the option select dialog.
+--
+--   * `title`: The dialog's title text.
+--   * `text`: The font preview text.
+--   * `font-name`: The initially selected font name.
+--   * `font-size`: The initially selected font size. The default value is `12`.
+--   * `font-style`: The initially selected font style. The available options
+--     are `"regular"`, `"bold"`, `"italic"`, and `"bold italic"`. The default
+--     value is `"regular"`.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+-- @return selected font, including style and size
+-- @usage ui.dialogs.fontselect{title = 'Font', font_name = 'Monospace',
+--   font_size = 10}
+function fontselect(options) end
