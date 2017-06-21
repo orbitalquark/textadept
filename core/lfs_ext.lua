@@ -30,14 +30,16 @@ local function exclude(file, filter)
   if not filter then return false end
   local ext = filter.extensions
   if ext and ext[file:match('[^%.]+$')] then return true end
+  local include -- track any match from a set of '!...' patterns
   for i = 1, #filter do
     local patt = filter[i]
     if patt:sub(1, 1) ~= '!' then
       if file:find(patt) then return true end
-    else
-      if not file:find(patt:sub(2)) then return true end
+    elseif not include then
+      include = file:find(patt:sub(2)) ~= nil
     end
   end
+  if type(include) == 'boolean' and not include then return true end
   return filter.symlink and lfs_symlinkattributes(file, 'mode') == 'link'
 end
 
@@ -57,8 +59,9 @@ end
 --   + Optional `folders.symlink` flag that when `true`, excludes symlinked
 --     directories.
 --
--- Any filter patterns starting with '!' exclude files and directories that do
--- not match the pattern that follows.
+-- Any filter patterns starting with '!' include files and directories that
+-- match the pattern that follows. This is useful for filtering out all files
+-- and directories except a select few.
 -- @param dir The directory path to iterate over.
 -- @param f Function to call with each full file path found. If *f* returns
 --   `false` explicitly, iteration ceases.
