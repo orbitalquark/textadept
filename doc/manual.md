@@ -831,11 +831,11 @@ list of available snippets. A snippet consists of a trigger word and snippet
 text. Instead of manually selecting a snippet to insert, type its trigger word
 followed by the `Tab` (`⇥` | `Tab`) key. Subsequent presses of `Tab` (`⇥` |
 `Tab`) cause the caret to enter placeholders in sequential order, `Shift+Tab`
-(`⇧⇥` | `S-Tab`) goes back to the previous placeholder, and `Ctrl+Shift+K`
-(`⌥⇧⇥` | `M-S-K`) cancels the current snippet. Textadept supports nested
-snippets, snippets inserted from within another snippet. Language modules
-usually define their [own set][] of snippets, but your
-[snippet preferences](#Snippet.Preferences) can define some too.
+(`⇧⇥` | `S-Tab`) goes back to the previous placeholder, and `Esc` cancels the
+current snippet. Textadept supports nested snippets, snippets inserted from
+within another snippet. Language modules usually define their [own set][] of
+snippets, but your [snippet preferences](#Snippet.Preferences) can define some
+too.
 
 ![Snippet](images/snippet.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
