@@ -113,6 +113,18 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
     for option, value in pairs(options) do
       if value then
         args[#args + 1] = '--'..option:gsub('_', '-')
+        if option == 'color' or
+           option == 'palette' and type(value) ~= 'boolean' then
+          -- Transform 0xBBGGRR colors into "#RRGGBB" for color selector.
+          if type(value) ~= 'table' then value = {value} end
+          for i = 1, #value do
+            if type(value[i]) == 'number' then
+              local bbggrr = string.format('%06X', value[i])
+              local b, g, r = bbggrr:match('^(%x%x)(%x%x)(%x%x)$')
+              if r and g and b then value[i] = '#'..r..g..b end
+            end
+          end
+        end
         if type(value) ~= 'boolean' then args[#args + 1] = value end
       end
     end
@@ -143,6 +155,12 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
         items[#items + 1] = options.string_output and item or tonumber(item) + 1
       end
       return button, options.select_multiple and items or items[1]
+    elseif k == 'colorselect' then
+      if options.string_output then return result ~= '' and result or nil end
+      local r, g, b = result:match('^#(%x%x)(%x%x)(%x%x)$')
+      return r and g and b and tonumber('0x'..b..g..r) or nil
+    elseif k == 'fontselect' then
+      return result ~= '' and result or nil
     elseif not options.string_output then
       local i, value = result:match('^(%-?%d+)\n?(.*)$')
       i = tonumber(i)
