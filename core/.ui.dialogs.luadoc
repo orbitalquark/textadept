@@ -476,3 +476,25 @@ function filteredlist(options) end
 --   informative_text = 'Check the languages you understand'
 --   items = {'English', 'Romanian'}, select = 1, string_output = true}
 function optionselect(options) end
+
+---
+-- Prompts the user with a color selection dialog defined by dialog options
+-- table *options*, returning the color selected.
+-- If the user canceled the dialog, returns `nil`.
+-- @param options Table of key-value option pairs for the option select dialog.
+--
+--   * `title`: The dialog's title text.
+--   * `color`: The initially selected color as either a number in "0xBBGGRR"
+--     format, or as a string in "#RRGGBB" format.
+--   * `palette`: The list of colors to show in the dialog's color palette.
+--     Up to 20 colors can be specified as either numbers in "0xBBGGRR" format
+--     or as strings in "#RRGGBB" format. If `true` (no list was given), a
+--     default palette is shown.
+--   * `string_output`: Return the selected color in string "#RRGGBB" format
+--     instead of numeric "0xBBGGRR" format. The default value is `false`.
+--   * `float`: Show the dialog on top of all desktop windows. The default value
+--     is `false`.
+-- @return selected color
+-- @usage ui.dialogs.colorselect{title = 'Foreground color', color = 0x000000,
+--   palette = {'#000000', 0x0000FF, '#00FF00', 0xFF0000}}
+function colorselect(options) end
