@@ -428,7 +428,7 @@ bombay_zip = bombay.zip
 cloc = cloc-1.60.pl
 
 $(scintilla_tgz): ; wget http://prdownloads.sourceforge.net/scintilla/$@ -O $@
-scintilla: $(wildcard scintilla_backports/*.patch) scintilla.patch | \
+scintilla: $(sort $(wildcard scintilla_backports/*.patch)) scintilla.patch | \
            $(scintilla_tgz)
 	if [ -d $@/.hg ]; then \
 		hg --cwd $@ update -C -r rel-3-7-3; \
