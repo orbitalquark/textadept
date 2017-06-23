@@ -194,10 +194,7 @@ function M.save(filename)
   end
   -- Write the session.
   local f = io.open(filename, 'wb')
-  if f then
-    f:write(table.concat(session, '\n'))
-    f:close()
-  end
+  if f then f:write(table.concat(session, '\n')):close() end
 end
 -- Saves session on quit.
 events.connect(events.QUIT, function()
