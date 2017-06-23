@@ -1343,12 +1343,15 @@ For now, the [wiki][] hosts third-party, user-created themes.
 
 The command entry grants access to Textadept's Lua state. Press `Ctrl+E` (`⌘E`
 on Mac OSX | `M-C` in curses) to display the entry. It is useful for debugging,
-inspecting, and entering `buffer` or `view` commands. If you try to cause
-instability in Textadept's Lua state, you will probably succeed so be careful.
-The [Lua API][] lists available commands. The command entry provides abbreviated
-commands for [`buffer`][], [`view`][] and [`ui`][]: for example you may reduce
-the `buffer:append_text('foo')` command to `append_text('foo')`. These commands
-are runnable on startup using the `-e` and `--execute` command line switches.
+inspecting, and entering commands (e.g. `buffer` or `view` commands). If you try
+to cause instability in Textadept's Lua state, you will probably succeed, so be
+careful. The [Lua API][] lists available commands. In addition to behaving like
+Lua's interactive prompt, the command entry provides some shortcuts for common
+[`buffer`][], [`view`][] and [`ui`][] commands. For example, instead of entering
+`buffer:append_text('foo')`, you can use `append_text('foo')`. Also, function
+call parentheses can be omitted. For example, instead of `view:split()`, you can
+simply use `split`. Finally, these commands are runnable on startup using the
+`-e` and `--execute` command line switches.
 
 Pressing `Ctrl+H` (`^H` | `M-H` or `M-S-H`) shows help for the current command.
 

@@ -131,11 +131,27 @@ local env = setmetatable({}, {
 -- environment.
 -- In this environment, the contents of the `buffer`, `view`, and `ui` tables
 -- are also considered as global functions and fields.
--- Prints the results of '=' expressions like in the Lua prompt.
+-- Prints the results of expressions like in the Lua prompt. Also invokes bare
+-- functions as commands.
 -- @param code The Lua code to execute.
 local function run_lua(code)
-  if code:find('^=') then code = 'return '..code:sub(2) end
-  local result = assert(load(code, nil, 'bt', env))()
+  if code:find('^=') then code = code:sub(2) end -- for compatibility
+  local f, errmsg = load('return '..code, nil, 't', env)
+  if not f then f, errmsg = load(code, nil, 't', env) end
+  local result = assert(f, errmsg)()
+  if type(result) == 'function' then result = result() end
+  if type(result) == 'table' then
+    local items = {}
+    for k, v in pairs(result) do
+      items[#items + 1] = tostring(k)..' = '..tostring(v)
+    end
+    table.sort(items)
+    result = '{'..table.concat(items, ', ')..'}'
+    if buffer.edge_column > 0 and #result > buffer.edge_column then
+      local indent = string.rep(' ', buffer.tab_width)
+      result = '{\n'..indent..table.concat(items, ',\n'..indent)..'\n}'
+    end
+  end
   if result ~= nil or code:find('^return ') then ui.print(result) end
   events.emit(events.UPDATE_UI)
 end
