@@ -517,10 +517,20 @@ function M.filter_through(command)
     -- Use the whole buffer as input.
     buffer:target_whole_document()
   end
-  local p = assert(spawn(command))
-  p:write(buffer.target_text)
-  p:close()
-  buffer:replace_target((p:read('*a') or ''):iconv('UTF-8', _CHARSET))
+  local commands = lpeg.match(lpeg.Ct(lpeg.P{
+    lpeg.C(lpeg.V('command')) * ('|' * lpeg.C(lpeg.V('command')))^0,
+    command = (1 - lpeg.S('"\'|') + lpeg.V('str'))^1,
+    str = '"' * (1 - lpeg.S('"\\') + lpeg.P('\\') * 1)^0 * lpeg.P('"')^-1 +
+          "'" * (1 - lpeg.S("'\\") + lpeg.P('\\') * 1)^0 * lpeg.P("'")^-1,
+  }), command)
+  local output = buffer.target_text
+  for i = 1, #commands do
+    local p = assert(spawn(commands[i]))
+    p:write(output)
+    p:close()
+    output = p:read('*a') or ''
+  end
+  buffer:replace_target(output:iconv('UTF-8', _CHARSET))
   if s ~= e then
     buffer:set_sel(buffer.target_start, buffer.target_end)
   else
