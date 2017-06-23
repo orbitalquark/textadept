@@ -480,18 +480,12 @@ end)
 -- on mouse events.
 if CURSES then
   if not WIN32 then
-    local function enable_mouse_mode()
-      io.stdout:write("\x1b[?1002h")
-      io.stdout:flush()
-    end
-    enable_mouse_mode()
-    local function disable_mouse_mode()
-      io.stdout:write("\x1b[?1002l") -- disable mouse mode
-      io.stdout:flush()
-    end
-    events_connect(events.SUSPEND, disable_mouse_mode)
-    events_connect(events.RESUME, enable_mouse_mode)
-    events_connect(events.QUIT, disable_mouse_mode)
+    local function enable_mouse() io.stdout:write("\x1b[?1002h"):flush() end
+    local function disable_mouse() io.stdout:write("\x1b[?1002l"):flush() end
+    enable_mouse()
+    events_connect(events.SUSPEND, disable_mouse)
+    events_connect(events.RESUME, enable_mouse)
+    events_connect(events.QUIT, disable_mouse)
   end
 
   -- Retrieves the view or split at the given terminal coordinates.
