@@ -19,7 +19,7 @@ Third Edition
 
 Order the print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][], [ES][]
 
-Published: Oct 2016 <span style="color: #ef373a;">[New!]</span><br/>
+Published: Oct 2016
 ISBN: 978-0-9912379-2-0<br/>
 Pages: 170
 
