@@ -166,3 +166,13 @@ rather than just the name of the "ttf" file in your Fonts directory.
 
 - - -
 
+**Q:**
+When I use Mercurial >= 3.9 to clone Textadept's source code repository, I get
+an "unsupported protocol" error related to TLS. How do I get around this?
+
+**A:**
+Set `hostsecurity.foicica.com:minimumprotocol=tls1.0` in your Mercurial
+configuration, as stated by the error message. Then try cloning again.
+
+- - -
+
