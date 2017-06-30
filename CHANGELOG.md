@@ -9,6 +9,59 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 9.5 beta (01 Jul 2017)
+
+Download:
+
+* [Textadept 9.5 beta -- Win32][] | [PGP -- 9.5 beta Win32][]
+* [Textadept 9.5 beta -- Mac OSX Intel 10.5+][] | [PGP -- 9.5 beta OSX][]
+* [Textadept 9.5 beta -- Linux][] | [PGP -- 9.5 beta Linux][]
+* [Textadept 9.5 beta -- Linux x86_64][] | [PGP -- 9.5 beta Linux x86_64][]
+* [Textadept 9.5 beta -- Modules][] | [PGP -- 9.5 beta Modules][]
+
+Bugfixes:
+
+* Fixed bug that deleted characters outside of mangled snippets.
+* Fixed start-anchored "Find Prev" regex searches.
+* Correctly handle multiple '!'-prefixed patterns in file filters.
+* Scintilla: Pressing `Esc` while rectangular selection is active does not
+  collapse it.
+
+Changes:
+
+* Changed "Cancel Snippet" keybinding from `Ctrl+Shift+K` (`⌥⇧⇥` on Mac OSX |
+  `M-S-K` in curses) to `Esc`.
+* Added [`buffer.caret_line_frame`][] option for outlining the current line.
+* Added [`buffer:line_reverse()`][] for reversing selected lines.
+* Added [`ui.dialogs.colorselect()`][] and [`ui.dialogs.fontselect()`][]
+  dialogs.
+* Handle pipes in shell commands for [filter-through][].
+* The [Lua command entry][] prints results like Lua 5.3's interactive prompt
+  (e.g. no need for explicit '=' prefix).
+* The Lua command entry now invokes bare functions as commands (e.g. `copy`
+  invokes `buffer:copy()`, `split` invokes `view:split()`, etc.).
+* Scintilla: Updated case conversion and character categories to Unicode 9.
+* Scintilla: Update scroll bar when annotations are added, removed, or changed.
+* Effectively updated to [Scintilla][] 3.7.5.
+
+[Textadept 9.5 beta -- Win32]: download/textadept_9.5_beta.win32.zip
+[Textadept 9.5 beta -- Mac OSX Intel 10.5+]: download/textadept_9.5_beta.osx.zip
+[Textadept 9.5 beta -- Linux]: download/textadept_9.5_beta.i386.tgz
+[Textadept 9.5 beta -- Linux x86_64]: download/textadept_9.5_beta.x86_64.tgz
+[Textadept 9.5 beta -- Modules]: download/textadept_9.5_beta.modules.zip
+[PGP -- 9.5 beta Win32]: download/textadept_9.5_beta.win32.zip.asc
+[PGP -- 9.5 beta OSX]: download/textadept_9.5_beta.osx.zip.asc
+[PGP -- 9.5 beta Linux]: download/textadept_9.5_beta.i386.tgz.asc
+[PGP -- 9.5 beta Linux x86_64]: download/textadept_9.5_beta.x86_64.tgz.asc
+[PGP -- 9.5 beta Modules]: download/textadept_9.5_beta.modules.zip.asc
+[`buffer.caret_line_frame`]: api.html#buffer.caret_line_frame
+[`buffer:line_reverse()`]: api.html#buffer.line_reverse
+[`ui.dialogs.colorselect()`]: api.html#ui.dialogs.colorselect
+[`ui.dialogs.fontselect()`]: api.html#ui.dialogs.fontselect
+[filter-through]: manual.html#Shell.Commands.and.Filtering.Text
+[Lua command entry]: manual.html#Lua.Command.Entry
+[Scintilla]: http://scintilla.org
+
 ## 9.4 (01 May 2017)
 
 Download:
