@@ -116,6 +116,9 @@ local M = {}
 -- None            |None  |None         |ASCII encoding
 -- None            |None  |None         |ISO-8859-1 encoding
 -- None            |None  |None         |UTF-16 encoding
+-- Ctrl+Alt+Enter  |^↩    |None         |Toggle view EOL
+-- Ctrl+Alt+\\     |^\\   |None         |Toggle wrap mode
+-- Ctrl+Alt+Shift+S|^⇧S   |None         |Toggle view whitespace
 -- Ctrl+Shift+L    |⌘⇧L   |M-S-L        |Select lexer...
 -- F5              |F5    |^L<br/>F5    |Refresh syntax highlighting
 -- **View**                 |         |                 |
@@ -128,10 +131,7 @@ local M = {}
 -- Ctrl+Alt++<br/>Ctrl+Alt+=|^+<br/>^=|M-^V +<br/>M-^V =|Grow view
 -- Ctrl+Alt+-               |^-       |M-^V -           |Shrink view
 -- Ctrl+*                   |⌘*       |M-*              |Toggle current fold
--- Ctrl+Alt+Enter           |^↩       |None             |Toggle view EOL
--- Ctrl+Alt+\\              |^\\      |None             |Toggle wrap mode
 -- Ctrl+Alt+Shift+I         |^⇧I      |N/A              |Toggle indent guides
--- Ctrl+Alt+Shift+S         |^⇧S      |None             |Toggle view whitespace
 -- Ctrl+Alt+Shift+V         |^⇧V      |None             |Toggle virtual space
 -- Ctrl+=                   |⌘=       |N/A              |Zoom in
 -- Ctrl+-                   |⌘-       |N/A              |Zoom out
@@ -236,7 +236,7 @@ module('textadept.keys')]]
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- m:       C        ~  I JkK  ~M    p  ~    tT   V    yY  _   ) ] }   +   ~~\n
--- c:      cC D    gG H  J K L    oO  qQ             xXyYzZ_   ) ] }  *  /
+-- c:      cC D    gG H   J K L    oO  qQ            xXyYzZ_   ) ] }  *  /
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  p q~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
 -- CTRL = 'c' (Control ^)
