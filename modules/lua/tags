@@ -453,6 +453,7 @@ cancel	_	0;"	f	class:buffer
 caret_fore	_	0;"	F	class:buffer
 caret_line_back	_	0;"	F	class:buffer
 caret_line_back_alpha	_	0;"	F	class:buffer
+caret_line_frame	_	0;"	F	class:buffer
 caret_line_visible	_	0;"	F	class:buffer
 caret_line_visible_always	_	0;"	F	class:buffer
 caret_period	_	0;"	F	class:buffer
@@ -490,6 +491,7 @@ cntrl	_	0;"	F	class:lexer
 codepoint	_	0;"	f	class:utf8
 codes	_	0;"	f	class:utf8
 collectgarbage	_	0;"	f	
+colorselect	_	0;"	f	class:ui.dialogs
 colourise	_	0;"	f	class:buffer
 column	_	0;"	F	class:buffer
 command_entry	_	0;"	m	class:ui
@@ -628,6 +630,7 @@ fold_level	_	0;"	F	class:lexer
 fold_line	_	0;"	f	class:buffer
 fold_line_comments	_	0;"	f	class:lexer
 fold_parent	_	0;"	F	class:buffer
+fontselect	_	0;"	f	class:ui.dialogs
 format	_	0;"	f	class:string
 frexp	_	0;"	f	class:math
 functions	_	0;"	t	class:_SCINTILLA
@@ -749,6 +752,7 @@ line_from_position	_	0;"	f	class:lexer
 line_indent_position	_	0;"	F	class:buffer
 line_indentation	_	0;"	F	class:buffer
 line_length	_	0;"	f	class:buffer
+line_reverse	_	0;"	f	class:buffer
 line_scroll	_	0;"	f	class:buffer
 line_scroll_down	_	0;"	f	class:buffer
 line_scroll_up	_	0;"	f	class:buffer
