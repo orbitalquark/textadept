@@ -17,7 +17,7 @@ buffer.mouse_selection_rectangular_switch = true
 buffer:set_x_caret_policy(buffer.CARET_SLOP, 20)
 buffer:set_y_caret_policy(buffer.CARET_SLOP + buffer.CARET_STRICT +
                           buffer.CARET_EVEN, 1)
---buffer:set_visible_policy()
+buffer:set_visible_policy(buffer.VISIBLE_SLOP + buffer.VISIBLE_STRICT, 5)
 --buffer.h_scroll_bar = CURSES
 --buffer.v_scroll_bar = false
 if CURSES and not (WIN32 or LINUX or BSD) then buffer.v_scroll_bar = false end

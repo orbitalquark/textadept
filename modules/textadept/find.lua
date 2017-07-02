@@ -161,6 +161,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   local f = buffer['search_'..(next and 'next' or 'prev')]
   local pos = f(buffer, flags, text)
   buffer:scroll_range(buffer.anchor, buffer.current_pos)
+  buffer:ensure_visible_enforce_policy(buffer:line_from_position(pos))
   find_text, found_text = text, buffer:get_sel_text() -- track for "replace all"
 
   -- If nothing was found, wrap the search.
