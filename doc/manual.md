@@ -365,11 +365,12 @@ in curses) to display this browser.
 
 ![Buffer Browser](images/bufferbrowser.png)
 
-The buffer browser displays a list of currently open buffers, the most recent
-towards the bottom. Typing part of any filename filters the list. Spaces are
-wildcards. The arrow keys move the selection up and down. Pressing `Enter`,
-selecting `OK`, or double-clicking a buffer in the list switches to the selected
-buffer.
+The buffer browser displays a list of currently open buffers. By default, the
+most recent buffers are towards the bottom of the list. The browser can be
+[configured](#Key.Bindings) to list the most recently viewed buffers first.
+Typing part of any filename filters the list. Spaces are wildcards. The arrow
+keys move the selection up and down. Pressing `Enter`, selecting `OK`, or
+double-clicking a buffer in the list switches to the selected buffer.
 
 ![Buffer Browser Filtered](images/bufferbrowserfiltered.png)
 
@@ -1106,10 +1107,13 @@ once.
 Textadept provides key bindings for a vast majority of its features. If you
 would like to add, tweak, or remove key bindings, you can do so from your
 *~/.textadept/init.lua*. For example, maybe you prefer that `Ctrl+Shift+C`
-creates a new buffer instead of `Ctrl+N`:
+creates a new buffer instead of `Ctrl+N`, or that the buffer list (`Ctrl+B`)
+shows buffers by their z-order (most recently viewed to least recently viewed)
+instead of the order they were opened in:
 
     keys.cC = buffer.new
     keys.cn = nil
+    keys.cb = function() ui.switch_buffer(true) end
 
 A key binding is simply a Lua function assigned to a key sequence in the global
 `keys` table. Key sequences are composed of an ordered combination of modifier
