@@ -171,13 +171,40 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
   end
 end})
 
+local buffers_zorder = {}
+
+-- Adds new buffers to the z-order list.
+events.connect(events.BUFFER_NEW, function()
+  if buffer == ui.command_entry then return end -- ignore this buffer
+  table.insert(buffers_zorder, 1, buffer)
+end)
+
+-- Updates the z-order list.
+events.connect(events.BUFFER_AFTER_SWITCH, function()
+  local i = 1
+  while i <= #buffers_zorder do
+    if buffers_zorder[i] == buffer or not _BUFFERS[buffers_zorder[i]] then
+      table.remove(buffers_zorder, i)
+    else
+      i = i + 1
+    end
+  end
+  table.insert(buffers_zorder, 1, buffer)
+end)
+
 ---
 -- Prompts the user to select a buffer to switch to.
+-- Buffers are listed in the order they were opened unless `zorder` is `true`,
+-- in which case buffers are listed by their z-order (most recently viewed to
+-- least recently viewed).
+-- @param zorder Flag that indicates whether or not to list buffers by their
+--   z-order. The default value is `false`.
 -- @name switch_buffer
-function ui.switch_buffer()
+function ui.switch_buffer(zorder)
+  local buffers = not zorder and _BUFFERS or buffers_zorder
   local columns, utf8_list = {_L['Name'], _L['File']}, {}
-  for i = 1, #_BUFFERS do
-    local buffer = _BUFFERS[i]
+  for i = not zorder and 1 or 2, #buffers do
+    local buffer = buffers[i]
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
@@ -188,7 +215,9 @@ function ui.switch_buffer()
     title = _L['Switch Buffers'], columns = columns, items = utf8_list,
     width = CURSES and ui.size[1] - 2 or nil
   }
-  if button == 1 and i then view:goto_buffer(_BUFFERS[i]) end
+  if button == 1 and i then
+    view:goto_buffer(buffers[not zorder and i or i + 1])
+  end
 end
 
 ---
