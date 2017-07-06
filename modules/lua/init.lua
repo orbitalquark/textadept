@@ -37,7 +37,7 @@ textadept.editing.autocompleters.lua = function()
   -- Retrieve the symbol behind the caret.
   local line, pos = buffer:get_cur_line()
   local symbol, op, part = line:sub(1, pos):match('([%w_%.]-)([%.:]?)([%w_]*)$')
-  if symbol == '' and part == '' and op ~= '' then return nil end -- lone .
+  if symbol == '' and part == '' then return nil end -- nothing to complete
   symbol, part = symbol:gsub('^_G%.?', ''), part ~= '_G' and part or ''
   -- Attempt to identify string type and file type symbols.
   local buffer = buffer
@@ -68,6 +68,7 @@ textadept.editing.autocompleters.lua = function()
       end
     end
   end
+  if #list == 1 and list[1]:find(name_patt..'%?') then return nil end
   return #part, list
 end
 
