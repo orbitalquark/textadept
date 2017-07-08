@@ -2,7 +2,7 @@
 
 ## Book
 
-<div style="float: left; margin: 0 1em 1em 1em;">
+<div style="float: left; margin: 0 1em 0 1em;">
   <a href="book/ta_quickref.png">
     <img src="book/ta_quickref_small.png" alt="" style="border-width: 1px;"/>
   </a>
@@ -11,16 +11,8 @@
 *Textadept Quick Reference*<br/>
 Third Edition
 
-<script src="https://gumroad.com/js/gumroad.js"></script>
-<p>
-  <a class="gumroad-button" href="https://gum.co/textadept3_ebook?wanted=true">
-    Order e-book &ndash; $15 USD
-  </a>
-  <a class="gumroad-button" href="https://gum.co/qr_bundle">
-    Order bundle with Lua Quick Reference &ndash; $27 USD
-  </a>
-</p>
-
+Order the [e-book][] &ndash; $15 USD<br/>
+Order the [e-book bundle][] with Lua Quick Reference &ndash; $27 USD<br/>
 Order the print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][], [ES][]
 
 Published: Oct 2016<br/>
@@ -50,6 +42,8 @@ This book covers how to:
 It serves as the perfect complement to Textadept's comprehensive Manual and
 exhaustive API documentation.
 
+[e-book]: https://gum.co/textadept3_ebook
+[e-book bundle]: https://gum.co/qr_bundle
 [US]: http://www.amazon.com/Textadept-Quick-Reference-Mitchell/dp/0991237927/
 [UK]: http://www.amazon.co.uk/Textadept-Quick-Reference-Mitchell/dp/0991237927/
 [DE]: http://www.amazon.de/Textadept-Quick-Reference-Mitchell/dp/0991237927/
