@@ -2,7 +2,7 @@
 
 ## Book
 
-<div style="float: left; margin: 0 1em 0 1em;">
+<div style="float: left; margin: 0 1em 1em 1em;">
   <a href="book/ta_quickref.png">
     <img src="book/ta_quickref_small.png" alt="" style="border-width: 1px;"/>
   </a>
@@ -13,13 +13,17 @@ Third Edition
 
 <script src="https://gumroad.com/js/gumroad.js"></script>
 <p>
-  <a target="_blank" class="gumroad-button"
-     href="https://gum.co/textadept3_ebook?wanted=true">Order the Ebook</a>
+  <a class="gumroad-button" href="https://gum.co/textadept3_ebook?wanted=true">
+    Order e-book &ndash; $15 USD
+  </a>
+  <a class="gumroad-button" href="https://gum.co/qr_bundle">
+    Order bundle with Lua Quick Reference &ndash; $27 USD
+  </a>
 </p>
 
 Order the print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][], [ES][]
 
-Published: Oct 2016
+Published: Oct 2016<br/>
 ISBN: 978-0-9912379-2-0<br/>
 Pages: 170
 
