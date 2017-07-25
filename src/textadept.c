@@ -1262,7 +1262,8 @@ static int lbuf_property(lua_State *L) {
     int ltype = !newindex ? SVOID : l_rawgetiint(L, -1, 4);
     int rtype = !newindex ? l_rawgetiint(L, -1, 3) : SVOID;
     if (newindex &&
-        (ltype != SVOID || wtype == SSTRING || wtype == SSTRINGRET)) {
+        (ltype != SVOID || wtype == SSTRING || wtype == SSTRINGRET ||
+         msg == SCI_SETMARGINLEFT || msg == SCI_SETMARGINRIGHT)) {
       int temp = (wtype != SSTRINGRET) ? wtype : SSTRING;
       wtype = ltype, ltype = temp;
     }
