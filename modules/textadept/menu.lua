@@ -487,8 +487,9 @@ local function set_menubar(menubar)
   ui.menubar = _menubar
   proxies.menubar = proxy_menu(menubar, set_menubar)
 end
-proxies.menubar = proxy_menu(default_menubar, function() end) -- for keys.lua
 events.connect(events.INITIALIZED, function() set_menubar(default_menubar) end)
+-- Define menu proxy for use by keys.lua and user scripts.
+proxies.menubar = proxy_menu(default_menubar, function() end)
 
 -- Sets `ui.context_menu` and `ui.tab_context_menu` from menu item lists
 -- *buffer_menu* and *tab_menu*, respectively.
@@ -515,6 +516,9 @@ local function set_contextmenus(buffer_menu, tab_menu)
   end)
 end
 events.connect(events.INITIALIZED, set_contextmenus)
+-- Define menu proxies for use by user scripts.
+proxies.context_menu = proxy_menu(default_context_menu, function() end)
+proxies.tab_context_menu = proxy_menu(default_tab_context_menu, function() end)
 
 -- Performs the appropriate action when clicking a menu item.
 events.connect(events.MENU_CLICKED, function(menu_id)
