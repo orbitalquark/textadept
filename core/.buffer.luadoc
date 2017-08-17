@@ -6,6 +6,10 @@
 -- Constants are documented in the fields they apply to.
 -- While you can work with individual buffer instances, it is really only useful
 -- to work with the global one.
+-- Many of these functions and fields are derived from the Scintilla editing
+-- component, and additional information can be found on the Scintilla website:
+-- [http://scintilla.org/ScintillaDoc.html](
+-- http://scintilla.org/ScintillaDoc.html)
 -- @field additional_caret_fore (number)
 --   The foreground color, in "0xBBGGRR" format, of additional carets.
 -- @field additional_carets_blink (bool)
@@ -159,7 +163,7 @@
 --   The default value is `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field caret_line_frame (number)
 --   The caret line's frame width in pixels.
---   When non-zero, the line that contains the caret is framed instead of 
+--   When non-zero, the line that contains the caret is framed instead of
 --   colored in. The `buffer.caret_line_back` and `buffer.caret_line_back_alpha`
 --   properties apply to the frame.
 --   The default value is `0`.
