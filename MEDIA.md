@@ -12,7 +12,7 @@
 Third Edition
 
 Order the [e-book][] &ndash; $15 USD<br/>
-Order the [e-book bundle][] with Lua Quick Reference &ndash; $27 USD<br/>
+Order the [e-book bundle][] with [Lua Quick Reference][] &ndash; $27 USD<br/>
 Order the print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][], [ES][]
 
 Published: Oct 2016<br/>
@@ -44,6 +44,7 @@ exhaustive API documentation.
 
 [e-book]: https://gum.co/textadept3_ebook
 [e-book bundle]: https://gum.co/qr_bundle
+[Lua Quick Reference]: http://foicica.com/lua
 [US]: http://www.amazon.com/Textadept-Quick-Reference-Mitchell/dp/0991237927/
 [UK]: http://www.amazon.co.uk/Textadept-Quick-Reference-Mitchell/dp/0991237927/
 [DE]: http://www.amazon.de/Textadept-Quick-Reference-Mitchell/dp/0991237927/
