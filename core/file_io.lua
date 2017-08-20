@@ -89,10 +89,14 @@ io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1'}
 -- Emits a `FILE_OPENED` event.
 -- @param filenames Optional string filename or table of filenames to open. If
 --   `nil`, the user is prompted with a fileselect dialog.
+-- @param encodings Optional string encoding or table of encodings file contents
+--   are in (one encoding per file). If `nil`, encoding auto-detection is
+--   attempted via `io.encodings`.
 -- @see _G.events
 -- @name open_file
-function io.open_file(filenames)
+function io.open_file(filenames, encodings)
   if type(filenames) == 'string' then filenames = {filenames} end
+  if type(encodings or '') == 'string' then encodings = {encodings} end
   filenames = filenames or ui.dialogs.fileselect{
     title = _L['Open'], select_multiple = true,
     with_directory = (buffer.filename or ''):match('^.+[/\\]') or
@@ -119,19 +123,23 @@ function io.open_file(filenames)
       error(err)
     end
     local buffer = buffer.new()
-    -- Try to detect character encoding and convert to UTF-8.
-    local has_zeroes = text:sub(1, 65536):find('\0')
-    for j = 1, #io.encodings do
-      if not has_zeroes or io.encodings[j]:find('^UTF%-[13][62]') then
-        local ok, conv = pcall(string.iconv, text, 'UTF-8', io.encodings[j])
-        if ok then
-          buffer.encoding, text = io.encodings[j], conv
-          goto encoding_detected
+    if encodings[i] then
+      buffer.encoding, text = encodings[i], text:iconv('UTF-8', encodings[i])
+    else
+      -- Try to detect character encoding and convert to UTF-8.
+      local has_zeroes = text:sub(1, 65536):find('\0')
+      for j = 1, #io.encodings do
+        if not has_zeroes or io.encodings[j]:find('^UTF%-[13][62]') then
+          local ok, conv = pcall(string.iconv, text, 'UTF-8', io.encodings[j])
+          if ok then
+            buffer.encoding, text = io.encodings[j], conv
+            goto encoding_detected
+          end
         end
       end
+      assert(has_zeroes, _L['Encoding conversion failed.'])
+      buffer.encoding = nil -- binary (default was 'UTF-8')
     end
-    assert(has_zeroes, _L['Encoding conversion failed.'])
-    buffer.encoding = nil -- binary (default was 'UTF-8')
     ::encoding_detected::
     buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
     -- Detect EOL mode.
