@@ -34,6 +34,7 @@ private contract work related to Textadept.
 * Carl Sturtivant
 * Chris Emerson
 * Daniel Wutke
+* Franck Guadagnini
 * Gabriel Dubatti
 * Gilles Grégoire
 * Giovanni Salmeri
