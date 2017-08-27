@@ -315,10 +315,14 @@ end
 function M.transpose_chars()
   if buffer.current_pos == 0 then return end
   local pos, byte = buffer.current_pos, buffer.char_at[buffer.current_pos]
-  if byte == 10 or byte == 13 or pos == buffer.length then pos = pos - 1 end
-  buffer:set_target_range(pos - 1, pos + 1)
-  buffer:replace_target(buffer.target_text:reverse())
-  buffer:goto_pos(pos + 1)
+  if byte == 10 or byte == 13 or pos == buffer.length then
+    pos = buffer:position_before(pos)
+  end
+  local pos1, pos2 = buffer:position_before(pos), buffer:position_after(pos)
+  local ch1, ch2 = buffer:text_range(pos1, pos), buffer:text_range(pos, pos2)
+  buffer:set_target_range(pos1, pos2)
+  buffer:replace_target(ch2..ch1)
+  buffer:goto_pos(pos2)
 end
 
 ---
