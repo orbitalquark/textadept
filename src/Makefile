@@ -394,7 +394,8 @@ win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
 
 ifndef NIGHTLY
-  scinterm_url = http://foicica.com/scinterm/download/$@
+  #scinterm_url = http://foicica.com/scinterm/download/$@
+  scinterm_url = http://foicica.com/hg/scinterm/archive/$@
   scintillua_url = http://foicica.com/scintillua/download/$@
   gtdialog_url = http://foicica.com/gtdialog/download/$@
   lspawn_url = http://foicica.com/lspawn/download/$@
@@ -407,7 +408,7 @@ endif
 
 scintilla_tgz = scintilla373.tgz
 tre_zip = cdce45e8dd7a3b36954022b4a4d3570e1ac5a4f8.zip
-scinterm_zip = scinterm_1.9.zip
+scinterm_zip = 30bef4e18cae.zip
 scintillua_zip = scintillua_3.7.5-1.zip
 lua_tgz = lua-5.3.4.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
