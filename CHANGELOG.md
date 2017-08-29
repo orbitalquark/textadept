@@ -9,6 +9,49 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 9.5 (01 Sep 2017)
+
+Download:
+
+* [Textadept 9.5 -- Win32][] | [PGP -- 9.5 Win32][]
+* [Textadept 9.5 -- Mac OSX Intel 10.5+][] | [PGP -- 9.5 OSX][]
+* [Textadept 9.5 -- Linux][] | [PGP -- 9.5 Linux][]
+* [Textadept 9.5 -- Linux x86_64][] | [PGP -- 9.5 Linux x86_64][]
+* [Textadept 9.5 -- Modules][] | [PGP -- 9.5 Modules][]
+
+Bugfixes:
+
+* Do not attempt to provide code completions when there is no context.
+* Properly handle [`buffer.margin_left`][] and [`buffer.margin_right`][].
+* Ensure context menus are configurable outside of `events.INITIALIZE`.
+* Various fixes in diff, Forth, and Elixir lexers.
+* Character transposing is now UTF-8-aware.
+
+Changes:
+
+* Added z-order parameter to [`ui.switch_buffer()`][].
+* When searching in files, show more lines below a match.
+* Added optional encoding parameter to [`io.open_file()`][].
+* Improved file associations on Mac OSX.
+* Added support for Myrddin.
+* The terminal version updates its cursor position for display in tools like
+  tmux.
+
+[Textadept 9.5 -- Win32]: download/textadept_9.5.win32.zip
+[Textadept 9.5 -- Mac OSX Intel 10.5+]: download/textadept_9.5.osx.zip
+[Textadept 9.5 -- Linux]: download/textadept_9.5.i386.tgz
+[Textadept 9.5 -- Linux x86_64]: download/textadept_9.5.x86_64.tgz
+[Textadept 9.5 -- Modules]: download/textadept_9.5.modules.zip
+[PGP -- 9.5 Win32]: download/textadept_9.5.win32.zip.asc
+[PGP -- 9.5 OSX]: download/textadept_9.5.osx.zip.asc
+[PGP -- 9.5 Linux]: download/textadept_9.5.i386.tgz.asc
+[PGP -- 9.5 Linux x86_64]: download/textadept_9.5.x86_64.tgz.asc
+[PGP -- 9.5 Modules]: download/textadept_9.5.modules.zip.asc
+[`buffer.margin_left`]: api.html#buffer.margin_left
+[`buffer.margin_right`]: api.html#buffer.margin_right
+[`ui.switch_buffer()`]: api.html#ui.switch_buffer
+[`io.open_file()`]: api.html#io.open_file
+
 ## 9.5 beta (01 Jul 2017)
 
 Download:
