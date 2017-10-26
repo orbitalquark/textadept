@@ -47,3 +47,25 @@ diff -r c8148182a381 lib/tre-config.h
 +#undef TRE_VERSION_3
 +
 +#define TRE_REGEX_T_FIELD value
+--- tre/lib/tre-parse.c.orig	2017-10-26 10:06:49.512031304 -0400
++++ tre/lib/tre-parse.c	2017-10-26 10:07:01.048160259 -0400
+@@ -1543,7 +1543,7 @@
+ 					     ctx->position);
+ 		  if (!tmp1)
+ 		    return REG_ESPACE;
+-		  tmp2 = tre_ast_new_literal(ctx->mem, L'\n' + 1, TRE_CHAR_MAX,
++		  tmp2 = tre_ast_new_literal(ctx->mem, L'\r' + 1, TRE_CHAR_MAX,
+ 					     ctx->position + 1);
+ 		  if (!tmp2)
+ 		    return REG_ESPACE;
+--- tre/lib/tre-match-utils.h.orig	2017-10-26 09:46:14.225633020 -0400
++++ tre/lib/tre-match-utils.h	2017-10-26 09:46:16.193657010 -0400
+@@ -146,7 +146,7 @@
+     && (prev_c != L'\n' || !reg_newline))				      \
+    || ((assertions & ASSERT_AT_EOL)					      \
+        && (next_c != L'\0' || reg_noteol)				      \
+-       && (next_c != L'\n' || !reg_newline))				      \
++       && ((next_c != L'\r' && next_c != L'\n') || !reg_newline))				      \
+    || ((assertions & ASSERT_AT_BOW)					      \
+        && (IS_WORD_CHAR(prev_c) || !IS_WORD_CHAR(next_c)))	              \
+    || ((assertions & ASSERT_AT_EOW)					      \
