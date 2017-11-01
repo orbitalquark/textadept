@@ -9,6 +9,37 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 9.6 (01 Nov 2017)
+
+Download:
+
+* [Textadept 9.6 -- Win32][] | [PGP -- 9.6 Win32][]
+* [Textadept 9.6 -- Mac OSX Intel 10.5+][] | [PGP -- 9.6 OSX][]
+* [Textadept 9.6 -- Linux][] | [PGP -- 9.6 Linux][]
+* [Textadept 9.6 -- Linux x86_64][] | [PGP -- 9.6 Linux x86_64][]
+* [Textadept 9.6 -- Modules][] | [PGP -- 9.6 Modules][]
+
+Bugfixes:
+
+* Regular expressions consider `\r` to be a newline character.
+* Fixed block comments for APDL.
+
+Changes:
+
+* Scintilla: Block caret appears after selection end instead of on it. (Reverts
+  change from Textadept 9.3)
+
+[Textadept 9.6 -- Win32]: download/textadept_9.6.win32.zip
+[Textadept 9.6 -- Mac OSX Intel 10.5+]: download/textadept_9.6.osx.zip
+[Textadept 9.6 -- Linux]: download/textadept_9.6.i386.tgz
+[Textadept 9.6 -- Linux x86_64]: download/textadept_9.6.x86_64.tgz
+[Textadept 9.6 -- Modules]: download/textadept_9.6.modules.zip
+[PGP -- 9.6 Win32]: download/textadept_9.6.win32.zip.asc
+[PGP -- 9.6 OSX]: download/textadept_9.6.osx.zip.asc
+[PGP -- 9.6 Linux]: download/textadept_9.6.i386.tgz.asc
+[PGP -- 9.6 Linux x86_64]: download/textadept_9.6.x86_64.tgz.asc
+[PGP -- 9.6 Modules]: download/textadept_9.6.modules.zip.asc
+
 ## 9.5 (01 Sep 2017)
 
 Download:
