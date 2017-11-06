@@ -1,0 +1,33 @@
+# HG changeset patch
+# User Zufu Liu
+# Date 1508018757 -39600
+# Node ID 2db0528f34b5b79890fd6c04897091474c18839a
+# Parent  85f99a613e89325580b2202031b99f88e1c73bb1
+Bug [#1978]. Minor undefined behaviour fixed.
+
+diff -r 85f99a613e89 -r 2db0528f34b5 doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Sun Oct 15 08:57:00 2017 +1100
++++ b/doc/ScintillaHistory.html	Sun Oct 15 09:05:57 2017 +1100
+@@ -557,6 +557,10 @@
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1968/">Bug #1968</a>.
+ 	</li>
+ 	<li>
++	Minor undefined behaviour fixed.
++	<a href="http://sourceforge.net/p/scintilla/bugs/1978">Bug #1978</a>.
++	</li>
++	<li>
+ 	On Cocoa, improve scrolling on macOS 10.12.
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1885">Bug #1885</a>.
+ 	</li>
+diff -r 85f99a613e89 -r 2db0528f34b5 src/ViewStyle.cxx
+--- a/src/ViewStyle.cxx	Sun Oct 15 08:57:00 2017 +1100
++++ b/src/ViewStyle.cxx	Sun Oct 15 09:05:57 2017 +1100
+@@ -192,7 +192,7 @@
+ 	}
+ 	maskDrawInText = 0;
+ 	for (int markBit = 0; markBit < 32; markBit++) {
+-		const int maskBit = 1 << markBit;
++		const int maskBit = 1U << markBit;
+ 		switch (markers[markBit].markType) {
+ 		case SC_MARK_EMPTY:
+ 			maskInLine &= ~maskBit;

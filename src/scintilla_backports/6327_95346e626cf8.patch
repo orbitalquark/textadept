@@ -1,0 +1,1794 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1498107131 -36000
+# Node ID 95346e626cf85a564bf2277197ab4915a4ef2932
+# Parent  c15f84c11e1770cdbeeb1aaf5e88b068b5304292
+Cast between Sci_Position.h types used for lexers and Position.h types used in
+core to allow the Sci_Position.h types to widen to 64-bits.
+
+diff -r c15f84c11e17 -r 95346e626cf8 src/Document.cxx
+--- a/src/Document.cxx	Thu Jun 22 14:36:26 2017 +1000
++++ b/src/Document.cxx	Thu Jun 22 14:52:11 2017 +1000
+@@ -62,7 +62,7 @@
+ 		// code looks for child lines which may trigger styling.
+ 		performingStyle = true;
+
+-		Sci::Position lengthDoc = pdoc->Length();
++		Sci::Position lengthDoc = static_cast<Sci::Position>(pdoc->Length());
+ 		if (end == -1)
+ 			end = lengthDoc;
+ 		Sci::Position len = end - start;
+@@ -302,7 +302,7 @@
+ int Document::AddMark(Sci::Line line, int markerNum) {
+ 	if (line >= 0 && line <= LinesTotal()) {
+ 		const int prev = static_cast<LineMarkers *>(perLineData[ldMarkers])->
+ 			AddMark(line, markerNum, LinesTotal());
+-		DocModification mh(SC_MOD_CHANGEMARKER, LineStart(line), 0, 0, 0, line);
++		DocModification mh(SC_MOD_CHANGEMARKER, static_cast<Sci::Position>(LineStart(line)), 0, 0, 0, line);
+ 		NotifyModified(mh);
+ 		return prev;
+@@ -319,13 +319,13 @@
+ 		if (m & 1)
+ 			static_cast<LineMarkers *>(perLineData[ldMarkers])->
+ 				AddMark(line, i, LinesTotal());
+-	DocModification mh(SC_MOD_CHANGEMARKER, LineStart(line), 0, 0, 0, line);
++	DocModification mh(SC_MOD_CHANGEMARKER, static_cast<Sci::Position>(LineStart(line)), 0, 0, 0, line);
+ 	NotifyModified(mh);
+ }
+
+ void Document::DeleteMark(Sci::Line line, int markerNum) {
+ 	static_cast<LineMarkers *>(perLineData[ldMarkers])->DeleteMark(line, markerNum, false);
+-	DocModification mh(SC_MOD_CHANGEMARKER, LineStart(line), 0, 0, 0, line);
++	DocModification mh(SC_MOD_CHANGEMARKER, static_cast<Sci::Position>(LineStart(line)), 0, 0, 0, line);
+ 	NotifyModified(mh);
+ }
+ 
+@@ -354,7 +354,7 @@
+ }
+
+ Sci_Position SCI_METHOD Document::LineStart(Sci_Position line) const {
+-	return cb.LineStart(line);
++	return cb.LineStart(static_cast<Sci::Line>(line));
+ }
+
+ bool Document::IsLineStartPosition(Sci::Position position) const {
+@@ -365,7 +365,7 @@
+ 	if (line >= LinesTotal() - 1) {
+ 		return LineStart(line + 1);
+ 	} else {
+-		Sci::Position position = LineStart(line + 1);
++		Sci::Position position = static_cast<Sci::Position>(LineStart(line + 1));
+ 		if (SC_CP_UTF8 == dbcsCodePage) {
+ 			const unsigned char bytes[] = {
+ 				static_cast<unsigned char>(cb.CharAt(position-3)),
+@@ -396,11 +396,11 @@
+ }
+
+ Sci_Position SCI_METHOD Document::LineFromPosition(Sci_Position pos) const {
+-	return cb.LineFromPosition(pos);
++	return cb.LineFromPosition(static_cast<Sci::Position>(pos));
+ }
+
+ Sci::Position Document::LineEndPosition(Sci::Position position) const {
+-	return LineEnd(LineFromPosition(position));
++	return static_cast<Sci::Position>(LineEnd(LineFromPosition(position)));
+ }
+
+ bool Document::IsLineEndPosition(Sci::Position position) const {
+@@ -412,9 +412,9 @@
+ }
+
+ Sci::Position Document::VCHomePosition(Sci::Position position) const {
+-	Sci::Line line = LineFromPosition(position);
+-	Sci::Position startPosition = LineStart(line);
+-	const Sci::Position endLine = LineEnd(line);
++	Sci::Line line = static_cast<Sci::Line>(LineFromPosition(position));
++	Sci::Position startPosition = static_cast<Sci::Position>(LineStart(line));
++	const Sci::Position endLine = static_cast<Sci::Position>(LineEnd(line));
+ 	Sci::Position startText = startPosition;
+ 	while (startText < endLine && (cb.CharAt(startText) == ' ' || cb.CharAt(startText) == '\t'))
+ 		startText++;
+@@ -425,10 +425,10 @@
+ }
+
+ int SCI_METHOD Document::SetLevel(Sci_Position line, int level) {
+-	const int prev = static_cast<LineLevels *>(perLineData[ldLevels])->SetLevel(line, level, LinesTotal());
++	const int prev = static_cast<LineLevels *>(perLineData[ldLevels])->SetLevel(static_cast<Sci::Line>(line), level, LinesTotal());
+ 	if (prev != level) {
+ 		DocModification mh(SC_MOD_CHANGEFOLD | SC_MOD_CHANGEMARKER,
+-		                   LineStart(line), 0, 0, 0, line);
++		                   static_cast<Sci::Position>(LineStart(line)), 0, 0, 0, static_cast<Sci::Line>(line));
+ 		mh.foldLevelNow = level;
+ 		mh.foldLevelPrev = prev;
+ 		NotifyModified(mh);
+@@ -437,7 +437,7 @@
+ }
+
+ int SCI_METHOD Document::GetLevel(Sci_Position line) const {
+-	return static_cast<LineLevels *>(perLineData[ldLevels])->GetLevel(line);
++	return static_cast<LineLevels *>(perLineData[ldLevels])->GetLevel(static_cast<Sci::Line>(line));
+ }
+
+ void Document::ClearLevels() {
+@@ -458,7 +458,7 @@
+ 	const Sci::Line lookLastLine = (lastLine != -1) ? std::min(LinesTotal() - 1, lastLine) : -1;
+ 	Sci::Line lineMaxSubord = lineParent;
+ 	while (lineMaxSubord < maxLine - 1) {
+-		EnsureStyledTo(LineStart(lineMaxSubord + 2));
++		EnsureStyledTo(static_cast<Sci::Position>(LineStart(lineMaxSubord + 2)));
+ 		if (!IsSubordinate(level, GetLevel(lineMaxSubord + 1)))
+ 			break;
+ 		if ((lookLastLine != -1) && (lineMaxSubord >= lookLastLine) && !(GetLevel(lineMaxSubord) & SC_FOLDLEVELWHITEFLAG))
+@@ -583,7 +583,7 @@
+ 	} else if (SC_CP_UTF8 == dbcsCodePage) {
+ 		const unsigned char leadByte = static_cast<unsigned char>(cb.CharAt(pos));
+ 		const int widthCharBytes = UTF8BytesOfLead[leadByte];
+-		Sci::Position lengthDoc = Length();
++		Sci::Position lengthDoc = static_cast<Sci::Position>(Length());
+ 		if ((pos + widthCharBytes) > lengthDoc)
+ 			return lengthDoc - pos;
+ 		else
+@@ -633,7 +633,7 @@
+ 	if (pos <= 0)
+ 		return 0;
+ 	if (pos >= Length())
+-		return Length();
++		return static_cast<Sci::Position>(Length());
+
+ 	// PLATFORM_ASSERT(pos > 0 && pos < Length());
+ 	if (checkLineEnd && IsCrLf(pos - 1)) {
+@@ -662,7 +662,7 @@
+ 		} else {
+ 			// Anchor DBCS calculations at start of line because start of line can
+ 			// not be a DBCS trail byte.
+-			const Sci::Position posStartLine = LineStart(LineFromPosition(pos));
++			const Sci::Position posStartLine = static_cast<Sci::Position>(LineStart(LineFromPosition(pos)));
+ 			if (pos == posStartLine)
+ 				return pos;
+
+@@ -700,7 +700,7 @@
+ 	if (pos + increment <= 0)
+ 		return 0;
+ 	if (pos + increment >= Length())
+-		return Length();
++		return static_cast<Sci::Position>(Length());
+
+ 	if (dbcsCodePage) {
+ 		if (SC_CP_UTF8 == dbcsCodePage) {
+@@ -741,11 +741,11 @@
+ 				int mbsize = IsDBCSLeadByte(cb.CharAt(pos)) ? 2 : 1;
+ 				pos += mbsize;
+ 				if (pos > Length())
+-					pos = Length();
++					pos = static_cast<Sci::Position>(Length());
+ 			} else {
+ 				// Anchor DBCS calculations at start of line because start of line can
+ 				// not be a DBCS trail byte.
+-				const Sci::Position posStartLine = LineStart(LineFromPosition(pos));
++				const Sci::Position posStartLine = static_cast<Sci::Position>(LineStart(LineFromPosition(pos)));
+ 				// See http://msdn.microsoft.com/en-us/library/cc194792%28v=MSDN.10%29.aspx
+ 				// http://msdn.microsoft.com/en-us/library/cc194790.aspx
+ 				if ((pos - 1) <= posStartLine) {
+@@ -856,7 +856,7 @@
+
+ // Return -1  on out-of-bounds
+ Sci_Position SCI_METHOD Document::GetRelativePosition(Sci_Position positionStart, Sci_Position characterOffset) const {
+-	Sci::Position pos = positionStart;
++	Sci::Position pos = static_cast<Sci::Position>(positionStart);
+ 	if (dbcsCodePage) {
+ 		const int increment = (characterOffset > 0) ? 1 : -1;
+ 		while (characterOffset != 0) {
+@@ -867,7 +867,7 @@
+ 			characterOffset -= increment;
+ 		}
+ 	} else {
+-		pos = positionStart + characterOffset;
++		pos = static_cast<Sci::Position>(positionStart + characterOffset);
+ 		if ((pos < 0) || (pos > Length()))
+ 			return INVALID_POSITION;
+ 	}
+@@ -899,7 +899,8 @@
+ 	int character;
+ 	int bytesInCharacter = 1;
+ 	if (dbcsCodePage) {
+-		const unsigned char leadByte = static_cast<unsigned char>(cb.CharAt(position));
++		const unsigned char leadByte = static_cast<unsigned char>(
++			cb.CharAt(static_cast<Sci::Position>(position)));
+ 		if (SC_CP_UTF8 == dbcsCodePage) {
+ 			if (UTF8IsAscii(leadByte)) {
+ 				// Single byte character or invalid
+@@ -908,7 +909,8 @@
+ 				const int widthCharBytes = UTF8BytesOfLead[leadByte];
+ 				unsigned char charBytes[UTF8MaxBytes] = {leadByte,0,0,0};
+ 				for (int b=1; b<widthCharBytes; b++)
+-					charBytes[b] = static_cast<unsigned char>(cb.CharAt(position+b));
++					charBytes[b] = static_cast<unsigned char>(
++						cb.CharAt(static_cast<Sci::Position>(position+b)));
+ 				const int utf8status = UTF8Classify(charBytes, widthCharBytes);
+ 				if (utf8status & UTF8MaskInvalid) {
+ 					// Report as singleton surrogate values which are invalid Unicode
+@@ -921,13 +923,14 @@
+ 		} else {
+ 			if (IsDBCSLeadByte(leadByte)) {
+ 				bytesInCharacter = 2;
+-				character = (leadByte << 8) | static_cast<unsigned char>(cb.CharAt(position+1));
++				character = (leadByte << 8) | static_cast<unsigned char>(
++					cb.CharAt(static_cast<Sci::Position>(position+1)));
+ 			} else {
+ 				character = leadByte;
+ 			}
+ 		}
+ 	} else {
+-		character = cb.CharAt(position);
++		character = cb.CharAt(static_cast<Sci::Position>(position));
+ 	}
+ 	if (pWidth) {
+ 		*pWidth = bytesInCharacter;
+@@ -1137,8 +1140,8 @@
+
+ int SCI_METHOD Document::AddData(char *data, Sci_Position length) {
+ 	try {
+-		Sci::Position position = Length();
+-		InsertString(position, data, length);
++		Sci::Position position = static_cast<Sci::Position>(Length());
++		InsertString(position, data, static_cast<Sci::Position>(length));
+ 	} catch (std::bad_alloc &) {
+ 		return SC_STATUS_BADALLOC;
+ 	} catch (...) {
+@@ -1335,8 +1338,8 @@
+ int SCI_METHOD Document::GetLineIndentation(Sci_Position line) {
+ 	int indent = 0;
+ 	if ((line >= 0) && (line < LinesTotal())) {
+-		const Sci::Position lineStart = LineStart(line);
+-		const Sci::Position length = Length();
++		const Sci::Position lineStart = static_cast<Sci::Position>(LineStart(line));
++		const Sci::Position length = static_cast<Sci::Position>(Length());
+ 		for (Sci::Position i = lineStart; i < length; i++) {
+ 			const char ch = cb.CharAt(i);
+ 			if (ch == ' ')
+@@ -1356,7 +1359,7 @@
+ 		indent = 0;
+ 	if (indent != indentOfLine) {
+ 		std::string linebuf = CreateIndentation(indent, tabInChars, !useTabs);
+-		Sci::Position thisLineStart = LineStart(line);
++		Sci::Position thisLineStart = static_cast<Sci::Position>(LineStart(line));
+ 		Sci::Position indentPos = GetLineIndentPosition(line);
+ 		UndoGroup ug(this);
+ 		DeleteChars(thisLineStart, indentPos - thisLineStart);
+@@ -1370,8 +1373,8 @@
+ Sci::Position Document::GetLineIndentPosition(Sci::Line line) const {
+ 	if (line < 0)
+ 		return 0;
+-	Sci::Position pos = LineStart(line);
+-	const Sci::Position length = Length();
++	Sci::Position pos = static_cast<Sci::Position>(LineStart(line));
++	const Sci::Position length = static_cast<Sci::Position>(Length());
+ 	while ((pos < length) && IsSpaceOrTab(cb.CharAt(pos))) {
+ 		pos++;
+ 	}
+@@ -1380,9 +1383,9 @@
+
+ Sci::Position Document::GetColumn(Sci::Position pos) {
+ 	Sci::Position column = 0;
+-	Sci::Line line = LineFromPosition(pos);
++	Sci::Line line = static_cast<Sci::Line>(LineFromPosition(pos));
+ 	if ((line >= 0) && (line < LinesTotal())) {
+-		for (Sci::Position i = LineStart(line); i < pos;) {
++		for (Sci::Position i = static_cast<Sci::Position>(LineStart(line)); i < pos;) {
+ 			const char ch = cb.CharAt(i);
+ 			if (ch == '\t') {
+ 				column = NextTab(column, tabInChars);
+@@ -1430,7 +1433,7 @@
+ }
+
+ Sci::Position Document::FindColumn(Sci::Line line, Sci::Position column) {
+-	Sci::Position position = LineStart(line);
++	Sci::Position position = static_cast<Sci::Position>(LineStart(line));
+ 	if ((line >= 0) && (line < LinesTotal())) {
+ 		Sci::Position columnCurrent = 0;
+ 		while ((columnCurrent < column) && (position < Length())) {
+@@ -1530,8 +1533,8 @@
+ }
+
+ bool Document::IsWhiteLine(Sci::Line line) const {
+-	Sci::Position currentChar = LineStart(line);
+-	const Sci::Position endLine = LineEnd(line);
++	Sci::Position currentChar = static_cast<Sci::Position>(LineStart(line));
++	const Sci::Position endLine = static_cast<Sci::Position>(LineEnd(line));
+ 	while (currentChar < endLine) {
+ 		if (cb.CharAt(currentChar) != ' ' && cb.CharAt(currentChar) != '\t') {
+ 			return false;
+@@ -1542,7 +1545,7 @@
+ }
+
+ Sci::Position Document::ParaUp(Sci::Position pos) const {
+-	Sci::Line line = LineFromPosition(pos);
++	Sci::Line line = static_cast<Sci::Line>(LineFromPosition(pos));
+ 	line--;
+ 	while (line >= 0 && IsWhiteLine(line)) { // skip empty lines
+ 		line--;
+@@ -1551,11 +1554,11 @@
+ 		line--;
+ 	}
+ 	line++;
+-	return LineStart(line);
++	return static_cast<Sci::Position>(LineStart(line));
+ }
+
+ Sci::Position Document::ParaDown(Sci::Position pos) const {
+-	Sci::Line line = LineFromPosition(pos);
++	Sci::Line line = static_cast<Sci::Line>(LineFromPosition(pos));
+ 	while (line < LinesTotal() && !IsWhiteLine(line)) { // skip non-empty lines
+ 		line++;
+ 	}
+@@ -1563,9 +1566,9 @@
+ 		line++;
+ 	}
+ 	if (line < LinesTotal())
+-		return LineStart(line);
++		return static_cast<Sci::Position>(LineStart(line));
+ 	else // end of a document
+-		return LineEnd(line-1);
++		return static_cast<Sci::Position>(LineEnd(line-1));
+ }
+
+ bool Document::IsASCIIWordByte(unsigned char ch) const {
+@@ -2040,12 +2043,12 @@
+ 	} else {
+ 		enteredStyling++;
+ 		Sci::Position prevEndStyled = endStyled;
+-		if (cb.SetStyleFor(endStyled, length, style)) {
++		if (cb.SetStyleFor(static_cast<Sci::Position>(endStyled), static_cast<Sci::Position>(length), style)) {
+ 			DocModification mh(SC_MOD_CHANGESTYLE | SC_PERFORMED_USER,
+-			                   prevEndStyled, length);
++			                   prevEndStyled, static_cast<Sci::Position>(length));
+ 			NotifyModified(mh);
+ 		}
+-		endStyled += length;
++		endStyled += static_cast<Sci::Position>(length);
+ 		enteredStyling--;
+ 		return true;
+ 	}
+@@ -2083,8 +2086,8 @@
+ 	if ((enteredStyling == 0) && (pos > GetEndStyled())) {
+ 		IncrementStyleClock();
+ 		if (pli && !pli->UseContainerLexing()) {
+-			Sci::Line lineEndStyled = LineFromPosition(GetEndStyled());
+-			Sci::Position endStyledTo = LineStart(lineEndStyled);
++			Sci::Line lineEndStyled = static_cast<Sci::Line>(LineFromPosition(GetEndStyled()));
++			Sci::Position endStyledTo = static_cast<Sci::Position>(LineStart(lineEndStyled));
+ 			pli->Colourise(endStyledTo, pos);
+ 		} else {
+ 			// Ask the watchers to style, and stop as soon as one responds.
+@@ -2106,11 +2109,11 @@
+ 	// Most recent value contributes 25% to smoothed value.
+ 	const double alpha = 0.25;
+
+-	const Sci::Line lineFirst = LineFromPosition(GetEndStyled());
++	const Sci::Line lineFirst = static_cast<Sci::Line>(LineFromPosition(GetEndStyled()));
+ 	ElapsedTime etStyling;
+ 	EnsureStyledTo(pos);
+ 	const double durationStyling = etStyling.Duration();
+-	const Sci::Line lineLast = LineFromPosition(GetEndStyled());
++	const Sci::Line lineLast = static_cast<Sci::Line>(LineFromPosition(GetEndStyled()));
+ 	if (lineLast >= lineFirst + 8) {
+ 		// Only adjust for styling multiple lines to avoid instability
+ 		const double durationOneLine = durationStyling / (lineLast - lineFirst);
+@@ -2139,16 +2142,17 @@
+ }
+
+ int SCI_METHOD Document::SetLineState(Sci_Position line, int state) {
+-	const int statePrevious = static_cast<LineState *>(perLineData[ldState])->SetLineState(line, state);
++	const int statePrevious = static_cast<LineState *>(perLineData[ldState])->SetLineState(static_cast<Sci::Line>(line), state);
+ 	if (state != statePrevious) {
+-		DocModification mh(SC_MOD_CHANGELINESTATE, LineStart(line), 0, 0, 0, line);
++		DocModification mh(SC_MOD_CHANGELINESTATE, static_cast<Sci::Position>(LineStart(line)), 0, 0, 0,
++			static_cast<Sci::Line>(line));
+ 		NotifyModified(mh);
+ 	}
+ 	return statePrevious;
+ }
+
+ int SCI_METHOD Document::GetLineState(Sci_Position line) const {
+-	return static_cast<LineState *>(perLineData[ldState])->GetLineState(line);
++	return static_cast<LineState *>(perLineData[ldState])->GetLineState(static_cast<Sci::Line>(line));
+ }
+
+ Sci::Line Document::GetMaxLineState() const {
+@@ -2156,7 +2160,8 @@
+ }
+
+ void SCI_METHOD Document::ChangeLexerState(Sci_Position start, Sci_Position end) {
+-	DocModification mh(SC_MOD_LEXERSTATE, start, end-start, 0, 0, 0);
++	DocModification mh(SC_MOD_LEXERSTATE, static_cast<Sci::Position>(start),
++		static_cast<Sci::Position>(end-start), 0, 0, 0);
+ 	NotifyModified(mh);
+ }
+
+@@ -2168,18 +2173,21 @@
+
+ void Document::MarginSetText(Sci::Line line, const char *text) {
+ 	static_cast<LineAnnotation *>(perLineData[ldMargin])->SetText(line, text);
+-	DocModification mh(SC_MOD_CHANGEMARGIN, LineStart(line), 0, 0, 0, line);
++	DocModification mh(SC_MOD_CHANGEMARGIN, static_cast<Sci::Position>(LineStart(line)),
++		0, 0, 0, line);
+ 	NotifyModified(mh);
+ }
+
+ void Document::MarginSetStyle(Sci::Line line, int style) {
+ 	static_cast<LineAnnotation *>(perLineData[ldMargin])->SetStyle(line, style);
+-	NotifyModified(DocModification(SC_MOD_CHANGEMARGIN, LineStart(line), 0, 0, 0, line));
++	NotifyModified(DocModification(SC_MOD_CHANGEMARGIN, static_cast<Sci::Position>(LineStart(line)),
++		0, 0, 0, line));
+ }
+
+ void Document::MarginSetStyles(Sci::Line line, const unsigned char *styles) {
+ 	static_cast<LineAnnotation *>(perLineData[ldMargin])->SetStyles(line, styles);
+-	NotifyModified(DocModification(SC_MOD_CHANGEMARGIN, LineStart(line), 0, 0, 0, line));
++	NotifyModified(DocModification(SC_MOD_CHANGEMARGIN, static_cast<Sci::Position>(LineStart(line)),
++		0, 0, 0, line));
+ }
+
+ void Document::MarginClearAll() {
+@@ -2201,7 +2209,8 @@
+ 		const Sci::Line linesBefore = AnnotationLines(line);
+ 		Annotations()->SetText(line, text);
+ 		const int linesAfter = AnnotationLines(line);
+-		DocModification mh(SC_MOD_CHANGEANNOTATION, LineStart(line), 0, 0, 0, line);
++		DocModification mh(SC_MOD_CHANGEANNOTATION, static_cast<Sci::Position>(LineStart(line)),
++			0, 0, 0, line);
+ 		mh.annotationLinesAdded = linesAfter - linesBefore;
+ 		NotifyModified(mh);
+ 	}
+@@ -2209,7 +2218,7 @@
+
+ void Document::AnnotationSetStyle(Sci::Line line, int style) {
+ 	static_cast<LineAnnotation *>(perLineData[ldAnnotation])->SetStyle(line, style);
+-	DocModification mh(SC_MOD_CHANGEANNOTATION, LineStart(line), 0, 0, 0, line);
++	DocModification mh(SC_MOD_CHANGEANNOTATION, static_cast<Sci::Position>(LineStart(line)), 0, 0, 0, line);
+ 	NotifyModified(mh);
+ }
+
+@@ -2240,9 +2249,11 @@
+ }
+
+ void SCI_METHOD Document::DecorationFillRange(Sci_Position position, int value, Sci_Position fillLength) {
+-	if (decorations.FillRange(position, value, fillLength)) {
++	Sci::Position sciPosition = static_cast<Sci::Position>(position);
++	Sci::Position sciFillLength = static_cast<Sci::Position>(fillLength);
++	if (decorations.FillRange(sciPosition, value, sciFillLength)) {
+ 		DocModification mh(SC_MOD_CHANGEINDICATOR | SC_PERFORMED_USER,
+-							position, fillLength);
++							sciPosition, sciFillLength);
+ 		NotifyModified(mh);
+ 	}
+ }
+@@ -2387,7 +2398,7 @@
+
+ Sci::Position Document::WordPartRight(Sci::Position pos) const {
+ 	CharacterExtracted ceStart = CharacterAfter(pos);
+-	const Sci::Position length = Length();
++	const Sci::Position length = static_cast<Sci::Position>(Length());
+ 	if (IsWordPartSeparator(ceStart.character)) {
+ 		while (pos < length && IsWordPartSeparator(CharacterAfter(pos).character))
+ 			pos += CharacterAfter(pos).widthBytes;
+@@ -2538,25 +2549,25 @@
+ 		startPos = doc->MovePositionOutsideChar(minPos, 1, false);
+ 		endPos = doc->MovePositionOutsideChar(maxPos, 1, false);
+
+-		lineRangeStart = doc->LineFromPosition(startPos);
+-		lineRangeEnd = doc->LineFromPosition(endPos);
++		lineRangeStart = static_cast<Sci::Line>(doc->LineFromPosition(startPos));
++		lineRangeEnd = static_cast<Sci::Line>(doc->LineFromPosition(endPos));
+ 		if ((increment == 1) &&
+ 			(startPos >= doc->LineEnd(lineRangeStart)) &&
+ 			(lineRangeStart < lineRangeEnd)) {
+ 			// the start position is at end of line or between line end characters.
+ 			lineRangeStart++;
+-			startPos = doc->LineStart(lineRangeStart);
++			startPos = static_cast<Sci::Position>(doc->LineStart(lineRangeStart));
+ 		} else if ((increment == -1) &&
+ 			(startPos <= doc->LineStart(lineRangeStart)) &&
+ 			(lineRangeStart > lineRangeEnd)) {
+ 			// the start position is at beginning of line.
+ 			lineRangeStart--;
+-			startPos = doc->LineEnd(lineRangeStart);
++			startPos = static_cast<Sci::Position>(doc->LineEnd(lineRangeStart));
+ 		}
+ 		lineRangeBreak = lineRangeEnd + increment;
+ 	}
+ 	Range LineRange(Sci::Line line) const {
+-		Range range(doc->LineStart(line), doc->LineEnd(line));
++		Range range(static_cast<Sci::Position>(doc->LineStart(line)), static_cast<Sci::Position>(doc->LineEnd(line)));
+ 		if (increment == 1) {
+ 			if (line == lineRangeStart)
+ 				range.start = startPos;
+@@ -2976,8 +2987,8 @@
+ 	const char searchEnd = s[*length - 1];
+ 	const char searchEndPrev = (*length > 1) ? s[*length - 2] : '\0';
+ 	for (Sci::Line line = resr.lineRangeStart; line != resr.lineRangeBreak; line += resr.increment) {
+-		Sci::Position startOfLine = doc->LineStart(line);
+-		Sci::Position endOfLine = doc->LineEnd(line);
++		Sci::Position startOfLine = static_cast<Sci::Position>(doc->LineStart(line));
++		Sci::Position endOfLine = static_cast<Sci::Position>(doc->LineEnd(line));
+ 		if (resr.increment == 1) {
+ 			if (line == resr.lineRangeStart) {
+ 				if ((resr.startPos != startOfLine) && (s[0] == '^'))
+@@ -3034,7 +3045,7 @@
+
+ const char *BuiltinRegex::SubstituteByPosition(Document *doc, const char *text, Sci::Position *length) {
+ 	substituted.clear();
+-	DocumentIndexer di(doc, doc->Length());
++	DocumentIndexer di(doc, static_cast<Sci::Position>(doc->Length()));
+ 	search.GrabMatches(di);
+ 	for (int j = 0; j < *length; j++) {
+ 		if (text[j] == '\\') {
+diff -r c15f84c11e17 -r 95346e626cf8 src/Document.h
+--- a/src/Document.h	Thu Jun 22 14:36:26 2017 +1000
++++ b/src/Document.h	Thu Jun 22 14:52:11 2017 +1000
+@@ -360,10 +360,10 @@
+
+ 	char CharAt(Sci::Position position) const { return cb.CharAt(position); }
+ 	void SCI_METHOD GetCharRange(char *buffer, Sci_Position position, Sci_Position lengthRetrieve) const {
+-		cb.GetCharRange(buffer, position, lengthRetrieve);
++		cb.GetCharRange(buffer, static_cast<Sci::Position>(position), static_cast<Sci::Position>(lengthRetrieve));
+ 	}
+-	char SCI_METHOD StyleAt(Sci_Position position) const { return cb.StyleAt(position); }
+-	int StyleIndexAt(Sci_Position position) const { return static_cast<unsigned char>(cb.StyleAt(position)); }
++	char SCI_METHOD StyleAt(Sci_Position position) const { return cb.StyleAt(static_cast<Sci::Position>(position)); }
++	int StyleIndexAt(Sci_Position position) const { return static_cast<unsigned char>(cb.StyleAt(static_cast<Sci::Position>(position))); }
+ 	void GetStyleRange(unsigned char *buffer, Sci::Position position, Sci::Position lengthRetrieve) const {
+ 		cb.GetStyleRange(buffer, position, lengthRetrieve);
+ 	}
+diff -r c15f84c11e17 -r 95346e626cf8 src/EditView.cxx
+--- a/src/EditView.cxx	Thu Jun 22 14:36:26 2017 +1000
++++ b/src/EditView.cxx	Thu Jun 22 14:52:11 2017 +1000
+@@ -339,10 +339,10 @@
+ }
+
+ LineLayout *EditView::RetrieveLineLayout(Sci::Line lineNumber, const EditModel &model) {
+-	Sci::Position posLineStart = model.pdoc->LineStart(lineNumber);
+-	Sci::Position posLineEnd = model.pdoc->LineStart(lineNumber + 1);
++	Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(lineNumber));
++	Sci::Position posLineEnd = static_cast<Sci::Position>(model.pdoc->LineStart(lineNumber + 1));
+ 	PLATFORM_ASSERT(posLineEnd >= posLineStart);
+-	Sci::Line lineCaret = model.pdoc->LineFromPosition(model.sel.MainCaret());
++	Sci::Line lineCaret = static_cast<Sci::Line>(model.pdoc->LineFromPosition(model.sel.MainCaret()));
+ 	return llc.Retrieve(lineNumber, lineCaret,
+ 		posLineEnd - posLineStart, model.pdoc->GetStyleClock(),
+ 		model.LinesOnScreen() + 1, model.pdoc->LinesTotal());
+@@ -359,8 +359,8 @@
+
+ 	PLATFORM_ASSERT(line < model.pdoc->LinesTotal());
+ 	PLATFORM_ASSERT(ll->chars != NULL);
+-	Sci::Position posLineStart = model.pdoc->LineStart(line);
+-	Sci::Position posLineEnd = model.pdoc->LineStart(line + 1);
++	Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(line));
++	Sci::Position posLineEnd = static_cast<Sci::Position>(model.pdoc->LineStart(line + 1));
+ 	// If the line is very long, limit the treatment to a length that should fit in the viewport
+ 	if (posLineEnd >(posLineStart + ll->maxLineLength)) {
+ 		posLineEnd = posLineStart + ll->maxLineLength;
+@@ -368,7 +368,7 @@
+ 	if (ll->validity == LineLayout::llCheckTextAndStyle) {
+ 		Sci::Position lineLength = posLineEnd - posLineStart;
+ 		if (!vstyle.viewEOL) {
+-			lineLength = model.pdoc->LineEnd(line) - posLineStart;
++			lineLength = static_cast<Sci::Position>(model.pdoc->LineEnd(line)) - posLineStart;
+ 		}
+ 		if (lineLength == ll->numCharsInLine) {
+ 			// See if chars, styles, indicators, are all the same
+@@ -427,7 +427,7 @@
+ 		const int lineLength = posLineEnd - posLineStart;
+ 		model.pdoc->GetCharRange(ll->chars, posLineStart, lineLength);
+ 		model.pdoc->GetStyleRange(ll->styles, posLineStart, lineLength);
+-		const int numCharsBeforeEOL = model.pdoc->LineEnd(line) - posLineStart;
++		const int numCharsBeforeEOL = static_cast<Sci::Position>(model.pdoc->LineEnd(line)) - posLineStart;
+ 		const int numCharsInLine = (vstyle.viewEOL) ? lineLength : numCharsBeforeEOL;
+ 		for (Sci::Position styleInLine = 0; styleInLine < numCharsInLine; styleInLine++) {
+ 			const unsigned char styleByte = ll->styles[styleInLine];
+@@ -598,12 +598,12 @@
+ 	Point pt;
+ 	if (pos.Position() == INVALID_POSITION)
+ 		return pt;
+-	Sci::Line lineDoc = model.pdoc->LineFromPosition(pos.Position());
+-	Sci::Position posLineStart = model.pdoc->LineStart(lineDoc);
++	Sci::Line lineDoc = static_cast<Sci::Line>(model.pdoc->LineFromPosition(pos.Position()));
++	Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc));
+ 	if ((pe & peLineEnd) && (lineDoc > 0) && (pos.Position() == posLineStart)) {
+ 		// Want point at end of first line
+ 		lineDoc--;
+-		posLineStart = model.pdoc->LineStart(lineDoc);
++		posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc));
+ 	}
+ 	const Sci::Line lineVisible = model.cs.DisplayFromDoc(lineDoc);
+ 	AutoLineLayout ll(llc, RetrieveLineLayout(lineDoc, model));
+@@ -624,7 +624,7 @@
+ 		return rangeSubLine;
+ 	}
+ 	const Sci::Line lineDoc = model.cs.DocFromDisplay(lineVisible);
+-	const Sci::Position positionLineStart = model.pdoc->LineStart(lineDoc);
++	const Sci::Position positionLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc));
+ 	AutoLineLayout ll(llc, RetrieveLineLayout(lineDoc, model));
+ 	if (surface && ll) {
+ 		LayoutLine(model, lineDoc, surface, vs, ll, model.wrapWidth);
+@@ -633,7 +633,7 @@
+ 		if (subLine < ll->lines) {
+ 			rangeSubLine = ll->SubLineRange(subLine);
+ 			if (subLine == ll->lines-1) {
+-				rangeSubLine.end = model.pdoc->LineStart(lineDoc + 1) -
++				rangeSubLine.end = static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc + 1)) -
+ 					positionLineStart;
+ 			}
+ 		}
+@@ -652,8 +652,9 @@
+ 	if (canReturnInvalid && (lineDoc < 0))
+ 		return SelectionPosition(INVALID_POSITION);
+ 	if (lineDoc >= model.pdoc->LinesTotal())
+-		return SelectionPosition(canReturnInvalid ? INVALID_POSITION : model.pdoc->Length());
+-	const Sci::Position posLineStart = model.pdoc->LineStart(lineDoc);
++		return SelectionPosition(canReturnInvalid ? INVALID_POSITION :
++			static_cast<Sci::Position>(model.pdoc->Length()));
++	const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc));
+ 	AutoLineLayout ll(llc, RetrieveLineLayout(lineDoc, model));
+ 	if (surface && ll) {
+ 		LayoutLine(model, lineDoc, surface, vs, ll, model.wrapWidth);
+@@ -696,7 +697,7 @@
+ SelectionPosition EditView::SPositionFromLineX(Surface *surface, const EditModel &model, Sci::Line lineDoc, int x, const ViewStyle &vs) {
+ 	AutoLineLayout ll(llc, RetrieveLineLayout(lineDoc, model));
+ 	if (surface && ll) {
+-		const Sci::Position posLineStart = model.pdoc->LineStart(lineDoc);
++		const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc));
+ 		LayoutLine(model, lineDoc, surface, vs, ll, model.wrapWidth);
+ 		const Range rangeSubLine = ll->SubLineRange(0);
+ 		const XYPOSITION subLineStart = ll->positions[rangeSubLine.start];
+@@ -713,12 +714,12 @@
+ }
+
+ Sci::Line EditView::DisplayFromPosition(Surface *surface, const EditModel &model, Sci::Position pos, const ViewStyle &vs) {
+-	const Sci::Line lineDoc = model.pdoc->LineFromPosition(pos);
++	const Sci::Line lineDoc = static_cast<Sci::Line>(model.pdoc->LineFromPosition(pos));
+ 	Sci::Line lineDisplay = model.cs.DisplayFromDoc(lineDoc);
+ 	AutoLineLayout ll(llc, RetrieveLineLayout(lineDoc, model));
+ 	if (surface && ll) {
+ 		LayoutLine(model, lineDoc, surface, vs, ll, model.wrapWidth);
+-		const Sci::Position posLineStart = model.pdoc->LineStart(lineDoc);
++		const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc));
+ 		const Sci::Position posInLine = pos - posLineStart;
+ 		lineDisplay--; // To make up for first increment ahead.
+ 		for (int subLine = 0; subLine < ll->lines; subLine++) {
+@@ -731,11 +732,11 @@
+ }
+
+ Sci::Position EditView::StartEndDisplayLine(Surface *surface, const EditModel &model, Sci::Position pos, bool start, const ViewStyle &vs) {
+-	const Sci::Line line = model.pdoc->LineFromPosition(pos);
++	const Sci::Line line = static_cast<Sci::Line>(model.pdoc->LineFromPosition(pos));
+ 	AutoLineLayout ll(llc, RetrieveLineLayout(line, model));
+ 	Sci::Position posRet = INVALID_POSITION;
+ 	if (surface && ll) {
+-		const Sci::Position posLineStart = model.pdoc->LineStart(line);
++		const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(line));
+ 		LayoutLine(model, line, surface, vs, ll, model.wrapWidth);
+ 		const Sci::Position posInLine = pos - posLineStart;
+ 		if (posInLine <= ll->maxLineLength) {
+@@ -862,14 +863,14 @@
+ 	PRectangle rcLine, Sci::Line line, Sci::Position lineEnd, int xStart, int subLine, XYACCUMULATOR subLineStart,
+ 	ColourOptional background) {
+
+-	const Sci::Position posLineStart = model.pdoc->LineStart(line);
++	const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(line));
+ 	PRectangle rcSegment = rcLine;
+
+ 	const bool lastSubLine = subLine == (ll->lines - 1);
+ 	XYPOSITION virtualSpace = 0;
+ 	if (lastSubLine) {
+ 		const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
+-		virtualSpace = model.sel.VirtualSpaceFor(model.pdoc->LineEnd(line)) * spaceWidth;
++		virtualSpace = model.sel.VirtualSpaceFor(static_cast<Sci::Position>(model.pdoc->LineEnd(line))) * spaceWidth;
+ 	}
+ 	const XYPOSITION xEol = static_cast<XYPOSITION>(ll->positions[lineEnd] - subLineStart);
+
+@@ -879,7 +880,9 @@
+ 		rcSegment.right = xEol + xStart + virtualSpace;
+ 		surface->FillRectangle(rcSegment, background.isSet ? background : vsDraw.styles[ll->styles[ll->numCharsInLine]].back);
+ 		if (!hideSelection && ((vsDraw.selAlpha == SC_ALPHA_NOALPHA) || (vsDraw.selAdditionalAlpha == SC_ALPHA_NOALPHA))) {
+-			SelectionSegment virtualSpaceRange(SelectionPosition(model.pdoc->LineEnd(line)), SelectionPosition(model.pdoc->LineEnd(line), model.sel.VirtualSpaceFor(model.pdoc->LineEnd(line))));
++			SelectionSegment virtualSpaceRange(SelectionPosition(static_cast<Sci::Position>(model.pdoc->LineEnd(line))),
++				SelectionPosition(static_cast<Sci::Position>(model.pdoc->LineEnd(line)),
++					model.sel.VirtualSpaceFor(static_cast<Sci::Position>(model.pdoc->LineEnd(line)))));
+ 			for (size_t r = 0; r<model.sel.Count(); r++) {
+ 				const int alpha = (r == model.sel.Main()) ? vsDraw.selAlpha : vsDraw.selAdditionalAlpha;
+ 				if (alpha == SC_ALPHA_NOALPHA) {
+@@ -902,7 +905,7 @@
+ 	int eolInSelection = 0;
+ 	int alpha = SC_ALPHA_NOALPHA;
+ 	if (!hideSelection) {
+-		Sci::Position posAfterLineEnd = model.pdoc->LineStart(line + 1);
++		Sci::Position posAfterLineEnd = static_cast<Sci::Position>(model.pdoc->LineStart(line + 1));
+ 		eolInSelection = (lastSubLine == true) ? model.sel.InSelectionForEOL(posAfterLineEnd) : 0;
+ 		alpha = (eolInSelection == 1) ? vsDraw.selAlpha : vsDraw.selAdditionalAlpha;
+ 	}
+@@ -1039,7 +1042,7 @@
+ static void DrawIndicators(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
+ 	Sci::Line line, int xStart, PRectangle rcLine, int subLine, Sci::Position lineEnd, bool under, Sci::Position hoverIndicatorPos) {
+ 	// Draw decorators
+-	const Sci::Position posLineStart = model.pdoc->LineStart(line);
++	const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(line));
+ 	const Sci::Position lineStart = ll->LineStart(subLine);
+ 	const Sci::Position posLineEnd = posLineStart + lineEnd;
+
+@@ -1109,13 +1112,14 @@
+ 	int eolInSelection = 0;
+ 	int alpha = SC_ALPHA_NOALPHA;
+ 	if (!hideSelection) {
+-		Sci::Position posAfterLineEnd = model.pdoc->LineStart(line + 1);
++		Sci::Position posAfterLineEnd = static_cast<Sci::Position>(model.pdoc->LineStart(line + 1));
+ 		eolInSelection = (subLine == (ll->lines - 1)) ? model.sel.InSelectionForEOL(posAfterLineEnd) : 0;
+ 		alpha = (eolInSelection == 1) ? vsDraw.selAlpha : vsDraw.selAdditionalAlpha;
+ 	}
+
+ 	const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
+-	XYPOSITION virtualSpace = model.sel.VirtualSpaceFor(model.pdoc->LineEnd(line)) * spaceWidth;
++	XYPOSITION virtualSpace = model.sel.VirtualSpaceFor(
++		static_cast<Sci::Position>(model.pdoc->LineEnd(line))) * spaceWidth;
+ 	rcSegment.left = xStart + static_cast<XYPOSITION>(ll->positions[ll->numCharsInLine] - subLineStart) + virtualSpace + vsDraw.aveCharWidth;
+ 	rcSegment.right = rcSegment.left + static_cast<XYPOSITION>(widthFoldDisplayText);
+
+@@ -1316,7 +1320,7 @@
+ 	const bool drawDrag = model.posDrag.IsValid();
+ 	if (hideSelection && !drawDrag)
+ 		return;
+-	const Sci::Position posLineStart = model.pdoc->LineStart(lineDoc);
++	const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc));
+ 	// For each selection draw
+ 	for (size_t r = 0; (r<model.sel.Count()) || drawDrag; r++) {
+ 		const bool mainCaret = r == model.sel.Main();
+@@ -1550,12 +1554,12 @@
+ static void DrawTranslucentSelection(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
+ 	Sci::Line line, PRectangle rcLine, int subLine, Range lineRange, int xStart) {
+ 	if ((vsDraw.selAlpha != SC_ALPHA_NOALPHA) || (vsDraw.selAdditionalAlpha != SC_ALPHA_NOALPHA)) {
+-		const Sci::Position posLineStart = model.pdoc->LineStart(line);
++		const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(line));
+ 		const XYACCUMULATOR subLineStart = ll->positions[lineRange.start];
+ 		// For each selection draw
+ 		Sci::Position virtualSpaces = 0;
+ 		if (subLine == (ll->lines - 1)) {
+-			virtualSpaces = model.sel.VirtualSpaceFor(model.pdoc->LineEnd(line));
++			virtualSpaces = model.sel.VirtualSpaceFor(static_cast<Sci::Position>(model.pdoc->LineEnd(line)));
+ 		}
+ 		const SelectionPosition posStart(posLineStart + lineRange.start);
+ 		const SelectionPosition posEnd(posLineStart + lineRange.end, virtualSpaces);
+@@ -1815,7 +1819,7 @@
+ 	Sci::Line line, Sci::Line lineVisible, PRectangle rcLine, int xStart, int subLine) {
+ 	if ((vsDraw.viewIndentationGuides == ivLookForward || vsDraw.viewIndentationGuides == ivLookBoth)
+ 		&& (subLine == 0)) {
+-		const Sci::Position posLineStart = model.pdoc->LineStart(line);
++		const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(line));
+ 		int indentSpace = model.pdoc->GetLineIndentation(line);
+ 		int xStartText = static_cast<int>(ll->positions[model.pdoc->GetLineIndentPosition(line) - posLineStart]);
+
+@@ -1876,7 +1880,7 @@
+ 	// See if something overrides the line background color.
+ 	const ColourOptional background = vsDraw.Background(model.pdoc->GetMark(line), model.caret.active, ll->containsCaret);
+
+-	const Sci::Position posLineStart = model.pdoc->LineStart(line);
++	const Sci::Position posLineStart = static_cast<Sci::Position>(model.pdoc->LineStart(line));
+
+ 	const Range lineRange = ll->SubLineRange(subLine);
+ 	const XYACCUMULATOR subLineStart = ll->positions[lineRange.start];
+@@ -1990,7 +1994,7 @@
+ 		SelectionPosition posCaret = model.sel.RangeMain().caret;
+ 		if (model.posDrag.IsValid())
+ 			posCaret = model.posDrag;
+-		const Sci::Line lineCaret = model.pdoc->LineFromPosition(posCaret.Position());
++		const Sci::Line lineCaret = static_cast<Sci::Line>(model.pdoc->LineFromPosition(posCaret.Position()));
+
+ 		PRectangle rcTextArea = rcClient;
+ 		if (vsDraw.marginInside) {
+@@ -2060,7 +2064,8 @@
+ 					rcLine.top = static_cast<XYPOSITION>(ypos);
+ 					rcLine.bottom = static_cast<XYPOSITION>(ypos + vsDraw.lineHeight);
+
+-					Range rangeLine(model.pdoc->LineStart(lineDoc), model.pdoc->LineStart(lineDoc + 1));
++					Range rangeLine(static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc)),
++						static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc + 1)));
+
+ 					// Highlight the current braces if any
+ 					ll->SetBracesHighlight(rangeLine, model.braces, static_cast<char>(model.bracesMatchStyle),
+@@ -2149,7 +2154,7 @@
+ 		int eolInSelection = 0;
+ 		int alpha = SC_ALPHA_NOALPHA;
+ 		if (!hideSelection) {
+-			Sci::Position posAfterLineEnd = model.pdoc->LineStart(line + 1);
++			Sci::Position posAfterLineEnd = static_cast<Sci::Position>(model.pdoc->LineStart(line + 1));
+ 			eolInSelection = (subLine == (ll->lines - 1)) ? model.sel.InSelectionForEOL(posAfterLineEnd) : 0;
+ 			alpha = (eolInSelection == 1) ? vsDraw.selAlpha : vsDraw.selAdditionalAlpha;
+ 		}
+@@ -2258,19 +2263,21 @@
+ 		vsPrint.Refresh(*surfaceMeasure, model.pdoc->tabInChars);	// Recalculate fixedColumnWidth
+ 	}
+
+-	Sci::Line linePrintStart = model.pdoc->LineFromPosition(static_cast<int>(pfr->chrg.cpMin));
++	Sci::Line linePrintStart = static_cast<Sci::Line>(
++		model.pdoc->LineFromPosition(static_cast<int>(pfr->chrg.cpMin)));
+ 	Sci::Line linePrintLast = linePrintStart + (pfr->rc.bottom - pfr->rc.top) / vsPrint.lineHeight - 1;
+ 	if (linePrintLast < linePrintStart)
+ 		linePrintLast = linePrintStart;
+-	Sci::Line linePrintMax = model.pdoc->LineFromPosition(static_cast<int>(pfr->chrg.cpMax));
++	Sci::Line linePrintMax = static_cast<Sci::Line>(
++		model.pdoc->LineFromPosition(static_cast<int>(pfr->chrg.cpMax)));
+ 	if (linePrintLast > linePrintMax)
+ 		linePrintLast = linePrintMax;
+ 	//Platform::DebugPrintf("Formatting lines=[%0d,%0d,%0d] top=%0d bottom=%0d line=%0d %0d\n",
+ 	//      linePrintStart, linePrintLast, linePrintMax, pfr->rc.top, pfr->rc.bottom, vsPrint.lineHeight,
+ 	//      surfaceMeasure->Height(vsPrint.styles[STYLE_LINENUMBER].font));
+-	Sci::Position endPosPrint = model.pdoc->Length();
++	Sci::Position endPosPrint = static_cast<Sci::Position>(model.pdoc->Length());
+ 	if (linePrintLast < model.pdoc->LinesTotal())
+-		endPosPrint = model.pdoc->LineStart(linePrintLast + 1);
++		endPosPrint = static_cast<Sci::Position>(model.pdoc->LineStart(linePrintLast + 1));
+
+ 	// Ensure we are styled to where we are formatting.
+ 	model.pdoc->EnsureStyledTo(endPosPrint);
+@@ -2296,7 +2303,7 @@
+
+ 		// Copy this line and its styles from the document into local arrays
+ 		// and determine the x position at which each character starts.
+-		LineLayout ll(model.pdoc->LineStart(lineDoc + 1) - model.pdoc->LineStart(lineDoc) + 1);
++		LineLayout ll(static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc + 1) - model.pdoc->LineStart(lineDoc) + 1));
+ 		LayoutLine(model, lineDoc, surfaceMeasure, vsPrint, &ll, widthPrint);
+
+ 		ll.containsCaret = false;
+@@ -2311,7 +2318,8 @@
+ 		// to start printing from to ensure a particular position is on the first
+ 		// line of the page.
+ 		if (visibleLine == 0) {
+-			const Sci::Position startWithinLine = nPrintPos - model.pdoc->LineStart(lineDoc);
++			const Sci::Position startWithinLine = nPrintPos -
++				static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc));
+ 			for (int iwl = 0; iwl < ll.lines - 1; iwl++) {
+ 				if (ll.LineStart(iwl) <= startWithinLine && ll.LineStart(iwl + 1) >= startWithinLine) {
+ 					visibleLine = -iwl;
+@@ -2355,7 +2363,7 @@
+ 				}
+ 				visibleLine++;
+ 				if (iwl == ll.lines - 1)
+-					nPrintPos = model.pdoc->LineStart(lineDoc + 1);
++					nPrintPos = static_cast<Sci::Position>(model.pdoc->LineStart(lineDoc + 1));
+ 				else
+ 					nPrintPos += ll.LineStart(iwl + 1) - ll.LineStart(iwl);
+ 			}
+diff -r c15f84c11e17 -r 95346e626cf8 src/Editor.cxx
+--- a/src/Editor.cxx	Thu Jun 22 14:36:26 2017 +1000
++++ b/src/Editor.cxx	Thu Jun 22 14:52:11 2017 +1000
+@@ -357,7 +357,7 @@
+ 	if (sp.Position() < 0) {
+ 		return SelectionPosition(0);
+ 	} else if (sp.Position() > pdoc->Length()) {
+-		return SelectionPosition(pdoc->Length());
++		return SelectionPosition(static_cast<Sci::Position>(pdoc->Length()));
+ 	} else {
+ 		// If not at end of line then set offset to 0
+ 		if (!pdoc->IsLineEndPosition(sp.Position()))
+@@ -418,7 +418,7 @@
+ SelectionPosition Editor::SPositionFromLineX(Sci::Line lineDoc, int x) {
+ 	RefreshStyleData();
+ 	if (lineDoc >= pdoc->LinesTotal())
+-		return SelectionPosition(pdoc->Length());
++		return SelectionPosition(static_cast<Sci::Position>(pdoc->Length()));
+ 	//Platform::DebugPrintf("Position of (%d,%d) line = %d top=%d\n", pt.x, pt.y, line, topLine);
+ 	AutoSurface surface(this);
+ 	return view.SPositionFromLineX(surface, *this, lineDoc, x, vs);
+@@ -437,7 +437,7 @@
+ 		topLine = topLineNew;
+ 		ContainerNeedsUpdate(SC_UPDATE_V_SCROLL);
+ 	}
+-	posTopLine = pdoc->LineStart(cs.DocFromDisplay(topLine));
++	posTopLine = static_cast<Sci::Position>(pdoc->LineStart(cs.DocFromDisplay(topLine)));
+ }
+
+ /**
+@@ -500,7 +500,7 @@
+ 		rcMarkers.right = rcMarkers.left + vs.fixedColumnWidth;
+ 	}
+ 	if (line != -1) {
+-		PRectangle rcLine = RectangleFromRange(Range(pdoc->LineStart(line)), 0);
++		PRectangle rcLine = RectangleFromRange(Range(static_cast<Sci::Position>(pdoc->LineStart(line))), 0);
+
+ 		// Inflate line rectangle if there are image markers with height larger than line height
+ 		if (vs.largestMarkerHeight > vs.lineHeight) {
+@@ -529,8 +529,10 @@
+ }
+
+ PRectangle Editor::RectangleFromRange(Range r, int overlap) {
+-	const Sci::Line minLine = cs.DisplayFromDoc(pdoc->LineFromPosition(r.First()));
+-	const Sci::Line maxLine = cs.DisplayLastFromDoc(pdoc->LineFromPosition(r.Last()));
++	const Sci::Line minLine = cs.DisplayFromDoc(
++		static_cast<Sci::Line>(pdoc->LineFromPosition(r.First())));
++	const Sci::Line maxLine = cs.DisplayLastFromDoc(
++		static_cast<Sci::Line>(pdoc->LineFromPosition(r.Last())));
+ 	const PRectangle rcClientDrawing = GetClientDrawingRectangle();
+ 	PRectangle rc;
+ 	const int leftTextOverlap = ((xOffset == 0) && (vs.leftMarginWidth > 0)) ? 1 : 0;
+@@ -572,8 +574,10 @@
+ 		if (sel.selType == Selection::selThin) {
+ 			xCaret = xAnchor;
+ 		}
+-		const Sci::Line lineAnchorRect = pdoc->LineFromPosition(sel.Rectangular().anchor.Position());
+-		const Sci::Line lineCaret = pdoc->LineFromPosition(sel.Rectangular().caret.Position());
++		const Sci::Line lineAnchorRect = static_cast<Sci::Line>(
++			pdoc->LineFromPosition(sel.Rectangular().anchor.Position()));
++		const Sci::Line lineCaret = static_cast<Sci::Line>(
++			pdoc->LineFromPosition(sel.Rectangular().caret.Position()));
+ 		const int increment = (lineCaret > lineAnchorRect) ? 1 : -1;
+ 		for (Sci::Line line=lineAnchorRect; line != lineCaret+increment; line += increment) {
+ 			SelectionRange range(SPositionFromLineX(line, xCaret), SPositionFromLineX(line, xAnchor));
+@@ -626,16 +630,20 @@
+ void Editor::SetSelection(SelectionPosition currentPos_, SelectionPosition anchor_) {
+ 	currentPos_ = ClampPositionIntoDocument(currentPos_);
+ 	anchor_ = ClampPositionIntoDocument(anchor_);
+-	Sci::Line currentLine = pdoc->LineFromPosition(currentPos_.Position());
++	Sci::Line currentLine = static_cast<Sci::Line>(pdoc->LineFromPosition(currentPos_.Position()));
+ 	/* For Line selection - ensure the anchor and caret are always
+ 	   at the beginning and end of the region lines. */
+ 	if (sel.selType == Selection::selLines) {
+ 		if (currentPos_ > anchor_) {
+-			anchor_ = SelectionPosition(pdoc->LineStart(pdoc->LineFromPosition(anchor_.Position())));
+-			currentPos_ = SelectionPosition(pdoc->LineEnd(pdoc->LineFromPosition(currentPos_.Position())));
++			anchor_ = SelectionPosition(static_cast<Sci::Position>(
++				pdoc->LineStart(pdoc->LineFromPosition(anchor_.Position()))));
++			currentPos_ = SelectionPosition(static_cast<Sci::Position>(
++				pdoc->LineEnd(pdoc->LineFromPosition(currentPos_.Position()))));
+ 		} else {
+-			currentPos_ = SelectionPosition(pdoc->LineStart(pdoc->LineFromPosition(currentPos_.Position())));
+-			anchor_ = SelectionPosition(pdoc->LineEnd(pdoc->LineFromPosition(anchor_.Position())));
++			currentPos_ = SelectionPosition(static_cast<Sci::Position>(
++				pdoc->LineStart(pdoc->LineFromPosition(currentPos_.Position()))));
++			anchor_ = SelectionPosition(static_cast<Sci::Position>(
++				pdoc->LineEnd(pdoc->LineFromPosition(anchor_.Position()))));
+ 		}
+ 	}
+ 	SelectionRange rangeNew(currentPos_, anchor_);
+@@ -660,7 +668,7 @@
+ // Just move the caret on the main selection
+ void Editor::SetSelection(SelectionPosition currentPos_) {
+ 	currentPos_ = ClampPositionIntoDocument(currentPos_);
+-	Sci::Line currentLine = pdoc->LineFromPosition(currentPos_.Position());
++	Sci::Line currentLine = static_cast<Sci::Line>(pdoc->LineFromPosition(currentPos_.Position()));
+ 	if (sel.Count() > 1 || !(sel.RangeMain().caret == currentPos_)) {
+ 		InvalidateSelection(SelectionRange(currentPos_));
+ 	}
+@@ -686,7 +694,8 @@
+ }
+
+ void Editor::SetEmptySelection(SelectionPosition currentPos_) {
+-	Sci::Line currentLine = pdoc->LineFromPosition(currentPos_.Position());
++	Sci::Line currentLine = static_cast<Sci::Line>(
++		pdoc->LineFromPosition(currentPos_.Position()));
+ 	SelectionRange rangeNew(ClampPositionIntoDocument(currentPos_));
+ 	if (sel.Count() > 1 || !(sel.RangeMain() == rangeNew)) {
+ 		InvalidateSelection(rangeNew);
+@@ -815,7 +824,8 @@
+ }
+
+ void Editor::MovedCaret(SelectionPosition newPos, SelectionPosition previousPos, bool ensureVisible) {
+-	const Sci::Line currentLine = pdoc->LineFromPosition(newPos.Position());
++	const Sci::Line currentLine = static_cast<Sci::Line>(
++		pdoc->LineFromPosition(newPos.Position()));
+ 	if (ensureVisible) {
+ 		// In case in need of wrapping to ensure DisplayFromDoc works.
+ 		if (currentLine >= wrapPending.start) {
+@@ -884,7 +894,7 @@
+ SelectionPosition Editor::MovePositionSoVisible(SelectionPosition pos, int moveDir) {
+ 	pos = ClampPositionIntoDocument(pos);
+ 	pos = MovePositionOutsideChar(pos, moveDir);
+-	Sci::Line lineDoc = pdoc->LineFromPosition(pos.Position());
++	Sci::Line lineDoc = static_cast<Sci::Line>(pdoc->LineFromPosition(pos.Position()));
+ 	if (cs.GetVisible(lineDoc)) {
+ 		return pos;
+ 	} else {
+@@ -892,10 +902,12 @@
+ 		if (moveDir > 0) {
+ 			// lineDisplay is already line before fold as lines in fold use display line of line after fold
+ 			lineDisplay = Platform::Clamp(lineDisplay, 0, cs.LinesDisplayed());
+-			return SelectionPosition(pdoc->LineStart(cs.DocFromDisplay(lineDisplay)));
++			return SelectionPosition(static_cast<Sci::Position>(
++				pdoc->LineStart(cs.DocFromDisplay(lineDisplay))));
+ 		} else {
+ 			lineDisplay = Platform::Clamp(lineDisplay - 1, 0, cs.LinesDisplayed());
+-			return SelectionPosition(pdoc->LineEnd(cs.DocFromDisplay(lineDisplay)));
++			return SelectionPosition(static_cast<Sci::Position>(
++				pdoc->LineEnd(cs.DocFromDisplay(lineDisplay))));
+ 		}
+ 	}
+ }
+@@ -965,7 +977,8 @@
+ }
+
+ void Editor::VerticalCentreCaret() {
+-	const Sci::Line lineDoc = pdoc->LineFromPosition(sel.IsRectangular() ? sel.Rectangular().caret.Position() : sel.MainCaret());
++	const Sci::Line lineDoc = static_cast<Sci::Line>(
++		pdoc->LineFromPosition(sel.IsRectangular() ? sel.Rectangular().caret.Position() : sel.MainCaret()));
+ 	const Sci::Line lineDisplay = cs.DisplayFromDoc(lineDoc);
+ 	const Sci::Line newTop = lineDisplay - (LinesOnScreen() / 2);
+ 	if (topLine != newTop) {
+@@ -984,19 +997,19 @@
+
+ 	// if selection doesn't start at the beginning of the line, set the new start
+ 	Sci::Position selectionStart = SelectionStart().Position();
+-	const Sci::Line startLine = pdoc->LineFromPosition(selectionStart);
+-	const Sci::Position beginningOfStartLine = pdoc->LineStart(startLine);
++	const Sci::Line startLine = static_cast<Sci::Line>(pdoc->LineFromPosition(selectionStart));
++	const Sci::Position beginningOfStartLine = static_cast<Sci::Position>(pdoc->LineStart(startLine));
+ 	selectionStart = beginningOfStartLine;
+
+ 	// if selection doesn't end at the beginning of a line greater than that of the start,
+ 	// then set it at the beginning of the next one
+ 	Sci::Position selectionEnd = SelectionEnd().Position();
+-	const Sci::Line endLine = pdoc->LineFromPosition(selectionEnd);
+-	const Sci::Position beginningOfEndLine = pdoc->LineStart(endLine);
++	const Sci::Line endLine = static_cast<Sci::Line>(pdoc->LineFromPosition(selectionEnd));
++	const Sci::Position beginningOfEndLine = static_cast<Sci::Position>(pdoc->LineStart(endLine));
+ 	bool appendEol = false;
+ 	if (selectionEnd > beginningOfEndLine
+ 		|| selectionStart == selectionEnd) {
+-		selectionEnd = pdoc->LineStart(endLine + 1);
++		selectionEnd = static_cast<Sci::Position>(pdoc->LineStart(endLine + 1));
+ 		appendEol = (selectionEnd == pdoc->Length() && pdoc->LineFromPosition(selectionEnd) == endLine);
+ 	}
+
+@@ -1031,7 +1044,7 @@
+
+ 	const char *eol = StringFromEOLMode(pdoc->eolMode);
+ 	if (currentLine + lineDelta >= pdoc->LinesTotal())
+-		pdoc->InsertString(pdoc->Length(), eol, istrlen(eol));
++		pdoc->InsertString(static_cast<Sci::Position>(pdoc->Length()), eol, istrlen(eol));
+ 	GoToLine(currentLine + lineDelta);
+
+ 	selectionLength = pdoc->InsertString(CurrentPosition(), selectedText.Data(), selectionLength);
+@@ -1521,7 +1534,7 @@
+ 		lineToWrapEnd = std::min(lineToWrapEnd, lineEndNeedWrap);
+
+ 		// Ensure all lines being wrapped are styled.
+-		pdoc->EnsureStyledTo(pdoc->LineStart(lineToWrapEnd));
++		pdoc->EnsureStyledTo(static_cast<Sci::Position>(pdoc->LineStart(lineToWrapEnd)));
+
+ 		if (lineToWrap < lineToWrapEnd) {
+
+@@ -1597,15 +1610,15 @@
+ 			const PRectangle rcText = GetTextRectangle();
+ 			pixelWidth = static_cast<int>(rcText.Width());
+ 		}
+-		Sci::Line lineStart = pdoc->LineFromPosition(targetStart);
+-		Sci::Line lineEnd = pdoc->LineFromPosition(targetEnd);
++		Sci::Line lineStart = static_cast<Sci::Line>(pdoc->LineFromPosition(targetStart));
++		Sci::Line lineEnd = static_cast<Sci::Line>(pdoc->LineFromPosition(targetEnd));
+ 		const char *eol = StringFromEOLMode(pdoc->eolMode);
+ 		UndoGroup ug(pdoc);
+ 		for (Sci::Line line = lineStart; line <= lineEnd; line++) {
+ 			AutoSurface surface(this);
+ 			AutoLineLayout ll(view.llc, view.RetrieveLineLayout(line, *this));
+ 			if (surface && ll) {
+-				Sci::Position posLineStart = pdoc->LineStart(line);
++				Sci::Position posLineStart = static_cast<Sci::Position>(pdoc->LineStart(line));
+ 				view.LayoutLine(*this, line, surface, vs, ll, pixelWidth);
+ 				Sci::Position lengthInsertedTotal = 0;
+ 				for (int subLine = 1; subLine < ll->lines; subLine++) {
+@@ -1617,7 +1630,7 @@
+ 					lengthInsertedTotal += lengthInserted;
+ 				}
+ 			}
+-			lineEnd = pdoc->LineFromPosition(targetEnd);
++			lineEnd = static_cast<Sci::Line>(pdoc->LineFromPosition(targetEnd));
+ 		}
+ 	}
+ }
+@@ -1834,7 +1847,7 @@
+
+ Sci::Position Editor::RealizeVirtualSpace(Sci::Position position, Sci::Position virtualSpace) {
+ 	if (virtualSpace > 0) {
+-		const Sci::Line line = pdoc->LineFromPosition(position);
++		const Sci::Line line = static_cast<Sci::Line>(pdoc->LineFromPosition(position));
+ 		const Sci::Position indent = pdoc->GetLineIndentPosition(line);
+ 		if (indent == position) {
+ 			return pdoc->SetLineIndentation(line, pdoc->GetLineIndentation(line) + virtualSpace);
+@@ -1915,7 +1928,7 @@
+ 				if (Wrapping()) {
+ 					AutoSurface surface(this);
+ 					if (surface) {
+-						if (WrapOneLine(surface, pdoc->LineFromPosition(positionInsert))) {
++						if (WrapOneLine(surface, static_cast<Sci::Line>(pdoc->LineFromPosition(positionInsert)))) {
+ 							SetScrollBars();
+ 							SetVerticalScrollPos();
+ 							Redraw();
+@@ -2031,7 +2044,8 @@
+ 		PasteRectangular(sel.Start(), text, len);
+ 	} else {
+ 		if (shape == pasteLine) {
+-			Sci::Position insertPos = pdoc->LineStart(pdoc->LineFromPosition(sel.MainCaret()));
++			Sci::Position insertPos = static_cast<Sci::Position>(
++				pdoc->LineStart(pdoc->LineFromPosition(sel.MainCaret())));
+ 			Sci::Position lengthInserted = pdoc->InsertString(insertPos, text, len);
+ 			// add the newline if necessary
+ 			if ((len > 0) && (text[len - 1] != '\n' && text[len - 1] != '\r')) {
+@@ -2072,7 +2086,7 @@
+ 	{
+ 		UndoGroup ug(pdoc);
+ 		if (0 != pdoc->Length()) {
+-			pdoc->DeleteChars(0, pdoc->Length());
++			pdoc->DeleteChars(0, static_cast<Sci::Position>(pdoc->Length()));
+ 		}
+ 		if (!pdoc->IsReadOnly()) {
+ 			cs.Clear();
+@@ -2118,7 +2132,7 @@
+ 	}
+ 	sel.Clear();
+ 	sel.RangeMain() = SelectionRange(pos);
+-	Sci::Line line = pdoc->LineFromPosition(sel.MainCaret());
++	Sci::Line line = static_cast<Sci::Line>(pdoc->LineFromPosition(sel.MainCaret()));
+ 	UndoGroup ug(pdoc);
+ 	sel.RangeMain().caret = RealizeVirtualSpace(sel.RangeMain().caret);
+ 	int xInsert = XFromPosition(sel.RangeMain().caret);
+@@ -2131,9 +2145,9 @@
+ 				line++;
+ 			if (line >= pdoc->LinesTotal()) {
+ 				if (pdoc->eolMode != SC_EOL_LF)
+-					pdoc->InsertString(pdoc->Length(), "\r", 1);
++					pdoc->InsertString(static_cast<Sci::Position>(pdoc->Length()), "\r", 1);
+ 				if (pdoc->eolMode != SC_EOL_CR)
+-					pdoc->InsertString(pdoc->Length(), "\n", 1);
++					pdoc->InsertString(static_cast<Sci::Position>(pdoc->Length()), "\n", 1);
+ 			}
+ 			// Pad the end of lines with spaces if required
+ 			sel.RangeMain().caret.SetPosition(PositionFromLineX(line, xInsert));
+@@ -2193,7 +2207,7 @@
+
+ void Editor::SelectAll() {
+ 	sel.Clear();
+-	SetSelection(0, pdoc->Length());
++	SetSelection(0, static_cast<Sci::Position>(pdoc->Length()));
+ 	Redraw();
+ }
+
+@@ -2230,7 +2244,8 @@
+ 					sel.Range(r).caret.SetVirtualSpace(sel.Range(r).caret.VirtualSpace() - 1);
+ 					sel.Range(r).anchor.SetVirtualSpace(sel.Range(r).caret.VirtualSpace());
+ 				} else {
+-					Sci::Line lineCurrentPos = pdoc->LineFromPosition(sel.Range(r).caret.Position());
++					Sci::Line lineCurrentPos = static_cast<Sci::Line>(
++						pdoc->LineFromPosition(sel.Range(r).caret.Position()));
+ 					if (allowLineStartDeletion || (pdoc->LineStart(lineCurrentPos) != sel.Range(r).caret.Position())) {
+ 						if (pdoc->GetColumn(sel.Range(r).caret.Position()) <= pdoc->GetLineIndentation(lineCurrentPos) &&
+ 								pdoc->GetColumn(sel.Range(r).caret.Position()) > 0 && pdoc->backspaceUnindents) {
+@@ -2388,11 +2403,11 @@
+ bool Editor::NotifyMarginClick(Point pt, int modifiers) {
+ 	const int marginClicked = vs.MarginFromLocation(pt);
+ 	if ((marginClicked >= 0) && vs.ms[marginClicked].sensitive) {
+-		Sci::Position position = pdoc->LineStart(LineFromLocation(pt));
++		Sci::Position position = static_cast<Sci::Position>(pdoc->LineStart(LineFromLocation(pt)));
+ 		if ((vs.ms[marginClicked].mask & SC_MASK_FOLDERS) && (foldAutomatic & SC_AUTOMATICFOLD_CLICK)) {
+ 			const bool ctrl = (modifiers & SCI_CTRL) != 0;
+ 			const bool shift = (modifiers & SCI_SHIFT) != 0;
+-			Sci::Line lineClick = pdoc->LineFromPosition(position);
++			Sci::Line lineClick = static_cast<Sci::Line>(pdoc->LineFromPosition(position));
+ 			if (shift && ctrl) {
+ 				FoldAll(SC_FOLDACTION_TOGGLE);
+ 			} else {
+@@ -2426,7 +2441,7 @@
+ bool Editor::NotifyMarginRightClick(Point pt, int modifiers) {
+ 	int marginRightClicked = vs.MarginFromLocation(pt);
+ 	if ((marginRightClicked >= 0) && vs.ms[marginRightClicked].sensitive) {
+-		Sci::Position position = pdoc->LineStart(LineFromLocation(pt));
++		Sci::Position position = static_cast<Sci::Position>(pdoc->LineStart(LineFromLocation(pt)));
+ 		SCNotification scn = {};
+ 		scn.nmhdr.code = SCN_MARGINRIGHTCLICK;
+ 		scn.modifiers = modifiers;
+@@ -2476,7 +2491,7 @@
+ void Editor::CheckModificationForWrap(DocModification mh) {
+ 	if (mh.modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)) {
+ 		view.llc.Invalidate(LineLayout::llCheckTextAndStyle);
+-		Sci::Line lineDoc = pdoc->LineFromPosition(mh.position);
++		Sci::Line lineDoc = static_cast<Sci::Line>(pdoc->LineFromPosition(mh.position));
+ 		Sci::Line lines = std::max(static_cast<Sci::Line>(0), mh.linesAdded);
+ 		if (Wrapping()) {
+ 			NeedWrapping(lineDoc, lineDoc + lines + 1);
+@@ -2518,7 +2533,8 @@
+ 	if (mh.modificationType & SC_MOD_CHANGELINESTATE) {
+ 		if (paintState == painting) {
+ 			CheckForChangeOutsidePaint(
+-			    Range(pdoc->LineStart(mh.line), pdoc->LineStart(mh.line + 1)));
++			    Range(static_cast<Sci::Position>(pdoc->LineStart(mh.line)),
++					static_cast<Sci::Position>(pdoc->LineStart(mh.line + 1))));
+ 		} else {
+ 			// Could check that change is before last visible line.
+ 			Redraw();
+@@ -2563,20 +2579,20 @@
+ 		}
+ 		if ((mh.modificationType & (SC_MOD_BEFOREINSERT | SC_MOD_BEFOREDELETE)) && cs.HiddenLines()) {
+ 			// Some lines are hidden so may need shown.
+-			const Sci::Line lineOfPos = pdoc->LineFromPosition(mh.position);
++			const Sci::Line lineOfPos = static_cast<Sci::Line>(pdoc->LineFromPosition(mh.position));
+ 			Sci::Position endNeedShown = mh.position;
+ 			if (mh.modificationType & SC_MOD_BEFOREINSERT) {
+ 				if (pdoc->ContainsLineEnd(mh.text, mh.length) && (mh.position != pdoc->LineStart(lineOfPos)))
+-					endNeedShown = pdoc->LineStart(lineOfPos+1);
++					endNeedShown = static_cast<Sci::Position>(pdoc->LineStart(lineOfPos+1));
+ 			} else if (mh.modificationType & SC_MOD_BEFOREDELETE) {
+ 				// If the deletion includes any EOL then we extend the need shown area.
+ 				endNeedShown = mh.position + mh.length;
+-				Sci::Line lineLast = pdoc->LineFromPosition(mh.position+mh.length);
++				Sci::Line lineLast = static_cast<Sci::Line>(pdoc->LineFromPosition(mh.position+mh.length));
+ 				for (Sci::Line line = lineOfPos + 1; line <= lineLast; line++) {
+ 					const Sci::Line lineMaxSubord = pdoc->GetLastChild(line, -1, -1);
+ 					if (lineLast < lineMaxSubord) {
+ 						lineLast = lineMaxSubord;
+-						endNeedShown = pdoc->LineEnd(lineLast);
++						endNeedShown = static_cast<Sci::Position>(pdoc->LineEnd(lineLast));
+ 					}
+ 				}
+ 			}
+@@ -2585,7 +2601,7 @@
+ 		if (mh.linesAdded != 0) {
+ 			// Update contraction state for inserted and removed lines
+ 			// lineOfPos should be calculated in context of state before modification, shouldn't it
+-			Sci::Line lineOfPos = pdoc->LineFromPosition(mh.position);
++			Sci::Line lineOfPos = static_cast<Sci::Line>(pdoc->LineFromPosition(mh.position));
+ 			if (mh.position > pdoc->LineStart(lineOfPos))
+ 				lineOfPos++;	// Affecting subsequent lines
+ 			if (mh.linesAdded > 0) {
+@@ -2596,7 +2612,7 @@
+ 			view.LinesAddedOrRemoved(lineOfPos, mh.linesAdded);
+ 		}
+ 		if (mh.modificationType & SC_MOD_CHANGEANNOTATION) {
+-			Sci::Line lineDoc = pdoc->LineFromPosition(mh.position);
++			Sci::Line lineDoc = static_cast<Sci::Line>(pdoc->LineFromPosition(mh.position));
+ 			if (vs.annotationVisible) {
+ 				if (cs.SetHeight(lineDoc, cs.GetHeight(lineDoc) + mh.annotationLinesAdded)) {
+ 					SetScrollBars();
+@@ -2616,7 +2632,7 @@
+ 			}
+
+ 			if (paintState == notPainting && !CanDeferToLastStep(mh)) {
+-				QueueIdleWork(WorkNeeded::workStyle, pdoc->Length());
++				QueueIdleWork(WorkNeeded::workStyle, static_cast<Sci::Position>(pdoc->Length()));
+ 				Redraw();
+ 			}
+ 		} else {
+@@ -2824,12 +2840,12 @@
+ 	Sci::Line topLineNew;
+ 	SelectionPosition newPos;
+
+-	const Sci::Line currentLine = pdoc->LineFromPosition(sel.MainCaret());
++	const Sci::Line currentLine = static_cast<Sci::Line>(pdoc->LineFromPosition(sel.MainCaret()));
+ 	const Sci::Line topStutterLine = topLine + caretYSlop;
+-	const Sci::Line bottomStutterLine =
++	const Sci::Line bottomStutterLine = static_cast<Sci::Line>(
+ 	    pdoc->LineFromPosition(PositionFromLocation(
+ 	                Point::FromInts(lastXChosen - xOffset, direction * vs.lineHeight * LinesToScroll())))
+-	    - caretYSlop - 1;
++	    - caretYSlop - 1);
+
+ 	if (stuttered && (direction < 0 && currentLine > topStutterLine)) {
+ 		topLineNew = topLine;
+@@ -2907,15 +2923,17 @@
+ }
+
+ void Editor::LineTranspose() {
+-	Sci::Line line = pdoc->LineFromPosition(sel.MainCaret());
++	Sci::Line line = static_cast<Sci::Line>(pdoc->LineFromPosition(sel.MainCaret()));
+ 	if (line > 0) {
+ 		UndoGroup ug(pdoc);
+
+-		const Sci::Position startPrevious = pdoc->LineStart(line - 1);
+-		const std::string linePrevious = RangeText(startPrevious, pdoc->LineEnd(line - 1));
+-
+-		Sci::Position startCurrent = pdoc->LineStart(line);
+-		const std::string lineCurrent = RangeText(startCurrent, pdoc->LineEnd(line));
++		const Sci::Position startPrevious = static_cast<Sci::Position>(pdoc->LineStart(line - 1));
++		const std::string linePrevious = RangeText(startPrevious,
++			static_cast<Sci::Position>(pdoc->LineEnd(line - 1)));
++
++		Sci::Position startCurrent = static_cast<Sci::Position>(pdoc->LineStart(line));
++		const std::string lineCurrent = RangeText(startCurrent,
++			static_cast<Sci::Position>(pdoc->LineEnd(line)));
+
+ 		pdoc->DeleteChars(startCurrent, static_cast<Sci::Position>(lineCurrent.length()));
+ 		pdoc->DeleteChars(startPrevious, static_cast<Sci::Position>(linePrevious.length()));
+@@ -2931,8 +2949,10 @@
+ }
+
+ void Editor::LineReverse() {
+-	const Sci::Line lineStart = pdoc->LineFromPosition(sel.RangeMain().Start().Position());
+-	const Sci::Line lineEnd = pdoc->LineFromPosition(sel.RangeMain().End().Position()-1);
++	const Sci::Line lineStart = static_cast<Sci::Line>(
++		pdoc->LineFromPosition(sel.RangeMain().Start().Position()));
++	const Sci::Line lineEnd = static_cast<Sci::Line>(
++		pdoc->LineFromPosition(sel.RangeMain().End().Position()-1));
+ 	const Sci::Line lineDiff = lineEnd - lineStart;
+ 	if (lineDiff <= 0)
+ 		return;
+@@ -2940,10 +2960,10 @@
+ 	for (Sci::Line i=(lineDiff+1)/2-1; i>=0; --i) {
+ 		const Sci::Line lineNum2 = lineEnd - i;
+ 		const Sci::Line lineNum1 = lineStart + i;
+-		Sci::Position lineStart2 = pdoc->LineStart(lineNum2);
+-		const Sci::Position lineStart1 = pdoc->LineStart(lineNum1);
+-		const std::string line2 = RangeText(lineStart2, pdoc->LineEnd(lineNum2));
+-		const std::string line1 = RangeText(lineStart1, pdoc->LineEnd(lineNum1));
++		Sci::Position lineStart2 = static_cast<Sci::Position>(pdoc->LineStart(lineNum2));
++		const Sci::Position lineStart1 = static_cast<Sci::Position>(pdoc->LineStart(lineNum1));
++		const std::string line2 = RangeText(lineStart2, static_cast<Sci::Position>(pdoc->LineEnd(lineNum2)));
++		const std::string line1 = RangeText(lineStart1, static_cast<Sci::Position>(pdoc->LineEnd(lineNum1)));
+ 		const Sci::Position lineLen2 = static_cast<Sci::Position>(line2.length());
+ 		const Sci::Position lineLen1 = static_cast<Sci::Position>(line1.length());
+ 		pdoc->DeleteChars(lineStart2, lineLen2);
+@@ -2953,7 +2973,8 @@
+ 		pdoc->InsertString(lineStart1, line2.c_str(), lineLen2);
+ 	}
+ 	// Wholly select all affected lines
+-	sel.RangeMain() = SelectionRange(pdoc->LineStart(lineStart), pdoc->LineStart(lineEnd+1));
++	sel.RangeMain() = SelectionRange(static_cast<Sci::Position>(pdoc->LineStart(lineStart)),
++		static_cast<Sci::Position>(pdoc->LineStart(lineEnd+1)));
+ }
+
+ void Editor::Duplicate(bool forLine) {
+@@ -2971,9 +2992,9 @@
+ 		SelectionPosition start = sel.Range(r).Start();
+ 		SelectionPosition end = sel.Range(r).End();
+ 		if (forLine) {
+-			Sci::Line line = pdoc->LineFromPosition(sel.Range(r).caret.Position());
+-			start = SelectionPosition(pdoc->LineStart(line));
+-			end = SelectionPosition(pdoc->LineEnd(line));
++			Sci::Line line = static_cast<Sci::Line>(pdoc->LineFromPosition(sel.Range(r).caret.Position()));
++			start = SelectionPosition(static_cast<Sci::Position>(pdoc->LineStart(line)));
++			end = SelectionPosition(static_cast<Sci::Position>(pdoc->LineEnd(line)));
+ 		}
+ 		std::string text = RangeText(start.Position(), end.Position());
+ 		Sci::Position lengthInserted = eolLen;
+@@ -2984,8 +3005,9 @@
+ 	if (sel.Count() && sel.IsRectangular()) {
+ 		SelectionPosition last = sel.Last();
+ 		if (forLine) {
+-			Sci::Line line = pdoc->LineFromPosition(last.Position());
+-			last = SelectionPosition(last.Position() + pdoc->LineStart(line+1) - pdoc->LineStart(line));
++			Sci::Line line = static_cast<Sci::Line>(pdoc->LineFromPosition(last.Position()));
++			last = SelectionPosition(last.Position() +
++				static_cast<Sci::Position>(pdoc->LineStart(line+1) - pdoc->LineStart(line)));
+ 		}
+ 		if (sel.Rectangular().anchor > sel.Rectangular().caret)
+ 			sel.Rectangular().anchor = last;
+@@ -3054,8 +3076,8 @@
+ 	int skipLines = 0;
+
+ 	if (vs.annotationVisible) {
+-		const Sci::Line lineDoc = pdoc->LineFromPosition(spStart.Position());
+-		const Point ptStartLine = LocationFromPosition(pdoc->LineStart(lineDoc));
++		const Sci::Line lineDoc = static_cast<Sci::Line>(pdoc->LineFromPosition(spStart.Position()));
++		const Point ptStartLine = LocationFromPosition(static_cast<Sci::Position>(pdoc->LineStart(lineDoc)));
+ 		const int subLine = static_cast<int>(pt.y - ptStartLine.y) / vs.lineHeight;
+
+ 		if (direction < 0 && subLine == 0) {
+@@ -3145,7 +3167,7 @@
+ 	Sci::Position savedPos = sel.MainCaret();
+ 	do {
+ 		MovePositionTo(SelectionPosition(direction > 0 ? pdoc->ParaDown(sel.MainCaret()) : pdoc->ParaUp(sel.MainCaret())), selt);
+-		lineDoc = pdoc->LineFromPosition(sel.MainCaret());
++		lineDoc = static_cast<Sci::Line>(pdoc->LineFromPosition(sel.MainCaret()));
+ 		if (direction > 0) {
+ 			if (sel.MainCaret() >= pdoc->Length() && !cs.GetVisible(lineDoc)) {
+ 				if (selt == Selection::noSel) {
+@@ -3321,7 +3343,8 @@
+ 			}
+ 			break;
+ 		case SCI_HOMERECTEXTEND:
+-			spCaret = SelectionPosition(pdoc->LineStart(pdoc->LineFromPosition(spCaret.Position())));
++			spCaret = SelectionPosition(
++				static_cast<Sci::Position>(pdoc->LineStart(pdoc->LineFromPosition(spCaret.Position()))));
+ 			break;
+ 		case SCI_VCHOMERECTEXTEND:
+ 			spCaret = SelectionPosition(pdoc->VCHomePosition(spCaret.Position()));
+@@ -3392,7 +3415,8 @@
+ 				break;
+ 			case SCI_HOME:
+ 			case SCI_HOMEEXTEND:
+-				spCaret = SelectionPosition(pdoc->LineStart(pdoc->LineFromPosition(spCaret.Position())));
++				spCaret = SelectionPosition(
++					static_cast<Sci::Position>(pdoc->LineStart(pdoc->LineFromPosition(spCaret.Position()))));
+ 				break;
+ 			case SCI_HOMEDISPLAY:
+ 			case SCI_HOMEDISPLAYEXTEND:
+@@ -3402,7 +3426,8 @@
+ 			case SCI_HOMEWRAPEXTEND:
+ 				spCaret = MovePositionSoVisible(StartEndDisplayLine(spCaret.Position(), true), -1);
+ 				if (spCaretNow <= spCaret)
+-					spCaret = SelectionPosition(pdoc->LineStart(pdoc->LineFromPosition(spCaret.Position())));
++					spCaret = SelectionPosition(
++						static_cast<Sci::Position>(pdoc->LineStart(pdoc->LineFromPosition(spCaret.Position()))));
+ 				break;
+ 			case SCI_VCHOME:
+ 			case SCI_VCHOMEEXTEND:
+@@ -3552,13 +3577,13 @@
+ 			break;
+ 		case SCI_DELLINELEFT:
+ 			rangeDelete = Range(
+-				pdoc->LineStart(pdoc->LineFromPosition(sel.Range(r).caret.Position())),
++				static_cast<Sci::Position>(pdoc->LineStart(pdoc->LineFromPosition(sel.Range(r).caret.Position()))),
+ 				sel.Range(r).caret.Position());
+ 			break;
+ 		case SCI_DELLINERIGHT:
+ 			rangeDelete = Range(
+ 				sel.Range(r).caret.Position(),
+-				pdoc->LineEnd(pdoc->LineFromPosition(sel.Range(r).caret.Position())));
++				static_cast<Sci::Position>(pdoc->LineEnd(pdoc->LineFromPosition(sel.Range(r).caret.Position()))));
+ 			break;
+ 		}
+ 		if (!RangeContainsProtected(rangeDelete.start, rangeDelete.end)) {
+@@ -3669,11 +3694,11 @@
+ 		SetLastXChosen();
+ 		break;
+ 	case SCI_DOCUMENTEND:
+-		MovePositionTo(pdoc->Length());
++		MovePositionTo(static_cast<Sci::Position>(pdoc->Length()));
+ 		SetLastXChosen();
+ 		break;
+ 	case SCI_DOCUMENTENDEXTEND:
+-		MovePositionTo(pdoc->Length(), Selection::selStream);
++		MovePositionTo(static_cast<Sci::Position>(pdoc->Length()), Selection::selStream);
+ 		SetLastXChosen();
+ 		break;
+ 	case SCI_STUTTEREDPAGEUP:
+@@ -3780,26 +3805,26 @@
+ 		return DelWordOrLine(iMessage);
+
+ 	case SCI_LINECOPY: {
+-			const Sci::Line lineStart = pdoc->LineFromPosition(SelectionStart().Position());
+-			const Sci::Line lineEnd = pdoc->LineFromPosition(SelectionEnd().Position());
+-			CopyRangeToClipboard(pdoc->LineStart(lineStart),
+-			        pdoc->LineStart(lineEnd + 1));
++			const Sci::Line lineStart = static_cast<Sci::Line>(pdoc->LineFromPosition(SelectionStart().Position()));
++			const Sci::Line lineEnd = static_cast<Sci::Line>(pdoc->LineFromPosition(SelectionEnd().Position()));
++			CopyRangeToClipboard(static_cast<Sci::Position>(pdoc->LineStart(lineStart)),
++				static_cast<Sci::Position>(pdoc->LineStart(lineEnd + 1)));
+ 		}
+ 		break;
+ 	case SCI_LINECUT: {
+-			const Sci::Line lineStart = pdoc->LineFromPosition(SelectionStart().Position());
+-			const Sci::Line lineEnd = pdoc->LineFromPosition(SelectionEnd().Position());
+-			const Sci::Position start = pdoc->LineStart(lineStart);
+-			const Sci::Position end = pdoc->LineStart(lineEnd + 1);
++			const Sci::Line lineStart = static_cast<Sci::Line>(pdoc->LineFromPosition(SelectionStart().Position()));
++			const Sci::Line lineEnd = static_cast<Sci::Line>(pdoc->LineFromPosition(SelectionEnd().Position()));
++			const Sci::Position start = static_cast<Sci::Position>(pdoc->LineStart(lineStart));
++			const Sci::Position end = static_cast<Sci::Position>(pdoc->LineStart(lineEnd + 1));
+ 			SetSelection(start, end);
+ 			Cut();
+ 			SetLastXChosen();
+ 		}
+ 		break;
+ 	case SCI_LINEDELETE: {
+-			const Sci::Line line = pdoc->LineFromPosition(sel.MainCaret());
+-			const Sci::Position start = pdoc->LineStart(line);
+-			const Sci::Position end = pdoc->LineStart(line + 1);
++			const Sci::Line line = static_cast<Sci::Line>(pdoc->LineFromPosition(sel.MainCaret()));
++			const Sci::Position start = static_cast<Sci::Position>(pdoc->LineStart(line));
++			const Sci::Position end = static_cast<Sci::Position>(pdoc->LineStart(line + 1));
+ 			pdoc->DeleteChars(start, end - start);
+ 		}
+ 		break;
+@@ -3852,9 +3877,10 @@
+ void Editor::Indent(bool forwards) {
+ 	UndoGroup ug(pdoc);
+ 	for (size_t r=0; r<sel.Count(); r++) {
+-		Sci::Line lineOfAnchor = pdoc->LineFromPosition(sel.Range(r).anchor.Position());
++		Sci::Line lineOfAnchor = static_cast<Sci::Line>(
++			pdoc->LineFromPosition(sel.Range(r).anchor.Position()));
+ 		Sci::Position caretPosition = sel.Range(r).caret.Position();
+-		Sci::Line lineCurrentPos = pdoc->LineFromPosition(caretPosition);
++		Sci::Line lineCurrentPos = static_cast<Sci::Line>(pdoc->LineFromPosition(caretPosition));
+ 		if (lineOfAnchor == lineCurrentPos) {
+ 			if (forwards) {
+ 				pdoc->DeleteChars(sel.Range(r).Start().Position(), sel.Range(r).Length());
+@@ -3900,8 +3926,10 @@
+ 				}
+ 			}
+ 		} else {	// Multiline
+-			const Sci::Position anchorPosOnLine = sel.Range(r).anchor.Position() - pdoc->LineStart(lineOfAnchor);
+-			const Sci::Position currentPosPosOnLine = caretPosition - pdoc->LineStart(lineCurrentPos);
++			const Sci::Position anchorPosOnLine = sel.Range(r).anchor.Position() -
++				static_cast<Sci::Position>(pdoc->LineStart(lineOfAnchor));
++			const Sci::Position currentPosPosOnLine = caretPosition -
++				static_cast<Sci::Position>(pdoc->LineStart(lineCurrentPos));
+ 			// Multiple lines selected so indent / dedent
+ 			const Sci::Line lineTopSel = std::min(lineOfAnchor, lineCurrentPos);
+ 			Sci::Line lineBottomSel = std::max(lineOfAnchor, lineCurrentPos);
+@@ -3910,14 +3938,18 @@
+ 			pdoc->Indent(forwards, lineBottomSel, lineTopSel);
+ 			if (lineOfAnchor < lineCurrentPos) {
+ 				if (currentPosPosOnLine == 0)
+-					sel.Range(r) = SelectionRange(pdoc->LineStart(lineCurrentPos), pdoc->LineStart(lineOfAnchor));
++					sel.Range(r) = SelectionRange(static_cast<Sci::Position>(pdoc->LineStart(lineCurrentPos)),
++						static_cast<Sci::Position>(pdoc->LineStart(lineOfAnchor)));
+ 				else
+-					sel.Range(r) = SelectionRange(pdoc->LineStart(lineCurrentPos + 1), pdoc->LineStart(lineOfAnchor));
++					sel.Range(r) = SelectionRange(static_cast<Sci::Position>(pdoc->LineStart(lineCurrentPos + 1)),
++						static_cast<Sci::Position>(pdoc->LineStart(lineOfAnchor)));
+ 			} else {
+ 				if (anchorPosOnLine == 0)
+-					sel.Range(r) = SelectionRange(pdoc->LineStart(lineCurrentPos), pdoc->LineStart(lineOfAnchor));
++					sel.Range(r) = SelectionRange(static_cast<Sci::Position>(pdoc->LineStart(lineCurrentPos)),
++						static_cast<Sci::Position>(pdoc->LineStart(lineOfAnchor)));
+ 				else
+-					sel.Range(r) = SelectionRange(pdoc->LineStart(lineCurrentPos), pdoc->LineStart(lineOfAnchor + 1));
++					sel.Range(r) = SelectionRange(static_cast<Sci::Position>(pdoc->LineStart(lineCurrentPos)),
++						static_cast<Sci::Position>(pdoc->LineStart(lineOfAnchor + 1)));
+ 			}
+ 		}
+ 	}
+@@ -4003,7 +4035,7 @@
+ 		pdoc->SetCaseFolder(CaseFolderForEncoding());
+ 	try {
+ 		if (iMessage == SCI_SEARCHNEXT) {
+-			pos = pdoc->FindText(searchAnchor, pdoc->Length(), txt,
++			pos = pdoc->FindText(searchAnchor, static_cast<Sci::Position>(pdoc->Length()), txt,
+ 					static_cast<int>(wParam),
+ 					&lengthFound);
+ 		} else {
+@@ -4068,7 +4100,7 @@
+ 		lineNo = pdoc->LinesTotal();
+ 	if (lineNo < 0)
+ 		lineNo = 0;
+-	SetEmptySelection(pdoc->LineStart(lineNo));
++	SetEmptySelection(static_cast<Sci::Position>(pdoc->LineStart(lineNo)));
+ 	ShowCaretAtCurrentPosition();
+ 	EnsureCaretVisible();
+ }
+@@ -4096,9 +4128,9 @@
+ void Editor::CopySelectionRange(SelectionText *ss, bool allowLineCopy) {
+ 	if (sel.Empty()) {
+ 		if (allowLineCopy) {
+-			Sci::Line currentLine = pdoc->LineFromPosition(sel.MainCaret());
+-			Sci::Position start = pdoc->LineStart(currentLine);
+-			Sci::Position end = pdoc->LineEnd(currentLine);
++			Sci::Line currentLine = static_cast<Sci::Line>(pdoc->LineFromPosition(sel.MainCaret()));
++			Sci::Position start = static_cast<Sci::Position>(pdoc->LineStart(currentLine));
++			Sci::Position end = static_cast<Sci::Position>(pdoc->LineEnd(currentLine));
+
+ 			std::string text = RangeText(start, end);
+ 			if (pdoc->eolMode != SC_EOL_LF)
+@@ -4314,17 +4346,17 @@
+ void Editor::LineSelection(Sci::Position lineCurrentPos_, Sci::Position lineAnchorPos_, bool wholeLine) {
+ 	Sci::Position selCurrentPos, selAnchorPos;
+ 	if (wholeLine) {
+-		Sci::Line lineCurrent_ = pdoc->LineFromPosition(lineCurrentPos_);
+-		Sci::Line lineAnchor_ = pdoc->LineFromPosition(lineAnchorPos_);
++		Sci::Line lineCurrent_ = static_cast<Sci::Line>(pdoc->LineFromPosition(lineCurrentPos_));
++		Sci::Line lineAnchor_ = static_cast<Sci::Line>(pdoc->LineFromPosition(lineAnchorPos_));
+ 		if (lineAnchorPos_ < lineCurrentPos_) {
+-			selCurrentPos = pdoc->LineStart(lineCurrent_ + 1);
+-			selAnchorPos = pdoc->LineStart(lineAnchor_);
++			selCurrentPos = static_cast<Sci::Position>(pdoc->LineStart(lineCurrent_ + 1));
++			selAnchorPos = static_cast<Sci::Position>(pdoc->LineStart(lineAnchor_));
+ 		} else if (lineAnchorPos_ > lineCurrentPos_) {
+-			selCurrentPos = pdoc->LineStart(lineCurrent_);
+-			selAnchorPos = pdoc->LineStart(lineAnchor_ + 1);
++			selCurrentPos = static_cast<Sci::Position>(pdoc->LineStart(lineCurrent_));
++			selAnchorPos = static_cast<Sci::Position>(pdoc->LineStart(lineAnchor_ + 1));
+ 		} else { // Same line, select it
+-			selCurrentPos = pdoc->LineStart(lineAnchor_ + 1);
+-			selAnchorPos = pdoc->LineStart(lineAnchor_);
++			selCurrentPos = static_cast<Sci::Position>(pdoc->LineStart(lineAnchor_ + 1));
++			selAnchorPos = static_cast<Sci::Position>(pdoc->LineStart(lineAnchor_));
+ 		}
+ 	} else {
+ 		if (lineAnchorPos_ < lineCurrentPos_) {
+@@ -4946,9 +4978,9 @@
+ 	// detect multiline comment additions and heals single line comments
+ 	Sci::Line lineAfter = TopLineOfMain() + static_cast<Sci::Line>(rcArea.bottom - 1) / vs.lineHeight + 1;
+ 	if (lineAfter < cs.LinesDisplayed())
+-		return pdoc->LineStart(cs.DocFromDisplay(lineAfter) + 1);
++		return static_cast<Sci::Position>(pdoc->LineStart(cs.DocFromDisplay(lineAfter) + 1));
+ 	else
+-		return pdoc->Length();
++		return static_cast<Sci::Position>(pdoc->Length());
+ }
+
+ // Style to a position within the view. If this causes a change at end of last line then
+@@ -5020,7 +5052,7 @@
+ void Editor::IdleStyling() {
+ 	const Sci::Position posAfterArea = PositionAfterArea(GetClientRectangle());
+ 	const Sci::Position endGoal = (idleStyling >= SC_IDLESTYLING_AFTERVISIBLE) ?
+-		pdoc->Length() : posAfterArea;
++		static_cast<Sci::Position>(pdoc->Length()) : posAfterArea;
+ 	const Sci::Position posAfterMax = PositionAfterMaxStyling(endGoal, false);
+ 	pdoc->StyleToAdjustingLineDuration(posAfterMax);
+ 	if (pdoc->GetEndStyled() >= endGoal) {
+@@ -5032,7 +5064,7 @@
+ 	// Style the line after the modification as this allows modifications that change just the
+ 	// line of the modification to heal instead of propagating to the rest of the window.
+ 	if (workNeeded.items & WorkNeeded::workStyle) {
+-		StyleToPositionInView(pdoc->LineStart(pdoc->LineFromPosition(workNeeded.upTo) + 2));
++		StyleToPositionInView(static_cast<Sci::Position>(pdoc->LineStart(pdoc->LineFromPosition(workNeeded.upTo) + 2)));
+ 	}
+ 	NotifyUpdateUI();
+ 	workNeeded.Reset();
+@@ -5227,7 +5259,8 @@
+ 				cs.SetExpanded(line, false);
+ 				cs.SetVisible(line + 1, lineMaxSubord, false);
+
+-				const Sci::Line lineCurrent = pdoc->LineFromPosition(sel.MainCaret());
++				const Sci::Line lineCurrent = static_cast<Sci::Line>(
++					pdoc->LineFromPosition(sel.MainCaret()));
+ 				if (lineCurrent > line && lineCurrent <= lineMaxSubord) {
+ 					// This does not re-expand the fold
+ 					EnsureCaretVisible();
+@@ -5346,7 +5379,7 @@
+ }
+
+ void Editor::FoldAll(int action) {
+-	pdoc->EnsureStyledTo(pdoc->Length());
++	pdoc->EnsureStyledTo(static_cast<Sci::Position>(pdoc->Length()));
+ 	Sci::Line maxLine = pdoc->LinesTotal();
+ 	bool expanding = action == SC_FOLDACTION_EXPAND;
+ 	if (action == SC_FOLDACTION_TOGGLE) {
+@@ -5435,8 +5468,8 @@
+
+ void Editor::NeedShown(Sci::Position pos, Sci::Position len) {
+ 	if (foldAutomatic & SC_AUTOMATICFOLD_SHOW) {
+-		const Sci::Line lineStart = pdoc->LineFromPosition(pos);
+-		const Sci::Line lineEnd = pdoc->LineFromPosition(pos+len);
++		const Sci::Line lineStart = static_cast<Sci::Line>(pdoc->LineFromPosition(pos));
++		const Sci::Line lineEnd = static_cast<Sci::Line>(pdoc->LineFromPosition(pos+len));
+ 		for (Sci::Line line = lineStart; line <= lineEnd; line++) {
+ 			EnsureLineVisible(line, false);
+ 		}
+@@ -5704,7 +5737,7 @@
+ 			if (lParam == 0)
+ 				return 0;
+ 			UndoGroup ug(pdoc);
+-			pdoc->DeleteChars(0, pdoc->Length());
++			pdoc->DeleteChars(0, static_cast<Sci::Position>(pdoc->Length()));
+ 			SetEmptySelection(0);
+ 			const char *text = CharPtrFromSPtr(lParam);
+ 			pdoc->InsertString(0, text, istrlen(text));
+@@ -5781,8 +5814,10 @@
+ 		break;
+
+ 	case SCI_GETLINE: {	// Risk of overwriting the end of the buffer
+-			Sci::Position lineStart = pdoc->LineStart(static_cast<Sci::Line>(wParam));
+-			Sci::Position lineEnd = pdoc->LineStart(static_cast<Sci::Line>(wParam + 1));
++			Sci::Position lineStart = static_cast<Sci::Position>(
++				pdoc->LineStart(static_cast<Sci::Line>(wParam)));
++			Sci::Position lineEnd = static_cast<Sci::Position>(
++				pdoc->LineStart(static_cast<Sci::Line>(wParam + 1)));
+ 			if (lParam == 0) {
+ 				return lineEnd - lineStart;
+ 			}
+@@ -5807,7 +5842,7 @@
+ 			Sci::Position nStart = static_cast<Sci::Position>(wParam);
+ 			Sci::Position nEnd = static_cast<Sci::Position>(lParam);
+ 			if (nEnd < 0)
+-				nEnd = pdoc->Length();
++				nEnd = static_cast<Sci::Position>(pdoc->Length());
+ 			if (nStart < 0)
+ 				nStart = nEnd; 	// Remove selection
+ 			InvalidateSelection(SelectionRange(nStart, nEnd));
+@@ -5893,7 +5928,7 @@
+
+ 	case SCI_TARGETWHOLEDOCUMENT:
+ 		targetStart = 0;
+-		targetEnd = pdoc->Length();
++		targetEnd = static_cast<Sci::Position>(pdoc->Length());
+ 		break;
+
+ 	case SCI_TARGETFROMSELECTION:
+@@ -5940,7 +5975,8 @@
+ 		return pdoc->MovePositionOutsideChar(static_cast<int>(wParam) + 1, 1, true);
+
+ 	case SCI_POSITIONRELATIVE:
+-		return Platform::Clamp(pdoc->GetRelativePosition(static_cast<int>(wParam), static_cast<int>(lParam)), 0, pdoc->Length());
++		return Platform::Clamp(static_cast<int>(pdoc->GetRelativePosition(static_cast<int>(wParam), static_cast<int>(lParam))),
++			0, static_cast<int>(pdoc->Length()));
+
+ 	case SCI_LINESCROLL:
+ 		ScrollTo(topLine + static_cast<Sci::Line>(lParam));
+@@ -6001,7 +6037,7 @@
+ 			Sci_TextRange *tr = reinterpret_cast<Sci_TextRange *>(lParam);
+ 			Sci::Position cpMax = static_cast<Sci::Position>(tr->chrg.cpMax);
+ 			if (cpMax == -1)
+-				cpMax = pdoc->Length();
++				cpMax = static_cast<Sci::Position>(pdoc->Length());
+ 			PLATFORM_ASSERT(cpMax <= pdoc->Length());
+ 			int len = static_cast<int>(cpMax - tr->chrg.cpMin); 	// No -1 as cpMin and cpMax are referring to inter character positions
+ 			pdoc->GetCharRange(tr->lpstrText, static_cast<int>(tr->chrg.cpMin), len);
+@@ -6072,7 +6108,8 @@
+ 		return 0;
+
+ 	case SCI_APPENDTEXT:
+-		pdoc->InsertString(pdoc->Length(), CharPtrFromSPtr(lParam), static_cast<int>(wParam));
++		pdoc->InsertString(static_cast<Sci::Position>(pdoc->Length()),
++			CharPtrFromSPtr(lParam), static_cast<int>(wParam));
+ 		return 0;
+
+ 	case SCI_CLEARALL:
+@@ -6311,9 +6348,9 @@
+ 		break;
+
+ 	case SCI_GETCURLINE: {
+-			const Sci::Line lineCurrentPos = pdoc->LineFromPosition(sel.MainCaret());
+-			const Sci::Position lineStart = pdoc->LineStart(lineCurrentPos);
+-			const Sci::Position lineEnd = pdoc->LineStart(lineCurrentPos + 1);
++			const Sci::Line lineCurrentPos = static_cast<Sci::Line>(pdoc->LineFromPosition(sel.MainCaret()));
++			const Sci::Position lineStart = static_cast<Sci::Position>(pdoc->LineStart(lineCurrentPos));
++			const Sci::Position lineEnd = static_cast<Sci::Position>(pdoc->LineStart(lineCurrentPos + 1));
+ 			if (lParam == 0) {
+ 				return 1 + lineEnd - lineStart;
+ 			}
+@@ -7585,8 +7622,9 @@
+ 		}
+ 	case SCI_GETLINESELSTARTPOSITION:
+ 	case SCI_GETLINESELENDPOSITION: {
+-			SelectionSegment segmentLine(SelectionPosition(pdoc->LineStart(static_cast<int>(wParam))),
+-				SelectionPosition(pdoc->LineEnd(static_cast<int>(wParam))));
++			SelectionSegment segmentLine(
++				SelectionPosition(static_cast<Sci::Position>(pdoc->LineStart(static_cast<int>(wParam)))),
++				SelectionPosition(static_cast<Sci::Position>(pdoc->LineEnd(static_cast<int>(wParam)))));
+ 			for (size_t r=0; r<sel.Count(); r++) {
+ 				const SelectionSegment portion = sel.Range(r).Intersect(segmentLine);
+ 				if (portion.start.IsValid()) {
+diff -r c15f84c11e17 -r 95346e626cf8 src/MarginView.cxx
+--- a/src/MarginView.cxx	Thu Jun 22 14:36:26 2017 +1000
++++ b/src/MarginView.cxx	Thu Jun 22 14:52:11 2017 +1000
+@@ -248,7 +248,8 @@
+ 				}
+ 				if (highlightDelimiter.isEnabled) {
+ 					Sci::Line lastLine = model.cs.DocFromDisplay(topLine + model.LinesOnScreen()) + 1;
+-					model.pdoc->GetHighlightDelimiters(highlightDelimiter, model.pdoc->LineFromPosition(model.sel.MainCaret()), lastLine);
++					model.pdoc->GetHighlightDelimiters(highlightDelimiter,
++						static_cast<Sci::Line>(model.pdoc->LineFromPosition(model.sel.MainCaret())), lastLine);
+ 				}
+ 			}
+
+diff -r c15f84c11e17 -r 95346e626cf8 win32/ScintillaWin.cxx
+--- a/win32/ScintillaWin.cxx	Thu Jun 22 14:36:26 2017 +1000
++++ b/win32/ScintillaWin.cxx	Thu Jun 22 14:52:11 2017 +1000
+@@ -1676,7 +1676,7 @@
+ 				Sci::Position nStart = static_cast<Sci::Position>(wParam);
+ 				Sci::Position nEnd = static_cast<Sci::Position>(lParam);
+ 				if (nStart == 0 && nEnd == -1) {
+-					nEnd = pdoc->Length();
++					nEnd = static_cast<Sci::Position>(pdoc->Length());
+ 				}
+ 				if (nStart == -1) {
+ 					nStart = nEnd;	// Remove selection
+@@ -1693,7 +1693,7 @@
+ 				Sci_CharacterRange *pCR = reinterpret_cast<Sci_CharacterRange *>(lParam);
+ 				sel.selType = Selection::selStream;
+ 				if (pCR->cpMin == 0 && pCR->cpMax == -1) {
+-					SetSelection(pCR->cpMin, pdoc->Length());
++					SetSelection(pCR->cpMin, static_cast<Sci::Position>(pdoc->Length()));
+ 				} else {
+ 					SetSelection(pCR->cpMin, pCR->cpMax);
+ 				}
+@@ -2679,11 +2679,11 @@
+ 	// Look around:   baseStart  <--  (|mainStart|  -- mainEnd)  --> baseEnd.
+ 	const Sci::Position mainStart = sel.RangeMain().Start().Position();
+ 	const Sci::Position mainEnd = sel.RangeMain().End().Position();
+-	const Sci::Line curLine = pdoc->LineFromPosition(mainStart);
++	const Sci::Line curLine = static_cast<Sci::Line>(pdoc->LineFromPosition(mainStart));
+ 	if (curLine != pdoc->LineFromPosition(mainEnd))
+ 		return 0;
+-	const Sci::Position baseStart = pdoc->LineStart(curLine);
+-	const Sci::Position baseEnd = pdoc->LineEnd(curLine);
++	const Sci::Position baseStart = static_cast<Sci::Position>(pdoc->LineStart(curLine));
++	const Sci::Position baseEnd = static_cast<Sci::Position>(pdoc->LineEnd(curLine));
+ 	if ((baseStart == baseEnd) || (mainEnd > baseEnd))
+ 		return 0;
+
+@@ -2743,7 +2743,7 @@
+ 		} else {
+ 			// Ensure docCompStart+docCompLen be not beyond lineEnd.
+ 			// since docCompLen by byte might break eol.
+-			Sci::Position lineEnd = pdoc->LineEnd(pdoc->LineFromPosition(rBase));
++			Sci::Position lineEnd = static_cast<Sci::Position>(pdoc->LineEnd(pdoc->LineFromPosition(rBase)));
+ 			Sci::Position overflow = (docCompStart + docCompLen) - lineEnd;
+ 			if (overflow > 0) {
+ 				pdoc->DeleteChars(docCompStart, docCompLen - overflow);

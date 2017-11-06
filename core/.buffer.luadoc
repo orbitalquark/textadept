@@ -3157,8 +3157,6 @@ function set_lexer(buffer, lexer) end
 --   * print_magnification
 --   * print_wrap_mode
 --   * status
---   * style_bits
---   * style_bits_needed
 --   * style_character_set
 --   * style_from_sub_style
 --   * style_hotspot

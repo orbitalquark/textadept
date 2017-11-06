@@ -1,0 +1,214 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1496971874 -36000
+# Node ID 4bf96081f6e60dcbcfd0111bcd7a3cd1ced06d0a
+# Parent  c2c63e649256a5ea777da2b4b41fac9d57364499
+Use min and max from std instead of own version from platform.
+
+diff -r c2c63e649256 -r 4bf96081f6e6 cocoa/ScintillaCocoa.mm
+--- a/cocoa/ScintillaCocoa.mm	Fri Jun 09 11:26:02 2017 +1000
++++ b/cocoa/ScintillaCocoa.mm	Fri Jun 09 11:31:14 2017 +1000
+@@ -1887,7 +1887,7 @@
+ void ScintillaCocoa::UpdateForScroll() {
+ 	Point ptOrigin = GetVisibleOriginInMain();
+ 	xOffset = static_cast<int>(ptOrigin.x);
+-	int newTop = Platform::Minimum(static_cast<int>(ptOrigin.y / vs.lineHeight), MaxScrollPos());
++	Sci::Line newTop = std::min(static_cast<Sci::Line>(ptOrigin.y / vs.lineHeight), MaxScrollPos());
+ 	SetTopLine(newTop);
+ }
+ 
+diff -r c2c63e649256 -r 4bf96081f6e6 gtk/PlatGTK.cxx
+--- a/gtk/PlatGTK.cxx	Fri Jun 09 11:26:02 2017 +1000
++++ b/gtk/PlatGTK.cxx	Fri Jun 09 11:31:14 2017 +1000
+@@ -432,10 +432,10 @@
+ 		if ((xDiff == 0) || (yDiff == 0)) {
+ 			// Horizontal or vertical lines can be more precisely drawn as a filled rectangle
+ 			int xEnd = x_ - xDelta;
+-			int left = Platform::Minimum(x, xEnd);
++			int left = std::min(x, xEnd);
+ 			int width = abs(x - xEnd) + 1;
+ 			int yEnd = y_ - yDelta;
+-			int top = Platform::Minimum(y, yEnd);
++			int top = std::min(y, yEnd);
+ 			int height = abs(y - yEnd) + 1;
+ 			cairo_rectangle(context, left, top, width, height);
+ 			cairo_fill(context);
+@@ -618,7 +618,7 @@
+ 	PLATFORM_ASSERT(context);
+ 	PenColour(back);
+ 	cairo_arc(context, (rc.left + rc.right) / 2, (rc.top + rc.bottom) / 2,
+-		Platform::Minimum(rc.Width(), rc.Height()) / 2, 0, 2*kPi);
++		std::min(rc.Width(), rc.Height()) / 2, 0, 2*kPi);
+ 	cairo_fill_preserve(context);
+ 	PenColour(fore);
+ 	cairo_stroke(context);
+@@ -1307,7 +1307,7 @@
+ 		"vertical-separator", &vertical_separator,
+ 		"expander-size", &expander_size, NULL);
+ 	row_height += vertical_separator;
+-	row_height = Platform::Maximum(row_height, expander_size);
++	row_height = std::max(row_height, expander_size);
+ 	return row_height;
+ #endif
+ }
+diff -r c2c63e649256 -r 4bf96081f6e6 gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Fri Jun 09 11:26:02 2017 +1000
++++ b/gtk/ScintillaGTK.cxx	Fri Jun 09 11:31:14 2017 +1000
+@@ -1614,7 +1614,7 @@
+ 		gtk_widget_show(GTK_WIDGET(PWidget(scrollbarh)));
+ 		alloc.x = 0;
+ 		alloc.y = height - horizontalScrollBarHeight;
+-		alloc.width = Platform::Maximum(minHScrollBarWidth, width - verticalScrollBarWidth);
++		alloc.width = std::max(minHScrollBarWidth, width - verticalScrollBarWidth);
+ 		alloc.height = horizontalScrollBarHeight;
+ 		gtk_widget_size_allocate(GTK_WIDGET(PWidget(scrollbarh)), &alloc);
+ 	} else {
+@@ -1627,7 +1627,7 @@
+ 		alloc.x = width - verticalScrollBarWidth;
+ 		alloc.y = 0;
+ 		alloc.width = verticalScrollBarWidth;
+-		alloc.height = Platform::Maximum(minVScrollBarHeight, height - horizontalScrollBarHeight);
++		alloc.height = std::max(minVScrollBarHeight, height - horizontalScrollBarHeight);
+ 		gtk_widget_size_allocate(GTK_WIDGET(PWidget(scrollbarv)), &alloc);
+ 	} else {
+ 		gtk_widget_hide(GTK_WIDGET(PWidget(scrollbarv)));
+@@ -1648,8 +1648,8 @@
+ 	alloc.width = requisition.width;
+ 	alloc.height = requisition.height;
+ #endif
+-	alloc.width = Platform::Maximum(alloc.width, width - verticalScrollBarWidth);
+-	alloc.height = Platform::Maximum(alloc.height, height - horizontalScrollBarHeight);
++	alloc.width = std::max(alloc.width, width - verticalScrollBarWidth);
++	alloc.height = std::max(alloc.height, height - horizontalScrollBarHeight);
+ 	gtk_widget_size_allocate(GTK_WIDGET(PWidget(wText)), &alloc);
+ }
+ 
+diff -r c2c63e649256 -r 4bf96081f6e6 lexers/LexCoffeeScript.cxx
+--- a/lexers/LexCoffeeScript.cxx	Fri Jun 09 11:26:02 2017 +1000
++++ b/lexers/LexCoffeeScript.cxx	Fri Jun 09 11:31:14 2017 +1000
+@@ -14,6 +14,8 @@
+ #include <assert.h>
+ #include <ctype.h>
+ 
++#include <algorithm>
++
+ #include "Platform.h"
+ #include "ILexer.h"
+ #include "Scintilla.h"
+@@ -427,7 +429,7 @@
+ 		}
+ 
+ 		const int levelAfterComments = indentNext & SC_FOLDLEVELNUMBERMASK;
+-		const int levelBeforeComments = Platform::Maximum(indentCurrentLevel,levelAfterComments);
++		const int levelBeforeComments = std::max(indentCurrentLevel,levelAfterComments);
+ 
+ 		// Now set all the indent levels on the lines we skipped
+ 		// Do this from end to start.  Once we encounter one line
+diff -r c2c63e649256 -r 4bf96081f6e6 src/Indicator.cxx
+--- a/src/Indicator.cxx	Fri Jun 09 11:26:02 2017 +1000
++++ b/src/Indicator.cxx	Fri Jun 09 11:31:14 2017 +1000
+@@ -55,7 +56,7 @@
+ 	} else if (sacDraw.style == INDIC_SQUIGGLEPIXMAP) {
+ 		PRectangle rcSquiggle = PixelGridAlign(rc);
+ 
+-		int width = Platform::Minimum(4000, static_cast<int>(rcSquiggle.Width()));
++		int width = std::min(4000, static_cast<int>(rcSquiggle.Width()));
+ 		RGBAImage image(width, 3, 1.0, 0);
+ 		enum { alphaFull = 0xff, alphaSide = 0x2f, alphaSide2=0x5f };
+ 		for (int x = 0; x < width; x++) {
+@@ -137,7 +138,7 @@
+ 		rcBox.top = rcLine.top + 1;
+ 		rcBox.bottom = rcLine.bottom;
+ 		// Cap width at 4000 to avoid large allocations when mistakes made
+-		int width = Platform::Minimum(static_cast<int>(rcBox.Width()), 4000);
++		int width = std::min(static_cast<int>(rcBox.Width()), 4000);
+ 		RGBAImage image(width, static_cast<int>(rcBox.Height()), 1.0, 0);
+ 		// Draw horizontal lines top and bottom
+ 		for (int x=0; x<width; x++) {
+@@ -156,7 +157,7 @@
+ 		int x = static_cast<int>(rc.left);
+ 		while (x < rc.right) {
+ 			surface->MoveTo(x, ymid);
+-			surface->LineTo(Platform::Minimum(x + 4, static_cast<int>(rc.right)), ymid);
++			surface->LineTo(std::min(x + 4, static_cast<int>(rc.right)), ymid);
+ 			x += 7;
+ 		}
+ 	} else if (sacDraw.style == INDIC_DOTS) {
+diff -r c2c63e649256 -r 4bf96081f6e6 src/LineMarker.cxx
+--- a/src/LineMarker.cxx	Fri Jun 09 11:26:02 2017 +1000
++++ b/src/LineMarker.cxx	Fri Jun 09 11:31:14 2017 +1000
+@@ -117,7 +118,7 @@
+ 	PRectangle rc = rcWhole;
+ 	rc.top++;
+ 	rc.bottom--;
+-	int minDim = Platform::Minimum(static_cast<int>(rc.Width()), static_cast<int>(rc.Height()));
++	int minDim = std::min(static_cast<int>(rc.Width()), static_cast<int>(rc.Height()));
+ 	minDim--;	// Ensure does not go beyond edge
+ 	int centreX = static_cast<int>(floor((rc.right + rc.left) / 2.0));
+ 	const int centreY = static_cast<int>(floor((rc.bottom + rc.top) / 2.0));
+diff -r c2c63e649256 -r 4bf96081f6e6 win32/PlatWin.cxx
+--- a/win32/PlatWin.cxx	Fri Jun 09 11:26:02 2017 +1000
++++ b/win32/PlatWin.cxx	Fri Jun 09 11:31:14 2017 +1000
+@@ -17,8 +17,13 @@
+ 
+ #include <vector>
+ #include <map>
++#include <algorithm>
+ #include <memory>
+ 
++// Want to use std::min and std::max so don't want Windows.h version of min and max
++#if !defined(NOMINMAX)
++#define NOMINMAX
++#endif
+ #undef _WIN32_WINNT
+ #define _WIN32_WINNT 0x0500
+ #undef WINVER
+@@ -771,7 +776,7 @@
+ 		int width = static_cast<int>(rc.Width());
+ 		int height = static_cast<int>(rc.Height());
+ 		// Ensure not distorted too much by corners when small
+-		cornerSize = Platform::Minimum(cornerSize, (Platform::Minimum(width, height) / 2) - 2);
++		cornerSize = std::min(cornerSize, (std::min(width, height) / 2) - 2);
+ 		BITMAPINFO bpih = {{sizeof(BITMAPINFOHEADER), width, height, 1, 32, BI_RGB, 0, 0, 0, 0, 0}};
+ 		void *image = 0;
+ 		HBITMAP hbmMem = CreateDIBSection(hMemDC, &bpih,
+@@ -929,7 +934,7 @@
+ 	SetFont(font_);
+ 	SIZE sz={0,0};
+ 	if (!unicodeMode) {
+-		::GetTextExtentPoint32A(hdc, s, Platform::Minimum(len, maxLenText), &sz);
++		::GetTextExtentPoint32A(hdc, s, std::min(len, maxLenText), &sz);
+ 	} else {
+ 		const TextWide tbuf(s, len, unicodeMode, codePage);
+ 		::GetTextExtentPoint32W(hdc, tbuf.buffer, tbuf.tlen, &sz);
+@@ -1306,10 +1311,10 @@
+ 		if ((xDiff == 0) || (yDiff == 0)) {
+ 			// Horizontal or vertical lines can be more precisely drawn as a filled rectangle
+ 			const int xEnd = x_ - xDelta;
+-			const int left = Platform::Minimum(x, xEnd);
++			const int left = std::min(x, xEnd);
+ 			const int width = abs(x - xEnd) + 1;
+ 			const int yEnd = y_ - yDelta;
+-			const int top = Platform::Minimum(y, yEnd);
++			const int top = std::min(y, yEnd);
+ 			const int height = abs(y - yEnd) + 1;
+ 			D2D1_RECT_F rectangle1 = D2D1::RectF(static_cast<float>(left), static_cast<float>(top),
+ 				static_cast<float>(left+width), static_cast<float>(top+height));
+@@ -2196,7 +2201,7 @@
+ 	SelectFont(hdc, oldFont);
+ 	::ReleaseDC(lb, hdc);
+ 
+-	const int widthDesired = Platform::Maximum(textSize.cx, (len + 1) * tm.tmAveCharWidth);
++	const int widthDesired = std::max(textSize.cx, (len + 1) * tm.tmAveCharWidth);
+ 	if (width < widthDesired)
+ 		width = widthDesired;
+ 
+@@ -2436,7 +2441,7 @@
+ 
+ POINT ListBoxX::MaxTrackSize() const {
+ 	PRectangle rc = PRectangle::FromInts(0, 0,
+-		Platform::Maximum(MinClientWidth(),
++		std::max(static_cast<unsigned int>(MinClientWidth()),
+ 		maxCharWidth * maxItemCharacters + static_cast<int>(TextInset.x) * 2 +
+ 		 TextOffset() + ::GetSystemMetrics(SM_CXVSCROLL)),
+ 		ItemHeight() * lti.Count());

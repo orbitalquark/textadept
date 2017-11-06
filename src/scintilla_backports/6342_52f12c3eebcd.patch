@@ -1,0 +1,69 @@
+# HG changeset patch
+# User Justin Dailey
+# Date 1499559915 -36000
+# Node ID 52f12c3eebcd37757503136e1c3a3c693120c50b
+# Parent  040330eec86d765ffdaffe85e55b30c794302c2b
+Bug [#1955]. The data parameter to ILoader::AddData made const.
+
+diff -r 040330eec86d -r 52f12c3eebcd doc/ScintillaDoc.html
+--- a/doc/ScintillaDoc.html	Sun Jul 09 10:03:53 2017 +1000
++++ b/doc/ScintillaDoc.html	Sun Jul 09 10:25:15 2017 +1000
+@@ -5761,7 +5761,7 @@
+ <span class="S5">public</span><span class="S10">:</span><br />
+ <span class="S0">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="S5">virtual</span><span class="S0"> </span><span class="S5">int</span><span class="S0"> </span>SCI_METHOD<span class="S0"> </span>Release<span class="S10">()</span><span class="S0"> </span><span class="S10">=</span><span class="S0"> </span><span class="S4">0</span><span class="S10">;</span><br />
+ <span class="S0">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="S2">// Returns a status code from SC_STATUS_*</span><br />
+-<span class="S0">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="S5">virtual</span><span class="S0"> </span><span class="S5">int</span><span class="S0"> </span>SCI_METHOD<span class="S0"> </span>AddData<span class="S10">(</span><span class="S5">char</span><span class="S0"> </span><span class="S10">*</span>data<span class="S10">,</span><span class="S0"> </span><span class="S5">int</span><span class="S0"> </span>length<span class="S10">)</span><span class="S0"> </span><span class="S10">=</span><span class="S0"> </span><span class="S4">0</span><span class="S10">;</span><br />
++<span class="S0">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="S5">virtual</span><span class="S0"> </span><span class="S5">int</span><span class="S0"> </span>SCI_METHOD<span class="S0"> </span>AddData<span class="S10">(</span><span class="S5">const</span><span class="S0"> </span><span class="S5">char</span><span class="S0"> </span><span class="S10">*</span>data<span class="S10">,</span><span class="S0"> </span>Sci_Position<span class="S0"> </span>length<span class="S10">)</span><span class="S0"> </span><span class="S10">=</span><span class="S0"> </span><span class="S4">0</span><span class="S10">;</span><br />
+ <span class="S0">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="S5">virtual</span><span class="S0"> </span><span class="S5">void</span><span class="S0"> </span><span class="S10">*</span><span class="S0"> </span>SCI_METHOD<span class="S0"> </span>ConvertToDocument<span class="S10">()</span><span class="S0"> </span><span class="S10">=</span><span class="S0"> </span><span class="S4">0</span><span class="S10">;</span><br />
+ <span class="S10">};</span><br />
+ </div>
+diff -r 040330eec86d -r 52f12c3eebcd doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Sun Jul 09 10:03:53 2017 +1000
++++ b/doc/ScintillaHistory.html	Sun Jul 09 10:25:15 2017 +1000
+@@ -542,6 +542,10 @@
+ 	An SCN_AUTOCSELECTIONCHANGE notification is sent when items are highlighted in an autocompletion or user list.
+ 	</li>
+ 	<li>
++	The data parameter to ILoader::AddData made const.
++	<a href="http://sourceforge.net/p/scintilla/bugs/1955/">Bug #1955</a>.
++	</li>
++	<li>
+ 	SciTE's embedded Lua interpreter updated to Lua 5.3.
+ 	</li>
+ 	<li>
+diff -r 040330eec86d -r 52f12c3eebcd include/ILexer.h
+--- a/include/ILexer.h	Sun Jul 09 10:03:53 2017 +1000
++++ b/include/ILexer.h	Sun Jul 09 10:25:15 2017 +1000
+@@ -85,7 +85,7 @@
+ public:
+ 	virtual int SCI_METHOD Release() = 0;
+ 	// Returns a status code from SC_STATUS_*
+-	virtual int SCI_METHOD AddData(char *data, Sci_Position length) = 0;
++	virtual int SCI_METHOD AddData(const char *data, Sci_Position length) = 0;
+ 	virtual void * SCI_METHOD ConvertToDocument() = 0;
+ };
+ 
+diff -r 040330eec86d -r 52f12c3eebcd src/Document.cxx
+--- a/src/Document.cxx	Sun Jul 09 10:03:53 2017 +1000
++++ b/src/Document.cxx	Sun Jul 09 10:25:15 2017 +1000
+@@ -1138,7 +1138,7 @@
+ 	insertion.assign(s, length);
+ }
+ 
+-int SCI_METHOD Document::AddData(char *data, Sci_Position length) {
++int SCI_METHOD Document::AddData(const char *data, Sci_Position length) {
+ 	try {
+ 		Sci::Position position = static_cast<Sci::Position>(Length());
+ 		InsertString(position, data, static_cast<Sci::Position>(length));
+diff -r 040330eec86d -r 52f12c3eebcd src/Document.h
+--- a/src/Document.h	Sun Jul 09 10:03:53 2017 +1000
++++ b/src/Document.h	Sun Jul 09 10:25:15 2017 +1000
+@@ -316,7 +316,7 @@
+ 	bool DeleteChars(Sci::Position pos, Sci::Position len);
+ 	Sci::Position InsertString(Sci::Position position, const char *s, Sci::Position insertLength);
+ 	void ChangeInsertion(const char *s, Sci::Position length);
+-	int SCI_METHOD AddData(char *data, Sci_Position length);
++	int SCI_METHOD AddData(const char *data, Sci_Position length);
+ 	void * SCI_METHOD ConvertToDocument();
+ 	Sci::Position Undo();
+ 	Sci::Position Redo();
