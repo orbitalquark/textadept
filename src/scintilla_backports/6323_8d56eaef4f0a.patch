@@ -1,0 +1,69 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1497838218 -36000
+# Node ID 8d56eaef4f0a8807f083d8a3e0d5f5738d43bd20
+# Parent  a3b66b2525e795e352cc02daa3a30d19a3d86e39
+The default encoding is now UTF-8.
+
+diff -r a3b66b2525e7 -r 8d56eaef4f0a doc/ScintillaDoc.html
+--- a/doc/ScintillaDoc.html	Sat Jun 17 10:23:38 2017 +1000
++++ b/doc/ScintillaDoc.html	Mon Jun 19 12:10:18 2017 +1000
+@@ -3684,14 +3684,15 @@
+ 
+     <p><b id="SCI_SETCODEPAGE">SCI_SETCODEPAGE(int codePage)</b><br />
+      <b id="SCI_GETCODEPAGE">SCI_GETCODEPAGE &rarr; int</b><br />
+-     Scintilla has some support for Japanese, Chinese and Korean DBCS. Use this message with
++     Scintilla supports UTF-8, Japanese, Chinese and Korean DBCS along with single byte encodings like Latin-1.
++     UTF-8 (<code>SC_CP_UTF8</code>) is the default. Use this message with
+     <code class="parameter">codePage</code> set to the code page number to set Scintilla to use code page information
+-    to ensure double byte characters are treated as one character rather than two. This also stops
+-    the caret from moving between the two bytes in a double byte character.
+-    Do not use this message to choose between different single byte character sets: it doesn't do that.
++    to ensure multiple byte characters are treated as one character rather than multiple. This also stops
++    the caret from moving between the bytes in a multi-byte character.
++    Do not use this message to choose between different single byte character sets - use
++    <a class="seealso" href="#SCI_STYLESETCHARACTERSET">SCI_STYLESETCHARACTERSET</a>.
+     Call with
+-    <code class="parameter">codePage</code> set to zero to disable DBCS support. The default is
+-    <code>SCI_SETCODEPAGE(0)</code>.</p>
++    <code class="parameter">codePage</code> set to zero to disable multi-byte support.</p>
+ 
+     <p>Code page <code>SC_CP_UTF8</code> (65001) sets Scintilla into Unicode mode with the document
+     treated as a sequence of characters expressed in UTF-8. The text is converted to the platform's
+@@ -3700,9 +3701,8 @@
+     horizontal space, such as Thai, will mostly work but there are some issues where the characters
+     are drawn separately leading to visual glitches. Bi-directional text is not supported. </p>
+ 
+-    <p>Code page can be set to 932 (Japanese Shift-JIS), 936 (Simplified Chinese GBK),
+-    949 (Korean Unified Hangul Code), 950 (Traditional Chinese Big5), or 1361 (Korean Johab)
+-    although these may require installation of language specific support.</p>
++    <p>Code page can be set to 65001 (UTF-8), 932 (Japanese Shift-JIS), 936 (Simplified Chinese GBK),
++    949 (Korean Unified Hangul Code), 950 (Traditional Chinese Big5), or 1361 (Korean Johab).</p>
+ 
+     <p><b id="SCI_SETIMEINTERACTION">SCI_SETIMEINTERACTION(int imeInteraction)</b><br />
+      <b id="SCI_GETIMEINTERACTION">SCI_GETIMEINTERACTION &rarr; int</b><br />
+diff -r a3b66b2525e7 -r 8d56eaef4f0a doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Sat Jun 17 10:23:38 2017 +1000
++++ b/doc/ScintillaHistory.html	Mon Jun 19 12:10:18 2017 +1000
+@@ -536,6 +536,9 @@
+ 	Support dropped for GTK+ versions before 2.24.
+ 	</li>
+ 	<li>
++	The default encoding in Scintilla is UTF-8.
++	</li>
++	<li>
+ 	An SCN_AUTOCSELECTIONCHANGE notification is sent when items are highlighted in an autocompletion or user list.
+ 	</li>
+ 	<li>
+diff -r a3b66b2525e7 -r 8d56eaef4f0a src/Document.cxx
+--- a/src/Document.cxx	Sat Jun 17 10:23:38 2017 +1000
++++ b/src/Document.cxx	Mon Jun 19 12:10:18 2017 +1000
+@@ -101,7 +101,7 @@
+ #else
+ 	eolMode = SC_EOL_LF;
+ #endif
+-	dbcsCodePage = 0;
++	dbcsCodePage = SC_CP_UTF8;
+ 	lineEndBitSet = SC_LINE_END_TYPE_DEFAULT;
+ 	endStyled = 0;
+ 	styleClock = 0;

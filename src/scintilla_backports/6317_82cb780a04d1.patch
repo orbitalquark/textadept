@@ -1,0 +1,53 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1497328847 -36000
+# Node ID 82cb780a04d12256758fc545b35779dc971d2de6
+# Parent  44fa26c9177437cd9d12ecbed3c9d6f9e1985a89
+Bug [#1949]. Fix drawing failure in wrap mode for delete to start/end of line.
+
+diff -r 44fa26c91774 -r 82cb780a04d1 doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Tue Jun 13 14:33:53 2017 +1000
++++ b/doc/ScintillaHistory.html	Tue Jun 13 14:40:47 2017 +1000
+@@ -547,6 +547,11 @@
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1919/">Bug #1919</a>.
+ 	</li>
+ 	<li>
++	Fix drawing failure when in wrap mode for delete to start/end of line which
++	affects later lines but did not redraw them.
++	<a href="http://sourceforge.net/p/scintilla/bugs/1949/">Bug #1949</a>.
++	</li>
++	<li>
+ 	On Qt, mouse tracking is reenabled when the window is reshown.
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1948/">Bug #1948</a>.
+ 	</li>
+diff -r 44fa26c91774 -r 82cb780a04d1 src/Editor.cxx
+--- a/src/Editor.cxx	Tue Jun 13 14:33:53 2017 +1000
++++ b/src/Editor.cxx	Tue Jun 13 14:40:47 2017 +1000
+@@ -818,8 +818,11 @@
+ 	const Sci::Line currentLine = pdoc->LineFromPosition(newPos.Position());
+ 	if (ensureVisible) {
+ 		// In case in need of wrapping to ensure DisplayFromDoc works.
+-		if (currentLine >= wrapPending.start)
+-			WrapLines(wsAll);
++		if (currentLine >= wrapPending.start) {
++			if (WrapLines(wsAll)) {
++				Redraw();
++			}
++		}
+ 		XYScrollPosition newXY = XYScrollToMakeVisible(
+ 			SelectionRange(posDrag.IsValid() ? posDrag : newPos), xysDefault);
+ 		if (previousPos.IsValid() && (newXY.xOffset == xOffset)) {
+@@ -5290,8 +5293,11 @@
+ void Editor::EnsureLineVisible(Sci::Line lineDoc, bool enforcePolicy) {
+ 
+ 	// In case in need of wrapping to ensure DisplayFromDoc works.
+-	if (lineDoc >= wrapPending.start)
+-		WrapLines(wsAll);
++	if (lineDoc >= wrapPending.start) {
++		if (WrapLines(wsAll)) {
++			Redraw();
++		}
++	}
+ 
+ 	if (!cs.GetVisible(lineDoc)) {
+ 		// Back up to find a non-blank line

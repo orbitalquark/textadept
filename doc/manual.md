@@ -100,8 +100,8 @@ equivalents as separate entities, not as translations of one another.
 ## Requirements
 
 In its bid for minimalism, Textadept also depends on very little to run. The GUI
-version needs only [GTK+][], a cross-platform GUI toolkit, version 2.18 or later
-(circa late-2009) on Linux and BSD systems. The application already bundles a
+version needs only [GTK+][], a cross-platform GUI toolkit, version 2.24 or later
+(circa early-2011) on Linux and BSD systems. The application already bundles a
 GTK+ runtime into the Windows and Mac OSX packages. The terminal, or curses,
 version of Textadept only depends on a curses implementation like [ncurses][] on
 Linux, Mac OSX, and BSD systems. The Windows binary includes a precompiled

@@ -1,0 +1,51 @@
+# HG changeset patch
+# User Justin Dailey
+# Date 1499396123 -36000
+# Node ID 79f86be9e988efc5b1462ae549c271c4f3a1b82c
+# Parent  5a311da5df4077a7666cbfede428d8f29a6d14e6
+Redraw when overtype changed so caret change visible even when not blinking.
+Notify application with SC_UPDATE_SELECTION when overtype changed - previously
+sent SC_UPDATE_CONTENT.
+
+diff -r 5a311da5df40 -r 79f86be9e988 doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Mon Jul 03 05:45:07 2017 -0700
++++ b/doc/ScintillaHistory.html	Fri Jul 07 12:55:23 2017 +1000
+@@ -565,6 +565,11 @@
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1919/">Bug #1919</a>.
+ 	</li>
+ 	<li>
++	Ensure redraw when application changes overtype mode so caret change visible even when not blinking.
++	Notify application with SC_UPDATE_SELECTION when overtype changed - previously
++	sent SC_UPDATE_CONTENT.
++	</li>
++	<li>
+ 	Fix drawing failure when in wrap mode for delete to start/end of line which
+ 	affects later lines but did not redraw them.
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1949/">Bug #1949</a>.
+diff -r 5a311da5df40 -r 79f86be9e988 src/Editor.cxx
+--- a/src/Editor.cxx	Mon Jul 03 05:45:07 2017 -0700
++++ b/src/Editor.cxx	Fri Jul 07 12:55:23 2017 +1000
+@@ -3733,9 +3733,8 @@
+ 		break;
+ 	case SCI_EDITTOGGLEOVERTYPE:
+ 		inOverstrike = !inOverstrike;
++		ContainerNeedsUpdate(SC_UPDATE_SELECTION);
+ 		ShowCaretAtCurrentPosition();
+-		ContainerNeedsUpdate(SC_UPDATE_CONTENT);
+-		NotifyUpdateUI();
+ 		break;
+ 	case SCI_CANCEL:            	// Cancel any modes - handled in subclass
+ 		// Also unselect text
+@@ -7637,7 +7636,11 @@
+ 		}
+ 
+ 	case SCI_SETOVERTYPE:
+-		inOverstrike = wParam != 0;
++		if (inOverstrike != (wParam != 0)) {
++			inOverstrike = wParam != 0;
++			ContainerNeedsUpdate(SC_UPDATE_SELECTION);
++			ShowCaretAtCurrentPosition();
++		}
+ 		break;
+ 
+ 	case SCI_GETOVERTYPE:

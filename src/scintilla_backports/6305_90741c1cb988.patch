@@ -1,0 +1,188 @@
+# HG changeset patch
+# User Baldur Karlsson
+# Date 1497048580 -36000
+# Node ID 90741c1cb988ff0eae02774204a407417598e621
+# Parent  d0038cc1af239b3d0e7b57a32796536e15ef1efc
+Require GTK+ 2.24 or later. Removes support for earlier versions.
+
+diff -r d0038cc1af23 -r 90741c1cb988 gtk/PlatGTK.cxx
+--- a/gtk/PlatGTK.cxx	Sat Jun 10 08:37:19 2017 +1000
++++ b/gtk/PlatGTK.cxx	Sat Jun 10 08:49:40 2017 +1000
+@@ -45,21 +45,7 @@
+ }
+ 
+ static cairo_surface_t *CreateSimilarSurface(GdkWindow *window, cairo_content_t content, int width, int height) {
+-#if GTK_CHECK_VERSION(2,22,0)
+ 	return gdk_window_create_similar_surface(window, content, width, height);
+-#else
+-	cairo_surface_t *window_surface, *surface;
+-
+-	g_return_val_if_fail(GDK_IS_WINDOW(window), NULL);
+-
+-	window_surface = GDK_DRAWABLE_GET_CLASS(window)->ref_cairo_surface(window);
+-
+-	surface = cairo_surface_create_similar(window_surface, content, width, height);
+-
+-	cairo_surface_destroy(window_surface);
+-
+-	return surface;
+-#endif
+ }
+ 
+ static GdkWindow *WindowFromWidget(GtkWidget *w) {
+@@ -310,7 +296,6 @@
+ }
+ 
+ bool SurfaceImpl::Initialised() {
+-#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 8, 0)
+ 	if (inited && context) {
+ 		if (cairo_status(context) == CAIRO_STATUS_SUCCESS) {
+ 			// Even when status is success, the target surface may have been
+@@ -327,7 +312,6 @@
+ 		}
+ 		return cairo_status(context) == CAIRO_STATUS_SUCCESS;
+ 	}
+-#endif
+ 	return inited;
+ }
+ 
+@@ -537,12 +521,7 @@
+ static void PathRoundRectangle(cairo_t *context, double left, double top, double width, double height, int radius) {
+ 	double degrees = kPi / 180.0;
+ 
+-#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 2, 0)
+ 	cairo_new_sub_path(context);
+-#else
+-	// First arc is in the top-right corner and starts from a point on the top line
+-	cairo_move_to(context, left + width - radius, top);
+-#endif
+ 	cairo_arc(context, left + width - radius, top + radius, radius, -90 * degrees, 0 * degrees);
+ 	cairo_arc(context, left + width - radius, top + height - radius, radius, 0 * degrees, 90 * degrees);
+ 	cairo_arc(context, left + radius, top + height - radius, radius, 90 * degrees, 180 * degrees);
+@@ -588,11 +567,7 @@
+ 		rc.top += (rc.Height() - height) / 2;
+ 	rc.bottom = rc.top + height;
+ 
+-#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1,6,0)
+ 	int stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, width);
+-#else
+-	int stride = width * 4;
+-#endif
+ 	int ucs = stride * height;
+ 	std::vector<unsigned char> image(ucs);
+ 	for (int iy=0; iy<height; iy++) {
+@@ -706,11 +681,7 @@
+ 			}
+ 			pango_layout_set_font_description(layout, PFont(font_)->pfd);
+ 			pango_cairo_update_layout(context, layout);
+-#ifdef PANGO_VERSION
+ 			PangoLayoutLine *pll = pango_layout_get_line_readonly(layout,0);
+-#else
+-			PangoLayoutLine *pll = pango_layout_get_line(layout,0);
+-#endif
+ 			cairo_move_to(context, xText, ybase);
+ 			pango_cairo_show_layout_line(context, pll);
+ 		}
+@@ -897,11 +868,7 @@
+ 				}
+ 				pango_layout_set_text(layout, utfForm.c_str(), utfForm.length());
+ 			}
+-#ifdef PANGO_VERSION
+ 			PangoLayoutLine *pangoLine = pango_layout_get_line_readonly(layout,0);
+-#else
+-			PangoLayoutLine *pangoLine = pango_layout_get_line(layout,0);
+-#endif
+ 			pango_layout_line_get_extents(pangoLine, NULL, &pos);
+ 			return doubleFromPangoUnits(pos.width);
+ 		}
+diff -r d0038cc1af23 -r 90741c1cb988 gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Sat Jun 10 08:37:19 2017 +1000
++++ b/gtk/ScintillaGTK.cxx	Sat Jun 10 08:49:40 2017 +1000
+@@ -85,13 +85,8 @@
+ 
+ #include "Converter.h"
+ 
+-#if GTK_CHECK_VERSION(2,20,0)
+ #define IS_WIDGET_REALIZED(w) (gtk_widget_get_realized(GTK_WIDGET(w)))
+ #define IS_WIDGET_MAPPED(w) (gtk_widget_get_mapped(GTK_WIDGET(w)))
+-#else
+-#define IS_WIDGET_REALIZED(w) (GTK_WIDGET_REALIZED(w))
+-#define IS_WIDGET_MAPPED(w) (GTK_WIDGET_MAPPED(w))
+-#endif
+ 
+ #define SC_INDICATOR_INPUT INDIC_IME
+ #define SC_INDICATOR_TARGET INDIC_IME+1
+@@ -231,11 +226,7 @@
+ 
+ void ScintillaGTK::RealizeThis(GtkWidget *widget) {
+ 	//Platform::DebugPrintf("ScintillaGTK::realize this\n");
+-#if GTK_CHECK_VERSION(2,20,0)
+ 	gtk_widget_set_realized(widget, TRUE);
+-#else
+-	GTK_WIDGET_SET_FLAGS(widget, GTK_REALIZED);
+-#endif
+ 	GdkWindowAttr attrs;
+ 	attrs.window_type = GDK_WINDOW_CHILD;
+ 	GtkAllocation allocation;
+@@ -322,11 +313,7 @@
+ 		if (IS_WIDGET_MAPPED(widget)) {
+ 			gtk_widget_unmap(widget);
+ 		}
+-#if GTK_CHECK_VERSION(2,20,0)
+ 		gtk_widget_set_realized(widget, FALSE);
+-#else
+-		GTK_WIDGET_UNSET_FLAGS(widget, GTK_REALIZED);
+-#endif
+ 		gtk_widget_unrealize(PWidget(wText));
+ 		if (PWidget(scrollbarv))
+ 			gtk_widget_unrealize(PWidget(scrollbarv));
+@@ -361,11 +348,7 @@
+ void ScintillaGTK::MapThis() {
+ 	try {
+ 		//Platform::DebugPrintf("ScintillaGTK::map this\n");
+-#if GTK_CHECK_VERSION(2,20,0)
+ 		gtk_widget_set_mapped(PWidget(wMain), TRUE);
+-#else
+-		GTK_WIDGET_SET_FLAGS(PWidget(wMain), GTK_MAPPED);
+-#endif
+ 		MapWidget(PWidget(wText));
+ 		MapWidget(PWidget(scrollbarh));
+ 		MapWidget(PWidget(scrollbarv));
+@@ -387,11 +370,7 @@
+ void ScintillaGTK::UnMapThis() {
+ 	try {
+ 		//Platform::DebugPrintf("ScintillaGTK::unmap this\n");
+-#if GTK_CHECK_VERSION(2,20,0)
+ 		gtk_widget_set_mapped(PWidget(wMain), FALSE);
+-#else
+-		GTK_WIDGET_UNSET_FLAGS(PWidget(wMain), GTK_MAPPED);
+-#endif
+ 		DropGraphics(false);
+ 		gdk_window_hide(PWindow(wMain));
+ 		gtk_widget_unmap(PWidget(wText));
+@@ -2723,13 +2702,8 @@
+ 	try {
+ 		Point npt(x, y);
+ 		SetDragPosition(SPositionFromLocation(npt, false, false, UserVirtualSpace()));
+-#if GTK_CHECK_VERSION(2,22,0)
+ 		GdkDragAction preferredAction = gdk_drag_context_get_suggested_action(context);
+ 		GdkDragAction actions = gdk_drag_context_get_actions(context);
+-#else
+-		GdkDragAction preferredAction = context->suggested_action;
+-		GdkDragAction actions = context->actions;
+-#endif
+ 		SelectionPosition pos = SPositionFromLocation(npt);
+ 		if ((inDragDrop == ddDragging) && (PositionInSelection(pos.Position()))) {
+ 			// Avoid dragging selection onto itself as that produces a move
+@@ -2807,11 +2781,7 @@
+ 		if (!sciThis->sel.Empty()) {
+ 			sciThis->GetSelection(selection_data, info, &sciThis->drag);
+ 		}
+-#if GTK_CHECK_VERSION(2,22,0)
+ 		GdkDragAction action = gdk_drag_context_get_selected_action(context);
+-#else
+-		GdkDragAction action = context->action;
+-#endif
+ 		if (action == GDK_ACTION_MOVE) {
+ 			for (size_t r=0; r<sciThis->sel.Count(); r++) {
+ 				if (sciThis->posDrop >= sciThis->sel.Range(r).Start()) {
