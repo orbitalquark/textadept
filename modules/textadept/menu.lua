@@ -18,8 +18,8 @@ local SEPARATOR = {''}
 -- The following buffer functions need to be constantized in order for menu
 -- items to identify the key associated with the functions.
 local menu_buffer_functions = {
-  'undo', 'redo', 'cut', 'copy', 'paste', 'line_duplicate', 'clear',
-  'select_all', 'upper_case', 'lower_case', 'move_selected_lines_up',
+  'undo', 'redo', 'cut', 'copy', 'line_duplicate', 'clear', 'select_all',
+  'upper_case', 'lower_case', 'move_selected_lines_up',
   'move_selected_lines_down', 'zoom_in', 'zoom_out', 'colourise'
 }
 for i = 1, #menu_buffer_functions do
@@ -81,7 +81,7 @@ local default_menubar = {
     SEPARATOR,
     {_L['Cu_t'], buffer.cut},
     {_L['_Copy'], buffer.copy},
-    {_L['_Paste'], buffer.paste},
+    {_L['_Paste'], textadept.editing.paste},
     {_L['Duplicate _Line'], buffer.line_duplicate},
     {_L['_Delete'], buffer.clear},
     {_L['D_elete Word'], function()
