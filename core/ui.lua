@@ -338,7 +338,6 @@ local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 -- Sets default properties for a Scintilla document.
 events_connect(events.BUFFER_NEW, function()
-  buffer.code_page = buffer.CP_UTF8
   buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
