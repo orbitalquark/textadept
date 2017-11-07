@@ -11,6 +11,9 @@ local M = {}
 -- @field strip_trailing_spaces (bool)
 --   Strip trailing whitespace before saving files.
 --   The default value is `false`.
+-- @field paste_reindents (bool)
+--   Reindent pasted text according to the buffer's indentation settings.
+--   The default value is `true`.
 -- @field autocomplete_all_words (bool)
 --   Autocomplete the current word using words from all open buffers.
 --   If `true`, performance may be slow when many buffers are open.
@@ -23,6 +26,7 @@ module('textadept.editing')]]
 
 M.auto_indent = true
 M.strip_trailing_spaces = false
+M.paste_reindents = true
 M.autocomplete_all_words = false
 M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
@@ -224,6 +228,60 @@ events.connect(events.FILE_BEFORE_SAVE, function()
   buffer:convert_eols(buffer.eol_mode)
   buffer:end_undo_action()
 end)
+
+---
+-- Pastes the text from the clipboard, taking into account the buffer's
+-- indentation settings and the indentation of the current and preceding lines.
+-- @name paste
+function M.paste()
+  local line = buffer:line_from_position(buffer.selection_start)
+  if not M.paste_reindents or
+     buffer.selection_start > buffer.line_indent_position[line] then
+    buffer:paste()
+    return
+  end
+  -- Strip leading indentation from clipboard text.
+  local text = ui.clipboard_text
+  local lead = text:match('^%s*')
+  if lead ~= '' then text = text:sub(#lead + 1):gsub('\n'..lead, '\n') end
+  -- Change indentation to match buffer indentation settings.
+  local tab_width = math.huge
+  text = text:gsub('\n([ \t]+)', function(indentation)
+    if indentation:find('^\t') then
+      if buffer.use_tabs then return '\n'..indentation end
+      return '\n'..indentation:gsub('\t', string.rep(' ', buffer.tab_width))
+    else
+      tab_width = math.min(tab_width, #indentation)
+      local indent = math.floor(#indentation / tab_width)
+      local spaces = string.rep(' ', math.fmod(#indentation, tab_width))
+      if buffer.use_tabs then return '\n'..string.rep('\t', indent)..spaces end
+      return '\n'..string.rep(' ', buffer.tab_width):rep(indent)..spaces
+    end
+  end)
+  -- Re-indent according to whichever of the current and preceding lines has the
+  -- higher indentation amount.
+  local i = line - 1
+  while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
+  if i < 0 or buffer.line_indentation[i] < buffer.line_indentation[line] then
+    i = line
+  end
+  local s, e = buffer:position_from_line(i), buffer.line_indent_position[i]
+  text = text:gsub('\n', '\n'..buffer:text_range(s, e))
+  -- Paste the text and adjust first and last line indentation accordingly.
+  local start_indent = buffer.line_indentation[i]
+  local end_line = buffer:line_from_position(buffer.selection_end)
+  local end_indent = buffer.line_indentation[end_line]
+  local end_column = buffer.column[buffer.selection_end]
+  buffer:begin_undo_action()
+  buffer:replace_sel(text)
+  buffer.line_indentation[line] = start_indent
+  if text:find('\n') then
+    local line = buffer:line_from_position(buffer.current_pos)
+    buffer.line_indentation[line] = end_indent
+    buffer:goto_pos(buffer:find_column(line, end_column))
+  end
+  buffer:end_undo_action()
+end
 
 ---
 -- Goes to the current character's matching brace, selecting the text in between

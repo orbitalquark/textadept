@@ -297,7 +297,7 @@ if not OSX then keys.cy = buffer.redo end
 keys[not OSX and GUI and 'cZ' or 'mZ'] = buffer.redo
 keys[not OSX and 'cx' or 'mx'] = buffer.cut
 keys[not OSX and 'cc' or 'mc'] = buffer.copy
-keys[not OSX and 'cv' or 'mv'] = buffer.paste
+keys[not OSX and 'cv' or 'mv'] = textadept.editing.paste
 if GUI then keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate end
 keys.del = buffer.clear
 keys[not OSX and (GUI and 'adel' or 'mdel')
