@@ -284,25 +284,6 @@ function M.paste()
 end
 
 ---
--- Goes to the current character's matching brace, selecting the text in between
--- if *select* is `true`.
--- @param select Optional flag indicating whether or not to select the text
---   between matching braces. The default value is `false`.
--- @name match_brace
-function M.match_brace(select)
-  local pos = buffer.current_pos
-  local match_pos = buffer:brace_match(pos)
-  if match_pos == -1 then return end
-  if not select then
-    buffer:goto_pos(match_pos)
-  elseif match_pos > pos then
-    buffer:set_sel(pos, match_pos + 1)
-  else
-    buffer:set_sel(pos + 1, match_pos)
-  end
-end
-
----
 -- Comments or uncomments the selected lines based on the current language.
 -- As long as any part of a line is selected, the entire line is eligible for
 -- commenting/uncommenting.
@@ -426,14 +407,40 @@ end
 -- Selects the text between strings *left* and *right* that enclose the caret.
 -- If that range is already selected, toggles between selecting *left* and
 -- *right* as well.
--- @param left The left part of the enclosure.
--- @param right The right part of the enclosure.
+-- If *left* and *right* are not provided, they are inferred from the current
+-- position or selection.
+-- @param left Optional left part of the enclosure.
+-- @param right Optional right part of the enclosure.
 -- @name select_enclosed
 function M.select_enclosed(left, right)
-  local anchor, pos = buffer.anchor, buffer.current_pos
-  if anchor ~= pos then buffer:goto_pos(pos - #right) end
-  buffer:search_anchor()
-  local s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
+  local s, e, anchor, pos = -1, -1, buffer.anchor, buffer.current_pos
+  if left and right then
+    if anchor ~= pos then buffer:goto_pos(pos - #right) end
+    buffer:search_anchor()
+    s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
+  elseif M.auto_pairs then
+    s = buffer.selection_start
+    local char_at, style_at = buffer.char_at, buffer.style_at
+    while s >= 0 do
+      local match = M.auto_pairs[char_at[s]]
+      left, right = string.char(char_at[s]), match
+      if match then
+        if buffer:brace_match(s) >= buffer.selection_end - 1 then
+          e = buffer:brace_match(s)
+          break
+        elseif M.brace_matches[char_at[s]] or
+               style_at[s] == style_at[buffer.selection_start] then
+          buffer.search_flags = 0
+          buffer:set_target_range(s + 1, buffer.length)
+          if buffer:search_in_target(match) >= buffer.selection_end - 1 then
+            e = buffer.target_end - 1
+            break
+          end
+        end
+      end
+      s = s - 1
+    end
+  end
   if s >= 0 and e >= 0 then
     if s + #left == anchor and e == pos then s, e = s - #left, e + #right end
     buffer:set_sel(s + #left, e)
