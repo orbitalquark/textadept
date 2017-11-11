@@ -106,14 +106,9 @@ local default_menubar = {
     end},
     {
       title = _L['_Select'],
-      {_L['Select to _Matching Brace'], sel_enc},
+      {_L['Select between _Matching Delimiters'], sel_enc},
       {_L['Select between _XML Tags'], function() sel_enc('>', '<') end},
       {_L['Select in XML _Tag'], function() sel_enc('<', '>') end},
-      {_L['Select in _Single Quotes'], function() sel_enc("'", "'") end},
-      {_L['Select in _Double Quotes'], function() sel_enc('"', '"') end},
-      {_L['Select in _Parentheses'], function() sel_enc('(', ')') end},
-      {_L['Select in _Brackets'], function() sel_enc('[', ']') end},
-      {_L['Select in B_races'], function() sel_enc('{', '}') end},
       {_L['Select _Word'], textadept.editing.select_word},
       {_L['Select _Line'], textadept.editing.select_line},
       {_L['Select Para_graph'], textadept.editing.select_paragraph}
