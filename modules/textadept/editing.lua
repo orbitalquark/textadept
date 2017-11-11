@@ -407,10 +407,12 @@ end
 -- Selects the text between strings *left* and *right* that enclose the caret.
 -- If that range is already selected, toggles between selecting *left* and
 -- *right* as well.
--- If *left* and *right* are not provided, they are inferred from the current
+-- If *left* and *right* are not provided, they are assumed to be one of the
+-- delimiter pairs specified in `auto_pairs` and are inferred from the current
 -- position or selection.
 -- @param left Optional left part of the enclosure.
 -- @param right Optional right part of the enclosure.
+-- @see auto_pairs
 -- @name select_enclosed
 function M.select_enclosed(left, right)
   local s, e, anchor, pos = -1, -1, buffer.anchor, buffer.current_pos
