@@ -90,7 +90,10 @@ local default_menubar = {
     end},
     {_L['Select _All'], buffer.select_all},
     SEPARATOR,
-    {_L['_Match Brace'], textadept.editing.match_brace},
+    {_L['_Match Brace'], function()
+      local match_pos = buffer:brace_match(buffer.current_pos)
+      if match_pos >= 0 then buffer:goto_pos(match_pos) end
+    end},
     {_L['Complete _Word'], function()
       textadept.editing.autocomplete('word')
     end},
@@ -103,9 +106,7 @@ local default_menubar = {
     end},
     {
       title = _L['_Select'],
-      {_L['Select to _Matching Brace'], function()
-        textadept.editing.match_brace('select')
-      end},
+      {_L['Select to _Matching Brace'], sel_enc},
       {_L['Select between _XML Tags'], function() sel_enc('>', '<') end},
       {_L['Select in XML _Tag'], function() sel_enc('<', '>') end},
       {_L['Select in _Single Quotes'], function() sel_enc("'", "'") end},

@@ -303,7 +303,7 @@ keys.del = buffer.clear
 keys[not OSX and (GUI and 'adel' or 'mdel')
              or 'cdel'] = m_edit[_L['D_elete Word']][2]
 keys[not OSX and GUI and 'ca' or 'ma'] = buffer.select_all
-keys[GUI and 'cm' or 'mm'] = textadept.editing.match_brace
+keys[GUI and 'cm' or 'mm'] = m_edit[_L['_Match Brace']][2]
 keys[not OSX and ((GUI or WIN32) and 'c\n' or 'cmj')
              or 'cesc'] = m_edit[_L['Complete _Word']][2]
 if GUI then
