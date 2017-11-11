@@ -41,14 +41,9 @@ local M = {}
 -- Ctrl+T                  |^T       |^T            |Transpose characters
 -- Ctrl+Shift+J            |^J       |M-J           |Join lines
 -- Ctrl+&#124;             |⌘&#124;  |^\            |Filter text through
--- Ctrl+Shift+M            |^⇧M      |M-S-M         |Select to matching brace
+-- Ctrl+Shift+M            |^⇧M      |M-S-M         |Select between delimiters
 -- Ctrl+<                  |⌘<       |M-<           |Select between XML tags
 -- Ctrl+>                  |⌘>       |None          |Select in XML tag
--- Ctrl+"                  |⌘"       |M-"           |Select in double quotes
--- Ctrl+'                  |⌘'       |M-'           |Select in single quotes
--- Ctrl+(                  |⌘(       |M-(           |Select in parentheses
--- Ctrl+[                  |⌘[       |M-[           |Select in brackets
--- Ctrl+{                  |⌘{       |M-{           |Select in braces
 -- Ctrl+Shift+D            |⌘⇧D      |M-S-W         |Select word
 -- Ctrl+Shift+N            |⌘⇧N      |M-S-N         |Select line
 -- Ctrl+Shift+P            |⌘⇧P      |M-S-P         |Select paragraph
@@ -316,19 +311,12 @@ keys[not OSX and (GUI and 'c|' or 'c\\')
              or 'm|'] = m_edit[_L['_Filter Through']][2]
 -- Select.
 local m_sel = m_edit[_L['_Select']]
-keys[GUI and 'cM' or 'mM'] = m_sel[_L['Select to _Matching Brace']][2]
+keys[GUI and 'cM' or 'mM'] = m_sel[_L['Select between _Matching Delimiters']][2]
 keys[not OSX and GUI and 'c<'
                      or 'm<'] = m_sel[_L['Select between _XML Tags']][2]
 if GUI then
   keys[not OSX and 'c>' or 'm>'] = m_sel[_L['Select in XML _Tag']][2]
 end
-keys[not OSX and GUI and "c'"
-                     or "m'"] = m_sel[_L['Select in _Single Quotes']][2]
-keys[not OSX and GUI and 'c"'
-                     or 'm"'] = m_sel[_L['Select in _Double Quotes']][2]
-keys[not OSX and GUI and 'c(' or 'm('] = m_sel[_L['Select in _Parentheses']][2]
-keys[not OSX and GUI and 'c[' or 'm['] = m_sel[_L['Select in _Brackets']][2]
-keys[not OSX and GUI and 'c{' or 'm{'] = m_sel[_L['Select in B_races']][2]
 keys[not OSX and (GUI and 'cD' or 'mW') or 'mD'] = textadept.editing.select_word
 keys[not OSX and GUI and 'cN' or 'mN'] = textadept.editing.select_line
 keys[not OSX and GUI and 'cP' or 'mP'] = textadept.editing.select_paragraph
