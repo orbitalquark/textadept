@@ -69,6 +69,8 @@ else
     LDFLAGS += -ldl
     MAKE = make
   else
+    CC=cc
+    CXX=c++
     LDFLAGS += -liconv
     MAKE = gmake
   endif
@@ -270,14 +272,14 @@ textadeptjit-curses.exe: $(sci_objs) $(sci_lex_objs) ScintillaTerm.o \
 # Install/uninstall.
 
 install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
-                              ../modules ../properties.lua ../themes
+                              ../modules ../themes
 	install -d $(DESTDIR)$(bin_dir) $(DESTDIR)$(data_dir)
 	install $^ $(DESTDIR)$(data_dir)
 	cp -r $| $(DESTDIR)$(data_dir)
 	ln -s $(subst .., $(data_dir), $^) $(DESTDIR)$(bin_dir)
 	if [ -d "$(XDG_DATA_DIR)" ]; then \
 		install -d $(DESTDIR)$(XDG_DATA_DIR); \
-		install -t $(DESTDIR)$(XDG_DATA_DIR) $(desktop_files); \
+		install $(desktop_files) $(DESTDIR)$(XDG_DATA_DIR); \
 	fi
 	if [ -d "$(PIXMAPS_DIR)" ]; then \
 		install -d $(DESTDIR)$(PIXMAPS_DIR); \
@@ -534,7 +536,7 @@ clean-deps:
 # Count lines of code and generate ctags.
 
 sources = ../core ../modules/ansi_c ../modules/lua ../modules/textadept \
-          ../themes textadept.c Makefile ../init.lua ../properties.lua
+          ../themes textadept.c Makefile ../init.lua
 count: $(cloc) ; perl $< $(sources) --not-match-f=tadoc.lua
 ctags:
 	ctags -R --langdef=luax --langmap=luax:.lua --exclude="*doc*" \

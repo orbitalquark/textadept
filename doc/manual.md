@@ -989,11 +989,37 @@ order to configure Textadept.
 Textadept executes a *~/.textadept/init.lua*, your user-init file, on startup.
 If this file does not exist, Textadept creates it for you. This file allows you
 to write arbitrary Lua code that instructs Textadept what to do when the
-application starts. This includes (but is not limited to) changing the
-settings of existing modules, loading new modules, modifying key bindings,
-adding snippets, editing file associations, adding menu items, and changing the
-theme. This manual discusses these specific customizations, minus theming, in
-the sections below. Theming is covered in a later section.
+application starts. This includes (but is not limited to) changing editor
+preferences, changing the settings of existing modules, loading new modules,
+modifying key bindings, adding snippets, editing file associations, adding menu
+items, and changing the theme. This manual discusses these specific
+customizations, minus theming, in the sections below. Theming is covered in a
+later section.
+
+### Editor Preferences
+
+Editor preferences are stored in a [`buffer`][] object. Normally, each buffer
+can have its own individual preferences, but on startup, any preferences set
+apply to all subsequent buffers. For example, in order to override a setting
+like Textadept's default indentation setting of 2 spaces per indent, add the
+following to your *~/.textadept/init.lua*:
+
+  buffer.use_tabs = true
+  buffer.tab_width = 4
+
+(If you want to define per-language editor preferences, use the technique shown
+in the [Language Preferences](#Language.Preferences) section below.)
+
+Textadept's own *init.lua* contains the application's default editor settings
+(like 2 space indentation). This file is a good "quick reference" for
+configurable editor settings. It also has many commented out settings that
+you can copy to your *~/.textadept/init.lua* and uncomment in order to turn on
+(or change the value of before turning on). You can view a settings's
+documentation by pressing `Ctrl+H` (`^H` on Mac OSX | `M-H` or `M-S-H` in
+curses) or by reading the [buffer API documentation][].
+
+[`buffer`]: api.html#buffer
+[buffer API documentation]: api.html#buffer
 
 ### Module Preferences
 
@@ -1208,37 +1234,6 @@ Learn more about menus and how to customize them in the [menu documentation][].
 
 [menu documentation]: api.html#textadept.menu
 
-## Buffer Settings
-
-While your *~/.textadept/init.lua* is useful for configuring Textadept's general
-preferences, it is not adequate for configuring editor preferences (e.g. buffer
-indentation settings, scrolling and autocompletion behavior, etc.). Attempting
-to define such settings from *~/.textadept/init.lua* would only apply to the
-first buffer and view -- subsequent buffers and split views would not inherit
-those settings.
-
-For editor preferences, Textadept executes a *~/.textadept/properties.lua* each
-time Textadept loads a file for editing (either in the current view or in a new,
-split view). Therefore, in order to override a setting like Textadept's default
-indentation setting of 2 spaces per indent, add the following to your
-*~/.textadept/properties.lua*:
-
-    buffer.use_tabs = true
-    buffer.tab_width = 4
-
-(If you want to define per-language editor preferences, use the technique shown
-in the [Language Preferences](#Language.Preferences) section above.)
-
-Textadept's own *properties.lua* contains the application's default editor
-settings (like 2 space indentation). This file is a good "quick reference" for
-configurable editor properties. It also has many commented out properties that
-you can copy to your *~/.textadept/properties.lua* and uncomment in order to
-turn on (or change the value of before turning on). You can view a property's
-documentation by pressing `Ctrl+H` (`^H` on Mac OSX | `M-H` or `M-S-H` in
-curses) or by reading the [buffer API documentation][].
-
-[buffer API documentation]: api.html#buffer
-
 ## Locale Preference
 
 Textadept attempts to auto-detect your locale settings using the "$LANG"
@@ -1285,17 +1280,17 @@ display these standard colors (which may be completely different in the end).
 ## Setting Themes
 
 Override the default theme in your [*~/.textadept/init.lua*](#User.Init) using
-the [`ui.set_theme()`][] function. For example:
+the [`buffer.set_theme()`][] function. For example:
 
-    ui.set_theme(not CURSES and 'dark' or 'term')
+    buffer.set_theme(not CURSES and 'dark' or 'term')
 
-Either restart Textadept for changes to take effect or type [`reset()`][] in the
+Either restart Textadept for changes to take effect or type [`reset`][] in the
 [command entry](#Lua.Command.Entry).
 
-`ui.set_theme()` can also tweak theme properties like font face and font size
-without editing the theme file itself:
+`buffer.set_theme()` can also tweak theme properties like font face and font
+size without editing the theme file itself:
 
-    ui.set_theme('light', {font = 'Monospace', fontsize = 12})
+    buffer.set_theme('light', {font = 'Monospace', fontsize = 12})
 
 You can even tweak themes on a per-language basis. For example, in order to
 color Java functions black instead of the default orange, add the following to
@@ -1310,8 +1305,8 @@ color Java functions black instead of the default orange, add the following to
 For a full list of configurable properties, please consult the theme file you
 are using.
 
-[`ui.set_theme()`]: api.html#ui.set_theme
-[`reset()`]: api.html#reset
+[`buffer.set_theme()`]: api.html#buffer.set_theme
+[`reset`]: api.html#reset
 
 ## Creating Themes
 
@@ -2564,7 +2559,7 @@ find.goto\_file\_in\_list()       |Renamed |find.[goto\_file\_found()][]
 select\_theme                     |Removed |N/A
 N/A                               |New     |[dialogs][]
 filteredlist                      |Removed |N/A
-set\_theme(name, ...)             |Changed |[set\_theme][](name, table)
+set\_theme(name, ...)             |Changed |set\_theme(name, table)
 **io**                            |        |
 try\_encodings                    |Renamed |[encodings][]
 open\_file(string)                |Changed |[open\_file][](string or table)
@@ -2613,7 +2608,6 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [maximized]: api.html#ui.maximized
 [goto\_file\_found()]: api.html#ui.find.goto_file_found
 [dialogs]: api.html#ui.dialogs
-[set\_theme]: api.html#ui.set_theme
 [encodings]: api.html#io.encodings
 [open\_file]: api.html#io.open_file
 [snapopen]: api.html#io.snapopen
@@ -2714,9 +2708,9 @@ Notes:
 5. Set view properties related to colors directly in *theme.lua* now instead of
    a separate *view.lua*. You may use color properties defined earlier. Try to
    refrain from setting properties like `buffer.sel_eol_filled` which belong in
-   a [*properties.lua*](#Buffer.Settings) file.
-6. The separate *buffer.lua* is gone. Use [*properties.lua*](#Buffer.Settings)
-   or a [language module](#Language-Specific.Buffer.Settings).
+   a *properties.lua* file.
+6. The separate *buffer.lua* is gone. Use *properties.lua* or a
+   [language module](#Language-Specific.Buffer.Settings).
 
 ##### Theme Preference
 
