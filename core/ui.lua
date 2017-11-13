@@ -37,11 +37,6 @@ module('ui')]]
 
 ui.silent_print = false
 
-local theme = package.searchpath(not CURSES and 'light' or 'term',
-                                 _USERHOME..'/themes/?.lua;'..
-                                 _HOME..'/themes/?.lua')
-local theme_props = {}
-
 -- Helper function for printing messages to buffers.
 -- @see ui._print
 local function _print(buffer_type, ...)
@@ -265,88 +260,10 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
   io.open_file(filename)
 end
 
----
--- Switches the editor theme to string *name* and (optionally) assigns the
--- properties contained in table *props*.
--- User themes override Textadept's default themes when they have the same name.
--- If *name* contains slashes, it is assumed to be an absolute path to a theme
--- instead of a theme name.
--- @param name The name or absolute path of a theme to set.
--- @param props Optional table of theme property assignments that override the
---   theme's defaults.
--- @usage ui.set_theme('light', {font = 'Monospace', fontsize = 12})
--- @name set_theme
-function ui.set_theme(name, props)
-  name = name:find('[/\\]') and name or
-         package.searchpath(name, _USERHOME..'/themes/?.lua;'..
-                                  _HOME..'/themes/?.lua')
-  if not name or not lfs.attributes(name) then return end
-  props = props or {}
-  local current_buffer, current_view = buffer, view
-  for i = 1, #_BUFFERS do
-    view:goto_buffer(_BUFFERS[i])
-    dofile(name)
-    for prop, value in pairs(props) do buffer.property[prop] = value end
-  end
-  view:goto_buffer(current_buffer)
-  for i = 1, #_VIEWS do
-    ui.goto_view(_VIEWS[i])
-    dofile(name)
-    for prop, value in pairs(props) do buffer.property[prop] = value end
-  end
-  ui.goto_view(current_view)
-  theme, theme_props = name, props
-end
-
 local events, events_connect = events, events.connect
 
--- Loads the theme and properties files.
-local function load_theme_and_settings()
-  dofile(theme)
-  for prop, value in pairs(theme_props) do buffer.property[prop] = value end
-  dofile(_HOME..'/properties.lua')
-  if lfs.attributes(_USERHOME..'/properties.lua') then
-    dofile(_USERHOME..'/properties.lua')
-  end
-end
-
--- Sets default properties for a Scintilla window.
-events_connect(events.VIEW_NEW, function()
-  local buffer = buffer
-  -- Allow redefinitions of these Scintilla key commands.
-  local ctrl_keys = {
-    '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
-  }
-  local ctrl_shift_keys = {'L', 'T', 'U', 'Z'}
-  for i = 1, #ctrl_keys do
-    buffer:clear_cmd_key(string.byte(ctrl_keys[i]) +
-                         bit32.lshift(buffer.MOD_CTRL, 16))
-  end
-  for i = 1, #ctrl_shift_keys do
-    buffer:clear_cmd_key(string.byte(ctrl_shift_keys[i]) +
-                         bit32.lshift(buffer.MOD_CTRL + buffer.MOD_SHIFT, 16))
-  end
-  -- Since BUFFER_NEW loads themes and settings on startup, only load them for
-  -- subsequent views.
-  if #_VIEWS > 1 then load_theme_and_settings() end
-end)
+-- Ensure title, statusbar, etc. are updated for new views.
 events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
-
-local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
-local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
-local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
-local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
--- Sets default properties for a Scintilla document.
-events_connect(events.BUFFER_NEW, function()
-  buffer.lexer_language = 'lpeg'
-  buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
-  buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-  buffer:private_lexer_call(SETLUASTATE, _LUA)
-  buffer.property['lexer.lpeg.home'] = _USERHOME..'/lexers/?.lua;'..
-                                       _HOME..'/lexers'
-  load_theme_and_settings()
-  buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
-end)
 
 -- Switches between buffers when a tab is clicked.
 events_connect(events.TAB_CLICKED,
@@ -434,6 +351,7 @@ end)
 -- Updates titlebar and statusbar.
 local function update_bars()
   set_title()
+  local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   events.emit(events.UPDATE_UI)
 end
