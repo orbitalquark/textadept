@@ -149,7 +149,7 @@ end)
 events.connect(events.UPDATE_UI, function(updated)
   if updated and bit32.band(updated, 3) == 0 then return end -- ignore scrolling
   if M.brace_matches[buffer.char_at[buffer.current_pos]] then
-    local match = buffer:brace_match(buffer.current_pos)
+    local match = buffer:brace_match(buffer.current_pos, 0)
     if match ~= -1 then
       buffer:brace_highlight(buffer.current_pos, match)
     else
@@ -427,8 +427,8 @@ function M.select_enclosed(left, right)
       local match = M.auto_pairs[char_at[s]]
       left, right = string.char(char_at[s]), match
       if match then
-        if buffer:brace_match(s) >= buffer.selection_end - 1 then
-          e = buffer:brace_match(s)
+        if buffer:brace_match(s, 0) >= buffer.selection_end - 1 then
+          e = buffer:brace_match(s, 0)
           break
         elseif M.brace_matches[char_at[s]] or
                style_at[s] == style_at[buffer.selection_start] then
@@ -688,7 +688,7 @@ function M.show_documentation()
   -- that function as well.
   local char_at = buffer.char_at
   while s >= 0 and char_at[s] ~= 40 do s = s - 1 end
-  e = buffer:brace_match(s)
+  e = buffer:brace_match(s, 0)
   if s > 0 and (e == -1 or e >= buffer.current_pos) then
     s, e = buffer:word_start_position(s - 1, true), s - 1
     symbol = buffer:text_range(s, e + 1)

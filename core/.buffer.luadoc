@@ -1437,8 +1437,9 @@ function brace_highlight_indicator(buffer, use_indicator, indicator) end
 -- '>' and must have the same style.
 -- @param buffer A buffer.
 -- @param pos The position of the brace in *buffer* to match.
+-- @param max_re_style Must be `0`. Reserved for expansion.
 -- @return number
-function brace_match(buffer, pos) end
+function brace_match(buffer, pos, max_re_style) end
 
 ---
 -- Returns whether or not a call tip is visible.
