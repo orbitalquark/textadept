@@ -91,7 +91,7 @@ local default_menubar = {
     {_L['Select _All'], buffer.select_all},
     SEPARATOR,
     {_L['_Match Brace'], function()
-      local match_pos = buffer:brace_match(buffer.current_pos)
+      local match_pos = buffer:brace_match(buffer.current_pos, 0)
       if match_pos >= 0 then buffer:goto_pos(match_pos) end
     end},
     {_L['Complete _Word'], function()
