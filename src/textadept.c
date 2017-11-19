@@ -982,8 +982,8 @@ static sptr_t l_todoc(lua_State *L, int index) {
 
 /**
  * Compares the Scintilla document at the given index with the global one and
- * returns 0 if they are equivalent, less than zero if that document belongs to
- * the command entry, and greater than zero otherwise.
+ * returns 0 if they are equivalent, -1 if that document belongs to the command
+ * entry, and any other value otherwise.
  * In the last case, loads the document in `dummy_view` for non-global document
  * use (unless it is already loaded). Raises and error if the value is not a
  * Scintilla document or if the document no longer exists.
@@ -1000,6 +1000,8 @@ static sptr_t l_globaldoccompare(lua_State *L, int index) {
     luaL_argcheck(L, (l_pushdoc(L, doc), lua_gettable(L, -2) != LUA_TNIL),
                   index, "this Buffer does not exist");
     lua_pop(L, 2); // buffer, ta_buffers
+    // TODO: technically, (uptr_t)-1 is a valid memory address, but in two's
+    // compliment, that is the absolute last byte, so unlikely to occur.
     if (doc == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) return -1;
     if (doc == SS(dummy_view, SCI_GETDOCPOINTER, 0, 0)) return doc; // keep
     return (SS(dummy_view, SCI_SETDOCPOINTER, 0, doc), doc);
@@ -1213,7 +1215,7 @@ static int lbuf_closure(lua_State *L) {
     //if (lL_hasmetatable(L, 1, "ta_view"))
     //  lua_getfield(L, 1, "buffer"), lua_replace(L, 1); // use view.buffer
     int result = l_globaldoccompare(L, 1);
-    if (result != 0) view = (result > 0) ? dummy_view : command_entry;
+    if (result != 0) view = (result != -1) ? dummy_view : command_entry;
   }
   // Interface table is of the form {msg, rtype, wtype, ltype}.
   return l_callscintilla(L, view, l_rawgetiint(L, lua_upvalueindex(1), 1),
@@ -1248,7 +1250,7 @@ static int lbuf_property(lua_State *L) {
     // Interface table is of the form {get_id, set_id, rtype, wtype}.
     if (!is_buffer) lua_getfield(L, 1, "buffer");
     int result = l_globaldoccompare(L, is_buffer ? 1 : -1);
-    if (result != 0) view = (result > 0) ? dummy_view : command_entry;
+    if (result != 0) view = (result != -1) ? dummy_view : command_entry;
     if (!is_buffer) lua_pop(L, 1);
     if (is_buffer && l_rawgetiint(L, -1, 4) != SVOID) { // indexible property
       lua_newtable(L);
