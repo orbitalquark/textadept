@@ -261,6 +261,9 @@ local M = {}
 -- @field VIEW_AFTER_SWITCH (string)
 --   Emitted right after switching to another view.
 --   Emitted by [`ui.goto_view()`]().
+-- @field ZOOM (string)
+--   Emitted after changing [`buffer.zoom`]().
+--   Emitted by [`buffer.zoom_in()`]() and [`buffer.zoom_out()`]().
 module('events')]]
 
 local handlers = {}
@@ -349,10 +352,11 @@ local scnotifications = {
   [c.SCN_URIDROPPED] = {'uri_dropped', 'text'},
   [c.SCN_DWELLSTART] = {'dwell_start', 'position', 'x', 'y'},
   [c.SCN_DWELLEND] = {'dwell_end', 'position', 'x', 'y'},
-  [c.SCN_CALLTIPCLICK] = {'call_tip_click', 'position'},
-  [c.SCN_AUTOCSELECTION] = {'auto_c_selection', 'text', 'position'},
+  [c.SCN_ZOOM] = {'zoom'},
   [c.SCN_INDICATORCLICK] = {'indicator_click', 'position', 'modifiers'},
   [c.SCN_INDICATORRELEASE] = {'indicator_release', 'position'},
+  [c.SCN_CALLTIPCLICK] = {'call_tip_click', 'position'},
+  [c.SCN_AUTOCSELECTION] = {'auto_c_selection', 'text', 'position'},
   [c.SCN_AUTOCCANCELLED] = {'auto_c_cancelled'},
   [c.SCN_AUTOCCHARDELETED] = {'auto_c_char_deleted'},
   [c.SCN_AUTOCCOMPLETED] = {'auto_c_completed', 'text', 'position'},
