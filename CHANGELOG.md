@@ -9,6 +9,61 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.0 alpha (01 Jan 2018)
+
+Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to
+Textadept 10.
+
+Download:
+
+* [Textadept 10.0 alpha -- Win32][] | [PGP -- 10.0 alpha Win32][]
+* [Textadept 10.0 alpha -- Mac OSX Intel 10.5+][] | [PGP -- 10.0 alpha OSX][]
+* [Textadept 10.0 alpha -- Linux][] | [PGP -- 10.0 alpha Linux][]
+* [Textadept 10.0 alpha -- Linux x86_64][] | [PGP -- 10.0 alpha Linux x86_64][]
+* [Textadept 10.0 alpha -- Modules][] | [PGP -- 10.0 alpha Modules][]
+
+Bugfixes:
+
+* Scintilla: Fixed a couple of wrapped line drawing cases.
+* Scintilla: Ensure overtype caret is drawn when manually set.
+* Scintilla: Fixed some instances of incorrect scrollbar drawing and flickering.
+* Scintilla: Fixed line selection when clicking in the margin when scrolled.
+
+Changes:
+
+* Textadept requires GTK 2.24 (circa early-2011) or greater.
+* Pasted text is reindented by default via [`textadept.editing.paste()`][], and
+  is configured with [`textadept.editing.paste_reindents`][].
+* Replaced `textadept.editing.match_brace()` with a menu function, enhanced
+  [`textadept.editing.select_enclosed()`][] behavior, and removed redundant
+  "Select in ..." menu items.
+* Removed the need for *~/.textadept/properties.lua*. All `buffer` settings set
+  in *~/.textadept/init.lua* will apply to the first and subsequent buffers.
+* Renamed `ui.set_theme()` to [`buffer.set_theme()`][].
+* Enforce extra argument to [`buffer.brace_match()`][] added back in Scintilla
+  3.7.0.
+* Added [`events.ZOOM`][].
+* Added [`buffer.move_extends_selection`][].
+
+[9 to 10 migration guide]: manual.html#Textadept.9.to.10
+[Textadept 10.0 alpha -- Win32]: download/textadept_10.0_alpha.win32.zip
+[Textadept 10.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_10.0_alpha.osx.zip
+[Textadept 10.0 alpha -- Linux]: download/textadept_10.0_alpha.i386.tgz
+[Textadept 10.0 alpha -- Linux x86_64]: download/textadept_10.0_alpha.x86_64.tgz
+[Textadept 10.0 alpha -- Modules]: download/textadept_10.0_alpha.modules.zip
+[PGP -- 10.0 alpha Win32]: download/textadept_10.0_alpha.win32.zip.asc
+[PGP -- 10.0 alpha OSX]: download/textadept_10.0_alpha.osx.zip.asc
+[PGP -- 10.0 alpha Linux]: download/textadept_10.0_alpha.i386.tgz.asc
+[PGP -- 10.0 alpha Linux x86_64]: download/textadept_10.0_alpha.x86_64.tgz.asc
+[PGP -- 10.0 alpha Modules]: download/textadept_10.0_alpha.modules.zip.asc
+[`textadept.editing.paste()`]: api.html#textadept.editing.paste
+[`textadept.editing.paste_reindents`]: api.html#textadept.editing.paste_reindents
+[`textadept.editing.select_enclosed()`]: api.html#textadept.editing.select_enclosed
+[`buffer.set_theme()`]: api.html#buffer.set_theme
+[`buffer.brace_match()`]: api.html#buffer.brace_match
+[`events.ZOOM`]: api.html#events.ZOOM
+[`buffer.move_extends_selection`]: api.html#buffer.move_extends_selection
+
 ## 9.6 (01 Nov 2017)
 
 Download:
