@@ -2221,6 +2221,62 @@ terminal's constraints:
 
 ## Migration Guides
 
+### Textadept 9 to 10
+
+#### API Changes
+
+Old API                         |Change  |New API
+--------------------------------|:------:|-------
+**buffer**                      |        |
+brace\_match(pos)               |Changed |[brace\_match][](pos, 0)
+**lexer**                       |        |
+\_foldsymbols                   |Replaced|[add\_fold\_point()][]
+\_rules                         |Replaced|[add\_rule()][]
+\_tokenstyles                   |Replaced|[add\_style()][]
+embed\_lexer(parent, child, ...)|Renamed |parent:[embed][](child, ...)
+\_RULES\[id\]                   |Replaced|[get\_rule][](id)
+\_RULES\[id\] = rule            |Replaced|[modify\_rule][](id, rule)
+N/A                             |Added   |[new()][]
+word\_match(list, wchars, icase)|Changed |[word\_match][](words, icase)
+**ui**                          |        |
+set\_theme                      |Renamed |[buffer.set\_theme()][]
+**textadept.editing**           |        |
+match\_brace                    |Replaced|N/A _(menu function)_
+N/A                             |Added   |[paste()][]
+N/A                             |Added   |[paste\_reindents][]
+
+[brace\_match]: api.html#buffer.brace_match
+[add\_fold\_point()]: api.html#lexer.add_fold_point
+[add\_rule()]: api.html#lexer.add_rule
+[add\_style()]: api.html#lexer.add_style
+[embed]: api.html#lexer.embed
+[get\_rule]: api.html#lexer.get_rule
+[modify\_rule]: api.html#lexer.modify_rule
+[new()]: api.html#lexer.new
+[word\_match]: api.html#lexer.word_match
+[buffer.set\_theme()]: api.html#buffer.set_theme
+[paste()]: api.html#textadept.editing.paste
+[paste\_reindents]: api.html#textadept.editing.paste_reindents
+
+#### Configuration Changes
+
+Textadept 10 no longer uses a *~/.textadept/properties.lua* file. Instead, all
+`buffer` settings are made in *~/.textadept/init.lua*, and apply to the first
+and any subsequent buffers. (In Textadept 9, any `buffer` settings made in
+*~/.textadept/init.lua* only applied to the first buffer, so a
+*~/.textadept/properties.lua* was required in order to define `buffer` settings
+that would affect subsequent buffers.)
+
+Simply copying the contents of your *~/.textadept/properties.lua* into
+*~/.textadept/init.lua* should be sufficient.
+
+#### Lexer Changes
+
+Lexers are now written in a more object-oriented way. Legacy lexers are still
+supported, but it is recommended that you [migrate them][].
+
+[migrate them]: api.html#lexer.Migrating.Legacy.Lexers
+
 ### Textadept 8 to 9
 
 Textadept 9 introduces minor API changes (mostly renames of existing functions
