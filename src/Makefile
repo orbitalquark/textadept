@@ -399,7 +399,7 @@ ifndef NIGHTLY
   #scinterm_url = http://foicica.com/scinterm/download/$@
   scinterm_url = http://foicica.com/hg/scinterm/archive/$@
   #scintillua_url = http://foicica.com/scintillua/download/$@
-  scintillua_url = http://foicica.com/scintillua/archive/$@
+  scintillua_url = http://foicica.com/hg/scintillua/archive/$@
   gtdialog_url = http://foicica.com/gtdialog/download/$@
   lspawn_url = http://foicica.com/lspawn/download/$@
 else
