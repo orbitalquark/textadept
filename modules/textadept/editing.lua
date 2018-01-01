@@ -555,7 +555,7 @@ end
 ---
 -- Passes the selected text or all buffer text to string shell command *command*
 -- as standard input (stdin) and replaces the input text with the command's
--- standard output (stdout).
+-- standard output (stdout). *command* may contain pipes.
 -- Standard input is as follows:
 --
 -- 1. If text is selected and spans multiple lines, all text on the lines that
@@ -566,7 +566,7 @@ end
 -- used.
 -- 3. If no text is selected, the entire buffer is used.
 -- @param command The Linux, BSD, Mac OSX, or Windows shell command to filter
---   text through.
+--   text through. May contain pipes.
 -- @name filter_through
 function M.filter_through(command)
   local s, e = buffer.selection_start, buffer.selection_end
