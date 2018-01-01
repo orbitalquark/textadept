@@ -137,7 +137,6 @@ KEYPRESS	_	0;"	F	class:events
 KEYSYMS	_	0;"	t	class:keys
 KEYWORD	_	0;"	F	class:lexer
 LABEL	_	0;"	F	class:lexer
-LEXERPATH	_	0;"	F	class:lexer
 LEXER_LOADED	_	0;"	F	class:events
 LINUX	_	0;"	F	
 MARGINOPTION_NONE	_	0;"	F	class:buffer
@@ -317,14 +316,13 @@ WS_INVISIBLE	_	0;"	F	class:buffer
 WS_VISIBLEAFTERINDENT	_	0;"	F	class:buffer
 WS_VISIBLEALWAYS	_	0;"	F	class:buffer
 XPM_IMAGES	_	0;"	t	class:textadept.editing
+ZOOM	_	0;"	F	class:events
 _BUFFERS	_	0;"	t	
 _CHARSET	_	0;"	F	
-_FOLDBYINDENTATION	_	0;"	F	class:lexer.lexer
 _G	_	0;"	F	
 _G	_	0;"	m	
 _HOME	_	0;"	F	
 _L	_	0;"	m	
-_LEXBYLINE	_	0;"	F	class:lexer.lexer
 _M	_	0;"	m	
 _M.ansi_c	_	0;"	m	
 _M.css	_	0;"	m	
@@ -334,28 +332,24 @@ _M.python	_	0;"	m
 _M.rest	_	0;"	m	
 _M.ruby	_	0;"	m	
 _M.yaml	_	0;"	m	
-_NAME	_	0;"	F	class:lexer.lexer
 _RELEASE	_	0;"	F	
-_RULES	_	0;"	F	class:lexer.lexer
 _SCINTILLA	_	0;"	m	
 _USERHOME	_	0;"	F	
 _VERSION	_	0;"	F	
 _VIEWS	_	0;"	t	
 _cancel_current	_	0;"	f	class:textadept.snippets
-_fold	_	0;"	F	class:lexer.lexer
-_foldsymbols	_	0;"	F	class:lexer.lexer
 _insert	_	0;"	f	class:textadept.snippets
-_lexer	_	0;"	F	class:lexer.lexer
 _paths	_	0;"	t	class:textadept.snippets
 _previous	_	0;"	f	class:textadept.snippets
 _print	_	0;"	f	class:ui
-_rules	_	0;"	F	class:lexer.lexer
 _select	_	0;"	f	class:textadept.snippets
-_tokenstyles	_	0;"	F	class:lexer.lexer
 abs	_	0;"	f	class:math
 abspath	_	0;"	f	class:lfs
 acos	_	0;"	f	class:math
+add_fold_point	_	0;"	f	class:lexer
+add_rule	_	0;"	f	class:lexer
 add_selection	_	0;"	f	class:buffer
+add_style	_	0;"	f	class:lexer
 add_text	_	0;"	f	class:buffer
 additional_caret_fore	_	0;"	F	class:buffer
 additional_carets_blink	_	0;"	F	class:buffer
@@ -564,7 +558,7 @@ edge_mode	_	0;"	F	class:buffer
 edit_toggle_overtype	_	0;"	f	class:buffer
 editing	_	0;"	m	class:textadept
 editing_keys	_	0;"	t	class:ui.command_entry
-embed_lexer	_	0;"	f	class:lexer
+embed	_	0;"	f	class:lexer
 emit	_	0;"	f	class:events
 empty_undo_buffer	_	0;"	f	class:buffer
 enclose	_	0;"	f	class:textadept.editing
@@ -641,6 +635,7 @@ get_line	_	0;"	f	class:buffer
 get_line_sel_end_position	_	0;"	f	class:buffer
 get_line_sel_start_position	_	0;"	f	class:buffer
 get_project_root	_	0;"	f	class:io
+get_rule	_	0;"	f	class:lexer
 get_sel_text	_	0;"	f	class:buffer
 get_split_table	_	0;"	f	class:ui
 get_text	_	0;"	f	class:buffer
@@ -728,7 +723,6 @@ len	_	0;"	f	class:utf8
 length	_	0;"	F	class:buffer
 lex	_	0;"	f	class:lexer
 lexer	_	0;"	m	
-lexer	_	0;"	t	class:lexer
 lexers	_	0;"	t	class:textadept.file_types
 lfs	_	0;"	m	
 line_copy	_	0;"	f	class:buffer
@@ -823,7 +817,6 @@ marker_previous	_	0;"	f	class:buffer
 marker_symbol_defined	_	0;"	f	class:buffer
 match	_	0;"	f	class:lpeg
 match	_	0;"	f	class:string
-match_brace	_	0;"	f	class:textadept.editing
 match_case	_	0;"	F	class:ui.find
 match_case_label_text	_	0;"	F	class:ui.find
 math	_	0;"	m	
@@ -841,6 +834,7 @@ mininteger	_	0;"	F	class:math
 mkdir	_	0;"	f	class:lfs
 modf	_	0;"	f	class:math
 modify	_	0;"	F	class:buffer
+modify_rule	_	0;"	f	class:lexer
 module	_	0;"	f	
 mouse_dwell_time	_	0;"	F	class:buffer
 mouse_selection_rectangular_switch	_	0;"	F	class:buffer
@@ -857,6 +851,7 @@ multiple_select_add_next	_	0;"	f	class:buffer
 multiple_selection	_	0;"	F	class:buffer
 nested_pair	_	0;"	f	class:lexer
 new	_	0;"	f	class:buffer
+new	_	0;"	f	class:lexer
 new_line	_	0;"	f	class:buffer
 newline	_	0;"	F	class:lexer
 next	_	0;"	f	
@@ -893,6 +888,9 @@ para_down_extend	_	0;"	f	class:buffer
 para_up	_	0;"	f	class:buffer
 para_up_extend	_	0;"	f	class:buffer
 paste	_	0;"	f	class:buffer
+paste	_	0;"	f	class:textadept.editing
+paste_reindents	_	0;"	F	class:textadept.editing
+path	_	0;"	F	class:lexer
 path	_	0;"	F	class:package
 patterns	_	0;"	t	class:textadept.file_types
 pcall	_	0;"	f	
@@ -1044,7 +1042,7 @@ set_selection	_	0;"	f	class:buffer
 set_styling	_	0;"	f	class:buffer
 set_target_range	_	0;"	f	class:buffer
 set_text	_	0;"	f	class:buffer
-set_theme	_	0;"	f	class:ui
+set_theme	_	0;"	f	class:buffer
 set_visible_policy	_	0;"	f	class:buffer
 set_whitespace_back	_	0;"	f	class:buffer
 set_whitespace_fore	_	0;"	f	class:buffer
