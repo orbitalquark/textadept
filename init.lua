@@ -253,8 +253,8 @@ buffer.wrap_mode = buffer.WRAP_NONE
 buffer.accessibility = buffer.ACCESSIBILITY_DISABLED
 
 -- Temporary compatibility notices for Textadept 10.
-function ui.set_theme(...) events.connect(events.INITIALIZED, function() ui.dialogs.ok_msgbox{title='Textadept 10 Compatibility Notice',informative_text='ui.set_theme() is now buffer.set_theme().\nPlease update your ~/.textadept/init.lua accordingly.',no_cancel=true} end) buffer.set_theme(...) end
-events.connect(events.INITIALIZED, function() if lfs.attributes(_USERHOME..'/properties.lua') then ui.dialogs.ok_msgbox{title='Textadept 10 Compatibility Notice',informative_text='~/.textadept/properties.lua is not read anymore.\nPlease move its contents to ~/.textadept/init.lua.',no_cancel=true} end end)
+function ui.set_theme(...) events.connect(events.INITIALIZED, function() ui.print('Textadept 10 Compatibility Notice: ui.set_theme() is now buffer.set_theme(). Please update your ~/.textadept/init.lua accordingly.') end) buffer.set_theme(...) end
+events.connect(events.INITIALIZED, function() if lfs.attributes(_USERHOME..'/properties.lua') then ui.print('Textadept 10 Compatibility Notice: textadept/properties.lua is not read anymore. Please move its contents to ~/.textadept/init.lua.') end end)
 
 -- Load user init file, which may also define default buffer settings.
 local user_init = _USERHOME..'/init.lua'
