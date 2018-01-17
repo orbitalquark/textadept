@@ -233,6 +233,7 @@ buffer.property['fold'] = '1'
 --buffer.property['fold.by.indentation'] = '1'
 --buffer.property['fold.line.comments'] = '1'
 --buffer.property['fold.on.zero.sum.lines'] = '1'
+--buffer.property['fold.compact'] = '1'
 buffer.automatic_fold = buffer.AUTOMATICFOLD_SHOW + buffer.AUTOMATICFOLD_CLICK +
                         buffer.AUTOMATICFOLD_CHANGE
 buffer.fold_flags = not CURSES and buffer.FOLDFLAG_LINEAFTER_CONTRACTED or 0
