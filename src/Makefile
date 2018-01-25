@@ -297,7 +297,7 @@ uninstall:
 # Clean.
 
 clean:
-	$(MAKE) -C luajit clean
+	$(MAKE) CC=$(CC) -C luajit clean
 	rm -f *.o ../textadept*
 
 # Documentation.
