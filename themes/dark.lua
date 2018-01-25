@@ -1,4 +1,4 @@
--- Copyright 2007-2017 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2018 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- Dark theme for Textadept.
 -- Contributions by Ana Balan.
 
