@@ -2,7 +2,7 @@ diff -r 49c8684413c0 driver-win32-pdcurses.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
 +++ b/driver-win32-pdcurses.c	Tue Dec 23 13:31:50 2014 -0500
 @@ -0,0 +1,106 @@
-+// Copyright 2014-2017 Mitchell mitchell.att.foicica.com. See LICENSE.
++// Copyright 2014-2018 Mitchell mitchell.att.foicica.com. See LICENSE.
 +
 +#include "termkey.h"
 +#include "termkey-internal.h"
