@@ -1,0 +1,79 @@
+# HG changeset patch
+# User Mitchell
+# Date 1511141091 -39600
+# Node ID 85205da6ec1b8eeb14c3edc94064fb0d8f685377
+# Parent  f78045efae202c3da36b6f347cc695da44a1d522
+Add SCI_GETMOVEEXTENDSSELECTION.
+
+diff -r f78045efae20 -r 85205da6ec1b doc/ScintillaDoc.html
+--- a/doc/ScintillaDoc.html	Mon Nov 20 11:48:00 2017 +1100
++++ b/doc/ScintillaDoc.html	Mon Nov 20 12:24:51 2017 +1100
+@@ -1222,6 +1222,7 @@
+      <a class="message" href="#SCI_SELECTIONISRECTANGLE">SCI_SELECTIONISRECTANGLE &rarr; bool</a><br />
+      <a class="message" href="#SCI_SETSELECTIONMODE">SCI_SETSELECTIONMODE(int selectionMode)</a><br />
+      <a class="message" href="#SCI_GETSELECTIONMODE">SCI_GETSELECTIONMODE &rarr; int</a><br />
++     <a class="message" href="#SCI_GETMOVEEXTENDSSELECTION">SCI_GETMOVEEXTENDSSELECTION &rarr; bool</a><br />
+      <a class="message" href="#SCI_GETLINESELSTARTPOSITION">SCI_GETLINESELSTARTPOSITION(int line) &rarr; position</a><br />
+      <a class="message" href="#SCI_GETLINESELENDPOSITION">SCI_GETLINESELENDPOSITION(int line) &rarr; position</a><br />
+      <a class="message" href="#SCI_MOVECARETINSIDEVIEW">SCI_MOVECARETINSIDEVIEW</a><br />
+@@ -1425,6 +1426,10 @@
+      <code>SC_SEL_THIN</code> is the mode after a rectangular selection has been typed into and ensures
+      that no characters are selected.</p>
+ 
++    <p><b id="SCI_GETMOVEEXTENDSSELECTION">SCI_GETMOVEEXTENDSSELECTION &rarr; bool</b><br />
++     This returns 1 if regular caret moves will extend or reduce the selection, 0 if not.
++     <code>SCI_SETSELECTIONMODE</code> toggles this setting between on and off.</p>
++
+     <p><b id="SCI_GETLINESELSTARTPOSITION">SCI_GETLINESELSTARTPOSITION(int line) &rarr; position</b><br />
+     <b id="SCI_GETLINESELENDPOSITION">SCI_GETLINESELENDPOSITION(int line) &rarr; position</b><br />
+     Retrieve the position of the start and end of the selection at the given line with
+diff -r f78045efae20 -r 85205da6ec1b doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Mon Nov 20 11:48:00 2017 +1100
++++ b/doc/ScintillaHistory.html	Mon Nov 20 12:24:51 2017 +1100
+@@ -534,6 +534,10 @@
+ 	Released 26 October 2017.
+ 	</li>
+ 	<li>
++	Add SCI_GETMOVEEXTENDSSELECTION to allow applications to add more
++	complex selection commands.
++	</li>
++	<li>
+ 	Improve VHDL lexer's handling of character literals and escape characters in strings.
+ 	</li>
+ 	<li>
+diff -r f78045efae20 -r 85205da6ec1b include/Scintilla.h
+--- a/include/Scintilla.h	Mon Nov 20 11:48:00 2017 +1100
++++ b/include/Scintilla.h	Mon Nov 20 12:24:51 2017 +1100
+@@ -758,6 +758,7 @@
+ #define SC_SEL_THIN 3
+ #define SCI_SETSELECTIONMODE 2422
+ #define SCI_GETSELECTIONMODE 2423
++#define SCI_GETMOVEEXTENDSSELECTION 2706
+ #define SCI_GETLINESELSTARTPOSITION 2424
+ #define SCI_GETLINESELENDPOSITION 2425
+ #define SCI_LINEDOWNRECTEXTEND 2426
+diff -r f78045efae20 -r 85205da6ec1b include/Scintilla.iface
+--- a/include/Scintilla.iface	Mon Nov 20 11:48:00 2017 +1100
++++ b/include/Scintilla.iface	Mon Nov 20 12:24:51 2017 +1100
+@@ -1964,6 +1964,9 @@
+ # Get the mode of the current selection.
+ get int GetSelectionMode=2423(,)
+ 
++# Get whether or not regular caret moves will extend or reduce the selection.
++get bool GetMoveExtendsSelection=2706(,)
++
+ # Retrieve the position of the start of the selection at the given line (INVALID_POSITION if no selection on this line).
+ fun position GetLineSelStartPosition=2424(int line,)
+ 
+diff -r f78045efae20 -r 85205da6ec1b src/Editor.cxx
+--- a/src/Editor.cxx	Mon Nov 20 11:48:00 2017 +1100
++++ b/src/Editor.cxx	Mon Nov 20 12:24:51 2017 +1100
+@@ -7625,6 +7625,8 @@
+ 		default:	// ?!
+ 			return SC_SEL_STREAM;
+ 		}
++	case SCI_GETMOVEEXTENDSSELECTION:
++		return sel.MoveExtends();
+ 	case SCI_GETLINESELSTARTPOSITION:
+ 	case SCI_GETLINESELENDPOSITION: {
+ 			SelectionSegment segmentLine(

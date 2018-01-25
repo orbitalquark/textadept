@@ -585,6 +585,8 @@
 --   The default value is `false`.
 -- @field modify (bool)
 --   Whether or not the buffer has unsaved changes.
+-- @field move_extends_selection (bool)
+--   Whether or not regular caret movement alters the selected text.
 -- @field multi_paste (number)
 --   The multiple selection paste mode.
 --
