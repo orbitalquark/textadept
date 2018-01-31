@@ -83,12 +83,16 @@ typedef GtkWidget Scintilla;
   (WaitNamedPipe("\\\\.\\pipe\\textadept.editor", NMPWAIT_WAIT_FOREVER) != 0)
 #define g_application_run(_,__,___) win32_application_run()
 #define gtk_main() \
-  HANDLE pipe = CreateNamedPipe("\\\\.\\pipe\\textadept.editor", \
-                                PIPE_ACCESS_INBOUND, PIPE_WAIT, 1, 0, 0, \
-                                INFINITE, NULL); \
-  HANDLE thread = CreateThread(NULL, 0, &pipe_listener, pipe, 0, NULL); \
+  HANDLE pipe = NULL, thread = NULL; \
+  if (!g_application_get_is_remote(app)) { \
+    pipe = CreateNamedPipe("\\\\.\\pipe\\textadept.editor", \
+                           PIPE_ACCESS_INBOUND, PIPE_WAIT, 1, 0, 0, INFINITE, \
+                           NULL); \
+    thread = CreateThread(NULL, 0, &pipe_listener, pipe, 0, NULL); \
+  } \
   gtk_main(); \
-  TerminateThread(thread, 0), CloseHandle(thread), CloseHandle(pipe);
+  if (pipe && thread) \
+    TerminateThread(thread, 0), CloseHandle(thread), CloseHandle(pipe);
 #endif
 #endif
 
