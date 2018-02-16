@@ -36,11 +36,12 @@ end
 -- Processes command line argument table *arg*, handling switches previously
 -- defined using `args.register()` and treating unrecognized arguments as
 -- filenames to open.
--- Emits an `ARG_NONE` event when no arguments are present.
+-- Emits an `ARG_NONE` event when no arguments are present unless
+-- *no_emit_arg_none* is `true`.
 -- @param arg Argument table.
 -- @see register
 -- @see _G.events
-local function process(arg)
+local function process(arg, no_emit_arg_none)
   local no_args = true
   local i = 1
   while i <= #arg do
@@ -55,10 +56,11 @@ local function process(arg)
     end
     i = i + 1
   end
-  if no_args then events.emit(events.ARG_NONE) end
+  if no_args and not no_emit_arg_none then events.emit(events.ARG_NONE) end
 end
 events.connect(events.INITIALIZED, function() if arg then process(arg) end end)
-events.connect('cmd_line', process) -- undocumented, single-instance event
+-- Undocumented, single-instance event handler for forwarding arguments.
+events.connect('cmd_line', function(arg) process(arg, true) end)
 
 if not CURSES then
   -- Shows all registered command line switches on the command line.
