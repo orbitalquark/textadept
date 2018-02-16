@@ -272,7 +272,9 @@ events_connect(events.TAB_CLICKED,
 -- Sets the title of the Textadept window to the buffer's filename.
 local function set_title()
   local filename = buffer.filename or buffer._type or _L['Untitled']
-  if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
+  if buffer.filename then
+    filename = select(2, pcall(string.iconv, filename, 'UTF-8', _CHARSET))
+  end
   local basename = buffer.filename and filename:match('[^/\\]+$') or filename
   ui.title = string.format('%s %s Textadept (%s)', basename,
                            buffer.modify and '*' or '-', filename)
