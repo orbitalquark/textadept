@@ -422,9 +422,15 @@ events_connect(events.BUFFER_DELETED, function()
   end
 end)
 
--- Enables and disables mouse mode in curses and focuses and resizes views based
--- on mouse events.
+-- Properly handle clipboard text between views in curses, enables and disables
+-- mouse mode, and focuses and resizes views based on mouse events.
 if CURSES then
+  local clipboard_text
+  events.connect(events.VIEW_BEFORE_SWITCH,
+                 function() clipboard_text = ui.clipboard_text end)
+  events.connect(events.VIEW_AFTER_SWITCH,
+                 function() ui.clipboard_text = clipboard_text end)
+
   if not WIN32 then
     local function enable_mouse() io.stdout:write("\x1b[?1002h"):flush() end
     local function disable_mouse() io.stdout:write("\x1b[?1002l"):flush() end
