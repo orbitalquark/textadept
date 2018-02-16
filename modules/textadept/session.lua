@@ -109,9 +109,10 @@ function M.load(filename)
   return true
 end
 -- Load session when no args are present.
-events.connect(events.ARG_NONE, function()
+local function load_default_session()
   if M.save_on_quit then M.load(M.default_session) end
-end)
+end
+events.connect(events.ARG_NONE, load_default_session)
 
 ---
 -- Saves the session to file *filename* or the user-selected file.
@@ -208,6 +209,7 @@ args.register('-n', '--nosession', 0,
 args.register('-s', '--session', 1, function(name)
   if not lfs.attributes(name) then name = _USERHOME..'/'..name end
   M.load(name)
+  events.disconnect(events.ARG_NONE, load_default_session)
 end, 'Load session')
 
 return M
