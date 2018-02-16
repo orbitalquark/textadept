@@ -179,7 +179,7 @@ local default_menubar = {
         -- file. The difference is any additional arguments set previously.
         base_commands[i] = commands[buffer.filename:match('[^.]+$')] or
                            commands[buffer:get_lexer()] or ''
-        local current_command = (commands[buffer.filename] or '')
+        local current_command = commands[buffer.filename] or ''
         local args = current_command:sub(#base_commands[i] + 2)
         utf8_args[i] = args:iconv('UTF-8', _CHARSET)
       end
