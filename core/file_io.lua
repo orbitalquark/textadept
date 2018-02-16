@@ -78,10 +78,10 @@ io.recent_files = {}
 --     UTF-16BE, UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 --
 -- [GNU iconv's encodings]: http://www.gnu.org/software/libiconv/
--- @usage io.encodings[#io.encodings + 1] = 'UTF-16'
+-- @usage io.encodings[#io.encodings + 1] = 'UTF-32'
 -- @class table
 -- @name encodings
-io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1'}
+io.encodings = {'UTF-8', 'ASCII', 'ISO-8859-1', 'UTF-16'}
 
 ---
 -- Opens *filenames*, a string filename or list of filenames, or the
