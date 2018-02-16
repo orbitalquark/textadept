@@ -207,7 +207,7 @@ local M = {}
 -- N/A            |N/A            |F3          |Toggle "Regex"
 -- N/A            |N/A            |F4          |Toggle "Find in Files"
 --
--- †: Some terminals interpret ^Z as suspend.
+-- †: Some terminals interpret ^Z as suspend; see FAQ for workaround.
 --
 -- ‡: Ctrl+Enter in Win32 curses.
 module('textadept.keys')]]
