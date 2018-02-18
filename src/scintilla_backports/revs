@@ -1,0 +1,76 @@
+ae52e0c68190 Bug [#1901]. GTK: Fix double scrolling under X11
+7f22895eaddb Bug [#1905]. Fix stream selection mode when moving caret up or down.
+809112c81196 Bug [#1907]. GTK: Fix crash after destroying the widget on GTK < 3.3.6
+b82fe8d33961 Fix potential problems with IME on Cocoa when document contains invalid UTF-8.
+e12538e52567 Bug [#1910]. GTK a11y: Speed up converting byte offsets to character offsets
+b833c0659497 Fix minor issues in interface definitions.
+225f39cfd931 For IMEs, do not clear selected text when there is no composition text to show.
+6c62b379a52e Avoid potential problems with memcmp reading past end of object.
+23546875480b Bug [#1910]. Accessibility support may be queried and, on GTK+, disabled.
+559dea66606f Bug [#1910]. Fixed double declaration.
+71bee2f06619 Bug [#1910]. Fixed more duplicate code.
+8e0cb37c4972 GTK: Fix popup positioning on monitors not positioned at 0,0
+4527b3c217a4 Fix warnings from Visual Studio 2017.
+a78e38849624 Fix use-after-free in fold tags when top line folded then new top line inserted.
+6cf19f2bf214 Fix difference between right of line end and left of fold tag.
+30f1573f17ac Fix 1 pixel unpainted as background.
+0253f113f223 Round left and right sides of fold text box to ensure within the allocation.
+34665edc7efd For multiphase drawing ensure edges and mark underline drawn over fold tags
+2b25287311d0 For single phase drawing ensure edges and mark underline drawn over fold tags
+c3bba4a9193e For single phase drawing ensure remainder of line filled
+55368b05bb72 Group non-single-phase drawing before text.
+b3eaa82b3750 Updated case conversion and character categories to Unicode 9.
+a0f26eaf474d Using Sci::Position and Sci::Line to mark variables that are document positions and lines.
+284cc3b0e754 Delete declaration of unimplemented method.
+c105254dae66 Hide decorations details a little.
+152e56f0b392 Prefer standard min/max over Platform's as adapts to changed types.
+35d652a3344b Standardize on C++ headers, remove headers that aren't needed and add <cstddef>
+47fa874827a5 More encapsulation for Decoration and DecorationList.
+67865d8e5a37 Fix DisplayFromPosition pos argument to be correct type.
+a1a9cde51997 Added "Reverse Selected Lines" as SCI_LINEREVERSE.
+e7ca78c6f29c Prevent warning from MSVC Code Analysis.
+797ed6c538fd Added a caret line frame as an alternative visual for highlighting the caret line.
+d046ce80d590 Added const where possible.
+df221375187c Allowing assigning Windows and ensure cursorLast is initialized.
+99e46ea84433 Check index before checking value at index.
+84161436cfbc Use same parameter names in declarations and definitions.
+c9dcde8a91d3 Drop "virtual" from methods that do not need to be virtual.
+150bdfbe2b5a Remove unnecessary casts.
+d742ec177a7e Prefer C++ static cast over C-style casts.
+20120f9d1698 Use reference for efficiency.
+7c132e9340ce For speed, store height of capital letters in FontMeasurements so not
+3e2dd5970075 Ensure capitalHeight initialised.
+692a54eaa604 Use bool literals true and false instead of 1 and 0.
+b8379bec8e70 Fix deprecation of gdk_window_process_updates in GTK+ 3.22 by redrawing instead
+044d2d030263 Avoid calling virtual functions in constructors and destructors.
+a80a6876c301 Avoid calling virtual functions in destructor. Mark overridden methods.
+e4f249dbdc30 Drop reinterpret_cast when can implicit cast to void* or const void*.
+1f02cb4a5b26 Bug [#1940]. Canceling modes with the Esc key preserves a rectangular selection.
+45f968a6735a More consistent use of size_t when converting Unicode formats.
+61adfbe4fa64 Feature [feature-requests:#1187]. Update scroll bar when annotations added,
+4bf96081f6e6 Use min and max from std instead of own version from platform.
+90741c1cb988 Require GTK+ 2.24 or later. Removes support for earlier versions.
+7e28cdba6d61 Implement SCN_AUTOCSELECTIONCHANGE notification.
+7030530a9a0f Removed unused functions and methods from Platform.h.
+af83baede430 Simplify mouse and keyboard handling by only retaining the 'WithModifiers" form.
+82cb780a04d1 Bug [#1949]. Fix drawing failure in wrap mode for delete to start/end of line.
+8d56eaef4f0a The default encoding is now UTF-8.
+95346e626cf8 Cast between Sci_Position.h types used for lexers and Position.h types used in
+79f86be9e988 Redraw when overtype changed so caret change visible even when not blinking.
+ebec660dcf48 Bug [#1949]. Fix drawing failure in wrap mode for GTK+ 2.x.
+52f12c3eebcd Bug [#1955]. The data parameter to ILoader::AddData made const.
+b44bb3627bbd Moved *StyleBits* APIs into deprecated category.
+96506cab38bd Bug [#1971]. Fix line selection by clicking in the margin when scrolled.
+2db0528f34b5 Bug [#1978]. Minor undefined behaviour fixed.
+85205da6ec1b Add SCI_GETMOVEEXTENDSSELECTION.
+8760026bba6a Update marshalling of signals from Scintilla, changing deprecated NONE to VOID.
+fd2f856b8d58 Use explicit typedefs instead of deprecated derivation from std::iterator.
+73343682cbda Start of bidirectional code - implement SCI_SETBIDIRECTIONAL.
+ed27432729c3 Use std::abs in preference to abs as std::abs is generic and abs casts to int
+a366ce1a811e Use std::end when filling arrays as reduces chance of mistake.
+92c8f0f1b3e6 Add documentOption argument to SCI_CREATELOADER.
+3e3bfe29a819 Extend SplitVector to allow more than 2 billion elements on 64-bit systems.
+1bd57324aa36 Templatize Partitioning so it can hold different types.
+89d992f380a1 Templatize RunStyles so it can be over ranges of different types and contain
+431b814a54a6 Implement SC_DOCUMENTOPTION_STYLES_NONE.
+1280ef150bbb [Bug #1983] Fix double tap word selection on Windows 10 1709 Fall Creators Update.
