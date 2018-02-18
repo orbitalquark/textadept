@@ -1,0 +1,42 @@
+# HG changeset patch
+# User Dimitar Radev
+# Date 1517896632 -39600
+# Node ID 1280ef150bbb364e25d01bf04146305389123e78
+# Parent  431b814a54a62d81c8069655bbbebec7bda782e3
+[Bug #1983] Fix double tap word selection on Windows 10 1709 Fall Creators Update.
+Times of observed mouse events went backwards causing unsigned overflow.
+
+diff -r 431b814a54a6 -r 1280ef150bbb doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Fri Feb 02 14:34:55 2018 +1100
++++ b/doc/ScintillaHistory.html	Tue Feb 06 16:57:12 2018 +1100
+@@ -519,6 +519,7 @@
+       </tr><tr>
+ 	<td>Georger Araújo</td>
+ 	<td>Tobias Kühne</td>
++	<td>Dimitar Radev</td>
+     </tr>
+     </table>
+     <p>
+@@ -557,6 +558,10 @@
+ 	Improve VHDL lexer's handling of character literals and escape characters in strings.
+ 	</li>
+ 	<li>
++	Fix double tap word selection on Windows 10 1709 Fall Creators Update.
++	<a href="http://sourceforge.net/p/scintilla/bugs/1983/">Bug #1983</a>.
++	</li>
++	<li>
+ 	Fix closing autocompletion lists on Cocoa for macOS 10.13 where the window
+ 	was emptying but staying visible.
+ 	<a href="http://sourceforge.net/p/scintilla/bugs/1981/">Bug #1981</a>.
+diff -r 431b814a54a6 -r 1280ef150bbb src/Editor.cxx
+--- a/src/Editor.cxx	Fri Feb 02 14:34:55 2018 +1100
++++ b/src/Editor.cxx	Tue Feb 06 16:57:12 2018 +1100
+@@ -4455,7 +4455,7 @@
+ 	if (shift && !inSelMargin) {
+ 		SetSelection(newPos);
+ 	}
+-	if (((curTime - lastClickTime) < Platform::DoubleClickTime()) && Close(pt, lastClick, doubleClickCloseThreshold)) {
++	if ((curTime < (lastClickTime+Platform::DoubleClickTime())) && Close(pt, lastClick, doubleClickCloseThreshold)) {
+ 		//Platform::DebugPrintf("Double click %d %d = %d\n", curTime, lastClickTime, curTime - lastClickTime);
+ 		SetMouseCapture(true);
+ 		FineTickerStart(tickScroll, 100, 10);

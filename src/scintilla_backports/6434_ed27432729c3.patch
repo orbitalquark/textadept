@@ -1,0 +1,50 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1517090168 -39600
+# Node ID ed27432729c386c48ef4f11459aeb2ed1f0856c8
+# Parent  231ac99e1fdc2b0fa62668cf5495b2f7df3f4d82
+Use std::abs in preference to abs as std::abs is generic and abs casts to int
+which may drop information.
+
+diff -r 231ac99e1fdc -r ed27432729c3 src/Document.cxx
+--- a/src/Document.cxx	Sun Jan 28 08:32:17 2018 +1100
++++ b/src/Document.cxx	Sun Jan 28 08:56:08 2018 +1100
+@@ -10,6 +10,7 @@
+ #include <cassert>
+ #include <cstring>
+ #include <cstdio>
++#include <cmath>
+ 
+ #include <stdexcept>
+ #include <string>
+@@ -877,7 +878,7 @@
+ 			const Sci::Position posNext = NextPosition(pos, increment);
+ 			if (posNext == pos)
+ 				return INVALID_POSITION;
+-			if (abs(pos-posNext) > 3)	// 4 byte character = 2*UTF16.
++			if (std::abs(pos-posNext) > 3)	// 4 byte character = 2*UTF16.
+ 				characterOffset -= increment;
+ 			pos = posNext;
+ 			characterOffset -= increment;
+diff -r 231ac99e1fdc -r ed27432729c3 src/Editor.cxx
+--- a/src/Editor.cxx	Sun Jan 28 08:32:17 2018 +1100
++++ b/src/Editor.cxx	Sun Jan 28 08:56:08 2018 +1100
+@@ -11,8 +11,8 @@
+ #include <cstring>
+ #include <cctype>
+ #include <cstdio>
+-
+ #include <cmath>
++
+ #include <stdexcept>
+ #include <string>
+ #include <vector>
+@@ -934,7 +934,7 @@
+ 		// Try to optimise small scrolls
+ #ifndef UNDER_CE
+ 		const Sci::Line linesToMove = topLine - topLineNew;
+-		const bool performBlit = (abs(linesToMove) <= 10) && (paintState == notPainting);
++		const bool performBlit = (std::abs(linesToMove) <= 10) && (paintState == notPainting);
+ 		willRedrawAll = !performBlit;
+ #endif
+ 		SetTopLine(topLineNew);
