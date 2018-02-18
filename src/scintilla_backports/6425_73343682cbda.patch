@@ -68,9 +68,10 @@ diff -r 5246ca55cf24 -r 73343682cbda doc/ScintillaDoc.html
 diff -r 5246ca55cf24 -r 73343682cbda include/Scintilla.h
 --- a/include/Scintilla.h	Wed Jan 10 10:04:03 2018 +1100
 +++ b/include/Scintilla.h	Tue Dec 19 15:00:40 2017 +1100
-@@ -1103,5 +1103,12 @@
+@@ -1103,6 +1103,13 @@
  #define SCN_AUTOCCOMPLETED 2030
  #define SCN_MARGINRIGHTCLICK 2031
+ #define SCN_AUTOCSELECTIONCHANGE 2032
 +#ifndef SCI_DISABLE_PROVISIONAL
 +#define SC_BIDIRECTIONAL_DISABLED 0
 +#define SC_BIDIRECTIONAL_L2R 1
@@ -84,8 +85,9 @@ diff -r 5246ca55cf24 -r 73343682cbda include/Scintilla.h
 diff -r 5246ca55cf24 -r 73343682cbda include/Scintilla.iface
 --- a/include/Scintilla.iface	Wed Jan 10 10:04:03 2018 +1100
 +++ b/include/Scintilla.iface	Tue Dec 19 15:00:40 2017 +1100
-@@ -4861,9 +4861,18 @@
+@@ -4861,10 +4861,19 @@
  evt void MarginRightClick=2031(int modifiers, int position, int margin)
+ evt void AutoCSelectionChange=2032(int listType, string text, int position)
  
 -# There are no provisional APIs currently, but some arguments to SCI_SETTECHNOLOGY are provisional.
 -

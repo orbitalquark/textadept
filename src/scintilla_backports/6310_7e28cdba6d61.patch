@@ -1,0 +1,695 @@
+# HG changeset patch
+# User Neil <nyamatongwe@gmail.com>
+# Date 1497154123 -36000
+# Node ID 7e28cdba6d61e090ac6f6627c855ffd2603508e4
+# Parent  f2f32d58bcd83aae163367781d2dcc65590109bc
+Implement SCN_AUTOCSELECTIONCHANGE notification.
+
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 cocoa/PlatCocoa.mm
+--- a/cocoa/PlatCocoa.mm	Sat Jun 10 13:22:55 2017 +1000
++++ b/cocoa/PlatCocoa.mm	Sun Jun 11 14:08:43 2017 +1000
+@@ -1274,7 +1274,9 @@
+ 
+ namespace {
+ 
+-// unnamed namespace hides IListBox interface
++// Unnamed namespace hides local IListBox interface.
++// IListBox is used to cross languages to send events from Objective C++
++// AutoCompletionDelegate and AutoCompletionDataSource to C++ ListBoxImpl.
+ 
+ class IListBox {
+ public:
+@@ -1282,18 +1284,43 @@
+ 	virtual NSImage *ImageForRow(NSInteger row) = 0;
+ 	virtual NSString *TextForRow(NSInteger row) = 0;
+ 	virtual void DoubleClick() = 0;
++	virtual void SelectionChange() = 0;
+ };
+ 
+-} // unnamed namespace
++}
++
++//----------------- AutoCompletionDelegate ---------------------------------------------------------
++
++// AutoCompletionDelegate is an Objective C++ class so it can implement
++// NSTableViewDelegate and receive tableViewSelectionDidChange events.
++
++@interface AutoCompletionDelegate : NSObject <NSTableViewDelegate> {
++	IListBox *box;
++}
++
++@property IListBox *box;
++
++@end
++
++@implementation AutoCompletionDelegate
++
++@synthesize box;
++
++- (void) tableViewSelectionDidChange: (NSNotification *) notification {
++#pragma unused(notification)
++	if (box) {
++		box->SelectionChange();
++	}
++}
++
++@end
+ 
+ //----------------- AutoCompletionDataSource -------------------------------------------------------
+ 
+-@interface AutoCompletionDataSource :
+-	NSObject
+-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
+-	<NSTableViewDataSource>
+-#endif
+-{
++// AutoCompletionDataSource provides data to display in the list box.
++// It is also the target of the NSTableView so it receives double clicks.
++
++@interface AutoCompletionDataSource : NSObject <NSTableViewDataSource> {
+ 	IListBox *box;
+ }
+ 
+@@ -1400,10 +1427,10 @@
+ 	NSTableColumn *colIcon;
+ 	NSTableColumn *colText;
+ 	AutoCompletionDataSource *ds;
++	AutoCompletionDelegate *acd;
+ 
+ 	LinesData ld;
+-	CallBackAction doubleClickAction;
+-	void *doubleClickActionData;
++	IListBoxDelegate *delegate;
+ 
+ public:
+ 	ListBoxImpl() :
+@@ -1420,8 +1447,8 @@
+ 		colIcon(nil),
+ 		colText(nil),
+ 		ds(nil),
+-		doubleClickAction(nullptr),
+-		doubleClickActionData(nullptr) {
++		acd(nil),
++		delegate(nullptr) {
+ 		images = [[NSMutableDictionary alloc] init];
+ 	}
+ 	~ListBoxImpl() override {
+@@ -1445,9 +1472,8 @@
+ 	void RegisterImage(int type, const char *xpm_data) override;
+ 	void RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage) override;
+ 	void ClearRegisteredImages() override;
+-	void SetDoubleClickAction(CallBackAction action, void *data) override {
+-		doubleClickAction = action;
+-		doubleClickActionData = data;
++	void SetDelegate(IListBoxDelegate *lbDelegate) override {
++		delegate = lbDelegate;
+ 	}
+ 	void SetList(const char *list, char separator, char typesep) override;
+ 
+@@ -1459,6 +1485,7 @@
+ 	NSImage *ImageForRow(NSInteger row) override;
+ 	NSString *TextForRow(NSInteger row) override;
+ 	void DoubleClick() override;
++	void SelectionChange() override;
+ };
+ 
+ void ListBoxImpl::Create(Window & /*parent*/, int /*ctrlID*/, Scintilla::Point pt,
+@@ -1494,6 +1521,9 @@
+ 	ds = [[AutoCompletionDataSource alloc] init];
+ 	ds.box = this;
+ 	table.dataSource = ds;	// Weak reference
++	acd = [[AutoCompletionDelegate alloc] init];
++	[acd setBox: this];
++	table.delegate = acd;
+ 	scroller.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+ 	[winLB.contentView addSubview: scroller];
+ 
+@@ -1568,6 +1598,7 @@
+ 	scroller = nil;
+ 	colIcon = nil;
+ 	colText = nil;
++	acd = nil;
+ 	ds = nil;
+ }
+ 
+@@ -1694,8 +1725,16 @@
+ }
+ 
+ void ListBoxImpl::DoubleClick() {
+-	if (doubleClickAction) {
+-		doubleClickAction(doubleClickActionData);
++	if (delegate) {
++		ListBoxEvent event(ListBoxEvent::EventType::doubleClick);
++		delegate->ListNotify(&event);
++	}
++}
++
++void ListBoxImpl::SelectionChange() {
++	if (delegate) {
++		ListBoxEvent event(ListBoxEvent::EventType::selectionChange);
++		delegate->ListNotify(&event);
+ 	}
+ }
+ 
+@@ -1703,6 +1742,8 @@
+ 
+ //----------------- ListBox ------------------------------------------------------------------------
+ 
++// ListBox is implemented by the ListBoxImpl class.
++
+ ListBox::ListBox() {
+ }
+ 
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 doc/ScintillaDoc.html
+--- a/doc/ScintillaDoc.html	Sat Jun 10 13:22:55 2017 +1000
++++ b/doc/ScintillaDoc.html	Sun Jun 11 14:08:43 2017 +1000
+@@ -7011,7 +7011,7 @@
+ 	/* SCN_MARGINRIGHTCLICK, SCN_NEEDSHOWN, SCN_DWELLSTART, SCN_DWELLEND, */
+ 	/* SCN_CALLTIPCLICK, SCN_HOTSPOTCLICK, SCN_HOTSPOTDOUBLECLICK, */
+ 	/* SCN_HOTSPOTRELEASECLICK, SCN_INDICATORCLICK, SCN_INDICATORRELEASE, */
+-	/* SCN_USERLISTSELECTION, SCN_AUTOCSELECTION */
++	/* SCN_USERLISTSELECTION, SCN_AUTOCSELECTION, SCN_AUTOCSELECTIONCHANGE */
+ 
+ 	int ch;
+ 	/* SCN_CHARADDED, SCN_KEY, SCN_AUTOCCOMPLETE, SCN_AUTOCSELECTION, */
+@@ -7022,7 +7022,8 @@
+ 
+ 	int modificationType;	/* SCN_MODIFIED */
+ 	const char *text;
+-	/* SCN_MODIFIED, SCN_USERLISTSELECTION, SCN_AUTOCSELECTION, SCN_URIDROPPED */
++	/* SCN_MODIFIED, SCN_USERLISTSELECTION, SCN_AUTOCSELECTION, SCN_URIDROPPED, */
++	/* SCN_AUTOCSELECTIONCHANGE */
+ 
+ 	Sci_Position length;		/* SCN_MODIFIED */
+ 	Sci_Position linesAdded;	/* SCN_MODIFIED */
+@@ -7033,7 +7034,7 @@
+ 	int foldLevelNow;	/* SCN_MODIFIED */
+ 	int foldLevelPrev;	/* SCN_MODIFIED */
+ 	int margin;		/* SCN_MARGINCLICK, SCN_MARGINRIGHTCLICK */
+-	int listType;	/* SCN_USERLISTSELECTION */
++	int listType;	/* SCN_USERLISTSELECTION, SCN_AUTOCSELECTIONCHANGE */
+ 	int x;			/* SCN_DWELLSTART, SCN_DWELLEND */
+ 	int y;		/* SCN_DWELLSTART, SCN_DWELLEND */
+ 	int token;		/* SCN_MODIFIED with SC_MOD_CONTAINER */
+@@ -7078,6 +7079,7 @@
+      <a class="message" href="#SCN_FOCUSOUT">SCN_FOCUSOUT</a><br />
+      <a class="message" href="#SCN_AUTOCCOMPLETED">SCN_AUTOCCOMPLETED</a><br />
+      <a class="message" href="#SCN_MARGINRIGHTCLICK">SCN_MARGINRIGHTCLICK</a><br />
++     <a class="message" href="#SCN_AUTOCSELECTIONCHANGE">SCN_AUTOCSELECTIONCHANGE</a><br />
+     </code>
+ 
+     <p>The following <code>SCI_*</code> messages are associated with these notifications:</p>
+@@ -7946,10 +7948,6 @@
+      The user deleted a character while autocompletion list was active.
+      There is no other information in SCNotification.</p>
+ 
+-    <p><b id="SCN_FOCUSIN">SCN_FOCUSIN</b><br />
+-    <b id="SCN_FOCUSOUT">SCN_FOCUSOUT</b><br />
+-    <code>SCN_FOCUSIN</code> (2028) is fired when Scintilla receives focus and
+-    <code>SCN_FOCUSOUT</code> (2029) when it loses focus.</p>
+ 
+     <p><b id="SCN_AUTOCCOMPLETED">SCN_AUTOCCOMPLETED<br />
+     </b>This notification is generated after an autocompletion has inserted its
+@@ -7958,6 +7956,48 @@
+      <a class="jump" href="#SCN_AUTOCSELECTION">SCN_AUTOCSELECTION</a></code>
+      notification.</p>
+ 
++    <p><b id="SCN_AUTOCSELECTIONCHANGE">SCN_AUTOCSELECTIONCHANGE<br />
++    </b>This notification is sent when items are highlighted in an autocompletion or user list.
++     The
++    <code>SCNotification</code> fields used are:</p>
++
++    <table class="standard" summary="User list notification">
++      <tbody>
++        <tr>
++          <th align="left">Field</th>
++
++          <th align="left">Usage</th>
++        </tr>
++      </tbody>
++
++      <tbody valign="top">
++        <tr>
++          <td align="left"><code>listType</code></td>
++
++          <td align="left">This is set to the <code>listType</code> parameter from the <a
++          class="message" href="#SCI_USERLISTSHOW"><code>SCI_USERLISTSHOW</code></a> message
++	  or 0 for an autocompletion.</td>
++        </tr>
++
++        <tr>
++          <td align="left"><code>text</code></td>
++
++          <td align="left">The text of the selection.</td>
++        </tr>
++
++        <tr>
++          <td align="left"><code>position</code></td>
++
++          <td align="left">The position the list was displayed at.</td>
++        </tr>
++      </tbody>
++    </table>
++
++    <p><b id="SCN_FOCUSIN">SCN_FOCUSIN</b><br />
++    <b id="SCN_FOCUSOUT">SCN_FOCUSOUT</b><br />
++    <code>SCN_FOCUSIN</code> (2028) is fired when Scintilla receives focus and
++    <code>SCN_FOCUSOUT</code> (2029) when it loses focus.</p>
++
+     <h2 id="Images">Images</h2>
+ 
+     <p>Two formats are supported for images used in margin markers and autocompletion lists, RGBA and XPM.</p>
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Sat Jun 10 13:22:55 2017 +1000
++++ b/doc/ScintillaHistory.html	Sun Jun 11 14:08:43 2017 +1000
+@@ -536,6 +536,9 @@
+ 	Support dropped for GTK+ versions before 2.24.
+ 	</li>
+ 	<li>
++	An SCN_AUTOCSELECTIONCHANGE notification is sent when items are highlighted in an autocompletion or user list.
++	</li>
++	<li>
+ 	SciTE allows user.shortcuts to be defined with symbolic Scintilla messages like
+ 	'Ctrl+L|SCI_LINEDELETE|'.
+ 	</li>
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 gtk/PlatGTK.cxx
+--- a/gtk/PlatGTK.cxx	Sat Jun 10 13:22:55 2017 +1000
++++ b/gtk/PlatGTK.cxx	Sun Jun 11 14:08:43 2017 +1000
+@@ -1196,8 +1196,7 @@
+ 	GtkCssProvider *cssProvider;
+ #endif
+ public:
+-	CallBackAction doubleClickAction;
+-	void *doubleClickActionData;
++	IListBoxDelegate *delegate;
+ 
+ 	ListBoxX() : widCached(0), frame(0), list(0), scroller(0), pixhash(NULL), pixbuf_renderer(0),
+ 		renderer(0),
+@@ -1206,7 +1205,7 @@
+ #if GTK_CHECK_VERSION(3,0,0)
+ 		cssProvider(NULL),
+ #endif
+-		doubleClickAction(NULL), doubleClickActionData(NULL) {
++		delegate(nullptr) {
+ 	}
+ 	~ListBoxX() override {
+ 		if (pixhash) {
+@@ -1243,10 +1242,7 @@
+ 	virtual void RegisterImage(int type, const char *xpm_data);
+ 	virtual void RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage);
+ 	virtual void ClearRegisteredImages();
+-	virtual void SetDoubleClickAction(CallBackAction action, void *data) {
+-		doubleClickAction = action;
+-		doubleClickActionData = data;
+-	}
++	virtual void SetDelegate(IListBoxDelegate *lbDelegate);
+ 	virtual void SetList(const char *listText, char separator, char typesep);
+ };
+ 
+@@ -1337,8 +1333,9 @@
+ static gboolean ButtonPress(GtkWidget *, GdkEventButton* ev, gpointer p) {
+ 	try {
+ 		ListBoxX* lb = static_cast<ListBoxX*>(p);
+-		if (ev->type == GDK_2BUTTON_PRESS && lb->doubleClickAction != NULL) {
+-			lb->doubleClickAction(lb->doubleClickActionData);
++		if (ev->type == GDK_2BUTTON_PRESS && lb->delegate) {
++			ListBoxEvent event(ListBoxEvent::EventType::doubleClick);
++			lb->delegate->ListNotify(&event);
+ 			return TRUE;
+ 		}
+ 
+@@ -1348,6 +1345,20 @@
+ 	return FALSE;
+ }
+ 
++static gboolean ButtonRelease(GtkWidget *, GdkEventButton* ev, gpointer p) {
++	try {
++		ListBoxX* lb = static_cast<ListBoxX*>(p);
++		if (ev->type != GDK_2BUTTON_PRESS && lb->delegate) {
++			ListBoxEvent event(ListBoxEvent::EventType::selectionChange);
++			lb->delegate->ListNotify(&event);
++			return TRUE;
++		}
++	} catch (...) {
++		// No pointer back to Scintilla to save status
++	}
++	return FALSE;
++}
++
+ /* Change the active color to the selected color so the listbox uses the color
+ scheme that it would use if it had the focus. */
+ static void StyleSet(GtkWidget *w, GtkStyle*, void*) {
+@@ -1472,6 +1483,8 @@
+ 	gtk_widget_show(widget);
+ 	g_signal_connect(G_OBJECT(widget), "button_press_event",
+ 	                   G_CALLBACK(ButtonPress), this);
++	g_signal_connect(G_OBJECT(widget), "button_release_event",
++	                   G_CALLBACK(ButtonRelease), this);
+ 
+ 	GtkWidget *top = gtk_widget_get_toplevel(static_cast<GtkWidget *>(parent.GetID()));
+ 	gtk_window_set_transient_for(GTK_WINDOW(static_cast<GtkWidget *>(wid)),
+@@ -1747,6 +1760,11 @@
+ 	} else {
+ 		gtk_tree_selection_unselect_all(selection);
+ 	}
++
++	if (delegate) {
++		ListBoxEvent event(ListBoxEvent::EventType::selectionChange);
++		delegate->ListNotify(&event);
++	}
+ }
+ 
+ int ListBoxX::GetSelection() {
+@@ -1843,6 +1861,10 @@
+ 	images.Clear();
+ }
+ 
++void ListBoxX::SetDelegate(IListBoxDelegate *lbDelegate) {
++	delegate = lbDelegate;
++}
++
+ void ListBoxX::SetList(const char *listText, char separator, char typesep) {
+ 	Clear();
+ 	int count = strlen(listText) + 1;
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 include/Platform.h
+--- a/include/Platform.h	Sat Jun 10 13:22:55 2017 +1000
++++ b/include/Platform.h	Sun Jun 11 14:08:43 2017 +1000
+@@ -397,6 +397,19 @@
+  * Listbox management.
+  */
+ 
++// ScintillaBase implements IListBoxDelegate to receive ListBoxEvents from a ListBox
++
++struct ListBoxEvent {
++	enum class EventType { selectionChange, doubleClick } event;
++	ListBoxEvent(EventType event_) : event(event_) {
++	}
++};
++
++class IListBoxDelegate {
++public:
++	virtual void ListNotify(ListBoxEvent *plbe)=0;
++};
++
+ class ListBox : public Window {
+ public:
+ 	ListBox();
+@@ -420,7 +433,7 @@
+ 	virtual void RegisterImage(int type, const char *xpm_data)=0;
+ 	virtual void RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage) = 0;
+ 	virtual void ClearRegisteredImages()=0;
+-	virtual void SetDoubleClickAction(CallBackAction, void *)=0;
++	virtual void SetDelegate(IListBoxDelegate *lbDelegate)=0;
+ 	virtual void SetList(const char* list, char separator, char typesep)=0;
+ };
+ 
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 include/Scintilla.h
+--- a/include/Scintilla.h	Sat Jun 10 13:22:55 2017 +1000
++++ b/include/Scintilla.h	Sun Jun 11 14:08:43 2017 +1000
+@@ -1102,6 +1102,7 @@
+ #define SCN_FOCUSOUT 2029
+ #define SCN_AUTOCCOMPLETED 2030
+ #define SCN_MARGINRIGHTCLICK 2031
++#define SCN_AUTOCSELECTIONCHANGE 2032
+ /* --Autogenerated -- end of section automatically generated from Scintilla.iface */
+ 
+ /* These structures are defined to be exactly the same shape as the Win32
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 include/Scintilla.iface
+--- a/include/Scintilla.iface	Sat Jun 10 13:22:55 2017 +1000
++++ b/include/Scintilla.iface	Sun Jun 11 14:08:43 2017 +1000
+@@ -4855,6 +4855,7 @@
+ evt void FocusOut=2029(void)
+ evt void AutoCCompleted=2030(string text, int position, int ch, CompletionMethods listCompletionMethod)
+ evt void MarginRightClick=2031(int modifiers, int position, int margin)
++evt void AutoCSelectionChange=2032(int listType, string text, int position)
+ 
+ # There are no provisional APIs currently, but some arguments to SCI_SETTECHNOLOGY are provisional.
+ 
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 qt/ScintillaEditBase/PlatQt.cpp
+--- a/qt/ScintillaEditBase/PlatQt.cpp	Sat Jun 10 13:22:55 2017 +1000
++++ b/qt/ScintillaEditBase/PlatQt.cpp	Sun Jun 11 14:08:43 2017 +1000
+@@ -772,7 +772,7 @@
+ 		const unsigned char *pixelsImage) override;
+ 	virtual void RegisterQPixmapImage(int type, const QPixmap& pm);
+ 	void ClearRegisteredImages() override;
+-	void SetDoubleClickAction(CallBackAction action, void *data) override;
++	void SetDelegate(IListBoxDelegate *lbDelegate) override;
+ 	void SetList(const char *list, char separator, char typesep) override;
+ private:
+ 	bool unicodeMode;
+@@ -785,15 +785,16 @@
+ 	explicit ListWidget(QWidget *parent);
+ 	virtual ~ListWidget();
+ 
+-	void setDoubleClickAction(CallBackAction action, void *data);
++	void setDelegate(IListBoxDelegate *lbDelegate);
++	void selectionChanged();
+ 
+ protected:
++	void mouseReleaseEvent(QMouseEvent * event) override;
+ 	void mouseDoubleClickEvent(QMouseEvent *event) override;
+ 	QStyleOptionViewItem viewOptions() const override;
+ 
+ private:
+-	CallBackAction doubleClickAction;
+-	void *doubleClickActionData;
++	IListBoxDelegate *delegate;
+ };
+ 
+ 
+@@ -946,6 +947,7 @@
+ 		}
+ 	}
+ 	list->setCurrentRow(n);
++	list->selectionChanged();
+ }
+ 
+ int ListBoxImpl::GetSelection()
+@@ -1014,10 +1016,10 @@
+ 		list->setIconSize(QSize(0, 0));
+ }
+ 
+-void ListBoxImpl::SetDoubleClickAction(CallBackAction action, void *data)
++void ListBoxImpl::SetDelegate(IListBoxDelegate *lbDelegate)
+ {
+ 	ListWidget *list = static_cast<ListWidget *>(wid);
+-	list->setDoubleClickAction(action, data);
++	list->setDelegate(lbDelegate);
+ }
+ 
+ void ListBoxImpl::SetList(const char *list, char separator, char typesep)
+@@ -1059,24 +1061,36 @@
+ }
+ 
+ ListWidget::ListWidget(QWidget *parent)
+-: QListWidget(parent), doubleClickAction(0), doubleClickActionData(0)
++: QListWidget(parent), delegate(0)
+ {}
+ 
+ ListWidget::~ListWidget() {}
+ 
+-void ListWidget::setDoubleClickAction(CallBackAction action, void *data)
++void ListWidget::setDelegate(IListBoxDelegate *lbDelegate)
+ {
+-	doubleClickAction = action;
+-	doubleClickActionData = data;
++	delegate = lbDelegate;
++}
++
++void ListWidget::selectionChanged() {
++	if (delegate) {
++		ListBoxEvent event(ListBoxEvent::EventType::selectionChange);
++		delegate->ListNotify(&event);
++	}
+ }
+ 
+ void ListWidget::mouseDoubleClickEvent(QMouseEvent * /* event */)
+ {
+-	if (doubleClickAction != 0) {
+-		doubleClickAction(doubleClickActionData);
++	if (delegate) {
++		ListBoxEvent event(ListBoxEvent::EventType::doubleClick);
++		delegate->ListNotify(&event);
+ 	}
+ }
+ 
++void ListWidget::mouseReleaseEvent(QMouseEvent * /* event */)
++{
++	selectionChanged();
++}
++
+ QStyleOptionViewItem ListWidget::viewOptions() const
+ {
+ 	QStyleOptionViewItem result = QListWidget::viewOptions();
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 src/ScintillaBase.cxx
+--- a/src/ScintillaBase.cxx	Sat Jun 10 13:22:55 2017 +1000
++++ b/src/ScintillaBase.cxx	Sun Jun 11 14:08:43 2017 +1000
+@@ -202,9 +202,15 @@
+ 	return Editor::KeyCommand(iMessage);
+ }
+ 
+-void ScintillaBase::AutoCompleteDoubleClick(void *p) {
+-	ScintillaBase *sci = static_cast<ScintillaBase *>(p);
+-	sci->AutoCompleteCompleted(0, SC_AC_DOUBLECLICK);
++void ScintillaBase::ListNotify(ListBoxEvent *plbe) {
++	switch (plbe->event) {
++	case ListBoxEvent::EventType::selectionChange:
++		AutoCompleteSelection();
++		break;
++	case ListBoxEvent::EventType::doubleClick:
++		AutoCompleteCompleted(0, SC_AC_DOUBLECLICK);
++		break;
++	}
+ }
+ 
+ void ScintillaBase::AutoCompleteInsert(Sci::Position startPos, int removeLen, const char *text, int textLen) {
+@@ -293,7 +299,7 @@
+ 	ac.lb->SetFont(vs.styles[STYLE_DEFAULT].font);
+ 	unsigned int aveCharWidth = static_cast<unsigned int>(vs.styles[STYLE_DEFAULT].aveCharWidth);
+ 	ac.lb->SetAverageCharWidth(aveCharWidth);
+-	ac.lb->SetDoubleClickAction(AutoCompleteDoubleClick, this);
++	ac.lb->SetDelegate(this);
+ 
+ 	ac.SetList(list ? list : "");
+ 
+@@ -340,6 +346,25 @@
+ 	ac.Select(wordCurrent.c_str());
+ }
+ 
++void ScintillaBase::AutoCompleteSelection() {
++	int item = ac.GetSelection();
++	std::string selected;
++	if (item != -1) {
++		selected = ac.GetValue(item);
++	}
++
++	SCNotification scn = {};
++	scn.nmhdr.code = SCN_AUTOCSELECTIONCHANGE;
++	scn.message = 0;
++	scn.wParam = listType;
++	scn.listType = listType;
++	Sci::Position firstPos = ac.posStart - ac.startLen;
++	scn.position = firstPos;
++	scn.lParam = firstPos;
++	scn.text = selected.c_str();
++	NotifyParent(scn);
++}
++
+ void ScintillaBase::AutoCompleteCharacterAdded(char ch) {
+ 	if (ac.IsFillUpChar(ch)) {
+ 		AutoCompleteCompleted(ch, SC_AC_FILLUP);
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 src/ScintillaBase.h
+--- a/src/ScintillaBase.h	Sat Jun 10 13:22:55 2017 +1000
++++ b/src/ScintillaBase.h	Sun Jun 11 14:08:43 2017 +1000
+@@ -18,7 +18,7 @@
+ 
+ /**
+  */
+-class ScintillaBase : public Editor {
++class ScintillaBase : public Editor, IListBoxDelegate {
+ 	// Private so ScintillaBase objects can not be copied
+ 	explicit ScintillaBase(const ScintillaBase &);
+ 	ScintillaBase &operator=(const ScintillaBase &);
+@@ -76,7 +76,8 @@
+ 	void AutoCompleteCharacterDeleted();
+ 	void AutoCompleteCompleted(char ch, unsigned int completionMethod);
+ 	void AutoCompleteMoveToCurrentWord();
+-	static void AutoCompleteDoubleClick(void *p);
++	void AutoCompleteSelection();
++	virtual void ListNotify(ListBoxEvent *plbe);
+ 
+ 	void CallTipClick();
+ 	void CallTipShow(Point pt, const char *defn);
+diff -r f2f32d58bcd8 -r 7e28cdba6d61 win32/PlatWin.cxx
+--- a/win32/PlatWin.cxx	Sat Jun 10 13:22:55 2017 +1000
++++ b/win32/PlatWin.cxx	Sun Jun 11 14:08:43 2017 +1000
+@@ -2042,8 +2042,7 @@
+ 	unsigned int aveCharWidth;
+ 	Window *parent;
+ 	int ctrlID;
+-	CallBackAction doubleClickAction;
+-	void *doubleClickActionData;
++	IListBoxDelegate *delegate;
+ 	const char *widestItem;
+ 	unsigned int maxCharWidth;
+ 	int resizeHit;
+@@ -2063,6 +2062,7 @@
+ 	POINT MaxTrackSize() const;
+ 	void SetRedraw(bool on);
+ 	void OnDoubleClick();
++	void OnSelChange();
+ 	void ResizeToCursor();
+ 	void StartResize(WPARAM);
+ 	LRESULT NcHitTest(WPARAM, LPARAM) const;
+@@ -2077,7 +2077,8 @@
+ public:
+ 	ListBoxX() : lineHeight(10), fontCopy(0), technology(0), lb(0), unicodeMode(false),
+ 		desiredVisibleRows(9), maxItemCharacters(0), aveCharWidth(8),
+-		parent(NULL), ctrlID(0), doubleClickAction(NULL), doubleClickActionData(NULL),
++		parent(NULL), ctrlID(0),
++		delegate(nullptr),
+ 		widestItem(NULL), maxCharWidth(1), resizeHit(0), wheelDelta(0) {
+ 	}
+ 	~ListBoxX() override {
+@@ -2103,10 +2104,7 @@
+ 	void RegisterImage(int type, const char *xpm_data) override;
+ 	void RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage) override;
+ 	void ClearRegisteredImages() override;
+-	void SetDoubleClickAction(CallBackAction action, void *data) override {
+-		doubleClickAction = action;
+-		doubleClickActionData = data;
+-	}
++	virtual void SetDelegate(IListBoxDelegate *lbDelegate) override;
+ 	void SetList(const char *list, char separator, char typesep) override;
+ 	void Draw(DRAWITEMSTRUCT *pDrawItem);
+ 	LRESULT WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+@@ -2247,6 +2245,7 @@
+ 	SetRedraw(false);
+ 	CentreItem(n);
+ 	::SendMessage(lb, LB_SETCURSEL, n, 0);
++	OnSelChange();
+ 	SetRedraw(true);
+ }
+ 
+@@ -2377,6 +2376,10 @@
+ 	}
+ }
+ 
++void ListBoxX::SetDelegate(IListBoxDelegate *lbDelegate) {
++	delegate = lbDelegate;
++}
++
+ void ListBoxX::SetList(const char *list, char separator, char typesep) {
+ 	// Turn off redraw while populating the list - this has a significant effect, even if
+ 	// the listbox is not visible.
+@@ -2606,9 +2609,16 @@
+ }
+ 
+ void ListBoxX::OnDoubleClick() {
+-
+-	if (doubleClickAction != NULL) {
+-		doubleClickAction(doubleClickActionData);
++	if (delegate) {
++		ListBoxEvent event(ListBoxEvent::EventType::doubleClick);
++		delegate->ListNotify(&event);
++	}
++}
++
++void ListBoxX::OnSelChange() {
++	if (delegate) {
++		ListBoxEvent event(ListBoxEvent::EventType::selectionChange);
++		delegate->ListNotify(&event);
+ 	}
+ }
+ 
+@@ -2683,6 +2693,10 @@
+ 				int item = LOWORD(lResult);
+ 				if (HIWORD(lResult) == 0 && item >= 0) {
+ 					::SendMessage(hWnd, LB_SETCURSEL, item, 0);
++					ListBoxX *lbx = static_cast<ListBoxX *>(PointerFromWindow(::GetParent(hWnd)));
++					if (lbx) {
++						lbx->OnSelChange();
++					}
+ 				}
+ 			}
+ 			return 0;

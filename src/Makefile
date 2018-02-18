@@ -172,7 +172,8 @@ scintilla-marshal.o: scintilla/gtk/scintilla-marshal.c
 $(regex_objs): %.o: tre/lib/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) -Itre/lib $< -o $@
 ScintillaTerm.o: scintilla/term/ScintillaTerm.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $(CURSES_CFLAGS) $< -o $@
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $(CURSES_CFLAGS) -DSCI_COMPAT_4 \
+		$< -o $@
 $(lexlpeg_objs): LexLPeg.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $< -o $@
 $(textadept_objs): textadept.c
@@ -411,7 +412,7 @@ endif
 
 scintilla_tgz = scintilla373.tgz
 tre_zip = cdce45e8dd7a3b36954022b4a4d3570e1ac5a4f8.zip
-scinterm_zip = 30bef4e18cae.zip
+scinterm_zip = a0a536a4fe7e.zip
 scintillua_zip = 53fb84d4d0ac.zip
 lua_tgz = lua-5.3.4.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
