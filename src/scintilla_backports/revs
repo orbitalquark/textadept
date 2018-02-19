@@ -67,7 +67,6 @@ b44bb3627bbd Moved *StyleBits* APIs into deprecated category.
 fd2f856b8d58 Use explicit typedefs instead of deprecated derivation from std::iterator.
 73343682cbda Start of bidirectional code - implement SCI_SETBIDIRECTIONAL.
 ed27432729c3 Use std::abs in preference to abs as std::abs is generic and abs casts to int
-a366ce1a811e Use std::end when filling arrays as reduces chance of mistake.
 92c8f0f1b3e6 Add documentOption argument to SCI_CREATELOADER.
 3e3bfe29a819 Extend SplitVector to allow more than 2 billion elements on 64-bit systems.
 1bd57324aa36 Templatize Partitioning so it can hold different types.

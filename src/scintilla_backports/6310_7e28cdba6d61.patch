@@ -290,7 +290,7 @@ diff -r f2f32d58bcd8 -r 7e28cdba6d61 gtk/PlatGTK.cxx
  		cssProvider(NULL),
  #endif
 -		doubleClickAction(NULL), doubleClickActionData(NULL) {
-+		delegate(nullptr) {
++		delegate(NULL) {
  	}
  	~ListBoxX() override {
  		if (pixhash) {
