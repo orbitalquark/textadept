@@ -55,7 +55,7 @@ else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
                           pkg-config --define-variable=prefix=gtkosx \
                           --cflags glib-2.0)
   else
-    plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
+    plat_flag = -DCURSES
     CURSES_LIBS = -lncurses
   endif
   libluajit = luajit/src/libluajit.osx.a
@@ -92,8 +92,14 @@ else
     GLIB_CFLAGS = $(shell pkg-config --cflags glib-2.0)
     install_targets = ../textadept ../textadeptjit
   else
-    plat_flag = -DCURSES -D_XOPEN_SOURCE_EXTENDED
-    CURSES_LIBS = -lncursesw
+    plat_flag = -DCURSES
+    CURSES_CFLAGS = $(shell pkg-config --silence-errors --cflags ncursesw  || \
+                            pkg-config --silence-errors --cflags ncurses || \
+                            pkg-config --silence-errors --cflags curses)
+    CURSES_LIBS = $(shell pkg-config --silence-errors --libs ncursesw || \
+                          pkg-config --silence-errors --libs ncurses || \
+                          pkg-config --silence-errors --libs curses || \
+                          echo -lncursesw)
     install_targets = ../textadept-curses ../textadeptjit-curses
   endif
   libluajit = luajit/src/libluajit.a
