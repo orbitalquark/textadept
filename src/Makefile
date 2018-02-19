@@ -173,7 +173,7 @@ $(regex_objs): %.o: tre/lib/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) -Itre/lib $< -o $@
 ScintillaTerm.o: scintilla/term/ScintillaTerm.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $(CURSES_CFLAGS) -DSCI_COMPAT_4 \
-		$< -o $@
+		-DTA_PATCH $< -o $@
 $(lexlpeg_objs): LexLPeg.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $< -o $@
 $(textadept_objs): textadept.c
