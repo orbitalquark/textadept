@@ -989,12 +989,12 @@ diff -r c15f84c11e17 -r 95346e626cf8 src/Editor.cxx
 @@ -892,10 +902,12 @@
  		if (moveDir > 0) {
  			// lineDisplay is already line before fold as lines in fold use display line of line after fold
- 			lineDisplay = Sci::Clamp(lineDisplay, 0, cs.LinesDisplayed());
+ 			lineDisplay = Sci::clamp(lineDisplay, 0, cs.LinesDisplayed());
 -			return SelectionPosition(pdoc->LineStart(cs.DocFromDisplay(lineDisplay)));
 +			return SelectionPosition(static_cast<Sci::Position>(
 +				pdoc->LineStart(cs.DocFromDisplay(lineDisplay))));
  		} else {
- 			lineDisplay = Sci::Clamp(lineDisplay - 1, 0, cs.LinesDisplayed());
+ 			lineDisplay = Sci::clamp(lineDisplay - 1, 0, cs.LinesDisplayed());
 -			return SelectionPosition(pdoc->LineEnd(cs.DocFromDisplay(lineDisplay)));
 +			return SelectionPosition(static_cast<Sci::Position>(
 +				pdoc->LineEnd(cs.DocFromDisplay(lineDisplay))));
@@ -1684,8 +1684,8 @@ diff -r c15f84c11e17 -r 95346e626cf8 src/Editor.cxx
  		return pdoc->MovePositionOutsideChar(static_cast<int>(wParam) + 1, 1, true);
 
  	case SCI_POSITIONRELATIVE:
--		return Sci::Clamp(pdoc->GetRelativePosition(static_cast<int>(wParam), static_cast<int>(lParam)), 0, pdoc->Length());
-+		return Sci::Clamp(static_cast<int>(pdoc->GetRelativePosition(static_cast<int>(wParam), static_cast<int>(lParam))),
+-		return Sci::clamp(pdoc->GetRelativePosition(static_cast<int>(wParam), static_cast<int>(lParam)), 0, pdoc->Length());
++		return Sci::clamp(static_cast<int>(pdoc->GetRelativePosition(static_cast<int>(wParam), static_cast<int>(lParam))),
 +			0, static_cast<int>(pdoc->Length()));
 
  	case SCI_LINESCROLL:
