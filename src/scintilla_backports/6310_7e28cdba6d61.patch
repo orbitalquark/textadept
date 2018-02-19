@@ -313,7 +313,7 @@ diff -r f2f32d58bcd8 -r 7e28cdba6d61 gtk/PlatGTK.cxx
 -		if (ev->type == GDK_2BUTTON_PRESS && lb->doubleClickAction != NULL) {
 -			lb->doubleClickAction(lb->doubleClickActionData);
 +		if (ev->type == GDK_2BUTTON_PRESS && lb->delegate) {
-+			ListBoxEvent event(ListBoxEvent::EventType::doubleClick);
++			ListBoxEvent event(ListBoxEvent::doubleClick);
 +			lb->delegate->ListNotify(&event);
  			return TRUE;
  		}
@@ -326,7 +326,7 @@ diff -r f2f32d58bcd8 -r 7e28cdba6d61 gtk/PlatGTK.cxx
 +	try {
 +		ListBoxX* lb = static_cast<ListBoxX*>(p);
 +		if (ev->type != GDK_2BUTTON_PRESS && lb->delegate) {
-+			ListBoxEvent event(ListBoxEvent::EventType::selectionChange);
++			ListBoxEvent event(ListBoxEvent::selectionChange);
 +			lb->delegate->ListNotify(&event);
 +			return TRUE;
 +		}
@@ -354,7 +354,7 @@ diff -r f2f32d58bcd8 -r 7e28cdba6d61 gtk/PlatGTK.cxx
  	}
 +
 +	if (delegate) {
-+		ListBoxEvent event(ListBoxEvent::EventType::selectionChange);
++		ListBoxEvent event(ListBoxEvent::selectionChange);
 +		delegate->ListNotify(&event);
 +	}
  }
@@ -381,7 +381,7 @@ diff -r f2f32d58bcd8 -r 7e28cdba6d61 include/Platform.h
 +// ScintillaBase implements IListBoxDelegate to receive ListBoxEvents from a ListBox
 +
 +struct ListBoxEvent {
-+	enum class EventType { selectionChange, doubleClick } event;
++	enum EventType { selectionChange, doubleClick } event;
 +	ListBoxEvent(EventType event_) : event(event_) {
 +	}
 +};
@@ -533,10 +533,10 @@ diff -r f2f32d58bcd8 -r 7e28cdba6d61 src/ScintillaBase.cxx
 -	sci->AutoCompleteCompleted(0, SC_AC_DOUBLECLICK);
 +void ScintillaBase::ListNotify(ListBoxEvent *plbe) {
 +	switch (plbe->event) {
-+	case ListBoxEvent::EventType::selectionChange:
++	case ListBoxEvent::selectionChange:
 +		AutoCompleteSelection();
 +		break;
-+	case ListBoxEvent::EventType::doubleClick:
++	case ListBoxEvent::doubleClick:
 +		AutoCompleteCompleted(0, SC_AC_DOUBLECLICK);
 +		break;
 +	}

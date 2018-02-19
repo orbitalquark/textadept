@@ -114,7 +114,7 @@ diff -r 5246ca55cf24 -r 73343682cbda src/EditModel.cxx
  	highlightGuideColumn = 0;
  	primarySelection = true;
  	imeInteraction = imeWindowed;
-+	bidirectional = Bidirectional::bidiDisabled;
++	bidirectional = bidiDisabled;
  	foldFlags = 0;
  	foldDisplayTextStyle = SC_FOLDDISPLAYTEXT_HIDDEN;
  	hotspot = Range(Sci::invalidPosition);
@@ -125,7 +125,7 @@ diff -r 5246ca55cf24 -r 73343682cbda src/EditModel.h
  
  	enum IMEInteraction { imeWindowed, imeInline } imeInteraction;
  
-+	enum class Bidirectional { bidiDisabled, bidiL2R, bidiR2L  } bidirectional;
++	enum Bidirectional { bidiDisabled, bidiL2R, bidiR2L  } bidirectional;
 +
  	int foldFlags;
  	int foldDisplayTextStyle;
