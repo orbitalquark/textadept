@@ -2602,10 +2602,12 @@ int main(int argc, char **argv) {
                         LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
       scintilla_send_key(view, ch, shift, ctrl, alt);
     else if (!ch && !scintilla_send_mouse(view, event, millis, button, y, x,
-                                          shift, ctrl, alt))
-      lL_event(lua, "mouse", LUA_TNUMBER, event, LUA_TNUMBER, button,
-               LUA_TNUMBER, y, LUA_TNUMBER, x, LUA_TBOOLEAN, shift,
-               LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1);
+                                          shift, ctrl, alt) &&
+             !lL_event(lua, "mouse", LUA_TNUMBER, event, LUA_TNUMBER, button,
+                       LUA_TNUMBER, y, LUA_TNUMBER, x, LUA_TBOOLEAN, shift,
+                       LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
+      scintilla_send_mouse(focused_view, event, millis, button, y, x, shift,
+                           ctrl, alt); // try again with possibly another view
     if (quit && !lL_event(lua, "quit", -1)) {
       l_close(lua);
       // Free some memory.

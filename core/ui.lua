@@ -476,6 +476,7 @@ if CURSES then
     elseif resize then
       resize(y, x)
     end
+    return resize ~= nil -- false resends mouse event to current view
   end)
 end
 
