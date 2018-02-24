@@ -83,12 +83,13 @@ else
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     plat_flag = -DGTK
     ifndef GTK3
-      gtk_version = 2.0
+      GTK_CFLAGS = $(shell pkg-config --cflags gtk+-2.0 gmodule-2.0)
+      GTK_LIBS = $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
     else
-      gtk_version = 3.0
+      GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0 gmodule-2.0) \
+                   -Wno-deprecated-declarations
+      GTK_LIBS = $(shell pkg-config --libs gtk+-3.0 gmodule-2.0)
     endif
-    GTK_CFLAGS = $(shell pkg-config --cflags gtk+-$(gtk_version) gmodule-2.0)
-    GTK_LIBS = $(shell pkg-config --libs gtk+-$(gtk_version) gmodule-2.0)
     GLIB_CFLAGS = $(shell pkg-config --cflags glib-2.0)
     install_targets = ../textadept ../textadeptjit
   else

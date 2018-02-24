@@ -59,19 +59,11 @@
 typedef GtkWidget Scintilla;
 // Translate GTK 2.x API to GTK 3.0 for compatibility.
 #if GTK_CHECK_VERSION(3,0,0)
-#define GDK_Return GDK_KEY_Return
 #define GDK_Escape GDK_KEY_Escape
-#define gtk_container_add(c, w) \
-  (GTK_IS_BOX(c) ? gtk_box_pack_start(GTK_BOX(c), w, TRUE, TRUE, 0) \
-                 : gtk_container_add(c, w))
-#define gtk_hpaned_new() gtk_paned_new(GTK_ORIENTATION_HORIZONTAL)
-#define gtk_vpaned_new() gtk_paned_new(GTK_ORIENTATION_VERTICAL)
 #define gtk_combo_box_entry_new_with_model(m,_) \
   gtk_combo_box_new_with_model_and_entry(m)
 #define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
-#define gtk_vbox_new(_,s) gtk_box_new(GTK_ORIENTATION_VERTICAL, s)
-#define gtk_hbox_new(_,s) gtk_box_new(GTK_ORIENTATION_HORIZONTAL, s)
 #endif
 // Win32 single-instance functionality.
 #if _WIN32
@@ -158,16 +150,7 @@ static ListStore *find_store, *repl_store;
 #define set_label_text(l, t) gtk_label_set_text_with_mnemonic(GTK_LABEL(l), t)
 #define set_button_label(b, l) gtk_button_set_label(GTK_BUTTON(b), l)
 #define set_option_label(o, _, l) gtk_button_set_label(GTK_BUTTON(o), l)
-#if !GTK_CHECK_VERSION(3,4,0)
 #define attach(...) gtk_table_attach(GTK_TABLE(findbox), __VA_ARGS__)
-#else
-// GTK 3.4 deprecated tables; translate from 2.x for compatibility.
-#define gtk_table_new(...) \
-  gtk_grid_new(), gtk_grid_set_column_spacing(GTK_GRID(findbox), 5)
-#define attach(w, x1, _, y1, __, xo, ...) \
-  (gtk_widget_set_hexpand(w, xo & GTK_EXPAND), \
-   gtk_grid_attach(GTK_GRID(findbox), w, x1, y1, 1, 1))
-#endif
 #define FILL(option) (GtkAttachOptions)(GTK_FILL | GTK_##option)
 #define command_entry_focused gtk_widget_has_focus(command_entry)
 #elif CURSES
