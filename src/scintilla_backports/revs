@@ -73,3 +73,5 @@ ed27432729c3 Use std::abs in preference to abs as std::abs is generic and abs ca
 89d992f380a1 Templatize RunStyles so it can be over ranges of different types and contain
 431b814a54a6 Implement SC_DOCUMENTOPTION_STYLES_NONE.
 1280ef150bbb [Bug #1983] Fix double tap word selection on Windows 10 1709 Fall Creators Update.
+eaa6c7fa1a81 For rectangular selections, pressing Home or End now moves the caret to the Home
+0a8a766722c0 Fix move-extends-selection mode for rectangular and line selections.

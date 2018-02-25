@@ -1,0 +1,56 @@
+# HG changeset patch
+# User Vicente
+# Date 1518837132 -39600
+# Node ID eaa6c7fa1a811bd10abe19124335e984e50a67e5
+# Parent  b9e27867752769a2cb7057cab8942baf4850757b
+For rectangular selections, pressing Home or End now moves the caret to the Home
+or End position instead of the limit of the rectangular selection.
+
+diff -r b9e278677527 -r eaa6c7fa1a81 doc/ScintillaHistory.html
+--- a/doc/ScintillaHistory.html	Sat Feb 17 11:28:52 2018 +1100
++++ b/doc/ScintillaHistory.html	Sat Feb 17 14:12:12 2018 +1100
+@@ -540,6 +540,10 @@
+ 	Released 12 February 2018.
+ 	</li>
+ 	<li>
++	For rectangular selections, pressing Home or End now moves the caret to the Home or End
++	position instead of the limit of the rectangular selection.
++	</li>
++	<li>
+ 	SciTE on Windows can execute Python scripts directly by name when on path.
+ 	<a href="http://sourceforge.net/p/scintilla/feature-requests/1209/">Feature #1209.</a>
+ 	</li>
+diff -r b9e278677527 -r eaa6c7fa1a81 src/Editor.cxx
+--- a/src/Editor.cxx	Sat Feb 17 11:28:52 2018 +1100
++++ b/src/Editor.cxx	Sat Feb 17 14:12:12 2018 +1100
+@@ -3359,8 +3359,19 @@
+ 		SetRectangularRange();
+ 	} else if (sel.IsRectangular()) {
+ 		// Not a rectangular extension so switch to stream.
+-		const SelectionPosition selAtLimit = 
+-			(NaturalDirection(iMessage) > 0) ? sel.Limits().end : sel.Limits().start;
++		SelectionPosition selAtLimit = (NaturalDirection(iMessage) > 0) ? sel.Limits().end : sel.Limits().start;
++		switch (iMessage) {
++		case SCI_HOME:
++			selAtLimit = SelectionPosition(
++				static_cast<Sci::Position>(pdoc->LineStart(pdoc->LineFromPosition(selAtLimit.Position()))));
++			break;
++		case SCI_VCHOME:
++			selAtLimit = SelectionPosition(pdoc->VCHomePosition(selAtLimit.Position()));
++			break;
++		case SCI_LINEEND:
++			selAtLimit = SelectionPosition(pdoc->LineEndPosition(selAtLimit.Position()));
++			break;
++		}
+ 		sel.selType = Selection::selStream;
+ 		sel.SetSelection(SelectionRange(selAtLimit));
+ 	} else {
+@@ -7537,7 +7548,7 @@
+ 		std::vector<EdgeProperties>().swap(vs.theMultiEdge); // Free vector and memory, C++03 compatible
+ 		InvalidateStyleRedraw();
+ 		break;
+-	
++
+ 	case SCI_GETACCESSIBILITY:
+ 		return SC_ACCESSIBILITY_DISABLED;
+ 
