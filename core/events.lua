@@ -173,6 +173,10 @@ local M = {}
 --     [`ui.menu()`]().
 -- @field MOUSE (string)
 --   Emitted by the terminal version for an unhandled mouse event.
+--   A handler should return `true` if it handled the event. Otherwise Textadept
+--   will try again. (This side effect for a `false` or `nil` return is useful
+--   for sending the original mouse event to a different view that a handler
+--   has switched to.)
 --   Arguments:
 --
 --   * _`event`_: The mouse event: `buffer.MOUSE_PRESS`, `buffer.MOUSE_DRAG`, or
