@@ -189,7 +189,7 @@ static int *match_case = &find_options[0], *whole_word = &find_options[1],
 static char *button_labels[4], *option_labels[4];
 typedef char * ListStore;
 static ListStore find_store[10], repl_store[10];
-#define max(a, b) (((a) > (b)) ? (a) : (b))
+#define max_(a, b) (((a) > (b)) ? (a) : (b))
 #define bind(k, d) (bindCDKObject(vENTRY, find_entry, k, entry_keypress, d), \
                     bindCDKObject(vENTRY, replace_entry, k, entry_keypress, d))
 #define toggled(find_option) *find_option
@@ -439,11 +439,11 @@ static int lfind_focus(lua_State *L) {
   if (findbox) return 0; // already active
   wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
   findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0)), eraseCDKScreen(findbox);
-  int b_width = max(strlen(button_labels[0]), strlen(button_labels[1])) +
-                max(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
-  int o_width = max(strlen(option_labels[0]), strlen(option_labels[1])) +
-                max(strlen(option_labels[2]), strlen(option_labels[3])) + 3;
-  int l_width = max(strlen(flabel), strlen(rlabel));
+  int b_width = max_(strlen(button_labels[0]), strlen(button_labels[1])) +
+                max_(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
+  int o_width = max_(strlen(option_labels[0]), strlen(option_labels[1])) +
+                max_(strlen(option_labels[2]), strlen(option_labels[3])) + 3;
+  int l_width = max_(strlen(flabel), strlen(rlabel));
   int e_width = COLS - o_width - b_width - l_width - 1;
   find_entry = newCDKEntry(findbox, l_width - strlen(flabel), TOP, NULL, flabel,
                            A_NORMAL, '_', vMIXED, e_width, 0, 64, FALSE, FALSE);
@@ -1692,14 +1692,14 @@ static void remove_views_from_pane(Pane *pane) {
  */
 static void pane_resize(Pane *pane, int rows, int cols, int y, int x) {
   if (pane->type == VSPLIT) {
-    int ssize = pane->split_size * cols / max(pane->cols, 1);
+    int ssize = pane->split_size * cols / max_(pane->cols, 1);
     if (ssize < 1 || ssize >= cols - 1) ssize = (ssize < 1) ? 1 : cols - 2;
     pane->split_size = ssize;
     pane_resize(pane->child1, rows, ssize, y, x);
     pane_resize(pane->child2, rows, cols - ssize - 1, y, x + ssize + 1);
     wresize(pane->win, rows, 1), mvwin(pane->win, y, x + ssize); // split bar
   } else if (pane->type == HSPLIT) {
-    int ssize = pane->split_size * rows / max(pane->rows, 1);
+    int ssize = pane->split_size * rows / max_(pane->rows, 1);
     if (ssize < 1 || ssize >= rows - 1) ssize = (ssize < 1) ? 1 : rows - 2;
     pane->split_size = ssize;
     pane_resize(pane->child1, ssize, cols, y, x);
