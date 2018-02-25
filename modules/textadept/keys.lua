@@ -513,7 +513,7 @@ elseif CURSES then
   keys.mA, keys.mE = buffer.vc_home_extend, buffer.line_end_extend
   keys.mU, keys.mD = buffer.page_up_extend, buffer.page_down_extend
   keys.cma, keys.cme = buffer.document_start, buffer.document_end
-  keys.cd, keys.md = buffer.clear, keys.mdel
+  keys.cd, keys.md, keys.ch = buffer.clear, keys.mdel, buffer.delete_back
   keys.ck = function()
     buffer:line_end_extend()
     buffer:cut()
