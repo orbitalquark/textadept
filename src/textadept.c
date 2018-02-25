@@ -1,5 +1,9 @@
 // Copyright 2007-2018 Mitchell mitchell.att.foicica.com. See LICENSE.
 
+#if __linux__
+#define _XOPEN_SOURCE 500 // for readlink from unistd.h
+#endif
+
 // Library includes.
 #include <errno.h>
 #include <locale.h>
@@ -17,7 +21,6 @@
 #elif __APPLE__
 #include <mach-o/dyld.h>
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
-#define u_int unsigned int // 'u_int' undefined when _POSIX_SOURCE is defined
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #endif
@@ -1377,11 +1380,11 @@ static int lquit(lua_State *L) {
   return 0;
 }
 
-#if _WIN32
-char *stpcpy(char *dest, const char *src) {
+// stpcpy() does not exist on _WIN32, but exists on other platforms with or
+// without feature test macros. In order to minimize confusion, just define it.
+char *stpcpy_(char *dest, const char *src) {
   return (strcpy(dest, src), dest + strlen(src));
 }
-#endif
 
 /**
  * Loads and runs the given file.
@@ -1391,7 +1394,7 @@ char *stpcpy(char *dest, const char *src) {
  */
 static int lL_dofile(lua_State *L, const char *filename) {
   char *file = malloc(strlen(textadept_home) + 1 + strlen(filename) + 1);
-  stpcpy(stpcpy(stpcpy(file, textadept_home), "/"), filename);
+  stpcpy_(stpcpy_(stpcpy_(file, textadept_home), "/"), filename);
   int ok = (luaL_dofile(L, file) == LUA_OK);
   if (!ok) {
 #if GTK
