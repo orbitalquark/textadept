@@ -247,7 +247,7 @@ module('textadept.keys')]]
 -- Key bindings available depend on your implementation of curses.
 --
 -- For ncurses (Linux, Mac OSX, BSD):
---   * The only Control keys recognized are 'ca'-'cz', 'c@', 'c\\', 'c]', 'c^',
+--   * The only Control keys recognized are 'ca'-'cz', 'c ', 'c\\', 'c]', 'c^',
 --     and 'c_'.
 --   * Control+Shift and Control+Meta+Shift keys are not recognized.
 --   * Modifiers for function keys F1-F12 are not recognized.
@@ -403,8 +403,7 @@ keys['\t'] = textadept.snippets._insert
 keys['s\t'] = textadept.snippets._previous
 keys.esc = textadept.snippets._cancel_current
 -- Other.
-keys[not OSX and ((GUI or WIN32) and 'c ' or 'c@')
-             or 'aesc'] = m_tools[_L['_Complete Symbol']][2]
+keys[not OSX and 'c ' or 'aesc'] = m_tools[_L['_Complete Symbol']][2]
 keys[GUI and 'ch' or 'mh'] = textadept.editing.show_documentation
 if CURSES then keys.mH = keys.mh end -- mh is used by some GUI terminals
 keys[not OSX and (GUI and 'ci' or 'mI') or 'mi'] = m_tools[_L['Show St_yle']][2]

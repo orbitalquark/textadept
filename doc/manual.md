@@ -2277,6 +2277,11 @@ Simply copying the contents of your *~/.textadept/properties.lua* into
 Lexers are now written in a more object-oriented way. Legacy lexers are still
 supported, but it is recommended that you [migrate them][].
 
+#### Key Bindings Changes
+
+The terminal version's key sequence for `Ctrl+Space` is now `'c '` instead of
+`'c@'`.
+
 [migrate them]: api.html#lexer.Migrating.Legacy.Lexers
 
 ### Textadept 8 to 9
