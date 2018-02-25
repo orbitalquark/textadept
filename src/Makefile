@@ -6,7 +6,7 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   # Cross-compile for Win32.
   CROSS = i686-w64-mingw32-
   CFLAGS = -mms-bitfields -Os
-  CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++ -Os -std=g++0x
+  CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++ -Os -std=gnu++0x
   LUA_CFLAGS = -DLUA_BUILD_AS_DLL -DLUA_LIB
   LDFLAGS = -Wl,--retain-symbols-file -Wl,lua.sym
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
@@ -417,7 +417,7 @@ endif
 
 scintilla_tgz = scintilla373.tgz
 tre_zip = cdce45e8dd7a3b36954022b4a4d3570e1ac5a4f8.zip
-scinterm_zip = a0a536a4fe7e.zip
+scinterm_zip = 46e218082338.zip
 scintillua_zip = 53fb84d4d0ac.zip
 lua_tgz = lua-5.3.4.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
