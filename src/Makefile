@@ -2,6 +2,7 @@
 
 CC = gcc
 CXX = g++
+MAKE = make
 ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   # Cross-compile for Win32.
   CROSS = i686-w64-mingw32-
@@ -14,7 +15,6 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
     LDFLAGS += -liconv
   endif
   WINDRES = windres
-  MAKE = make
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     plat_flag = -DGTK
     GTK_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
@@ -39,7 +39,6 @@ else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
   CXXFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 -Os
   LUA_CFLAGS = -DLUA_USE_MACOSX
   LDFLAGS = -liconv -rdynamic
-  MAKE = make
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     plat_flag = -DGTK
     GTK_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
@@ -65,7 +64,6 @@ else
   LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
   ifeq (Linux, $(shell uname -s))
     LDFLAGS += -ldl
-    MAKE = make
   else
     CC=cc
     CXX=c++
@@ -127,8 +125,8 @@ lexlpeg_objs = LexLPeg.o LexLPegjit.o LexLPeg-curses.o LexLPegjit-curses.o
 
 # Textadept.
 
-ta_flags = -std=c99 -pedantic $(plat_flag) -Iscintilla/include -Igtdialog -W \
-           -Wall -Wno-unused
+ta_flags = -std=c99 -pedantic $(plat_flag) -Iscintilla/include -Igtdialog \
+           -Wall -Wextra -Wno-unused
 
 textadept_gtk_objs = textadept.o textadeptjit.o
 textadept_curses_objs = textadept-curses.o textadeptjit-curses.o
@@ -209,7 +207,7 @@ textadept_rc.o: textadept.rc ; $(CROSS)$(WINDRES) $< $@
 
 # Target-specific variables.
 
-$(lexlpeg_objs): sci_flags += -DLPEG_LEXER -DNO_SCITE -Wno-long-long
+$(lexlpeg_objs): sci_flags += -DLPEG_LEXER -DNO_SCITE
 LexLPeg-curses.o LexLPegjit-curses.o: sci_flags += -DCURSES $(CURSES_CFLAGS)
 lua_dep_objs = LexLPeg.o LexLPeg-curses.o textadept.o textadept-curses.o \
                $(lua_objs) $(lua_lib_objs) lspawn.o lspawn-curses.o
