@@ -2264,9 +2264,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>10.0alpha</string>
+	<string>10.0alpha2</string>
 	<key>CFBundleShortVersionString</key>
-	<string>10.0 alpha</string>
+	<string>10.0 alpha 2</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
