@@ -402,8 +402,10 @@ ifndef NIGHTLY
   scinterm_url = http://foicica.com/hg/scinterm/archive/$@
   #scintillua_url = http://foicica.com/scintillua/download/$@
   scintillua_url = http://foicica.com/hg/scintillua/archive/$@
-  gtdialog_url = http://foicica.com/gtdialog/download/$@
-  lspawn_url = http://foicica.com/lspawn/download/$@
+  #gtdialog_url = http://foicica.com/gtdialog/download/$@
+  gtdialog_url = http://foicica.com/hg/gtdialog/archive/$@
+  #lspawn_url = http://foicica.com/lspawn/download/$@
+  lspawn_url = http://foicica.com/hg/lspawn/archive/$@
 else
   scinterm_url = http://foicica.com/hg/scinterm/archive/tip.zip
   scintillua_url = http://foicica.com/hg/scintillua/archive/tip.zip
@@ -414,14 +416,14 @@ endif
 scintilla_tgz = scintilla373.tgz
 tre_zip = cdce45e8dd7a3b36954022b4a4d3570e1ac5a4f8.zip
 scinterm_zip = 46e218082338.zip
-scintillua_zip = 53fb84d4d0ac.zip
+scintillua_zip = 3d489664a2af.zip
 lua_tgz = lua-5.3.4.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
-lspawn_zip = lspawn_1.5.zip
+lspawn_zip = 9a8b4b5e4137.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
-gtdialog_zip = gtdialog_1.4.zip
+gtdialog_zip = 6435a42450c7.zip
 cdk_tgz = cdk-5.0-20150928.tgz
 termkey_tgz = libtermkey-0.20.tar.gz
 win32gtk_zip = gtk+-bundle_2.24.10-20120208_win32.zip
