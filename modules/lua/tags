@@ -524,7 +524,6 @@ debug	_	0;"	f	class:debug
 debug	_	0;"	m	
 dec_num	_	0;"	F	class:lexer
 default_filter	_	0;"	t	class:lfs
-default_session	_	0;"	F	class:textadept.session
 deg	_	0;"	f	class:math
 del_line_left	_	0;"	f	class:buffer
 del_line_right	_	0;"	f	class:buffer
@@ -840,6 +839,7 @@ mouse_dwell_time	_	0;"	F	class:buffer
 mouse_selection_rectangular_switch	_	0;"	F	class:buffer
 move	_	0;"	f	class:table
 move_caret_inside_view	_	0;"	f	class:buffer
+move_extends_selection	_	0;"	F	class:buffer
 move_selected_lines_down	_	0;"	f	class:buffer
 move_selected_lines_up	_	0;"	f	class:buffer
 msgbox	_	0;"	f	class:ui.dialogs
