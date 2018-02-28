@@ -6,7 +6,7 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   # Cross-compile for Win32.
   CROSS = i686-w64-mingw32-
   CFLAGS = -mms-bitfields -Os
-  CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++ -Os -std=gnu++0x
+  CXXFLAGS = -mms-bitfields -static-libgcc -static-libstdc++ -Os -std=c++0x
   LUA_CFLAGS = -DLUA_BUILD_AS_DLL -DLUA_LIB
   LDFLAGS = -Wl,--retain-symbols-file -Wl,lua.sym
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
@@ -35,10 +35,8 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
 else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
   # Cross-compile for Mac OSX.
   CROSS = i686-apple-darwin10-
-  CFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
-           -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk -Os
-  CXXFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 \
-             -isysroot /usr/lib/apple/SDKs/MacOSX10.5.sdk -Os
+  CFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 -Os
+  CXXFLAGS = -m32 -arch i386 -mdynamic-no-pic -mmacosx-version-min=10.5 -Os
   LUA_CFLAGS = -DLUA_USE_MACOSX
   LDFLAGS = -liconv -rdynamic
   MAKE = make
@@ -358,12 +356,12 @@ release64: $(basedir).x86_64
 	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg -ab /tmp/$<.tgz
 $(basedir).win32: ; hg archive $@ -X ".hg*"
 win32-release: $(basedir).win32
-	make -j4 clean CROSS=i586-mingw32msvc- win32-deps
+	make -j4 clean win32-deps
 	cp win32gtk/bin/*.dll $< && cp -r win32gtk/etc \
 		win32gtk/lib win32gtk/share $<
 	rm -r $</lib/*.a $</lib/glib-2.0 $</lib/gtk-2.0/include $</lib/pkgconfig
-	make -j4 CROSS=i586-mingw32msvc- win32
-	make -j4 CROSS=i586-mingw32msvc- win32-curses
+	make -j4 win32
+	make -j4 win32-curses
 	cp -r ../doc ../lexers ../textadept* luajit/src/lua51.dll $<
 	cp *.asc $</src
 	zip -r /tmp/$<.zip $< && rm -rf $< && gpg -ab /tmp/$<.zip
