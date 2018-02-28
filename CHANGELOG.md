@@ -9,10 +9,63 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 10.0 alpha (01 Jan 2018)
+## 10.0 alpha 2 (01 Mar 2018)
 
 Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to
 Textadept 10.
+
+Download:
+
+* [Textadept 10.0 alpha 2 -- Win32][] | [PGP -- 10.0 alpha 2 Win32][]
+* [Textadept 10.0 alpha 2 -- Mac OSX Intel 10.5+][] | [PGP -- 10.0 alpha 2 OSX][]
+* [Textadept 10.0 alpha 2 -- Linux][] | [PGP -- 10.0 alpha 2 Linux][]
+* [Textadept 10.0 alpha 2 -- Linux x86_64][] | [PGP -- 10.0 alpha 2 Linux x86_64][]
+* [Textadept 10.0 alpha 2 -- Modules][] | [PGP -- 10.0 alpha 2 Modules][]
+
+Bugfixes:
+
+* Fixed clang build warnings/errors regarding LuaJIT.
+* Fixed busy wait in second instance of Textadept on Windows.
+* Fixed bug in remote-controlled Textadept when no arguments were initially
+  given.
+* Fixed session loading when only it is provided as a command line argument.
+* Fixed copy-paste between views in the terminal version.
+* Fixed crash when attempting to show a badly-encoded filename in the titlebar.
+* Scintilla: Fixed double-click word selection on Windows 10.
+* Scintilla: Fixed rectangular and line modal selection movements.
+
+Changes:
+
+* Added `fold.compact` buffer property.
+* Added [`buffer.move_extends_selection`][] for enhanced modal keyboard
+  movement.
+* Auto-detect UTF-16-encoded files automatically.
+* Save to the loaded session on quit and removed the
+  `textadept.session.default_session` option.
+* Various Makefile improvements.
+* The terminal version can immediately focus on a clicked split view.
+* Textadept only minimally supports GTK3 now -- it still compiles, but
+  deprecated function calls have not been, and will not be migrated.
+* The terminal key sequence for `Ctrl+Space` is now `'c '` instead of `'c@'`.
+* The terminal version can now remap `^H` (which was previously locked to
+  `Backspace`).
+* Scintilla: Theoretical support for files larger than 2GB in size on 64-bit
+  machines (but this is not recommended or encouraged).
+
+[9 to 10 migration guide]: manual.html#Textadept.9.to.10
+[Textadept 10.0 alpha 2 -- Win32]: download/textadept_10.0_alpha_2.win32.zip
+[Textadept 10.0 alpha 2 -- Mac OSX Intel 10.5+]: download/textadept_10.0_alpha_2.osx.zip
+[Textadept 10.0 alpha 2 -- Linux]: download/textadept_10.0_alpha_2.i386.tgz
+[Textadept 10.0 alpha 2 -- Linux x86_64]: download/textadept_10.0_alpha_2.x86_64.tgz
+[Textadept 10.0 alpha 2 -- Modules]: download/textadept_10.0_alpha_2.modules.zip
+[PGP -- 10.0 alpha 2 Win32]: download/textadept_10.0_alpha_2.win32.zip.asc
+[PGP -- 10.0 alpha 2 OSX]: download/textadept_10.0_alpha_2.osx.zip.asc
+[PGP -- 10.0 alpha 2 Linux]: download/textadept_10.0_alpha_2.i386.tgz.asc
+[PGP -- 10.0 alpha 2 Linux x86_64]: download/textadept_10.0_alpha_2.x86_64.tgz.asc
+[PGP -- 10.0 alpha 2 Modules]: download/textadept_10.0_alpha_2.modules.zip.asc
+[`buffer.move_extends_selection`]: api.html#buffer.move_extends_selection
+
+## 10.0 alpha (01 Jan 2018)
 
 Download:
 
@@ -43,9 +96,8 @@ Changes:
 * Enforce extra argument to [`buffer.brace_match()`][] added back in Scintilla
   3.7.0.
 * Added [`events.ZOOM`][].
-* Added [`buffer.move_extends_selection`][].
+* TODO: new lexer format.
 
-[9 to 10 migration guide]: manual.html#Textadept.9.to.10
 [Textadept 10.0 alpha -- Win32]: download/textadept_10.0_alpha.win32.zip
 [Textadept 10.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_10.0_alpha.osx.zip
 [Textadept 10.0 alpha -- Linux]: download/textadept_10.0_alpha.i386.tgz
@@ -62,7 +114,6 @@ Changes:
 [`buffer.set_theme()`]: api.html#buffer.set_theme
 [`buffer.brace_match()`]: api.html#buffer.brace_match
 [`events.ZOOM`]: api.html#events.ZOOM
-[`buffer.move_extends_selection`]: api.html#buffer.move_extends_selection
 
 ## 9.6 (01 Nov 2017)
 
