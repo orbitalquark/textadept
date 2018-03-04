@@ -155,7 +155,7 @@ diff -r 49c8684413c0 termkey-internal.h
 diff -r 49c8684413c0 termkey.c
 --- a/termkey.c	Tue Dec 23 10:36:54 2014 -0500
 +++ b/termkey.c	Tue Dec 23 13:31:50 2014 -0500
-@@ -3,8 +3,13 @@
+@@ -3,8 +3,14 @@
  
  #include <ctype.h>
  #include <errno.h>
@@ -164,7 +164,8 @@ diff -r 49c8684413c0 termkey.c
  #include <unistd.h>
 +#else
 +#define ssize_t int
-+#define strcasecmp _stricmp
++// TODO: _stricmp causes a hang
++#define strcasecmp strcmp
 +#endif
  #include <string.h>
  
