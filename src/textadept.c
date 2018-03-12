@@ -52,7 +52,7 @@
 #if GTK
 #include "ScintillaWidget.h"
 #elif CURSES
-#include "ScintillaTerm.h"
+#include "ScintillaCurses.h"
 #include "cdk_int.h"
 #include "termkey.h"
 #endif
