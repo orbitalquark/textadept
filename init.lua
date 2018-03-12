@@ -73,6 +73,8 @@ end
 local buffer = buffer
 buffer.set_theme(not CURSES and 'light' or 'term')
 
+buffer.FIND_REGEXP = buffer.FIND_REGEXP + buffer.FIND_CXX11REGEX
+
 -- Multiple Selection and Virtual Space
 buffer.multiple_selection = true
 buffer.additional_selection_typing = true

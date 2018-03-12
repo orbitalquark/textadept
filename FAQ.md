@@ -17,6 +17,21 @@ that had a noticible difference between the two. *textadept* is recommended.
 - - -
 
 **Q:**
+If Textadept is so minimalist, why are the downloads around 10MB in size and the
+unzipped folders 10s of MBs in size?
+
+**A:**
+Each download contains 4 executables: 2 GUI versions and 2 terminal versions
+(each version uses either Lua or LuaJIT). Furthermore, the Windows and OSX
+packages bundle in GTK+ runtimes, accounting for some 3/4 of the total
+application size. (GTK+ is the cross-platform GUI toolkit Textadept uses.)
+Finally, starting in version 10, in order to be able to run on older Linux
+systems whose libstdc++ does not support newer C++11 symbols, the Linux
+executables statically link in a newer version of libstdc++.
+
+- - -
+
+**Q:**
 On Linux I get a `error while loading shared libraries: <lib>: cannot open`
 `shared object file: No such file or directory` when trying to run Textadept.
 How do I fix it?

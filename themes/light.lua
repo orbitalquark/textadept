@@ -63,7 +63,7 @@ end
 property['style.default'] = 'font:$(font),size:$(fontsize),'..
                             'fore:$(color.light_black),back:$(color.white)'
 property['style.linenumber'] = 'fore:$(color.grey),back:$(color.white)'
---property['style.controlchar'] = '$(style.nothing)'
+--property['style.controlchar'] = ''
 property['style.indentguide'] = 'fore:$(color.dark_white)'
 property['style.calltip'] = 'fore:$(color.light_black),back:$(color.dark_white)'
 property['style.folddisplaytext'] = 'fore:$(color.grey)'

@@ -696,7 +696,7 @@ Changes:
 * Disabled `textadept.run.CHECK_SYNTAX` by default.
 * Updated to [lspawn][] 1.5.
 * Updated to [Scintilla][] 3.6.5.
-* Updated to [Scinterm][] 1.8.
+* Updated to Scinterm 1.8.
 
 [Textadept 8.7 -- Win32]: download/textadept_8.7.win32.zip
 [Textadept 8.7 -- Mac OSX Intel 10.5+]: download/textadept_8.7.osx.zip
@@ -718,7 +718,6 @@ Changes:
 [`textadept.editing.enclose()`]: api.html#textadept.editing.enclose
 [lspawn]: http://foicica.com/hg/lspawn
 [Scintilla]: http://scintilla.org
-[Scinterm]: http://foicica.com/scinterm
 
 ## 8.6 (01 Mar 2016)
 
@@ -760,7 +759,7 @@ Changes:
   [stateful lexers][].
 * Updated to [lspawn][] 1.4.
 * Updated to [Scintilla][] 3.6.3.
-* Updated to [Scinterm][] 1.7.
+* Updated to Scinterm 1.7.
 
 [Textadept 8.6 -- Win32]: download/textadept_8.6.win32.zip
 [Textadept 8.6 -- Mac OSX Intel 10.5+]: download/textadept_8.6.osx.zip
@@ -779,7 +778,6 @@ Changes:
 [stateful lexers]: api.html#lexer.Lexers.with.Complex.State
 [lspawn]: http://foicica.com/hg/lspawn
 [Scintilla]: http://scintilla.org
-[Scinterm]: http://foicica.com/scinterm
 
 ## 8.5 (01 Jan 2016)
 
@@ -4053,7 +4051,7 @@ Bugfixes:
 
 Changes:
 
-* Updated to the new [Scintillua][] that does not required patched Scintilla.
+* Updated to the new Scintillua that does not required patched Scintilla.
 * Updated to [Scintilla][] 2.21.
 
 [Textadept 3.2 -- Win32]: download/textadept_3.2.win32.zip
@@ -4066,7 +4064,6 @@ Changes:
 [PGP -- 3.2 Linux]: download/textadept_3.2.tgz.asc
 [PGP -- 3.2 Linux x86_64]: download/textadept_3.2.x86_64.tgz.asc
 [PGP -- 3.2 Source]: download/textadept_3.2.src.zip.asc
-[Scintillua]: http://foicica.com/scintillua
 [Scintilla]: http://scintilla.org
 
 ## 3.1 (21 Aug 2010)

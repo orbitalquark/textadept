@@ -1618,8 +1618,9 @@ as running it.
 
 ### Requirements for Linux and BSD
 
-First, Linux and BSD systems need either the [GNU C compiler][] (*gcc*) or
-[Clang][] (*clang*), as well as [GNU Make][] (*make* or *gmake*). BSD users
+First, Linux and BSD systems need either the [GNU C compiler][] (*gcc*) version
+4.9 or later (circa early 2014) or [Clang][] (*clang*), [libstdc++][] 4.9 or
+later (circa early 2014), and [GNU Make][] (*make* or *gmake*). BSD users
 additionally need to have [pkg-config][] and [libiconv][] installed. All of
 these should be available for your distribution through a package manager. For
 example, Ubuntu includes these tools in the "build-essential" package.
@@ -1639,6 +1640,7 @@ users _also_ need "libncursesw5-dev".)
 
 [GNU C compiler]: http://gcc.gnu.org
 [Clang]: http://clang.llvm.org/
+[libstdc++]: http://gcc.gnu.org
 [GNU Make]: http://www.gnu.org/software/make/
 [pkg-config]: http://www.freedesktop.org/wiki/Software/pkg-config/
 [libiconv]: http://www.gnu.org/software/libiconv/
@@ -1649,15 +1651,18 @@ users _also_ need "libncursesw5-dev".)
 
 Compiling Textadept on Windows is no longer supported. The preferred way to
 compile for Windows is cross-compiling from Linux. In order to do so, you need
-[MinGW][] with the Windows header files. Your package manager should offer them.
+[MinGW][] or [mingw-w64][] version 4.9 or later with the Windows header files.
+Your package manager should offer them.
 
 Note: compiling on Windows requires a C compiler that supports the C99 standard,
-the [GTK+ for Windows bundle][] (2.24 is recommended), and
+a C++ compiler that supports the C++11 standard, a C++ standard library that
+supports C++11, the [GTK+ for Windows bundle][] version 2.24, and
 [libiconv for Windows][] (the "Developer files" and "Binaries" zip files). The
 terminal (pdcurses) version requires my [win32curses bundle][] instead of GTK+
 and libiconv.
 
 [MinGW]: http://mingw.org
+[mingw-w64]: http://mingw-w64.org/
 [GTK+ for Windows bundle]: http://www.gtk.org/download/windows.php
 [libiconv for Windows]: http://gnuwin32.sourceforge.net/packages/libiconv.htm
 [win32curses bundle]: download/win32curses.zip
@@ -1665,10 +1670,15 @@ and libiconv.
 ### Requirements for Mac OSX
 
 Compiling Textadept on Mac OSX is no longer supported. The preferred way is
-cross-compiling from Linux. In order to do so, you need the
-[Apple Cross-compiler][] binaries.
+cross-compiling from Linux. In order to do so, you need install an [OSX cross
+toolchain][] _with GCC_ version 4.9 or later. You will need to run
+`./build_binutils.sh` _before_ `./build_gcc.sh`. OSX SDK tarballs like
+*MacOSX10.5.tar.gz* can be found readily on the internet.
 
-[Apple Cross-compiler]: https://launchpad.net/~flosoft/+archive/cross-apple
+Note that building an OSX toolchain can easily take 30 minutes or more and
+ultimately consume nearly 3.5GB of disk space.
+
+[OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
 
 ## Compiling
 
@@ -1729,12 +1739,13 @@ Similarly, `make curses` and `make curses install` installs the curses version.
 
 When cross-compiling from within Linux, first make a note of your MinGW
 compiler names. You may have to either modify the `CROSS` variable in the
-"win32" block of *src/Makefile* or append something like "CROSS=i486-mingw32-"
-when running `make`. After considering your MinGW compiler names, run
-`make win32-deps` or `make CROSS=i486-mingw32- win32-deps` to prepare the build
-environment followed by `make win32` or `make CROSS=i486-mingw32- win32` to
-build *../textadept.exe* and *../textadeptjit.exe*. Finally, copy the dll files
-from *src/win32gtk/bin/* to the directory containing the Textadept executables.
+"win32" block of *src/Makefile* or append something like
+"CROSS=i586-mingw32msvc-" when running `make`. After considering your MinGW
+compiler names, run `make win32-deps` or
+`make CROSS=i586-mingw32msvc- win32-deps` to prepare the build environment
+followed by `make win32` or `make CROSS=i586-mingw32msvc- win32` to build
+*../textadept.exe* and *../textadeptjit.exe*. Finally, copy the dll files from
+*src/win32gtk/bin/* to the directory containing the Textadept executables.
 
 Similarly for the terminal version, run `make win32-curses` or its variant as
 suggested above to build *../textadept-curses.exe* and
@@ -1869,210 +1880,12 @@ Textadept has a [mailing list][] and a [wiki][].
 
 ## Regular Expressions
 
-Textadept uses [TRE][] as its regular expression library. TRE is a "lightweight,
-robust, and efficient POSIX compliant regexp matching library".
+Textadept's regular expressions are based on the C++11 standard for ECMAScript.
+There are a number of references for this syntax on the internet including:
 
-The following is from the [TRE Regexp Syntax][].
-
-This section describes the POSIX 1003.2 extended RE (ERE) syntax as implemented
-by TRE, and the TRE extensions to the ERE syntax. A simple Extended Backus-Naur
-Form (EBNF) style notation is used to describe the grammar.
-
-**Alternation operator**
-
-    extended-regexp ::= branch
-                    |   extended-regexp "|" branch
-
-An extended regexp (ERE) is one or more branches, separated by `|`. An ERE
-matches anything that matches one or more of the branches.
-
-**Catenation of REs**
-
-    branch ::= piece
-           |   branch piece
-
-A branch is one or more pieces concatenated. It matches a match for the first
-piece, followed by a match for the second piece, and so on.
-
-    piece ::= atom
-          |   atom repeat-operator
-          |   atom approx-settings
-
-A piece is an atom possibly followed by a repeat operator or an expression
-controlling approximate matching parameters for the atom.
-
-    atom ::= "(" extended-regexp ")"
-         |   bracket-expression
-         |   "."
-         |   assertion
-         |   literal
-         |   back-reference
-         |   "(?#" comment-text ")"
-         |   "(?" options ")" extended-regexp
-         |   "(?" options ":" extended-regexp ")"
-
-An atom is either an ERE enclosed in parenthesis, a bracket expression, a `.`
-(period), an assertion, or a literal.
-
-The dot (`.`) matches any single character.
-
-Comment-text can contain any characters except for a closing parenthesis `)`.
-The text in the comment is completely ignored by the regex parser and it used
-solely for readability purposes.
-
-**Repeat operators**
-
-    repeat-operator ::= "*"
-                    |   "+"
-                    |   "?"
-                    |   bound
-                    |   "*?"
-                    |   "+?"
-                    |   "??"
-                    |   bound ?
-
-An atom followed by `*` matches a sequence of 0 or more matches of the atom. `+`
-is similar to `*`, matching a sequence of 1 or more matches of the atom. An atom
-followed by `?` matches a sequence of 0 or 1 matches of the atom.
-
-A bound is one of the following, where *m* and *n* are unsigned decimal integers
-between 0 and `RE_DUP_MAX`:
-
-1. {*m*,*n*}
-2. {*m*,}
-3. {*m*}
-
-An atom followed by [1] matches a sequence of *m* through *n* (inclusive)
-matches of the atom. An atom followed by [2] matches a sequence of *m* or more
-matches of the atom. An atom followed by [3] matches a sequence of exactly *m*
-matches of the atom.
-
-Adding a `?` to a repeat operator makes the subexpression minimal, or
-non-greedy. Normally a repeated expression is greedy, that is, it matches as
-many characters as possible. A non-greedy subexpression matches as few
-characters as possible. Note that this does not (always) mean the same thing as
-matching as many or few repetitions as possible.
-
-**Bracket expressions**
-
-    bracket-expression ::= "[" item+ "]"
-                       |   "[^" item+ "]"
-
-A bracket expression specifies a set of characters by enclosing a nonempty list
-of items in brackets. Normally anything matching any item in the list is
-matched. If the list begins with `^` the meaning is negated; any character
-matching no item in the list is matched.
-
-An item is any of the following:
-
-* A single character, matching that character.
-* Two characters separated by `-`. This is shorthand for the full range of
-  characters between those two (inclusive) in the collating sequence. For
-  example, `[0-9]` in ASCII matches any decimal digit.
-* A collating element enclosed in `[.` and `.]`, matching the collating element.
-  This can be used to include a literal `-` or a multi-character collating
-  element in the list.
-* A collating element enclosed in `[=` and `=]` (an equivalence class), matching
-  all collating elements with the same primary collation weight as that element,
-  including the element itself.
-* The name of a character class enclosed in `[:` and `:]`, matching any
-  character belonging to the class. The set of valid names depends on the
-  `LC_CTYPE` category of the current locale, but the following names are valid
-  in all locales:
-  + `alnum` -- alphanumeric characters
-  + `alpha` -- alphabetic characters
-  + `blank` -- blank characters
-  + `cntrl` -- control characters
-  + `digit` -- decimal digits (0 through 9)
-  + `graph` -- all printable characters except space
-  + `lower` -- lower-case letters
-  + `print` -- printable characters including space
-  + `punct` -- printable characters not space or alphanumeric
-  + `space` -- white-space characters
-  + `upper` -- upper case letters
-  + `xdigit` -- hexadecimal digits
-
-To include a literal `-` in the list, make it either the first or last item, the
-second endpoint of a range, or enclose it in `[.` and `.]` to make it a
-collating element. To include a literal `]` in the list, make it either the
-first item, the second endpoint of a range, or enclose it in `[.` and `.]`. To
-use a literal `-` as the first endpoint of a range, enclose it in `[.` and `.].`
-
-**Assertions**
-
-    assertion ::= "^"
-              |   "$"
-              |   "\" assertion-character
-
-The expressions `^` and `$` are called "left anchor" and "right anchor",
-respectively. The left anchor matches the empty string at the beginning of the
-string. The right anchor matches the empty string at the end of the string.
-
-An assertion-character can be any of the following:
-
-* `<` -- Beginning of word
-* `>` -- End of word
-* `b` -- Word boundary
-* `B` -- Non-word boundary
-* `d` -- Digit character (equivalent to `[[:digit:]]`)
-* `D` -- Non-digit character (equivalent to `[^[:digit:]]`)
-* `s` -- Space character (equivalent to `[[:space:]]`)
-* `S` -- Non-space character (equivalent to `[^[:space:]]`)
-* `w` -- Word character (equivalent to `[[:alnum:]_]`)
-* `W` -- Non-word character (equivalent to `[^[:alnum:]_]`)
-
-**Literals**
-
-    literal ::= ordinary-character
-            |   "\x" ["1"-"9" "a"-"f" "A"-"F"]{0,2}
-            |   "\x{" ["1"-"9" "a"-"f" "A"-"F"]* "}"
-            |  "\" character
-
-A literal is either an ordinary character (a character that has no other
-significance in the context), an 8 bit hexadecimal encoded character (e.g.
-`\x1B`), a wide hexadecimal encoded character (e.g. `\x{263a}`), or an escaped
-character. An escaped character is a `\` followed by any character, and matches
-that character. Escaping can be used to match characters which have a special
-meaning in regexp syntax. A `\` cannot be the last character of an ERE. Escaping
-also allows you to include a few non-printable characters in the regular
-expression. These special escape sequences include:
-
-* `\a` -- Bell character (ASCII code 7)
-* `\e` -- Escape character (ASCII code 27)
-* `\f` -- Form-feed character (ASCII code 12)
-* `\n` -- New-line/line-feed character (ASCII code 10)
-* `\r` -- Carriage return character (ASCII code 13)
-* `\t` -- Horizontal tab character (ASCII code 9)
-
-An ordinary character is just a single character with no other significance, and
-matches that character. A `{` followed by something else than a digit is
-considered an ordinary character.
-
-**Back references**
-
-    back-reference ::= "\" ["1"-"9"]
-
-A back reference is a backslash followed by a single non-zero decimal digit *d*.
-It matches the same sequence of characters matched by the *d*th parenthesized
-subexpression.
-
-**Options**
-
-    options ::= ["i" "n" "r" "U"]* ("-" ["i" "n" "r" "U"]*)?
-
-Options allow compile time options to be turned on/off for particular parts of
-the regular expression. If the option is specified in the first section, it is
-turned on. If it is specified in the second section (after the `-`), it is
-turned off.
-
-* `i` -- Case insensitive.
-* `n` -- Forces special handling of the new line character.
-* `r` -- Causes the regex to be matched in a right associative manner rather than
-        the normal left associative manner.
-* `U` -- Forces repetition operators to be non-greedy unless a `?` is appended.
-
-[TRE]: https://github.com/laurikari/tre
-[TRE Regexp Syntax]: http://laurikari.net/tre/documentation/regex-syntax/
+* [ECMAScript syntax C++ reference](http://www.cplusplus.com/reference/regex/ECMAScript/)
+* [Modified ECMAScript regular expression grammar](http://en.cppreference.com/w/cpp/regex/ecmascript)
+* [Regular Expressions (C++)](https://docs.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp)
 
 ## Lua Patterns
 
@@ -2277,12 +2090,19 @@ Simply copying the contents of your *~/.textadept/properties.lua* into
 Lexers are now written in a more object-oriented way. Legacy lexers are still
 supported, but it is recommended that you [migrate them][].
 
+[migrate them]: api.html#lexer.Migrating.Legacy.Lexers
+
 #### Key Bindings Changes
 
 The terminal version's key sequence for `Ctrl+Space` is now `'c '` instead of
 `'c@'`.
 
-[migrate them]: api.html#lexer.Migrating.Legacy.Lexers
+#### Regex Changes
+
+Textadept now uses [C++11's ECMAScript regex syntax](#Regular.Expressions)
+instead of [TRE][].
+
+[TRE]: https://github.com/laurikari/tre
 
 ### Textadept 8 to 9
 

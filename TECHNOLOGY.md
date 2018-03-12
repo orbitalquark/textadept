@@ -31,17 +31,6 @@ Textadept's core text editing component is Scintilla.
 =[Scintilla][] - Scintilla=
     Textadept uses Scintilla as its core text editing component.
 
-=[TRE][] - Regular Expression Library=
-    Textadept replaces Scintilla's bare-bones Regex capabilities with TRE.
-    Approximate matching is not turned on.
-
-=[Scinterm][]\* - Scintilla for curses=
-    Textadept uses Scinterm as its core text editing component for the terminal
-    version.
-
-=[Scintillua][]\* - Dynamic Lua LPeg Lexers for Scintilla=
-    Textadept uses Scintillua and its lexers for highlighting source code.
-
 ## Scripting
 
 Textadept uses Lua as its scripting language. The editor is primarily written in
@@ -55,7 +44,7 @@ Lua and includes a few external libraries.
     Textadept optionally uses LuaJIT as a substitute for vanilla Lua.
 
 =[LPeg][] - Parsing Expression Grammars for Lua=
-    Textadept uses LPeg in its Scintillua lexers.
+    Textadept uses LPeg in its Scintilla lexers.
 
 =[LuaFileSystem][] - Library for accessing directories and file attributes=
     Textadept uses LFS for accessing the host filesystem.
@@ -67,11 +56,8 @@ Lua and includes a few external libraries.
 
 [GTK+]: http://www.gtk.org
 [Scintilla]: http://scintilla.org
-[TRE]: https://github.com/laurikari/tre
 [Lua]: http://www.lua.org
 [LuaJIT]: http://luajit.org
-[Scintillua]: http://foicica.com/scintillua
-[Scinterm]: http://foicica.com/scinterm
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: http://keplerproject.github.io/luafilesystem/
 [lspawn]: http://foicica.com/hg/lspawn
