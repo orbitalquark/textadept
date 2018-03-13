@@ -267,7 +267,7 @@ install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
                               ../modules ../themes
 	install -d $(DESTDIR)$(bin_dir) $(DESTDIR)$(data_dir)
 	install $^ $(DESTDIR)$(data_dir)
-	cp -r $| $(DESTDIR)$(data_dir)
+	cp -rL $| $(DESTDIR)$(data_dir)
 	ln -s $(subst .., $(data_dir), $^) $(DESTDIR)$(bin_dir)
 	if [ -d "$(XDG_DATA_DIR)" ]; then \
 		install -d $(DESTDIR)$(XDG_DATA_DIR); \
@@ -332,7 +332,7 @@ release: $(basedir).i386
 	make -j4 CXXFLAGS="$(CXXFLAGS) -static-libstdc++" \
 		CURSES_CFLAGS=-I/opt/ncursesw/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw/lib -lncursesw" curses
-	cp -r ../doc ../lexers ../textadept* $< && cp *.asc $</src
+	cp -rL ../doc ../lexers ../textadept* $< && cp *.asc $</src
 	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg -ab /tmp/$<.tgz
 $(basedir).x86_64: ; hg archive $@ -X ".hg*"
 release64: $(basedir).x86_64
@@ -343,7 +343,7 @@ release64: $(basedir).x86_64
 		CXXFLAGS="$(CXXFLAGS) -m64 -static-libstdc++" \
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
-	cp -r ../doc ../lexers ../textadept* $< && cp *.asc $</src
+	cp -rL ../doc ../lexers ../textadept* $< && cp *.asc $</src
 	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg -ab /tmp/$<.tgz
 $(basedir).win32: ; hg archive $@ -X ".hg*"
 win32-release: $(basedir).win32
@@ -353,7 +353,7 @@ win32-release: $(basedir).win32
 	rm -r $</lib/*.a $</lib/glib-2.0 $</lib/gtk-2.0/include $</lib/pkgconfig
 	make -j4 win32
 	make -j4 win32-curses
-	cp -r ../doc ../lexers ../textadept* luajit/src/lua51.dll $<
+	cp -rL ../doc ../lexers ../textadept* luajit/src/lua51.dll $<
 	cp *.asc $</src
 	zip -r /tmp/$<.zip $< && rm -rf $< && gpg -ab /tmp/$<.zip
 $(basedir).osx: ; mkdir $@ && cp ../scripts/osx/ta $@
@@ -375,7 +375,7 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 	cp Info.plist $(osxapp_bin)/../
 	cp $^ $(osxapp_bin)/
 	hg archive $(osxapp_res) -X ".hg*"
-	cp -r ../doc ../lexers $(osxapp_res) && cp *.asc $(osxapp_res)/src
+	cp -rL ../doc ../lexers $(osxapp_res) && cp *.asc $(osxapp_res)/src
 	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
 	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
 	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
