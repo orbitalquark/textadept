@@ -384,7 +384,7 @@ osx-app: ../textadept ../textadeptjit ../textadept-curses \
 
 # External dependencies.
 
-base_deps = scintilla lua lualibs luajit gtdialog cdk ../doc/bombay
+base_deps = scintilla ../lexers lua lualibs luajit gtdialog cdk ../doc/bombay
 deps: $(base_deps) termkey
 win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
