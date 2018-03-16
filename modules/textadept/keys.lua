@@ -498,7 +498,7 @@ if OSX then
   keys.cd = buffer.clear
   keys.ck = function()
     buffer:line_end_extend()
-    buffer:cut()
+    if not buffer.selection_empty then buffer:cut() else buffer:clear() end
   end
   keys.cl = buffer.vertical_centre_caret
   -- GTK-OSX reports Fn-key as a single keycode which confuses Scintilla. Do
@@ -516,7 +516,7 @@ elseif CURSES then
   keys.cd, keys.md, keys.ch = buffer.clear, keys.mdel, buffer.delete_back
   keys.ck = function()
     buffer:line_end_extend()
-    buffer:cut()
+    if not buffer.selection_empty then buffer:cut() else buffer:clear() end
   end
 end
 
