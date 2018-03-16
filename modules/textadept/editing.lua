@@ -242,7 +242,7 @@ function M.paste()
   end
   -- Strip leading indentation from clipboard text.
   local text = ui.clipboard_text
-  local lead = text:match('^%s*')
+  local lead = text:match('^[ \t]*')
   if lead ~= '' then text = text:sub(#lead + 1):gsub('\n'..lead, '\n') end
   -- Change indentation to match buffer indentation settings.
   local tab_width = math.huge
