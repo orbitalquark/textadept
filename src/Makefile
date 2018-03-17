@@ -185,7 +185,8 @@ $(lua_spawn_objs): lua/src/lib/lspawn.c
 		$< -o $@
 luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC) $(CFLAGS)"
 luajit/src/lua51.dll:
-	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows
+	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows \
+		TARGET_SHLDFLAGS="-static-libgcc"
 luajit/src/libluajit.osx.a:
 	$(MAKE) -C luajit CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin \
 		LUAJIT_A=$(notdir $@) || return 0
