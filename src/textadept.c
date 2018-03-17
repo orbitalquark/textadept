@@ -1397,17 +1397,11 @@ static int lL_dofile(lua_State *L, const char *filename) {
   stpcpy_(stpcpy_(stpcpy_(file, textadept_home), "/"), filename);
   int ok = (luaL_dofile(L, file) == LUA_OK);
   if (!ok) {
-#if GTK
-    GtkWidget *dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
-                                               GTK_MESSAGE_ERROR,
-                                               GTK_BUTTONS_OK, "%s\n",
-                                               lua_tostring(L, -1));
-    gtk_dialog_run(GTK_DIALOG(dialog)), gtk_widget_destroy(dialog);
-#elif CURSES
-    WINDOW *win = newwin(0, 0, 1, 0);
-    wprintw(win, lua_tostring(L, -1)), wrefresh(win);
-    getch(), delwin(win);
-#endif
+    const char *argv[] = {
+      "--title", "Initialization Error", "--informative-text",
+      lua_tostring(L, -1), "--no-cancel", "--icon", "gtk-dialog-error"
+    };
+    free(gtdialog(GTDIALOG_OK_MSGBOX, 7, argv));
     lua_settop(L, 0);
   }
   free(file);
