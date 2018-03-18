@@ -259,16 +259,25 @@ function M.paste()
     end
   end)
   -- Re-indent according to whichever of the current and preceding lines has the
-  -- higher indentation amount.
+  -- higher indentation amount. However, if the preceding line is a fold header,
+  -- indent by an extra level.
   local i = line - 1
   while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
   if i < 0 or buffer.line_indentation[i] < buffer.line_indentation[line] then
     i = line
   end
-  local s, e = buffer:position_from_line(i), buffer.line_indent_position[i]
-  text = text:gsub('\n', '\n'..buffer:text_range(s, e))
+  local indentation = buffer:text_range(buffer:position_from_line(i),
+                                        buffer.line_indent_position[i])
+  local fold_header = i ~= line and bit32.band(buffer.fold_level[i],
+                                               buffer.FOLDLEVELHEADERFLAG) > 0
+  if fold_header then
+    indentation = indentation..(buffer.use_tabs and '\t' or
+                                string.rep(' ', buffer.tab_width))
+  end
+  text = text:gsub('\n', '\n'..indentation)
   -- Paste the text and adjust first and last line indentation accordingly.
   local start_indent = buffer.line_indentation[i]
+  if fold_header then start_indent = start_indent + buffer.tab_width end
   local end_line = buffer:line_from_position(buffer.selection_end)
   local end_indent = buffer.line_indentation[end_line]
   local end_column = buffer.column[buffer.selection_end]
