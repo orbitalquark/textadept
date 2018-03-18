@@ -9,9 +9,10 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   # Cross-compile for Win32.
   CROSS = i686-w64-mingw32-
   CFLAGS += -mms-bitfields
-  CXXFLAGS += -mms-bitfields -static-libgcc -static-libstdc++
+  CXXFLAGS += -mms-bitfields
   LUA_CFLAGS = -DLUA_BUILD_AS_DLL -DLUA_LIB
-  LDFLAGS = -Wl,--retain-symbols-file -Wl,lua.sym
+  LDFLAGS = -static-libgcc -static-libstdc++ -Wl,--retain-symbols-file \
+            -Wl,lua.sym
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     CXXFLAGS += -mwindows
     LDFLAGS += -liconv
@@ -329,8 +330,8 @@ $(basedir).i386: ; hg archive $@ -X ".hg*"
 release: $(basedir).i386
 	make deps clean doc sign-deps
 	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -j4 \
-		CXXFLAGS="$(CXXFLAGS) -static-libstdc++"
-	make -j4 CXXFLAGS="$(CXXFLAGS) -static-libstdc++" \
+		LDFLAGS="$(LDFLAGS) -static-libstdc++"
+	make -j4 LDFLAGS="$(LDFLAGS) -static-libstdc++" \
 		CURSES_CFLAGS=-I/opt/ncursesw/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw/lib -lncursesw" curses
 	cp -rL ../doc ../lexers ../textadept* $< && cp *.asc $</src
