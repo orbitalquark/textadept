@@ -89,7 +89,9 @@ When mentioning key bindings, the manual often shows the Mac OSX and curses
 equivalents in parenthesis. It may be tempting to assume that some Windows/Linux
 keys map to Mac OSX's (e.g. `Ctrl` to `⌘`) or curses' (e.g. `Ctrl` to `^`), but
 this is not always the case. In order to minimize confusion, view key
-equivalents as separate entities, not as translations of one another.
+equivalents as separate entities, not as translations of one another. It is also
+worth pointing out that for curses, the prefix `M-` represents the Alt (or Meta)
+modifier key.
 
 - - -
 
