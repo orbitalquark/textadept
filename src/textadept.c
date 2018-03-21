@@ -89,6 +89,8 @@ typedef GtkWidget Scintilla;
   if (pipe && thread) \
     TerminateThread(thread, 0), CloseHandle(thread), CloseHandle(pipe);
 #endif
+#elif CURSES
+typedef void Scintilla;
 #endif
 
 // Lua definitions and macros.

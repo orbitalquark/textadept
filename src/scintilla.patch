@@ -1,4 +1,4 @@
-diff -r 5693714a8b0b src/Catalogue.cxx
+Only link the LPeg lexer.
 --- a/src/Catalogue.cxx	Fri Dec 06 16:19:52 2013 +1100
 +++ b/src/Catalogue.cxx	Sun Dec 15 21:21:20 2013 -0500
 @@ -74,6 +74,7 @@
@@ -18,18 +18,7 @@ diff -r 5693714a8b0b src/Catalogue.cxx
  
  	return 1;
  }
-diff -r eb69b2b4bb85 gtk/ScintillaGTK.cxx
---- a/gtk/ScintillaGTK.cxx	Mon Jan 18 09:02:53 2016 +1100
-+++ b/gtk/ScintillaGTK.cxx	Wed Jan 20 00:52:11 2016 -0500
-@@ -3110,7 +3110,7 @@
- 	// of the signal handlers here (those that currently attached to wDraw
- 	// in Initialise() may require coordinate translation?)
- 
--	object_class->dispose = Dispose;
-+	//object_class->dispose = Dispose;
- 	object_class->finalize = Destroy;
- #if GTK_CHECK_VERSION(3,0,0)
- 	widget_class->get_preferred_width = GetPreferredWidth;
+Revert caret block placement change introduced by Scintilla 3.7.3.
 --- a/src/EditView.cxx	2017-10-06 14:21:52.634733696 +0200
 +++ b/src/EditView.cxx	2017-10-06 15:06:12.449296662 +0200
 @@ -1328,13 +1328,7 @@
@@ -44,6 +33,6 @@ diff -r eb69b2b4bb85 gtk/ScintillaGTK.cxx
 -				posCaret.SetPosition(model.pdoc->MovePositionOutsideChar(posCaret.Position()-1, -1));
 -		}
 +		const SelectionPosition posCaret = (drawDrag ? model.posDrag : model.sel.Range(r).caret);
- 		const int offset = posCaret.Position() - posLineStart;
+ 		const int offset = static_cast<int>(posCaret.Position() - posLineStart);
  		const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
  		const XYPOSITION virtualOffset = posCaret.VirtualSpace() * spaceWidth;
