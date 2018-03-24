@@ -12,7 +12,7 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   CXXFLAGS += -mms-bitfields
   LUA_CFLAGS = -DLUA_BUILD_AS_DLL -DLUA_LIB
   LDFLAGS = -static-libgcc -static-libstdc++ -Wl,--retain-symbols-file \
-            -Wl,lua.sym
+            -Wl,$(shell pwd)/lua.sym
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
     CXXFLAGS += -mwindows
     LDFLAGS += -liconv
@@ -62,7 +62,7 @@ else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
 else
   # Build for Linux/BSD.
   LUA_CFLAGS = -DLUA_USE_LINUX
-  LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,lua.sym
+  LDFLAGS = -rdynamic -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
   ifeq (Linux, $(shell uname -s))
     LDFLAGS += -ldl
   else
