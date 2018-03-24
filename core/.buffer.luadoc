@@ -3239,6 +3239,7 @@ function set_theme(name, props) end
 --   * create_loader
 --   * describe_key_word_sets
 --   * describe_property
+--   * description_of_style
 --   * encoded_from_utf8
 --   * expand_children
 --   * find_indicator_flash
@@ -3258,6 +3259,8 @@ function set_theme(name, props) end
 --   * indicator_value_at
 --   * load_lexer_library
 --   * mouse_wheel_captures
+--   * name_of_style
+--   * named_styles
 --   * null
 --   * point_x_from_position
 --   * point_y_from_position
@@ -3274,5 +3277,6 @@ function set_theme(name, props) end
 --   * set_styling_ex
 --   * start_record
 --   * stop_record
+--   * tags_of_style
 --   * target_as_utf8
 --   * use_pop_up
