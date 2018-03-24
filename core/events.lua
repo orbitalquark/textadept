@@ -52,6 +52,14 @@ local M = {}
 --
 --   * _`text`_: The selection's text.
 --   * _`position`_: The autocompleted word's beginning position.
+-- @field AUTO_C_SELECTION_CHANGE (string)
+--   Emitted as items are highlighted in an autocompletion or user list.
+--   Arguments:
+--
+--   * _`id`_: Either the *id* from [`buffer.user_list_show()`]() or `0` for an
+--     autocompletion list.
+--   * _`text`_: The current selection's text.
+--   * _`position`_: The position the list was displayed at.
 -- @field BUFFER_AFTER_SWITCH (string)
 --   Emitted right after switching to another buffer.
 --   Emitted by [`view.goto_buffer()`]().
@@ -361,6 +369,9 @@ local scnotifications = {
   [c.SCN_INDICATORRELEASE] = {'indicator_release', 'position'},
   [c.SCN_CALLTIPCLICK] = {'call_tip_click', 'position'},
   [c.SCN_AUTOCSELECTION] = {'auto_c_selection', 'text', 'position'},
+  [c.SCN_AUTOCSELECTIONCHANGE] = {
+    'auto_c_selection_change', 'id', 'text', 'position'
+  },
   [c.SCN_AUTOCCANCELLED] = {'auto_c_cancelled'},
   [c.SCN_AUTOCCHARDELETED] = {'auto_c_char_deleted'},
   [c.SCN_AUTOCCOMPLETED] = {'auto_c_completed', 'text', 'position'},

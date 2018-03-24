@@ -184,12 +184,12 @@ $(luajit_lib_objs): %jit.o: lua/src/lib/%.c
 $(lua_spawn_objs): lua/src/lib/lspawn.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -std=c99 -pedantic $(spawn_flags) \
 		$< -o $@
-luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC) $(CFLAGS)"
+luajit/src/libluajit.a: ; $(MAKE) -C luajit CC="$(CC)" CFLAGS="$(CFLAGS)"
 luajit/src/lua51.dll:
 	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows \
 		TARGET_SHLDFLAGS="-static-libgcc"
 luajit/src/libluajit.osx.a:
-	$(MAKE) -C luajit CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin \
+	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin \
 		LUAJIT_A=$(notdir $@) || return 0
 $(gtdialog_objs): gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 -pedantic $(plat_flag) -DNOHELP \
@@ -401,12 +401,14 @@ else
   lspawn_url = http://foicica.com/hg/lspawn/archive/tip.zip
 endif
 
-scintilla_zip = d9f1d7450ec2.zip
+scintilla_zip = 80bcec2634db.zip
 lua_tgz = lua-5.3.4.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
 lspawn_zip = 9a8b4b5e4137.zip
 luajit_tgz = LuaJIT-2.0.3.tar.gz
+# Needed since LuaJIT will not cross-compile from x86 to x64 due to pointer size
+# mismatch.
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
 gtdialog_zip = 6435a42450c7.zip
 cdk_tgz = cdk-5.0-20150928.tgz
