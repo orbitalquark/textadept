@@ -14,14 +14,20 @@ package.cpath = table.concat({
 textadept = require('textadept')
 
 -- Documentation is in core/.buffer.luadoc.
-function buffer.set_theme(name, props)
+local function set_theme(buffer, name, props)
+  --[[Temporary compatibility notice for Textadept 10 alpha 3.]]if type(buffer) == 'string' then events.connect(events.INITIALIZED, function() ui.print('Textadept 10 Compatibility Notice: buffer.set_theme() should be called as buffer:set_theme(). Please update your ~/.textadept/init.lua accordingly.') end) buffer, name, props = _G.buffer, buffer, name end
   name = name:find('[/\\]') and name or
          package.searchpath(name, _USERHOME..'/themes/?.lua;'..
                                   _HOME..'/themes/?.lua')
   if not name or not lfs.attributes(name) then return end
+  local orig_buffer = _G.buffer -- may not be equivalent to buffer argument
+  _G.buffer = buffer
   dofile(name)
+  _G.buffer = orig_buffer
   for prop, value in pairs(props or {}) do buffer.property[prop] = value end
 end
+events.connect(events.BUFFER_NEW, function() buffer.set_theme = set_theme end)
+buffer.set_theme = set_theme -- needed for the first buffer
 -- On reset, _LOADED['lexer'] is removed. Force a reload in order for set_theme
 -- to work properly.
 if not arg then view:goto_buffer(buffer) end
@@ -71,7 +77,7 @@ end
 -- Default buffer settings.
 
 local buffer = buffer
-buffer.set_theme(not CURSES and 'light' or 'term')
+buffer:set_theme(not CURSES and 'light' or 'term')
 
 buffer.FIND_REGEXP = buffer.FIND_REGEXP + buffer.FIND_CXX11REGEX
 
@@ -256,7 +262,7 @@ buffer.wrap_mode = buffer.WRAP_NONE
 buffer.accessibility = buffer.ACCESSIBILITY_DISABLED
 
 -- Temporary compatibility notices for Textadept 10.
-function ui.set_theme(...) events.connect(events.INITIALIZED, function() ui.print('Textadept 10 Compatibility Notice: ui.set_theme() is now buffer.set_theme(). Please update your ~/.textadept/init.lua accordingly.') end) buffer.set_theme(...) end
+function ui.set_theme(...) events.connect(events.INITIALIZED, function() ui.print('Textadept 10 Compatibility Notice: ui.set_theme() is now buffer:set_theme(). Please update your ~/.textadept/init.lua accordingly.') end) buffer:set_theme(...) end
 events.connect(events.INITIALIZED, function() if lfs.attributes(_USERHOME..'/properties.lua') then ui.print('Textadept 10 Compatibility Notice: textadept/properties.lua is not read anymore. Please move its contents to ~/.textadept/init.lua.') end end)
 
 -- Load user init file, which may also define default buffer settings.

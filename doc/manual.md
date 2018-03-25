@@ -1284,7 +1284,7 @@ display these standard colors (which may be completely different in the end).
 Override the default theme in your [*~/.textadept/init.lua*](#User.Init) using
 the [`buffer.set_theme()`][] function. For example:
 
-    buffer.set_theme(not CURSES and 'dark' or 'term')
+    buffer:set_theme(not CURSES and 'dark' or 'term')
 
 Either restart Textadept for changes to take effect or type [`reset`][] in the
 [command entry](#Lua.Command.Entry).
@@ -1292,7 +1292,7 @@ Either restart Textadept for changes to take effect or type [`reset`][] in the
 `buffer.set_theme()` can also tweak theme properties like font face and font
 size without editing the theme file itself:
 
-    buffer.set_theme('light', {font = 'Monospace', fontsize = 12})
+    buffer:set_theme('light', {font = 'Monospace', fontsize = 12})
 
 You can even tweak themes on a per-language basis. For example, in order to
 color Java functions black instead of the default orange, add the following to
