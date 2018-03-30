@@ -14,6 +14,7 @@ AUTO_C_CANCELED	_	0;"	F	class:events
 AUTO_C_CHAR_DELETED	_	0;"	F	class:events
 AUTO_C_COMPLETED	_	0;"	F	class:events
 AUTO_C_SELECTION	_	0;"	F	class:events
+AUTO_C_SELECTION_CHANGE	_	0;"	F	class:events
 B	_	0;"	f	class:lpeg
 BSD	_	0;"	F	
 BUFFER_AFTER_SWITCH	_	0;"	F	class:events
