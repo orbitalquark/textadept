@@ -401,7 +401,7 @@ else
   lspawn_url = http://foicica.com/hg/lspawn/archive/tip.zip
 endif
 
-scintilla_zip = 2b68221be146.zip
+scintilla_zip = 5135775cc8cc.zip
 lua_tgz = lua-5.3.4.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
