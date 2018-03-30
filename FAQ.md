@@ -25,9 +25,10 @@ Each download contains 4 executables: 2 GUI versions and 2 terminal versions
 (each version uses either Lua or LuaJIT). Furthermore, the Windows and OSX
 packages bundle in GTK+ runtimes, accounting for some 3/4 of the total
 application size. (GTK+ is the cross-platform GUI toolkit Textadept uses.)
-Finally, starting in version 10, in order to be able to run on older Linux
-systems whose libstdc++ does not support newer C++11 symbols, the Linux
-executables statically link in a newer version of libstdc++.
+Then, starting in version 10, in order to be able to run on older Linux systems
+whose libstdc++ does not support newer C++11 symbols, the Linux executables
+statically link in a newer version of libstdc++. Finally, nightly builds are
+compiled with debug symbols enabled in order to aid debugging of various issues.
 
 - - -
 
