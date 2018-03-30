@@ -9,10 +9,54 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 10.0 alpha 2 (01 Mar 2018)
+## 10.0 alpha 3 (01 Apr 2018)
 
 Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to
 Textadept 10.
+
+Download:
+
+* [Textadept 10.0 alpha 3 -- Win32][] | [PGP -- 10.0 alpha 3 Win32][]
+* [Textadept 10.0 alpha 3 -- Mac OSX Intel 10.5+][] | [PGP -- 10.0 alpha 3 OSX][]
+* [Textadept 10.0 alpha 3 -- Linux][] | [PGP -- 10.0 alpha 3 Linux][]
+* [Textadept 10.0 alpha 3 -- Linux x86_64][] | [PGP -- 10.0 alpha 3 Linux x86_64][]
+* [Textadept 10.0 alpha 3 -- Modules][] | [PGP -- 10.0 alpha 3 Modules][]
+
+Bugfixes:
+
+* Fixed hang in the terminal version on Windows.
+* Fixed accidental stripping of leading newlines in pasted text.
+* Fixed initialization errors not showing in the terminal version.
+
+Changes:
+
+* Textadept requires GCC 4.9 (circa early-2014) or later to _compile_ (not run).
+* C++11 regex replaces old TRE library.
+* Scintillua and Scinterm were merged into Scintilla and are no longer
+  dependencies.
+* Emacs-style `^K` for OSX and the terminal version joins lines at EOL.
+* Pasted text reindents an extra level after a fold header.
+* [`buffer.set_theme()`][] now takes an initial buffer argument like all other
+  buffer functions and does not have any call restrictions.
+* Scintilla: Added [`events.AUTO_C_SELECTION_CHANGE`][] event.
+* Updated to [Scintilla][] 3.8.0.
+
+[9 to 10 migration guide]: manual.html#Textadept.9.to.10
+[Textadept 10.0 alpha 3 -- Win32]: download/textadept_10.0_alpha_3.win32.zip
+[Textadept 10.0 alpha 3 -- Mac OSX Intel 10.5+]: download/textadept_10.0_alpha_3.osx.zip
+[Textadept 10.0 alpha 3 -- Linux]: download/textadept_10.0_alpha_3.i386.tgz
+[Textadept 10.0 alpha 3 -- Linux x86_64]: download/textadept_10.0_alpha_3.x86_64.tgz
+[Textadept 10.0 alpha 3 -- Modules]: download/textadept_10.0_alpha_3.modules.zip
+[PGP -- 10.0 alpha 3 Win32]: download/textadept_10.0_alpha_3.win32.zip.asc
+[PGP -- 10.0 alpha 3 OSX]: download/textadept_10.0_alpha_3.osx.zip.asc
+[PGP -- 10.0 alpha 3 Linux]: download/textadept_10.0_alpha_3.i386.tgz.asc
+[PGP -- 10.0 alpha 3 Linux x86_64]: download/textadept_10.0_alpha_3.x86_64.tgz.asc
+[PGP -- 10.0 alpha 3 Modules]: download/textadept_10.0_alpha_3.modules.zip.asc
+[`buffer.set_theme()`]: api.html#buffer.set_theme
+[`events.AUTO_C_SELECTION_CHANGE`]: api.html#events.AUTO_C_SELECTION_CHANGE
+[Scintilla]: http://scintilla.org
+
+## 10.0 alpha 2 (01 Mar 2018)
 
 Download:
 
@@ -49,10 +93,7 @@ Changes:
 * The terminal key sequence for `Ctrl+Space` is now `'c '` instead of `'c@'`.
 * The terminal version can now remap `^H` (which was previously locked to
   `Backspace`).
-* Scintilla: Theoretical support for files larger than 2GB in size on 64-bit
-  machines (but this is not recommended or encouraged).
 
-[9 to 10 migration guide]: manual.html#Textadept.9.to.10
 [Textadept 10.0 alpha 2 -- Win32]: download/textadept_10.0_alpha_2.win32.zip
 [Textadept 10.0 alpha 2 -- Mac OSX Intel 10.5+]: download/textadept_10.0_alpha_2.osx.zip
 [Textadept 10.0 alpha 2 -- Linux]: download/textadept_10.0_alpha_2.i386.tgz
