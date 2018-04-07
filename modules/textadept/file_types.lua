@@ -102,7 +102,7 @@ end)
 -- Restores the buffer's lexer, primarily for the side-effect of emitting
 -- `events.LEXER_LOADED`.
 local function restore_lexer() buffer:set_lexer(buffer._lexer) end
-events.connect(events.BUFFER_AFTER_SWITCH, restore_lexer)
+events.connect(events.BUFFER_AFTER_SWITCH, restore_lexer, 1)
 events.connect(events.VIEW_AFTER_SWITCH, restore_lexer)
 events.connect(events.VIEW_NEW, restore_lexer)
 events.connect(events.RESET_AFTER, restore_lexer)
