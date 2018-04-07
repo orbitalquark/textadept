@@ -310,5 +310,18 @@ events.connect(events.VIEW_NEW, function()
   end
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for
   -- subsequent views.
-  if #_VIEWS > 1 then load_settings() end
+  if #_VIEWS > 1 then
+    load_settings()
+    -- Refresh styles since the user may have altered style settings.
+    -- When load_settings() calls `buffer.property['style.default'] = ...`, the
+    -- LPeg lexer resets all styles to that default. However, load_settings()
+    -- may later call a user's `buffer.property['fontsize'] = ...`, which
+    -- 'style.default' references. Styles are now stale and need refreshing.
+    -- This is not an issue in BUFFER_NEW since a lexer is set immediately
+    -- afterwards, which refreshes styles.
+    -- Note: for some reason, calling SETDOCPOINTER before SETLEXERLANGUAGE is
+    -- not needed in this case.
+    local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
+    buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer)
+  end
 end, 1)
