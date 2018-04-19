@@ -37,7 +37,7 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   libluajit = luajit/src/lua51.dll
 else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
   # Cross-compile for Mac OSX.
-  CROSS = i386-apple-darwin9-
+  CROSS = x86_64-apple-darwin9-
   CFLAGS += -mdynamic-no-pic
   CXXFLAGS += -mdynamic-no-pic
   LUA_CFLAGS = -DLUA_USE_MACOSX
@@ -189,8 +189,7 @@ luajit/src/lua51.dll:
 	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Windows \
 		TARGET_SHLDFLAGS="-static-libgcc"
 luajit/src/libluajit.osx.a:
-	$(MAKE) -C luajit HOST_CC="$(CC) -m32" CROSS=$(CROSS) TARGET_SYS=Darwin \
-		LUAJIT_A=$(notdir $@) || return 0
+	$(MAKE) -C luajit CROSS=$(CROSS) TARGET_SYS=Darwin LUAJIT_A=$(notdir $@)
 $(gtdialog_objs): gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 -pedantic $(plat_flag) -DNOHELP \
 		-DLIBRARY $(gtdialog_flags) $< -o $@
@@ -418,7 +417,7 @@ win32iconv_bin_zip = libiconv-bin-zip.php
 win32iconv_lib_zip = libiconv-lib-zip.php
 win32curses_zip = win32curses.zip
 pdcurses_zip = pdcurs34.zip
-gtkosx_zip = gtkosx-2.24.16.zip
+gtkosx_tgz = gtkosx-2.24.31.tar.gz
 bombay_zip = bombay.zip
 cloc = cloc-1.60.pl
 
@@ -493,8 +492,8 @@ win32curses: | $(win32curses_zip) $(pdcurses_zip)
 	cd $@/src/win32 && $(MAKE) -f gccwin32.mak CC="$(CROSS)$(CC) $(CFLAGS)" \
 		LIBEXE=$(CROSS)ar LINK="$(CROSS)$(CC) $(CFLAGS)" WIDE=Y UTF8=Y
 	cp $@/src/win32/pdcurses.a $@/lib/
-$(gtkosx_zip): ; wget http://foicica.com/textadept/download/$@
-gtkosx: | $(gtkosx_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
+$(gtkosx_tgz): ; wget http://foicica.com/textadept/download/$@
+gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(bombay_zip): ; wget http://foicica.com/hg/bombay/archive/tip.zip -O $@
 ../doc/bombay: | $(bombay_zip)
 	mkdir $(notdir $@) && unzip -d $(notdir $@) $| && \
@@ -504,7 +503,7 @@ sign-deps: | $(scintilla_tgz) $(lua_tgz) $(lpeg_tgz) $(lfs_zip) $(lspawn_zip) \
              $(luajit_tgz) $(libluajit_tgz) $(gtdialog_zip) $(cdk_tgz) \
              $(termkey_tgz) $(win32gtk_zip) $(win32iconv_bin_zip) \
              $(win32iconv_lib_zip) $(win32curses_zip) $(pdcurses_zip) \
-             $(gtkosx_zip)
+             $(gtkosx_tgz)
 	@for file in $|; do gpg -ab $$file; done
 verify-deps: | $(wildcard $(basename $(wildcard *.asc)))
 	@for file in $|; do echo "$$file"; gpg --verify $$file.asc || return 1; done

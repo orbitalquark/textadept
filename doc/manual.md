@@ -1776,9 +1776,8 @@ Note that the entire compiling process can easily take 30 minutes or more and
 ultimately consume nearly 1GB of disk space.
 
 After using *jhbuild*, GTK+ is in *~/gtk/* so make a symlink from *~/gtk/inst*
-to *src/gtkosx* in Textadept. Then open *src/Makefile* and uncomment the
-"Darwin" block. Finally, run `make osx` to build *../textadept.osx* and
-*../textadeptjit.osx*.
+to *src/gtkosx* in Textadept. Then run `make osx` to build *../textadept.osx*
+and *../textadeptjit.osx*.
 
 Developer note: in order to build a GTK+ for OSX bundle, run the following from
 the *src/* directory before zipping up *gtkosx/include/* and *gtkosx/lib/*:
@@ -1789,8 +1788,7 @@ the *src/* directory before zipping up *gtkosx/include/* and *gtkosx/lib/*:
 where `username` is your username.
 
 Compiling the terminal version is not so expensive and requires no additional
-libraries. After uncommenting the "Darwin" block mentioned above, simply run
-`make osx-curses` to build *../textadept-curses.osx* and
+libraries. Simply run `make osx-curses` to build *../textadept-curses.osx* and
 *../textadeptjit-curses.osx*.
 
 [XCode]: http://developer.apple.com/TOOLS/xcode/
