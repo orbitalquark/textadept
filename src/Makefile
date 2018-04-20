@@ -314,14 +314,14 @@ osxapp = Textadept.app
 osxapp_bin = $(osxapp)/Contents/MacOS
 osxapp_res = $(osxapp)/Contents/Resources
 osxapp_libs = libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib \
-              libffi.5.dylib libfontconfig.1.dylib libfreetype.6.dylib \
+              libffi.6.dylib libfontconfig.1.dylib libfreetype.6.dylib \
               libgdk_pixbuf-2.0.0.dylib libgdk-quartz-2.0.0.dylib \
               libgio-2.0.0.dylib libglib-2.0.0.dylib libgmodule-2.0.0.dylib \
               libgobject-2.0.0.dylib libgthread-2.0.0.dylib \
               libgtkmacintegration.2.dylib libgtk-quartz-2.0.0.dylib \
               libintl.8.dylib libpango-1.0.0.dylib libpangocairo-1.0.0.dylib \
-              libpangoft2-1.0.0.dylib libpixman-1.0.dylib libpng14.14.dylib \
-              charset.alias gdk-pixbuf-2.0 gtk-2.0 pango
+              libpangoft2-1.0.0.dylib libpixman-1.0.dylib libpng16.16.dylib \
+              charset.alias gdk-pixbuf-2.0 gtk-2.0
 
 release-all: release release64 win32-release osx-release modules-release
 
