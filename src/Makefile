@@ -359,7 +359,7 @@ win32-release: $(basedir).win32
 	zip -r /tmp/$<.zip $< && rm -rf $< && gpg -ab /tmp/$<.zip
 $(basedir).osx: ; mkdir $@ && cp ../scripts/osx/ta $@
 osx-release: $(basedir).osx
-	make clean osx-deps
+	make clean osx-deps libluajitosx
 	make -j4 osx
 	make -j4 osx-curses
 	make osx-app && mv $(osxapp) $<
@@ -409,6 +409,7 @@ luajit_tgz = LuaJIT-2.0.3.tar.gz
 # Needed since LuaJIT will not cross-compile from x86 to x64 due to pointer size
 # mismatch.
 libluajit_tgz = libluajit_2.0.3.x86_64.tgz
+libluajit_osx_tgz = libluajit_2.0.3.osx.tgz
 gtdialog_zip = 6435a42450c7.zip
 cdk_tgz = cdk-5.0-20150928.tgz
 termkey_tgz = libtermkey-0.20.tar.gz
@@ -458,6 +459,8 @@ luajit: luajit.patch | $(luajit_tgz)
 	patch -d $@ -N -p1 < $<
 $(libluajit_tgz): ; wget http://foicica.com/textadept/download/$@
 libluajit64: | $(libluajit_tgz) ; tar xzf $|
+$(libluajit_osx_tgz): ; wget http://foicica.com/textadept/download/$@
+libluajitosx: | $(libluajit_osx_tgz) ; tar xzf $|
 $(gtdialog_zip): ; wget $(gtdialog_url) -O $@
 gtdialog: | $(gtdialog_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 $(cdk_tgz): ; wget http://invisible-mirror.net/archives/cdk/$@
