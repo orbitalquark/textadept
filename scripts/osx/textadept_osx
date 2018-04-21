@@ -4,7 +4,7 @@
 # Set the GTK environment variables of resources within Textadept.app.
 bundle=$(cd "$(dirname "$0")/../../" && pwd)
 bundle_res="$bundle/Contents/Resources"
-export DYLD_LIBRARY_PATH="$bundle_res/lib:$DYLD_LIBRARY_PATH"
+export DYLD_LIBRARY_PATH="$bundle_res/lib"
 export GTK_DATA_PREFIX="$bundle_res"
 export GTK_EXE_PREFIX="$bundle_res"
 export GTK_PATH="$bundle_res"
