@@ -134,7 +134,8 @@ Ubuntu typically call the package "libncursesw5".
 
 ### Requirements for Mac OSX
 
-No requirements other than Mac OSX 10.5 (Leopard) or higher with an Intel CPU.
+No requirements other than Mac OSX 10.6 (Snow Leopard) or higher with an Intel
+CPU.
 
 ### Requirements for Windows
 
