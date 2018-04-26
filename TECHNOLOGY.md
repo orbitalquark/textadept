@@ -40,9 +40,6 @@ Lua and includes a few external libraries.
     Textadept uses Lua as its internal scripting language. Most of Textadept is
     written in Lua.
 
-=[LuaJIT][] - Just in Time Compiler for Lua=
-    Textadept optionally uses LuaJIT as a substitute for vanilla Lua.
-
 =[LPeg][] - Parsing Expression Grammars for Lua=
     Textadept uses LPeg in its Scintilla lexers.
 
@@ -57,7 +54,6 @@ Lua and includes a few external libraries.
 [GTK+]: http://www.gtk.org
 [Scintilla]: http://scintilla.org
 [Lua]: http://www.lua.org
-[LuaJIT]: http://luajit.org
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: http://keplerproject.github.io/luafilesystem/
 [lspawn]: http://foicica.com/hg/lspawn

@@ -79,8 +79,6 @@ end
 local buffer = buffer
 buffer:set_theme(not CURSES and 'light' or 'term')
 
-buffer.FIND_REGEXP = buffer.FIND_REGEXP + buffer.FIND_CXX11REGEX
-
 -- Multiple Selection and Virtual Space
 buffer.multiple_selection = true
 buffer.additional_selection_typing = true
@@ -301,12 +299,11 @@ events.connect(events.VIEW_NEW, function()
   }
   local ctrl_shift_keys = {'L', 'T', 'U', 'Z'}
   for i = 1, #ctrl_keys do
-    buffer:clear_cmd_key(string.byte(ctrl_keys[i]) +
-                         bit32.lshift(buffer.MOD_CTRL, 16))
+    buffer:clear_cmd_key(string.byte(ctrl_keys[i]) | buffer.MOD_CTRL << 16)
   end
   for i = 1, #ctrl_shift_keys do
-    buffer:clear_cmd_key(string.byte(ctrl_shift_keys[i]) +
-                         bit32.lshift(buffer.MOD_CTRL + buffer.MOD_SHIFT, 16))
+    buffer:clear_cmd_key(string.byte(ctrl_shift_keys[i]) |
+                         (buffer.MOD_CTRL | buffer.MOD_SHIFT) << 16)
   end
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for
   -- subsequent views.

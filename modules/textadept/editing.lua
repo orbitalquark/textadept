@@ -147,7 +147,7 @@ end)
 
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function(updated)
-  if updated and bit32.band(updated, 3) == 0 then return end -- ignore scrolling
+  if updated and updated & 3 == 0 then return end -- ignore scrolling
   if M.brace_matches[buffer.char_at[buffer.current_pos]] then
     local match = buffer:brace_match(buffer.current_pos, 0)
     if match ~= -1 then
@@ -268,8 +268,8 @@ function M.paste()
   end
   local indentation = buffer:text_range(buffer:position_from_line(i),
                                         buffer.line_indent_position[i])
-  local fold_header = i ~= line and bit32.band(buffer.fold_level[i],
-                                               buffer.FOLDLEVELHEADERFLAG) > 0
+  local fold_header = i ~= line and
+                      buffer.fold_level[i] & buffer.FOLDLEVELHEADERFLAG > 0
   if fold_header then
     indentation = indentation..(buffer.use_tabs and '\t' or
                                 string.rep(' ', buffer.tab_width))
@@ -512,8 +512,7 @@ function M.convert_indentation()
     local e = buffer.line_indent_position[line]
     local current_indentation, new_indentation = buffer:text_range(s, e), nil
     if buffer.use_tabs then
-      -- Need integer division and LuaJIT does not have // operator.
-      local tabs = math.floor(indent / buffer.tab_width)
+      local tabs = indent // buffer.tab_width
       local spaces = math.fmod(indent, buffer.tab_width)
       new_indentation = string.rep('\t', tabs)..string.rep(' ', spaces)
     else

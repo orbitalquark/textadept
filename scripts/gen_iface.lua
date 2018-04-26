@@ -27,7 +27,7 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
     for i = 1, #ignores do if name:find(ignores[i]) then goto continue end end
     name = name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1')
     if name == 'FIND_REGEXP' then
-      value = tostring(tonumber(value) + 2^22) -- add SCFIND_POSIX
+      value = tostring(tonumber(value) + 2^23) -- add SCFIND_CXX11REGEX
     elseif name == 'MASK_FOLDERS' then
       value = '-33554432'
     end

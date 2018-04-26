@@ -361,11 +361,11 @@ function M.goto_error(line, next)
   if not line and next ~= nil then
     local f = buffer['marker_'..(next and 'next' or 'previous')]
     line = buffer:line_from_position(buffer.current_pos)
-    local wline = f(buffer, line + (next and 1 or -1), 2^M.MARK_WARNING)
-    local eline = f(buffer, line + (next and 1 or -1), 2^M.MARK_ERROR)
+    local wline = f(buffer, line + (next and 1 or -1), 1 << M.MARK_WARNING)
+    local eline = f(buffer, line + (next and 1 or -1), 1 << M.MARK_ERROR)
     if wline == -1 and eline == -1 then
-      wline = f(buffer, next and 0 or buffer.line_count, 2^M.MARK_WARNING)
-      eline = f(buffer, next and 0 or buffer.line_count, 2^M.MARK_ERROR)
+      wline = f(buffer, next and 0 or buffer.line_count, 1 << M.MARK_WARNING)
+      eline = f(buffer, next and 0 or buffer.line_count, 1 << M.MARK_ERROR)
     elseif wline == -1 or eline == -1 then
       if wline == -1 then wline = eline else eline = wline end
     end

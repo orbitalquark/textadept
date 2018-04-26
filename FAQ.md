@@ -1,34 +1,18 @@
 # FAQ
 
 **Q:**
-What is the difference between *textadept* and *textadeptjit*? Which one should
-I use?
-
-**A:**
-*textadept* uses Lua 5.3 while *textadeptjit* uses [LuaJIT][], which is based on
-Lua 5.1. Other than access to the [FFI Library][], *textadeptjit* does not
-provide any noteworthy benefits. It used to be the case that *textadeptjit* was
-slightly faster when loading large files, but Textadept 6.1 was the last version
-that had a noticible difference between the two. *textadept* is recommended.
-
-[LuaJIT]: http://luajit.org
-[FFI library]: http://luajit.org/ext_ffi.html
-
-- - -
-
-**Q:**
 If Textadept is so minimalist, why are the downloads around 10MB in size and the
 unzipped folders 10s of MBs in size?
 
 **A:**
-Each download contains 4 executables: 2 GUI versions and 2 terminal versions
-(each version uses either Lua or LuaJIT). Furthermore, the Windows and OSX
-packages bundle in GTK+ runtimes, accounting for some 3/4 of the total
-application size. (GTK+ is the cross-platform GUI toolkit Textadept uses.)
-Then, starting in version 10, in order to be able to run on older Linux systems
-whose libstdc++ does not support newer C++11 symbols, the Linux executables
-statically link in a newer version of libstdc++. Finally, nightly builds are
-compiled with debug symbols enabled in order to aid debugging of various issues.
+Each download contains 2 executables: a GUI version and a terminal version.
+Furthermore, the Windows and OSX packages bundle in GTK+ runtimes, accounting
+for some 3/4 of the total application size. (GTK+ is the cross-platform GUI
+toolkit Textadept uses.) Then, starting in version 10, in order to be able to
+run on older Linux systems whose libstdc++ does not support newer C++11 symbols,
+the Linux executables statically link in a newer version of libstdc++. Finally,
+nightly builds are compiled with debug symbols enabled in order to aid debugging
+of various issues.
 
 - - -
 
@@ -58,8 +42,8 @@ is this a false-positive?
 
 **A:**
 Textadept does not contain any viruses and it certainly is a false positive.
-The likely culprits are the `textadept-curses.exe` and `textadeptjit-curses.exe`
-executables, which run in the Windows command prompt.
+The likely culprit is the `textadept-curses.exe` executable, which runs in the
+Windows command prompt.
 
 - - -
 

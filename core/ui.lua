@@ -307,7 +307,7 @@ end)
 local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- Sets buffer statusbar text.
 events_connect(events.UPDATE_UI, function(updated)
-  if updated and bit32.band(updated, 3) == 0 then return end -- ignore scrolling
+  if updated and updated & 3 == 0 then return end -- ignore scrolling
   local pos = buffer.current_pos
   local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
   local col = buffer.column[pos] + 1

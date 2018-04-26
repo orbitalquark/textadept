@@ -24,8 +24,9 @@ function M.toggle(on, line)
   if not line then line = buffer:line_from_position(buffer.current_pos) end
   local f = on and buffer.marker_add or buffer.marker_delete
   if on == nil then -- toggle
-    local bit, marker_mask = 2^M.MARK_BOOKMARK, buffer:marker_get(line)
-    if bit32.band(marker_mask, bit) == 0 then f = buffer.marker_add end
+    if buffer:marker_get(line) & 1 << M.MARK_BOOKMARK == 0 then
+      f = buffer.marker_add
+    end
   end
   f(buffer, line, M.MARK_BOOKMARK)
 end
@@ -58,12 +59,12 @@ function M.goto_mark(next)
           if buffer.filename then
             basename = basename:iconv('UTF-8', _CHARSET)
           end
-          local line = buffer:marker_next(0, 2^M.MARK_BOOKMARK)
+          local line = buffer:marker_next(0, 1 << M.MARK_BOOKMARK)
           while line >= 0 do
             local mark = string.format('%s:%d: %s', basename, line + 1,
                                        buffer:get_line(line):match('^[^\r\n]*'))
             utf8_list[#utf8_list + 1], buffers[#utf8_list + 1] = mark, buffer
-            line = buffer:marker_next(line + 1, 2^M.MARK_BOOKMARK)
+            line = buffer:marker_next(line + 1, 1 << M.MARK_BOOKMARK)
           end
         end
       end
@@ -78,9 +79,10 @@ function M.goto_mark(next)
   else
     local f = next and buffer.marker_next or buffer.marker_previous
     local current_line = buffer:line_from_position(buffer.current_pos)
-    local line = f(buffer, current_line + (next and 1 or -1), 2^M.MARK_BOOKMARK)
+    local line = f(buffer, current_line + (next and 1 or -1),
+                   1 << M.MARK_BOOKMARK)
     if line == -1 then
-      line = f(buffer, (next and 0 or buffer.line_count), 2^M.MARK_BOOKMARK)
+      line = f(buffer, (next and 0 or buffer.line_count), 1 << M.MARK_BOOKMARK)
     end
     if line >= 0 then textadept.editing.goto_line(line) end
   end
