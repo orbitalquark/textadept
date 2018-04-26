@@ -399,7 +399,6 @@ lua/src/lib/lpeg: | $(lpeg_tgz)
 lua/src/lib/lfs: | $(lfs_zip)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
-	patch -d $(dir $@) -N -p1 < $<
 lua/src/lib/lspawn: | $(lspawn_zip)
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.c $(dir $@)
 $(gtdialog_zip): ; wget $(gtdialog_url) -O $@
