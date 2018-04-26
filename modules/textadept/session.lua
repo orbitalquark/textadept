@@ -144,10 +144,11 @@ function M.save(filename)
                                                  filename)
       -- Write out bookmarks.
       local lines = {}
-      local line = buffer:marker_next(0, 2^textadept.bookmarks.MARK_BOOKMARK)
+      local line = buffer:marker_next(0, 1 << textadept.bookmarks.MARK_BOOKMARK)
       while line >= 0 do
         lines[#lines + 1] = line
-        line = buffer:marker_next(line + 1, 2^textadept.bookmarks.MARK_BOOKMARK)
+        line = buffer:marker_next(line + 1,
+                                  1 << textadept.bookmarks.MARK_BOOKMARK)
       end
       session[#session + 1] = 'bookmarks: '..table.concat(lines, ' ')
     end

@@ -23,6 +23,4 @@ if [ x`echo "x$1" | sed -e "s/^x-psn_.*//"` == x ]; then shift 1; fi
 if [ -f $HOME/.textadept/osx_env.sh ]; then . $HOME/.textadept/osx_env.sh; fi
 
 # Run Textadept.
-textadept=textadept
-if [ ! -z $TEXTADEPTJIT ]; then textadept=textadeptjit; fi
-exec "$bundle/Contents/MacOS/$textadept" "$@"
+exec "$bundle/Contents/MacOS/textadept" "$@"

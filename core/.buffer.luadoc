@@ -507,8 +507,8 @@
 --   default).
 --   Bit-masks are 32-bit values whose bits correspond to the 32 available
 --   markers.
---   The default values are `0`, `bit32.bnot(buffer.MASK_FOLDERS)`, `0`, `0`,
---   and `0`, for a line margin and logical marker margin.
+--   The default values are `0`, `~buffer.MASK_FOLDERS`, `0`, `0`, and `0`, for
+--   a line margin and logical marker margin.
 -- @field margin_options (number)
 --   A bit-mask of margin option settings.
 --

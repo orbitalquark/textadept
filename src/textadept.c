@@ -104,24 +104,7 @@ typedef void Scintilla;
     l_setcfunction(l, -1, "__newindex", __newindex); \
   } \
   lua_setmetatable(l, (n > 0) ? n : n - 1);
-// Translate Lua 5.3 API to LuaJIT API (Lua 5.1) for compatibility.
-#if LUA_VERSION_NUM == 501
-#define LUA_OK 0
-#define lua_rawlen lua_objlen
-#define LUA_OPEQ 0
-#undef lua_getglobal
-#define lua_getglobal(l, n) \
-  (lua_getfield(l, LUA_GLOBALSINDEX, (n)), lua_type(l, -1))
-#define lua_getfield(l, t, k) (lua_getfield(l, t, k), lua_type(l, -1))
-#define lua_rawgeti(l, i, n) (lua_rawgeti(l, i, n), lua_type(l, -1))
-#define lua_gettable(l, i) (lua_gettable(l, i), lua_type(l, -1))
-#define luaL_openlibs(l) luaL_openlibs(l), luaopen_utf8(l)
-#define lL_openlib(l, n) \
-  (lua_pushcfunction(l, luaopen_##n), lua_pushstring(l, #n), lua_call(l, 1, 0))
-LUALIB_API int luaopen_utf8(lua_State *);
-#else
 #define lL_openlib(l, n) (luaL_requiref(l, #n, luaopen_##n, 1), lua_pop(l, 1))
-#endif
 
 static char *textadept_home, *platform;
 
@@ -1513,13 +1496,9 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
     lua_getfield(L, LUA_REGISTRYINDEX, "_LOADED");
     lL_cleartable(L, lua_gettop(L));
     lua_pop(L, 1); // _LOADED
-#if LUA_VERSION_NUM >= 502
     lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
     lL_cleartable(L, lua_gettop(L));
     lua_pop(L, 1); // _G
-#else
-    lL_cleartable(L, LUA_GLOBALSINDEX);
-#endif
   }
   lua_pushinteger(L, (sptr_t)L), lua_setglobal(L, "_LUA");
   luaL_openlibs(L);

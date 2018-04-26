@@ -164,8 +164,8 @@ local function new_snippet(text, trigger)
       -- snippet. (If so, pos will point to the correct position.)
       local pos = buffer:indicator_end(INDIC_CURRENTPLACEHOLDER, self.start_pos)
       if pos == 0 then pos = self.start_pos end
-      return bit32.band(buffer:indicator_all_on_for(pos),
-                        2^INDIC_CURRENTPLACEHOLDER) > 0 and pos + 1 or pos
+      return buffer:indicator_all_on_for(pos) &
+             1 << INDIC_CURRENTPLACEHOLDER > 0 and pos + 1 or pos
     else
       return M._snippet_mt[k]
     end
@@ -184,8 +184,7 @@ local function new_snippet(text, trigger)
   if #lines > 1 then
     -- Match indentation on all lines after the first.
     local line = buffer:line_from_position(buffer.current_pos)
-    -- Need integer division and LuaJIT does not have // operator.
-    local level = math.floor(buffer.line_indentation[line] / buffer.tab_width)
+    local level = buffer.line_indentation[line] // buffer.tab_width
     local additional_indent = indent[use_tabs]:rep(level)
     for i = 2, #lines do lines[i] = additional_indent..lines[i] end
   end
@@ -543,8 +542,7 @@ M._snippet_mt = {
     return function()
       local s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
       while s > 0 and s <= self.end_pos do
-        if bit32.band(buffer:indicator_all_on_for(i),
-                      2^M.INDIC_PLACEHOLDER) > 0 then
+        if buffer:indicator_all_on_for(i) & 1 << M.INDIC_PLACEHOLDER > 0 then
           -- This next indicator comes directly after the previous one; adjust
           -- start and end positions to compensate.
           s, i = buffer:indicator_start(M.INDIC_PLACEHOLDER, i), s
@@ -617,8 +615,7 @@ M._snippet_mt = {
 
 -- Update snippet transforms when text is added or deleted.
 events.connect(events.UPDATE_UI, function(updated)
-  if #snippet_stack > 0 and updated and
-     bit32.band(updated, buffer.UPDATE_CONTENT) > 0 then
+  if #snippet_stack > 0 and updated and updated & buffer.UPDATE_CONTENT > 0 then
     snippet_stack[#snippet_stack]:update_transforms()
   end
 end)

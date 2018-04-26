@@ -39,10 +39,7 @@ speed or succumbing to code bloat and featuritis.
 
 Textadept is _fast_. It starts up instantly and has a very responsive user
 interface. Even though the editor consists primarily of Lua, Lua is one of the
-fastest scripting languages available. With the optional [LuaJIT][] version,
-Textadept runs faster than ever before.
-
-[LuaJIT]: http://luajit.org
+fastest scripting languages available.
 
 ### Minimalist
 
@@ -200,15 +197,8 @@ You can also create a symbolic link to the executable in a directory in your
 "$PATH" (e.g. */usr/local/bin/*) or make a GNOME, KDE, XFCE, etc. button or menu
 launcher.
 
-The package also contains a *textadeptjit* executable for running Textadept with
-[LuaJIT][]. Due to potential [compatibility issues](#LuaJIT), use the
-*textadept* executable wherever possible.
-
-The *textadept-curses* and *textadeptjit-curses* executables are the terminal
-versions of Textadept. Run them as you would run the *textadept* and
-*textadeptjit* executables, but from a terminal instead.
-
-[LuaJIT]: http://luajit.org
+The *textadept-curses* executable is the terminal version of Textadept. Run them
+as you would run the *textadept* executable, but from a terminal instead.
 
 #### Runtime Problems
 
@@ -228,15 +218,6 @@ painless even though it requires [recompiling](#Compiling) Textadept.
 Run Textadept by double-clicking *Textadept.app*. You can also pin it to your
 dock.
 
-*Textadept.app* also contains an executable for running Textadept with
-[LuaJIT][]. Enable it by setting a "TEXTADEPTJIT"
-[environment variable](#Mac.OSX.Environment.Variables) or by typing
-`export TEXTADEPTJIT=1` in the terminal. Due to potential
-[compatibility issues](#LuaJIT), use the non-LuaJIT executable wherever
-possible.
-
-[LuaJIT]: http://luajit.org
-
 #### Mac OSX Environment Variables
 
 By default, Mac OSX GUI apps like Textadept do not see shell environment
@@ -252,12 +233,6 @@ example:
 
 Run Textadept by double-clicking *textadept.exe*. You can also create shortcuts
 to the executable in your Start Menu, Quick Launch toolbar, Desktop, etc.
-
-The package also contains a *textadeptjit.exe* executable for running Textadept
-with [LuaJIT][]. Due to potential [compatibility issues](#LuaJIT), use the
-*textadept.exe* executable wherever possible.
-
-[LuaJIT]: http://luajit.org
 
 #### Portable Textadept
 
@@ -1553,15 +1528,6 @@ Textadept contains its own copy of [Lua 5.3][] which has the same configuration
 
 [Lua 5.3]: http://www.lua.org/manual/5.3/
 
-### LuaJIT
-
-Even though Textadept runs with [LuaJIT][], LuaJIT does not fully support
-Lua 5.3. Therefore, try to write your modules and scripts to be compatible with
-both versions. For the most part, LuaJIT only lacks Lua 5.2's `_ENV` and Lua
-5.3's new bitwise operators and some new integer operations.
-
-[LuaJIT]: http://luajit.org
-
 ## Scintilla
 
 Textadept uses the [Scintilla][] editing component. The [buffer][] part of
@@ -1710,10 +1676,10 @@ Note: for BSD systems, replace the `make` commands below with `gmake`.
 For Linux and BSD systems, simply run `make deps` (or `make deps NIGHTLY=1` when
 compiling Textadept from the latest source rather than from a tagged release) in
 the *src/* directory to prepare the build environment, followed by `make` to
-build the *textadept* and *textadeptjit* executables in the root directory. Make
-a symlink from them to */usr/bin/* or elsewhere in your `PATH`.
+build the *textadept* executable in the root directory. Make a symlink from them
+to */usr/bin/* or elsewhere in your `PATH`.
 
-Similarly, `make curses` builds *textadept-curses* and *textadeptjit-curses*.
+Similarly, `make curses` builds *textadept-curses*.
 
 Note: you may have to run
 
@@ -1747,25 +1713,18 @@ compiler names. You may have to either modify the `CROSS` variable in the
 compiler names, run `make win32-deps` or
 `make CROSS=i586-mingw32msvc- win32-deps` to prepare the build environment
 followed by `make win32` or `make CROSS=i586-mingw32msvc- win32` to build
-*../textadept.exe* and *../textadeptjit.exe*. Finally, copy the dll files from
-*src/win32gtk/bin/* to the directory containing the Textadept executables.
+*../textadept.exe*. Finally, copy the dll files from *src/win32gtk/bin/* to the
+directory containing the Textadept executables.
 
 Similarly for the terminal version, run `make win32-curses` or its variant as
-suggested above to build *../textadept-curses.exe* and
-*../textadeptjit-curses.exe*.
-
-Please note the build process produces a *lua51.dll* for _only_
-*textadeptjit.exe* and *textadeptjit-curses.exe* because limitations on external
-Lua library loading do not allow statically linking LuaJIT to Textadept.
+suggested above to build *../textadept-curses.exe*.
 
 ### Cross Compiling for Mac OSX
 
 When cross-compiling from within Linux, run `make osx-deps` to prepare the build
-environment followed by `make osx` to build *../textadept.osx* and
-*../textadeptjit.osx*.
+environment followed by `make osx` to build *../textadept.osx*.
 
-Similarly, `make osx-curses` builds *../textadept-curses.osx* and
-*../textadeptjit-curses.osx*.
+Similarly, `make osx-curses` builds *../textadept-curses.osx*.
 
 Build a new *Textadept.app* with `make osx-app`.
 
@@ -1777,8 +1736,7 @@ Note that the entire compiling process can easily take 30 minutes or more and
 ultimately consume nearly 1GB of disk space.
 
 After using *jhbuild*, GTK+ is in *~/gtk/* so make a symlink from *~/gtk/inst*
-to *src/gtkosx* in Textadept. Then run `make osx` to build *../textadept.osx*
-and *../textadeptjit.osx*.
+to *src/gtkosx* in Textadept. Then run `make osx` to build *../textadept.osx*.
 
 Developer note: in order to build a GTK+ for OSX bundle, run the following from
 the *src/* directory before zipping up *gtkosx/include/* and *gtkosx/lib/*:
@@ -1789,21 +1747,10 @@ the *src/* directory before zipping up *gtkosx/include/* and *gtkosx/lib/*:
 where `username` is your username.
 
 Compiling the terminal version is not so expensive and requires no additional
-libraries. Simply run `make osx-curses` to build *../textadept-curses.osx* and
-*../textadeptjit-curses.osx*.
+libraries. Simply run `make osx-curses` to build *../textadept-curses.osx*.
 
 [XCode]: http://developer.apple.com/TOOLS/xcode/
 [jhbuild]: https://wiki.gnome.org/Projects/GTK+/OSX/Building
-
-### Notes on LuaJIT
-
-[LuaJIT][] is a Just-In-Time Compiler for Lua and can boost the speed of Lua
-programs. LuaJIT offers no real benefit performance-wise to justify it being
-Textadept's default runtime. LuaJIT's [ffi library][], however, appears to be
-useful for interfacing with external, non-Lua, libraries.
-
-[LuaJIT]: http://luajit.org
-[ffi library]: http://luajit.org/ext_ffi.html
 
 ### Notes on CDK
 
@@ -2104,6 +2051,16 @@ Textadept now uses [C++11's ECMAScript regex syntax](#Regular.Expressions)
 instead of [TRE][].
 
 [TRE]: https://github.com/laurikari/tre
+
+#### Mac OSX System Requirements
+
+Textadept now requires Mac OSX 10.6 (Snow Leopard) at a minimum. The previous
+minimum version was 10.5 (Leopard).
+
+#### LuaJIT Changes
+
+The LuaJIT version of Textadept has been removed. Any LuaJIT-specific features
+used in external modules will no longer function.
 
 ### Textadept 8 to 9
 
