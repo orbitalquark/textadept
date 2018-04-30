@@ -9,10 +9,45 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 10.0 alpha 3 (01 Apr 2018)
+## 10.0 beta (01 May 2018)
 
 Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to
 Textadept 10.
+
+Download:
+
+* [Textadept 10.0 beta -- Win32][] | [PGP -- 10.0 beta Win32][]
+* [Textadept 10.0 beta -- Mac OSX Intel 10.5+][] | [PGP -- 10.0 beta OSX][]
+* [Textadept 10.0 beta -- Linux][] | [PGP -- 10.0 beta Linux][]
+* [Textadept 10.0 beta -- Linux x86_64][] | [PGP -- 10.0 beta Linux x86_64][]
+* [Textadept 10.0 beta -- Modules][] | [PGP -- 10.0 beta Modules][]
+
+Bugfixes:
+
+* Fixed incorrect style settings when splitting views.
+* Fixed restoration of vertical scroll for buffers with different line heights.
+* Fixed potential crash in terminal version with newer versions of ncurses.
+
+Changes:
+
+* Change SQL comments to use `--` instead of `#`.
+* Updated Textadept icon.
+* Minimum required Mac OSX version is now 10.6 (Snow Leopard) or higher.
+* Removed LuaJIT version of Textadept.
+
+[9 to 10 migration guide]: manual.html#Textadept.9.to.10
+[Textadept 10.0 beta -- Win32]: download/textadept_10.0_beta.win32.zip
+[Textadept 10.0 beta -- Mac OSX Intel 10.5+]: download/textadept_10.0_beta.osx.zip
+[Textadept 10.0 beta -- Linux]: download/textadept_10.0_beta.i386.tgz
+[Textadept 10.0 beta -- Linux x86_64]: download/textadept_10.0_beta.x86_64.tgz
+[Textadept 10.0 beta -- Modules]: download/textadept_10.0_beta.modules.zip
+[PGP -- 10.0 beta Win32]: download/textadept_10.0_beta.win32.zip.asc
+[PGP -- 10.0 beta OSX]: download/textadept_10.0_beta.osx.zip.asc
+[PGP -- 10.0 beta Linux]: download/textadept_10.0_beta.i386.tgz.asc
+[PGP -- 10.0 beta Linux x86_64]: download/textadept_10.0_beta.x86_64.tgz.asc
+[PGP -- 10.0 beta Modules]: download/textadept_10.0_beta.modules.zip.asc
+
+## 10.0 alpha 3 (01 Apr 2018)
 
 Download:
 
@@ -41,7 +76,6 @@ Changes:
 * Scintilla: Added [`events.AUTO_C_SELECTION_CHANGE`][] event.
 * Updated to [Scintilla][] 3.8.0.
 
-[9 to 10 migration guide]: manual.html#Textadept.9.to.10
 [Textadept 10.0 alpha 3 -- Win32]: download/textadept_10.0_alpha_3.win32.zip
 [Textadept 10.0 alpha 3 -- Mac OSX Intel 10.5+]: download/textadept_10.0_alpha_3.osx.zip
 [Textadept 10.0 alpha 3 -- Linux]: download/textadept_10.0_alpha_3.i386.tgz
