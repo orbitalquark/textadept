@@ -319,6 +319,6 @@ events.connect(events.VIEW_NEW, function()
     -- Note: for some reason, calling SETDOCPOINTER before SETLEXERLANGUAGE is
     -- not needed in this case.
     local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
-    buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer)
+    buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
   end
 end, 1)
