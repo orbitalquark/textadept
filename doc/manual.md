@@ -1988,6 +1988,8 @@ terminal's constraints:
 
 Old API                         |Change  |New API
 --------------------------------|:------:|-------
+**_G**                          |        |
+bit32                           |Removed |N/A _(use bitwise operators)_
 **buffer**                      |        |
 brace\_match(pos)               |Changed |[brace\_match][](pos, 0)
 **lexer**                       |        |
