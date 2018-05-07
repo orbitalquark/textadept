@@ -351,6 +351,7 @@ local function replace_all(ftext, rtext)
     buffer:goto_pos(s)
     local pos = find(ftext, true, nil, true)
     while pos ~= -1 and (pos < buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
+      if buffer.selection_empty then break end -- prevent infinite loops
       replace(rtext)
       count = count + 1
       pos = find(ftext, true, nil, true)
