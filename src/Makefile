@@ -136,9 +136,11 @@ gtdialog_objs = gtdialog.o gtdialog-curses.o
 termkey_unix_objs = driver-ti.o driver-csi.o
 termkey_win32_objs = driver-win32-pdcurses.o
 termkey_objs = termkey.o $(termkey_unix_objs) $(termkey_win32_objs)
-cdk_objs = binding.o buttonbox.o cdk.o cdk_display.o cdk_objs.o cdkscreen.o \
-           draw.o entry.o fselect.o itemlist.o label.o mentry.o popup_label.o \
-           scroll.o scroller.o select_file.o selection.o traverse.o version.o
+cdk_objs = $(addprefix cdk-, binding.o buttonbox.o cdk.o cdk_display.o \
+                             cdk_objs.o cdkscreen.o draw.o entry.o fselect.o \
+                             itemlist.o label.o mentry.o popup_label.o \
+                             scroll.o scroller.o select_file.o selection.o \
+                             traverse.o version.o)
 
 # Add debugging symbols and disable optimizations when DEBUG=1.
 # Note: In order to profile with gprof (-pg), do not retain symbols in LDFLAGS.
@@ -180,7 +182,7 @@ $(lua_spawn_objs): lua/src/lib/lspawn.c
 $(gtdialog_objs): gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 -pedantic $(plat_flag) -DNOHELP \
 		-DLIBRARY $(gtdialog_flags) $< -o $@
-$(cdk_objs): %.o: cdk/%.c
+$(cdk_objs): cdk-%.o: cdk/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) -D_GNU_SOURCE -Itermkey -Icdk $(CURSES_CFLAGS) $< \
 		-o $@
 $(termkey_objs): %.o: termkey/%.c
