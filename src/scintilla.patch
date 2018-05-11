@@ -36,3 +36,15 @@ Revert caret block placement change introduced by Scintilla 3.7.3.
  		const int offset = static_cast<int>(posCaret.Position() - posLineStart);
  		const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
  		const XYPOSITION virtualOffset = posCaret.VirtualSpace() * spaceWidth;
+diff -r f9eb9df49b8e src/Document.cxx
+--- a/src/Document.cxx	Sun May 06 23:46:01 2018 -0400
++++ b/src/Document.cxx	Fri May 11 11:51:01 2018 -0400
+@@ -2951,7 +2951,7 @@
+ #endif
+ 			ws[outLen] = 0;
+ 			std::wregex regexp;
+-#if defined(__APPLE__)
++#if defined(__APPLE__) && !defined(GTK)
+ 			// Using a UTF-8 locale doesn't change to Unicode over a byte buffer so '.'
+ 			// is one byte not one character.
+ 			// However, on OS X this makes wregex act as Unicode
