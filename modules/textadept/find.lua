@@ -316,6 +316,9 @@ end
 local function replace(rtext)
   if buffer.selection_empty then return end
   if M.in_files then M.in_files = false end
+  rtext = rtext:gsub('\\[ux](%x+)', function(codepoint)
+    return utf8.char(tonumber(codepoint, 16)) -- interpret \uXXXX or \xYY
+  end)
   buffer:target_from_selection()
   buffer[not M.regex and 'replace_target' or 'replace_target_re'](buffer, rtext)
   buffer:set_sel(buffer.target_start, buffer.target_end)
