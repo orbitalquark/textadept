@@ -316,9 +316,12 @@ end
 local function replace(rtext)
   if buffer.selection_empty then return end
   if M.in_files then M.in_files = false end
-  rtext = rtext:gsub('\\u(%x%x%x%x)', function(code)
-    return utf8.char(tonumber(code, 16))
-  end):gsub('\\x(%x%x)', function(c) return string.char(tonumber(c, 16)) end)
+  if M.regex then
+    -- Interpret \uXXXX sequences, just like with \n, \t, etc.
+    rtext = rtext:gsub('%f[\\]\\u(%x%x%x%x)', function(code)
+      return utf8.char(tonumber(code, 16))
+    end)
+  end
   buffer:target_from_selection()
   buffer[not M.regex and 'replace_target' or 'replace_target_re'](buffer, rtext)
   buffer:set_sel(buffer.target_start, buffer.target_end)
