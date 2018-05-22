@@ -99,6 +99,8 @@ else
     install_targets = ../textadept-curses
   endif
 endif
+version = $(shell grep -m 1 _RELEASE ../core/init.lua | cut -d ' ' -f4- | \
+                  tr ' ' '_' | tr -d '"')
 
 # Scintilla.
 
@@ -258,15 +260,20 @@ clean: ; rm -f *.o ../textadept*
 doc: manual luadoc
 manual: ../*.md ../doc/manual.md | ../doc/bombay
 	$| -d ../doc -t ../doc --title Textadept $^
+	sed -i -e "s/manual - Textadept/Textadept $(subst _, ,$(version)) Manual/;" \
+		../doc/manual.html
+	sed -i -e "s/Textadept Manual/Textadept $(subst _, ,$(version)) Manual/;" \
+		../doc/manual.html
 luadoc: ../modules ../core ../lexers
 	cd ../doc && luadoc -d . -t . --doclet markdowndoc $^/lexer.lua
+	sed -i -e "s/Textadept API/Textadept $(subst _, ,$(version)) API/;" \
+		../doc/api.html
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $^/lexer.lua
 
 # Releases.
 
 ifndef NIGHTLY
-  basedir = textadept_$(shell grep -m 1 _RELEASE ../core/init.lua | \
-                              cut -d ' ' -f4- | tr ' ' '_' | tr -d '"')
+  basedir = textadept_$(version)
 else
   basedir = textadept_NIGHTLY_$(shell date +"%F")
 endif
