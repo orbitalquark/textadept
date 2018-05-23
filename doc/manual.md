@@ -1829,11 +1829,15 @@ Textadept has a [mailing list][] and a [wiki][].
 ## Regular Expressions
 
 Textadept's regular expressions are based on the C++11 standard for ECMAScript.
-There are a number of references for this syntax on the internet including:
+There are a number of references for this syntax on the internet, including:
 
 * [ECMAScript syntax C++ reference](http://www.cplusplus.com/reference/regex/ECMAScript/)
 * [Modified ECMAScript regular expression grammar](http://en.cppreference.com/w/cpp/regex/ecmascript)
 * [Regular Expressions (C++)](https://docs.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp)
+
+Note that Textadept's editing component, Scintilla, does not allow for matching
+newline characters (`\r` and `\n`). Use Lua scripts and
+[Lua patterns](#Lua.Patterns) instead.
 
 ## Lua Patterns
 
