@@ -113,15 +113,6 @@ local preferred_view
 -- @name find_in_files_filter
 M.find_in_files_filter = lfs.default_filter
 
--- Text escape sequences with their associated characters and vice-versa.
--- @class table
--- @name escapes
-local escapes = {
-  ['\\a'] = '\a', ['\\b'] = '\b', ['\\f'] = '\f', ['\\n'] = '\n',
-  ['\\r'] = '\r', ['\\t'] = '\t', ['\\v'] = '\v', ['\\\\'] = '\\'
-}
-for k, v in pairs(escapes) do escapes[v] = k end
-
 -- Keep track of find text and found text so that "replace all" works as
 -- expected during a find session ("replace all" with selected text normally
 -- does "replace in selection").
@@ -416,7 +407,7 @@ function M.goto_file_found(line_num, next)
   if not utf8_filename then return end
   textadept.editing.select_line()
   pos = buffer.anchor + pos - 1 -- absolute position of result text on line
-  local s = buffer:indicator_end(M.INDIC_FIND, pos)
+  local s = buffer:indicator_end(M.INDIC_FIND, pos - 1)
   local e = buffer:indicator_end(M.INDIC_FIND, s + 1)
   if buffer:line_from_position(s) == buffer:line_from_position(pos) then
     s, e = s - pos, e - pos -- relative to line start
