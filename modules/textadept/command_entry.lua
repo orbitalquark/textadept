@@ -120,7 +120,10 @@ local env = setmetatable({}, {
     return f
   end,
   __newindex = function(self, k, v)
-    if buffer[k] ~= nil then buffer[k] = v return end
+    local ok, value = pcall(function() return buffer[k] end)
+    if ok and value ~= nil or not ok and value:find('write-only property') then
+      buffer[k] = v return
+    end
     if view[k] ~= nil then view[k] = v return end
     if ui[k] ~= nil then ui[k] = v return end
     rawset(self, k, v)
