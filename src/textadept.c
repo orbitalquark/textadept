@@ -1492,10 +1492,10 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
     lua_setfield(L, LUA_REGISTRYINDEX, "ta_arg");
     lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_buffers");
     lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_views");
-  } else { // clear _LOADED and _G
-    lua_getfield(L, LUA_REGISTRYINDEX, "_LOADED");
+  } else { // clear package.loaded and _G
+    lua_getfield(L, LUA_REGISTRYINDEX, LUA_LOADED_TABLE);
     lL_cleartable(L, lua_gettop(L));
-    lua_pop(L, 1); // _LOADED
+    lua_pop(L, 1); // package.loaded
     lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
     lL_cleartable(L, lua_gettop(L));
     lua_pop(L, 1); // _G
