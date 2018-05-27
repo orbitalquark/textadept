@@ -17,7 +17,7 @@ Textadept 10.
 Download:
 
 * [Textadept 10.0 beta -- Win32][] | [PGP -- 10.0 beta Win32][]
-* [Textadept 10.0 beta -- Mac OSX Intel 10.5+][] | [PGP -- 10.0 beta OSX][]
+* [Textadept 10.0 beta -- Mac OSX Intel 10.6+][] | [PGP -- 10.0 beta OSX][]
 * [Textadept 10.0 beta -- Linux][] | [PGP -- 10.0 beta Linux][]
 * [Textadept 10.0 beta -- Linux x86_64][] | [PGP -- 10.0 beta Linux x86_64][]
 * [Textadept 10.0 beta -- Modules][] | [PGP -- 10.0 beta Modules][]
@@ -37,7 +37,7 @@ Changes:
 
 [9 to 10 migration guide]: manual.html#Textadept.9.to.10
 [Textadept 10.0 beta -- Win32]: download/textadept_10.0_beta.win32.zip
-[Textadept 10.0 beta -- Mac OSX Intel 10.5+]: download/textadept_10.0_beta.osx.zip
+[Textadept 10.0 beta -- Mac OSX Intel 10.6+]: download/textadept_10.0_beta.osx.zip
 [Textadept 10.0 beta -- Linux]: download/textadept_10.0_beta.i386.tgz
 [Textadept 10.0 beta -- Linux x86_64]: download/textadept_10.0_beta.x86_64.tgz
 [Textadept 10.0 beta -- Modules]: download/textadept_10.0_beta.modules.zip
