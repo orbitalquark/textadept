@@ -9,10 +9,47 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 10.0 beta (01 May 2018)
+## 10.0 beta 2 (01 Jun 2018)
 
 Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to
 Textadept 10.
+
+Download:
+
+* [Textadept 10.0 beta 2 -- Win32][] | [PGP -- 10.0 beta 2 Win32][]
+* [Textadept 10.0 beta 2 -- Mac OSX Intel 10.6+][] | [PGP -- 10.0 beta 2 OSX][]
+* [Textadept 10.0 beta 2 -- Linux][] | [PGP -- 10.0 beta 2 Linux][]
+* [Textadept 10.0 beta 2 -- Linux x86_64][] | [PGP -- 10.0 beta 2 Linux x86_64][]
+* [Textadept 10.0 beta 2 -- Modules][] | [PGP -- 10.0 beta 2 Modules][]
+
+Bugfixes:
+
+* Fixed unset lexer bug upon splitting a newly created buffer.
+* Fixed a potential infinite loop with "replace in selection".
+* Fixed crash on Mac OSX with regex searches.
+* Fixed selection of "find in files" result if it's at the start of the line.
+* Properly handle abbreviated setting of write-only buffer properties via 
+  command entry.
+
+Changes:
+
+* Removed `bit32` module in favor of Lua's bitwise operators.
+* Makefile can be used to build on case-insensitive filesystems.
+* Interpret `\uXXXX` sequences in regex replacement text.
+
+[9 to 10 migration guide]: manual.html#Textadept.9.to.10
+[Textadept 10.0 beta 2 -- Win32]: download/textadept_10.0_beta_2.win32.zip
+[Textadept 10.0 beta 2 -- Mac OSX Intel 10.6+]: download/textadept_10.0_beta_2.osx.zip
+[Textadept 10.0 beta 2 -- Linux]: download/textadept_10.0_beta_2.i386.tgz
+[Textadept 10.0 beta 2 -- Linux x86_64]: download/textadept_10.0_beta_2.x86_64.tgz
+[Textadept 10.0 beta 2 -- Modules]: download/textadept_10.0_beta_2.modules.zip
+[PGP -- 10.0 beta 2 Win32]: download/textadept_10.0_beta_2.win32.zip.asc
+[PGP -- 10.0 beta 2 OSX]: download/textadept_10.0_beta_2.osx.zip.asc
+[PGP -- 10.0 beta 2 Linux]: download/textadept_10.0_beta_2.i386.tgz.asc
+[PGP -- 10.0 beta 2 Linux x86_64]: download/textadept_10.0_beta_2.x86_64.tgz.asc
+[PGP -- 10.0 beta 2 Modules]: download/textadept_10.0_beta_2.modules.zip.asc
+
+## 10.0 beta (01 May 2018)
 
 Download:
 
@@ -35,7 +72,6 @@ Changes:
 * Minimum required Mac OSX version is now 10.6 (Snow Leopard) or higher.
 * Removed LuaJIT version of Textadept.
 
-[9 to 10 migration guide]: manual.html#Textadept.9.to.10
 [Textadept 10.0 beta -- Win32]: download/textadept_10.0_beta.win32.zip
 [Textadept 10.0 beta -- Mac OSX Intel 10.6+]: download/textadept_10.0_beta.osx.zip
 [Textadept 10.0 beta -- Linux]: download/textadept_10.0_beta.i386.tgz
