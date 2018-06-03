@@ -82,7 +82,7 @@ buffer:set_theme(not CURSES and 'light' or 'term')
 -- Multiple Selection and Virtual Space
 buffer.multiple_selection = true
 buffer.additional_selection_typing = true
---buffer.multi_paste = buffer.MULTIPASTE_EACH
+buffer.multi_paste = buffer.MULTIPASTE_EACH
 --buffer.virtual_space_options = buffer.VS_RECTANGULARSELECTION +
 --                               buffer.VS_USERACCESSIBLE
 buffer.rectangular_selection_modifier = buffer.MOD_ALT
