@@ -33,6 +33,7 @@ private contract work related to Textadept.
 * Callum Wilson
 * Carl Sturtivant
 * Chris Emerson
+* Christof Böckler
 * Daniel Wutke
 * Franck Guadagnini
 * Gabriel Dubatti
