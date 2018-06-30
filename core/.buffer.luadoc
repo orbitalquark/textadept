@@ -448,6 +448,12 @@
 --   * `buffer.INDIC_POINTCHARACTER`
 --     A triangle below the centre of the first character of the indicator
 --     range.
+--   * `buffer.INDIC_GRADIENT`
+--     A box with a vertical gradient from solid on top to transparent on 
+--     bottom.
+--   * `buffer.INDIC_GRADIENTCENTRE`
+--     A box with a centered gradient from solid in the middle to transparent on
+--     the top and bottom.
 --
 --   Use [`_SCINTILLA.next_indic_number()`]() for custom indicators.
 --   Changing an indicator's style resets that indicator's hover style.
@@ -882,6 +888,8 @@
 --     Indent wrapped lines the same amount as the first line.
 --   * `buffer.WRAPINDENT_INDENT`
 --     Indent wrapped lines one more level than the level of the first line.
+--   * `buffer.WRAPINDENT_DEEPINDENT`
+--     Indent wrapped lines two more levels than the level of the first line.
 --
 --   The default value is `buffer.WRAPINDENT_FIXED`.
 -- @field wrap_mode (number)
