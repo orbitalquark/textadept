@@ -368,7 +368,7 @@ else
 endif
 
 scintilla_zip = cfad7e56cac1.zip
-lua_tgz = lua-5.3.4.tar.gz
+lua_tgz = lua-5.3.5.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
 lspawn_zip = 9a8b4b5e4137.zip
