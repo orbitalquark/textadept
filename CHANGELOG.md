@@ -9,10 +9,53 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 10.0 beta 2 (01 Jun 2018)
+## 10.0 (01 Aug 2018)
 
 Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to
 Textadept 10.
+
+Download:
+
+* [Textadept 10.0 -- Win32][] | [PGP -- 10.0 Win32][]
+* [Textadept 10.0 -- Mac OSX Intel 10.6+][] | [PGP -- 10.0 OSX][]
+* [Textadept 10.0 -- Linux][] | [PGP -- 10.0 Linux][]
+* [Textadept 10.0 -- Linux x86_64][] | [PGP -- 10.0 Linux x86_64][]
+* [Textadept 10.0 -- Modules][] | [PGP -- 10.0 Modules][]
+
+Bugfixes:
+
+* Fixed markdown lexer lists and C# lexer keywords.
+* Fixed child lexers that embed themselves into parents and fixed proxy lexers.
+* Fixed handling of custom fold functions in legacy lexers.
+* Fixed [`buffer:set_theme()`][] for lexers that have their own styles.
+* Scintilla: Fixed potential crash with newer versions of ncurses.
+* Scintilla: Fixed some regex searching corner-cases.
+
+Changes:
+
+* Updated German localization.
+* Scintilla: Added new `buffer.INDIC_GRADIENT` and `buffer.INDIC_GRADIENTCENTRE`
+  indicators.
+* Scintilla: Added `buffer.WRAPINDENT_DEEPINDENT` line wrapping option.
+* Updated to [Scintilla][] 3.10.0.
+* Updated to [Lua][] 5.3.5.
+
+[9 to 10 migration guide]: manual.html#Textadept.9.to.10
+[Textadept 10.0 -- Win32]: download/textadept_10.0.win32.zip
+[Textadept 10.0 -- Mac OSX Intel 10.6+]: download/textadept_10.0.osx.zip
+[Textadept 10.0 -- Linux]: download/textadept_10.0.i386.tgz
+[Textadept 10.0 -- Linux x86_64]: download/textadept_10.0.x86_64.tgz
+[Textadept 10.0 -- Modules]: download/textadept_10.0.modules.zip
+[PGP -- 10.0 Win32]: download/textadept_10.0.win32.zip.asc
+[PGP -- 10.0 OSX]: download/textadept_10.0.osx.zip.asc
+[PGP -- 10.0 Linux]: download/textadept_10.0.i386.tgz.asc
+[PGP -- 10.0 Linux x86_64]: download/textadept_10.0.x86_64.tgz.asc
+[PGP -- 10.0 Modules]: download/textadept_10.0.modules.zip.asc
+[`buffer:set_theme()`]: api.html#buffer.set_theme
+[Scintilla]: http://scintilla.org
+[Lua]: http://lua.org
+
+## 10.0 beta 2 (01 Jun 2018)
 
 Download:
 
@@ -28,7 +71,7 @@ Bugfixes:
 * Fixed a potential infinite loop with "replace in selection".
 * Fixed crash on Mac OSX with regex searches.
 * Fixed selection of "find in files" result if it's at the start of the line.
-* Properly handle abbreviated setting of write-only buffer properties via 
+* Properly handle abbreviated setting of write-only buffer properties via
   command entry.
 
 Changes:
@@ -37,7 +80,6 @@ Changes:
 * Makefile can be used to build on case-insensitive filesystems.
 * Interpret `\uXXXX` sequences in regex replacement text.
 
-[9 to 10 migration guide]: manual.html#Textadept.9.to.10
 [Textadept 10.0 beta 2 -- Win32]: download/textadept_10.0_beta_2.win32.zip
 [Textadept 10.0 beta 2 -- Mac OSX Intel 10.6+]: download/textadept_10.0_beta_2.osx.zip
 [Textadept 10.0 beta 2 -- Linux]: download/textadept_10.0_beta_2.i386.tgz
@@ -207,7 +249,7 @@ Changes:
 * Enforce extra argument to [`buffer.brace_match()`][] added back in Scintilla
   3.7.0.
 * Added [`events.ZOOM`][].
-* TODO: new lexer format.
+* New, object-oriented way to [create lexers][].
 
 [Textadept 10.0 alpha -- Win32]: download/textadept_10.0_alpha.win32.zip
 [Textadept 10.0 alpha -- Mac OSX Intel 10.5+]: download/textadept_10.0_alpha.osx.zip
@@ -225,6 +267,7 @@ Changes:
 [`buffer.set_theme()`]: api.html#buffer.set_theme
 [`buffer.brace_match()`]: api.html#buffer.brace_match
 [`events.ZOOM`]: api.html#events.ZOOM
+[create lexers]: api.html#lexer
 
 ## 9.6 (01 Nov 2017)
 
