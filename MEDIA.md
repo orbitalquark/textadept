@@ -9,15 +9,15 @@
 </div>
 
 *Textadept Quick Reference*<br/>
-Third Edition
+Fourth Edition
 
 Order the [e-book][] &ndash; $15 USD<br/>
 Order the [e-book bundle][] with [Lua Quick Reference][] &ndash; $27 USD<br/>
 Order the print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][], [ES][]
 
-Published: Oct 2016<br/>
-ISBN: 978-0-9912379-2-0<br/>
-Pages: 170
+Published: Aug 2018 <span style="color: #ef373a;">[New!]</span><br/>
+ISBN: 978-0-9912379-4-4<br/>
+Pages: 174
 
 [Excerpt][]
 
@@ -42,16 +42,16 @@ This book covers how to:
 It serves as the perfect complement to Textadept's comprehensive Manual and
 exhaustive API documentation.
 
-[e-book]: https://gum.co/textadept3_ebook
+[e-book]: https://gum.co/textadept_ebook
 [e-book bundle]: https://gum.co/qr_bundle
 [Lua Quick Reference]: http://foicica.com/lua
-[US]: http://www.amazon.com/Textadept-Quick-Reference-Mitchell/dp/0991237927/
-[UK]: http://www.amazon.co.uk/Textadept-Quick-Reference-Mitchell/dp/0991237927/
-[DE]: http://www.amazon.de/Textadept-Quick-Reference-Mitchell/dp/0991237927/
-[FR]: http://www.amazon.fr/Textadept-Quick-Reference-Mitchell/dp/0991237927/
-[IT]: http://www.amazon.it/Textadept-Quick-Reference-Mitchell/dp/0991237927/
-[ES]: http://www.amazon.es/Textadept-Quick-Reference-Mitchell/dp/0991237927/
-[Excerpt]: download/ta_quickref3_excerpt.pdf
+[US]: http://www.amazon.com/Textadept-Quick-Reference-Mitchell/dp/0991237943/
+[UK]: http://www.amazon.co.uk/Textadept-Quick-Reference-Mitchell/dp/0991237943/
+[DE]: http://www.amazon.de/Textadept-Quick-Reference-Mitchell/dp/0991237943/
+[FR]: http://www.amazon.fr/Textadept-Quick-Reference-Mitchell/dp/0991237943/
+[IT]: http://www.amazon.it/Textadept-Quick-Reference-Mitchell/dp/0991237943/
+[ES]: http://www.amazon.es/Textadept-Quick-Reference-Mitchell/dp/0991237943/
+[Excerpt]: download/ta_quickref4_excerpt.pdf
 
 ## Lua Workshop 2012
 
