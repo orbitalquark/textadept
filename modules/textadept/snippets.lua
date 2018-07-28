@@ -339,7 +339,7 @@ function M._insert(text)
           if first == lexer and second == trigger or
              first == trigger and second == '' and not text then
             local f = io.open(M._paths[i]..'/'..basename)
-            text = f:read('*a')
+            text = f:read('a')
             f:close()
           end
         end
@@ -393,7 +393,7 @@ function M._select()
       local first, second = basename:match('^([^.]+)%.?([^.]*)')
       if second == '' or first == lexer then
         local f = io.open(M._paths[i]..'/'..basename)
-        list[#list + 1] = (second ~= '' and second or first)..'|'..f:read('*a')
+        list[#list + 1] = (second ~= '' and second or first)..'|'..f:read('a')
         f:close()
       end
     end
@@ -575,7 +575,7 @@ M._snippet_mt = {
       -- Note: cannot use spawn since $env variables are not expanded.
       local command = placeholder.sh_code:gsub('%f[%%]%%%f[^%%]', text)
       local p = io.popen(command)
-      local result = p:read('*a'):sub(1, -2) -- chop '\n'
+      local result = p:read('a'):sub(1, -2) -- chop '\n'
       p:close()
       return result
     end

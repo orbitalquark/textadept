@@ -24,7 +24,7 @@ if CURSES and WIN32 then
     local p = io.popen(argv..' 2>&1')
     local cb_index = type(select(1, ...)) ~= 'table' and 1 or 2 -- ignore env
     local stdout_cb, exit_cb = select(cb_index, ...), select(cb_index + 2, ...)
-    if stdout_cb then stdout_cb(p:read('*a')) end
+    if stdout_cb then stdout_cb(p:read('a')) end
     if exit_cb then exit_cb(select(3, p:close())) else p:close() end
     lfs.chdir(current_dir)
     return p
