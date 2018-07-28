@@ -254,7 +254,7 @@ function M.find_in_files(dir, filter)
     buffer:empty_undo_buffer()
     local f = io.open(filename, 'rb')
     while f:read(0) do buffer:append_text(f:read(1048576)) end
-    --buffer:set_text(f:read('*a'))
+    --buffer:set_text(f:read('a'))
     f:close()
     local binary = nil -- determine lazily for performance reasons
     buffer:target_whole_document()

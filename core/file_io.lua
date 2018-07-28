@@ -116,7 +116,7 @@ function io.open_file(filenames, encodings)
     local text = ''
     local f, err = io.open(filename, 'rb')
     if f then
-      text = f:read('*a')
+      text = f:read('a')
       f:close()
       if not text then goto continue end -- filename exists, but cannot read it
     elseif lfs.attributes(filename) then
@@ -172,7 +172,7 @@ function io.reload_file()
   if not buffer.filename then return end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local f = assert(io.open(buffer.filename, 'rb'))
-  local text = f:read('*a')
+  local text = f:read('a')
   f:close()
   if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
   buffer:clear_all()

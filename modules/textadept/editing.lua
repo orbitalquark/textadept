@@ -601,7 +601,7 @@ function M.filter_through(command)
     local p = assert(spawn(commands[i]))
     p:write(output)
     p:close()
-    output = p:read('*a') or ''
+    output = p:read('a') or ''
   end
   buffer:replace_target(output:iconv('UTF-8', _CHARSET))
   if s ~= e then
