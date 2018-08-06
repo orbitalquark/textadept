@@ -299,6 +299,7 @@ events_connect(events.URI_DROPPED, function(utf8_uris)
       if mode and mode ~= 'directory' then io.open_file(uri) end
     end
   end
+  ui.goto_view(view) -- work around any view focus synchronization issues
 end)
 events_connect(events.APPLEEVENT_ODOC, function(uri)
   return events.emit(events.URI_DROPPED, 'file://'..uri)
