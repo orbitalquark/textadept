@@ -187,6 +187,12 @@ events.connect(events.BUFFER_AFTER_SWITCH, function()
   table.insert(buffers_zorder, 1, buffer)
 end)
 
+-- Saves and restores buffer zorder data during a reset.
+events.connect(events.RESET_BEFORE,
+               function(persist) persist.buffers_zorder = buffers_zorder end)
+events.connect(events.RESET_AFTER,
+               function(persist) buffers_zorder = persist.buffers_zorder end)
+
 ---
 -- Prompts the user to select a buffer to switch to.
 -- Buffers are listed in the order they were opened unless `zorder` is `true`,

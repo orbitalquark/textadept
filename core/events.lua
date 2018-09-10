@@ -217,9 +217,17 @@ local M = {}
 -- @field RESET_AFTER (string)
 --   Emitted after resetting the Lua state.
 --   Emitted by [`reset()`]().
+--   Arguments:
+--
+--   * _`persist`_: Table of data persisted by `events.RESET_BEFORE`. All
+--     handlers will have access to this same table.
 -- @field RESET_BEFORE (string)
 --   Emitted before resetting the Lua state.
 --   Emitted by [`reset()`]().
+--   Arguments:
+--
+--   * _`persist`_: Table to store persistent data in for use by
+--     `events.RESET_AFTER`. All handlers will have access to this same table.
 -- @field RESUME (string)
 --   Emitted when resuming Textadept from a suspended state.
 --   This event is only emitted by the terminal version.

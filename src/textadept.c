@@ -1395,14 +1395,16 @@ static int lL_dofile(lua_State *L, const char *filename) {
 
 /** `_G.reset()` Lua function. */
 static int lreset(lua_State *L) {
-  lL_event(L, "reset_before", -1);
+  int persist_ref = (lua_newtable(L), luaL_ref(L, LUA_REGISTRYINDEX));
+  lua_rawgeti(L, LUA_REGISTRYINDEX, persist_ref); // lL_event will unref
+  lL_event(L, "reset_before", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
   lL_init(L, 0, NULL, TRUE);
   l_setglobalview(L, focused_view);
   l_setglobaldoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0));
   lua_pushnil(L), lua_setglobal(L, "arg");
   lL_dofile(L, "init.lua"), lL_event(L, "initialized", -1);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_arg"), lua_setglobal(L, "arg");
-  lL_event(L, "reset_after", -1);
+  lL_event(L, "reset_after", LUA_TTABLE, persist_ref, -1);
   return 0;
 }
 
