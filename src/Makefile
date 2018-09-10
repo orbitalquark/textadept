@@ -25,7 +25,7 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
                          --cflags gtk+-2.0)
     GTK_LIBS = $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
                        pkg-config --define-variable=prefix=win32gtk \
-                       --libs gtk+-2.0)
+                       --libs gtk+-2.0 gmodule-2.0)
     GLIB_CFLAGS = $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
                           pkg-config --define-variable=prefix=win32gtk \
                           --cflags glib-2.0)
@@ -375,9 +375,7 @@ lspawn_zip = 9a8b4b5e4137.zip
 gtdialog_zip = 6435a42450c7.zip
 cdk_tgz = cdk-5.0-20150928.tgz
 termkey_tgz = libtermkey-0.20.tar.gz
-win32gtk_zip = gtk+-bundle_2.24.10-20120208_win32.zip
-win32iconv_bin_zip = libiconv-bin-zip.php
-win32iconv_lib_zip = libiconv-lib-zip.php
+win32gtk_zip = win32gtk-2.24.32.zip
 win32curses_zip = win32curses.zip
 pdcurses_zip = pdcurs34.zip
 gtkosx_tgz = gtkosx-2.24.31.tar.gz
@@ -423,18 +421,8 @@ termkey: termkey.patch | $(termkey_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@ && chmod +w $@/termkey.h
 	patch -d $@ -N -p1 < $<
-$(win32gtk_zip):
-	wget http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/$@
-$(win32iconv_bin_zip): ; wget http://gnuwin32.sourceforge.net/downlinks/$@
-$(win32iconv_lib_zip): ; wget http://gnuwin32.sourceforge.net/downlinks/$@
-win32gtk: | $(win32gtk_zip) $(win32iconv_bin_zip) $(win32iconv_lib_zip)
-	mkdir $@
-	unzip -d $@ $(win32gtk_zip)
-	for zip in $(win32iconv_bin_zip) $(win32iconv_lib_zip); do \
-		unzip -d $@ $$zip; \
-	done
-	rm -r $@/etc/bash_completion.d $@/lib/gtk-2.0/modules $@/lib/*.def
-	cd $@/share && rm -r aclocal doc glib-2.0 gtk-2.0 gtk-doc locale man
+$(win32gtk_zip): ; wget http://foicica.com/textadept/download/$@
+win32gtk: | $(win32gtk_zip) ; unzip $|
 $(win32curses_zip): ; wget http://foicica.com/textadept/download/$@
 $(pdcurses_zip): ; wget http://prdownloads.sourceforge.net/pdcurses/$@
 win32curses: | $(win32curses_zip) $(pdcurses_zip)
@@ -453,8 +441,7 @@ $(bombay_zip): ; wget http://foicica.com/hg/bombay/archive/tip.zip -O $@
 $(cloc): ; wget http://prdownloads.sourceforge.net/cloc/$@ -O $@
 sign-deps: | $(scintilla_tgz) $(lua_tgz) $(lpeg_tgz) $(lfs_zip) $(lspawn_zip) \
              $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) $(win32gtk_zip) \
-             $(win32iconv_bin_zip) $(win32iconv_lib_zip) $(win32curses_zip) \
-             $(pdcurses_zip) $(gtkosx_tgz)
+             $(win32curses_zip) $(pdcurses_zip) $(gtkosx_tgz)
 	@for file in $|; do gpg -ab $$file; done
 verify-deps: | $(wildcard $(basename $(wildcard *.asc)))
 	@for file in $|; do echo "$$file"; gpg --verify $$file.asc || return 1; done
