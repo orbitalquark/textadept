@@ -89,29 +89,11 @@ events.FIND_WRAPPED = 'find_wrapped'
 local preferred_view
 
 ---
--- The table of Lua patterns matching files and directories to exclude when
--- finding in files.
--- The filter table contains:
---
---   + Lua patterns that match filenames to exclude.
---   + Optional `folders` sub-table that contains patterns matching directories
---     to exclude.
---   + Optional `extensions` sub-table that contains raw file extensions to
---     exclude.
---   + Optional `symlink` flag that when `true`, excludes symlinked files (but
---     not symlinked directories).
---   + Optional `folders.symlink` flag that when `true`, excludes symlinked
---     directories.
---
--- Any patterns starting with '!' exclude files and directories that do not
--- match the pattern that follows.
--- The default value is `lfs.default_filter`, a filter for common binary file
--- extensions and version control directories.
--- @see find_in_files
--- @see lfs.default_filter
+-- Map of file paths to filters used in `ui.find.find_in_files()`.
 -- @class table
--- @name find_in_files_filter
-M.find_in_files_filter = lfs.default_filter
+-- @name find_in_files_filters
+-- @see find_in_files
+M.find_in_files_filters = {}
 
 -- Keep track of find text and found text so that "replace all" works as
 -- expected during a find session ("replace all" with selected text normally
@@ -221,11 +203,28 @@ end
 -- prints the results to a buffer titled "Files Found", highlighting found text.
 -- Use the `find_text`, `match_case`, `whole_word`, and `regex` fields to set
 -- the search text and option flags, respectively.
+-- A filter is a table that contains:
+--
+--   + Lua patterns that match filenames to exclude.
+--   + Optional `folders` sub-table that contains patterns matching directories
+--     to exclude.
+--   + Optional `extensions` sub-table that contains raw file extensions to
+--     exclude.
+--   + Optional `symlink` flag that when `true`, excludes symlinked files (but
+--     not symlinked directories).
+--   + Optional `folders.symlink` flag that when `true`, excludes symlinked
+--     directories.
+--
+-- Any filter patterns starting with '!' exclude files and directories that do
+-- not match the pattern that follows.
+-- If *filter* is `nil`, the filter from the `ui.find.find_in_files_filters`
+-- table is used. If that filter does not exist, `lfs.default_filter` is used.
 -- @param dir Optional directory path to search. If `nil`, the user is prompted
 --   for one.
 -- @param filter Optional filter for files and directories to exclude. The
---   default value is `ui.find.find_in_files_filter`.
--- @see find_in_files_filter
+--   default value is `lfs.default_filter` unless a filter for *dir* is defined
+--   in `ui.find.find_in_files_filters`.
+-- @see find_in_files_filters
 -- @name find_in_files
 function M.find_in_files(dir, filter)
   dir = dir or ui.dialogs.fileselect{
@@ -291,7 +290,7 @@ function M.find_in_files(dir, filter)
       end
       ref_time = os.time()
     end
-  end, filter or M.find_in_files_filter)
+  end, filter or M.find_in_files_filters[dir] or lfs.default_filter)
   if not found then ff_buffer:append_text(_L['No results found']) end
   buffer:delete() -- delete temporary buffer
   ui._print(_L['[Files Found Buffer]'], '') -- goto end, set save pos, etc.
