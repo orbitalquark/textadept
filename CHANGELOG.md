@@ -9,6 +9,47 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.1 (01 Oct 2018)
+
+Download:
+
+* [Textadept 10.1 -- Win32][] | [PGP -- 10.1 Win32][]
+* [Textadept 10.1 -- Mac OSX Intel 10.6+][] | [PGP -- 10.1 OSX][]
+* [Textadept 10.1 -- Linux][] | [PGP -- 10.1 Linux][]
+* [Textadept 10.1 -- Linux x86_64][] | [PGP -- 10.1 Linux x86_64][]
+* [Textadept 10.1 -- Modules][] | [PGP -- 10.1 Modules][]
+
+Bugfixes:
+
+* Fixed view focus synchronization issues when dropping files into split views.
+* Fixed potential crash with non-UTF-8 bytes copy-pasted into non-UTF-8 buffer.
+* [`spawn_proc:read()`][] correctly handles `\r\n` sequences.
+
+Changes:
+
+* Added ability to save/restore persistent data during a reset event via
+  [`events.RESET_BEFORE`][] and [`events.RESET_AFTER`][].
+* Replaced `ui.find.find_in_files_filter` with
+  [`ui.find.find_in_files_filters`][] table for project-specific filters.
+* Added Chinese localization.
+* Updated to GTK 2.24.32 on Windows, which fixes a number of various GTK-related
+  issues.
+
+[Textadept 10.1 -- Win32]: download/textadept_10.1.win32.zip
+[Textadept 10.1 -- Mac OSX Intel 10.6+]: download/textadept_10.1.osx.zip
+[Textadept 10.1 -- Linux]: download/textadept_10.1.i386.tgz
+[Textadept 10.1 -- Linux x86_64]: download/textadept_10.1.x86_64.tgz
+[Textadept 10.1 -- Modules]: download/textadept_10.1.modules.zip
+[PGP -- 10.1 Win32]: download/textadept_10.1.win32.zip.asc
+[PGP -- 10.1 OSX]: download/textadept_10.1.osx.zip.asc
+[PGP -- 10.1 Linux]: download/textadept_10.1.i386.tgz.asc
+[PGP -- 10.1 Linux x86_64]: download/textadept_10.1.x86_64.tgz.asc
+[PGP -- 10.1 Modules]: download/textadept_10.1.modules.zip.asc
+[`spawn_proc:read()`]: api.html#spawn_proc:read
+[`events.RESET_BEFORE`]: api.html#events.RESET_BEFORE
+[`events.RESET_AFTER`]: api.html#events.RESET_AFTER
+[`ui.find.find_in_files_filters`]: api.html#ui.find.find_in_files_filters
+
 ## 10.0 (01 Aug 2018)
 
 Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to
