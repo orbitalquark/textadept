@@ -596,7 +596,7 @@ find	_	0;"	m	class:ui
 find_column	_	0;"	f	class:buffer
 find_entry_text	_	0;"	F	class:ui.find
 find_in_files	_	0;"	f	class:ui.find
-find_in_files_filter	_	0;"	t	class:ui.find
+find_in_files_filters	_	0;"	t	class:ui.find
 find_in_files_timeout	_	0;"	F	class:ui.find
 find_incremental	_	0;"	f	class:ui.find
 find_label_text	_	0;"	F	class:ui.find
