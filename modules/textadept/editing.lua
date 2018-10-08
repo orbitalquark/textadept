@@ -435,8 +435,8 @@ function M.select_enclosed(left, right)
     local char_at, style_at = buffer.char_at, buffer.style_at
     while s >= 0 do
       local match = M.auto_pairs[char_at[s]]
-      left, right = string.char(char_at[s]), match
       if match then
+        left, right = string.char(char_at[s]), match
         if buffer:brace_match(s, 0) >= buffer.selection_end - 1 then
           e = buffer:brace_match(s, 0)
           break
