@@ -158,7 +158,7 @@ local function compile_or_run(filename, commands)
   local event = commands == M.compile_commands and events.COMPILE_OUTPUT or
                 events.RUN_OUTPUT
   local ext_or_lexer = commands[ext] and ext or lexer
-  local function emit_output(output)
+  local function emit(output)
     for line in output:gmatch('[^\r\n]+') do
       events.emit(event, line, ext_or_lexer)
     end
@@ -167,7 +167,7 @@ local function compile_or_run(filename, commands)
   cwd = working_dir or dirname
   if cwd ~= dirname then events.emit(event, '> cd '..cwd) end
   events.emit(event, '> '..command:iconv('UTF-8', _CHARSET))
-  proc = assert(spawn(command, cwd, emit_output, emit_output, function(status)
+  proc = assert(os.spawn(command, cwd, emit, emit, function(status)
     events.emit(event, '> exit status: '..status)
   end))
 end
@@ -283,7 +283,7 @@ function M.build(root_directory)
   if not command then return end
   -- Prepare to run the command.
   preferred_view = view
-  local function emit_output(output)
+  local function emit(output)
     for line in output:gmatch('[^\r\n]+') do
       events.emit(events.BUILD_OUTPUT, line)
     end
@@ -292,7 +292,7 @@ function M.build(root_directory)
   cwd = working_dir or root_directory
   events.emit(events.BUILD_OUTPUT, '> cd '..cwd)
   events.emit(events.BUILD_OUTPUT, '> '..command:iconv('UTF-8', _CHARSET))
-  proc = assert(spawn(command, cwd, emit_output, emit_output, function(status)
+  proc = assert(os.spawn(command, cwd, emit, emit, function(status)
     events.emit(events.BUILD_OUTPUT, '> exit status: '..status)
   end))
 end

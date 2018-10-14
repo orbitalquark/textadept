@@ -1072,7 +1072,7 @@ snippets	_	0;"	m	class:textadept
 snippets	_	0;"	t	
 sort	_	0;"	f	class:table
 space	_	0;"	F	class:lexer
-spawn	_	0;"	f	
+spawn	_	0;"	f	class:os
 split	_	0;"	f	class:view
 sqrt	_	0;"	f	class:math
 standard_dropdown	_	0;"	f	class:ui.dialogs

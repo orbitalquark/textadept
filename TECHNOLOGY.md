@@ -46,9 +46,6 @@ Lua and includes a few external libraries.
 =[LuaFileSystem][] - Library for accessing directories and file attributes=
     Textadept uses LFS for accessing the host filesystem.
 
-=[lspawn][]\* - Lua module for spawning processes=
-    Textadept uses lspawn for spawning asynchronous processes.
-
 \* A Foicica.com project.
 
 [GTK+]: http://www.gtk.org
@@ -56,7 +53,6 @@ Lua and includes a few external libraries.
 [Lua]: http://www.lua.org
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: http://keplerproject.github.io/luafilesystem/
-[lspawn]: http://foicica.com/hg/lspawn
 [gtDialog]: http://foicica.com/gtdialog/
 [ncurses]: http://invisible-island.net/ncurses/
 [pdcurses]: http://pdcurses.sourceforge.net/

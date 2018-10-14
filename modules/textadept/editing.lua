@@ -599,7 +599,7 @@ function M.filter_through(command)
   }), command)
   local output = buffer.target_text
   for i = 1, #commands do
-    local p = assert(spawn(commands[i]))
+    local p = assert(os.spawn(commands[i]))
     p:write(output)
     p:close()
     output = p:read('a') or ''

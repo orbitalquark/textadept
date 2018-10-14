@@ -44,7 +44,7 @@ local function set_encoding(encoding)
 end
 local function open_page(url)
   local cmd = (WIN32 and 'start ""') or (OSX and 'open') or 'xdg-open'
-  spawn(string.format('%s "%s"', cmd, not OSX and url or 'file://'..url))
+  os.spawn(string.format('%s "%s"', cmd, not OSX and url or 'file://'..url))
 end
 
 ---
