@@ -18,7 +18,7 @@ keys = require('keys')
 _M = {} -- language modules table
 -- pdcurses compatibility.
 if CURSES and WIN32 then
-  function spawn(argv, cwd, ...)
+  function os.spawn(argv, cwd, ...)
     local current_dir = lfs.currentdir()
     if cwd then lfs.chdir(cwd) end
     local p = io.popen(argv..' 2>&1')
@@ -154,85 +154,4 @@ local reset
 -- @class function
 -- @name timeout
 local timeout
-
--- The function below comes from the lspawn module.
-
----
--- Spawns an interactive child process *argv* in a separate thread, returning
--- a handle to that process.
--- On Windows, *argv* is passed to `cmd.exe`: `%COMSPEC% /c [argv]`.
--- At the moment, only the Windows terminal version spawns processes in the same
--- thread.
--- @param argv A command line string that contains the program's name followed
---   by arguments to pass to it. `PATH` is searched for program names.
--- @param cwd Optional current working directory (cwd) for the child
---   process. The default value is `nil`, which inherits the parent's cwd.
--- @param env Optional list of environment variables for the child process.
---   Each element in the list is a 'KEY=VALUE' string. The default value is
---   `nil`, which inherits the parent's environment.
---   This parameter should be omitted completely instead of specifying `nil`.
--- @param stdout_cb Optional Lua function that accepts a string parameter for a
---   block of standard output read from the child. Stdout is read asynchronously
---   in 1KB or 0.5KB blocks (depending on the platform), or however much data is
---   available at the time.
---   At the moment, only the Win32 terminal version sends all output, whether it
---   be stdout or stderr, to this callback after the process finishes.
--- @param stderr_cb Optional Lua function that accepts a string parameter for a
---   block of standard error read from the child. Stderr is read asynchronously
---   in 1KB or 0.5kB blocks (depending on the platform), or however much data is
---   available at the time.
--- @param exit_cb Optional Lua function that is called when the child process
---   finishes. The child's exit status is passed.
--- @return proc or nil plus an error message on failure
--- @usage spawn('lua buffer.filename', nil, print)
--- @usage proc = spawn('lua -e "print(io.read())"', nil, print)
---        proc:write('foo\n')
--- @class function
--- @name spawn
-local spawn
-
----
--- Returns the status of process *spawn_proc*, which is either "running" or
--- "terminated".
--- @return "running" or "terminated"
-function spawn_proc:status() end
-
----
--- Blocks until process *spawn_proc* finishes.
-function spawn_proc:wait() end
-
----
--- Reads and returns stdout from process *spawn_proc*, according to string
--- format or number *arg*.
--- Similar to Lua's `io.read()` and blocks for input. *spawn_proc* must still be
--- running. If an error occurs while reading, returns `nil`, an error code, and
--- an error message.
--- Ensure any read operations read all stdout available, as the stdout callback
--- function passed to `spawn()` will not be called until the stdout buffer is
--- clear.
--- @param arg Optional argument similar to those in Lua's `io.read()`, but "n"
---   is not supported. The default value is "l", which reads a line.
--- @return string of bytes read
-function spawn_proc:read(arg) end
-
----
--- Writes string input to the stdin of process *spawn_proc*.
--- Note: On Linux, if more than 65536 bytes (64K) are to be written, it is
--- possible those bytes need to be written in 65536-byte (64K) chunks, or the
--- process may not receive all input. However, it is also possible that there is
--- a limit on how many bytes can be written in a short period of time, perhaps
--- 196608 bytes (192K).
--- @param ... Standard input for *spawn_proc*.
-function spawn_proc:write(...) end
-
----
--- Closes standard input for process *spawn_proc*, effectively sending an EOF
--- (end of file) to it.
-function spawn_proc:close() end
-
----
--- Kills running process *spawn_proc*, or sends it Unix signal *signal*.
--- @param signal Optional Unix signal to send to *spawn_proc*. The default value
---   is 9 (`SIGKILL`), which kills the process.
-function spawn_proc:kill() end
 ]]

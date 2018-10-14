@@ -214,8 +214,7 @@ static void new_buffer(sptr_t);
 static Scintilla *new_view(sptr_t);
 static int lL_init(lua_State *, int, char **, int);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
-LUALIB_API int luaopen_spawn(lua_State *);
-LUALIB_API int lspawn_pushfds(lua_State *), lspawn_readfds(lua_State *);
+LUALIB_API int os_spawn_pushfds(lua_State *), os_spawn_readfds(lua_State *);
 
 /**
  * Emits an event.
@@ -1504,7 +1503,7 @@ static int lL_init(lua_State *L, int argc, char **argv, int reinit) {
   }
   lua_pushinteger(L, (sptr_t)L), lua_setglobal(L, "_LUA");
   luaL_openlibs(L);
-  lL_openlib(L, lpeg), lL_openlib(L, lfs), lL_openlib(L, spawn);
+  lL_openlib(L, lpeg), lL_openlib(L, lfs);
 
   lua_newtable(L);
   lua_newtable(L);
@@ -2407,12 +2406,12 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
     if (res != TERMKEY_RES_AGAIN && res != TERMKEY_RES_NONE) return res;
     if (res == TERMKEY_RES_AGAIN) force = TRUE;
     // Wait for input.
-    int nfds = lspawn_pushfds(lua);
+    int nfds = os_spawn_pushfds(lua);
     fd_set *fds = (fd_set *)lua_touserdata(lua, -1);
     FD_SET(0, fds); // monitor stdin
     if (select(nfds, fds, NULL, NULL, force ? &timeout : NULL) > 0) {
       if (FD_ISSET(0, fds)) termkey_advisereadable(tk);
-      if (lspawn_readfds(lua) > 0) refresh_all();
+      if (os_spawn_readfds(lua) > 0) refresh_all();
     }
     lua_pop(lua, 1); // fd_set
   }

@@ -131,9 +131,9 @@ lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            linit.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
            lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
-           lmathlib.o loadlib.o loslib.o lstrlib.o ltablib.o lutf8lib.o
+           lmathlib.o loadlib.o lstrlib.o ltablib.o lutf8lib.o
+lua_oslib_objs = loslib.o loslib-curses.o
 lua_lib_objs = lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
-lua_spawn_objs = lspawn.o lspawn-curses.o
 gtdialog_objs = gtdialog.o gtdialog-curses.o
 termkey_unix_objs = driver-ti.o driver-csi.o
 termkey_win32_objs = driver-win32-pdcurses.o
@@ -176,11 +176,10 @@ $(textadept_objs): textadept.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $(ta_flags) $< -o $@
 $(lua_objs): %.o: lua/src/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -ULUA_LIB $< -o $@
+$(lua_oslib_objs): lua/src/loslib.c
+	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -ULUA_LIB -std=c99 -pedantic $< -o $@
 $(lua_lib_objs): %.o: lua/src/lib/%.c
 	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) $< -o $@
-$(lua_spawn_objs): lua/src/lib/lspawn.c
-	$(CROSS)$(CC) -c $(CFLAGS) $(LUA_CFLAGS) -std=c99 -pedantic $(spawn_flags) \
-		$< -o $@
 $(gtdialog_objs): gtdialog/gtdialog.c
 	$(CROSS)$(CC) -c $(CFLAGS) -std=c99 -pedantic $(plat_flag) -DNOHELP \
 		-DLIBRARY $(gtdialog_flags) $< -o $@
@@ -195,33 +194,33 @@ textadept_rc.o: textadept.rc ; $(CROSS)$(WINDRES) $< $@
 
 LexLPeg-curses.o: sci_flags += -DCURSES $(CURSES_CFLAGS)
 lua_dep_objs = LexLPeg.o LexLPeg-curses.o textadept.o textadept-curses.o \
-               $(lua_objs) $(lua_lib_objs) lspawn.o lspawn-curses.o
+               $(lua_objs) $(lua_oslib_objs) $(lua_lib_objs)
 $(lua_dep_objs): LUA_CFLAGS += -Ilua/src
 $(textadept_gtk_objs): ta_flags += $(GTK_CFLAGS)
 $(textadept_curses_objs): \
   ta_flags += -Iscintilla/curses -Itermkey -Icdk $(CURSES_CFLAGS)
-lspawn.o: spawn_flags = -DGTK $(GLIB_CFLAGS)
+loslib.o: LUA_CFLAGS += -DGTK $(GLIB_CFLAGS)
 gtdialog.o: gtdialog_flags += $(GTK_CFLAGS)
 gtdialog-curses.o: gtdialog_flags += -Icdk $(CURSES_CFLAGS)
 
 # Executables.
 
 textadept: $(sci_objs) $(sci_lex_objs) LexLPeg.o $(sci_gtk_objs) \
-           scintilla-marshal.o textadept.o $(lua_objs) $(lua_lib_objs) \
-           lspawn.o gtdialog.o
+           scintilla-marshal.o textadept.o $(lua_objs) loslib.o \
+           $(lua_lib_objs) gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadept-curses: $(sci_objs) $(sci_lex_objs) LexLPeg-curses.o \
                   $(sci_curses_objs) textadept-curses.o $(lua_objs) \
-                  $(lua_lib_objs) lspawn-curses.o gtdialog-curses.o termkey.o \
+                  loslib-curses.o $(lua_lib_objs) gtdialog-curses.o termkey.o \
                   $(termkey_unix_objs) $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
 textadept.exe: $(sci_objs) $(sci_lex_objs) LexLPeg.o $(sci_gtk_objs) \
                scintilla-marshal.o textadept.o textadept_rc.o $(lua_objs) \
-               $(lua_lib_objs) lspawn.o gtdialog.o
+               loslib.o $(lua_lib_objs) gtdialog.o
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(GTK_LIBS) $(LDFLAGS)
 textadept-curses.exe: $(sci_objs) $(sci_lex_objs) LexLPeg-curses.o \
                       $(sci_curses_objs) textadept-curses.o textadept_rc.o \
-                      $(lua_objs) $(lua_lib_objs) lspawn-curses.o \
+                      $(lua_objs) loslib-curses.o $(lua_lib_objs) \
                       gtdialog-curses.o termkey.o $(termkey_win32_objs) \
                       $(cdk_objs)
 	$(CROSS)$(CXX) $(CXXFLAGS) -o ../$@ $^ $(CURSES_LIBS) $(LDFLAGS)
@@ -360,18 +359,14 @@ osx-deps: $(base_deps) gtkosx termkey
 ifndef NIGHTLY
   #gtdialog_url = http://foicica.com/gtdialog/download/$@
   gtdialog_url = http://foicica.com/hg/gtdialog/archive/$@
-  #lspawn_url = http://foicica.com/lspawn/download/$@
-  lspawn_url = http://foicica.com/hg/lspawn/archive/$@
 else
   gtdialog_url = http://foicica.com/hg/gtdialog/archive/tip.zip
-  lspawn_url = http://foicica.com/hg/lspawn/archive/tip.zip
 endif
 
 scintilla_zip = cfad7e56cac1.zip
 lua_tgz = lua-5.3.5.tar.gz
 lpeg_tgz = lpeg-1.0.0.tar.gz
 lfs_zip = v_1_6_3.zip
-lspawn_zip = f22d4d50a6ac.zip
 gtdialog_zip = 6435a42450c7.zip
 cdk_tgz = cdk-5.0-20150928.tgz
 termkey_tgz = libtermkey-0.20.tar.gz
@@ -395,19 +390,16 @@ scintilla: scintilla.patch | $(scintilla_zip)
 $(lua_tgz): ; wget http://www.lua.org/ftp/$@
 $(lpeg_tgz): ; wget http://www.inf.puc-rio.br/~roberto/lpeg/$@
 $(lfs_zip): ; wget http://github.com/keplerproject/luafilesystem/archive/$@
-$(lspawn_zip): ; wget $(lspawn_url) -O $@
 lua: lua.patch | $(lua_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
-lualibs: lua/src/lib/lpeg lua/src/lib/lfs lua/src/lib/lspawn
+lualibs: lua/src/lib/lpeg lua/src/lib/lfs
 lua/src/lib/lpeg: | $(lpeg_tgz)
 	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
 lua/src/lib/lfs: | $(lfs_zip)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
-lua/src/lib/lspawn: | $(lspawn_zip)
-	mkdir -p $@ && unzip -d $@ $| && mv $@/*/*.c $(dir $@)
 $(gtdialog_zip): ; wget $(gtdialog_url) -O $@
 gtdialog: | $(gtdialog_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
 $(cdk_tgz): ; wget http://invisible-mirror.net/archives/cdk/$@
@@ -439,7 +431,7 @@ $(bombay_zip): ; wget http://foicica.com/hg/bombay/archive/tip.zip -O $@
 	mkdir $(notdir $@) && unzip -d $(notdir $@) $| && \
 		mv $(notdir $@)/*/* $(dir $@)
 $(cloc): ; wget http://prdownloads.sourceforge.net/cloc/$@ -O $@
-sign-deps: | $(scintilla_tgz) $(lua_tgz) $(lpeg_tgz) $(lfs_zip) $(lspawn_zip) \
+sign-deps: | $(scintilla_tgz) $(lua_tgz) $(lpeg_tgz) $(lfs_zip) \
              $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) $(win32gtk_zip) \
              $(win32curses_zip) $(pdcurses_zip) $(gtkosx_tgz)
 	@for file in $|; do gpg -ab $$file; done

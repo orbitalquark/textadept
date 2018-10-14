@@ -1084,7 +1084,7 @@ Changes:
 
 * Improved API documentation lookup behind the caret.
 * [Refactored snippets][] to longer display placeholder text.
-* [`spawn()`][] can now optionally specify the child's environment.
+* [`os.spawn()`][] can now optionally specify the child's environment.
 * Added Gherkin lexer.
 * Updated to [Scintilla][] 3.6.1.
 
@@ -1100,7 +1100,7 @@ Changes:
 [PGP -- 8.3 Modules]: download/textadept_8.3.modules.zip.asc
 [`buffer:count_characters()`]: api.html#buffer.count_characters
 [Refactored snippets]: http://foicica.com/lists/code/201509/2687.html
-[`spawn()`]: api.html#spawn
+[`os.spawn()`]: api.html#os.spawn
 [Scintilla]: http://scintilla.org
 
 ## 8.2 (01 Sep 2015)
@@ -1291,7 +1291,7 @@ Changes:
 * Upgraded to Lua 5.3, LPeg 0.12.2, lfs 1.6.3, and lspawn 1.2.
 * Removed `keys.LANGUAGE_MODULE_PREFIX`, but left that prefix unused on all
   platforms.
-* [`textadept.editing.filter_through()`][] now uses [`spawn()`][].
+* [`textadept.editing.filter_through()`][] now uses [`os.spawn()`][].
 * Removed long-hand [compile and run macros][] in favor of shorter ones.
 * [`textadept.bookmarks.toggle()`][] accepts an optional line to bookmark.
 * Added support for Rust and TOML.
@@ -1311,7 +1311,7 @@ Changes:
 [PGP -- 8.0 alpha Linux x86_64]: download/textadept_8.0_alpha.x86_64.tgz.asc
 [PGP -- 8.0 alpha Modules]: download/textadept_8.0_alpha.modules.zip.asc
 [`textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
-[`spawn()`]: api.html#spawn
+[`os.spawn()`]: api.html#os.spawn
 [compile and run macros]: api.html#textadept.run.compile\_commands
 [`textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
 [`spawn_proc:kill()`]: api.html#spawn_proc:kill
@@ -1578,7 +1578,7 @@ Bugfixes:
 
 Changes:
 
-* Mac OSX GUI version can truly [`spawn()`][] processes now.
+* Mac OSX GUI version can truly [`os.spawn()`][] processes now.
 * Improved performance for lexers with no grammars and no fold rules.
 * Updated to [Scintilla][] 3.5.1.
 
@@ -1613,7 +1613,7 @@ Bugfixes:
 
 Changes:
 
-* Terminal version can truly [`spawn()`][] processes now.
+* Terminal version can truly [`os.spawn()`][] processes now.
 * Added Linux .desktop files for menus and launchers.
 * Indicate presence of a BOM in the statusbar.
 * Switch to previous buffer after closing a buffer.
@@ -1631,7 +1631,7 @@ Changes:
 [PGP -- 7.6 Linux x86_64]: download/textadept_7.6.x86_64.tgz.asc
 [PGP -- 7.6 Modules]: download/textadept_7.6.modules.zip.asc
 [`buffer:del_word_right()`]: api.html#buffer.del_word_right
-[`spawn()`]: api.html#spawn
+[`os.spawn()`]: api.html#os.spawn
 [`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [Scintilla]: http://scintilla.org
 
@@ -1729,7 +1729,7 @@ Bugfixes:
 Changes:
 
 * Added reST and YAML lexers and official language modules for each.
-* Use [`spawn()`][] for launching help.
+* Use [`os.spawn()`][] for launching help.
 * Renamed `io.set_buffer_encoding()` to [`buffer:set_encoding()`][].
 * Removed Adeptsense in favor of [autocompleter functions][], but kept existing
   [api file format][].
@@ -1762,7 +1762,7 @@ Changes:
 [PGP -- 7.3 Linux]: download/textadept_7.3.i386.tgz.asc
 [PGP -- 7.3 Linux x86_64]: download/textadept_7.3.x86_64.tgz.asc
 [PGP -- 7.3 Modules]: download/textadept_7.3.modules.zip.asc
-[`spawn()`]: api.html#spawn
+[`os.spawn()`]: api.html#os.spawn
 [`buffer:set_encoding()`]: api.html#buffer.set_encoding
 [autocompleter functions]: api.html#textadept.editing.autocompleters
 [api file format]: api.html#textadept.editing.api_files
@@ -1879,7 +1879,7 @@ Changes:
 [PGP -- 7.2 beta 3 Modules]: download/textadept_7.2_beta_3.modules.zip.asc
 [optionselect]: api.html#ui.dialogs.optionselect
 [`ui.SILENT_PRINT`]: api.html#ui.silent_print
-[spawn processes]: api.html#spawn
+[spawn processes]: api.html#os.spawn
 [Snapopen]: manual.html#Quick.Open
 [building projects]: api.html#_M.Build.a.Project
 [LuaJIT]: http://luajit.org
