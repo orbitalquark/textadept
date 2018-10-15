@@ -18,14 +18,18 @@ keys = require('keys')
 _M = {} -- language modules table
 -- pdcurses compatibility.
 if CURSES and WIN32 then
-  function os.spawn(argv, cwd, ...)
+  function os.spawn(argv, ...)
     local current_dir = lfs.currentdir()
-    if cwd then lfs.chdir(cwd) end
+    local i = 1
+    if type(select(i, ...)) == 'string' then
+      lfs.chdir(select(i, ...)) -- cwd
+      i = i + 1
+    end
+    if type(select(i, ...)) == 'table' then i = i + 1 end -- env (ignore)
     local p = io.popen(argv..' 2>&1')
-    local cb_index = type(select(1, ...)) ~= 'table' and 1 or 2 -- ignore env
-    local stdout_cb, exit_cb = select(cb_index, ...), select(cb_index + 2, ...)
-    if stdout_cb then stdout_cb(p:read('a')) end
-    if exit_cb then exit_cb(select(3, p:close())) else p:close() end
+    if select(i, ...) then select(i, ...)(p:read('a')) end -- stdout_cb
+    local status = select(3, p:close())
+    if select(i + 2, ...) then select(i + 2, ...)(status) end -- exit_cb
     lfs.chdir(current_dir)
     return p
   end

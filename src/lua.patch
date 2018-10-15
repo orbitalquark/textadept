@@ -47,8 +47,8 @@ diff -r 8a23edc91533 src/luaconf.h
  #endif			/* } */
  
  
---- a/src/loslib.c	2018-10-14 14:54:46.915282217 -0400
-+++ b/src/loslib.c	2018-10-14 16:02:59.583627265 -0400
+--- a/src/loslib.c	2018-10-15 09:20:06.000000000 -0400
++++ b/src/loslib.c	2018-10-15 09:20:13.000000000 -0400
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -85,7 +85,7 @@ diff -r 8a23edc91533 src/luaconf.h
    {"time",      os_time},
    {"tmpname",   os_tmpname},
    {NULL, NULL}
-@@ -404,6 +419,580 @@
+@@ -404,6 +419,594 @@
  
  LUAMOD_API int luaopen_os (lua_State *L) {
    luaL_newlib(L, syslib);
@@ -434,17 +434,20 @@ diff -r 8a23edc91533 src/luaconf.h
 +
 +/** spawn() Lua function. */
 +static int os_spawn(lua_State *L) {
++  int narg = 1;
++  // Determine process parameters (argv, cwd, envp).
 +#if !_WIN32
++  // Construct argv from first string param.
 +#if GTK
 +  char **argv = NULL;
 +  GError *error = NULL;
-+  if (!g_shell_parse_argv(luaL_checkstring(L, 1), NULL, &argv, &error)) {
++  if (!g_shell_parse_argv(luaL_checkstring(L, narg++), NULL, &argv, &error)) {
 +    lua_pushfstring(L, "invalid argv: %s", error->message);
 +    luaL_argerror(L, 1, lua_tostring(L, -1));
 +  }
 +#else
 +  lua_newtable(L);
-+  const char *param = luaL_checkstring(L, 1), *c = param;
++  const char *param = luaL_checkstring(L, narg++), *c = param;
 +  while (*c) {
 +    while (*c == ' ') c++;
 +    param = c;
@@ -469,12 +472,15 @@ diff -r 8a23edc91533 src/luaconf.h
 +  argv[argc] = NULL;
 +  lua_pop(L, 1); // argv
 +#endif
++  // Determine cwd from optional second string param.
++  const char *cwd = lua_isstring(L, narg) ? lua_tostring(L, narg++) : NULL;
++  // Construct environment from optional third table param.
 +  int envn = 0;
 +  char **envp = NULL;
-+  if (lua_istable(L, 3)) {
-+    envn = lua_rawlen(L, 3), envp = malloc((envn + 1) * sizeof(char *));
++  if (lua_istable(L, narg)) {
++    envn = lua_rawlen(L, narg), envp = malloc((envn + 1) * sizeof(char *));
 +    for (int i = 0; i < envn; i++) {
-+      lua_rawgeti(L, 3, i + 1);
++      lua_rawgeti(L, narg, i + 1);
 +      size_t len = lua_rawlen(L, -1);
 +      char *pair = malloc(len + 1);
 +      strcpy(pair, lua_tostring(L, -1)), pair[len] = '\0';
@@ -482,24 +488,30 @@ diff -r 8a23edc91533 src/luaconf.h
 +      lua_pop(L, 1); // pair
 +    }
 +    envp[envn] = NULL;
++    narg++;
 +  }
 +#else
++  // Construct argv from first string param.
 +  lua_pushstring(L, getenv("COMSPEC"));
 +  lua_pushstring(L, " /c ");
 +  lua_pushvalue(L, 1);
 +  lua_concat(L, 3);
 +  lua_replace(L, 1); // cmd = os.getenv('COMSPEC')..' /c '..cmd
-+  wchar_t argv[2048] = {L'\0'}, cwd[MAX_PATH] = {L'\0'};
-+  MultiByteToWideChar(GetACP(), 0, lua_tostring(L, 1), -1, (LPWSTR)&argv,
++  wchar_t argv[2048] = {L'\0'};
++  MultiByteToWideChar(GetACP(), 0, lua_tostring(L, narg++), -1, (LPWSTR)&argv,
 +                      sizeof(argv));
-+  MultiByteToWideChar(GetACP(), 0, lua_tostring(L, 2), -1, (LPWSTR)&cwd,
-+                      MAX_PATH);
++  // Determine cwd from optional second string param.
++  wchar_t cwd[MAX_PATH] = {L'\0'};
++  if (lua_isstring(L, narg))
++    MultiByteToWideChar(GetACP(), 0, lua_tostring(L, narg++), -1, (LPWSTR)&cwd,
++                        MAX_PATH);
++  // Construct environment from optional third table param.
 +  char *envp = NULL;
-+  if (lua_istable(L, 3)) {
++  if (lua_istable(L, narg)) {
 +    luaL_Buffer buf;
 +    luaL_buffinit(L, &buf);
-+    for (int i = 0; i < lua_rawlen(L, 3); i++) {
-+      lua_rawgeti(L, 3, i + 1);
++    for (int i = 0; i < lua_rawlen(L, narg); i++) {
++      lua_rawgeti(L, narg, i + 1);
 +      luaL_addstring(&buf, lua_tostring(L, -1)), luaL_addchar(&buf, '\0');
 +      lua_pop(L, 1); // pair
 +    }
@@ -508,15 +520,18 @@ diff -r 8a23edc91533 src/luaconf.h
 +    envp = malloc(lua_rawlen(L, -1) * sizeof(char));
 +    memcpy(envp, lua_tostring(L, -1), lua_rawlen(L, -1));
 +    lua_pop(L, 1); // buf
++    narg++;
 +  }
 +#endif
 +  lua_settop(L, 6); // ensure 6 values so userdata to be pushed is 7th
 +
++  // Create process object to be returned and link callback functions from
++  // optional fourth, fifth, and sixth function params.
 +  PStream *p = (PStream *)lua_newuserdata(L, sizeof(PStream));
 +  p->L = L, p->ref = 0;
-+  p->stdout_cb = l_reffunction(L, !envp ? 3 : 4);
-+  p->stderr_cb = l_reffunction(L, !envp ? 4 : 5);
-+  p->exit_cb = l_reffunction(L, !envp ? 5 : 6);
++  p->stdout_cb = l_reffunction(L, narg), narg++;
++  p->stderr_cb = l_reffunction(L, narg), narg++;
++  p->exit_cb = l_reffunction(L, narg), narg++;
 +  if (luaL_newmetatable(L, "ta_spawn")) {
 +    l_setcfunction(L, -1, "status", lp_status);
 +    l_setcfunction(L, -1, "wait", lp_wait);
@@ -532,12 +547,12 @@ diff -r 8a23edc91533 src/luaconf.h
 +  }
 +  lua_setmetatable(L, -2);
 +
++  // Spawn the process, connecting to stdin, stdout, stderr, and exit.
 +#if !_WIN32
 +#if GTK
 +  GSpawnFlags flags = G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH;
-+  if (g_spawn_async_with_pipes(lua_tostring(L, 2), argv, envp, flags, NULL,
-+                               NULL, &p->pid, &p->fstdin, &p->fstdout,
-+                               &p->fstderr, &error)) {
++  if (g_spawn_async_with_pipes(cwd, argv, envp, flags, NULL, NULL, &p->pid,
++                               &p->fstdin, &p->fstdout, &p->fstderr, &error)) {
 +    p->cstdout = new_channel(p->fstdout, p, p->stdout_cb > 0);
 +    p->cstderr = new_channel(p->fstderr, p, p->stderr_cb > 0);
 +    g_child_watch_add_full(G_PRIORITY_DEFAULT + 1, p->pid, p_exit, p, NULL);
@@ -570,7 +585,6 @@ diff -r 8a23edc91533 src/luaconf.h
 +      close(0), close(1), close(2);
 +      dup2(pstdin[0], 0), dup2(pstdout[1], 1), dup2(pstderr[1], 2);
 +      close(pstdin[0]), close(pstdout[1]), close(pstderr[1]);
-+      const char *cwd = lua_tostring(L, 2);
 +      if (cwd && chdir(cwd) < 0) {
 +        fprintf(stderr, "Failed to change directory '%s' (%s)", cwd,
 +                strerror(errno));
