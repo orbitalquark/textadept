@@ -1909,19 +1909,8 @@ static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
 }
 
 #if GTK
-/**
- * Signal for a Scintilla keypress.
- * Translate Ctrl-, or Meta-modified keys to their group 0 key values (which are
- * typically ASCII values) as necessary in order for bindings like Ctrl+Z to
- * work on international keyboards.
- * Do not modify Alt- keys since they may be composed.
- */
+/** Signal for a Scintilla keypress. */
 static int s_keypress(GtkWidget*_, GdkEventKey *event, void*__) {
-  if (event->group > 0 &&
-      (event->state & (GDK_CONTROL_MASK | GDK_META_MASK)))
-    gdk_keymap_translate_keyboard_state(gdk_keymap_get_default(),
-                                        event->hardware_keycode, 0, 0,
-                                        &event->keyval, NULL, NULL, NULL);
   return lL_event(lua, "keypress", LUA_TNUMBER, event->keyval, event_mod(SHIFT),
                   event_mod(CONTROL), event_mod(MOD1), event_mod(META),
                   event_mod(LOCK), -1);
