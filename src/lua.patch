@@ -47,8 +47,8 @@ diff -r 8a23edc91533 src/luaconf.h
  #endif			/* } */
  
  
---- a/src/loslib.c	2018-10-15 09:20:06.000000000 -0400
-+++ b/src/loslib.c	2018-10-15 09:20:13.000000000 -0400
+--- a/src/loslib.c	2017-04-19 13:29:57.000000000 -0400
++++ b/src/loslib.c	2018-10-16 17:27:04.962929037 -0400
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -85,7 +85,7 @@ diff -r 8a23edc91533 src/luaconf.h
    {"time",      os_time},
    {"tmpname",   os_tmpname},
    {NULL, NULL}
-@@ -404,6 +419,594 @@
+@@ -404,6 +419,618 @@
  
  LUAMOD_API int luaopen_os (lua_State *L) {
    luaL_newlib(L, syslib);
@@ -108,7 +108,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +#include <glib.h>
 +#endif
 +#if !_WIN32
-+#if !GTK
++#if (!GTK || __APPLE__)
 +#include <errno.h>
 +#include <sys/select.h>
 +#endif
@@ -146,7 +146,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +#else
 +  HANDLE pid, fstdin, fstdout, fstderr;
 +#endif
-+#if GTK
++#if (GTK && !__APPLE__)
 +  GIOChannel *cstdout, *cstderr;
 +#endif
 +  int stdout_cb, stderr_cb, exit_cb;
@@ -156,9 +156,9 @@ diff -r 8a23edc91533 src/luaconf.h
 +static int lp_status(lua_State *L) {
 +  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
 +  lua_pushstring(L, p->pid ? "running" : "terminated");
-   return 1;
- }
- 
++  return 1;
++}
++
 +/** p:wait() Lua function. */
 +static int lp_wait(lua_State *L) {
 +  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
@@ -175,7 +175,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +  if (*c == '*') c++; // skip optional '*' (for compatibility)
 +  luaL_argcheck(L, *c == 'l' || *c == 'L' || *c == 'a' || lua_isnumber(L, 2), 2,
 +                   "invalid option");
-+#if GTK
++#if (GTK && !__APPLE__)
 +  char *buf;
 +  size_t len;
 +  GError *error = NULL;
@@ -278,10 +278,10 @@ diff -r 8a23edc91533 src/luaconf.h
 +    lua_pushfstring(L, "process (pid=%d)", p->pid);
 +  else
 +    lua_pushstring(L, "process (terminated)");
-+  return 1;
-+}
-+
-+#if GTK
+   return 1;
+ }
+ 
++#if (GTK && !__APPLE__)
 +/** __gc Lua metamethod. */
 +static int lp_gc(lua_State *L) {
 +  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
@@ -430,6 +430,25 @@ diff -r 8a23edc91533 src/luaconf.h
 +  lua_pop(L, 1); // spawn_procs
 +  return n;
 +}
++
++#if (GTK && __APPLE__)
++static int monitoring_fds = 0;
++/**
++ * Monitors spawned fds when GTK is idle.
++ * This is necessary because at the moment, using GLib on Mac OSX to spawn
++ * and monitor file descriptors mostly blocks when attempting to poll those fds.
++ */
++static int monitor_fds(void *data) {
++  lua_State *L = (lua_State *)data;
++  struct timeval timeout = {0, 1e5}; // 0.1s
++  int nfds = os_spawn_pushfds(L);
++  fd_set *fds = (fd_set *)lua_touserdata(L, -1);
++  if (select(nfds, fds, NULL, NULL, &timeout) > 0) os_spawn_readfds(L);
++  lua_pop(L, 1); // fd_set
++  if (nfds == 1) monitoring_fds = 0;
++  return nfds > 1;
++}
++#endif
 +#endif
 +
 +/** spawn() Lua function. */
@@ -438,7 +457,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +  // Determine process parameters (argv, cwd, envp).
 +#if !_WIN32
 +  // Construct argv from first string param.
-+#if GTK
++#if (GTK && !__APPLE__)
 +  char **argv = NULL;
 +  GError *error = NULL;
 +  if (!g_shell_parse_argv(luaL_checkstring(L, narg++), NULL, &argv, &error)) {
@@ -540,7 +559,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +    l_setcfunction(L, -1, "close", lp_close);
 +    l_setcfunction(L, -1, "kill", lp_kill);
 +    l_setcfunction(L, -1, "__tostring", lp_tostring);
-+#if GTK
++#if (GTK && !__APPLE__)
 +    l_setcfunction(L, -1, "__gc", lp_gc);
 +#endif
 +    lua_pushvalue(L, -1), lua_setfield(L, -2, "__index");
@@ -549,7 +568,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +
 +  // Spawn the process, connecting to stdin, stdout, stderr, and exit.
 +#if !_WIN32
-+#if GTK
++#if (GTK && !__APPLE__)
 +  GSpawnFlags flags = G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH;
 +  if (g_spawn_async_with_pipes(cwd, argv, envp, flags, NULL, NULL, &p->pid,
 +                               &p->fstdin, &p->fstdout, &p->fstderr, &error)) {
@@ -579,6 +598,11 @@ diff -r 8a23edc91533 src/luaconf.h
 +      lua_pushvalue(L, -2), lua_pushboolean(L, 1), lua_settable(L, -3);
 +      lua_pop(L, 1); // spawn_procs
 +      lua_pushnil(L); // no error
++#if (GTK && __APPLE__)
++      // On GTK-OSX, manually monitoring spawned fds prevents the fd polling
++      // aborts caused by GLib.
++      if (!monitoring_fds) g_idle_add(monitor_fds, L), monitoring_fds = 1;
++#endif
 +    } else if (pid == 0) {
 +      // Child process: redirect stdin, stdout, and stderr, chdir, and exec.
 +      close(pstdin[1]), close(pstdout[0]), close(pstderr[0]);
