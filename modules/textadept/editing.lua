@@ -603,6 +603,11 @@ function M.filter_through(command)
     p:write(output)
     p:close()
     output = p:read('a') or ''
+    if p:wait() ~= 0 then
+      ui.statusbar_text = string.format('"%s" %s', commands[i],
+                                        _L['returned non-zero status'])
+      return
+    end
   end
   buffer:replace_target(output:iconv('UTF-8', _CHARSET))
   if s ~= e then
