@@ -48,7 +48,7 @@ diff -r 8a23edc91533 src/luaconf.h
  
  
 --- a/src/loslib.c	2017-04-19 13:29:57.000000000 -0400
-+++ b/src/loslib.c	2018-10-16 17:27:04.962929037 -0400
++++ b/src/loslib.c	2018-10-17 09:15:35.000000000 -0400
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -89,7 +89,7 @@ diff -r 8a23edc91533 src/luaconf.h
  
  LUAMOD_API int luaopen_os (lua_State *L) {
    luaL_newlib(L, syslib);
-+#if !GTK
++#if (!GTK || __APPLE__)
 +  // Need to keep track of running processes for monitoring fds and pids.
 +  lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "spawn_procs");
 +#endif
