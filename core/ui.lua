@@ -74,6 +74,8 @@ end
 -- buffer is already open in a view, the message is printed to that view.
 -- Otherwise the view is split (unless `ui.tabs` is `true`) and the message
 -- buffer is displayed before being printed to.
+-- At this time, `ui.print()` cannot be used until Textadept is fully
+-- initialized. (That is, not until `events.INITIALIZED` is emitted.)
 -- @param buffer_type String type of message buffer.
 -- @param ... Message strings.
 -- @usage ui._print(_L['[Message Buffer]'], message)
