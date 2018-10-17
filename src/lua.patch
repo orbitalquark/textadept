@@ -47,8 +47,8 @@ diff -r 8a23edc91533 src/luaconf.h
  #endif			/* } */
  
  
---- a/src/loslib.c	2017-04-19 13:29:57.000000000 -0400
-+++ b/src/loslib.c	2018-10-17 09:15:35.000000000 -0400
+--- a/src/loslib.c	2018-10-15 09:22:45.000000000 -0400
++++ b/src/loslib.c	2018-10-17 14:06:59.000000000 -0400
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -85,7 +85,7 @@ diff -r 8a23edc91533 src/luaconf.h
    {"time",      os_time},
    {"tmpname",   os_tmpname},
    {NULL, NULL}
-@@ -404,6 +419,618 @@
+@@ -404,6 +419,625 @@
  
  LUAMOD_API int luaopen_os (lua_State *L) {
    luaL_newlib(L, syslib);
@@ -120,7 +120,6 @@ diff -r 8a23edc91533 src/luaconf.h
 +#endif
 +
 +#if _WIN32
-+#define waitpid(pid, ...) WaitForSingleObject(pid, INFINITE)
 +#define kill(pid, _) TerminateProcess(pid, 1)
 +#define g_io_channel_unix_new g_io_channel_win32_new_fd
 +#define close CloseHandle
@@ -163,8 +162,16 @@ diff -r 8a23edc91533 src/luaconf.h
 +static int lp_wait(lua_State *L) {
 +  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
 +  luaL_argcheck(L, p->pid, 1, "process terminated");
-+  waitpid(p->pid, NULL, 0);
-+  return 0;
++#if !_WIN32
++  int status;
++  waitpid(p->pid, &status, 0);
++  status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
++#else
++  DWORD status;
++  WaitForSingleObject(p->pid, INFINITE);
++  GetExitCodeProcess(p->pid, &status);
++#endif
++  return (lua_pushinteger(L, status), 1);
 +}
 +
 +/** p:read() Lua function. */

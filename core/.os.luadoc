@@ -45,7 +45,8 @@ local spawn
 function spawn_proc:status() end
 
 ---
--- Blocks until process *spawn_proc* finishes.
+-- Blocks until process *spawn_proc* finishes and returns its status code.
+-- @return integer status code
 function spawn_proc:wait() end
 
 ---
