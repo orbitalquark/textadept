@@ -391,7 +391,7 @@ $(lua_tgz): ; wget http://www.lua.org/ftp/$@
 $(lpeg_tgz): ; wget http://www.inf.puc-rio.br/~roberto/lpeg/$@
 $(lfs_zip): ; wget http://github.com/keplerproject/luafilesystem/archive/$@
 lua: lua.patch | $(lua_tgz)
-	if [ -d $@ ]; then rm -r $@; fi
+	if [ -d $@ ]; then rm -rf $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
 lualibs: lua/src/lib/lpeg lua/src/lib/lfs
