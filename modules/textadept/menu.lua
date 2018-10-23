@@ -20,7 +20,7 @@ local SEPARATOR = {''}
 local menu_buffer_functions = {
   'undo', 'redo', 'cut', 'copy', 'paste', 'line_duplicate', 'clear',
   'select_all', 'upper_case', 'lower_case', 'move_selected_lines_up',
-  'move_selected_lines_down', 'zoom_in', 'zoom_out', 'colourise'
+  'move_selected_lines_down', 'zoom_in', 'zoom_out'
 }
 for i = 1, #menu_buffer_functions do
   buffer[menu_buffer_functions[i]] = buffer[menu_buffer_functions[i]]
