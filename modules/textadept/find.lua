@@ -172,7 +172,10 @@ local function find_incremental(text, next, anchor)
                                                  next and 1 or -1)
   end
   buffer:goto_pos(incremental_start or 0)
-  find(text, next, M.match_case and buffer.FIND_MATCHCASE or 0)
+  -- Note: even though `events.FIND` does not support a flags parameter, the
+  -- default handler has one, so make use of it.
+  events.emit(events.FIND, text, next,
+              M.match_case and buffer.FIND_MATCHCASE or 0)
 end
 
 ---
