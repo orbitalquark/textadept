@@ -1,7 +1,7 @@
 -- Copyright 2007-2018 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 local M = {}
-textadept = M
+textadept = M -- forward declaration
 
 --[[ This comment is for LuaDoc.
 ---
@@ -14,6 +14,7 @@ require('textadept.command_entry')
 M.editing = require('textadept.editing')
 M.file_types = require('textadept.file_types')
 require('textadept.find')
+M.macros = require('textadept.macros')
 M.run = require('textadept.run')
 M.session = require('textadept.session')
 M.snippets = require('textadept.snippets')

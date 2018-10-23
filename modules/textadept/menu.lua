@@ -216,6 +216,16 @@ local default_menubar = {
       {_L['_Goto Bookmark...'], textadept.bookmarks.goto_mark},
     },
     {
+      title = _L['_Macros'],
+      {_L['_Start Recording'], textadept.macros.start_recording},
+      {_L['Sto_p Recording'], textadept.macros.stop_recording},
+      SEPARATOR,
+      {_L['_Play'], textadept.macros.play},
+      SEPARATOR,
+      {_L['Sa_ve...'], textadept.macros.save},
+      {_L['_Load...'], textadept.macros.load},
+    },
+    {
       title = _L['Quick _Open'],
       {_L['Quickly Open _User Home'], function() io.quick_open(_USERHOME) end},
       {_L['Quickly Open _Textadept Home'], function() io.quick_open(_HOME) end},

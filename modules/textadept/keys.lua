@@ -90,6 +90,9 @@ local M = {}
 -- F2              |F2     |F2           |Next bookmark
 -- Shift+F2        |⇧F2    |F3           |Previous bookmark
 -- Alt+F2          |⌥F2    |F4           |Goto bookmark...
+-- F9              |F9     |F9           |Start recording macro
+-- Shift+F9        |⇧F9    |F10          |Stop recording macro
+-- Alt+F9          |⌥F9    |F12          |Play recorded macro
 -- Ctrl+U          |⌘U     |^U           |Quickly open `_USERHOME`
 -- None            |None   |None         |Quickly open `_HOME`
 -- Ctrl+Alt+Shift+O|^⌘⇧O   |M-S-O        |Quickly open current directory
@@ -390,6 +393,10 @@ keys[not OSX and (GUI and 'csf2' or 'f6') or 'msf2'] = textadept.bookmarks.clear
 keys.f2 = m_bookmark[_L['_Next Bookmark']][2]
 keys[GUI and 'sf2' or 'f3'] = m_bookmark[_L['_Previous Bookmark']][2]
 keys[GUI and 'af2' or 'f4'] = textadept.bookmarks.goto_mark
+-- Macros.
+keys.f9 = textadept.macros.start_recording
+keys[GUI and 'sf9' or 'f10'] = textadept.macros.stop_recording
+keys[GUI and 'af9' or 'f12'] = textadept.macros.play
 -- Quick Open.
 local m_quick_open = m_tools[_L['Quick _Open']]
 keys[not OSX and 'cu' or 'mu'] = m_quick_open[_L['Quickly Open _User Home']][2]
@@ -519,6 +526,31 @@ elseif CURSES then
     if not buffer.selection_empty then buffer:cut() else buffer:clear() end
   end
 end
+
+-- Unbound keys are handled by Scintilla, but when playing back a macro, this is
+-- not possible. Define useful default keybindings so Scintilla does not have to
+-- handle them.
+keys.left, keys.sleft = buffer.char_left, buffer.char_left_extend
+keys.cleft, keys.csleft  = buffer.word_left, buffer.word_left_extend
+keys.right, keys.sright = buffer.char_right, buffer.char_right_extend
+keys.cright, keys.csright = buffer.word_right, buffer.word_right_extend
+if OSX then
+  keys.mleft, keys.msleft = buffer.vc_home, buffer.vc_home_extend
+  keys.mright, keys.msright = buffer.line_end, buffer.line_end_extend
+end
+keys.down, keys.sdown = buffer.line_down, buffer.line_down_extend
+keys.up, keys.sup = buffer.line_up, buffer.line_up_extend
+if not OSX then
+  keys.home, keys.shome = buffer.home, buffer.home_extend
+  keys['end'], keys.send = buffer.line_end, buffer.line_end_extend
+end
+keys.del, keys.sdel = buffer.clear, buffer.cut
+keys[not OSX and 'cdel' or 'mdel'] = buffer.del_word_right
+keys[not OSX and 'csdel' or 'msdel'] = buffer.del_line_right
+keys['\b'], keys['s\b'] = buffer.delete_back, buffer.delete_back
+keys[not OSX and 'c\b' or 'm\b'] = buffer.del_word_left
+keys[not OSX and 'cs\b' or 'ms\b'] = buffer.del_line_left
+keys['\t'], keys['s\t'] = buffer.tab, buffer.back_tab
 
 -- Modes.
 keys.filter_through = {
