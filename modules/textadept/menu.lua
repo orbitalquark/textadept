@@ -539,8 +539,8 @@ end)
 -- Prompts the user to select a menu command to run.
 -- @name select_command
 function M.select_command()
-  local items, commands = {}, {}
-  -- Builds the item and commands tables for the filtered list dialog.
+  local items = {}
+  -- Builds the item tables for the filtered list dialog.
   -- @param menu The menu to read from.
   local function build_command_tables(menu)
     for i = 1, #menu do
@@ -550,7 +550,6 @@ function M.select_command()
         local label = menu.title and menu.title..': '..menu[i][1] or menu[i][1]
         items[#items + 1] = label:gsub('_([^_])', '%1')
         items[#items + 1] = key_shortcuts[tostring(menu[i][2])] or ''
-        commands[#commands + 1] = menu[i][2]
       end
     end
   end
@@ -559,10 +558,7 @@ function M.select_command()
     title = _L['Run Command'], columns = {_L['Command'], _L['Key Binding']},
     items = items, width = CURSES and ui.size[1] - 2 or nil
   }
-  if button ~= 1 or not i then return end
-  assert(type(commands[i]) == 'function',
-         _L['Unknown command:']..' '..tostring(commands[i]))
-  commands[i]()
+  if button == 1 and i then events.emit(events.MENU_CLICKED, i) end
 end
 
 return setmetatable(M, {
