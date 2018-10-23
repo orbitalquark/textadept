@@ -53,6 +53,7 @@ function M.load(filename)
         end
       else
         buffer.new()._type = filename
+        buffer:set_save_point()
         events.emit(events.FILE_OPENED, filename) -- close initial untitled buf
       end
       -- Restore saved buffer selection and view.
