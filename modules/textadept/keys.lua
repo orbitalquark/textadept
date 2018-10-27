@@ -550,7 +550,6 @@ keys[not OSX and 'csdel' or 'msdel'] = buffer.del_line_right
 keys['\b'], keys['s\b'] = buffer.delete_back, buffer.delete_back
 keys[not OSX and 'c\b' or 'm\b'] = buffer.del_word_left
 keys[not OSX and 'cs\b' or 'ms\b'] = buffer.del_line_left
-keys['\t'], keys['s\t'] = buffer.tab, buffer.back_tab
 
 -- Modes.
 keys.filter_through = {
