@@ -6,6 +6,7 @@
 
 // Library includes.
 #include <errno.h>
+#include <limits.h> // for MB_LEN_MAX
 #include <locale.h>
 #include <iconv.h>
 #include <stdarg.h>
@@ -1440,23 +1441,22 @@ static int ltimeout(lua_State *L) {
 /** `string.iconv()` Lua function. */
 static int lstring_iconv(lua_State *L) {
   size_t inbytesleft = 0;
-#if !_WIN32
   char *inbuf = (char *)luaL_checklstring(L, 1, &inbytesleft);
-#else
-  const char *inbuf = luaL_checklstring(L, 1, &inbytesleft);
-#endif
   const char *to = luaL_checkstring(L, 2), *from = luaL_checkstring(L, 3);
   iconv_t cd = iconv_open(to, from);
   if (cd != (iconv_t)-1) {
-    char *outbuf = malloc(inbytesleft + 1), *p = outbuf;
-    size_t outbytesleft = inbytesleft, bufsize = inbytesleft;
+    // Ensure the minimum buffer size can hold a potential output BOM and one
+    // multibyte character.
+    size_t bufsiz = 4 + ((inbytesleft > MB_LEN_MAX) ? inbytesleft : MB_LEN_MAX);
+    char *outbuf = malloc(bufsiz + 1), *p = outbuf;
+    size_t outbytesleft = bufsiz;
     int n = 1; // concat this many converted strings
     while (iconv(cd, &inbuf, &inbytesleft, &p, &outbytesleft) == (size_t)-1)
-      if (errno == E2BIG) {
+      if (errno == E2BIG && p - outbuf > 0) {
         // Buffer was too small to store converted string. Push the partially
         // converted string for later concatenation.
         lua_checkstack(L, 2), lua_pushlstring(L, outbuf, p - outbuf), n++;
-        p = outbuf, outbytesleft = bufsize;
+        p = outbuf, outbytesleft = bufsiz;
       } else free(outbuf), iconv_close(cd), luaL_error(L, "conversion failed");
     lua_pushlstring(L, outbuf, p - outbuf);
     lua_concat(L, n);
