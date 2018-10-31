@@ -9,6 +9,59 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.2 (01 Nov 2018)
+
+Download:
+
+* [Textadept 10.2 -- Win32][] | [PGP -- 10.2 Win32][]
+* [Textadept 10.2 -- Mac OSX Intel 10.6+][] | [PGP -- 10.2 OSX][]
+* [Textadept 10.2 -- Linux][] | [PGP -- 10.2 Linux][]
+* [Textadept 10.2 -- Linux x86_64][] | [PGP -- 10.2 Linux x86_64][]
+* [Textadept 10.2 -- Modules][] | [PGP -- 10.2 Modules][]
+
+Bugfixes:
+
+* Fixed error when performing "select enclosed" on a non-ASCII character.
+* Fixed regression of Retina display support of Mac OSX.
+* Fixed key handling on some international keyboards.
+* Fixed tab labels not updating when loading message buffers from a session.
+* Fixed potential crashes in [`string.iconv()`][] with tiny strings.
+* Fixed inability to resize one split view configuration with the mouse in the
+  terminal version.
+
+Changes:
+
+* Experimentally moved `spawn()` into [`os.spawn()`][] as a Lua patch.
+* [`os.spawn()`][] now allows omission of `cwd` and `env` parameters.
+* [`spawn_proc:wait()`][] returns the process' exit code.
+* [`textadept.editing.filter_through()`][] halts on non-zero status instead of
+  clobbering the buffer or selected text.
+* Removed `textadept.editing.paste()` and `textadept.editing.paste_reindents`
+  option.
+* Added [`textadept.macros`][] module for recording, playing, saving, and
+  loading keyboard macros.
+* Scintilla: Improve efficiency of idle wrapping.
+* Scintilla: Updated case conversion and character categories to Unicode 11.
+* Scintilla: Updated ConTeXt, HTML, and Markdown lexers.
+* Updated to [Scintilla][] 3.10.1.
+
+[Textadept 10.2 -- Win32]: download/textadept_10.2.win32.zip
+[Textadept 10.2 -- Mac OSX Intel 10.6+]: download/textadept_10.2.osx.zip
+[Textadept 10.2 -- Linux]: download/textadept_10.2.i386.tgz
+[Textadept 10.2 -- Linux x86_64]: download/textadept_10.2.x86_64.tgz
+[Textadept 10.2 -- Modules]: download/textadept_10.2.modules.zip
+[PGP -- 10.2 Win32]: download/textadept_10.2.win32.zip.asc
+[PGP -- 10.2 OSX]: download/textadept_10.2.osx.zip.asc
+[PGP -- 10.2 Linux]: download/textadept_10.2.i386.tgz.asc
+[PGP -- 10.2 Linux x86_64]: download/textadept_10.2.x86_64.tgz.asc
+[PGP -- 10.2 Modules]: download/textadept_10.2.modules.zip.asc
+[`string.iconv()`]: api.html#string.iconv
+[`os.spawn()`]: api.html#os.spawn
+[`spawn_proc:wait()`]: api.html#spawn_proc:wait
+[`textadept.editing.filter_through()`]: api.html#textadept.editing.filt
+[`textadept.macros`]: api.html#textadept.macros
+[Scintilla]: http://scintilla.org
+
 ## 10.1 (01 Oct 2018)
 
 Download:
