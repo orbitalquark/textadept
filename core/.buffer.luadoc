@@ -449,7 +449,7 @@
 --     A triangle below the centre of the first character of the indicator
 --     range.
 --   * `buffer.INDIC_GRADIENT`
---     A box with a vertical gradient from solid on top to transparent on 
+--     A box with a vertical gradient from solid on top to transparent on
 --     bottom.
 --   * `buffer.INDIC_GRADIENTCENTRE`
 --     A box with a centered gradient from solid in the middle to transparent on
@@ -3146,6 +3146,7 @@ function set_theme(buffer, name, props) end
 --   * call_tip_fore
 --   * character_pointer
 --   * code_page
+--   * command_events
 --   * control_char_symbol
 --   * direct_function
 --   * direct_pointer
@@ -3165,6 +3166,7 @@ function set_theme(buffer, name, props) end
 --   * layout_cache
 --   * lexer
 --   * lexer_language
+--   * line_character_index
 --   * line_end_types_active
 --   * line_end_types_allowed
 --   * line_end_types_supported
@@ -3230,6 +3232,7 @@ function set_theme(buffer, name, props) end
 --   * add_undo_action
 --   * allocate
 --   * allocate_extended_styles
+--   * allocate_line_character_index
 --   * allocate_sub_styles
 --   * assign_cmd_key
 --   * buffered_draw
@@ -3241,6 +3244,7 @@ function set_theme(buffer, name, props) end
 --   * clear_cmd_key
 --   * clear_all_cmd_keys
 --   * clear_tab_stops
+--   * count_code_units
 --   * create_document
 --   * create_loader
 --   * describe_key_word_sets
@@ -3262,7 +3266,9 @@ function set_theme(buffer, name, props) end
 --   * get_styled_text
 --   * grab_focus
 --   * hide_selection
+--   * index_position_from_line
 --   * indicator_value_at
+--   * line_from_index_position
 --   * load_lexer_library
 --   * mouse_wheel_captures
 --   * name_of_style
@@ -3272,11 +3278,13 @@ function set_theme(buffer, name, props) end
 --   * point_y_from_position
 --   * position_from_point
 --   * position_from_point_close
+--   * position_relative_code_units
 --   * private_lexer_call
 --   * property_names
 --   * property_type
 --   * release_all_extended_styles
 --   * release_document
+--   * release_line_character_index
 --   * set_hotspot_active_back
 --   * set_hotspot_active_fore
 --   * set_length_for_encode
