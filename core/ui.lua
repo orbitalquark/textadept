@@ -479,7 +479,8 @@ if CURSES then
         resize = nil
       else
         resize = function(y2, x2)
-          view[1].size = view.size + (view.vertical and x2 - x or y2 - y)
+          local i = getmetatable(view[1]) == getmetatable(_G.view) and 1 or 2
+          view[i].size = view.size + (view.vertical and x2 - x or y2 - y)
         end
       end
     elseif resize then
