@@ -763,6 +763,7 @@ lines_on_screen	_	0;"	F	class:buffer
 lines_split	_	0;"	f	class:buffer
 load	_	0;"	f	
 load	_	0;"	f	class:lexer
+load	_	0;"	f	class:textadept.macros
 load	_	0;"	f	class:textadept.session
 loaded	_	0;"	F	class:package
 loaders	_	0;"	F	class:package
@@ -783,6 +784,7 @@ lshift	_	0;"	f	class:bit32
 lua	_	0;"	m	class:_M
 lua	_	0;"	t	class:keys
 lua	_	0;"	t	class:snippets
+macros	_	0;"	m	class:textadept
 main_selection	_	0;"	F	class:buffer
 margin_back_n	_	0;"	F	class:buffer
 margin_cursor_n	_	0;"	F	class:buffer
@@ -889,13 +891,12 @@ para_down_extend	_	0;"	f	class:buffer
 para_up	_	0;"	f	class:buffer
 para_up_extend	_	0;"	f	class:buffer
 paste	_	0;"	f	class:buffer
-paste	_	0;"	f	class:textadept.editing
-paste_reindents	_	0;"	F	class:textadept.editing
 path	_	0;"	F	class:lexer
 path	_	0;"	F	class:package
 patterns	_	0;"	t	class:textadept.file_types
 pcall	_	0;"	f	
 pi	_	0;"	F	class:math
+play	_	0;"	f	class:textadept.macros
 popen	_	0;"	f	class:io
 position_after	_	0;"	f	class:buffer
 position_before	_	0;"	f	class:buffer
@@ -983,6 +984,7 @@ run	_	0;"	m	class:textadept
 run_commands	_	0;"	t	class:textadept.run
 run_in_background	_	0;"	F	class:textadept.run
 running	_	0;"	f	class:coroutine
+save	_	0;"	f	class:textadept.macros
 save	_	0;"	f	class:textadept.session
 save_all_files	_	0;"	f	class:io
 save_file	_	0;"	f	class:io
@@ -1077,6 +1079,7 @@ split	_	0;"	f	class:view
 sqrt	_	0;"	f	class:math
 standard_dropdown	_	0;"	f	class:ui.dialogs
 standard_inputbox	_	0;"	f	class:ui.dialogs
+start_recording	_	0;"	f	class:textadept.macros
 start_styling	_	0;"	f	class:buffer
 starts_line	_	0;"	f	class:lexer
 status	_	0;"	f	class:coroutine
@@ -1086,6 +1089,7 @@ stderr	_	0;"	F	class:io
 stdin	_	0;"	F	class:io
 stdout	_	0;"	F	class:io
 stop	_	0;"	f	class:textadept.run
+stop_recording	_	0;"	f	class:textadept.macros
 string	_	0;"	m	
 strip_trailing_spaces	_	0;"	F	class:textadept.editing
 stuttered_page_down	_	0;"	f	class:buffer
@@ -1142,6 +1146,7 @@ textadept.bookmarks	_	0;"	m
 textadept.editing	_	0;"	m	
 textadept.file_types	_	0;"	m	
 textadept.keys	_	0;"	m	
+textadept.macros	_	0;"	m	
 textadept.menu	_	0;"	m	
 textadept.run	_	0;"	m	
 textadept.session	_	0;"	m	
