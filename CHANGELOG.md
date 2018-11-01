@@ -14,7 +14,7 @@
 Download:
 
 * [Textadept 10.2 -- Win32][] | [PGP -- 10.2 Win32][]
-* [Textadept 10.2 -- Mac OSX Intel 10.6+][] | [PGP -- 10.2 OSX][]
+* [Textadept 10.2 -- Mac OSX 10.6+][] | [PGP -- 10.2 OSX][]
 * [Textadept 10.2 -- Linux][] | [PGP -- 10.2 Linux][]
 * [Textadept 10.2 -- Linux x86_64][] | [PGP -- 10.2 Linux x86_64][]
 * [Textadept 10.2 -- Modules][] | [PGP -- 10.2 Modules][]
@@ -31,22 +31,22 @@ Bugfixes:
 
 Changes:
 
-* Experimentally moved `spawn()` into [`os.spawn()`][] as a Lua patch.
+* Renamed `spawn()` to [`os.spawn()`][].
 * [`os.spawn()`][] now allows omission of `cwd` and `env` parameters.
 * [`spawn_proc:wait()`][] returns the process' exit code.
 * [`textadept.editing.filter_through()`][] halts on non-zero status instead of
   clobbering the buffer or selected text.
 * Removed `textadept.editing.paste()` and `textadept.editing.paste_reindents`
-  option.
-* Added [`textadept.macros`][] module for recording, playing, saving, and
-  loading keyboard macros.
+  option; Textadept no longer reindents pasted text by default.
+* Experimentally added [`textadept.macros`][] module for recording, playing,
+  saving, and loading keyboard macros.
 * Scintilla: Improve efficiency of idle wrapping.
 * Scintilla: Updated case conversion and character categories to Unicode 11.
 * Scintilla: Updated ConTeXt, HTML, and Markdown lexers.
 * Updated to [Scintilla][] 3.10.1.
 
 [Textadept 10.2 -- Win32]: download/textadept_10.2.win32.zip
-[Textadept 10.2 -- Mac OSX Intel 10.6+]: download/textadept_10.2.osx.zip
+[Textadept 10.2 -- Mac OSX 10.6+]: download/textadept_10.2.osx.zip
 [Textadept 10.2 -- Linux]: download/textadept_10.2.i386.tgz
 [Textadept 10.2 -- Linux x86_64]: download/textadept_10.2.x86_64.tgz
 [Textadept 10.2 -- Modules]: download/textadept_10.2.modules.zip
@@ -67,7 +67,7 @@ Changes:
 Download:
 
 * [Textadept 10.1 -- Win32][] | [PGP -- 10.1 Win32][]
-* [Textadept 10.1 -- Mac OSX Intel 10.6+][] | [PGP -- 10.1 OSX][]
+* [Textadept 10.1 -- Mac OSX 10.6+][] | [PGP -- 10.1 OSX][]
 * [Textadept 10.1 -- Linux][] | [PGP -- 10.1 Linux][]
 * [Textadept 10.1 -- Linux x86_64][] | [PGP -- 10.1 Linux x86_64][]
 * [Textadept 10.1 -- Modules][] | [PGP -- 10.1 Modules][]
@@ -89,7 +89,7 @@ Changes:
   issues.
 
 [Textadept 10.1 -- Win32]: download/textadept_10.1.win32.zip
-[Textadept 10.1 -- Mac OSX Intel 10.6+]: download/textadept_10.1.osx.zip
+[Textadept 10.1 -- Mac OSX 10.6+]: download/textadept_10.1.osx.zip
 [Textadept 10.1 -- Linux]: download/textadept_10.1.i386.tgz
 [Textadept 10.1 -- Linux x86_64]: download/textadept_10.1.x86_64.tgz
 [Textadept 10.1 -- Modules]: download/textadept_10.1.modules.zip
@@ -111,7 +111,7 @@ Textadept 10.
 Download:
 
 * [Textadept 10.0 -- Win32][] | [PGP -- 10.0 Win32][]
-* [Textadept 10.0 -- Mac OSX Intel 10.6+][] | [PGP -- 10.0 OSX][]
+* [Textadept 10.0 -- Mac OSX 10.6+][] | [PGP -- 10.0 OSX][]
 * [Textadept 10.0 -- Linux][] | [PGP -- 10.0 Linux][]
 * [Textadept 10.0 -- Linux x86_64][] | [PGP -- 10.0 Linux x86_64][]
 * [Textadept 10.0 -- Modules][] | [PGP -- 10.0 Modules][]
@@ -136,7 +136,7 @@ Changes:
 
 [9 to 10 migration guide]: manual.html#Textadept.9.to.10
 [Textadept 10.0 -- Win32]: download/textadept_10.0.win32.zip
-[Textadept 10.0 -- Mac OSX Intel 10.6+]: download/textadept_10.0.osx.zip
+[Textadept 10.0 -- Mac OSX 10.6+]: download/textadept_10.0.osx.zip
 [Textadept 10.0 -- Linux]: download/textadept_10.0.i386.tgz
 [Textadept 10.0 -- Linux x86_64]: download/textadept_10.0.x86_64.tgz
 [Textadept 10.0 -- Modules]: download/textadept_10.0.modules.zip
@@ -154,7 +154,7 @@ Changes:
 Download:
 
 * [Textadept 10.0 beta 2 -- Win32][] | [PGP -- 10.0 beta 2 Win32][]
-* [Textadept 10.0 beta 2 -- Mac OSX Intel 10.6+][] | [PGP -- 10.0 beta 2 OSX][]
+* [Textadept 10.0 beta 2 -- Mac OSX 10.6+][] | [PGP -- 10.0 beta 2 OSX][]
 * [Textadept 10.0 beta 2 -- Linux][] | [PGP -- 10.0 beta 2 Linux][]
 * [Textadept 10.0 beta 2 -- Linux x86_64][] | [PGP -- 10.0 beta 2 Linux x86_64][]
 * [Textadept 10.0 beta 2 -- Modules][] | [PGP -- 10.0 beta 2 Modules][]
@@ -175,7 +175,7 @@ Changes:
 * Interpret `\uXXXX` sequences in regex replacement text.
 
 [Textadept 10.0 beta 2 -- Win32]: download/textadept_10.0_beta_2.win32.zip
-[Textadept 10.0 beta 2 -- Mac OSX Intel 10.6+]: download/textadept_10.0_beta_2.osx.zip
+[Textadept 10.0 beta 2 -- Mac OSX 10.6+]: download/textadept_10.0_beta_2.osx.zip
 [Textadept 10.0 beta 2 -- Linux]: download/textadept_10.0_beta_2.i386.tgz
 [Textadept 10.0 beta 2 -- Linux x86_64]: download/textadept_10.0_beta_2.x86_64.tgz
 [Textadept 10.0 beta 2 -- Modules]: download/textadept_10.0_beta_2.modules.zip
@@ -190,7 +190,7 @@ Changes:
 Download:
 
 * [Textadept 10.0 beta -- Win32][] | [PGP -- 10.0 beta Win32][]
-* [Textadept 10.0 beta -- Mac OSX Intel 10.6+][] | [PGP -- 10.0 beta OSX][]
+* [Textadept 10.0 beta -- Mac OSX 10.6+][] | [PGP -- 10.0 beta OSX][]
 * [Textadept 10.0 beta -- Linux][] | [PGP -- 10.0 beta Linux][]
 * [Textadept 10.0 beta -- Linux x86_64][] | [PGP -- 10.0 beta Linux x86_64][]
 * [Textadept 10.0 beta -- Modules][] | [PGP -- 10.0 beta Modules][]
@@ -209,7 +209,7 @@ Changes:
 * Removed LuaJIT version of Textadept.
 
 [Textadept 10.0 beta -- Win32]: download/textadept_10.0_beta.win32.zip
-[Textadept 10.0 beta -- Mac OSX Intel 10.6+]: download/textadept_10.0_beta.osx.zip
+[Textadept 10.0 beta -- Mac OSX 10.6+]: download/textadept_10.0_beta.osx.zip
 [Textadept 10.0 beta -- Linux]: download/textadept_10.0_beta.i386.tgz
 [Textadept 10.0 beta -- Linux x86_64]: download/textadept_10.0_beta.x86_64.tgz
 [Textadept 10.0 beta -- Modules]: download/textadept_10.0_beta.modules.zip
@@ -332,8 +332,8 @@ Bugfixes:
 Changes:
 
 * Textadept requires GTK 2.24 (circa early-2011) or greater.
-* Pasted text is reindented by default via [`textadept.editing.paste()`][], and
-  is configured with [`textadept.editing.paste_reindents`][].
+* Pasted text is reindented by default via `textadept.editing.paste()`, and is
+  configured with `textadept.editing.paste_reindents`.
 * Replaced `textadept.editing.match_brace()` with a menu function, enhanced
   [`textadept.editing.select_enclosed()`][] behavior, and removed redundant
   "Select in ..." menu items.
@@ -355,8 +355,6 @@ Changes:
 [PGP -- 10.0 alpha Linux]: download/textadept_10.0_alpha.i386.tgz.asc
 [PGP -- 10.0 alpha Linux x86_64]: download/textadept_10.0_alpha.x86_64.tgz.asc
 [PGP -- 10.0 alpha Modules]: download/textadept_10.0_alpha.modules.zip.asc
-[`textadept.editing.paste()`]: api.html#textadept.editing.paste
-[`textadept.editing.paste_reindents`]: api.html#textadept.editing.paste_reindents
 [`textadept.editing.select_enclosed()`]: api.html#textadept.editing.select_enclosed
 [`buffer.set_theme()`]: api.html#buffer.set_theme
 [`buffer.brace_match()`]: api.html#buffer.brace_match
