@@ -131,8 +131,7 @@ Ubuntu typically call the package "libncursesw5".
 
 ### Requirements for Mac OSX
 
-No requirements other than Mac OSX 10.6 (Snow Leopard) or higher with an Intel
-CPU.
+No requirements other than Mac OSX 10.6 (Snow Leopard) or higher.
 
 ### Requirements for Windows
 
@@ -621,19 +620,16 @@ manager may also consume `Alt+Mouse` in order to move windows. In that case, a
 normal text selection may be changed into a rectangular selection by tapping the
 `Alt` modifier key.
 
-### Select to Matching Brace
+### Select between Matching Braces and Other Entities
 
-Placing the caret over a brace character ('(', ')', '[', ']', '{', or '}') and
-pressing `Ctrl+Shift+M` (`^⇧M` on Mac OSX| `M-S-M` in curses) extends the
-selection to the brace character's matching brace.
+Placing the caret over a brace character ('(', ')', '[', ']', '{', or '}') or
+between matching pairs and then pressing `Ctrl+Shift+M` (`^⇧M` on Mac OSX |
+`M-S-M` in curses) selects all text between the pair. Repeated use of this key
+binding toggles the selection of the brace characters themselves. You can also
+use this feature within other entities like single and double quotes.
 
-### Entity Selection
-
-Textadept allows the selection of many different entities from the caret. For
-example, `Ctrl+"` (`^"` on Mac OSX | `M-"` in curses) selects all characters in
-a double-quoted range. Typing it again selects the double-quotes too. The
-"Edit -> Select In..." menu lists all selectable entities with their key
-bindings.
+The "Edit -> Select In..." menu lists other selectable entities like HTML/XML
+tags.
 
 ### Marks
 
@@ -704,7 +700,8 @@ Pressing `Esc` (`Esc` | `Esc`) hides the pane after you finish with it.
 
 By default, "Replace All" replaces all text in the buffer. Selecting a
 continuous block of text and then "Replace All" replaces all text in the
-selection.
+selection. "Replace All" within rectangular or multiple selections is currently
+not supported.
 
 ### Find in Files
 
@@ -1396,6 +1393,15 @@ follows:
 
 The standard output (stdout) of the command replaces the input text.
 
+## Macros
+
+While Textadept can be completely scripted with Lua, it is sometimes desirable
+to quickly record a series of edits and play them back without writing a custom
+script. Pressing `F9` starts a recording session, and `Shift+F9` (`⇧F9` on Mac
+OSX | `F10` in curses) stops recording. `Alt+F9` (`⌥F9` | `F12`) plays back the
+most recently recorded macro. You can use the "Tools -> Macros" menu to save a
+macro to a file, or load one for subsequent playback.
+
 ## Remote Control
 
 Since Textadept executes arbitrary Lua code passed via the `-e` and `--execute`
@@ -1624,15 +1630,13 @@ compile for Windows is cross-compiling from Linux. In order to do so, you need
 Your package manager should offer them.
 
 Note: compiling on Windows requires a C compiler that supports the C99 standard,
-a C++ compiler that supports the C++11 standard, a C++ standard library that
-supports C++11, the [GTK+ for Windows bundle][] version 2.24, and
-[libiconv for Windows][] (the "Developer files" and "Binaries" zip files). The
-terminal (pdcurses) version requires my [win32curses bundle][] instead of GTK+
-and libiconv.
+a C++ compiler that supports the C++11 standard, and a C++ standard library that
+supports C++11, and my [win32gtk bundle][]. The terminal (pdcurses) version
+requires [libiconv for Windows][] and my [win32curses bundle][] instead of GTK+.
 
 [MinGW]: http://mingw.org
 [mingw-w64]: http://mingw-w64.org/
-[GTK+ for Windows bundle]: http://www.gtk.org/download/windows.php
+[win32gtk bundle]: download/win32gtk-2.24.32.zip
 [libiconv for Windows]: http://gnuwin32.sourceforge.net/packages/libiconv.htm
 [win32curses bundle]: download/win32curses.zip
 
@@ -2009,8 +2013,8 @@ word\_match(list, wchars, icase)|Changed |[word\_match][](words, icase)
 set\_theme                      |Renamed |[buffer.set\_theme()][]
 **textadept.editing**           |        |
 match\_brace                    |Replaced|N/A _(menu function)_
-N/A                             |Added   |[paste()][]
-N/A                             |Added   |[paste\_reindents][]
+N/A                             |Added   |paste()
+N/A                             |Added   |paste\_reindents
 **textadept.session**           |        |
 default\_session                |Removed |
 
@@ -2024,8 +2028,6 @@ default\_session                |Removed |
 [new()]: api.html#lexer.new
 [word\_match]: api.html#lexer.word_match
 [buffer.set\_theme()]: api.html#buffer.set_theme
-[paste()]: api.html#textadept.editing.paste
-[paste\_reindents]: api.html#textadept.editing.paste_reindents
 
 #### Configuration Changes
 
