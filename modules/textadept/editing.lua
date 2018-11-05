@@ -601,22 +601,25 @@ end
 local api_docs
 ---
 -- Displays a call tip with documentation for the symbol under or directly
--- behind the caret.
+-- behind position *pos* or the caret position.
 -- Documentation is read from API files in the `api_files` table.
 -- If a call tip is already shown, cycles to the next one if it exists.
 -- Symbols are determined by using `buffer.word_chars`.
+-- @param pos Optional position of the symbol to show documentation for. If
+--   omitted, the caret position is used.
 -- @name show_documentation
 -- @see api_files
 -- @see buffer.word_chars
-function M.show_documentation()
+function M.show_documentation(pos)
   if buffer:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
   local lang = buffer:get_lexer(true)
   if not M.api_files[lang] then return end
-  local s = buffer:word_start_position(buffer.current_pos, true)
-  local e = buffer:word_end_position(buffer.current_pos, true)
+  if not pos then pos = buffer.current_pos end
+  local s = buffer:word_start_position(pos, true)
+  local e = buffer:word_end_position(pos, true)
   local symbol = buffer:text_range(s, e)
 
-  api_docs = {}
+  api_docs = {pos = pos, i = 1}
   ::lookup::
   if symbol ~= '' then
     local symbol_patt = '^'..symbol:gsub('(%p)', '%%%1')
@@ -635,7 +638,7 @@ function M.show_documentation()
   local char_at = buffer.char_at
   while s >= 0 and char_at[s] ~= 40 do s = s - 1 end
   e = buffer:brace_match(s, 0)
-  if s > 0 and (e == -1 or e >= buffer.current_pos) then
+  if s > 0 and (e == -1 or e >= pos) then
     s, e = buffer:word_start_position(s - 1, true), s - 1
     symbol = buffer:text_range(s, e + 1)
     goto lookup
@@ -650,19 +653,18 @@ function M.show_documentation()
     end
     api_docs[i] = doc
   end
-  if not api_docs.pos then api_docs.pos = 1 end
-  buffer:call_tip_show(buffer.current_pos, api_docs[api_docs.pos])
+  buffer:call_tip_show(pos, api_docs[api_docs.i])
 end
 -- Cycle through apidoc calltips.
 events.connect(events.CALL_TIP_CLICK, function(position)
   if not api_docs then return end
-  api_docs.pos = api_docs.pos + (position == 1 and -1 or 1)
-  if api_docs.pos > #api_docs then
-    api_docs.pos = 1
-  elseif api_docs.pos < 1 then
-    api_docs.pos = #api_docs
+  api_docs.i = api_docs.i + (position == 1 and -1 or 1)
+  if api_docs.i > #api_docs then
+    api_docs.i = 1
+  elseif api_docs.i < 1 then
+    api_docs.i = #api_docs
   end
-  buffer:call_tip_show(buffer.current_pos, api_docs[api_docs.pos])
+  buffer:call_tip_show(api_docs.pos, api_docs[api_docs.i])
 end)
 
 return M
