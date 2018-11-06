@@ -466,7 +466,7 @@ local function clear_highlighted_words()
 end
 events.connect(events.KEYPRESS, function(code)
   if keys.KEYSYMS[code] == 'esc' then clear_highlighted_words() end
-end)
+end, 1)
 
 ---
 -- Highlights all occurrences of the selected text or all occurrences of the
