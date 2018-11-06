@@ -490,7 +490,6 @@ function M.highlight_word()
                                 buffer.target_end - buffer.target_start)
     buffer:set_target_range(buffer.target_end, buffer.length)
   end
-  buffer:set_sel(s, e)
 end
 
 ---
