@@ -541,7 +541,7 @@ end
 keys.down, keys.sdown = buffer.line_down, buffer.line_down_extend
 keys.up, keys.sup = buffer.line_up, buffer.line_up_extend
 if not OSX then
-  keys.home, keys.shome = buffer.home, buffer.home_extend
+  keys.home, keys.shome = buffer.vc_home, buffer.vc_home_extend
   keys['end'], keys.send = buffer.line_end, buffer.line_end_extend
 end
 keys.del, keys.sdel = buffer.clear, buffer.cut
