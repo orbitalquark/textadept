@@ -420,10 +420,10 @@ $(pdcurses_zip): ; wget http://prdownloads.sourceforge.net/pdcurses/$@
 win32curses: | $(win32curses_zip) $(pdcurses_zip)
 	unzip $(win32curses_zip)
 	mkdir $@/src && unzip -d $@/src $(pdcurses_zip)
-	cp $@/lib/pdckbd.c $@/src/win32
-	cd $@/src/win32 && $(MAKE) -f gccwin32.mak CC="$(CROSS)$(CC) $(CFLAGS)" \
-		LIBEXE=$(CROSS)ar LINK="$(CROSS)$(CC) $(CFLAGS)" WIDE=Y UTF8=Y
-	cp $@/src/win32/pdcurses.a $@/lib/
+	cp $@/lib/pdckbd.c $@/src/wincon
+	cd $@/src/wincon && $(MAKE) CC="$(CROSS)$(CC) $(CFLAGS)" LIBEXE=$(CROSS)ar \
+		LINK="$(CROSS)$(CC) $(CFLAGS)" WIDE=Y UTF8=Y libs
+	cp $@/src/wincon/pdcurses.a $@/lib/
 $(gtkosx_tgz): ; wget http://foicica.com/textadept/download/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(bombay_zip): ; wget http://foicica.com/hg/bombay/archive/tip.zip -O $@
