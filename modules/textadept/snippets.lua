@@ -551,7 +551,8 @@ M._snippet_mt = {
         end
         local id = buffer:indicator_value_at(M.INDIC_PLACEHOLDER, s)
         local ph = snapshot.placeholders[id]
-        if (not index or ph.index == index) and (not type or ph[type]) then
+        if ph and (not index or ph.index == index) and
+           (not type or ph[type]) then
           return s, ph
         end
         s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
