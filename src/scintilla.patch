@@ -36,6 +36,7 @@ Revert caret block placement change introduced by Scintilla 3.7.3.
  		const int offset = static_cast<int>(posCaret.Position() - posLineStart);
  		const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
  		const XYPOSITION virtualOffset = posCaret.VirtualSpace() * spaceWidth;
+Temporary patch to send SC_UPDATE_SELECTION for multiple select.
 diff -r 6e368ee248e4 src/Editor.cxx
 --- a/src/Editor.cxx	Fri Oct 26 11:06:34 2018 -0400
 +++ b/src/Editor.cxx	Sun Nov 04 09:06:53 2018 -0500
@@ -47,3 +48,24 @@ diff -r 6e368ee248e4 src/Editor.cxx
  					ScrollRange(sel.RangeMain());
  					Redraw();
  					if (addNumber == addOne)
+Hijack SCI_LOADLEXERLIBRARY for programmatically setting input method.
+This is helpful on newer version of Mac OSX, where changing the input method is
+flaky.
+diff -r 6e368ee248e4 gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Fri Oct 26 11:06:34 2018 -0400
++++ b/gtk/ScintillaGTK.cxx	Sun Nov 25 00:20:58 2018 -0500
+@@ -821,11 +821,11 @@
+ 		case SCI_GETDIRECTPOINTER:
+ 			return reinterpret_cast<sptr_t>(this);
+ 
+-#ifdef SCI_LEXER
+ 		case SCI_LOADLEXERLIBRARY:
+-			LexerManager::GetInstance()->Load(ConstCharPtrFromSPtr(lParam));
++			// Hijack this interface to programmatically set input method.
++			gtk_im_multicontext_set_context_id(GTK_IM_MULTICONTEXT(im_context), ConstCharPtrFromSPtr(lParam));
+ 			break;
+-#endif
++
+ 		case SCI_TARGETASUTF8:
+ 			return TargetAsUTF8(CharPtrFromSPtr(lParam));
+ 
