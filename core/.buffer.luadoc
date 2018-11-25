@@ -3139,6 +3139,7 @@ function set_lexer(buffer, lexer) end
 function set_theme(buffer, name, props) end
 
 -- Unused Fields.
+--   * accessibility
 --   * annotation_style_offset
 --   * annotation_styles
 --   * automatic_fold
@@ -3225,7 +3226,6 @@ function set_theme(buffer, name, props) end
 --   * STYLE_LASTPREDEFINED
 
 -- Unused Functions.
---   * accessibility
 --   * add_ref_document
 --   * add_styled_text
 --   * add_tab_stop
