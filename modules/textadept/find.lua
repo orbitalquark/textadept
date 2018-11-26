@@ -206,20 +206,13 @@ end
 -- prints the results to a buffer titled "Files Found", highlighting found text.
 -- Use the `find_text`, `match_case`, `whole_word`, and `regex` fields to set
 -- the search text and option flags, respectively.
--- A filter is a table that contains:
---
---   + Lua patterns that match filenames to exclude.
---   + Optional `folders` sub-table that contains patterns matching directories
---     to exclude.
---   + Optional `extensions` sub-table that contains raw file extensions to
---     exclude.
---   + Optional `symlink` flag that when `true`, excludes symlinked files (but
---     not symlinked directories).
---   + Optional `folders.symlink` flag that when `true`, excludes symlinked
---     directories.
---
--- Any filter patterns starting with '!' exclude files and directories that do
--- not match the pattern that follows.
+-- A filter determines which files to search in, with the default filter being
+-- `lfs.default_filter`. A filter consists of Lua patterns that match filenames
+-- to include or exclude. Exclusive patterns begin with a '!'. If no inclusive
+-- patterns are given, any filename is initially considered. As a convenience,
+-- file extensions can be specified literally instead of as a Lua pattern (e.g.
+-- '.lua' vs. '%.lua$'), and '/' also matches the Windows directory separator
+-- ('[/\\]' is not needed).
 -- If *filter* is `nil`, the filter from the `ui.find.find_in_files_filters`
 -- table is used. If that filter does not exist, `lfs.default_filter` is used.
 -- @param dir Optional directory path to search. If `nil`, the user is prompted
