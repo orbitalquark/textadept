@@ -382,23 +382,14 @@ io.quick_open_filters = {}
 -- directory path or list of directory paths, using a filtered list dialog.
 -- If *paths* is `nil`, uses the current project's root directory, which is
 -- obtained from `io.get_project_root()`.
--- Files shown in the dialog do not match any pattern in either string or table
--- *filter* (or `lfs.default_filter` if *filter* is `nil`). A filter table
--- contains:
---
---   + Lua patterns that match filenames to exclude.
---   + Optional `folders` sub-table that contains patterns matching directories
---     to exclude.
---   + Optional `extensions` sub-table that contains raw file extensions to
---     exclude.
---   + Optional `symlink` flag that when `true`, excludes symlinked files (but
---     not symlinked directories).
---   + Optional `folders.symlink` flag that when `true`, excludes symlinked
---     directories.
---
--- Any filter patterns starting with '!' exclude files and directories that do
--- not match the pattern that follows. The number of files in the list is capped
--- at `quick_open_max`.
+-- String or list *filter* determines which files to show in the dialog, with
+-- the default filter being `lfs.default_filter`. A filter consists of Lua
+-- patterns that match file and directory paths to include or exclude. Exclusive
+-- patterns begin with a '!'. If no inclusive patterns are given, any path is
+-- initially considered. As a convenience, file extensions can be specified
+-- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/'
+-- also matches the Windows directory separator ('[/\\]' is not needed).
+-- The number of files in the list is capped at `quick_open_max`.
 -- If *filter* is `nil` and *paths* is ultimately a string, the filter from the
 -- `io.quick_open_filters` table is used in place of `lfs.default_filter` if the
 -- former exists.
@@ -414,10 +405,10 @@ io.quick_open_filters = {}
 --   `ui.dialogs.filteredlist()`.
 -- @usage io.quick_open(buffer.filename:match('^.+/')) -- list all files in the
 --   current file's directory, subject to the default filter
--- @usage io.quick_open(io.get_current_project(), '!%.lua$') -- list all Lua
+-- @usage io.quick_open(io.get_current_project(), '%.lua$') -- list all Lua
 --    files in the current project
--- @usage io.quick_open(io.get_current_project(), {folders = {'build'}}) -- list
---   all non-built files in the current project
+-- @usage io.quick_open(io.get_current_project(), '![/\\]build') -- list all
+--   files in the current project except those in the build directory
 -- @see io.quick_open_filters
 -- @see lfs.default_filter
 -- @see quick_open_max
