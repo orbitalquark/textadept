@@ -1808,6 +1808,7 @@ Switch             |Arguments|Description
 `-e`, `--execute`  |    1    |Run Lua [code](#Lua.Command.Entry).
 `-f`, `--force`    |    0    |Forces [unique instance](#Single.Instance).
 `-h`, `--help`     |    0    |Shows this.
+`-l`, `--line`     |    1    |Jumps to a line in the previously opened file.
 `-n`, `--nosession`|    0    |No [session](#Sessions) functionality.
 `-s`, `--session`  |    1    |Loads [session](#Sessions) on startup.
 `-u`, `--userhome` |    1    |Sets alternate [`_USERHOME`][].
