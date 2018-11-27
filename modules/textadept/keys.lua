@@ -257,6 +257,7 @@ module('textadept.keys')]]
 -- For pdcurses (Win32):
 --   * Control+Shift+Letter keys are not recognized. Other Control+Shift keys
 --     are.
+--   * Ctrl+Meta+Symbol keys are not recognized.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~            ~

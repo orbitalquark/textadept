@@ -1,7 +1,7 @@
 diff -r 49c8684413c0 driver-win32-pdcurses.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
 +++ b/driver-win32-pdcurses.c	Tue Dec 23 13:31:50 2014 -0500
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,108 @@
 +// Copyright 2014-2018 Mitchell mitchell.att.foicica.com. See LICENSE.
 +
 +#include "termkey.h"
@@ -58,10 +58,12 @@ diff -r 49c8684413c0 driver-win32-pdcurses.c
 +    alt = PDC_get_key_modifiers() & PDC_KEY_MODIFIER_ALT;
 +    // Do not shift printable keys.
 +    if (shift && codepoint >= 32 && codepoint <= 127) shift = 0;
++    // Alt+Gr maps to Ctrl+Alt; assume non-ascii-letter chars are composed.
++    if (ctrl && alt && (codepoint < 'a' || codepoint > 'z')) ctrl = 0, alt = 0;
 +    key->type = type;
 +    if (type == TERMKEY_TYPE_UNICODE) {
 +      key->code.codepoint = codepoint;
-+      key->utf8[0] = key->code.codepoint, key->utf8[1] = '\0';
++      key->utf8[0] = key->code.codepoint, key->utf8[1] = '\0'; // unused
 +    } else if (type == TERMKEY_TYPE_FUNCTION)
 +      key->code.number = number;
 +    else if (type == TERMKEY_TYPE_KEYSYM)
