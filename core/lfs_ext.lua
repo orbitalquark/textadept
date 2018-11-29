@@ -63,10 +63,16 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
       local patt = filter[i]
       patt = patt:gsub('^(!?)%%?%.([^.]+)$', '%1%%.%2$') -- '.lua' to '%.lua$'
       patt = patt:gsub('/([^\\])', '[/\\]%1') -- '/' to '[/\\]'
-      if not patt:find('^!') then processed_filter.consider_any = false end
+      local include = not patt:find('^!')
+      if include then processed_filter.consider_any = false end
       local ext = patt:match('^!?%%.([^.]+)%$$')
       if ext then
-        processed_filter.exts[ext] = patt:find('^!') and 'exclude' or 'include'
+        processed_filter.exts[ext] = include and 'include' or 'exclude'
+        if include and not getmetatable(processed_filter.exts) then
+          -- Exclude any extensions not manually specified.
+          setmetatable(processed_filter.exts,
+                       {__index = function() return 'exclude' end})
+        end
       else
         processed_filter[#processed_filter + 1] = patt
       end
