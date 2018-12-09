@@ -103,7 +103,7 @@ end
 function M.finish_mode(f)
   if M:auto_c_active() then return false end -- allow Enter to autocomplete
   M.enter_mode(nil)
-  if f then f(M:get_text()) end
+  if f then f((M:get_text())) end
 end
 
 -- Environment for abbreviated Lua commands.
