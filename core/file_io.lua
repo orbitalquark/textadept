@@ -313,7 +313,8 @@ events_connect(events.FILE_CHANGED, function()
     informative_text = string.format('"%s"\n%s',
                                      buffer.filename:iconv('UTF-8', _CHARSET),
                                      _L['has been modified. Reload it?']),
-    icon = 'gtk-dialog-question', button1 = _L['_Yes'], button2 = _L['_No']
+    icon = 'gtk-dialog-question', button1 = _L['_Yes'], button2 = _L['_No'],
+    width = CURSES and #buffer.filename > 40 and ui.size[1] - 2 or nil
   }
   if button == 1 then io.reload_file() end
 end)
