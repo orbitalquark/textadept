@@ -479,7 +479,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +    param = c;
 +    if (*c == '"') {
 +      param = ++c;
-+      while (*c && *c != '"') c++;
++      while (*c && (*c != '"' || *(c - 1) == '\\')) c++;
 +    } else while (*c && *c != ' ') c++;
 +    lua_pushlstring(L, param, c - param);
 +    lua_rawseti(L, -2, lua_rawlen(L, -2) + 1);
