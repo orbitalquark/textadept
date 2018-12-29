@@ -9,6 +9,56 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.3 beta (01 Jan 2019)
+
+Download:
+
+* [Textadept 10.3 beta -- Win32][] | [PGP -- 10.3 beta Win32][]
+* [Textadept 10.3 beta -- Mac OSX 10.6+][] | [PGP -- 10.3 beta OSX][]
+* [Textadept 10.3 beta -- Linux][] | [PGP -- 10.3 beta Linux][]
+* [Textadept 10.3 beta -- Linux x86_64][] | [PGP -- 10.3 beta Linux x86_64][]
+* [Textadept 10.3 beta -- Modules][] | [PGP -- 10.3 beta Modules][]
+
+Bugfixes:
+
+* Ensure `Esc` clears highlighted words.
+* Fixed behavior of `Home` and `Shift+Home` keys on non-OSX platforms.
+* Fixed some instances of snippet next/prev not working correctly.
+* Fixed Alt+Gr key handling in the Windows terminal version.
+* Only pass command entry text to function passed to
+  [`ui.command_entry.finish_mode()`][].
+* Fixed handling of escaped double-quotes in [`os.spawn()`][] in the terminal
+  version.
+* Ensure long filenames are visible in the reload dialog prompt in the terminal
+  version.
+
+Changes:
+
+* Added optional position argument to
+  [`textadept.editing.show_documentation()`][].
+* [`textadept.editing.highlight_word()`][] does not select the word by default
+  anymore.
+* Changed [file filter][] format to be more flat and intuitive.
+* Added `-l` and `--line` command line switches to jump to a buffer line.
+* Updated to [PDCurses][] 3.6 for the Windows terminal version.
+
+[Textadept 10.3 beta -- Win32]: download/textadept_10.3_beta.win32.zip
+[Textadept 10.3 beta -- Mac OSX 10.6+]: download/textadept_10.3_beta.osx.zip
+[Textadept 10.3 beta -- Linux]: download/textadept_10.3_beta.i386.tgz
+[Textadept 10.3 beta -- Linux x86_64]: download/textadept_10.3_beta.x86_64.tgz
+[Textadept 10.3 beta -- Modules]: download/textadept_10.3_beta.modules.zip
+[PGP -- 10.3 beta Win32]: download/textadept_10.3_beta.win32.zip.asc
+[PGP -- 10.3 beta OSX]: download/textadept_10.3_beta.osx.zip.asc
+[PGP -- 10.3 beta Linux]: download/textadept_10.3_beta.i386.tgz.asc
+[PGP -- 10.3 beta Linux x86_64]: download/textadept_10.3_beta.x86_64.tgz.asc
+[PGP -- 10.3 beta Modules]: download/textadept_10.3_beta.modules.zip.asc
+[`ui.command_entry.finish_mode()`]: api.html#ui.command_entry.finish_mode
+[`os.spawn()`]: api.html#os.spawn
+[`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
+[`textadept.editing.highlight_word()`]: api.html#textadept.editing.highlight_word
+[file filter]: api.html#lfs.dir_foreach
+[PDCurses]: https://pdcurses.sourceforge.io/
+
 ## 10.2 (01 Nov 2018)
 
 Download:
