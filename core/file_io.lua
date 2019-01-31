@@ -362,9 +362,7 @@ function io.get_project_root(path)
   local dir = path or (buffer.filename or lfs.currentdir()):match('^(.+)[/\\]')
   while dir do
     for i = 1, #vcs do
-      if lfs_attributes(dir..'/'..vcs[i], 'mode') == 'directory' then
-        return dir
-      end
+      if lfs_attributes(dir..'/'..vcs[i], 'mode') then return dir end
     end
     dir = dir:match('^(.+)[/\\]')
   end
