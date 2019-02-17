@@ -104,7 +104,7 @@ local function write_apidoc(file, m, b)
     end
   end
   -- Format the block documentation.
-  doc = table.concat(doc, '\n'):gsub('\n', '\\n')
+  doc = table.concat(doc, '\n'):gsub('\\n', '\\\\n'):gsub('\n', '\\n')
   file[#file + 1] = name:match('[^%.:]+$')..' '..doc
 end
 
