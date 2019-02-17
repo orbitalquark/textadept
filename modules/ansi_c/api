@@ -203,7 +203,7 @@ fsetpos fsetpos(FILE* stream, const fpos_t* ptr) [int]\nSets current position of
 clearerr clearerr(FILE* stream) [void]\nClears end-of-file and error indicators for stream `stream`.
 feof feof(FILE* stream) [int]\nReturns non-zero if end-of-file indicator is set for stream `stream`.
 ferror ferror(FILE* stream) [int]\nReturns non-zero if error indicator is set for stream `stream`.
-perror perror(const char* s) [void]\nPrints `s` (if non-null) and strerror(errno) to standard error as would:\n  fprintf(stderr, "%s: %s\n", (s != NULL ? s : ""), strerror(errno))
+perror perror(const char* s) [void]\nPrints `s` (if non-null) and strerror(errno) to standard error as would:\n  fprintf(stderr, "%s: %s\\n", (s != NULL ? s : ""), strerror(errno))
 
 EXIT_FAILURE EXIT_FAILURE\nValue for status argument to exit indicating failure.
 EXIT_SUCCESS EXIT_SUCCESS\nValue for status argument to exit indicating success.
