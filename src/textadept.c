@@ -1,4 +1,4 @@
-// Copyright 2007-2018 Mitchell mitchell.att.foicica.com. See LICENSE.
+// Copyright 2007-2019 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 #if __linux__
 #define _XOPEN_SOURCE 500 // for readlink from unistd.h
