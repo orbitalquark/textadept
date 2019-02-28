@@ -36,18 +36,6 @@ Revert caret block placement change introduced by Scintilla 3.7.3.
  		const int offset = static_cast<int>(posCaret.Position() - posLineStart);
  		const XYPOSITION spaceWidth = vsDraw.styles[ll->EndLineStyle()].spaceWidth;
  		const XYPOSITION virtualOffset = posCaret.VirtualSpace() * spaceWidth;
-Temporary patch to send SC_UPDATE_SELECTION for multiple select.
-diff -r 6e368ee248e4 src/Editor.cxx
---- a/src/Editor.cxx	Fri Oct 26 11:06:34 2018 -0400
-+++ b/src/Editor.cxx	Sun Nov 04 09:06:53 2018 -0500
-@@ -770,6 +770,7 @@
- 					selectedText.c_str(), searchFlags, &lengthFound);
- 				if (pos >= 0) {
- 					sel.AddSelection(SelectionRange(pos + lengthFound, pos));
-+					ContainerNeedsUpdate(SC_UPDATE_SELECTION);
- 					ScrollRange(sel.RangeMain());
- 					Redraw();
- 					if (addNumber == addOne)
 Hijack SCI_LOADLEXERLIBRARY for programmatically setting input method.
 This is helpful on newer version of Mac OSX, where changing the input method is
 flaky.
