@@ -93,6 +93,7 @@
 				<string>com.textadept.Man-source</string>
 				<string>com.textadept.Markdown-source</string>
 				<string>com.textadept.MoonScript-source</string>
+				<string>com.textadept.Myrddin-source</string>
 				<string>com.textadept.Nemerle-source</string>
 				<string>com.textadept.Nim-source</string>
 				<string>com.textadept.NSIS-source</string>
@@ -1399,6 +1400,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>myr</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Myrddin source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Myrddin-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>n</string>
 				</array>
 			</dict>
@@ -2264,9 +2282,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>10.3beta</string>
+	<string>10.3</string>
 	<key>CFBundleShortVersionString</key>
-	<string>10.3 beta</string>
+	<string>10.3</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 </dict>
