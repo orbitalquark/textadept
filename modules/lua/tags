@@ -1161,7 +1161,7 @@ toggle	_	0;"	f	class:textadept.bookmarks
 toggle_block	_	0;"	f	class:_M.ruby
 toggle_caret_sticky	_	0;"	f	class:buffer
 toggle_fold	_	0;"	f	class:buffer
-toggle_fold_display_text	_	0;"	f	class:buffer
+toggle_fold_show_text	_	0;"	f	class:buffer
 tointeger	_	0;"	f	class:math
 token	_	0;"	f	class:lexer
 tonumber	_	0;"	f	
