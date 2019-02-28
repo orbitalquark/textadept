@@ -9,6 +9,39 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.3 (01 Mar 2019)
+
+Download:
+
+* [Textadept 10.3 -- Win32][] | [PGP -- 10.3 Win32][]
+* [Textadept 10.3 -- Mac OSX 10.6+][] | [PGP -- 10.3 OSX][]
+* [Textadept 10.3 -- Linux][] | [PGP -- 10.3 Linux][]
+* [Textadept 10.3 -- Linux x86_64][] | [PGP -- 10.3 Linux x86_64][]
+* [Textadept 10.3 -- Modules][] | [PGP -- 10.3 Modules][]
+
+Bugfixes:
+
+* Fixed block comment support for Nim.
+* Fixed escaping of newlines (`\n`) in Lua and C API documentation.
+
+Changes:
+
+* Version control markers like `.git` are not limited to directories.
+* Allow redefinition of `WGET` in Makefile for
+* Updated to [Scintilla][] 3.10.2.
+
+[Textadept 10.3 -- Win32]: download/textadept_10.3.win32.zip
+[Textadept 10.3 -- Mac OSX 10.6+]: download/textadept_10.3.osx.zip
+[Textadept 10.3 -- Linux]: download/textadept_10.3.i386.tgz
+[Textadept 10.3 -- Linux x86_64]: download/textadept_10.3.x86_64.tgz
+[Textadept 10.3 -- Modules]: download/textadept_10.3.modules.zip
+[PGP -- 10.3 Win32]: download/textadept_10.3.win32.zip.asc
+[PGP -- 10.3 OSX]: download/textadept_10.3.osx.zip.asc
+[PGP -- 10.3 Linux]: download/textadept_10.3.i386.tgz.asc
+[PGP -- 10.3 Linux x86_64]: download/textadept_10.3.x86_64.tgz.asc
+[PGP -- 10.3 Modules]: download/textadept_10.3.modules.zip.asc
+[Scintilla]: http://scintilla.org
+
 ## 10.3 beta (01 Jan 2019)
 
 Download:
