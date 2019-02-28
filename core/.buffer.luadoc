@@ -2857,7 +2857,7 @@ function toggle_fold(buffer, line) end
 -- @param line The line number in *buffer* to toggle the fold on and display
 --   *text* after.
 -- @param text The text to display after the line.
-function toggle_fold_display_text(buffer, line, text) end
+function toggle_fold_show_text(buffer, line, text) end
 
 ---
 -- Undoes the most recent action.
