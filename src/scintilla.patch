@@ -26,7 +26,7 @@ Revert caret block placement change introduced by Scintilla 3.7.3.
  	for (size_t r = 0; (r<model.sel.Count()) || drawDrag; r++) {
  		const bool mainCaret = r == model.sel.Main();
 -		SelectionPosition posCaret = (drawDrag ? model.posDrag : model.sel.Range(r).caret);
--		if (vsDraw.caretStyle == CARETSTYLE_BLOCK && !drawDrag && posCaret > model.sel.Range(r).anchor) {
+-		if ((vsDraw.IsBlockCaretStyle() || imeCaretBlockOverride) && !drawDrag && posCaret > model.sel.Range(r).anchor) {
 -			if (posCaret.VirtualSpace() > 0)
 -				posCaret.SetVirtualSpace(posCaret.VirtualSpace() - 1);
 -			else
