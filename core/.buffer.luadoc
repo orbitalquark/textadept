@@ -200,6 +200,9 @@
 --     A line caret.
 --   * `buffer.CARETSTYLE_BLOCK`
 --     A block caret.
+--   * `buffer.CARETSTYLE_OVERSTRIKE_BLOCK`
+--     A block caret for overtype mode. (Needs to be bit-wise ORed with another
+--     caret style.)
 --
 --   The default value is `buffer.CARETSTYLE_LINE`.
 -- @field caret_width (number)
