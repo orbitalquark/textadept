@@ -366,8 +366,8 @@ endif
 
 scintilla_zip = 8fa03651144f.zip
 lua_tgz = lua-5.3.5.tar.gz
-lpeg_tgz = lpeg-1.0.0.tar.gz
-lfs_zip = v_1_6_3.zip
+lpeg_tgz = lpeg-1.0.2.tar.gz
+lfs_zip = v1_7_0_2.zip
 gtdialog_zip = 6435a42450c7.zip
 cdk_tgz = cdk-5.0-20150928.tgz
 termkey_tgz = libtermkey-0.20.tar.gz
