@@ -140,6 +140,7 @@ local function resize_line_number_margin()
   buffer.margin_width_n[0] = math.max(buffer.margin_width_n[0], width)
 end
 events.connect(events.BUFFER_NEW, resize_line_number_margin)
+events.connect(events.VIEW_NEW, resize_line_number_margin)
 events.connect(events.FILE_OPENED, resize_line_number_margin)
 -- Marker Margin.
 buffer.margin_width_n[1] = not CURSES and 4 or 1
