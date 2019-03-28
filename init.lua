@@ -131,8 +131,16 @@ buffer.caret_line_visible = not CURSES
 --buffer.margin_right =
 -- Line Number Margin.
 buffer.margin_type_n[0] = buffer.MARGIN_NUMBER
-local width = 4 * buffer:text_width(buffer.STYLE_LINENUMBER, '9')
-buffer.margin_width_n[0] = width + (not CURSES and 4 or 0)
+local function resize_line_number_margin()
+  -- This needs to be evaluated dynamically since themes/styles can change.
+  local buffer = _G.buffer
+  local width = math.max(4, #tostring(buffer.line_count)) *
+                buffer:text_width(buffer.STYLE_LINENUMBER, '9') +
+                (not CURSES and 4 or 0)
+  buffer.margin_width_n[0] = math.max(buffer.margin_width_n[0], width)
+end
+events.connect(events.BUFFER_NEW, resize_line_number_margin)
+events.connect(events.FILE_OPENED, resize_line_number_margin)
 -- Marker Margin.
 buffer.margin_width_n[1] = not CURSES and 4 or 1
 -- Fold Margin.
