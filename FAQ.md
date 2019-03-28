@@ -18,8 +18,8 @@ of various issues.
 
 **Q:**
 On Linux I get a `error while loading shared libraries: <lib>: cannot open`
-`shared object file: No such file or directory` when trying to run Textadept.
-How do I fix it?
+`shared object file: No such file or directory` when trying to run Textadept,
+or I get odd behavior in the terminal version, even crashes. How do I fix it?
 
 **A:**
 It is difficult to provide a binary that runs on all Linux platforms since the
