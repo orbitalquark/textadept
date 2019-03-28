@@ -473,7 +473,7 @@ function filteredlist(options) end
 --     select a button before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code, list of selected options
 -- @usage ui.dialogs.optionselect{title = 'Language',
---   informative_text = 'Check the languages you understand'
+--   informative_text = 'Check the languages you understand',
 --   items = {'English', 'Romanian'}, select = 1, string_output = true}
 function optionselect(options) end
 
