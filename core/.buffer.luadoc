@@ -1222,6 +1222,8 @@
 --
 -- @field MARK_UNDERLINE (number, Read-only)
 --
+-- @field MARK_VERTICALBOOKMARK (number, Read-only)
+--
 -- @field MARK_VLINE (number, Read-only)
 --
 -- @field MASK_FOLDERS (number, Read-only)
@@ -1825,6 +1827,11 @@ function fold_line(buffer, line, action) end
 -- @param buffer A buffer.
 -- @return string, number
 function get_cur_line(buffer) end
+
+---
+-- Returns the default fold display text.
+-- @param buffer A buffer.
+function get_default_fold_display_text(buffer) end
 
 ---
 -- Returns the line number of the last line after line number *line* whose fold
@@ -2610,6 +2617,13 @@ function selection_duplicate(buffer) end
 function set_chars_default(buffer) end
 
 ---
+-- Sets the default fold display text to string *text*.
+-- @param buffer A buffer.
+-- @param text The text to display by default next to folded lines.
+-- @see toggle_fold_show_text
+function set_default_fold_display_text(buffer, text) end
+
+---
 -- Moves the caret to position *pos* without scrolling the view and removes any
 -- selections.
 -- @param buffer A buffer
@@ -3244,6 +3258,7 @@ function set_theme(buffer, name, props) end
 --   * change_lexer_state
 --   * char_position_from_point
 --   * char_position_from_point_close
+--   * character_category_optimization
 --   * clear_cmd_key
 --   * clear_all_cmd_keys
 --   * clear_tab_stops
