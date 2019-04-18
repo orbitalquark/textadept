@@ -1900,10 +1900,6 @@ static void s_notify(Scintilla *view, int _, void *lParam, void*__) {
   if (focused_view == view || n->nmhdr.code == SCN_URIDROPPED) {
     if (focused_view != view) goto_view(view);
     lL_notify(lua, n);
-  } else if (n->nmhdr.code == SCN_SAVEPOINTLEFT) {
-    Scintilla *prev = focused_view;
-    // Do not let a split view steal focus.
-    goto_view(view), lL_notify(lua, n), goto_view(prev);
   } else if (n->nmhdr.code == SCN_FOCUSIN)
     goto_view(view);
 }
