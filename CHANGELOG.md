@@ -9,6 +9,45 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.4 (01 May 2019)
+
+Download:
+
+* [Textadept 10.4 -- Win32][] | [PGP -- 10.4 Win32][]
+* [Textadept 10.4 -- Mac OSX 10.6+][] | [PGP -- 10.4 OSX][]
+* [Textadept 10.4 -- Linux][] | [PGP -- 10.4 Linux][]
+* [Textadept 10.4 -- Linux x86_64][] | [PGP -- 10.4 Linux x86_64][]
+* [Textadept 10.4 -- Modules][] | [PGP -- 10.4 Modules][]
+
+Bugfixes:
+
+* Fixed scrolling found text into view on long lines.
+
+Changes:
+
+* Recognize `.vue` and `.yml` file extensions.
+* Line number margin grows for large files as needed.
+* Do not emit [`events.SAVE_POINT_LEFT`][] event for unfocused views.
+* Updated CSS lexer to support CSS3.
+* Updated YAML lexer.
+* Updated to [Scintilla][] 3.10.4.
+* Updated to [LuaFileSystem][] 1.7.0 and [LPeg][] 1.0.2.
+
+[Textadept 10.4 -- Win32]: download/textadept_10.4.win32.zip
+[Textadept 10.4 -- Mac OSX 10.6+]: download/textadept_10.4.osx.zip
+[Textadept 10.4 -- Linux]: download/textadept_10.4.i386.tgz
+[Textadept 10.4 -- Linux x86_64]: download/textadept_10.4.x86_64.tgz
+[Textadept 10.4 -- Modules]: download/textadept_10.4.modules.zip
+[PGP -- 10.4 Win32]: download/textadept_10.4.win32.zip.asc
+[PGP -- 10.4 OSX]: download/textadept_10.4.osx.zip.asc
+[PGP -- 10.4 Linux]: download/textadept_10.4.i386.tgz.asc
+[PGP -- 10.4 Linux x86_64]: download/textadept_10.4.x86_64.tgz.asc
+[PGP -- 10.4 Modules]: download/textadept_10.4.modules.zip.asc
+[`events.SAVE_POINT_LEFT`]: api.html#events.SAVE_POINT_LEFT
+[Scintilla]: http://scintilla.org
+[LuaFileSystem]: https://keplerproject.github.io/luafilesystem/
+[LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/
+
 ## 10.3 (01 Mar 2019)
 
 Download:
