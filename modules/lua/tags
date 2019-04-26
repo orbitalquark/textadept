@@ -192,6 +192,7 @@ MARK_SMALLRECT	_	0;"	F	class:buffer
 MARK_TCORNER	_	0;"	F	class:buffer
 MARK_TCORNERCURVE	_	0;"	F	class:buffer
 MARK_UNDERLINE	_	0;"	F	class:buffer
+MARK_VERTICALBOOKMARK	_	0;"	F	class:buffer
 MARK_VLINE	_	0;"	F	class:buffer
 MARK_WARNING	_	0;"	F	class:textadept.run
 MASK_FOLDERS	_	0;"	F	class:buffer
@@ -629,6 +630,7 @@ format	_	0;"	f	class:string
 frexp	_	0;"	f	class:math
 functions	_	0;"	t	class:_SCINTILLA
 get_cur_line	_	0;"	f	class:buffer
+get_default_fold_display_text	_	0;"	f	class:buffer
 get_last_child	_	0;"	f	class:buffer
 get_lexer	_	0;"	f	class:buffer
 get_line	_	0;"	f	class:buffer
@@ -761,6 +763,7 @@ lines	_	0;"	f	class:io
 lines_join	_	0;"	f	class:buffer
 lines_on_screen	_	0;"	F	class:buffer
 lines_split	_	0;"	f	class:buffer
+link	_	0;"	f	class:lfs
 load	_	0;"	f	
 load	_	0;"	f	class:lexer
 load	_	0;"	f	class:textadept.macros
@@ -1032,6 +1035,7 @@ selection_start	_	0;"	F	class:buffer
 selections	_	0;"	F	class:buffer
 session	_	0;"	m	class:textadept
 set_chars_default	_	0;"	f	class:buffer
+set_default_fold_display_text	_	0;"	f	class:buffer
 set_empty_selection	_	0;"	f	class:buffer
 set_encoding	_	0;"	f	class:buffer
 set_fold_margin_colour	_	0;"	f	class:buffer
