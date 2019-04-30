@@ -22,6 +22,7 @@ Download:
 Bugfixes:
 
 * Fixed scrolling found text into view on long lines.
+* Fixed crash on Mac with malformed regex patterns.
 
 Changes:
 
