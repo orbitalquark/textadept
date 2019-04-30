@@ -15,7 +15,7 @@ Order the [e-book][] &ndash; $15 USD<br/>
 Order the [e-book bundle][] with [Lua Quick Reference][] &ndash; $27 USD<br/>
 Order the print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][], [ES][]
 
-Published: Aug 2018 <span style="color: #ef373a;">[New!]</span><br/>
+Published: Aug 2018
 ISBN: 978-0-9912379-4-4<br/>
 Pages: 174
 
