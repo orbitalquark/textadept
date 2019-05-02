@@ -167,6 +167,7 @@ local incremental_start
 -- @param anchor Flag indicating whether or not to search from the current
 --   position.
 local function find_incremental(text, next, anchor)
+  local orig_pos = buffer.current_pos
   if anchor then
     incremental_start = buffer:position_relative(buffer.current_pos,
                                                  next and 1 or -1)
@@ -176,6 +177,7 @@ local function find_incremental(text, next, anchor)
   -- default handler has one, so make use of it.
   events.emit(events.FIND, text, next,
               M.match_case and buffer.FIND_MATCHCASE or 0)
+  if buffer.selection_empty and anchor then buffer:goto_pos(orig_pos) end
 end
 
 ---
