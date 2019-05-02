@@ -607,10 +607,12 @@ local api_docs
 -- Symbols are determined by using `buffer.word_chars`.
 -- @param pos Optional position of the symbol to show documentation for. If
 --   omitted, the caret position is used.
+-- @param case_insensitive Optional flag that indicates whether or not to search
+--   API files case-insensitively for symbols. The default value is `false`.
 -- @name show_documentation
 -- @see api_files
 -- @see buffer.word_chars
-function M.show_documentation(pos)
+function M.show_documentation(pos, case_insensitive)
   if buffer:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
   local lang = buffer:get_lexer(true)
   if not M.api_files[lang] then return end
@@ -623,6 +625,11 @@ function M.show_documentation(pos)
   ::lookup::
   if symbol ~= '' then
     local symbol_patt = '^'..symbol:gsub('(%p)', '%%%1')
+    if case_insensitive then 
+      symbol_patt = symbol_patt:gsub('%a', function(ch)
+        return string.format('[%s%s]', ch:upper(), ch:lower())
+      end)
+    end
     for i = 1, #M.api_files[lang] do
       if lfs.attributes(M.api_files[lang][i]) then
         for line in io.lines(M.api_files[lang][i]) do
