@@ -6,11 +6,11 @@ unzipped folders 10s of MBs in size?
 
 **A:**
 Each download contains 2 executables: a GUI version and a terminal version.
-Furthermore, the Windows and OSX packages bundle in GTK+ runtimes, accounting
-for some 3/4 of the total application size. (GTK+ is the cross-platform GUI
-toolkit Textadept uses.) Then, starting in version 10, in order to be able to
-run on older Linux systems whose libstdc++ does not support newer C++11 symbols,
-the Linux executables statically link in a newer version of libstdc++. Finally,
+Furthermore, the Windows and OSX packages bundle in GTK runtimes, accounting for
+some 3/4 of the total application size. (GTK is the cross-platform GUI toolkit
+Textadept uses.) Then, starting in version 10, in order to be able to run on
+older Linux systems whose libstdc++ does not support newer C++11 symbols, the
+Linux executables statically link in a newer version of libstdc++. Finally,
 nightly builds are compiled with debug symbols enabled in order to aid debugging
 of various issues.
 
@@ -29,8 +29,8 @@ while Ubuntu 12.04 (circa 2012) used "libpng12". More recently, some
 distributions have started using "libncurses6" while many distributions are
 still on "libncurses5". Unfortunately in these cases, the best idea is to
 [compile][] Textadept. This process is actually very simple though. Only the
-GTK+ development libraries are needed for the GUI version. (A development
-library for a curses implementation is required for the terminal version.)
+GTK development libraries are needed for the GUI version. (A development library
+for a curses implementation is required for the terminal version.)
 
 [compile]: manual.html#Compiling
 

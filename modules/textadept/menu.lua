@@ -414,10 +414,10 @@ end
 
 -- Creates a menu suitable for `ui.menu()` from the menu table format.
 -- Also assigns key commands.
--- @param menu The menu to create a GTK+ menu from.
+-- @param menu The menu to create a GTK menu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu.
 --   If so, menu_id offset is 1000. The default value is `false`.
--- @return GTK+ menu that can be passed to `ui.menu()`.
+-- @return GTK menu that can be passed to `ui.menu()`.
 -- @see ui.menu
 local function read_menu_table(menu, contextmenu)
   local gtkmenu = {}
