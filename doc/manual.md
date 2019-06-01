@@ -99,23 +99,23 @@ modifier key.
 ## Requirements
 
 In its bid for minimalism, Textadept also depends on very little to run. The GUI
-version needs only [GTK+][], a cross-platform GUI toolkit, version 2.24 or later
+version needs only [GTK][], a cross-platform GUI toolkit, version 2.24 or later
 (circa early-2011) on Linux and BSD systems. The application already bundles a
-GTK+ runtime into the Windows and Mac OSX packages. The terminal, or curses,
+GTK runtime into the Windows and Mac OSX packages. The terminal, or curses,
 version of Textadept only depends on a curses implementation like [ncurses][] on
 Linux, Mac OSX, and BSD systems. The Windows binary includes a precompiled
 version of [pdcurses][]. Textadept also incorporates its own
 [copy of Lua](#Lua.Configuration) on all platforms.
 
-[GTK+]: http://gtk.org
+[GTK]: http://gtk.org
 [ncurses]: http://invisible-island.net/ncurses/ncurses.html
 [pdcurses]: http://pdcurses.sourceforge.net
 
 ### Requirements for Linux and BSD
 
-Most Linux and BSD systems already have GTK+ installed. If not, your package
-manager probably makes it available. Otherwise, compile and install GTK+from the
-[GTK+ website][].
+Most Linux and BSD systems already have GTK installed. If not, your package
+manager probably makes it available. Otherwise, compile and install GTK from the
+[GTK website][].
 
 The GUI versions of Textadept require GLib version 2.28 or later (circa
 mid-2011) in order to support [single-instance](#Single.Instance) functionality.
@@ -126,7 +126,7 @@ ncurses from the [ncurses website][]. Ensure it is the wide-character version of
 ncurses, which handles multibyte characters. Debian-based distributions like
 Ubuntu typically call the package "libncursesw5".
 
-[GTK+ website]: http://www.gtk.org/download/linux.php
+[GTK website]: http://www.gtk.org/download/linux.php
 [ncurses website]: http://invisible-island.net/ncurses/#download_ncurses
 
 ### Requirements for Mac OSX
@@ -141,7 +141,7 @@ Windows XP or greater.
 
 Download Textadept from the project's [download page][] by selecting the
 appropriate package for your platform. For the Windows and Mac OSX packages, the
-bundled GTK+ runtime accounts for more than 3/4 of the download and unpackaged
+bundled GTK runtime accounts for more than 3/4 of the download and unpackaged
 application sizes. Textadept itself is much smaller.
 
 You also have the option of downloading an official set of
@@ -203,7 +203,7 @@ as you would run the *textadept* executable, but from a terminal instead.
 
 Providing a single binary that runs on all Linux platforms proves challenging,
 since the versions of software installed vary widely from distribution to
-distribution. Because the Linux version of Textadept uses the versions of GTK+
+distribution. Because the Linux version of Textadept uses the versions of GTK
 and ncurses installed on your system, an error like:
 
     error while loading shared libraries: <lib>: cannot open shared object
@@ -1293,13 +1293,13 @@ upgrade Textadept. This applies to downloaded themes too.
 ## GUI Theme
 
 There is no way to theme GUI controls like text fields and buttons from within
-Textadept. Instead, use [GTK+ Resource files][]. The "GtkWindow" name is
+Textadept. Instead, use [GTK Resource files][]. The "GtkWindow" name is
 "textadept". For example, style all text fields with a "textadept-entry-style"
 like this:
 
     widget "textadept*GtkEntry*" style "textadept-entry-style"
 
-[GTK+ Resource files]: https://developer.gnome.org/gtk2/stable/gtk2-Resource-Files.html
+[GTK Resource files]: https://developer.gnome.org/gtk2/stable/gtk2-Resource-Files.html
 
 ## Getting Themes
 
@@ -1575,9 +1575,9 @@ The *~/.textadept/* folder houses your preferences, Lua modules, themes, and
 user-data. This folder may contain *lexers/*, *modules/*, and *themes/*
 sub-directories.
 
-### GTK+ Directories
+### GTK Directories
 
-GTK+ uses the *etc/*, *lib/*, and *share/* directories, which only appear in the
+GTK uses the *etc/*, *lib/*, and *share/* directories, which only appear in the
 Win32 and Mac OSX packages.
 
 - - -
@@ -1600,10 +1600,10 @@ additionally need to have [pkg-config][] and [libiconv][] installed. All of
 these should be available for your distribution through a package manager. For
 example, Ubuntu includes these tools in the "build-essential" package.
 
-Next, the GUI version of Textadept requires the GTK+ development libraries.
+Next, the GUI version of Textadept requires the GTK development libraries.
 Again, your package manager should allow you to install them. Debian-based Linux
 distributions like Ubuntu typically call the package "libgtk2.0-dev". Otherwise,
-compile and install GTK+ from the [GTK+ website][].
+compile and install GTK from the [GTK website][].
 
 The optional terminal version of Textadept depends on the development library
 for a curses implementation like ncurses. Similarly, your package manager should
@@ -1619,7 +1619,7 @@ users _also_ need "libncursesw5-dev".)
 [GNU Make]: http://www.gnu.org/software/make/
 [pkg-config]: http://www.freedesktop.org/wiki/Software/pkg-config/
 [libiconv]: http://www.gnu.org/software/libiconv/
-[GTK+ website]: http://www.gtk.org/download/linux.php
+[GTK website]: http://www.gtk.org/download/linux.php
 [ncurses website]: http://invisible-island.net/ncurses/#download_ncurses
 
 ### Requirements for Windows
@@ -1632,7 +1632,7 @@ Your package manager should offer them.
 Note: compiling on Windows requires a C compiler that supports the C99 standard,
 a C++ compiler that supports the C++11 standard, and a C++ standard library that
 supports C++11, and my [win32gtk bundle][]. The terminal (pdcurses) version
-requires [libiconv for Windows][] and my [win32curses bundle][] instead of GTK+.
+requires [libiconv for Windows][] and my [win32curses bundle][] instead of GTK.
 
 [MinGW]: http://mingw.org
 [mingw-w64]: http://mingw-w64.org/
@@ -1734,15 +1734,15 @@ Build a new *Textadept.app* with `make osx-app`.
 
 #### Compiling on OSX (Legacy)
 
-Textadept requires [XCode][] as well as [jhbuild][] (for GTK+). After building
+Textadept requires [XCode][] as well as [jhbuild][] (for GTK). After building
 "meta-gtk-osx-bootstrap" and "meta-gtk-osx-core", build "meta-gtk-osx-themes".
 Note that the entire compiling process can easily take 30 minutes or more and
 ultimately consume nearly 1GB of disk space.
 
-After using *jhbuild*, GTK+ is in *~/gtk/* so make a symlink from *~/gtk/inst*
-to *src/gtkosx* in Textadept. Then run `make osx` to build *../textadept.osx*.
+After using *jhbuild*, GTK is in *~/gtk/* so make a symlink from *~/gtk/inst* to
+*src/gtkosx* in Textadept. Then run `make osx` to build *../textadept.osx*.
 
-Developer note: in order to build a GTK+ for OSX bundle, run the following from
+Developer note: in order to build a GTK for OSX bundle, run the following from
 the *src/* directory before zipping up *gtkosx/include/* and *gtkosx/lib/*:
 
     sed -i -e 's|libdir=/Users/username/gtk/inst/lib|libdir=${prefix}/lib|;' \
@@ -1754,7 +1754,7 @@ Compiling the terminal version is not so expensive and requires no additional
 libraries. Simply run `make osx-curses` to build *../textadept-curses.osx*.
 
 [XCode]: http://developer.apple.com/TOOLS/xcode/
-[jhbuild]: https://wiki.gnome.org/Projects/GTK+/OSX/Building
+[jhbuild]: https://wiki.gnome.org/Projects/GTK/OSX/Building
 
 ### Notes on CDK
 

@@ -8,7 +8,7 @@ in the following sections.
 Textadept's user interface consists of a graphical user interface (GUI) and a
 terminal user interface (TUI).
 
-=[GTK+][] - GIMP Toolkit=
+=[GTK][] - GIMP Toolkit=
     Textadept uses GTK as its cross-platform GUI toolkit.
 
 =[ncurses][], [pdcurses][] - Libraries for displaying terminal applications=
@@ -48,7 +48,7 @@ Lua and includes a few external libraries.
 
 \* A Foicica.com project.
 
-[GTK+]: http://www.gtk.org
+[GTK]: http://www.gtk.org
 [Scintilla]: http://scintilla.org
 [Lua]: http://www.lua.org
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html

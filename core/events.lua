@@ -93,7 +93,7 @@ local M = {}
 --     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
---     and "Alt" due to a Scintilla limitation with GTK+.
+--     and "Alt" due to a Scintilla limitation with GTK.
 -- @field CSI (string)
 --   Emitted when the terminal version receives an unrecognized CSI sequence.
 --   Arguments:
@@ -142,7 +142,7 @@ local M = {}
 --     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
---     and "Alt" due to a Scintilla limitation with GTK+.
+--     and "Alt" due to a Scintilla limitation with GTK.
 -- @field INDICATOR_RELEASE (string)
 --   Emitted when releasing the mouse after clicking on text that has an
 --   indicator present.
@@ -172,7 +172,7 @@ local M = {}
 --     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
 --     Note: If you set `buffer.rectangular_selection_modifier` to
 --     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
---     and "Alt" due to a Scintilla limitation with GTK+.
+--     and "Alt" due to a Scintilla limitation with GTK.
 -- @field MENU_CLICKED (string)
 --   Emitted after selecting a menu item.
 --   Arguments:
