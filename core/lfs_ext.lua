@@ -20,7 +20,6 @@ lfs.default_filter = {
   '!.tif', '!.tiff', '!.xz', '!.zip',
   -- Directories to exclude.
   '!/%.bzr$', '!/%.git$', '!/%.hg$', '!/%.svn$', '!/node_modules$',
-  --[[Temporary backwards-compatibility]]extensions={'a','bmp','bz2','class','dll','exe','gif','gz','jar','jpeg','jpg','o','pdf','png','so','tar','tgz','tif','tiff','xz','zip'},folders={'%.bzr$','%.git$','%.hg$','%.svn$','node_modules'}
 }
 
 ---
@@ -53,27 +52,25 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
     -- Convert filter to a table from nil or string arguments.
     if not filter then filter = lfs.default_filter end
     if type(filter) == 'string' then filter = {filter} end
-    --[[Temporary backwards-compatibility.]]if filter.extensions and filter~=lfs.default_filter then;local compat_filter={};ui.dialogs.textbox{title='Compatibility Notice',informative_text='Warning: use of deprecated filter format; please update your scripts',text=debug.traceback()};for i=1,#filter do if filter[i]:find('^!')then compat_filter[i]=filter[i]:sub(2)else compat_filter[i]='!'..filter[i]end end;for i=1,#filter.extensions do compat_filter[#compat_filter+1]='!.'..filter.extensions[i]end;if filter.folders then for i=1,#filter.folders do; compat_filter[#compat_filter+1]='!'..filter.folders[i]:gsub('^%%.[^.]+%$$','[/\\]%0')end end;filter = compat_filter;end
     -- Process the given filter into something that can match files more easily
     -- and/or quickly. For example, convert '.ext' shorthand to '%.ext$',
     -- substitute '/' with '[/\\]', and enable hash lookup for file extensions
     -- to include or exclude.
-    local processed_filter = {consider_any = true, exts = {}}
+    local processed_filter = {
+      consider_any = true,
+      exts = setmetatable({}, {__index = function() return true end})
+    }
     for i = 1, #filter do
       local patt = filter[i]
       patt = patt:gsub('^(!?)%%?%.([^.]+)$', '%1%%.%2$') -- '.lua' to '%.lua$'
       patt = patt:gsub('/([^\\])', '[/\\]%1') -- '/' to '[/\\]'
       local include = not patt:find('^!')
-      if include then processed_filter.consider_any = false end
       local ext = patt:match('^!?%%.([^.]+)%$$')
       if ext then
-        processed_filter.exts[ext] = include and 'include' or 'exclude'
-        if include and not getmetatable(processed_filter.exts) then
-          -- Exclude any extensions not manually specified.
-          setmetatable(processed_filter.exts,
-                       {__index = function() return 'exclude' end})
-        end
+        processed_filter.exts[ext] = include
+        if include then setmetatable(processed_filter.exts, nil) end
       else
+        if include then processed_filter.consider_any = false end
         processed_filter[#processed_filter + 1] = patt
       end
     end
@@ -81,37 +78,36 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
   end
   local dir_sep, lfs_attributes = not WIN32 and '/' or '\\', lfs.attributes
   for basename in lfs.dir(dir) do
-    if not basename:find('^%.%.?$') then -- ignore . and ..
-      local filename = dir..(dir ~= '/' and dir_sep or '')..basename
-      local mode = lfs_attributes(filename, 'mode')
-      if mode ~= 'directory' and mode ~= 'file' then goto skip end
-      local include
-      if mode == 'file' then
-        local ext = filename:match('[^.]+$')
-        if ext and filter.exts[ext] == 'exclude' then goto skip end
-        include = filter.consider_any or ext and filter.exts[ext] == 'include'
-      elseif mode == 'directory' then
-        include = filter.consider_any or #filter == 0
-      end
-      for i = 1, #filter do
-        local patt = filter[i]
-        -- Treat exclusive patterns as logical AND.
-        if patt:find('^!') and filename:find(patt:sub(2)) then goto skip end
-        -- Treat inclusive patterns as logical OR.
-        include = include or (not patt:find('^!') and filename:find(patt))
-      end
-      if include and mode == 'directory' then
-        if include_dirs and f(filename..dir_sep) == false then return end
-        if not n or (level or 0) < n then
-          local halt = lfs.dir_foreach(filename, f, filter, n, include_dirs,
-                                       (level or 0) + 1) == false
-          if halt then return false end
-        end
-      elseif include and mode == 'file' then
-        if f(filename) == false then return false end
-      end
-      ::skip::
+    if basename:find('^%.%.?$') then goto continue end -- ignore . and ..
+    local filename = dir..(dir ~= '/' and dir_sep or '')..basename
+    local mode = lfs_attributes(filename, 'mode')
+    if mode ~= 'directory' and mode ~= 'file' then goto continue end
+    local include
+    if mode == 'file' then
+      local ext = filename:match('[^.]+$')
+      if ext and not filter.exts[ext] then goto continue end
+      include = filter.consider_any or ext ~= nil
+    elseif mode == 'directory' then
+      include = filter.consider_any
     end
+    for i = 1, #filter do
+      local patt = filter[i]
+      -- Treat exclusive patterns as logical AND.
+      if patt:find('^!') and filename:find(patt:sub(2)) then goto continue end
+      -- Treat inclusive patterns as logical OR.
+      include = include or (not patt:find('^!') and filename:find(patt))
+    end
+    if include and mode == 'directory' then
+      if include_dirs and f(filename..dir_sep) == false then return end
+      if not n or (level or 0) < n then
+        local halt = lfs.dir_foreach(filename, f, filter, n, include_dirs,
+                                     (level or 0) + 1) == false
+        if halt then return false end
+      end
+    elseif include and mode == 'file' then
+      if f(filename) == false then return false end
+    end
+    ::continue::
   end
 end
 
