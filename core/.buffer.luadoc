@@ -200,9 +200,8 @@
 --     A line caret.
 --   * `buffer.CARETSTYLE_BLOCK`
 --     A block caret.
---   * `buffer.CARETSTYLE_OVERSTRIKE_BLOCK`
---     A block caret for overtype mode. (Needs to be bit-wise ORed with another
---     caret style.)
+--   * `buffer.CARETSTYLE_BLOCK_ALWAYS`
+--     A block caret in both insert and overtype mode.
 --
 --   The default value is `buffer.CARETSTYLE_LINE`.
 -- @field caret_width (number)
@@ -2863,6 +2862,7 @@ function toggle_caret_sticky(buffer) end
 -- are hidden).
 -- @param buffer A buffer.
 -- @param line The line number in *buffer* to toggle the fold on.
+-- @see set_default_fold_display_text
 function toggle_fold(buffer, line) end
 
 ---
@@ -3162,6 +3162,7 @@ function set_theme(buffer, name, props) end
 --   * automatic_fold
 --   * call_tip_back
 --   * call_tip_fore
+--   * character_category_optimization
 --   * character_pointer
 --   * code_page
 --   * command_events
