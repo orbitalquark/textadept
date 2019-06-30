@@ -9,6 +9,47 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.5 (01 Jul 2019)
+
+Download:
+
+* [Textadept 10.5 -- Win32][] | [PGP -- 10.5 Win32][]
+* [Textadept 10.5 -- Mac OSX 10.6+][] | [PGP -- 10.5 OSX][]
+* [Textadept 10.5 -- Linux][] | [PGP -- 10.5 Linux][]
+* [Textadept 10.5 -- Linux x86_64][] | [PGP -- 10.5 Linux x86_64][]
+* [Textadept 10.5 -- Modules][] | [PGP -- 10.5 Modules][]
+
+Bugfixes:
+
+* Do not advance the caret on failed incremental find.
+* Fixed bug with filters that have extension includes and pattern excludes
+
+Changes:
+
+* Added case-insensitive option to [`textadept.editing.show_documentation()`][].
+* Updated the default window size and some default dialog sizes.
+* Updated Markdown lexer.
+* Improved C++ lexer to support single quotes in C++14 integer literals.
+* Scintilla: Improved performance opening and closing large files with fold
+  points.
+* Scintilla: Tweaked behavior of [`buffer.style_case`][]'s `buffer.CASE_CAMEL`
+  option to treat only letters as word characters.
+* Updated to [Scintilla][] 3.10.6.
+
+[Textadept 10.5 -- Win32]: download/textadept_10.5.win32.zip
+[Textadept 10.5 -- Mac OSX 10.6+]: download/textadept_10.5.osx.zip
+[Textadept 10.5 -- Linux]: download/textadept_10.5.i386.tgz
+[Textadept 10.5 -- Linux x86_64]: download/textadept_10.5.x86_64.tgz
+[Textadept 10.5 -- Modules]: download/textadept_10.5.modules.zip
+[PGP -- 10.5 Win32]: download/textadept_10.5.win32.zip.asc
+[PGP -- 10.5 OSX]: download/textadept_10.5.osx.zip.asc
+[PGP -- 10.5 Linux]: download/textadept_10.5.i386.tgz.asc
+[PGP -- 10.5 Linux x86_64]: download/textadept_10.5.x86_64.tgz.asc
+[PGP -- 10.5 Modules]: download/textadept_10.5.modules.zip.asc
+[`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
+[`buffer.style_case`]: api.html#buffer.style_case
+[Scintilla]: http://scintilla.org
+
 ## 10.4 (01 May 2019)
 
 Download:
