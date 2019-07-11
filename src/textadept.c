@@ -208,7 +208,7 @@ static int quit;
 #endif
 static int initing, closing;
 static int show_tabs = TRUE, tab_sync;
-enum {SVOID, SINT, SLEN, SPOS, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET};
+enum {SVOID, SINT, SLEN, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET};
 
 // Forward declarations.
 static void new_buffer(sptr_t);
