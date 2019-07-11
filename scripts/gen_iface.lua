@@ -6,9 +6,9 @@ local const_patt = '^val ([%w_]+)=([-%dx%x]+)'
 local event_patt = '^evt %a+ ([%w_]+)=(%d+)'
 local msg_patt = '^(%a+) (%a+) (%w+)=(%d+)%((%a*) ?([^,]*),%s*(%a*)'
 local types = {
-  [''] = 0, void = 0, int = 1, length = 2, position = 3, colour = 4, bool = 5,
-  keymod = 6, string = 7, stringresult = 8, cells = 9, textrange = 10,
-  findtext = 11, formatrange = 12
+  [''] = 0, void = 0, int = 1, length = 2, position = 1, line = 1, colour = 3,
+  bool = 4, keymod = 5, string = 6, stringresult = 7, cells = 8, pointer = 1,
+  textrange = 9, findtext = 10, formatrange = 11
 }
 local ignores = { -- constants to ignore
   '^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_',
@@ -37,18 +37,25 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
     constants[#constants + 1] = string_format('SCN_%s=%s', name:upper(), value)
   elseif line:find('^fun ') then
     local _, rtype, name, id, wtype, param, ltype = line:match(msg_patt)
+    if rtype:find('^%u') then rtype = 'int' end
+    if wtype:find('^%u') then wtype = 'int' end
+    if ltype:find('^%u') then ltype = 'int' end
     name = name:gsub('([a-z])([A-Z])', '%1_%2')
                :gsub('([A-Z])([A-Z][a-z])', '%1_%2'):lower()
     if name == 'convert_eo_ls' then name = 'convert_eols' end
-    if wtype == 'int' and param == 'length' then wtype = 'length' end
+    if types[wtype] == types.int and param == 'length' then wtype = 'length' end
     functions[#functions + 1] = name
     functions[name] = {id, types[rtype], types[wtype], types[ltype]}
   elseif line:find('^get ') or line:find('^set ') then
     local kind, rtype, name, id, wtype, _, ltype = line:match(msg_patt)
+    if rtype:find('^%u') then rtype = 'int' end
+    if wtype:find('^%u') then wtype = 'int' end
+    if ltype:find('^%u') then ltype = 'int' end
     name = name:gsub('[GS]et%f[%u]', ''):gsub('([a-z])([A-Z])', '%1_%2')
                :gsub('([A-Z])([A-Z][a-z])', '%1_%2'):lower()
-    if kind == 'get' and wtype == 'int' and ltype == 'int' or
-       wtype == 'bool' and ltype ~= '' or changed_setter[name] then
+    if kind == 'get' and types[wtype] == types.int and
+       types[ltype] == types.int or wtype == 'bool' and ltype ~= '' or
+       changed_setter[name] then
       -- Special case getter/setter; handle as function.
       local fname = kind..'_'..name
       functions[#functions + 1] = fname
