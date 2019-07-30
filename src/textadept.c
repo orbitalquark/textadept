@@ -1100,6 +1100,7 @@ static int lbuffer_delete(lua_State *L) {
 
 /** `_G.buffer_new()` Lua function. */
 static int lbuffer_new(lua_State *L) {
+  if (initing) luaL_error(L, "cannot create buffers during initialization");
   new_buffer(0);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
   return (lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);

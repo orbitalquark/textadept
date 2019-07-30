@@ -941,10 +941,9 @@ mind:
   module names that match the name of a lexer in the *lexers/* directory unless
   you are creating a language module.
 * Do not call any functions that create buffers and views (e.g. `ui.print()`,
-  `io.open_file()`, and `buffer.new()`) at file-level scope. This will result in
-  hard errors as Textadept initializes. Those types of function calls must occur
-  within functions (e.g. in a key binding, menu item, or
-  [`events.INITIALIZED`][] event handler).
+  `io.open_file()`, and `buffer.new()`) at file-level scope. Those types of
+  function calls must occur within functions (e.g. in a key binding, menu item,
+  or [`events.INITIALIZED`][] event handler).
 * Additional documentation on creating language modules can be found in the
   the [language module API documentation][].
 
@@ -979,9 +978,9 @@ later section.
 
 Note: Do not call any functions that create buffers and views (e.g.
 `ui.print()`, `io.open_file()`, and `buffer.new()`) at the file-level scope of
-*~/.textadept/init.lua*. This will result in hard errors as Textadept
-initializes. Those types of function calls must occur within functions (e.g. in
-a key binding, menu item, or [`events.INITIALIZED`][] event handler).
+*~/.textadept/init.lua*. Those types of function calls must occur within
+functions (e.g. in a key binding, menu item, or [`events.INITIALIZED`][] event
+handler).
 
 [`events.INITIALIZED`]: api.html#events.INITIALIZED
 
