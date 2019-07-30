@@ -112,7 +112,7 @@ local M = {}
 -- None            |None  |None         |LF EOL mode
 -- None            |None  |None         |UTF-8 encoding
 -- None            |None  |None         |ASCII encoding
--- None            |None  |None         |ISO-8859-1 encoding
+-- None            |None  |None         |CP-1252 encoding
 -- None            |None  |None         |UTF-16 encoding
 -- Ctrl+Alt+Enter  |^↩    |None         |Toggle view EOL
 -- Ctrl+Alt+\\     |^\\   |None         |Toggle wrap mode
@@ -439,7 +439,7 @@ keys[not OSX and (GUI and 'cai' or 'mi')
 -- Encoding.
 -- TODO: m_buffer[_L['E_ncoding']][_L['_UTF-8 Encoding']][2]
 -- TODO: m_buffer[_L['E_ncoding']][_L['_ASCII Encoding']][2]
--- TODO: m_buffer[_L['E_ncoding']][_L['_ISO-8859-1 Encoding']][2]
+-- TODO: m_buffer[_L['E_ncoding']][_L['_CP-1252 Encoding']][2]
 -- TODO: m_buffer[_L['E_ncoding']][_L['UTF-1_6 Encoding']][2]
 if GUI then
   keys[not OSX and 'ca\n' or 'c\n'] = m_buffer[_L['Toggle View _EOL']][2]
