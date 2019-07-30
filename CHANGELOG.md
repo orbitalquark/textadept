@@ -22,7 +22,7 @@ Download:
 Bugfixes:
 
 * Do not advance the caret on failed incremental find.
-* Fixed bug with filters that have extension includes and pattern excludes
+* Fixed bug with filters that have extension includes and pattern excludes.
 
 Changes:
 

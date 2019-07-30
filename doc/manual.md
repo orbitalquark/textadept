@@ -389,8 +389,8 @@ manually sets indentation size.
 #### Buffer Encodings
 
 Textadept has the ability to decode files encoded in many different encodings,
-but by default it only attempts to decode UTF-8, ASCII, ISO-8859-1, and UTF-16.
-If you work with files with encodings Textadept does not recognize, add those
+but by default it only attempts to decode UTF-8, ASCII, CP-1252, and UTF-16. If
+you work with files with encodings Textadept does not recognize, add those
 encodings to [`io.encodings`][] in your [preferences](#Preferences).
 
 UTF-8 is the recommended file encoding because of its wide support by other text
