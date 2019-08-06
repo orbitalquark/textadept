@@ -988,6 +988,7 @@
 					<string>shtm</string>
 					<string>shtml</string>
 					<string>xhtml</string>
+					<string>vue</string>
 				</array>
 			</dict>
 			<key>UTTypeDescription</key>
@@ -1936,6 +1937,8 @@
 					<string>bash_profile</string>
 					<string>configure</string>
 					<string>csh</string>
+					<string>ksh</string>
+					<string>mksh</string>
 					<string>sh</string>
 					<string>zsh</string>
 				</array>
@@ -2255,6 +2258,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>yaml</string>
+					<string>yml</string>
 				</array>
 			</dict>
 			<key>UTTypeDescription</key>
