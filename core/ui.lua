@@ -352,6 +352,7 @@ events_connect(events.BUFFER_AFTER_SWITCH, function()
   for i = 1, #buffer._folds do buffer:toggle_fold(buffer._folds[i]) end
   -- Restore view state.
   buffer:set_sel(buffer._anchor, buffer._current_pos)
+  buffer:choose_caret_x()
   buffer:line_scroll(0, buffer:visible_from_doc_line(buffer._top_line) -
                         buffer.first_visible_line)
   buffer.x_offset = buffer._x_offset or 0
