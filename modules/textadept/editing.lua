@@ -170,6 +170,10 @@ end)
 events.connect(events.CHAR_ADDED, function(code)
   if not M.auto_indent or code ~= 10 then return end
   local line = buffer:line_from_position(buffer.current_pos)
+  if line > 0 and buffer:get_line(line - 1):find('^[\r\n]+$') and
+    buffer:get_line(line):find('^[^\r\n]') then
+    return -- do not auto-indent when pressing enter from start of previous line
+  end
   local i = line - 1
   while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
   if i >= 0 then
@@ -625,7 +629,7 @@ function M.show_documentation(pos, case_insensitive)
   ::lookup::
   if symbol ~= '' then
     local symbol_patt = '^'..symbol:gsub('(%p)', '%%%1')
-    if case_insensitive then 
+    if case_insensitive then
       symbol_patt = symbol_patt:gsub('%a', function(ch)
         return string.format('[%s%s]', ch:upper(), ch:lower())
       end)
