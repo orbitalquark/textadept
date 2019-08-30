@@ -9,6 +9,42 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.6 (01 Sep 2019)
+
+Download:
+
+* [Textadept 10.6 -- Win32][] | [PGP -- 10.6 Win32][]
+* [Textadept 10.6 -- Mac OSX 10.6+][] | [PGP -- 10.6 OSX][]
+* [Textadept 10.6 -- Linux][] | [PGP -- 10.6 Linux][]
+* [Textadept 10.6 -- Linux x86_64][] | [PGP -- 10.6 Linux x86_64][]
+* [Textadept 10.6 -- Modules][] | [PGP -- 10.6 Modules][]
+
+Bugfixes:
+
+* Fail more gracefully when users attempt to create buffers on init.
+* Improve caret sticky behavior when switching between buffers.
+* Do not auto-indent when pressing enter at the start of a non-empty line.
+* Scintilla: Fix deletion of isolated invalid bytes.
+* Scintilla: Fix position of line caret when overstrike caret is set to block.
+
+Changes:
+
+* Use CP1252 encoding instead of ISO-8859-1.
+* Added support for ksh and mksh.
+* Updated to [Scintilla][] 3.11.0.
+
+[Textadept 10.6 -- Win32]: download/textadept_10.6.win32.zip
+[Textadept 10.6 -- Mac OSX 10.6+]: download/textadept_10.6.osx.zip
+[Textadept 10.6 -- Linux]: download/textadept_10.6.i386.tgz
+[Textadept 10.6 -- Linux x86_64]: download/textadept_10.6.x86_64.tgz
+[Textadept 10.6 -- Modules]: download/textadept_10.6.modules.zip
+[PGP -- 10.6 Win32]: download/textadept_10.6.win32.zip.asc
+[PGP -- 10.6 OSX]: download/textadept_10.6.osx.zip.asc
+[PGP -- 10.6 Linux]: download/textadept_10.6.i386.tgz.asc
+[PGP -- 10.6 Linux x86_64]: download/textadept_10.6.x86_64.tgz.asc
+[PGP -- 10.6 Modules]: download/textadept_10.6.modules.zip.asc
+[Scintilla]: http://scintilla.org
+
 ## 10.5 (01 Jul 2019)
 
 Download:
