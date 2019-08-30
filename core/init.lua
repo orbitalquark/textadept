@@ -1,6 +1,6 @@
 -- Copyright 2007-2019 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-_RELEASE = "Textadept 10.5"
+_RELEASE = "Textadept 10.6"
 _COPYRIGHT = 'Copyright © 2007-2019 Mitchell. See LICENSE.\n'..
              'http://foicica.com/textadept'
 
