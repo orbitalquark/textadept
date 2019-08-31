@@ -203,6 +203,10 @@
 --   * `buffer.CARETSTYLE_BLOCK_ALWAYS`
 --     A block caret in both insert and overtype mode.
 --
+--   Any block setting may be combined with `buffer.CARETSTYLE_BLOCK_AFTER` via
+--   bitwise OR (`|`) in order to draw the caret after the end of a selection,
+--   as opposed to just inside it.
+--
 --   The default value is `buffer.CARETSTYLE_LINE`.
 -- @field caret_width (number)
 --   The line caret's pixel width in insert mode, either `0`, `1`, `2`, or `3`.
