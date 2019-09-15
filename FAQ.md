@@ -167,6 +167,21 @@ rather than just the name of the "ttf" file in your Fonts directory.
 - - -
 
 **Q:**
+On my Windows HiDPI display, Textadept's fonts look fuzzy or blurred. How can I
+make them crisp like other HiDPI-aware applications?
+
+**A:**
+GTK 2.0, the cross-platform GUI toolkit Textadept uses, is not HiDPI aware, so
+you need to instruct Windows to take over font rendering. Right-click on the
+Textadept executable and select "Properties". Click on the "Compatibility" tab
+and then the "Change high DPI settings" button. Check the "Override high DPI
+scaling" checkbox towards the bottom of the pop-up dialog. The next time you
+run Textadept, the fonts should look much better. You may have to tweak other
+settings in the dialog, but the above worked for me.
+
+- - -
+
+**Q:**
 When I use Mercurial >= 3.9 to clone Textadept's source code repository, I get
 an "unsupported protocol" error related to TLS. How do I get around this?
 
