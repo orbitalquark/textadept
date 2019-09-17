@@ -297,7 +297,10 @@ local default_menubar = {
       buffer.view_eol = not buffer.view_eol
     end},
     {_L['Toggle _Wrap Mode'], function()
+      local first_visible_line = buffer.first_visible_line
+      local display_line = buffer:visible_from_doc_line(first_visible_line)
       buffer.wrap_mode = buffer.wrap_mode == 0 and buffer.WRAP_WHITESPACE or 0
+      buffer:line_scroll(0, first_visible_line - display_line)
     end},
     {_L['Toggle View White_space'], function()
       buffer.view_ws = buffer.view_ws == 0 and buffer.WS_VISIBLEALWAYS or 0
