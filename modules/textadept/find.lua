@@ -100,11 +100,23 @@ M.find_in_files_filters = {}
 -- does "replace in selection").
 local find_text, found_text
 
+-- Returns a bit-mask of search flags to use in Scintilla search functions based
+-- on the checkboxes in the find box.
+-- The "Find in Files" flag is unused by Scintilla, but used by Textadept.
+-- @return search flag bit-mask
+local function get_flags()
+  return (M.match_case and buffer.FIND_MATCHCASE or 0) +
+         (M.whole_word and buffer.FIND_WHOLEWORD or 0) +
+         (M.regex and buffer.FIND_REGEXP or 0) +
+         (M.in_files and 0x1000000 or 0) -- next after 0x800000
+end
+
 -- Finds and selects text in the current buffer.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
--- @param flags Search flags. This is a number mask of 4 flags: match case (2),
---   whole word (4), Lua pattern (8), and in files (16) joined with binary OR.
+-- @param flags Search flags. This is a bit-mask of 4 flags:
+--   `buffer.FIND_MATCHCASE`, `buffer.FIND_WHOLEWORD`, `buffer.FIND_REGEXP`, and
+--   0x1000000 (in files), each joined with binary OR.
 --   If `nil`, this is determined based on the checkboxes in the find box.
 -- @param no_wrap Flag indicating whether or not the search will not wrap.
 -- @param wrapped Utility flag indicating whether or not the search has wrapped
@@ -113,21 +125,13 @@ local find_text, found_text
 -- @return position of the found text or `-1`
 local function find(text, next, flags, no_wrap, wrapped)
   if text == '' then return end
-  if not flags then
-    flags = 0
-    if M.match_case then flags = flags + buffer.FIND_MATCHCASE end
-    if M.whole_word then flags = flags + buffer.FIND_WHOLEWORD end
-    if M.regex then flags = flags + buffer.FIND_REGEXP end
-    if M.in_files then flags = flags + 0x1000000 end -- next after 0x800000
-  end
+  if not flags then flags = get_flags() end
   if flags >= 0x1000000 then M.find_in_files() return end -- not performed here
   local first_visible_line = buffer.first_visible_line -- for 'no results found'
 
   -- If text is selected, assume it is from the current search and move the
   -- caret appropriately for the next search.
-  if not buffer.selection_empty then
-    buffer:goto_pos(buffer[next and 'selection_end' or 'selection_start'])
-  end
+  buffer:goto_pos(buffer[next and 'selection_end' or 'selection_start'])
 
   -- Scintilla search.
   buffer:search_anchor()
@@ -141,7 +145,6 @@ local function find(text, next, flags, no_wrap, wrapped)
   if pos == -1 and not no_wrap then
     local anchor = buffer.anchor
     buffer:goto_pos(next and 0 or buffer.length)
-    ui.statusbar_text = _L['Search wrapped']
     events.emit(events.FIND_WRAPPED)
     pos = find(text, next, flags, true, true)
     if pos == -1 then
@@ -156,6 +159,8 @@ local function find(text, next, flags, no_wrap, wrapped)
   return pos
 end
 events.connect(events.FIND, find)
+events.connect(events.FIND_WRAPPED,
+               function() ui.statusbar_text = _L['Search wrapped'] end)
 
 local incremental_start
 
@@ -241,11 +246,8 @@ function M.find_in_files(dir, filter)
 
   local buffer = buffer.new() -- temporary buffer
   buffer.code_page = 0
-  local text, flags, found, ref_time = M.find_entry_text, 0, false, os.time()
-  if M.match_case then flags = flags + buffer.FIND_MATCHCASE end
-  if M.whole_word then flags = flags + buffer.FIND_WHOLEWORD end
-  if M.regex then flags = flags + buffer.FIND_REGEXP end
-  buffer.search_flags = flags
+  local text, found, ref_time = M.find_entry_text, false, os.time()
+  buffer.search_flags = get_flags()
   lfs.dir_foreach(dir, function(filename)
     buffer:clear_all()
     buffer:empty_undo_buffer()
@@ -294,70 +296,67 @@ function M.find_in_files(dir, filter)
   ui._print(_L['[Files Found Buffer]'], '') -- goto end, set save pos, etc.
 end
 
--- Replaces found text.
--- `find()` is called first, to select any found text. The selected text is
--- then replaced by the specified replacement text.
--- This function ignores "Find in Files".
--- @param rtext The text to replace found text with. It can contain regex
---   capture groups (`\d` where 0 <= `d` <= 9).
--- @see find
-local function replace(rtext)
+-- Unescapes \uXXXX sequences in the string *text* and returns the result.
+-- Just like with \n, \t, etc., escape sequence interpretation only happens for
+-- regex search and replace.
+-- @param text String text to unescape.
+-- @return unescaped text
+local function unescape(text)
+  return M.regex and text:gsub('%f[\\]\\u(%x%x%x%x)', function(code)
+           return utf8.char(tonumber(code, 16))
+         end) or text
+end
+
+-- Replaces found (selected) text.
+events.connect(events.REPLACE, function(rtext)
   if buffer.selection_empty then return end
-  if M.in_files then M.in_files = false end
-  if M.regex then
-    -- Interpret \uXXXX sequences, just like with \n, \t, etc.
-    rtext = rtext:gsub('%f[\\]\\u(%x%x%x%x)', function(code)
-      return utf8.char(tonumber(code, 16))
-    end)
-  end
+  rtext = unescape(rtext)
   buffer:target_from_selection()
   buffer[not M.regex and 'replace_target' or 'replace_target_re'](buffer, rtext)
   buffer:set_sel(buffer.target_start, buffer.target_end)
-end
-events.connect(events.REPLACE, replace)
+end)
 
 local INDIC_REPLACE = _SCINTILLA.next_indic_number()
--- Replaces all found text.
--- If any text is selected (other than text just found), all found text in that
+-- Replaces all found text in the current buffer (ignores "Find in Files").
+-- If any text is selected (other than text just found), only found text in that
 -- selection is replaced.
--- This function ignores "Find in Files".
--- @param ftext The text to find.
--- @param rtext The text to replace found text with.
--- @see find
-local function replace_all(ftext, rtext)
+events.connect(events.REPLACE_ALL, function(ftext, rtext)
   if ftext == '' then return end
-  if M.in_files then M.in_files = false end
-  buffer:begin_undo_action()
   local count = 0
-  if buffer.selection_empty or
-     ftext == find_text and buffer:get_sel_text() == found_text then
-    buffer:goto_pos(0)
-    while find(ftext, true, nil, true) ~= -1 do
-      if buffer.selection_empty then break end -- prevent infinite loops
-      replace(rtext)
-      count = count + 1
-    end
-  else
-    local s, e = buffer.selection_start, buffer.selection_end
+  local buffer = buffer
+  local s, e = buffer.selection_start, buffer.selection_end
+  local replace_in_sel = s ~= e and (ftext ~= find_text or
+                                     buffer:get_sel_text() ~= found_text)
+  if replace_in_sel then
     buffer.indicator_current = INDIC_REPLACE
     buffer:indicator_fill_range(e, 1)
-    local EOF = buffer.selection_end == buffer.length -- no indic at EOF
-    buffer:goto_pos(s)
-    local pos = find(ftext, true, nil, true)
-    while pos ~= -1 and (pos < buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
-      if buffer.selection_empty then break end -- prevent infinite loops
-      replace(rtext)
-      count = count + 1
-      pos = find(ftext, true, nil, true)
-    end
+  end
+  local EOF = replace_in_sel and e == buffer.length -- no indicator at EOF
+  local buffer_replace_target = buffer[not M.regex and 'replace_target' or
+                                       'replace_target_re']
+  rtext = unescape(rtext)
+
+  -- Perform the search and replace.
+  buffer:begin_undo_action()
+  buffer.search_flags = get_flags()
+  buffer:set_target_range(not replace_in_sel and 0 or s, buffer.length)
+  while buffer:search_in_target(ftext) ~= -1 and (not replace_in_sel or
+        buffer.target_end < buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
+    if buffer.target_start == buffer.target_end then break end -- prevent loops
+    buffer_replace_target(buffer, rtext)
+    count = count + 1
+    buffer:set_target_range(buffer.target_end, buffer.length)
+  end
+  buffer:end_undo_action()
+
+  -- Restore any original selection and report the number of replacements made.
+  if replace_in_sel then
     e = buffer:indicator_end(INDIC_REPLACE, s)
     buffer:set_sel(s, e > 0 and e or buffer.length)
     buffer:indicator_clear_range(e, 1)
   end
   ui.statusbar_text = string.format('%d %s', count, _L['replacement(s) made'])
-  buffer:end_undo_action()
-end
-events.connect(events.REPLACE_ALL, replace_all)
+end)
 
 -- Returns whether or not the given buffer is a files found buffer.
 local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
