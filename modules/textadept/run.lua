@@ -379,8 +379,10 @@ function M.goto_error(line, next)
   local error = scan_for_error(line:iconv(_CHARSET, 'UTF-8'))
   if not error then return end
   textadept.editing.select_line()
-  ui.goto_file(cwd..(not WIN32 and '/' or '\\')..error.filename, true,
-               preferred_view, true)
+  if not error.filename:find(not WIN32 and '^/' or '^%a:[/\\]') then
+    error.filename = cwd..(not WIN32 and '/' or '\\')..error.filename
+  end
+  ui.goto_file(error.filename, true, preferred_view, true)
   textadept.editing.goto_line(error.line - 1)
   if error.column then
     buffer:goto_pos(buffer:find_column(error.line - 1, error.column - 1))
