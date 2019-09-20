@@ -339,8 +339,10 @@ events_connect(events.BUFFER_BEFORE_SWITCH, function()
   local buffer = buffer
   -- Save view state.
   buffer._anchor, buffer._current_pos = buffer.anchor, buffer.current_pos
-  buffer._anchor_virtual_space = buffer.selection_n_anchor_virtual_space[0]
-  buffer._caret_virtual_space = buffer.selection_n_caret_virtual_space[0]
+  local n = buffer.main_selection
+  buffer._anchor_virtual_space = buffer.selection_n_anchor_virtual_space[n]
+  buffer._caret_virtual_space = buffer.selection_n_caret_virtual_space[n]
+  buffer._sel_rectangle = buffer.selection_mode == buffer.SEL_RECTANGLE
   buffer._top_line = buffer:doc_line_from_visible(buffer.first_visible_line)
   buffer._x_offset = buffer.x_offset
   -- Save fold state.
@@ -359,8 +361,10 @@ events_connect(events.BUFFER_AFTER_SWITCH, function()
   for i = 1, #buffer._folds do buffer:toggle_fold(buffer._folds[i]) end
   -- Restore view state.
   buffer:set_sel(buffer._anchor, buffer._current_pos)
-  buffer.selection_n_anchor_virtual_space[0] = buffer._anchor_virtual_space
-  buffer.selection_n_caret_virtual_space[0] = buffer._caret_virtual_space
+  local n = buffer.main_selection
+  buffer.selection_n_anchor_virtual_space[n] = buffer._anchor_virtual_space
+  buffer.selection_n_caret_virtual_space[n] = buffer._caret_virtual_space
+  if buffer._sel_rectangle then buffer.selection_mode = buffer.SEL_RECTANGLE end
   buffer:choose_caret_x()
   buffer:line_scroll(0, buffer:visible_from_doc_line(buffer._top_line) -
                         buffer.first_visible_line)
