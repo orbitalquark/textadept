@@ -21,15 +21,15 @@ property['color.white'] = 0xC0C0C0
 property['color.light_black'] = 0x404040
 property['color.light_red'] = 0x0000FF
 property['color.light_green'] = 0x00FF00
---property['color.light_yellow'] = 0x00FFFF
+property['color.light_yellow'] = 0x00FFFF
 property['color.light_blue'] = 0xFF0000
 property['color.light_magenta'] = 0xFF00FF
---property['color.light_cyan'] = 0xFFFF00
+property['color.light_cyan'] = 0xFFFF00
 property['color.light_white'] = 0xFFFFFF
 
 -- Predefined styles.
 property['style.default'] = 'fore:$(color.white),back:$(color.black)'
---property['style.linenumber'] =
+property['style.linenumber'] = 'fore:$(color.black),bold'
 property['style.bracelight'] = 'fore:$(color.black),back:$(color.white)'
 --property['style.controlchar'] =
 --property['style.indentguide'] =
@@ -84,7 +84,7 @@ local INDIC_PLACEHOLDER = textadept.snippets.INDIC_PLACEHOLDER
 buffer.indic_fore[INDIC_PLACEHOLDER] = property_int['color.magenta']
 
 -- Call tips.
---buffer.call_tip_fore_hlt = property_int['color.blue']
+buffer.call_tip_fore_hlt = property_int['color.blue']
 
 -- Long Lines.
 buffer.edge_colour = property_int['color.red']
