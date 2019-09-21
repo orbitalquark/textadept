@@ -30,6 +30,7 @@ local M = {}
 -- Ctrl+X<br/>Shift+Del    |⌘X<br/>⇧⌦|^X            |Cut
 -- Ctrl+C<br/>Ctrl+Ins     |⌘C       |^C            |Copy
 -- Ctrl+V<br/>Shift+Ins    |⌘V       |^V            |Paste
+-- Ctrl+Shift+V            |⌘⇧V      |M-V           |Paste Reindent
 -- Ctrl+D                  |⌘D       |None          |Duplicate line
 -- Del                     |⌦<br/>^D |Del<br/>^D    |Delete
 -- Alt+Del                 |^⌦       |M-Del<br/>M-D |Delete word
@@ -297,6 +298,8 @@ keys[not OSX and GUI and 'cZ' or 'mZ'] = buffer.redo
 keys[not OSX and 'cx' or 'mx'] = buffer.cut
 keys[not OSX and 'cc' or 'mc'] = buffer.copy
 keys[not OSX and 'cv' or 'mv'] = buffer.paste
+keys[not OSX and (GUI and 'cV' or 'mv')
+             or 'mV'] = textadept.editing.paste_reindent
 if GUI then keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate end
 keys.del = buffer.clear
 keys[not OSX and (GUI and 'adel' or 'mdel')
