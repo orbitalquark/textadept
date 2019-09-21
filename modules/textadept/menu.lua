@@ -82,6 +82,7 @@ local default_menubar = {
     {_L['Cu_t'], buffer.cut},
     {_L['_Copy'], buffer.copy},
     {_L['_Paste'], buffer.paste},
+    {_L['Paste Re_indent'], textadept.editing.paste_reindent},
     {_L['Duplicate _Line'], buffer.line_duplicate},
     {_L['_Delete'], buffer.clear},
     {_L['D_elete Word'], function()
