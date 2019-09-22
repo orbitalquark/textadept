@@ -570,7 +570,6 @@ end_styled	_	0;"	F	class:buffer
 end_undo_action	_	0;"	f	class:buffer
 ensure_visible	_	0;"	f	class:buffer
 ensure_visible_enforce_policy	_	0;"	f	class:buffer
-enter_mode	_	0;"	f	class:ui.command_entry
 eol_mode	_	0;"	F	class:buffer
 error	_	0;"	f	
 error_patterns	_	0;"	t	class:textadept.run
@@ -600,12 +599,12 @@ find_in_files	_	0;"	f	class:ui.find
 find_in_files_filters	_	0;"	t	class:ui.find
 find_in_files_timeout	_	0;"	F	class:ui.find
 find_incremental	_	0;"	f	class:ui.find
+find_incremental_keys	_	0;"	t	class:ui.find
 find_label_text	_	0;"	F	class:ui.find
 find_next	_	0;"	f	class:ui.find
 find_next_button_text	_	0;"	F	class:ui.find
 find_prev	_	0;"	f	class:ui.find
 find_prev_button_text	_	0;"	F	class:ui.find
-finish_mode	_	0;"	f	class:ui.command_entry
 first_visible_line	_	0;"	F	class:buffer
 float	_	0;"	F	class:lexer
 floor	_	0;"	f	class:math
@@ -894,6 +893,7 @@ para_down_extend	_	0;"	f	class:buffer
 para_up	_	0;"	f	class:buffer
 para_up_extend	_	0;"	f	class:buffer
 paste	_	0;"	f	class:buffer
+paste_reindent	_	0;"	f	class:textadept.editing
 path	_	0;"	F	class:lexer
 path	_	0;"	F	class:package
 patterns	_	0;"	t	class:textadept.file_types
@@ -983,6 +983,7 @@ ruby	_	0;"	m	class:_M
 ruby	_	0;"	t	class:keys
 ruby	_	0;"	t	class:snippets
 run	_	0;"	f	class:textadept.run
+run	_	0;"	f	class:ui.command_entry
 run	_	0;"	m	class:textadept
 run_commands	_	0;"	t	class:textadept.run
 run_in_background	_	0;"	F	class:textadept.run

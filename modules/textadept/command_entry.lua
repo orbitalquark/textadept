@@ -6,40 +6,19 @@ local M = ui.command_entry
 --[[ This comment is for LuaDoc.
 ---
 -- Textadept's Command Entry.
---
--- ## Modes
---
--- The command entry supports multiple [modes](#keys.Modes) that have their own
--- sets of key bindings stored in a separate table in `_G.keys` under a mode
--- prefix key. Mode names are arbitrary, but cannot conflict with lexer names or
--- key sequence strings (e.g. `'lua'` or `'send'`) due to the method Textadept
--- uses for looking up key bindings. An example mode is "lua_command" mode for
--- executing Lua commands:
---
---     local function complete_lua() ... end
---     local function run_lua() ... end
---     keys['ce'] = function() ui.command_entry.enter_mode('lua_command') end
---     keys.lua_command = {
---       ['\t'] = complete_lua,
---       ['\n'] = function() return ui.command_entry.finish_mode(run_lua) end
---     }
---
--- In this case, `Ctrl+E` opens the command entry and enters "lua_command" key
--- mode where the `Tab` and `Enter` keys have special, defined functionality.
--- (By default, Textadept pre-defines `Esc` to exit any command entry mode.)
--- `Tab` shows a list of Lua completions for the entry text and `Enter` exits
--- "lua_command" key mode and executes the entered code. The command entry
--- handles all other editing and movement keys normally.
+-- It supports multiple modes that each have their own functionality, such as
+-- running Lua code, searching for text incrementally, and filtering text
+-- through shell commands.
 -- @field height (number)
 --   The height in pixels of the command entry.
 module('ui.command_entry')]]
 
 ---
 -- A metatable with typical platform-specific key bindings for text entries.
--- This metatable may be used to add basic editing keys to command entry modes.
--- It is automatically added to command entry modes unless a metatable was
--- previously set.
--- @usage setmetatable(keys.my_mode, ui.command_entry.editing_keys)
+-- This metatable may be used to add basic editing and movement keys to command
+-- entry modes. It is automatically added to command entry modes unless a
+-- metatable was previously set.
+-- @usage setmetatable(mode_keys, ui.command_entry.editing_keys)
 -- @class table
 -- @name editing_keys
 M.editing_keys = {__index = {
@@ -59,52 +38,6 @@ M.editing_keys = {__index = {
   [(OSX or CURSES) and 'ce' or '\0'] = function() M:line_end() end,
   [(OSX or CURSES) and 'cd' or '\0'] = function() M:clear() end
 }}
-
----
--- Opens the command entry in key mode *mode*, highlighting text with lexer name
--- *lexer*, and displaying *height* number of lines at a time.
--- Key bindings will be looked up in `keys[mode]` instead of `keys`. The `Esc`
--- key exits the current mode, closes the command entry, and restores normal key
--- lookup.
--- This function is useful for binding keys to enter a command entry mode.
--- @param mode The key mode to enter into, or `nil` to exit the current mode.
--- @param lexer Optional string lexer name to use for command entry text. The
---   default value is `'text'`.
--- @param height Optional number of lines to display in the command entry. The
---   default value is `1`.
--- @usage keys['ce'] =
---   function() ui.command_entry.enter_mode('command_entry') end
--- @see _G.keys.MODE
--- @name enter_mode
-function M.enter_mode(mode, lexer, height)
-  if M:auto_c_active() then M:auto_c_cancel() end -- may happen in curses
-  keys.MODE = mode
-  if mode then
-    local mkeys = keys[mode]
-    if not mkeys['esc'] then mkeys['esc'] = M.enter_mode end
-    if not getmetatable(mkeys) then setmetatable(mkeys, M.editing_keys) end
-  end
-  M:select_all()
-  M.focus()
-  M:set_lexer(lexer or 'text')
-  M.height = M:text_height(0) * (height or 1)
-end
-
----
--- Exits the current key mode, closes the command entry, and calls function *f*
--- (if given) with the command entry's text as an argument.
--- This is useful for binding keys to exit a command entry mode and perform an
--- action with the entered text.
--- @param f Optional function to call. It should accept the command entry text
---   as an argument.
--- @usage keys['\n'] =
---   function() return ui.command_entry.finish_mode(ui.print) end
--- @name finish_mode
-function M.finish_mode(f)
-  if M:auto_c_active() then return false end -- allow Enter to autocomplete
-  M.enter_mode(nil)
-  if f then f((M:get_text())) end
-end
 
 -- Environment for abbreviated Lua commands.
 -- @class table
@@ -197,18 +130,94 @@ local function complete_lua()
   M:auto_c_show(#part - 1, table.concat(cmpls, ' '))
 end
 
--- Define key mode for entering Lua commands.
-keys.lua_command = {
-  ['\t'] = complete_lua,
-  ['\n'] = function() return M.finish_mode(run_lua) end
-}
+-- Key mode for entering Lua commands.
+-- @class table
+-- @name lua_mode_keys
+local lua_mode_keys = {['\t'] = complete_lua}
+
+---
+-- Opens the command entry, subjecting it to any key bindings defined in table
+-- *mode_keys*, highlighting text with lexer name *lexer*, and displaying
+-- *height* number of lines at a time, and then when the `Enter` key is pressed,
+-- closes the command entry and calls function *f* (if non-`nil`) with the
+-- command entry's text as an argument.
+-- By default with no arguments given, opens a Lua command entry.
+-- The command entry does not respond to Textadept's default key bindings, but
+-- instead to the key bindings defined in *mode_keys* and in
+-- `ui.command_entry.editing_keys`.
+-- @param f Optional function to call upon pressing `Enter` in the command
+--   entry, ending the mode. It should accept the command entry text as an
+--   argument.
+-- @param mode_keys Optional table of key bindings to respond to. This is in
+--   addition to the basic editing and movement keys defined in
+--   `ui.command_entry.editing_keys`.
+--   `Esc` and `Enter` are automatically defined to cancel and finish the
+--   command entry, respectively.
+--   This parameter may be omitted completely.
+-- @param lexer Optional string lexer name to use for command entry text. The
+--   default value is `'text'`.
+-- @param height Optional number of lines to display in the command entry. The
+--   default value is `1`.
+-- @see editing_keys
+-- @usage ui.command_entry.run(ui.print)
+-- @name run
+function M.run(f, mode_keys, lexer, height)
+  if M:auto_c_active() then M:auto_c_cancel() end -- may happen in curses
+  if not f and not mode_keys then
+    f, mode_keys, lexer = run_lua, lua_mode_keys, 'lua'
+  elseif type(mode_keys) == 'string' then
+    mode_keys, lexer, height = {}, mode_keys, lexer
+  elseif not mode_keys then
+    mode_keys = {}
+  end
+  if not mode_keys['esc'] then mode_keys['esc'] = M.focus end -- hide
+  mode_keys['\n'] = mode_keys['\n'] or function()
+    if M:auto_c_active() then return false end -- allow Enter to autocomplete
+    M.focus() -- hide
+    if f then f((M:get_text())) end
+  end
+  if not getmetatable(mode_keys) then
+    setmetatable(mode_keys, M.editing_keys)
+  end
+  M:select_all()
+  M.focus()
+  M:set_lexer(lexer or 'text')
+  M.height = M:text_height(0) * (height or 1)
+  keys._command_entry, keys.MODE = mode_keys, '_command_entry'
+end
+
+-- Redefine ui.command_entry.focus() to clear any current key mode on hide/show.
+local orig_focus = M.focus
+M.focus = function()
+  keys.MODE = nil
+  orig_focus()
+end
 
 -- Configure the command entry's default properties.
+-- Also find the key binding for `textadept.editing.show_documentation` and use
+-- it to show Lua documentation in the Lua command entry.
 events.connect(events.INITIALIZED, function()
   M.h_scroll_bar, M.v_scroll_bar = false, false
   M.margin_width_n[0], M.margin_width_n[1], M.margin_width_n[2] = 0, 0, 0
   M.call_tip_position = true
+  for key, f in pairs(keys) do
+    if f == textadept.editing.show_documentation then
+      lua_mode_keys[key] = function()
+        -- Temporarily change _G.buffer since ui.command_entry is the "active"
+        -- buffer.
+        local orig_buffer = _G.buffer
+        _G.buffer = ui.command_entry
+        textadept.editing.show_documentation()
+        _G.buffer = orig_buffer
+      end
+      break
+    end
+  end
 end)
+
+-- TODO: deprecated; remove after next release.
+M.enter_mode = function() ui.dialogs.ok_msgbox{text='ui.command_entry.enter_mode() is deprecated and will be removed.',informative_text='Please use ui.command_entry.run()',no_cancel=true} end
+M.finish_mode = function() ui.dialogs.ok_msgbox{text='ui.command_entry.finish_mode() is deprecated and will be removed.',informative_text='Please use ui.command_entry.run()',no_cancel=true} end
 
 --[[ The function below is a Lua C function.
 
