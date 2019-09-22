@@ -1363,12 +1363,9 @@ available completions. Use the arrow keys to make a selection and press `Enter`
 
 Executing Lua commands is just one of the many "modes" the command entry has.
 The [command entry API documentation][] has more information on modes and how to
-create new ones. As an example, *modules/textadept/keys.lua* defines a new mode
-that works in conjunction with *modules/textadept/find.lua* in order to provide
-[incremental search][].
+create new ones.
 
 [command entry API documentation]: api.html#ui.command_entry
-[incremental search]: api.html#ui.find.find_incremental
 
 ## Command Selection
 

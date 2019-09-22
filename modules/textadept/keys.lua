@@ -532,8 +532,8 @@ elseif CURSES then
 end
 
 -- Unbound keys are handled by Scintilla, but when playing back a macro, this is
--- not possible. Define useful default keybindings so Scintilla does not have to
--- handle them.
+-- not possible. Define useful default key bindings so Scintilla does not have
+-- to handle them.
 keys.left, keys.sleft = buffer.char_left, buffer.char_left_extend
 keys.cleft, keys.csleft  = buffer.word_left, buffer.word_left_extend
 keys.right, keys.sright = buffer.char_right, buffer.char_right_extend
@@ -555,50 +555,16 @@ keys['\b'], keys['s\b'] = buffer.delete_back, buffer.delete_back
 keys[not OSX and 'c\b' or 'm\b'] = buffer.del_word_left
 keys[not OSX and 'cs\b' or 'ms\b'] = buffer.del_line_left
 
--- Modes.
-keys.filter_through = {
-  ['\n'] = function()
-    return ui.command_entry.finish_mode(textadept.editing.filter_through)
-  end,
-}
-keys.find_incremental = {
-  ['\n'] = function()
-    ui.find.find_entry_text = ui.command_entry:get_text() -- save
-    ui.find.find_incremental(ui.command_entry:get_text(), true, true)
-  end,
-  ['cr'] = function()
-    ui.find.find_incremental(ui.command_entry:get_text(), false, true)
-  end,
-  ['\b'] = function()
-    local e = ui.command_entry:position_before(ui.command_entry.length)
-    ui.find.find_incremental(ui.command_entry:text_range(0, e), true)
-    return false -- propagate
-  end
-}
--- Add the character for any key pressed without modifiers to incremental find.
-setmetatable(keys.find_incremental, {__index = function(_, k)
-               if #k > 1 and k:find('^[cams]*.+$') then return end
-               ui.find.find_incremental(ui.command_entry:get_text()..k, true)
-             end})
--- Show documentation for symbols in the Lua command entry.
-keys.lua_command[GUI and 'ch' or 'mh'] = function()
-  -- Temporarily change _G.buffer since ui.command_entry is the "active" buffer.
-  local orig_buffer = _G.buffer
-  _G.buffer = ui.command_entry
-  textadept.editing.show_documentation()
-  _G.buffer = orig_buffer
+-- Other.
+ui.find.find_incremental_keys.cr = function()
+  ui.find.find_incremental(ui.command_entry:get_text(), false, true) -- reverse
 end
 if OSX or CURSES then
   -- UTF-8 input.
-  keys.utf8_input = {
-    ['\n'] = function()
-      return ui.command_entry.finish_mode(function(code)
-        buffer:add_text(utf8.char(tonumber(code, 16)))
-      end)
-    end
-  }
   keys[OSX and 'mU' or 'mu'] = function()
-    ui.command_entry.enter_mode('utf8_input')
+    ui.command_entry.run(function(code)
+      buffer:add_text(utf8.char(tonumber(code, 16)))
+    end)
   end
 end
 

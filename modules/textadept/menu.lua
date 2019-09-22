@@ -103,7 +103,7 @@ local default_menubar = {
     {_L['T_ranspose Characters'], textadept.editing.transpose_chars},
     {_L['_Join Lines'], textadept.editing.join_lines},
     {_L['_Filter Through'], function()
-      ui.command_entry.enter_mode('filter_through', 'bash')
+      ui.command_entry.run(textadept.editing.filter_through, 'bash')
     end},
     {
       title = _L['_Select'],
@@ -163,9 +163,7 @@ local default_menubar = {
   },
   {
     title = _L['_Tools'],
-    {_L['Command _Entry'], function()
-      ui.command_entry.enter_mode('lua_command', 'lua')
-    end},
+    {_L['Command _Entry'], ui.command_entry.run},
     {_L['Select Co_mmand'], function() M.select_command() end},
     SEPARATOR,
     {_L['_Run'], textadept.run.run},

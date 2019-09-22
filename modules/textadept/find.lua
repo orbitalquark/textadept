@@ -204,8 +204,29 @@ function M.find_incremental(text, next, anchor)
   if text then find_incremental(text, next, anchor) return end
   incremental_start = buffer.current_pos
   ui.command_entry:set_text('')
-  ui.command_entry.enter_mode('find_incremental')
+  ui.command_entry.run(nil, M.find_incremental_keys)
 end
+
+---
+-- Table of key bindings used when searching for text incrementally.
+-- @class table
+-- @name find_incremental_keys
+M.find_incremental_keys = setmetatable({
+  ['\n'] = function()
+    M.find_entry_text = ui.command_entry:get_text() -- save
+    M.find_incremental(ui.command_entry:get_text(), true, true)
+  end,
+  ['\b'] = function()
+    local e = ui.command_entry:position_before(ui.command_entry.length)
+    M.find_incremental(ui.command_entry:text_range(0, e), true)
+    return false -- propagate
+  end
+}, {__index = function(_, k)
+  -- Add the character for any key pressed without modifiers to incremental
+  -- find.
+  if #k > 1 and k:find('^[cams]*.+$') then return end
+  M.find_incremental(ui.command_entry:get_text()..k, true)
+end})
 
 ---
 -- Searches directory *dir* or the user-specified directory for files that match
