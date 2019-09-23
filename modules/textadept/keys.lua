@@ -398,9 +398,8 @@ keys.f2 = m_bookmark[_L['_Next Bookmark']][2]
 keys[GUI and 'sf2' or 'f3'] = m_bookmark[_L['_Previous Bookmark']][2]
 keys[GUI and 'af2' or 'f4'] = textadept.bookmarks.goto_mark
 -- Macros.
-keys.f9 = textadept.macros.start_recording
-keys[GUI and 'sf9' or 'f10'] = textadept.macros.stop_recording
-keys[GUI and 'af9' or 'f12'] = textadept.macros.play
+keys.f9 = textadept.macros.record
+keys[GUI and 'sf9' or 'f10'] = textadept.macros.play
 -- Quick Open.
 local m_quick_open = m_tools[_L['Quick _Open']]
 keys[not OSX and 'cu' or 'mu'] = m_quick_open[_L['Quickly Open _User Home']][2]

@@ -15,10 +15,12 @@ local recording, macro
 -- ultimately executed will be recorded in some form.
 local ignore
 events.connect(events.INITIALIZED, function()
+  local m_tools = textadept.menu.menubar[_L['_Tools']]
   ignore = {
     textadept.menu.menubar[_L['_Search']][_L['_Find']][2],
     ui.find.find_incremental,
-    textadept.menu.menubar[_L['_Tools']][_L['Select Co_mmand']][2],
+    m_tools[_L['Select Co_mmand']][2],
+    m_tools[_L['_Macros']][_L['Start/Stop _Recording']][2]
   }
 end)
 
@@ -47,24 +49,18 @@ local event_recorders = {
 }
 
 ---
--- Begins recording a macro.
--- @name start_recording
-function M.start_recording()
-  if recording then return end
-  macro = {}
-  for event, f in pairs(event_recorders) do events.connect(event, f, 1) end
-  recording = true
-  ui.statusbar_text = _L['Macro recording']
-end
-
----
--- Stops recording a macro.
--- @name stop_recording
-function M.stop_recording()
-  if not recording then return end
-  for event, f in pairs(event_recorders) do events.disconnect(event, f) end
-  recording = false
-  ui.statusbar_text = _L['Macro stopped recording']
+-- Toggles between starting and stopping macro recording.
+-- @name record
+function M.record()
+  if not recording then
+    macro = {}
+    for event, f in pairs(event_recorders) do events.connect(event, f, 1) end
+    ui.statusbar_text = _L['Macro recording']
+  else
+    for event, f in pairs(event_recorders) do events.disconnect(event, f) end
+    ui.statusbar_text = _L['Macro stopped recording']
+  end
+  recording = not recording
 end
 
 ---
