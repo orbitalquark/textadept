@@ -216,9 +216,7 @@ local default_menubar = {
     },
     {
       title = _L['_Macros'],
-      {_L['_Start Recording'], textadept.macros.start_recording},
-      {_L['Sto_p Recording'], textadept.macros.stop_recording},
-      SEPARATOR,
+      {_L['Start/Stop _Recording'], textadept.macros.record},
       {_L['_Play'], textadept.macros.play},
       SEPARATOR,
       {_L['Sa_ve...'], textadept.macros.save},
