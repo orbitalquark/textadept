@@ -300,14 +300,14 @@ events_connect(events.SAVE_POINT_LEFT, set_title)
 events_connect(events.URI_DROPPED, function(utf8_uris)
   for utf8_uri in utf8_uris:gmatch('[^\r\n]+') do
     if utf8_uri:find('^file://') then
-      local uri = utf8_uri:iconv(_CHARSET, 'UTF-8')
-      uri = uri:match('^file://([^\r\n]+)'):gsub('%%(%x%x)', function(hex)
+      local path = utf8_uri:match('^file://([^\r\n]+)')
+      path = path:gsub('%%(%x%x)', function(hex)
         return string.char(tonumber(hex, 16))
-      end)
+      end):iconv(_CHARSET, 'UTF-8')
       -- In WIN32, ignore a leading '/', but not '//' (network path).
-      if WIN32 and not uri:match('^//') then uri = uri:sub(2, -1) end
-      local mode = lfs.attributes(uri, 'mode')
-      if mode and mode ~= 'directory' then io.open_file(uri) end
+      if WIN32 and not path:match('^//') then path = path:sub(2, -1) end
+      local mode = lfs.attributes(path, 'mode')
+      if mode and mode ~= 'directory' then io.open_file(path) end
     end
   end
   ui.goto_view(view) -- work around any view focus synchronization issues
