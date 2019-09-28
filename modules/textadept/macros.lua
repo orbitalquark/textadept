@@ -33,6 +33,7 @@ local event_recorders = {
     local key = code < 256 and string.char(code) or keys.KEYSYMS[code]
     if key then
       -- Note: this is a simplified version of key handling.
+      shift = shift and (code >= 256 or code == 9)
       local key_seq = (control and 'c' or '')..(alt and 'a' or '')..
                       (meta and OSX and 'm' or '')..(shift and 's' or '')..key
       for i = 1, #ignore do if keys[key_seq] == ignore[i] then return end end
