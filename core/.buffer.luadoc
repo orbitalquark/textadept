@@ -3216,6 +3216,7 @@ function set_theme(buffer, name, props) end
 --   * sub_style_bases
 --   * sub_styles_length
 --   * sub_styles_start
+--   * tab_minimum_width
 --   * technology
 --   * two_phase_draw
 --   * undo_collection
