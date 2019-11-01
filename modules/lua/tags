@@ -938,6 +938,7 @@ read	_	0;"	f	class:io
 read	_	0;"	f	class:spawn_proc
 read_only	_	0;"	F	class:buffer
 recent_files	_	0;"	t	class:io
+record	_	0;"	f	class:textadept.macros
 rectangular_selection_anchor	_	0;"	F	class:buffer
 rectangular_selection_anchor_virtual_space	_	0;"	F	class:buffer
 rectangular_selection_caret	_	0;"	F	class:buffer
@@ -1084,7 +1085,6 @@ split	_	0;"	f	class:view
 sqrt	_	0;"	f	class:math
 standard_dropdown	_	0;"	f	class:ui.dialogs
 standard_inputbox	_	0;"	f	class:ui.dialogs
-start_recording	_	0;"	f	class:textadept.macros
 start_styling	_	0;"	f	class:buffer
 starts_line	_	0;"	f	class:lexer
 status	_	0;"	f	class:coroutine
@@ -1094,7 +1094,6 @@ stderr	_	0;"	F	class:io
 stdin	_	0;"	F	class:io
 stdout	_	0;"	F	class:io
 stop	_	0;"	f	class:textadept.run
-stop_recording	_	0;"	f	class:textadept.macros
 string	_	0;"	m	
 strip_trailing_spaces	_	0;"	F	class:textadept.editing
 stuttered_page_down	_	0;"	f	class:buffer
