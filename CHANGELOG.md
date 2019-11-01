@@ -9,6 +9,62 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.7 (01 Nov 2019)
+
+Download:
+
+* [Textadept 10.7 -- Win32][] | [PGP -- 10.7 Win32][]
+* [Textadept 10.7 -- Mac OSX 10.6+][] | [PGP -- 10.7 OSX][]
+* [Textadept 10.7 -- Linux][] | [PGP -- 10.7 Linux][]
+* [Textadept 10.7 -- Linux x86_64][] | [PGP -- 10.7 Linux x86_64][]
+* [Textadept 10.7 -- Modules][] | [PGP -- 10.7 Modules][]
+
+Bugfixes:
+
+* Fixed scroll issues when toggling line wrap.
+* Properly handle absolute paths in run/compile/build output and also
+  case-insensitivity on Windows.
+* Restore virtual space state when switching between buffers.
+* Restore rectangular selection state when switching between buffers.
+* Fixed opening of non-UTF-8-encoded filenames dropped into a view.
+* Fixed macro toggling with some key combinations.
+* Ensure `events.BUFFER_AFTER_SWITCH` is emitted properly during `buffer.new()`.
+* Prevent double-counting fold points on a single line.
+
+Changes:
+
+* Refactored "Replace All" to be more performant.
+* Added back [`textadept.editing.paste_reindent()`][] as a separate
+  menu/key/command from `buffer.paste()`.
+* Enabled all theme colors by default, and changed line number color in the
+  terminal version.
+* Replaced `ui.command_entry.enter_mode()` and `ui.command_entry.finish_mode()`
+  with simplified [`ui.command_entry.run()`][].
+* Added [`ui.find.find_incremental_keys`][] table of key bindings during "Find
+  Incremental" searches.
+* Replaced `textadept.macros.start_recording()` and
+  `textadept.macros.stop_recording()` with [`textadept.macros.record()`][].
+* Updated C, Rust, Prolog, and Logtalk lexers.
+* Added MediaWiki lexer.
+* Scintilla: Updated case conversion and character categories to Unicode 12.1.
+* Updated to [Scintilla][] 3.11.1.
+
+[Textadept 10.7 -- Win32]: download/textadept_10.7.win32.zip
+[Textadept 10.7 -- Mac OSX 10.6+]: download/textadept_10.7.osx.zip
+[Textadept 10.7 -- Linux]: download/textadept_10.7.i386.tgz
+[Textadept 10.7 -- Linux x86_64]: download/textadept_10.7.x86_64.tgz
+[Textadept 10.7 -- Modules]: download/textadept_10.7.modules.zip
+[PGP -- 10.7 Win32]: download/textadept_10.7.win32.zip.asc
+[PGP -- 10.7 OSX]: download/textadept_10.7.osx.zip.asc
+[PGP -- 10.7 Linux]: download/textadept_10.7.i386.tgz.asc
+[PGP -- 10.7 Linux x86_64]: download/textadept_10.7.x86_64.tgz.asc
+[PGP -- 10.7 Modules]: download/textadept_10.7.modules.zip.asc
+[Scintilla]: http://scintilla.org
+[`textadept.editing.paste_reindent()`]: api.html#textadept.editing.paste_reindent
+[`ui.command_entry.run()`]: api.html#ui.command_entry.run
+[`ui.find.find_incremental_keys`]: api.html#ui.find.find_incremental_keys
+[`textadept.macros.record()`]: api.html#textadept.macros.record
+
 ## 10.6 (01 Sep 2019)
 
 Download:
@@ -176,7 +232,7 @@ Bugfixes:
 * Fixed some instances of snippet next/prev not working correctly.
 * Fixed Alt+Gr key handling in the Windows terminal version.
 * Only pass command entry text to function passed to
-  [`ui.command_entry.finish_mode()`][].
+  `ui.command_entry.finish_mode()`.
 * Fixed handling of escaped double-quotes in [`os.spawn()`][] in the terminal
   version.
 * Ensure long filenames are visible in the reload dialog prompt in the terminal
@@ -202,7 +258,6 @@ Changes:
 [PGP -- 10.3 beta Linux]: download/textadept_10.3_beta.i386.tgz.asc
 [PGP -- 10.3 beta Linux x86_64]: download/textadept_10.3_beta.x86_64.tgz.asc
 [PGP -- 10.3 beta Modules]: download/textadept_10.3_beta.modules.zip.asc
-[`ui.command_entry.finish_mode()`]: api.html#ui.command_entry.finish_mode
 [`os.spawn()`]: api.html#os.spawn
 [`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
 [`textadept.editing.highlight_word()`]: api.html#textadept.editing.highlight_word
@@ -1770,7 +1825,7 @@ Changes:
 * Replaced the command entry text field with a Scintilla buffer and added
   [`ui.command_entry.editing_keys`][] for changing the editing keys in all
   modes.
-* Added lexer and height parameters to [`ui.command_entry.enter_mode()`][].
+* Added lexer and height parameters to `ui.command_entry.enter_mode()`.
 * Support bracketed paste in the terminal version.
 * Allow handling of unknown [CSI events][].
 * Added mouse support for buffers and eliminated many
@@ -1800,7 +1855,6 @@ Changes:
 [PGP -- 7.8 beta Modules]: download/textadept_7.8_beta.modules.zip.asc
 [`ui.dialog()`]: api.html#ui.dialog
 [`ui.command_entry.editing_keys`]: api.html#ui.command_entry.editing_keys
-[`ui.command_entry.enter_mode()`]: api.html#ui.command_entry.enter_mode
 [CSI events]: api.html#events.CSI
 [curses incompatibilities]: manual.html#Curses.Compatibility
 [`_G.LINUX`]: api.html#LINUX
