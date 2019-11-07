@@ -278,7 +278,7 @@ events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
 -- Switches between buffers when a tab is clicked.
 events_connect(events.TAB_CLICKED,
-               function(index) view:goto_buffer(_BUFFERS[index]) end)
+               function(button, index) view:goto_buffer(_BUFFERS[index]) end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
 local function set_title()

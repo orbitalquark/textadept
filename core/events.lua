@@ -243,9 +243,17 @@ local M = {}
 --   Emitted when the user clicks on a buffer tab.
 --   When connecting to this event, connect with an index of 1 if the handler
 --   needs to run before Textadept switches between buffers.
+--   Note that Textadept always displays a context menu on right-click.
 --   Arguments:
 --
+--   * _`button`_: The mouse button number that was clicked, either `1` (left
+--     button), `2` (middle button), `3` (right button), `4` (wheel up), or `5`
+--    (wheel down).
 --   * _`index`_: The numeric index of the clicked tab.
+--   * _`shift`_: The "Shift" modifier key is held down.
+--   * _`ctrl`_: The "Control" modifier key is held down.
+--   * _`alt`_: The "Alt"/"Option" modifier key is held down.
+--   * _`meta`_: The "Command" modifier key on Mac OSX is held down.
 -- @field UPDATE_UI (string)
 --   Emitted after the view is visually updated.
 --   Arguments:
