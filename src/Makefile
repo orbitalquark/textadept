@@ -400,9 +400,9 @@ lua/src/lib/lpeg: | $(lpeg_tgz)
 	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
 lua/src/lib/lfs: | $(lfs_zip)
 	if [ -d $@ ]; then rm -r $@; fi
-	mkdir -p $@ && unzip -d $@ $| && mv $@/*/src/*.c $@/*/src/*.h $(dir $@)
+	mkdir -p $@ && unzip -d $(dir $@) -j $| "*/src/*.c" "*/src/*.h"
 $(gtdialog_zip): ; $(WGET) $(gtdialog_url)
-gtdialog: | $(gtdialog_zip) ; mkdir $@ && unzip -d $@ $| && mv $@/*/* $@
+gtdialog: | $(gtdialog_zip) ; unzip -d $@ -j $|
 $(cdk_tgz): ; $(WGET) http://invisible-mirror.net/archives/cdk/$@
 cdk: cdk.patch | $(cdk_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
@@ -428,9 +428,7 @@ win32curses: | $(win32curses_zip) $(pdcurses_zip)
 $(gtkosx_tgz): ; $(WGET) http://foicica.com/textadept/download/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(bombay_zip): ; $(WGET) http://foicica.com/hg/bombay/archive/tip.zip
-../doc/bombay: | $(bombay_zip)
-	mkdir $(notdir $@) && unzip -d $(notdir $@) $| && \
-		mv $(notdir $@)/*/* $(dir $@)
+../doc/bombay: | $(bombay_zip) ; unzip -d $(dir $@) -j $|
 $(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
 sign-deps: | $(scintilla_tgz) $(lua_tgz) $(lpeg_tgz) $(lfs_zip) \
              $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) $(win32gtk_zip) \
