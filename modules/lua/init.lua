@@ -76,6 +76,27 @@ textadept.editing.api_files.lua = {
   _HOME..'/modules/lua/api', _USERHOME..'/modules/lua/api'
 }
 
+-- For Lua buffers, enable or disable Textadept API autocompletion and
+-- documentation depending on `buffer.filename`.
+local function update_textadept_tags_api()
+  if buffer:get_lexer() ~= 'lua' then return end
+  local tags, api = M.tags, textadept.editing.api_files.lua
+  if (buffer.filename or ''):find('^'.._HOME:gsub('%p', '%%%0')) or
+     (buffer.filename or ''):find('^'.._USERHOME:gsub('%p', '%%%0')) then
+    if not tags[_HOME] then
+      tags[#tags + 1] = _HOME..'/modules/lua/ta_tags'
+      api[#api + 1] = _HOME..'/modules/lua/ta_api'
+      tags[_HOME], api[_HOME] = #tags, #api
+    end
+  elseif tags[_HOME] then
+    table.remove(tags, tags[_HOME])
+    table.remove(api, api[_HOME])
+    tags[_HOME], api[_HOME] = nil, nil
+  end
+end
+events.connect(events.LEXER_LOADED, update_textadept_tags_api)
+events.connect(events.VIEW_AFTER_SWITCH, update_textadept_tags_api)
+
 -- Commands.
 
 ---

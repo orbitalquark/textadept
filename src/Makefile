@@ -264,11 +264,13 @@ manual: ../*.md ../doc/manual.md | ../doc/bombay
 		../doc/manual.html
 	sed -i -e "s/Textadept Manual/Textadept $(subst _, ,$(version)) Manual/;" \
 		../doc/manual.html
-luadoc: ../modules ../core ../lexers
+luadoc: ../modules ../core ../lexers | ../modules/lua/lua.luadoc
 	cd ../doc && luadoc -d . -t . --doclet markdowndoc $^/lexer.lua
 	sed -i -e "s/Textadept API/Textadept $(subst _, ,$(version)) API/;" \
 		../doc/api.html
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $^/lexer.lua
+	cd ../modules/lua && mv tags ta_tags && mv api ta_api
+	cd ../modules && luadoc -d lua --doclet lua/tadoc $|
 
 # Releases.
 
