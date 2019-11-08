@@ -215,10 +215,6 @@ events.connect(events.INITIALIZED, function()
   end
 end)
 
--- TODO: deprecated; remove after next release.
-M.enter_mode = function() ui.dialogs.ok_msgbox{text='ui.command_entry.enter_mode() is deprecated and will be removed.',informative_text='Please use ui.command_entry.run()',no_cancel=true} end
-M.finish_mode = function() ui.dialogs.ok_msgbox{text='ui.command_entry.finish_mode() is deprecated and will be removed.',informative_text='Please use ui.command_entry.run()',no_cancel=true} end
-
 --[[ The function below is a Lua C function.
 
 ---
