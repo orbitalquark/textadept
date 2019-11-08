@@ -134,7 +134,7 @@ function M.start(doc)
 
   -- Convert module functions in the Lua luadoc into LuaDoc modules.
   local lua_luadoc = files['../modules/lua/lua.luadoc']
-  if lua_luadoc then
+  if lua_luadoc and #files == 1 then
     for i = 1, #lua_luadoc.functions do
       local f = lua_luadoc.functions[lua_luadoc.functions[i]]
       local module_name = f.name:match('^([^%.:]+)[%.:]') or '_G'
