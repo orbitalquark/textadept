@@ -113,6 +113,7 @@ M.autocompleters = {}
 
 ---
 -- Map of lexer names to API documentation file tables.
+-- File tables contain API file paths or functions that return such paths.
 -- Each line in an API file consists of a symbol name (not a fully qualified
 -- symbol name), a space character, and that symbol's documentation. "\n"
 -- represents a newline character.
@@ -697,8 +698,10 @@ function M.show_documentation(pos, case_insensitive)
       end)
     end
     for i = 1, #M.api_files[lang] do
-      if lfs.attributes(M.api_files[lang][i]) then
-        for line in io.lines(M.api_files[lang][i]) do
+      local file = M.api_files[lang][i]
+      if type(file) == 'function' then file = file() end
+      if file and lfs.attributes(file) then
+        for line in io.lines(file) do
           if line:find(symbol_patt) then
             api_docs[#api_docs + 1] = line:match(symbol_patt..'%s+(.+)$')
           end
