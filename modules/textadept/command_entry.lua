@@ -203,21 +203,12 @@ events.connect(events.INITIALIZED, function()
   for key, f in pairs(keys) do
     if f == textadept.editing.show_documentation then
       lua_mode_keys[key] = function()
-        -- Enable Textadept API documentation unless the Lua module already
-        -- enabled it.
-        local api_files = textadept.editing.api_files
-        if not api_files.lua[_HOME] then
-          api_files.lua[#api_files.lua + 1] = _HOME..'/modules/lua/ta_api'
-        end
         -- Temporarily change _G.buffer since ui.command_entry is the "active"
         -- buffer.
         local orig_buffer = _G.buffer
         _G.buffer = ui.command_entry
         textadept.editing.show_documentation()
         _G.buffer = orig_buffer
-        -- Disable Textadept API documentation unless the Lua module previously
-        -- enabled it.
-        if not api_files.lua[_HOME] then api_files.lua[#api_files.lua] = nil end
       end
       break
     end

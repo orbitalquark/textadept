@@ -10,15 +10,33 @@ module('_M.lua')]]
 
 -- Autocompletion and documentation.
 
+-- Returns a function that, when called from a Textadept Lua file or the Lua
+-- command entry, returns the given Textadept tags or API file for use in
+-- autocompletion and documentation.
+-- @param filename Textadept tags or api file to return.
+local function ta_api(filename)
+  return function()
+    if (buffer.filename or ''):find('^'.._HOME:gsub('%p', '%%%0')) or
+       (buffer.filename or ''):find('^'.._USERHOME:gsub('%p', '%%%0')) or
+       buffer == ui.command_entry then
+      return filename
+    end
+  end
+end
+
 ---
--- List of "fake" ctags files to use for autocompletion.
+-- List of "fake" ctags files (or functions that return such files) to use for
+-- autocompletion.
 -- The kind 'm' is recognized as a module, 'f' as a function, 't' as a table and
 -- 'F' as a module or table field.
 -- The *modules/lua/tadoc.lua* script can generate *tags* and
 -- [*api*](#textadept.editing.api_files) files for Lua modules via LuaDoc.
 -- @class table
 -- @name tags
-M.tags = {_HOME..'/modules/lua/tags', _USERHOME..'/modules/lua/tags'}
+M.tags = {
+  _HOME..'/modules/lua/tags', _USERHOME..'/modules/lua/tags',
+  ta_api(_HOME..'/modules/lua/ta_tags')
+}
 
 ---
 -- Map of expression patterns to their types.
@@ -54,8 +72,10 @@ textadept.editing.autocompleters.lua = function()
   local name_patt = '^'..part
   local sep = string.char(buffer.auto_c_type_separator)
   for i = 1, #M.tags do
-    if lfs.attributes(M.tags[i]) then
-      for tag_line in io.lines(M.tags[i]) do
+    local file = M.tags[i]
+    if type(file) == 'function' then file = file() end
+    if file and lfs.attributes(file) then
+      for tag_line in io.lines(file) do
         local name = tag_line:match('^%S+')
         if name:find(name_patt) and not list[name] then
           local fields = tag_line:match(';"\t(.*)$')
@@ -73,29 +93,9 @@ textadept.editing.autocompleters.lua = function()
 end
 
 textadept.editing.api_files.lua = {
-  _HOME..'/modules/lua/api', _USERHOME..'/modules/lua/api'
+  _HOME..'/modules/lua/api', _USERHOME..'/modules/lua/api',
+  ta_api(_HOME..'/modules/lua/ta_api')
 }
-
--- For Lua buffers, enable or disable Textadept API autocompletion and
--- documentation depending on `buffer.filename`.
-local function update_textadept_tags_api()
-  if buffer:get_lexer() ~= 'lua' then return end
-  local tags, api = M.tags, textadept.editing.api_files.lua
-  if (buffer.filename or ''):find('^'.._HOME:gsub('%p', '%%%0')) or
-     (buffer.filename or ''):find('^'.._USERHOME:gsub('%p', '%%%0')) then
-    if not tags[_HOME] then
-      tags[#tags + 1] = _HOME..'/modules/lua/ta_tags'
-      api[#api + 1] = _HOME..'/modules/lua/ta_api'
-      tags[_HOME], api[_HOME] = #tags, #api
-    end
-  elseif tags[_HOME] then
-    table.remove(tags, tags[_HOME])
-    table.remove(api, api[_HOME])
-    tags[_HOME], api[_HOME] = nil, nil
-  end
-end
-events.connect(events.LEXER_LOADED, update_textadept_tags_api)
-events.connect(events.VIEW_AFTER_SWITCH, update_textadept_tags_api)
 
 -- Commands.
 
