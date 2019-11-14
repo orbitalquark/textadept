@@ -1227,7 +1227,7 @@ static int t_tabbuttonpress(GtkWidget *label, GdkEventButton *event, void*__) {
   for (int i = 0; i < gtk_notebook_get_n_pages(tabs); i++) {
     GtkWidget *page = gtk_notebook_get_nth_page(tabs, i);
     if (label != gtk_notebook_get_tab_label(tabs, page)) continue;
-    lL_event(lua, "tab_clicked", LUA_TNUMBER, event->button, LUA_TNUMBER, i + 1,
+    lL_event(lua, "tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button,
              event_mod(SHIFT), event_mod(CONTROL), event_mod(MOD1),
              event_mod(META), -1);
     if (event->button == 3) lL_showcontextmenu(lua, event, "tab_context_menu");
@@ -1855,7 +1855,7 @@ static void w_quit_osx(GtkosxApplication*_, void*__) {
  */
 static void t_tabchange(GtkNotebook*_, GtkWidget*__, int page_num, void*___) {
   if (tab_sync) return;
-  lL_event(lua, "tab_clicked", LUA_TNUMBER, 1, LUA_TNUMBER, page_num + 1, -1);
+  lL_event(lua, "tab_clicked", LUA_TNUMBER, page_num + 1, LUA_TNUMBER, 1, -1);
 }
 #endif // if GTK
 
