@@ -386,7 +386,7 @@ local scnotifications = {
   [c.SCN_CALLTIPCLICK] = {'call_tip_click', 'position'},
   [c.SCN_AUTOCSELECTION] = {'auto_c_selection', 'text', 'position'},
   [c.SCN_AUTOCSELECTIONCHANGE] = {
-    'auto_c_selection_change', 'id', 'text', 'position'
+    'auto_c_selection_change', 'wParam', 'text', 'position'
   },
   [c.SCN_AUTOCCANCELLED] = {'auto_c_cancelled'},
   [c.SCN_AUTOCCHARDELETED] = {'auto_c_char_deleted'},
