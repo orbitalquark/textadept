@@ -362,7 +362,7 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
   buffer.search_flags = get_flags()
   buffer:set_target_range(not replace_in_sel and 0 or s, buffer.length)
   while buffer:search_in_target(ftext) ~= -1 and (not replace_in_sel or
-        buffer.target_end < buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
+        buffer.target_end <= buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
     if buffer.target_start == buffer.target_end then break end -- prevent loops
     buffer_replace_target(buffer, rtext)
     count = count + 1
