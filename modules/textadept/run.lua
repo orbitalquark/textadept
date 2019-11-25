@@ -107,25 +107,46 @@ local function scan_for_error(message, ext_or_lexer)
   return nil
 end
 
--- Prints the output from a compile, run, or build shell command.
+-- Prints an output line from a compile, run, or build shell command.
 -- Assume output is UTF-8 unless there's a recognized warning or error message.
 -- In that case assume it is encoded in _CHARSET and mark it.
 -- All stdout and stderr from the command is printed silently.
--- @param output The output to print.
+-- @param line The output line to print.
 -- @param ext_or_lexer Optional file extension or lexer name associated with the
 --   executed command. This is used for better error detection in compile and
 --   run commands.
-local function print_output(output, ext_or_lexer)
-  local error = scan_for_error(output, ext_or_lexer)
+local function print_line(line, ext_or_lexer)
+  local error = scan_for_error(line, ext_or_lexer)
   ui.silent_print = (M.run_in_background or ext_or_lexer or
-                     not output:find('^> ') or output:find('^> exit')) and true
-  ui.print(not error and output or output:iconv('UTF-8', _CHARSET))
+                     not line:find('^> ') or line:find('^> exit')) and true
+  ui.print(not error and line or line:iconv('UTF-8', _CHARSET))
   ui.silent_print = false
   if error then
     -- Current position is one line below the error due to ui.print()'s '\n'.
     buffer:marker_add(buffer.line_count - 2,
                       error.warning and M.MARK_WARNING or M.MARK_ERROR)
   end
+end
+
+local output_buffer
+-- Prints the output from a compile, run, or build shell command as a series of
+-- lines, performing buffering as needed.
+-- @param output The output to print, or `nil` to flush any buffered output.
+-- @param ext_or_lexer Optional file extension or lexer name associated with the
+--   executed command. This is used for better error detection in compile and
+--   run commands.
+local function print_output(output, ext_or_lexer)
+  if not output then
+    if output_buffer then print_line(output_buffer, ext_or_lexer) end
+    return
+  end
+  if output_buffer then output = output_buffer..output end
+  local remainder = 1
+  for line, e in output:gmatch('([^\r\n]*)\r?\n()') do
+    print_line(line, ext_or_lexer)
+    remainder = e
+  end
+  output_buffer = remainder <= #output and string.sub(output, remainder)
 end
 
 -- Compiles or runs file *filename* based on a shell command in *commands*.
@@ -158,17 +179,14 @@ local function compile_or_run(filename, commands)
   local event = commands == M.compile_commands and events.COMPILE_OUTPUT or
                 events.RUN_OUTPUT
   local ext_or_lexer = commands[ext] and ext or lexer
-  local function emit(output)
-    for line in output:gmatch('[^\r\n]+') do
-      events.emit(event, line, ext_or_lexer)
-    end
-  end
+  local function emit(output) events.emit(event, output, ext_or_lexer) end
   -- Run the command.
   cwd = working_dir or dirname
-  if cwd ~= dirname then events.emit(event, '> cd '..cwd) end
-  events.emit(event, '> '..command:iconv('UTF-8', _CHARSET))
+  if cwd ~= dirname then events.emit(event, '> cd '..cwd..'\n') end
+  events.emit(event, '> '..command:iconv('UTF-8', _CHARSET)..'\n')
   proc = assert(os.spawn(command, cwd, emit, emit, function(status)
-    events.emit(event, '> exit status: '..status)
+    emit() -- flush
+    events.emit(event, '> exit status: '..status..'\n')
   end))
 end
 
@@ -283,17 +301,14 @@ function M.build(root_directory)
   if not command then return end
   -- Prepare to run the command.
   preferred_view = view
-  local function emit(output)
-    for line in output:gmatch('[^\r\n]+') do
-      events.emit(events.BUILD_OUTPUT, line)
-    end
-  end
+  local function emit(output) events.emit(events.BUILD_OUTPUT, output) end
   -- Run the command.
   cwd = working_dir or root_directory
-  events.emit(events.BUILD_OUTPUT, '> cd '..cwd)
-  events.emit(events.BUILD_OUTPUT, '> '..command:iconv('UTF-8', _CHARSET))
+  events.emit(events.BUILD_OUTPUT, '> cd '..cwd..'\n')
+  events.emit(events.BUILD_OUTPUT, '> '..command:iconv('UTF-8', _CHARSET)..'\n')
   proc = assert(os.spawn(command, cwd, emit, emit, function(status)
-    events.emit(events.BUILD_OUTPUT, '> exit status: '..status)
+    emit() -- flush
+    events.emit(events.BUILD_OUTPUT, '> exit status: '..status..'\n')
   end))
 end
 events.connect(events.BUILD_OUTPUT, print_output)
