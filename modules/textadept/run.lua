@@ -136,17 +136,18 @@ local output_buffer
 --   executed command. This is used for better error detection in compile and
 --   run commands.
 local function print_output(output, ext_or_lexer)
-  if not output then
-    if output_buffer then print_line(output_buffer, ext_or_lexer) end
-    return
+  if output then
+    if output_buffer then output = output_buffer..output end
+    local remainder = 1
+    for line, e in output:gmatch('([^\r\n]*)\r?\n()') do
+      print_line(line, ext_or_lexer)
+      remainder = e
+    end
+    output_buffer = remainder <= #output and string.sub(output, remainder)
+  elseif output_buffer then
+    print_line(output_buffer, ext_or_lexer)
+    output_buffer = nil
   end
-  if output_buffer then output = output_buffer..output end
-  local remainder = 1
-  for line, e in output:gmatch('([^\r\n]*)\r?\n()') do
-    print_line(line, ext_or_lexer)
-    remainder = e
-  end
-  output_buffer = remainder <= #output and string.sub(output, remainder)
 end
 
 -- Compiles or runs file *filename* based on a shell command in *commands*.
