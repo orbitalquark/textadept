@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2019 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 local constants, functions, properties = {}, {}, {}
 local const_patt = '^val ([%w_]+)=([-%dx%x]+)'
@@ -96,7 +96,7 @@ table.sort(properties)
 
 local f = io.open('../core/iface.lua', 'wb')
 f:write([=[
--- Copyright 2007-2019 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 local M = {}
 

@@ -1,7 +1,7 @@
--- Copyright 2007-2019 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 _RELEASE = "Textadept 10.8"
-_COPYRIGHT = 'Copyright © 2007-2019 Mitchell. See LICENSE.\n'..
+_COPYRIGHT = 'Copyright © 2007-2020 Mitchell. See LICENSE.\n'..
              'http://foicica.com/textadept'
 
 package.path = _HOME..'/core/?.lua;'..package.path
