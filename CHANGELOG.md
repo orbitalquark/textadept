@@ -9,6 +9,51 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 10.8 (01 Jan 2020)
+
+Download:
+
+* [Textadept 10.8 -- Win32][] | [PGP -- 10.8 Win32][]
+* [Textadept 10.8 -- Mac OSX 10.6+][] | [PGP -- 10.8 OSX][]
+* [Textadept 10.8 -- Linux][] | [PGP -- 10.8 Linux][]
+* [Textadept 10.8 -- Linux x86_64][] | [PGP -- 10.8 Linux x86_64][]
+* [Textadept 10.8 -- Modules][] | [PGP -- 10.8 Modules][]
+
+Bugfixes:
+
+* Fixed incorrect event arguments for `events.AUTO_C_SELECTION_CHANGE`.
+* Fixed bug in "Replace All in selection" with match at the end of a selection.
+* Fixed long line output for run, compile, and build commands.
+
+Changes:
+
+* Changed [`events.TAB_CLICKED`][] to emit button clicked as well as modifier
+  keys.
+* Autocompletion and documentation for Textadept's Lua API only happens in
+  Textadept files now (i.e. files in `_HOME` and `_USERHOME`).
+* [`textadept.editing.api_files`][] and [`_M.lua.tags`][] can contain functions
+  that return file paths.
+* Added support for txt2tags.
+* Scintilla: Added access to virtual space at the start and end of multiple
+  selections.
+* Scintilla: The target can have virtual space.
+* Updated to [Scintilla][] 3.11.2.
+
+[Textadept 10.8 -- Win32]: download/textadept_10.8.win32.zip
+[Textadept 10.8 -- Mac OSX 10.6+]: download/textadept_10.8.osx.zip
+[Textadept 10.8 -- Linux]: download/textadept_10.8.i386.tgz
+[Textadept 10.8 -- Linux x86_64]: download/textadept_10.8.x86_64.tgz
+[Textadept 10.8 -- Modules]: download/textadept_10.8.modules.zip
+[PGP -- 10.8 Win32]: download/textadept_10.8.win32.zip.asc
+[PGP -- 10.8 OSX]: download/textadept_10.8.osx.zip.asc
+[PGP -- 10.8 Linux]: download/textadept_10.8.i386.tgz.asc
+[PGP -- 10.8 Linux x86_64]: download/textadept_10.8.x86_64.tgz.asc
+[PGP -- 10.8 Modules]: download/textadept_10.8.modules.zip.asc
+[`events.TAB_CLICKED`]: api.html#events.TAB_CLICKED
+[`textadept.editing.api_files`]: api.html#textadept.editing.api_files
+[`_M.lua.tags`]: api.html#_M.lua.tags
+[Scintilla]: http://scintilla.org
+
 ## 10.7 (01 Nov 2019)
 
 Download:
