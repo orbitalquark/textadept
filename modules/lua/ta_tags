@@ -869,7 +869,9 @@ selection_n_anchor_virtual_space	_	0;"	F	class:buffer
 selection_n_caret	_	0;"	F	class:buffer
 selection_n_caret_virtual_space	_	0;"	F	class:buffer
 selection_n_end	_	0;"	F	class:buffer
+selection_n_end_virtual_space	_	0;"	F	class:buffer
 selection_n_start	_	0;"	F	class:buffer
+selection_n_start_virtual_space	_	0;"	F	class:buffer
 selection_start	_	0;"	F	class:buffer
 selections	_	0;"	F	class:buffer
 session	_	0;"	m	class:textadept
@@ -949,8 +951,10 @@ tags	_	0;"	t	class:_M.lua
 tags	_	0;"	t	class:_M.python
 tags	_	0;"	t	class:_M.ruby
 target_end	_	0;"	F	class:buffer
+target_end_virtual_space	_	0;"	F	class:buffer
 target_from_selection	_	0;"	f	class:buffer
 target_start	_	0;"	F	class:buffer
+target_start_virtual_space	_	0;"	F	class:buffer
 target_text	_	0;"	F	class:buffer
 target_whole_document	_	0;"	f	class:buffer
 text_height	_	0;"	f	class:buffer

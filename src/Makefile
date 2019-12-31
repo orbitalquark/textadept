@@ -366,7 +366,7 @@ else
   gtdialog_url = http://foicica.com/hg/gtdialog/archive/tip.zip
 endif
 
-scintilla_zip = d14e1b1086de.zip
+scintilla_zip = 99fa62b828ee.zip
 lua_tgz = lua-5.3.5.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_7_0_2.zip
