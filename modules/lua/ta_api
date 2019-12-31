@@ -262,7 +262,7 @@ STYLE_TYPE lexer.STYLE_TYPE (string)\nThe style typically used for static types.
 STYLE_VARIABLE lexer.STYLE_VARIABLE (string)\nThe style typically used for variables.
 STYLE_WHITESPACE lexer.STYLE_WHITESPACE (string)\nThe style typically used for whitespace.
 SUSPEND events.SUSPEND (string)\nEmitted when suspending Textadept. If any handler returns `true`, Textadept\ndoes not suspend.\nThis event is only emitted by the terminal version.
-TAB_CLICKED events.TAB_CLICKED (string)\nEmitted when the user clicks on a buffer tab.\nWhen connecting to this event, connect with an index of 1 if the handler\nneeds to run before Textadept switches between buffers.\nNote that Textadept always displays a context menu on right-click.\nArguments:\n\n* _`button`_: The mouse button number that was clicked, either `1` (left\n  button), `2` (middle button), `3` (right button), `4` (wheel up), or `5`\n (wheel down).\n* _`index`_: The numeric index of the clicked tab.\n* _`shift`_: The "Shift" modifier key is held down.\n* _`ctrl`_: The "Control" modifier key is held down.\n* _`alt`_: The "Alt"/"Option" modifier key is held down.\n* _`meta`_: The "Command" modifier key on Mac OSX is held down.
+TAB_CLICKED events.TAB_CLICKED (string)\nEmitted when the user clicks on a buffer tab.\nWhen connecting to this event, connect with an index of 1 if the handler\nneeds to run before Textadept switches between buffers.\nNote that Textadept always displays a context menu on right-click.\nArguments:\n\n* _`index`_: The numeric index of the clicked tab.\n* _`button`_: The mouse button number that was clicked, either `1` (left\n  button), `2` (middle button), `3` (right button), `4` (wheel up), or `5`\n (wheel down).\n* _`shift`_: The "Shift" modifier key is held down.\n* _`ctrl`_: The "Control" modifier key is held down.\n* _`alt`_: The "Alt"/"Option" modifier key is held down.\n* _`meta`_: The "Command" modifier key on Mac OSX is held down.
 TIME_FOREVER buffer.TIME_FOREVER (number, Read-only)\n
 TYPE lexer.TYPE (string)\nThe token name for type tokens.
 TYPEDEF textadept.editing.XPM_IMAGES.TYPEDEF (table)\nThe image number for type definitions.
@@ -346,7 +346,7 @@ ansi_c _G.keys.ansi_c (table)\nTable of C-specific key bindings.\n\n+ `Shift+Ent
 ansi_c _G.snippets.ansi_c (table)\nTable of C-specific snippets.
 ansi_c _M.ansi_c (module)\nThe ansi_c module.\nIt provides utilities for editing C code.
 any lexer.any (pattern)\nA pattern that matches any single character.
-api_files textadept.editing.api_files (table)\nMap of lexer names to API documentation file tables.\nEach line in an API file consists of a symbol name (not a fully qualified\nsymbol name), a space character, and that symbol's documentation. "\\n"\nrepresents a newline character.\n@see show_documentation
+api_files textadept.editing.api_files (table)\nMap of lexer names to API documentation file tables.\nFile tables contain API file paths or functions that return such paths.\nEach line in an API file consists of a symbol name (not a fully qualified\nsymbol name), a space character, and that symbol's documentation. "\\n"\nrepresents a newline character.\n@see show_documentation
 append_text buffer.append_text(buffer, text)\nAppends string *text* to the end of the buffer without modifying any existing\nselections or scrolling the text into view.\n@param buffer A buffer.\n@param text The text to append.
 arg _G.arg (table)\nTable of command line parameters passed to Textadept.\n@see args
 args _G.args (module)\nProcesses command line arguments for Textadept.
@@ -937,7 +937,7 @@ tab_width buffer.tab_width (number)\nThe number of space characters represented 
 tabs ui.tabs (bool)\nWhether or not to display the tab bar when multiple buffers are open.\nThe default value is `true`.
 tag buffer.tag (table, Read-only)\nList of capture text for capture numbers from a regular expression search.
 tags _M.ansi_c.tags (table)\nList of ctags files to use for autocompletion in addition to the current\nproject's top-level *tags* file or the current directory's *tags* file.
-tags _M.lua.tags (table)\nList of "fake" ctags files to use for autocompletion.\nThe kind 'm' is recognized as a module, 'f' as a function, 't' as a table and\n'F' as a module or table field.\nThe *modules/lua/tadoc.lua* script can generate *tags* and\n*api* files for Lua modules via LuaDoc.
+tags _M.lua.tags (table)\nList of "fake" ctags files (or functions that return such files) to use for\nautocompletion.\nThe kind 'm' is recognized as a module, 'f' as a function, 't' as a table and\n'F' as a module or table field.\nThe *modules/lua/tadoc.lua* script can generate *tags* and\n*api* files for Lua modules via LuaDoc.
 tags _M.python.tags (table)\nList of ctags files to use for autocompletion.
 tags _M.ruby.tags (table)\nList of "fake" ctags files to use for autocompletion.\nIn addition to the normal ctags kinds for Ruby, the kind 'C' is recognized as\na constant and 'a' as an attribute.
 target_end buffer.target_end (number)\nThe position of the end of the target range.\nThis is also set by a successful `buffer.search_in_target()`.
