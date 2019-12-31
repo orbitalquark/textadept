@@ -743,6 +743,12 @@
 -- @field selection_n_start (table)
 --   Table of positions at the beginning of existing selections numbered from
 --   zero, the main selection.
+-- @field selection_n_end_virtual_space (number, Read-only)
+--   Table of positions at the end of virtual space selected in existing
+--   selections numbered from zero, the main selection.
+-- @field selection_n_start_virtual_space (number, Read-only)
+--   Table of positions at the beginning of virtual space selected in existing
+--   selections numbered from zero, the main selection.
 -- @field selection_start (number)
 --   The position of the beginning of the selected text.
 --   When set, becomes the anchor, but is not scrolled into view.
@@ -823,9 +829,19 @@
 -- @field target_end (number)
 --   The position of the end of the target range.
 --   This is also set by a successful [`buffer.search_in_target()`]().
+-- @field target_end_virtual_space (number)
+--   The position of the end of virtual space in the target range.
+--   This is set to `0` when [`buffer.target_start`]() or
+--   [`buffer.target_end`]() is set, or when [`buffer.set_target_range()`]() is
+--   called.
 -- @field target_start (number)
 --   The position of the beginning of the target range.
 --   This is also set by a successful [`buffer.search_in_target()`]().
+-- @field target_start_virtual_space (number)
+--   The position of the beginning of virtual space in the target range.
+--   This is set to `0` when [`buffer.target_start`]() or
+--   [`buffer.target_end`]() is set, or when [`buffer.set_target_range()`]() is
+--   called.
 -- @field target_text (string, Read-only)
 --   The text in the target range.
 -- @field text_length (number, Read-only)

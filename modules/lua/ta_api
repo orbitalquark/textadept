@@ -861,7 +861,9 @@ selection_n_anchor_virtual_space buffer.selection_n_anchor_virtual_space (table)
 selection_n_caret buffer.selection_n_caret (table)\nTable of positions at the end of existing selections numbered from zero,\nthe main selection.
 selection_n_caret_virtual_space buffer.selection_n_caret_virtual_space (table)\nTable of positions at the end of virtual space selected in existing\nselections numbered from zero, the main selection.
 selection_n_end buffer.selection_n_end (table)\nTable of positions at the end of existing selections numbered from zero,\nthe main selection.
+selection_n_end_virtual_space buffer.selection_n_end_virtual_space (number, Read-only)\nTable of positions at the end of virtual space selected in existing\nselections numbered from zero, the main selection.
 selection_n_start buffer.selection_n_start (table)\nTable of positions at the beginning of existing selections numbered from\nzero, the main selection.
+selection_n_start_virtual_space buffer.selection_n_start_virtual_space (number, Read-only)\nTable of positions at the beginning of virtual space selected in existing\nselections numbered from zero, the main selection.
 selection_start buffer.selection_start (number)\nThe position of the beginning of the selected text.\nWhen set, becomes the anchor, but is not scrolled into view.
 selections buffer.selections (number, Read-only)\nThe number of active selections. There is always at least one selection.
 session textadept.session (module)\nSession support for Textadept.
@@ -941,8 +943,10 @@ tags _M.lua.tags (table)\nList of "fake" ctags files (or functions that return s
 tags _M.python.tags (table)\nList of ctags files to use for autocompletion.
 tags _M.ruby.tags (table)\nList of "fake" ctags files to use for autocompletion.\nIn addition to the normal ctags kinds for Ruby, the kind 'C' is recognized as\na constant and 'a' as an attribute.
 target_end buffer.target_end (number)\nThe position of the end of the target range.\nThis is also set by a successful `buffer.search_in_target()`.
+target_end_virtual_space buffer.target_end_virtual_space (number)\nThe position of the end of virtual space in the target range.\nThis is set to `0` when `buffer.target_start` or\n`buffer.target_end` is set, or when `buffer.set_target_range()` is\ncalled.
 target_from_selection buffer.target_from_selection(buffer)\nDefines the target range's beginning and end positions as the beginning and\nend positions of the main selection, respectively.\n@param buffer A buffer.
 target_start buffer.target_start (number)\nThe position of the beginning of the target range.\nThis is also set by a successful `buffer.search_in_target()`.
+target_start_virtual_space buffer.target_start_virtual_space (number)\nThe position of the beginning of virtual space in the target range.\nThis is set to `0` when `buffer.target_start` or\n`buffer.target_end` is set, or when `buffer.set_target_range()` is\ncalled.
 target_text buffer.target_text (string, Read-only)\nThe text in the target range.
 target_whole_document buffer.target_whole_document(buffer)\nDefines the target range's beginning and end positions as the beginning and\nend positions of the document, respectively.\n@param buffer A buffer.
 text_height buffer.text_height(buffer, line)\nReturns the pixel height of line number *line*.\n@param buffer A buffer.\n@param line The line number in *buffer* to get the pixel height of.\n@return number
