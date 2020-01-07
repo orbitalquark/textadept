@@ -24,17 +24,14 @@ flaky.
 diff -r 6e368ee248e4 gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Oct 26 11:06:34 2018 -0400
 +++ b/gtk/ScintillaGTK.cxx	Sun Nov 25 00:20:58 2018 -0500
-@@ -821,11 +821,11 @@
+@@ -821,6 +821,11 @@
  		case SCI_GETDIRECTPOINTER:
  			return reinterpret_cast<sptr_t>(this);
  
--#ifdef SCI_LEXER
- 		case SCI_LOADLEXERLIBRARY:
--			LexerManager::GetInstance()->Load(ConstCharPtrFromSPtr(lParam));
++		case SCI_LOADLEXERLIBRARY:
 +			// Hijack this interface to programmatically set input method.
 +			gtk_im_multicontext_set_context_id(GTK_IM_MULTICONTEXT(im_context), ConstCharPtrFromSPtr(lParam));
- 			break;
--#endif
++			break;
 +
  		case SCI_TARGETASUTF8:
  			return TargetAsUTF8(CharPtrFromSPtr(lParam));
