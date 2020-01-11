@@ -354,7 +354,8 @@ function M.goto_line(line)
   buffer:ensure_visible_enforce_policy(line)
   buffer:goto_line(line)
 end
-args.register('-l', '--line', 1, function(line) M.goto_line(line - 1) end)
+args.register('-l', '--line', 1, function(line) M.goto_line(line - 1) end,
+              'Go to line')
 
 ---
 -- Transposes characters intelligently.
