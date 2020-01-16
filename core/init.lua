@@ -21,11 +21,11 @@ if CURSES and WIN32 then
   function os.spawn(argv, ...)
     local current_dir = lfs.currentdir()
     local i = 1
-    if type(select(i, ...)) == 'string' then
+    if type(select(i, ...) or nil) == 'string' then
       lfs.chdir(select(i, ...)) -- cwd
       i = i + 1
     end
-    if type(select(i, ...)) == 'table' then i = i + 1 end -- env (ignore)
+    if type(select(i, ...) or nil) == 'table' then i = i + 1 end -- env (ignore)
     local p = io.popen(argv..' 2>&1')
     if select(i, ...) then select(i, ...)(p:read('a')) end -- stdout_cb
     local status = select(3, p:close())
