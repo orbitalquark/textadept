@@ -2504,6 +2504,9 @@ int main(int argc, char **argv) {
   sigaction(SIGWINCH, &act, NULL);
 #else
   freopen("NUL", "w", stderr); // redirect stderr
+#if CURSES
+  freopen("NUL", "w", stdout); // redirect stdout
+#endif
 #endif
 
   Scintilla *view = focused_view;
@@ -2575,6 +2578,9 @@ int main(int argc, char **argv) {
     } else quit = FALSE;
     refresh_all();
     view = !command_entry_focused ? focused_view : command_entry;
+#if (_WIN32 && CURSES)
+    mouse_set(ALL_MOUSE_EVENTS); // _popen() and system() change console mode
+#endif
   }
   endwin();
   termkey_destroy(ta_tk);

@@ -374,8 +374,8 @@ gtdialog_zip = db67f8a489e8.zip
 cdk_tgz = cdk-5.0-20150928.tgz
 termkey_tgz = libtermkey-0.20.tar.gz
 win32gtk_zip = win32gtk-2.24.32.zip
-win32curses_zip = win32curses36.zip
-pdcurses_zip = pdcurs36.zip
+win32curses_zip = win32curses39.zip
+pdcurses_zip = PDCurses-3.9.zip
 gtkosx_tgz = gtkosx-2.24.31.tar.gz
 bombay_zip = bombay.zip
 cloc = cloc-1.60.pl
@@ -420,10 +420,11 @@ $(win32gtk_zip): ; $(WGET) http://foicica.com/textadept/download/$@
 win32gtk: | $(win32gtk_zip) ; unzip $|
 $(win32curses_zip): ; $(WGET) http://foicica.com/textadept/download/$@
 $(pdcurses_zip): ; $(WGET) http://prdownloads.sourceforge.net/pdcurses/$@
-win32curses: | $(win32curses_zip) $(pdcurses_zip)
+win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 	unzip $(win32curses_zip)
-	mkdir $@/src && unzip -d $@/src $(pdcurses_zip)
-	cp $@/lib/pdckbd.c $@/src/wincon
+	mkdir $@/src && unzip -d $@/src $(pdcurses_zip) && mv $@/src/*/* $@/src
+	cp $@/src/curses.h $@/include
+	patch -d $@/src -N -p1 < $<
 	cd $@/src/wincon && $(MAKE) CC="$(CROSS)$(CC) $(CFLAGS)" LIBEXE=$(CROSS)ar \
 		LINK="$(CROSS)$(CC) $(CFLAGS)" WIDE=Y UTF8=Y libs
 	cp $@/src/wincon/pdcurses.a $@/lib/
