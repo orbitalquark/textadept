@@ -578,6 +578,7 @@ end
 --   text through. May contain pipes.
 -- @name filter_through
 function M.filter_through(command)
+  assert(not (WIN32 and CURSES), 'not implemented in this environment')
   local s, e = buffer.selection_start, buffer.selection_end
   if s ~= e then
     -- Use the selected lines as input.
