@@ -175,7 +175,7 @@ events.connect(events.BUFFER_NEW, function()
 end)
 
 -- Updates the z-order list.
-events.connect(events.BUFFER_AFTER_SWITCH, function()
+local function update_zorder()
   local i = 1
   while i <= #buffers_zorder do
     if buffers_zorder[i] == buffer or not _BUFFERS[buffers_zorder[i]] then
@@ -185,7 +185,9 @@ events.connect(events.BUFFER_AFTER_SWITCH, function()
     end
   end
   table.insert(buffers_zorder, 1, buffer)
-end)
+end
+events.connect(events.BUFFER_AFTER_SWITCH, update_zorder)
+events.connect(events.VIEW_AFTER_SWITCH, update_zorder)
 
 -- Saves and restores buffer zorder data during a reset.
 events.connect(events.RESET_BEFORE,
