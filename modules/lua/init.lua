@@ -15,9 +15,11 @@ module('_M.lua')]]
 -- autocompletion and documentation.
 -- @param filename Textadept tags or api file to return.
 local function ta_api(filename)
+  local home = '^'.._HOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
+  local userhome = '^'.._USERHOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
   return function()
-    if (buffer.filename or ''):find('^'.._HOME:gsub('%p', '%%%0')) or
-       (buffer.filename or ''):find('^'.._USERHOME:gsub('%p', '%%%0')) or
+    local buffer_filename = buffer.filename or ''
+    if buffer_filename:find(home) or buffer_filename:find(userhome) or
        buffer == ui.command_entry then
       return filename
     end
