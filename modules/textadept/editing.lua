@@ -121,6 +121,10 @@ M.autocompleters = {}
 -- @name api_files
 -- @see show_documentation
 M.api_files = {}
+setmetatable(M.api_files, {__index = function(t, k)
+  t[k] = {}
+  return t[k]
+end})
 
 -- Matches characters specified in auto_pairs.
 events.connect(events.CHAR_ADDED, function(code)

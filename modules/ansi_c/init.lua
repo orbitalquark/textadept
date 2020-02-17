@@ -76,10 +76,10 @@ textadept.editing.autocompleters.ansi_c = function()
   return #part, list
 end
 
-textadept.editing.api_files.ansi_c = {
-  _HOME..'/modules/ansi_c/api', _HOME..'/modules/ansi_c/lua_api',
-  _USERHOME..'/modules/ansi_c/api'
-}
+local api_files = textadept.editing.api_files
+api_files.ansi_c[#api_files.ansi_c + 1] = _HOME..'/modules/ansi_c/api'
+api_files.ansi_c[#api_files.ansi_c + 1] = _HOME..'/modules/ansi_c/lua_api'
+api_files.ansi_c[#api_files.ansi_c + 1] = _USERHOME..'/modules/ansi_c/api'
 
 -- Commands.
 
