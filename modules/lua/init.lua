@@ -94,10 +94,10 @@ textadept.editing.autocompleters.lua = function()
   return #part, list
 end
 
-textadept.editing.api_files.lua = {
-  _HOME..'/modules/lua/api', _USERHOME..'/modules/lua/api',
-  ta_api(_HOME..'/modules/lua/ta_api')
-}
+local api_files = textadept.editing.api_files
+api_files.lua[#api_files.lua + 1] = _HOME..'/modules/lua/api'
+api_files.lua[#api_files.lua + 1] = _USERHOME..'/modules/lua/api'
+api_files.lua[#api_files.lua + 1] = ta_api(_HOME..'/modules/lua/ta_api')
 
 -- Commands.
 
