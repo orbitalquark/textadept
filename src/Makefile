@@ -444,17 +444,8 @@ clean-deps:
 	rm -rf scintilla ../lexers lua gtdialog cdk termkey win32gtk win32curses \
 		gtkosx $(notdir ../doc/bombay)
 
-# Count lines of code and generate ctags.
+# Count lines of code.
 
 sources = ../core ../modules/ansi_c ../modules/lua ../modules/textadept \
           textadept.c Makefile ../init.lua
 count: $(cloc) ; perl $< $(sources) --not-match-f=tadoc.lua
-ctags:
-	ctags -R --langdef=luax --langmap=luax:.lua --exclude="*doc*" \
-		--exclude=scintilla/cocoa --exclude=scintilla/lexers \
-		--exclude=scintilla/qt --exclude=scintilla/scripts \
-		--exclude=scintilla/test --exclude=scintilla/win32 \
-		--regex-luax="/^\s*function\s+[^[:space:]\.]*\.?([[:alnum:]_]+)\(/\1/f/" \
-		--regex-luax="/^\s*local\s+function\s+([[:alnum:]_]+)\(/\1/F/" \
-		--regex-luax="/^[^[:space:]\.]*\.?([[:alnum:]_]+)\s*=\s*[{]/\1/t/" \
-		$(sources) scintilla gtdialog/gtdialog.c
