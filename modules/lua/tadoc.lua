@@ -125,7 +125,8 @@ function M.start(doc)
   -- Add a module's fields to its LuaDoc.
   for i = 1, #files do
     local module_doc = filedocs[files[i]][1]
-    if module_doc and module_doc.class == 'module' then
+    if module_doc and module_doc.class == 'module' and
+       modules[module_doc.name] then
       modules[module_doc.name].fields = module_doc.field
     elseif module_doc then
       print('[WARN] '..files[i]..' has no module declaration')
@@ -235,7 +236,7 @@ function M.start(doc)
   local f = io.open(M.options.output_dir..'/tags', 'wb')
   f:write(table.concat(ctags, '\n'))
   f:close()
-  f = io.open(M.options.output_dir..'api', 'wb')
+  f = io.open(M.options.output_dir..'/api', 'wb')
   f:write(table.concat(apidoc, '\n'))
   f:close()
 
