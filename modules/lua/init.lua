@@ -6,6 +6,9 @@ local M = {}
 ---
 -- The lua module.
 -- It provides utilities for editing Lua code.
+-- @field autocomplete_snippets (boolean)
+--   Whether or not to include snippets in autocompletion lists.
+--   The default value is `false`.
 module('_M.lua')]]
 
 -- Autocompletion and documentation.
@@ -49,6 +52,8 @@ M.tags = {
 -- @usage _M.lua.expr_types['^spawn%b()%s*$'] = 'proc'
 M.expr_types = {['^[\'"]'] = 'string', ['^io%.p?open%s*%b()%s*$'] = 'file'}
 
+M.autocomplete_snippets = true
+
 local XPM = textadept.editing.XPM_IMAGES
 local xpms = {m = XPM.CLASS, f = XPM.METHOD, F = XPM.VARIABLE, t = XPM.TYPEDEF}
 
@@ -58,6 +63,10 @@ textadept.editing.autocompleters.lua = function()
   local line, pos = buffer:get_cur_line()
   local symbol, op, part = line:sub(1, pos):match('([%w_%.]-)([%.:]?)([%w_]*)$')
   if symbol == '' and part == '' then return nil end -- nothing to complete
+  if symbol == '' and M.autocomplete_snippets then
+    local _, snippets = textadept.editing.autocompleters.snippet()
+    for i = 1, #snippets do list[#list + 1] = snippets[i] end
+  end
   symbol, part = symbol:gsub('^_G%.?', ''), part ~= '_G' and part or ''
   -- Attempt to identify string type and file type symbols.
   local buffer = buffer

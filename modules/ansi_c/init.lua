@@ -6,6 +6,9 @@ local M = {}
 ---
 -- The ansi_c module.
 -- It provides utilities for editing C code.
+-- @field autocomplete_snippets (boolean)
+--   Whether or not to include snippets in autocompletion lists.
+--   The default value is `true`.
 module('_M.ansi_c')]]
 
 -- Autocompletion and documentation.
@@ -19,6 +22,8 @@ M.tags = {
   _HOME..'/modules/ansi_c/tags', _HOME..'/modules/ansi_c/lua_tags',
   _USERHOME..'/modules/ansi_c/tags'
 }
+
+M.autocomplete_snippets = true
 
 local XPM = textadept.editing.XPM_IMAGES
 local xpms = setmetatable({
@@ -36,7 +41,7 @@ textadept.editing.autocompleters.ansi_c = function()
   -- Attempt to identify the symbol type.
   if symbol ~= '' then
     local buffer = buffer
-    local decl = '([%w_]+)[%s%*&]+'..symbol:gsub('(%p)', '%%%1')..'[^%w_]'
+    local decl = '([%w_]+)[%s%*&]+'..symbol:gsub('%p', '%%%0')..'[^%w_]'
     for i = buffer:line_from_position(buffer.current_pos) - 1, 0, -1 do
       local class = buffer:get_line(i):match(decl)
       if class then symbol = class break end
@@ -72,6 +77,10 @@ textadept.editing.autocompleters.ansi_c = function()
         end
       end
     end
+  end
+  if symbol == '' and M.autocomplete_snippets then
+    local _, snippets = textadept.editing.autocompleters.snippet()
+    for i = 1, #snippets do list[#list + 1] = snippets[i] end
   end
   return #part, list
 end

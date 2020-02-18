@@ -123,6 +123,57 @@ M._paths = {}
 local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
 local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.next_indic_number()
 
+-- Finds the snippet assigned to the trigger word behind the caret and returns
+-- the trigger word and snippet text. If *grep* is `true`, returns a table of
+-- snippets (trigger-text key-value pairs) that match the trigger word
+-- instead of snippet text.
+-- Snippets are searched for in the global snippets table followed by snippet
+-- directories. Lexer-specific snippets are preferred.
+-- @param grep Flag that indicates whether or not to return a table of snippets
+--   that match the trigger word.
+-- @param no_trigger Flag that indicates whether or not to ignore the trigger
+--   word and return all snippets.
+-- @return trigger word, snippet text or table of matching snippets
+local function find_snippet(grep, no_trigger)
+  local snippets = {}
+  local pos = buffer.current_pos
+  local trigger = buffer:text_range(buffer:word_start_position(pos), pos)
+  if no_trigger then grep, trigger = true, '' end
+  local lexer = buffer:get_lexer(true)
+  local name_patt = '^'..trigger
+  -- Search in the snippet tables, ignoring this module's non-string members.
+  for _, v in ipairs{type(M[lexer]) == 'table' and M[lexer] or {}, M} do
+    if not grep and v[trigger] then
+      return trigger, v[trigger]
+    elseif grep then
+      for name, text in pairs(v) do
+        if name:find(name_patt) and (v ~= M or type(text) == 'string') then
+          snippets[name] = text
+        end
+      end
+    end
+  end
+  -- Search in snippet files.
+  for i = 1, #M._paths do
+    for basename in lfs.dir(M._paths[i]) do
+      -- Snippet files are either of the form "lexer.trigger.ext" or
+      -- "trigger.ext". Prefer "lexer."-prefixed snippets.
+      local p1, p2, p3 = basename:match('^([^.]+)%.?([^.]*)%.?([^.]*)$')
+      if not grep and (p1 == lexer and p2 == trigger or
+                       p1 == trigger and p3 == '') or
+         grep and (p1 == lexer and p2 and p2:find(name_patt) or
+                   p1 and p1:find(name_patt) and p3 == '') then
+        local f = io.open(M._paths[i]..'/'..basename)
+        text = f:read('a')
+        f:close()
+        if not grep then return trigger, text end
+        snippets[p1 == lexer and p2 or p1] = text
+      end
+    end
+  end
+  if not grep then return nil, nil else return trigger, snippets end
+end
+
 -- The stack of currently running snippets.
 local snippet_stack = {}
 
@@ -325,27 +376,7 @@ end
 -- @name _insert
 function M._insert(text)
   local trigger
-  if not text then
-    local lexer = buffer:get_lexer(true)
-    trigger = buffer:text_range(buffer:word_start_position(buffer.current_pos),
-                                buffer.current_pos)
-    text = type(M[lexer]) == 'table' and M[lexer][trigger] or M[trigger]
-    if not text then
-      for i = 1, #M._paths do
-        for basename in lfs.dir(M._paths[i]) do
-          -- Snippet files are either of the form "lexer.trigger.ext" or
-          -- "trigger.ext". Prefer "lexer."-prefixed snippets.
-          local first, second = basename:match('^([^.]+)%.?([^.]*)')
-          if first == lexer and second == trigger or
-             first == trigger and second == '' and not text then
-            local f = io.open(M._paths[i]..'/'..basename)
-            text = f:read('a')
-            f:close()
-          end
-        end
-      end
-    end
-  end
+  if not text then trigger, text = find_snippet(trigger) end
   if type(text) == 'function' and not trigger:find('^_') then text = text() end
   local snippet = type(text) == 'string' and new_snippet(text, trigger) or
                   snippet_stack[#snippet_stack]
@@ -378,29 +409,12 @@ end
 -- language-specific snippets.
 -- @name _select
 function M._select()
-  local list, items = {}, {}
-  for trigger, text in pairs(snippets) do
-    if type(text) == 'string' then list[#list + 1] = trigger..'|'..text end
-  end
-  local lexer = buffer:get_lexer(true)
-  if snippets[lexer] then
-    for trigger, text in pairs(snippets[lexer]) do
-      if type(text) == 'string' then list[#list + 1] = trigger..'|'..text end
-    end
-  end
-  for i = 1, #M._paths do
-    for basename in lfs.dir(M._paths[i]) do
-      local first, second = basename:match('^([^.]+)%.?([^.]*)')
-      if second == '' or first == lexer then
-        local f = io.open(M._paths[i]..'/'..basename)
-        list[#list + 1] = (second ~= '' and second or first)..'|'..f:read('a')
-        f:close()
-      end
-    end
-  end
-  table.sort(list)
-  for i = 1, #list do
-    items[#items + 1], items[#items + 2] = list[i]:match('^([^|]+)|(.+)$')
+  local snippets = select(2, find_snippet(true, true))
+  local triggers, items = {}, {}
+  for trigger in pairs(snippets) do triggers[#triggers + 1] = trigger end
+  table.sort(triggers)
+  for i = 1, #triggers do
+    items[#items + 1], items[#items + 2] = triggers[i], snippets[triggers[i]]
   end
   local button, i = ui.dialogs.filteredlist{
     title = _L['Select Snippet'], columns = {_L['Trigger'], _L['Snippet Text']},
@@ -625,6 +639,17 @@ events.connect(events.VIEW_NEW, function()
   buffer.indic_style[INDIC_SNIPPET] = buffer.INDIC_HIDDEN
   buffer.indic_style[INDIC_CURRENTPLACEHOLDER] = buffer.INDIC_HIDDEN
 end)
+
+textadept.editing.autocompleters.snippet = function()
+  local list = {}
+  local trigger, snippets = find_snippet(true)
+  local sep = string.char(buffer.auto_c_type_separator)
+  local xpm = textadept.editing.XPM_IMAGES.NAMESPACE
+  for name in pairs(snippets) do
+    list[#list + 1] = string.format('%s%s%d', name, sep, xpm)
+  end
+  return #trigger, list
+end
 
 ---
 -- Map of snippet triggers with their snippet text or functions that return such
