@@ -56,7 +56,7 @@ textadept.editing.autocompleters.ansi_c = function()
       for tag_line in io.lines(tags_files[i]) do
         local name = tag_line:match('^%S+')
         if (name:find(name_patt) and not name:find('^!') and not list[name]) or
-           name == symbol then
+           name == symbol and op == '' then
           local fields = tag_line:match(';"\t(.*)$')
           if (fields:match('class:(%S+)') or fields:match('enum:(%S+)') or
               fields:match('struct:(%S+)') or '') == symbol then
