@@ -517,7 +517,7 @@ M._snippet_mt = {
   --   `true`, the buffer is restored to its state prior to snippet expansion.
   finish = function(self, canceling)
     local s, e = self.start_pos, self.end_pos
-    buffer:delete_range(e, 1) -- clear initial padding space
+    if e ~= s then buffer:delete_range(e, 1) end -- clear initial padding space
     if not canceling then
       buffer.indicator_current = M.INDIC_PLACEHOLDER
       buffer:indicator_clear_range(s, e - s)
