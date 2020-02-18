@@ -83,9 +83,10 @@ local M = {}
 -- Ctrl+Space      |⌥Esc   |^Space       |Complete symbol
 -- Ctrl+H          |^H     |M-H<br/>M-S-H|Show documentation
 -- Tab             |⇥      |Tab          |Expand snippet or next placeholder
--- Ctrl+K          |⌥⇥     |M-K          |Insert snippet...
+-- Ctrl+Shift+K    |⌥⇧⇥    |M-S-K        |Insert snippet...
 -- Shift+Tab       |⇧⇥     |S-Tab        |Previous snippet placeholder
 -- Esc             |Esc    |Esc          |Cancel snippet
+-- Ctrl+K          |⌥⇥     |M-K          |Complete trigger word
 -- Ctrl+F2         |⌘F2    |F1           |Toggle bookmark
 -- Ctrl+Shift+F2   |⌘⇧F2   |F6           |Clear bookmarks
 -- F2              |F2     |F2           |Next bookmark
@@ -219,7 +220,7 @@ module('textadept.keys')]]
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:       C         H I   K        p  Q     T ~ V     Y  _   ) ] }   +
+-- c:       C         H I            p  Q     T ~ V     Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdD   F      jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
@@ -256,14 +257,14 @@ module('textadept.keys')]]
 --   * Control+Shift and Control+Meta+Shift keys are not recognized.
 --   * Modifiers for function keys F1-F12 are not recognized.
 -- For pdcurses (Win32):
---   * Many Control+Symbol keys are not recognized, but most 
+--   * Many Control+Symbol keys are not recognized, but most
 --     Control+Shift+Symbol keys are.
 --   * Ctrl+Meta+Symbol keys are not recognized.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~   ~            ~
 -- cm:   cd  g~~ k ~   q  t    yz
--- m:          e          J K          qQ  sS    vVw   yY  _          +
+-- m:          e          J            qQ  sS    vVw   yY  _          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- CTRL = 'c' (Control ^)
@@ -408,10 +409,13 @@ keys[not OSX and (GUI and 'caO' or 'mO')
              or 'cmO'] = m_quick_open[_L['Quickly Open _Current Directory']][2]
 keys[not OSX and (GUI and 'caP' or 'cmp') or 'cmP'] = io.quick_open
 -- Snippets.
-keys[not OSX and (GUI and 'ck' or 'mk') or 'a\t'] = textadept.snippets._select
+local m_snippets = m_tools[_L['_Snippets']]
+keys[not OSX and (GUI and 'cK' or 'mK') or 'sa\t'] = textadept.snippets._select
 keys['\t'] = textadept.snippets._insert
 keys['s\t'] = textadept.snippets._previous
 keys.esc = textadept.snippets._cancel_current
+keys[not OSX and (GUI and 'ck' or 'mk')
+             or 'a\t'] = m_snippets[_L['Complete Trigger _Word']][2]
 -- Other.
 keys[not OSX and 'c ' or 'aesc'] = m_tools[_L['_Complete Symbol']][2]
 keys[GUI and 'ch' or 'mh'] = textadept.editing.show_documentation
