@@ -377,6 +377,8 @@ function M.goto_error(line, next)
   if not line and next ~= nil then
     local f = buffer['marker_'..(next and 'next' or 'previous')]
     line = buffer:line_from_position(buffer.current_pos)
+    local wrapped = false
+    ::retry::
     local wline = f(buffer, line + (next and 1 or -1), 1 << M.MARK_WARNING)
     local eline = f(buffer, line + (next and 1 or -1), 1 << M.MARK_ERROR)
     if wline == -1 and eline == -1 then
@@ -386,7 +388,11 @@ function M.goto_error(line, next)
       if wline == -1 then wline = eline else eline = wline end
     end
     line = (next and math.min or math.max)(wline, eline)
-    if line == -1 then return end
+    if line == -1 and not wrapped then
+      line = next and 0 or buffer.line_count
+      wrapped = true
+      goto retry
+    end
   end
   textadept.editing.goto_line(line) -- ensure visible
 
