@@ -13,9 +13,9 @@ module('_M.lua')]]
 
 -- Autocompletion and documentation.
 
--- Returns a function that, when called from a Textadept Lua file or the Lua
--- command entry, returns the given Textadept tags or API file for use in
--- autocompletion and documentation.
+-- Returns a function that, when called from a Textadept Lua file, the Lua
+-- command entry, or a special Lua buffer (e.g. a REPL), returns the given
+-- Textadept tags or API file for use in autocompletion and documentation.
 -- @param filename Textadept tags or api file to return.
 local function ta_api(filename)
   local home = '^'.._HOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
@@ -23,7 +23,7 @@ local function ta_api(filename)
   return function()
     local buffer_filename = buffer.filename or ''
     if buffer_filename:find(home) or buffer_filename:find(userhome) or
-       buffer == ui.command_entry then
+       buffer == ui.command_entry or buffer._type then
       return filename
     end
   end
