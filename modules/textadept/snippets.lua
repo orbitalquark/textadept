@@ -104,6 +104,8 @@ local M = {}
 --
 -- @field INDIC_PLACEHOLDER (number)
 --   The snippet placeholder indicator number.
+-- @field _G.textadept.editing.autocompleters.snippet (function)
+--   Autocompleter function for snippet trigger words.
 module('textadept.snippets')]=]
 
 M.INDIC_PLACEHOLDER = _SCINTILLA.next_indic_number()
@@ -640,6 +642,9 @@ events.connect(events.VIEW_NEW, function()
   buffer.indic_style[INDIC_CURRENTPLACEHOLDER] = buffer.INDIC_HIDDEN
 end)
 
+-- Returns for the word behind the caret a list of snippet trigger word
+-- completions.
+-- @see textadept.editing.autocomplete
 textadept.editing.autocompleters.snippet = function()
   local list = {}
   local trigger, snippets = find_snippet(true)
