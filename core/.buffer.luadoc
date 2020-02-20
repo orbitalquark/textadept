@@ -617,7 +617,7 @@
 -- @field property (table)
 --   Map of key-value string pairs used by lexers.
 -- @field property_expanded (table, Read-only)
---   Map of key-value string pairs used by lexers with `%()` variable
+--   Map of key-value string pairs used by lexers with `$()` and `%()` variable
 --   replacement performed in values.
 -- @field property_int (table, Read-only)
 --   Map of key-value pairs used by lexers with values interpreted as numbers,
