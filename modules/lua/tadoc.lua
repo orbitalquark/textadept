@@ -9,18 +9,21 @@
 -- @usage luadoc -d [output_path] -doclet path/to/tadoc [file(s)]
 local M = {}
 
-local CTAGS_FMT = '%s\t_\t0;"\t%s\t%s'
+local CTAG = '%s\t%s\t/^%s$/;"\t%s\t%s'
 local string_format = string.format
+local lfs = require('lfs')
 
 -- Writes a ctag.
 -- @param file The file to write to.
 -- @param name The name of the tag.
+-- @param filename The filename the tag occurs in.
+-- @param code The line of code the tag occurs on.
 -- @param k The kind of ctag. The Lua module recognizes 4 kinds: m Module, f
 --   Function, t Table, and F Field.
 -- @param ext_fields The ext_fields for the ctag.
-local function write_tag(file, name, k, ext_fields)
+local function write_tag(file, name, filename, code, k, ext_fields)
   if ext_fields == 'class:_G' then ext_fields = '' end
-  file[#file + 1] = string_format(CTAGS_FMT, name, k, ext_fields)
+  file[#file + 1] = string_format(CTAG, name, filename, code, k, ext_fields)
 end
 
 -- Sanitizes Markdown from the given documentation string by stripping links and
@@ -108,6 +111,18 @@ local function write_apidoc(file, m, b)
   file[#file + 1] = name:match('[^%.:]+$')..' '..doc
 end
 
+-- Returns the absolute path of the given relative path.
+-- @param string path String relative path.
+-- @return absolute path
+local function abspath(path)
+  path = lfs.currentdir()..'/'..path
+  path = path:gsub('%f[^/]%./', '') -- clean up './'
+  while path:find('[^/]+/%.%./') do
+    path = path:gsub('[^/]+/%.%./', '', 1) -- clean up '../'
+  end
+  return path
+end
+
 -- Called by LuaDoc to process a doc object.
 -- @param doc The LuaDoc doc object.
 function M.start(doc)
@@ -117,14 +132,16 @@ function M.start(doc)
 
   local modules, files = doc.modules, doc.files
 
-  -- Create a map of file names to doc objects so their module names can be
-  -- determined.
-  local filedocs = {}
-  for i = 1, #files do filedocs[files[i]] = files[files[i]].doc end
+  -- Map doc objects to file names so a module can be mapped to its filename.
+  for i = 1, #files do
+    local filename = files[i]
+    local doc = files[filename].doc
+    files[doc] = abspath(filename)
+  end
 
   -- Add a module's fields to its LuaDoc.
   for i = 1, #files do
-    local module_doc = filedocs[files[i]][1]
+    local module_doc = files[files[i]].doc[1]
     if module_doc and module_doc.class == 'module' and
        modules[module_doc.name] then
       modules[module_doc.name].fields = module_doc.field
@@ -141,7 +158,10 @@ function M.start(doc)
       local module_name = f.name:match('^([^%.:]+)[%.:]') or '_G'
       if not modules[module_name] then
         modules[#modules + 1] = module_name
-        modules[module_name] = {name = module_name, functions = {}}
+        modules[module_name] = {
+          name = module_name, functions = {}, doc = {{code = f.code}}
+        }
+        files[modules[module_name].doc] = abspath(files[1])
         -- For functions like file:read(), 'file' is not a module; fake it.
         if f.name:find(':') then modules[module_name].fake = true end
       end
@@ -165,13 +185,15 @@ function M.start(doc)
   local ctags, apidoc = {}, {}
   for i = 1, #modules do
     local m = modules[modules[i]]
+    local filename = files[m.doc]
     if not m.fake then
       -- Tag and document the module.
-      write_tag(ctags, m.name, 'm', '')
+      write_tag(ctags, m.name, filename, m.doc[1].code[1], 'm', '')
       if m.name:find('%.') then
         -- Tag the last part of the module as a table of the first part.
         local parent, child = m.name:match('^(.-)%.([^%.]+)$')
-        write_tag(ctags, child, 'm', 'class:'..parent)
+        write_tag(ctags, child, filename, m.doc[1].code[1], 'm',
+                  'class:'..parent)
       end
       m.class = 'module'
       write_apidoc(apidoc, {name = '_G'}, m)
@@ -180,8 +202,9 @@ function M.start(doc)
     for j = 1, #m.functions do
       local module_name, name = m.functions[j]:match('^(.-)[%.:]?([^.:]+)$')
       if module_name == '' then module_name = m.name end
-      write_tag(ctags, name, 'f', 'class:'..module_name)
-      write_apidoc(apidoc, m, m.functions[m.functions[j]])
+      local func = m.functions[m.functions[j]]
+      write_tag(ctags, name, filename, func.code[1], 'f', 'class:'..module_name)
+      write_apidoc(apidoc, m, func)
     end
     if m.tables then
       -- Document the tables.
@@ -196,13 +219,15 @@ function M.start(doc)
             module_name = '_G' -- _G.keys or _G.snippets
           end
         end
-        write_tag(ctags, table_name, 't', 'class:'..module_name)
+        write_tag(ctags, table_name, filename, table.code[1], 't',
+                  'class:'..module_name)
         write_apidoc(apidoc, m, table)
         if table.field then
           -- Tag and document the table's fields.
           table_name = module_name..'.'..table_name
           for k = 1, #table.field do
-            write_tag(ctags, table.field[k], 'F', 'class:'..table_name)
+            write_tag(ctags, table.field[k], filename, table.code[1], 'F',
+                      'class:'..table_name)
             write_apidoc(apidoc, {name = table_name}, {
                            name = table.field[k],
                            description = table.field[table.field[k]],
@@ -223,7 +248,8 @@ function M.start(doc)
             print('[ERROR] Cannot determine module name for '..field.name)
           end
         end
-        write_tag(ctags, field_name, 'F', 'class:'..module_name)
+        write_tag(ctags, field_name, filename, m.doc[1].code[1], 'F',
+                  'class:'..module_name)
         write_apidoc(apidoc, {name = field_name}, {
                        name = module_name..'.'..field_name, description = field,
                        class = 'field'
