@@ -304,7 +304,7 @@ release: $(basedir).i386
 		CURSES_CFLAGS=-I/opt/ncursesw/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw/lib -lncursesw" curses
 	cp -rL ../doc ../lexers ../textadept* $< && cp *.asc $</src
-	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg -ab /tmp/$<.tgz
+	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg --batch -ab /tmp/$<.tgz
 $(basedir).x86_64: ; hg archive $@ -X ".hg*"
 release64: $(basedir).x86_64
 	make clean
@@ -315,7 +315,7 @@ release64: $(basedir).x86_64
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
 	cp -rL ../doc ../lexers ../textadept* $< && cp *.asc $</src
-	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg -ab /tmp/$<.tgz
+	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg --batch -ab /tmp/$<.tgz
 $(basedir).win32: ; hg archive $@ -X ".hg*"
 win32-release: $(basedir).win32
 	make -j4 clean win32-deps
@@ -326,19 +326,19 @@ win32-release: $(basedir).win32
 	make -j4 win32-curses
 	cp -rL ../doc ../lexers ../textadept* $<
 	cp *.asc $</src
-	zip -r /tmp/$<.zip $< && rm -rf $< && gpg -ab /tmp/$<.zip
+	zip -r /tmp/$<.zip $< && rm -rf $< && gpg --batch -ab /tmp/$<.zip
 $(basedir).osx: ; mkdir $@ && cp ../scripts/osx/ta $@
 osx-release: $(basedir).osx
 	make clean osx-deps
 	make -j4 osx
 	make -j4 osx-curses
 	make osx-app && mv $(osxapp) $<
-	zip -r /tmp/$<.zip $< && rm -rf $< && gpg -ab /tmp/$<.zip
+	zip -r /tmp/$<.zip $< && rm -rf $< && gpg --batch -ab /tmp/$<.zip
 $(basedir).modules:
 	mkdir -p $@/modules
 	hg archive -R /home/mitchell/code/textadept_modules/ -r tip $@/modules
 modules-release: $(basedir).modules
-	zip -r /tmp/$<.zip $< && rm -r $< && gpg -ab /tmp/$<.zip
+	zip -r /tmp/$<.zip $< && rm -r $< && gpg --batch -ab /tmp/$<.zip
 
 osx-app: ../textadept ../textadept-curses ../scripts/osx/textadept_osx
 	mkdir -p $(osxapp_bin) $(osxapp_res)
@@ -436,7 +436,7 @@ $(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
 sign-deps: | $(scintilla_tgz) $(lua_tgz) $(lpeg_tgz) $(lfs_zip) \
              $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) $(win32gtk_zip) \
              $(win32curses_zip) $(pdcurses_zip) $(gtkosx_tgz)
-	@for file in $|; do gpg -ab $$file; done
+	@for file in $|; do gpg --batch -ab $$file; done
 verify-deps: | $(wildcard $(basename $(wildcard *.asc)))
 	@for file in $|; do echo "$$file"; gpg --verify $$file.asc || return 1; done
 
