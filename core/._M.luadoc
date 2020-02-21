@@ -130,7 +130,7 @@
 --       {'Item 1', function() ... end},
 --       {'Item 2', function() ... end}
 --     }
---     local tools = textadept.menu.menubar[_L['_Tools']]
+--     local tools = textadept.menu.menubar[_L['Tools']]
 --     tools[#tools + 1] = lua_menu
 --     textadept.menu.context_menu[#textadept.menu.context_menu + 1] = lua_menu
 module('_M')]]

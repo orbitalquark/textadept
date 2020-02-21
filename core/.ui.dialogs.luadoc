@@ -22,7 +22,7 @@ module('ui.dialogs')
 --   * `icon_file`: The dialog's icon file path. This option has no effect when
 --     `icon` is set.
 --   * `button1`: The right-most button's label. The default value is
---     `_L['_OK']`.
+--     `_L['OK']`.
 --   * `button2`: The middle button's label.
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
@@ -123,7 +123,7 @@ function yesno_msgbox(options) end
 --     table values are used to populate the multiple entry boxes defined by
 --     `informative_text`.
 --   * `button1`: The right-most button's label. The default value is
---     `_L['_OK']`.
+--     `_L['OK']`.
 --   * `button2`: The middle button's label.
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
@@ -194,7 +194,7 @@ function standard_inputbox(options) end
 --     table values are used to populate the multiple entry boxes defined by
 --     `informative_text`.
 --   * `button1`: The right-most button's label. The default value is
---     `_L['_OK']`.
+--     `_L['OK']`.
 --   * `button2`: The middle button's label.
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
@@ -295,7 +295,7 @@ function filesave(options) end
 --   * `text_from_file`: The filename whose contents are loaded into the
 --     textbox. This option has no effect when `text` is given.
 --   * `button1`: The right-most button's label. The default value is
---     `_L['_OK']`.
+--     `_L['OK']`.
 --   * `button2`: The middle button's label.
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
@@ -340,7 +340,7 @@ function textbox(options) end
 --   * `text`: The dialog's main message text.
 --   * `items`: The list of string items to show in the drop-down.
 --   * `button1`: The right-most button's label. The default value is
---     `_L['_OK']`.
+--     `_L['OK']`.
 --   * `button2`: The middle button's label.
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
@@ -415,7 +415,7 @@ function standard_dropdown(options) end
 --   * `columns`: The list of string column names for list rows.
 --   * `items`: The list of string items to show in the filtered list.
 --   * `button1`: The right-most button's label. The default value is
---     `_L['_OK']`.
+--     `_L['OK']`.
 --   * `button2`: The middle button's label.
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.
@@ -456,7 +456,7 @@ function filteredlist(options) end
 --   * `text`: The dialog's main message text.
 --   * `items`: The list of string options to show in the option group.
 --   * `button1`: The right-most button's label. The default value is
---     `_L['_OK']`.
+--     `_L['OK']`.
 --   * `button2`: The middle button's label.
 --   * `button3`: The left-most button's label. This option requires `button2`
 --     to be set.

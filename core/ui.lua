@@ -96,7 +96,7 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
   -- @return Lua objects depending on the dialog kind
   return function(options)
     -- Set up dialog defaults and convert any 1-based indices to 0-based ones.
-    if not options.button1 then options.button1 = _L['_OK'] end
+    if not options.button1 then options.button1 = _L['OK'] end
     local select = options.select
     if type(select) == 'number' then
       options.select = select - 1
@@ -430,8 +430,8 @@ events_connect(events.QUIT, function()
     title = _L['Quit without saving?'],
     text = _L['The following buffers are unsaved:'],
     informative_text = table.concat(utf8_list, '\n'),
-    icon = 'gtk-dialog-question', button1 = _L['_Cancel'],
-    button2 = _L['Quit _without saving']
+    icon = 'gtk-dialog-question', button1 = _L['Cancel'],
+    button2 = _L['Quit without saving']
   } ~= 2
   if cancel then return true end -- prevent quit
 end)

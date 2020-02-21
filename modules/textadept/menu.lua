@@ -53,122 +53,122 @@ end
 -- addition to table index number.
 -- @class table
 -- @name menubar
--- @usage textadept.menu.menubar[_L['_File']][_L['_New']]
--- @usage textadept.menu.menubar[_L['_File']][_L['_New']][2] = function() .. end
+-- @usage textadept.menu.menubar[_L['File']][_L['New']]
+-- @usage textadept.menu.menubar[_L['File']][_L['New']][2] = function() .. end
 local default_menubar = {
   {
-    title = _L['_File'],
-    {_L['_New'], buffer.new},
-    {_L['_Open'], io.open_file},
-    {_L['Open _Recent...'], io.open_recent_file},
-    {_L['Re_load'], io.reload_file},
-    {_L['_Save'], io.save_file},
-    {_L['Save _As'], io.save_file_as},
+    title = _L['File'],
+    {_L['New'], buffer.new},
+    {_L['Open'], io.open_file},
+    {_L['Open Recent...'], io.open_recent_file},
+    {_L['Reload'], io.reload_file},
+    {_L['Save'], io.save_file},
+    {_L['Save As'], io.save_file_as},
     {_L['Save All'], io.save_all_files},
     SEPARATOR,
-    {_L['_Close'], io.close_buffer},
+    {_L['Close'], io.close_buffer},
     {_L['Close All'], io.close_all_buffers},
     SEPARATOR,
-    {_L['Loa_d Session...'], textadept.session.load},
-    {_L['Sav_e Session...'], textadept.session.save},
+    {_L['Load Session...'], textadept.session.load},
+    {_L['Save Session...'], textadept.session.save},
     SEPARATOR,
-    {_L['_Quit'], quit}
+    {_L['Quit'], quit}
   },
   {
-    title = _L['_Edit'],
-    {_L['_Undo'], buffer.undo},
-    {_L['_Redo'], buffer.redo},
+    title = _L['Edit'],
+    {_L['Undo'], buffer.undo},
+    {_L['Redo'], buffer.redo},
     SEPARATOR,
-    {_L['Cu_t'], buffer.cut},
-    {_L['_Copy'], buffer.copy},
-    {_L['_Paste'], buffer.paste},
-    {_L['Paste Re_indent'], textadept.editing.paste_reindent},
-    {_L['Duplicate _Line'], buffer.line_duplicate},
-    {_L['_Delete'], buffer.clear},
-    {_L['D_elete Word'], function()
+    {_L['Cut'], buffer.cut},
+    {_L['Copy'], buffer.copy},
+    {_L['Paste'], buffer.paste},
+    {_L['Paste Reindent'], textadept.editing.paste_reindent},
+    {_L['Duplicate Line'], buffer.line_duplicate},
+    {_L['Delete'], buffer.clear},
+    {_L['Delete Word'], function()
       textadept.editing.select_word()
       buffer:delete_back()
     end},
-    {_L['Select _All'], buffer.select_all},
+    {_L['Select All'], buffer.select_all},
     SEPARATOR,
-    {_L['_Match Brace'], function()
+    {_L['Match Brace'], function()
       local match_pos = buffer:brace_match(buffer.current_pos, 0)
       if match_pos >= 0 then buffer:goto_pos(match_pos) end
     end},
-    {_L['Complete _Word'], function()
+    {_L['Complete Word'], function()
       textadept.editing.autocomplete('word')
     end},
-    {_L['_Highlight Word'], textadept.editing.highlight_word},
-    {_L['Toggle _Block Comment'], textadept.editing.block_comment},
-    {_L['T_ranspose Characters'], textadept.editing.transpose_chars},
-    {_L['_Join Lines'], textadept.editing.join_lines},
-    {_L['_Filter Through'], function()
+    {_L['Highlight Word'], textadept.editing.highlight_word},
+    {_L['Toggle Block Comment'], textadept.editing.block_comment},
+    {_L['Transpose Characters'], textadept.editing.transpose_chars},
+    {_L['Join Lines'], textadept.editing.join_lines},
+    {_L['Filter Through'], function()
       ui.command_entry.run(textadept.editing.filter_through, 'bash')
     end},
     {
-      title = _L['_Select'],
-      {_L['Select between _Matching Delimiters'], sel_enc},
-      {_L['Select between _XML Tags'], function() sel_enc('>', '<') end},
-      {_L['Select in XML _Tag'], function() sel_enc('<', '>') end},
-      {_L['Select _Word'], textadept.editing.select_word},
-      {_L['Select _Line'], textadept.editing.select_line},
-      {_L['Select Para_graph'], textadept.editing.select_paragraph}
+      title = _L['Select'],
+      {_L['Select between Matching Delimiters'], sel_enc},
+      {_L['Select between XML Tags'], function() sel_enc('>', '<') end},
+      {_L['Select in XML Tag'], function() sel_enc('<', '>') end},
+      {_L['Select Word'], textadept.editing.select_word},
+      {_L['Select Line'], textadept.editing.select_line},
+      {_L['Select Paragraph'], textadept.editing.select_paragraph}
     },
     {
-      title = _L['Selectio_n'],
-      {_L['_Upper Case Selection'], buffer.upper_case},
-      {_L['_Lower Case Selection'], buffer.lower_case},
+      title = _L['Selection'],
+      {_L['Upper Case Selection'], buffer.upper_case},
+      {_L['Lower Case Selection'], buffer.lower_case},
       SEPARATOR,
-      {_L['Enclose as _XML Tags'], function()
+      {_L['Enclose as XML Tags'], function()
         enc('<', '>')
         local pos = buffer.current_pos
         while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
         buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
       end},
-      {_L['Enclose as Single XML _Tag'], function() enc('<', ' />') end},
-      {_L['Enclose in Single _Quotes'], function() enc("'", "'") end},
-      {_L['Enclose in _Double Quotes'], function() enc('"', '"') end},
-      {_L['Enclose in _Parentheses'], function() enc('(', ')') end},
-      {_L['Enclose in _Brackets'], function() enc('[', ']') end},
-      {_L['Enclose in B_races'], function() enc('{', '}') end},
+      {_L['Enclose as Single XML Tag'], function() enc('<', ' />') end},
+      {_L['Enclose in Single Quotes'], function() enc("'", "'") end},
+      {_L['Enclose in Double Quotes'], function() enc('"', '"') end},
+      {_L['Enclose in Parentheses'], function() enc('(', ')') end},
+      {_L['Enclose in Brackets'], function() enc('[', ']') end},
+      {_L['Enclose in Braces'], function() enc('{', '}') end},
       SEPARATOR,
-      {_L['_Move Selected Lines Up'], buffer.move_selected_lines_up},
-      {_L['Move Selected Lines Do_wn'], buffer.move_selected_lines_down}
+      {_L['Move Selected Lines Up'], buffer.move_selected_lines_up},
+      {_L['Move Selected Lines Down'], buffer.move_selected_lines_down}
     }
   },
   {
-    title = _L['_Search'],
-    {_L['_Find'], function()
+    title = _L['Search'],
+    {_L['Find'], function()
       ui.find.in_files = false
       ui.find.focus()
     end},
-    {_L['Find _Next'], ui.find.find_next},
-    {_L['Find _Previous'], ui.find.find_prev},
-    {_L['_Replace'], ui.find.replace},
-    {_L['Replace _All'], ui.find.replace_all},
-    {_L['Find _Incremental'], ui.find.find_incremental},
+    {_L['Find Next'], ui.find.find_next},
+    {_L['Find Previous'], ui.find.find_prev},
+    {_L['Replace'], ui.find.replace},
+    {_L['Replace All'], ui.find.replace_all},
+    {_L['Find Incremental'], ui.find.find_incremental},
     SEPARATOR,
-    {_L['Find in Fi_les'], function()
+    {_L['Find in Files'], function()
       ui.find.in_files = true
       ui.find.focus()
     end},
-    {_L['Goto Nex_t File Found'], function()
+    {_L['Goto Next File Found'], function()
       ui.find.goto_file_found(false, true)
     end},
-    {_L['Goto Previou_s File Found'], function()
+    {_L['Goto Previous File Found'], function()
       ui.find.goto_file_found(false, false)
     end},
     SEPARATOR,
-    {_L['_Jump to'], textadept.editing.goto_line}
+    {_L['Jump to'], textadept.editing.goto_line}
   },
   {
-    title = _L['_Tools'],
-    {_L['Command _Entry'], ui.command_entry.run},
-    {_L['Select Co_mmand'], function() M.select_command() end},
+    title = _L['Tools'],
+    {_L['Command Entry'], ui.command_entry.run},
+    {_L['Select Command'], function() M.select_command() end},
     SEPARATOR,
-    {_L['_Run'], textadept.run.run},
-    {_L['_Compile'], textadept.run.compile},
-    {_L['Set _Arguments...'], function()
+    {_L['Run'], textadept.run.run},
+    {_L['Compile'], textadept.run.compile},
+    {_L['Set Arguments...'], function()
       if not buffer.filename then return end
       local run_commands = textadept.run.run_commands
       local compile_commands = textadept.run.compile_commands
@@ -183,7 +183,7 @@ local default_menubar = {
         utf8_args[i] = args:iconv('UTF-8', _CHARSET)
       end
       local button, utf8_args = ui.dialogs.inputbox{
-        title = _L['Set _Arguments...']:gsub('_', ''), informative_text = {
+        title = _L['Set Arguments...']:gsub('_', ''), informative_text = {
           _L['Command line arguments'], _L['For Run:'], _L['For Compile:']
         }, text = utf8_args, width = not CURSES and 400 or nil
       }
@@ -195,61 +195,59 @@ local default_menubar = {
                                     utf8_args[i]:iconv(_CHARSET, 'UTF-8')
       end
     end},
-    {_L['Buil_d'], textadept.run.build},
-    {_L['S_top'], textadept.run.stop},
-    {_L['_Next Error'], function() textadept.run.goto_error(false, true) end},
-    {_L['_Previous Error'], function()
+    {_L['Build'], textadept.run.build},
+    {_L['Stop'], textadept.run.stop},
+    {_L['Next Error'], function() textadept.run.goto_error(false, true) end},
+    {_L['Previous Error'], function()
       textadept.run.goto_error(false, false)
     end},
     SEPARATOR,
     {
-      title = _L['_Bookmarks'],
-      {_L['_Toggle Bookmark'], textadept.bookmarks.toggle},
-      {_L['_Clear Bookmarks'], textadept.bookmarks.clear},
-      {_L['_Next Bookmark'], function()
-        textadept.bookmarks.goto_mark(true)
-      end},
-      {_L['_Previous Bookmark'], function()
+      title = _L['Bookmarks'],
+      {_L['Toggle Bookmark'], textadept.bookmarks.toggle},
+      {_L['Clear Bookmarks'], textadept.bookmarks.clear},
+      {_L['Next Bookmark'], function() textadept.bookmarks.goto_mark(true) end},
+      {_L['Previous Bookmark'], function()
         textadept.bookmarks.goto_mark(false)
       end},
-      {_L['_Goto Bookmark...'], textadept.bookmarks.goto_mark},
+      {_L['Goto Bookmark...'], textadept.bookmarks.goto_mark},
     },
     {
-      title = _L['_Macros'],
-      {_L['Start/Stop _Recording'], textadept.macros.record},
-      {_L['_Play'], textadept.macros.play},
+      title = _L['Macros'],
+      {_L['Start/Stop Recording'], textadept.macros.record},
+      {_L['Play'], textadept.macros.play},
       SEPARATOR,
-      {_L['Sa_ve...'], textadept.macros.save},
-      {_L['_Load...'], textadept.macros.load},
+      {_L['Save...'], textadept.macros.save},
+      {_L['Load...'], textadept.macros.load},
     },
     {
-      title = _L['Quick _Open'],
-      {_L['Quickly Open _User Home'], function() io.quick_open(_USERHOME) end},
-      {_L['Quickly Open _Textadept Home'], function() io.quick_open(_HOME) end},
-      {_L['Quickly Open _Current Directory'], function()
+      title = _L['Quick Open'],
+      {_L['Quickly Open User Home'], function() io.quick_open(_USERHOME) end},
+      {_L['Quickly Open Textadept Home'], function() io.quick_open(_HOME) end},
+      {_L['Quickly Open Current Directory'], function()
         if buffer.filename then
           io.quick_open(buffer.filename:match('^(.+)[/\\]'))
         end
       end},
-      {_L['Quickly Open Current _Project'], io.quick_open},
+      {_L['Quickly Open Current Project'], io.quick_open},
     },
     {
-      title = _L['_Snippets'],
-      {_L['_Insert Snippet...'], textadept.snippets._select},
-      {_L['_Expand Snippet/Next Placeholder'], textadept.snippets._insert},
-      {_L['_Previous Snippet Placeholder'], textadept.snippets._previous},
-      {_L['_Cancel Snippet'], textadept.snippets._cancel_current},
+      title = _L['Snippets'],
+      {_L['Insert Snippet...'], textadept.snippets._select},
+      {_L['Expand Snippet/Next Placeholder'], textadept.snippets._insert},
+      {_L['Previous Snippet Placeholder'], textadept.snippets._previous},
+      {_L['Cancel Snippet'], textadept.snippets._cancel_current},
       SEPARATOR,
-      {_L['Complete Trigger _Word'], function()
+      {_L['Complete Trigger Word'], function()
         textadept.editing.autocomplete('snippets')
       end}
     },
     SEPARATOR,
-    {_L['_Complete Symbol'], function()
+    {_L['Complete Symbol'], function()
       textadept.editing.autocomplete(buffer:get_lexer(true))
     end},
-    {_L['Show _Documentation'], textadept.editing.show_documentation},
-    {_L['Show St_yle'], function()
+    {_L['Show Documentation'], textadept.editing.show_documentation},
+    {_L['Show Style'], function()
       local char = buffer:text_range(buffer.current_pos,
                                      buffer:position_after(buffer.current_pos))
       if char == '' then return end -- end of buffer
@@ -263,92 +261,92 @@ local default_menubar = {
     end}
   },
   {
-    title = _L['_Buffer'],
-    {_L['_Next Buffer'], function() view:goto_buffer(1) end},
-    {_L['_Previous Buffer'], function() view:goto_buffer(-1) end},
-    {_L['_Switch to Buffer...'], ui.switch_buffer},
+    title = _L['Buffer'],
+    {_L['Next Buffer'], function() view:goto_buffer(1) end},
+    {_L['Previous Buffer'], function() view:goto_buffer(-1) end},
+    {_L['Switch to Buffer...'], ui.switch_buffer},
     SEPARATOR,
     {
-      title = _L['_Indentation'],
-      {_L['Tab width: _2'], function() set_indentation(2) end},
-      {_L['Tab width: _3'], function() set_indentation(3) end},
-      {_L['Tab width: _4'], function() set_indentation(4) end},
-      {_L['Tab width: _8'], function() set_indentation(8) end},
+      title = _L['Indentation'],
+      {_L['Tab width: 2'], function() set_indentation(2) end},
+      {_L['Tab width: 3'], function() set_indentation(3) end},
+      {_L['Tab width: 4'], function() set_indentation(4) end},
+      {_L['Tab width: 8'], function() set_indentation(8) end},
       SEPARATOR,
-      {_L['_Toggle Use Tabs'], function()
+      {_L['Toggle Use Tabs'], function()
         buffer.use_tabs = not buffer.use_tabs
         events.emit(events.UPDATE_UI) -- for updating statusbar
       end},
-      {_L['_Convert Indentation'], textadept.editing.convert_indentation}
+      {_L['Convert Indentation'], textadept.editing.convert_indentation}
     },
     {
-      title = _L['_EOL Mode'],
+      title = _L['EOL Mode'],
       {_L['CRLF'], function() set_eol_mode(buffer.EOL_CRLF) end},
       {_L['LF'], function() set_eol_mode(buffer.EOL_LF) end}
     },
     {
-      title = _L['E_ncoding'],
-      {_L['_UTF-8 Encoding'], function() set_encoding('UTF-8') end},
-      {_L['_ASCII Encoding'], function() set_encoding('ASCII') end},
-      {_L['_CP-1252 Encoding'], function() set_encoding('CP1252') end},
-      {_L['UTF-1_6 Encoding'], function() set_encoding('UTF-16LE') end}
+      title = _L['Encoding'],
+      {_L['UTF-8 Encoding'], function() set_encoding('UTF-8') end},
+      {_L['ASCII Encoding'], function() set_encoding('ASCII') end},
+      {_L['CP-1252 Encoding'], function() set_encoding('CP1252') end},
+      {_L['UTF-16 Encoding'], function() set_encoding('UTF-16LE') end}
     },
     SEPARATOR,
-    {_L['Toggle View _EOL'], function()
+    {_L['Toggle View EOL'], function()
       buffer.view_eol = not buffer.view_eol
     end},
-    {_L['Toggle _Wrap Mode'], function()
+    {_L['Toggle Wrap Mode'], function()
       local first_visible_line = buffer.first_visible_line
       local display_line = buffer:visible_from_doc_line(first_visible_line)
       buffer.wrap_mode = buffer.wrap_mode == 0 and buffer.WRAP_WHITESPACE or 0
       buffer:line_scroll(0, first_visible_line - display_line)
     end},
-    {_L['Toggle View White_space'], function()
+    {_L['Toggle View Whitespace'], function()
       buffer.view_ws = buffer.view_ws == 0 and buffer.WS_VISIBLEALWAYS or 0
     end},
     SEPARATOR,
-    {_L['Select _Lexer...'], textadept.file_types.select_lexer},
-    {_L['_Refresh Syntax Highlighting'], function() buffer:colourise(0, -1) end}
+    {_L['Select Lexer...'], textadept.file_types.select_lexer},
+    {_L['Refresh Syntax Highlighting'], function() buffer:colourise(0, -1) end}
   },
   {
-    title = _L['_View'],
-    {_L['_Next View'], function() ui.goto_view(1) end},
-    {_L['_Previous View'], function() ui.goto_view(-1) end},
+    title = _L['View'],
+    {_L['Next View'], function() ui.goto_view(1) end},
+    {_L['Previous View'], function() ui.goto_view(-1) end},
     SEPARATOR,
-    {_L['Split View _Horizontal'], function() view:split() end},
-    {_L['Split View _Vertical'], function() view:split(true) end},
-    {_L['_Unsplit View'], function() view:unsplit() end},
-    {_L['Unsplit _All Views'], function() while view:unsplit() do end end},
-    {_L['_Grow View'], function()
+    {_L['Split View Horizontal'], function() view:split() end},
+    {_L['Split View Vertical'], function() view:split(true) end},
+    {_L['Unsplit View'], function() view:unsplit() end},
+    {_L['Unsplit All Views'], function() while view:unsplit() do end end},
+    {_L['Grow View'], function()
       if view.size then view.size = view.size + buffer:text_height(0) end
     end},
-    {_L['Shrin_k View'], function()
+    {_L['Shrink View'], function()
       if view.size then view.size = view.size - buffer:text_height(0) end
     end},
     SEPARATOR,
-    {_L['Toggle Current _Fold'], function()
+    {_L['Toggle Current Fold'], function()
       buffer:toggle_fold(buffer:line_from_position(buffer.current_pos))
     end},
     SEPARATOR,
-    {_L['Toggle Show In_dent Guides'], function()
+    {_L['Toggle Show Indent Guides'], function()
       local off = buffer.indentation_guides == 0
       buffer.indentation_guides = off and buffer.IV_LOOKBOTH or 0
     end},
-    {_L['Toggle _Virtual Space'], function()
+    {_L['Toggle Virtual Space'], function()
       local off = buffer.virtual_space_options == 0
       buffer.virtual_space_options = off and buffer.VS_USERACCESSIBLE or 0
     end},
     SEPARATOR,
-    {_L['Zoom _In'], buffer.zoom_in},
-    {_L['Zoom _Out'], buffer.zoom_out},
-    {_L['_Reset Zoom'], function() buffer.zoom = 0 end}
+    {_L['Zoom In'], buffer.zoom_in},
+    {_L['Zoom Out'], buffer.zoom_out},
+    {_L['Reset Zoom'], function() buffer.zoom = 0 end}
   },
   {
-    title = _L['_Help'],
-    {_L['Show _Manual'], function() open_page(_HOME..'/doc/manual.html') end},
-    {_L['Show _LuaDoc'], function() open_page(_HOME..'/doc/api.html') end},
+    title = _L['Help'],
+    {_L['Show Manual'], function() open_page(_HOME..'/doc/manual.html') end},
+    {_L['Show LuaDoc'], function() open_page(_HOME..'/doc/api.html') end},
     SEPARATOR,
-    {_L['_About'], function()
+    {_L['About'], function()
       ui.dialogs.msgbox({
         title = 'Textadept', text = _RELEASE, informative_text = _COPYRIGHT,
         icon_file = _HOME..'/core/images/ta_64x64.png'
@@ -365,15 +363,15 @@ local default_menubar = {
 -- @name context_menu
 -- @usage textadept.menu.context_menu[#textadept.menu.context_menu + 1] = {...}
 local default_context_menu = {
-  {_L['_Undo'], buffer.undo},
-  {_L['_Redo'], buffer.redo},
+  {_L['Undo'], buffer.undo},
+  {_L['Redo'], buffer.redo},
   SEPARATOR,
-  {_L['Cu_t'], buffer.cut},
-  {_L['_Copy'], buffer.copy},
-  {_L['_Paste'], buffer.paste},
-  {_L['_Delete'], buffer.clear},
+  {_L['Cut'], buffer.cut},
+  {_L['Copy'], buffer.copy},
+  {_L['Paste'], buffer.paste},
+  {_L['Delete'], buffer.clear},
   SEPARATOR,
-  {_L['Select _All'], buffer.select_all}
+  {_L['Select All'], buffer.select_all}
 }
 
 ---
@@ -383,12 +381,12 @@ local default_context_menu = {
 -- @class table
 -- @name tab_context_menu
 local default_tab_context_menu = {
-  {_L['_Close'], io.close_buffer},
+  {_L['Close'], io.close_buffer},
   SEPARATOR,
-  {_L['_Save'], io.save_file},
-  {_L['Save _As'], io.save_file_as},
+  {_L['Save'], io.save_file},
+  {_L['Save As'], io.save_file_as},
   SEPARATOR,
-  {_L['Re_load'], io.reload_file},
+  {_L['Reload'], io.reload_file},
 }
 
 -- Table of proxy tables for menus.

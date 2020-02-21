@@ -349,7 +349,7 @@ function M.goto_line(line)
   if not line then
     local button, value = ui.dialogs.inputbox{
       title = _L['Go To'], informative_text = _L['Line Number:'],
-      button1 = _L['_OK'], button2 = _L['_Cancel']
+      button1 = _L['OK'], button2 = _L['Cancel']
     }
     line = tonumber(value)
     if button ~= 1 or not line then return end

@@ -266,8 +266,8 @@ function io.close_buffer()
   local confirm = not buffer.modify or ui.dialogs.msgbox{
     title = _L['Close without saving?'],
     text = _L['There are unsaved changes in'], informative_text = filename,
-    icon = 'gtk-dialog-question', button1 = _L['_Cancel'],
-    button2 = _L['Close _without saving']
+    icon = 'gtk-dialog-question', button1 = _L['Cancel'],
+    button2 = _L['Close without saving']
   } == 2
   if not confirm then return nil end -- nil return won't propagate a key command
   buffer:delete()
@@ -313,7 +313,7 @@ events_connect(events.FILE_CHANGED, function()
     informative_text = string.format('"%s"\n%s',
                                      buffer.filename:iconv('UTF-8', _CHARSET),
                                      _L['has been modified. Reload it?']),
-    icon = 'gtk-dialog-question', button1 = _L['_Yes'], button2 = _L['_No'],
+    icon = 'gtk-dialog-question', button1 = _L['Yes'], button2 = _L['No'],
     width = CURSES and #buffer.filename > 40 and ui.size[1] - 2 or nil
   }
   if button == 1 then io.reload_file() end
@@ -438,12 +438,12 @@ function io.quick_open(paths, filter, opts)
   end
   local options = {
     title = _L['Open File'], columns = _L['Filename'], items = utf8_list,
-    button1 = _L['_OK'], button2 = _L['_Cancel'], select_multiple = true,
+    button1 = _L['OK'], button2 = _L['Cancel'], select_multiple = true,
     string_output = true, width = CURSES and ui.size[1] - 2 or nil
   }
   if opts then for k, v in pairs(opts) do options[k] = v end end
   local button, utf8_filenames = ui.dialogs.filteredlist(options)
-  if button ~= _L['_OK'] or not utf8_filenames then return end
+  if button ~= _L['OK'] or not utf8_filenames then return end
   local filenames = {}
   for i = 1, #utf8_filenames do
     filenames[i] = utf8_filenames[i]:iconv(_CHARSET, 'UTF-8')
