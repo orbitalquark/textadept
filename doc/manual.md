@@ -1213,7 +1213,7 @@ selected, its Lua function is executed. For example, in order to append a menu
 item to the "Tools" menu and to the right-click context menu, add the following
 to your *~/.textadept/init.lua*:
 
-    local tools = textadept.menu.menubar[_L['_Tools']]
+    local tools = textadept.menu.menubar[_L['Tools']]
     tools[#tools + 1] = {'Extra Tool', function() ... end}
     local context_menu = textadept.menu.context_menu
     context_menu[#context_menu + 1] = tools[#tools]

@@ -290,7 +290,7 @@ function M.build(root_directory)
       if lfs.attributes(root_directory..'/'..build_file) then
         local button, utf8_command = ui.dialogs.inputbox{
           title = _L['Command'], informative_text = root_directory,
-          text = build_command, button1 = _L['_OK'], button2 = _L['_Cancel']
+          text = build_command, button1 = _L['OK'], button2 = _L['Cancel']
         }
         if button == 1 then command = utf8_command:iconv(_CHARSET, 'UTF-8') end
         break

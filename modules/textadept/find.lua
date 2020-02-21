@@ -67,16 +67,16 @@ local M = ui.find
 module('ui.find')]]
 
 local _L = _L
-M.find_label_text = _L['_Find:']
-M.replace_label_text = _L['R_eplace:']
-M.find_next_button_text = not CURSES and _L['Find _Next'] or _L['[Next]']
-M.find_prev_button_text = not CURSES and _L['Find _Prev'] or _L['[Prev]']
-M.replace_button_text = not CURSES and _L['_Replace'] or _L['[Replace]']
-M.replace_all_button_text = not CURSES and _L['Replace _All'] or _L['[All]']
-M.match_case_label_text = not CURSES and _L['_Match case'] or _L['Case(F1)']
-M.whole_word_label_text = not CURSES and _L['_Whole word'] or _L['Word(F2)']
-M.regex_label_text = not CURSES and _L['Rege_x'] or _L['Regex(F3)']
-M.in_files_label_text = not CURSES and _L['_In files'] or _L['Files(F4)']
+M.find_label_text = _L['Find:']
+M.replace_label_text = _L['Replace:']
+M.find_next_button_text = not CURSES and _L['Find Next'] or _L['[Next]']
+M.find_prev_button_text = not CURSES and _L['Find Prev'] or _L['[Prev]']
+M.replace_button_text = not CURSES and _L['Replace'] or _L['[Replace]']
+M.replace_all_button_text = not CURSES and _L['Replace All'] or _L['[All]']
+M.match_case_label_text = not CURSES and _L['Match case'] or _L['Case(F1)']
+M.whole_word_label_text = not CURSES and _L['Whole word'] or _L['Word(F2)']
+M.regex_label_text = not CURSES and _L['Regex'] or _L['Regex(F3)']
+M.in_files_label_text = not CURSES and _L['In files'] or _L['Files(F4)']
 
 M.find_in_files_timeout = 10
 M.INDIC_FIND = _SCINTILLA.next_indic_number()

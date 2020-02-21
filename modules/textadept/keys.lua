@@ -291,7 +291,7 @@ keys[not OSX and (GUI and 'cW' or 'cmw') or 'mW'] = io.close_all_buffers
 keys[not OSX and 'cq' or 'mq'] = quit
 
 -- Edit.
-local m_edit = textadept.menu.menubar[_L['_Edit']]
+local m_edit = textadept.menu.menubar[_L['Edit']]
 keys[not OSX and 'cz' or 'mz'] = buffer.undo
 if CURSES then keys.mz = keys.cz end -- ^Z suspends in some terminals
 if not OSX then keys.cy = buffer.redo end
@@ -304,11 +304,11 @@ keys[not OSX and (GUI and 'cV' or 'mv')
 if GUI then keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate end
 keys.del = buffer.clear
 keys[not OSX and (GUI and 'adel' or 'mdel')
-             or 'cdel'] = m_edit[_L['D_elete Word']][2]
+             or 'cdel'] = m_edit[_L['Delete Word']][2]
 keys[not OSX and GUI and 'ca' or 'ma'] = buffer.select_all
-keys[GUI and 'cm' or 'mm'] = m_edit[_L['_Match Brace']][2]
+keys[GUI and 'cm' or 'mm'] = m_edit[_L['Match Brace']][2]
 keys[not OSX and ((GUI or WIN32) and 'c\n' or 'cmj')
-             or 'cesc'] = m_edit[_L['Complete _Word']][2]
+             or 'cesc'] = m_edit[_L['Complete Word']][2]
 if GUI then
   keys[not OSX and 'caH' or 'mH'] = textadept.editing.highlight_word
 end
@@ -316,41 +316,41 @@ keys[not OSX and GUI and 'c/' or 'm/'] = textadept.editing.block_comment
 keys.ct = textadept.editing.transpose_chars
 keys[not OSX and (GUI and 'cJ' or 'mj') or 'cj'] = textadept.editing.join_lines
 keys[not OSX and (GUI and 'c|' or 'c\\')
-             or 'm|'] = m_edit[_L['_Filter Through']][2]
+             or 'm|'] = m_edit[_L['Filter Through']][2]
 -- Select.
-local m_sel = m_edit[_L['_Select']]
-keys[GUI and 'cM' or 'mM'] = m_sel[_L['Select between _Matching Delimiters']][2]
+local m_sel = m_edit[_L['Select']]
+keys[GUI and 'cM' or 'mM'] = m_sel[_L['Select between Matching Delimiters']][2]
 keys[not OSX and GUI and 'c<'
-                     or 'm<'] = m_sel[_L['Select between _XML Tags']][2]
+                     or 'm<'] = m_sel[_L['Select between XML Tags']][2]
 if GUI then
-  keys[not OSX and 'c>' or 'm>'] = m_sel[_L['Select in XML _Tag']][2]
+  keys[not OSX and 'c>' or 'm>'] = m_sel[_L['Select in XML Tag']][2]
 end
 keys[not OSX and (GUI and 'cD' or 'mW') or 'mD'] = textadept.editing.select_word
 keys[not OSX and GUI and 'cN' or 'mN'] = textadept.editing.select_line
 keys[not OSX and GUI and 'cP' or 'mP'] = textadept.editing.select_paragraph
 -- Selection.
-m_sel = m_edit[_L['Selectio_n']]
+m_sel = m_edit[_L['Selection']]
 keys[not OSX and (GUI and 'cau' or 'cmu') or 'cu'] = buffer.upper_case
 keys[not OSX and (GUI and 'caU' or 'cml') or 'cU'] = buffer.lower_case
 keys[not OSX and (GUI and 'a<' or 'm>')
-             or 'c<'] = m_sel[_L['Enclose as _XML Tags']][2]
+             or 'c<'] = m_sel[_L['Enclose as XML Tags']][2]
 if GUI then
-  keys[not OSX and 'a>' or 'c>'] = m_sel[_L['Enclose as Single XML _Tag']][2]
-  keys[not OSX and "a'" or "c'"] = m_sel[_L['Enclose in Single _Quotes']][2]
-  keys[not OSX and 'a"' or 'c"'] = m_sel[_L['Enclose in _Double Quotes']][2]
+  keys[not OSX and 'a>' or 'c>'] = m_sel[_L['Enclose as Single XML Tag']][2]
+  keys[not OSX and "a'" or "c'"] = m_sel[_L['Enclose in Single Quotes']][2]
+  keys[not OSX and 'a"' or 'c"'] = m_sel[_L['Enclose in Double Quotes']][2]
 end
 keys[not OSX and (GUI and 'a(' or 'm)')
-             or 'c('] = m_sel[_L['Enclose in _Parentheses']][2]
+             or 'c('] = m_sel[_L['Enclose in Parentheses']][2]
 keys[not OSX and (GUI and 'a[' or 'm]')
-             or 'c['] = m_sel[_L['Enclose in _Brackets']][2]
+             or 'c['] = m_sel[_L['Enclose in Brackets']][2]
 keys[not OSX and (GUI and 'a{' or 'm}')
-             or 'c{'] = m_sel[_L['Enclose in B_races']][2]
+             or 'c{'] = m_sel[_L['Enclose in Braces']][2]
 keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
 -- Search.
-local m_search = textadept.menu.menubar[_L['_Search']]
-keys[not OSX and GUI and 'cf' or 'mf'] = m_search[_L['_Find']][2]
+local m_search = textadept.menu.menubar[_L['Search']]
+keys[not OSX and GUI and 'cf' or 'mf'] = m_search[_L['Find']][2]
 if CURSES then keys.mF = keys.mf end -- mf is used by some GUI terminals
 keys[not OSX and GUI and 'cg' or 'mg'] = ui.find.find_next
 if not OSX and GUI then keys.f3 = keys.cg end
@@ -364,138 +364,138 @@ keys[not OSX and (GUI and 'caR' or 'mR') or 'cR'] = ui.find.replace_all
 -- Replace All is aa when find pane is focused in GUI.
 keys[not OSX and GUI and 'caf' or 'cmf'] = ui.find.find_incremental
 if GUI then
-  keys[not OSX and 'cF' or 'mF'] = m_search[_L['Find in Fi_les']][2]
+  keys[not OSX and 'cF' or 'mF'] = m_search[_L['Find in Files']][2]
 end
 -- Find in Files is ai when find pane is focused in GUI.
 if GUI then
-  keys[not OSX and 'cag' or 'cmg'] = m_search[_L['Goto Nex_t File Found']][2]
+  keys[not OSX and 'cag' or 'cmg'] = m_search[_L['Goto Next File Found']][2]
   keys[not OSX and 'caG'
-               or 'cmG'] = m_search[_L['Goto Previou_s File Found']][2]
+               or 'cmG'] = m_search[_L['Goto Previous File Found']][2]
 end
 keys[not OSX and 'cj' or 'mj'] = textadept.editing.goto_line
 
 -- Tools.
-local m_tools = textadept.menu.menubar[_L['_Tools']]
+local m_tools = textadept.menu.menubar[_L['Tools']]
 keys[not OSX and (GUI and 'ce' or 'mc')
-             or 'me'] = m_tools[_L['Command _Entry']][2]
+             or 'me'] = m_tools[_L['Command Entry']][2]
 keys[not OSX and (GUI and 'cE' or 'mC')
-             or 'mE'] = m_tools[_L['Select Co_mmand']][2]
+             or 'mE'] = m_tools[_L['Select Command']][2]
 keys[not OSX and 'cr' or 'mr'] = textadept.run.run
 keys[not OSX and (GUI and 'cR' or 'cmr') or 'mR'] = textadept.run.compile
 keys[not OSX and (GUI and 'cB' or 'cmb') or 'mB'] = textadept.run.build
 if GUI then
-  keys[not OSX and 'cA' or 'mA'] = m_tools[_L['Set _Arguments...']][2]
+  keys[not OSX and 'cA' or 'mA'] = m_tools[_L['Set Arguments...']][2]
 end
 keys[not OSX and (GUI and 'cX' or 'cmx') or 'mX'] = textadept.run.stop
 keys[not OSX and (GUI and 'cae' or 'mx')
-             or 'cme'] = m_tools[_L['_Next Error']][2]
+             or 'cme'] = m_tools[_L['Next Error']][2]
 keys[not OSX and (GUI and 'caE' or 'mX')
-             or 'cmE'] = m_tools[_L['_Previous Error']][2]
+             or 'cmE'] = m_tools[_L['Previous Error']][2]
 -- Bookmark.
-local m_bookmark = m_tools[_L['_Bookmarks']]
+local m_bookmark = m_tools[_L['Bookmarks']]
 keys[not OSX and (GUI and 'cf2' or 'f1') or 'mf2'] = textadept.bookmarks.toggle
 keys[not OSX and (GUI and 'csf2' or 'f6') or 'msf2'] = textadept.bookmarks.clear
-keys.f2 = m_bookmark[_L['_Next Bookmark']][2]
-keys[GUI and 'sf2' or 'f3'] = m_bookmark[_L['_Previous Bookmark']][2]
+keys.f2 = m_bookmark[_L['Next Bookmark']][2]
+keys[GUI and 'sf2' or 'f3'] = m_bookmark[_L['Previous Bookmark']][2]
 keys[GUI and 'af2' or 'f4'] = textadept.bookmarks.goto_mark
 -- Macros.
 keys.f9 = textadept.macros.record
 keys[GUI and 'sf9' or 'f10'] = textadept.macros.play
 -- Quick Open.
-local m_quick_open = m_tools[_L['Quick _Open']]
-keys[not OSX and 'cu' or 'mu'] = m_quick_open[_L['Quickly Open _User Home']][2]
--- TODO: m_quick_open[_L['Quickly Open _Textadept Home']][2]
+local m_quick_open = m_tools[_L['Quick Open']]
+keys[not OSX and 'cu' or 'mu'] = m_quick_open[_L['Quickly Open User Home']][2]
+-- TODO: m_quick_open[_L['Quickly Open Textadept Home']][2]
 keys[not OSX and (GUI and 'caO' or 'mO')
-             or 'cmO'] = m_quick_open[_L['Quickly Open _Current Directory']][2]
+             or 'cmO'] = m_quick_open[_L['Quickly Open Current Directory']][2]
 keys[not OSX and (GUI and 'caP' or 'cmp') or 'cmP'] = io.quick_open
 -- Snippets.
-local m_snippets = m_tools[_L['_Snippets']]
+local m_snippets = m_tools[_L['Snippets']]
 keys[not OSX and (GUI and 'cK' or 'mK') or 'sa\t'] = textadept.snippets._select
 keys['\t'] = textadept.snippets._insert
 keys['s\t'] = textadept.snippets._previous
 keys.esc = textadept.snippets._cancel_current
 keys[not OSX and (GUI and 'ck' or 'mk')
-             or 'a\t'] = m_snippets[_L['Complete Trigger _Word']][2]
+             or 'a\t'] = m_snippets[_L['Complete Trigger Word']][2]
 -- Other.
-keys[not OSX and 'c ' or 'aesc'] = m_tools[_L['_Complete Symbol']][2]
+keys[not OSX and 'c ' or 'aesc'] = m_tools[_L['Complete Symbol']][2]
 keys[GUI and 'ch' or 'mh'] = textadept.editing.show_documentation
 if CURSES then keys.mH = keys.mh end -- mh is used by some GUI terminals
-keys[not OSX and (GUI and 'ci' or 'mI') or 'mi'] = m_tools[_L['Show St_yle']][2]
+keys[not OSX and (GUI and 'ci' or 'mI') or 'mi'] = m_tools[_L['Show Style']][2]
 
 -- Buffer.
-local m_buffer = textadept.menu.menubar[_L['_Buffer']]
-keys[GUI and 'c\t' or 'mn'] = m_buffer[_L['_Next Buffer']][2]
-keys[GUI and 'cs\t' or 'mp'] = m_buffer[_L['_Previous Buffer']][2]
+local m_buffer = textadept.menu.menubar[_L['Buffer']]
+keys[GUI and 'c\t' or 'mn'] = m_buffer[_L['Next Buffer']][2]
+keys[GUI and 'cs\t' or 'mp'] = m_buffer[_L['Previous Buffer']][2]
 keys[not OSX and GUI and 'cb' or 'mb'] = ui.switch_buffer
 if CURSES then keys.mB = keys.mb end -- mb is used by some GUI terminals
 -- Indentation.
-local m_indentation = m_buffer[_L['_Indentation']]
--- TODO: m_indentation[_L['Tab width: _2']][2]
--- TODO: m_indentation[_L['Tab width: _3']][2]
--- TODO: m_indentation[_L['Tab width: _4']][2]
--- TODO: m_indentation[_L['Tab width: _8']][2]
+local m_indentation = m_buffer[_L['Indentation']]
+-- TODO: m_indentation[_L['Tab width: 2']][2]
+-- TODO: m_indentation[_L['Tab width: 3']][2]
+-- TODO: m_indentation[_L['Tab width: 4']][2]
+-- TODO: m_indentation[_L['Tab width: 8']][2]
 keys[not OSX and (GUI and 'caT' or 'mt')
-             or 'cT'] = m_indentation[_L['_Toggle Use Tabs']][2]
+             or 'cT'] = m_indentation[_L['Toggle Use Tabs']][2]
 if CURSES then keys.mT = keys.mt end -- mt is used by some GUI terminals
 keys[not OSX and (GUI and 'cai' or 'mi')
              or 'ci'] = textadept.editing.convert_indentation
 -- EOL Mode.
--- TODO: m_buffer[_L['_EOL Mode']][_L['CRLF']][2]
--- TODO: m_buffer[_L['_EOL Mode']][_L['LF']][2]
+-- TODO: m_buffer[_L['EOL Mode']][_L['CRLF']][2]
+-- TODO: m_buffer[_L['EOL Mode']][_L['LF']][2]
 -- Encoding.
--- TODO: m_buffer[_L['E_ncoding']][_L['_UTF-8 Encoding']][2]
--- TODO: m_buffer[_L['E_ncoding']][_L['_ASCII Encoding']][2]
--- TODO: m_buffer[_L['E_ncoding']][_L['_CP-1252 Encoding']][2]
--- TODO: m_buffer[_L['E_ncoding']][_L['UTF-1_6 Encoding']][2]
+-- TODO: m_buffer[_L['Encoding']][_L['UTF-8 Encoding']][2]
+-- TODO: m_buffer[_L['Encoding']][_L['ASCII Encoding']][2]
+-- TODO: m_buffer[_L['Encoding']][_L['CP-1252 Encoding']][2]
+-- TODO: m_buffer[_L['Encoding']][_L['UTF-16 Encoding']][2]
 if GUI then
-  keys[not OSX and 'ca\n' or 'c\n'] = m_buffer[_L['Toggle View _EOL']][2]
-  keys[not OSX and 'ca\\' or 'c\\'] = m_buffer[_L['Toggle _Wrap Mode']][2]
-  keys[not OSX and 'caS' or 'cS'] = m_buffer[_L['Toggle View White_space']][2]
+  keys[not OSX and 'ca\n' or 'c\n'] = m_buffer[_L['Toggle View EOL']][2]
+  keys[not OSX and 'ca\\' or 'c\\'] = m_buffer[_L['Toggle Wrap Mode']][2]
+  keys[not OSX and 'caS' or 'cS'] = m_buffer[_L['Toggle View Whitespace']][2]
 end
 keys[not OSX and GUI and 'cL' or 'mL'] = textadept.file_types.select_lexer
-keys.f5 = m_buffer[_L['_Refresh Syntax Highlighting']][2]
+keys.f5 = m_buffer[_L['Refresh Syntax Highlighting']][2]
 if CURSES then keys.cl = keys.f5 end
 
 -- View.
-local m_view = textadept.menu.menubar[_L['_View']]
+local m_view = textadept.menu.menubar[_L['View']]
 if GUI then
-  keys[not OSX and 'can' or 'ca\t'] = m_view[_L['_Next View']][2]
-  keys[not OSX and 'cap' or 'cas\t'] = m_view[_L['_Previous View']][2]
-  keys[not OSX and 'cas' or 'cs'] = m_view[_L['Split View _Horizontal']][2]
+  keys[not OSX and 'can' or 'ca\t'] = m_view[_L['Next View']][2]
+  keys[not OSX and 'cap' or 'cas\t'] = m_view[_L['Previous View']][2]
+  keys[not OSX and 'cas' or 'cs'] = m_view[_L['Split View Horizontal']][2]
   if not OSX then keys.cah = keys.cas end
-  keys[not OSX and 'cav' or 'cv'] = m_view[_L['Split View _Vertical']][2]
-  keys[not OSX and 'caw' or 'cw'] = m_view[_L['_Unsplit View']][2]
-  keys[not OSX and 'caW' or 'cW'] = m_view[_L['Unsplit _All Views']][2]
-  keys[not OSX and 'ca+' or 'c+'] = m_view[_L['_Grow View']][2]
+  keys[not OSX and 'cav' or 'cv'] = m_view[_L['Split View Vertical']][2]
+  keys[not OSX and 'caw' or 'cw'] = m_view[_L['Unsplit View']][2]
+  keys[not OSX and 'caW' or 'cW'] = m_view[_L['Unsplit All Views']][2]
+  keys[not OSX and 'ca+' or 'c+'] = m_view[_L['Grow View']][2]
   keys[not OSX and 'ca=' or 'c='] = keys[not OSX and 'ca+' or 'c+']
-  keys[not OSX and 'ca-' or 'c-'] = m_view[_L['Shrin_k View']][2]
+  keys[not OSX and 'ca-' or 'c-'] = m_view[_L['Shrink View']][2]
 else
   keys.cmv = {
-    n = m_view[_L['_Next View']][2],
-    p = m_view[_L['_Previous View']][2],
-    s = m_view[_L['Split View _Horizontal']][2],
-    v = m_view[_L['Split View _Vertical']][2],
-    w = m_view[_L['_Unsplit View']][2],
-    W = m_view[_L['Unsplit _All Views']][2],
-    ['+'] = m_view[_L['_Grow View']][2],
-    ['-'] = m_view[_L['Shrin_k View']][2]
+    n = m_view[_L['Next View']][2],
+    p = m_view[_L['Previous View']][2],
+    s = m_view[_L['Split View Horizontal']][2],
+    v = m_view[_L['Split View Vertical']][2],
+    w = m_view[_L['Unsplit View']][2],
+    W = m_view[_L['Unsplit All Views']][2],
+    ['+'] = m_view[_L['Grow View']][2],
+    ['-'] = m_view[_L['Shrink View']][2]
   }
   if not OSX then keys.cmv.h = keys.cmv.s end
   keys.cmv['='] = keys.cmv['+']
 end
-keys[not OSX and GUI and 'c*' or 'm*'] = m_view[_L['Toggle Current _Fold']][2]
+keys[not OSX and GUI and 'c*' or 'm*'] = m_view[_L['Toggle Current Fold']][2]
 if GUI then
-  keys[not OSX and 'caI' or 'cI'] = m_view[_L['Toggle Show In_dent Guides']][2]
-  keys[not OSX and 'caV' or 'cV'] = m_view[_L['Toggle _Virtual Space']][2]
+  keys[not OSX and 'caI' or 'cI'] = m_view[_L['Toggle Show Indent Guides']][2]
+  keys[not OSX and 'caV' or 'cV'] = m_view[_L['Toggle Virtual Space']][2]
 end
 keys[not OSX and GUI and 'c=' or 'm='] = buffer.zoom_in
 keys[not OSX and GUI and 'c-' or 'm-'] = buffer.zoom_out
-keys[not OSX and GUI and 'c0' or 'm0'] = m_view[_L['_Reset Zoom']][2]
+keys[not OSX and GUI and 'c0' or 'm0'] = m_view[_L['Reset Zoom']][2]
 
 -- Help.
 if GUI then
-  keys.f1 = textadept.menu.menubar[_L['_Help']][_L['Show _Manual']][2]
-  keys.sf1 = textadept.menu.menubar[_L['_Help']][_L['Show _LuaDoc']][2]
+  keys.f1 = textadept.menu.menubar[_L['Help']][_L['Show Manual']][2]
+  keys.sf1 = textadept.menu.menubar[_L['Help']][_L['Show LuaDoc']][2]
 end
 
 -- Movement commands.
