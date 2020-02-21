@@ -203,7 +203,7 @@ local default_menubar = {
     end},
     SEPARATOR,
     {
-      title = _L['_Bookmark'],
+      title = _L['_Bookmarks'],
       {_L['_Toggle Bookmark'], textadept.bookmarks.toggle},
       {_L['_Clear Bookmarks'], textadept.bookmarks.clear},
       {_L['_Next Bookmark'], function()

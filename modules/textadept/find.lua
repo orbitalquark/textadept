@@ -67,8 +67,8 @@ local M = ui.find
 module('ui.find')]]
 
 local _L = _L
-M.find_label_text = not CURSES and _L['_Find:'] or _L['Find:']
-M.replace_label_text = not CURSES and _L['R_eplace:'] or _L['Replace:']
+M.find_label_text = _L['_Find:']
+M.replace_label_text = _L['R_eplace:']
 M.find_next_button_text = not CURSES and _L['Find _Next'] or _L['[Next]']
 M.find_prev_button_text = not CURSES and _L['Find _Prev'] or _L['[Prev]']
 M.replace_button_text = not CURSES and _L['_Replace'] or _L['[Replace]']
@@ -252,7 +252,7 @@ end})
 -- @name find_in_files
 function M.find_in_files(dir, filter)
   dir = dir or ui.dialogs.fileselect{
-    title = _L['Find in Files'], select_only_directories = true,
+    title = _L['Select Directory'], select_only_directories = true,
     with_directory = io.get_project_root() or
                      (buffer.filename or ''):match('^.+[/\\]') or
                      lfs.currentdir()
