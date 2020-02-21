@@ -392,7 +392,7 @@ keys[not OSX and (GUI and 'cae' or 'mx')
 keys[not OSX and (GUI and 'caE' or 'mX')
              or 'cmE'] = m_tools[_L['_Previous Error']][2]
 -- Bookmark.
-local m_bookmark = m_tools[_L['_Bookmark']]
+local m_bookmark = m_tools[_L['_Bookmarks']]
 keys[not OSX and (GUI and 'cf2' or 'f1') or 'mf2'] = textadept.bookmarks.toggle
 keys[not OSX and (GUI and 'csf2' or 'f6') or 'msf2'] = textadept.bookmarks.clear
 keys.f2 = m_bookmark[_L['_Next Bookmark']][2]

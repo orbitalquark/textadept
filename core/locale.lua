@@ -7,6 +7,8 @@ local M = {}
 -- Map of all messages used by Textadept to their localized form.
 -- If the table does not contain the localized version of a given message, it
 -- returns a string that starts with "No Localization:" via a metamethod.
+-- Note: the terminal version ignores any "_" mnemonics the GUI version would
+-- use.
 module('_L')]]
 
 local f = io.open(_USERHOME..'/locale.conf', 'rb')
@@ -21,7 +23,9 @@ for line in f:lines() do
   -- comment.
   if not line:find('^%s*[^%w_%[]') then
     local id, str = line:match('^(.-)%s*=%s*(.+)$')
-    if id and str then M[id] = not CURSES and str or str:gsub('_', '') end
+    if id and str and assert(not M[id], 'duplicate locale key: '..id) then
+      M[id] = not CURSES and str or str:gsub('_', '')
+    end
   end
 end
 f:close()

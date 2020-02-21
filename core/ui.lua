@@ -205,7 +205,7 @@ events.connect(events.RESET_AFTER,
 -- @name switch_buffer
 function ui.switch_buffer(zorder)
   local buffers = not zorder and _BUFFERS or buffers_zorder
-  local columns, utf8_list = {_L['Name'], _L['File']}, {}
+  local columns, utf8_list = {_L['Name'], _L['Filename']}, {}
   for i = not zorder and 1 or 2, #buffers do
     local buffer = buffers[i]
     local filename = buffer.filename or buffer._type or _L['Untitled']

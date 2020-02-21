@@ -98,7 +98,7 @@ function io.open_file(filenames, encodings)
   if type(filenames) == 'string' then filenames = {filenames} end
   if type(encodings or '') == 'string' then encodings = {encodings} end
   filenames = filenames or ui.dialogs.fileselect{
-    title = _L['Open'], select_multiple = true,
+    title = _L['Open File'], select_multiple = true,
     with_directory = (buffer.filename or ''):match('^.+[/\\]') or
                      lfs.currentdir(),
     width = CURSES and ui.size[1] - 2 or nil
@@ -230,7 +230,7 @@ end
 function io.save_file_as(filename)
   local dir, name = (buffer.filename or ''):match('^(.-[/\\]?)([^/\\]*)$')
   filename = filename or ui.dialogs.filesave{
-    title = _L['Save'], with_directory = dir,
+    title = _L['Save File'], with_directory = dir,
     with_file = name:iconv('UTF-8', _CHARSET),
     width = CURSES and ui.size[1] - 2 or nil
   }
@@ -338,7 +338,7 @@ function io.open_recent_file()
     utf8_list[#utf8_list + 1] = io.recent_files[i]:iconv('UTF-8', _CHARSET)
   end
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Open'], columns = _L['File'], items = utf8_list,
+    title = _L['Open File'], columns = _L['Filename'], items = utf8_list,
     width = CURSES and ui.size[1] - 2 or nil
   }
   if button == 1 and i then io.open_file(io.recent_files[i]) end
@@ -437,7 +437,7 @@ function io.quick_open(paths, filter, opts)
     }
   end
   local options = {
-    title = _L['Open'], columns = _L['File'], items = utf8_list,
+    title = _L['Open File'], columns = _L['Filename'], items = utf8_list,
     button1 = _L['_OK'], button2 = _L['_Cancel'], select_multiple = true,
     string_output = true, width = CURSES and ui.size[1] - 2 or nil
   }
