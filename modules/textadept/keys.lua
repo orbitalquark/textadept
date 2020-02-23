@@ -320,8 +320,7 @@ keys[not OSX and (GUI and 'c|' or 'c\\')
 -- Select.
 local m_sel = m_edit[_L['Select']]
 keys[GUI and 'cM' or 'mM'] = m_sel[_L['Select between Matching Delimiters']][2]
-keys[not OSX and GUI and 'c<'
-                     or 'm<'] = m_sel[_L['Select between XML Tags']][2]
+keys[not OSX and GUI and 'c<' or 'm<'] = m_sel[_L['Select between XML Tags']][2]
 if GUI then
   keys[not OSX and 'c>' or 'm>'] = m_sel[_L['Select in XML Tag']][2]
 end
@@ -369,8 +368,7 @@ end
 -- Find in Files is ai when find pane is focused in GUI.
 if GUI then
   keys[not OSX and 'cag' or 'cmg'] = m_search[_L['Goto Next File Found']][2]
-  keys[not OSX and 'caG'
-               or 'cmG'] = m_search[_L['Goto Previous File Found']][2]
+  keys[not OSX and 'caG' or 'cmG'] = m_search[_L['Goto Previous File Found']][2]
 end
 keys[not OSX and 'cj' or 'mj'] = textadept.editing.goto_line
 
@@ -410,10 +408,10 @@ keys[not OSX and (GUI and 'caO' or 'mO')
 keys[not OSX and (GUI and 'caP' or 'cmp') or 'cmP'] = io.quick_open
 -- Snippets.
 local m_snippets = m_tools[_L['Snippets']]
-keys[not OSX and (GUI and 'cK' or 'mK') or 'sa\t'] = textadept.snippets._select
-keys['\t'] = textadept.snippets._insert
-keys['s\t'] = textadept.snippets._previous
-keys.esc = textadept.snippets._cancel_current
+keys[not OSX and (GUI and 'cK' or 'mK') or 'sa\t'] = textadept.snippets.select
+keys['\t'] = textadept.snippets.insert
+keys['s\t'] = textadept.snippets.previous
+keys.esc = textadept.snippets.cancel_current
 keys[not OSX and (GUI and 'ck' or 'mk')
              or 'a\t'] = m_snippets[_L['Complete Trigger Word']][2]
 -- Other.
