@@ -119,11 +119,19 @@ M.INDIC_PLACEHOLDER = _SCINTILLA.next_indic_number()
 -- Note: If a directory has multiple snippets with the same trigger, the snippet
 -- chosen for insertion is not defined and may not be constant.
 -- @class table
--- @name _paths
-M._paths = {}
+-- @name paths
+M.paths = {}
 
 local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
 local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.next_indic_number()
+
+
+-- Map of snippet triggers with their snippet text or functions that return such
+-- text, with language-specific snippets tables assigned to a lexer name key.
+-- @class table
+-- @name snippets
+-- @see _G.snippets
+local snippets = {}
 
 -- Finds the snippet assigned to the trigger word behind the caret and returns
 -- the trigger word and snippet text. If *grep* is `true`, returns a table of
@@ -137,27 +145,29 @@ local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.next_indic_number()
 --   word and return all snippets.
 -- @return trigger word, snippet text or table of matching snippets
 local function find_snippet(grep, no_trigger)
-  local snippets = {}
+  local matching_snippets = {}
   local pos = buffer.current_pos
   local trigger = buffer:text_range(buffer:word_start_position(pos), pos)
   if no_trigger then grep, trigger = true, '' end
   local lexer = buffer:get_lexer(true)
   local name_patt = '^'..trigger
   -- Search in the snippet tables, ignoring this module's non-string members.
-  for _, v in ipairs{type(M[lexer]) == 'table' and M[lexer] or {}, M} do
+  local s = snippets
+  for _, v in ipairs{type(s[lexer]) == 'table' and s[lexer] or {}, s} do
     if not grep and v[trigger] then
       return trigger, v[trigger]
     elseif grep then
       for name, text in pairs(v) do
-        if name:find(name_patt) and (v ~= M or type(text) == 'string') then
-          snippets[name] = text
+        if name:find(name_patt) and
+           (type(text) == 'string' or type(text) == 'function') then
+          matching_snippets[name] = tostring(text)
         end
       end
     end
   end
   -- Search in snippet files.
-  for i = 1, #M._paths do
-    for basename in lfs.dir(M._paths[i]) do
+  for i = 1, #M.paths do
+    for basename in lfs.dir(M.paths[i]) do
       -- Snippet files are either of the form "lexer.trigger.ext" or
       -- "trigger.ext". Prefer "lexer."-prefixed snippets.
       local p1, p2, p3 = basename:match('^([^.]+)%.?([^.]*)%.?([^.]*)$')
@@ -165,16 +175,21 @@ local function find_snippet(grep, no_trigger)
                        p1 == trigger and p3 == '') or
          grep and (p1 == lexer and p2 and p2:find(name_patt) or
                    p1 and p1:find(name_patt) and p3 == '') then
-        local f = io.open(M._paths[i]..'/'..basename)
+        local f = io.open(M.paths[i]..'/'..basename)
         text = f:read('a')
         f:close()
         if not grep then return trigger, text end
-        snippets[p1 == lexer and p2 or p1] = text
+        matching_snippets[p1 == lexer and p2 or p1] = text
       end
     end
   end
-  if not grep then return nil, nil else return trigger, snippets end
+  if not grep then return nil, nil else return trigger, matching_snippets end
 end
+
+-- Metatable for a snippet object.
+-- @class table
+-- @name snippet_mt
+local snippet_mt -- defined later
 
 -- The stack of currently running snippets.
 local snippet_stack = {}
@@ -220,7 +235,7 @@ local function new_snippet(text, trigger)
       return buffer:indicator_all_on_for(pos) &
              1 << INDIC_CURRENTPLACEHOLDER > 0 and pos + 1 or pos
     else
-      return M._snippet_mt[k]
+      return snippet_mt[k]
     end
   end})
   snippet_stack[#snippet_stack + 1] = snippet
@@ -365,70 +380,7 @@ local function new_snippet(text, trigger)
   return snippet
 end
 
----
--- Inserts snippet text *text* or the snippet assigned to the trigger word
--- behind the caret.
--- Otherwise, if a snippet is active, goes to the active snippet's next
--- placeholder. Returns `false` if no action was taken.
--- @param text Optional snippet text to insert. If `nil`, attempts to insert a
---   new snippet based on the trigger, the word behind caret, and the current
---   lexer.
--- @return `false` if no action was taken; `nil` otherwise.
--- @see buffer.word_chars
--- @name _insert
-function M._insert(text)
-  local trigger
-  if not text then trigger, text = find_snippet(trigger) end
-  if type(text) == 'function' and not trigger:find('^_') then text = text() end
-  local snippet = type(text) == 'string' and new_snippet(text, trigger) or
-                  snippet_stack[#snippet_stack]
-  if snippet then snippet:next() else return false end
-end
-
----
--- Jumps back to the previous snippet placeholder, reverting any changes from
--- the current one.
--- Returns `false` if no snippet is active.
--- @return `false` if no snippet is active; `nil` otherwise.
--- @name _previous
-function M._previous()
-  if #snippet_stack == 0 then return false end
-  snippet_stack[#snippet_stack]:previous()
-end
-
----
--- Cancels the active snippet, removing all inserted text.
--- Returns `false` if no snippet is active.
--- @return `false` if no snippet is active; `nil` otherwise.
--- @name _cancel_current
-function M._cancel_current()
-  if #snippet_stack == 0 then return false end
-  snippet_stack[#snippet_stack]:finish(true)
-end
-
----
--- Prompts the user to select a snippet to insert from a list of global and
--- language-specific snippets.
--- @name _select
-function M._select()
-  local snippets = select(2, find_snippet(true, true))
-  local triggers, items = {}, {}
-  for trigger in pairs(snippets) do triggers[#triggers + 1] = trigger end
-  table.sort(triggers)
-  for i = 1, #triggers do
-    items[#items + 1], items[#items + 2] = triggers[i], snippets[triggers[i]]
-  end
-  local button, i = ui.dialogs.filteredlist{
-    title = _L['Select Snippet'], columns = {_L['Trigger'], _L['Snippet Text']},
-    items = items, width = CURSES and ui.size[1] - 2 or nil
-  }
-  if button == 1 and i then M._insert(items[i * 2]) end
-end
-
--- Metatable for a snippet object.
--- @class table
--- @name _snippet_mt
-M._snippet_mt = {
+snippet_mt = {
   -- Inserts the current snapshot (based on `self.index`) of this snippet into
   -- the buffer and marks placeholders.
   insert = function(self)
@@ -630,6 +582,68 @@ M._snippet_mt = {
   end,
 }
 
+---
+-- Inserts snippet text *text* or the snippet assigned to the trigger word
+-- behind the caret.
+-- Otherwise, if a snippet is active, goes to the active snippet's next
+-- placeholder. Returns `false` if no action was taken.
+-- @param text Optional snippet text to insert. If `nil`, attempts to insert a
+--   new snippet based on the trigger, the word behind caret, and the current
+--   lexer.
+-- @return `false` if no action was taken; `nil` otherwise.
+-- @see buffer.word_chars
+-- @name insert
+function M.insert(text)
+  local trigger
+  if not text then trigger, text = find_snippet(trigger) end
+  if type(text) == 'function' and not trigger:find('^_') then text = text() end
+  local snippet = type(text) == 'string' and new_snippet(text, trigger) or
+                  snippet_stack[#snippet_stack]
+  if snippet then snippet:next() else return false end
+end
+
+---
+-- Jumps back to the previous snippet placeholder, reverting any changes from
+-- the current one.
+-- Returns `false` if no snippet is active.
+-- @return `false` if no snippet is active; `nil` otherwise.
+-- @name previous
+function M.previous()
+  if #snippet_stack == 0 then return false end
+  snippet_stack[#snippet_stack]:previous()
+end
+
+---
+-- Cancels the active snippet, removing all inserted text.
+-- Returns `false` if no snippet is active.
+-- @return `false` if no snippet is active; `nil` otherwise.
+-- @name cancel_current
+function M.cancel_current()
+  if #snippet_stack == 0 then return false end
+  snippet_stack[#snippet_stack]:finish(true)
+end
+
+---
+-- Prompts the user to select a snippet to insert from a list of global and
+-- language-specific snippets.
+-- @name select
+function M.select()
+  local all_snippets, items = {}, {}
+  for trigger, snippet in pairs(select(2, find_snippet(true, true))) do
+    all_snippets[#all_snippets + 1], all_snippets[trigger] = trigger, snippet
+  end
+  table.sort(all_snippets)
+  for i = 1, #all_snippets do
+    local trigger = all_snippets[i]
+    items[#items + 1], items[#items + 2] = trigger, all_snippets[trigger]
+  end
+  local button, i = ui.dialogs.filteredlist{
+    title = _L['Select Snippet'], columns = {_L['Trigger'], _L['Snippet Text']},
+    items = items, width = CURSES and ui.size[1] - 2 or nil
+  }
+  if button == 1 and i then M.insert(items[i * 2]) end
+end
+
 -- Update snippet transforms when text is added or deleted.
 events.connect(events.UPDATE_UI, function(updated)
   if #snippet_stack > 0 and updated and updated & buffer.UPDATE_CONTENT > 0 then
@@ -647,10 +661,10 @@ end)
 -- @see textadept.editing.autocomplete
 textadept.editing.autocompleters.snippet = function()
   local list = {}
-  local trigger, snippets = find_snippet(true)
+  local trigger, matching_snippets = find_snippet(true)
   local sep = string.char(buffer.auto_c_type_separator)
   local xpm = textadept.editing.XPM_IMAGES.NAMESPACE
-  for name in pairs(snippets) do
+  for name in pairs(matching_snippets) do
     list[#list + 1] = string.format('%s%s%d', name, sep, xpm)
   end
   return #trigger, list
@@ -662,6 +676,6 @@ end
 -- This table also contains the `textadept.snippets` module.
 -- @class table
 -- @name _G.snippets
-_G.snippets = M
+_G.snippets = snippets
 
 return M

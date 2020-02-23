@@ -13,6 +13,10 @@ package.cpath = table.concat({
 
 textadept = require('textadept')
 
+-- Temporary compatibility.
+setmetatable(_L, {__index = function(t, k) return rawget(t, k:gsub('_', '')) or 'No Localization:'..k end})
+setmetatable(textadept.snippets, {__index = function(t, k) return rawget(t, k:gsub('^_', '')) end})
+
 -- Documentation is in core/.buffer.luadoc.
 local function set_theme(buffer, name, props)
   name = name:find('[/\\]') and name or
