@@ -1,9 +1,9 @@
 #!/usr/bin/lua
 -- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
-local constants, functions, properties = {}, {}, {}
+local constants, functions, properties, events = {}, {}, {}, {}
 local const_patt = '^val ([%w_]+)=([-%dx%x]+)'
-local event_patt = '^evt %a+ ([%w_]+)=(%d+)'
+local event_patt = '^evt %a+ ([%w_]+)=(%d+)(%b())'
 local msg_patt = '^(%a+) (%a+) (%w+)=(%d+)%((%a*) ?([^,]*),%s*(%a*)'
 local types = {
   [''] = 0, void = 0, int = 1, length = 2, position = 1, line = 1, colour = 3,
@@ -19,7 +19,10 @@ local ignores = { -- constants to ignore
   '^SCLEX_', '^UNDO_MAY_COALESCE'
 }
 local changed_setter = {} -- holds properties changed to setter functions
-local string_format, table_unpack = string.format, table.unpack
+local function to_lua_name(camel_case)
+  return camel_case:gsub('([a-z])([A-Z])', '%1_%2'):
+    gsub('([A-Z])([A-Z][a-z])', '%1_%2'):lower()
+end
 
 for line in io.lines('../src/scintilla/include/Scintilla.iface') do
   if line:find('^val ') then
@@ -28,20 +31,31 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
     name = name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1')
     if name == 'FIND_REGEXP' then
       value = tostring(tonumber(value) + 2^23) -- add SCFIND_CXX11REGEX
+      value = value:gsub('%.0$', '') -- Lua 5.3+ may append this
     elseif name == 'MASK_FOLDERS' then
-      value = '-33554432'
+      value = tostring(-33554432)
     end
-    constants[#constants + 1] = string_format('%s=%s', name, value)
+    constants[#constants + 1] = string.format('%s=%s', name, value)
   elseif line:find('^evt ') then
-    local name, value = line:match(event_patt)
-    constants[#constants + 1] = string_format('SCN_%s=%s', name:upper(), value)
+    local name, value, param_list = line:match(event_patt)
+    name = to_lua_name(name)
+    local event = {string.format('%q', name)}
+    for param in param_list:gmatch('(%a+)[,)]') do
+      if param ~= 'void' then
+        event[#event + 1] = string.format('%q', to_lua_name(param))
+      end
+    end
+    if name:find('^margin') then
+      event[2], event[4] = event[4], event[2] -- swap modifiers, margin
+    end
+    events[#events + 1] = value
+    events[value] = table.concat(event, ',')
   elseif line:find('^fun ') then
     local _, rtype, name, id, wtype, param, ltype = line:match(msg_patt)
     if rtype:find('^%u') then rtype = 'int' end
     if wtype:find('^%u') then wtype = 'int' end
     if ltype:find('^%u') then ltype = 'int' end
-    name = name:gsub('([a-z])([A-Z])', '%1_%2')
-               :gsub('([A-Z])([A-Z][a-z])', '%1_%2'):lower()
+    name = to_lua_name(name)
     if name == 'convert_eo_ls' then name = 'convert_eols' end
     if types[wtype] == types.int and param == 'length' then wtype = 'length' end
     functions[#functions + 1] = name
@@ -51,13 +65,12 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
     if rtype:find('^%u') then rtype = 'int' end
     if wtype:find('^%u') then wtype = 'int' end
     if ltype:find('^%u') then ltype = 'int' end
-    name = name:gsub('[GS]et%f[%u]', ''):gsub('([a-z])([A-Z])', '%1_%2')
-               :gsub('([A-Z])([A-Z][a-z])', '%1_%2'):lower()
+    name = to_lua_name(name:gsub('[GS]et%f[%u]', ''))
     if kind == 'get' and types[wtype] == types.int and
        types[ltype] == types.int or wtype == 'bool' and ltype ~= '' or
        changed_setter[name] then
       -- Special case getter/setter; handle as function.
-      local fname = kind..'_'..name
+      local fname = kind .. '_' .. name
       functions[#functions + 1] = fname
       functions[fname] = {id, types[rtype], types[wtype], types[ltype]}
       changed_setter[name] = true
@@ -93,6 +106,7 @@ constants[#constants + 1] = 'MOUSE_RELEASE=3'
 table.sort(constants)
 table.sort(functions)
 table.sort(properties)
+table.sort(events)
 
 local f = io.open('../core/iface.lua', 'wb')
 f:write([=[
@@ -134,9 +148,9 @@ f:write([[
 -- @class table
 -- @name functions
 M.functions = {]])
-for i = 1, #functions do
-  f:write(string_format('%s={%d,%d,%d,%d},', functions[i],
-                        table_unpack(functions[functions[i]])))
+for _, func in ipairs(functions) do
+  f:write(
+    string.format('%s={%d,%d,%d,%d},', func, table.unpack(functions[func])))
 end
 f:write('}\n\n')
 f:write([[
@@ -149,9 +163,19 @@ f:write([[
 -- @class table
 -- @name properties
 M.properties = {]])
-for i = 1, #properties do
-  f:write(string_format('%s={%d,%d,%d,%d},', properties[i],
-                        table_unpack(properties[properties[i]])))
+for _, property in ipairs(properties) do
+  f:write(string.format(
+    '%s={%d,%d,%d,%d},', property, table.unpack(properties[property])))
+end
+f:write('}\n\n')
+f:write([[
+---
+-- Map of Scintilla event IDs to tables of event names and event parameters.
+-- @class table
+-- @name events
+M.events = {]])
+for _, event in ipairs(events) do
+  f:write(string.format('[%s]={%s},', event, events[event]))
 end
 f:write('}\n\n')
 f:write([[
