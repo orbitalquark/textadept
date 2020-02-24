@@ -67,7 +67,14 @@ if not CURSES then
   M.register('-h', '--help', 0, function()
     print('Usage: textadept [args] [filenames]')
     local line = "  %s [%d args]: %s"
-    for k, v in pairs(switches) do print(line:format(k, table.unpack(v, 2))) end
+    local list = {}
+    for switch in pairs(switches) do list[#list + 1] = switch end
+    table.sort(list,
+               function(a, b) return a:match('[^-]+') < b:match('[^-]+') end)
+    for i = 1, #list do
+      local switch = list[i]
+      print(line:format(switch, table.unpack(switches[switch], 2)))
+    end
     os.exit()
   end, 'Shows this')
   -- Shows Textadept version and copyright on the command line.
@@ -86,6 +93,8 @@ if not CURSES then
 end
 
 -- Set `_G._USERHOME`.
+-- This needs to be set as soon as possible since the processing of arguments is
+-- positional.
 _USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'
 for i = 1, #arg do
   if (arg[i] == '-u' or arg[i] == '--userhome') and arg[i + 1] then
@@ -97,6 +106,7 @@ if not lfs.attributes(_USERHOME) then lfs.mkdir(_USERHOME) end
 local f = io.open(_USERHOME..'/init.lua', 'a+') -- ensure existence
 if f then f:close() end
 
+-- Placeholders.
 M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
 M.register('-f', '--force', 0, function() end, 'Forces unique instance')
 
