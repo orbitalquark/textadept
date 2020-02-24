@@ -363,47 +363,17 @@ function M.emit(event, ...)
   end
 end
 
---- Map of Scintilla notifications to their handlers.
-local c = _SCINTILLA.constants
-local scnotifications = {
-  [c.SCN_CHARADDED] = {'char_added', 'ch'},
-  [c.SCN_SAVEPOINTREACHED] = {'save_point_reached'},
-  [c.SCN_SAVEPOINTLEFT] = {'save_point_left'},
-  [c.SCN_DOUBLECLICK] = {'double_click', 'position', 'line', 'modifiers'},
-  [c.SCN_UPDATEUI] = {'update_ui', 'updated'},
-  -- SCN_MODIFIED is undocumented.
-  [c.SCN_MODIFIED] = {'modified', 'modification_type', 'position', 'length'},
-  [c.SCN_MARGINCLICK] = {'margin_click', 'margin', 'position', 'modifiers'},
-  [c.SCN_USERLISTSELECTION] = {
-    'user_list_selection', 'wParam', 'text', 'position'
-  },
-  [c.SCN_URIDROPPED] = {'uri_dropped', 'text'},
-  [c.SCN_DWELLSTART] = {'dwell_start', 'position', 'x', 'y'},
-  [c.SCN_DWELLEND] = {'dwell_end', 'position', 'x', 'y'},
-  [c.SCN_ZOOM] = {'zoom'},
-  [c.SCN_INDICATORCLICK] = {'indicator_click', 'position', 'modifiers'},
-  [c.SCN_INDICATORRELEASE] = {'indicator_release', 'position'},
-  [c.SCN_CALLTIPCLICK] = {'call_tip_click', 'position'},
-  [c.SCN_AUTOCSELECTION] = {'auto_c_selection', 'text', 'position'},
-  [c.SCN_AUTOCSELECTIONCHANGE] = {
-    'auto_c_selection_change', 'wParam', 'text', 'position'
-  },
-  [c.SCN_AUTOCCANCELLED] = {'auto_c_cancelled'},
-  [c.SCN_AUTOCCHARDELETED] = {'auto_c_char_deleted'},
-  [c.SCN_AUTOCCOMPLETED] = {'auto_c_completed', 'text', 'position'},
-}
-
 -- Handles Scintilla notifications.
-M.connect('SCN', function(n)
-  local f = scnotifications[n.code]
+M.connect('SCN', function(notification)
+  local f = _SCINTILLA.events[notification.code]
   if not f then return end
   local args = {}
-  for i = 2, #f do args[i - 1] = n[f[i]] end
+  for i = 2, #f do args[i - 1] = notification[f[i]] end
   return M.emit(f[1], table.unpack(args))
 end)
 
 -- Set event constants.
-for _, n in pairs(scnotifications) do M[n[1]:upper()] = n[1] end
+for _, v in pairs(_SCINTILLA.events) do M[v[1]:upper()] = v[1] end
 local textadept_events = {
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
   'buffer_deleted', 'buffer_new', 'csi', 'error', 'find', 'focus',
@@ -411,6 +381,6 @@ local textadept_events = {
   'replace_all', 'reset_after', 'reset_before', 'resume', 'suspend',
   'tab_clicked', 'view_after_switch', 'view_before_switch', 'view_new'
 }
-for _, e in pairs(textadept_events) do M[e:upper()] = e end
+for _, v in pairs(textadept_events) do M[v:upper()] = v end
 
 return M
