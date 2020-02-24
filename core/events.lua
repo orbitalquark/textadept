@@ -294,7 +294,10 @@ local M = {}
 --   Emitted by [`buffer.zoom_in()`]() and [`buffer.zoom_out()`]().
 module('events')]]
 
-local handlers = {}
+local handlers = setmetatable({}, {__index = function(t, k)
+  t[k] = {}
+  return t[k]
+end})
 
 ---
 -- Adds function *f* to the set of event handlers for event *event* at position
@@ -308,9 +311,7 @@ local handlers = {}
 -- @see disconnect
 -- @name connect
 function M.connect(event, f, index)
-  -- Note: cannot assert() here since _L is undefined early in init process.
-  if not event then error(_L['Undefined event name']) end
-  if not handlers[event] then handlers[event] = {} end
+  assert(type(event) == 'string', 'string expected')
   M.disconnect(event, f) -- in case it already exists
   table.insert(handlers[event], index or #handlers[event] + 1, f)
 end
@@ -322,7 +323,6 @@ end
 -- @see connect
 -- @name disconnect
 function M.disconnect(event, f)
-  if not handlers[event] then return end
   for i = 1, #handlers[event] do
     if handlers[event][i] == f then table.remove(handlers[event], i) break end
   end
@@ -344,22 +344,22 @@ local error_emitted = false
 -- @usage events.emit('my_event', 'my message')
 -- @name emit
 function M.emit(event, ...)
-  assert(event, _L['Undefined event name'])
-  local h = handlers[event]
-  if not h then return end
-  for i = 1, #h do
-    if not h[i] then break end -- M.disconnect() for this event was called
-    local ok, result = pcall(h[i], ...)
+  assert(type(event) == 'string', 'string expectd')
+  local i = 1
+  while i <= #handlers[event] do
+    local handler = handlers[event][i]
+    local ok, result = pcall(handler, ...)
     if not ok then
       if not error_emitted then
         error_emitted = true
         M.emit(events.ERROR, result)
         error_emitted = false
       else
-        io.stderr:write(result)
+        io.stderr:write(result) -- prevent infinite loop
       end
     end
     if type(result) == 'boolean' then return result end
+    if handlers[event][i] == handler then i = i + 1 end -- unless M.disconnect()
   end
 end
 
