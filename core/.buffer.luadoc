@@ -595,7 +595,7 @@
 --   Whether or not pressing [`buffer.rectangular_selection_modifier`]() when
 --   selecting text normally with the mouse turns on rectangular selection.
 --   The default value is `false`.
--- @field modify (bool)
+-- @field modify (bool, Read-only)
 --   Whether or not the buffer has unsaved changes.
 -- @field move_extends_selection (bool)
 --   Whether or not regular caret movement alters the selected text.
@@ -3138,8 +3138,8 @@ function text_range(buffer, start_pos, end_pos) end
 -- Converts the current buffer's contents to encoding *encoding*.
 -- @param buffer A buffer.
 -- @param encoding The string encoding to set. Valid encodings are ones that GNU
---   iconv accepts.
--- @usage buffer:set_encoding('ASCII')
+--   iconv accepts. If `nil`, assumes a binary encoding.
+-- @usage buffer:set_encoding('CP1252')
 function set_encoding(buffer, encoding) end
 
 ---

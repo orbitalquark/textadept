@@ -24,7 +24,8 @@ local switches = {}
 -- @param short The string short version of the switch.
 -- @param long The string long version of the switch.
 -- @param narg The number of expected parameters for the switch.
--- @param f The Lua function to run when the switch is tripped.
+-- @param f The Lua function to run when the switch is tripped. It is passed
+--   *narg* string arguments.
 -- @param description The string description of the switch for command line
 --   help.
 -- @name register
