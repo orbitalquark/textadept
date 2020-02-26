@@ -344,7 +344,7 @@ local error_emitted = false
 -- @usage events.emit('my_event', 'my message')
 -- @name emit
 function M.emit(event, ...)
-  assert(type(event) == 'string', 'string expectd')
+  assert(type(event) == 'string', 'string expected')
   local i = 1
   while i <= #handlers[event] do
     local handler = handlers[event][i]

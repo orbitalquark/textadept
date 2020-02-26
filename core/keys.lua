@@ -152,13 +152,13 @@ local keychain = {}
 -- @name keychain
 M.keychain = setmetatable({}, {
   __index = keychain,
-  __newindex = function() error("read-only table") end,
+  __newindex = function() error('read-only table') end,
   __len = function() return #keychain end
 })
 
 -- Clears the current key sequence.
+-- Note: clearing a table is often faster than re-creating one.
 local function clear_key_sequence()
-  -- Clearing a table is sometimes faster than re-creating one.
   if #keychain == 1 then keychain[1] = nil else keychain = {} end
 end
 
@@ -212,7 +212,7 @@ local function keypress(code, shift, control, alt, meta, caps_lock)
   --print(key_seq)
 
   ui.statusbar_text = ''
-  --if CURSES then ui.statusbar_text = '"'..key_seq..'"' end
+  --if CURSES then ui.statusbar_text = string.format('"%s"', key_seq) end
   local keychain_size = #keychain
   if keychain_size > 0 and key_seq == M.CLEAR then
     clear_key_sequence()
