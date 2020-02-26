@@ -507,9 +507,9 @@ function colorselect(options) end
 --
 --   * `title`: The dialog's title text.
 --   * `text`: The font preview text.
---   * `font-name`: The initially selected font name.
---   * `font-size`: The initially selected font size. The default value is `12`.
---   * `font-style`: The initially selected font style. The available options
+--   * `font_name`: The initially selected font name.
+--   * `font_size`: The initially selected font size. The default value is `12`.
+--   * `font_style`: The initially selected font style. The available options
 --     are `"regular"`, `"bold"`, `"italic"`, and `"bold italic"`. The default
 --     value is `"regular"`.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
