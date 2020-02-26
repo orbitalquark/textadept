@@ -359,7 +359,7 @@ local vcs = {'.bzr', '.git', '.hg', '.svn'}
 -- @name get_project_root
 function io.get_project_root(path)
   local lfs_attributes = lfs.attributes
-  local dir = path or (buffer.filename or lfs.currentdir()):match('^(.+)[/\\]')
+  local dir = path or (buffer.filename or lfs.currentdir()..'/'):match('^(.+)[/\\]')
   while dir do
     for i = 1, #vcs do
       if lfs_attributes(dir..'/'..vcs[i], 'mode') then return dir end

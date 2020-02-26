@@ -76,11 +76,11 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
     end
     filter = processed_filter
   end
-  local dir_sep, lfs_attributes = not WIN32 and '/' or '\\', lfs.attributes
+  local dir_sep = not WIN32 and '/' or '\\'
   for basename in lfs.dir(dir) do
     if basename:find('^%.%.?$') then goto continue end -- ignore . and ..
     local filename = dir..(dir ~= '/' and dir_sep or '')..basename
-    local mode = lfs_attributes(filename, 'mode')
+    local mode = lfs.attributes(filename, 'mode')
     if mode ~= 'directory' and mode ~= 'file' then goto continue end
     local include
     if mode == 'file' then
@@ -123,7 +123,7 @@ function lfs.abspath(filename, prefix)
   if WIN32 then filename = filename:gsub('/', '\\') end
   if not filename:find(not WIN32 and '^/' or '^%a:[/\\]') and
      not (WIN32 and filename:find('^\\\\')) then
-    prefix = prefix or lfs.currentdir()
+    if not prefix then prefix = lfs.currentdir() end
     filename = prefix..(not WIN32 and '/' or '\\')..filename
   end
   filename = filename:gsub('%f[^/\\]%.[/\\]', '') -- clean up './'

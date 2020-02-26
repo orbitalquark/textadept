@@ -17,7 +17,7 @@ if not f then
   if lang then f = io.open(_HOME..'/core/locales/locale.'..lang..'.conf') end
 end
 if not f then f = io.open(_HOME..'/core/locale.conf', 'rb') end
-assert(f, '"core/locale.conf" not found.')
+assert(f, '"core/locale.conf" not found')
 for line in f:lines() do
   -- Any line that starts with a non-word character except '[' is considered a
   -- comment.
