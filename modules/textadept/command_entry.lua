@@ -47,6 +47,8 @@ local env = setmetatable({}, {
     local f = buffer[k]
     if f and type(f) == 'function' then
       f = function(...) return buffer[k](buffer, ...) end
+    elseif f == nil and type(view[k]) == 'function' then
+      f = function(...) view[k](view, ...) end -- do not return a value
     elseif f == nil then
       f = view[k] or ui[k] or _G[k]
     end
