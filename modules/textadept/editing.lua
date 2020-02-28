@@ -120,54 +120,61 @@ M.autocompleters = {}
 -- @class table
 -- @name api_files
 -- @see show_documentation
-M.api_files = {}
-setmetatable(M.api_files, {__index = function(t, k)
+M.api_files = setmetatable({}, {__index = function(t, k)
   t[k] = {}
   return t[k]
 end})
 
 -- Matches characters specified in auto_pairs.
 events.connect(events.CHAR_ADDED, function(code)
-  if M.auto_pairs and M.auto_pairs[code] and buffer.selections == 1 then
-    buffer:insert_text(-1, M.auto_pairs[code])
+  if M.auto_pairs and M.auto_pairs[code] then
+    buffer:begin_undo_action()
+    for i = 0, buffer.selections - 1 do
+      local pos = buffer.selection_n_caret[i]
+      buffer:set_target_range(pos, pos)
+      buffer:replace_target(M.auto_pairs[code])
+    end
+    buffer:end_undo_action()
   end
 end)
 
 -- Removes matched chars on backspace.
 events.connect(events.KEYPRESS, function(code)
-  if not M.auto_pairs or keys.KEYSYMS[code] ~= '\b' or
-     buffer.selections ~= 1 then
-    return
+  if not M.auto_pairs or keys.KEYSYMS[code] ~= '\b' then return end
+  buffer:begin_undo_action()
+  for i = 0, buffer.selections - 1 do
+    local pos = buffer.selection_n_caret[i]
+    local complement = M.auto_pairs[buffer.char_at[pos - 1]]
+    if complement and buffer.char_at[pos] == string.byte(complement) then
+      buffer:set_target_range(pos, pos + 1)
+      buffer:replace_target('')
+    end
   end
-  local byte = buffer.char_at[buffer.current_pos - 1]
-  if M.auto_pairs[byte] and
-     buffer.char_at[buffer.current_pos] == string.byte(M.auto_pairs[byte]) then
-    buffer:clear()
-  end
+  buffer:end_undo_action()
 end)
 
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function(updated)
   if updated and updated & 3 == 0 then return end -- ignore scrolling
-  if M.brace_matches[buffer.char_at[buffer.current_pos]] then
-    local match = buffer:brace_match(buffer.current_pos, 0)
-    if match ~= -1 then
-      buffer:brace_highlight(buffer.current_pos, match)
-    else
-      buffer:brace_bad_light(buffer.current_pos)
-    end
-  else
-    buffer:brace_bad_light(-1)
-  end
+  local pos = buffer.selection_n_caret[buffer.main_selection]
+  local match = M.brace_matches[buffer.char_at[pos]] and
+                buffer:brace_match(pos, 0) or -1
+  local f = buffer[match ~= -1 and 'brace_highlight' or 'brace_bad_light']
+  f(pos, match)
 end)
 
 -- Moves over typeover characters when typed.
 events.connect(events.KEYPRESS, function(code)
-  if M.typeover_chars and M.typeover_chars[code] and
-     buffer.selection_start == buffer.selection_end and
-     buffer.char_at[buffer.current_pos] == code then
-    buffer:char_right()
-    return true
+  if M.typeover_chars and M.typeover_chars[code] then
+    local handled = false
+    for i = 0, buffer.selections - 1 do
+      local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
+      if s == e and buffer.char_at[s] == code then
+        buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
+        handled = true
+      end
+    end
+    if handled then return true end
   end
 end)
 
