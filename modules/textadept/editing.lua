@@ -611,7 +611,7 @@ function M.filter_through(command)
   }), command)
   local output = buffer.target_text
   for i = 1, #commands do
-    local p = assert(os.spawn(commands[i]))
+    local p = assert(os.spawn(commands[i]:match('^%s*(.-)%s*$')))
     p:write(output)
     p:close()
     output = p:read('a') or ''
