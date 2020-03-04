@@ -118,10 +118,12 @@ local default_menubar = {
       {_L['Lower Case Selection'], buffer.lower_case},
       SEPARATOR,
       {_L['Enclose as XML Tags'], function()
+        buffer:begin_undo_action()
         enc('<', '>')
         local pos = buffer.current_pos
         while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
         buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
+        buffer:end_undo_action()
       end},
       {_L['Enclose as Single XML Tag'], function() enc('<', ' />') end},
       {_L['Enclose in Single Quotes'], function() enc("'", "'") end},
