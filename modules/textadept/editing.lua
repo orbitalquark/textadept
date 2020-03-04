@@ -125,7 +125,8 @@ M.api_files = setmetatable({}, {__index = function(t, k)
   return t[k]
 end})
 
--- Matches characters specified in auto_pairs.
+-- Matches characters specified in auto_pairs, taking multiple selections into
+-- account.
 events.connect(events.CHAR_ADDED, function(code)
   if M.auto_pairs and M.auto_pairs[code] then
     buffer:begin_undo_action()
@@ -138,7 +139,7 @@ events.connect(events.CHAR_ADDED, function(code)
   end
 end)
 
--- Removes matched chars on backspace.
+-- Removes matched chars on backspace, taking multiple selections into account.
 events.connect(events.KEYPRESS, function(code)
   if not M.auto_pairs or keys.KEYSYMS[code] ~= '\b' then return end
   buffer:begin_undo_action()
@@ -163,7 +164,8 @@ events.connect(events.UPDATE_UI, function(updated)
   f(pos, match)
 end)
 
--- Moves over typeover characters when typed.
+-- Moves over typeover characters when typed, taking multiple selections into
+-- account.
 events.connect(events.KEYPRESS, function(code)
   if M.typeover_chars and M.typeover_chars[code] then
     local handled = false
@@ -353,7 +355,7 @@ end
 --   one.
 -- @name goto_line
 function M.goto_line(line)
-  if not line then
+  if not assert_type(line, 'number/nil', 1) then
     local button, value = ui.dialogs.inputbox{
       title = _L['Go To'], informative_text = _L['Line Number:'],
       button1 = _L['OK'], button2 = _L['Cancel']
@@ -409,6 +411,8 @@ end
 -- @param right The right part of the enclosure.
 -- @name enclose
 function M.enclose(left, right)
+  assert_type(left, 'string', 1)
+  assert_type(right, 'string', 2)
   buffer:begin_undo_action()
   for i = 0, buffer.selections - 1 do
     local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
@@ -438,7 +442,7 @@ end
 -- @name select_enclosed
 function M.select_enclosed(left, right)
   local s, e, anchor, pos = -1, -1, buffer.anchor, buffer.current_pos
-  if left and right then
+  if assert_type(left, 'string/nil', 1) and assert_type(right, 'string', 2) then
     if anchor ~= pos then buffer:goto_pos(pos - #right) end
     buffer:search_anchor()
     s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
@@ -590,6 +594,7 @@ end
 -- @name filter_through
 function M.filter_through(command)
   assert(not (WIN32 and CURSES), 'not implemented in this environment')
+  assert_type(command, 'string', 1)
   local s, e = buffer.selection_start, buffer.selection_end
   if s ~= e then
     -- Use the selected lines as input.
@@ -637,7 +642,7 @@ end
 -- @name autocomplete
 -- @see autocompleters
 function M.autocomplete(name)
-  if not M.autocompleters[name] then return end
+  if not M.autocompleters[assert_type(name, 'string', 1)] then return end
   local len_entered, list = M.autocompleters[name]()
   if not len_entered or not list or #list == 0 then return end
   buffer.auto_c_order = buffer.ORDER_PERFORMSORT
@@ -656,9 +661,8 @@ M.autocompleters.word = function()
   local s = buffer:word_start_position(buffer.current_pos, true)
   if s == buffer.current_pos then return end
   local word = buffer:text_range(s, buffer.current_pos)
-  for i = 1, #_BUFFERS do
-    if _BUFFERS[i] == buffer or M.autocomplete_all_words then
-      local buffer = _BUFFERS[i]
+  for _, buffer in ipairs(_BUFFERS) do
+    if buffer == _G.buffer or M.autocomplete_all_words then
       buffer.search_flags = buffer.FIND_WORDSTART
       if not buffer.auto_c_ignore_case then
         buffer.search_flags = buffer.search_flags + buffer.FIND_MATCHCASE
@@ -696,7 +700,7 @@ function M.show_documentation(pos, case_insensitive)
   if buffer:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
   local lang = buffer:get_lexer(true)
   if not M.api_files[lang] then return end
-  if not pos then pos = buffer.current_pos end
+  if not assert_type(pos, 'number/nil', 1) then pos = buffer.current_pos end
   local s = buffer:word_start_position(pos, true)
   local e = buffer:word_end_position(pos, true)
   local symbol = buffer:text_range(s, e)
@@ -710,8 +714,7 @@ function M.show_documentation(pos, case_insensitive)
         return string.format('[%s%s]', ch:upper(), ch:lower())
       end)
     end
-    for i = 1, #M.api_files[lang] do
-      local file = M.api_files[lang][i]
+    for _, file in ipairs(M.api_files[lang]) do
       if type(file) == 'function' then file = file() end
       if file and lfs.attributes(file) then
         for line in io.lines(file) do

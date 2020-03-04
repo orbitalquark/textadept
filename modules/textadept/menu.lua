@@ -22,9 +22,7 @@ local menu_buffer_functions = {
   'select_all', 'upper_case', 'lower_case', 'move_selected_lines_up',
   'move_selected_lines_down', 'zoom_in', 'zoom_out'
 }
-for i = 1, #menu_buffer_functions do
-  buffer[menu_buffer_functions[i]] = buffer[menu_buffer_functions[i]]
-end
+for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 
 -- Commonly used functions in menu commands.
 local sel_enc = textadept.editing.select_enclosed

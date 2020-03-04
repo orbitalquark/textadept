@@ -1,0 +1,2 @@
+-- Missing 'end'
+function foo()

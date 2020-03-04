@@ -309,12 +309,6 @@ local function new_snippet(text, trigger)
     end
     placeholder.position = #snapshot.text
     if placeholder.default then
-      -- Execute any embedded code first.
-      placeholder.default = placeholder.default:gsub('%%%b<>', function(s)
-        return snippet:execute_code{lua_code = s:sub(3, -2)}
-      end):gsub('%%%b[]', function(s)
-        return snippet:execute_code{sh_code = s:sub(3, -2)}
-      end)
       if placeholder.default:find('%%%d+') then
         -- Parses out embedded placeholders, adding them to this snippet's
         -- snapshot.
@@ -595,8 +589,11 @@ snippet_mt = {
 -- @name insert
 function M.insert(text)
   local trigger
-  if not text then trigger, text = find_snippet(trigger) end
-  if type(text) == 'function' and not trigger:find('^_') then text = text() end
+  if not assert_type(text, 'string/nil', 1) then
+    trigger, text = find_snippet(trigger)
+    if type(text) == 'function' and not trigger:find('^_') then text = text() end
+    assert_type(text, 'string/nil', trigger or '?')
+  end
   local snippet = type(text) == 'string' and new_snippet(text, trigger) or
                   snippet_stack[#snippet_stack]
   if snippet then snippet:next() else return false end
@@ -633,8 +630,7 @@ function M.select()
     all_snippets[#all_snippets + 1], all_snippets[trigger] = trigger, snippet
   end
   table.sort(all_snippets)
-  for i = 1, #all_snippets do
-    local trigger = all_snippets[i]
+  for _, trigger in ipairs(all_snippets) do
     items[#items + 1], items[#items + 2] = trigger, all_snippets[trigger]
   end
   local button, i = ui.dialogs.filteredlist{

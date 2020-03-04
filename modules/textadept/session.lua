@@ -32,10 +32,12 @@ local session_file = _USERHOME..(not CURSES and '/session' or '/session_term')
 -- @name load
 function M.load(filename)
   local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
-  filename = filename or ui.dialogs.fileselect{
-    title = _L['Load Session'], with_directory = dir, with_file = name
-  }
-  if not filename then return end
+  if not assert_type(filename, 'string/nil', 1) then
+    filename = ui.dialogs.fileselect{
+      title = _L['Load Session'], with_directory = dir, with_file = name
+    }
+    if not filename then return end
+  end
   local not_found = {}
   local f = io.open(filename, 'rb')
   if not f or not io.close_all_buffers() then return false end
@@ -121,18 +123,19 @@ events.connect(events.ARG_NONE, load_default_session)
 -- @name save
 function M.save(filename)
   local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
-  filename = filename or ui.dialogs.filesave{
-    title = _L['Save Session'], with_directory = dir,
-    with_file = name:iconv('UTF-8', _CHARSET)
-  }
-  if not filename then return end
+  if not assert_type(filename, 'string/nil', 1) then
+    filename = ui.dialogs.filesave{
+      title = _L['Save Session'], with_directory = dir,
+      with_file = name:iconv('UTF-8', _CHARSET)
+    }
+    if not filename then return end
+  end
   local session = {}
   local buffer_line = 'buffer: %d %d %d %s' -- anchor, cursor, line, filename
   local split_line = '%ssplit%d: %s %d' -- level, number, type, size
   local view_line = '%sview%d: %d' -- level, number, doc index
   -- Write out opened buffers.
-  for i = 1, #_BUFFERS do
-    local buffer = _BUFFERS[i]
+  for _, buffer in ipairs(_BUFFERS) do
     local filename = buffer.filename or buffer._type
     if filename then
       local current = buffer == view.buffer

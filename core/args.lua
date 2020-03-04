@@ -30,8 +30,12 @@ local switches = {}
 --   help.
 -- @name register
 function M.register(short, long, narg, f, description)
-  local t = {f, narg, description}
-  switches[short], switches[long] = t, t
+  local switch = {
+    narg = assert_type(narg, 'number', 3), f = assert_type(f, 'function', 4),
+    description = assert_type(description, 'string', 5)
+  }
+  switches[assert_type(short, 'string', 1)] = switch
+  switches[assert_type(long, 'string', 2)] = switch
 end
 
 -- Processes command line argument table *arg*, handling switches previously
@@ -48,9 +52,8 @@ local function process(arg, no_emit_arg_none)
   while i <= #arg do
     local switch = switches[arg[i]]
     if switch then
-      local f, n = table.unpack(switch)
-      f(table.unpack(arg, i + 1, i + n))
-      i = i + n
+      switch.f(table.unpack(arg, i + 1, i + switch.narg))
+      i = i + switch.narg
     else
       io.open_file(lfs.abspath(arg[i], arg[-1]))
       no_args = false
@@ -67,14 +70,14 @@ if not CURSES then
   -- Shows all registered command line switches on the command line.
   M.register('-h', '--help', 0, function()
     print('Usage: textadept [args] [filenames]')
-    local line = "  %s [%d args]: %s"
     local list = {}
-    for switch in pairs(switches) do list[#list + 1] = switch end
+    for name in pairs(switches) do list[#list + 1] = name end
     table.sort(list,
                function(a, b) return a:match('[^-]+') < b:match('[^-]+') end)
     for i = 1, #list do
-      local switch = list[i]
-      print(line:format(switch, table.unpack(switches[switch], 2)))
+      local switch = switches[list[i]]
+      print(string.format('  %s [%d args]: %s', list[i], switch.narg,
+                          switch.description))
     end
     os.exit()
   end, 'Shows this')
@@ -103,12 +106,30 @@ for i = 1, #arg do
     break
   end
 end
-if not lfs.attributes(_USERHOME) then lfs.mkdir(_USERHOME) end
-local f = io.open(_USERHOME..'/init.lua', 'a+') -- ensure existence
-if f then f:close() end
+local mode = lfs.attributes(_USERHOME, 'mode')
+assert(not mode or mode == 'directory', '"%s" is not a directory', _USERHOME)
+if not mode then assert(lfs.mkdir(_USERHOME), 'cannot create %s', _USERHOME) end
+local user_init = _USERHOME..'/init.lua'
+mode = lfs.attributes(user_init, 'mode')
+assert(not mode or mode == 'file', '"%s" is not a file', user_init)
+if not mode then
+  assert(io.open(user_init, 'w'), 'unable to create %s', user_init):close()
+end
 
 -- Placeholders.
 M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
 M.register('-f', '--force', 0, function() end, 'Forces unique instance')
+
+-- Run unit tests.
+-- Note: have them run after the last `events.INITIALIZED` handler so everything
+-- is completely initialized (e.g. menus, macro module, etc.).
+M.register('-t', '--test', 1, function(patterns)
+  events.connect(events.INITIALIZED, function()
+    local arg = {}
+    for patt in (patterns or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
+    local env = setmetatable({arg = arg}, {__index = _G})
+    assert(loadfile(_HOME..'/test.lua', 't', env))()
+  end)
+end, 'Runs unit tests indicated by comma-separated list of patterns (or all)')
 
 return M

@@ -311,7 +311,9 @@ end})
 -- @see disconnect
 -- @name connect
 function M.connect(event, f, index)
-  assert(type(event) == 'string', 'string expected')
+  assert_type(event, 'string', 1)
+  assert_type(f, 'function', 2)
+  assert_type(index, 'number/nil', 3)
   M.disconnect(event, f) -- in case it already exists
   table.insert(handlers[event], index or #handlers[event] + 1, f)
 end
@@ -323,7 +325,8 @@ end
 -- @see connect
 -- @name disconnect
 function M.disconnect(event, f)
-  for i = 1, #handlers[event] do
+  assert_type(f, 'function', 2)
+  for i = 1, #handlers[assert_type(event, 'string', 1)] do
     if handlers[event][i] == f then table.remove(handlers[event], i) break end
   end
 end
@@ -344,10 +347,10 @@ local error_emitted = false
 -- @usage events.emit('my_event', 'my message')
 -- @name emit
 function M.emit(event, ...)
-  assert(type(event) == 'string', 'string expected')
+  local event_handlers = handlers[assert_type(event, 'string', 1)]
   local i = 1
-  while i <= #handlers[event] do
-    local handler = handlers[event][i]
+  while i <= #event_handlers do
+    local handler = event_handlers[i]
     local ok, result = pcall(handler, ...)
     if not ok then
       if not error_emitted then
@@ -359,7 +362,7 @@ function M.emit(event, ...)
       end
     end
     if type(result) == 'boolean' then return result end
-    if handlers[event][i] == handler then i = i + 1 end -- unless M.disconnect()
+    if event_handlers[i] == handler then i = i + 1 end -- unless M.disconnect()
   end
 end
 

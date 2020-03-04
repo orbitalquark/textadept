@@ -6,6 +6,11 @@ _COPYRIGHT = 'Copyright © 2007-2020 Mitchell. See LICENSE.\n'..
 
 package.path = _HOME..'/core/?.lua;'..package.path
 
+--for i = 1, #arg do
+--  if arg[i] == '-t' or arg[i] == '--test' then pcall(require, 'luacov') end
+--end
+
+require('assert')
 _SCINTILLA = require('iface')
 events = require('events')
 args = require('args')
@@ -14,22 +19,22 @@ require('file_io')
 require('lfs_ext')
 require('ui')
 keys = require('keys')
-
 _M = {} -- language modules table
+
 -- pdcurses compatibility.
 if CURSES and WIN32 then
   function os.spawn(argv, ...)
     local current_dir = lfs.currentdir()
-    local i = 1
-    if type(select(i, ...) or nil) == 'string' then
-      lfs.chdir(select(i, ...)) -- cwd
+    local args, i = {...}, 1
+    if type(args[i]) == 'string' then
+      lfs.chdir(args[i]) -- cwd
       i = i + 1
     end
-    if type(select(i, ...) or nil) == 'table' then i = i + 1 end -- env (ignore)
+    if type(args[i]) == 'table' then i = i + 1 end -- env (ignore)
     local p = io.popen(argv..' 2>&1')
-    if select(i, ...) then select(i, ...)(p:read('a')) end -- stdout_cb
+    if type(args[i]) == 'function' then args[i](p:read('a')) end -- stdout_cb
     local status = select(3, p:close())
-    if select(i + 2, ...) then select(i + 2, ...)(status) end -- exit_cb
+    if type(args[i + 2]) == 'function' then args[i + 2](status) end -- exit_cb
     lfs.chdir(current_dir)
     return p
   end
@@ -39,6 +44,8 @@ end
 -- argument.
 -- Documentation is in core/.buffer.luadoc.
 local function text_range(buffer, start_pos, end_pos)
+  assert_type(start_pos, 'number', 2)
+  assert_type(end_pos, 'number', 3)
   local target_start, target_end = buffer.target_start, buffer.target_end
   if start_pos < 0 then start_pos = 0 end
   if end_pos > buffer.length then end_pos = buffer.length end

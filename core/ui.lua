@@ -41,11 +41,8 @@ ui.silent_print = false
 -- @see ui._print
 local function _print(buffer_type, ...)
   local print_buffer
-  for i = 1, #_BUFFERS do
-    if _BUFFERS[i]._type == buffer_type then
-      print_buffer = _BUFFERS[i]
-      break
-    end
+  for _, buffer in ipairs(_BUFFERS) do
+    if buffer._type == buffer_type then print_buffer = buffer break end
   end
   if not print_buffer then
     if not ui.tabs then view:split() end
@@ -53,13 +50,10 @@ local function _print(buffer_type, ...)
     print_buffer._type = buffer_type
     events.emit(events.FILE_OPENED)
   elseif not ui.silent_print then
-    for i = 1, #_VIEWS do
-      local view = _VIEWS[i]
+    for _, view in ipairs(_VIEWS) do
       if view.buffer._type == buffer_type then ui.goto_view(view) break end
     end
-    if view.buffer._type ~= buffer_type then
-      view:goto_buffer(print_buffer)
-    end
+    if view.buffer._type ~= buffer_type then view:goto_buffer(print_buffer) end
   end
   local args, n = {...}, select('#', ...)
   for i = 1, n do args[i] = tostring(args[i]) end
@@ -78,7 +72,9 @@ end
 -- @param ... Message strings.
 -- @usage ui._print(_L['[Message Buffer]'], message)
 -- @name _print
-function ui._print(buffer_type, ...) _print(buffer_type, ...) end
+function ui._print(buffer_type, ...)
+  _print(assert_type(buffer_type, 'string', 1), ...)
+end
 
 ---
 -- Prints the given string messages to the message buffer.
@@ -86,6 +82,16 @@ function ui._print(buffer_type, ...) _print(buffer_type, ...) end
 -- @param ... Message strings.
 -- @name print
 function ui.print(...) ui._print(_L['[Message Buffer]'], ...) end
+
+-- Returns 0xBBGGRR colors transformed into "#RRGGBB" for the colorselect
+-- dialog.
+-- @param value Number color to transform.
+-- @return string or nil if the transform failed
+local function torgb(value)
+  local bbggrr = string.format('%06X', value)
+  local b, g, r = bbggrr:match('^(%x%x)(%x%x)(%x%x)$')
+  return r and g and b and string.format('#%s%s%s', r, g, b) or nil
+end
 
 -- Documentation is in core/.ui.dialogs.luadoc.
 ui.dialogs = setmetatable({}, {__index = function(_, k)
@@ -106,22 +112,23 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
     -- Transform key-value pairs into command line arguments.
     local args = {}
     for option, value in pairs(options) do
+      assert_type(value, 'string/number/table/boolean', option)
       if value then
         args[#args + 1] = '--'..option:gsub('_', '-')
-        if option == 'color' or
-           option == 'palette' and type(value) ~= 'boolean' then
-          -- Transform 0xBBGGRR colors into "#RRGGBB" for color selector.
-          if type(value) ~= 'table' then value = {value} end
-          for i = 1, #value do
-            if type(value[i]) == 'number' then
-              local bbggrr = string.format('%06X', value[i])
-              local b, g, r = bbggrr:match('^(%x%x)(%x%x)(%x%x)$')
-              if r and g and b then value[i] = '#'..r..g..b end
+        if type(value) == 'boolean' then goto continue end
+        if type(value) == 'table' then
+          for i, val in ipairs(value) do
+            assert_type(val, 'string/number', option..'['..i..']')
+            if option == 'palette' and type(val) == 'number' then
+              value[i] = torgb(val) -- nil return is okay
             end
           end
+        elseif option == 'color' and type(value) == 'number' then
+          value = torgb(value)
         end
-        if type(value) ~= 'boolean' then args[#args + 1] = value end
+        args[#args + 1] = value
       end
+      ::continue::
     end
     -- Call gtdialog, stripping any trailing newline in the standard output.
     local result = ui.dialog(k:gsub('_', '-'), table.unpack(args))
@@ -153,7 +160,8 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
     elseif k == 'colorselect' then
       if options.string_output then return result ~= '' and result or nil end
       local r, g, b = result:match('^#(%x%x)(%x%x)(%x%x)$')
-      return r and g and b and tonumber('0x'..b..g..r) or nil
+      local bgr = r and g and b and string.format('0x%s%s%s', b, g, r) or nil
+      return tonumber(bgr)
     elseif k == 'fontselect' then
       return result ~= '' and result or nil
     elseif not options.string_output then
@@ -246,8 +254,9 @@ end
 --   is `false`.
 -- @name goto_file
 function ui.goto_file(filename, split, preferred_view, sloppy)
-  local patt = '^'..filename..'$' -- TODO: escape filename properly
-  if sloppy then patt = filename:match('[^/\\]+$')..'$' end
+  assert_type(filename, 'string', 1)
+  local patt = not sloppy and '^'..filename..'$' or
+               filename:match('[^/\\]+$')..'$' -- TODO: escape filename properly
   if WIN32 then
     patt = patt:gsub('%a', function(letter)
       return string.format('[%s%s]', letter:upper(), letter:lower())
@@ -257,20 +266,15 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
     view:split()
   else
     local other_view = _VIEWS[preferred_view]
-    for i = 1, #_VIEWS do
-      if (_VIEWS[i].buffer.filename or ''):find(patt) then
-        ui.goto_view(_VIEWS[i])
-        return
-      end
-      if not other_view and _VIEWS[i] ~= view then other_view = _VIEWS[i] end
+    for _, view in ipairs(_VIEWS) do
+      local filename = view.buffer.filename or ''
+      if filename:find(patt) then ui.goto_view(view) return end
+      if not other_view and view ~= _G.view then other_view = view end
     end
     if other_view then ui.goto_view(other_view) end
   end
-  for i = 1, #_BUFFERS do
-    if (_BUFFERS[i].filename or ''):find(patt) then
-      view:goto_buffer(_BUFFERS[i])
-      return
-    end
+  for _, buf in ipairs(_BUFFERS) do
+    if (buf.filename or ''):find(patt) then view:goto_buffer(buf) return end
   end
   io.open_file(filename)
 end
@@ -418,13 +422,10 @@ events_connect(events.RESET_AFTER,
 -- Prompts for confirmation if any buffers are modified.
 events_connect(events.QUIT, function()
   local utf8_list = {}
-  for i = 1, #_BUFFERS do
-    if _BUFFERS[i].modify then
-      local filename = _BUFFERS[i].filename or _BUFFERS[i]._type or
-                       _L['Untitled']
-      if _BUFFERS[i].filename then
-        filename = filename:iconv('UTF-8', _CHARSET)
-      end
+  for _, buffer in ipairs(_BUFFERS) do
+    if buffer.modify then
+      local filename = buffer.filename or buffer._type or _L['Untitled']
+      if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
       utf8_list[#utf8_list + 1] = filename
     end
   end

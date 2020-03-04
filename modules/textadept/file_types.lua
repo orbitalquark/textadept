@@ -65,6 +65,7 @@ local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 local GETERROR = _SCINTILLA.properties.status[1]
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, lang)
+  assert_type(lang, 'string/nil', 2)
   if not lang then lang = detect_language(buffer) end
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)

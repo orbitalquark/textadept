@@ -169,7 +169,7 @@ local function compile_or_run(filename, commands)
   -- Replace macros in the command.
   local dirname, basename = '', filename
   if filename:find('[/\\]') then
-    dirname, basename = filename:match('^(.+[/\\])([^/\\]+)$')
+    dirname, basename = filename:match('^(.+)[/\\]([^/\\]+)$')
   end
   local basename_no_ext = basename:match('^(.+)%.')
   command = command:gsub('%%([pdfe])', {
@@ -182,7 +182,7 @@ local function compile_or_run(filename, commands)
   local ext_or_lexer = commands[ext] and ext or lexer
   local function emit(output) events.emit(event, output, ext_or_lexer) end
   -- Run the command.
-  cwd = working_dir or dirname
+  cwd = (working_dir or dirname):gsub('[/\\]$', '')
   if cwd ~= dirname then events.emit(event, '> cd '..cwd..'\n') end
   events.emit(event, '> '..command:iconv('UTF-8', _CHARSET)..'\n')
   proc = assert(os.spawn(command, cwd, emit, emit, function(status)
@@ -219,8 +219,9 @@ M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc 
 -- @see _G.events
 -- @name compile
 function M.compile(filename)
-  if not filename and not buffer.filename then return end
-  compile_or_run(filename or buffer.filename, M.compile_commands)
+  if assert_type(filename, 'string/nil', 1) or buffer.filename then
+    compile_or_run(filename or buffer.filename, M.compile_commands)
+  end
 end
 events.connect(events.COMPILE_OUTPUT, print_output)
 
@@ -252,8 +253,9 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 -- @see _G.events
 -- @name run
 function M.run(filename)
-  if not filename and not buffer.filename then return end
-  compile_or_run(filename or buffer.filename, M.run_commands)
+  if assert_type(filename, 'string/nil', 1) or buffer.filename then
+    compile_or_run(filename or buffer.filename, M.run_commands)
+  end
 end
 events.connect(events.RUN_OUTPUT, print_output)
 
@@ -280,8 +282,10 @@ M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='doc
 -- @see _G.events
 -- @name build
 function M.build(root_directory)
-  if not root_directory then root_directory = io.get_project_root() end
-  if not root_directory then return end
+  if not assert_type(root_directory, 'string/nil', 1) then
+    root_directory = io.get_project_root()
+    if not root_directory then return end
+  end
   for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
   -- Determine command.
   local command = M.build_commands[root_directory]
@@ -304,7 +308,7 @@ function M.build(root_directory)
   preferred_view = view
   local function emit(output) events.emit(events.BUILD_OUTPUT, output) end
   -- Run the command.
-  cwd = working_dir or root_directory
+  cwd = (working_dir or root_directory):gsub('[/\\]$', '')
   events.emit(events.BUILD_OUTPUT, '> cd '..cwd..'\n')
   events.emit(events.BUILD_OUTPUT, '> '..command:iconv('UTF-8', _CHARSET)..'\n')
   proc = assert(os.spawn(command, cwd, emit, emit, function(status)
@@ -374,7 +378,7 @@ function M.goto_error(line, next)
   if msg_view then ui.goto_view(msg_view) else view:goto_buffer(msg_buf) end
 
   -- If no line was given, find the next warning or error marker.
-  if not line and next ~= nil then
+  if not assert_type(line, 'number/nil', 1) and next ~= nil then
     local f = buffer['marker_'..(next and 'next' or 'previous')]
     line = buffer:line_from_position(buffer.current_pos)
     local wrapped = false
