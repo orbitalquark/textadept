@@ -1,221 +1,221 @@
-B	_	0;"	f	class:lpeg
-C	_	0;"	f	class:lpeg
-Carg	_	0;"	f	class:lpeg
-Cb	_	0;"	f	class:lpeg
-Cc	_	0;"	f	class:lpeg
-Cf	_	0;"	f	class:lpeg
-Cg	_	0;"	f	class:lpeg
-Cmt	_	0;"	f	class:lpeg
-Cp	_	0;"	f	class:lpeg
-Cs	_	0;"	f	class:lpeg
-Ct	_	0;"	f	class:lpeg
-P	_	0;"	f	class:lpeg
-R	_	0;"	f	class:lpeg
-S	_	0;"	f	class:lpeg
-V	_	0;"	f	class:lpeg
-_G	_	0;"	F	
-_G	_	0;"	m	
-_VERSION	_	0;"	F	
-abs	_	0;"	f	class:math
-acos	_	0;"	f	class:math
-arshift	_	0;"	f	class:bit32
-asin	_	0;"	f	class:math
-assert	_	0;"	f	
-atan	_	0;"	f	class:math
-atan2	_	0;"	f	class:math
-attributes	_	0;"	f	class:lfs
-band	_	0;"	f	class:bit32
-bit32	_	0;"	m	
-bnot	_	0;"	f	class:bit32
-bor	_	0;"	f	class:bit32
-btest	_	0;"	f	class:bit32
-byte	_	0;"	f	class:string
-ceil	_	0;"	f	class:math
-char	_	0;"	f	class:string
-char	_	0;"	f	class:utf8
-charpattern	_	0;"	F	class:utf8
-chdir	_	0;"	f	class:lfs
-clock	_	0;"	f	class:os
-close	_	0;"	f	class:file
-close	_	0;"	f	class:io
-codepoint	_	0;"	f	class:utf8
-codes	_	0;"	f	class:utf8
-collectgarbage	_	0;"	f	
-concat	_	0;"	f	class:table
-config	_	0;"	F	class:package
-coroutine	_	0;"	m	
-cos	_	0;"	f	class:math
-cosh	_	0;"	f	class:math
-cpath	_	0;"	F	class:package
-create	_	0;"	f	class:coroutine
-currentdir	_	0;"	f	class:lfs
-date	_	0;"	f	class:os
-debug	_	0;"	f	class:debug
-debug	_	0;"	m	
-deg	_	0;"	f	class:math
-difftime	_	0;"	f	class:os
-dir	_	0;"	f	class:lfs
-dofile	_	0;"	f	
-dump	_	0;"	f	class:string
-error	_	0;"	f	
-execute	_	0;"	f	class:os
-exit	_	0;"	f	class:os
-exp	_	0;"	f	class:math
-extract	_	0;"	f	class:bit32
-find	_	0;"	f	class:string
-floor	_	0;"	f	class:math
-flush	_	0;"	f	class:file
-flush	_	0;"	f	class:io
-fmod	_	0;"	f	class:math
-format	_	0;"	f	class:string
-frexp	_	0;"	f	class:math
-getenv	_	0;"	f	class:os
-getfenv	_	0;"	f	
-getfenv	_	0;"	f	class:debug
-gethook	_	0;"	f	class:debug
-getinfo	_	0;"	f	class:debug
-getlocal	_	0;"	f	class:debug
-getmetatable	_	0;"	f	
-getmetatable	_	0;"	f	class:debug
-getregistry	_	0;"	f	class:debug
-getupvalue	_	0;"	f	class:debug
-getuservalue	_	0;"	f	class:debug
-gmatch	_	0;"	f	class:string
-gsub	_	0;"	f	class:string
-huge	_	0;"	F	class:math
-input	_	0;"	f	class:io
-insert	_	0;"	f	class:table
-io	_	0;"	m	
-ipairs	_	0;"	f	
-isyieldable	_	0;"	f	class:coroutine
-ldexp	_	0;"	f	class:math
-len	_	0;"	f	class:string
-len	_	0;"	f	class:utf8
-lfs	_	0;"	m	
-lines	_	0;"	f	class:file
-lines	_	0;"	f	class:io
-link	_	0;"	f	class:lfs
-load	_	0;"	f	
-loaded	_	0;"	F	class:package
-loaders	_	0;"	F	class:package
-loadfile	_	0;"	f	
-loadlib	_	0;"	f	class:package
-loadstring	_	0;"	f	
-locale	_	0;"	f	class:lpeg
-lock	_	0;"	f	class:lfs
-lock_dir	_	0;"	f	class:lfs
-log	_	0;"	f	class:math
-log10	_	0;"	f	class:math
-lower	_	0;"	f	class:string
-lpeg	_	0;"	m	
-lrotate	_	0;"	f	class:bit32
-lshift	_	0;"	f	class:bit32
-match	_	0;"	f	class:lpeg
-match	_	0;"	f	class:string
-math	_	0;"	m	
-max	_	0;"	f	class:math
-maxinteger	_	0;"	F	class:math
-maxn	_	0;"	f	class:table
-min	_	0;"	f	class:math
-mininteger	_	0;"	F	class:math
-mkdir	_	0;"	f	class:lfs
-modf	_	0;"	f	class:math
-module	_	0;"	f	
-move	_	0;"	f	class:table
-next	_	0;"	f	
-offset	_	0;"	f	class:utf8
-open	_	0;"	f	class:io
-os	_	0;"	m	
-output	_	0;"	f	class:io
-pack	_	0;"	f	class:string
-pack	_	0;"	f	class:table
-package	_	0;"	m	
-packsize	_	0;"	f	class:string
-pairs	_	0;"	f	
-path	_	0;"	F	class:package
-pcall	_	0;"	f	
-pi	_	0;"	F	class:math
-popen	_	0;"	f	class:io
-pow	_	0;"	f	class:math
-preload	_	0;"	F	class:package
-print	_	0;"	f	
-rad	_	0;"	f	class:math
-random	_	0;"	f	class:math
-randomseed	_	0;"	f	class:math
-rawequal	_	0;"	f	
-rawget	_	0;"	f	
-rawlen	_	0;"	f	
-rawset	_	0;"	f	
-read	_	0;"	f	class:file
-read	_	0;"	f	class:io
-remove	_	0;"	f	class:os
-remove	_	0;"	f	class:table
-rename	_	0;"	f	class:os
-rep	_	0;"	f	class:string
-replace	_	0;"	f	class:bit32
-require	_	0;"	f	
-resume	_	0;"	f	class:coroutine
-reverse	_	0;"	f	class:string
-rmdir	_	0;"	f	class:lfs
-rrotate	_	0;"	f	class:bit32
-rshift	_	0;"	f	class:bit32
-running	_	0;"	f	class:coroutine
-searchers	_	0;"	F	class:package
-searchpath	_	0;"	f	class:package
-seeall	_	0;"	f	class:package
-seek	_	0;"	f	class:file
-select	_	0;"	f	
-setfenv	_	0;"	f	
-setfenv	_	0;"	f	class:debug
-sethook	_	0;"	f	class:debug
-setlocal	_	0;"	f	class:debug
-setlocale	_	0;"	f	class:os
-setmaxstack	_	0;"	f	class:lpeg
-setmetatable	_	0;"	f	
-setmetatable	_	0;"	f	class:debug
-setmode	_	0;"	f	class:lfs
-setupvalue	_	0;"	f	class:debug
-setuservalue	_	0;"	f	class:debug
-setvbuf	_	0;"	f	class:file
-sin	_	0;"	f	class:math
-sinh	_	0;"	f	class:math
-sort	_	0;"	f	class:table
-sqrt	_	0;"	f	class:math
-status	_	0;"	f	class:coroutine
-stderr	_	0;"	F	class:io
-stdin	_	0;"	F	class:io
-stdout	_	0;"	F	class:io
-string	_	0;"	m	
-sub	_	0;"	f	class:string
-symlinkattributes	_	0;"	f	class:lfs
-table	_	0;"	m	
-tan	_	0;"	f	class:math
-tanh	_	0;"	f	class:math
-time	_	0;"	f	class:os
-tmpfile	_	0;"	f	class:io
-tmpname	_	0;"	f	class:os
-tointeger	_	0;"	f	class:math
-tonumber	_	0;"	f	
-tostring	_	0;"	f	
-touch	_	0;"	f	class:lfs
-traceback	_	0;"	f	class:debug
-type	_	0;"	f	
-type	_	0;"	f	class:io
-type	_	0;"	f	class:lpeg
-type	_	0;"	f	class:math
-ult	_	0;"	f	class:math
-unlock	_	0;"	f	class:lfs
-unpack	_	0;"	f	
-unpack	_	0;"	f	class:string
-unpack	_	0;"	f	class:table
-upper	_	0;"	f	class:string
-upvalueid	_	0;"	f	class:debug
-upvaluejoin	_	0;"	f	class:debug
-utf8	_	0;"	m	
-version	_	0;"	f	class:lpeg
-wrap	_	0;"	f	class:coroutine
-write	_	0;"	f	class:file
-write	_	0;"	f	class:io
-xor	_	0;"	f	class:bit32
-xpcall	_	0;"	f	
-yield	_	0;"	f	class:coroutine
+B	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.B(patt) end$/;"	f	class:lpeg
+C	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.C(patt) end$/;"	f	class:lpeg
+Carg	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.Carg(n) end$/;"	f	class:lpeg
+Cb	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.Cb(name) end$/;"	f	class:lpeg
+Cc	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.Cc([value, ...]) end$/;"	f	class:lpeg
+Cf	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.Cf(patt, func) end$/;"	f	class:lpeg
+Cg	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.Cg(patt [, name]) end$/;"	f	class:lpeg
+Cmt	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.Cmt(patt, function) end$/;"	f	class:lpeg
+Cp	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.Cp() end$/;"	f	class:lpeg
+Cs	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.Cs(patt) end$/;"	f	class:lpeg
+Ct	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.Ct(patt) end$/;"	f	class:lpeg
+P	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.P(value) end$/;"	f	class:lpeg
+R	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.R({range}) end$/;"	f	class:lpeg
+S	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.S(string) end$/;"	f	class:lpeg
+V	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.V(v) end$/;"	f	class:lpeg
+_G	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function assert(v [, message]) end$/;"	F	
+_G	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function assert(v [, message]) end$/;"	m	
+_VERSION	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function assert(v [, message]) end$/;"	F	
+abs	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.abs(x) end$/;"	f	class:math
+acos	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.acos(x) end$/;"	f	class:math
+arshift	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.arshift(x, disp) end$/;"	f	class:bit32
+asin	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.asin(x) end$/;"	f	class:math
+assert	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function assert(v [, message]) end$/;"	f	
+atan	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.atan(y [, x]) end$/;"	f	class:math
+atan2	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.atan2(y, x) end$/;"	f	class:math
+attributes	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.attributes(filepath [, aname | atable]) end$/;"	f	class:lfs
+band	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.band(...) end$/;"	f	class:bit32
+bit32	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.arshift(x, disp) end$/;"	m	
+bnot	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.bnot(x) end$/;"	f	class:bit32
+bor	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.bor(...) end$/;"	f	class:bit32
+btest	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.btest(...) end$/;"	f	class:bit32
+byte	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.byte(s [, i [, j]]) end$/;"	f	class:string
+ceil	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.ceil(x) end$/;"	f	class:math
+char	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.char(···) end$/;"	f	class:string
+char	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function utf8.char(···) end$/;"	f	class:utf8
+charpattern	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function utf8.char(···) end$/;"	F	class:utf8
+chdir	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.chdir(path) end$/;"	f	class:lfs
+clock	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.clock() end$/;"	f	class:os
+close	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function file:close() end$/;"	f	class:file
+close	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.close([file]) end$/;"	f	class:io
+codepoint	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function utf8.codepoint(s [, i [, j]]) end$/;"	f	class:utf8
+codes	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function utf8.codes(s) end$/;"	f	class:utf8
+collectgarbage	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function collectgarbage([opt [, arg]]) end$/;"	f	
+concat	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function table.concat(list [, sep [, i [, j]]]) end$/;"	f	class:table
+config	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	F	class:package
+coroutine	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function coroutine.create(f) end$/;"	m	
+cos	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.cos(x) end$/;"	f	class:math
+cosh	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.cosh(x) end$/;"	f	class:math
+cpath	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	F	class:package
+create	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function coroutine.create(f) end$/;"	f	class:coroutine
+currentdir	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.currentdir() end$/;"	f	class:lfs
+date	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.date([format [, time]]) end$/;"	f	class:os
+debug	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.debug() end$/;"	f	class:debug
+debug	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.debug() end$/;"	m	
+deg	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.deg(x) end$/;"	f	class:math
+difftime	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.difftime(t2, t1) end$/;"	f	class:os
+dir	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.dir(path) end$/;"	f	class:lfs
+dofile	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function dofile([filename]) end$/;"	f	
+dump	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.dump(function [, strip]) end$/;"	f	class:string
+error	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function error(message [, level]) end$/;"	f	
+execute	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.execute([command]) end$/;"	f	class:os
+exit	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.exit([code [, close]]) end$/;"	f	class:os
+exp	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.exp(x) end$/;"	f	class:math
+extract	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.extract(n, field [, width]) end$/;"	f	class:bit32
+find	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.find(s, pattern [, init [, plain]]) end$/;"	f	class:string
+floor	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.floor(x) end$/;"	f	class:math
+flush	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function file:flush() end$/;"	f	class:file
+flush	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.flush() end$/;"	f	class:io
+fmod	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.fmod(x, y) end$/;"	f	class:math
+format	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.format(formatstring, ···) end$/;"	f	class:string
+frexp	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.frexp(x) end$/;"	f	class:math
+getenv	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.getenv(varname) end$/;"	f	class:os
+getfenv	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.getfenv(o) end$/;"	f	class:debug
+getfenv	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function getfenv([f]) end$/;"	f	
+gethook	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.gethook([thread]) end$/;"	f	class:debug
+getinfo	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.getinfo([thread,] f [, what]) end$/;"	f	class:debug
+getlocal	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.getlocal([thread,] f, local) end$/;"	f	class:debug
+getmetatable	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.getmetatable(value) end$/;"	f	class:debug
+getmetatable	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function getmetatable(object) end$/;"	f	
+getregistry	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.getregistry() end$/;"	f	class:debug
+getupvalue	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.getupvalue(f, up) end$/;"	f	class:debug
+getuservalue	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.getuservalue(u) end$/;"	f	class:debug
+gmatch	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.gmatch(s, pattern) end$/;"	f	class:string
+gsub	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.gsub(s, pattern, repl [, n]) end$/;"	f	class:string
+huge	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.abs(x) end$/;"	F	class:math
+input	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.input([file]) end$/;"	f	class:io
+insert	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function table.insert(list, [pos,] value) end$/;"	f	class:table
+io	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.close([file]) end$/;"	m	
+ipairs	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function ipairs(t) end$/;"	f	
+isyieldable	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function coroutine.isyieldable() end$/;"	f	class:coroutine
+ldexp	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.ldexp(m, e) end$/;"	f	class:math
+len	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.len(s) end$/;"	f	class:string
+len	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function utf8.len(s [, i [, j]]) end$/;"	f	class:utf8
+lfs	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.attributes(filepath [, aname | atable]) end$/;"	m	
+lines	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function file:lines(···) end$/;"	f	class:file
+lines	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.lines([filename, ···]) end$/;"	f	class:io
+link	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.link(old, new[, symlink]) end$/;"	f	class:lfs
+load	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function load(chunk [, chunkname [, mode [, env]]]) end$/;"	f	
+loaded	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	F	class:package
+loaders	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	F	class:package
+loadfile	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function loadfile([filename [, mode [, env]]]) end$/;"	f	
+loadlib	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	f	class:package
+loadstring	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function loadstring(string [, chunkname])$/;"	f	
+locale	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.locale([table]) end$/;"	f	class:lpeg
+lock	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.lock(filehandle, mode[, start[, length]]) end$/;"	f	class:lfs
+lock_dir	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.lock_dir(path, [seconds_stale]) end$/;"	f	class:lfs
+log	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.log(x [, base]) end$/;"	f	class:math
+log10	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.log10(x) end$/;"	f	class:math
+lower	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.lower(s) end$/;"	f	class:string
+lpeg	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.B(patt) end$/;"	m	
+lrotate	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.lrotate(x, disp) end$/;"	f	class:bit32
+lshift	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.lshift(x, disp) end$/;"	f	class:bit32
+match	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.match(pattern, subject [, init]) end$/;"	f	class:lpeg
+match	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.match(s, pattern [, init]) end$/;"	f	class:string
+math	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.abs(x) end$/;"	m	
+max	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.max(x, ···) end$/;"	f	class:math
+maxinteger	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.abs(x) end$/;"	F	class:math
+maxn	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function table.maxn(table) end$/;"	f	class:table
+min	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.min(x, ···) end$/;"	f	class:math
+mininteger	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.abs(x) end$/;"	F	class:math
+mkdir	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.mkdir(dirname) end$/;"	f	class:lfs
+modf	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.modf(x) end$/;"	f	class:math
+module	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function module(name [, ···]) end$/;"	f	
+move	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function table.move(a1, f, e, t [,a2]) end$/;"	f	class:table
+next	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function next(table [, index]) end$/;"	f	
+offset	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function utf8.offset(s, n [, i]) end$/;"	f	class:utf8
+open	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.open(filename [, mode]) end$/;"	f	class:io
+os	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.clock() end$/;"	m	
+output	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.output([file]) end$/;"	f	class:io
+pack	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.pack(fmt, v1, v2, ···) end$/;"	f	class:string
+pack	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function table.pack(···) end$/;"	f	class:table
+package	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	m	
+packsize	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.packsize(fmt) end$/;"	f	class:string
+pairs	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function pairs(t) end$/;"	f	
+path	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	F	class:package
+pcall	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function pcall(f [, arg1, ···]) end$/;"	f	
+pi	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.abs(x) end$/;"	F	class:math
+popen	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.popen(prog [, mode]) end$/;"	f	class:io
+pow	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.pow(x, y) end$/;"	f	class:math
+preload	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	F	class:package
+print	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function print(···) end$/;"	f	
+rad	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.rad(x) end$/;"	f	class:math
+random	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.random([m [, n]]) end$/;"	f	class:math
+randomseed	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.randomseed(x) end$/;"	f	class:math
+rawequal	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function rawequal(v1, v2) end$/;"	f	
+rawget	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function rawget(table, index) end$/;"	f	
+rawlen	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function rawlen(v) end$/;"	f	
+rawset	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function rawset(table, index, value) end$/;"	f	
+read	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function file:read(···) end$/;"	f	class:file
+read	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.read(···) end$/;"	f	class:io
+remove	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.remove(filename) end$/;"	f	class:os
+remove	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function table.remove(list [, pos]) end$/;"	f	class:table
+rename	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.rename(oldname, newname) end$/;"	f	class:os
+rep	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.rep(s, n [, sep]) end$/;"	f	class:string
+replace	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.replace(n, v, field [, width]) end$/;"	f	class:bit32
+require	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function require(modname) end$/;"	f	
+resume	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function coroutine.resume(co [, val1, ···]) end$/;"	f	class:coroutine
+reverse	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.reverse(s) end$/;"	f	class:string
+rmdir	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.rmdir(dirname) end$/;"	f	class:lfs
+rrotate	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.rrotate(x, disp) end$/;"	f	class:bit32
+rshift	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.rshift(x, disp) end$/;"	f	class:bit32
+running	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function coroutine.running() end$/;"	f	class:coroutine
+searchers	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	F	class:package
+searchpath	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.searchpath(name, path [, sep [, rep]]) end$/;"	f	class:package
+seeall	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function package.seeall(module) end$/;"	f	class:package
+seek	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function file:seek([whence [, offset]]) end$/;"	f	class:file
+select	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function select(index, ···) end$/;"	f	
+setfenv	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.setfenv(object, table) end$/;"	f	class:debug
+setfenv	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function setfenv(f, table) end$/;"	f	
+sethook	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.sethook([thread,] hook, mask [, count]) end$/;"	f	class:debug
+setlocal	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.setlocal([thread,] level, local, value) end$/;"	f	class:debug
+setlocale	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.setlocale(locale [, category]) end$/;"	f	class:os
+setmaxstack	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.setmaxstack(max) end$/;"	f	class:lpeg
+setmetatable	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.setmetatable(value, table) end$/;"	f	class:debug
+setmetatable	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function setmetatable(table, metatable) end$/;"	f	
+setmode	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.setmode(file, mode) end$/;"	f	class:lfs
+setupvalue	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.setupvalue(f, up, value) end$/;"	f	class:debug
+setuservalue	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.setuservalue(udata, value) end$/;"	f	class:debug
+setvbuf	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function file:setvbuf(mode [, size]) end$/;"	f	class:file
+sin	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.sin(x) end$/;"	f	class:math
+sinh	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.sinh(x) end$/;"	f	class:math
+sort	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function table.sort(list [, comp]) end$/;"	f	class:table
+sqrt	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.sqrt(x) end$/;"	f	class:math
+status	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function coroutine.status(co) end$/;"	f	class:coroutine
+stderr	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.close([file]) end$/;"	F	class:io
+stdin	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.close([file]) end$/;"	F	class:io
+stdout	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.close([file]) end$/;"	F	class:io
+string	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.byte(s [, i [, j]]) end$/;"	m	
+sub	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.sub(s, i [, j]) end$/;"	f	class:string
+symlinkattributes	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.symlinkattributes(filepath [, aname]) end$/;"	f	class:lfs
+table	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function table.concat(list [, sep [, i [, j]]]) end$/;"	m	
+tan	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.tan(x) end$/;"	f	class:math
+tanh	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.tanh(x) end$/;"	f	class:math
+time	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.time([table]) end$/;"	f	class:os
+tmpfile	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.tmpfile() end$/;"	f	class:io
+tmpname	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function os.tmpname() end$/;"	f	class:os
+tointeger	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.tointeger(x) end$/;"	f	class:math
+tonumber	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function tonumber(e [, base]) end$/;"	f	
+tostring	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function tostring(v) end$/;"	f	
+touch	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.touch(filepath [, atime [, mtime]]) end$/;"	f	class:lfs
+traceback	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.traceback([thread,] [message] [,level]) end$/;"	f	class:debug
+type	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.type(obj) end$/;"	f	class:io
+type	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.type(value) end$/;"	f	class:lpeg
+type	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.type(x) end$/;"	f	class:math
+type	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function type(v) end$/;"	f	
+ult	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function math.ult(m, n) end$/;"	f	class:math
+unlock	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lfs.unlock(filehandle[, start[, length]]) end$/;"	f	class:lfs
+unpack	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.unpack(fmt, s [, pos]) end$/;"	f	class:string
+unpack	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function table.unpack(list [, i [, j]]) end$/;"	f	class:table
+unpack	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function unpack(list [, i [, j]]) end$/;"	f	
+upper	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function string.upper(s) end$/;"	f	class:string
+upvalueid	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.upvalueid(f, n) end$/;"	f	class:debug
+upvaluejoin	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function debug.upvaluejoin(f1, n1, f2, n2) end$/;"	f	class:debug
+utf8	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function utf8.char(···) end$/;"	m	
+version	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function lpeg.version() end$/;"	f	class:lpeg
+wrap	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function coroutine.wrap(f) end$/;"	f	class:coroutine
+write	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function file:write(···) end$/;"	f	class:file
+write	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function io.write(···) end$/;"	f	class:io
+xor	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function bit32.xor(...) end$/;"	f	class:bit32
+xpcall	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function xpcall(f, msgh [, arg1, ···]) end$/;"	f	
+yield	/home/mitchell/code/textadept/modules/lua/lua.luadoc	/^function coroutine.yield(···) end$/;"	f	class:coroutine

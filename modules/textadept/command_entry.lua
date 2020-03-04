@@ -44,20 +44,18 @@ M.editing_keys = {__index = {
 -- @name env
 local env = setmetatable({}, {
   __index = function(_, k)
-    local f = buffer[k]
-    if f and type(f) == 'function' then
-      f = function(...) return buffer[k](buffer, ...) end
-    elseif f == nil and type(view[k]) == 'function' then
-      f = function(...) view[k](view, ...) end -- do not return a value
-    elseif f == nil then
-      f = view[k] or ui[k] or _G[k]
+    if type(buffer[k]) == 'function' then
+      return function(...) return buffer[k](buffer, ...) end
+    elseif type(view[k]) == 'function' then
+      return function(...) view[k](view, ...) end -- do not return a value
     end
-    return f
+    return buffer[k] or view[k] or ui[k] or _G[k]
   end,
   __newindex = function(self, k, v)
     local ok, value = pcall(function() return buffer[k] end)
     if ok and value ~= nil or not ok and value:find('write-only property') then
-      buffer[k] = v return
+      buffer[k] = v
+      return
     end
     if view[k] ~= nil then view[k] = v return end
     if ui[k] ~= nil then ui[k] = v return end
@@ -165,12 +163,15 @@ local lua_mode_keys = {['\t'] = complete_lua}
 -- @name run
 function M.run(f, mode_keys, lexer, height)
   if M:auto_c_active() then M:auto_c_cancel() end -- may happen in curses
-  if not f and not mode_keys then
+  if not assert_type(f, 'function/nil', 1) and not mode_keys then
     f, mode_keys, lexer = run_lua, lua_mode_keys, 'lua'
-  elseif type(mode_keys) == 'string' then
-    mode_keys, lexer, height = {}, mode_keys, lexer
-  elseif not mode_keys then
+  elseif type(assert_type(mode_keys, 'table/string/nil', 2)) == 'string' then
+    lexer, height = mode_keys, assert_type(lexer, 'number/nil', 3)
     mode_keys = {}
+  else
+    if not mode_keys then mode_keys = {} end
+    assert_type(lexer, 'string/nil', 3)
+    assert_type(height, 'number/nil', 4)
   end
   if not mode_keys['esc'] then mode_keys['esc'] = M.focus end -- hide
   mode_keys['\n'] = mode_keys['\n'] or function()

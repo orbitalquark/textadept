@@ -124,6 +124,7 @@ end
 --   internally, and should not be set otherwise.
 -- @return position of the found text or `-1`
 local function find(text, next, flags, no_wrap, wrapped)
+  -- Note: cannot use assert_type(), as event errors are handled silently.
   if text == '' then return end
   if not flags then flags = get_flags() end
   if flags >= 0x1000000 then M.find_in_files() return end -- not performed here
@@ -193,7 +194,7 @@ end
 -- caret position instead of the position where the incremental search began.
 -- Only the `match_case` find option is recognized. Normal command entry
 -- functionality is unavailable until the search is finished or by pressing
--- `Esc` (`⎋` on Mac OSX | `Esc` in curses).
+-- `Esc`.
 -- @param text The text to incrementally search for, or `nil` to begin an
 --   incremental search.
 -- @param next Flag indicating whether or not the search direction is forward.
@@ -201,6 +202,7 @@ end
 --   the caret position. The default value is `false`.
 -- @name find_incremental
 function M.find_incremental(text, next, anchor)
+  assert_type(text, 'string/nil', 1)
   if text then find_incremental(text, next, anchor) return end
   incremental_start = buffer.current_pos
   ui.command_entry:set_text('')
@@ -251,17 +253,20 @@ end})
 -- @see find_in_files_filters
 -- @name find_in_files
 function M.find_in_files(dir, filter)
-  dir = dir or ui.dialogs.fileselect{
-    title = _L['Select Directory'], select_only_directories = true,
-    with_directory = io.get_project_root() or
-                     (buffer.filename or ''):match('^.+[/\\]') or
-                     lfs.currentdir()
-  }
-  if not dir then return end
+  if not assert_type(dir, 'string/nil', 1) then
+    dir = ui.dialogs.fileselect{
+      title = _L['Select Directory'], select_only_directories = true,
+      with_directory = io.get_project_root() or
+                       (buffer.filename or ''):match('^.+[/\\]') or
+                       lfs.currentdir()
+    }
+    if not dir then return end
+  end
 
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
   ui.silent_print = false
-  ui._print(_L['[Files Found Buffer]'], _L['Find:']..' '..M.find_entry_text)
+  ui._print(_L['[Files Found Buffer]'],
+            _L['Find:']:gsub('_', '')..' '..M.find_entry_text)
   buffer.indicator_current = M.INDIC_FIND
   local ff_buffer = buffer
 
@@ -273,8 +278,8 @@ function M.find_in_files(dir, filter)
     buffer:clear_all()
     buffer:empty_undo_buffer()
     local f = io.open(filename, 'rb')
-    while f:read(0) do buffer:append_text(f:read(1048576)) end
-    --buffer:set_text(f:read('a'))
+    while f:read(0) do buffer:append_text(f:read(1048576)) end -- TODO: why?
+    --buffer:set_text(f:read('a')) -- TODO: why not?
     f:close()
     local binary = nil -- determine lazily for performance reasons
     buffer:target_whole_document()
@@ -402,7 +407,7 @@ function M.goto_file_found(line_num, next)
   if ff_view then ui.goto_view(ff_view) else view:goto_buffer(ff_buf) end
 
   -- If no line was given, find the next search result.
-  if not line_num and next ~= nil then
+  if not assert_type(line_num, 'number/nil', 1) and next ~= nil then
     if next then buffer:line_end() else buffer:home() end
     buffer:search_anchor()
     local f = buffer['search_'..(next and 'next' or 'prev')]

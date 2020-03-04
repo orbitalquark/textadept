@@ -88,9 +88,9 @@ local M = {}
 -- ## Key Chains
 --
 -- Key chains are a powerful concept. They allow you to assign multiple key
--- bindings to one key sequence. By default, the `Esc` (`⎋` on Mac OSX | `Esc`
--- in curses) key cancels a key chain, but you can redefine it via
--- [`keys.CLEAR`](). An example key chain looks like:
+-- bindings to one key sequence. By default, the `Esc` key cancels a key chain,
+-- but you can redefine it via [`keys.CLEAR`](). An example key chain looks
+-- like:
 --
 --     keys['aa'] = {
 --       a = function1,
@@ -205,10 +205,13 @@ local function keypress(code, shift, control, alt, meta, caps_lock)
   local key = code < 256 and (not CURSES or (code ~= 7 and code ~= 13)) and
               string.char(code) or M.KEYSYMS[code]
   if not key then return end
-  shift = shift and (code >= 256 or code == 9) -- printable chars are uppercased
-  if OSX and alt and code < 256 then alt = false end -- composed key; ignore alt
-  local key_seq = (control and CTRL or '')..(alt and ALT or '')..
-                  (meta and OSX and META or '')..(shift and SHIFT or '')..key
+  -- Since printable characters are uppercased, disable shift.
+  if shift and code < 256 and code ~= 9 then shift = false end
+  -- For composed keys on OSX, ignore alt.
+  if OSX and alt and code < 256 then alt = false end
+  local key_seq = string.format('%s%s%s%s%s', control and CTRL or '',
+                                alt and ALT or '', meta and OSX and META or '',
+                                shift and SHIFT or '', key)
   --print(key_seq)
 
   ui.statusbar_text = ''

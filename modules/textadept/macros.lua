@@ -87,10 +87,12 @@ end
 -- @name save
 function M.save(filename)
   if recording or not macro then return end
-  filename = filename or ui.dialogs.filesave{
-    title = _L['Save Macro'], with_directory = _USERHOME, with_extension = 'm'
-  }
-  if not filename then return end
+  if not assert_type(filename, 'string/nil', 1) then
+    filename = ui.dialogs.filesave{
+      title = _L['Save Macro'], with_directory = _USERHOME, with_extension = 'm'
+    }
+    if not filename then return end
+  end
   local f = assert(io.open(filename, 'w'))
   f:write('return {\n')
   for i = 1, #macro do
@@ -113,10 +115,13 @@ end
 -- @name load
 function M.load(filename)
   if recording then return end
-  filename = filename or ui.dialogs.fileselect{
-    title = _L['Load Macro'], with_directory = _USERHOME, with_extension = 'm'
-  }
-  if filename then macro = assert(loadfile(filename, 't', {}))() end
+  if not assert_type(filename, 'string/nil', 1) then
+    filename = ui.dialogs.fileselect{
+      title = _L['Load Macro'], with_directory = _USERHOME, with_extension = 'm'
+    }
+    if not filename then return end
+  end
+  macro = assert(loadfile(filename, 't', {}))()
 end
 
 return M

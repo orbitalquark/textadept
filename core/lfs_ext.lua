@@ -48,6 +48,10 @@ lfs.default_filter = {
 -- @see filter
 -- @name dir_foreach
 function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
+  assert_type(dir, 'string', 1)
+  assert_type(f, 'function', 2)
+  assert_type(filter, 'string/table/nil', 3)
+  assert_type(n, 'number/nil', 4)
   if not level then
     -- Convert filter to a table from nil or string arguments.
     if not filter then filter = lfs.default_filter end
@@ -60,8 +64,7 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
       consider_any = true,
       exts = setmetatable({}, {__index = function() return true end})
     }
-    for i = 1, #filter do
-      local patt = filter[i]
+    for _, patt in ipairs(filter) do
       patt = patt:gsub('^(!?)%%?%.([^.]+)$', '%1%%.%2$') -- '.lua' to '%.lua$'
       patt = patt:gsub('/([^\\])', '[/\\]%1') -- '/' to '[/\\]'
       local include = not patt:find('^!')
@@ -76,10 +79,9 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
     end
     filter = processed_filter
   end
-  local dir_sep = not WIN32 and '/' or '\\'
   for basename in lfs.dir(dir) do
     if basename:find('^%.%.?$') then goto continue end -- ignore . and ..
-    local filename = dir..(dir ~= '/' and dir_sep or '')..basename
+    local filename = dir..(dir ~= '/' and '/' or '')..basename
     local mode = lfs.attributes(filename, 'mode')
     if mode ~= 'directory' and mode ~= 'file' then goto continue end
     local include
@@ -90,22 +92,23 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
     elseif mode == 'directory' then
       include = filter.consider_any
     end
-    for i = 1, #filter do
-      local patt = filter[i]
+    for _, patt in ipairs(filter) do
       -- Treat exclusive patterns as logical AND.
       if patt:find('^!') and filename:find(patt:sub(2)) then goto continue end
       -- Treat inclusive patterns as logical OR.
       include = include or (not patt:find('^!') and filename:find(patt))
     end
+    local dir_sep = not WIN32 and '/' or '\\'
+    local os_filename = not WIN32 and filename or filename:gsub('/', dir_sep)
     if include and mode == 'directory' then
-      if include_dirs and f(filename..dir_sep) == false then return end
+      if include_dirs and f(os_filename..dir_sep) == false then return end
       if not n or (level or 0) < n then
         local halt = lfs.dir_foreach(filename, f, filter, n, include_dirs,
                                      (level or 0) + 1) == false
         if halt then return false end
       end
     elseif include and mode == 'file' then
-      if f(filename) == false then return false end
+      if f(os_filename) == false then return false end
     end
     ::continue::
   end
@@ -120,6 +123,8 @@ end
 -- @return string absolute path
 -- @name abspath
 function lfs.abspath(filename, prefix)
+  assert_type(filename, 'string', 1)
+  assert_type(prefix, 'string/nil', 2)
   if WIN32 then filename = filename:gsub('/', '\\') end
   if not filename:find(not WIN32 and '^/' or '^%a:[/\\]') and
      not (WIN32 and filename:find('^\\\\')) then

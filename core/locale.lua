@@ -23,12 +23,12 @@ for line in f:lines() do
   -- comment.
   if not line:find('^%s*[^%w_%[]') then
     local id, str = line:match('^(.-)%s*=%s*(.+)$')
-    if id and str and assert(not M[id], 'duplicate locale key: '..id) then
+    if id and str and assert(not M[id], 'duplicate locale key "%s"', id) then
       M[id] = not CURSES and str or str:gsub('_', '')
     end
   end
 end
 f:close()
 
-return setmetatable(M,
-                    {__index = function(_, k) return 'No Localization:'..k end})
+setmetatable(M, {__index = function(_, k) return 'No Localization:'..k end})
+return M

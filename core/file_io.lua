@@ -95,32 +95,31 @@ io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 -- @see _G.events
 -- @name open_file
 function io.open_file(filenames, encodings)
+  assert_type(encodings, 'string/table/nil', 2)
+  if not assert_type(filenames, 'string/table/nil', 1) then
+    filenames = ui.dialogs.fileselect{
+      title = _L['Open File'], select_multiple = true,
+      with_directory = (buffer.filename or ''):match('^.+[/\\]') or
+                       lfs.currentdir(),
+      width = CURSES and ui.size[1] - 2 or nil
+    }
+    if not filenames then return end
+  end
   if type(filenames) == 'string' then filenames = {filenames} end
-  if type(encodings or '') == 'string' then encodings = {encodings} end
-  filenames = filenames or ui.dialogs.fileselect{
-    title = _L['Open File'], select_multiple = true,
-    with_directory = (buffer.filename or ''):match('^.+[/\\]') or
-                     lfs.currentdir(),
-    width = CURSES and ui.size[1] - 2 or nil
-  }
-  if not filenames then return end
+  if type(encodings) ~= 'table' then encodings = {encodings} end
   for i = 1, #filenames do
     local filename = lfs.abspath((filenames[i]:gsub('^file://', '')))
-    for j = 1, #_BUFFERS do
-      if filename == _BUFFERS[j].filename then
-        view:goto_buffer(_BUFFERS[j]) -- already open
-        goto continue
-      end
+    for _, buf in ipairs(_BUFFERS) do
+      if filename == buf.filename then view:goto_buffer(buf) goto continue end
     end
 
     local text = ''
-    local f, err = io.open(filename, 'rb')
-    if f then
+    if lfs.attributes(filename) then
+      local f, errmsg = io.open(filename, 'rb')
+      if not f then error(string.format('cannot open %s', errmsg), 2) end
       text = f:read('a')
       f:close()
       if not text then goto continue end -- filename exists, but cannot read it
-    elseif lfs.attributes(filename) then
-      error(err)
     end
     local buffer = buffer.new()
     if encodings[i] then
@@ -128,11 +127,11 @@ function io.open_file(filenames, encodings)
     else
       -- Try to detect character encoding and convert to UTF-8.
       local has_zeroes = text:sub(1, 65536):find('\0')
-      for j = 1, #io.encodings do
-        if not has_zeroes or io.encodings[j]:find('^UTF%-[13][62]') then
-          local ok, conv = pcall(string.iconv, text, 'UTF-8', io.encodings[j])
+      for _, encoding in ipairs(io.encodings) do
+        if not has_zeroes or encoding:find('^UTF%-[13][62]') then
+          local ok, conv = pcall(string.iconv, text, 'UTF-8', encoding)
           if ok then
-            buffer.encoding, text = io.encodings[j], conv
+            buffer.encoding, text = encoding, conv
             goto encoding_detected
           end
         end
@@ -185,6 +184,7 @@ end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_encoding(buffer, encoding)
+  assert_type(encoding, 'string/nil', 1)
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local text = buffer:get_text()
   if buffer.encoding then
@@ -229,12 +229,14 @@ end
 -- @name save_file_as
 function io.save_file_as(filename)
   local dir, name = (buffer.filename or ''):match('^(.-[/\\]?)([^/\\]*)$')
-  filename = filename or ui.dialogs.filesave{
-    title = _L['Save File'], with_directory = dir,
-    with_file = name:iconv('UTF-8', _CHARSET),
-    width = CURSES and ui.size[1] - 2 or nil
-  }
-  if not filename then return end
+  if not assert_type(filename, 'string/nil', 1) then
+    filename = ui.dialogs.filesave{
+      title = _L['Save File'], with_directory = dir,
+      with_file = name:iconv('UTF-8', _CHARSET),
+      width = CURSES and ui.size[1] - 2 or nil
+    }
+    if not filename then return end
+  end
   buffer.filename = filename
   io.save_file()
   events.emit(events.FILE_AFTER_SAVE, filename, true)
@@ -246,9 +248,9 @@ end
 -- @name save_all_files
 function io.save_all_files()
   local current_buffer = buffer
-  for i = 1, #_BUFFERS do
-    if _BUFFERS[i].filename and _BUFFERS[i].modify then
-      view:goto_buffer(_BUFFERS[i])
+  for _, buffer in ipairs(_BUFFERS) do
+    if buffer.filename and buffer.modify then
+      view:goto_buffer(buffer)
       io.save_file()
     end
   end
@@ -358,11 +360,11 @@ local vcs = {'.bzr', '.git', '.hg', '.svn'}
 -- @return string root or nil
 -- @name get_project_root
 function io.get_project_root(path)
-  local lfs_attributes = lfs.attributes
-  local dir = path or (buffer.filename or lfs.currentdir()..'/'):match('^(.+)[/\\]')
+  local dir = assert_type(path, 'string/nil', 1) or
+              (buffer.filename or lfs.currentdir()..'/'):match('^(.+)[/\\]')
   while dir do
     for i = 1, #vcs do
-      if lfs_attributes(dir..'/'..vcs[i], 'mode') then return dir end
+      if lfs.attributes(dir..'/'..vcs[i], 'mode') then return dir end
     end
     dir = dir:match('^(.+)[/\\]')
   end
@@ -414,8 +416,12 @@ io.quick_open_filters = {}
 -- @see ui.dialogs.filteredlist
 -- @name quick_open
 function io.quick_open(paths, filter, opts)
-  if not paths then paths = io.get_project_root() end
-  if not paths then return end
+  if not assert_type(paths, 'string/table/nil', 1) then
+    paths = io.get_project_root()
+    if not paths then return end
+  end
+  assert_type(filter, 'string/table/nil', 2)
+  assert_type(opts, 'table/nil', 3)
   if type(paths) == 'string' then
     if not filter then filter = io.quick_open_filters[paths] end
     paths = {paths}
@@ -429,11 +435,12 @@ function io.quick_open(paths, filter, opts)
     end, filter or lfs.default_filter)
   end
   if #utf8_list >= io.quick_open_max then
-    local msg = string.format('%d %s %d', io.quick_open_max,
-                              _L['files or more were found. Showing the first'],
-                              io.quick_open_max)
     ui.dialogs.msgbox{
-      title = _L['File Limit Exceeded'], text = msg, icon = 'gtk-dialog-info'
+      title = _L['File Limit Exceeded'],
+      text = string.format('%d %s %d', io.quick_open_max,
+                           _L['files or more were found. Showing the first'],
+                           io.quick_open_max),
+      icon = 'gtk-dialog-info'
     }
   end
   local options = {

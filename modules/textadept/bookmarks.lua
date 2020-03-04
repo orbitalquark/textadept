@@ -21,6 +21,7 @@ M.MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 -- @param line Optional line number to add or remove a bookmark on.
 -- @name toggle
 function M.toggle(on, line)
+  assert_type(line, 'number/nil', 2)
   if not line then line = buffer:line_from_position(buffer.current_pos) end
   local f = on and buffer.marker_add or buffer.marker_delete
   if on == nil then -- toggle
@@ -50,10 +51,9 @@ function M.goto_mark(next)
     local utf8_list, buffers = {}, {}
     -- List the current buffer's marks, and then all other buffers' marks.
     for _, current_buffer_first in ipairs{true, false} do
-      for i = 1, #_BUFFERS do
-        if current_buffer_first and _BUFFERS[i] == buffer or
-           not current_buffer_first and _BUFFERS[i] ~= buffer then
-          local buffer = _BUFFERS[i]
+      for _, buffer in ipairs(_BUFFERS) do
+        if current_buffer_first and buffer == _G.buffer or
+           not current_buffer_first and buffer ~= _G.buffer then
           local basename = (buffer.filename or ''):match('[^/\\]+$') or
                            buffer._type or _L['Untitled']
           if buffer.filename then
