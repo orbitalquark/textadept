@@ -128,7 +128,7 @@ M.register('-t', '--test', 1, function(patterns)
     local arg = {}
     for patt in (patterns or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
     local env = setmetatable({arg = arg}, {__index = _G})
-    assert(loadfile(_HOME..'/test.lua', 't', env))()
+    assert(loadfile(_HOME..'/test/test.lua', 't', env))()
   end)
 end, 'Runs unit tests indicated by comma-separated list of patterns (or all)')
 
