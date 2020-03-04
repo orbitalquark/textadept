@@ -2792,10 +2792,10 @@ function show_lines(buffer, start_line, end_line) end
 -- `buffer.set_styling()`.
 -- @param buffer A buffer.
 -- @param position The position in *buffer* to start styling at.
--- @param style_mask The bit mask of style bits that can be set when styling.
--- @usage buffer:start_styling(0, 0xFF)
+-- @param unused Unused number. `0` can be safely used.
+-- @usage buffer:start_styling(0, 0)
 -- @see set_styling
-function start_styling(buffer, position, style_mask) end
+function start_styling(buffer, position, unused) end
 
 ---
 -- Moves the caret to the bottom of the page or, if already there, down one
