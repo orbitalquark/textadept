@@ -553,7 +553,7 @@ function test_lfs_ext_dir_foreach_max_depth()
   local count = 0
   lfs.dir_foreach(
     _HOME, function(filename) count = count + 1 end, '.lua', 0)
-  assert_equal(count, 2) -- init.lua, test.lua
+  assert_equal(count, 1) -- init.lua
 end
 
 function test_lfs_ext_dir_foreach_win32()
@@ -1936,7 +1936,96 @@ function test_macro_record_play_save_load()
   assert_raises(function() textadept.macros.load(1) end, 'string/nil expected, got number')
 end
 
--- TODO: menu functions.
+function test_menu_menu_functions()
+  buffer.new()
+  textadept.menu.menubar[_L['Buffer']][_L['Indentation']][_L['Tab width: 8']][2]()
+  assert_equal(buffer.tab_width, 8)
+  textadept.menu.menubar[_L['Buffer']][_L['EOL Mode']][_L['CRLF']][2]()
+  assert_equal(buffer.eol_mode, buffer.EOL_CRLF)
+  textadept.menu.menubar[_L['Buffer']][_L['Encoding']][_L['CP-1252 Encoding']][2]()
+  assert_equal(buffer.encoding, 'CP1252')
+  buffer:set_text('foo')
+  textadept.menu.menubar[_L['Edit']][_L['Delete Word']][2]()
+  assert_equal(buffer:get_text(), '')
+  buffer:set_text('(foo)')
+  textadept.menu.menubar[_L['Edit']][_L['Match Brace']][2]()
+  assert_equal(buffer.char_at[buffer.current_pos], string.byte(')'))
+  buffer:set_text('foo f')
+  buffer:line_end()
+  textadept.menu.menubar[_L['Edit']][_L['Complete Word']][2]()
+  assert_equal(buffer:get_text(), 'foo foo')
+  buffer:set_text('2\n1\n3\n')
+  textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
+  ui.command_entry:set_text('sort')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  assert_equal(buffer:get_text(), '1\n2\n3\n')
+  buffer:set_text('foo')
+  buffer:line_end()
+  textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as XML Tags']][2]()
+  assert_equal(buffer:get_text(), '<foo></foo>')
+  assert_equal(buffer.current_pos, POS(6))
+  buffer:undo()
+  assert_equal(buffer:get_text(), 'foo') -- verify atomic undo
+  textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as Single XML Tag']][2]()
+  assert_equal(buffer:get_text(), '<foo />')
+  assert_equal(buffer.current_pos, buffer.line_end_position[LINE(1)])
+  textadept.menu.menubar[_L['Search']][_L['Find in Files']][2]()
+  assert(ui.find.in_files, 'not finding in files')
+  textadept.menu.menubar[_L['Search']][_L['Find']][2]()
+  assert(not ui.find.in_files, 'finding in files')
+  buffer:clear_all()
+  buffer:set_lexer('lua')
+  buffer:add_text('string.')
+  textadept.menu.menubar[_L['Tools']][_L['Complete Symbol']][2]()
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'byte')
+  buffer:auto_c_cancel()
+  buffer:char_left()
+  textadept.menu.menubar[_L['Tools']][_L['Show Style']][2]()
+  assert(buffer:call_tip_active(), 'style not shown')
+  buffer:call_tip_cancel()
+  local use_tabs = buffer.use_tabs
+  textadept.menu.menubar[_L['Buffer']][_L['Indentation']][_L['Toggle Use Tabs']][2]()
+  assert(buffer.use_tabs ~= use_tabs, 'use tabs not toggled')
+  local view_eol = buffer.view_eol
+  textadept.menu.menubar[_L['Buffer']][_L['Toggle View EOL']][2]()
+  assert(buffer.view_eol ~= view_eol, 'view EOL not toggled')
+  local wrap_mode = buffer.wrap_mode
+  textadept.menu.menubar[_L['Buffer']][_L['Toggle Wrap Mode']][2]()
+  assert(buffer.wrap_mode ~= wrap_mode, 'wrap mode not toggled')
+  local view_whitespace = buffer.view_ws
+  textadept.menu.menubar[_L['Buffer']][_L['Toggle View Whitespace']][2]()
+  assert(buffer.view_ws ~= view_whitespace, 'view whitespace not toggled')
+  view:split()
+  update_ui()
+  local size = view.size
+  textadept.menu.menubar[_L['View']][_L['Grow View']][2]()
+  assert(view.size > size, 'view shrunk')
+  textadept.menu.menubar[_L['View']][_L['Shrink View']][2]()
+  assert_equal(view.size, size)
+  view:unsplit()
+  buffer:set_text('if foo then\n  bar\nend')
+  buffer:colourise(POS(1), -1)
+  textadept.menu.menubar[_L['View']][_L['Toggle Current Fold']][2]()
+  assert_equal(buffer.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
+  local indentation_guides = buffer.indentation_guides
+  textadept.menu.menubar[_L['View']][_L['Toggle Show Indent Guides']][2]()
+  assert(buffer.indentation_guides ~= indentation_guides, 'indentation guides not toggled')
+  local virtual_space = buffer.virtual_space_options
+  textadept.menu.menubar[_L['View']][_L['Toggle Virtual Space']][2]()
+  assert(buffer.virtual_space_options ~= virtual_space, 'virtual space not toggled')
+  buffer:set_save_point()
+  io.close_buffer()
+end
+
+function test_menu_functions_interactive()
+  buffer.new()
+  buffer.filename = '/tmp/test.lua'
+  textadept.menu.menubar[_L['Tools']][_L['Set Arguments...']][2]()
+  textadept.menu.menubar[_L['Help']][_L['About']][2]()
+  buffer:set_save_point()
+  io.close_buffer()
+end
 
 function test_menu_select_command_interactive()
   local num_buffers = #_BUFFERS
@@ -2030,6 +2119,7 @@ function test_run_build()
   -- TODO: chdir(_HOME) and textadept.run.build() -- no param.
   -- TODO: project whose makefile is autodetected.
 end
+unstable(test_run_build)
 
 -- TODO: test textadept.run.run_in_background
 
