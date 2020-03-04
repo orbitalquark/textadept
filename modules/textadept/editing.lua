@@ -151,7 +151,7 @@ events.connect(events.KEYPRESS, function(code)
     end
   end
   buffer:end_undo_action()
-end)
+end, 1) -- need index of 1 because default key handler halts propagation
 
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function(updated)
