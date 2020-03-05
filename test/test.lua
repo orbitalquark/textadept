@@ -1695,6 +1695,20 @@ function test_file_types_select_lexer_interactive()
   io.close_buffer()
 end
 
+function test_file_types_load_lexers()
+  print('Loading lexers...')
+  if #_VIEWS > 1 then view:unsplit() end
+  view:goto_buffer(-1)
+  ui.silent_print = true
+  buffer.new()
+  for _, name in ipairs(textadept.file_types.lexers) do
+    print('Loading lexer ' .. name)
+    buffer:set_lexer(name)
+  end
+  io.close_buffer()
+  ui.silent_print = false
+end
+
 function test_ui_find_find_text()
   local wrapped = false
   local handler = function() wrapped = true end
@@ -2485,6 +2499,56 @@ function test_ansi_c_autocomplete()
 
   buffer:set_save_point()
   io.close_buffer()
+end
+
+function test_lexer_api()
+  buffer.new()
+  buffer.use_tabs, buffer.tab_width = true, 4
+  buffer:set_text(table.concat({
+    'if foo then',
+    '\tbar',
+    '',
+    'end',
+    'baz'
+  }, '\n'))
+  buffer:set_lexer('lua')
+  buffer:colourise(POS(1), -1)
+  local lexer = require('lexer')
+  assert(lexer.fold_level[LINE(1)] & lexer.FOLD_HEADER > 0, 'not a fold header')
+  assert_equal(lexer.fold_level[LINE(2)], lexer.fold_level[LINE(3)])
+  assert(lexer.fold_level[LINE(4)] > lexer.fold_level[LINE(5)], 'incorrect fold levels')
+  assert(lexer.indent_amount[LINE(1)] < lexer.indent_amount[LINE(2)], 'incorrect indent level')
+  assert(lexer.indent_amount[LINE(2)] > lexer.indent_amount[LINE(3)], 'incorrect indent level')
+  lexer.line_state[LINE(1)] = 2
+  assert_equal(lexer.line_state[LINE(1)], 2)
+  assert_equal(lexer.property['foo'], '')
+  lexer.property['foo'] = 'bar'
+  assert_equal(lexer.property['foo'], 'bar')
+  lexer.property['bar'] = '$(foo),$(foo)'
+  assert_equal(lexer.property_expanded['bar'], 'bar,bar')
+  lexer.property['baz'] = '1'
+  assert_equal(lexer.property_int['baz'], 1)
+  lexer.property['baz'] = ''
+  assert_equal(lexer.property_int['baz'], 0)
+  assert_equal(lexer.property_int['quux'], 0)
+  assert_equal(lexer.style_at[2], 'keyword')
+  assert_equal(lexer.line_from_position(15), LINE(2))
+  buffer:set_save_point()
+  io.close_buffer()
+
+  assert_raises(function() lexer.fold_level = nil end, 'read-only')
+  assert_raises(function() lexer.fold_level[LINE(1)] = 0 end, 'read-only')
+  assert_raises(function() lexer.indent_amount = nil end, 'read-only')
+  assert_raises(function() lexer.indent_amount[LINE(1)] = 0 end, 'read-only')
+  assert_raises(function() lexer.property = nil end, 'read-only')
+  assert_raises(function() lexer.property_int = nil end, 'read-only')
+  assert_raises(function() lexer.property_int['foo'] = 1 end, 'read-only')
+  --TODO: assert_raises(function() lexer.property_expanded = nil end, 'read-only')
+  assert_raises(function() lexer.property_expanded['foo'] = 'bar' end, 'read-only')
+  assert_raises(function() lexer.style_at = nil end, 'read-only')
+  assert_raises(function() lexer.style_at[1] = 0 end, 'read-only')
+  assert_raises(function() lexer.line_state = nil end, 'read-only')
+  assert_raises(function() lexer.line_from_position = nil end, 'read-only')
 end
 
 --------------------------------------------------------------------------------
