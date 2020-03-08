@@ -1151,7 +1151,7 @@ static int l_callscintilla(lua_State *L, Scintilla *view, int msg, int wtype,
     if (c == SCI_GETDIRECTFUNCTION || c == SCI_SETDOCPOINTER ||
         c == SCI_CHANGELEXERSTATE)
       ltype = SINT;
-    else if (c == SCI_SETLEXERLANGUAGE)
+    else if (c == SCI_SETLEXERLANGUAGE || c == SCI_LOADLEXERLIBRARY)
       ltype = SSTRING;
   }
 
