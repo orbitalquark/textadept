@@ -291,13 +291,14 @@ events.connect(events.BUFFER_NEW, function()
   local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
   local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
   local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
+  local LOADLEXERLIBRARY = _SCINTILLA.functions.load_lexer_library[1]
   local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
   buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLUASTATE, _LUA)
-  buffer.property['lexer.lpeg.home'] = _USERHOME..'/lexers/?.lua;'..
-                                       _HOME..'/lexers'
+  buffer:private_lexer_call(LOADLEXERLIBRARY, _HOME..'/lexers')
+  buffer:private_lexer_call(LOADLEXERLIBRARY, _USERHOME..'/lexers')
   load_settings()
   buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
   if buffer == ui.command_entry then buffer.caret_line_visible = false end
