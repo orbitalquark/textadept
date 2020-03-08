@@ -1696,12 +1696,16 @@ function test_file_types_select_lexer_interactive()
 end
 
 function test_file_types_load_lexers()
+  local lexers = {}
+  for name in buffer:private_lexer_call(_SCINTILLA.functions.property_names[1]):gmatch('[^\n]+') do
+    lexers[#lexers + 1] = name
+  end
   print('Loading lexers...')
   if #_VIEWS > 1 then view:unsplit() end
   view:goto_buffer(-1)
   ui.silent_print = true
   buffer.new()
-  for _, name in ipairs(textadept.file_types.lexers) do
+  for _, name in ipairs(lexers) do
     print('Loading lexer ' .. name)
     buffer:set_lexer(name)
   end

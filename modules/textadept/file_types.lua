@@ -32,12 +32,6 @@ M.extensions = {--[[Actionscript]]as='actionscript',asc='actionscript',--[[Ada]]
 -- @name patterns
 M.patterns = {['^#!.+[/ ][gm]?awk']='awk',['^#!.+[/ ]lua']='lua',['^#!.+[/ ]octave']='matlab',['^#!.+[/ ]perl']='perl',['^#!.+[/ ]php']='php',['^#!.+[/ ]python']='python',['^#!.+[/ ]ruby']='ruby',['^#!.+[/ ]bash']='bash',['^#!.+/m?ksh']='bash',['^#!.+/sh']='bash',['^%s*class%s+%S+%s*<%s*ApplicationController']='rails',['^%s*class%s+%S+%s*<%s*ActionController::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Migration']='rails',['^%s*<%?xml%s']='xml',['^#cloud%-config']='yaml'}
 
----
--- List of available lexer names.
--- @class table
--- @name lexers
-M.lexers = {}
-
 local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- LuaDoc is in core/.buffer.luadoc.
 local function get_lexer(buffer, current)
@@ -108,31 +102,20 @@ events.connect(events.VIEW_AFTER_SWITCH, restore_lexer)
 events.connect(events.VIEW_NEW, restore_lexer)
 events.connect(events.RESET_AFTER, restore_lexer)
 
--- Generate lexer list.
-local lexers_found = {}
-for _, dir in ipairs{_HOME..'/lexers', _USERHOME..'/lexers'} do
-  if lfs.attributes(dir) then
-    for lexer in lfs.dir(dir) do
-      if lexer:find('%.lua$') and lexer ~= 'lexer.lua' then
-        lexers_found[lexer:match('^(.+)%.lua$')] = true
-      end
-    end
-  end
-end
-for lexer in pairs(lexers_found) do
-  M.lexers[#M.lexers + 1] = lexer:iconv('UTF-8', _CHARSET)
-end
-table.sort(M.lexers)
-
 ---
 -- Prompts the user to select a lexer for the current buffer.
 -- @see buffer.set_lexer
 -- @name select_lexer
 function M.select_lexer()
+  local lexers = {}
+  local LEXERNAMES = _SCINTILLA.functions.property_names[1]
+  for name in buffer:private_lexer_call(LEXERNAMES):gmatch('[^\n]+') do
+    lexers[#lexers + 1] = name
+  end
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Select Lexer'], columns = _L['Name'], items = M.lexers
+    title = _L['Select Lexer'], columns = _L['Name'], items = lexers
   }
-  if button == 1 and i then buffer:set_lexer(M.lexers[i]) end
+  if button == 1 and i then buffer:set_lexer(lexers[i]) end
 end
 
 return M
