@@ -72,18 +72,18 @@ if not CURSES then
     print('Usage: textadept [args] [filenames]')
     local list = {}
     for name in pairs(switches) do list[#list + 1] = name end
-    table.sort(list,
-               function(a, b) return a:match('[^-]+') < b:match('[^-]+') end)
-    for i = 1, #list do
-      local switch = switches[list[i]]
-      print(string.format('  %s [%d args]: %s', list[i], switch.narg,
-                          switch.description))
+    table.sort(
+      list, function(a, b) return a:match('[^-]+') < b:match('[^-]+') end)
+    for _, name in ipairs(list) do
+      local switch = switches[name]
+      print(string.format(
+        '  %s [%d args]: %s', name, switch.narg, switch.description))
     end
     os.exit()
   end, 'Shows this')
   -- Shows Textadept version and copyright on the command line.
   M.register('-v', '--version', 0, function()
-    print(_RELEASE..'\n'.._COPYRIGHT)
+    print(_RELEASE .. '\n' .. _COPYRIGHT)
     quit()
   end, 'Prints Textadept version and copyright')
   -- After Textadept finishes initializing and processes arguments, remove the
@@ -99,21 +99,23 @@ end
 -- Set `_G._USERHOME`.
 -- This needs to be set as soon as possible since the processing of arguments is
 -- positional.
-_USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE')..'/.textadept'
-for i = 1, #arg do
-  if (arg[i] == '-u' or arg[i] == '--userhome') and arg[i + 1] then
+_USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE') .. '/.textadept'
+for i, switch in ipairs(arg) do
+  if (switch == '-u' or switch == '--userhome') and arg[i + 1] then
     _USERHOME = arg[i + 1]
     break
   end
 end
 local mode = lfs.attributes(_USERHOME, 'mode')
 assert(not mode or mode == 'directory', '"%s" is not a directory', _USERHOME)
-if not mode then assert(lfs.mkdir(_USERHOME), 'cannot create %s', _USERHOME) end
-local user_init = _USERHOME..'/init.lua'
-mode = lfs.attributes(user_init, 'mode')
-assert(not mode or mode == 'file', '"%s" is not a file', user_init)
 if not mode then
-  assert(io.open(user_init, 'w'), 'unable to create %s', user_init):close()
+  assert(lfs.mkdir(_USERHOME), 'cannot create "%s"', _USERHOME)
+end
+local user_init = _USERHOME .. '/init.lua'
+mode = lfs.attributes(user_init, 'mode')
+assert(not mode or mode == 'file', '"%s" is not a file (%s)', user_init, mode)
+if not mode then
+  assert(io.open(user_init, 'w'), 'unable to create "%s"', user_init):close()
 end
 
 -- Placeholders.

@@ -81,7 +81,8 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
   end
   for basename in lfs.dir(dir) do
     if basename:find('^%.%.?$') then goto continue end -- ignore . and ..
-    local filename = dir..(dir ~= '/' and '/' or '')..basename
+    local filename = string.format(
+      '%s%s%s', dir, dir ~= '/' and '/' or '', basename)
     local mode = lfs.attributes(filename, 'mode')
     if mode ~= 'directory' and mode ~= 'file' then goto continue end
     local include
@@ -98,15 +99,14 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
       -- Treat inclusive patterns as logical OR.
       include = include or (not patt:find('^!') and filename:find(patt))
     end
-    local dir_sep = not WIN32 and '/' or '\\'
-    local os_filename = not WIN32 and filename or filename:gsub('/', dir_sep)
+    local sep = not WIN32 and '/' or '\\'
+    local os_filename = not WIN32 and filename or filename:gsub('/', sep)
     if include and mode == 'directory' then
-      if include_dirs and f(os_filename..dir_sep) == false then return end
-      if not n or (level or 0) < n then
-        local halt = lfs.dir_foreach(filename, f, filter, n, include_dirs,
-                                     (level or 0) + 1) == false
-        if halt then return false end
-      end
+      if include_dirs and f(os_filename .. sep) == false then return false end
+      if n and (level or 0) >= n then goto continue end
+      local halt = lfs.dir_foreach(
+        filename, f, filter, n, include_dirs, (level or 0) + 1) == false
+      if halt then return false end
     elseif include and mode == 'file' then
       if f(os_filename) == false then return false end
     end
@@ -129,7 +129,8 @@ function lfs.abspath(filename, prefix)
   if not filename:find(not WIN32 and '^/' or '^%a:[/\\]') and
      not (WIN32 and filename:find('^\\\\')) then
     if not prefix then prefix = lfs.currentdir() end
-    filename = prefix..(not WIN32 and '/' or '\\')..filename
+    filename = string.format(
+      '%s%s%s', prefix, not WIN32 and '/' or '\\', filename)
   end
   filename = filename:gsub('%f[^/\\]%.[/\\]', '') -- clean up './'
   while filename:find('[^/\\]+[/\\]%.%.[/\\]') do

@@ -59,6 +59,7 @@ local marker_number, indic_number, list_type, image_type = -1, -1, 0, 0
 -- @see buffer.marker_define
 -- @name next_marker_number
 function M.next_marker_number()
+  assert(marker_number < M.constants.MARKER_MAX, 'too many markers in use')
   marker_number = marker_number + 1
   return marker_number
 end
@@ -71,6 +72,7 @@ end
 -- @see buffer.indic_style
 -- @name next_indic_number
 function M.next_indic_number()
+  assert(indic_number < M.constants.INDICATOR_MAX, 'too many indicators in use')
   indic_number = indic_number + 1
   return indic_number
 end
