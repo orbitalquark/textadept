@@ -11,12 +11,14 @@ local M = {}
 -- use.
 module('_L')]]
 
-local f = io.open(_USERHOME..'/locale.conf', 'rb')
+local f = io.open(_USERHOME .. '/locale.conf', 'rb')
 if not f then
   local lang = (os.getenv('LANG') or ''):match('^[^_.@]+') -- TODO: LC_MESSAGES?
-  if lang then f = io.open(_HOME..'/core/locales/locale.'..lang..'.conf') end
+  if lang then
+    f = io.open(string.format('%s/core/locales/locale.%s.conf', _HOME, lang))
+  end
 end
-if not f then f = io.open(_HOME..'/core/locale.conf', 'rb') end
+if not f then f = io.open(_HOME .. '/core/locale.conf', 'rb') end
 assert(f, '"core/locale.conf" not found')
 for line in f:lines() do
   -- Any line that starts with a non-word character except '[' is considered a
@@ -30,5 +32,5 @@ for line in f:lines() do
 end
 f:close()
 
-setmetatable(M, {__index = function(_, k) return 'No Localization:'..k end})
+setmetatable(M, {__index = function(_, k) return 'No Localization:' .. k end})
 return M

@@ -4,7 +4,6 @@
 local function LINE(i) return i - 1 end
 local function POS(i) return i - 1 end
 local function INDEX(i) return i - 1 end
-if CURSES then function update_ui() end end
 
 local _tostring = tostring
 -- Overloads tostring() to print more user-friendly output for `assert_equal()`.
@@ -285,6 +284,7 @@ function test_file_io_open_file_detect_encoding()
 
   assert_raises(function() io.open_file(1) end, 'string/table/nil expected, got number')
   assert_raises(function() io.open_file('/tmp/foo', true) end, 'string/table/nil expected, got boolean')
+  -- TODO: encoding failure
 end
 
 function test_file_io_open_file_detect_newlines()
@@ -374,6 +374,7 @@ end
 
 function test_file_io_save_file()
   buffer.new()
+  buffer._type = '[Foo Buffer]'
   buffer:append_text('foo')
   local filename = os.tmpname()
   io.save_file_as(filename)
@@ -381,6 +382,7 @@ function test_file_io_save_file()
   local contents = f:read('a')
   f:close()
   assert_equal(contents, buffer:get_text())
+  assert(not buffer._type, 'still has a type')
   buffer:append_text('bar')
   io.save_all_files()
   f = assert(io.open(filename))
@@ -395,7 +397,8 @@ end
 
 function test_file_io_file_detect_modified()
   local modified = false
-  local handler = function()
+  local handler = function(filename)
+    assert_type(filename, 'string', 1)
     modified = true
     return false -- halt propagation
   end
@@ -465,6 +468,7 @@ function test_file_io_get_project_root()
   lfs.chdir(cwd)
   assert_equal(io.get_project_root(_HOME), _HOME)
   assert_equal(io.get_project_root(_HOME .. '/core'), _HOME)
+  assert_equal(io.get_project_root(_HOME .. '/core/init.lua'), _HOME)
   assert_equal(io.get_project_root('/tmp'), nil)
 
   assert_raises(function() io.get_project_root(1) end, 'string/nil expected, got number')
@@ -481,6 +485,8 @@ function test_file_io_quick_open_interactive()
     assert(buffer.filename:find('%.lua$'), '.lua file filter did not work')
     io.close_buffer()
   end
+  io.quick_open_filters[dir] = true
+  assert_raises(function() io.quick_open(dir) end, 'string/table/nil expected, got boolean')
   io.quick_open_filters[_HOME] = '.lua'
   io.quick_open()
   if #_BUFFERS > num_buffers then
@@ -492,6 +498,80 @@ function test_file_io_quick_open_interactive()
   assert_raises(function() io.quick_open(1) end, 'string/table/nil expected, got number')
   assert_raises(function() io.quick_open(_HOME, true) end, 'string/table/nil expected, got boolean')
   assert_raises(function() io.quick_open(_HOME, nil, 1) end, 'table/nil expected, got number')
+end
+
+function test_keys_keychain()
+  local ca = keys.ca
+  local foo = false
+  keys.ca = {a = function() foo = true end}
+  events.emit(events.KEYPRESS, string.byte('a'))
+  assert(not foo, 'foo set outside keychain')
+  events.emit(events.KEYPRESS, string.byte('a'), false, true)
+  assert_equal(#keys.keychain, 1)
+  --assert_equal(keys.keychain[1], 'ca')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  assert_equal(#keys.keychain, 0, 'keychain not canceled')
+  events.emit(events.KEYPRESS, string.byte('a'))
+  assert(not foo, 'foo set outside keychain')
+  events.emit(events.KEYPRESS, string.byte('a'), false, true)
+  events.emit(events.KEYPRESS, string.byte('a'))
+  assert(foo, 'foo not set')
+  keys.ca = ca -- restore
+end
+
+function test_keys_propagation()
+  buffer:new()
+  local foo, bar, baz = false, false, false
+  keys.a = function() foo = true end
+  keys.b = function() bar = true end
+  keys.c = function() baz = true end
+  keys.cpp = {
+    a = function() end, -- halt
+    b = function() return false end, -- propagate
+    c = function()
+      keys.MODE = 'test_mode'
+      return false -- propagate
+    end
+  }
+  buffer:set_lexer('cpp')
+  events.emit(events.KEYPRESS, string.byte('a'))
+  assert(not foo, 'foo set')
+  events.emit(events.KEYPRESS, string.byte('b'))
+  assert(bar, 'bar set')
+  events.emit(events.KEYPRESS, string.byte('c'))
+  assert(not baz, 'baz set') -- mode changed, so cannot propagate to keys.c
+  assert_equal(keys.MODE, 'test_mode')
+  keys.MODE = nil
+  keys.a, keys.b, keys.c, keys.cpp = nil, nil, nil, nil -- reset
+  io.close_buffer()
+end
+
+function test_keys_modes()
+  buffer.new()
+  local foo, bar = false, false
+  keys.a = function() foo = true end
+  keys.test_mode = {a = function()
+    bar = true
+    keys.MODE = nil
+    return false -- propagate
+  end}
+  keys.cpp = {a = function() keys.MODE = 'test_mode' end}
+  events.emit(events.KEYPRESS, string.byte('a'))
+  assert(foo, 'foo not set')
+  assert(not keys.MODE, 'key mode entered')
+  assert(not bar, 'bar set outside mode')
+  foo = false
+  buffer:set_lexer('cpp')
+  events.emit(events.KEYPRESS, string.byte('a'))
+  assert_equal(keys.MODE, 'test_mode')
+  assert(not foo, 'foo set outside mode')
+  assert(not bar, 'bar set outside mode')
+  events.emit(events.KEYPRESS, string.byte('a'))
+  assert(bar, 'bar not set')
+  assert(not keys.MODE, 'key mode still active')
+  assert(not foo, 'foo set') -- TODO: should this propagate?
+  keys.a, keys.test_mode, keys.cpp = nil, nil, nil -- reset
+  io.close_buffer()
 end
 
 function test_lfs_ext_dir_foreach()
@@ -554,6 +634,27 @@ function test_lfs_ext_dir_foreach_max_depth()
   lfs.dir_foreach(
     _HOME, function(filename) count = count + 1 end, '.lua', 0)
   assert_equal(count, 1) -- init.lua
+end
+
+function test_lfs_ext_dir_foreach_halt()
+  local count, count_at_halt = 0, 0
+  lfs.dir_foreach(_HOME .. '/core', function(filename)
+    count = count + 1
+    if filename:find('/locales/.') then
+      count_at_halt = count
+      return false
+    end
+  end)
+  assert_equal(count, count_at_halt)
+
+  lfs.dir_foreach(_HOME .. '/core', function(filename)
+    count = count + 1
+    if filename:find('[/\\]$') then
+      count_at_halt = count
+      return false
+    end
+  end, nil, nil, true)
+  assert_equal(count, count_at_halt)
 end
 
 function test_lfs_ext_dir_foreach_win32()
@@ -660,6 +761,7 @@ function test_ui_dialogs_dropdown_interactive()
     assert_equal(i, 2)
   end
 
+  assert_raises(function() ui.dialogs.dropdown{items = {'foo', 'bar', 'baz'}, select = true} end, "bad argument #select to 'dropdown' (number expected, got boolean")
   assert_raises(function() ui.dialogs.dropdown{items = {'foo', 'bar', 'baz', true}} end, "bad argument #items[4] to 'dropdown' (string/number expected, got boolean")
 end
 
@@ -755,6 +857,8 @@ function test_ui_dialogs_optionselect_interactive()
     items = {'foo', 'bar', 'baz'}, select = {1, 3}, string_output = true
   }
   assert_equal(selected, {'foo', 'baz'})
+
+  assert_raises(function() ui.dialogs.optionselect{items = {'foo', 'bar', 'baz'}, select = {1, 'bar'}} end, "bad argument #select[2] to 'optionselect' (number expected, got string")
 end
 
 function test_ui_dialogs_textbox_interactive()
@@ -924,12 +1028,12 @@ function test_command_entry_run()
   ui.command_entry.run(function(command) command_run = command end, {
     ['\t'] = function() tab_pressed = true end
   }, nil, 2)
-  update_ui() -- redraw command entry
+  ui.update() -- redraw command entry
   assert_equal(ui.command_entry:get_lexer(), 'text')
   assert(ui.command_entry.height > ui.command_entry:text_height(0), 'height < 2 lines')
   ui.command_entry:set_text('foo')
   events.emit(events.KEYPRESS, string.byte('\t'))
-  events.emit(events.KEYPRESS, string.byte('\n'))
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(command_run, 'foo')
   assert(tab_pressed, '\\t not registered')
 
@@ -943,7 +1047,7 @@ local function run_lua_command(command)
   ui.command_entry:set_text(command)
   ui.command_entry.run()
   assert_equal(ui.command_entry:get_lexer(), 'lua')
-  events.emit(events.KEYPRESS, string.byte('\n'))
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 end
 
 function test_command_entry_run_lua()
@@ -1785,7 +1889,7 @@ function test_ui_find_incremental()
   ui.command_entry:add_text('o') -- simulate keypress
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  events.emit(events.KEYPRESS, string.byte('\n'))
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   events.emit(events.KEYPRESS, string.byte('q'))
@@ -1796,11 +1900,11 @@ function test_ui_find_incremental()
   ui.command_entry:delete_back() -- simulate keypress
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  events.emit(events.KEYPRESS, string.byte('\n'))
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(3)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case = true
-  events.emit(events.KEYPRESS, string.byte('\n')) -- wrap
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n, wrap
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case = false
@@ -2015,7 +2119,7 @@ function test_menu_menu_functions()
   textadept.menu.menubar[_L['Buffer']][_L['Toggle View Whitespace']][2]()
   assert(buffer.view_ws ~= view_whitespace, 'view whitespace not toggled')
   view:split()
-  update_ui()
+  ui.update()
   local size = view.size
   textadept.menu.menubar[_L['View']][_L['Grow View']][2]()
   assert(view.size > size, 'view shrunk')
@@ -2062,7 +2166,7 @@ function test_run_compile_run()
   textadept.run.compile(compile_file)
   assert_equal(#_BUFFERS, 2)
   assert_equal(buffer._type, _L['[Message Buffer]'])
-  update_ui() -- process output
+  ui.update() -- process output
   assert(buffer:get_text():find("'end' expected"), 'no compile error')
   assert(buffer:get_text():find('> exit status: 256'), 'no compile error')
   if #_VIEWS > 1 then view:unsplit() end
@@ -2082,7 +2186,7 @@ function test_run_compile_run()
   assert_equal(buffer.filename, compile_file)
   local compile_command = textadept.run.compile_commands.lua
   textadept.run.compile() -- clears annotation
-  update_ui() -- process output
+  ui.update() -- process output
   view:goto_buffer(1)
   assert(not buffer.annotation_text[LINE(3)]:find("'end' expected"), 'annotation visible')
   io.close_buffer() -- compile_file
@@ -2094,7 +2198,7 @@ function test_run_compile_run()
   io.open_file(run_file)
   textadept.run.run()
   assert_equal(buffer._type, _L['[Message Buffer]'])
-  update_ui() -- process output
+  ui.update() -- process output
   assert(buffer:get_text():find('attempt to call a nil value'), 'no run error')
   textadept.run.goto_error(nil, false)
   assert_equal(buffer.filename, run_file)
@@ -2127,8 +2231,9 @@ function test_run_build()
   os.execute('sleep 0.1') -- ensure process is running
   buffer:add_text('foo')
   buffer:new_line() -- should send previous line as stdin
+  os.execute('sleep 0.1') -- ensure process processed stdin
   textadept.run.stop()
-  update_ui() -- process output
+  ui.update() -- process output
   assert(buffer:get_text():find('> cd '), 'did not change directory')
   assert(buffer:get_text():find('build%.lua'), 'did not run build command')
   assert(buffer:get_text():find('read "foo"'), 'did not send stdin')
@@ -2618,12 +2723,12 @@ for i = 1, #tests do
   local name, f, attempts = tests[i], _ENV[tests[i]], 1
   ::retry::
   print(string.format('Running %s', name))
-  update_ui()
+  ui.update()
   local ok, errmsg = xpcall(f, function(errmsg)
     local fail = not expected_failures[f] and 'Failed!' or 'Expected failure.'
     return string.format('%s %s', fail, debug.traceback(errmsg, 3))
   end)
-  update_ui()
+  ui.update()
   if not ok and unstable_tests[f] and attempts < 3 then
     cleanup()
     print('Failed, but unstable. Trying again.')

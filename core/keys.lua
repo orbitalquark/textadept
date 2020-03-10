@@ -118,11 +118,11 @@ M.CLEAR = 'esc'
 -- @class table
 -- @name KEYSYMS
 M.KEYSYMS = {
-  -- From Scintilla.h.
-  [7] = 'esc', [13] = '\n',
+  -- From Scintilla.h for CURSES.
+  [7] = 'esc', [8] = '\b', [9] = '\t', [13] = '\n',
   -- From curses.h.
   [263] = '\b', [343] = '\n',
-  -- From Scintilla.h.
+  -- From Scintilla.h for CURSES.
   [300] = 'down', [301] = 'up', [302] = 'left', [303] = 'right', [304] = 'home',
   [305] = 'end', [306] = 'pgup', [307] = 'pgdn', [308] = 'del', [309] = 'ins',
   -- From <gdk/gdkkeysyms.h>.
@@ -181,7 +181,8 @@ local function key_command(prefix)
   end
   if type(key) ~= 'function' and type(key) ~= 'table' then return INVALID end
   if type(key) == 'table' then
-    ui.statusbar_text = _L['Keychain:']..' '..table.concat(keychain, ' ')
+    ui.statusbar_text = string.format(
+      '%s %s', _L['Keychain:'], table.concat(keychain, ' '))
     return CHAIN
   end
   return select(2, xpcall(key, key_error)) == false and PROPAGATE or HALT
@@ -202,26 +203,22 @@ local function keypress(code, shift, control, alt, meta, caps_lock)
   if caps_lock and (shift or control or alt or meta) and code < 256 then
     code = string[shift and 'upper' or 'lower'](string.char(code)):byte()
   end
-  local key = code < 256 and (not CURSES or (code ~= 7 and code ~= 13)) and
-              string.char(code) or M.KEYSYMS[code]
+  local key = code >= 32 and code < 256 and string.char(code) or M.KEYSYMS[code]
   if not key then return end
   -- Since printable characters are uppercased, disable shift.
-  if shift and code < 256 and code ~= 9 then shift = false end
+  if shift and code >= 32 and code < 256 then shift = false end
   -- For composed keys on OSX, ignore alt.
   if OSX and alt and code < 256 then alt = false end
-  local key_seq = string.format('%s%s%s%s%s', control and CTRL or '',
-                                alt and ALT or '', meta and OSX and META or '',
-                                shift and SHIFT or '', key)
+  local key_seq = string.format(
+    '%s%s%s%s%s', control and CTRL or '', alt and ALT or '',
+    meta and OSX and META or '', shift and SHIFT or '', key)
   --print(key_seq)
 
   ui.statusbar_text = ''
   --if CURSES then ui.statusbar_text = string.format('"%s"', key_seq) end
-  local keychain_size = #keychain
-  if keychain_size > 0 and key_seq == M.CLEAR then
-    clear_key_sequence()
-    return true
-  end
-  keychain[keychain_size + 1] = key_seq
+  local in_chain = #keychain > 0
+  if in_chain and key_seq == M.CLEAR then clear_key_sequence() return true end
+  keychain[#keychain + 1] = key_seq
 
   local status = PROPAGATE
   if not M.MODE then
@@ -232,7 +229,7 @@ local function keypress(code, shift, control, alt, meta, caps_lock)
   end
   if status ~= CHAIN then clear_key_sequence() end
   if status > PROPAGATE then return true end -- CHAIN or HALT
-  if status == INVALID and keychain_size > 0 then
+  if status == INVALID and in_chain then
     ui.statusbar_text = _L['Invalid sequence']
     return true
   end

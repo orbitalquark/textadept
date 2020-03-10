@@ -294,6 +294,10 @@ local M = {}
 --   Emitted by [`buffer.zoom_in()`]() and [`buffer.zoom_out()`]().
 module('events')]]
 
+-- Map of event names to tables of handler functions.
+-- Handler tables are auto-created as needed.
+-- @class table
+-- @name handlers
 local handlers = setmetatable({}, {__index = function(t, k)
   t[k] = {}
   return t[k]
@@ -377,7 +381,7 @@ end)
 
 -- Set event constants.
 for _, v in pairs(_SCINTILLA.events) do M[v[1]:upper()] = v[1] end
-local textadept_events = {
+local textadept_events = { -- defined in C
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
   'buffer_deleted', 'buffer_new', 'csi', 'error', 'find', 'focus',
   'initialized', 'keypress', 'menu_clicked', 'mouse', 'quit', 'replace',

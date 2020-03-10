@@ -1,13 +1,13 @@
 -- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 _RELEASE = 'Textadept 10.8'
-_COPYRIGHT = 'Copyright © 2007-2020 Mitchell. See LICENSE.\n'..
-             'http://foicica.com/textadept'
+_COPYRIGHT =
+  'Copyright © 2007-2020 Mitchell. See LICENSE.\nhttp://foicica.com/textadept'
 
-package.path = _HOME..'/core/?.lua;'..package.path
+package.path = string.format('%s/core/?.lua;%s', _HOME, package.path)
 
---for i = 1, #arg do
---  if arg[i] == '-t' or arg[i] == '--test' then pcall(require, 'luacov') end
+--for _, arg in ipairs(arg) do
+--  if arg == '-t' or arg == '--test' then pcall(require, 'luacov') end
 --end
 
 require('assert')
@@ -24,18 +24,18 @@ _M = {} -- language modules table
 -- pdcurses compatibility.
 if CURSES and WIN32 then
   function os.spawn(argv, ...)
-    local current_dir = lfs.currentdir()
+    local cwd = lfs.currentdir()
     local args, i = {...}, 1
     if type(args[i]) == 'string' then
       lfs.chdir(args[i]) -- cwd
       i = i + 1
     end
     if type(args[i]) == 'table' then i = i + 1 end -- env (ignore)
-    local p = io.popen(argv..' 2>&1')
+    local p = io.popen(assert_type(argv, 'string', 1) .. ' 2>&1')
     if type(args[i]) == 'function' then args[i](p:read('a')) end -- stdout_cb
     local status = select(3, p:close())
     if type(args[i + 2]) == 'function' then args[i + 2](status) end -- exit_cb
-    lfs.chdir(current_dir)
+    lfs.chdir(cwd) -- restore
     return p
   end
 end
@@ -51,7 +51,7 @@ local function text_range(buffer, start_pos, end_pos)
   if end_pos > buffer.length then end_pos = buffer.length end
   buffer:set_target_range(start_pos, end_pos)
   local text = buffer.target_text
-  buffer:set_target_range(target_start, target_end) -- reset
+  buffer:set_target_range(target_start, target_end) -- restore
   return text
 end
 events.connect(events.BUFFER_NEW, function() buffer.text_range = text_range end)

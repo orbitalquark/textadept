@@ -99,8 +99,8 @@ function io.open_file(filenames, encodings)
   if not assert_type(filenames, 'string/table/nil', 1) then
     filenames = ui.dialogs.fileselect{
       title = _L['Open File'], select_multiple = true,
-      with_directory = (buffer.filename or ''):match('^.+[/\\]') or
-                       lfs.currentdir(),
+      with_directory =
+        (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir(),
       width = CURSES and ui.size[1] - 2 or nil
     }
     if not filenames then return end
@@ -144,8 +144,7 @@ function io.open_file(filenames, encodings)
     -- Detect EOL mode.
     buffer.eol_mode = text:find('\r\n') and buffer.EOL_CRLF or buffer.EOL_LF
     -- Insert buffer text and set properties.
-    buffer:add_text(text, #text)
-    buffer:goto_pos(0)
+    buffer:append_text(text)
     buffer:empty_undo_buffer()
     buffer.mod_time = lfs.attributes(filename, 'modification') or os.time()
     buffer.filename = filename
@@ -174,10 +173,9 @@ function io.reload_file()
   local text = f:read('a')
   f:close()
   if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
-  buffer:clear_all()
-  buffer:add_text(text, #text)
-  buffer:line_scroll(0, first_visible_line)
+  buffer:set_text(text)
   buffer:goto_pos(pos)
+  buffer.first_visible_line = first_visible_line
   buffer:set_save_point()
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
 end
@@ -192,10 +190,9 @@ local function set_encoding(buffer, encoding)
     if encoding then text = text:iconv(encoding, buffer.encoding) end
   end
   if encoding then text = text:iconv('UTF-8', encoding) end
-  buffer:clear_all()
-  buffer:add_text(text, #text)
-  buffer:line_scroll(0, first_visible_line)
+  buffer:set_text(text)
   buffer:goto_pos(pos)
+  buffer.first_visible_line = first_visible_line
   buffer.encoding = encoding
   buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
 end
@@ -213,8 +210,7 @@ function io.save_file()
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
   local text = buffer:get_text()
   if buffer.encoding then text = text:iconv(buffer.encoding, 'UTF-8') end
-  local f = assert(io.open(buffer.filename, 'wb'))
-  f:write(text):close()
+  assert(io.open(buffer.filename, 'wb')):write(text):close()
   buffer:set_save_point()
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
   if buffer._type then buffer._type = nil end
@@ -265,13 +261,15 @@ end
 function io.close_buffer()
   local filename = buffer.filename or buffer._type or _L['Untitled']
   if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
-  local confirm = not buffer.modify or ui.dialogs.msgbox{
-    title = _L['Close without saving?'],
-    text = _L['There are unsaved changes in'], informative_text = filename,
-    icon = 'gtk-dialog-question', button1 = _L['Cancel'],
-    button2 = _L['Close without saving']
-  } == 2
-  if not confirm then return nil end -- nil return won't propagate a key command
+  if buffer.modify then
+    local button = ui.dialogs.msgbox{
+      title = _L['Close without saving?'],
+      text = _L['There are unsaved changes in'], informative_text = filename,
+      icon = 'gtk-dialog-question', button1 = _L['Cancel'],
+      button2 = _L['Close without saving']
+    }
+    if button ~= 2 then return nil end -- do not propagate key command
+  end
   buffer:delete()
   return true
 end
@@ -280,13 +278,13 @@ end
 -- Closes all open buffers, prompting the user to continue if there are unsaved
 -- buffers, and returns `true` if the user did not cancel.
 -- No buffers are saved automatically. They must be saved manually.
--- @return `true` if user did not cancel.
+-- @return `true` if user did not cancel; `nil` otherwise.
 -- @see io.close_buffer
 -- @name close_all_buffers
 function io.close_all_buffers()
   while #_BUFFERS > 1 do
     view:goto_buffer(_BUFFERS[#_BUFFERS])
-    if not io.close_buffer() then return false end
+    if not io.close_buffer() then return nil end -- do not propagate key command
   end
   return io.close_buffer() -- the last one
 end
@@ -299,7 +297,7 @@ local function update_modified_file()
   if not mod_time or not buffer.mod_time then return end
   if buffer.mod_time < mod_time then
     buffer.mod_time = mod_time
-    events.emit(events.FILE_CHANGED)
+    events.emit(events.FILE_CHANGED, buffer.filename)
   end
 end
 events_connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
@@ -309,14 +307,14 @@ events_connect(events.RESUME, update_modified_file)
 
 -- Prompts the user to reload the current file if it has been externally
 -- modified.
-events_connect(events.FILE_CHANGED, function()
+events_connect(events.FILE_CHANGED, function(filename)
   local button = ui.dialogs.msgbox{
     title = _L['Reload?'], text = _L['Reload modified file?'],
-    informative_text = string.format('"%s"\n%s',
-                                     buffer.filename:iconv('UTF-8', _CHARSET),
-                                     _L['has been modified. Reload it?']),
+    informative_text = string.format(
+      '"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
+      _L['has been modified. Reload it?']),
     icon = 'gtk-dialog-question', button1 = _L['Yes'], button2 = _L['No'],
-    width = CURSES and #buffer.filename > 40 and ui.size[1] - 2 or nil
+    width = CURSES and #filename > 40 and ui.size[1] - 2 or nil
   }
   if button == 1 then io.reload_file() end
 end)
@@ -360,11 +358,13 @@ local vcs = {'.bzr', '.git', '.hg', '.svn'}
 -- @return string root or nil
 -- @name get_project_root
 function io.get_project_root(path)
-  local dir = assert_type(path, 'string/nil', 1) or
-              (buffer.filename or lfs.currentdir()..'/'):match('^(.+)[/\\]')
+  if not assert_type(path, 'string/nil', 1) then
+    path = buffer.filename or lfs.currentdir()
+  end
+  local dir = path:match('^(.+)[/\\]?')
   while dir do
     for i = 1, #vcs do
-      if lfs.attributes(dir..'/'..vcs[i], 'mode') then return dir end
+      if lfs.attributes(dir .. '/' .. vcs[i], 'mode') then return dir end
     end
     dir = dir:match('^(.+)[/\\]')
   end
@@ -420,26 +420,25 @@ function io.quick_open(paths, filter, opts)
     paths = io.get_project_root()
     if not paths then return end
   end
-  assert_type(filter, 'string/table/nil', 2)
-  assert_type(opts, 'table/nil', 3)
   if type(paths) == 'string' then
     if not filter then filter = io.quick_open_filters[paths] end
     paths = {paths}
   end
+  assert_type(filter, 'string/table/nil', 2)
+  assert_type(opts, 'table/nil', 3)
   local utf8_list = {}
   for i = 1, #paths do
     lfs.dir_foreach(paths[i], function(filename)
       if #utf8_list >= io.quick_open_max then return false end
-      filename = filename:gsub('^%.[/\\]', '')
       utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
     end, filter or lfs.default_filter)
   end
   if #utf8_list >= io.quick_open_max then
     ui.dialogs.msgbox{
       title = _L['File Limit Exceeded'],
-      text = string.format('%d %s %d', io.quick_open_max,
-                           _L['files or more were found. Showing the first'],
-                           io.quick_open_max),
+      text = string.format(
+        '%d %s %d', io.quick_open_max,
+        _L['files or more were found. Showing the first'], io.quick_open_max),
       icon = 'gtk-dialog-info'
     }
   end

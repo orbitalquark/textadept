@@ -101,42 +101,38 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
   -- @param options Table of key-value command line options for gtdialog.
   -- @return Lua objects depending on the dialog kind
   return function(options)
-    -- Set up dialog defaults and convert any 1-based indices to 0-based ones.
     if not options.button1 then options.button1 = _L['OK'] end
-    local select = options.select
-    if type(select) == 'number' then
-      options.select = select - 1
-    elseif type(select) == 'table' then
-      for i = 1, #select do select[i] = select[i] - 1 end
-    end
     -- Transform key-value pairs into command line arguments.
     local args = {}
     for option, value in pairs(options) do
       assert_type(value, 'string/number/table/boolean', option)
       if value then
-        args[#args + 1] = '--'..option:gsub('_', '-')
-        if type(value) == 'boolean' then goto continue end
+        args[#args + 1] = '--' .. option:gsub('_', '-')
         if type(value) == 'table' then
           for i, val in ipairs(value) do
-            assert_type(val, 'string/number', option..'['..i..']')
+            local narg = string.format('%s[%d]', option, i)
+            assert_type(val, 'string/number', narg)
             if option == 'palette' and type(val) == 'number' then
               value[i] = torgb(val) -- nil return is okay
+            elseif option == 'select' and assert_type(val, 'number', narg) then
+              value[i] = val - 1 -- convert from 1-based index to 0-based index
             end
           end
         elseif option == 'color' and type(value) == 'number' then
           value = torgb(value)
+        elseif option == 'select' and assert_type(value, 'number', option) then
+          value = value - 1 -- convert from 1-based index to 0-based index
         end
-        args[#args + 1] = value
+        if type(value) ~= 'boolean' then args[#args + 1] = value end
       end
-      ::continue::
     end
     -- Call gtdialog, stripping any trailing newline in the standard output.
-    local result = ui.dialog(k:gsub('_', '-'), table.unpack(args))
-    result = result:match('^(.-)\n?$')
+    local result = ui.dialog(
+      k:gsub('_', '-'), table.unpack(args)):match('^(.-)\n?$')
     -- Depending on the dialog type, transform the result into Lua objects.
     if k == 'fileselect' or k == 'filesave' then
       if result == '' then return nil end
-      if not CURSES and WIN32 then result = result:iconv(_CHARSET, 'UTF-8') end
+      if WIN32 and not CURSES then result = result:iconv(_CHARSET, 'UTF-8') end
       if k == 'filesave' or not options.select_multiple then return result end
       local filenames = {}
       for filename in result:gmatch('[^\n]+') do
@@ -153,7 +149,7 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
         options.string_output, options.select_multiple = true, true
       end
       local items, patt = {}, not k:find('input') and '[^\n]+' or '([^\n]*)\n'
-      for item in (value..'\n'):gmatch(patt) do
+      for item in (value .. '\n'):gmatch(patt) do
         items[#items + 1] = options.string_output and item or tonumber(item) + 1
       end
       return button, options.select_multiple and items or items[1]
@@ -180,8 +176,7 @@ local buffers_zorder = {}
 
 -- Adds new buffers to the z-order list.
 events.connect(events.BUFFER_NEW, function()
-  if buffer == ui.command_entry then return end -- ignore this buffer
-  table.insert(buffers_zorder, 1, buffer)
+  if buffer ~= ui.command_entry then table.insert(buffers_zorder, 1, buffer) end
 end)
 
 -- Updates the z-order list.
@@ -200,10 +195,10 @@ events.connect(events.BUFFER_AFTER_SWITCH, update_zorder)
 events.connect(events.VIEW_AFTER_SWITCH, update_zorder)
 
 -- Saves and restores buffer zorder data during a reset.
-events.connect(events.RESET_BEFORE,
-               function(persist) persist.buffers_zorder = buffers_zorder end)
-events.connect(events.RESET_AFTER,
-               function(persist) buffers_zorder = persist.buffers_zorder end)
+events.connect(
+  events.RESET_BEFORE, function(persist) persist.ui_zorder = buffers_zorder end)
+events.connect(
+  events.RESET_AFTER, function(persist) buffers_zorder = persist.ui_zorder end)
 
 ---
 -- Prompts the user to select a buffer to switch to.
@@ -221,7 +216,7 @@ function ui.switch_buffer(zorder)
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
-    utf8_list[#utf8_list + 1] = (buffer.modify and '*' or '')..basename
+    utf8_list[#utf8_list + 1] = (buffer.modify and '*' or '') .. basename
     utf8_list[#utf8_list + 1] = filename
   end
   local button, i = ui.dialogs.filteredlist{
@@ -255,8 +250,9 @@ end
 -- @name goto_file
 function ui.goto_file(filename, split, preferred_view, sloppy)
   assert_type(filename, 'string', 1)
-  local patt = not sloppy and '^'..filename..'$' or
-               filename:match('[^/\\]+$')..'$' -- TODO: escape filename properly
+  local patt = string.format( -- TODO: escape filename properly
+    '%s%s$', not sloppy and '^' or '',
+    not sloppy and filename or filename:match('[^/\\]+$'))
   if WIN32 then
     patt = patt:gsub('%a', function(letter)
       return string.format('[%s%s]', letter:upper(), letter:lower())
@@ -285,8 +281,8 @@ local events, events_connect = events, events.connect
 events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI) end)
 
 -- Switches between buffers when a tab is clicked.
-events_connect(events.TAB_CLICKED,
-               function(index, button) view:goto_buffer(_BUFFERS[index]) end)
+events_connect(
+  events.TAB_CLICKED, function(index) view:goto_buffer(_BUFFERS[index]) end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
 local function set_title()
@@ -295,9 +291,9 @@ local function set_title()
     filename = select(2, pcall(string.iconv, filename, 'UTF-8', _CHARSET))
   end
   local basename = buffer.filename and filename:match('[^/\\]+$') or filename
-  ui.title = string.format('%s %s Textadept (%s)', basename,
-                           buffer.modify and '*' or '-', filename)
-  buffer.tab_label = basename..(buffer.modify and '*' or '')
+  ui.title = string.format(
+    '%s %s Textadept (%s)', basename, buffer.modify and '*' or '-', filename)
+  buffer.tab_label = basename .. (buffer.modify and '*' or '')
 end
 
 -- Changes Textadept title to show the buffer as being "clean" or "dirty".
@@ -306,40 +302,37 @@ events_connect(events.SAVE_POINT_LEFT, set_title)
 
 -- Open uri(s).
 events_connect(events.URI_DROPPED, function(utf8_uris)
-  for utf8_uri in utf8_uris:gmatch('[^\r\n]+') do
-    if utf8_uri:find('^file://') then
-      local path = utf8_uri:match('^file://([^\r\n]+)')
-      path = path:gsub('%%(%x%x)', function(hex)
-        return string.char(tonumber(hex, 16))
-      end):iconv(_CHARSET, 'UTF-8')
-      -- In WIN32, ignore a leading '/', but not '//' (network path).
-      if WIN32 and not path:match('^//') then path = path:sub(2, -1) end
-      local mode = lfs.attributes(path, 'mode')
-      if mode and mode ~= 'directory' then io.open_file(path) end
-    end
+  for utf8_path in utf8_uris:gmatch('file://([^\r\n]+)') do
+    local path = utf8_path:gsub('%%(%x%x)', function(hex)
+      return string.char(tonumber(hex, 16))
+    end):iconv(_CHARSET, 'UTF-8')
+    -- In WIN32, ignore a leading '/', but not '//' (network path).
+    if WIN32 and not path:match('^//') then path = path:sub(2, -1) end
+    local mode = lfs.attributes(path, 'mode')
+    if mode and mode ~= 'directory' then io.open_file(path) end
   end
   ui.goto_view(view) -- work around any view focus synchronization issues
 end)
 events_connect(events.APPLEEVENT_ODOC, function(uri)
-  return events.emit(events.URI_DROPPED, 'file://'..uri)
+  return events.emit(events.URI_DROPPED, 'file://' .. uri)
 end)
 
-local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- Sets buffer statusbar text.
 events_connect(events.UPDATE_UI, function(updated)
   if updated and updated & 3 == 0 then return end -- ignore scrolling
+  local text =
+    not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
+    '%s %d/%d  %s %d  %s  %s  %s  %s'
   local pos = buffer.selection_n_caret[buffer.main_selection]
   local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
   local col = buffer.column[pos] + 1
-  local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE):match('^[^/]+')
+  local lexer = buffer:get_lexer()
   local eol = buffer.eol_mode == buffer.EOL_CRLF and _L['CRLF'] or _L['LF']
-  local tabs = string.format('%s %d', buffer.use_tabs and _L['Tabs:'] or
-                                      _L['Spaces:'], buffer.tab_width)
+  local tabs = string.format(
+    '%s %d', buffer.use_tabs and _L['Tabs:'] or _L['Spaces:'], buffer.tab_width)
   local enc = buffer.encoding or ''
-  local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
-                              '%s %d/%d  %s %d  %s  %s  %s  %s'
-  ui.bufstatusbar_text = string.format(text, _L['Line:'], line, max, _L['Col:'],
-                                       col, lexer, eol, tabs, enc)
+  ui.bufstatusbar_text = string.format(
+    text, _L['Line:'], line, max, _L['Col:'], col, lexer, eol, tabs, enc)
 end)
 
 -- Save buffer properties.
@@ -353,11 +346,11 @@ events_connect(events.BUFFER_BEFORE_SWITCH, function()
   buffer._top_line = buffer:doc_line_from_visible(buffer.first_visible_line)
   buffer._x_offset = buffer.x_offset
   -- Save fold state.
-  buffer._folds = {}
-  local folds, i = buffer._folds, buffer:contracted_fold_next(0)
-  while i >= 0 do
+  local folds, i = {}, buffer:contracted_fold_next(0)
+  while i ~= -1 do
     folds[#folds + 1], i = i, buffer:contracted_fold_next(i + 1)
   end
+  buffer._folds = folds
 end)
 
 -- Restore buffer properties.
@@ -368,20 +361,17 @@ events_connect(events.BUFFER_AFTER_SWITCH, function()
   for i = 1, #buffer._folds do buffer:toggle_fold(buffer._folds[i]) end
   -- Restore view state.
   buffer:set_sel(buffer._anchor, buffer._current_pos)
-  local n = buffer.main_selection
-  buffer.selection_n_anchor_virtual_space[n] = buffer._anchor_virtual_space
-  buffer.selection_n_caret_virtual_space[n] = buffer._caret_virtual_space
+  buffer.selection_n_anchor_virtual_space[0] = buffer._anchor_virtual_space
+  buffer.selection_n_caret_virtual_space[0] = buffer._caret_virtual_space
   buffer:choose_caret_x()
-  buffer:line_scroll(0, buffer:visible_from_doc_line(buffer._top_line) -
-                        buffer.first_visible_line)
+  local _top_line, top_line = buffer._top_line, buffer.first_visible_line
+  buffer:line_scroll(0, buffer:visible_from_doc_line(_top_line) - top_line)
   buffer.x_offset = buffer._x_offset or 0
 end)
 
 -- Updates titlebar and statusbar.
 local function update_bars()
   set_title()
-  local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
-  buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   events.emit(events.UPDATE_UI)
 end
 events_connect(events.BUFFER_NEW, update_bars)
@@ -416,8 +406,8 @@ end
 events_connect(events.BUFFER_AFTER_SWITCH, restore_view_state)
 events_connect(events.VIEW_AFTER_SWITCH, restore_view_state)
 
-events_connect(events.RESET_AFTER,
-               function() ui.statusbar_text = _L['Lua reset'] end)
+events_connect(
+  events.RESET_AFTER, function() ui.statusbar_text = _L['Lua reset'] end)
 
 -- Prompts for confirmation if any buffers are modified.
 events_connect(events.QUIT, function()
@@ -429,19 +419,20 @@ events_connect(events.QUIT, function()
       utf8_list[#utf8_list + 1] = filename
     end
   end
-  local cancel = #utf8_list > 0 and ui.dialogs.msgbox{
+  if #utf8_list == 0 then return end
+  local button = ui.dialogs.msgbox{
     title = _L['Quit without saving?'],
     text = _L['The following buffers are unsaved:'],
     informative_text = table.concat(utf8_list, '\n'),
     icon = 'gtk-dialog-question', button1 = _L['Cancel'],
     button2 = _L['Quit without saving']
-  } ~= 2
-  if cancel then return true end -- prevent quit
+  }
+  if button ~= 2 then return true end -- prevent quit
 end)
 
 -- Keeps track of and switches back to the previous buffer after buffer close.
-events_connect(events.BUFFER_BEFORE_SWITCH,
-               function() view._prev_buffer = buffer end)
+events_connect(
+  events.BUFFER_BEFORE_SWITCH, function() view._prev_buffer = buffer end)
 events_connect(events.BUFFER_DELETED, function()
   if _BUFFERS[view._prev_buffer] and buffer ~= view._prev_buffer then
     view:goto_buffer(view._prev_buffer)
@@ -451,11 +442,11 @@ end)
 -- Properly handle clipboard text between views in curses, enables and disables
 -- mouse mode, and focuses and resizes views based on mouse events.
 if CURSES then
-  local clipboard_text
-  events.connect(events.VIEW_BEFORE_SWITCH,
-                 function() clipboard_text = ui.clipboard_text end)
-  events.connect(events.VIEW_AFTER_SWITCH,
-                 function() ui.clipboard_text = clipboard_text end)
+  local clip_text
+  events.connect(
+    events.VIEW_BEFORE_SWITCH, function() clip_text = ui.clipboard_text end)
+  events.connect(
+    events.VIEW_AFTER_SWITCH, function() ui.clipboard_text = clip_text end)
 
   if not WIN32 then
     local function enable_mouse() io.stdout:write("\x1b[?1002h"):flush() end
@@ -477,8 +468,8 @@ if CURSES then
       return get_view(view[1], y, x)
     elseif vertical and x > size or not vertical and y > size then
       -- Zero y or x relative to the other view based on split orientation.
-      return get_view(view[2], vertical and y or y - size - 1,
-                      vertical and x - size - 1 or x)
+      return get_view(
+        view[2], vertical and y or y - size - 1, vertical and x - size - 1 or x)
     else
       return view -- in-between views; return the split itself
     end
