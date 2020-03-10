@@ -71,21 +71,21 @@ local env = setmetatable({}, {
 -- functions as commands.
 -- @param code The Lua code to execute.
 local function run_lua(code)
-  if code:find('^=') then code = code:sub(2) end -- for compatibility
-  local f, errmsg = load('return '..code, nil, 't', env)
+  local f, errmsg = load('return ' .. code, nil, 't', env)
   if not f then f, errmsg = load(code, nil, 't', env) end
   local result = assert(f, errmsg)()
   if type(result) == 'function' then result = result() end
   if type(result) == 'table' then
     local items = {}
     for k, v in pairs(result) do
-      items[#items + 1] = tostring(k)..' = '..tostring(v)
+      items[#items + 1] = string.format('%s = %s', tostring(k), tostring(v))
     end
     table.sort(items)
-    result = '{'..table.concat(items, ', ')..'}'
+    result = string.format('{%s}', table.concat(items, ', '))
     if buffer.edge_column > 0 and #result > buffer.edge_column then
       local indent = string.rep(' ', buffer.tab_width)
-      result = '{\n'..indent..table.concat(items, ',\n'..indent)..'\n}'
+      result = string.format(
+        '{\n%s%s\n}', indent, table.concat(items, ',\n' .. indent))
     end
   end
   if result ~= nil or code:find('^return ') then ui.print(result) end
@@ -94,31 +94,27 @@ end
 args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
 
 -- Shows a set of Lua code completions for the entry's text, subject to an
--- "abbreviated" environment where the `buffer`, `view`, and `ui` tables are
--- also considered as globals.
+-- "abbreviated" environment where the contents of the `buffer`, `view`, and
+-- `ui` tables are also considered as globals.
 local function complete_lua()
   local line, pos = M:get_cur_line()
   local symbol, op, part = line:sub(1, pos):match('([%w_.]-)([%.:]?)([%w_]*)$')
-  local ok, result = pcall((load('return ('..symbol..')', nil, 't', env)))
+  local ok, result = pcall(
+    (load(string.format('return (%s)', symbol), nil, 't', env)))
   if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
   local cmpls = {}
-  part = '^'..part
+  part = '^' .. part
   if not ok or symbol == 'buffer' then
-    local pool
-    if not ok then
-      -- Consider `buffer`, `view`, `ui` as globals too.
-      pool = {buffer, view, ui, _G, _SCINTILLA.functions, _SCINTILLA.properties}
-    else
-      pool = op == ':' and {_SCINTILLA.functions} or
-                           {_SCINTILLA.properties, _SCINTILLA.constants}
-    end
-    for i = 1, #pool do
-      for k in pairs(pool[i]) do
+    local sci = _SCINTILLA
+    local global_envs =
+      not ok and {buffer, view, ui, _G, sci.functions, sci.properties} or
+      op == ':' and {sci.functions} or {sci.properties, sci.constants}
+    for i = 1, #global_envs do
+      for k in pairs(global_envs[i]) do
         if type(k) == 'string' and k:find(part) then cmpls[#cmpls + 1] = k end
       end
     end
-  end
-  if ok then
+  else
     for k, v in pairs(result) do
       if type(k) == 'string' and k:find(part) and
          (op == '.' or type(v) == 'function') then
@@ -127,28 +123,28 @@ local function complete_lua()
     end
   end
   table.sort(cmpls)
-  M:auto_c_show(#part - 1, table.concat(cmpls, ' '))
+  M:auto_c_show(#part - 1, table.concat(cmpls, string.char(M.auto_c_separator)))
 end
 
 -- Key mode for entering Lua commands.
 -- @class table
--- @name lua_mode_keys
-local lua_mode_keys = {['\t'] = complete_lua}
+-- @name lua_keys
+local lua_keys = {['\t'] = complete_lua}
 
 ---
 -- Opens the command entry, subjecting it to any key bindings defined in table
--- *mode_keys*, highlighting text with lexer name *lexer*, and displaying
+-- *keys*, highlighting text with lexer name *lexer*, and displaying
 -- *height* number of lines at a time, and then when the `Enter` key is pressed,
 -- closes the command entry and calls function *f* (if non-`nil`) with the
 -- command entry's text as an argument.
 -- By default with no arguments given, opens a Lua command entry.
 -- The command entry does not respond to Textadept's default key bindings, but
--- instead to the key bindings defined in *mode_keys* and in
+-- instead to the key bindings defined in *keys* and in
 -- `ui.command_entry.editing_keys`.
 -- @param f Optional function to call upon pressing `Enter` in the command
 --   entry, ending the mode. It should accept the command entry text as an
 --   argument.
--- @param mode_keys Optional table of key bindings to respond to. This is in
+-- @param keys Optional table of key bindings to respond to. This is in
 --   addition to the basic editing and movement keys defined in
 --   `ui.command_entry.editing_keys`.
 --   `Esc` and `Enter` are automatically defined to cancel and finish the
@@ -161,32 +157,31 @@ local lua_mode_keys = {['\t'] = complete_lua}
 -- @see editing_keys
 -- @usage ui.command_entry.run(ui.print)
 -- @name run
-function M.run(f, mode_keys, lexer, height)
+function M.run(f, keys, lexer, height)
   if M:auto_c_active() then M:auto_c_cancel() end -- may happen in curses
-  if not assert_type(f, 'function/nil', 1) and not mode_keys then
-    f, mode_keys, lexer = run_lua, lua_mode_keys, 'lua'
-  elseif type(assert_type(mode_keys, 'table/string/nil', 2)) == 'string' then
-    lexer, height = mode_keys, assert_type(lexer, 'number/nil', 3)
-    mode_keys = {}
+  if not assert_type(f, 'function/nil', 1) and not keys then
+    f, keys, lexer = run_lua, lua_keys, 'lua'
+  elseif type(assert_type(keys, 'table/string/nil', 2)) == 'string' then
+    lexer, height, keys = keys, assert_type(lexer, 'number/nil', 3), {}
   else
-    if not mode_keys then mode_keys = {} end
+    if not keys then keys = {} end
     assert_type(lexer, 'string/nil', 3)
     assert_type(height, 'number/nil', 4)
   end
-  if not mode_keys['esc'] then mode_keys['esc'] = M.focus end -- hide
-  mode_keys['\n'] = mode_keys['\n'] or function()
-    if M:auto_c_active() then return false end -- allow Enter to autocomplete
-    M.focus() -- hide
-    if f then f((M:get_text())) end
+  if not keys['esc'] then keys['esc'] = M.focus end -- hide
+  if not keys['\n'] then
+    keys['\n'] = function()
+      if M:auto_c_active() then return false end -- allow Enter to autocomplete
+      M.focus() -- hide
+      if f then f((M:get_text())) end
+    end
   end
-  if not getmetatable(mode_keys) then
-    setmetatable(mode_keys, M.editing_keys)
-  end
+  if not getmetatable(keys) then setmetatable(keys, M.editing_keys) end
   M:select_all()
   M.focus()
   M:set_lexer(lexer or 'text')
   M.height = M:text_height(0) * (height or 1)
-  keys._command_entry, keys.MODE = mode_keys, '_command_entry'
+  _G.keys._command_entry, _G.keys.MODE = keys, '_command_entry'
 end
 
 -- Redefine ui.command_entry.focus() to clear any current key mode on hide/show.
@@ -201,11 +196,11 @@ end
 -- it to show Lua documentation in the Lua command entry.
 events.connect(events.INITIALIZED, function()
   M.h_scroll_bar, M.v_scroll_bar = false, false
-  M.margin_width_n[0], M.margin_width_n[1], M.margin_width_n[2] = 0, 0, 0
+  for i = 0, M.margins - 1 do M.margin_width_n[i] = 0 end
   M.call_tip_position = true
   for key, f in pairs(keys) do
     if f == textadept.editing.show_documentation then
-      lua_mode_keys[key] = function()
+      lua_keys[key] = function()
         -- Temporarily change _G.buffer since ui.command_entry is the "active"
         -- buffer.
         local orig_buffer = _G.buffer
