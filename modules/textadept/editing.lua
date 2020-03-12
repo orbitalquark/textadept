@@ -158,10 +158,10 @@ end, 1) -- need index of 1 because default key handler halts propagation
 events.connect(events.UPDATE_UI, function(updated)
   if updated and updated & 3 == 0 then return end -- ignore scrolling
   local pos = buffer.selection_n_caret[buffer.main_selection]
-  local match = M.brace_matches[buffer.char_at[pos]] and
-                buffer:brace_match(pos, 0) or -1
-  local f = buffer[match ~= -1 and 'brace_highlight' or 'brace_bad_light']
-  f(pos, match)
+  local match =
+    M.brace_matches[buffer.char_at[pos]] and buffer:brace_match(pos, 0) or -1
+  local f = match ~= -1 and buffer.brace_highlight or buffer.brace_bad_light
+  f(buffer, pos, match)
 end)
 
 -- Moves over typeover characters when typed, taking multiple selections into
@@ -176,7 +176,7 @@ events.connect(events.KEYPRESS, function(code)
         handled = true
       end
     end
-    if handled then return true end
+    if handled then return true end -- prevent typing
   end
 end)
 
@@ -185,7 +185,7 @@ events.connect(events.CHAR_ADDED, function(code)
   if not M.auto_indent or code ~= 10 then return end
   local line = buffer:line_from_position(buffer.current_pos)
   if line > 0 and buffer:get_line(line - 1):find('^[\r\n]+$') and
-    buffer:get_line(line):find('^[^\r\n]') then
+     buffer:get_line(line):find('^[^\r\n]') then
     return -- do not auto-indent when pressing enter from start of previous line
   end
   local i = line - 1
@@ -218,26 +218,22 @@ if CURSES and not WIN32 then
   end)
 end
 
--- Prepares the buffer for saving to a file.
+-- Prepares the buffer for saving to a file by stripping trailing whitespace,
+-- ensuring a final newline, and normalizing line endings.
 events.connect(events.FILE_BEFORE_SAVE, function()
   if not M.strip_trailing_spaces then return end
-  local buffer = buffer
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
   for line = 0, buffer.line_count - 1 do
     local s, e = buffer:position_from_line(line), buffer.line_end_position[line]
     local i, byte = e - 1, buffer.char_at[e - 1]
-    while i >= s and (byte == 9 or byte == 32) do
+    while i >= s and (byte == 9 or byte == 32) do -- '\t' or ' '
       i, byte = i - 1, buffer.char_at[i - 1]
     end
     if i < e - 1 then buffer:delete_range(i + 1, e - i - 1) end
   end
-  -- Ensure ending newline.
-  local e = buffer:position_from_line(buffer.line_count)
-  if buffer.line_count == 1 or
-     e > buffer:position_from_line(buffer.line_count - 1) then
-    buffer:insert_text(e, '\n')
-  end
+  -- Ensure final newline.
+  if buffer.char_at[buffer.length - 1] ~= 10 then buffer:append_text('\n') end
   -- Convert non-consistent EOLs
   buffer:convert_eols(buffer.eol_mode)
   buffer:end_undo_action()
@@ -256,19 +252,20 @@ function M.paste_reindent()
     text = text:gsub('^\n', '\r\n'):gsub('([^\r])\n', '%1\r\n')
   end
   local lead = text:match('^[ \t]*')
-  if lead ~= '' then text = text:sub(#lead + 1):gsub('\n'..lead, '\n') end
+  if lead ~= '' then text = text:sub(#lead + 1):gsub('\n' .. lead, '\n') end
   -- Change indentation to match buffer indentation settings.
   local tab_width = math.huge
   text = text:gsub('\n([ \t]+)', function(indentation)
     if indentation:find('^\t') then
-      if buffer.use_tabs then return '\n'..indentation end
-      return '\n'..indentation:gsub('\t', string.rep(' ', buffer.tab_width))
+      return buffer.use_tabs and '\n' .. indentation or
+        '\n' .. indentation:gsub('\t', string.rep(' ', buffer.tab_width))
     else
       tab_width = math.min(tab_width, #indentation)
       local indent = math.floor(#indentation / tab_width)
       local spaces = string.rep(' ', math.fmod(#indentation, tab_width))
-      if buffer.use_tabs then return '\n'..string.rep('\t', indent)..spaces end
-      return '\n'..string.rep(' ', buffer.tab_width):rep(indent)..spaces
+      return string.format(
+        '\n%s%s', buffer.use_tabs and string.rep('\t', indent) or
+        string.rep(' ', buffer.tab_width):rep(indent), spaces)
     end
   end)
   -- Re-indent according to whichever of the current and preceding lines has the
@@ -279,15 +276,15 @@ function M.paste_reindent()
   if i < 0 or buffer.line_indentation[i] < buffer.line_indentation[line] then
     i = line
   end
-  local indentation = buffer:text_range(buffer:position_from_line(i),
-                                        buffer.line_indent_position[i])
-  local fold_header = i ~= line and
-                      buffer.fold_level[i] & buffer.FOLDLEVELHEADERFLAG > 0
+  local indentation = buffer:text_range(
+    buffer:position_from_line(i), buffer.line_indent_position[i])
+  local fold_header =
+    i ~= line and buffer.fold_level[i] & buffer.FOLDLEVELHEADERFLAG > 0
   if fold_header then
-    indentation = indentation..(buffer.use_tabs and '\t' or
-                                string.rep(' ', buffer.tab_width))
+    indentation = indentation ..
+      (buffer.use_tabs and '\t' or string.rep(' ', buffer.tab_width))
   end
-  text = text:gsub('\n', '\n'..indentation)
+  text = text:gsub('\n', '\n' .. indentation)
   -- Paste the text and adjust first and last line indentation accordingly.
   local start_indent = buffer.line_indentation[i]
   if fold_header then start_indent = start_indent + buffer.tab_width end
@@ -312,7 +309,6 @@ end
 -- @see comment_string
 -- @name block_comment
 function M.block_comment()
-  local buffer = buffer
   local comment = M.comment_string[buffer:get_lexer(true)] or ''
   local prefix, suffix = comment:match('^([^|]+)|?([^|]*)$')
   if not prefix then return end
@@ -323,22 +319,21 @@ function M.block_comment()
   buffer:begin_undo_action()
   for line = s, not ignore_last_line and e or e - 1 do
     local p = buffer.line_indent_position[line]
-    if buffer:text_range(p, p + #prefix) == prefix then
+    local uncomment = buffer:text_range(p, p + #prefix) == prefix
+    if not uncomment then
+      buffer:insert_text(p, prefix)
+      if suffix ~= '' then
+        buffer:insert_text(buffer.line_end_position[line], suffix)
+      end
+    else
       buffer:delete_range(p, #prefix)
       if suffix ~= '' then
         p = buffer.line_end_position[line]
         buffer:delete_range(p - #suffix, #suffix)
-        if line == s then anchor = anchor - #suffix end
-        if line == e then pos = pos - #suffix end
-      end
-    else
-      buffer:insert_text(p, prefix)
-      if suffix ~= '' then
-        buffer:insert_text(buffer.line_end_position[line], suffix)
-        if line == s then anchor = anchor + #suffix end
-        if line == e then pos = pos + #suffix end
       end
     end
+    if line == s then anchor = anchor + #suffix * (uncomment and -1 or 1) end
+    if line == e then pos = pos + #suffix * (uncomment and -1 or 1) end
   end
   buffer:end_undo_action()
   anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
@@ -367,8 +362,8 @@ function M.goto_line(line)
   buffer:ensure_visible_enforce_policy(line)
   buffer:goto_line(line)
 end
-args.register('-l', '--line', 1, function(line) M.goto_line(line - 1) end,
-              'Go to line')
+args.register(
+  '-l', '--line', 1, function(line) M.goto_line(line - 1) end, 'Go to line')
 
 ---
 -- Transposes characters intelligently.
@@ -377,14 +372,13 @@ args.register('-l', '--line', 1, function(line) M.goto_line(line - 1) end,
 -- @name transpose_chars
 function M.transpose_chars()
   if buffer.current_pos == 0 then return end
-  local pos, byte = buffer.current_pos, buffer.char_at[buffer.current_pos]
-  if byte == 10 or byte == 13 or pos == buffer.length then
-    pos = buffer:position_before(pos)
-  end
+  local pos = buffer.current_pos
+  local line_end = buffer.line_end_position[buffer:line_from_position(pos)]
+  if pos == line_end then pos = buffer:position_before(pos) end
   local pos1, pos2 = buffer:position_before(pos), buffer:position_after(pos)
   local ch1, ch2 = buffer:text_range(pos1, pos), buffer:text_range(pos, pos2)
   buffer:set_target_range(pos1, pos2)
-  buffer:replace_target(ch2..ch1)
+  buffer:replace_target(ch2 .. ch1)
   buffer:goto_pos(pos2)
 end
 
@@ -417,12 +411,11 @@ function M.enclose(left, right)
   for i = 0, buffer.selections - 1 do
     local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
     if s == e then
-      buffer:set_target_range(buffer:word_start_position(s, true),
-                              buffer:word_end_position(e, true))
-    else
-      buffer:set_target_range(s, e)
+      s = buffer:word_start_position(s, true)
+      e = buffer:word_end_position(e, true)
     end
-    buffer:replace_target(left..buffer.target_text..right)
+    buffer:set_target_range(s, e)
+    buffer:replace_target(left .. buffer.target_text .. right)
     buffer.selection_n_start[i] = buffer.target_end
     buffer.selection_n_end[i] = buffer.target_end
   end
@@ -448,24 +441,23 @@ function M.select_enclosed(left, right)
     s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
   elseif M.auto_pairs then
     s = buffer.selection_start
-    local char_at, style_at = buffer.char_at, buffer.style_at
     while s >= 0 do
-      local match = M.auto_pairs[char_at[s]]
-      if match then
-        left, right = string.char(char_at[s]), match
-        if buffer:brace_match(s, 0) >= buffer.selection_end - 1 then
-          e = buffer:brace_match(s, 0)
+      local match = M.auto_pairs[buffer.char_at[s]]
+      if not match then goto continue end
+      left, right = string.char(buffer.char_at[s]), match
+      if buffer:brace_match(s, 0) >= buffer.selection_end - 1 then
+        e = buffer:brace_match(s, 0)
+        break
+      elseif M.brace_matches[buffer.char_at[s]] or
+             buffer.style_at[s] == buffer.style_at[buffer.selection_start] then
+        buffer.search_flags = 0
+        buffer:set_target_range(s + 1, buffer.length)
+        if buffer:search_in_target(match) >= buffer.selection_end - 1 then
+          e = buffer.target_end - 1
           break
-        elseif M.brace_matches[char_at[s]] or
-               style_at[s] == style_at[buffer.selection_start] then
-          buffer.search_flags = 0
-          buffer:set_target_range(s + 1, buffer.length)
-          if buffer:search_in_target(match) >= buffer.selection_end - 1 then
-            e = buffer.target_end - 1
-            break
-          end
         end
       end
+      ::continue::
       s = s - 1
     end
   end
@@ -492,7 +484,7 @@ function M.select_word(all)
     buffer.search_flags = buffer.search_flags + buffer.FIND_WHOLEWORD
     if all then buffer:multiple_select_add_next() end -- select word first
   end
-  buffer['multiple_select_add_'..(not all and 'next' or 'each')](buffer)
+  buffer['multiple_select_add_' .. (not all and 'next' or 'each')](buffer)
 end
 
 ---
@@ -521,7 +513,6 @@ end
 -- @see buffer.use_tabs
 -- @name convert_indentation
 function M.convert_indentation()
-  local buffer = buffer
   buffer:begin_undo_action()
   for line = 0, buffer.line_count - 1 do
     local s = buffer:position_from_line(line)
@@ -531,7 +522,7 @@ function M.convert_indentation()
     if buffer.use_tabs then
       local tabs = indent // buffer.tab_width
       local spaces = math.fmod(indent, buffer.tab_width)
-      new_indentation = string.rep('\t', tabs)..string.rep(' ', spaces)
+      new_indentation = string.rep('\t', tabs) .. string.rep(' ', spaces)
     else
       new_indentation = string.rep(' ', indent)
     end
@@ -570,8 +561,8 @@ function M.highlight_word()
   buffer.search_flags = buffer.FIND_WHOLEWORD + buffer.FIND_MATCHCASE
   buffer:target_whole_document()
   while buffer:search_in_target(word) > -1 do
-    buffer:indicator_fill_range(buffer.target_start,
-                                buffer.target_end - buffer.target_start)
+    buffer:indicator_fill_range(
+      buffer.target_start, buffer.target_end - buffer.target_start)
     buffer:set_target_range(buffer.target_end, buffer.length)
   end
 end
@@ -582,13 +573,13 @@ end
 -- standard output (stdout). *command* may contain pipes.
 -- Standard input is as follows:
 --
--- 1. If text is selected and spans multiple lines, all text on the lines that
+-- 1. If no text is selected, the entire buffer is used.
+-- 2. If text is selected and spans a single line, only the selected text is
+-- used.
+-- 3. If text is selected and spans multiple lines, all text on the lines that
 -- have text selected is passed as stdin. However, if the end of the selection
 -- is at the beginning of a line, only the line ending delimiters from the
 -- previous line are included. The rest of the line is excluded.
--- 2. If text is selected and spans a single line, only the selected text is
--- used.
--- 3. If no text is selected, the entire buffer is used.
 -- @param command The Linux, BSD, Mac OSX, or Windows shell command to filter
 --   text through. May contain pipes.
 -- @name filter_through
@@ -596,7 +587,10 @@ function M.filter_through(command)
   assert(not (WIN32 and CURSES), 'not implemented in this environment')
   assert_type(command, 'string', 1)
   local s, e = buffer.selection_start, buffer.selection_end
-  if s ~= e then
+  if s == e then
+    -- Use the whole buffer as input.
+    buffer:target_whole_document()
+  else
     -- Use the selected lines as input.
     local i, j = buffer:line_from_position(s), buffer:line_from_position(e)
     if i < j then
@@ -604,15 +598,12 @@ function M.filter_through(command)
       if buffer.column[e] > 0 then e = buffer:position_from_line(j + 1) end
     end
     buffer:set_target_range(s, e)
-  else
-    -- Use the whole buffer as input.
-    buffer:target_whole_document()
   end
   local commands = lpeg.match(lpeg.Ct(lpeg.P{
     lpeg.C(lpeg.V('command')) * ('|' * lpeg.C(lpeg.V('command')))^0,
     command = (1 - lpeg.S('"\'|') + lpeg.V('str'))^1,
     str = '"' * (1 - lpeg.S('"\\') + lpeg.P('\\') * 1)^0 * lpeg.P('"')^-1 +
-          "'" * (1 - lpeg.S("'\\") + lpeg.P('\\') * 1)^0 * lpeg.P("'")^-1,
+      "'" * (1 - lpeg.S("'\\") + lpeg.P('\\') * 1)^0 * lpeg.P("'")^-1,
   }), command)
   local output = buffer.target_text
   for i = 1, #commands do
@@ -621,17 +612,14 @@ function M.filter_through(command)
     p:close()
     output = p:read('a') or ''
     if p:wait() ~= 0 then
-      ui.statusbar_text = string.format('"%s" %s', commands[i],
-                                        _L['returned non-zero status'])
+      ui.statusbar_text = string.format(
+        '"%s" %s', commands[i], _L['returned non-zero status'])
       return
     end
   end
   buffer:replace_target(output:iconv('UTF-8', _CHARSET))
-  if s ~= e then
-    buffer:set_sel(buffer.target_start, buffer.target_end)
-  else
-    buffer:goto_pos(s)
-  end
+  if s == e then buffer:goto_pos(s) return end
+  buffer:set_sel(buffer.target_start, buffer.target_end)
 end
 
 ---
@@ -646,13 +634,13 @@ function M.autocomplete(name)
   local len_entered, list = M.autocompleters[name]()
   if not len_entered or not list or #list == 0 then return end
   buffer.auto_c_order = buffer.ORDER_PERFORMSORT
-  buffer:auto_c_show(len_entered,
-                     table.concat(list, string.char(buffer.auto_c_separator)))
+  buffer:auto_c_show(
+    len_entered, table.concat(list, string.char(buffer.auto_c_separator)))
   return true
 end
 
--- Returns for the word behind the caret a list of completions constructed from
--- the current buffer or all open buffers (depending on
+-- Returns for the word part behind the caret a list of whole word completions
+-- constructed from the current buffer or all open buffers (depending on
 -- `M.autocomplete_all_words`).
 -- @see buffer.word_chars
 -- @see autocomplete
@@ -660,26 +648,22 @@ M.autocompleters.word = function()
   local list, matches = {}, {}
   local s = buffer:word_start_position(buffer.current_pos, true)
   if s == buffer.current_pos then return end
-  local word = buffer:text_range(s, buffer.current_pos)
+  local word_part = buffer:text_range(s, buffer.current_pos)
   for _, buffer in ipairs(_BUFFERS) do
     if buffer == _G.buffer or M.autocomplete_all_words then
-      buffer.search_flags = buffer.FIND_WORDSTART
-      if not buffer.auto_c_ignore_case then
-        buffer.search_flags = buffer.search_flags + buffer.FIND_MATCHCASE
-      end
+      buffer.search_flags = buffer.FIND_WORDSTART + buffer.FIND_MATCHCASE
       buffer:target_whole_document()
-      while buffer:search_in_target(word) > -1 do
+      while buffer:search_in_target(word_part) > -1 do
         local e = buffer:word_end_position(buffer.target_end, true)
         local match = buffer:text_range(buffer.target_start, e)
-        if #match > #word and not matches[match] then
+        if #match > #word_part and not matches[match] then
           list[#list + 1], matches[match] = match, true
         end
         buffer:set_target_range(e, buffer.length)
       end
     end
   end
-  if #list == 0 then return nil end
-  return #word, list
+  return #word_part, list
 end
 
 local api_docs
@@ -698,8 +682,8 @@ local api_docs
 -- @see buffer.word_chars
 function M.show_documentation(pos, case_insensitive)
   if buffer:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
-  local lang = buffer:get_lexer(true)
-  if not M.api_files[lang] then return end
+  local api_files = M.api_files[buffer:get_lexer(true)]
+  if not api_files then return end
   if not assert_type(pos, 'number/nil', 1) then pos = buffer.current_pos end
   local s = buffer:word_start_position(pos, true)
   local e = buffer:word_end_position(pos, true)
@@ -708,18 +692,18 @@ function M.show_documentation(pos, case_insensitive)
   api_docs = {pos = pos, i = 1}
   ::lookup::
   if symbol ~= '' then
-    local symbol_patt = '^'..symbol:gsub('(%p)', '%%%1')
+    local symbol_patt = '^' .. symbol:gsub('(%p)', '%%%1')
     if case_insensitive then
       symbol_patt = symbol_patt:gsub('%a', function(ch)
         return string.format('[%s%s]', ch:upper(), ch:lower())
       end)
     end
-    for _, file in ipairs(M.api_files[lang]) do
+    for _, file in ipairs(api_files) do
       if type(file) == 'function' then file = file() end
       if file and lfs.attributes(file) then
         for line in io.lines(file) do
           if line:find(symbol_patt) then
-            api_docs[#api_docs + 1] = line:match(symbol_patt..'%s+(.+)$')
+            api_docs[#api_docs + 1] = line:match(symbol_patt .. '%s+(.+)$')
           end
         end
       end
@@ -727,8 +711,7 @@ function M.show_documentation(pos, case_insensitive)
   end
   -- Search backwards for an open function call and show API documentation for
   -- that function as well.
-  local char_at = buffer.char_at
-  while s >= 0 and char_at[s] ~= 40 do s = s - 1 end
+  while s > 0 and buffer.char_at[s] ~= 40 do s = s - 1 end -- '('
   e = buffer:brace_match(s, 0)
   if s > 0 and (e == -1 or e >= pos) then
     s, e = buffer:word_start_position(s - 1, true), s - 1
@@ -736,12 +719,15 @@ function M.show_documentation(pos, case_insensitive)
     goto lookup
   end
 
-  if #api_docs == 0 then return end
+  if #api_docs == 0 then
+    api_docs = nil -- prevent the call tip click handler below from running
+    return
+  end
   for i = 1, #api_docs do
     local doc = api_docs[i]:gsub('%f[\\]\\n', '\n'):gsub('\\\\', '\\')
     if #api_docs > 1 then
-      if not doc:find('\n') then doc = doc..'\n' end
-      doc = '\001'..doc:gsub('\n', '\n\002', 1)
+      if not doc:find('\n') then doc = doc .. '\n' end
+      doc = '\001' .. doc:gsub('\n', '\n\002', 1)
     end
     api_docs[i] = doc
   end

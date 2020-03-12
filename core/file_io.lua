@@ -99,8 +99,8 @@ function io.open_file(filenames, encodings)
   if not assert_type(filenames, 'string/table/nil', 1) then
     filenames = ui.dialogs.fileselect{
       title = _L['Open File'], select_multiple = true,
-      with_directory =
-        (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir(),
+      with_directory = (buffer.filename or ''):match('^.+[/\\]') or
+        lfs.currentdir(),
       width = CURSES and ui.size[1] - 2 or nil
     }
     if not filenames then return end
