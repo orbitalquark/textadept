@@ -42,7 +42,7 @@ end
 -- Attempts to detect the language based on a buffer's first line of text or
 -- that buffer's filename.
 -- @param buffer The buffer to detect the language of.
--- @return lexer language
+-- @return lexer language or nil
 local function detect_language(buffer)
   local line = buffer:get_line(0)
   -- Detect from first line.
@@ -50,8 +50,7 @@ local function detect_language(buffer)
     if line:find(patt) then return lexer end
   end
   -- Detect from file extension.
-  return buffer.filename and M.extensions[buffer.filename:match('[^/\\.]+$')] or
-         'text'
+  return buffer.filename and M.extensions[buffer.filename:match('[^/\\.]+$')]
 end
 
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
@@ -60,32 +59,24 @@ local GETERROR = _SCINTILLA.properties.status[1]
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, lang)
   assert_type(lang, 'string/nil', 2)
-  if not lang then lang = detect_language(buffer) end
+  if not lang then lang = detect_language(buffer) or 'text' end
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
   local errmsg = buffer:private_lexer_call(GETERROR)
   if #errmsg > 0 then
     buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
-    ui.print(errmsg)
-    return -- do not error() since the stack trace implicates this function
+    error(errmsg, 2)
   end
   buffer._lexer = lang
   if package.searchpath(lang, package.path) then _M[lang] = require(lang) end
   if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, lang) end
   local last_line = buffer.first_visible_line + buffer.lines_on_screen
-  buffer:colourise(0, buffer:position_from_line(last_line + 1))
+  buffer:colourise(0, buffer:position_from_line(last_line + 1)) -- refresh
 end
 
 -- Gives new buffers lexer-specific functions.
 events.connect(events.BUFFER_NEW, function()
   buffer.get_lexer, buffer.set_lexer = get_lexer, set_lexer
-  buffer.style_name = setmetatable({}, {
-    __index = function(_, style_num) -- LuaDoc is in core/.buffer.luadoc
-      return style_num >= 0 and style_num <= 255 and
-             buffer:private_lexer_call(style_num) or nil
-    end,
-    __newindex = function() error('read-only property') end
-  })
 end, 1)
 
 -- Auto-detect lexer on file open or save as.

@@ -114,9 +114,9 @@ sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
            Indicator.o KeyMap.o LineMarker.o MarginView.o PerLine.o \
            PositionCache.o RESearch.o RunStyles.o ScintillaBase.o Selection.o \
            Style.o UniConversion.o ViewStyle.o UniqueString.o XPM.o
-sci_lex_objs = Accessor.o CharacterCategory.o CharacterSet.o LexerBase.o \
-               LexerModule.o LexerNoExceptions.o LexerSimple.o PropSetSimple.o \
-               StyleContext.o WordList.o
+sci_lex_objs = Accessor.o CharacterCategory.o CharacterSet.o DefaultLexer.o \
+               LexerBase.o LexerModule.o LexerNoExceptions.o LexerSimple.o \
+               PropSetSimple.o StyleContext.o WordList.o
 sci_lexer_objs = LexLPeg.o LexLPeg-curses.o
 sci_gtk_objs = PlatGTK.o ScintillaGTK.o ScintillaGTKAccessible.o
 sci_curses_objs = ScintillaCurses.o
@@ -366,7 +366,7 @@ else
   gtdialog_url = http://foicica.com/hg/gtdialog/archive/tip.zip
 endif
 
-scintilla_zip = 0c14c2086500.zip
+scintilla_zip = 429993cf4429.zip
 lua_tgz = lua-5.3.5.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_7_0_2.zip

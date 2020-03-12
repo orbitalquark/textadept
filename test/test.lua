@@ -1753,11 +1753,9 @@ function test_file_types_get_lexer()
   buffer:goto_pos(buffer:position_from_line(LINE(2)))
   assert_equal(buffer:get_lexer(), 'html')
   assert_equal(buffer:get_lexer(true), 'css')
-  assert_equal(buffer.style_name[buffer.style_at[buffer.current_pos]], 'identifier')
+  assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos]), 'identifier')
   buffer:set_save_point()
   io.close_buffer()
-
-  assert_raises(function() buffer.style_name[1] = 'foo' end, 'read-only property')
 end
 
 function test_file_types_set_lexer()

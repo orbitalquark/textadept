@@ -795,8 +795,6 @@
 --   Table of flags that indicate whether or not text is italic for style
 --   numbers from `0` to `255`.
 --   The default values are `false`.
--- @field style_name (table, Read-only)
---   Table of style names for style numbers from `0` to `255`.
 -- @field style_size (table)
 --   Table of font sizes of text for style numbers from `0` to `255`.
 -- @field style_underline (table)
@@ -2383,6 +2381,13 @@ function multi_edge_add_line(buffer, column, color) end
 function multi_edge_clear_all(buffer) end
 
 ---
+-- Returns the name of style number *style*, which is between `0` and `255`.
+-- @param buffer A buffer.
+-- @param style_num The style number between `0` and `255` to get the name of.
+-- @return string
+function name_of_style(buffer, style) end
+
+---
 -- Types a new line at the caret position according to [`buffer.eol_mode`]().
 -- @param buffer A buffer.
 function new_line(buffer) end
@@ -3311,7 +3316,6 @@ function set_theme(buffer, name, props) end
 --   * line_from_index_position
 --   * load_lexer_library
 --   * mouse_wheel_captures
---   * name_of_style
 --   * named_styles
 --   * null
 --   * point_x_from_position

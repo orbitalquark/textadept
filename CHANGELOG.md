@@ -2609,7 +2609,7 @@ Changes:
 * Renamed `gui` to [`ui`][].
 * Renamed `_M.textadept` to [`textadept`][].
 * New [`events.INITIALIZED`][] event.
-* Renamed `buffer:get_style_name()` to [`buffer.style_name`][].
+* Renamed `buffer:get_style_name()` to `buffer.style_name`.
 * Renamed `ui.docstatusbar_text` to [`ui.bufstatusbar_text`][].
 * Removed `textadept.bookmarks.BOOKMARK_COLOR`,
   `textadept.editing.HIGHLIGHT_COLOR`, and `textadept.run.ERROR_COLOR` while
@@ -2631,7 +2631,6 @@ Changes:
 [`ui`]: api.html#ui
 [`textadept`]: api.html#textadept
 [`events.INITIALIZED`]: api.html#events.INITIALIZED
-[`buffer.style_name`]: api.html#buffer.style_name
 [`ui.bufstatusbar_text`]: api.html#ui.bufstatusbar_text
 [`io` module]: api.html#io
 [CDK]: http://invisible-island.net/cdk/cdk.html
