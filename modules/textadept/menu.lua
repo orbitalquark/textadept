@@ -256,7 +256,7 @@ local default_menubar = {
       local text = string.format("'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char,
                                  utf8.codepoint(char), bytes, _L['Lexer'],
                                  buffer:get_lexer(true), _L['Style'],
-                                 buffer.style_name[style], style)
+                                 buffer:name_of_style(style), style)
       buffer:call_tip_show(buffer.current_pos, text)
     end}
   },
