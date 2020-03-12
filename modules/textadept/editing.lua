@@ -158,10 +158,13 @@ end, 1) -- need index of 1 because default key handler halts propagation
 events.connect(events.UPDATE_UI, function(updated)
   if updated and updated & 3 == 0 then return end -- ignore scrolling
   local pos = buffer.selection_n_caret[buffer.main_selection]
-  local match =
-    M.brace_matches[buffer.char_at[pos]] and buffer:brace_match(pos, 0) or -1
-  local f = match ~= -1 and buffer.brace_highlight or buffer.brace_bad_light
-  f(buffer, pos, match)
+  if M.brace_matches[buffer.char_at[pos]] then
+    local match = buffer:brace_match(pos, 0)
+    local f = match ~= -1 and buffer.brace_highlight or buffer.brace_bad_light
+    f(buffer, pos, match)
+    return
+  end
+  buffer:brace_bad_light(-1)
 end)
 
 -- Moves over typeover characters when typed, taking multiple selections into
