@@ -39,15 +39,15 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
   elseif line:find('^evt ') then
     local name, value, param_list = line:match(event_patt)
     name = to_lua_name(name)
-    local event = {string.format('%q', name)}
+    local event, has_modifiers = {string.format('%q', name)}, false
     for param in param_list:gmatch('(%a+)[,)]') do
-      if param ~= 'void' then
+      if param ~= 'void' and param ~= 'modifiers' then
         event[#event + 1] = string.format('%q', to_lua_name(param))
+      elseif param == 'modifiers' then
+        has_modifiers = true
       end
     end
-    if name:find('^margin') then
-      event[2], event[4] = event[4], event[2] -- swap modifiers, margin
-    end
+    if has_modifiers then event[#event + 1] = '"modifiers"' end
     events[#events + 1] = value
     events[value] = table.concat(event, ',')
   elseif line:find('^fun ') then
@@ -189,6 +189,7 @@ local marker_number, indic_number, list_type, image_type = -1, -1, 0, 0
 -- @see buffer.marker_define
 -- @name next_marker_number
 function M.next_marker_number()
+  assert(marker_number < M.constants.MARKER_MAX, 'too many markers in use')
   marker_number = marker_number + 1
   return marker_number
 end
@@ -201,6 +202,7 @@ end
 -- @see buffer.indic_style
 -- @name next_indic_number
 function M.next_indic_number()
+  assert(indic_number < M.constants.INDICATOR_MAX, 'too many indicators in use')
   indic_number = indic_number + 1
   return indic_number
 end
