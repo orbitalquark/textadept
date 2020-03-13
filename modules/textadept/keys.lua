@@ -299,24 +299,24 @@ keys[not OSX and GUI and 'cZ' or 'mZ'] = buffer.redo
 keys[not OSX and 'cx' or 'mx'] = buffer.cut
 keys[not OSX and 'cc' or 'mc'] = buffer.copy
 keys[not OSX and 'cv' or 'mv'] = buffer.paste
-keys[not OSX and (GUI and 'cV' or 'mv')
-             or 'mV'] = textadept.editing.paste_reindent
+keys[not OSX and (GUI and 'cV' or 'mv') or 'mV'] =
+  textadept.editing.paste_reindent
 if GUI then keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate end
 keys.del = buffer.clear
-keys[not OSX and (GUI and 'adel' or 'mdel')
-             or 'cdel'] = m_edit[_L['Delete Word']][2]
+keys[not OSX and (GUI and 'adel' or 'mdel') or 'cdel'] =
+  m_edit[_L['Delete Word']][2]
 keys[not OSX and GUI and 'ca' or 'ma'] = buffer.select_all
 keys[GUI and 'cm' or 'mm'] = m_edit[_L['Match Brace']][2]
-keys[not OSX and ((GUI or WIN32) and 'c\n' or 'cmj')
-             or 'cesc'] = m_edit[_L['Complete Word']][2]
+keys[not OSX and ((GUI or WIN32) and 'c\n' or 'cmj') or 'cesc'] =
+  m_edit[_L['Complete Word']][2]
 if GUI then
   keys[not OSX and 'caH' or 'mH'] = textadept.editing.highlight_word
 end
 keys[not OSX and GUI and 'c/' or 'm/'] = textadept.editing.block_comment
 keys.ct = textadept.editing.transpose_chars
 keys[not OSX and (GUI and 'cJ' or 'mj') or 'cj'] = textadept.editing.join_lines
-keys[not OSX and (GUI and 'c|' or 'c\\')
-             or 'm|'] = m_edit[_L['Filter Through']][2]
+keys[not OSX and (GUI and 'c|' or 'c\\') or 'm|'] =
+  m_edit[_L['Filter Through']][2]
 -- Select.
 local m_sel = m_edit[_L['Select']]
 keys[GUI and 'cM' or 'mM'] = m_sel[_L['Select between Matching Delimiters']][2]
@@ -331,19 +331,19 @@ keys[not OSX and GUI and 'cP' or 'mP'] = textadept.editing.select_paragraph
 m_sel = m_edit[_L['Selection']]
 keys[not OSX and (GUI and 'cau' or 'cmu') or 'cu'] = buffer.upper_case
 keys[not OSX and (GUI and 'caU' or 'cml') or 'cU'] = buffer.lower_case
-keys[not OSX and (GUI and 'a<' or 'm>')
-             or 'c<'] = m_sel[_L['Enclose as XML Tags']][2]
+keys[not OSX and (GUI and 'a<' or 'm>') or 'c<'] =
+  m_sel[_L['Enclose as XML Tags']][2]
 if GUI then
   keys[not OSX and 'a>' or 'c>'] = m_sel[_L['Enclose as Single XML Tag']][2]
   keys[not OSX and "a'" or "c'"] = m_sel[_L['Enclose in Single Quotes']][2]
   keys[not OSX and 'a"' or 'c"'] = m_sel[_L['Enclose in Double Quotes']][2]
 end
-keys[not OSX and (GUI and 'a(' or 'm)')
-             or 'c('] = m_sel[_L['Enclose in Parentheses']][2]
-keys[not OSX and (GUI and 'a[' or 'm]')
-             or 'c['] = m_sel[_L['Enclose in Brackets']][2]
-keys[not OSX and (GUI and 'a{' or 'm}')
-             or 'c{'] = m_sel[_L['Enclose in Braces']][2]
+keys[not OSX and (GUI and 'a(' or 'm)') or 'c('] =
+  m_sel[_L['Enclose in Parentheses']][2]
+keys[not OSX and (GUI and 'a[' or 'm]') or 'c['] =
+  m_sel[_L['Enclose in Brackets']][2]
+keys[not OSX and (GUI and 'a{' or 'm}') or 'c{'] =
+  m_sel[_L['Enclose in Braces']][2]
 keys.csup = buffer.move_selected_lines_up
 keys.csdown = buffer.move_selected_lines_down
 
@@ -374,10 +374,10 @@ keys[not OSX and 'cj' or 'mj'] = textadept.editing.goto_line
 
 -- Tools.
 local m_tools = textadept.menu.menubar[_L['Tools']]
-keys[not OSX and (GUI and 'ce' or 'mc')
-             or 'me'] = m_tools[_L['Command Entry']][2]
-keys[not OSX and (GUI and 'cE' or 'mC')
-             or 'mE'] = m_tools[_L['Select Command']][2]
+keys[not OSX and (GUI and 'ce' or 'mc') or 'me'] =
+  m_tools[_L['Command Entry']][2]
+keys[not OSX and (GUI and 'cE' or 'mC') or 'mE'] =
+  m_tools[_L['Select Command']][2]
 keys[not OSX and 'cr' or 'mr'] = textadept.run.run
 keys[not OSX and (GUI and 'cR' or 'cmr') or 'mR'] = textadept.run.compile
 keys[not OSX and (GUI and 'cB' or 'cmb') or 'mB'] = textadept.run.build
@@ -385,10 +385,10 @@ if GUI then
   keys[not OSX and 'cA' or 'mA'] = m_tools[_L['Set Arguments...']][2]
 end
 keys[not OSX and (GUI and 'cX' or 'cmx') or 'mX'] = textadept.run.stop
-keys[not OSX and (GUI and 'cae' or 'mx')
-             or 'cme'] = m_tools[_L['Next Error']][2]
-keys[not OSX and (GUI and 'caE' or 'mX')
-             or 'cmE'] = m_tools[_L['Previous Error']][2]
+keys[not OSX and (GUI and 'cae' or 'mx') or 'cme'] =
+  m_tools[_L['Next Error']][2]
+keys[not OSX and (GUI and 'caE' or 'mX') or 'cmE'] =
+  m_tools[_L['Previous Error']][2]
 -- Bookmark.
 local m_bookmark = m_tools[_L['Bookmarks']]
 keys[not OSX and (GUI and 'cf2' or 'f1') or 'mf2'] = textadept.bookmarks.toggle
@@ -403,8 +403,8 @@ keys[GUI and 'sf9' or 'f10'] = textadept.macros.play
 local m_quick_open = m_tools[_L['Quick Open']]
 keys[not OSX and 'cu' or 'mu'] = m_quick_open[_L['Quickly Open User Home']][2]
 -- TODO: m_quick_open[_L['Quickly Open Textadept Home']][2]
-keys[not OSX and (GUI and 'caO' or 'mO')
-             or 'cmO'] = m_quick_open[_L['Quickly Open Current Directory']][2]
+keys[not OSX and (GUI and 'caO' or 'mO') or 'cmO'] =
+  m_quick_open[_L['Quickly Open Current Directory']][2]
 keys[not OSX and (GUI and 'caP' or 'cmp') or 'cmP'] = io.quick_open
 -- Snippets.
 local m_snippets = m_tools[_L['Snippets']]
@@ -412,8 +412,8 @@ keys[not OSX and (GUI and 'cK' or 'mK') or 'sa\t'] = textadept.snippets.select
 keys['\t'] = textadept.snippets.insert
 keys['s\t'] = textadept.snippets.previous
 keys.esc = textadept.snippets.cancel_current
-keys[not OSX and (GUI and 'ck' or 'mk')
-             or 'a\t'] = m_snippets[_L['Complete Trigger Word']][2]
+keys[not OSX and (GUI and 'ck' or 'mk') or 'a\t'] =
+  m_snippets[_L['Complete Trigger Word']][2]
 -- Other.
 keys[not OSX and 'c ' or 'aesc'] = m_tools[_L['Complete Symbol']][2]
 keys[GUI and 'ch' or 'mh'] = textadept.editing.show_documentation
@@ -432,11 +432,11 @@ local m_indentation = m_buffer[_L['Indentation']]
 -- TODO: m_indentation[_L['Tab width: 3']][2]
 -- TODO: m_indentation[_L['Tab width: 4']][2]
 -- TODO: m_indentation[_L['Tab width: 8']][2]
-keys[not OSX and (GUI and 'caT' or 'mt')
-             or 'cT'] = m_indentation[_L['Toggle Use Tabs']][2]
+keys[not OSX and (GUI and 'caT' or 'mt') or 'cT'] =
+  m_indentation[_L['Toggle Use Tabs']][2]
 if CURSES then keys.mT = keys.mt end -- mt is used by some GUI terminals
-keys[not OSX and (GUI and 'cai' or 'mi')
-             or 'ci'] = textadept.editing.convert_indentation
+keys[not OSX and (GUI and 'cai' or 'mi') or 'ci'] =
+  textadept.editing.convert_indentation
 -- EOL Mode.
 -- TODO: m_buffer[_L['EOL Mode']][_L['CRLF']][2]
 -- TODO: m_buffer[_L['EOL Mode']][_L['LF']][2]
@@ -563,9 +563,8 @@ end
 if OSX or CURSES then
   -- UTF-8 input.
   keys[OSX and 'mU' or 'mu'] = function()
-    ui.command_entry.run(function(code)
-      buffer:add_text(utf8.char(tonumber(code, 16)))
-    end)
+    ui.command_entry.run(
+      function(code) buffer:add_text(utf8.char(tonumber(code, 16))) end)
   end
 end
 
