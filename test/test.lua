@@ -2059,6 +2059,39 @@ function test_macro_record_play_save_load()
   assert_raises(function() textadept.macros.load(1) end, 'string/nil expected, got number')
 end
 
+function test_macro_record_play_with_keys_only()
+  if keys.f9 ~= textadept.macros.record then
+    print('Note: not running since F9 does not toggle macro recording')
+    return
+  end
+  buffer.new()
+  buffer:append_text('foo\nbar\nbaz\n')
+  events.emit(events.KEYPRESS, 0xFFC6) -- f9; start recording
+  events.emit(events.KEYPRESS, not CURSES and 0xFF57 or 305) -- end
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 13) -- \n
+  buffer:new_line()
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 0xFFC6) -- f9; stop recording
+  assert_equal(buffer:get_text(), 'foo\n\nbar\nbaz\n');
+  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(3)))
+  if not CURSES then
+    events.emit(events.KEYPRESS, 0xFFC6, true) -- sf9; play
+  else
+    events.emit(events.KEYPRESS, 0xFFC7) -- f10; play
+  end
+  assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n');
+  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(5)))
+  if not CURSES then
+    events.emit(events.KEYPRESS, 0xFFC6, true) -- sf9; play
+  else
+    events.emit(events.KEYPRESS, 0xFFC7) -- f10; play
+  end
+  assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n\n');
+  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(7)))
+  buffer:set_save_point()
+  io.close_buffer()
+end
+
 function test_menu_menu_functions()
   buffer.new()
   textadept.menu.menubar[_L['Buffer']][_L['Indentation']][_L['Tab width: 8']][2]()

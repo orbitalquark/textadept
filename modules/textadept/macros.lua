@@ -30,12 +30,14 @@ local function event_recorder(event)
 end
 local event_recorders = {
   [events.KEYPRESS] = function(code, shift, control, alt, meta)
+    -- Not every keypress should be recorded (e.g. toggling macro recording).
+    -- Use very basic key handling to try to identify key commands to ignore.
     local key = code < 256 and string.char(code) or keys.KEYSYMS[code]
     if key then
-      -- Note: this is a simplified version of key handling.
-      shift = shift and (code >= 256 or code == 9)
-      local key_seq = (control and 'c' or '')..(alt and 'a' or '')..
-                      (meta and OSX and 'm' or '')..(shift and 's' or '')..key
+      if shift and code >= 32 and code < 256 then shift = false end
+      local key_seq = string.format(
+        '%s%s%s%s%s', control and 'c' or '', alt and 'a' or '',
+        meta and OSX and 'm' or '', shift and 's' or '', key)
       for i = 1, #ignore do if keys[key_seq] == ignore[i] then return end end
     end
     macro[#macro + 1] = {events.KEYPRESS, code, shift, control, alt, meta}
@@ -70,13 +72,16 @@ end
 -- @name play
 function M.play()
   if recording or not macro then return end
-  events.emit(events.KEYPRESS, 27) -- needed to initialize for some reason
-  for i = 1, #macro do
-    if macro[i][1] == events.CHAR_ADDED then
-      local f = buffer[buffer.selection_empty and 'add_text' or 'replace_sel']
-      f(buffer, utf8.char(macro[i][2]))
+  -- If this function is run as a key command, `keys.keychain` cannot be cleared
+  -- until this function returns. Emit 'esc' to forcibly clear it so subsequent
+  -- keypress events can be properly handled.
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- 'esc'
+  for _, event in ipairs(macro) do
+    if event[1] == events.CHAR_ADDED then
+      local f = buffer.selection_empty and buffer.add_text or buffer.replace_sel
+      f(buffer, utf8.char(event[2]))
     end
-    events.emit(table.unpack(macro[i]))
+    events.emit(table.unpack(event))
   end
 end
 
@@ -95,17 +100,15 @@ function M.save(filename)
   end
   local f = assert(io.open(filename, 'w'))
   f:write('return {\n')
-  for i = 1, #macro do
-    f:write('{"', macro[i][1], '",')
-    for j = 2, #macro[i] do
-      if type(macro[i][j]) == 'string' then f:write('"') end
-      f:write(tostring(macro[i][j]))
-      f:write(type(macro[i][j]) == 'string' and '",' or ',')
+  for _, event in ipairs(macro) do
+    f:write(string.format('{%q,', event[1]))
+    for i = 2, #event do
+      f:write(string.format(
+        type(event[i]) == 'string' and '%q,' or '%s,', event[i]))
     end
     f:write('},\n')
   end
-  f:write('}\n')
-  f:close()
+  f:write('}\n'):close()
 end
 
 ---
