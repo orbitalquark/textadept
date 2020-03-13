@@ -9,16 +9,30 @@ local M = {}
 --   Save the session when quitting.
 --   The default value is `true` unless the user passed the command line switch
 --   `-n` or `--nosession` to Textadept.
--- @field max_recent_files (number)
---   The maximum number of recent files to save in session files.
---   Recent files are stored in [`io.recent_files`]().
---   The default value is `10`.
+-- @field _G.events.SESSION_SAVE (string)
+--   Emitted when saving a session.
+--
+--   Arguments:
+--
+--   * `session`: Table of session data to save. All handlers will have access
+--     to this same table, and Textadept's default handler reserves the use of
+--     some keys.
+--     Note that functions, userdata, and circular table values cannot be saved.
+--     The latter case is not recognized at all, so beware.
+-- @field _G.events.SESSION_LOAD (string)
+--   Emitted when loading a session.
+--   Arguments:
+--
+--   * `session`: Table of session data to load. All handlers will have access
+--     to this same table.
 module('textadept.session')]]
 
 M.save_on_quit = true
-M.max_recent_files = 10
 
-local session_file = _USERHOME..(not CURSES and '/session' or '/session_term')
+-- Events.
+events.SESSION_SAVE, events.SESSION_LOAD = 'session_save', 'session_load'
+
+local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 
 ---
 -- Loads session file *filename* or the user-selected session, returning `true`
@@ -27,7 +41,7 @@ local session_file = _USERHOME..(not CURSES and '/session' or '/session_term')
 -- files, and bookmarks.
 -- @param filename Optional absolute path to the session file to load. If `nil`,
 --   the user is prompted for one.
--- @return `true` if the session file was opened and read; `false` otherwise.
+-- @return `true` if the session file was opened and read; `nil` otherwise.
 -- @usage textadept.session.load(filename)
 -- @name load
 function M.load(filename)
@@ -38,64 +52,58 @@ function M.load(filename)
     }
     if not filename then return end
   end
+
+  local f = loadfile(filename, 't', {})
+  if not f or not io.close_all_buffers() then return end -- fail silently
+  local session = f()
   local not_found = {}
-  local f = io.open(filename, 'rb')
-  if not f or not io.close_all_buffers() then return false end
-  io.recent_files = {}
-  local current_view, splits = view, {[0] = {}}
-  for line in f:lines() do
-    if line:find('^buffer:') then
-      local patt = '^buffer: (%d+) (%d+) (%d+) (.+)$'
-      local anchor, current_pos, top_line, filename = line:match(patt)
-      if not filename:find('^%[.+%]$') then
-        if lfs.attributes(filename) then
-          io.open_file(filename)
-        else
-          not_found[#not_found + 1] = filename
+
+  -- Unserialize buffers.
+  for _, buf in ipairs(session.buffers) do
+    if not buf.filename:find('^%[.+%]$') then
+      if lfs.attributes(buf.filename) then
+        io.open_file(buf.filename)
+        buffer:set_sel(buf.anchor, buf.current_pos)
+        buffer:line_scroll(0, buf.top_line - buffer.first_visible_line)
+        for _, line in ipairs(buf.bookmarks) do
+          buffer:marker_add(line, textadept.bookmarks.MARK_BOOKMARK)
         end
       else
-        buffer.new()._type = filename
-        buffer:set_save_point()
-        events.emit(events.FILE_OPENED, filename) -- close initial untitled buf
+        not_found[#not_found + 1] = buf.filename
       end
-      -- Restore saved buffer selection and view.
-      buffer:set_sel(tonumber(anchor), tonumber(current_pos))
-      buffer:line_scroll(0, buffer:visible_from_doc_line(tonumber(top_line)) -
-                            buffer.first_visible_line)
-    elseif line:find('^bookmarks:') then
-      local lines = line:match('^bookmarks: (.*)$')
-      for line in lines:gmatch('%d+') do
-        buffer:marker_add(tonumber(line), textadept.bookmarks.MARK_BOOKMARK)
-      end
-    elseif line:find('^size:') then
-      local maximized, width, height = line:match('^size: (%l+) (%d+) (%d+)$')
-      ui.maximized = maximized == 'true'
-      if not ui.maximized then ui.size = {width, height} end
-    elseif line:find('^%s*split%d:') then
-      local level, num, type, size = line:match('^(%s*)split(%d): (%S+) (%d+)')
-      local view = splits[#level] and splits[#level][tonumber(num)] or view
-      ui.goto_view(view)
-      splits[#level + 1] = {view:split(type == 'true')}
-      splits[#level + 1][1].size = tonumber(size) -- could be 1 or 2
-    elseif line:find('^%s*view%d:') then
-      local level, num, buf_idx = line:match('^(%s*)view(%d): (%d+)$')
-      local view = splits[#level][tonumber(num)] or view
-      buf_idx = tonumber(buf_idx)
-      if buf_idx > #_BUFFERS then buf_idx = #_BUFFERS end
-      view:goto_buffer(_BUFFERS[buf_idx])
-    elseif line:find('^current_view:') then
-      current_view = _VIEWS[tonumber(line:match('^current_view: (%d+)')) or 1]
-    elseif line:find('^recent:') then
-      -- If a recent file is already open, do not add it to the list again.
-      local recent_file, exists = line:match('^recent: (.+)$'), false
-      for i = 1, #io.recent_files do
-        if io.recent_files[i] == recent_file then exists = true break end
-      end
-      if not exists then io.recent_files[#io.recent_files + 1] = recent_file end
+    else
+      buffer.new()._type = buf.filename
+      buffer:set_save_point()
+      events.emit(events.FILE_OPENED, buf.filename) -- close initial buffer
     end
   end
-  f:close()
-  ui.goto_view(current_view)
+
+  -- Unserialize UI state.
+  ui.maximized = session.ui.maximized
+  if not ui.maximized then ui.size = session.ui.size end
+
+  -- Unserialize views.
+  local function unserialize_split(split)
+    if type(split) ~= 'table' then
+      view:goto_buffer(_BUFFERS[math.min(split, #_BUFFERS)])
+      return
+    end
+    local one, two = view:split(split.vertical)
+    one.size = split.size -- could use either one or two, it does not matter
+    for i, view in ipairs{one, two} do
+      ui.goto_view(view)
+      unserialize_split(split[i])
+    end
+  end
+  unserialize_split(session.views[1])
+  ui.goto_view(_VIEWS[math.min(session.views.current, #_VIEWS)])
+
+  -- Unserialize recent files.
+  io.recent_files = session.recent_files
+
+  -- Unserialize user data.
+  events.emit(events.SESSION_LOAD, session)
+
   if #not_found > 0 then
     ui.dialogs.msgbox{
       title = _L['Session Files Not Found'],
@@ -112,6 +120,20 @@ local function load_default_session()
   if M.save_on_quit then M.load(session_file) end
 end
 events.connect(events.ARG_NONE, load_default_session)
+
+-- Returns value *val* serialized as a string.
+-- This is a very simple implementation suitable for session saving only.
+local function _tostring(val)
+  if type(val) == 'function' or type(val) == 'userdata' then val = nil end
+  if type(val) == 'table' then
+    local t = {}
+    for k, v in pairs(val) do
+      t[#t + 1] = string.format('[%s]=%s,', _tostring(k), _tostring(v))
+    end
+    return string.format('{%s}', table.concat(t))
+  end
+  return type(val) == 'string' and string.format('%q', val) or tostring(val)
+end
 
 ---
 -- Saves the session to file *filename* or the user-selected file.
@@ -131,71 +153,56 @@ function M.save(filename)
     if not filename then return end
   end
   local session = {}
-  local buffer_line = 'buffer: %d %d %d %s' -- anchor, cursor, line, filename
-  local split_line = '%ssplit%d: %s %d' -- level, number, type, size
-  local view_line = '%sview%d: %d' -- level, number, doc index
-  -- Write out opened buffers.
+
+  -- Serialize user data.
+  events.emit(events.SESSION_SAVE, session)
+
+  -- Serialize buffers.
+  session.buffers = {}
   for _, buffer in ipairs(_BUFFERS) do
-    local filename = buffer.filename or buffer._type
-    if filename then
-      local current = buffer == view.buffer
-      local anchor = current and 'anchor' or '_anchor'
-      local current_pos = current and 'current_pos' or '_current_pos'
-      local top_line = current and 'first_visible_line' or '_top_line'
-      session[#session + 1] = buffer_line:format(buffer[anchor] or 0,
-                                                 buffer[current_pos] or 0,
-                                                 buffer[top_line] or 0,
-                                                 filename)
-      -- Write out bookmarks.
-      local lines = {}
-      local line = buffer:marker_next(0, 1 << textadept.bookmarks.MARK_BOOKMARK)
-      while line >= 0 do
-        lines[#lines + 1] = line
-        line = buffer:marker_next(line + 1,
-                                  1 << textadept.bookmarks.MARK_BOOKMARK)
-      end
-      session[#session + 1] = 'bookmarks: '..table.concat(lines, ' ')
+    if not buffer.filename and not buffer._type then goto continue end
+    local current = buffer == view.buffer
+    session.buffers[#session.buffers + 1] = {
+      filename = buffer.filename or buffer._type,
+      anchor = current and buffer.anchor or buffer._anchor,
+      current_pos = current and buffer.current_pos or buffer._current_pos,
+      top_line = current and buffer.first_visible_line or buffer._top_line,
+    }
+    local bookmarks = {}
+    local line = buffer:marker_next(0, 1 << textadept.bookmarks.MARK_BOOKMARK)
+    while line ~= -1 do
+      bookmarks[#bookmarks + 1] = line
+      line = buffer:marker_next(
+        line + 1, 1 << textadept.bookmarks.MARK_BOOKMARK)
     end
+    session.buffers[#session.buffers].bookmarks = bookmarks
+    ::continue::
   end
-  -- Write out window size. Do this before writing split views since split view
-  -- size depends on the window size.
-  local maximized, size = tostring(ui.maximized), ui.size
-  session[#session + 1] = string.format('size: %s %d %d', maximized, size[1],
-                                        size[2])
-  -- Write out split views.
-  local function write_split(split, level, number)
-    local c1, c2 = split[1], split[2]
-    local vertical, size = tostring(split.vertical), split.size
-    local spaces = string.rep(' ', level)
-    session[#session + 1] = split_line:format(spaces, number, vertical, size)
-    spaces = string.rep(' ', level + 1)
-    if c1[1] and c1[2] then
-      write_split(c1, level + 1, 1)
-    else
-      session[#session + 1] = view_line:format(spaces, 1, _BUFFERS[c1.buffer])
-    end
-    if c2[1] and c2[2] then
-      write_split(c2, level + 1, 2)
-    else
-      session[#session + 1] = view_line:format(spaces, 2, _BUFFERS[c2.buffer])
-    end
+
+  -- Serialize UI state.
+  session.ui = {maximized = ui.maximized, size = ui.size}
+
+  -- Serialize views.
+  local function serialize_split(split)
+    local one, two = split[1], split[2]
+    return {
+      one.buffer and _BUFFERS[one.buffer] or serialize_split(one),
+      two.buffer and _BUFFERS[two.buffer] or serialize_split(two),
+      vertical = split.vertical, size = split.size
+    }
   end
   local splits = ui.get_split_table()
-  if splits[1] and splits[2] then
-    write_split(splits, 0, 0)
-  else
-    session[#session + 1] = view_line:format('', 1, _BUFFERS[splits.buffer])
-  end
-  -- Write out the current focused view.
-  session[#session + 1] = string.format('current_view: %d', _VIEWS[view])
-  -- Write out other things.
-  for i = 1, #io.recent_files do
-    if i > M.max_recent_files then break end
-    session[#session + 1] = string.format('recent: %s', io.recent_files[i])
-  end
+  session.views = {
+    splits.buffer and _BUFFERS[splits.buffer] or serialize_split(splits),
+    current = _VIEWS[view]
+  }
+
+  -- Serialize recent files.
+  session.recent_files = io.recent_files
+
   -- Write the session.
   local f = io.open(filename, 'wb')
-  if f then f:write(table.concat(session, '\n')):close() end
+  if f then f:write('return ', _tostring(session)):close() end
   session_file = filename
 end
 -- Saves session on quit.
@@ -204,11 +211,14 @@ events.connect(events.QUIT, function()
 end, 1)
 
 -- Does not save session on quit.
-args.register('-n', '--nosession', 0,
-              function() M.save_on_quit = false end, 'No session functionality')
+args.register('-n', '--nosession', 0, function()
+  M.save_on_quit = false
+end, 'No session functionality')
 -- Loads the given session on startup.
 args.register('-s', '--session', 1, function(name)
-  if not lfs.attributes(name) then name = _USERHOME..'/'..name end
+  if not lfs.attributes(name) then
+    name = string.format('%s/%s', _USERHOME, name)
+  end
   M.load(name)
   events.disconnect(events.ARG_NONE, load_default_session)
 end, 'Load session')
