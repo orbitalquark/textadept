@@ -73,33 +73,33 @@ local proc, cwd, preferred_view
 local function scan_for_error(message, ext_or_lexer)
   for key, patterns in pairs(M.error_patterns) do
     if ext_or_lexer and key ~= ext_or_lexer then goto continue end
-    for i = 1, #patterns do
-      if not message:find(patterns[i]) then goto continue end
+    for _, patt in ipairs(patterns) do
+      if not message:find(patt) then goto continue end
       -- Extract details from the warning or error.
-      local details, j = {message:match(patterns[i])}, 1
-      for capture in patterns[i]:gmatch('[^%%](%b())') do
+      local detail, i = {message:match(patt)}, 1
+      for capture in patt:gmatch('[^%%](%b())') do
         if capture == '(.-)' then
-          details.filename = details[j]
+          detail.filename = detail[i]
         elseif capture == '(%d+)' then
-          local line_or_column = not details.line and 'line' or 'column'
-          details[line_or_column] = tonumber(details[j])
+          local line_or_column = not detail.line and 'line' or 'column'
+          detail[line_or_column] = tonumber(detail[i])
         else
-          details.message = details[j]
+          detail.message = detail[i]
         end
-        j = j + 1
+        i = i + 1
       end
-      details.warning = message:lower():find('warning') and
-                        not message:lower():find('error')
+      detail.warning =
+        message:lower():find('warning') and not message:lower():find('error')
       -- Compile and run commands specify the file extension or lexer used to
       -- determine the command, so the error patterns used are guaranteed to be
       -- correct. Build commands have no such context and instead iterate
       -- through all possible error patterns. Only consider the error/warning
       -- valid if the extracted filename's extension or lexer matches the error
       -- pattern's extension or lexer.
-      if ext_or_lexer then return details end
-      local ext = details.filename:match('[^/\\.]+$')
+      if ext_or_lexer then return detail end
+      local ext = detail.filename:match('[^/\\.]+$')
       local lexer = textadept.file_types.extensions[ext]
-      if ext == key or lexer == key then return details end
+      if ext == key or lexer == key then return detail end
       ::continue::
     end
     ::continue::
@@ -117,14 +117,14 @@ end
 --   run commands.
 local function print_line(line, ext_or_lexer)
   local error = scan_for_error(line, ext_or_lexer)
-  ui.silent_print = (M.run_in_background or ext_or_lexer or
-                     not line:find('^> ') or line:find('^> exit')) and true
+  ui.silent_print = M.run_in_background or ext_or_lexer or
+    not line:find('^> ') or line:find('^> exit')
   ui.print(not error and line or line:iconv('UTF-8', _CHARSET))
   ui.silent_print = false
   if error then
     -- Current position is one line below the error due to ui.print()'s '\n'.
-    buffer:marker_add(buffer.line_count - 2,
-                      error.warning and M.MARK_WARNING or M.MARK_ERROR)
+    buffer:marker_add(
+      buffer.line_count - 2, error.warning and M.MARK_WARNING or M.MARK_ERROR)
   end
 end
 
@@ -137,17 +137,44 @@ local output_buffer
 --   run commands.
 local function print_output(output, ext_or_lexer)
   if output then
-    if output_buffer then output = output_buffer..output end
+    if output_buffer then output = output_buffer .. output end
     local remainder = 1
     for line, e in output:gmatch('([^\r\n]*)\r?\n()') do
       print_line(line, ext_or_lexer)
       remainder = e
     end
-    output_buffer = remainder <= #output and string.sub(output, remainder)
+    output_buffer = remainder <= #output and output:sub(remainder)
   elseif output_buffer then
     print_line(output_buffer, ext_or_lexer)
     output_buffer = nil
   end
+end
+
+-- Runs command *command* in working directory *dir*, emitting events of type
+-- *event* with any output received.
+-- @param command String command to run, or a function returning such a string
+--   and optional working directory. A returned working directory overrides
+--   *dir*.
+-- @param dir String working directory to run *command* in.
+-- @param event String event name to emit command output with.
+-- @param macros Optional table of '%[char]' macros to expand within *command*.
+-- @param ext_or_lexer Optional file extension or lexer name associated with the
+--   executed command. This is used for better error detection in compile and
+--   run commands.
+local function run_command(command, dir, event, macros, ext_or_lexer)
+  local working_dir
+  if type(command) == 'function' then command, working_dir = command() end
+  if not command then return end
+  if macros then command = command:gsub('%%%a', macros) end
+  preferred_view = view
+  local function emit(output) events.emit(event, output, ext_or_lexer) end
+  cwd = (working_dir or dir):gsub('[/\\]$', '')
+  events.emit(event, string.format('> cd %s\n', cwd))
+  events.emit(event, string.format('> %s\n', command:iconv('UTF-8', _CHARSET)))
+  proc = assert(os.spawn(command, cwd, emit, emit, function(status)
+    emit() -- flush
+    events.emit(event, string.format('> exit status: %d\n', status))
+  end))
 end
 
 -- Compiles or runs file *filename* based on a shell command in *commands*.
@@ -158,37 +185,21 @@ local function compile_or_run(filename, commands)
     buffer:annotation_clear_all()
     io.save_file()
   end
-  -- Determine the command.
   local ext = filename:match('[^/\\.]+$')
   local lexer = filename == buffer.filename and buffer:get_lexer() or
-                textadept.file_types.extensions[ext]
+    textadept.file_types.extensions[ext]
   local command = commands[filename] or commands[ext] or commands[lexer]
-  local working_dir
-  if type(command) == 'function' then command, working_dir = command() end
-  if not command then return end
-  -- Replace macros in the command.
   local dirname, basename = '', filename
   if filename:find('[/\\]') then
     dirname, basename = filename:match('^(.+)[/\\]([^/\\]+)$')
   end
-  local basename_no_ext = basename:match('^(.+)%.')
-  command = command:gsub('%%([pdfe])', {
-    p = filename, d = dirname, f = basename, e = basename_no_ext
-  })
-  -- Prepare to run the command.
-  preferred_view = view
   local event = commands == M.compile_commands and events.COMPILE_OUTPUT or
-                events.RUN_OUTPUT
-  local ext_or_lexer = commands[ext] and ext or lexer
-  local function emit(output) events.emit(event, output, ext_or_lexer) end
-  -- Run the command.
-  cwd = (working_dir or dirname):gsub('[/\\]$', '')
-  if cwd ~= dirname then events.emit(event, '> cd '..cwd..'\n') end
-  events.emit(event, '> '..command:iconv('UTF-8', _CHARSET)..'\n')
-  proc = assert(os.spawn(command, cwd, emit, emit, function(status)
-    emit() -- flush
-    events.emit(event, '> exit status: '..status..'\n')
-  end))
+    events.RUN_OUTPUT
+  local macros = {
+    ['%p'] = filename, ['%d'] = dirname, ['%f'] = basename,
+    ['%e'] = basename:match('^(.+)%.') -- no extension
+  }
+  run_command(command, dirname, event, macros, commands[ext] and ext or lexer)
 end
 
 ---
@@ -287,11 +298,10 @@ function M.build(root_directory)
     if not root_directory then return end
   end
   for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
-  -- Determine command.
   local command = M.build_commands[root_directory]
   if not command then
     for build_file, build_command in pairs(M.build_commands) do
-      if lfs.attributes(root_directory..'/'..build_file) then
+      if lfs.attributes(string.format('%s/%s', root_directory, build_file)) then
         local button, utf8_command = ui.dialogs.inputbox{
           title = _L['Command'], informative_text = root_directory,
           text = build_command, button1 = _L['OK'], button2 = _L['Cancel']
@@ -301,20 +311,7 @@ function M.build(root_directory)
       end
     end
   end
-  local working_dir
-  if type(command) == 'function' then command, working_dir = command() end
-  if not command then return end
-  -- Prepare to run the command.
-  preferred_view = view
-  local function emit(output) events.emit(events.BUILD_OUTPUT, output) end
-  -- Run the command.
-  cwd = (working_dir or root_directory):gsub('[/\\]$', '')
-  events.emit(events.BUILD_OUTPUT, '> cd '..cwd..'\n')
-  events.emit(events.BUILD_OUTPUT, '> '..command:iconv('UTF-8', _CHARSET)..'\n')
-  proc = assert(os.spawn(command, cwd, emit, emit, function(status)
-    emit() -- flush
-    events.emit(events.BUILD_OUTPUT, '> exit status: '..status..'\n')
-  end))
+  run_command(command, root_directory, events.BUILD_OUTPUT)
 end
 events.connect(events.BUILD_OUTPUT, print_output)
 
@@ -325,7 +322,7 @@ function M.stop() if proc then proc:kill() end end
 
 -- Send line as input to process stdin on return.
 events.connect(events.CHAR_ADDED, function(code)
-  if code == 10 and proc and proc:status() == 'running' and
+  if code == string.byte('\n') and proc and proc:status() == 'running' and
      buffer._type == _L['[Message Buffer]'] then
     local line_num = buffer:line_from_position(buffer.current_pos) - 1
     proc:write((buffer:get_line(line_num)))
@@ -379,7 +376,7 @@ function M.goto_error(line, next)
 
   -- If no line was given, find the next warning or error marker.
   if not assert_type(line, 'number/nil', 1) and next ~= nil then
-    local f = buffer['marker_'..(next and 'next' or 'previous')]
+    local f = next and buffer.marker_next or buffer.marker_previous
     line = buffer:line_from_position(buffer.current_pos)
     local wrapped = false
     ::retry::
@@ -398,25 +395,25 @@ function M.goto_error(line, next)
       goto retry
     end
   end
-  textadept.editing.goto_line(line) -- ensure visible
+  buffer:goto_line(line)
 
   -- Goto the warning or error and show an annotation.
   local line = buffer:get_line(line):match('^[^\r\n]*')
-  local error = scan_for_error(line:iconv(_CHARSET, 'UTF-8'))
-  if not error then return end
+  local detail = scan_for_error(line:iconv(_CHARSET, 'UTF-8'))
+  if not detail then return end
   textadept.editing.select_line()
-  if not error.filename:find(not WIN32 and '^/' or '^%a:[/\\]') then
-    error.filename = cwd..(not WIN32 and '/' or '\\')..error.filename
+  if not detail.filename:find(not WIN32 and '^/' or '^%a:[/\\]') then
+    detail.filename = cwd .. (not WIN32 and '/' or '\\') .. detail.filename
   end
-  ui.goto_file(error.filename, true, preferred_view, true)
-  textadept.editing.goto_line(error.line - 1)
-  if error.column then
-    buffer:goto_pos(buffer:find_column(error.line - 1, error.column - 1))
+  ui.goto_file(detail.filename, true, preferred_view, true)
+  textadept.editing.goto_line(detail.line - 1)
+  if detail.column then
+    buffer:goto_pos(buffer:find_column(detail.line - 1, detail.column - 1))
   end
-  if error.message then
-    buffer.annotation_text[error.line - 1] = error.message
+  if detail.message then
+    buffer.annotation_text[detail.line - 1] = detail.message
     -- Style number 8 is the error style.
-    if not error.warning then buffer.annotation_style[error.line - 1] = 8 end
+    if not detail.warning then buffer.annotation_style[detail.line - 1] = 8 end
   end
 end
 events.connect(events.KEYPRESS, function(code)

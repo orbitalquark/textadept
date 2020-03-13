@@ -78,7 +78,7 @@ local function run_lua(code)
   if type(result) == 'table' then
     local items = {}
     for k, v in pairs(result) do
-      items[#items + 1] = string.format('%s = %s', tostring(k), tostring(v))
+      items[#items + 1] = string.format('%s = %s', k, v)
     end
     table.sort(items)
     result = string.format('{%s}', table.concat(items, ', '))
