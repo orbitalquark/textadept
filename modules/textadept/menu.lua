@@ -42,7 +42,7 @@ local function set_encoding(encoding)
 end
 local function open_page(url)
   local cmd = (WIN32 and 'start ""') or (OSX and 'open') or 'xdg-open'
-  os.spawn(string.format('%s "%s"', cmd, not OSX and url or 'file://'..url))
+  os.spawn(string.format('%s "%s"', cmd, not OSX and url or 'file://' .. url))
 end
 
 ---
@@ -91,7 +91,7 @@ local default_menubar = {
     SEPARATOR,
     {_L['Match Brace'], function()
       local match_pos = buffer:brace_match(buffer.current_pos, 0)
-      if match_pos >= 0 then buffer:goto_pos(match_pos) end
+      if match_pos ~= -1 then buffer:goto_pos(match_pos) end
     end},
     {_L['Complete Word'], function()
       textadept.editing.autocomplete('word')
@@ -120,9 +120,9 @@ local default_menubar = {
       {_L['Enclose as XML Tags'], function()
         buffer:begin_undo_action()
         enc('<', '>')
-        local pos = buffer.current_pos
-        while buffer.char_at[pos - 1] ~= 60 do pos = pos - 1 end -- '<'
-        buffer:insert_text(-1, '</'..buffer:text_range(pos, buffer.current_pos))
+        local s, e = buffer.current_pos, buffer.current_pos
+        while buffer.char_at[s - 1] ~= 60 do s = s - 1 end -- '<'
+        buffer:insert_text(-1, '</' .. buffer:text_range(s, e))
         buffer:end_undo_action()
       end},
       {_L['Enclose as Single XML Tag'], function() enc('<', ' />') end},
@@ -177,7 +177,7 @@ local default_menubar = {
         -- Compare the base run/compile command with the one for the current
         -- file. The difference is any additional arguments set previously.
         base_commands[i] = commands[buffer.filename:match('[^.]+$')] or
-                           commands[buffer:get_lexer()] or ''
+          commands[buffer:get_lexer()] or ''
         local current_command = commands[buffer.filename] or ''
         local args = current_command:sub(#base_commands[i] + 2)
         utf8_args[i] = args:iconv('UTF-8', _CHARSET)
@@ -191,8 +191,8 @@ local default_menubar = {
       for i, commands in ipairs{run_commands, compile_commands} do
         -- Add the additional arguments to the base run/compile command and set
         -- the new command to be the one used for the current file.
-        commands[buffer.filename] = base_commands[i]..' '..
-                                    utf8_args[i]:iconv(_CHARSET, 'UTF-8')
+        commands[buffer.filename] = string.format('%s %s', base_commands[i],
+          utf8_args[i]:iconv(_CHARSET, 'UTF-8'))
       end
     end},
     {_L['Build'], textadept.run.build},
@@ -249,14 +249,14 @@ local default_menubar = {
     {_L['Show Documentation'], textadept.editing.show_documentation},
     {_L['Show Style'], function()
       local char = buffer:text_range(buffer.current_pos,
-                                     buffer:position_after(buffer.current_pos))
+        buffer:position_after(buffer.current_pos))
       if char == '' then return end -- end of buffer
       local bytes = string.rep(' 0x%X', #char):format(char:byte(1, #char))
       local style = buffer.style_at[buffer.current_pos]
-      local text = string.format("'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char,
-                                 utf8.codepoint(char), bytes, _L['Lexer'],
-                                 buffer:get_lexer(true), _L['Style'],
-                                 buffer:name_of_style(style), style)
+      local text = string.format(
+        "'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char, utf8.codepoint(char),
+        bytes, _L['Lexer'], buffer:get_lexer(true), _L['Style'],
+        buffer:name_of_style(style), style)
       buffer:call_tip_show(buffer.current_pos, text)
     end}
   },
@@ -343,14 +343,14 @@ local default_menubar = {
   },
   {
     title = _L['Help'],
-    {_L['Show Manual'], function() open_page(_HOME..'/doc/manual.html') end},
-    {_L['Show LuaDoc'], function() open_page(_HOME..'/doc/api.html') end},
+    {_L['Show Manual'], function() open_page(_HOME .. '/doc/manual.html') end},
+    {_L['Show LuaDoc'], function() open_page(_HOME .. '/doc/api.html') end},
     SEPARATOR,
     {_L['About'], function()
-      ui.dialogs.msgbox({
+      ui.dialogs.msgbox{
         title = 'Textadept', text = _RELEASE, informative_text = _COPYRIGHT,
-        icon_file = _HOME..'/core/images/ta_64x64.png'
-      })
+        icon_file = _HOME .. '/core/images/ta_64x64.png'
+      }
     end}
   }
 }
@@ -403,8 +403,8 @@ local function get_gdk_key(key_seq)
   local mods, key = key_seq:match('^([cams]*)(.+)$')
   if not mods or not key then return nil end
   local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
-                    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
-                    (mods:find('m') and 0x10000000 or 0)
+    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
+    (mods:find('m') and 0x10000000 or 0)
   local code = string.byte(key)
   if #key > 1 or code < 32 then
     for i, s in pairs(keys.KEYSYMS) do
@@ -424,18 +424,17 @@ end
 local function read_menu_table(menu, contextmenu)
   local gtkmenu = {}
   gtkmenu.title = menu.title
-  for i = 1, #menu do
-    if menu[i].title then
-      gtkmenu[#gtkmenu + 1] = read_menu_table(menu[i], contextmenu)
-    else
-      local label, f = menu[i][1], menu[i][2]
-      local menu_id = not contextmenu and #menu_items + 1 or
-                      #contextmenu_items + 1000 + 1
-      local key, mods = get_gdk_key(key_shortcuts[tostring(f)])
-      gtkmenu[#gtkmenu + 1] = {label, menu_id, key, mods}
-      if f then
+  for _, item in ipairs(menu) do
+    if item.title then
+      gtkmenu[#gtkmenu + 1] = read_menu_table(item, contextmenu)
+    else -- item = {label, function}
+      local menu_id =
+        not contextmenu and #menu_items + 1 or #contextmenu_items + 1000 + 1
+      local key, mods = get_gdk_key(key_shortcuts[tostring(item[2])])
+      gtkmenu[#gtkmenu + 1] = {item[1], menu_id, key, mods}
+      if item[2] then
         local menu_items = not contextmenu and menu_items or contextmenu_items
-        menu_items[menu_id < 1000 and menu_id or menu_id - 1000] = menu[i]
+        menu_items[menu_id < 1000 and menu_id or menu_id - 1000] = item
       end
     end
   end
@@ -456,8 +455,8 @@ local function proxy_menu(menu, update, menubar)
       if type(k) == 'number' or k == 'title' then
         v = menu[k]
       elseif type(k) == 'string' then
-        for i = 1, #menu do
-          if menu[i].title == k or menu[i][1] == k then v = menu[i] break end
+        for _, item in ipairs(menu) do
+          if item.title == k or item[1] == k then v = item break end
         end
       end
       return type(v) == 'table' and proxy_menu(v, update, menubar or menu) or v
@@ -497,6 +496,8 @@ local function set_menubar(menubar)
 end
 events.connect(events.INITIALIZED, function() set_menubar(default_menubar) end)
 -- Define menu proxy for use by keys.lua and user scripts.
+-- Do not use an update function because this is expensive at startup, and
+-- `events.INITIALIZED` will create the first visible menubar and proper proxy.
 proxies.menubar = proxy_menu(default_menubar, function() end)
 
 -- Sets `ui.context_menu` and `ui.tab_context_menu` from menu item lists
@@ -514,17 +515,22 @@ proxies.menubar = proxy_menu(default_menubar, function() end)
 -- @see ui.menu
 local function set_contextmenus(buffer_menu, tab_menu)
   contextmenu_items = {} -- reset
-  local menu = buffer_menu or default_context_menu
-  ui.context_menu = ui.menu(read_menu_table(menu, true))
-  proxies.context_menu = proxy_menu(menu, set_contextmenus)
-  menu = tab_menu or default_tab_context_menu
-  ui.tab_context_menu = ui.menu(read_menu_table(menu, true))
-  proxies.tab_context_menu = proxy_menu(menu, function()
-    set_contextmenus(nil, menu)
-  end)
+  local menus = {
+    context_menu = buffer_menu or default_context_menu,
+    tab_context_menu = tab_menu or default_tab_context_menu
+  }
+  for name, menu in pairs(menus) do
+    ui[name] = ui.menu(read_menu_table(menu, true))
+    proxies[name] = proxy_menu(menu, function()
+      set_contextmenus(menus.context_menu, menus.tab_context_menu)
+    end)
+  end
 end
 events.connect(events.INITIALIZED, set_contextmenus)
 -- Define menu proxies for use by user scripts.
+-- Do not use an update function because this is expensive at startup, and
+-- `events.INITIALIZED` will create these visible menus and their proper
+-- proxies.
 proxies.context_menu = proxy_menu(default_context_menu, function() end)
 proxies.tab_context_menu = proxy_menu(default_tab_context_menu, function() end)
 
@@ -532,8 +538,8 @@ proxies.tab_context_menu = proxy_menu(default_tab_context_menu, function() end)
 events.connect(events.MENU_CLICKED, function(menu_id)
   local menu_item = menu_id < 1000 and menu_items or contextmenu_items
   local action = menu_item[menu_id < 1000 and menu_id or menu_id - 1000][2]
-  assert(type(action) == 'function',
-         _L['Unknown command:']..' '..tostring(action))
+  assert(type(action) == 'function', string.format(
+    '%s %s', _L['Unknown command:'], action))
   action()
 end)
 
@@ -545,13 +551,14 @@ function M.select_command()
   -- Builds the item tables for the filtered list dialog.
   -- @param menu The menu to read from.
   local function build_command_tables(menu)
-    for i = 1, #menu do
-      if menu[i].title then
-        build_command_tables(menu[i])
-      elseif menu[i][1] ~= '' then
-        local label = menu.title and menu.title..': '..menu[i][1] or menu[i][1]
+    for _, item in ipairs(menu) do
+      if item.title then
+        build_command_tables(item)
+      elseif item[1] ~= '' then -- item = {label, function}
+        local label =
+          menu.title and string.format('%s: %s', menu.title, item[1]) or item[1]
         items[#items + 1] = label:gsub('_([^_])', '%1')
-        items[#items + 1] = key_shortcuts[tostring(menu[i][2])] or ''
+        items[#items + 1] = key_shortcuts[tostring(item[2])] or ''
       end
     end
   end

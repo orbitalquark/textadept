@@ -29,7 +29,7 @@ function assert_equal(v1, v2)
     end
     ::continue::
   end
-  error(string.format('%s ~= %s', tostring(v1), tostring(v2)), 2)
+  error(string.format('%s ~= %s', v1, v2), 2)
 end
 
 
@@ -2183,6 +2183,8 @@ function test_menu_functions_interactive()
   io.close_buffer()
 end
 
+-- TODO: test set arguments more thoroughly.
+
 function test_menu_select_command_interactive()
   local num_buffers = #_BUFFERS
   textadept.menu.select_command()
@@ -2259,6 +2261,7 @@ function test_run_build()
   textadept.run.build_commands[_HOME] = function()
     return 'lua modules/textadept/run/build.lua', _HOME .. '/test/' -- intentional trailing '/'
   end
+  textadept.run.stop() -- should not do anything
   textadept.run.build(_HOME)
   if #_VIEWS > 1 then view:unsplit() end
   assert_equal(buffer._type, _L['[Message Buffer]'])
@@ -2272,6 +2275,7 @@ function test_run_build()
   assert(buffer:get_text():find('build%.lua'), 'did not run build command')
   assert(buffer:get_text():find('read "foo"'), 'did not send stdin')
   assert(buffer:get_text():find('> exit status: 9'), 'build not stopped')
+  textadept.run.stop() -- should not do anything
   io.close_buffer()
   -- TODO: chdir(_HOME) and textadept.run.build() -- no param.
   -- TODO: project whose makefile is autodetected.

@@ -185,7 +185,7 @@ end)
 
 -- Auto-indent on return.
 events.connect(events.CHAR_ADDED, function(code)
-  if not M.auto_indent or code ~= 10 then return end
+  if not M.auto_indent or code ~= string.byte('\n') then return end
   local line = buffer:line_from_position(buffer.current_pos)
   if line > 0 and buffer:get_line(line - 1):find('^[\r\n]+$') and
      buffer:get_line(line):find('^[^\r\n]') then
