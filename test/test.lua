@@ -2284,6 +2284,44 @@ unstable(test_run_build)
 
 -- TODO: test textadept.run.run_in_background
 
+function test_session_save()
+  local handler = function(session)
+    session.baz = true
+    session.quux = assert
+    session.foobar = buffer.doc_pointer
+    session.foobaz = coroutine.create(function() end)
+  end
+  events.connect(events.SESSION_SAVE, handler)
+  buffer.new()
+  buffer.filename = 'foo.lua'
+  textadept.bookmarks.toggle()
+  view:split()
+  buffer.new()
+  buffer.filename = 'bar.lua'
+  local session_file = os.tmpname()
+  textadept.session.save(session_file)
+  local session = assert(loadfile(session_file, 't', {}))()
+  assert_equal(session.buffers[#session.buffers - 1].filename, 'foo.lua')
+  assert_equal(session.buffers[#session.buffers - 1].bookmarks, {0})
+  assert_equal(session.buffers[#session.buffers].filename, 'bar.lua')
+  assert_equal(session.ui.maximized, false)
+  assert_equal(type(session.views[1]), 'table')
+  assert_equal(session.views[1][1], #_BUFFERS - 1)
+  assert_equal(session.views[1][2], #_BUFFERS)
+  assert(not session.views[1].vertical, 'split vertical')
+  assert(session.views[1].size > 1, 'split size not set properly')
+  assert_equal(session.views.current, #_VIEWS)
+  assert_equal(session.baz, true)
+  assert(not session.quux, 'function serialized')
+  assert(not session.foobar, 'userdata serialized')
+  assert(not session.foobaz, 'thread serialized')
+  view:unsplit()
+  io.close_buffer()
+  io.close_buffer()
+  os.remove(session_file)
+  events.disconnect(events.SESSION_SAVE, handler)
+end
+
 function test_snippets_find_snippet()
   snippets.foo = 'bar'
   textadept.snippets.paths[1] = _HOME .. '/test/modules/textadept/snippets'
