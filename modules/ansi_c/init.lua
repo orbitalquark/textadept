@@ -19,8 +19,8 @@ module('_M.ansi_c')]]
 -- @class table
 -- @name tags
 M.tags = {
-  _HOME..'/modules/ansi_c/tags', _HOME..'/modules/ansi_c/lua_tags',
-  _USERHOME..'/modules/ansi_c/tags'
+  _HOME .. '/modules/ansi_c/tags', _HOME .. '/modules/ansi_c/lua_tags',
+  _USERHOME .. '/modules/ansi_c/tags'
 }
 
 M.autocomplete_snippets = true
@@ -40,8 +40,7 @@ textadept.editing.autocompleters.ansi_c = function()
   if op ~= '' and op ~= '.' and op ~= '->' then return nil end
   -- Attempt to identify the symbol type.
   if symbol ~= '' then
-    local buffer = buffer
-    local decl = '([%w_]+)[%s%*&]+'..symbol:gsub('%p', '%%%0')..'[^%w_]'
+    local decl = '([%w_]+)[%s%*&]+' .. symbol:gsub('%p', '%%%0') .. '[^%w_]'
     for i = buffer:line_from_position(buffer.current_pos) - 1, 0, -1 do
       local class = buffer:get_line(i):match(decl)
       if class then symbol = class break end
@@ -50,33 +49,33 @@ textadept.editing.autocompleters.ansi_c = function()
   -- Search through ctags for completions for that symbol.
   local tags_files = {}
   for i = 1, #M.tags do tags_files[#tags_files + 1] = M.tags[i] end
-  tags_files[#tags_files + 1] = (io.get_project_root(buffer.filename) or
-                                 lfs.currentdir())..'/tags'
-  local name_patt = '^'..part
+  tags_files[#tags_files + 1] =
+    (io.get_project_root(buffer.filename) or lfs.currentdir()) .. '/tags'
+  local name_patt = '^' .. part
   local sep = string.char(buffer.auto_c_type_separator)
   ::rescan::
   local list = {}
   for i = 1, #tags_files do
-    if lfs.attributes(tags_files[i]) then
-      for tag_line in io.lines(tags_files[i]) do
-        local name = tag_line:match('^%S+')
-        if (name:find(name_patt) and not name:find('^!') and not list[name]) or
-           name == symbol and op == '' then
-          local fields = tag_line:match(';"\t(.*)$')
-          if (fields:match('class:(%S+)') or fields:match('enum:(%S+)') or
-              fields:match('struct:(%S+)') or '') == symbol then
-            list[#list + 1] = string.format('%s%s%d', name, sep,
-                                            xpms[fields:sub(1, 1)])
-            list[name] = true
-          elseif name == symbol and fields:match('typeref:') then
-            -- For typeref, change the lookup symbol to the referenced name and
-            -- rescan tags files.
-            symbol = fields:match('[^:]+$')
-            goto rescan
-          end
+    if not lfs.attributes(tags_files[i]) then goto continue end
+    for tag_line in io.lines(tags_files[i]) do
+      local name = tag_line:match('^%S+')
+      if (name:find(name_patt) and not name:find('^!') and not list[name]) or
+         name == symbol and op == '' then
+        local fields = tag_line:match(';"\t(.*)$')
+        local type = fields:match('class:(%S+)') or
+          fields:match('enum:(%S+)') or fields:match('struct:(%S+)') or ''
+        if type == symbol then
+          list[#list + 1] = name .. sep .. xpms[fields:sub(1, 1)]
+          list[name] = true
+        elseif name == symbol and fields:match('typeref:') then
+          -- For typeref, change the lookup symbol to the referenced name and
+          -- rescan tags files.
+          symbol = fields:match('[^:]+$')
+          goto rescan
         end
       end
     end
+    ::continue::
   end
   if symbol == '' and M.autocomplete_snippets then
     local _, snippets = textadept.editing.autocompleters.snippet()
@@ -86,26 +85,17 @@ textadept.editing.autocompleters.ansi_c = function()
 end
 
 local api_files = textadept.editing.api_files
-api_files.ansi_c[#api_files.ansi_c + 1] = _HOME..'/modules/ansi_c/api'
-api_files.ansi_c[#api_files.ansi_c + 1] = _HOME..'/modules/ansi_c/lua_api'
-api_files.ansi_c[#api_files.ansi_c + 1] = _USERHOME..'/modules/ansi_c/api'
+api_files.ansi_c[#api_files.ansi_c + 1] = _HOME .. '/modules/ansi_c/api'
+api_files.ansi_c[#api_files.ansi_c + 1] = _HOME .. '/modules/ansi_c/lua_api'
+api_files.ansi_c[#api_files.ansi_c + 1] = _USERHOME .. '/modules/ansi_c/api'
 
 -- Commands.
 
 ---
 -- Table of C-specific key bindings.
---
--- + `Shift+Enter` (`⇧↩` | `S-Enter`)
---   Add ';' to the end of the current line and insert a newline.
 -- @class table
 -- @name _G.keys.ansi_c
-keys.ansi_c = {
-  ['s\n'] = function()
-    buffer:line_end()
-    buffer:add_text(';')
-    buffer:new_line()
-  end,
-}
+keys.ansi_c = {}
 
 -- Snippets.
 

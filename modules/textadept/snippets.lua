@@ -146,20 +146,21 @@ local snippets = {}
 -- @return trigger word, snippet text or table of matching snippets
 local function find_snippet(grep, no_trigger)
   local matching_snippets = {}
-  local pos = buffer.current_pos
-  local trigger = buffer:text_range(buffer:word_start_position(pos), pos)
-  if no_trigger then grep, trigger = true, '' end
+  local trigger = not no_trigger and buffer:text_range(
+    buffer:word_start_position(buffer.current_pos), buffer.current_pos) or ''
+  if no_trigger then grep = true end
   local lexer = buffer:get_lexer(true)
-  local name_patt = '^'..trigger
-  -- Search in the snippet tables, ignoring this module's non-string members.
-  local s = snippets
-  for _, v in ipairs{type(s[lexer]) == 'table' and s[lexer] or {}, s} do
-    if not grep and v[trigger] then
-      return trigger, v[trigger]
-    elseif grep then
-      for name, text in pairs(v) do
-        if name:find(name_patt) and
-           (type(text) == 'string' or type(text) == 'function') then
+  local name_patt = '^' .. trigger
+  -- Search in the snippet tables.
+  local snippet_tables = {snippets}
+  if type(snippets[lexer]) == 'table' then
+    table.insert(snippet_tables, 1, snippets[lexer])
+  end
+  for _, snippets in ipairs(snippet_tables) do
+    if not grep and snippets[trigger] then return trigger, snippets[trigger] end
+    if grep then
+      for name, text in pairs(snippets) do
+        if name:find(name_patt) and type(text) ~= 'table' then
           matching_snippets[name] = tostring(text)
         end
       end
@@ -171,11 +172,12 @@ local function find_snippet(grep, no_trigger)
       -- Snippet files are either of the form "lexer.trigger.ext" or
       -- "trigger.ext". Prefer "lexer."-prefixed snippets.
       local p1, p2, p3 = basename:match('^([^.]+)%.?([^.]*)%.?([^.]*)$')
-      if not grep and (p1 == lexer and p2 == trigger or
-                       p1 == trigger and p3 == '') or
-         grep and (p1 == lexer and p2 and p2:find(name_patt) or
-                   p1 and p1:find(name_patt) and p3 == '') then
-        local f = io.open(M.paths[i]..'/'..basename)
+      if not grep and
+         (p1 == lexer and p2 == trigger or p1 == trigger and p3 == '') or
+         grep and
+         (p1 == lexer and p2 and p2:find(name_patt) or
+           p1 and p1:find(name_patt) and p3 == '') then
+        local f = io.open(string.format('%s/%s', M.paths[i], basename))
         text = f:read('a')
         f:close()
         if not grep then return trigger, text end
@@ -233,7 +235,7 @@ local function new_snippet(text, trigger)
       local pos = buffer:indicator_end(INDIC_CURRENTPLACEHOLDER, self.start_pos)
       if pos == 0 then pos = self.start_pos end
       return buffer:indicator_all_on_for(pos) &
-             1 << INDIC_CURRENTPLACEHOLDER > 0 and pos + 1 or pos
+        1 << INDIC_CURRENTPLACEHOLDER > 0 and pos + 1 or pos
     else
       return snippet_mt[k]
     end
@@ -244,7 +246,7 @@ local function new_snippet(text, trigger)
   local lines = {}
   local indent = {[true] = '\t', [false] = string.rep(' ', buffer.tab_width)}
   local use_tabs = buffer.use_tabs
-  for line in (text..'\n'):gmatch('([^\r\n]*)\r?\n') do
+  for line in (text .. '\n'):gmatch('([^\r\n]*)\r?\n') do
     lines[#lines + 1] = line:gsub('^(%s*)', function(indentation)
       return indentation:gsub(indent[not use_tabs], indent[use_tabs])
     end)
@@ -254,7 +256,7 @@ local function new_snippet(text, trigger)
     local line = buffer:line_from_position(buffer.current_pos)
     local level = buffer.line_indentation[line] // buffer.tab_width
     local additional_indent = indent[use_tabs]:rep(level)
-    for i = 2, #lines do lines[i] = additional_indent..lines[i] end
+    for i = 2, #lines do lines[i] = additional_indent .. lines[i] end
   end
   text = table.concat(lines, ({[0] = '\r\n', '\r', '\n'})[buffer.eol_mode])
 
@@ -265,10 +267,9 @@ local function new_snippet(text, trigger)
   local patt = P{
     V('plain_text') * V('placeholder') * Cp() + V('plain_text') * -1,
     plain_text = C(((P(1) - '%' + '%' * S('({'))^1 + '%%')^0),
-    placeholder = Ct('%' * (V('index')^-1 * (V('angles') + V('brackets') +
-                                             V('braces')) *
-                            V('transform') +
-                            V('index') * (V('parens') + V('simple')))),
+    placeholder = Ct(
+      '%' * (V('index')^-1 * (V('angles') + V('brackets') + V('braces')) *
+        V('transform') + V('index') * (V('parens') + V('simple')))),
     index = Cg(R('09')^1 / tonumber, 'index'),
     parens = '(' * Cg((1 - S('()') + V('parens'))^0, 'default') * ')',
     simple = Cg(Cc(true), 'simple'), transform = Cg(Cc(true), 'transform'),
@@ -305,7 +306,7 @@ local function new_snippet(text, trigger)
       snapshot.placeholders[#snapshot.placeholders + 1] = placeholder
     end
     if text_part ~= '' then
-      snapshot.text = snapshot.text..text_part:gsub('%%(%p)', '%1')
+      snapshot.text = snapshot.text .. text_part:gsub('%%(%p)', '%1')
     end
     placeholder.position = #snapshot.text
     if placeholder.default then
@@ -325,8 +326,8 @@ local function new_snippet(text, trigger)
             position = start_pos + position - 1
             if default then
               -- Process sub-placeholders starting at the index after '%n('.
-              default = process_placeholders(default:sub(2, -2),
-                                             position + #index + 2)
+              default = process_placeholders(
+                default:sub(2, -2), position + #index + 2)
             end
             index = tonumber(index)
             if index > snippet.max_index then snippet.max_index = index end
@@ -336,7 +337,7 @@ local function new_snippet(text, trigger)
               length = #(default or ' '),
               position = snippet.start_pos + position,
             }
-            return default or ' '
+            return default or ' ' -- fill empty placeholder for display
           end
           local ph_patt = P{
             lpeg.Cs((Cp() * '%' * C(R('09')^1) * C(V('parens'))^-1 / ph + 1)^0),
@@ -344,21 +345,21 @@ local function new_snippet(text, trigger)
           }
           return ph_patt:match(s)
         end
-        placeholder.default = process_placeholders(placeholder.default,
-                                                   placeholder.position)
+        placeholder.default = process_placeholders(
+          placeholder.default, placeholder.position)
       end
-      snapshot.text = snapshot.text..placeholder.default
+      snapshot.text = snapshot.text .. placeholder.default
     elseif placeholder.transform and not placeholder.index then
-      snapshot.text = snapshot.text..snippet:execute_code(placeholder)
+      snapshot.text = snapshot.text .. snippet:execute_code(placeholder)
     else
-      snapshot.text = snapshot.text..' ' -- fill empty placeholders for display
+      snapshot.text = snapshot.text .. ' ' -- fill empty placeholder for display
     end
     placeholder.length = #snapshot.text - placeholder.position
     placeholder.position = snippet.start_pos + placeholder.position -- absolute
     text_part, placeholder, e = patt:match(text, e)
   end
   if text_part ~= '' then
-    snapshot.text = snapshot.text..text_part:gsub('%%(%p)', '%1')
+    snapshot.text = snapshot.text .. text_part:gsub('%%(%p)', '%1')
   end
   snippet.snapshots[0] = snapshot
 
@@ -415,9 +416,9 @@ snippet_mt = {
 
     -- Find the default placeholder, which may be the first mirror.
     local ph = select(2, self:each_placeholder(self.index, 'default')()) or
-               select(2, self:each_placeholder(self.index, 'choice')()) or
-               select(2, self:each_placeholder(self.index, 'simple')()) or
-               self.index == 0 and {position = self.end_pos, length = 0}
+      select(2, self:each_placeholder(self.index, 'choice')()) or
+      select(2, self:each_placeholder(self.index, 'simple')()) or
+      self.index == 0 and {position = self.end_pos, length = 0}
     if not ph then self:next() return end -- try next placeholder
 
     -- Mark the position of the placeholder so transforms can identify it.
@@ -498,8 +499,8 @@ snippet_mt = {
   -- @param index Optional placeholder index to constrain results to.
   -- @param type Optional placeholder type to constrain results to.
   each_placeholder = function(self, index, type)
-    local snapshot = self.snapshots[self.index > 0 and self.index - 1 or
-                                    #self.snapshots]
+    local snapshot =
+      self.snapshots[self.index > 0 and self.index - 1 or #self.snapshots]
     local i = self.start_pos
     return function()
       local s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
@@ -527,12 +528,12 @@ snippet_mt = {
   -- @param placeholder The placeholder that contains code to execute.
   execute_code = function(self, placeholder)
     local s, e = self.placeholder_pos, buffer.selection_end
-    local text = s < e and buffer:text_range(s, e) or buffer:text_range(e, s)
-    if not self.index then text = '' end -- %<...> or %[...]
+    if s > e then s, e = e, s end
+    local text = self.index and buffer:text_range(s, e) or '' -- %<...>, %[...]
     if placeholder.lua_code then
-      local env = {text = text, selected_text = self.original_sel_text}
-      local f, result = load('return '..placeholder.lua_code, nil, 'bt',
-                             setmetatable(env, {__index = _G}))
+      local env = setmetatable(
+        {text = text, selected_text = self.original_sel_text}, {__index = _G})
+      local f, result = load('return ' .. placeholder.lua_code, nil, 't', env)
       return f and select(2, pcall(f)) or result or ''
     elseif placeholder.sh_code then
       -- Note: cannot use spawn since $env variables are not expanded.
@@ -567,7 +568,7 @@ snippet_mt = {
         buffer:indicator_clear_range(s, e - s)
         if buffer:text_range(s, e) == ' ' then
           buffer:set_target_range(s, e)
-          buffer:replace_target('')
+          buffer:replace_target('') -- delete filler ' '
           goto redo
         end
       end
@@ -591,11 +592,11 @@ function M.insert(text)
   local trigger
   if not assert_type(text, 'string/nil', 1) then
     trigger, text = find_snippet(trigger)
-    if type(text) == 'function' and not trigger:find('^_') then text = text() end
+    if type(text) == 'function' then text = text() end
     assert_type(text, 'string/nil', trigger or '?')
   end
   local snippet = type(text) == 'string' and new_snippet(text, trigger) or
-                  snippet_stack[#snippet_stack]
+    snippet_stack[#snippet_stack]
   if snippet then snippet:next() else return false end
 end
 
@@ -657,19 +658,16 @@ end)
 -- @see textadept.editing.autocomplete
 textadept.editing.autocompleters.snippet = function()
   local list = {}
-  local trigger, matching_snippets = find_snippet(true)
+  local trigger, snippets = find_snippet(true)
   local sep = string.char(buffer.auto_c_type_separator)
   local xpm = textadept.editing.XPM_IMAGES.NAMESPACE
-  for name in pairs(matching_snippets) do
-    list[#list + 1] = string.format('%s%s%d', name, sep, xpm)
-  end
+  for name in pairs(snippets) do list[#list + 1] = name .. sep .. xpm end
   return #trigger, list
 end
 
 ---
 -- Map of snippet triggers with their snippet text or functions that return such
 -- text, with language-specific snippets tables assigned to a lexer name key.
--- This table also contains the `textadept.snippets` module.
 -- @class table
 -- @name _G.snippets
 _G.snippets = snippets

@@ -18,8 +18,8 @@ module('_M.lua')]]
 -- Textadept tags or API file for use in autocompletion and documentation.
 -- @param filename Textadept tags or api file to return.
 local function ta_api(filename)
-  local home = '^'.._HOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
-  local userhome = '^'.._USERHOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
+  local home = '^' .. _HOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
+  local userhome = '^' .. _USERHOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
   return function()
     local buffer_filename = buffer.filename or ''
     if buffer_filename:find(home) or buffer_filename:find(userhome) or
@@ -39,8 +39,8 @@ end
 -- @class table
 -- @name tags
 M.tags = {
-  _HOME..'/modules/lua/tags', _USERHOME..'/modules/lua/tags',
-  ta_api(_HOME..'/modules/lua/ta_tags')
+  _HOME .. '/modules/lua/tags', _USERHOME .. '/modules/lua/tags',
+  ta_api(_HOME .. '/modules/lua/ta_tags')
 }
 
 ---
@@ -69,8 +69,7 @@ textadept.editing.autocompleters.lua = function()
   end
   symbol, part = symbol:gsub('^_G%.?', ''), part ~= '_G' and part or ''
   -- Attempt to identify string type and file type symbols.
-  local buffer = buffer
-  local assignment = '%f[%w_]'..symbol:gsub('(%p)', '%%%1')..'%s*=%s*(.*)$'
+  local assignment = '%f[%w_]' .. symbol:gsub('(%p)', '%%%1') .. '%s*=%s*(.*)$'
   for i = buffer:line_from_position(buffer.current_pos) - 1, 0, -1 do
     local expr = buffer:get_line(i):match(assignment)
     if expr then
@@ -80,32 +79,32 @@ textadept.editing.autocompleters.lua = function()
     end
   end
   -- Search through ctags for completions for that symbol.
-  local name_patt = '^'..part
+  local name_patt = '^' .. part
   local sep = string.char(buffer.auto_c_type_separator)
   for _, file in ipairs(M.tags) do
     if type(file) == 'function' then file = file() end
-    if file and lfs.attributes(file) then
-      for tag_line in io.lines(file) do
-        local name = tag_line:match('^%S+')
-        if name:find(name_patt) and not list[name] then
-          local fields = tag_line:match(';"\t(.*)$')
-          local k, class = fields:sub(1, 1), fields:match('class:(%S+)') or ''
-          if class == symbol and (op ~= ':' or k == 'f') then
-            list[#list + 1] = string.format('%s%s%d', name, sep, xpms[k])
-            list[name] = true
-          end
+    if not file or not lfs.attributes(file) then goto continue end
+    for tag_line in io.lines(file) do
+      local name = tag_line:match('^%S+')
+      if name:find(name_patt) and not list[name] then
+        local fields = tag_line:match(';"\t(.*)$')
+        local k, class = fields:sub(1, 1), fields:match('class:(%S+)') or ''
+        if class == symbol and (op ~= ':' or k == 'f') then
+          list[#list + 1] = name .. sep .. xpms[k]
+          list[name] = true
         end
       end
     end
+    ::continue::
   end
-  if #list == 1 and list[1]:find(name_patt..'%?') then return nil end
+  if #list == 1 and list[1]:find(name_patt .. '%?') then return nil end
   return #part, list
 end
 
 local api_files = textadept.editing.api_files
-api_files.lua[#api_files.lua + 1] = _HOME..'/modules/lua/api'
-api_files.lua[#api_files.lua + 1] = _USERHOME..'/modules/lua/api'
-api_files.lua[#api_files.lua + 1] = ta_api(_HOME..'/modules/lua/ta_api')
+api_files.lua[#api_files.lua + 1] = _HOME .. '/modules/lua/api'
+api_files.lua[#api_files.lua + 1] = _USERHOME .. '/modules/lua/api'
+api_files.lua[#api_files.lua + 1] = ta_api(_HOME .. '/modules/lua/ta_api')
 
 -- Commands.
 
