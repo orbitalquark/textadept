@@ -358,8 +358,7 @@ local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 -- @param line The line number in the message buffer that contains the
 --   compile/run warning or error to go to.
 -- @param next Optional flag indicating whether to go to the next recognized
---   warning/error or the previous one. Only applicable when *line* is `nil` or
---   `false`.
+--   warning/error or the previous one. Only applicable when *line* is `nil`.
 -- @see error_patterns
 -- @name goto_error
 function M.goto_error(line, next)
