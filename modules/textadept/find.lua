@@ -389,7 +389,7 @@ local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 -- @param line_num The line number in the files found buffer that contains the
 --   search result to go to.
 -- @param next Optional flag indicating whether to go to the next search result
---   or the previous one. Only applicable when *line_num* is `nil` or `false`.
+--   or the previous one. Only applicable when *line_num* is `nil`.
 -- @name goto_file_found
 function M.goto_file_found(line_num, next)
   local ff_view, ff_buf = nil, nil

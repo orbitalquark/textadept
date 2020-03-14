@@ -227,8 +227,7 @@ function io.save_file_as(filename)
   local dir, name = (buffer.filename or ''):match('^(.-[/\\]?)([^/\\]*)$')
   if not assert_type(filename, 'string/nil', 1) then
     filename = ui.dialogs.filesave{
-      title = _L['Save File'], with_directory = dir,
-      with_file = name:iconv('UTF-8', _CHARSET),
+      title = _L['Save File'], with_directory = dir, with_file = name,
       width = CURSES and ui.size[1] - 2 or nil
     }
     if not filename then return end

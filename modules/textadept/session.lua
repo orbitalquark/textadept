@@ -11,7 +11,6 @@ local M = {}
 --   `-n` or `--nosession` to Textadept.
 -- @field _G.events.SESSION_SAVE (string)
 --   Emitted when saving a session.
---
 --   Arguments:
 --
 --   * `session`: Table of session data to save. All handlers will have access
@@ -60,21 +59,19 @@ function M.load(filename)
 
   -- Unserialize buffers.
   for _, buf in ipairs(session.buffers) do
-    if not buf.filename:find('^%[.+%]$') then
-      if lfs.attributes(buf.filename) then
-        io.open_file(buf.filename)
-        buffer:set_sel(buf.anchor, buf.current_pos)
-        buffer:line_scroll(0, buf.top_line - buffer.first_visible_line)
-        for _, line in ipairs(buf.bookmarks) do
-          buffer:marker_add(line, textadept.bookmarks.MARK_BOOKMARK)
-        end
-      else
-        not_found[#not_found + 1] = buf.filename
+    if lfs.attributes(buf.filename) then
+      io.open_file(buf.filename)
+      buffer:set_sel(buf.anchor, buf.current_pos)
+      buffer:line_scroll(0, buf.top_line - buffer.first_visible_line)
+      for _, line in ipairs(buf.bookmarks) do
+        buffer:marker_add(line, textadept.bookmarks.MARK_BOOKMARK)
       end
-    else
+    elseif buf.filename:find('^%[.+%]$') then
       buffer.new()._type = buf.filename
       buffer:set_save_point()
       events.emit(events.FILE_OPENED, buf.filename) -- close initial buffer
+    else
+      not_found[#not_found + 1] = buf.filename
     end
   end
 
@@ -88,9 +85,8 @@ function M.load(filename)
       view:goto_buffer(_BUFFERS[math.min(split, #_BUFFERS)])
       return
     end
-    local one, two = view:split(split.vertical)
-    one.size = split.size -- could use either one or two, it does not matter
-    for i, view in ipairs{one, two} do
+    for i, view in ipairs{view:split(split.vertical)} do
+      view.size = split.size
       ui.goto_view(view)
       unserialize_split(split[i])
     end
@@ -123,14 +119,18 @@ events.connect(events.ARG_NONE, load_default_session)
 
 -- Returns value *val* serialized as a string.
 -- This is a very simple implementation suitable for session saving only.
+-- Ignores function, userdata, and thread types, and does not handle circular
+-- tables.
 local function _tostring(val)
-  if type(val) == 'function' or type(val) == 'userdata' then val = nil end
   if type(val) == 'table' then
     local t = {}
     for k, v in pairs(val) do
       t[#t + 1] = string.format('[%s]=%s,', _tostring(k), _tostring(v))
     end
     return string.format('{%s}', table.concat(t))
+  elseif type(val) == 'function' or type(val) == 'userdata' or
+         type(val) == 'thread' then
+    val = nil
   end
   return type(val) == 'string' and string.format('%q', val) or tostring(val)
 end
@@ -147,8 +147,7 @@ function M.save(filename)
   local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
   if not assert_type(filename, 'string/nil', 1) then
     filename = ui.dialogs.filesave{
-      title = _L['Save Session'], with_directory = dir,
-      with_file = name:iconv('UTF-8', _CHARSET)
+      title = _L['Save Session'], with_directory = dir, with_file = name
     }
     if not filename then return end
   end
@@ -184,25 +183,20 @@ function M.save(filename)
 
   -- Serialize views.
   local function serialize_split(split)
-    local one, two = split[1], split[2]
-    return {
-      one.buffer and _BUFFERS[one.buffer] or serialize_split(one),
-      two.buffer and _BUFFERS[two.buffer] or serialize_split(two),
+    return split.buffer and _BUFFERS[split.buffer] or {
+      serialize_split(split[1]), serialize_split(split[2]),
       vertical = split.vertical, size = split.size
     }
   end
-  local splits = ui.get_split_table()
   session.views = {
-    splits.buffer and _BUFFERS[splits.buffer] or serialize_split(splits),
-    current = _VIEWS[view]
+    serialize_split(ui.get_split_table()), current = _VIEWS[view]
   }
 
   -- Serialize recent files.
   session.recent_files = io.recent_files
 
   -- Write the session.
-  local f = io.open(filename, 'wb')
-  if f then f:write('return ', _tostring(session)):close() end
+  assert(io.open(filename, 'wb')):write('return ', _tostring(session)):close()
   session_file = filename
 end
 -- Saves session on quit.
