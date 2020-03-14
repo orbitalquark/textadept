@@ -1,14 +1,13 @@
 -- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 package.path = table.concat({
-  _USERHOME..'/?.lua',
   _USERHOME..'/modules/?.lua', _USERHOME..'/modules/?/init.lua',
   _HOME..'/modules/?.lua', _HOME..'/modules/?/init.lua',
   package.path
 }, ';');
 local so = not WIN32 and '/?.so' or '/?.dll'
 package.cpath = table.concat({
-  _USERHOME..so, _USERHOME..'/modules'..so, _HOME..'/modules'..so, package.cpath
+  _USERHOME..'/modules'..so, _HOME..'/modules'..so, package.cpath
 }, ';')
 
 textadept = require('textadept')
@@ -50,7 +49,7 @@ local settings = {}
 local buffer_mt = getmetatable(buffer)
 local orig__index, orig__newindex = buffer_mt.__index, buffer_mt.__newindex
 local function repr(v)
-  return type(v) == 'string' and string.format("%q", v) or tostring(v)
+  return string.format(type(v) == 'string' and '%q' or '%s', v)
 end
 buffer_mt.__index = function(buffer, k)
   local v = orig__index(buffer, k)
