@@ -1,13 +1,13 @@
 -- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 package.path = table.concat({
-  _USERHOME..'/modules/?.lua', _USERHOME..'/modules/?/init.lua',
-  _HOME..'/modules/?.lua', _HOME..'/modules/?/init.lua',
-  package.path
+  _USERHOME .. '/modules/?.lua', _USERHOME .. '/modules/?/init.lua',
+  _HOME .. '/modules/?.lua', _HOME .. '/modules/?/init.lua', package.path
 }, ';');
-local so = not WIN32 and '/?.so' or '/?.dll'
 package.cpath = table.concat({
-  _USERHOME..'/modules'..so, _HOME..'/modules'..so, package.cpath
+  string.format('%s/modules/?.%s', _USERHOME, not WIN32 and 'so' or 'dll'),
+  string.format('%s/modules/?.%s', _HOME, not WIN32 and 'so' or 'dll'),
+  package.cpath
 }, ';')
 
 textadept = require('textadept')
@@ -18,19 +18,20 @@ setmetatable(textadept.snippets, {__index = function(t, k) return rawget(t, k:gs
 
 -- Documentation is in core/.buffer.luadoc.
 local function set_theme(buffer, name, props)
-  name = name:find('[/\\]') and name or
-         package.searchpath(name, _USERHOME..'/themes/?.lua;'..
-                                  _HOME..'/themes/?.lua')
+  if not assert_type(name, 'string', 2):find('[/\\]') then
+    name = package.searchpath(name, string.format(
+      '%s/themes/?.lua;%s/themes/?.lua', _USERHOME, _HOME))
+  end
   if not name or not lfs.attributes(name) then return end
+  if not assert_type(props, 'table/nil', 3) then props = {} end
   local orig_buffer = _G.buffer -- may not be equivalent to buffer argument
   _G.buffer = buffer
   dofile(name)
   _G.buffer = orig_buffer
-  for prop, value in pairs(props or {}) do buffer.property[prop] = value end
+  for prop, value in pairs(props) do buffer.property[prop] = value end
   -- Force reload of all styles since the current lexer may have defined its own
   -- styles. (The LPeg lexer has only refreshed default lexer styles.)
-  local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
-  buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
+  if buffer.set_lexer then buffer:set_lexer(buffer._lexer or 'text') end
 end
 events.connect(events.BUFFER_NEW, function() buffer.set_theme = set_theme end)
 buffer.set_theme = set_theme -- needed for the first buffer
@@ -58,8 +59,8 @@ buffer_mt.__index = function(buffer, k)
       local args = {...}
       if type(args[1]) == 'table' then table.remove(args, 1) end -- ignore self
       for i = 1, #args do args[i] = repr(args[i]) end
-      settings[#settings + 1] = string.format("buffer:%s(%s)", k,
-                                              table.concat(args, ','))
+      settings[#settings + 1] = string.format(
+        'buffer:%s(%s)', k, table.concat(args, ','))
       return v(...)
     end
   elseif type(v) == 'table' then
@@ -67,8 +68,8 @@ buffer_mt.__index = function(buffer, k)
     setmetatable(v, {
       __index = property_mt.__index,
       __newindex = function(property, k2, v2)
-        settings[#settings + 1] = string.format("buffer.%s[%s]=%s", k, repr(k2),
-                                                repr(v2))
+        settings[#settings + 1] = string.format(
+          'buffer.%s[%s]=%s', k, repr(k2), repr(v2))
         property_mt.__newindex(property, k2, v2)
       end
     })
@@ -76,7 +77,7 @@ buffer_mt.__index = function(buffer, k)
   return v
 end
 buffer_mt.__newindex = function(buffer, k, v)
-  settings[#settings + 1] = string.format("buffer[%s]=%s", repr(k), repr(v))
+  settings[#settings + 1] = string.format('buffer[%s]=%s', repr(k), repr(v))
   orig__newindex(buffer, k, v)
 end
 
@@ -89,8 +90,8 @@ buffer:set_theme(not CURSES and 'light' or 'term')
 buffer.multiple_selection = true
 buffer.additional_selection_typing = true
 buffer.multi_paste = buffer.MULTIPASTE_EACH
---buffer.virtual_space_options = buffer.VS_RECTANGULARSELECTION +
---                               buffer.VS_USERACCESSIBLE
+--buffer.virtual_space_options = buffer.VS_RECTANGULARSELECTION |
+--  buffer.VS_USERACCESSIBLE
 buffer.rectangular_selection_modifier = buffer.MOD_ALT
 buffer.mouse_selection_rectangular_switch = true
 --buffer.additional_carets_blink = false
@@ -98,9 +99,9 @@ buffer.mouse_selection_rectangular_switch = true
 
 -- Scrolling.
 buffer:set_x_caret_policy(buffer.CARET_SLOP, 20)
-buffer:set_y_caret_policy(buffer.CARET_SLOP + buffer.CARET_STRICT +
-  buffer.CARET_EVEN, 1)
-buffer:set_visible_policy(buffer.VISIBLE_SLOP + buffer.VISIBLE_STRICT, 5)
+buffer:set_y_caret_policy(
+  buffer.CARET_SLOP | buffer.CARET_STRICT | buffer.CARET_EVEN, 1)
+buffer:set_visible_policy(buffer.VISIBLE_SLOP | buffer.VISIBLE_STRICT, 5)
 --buffer.h_scroll_bar = CURSES
 --buffer.v_scroll_bar = false
 if CURSES and not (WIN32 or LINUX or BSD) then buffer.v_scroll_bar = false end
@@ -138,8 +139,7 @@ local function resize_line_number_margin()
   -- This needs to be evaluated dynamically since themes/styles can change.
   local buffer = _G.buffer
   local width = math.max(4, #tostring(buffer.line_count)) *
-                buffer:text_width(buffer.STYLE_LINENUMBER, '9') +
-                (not CURSES and 4 or 0)
+    buffer:text_width(buffer.STYLE_LINENUMBER, '9') + (not CURSES and 4 or 0)
   buffer.margin_width_n[0] = math.max(buffer.margin_width_n[0], width)
 end
 events.connect(events.BUFFER_NEW, resize_line_number_margin)
@@ -201,10 +201,10 @@ buffer:marker_define(textadept.run.MARK_ERROR, buffer.MARK_FULLRECT)
 --buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_CIRCLEPLUS)
 --buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
 --buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNERCURVE)
---buffer:marker_define(buffer.MARKNUM_FOLDEREND,
---                     buffer.MARK_CIRCLEPLUSCONNECTED)
---buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID,
---                     buffer.MARK_CIRCLEMINUSCONNECTED)
+--buffer:marker_define(
+--  buffer.MARKNUM_FOLDEREND, buffer.MARK_CIRCLEPLUSCONNECTED)
+--buffer:marker_define(
+--  buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_CIRCLEMINUSCONNECTED)
 --buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNERCURVE)
 -- Box Tree Folding Symbols.
 buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_BOXMINUS)
@@ -212,8 +212,8 @@ buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_BOXPLUS)
 buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
 buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNER)
 buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_BOXPLUSCONNECTED)
-buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID,
-                     buffer.MARK_BOXMINUSCONNECTED)
+buffer:marker_define(
+  buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_BOXMINUSCONNECTED)
 buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNER)
 --buffer:marker_enable_highlight(true)
 
@@ -228,7 +228,7 @@ buffer.indic_style[INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
 if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
 local INDIC_PLACEHOLDER = textadept.snippets.INDIC_PLACEHOLDER
 buffer.indic_style[INDIC_PLACEHOLDER] = not CURSES and buffer.INDIC_DOTBOX or
-                                        buffer.INDIC_STRAIGHTBOX
+  buffer.INDIC_STRAIGHTBOX
 
 -- Autocompletion.
 --buffer.auto_c_separator =
@@ -247,7 +247,7 @@ buffer.auto_c_multi = buffer.MULTIAUTOC_EACH
 
 -- Call Tips.
 buffer.call_tip_use_style = buffer.tab_width *
-                            buffer:text_width(buffer.STYLE_CALLTIP, ' ')
+  buffer:text_width(buffer.STYLE_CALLTIP, ' ')
 --buffer.call_tip_position = true
 
 -- Folding.
@@ -256,8 +256,8 @@ buffer.property['fold'] = '1'
 --buffer.property['fold.line.comments'] = '1'
 --buffer.property['fold.on.zero.sum.lines'] = '1'
 --buffer.property['fold.compact'] = '1'
-buffer.automatic_fold = buffer.AUTOMATICFOLD_SHOW + buffer.AUTOMATICFOLD_CLICK +
-                        buffer.AUTOMATICFOLD_CHANGE
+buffer.automatic_fold = buffer.AUTOMATICFOLD_SHOW | buffer.AUTOMATICFOLD_CLICK |
+  buffer.AUTOMATICFOLD_CHANGE
 buffer.fold_flags = not CURSES and buffer.FOLDFLAG_LINEAFTER_CONTRACTED or 0
 buffer.fold_display_text_style = buffer.FOLDDISPLAYTEXT_BOXED
 
@@ -276,7 +276,7 @@ buffer.wrap_mode = buffer.WRAP_NONE
 buffer.accessibility = buffer.ACCESSIBILITY_DISABLED
 
 -- Load user init file, which may also define default buffer settings.
-local user_init = _USERHOME..'/init.lua'
+local user_init = _USERHOME .. '/init.lua'
 if lfs.attributes(user_init) then dofile(user_init) end
 
 -- Generate default buffer settings for subsequent buffers and remove temporary
@@ -296,8 +296,8 @@ events.connect(events.BUFFER_NEW, function()
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLUASTATE, _LUA)
-  buffer:private_lexer_call(LOADLEXERLIBRARY, _USERHOME..'/lexers')
-  buffer:private_lexer_call(LOADLEXERLIBRARY, _HOME..'/lexers')
+  buffer:private_lexer_call(LOADLEXERLIBRARY, _USERHOME .. '/lexers')
+  buffer:private_lexer_call(LOADLEXERLIBRARY, _HOME .. '/lexers')
   load_settings()
   buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
   if buffer == ui.command_entry then buffer.caret_line_visible = false end
@@ -310,28 +310,23 @@ events.connect(events.VIEW_NEW, function()
   local ctrl_keys = {
     '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
   }
-  local ctrl_shift_keys = {'L', 'T', 'U', 'Z'}
-  for i = 1, #ctrl_keys do
-    buffer:clear_cmd_key(string.byte(ctrl_keys[i]) | buffer.MOD_CTRL << 16)
+  for _, key in ipairs(ctrl_keys) do
+    buffer:clear_cmd_key(string.byte(key) | buffer.MOD_CTRL << 16)
   end
-  for i = 1, #ctrl_shift_keys do
-    buffer:clear_cmd_key(string.byte(ctrl_shift_keys[i]) |
-                         (buffer.MOD_CTRL | buffer.MOD_SHIFT) << 16)
+  for _, key in ipairs{'L', 'T', 'U', 'Z'} do -- ctrl+shift keys
+    buffer:clear_cmd_key(
+      string.byte(key) | (buffer.MOD_CTRL | buffer.MOD_SHIFT) << 16)
   end
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for
   -- subsequent views.
-  if #_VIEWS > 1 then
-    load_settings()
-    -- Refresh styles since the user may have altered style settings.
-    -- When load_settings() calls `buffer.property['style.default'] = ...`, the
-    -- LPeg lexer resets all styles to that default. However, load_settings()
-    -- may later call a user's `buffer.property['fontsize'] = ...`, which
-    -- 'style.default' references. Styles are now stale and need refreshing.
-    -- This is not an issue in BUFFER_NEW since a lexer is set immediately
-    -- afterwards, which refreshes styles.
-    -- Note: for some reason, calling SETDOCPOINTER before SETLEXERLANGUAGE is
-    -- not needed in this case.
-    local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
-    buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
-  end
+  if #_VIEWS == 1 then return end
+  load_settings()
+  -- Refresh styles since the user may have altered style settings.
+  -- When load_settings() calls `buffer.property['style.default'] = ...`, the
+  -- LPeg lexer resets all styles to that default. However, load_settings() may
+  -- later call a user's `buffer.property['fontsize'] = ...`, which
+  -- 'style.default' references. Styles are now stale and need refreshing. This
+  -- is not an issue in BUFFER_NEW since a lexer is set immediately afterwards,
+  -- which refreshes styles.
+  buffer:set_lexer(buffer._lexer or 'text')
 end, 1)
