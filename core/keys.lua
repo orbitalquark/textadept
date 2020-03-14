@@ -209,9 +209,8 @@ local function keypress(code, shift, control, alt, meta, caps_lock)
   if shift and code >= 32 and code < 256 then shift = false end
   -- For composed keys on OSX, ignore alt.
   if OSX and alt and code < 256 then alt = false end
-  local key_seq = string.format(
-    '%s%s%s%s%s', control and CTRL or '', alt and ALT or '',
-    meta and OSX and META or '', shift and SHIFT or '', key)
+  local key_seq = (control and CTRL or '') .. (alt and ALT or '') ..
+    (meta and OSX and META or '') .. (shift and SHIFT or '') .. key
   --print(key_seq)
 
   ui.statusbar_text = ''
