@@ -64,7 +64,7 @@ local M = {}
 --
 -- ## Modes
 --
--- Modes are groups of key bindings such that when a key [mode](#keys.MODE) is
+-- Modes are groups of key bindings such that when a key [mode](#keys.mode) is
 -- active, Textadept ignores all key bindings defined outside the mode until the
 -- mode is unset. Here is a simple vi mode example:
 --
@@ -74,16 +74,16 @@ local M = {}
 --       ['k'] = buffer.line_down,
 --       ['l'] = buffer.char_right,
 --       ['i'] = function()
---         keys.MODE = nil
+--         keys.mode = nil
 --         ui.statusbar_text = 'INSERT MODE'
 --       end
 --     }
---     keys['esc'] = function() keys.MODE = 'command_mode' end
+--     keys['esc'] = function() keys.mode = 'command_mode' end
 --     events.connect(events.UPDATE_UI, function()
---       if keys.MODE == 'command_mode' then return end
+--       if keys.mode == 'command_mode' then return end
 --       ui.statusbar_text = 'INSERT MODE'
 --     end)
---     keys.MODE = 'command_mode' -- default mode
+--     keys.mode = 'command_mode' -- default mode
 --
 -- ## Key Chains
 --
@@ -101,9 +101,9 @@ local M = {}
 --   The key that clears the current key chain.
 --   It cannot be part of a key chain.
 --   The default value is `'esc'` for the `Esc` key.
--- @field MODE (string)
+-- @field mode (string)
 --   The current key mode.
---   When non-`nil`, all key bindings defined outside of `keys[MODE]` are
+--   When non-`nil`, all key bindings defined outside of `keys[mode]` are
 --   ignored.
 --   The default value is `nil`.
 module('keys')]]
@@ -220,11 +220,11 @@ local function keypress(code, shift, control, alt, meta, caps_lock)
   keychain[#keychain + 1] = key_seq
 
   local status = PROPAGATE
-  if not M.MODE then
+  if not M.mode then
     status = key_command(buffer:get_lexer(true))
-    if status <= PROPAGATE and not M.MODE then status = key_command() end
+    if status <= PROPAGATE and not M.mode then status = key_command() end
   else
-    status = key_command(M.MODE)
+    status = key_command(M.mode)
   end
   if status ~= CHAIN then clear_key_sequence() end
   if status > PROPAGATE then return true end -- CHAIN or HALT
