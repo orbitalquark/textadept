@@ -181,13 +181,13 @@ function M.run(f, keys, lexer, height)
   M.focus()
   M:set_lexer(lexer or 'text')
   M.height = M:text_height(0) * (height or 1)
-  _G.keys._command_entry, _G.keys.MODE = keys, '_command_entry'
+  _G.keys._command_entry, _G.keys.mode = keys, '_command_entry'
 end
 
 -- Redefine ui.command_entry.focus() to clear any current key mode on hide/show.
 local orig_focus = M.focus
 M.focus = function()
-  keys.MODE = nil
+  keys.mode = nil
   orig_focus()
 end
 

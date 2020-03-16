@@ -529,7 +529,7 @@ function test_keys_propagation()
     a = function() end, -- halt
     b = function() return false end, -- propagate
     c = function()
-      keys.MODE = 'test_mode'
+      keys.mode = 'test_mode'
       return false -- propagate
     end
   }
@@ -540,8 +540,8 @@ function test_keys_propagation()
   assert(bar, 'bar set')
   events.emit(events.KEYPRESS, string.byte('c'))
   assert(not baz, 'baz set') -- mode changed, so cannot propagate to keys.c
-  assert_equal(keys.MODE, 'test_mode')
-  keys.MODE = nil
+  assert_equal(keys.mode, 'test_mode')
+  keys.mode = nil
   keys.a, keys.b, keys.c, keys.cpp = nil, nil, nil, nil -- reset
   io.close_buffer()
 end
@@ -552,23 +552,23 @@ function test_keys_modes()
   keys.a = function() foo = true end
   keys.test_mode = {a = function()
     bar = true
-    keys.MODE = nil
+    keys.mode = nil
     return false -- propagate
   end}
-  keys.cpp = {a = function() keys.MODE = 'test_mode' end}
+  keys.cpp = {a = function() keys.mode = 'test_mode' end}
   events.emit(events.KEYPRESS, string.byte('a'))
   assert(foo, 'foo not set')
-  assert(not keys.MODE, 'key mode entered')
+  assert(not keys.mode, 'key mode entered')
   assert(not bar, 'bar set outside mode')
   foo = false
   buffer:set_lexer('cpp')
   events.emit(events.KEYPRESS, string.byte('a'))
-  assert_equal(keys.MODE, 'test_mode')
+  assert_equal(keys.mode, 'test_mode')
   assert(not foo, 'foo set outside mode')
   assert(not bar, 'bar set outside mode')
   events.emit(events.KEYPRESS, string.byte('a'))
   assert(bar, 'bar not set')
-  assert(not keys.MODE, 'key mode still active')
+  assert(not keys.mode, 'key mode still active')
   assert(not foo, 'foo set') -- TODO: should this propagate?
   keys.a, keys.test_mode, keys.cpp = nil, nil, nil -- reset
   io.close_buffer()
