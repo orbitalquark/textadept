@@ -31,7 +31,9 @@ local function set_theme(buffer, name, props)
   for prop, value in pairs(props) do buffer.property[prop] = value end
   -- Force reload of all styles since the current lexer may have defined its own
   -- styles. (The LPeg lexer has only refreshed default lexer styles.)
-  if buffer.set_lexer then buffer:set_lexer(buffer._lexer or 'text') end
+  -- Note: cannot use `buffer.set_lexer()` because it may not exist yet.
+  local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
+  buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
 end
 events.connect(events.BUFFER_NEW, function() buffer.set_theme = set_theme end)
 buffer.set_theme = set_theme -- needed for the first buffer
