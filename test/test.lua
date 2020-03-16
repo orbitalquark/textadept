@@ -794,7 +794,7 @@ function test_ui_dialogs_filteredlist_interactive()
     items = {'foo', 'foobar', 'bar', 'barbaz', 'baz', 'bazfoo'},
     search_column = 2, text = 'baz', output_column = 2, string_output = true,
     select_multiple = true, button1 = _L['OK'], button2 = _L['Cancel'],
-    button3 = 'Other'
+    button3 = 'Other', width = ui.size[1] / 2
   }
   assert_equal(text, {'barbaz'})
 end

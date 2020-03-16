@@ -337,8 +337,7 @@ function io.open_recent_file()
     utf8_list[#utf8_list + 1] = io.recent_files[i]:iconv('UTF-8', _CHARSET)
   end
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Open File'], columns = _L['Filename'], items = utf8_list,
-    width = CURSES and ui.size[1] - 2 or nil
+    title = _L['Open File'], columns = _L['Filename'], items = utf8_list
   }
   if button == 1 and i then io.open_file(io.recent_files[i]) end
 end

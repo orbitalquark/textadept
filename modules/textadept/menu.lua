@@ -565,7 +565,7 @@ function M.select_command()
   build_command_tables(getmetatable(M.menubar).menu)
   local button, i = ui.dialogs.filteredlist{
     title = _L['Run Command'], columns = {_L['Command'], _L['Key Binding']},
-    items = items, width = CURSES and ui.size[1] - 2 or nil
+    items = items
   }
   if button == 1 and i then events.emit(events.MENU_CLICKED, i) end
 end

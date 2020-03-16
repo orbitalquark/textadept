@@ -636,7 +636,7 @@ function M.select()
   end
   local button, i = ui.dialogs.filteredlist{
     title = _L['Select Snippet'], columns = {_L['Trigger'], _L['Snippet Text']},
-    items = items, width = CURSES and ui.size[1] - 2 or nil
+    items = items
   }
   if button == 1 and i then M.insert(items[i * 2]) end
 end
