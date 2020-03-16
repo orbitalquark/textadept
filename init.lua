@@ -10,6 +10,12 @@ package.cpath = table.concat({
   package.cpath
 }, ';')
 
+-- Populate initial `_G.buffer` with temporarily exported io functions now that
+-- it exists. This is needed for menus and key bindings.
+for _, name in ipairs{'reload', 'save', 'save_as', 'close'} do
+  buffer[name], io['_' .. name] = io['_' .. name], nil
+end
+
 textadept = require('textadept')
 
 -- Temporary compatibility.

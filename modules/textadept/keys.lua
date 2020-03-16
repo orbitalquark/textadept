@@ -280,11 +280,11 @@ local keys, OSX, GUI, CURSES, _L = keys, OSX, not CURSES, CURSES, _L
 keys[not OSX and (GUI and 'cn' or 'cmn') or 'mn'] = buffer.new
 keys[not OSX and 'co' or 'mo'] = io.open_file
 keys[not OSX and GUI and 'cao' or 'cmo'] = io.open_recent_file
-keys[not OSX and (GUI and 'cO' or 'mo') or 'mO'] = io.reload_file
-keys[not OSX and 'cs' or 'ms'] = io.save_file
-keys[not OSX and (GUI and 'cS' or 'cms') or 'mS'] = io.save_file_as
+keys[not OSX and (GUI and 'cO' or 'mo') or 'mO'] = buffer.reload
+keys[not OSX and 'cs' or 'ms'] = buffer.save
+keys[not OSX and (GUI and 'cS' or 'cms') or 'mS'] = buffer.save_as
 -- TODO: io.save_all_files
-keys[not OSX and 'cw' or 'mw'] = io.close_buffer
+keys[not OSX and 'cw' or 'mw'] = buffer.close
 keys[not OSX and (GUI and 'cW' or 'cmw') or 'mW'] = io.close_all_buffers
 -- TODO: textadept.sessions.load
 -- TODO: textadept.sessions.save

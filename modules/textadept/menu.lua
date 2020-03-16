@@ -15,7 +15,7 @@ module('textadept.menu')]]
 local _L = _L
 local SEPARATOR = {''}
 
--- The following buffer functions need to be constantized in order for menu
+-- The following buffer functions need to be made constant in order for menu
 -- items to identify the key associated with the functions.
 local menu_buffer_functions = {
   'undo', 'redo', 'cut', 'copy', 'paste', 'line_duplicate', 'clear',
@@ -59,12 +59,12 @@ local default_menubar = {
     {_L['New'], buffer.new},
     {_L['Open'], io.open_file},
     {_L['Open Recent...'], io.open_recent_file},
-    {_L['Reload'], io.reload_file},
-    {_L['Save'], io.save_file},
-    {_L['Save As'], io.save_file_as},
+    {_L['Reload'], buffer.reload},
+    {_L['Save'], buffer.save},
+    {_L['Save As'], buffer.save_as},
     {_L['Save All'], io.save_all_files},
     SEPARATOR,
-    {_L['Close'], io.close_buffer},
+    {_L['Close'], buffer.close},
     {_L['Close All'], io.close_all_buffers},
     SEPARATOR,
     {_L['Load Session...'], textadept.session.load},
@@ -381,12 +381,12 @@ local default_context_menu = {
 -- @class table
 -- @name tab_context_menu
 local default_tab_context_menu = {
-  {_L['Close'], io.close_buffer},
+  {_L['Close'], buffer.close},
   SEPARATOR,
-  {_L['Save'], io.save_file},
-  {_L['Save As'], io.save_file_as},
+  {_L['Save'], buffer.save},
+  {_L['Save As'], buffer.save_as},
   SEPARATOR,
-  {_L['Reload'], io.reload_file},
+  {_L['Reload'], buffer.reload},
 }
 
 -- Table of proxy tables for menus.
