@@ -402,7 +402,8 @@ function M.goto_file_found(line_num, next)
   if not ff_view and not ff_buf then return end
   if ff_view then ui.goto_view(ff_view) else view:goto_buffer(ff_buf) end
 
-  -- If no line was given, find the next search result, wrapping as necessary.
+  -- If no line number was given, find the next search result, wrapping as
+  -- necessary.
   if not assert_type(line_num, 'number/nil', 1) and next ~= nil then
     if next then buffer:line_end() else buffer:home() end
     buffer:search_anchor()
