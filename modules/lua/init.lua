@@ -81,10 +81,10 @@ textadept.editing.autocompleters.lua = function()
   -- Search through ctags for completions for that symbol.
   local name_patt = '^' .. part
   local sep = string.char(buffer.auto_c_type_separator)
-  for _, file in ipairs(M.tags) do
-    if type(file) == 'function' then file = file() end
-    if not file or not lfs.attributes(file) then goto continue end
-    for tag_line in io.lines(file) do
+  for _, filename in ipairs(M.tags) do
+    if type(filename) == 'function' then filename = filename() end
+    if not filename or not lfs.attributes(filename) then goto continue end
+    for tag_line in io.lines(filename) do
       local name = tag_line:match('^%S+')
       if name:find(name_patt) and not list[name] then
         local fields = tag_line:match(';"\t(.*)$')
