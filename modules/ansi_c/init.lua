@@ -55,9 +55,9 @@ textadept.editing.autocompleters.ansi_c = function()
   local sep = string.char(buffer.auto_c_type_separator)
   ::rescan::
   local list = {}
-  for i = 1, #tags_files do
-    if not lfs.attributes(tags_files[i]) then goto continue end
-    for tag_line in io.lines(tags_files[i]) do
+  for _, filename in ipairs(tags_files) do
+    if not lfs.attributes(filename) then goto continue end
+    for tag_line in io.lines(filename) do
       local name = tag_line:match('^%S+')
       if (name:find(name_patt) and not name:find('^!') and not list[name]) or
          name == symbol and op == '' then
