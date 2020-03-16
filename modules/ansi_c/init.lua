@@ -99,37 +99,35 @@ keys.ansi_c = {}
 
 -- Snippets.
 
-if type(snippets) == 'table' then
 ---
 -- Table of C-specific snippets.
 -- @class table
 -- @name _G.snippets.ansi_c
-  snippets.ansi_c = {
-    func = '%1(int) %2(name)(%3(args)) {\n\t%0\n\treturn %4(0);\n}',
-    vfunc = 'void %1(name)(%2(args)) {\n\t%0\n}',
-    ['if'] = 'if (%1) {\n\t%0\n}',
-    eif = 'else if (%1) {\n\t%0\n}',
-    ['else'] = 'else {\n\t%0\n}',
-    ['for'] = 'for (%1; %2; %3) {\n\t%0\n}',
-    ['fori'] = 'for (%1(int) %2(i) = %3(0); %2 %4(<) %5(count); %2%6(++)) {\n'..
-               '\t%0\n}',
-    ['while'] = 'while (%1) {\n\t%0\n}',
-    ['do'] = 'do {\n\t%0\n} while (%1);',
-    sw = 'switch (%1) {\n\tcase %2:\n\t\t%0\n\t\tbreak;\n}',
-    case = 'case %1:\n\t%0\n\tbreak;',
+snippets.ansi_c = {
+  func = '%1(int) %2(name)(%3(args)) {\n\t%0\n\treturn %4(0);\n}',
+  vfunc = 'void %1(name)(%2(args)) {\n\t%0\n}',
+  ['if'] = 'if (%1) {\n\t%0\n}',
+  eif = 'else if (%1) {\n\t%0\n}',
+  ['else'] = 'else {\n\t%0\n}',
+  ['for'] = 'for (%1; %2; %3) {\n\t%0\n}',
+  ['fori'] = 'for (%1(int) %2(i) = %3(0); %2 %4(<) %5(count); %2%6(++)) {\n'..
+             '\t%0\n}',
+  ['while'] = 'while (%1) {\n\t%0\n}',
+  ['do'] = 'do {\n\t%0\n} while (%1);',
+  sw = 'switch (%1) {\n\tcase %2:\n\t\t%0\n\t\tbreak;\n}',
+  case = 'case %1:\n\t%0\n\tbreak;',
 
-    st = 'struct %1(name) {\n\t%0\n};',
-    td = 'typedef %1(int) %2(name_t);',
-    tds = 'typedef struct %1(name) {\n\t%0\n} %1%2(_t);',
+  st = 'struct %1(name) {\n\t%0\n};',
+  td = 'typedef %1(int) %2(name_t);',
+  tds = 'typedef struct %1(name) {\n\t%0\n} %1%2(_t);',
 
-    def = '#define %1(name) %2(value)',
-    inc = '#include "%1"',
-    Inc = '#include <%1>',
-    pif = '#if %1\n%0\n#endif',
+  def = '#define %1(name) %2(value)',
+  inc = '#include "%1"',
+  Inc = '#include <%1>',
+  pif = '#if %1\n%0\n#endif',
 
-    main = 'int main(int argc, const char **argv) {\n\t%0\n\treturn 0;\n}',
-    printf = 'printf("%1(%s)\\n", %2);',
-  }
-end
+  main = 'int main(int argc, const char **argv) {\n\t%0\n\treturn 0;\n}',
+  printf = 'printf("%1(%s)\\n", %2);',
+}
 
 return M
