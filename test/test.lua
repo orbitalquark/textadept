@@ -2282,6 +2282,16 @@ function test_run_build()
 end
 unstable(test_run_build)
 
+function test_run_goto_internal_lua_error()
+  xpcall(error, function(message) events.emit(events.ERROR, debug.traceback(message)) end, 'internal error', 2)
+  if #_VIEWS > 1 then view:unsplit() end
+  textadept.run.goto_error(LINE(1))
+  assert(buffer.filename:find('/test/test%.lua$'), 'did not detect internal Lua error')
+  view:unsplit()
+  io.close_buffer()
+  io.close_buffer()
+end
+
 -- TODO: test textadept.run.run_in_background
 
 function test_session_save()
@@ -2735,6 +2745,8 @@ function test_lexer_api()
   assert_raises(function() lexer.line_state = nil end, 'read-only')
   assert_raises(function() lexer.line_from_position = nil end, 'read-only')
 end
+
+-- TODO: test init.lua's buffer settings
 
 --------------------------------------------------------------------------------
 
