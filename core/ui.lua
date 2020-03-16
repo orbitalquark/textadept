@@ -102,6 +102,9 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
   -- @return Lua objects depending on the dialog kind
   return function(options)
     if not options.button1 then options.button1 = _L['OK'] end
+    if k == 'filteredlist' and not options.width then
+      options.width = ui.size[1] - 2 * (CURSES and 1 or 100)
+    end
     -- Transform key-value pairs into command line arguments.
     local args = {}
     for option, value in pairs(options) do
@@ -220,8 +223,7 @@ function ui.switch_buffer(zorder)
     utf8_list[#utf8_list + 1] = filename
   end
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Switch Buffers'], columns = columns, items = utf8_list,
-    width = CURSES and ui.size[1] - 2 or nil
+    title = _L['Switch Buffers'], columns = columns, items = utf8_list
   }
   if button == 1 and i then
     view:goto_buffer(buffers[not zorder and i or i + 1])
