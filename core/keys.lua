@@ -85,6 +85,9 @@ local M = {}
 --     end)
 --     keys.mode = 'command_mode' -- default mode
 --
+-- **Warning**: When creating a mode, be sure to define a way to exit the mode,
+-- otherwise you will probably have to restart Textadept.
+--
 -- ## Key Chains
 --
 -- Key chains are a powerful concept. They allow you to assign multiple key
