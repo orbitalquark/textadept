@@ -277,7 +277,7 @@ function test_file_io_open_file_detect_encoding()
       assert_equal(buffer.encoding, nil)
       assert_equal(buffer.code_page, 0)
     end
-    io.close_buffer()
+    buffer:close()
     table.insert(recent_files, 1, filename)
   end
   assert_equal(io.recent_files, recent_files)
@@ -295,7 +295,7 @@ function test_file_io_open_file_detect_newlines()
   for filename, mode in pairs(files) do
     io.open_file(filename)
     assert_equal(buffer.eol_mode, mode)
-    io.close_buffer()
+    buffer:close()
   end
 end
 
@@ -313,7 +313,7 @@ function test_file_io_open_file_with_encoding()
     view:goto_buffer(_BUFFERS[num_buffers + i])
     assert_equal(buffer.filename, files[i])
     if encodings[i] then assert_equal(buffer.encoding, encodings[i]) end
-    io.close_buffer()
+    buffer:close()
   end
 end
 
@@ -326,14 +326,14 @@ function test_file_io_open_file_already_open()
   assert_equal(buffer.filename, filename)
   assert_equal(#_BUFFERS, num_buffers)
   view:goto_buffer(1)
-  io.close_buffer() -- untitled
-  io.close_buffer() -- filename
+  buffer:close() -- untitled
+  buffer:close() -- filename
 end
 
 function test_file_io_open_file_interactive()
   local num_buffers = #_BUFFERS
   io.open_file()
-  if #_BUFFERS > num_buffers then io.close_buffer() end
+  if #_BUFFERS > num_buffers then buffer:close() end
 end
 
 function test_file_io_open_file_errors()
@@ -350,10 +350,10 @@ function test_file_io_reload_file()
   local text = buffer:get_text()
   buffer:append_text('foo')
   assert(buffer:get_text() ~= text, 'buffer text is unchanged')
-  io.reload_file()
+  buffer:reload()
   assert_equal(buffer:get_text(), text)
   assert_equal(buffer.current_pos, pos)
-  io.close_buffer()
+  buffer:close()
 end
 
 function test_file_io_set_encoding()
@@ -366,8 +366,8 @@ function test_file_io_set_encoding()
   assert_equal(buffer.code_page, buffer.CP_UTF8)
   assert_equal(buffer:get_text(), text) -- fundamentally the same
   assert_equal(buffer.current_pos, pos)
-  io.reload_file()
-  io.close_buffer()
+  buffer:reload()
+  buffer:close()
 
   assert_raises(function() buffer:set_encoding(true) end, 'string/nil expected, got boolean')
 end
@@ -377,7 +377,7 @@ function test_file_io_save_file()
   buffer._type = '[Foo Buffer]'
   buffer:append_text('foo')
   local filename = os.tmpname()
-  io.save_file_as(filename)
+  buffer:save_as(filename)
   local f = assert(io.open(filename))
   local contents = f:read('a')
   f:close()
@@ -389,10 +389,49 @@ function test_file_io_save_file()
   contents = f:read('a')
   f:close()
   assert_equal(contents, buffer:get_text())
-  io.close_buffer()
+  buffer:close()
   os.remove(filename)
 
-  assert_raises(function() io.save_file_as(1) end, 'string/nil expected, got number')
+  assert_raises(function() buffer:save_as(1) end, 'string/nil expected, got number')
+end
+
+function test_file_io_non_global_buffer_functions()
+  local filename = os.tmpname()
+  local buf = buffer.new()
+  buf:append_text('foo')
+  view:goto_buffer(-1)
+  assert(buffer ~= buf, 'still in untitled buffer')
+  assert_equal(buf:get_text(), 'foo')
+  assert(buffer ~= buf, 'jumped to untitled buffer')
+  buf:save_as(filename)
+  assert(buffer ~= buf, 'jumped to untitled buffer')
+  view:goto_buffer(1)
+  assert(buffer == buf, 'not in saved buffer')
+  assert_equal(buffer.filename, filename)
+  assert(not buffer.modify, 'saved buffer still marked modified')
+  local f = io.open(filename, 'rb')
+  local contents = f:read('a')
+  f:close()
+  assert_equal(buffer:get_text(), contents)
+  buffer:append_text('bar')
+  view:goto_buffer(-1)
+  assert(buffer ~= buf, 'still in saved buffer')
+  buf:save()
+  assert(buffer ~= buf, 'jumped to untitled buffer')
+  f = io.open(filename, 'rb')
+  contents = f:read('a')
+  f:close()
+  assert_equal(buf:get_text(), contents)
+  buf:append_text('baz')
+  assert_equal(buf:get_text(), contents .. 'baz')
+  assert(buf.modify, 'buffer not marked modified')
+  buf:reload()
+  assert_equal(buf:get_text(), contents)
+  assert(not buf.modify, 'buffer still marked modified')
+  buf:append_text('baz')
+  buf:close(true)
+  assert(buffer ~= buf, 'closed the wrong buffer')
+  os.remove(filename)
 end
 
 function test_file_io_file_detect_modified()
@@ -413,7 +452,7 @@ function test_file_io_file_detect_modified()
   f:write('bar\n'):flush()
   view:goto_buffer(1)
   assert_equal(modified, true)
-  io.close_buffer()
+  buffer:close()
   f:close()
   os.remove(filename)
   events.disconnect(events.FILE_CHANGED, handler)
@@ -430,7 +469,7 @@ function test_file_io_file_detect_modified_interactive()
   f:write('bar\n'):flush()
   view:goto_buffer(1)
   assert_equal(buffer:get_text(), 'foo\nbar\n')
-  io.close_buffer()
+  buffer:close()
   f:close()
   os.remove(filename)
 end
@@ -446,7 +485,7 @@ function test_file_io_recent_files()
   }
   for _, filename in ipairs(files) do
     io.open_file(filename)
-    io.close_buffer()
+    buffer:close()
     table.insert(recent_files, 1, filename)
   end
   assert_equal(io.recent_files, recent_files)
@@ -455,10 +494,10 @@ end
 function test_file_io_open_recent_interactive()
   local filename = _HOME .. '/test/file_io/utf8'
   io.open_file(filename)
-  io.close_buffer()
+  buffer:close()
   io.open_recent_file()
   assert_equal(buffer.filename, filename)
-  io.close_buffer()
+  buffer:close()
 end
 
 function test_file_io_get_project_root()
@@ -483,7 +522,7 @@ function test_file_io_quick_open_interactive()
   io.quick_open(dir)
   if #_BUFFERS > num_buffers then
     assert(buffer.filename:find('%.lua$'), '.lua file filter did not work')
-    io.close_buffer()
+    buffer:close()
   end
   io.quick_open_filters[dir] = true
   assert_raises(function() io.quick_open(dir) end, 'string/table/nil expected, got boolean')
@@ -491,7 +530,7 @@ function test_file_io_quick_open_interactive()
   io.quick_open()
   if #_BUFFERS > num_buffers then
     assert(buffer.filename:find('%.lua$'), '.lua file filter did not work')
-    io.close_buffer()
+    buffer:close()
   end
   lfs.chdir(cwd)
 
@@ -543,7 +582,7 @@ function test_keys_propagation()
   assert_equal(keys.mode, 'test_mode')
   keys.mode = nil
   keys.a, keys.b, keys.c, keys.cpp = nil, nil, nil, nil -- reset
-  io.close_buffer()
+  buffer:close()
 end
 
 function test_keys_modes()
@@ -571,7 +610,7 @@ function test_keys_modes()
   assert(not keys.mode, 'key mode still active')
   assert(not foo, 'foo set') -- TODO: should this propagate?
   keys.a, keys.test_mode, keys.cpp = nil, nil, nil -- reset
-  io.close_buffer()
+  buffer:close()
 end
 
 function test_lfs_ext_dir_foreach()
@@ -701,7 +740,7 @@ function test_ui_print()
   assert(buffer:line_from_position(buffer.current_pos) > LINE(1), 'still on first line')
   ui.print('bar', 'baz')
   assert_equal(buffer:get_text(), 'foo\nbar\tbaz\n')
-  io.close_buffer()
+  buffer:close()
 
   ui.tabs = false
   ui.print(1, 2, 3)
@@ -729,7 +768,7 @@ function test_ui_print()
   assert_equal(buffer:get_text(), '1\t2\t3\n4\t5\t6\n7\t8\t9\n\n')
   view:unsplit()
 
-  io.close_buffer()
+  buffer:close()
   ui.tabs = tabs
   ui.silent_print = silent_print
 end
@@ -881,10 +920,7 @@ function test_ui_switch_buffer_interactive()
   for i = 1, 3 do view:goto_buffer(1) end -- cycle back to baz
   ui.switch_buffer(true)
   assert_equal(buffer:get_text(), 'bar')
-  for i = 1, 3 do
-    buffer:set_save_point()
-    io.close_buffer()
-  end
+  for i = 1, 3 do buffer:close(true) end
 end
 
 function test_ui_goto_file()
@@ -914,7 +950,7 @@ function test_ui_goto_file()
   assert_equal(_VIEWS[1].buffer.filename, dir2_file1)
   view:unsplit()
   assert_equal(#_VIEWS, 1)
-  for i = 1, 4 do io.close_buffer() end
+  for i = 1, 4 do buffer:close() end
 end
 
 function test_ui_uri_drop()
@@ -922,7 +958,7 @@ function test_ui_uri_drop()
   local uri = 'file://' .. _HOME .. '/test/ui/uri%20drop'
   events.emit(events.URI_DROPPED, uri)
   assert_equal(buffer.filename, filename)
-  io.close_buffer()
+  buffer:close()
   local buffer = buffer
   events.emit(events.URI_DROPPED, 'file://' .. _HOME)
   assert_equal(buffer, _G.buffer) -- do not open directory
@@ -946,7 +982,7 @@ function test_ui_buffer_switch_save_restore_properties()
   assert_equal(buffer.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
   assert_equal(buffer.view_eol, true)
   assert_equal(buffer.margin_width_n[INDEX(1)], 0)
-  io.close_buffer()
+  buffer:close()
 end
 
 if CURSES then
@@ -968,8 +1004,7 @@ function test_buffer_text_range()
   assert_equal(buffer:text_range(-1, POS(4)), 'foo')
   assert_equal(buffer:text_range(POS(9), POS(16)), 'baz')
   assert_equal(buffer.target_text, 'bar') -- assert target range is unchanged
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   assert_raises(function() buffer:text_range() end, 'number expected, got nil')
   assert_raises(function() buffer:text_range(POS(5)) end, 'number expected, got nil')
@@ -1003,8 +1038,7 @@ function test_bookmarks()
   textadept.bookmarks.clear()
   assert(not has_bookmark(LINE(1)), 'bookmark still there')
   assert(not has_bookmark(LINE(2)), 'bookmark still there')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_bookmarks_interactive()
@@ -1015,8 +1049,7 @@ function test_bookmarks_interactive()
   assert_equal(buffer:line_from_position(buffer.current_pos), LINE(1))
   textadept.bookmarks.goto_mark()
   assert_equal(buffer:line_from_position(buffer.current_pos), LINE(2))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_command_entry_run()
@@ -1054,7 +1087,7 @@ function test_command_entry_run_lua()
   assert(buffer:get_text():find('{key = value}'), 'table not pretty-printed')
   -- TODO: multi-line table pretty print.
   if #_VIEWS > 1 then view:unsplit() end
-  io.close_buffer()
+  buffer:close()
 end
 
 function test_command_entry_run_lua_abbreviated_env()
@@ -1081,7 +1114,7 @@ function test_command_entry_run_lua_abbreviated_env()
   run_lua_command('foo="bar"')
   run_lua_command('foo')
   assert(buffer:get_text():find('bar%s*$'), 'foo result not "bar"')
-  io.close_buffer()
+  buffer:close()
 end
 
 local function assert_lua_autocompletion(text, first_item)
@@ -1139,8 +1172,7 @@ function test_editing_auto_pair()
   assert_equal(buffer:get_text(), 'foo()\nfoo()')
   buffer:undo()
   assert_equal(buffer:get_text(), 'foo(\nfoo(')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_auto_indent()
@@ -1164,8 +1196,7 @@ function test_editing_auto_indent()
   buffer:new_line() -- should not change indentation
   assert_equal(buffer.line_indentation[LINE(3)], buffer.tab_width)
   assert_equal(buffer.current_pos, buffer:position_from_line(LINE(3)))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_strip_trailing_spaces()
@@ -1189,8 +1220,7 @@ function test_editing_strip_trailing_spaces()
   assert_equal(buffer.current_pos, buffer.line_end_position[LINE(2)])
   buffer:undo()
   assert_equal(buffer:get_text(), text)
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
   textadept.editing.strip_trailing_spaces = strip -- restore
 end
 
@@ -1239,8 +1269,7 @@ function test_editing_paste_reindent_tabs_to_tabs()
     '\t\t\tbar',
     '\t\tbaz'
   }, '\r\n'))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 expected_failure(test_editing_paste_reindent_tabs_to_tabs)
 
@@ -1293,8 +1322,7 @@ function test_editing_paste_reindent_spaces_to_spaces()
     '        baz',
     '    quux'
   }, '\n'))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 expected_failure(test_editing_paste_reindent_spaces_to_spaces)
 
@@ -1315,8 +1343,7 @@ function test_editing_paste_reindent_spaces_to_tabs()
     '\t\tbar',
     '\tbaz'
   }, '\n'))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_paste_reindent_tabs_to_spaces()
@@ -1343,8 +1370,7 @@ function test_editing_paste_reindent_tabs_to_spaces()
     '  end',
     'end'
   }, '\n'))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 expected_failure(test_editing_paste_reindent_tabs_to_spaces)
 
@@ -1396,8 +1422,7 @@ function test_editing_block_comment_lines()
   buffer:undo() -- comment
   buffer:undo() -- uncomment
   assert_equal(buffer:get_text(), text) -- verify atomic undo
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_block_comment()
@@ -1428,8 +1453,7 @@ function test_editing_block_comment()
   }, '\n'))
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))
   assert_equal(buffer.selection_end, buffer:position_from_line(LINE(4)))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_goto_line()
@@ -1439,8 +1463,7 @@ function test_editing_goto_line()
   assert_equal(buffer:line_from_position(buffer.current_pos), LINE(1))
   textadept.editing.goto_line(LINE(2))
   assert_equal(buffer:line_from_position(buffer.current_pos), LINE(2))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   assert_raises(function() textadept.editing.goto_line(true) end, 'number/nil expected, got boolean')
 end
@@ -1463,8 +1486,7 @@ function test_editing_transpose_chars()
   textadept.editing.transpose_chars()
   assert_equal(buffer:get_text(), '⌘⇧⌥')
   -- TODO: multiple selection?
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_join_lines()
@@ -1476,8 +1498,7 @@ function test_editing_join_lines()
   buffer:set_sel(buffer:position_from_line(LINE(2)) + 5, buffer:position_from_line(LINE(4)) - 5)
   textadept.editing.join_lines()
   assert_equal(buffer:get_text(), 'foo bar\n  baz quux\n')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_enclose()
@@ -1501,8 +1522,7 @@ function test_editing_enclose()
   buffer:add_selection(buffer:position_from_line(LINE(2)), buffer.line_end_position[LINE(2)])
   textadept.editing.enclose('-', '-')
   assert_equal(buffer:get_text(), '-foo bar-\n-foo bar-')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   assert_raises(function() textadept.editing.enclose() end, 'string expected, got nil')
   assert_raises(function() textadept.editing.enclose('<', 1) end, 'string expected, got number')
@@ -1529,8 +1549,7 @@ function test_editing_select_enclosed()
   buffer:goto_pos(POS(10)) -- last " on first line
   textadept.editing.select_enclosed()
   assert_equal(buffer:get_sel_text(), 'foo bar')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   assert_raises(function() textadept.editing.select_enclosed('"') end, 'string expected, got nil')
 end
@@ -1560,8 +1579,7 @@ function test_editing_select_word()
   end
   table.sort(lines)
   assert_equal(lines, {LINE(1), LINE(3), LINE(4), LINE(6)})
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_select_line()
@@ -1569,8 +1587,7 @@ function test_editing_select_line()
   buffer:add_text('foo\n  bar')
   textadept.editing.select_line()
   assert_equal(buffer:get_sel_text(), '  bar')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_select_paragraph()
@@ -1586,8 +1603,7 @@ function test_editing_select_paragraph()
   buffer:goto_pos(buffer:position_from_line(LINE(3)))
   textadept.editing.select_paragraph()
   assert_equal(buffer:get_sel_text(), 'bar\nbaz\n\n')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_convert_indentation()
@@ -1617,8 +1633,7 @@ function test_editing_convert_indentation()
     '      baz',
     '      quux'
   }, '\n'))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_highlight_word()
@@ -1643,8 +1658,7 @@ function test_editing_highlight_word()
     local mask = buffer:indicator_all_on_for(pos)
     assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
   end
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_editing_filter_through()
@@ -1667,8 +1681,7 @@ function test_editing_filter_through()
   buffer:set_sel(buffer:position_from_line(LINE(2)), buffer:position_from_line(LINE(5)) + 1)
   textadept.editing.filter_through('sort')
   assert_equal(buffer:get_text(), '3|baz\n1|foo\n1|foo\n4|quux\n5|foobar\n2|bar\n')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   assert_raises(function() textadept.editing.filter_through() end, 'string expected, got nil')
 end
@@ -1691,16 +1704,14 @@ function test_editing_autocomplete_word()
   buffer:auto_c_select('foob')
   buffer:auto_c_complete()
   assert_equal(buffer:get_text(), 'foo foobar foobar')
-  buffer:set_save_point()
   buffer.new()
   buffer:add_text('foob')
   textadept.editing.autocomplete_all_words = true
   textadept.editing.autocomplete('word')
   textadept.editing.autocomplete_all_words = all_words
   assert_equal(buffer:get_text(), 'foobar')
-  buffer:set_save_point()
-  io.close_buffer()
-  io.close_buffer()
+  buffer:close(true)
+  buffer:close(true)
 end
 
 function test_editing_show_documentation()
@@ -1734,8 +1745,7 @@ function test_editing_show_documentation()
   assert(buffer:call_tip_active(), 'documentation not found')
   events.emit(events.CALL_TIP_CLICK, 1)
   -- TODO: test calltip cycling.
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
   textadept.editing.api_files['text'] = nil
 
   assert_raises(function() textadept.editing.show_documentation(true) end, 'number/nil expected, got boolean')
@@ -1754,8 +1764,7 @@ function test_file_types_get_lexer()
   assert_equal(buffer:get_lexer(), 'html')
   assert_equal(buffer:get_lexer(true), 'css')
   assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos]), 'identifier')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_file_types_set_lexer()
@@ -1786,8 +1795,7 @@ function test_file_types_set_lexer()
   view:goto_buffer(-1)
   assert_equal(buffer:get_lexer(), 'cpp')
   events.disconnect(events.LEXER_LOADED, handler)
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   assert_raises(function() buffer:set_lexer(true) end, 'string/nil expected, got boolean')
 end
@@ -1797,7 +1805,7 @@ function test_file_types_select_lexer_interactive()
   local lexer = buffer:get_lexer()
   textadept.file_types.select_lexer()
   assert(buffer:get_lexer() ~= lexer, 'lexer unchanged')
-  io.close_buffer()
+  buffer:close()
 end
 
 function test_file_types_load_lexers()
@@ -1814,7 +1822,7 @@ function test_file_types_load_lexers()
     print('Loading lexer ' .. name)
     buffer:set_lexer(name)
   end
-  io.close_buffer()
+  buffer:close()
   ui.silent_print = false
 end
 
@@ -1858,8 +1866,7 @@ function test_ui_find_find_text()
   events.emit(events.FIND, 'quux', true)
   assert_equal(buffer.selection_start, buffer.selection_end) -- no match
   ui.find.match_case, ui.find.regex = false, false
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_ui_find_incremental()
@@ -1910,8 +1917,7 @@ function test_ui_find_incremental()
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case = false
   ui.find.find_entry_text = '' -- reset
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   assert_raises(function() ui.find.find_incremental(1) end, 'string/nil expected, got number')
 end
@@ -1952,16 +1958,16 @@ function test_ui_find_find_in_files()
   ui.goto_view(1) -- files found buffer
   events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos))
   assert_equal(buffer.filename, filename)
-  io.close_buffer()
+  buffer:close()
   ui.goto_view(1) -- files found buffer
   ui.find.goto_file_found(nil, false) -- wraps around
   assert(buffer.filename and buffer.filename ~= filename, 'opened the same file')
-  io.close_buffer()
+  buffer:close()
   ui.goto_view(1) -- files found buffer
   assert_raises(function() ui.find.goto_file_found(true) end, 'number/nil expected, got boolean')
   ui.find.find_entry_text = ''
   view:unsplit()
-  io.close_buffer()
+  buffer:close()
   -- TODO: ui.find.find_in_files() -- no param
 end
 
@@ -1982,8 +1988,7 @@ function test_ui_find_replace()
   events.emit(events.FIND, 'quux', true)
   events.emit(events.REPLACE, '')
   assert_equal(buffer:get_text(), 'barbooሴ')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_ui_find_replace_all()
@@ -2009,8 +2014,7 @@ function test_ui_find_replace_all()
   assert_equal(buffer:get_text(), '\nbar\nbaz\n')
   events.emit(events.REPLACE_ALL, 'quux', '')
   assert_equal(buffer:get_text(), '\nbar\nbaz\n')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_macro_record_play_save_load()
@@ -2036,13 +2040,11 @@ function test_macro_record_play_save_load()
   textadept.macros.record() -- stop
   assert_equal(#_BUFFERS, 2)
   assert_equal(buffer:get_text(), 'ra')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
   textadept.macros.play()
   assert_equal(#_BUFFERS, 2)
   assert_equal(buffer:get_text(), 'ra')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
   local filename = os.tmpname()
   textadept.macros.save(filename)
   textadept.macros.record()
@@ -2051,8 +2053,7 @@ function test_macro_record_play_save_load()
   textadept.macros.play()
   assert_equal(#_BUFFERS, 2)
   assert_equal(buffer:get_text(), 'ra')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
   os.remove(filename)
 
   assert_raises(function() textadept.macros.save(1) end, 'string/nil expected, got number')
@@ -2088,8 +2089,7 @@ function test_macro_record_play_with_keys_only()
   end
   assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n\n');
   assert_equal(buffer.current_pos, buffer:position_from_line(LINE(7)))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_menu_menu_functions()
@@ -2170,8 +2170,7 @@ function test_menu_menu_functions()
   local virtual_space = buffer.virtual_space_options
   textadept.menu.menubar[_L['View']][_L['Toggle Virtual Space']][2]()
   assert(buffer.virtual_space_options ~= virtual_space, 'virtual space not toggled')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_menu_functions_interactive()
@@ -2179,8 +2178,7 @@ function test_menu_functions_interactive()
   buffer.filename = '/tmp/test.lua'
   textadept.menu.menubar[_L['Tools']][_L['Set Arguments...']][2]()
   textadept.menu.menubar[_L['Help']][_L['About']][2]()
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 -- TODO: test set arguments more thoroughly.
@@ -2189,7 +2187,7 @@ function test_menu_select_command_interactive()
   local num_buffers = #_BUFFERS
   textadept.menu.select_command()
   assert(#_BUFFERS > num_buffers, 'new buffer not created')
-  io.close_buffer()
+  buffer:close()
 end
 
 function test_run_compile_run()
@@ -2225,7 +2223,7 @@ function test_run_compile_run()
   ui.update() -- process output
   view:goto_buffer(1)
   assert(not buffer.annotation_text[LINE(3)]:find("'end' expected"), 'annotation visible')
-  io.close_buffer() -- compile_file
+  buffer:close() -- compile_file
 
   local run_file = _HOME .. '/test/modules/textadept/run/run.lua'
   textadept.run.run_commands[run_file] = function()
@@ -2248,10 +2246,10 @@ function test_run_compile_run()
   textadept.run.goto_error(nil, false)
   assert_equal(buffer.filename, compile_file)
   if #_VIEWS > 1 then view:unsplit() end
-  io.close_buffer() -- compile_file
-  io.close_buffer() -- run_file
+  buffer:close() -- compile_file
+  buffer:close() -- run_file
   assert_raises(function() textadept.run.goto_error(true) end, 'number/nil expected, got boolean')
-  io.close_buffer() -- message buffer
+  buffer:close() -- message buffer
 
   assert_raises(function() textadept.run.compile({}) end, 'string/nil expected, got table')
   assert_raises(function() textadept.run.run({}) end, 'string/nil expected, got table')
@@ -2276,7 +2274,7 @@ function test_run_build()
   assert(buffer:get_text():find('read "foo"'), 'did not send stdin')
   assert(buffer:get_text():find('> exit status: 9'), 'build not stopped')
   textadept.run.stop() -- should not do anything
-  io.close_buffer()
+  buffer:close()
   -- TODO: chdir(_HOME) and textadept.run.build() -- no param.
   -- TODO: project whose makefile is autodetected.
 end
@@ -2288,8 +2286,8 @@ function test_run_goto_internal_lua_error()
   textadept.run.goto_error(LINE(1))
   assert(buffer.filename:find('/test/test%.lua$'), 'did not detect internal Lua error')
   view:unsplit()
-  io.close_buffer()
-  io.close_buffer()
+  buffer:close()
+  buffer:close()
 end
 
 -- TODO: test textadept.run.run_in_background
@@ -2326,8 +2324,8 @@ function test_session_save()
   assert(not session.foobar, 'userdata serialized')
   assert(not session.foobaz, 'thread serialized')
   view:unsplit()
-  io.close_buffer()
-  io.close_buffer()
+  buffer:close()
+  buffer:close()
   os.remove(session_file)
   events.disconnect(events.SESSION_SAVE, handler)
 end
@@ -2359,8 +2357,7 @@ function test_snippets_find_snippet()
   buffer:delete_back()
   textadept.snippets.insert()
   assert_equal(buffer:get_text(), 'quux\n') -- from lua.bar file
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   snippets.foo = nil
   table.remove(textadept.snippets.paths, 1)
@@ -2410,9 +2407,7 @@ function test_snippets_match_indentation()
     '        baz',
     '  quux'
   }, '\n'))
-
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   assert_raises(function() textadept.snippets.insert(true) end, 'string/nil expected, got boolean')
 end
@@ -2473,8 +2468,7 @@ function test_snippets_placeholders()
   }, '\n'), lua_date, shell_date))
   assert_equal(buffer.selection_start, POS(1))
   assert_equal(buffer.selection_start, POS(1))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_snippets_irregular_placeholders()
@@ -2486,8 +2480,7 @@ function test_snippets_irregular_placeholders()
   assert_equal(buffer:get_sel_text(), 'quux')
   textadept.snippets.insert()
   assert_equal(buffer:get_text(), 'quux')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_snippets_previous_cancel()
@@ -2507,8 +2500,7 @@ function test_snippets_previous_cancel()
   textadept.snippets.insert()
   textadept.snippets.cancel_current()
   assert_equal(buffer.length, 0)
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_snippets_nested()
@@ -2571,8 +2563,7 @@ function test_snippets_nested()
   assert_equal(buffer.selection_start, buffer.selection_end)
   assert_equal(buffer:get_text(), 'fooquuxbarbaz')
 
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
   snippets.foo = nil
 end
 
@@ -2581,8 +2572,7 @@ function test_snippets_select_interactive()
   buffer.new()
   textadept.snippets.select()
   assert(buffer.length > 0, 'no snippet inserted')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
   snippets.foo = nil
 end
 
@@ -2596,8 +2586,7 @@ function test_snippets_autocomplete()
   buffer:auto_c_complete()
   textadept.snippets.insert()
   assert_equal(buffer:get_text(), 'baz')
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
   snippets.bar = nil
   snippets.baz = nil
 end
@@ -2656,8 +2645,7 @@ function test_lua_autocomplete()
   buffer:clear_all()
   _M.lua.autocomplete_snippets = autocomplete_snippets -- restore
 
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_ansi_c_autocomplete()
@@ -2692,8 +2680,7 @@ function test_ansi_c_autocomplete()
 
   -- TODO: typeref and rescan
 
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 end
 
 function test_lexer_api()
@@ -2728,8 +2715,7 @@ function test_lexer_api()
   assert_equal(lexer.property_int['quux'], 0)
   assert_equal(lexer.style_at[2], 'keyword')
   assert_equal(lexer.line_from_position(15), LINE(2))
-  buffer:set_save_point()
-  io.close_buffer()
+  buffer:close(true)
 
   assert_raises(function() lexer.fold_level = nil end, 'read-only')
   assert_raises(function() lexer.fold_level[LINE(1)] = 0 end, 'read-only')
@@ -2758,8 +2744,7 @@ function print(...) ui._print(TEST_OUTPUT_BUFFER, ...) end
 local function cleanup()
   while #_BUFFERS > 1 do
     if buffer._type == TEST_OUTPUT_BUFFER then view:goto_buffer(1) end
-    buffer:set_save_point()
-    io.close_buffer()
+    buffer:close(true)
   end
   while view:unsplit() do end
 end

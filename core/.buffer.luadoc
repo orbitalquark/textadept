@@ -3118,7 +3118,7 @@ function zoom_out(buffer) end
 
 ---
 -- Deletes the buffer.
--- **Do not call this function.** Call `io.close_buffer()` instead. Emits a
+-- **Do not call this function.** Call `buffer:close()` instead. Emits a
 -- `BUFFER_DELETED` event.
 -- @param buffer A buffer.
 -- @see events.BUFFER_DELETED
@@ -3138,6 +3138,39 @@ function new() end
 -- @param start_pos The start position of the range of text to get in *buffer*.
 -- @param end_pos The end position of the range of text to get in *buffer*.
 function text_range(buffer, start_pos, end_pos) end
+
+---
+-- Reloads the buffer's file contents, discarding any changes.
+-- @param buffer A buffer.
+-- @name reload_file
+function reload(buffer) end
+
+---
+-- Saves the buffer to its file.
+-- Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
+-- @param buffer A buffer.
+-- @name save_file
+function save(buffer) end
+
+---
+-- Saves the buffer to file *filename* or the user-specified filename.
+-- Emits a `FILE_AFTER_SAVE` event.
+-- @param buffer A buffer.
+-- @param filename Optional new filepath to save the buffer to. If `nil`, the
+--   user is prompted for one.
+-- @name save_file_as
+function save_as(buffer, filename) end
+
+---
+-- Closes the buffer, prompting the user to continue if there are unsaved
+-- changes (unless *force* is `true`), and returns `true` if the buffer was
+-- closed.
+-- @param buffer A buffer.
+-- @param force Optional flag that discards unsaved changes without prompting
+--   the user. The default value is `false`.
+-- @return `true` if the buffer was closed; `nil` otherwise.
+-- @name close_buffer
+function close(buffer, force) end
 
 ---
 -- Converts the current buffer's contents to encoding *encoding*.

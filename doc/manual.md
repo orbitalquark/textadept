@@ -1470,7 +1470,7 @@ replace pane's search box? Create a Lua function that populates
 [`ui.find.find_entry_text`][] and [shows the pane][], and then re-assign the
 "Search -> Find" [menu action][]'s existing function to the one you just
 created. Would you like to have Textadept auto-save files as you switch between
-buffers? Connect the [`io.save_file()`][] function to the
+buffers? Connect the [`buffer:save()`][] function to the
 [`events.BUFFER_BEFORE_SWITCH`][] event. Would you like the ability to execute
 arbitrary code in order to transform replacement text while performing find &
 replace? Textadept emits an [`events.REPLACE`][] event every time the "Replace"
@@ -1482,7 +1482,7 @@ using Lua" is not an exaggeration!
 [`events.FILE_OPENED`]: api.html#events.FILE_OPENED
 [event]: api.html#events
 [`ui.find.find_entry_text`]: api.html#ui.find.find_entry_text
-[`io.save_file()`]: api.html#io.save_file
+[`buffer:save()`]: api.html#buffer.save
 [`events.BUFFER_BEFORE_SWITCH`]: api.html#events.BUFFER_BEFORE_SWITCH
 [`events.REPLACE`]: api.html#events.REPLACE
 [shows the pane]: api.html#ui.find.focus
@@ -2394,18 +2394,18 @@ compile\_command                  |Renamed |[compile\_commands][]
 run\_command                      |Renamed |[run\_commands][]
 error\_detail                     |Renamed |[error\_patterns][]<sup>e</sup>
 **_M.textadept.snapopen**         |Removed |N/A
-open                              |Changed |\_G.[io.snapopen()][]<sup>f</sup>
+open                              |Changed |\_G.io.snapopen()<sup>f</sup>
 **_SCINTILLA.constants**          |        |
 SC\_\*                            |Renamed |Removed "SC\_" prefix.
 SC(FIND\|MOD\|VS\|WS)             |Renamed |Removed "SC" prefix.
 **buffer**                        |        |
 check\_global()                   |Removed |
 get\_style\_name(buffer, n)       |Renamed |[style\_name][]\[n\]
-reload()                          |Renamed |[io.reload\_file()][]
-save()                            |Renamed |[io.save\_file()][]
-save\_as()                        |Renamed |[io.save\_file\_as()][]
-close()                           |Renamed |[io.close\_buffer()][]
-set\_encoding()                   |Renamed |[io.set\_buffer\_encoding()][]
+reload()                          |Renamed |io.reload\_file()
+save()                            |Renamed |io.save\_file()
+save\_as()                        |Renamed |io.save\_file\_as()
+close()                           |Renamed |io.close\_buffer()
+set\_encoding()                   |Renamed |io.set\_buffer\_encoding()
 convert\_eo\_ls()                 |Renamed |[buffer.convert\_eols()][]
 dirty                             |Replaced|[buffer.modify][]
 **events**                        |        |
@@ -2422,7 +2422,7 @@ set\_theme(name, ...)             |Changed |set\_theme(name, table)
 **io**                            |        |
 try\_encodings                    |Renamed |[encodings][]
 open\_file(string)                |Changed |[open\_file][](string or table)
-snapopen(string, ...)             |Changed |[snapopen][](string or table, ...)
+snapopen(string, ...)             |Changed |snapopen(string or table, ...)
 save\_all()                       |Renamed |[save\_all\_files()][]
 close\_all()                      |Renamed |[close\_all\_buffers()][]
 
@@ -2452,13 +2452,7 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [compile\_commands]: api.html#textadept.run.compile_commands
 [run\_commands]: api.html#textadept.run.run_commands
 [error\_patterns]: api.html#textadept.run.error_patterns
-[io.snapopen()]: api.html#io.snapopen
 [style\_name]: api.html#buffer.style_name
-[io.reload\_file()]: api.html#io.reload_file
-[io.save\_file()]: api.html#io.save_file
-[io.save\_file\_as()]: api.html#io.save_file_as
-[io.close\_buffer()]: api.html#io.close_buffer
-[io.set\_buffer\_encoding()]: api.html#buffer.set_encoding
 [buffer.convert\_eols()]: api.html#buffer.convert_eols
 [buffer.modify]: api.html#buffer.modify
 [INITIALIZED]: api.html#events.INITIALIZED
@@ -2469,7 +2463,6 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [dialogs]: api.html#ui.dialogs
 [encodings]: api.html#io.encodings
 [open\_file]: api.html#io.open_file
-[snapopen]: api.html#io.snapopen
 [save\_all\_files()]: api.html#io.save_all_files
 [close\_all\_buffers()]: api.html#io.close_all_buffers
 [`buffer.marker_back`]: api.html#buffer.marker_back

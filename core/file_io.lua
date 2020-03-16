@@ -11,13 +11,13 @@
 --   * _`filename`_: The opened file's filename.
 -- @field _G.events.FILE_BEFORE_SAVE (string)
 --   Emitted right before saving a file to disk.
---   Emitted by [`io.save_file()`]().
+--   Emitted by [`buffer:save()`]().
 --   Arguments:
 --
 --   * _`filename`_: The filename of the file being saved.
 -- @field _G.events.FILE_AFTER_SAVE (string)
 --   Emitted right after saving a file to disk.
---   Emitted by [`io.save_file()`]() and [`io.save_file_as()`]().
+--   Emitted by [`buffer:save()`]() and [`buffer:save_as()`]().
 --   Arguments:
 --
 --   * _`filename`_: The filename of the file being saved.
@@ -163,10 +163,9 @@ function io.open_file(filenames, encodings)
   end
 end
 
----
--- Reloads the current buffer's file contents, discarding any changes.
--- @name reload_file
-function io.reload_file()
+-- LuaDoc is in core/.buffer.luadoc.
+local function reload(buffer)
+  if not buffer then buffer = _G.buffer end
   if not buffer.filename then return end
   local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
   local f = assert(io.open(buffer.filename, 'rb'))
@@ -174,10 +173,12 @@ function io.reload_file()
   f:close()
   if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
   buffer:set_text(text)
-  buffer:goto_pos(pos)
-  buffer.first_visible_line = first_visible_line
   buffer:set_save_point()
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
+  if buffer == _G.buffer then
+    buffer:goto_pos(pos)
+    buffer.first_visible_line = first_visible_line
+  end
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
@@ -196,17 +197,11 @@ local function set_encoding(buffer, encoding)
   buffer.encoding = encoding
   buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
 end
--- Sets the default buffer encoding.
-events_connect(events.BUFFER_NEW, function()
-  buffer.set_encoding, buffer.encoding = set_encoding, 'UTF-8'
-end)
 
----
--- Saves the current buffer to its file.
--- Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
--- @name save_file
-function io.save_file()
-  if not buffer.filename then io.save_file_as() return end
+-- LuaDoc is in core/.buffer.luadoc.
+local function save(buffer)
+  if not buffer then buffer = _G.buffer end
+  if not buffer.filename then buffer:save_as() return end
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
   local text = buffer:get_text()
   if buffer.encoding then text = text:iconv(buffer.encoding, 'UTF-8') end
@@ -217,13 +212,9 @@ function io.save_file()
   events.emit(events.FILE_AFTER_SAVE, buffer.filename)
 end
 
----
--- Saves the current buffer to file *filename* or the user-specified filename.
--- Emits a `FILE_AFTER_SAVE` event.
--- @param filename Optional new filepath to save the buffer to. If `nil`, the
---   user is prompted for one.
--- @name save_file_as
-function io.save_file_as(filename)
+-- LuaDoc is in core/.buffer.luadoc.
+local function save_as(buffer, filename)
+  if not buffer then buffer = _G.buffer end
   local dir, name = (buffer.filename or ''):match('^(.-[/\\]?)([^/\\]*)$')
   if not assert_type(filename, 'string/nil', 1) then
     filename = ui.dialogs.filesave{
@@ -233,34 +224,31 @@ function io.save_file_as(filename)
     if not filename then return end
   end
   buffer.filename = filename
-  io.save_file()
+  buffer:save()
   events.emit(events.FILE_AFTER_SAVE, filename, true)
 end
 
 ---
 -- Saves all unsaved buffers to their respective files.
--- @see io.save_file
+-- @see buffer.save
 -- @name save_all_files
 function io.save_all_files()
   local current_buffer = buffer
   for _, buffer in ipairs(_BUFFERS) do
     if buffer.filename and buffer.modify then
       view:goto_buffer(buffer)
-      io.save_file()
+      buffer:save()
     end
   end
   view:goto_buffer(current_buffer)
 end
 
----
--- Closes the current buffer, prompting the user to continue if there are
--- unsaved changes, and returns `true` if the buffer was closed.
--- @return `true` if the buffer was closed; `nil` otherwise.
--- @name close_buffer
-function io.close_buffer()
+-- LuaDoc is in core/.buffer.luadoc.
+local function close(buffer, force)
+  if not buffer then buffer = _G.buffer end
   local filename = buffer.filename or buffer._type or _L['Untitled']
   if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
-  if buffer.modify then
+  if buffer.modify and not force then
     local button = ui.dialogs.msgbox{
       title = _L['Close without saving?'],
       text = _L['There are unsaved changes in'], informative_text = filename,
@@ -278,15 +266,27 @@ end
 -- buffers, and returns `true` if the user did not cancel.
 -- No buffers are saved automatically. They must be saved manually.
 -- @return `true` if user did not cancel; `nil` otherwise.
--- @see io.close_buffer
+-- @see buffer.close
 -- @name close_all_buffers
 function io.close_all_buffers()
   while #_BUFFERS > 1 do
     view:goto_buffer(_BUFFERS[#_BUFFERS])
-    if not io.close_buffer() then return nil end -- do not propagate key command
+    if not buffer:close() then return nil end -- do not propagate key command
   end
-  return io.close_buffer() -- the last one
+  return buffer:close() -- the last one
 end
+
+-- Sets buffer io methods and the default buffer encoding.
+events_connect(events.BUFFER_NEW, function()
+  buffer.reload = reload
+  buffer.set_encoding, buffer.encoding = set_encoding, 'UTF-8'
+  buffer.save, buffer.save_as, buffer.close = save, save_as, close
+end)
+-- Export for later storage into the first buffer, which does not exist yet.
+-- Cannot rely on `events.BUFFER_NEW` because init scripts (e.g. menus and key
+-- bindings) can access buffer functions before the first `events.BUFFER_NEW` is
+-- emitted.
+io._reload, io._save, io._save_as, io._close = reload, save, save_as, close
 
 -- Detects if the current file has been externally modified and, if so, emits a
 -- `FILE_CHANGED` event.
@@ -315,7 +315,7 @@ events_connect(events.FILE_CHANGED, function(filename)
     icon = 'gtk-dialog-question', button1 = _L['Yes'], button2 = _L['No'],
     width = CURSES and #filename > 40 and ui.size[1] - 2 or nil
   }
-  if button == 1 then io.reload_file() end
+  if button == 1 then buffer:reload() end
 end)
 
 -- Closes the initial "Untitled" buffer when another buffer is opened.
@@ -323,7 +323,7 @@ events_connect(events.FILE_OPENED, function()
   local buf = _BUFFERS[1]
   if #_BUFFERS == 2 and not (buf.filename or buf._type or buf.modify) then
     view:goto_buffer(_BUFFERS[1])
-    io.close_buffer()
+    buffer:close()
   end
 end)
 
