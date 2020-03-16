@@ -495,7 +495,14 @@ if CURSES then
   end)
 end
 
-events_connect(events.ERROR, ui.print)
+local lua_error = (not WIN32 and '^/' or '^%a:[/\\]') .. '.-%.lua:%d+:'
+-- Print internal Lua error messages as they are reported.
+-- Attempt to mimic the Lua interpreter's error message format so tools that
+-- look for it can recognize these errors too.
+events_connect(events.ERROR, function(text)
+  if text and text:find(lua_error) then text = 'lua: ' .. text end -- mimic Lua
+  ui.print(text)
+end)
 
 --[[ The tables below were defined in C.
 

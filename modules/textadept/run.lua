@@ -351,18 +351,18 @@ M.error_patterns = {actionscript={'^(.-)%((%d+)%): col: (%d+) (.+)$'},ada={'^(.-
 local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 ---
 -- Jumps to the source of the recognized compile/run warning or error on line
--- number *line* in the message buffer.
--- If *line* is `nil`, jumps to the next or previous warning or error, depending
--- on boolean *next*. Displays an annotation with the warning or error message
--- if possible.
--- @param line The line number in the message buffer that contains the
+-- number *line_num* in the message buffer.
+-- If *line_num* is `nil`, jumps to the next or previous warning or error,
+-- depending on boolean *next*. Displays an annotation with the warning or error
+-- message if possible.
+-- @param line_num The line number in the message buffer that contains the
 --   compile/run warning or error to go to.
 -- @param next Optional flag indicating whether to go to the next recognized
---   warning/error or the previous one. Only applicable when *line* is `nil`.
+--   warning/error or the previous one. Only applicable when *line_num* is
+--   `nil`.
 -- @see error_patterns
 -- @name goto_error
-function M.goto_error(line, next)
-  if not cwd then return end -- no previously run command
+function M.goto_error(line_num, next)
   local msg_view, msg_buf = nil, nil
   for i = 1, #_VIEWS do
     if is_msg_buf(_VIEWS[i].buffer) then msg_view = _VIEWS[i] break end
@@ -373,38 +373,39 @@ function M.goto_error(line, next)
   if not msg_view and not msg_buf then return end
   if msg_view then ui.goto_view(msg_view) else view:goto_buffer(msg_buf) end
 
-  -- If no line was given, find the next warning or error marker.
-  if not assert_type(line, 'number/nil', 1) and next ~= nil then
+  -- If no line number was given, find the next warning or error marker.
+  if not assert_type(line_num, 'number/nil', 1) and next ~= nil then
     local f = next and buffer.marker_next or buffer.marker_previous
-    line = buffer:line_from_position(buffer.current_pos)
+    line_num = buffer:line_from_position(buffer.current_pos)
     local wrapped = false
     ::retry::
-    local wline = f(buffer, line + (next and 1 or -1), 1 << M.MARK_WARNING)
-    local eline = f(buffer, line + (next and 1 or -1), 1 << M.MARK_ERROR)
+    local wline = f(buffer, line_num + (next and 1 or -1), 1 << M.MARK_WARNING)
+    local eline = f(buffer, line_num + (next and 1 or -1), 1 << M.MARK_ERROR)
     if wline == -1 and eline == -1 then
       wline = f(buffer, next and 0 or buffer.line_count, 1 << M.MARK_WARNING)
       eline = f(buffer, next and 0 or buffer.line_count, 1 << M.MARK_ERROR)
     elseif wline == -1 or eline == -1 then
       if wline == -1 then wline = eline else eline = wline end
     end
-    line = (next and math.min or math.max)(wline, eline)
-    if line == -1 and not wrapped then
-      line = next and 0 or buffer.line_count
+    line_num = (next and math.min or math.max)(wline, eline)
+    if line_num == -1 and not wrapped then
+      line_num = next and 0 or buffer.line_count
       wrapped = true
       goto retry
     end
   end
-  buffer:goto_line(line)
 
   -- Goto the warning or error and show an annotation.
-  local line = buffer:get_line(line):match('^[^\r\n]*')
+  local line = buffer:get_line(line_num):match('^[^\r\n]*')
   local detail = scan_for_error(line:iconv(_CHARSET, 'UTF-8'))
   if not detail then return end
+  buffer:goto_line(line_num)
   textadept.editing.select_line()
-  if not detail.filename:find(not WIN32 and '^/' or '^%a:[/\\]') then
+  if not detail.filename:find(not WIN32 and '^/' or '^%a:[/\\]') and cwd then
     detail.filename = cwd .. (not WIN32 and '/' or '\\') .. detail.filename
   end
-  ui.goto_file(detail.filename, true, preferred_view, true)
+  local sloppy = not detail.filename:find(not WIN32 and '^/' or '^%a:[/\\]')
+  ui.goto_file(detail.filename, true, preferred_view, sloppy)
   textadept.editing.goto_line(detail.line - 1)
   if detail.column then
     buffer:goto_pos(buffer:find_column(detail.line - 1, detail.column - 1))
