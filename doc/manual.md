@@ -901,9 +901,9 @@ modules can provide.
 
 ## Getting Modules
 
-Textadept has a set of officially supported language modules available as a
-separate download from the Textadept downloads page. The source code for those
-modules is hosted [here][].
+Textadept has a set of officially supported modules available as a separate
+download from the Textadept downloads page. The source code for those modules is
+hosted [here][].
 
 For now, the [wiki][] hosts third-party, user-created modules.
 
@@ -1181,7 +1181,7 @@ You may also have a directory of snippet files where each file is its own
 snippet: filenames emulate the keys in the `snippets` table and file contents
 are the snippet text. Adding such snippet directories looks like this:
 
-    textadept.snippets._paths[#textadept.snippets._paths + 1] = '/path/to/dir'
+    textadept.snippets.paths[#textadept.snippets.paths + 1] = '/path/to/dir'
 
 Learn more about snippets, snippet syntax, and snippet files in the
 [snippets documentation][].
@@ -2001,6 +2001,78 @@ terminal's constraints:
 
 ## Migration Guides
 
+### Textadept 10 to 11
+
+#### API Changes
+
+Old API                 |Change  |New API
+------------------------|:------:|-------
+**buffer**              |        |
+style_name[n]           |Replaced|[buffer:name_of_style][](n)
+**events**              |        |
+N/A                     |Added   |[events.SESSION_SAVE][]
+N/A                     |Added   |[events.SESSION_LOAD][]
+**io**                  |        |
+reload_file             |Renamed |[buffer:reload()]
+save_file               |Renamed |[buffer:save()]
+save_file_as            |Renamed |[buffer:save_as()]
+close_buffer            |Renamed |[buffer:close()]
+**keys**                |        |
+MODE                    |Renamed |[mode][]
+**textadept.bookmarks** |        |
+toggle(line, on)        |Changed |[toggle][]()
+**textadept.file_types**|        |
+lexers                  |Removed |N/A<sup>a</sup>
+**textadept.snippets**  |        |
+\_insert()              |Renamed |[insert()][]
+\_previous()            |Renamed |[previous()][]
+\_cancel_current()      |Renamed |[cancel_current()][]
+\_select()              |Renamed |[select()][]
+\_paths                 |Renamed |[paths][]
+
+<sup>a</sup>Use `for name in buffer:private_lexer_call(_SCINTILLA.functions.property_names[1]):gmatch('[^\n]+') do ... end`.
+
+[buffer:name_of_style]: api.html#buffer.name_of_style
+[events.SESSION_SAVE]: api.html#events.SESSION_SAVE
+[events.SESSION_LOAD]: api.html#events.SESSION_LOAD
+[buffer:reload()]: api.html#buffer.reload
+[buffer:save()]: api.html#buffer.save
+[buffer:save_as()]: api.html#buffer.save_as
+[buffer:close()]: api.html#buffer.close
+[mode]: api.html#keys.mode
+[toggle]: api.html#textadept.bookmarks.toggle
+[insert()]: api.html#textadept.snippets.insert
+[previous()]: api.html#textadept.snippets.previous
+[cancel_current()]: api.html#textadept.snippets.cancel_current
+[select()]: api.html#textadept.snippets.select
+[paths]: api.html#textadept.snippets.paths
+
+#### Localization Changes
+
+GUI mnemonics in localization keys have been removed. For example, `_L['_New']`
+should be changed to `_L['New']`. Mnemonics can still be used in localization
+values; it's just the keys that have changed. See *core/locale.conf* for
+examples.
+
+#### Key Bindings Changes
+
+The key binding for inserting a user-specified snippet from a dialog has changed
+from `Ctrl+K` (`⌥⇥` on Mac OSX | `M-K` on curses) to `Ctrl+Shift+K`
+(`⌥⇧⇥` | `M-S-K`). `Ctrl+K` (`⌥⇥` | `M-K`) now autocompletes snippet names.
+
+#### Session Changes
+
+Textadept saves and loads session from Lua data files instead of structured text
+files. As a result, Textadept 11 cannot load session files from 10.x or before.
+
+#### Miscellaneous Changes
+
+* *~/.textadept/?.lua* and *~/.textadept/?.{so,dll}* has been removed from
+  `package.path` and `package.cpath`, respectively. All modules should be placed
+  in *~/.textadept/modules/*.
+* The command entry no longer recognizes a Lua 5.1-style '`=`' prefix for
+  printing return values. This has been the default for quite some time.
+
 ### Textadept 9 to 10
 
 #### API Changes
@@ -2135,11 +2207,11 @@ build()                           |Changed |[build][](root\_directory)
 syntax\_commands                  |Removed |
 syntax\_error\_patterns           |Removed |
 **textadept.snippets**            |        |
-N/A                               |Added   |[\_paths][]
+N/A                               |Added   |\_paths
 **textadept.session**             |        |
 DEFAULT\_SESSION                  |Renamed |default\_session
 SAVE\_ON\_QUIT                    |Renamed |[save\_on\_quit][]
-MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
+MAX\_RECENT\_FILES                |Renamed |max\_recent\_files
 
 [COMPILE\_OUTPUT]: api.html#events.COMPILE_OUTPUT
 [RUN\_OUTPUT]: api.html#events.RUN_OUTPUT
@@ -2169,9 +2241,7 @@ MAX\_RECENT\_FILES                |Renamed |[max\_recent\_files][]
 [run]: api.html#textadept.run.run
 [build]: api.html#textadept.run.build
 [error\_patterns]: api.html#textadept.run.error_patterns
-[\_paths]: api.html#textadept.snippets._paths
 [save\_on\_quit]: api.html#textadept.session.save_on_quit
-[max\_recent\_files]: api.html#textadept.session.max_recent_files
 
 #### Key and Menu Command Changes
 
@@ -2287,7 +2357,7 @@ N/A                        |Added   |[tabs][]                            |7.1
 N/A                        |Added   |[SILENT\_PRINT][]                   |7.2
 **ui.command_entry**       |        |                                    |
 N/A                        |Added   |[editing\_keys][]                   |7.8
-enter\_mode(mode)          |Changed |[enter\_mode][](mode, lexer, height)|7.8
+enter\_mode(mode)          |Changed |enter\_mode(mode, lexer, height)    |7.8
 **ui.dialogs**             |        |                                    |
 N/A                        |Added   |[optionselect()][]                  |7.2
 
@@ -2322,7 +2392,6 @@ N/A                        |Added   |[optionselect()][]                  |7.2
 [tabs]: api.html#ui.tabs
 [SILENT\_PRINT]: api.html#ui.SILENT_PRINT
 [editing\_keys]: api.html#ui.command_entry.editing_keys
-[enter\_mode]: api.html#ui.command_entry.enter_mode
 [optionselect()]: api.html#ui.dialogs.optionselect
 
 #### Language-specific Key Changes
@@ -2400,7 +2469,7 @@ SC\_\*                            |Renamed |Removed "SC\_" prefix.
 SC(FIND\|MOD\|VS\|WS)             |Renamed |Removed "SC" prefix.
 **buffer**                        |        |
 check\_global()                   |Removed |
-get\_style\_name(buffer, n)       |Renamed |[style\_name][]\[n\]
+get\_style\_name(buffer, n)       |Renamed |style\_name\[n\]
 reload()                          |Renamed |io.reload\_file()
 save()                            |Renamed |io.save\_file()
 save\_as()                        |Renamed |io.save\_file\_as()
@@ -2452,7 +2521,6 @@ close\_all()                      |Renamed |[close\_all\_buffers()][]
 [compile\_commands]: api.html#textadept.run.compile_commands
 [run\_commands]: api.html#textadept.run.run_commands
 [error\_patterns]: api.html#textadept.run.error_patterns
-[style\_name]: api.html#buffer.style_name
 [buffer.convert\_eols()]: api.html#buffer.convert_eols
 [buffer.modify]: api.html#buffer.modify
 [INITIALIZED]: api.html#events.INITIALIZED
