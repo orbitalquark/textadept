@@ -1344,6 +1344,7 @@ simply use `split`. Finally, these commands are runnable on startup using the
 `-e` and `--execute` command line switches.
 
 Pressing `Ctrl+H` (`^H` | `M-H` or `M-S-H`) shows help for the current command.
+Pressing `Up` or `Down` cycles through command history.
 
 ![Command Entry](images/commandentry.png)
 
@@ -1366,7 +1367,8 @@ available completions. Use the arrow keys to make a selection and press `Enter`
 
 Executing Lua commands is just one of the many "modes" the command entry has.
 The [command entry API documentation][] has more information on modes and how to
-create new ones.
+create new ones. Each mode has its own history that can be cycled through using
+the `Up` or `Down` keys.
 
 [command entry API documentation]: api.html#ui.command_entry
 

@@ -1081,8 +1081,8 @@ function test_command_entry_run()
 end
 
 local function run_lua_command(command)
-  ui.command_entry:set_text(command)
   ui.command_entry.run()
+  ui.command_entry:set_text(command)
   assert_equal(ui.command_entry:get_lexer(), 'lua')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 end
@@ -1131,6 +1131,11 @@ local function assert_lua_autocompletion(text, first_item)
   events.emit(events.KEYPRESS, string.byte('\t'))
   assert_equal(ui.command_entry:auto_c_active(), true)
   assert_equal(ui.command_entry.auto_c_current_text, first_item)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), text) -- no history cycling
+  assert_equal(ui.command_entry:auto_c_active(), true)
+  assert_equal(ui.command_entry.auto_c_current_text, first_item)
   ui.command_entry:auto_c_cancel()
 end
 
@@ -1144,6 +1149,61 @@ function test_command_entry_complete_lua()
   assert_lua_autocompletion('_', '_BUFFERS')
   -- TODO: textadept.editing.show_documentation key binding.
   ui.command_entry:focus() -- hide
+end
+
+function test_command_entry_history()
+  local one, two = function() end, function() end
+
+  ui.command_entry.run(one)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), '') -- no prior history
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  assert_equal(ui.command_entry:get_text(), '') -- no further history
+  ui.command_entry:add_text('foo')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+
+  ui.command_entry.run(two)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), '') -- no prior history
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  assert_equal(ui.command_entry:get_text(), '') -- no further history
+  ui.command_entry:add_text('bar')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+
+  ui.command_entry.run(one)
+  assert_equal(ui.command_entry:get_text(), '')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'foo')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'foo') -- no prior history
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  assert_equal(ui.command_entry:get_text(), 'foo') -- no further history
+  ui.command_entry:set_text('baz')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+
+  ui.command_entry.run(one)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'baz')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'foo')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  assert_equal(ui.command_entry:get_text(), 'baz')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up, 'foo'
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+
+  ui.command_entry.run(one)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'foo')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'baz')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'foo')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+
+  ui.command_entry.run(two)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'bar')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
 end
 
 function test_editing_auto_pair()
