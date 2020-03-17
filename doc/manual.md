@@ -45,9 +45,11 @@ fastest scripting languages available.
 
 Textadept is minimalist. Not only does its appearance exhibit this, but the
 editor's C core pledges to never exceed 2000 lines of code and its Lua extension
-code avoids going beyond 4000 lines. After more than 8 years of development,
-Textadept contains roughly the same amount of code since its inception while
+code avoids going beyond 4000 lines. After more than 12 years of development,
+Textadept contains [roughly the same amount of code][] since its inception while
 evolving into a vastly superior editor.
+
+[roughly the same amount of code]: https://foicica.com/stats.html#Textadept
 
 ### Remarkably Extensible
 
@@ -144,9 +146,10 @@ appropriate package for your platform. For the Windows and Mac OSX packages, the
 bundled GTK runtime accounts for more than 3/4 of the download and unpackaged
 application sizes. Textadept itself is much smaller.
 
-You also have the option of downloading an official set of
-[language modules](#Language.Modules) from the download page. Textadept itself
-includes C and Lua language modules by default.
+You also have the option of downloading an official set of extra support
+[modules](#Modules) from the download page. Textadept itself already includes a
+core set of editing modules as well as C and Lua
+[language modules](#Language.Modules).
 
 If necessary, you can obtain PGP signatures from the [download page][] along
 with a public key in order to verify download integrity. For example on Linux,
@@ -164,7 +167,7 @@ privileges.
 
 Unpack the archive anywhere.
 
-If you downloaded the set of language modules, unpack it where you unpacked the
+If you downloaded the extra set of modules, unpack it where you unpacked the
 Textadept archive. The modules are located in the
 */path/to/textadept_x.x/modules/* directory.
 
@@ -175,7 +178,7 @@ Unpack the archive and move *Textadept.app* to your user or system
 contains an optional *ta* script for launching Textadept from the command line
 that you can put in a directory in your "$PATH" (e.g. */usr/local/bin/*).
 
-If you downloaded the set of language modules, unpack it, right-click
+If you downloaded the extra set of modules, unpack it, right-click
 *Textadept.app*, select "Show Package Contents", navigate to
 *Contents/Resources/modules/*, and move the unpacked modules there.
 
@@ -183,7 +186,7 @@ If you downloaded the set of language modules, unpack it, right-click
 
 Unpack the archive anywhere.
 
-If you downloaded the set of language modules, unpack it where you unpacked the
+If you downloaded the extra set of modules, unpack it where you unpacked the
 Textadept archive. The modules are located in the *textadept_x.x\modules\\*
 directory.
 
@@ -357,13 +360,18 @@ Textadept shows the name of the active buffer in its titlebar. Pressing
 
 ### Typical Buffer Settings
 
-Individual files have three configurable settings: line endings, indentation,
-and encoding. Line endings are the characters that separate lines. Indentation
-consists of an indentation character and an indentation size. File encoding
-specifies how to display text characters. Textadept shows these settings in the
-buffer status statusbar.
+Individual files have many configurable settings. Among the more useful settings
+are those involving line endings and viewing them, indentation, encoding,
+long line wrapping, and viewing whitespace. Line endings are the characters that
+separate lines. Indentation consists of an indentation character and an
+indentation size. File encoding specifies how to display text characters.
+Textadept shows these settings in the buffer status statusbar.
 
 ![Document Statusbar](images/docstatusbar.png)
+
+View settings for line endings, long lines, and whitespace only affect the
+_current_ buffer. Changing a setting in one buffer does not change that setting
+in any other buffer.
 
 #### Buffer Line Endings
 
@@ -399,6 +407,22 @@ encoding and performs the conversion. Textadept saves new files as UTF-8 by
 default, but does not alter the encoding of existing ones.
 
 [`io.encodings`]: api.html#io.encodings
+
+#### View Line Endings
+
+Normally, EOL characters ("\r" and "\n") are invisible. Pressing
+`Ctrl+Alt+Enter` (`^↩` on Mac OSX | none in curses) toggles their visibility.
+
+#### View Long Lines
+
+By default, lines with more characters than the view can show do not wrap into
+view. `Ctrl+Alt+\` (`^\` on Mac OSX | none in curses) toggles line wrapping.
+
+#### View Whitespace
+
+Normally, whitespace characters, tabs and spaces, are invisible. Pressing
+`Ctrl+Alt+Shift+S` (`^⇧S` on Mac OSX | none in curses) toggles their visibility.
+Visible spaces show up as dots and visible tabs show up as arrows.
 
 ### Recent Files
 
@@ -459,21 +483,10 @@ Note: Textadept curses uses the `M-^V` key prefix for split views.
 
 ### View Settings
 
-Individual views have many configurable settings. Among the more useful settings
-are viewing line endings, handling long lines, viewing indentation guides, and
-viewing whitespace. These options change how to display buffers in the _current_
-view. Changing a setting in one view does not immediately change that setting in
-any other split view. You must switch to that other view first.
-
-#### View Line Endings
-
-Normally, EOL characters ("\r" and "\n") are invisible. Pressing
-`Ctrl+Alt+Enter` (`^↩` on Mac OSX | none in curses) toggles their visibility.
-
-#### View Long Lines
-
-By default, lines with more characters than the view can show do not wrap into
-view. `Ctrl+Alt+\` (`^\` on Mac OSX | none in curses) toggles line wrapping.
+Individual views can configure the view of indentation guides and adjust the
+zoom level. These options change how to display buffers in the _current_ view.
+Changing a setting in one view does not immediately change that setting in any
+other split view. You must switch to that other view first.
 
 #### View Indentation Guides
 
@@ -482,12 +495,6 @@ Views show small guiding lines based on indentation level by default.
 these guides.
 
 Textadept curses does not support indentation guides.
-
-#### View Whitespace
-
-Normally, whitespace characters, tabs and spaces, are invisible. Pressing
-`Ctrl+Alt+Shift+S` (`^⇧S` on Mac OSX | none in curses) toggles their visibility.
-Visible spaces show up as dots and visible tabs show up as arrows.
 
 ### Zoom
 
@@ -738,7 +745,7 @@ matches and `Ctrl+R` (`⌘R` | `^R`) cycles through matches in reverse. Pressing
 ## Source Code Editing
 
 Being a programmer's editor, Textadept excels at editing source code. It
-understands the syntax and structure of more than 90 different programming
+understands the syntax and structure of more than 100 different programming
 languages and recognizes hundreds of file types. Textadept uses this knowledge
 to make viewing and editing code faster and easier. It can also compile and run
 simple source files.
@@ -802,16 +809,16 @@ However, snippets are not bound to static text. They can be dynamic templates
 which contain placeholders for further user input, can mirror or transform those
 user inputs, and can execute arbitrary code. Snippets are useful for rapidly
 constructing blocks of code such as control structures, method calls, and
-function declarations. Press `Ctrl+K` (`⌥⇥` on Mac OSX | `M-K` in curses) for a
-list of available snippets. A snippet consists of a trigger word and snippet
-text. Instead of manually selecting a snippet to insert, type its trigger word
-followed by the `Tab` (`⇥` | `Tab`) key. Subsequent presses of `Tab` (`⇥` |
-`Tab`) cause the caret to enter placeholders in sequential order, `Shift+Tab`
-(`⇧⇥` | `S-Tab`) goes back to the previous placeholder, and `Esc` cancels the
-current snippet. Textadept supports nested snippets, snippets inserted from
-within another snippet. Language modules usually define their [own set][] of
-snippets, but your [snippet preferences](#Snippet.Preferences) can define some
-too.
+function declarations. Press `Ctrl+Shift+K` (`⌥⇧⇥` on Mac OSX | `M-S-K` in
+curses) for a list of available snippets. A snippet consists of a trigger word
+and snippet text. Instead of manually selecting a snippet to insert, type its
+trigger word followed by the `Tab` (`⇥` | `Tab`) key. Subsequent presses of
+`Tab` (`⇥` | `Tab`) cause the caret to enter placeholders in sequential order,
+`Shift+Tab` (`⇧⇥` | `S-Tab`) goes back to the previous placeholder, and `Esc`
+cancels the current snippet. Textadept supports nested snippets, snippets
+inserted from within another snippet. Language modules usually define their
+[own set][] of snippets, but your [snippet preferences](#Snippet.Preferences)
+can define some too.
 
 ![Snippet](images/snippet.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -901,9 +908,9 @@ modules can provide.
 
 ## Getting Modules
 
-Textadept has a set of officially supported modules available as a separate
-download from the Textadept downloads page. The source code for those modules is
-hosted [here][].
+Textadept has a set of officially supported modules (including language modules)
+available as a separate download from the Textadept downloads page. The source
+code for those modules is hosted [here][].
 
 For now, the [wiki][] hosts third-party, user-created modules.
 
@@ -960,9 +967,11 @@ Textadept provides a wealth of customization options and extension points. The
 two main extension points are when Textadept starts up and when Textadept loads
 a file for editing. By now, this manual assumes you are at least familiar with
 the basics of [Lua][], but you do not have to know a lot of the language in
-order to configure Textadept.
+order to configure Textadept. The excerpt from [Lua Quick Reference][] may be of
+help.
 
 [Lua]: http://www.lua.org
+[Lua Quick Reference]: https://foicica.com/lua/
 
 ## User Init
 
@@ -992,8 +1001,8 @@ apply to all subsequent buffers. For example, in order to override a setting
 like Textadept's default indentation setting of 2 spaces per indent, add the
 following to your *~/.textadept/init.lua*:
 
-  buffer.use_tabs = true
-  buffer.tab_width = 4
+    buffer.use_tabs = true
+    buffer.tab_width = 4
 
 (If you want to define per-language editor preferences, use the technique shown
 in the [Language Preferences](#Language.Preferences) section below.)
@@ -1060,10 +1069,9 @@ your default indentation settings are), add the following to your
 *~/.textadept/init.lua*:
 
     events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer == 'ruby' then
-        buffer.use_tabs = false
-        buffer.tab_width = 2
-      end
+      if lexer ~= 'ruby' then return end
+      buffer.use_tabs = false
+      buffer.tab_width = 2
     end)
 
 Perhaps you want to auto-pair and brace-match '<' and '>' characters, but only
@@ -1082,9 +1090,8 @@ Since that module is not available at startup, but only once an applicable
 source file is loaded, you would use this:
 
     events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer == '...' then
-        _M[lexer].setting = 'custom setting'
-      end
+      if lexer ~= '...' then return end
+      _M[lexer].setting = 'custom setting'
     end)
 
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
@@ -1145,10 +1152,9 @@ bindings outside of a language module, you would add something like this to
 *~/.textadept/init.lua*:
 
     events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer == '...' then
-        if not keys[lexer] then keys[lexer] = {} end
-        keys[lexer].cn = function() ... end
-      end
+      if lexer ~= '...' then return end
+      if not keys[lexer] then keys[lexer] = {} end
+      keys[lexer].cn = function() ... end
     end)
 
 If you plan on redefining most key bindings (e.g. in order to mimic an editor
@@ -1171,10 +1177,8 @@ via a global `snippets` table:
     snippets['file'] = '%<buffer.filename>'
     snippets['path'] = "%<(buffer.filename or ''):match('^.+[/\\]')>"
     events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer == '...' then
-        if not snippets[lexer] then snippets[lexer] = {} end
-        snippets[lexer]['trigger'] = 'snippet text'
-      end
+      if lexer ~= '...' then return end
+      snippets[lexer]['trigger'] = 'snippet text'
     end)
 
 You may also have a directory of snippet files where each file is its own
@@ -1285,9 +1289,8 @@ color Java functions black instead of the default orange, add the following to
 *~/.textadept/init.lua*:
 
     events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer == 'java' then
-        buffer.property['style.function'] = 'fore:%(color.light_black)'
-      end
+      if lexer ~= 'java' then return end
+      buffer.property['style.function'] = 'fore:$(color.light_black)'
     end)
 
 For a full list of configurable properties, please consult the theme file you
@@ -1394,10 +1397,10 @@ the shell command `sort`, and pressing `Enter` (`↩` | `Enter`).
 This feature determines the standard input (stdin) for shell commands as
 follows:
 
-* If text is selected and spans multiple lines, all text on the lines containing
-  the selection is used. However, if the end of the selection is at the
-  beginning of a line, only the EOL (end of line) characters from the previous
-  line are included as input. The rest of the line is excluded.
+* If text is selected and spans multiple lines, all text on the lines that have
+  have text selected is passed as stdin. However, if the end of the selection is
+  at the beginning of a line, only the line ending delimiters from the previous
+  line are included. The rest of the line is excluded.
 * If text is selected and spans a single line, only the selected text is used.
 * If no text is selected, the entire buffer is used.
 
@@ -1470,7 +1473,7 @@ replace pane's search box? Create a Lua function that populates
 [`ui.find.find_entry_text`][] and [shows the pane][], and then re-assign the
 "Search -> Find" [menu action][]'s existing function to the one you just
 created. Would you like to have Textadept auto-save files as you switch between
-buffers? Connect the [`buffer:save()`][] function to the
+buffers? Connect [`buffer.save`][] function to the
 [`events.BUFFER_BEFORE_SWITCH`][] event. Would you like the ability to execute
 arbitrary code in order to transform replacement text while performing find &
 replace? Textadept emits an [`events.REPLACE`][] event every time the "Replace"
@@ -1482,7 +1485,7 @@ using Lua" is not an exaggeration!
 [`events.FILE_OPENED`]: api.html#events.FILE_OPENED
 [event]: api.html#events
 [`ui.find.find_entry_text`]: api.html#ui.find.find_entry_text
-[`buffer:save()`]: api.html#buffer.save
+[`buffer.save`]: api.html#buffer.save
 [`events.BUFFER_BEFORE_SWITCH`]: api.html#events.BUFFER_BEFORE_SWITCH
 [`events.REPLACE`]: api.html#events.REPLACE
 [shows the pane]: api.html#ui.find.focus
@@ -1502,11 +1505,10 @@ use your *~/.textadept/init.lua* file to load those completions and API docs for
 use within Textadept when editing [Lua files][]:
 
     events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer == 'lua' then
-        _M.lua.tags[#_M.lua.tags + 1] = '/path/to/tags'
-        local lua_api_files = textadept.editing.api_files.lua
-        lua_api_files[#lua_api_files + 1] = '/path/to/api'
-      end
+      if lexer ~= 'lua' then return end
+      _M.lua.tags[#_M.lua.tags + 1] = '/path/to/tags'
+      local lua_api_files = textadept.editing.api_files.lua
+      lua_api_files[#lua_api_files + 1] = '/path/to/api'
     end)
 
 Textadept uses this script to generate its own *tags* and *api* files for its
@@ -1654,7 +1656,7 @@ requires [libiconv for Windows][] and my [win32curses bundle][] instead of GTK.
 
 Compiling Textadept on Mac OSX is no longer supported. The preferred way is
 cross-compiling from Linux. In order to do so, you need install an [OSX cross
-toolchain][] _with GCC_ version 4.9 or later. You will need to run
+toolchain][] _with GCC_ version 4.9 or later (not Clang). You will need to run
 `./build_binutils.sh` _before_ `./build_gcc.sh`. OSX SDK tarballs like
 *MacOSX10.5.tar.gz* can be found readily on the internet.
 
@@ -2071,7 +2073,8 @@ files. As a result, Textadept 11 cannot load session files from 10.x or before.
   `package.path` and `package.cpath`, respectively. All modules should be placed
   in *~/.textadept/modules/*.
 * The command entry no longer recognizes a Lua 5.1-style '`=`' prefix for
-  printing return values. This has been the default for quite some time.
+  printing return values. Printing return values has been the default for quite
+  some time.
 
 ### Textadept 9 to 10
 
@@ -2274,9 +2277,9 @@ If you have a number of *post_init.lua* files that you want Textadept 9 to make
 use of, you can put the following in your *~/.textadept/init.lua*:
 
     events.connect(events.LEXER_LOADED, function(lexer)
-      if lfs.attributes(_USERHOME..'/modules/'..lexer..'/post_init.lua') then
-        require(lexer..'/post_init')
-      end
+      local post_init = string.format(
+        '%s/modules/%s/post_init.lua', _USERHOME, lexer)
+      if lfs.attributes(post_init) then require(lexer .. '/post_init') end
     end)
 
 #### Find & Replace Changes
@@ -2336,7 +2339,7 @@ toggle(on)                 |Changed |[toggle][](on, line)                |8.0
 complete\_lua()            |Removed |                                    |7.3
 execute\_lua()             |Removed |                                    |7.3
 **textadept.editing**      |        |                                    |
-N/A                        |Added   |[AUTOCOMPLETE\_ALL][]               |7.3
+N/A                        |Added   |AUTOCOMPLETE\_ALL                   |7.3
 N/A                        |Added   |[autocompleters][]                  |7.3
 autocomplete\_word()       |Replaced|autocomplete('word')                |7.3
 HIGHLIGHT\_BRACES          |Removed |                                    |7.3
@@ -2351,10 +2354,10 @@ set\_tabcontextmenu(menu)  |Replaced|[tab_context_menu][] = menu         |7.3
 N/A                        |Added   |[build()][]                         |7.2
 N/A                        |Added   |[build_commands][]                  |7.2
 N/A                        |Added   |[stop()][]                          |7.2
-N/A                        |Added   |[RUN\_IN\_BACKGROUND][]             |8.0
+N/A                        |Added   |RUN\_IN\_BACKGROUND                 |8.0
 **ui**                     |        |                                    |
 N/A                        |Added   |[tabs][]                            |7.1
-N/A                        |Added   |[SILENT\_PRINT][]                   |7.2
+N/A                        |Added   |SILENT\_PRINT                       |7.2
 **ui.command_entry**       |        |                                    |
 N/A                        |Added   |[editing\_keys][]                   |7.8
 enter\_mode(mode)          |Changed |enter\_mode(mode, lexer, height)    |7.8
@@ -2379,7 +2382,6 @@ N/A                        |Added   |[optionselect()][]                  |7.2
 [autocomplete()]: api.html#textadept.editing.autocomplete
 [show\_documentation()]: api.html#textadept.editing.show_documentation
 [toggle]: api.html#textadept.bookmarks.toggle
-[AUTOCOMPLETE\_ALL]: api.html#textadept.editing.AUTOCOMPLETE_ALL
 [autocompleters]: api.html#textadept.editing.autocompleters
 [patterns]: api.html#textadept.file_types.patterns
 [menubar]: api.html#textadept.menu.menubar
@@ -2388,9 +2390,7 @@ N/A                        |Added   |[optionselect()][]                  |7.2
 [build()]: api.html#textadept.run.build
 [build_commands]: api.html#textadept.run.build_commands
 [stop()]: api.html#textadept.run.stop
-[RUN\_IN\_BACKGROUND]: api.html#textadept.run.RUN_IN_BACKGROUND
 [tabs]: api.html#ui.tabs
-[SILENT\_PRINT]: api.html#ui.SILENT_PRINT
 [editing\_keys]: api.html#ui.command_entry.editing_keys
 [optionselect()]: api.html#ui.dialogs.optionselect
 
