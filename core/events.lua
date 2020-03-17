@@ -21,10 +21,10 @@ local M = {}
 -- using it. Events are simply strings containing arbitrary event names. When
 -- either you or Textadept emits an event, Textadept runs all event handlers
 -- connected to the event, passing any given arguments to the event's handler
--- functions. If an event handler explicitly returns a `true` or `false` boolean
--- value, Textadept will not call subsequent handlers. This is useful if you
--- want to stop the propagation of an event like a keypress if your event
--- handler handled it.
+-- functions. If an event handler explicitly returns a value that is not `nil`,
+-- Textadept will not call subsequent handlers. This is useful if you want to
+-- stop the propagation of an event like a keypress if your event handler
+-- handled it, or if you want to use the event framework to pass values.
 --
 -- @field APPLEEVENT_ODOC (string)
 --   Emitted when Mac OSX tells Textadept to open a file.
@@ -340,14 +340,14 @@ local error_emitted = false
 -- Sequentially calls all handler functions for event *event* with the given
 -- arguments.
 -- *event* may be any arbitrary string and does not need to have been previously
--- defined. If any handler explicitly returns `true` or `false`, `emit()`
--- returns that value and ceases to call subsequent handlers. This is useful for
--- stopping the propagation of an event like a keypress after it has been
--- handled.
+-- defined. If any handler explicitly returns a value that is not `nil`,
+-- `emit()` returns that value and ceases to call subsequent handlers. This is
+-- useful for stopping the propagation of an event like a keypress after it has
+-- been handled, or for passing back values from handlers.
 -- @param event The string event name.
 -- @param ... Arguments passed to the handler.
--- @return `true` or `false` if any handler explicitly returned such; `nil`
---   otherwise.
+-- @return `nil` unless any any handler explicitly returned a non-`nil` value;
+--   otherwise returns that value
 -- @usage events.emit('my_event', 'my message')
 -- @name emit
 function M.emit(event, ...)
@@ -365,7 +365,7 @@ function M.emit(event, ...)
         io.stderr:write(result) -- prevent infinite loop
       end
     end
-    if type(result) == 'boolean' then return result end
+    if result ~= nil then return result end
     if event_handlers[i] == handler then i = i + 1 end -- unless M.disconnect()
   end
 end
