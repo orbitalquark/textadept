@@ -100,7 +100,7 @@ else
   endif
 endif
 version = $(shell grep -m 1 _RELEASE ../core/init.lua | cut -d ' ' -f4- | \
-                  tr ' ' '_' | tr -d '"')
+                  tr ' ' '_' | tr -d "'")
 WGET = wget -O $@
 
 # Scintilla.
