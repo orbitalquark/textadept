@@ -2383,7 +2383,7 @@ function multi_edge_clear_all(buffer) end
 ---
 -- Returns the name of style number *style*, which is between `0` and `255`.
 -- @param buffer A buffer.
--- @param style_num The style number between `0` and `255` to get the name of.
+-- @param style The style number between `0` and `255` to get the name of.
 -- @return string
 function name_of_style(buffer, style) end
 
@@ -3142,14 +3142,14 @@ function text_range(buffer, start_pos, end_pos) end
 ---
 -- Reloads the buffer's file contents, discarding any changes.
 -- @param buffer A buffer.
--- @name reload_file
+-- @name reload
 function reload(buffer) end
 
 ---
 -- Saves the buffer to its file.
 -- Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
 -- @param buffer A buffer.
--- @name save_file
+-- @name save
 function save(buffer) end
 
 ---
@@ -3158,7 +3158,7 @@ function save(buffer) end
 -- @param buffer A buffer.
 -- @param filename Optional new filepath to save the buffer to. If `nil`, the
 --   user is prompted for one.
--- @name save_file_as
+-- @name save_as
 function save_as(buffer, filename) end
 
 ---
@@ -3169,7 +3169,7 @@ function save_as(buffer, filename) end
 -- @param force Optional flag that discards unsaved changes without prompting
 --   the user. The default value is `false`.
 -- @return `true` if the buffer was closed; `nil` otherwise.
--- @name close_buffer
+-- @name close
 function close(buffer, force) end
 
 ---
