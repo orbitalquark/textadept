@@ -6,12 +6,32 @@ local M = ui.command_entry
 --[[ This comment is for LuaDoc.
 ---
 -- Textadept's Command Entry.
--- It supports multiple modes that each have their own functionality, such as
+-- It supports multiple modes that each have their own functionality (such as
 -- running Lua code, searching for text incrementally, and filtering text
--- through shell commands.
+-- through shell commands) and history.
 -- @field height (number)
 --   The height in pixels of the command entry.
 module('ui.command_entry')]]
+
+-- Command history per mode.
+-- The current mode is in the `mode` field.
+-- @class table
+-- @name history
+local history = {}
+
+-- Cycles through command history for the current mode.
+-- @param prev Flag that indicates whether to cycle to the previous command or
+--   the next one.
+local function cycle_history(prev)
+  if M:auto_c_active() then M[prev and 'line_up' or 'line_down'](M) return end
+  local mode_history = history[history.mode]
+  if not mode_history or prev and mode_history.pos <= 1 then return end
+  if not prev and mode_history.pos >= #mode_history then return end
+  M:line_delete()
+  local i, bound = prev and -1 or 1, prev and 1 or #mode_history
+  mode_history.pos = math[prev and 'max' or 'min'](mode_history.pos + i, bound)
+  M:add_text(mode_history[mode_history.pos])
+end
 
 ---
 -- A metatable with typical platform-specific key bindings for text entries.
@@ -31,6 +51,9 @@ M.editing_keys = {__index = {
   [not OSX and 'cz' or 'mz'] = function() M:undo() end,
   [not OSX and 'cZ' or 'mZ'] = function() M:redo() end,
   [not OSX and 'cy' or '\0'] = function() M:redo() end,
+  up = function() cycle_history(true) end, down = cycle_history,
+  [(OSX or CURSES) and 'cp' or '\0'] = function() cycle_history(true) end,
+  [(OSX or CURSES) and 'cn' or '\0'] = cycle_history,
   -- Movement keys.
   [(OSX or CURSES) and 'cf' or '\0'] = function() M:char_right() end,
   [(OSX or CURSES) and 'cb' or '\0'] = function() M:char_left() end,
@@ -104,7 +127,7 @@ local function complete_lua()
   if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
   local cmpls = {}
   part = '^' .. part
-  local sep = string.char(buffer.auto_c_type_separator)
+  local sep = string.char(M.auto_c_type_separator)
   local XPM = textadept.editing.XPM_IMAGES
   if not ok or symbol == 'buffer' then
     local sci = _SCINTILLA
@@ -180,11 +203,17 @@ function M.run(f, keys, lexer, height)
     keys['\n'] = function()
       if M:auto_c_active() then return false end -- allow Enter to autocomplete
       M.focus() -- hide
-      if f then f((M:get_text())) end
+      if not f then return end
+      local mode_history = history[history.mode]
+      mode_history[#mode_history + 1] = M:get_text()
+      mode_history.pos = #mode_history + 1
+      f((M:get_text()))
     end
   end
   if not getmetatable(keys) then setmetatable(keys, M.editing_keys) end
-  M:select_all()
+  if f and not history[f] then history[f] = {pos = 0} end
+  history.mode = f
+  M:set_text('')
   M.focus()
   M:set_lexer(lexer or 'text')
   M.height = M:text_height(0) * (height or 1)
