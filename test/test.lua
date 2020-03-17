@@ -1413,7 +1413,7 @@ function test_editing_block_comment_lines()
   assert_equal(buffer:get_text(), table.concat({
     '',
     '--local foo = "bar"',
-    '  --local baz = "quux"',
+    '--  local baz = "quux"',
     ''
   }, '\n'))
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)) + offset + 2)
@@ -1438,16 +1438,16 @@ function test_editing_block_comment()
   buffer:set_lexer('ansi_c')
   buffer:set_text(table.concat({
     '',
-    'const char *foo = "bar";',
-    '  const char *baz = "quux";',
+    '  const char *foo = "bar";',
+    'const char *baz = "quux";',
     ''
   }, '\n'))
   buffer:set_sel(buffer:position_from_line(LINE(2)), buffer:position_from_line(LINE(4)))
   textadept.editing.block_comment()
   assert_equal(buffer:get_text(), table.concat({
     '',
-    '/*const char *foo = "bar";*/',
-    '  /*const char *baz = "quux";*/',
+    '  /*const char *foo = "bar";*/',
+    '/*const char *baz = "quux";*/',
     ''
   }, '\n'))
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)) + 2)
@@ -1455,8 +1455,8 @@ function test_editing_block_comment()
   textadept.editing.block_comment() -- uncomment
   assert_equal(buffer:get_text(), table.concat({
     '',
-    'const char *foo = "bar";',
-    '  const char *baz = "quux";',
+    '  const char *foo = "bar";',
+    'const char *baz = "quux";',
     ''
   }, '\n'))
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))

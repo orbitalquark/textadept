@@ -319,9 +319,12 @@ function M.block_comment()
   local s, e = buffer:line_from_position(anchor), buffer:line_from_position(pos)
   local ignore_last_line = s ~= e and pos == buffer:position_from_line(e)
   anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
+  local column = math.huge
   buffer:begin_undo_action()
   for line = s, not ignore_last_line and e or e - 1 do
     local p = buffer.line_indent_position[line]
+    column = math.min(buffer.column[p], column)
+    p = buffer:find_column(line, column)
     local uncomment = buffer:text_range(p, p + #prefix) == prefix
     if not uncomment then
       buffer:insert_text(p, prefix)
