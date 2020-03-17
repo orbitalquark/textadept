@@ -65,11 +65,10 @@
 -- properties. For example:
 --
 --     events.connect(events.LEXER_LOADED, function(lexer)
---       if lexer == 'python' then
---         buffer.tab_width = 4
---         buffer.use_tabs = false
---         buffer.view_ws = buffer.WS_VISIBLEALWAYS
---       end
+--       if lexer ~= 'python' then return end
+--       buffer.tab_width = 4
+--       buffer.use_tabs = false
+--       buffer.view_ws = buffer.WS_VISIBLEALWAYS
 --     end
 --
 -- ## Autocompletion and Documentation
@@ -95,12 +94,12 @@
 --
 -- ## Commands
 --
--- Additional editing features for the language can be useful. For example, the
--- [C](#_M.ansi_c) module has a feature to add a ';' to the end of the current
--- line and insert a new line. This command is bound to the `Shift+Enter` (`⇧↩`
+-- Additional editing features for the language can be useful. For example, a
+-- C++ module might have a feature to add a ';' to the end of the current line
+-- and insert a new line. This command could be bound to the `Shift+Enter` (`⇧↩`
 -- on Mac OSX | `S-Enter` in curses) key for easy access:
 --
---     keys.ansi_c = {
+--     keys.cpp = {
 --       ['s\n'] = function()
 --         buffer:line_end()
 --         buffer:add_text(';')
