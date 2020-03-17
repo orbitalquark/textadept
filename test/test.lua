@@ -154,6 +154,14 @@ function test_events_error()
   assert(errmsg:find('foo'), 'error handler did not run')
 end
 
+function test_events_value_passing()
+  local event = 'test_value_passing'
+  events.connect(event, function() return end)
+  events.connect(event, function() return {1, 2, 3} end) -- halts propagation
+  events.connect(event, function() return 'foo' end)
+  assert_equal(events.emit(event), {1, 2, 3})
+end
+
 local locales = {}
 -- Load localizations from *locale_conf* and return them in a table.
 -- @param locale_conf String path to a local file to load.
