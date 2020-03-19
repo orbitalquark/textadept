@@ -143,7 +143,7 @@ cdk_objs = $(addprefix cdk-, binding.o buttonbox.o cdk.o cdk_display.o \
                              cdk_objs.o cdkscreen.o draw.o entry.o fselect.o \
                              itemlist.o label.o mentry.o popup_label.o \
                              scroll.o scroller.o select_file.o selection.o \
-                             traverse.o version.o)
+                             slider.o traverse.o version.o)
 
 # Add debugging symbols and disable optimizations when DEBUG=1.
 # Note: In order to profile with gprof (-pg), do not retain symbols in LDFLAGS.
@@ -370,7 +370,7 @@ scintilla_zip = 429993cf4429.zip
 lua_tgz = lua-5.3.5.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_7_0_2.zip
-gtdialog_zip = db67f8a489e8.zip
+gtdialog_zip = 6edd57eeed93.zip
 cdk_tgz = cdk-5.0-20150928.tgz
 termkey_tgz = libtermkey-0.20.tar.gz
 win32gtk_zip = win32gtk-2.24.32.zip
@@ -410,6 +410,8 @@ cdk: cdk.patch | $(cdk_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	mv $@/include/*.h $@
+	$@/gen-scale.sh SLIDER Slider Int int $@/gen-slider.h > $@/slider.h
+	$@/gen-scale.sh SLIDER Slider Int int $@/gen-slider.c > $@/slider.c
 	patch -d $@ -N -p1 < $<
 $(termkey_tgz): ; $(WGET) http://www.leonerd.org.uk/code/libtermkey/$@
 termkey: termkey.patch | $(termkey_tgz)

@@ -99,8 +99,9 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
   -- a set of command line arguments and transforming the resulting standard
   -- output into Lua objects.
   -- @param options Table of key-value command line options for gtdialog.
+  -- @param f Work function for progressbar dialogs.
   -- @return Lua objects depending on the dialog kind
-  return function(options)
+  return function(options, f)
     if not options.button1 then options.button1 = _L['OK'] end
     if k == 'filteredlist' and not options.width then
       options.width = ui.size[1] - 2 * (CURSES and 1 or 100)
@@ -128,6 +129,9 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
         end
         if type(value) ~= 'boolean' then args[#args + 1] = value end
       end
+    end
+    if k == 'progressbar' then
+      args[#args + 1] = assert_type(f, 'function', 2)
     end
     -- Call gtdialog, stripping any trailing newline in the standard output.
     local result = ui.dialog(
@@ -161,7 +165,7 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
       local r, g, b = result:match('^#(%x%x)(%x%x)(%x%x)$')
       local bgr = r and g and b and string.format('0x%s%s%s', b, g, r) or nil
       return tonumber(bgr)
-    elseif k == 'fontselect' then
+    elseif k == 'fontselect' or k == 'progressbar' then
       return result ~= '' and result or nil
     elseif not options.string_output then
       local i, value = result:match('^(%-?%d+)\n?(.*)$')

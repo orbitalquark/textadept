@@ -462,6 +462,7 @@ static int lfind_focus(lua_State *L) {
     if (focused_entry->exitType == vNORMAL) {
       f_clicked(getCDKButtonboxCurrentButton(buttonbox), NULL);
       refresh_all();
+      if (toggled(in_files)) refreshCDKScreen(findbox); // splits cause trouble
     }
     find_entry->exitType = replace_entry->exitType = vNEVER_ACTIVATED;
     activateCDKEntry(focused_entry, NULL);
@@ -569,12 +570,33 @@ static int lce_focus(lua_State *L) {
   return 0;
 }
 
+/** Runs the work function passed to `ui.dialogs.progressbar()`. */
+static char *progressbar_cb() {
+  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_progress");
+  if (lua_pcall(lua, 0, 2, 0) == LUA_OK) {
+    if (lua_isnil(lua, -2)) return (lua_pop(lua, 2), NULL);
+    if (lua_isnil(lua, -1)) lua_pushliteral(lua, ""), lua_replace(lua, -2);
+    if (lua_isnumber(lua, -2)) {
+      lua_pushliteral(lua, " "), lua_insert(lua, -2),
+      lua_pushliteral(lua, "\n");
+      lua_concat(lua, 4); // "num str\n"
+      char *s = strcpy(malloc(lua_rawlen(lua, -1) + 1), lua_tostring(lua, -1));
+      return (lua_pop(lua, 1), s); // will be freed by gtdialog
+    } else lua_pop(lua, 2), lua_pushliteral(lua, "invalid return values");
+  }
+  lL_event(lua, "error", LUA_TSTRING, lua_tostring(lua, -1), -1);
+  return (lua_pop(lua, 1), NULL);
+}
+
 /** `ui.dialog()` Lua function. */
 static int lui_dialog(lua_State *L) {
+  GTDialogType type = gtdialog_type(luaL_checkstring(L, 1));
   int i, j, k, n = lua_gettop(L) - 1, argc = n;
   for (i = 2; i < n + 2; i++)
     if (lua_istable(L, i)) argc += lua_rawlen(L, i) - 1;
-  const char **argv = malloc((argc + 1) * sizeof(const char *));
+  if (type == GTDIALOG_PROGRESSBAR)
+    lua_pushnil(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_progress"), argc--;
+  const char *argv[argc + 1]; // not malloc since luaL_checklstring throws
   for (i = 0, j = 2; j < n + 2; j++)
     if (lua_istable(L, j)) {
       int len = lua_rawlen(L, j);
@@ -583,11 +605,14 @@ static int lui_dialog(lua_State *L) {
         argv[i++] = luaL_checkstring(L, -1);
         lua_pop(L, 1);
       }
+    } else if (lua_isfunction(L, j) && type == GTDIALOG_PROGRESSBAR) {
+      lua_pushvalue(L, j), lua_setfield(L, LUA_REGISTRYINDEX, "ta_progress");
+      gtdialog_set_progressbar_callback(progressbar_cb, NULL);
     } else argv[i++] = luaL_checkstring(L, j);
   argv[argc] = NULL;
-  char *out = gtdialog(gtdialog_type(luaL_checkstring(L, 1)), argc, argv);
+  char *out = gtdialog(type, argc, argv);
   lua_pushstring(L, out);
-  free(out), free(argv);
+  free(out);
 #if (CURSES && _WIN32)
   redrawwin(scintilla_get_window(focused_view)); // needed for pdcurses
 #endif
