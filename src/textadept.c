@@ -302,24 +302,28 @@ static void fcopy(char **s, const char *value) {
  */
 static void find_add_to_history(const char *text, ListStore *store) {
 #if GTK
-  char *first_item = NULL;
+  // Note: GtkComboBoxEntry key navigation behaves contrary to command line
+  // history navigation. Down cycles from newer to older, and up cycles from
+  // older to newer. In order to mimic traditional command line history
+  // navigation, append to the list instead of prepending to it.
+  int n = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), NULL);
   GtkTreeIter iter;
-  if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter))
-    gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &first_item, -1);
-  if (!first_item || strcmp(text, first_item) != 0) {
-    gtk_list_store_prepend(store, &iter);
+  if (n > 10)
+    gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(store), &iter, NULL, --n),
+    gtk_list_store_remove(store, &iter); // keep 10 items
+  char *last_text = NULL;
+  if (n > 0)
+    gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(store), &iter, NULL, n - 1),
+    gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &last_text, -1);
+  if (!last_text || strcmp(text, last_text) != 0)
+    gtk_list_store_append(store, &iter),
     gtk_list_store_set(store, &iter, 0, text, -1);
-    g_free(first_item);
-    int count = 1;
-    while (iter.stamp && gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter))
-      if (++count > 10) gtk_list_store_remove(store, &iter); // keep 10 items
-  }
+  g_free(last_text);
 #elif CURSES
-  if (text && (!store[0] || strcmp(text, store[0]) != 0)) {
-    if (store[9]) free(store[9]);
-    for (int i = 9; i > 0; i--) store[i] = store[i - 1];
-    store[0] = NULL, fcopy(&store[0], text);
-  }
+  if (!text || (store[0] && strcmp(text, store[0]) == 0)) return;
+  if (store[9]) free(store[9]);
+  for (int i = 9; i > 0; i--) store[i] = store[i - 1];
+  store[0] = NULL, fcopy(&store[0], text);
 #endif
 }
 
