@@ -1325,6 +1325,7 @@ static int lbuf_property(lua_State *L) {
     lua_pushstring(L, gtk_notebook_get_tab_label_text(tabs, tab));
     if (newindex) {
       GtkWidget *box = gtk_event_box_new();
+      gtk_event_box_set_visible_window(GTK_EVENT_BOX(box), FALSE); // for WIN32
       GtkWidget *label = gtk_label_new(luaL_checkstring(L, 3));
       gtk_container_add(GTK_CONTAINER(box), label), gtk_widget_show(label);
       gtk_notebook_set_tab_label(tabs, tab, box);
