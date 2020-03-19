@@ -52,10 +52,6 @@ local M = ui.find
 -- @field in_files_label_text (string, Write-only)
 --   The text of the "In files" label.
 --   This is primarily used for localization.
--- @field find_in_files_timeout (number)
---   The approximate interval in seconds between prompts for continuing an
---   "In files" search.
---   The default value is 10 seconds.
 -- @field INDIC_FIND (number)
 --   The find in files highlight indicator number.
 -- @field _G.events.FIND_WRAPPED (string)
@@ -78,7 +74,6 @@ M.whole_word_label_text = not CURSES and _L['Whole word'] or _L['Word(F2)']
 M.regex_label_text = not CURSES and _L['Regex'] or _L['Regex(F3)']
 M.in_files_label_text = not CURSES and _L['In files'] or _L['Files(F4)']
 
-M.find_in_files_timeout = 10
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
 -- Events.
@@ -267,16 +262,25 @@ function M.find_in_files(dir, filter)
     _L['[Files Found Buffer]'],
     string.format('%s %s', _L['Find:']:gsub('_', ''), M.find_entry_text))
   buffer.indicator_current = M.INDIC_FIND
-  local ff_buffer = buffer
 
-  local buffer = buffer.new() -- temporary buffer
-  buffer.code_page = 0
-  local text, found, ref_time = M.find_entry_text, false, os.time()
-  buffer.search_flags = get_flags()
+  -- Determine which files to search.
+  local filenames, utf8_filenames = {}, {}
   lfs.dir_foreach(dir, function(filename)
-    buffer:clear_all()
-    buffer:empty_undo_buffer()
-    local f = io.open(filename, 'rb')
+    filenames[#filenames + 1] = filename
+    utf8_filenames[#utf8_filenames + 1] = filename:iconv('UTF-8', _CHARSET)
+  end, filter or M.find_in_files_filters[dir] or lfs.default_filter)
+
+  -- Perform the search in a temporary buffer and print results.
+  local orig_buffer, buffer = buffer, buffer.new()
+  view:goto_buffer(orig_buffer)
+  buffer.code_page = 0 -- default is UTF-8
+  buffer.search_flags = get_flags()
+  local text, i, found = M.find_entry_text, 1, false
+  local stopped = ui.dialogs.progressbar({
+    title = string.format('%s: %s', _L['Find in Files']:gsub('_', ''), text),
+    text = utf8_filenames[i], stoppable = true
+  }, function()
+    local f = io.open(filenames[i], 'rb')
     buffer:set_text(f:read('a'))
     f:close()
     local binary = nil -- determine lazily for performance reasons
@@ -284,40 +288,34 @@ function M.find_in_files(dir, filter)
     while buffer:search_in_target(text) > -1 do
       found = true
       if binary == nil then binary = buffer:text_range(0, 65536):find('\0') end
-      local utf8_filename = filename:iconv('UTF-8', _CHARSET)
-      if not binary then
-        local line_num = buffer:line_from_position(buffer.target_start)
-        local line = buffer:get_line(line_num)
-        ff_buffer:append_text(
-          string.format('%s:%d:%s', utf8_filename, line_num + 1, line))
-        local pos = ff_buffer.length - #line +
-          buffer.target_start - buffer:position_from_line(line_num)
-        ff_buffer:indicator_fill_range(
-          pos, buffer.target_end - buffer.target_start)
-        if not line:find('\n$') then ff_buffer:append_text('\n') end
-      else
-        ff_buffer:append_text(
-          string.format('%s:1:%s\n', utf8_filename, _L['Binary file matches.']))
+      if binary then
+        _G.buffer:append_text(string.format(
+          '%s:1:%s\n', utf8_filenames[i], _L['Binary file matches.']))
         break
       end
+      local line_num = buffer:line_from_position(buffer.target_start)
+      local line = buffer:get_line(line_num)
+      _G.buffer:append_text(
+        string.format('%s:%d:%s', utf8_filenames[i], line_num + 1, line))
+      local pos = _G.buffer.length - #line +
+        buffer.target_start - buffer:position_from_line(line_num)
+      _G.buffer:indicator_fill_range(
+        pos, buffer.target_end - buffer.target_start)
+      if not line:find('\n$') then _G.buffer:append_text('\n') end
       buffer:set_target_range(buffer.target_end, buffer.length)
     end
-    if os.difftime(os.time(), ref_time) >= M.find_in_files_timeout then
-      local button = ui.dialogs.yesno_msgbox{
-        title = _L['Continue?'],
-        text = _L['Still searching in files... Continue waiting?'],
-        icon = 'gtk-dialog-question', no_cancel = true
-      }
-      if button ~= 1 then
-        ff_buffer:append_text(_L['Find in Files aborted'] .. '\n')
-        return false
-      end
-      ref_time = os.time()
-    end
-  end, filter or M.find_in_files_filters[dir] or lfs.default_filter)
-  if not found then ff_buffer:append_text(_L['No results found']) end
-  buffer:delete() -- delete temporary buffer
-  ui._print(_L['[Files Found Buffer]'], '') -- goto end, set save pos, etc.
+    buffer:clear_all()
+    buffer:empty_undo_buffer()
+    _G.buffer:goto_pos(_G.buffer.length) -- [Files Found Buffer]
+    i = i + 1
+    if i > #filenames then return nil end
+    return i * 100 / #filenames, utf8_filenames[i]
+  end)
+  buffer:close(true) -- temporary buffer
+  ui._print(
+    _L['[Files Found Buffer]'],
+    stopped and _L['Find in Files aborted'] .. '\n' or
+    not found and _L['No results found'] .. '\n' or '')
 end
 
 -- Unescapes \uXXXX sequences in the string *text* and returns the result.

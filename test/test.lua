@@ -908,6 +908,33 @@ function test_ui_dialogs_optionselect_interactive()
   assert_raises(function() ui.dialogs.optionselect{items = {'foo', 'bar', 'baz'}, select = {1, 'bar'}} end, "bad argument #select[2] to 'optionselect' (number expected, got string")
 end
 
+function test_ui_dialogs_progressbar_interactive()
+  local i = 0
+  ui.dialogs.progressbar({title = 'foo'}, function()
+    os.execute('sleep 0.1')
+    i = i + 10
+    if i > 100 then return nil end
+    return i, i .. '%'
+  end)
+
+  local stopped = ui.dialogs.progressbar({
+    title = 'foo', indeterminite = true, stoppable = true
+  }, function()
+    os.execute('sleep 0.1')
+    return 50
+  end)
+  assert(stopped, 'progressbar not stopped')
+
+  ui.update() -- allow GTK to remove callback for previous function
+  i = 0
+  ui.dialogs.progressbar({title = 'foo', stoppable = true}, function()
+    os.execute('sleep 0.1')
+    i = i + 10
+    if i > 100 then return nil end
+    return i, i <= 50 and "stop disable" or "stop enable"
+  end)
+end
+
 function test_ui_dialogs_textbox_interactive()
   ui.dialogs.textbox{
     text = 'foo', editable = true, selected = true, monospaced_font = true

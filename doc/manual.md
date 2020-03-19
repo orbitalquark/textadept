@@ -720,15 +720,10 @@ cycling through results. Textadept does not support replacing in files directly.
 You must "Find in Files" first, and then "Replace All" for each file containing
 a result. The "Match Case", "Whole Word", and "Regex" flags still apply.
 
-_Warning_: currently, the [find API][] provides the only means to specify a
+_Note_: currently, the [find API][] provides the only means to specify a
 file-type filter. While the default filter excludes many common binary files
 and version control folders from searches, Find in Files could still scan
-unrecognized binary files or large, unwanted sub-directories. Searches also
-block Textadept from receiving additional input, making the interface
-temporarily unresponsive. By default, every 10 seconds or so, Textadept will
-prompt you to continue a "Find in Files" search, allowing you to cancel one that
-is taking too long. You can change this timeout in your
-[preferences](#Module.Preferences).
+unrecognized binary files or large, unwanted sub-directories.
 
 ![Find in Files](images/findinfiles.png)
 
@@ -1023,13 +1018,11 @@ curses) or by reading the [buffer API documentation][].
 Many of Textadept's default modules come with configurable settings that can be
 changed from your *~/.textadept/init.lua* (which is executed after those modules
 are loaded). Each module's [API documentation][] lists any configurable settings
-it has. For example, in order to always hide the tab bar, shorten the "Find in
-Files" timeout prompt, disable character autopairing with typeover, strip
-trailing whitespace on save, and use C99-style line comments in C code, add the
-following to *~/.textadept/init.lua*:
+it has. For example, in order to always hide the tab bar, disable character
+autopairing with typeover, strip trailing whitespace on save, and use C99-style
+line comments in C code, add the following to *~/.textadept/init.lua*:
 
     ui.tabs = false
-    ui.find.find_in_files_timeout = 5
     textadept.editing.auto_pairs = nil
     textadept.editing.typeover_chars = nil
     textadept.editing.strip_trailing_spaces = true
@@ -1778,16 +1771,15 @@ made to CDK are in *src/cdk.patch* and listed as follows:
 
 * Excluded the following source files: *alphalist.c*, *button.c*, *calendar.c*,
   *cdk_compat.{c,h}*, *cdk_params.c*, *cdk_test.h*, *debug.c*, *dialog.c*,
-  *{d,f}scale.{c,h}*, *fslider.{c,h}*, *gen-{scale,slider}.{c,h}*,
-  *get_index.c*, *get_string.c*, *graph.c*, *histogram.c*, *marquee.c*,
-  *matrix.c*, *menu.c*, *popup_dialog.c*, *position.c*, *radio.c*,
-  *scale.{c,h}*, *slider.{c,h}*, *swindow.c*, *template.c*,
-  *u{scale,slider}.{c,h}*, *view_{file,info}.c*, and *viewer.c*.
+  *{d,f}scale.{c,h}*, *fslider.{c,h}*, *gen-scale.{c,h}*, *get_index.c*,
+  *get_string.c*, *graph.c*, *histogram.c*, *marquee.c*, *matrix.c*, *menu.c*,
+  *popup_dialog.c*, *position.c*, *radio.c*, *scale.{c,h}*, *swindow.c*,
+  *template.c*, *u{scale,slider}.{c,h}*, *view_{file,info}.c*, and *viewer.c*.
 * *binding.c* utilizes libtermkey for universal input.
 * *cdk.h* does not `#include` "matrix.h", "viewer.h", and any headers labeled
-  "Generated headers" due to their machine-dependence. It also `#define`s
-  `boolean` as `CDKboolean` on Windows platforms since the former is already
-  `typedef`ed.
+  "Generated headers" due to their machine-dependence, except for "slider.h". It
+  also `#define`s `boolean` as `CDKboolean` on Windows platforms since the
+  former is already `typedef`ed.
 * *cdk_config.h* no longer defines `HAVE_SETLOCALE` since Textadept handles
   locale settings, no longer defines `HAVE_NCURSES_H` and `NCURSES` since
   Textadept supports multiple curses implementations (not just ncurses),
@@ -2033,6 +2025,8 @@ lexers                  |Removed |N/A<sup>a</sup>
 \_cancel_current()      |Renamed |[cancel_current()][]
 \_select()              |Renamed |[select()][]
 \_paths                 |Renamed |[paths][]
+**ui.find**             |        |
+find\_in\_files\_timeout|Removed |N/A
 
 <sup>a</sup>Use `for name in buffer:private_lexer_call(_SCINTILLA.functions.property_names[1]):gmatch('[^\n]+') do ... end`.
 
@@ -2185,7 +2179,7 @@ goto\_view(n, relative)           |Changed |[goto\_view][](view)
 **ui.find**                       |        |
 FILTER                            |Renamed |[find\_in\_files\_filter][]
 find\_in\_files(dir)              |Changed |[find\_in\_files][](dir, filter)
-N/A                               |Added   |[find\_in\_files\_timeout][]
+N/A                               |Added   |find\_in\_files\_timeout
 lua                               |Changed |[regex][]
 lua\_pattern\_label\_text         |Changed |[regex\_label\_text][]
 **view**                          |        |
@@ -2230,7 +2224,6 @@ MAX\_RECENT\_FILES                |Renamed |max\_recent\_files
 [goto\_view]: api.html#ui.goto_view
 [find\_in\_files\_filter]: api.html#ui.find.find_in_files_filter
 [find\_in\_files]: api.html#ui.find.find_in_files
-[find\_in\_files\_timeout]: api.html#ui.find.find_in_files_timeout
 [regex]: api.html#ui.find.regex
 [regex\_label\_text]: api.html#ui.find.regex_label_text
 [goto\_buffer]: api.html#view.goto_buffer
