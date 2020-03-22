@@ -150,6 +150,8 @@ cdk_objs = $(addprefix cdk-, binding.o buttonbox.o cdk.o cdk_display.o \
 ifdef DEBUG
   CFLAGS += -g -O0
   CXXFLAGS += -g -O0
+  LUA_CFLAGS += -DLUA_USE_APICHECK
+  sci_flags += -UNDEBUG -DDEBUG
 endif
 
 # Build.
@@ -366,7 +368,7 @@ else
   gtdialog_url = http://foicica.com/hg/gtdialog/archive/tip.zip
 endif
 
-scintilla_zip = 429993cf4429.zip
+scintilla_zip = 000045872e04.zip
 lua_tgz = lua-5.3.5.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_7_0_2.zip
