@@ -2355,7 +2355,7 @@ int g_application_run(GApplication *_, int __, char **___) {
  * libtermkey has been patched to enable suspend as well as enable/disable mouse
  * mode (1002).
  */
-static void t_signal(int signal) {
+static void signalled(int signal) {
   if (signal != SIGTSTP) {
     if (signal == SIGCONT) termkey_start(ta_tk);
     struct winsize w;
@@ -2491,7 +2491,7 @@ int main(int argc, char **argv) {
   // in them from causing interrupts.
   struct sigaction act;
   memset(&act, 0, sizeof(struct sigaction));
-  act.sa_handler = t_signal, sigfillset(&act.sa_mask);
+  act.sa_handler = signalled, sigfillset(&act.sa_mask);
   sigaction(SIGTSTP, &act, NULL), sigaction(SIGCONT, &act, NULL),
     sigaction(SIGWINCH, &act, NULL);
 #else
