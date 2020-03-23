@@ -230,7 +230,9 @@ static int emit(lua_State *L, const char *name, ...) {
     }
   va_end(ap);
   if (lua_pcall(L, n, 1, 0) != LUA_OK) {
-    emit(L, "error", LUA_TSTRING, lua_tostring(L, -1), -1);
+    // An error occurred within `events.emit()` itself, not an event handler.
+    const char *argv[] = {"--title", "Error", "--text", lua_tostring(L, -1)};
+    free(gtdialog(GTDIALOG_TEXTBOX, 4, argv));
     return (lua_pop(L, 2), FALSE); // result, events
   }
   ret = lua_toboolean(L, -1);
@@ -1413,7 +1415,7 @@ static int run_file(lua_State *L, const char *filename) {
     const char *argv[] = {
       "--title", "Initialization Error", "--text", lua_tostring(L, -1)
     };
-    free(gtdialog(GTDIALOG_TEXTBOX, 7, argv));
+    free(gtdialog(GTDIALOG_TEXTBOX, 4, argv));
     lua_settop(L, 0);
   }
   free(file);

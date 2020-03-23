@@ -146,7 +146,13 @@ cdk_objs = $(addprefix cdk-, binding.o buttonbox.o cdk.o cdk_display.o \
                              slider.o traverse.o version.o)
 
 # Add debugging symbols and disable optimizations when DEBUG=1.
-# Note: In order to profile with gprof (-pg), do not retain symbols in LDFLAGS.
+# Notes:
+# In order to profile with gprof (-pg), do not retain symbols in LDFLAGS.
+# In order to report code coverage with gcov (-fprofile-arcs -ftest-coverage):
+#   Run test suite with textadept, run gcov textadept.c, then examine
+#     textadept.c.gcov
+#   Run test suite with textadept-curses, run gcov textadept-curses.c, then
+#     examine textadept.c.gcov.
 ifdef DEBUG
   CFLAGS += -g -O0
   CXXFLAGS += -g -O0

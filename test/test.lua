@@ -115,7 +115,7 @@ function test_events_insert()
   events.connect(event, function() foo[#foo + 1] = 2 end)
   events.connect(event, function() foo[#foo + 1] = 1 end, 1)
   events.emit(event)
-  assert_equal({1, 2}, foo)
+  assert_equal(foo, {1, 2})
 end
 
 function test_events_short_circuit()
@@ -138,7 +138,7 @@ function test_events_disconnect_during_handle()
     events.connect(event, handlers[i])
   end
   events.emit(event)
-  assert_equal({1, 2, 3}, foo)
+  assert_equal(foo, {1, 2, 3})
 end
 
 function test_events_error()
@@ -389,14 +389,14 @@ function test_file_io_save_file()
   local f = assert(io.open(filename))
   local contents = f:read('a')
   f:close()
-  assert_equal(contents, buffer:get_text())
+  assert_equal(buffer:get_text(), contents)
   assert(not buffer._type, 'still has a type')
   buffer:append_text('bar')
   io.save_all_files()
   f = assert(io.open(filename))
   contents = f:read('a')
   f:close()
-  assert_equal(contents, buffer:get_text())
+  assert_equal(buffer:get_text(), contents)
   buffer:close()
   os.remove(filename)
 
@@ -933,6 +933,18 @@ function test_ui_dialogs_progressbar_interactive()
     if i > 100 then return nil end
     return i, i <= 50 and "stop disable" or "stop enable"
   end)
+
+  local errmsg
+  local handler = function(message)
+    errmsg = message
+    return false -- halt propagation
+  end
+  events.connect(events.ERROR, handler, 1)
+  ui.dialogs.progressbar({}, function() error('foo') end)
+  assert(errmsg:find('foo'), 'error handler did not run')
+  ui.dialogs.progressbar({}, function() return true end)
+  assert(errmsg:find('invalid return values'), 'error handler did not run')
+  events.disconnect(events.ERROR, handler)
 end
 
 function test_ui_dialogs_textbox_interactive()
@@ -1931,36 +1943,41 @@ function test_ui_find_find_text()
     'FOObar',
     'foo bar baz',
   }, '\n'))
-  events.emit(events.FIND, 'foo', true)
+  ui.find.find_entry_text = 'foo'
+  ui.find.find_next()
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.whole_word = true
-  events.emit(events.FIND, 'foo', true)
+  ui.find.find_next()
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(4)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   events.connect(events.FIND_WRAPPED, handler)
-  events.emit(events.FIND, 'foo', true)
+  ui.find.find_next()
   assert(wrapped, 'search did not wrap')
   events.disconnect(events.FIND_WRAPPED, handler)
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  events.emit(events.FIND, 'foo', false)
+  ui.find.find_prev()
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(4)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case, ui.find.whole_word = true, false
-  events.emit(events.FIND, 'FOO', true)
+  ui.find.find_entry_text = 'FOO'
+  ui.find.find_next()
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(3)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  events.emit(events.FIND, 'FOO', true)
+  ui.find.find_next()
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(3)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.regex = true
-  events.emit(events.FIND, 'f(.)\\1', true)
+  ui.find.find_entry_text = 'f(.)\\1'
+  ui.find.find_next()
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(4)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  events.emit(events.FIND, 'quux', true)
+  ui.find.find_entry_text = 'quux'
+  ui.find.find_next()
   assert_equal(buffer.selection_start, buffer.selection_end) -- no match
-  ui.find.match_case, ui.find.regex = false, false
+  ui.find.find_entry_text = '' -- reset
+  ui.find.match_case, ui.find.regex = false, false -- reset
   buffer:close(true)
 end
 
@@ -2069,20 +2086,27 @@ end
 function test_ui_find_replace()
   buffer.new()
   buffer:set_text('foofoo')
-  events.emit(events.FIND, 'foo', true)
-  events.emit(events.REPLACE, 'bar')
-  assert_equal(buffer.selection_start, POS(1))
+  ui.find.find_entry_text = 'foo'
+  ui.find.find_next()
+  ui.find.replace_entry_text = 'bar'
+  ui.find.replace()
+  assert_equal(buffer.selection_start, POS(4))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  assert_equal(buffer:get_sel_text(), 'bar')
+  assert_equal(buffer:get_sel_text(), 'foo')
   assert_equal(buffer:get_text(), 'barfoo')
   ui.find.regex = true
-  events.emit(events.FIND, 'f(.)\\1', true)
-  events.emit(events.REPLACE, 'b\\1\\1\\u1234')
+  ui.find.find_entry_text = 'f(.)\\1'
+  ui.find.find_next()
+  ui.find.replace_entry_text = 'b\\1\\1\\u1234'
+  ui.find.replace()
   assert_equal(buffer:get_text(), 'barbooሴ')
   ui.find.regex = false
-  events.emit(events.FIND, 'quux', true)
-  events.emit(events.REPLACE, '')
+  ui.find.find_entry_text = 'quux'
+  ui.find.find_next()
+  ui.find.replace_entry_text = ''
+  ui.find.replace()
   assert_equal(buffer:get_text(), 'barbooሴ')
+  ui.find.find_entry_text, ui.find.replace_entry_text = '', '' -- reset
   buffer:close(true)
 end
 
@@ -2095,20 +2119,25 @@ function test_ui_find_replace_all()
     'foofoo'
   }, '\n')
   buffer:set_text(text)
-  events.emit(events.REPLACE_ALL, 'foo', 'bar')
+  ui.find.find_entry_text, ui.find.replace_entry_text = 'foo', 'bar'
+  ui.find.replace_all()
   assert_equal(buffer:get_text(), 'bar\nbarbar\nbarbaz\nbarbar')
   buffer:undo()
   assert_equal(buffer:get_text(), text) -- verify atomic undo
   ui.find.regex = true
   buffer:set_sel(buffer:position_from_line(LINE(2)), buffer:position_from_line(LINE(4)) + 3)
-  events.emit(events.REPLACE_ALL, 'f(.)\\1', 'b\\1\\1') -- replace in selection
+  ui.find.find_entry_text, ui.find.replace_entry_text = 'f(.)\\1', 'b\\1\\1'
+  ui.find.replace_all() -- replace in selection
   assert_equal(buffer:get_text(), 'foo\nboobar\nboobaz\nboofoo')
   ui.find.regex = false
   buffer:undo()
-  events.emit(events.REPLACE_ALL, 'foo', '')
+  ui.find.find_entry_text, ui.find.replace_entry_text = 'foo', ''
+  ui.find.replace_all()
   assert_equal(buffer:get_text(), '\nbar\nbaz\n')
-  events.emit(events.REPLACE_ALL, 'quux', '')
+  ui.find.find_entry_text, ui.find.replace_entry_text = 'quux', ''
+  ui.find.replace_all()
   assert_equal(buffer:get_text(), '\nbar\nbaz\n')
+  ui.find.find_entry_text, ui.find.replace_entry_text = '', '' -- reset
   buffer:close(true)
 end
 
@@ -2206,10 +2235,12 @@ function test_menu_menu_functions()
   textadept.menu.menubar[_L['Edit']][_L['Complete Word']][2]()
   assert_equal(buffer:get_text(), 'foo foo')
   buffer:set_text('2\n1\n3\n')
-  textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
-  ui.command_entry:set_text('sort')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
-  assert_equal(buffer:get_text(), '1\n2\n3\n')
+  if not CURSES then -- this is unstable in curses
+    textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
+    ui.command_entry:set_text('sort')
+    events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+    assert_equal(buffer:get_text(), '1\n2\n3\n')
+  end
   buffer:set_text('foo')
   buffer:line_end()
   textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as XML Tags']][2]()
@@ -2220,10 +2251,12 @@ function test_menu_menu_functions()
   textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as Single XML Tag']][2]()
   assert_equal(buffer:get_text(), '<foo />')
   assert_equal(buffer.current_pos, buffer.line_end_position[LINE(1)])
-  textadept.menu.menubar[_L['Search']][_L['Find in Files']][2]()
-  assert(ui.find.in_files, 'not finding in files')
-  textadept.menu.menubar[_L['Search']][_L['Find']][2]()
-  assert(not ui.find.in_files, 'finding in files')
+  if not CURSES then -- there are focus issues in curses
+    textadept.menu.menubar[_L['Search']][_L['Find in Files']][2]()
+    assert(ui.find.in_files, 'not finding in files')
+    textadept.menu.menubar[_L['Search']][_L['Find']][2]()
+    assert(not ui.find.in_files, 'finding in files')
+  end
   buffer:clear_all()
   buffer:set_lexer('lua')
   buffer:add_text('string.')
@@ -2825,6 +2858,85 @@ function test_lexer_api()
   assert_raises(function() lexer.style_at[1] = 0 end, 'read-only')
   assert_raises(function() lexer.line_state = nil end, 'read-only')
   assert_raises(function() lexer.line_from_position = nil end, 'read-only')
+end
+
+function test_ui_size()
+  local size = ui.size
+  ui.size = {size[1] - 50, size[2] + 50}
+  assert_equal(ui.size, size)
+  ui.size = size
+end
+
+function test_ui_maximized()
+  local maximized = ui.maximized
+  ui.maximized = not maximized
+  local not_maximized = ui.maximized
+  ui.maximized = maximized -- reset
+  -- For some reason, the following fails, even though the window maximized
+  -- status is toggled. `ui.update()` does not seem to help.
+  assert_equal(not_maximized, not maximized)
+end
+expected_failure(test_ui_maximized)
+
+function test_reset()
+  local _persist
+  _G.foo = 'bar'
+  reset()
+  assert(not _G.foo, 'Lua not reset')
+  _G.foo = 'bar'
+  events.connect(events.RESET_BEFORE, function(persist)
+    persist.foo = _G.foo
+    _persist = persist -- store
+  end)
+  reset()
+  -- events.RESET_AFTER has already been run, but there was no opportunity to
+  -- connect to it in this test, so connect and simulate the event again.
+  events.connect(events.RESET_AFTER, function(persist) _G.foo = persist.foo end)
+  events.emit(events.RESET_AFTER, _persist)
+  assert_equal(_G.foo, 'bar')
+end
+
+function test_timeout()
+  if CURSES then
+    assert_raises(function() timeout(1, function() end) end, 'not implemented')
+    return
+  end
+
+  local count = 0
+  local function f()
+    count = count + 1
+    return count < 2
+  end
+  timeout(0.4, f)
+  assert_equal(count, 0)
+  os.execute('sleep 0.5')
+  ui.update()
+  assert_equal(count, 1)
+  os.execute('sleep 0.5')
+  ui.update()
+  assert_equal(count, 2)
+  os.execute('sleep 0.5')
+  ui.update()
+  assert_equal(count, 2)
+end
+
+function test_view_split_resize_unsplit()
+  view:split()
+  local size = view.size
+  view.size = view.size - 1
+  assert_equal(view.size, size - 1)
+  assert_equal(#_VIEWS, 2)
+  view:split(true)
+  size = view.size
+  view.size = view.size + 1
+  assert_equal(view.size, size + 1)
+  assert_equal(#_VIEWS, 3)
+  view:unsplit()
+  assert_equal(#_VIEWS, 2)
+  view:split(true)
+  ui.goto_view(_VIEWS[1])
+  view:unsplit() -- unsplits split view, leaving single view
+  assert_equal(#_VIEWS, 1)
 end
 
 -- TODO: test init.lua's buffer settings
