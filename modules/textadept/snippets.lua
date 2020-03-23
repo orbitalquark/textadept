@@ -643,8 +643,11 @@ end
 
 -- Update snippet transforms when text is added or deleted.
 events.connect(events.UPDATE_UI, function(updated)
-  if #snippet_stack > 0 and updated and updated & buffer.UPDATE_CONTENT > 0 then
-    snippet_stack[#snippet_stack]:update_transforms()
+  if #snippet_stack > 0 then
+    if updated & buffer.UPDATE_CONTENT > 0 then
+      snippet_stack[#snippet_stack]:update_transforms()
+    end
+    if #keys.keychain == 0 then ui.statusbar_text = _L['Snippet active'] end
   end
 end)
 

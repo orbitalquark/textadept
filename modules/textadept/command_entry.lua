@@ -112,7 +112,7 @@ local function run_lua(code)
     end
   end
   if result ~= nil or code:find('^return ') then ui.print(result) end
-  events.emit(events.UPDATE_UI)
+  events.emit(events.UPDATE_UI, 0)
 end
 args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
 
