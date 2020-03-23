@@ -29,16 +29,16 @@ local sel_enc = textadept.editing.select_enclosed
 local enc = textadept.editing.enclose
 local function set_indentation(i)
   buffer.tab_width = i
-  events.emit(events.UPDATE_UI) -- for updating statusbar
+  events.emit(events.UPDATE_UI, 0) -- for updating statusbar
 end
 local function set_eol_mode(mode)
   buffer.eol_mode = mode
   buffer:convert_eols(mode)
-  events.emit(events.UPDATE_UI) -- for updating statusbar
+  events.emit(events.UPDATE_UI, 0) -- for updating statusbar
 end
 local function set_encoding(encoding)
   buffer:set_encoding(encoding)
-  events.emit(events.UPDATE_UI) -- for updating statusbar
+  events.emit(events.UPDATE_UI, 0) -- for updating statusbar
 end
 local function open_page(url)
   local cmd = (WIN32 and 'start ""') or (OSX and 'open') or 'xdg-open'
@@ -275,7 +275,7 @@ local default_menubar = {
       SEPARATOR,
       {_L['Toggle Use Tabs'], function()
         buffer.use_tabs = not buffer.use_tabs
-        events.emit(events.UPDATE_UI) -- for updating statusbar
+        events.emit(events.UPDATE_UI, 0) -- for updating statusbar
       end},
       {_L['Convert Indentation'], textadept.editing.convert_indentation}
     },
