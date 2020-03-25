@@ -700,7 +700,8 @@ static void sync_tabbar() {
  * @param tname The name of the expected metatable.
  */
 static int is_type(lua_State *L, int index, const char *tname) {
-  lua_getmetatable(L, index), luaL_getmetatable(L, tname);
+  if (!lua_getmetatable(L, index)) return FALSE;
+  luaL_getmetatable(L, tname);
   int has_metatable = lua_rawequal(L, -1, -2);
   return (lua_pop(L, 2), has_metatable); // metatable, metatable
 }
@@ -714,9 +715,7 @@ static int is_type(lua_State *L, int index, const char *tname) {
  */
 static Scintilla *luaL_checkview(lua_State *L, int arg) {
   luaL_argcheck(L, is_type(L, arg, "ta_view"), arg, "View expected");
-  lua_getfield(L, arg, "widget_pointer");
-  Scintilla *view = (Scintilla *)lua_touserdata(L, -1);
-  return (lua_pop(L, 1), view); // widget_pointer
+  return lua_toview(L, arg);
 }
 
 /**
@@ -1183,14 +1182,16 @@ static int call_scintilla(
   return nresults;
 }
 
+/** `buffer:method()` Lua function. */
 static int call_scintilla_lua(lua_State *L) {
+  Scintilla *view = focused_view;
   // If optional buffer/view argument is given, check it.
-  //if (is_type(L, 1, "ta_view"))
-  //  lua_getfield(L, 1, "buffer"), lua_replace(L, 1); // use view.buffer
+  if (is_type(L, 1, "ta_buffer")) view = view_for_doc(L, 1);
+  //else if (is_type(L, 1, "ta_view"))
+  //  view = lua_toview(L, 1);
   // Interface table is of the form {msg, rtype, wtype, ltype}.
   return call_scintilla(
-    L, lua_istable(L, 1) ? view_for_doc(L, 1) : focused_view,
-    get_int_field(L, lua_upvalueindex(1), 1),
+    L, view, get_int_field(L, lua_upvalueindex(1), 1),
     get_int_field(L, lua_upvalueindex(1), 3),
     get_int_field(L, lua_upvalueindex(1), 4),
     get_int_field(L, lua_upvalueindex(1), 2), lua_istable(L, 1) ? 2 : 1);
@@ -1234,102 +1235,142 @@ static int tab_clicked(GtkWidget *label, GdkEventButton *event, void *L) {
 }
 #endif
 
-/** `buffer.__index` and `buffer.__newindex` Lua metamethods. */
-static int buffer_metamethod(lua_State *L) {
-  int newindex = lua_gettop(L) == 3;
-  int is_buffer = is_type(L, 1, "ta_buffer"); // ta_buffer or ta_bufferp
+/** `buffer[k].__index` metamethod. */
+static int property_index(lua_State *L) {
+  //Scintilla *view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view"))?
+  //  view_for_doc(L, -1) : lua_toview(L, -1);
+  Scintilla *view = (lua_getfield(L, 1, "_self"), view_for_doc(L, -1));
+  lua_getfield(L, 1, "_iface"); // {get_id, set_id, rtype, wtype}.
+  int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4),
+    ltype = SVOID, rtype = get_int_field(L, -1, 3);
+  luaL_argcheck(L, msg, 2, "write-only property");
+  return (call_scintilla(L, view, msg, wtype, ltype, rtype, 2), 1);
+}
 
-  // If the key is a Scintilla function, return a callable closure.
-  if (is_buffer && !newindex) {
-    lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions");
-    if (lua_pushvalue(L, 2), lua_gettable(L, -2) == LUA_TTABLE)
-      return (lua_pushcclosure(L, call_scintilla_lua, 1), 1);
-    lua_pop(L, 2); // non-table, ta_functions
-  }
+/** `buffer[k].__newindex` metamethod. */
+static int property_newindex(lua_State *L) {
+  //Scintilla *view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view"))?
+  //  view_for_doc(L, -1) : lua_toview(L, -1);
+  Scintilla *view = (lua_getfield(L, 1, "_self"), view_for_doc(L, -1));
+  lua_getfield(L, 1, "_iface"); // {get_id, set_id, rtype, wtype}.
+  int msg = get_int_field(L, -1, 2), wtype = get_int_field(L, -1, 4),
+    ltype = get_int_field(L, -1, 3), rtype = SVOID;
+  luaL_argcheck(L, msg, 3, "read-only property");
+  if (ltype == SSTRINGRET) ltype = SSTRING;
+  return (call_scintilla(L, view, msg, wtype, ltype, rtype, 2), 0);
+}
 
-  // If the key is a Scintilla property, determine if it is an indexible one or
-  // not. If so, return a table with the appropriate metatable; otherwise call
-  // Scintilla to get or set the property's value.
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties");
-  // If the table is a buffer, the key is given; otherwise the table is an
-  // indexible property.
-  is_buffer ? lua_pushvalue(L, 2) : (void)lua_getfield(L, 1, "property");
-  if (lua_gettable(L, -2) == LUA_TTABLE) {
-    // Interface table is of the form {get_id, set_id, rtype, wtype}.
-    if (!is_buffer) lua_getfield(L, 1, "buffer");
-    Scintilla *view = view_for_doc(L, is_buffer ? 1 : -1);
-    if (!is_buffer) lua_pop(L, 1);
-    if (is_buffer && get_int_field(L, -1, 4) != SVOID) { // indexible property
-      lua_newtable(L);
-      lua_pushvalue(L, 2), lua_setfield(L, -2, "property");
-      lua_pushvalue(L, 1), lua_setfield(L, -2, "buffer");
-      set_metatable(L, -1, "ta_bufferp", buffer_metamethod, buffer_metamethod);
-      return 1;
-    }
-    int msg = get_int_field(L, -1, !newindex ? 1 : 2);
-    int wtype = get_int_field(L, -1, !newindex ? 4 : 3);
-    int ltype = !newindex ? SVOID : get_int_field(L, -1, 4);
-    int rtype = !newindex ? get_int_field(L, -1, 3) : SVOID;
-    if (newindex &&
-        (ltype != SVOID || wtype == SSTRING || wtype == SSTRINGRET ||
-          msg == SCI_SETMARGINLEFT || msg == SCI_SETMARGINRIGHT)) {
-      int temp = wtype != SSTRINGRET ? wtype : SSTRING;
-      wtype = ltype, ltype = temp;
-    }
-    luaL_argcheck(
-      L, msg != 0, !newindex ? 2 : 3,
-      !newindex ? "write-only property" : "read-only property");
-    return call_scintilla(
-      L, view, msg, wtype, ltype, rtype, !is_buffer || !newindex ? 2 : 3);
-  } else lua_pop(L, 2); // non-table, ta_properties
+// Helper function for `buffer_index()` and `view_index()` that gets Scintilla
+// properties.
+static void get_property(lua_State *L) {
+  //Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) :
+  //  lua_toview(L, 1);
+  // Interface table is of the form {get_id, set_id, rtype, wtype}.
+  int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4),
+    ltype = SVOID, rtype = get_int_field(L, -1, 3);
+  luaL_argcheck(L, msg || wtype != SVOID, 2, "write-only property");
+  if (wtype != SVOID) { // indexible property
+    lua_createtable(L, 2, 0);
+    lua_pushvalue(L, 1), lua_setfield(L, -2, "_self");
+    lua_pushvalue(L, -2), lua_setfield(L, -2, "_iface");
+    set_metatable(L, -1, "ta_property", property_index, property_newindex);
+  } else call_scintilla(L, view_for_doc(L, 1), msg, wtype, ltype, rtype, 2);
+}
 
-  if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
-      lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
-    // Return or update the buffer's tab label.
+// Helper function for `buffer_newindex()` and `view_newindex()` that sets
+// Scintilla properties.
+static void set_property(lua_State *L) {
+  //Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) :
+  //  lua_toview(L, 1);
+  // Interface table is of the form {get_id, set_id, rtype, wtype}.
+  int msg = get_int_field(L, -1, 2), wtype = get_int_field(L, -1, 3),
+    ltype = get_int_field(L, -1, 4), rtype = SVOID, temp;
+  luaL_argcheck(L, msg && ltype == SVOID, 3, "read-only property");
+  if (wtype == SSTRING || wtype == SSTRINGRET ||
+      msg == SCI_SETMARGINLEFT || msg == SCI_SETMARGINRIGHT)
+    temp = wtype != SSTRINGRET ? wtype : SSTRING, wtype = ltype, ltype = temp;
+  call_scintilla(L, view_for_doc(L, 1), msg, wtype, ltype, rtype, 3);
+}
+
+/** `buffer.__index` metamethod. */
+static int buffer_index(lua_State *L) {
+  if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"), lua_pushvalue(L, 2),
+      lua_rawget(L, -2) == LUA_TTABLE)
+    // If the key is a Scintilla function, return a callable closure.
+    lua_pushcclosure(L, call_scintilla_lua, 1);
+  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
+           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
+    // If the key is a Scintilla property, determine if it is an indexible one
+    // or not. If so, return a table with the appropriate metatable; otherwise
+    // call Scintilla to get the property's value.
+    get_property(L);
+  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"),
+           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TNUMBER); // pushed
+    // If the key is a Scintilla constant, return its value.
+  else if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
+           lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
+    // Return the buffer's tab label.
     lua_getfield(L, 1, "tab_pointer");
 #if GTK
-    GtkNotebook *tabs = GTK_NOTEBOOK(tabbar);
     GtkWidget *tab = (GtkWidget *)lua_touserdata(L, -1);
-    lua_pushstring(L, gtk_notebook_get_tab_label_text(tabs, tab));
-    if (!newindex) return 1;
+    lua_pushstring(
+      L, gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(tabbar), tab));
+//#elif CURSES
+    // TODO: tabs
+#endif
+  } else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
+             lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
+    // Return the command entry's pixel height.
+#if GTK
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(command_entry, &allocation);
+    lua_pushinteger(L, allocation.height);
+#elif CURSES
+    lua_pushinteger(L, getmaxy(scintilla_get_window(command_entry)));
+#endif
+  } else lua_pushvalue(L, 2), lua_rawget(L, 1);
+  return 1;
+}
+
+/** `buffer.__newindex` metamethod. */
+static int buffer_newindex(lua_State *L) {
+  if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"), lua_pushvalue(L, 2),
+      lua_rawget(L, -2) == LUA_TTABLE)
+    // If the key is a Scintilla property, call Scintilla to set its value.
+    // Interface table is of the form {get_id, set_id, rtype, wtype}.
+    set_property(L);
+  else if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
+           lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
+    // Update the buffer's tab label.
+    lua_getfield(L, 1, "tab_pointer");
+#if GTK
+    GtkWidget *tab = (GtkWidget *)lua_touserdata(L, -1);
     GtkWidget *box = gtk_event_box_new();
     gtk_event_box_set_visible_window(GTK_EVENT_BOX(box), FALSE);
     GtkWidget *label = gtk_label_new(luaL_checkstring(L, 3));
     gtk_container_add(GTK_CONTAINER(box), label), gtk_widget_show(label);
-    gtk_notebook_set_tab_label(tabs, tab, box);
+    gtk_notebook_set_tab_label(GTK_NOTEBOOK(tabbar), tab, box);
     g_signal_connect(box, "button-press-event", G_CALLBACK(tab_clicked), L);
 //#elif CURSES
     // TODO: tabs
 #endif
-    return 0;
   } else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
              lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
-    // Return or set the command entry's pixel height.
+    // Set the command entry's pixel height.
     int height = fmax(
-      luaL_optinteger(L, 3, 0), SS(command_entry, SCI_TEXTHEIGHT, 0, 0));
+      luaL_checkinteger(L, 3), SS(command_entry, SCI_TEXTHEIGHT, 0, 0));
 #if GTK
     GtkWidget *paned = gtk_widget_get_parent(command_entry);
     GtkAllocation allocation;
-    gtk_widget_get_allocation(newindex ? paned : command_entry, &allocation);
-    if (newindex) {
-      gtk_widget_set_size_request(command_entry, -1, height);
-      gtk_paned_set_position(GTK_PANED(paned), allocation.height - height);
-      //while (gtk_events_pending()) gtk_main_iteration(); // update immediately
-    } else lua_pushinteger(L, allocation.height);
+    gtk_widget_get_allocation(paned, &allocation);
+    gtk_widget_set_size_request(command_entry, -1, height);
+    gtk_paned_set_position(GTK_PANED(paned), allocation.height - height);
 #elif CURSES
     WINDOW *win = scintilla_get_window(command_entry);
-    lua_pushinteger(L, getmaxy(win));
-    if (newindex) wresize(win, height, COLS), mvwin(win, LINES - 1 - height, 0);
+    wresize(win, height, COLS), mvwin(win, LINES - 1 - height, 0);
 #endif
-    return !newindex ? 1 : 0;
-  } else if (!newindex) {
-    // If the key is a Scintilla constant, return its value.
-    lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants");
-    if (lua_pushvalue(L, 2), lua_gettable(L, -2) == LUA_TNUMBER) return 1;
-    lua_pop(L, 2); // non-number, ta_constants
-  }
-
-  return !newindex ? (lua_rawget(L, 1), 1) : (lua_rawset(L, 1), 0);
+  } else lua_pushvalue(L, 2), lua_pushvalue(L, 3), lua_rawset(L, 1);
+  return 0;
 }
 
 /**
@@ -1350,7 +1391,7 @@ static void add_doc(lua_State *L, sptr_t doc) {
 #endif
   lua_pushcfunction(L, delete_buffer_lua), lua_setfield(L, -3, "delete");
   lua_pushcfunction(L, new_buffer_lua) , lua_setfield(L, -3, "new");
-  set_metatable(L, -2, "ta_buffer", buffer_metamethod, buffer_metamethod);
+  set_metatable(L, -2, "ta_buffer", buffer_index, buffer_newindex);
   // t[doc_pointer] = buffer, t[#t + 1] = buffer, t[buffer] = #t
   lua_pushvalue(L, -2), lua_settable(L, -4);
   lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_rawlen(L, -3) + 1);
@@ -1538,7 +1579,7 @@ static int init_lua(lua_State *L, int argc, char **argv, int reinit) {
   if (!reinit) {
     lua_newtable(L);
     lua_pushcfunction(L, focus_command_entry), lua_setfield(L, -2, "focus");
-    set_metatable(L, -1, "ta_buffer", buffer_metamethod, buffer_metamethod);
+    set_metatable(L, -1, "ta_buffer", buffer_index, buffer_newindex);
   } else
     lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_rawgeti(L, -1, 0),
       lua_replace(L, -2); // _BUFFERS[0] == command_entry
@@ -2044,46 +2085,56 @@ static Pane *get_parent_pane(Pane *pane, Scintilla *view) {
 }
 #endif
 
-/** `view.__index` and `view.__newindex` Lua metamethods. */
-static int view_metamethod(lua_State *L) {
-  int newindex = (lua_gettop(L) == 3);
-  Scintilla *view = luaL_checkview(L, 1);
-  if (strcmp(lua_tostring(L, 2), "buffer") == 0) {
-    luaL_argcheck(L, !newindex, 2, "read-only property");
-    return (lua_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0)), 1);
-  } else if (strcmp(lua_tostring(L, 2), "size") == 0) {
+/** `view.__index` metamethod. */
+static int view_index(lua_State *L) {
+  if (strcmp(lua_tostring(L, 2), "buffer") == 0)
+    lua_pushdoc(L, SS(lua_toview(L, 1), SCI_GETDOCPOINTER, 0, 0));
+  else if (strcmp(lua_tostring(L, 2), "size") == 0) {
+    lua_pushnil(L); // default
+    Pane *p;
 #if GTK
-    GtkWidget *pane = gtk_widget_get_parent(view);
-    GtkPaned *p = GTK_IS_PANED(pane) ? GTK_PANED(pane) : NULL;
-    if (p && newindex)
-      gtk_paned_set_position(p, fmax(luaL_checkinteger(L, 3), 0));
-    else if (!newindex)
-      p ? lua_pushinteger(L, gtk_paned_get_position(p)) : lua_pushnil(L);
+    if (GTK_IS_PANED(p = gtk_widget_get_parent(lua_toview(L, 1))))
+      lua_pushinteger(L, gtk_paned_get_position(GTK_PANED(p)));
 #elif CURSES
-    Pane *p = get_parent_pane(pane, view);
-    if (p && newindex) {
-      p->split_size = fmax(luaL_checkinteger(L, 3), 0);
-      resize_pane(p, p->rows, p->cols, p->y, p->x);
-    } else if (!newindex)
-      p ? lua_pushinteger(L, p->split_size) : lua_pushnil(L);
+    if (p = get_parent_pane(pane, lua_toview(L, 1)))
+      lua_pushinteger(L, p->split_size);
 #endif
-    return !newindex ? 1 : 0;
-  //} else {
-  //  // Emulate view-specific Scintilla properties by replacing `view[k]` with
-  //  // `view.buffer[k]` as necessary.
-  //  lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties");
-  //  lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions");
-  //  lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants");
-  //  if ((lua_pushvalue(L, 2), lua_gettable(L, -4) == LUA_TTABLE) ||
-  //       (!newindex &&
-  //         ((lua_pushvalue(L, 2), lua_gettable(L, -4) == LUA_TTABLE) ||
-  //           (lua_pushvalue(L, 2), lua_gettable(L, -4) == LUA_TNUMBER)))) {
-  //    lua_settop(L, !newindex ? 2 : 3);
-  //    lua_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_replace(L, 1);
-  //    return buffer_metamethod(L);
-  //  } else lua_settop(L, !newindex ? 2 : 3);
-  }
-  return !newindex ? (lua_rawget(L, 1), 1) : (lua_rawset(L, 1), 0);
+  //} else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"),
+  //           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
+  //  // If the key is a Scintilla function, return a callable closure.
+  //  lua_pushcclosure(L, call_scintilla_lua, 1);
+  //else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
+  //         lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
+  //  // If the key is a Scintilla property, determine if it is an indexible one
+  //  // or not. If so, return a table with the appropriate metatable; otherwise
+  //  // call Scintilla to get the property's value.
+  //  get_property(L);
+  //else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"),
+  //         lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TNUMBER); // pushed
+  //  // If the key is a Scintilla constant, return its value.
+  } else lua_pushvalue(L, 2), lua_rawget(L, 1);
+  return 1;
+}
+
+/** `view.__newindex` metamethod. */
+static int view_newindex(lua_State *L) {
+  if (strcmp(lua_tostring(L, 2), "buffer") == 0)
+    luaL_argerror(L, 2, "read-only property");
+  else if (strcmp(lua_tostring(L, 2), "size") == 0) {
+    Pane *p;
+#if GTK
+    if (GTK_IS_PANED(p = gtk_widget_get_parent(lua_toview(L, 1))))
+      gtk_paned_set_position(GTK_PANED(p), fmax(luaL_checkinteger(L, 3), 0));
+#elif CURSES
+    if (p = get_parent_pane(pane, lua_toview(L, 1)))
+      p->split_size = fmax(luaL_checkinteger(L, 3), 0),
+        resize_pane(p, p->rows, p->cols, p->y, p->x);
+#endif
+  //} else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
+  //           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
+  //  set_property(L);
+  } else lua_pushvalue(L, 2), lua_pushvalue(L, 3), lua_rawset(L, 1);
+  return 0;
 }
 
 /**
@@ -2099,7 +2150,7 @@ static void add_view(lua_State *L, Scintilla *view) {
   lua_pushcfunction(L, goto_doc_lua), lua_setfield(L, -3, "goto_buffer");
   lua_pushcfunction(L, split_view_lua), lua_setfield(L, -3, "split");
   lua_pushcfunction(L, unsplit_view_lua), lua_setfield(L, -3, "unsplit");
-  set_metatable(L, -2, "ta_view", view_metamethod, view_metamethod);
+  set_metatable(L, -2, "ta_view", view_index, view_newindex);
   // t[widget_pointer] = view, t[#t + 1] = view, t[view] = #t
   lua_pushvalue(L, -2), lua_settable(L, -4);
   lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_rawlen(L, -3) + 1);
