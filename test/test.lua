@@ -2939,6 +2939,14 @@ function test_view_split_resize_unsplit()
   assert_equal(#_VIEWS, 1)
 end
 
+function test_buffer_read_write_only_properties()
+  assert_raises(function() buffer.all_lines_visible = false end, 'read-only property')
+  assert_raises(function() return buffer.auto_c_fill_ups end, 'write-only property')
+  assert_raises(function() buffer.annotation_text = {} end, 'read-only property')
+  assert_raises(function() buffer.char_at[POS(1)] = string.byte(' ') end, 'read-only property')
+  assert_raises(function() return buffer.marker_alpha[INDEX(1)] end, 'write-only property')
+end
+
 -- TODO: test init.lua's buffer settings
 
 --------------------------------------------------------------------------------
