@@ -124,7 +124,7 @@ local function print_line(line, ext_or_lexer)
   if error then
     -- Current position is one line below the error due to ui.print()'s '\n'.
     buffer:marker_add(
-      buffer.line_count - 2, error.warning and M.MARK_WARNING or M.MARK_ERROR)
+      buffer.line_count - 1, error.warning and M.MARK_WARNING or M.MARK_ERROR)
   end
 end
 
@@ -377,19 +377,20 @@ function M.goto_error(line_num, next)
   if not assert_type(line_num, 'number/nil', 1) and next ~= nil then
     local f = next and buffer.marker_next or buffer.marker_previous
     line_num = buffer:line_from_position(buffer.current_pos)
+    local WARN_BIT, ERROR_BIT = 1 << M.MARK_WARNING - 1, 1 << M.MARK_ERROR - 1
     local wrapped = false
     ::retry::
-    local wline = f(buffer, line_num + (next and 1 or -1), 1 << M.MARK_WARNING)
-    local eline = f(buffer, line_num + (next and 1 or -1), 1 << M.MARK_ERROR)
+    local wline = f(buffer, line_num + (next and 1 or -1), WARN_BIT)
+    local eline = f(buffer, line_num + (next and 1 or -1), ERROR_BIT)
     if wline == -1 and eline == -1 then
-      wline = f(buffer, next and 0 or buffer.line_count, 1 << M.MARK_WARNING)
-      eline = f(buffer, next and 0 or buffer.line_count, 1 << M.MARK_ERROR)
+      wline = f(buffer, next and 1 or buffer.line_count, WARN_BIT)
+      eline = f(buffer, next and 1 or buffer.line_count, ERROR_BIT)
     elseif wline == -1 or eline == -1 then
       if wline == -1 then wline = eline else eline = wline end
     end
     line_num = (next and math.min or math.max)(wline, eline)
     if line_num == -1 and not wrapped then
-      line_num = next and 0 or buffer.line_count
+      line_num = next and 1 or buffer.line_count
       wrapped = true
       goto retry
     end
@@ -406,14 +407,14 @@ function M.goto_error(line_num, next)
   end
   local sloppy = not detail.filename:find(not WIN32 and '^/' or '^%a:[/\\]')
   ui.goto_file(detail.filename, true, preferred_view, sloppy)
-  textadept.editing.goto_line(detail.line - 1)
+  textadept.editing.goto_line(detail.line)
   if detail.column then
-    buffer:goto_pos(buffer:find_column(detail.line - 1, detail.column - 1))
+    buffer:goto_pos(buffer:find_column(detail.line, detail.column))
   end
   if detail.message then
-    buffer.annotation_text[detail.line - 1] = detail.message
-    -- Style number 8 is the error style.
-    if not detail.warning then buffer.annotation_style[detail.line - 1] = 8 end
+    buffer.annotation_text[detail.line] = detail.message
+    -- Style number 9 is the error style.
+    if not detail.warning then buffer.annotation_style[detail.line] = 9 end
   end
 end
 events.connect(events.KEYPRESS, function(code)

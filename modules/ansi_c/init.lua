@@ -41,7 +41,7 @@ textadept.editing.autocompleters.ansi_c = function()
   -- Attempt to identify the symbol type.
   if symbol ~= '' then
     local decl = '([%w_]+)[%s%*&]+' .. symbol:gsub('%p', '%%%0') .. '[^%w_]'
-    for i = buffer:line_from_position(buffer.current_pos) - 1, 0, -1 do
+    for i = buffer:line_from_position(buffer.current_pos) - 1, 1, -1 do
       local class = buffer:get_line(i):match(decl)
       if class then symbol = class break end
     end

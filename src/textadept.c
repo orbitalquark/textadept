@@ -187,7 +187,7 @@ static int quitting;
 #endif
 static int initing, closing;
 static int show_tabs = TRUE, tab_sync;
-enum {SVOID, SINT, SLEN, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET};
+enum {SVOID, SINT, SLEN, SINDEX, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET};
 
 // Forward declarations.
 static void new_buffer(sptr_t);
@@ -831,6 +831,21 @@ static int menu(lua_State *L) {
 #endif
 }
 
+/** `ui.update()` Lua function. */
+static int update_ui(lua_State *L) {
+#if GTK
+  while (gtk_events_pending()) gtk_main_iteration();
+#elif CURSES
+  struct timeval timeout = {0, 1e5}; // 0.1s
+  int nfds = os_spawn_pushfds(L);
+  fd_set *fds = (fd_set *)lua_touserdata(L, -1);
+  while (select(nfds, fds, NULL, NULL, &timeout) > 0)
+    if (os_spawn_readfds(L) >= 0) refresh_all();
+  lua_pop(L, 1); // fd_set
+#endif
+  return 0;
+}
+
 /** `ui.__index` Lua metamethod. */
 static int ui_index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
@@ -1114,6 +1129,10 @@ static int new_buffer_lua(lua_State *L) {
 static sptr_t luaL_checkscintilla(lua_State *L, int *arg, int type) {
   if (type == SSTRING) return (sptr_t)luaL_checkstring(L, (*arg)++);
   if (type == SBOOL) return lua_toboolean(L, (*arg)++);
+  if (type == SINDEX) {
+    int i = luaL_checkinteger(L, (*arg)++);
+    return i >= 0 ? i - 1 : i; // do not adjust significant values like -1
+  }
   if (type >= SINT && type <= SKEYMOD) return luaL_checkinteger(L, (*arg)++);
   return 0;
 }
@@ -1175,6 +1194,7 @@ static int call_scintilla(
   // Send the message to Scintilla and return the appropriate values.
   sptr_t result = SS(view, msg, wparam, lparam);
   if (string_return) lua_pushlstring(L, text, len), nresults++, free(text);
+  if (rtype == SINDEX && result >= 0) result++;
   if (rtype > SVOID && rtype < SBOOL)
     lua_pushinteger(L, result), nresults++;
   else if (rtype == SBOOL)
@@ -1588,6 +1608,7 @@ static int init_lua(lua_State *L, int argc, char **argv, int reinit) {
   lua_pushcfunction(L, get_split_table), lua_setfield(L, -2, "get_split_table");
   lua_pushcfunction(L, goto_view), lua_setfield(L, -2, "goto_view");
   lua_pushcfunction(L, menu), lua_setfield(L, -2, "menu");
+  lua_pushcfunction(L, update_ui), lua_setfield(L, -2, "update");
   set_metatable(L, -1, "ta_ui", ui_index, ui_newindex);
   lua_setglobal(L, "ui");
 
@@ -1888,7 +1909,7 @@ static void tab_changed(GtkNotebook *_, GtkWidget *__, int tab_num, void *L) {
 static void emit_notification(lua_State *L, SCNotification *n) {
   lua_newtable(L);
   lua_pushinteger(L, n->nmhdr.code), lua_setfield(L, -2, "code");
-  lua_pushinteger(L, n->position), lua_setfield(L, -2, "position");
+  lua_pushinteger(L, n->position + 1), lua_setfield(L, -2, "position");
   lua_pushinteger(L, n->ch), lua_setfield(L, -2, "ch");
   lua_pushinteger(L, n->modifiers), lua_setfield(L, -2, "modifiers");
   lua_pushinteger(L, n->modificationType),
@@ -1902,11 +1923,11 @@ static void emit_notification(lua_State *L, SCNotification *n) {
   //lua_pushinteger(L, n->message), lua_setfield(L, -2, "message");
   lua_pushinteger(L, n->listType), lua_setfield(L, -2, "list_type");
   //lua_pushinteger(L, n->lParam), lua_setfield(L, -2, "lParam");
-  lua_pushinteger(L, n->line), lua_setfield(L, -2, "line");
+  lua_pushinteger(L, n->line + 1), lua_setfield(L, -2, "line");
   //lua_pushinteger(L, n->foldLevelNow), lua_setfield(L, -2, "fold_level_now");
   //lua_pushinteger(L, n->foldLevelPrev),
   //  lua_setfield(L, -2, "fold_level_prev");
-  lua_pushinteger(L, n->margin), lua_setfield(L, -2, "margin");
+  lua_pushinteger(L, n->margin + 1), lua_setfield(L, -2, "margin");
   lua_pushinteger(L, n->x), lua_setfield(L, -2, "x");
   lua_pushinteger(L, n->y), lua_setfield(L, -2, "y");
   //lua_pushinteger(L, n->token), lua_setfield(L, -2, "token");
@@ -2096,7 +2117,7 @@ static int view_index(lua_State *L) {
     if (GTK_IS_PANED(p = gtk_widget_get_parent(lua_toview(L, 1))))
       lua_pushinteger(L, gtk_paned_get_position(GTK_PANED(p)));
 #elif CURSES
-    if (p = get_parent_pane(pane, lua_toview(L, 1)))
+    if ((p = get_parent_pane(pane, lua_toview(L, 1))))
       lua_pushinteger(L, p->split_size);
 #endif
   //} else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"),
@@ -2126,7 +2147,7 @@ static int view_newindex(lua_State *L) {
     if (GTK_IS_PANED(p = gtk_widget_get_parent(lua_toview(L, 1))))
       gtk_paned_set_position(GTK_PANED(p), fmax(luaL_checkinteger(L, 3), 0));
 #elif CURSES
-    if (p = get_parent_pane(pane, lua_toview(L, 1)))
+    if ((p = get_parent_pane(pane, lua_toview(L, 1))))
       p->split_size = fmax(luaL_checkinteger(L, 3), 0),
         resize_pane(p, p->rows, p->cols, p->y, p->x);
 #endif

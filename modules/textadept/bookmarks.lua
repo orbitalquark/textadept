@@ -16,7 +16,7 @@ M.MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 -- @name toggle
 function M.toggle()
   local line = buffer:line_from_position(buffer.current_pos)
-  local has_mark = buffer:marker_get(line) & 1 << M.MARK_BOOKMARK > 0
+  local has_mark = buffer:marker_get(line) & 1 << M.MARK_BOOKMARK - 1 > 0
   local f = has_mark and buffer.marker_delete or buffer.marker_add
   f(buffer, line, M.MARK_BOOKMARK)
 end
@@ -36,15 +36,15 @@ function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end
 --   prompting the user for a bookmarked line to go to.
 -- @name goto_mark
 function M.goto_mark(next)
+  local BOOKMARK_BIT = 1 << M.MARK_BOOKMARK - 1
   if next ~= nil then
     local f = next and buffer.marker_next or buffer.marker_previous
     local current_line = buffer:line_from_position(buffer.current_pos)
-    local line = f(
-      buffer, current_line + (next and 1 or -1), 1 << M.MARK_BOOKMARK)
+    local line = f(buffer, current_line + (next and 1 or -1), BOOKMARK_BIT)
     if line == -1 then
-      line = f(buffer, (next and 0 or buffer.line_count), 1 << M.MARK_BOOKMARK)
+      line = f(buffer, (next and 1 or buffer.line_count), BOOKMARK_BIT)
     end
-    if line >= 0 then textadept.editing.goto_line(line) end
+    if line >= 1 then textadept.editing.goto_line(line) end
     return
   end
   local scan_this_buffer, utf8_list, buffers = true, {}, {}
@@ -55,13 +55,12 @@ function M.goto_mark(next)
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
-    local line = buffer:marker_next(0, 1 << M.MARK_BOOKMARK)
-    while line >= 0 do
+    local line = buffer:marker_next(1, BOOKMARK_BIT)
+    while line >= 1 do
       utf8_list[#utf8_list + 1] = string.format(
-        '%s:%d: %s', basename, line + 1,
-        buffer:get_line(line):match('^[^\r\n]*'))
+        '%s:%d: %s', basename, line, buffer:get_line(line):match('^[^\r\n]*'))
       buffers[#buffers + 1] = buffer
-      line = buffer:marker_next(line + 1, 1 << M.MARK_BOOKMARK)
+      line = buffer:marker_next(line + 1, BOOKMARK_BIT)
     end
     ::continue::
   end
@@ -73,7 +72,7 @@ function M.goto_mark(next)
   }
   if button ~= 1 or not i then return end
   view:goto_buffer(buffers[i])
-  textadept.editing.goto_line(utf8_list[i]:match('^[^:]+:(%d+):') - 1)
+  textadept.editing.goto_line(tonumber(utf8_list[i]:match('^[^:]+:(%d+):')))
 end
 
 return M

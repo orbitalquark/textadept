@@ -70,7 +70,7 @@ textadept.editing.autocompleters.lua = function()
   symbol, part = symbol:gsub('^_G%.?', ''), part ~= '_G' and part or ''
   -- Attempt to identify string type and file type symbols.
   local assignment = '%f[%w_]' .. symbol:gsub('(%p)', '%%%1') .. '%s*=%s*(.*)$'
-  for i = buffer:line_from_position(buffer.current_pos) - 1, 0, -1 do
+  for i = buffer:line_from_position(buffer.current_pos) - 1, 1, -1 do
     local expr = buffer:get_line(i):match(assignment)
     if expr then
       for patt, type in pairs(M.expr_types) do

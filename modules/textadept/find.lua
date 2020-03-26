@@ -100,9 +100,9 @@ local find_text, found_text
 -- The "Find in Files" flag is unused by Scintilla, but used by Textadept.
 -- @return search flag bit-mask
 local function get_flags()
-  return (M.match_case and buffer.FIND_MATCHCASE or 0) +
-    (M.whole_word and buffer.FIND_WHOLEWORD or 0) +
-    (M.regex and buffer.FIND_REGEXP or 0) + (M.in_files and 1 << 31 or 0)
+  return (M.match_case and buffer.FIND_MATCHCASE or 0) |
+    (M.whole_word and buffer.FIND_WHOLEWORD or 0) |
+    (M.regex and buffer.FIND_REGEXP or 0) | (M.in_files and 1 << 31 or 0)
 end
 
 -- Finds and selects text in the current buffer.
@@ -139,7 +139,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   -- If nothing was found, wrap the search.
   if pos == -1 and not no_wrap then
     local anchor = buffer.anchor
-    buffer:goto_pos(next and 0 or buffer.length)
+    buffer:goto_pos(next and 1 or buffer.length + 1)
     events.emit(events.FIND_WRAPPED)
     pos = find(text, next, flags, true, true)
     if pos == -1 then
@@ -171,7 +171,7 @@ local function find_incremental(text, next, anchor)
   if anchor then
     incremental_start = buffer:position_relative(orig_pos, next and 1 or -1)
   end
-  buffer:goto_pos(incremental_start or 0)
+  buffer:goto_pos(incremental_start or 1)
   -- Note: even though `events.FIND` does not support a flags parameter, the
   -- default handler has one, so make use of it.
   events.emit(
@@ -213,8 +213,8 @@ M.find_incremental_keys = setmetatable({
     M.find_incremental(ui.command_entry:get_text(), true, true)
   end,
   ['\b'] = function()
-    local e = ui.command_entry:position_before(ui.command_entry.length)
-    M.find_incremental(ui.command_entry:text_range(0, e), true)
+    local e = ui.command_entry:position_before(ui.command_entry.length + 1)
+    M.find_incremental(ui.command_entry:text_range(1, e), true)
     return false -- propagate
   end
 }, {__index = function(_, k)
@@ -285,9 +285,9 @@ function M.find_in_files(dir, filter)
     f:close()
     local binary = nil -- determine lazily for performance reasons
     buffer:target_whole_document()
-    while buffer:search_in_target(text) > -1 do
+    while buffer:search_in_target(text) ~= -1 do
       found = true
-      if binary == nil then binary = buffer:text_range(0, 65536):find('\0') end
+      if binary == nil then binary = buffer:text_range(1, 65536):find('\0') end
       if binary then
         _G.buffer:append_text(string.format(
           '%s:1:%s\n', utf8_filenames[i], _L['Binary file matches.']))
@@ -296,17 +296,17 @@ function M.find_in_files(dir, filter)
       local line_num = buffer:line_from_position(buffer.target_start)
       local line = buffer:get_line(line_num)
       _G.buffer:append_text(
-        string.format('%s:%d:%s', utf8_filenames[i], line_num + 1, line))
-      local pos = _G.buffer.length - #line +
+        string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
+      local pos = _G.buffer.length + 1 - #line +
         buffer.target_start - buffer:position_from_line(line_num)
       _G.buffer:indicator_fill_range(
         pos, buffer.target_end - buffer.target_start)
       if not line:find('\n$') then _G.buffer:append_text('\n') end
-      buffer:set_target_range(buffer.target_end, buffer.length)
+      buffer:set_target_range(buffer.target_end, buffer.length + 1)
     end
     buffer:clear_all()
     buffer:empty_undo_buffer()
-    _G.buffer:goto_pos(_G.buffer.length) -- [Files Found Buffer]
+    _G.buffer:goto_pos(_G.buffer.length + 1) -- [Files Found Buffer]
     i = i + 1
     if i > #filenames then return nil end
     return i * 100 / #filenames, utf8_filenames[i]
@@ -352,28 +352,28 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
     buffer.indicator_current = INDIC_REPLACE
     buffer:indicator_fill_range(e, 1)
   end
-  local EOF = replace_in_sel and e == buffer.length -- no indicator at EOF
+  local EOF = replace_in_sel and e == buffer.length + 1 -- no indicator at EOF
   local f = not M.regex and buffer.replace_target or buffer.replace_target_re
   rtext = unescape(rtext)
 
   -- Perform the search and replace.
   buffer:begin_undo_action()
   buffer.search_flags = get_flags()
-  buffer:set_target_range(not replace_in_sel and 0 or s, buffer.length)
+  buffer:set_target_range(not replace_in_sel and 1 or s, buffer.length + 1)
   while buffer:search_in_target(ftext) ~= -1 and (not replace_in_sel or
         buffer.target_end <= buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
     if buffer.target_start == buffer.target_end then break end -- prevent loops
     f(buffer, rtext)
     count = count + 1
-    buffer:set_target_range(buffer.target_end, buffer.length)
+    buffer:set_target_range(buffer.target_end, buffer.length + 1)
   end
   buffer:end_undo_action()
 
   -- Restore any original selection and report the number of replacements made.
   if replace_in_sel then
     e = buffer:indicator_end(INDIC_REPLACE, s)
-    buffer:set_sel(s, e > 0 and e or buffer.length)
-    if e > 0 then buffer:indicator_clear_range(e, 1) end
+    buffer:set_sel(s, e > 1 and e or buffer.length + 1)
+    if e > 1 then buffer:indicator_clear_range(e, 1) end
   end
   ui.statusbar_text = string.format('%d %s', count, _L['replacement(s) made'])
 end)
@@ -408,7 +408,7 @@ function M.goto_file_found(line_num, next)
     local f = next and buffer.search_next or buffer.search_prev
     local pos = f(buffer, buffer.FIND_REGEXP, '^.+:\\d+:.+$')
     if pos == -1 then
-      buffer:goto_line(next and 0 or buffer.line_count)
+      buffer:goto_line(next and 1 or buffer.line_count)
       buffer:search_anchor()
       pos = f(buffer, buffer.FIND_REGEXP, '^.+:\\d+:.+$')
     end
@@ -422,9 +422,10 @@ function M.goto_file_found(line_num, next)
   local utf8_filename, pos
   utf8_filename, line_num, pos = line:match('^(.+):(%d+):()')
   if not utf8_filename then return end
+  line_num = tonumber(line_num)
   textadept.editing.select_line()
   pos = buffer.selection_start + pos - 1 -- absolute pos of result text on line
-  local s = buffer:indicator_end(M.INDIC_FIND, pos - 1)
+  local s = buffer:indicator_end(M.INDIC_FIND, buffer.selection_start)
   local e = buffer:indicator_end(M.INDIC_FIND, s + 1)
   if buffer:line_from_position(s) == buffer:line_from_position(pos) then
     s, e = s - pos, e - pos -- relative to line start
@@ -432,8 +433,8 @@ function M.goto_file_found(line_num, next)
     s, e = 0, 0 -- binary file notice, or highlighting was somehow removed
   end
   ui.goto_file(utf8_filename:iconv(_CHARSET, 'UTF-8'), true, preferred_view)
-  textadept.editing.goto_line(line_num - 1)
-  if buffer:line_from_position(buffer.current_pos + s) == line_num - 1 then
+  textadept.editing.goto_line(line_num)
+  if buffer:line_from_position(buffer.current_pos + s) == line_num then
     buffer:set_sel(buffer.current_pos + e, buffer.current_pos + s)
   end
 end

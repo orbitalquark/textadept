@@ -168,11 +168,11 @@ function M.save(filename)
       top_line = current and buffer.first_visible_line or buffer._top_line,
     }
     local bookmarks = {}
-    local line = buffer:marker_next(0, 1 << textadept.bookmarks.MARK_BOOKMARK)
+    local BOOKMARK_BIT = 1 << textadept.bookmarks.MARK_BOOKMARK - 1
+    local line = buffer:marker_next(1, BOOKMARK_BIT)
     while line ~= -1 do
       bookmarks[#bookmarks + 1] = line
-      line = buffer:marker_next(
-        line + 1, 1 << textadept.bookmarks.MARK_BOOKMARK)
+      line = buffer:marker_next(line + 1, BOOKMARK_BIT)
     end
     session.buffers[#session.buffers].bookmarks = bookmarks
     ::continue::

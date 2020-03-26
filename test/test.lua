@@ -1,9 +1,10 @@
 -- Copyright 2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
--- Scintilla uses 0-based indices as opposed to Lua's 1-based indices.
-local function LINE(i) return i - 1 end
-local function POS(i) return i - 1 end
-local function INDEX(i) return i - 1 end
+-- In the past, Scintilla used 0-based indices as opposed to Lua's 1-based
+-- indices, so these conversions were needed. Now, they are vestigal.
+local function LINE(i) return i end
+local function POS(i) return i end
+local function INDEX(i) return i end
 
 local _tostring = tostring
 -- Overloads tostring() to print more user-friendly output for `assert_equal()`.
@@ -1047,7 +1048,7 @@ function test_buffer_text_range()
   buffer:set_text('foo\nbar\nbaz')
   buffer:set_target_range(POS(5), POS(8))
   assert_equal(buffer.target_text, 'bar')
-  assert_equal(buffer:text_range(POS(1), buffer.length), 'foo\nbar\nbaz')
+  assert_equal(buffer:text_range(POS(1), buffer.length + 1), 'foo\nbar\nbaz')
   assert_equal(buffer:text_range(-1, POS(4)), 'foo')
   assert_equal(buffer:text_range(POS(9), POS(16)), 'baz')
   assert_equal(buffer.target_text, 'bar') -- assert target range is unchanged
@@ -1059,7 +1060,7 @@ end
 
 function test_bookmarks()
   local function has_bookmark(line)
-    return buffer:marker_get(line) & 1 << textadept.bookmarks.MARK_BOOKMARK > 0
+    return buffer:marker_get(line) & 1 << textadept.bookmarks.MARK_BOOKMARK - 1 > 0
   end
 
   buffer.new()
@@ -1166,7 +1167,7 @@ end
 
 local function assert_lua_autocompletion(text, first_item)
   ui.command_entry:set_text(text)
-  ui.command_entry:goto_pos(ui.command_entry.length)
+  ui.command_entry:goto_pos(ui.command_entry.length + 1)
   events.emit(events.KEYPRESS, string.byte('\t'))
   assert_equal(ui.command_entry:auto_c_active(), true)
   assert_equal(ui.command_entry.auto_c_current_text, first_item)
@@ -1467,7 +1468,7 @@ function test_editing_paste_reindent_tabs_to_spaces()
   buffer:add_text('function quux()')
   buffer:new_line()
   buffer:insert_text(-1, 'end')
-  buffer:colourise(INDEX(1), -1) -- first line should be a fold header
+  buffer:colourise(POS(1), -1) -- first line should be a fold header
   textadept.editing.paste_reindent()
   assert_equal(buffer:get_text(), table.concat({
     'function quux()',
@@ -1760,7 +1761,7 @@ function test_editing_highlight_word()
     buffer:position_from_line(LINE(4)) + 4,
     buffer:position_from_line(LINE(6))
   }
-  local bit = 1 << textadept.editing.INDIC_HIGHLIGHT
+  local bit = 1 << textadept.editing.INDIC_HIGHLIGHT - 1
   for _, pos in ipairs(indics) do
     local mask = buffer:indicator_all_on_for(pos)
     assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
@@ -2340,7 +2341,7 @@ function test_run_compile_run()
   ui.goto_view(1) -- message buffer
   assert_equal(buffer._type, _L['[Message Buffer]'])
   assert(buffer:get_sel_text():find("'end' expected"), 'compile error not selected')
-  assert(buffer:marker_get(buffer:line_from_position(buffer.current_pos)) & 1 << textadept.run.MARK_ERROR > 0)
+  assert(buffer:marker_get(buffer:line_from_position(buffer.current_pos)) & 1 << textadept.run.MARK_ERROR - 1 > 0)
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(buffer.filename, compile_file)
   ui.goto_view(1) -- message buffer
@@ -2369,7 +2370,7 @@ function test_run_compile_run()
   assert_equal(buffer.filename, run_file)
   assert_equal(buffer:line_from_position(buffer.current_pos), LINE(1))
   ui.goto_view(1)
-  assert(buffer:marker_get(buffer:line_from_position(buffer.current_pos)) & 1 << textadept.run.MARK_WARNING > 0)
+  assert(buffer:marker_get(buffer:line_from_position(buffer.current_pos)) & 1 << textadept.run.MARK_WARNING - 1 > 0)
   ui.goto_view(-1)
   textadept.run.goto_error(nil, false)
   assert_equal(buffer.filename, compile_file)
@@ -2438,7 +2439,7 @@ function test_session_save()
   textadept.session.save(session_file)
   local session = assert(loadfile(session_file, 't', {}))()
   assert_equal(session.buffers[#session.buffers - 1].filename, 'foo.lua')
-  assert_equal(session.buffers[#session.buffers - 1].bookmarks, {0})
+  assert_equal(session.buffers[#session.buffers - 1].bookmarks, {1})
   assert_equal(session.buffers[#session.buffers].filename, 'bar.lua')
   assert_equal(session.ui.maximized, false)
   assert_equal(type(session.views[1]), 'table')

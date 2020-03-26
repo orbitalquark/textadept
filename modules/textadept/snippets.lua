@@ -233,9 +233,9 @@ local function new_snippet(text, trigger)
       -- snippet. Also account for the marker being at the beginning of the
       -- snippet. (If so, pos will point to the correct position.)
       local pos = buffer:indicator_end(INDIC_CURRENTPLACEHOLDER, self.start_pos)
-      if pos == 0 then pos = self.start_pos end
+      if pos == 1 then pos = self.start_pos end
       return buffer:indicator_all_on_for(pos) &
-        1 << INDIC_CURRENTPLACEHOLDER > 0 and pos + 1 or pos
+        1 << INDIC_CURRENTPLACEHOLDER - 1 > 0 and pos + 1 or pos
     else
       return snippet_mt[k]
     end
@@ -455,7 +455,7 @@ snippet_mt = {
       buffer:add_selection(pos, pos + #text)
       goto redo -- indicator positions have changed
     end
-    buffer.main_selection = 0
+    buffer.main_selection = 1
 
     -- Update transforms.
     self:update_transforms()
@@ -502,10 +502,11 @@ snippet_mt = {
     local snapshot =
       self.snapshots[self.index > 0 and self.index - 1 or #self.snapshots]
     local i = self.start_pos
+    local PLACEHOLDER_BIT = 1 << M.INDIC_PLACEHOLDER - 1
     return function()
       local s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
-      while s > 0 and s <= self.end_pos do
-        if buffer:indicator_all_on_for(i) & 1 << M.INDIC_PLACEHOLDER > 0 then
+      while s > 1 and s <= self.end_pos do
+        if buffer:indicator_all_on_for(i) & PLACEHOLDER_BIT > 0 then
           -- This next indicator comes directly after the previous one; adjust
           -- start and end positions to compensate.
           s, i = buffer:indicator_start(M.INDIC_PLACEHOLDER, i), s

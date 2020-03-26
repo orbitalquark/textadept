@@ -2045,6 +2045,46 @@ find\_in\_files\_timeout|Removed |N/A
 [select()]: api.html#textadept.snippets.select
 [paths]: api.html#textadept.snippets.paths
 
+#### Buffer Indexing Changes
+
+All buffer positions, lines, and countable entities now start from `1` instead
+of `0`. For example, `buffer:get_line(1)` now returns the contents of the first
+line instead of `buffer:get_line(0)`, and marker and indicator numbers now count
+from 1 instead of 0.
+
+While this change may seem daunting for migrating user scripts, in practice it
+is not, since most usage is internal, and an offset of 1 or 0 does not matter.
+In migrating Textadept's internals, the following changes were made:
+
+* Themes that loop through marker numbers will need to be updated from something
+  like `for i = 25, 31 do ... end` to either `for i = 26, 32 do ... end` or
+  `for i = buffer.MARKNUM_FOLDEREND, buffer.MARKNUM_FOLDEROPEN do ... end`.
+* Most references of `buffer.length` will need to be changed to
+  `buffer.length + 1`. For example, something like
+  `buffer:goto_pos(buffer.length)` needs to be
+  `buffer:goto_pos(buffer.length + 1)`. The exceptions are when `buffer.length`
+  is not used as a position, as in
+  `buffer:indicator_clear_range(1, buffer.length)`, which is still valid.
+* Any `buffer` function calls and property indexing with bare numbers should be
+  changed to calls or indexes with those numbers plus 1. For example,
+  `buffer:contracted_fold_next(0)` changes to `buffer:contracted_fold_next(1)`,
+  and `buffer.margin_n_width[1] = ...` changes to
+  `buffer.margin_n_width[2] = ...`.
+* Any looping through lines, margins, and selections via
+  `for i = 0, buffer.{line_count,margins,selections} - 1 do ... end` needs to be
+  `for i = 1, buffer.{line_count,margins,selections} do ... end`.
+* Similarly, any language modules that loop back through lines (e.g. to
+  determine types for autocompletion) via
+  `for i = current_line, 0, -1 do ... end` needs to be
+  `for i = current_line, 1, -1 do ... end`.
+* Marker or indicator masks are produced by subtracting 1 from marker or
+  indicator numbers. For example, `1 << textadept.bookmarks.MARK_BOOKMARK`
+  changes to `1 << textadept.bookmarks.MARK_BOOKMARK - 1`.
+
+I found it helpful to quickly scan source files for syntax-highlighted numbers
+and then seeing if those numbers needed to be changed. Searching for "- 1",
+"+ 1", "buffer.length", etc. was also helpful.
+
 #### Localization Changes
 
 GUI mnemonics in localization keys have been removed. For example, `_L['_New']`

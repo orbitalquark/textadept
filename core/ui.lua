@@ -59,7 +59,7 @@ local function _print(buffer_type, ...)
   for i = 1, n do args[i] = tostring(args[i]) end
   print_buffer:append_text(table.concat(args, '\t'))
   print_buffer:append_text('\n')
-  print_buffer:goto_pos(buffer.length)
+  print_buffer:goto_pos(buffer.length + 1)
   print_buffer:set_save_point()
 end
 ---
@@ -329,8 +329,8 @@ events_connect(events.UPDATE_UI, function(updated)
   local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
     '%s %d/%d  %s %d  %s  %s  %s  %s'
   local pos = buffer.selection_n_caret[buffer.main_selection]
-  local line, max = buffer:line_from_position(pos) + 1, buffer.line_count
-  local col = buffer.column[pos] + 1
+  local line, max = buffer:line_from_position(pos), buffer.line_count
+  local col = buffer.column[pos]
   local lexer = buffer:get_lexer()
   local eol = buffer.eol_mode == buffer.EOL_CRLF and _L['CRLF'] or _L['LF']
   local tabs = string.format(
@@ -351,8 +351,8 @@ events_connect(events.BUFFER_BEFORE_SWITCH, function()
   buffer._top_line = buffer:doc_line_from_visible(buffer.first_visible_line)
   buffer._x_offset = buffer.x_offset
   -- Save fold state.
-  local folds, i = {}, buffer:contracted_fold_next(0)
-  while i ~= -1 do
+  local folds, i = {}, buffer:contracted_fold_next(1)
+  while i >= 1 do
     folds[#folds + 1], i = i, buffer:contracted_fold_next(i + 1)
   end
   buffer._folds = folds
@@ -366,8 +366,8 @@ events_connect(events.BUFFER_AFTER_SWITCH, function()
   for i = 1, #buffer._folds do buffer:toggle_fold(buffer._folds[i]) end
   -- Restore view state.
   buffer:set_sel(buffer._anchor, buffer._current_pos)
-  buffer.selection_n_anchor_virtual_space[0] = buffer._anchor_virtual_space
-  buffer.selection_n_caret_virtual_space[0] = buffer._caret_virtual_space
+  buffer.selection_n_anchor_virtual_space[1] = buffer._anchor_virtual_space
+  buffer.selection_n_caret_virtual_space[1] = buffer._caret_virtual_space
   buffer:choose_caret_x()
   local _top_line, top_line = buffer._top_line, buffer.first_visible_line
   buffer:line_scroll(0, buffer:visible_from_doc_line(_top_line) - top_line)
@@ -389,7 +389,7 @@ local function save_view_state()
   buffer._view_eol, buffer._view_ws = buffer.view_eol, buffer.view_ws
   buffer._wrap_mode = buffer.wrap_mode
   buffer._margin_type_n, buffer._margin_width_n = {}, {}
-  for i = 0, buffer.margins - 1 do
+  for i = 1, buffer.margins do
     buffer._margin_type_n[i] = buffer.margin_type_n[i]
     buffer._margin_width_n[i] = buffer.margin_width_n[i]
   end
@@ -403,7 +403,7 @@ local function restore_view_state()
   if not buffer._margin_type_n then return end
   buffer.view_eol, buffer.view_ws = buffer._view_eol, buffer._view_ws
   buffer.wrap_mode = buffer._wrap_mode
-  for i = 0, buffer.margins - 1 do
+  for i = 1, buffer.margins do
     buffer.margin_type_n[i] = buffer._margin_type_n[i]
     buffer.margin_width_n[i] = buffer._margin_width_n[i]
   end
