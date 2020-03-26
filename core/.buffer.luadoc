@@ -36,15 +36,13 @@
 -- @field anchor (number)
 --   The anchor's position.
 -- @field annotation_lines (table, Read-only)
---   Table of the number of annotation text lines for line numbers starting from
---   zero.
+--   Table of the number of annotation text lines per line number.
 -- @field annotation_style (table)
---   Table of style numbers for annotation text for line numbers starting from
---   zero.
+--   Table of style numbers for annotation text per line number.
 --   Only some style attributes are active in annotations: font,
 --   size/size_fractional, bold/weight, italics, fore, back, and character_set.
 -- @field annotation_text (table)
---   Table of annotation text for line numbers starting from zero.
+--   Table of annotation text per line number.
 -- @field annotation_visible (number)
 --   The annotation visibility mode.
 --
@@ -212,10 +210,9 @@
 --   The line caret's pixel width in insert mode, either `0`, `1`, `2`, or `3`.
 --   The default value is `1`.
 -- @field char_at (table, Read-only)
---   Table of character bytes at positions starting from zero.
+--   Table of character bytes per position.
 -- @field column (table, Read-only)
---   Table of column numbers (taking tab widths into account) for positions
---   starting from zero.
+--   Table of column numbers (taking tab widths into account) per position.
 --   Multi-byte characters count as single characters.
 -- @field current_pos (number)
 --   The caret's position.
@@ -283,7 +280,7 @@
 -- @field filename (string)
 --   The absolute file path associated with the buffer.
 -- @field first_visible_line (number)
---   The line number of the line at the top of the view, starting from zero.
+--   The line number of the line at the top of the view.
 -- @field fold_display_text_style (number)
 --   The fold display text mode.
 --
@@ -296,8 +293,8 @@
 --
 --   The default value is `buffer.FOLDDISPLAYTEXT_HIDDEN`.
 -- @field fold_expanded (table)
---   Table of flags that indicate whether or not fold points are expanded for
---   line numbers starting from zero.
+--   Table of flags per line number that indicate whether or not fold points are
+--   expanded for those line numbers.
 --   Setting expanded fold states does not toggle folds; it only updates fold
 --   margin markers. Use [`buffer.toggle_fold()`]() instead.
 -- @field fold_flags (number, Read-only)
@@ -320,7 +317,7 @@
 --
 --   The default value is `0`.
 -- @field fold_level (table)
---   Table of fold level bit-masks for line numbers starting from zero.
+--   Table of fold level bit-masks per line number.
 --   Fold level masks comprise of an integer level combined with any of the
 --   following bit flags:
 --
@@ -331,7 +328,7 @@
 --   * `buffer.FOLDLEVELHEADERFLAG`
 --     The line is a header, or fold point.
 -- @field fold_parent (table, Read-only)
---   Table of fold point line numbers for child line numbers starting from zero.
+--   Table of fold point line numbers per child line number.
 --   A line number of `-1` means no line was found.
 -- @field h_scroll_bar (bool)
 --   Display the horizontal scroll bar.
@@ -377,30 +374,30 @@
 --   The default value is `buffer.IV_NONE`.
 -- @field indic_alpha (table)
 --   Table of fill color alpha values, ranging from `0` (transparent) to `255`
---   (opaque), for indicator numbers from `0` to `31` whose styles are either
+--   (opaque), for indicator numbers from `1` to `32` whose styles are either
 --   `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
 --   The default values are `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field indic_fore (table)
 --   Table of foreground colors, in "0xBBGGRR" format, for indicator numbers
---   from `0` to `31`.
+--   from `1` to `32`.
 --   Changing an indicator's foreground color resets that indicator's hover
 --   foreground color.
 -- @field indic_hover_fore (table)
 --   Table of hover foreground colors, in "0xBBGGRR" format, for indicator
---   numbers from `0` to `31`.
+--   numbers from `1` to `32`.
 --   The default values are the respective indicator foreground colors.
 -- @field indic_hover_style (table)
---   Table of hover styles for indicators numbers from `0` to `31`. An
+--   Table of hover styles for indicators numbers from `1` to `32`. An
 --   indicator's hover style drawn when either the cursor hovers over that
 --   indicator or the caret is within that indicator.
 --   The default values are the respective indicator styles.
 -- @field indic_outline_alpha (table)
 --   Table of outline color alpha values, ranging from `0` (transparent) to
---   `255` (opaque), for indicator numbers from `0` to `31` whose styles are
+--   `255` (opaque), for indicator numbers from `1` to `32` whose styles are
 --   either `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
 --   The default values are `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field indic_style (table)
---   Table of styles for indicator numbers from `0` to `31`.
+--   Table of styles for indicator numbers from `1` to `32`.
 --
 --   * `buffer.INDIC_PLAIN`
 --     An underline.
@@ -465,10 +462,10 @@
 --   Changing an indicator's style resets that indicator's hover style.
 -- @field indic_under (table)
 --   Table of flags that indicate whether or not to draw indicators behind text
---   instead of over the top of it for indicator numbers from `0` to `31`.
+--   instead of over the top of it for indicator numbers from `1` to `32`.
 --   The default values are `false`.
 -- @field indicator_current (number)
---   The indicator number in the range of `0` to `31` used by
+--   The indicator number in the range of `1` to `32` used by
 --   [`buffer.indicator_fill_range()`]() and
 --   [`buffer.indicator_clear_range()`]().
 -- @field length (number, Read-only)
@@ -478,15 +475,14 @@
 --   There is always at least one.
 -- @field line_end_position (table, Read-only)
 --   Table of positions at the ends of lines, but before any end of line
---   characters, for line numbers starting from zero.
+--   characters, per line number.
 -- @field line_indent_position (table, Read-only)
---   Table of positions at the ends of indentation for line numbers starting
---   from zero.
+--   Table of positions at the ends of indentation per line number.
 -- @field line_indentation (table)
---   Table of column indentation amounts, for line numbers starting from zero.
+--   Table of column indentation amounts per line number.
 -- @field line_visible (table, Read-only)
---   Table of flags that indicate whether or not lines are visible for line
---   numbers starting from zero.
+--   Table of flags per line number that indicate whether or not lines are
+--   visible for those line numbers.
 -- @field lines_on_screen (number, Read-only)
 --   The number of completely visible lines in the view.
 --   It is possible to have a partial line visible at the bottom of the view.
@@ -498,11 +494,11 @@
 --   The default value is `5`.
 -- @field margin_back_n (table)
 --   Table of background colors, in "0xBBGGRR" format, of margin numbers from
---   `0` to `buffer.margins - 1` (`4` by default).
+--   `1` to `buffer.margins` (`5` by default).
 --   Only affects margins of type `buffer.MARGIN_COLOUR`.
 -- @field margin_cursor_n (table)
---   Table of cursor types shown over margin numbers from `0` to
---   `buffer.margins - 1` (`4` by default).
+--   Table of cursor types shown over margin numbers from `1` to
+--   `buffer.margins` (`5` by default).
 --
 --   * `buffer.CURSORARROW`
 --     Normal arrow cursor.
@@ -515,11 +511,10 @@
 --   The default value is `1`.
 -- @field margin_mask_n (table)
 --   Table of bit-masks of markers whose symbols marker symbol margins can
---   display for margin numbers from `0` to `buffer.margins - 1` (`4` by
---   default).
+--   display for margin numbers from `1` to `buffer.margins` (`5` by default).
 --   Bit-masks are 32-bit values whose bits correspond to the 32 available
 --   markers.
---   The default values are `0`, `~buffer.MASK_FOLDERS`, `0`, `0`, and `0`, for
+--   The default values are `0`, `buffer.MASK_FOLDERS`, `0`, `0`, and `0`, for
 --   a line margin and logical marker margin.
 -- @field margin_options (number)
 --   A bit-mask of margin option settings.
@@ -536,20 +531,18 @@
 --   The default value is `1`.
 -- @field margin_sensitive_n (table)
 --   Table of flags that indicate whether or not mouse clicks in margins emit
---   `MARGIN_CLICK` events for margin numbers from `0` to `buffer.margins - 1`
---   (`4` by default).
+--   `MARGIN_CLICK` events for margin numbers from `1` to `buffer.margins` (`5`
+--   by default).
 --   The default values are `false`.
 -- @field margin_style (table)
---   Table of style numbers for line numbers starting from zero in the text
---   margin.
+--   Table of style numbers in the text margin per line number.
 --   Only some style attributes are active in text margins: font, size, bold,
 --   italics, fore, and back.
 -- @field margin_text (table)
---   Table of text displayed in text margins for line numbers starting from
---   zero.
+--   Table of text displayed in text margins per line number.
 -- @field margin_type_n (table)
---   Table of margin types for margin numbers from `0` to `buffer.margins - 1`
---   (`4` by default).
+--   Table of margin types for margin numbers from `1` to `buffer.margins` (`5`
+--   by default).
 --
 --   * `buffer.MARGIN_SYMBOL`
 --     A marker symbol margin.
@@ -571,22 +564,22 @@
 --   The default value for the first margin is `buffer.MARGIN_NUMBER`, followed
 --   by `buffer.MARGIN_SYMBOL` for the rest.
 -- @field margin_width_n (table)
---   Table of pixel margin widths for margin numbers from `0` to
---   `buffer.margins - 1` (`4` by default).
+--   Table of pixel margin widths for margin numbers from `1` to
+--   `buffer.margins` (`5` by default).
 -- @field marker_alpha (table, Write-only)
 --   Table of alpha values, ranging from `0` (transparent) to `255` (opaque),
 --   of markers drawn in the text area (not the margin) for markers numbers from
---   `0` to `31`.
+--   `1` to `32`.
 --   The default values are `buffer.ALPHA_NOALPHA`, for no alpha.
 -- @field marker_back (table, Write-only)
 --   Table of background colors, in "0xBBGGRR" format, of marker numbers from
---   `0` to `31`.
+--   `1` to `32`.
 -- @field marker_back_selected (table, Write-only)
 --   Table of background colors, in "0xBBGGRR" format, of markers whose folding
---   blocks are selected for marker numbers from `0` to `31`.
+--   blocks are selected for marker numbers from `1` to `32`.
 -- @field marker_fore (table, Write-only)
 --   Table of foreground colors, in "0xBBGGRR" format, of marker numbers from
---   `0` to `31`.
+--   `1` to `32`.
 -- @field mouse_dwell_time (number)
 --   The number of milliseconds the mouse must idle before generating a
 --   `DWELL_START` event. A time of `buffer.TIME_FOREVER` will never generate
@@ -727,44 +720,44 @@
 --   again to the same value or until [`buffer.cancel()`]() is called.
 -- @field selection_n_anchor (table)
 --   Table of positions at the beginning of existing selections numbered from
---   zero, the main selection.
+--   `1`, the main selection.
 -- @field selection_n_anchor_virtual_space (table)
 --   Table of positions at the beginning of virtual space selected in existing
---   selections numbered from zero, the main selection.
+--   selections numbered from `1`, the main selection.
 -- @field selection_n_caret (table)
---   Table of positions at the end of existing selections numbered from zero,
+--   Table of positions at the end of existing selections numbered from `1`,
 --   the main selection.
 -- @field selection_n_caret_virtual_space (table)
 --   Table of positions at the end of virtual space selected in existing
---   selections numbered from zero, the main selection.
+--   selections numbered from `1`, the main selection.
 -- @field selection_n_end (table)
---   Table of positions at the end of existing selections numbered from zero,
+--   Table of positions at the end of existing selections numbered from `1`,
 --   the main selection.
 -- @field selection_n_start (table)
 --   Table of positions at the beginning of existing selections numbered from
---   zero, the main selection.
+--   `1`, the main selection.
 -- @field selection_n_end_virtual_space (number, Read-only)
 --   Table of positions at the end of virtual space selected in existing
---   selections numbered from zero, the main selection.
+--   selections numbered from `1`, the main selection.
 -- @field selection_n_start_virtual_space (number, Read-only)
 --   Table of positions at the beginning of virtual space selected in existing
---   selections numbered from zero, the main selection.
+--   selections numbered from `1`, the main selection.
 -- @field selection_start (number)
 --   The position of the beginning of the selected text.
 --   When set, becomes the anchor, but is not scrolled into view.
 -- @field selections (number, Read-only)
 --   The number of active selections. There is always at least one selection.
 -- @field style_at (table, Read-only)
---   Table of style numbers at positions starting from zero.
+--   Table of style numbers per position.
 -- @field style_back (table)
 --   Table of background colors, in "0xBBGGRR" format, of text for style numbers
---   from `0` to `255`.
+--   from `1` to `256`.
 -- @field style_bold (table)
 --   Table of flags that indicate whether or not text is bold for style numbers
---   from `0` to `255`.
+--   from `1` to `256`.
 --   The default values are `false`.
 -- @field style_case (table)
---   Table of letter case modes of text for style numbers from `0` to `255`.
+--   Table of letter case modes of text for style numbers from `1` to `256`.
 --
 --   * `buffer.CASE_MIXED`
 --     Display text in normally.
@@ -778,32 +771,32 @@
 --   The default values are `buffer.CASE_MIXED`.
 -- @field style_changeable (table)
 --   Table of flags that indicate whether or not text is changeable for style
---   numbers from `0` to `255`.
+--   numbers from `1` to `256`.
 --   The default values are `true`.
 --   Read-only styles do not allow the caret into the range of text.
 -- @field style_eol_filled (table)
 --   Table of flags that indicate whether or not the background colors of styles
 --   whose characters occur last on lines extend all the way to the view's right
---   margin for style numbers from `0` to `255`.
+--   margin for style numbers from `1` to `256`.
 --   The default values are `false`.
 -- @field style_font (table)
---   Table of string font names of text for style numbers from `0` to `255`.
+--   Table of string font names of text for style numbers from `1` to `256`.
 -- @field style_fore (table)
 --   Table of foreground colors, in "0xBBGGRR" format, of text for style numbers
---   from `0` to `255`.
+--   from `1` to `256`.
 -- @field style_italic (table)
 --   Table of flags that indicate whether or not text is italic for style
---   numbers from `0` to `255`.
+--   numbers from `1` to `256`.
 --   The default values are `false`.
 -- @field style_size (table)
---   Table of font sizes of text for style numbers from `0` to `255`.
+--   Table of font sizes of text for style numbers from `1` to `256`.
 -- @field style_underline (table)
 --   Table of flags that indicate whether or not text is underlined for style
---   numbers from `0` to `255`.
+--   numbers from `1` to `256`.
 --   The default values are `false`.
 -- @field style_visible (table)
 --   Table of flags that indicate whether or not text is visible for style
---   numbers from `0` to `255`.
+--   numbers from `1` to `256`.
 --   The default values are `true`.
 -- @field tab_draw_mode (number)
 --   The draw mode of visible tabs.
@@ -829,7 +822,7 @@
 --   This is also set by a successful [`buffer.search_in_target()`]().
 -- @field target_end_virtual_space (number)
 --   The position of the end of virtual space in the target range.
---   This is set to `0` when [`buffer.target_start`]() or
+--   This is set to `1` when [`buffer.target_start`]() or
 --   [`buffer.target_end`]() is set, or when [`buffer.set_target_range()`]() is
 --   called.
 -- @field target_start (number)
@@ -837,7 +830,7 @@
 --   This is also set by a successful [`buffer.search_in_target()`]().
 -- @field target_start_virtual_space (number)
 --   The position of the beginning of virtual space in the target range.
---   This is set to `0` when [`buffer.target_start`]() or
+--   This is set to `1` when [`buffer.target_start`]() or
 --   [`buffer.target_end`]() is set, or when [`buffer.set_target_range()`]() is
 --   called.
 -- @field target_text (string, Read-only)
@@ -1437,7 +1430,7 @@ function brace_bad_light(buffer, pos) end
 
 ---
 -- Highlights unmatched brace characters with indicator number *indicator*, in
--- the range of `0` to `31`, instead of the
+-- the range of `1 to `32`, instead of the
 -- `buffer.STYLE_BRACEBAD` style if *use_indicator* is `true`.
 -- @param buffer A buffer.
 -- @param use_indicator Whether or not to use an indicator.
@@ -1456,7 +1449,7 @@ function brace_highlight(buffer, pos1, pos2) end
 
 ---
 -- Highlights matching brace characters with indicator number *indicator*, in
--- the range of `0` to `31`, instead of the
+-- the range of `1` to `32`, instead of the
 -- `buffer.STYLE_BRACELIGHT` style if *use_indicator* is `true`.
 -- @param buffer A buffer.
 -- @param use_indicator Whether or not to use an indicator.
@@ -1492,8 +1485,8 @@ function call_tip_cancel(buffer) end
 function call_tip_pos_start(buffer) end
 
 ---
--- Highlights a call tip's text between positions *start_pos*, starting from
--- zero, to *end_pos* with the color `buffer.call_tip_fore_hlt`.
+-- Highlights a call tip's text between positions *start_pos* to *end_pos* with
+-- the color `buffer.call_tip_fore_hlt`.
 -- @param buffer A buffer.
 -- @param start_pos The start position in a call tip text to highlight.
 -- @param end_pos The end position in a call tip text to highlight.
@@ -1731,9 +1724,9 @@ function delete_range(buffer, pos, length) end
 ---
 -- Returns the actual line number of displayed line number *display_line*,
 -- taking hidden lines into account.
--- If *display_line* is less than or equal to zero, returns `0`. If
--- *display_line* is greater than or equal to the number of displayed lines,
--- returns `buffer.line_count`.
+-- If *display_line* is less than or equal to `1`, returns `1`. If
+-- *display_line* is greater than the number of displayed lines, returns
+-- `buffer.line_count`.
 -- @param buffer A buffer.
 -- @param display_line The display line number to use.
 -- @return number
@@ -1839,8 +1832,7 @@ function fold_children(buffer, line, action) end
 function fold_line(buffer, line, action) end
 
 ---
--- Returns the current line's text and the caret's position on that line,
--- starting from zero.
+-- Returns the current line's text and the caret's position on that line.
 -- @param buffer A buffer.
 -- @return string, number
 function get_cur_line(buffer) end
@@ -1957,7 +1949,8 @@ function home_wrap_extend(buffer) end
 
 ---
 -- Returns a bit-mask that represents which indicators are on at position *pos*.
--- Bit 0 is set if indicator 0 is on, bit 1 for indicator 1, etc.
+-- The first bit is set if indicator 1 is on, the second bit for indicator 2,
+-- etc.
 -- @param buffer A buffer.
 -- @param pos The position in *buffer* to get indicators at.
 -- @return number
@@ -1975,10 +1968,10 @@ function indicator_clear_range(buffer, pos, length) end
 
 ---
 -- Returns the next boundary position, starting from position *pos*, of
--- indicator number *indicator*, in the range of `0` to `31`.
--- Returns `0` if *indicator* was not found.
+-- indicator number *indicator*, in the range of `1` to `32`.
+-- Returns `1` if *indicator* was not found.
 -- @param buffer A buffer.
--- @param indicator An indicator number in the range of `0` to `31`.
+-- @param indicator An indicator number in the range of `1` to `32`.
 -- @param pos The position in *buffer* of the indicator.
 function indicator_end(buffer, indicator, pos) end
 
@@ -1994,10 +1987,10 @@ function indicator_fill_range(buffer, pos, length) end
 
 ---
 -- Returns the previous boundary position, starting from position *pos*, of
--- indicator number *indicator*, in the range of `0` to `31`.
--- Returns `0` if *indicator* was not found.
+-- indicator number *indicator*, in the range of `1` to `32`.
+-- Returns `1` if *indicator* was not found.
 -- @param buffer A buffer.
--- @param indicator An indicator number in the range of `0` to `31`.
+-- @param indicator An indicator number in the range of `1` to `32`.
 -- @param pos The position in *buffer* of the indicator.
 function indicator_start(buffer, indicator, pos) end
 
@@ -2101,8 +2094,8 @@ function line_end_wrap_extend(buffer) end
 
 ---
 -- Returns the line number of the line that contains position *pos*.
--- Returns `0` if *pos* is less than 0 or `buffer.line_count` if *pos* is
--- greater than `buffer.length`.
+-- Returns `1` if *pos* is less than 1 or `buffer.line_count` if *pos* is
+-- greater than `buffer.length + 1`.
 -- @param buffer A buffer.
 -- @param pos The position in *buffer* to get the line number of.
 -- @return number
@@ -2188,53 +2181,53 @@ function lower_case(buffer) end
 function margin_text_clear_all(buffer) end
 
 ---
--- Adds marker number *marker*, in the range of `0` to `31`, to line number
+-- Adds marker number *marker*, in the range of `1` to `32`, to line number
 -- *line*, returning the added marker's handle which can be used in
 -- `buffer.marker_delete_handle()` and `buffer.marker_line_from_handle()`, or
--- `0` if *line* is invalid.
+-- `-1` if *line* is invalid.
 -- @param buffer A buffer.
 -- @param line The line number to add the marker on.
--- @param marker The marker number in the range of `0` to `31` to add.
+-- @param marker The marker number in the range of `1` to `32` to add.
 -- @return number
 function marker_add(buffer, line, marker) end
 
 ---
 -- Adds the markers specified in marker bit-mask *marker_mask* to line number
 -- *line*.
--- The first bit is set to add marker number 0, the second bit for marker number
--- 1, and so on up to marker number 31.
+-- The first bit is set to add marker number 1, the second bit for marker number
+-- 2, and so on up to marker number 32.
 -- @param buffer A buffer.
 -- @param line The line number to add the markers on.
--- @param marker_mask The mask of markers to set. Set bit 0 to set marker 0, bit
---   1 for marker 1 and so on.
+-- @param marker_mask The mask of markers to set. Set the first bit to set
+--   marker 1, the second bit for marker 2 and so on.
 function marker_add_set(buffer, line, marker_mask) end
 
 ---
--- Assigns marker symbol *symbol* to marker number *marker*, in the range of `0`
--- to `31`.
+-- Assigns marker symbol *symbol* to marker number *marker*, in the range of `1`
+-- to `32`.
 -- *symbol* is shown in marker symbol margins next to lines marked with
 -- *marker*.
 -- @param buffer A buffer.
--- @param marker The marker number in the range of `0` to `31` to set *symbol*
+-- @param marker The marker number in the range of `1` to `32` to set *symbol*
 --   for.
 -- @param symbol The marker symbol: `buffer.MARK_*`.
 -- @see _SCINTILLA.next_marker_number
 function marker_define(buffer, marker, symbol) end
 
 ---
--- Associates marker number *marker*, in the range of `0` to `31`, with XPM
+-- Associates marker number *marker*, in the range of `1` to `32`, with XPM
 -- image *pixmap*.
 -- The `buffer.MARK_PIXMAP` marker symbol must be assigned to *marker*.
 -- *pixmap* is shown in marker symbol margins next to lines marked with
 -- *marker*.
 -- @param buffer A buffer.
--- @param marker The marker number in the range of `0` to `31` to define
+-- @param marker The marker number in the range of `1` to `32` to define
 --   pixmap *pixmap* for.
 -- @param pixmap The string pixmap data.
 function marker_define_pixmap(buffer, marker, pixmap) end
 
 ---
--- Associates marker number *marker*, in the range of `0` to `31`, with RGBA
+-- Associates marker number *marker*, in the range of `1` to `32`, with RGBA
 -- image *pixels*.
 -- The dimensions for *pixels* (`buffer.rgba_image_width` and
 -- `buffer.rgba_image_height`) must have already been defined. *pixels* is a
@@ -2243,7 +2236,7 @@ function marker_define_pixmap(buffer, marker, pixmap) end
 -- The `buffer.MARK_RGBAIMAGE` marker symbol must be assigned to *marker*.
 -- *pixels* is shown in symbol margins next to lines marked with *marker*.
 -- @param buffer A buffer.
--- @param marker The marker number in the range of `0` to `31` to define RGBA
+-- @param marker The marker number in the range of `1` to `32` to define RGBA
 --   data *pixels* for.
 -- @param pixels The string sequence of 4 byte pixel values starting with the
 --   pixels for the top line, with the leftmost pixel first, then continuing
@@ -2255,20 +2248,20 @@ function marker_define_pixmap(buffer, marker, pixmap) end
 function marker_define_rgba_image(buffer, marker, pixels) end
 
 ---
--- Deletes marker number *marker*, in the range of `0` to `31`, from line number
+-- Deletes marker number *marker*, in the range of `1` to `32`, from line number
 -- *line*. If *marker* is `-1`, deletes all markers from *line*.
 -- @param buffer A buffer.
 -- @param line The line number to delete the marker on.
--- @param marker The marker number in the range of `0` to `31` to delete from
+-- @param marker The marker number in the range of `1` to `32` to delete from
 --   *line*, or `-1` to delete all markers from the line.
 function marker_delete(buffer, line, marker) end
 
 ---
--- Deletes marker number *marker*, in the range of `0` to `31`, from any line
+-- Deletes marker number *marker*, in the range of `1` to `32`, from any line
 -- that has it.
 -- If *marker* is `-1`, deletes all markers from all lines.
 -- @param buffer A buffer.
--- @param marker The marker number in the range of `0` to `31` to delete from
+-- @param marker The marker number in the range of `1` to `32` to delete from
 --   all lines, or `-1` to delete all markers from all lines.
 function marker_delete_all(buffer, marker) end
 
@@ -2288,8 +2281,8 @@ function marker_enable_highlight(buffer, enabled) end
 ---
 -- Returns a bit-mask that represents the markers that were added to line number
 -- *line*.
--- The first bit is set if marker number 0 is present, the second bit for marker
--- number 1, and so on.
+-- The first bit is set if marker number 1 is present, the second bit for marker
+-- number 2, and so on.
 -- @param buffer A buffer.
 -- @param line The line number to get markers on.
 -- @return number
@@ -2307,11 +2300,12 @@ function marker_line_from_handle(buffer, handle) end
 -- Returns the first line number, starting at line number *line*, that has had
 -- all of the markers represented by marker bit-mask *marker_mask* added to it.
 -- Returns `-1` if no line was found.
--- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc., up to marker 31.
+-- The first bit is set if marker 1 is set, the second bit for marker 2, etc.,
+-- up to marker 32.
 -- @param buffer A buffer.
 -- @param line The start line to search from.
--- @param marker_mask The mask of markers to find. Set bit 0 to find marker 0,
---   bit 1 for marker 1 and so on.
+-- @param marker_mask The mask of markers to find. Set the first bit to find
+--   marker 1, the second bit for marker 2, and so on.
 -- @return number
 function marker_next(buffer, line, marker_mask) end
 
@@ -2319,20 +2313,21 @@ function marker_next(buffer, line, marker_mask) end
 -- Returns the last line number, before or on line number *line*, that has had
 -- all of the markers represented by marker bit-mask *marker_mask* added to it.
 -- Returns `-1` if no line was found.
--- Bit 0 is set if marker 0 is set, bit 1 for marker 1, etc., up to marker 31.
+-- The first bit is set if marker 1 is set, the second bit for marker 2, etc.,
+-- up to marker 32.
 -- @param buffer A buffer.
 -- @param line The start line to search from.
--- @param marker_mask The mask of markers to find. Set bit 0 to find marker 0,
---   bit 1 for marker 1 and so on.
+-- @param marker_mask The mask of markers to find. Set the first bit to find
+--   marker 1, the second bit for marker 2, and so on.
 -- @return number
 function marker_previous(buffer, line, marker_mask) end
 
 ---
--- Returns the symbol assigned to marker number *marker*, in the range of `0` to
--- `31`, used in `buffer.marker_define()`,
+-- Returns the symbol assigned to marker number *marker*, in the range of `1` to
+-- `32`, used in `buffer.marker_define()`,
 -- `buffer.marker_define_pixmap()`, or `buffer.marker_define_rgba_image()`.
 -- @param buffer A buffer.
--- @param marker The marker number in the range of `0` to `31` to get the symbol
+-- @param marker The marker number in the range of `1` to `32` to get the symbol
 --   of.
 -- @return number
 function marker_symbol_defined(buffer, marker) end
@@ -2381,9 +2376,9 @@ function multi_edge_add_line(buffer, column, color) end
 function multi_edge_clear_all(buffer) end
 
 ---
--- Returns the name of style number *style*, which is between `0` and `255`.
+-- Returns the name of style number *style*, which is between `1` and `256`.
 -- @param buffer A buffer.
--- @param style The style number between `0` and `255` to get the name of.
+-- @param style The style number between `1` and `256` to get the name of.
 -- @return string
 function name_of_style(buffer, style) end
 
@@ -2467,7 +2462,7 @@ function position_after(buffer, pos) end
 
 ---
 -- Returns the position of the character before position *pos* (taking
--- multi-byte characters into account), or `0` if there is no character before
+-- multi-byte characters into account), or `1` if there is no character before
 -- *pos*.
 -- @param buffer A buffer.
 -- @param pos The position in *buffer* to get the position before from.
@@ -2476,7 +2471,7 @@ function position_before(buffer, pos) end
 
 ---
 -- Returns the position at the beginning of line number *line*.
--- Returns `-1` if *line* is greater than `buffer.line_count`.
+-- Returns `-1` if *line* is greater than `buffer.line_count + 1`.
 -- @param buffer A buffer.
 -- @param line The line number in *buffer* to get the beginning position for.
 -- @return number
@@ -2485,7 +2480,8 @@ function position_from_line(buffer, line) end
 ---
 -- Returns the position *n* characters before or after position *pos* (taking
 -- multi-byte characters into account).
--- Returns `0` if the position is less than 0 or greater than `buffer.length`.
+-- Returns `1` if the position is less than 1 or greater than
+-- `buffer.length + 1`.
 -- @param buffer A buffer.
 -- @param pos The position in *buffer* to get the relative position from.
 -- @param n The relative number of characters to get the position for. A
@@ -2715,7 +2711,7 @@ function set_sel_fore(buffer, use_setting, color) end
 function set_selection(buffer, end_pos, start_pos) end
 
 ---
--- Assigns style number *style*, in the range from `0` to `255`, to the next
+-- Assigns style number *style*, in the range from `1` to `256`, to the next
 -- *length* characters, starting from the current styling position, and
 -- increments the styling position by *length*.
 -- [`buffer:start_styling`]() should be called before `buffer:set_styling()`.
@@ -2798,7 +2794,7 @@ function show_lines(buffer, start_line, end_line) end
 -- @param buffer A buffer.
 -- @param position The position in *buffer* to start styling at.
 -- @param unused Unused number. `0` can be safely used.
--- @usage buffer:start_styling(0, 0)
+-- @usage buffer:start_styling(1, 0)
 -- @see set_styling
 function start_styling(buffer, position, unused) end
 
@@ -2867,9 +2863,9 @@ function text_height(buffer, line) end
 
 ---
 -- Returns the pixel width string *text* would have when styled with style
--- number *style_num*, in the range of `0` to `255`.
+-- number *style_num*, in the range of `1` to `256`.
 -- @param buffer A buffer.
--- @param style_num The style number between `0` and `255` to use.
+-- @param style_num The style number between `1` and `256` to use.
 -- @param text The text to measure the width of.
 -- @return number
 function text_width(buffer, style_num, text) end

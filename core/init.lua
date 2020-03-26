@@ -47,8 +47,8 @@ local function text_range(buffer, start_pos, end_pos)
   assert_type(start_pos, 'number', 2)
   assert_type(end_pos, 'number', 3)
   local target_start, target_end = buffer.target_start, buffer.target_end
-  if start_pos < 0 then start_pos = 0 end
-  if end_pos > buffer.length then end_pos = buffer.length end
+  if start_pos < 1 then start_pos = 1 end
+  if end_pos > buffer.length + 1 then end_pos = buffer.length + 1 end
   buffer:set_target_range(start_pos, end_pos)
   local text = buffer.target_text
   buffer:set_target_range(target_start, target_end) -- restore

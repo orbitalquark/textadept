@@ -306,7 +306,7 @@ local default_menubar = {
     end},
     SEPARATOR,
     {_L['Select Lexer...'], textadept.file_types.select_lexer},
-    {_L['Refresh Syntax Highlighting'], function() buffer:colourise(0, -1) end}
+    {_L['Refresh Syntax Highlighting'], function() buffer:colourise(1, -1) end}
   },
   {
     title = _L['View'],
@@ -318,10 +318,10 @@ local default_menubar = {
     {_L['Unsplit View'], function() view:unsplit() end},
     {_L['Unsplit All Views'], function() while view:unsplit() do end end},
     {_L['Grow View'], function()
-      if view.size then view.size = view.size + buffer:text_height(0) end
+      if view.size then view.size = view.size + buffer:text_height(1) end
     end},
     {_L['Shrink View'], function()
-      if view.size then view.size = view.size - buffer:text_height(0) end
+      if view.size then view.size = view.size - buffer:text_height(1) end
     end},
     SEPARATOR,
     {_L['Toggle Current Fold'], function()

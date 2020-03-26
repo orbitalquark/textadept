@@ -44,7 +44,7 @@ end
 -- @param buffer The buffer to detect the language of.
 -- @return lexer language or nil
 local function detect_language(buffer)
-  local line = buffer:get_line(0)
+  local line = buffer:get_line(1)
   -- Detect from first line.
   for patt, lexer in pairs(M.patterns) do
     if line:find(patt) then return lexer end
@@ -71,7 +71,7 @@ local function set_lexer(buffer, lang)
   if package.searchpath(lang, package.path) then _M[lang] = require(lang) end
   if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, lang) end
   local last_line = buffer.first_visible_line + buffer.lines_on_screen
-  buffer:colourise(0, buffer:position_from_line(last_line + 1)) -- refresh
+  buffer:colourise(1, buffer:position_from_line(last_line + 1)) -- refresh
 end
 
 -- Gives new buffers lexer-specific functions.

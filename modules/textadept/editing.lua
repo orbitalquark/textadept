@@ -130,7 +130,7 @@ end})
 events.connect(events.CHAR_ADDED, function(code)
   if M.auto_pairs and M.auto_pairs[code] then
     buffer:begin_undo_action()
-    for i = 0, buffer.selections - 1 do
+    for i = 1, buffer.selections do
       local pos = buffer.selection_n_caret[i]
       buffer:set_target_range(pos, pos)
       buffer:replace_target(M.auto_pairs[code])
@@ -143,7 +143,7 @@ end)
 events.connect(events.KEYPRESS, function(code)
   if not M.auto_pairs or keys.KEYSYMS[code] ~= '\b' then return end
   buffer:begin_undo_action()
-  for i = 0, buffer.selections - 1 do
+  for i = 1, buffer.selections do
     local pos = buffer.selection_n_caret[i]
     local complement = M.auto_pairs[buffer.char_at[pos - 1]]
     if complement and buffer.char_at[pos] == string.byte(complement) then
@@ -172,7 +172,7 @@ end)
 events.connect(events.KEYPRESS, function(code)
   if M.typeover_chars and M.typeover_chars[code] then
     local handled = false
-    for i = 0, buffer.selections - 1 do
+    for i = 1, buffer.selections do
       local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
       if s == e and buffer.char_at[s] == code then
         buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
@@ -187,13 +187,13 @@ end)
 events.connect(events.CHAR_ADDED, function(code)
   if not M.auto_indent or code ~= string.byte('\n') then return end
   local line = buffer:line_from_position(buffer.current_pos)
-  if line > 0 and buffer:get_line(line - 1):find('^[\r\n]+$') and
+  if line > 1 and buffer:get_line(line - 1):find('^[\r\n]+$') and
      buffer:get_line(line):find('^[^\r\n]') then
     return -- do not auto-indent when pressing enter from start of previous line
   end
   local i = line - 1
-  while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
-  if i >= 0 then
+  while i >= 1 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
+  if i >= 1 then
     buffer.line_indentation[line] = buffer.line_indentation[i]
     buffer:vc_home()
   end
@@ -227,7 +227,7 @@ events.connect(events.FILE_BEFORE_SAVE, function()
   if not M.strip_trailing_spaces then return end
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
-  for line = 0, buffer.line_count - 1 do
+  for line = 1, buffer.line_count do
     local s, e = buffer:position_from_line(line), buffer.line_end_position[line]
     local i, byte = e - 1, buffer.char_at[e - 1]
     while i >= s and (byte == 9 or byte == 32) do -- '\t' or ' '
@@ -236,7 +236,7 @@ events.connect(events.FILE_BEFORE_SAVE, function()
     if i < e - 1 then buffer:delete_range(i + 1, e - i - 1) end
   end
   -- Ensure final newline.
-  if buffer.char_at[buffer.length - 1] ~= 10 then buffer:append_text('\n') end
+  if buffer.char_at[buffer.length] ~= 10 then buffer:append_text('\n') end
   -- Convert non-consistent EOLs
   buffer:convert_eols(buffer.eol_mode)
   buffer:end_undo_action()
@@ -275,8 +275,8 @@ function M.paste_reindent()
   -- higher indentation amount. However, if the preceding line is a fold header,
   -- indent by an extra level.
   local i = line - 1
-  while i >= 0 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
-  if i < 0 or buffer.line_indentation[i] < buffer.line_indentation[line] then
+  while i >= 1 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
+  if i < 1 or buffer.line_indentation[i] < buffer.line_indentation[line] then
     i = line
   end
   local indentation = buffer:text_range(
@@ -318,7 +318,7 @@ function M.block_comment()
   local anchor, pos = buffer.selection_start, buffer.selection_end
   local s, e = buffer:line_from_position(anchor), buffer:line_from_position(pos)
   local ignore_last_line = s ~= e and pos == buffer:position_from_line(e)
-  anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
+  anchor, pos = buffer.line_end_position[s] - anchor, buffer.length + 1 - pos
   local column = math.huge
   buffer:begin_undo_action()
   for line = s, not ignore_last_line and e or e - 1 do
@@ -342,7 +342,7 @@ function M.block_comment()
     if line == e then pos = pos + #suffix * (uncomment and -1 or 1) end
   end
   buffer:end_undo_action()
-  anchor, pos = buffer.line_end_position[s] - anchor, buffer.length - pos
+  anchor, pos = buffer.line_end_position[s] - anchor, buffer.length + 1 - pos
   -- Keep the anchor and caret on the first line as necessary.
   local start_pos = buffer:position_from_line(s)
   anchor, pos = math.max(anchor, start_pos), math.max(pos, start_pos)
@@ -363,13 +363,12 @@ function M.goto_line(line)
     }
     line = tonumber(value)
     if button ~= 1 or not line then return end
-    line = line - 1
   end
   buffer:ensure_visible_enforce_policy(line)
   buffer:goto_line(line)
 end
 args.register(
-  '-l', '--line', 1, function(line) M.goto_line(line - 1) end, 'Go to line')
+  '-l', '--line', 1, function(line) M.goto_line(line) end, 'Go to line')
 
 ---
 -- Transposes characters intelligently.
@@ -377,7 +376,7 @@ args.register(
 -- the caret. Otherwise, the characters to the left and right are.
 -- @name transpose_chars
 function M.transpose_chars()
-  if buffer.current_pos == 0 then return end
+  if buffer.current_pos == 1 then return end
   local pos = buffer.current_pos
   local line_end = buffer.line_end_position[buffer:line_from_position(pos)]
   if pos == line_end then pos = buffer:position_before(pos) end
@@ -414,7 +413,7 @@ function M.enclose(left, right)
   assert_type(left, 'string', 1)
   assert_type(right, 'string', 2)
   buffer:begin_undo_action()
-  for i = 0, buffer.selections - 1 do
+  for i = 1, buffer.selections do
     local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
     if s == e then
       s = buffer:word_start_position(s, true)
@@ -447,7 +446,7 @@ function M.select_enclosed(left, right)
     s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
   elseif M.auto_pairs then
     s = buffer.selection_start
-    while s >= 0 do
+    while s >= 1 do
       local match = M.auto_pairs[buffer.char_at[s]]
       if not match then goto continue end
       left, right = string.char(buffer.char_at[s]), match
@@ -457,7 +456,7 @@ function M.select_enclosed(left, right)
       elseif M.brace_matches[buffer.char_at[s]] or
              buffer.style_at[s] == buffer.style_at[buffer.selection_start] then
         buffer.search_flags = 0
-        buffer:set_target_range(s + 1, buffer.length)
+        buffer:set_target_range(s + 1, buffer.length + 1)
         if buffer:search_in_target(match) >= buffer.selection_end - 1 then
           e = buffer.target_end - 1
           break
@@ -467,7 +466,7 @@ function M.select_enclosed(left, right)
       s = s - 1
     end
   end
-  if s >= 0 and e >= 0 then
+  if s >= 1 and e >= 1 then
     if s + #left == anchor and e == pos then s, e = s - #left, e + #right end
     buffer:set_sel(s + #left, e)
   end
@@ -520,7 +519,7 @@ end
 -- @name convert_indentation
 function M.convert_indentation()
   buffer:begin_undo_action()
-  for line = 0, buffer.line_count - 1 do
+  for line = 1, buffer.line_count do
     local s = buffer:position_from_line(line)
     local indent = buffer.line_indentation[line]
     local e = buffer.line_indent_position[line]
@@ -543,7 +542,7 @@ end
 -- Clears highlighted word indicators and markers.
 local function clear_highlighted_words()
   buffer.indicator_current = M.INDIC_HIGHLIGHT
-  buffer:indicator_clear_range(0, buffer.length)
+  buffer:indicator_clear_range(1, buffer.length)
 end
 events.connect(events.KEYPRESS, function(code)
   if keys.KEYSYMS[code] == 'esc' then clear_highlighted_words() end
@@ -566,10 +565,10 @@ function M.highlight_word()
   local word = buffer:text_range(s, e)
   buffer.search_flags = buffer.FIND_WHOLEWORD + buffer.FIND_MATCHCASE
   buffer:target_whole_document()
-  while buffer:search_in_target(word) > -1 do
+  while buffer:search_in_target(word) ~= -1 do
     buffer:indicator_fill_range(
       buffer.target_start, buffer.target_end - buffer.target_start)
-    buffer:set_target_range(buffer.target_end, buffer.length)
+    buffer:set_target_range(buffer.target_end, buffer.length + 1)
   end
 end
 
@@ -601,7 +600,7 @@ function M.filter_through(command)
     local i, j = buffer:line_from_position(s), buffer:line_from_position(e)
     if i < j then
       s = buffer:position_from_line(i)
-      if buffer.column[e] > 0 then e = buffer:position_from_line(j + 1) end
+      if buffer.column[e] > 1 then e = buffer:position_from_line(j + 1) end
     end
     buffer:set_target_range(s, e)
   end
@@ -659,13 +658,13 @@ M.autocompleters.word = function()
     if buffer == _G.buffer or M.autocomplete_all_words then
       buffer.search_flags = buffer.FIND_WORDSTART + buffer.FIND_MATCHCASE
       buffer:target_whole_document()
-      while buffer:search_in_target(word_part) > -1 do
+      while buffer:search_in_target(word_part) ~= -1 do
         local e = buffer:word_end_position(buffer.target_end, true)
         local match = buffer:text_range(buffer.target_start, e)
         if #match > #word_part and not matches[match] then
           list[#list + 1], matches[match] = match, true
         end
-        buffer:set_target_range(e, buffer.length)
+        buffer:set_target_range(e, buffer.length + 1)
       end
     end
   end
@@ -717,9 +716,9 @@ function M.show_documentation(pos, case_insensitive)
   end
   -- Search backwards for an open function call and show API documentation for
   -- that function as well.
-  while s > 0 and buffer.char_at[s] ~= 40 do s = s - 1 end -- '('
+  while s > 1 and buffer.char_at[s] ~= 40 do s = s - 1 end -- '('
   e = buffer:brace_match(s, 0)
-  if s > 0 and (e == -1 or e >= pos) then
+  if s > 1 and (e == -1 or e >= pos) then
     s, e = buffer:word_start_position(s - 1, true), s - 1
     symbol = buffer:text_range(s, e + 1)
     goto lookup

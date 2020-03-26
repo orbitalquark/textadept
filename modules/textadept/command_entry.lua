@@ -216,7 +216,7 @@ function M.run(f, keys, lexer, height)
   M:set_text('')
   M.focus()
   M:set_lexer(lexer or 'text')
-  M.height = M:text_height(0) * (height or 1)
+  M.height = M:text_height(1) * (height or 1)
   _G.keys._command_entry, _G.keys.mode = keys, '_command_entry'
 end
 
@@ -232,7 +232,7 @@ end
 -- it to show Lua documentation in the Lua command entry.
 events.connect(events.INITIALIZED, function()
   M.h_scroll_bar, M.v_scroll_bar = false, false
-  for i = 0, M.margins - 1 do M.margin_width_n[i] = 0 end
+  for i = 1, M.margins do M.margin_width_n[i] = 0 end
   M.call_tip_position = true
   for key, f in pairs(keys) do
     if f == textadept.editing.show_documentation then

@@ -4,11 +4,11 @@
 local constants, functions, properties, events = {}, {}, {}, {}
 local const_patt = '^val ([%w_]+)=([-%dx%x]+)'
 local event_patt = '^evt %a+ ([%w_]+)=(%d+)(%b())'
-local msg_patt = '^(%a+) (%a+) (%w+)=(%d+)%((%a*) ?([^,]*),%s*(%a*)'
+local msg_patt = '^(%a+) (%a+) (%w+)=(%d+)%((%a*)%s*([^,]*),%s*(%a*)%s*([^)]*)'
 local types = {
-  [''] = 0, void = 0, int = 1, length = 2, position = 1, line = 1, colour = 3,
-  bool = 4, keymod = 5, string = 6, stringresult = 7, cells = 8, pointer = 1,
-  textrange = 9, findtext = 10, formatrange = 11
+  [''] = 0, void = 0, int = 1, length = 2, index = 3, position = 3, line = 3,
+  colour = 4, bool = 5, keymod = 6, string = 7, stringresult = 8, cells = 9,
+  pointer = 1, textrange = 10, findtext = 11, formatrange = 12
 }
 local ignores = { -- constants to ignore
   '^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_',
@@ -18,10 +18,23 @@ local ignores = { -- constants to ignore
   '^SC_WEIGHT_', '^SCE_', '^SCEN_', '^SCFIND_POSIX', '^SCI_', '^SCK_',
   '^SCLEX_', '^UNDO_MAY_COALESCE'
 }
+local increments = { -- constants to increment by one
+  'MARKER_MAX', 'MAX_MARGIN', 'STYLE_MAX', 'INDIC_CONTAINER', 'INDIC_IME',
+  'INDIC_IME_MAX', 'INDIC_MAX', 'INDICATOR_CONTAINER', 'INDICATOR_IME',
+  'INDICATOR_IME_MAX', 'INDICATOR_MAX'
+}
+for _, v in ipairs(increments) do increments[v] = true end
 local changed_setter = {} -- holds properties changed to setter functions
 local function to_lua_name(camel_case)
   return camel_case:gsub('([a-z])([A-Z])', '%1_%2'):
     gsub('([A-Z])([A-Z][a-z])', '%1_%2'):lower()
+end
+local function is_length(ptype, param)
+  return ptype == 'position' and param:find('^length')
+end
+local function is_index(ptype, param)
+  return ptype == 'int' and (param == 'style' or param == 'markerNumber' or
+    param == 'margin' or param == 'indicator' or param == 'selection')
 end
 
 for line in io.lines('../src/scintilla/include/Scintilla.iface') do
@@ -32,8 +45,8 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
     if name == 'FIND_REGEXP' then
       value = tostring(tonumber(value) + 2^23) -- add SCFIND_CXX11REGEX
       value = value:gsub('%.0$', '') -- Lua 5.3+ may append this
-    elseif name == 'MASK_FOLDERS' then
-      value = tostring(-33554432)
+    elseif increments[name] or name:find('^MARKNUM') then
+      value = tonumber(value) + 1
     end
     constants[#constants + 1] = string.format('%s=%s', name, value)
   elseif line:find('^evt ') then
@@ -47,21 +60,36 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
         has_modifiers = true
       end
     end
-    if has_modifiers then event[#event + 1] = '"modifiers"' end
+    if name:find('^margin') then
+      event[2], event[3] = event[3], event[2] -- swap position, margin
+    end
+    if has_modifiers then event[#event + 1] = '"modifiers"' end -- prefer at end
     events[#events + 1] = value
     events[value] = table.concat(event, ',')
   elseif line:find('^fun ') then
-    local _, rtype, name, id, wtype, param, ltype = line:match(msg_patt)
+    local _, rtype, name, id, wtype, param, ltype, param2 = line:match(msg_patt)
     if rtype:find('^%u') then rtype = 'int' end
     if wtype:find('^%u') then wtype = 'int' end
     if ltype:find('^%u') then ltype = 'int' end
     name = to_lua_name(name)
     if name == 'convert_eo_ls' then name = 'convert_eols' end
-    if types[wtype] == types.int and param == 'length' then wtype = 'length' end
+    if is_length(wtype, param) then
+      wtype = 'length'
+    elseif is_index(wtype, param) then
+      wtype = 'index'
+    end
+    if is_length(ltype, param2) then
+      ltype = 'length'
+    elseif is_index(ltype, param2) then
+      ltype = 'index'
+    elseif ltype == 'stringresult' then
+      rtype = 'void'
+    end
     functions[#functions + 1] = name
     functions[name] = {id, types[rtype], types[wtype], types[ltype]}
   elseif line:find('^get ') or line:find('^set ') then
-    local kind, rtype, name, id, wtype, _, ltype = line:match(msg_patt)
+    local kind, rtype, name, id, wtype, param, ltype, param2 =
+      line:match(msg_patt)
     if rtype:find('^%u') then rtype = 'int' end
     if wtype:find('^%u') then wtype = 'int' end
     if ltype:find('^%u') then ltype = 'int' end
@@ -80,6 +108,8 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
       properties[#properties + 1] = name
       properties[name] = {0, 0, 0, 0}
     end
+    if is_index(wtype, param) then wtype = 'index' end
+    if is_index(ltype, param2) then ltype = 'index' end
     local prop = properties[name]
     if kind == 'get' then
       prop[1] = id
@@ -97,6 +127,36 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
   end
   ::continue::
 end
+
+-- Manually adjust special-case messages that do not quite follow the rules.
+functions['auto_c_show'][3] = types.int -- was interpreted as 'length'
+functions['get_cur_line'][2] = types.position -- was interpreted as 'void'
+
+-- Manually adjust messages whose param or return types would be interpreted as
+-- 1-based numbers, but should not be, or vice-versa.
+properties['length'][3] = types.int
+properties['style_at'][3] = types.index
+functions['count_characters'][2] = types.int
+functions['count_code_units'][2] = types.int
+properties['line_count'][3] = types.int
+functions['line_scroll'][3] = types.int
+functions['line_scroll'][4] = types.int
+properties['text_length'][3] = types.int
+functions['replace_target'][2] = types.int
+functions['replace_target_re'][2] = types.int
+functions['wrap_count'][2] = types.int
+properties['edge_column'][3] = types.int
+functions['multi_edge_add_line'][3] = types.int
+functions['line_length'][2] = types.int
+properties['lines_on_screen'][3] = types.int
+properties['auto_c_current'][3] = types.index
+properties['indicator_current'][3] = types.index
+properties['margin_style'][3] = types.index
+properties['margin_style_offset'][3] = types.index
+properties['annotation_style'][3] = types.index
+properties['annotation_style_offset'][3] = types.index
+properties['main_selection'][3] = types.index
+functions['position_relative'][4] = types.int
 
 -- Add mouse events from Scintilla curses manually.
 constants[#constants + 1] = 'MOUSE_PRESS=1'
@@ -179,7 +239,7 @@ for _, event in ipairs(events) do
 end
 f:write('}\n\n')
 f:write([[
-local marker_number, indic_number, list_type, image_type = -1, -1, 0, 0
+local marker_number, indic_number, list_type, image_type = 0, 0, 0, 0
 
 ---
 -- Returns a unique marker number for use with `buffer.marker_define()`.
