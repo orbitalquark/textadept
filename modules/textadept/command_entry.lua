@@ -207,7 +207,7 @@ function M.run(f, keys, lexer, height)
       local mode_history = history[history.mode]
       mode_history[#mode_history + 1] = M:get_text()
       mode_history.pos = #mode_history + 1
-      f((M:get_text()))
+      f(M:get_text())
     end
   end
   if not getmetatable(keys) then setmetatable(keys, M.editing_keys) end

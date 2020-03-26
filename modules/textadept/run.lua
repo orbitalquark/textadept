@@ -325,7 +325,7 @@ events.connect(events.CHAR_ADDED, function(code)
   if code == string.byte('\n') and proc and proc:status() == 'running' and
      buffer._type == _L['[Message Buffer]'] then
     local line_num = buffer:line_from_position(buffer.current_pos) - 1
-    proc:write((buffer:get_line(line_num)))
+    proc:write(buffer:get_line(line_num))
   end
 end)
 
