@@ -286,9 +286,9 @@ static void add_to_history(ListStore* store, const char *text) {
   // navigation, append to the list instead of prepending to it.
   int n = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), NULL);
   GtkTreeIter iter;
-  if (n > 10)
-    gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(store), &iter, NULL, --n),
-      gtk_list_store_remove(store, &iter); // keep 10 items
+  if (n > 9)
+    gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter),
+      gtk_list_store_remove(store, &iter), n--; // keep 10 items
   char *last_text = NULL;
   if (n > 0)
     gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(store), &iter, NULL, n - 1),
