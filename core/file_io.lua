@@ -343,7 +343,7 @@ function io.open_recent_file()
 end
 
 -- List of version control directories.
-local vcs = {'.bzr', '.git', '.hg', '.svn'}
+local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 
 ---
 -- Returns the root directory of the project that contains filesystem path
