@@ -158,6 +158,13 @@ properties['annotation_style_offset'][3] = types.index
 properties['main_selection'][3] = types.index
 functions['position_relative'][4] = types.int
 
+-- Awaiting upstream Scintilla patch. Once applied, these should be removed.
+functions['marker_line_from_handle'][2] = types.index
+functions['call_tip_set_hlt'][3] = types.index
+functions['call_tip_set_hlt'][4] = types.index
+functions['indicator_start'][2] = types.index
+functions['indicator_end'][2] = types.index
+
 -- Add mouse events from Scintilla curses manually.
 constants[#constants + 1] = 'MOUSE_PRESS=1'
 constants[#constants + 1] = 'MOUSE_DRAG=2'
