@@ -2080,6 +2080,10 @@ In migrating Textadept's internals, the following changes were made:
 * Marker or indicator masks are produced by subtracting 1 from marker or
   indicator numbers. For example, `1 << textadept.bookmarks.MARK_BOOKMARK`
   changes to `1 << textadept.bookmarks.MARK_BOOKMARK - 1`.
+* Logic that depends on the return value of `buffer:get_cur_line()` may need to
+  be changed. For example, any subsequent references to `pos` after
+  `local line, pos = buffer:get_cur_line()` like `if line:sub(1, pos) ... end`
+  need to be changed to `if line:sub(1, pos - 1) ... end`.
 
 I found it helpful to quickly scan source files for syntax-highlighted numbers
 and then seeing if those numbers needed to be changed. Searching for "- 1",
