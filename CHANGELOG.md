@@ -9,6 +9,117 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
+## 11.0 alpha (31 Mar 2020)
+
+Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to
+Textadept 11.
+
+* [Textadept 11.0 alpha -- Win32][] | [PGP -- 11.0 alpha Win32][]
+* [Textadept 11.0 alpha -- Mac OSX 10.6+][] | [PGP -- 11.0 alpha OSX][]
+* [Textadept 11.0 alpha -- Linux][] | [PGP -- 11.0 alpha Linux][]
+* [Textadept 11.0 alpha -- Linux x86_64][] | [PGP -- 11.0 alpha Linux x86_64][]
+* [Textadept 11.0 alpha -- Modules][] | [PGP -- 11.0 alpha Modules][]
+
+Bugfixes:
+
+* Fixed `--help` command line option.
+* Fixed Textadept API autocompletion and documentation on Windows.
+* Fixed bug that regards lexer-specific snippet files as global.
+* Fixed hangs on Win32 terminal version with
+  [`textadept.editing.filter_through()`][].
+* Fixed issues with buffer z-order when switching between views.
+* Fixed accidental clipping of first character in a snippet under certain
+  circumstances.
+* Fixed C autocompletion error with typerefs.
+* Fixed skipping of event handlers that come directly after one that was just
+  run, but disconnected.
+* Fixed bugs in the return values of `ui.dialogs.standard_dropdown` and `msgbox`
+  dialogs.
+* Fixed [`events.FILE_CHANGED`][] not emitting a filename.
+* Fixed bug with pipes in [`textadept.editing.filter_through()`].
+* Fixed tab label display on Windows.
+* Fixed bug in syntax highlighting with PHP, Django, and other lexers that embed
+  themselves.
+
+Changes:
+
+* All buffer positions, lines, and countable entities start from 1 instead of 0.
+* Support more Alt and Shift+Alt keys in the Win32 terminal version.
+* [`textadept.editing.api_files`][] acts as if it already has lexer tables
+  defined.
+* [`textadept.run.goto_error()`][] wraps searches now.
+* Added snippet trigger autocompletion via
+  [`textadept.editing.autocomplete`][]`('snippet')`.
+* Improved Lua API [documentation generator][].
+* Localization keys in [`_L`][] no longer contain GUI mnemonics ('\_').
+* [`textadept.snippets`][] functions no longer have a '\_' prefix.
+* `--help` command line options are alphabetized.
+* The Lua command entry can now run any [`view`][] functions by name (e.g.
+  split).
+* Auto-pair, type-over, and auto-deletion of matching braces now works with
+  multiple selections.
+* Removed `textadept.file_types.lexers` table in favor of asking the LPeg lexer
+  for known lexer names.
+* Updated German translation.
+* Changed [`textadept.bookmarks.toggle()`][] to only toggle bookmarks on the
+  current line.
+* Removed '=' prefix in command entry that would print results; printing results
+  has been the default behavior for quite some time.
+* Replaced `buffer.style_name[]` with [`buffer:name_of_style()`][].
+* Session files are now Lua data files; old formats will no longer work.
+* Added [`events.SESSION_SAVE`][] and [`events.SESSION_LOAD`][] events for
+  saving and loading custom user data to sessions.
+* Removed *~/.textadept/?.lua* and *~/.textadept/?.{so,dll}* from `package.path`
+  and `package.cpath`, respectively.
+* Lua errors in Textadept can now be jumped to via double-click or Enter.
+* [`ui.dialogs.filteredlist()`][] dialogs have a reasonable default width.
+* Renamed `keys.MODE` to [`keys.mode`][].
+* Moved individual buffer functions in `io` into `buffer`.
+* Event handlers can now return any non-`nil` value instead of a boolean value
+  and have that value passed back to [`events.emit()`][].
+* Lua command entry completions show images just like in Lua autocompletion.
+* Align block comments by column if possible, not indent.
+* Added per-mode command entry history which can be cycled through using the
+  `Up` and `Down` keys.
+* Added [`ui.dialogs.progressbar()`][], utilize it with Find in Files, and
+  removed `ui.find.find_in_files_timeout`.
+* GUI find/replace history Up/Down history key bindings swapped, mimicking
+  traditional command line history navigation.
+* The statusbar now indicates an active snippet.
+* Updated to [PDCurses][] 3.9.
+* Experimental set of "standard" modules is provided in the modules archive
+  instead of just language modules.
+
+[10 to 11 migration guide]: manual.html#Textadept.10.to.11
+[Textadept 11.0 alpha -- Win32]: download/textadept_11.0_alpha.win32.zip
+[Textadept 11.0 alpha -- Mac OSX 10.6+]: download/textadept_11.0_alpha.osx.zip
+[Textadept 11.0 alpha -- Linux]: download/textadept_11.0_alpha.i386.tgz
+[Textadept 11.0 alpha -- Linux x86_64]: download/textadept_11.0_alpha.x86_64.tgz
+[Textadept 11.0 alpha -- Modules]: download/textadept_11.0_alpha.modules.zip
+[PGP -- 11.0 alpha Win32]: download/textadept_11.0_alpha.win32.zip.asc
+[PGP -- 11.0 alpha OSX]: download/textadept_11.0_alpha.osx.zip.asc
+[PGP -- 11.0 alpha Linux]: download/textadept_11.0_alpha.i386.tgz.asc
+[PGP -- 11.0 alpha Linux x86_64]: download/textadept_11.0_alpha.x86_64.tgz.asc
+[PGP -- 11.0 alpha Modules]: download/textadept_11.0_alpha.modules.zip.asc
+[`events.FILE_CHANGED`]: api.html#events.FILE_CHANGED
+[`textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
+[`textadept.editing.api_files`]: api.html#textadept.editing.api_files
+[`textadept.run.goto_error()`]: api.html#textadept.run.goto_error
+[`textadept.editing.autocomplete`]: api.html#textadept.editing.autocomplete
+[documentation generator]: manual.html#Generating.LuaDoc
+[`_L`]: api.html#_L
+[`textadept.snippets`]: api.html#textadept.snippets
+[`view`]: api.html#view
+[`textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
+[`buffer:name_of_style()`]: api.html#buffer.name_of_style
+[`events.SESSION_SAVE`]: api.html#events.SESSION_SAVE
+[`events.SESSION_LOAD`]: api.html#events.SESSION_LOAD
+[`ui.dialogs.filteredlist()`]: api.html#ui.dialogs.filteredlist
+[`keys.mode`]: api.html#keys.mode
+[`events.emit()`]: api.html#events.emit
+[`ui.dialogs.progressbar()`]: api.html#ui.dialogs.progressbar
+[PDCurses]: https://pdcurses.sourceforge.io/
+
 ## 10.8 (01 Jan 2020)
 
 Download:
@@ -755,7 +866,7 @@ Bugfixes:
 
 Changes:
 
-* Changed "Cancel Snippet" keybinding from `Ctrl+Shift+K` (`⌥⇧⇥` on Mac OSX |
+* Changed "Cancel Snippet" key binding from `Ctrl+Shift+K` (`⌥⇧⇥` on Mac OSX |
   `M-S-K` in curses) to `Esc`.
 * Added [`buffer.caret_line_frame`][] option for outlining the current line.
 * Added [`buffer:line_reverse()`][] for reversing selected lines.
@@ -1074,7 +1185,7 @@ Bugfixes:
 Changes:
 
 * Replaced Lua pattern searches with [regular expressions][].
-* Added [timeout prompt][] to Find in Files. (10 second default.)
+* Added timeout prompt to Find in Files. (10 second default.)
 * Better differentiation between Python 2 and 3 run commands.
 
 [Textadept 9.0 alpha 2 -- Win32]: download/textadept_9.0_alpha_2.win32.zip
@@ -1090,7 +1201,6 @@ Changes:
 [`buffer:text_range()`]: api.html#buffer.text_range
 [`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [regular expressions]: manual.html#Regular.Expressions
-[timeout prompt]: api.html#ui.find.find_in_files_timeout
 
 ## 9.0 alpha (01 Jul 2016)
 
