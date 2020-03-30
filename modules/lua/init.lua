@@ -26,6 +26,7 @@ local function ta_api(filename)
        buffer == ui.command_entry or buffer._type then
       return filename
     end
+    ui.dialogs.msgbox{text=filename,informative_text=buffer.filename}
   end
 end
 
@@ -61,7 +62,8 @@ textadept.editing.autocompleters.lua = function()
   local list = {}
   -- Retrieve the symbol behind the caret.
   local line, pos = buffer:get_cur_line()
-  local symbol, op, part = line:sub(1, pos):match('([%w_%.]-)([%.:]?)([%w_]*)$')
+  local symbol, op, part = line:sub(1, pos - 1):match(
+    '([%w_%.]-)([%.:]?)([%w_]*)$')
   if symbol == '' and part == '' then return nil end -- nothing to complete
   if symbol == '' and M.autocomplete_snippets then
     local _, snippets = textadept.editing.autocompleters.snippet()

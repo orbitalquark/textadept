@@ -121,7 +121,8 @@ args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
 -- `ui` tables are also considered as globals.
 local function complete_lua()
   local line, pos = M:get_cur_line()
-  local symbol, op, part = line:sub(1, pos):match('([%w_.]-)([%.:]?)([%w_]*)$')
+  local symbol, op, part = line:sub(1, pos - 1):match(
+    '([%w_.]-)([%.:]?)([%w_]*)$')
   local ok, result = pcall(
     (load(string.format('return (%s)', symbol), nil, 't', env)))
   if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
