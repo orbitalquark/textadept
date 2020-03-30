@@ -284,7 +284,7 @@ end
 local events, events_connect = events, events.connect
 
 -- Ensure title, statusbar, etc. are updated for new views.
-events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI, 0) end)
+events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI, 3) end)
 
 -- Switches between buffers when a tab is clicked.
 events_connect(
@@ -377,7 +377,7 @@ end)
 -- Updates titlebar and statusbar.
 local function update_bars()
   set_title()
-  events.emit(events.UPDATE_UI, 0)
+  events.emit(events.UPDATE_UI, 3)
 end
 events_connect(events.BUFFER_NEW, update_bars)
 events_connect(events.BUFFER_AFTER_SWITCH, update_bars)
