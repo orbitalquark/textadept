@@ -596,9 +596,6 @@ static int dialog(lua_State *L) {
   char *out = gtdialog(type, argc, argv);
   lua_pushstring(L, out);
   free(out);
-#if (CURSES && _WIN32)
-  redrawwin(scintilla_get_window(focused_view)); // needed for pdcurses
-#endif
   return 1;
 }
 
@@ -2448,6 +2445,10 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
     lua_pop(lua, 1); // fd_set
   }
 #else
+  // TODO: ideally computation of view would not be done twice.
+  Scintilla *view = !command_entry_focused ? focused_view : command_entry;
+  termkey_set_fd(ta_tk, scintilla_get_window(view));
+  mouse_set(ALL_MOUSE_EVENTS); // _popen() and system() change console mode
   return termkey_getkey(tk, key);
 #endif
 }
@@ -2626,10 +2627,6 @@ int main(int argc, char **argv) {
     }
     refresh_all();
     view = !command_entry_focused ? focused_view : command_entry;
-#if _WIN32
-    termkey_set_fd(ta_tk, scintilla_get_window(view));
-    mouse_set(ALL_MOUSE_EVENTS); // _popen() and system() change console mode
-#endif
   }
   endwin();
   termkey_destroy(ta_tk);
