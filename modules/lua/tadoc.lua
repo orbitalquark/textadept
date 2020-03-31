@@ -6,12 +6,22 @@
 -- To preserve formatting, the included *luadoc.patch* file must be applied to
 -- your instance of LuaDoc. It will not affect the look of HTML web pages, only
 -- the look of plain-text output.
+-- Also requires LuaFileSystem (lfs) to be installed.
 -- @usage luadoc -d [output_path] -doclet path/to/tadoc [file(s)]
 local M = {}
 
 local CTAG = '%s\t%s\t/^%s$/;"\t%s\t%s'
 local string_format = string.format
 local lfs = require('lfs')
+
+-- As a special case for Textadept API tags, do not store the local path, but
+-- use a `_HOME` prefix that will be filled in by consumers. Do this by making
+-- use of a custom command line switch: --ta-home="path/to/ta/home".
+local _HOME
+for i = 1, #arg do
+  _HOME = arg[i]:match('^%-%-ta%-home=(.+)$')
+  if _HOME then _HOME = _HOME:gsub('%p', '%%%0') break end
+end
 
 -- Writes a ctag.
 -- @param file The file to write to.
@@ -22,6 +32,7 @@ local lfs = require('lfs')
 --   Function, t Table, and F Field.
 -- @param ext_fields The ext_fields for the ctag.
 local function write_tag(file, name, filename, code, k, ext_fields)
+  if _HOME then filename = filename:gsub(_HOME, '_HOME') end
   if ext_fields == 'class:_G' then ext_fields = '' end
   file[#file + 1] = string_format(CTAG, name, filename, code, k, ext_fields)
 end
