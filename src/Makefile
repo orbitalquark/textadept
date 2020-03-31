@@ -265,6 +265,8 @@ clean: ; rm -f *.o ../textadept*
 
 # Documentation.
 
+ta_home = $(shell dirname `pwd`)
+
 doc: manual luadoc
 manual: ../*.md ../doc/manual.md | ../doc/bombay
 	$| -d ../doc -t ../doc --title Textadept $^
@@ -272,13 +274,13 @@ manual: ../*.md ../doc/manual.md | ../doc/bombay
 		../doc/manual.html
 	sed -i -e "s/Textadept Manual/Textadept $(subst _, ,$(version)) Manual/;" \
 		../doc/manual.html
-luadoc: ../modules ../core ../lexers | ../modules/lua/lua.luadoc
-	cd ../doc && luadoc -d . -t . --doclet markdowndoc $^/lexer.lua
+luadoc: ../modules ../core ../lexers/lexer.lua | ../modules/lua/lua.luadoc
+	cd ../doc && luadoc -d . -t . --doclet markdowndoc $^
 	sed -i -e "s/Textadept API/Textadept $(subst _, ,$(version)) API/;" \
 		../doc/api.html
-	cd ../modules && luadoc -d lua --doclet lua/tadoc $^/lexer.lua
+	cd ../modules && luadoc -d lua --doclet lua/tadoc $^ --ta-home=$(ta_home)
 	cd ../modules/lua && mv tags ta_tags && mv api ta_api
-	cd ../modules && luadoc -d lua --doclet lua/tadoc $|
+	cd ../modules && luadoc -d lua --doclet lua/tadoc $| --ta-home=$(ta_home)
 
 # Releases.
 
