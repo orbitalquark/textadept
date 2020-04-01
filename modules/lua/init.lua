@@ -26,7 +26,6 @@ local function ta_api(filename)
        buffer == ui.command_entry or buffer._type then
       return filename
     end
-    ui.dialogs.msgbox{text=filename,informative_text=buffer.filename}
   end
 end
 
