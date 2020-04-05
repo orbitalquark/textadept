@@ -1992,6 +1992,8 @@ terminal's constraints:
 * No style settings like font name, font size, or italics.
 * No X selection, primary or secondary, integration with the clipboard.
 * No zoom.
+* When using the mouse in the Windows console, Shift+Double-click extends
+  selections and quadruple-clicking inside a selection collapses it.
 
 [`buffer.register_image()`]: api.html#buffer.register_image
 
