@@ -325,8 +325,8 @@ function filesave(options) end
 function textbox(options) end
 
 ---
--- Displays a progressbar dialog defined by dialog options table *options* and
--- updates from function *f*.
+-- Displays a progressbar dialog, defined by dialog options table *options*,
+-- that receives updates from function *f*.
 -- Returns "stopped" if *options*.`stoppable` is `true` and the user clicked the
 -- "Stop" button. Otherwise, returns `nil`.
 -- @param options Table of key-value option pairs for the progressbar dialog.
@@ -342,9 +342,9 @@ function textbox(options) end
 -- @param f Function repeatedly called to do work and provide progress updates.
 --   The function is called without arguments and must return either `nil`,
 --   which indicates work is complete, or a progress percentage number in the
---   range 0-100 and optional string text to display (GTK only). If the text
---   is either "stop disable" or "stop enable" and *options*.`stoppable` is
---   `true`, the "Stop" button is disabled or enabled, respectively.
+--   range 0-100 and an optional string to display (GTK only). If the text is
+--   either "stop disable" or "stop enable" and *options*.`stoppable` is `true`,
+--   the "Stop" button is disabled or enabled, respectively.
 -- @return nil or "stopped"
 -- @usage ui.dialogs.progressbar({stoppable = true},
 --   function() if work() then return percent, status else return nil end end)

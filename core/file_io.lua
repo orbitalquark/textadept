@@ -397,9 +397,9 @@ io.quick_open_filters = {}
 -- @param paths Optional string directory path or table of directory paths to
 --   search. The default value is the current project's root directory, if
 --   available.
--- @param filter Optional filter for files and directories to exclude. The
---   default value is `lfs.default_filter` unless *paths* is a string and a
---   filter for it is defined in `io.quick_open_filters`.
+-- @param filter Optional filter for files and directories to include and/or
+--   exclude. The default value is `lfs.default_filter` unless *paths* is a
+--   string and a filter for it is defined in `io.quick_open_filters`.
 -- @param opts Optional table of additional options for
 --   `ui.dialogs.filteredlist()`.
 -- @usage io.quick_open(buffer.filename:match('^.+/')) -- list all files in the

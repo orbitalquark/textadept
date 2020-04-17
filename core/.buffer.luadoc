@@ -198,8 +198,6 @@
 --     A line caret.
 --   * `buffer.CARETSTYLE_BLOCK`
 --     A block caret.
---   * `buffer.CARETSTYLE_BLOCK_ALWAYS`
---     A block caret in both insert and overtype mode.
 --
 --   Any block setting may be combined with `buffer.CARETSTYLE_BLOCK_AFTER` via
 --   bitwise OR (`|`) in order to draw the caret after the end of a selection,
@@ -1002,7 +1000,7 @@
 --
 -- @field INDIC_HIDDEN (number, Read-only)
 --
--- @field INDIC_MAX (number, Read-only)
+-- @field INDICATOR_MAX (number, Read-only)
 --
 -- @field INDIC_PLAIN (number, Read-only)
 --
@@ -2454,8 +2452,8 @@ function paste(buffer) end
 
 ---
 -- Returns the position of the character after position *pos* (taking multi-byte
--- characters into account), or `buffer.length` if there is no character after
--- *pos*.
+-- characters into account), or `buffer.length + 1` if there is no character
+-- after *pos*.
 -- @param buffer A buffer.
 -- @param pos The position in *buffer* to get the position after from.
 function position_after(buffer, pos) end
@@ -3196,8 +3194,8 @@ function get_lexer(buffer, current) end
 function set_lexer(buffer, lexer) end
 
 ---
--- Declares the editor theme to be string *name* and (optionally) assigns the
--- properties contained in table *props*.
+-- Sets the buffer's color theme to be string *name* and (optionally) assigns
+-- the properties contained in table *props*.
 -- User themes override Textadept's default themes when they have the same name.
 -- If *name* contains slashes, it is assumed to be an absolute path to a theme
 -- instead of a theme name.
@@ -3270,7 +3268,7 @@ function set_theme(buffer, name, props) end
 --   * technology
 --   * two_phase_draw
 --   * undo_collection
---   * INDIC_CONTAINER
+--   * INDICATOR_CONTAINER
 --   * MOD_NORM
 --   * CP_UTF8
 --   * LASTSTEPINUNDOREDO
