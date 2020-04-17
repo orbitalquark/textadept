@@ -19,11 +19,8 @@ local ignores = { -- constants to ignore
   '^SCLEX_', '^UNDO_MAY_COALESCE'
 }
 local increments = { -- constants to increment by one
-  'MARKER_MAX', 'MAX_MARGIN', 'STYLE_MAX', 'INDIC_CONTAINER', 'INDIC_IME',
-  'INDIC_IME_MAX', 'INDIC_MAX', 'INDICATOR_CONTAINER', 'INDICATOR_IME',
-  'INDICATOR_IME_MAX', 'INDICATOR_MAX'
+  '^MARKER_MAX', '^MARKNUM_', '^MAX_MARGIN', '^STYLE_', '^INDICATOR_'
 }
-for _, v in ipairs(increments) do increments[v] = true end
 local changed_setter = {} -- holds properties changed to setter functions
 local function to_lua_name(camel_case)
   return camel_case:gsub('([a-z])([A-Z])', '%1_%2'):
@@ -45,8 +42,10 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
     if name == 'FIND_REGEXP' then
       value = tostring(tonumber(value) + 2^23) -- add SCFIND_CXX11REGEX
       value = value:gsub('%.0$', '') -- Lua 5.3+ may append this
-    elseif increments[name] or name:find('^MARKNUM') then
-      value = tonumber(value) + 1
+    else
+      for i = 1, #increments do
+        if name:find(increments[i]) then value = tonumber(value) + 1 end
+      end
     end
     constants[#constants + 1] = string.format('%s=%s', name, value)
   elseif line:find('^evt ') then
