@@ -214,7 +214,9 @@ function M.run(f, keys, lexer, height)
   if not getmetatable(keys) then setmetatable(keys, M.editing_keys) end
   if f and not history[f] then history[f] = {pos = 0} end
   history.mode = f
-  M:set_text('')
+  local mode_history = history[history.mode]
+  M:set_text(mode_history and mode_history[#mode_history] or '')
+  M:select_all()
   M.focus()
   M:set_lexer(lexer or 'text')
   M.height = M:text_height(1) * (height or 1)
