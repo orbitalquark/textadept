@@ -563,7 +563,9 @@ function M.highlight_word()
   end
   if s == e then return end
   local word = buffer:text_range(s, e)
-  buffer.search_flags = buffer.FIND_WHOLEWORD + buffer.FIND_MATCHCASE
+  local flags = buffer.FIND_MATCHCASE
+  if buffer:is_range_word(s, e) then flags = flags | buffer.FIND_WHOLEWORD end
+  buffer.search_flags = flags
   buffer:target_whole_document()
   while buffer:search_in_target(word) ~= -1 do
     buffer:indicator_fill_range(
