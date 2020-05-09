@@ -2011,14 +2011,19 @@ style_name[n]           |Replaced|[buffer:name_of_style][](n)
 N/A                     |Added   |[events.SESSION_SAVE][]
 N/A                     |Added   |[events.SESSION_LOAD][]
 **io**                  |        |
-reload_file             |Renamed |[buffer:reload()]
-save_file               |Renamed |[buffer:save()]
-save_file_as            |Renamed |[buffer:save_as()]
-close_buffer            |Renamed |[buffer:close()]
+reload_file             |Renamed |[buffer:reload()][]
+save_file               |Renamed |[buffer:save()][]
+save_file_as            |Renamed |[buffer:save_as()][]
+close_buffer            |Renamed |[buffer:close()][]
 **keys**                |        |
 MODE                    |Renamed |[mode][]
+**lexer**               |        |
+N/A                     |Added   |[to_eol()][]
+delimited\_range()      |Replaced|[range()][]
+nested\_pair()          |Replaced|[range()][]
+N/A                     |Added   |[number][]
 **textadept.bookmarks** |        |
-toggle(line, on)        |Changed |[toggle][]()
+toggle(line, on)        |Changed |[toggle()][]
 **textadept.file_types**|        |
 lexers                  |Removed |N/A<sup>a</sup>
 **textadept.snippets**  |        |
@@ -2040,7 +2045,10 @@ find\_in\_files\_timeout|Removed |N/A
 [buffer:save_as()]: api.html#buffer.save_as
 [buffer:close()]: api.html#buffer.close
 [mode]: api.html#keys.mode
-[toggle]: api.html#textadept.bookmarks.toggle
+[to_eol()]: api.html#lexer.to_eol
+[range()]: api.html#lexer.range
+[number]: api.html#lexer.number
+[toggle()]: api.html#textadept.bookmarks.toggle
 [insert()]: api.html#textadept.snippets.insert
 [previous()]: api.html#textadept.snippets.previous
 [cancel_current()]: api.html#textadept.snippets.cancel_current
