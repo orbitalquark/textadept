@@ -135,6 +135,9 @@ functions['get_cur_line'][2] = types.position -- was interpreted as 'void'
 -- 1-based numbers, but should not be, or vice-versa.
 properties['length'][3] = types.int
 properties['style_at'][3] = types.index
+functions['marker_handle_from_line'][4] = types.index
+functions['marker_number_from_line'][2] = types.index
+functions['marker_number_from_line'][4] = types.index
 functions['count_characters'][2] = types.int
 functions['count_code_units'][2] = types.int
 properties['line_count'][3] = types.int

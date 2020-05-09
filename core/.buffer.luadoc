@@ -2287,6 +2287,14 @@ function marker_enable_highlight(buffer, enabled) end
 function marker_get(buffer, line) end
 
 ---
+-- Returns the handle of the *n*th marker on line number *line*, or `-1` if no
+-- such marker exists.
+-- @param buffer A buffer.
+-- @param line The line number to get markers on.
+-- @param n The marker to get the handle of.
+function marker_handle_from_line(buffer, line, n) end
+
+---
 -- Returns the line number that marker handle *handle*, returned by
 -- `buffer.marker_add()`, was added to, or `-1` if the line was not found.
 -- @param buffer A buffer.
@@ -2306,6 +2314,14 @@ function marker_line_from_handle(buffer, handle) end
 --   marker 1, the second bit for marker 2, and so on.
 -- @return number
 function marker_next(buffer, line, marker_mask) end
+
+---
+-- Returns the number of the *n*th marker on line number *line*, or `-1` if no
+-- such marker exists.
+-- @param buffer A buffer.
+-- @param line The line number to get markers on.
+-- @param n The marker to get the number of.
+function marker_number_from_line(buffer, line, n) end
 
 ---
 -- Returns the last line number, before or on line number *line*, that has had
