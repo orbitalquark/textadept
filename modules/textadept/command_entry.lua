@@ -207,7 +207,7 @@ function M.run(f, keys, lexer, height)
       if not f then return end
       local mode_history = history[history.mode]
       mode_history[#mode_history + 1] = M:get_text()
-      mode_history.pos = #mode_history + 1
+      mode_history.pos = #mode_history
       f(M:get_text())
     end
   end
@@ -215,7 +215,7 @@ function M.run(f, keys, lexer, height)
   if f and not history[f] then history[f] = {pos = 0} end
   history.mode = f
   local mode_history = history[history.mode]
-  M:set_text(mode_history and mode_history[#mode_history] or '')
+  M:set_text(mode_history and mode_history[mode_history.pos] or '')
   M:select_all()
   M.focus()
   M:set_lexer(lexer or 'text')
