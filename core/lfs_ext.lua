@@ -124,7 +124,9 @@ end
 function lfs.abspath(filename, prefix)
   assert_type(filename, 'string', 1)
   assert_type(prefix, 'string/nil', 2)
-  if WIN32 then filename = filename:gsub('/', '\\') end
+  if WIN32 then
+    filename = filename:gsub('/', '\\'):gsub('^%l:[/\\]', string.upper)
+  end
   if not filename:find(not WIN32 and '^/' or '^%a:[/\\]') and
      not (WIN32 and filename:find('^\\\\')) then
     if not prefix then prefix = lfs.currentdir() end
