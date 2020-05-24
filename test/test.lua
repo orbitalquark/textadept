@@ -729,6 +729,7 @@ function test_lfs_ext_abs_path()
   assert_equal(lfs.abspath('.\\bar', 'C:\\foo'), 'C:\\foo\\bar')
   assert_equal(lfs.abspath('..\\bar', 'C:\\foo'), 'C:\\bar')
   assert_equal(lfs.abspath('C:\\bar', 'C:\\foo'), 'C:\\bar')
+  assert_equal(lfs.abspath('c:\\bar', 'c:\\foo'), 'C:\\bar')
   assert_equal(lfs.abspath('..\\../.\\./baz', 'C:\\foo\\bar'), 'C:\\baz')
   _G.WIN32 = win32 -- reset just in case
 
