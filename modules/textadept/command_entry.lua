@@ -162,6 +162,8 @@ end
 -- @name lua_keys
 local lua_keys = {['\t'] = complete_lua}
 
+local prev_key_mode
+
 ---
 -- Opens the command entry, subjecting it to any key bindings defined in table
 -- *keys*, highlighting text with lexer name *lexer*, and displaying
@@ -217,6 +219,7 @@ function M.run(f, keys, lexer, height)
   local mode_history = history[history.mode]
   M:set_text(mode_history and mode_history[mode_history.pos] or '')
   M:select_all()
+  prev_key_mode = _G.keys.mode
   M.focus()
   M:set_lexer(lexer or 'text')
   M.height = M:text_height(1) * (height or 1)
@@ -226,7 +229,7 @@ end
 -- Redefine ui.command_entry.focus() to clear any current key mode on hide/show.
 local orig_focus = M.focus
 M.focus = function()
-  keys.mode = nil
+  keys.mode = prev_key_mode
   orig_focus()
 end
 
