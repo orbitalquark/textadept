@@ -47,8 +47,8 @@ diff -r 8a23edc91533 src/luaconf.h
  #endif			/* } */
  
  
---- a/src/loslib.c	2018-10-15 09:22:45.000000000 -0400
-+++ b/src/loslib.c	2018-10-17 14:06:59.000000000 -0400
+--- a/src/loslib.c	2017-04-19 13:29:57.000000000 -0400
++++ b/src/loslib.c	2020-05-24 14:28:49.259487829 -0400
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -85,7 +85,7 @@ diff -r 8a23edc91533 src/luaconf.h
    {"time",      os_time},
    {"tmpname",   os_tmpname},
    {NULL, NULL}
-@@ -404,6 +419,625 @@
+@@ -404,6 +419,630 @@
  
  LUAMOD_API int luaopen_os (lua_State *L) {
    luaL_newlib(L, syslib);
@@ -141,7 +141,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +  lua_State *L;
 +  int ref;
 +#if !_WIN32
-+  int pid, fstdin, fstdout, fstderr;
++  int pid, fstdin, fstdout, fstderr, exit_status;
 +#else
 +  HANDLE pid, fstdin, fstdout, fstderr;
 +#endif
@@ -155,13 +155,26 @@ diff -r 8a23edc91533 src/luaconf.h
 +static int lp_status(lua_State *L) {
 +  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
 +  lua_pushstring(L, p->pid ? "running" : "terminated");
-+  return 1;
+   return 1;
+ }
+ 
++/** Process exit cleanup function. */
++static void exited(PStream *p, int status) {
++#if _WIN32
++  close(p->pid);
++#endif
++  close(p->fstdin), close(p->fstdout), close(p->fstderr);
++  luaL_unref(p->L, LUA_REGISTRYINDEX, p->stdout_cb);
++  luaL_unref(p->L, LUA_REGISTRYINDEX, p->stderr_cb);
++  luaL_unref(p->L, LUA_REGISTRYINDEX, p->exit_cb);
++  luaL_unref(p->L, LUA_REGISTRYINDEX, p->ref); // allow proc to be collected
++  p->pid = 0, p->exit_status = status;
 +}
 +
 +/** p:wait() Lua function. */
 +static int lp_wait(lua_State *L) {
 +  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
-+  luaL_argcheck(L, p->pid, 1, "process terminated");
++  if (!p->pid) return (lua_pushinteger(L, p->exit_status), 1);
 +#if !_WIN32
 +  int status;
 +  waitpid(p->pid, &status, 0);
@@ -171,6 +184,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +  WaitForSingleObject(p->pid, INFINITE);
 +  GetExitCodeProcess(p->pid, &status);
 +#endif
++  exited(p, status);
 +  return (lua_pushinteger(L, status), 1);
 +}
 +
@@ -285,9 +299,9 @@ diff -r 8a23edc91533 src/luaconf.h
 +    lua_pushfstring(L, "process (pid=%d)", p->pid);
 +  else
 +    lua_pushstring(L, "process (terminated)");
-   return 1;
- }
- 
++  return 1;
++}
++
 +#if (GTK && !__APPLE__)
 +/** __gc Lua metamethod. */
 +static int lp_gc(lua_State *L) {
@@ -342,21 +356,11 @@ diff -r 8a23edc91533 src/luaconf.h
 +/** Signal that the child process finished. */
 +static void p_exit(GPid pid, int status, void *data) {
 +  PStream *p = (PStream *)data;
-+  if (p->exit_cb != LUA_REFNIL) {
-+    lua_rawgeti(p->L, LUA_REGISTRYINDEX, p->exit_cb);
-+    lua_pushinteger(p->L, status);
-+    if (lua_pcall(p->L, 1, 0, 0) != LUA_OK)
-+      fprintf(stderr, "Lua: %s\n", lua_tostring(p->L, -1)), lua_pop(p->L, 1);
-+  }
-+#if _WIN32
-+  close(p->pid);
-+#endif
-+  close(p->fstdin), close(p->fstdout), close(p->fstderr);
-+  luaL_unref(p->L, LUA_REGISTRYINDEX, p->stdout_cb);
-+  luaL_unref(p->L, LUA_REGISTRYINDEX, p->stderr_cb);
-+  luaL_unref(p->L, LUA_REGISTRYINDEX, p->exit_cb);
-+  luaL_unref(p->L, LUA_REGISTRYINDEX, p->ref); // allow proc to be collected
-+  p->pid = 0;
++  lua_rawgeti(p->L, LUA_REGISTRYINDEX, p->exit_cb);
++  lua_pushinteger(p->L, status);
++  if (lua_pcall(p->L, 1, 0, 0) != LUA_OK)
++    fprintf(stderr, "Lua: %s\n", lua_tostring(p->L, -1)), lua_pop(p->L, 1);
++  exited(p, status);
 +}
 +#elif !_WIN32
 +/**
@@ -581,7 +585,8 @@ diff -r 8a23edc91533 src/luaconf.h
 +                               &p->fstdin, &p->fstdout, &p->fstderr, &error)) {
 +    p->cstdout = new_channel(p->fstdout, p, p->stdout_cb > 0);
 +    p->cstderr = new_channel(p->fstderr, p, p->stderr_cb > 0);
-+    g_child_watch_add_full(G_PRIORITY_DEFAULT + 1, p->pid, p_exit, p, NULL);
++    if (p->exit_cb != LUA_REFNIL)
++      g_child_watch_add_full(G_PRIORITY_DEFAULT + 1, p->pid, p_exit, p, NULL);
 +    lua_pushnil(L); // no error
 +  } else {
 +    lua_pushnil(L);
@@ -685,7 +690,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +    p->fstdin = proc_stdin, p->fstdout = proc_stdout, p->fstderr = proc_stderr;
 +    p->cstdout = new_channel(FD(proc_stdout), p, p->stdout_cb > 0);
 +    p->cstderr = new_channel(FD(proc_stderr), p, p->stderr_cb > 0);
-+    g_child_watch_add(p->pid, p_exit, p);
++    if (p->exit_cb != LUA_REFNIL) g_child_watch_add(p->pid, p_exit, p);
 +    // Close unneeded handles.
 +    CloseHandle(proc_info.hThread);
 +    CloseHandle(stdin_read);
