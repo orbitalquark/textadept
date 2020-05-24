@@ -1242,6 +1242,16 @@ function test_command_entry_history()
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
 end
 
+function test_command_entry_mode_restore()
+  local mode = 'test_mode'
+  keys.mode = mode
+  ui.command_entry.run(nil)
+  assert(keys.mode ~= mode)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  assert_equal(keys.mode, mode)
+  keys.mode = nil
+end
+
 function test_editing_auto_pair()
   buffer.new()
   -- Single selection.
