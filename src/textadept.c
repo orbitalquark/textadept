@@ -1152,6 +1152,7 @@ static int call_scintilla(
         ltype = SINT; break;
       case SCI_SETLEXERLANGUAGE: case SCI_LOADLEXERLIBRARY:
         ltype = SSTRING; break;
+      case SCI_GETNAMEDSTYLES: ltype = SSTRING, rtype = SINDEX; break;
       default: ltype = SSTRINGRET;
     }
 
