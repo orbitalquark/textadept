@@ -647,6 +647,7 @@ end
 -- Returns for the word part behind the caret a list of whole word completions
 -- constructed from the current buffer or all open buffers (depending on
 -- `M.autocomplete_all_words`).
+-- If `buffer.auto_c_ignore_case` is `true`, completions are not case-sensitive.
 -- @see buffer.word_chars
 -- @see autocomplete
 M.autocompleters.word = function()
@@ -656,7 +657,8 @@ M.autocompleters.word = function()
   local word_part = buffer:text_range(s, buffer.current_pos)
   for _, buffer in ipairs(_BUFFERS) do
     if buffer == _G.buffer or M.autocomplete_all_words then
-      buffer.search_flags = buffer.FIND_WORDSTART + buffer.FIND_MATCHCASE
+      buffer.search_flags = buffer.FIND_WORDSTART |
+        (not buffer.auto_c_ignore_case and buffer.FIND_MATCHCASE or 0)
       buffer:target_whole_document()
       while buffer:search_in_target(word_part) ~= -1 do
         local e = buffer:word_end_position(buffer.target_end, true)
