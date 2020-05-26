@@ -1818,6 +1818,15 @@ function test_editing_autocomplete_word()
   buffer:auto_c_select('foob')
   buffer:auto_c_complete()
   assert_equal(buffer:get_text(), 'foo foobar foobar')
+  local ignore_case = buffer.auto_c_ignore_case
+  buffer.auto_c_ignore_case = false
+  buffer:add_text(' Bar b')
+  textadept.editing.autocomplete('word')
+  assert_equal(buffer:get_text(), 'foo foobar foobar Bar b')
+  buffer.auto_c_ignore_case = true
+  textadept.editing.autocomplete('word')
+  assert_equal(buffer:get_text(), 'foo foobar foobar Bar Bar')
+  buffer.auto_c_ignore_case = ignore_case
   buffer.new()
   buffer:add_text('foob')
   textadept.editing.autocomplete_all_words = true
