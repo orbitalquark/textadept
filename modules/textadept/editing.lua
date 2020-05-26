@@ -128,15 +128,14 @@ end})
 -- Matches characters specified in auto_pairs, taking multiple selections into
 -- account.
 events.connect(events.CHAR_ADDED, function(code)
-  if M.auto_pairs and M.auto_pairs[code] then
-    buffer:begin_undo_action()
-    for i = 1, buffer.selections do
-      local pos = buffer.selection_n_caret[i]
-      buffer:set_target_range(pos, pos)
-      buffer:replace_target(M.auto_pairs[code])
-    end
-    buffer:end_undo_action()
+  if not M.auto_pairs or not M.auto_pairs[code] then return end
+  buffer:begin_undo_action()
+  for i = 1, buffer.selections do
+    local pos = buffer.selection_n_caret[i]
+    buffer:set_target_range(pos, pos)
+    buffer:replace_target(M.auto_pairs[code])
   end
+  buffer:end_undo_action()
 end)
 
 -- Removes matched chars on backspace, taking multiple selections into account.
@@ -170,17 +169,16 @@ end)
 -- Moves over typeover characters when typed, taking multiple selections into
 -- account.
 events.connect(events.KEYPRESS, function(code)
-  if M.typeover_chars and M.typeover_chars[code] then
-    local handled = false
-    for i = 1, buffer.selections do
-      local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
-      if s == e and buffer.char_at[s] == code then
-        buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
-        handled = true
-      end
+  if not M.typeover_chars or not M.typeover_chars[code] then return end
+  local handled = false
+  for i = 1, buffer.selections do
+    local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
+    if s == e and buffer.char_at[s] == code then
+      buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
+      handled = true
     end
-    if handled then return true end -- prevent typing
   end
+  if handled then return true end -- prevent typing
 end)
 
 -- Auto-indent on return.
