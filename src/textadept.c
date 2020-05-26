@@ -1188,9 +1188,10 @@ static int call_scintilla(
 static int call_scintilla_lua(lua_State *L) {
   Scintilla *view = focused_view;
   // If optional buffer/view argument is given, check it.
-  if (is_type(L, 1, "ta_buffer")) view = view_for_doc(L, 1);
-  //else if (is_type(L, 1, "ta_view"))
-  //  view = lua_toview(L, 1);
+  if (is_type(L, 1, "ta_buffer"))
+    view = view_for_doc(L, 1);
+  else if (is_type(L, 1, "ta_view"))
+    view = lua_toview(L, 1);
   // Interface table is of the form {msg, rtype, wtype, ltype}.
   return call_scintilla(
     L, view, get_int_field(L, lua_upvalueindex(1), 1),
@@ -1239,9 +1240,8 @@ static int tab_clicked(GtkWidget *label, GdkEventButton *event, void *L) {
 
 /** `buffer[k].__index` metamethod. */
 static int property_index(lua_State *L) {
-  //Scintilla *view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view"))?
-  //  view_for_doc(L, -1) : lua_toview(L, -1);
-  Scintilla *view = (lua_getfield(L, 1, "_self"), view_for_doc(L, -1));
+  Scintilla *view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view")) ?
+    view_for_doc(L, -1) : lua_toview(L, -1);
   lua_getfield(L, 1, "_iface"); // {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4),
     ltype = SVOID, rtype = get_int_field(L, -1, 3);
@@ -1251,9 +1251,8 @@ static int property_index(lua_State *L) {
 
 /** `buffer[k].__newindex` metamethod. */
 static int property_newindex(lua_State *L) {
-  //Scintilla *view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view"))?
-  //  view_for_doc(L, -1) : lua_toview(L, -1);
-  Scintilla *view = (lua_getfield(L, 1, "_self"), view_for_doc(L, -1));
+  Scintilla *view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view")) ?
+    view_for_doc(L, -1) : lua_toview(L, -1);
   lua_getfield(L, 1, "_iface"); // {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 2), wtype = get_int_field(L, -1, 4),
     ltype = get_int_field(L, -1, 3), rtype = SVOID;
@@ -1265,8 +1264,8 @@ static int property_newindex(lua_State *L) {
 // Helper function for `buffer_index()` and `view_index()` that gets Scintilla
 // properties.
 static void get_property(lua_State *L) {
-  //Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) :
-  //  lua_toview(L, 1);
+  Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) :
+    lua_toview(L, 1);
   // Interface table is of the form {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4),
     ltype = SVOID, rtype = get_int_field(L, -1, 3);
@@ -1276,14 +1275,14 @@ static void get_property(lua_State *L) {
     lua_pushvalue(L, 1), lua_setfield(L, -2, "_self");
     lua_pushvalue(L, -2), lua_setfield(L, -2, "_iface");
     set_metatable(L, -1, "ta_property", property_index, property_newindex);
-  } else call_scintilla(L, view_for_doc(L, 1), msg, wtype, ltype, rtype, 2);
+  } else call_scintilla(L, view, msg, wtype, ltype, rtype, 2);
 }
 
 // Helper function for `buffer_newindex()` and `view_newindex()` that sets
 // Scintilla properties.
 static void set_property(lua_State *L) {
-  //Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) :
-  //  lua_toview(L, 1);
+  Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) :
+    lua_toview(L, 1);
   // Interface table is of the form {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 2), wtype = get_int_field(L, -1, 3),
     ltype = get_int_field(L, -1, 4), rtype = SVOID, temp;
@@ -1291,7 +1290,7 @@ static void set_property(lua_State *L) {
   if (wtype == SSTRING || wtype == SSTRINGRET ||
       msg == SCI_SETMARGINLEFT || msg == SCI_SETMARGINRIGHT)
     temp = wtype != SSTRINGRET ? wtype : SSTRING, wtype = ltype, ltype = temp;
-  call_scintilla(L, view_for_doc(L, 1), msg, wtype, ltype, rtype, 3);
+  call_scintilla(L, view, msg, wtype, ltype, rtype, 3);
 }
 
 /** `buffer.__index` metamethod. */
@@ -2101,20 +2100,21 @@ static int view_index(lua_State *L) {
     if ((p = get_parent_pane(pane, lua_toview(L, 1))))
       lua_pushinteger(L, p->split_size);
 #endif
-  //} else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"),
-  //           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
-  //  // If the key is a Scintilla function, return a callable closure.
-  //  lua_pushcclosure(L, call_scintilla_lua, 1);
-  //else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
-  //         lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
-  //  // If the key is a Scintilla property, determine if it is an indexible one
-  //  // or not. If so, return a table with the appropriate metatable; otherwise
-  //  // call Scintilla to get the property's value.
-  //  get_property(L);
-  //else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"),
-  //         lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TNUMBER); // pushed
-  //  // If the key is a Scintilla constant, return its value.
-  } else lua_pushvalue(L, 2), lua_rawget(L, 1);
+  } else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"),
+             lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
+    // If the key is a Scintilla function, return a callable closure.
+    lua_pushcclosure(L, call_scintilla_lua, 1);
+  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
+           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
+    // If the key is a Scintilla property, determine if it is an indexible one
+    // or not. If so, return a table with the appropriate metatable; otherwise
+    // call Scintilla to get the property's value.
+    get_property(L);
+  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"),
+           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TNUMBER); // pushed
+    // If the key is a Scintilla constant, return its value.
+  else
+    lua_pushvalue(L, 2), lua_rawget(L, 1);
   return 1;
 }
 
@@ -2132,10 +2132,11 @@ static int view_newindex(lua_State *L) {
       p->split_size = fmax(luaL_checkinteger(L, 3), 0),
         resize_pane(p, p->rows, p->cols, p->y, p->x);
 #endif
-  //} else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
-  //           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
-  //  set_property(L);
-  } else lua_pushvalue(L, 2), lua_pushvalue(L, 3), lua_rawset(L, 1);
+  } else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
+             lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
+    set_property(L);
+  else
+    lua_pushvalue(L, 2), lua_pushvalue(L, 3), lua_rawset(L, 1);
   return 0;
 }
 

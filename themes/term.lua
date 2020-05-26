@@ -2,7 +2,7 @@
 -- Terminal theme for Textadept.
 -- Contributions by Ana Balan.
 
-local buffer = buffer
+local buffer, view = buffer, view
 local property, property_int = buffer.property, buffer.property_int
 
 -- Normal colors.
@@ -56,35 +56,35 @@ property['style.variable'] = 'fore:$(color.blue),bold'
 property['style.whitespace'] = ''
 
 -- Multiple Selection and Virtual Space
---buffer.additional_sel_fore =
---buffer.additional_sel_back =
---buffer.additional_caret_fore =
+--view.additional_sel_fore =
+--view.additional_sel_back =
+--view.additional_caret_fore =
 
 -- Caret and Selection Styles.
---buffer:set_sel_fore(true, property_int['color.white'])
---buffer:set_sel_back(true, property_int['color.black'])
---buffer.caret_fore = property_int['color.black']
---buffer.caret_line_back =
+--view:set_sel_fore(true, property_int['color.white'])
+--view:set_sel_back(true, property_int['color.black'])
+--view.caret_fore = property_int['color.black']
+--view.caret_line_back =
 
 -- Fold Margin.
---buffer:set_fold_margin_colour(true, property_int['color.white'])
---buffer:set_fold_margin_hi_colour(true, property_int['color.white'])
+--view:set_fold_margin_colour(true, property_int['color.white'])
+--view:set_fold_margin_hi_colour(true, property_int['color.white'])
 
 -- Markers.
 local MARK_BOOKMARK = textadept.bookmarks.MARK_BOOKMARK
-buffer.marker_back[MARK_BOOKMARK] = property_int['color.blue']
-buffer.marker_back[textadept.run.MARK_WARNING] = property_int['color.yellow']
-buffer.marker_back[textadept.run.MARK_ERROR] = property_int['color.red']
+view.marker_back[MARK_BOOKMARK] = property_int['color.blue']
+view.marker_back[textadept.run.MARK_WARNING] = property_int['color.yellow']
+view.marker_back[textadept.run.MARK_ERROR] = property_int['color.red']
 
 -- Indicators.
-buffer.indic_fore[ui.find.INDIC_FIND] = property_int['color.yellow']
+view.indic_fore[ui.find.INDIC_FIND] = property_int['color.yellow']
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
-buffer.indic_fore[INDIC_HIGHLIGHT] = property_int['color.yellow']
+view.indic_fore[INDIC_HIGHLIGHT] = property_int['color.yellow']
 local INDIC_PLACEHOLDER = textadept.snippets.INDIC_PLACEHOLDER
-buffer.indic_fore[INDIC_PLACEHOLDER] = property_int['color.magenta']
+view.indic_fore[INDIC_PLACEHOLDER] = property_int['color.magenta']
 
 -- Call tips.
-buffer.call_tip_fore_hlt = property_int['color.blue']
+view.call_tip_fore_hlt = property_int['color.blue']
 
 -- Long Lines.
-buffer.edge_colour = property_int['color.red']
+view.edge_colour = property_int['color.red']

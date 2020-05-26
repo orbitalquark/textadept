@@ -122,7 +122,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   if text == '' then return end
   if not flags then flags = get_flags() end
   if flags >= 1 << 31 then M.find_in_files() return end -- not performed here
-  local first_visible_line = buffer.first_visible_line -- for 'no results found'
+  local first_visible_line = view.first_visible_line -- for 'no results found'
 
   -- If text is selected, assume it is from the current search and move the
   -- caret appropriately for the next search.
@@ -132,8 +132,8 @@ local function find(text, next, flags, no_wrap, wrapped)
   buffer:search_anchor()
   local f = next and buffer.search_next or buffer.search_prev
   local pos = f(buffer, flags, text)
-  buffer:ensure_visible_enforce_policy(buffer:line_from_position(pos))
-  buffer:scroll_range(buffer.anchor, buffer.current_pos)
+  view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
+  view:scroll_range(buffer.anchor, buffer.current_pos)
   find_text, found_text = text, buffer:get_sel_text() -- track for "replace all"
 
   -- If nothing was found, wrap the search.
@@ -144,7 +144,7 @@ local function find(text, next, flags, no_wrap, wrapped)
     pos = find(text, next, flags, true, true)
     if pos == -1 then
       ui.statusbar_text = _L['No results found']
-      buffer:line_scroll(0, first_visible_line - buffer.first_visible_line)
+      view:line_scroll(0, first_visible_line - view.first_visible_line)
       buffer:goto_pos(anchor)
     end
   elseif not wrapped then

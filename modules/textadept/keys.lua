@@ -486,8 +486,8 @@ if GUI then
   keys[not OSX and 'caI' or 'cI'] = m_view[_L['Toggle Show Indent Guides']][2]
   keys[not OSX and 'caV' or 'cV'] = m_view[_L['Toggle Virtual Space']][2]
 end
-keys[not OSX and GUI and 'c=' or 'm='] = buffer.zoom_in
-keys[not OSX and GUI and 'c-' or 'm-'] = buffer.zoom_out
+keys[not OSX and GUI and 'c=' or 'm='] = view.zoom_in
+keys[not OSX and GUI and 'c-' or 'm-'] = view.zoom_out
 keys[not OSX and GUI and 'c0' or 'm0'] = m_view[_L['Reset Zoom']][2]
 
 -- Help.
@@ -512,7 +512,7 @@ if OSX then
     buffer:line_end_extend()
     if not buffer.selection_empty then buffer:cut() else buffer:clear() end
   end
-  keys.cl = buffer.vertical_centre_caret
+  keys.cl = view.vertical_centre_caret
   -- GTK-OSX reports Fn-key as a single keycode which confuses Scintilla. Do
   -- not propagate it.
   keys.fn = function() return true end

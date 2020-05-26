@@ -1,15 +1,12 @@
-ALPHA_NOALPHA	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-ALPHA_OPAQUE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-ALPHA_TRANSPARENT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-ANNOTATION_BOXED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-ANNOTATION_HIDDEN	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-ANNOTATION_INDENTED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-ANNOTATION_STANDARD	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+ALPHA_NOALPHA	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+ALPHA_OPAQUE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+ALPHA_TRANSPARENT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+ANNOTATION_BOXED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+ANNOTATION_HIDDEN	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+ANNOTATION_INDENTED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+ANNOTATION_STANDARD	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 APPLEEVENT_ODOC	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 ARG_NONE	_HOME/core/args.lua	/^module('args')]]$/;"	F	class:events
-AUTOMATICFOLD_CHANGE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-AUTOMATICFOLD_CLICK	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-AUTOMATICFOLD_SHOW	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 AUTO_C_CANCELED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 AUTO_C_CHAR_DELETED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 AUTO_C_COMPLETED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
@@ -25,18 +22,19 @@ CALL_TIP_CLICK	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 CARETSTICKY_OFF	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 CARETSTICKY_ON	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 CARETSTICKY_WHITESPACE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CARETSTYLE_BLOCK	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CARETSTYLE_INVISIBLE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CARETSTYLE_LINE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CARET_EVEN	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CARET_JUMPS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CARET_SLOP	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CARET_STRICT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+CARETSTYLE_BLOCK	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CARETSTYLE_INVISIBLE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CARETSTYLE_LINE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CARET_EVEN	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CARET_JUMPS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CARET_SLOP	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CARET_STRICT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 CASEINSENSITIVEBEHAVIOUR_IGNORECASE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 CASEINSENSITIVEBEHAVIOUR_RESPECTCASE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CASE_LOWER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CASE_MIXED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CASE_UPPER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+CASE_CAMEL	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CASE_LOWER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CASE_MIXED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CASE_UPPER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 CHAR_ADDED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 CLASS	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 CLASS	_HOME/modules/textadept/editing.lua	/^M.XPM_IMAGES = {$/;"	F	class:textadept.editing.XPM_IMAGES
@@ -46,10 +44,10 @@ COMPILE_OUTPUT	_HOME/modules/textadept/run.lua	/^module('textadept.run')]]$/;"	F
 CONSTANT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 CSI	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 CURSES	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
-CURSORARROW	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CURSORNORMAL	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CURSORREVERSEARROW	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-CURSORWAIT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+CURSORARROW	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CURSORNORMAL	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CURSORREVERSEARROW	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+CURSORWAIT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 DEBUGGER_BREAKPOINT_ADDED	_HOME/modules/debugger/init.lua	/^module('debugger')]]$/;"	F	class:events
 DEBUGGER_BREAKPOINT_REMOVED	_HOME/modules/debugger/init.lua	/^module('debugger')]]$/;"	F	class:events
 DEBUGGER_COMMAND	_HOME/modules/debugger/init.lua	/^module('debugger')]]$/;"	F	class:events
@@ -70,10 +68,10 @@ DOCUTILS_PATH	_HOME/modules/rest/init.lua	/^module('_M.rest')]]$/;"	F	class:_M.r
 DOUBLE_CLICK	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 DWELL_END	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 DWELL_START	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
-EDGE_BACKGROUND	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-EDGE_LINE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-EDGE_MULTILINE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-EDGE_NONE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+EDGE_BACKGROUND	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+EDGE_LINE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+EDGE_MULTILINE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+EDGE_NONE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 EOL_CR	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 EOL_CRLF	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 EOL_LF	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -90,15 +88,18 @@ FIND_WHOLEWORD	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 FIND_WORDSTART	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 FIND_WRAPPED	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:events
 FOCUS	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
-FOLDACTION_CONTRACT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-FOLDACTION_EXPAND	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-FOLDACTION_TOGGLE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-FOLDFLAG_LEVELNUMBERS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-FOLDFLAG_LINEAFTER_CONTRACTED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-FOLDFLAG_LINEAFTER_EXPANDED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-FOLDFLAG_LINEBEFORE_CONTRACTED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-FOLDFLAG_LINEBEFORE_EXPANDED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-FOLDFLAG_LINESTATE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+FOLDACTION_CONTRACT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDACTION_EXPAND	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDACTION_TOGGLE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDDISPLAYTEXT_BOXED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDDISPLAYTEXT_HIDDEN	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDDISPLAYTEXT_STANDARD	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDFLAG_LEVELNUMBERS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDFLAG_LINEAFTER_CONTRACTED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDFLAG_LINEAFTER_EXPANDED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDFLAG_LINEBEFORE_CONTRACTED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDFLAG_LINEBEFORE_EXPANDED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+FOLDFLAG_LINESTATE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 FOLDLEVELBASE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 FOLDLEVELHEADERFLAG	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 FOLDLEVELNUMBERMASK	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -109,40 +110,44 @@ FOLD_HEADER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 FUNCTION	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 IDENTIFIER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 INDICATOR_CLICK	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
+INDICATOR_MAX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 INDICATOR_RELEASE	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 INDIC_ADDITION	_HOME/modules/file_diff/init.lua	/^module('file_diff')]]$/;"	F	class:file_diff
-INDIC_BOX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+INDIC_BOX	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_BRACEMATCH	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
-INDIC_COMPOSITIONTHICK	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_COMPOSITIONTHIN	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_DASH	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+INDIC_COMPOSITIONTHICK	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_COMPOSITIONTHIN	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_DASH	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_DELETION	_HOME/modules/file_diff/init.lua	/^module('file_diff')]]$/;"	F	class:file_diff
-INDIC_DIAGONAL	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_DOTBOX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_DOTS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+INDIC_DIAGONAL	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_DOTBOX	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_DOTS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_ERROR	_HOME/modules/lsp/init.lua	/^module('lsp')]]$/;"	F	class:lsp
 INDIC_FIND	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
-INDIC_FULLBOX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_HIDDEN	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+INDIC_FULLBOX	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_GRADIENT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_GRADIENTCENTRE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_HIDDEN	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_HIGHLIGHT	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
-INDIC_MAX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 INDIC_PLACEHOLDER	_HOME/modules/textadept/snippets.lua	/^module('textadept.snippets')]=]$/;"	F	class:textadept.snippets
-INDIC_PLAIN	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_ROUNDBOX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+INDIC_PLAIN	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_POINT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_POINTCHARACTER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_ROUNDBOX	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_SPELLING	_HOME/modules/spellcheck/init.lua	/^module('spellcheck')]]$/;"	F	class:spellcheck
-INDIC_SQUIGGLE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_SQUIGGLELOW	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_SQUIGGLEPIXMAP	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_STRAIGHTBOX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_STRIKE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_TEXTFORE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-INDIC_TT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+INDIC_SQUIGGLE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_SQUIGGLELOW	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_SQUIGGLEPIXMAP	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_STRAIGHTBOX	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_STRIKE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_TEXTFORE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_TT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_WARN	_HOME/modules/lsp/init.lua	/^module('lsp')]]$/;"	F	class:lsp
 INITIALIZED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
-IV_LOOKBOTH	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-IV_LOOKFORWARD	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-IV_NONE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-IV_REAL	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+IV_LOOKBOTH	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+IV_LOOKFORWARD	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+IV_NONE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+IV_REAL	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 KEYPRESS	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 KEYSYMS	_HOME/core/keys.lua	/^M.KEYSYMS = {$/;"	t	class:keys
 KEYWORD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
@@ -153,16 +158,16 @@ LSP_INITIALIZED	_HOME/modules/lsp/init.lua	/^module('lsp')]]$/;"	F	class:events
 LSP_NOTIFICATION	_HOME/modules/lsp/init.lua	/^module('lsp')]]$/;"	F	class:events
 LUA_FLAGS	_HOME/modules/ctags/init.lua	/^module('ctags')]]$/;"	F	class:ctags
 LUA_GENERATOR	_HOME/modules/ctags/init.lua	/^module('ctags')]]$/;"	F	class:ctags
-MARGINOPTION_NONE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARGINOPTION_SUBLINESELECT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARGIN_BACK	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MARGINOPTION_NONE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARGINOPTION_SUBLINESELECT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARGIN_BACK	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARGIN_CLICK	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
-MARGIN_COLOUR	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARGIN_FORE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARGIN_NUMBER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARGIN_RTEXT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARGIN_SYMBOL	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARGIN_TEXT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MARGIN_COLOUR	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARGIN_FORE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARGIN_NUMBER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARGIN_RTEXT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARGIN_SYMBOL	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARGIN_TEXT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARKER_MAX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 MARKNUM_FOLDER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 MARKNUM_FOLDEREND	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -172,59 +177,59 @@ MARKNUM_FOLDEROPENMID	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:b
 MARKNUM_FOLDERSUB	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 MARKNUM_FOLDERTAIL	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 MARK_ADDITION	_HOME/modules/file_diff/init.lua	/^module('file_diff')]]$/;"	F	class:file_diff
-MARK_ARROW	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_ARROWDOWN	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_ARROWS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MARK_ARROW	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_ARROWDOWN	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_ARROWS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARK_AVAILABLE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_BACKGROUND	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_BOOKMARK	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MARK_BACKGROUND	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_BOOKMARK	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARK_BOOKMARK	_HOME/modules/textadept/bookmarks.lua	/^module('textadept.bookmarks')]]$/;"	F	class:textadept.bookmarks
-MARK_BOXMINUS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_BOXMINUSCONNECTED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_BOXPLUS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_BOXPLUSCONNECTED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MARK_BOXMINUS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_BOXMINUSCONNECTED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_BOXPLUS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_BOXPLUSCONNECTED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARK_BREAKPOINT_COLOR	_HOME/modules/debugger/init.lua	/^module('debugger')]]$/;"	F	class:debugger
-MARK_CHARACTER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_CIRCLE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_CIRCLEMINUS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_CIRCLEMINUSCONNECTED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_CIRCLEPLUS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_CIRCLEPLUSCONNECTED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MARK_CHARACTER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_CIRCLE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_CIRCLEMINUS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_CIRCLEMINUSCONNECTED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_CIRCLEPLUS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_CIRCLEPLUSCONNECTED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARK_DEBUGLINE_COLOR	_HOME/modules/debugger/init.lua	/^module('debugger')]]$/;"	F	class:debugger
 MARK_DELETION	_HOME/modules/file_diff/init.lua	/^module('file_diff')]]$/;"	F	class:file_diff
-MARK_DOTDOTDOT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_EMPTY	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MARK_DOTDOTDOT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_EMPTY	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARK_ERROR	_HOME/modules/textadept/run.lua	/^module('textadept.run')]]$/;"	F	class:textadept.run
-MARK_FULLRECT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_LCORNER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_LCORNERCURVE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_LEFTRECT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_MINUS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MARK_FULLRECT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_LCORNER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_LCORNERCURVE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_LEFTRECT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_MINUS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARK_MODIFICATION	_HOME/modules/file_diff/init.lua	/^module('file_diff')]]$/;"	F	class:file_diff
-MARK_PIXMAP	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_PLUS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_RGBAIMAGE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_ROUNDRECT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_SHORTARROW	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_SMALLRECT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_TCORNER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_TCORNERCURVE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_UNDERLINE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_VERTICALBOOKMARK	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MARK_VLINE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MARK_PIXMAP	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_PLUS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_RGBAIMAGE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_ROUNDRECT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_SHORTARROW	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_SMALLRECT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_TCORNER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_TCORNERCURVE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_UNDERLINE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_VERTICALBOOKMARK	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MARK_VLINE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARK_WARNING	_HOME/modules/textadept/run.lua	/^module('textadept.run')]]$/;"	F	class:textadept.run
-MASK_FOLDERS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MASK_FOLDERS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MENU_CLICKED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 METHOD	_HOME/modules/textadept/editing.lua	/^M.XPM_IMAGES = {$/;"	F	class:textadept.editing.XPM_IMAGES
-MOD_ALT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MOD_CTRL	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MOD_META	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MOD_SHIFT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MOD_SUPER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MOD_ALT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MOD_CTRL	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MOD_META	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MOD_SHIFT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MOD_SUPER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MOUSE	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
-MOUSE_DRAG	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MOUSE_PRESS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-MOUSE_RELEASE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+MOUSE_DRAG	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MOUSE_PRESS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+MOUSE_RELEASE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MULTIAUTOC_EACH	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 MULTIAUTOC_ONCE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 MULTIPASTE_EACH	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -257,30 +262,30 @@ SIGNAL	_HOME/modules/textadept/editing.lua	/^M.XPM_IMAGES = {$/;"	F	class:textad
 SLOT	_HOME/modules/textadept/editing.lua	/^M.XPM_IMAGES = {$/;"	F	class:textadept.editing.XPM_IMAGES
 STRING	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STRUCT	_HOME/modules/textadept/editing.lua	/^M.XPM_IMAGES = {$/;"	F	class:textadept.editing.XPM_IMAGES
-STYLE_BRACEBAD	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+STYLE_BRACEBAD	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_BRACEBAD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-STYLE_BRACELIGHT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+STYLE_BRACELIGHT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_BRACELIGHT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-STYLE_CALLTIP	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+STYLE_CALLTIP	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_CALLTIP	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_CLASS	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_COMMENT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_CONSTANT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-STYLE_CONTROLCHAR	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+STYLE_CONTROLCHAR	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_CONTROLCHAR	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-STYLE_DEFAULT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+STYLE_DEFAULT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_DEFAULT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_EMBEDDED	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_ERROR	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-STYLE_FOLDDISPLAYTEXT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+STYLE_FOLDDISPLAYTEXT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_FOLDDISPLAYTEXT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_FUNCTION	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_IDENTIFIER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-STYLE_INDENTGUIDE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+STYLE_INDENTGUIDE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_INDENTGUIDE	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_KEYWORD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_LABEL	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-STYLE_LINENUMBER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+STYLE_LINENUMBER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_LINENUMBER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_MAX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 STYLE_NUMBER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
@@ -293,14 +298,16 @@ STYLE_VARIABLE	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_WHITESPACE	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 SUSPEND	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 TAB_CLICKED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
-TIME_FOREVER	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+TD_LONGARROW	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+TD_STRIKEOUT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+TIME_FOREVER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 TYPE	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 TYPEDEF	_HOME/modules/textadept/editing.lua	/^M.XPM_IMAGES = {$/;"	F	class:textadept.editing.XPM_IMAGES
 UPDATE_CONTENT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-UPDATE_H_SCROLL	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+UPDATE_H_SCROLL	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 UPDATE_SELECTION	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 UPDATE_UI	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
-UPDATE_V_SCROLL	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+UPDATE_V_SCROLL	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 URI_DROPPED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 USER_LIST_SELECTION	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 VARIABLE	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
@@ -308,30 +315,32 @@ VARIABLE	_HOME/modules/textadept/editing.lua	/^M.XPM_IMAGES = {$/;"	F	class:text
 VIEW_AFTER_SWITCH	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 VIEW_BEFORE_SWITCH	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 VIEW_NEW	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
-VISIBLE_SLOP	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-VISIBLE_STRICT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+VISIBLE_SLOP	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+VISIBLE_STRICT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 VS_NONE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 VS_RECTANGULARSELECTION	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 VS_USERACCESSIBLE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 WHITESPACE	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 WIN32	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
-WRAPINDENT_FIXED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAPINDENT_INDENT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAPINDENT_SAME	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAPVISUALFLAGLOC_DEFAULT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAPVISUALFLAGLOC_END_BY_TEXT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAPVISUALFLAGLOC_START_BY_TEXT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAPVISUALFLAG_END	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAPVISUALFLAG_MARGIN	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAPVISUALFLAG_NONE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAPVISUALFLAG_START	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAP_CHAR	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAP_NONE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAP_WHITESPACE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WRAP_WORD	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WS_INVISIBLE	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WS_VISIBLEAFTERINDENT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-WS_VISIBLEALWAYS	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+WRAPINDENT_DEEPINDENT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPINDENT_FIXED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPINDENT_INDENT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPINDENT_SAME	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPVISUALFLAGLOC_DEFAULT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPVISUALFLAGLOC_END_BY_TEXT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPVISUALFLAGLOC_START_BY_TEXT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPVISUALFLAG_END	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPVISUALFLAG_MARGIN	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPVISUALFLAG_NONE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAPVISUALFLAG_START	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAP_CHAR	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAP_NONE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAP_WHITESPACE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WRAP_WORD	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WS_INVISIBLE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WS_VISIBLEAFTERINDENT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WS_VISIBLEALWAYS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+WS_VISIBLEONLYININDENT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 XPM_IMAGES	_HOME/modules/textadept/editing.lua	/^M.XPM_IMAGES = {$/;"	t	class:textadept.editing
 ZOOM	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 _BUFFERS	_HOME/core/init.lua	/^local _BUFFERS$/;"	t	
@@ -361,14 +370,14 @@ add_selection	_HOME/core/.buffer.luadoc	/^function add_selection(buffer, end_pos
 add_style	_HOME/lexers/lexer.lua	/^function M.add_style(lexer, token_name, style)$/;"	f	class:lexer
 add_text	_HOME/core/.buffer.luadoc	/^function add_text(buffer, text) end$/;"	f	class:buffer
 add_word	_HOME/modules/spellcheck/init.lua	/^function spellchecker:add_word(word) end$/;"	f	class:spellchecker
-additional_caret_fore	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-additional_carets_blink	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-additional_carets_visible	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-additional_sel_alpha	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-additional_sel_back	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-additional_sel_fore	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+additional_caret_fore	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+additional_carets_blink	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+additional_carets_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+additional_sel_alpha	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+additional_sel_back	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+additional_sel_fore	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 additional_selection_typing	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-all_lines_visible	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+all_lines_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 alnum	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 alpha	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 anchor	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -376,7 +385,7 @@ annotation_clear_all	_HOME/core/.buffer.luadoc	/^function annotation_clear_all(b
 annotation_lines	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 annotation_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 annotation_text	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-annotation_visible	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+annotation_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 ansi_c	_HOME/modules/ansi_c/init.lua	/^keys.ansi_c = {}$/;"	t	class:keys
 ansi_c	_HOME/modules/ansi_c/init.lua	/^module('_M.ansi_c')]]$/;"	m	class:_M
 ansi_c	_HOME/modules/ansi_c/init.lua	/^snippets.ansi_c = {$/;"	t	class:snippets
@@ -404,8 +413,8 @@ auto_c_current_text	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buf
 auto_c_drop_rest_of_word	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 auto_c_fill_ups	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 auto_c_ignore_case	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-auto_c_max_height	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-auto_c_max_width	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+auto_c_max_height	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+auto_c_max_width	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 auto_c_multi	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 auto_c_order	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 auto_c_pos_start	_HOME/core/.buffer.luadoc	/^function auto_c_pos_start(buffer) end$/;"	f	class:buffer
@@ -427,10 +436,10 @@ back_tab	_HOME/core/.buffer.luadoc	/^function back_tab(buffer) end$/;"	f	class:b
 begin_undo_action	_HOME/core/.buffer.luadoc	/^function begin_undo_action(buffer) end$/;"	f	class:buffer
 block_comment	_HOME/modules/textadept/editing.lua	/^function M.block_comment()$/;"	f	class:textadept.editing
 bookmarks	_HOME/modules/textadept/bookmarks.lua	/^module('textadept.bookmarks')]]$/;"	m	class:textadept
-brace_bad_light	_HOME/core/.buffer.luadoc	/^function brace_bad_light(buffer, pos) end$/;"	f	class:buffer
-brace_bad_light_indicator	_HOME/core/.buffer.luadoc	/^function brace_bad_light_indicator(buffer, use_indicator, indicator) end$/;"	f	class:buffer
-brace_highlight	_HOME/core/.buffer.luadoc	/^function brace_highlight(buffer, pos1, pos2) end$/;"	f	class:buffer
-brace_highlight_indicator	_HOME/core/.buffer.luadoc	/^function brace_highlight_indicator(buffer, use_indicator, indicator) end$/;"	f	class:buffer
+brace_bad_light	_HOME/core/.view.luadoc	/^function brace_bad_light(view, pos) end$/;"	f	class:view
+brace_bad_light_indicator	_HOME/core/.view.luadoc	/^function brace_bad_light_indicator(view, use_indicator, indicator) end$/;"	f	class:view
+brace_highlight	_HOME/core/.view.luadoc	/^function brace_highlight(view, pos1, pos2) end$/;"	f	class:view
+brace_highlight_indicator	_HOME/core/.view.luadoc	/^function brace_highlight_indicator(view, use_indicator, indicator) end$/;"	f	class:view
 brace_match	_HOME/core/.buffer.luadoc	/^function brace_match(buffer, pos, max_re_style) end$/;"	f	class:buffer
 brace_matches	_HOME/modules/textadept/editing.lua	/^M.brace_matches = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}$/;"	t	class:textadept.editing
 browser	_HOME/modules/export/init.lua	/^module('export')]]$/;"	F	class:export
@@ -442,27 +451,27 @@ build	_HOME/modules/textadept/run.lua	/^function M.build(root_directory)$/;"	f	c
 build_commands	_HOME/modules/textadept/run.lua	/^M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}$/;"	t	class:textadept.run
 call_tip_active	_HOME/core/.buffer.luadoc	/^function call_tip_active(buffer) end$/;"	f	class:buffer
 call_tip_cancel	_HOME/core/.buffer.luadoc	/^function call_tip_cancel(buffer) end$/;"	f	class:buffer
-call_tip_fore_hlt	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+call_tip_fore_hlt	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 call_tip_pos_start	_HOME/core/.buffer.luadoc	/^function call_tip_pos_start(buffer) end$/;"	f	class:buffer
 call_tip_pos_start	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-call_tip_position	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-call_tip_set_hlt	_HOME/core/.buffer.luadoc	/^function call_tip_set_hlt(buffer, start_pos, end_pos) end$/;"	f	class:buffer
+call_tip_position	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+call_tip_set_hlt	_HOME/core/.view.luadoc	/^function call_tip_set_hlt(view, start_pos, end_pos) end$/;"	f	class:view
 call_tip_show	_HOME/core/.buffer.luadoc	/^function call_tip_show(buffer, pos, text) end$/;"	f	class:buffer
-call_tip_use_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+call_tip_use_style	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 can_redo	_HOME/core/.buffer.luadoc	/^function can_redo(buffer) end$/;"	f	class:buffer
 can_undo	_HOME/core/.buffer.luadoc	/^function can_undo(buffer) end$/;"	f	class:buffer
 cancel	_HOME/core/.buffer.luadoc	/^function cancel(buffer) end$/;"	f	class:buffer
 cancel_current	_HOME/modules/textadept/snippets.lua	/^function M.cancel_current()$/;"	f	class:textadept.snippets
-caret_fore	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-caret_line_back	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-caret_line_back_alpha	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-caret_line_frame	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-caret_line_visible	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-caret_line_visible_always	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-caret_period	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+caret_fore	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+caret_line_back	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+caret_line_back_alpha	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+caret_line_frame	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+caret_line_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+caret_line_visible_always	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+caret_period	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 caret_sticky	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-caret_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-caret_width	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+caret_style	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+caret_width	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 char_at	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 char_left	_HOME/core/.buffer.luadoc	/^function char_left(buffer) end$/;"	f	class:buffer
 char_left_extend	_HOME/core/.buffer.luadoc	/^function char_left_extend(buffer) end$/;"	f	class:buffer
@@ -477,8 +486,8 @@ clear	_HOME/core/.buffer.luadoc	/^function clear(buffer) end$/;"	f	class:buffer
 clear	_HOME/modules/textadept/bookmarks.lua	/^function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end$/;"	f	class:textadept.bookmarks
 clear_all	_HOME/core/.buffer.luadoc	/^function clear_all(buffer) end$/;"	f	class:buffer
 clear_document_style	_HOME/core/.buffer.luadoc	/^function clear_document_style(buffer) end$/;"	f	class:buffer
-clear_registered_images	_HOME/core/.buffer.luadoc	/^function clear_registered_images(buffer) end$/;"	f	class:buffer
-clear_representation	_HOME/core/.buffer.luadoc	/^function clear_representation(buffer, char) end$/;"	f	class:buffer
+clear_registered_images	_HOME/core/.view.luadoc	/^function clear_registered_images(view) end$/;"	f	class:view
+clear_representation	_HOME/core/.view.luadoc	/^function clear_representation(view, char) end$/;"	f	class:view
 clear_selections	_HOME/core/.buffer.luadoc	/^function clear_selections(buffer) end$/;"	f	class:buffer
 clipboard_text	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 close	_HOME/core/.buffer.luadoc	/^function close(buffer, force) end$/;"	f	class:buffer
@@ -494,11 +503,11 @@ compile	_HOME/modules/textadept/run.lua	/^function M.compile(filename)$/;"	f	cla
 compile_commands	_HOME/modules/textadept/run.lua	/^M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc -o "%e" "%f"',antlr='antlr4 "%f"',g='antlr3 "%f"',applescript='osacompile "%f" -o "%e.scpt"',asm='nasm "%f"'--[[ && ld "%e.o" -o "%e"']],boo='booc "%f"',caml='ocamlc -o "%e" "%f"',csharp=WIN32 and 'csc "%f"' or 'mcs "%f"',coffeescript='coffee -c "%f"',context='context --nonstopmode "%f"',cpp='g++ -o "%e" "%f"',cuda=WIN32 and 'nvcc -o "%e.exe" "%f"' or 'nvcc -o "%e" "%f"',dmd='dmd "%f"',dot='dot -Tps "%f" -o "%e.ps"',eiffel='se c "%f"',elixir='elixirc "%f"',erlang='erl -compile "%e"',faust='faust -o "%e.cpp" "%f"',fsharp=WIN32 and 'fsc.exe "%f"' or 'mono fsc.exe "%f"',fortran='gfortran -o "%e" "%f"',gap='gac -o "%e" "%f"',go='go build "%f"',groovy='groovyc "%f"',haskell=WIN32 and 'ghc -o "%e.exe" "%f"' or 'ghc -o "%e" "%f"',inform=function() return 'inform -c "'..buffer.filename:match('^(.+%.inform[/\\])Source')..'"' end,java='javac "%f"',ltx='pdflatex -file-line-error -halt-on-error "%f"',less='lessc --no-color "%f" "%e.css"',lilypond='lilypond "%f"',lisp='clisp -c "%f"',litcoffee='coffee -c "%f"',lua='luac -o "%e.luac" "%f"',moon='moonc "%f"',markdown='markdown "%f" > "%e.html"',myr='mbld -b "%e" "%f"',nemerle='ncc "%f" -out:"%e.exe"',nim='nim c "%f"',nsis='MakeNSIS "%f"',objective_c='gcc -o "%e" "%f"',pascal='fpc "%f"',perl='perl -c "%f"',php='php -l "%f"',prolog='gplc --no-top-level "%f"',python='python -m py_compile "%f"',ruby='ruby -c "%f"',rust='rustc "%f"',sass='sass "%f" "%e.css"',scala='scalac "%f"',sml='mlton "%f"',tex='pdflatex -file-line-error -halt-on-error "%f"',vala='valac "%f"',vb=WIN32 and 'vbc "%f"' or 'vbnc "%f"',}$/;"	t	class:textadept.run
 complete_lua	_HOME/modules/lua_repl/init.lua	/^function M.complete_lua()$/;"	f	class:lua_repl
 connect	_HOME/core/events.lua	/^function M.connect(event, f, index)$/;"	f	class:events
-constants	_HOME/core/iface.lua	/^M.constants = {ACCESSIBILITY_DISABLED=0,ACCESSIBILITY_ENABLED=1,ALPHA_NOALPHA=256,ALPHA_OPAQUE=255,ALPHA_TRANSPARENT=0,ANNOTATION_BOXED=2,ANNOTATION_HIDDEN=0,ANNOTATION_INDENTED=3,ANNOTATION_STANDARD=1,AUTOMATICFOLD_CHANGE=0x0004,AUTOMATICFOLD_CLICK=0x0002,AUTOMATICFOLD_SHOW=0x0001,CARETSTICKY_OFF=0,CARETSTICKY_ON=1,CARETSTICKY_WHITESPACE=2,CARETSTYLE_BLOCK=2,CARETSTYLE_BLOCK_AFTER=0x100,CARETSTYLE_INS_MASK=0xF,CARETSTYLE_INVISIBLE=0,CARETSTYLE_LINE=1,CARETSTYLE_OVERSTRIKE_BAR=0,CARETSTYLE_OVERSTRIKE_BLOCK=0x10,CARET_EVEN=0x08,CARET_JUMPS=0x10,CARET_SLOP=0x01,CARET_STRICT=0x04,CASEINSENSITIVEBEHAVIOUR_IGNORECASE=1,CASEINSENSITIVEBEHAVIOUR_RESPECTCASE=0,CASE_CAMEL=3,CASE_LOWER=2,CASE_MIXED=0,CASE_UPPER=1,CHARACTERSOURCE_DIRECT_INPUT=0,CHARACTERSOURCE_IME_RESULT=2,CHARACTERSOURCE_TENTATIVE_INPUT=1,CP_UTF8=65001,CURSORARROW=2,CURSORNORMAL=-1,CURSORREVERSEARROW=7,CURSORWAIT=4,EDGE_BACKGROUND=2,EDGE_LINE=1,EDGE_MULTILINE=3,EDGE_NONE=0,EOL_CR=1,EOL_CRLF=0,EOL_LF=2,FIND_CXX11REGEX=0x00800000,FIND_MATCHCASE=0x4,FIND_NONE=0x0,FIND_REGEXP=10485760,FIND_WHOLEWORD=0x2,FIND_WORDSTART=0x00100000,FOLDACTION_CONTRACT=0,FOLDACTION_EXPAND=1,FOLDACTION_TOGGLE=2,FOLDDISPLAYTEXT_BOXED=2,FOLDDISPLAYTEXT_HIDDEN=0,FOLDDISPLAYTEXT_STANDARD=1,FOLDFLAG_LEVELNUMBERS=0x0040,FOLDFLAG_LINEAFTER_CONTRACTED=0x0010,FOLDFLAG_LINEAFTER_EXPANDED=0x0008,FOLDFLAG_LINEBEFORE_CONTRACTED=0x0004,FOLDFLAG_LINEBEFORE_EXPANDED=0x0002,FOLDFLAG_LINESTATE=0x0080,FOLDLEVELBASE=0x400,FOLDLEVELHEADERFLAG=0x2000,FOLDLEVELNUMBERMASK=0x0FFF,FOLDLEVELWHITEFLAG=0x1000,IDLESTYLING_AFTERVISIBLE=2,IDLESTYLING_ALL=3,IDLESTYLING_NONE=0,IDLESTYLING_TOVISIBLE=1,IME_INLINE=1,IME_WINDOWED=0,INDICATOR_CONTAINER=9,INDICATOR_IME=33,INDICATOR_IME_MAX=36,INDICATOR_MAX=36,INDIC_BOX=6,INDIC_COMPOSITIONTHICK=14,INDIC_COMPOSITIONTHIN=15,INDIC_CONTAINER=9,INDIC_DASH=9,INDIC_DIAGONAL=3,INDIC_DOTBOX=12,INDIC_DOTS=10,INDIC_FULLBOX=16,INDIC_GRADIENT=20,INDIC_GRADIENTCENTRE=21,INDIC_HIDDEN=5,INDIC_IME=33,INDIC_IME_MAX=36,INDIC_MAX=36,INDIC_PLAIN=0,INDIC_POINT=18,INDIC_POINTCHARACTER=19,INDIC_ROUNDBOX=7,INDIC_SQUIGGLE=1,INDIC_SQUIGGLELOW=11,INDIC_SQUIGGLEPIXMAP=13,INDIC_STRAIGHTBOX=8,INDIC_STRIKE=4,INDIC_TEXTFORE=17,INDIC_TT=2,IV_LOOKBOTH=3,IV_LOOKFORWARD=2,IV_NONE=0,IV_REAL=1,LASTSTEPINUNDOREDO=0x100,MARGINOPTION_NONE=0,MARGINOPTION_SUBLINESELECT=1,MARGIN_BACK=2,MARGIN_COLOUR=6,MARGIN_FORE=3,MARGIN_NUMBER=1,MARGIN_RTEXT=5,MARGIN_SYMBOL=0,MARGIN_TEXT=4,MARKER_MAX=32,MARKNUM_FOLDER=31,MARKNUM_FOLDEREND=26,MARKNUM_FOLDERMIDTAIL=28,MARKNUM_FOLDEROPEN=32,MARKNUM_FOLDEROPENMID=27,MARKNUM_FOLDERSUB=30,MARKNUM_FOLDERTAIL=29,MARK_ARROW=2,MARK_ARROWDOWN=6,MARK_ARROWS=24,MARK_AVAILABLE=28,MARK_BACKGROUND=22,MARK_BOOKMARK=31,MARK_BOXMINUS=14,MARK_BOXMINUSCONNECTED=15,MARK_BOXPLUS=12,MARK_BOXPLUSCONNECTED=13,MARK_CHARACTER=10000,MARK_CIRCLE=0,MARK_CIRCLEMINUS=20,MARK_CIRCLEMINUSCONNECTED=21,MARK_CIRCLEPLUS=18,MARK_CIRCLEPLUSCONNECTED=19,MARK_DOTDOTDOT=23,MARK_EMPTY=5,MARK_FULLRECT=26,MARK_LCORNER=10,MARK_LCORNERCURVE=16,MARK_LEFTRECT=27,MARK_MINUS=7,MARK_PIXMAP=25,MARK_PLUS=8,MARK_RGBAIMAGE=30,MARK_ROUNDRECT=1,MARK_SHORTARROW=4,MARK_SMALLRECT=3,MARK_TCORNER=11,MARK_TCORNERCURVE=17,MARK_UNDERLINE=29,MARK_VERTICALBOOKMARK=32,MARK_VLINE=9,MASK_FOLDERS=0xFE000000,MAX_MARGIN=5,MODEVENTMASKALL=0x3FFFFF,MOD_ALT=4,MOD_BEFOREDELETE=0x800,MOD_BEFOREINSERT=0x400,MOD_CHANGEANNOTATION=0x20000,MOD_CHANGEFOLD=0x8,MOD_CHANGEINDICATOR=0x4000,MOD_CHANGELINESTATE=0x8000,MOD_CHANGEMARGIN=0x10000,MOD_CHANGEMARKER=0x200,MOD_CHANGESTYLE=0x4,MOD_CHANGETABSTOPS=0x200000,MOD_CONTAINER=0x40000,MOD_CTRL=2,MOD_DELETETEXT=0x2,MOD_INSERTCHECK=0x100000,MOD_INSERTTEXT=0x1,MOD_LEXERSTATE=0x80000,MOD_META=16,MOD_NONE=0x0,MOD_NORM=0,MOD_SHIFT=1,MOD_SUPER=8,MOUSE_DRAG=2,MOUSE_PRESS=1,MOUSE_RELEASE=3,MULTIAUTOC_EACH=1,MULTIAUTOC_ONCE=0,MULTILINEUNDOREDO=0x1000,MULTIPASTE_EACH=1,MULTIPASTE_ONCE=0,MULTISTEPUNDOREDO=0x80,ORDER_CUSTOM=2,ORDER_PERFORMSORT=1,ORDER_PRESORTED=0,PERFORMED_REDO=0x40,PERFORMED_UNDO=0x20,PERFORMED_USER=0x10,SEL_LINES=2,SEL_RECTANGLE=1,SEL_STREAM=0,SEL_THIN=3,STARTACTION=0x2000,STYLE_BRACEBAD=35,STYLE_BRACELIGHT=34,STYLE_CALLTIP=38,STYLE_CONTROLCHAR=36,STYLE_DEFAULT=32,STYLE_FOLDDISPLAYTEXT=39,STYLE_INDENTGUIDE=37,STYLE_LASTPREDEFINED=39,STYLE_LINENUMBER=33,STYLE_MAX=256,TD_LONGARROW=0,TD_STRIKEOUT=1,TIME_FOREVER=10000000,UNDO_NONE=0,UPDATE_CONTENT=0x1,UPDATE_H_SCROLL=0x8,UPDATE_SELECTION=0x2,UPDATE_V_SCROLL=0x4,VISIBLE_SLOP=0x01,VISIBLE_STRICT=0x04,VS_NONE=0,VS_NOWRAPLINESTART=4,VS_RECTANGULARSELECTION=1,VS_USERACCESSIBLE=2,WRAPINDENT_DEEPINDENT=3,WRAPINDENT_FIXED=0,WRAPINDENT_INDENT=2,WRAPINDENT_SAME=1,WRAPVISUALFLAGLOC_DEFAULT=0x0000,WRAPVISUALFLAGLOC_END_BY_TEXT=0x0001,WRAPVISUALFLAGLOC_START_BY_TEXT=0x0002,WRAPVISUALFLAG_END=0x0001,WRAPVISUALFLAG_MARGIN=0x0004,WRAPVISUALFLAG_NONE=0x0000,WRAPVISUALFLAG_START=0x0002,WRAP_CHAR=2,WRAP_NONE=0,WRAP_WHITESPACE=3,WRAP_WORD=1,WS_INVISIBLE=0,WS_VISIBLEAFTERINDENT=2,WS_VISIBLEALWAYS=1,WS_VISIBLEONLYININDENT=3}$/;"	t	class:_SCINTILLA
+constants	_HOME/core/iface.lua	/^M.constants = {ACCESSIBILITY_DISABLED=0,ACCESSIBILITY_ENABLED=1,ALPHA_NOALPHA=256,ALPHA_OPAQUE=255,ALPHA_TRANSPARENT=0,ANNOTATION_BOXED=2,ANNOTATION_HIDDEN=0,ANNOTATION_INDENTED=3,ANNOTATION_STANDARD=1,AUTOMATICFOLD_CHANGE=0x0004,AUTOMATICFOLD_CLICK=0x0002,AUTOMATICFOLD_SHOW=0x0001,CARETSTICKY_OFF=0,CARETSTICKY_ON=1,CARETSTICKY_WHITESPACE=2,CARETSTYLE_BLOCK=2,CARETSTYLE_BLOCK_AFTER=0x100,CARETSTYLE_INS_MASK=0xF,CARETSTYLE_INVISIBLE=0,CARETSTYLE_LINE=1,CARETSTYLE_OVERSTRIKE_BAR=0,CARETSTYLE_OVERSTRIKE_BLOCK=0x10,CARET_EVEN=0x08,CARET_JUMPS=0x10,CARET_SLOP=0x01,CARET_STRICT=0x04,CASEINSENSITIVEBEHAVIOUR_IGNORECASE=1,CASEINSENSITIVEBEHAVIOUR_RESPECTCASE=0,CASE_CAMEL=3,CASE_LOWER=2,CASE_MIXED=0,CASE_UPPER=1,CHARACTERSOURCE_DIRECT_INPUT=0,CHARACTERSOURCE_IME_RESULT=2,CHARACTERSOURCE_TENTATIVE_INPUT=1,CP_UTF8=65001,CURSORARROW=2,CURSORNORMAL=-1,CURSORREVERSEARROW=7,CURSORWAIT=4,EDGE_BACKGROUND=2,EDGE_LINE=1,EDGE_MULTILINE=3,EDGE_NONE=0,EOL_CR=1,EOL_CRLF=0,EOL_LF=2,FIND_CXX11REGEX=0x00800000,FIND_MATCHCASE=0x4,FIND_NONE=0x0,FIND_REGEXP=10485760,FIND_WHOLEWORD=0x2,FIND_WORDSTART=0x00100000,FOLDACTION_CONTRACT=0,FOLDACTION_EXPAND=1,FOLDACTION_TOGGLE=2,FOLDDISPLAYTEXT_BOXED=2,FOLDDISPLAYTEXT_HIDDEN=0,FOLDDISPLAYTEXT_STANDARD=1,FOLDFLAG_LEVELNUMBERS=0x0040,FOLDFLAG_LINEAFTER_CONTRACTED=0x0010,FOLDFLAG_LINEAFTER_EXPANDED=0x0008,FOLDFLAG_LINEBEFORE_CONTRACTED=0x0004,FOLDFLAG_LINEBEFORE_EXPANDED=0x0002,FOLDFLAG_LINESTATE=0x0080,FOLDLEVELBASE=0x400,FOLDLEVELHEADERFLAG=0x2000,FOLDLEVELNUMBERMASK=0x0FFF,FOLDLEVELWHITEFLAG=0x1000,IDLESTYLING_AFTERVISIBLE=2,IDLESTYLING_ALL=3,IDLESTYLING_NONE=0,IDLESTYLING_TOVISIBLE=1,IME_INLINE=1,IME_WINDOWED=0,INDICATOR_CONTAINER=9,INDICATOR_IME=33,INDICATOR_IME_MAX=36,INDICATOR_MAX=36,INDIC_BOX=6,INDIC_COMPOSITIONTHICK=14,INDIC_COMPOSITIONTHIN=15,INDIC_CONTAINER=8,INDIC_DASH=9,INDIC_DIAGONAL=3,INDIC_DOTBOX=12,INDIC_DOTS=10,INDIC_FULLBOX=16,INDIC_GRADIENT=20,INDIC_GRADIENTCENTRE=21,INDIC_HIDDEN=5,INDIC_IME=32,INDIC_IME_MAX=35,INDIC_MAX=35,INDIC_PLAIN=0,INDIC_POINT=18,INDIC_POINTCHARACTER=19,INDIC_ROUNDBOX=7,INDIC_SQUIGGLE=1,INDIC_SQUIGGLELOW=11,INDIC_SQUIGGLEPIXMAP=13,INDIC_STRAIGHTBOX=8,INDIC_STRIKE=4,INDIC_TEXTFORE=17,INDIC_TT=2,IV_LOOKBOTH=3,IV_LOOKFORWARD=2,IV_NONE=0,IV_REAL=1,LASTSTEPINUNDOREDO=0x100,MARGINOPTION_NONE=0,MARGINOPTION_SUBLINESELECT=1,MARGIN_BACK=2,MARGIN_COLOUR=6,MARGIN_FORE=3,MARGIN_NUMBER=1,MARGIN_RTEXT=5,MARGIN_SYMBOL=0,MARGIN_TEXT=4,MARKER_MAX=32,MARKNUM_FOLDER=31,MARKNUM_FOLDEREND=26,MARKNUM_FOLDERMIDTAIL=28,MARKNUM_FOLDEROPEN=32,MARKNUM_FOLDEROPENMID=27,MARKNUM_FOLDERSUB=30,MARKNUM_FOLDERTAIL=29,MARK_ARROW=2,MARK_ARROWDOWN=6,MARK_ARROWS=24,MARK_AVAILABLE=28,MARK_BACKGROUND=22,MARK_BOOKMARK=31,MARK_BOXMINUS=14,MARK_BOXMINUSCONNECTED=15,MARK_BOXPLUS=12,MARK_BOXPLUSCONNECTED=13,MARK_CHARACTER=10000,MARK_CIRCLE=0,MARK_CIRCLEMINUS=20,MARK_CIRCLEMINUSCONNECTED=21,MARK_CIRCLEPLUS=18,MARK_CIRCLEPLUSCONNECTED=19,MARK_DOTDOTDOT=23,MARK_EMPTY=5,MARK_FULLRECT=26,MARK_LCORNER=10,MARK_LCORNERCURVE=16,MARK_LEFTRECT=27,MARK_MINUS=7,MARK_PIXMAP=25,MARK_PLUS=8,MARK_RGBAIMAGE=30,MARK_ROUNDRECT=1,MARK_SHORTARROW=4,MARK_SMALLRECT=3,MARK_TCORNER=11,MARK_TCORNERCURVE=17,MARK_UNDERLINE=29,MARK_VERTICALBOOKMARK=32,MARK_VLINE=9,MASK_FOLDERS=0xFE000000,MAX_MARGIN=5,MODEVENTMASKALL=0x3FFFFF,MOD_ALT=4,MOD_BEFOREDELETE=0x800,MOD_BEFOREINSERT=0x400,MOD_CHANGEANNOTATION=0x20000,MOD_CHANGEFOLD=0x8,MOD_CHANGEINDICATOR=0x4000,MOD_CHANGELINESTATE=0x8000,MOD_CHANGEMARGIN=0x10000,MOD_CHANGEMARKER=0x200,MOD_CHANGESTYLE=0x4,MOD_CHANGETABSTOPS=0x200000,MOD_CONTAINER=0x40000,MOD_CTRL=2,MOD_DELETETEXT=0x2,MOD_INSERTCHECK=0x100000,MOD_INSERTTEXT=0x1,MOD_LEXERSTATE=0x80000,MOD_META=16,MOD_NONE=0x0,MOD_NORM=0,MOD_SHIFT=1,MOD_SUPER=8,MOUSE_DRAG=2,MOUSE_PRESS=1,MOUSE_RELEASE=3,MULTIAUTOC_EACH=1,MULTIAUTOC_ONCE=0,MULTILINEUNDOREDO=0x1000,MULTIPASTE_EACH=1,MULTIPASTE_ONCE=0,MULTISTEPUNDOREDO=0x80,ORDER_CUSTOM=2,ORDER_PERFORMSORT=1,ORDER_PRESORTED=0,PERFORMED_REDO=0x40,PERFORMED_UNDO=0x20,PERFORMED_USER=0x10,SEL_LINES=2,SEL_RECTANGLE=1,SEL_STREAM=0,SEL_THIN=3,STARTACTION=0x2000,STYLE_BRACEBAD=36,STYLE_BRACELIGHT=35,STYLE_CALLTIP=39,STYLE_CONTROLCHAR=37,STYLE_DEFAULT=33,STYLE_FOLDDISPLAYTEXT=40,STYLE_INDENTGUIDE=38,STYLE_LASTPREDEFINED=40,STYLE_LINENUMBER=34,STYLE_MAX=256,TD_LONGARROW=0,TD_STRIKEOUT=1,TIME_FOREVER=10000000,UNDO_NONE=0,UPDATE_CONTENT=0x1,UPDATE_H_SCROLL=0x8,UPDATE_SELECTION=0x2,UPDATE_V_SCROLL=0x4,VISIBLE_SLOP=0x01,VISIBLE_STRICT=0x04,VS_NONE=0,VS_NOWRAPLINESTART=4,VS_RECTANGULARSELECTION=1,VS_USERACCESSIBLE=2,WRAPINDENT_DEEPINDENT=3,WRAPINDENT_FIXED=0,WRAPINDENT_INDENT=2,WRAPINDENT_SAME=1,WRAPVISUALFLAGLOC_DEFAULT=0x0000,WRAPVISUALFLAGLOC_END_BY_TEXT=0x0001,WRAPVISUALFLAGLOC_START_BY_TEXT=0x0002,WRAPVISUALFLAG_END=0x0001,WRAPVISUALFLAG_MARGIN=0x0004,WRAPVISUALFLAG_NONE=0x0000,WRAPVISUALFLAG_START=0x0002,WRAP_CHAR=2,WRAP_NONE=0,WRAP_WHITESPACE=3,WRAP_WORD=1,WS_INVISIBLE=0,WS_VISIBLEAFTERINDENT=2,WS_VISIBLEALWAYS=1,WS_VISIBLEONLYININDENT=3}$/;"	t	class:_SCINTILLA
 context_menu	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 context_menu	_HOME/modules/textadept/menu.lua	/^local default_context_menu = {$/;"	t	class:textadept.menu
 continue	_HOME/modules/debugger/init.lua	/^function M.continue(lexer, ...)$/;"	f	class:debugger
-contracted_fold_next	_HOME/core/.buffer.luadoc	/^function contracted_fold_next(buffer, line) end$/;"	f	class:buffer
+contracted_fold_next	_HOME/core/.view.luadoc	/^function contracted_fold_next(view, line) end$/;"	f	class:view
 control_structure_patterns	_HOME/modules/ruby/init.lua	/^local control_structure_patterns = {$/;"	t	class:_M.ruby
 convert_eols	_HOME/core/.buffer.luadoc	/^function convert_eols(buffer, mode) end$/;"	f	class:buffer
 convert_indentation	_HOME/modules/textadept/editing.lua	/^function M.convert_indentation()$/;"	f	class:textadept.editing
@@ -515,7 +524,7 @@ ctags	_HOME/modules/ctags/init.lua	/^module('ctags')]]$/;"	F	class:ctags
 ctags	_HOME/modules/ctags/init.lua	/^module('ctags')]]$/;"	m	
 ctags_flags	_HOME/modules/ctags/init.lua	/^M.ctags_flags = {}$/;"	t	class:ctags
 current_pos	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-cursor	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+cursor	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 cut	_HOME/core/.buffer.luadoc	/^function cut(buffer) end$/;"	f	class:buffer
 cycle_history_next	_HOME/modules/lua_repl/init.lua	/^function M.cycle_history_next()$/;"	f	class:lua_repl
 cycle_history_prev	_HOME/modules/lua_repl/init.lua	/^function M.cycle_history_prev()$/;"	f	class:lua_repl
@@ -533,7 +542,6 @@ delete	_HOME/core/.buffer.luadoc	/^function delete(buffer) end$/;"	f	class:buffe
 delete_back	_HOME/core/.buffer.luadoc	/^function delete_back(buffer) end$/;"	f	class:buffer
 delete_back_not_line	_HOME/core/.buffer.luadoc	/^function delete_back_not_line(buffer) end$/;"	f	class:buffer
 delete_range	_HOME/core/.buffer.luadoc	/^function delete_range(buffer, pos, length) end$/;"	f	class:buffer
-delimited_range	_HOME/lexers/lexer.lua	/^function M.delimited_range(chars, single_line, no_escape, balanced)$/;"	f	class:lexer
 dialog	_HOME/core/ui.lua	/^local dialog$/;"	f	class:ui
 dialogs	_HOME/core/.ui.dialogs.luadoc	/^module('ui.dialogs')$/;"	m	class:ui
 diff	_HOME/modules/file_diff/init.lua	/^function _G.diff(text1, text2) end$/;"	f	
@@ -541,16 +549,16 @@ digit	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 dir_foreach	_HOME/core/lfs_ext.lua	/^function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)$/;"	f	class:lfs
 disable_listening	_HOME/modules/history/init.lua	/^function M.disable_listening()$/;"	f	class:history
 disconnect	_HOME/core/events.lua	/^function M.disconnect(event, f)$/;"	f	class:events
-doc_line_from_visible	_HOME/core/.buffer.luadoc	/^function doc_line_from_visible(buffer, display_line) end$/;"	f	class:buffer
+doc_line_from_visible	_HOME/core/.view.luadoc	/^function doc_line_from_visible(view, display_line) end$/;"	f	class:view
 document_end	_HOME/core/.buffer.luadoc	/^function document_end(buffer) end$/;"	f	class:buffer
 document_end_extend	_HOME/core/.buffer.luadoc	/^function document_end_extend(buffer) end$/;"	f	class:buffer
 document_start	_HOME/core/.buffer.luadoc	/^function document_start(buffer) end$/;"	f	class:buffer
 document_start_extend	_HOME/core/.buffer.luadoc	/^function document_start_extend(buffer) end$/;"	f	class:buffer
 drop_selection_n	_HOME/core/.buffer.luadoc	/^function drop_selection_n(buffer, n) end$/;"	f	class:buffer
 dropdown	_HOME/core/.ui.dialogs.luadoc	/^function dropdown(options) end$/;"	f	class:ui.dialogs
-edge_colour	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-edge_column	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-edge_mode	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+edge_colour	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+edge_column	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+edge_mode	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 edit_toggle_overtype	_HOME/core/.buffer.luadoc	/^function edit_toggle_overtype(buffer) end$/;"	f	class:buffer
 editing	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	m	class:textadept
 editing_keys	_HOME/modules/textadept/command_entry.lua	/^M.editing_keys = {__index = {$/;"	t	class:ui.command_entry
@@ -561,11 +569,11 @@ enable_listening	_HOME/modules/history/init.lua	/^function M.enable_listening()$
 enclose	_HOME/modules/textadept/editing.lua	/^function M.enclose(left, right)$/;"	f	class:textadept.editing
 encoding	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 encodings	_HOME/core/file_io.lua	/^io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}$/;"	t	class:io
-end_at_last_line	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+end_at_last_line	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 end_styled	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 end_undo_action	_HOME/core/.buffer.luadoc	/^function end_undo_action(buffer) end$/;"	f	class:buffer
-ensure_visible	_HOME/core/.buffer.luadoc	/^function ensure_visible(buffer, line) end$/;"	f	class:buffer
-ensure_visible_enforce_policy	_HOME/core/.buffer.luadoc	/^function ensure_visible_enforce_policy(buffer, line) end$/;"	f	class:buffer
+ensure_visible	_HOME/core/.view.luadoc	/^function ensure_visible(view, line) end$/;"	f	class:view
+ensure_visible_enforce_policy	_HOME/core/.view.luadoc	/^function ensure_visible_enforce_policy(view, line) end$/;"	f	class:view
 eol_mode	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 error_patterns	_HOME/modules/textadept/run.lua	/^M.error_patterns = {actionscript={'^(.-)%((%d+)%): col: (%d+) (.+)$'},ada={'^(.-):(%d+):(%d+):%s*(.*)$','^[^:]+: (.-):(%d+) (.+)$'},ansi_c={'^(.-):(%d+):(%d+): (.+)$'},antlr={'^error%(%d+%): (.-):(%d+):(%d+): (.+)$','^warning%(%d+%): (.-):(%d+):(%d+): (.+)$'},--[[ANTLR]]g={'^error%(%d+%): (.-):(%d+):(%d+): (.+)$','^warning%(%d+%): (.-):(%d+):(%d+): (.+)$'},asm={'^(.-):(%d+): (.+)$'},awk={'^awk: (.-):(%d+): (.+)$'},boo={'^(.-)%((%d+),(%d+)%): (.+)$'},caml={'^%s*File "(.-)", line (%d+), characters (%d+)'},chuck={'^(.-)line%((%d+)%)%.char%((%d+)%): (.+)$'},cmake={'^CMake Error at (.-):(%d+)','^(.-):(%d+):$'},coffeescript={'^(.-):(%d+):(%d+): (.+)$'},context={'error on line (%d+) in file (.-): (.+)$'},cpp={'^(.-):(%d+):(%d+): (.+)$'},csharp={'^(.-)%((%d+),(%d+)%): (.+)$'},cuda={'^(.-)%((%d+)%): (error.+)$'},dart={"^'(.-)': error: line (%d+) pos (%d+): (.+)$",'%(file://(.-):(%d+):(%d+)%)'},dmd={'^(.-)%((%d+)%): (Error.+)$'},dot={'^Warning: (.-): (.+) in line (%d+)'},eiffel={'^Line (%d+) columns? .- in .- %((.-)%):$','^line (%d+) column (%d+) file (.-)$'},elixir={'^(.-):(%d+): (.+)$','Error%) (.-):(%d+): (.+)$'},erlang={'^(.-):(%d+): (.+)$'},faust={'^(.-):(%d+):(.+)$'},forth={'^(.-):(%d+): (.+)$'},fortran={'^(.-):(%d+)%D+(%d+):%s*(.*)$'},fsharp={'^(.-)%((%d+),(%d+)%): (.+)$'},gap={'^(.+) in (.-) line (%d+)$'},gnuplot={'^"(.-)", line (%d+): (.+)$'},go={'^(.-):(%d+): (.+)$'},groovy={'^%s+at .-%((.-):(%d+)%)$','^(.-):(%d+): (.+)$'},haskell={'^(.-):(%d+):(%d+):%s*(.*)$'},icon={'^File (.-); Line (%d+) # (.+)$','^.-from line (%d+) in (.-)$'},java={'^%s+at .-%((.-):(%d+)%)$','^(.-):(%d+): (.+)$'},javascript={'^%s+at .-%((.-):(%d+):(%d+)%)$','^%s+at (.-):(%d+):(%d+)$','^(.-):(%d+):?$'},ltx={'^(.-):(%d+): (.+)$'},less={'^(.+) in (.-) on line (%d+), column (%d+):$'},lilypond={'^(.-):(%d+):(%d+):%s*(.*)$'},litcoffee={'^(.-):(%d+):(%d+): (.+)$'},lua={'^luac?: (.-):(%d+): (.+)$'},makefile={'^(.-):(%d+): (.+)$'},nemerle={'^(.-)%((%d+),(%d+)%): (.+)$'},nim={'^(.-)%((%d+), (%d+)%) (%w+:.+)$'},objective_c={'^(.-):(%d+):(%d+): (.+)$'},pascal={'^(.-)%((%d+),(%d+)%) (%w+:.+)$'},perl={'^(.+) at (.-) line (%d+)'},php={'^(.+) in (.-) on line (%d+)$'},pike={'^(.-):(%d+):(.+)$'},prolog={'^(.-):(%d+):(%d+): (.+)$','^(.-):(%d+): (.+)$'},pure={'^(.-), line (%d+): (.+)$'},python={'^%s*File "(.-)", line (%d+)'},rexx={'^Error %d+ running "(.-)", line (%d+): (.+)$'},ruby={'^%s+from (.-):(%d+):','^(.-):(%d+):%s*(.+)$'},rust={'^(.-):(%d+):(%d+): (.+)$',"panicked at '([^']+)', (.-):(%d+)"},sass={'^WARNING on line (%d+) of (.-):$','^%s+on line (%d+) of (.-)$'},scala={'^%s+at .-%((.-):(%d+)%)$','^(.-):(%d+): (.+)$'},sh={'^(.-): (%d+): %1: (.+)$'},bash={'^(.-): line (%d+): (.+)$'},zsh={'^(.-):(%d+): (.+)$'},smalltalk={'^(.-):(%d+): (.+)$','%((.-):(%d+)%)$'},snobol4={'^(.-):(%d+): (.+)$'},tcl={'^%s*%(file "(.-)" line (%d+)%)$'},tex={'^(.-):(%d+): (.+)$'},vala={'^(.-):(%d+)%.(%d+)[%-%.%d]+: (.+)$','^(.-):(%d+):(%d+): (.+)$'},vb={'^(.-)%((%d+),(%d+)%): (.+)$'}}$/;"	t	class:textadept.run
 evaluate_repl	_HOME/modules/lua_repl/init.lua	/^function M.evaluate_repl()$/;"	f	class:lua_repl
@@ -577,8 +585,8 @@ expr_types	_HOME/modules/python/init.lua	/^M.expr_types = {$/;"	t	class:_M.pytho
 expr_types	_HOME/modules/ruby/init.lua	/^M.expr_types = {$/;"	t	class:_M.ruby
 extend	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 extensions	_HOME/modules/textadept/file_types.lua	/^M.extensions = {--[[Actionscript]]as='actionscript',asc='actionscript',--[[Ada]]adb='ada',ads='ada',--[[ANTLR]]g='antlr',g4='antlr',--[[APDL]]ans='apdl',inp='apdl',mac='apdl',--[[APL]]apl='apl',--[[Applescript]]applescript='applescript',--[[ASM]]asm='asm',ASM='asm',s='asm',S='asm',--[[ASP]]asa='asp',asp='asp',hta='asp',--[[AutoIt]]au3='autoit',a3x='autoit',--[[AWK]]awk='awk',--[[Batch]]bat='batch',cmd='batch',--[[BibTeX]]bib='bibtex',--[[Boo]]boo='boo',--[[C#]]cs='csharp',--[[C/C++]]c='ansi_c',cc='cpp',C='ansi_c',cpp='cpp',cxx='cpp',['c++']='cpp',h='cpp',hh='cpp',hpp='cpp',hxx='cpp',['h++']='cpp',--[[ChucK]]ck='chuck',--[[CMake]]cmake='cmake',['cmake.in']='cmake',ctest='cmake',['ctest.in']='cmake',--[[CoffeeScript]]coffee='coffeescript',--[[Crystal]]cr='crystal',--[[CSS]]css='css',--[[CUDA]]cu='cuda',cuh='cuda',--[[D]]d='dmd',di='dmd',--[[Dart]]dart='dart',--[[Desktop]]desktop='desktop',--[[diff]]diff='diff',patch='diff',--[[Dockerfile]]Dockerfile='dockerfile',--[[dot]]dot='dot',--[[Eiffel]]e='eiffel',eif='eiffel',--[[Elixir]]ex='elixir',exs='elixir',--[[Erlang]]erl='erlang',hrl='erlang',--[[F#]]fs='fsharp',--[[Faust]]dsp='faust',--[[Fish]]fish='fish',--[[Forth]]forth='forth',frt='forth',fs='forth',--[[Fortran]]f='fortran',['for']='fortran',ftn='fortran',fpp='fortran',f77='fortran',f90='fortran',f95='fortran',f03='fortran',f08='fortran',--[[Gap]]g='gap',gd='gap',gi='gap',gap='gap',--[[Gettext]]po='gettext',pot='gettext',--[[Gherkin]]feature='gherkin',--[[GLSL]]glslf='glsl',glslv='glsl',--[[GNUPlot]]dem='gnuplot',plt='gnuplot',--[[Go]]go='go',--[[Groovy]]groovy='groovy',gvy='groovy',--[[Gtkrc]]gtkrc='gtkrc',--[[Haskell]]hs='haskell',--[[HTML]]htm='html',html='html',shtm='html',shtml='html',xhtml='html',vue='html',--[[Icon]]icn='icon',--[[IDL]]idl='idl',odl='idl',--[[Inform]]inf='inform',ni='inform',--[[ini]]cfg='ini',cnf='ini',inf='ini',ini='ini',reg='ini',--[[Io]]io='io_lang',--[[Java]]bsh='java',java='java',--[[Javascript]]js='javascript',jsfl='javascript',--[[JSON]]json='json',--[[JSP]]jsp='jsp',--[[LaTeX]]bbl='latex',dtx='latex',ins='latex',ltx='latex',tex='latex',sty='latex',--[[Ledger]]ledger='ledger',journal='ledger',--[[LESS]]less='less',--[[LilyPond]]lily='lilypond',ly='lilypond',--[[Lisp]]cl='lisp',el='lisp',lisp='lisp',lsp='lisp',--[[Literate Coffeescript]]litcoffee='litcoffee',--[[Logtalk]]lgt='logtalk',--[[Lua]]lua='lua',--[[Makefile]]GNUmakefile='makefile',iface='makefile',mak='makefile',makefile='makefile',Makefile='makefile',--[[Man]]['1']='man',['2']='man',['3']='man',['4']='man',['5']='man',['6']='man',['7']='man',['8']='man',['9']='man',['1x']='man',['2x']='man',['3x']='man',['4x']='man',['5x']='man',['6x']='man',['7x']='man',['8x']='man',['9x']='man',--[[Markdown]]md='markdown',--[[MoonScript]]moon='moonscript',--[[Myrddin]]myr='myrddin',--[[Nemerle]]n='nemerle',--[[Nim]]nim='nim',--[[NSIS]]nsh='nsis',nsi='nsis',nsis='nsis',--[[Objective C]]m='objective_c',mm='objective_c',objc='objective_c',--[[OCaml]]caml='caml',ml='caml',mli='caml',mll='caml',mly='caml',--[[Pascal]]dpk='pascal',dpr='pascal',p='pascal',pas='pascal',--[[Perl]]al='perl',perl='perl',pl='perl',pm='perl',pod='perl',--[[PHP]]inc='php',php='php',php3='php',php4='php',phtml='php',--[[PICO-8]]p8='pico',--[[Pike]]pike='pike',pmod='pike',--[[PKGBUILD]]PKGBUILD='pkgbuild',--[[Postscript]]eps='ps',ps='ps',--[[PowerShell]]ps1='powershell',--[[Prolog]]prolog='prolog',--[[Properties]]props='props',properties='props',--[[Protobuf]]proto='protobuf',--[[Pure]]pure='pure',--[[Python]]sc='python',py='python',pyw='python',--[[R]]R='rstats',Rout='rstats',Rhistory='rstats',Rt='rstats',['Rout.save']='rstats',['Rout.fail']='rstats',S='rstats',--[[REBOL]]r='rebol',reb='rebol',--[[reST]]rst='rest',--[[Rexx]]orx='rexx',rex='rexx',--[[RHTML]]erb='rhtml',rhtml='rhtml',--[[Ruby]]Rakefile='ruby',rake='ruby',rb='ruby',rbw='ruby',--[[Rust]]rs='rust',--[[Sass CSS]]sass='sass',scss='sass',--[[Scala]]scala='scala',--[[Scheme]]sch='scheme',scm='scheme',--[[Shell]]bash='bash',bashrc='bash',bash_profile='bash',configure='bash',csh='bash',ksh='bash',mksh='bash',sh='bash',zsh='bash',--[[Smalltalk]]changes='smalltalk',st='smalltalk',sources='smalltalk',--[[SML]]sml='sml',fun='sml',sig='sml',--[[SNOBOL4]]sno='snobol4',SNO='snobol4',--[[SQL]]ddl='sql',sql='sql',--[[TaskPaper]]taskpaper='taskpaper',--[[Tcl]]tcl='tcl',tk='tcl',--[[Texinfo]]texi='texinfo',--[[TOML]]toml='toml',--[[Txt2tags]]t2t='txt2tags',--[[Vala]]vala='vala',--[[vCard]]vcf='vcard',vcard='vcard',--[[Verilog]]v='verilog',ver='verilog',--[[VHDL]]vh='vhdl',vhd='vhdl',vhdl='vhdl',--[[Visual Basic]]asa='vb',bas='vb',cls='vb',ctl='vb',dob='vb',dsm='vb',dsr='vb',frm='vb',pag='vb',vb='vb',vba='vb',vbs='vb',--[[WSF]]wsf='wsf',--[[XML]]dtd='xml',svg='xml',xml='xml',xsd='xml',xsl='xml',xslt='xml',xul='xml',--[[Xtend]]xtend='xtend',--[[YAML]]yaml='yaml',yml='yaml'}$/;"	t	class:textadept.file_types
-extra_ascent	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-extra_descent	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+extra_ascent	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+extra_descent	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 file_diff	_HOME/modules/file_diff/init.lua	/^module('file_diff')]]$/;"	m	
 file_types	_HOME/modules/textadept/file_types.lua	/^module('textadept.file_types')]]$/;"	m	class:textadept
 filename	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -599,27 +607,27 @@ find_next_button_text	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"
 find_prev	_HOME/modules/textadept/find.lua	/^local find_prev$/;"	f	class:ui.find
 find_prev_button_text	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 find_references	_HOME/modules/lsp/init.lua	/^function M.find_references()$/;"	f	class:lsp
-first_visible_line	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+first_visible_line	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 float	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 focus	_HOME/modules/textadept/command_entry.lua	/^local focus$/;"	f	class:ui.command_entry
 focus	_HOME/modules/textadept/find.lua	/^local focus$/;"	f	class:ui.find
 fold	_HOME/lexers/lexer.lua	/^function M.fold(lexer, text, start_pos, start_line, start_level)$/;"	f	class:lexer
-fold_all	_HOME/core/.buffer.luadoc	/^function fold_all(buffer, action) end$/;"	f	class:buffer
-fold_children	_HOME/core/.buffer.luadoc	/^function fold_children(buffer, line, action) end$/;"	f	class:buffer
-fold_display_text_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-fold_expanded	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-fold_flags	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+fold_all	_HOME/core/.view.luadoc	/^function fold_all(view, action) end$/;"	f	class:view
+fold_children	_HOME/core/.view.luadoc	/^function fold_children(view, line, action) end$/;"	f	class:view
+fold_display_text_style	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+fold_expanded	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+fold_flags	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 fold_level	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 fold_level	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-fold_line	_HOME/core/.buffer.luadoc	/^function fold_line(buffer, line, action) end$/;"	f	class:buffer
+fold_line	_HOME/core/.view.luadoc	/^function fold_line(view, line, action) end$/;"	f	class:view
 fold_line_comments	_HOME/lexers/lexer.lua	/^function M.fold_line_comments(prefix)$/;"	f	class:lexer
 fold_parent	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 fontselect	_HOME/core/.ui.dialogs.luadoc	/^function fontselect(options) end$/;"	f	class:ui.dialogs
 forward	_HOME/modules/history/init.lua	/^function M.forward()$/;"	f	class:history
-functions	_HOME/core/iface.lua	/^M.functions = {add_ref_document={2376,0,0,1},add_selection={2573,0,3,3},add_styled_text={2002,0,2,9},add_tab_stop={2676,0,3,1},add_text={2001,0,2,7},add_undo_action={2560,0,1,1},allocate={2446,0,3,0},allocate_extended_styles={2553,1,1,0},allocate_sub_styles={4020,1,1,1},annotation_clear_all={2547,0,0,0},append_text={2282,0,2,7},assign_cmd_key={2070,0,6,1},auto_c_active={2102,5,0,0},auto_c_cancel={2101,0,0,0},auto_c_complete={2104,0,0,0},auto_c_pos_start={2103,3,0,0},auto_c_select={2108,0,0,7},auto_c_show={2100,0,1,7},auto_c_stops={2105,0,0,7},back_tab={2328,0,0,0},begin_undo_action={2078,0,0,0},brace_bad_light={2352,0,3,0},brace_bad_light_indicator={2499,0,5,3},brace_highlight={2351,0,3,3},brace_highlight_indicator={2498,0,5,3},brace_match={2353,3,3,1},call_tip_active={2202,5,0,0},call_tip_cancel={2201,0,0,0},call_tip_pos_start={2203,3,0,0},call_tip_set_hlt={2204,0,3,3},call_tip_show={2200,0,3,7},can_paste={2173,5,0,0},can_redo={2016,5,0,0},can_undo={2174,5,0,0},cancel={2325,0,0,0},change_insertion={2672,0,2,7},change_lexer_state={2617,1,3,3},char_left={2304,0,0,0},char_left_extend={2305,0,0,0},char_left_rect_extend={2428,0,0,0},char_position_from_point={2561,3,1,1},char_position_from_point_close={2562,3,1,1},char_right={2306,0,0,0},char_right_extend={2307,0,0,0},char_right_rect_extend={2429,0,0,0},choose_caret_x={2399,0,0,0},clear={2180,0,0,0},clear_all={2004,0,0,0},clear_all_cmd_keys={2072,0,0,0},clear_cmd_key={2071,0,6,0},clear_document_style={2005,0,0,0},clear_registered_images={2408,0,0,0},clear_representation={2667,0,7,0},clear_selections={2571,0,0,0},clear_tab_stops={2675,0,3,0},colourise={4003,0,3,3},contracted_fold_next={2618,3,3,0},convert_eols={2029,0,1,0},copy={2178,0,0,0},copy_allow_line={2519,0,0,0},copy_range={2419,0,3,3},copy_text={2420,0,2,7},count_characters={2633,1,3,3},count_code_units={2715,1,3,3},create_document={2375,1,3,1},create_loader={2632,1,3,1},cut={2177,0,0,0},del_line_left={2395,0,0,0},del_line_right={2396,0,0,0},del_word_left={2335,0,0,0},del_word_right={2336,0,0,0},del_word_right_end={2518,0,0,0},delete_back={2326,0,0,0},delete_back_not_line={2344,0,0,0},delete_range={2645,0,3,2},describe_key_word_sets={4017,0,0,8},describe_property={4016,0,7,8},description_of_style={4032,0,3,8},doc_line_from_visible={2221,3,3,0},document_end={2318,0,0,0},document_end_extend={2319,0,0,0},document_start={2316,0,0,0},document_start_extend={2317,0,0,0},drop_selection_n={2671,0,3,0},edit_toggle_overtype={2324,0,0,0},empty_undo_buffer={2175,0,0,0},encoded_from_utf8={2449,0,7,8},end_undo_action={2079,0,0,0},ensure_visible={2232,0,3,0},ensure_visible_enforce_policy={2234,0,3,0},expand_children={2239,0,3,1},find_column={2456,3,3,3},find_indicator_flash={2641,0,3,3},find_indicator_hide={2642,0,0,0},find_indicator_show={2640,0,3,3},find_text={2150,3,1,11},fold_all={2662,0,1,0},fold_children={2238,0,3,1},fold_line={2237,0,3,1},form_feed={2330,0,0,0},format_range={2151,3,5,12},free_sub_styles={4023,0,0,0},get_cur_line={2027,3,2,8},get_default_fold_display_text={2723,0,0,8},get_hotspot_active_back={2495,4,0,0},get_hotspot_active_fore={2494,4,0,0},get_line={2153,0,3,8},get_line_sel_end_position={2425,3,3,0},get_line_sel_start_position={2424,3,3,0},get_next_tab_stop={2677,1,3,1},get_sel_text={2161,0,0,8},get_styled_text={2015,3,0,10},get_text={2182,0,2,8},get_text_range={2162,3,0,10},goto_line={2024,0,3,0},goto_pos={2025,0,3,0},grab_focus={2400,0,0,0},hide_lines={2227,0,3,3},hide_selection={2163,0,5,0},home={2312,0,0,0},home_display={2345,0,0,0},home_display_extend={2346,0,0,0},home_extend={2313,0,0,0},home_rect_extend={2430,0,0,0},home_wrap={2349,0,0,0},home_wrap_extend={2450,0,0,0},indicator_all_on_for={2506,1,3,0},indicator_clear_range={2505,0,3,2},indicator_end={2509,3,3,3},indicator_fill_range={2504,0,3,2},indicator_start={2508,3,3,3},indicator_value_at={2507,1,3,3},insert_text={2003,0,3,7},is_range_word={2691,5,3,3},line_copy={2455,0,0,0},line_cut={2337,0,0,0},line_delete={2338,0,0,0},line_down={2300,0,0,0},line_down_extend={2301,0,0,0},line_down_rect_extend={2426,0,0,0},line_duplicate={2404,0,0,0},line_end={2314,0,0,0},line_end_display={2347,0,0,0},line_end_display_extend={2348,0,0,0},line_end_extend={2315,0,0,0},line_end_rect_extend={2432,0,0,0},line_end_wrap={2451,0,0,0},line_end_wrap_extend={2452,0,0,0},line_from_position={2166,3,3,0},line_length={2350,1,3,0},line_reverse={2354,0,0,0},line_scroll={2168,0,1,1},line_scroll_down={2342,0,0,0},line_scroll_up={2343,0,0,0},line_transpose={2339,0,0,0},line_up={2302,0,0,0},line_up_extend={2303,0,0,0},line_up_rect_extend={2427,0,0,0},lines_join={2288,0,0,0},lines_split={2289,0,1,0},load_lexer_library={4007,0,0,7},lower_case={2340,0,0,0},margin_text_clear_all={2536,0,0,0},marker_add={2043,1,3,3},marker_add_set={2466,0,3,1},marker_define={2040,0,3,1},marker_define_pixmap={2049,0,3,7},marker_define_rgba_image={2626,0,3,7},marker_delete={2044,0,3,3},marker_delete_all={2045,0,3,0},marker_delete_handle={2018,0,1,0},marker_enable_highlight={2293,0,5,0},marker_get={2046,1,3,0},marker_line_from_handle={2017,3,1,0},marker_next={2047,3,3,1},marker_previous={2048,3,3,1},marker_symbol_defined={2529,1,3,0},move_caret_inside_view={2401,0,0,0},move_selected_lines_down={2621,0,0,0},move_selected_lines_up={2620,0,0,0},multi_edge_add_line={2694,0,1,4},multi_edge_clear_all={2695,0,0,0},multiple_select_add_each={2689,0,0,0},multiple_select_add_next={2688,0,0,0},name_of_style={4030,0,3,8},new_line={2329,0,0,0},null={2172,0,0,0},page_down={2322,0,0,0},page_down_extend={2323,0,0,0},page_down_rect_extend={2434,0,0,0},page_up={2320,0,0,0},page_up_extend={2321,0,0,0},page_up_rect_extend={2433,0,0,0},para_down={2413,0,0,0},para_down_extend={2414,0,0,0},para_up={2415,0,0,0},para_up_extend={2416,0,0,0},paste={2179,0,0,0},point_x_from_position={2164,1,0,3},point_y_from_position={2165,1,0,3},position_after={2418,3,3,0},position_before={2417,3,3,0},position_from_line={2167,3,3,0},position_from_point={2022,3,1,1},position_from_point_close={2023,3,1,1},position_relative={2670,3,3,1},position_relative_code_units={2716,3,3,3},private_lexer_call={4013,1,1,1},property_names={4014,0,0,8},property_type={4015,1,7,0},redo={2011,0,0,0},register_image={2405,0,1,7},register_rgba_image={2627,0,1,7},release_all_extended_styles={2552,0,0,0},release_document={2377,0,0,1},replace_sel={2170,0,0,7},replace_target={2194,1,2,7},replace_target_re={2195,1,2,7},rotate_selection={2606,0,0,0},scroll_caret={2169,0,0,0},scroll_range={2569,0,3,3},scroll_to_end={2629,0,0,0},scroll_to_start={2628,0,0,0},search_anchor={2366,0,0,0},search_in_target={2197,3,2,7},search_next={2367,3,1,7},search_prev={2368,3,1,7},select_all={2013,0,0,0},selection_duplicate={2469,0,0,0},set_chars_default={2444,0,0,0},set_default_fold_display_text={2722,0,0,7},set_empty_selection={2556,0,3,0},set_fold_margin_colour={2290,0,5,4},set_fold_margin_hi_colour={2291,0,5,4},set_hotspot_active_back={2411,0,5,4},set_hotspot_active_fore={2410,0,5,4},set_length_for_encode={2448,0,3,0},set_save_point={2014,0,0,0},set_sel={2160,0,3,3},set_sel_back={2068,0,5,4},set_sel_fore={2067,0,5,4},set_selection={2572,0,3,3},set_styling={2033,0,2,3},set_styling_ex={2073,0,2,7},set_target_range={2686,0,3,3},set_text={2181,0,0,7},set_visible_policy={2394,0,1,1},set_whitespace_back={2085,0,5,4},set_whitespace_fore={2084,0,5,4},set_x_caret_policy={2402,0,1,1},set_y_caret_policy={2403,0,1,1},show_lines={2226,0,3,3},start_record={3001,0,0,0},start_styling={2032,0,3,1},stop_record={3002,0,0,0},stuttered_page_down={2437,0,0,0},stuttered_page_down_extend={2438,0,0,0},stuttered_page_up={2435,0,0,0},stuttered_page_up_extend={2436,0,0,0},style_clear_all={2050,0,0,0},style_reset_default={2058,0,0,0},swap_main_anchor_caret={2607,0,0,0},tab={2327,0,0,0},tags_of_style={4031,0,3,8},target_as_utf8={2447,0,0,8},target_from_selection={2287,0,0,0},target_whole_document={2690,0,0,0},text_height={2279,1,3,0},text_width={2276,1,3,7},toggle_caret_sticky={2459,0,0,0},toggle_fold={2231,0,3,0},toggle_fold_show_text={2700,0,3,7},undo={2176,0,0,0},upper_case={2341,0,0,0},use_pop_up={2371,0,1,0},user_list_show={2117,0,1,7},vc_home={2331,0,0,0},vc_home_display={2652,0,0,0},vc_home_display_extend={2653,0,0,0},vc_home_extend={2332,0,0,0},vc_home_rect_extend={2431,0,0,0},vc_home_wrap={2453,0,0,0},vc_home_wrap_extend={2454,0,0,0},vertical_centre_caret={2619,0,0,0},visible_from_doc_line={2220,3,3,0},word_end_position={2267,3,3,5},word_left={2308,0,0,0},word_left_end={2439,0,0,0},word_left_end_extend={2440,0,0,0},word_left_extend={2309,0,0,0},word_part_left={2390,0,0,0},word_part_left_extend={2391,0,0,0},word_part_right={2392,0,0,0},word_part_right_extend={2393,0,0,0},word_right={2310,0,0,0},word_right_end={2441,0,0,0},word_right_end_extend={2442,0,0,0},word_right_extend={2311,0,0,0},word_start_position={2266,3,3,5},wrap_count={2235,1,3,0},zoom_in={2333,0,0,0},zoom_out={2334,0,0,0},}$/;"	t	class:_SCINTILLA
+functions	_HOME/core/iface.lua	/^M.functions = {add_ref_document={2376,0,0,1},add_selection={2573,0,3,3},add_styled_text={2002,0,2,9},add_tab_stop={2676,0,3,1},add_text={2001,0,2,7},add_undo_action={2560,0,1,1},allocate={2446,0,3,0},allocate_extended_styles={2553,1,1,0},allocate_sub_styles={4020,1,1,1},annotation_clear_all={2547,0,0,0},append_text={2282,0,2,7},assign_cmd_key={2070,0,6,1},auto_c_active={2102,5,0,0},auto_c_cancel={2101,0,0,0},auto_c_complete={2104,0,0,0},auto_c_pos_start={2103,3,0,0},auto_c_select={2108,0,0,7},auto_c_show={2100,0,1,7},auto_c_stops={2105,0,0,7},back_tab={2328,0,0,0},begin_undo_action={2078,0,0,0},brace_bad_light={2352,0,3,0},brace_bad_light_indicator={2499,0,5,3},brace_highlight={2351,0,3,3},brace_highlight_indicator={2498,0,5,3},brace_match={2353,3,3,1},call_tip_active={2202,5,0,0},call_tip_cancel={2201,0,0,0},call_tip_pos_start={2203,3,0,0},call_tip_set_hlt={2204,0,3,3},call_tip_show={2200,0,3,7},can_paste={2173,5,0,0},can_redo={2016,5,0,0},can_undo={2174,5,0,0},cancel={2325,0,0,0},change_insertion={2672,0,2,7},change_lexer_state={2617,1,3,3},char_left={2304,0,0,0},char_left_extend={2305,0,0,0},char_left_rect_extend={2428,0,0,0},char_position_from_point={2561,3,1,1},char_position_from_point_close={2562,3,1,1},char_right={2306,0,0,0},char_right_extend={2307,0,0,0},char_right_rect_extend={2429,0,0,0},choose_caret_x={2399,0,0,0},clear={2180,0,0,0},clear_all={2004,0,0,0},clear_all_cmd_keys={2072,0,0,0},clear_cmd_key={2071,0,6,0},clear_document_style={2005,0,0,0},clear_registered_images={2408,0,0,0},clear_representation={2667,0,7,0},clear_selections={2571,0,0,0},clear_tab_stops={2675,0,3,0},colourise={4003,0,3,3},contracted_fold_next={2618,3,3,0},convert_eols={2029,0,1,0},copy={2178,0,0,0},copy_allow_line={2519,0,0,0},copy_range={2419,0,3,3},copy_text={2420,0,2,7},count_characters={2633,1,3,3},count_code_units={2715,1,3,3},create_document={2375,1,3,1},create_loader={2632,1,3,1},cut={2177,0,0,0},del_line_left={2395,0,0,0},del_line_right={2396,0,0,0},del_word_left={2335,0,0,0},del_word_right={2336,0,0,0},del_word_right_end={2518,0,0,0},delete_back={2326,0,0,0},delete_back_not_line={2344,0,0,0},delete_range={2645,0,3,2},describe_key_word_sets={4017,0,0,8},describe_property={4016,0,7,8},description_of_style={4032,0,3,8},doc_line_from_visible={2221,3,3,0},document_end={2318,0,0,0},document_end_extend={2319,0,0,0},document_start={2316,0,0,0},document_start_extend={2317,0,0,0},drop_selection_n={2671,0,3,0},edit_toggle_overtype={2324,0,0,0},empty_undo_buffer={2175,0,0,0},encoded_from_utf8={2449,0,7,8},end_undo_action={2079,0,0,0},ensure_visible={2232,0,3,0},ensure_visible_enforce_policy={2234,0,3,0},expand_children={2239,0,3,1},find_column={2456,3,3,3},find_indicator_flash={2641,0,3,3},find_indicator_hide={2642,0,0,0},find_indicator_show={2640,0,3,3},find_text={2150,3,1,11},fold_all={2662,0,1,0},fold_children={2238,0,3,1},fold_line={2237,0,3,1},form_feed={2330,0,0,0},format_range={2151,3,5,12},free_sub_styles={4023,0,0,0},get_cur_line={2027,3,2,8},get_default_fold_display_text={2723,0,0,8},get_hotspot_active_back={2495,4,0,0},get_hotspot_active_fore={2494,4,0,0},get_line={2153,0,3,8},get_line_sel_end_position={2425,3,3,0},get_line_sel_start_position={2424,3,3,0},get_next_tab_stop={2677,1,3,1},get_sel_text={2161,0,0,8},get_styled_text={2015,3,0,10},get_text={2182,0,2,8},get_text_range={2162,3,0,10},goto_line={2024,0,3,0},goto_pos={2025,0,3,0},grab_focus={2400,0,0,0},hide_lines={2227,0,3,3},hide_selection={2163,0,5,0},home={2312,0,0,0},home_display={2345,0,0,0},home_display_extend={2346,0,0,0},home_extend={2313,0,0,0},home_rect_extend={2430,0,0,0},home_wrap={2349,0,0,0},home_wrap_extend={2450,0,0,0},indicator_all_on_for={2506,1,3,0},indicator_clear_range={2505,0,3,2},indicator_end={2509,3,3,3},indicator_fill_range={2504,0,3,2},indicator_start={2508,3,3,3},indicator_value_at={2507,1,3,3},insert_text={2003,0,3,7},is_range_word={2691,5,3,3},line_copy={2455,0,0,0},line_cut={2337,0,0,0},line_delete={2338,0,0,0},line_down={2300,0,0,0},line_down_extend={2301,0,0,0},line_down_rect_extend={2426,0,0,0},line_duplicate={2404,0,0,0},line_end={2314,0,0,0},line_end_display={2347,0,0,0},line_end_display_extend={2348,0,0,0},line_end_extend={2315,0,0,0},line_end_rect_extend={2432,0,0,0},line_end_wrap={2451,0,0,0},line_end_wrap_extend={2452,0,0,0},line_from_position={2166,3,3,0},line_length={2350,1,3,0},line_reverse={2354,0,0,0},line_scroll={2168,0,1,1},line_scroll_down={2342,0,0,0},line_scroll_up={2343,0,0,0},line_transpose={2339,0,0,0},line_up={2302,0,0,0},line_up_extend={2303,0,0,0},line_up_rect_extend={2427,0,0,0},lines_join={2288,0,0,0},lines_split={2289,0,1,0},load_lexer_library={4007,0,0,7},lower_case={2340,0,0,0},margin_text_clear_all={2536,0,0,0},marker_add={2043,1,3,3},marker_add_set={2466,0,3,1},marker_define={2040,0,3,1},marker_define_pixmap={2049,0,3,7},marker_define_rgba_image={2626,0,3,7},marker_delete={2044,0,3,3},marker_delete_all={2045,0,3,0},marker_delete_handle={2018,0,1,0},marker_enable_highlight={2293,0,5,0},marker_get={2046,1,3,0},marker_handle_from_line={2732,1,3,3},marker_line_from_handle={2017,3,1,0},marker_next={2047,3,3,1},marker_number_from_line={2733,3,3,3},marker_previous={2048,3,3,1},marker_symbol_defined={2529,1,3,0},move_caret_inside_view={2401,0,0,0},move_selected_lines_down={2621,0,0,0},move_selected_lines_up={2620,0,0,0},multi_edge_add_line={2694,0,1,4},multi_edge_clear_all={2695,0,0,0},multiple_select_add_each={2689,0,0,0},multiple_select_add_next={2688,0,0,0},name_of_style={4030,0,3,8},new_line={2329,0,0,0},null={2172,0,0,0},page_down={2322,0,0,0},page_down_extend={2323,0,0,0},page_down_rect_extend={2434,0,0,0},page_up={2320,0,0,0},page_up_extend={2321,0,0,0},page_up_rect_extend={2433,0,0,0},para_down={2413,0,0,0},para_down_extend={2414,0,0,0},para_up={2415,0,0,0},para_up_extend={2416,0,0,0},paste={2179,0,0,0},point_x_from_position={2164,1,0,3},point_y_from_position={2165,1,0,3},position_after={2418,3,3,0},position_before={2417,3,3,0},position_from_line={2167,3,3,0},position_from_point={2022,3,1,1},position_from_point_close={2023,3,1,1},position_relative={2670,3,3,1},position_relative_code_units={2716,3,3,3},private_lexer_call={4013,1,1,1},property_names={4014,0,0,8},property_type={4015,1,7,0},redo={2011,0,0,0},register_image={2405,0,1,7},register_rgba_image={2627,0,1,7},release_all_extended_styles={2552,0,0,0},release_document={2377,0,0,1},replace_sel={2170,0,0,7},replace_target={2194,1,2,7},replace_target_re={2195,1,2,7},rotate_selection={2606,0,0,0},scroll_caret={2169,0,0,0},scroll_range={2569,0,3,3},scroll_to_end={2629,0,0,0},scroll_to_start={2628,0,0,0},search_anchor={2366,0,0,0},search_in_target={2197,3,2,7},search_next={2367,3,1,7},search_prev={2368,3,1,7},select_all={2013,0,0,0},selection_duplicate={2469,0,0,0},set_chars_default={2444,0,0,0},set_default_fold_display_text={2722,0,0,7},set_empty_selection={2556,0,3,0},set_fold_margin_colour={2290,0,5,4},set_fold_margin_hi_colour={2291,0,5,4},set_hotspot_active_back={2411,0,5,4},set_hotspot_active_fore={2410,0,5,4},set_length_for_encode={2448,0,3,0},set_save_point={2014,0,0,0},set_sel={2160,0,3,3},set_sel_back={2068,0,5,4},set_sel_fore={2067,0,5,4},set_selection={2572,0,3,3},set_styling={2033,0,2,3},set_styling_ex={2073,0,2,7},set_target_range={2686,0,3,3},set_text={2181,0,0,7},set_visible_policy={2394,0,1,1},set_whitespace_back={2085,0,5,4},set_whitespace_fore={2084,0,5,4},set_x_caret_policy={2402,0,1,1},set_y_caret_policy={2403,0,1,1},show_lines={2226,0,3,3},start_record={3001,0,0,0},start_styling={2032,0,3,1},stop_record={3002,0,0,0},stuttered_page_down={2437,0,0,0},stuttered_page_down_extend={2438,0,0,0},stuttered_page_up={2435,0,0,0},stuttered_page_up_extend={2436,0,0,0},style_clear_all={2050,0,0,0},style_reset_default={2058,0,0,0},swap_main_anchor_caret={2607,0,0,0},tab={2327,0,0,0},tags_of_style={4031,0,3,8},target_as_utf8={2447,0,0,8},target_from_selection={2287,0,0,0},target_whole_document={2690,0,0,0},text_height={2279,1,3,0},text_width={2276,1,3,7},toggle_caret_sticky={2459,0,0,0},toggle_fold={2231,0,3,0},toggle_fold_show_text={2700,0,3,7},undo={2176,0,0,0},upper_case={2341,0,0,0},use_pop_up={2371,0,1,0},user_list_show={2117,0,1,7},vc_home={2331,0,0,0},vc_home_display={2652,0,0,0},vc_home_display_extend={2653,0,0,0},vc_home_extend={2332,0,0,0},vc_home_rect_extend={2431,0,0,0},vc_home_wrap={2453,0,0,0},vc_home_wrap_extend={2454,0,0,0},vertical_centre_caret={2619,0,0,0},visible_from_doc_line={2220,3,3,0},word_end_position={2267,3,3,5},word_left={2308,0,0,0},word_left_end={2439,0,0,0},word_left_end_extend={2440,0,0,0},word_left_extend={2309,0,0,0},word_part_left={2390,0,0,0},word_part_left_extend={2391,0,0,0},word_part_right={2392,0,0,0},word_part_right_extend={2393,0,0,0},word_right={2310,0,0,0},word_right_end={2441,0,0,0},word_right_end_extend={2442,0,0,0},word_right_extend={2311,0,0,0},word_start_position={2266,3,3,5},wrap_count={2235,1,3,0},zoom_in={2333,0,0,0},zoom_out={2334,0,0,0},}$/;"	t	class:_SCINTILLA
 generate_default_api	_HOME/modules/ctags/init.lua	/^module('ctags')]]$/;"	F	class:ctags
 get_cur_line	_HOME/core/.buffer.luadoc	/^function get_cur_line(buffer) end$/;"	f	class:buffer
-get_default_fold_display_text	_HOME/core/.buffer.luadoc	/^function get_default_fold_display_text(buffer) end$/;"	f	class:buffer
+get_default_fold_display_text	_HOME/core/.view.luadoc	/^function get_default_fold_display_text(view) end$/;"	f	class:view
 get_last_child	_HOME/core/.buffer.luadoc	/^function get_last_child(buffer, line, level) end$/;"	f	class:buffer
 get_lexer	_HOME/core/.buffer.luadoc	/^function get_lexer(buffer, current) end$/;"	f	class:buffer
 get_line	_HOME/core/.buffer.luadoc	/^function get_line(buffer, line) end$/;"	f	class:buffer
@@ -648,13 +656,13 @@ goto_tag	_HOME/modules/ctags/init.lua	/^function M.goto_tag(tag)$/;"	f	class:cta
 goto_type_definition	_HOME/modules/lsp/init.lua	/^function M.goto_type_definition() return goto_definition('typeDefinition') end$/;"	f	class:lsp
 goto_view	_HOME/core/ui.lua	/^local goto_view$/;"	f	class:ui
 graph	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-h_scroll_bar	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+h_scroll_bar	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 handle_notification	_HOME/modules/lsp/init.lua	/^function Server:handle_notification(method, params)$/;"	f	class:Server
 handle_stdout	_HOME/modules/lsp/init.lua	/^function Server:handle_stdout(output)$/;"	f	class:Server
 height	_HOME/modules/textadept/command_entry.lua	/^module('ui.command_entry')]]$/;"	F	class:ui.command_entry
 hex_num	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-hide_lines	_HOME/core/.buffer.luadoc	/^function hide_lines(buffer, start_line, end_line) end$/;"	f	class:buffer
-highlight_guide	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+hide_lines	_HOME/core/.view.luadoc	/^function hide_lines(view, start_line, end_line) end$/;"	f	class:view
+highlight_guide	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 highlight_word	_HOME/modules/textadept/editing.lua	/^function M.highlight_word()$/;"	f	class:textadept.editing
 history	_HOME/modules/history/init.lua	/^module('history')]]$/;"	m	
 history	_HOME/modules/lua_repl/init.lua	/^M.history = {pos = 0}$/;"	t	class:lua_repl
@@ -670,19 +678,19 @@ html	_HOME/modules/html/init.lua	/^keys.html = {}$/;"	t	class:keys
 html	_HOME/modules/html/init.lua	/^module('_M.html')]]$/;"	m	class:_M
 html	_HOME/modules/html/init.lua	/^snippets.html = {$/;"	t	class:snippets
 iconv	_HOME/core/.iconv.luadoc	/^function iconv(text, new, old) end$/;"	f	class:string
-idle_styling	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+idle_styling	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 in_files	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 in_files_label_text	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 indent	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 indent_amount	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-indentation_guides	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-indic_alpha	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-indic_fore	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-indic_hover_fore	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-indic_hover_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-indic_outline_alpha	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-indic_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-indic_under	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+indentation_guides	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+indic_alpha	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+indic_fore	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+indic_hover_fore	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+indic_hover_style	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+indic_outline_alpha	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+indic_style	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+indic_under	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 indicator_all_on_for	_HOME/core/.buffer.luadoc	/^function indicator_all_on_for(buffer, pos) end$/;"	f	class:buffer
 indicator_clear_range	_HOME/core/.buffer.luadoc	/^function indicator_clear_range(buffer, pos, length) end$/;"	f	class:buffer
 indicator_current	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -731,17 +739,17 @@ line_indentation	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 line_length	_HOME/core/.buffer.luadoc	/^function line_length(buffer, line) end$/;"	f	class:buffer
 line_numbers	_HOME/modules/export/init.lua	/^module('export')]]$/;"	F	class:export
 line_reverse	_HOME/core/.buffer.luadoc	/^function line_reverse(buffer) end$/;"	f	class:buffer
-line_scroll	_HOME/core/.buffer.luadoc	/^function line_scroll(buffer, columns, lines) end$/;"	f	class:buffer
-line_scroll_down	_HOME/core/.buffer.luadoc	/^function line_scroll_down(buffer) end$/;"	f	class:buffer
-line_scroll_up	_HOME/core/.buffer.luadoc	/^function line_scroll_up(buffer) end$/;"	f	class:buffer
+line_scroll	_HOME/core/.view.luadoc	/^function line_scroll(view, columns, lines) end$/;"	f	class:view
+line_scroll_down	_HOME/core/.view.luadoc	/^function line_scroll_down(view) end$/;"	f	class:view
+line_scroll_up	_HOME/core/.view.luadoc	/^function line_scroll_up(view) end$/;"	f	class:view
 line_state	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 line_transpose	_HOME/core/.buffer.luadoc	/^function line_transpose(buffer) end$/;"	f	class:buffer
 line_up	_HOME/core/.buffer.luadoc	/^function line_up(buffer) end$/;"	f	class:buffer
 line_up_extend	_HOME/core/.buffer.luadoc	/^function line_up_extend(buffer) end$/;"	f	class:buffer
 line_up_rect_extend	_HOME/core/.buffer.luadoc	/^function line_up_rect_extend(buffer) end$/;"	f	class:buffer
-line_visible	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+line_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 lines_join	_HOME/core/.buffer.luadoc	/^function lines_join(buffer) end$/;"	f	class:buffer
-lines_on_screen	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+lines_on_screen	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 lines_split	_HOME/core/.buffer.luadoc	/^function lines_split(buffer, pixel_width) end$/;"	f	class:buffer
 load	_HOME/lexers/lexer.lua	/^function M.load(name, alt_name, cache)$/;"	f	class:lexer
 load	_HOME/modules/textadept/macros.lua	/^function M.load(filename)$/;"	f	class:textadept.macros
@@ -761,37 +769,39 @@ lua	_HOME/modules/lua/init.lua	/^snippets.lua = {$/;"	t	class:snippets
 lua_repl	_HOME/modules/lua_repl/init.lua	/^module('lua_repl')]]$/;"	m	
 macros	_HOME/modules/textadept/macros.lua	/^module('textadept.macros')]]$/;"	m	class:textadept
 main_selection	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-margin_back_n	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-margin_cursor_n	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-margin_left	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-margin_mask_n	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-margin_options	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-margin_right	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-margin_sensitive_n	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+margin_back_n	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+margin_cursor_n	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+margin_left	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+margin_mask_n	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+margin_options	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+margin_right	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+margin_sensitive_n	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 margin_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 margin_text	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 margin_text_clear_all	_HOME/core/.buffer.luadoc	/^function margin_text_clear_all(buffer) end$/;"	f	class:buffer
-margin_type_n	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-margin_width_n	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-margins	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+margin_type_n	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+margin_width_n	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+margins	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 marker_add	_HOME/core/.buffer.luadoc	/^function marker_add(buffer, line, marker) end$/;"	f	class:buffer
 marker_add_set	_HOME/core/.buffer.luadoc	/^function marker_add_set(buffer, line, marker_mask) end$/;"	f	class:buffer
-marker_alpha	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-marker_back	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-marker_back_selected	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-marker_define	_HOME/core/.buffer.luadoc	/^function marker_define(buffer, marker, symbol) end$/;"	f	class:buffer
-marker_define_pixmap	_HOME/core/.buffer.luadoc	/^function marker_define_pixmap(buffer, marker, pixmap) end$/;"	f	class:buffer
-marker_define_rgba_image	_HOME/core/.buffer.luadoc	/^function marker_define_rgba_image(buffer, marker, pixels) end$/;"	f	class:buffer
+marker_alpha	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+marker_back	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+marker_back_selected	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+marker_define	_HOME/core/.view.luadoc	/^function marker_define(view, marker, symbol) end$/;"	f	class:view
+marker_define_pixmap	_HOME/core/.view.luadoc	/^function marker_define_pixmap(view, marker, pixmap) end$/;"	f	class:view
+marker_define_rgba_image	_HOME/core/.view.luadoc	/^function marker_define_rgba_image(view, marker, pixels) end$/;"	f	class:view
 marker_delete	_HOME/core/.buffer.luadoc	/^function marker_delete(buffer, line, marker) end$/;"	f	class:buffer
 marker_delete_all	_HOME/core/.buffer.luadoc	/^function marker_delete_all(buffer, marker) end$/;"	f	class:buffer
 marker_delete_handle	_HOME/core/.buffer.luadoc	/^function marker_delete_handle(buffer, handle) end$/;"	f	class:buffer
-marker_enable_highlight	_HOME/core/.buffer.luadoc	/^function marker_enable_highlight(buffer, enabled) end$/;"	f	class:buffer
-marker_fore	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+marker_enable_highlight	_HOME/core/.view.luadoc	/^function marker_enable_highlight(view, enabled) end$/;"	f	class:view
+marker_fore	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 marker_get	_HOME/core/.buffer.luadoc	/^function marker_get(buffer, line) end$/;"	f	class:buffer
+marker_handle_from_line	_HOME/core/.buffer.luadoc	/^function marker_handle_from_line(buffer, line, n) end$/;"	f	class:buffer
 marker_line_from_handle	_HOME/core/.buffer.luadoc	/^function marker_line_from_handle(buffer, handle) end$/;"	f	class:buffer
 marker_next	_HOME/core/.buffer.luadoc	/^function marker_next(buffer, line, marker_mask) end$/;"	f	class:buffer
+marker_number_from_line	_HOME/core/.buffer.luadoc	/^function marker_number_from_line(buffer, line, n) end$/;"	f	class:buffer
 marker_previous	_HOME/core/.buffer.luadoc	/^function marker_previous(buffer, line, marker_mask) end$/;"	f	class:buffer
-marker_symbol_defined	_HOME/core/.buffer.luadoc	/^function marker_symbol_defined(buffer, marker) end$/;"	f	class:buffer
+marker_symbol_defined	_HOME/core/.view.luadoc	/^function marker_symbol_defined(view, marker) end$/;"	f	class:view
 match_case	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 match_case_label_text	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 maximized	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
@@ -805,21 +815,20 @@ minimum_line_distance	_HOME/modules/history/init.lua	/^module('history')]]$/;"	F
 mode	_HOME/core/keys.lua	/^module('keys')]]$/;"	F	class:keys
 modify	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 modify_rule	_HOME/lexers/lexer.lua	/^function M.modify_rule(lexer, id, rule)$/;"	f	class:lexer
-mouse_dwell_time	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-mouse_selection_rectangular_switch	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+mouse_dwell_time	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+mouse_selection_rectangular_switch	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 move_caret_inside_view	_HOME/core/.buffer.luadoc	/^function move_caret_inside_view(buffer) end$/;"	f	class:buffer
 move_extends_selection	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 move_selected_lines_down	_HOME/core/.buffer.luadoc	/^function move_selected_lines_down(buffer) end$/;"	f	class:buffer
 move_selected_lines_up	_HOME/core/.buffer.luadoc	/^function move_selected_lines_up(buffer) end$/;"	f	class:buffer
 msgbox	_HOME/core/.ui.dialogs.luadoc	/^function msgbox(options) end$/;"	f	class:ui.dialogs
-multi_edge_add_line	_HOME/core/.buffer.luadoc	/^function multi_edge_add_line(buffer, column, color) end$/;"	f	class:buffer
-multi_edge_clear_all	_HOME/core/.buffer.luadoc	/^function multi_edge_clear_all(buffer) end$/;"	f	class:buffer
+multi_edge_add_line	_HOME/core/.view.luadoc	/^function multi_edge_add_line(view, column, color) end$/;"	f	class:view
+multi_edge_clear_all	_HOME/core/.view.luadoc	/^function multi_edge_clear_all(view) end$/;"	f	class:view
 multi_paste	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 multiple_select_add_each	_HOME/core/.buffer.luadoc	/^function multiple_select_add_each(buffer) end$/;"	f	class:buffer
 multiple_select_add_next	_HOME/core/.buffer.luadoc	/^function multiple_select_add_next(buffer) end$/;"	f	class:buffer
 multiple_selection	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 name_of_style	_HOME/core/.buffer.luadoc	/^function name_of_style(buffer, style) end$/;"	f	class:buffer
-nested_pair	_HOME/lexers/lexer.lua	/^function M.nested_pair(start_chars, end_chars)$/;"	f	class:lexer
 new	_HOME/core/.buffer.luadoc	/^function new() end$/;"	f	class:buffer
 new	_HOME/lexers/lexer.lua	/^function M.new(name, opts)$/;"	f	class:lexer
 new	_HOME/modules/lsp/init.lua	/^function Server.new(lexer, cmd, init_options)$/;"	f	class:Server
@@ -833,6 +842,7 @@ nonnewline	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 nonnewline_esc	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 notify	_HOME/modules/lsp/init.lua	/^function Server:notify(method, params)$/;"	f	class:Server
 notify_opened	_HOME/modules/lsp/init.lua	/^function Server:notify_opened(buffer)$/;"	f	class:Server
+number	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 oct_num	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 ok_msgbox	_HOME/core/.ui.dialogs.luadoc	/^function ok_msgbox(options) end$/;"	f	class:ui.dialogs
 open_file	_HOME/core/file_io.lua	/^function io.open_file(filenames, encodings)$/;"	f	class:io
@@ -883,6 +893,7 @@ quick_open	_HOME/core/file_io.lua	/^function io.quick_open(paths, filter, opts)$
 quick_open_filters	_HOME/core/file_io.lua	/^io.quick_open_filters = {}$/;"	t	class:io
 quick_open_max	_HOME/core/file_io.lua	/^module('io')]]$/;"	F	class:io
 quit	_HOME/core/init.lua	/^local quit$/;"	f	
+range	_HOME/lexers/lexer.lua	/^function M.range(s, e, single_line, escapes, balanced)$/;"	f	class:lexer
 read	_HOME/core/.os.luadoc	/^function spawn_proc:read(arg) end$/;"	f	class:spawn_proc
 read	_HOME/modules/lsp/init.lua	/^function Server:read()$/;"	f	class:Server
 read_only	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -892,13 +903,13 @@ rectangular_selection_anchor	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	
 rectangular_selection_anchor_virtual_space	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 rectangular_selection_caret	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 rectangular_selection_caret_virtual_space	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-rectangular_selection_modifier	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+rectangular_selection_modifier	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 redo	_HOME/core/.buffer.luadoc	/^function redo(buffer) end$/;"	f	class:buffer
 regex	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 regex_label_text	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 register	_HOME/core/args.lua	/^function M.register(short, long, narg, f, description)$/;"	f	class:args
-register_image	_HOME/core/.buffer.luadoc	/^function register_image(buffer, type, xpm_data) end$/;"	f	class:buffer
-register_rgba_image	_HOME/core/.buffer.luadoc	/^function register_rgba_image(buffer, type, pixels) end$/;"	f	class:buffer
+register_image	_HOME/core/.view.luadoc	/^function register_image(view, type, xpm_data) end$/;"	f	class:view
+register_rgba_image	_HOME/core/.view.luadoc	/^function register_rgba_image(view, type, pixels) end$/;"	f	class:view
 reload	_HOME/core/.buffer.luadoc	/^function reload(buffer) end$/;"	f	class:buffer
 remove_breakpoint	_HOME/modules/debugger/init.lua	/^function M.remove_breakpoint(file, line)$/;"	f	class:debugger
 remove_watch	_HOME/modules/debugger/init.lua	/^function M.remove_watch(id)$/;"	f	class:debugger
@@ -911,7 +922,7 @@ replace_label_text	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	
 replace_sel	_HOME/core/.buffer.luadoc	/^function replace_sel(buffer, text) end$/;"	f	class:buffer
 replace_target	_HOME/core/.buffer.luadoc	/^function replace_target(buffer, text) end$/;"	f	class:buffer
 replace_target_re	_HOME/core/.buffer.luadoc	/^function replace_target_re(buffer, text) end$/;"	f	class:buffer
-representation	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+representation	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 request	_HOME/modules/lsp/init.lua	/^function Server:request(method, params)$/;"	f	class:Server
 reset	_HOME/core/init.lua	/^local reset$/;"	f	
 respond	_HOME/modules/lsp/init.lua	/^function Server:respond(id, result)$/;"	f	class:Server
@@ -919,9 +930,9 @@ rest	_HOME/modules/rest/init.lua	/^keys.rest = {$/;"	t	class:keys
 rest	_HOME/modules/rest/init.lua	/^module('_M.rest')]]$/;"	m	class:_M
 rest	_HOME/modules/rest/init.lua	/^snippets.rest = {$/;"	t	class:snippets
 restart	_HOME/modules/debugger/init.lua	/^function M.restart(...)$/;"	f	class:debugger
-rgba_image_height	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-rgba_image_scale	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-rgba_image_width	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+rgba_image_height	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+rgba_image_scale	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+rgba_image_width	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 rotate_selection	_HOME/core/.buffer.luadoc	/^function rotate_selection(buffer) end$/;"	f	class:buffer
 ruby	_HOME/modules/ruby/init.lua	/^keys.ruby = {$/;"	t	class:keys
 ruby	_HOME/modules/ruby/init.lua	/^module('_M.ruby')]]$/;"	m	class:_M
@@ -937,12 +948,12 @@ save	_HOME/modules/textadept/session.lua	/^function M.save(filename)$/;"	f	class
 save_all_files	_HOME/core/file_io.lua	/^function io.save_all_files()$/;"	f	class:io
 save_as	_HOME/core/.buffer.luadoc	/^function save_as(buffer, filename) end$/;"	f	class:buffer
 save_on_quit	_HOME/modules/textadept/session.lua	/^module('textadept.session')]]$/;"	F	class:textadept.session
-scroll_caret	_HOME/core/.buffer.luadoc	/^function scroll_caret(buffer) end$/;"	f	class:buffer
-scroll_range	_HOME/core/.buffer.luadoc	/^function scroll_range(buffer, secondary_pos, primary_pos) end$/;"	f	class:buffer
-scroll_to_end	_HOME/core/.buffer.luadoc	/^function scroll_to_end(buffer) end$/;"	f	class:buffer
-scroll_to_start	_HOME/core/.buffer.luadoc	/^function scroll_to_start(buffer) end$/;"	f	class:buffer
-scroll_width	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-scroll_width_tracking	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+scroll_caret	_HOME/core/.view.luadoc	/^function scroll_caret(view) end$/;"	f	class:view
+scroll_range	_HOME/core/.view.luadoc	/^function scroll_range(view, secondary_pos, primary_pos) end$/;"	f	class:view
+scroll_to_end	_HOME/core/.view.luadoc	/^function scroll_to_end(view) end$/;"	f	class:view
+scroll_to_start	_HOME/core/.view.luadoc	/^function scroll_to_start(view) end$/;"	f	class:view
+scroll_width	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+scroll_width_tracking	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 search_anchor	_HOME/core/.buffer.luadoc	/^function search_anchor(buffer) end$/;"	f	class:buffer
 search_flags	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 search_in_target	_HOME/core/.buffer.luadoc	/^function search_in_target(buffer, text) end$/;"	f	class:buffer
@@ -950,8 +961,8 @@ search_next	_HOME/core/.buffer.luadoc	/^function search_next(buffer, flags, text
 search_prev	_HOME/core/.buffer.luadoc	/^function search_prev(buffer, flags, text) end$/;"	f	class:buffer
 secure_inputbox	_HOME/core/.ui.dialogs.luadoc	/^function secure_inputbox(options) end$/;"	f	class:ui.dialogs
 secure_standard_inputbox	_HOME/core/.ui.dialogs.luadoc	/^function secure_standard_inputbox(options) end$/;"	f	class:ui.dialogs
-sel_alpha	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-sel_eol_filled	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+sel_alpha	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+sel_eol_filled	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 select	_HOME/modules/textadept/snippets.lua	/^function M.select()$/;"	f	class:textadept.snippets
 select_all	_HOME/core/.buffer.luadoc	/^function select_all(buffer) end$/;"	f	class:buffer
 select_command	_HOME/modules/textadept/menu.lua	/^function M.select_command()$/;"	f	class:textadept.menu
@@ -978,31 +989,31 @@ selections	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 server_commands	_HOME/modules/lsp/init.lua	/^M.server_commands = {}$/;"	t	class:lsp
 session	_HOME/modules/textadept/session.lua	/^module('textadept.session')]]$/;"	m	class:textadept
 set_chars_default	_HOME/core/.buffer.luadoc	/^function set_chars_default(buffer) end$/;"	f	class:buffer
-set_default_fold_display_text	_HOME/core/.buffer.luadoc	/^function set_default_fold_display_text(buffer, text) end$/;"	f	class:buffer
+set_default_fold_display_text	_HOME/core/.view.luadoc	/^function set_default_fold_display_text(view, text) end$/;"	f	class:view
 set_empty_selection	_HOME/core/.buffer.luadoc	/^function set_empty_selection(buffer, pos) end$/;"	f	class:buffer
 set_encoding	_HOME/core/.buffer.luadoc	/^function set_encoding(buffer, encoding) end$/;"	f	class:buffer
-set_fold_margin_colour	_HOME/core/.buffer.luadoc	/^function set_fold_margin_colour(buffer, use_setting, color) end$/;"	f	class:buffer
-set_fold_margin_hi_colour	_HOME/core/.buffer.luadoc	/^function set_fold_margin_hi_colour(buffer, use_setting, color) end$/;"	f	class:buffer
+set_fold_margin_colour	_HOME/core/.view.luadoc	/^function set_fold_margin_colour(view, use_setting, color) end$/;"	f	class:view
+set_fold_margin_hi_colour	_HOME/core/.view.luadoc	/^function set_fold_margin_hi_colour(view, use_setting, color) end$/;"	f	class:view
 set_frame	_HOME/modules/debugger/init.lua	/^function M.set_frame()$/;"	f	class:debugger
 set_lexer	_HOME/core/.buffer.luadoc	/^function set_lexer(buffer, lexer) end$/;"	f	class:buffer
 set_save_point	_HOME/core/.buffer.luadoc	/^function set_save_point(buffer) end$/;"	f	class:buffer
 set_sel	_HOME/core/.buffer.luadoc	/^function set_sel(buffer, start_pos, end_pos) end$/;"	f	class:buffer
-set_sel_back	_HOME/core/.buffer.luadoc	/^function set_sel_back(buffer, use_setting, color) end$/;"	f	class:buffer
-set_sel_fore	_HOME/core/.buffer.luadoc	/^function set_sel_fore(buffer, use_setting, color) end$/;"	f	class:buffer
+set_sel_back	_HOME/core/.view.luadoc	/^function set_sel_back(view, use_setting, color) end$/;"	f	class:view
+set_sel_fore	_HOME/core/.view.luadoc	/^function set_sel_fore(view, use_setting, color) end$/;"	f	class:view
 set_selection	_HOME/core/.buffer.luadoc	/^function set_selection(buffer, end_pos, start_pos) end$/;"	f	class:buffer
 set_styling	_HOME/core/.buffer.luadoc	/^function set_styling(buffer, length, style) end$/;"	f	class:buffer
 set_target_range	_HOME/core/.buffer.luadoc	/^function set_target_range(buffer, start_pos, end_pos) end$/;"	f	class:buffer
 set_text	_HOME/core/.buffer.luadoc	/^function set_text(buffer, text) end$/;"	f	class:buffer
 set_theme	_HOME/core/.buffer.luadoc	/^function set_theme(buffer, name, props) end$/;"	f	class:buffer
-set_visible_policy	_HOME/core/.buffer.luadoc	/^function set_visible_policy(buffer, policy, y) end$/;"	f	class:buffer
+set_visible_policy	_HOME/core/.view.luadoc	/^function set_visible_policy(view, policy, y) end$/;"	f	class:view
 set_watch	_HOME/modules/debugger/init.lua	/^function M.set_watch(expr)$/;"	f	class:debugger
-set_whitespace_back	_HOME/core/.buffer.luadoc	/^function set_whitespace_back(buffer, use_setting, color) end$/;"	f	class:buffer
-set_whitespace_fore	_HOME/core/.buffer.luadoc	/^function set_whitespace_fore(buffer, use_setting, color) end$/;"	f	class:buffer
-set_x_caret_policy	_HOME/core/.buffer.luadoc	/^function set_x_caret_policy(buffer, policy, x) end$/;"	f	class:buffer
-set_y_caret_policy	_HOME/core/.buffer.luadoc	/^function set_y_caret_policy(buffer, policy, y) end$/;"	f	class:buffer
+set_whitespace_back	_HOME/core/.view.luadoc	/^function set_whitespace_back(view, use_setting, color) end$/;"	f	class:view
+set_whitespace_fore	_HOME/core/.view.luadoc	/^function set_whitespace_fore(view, use_setting, color) end$/;"	f	class:view
+set_x_caret_policy	_HOME/core/.view.luadoc	/^function set_x_caret_policy(view, policy, x) end$/;"	f	class:view
+set_y_caret_policy	_HOME/core/.view.luadoc	/^function set_y_caret_policy(view, policy, y) end$/;"	f	class:view
 show_all_diagnostics	_HOME/modules/lsp/init.lua	/^module('lsp')]]$/;"	F	class:lsp
 show_documentation	_HOME/modules/textadept/editing.lua	/^function M.show_documentation(pos, case_insensitive)$/;"	f	class:textadept.editing
-show_lines	_HOME/core/.buffer.luadoc	/^function show_lines(buffer, start_line, end_line) end$/;"	f	class:buffer
+show_lines	_HOME/core/.view.luadoc	/^function show_lines(view, start_line, end_line) end$/;"	f	class:view
 signature_help	_HOME/modules/lsp/init.lua	/^function M.signature_help()$/;"	f	class:lsp
 silent_print	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 size	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
@@ -1041,19 +1052,19 @@ stuttered_page_up	_HOME/core/.buffer.luadoc	/^function stuttered_page_up(buffer)
 stuttered_page_up_extend	_HOME/core/.buffer.luadoc	/^function stuttered_page_up_extend(buffer) end$/;"	f	class:buffer
 style_at	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 style_at	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-style_back	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_bold	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_case	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_changeable	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_clear_all	_HOME/core/.buffer.luadoc	/^function style_clear_all(buffer) end$/;"	f	class:buffer
-style_eol_filled	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_font	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_fore	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_italic	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_reset_default	_HOME/core/.buffer.luadoc	/^function style_reset_default(buffer) end$/;"	f	class:buffer
-style_size	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_underline	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-style_visible	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+style_back	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_bold	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_case	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_changeable	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_clear_all	_HOME/core/.view.luadoc	/^function style_clear_all(view) end$/;"	f	class:view
+style_eol_filled	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_font	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_fore	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_italic	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_reset_default	_HOME/core/.view.luadoc	/^function style_reset_default(view) end$/;"	f	class:view
+style_size	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_underline	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+style_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 suggest	_HOME/modules/spellcheck/init.lua	/^function spellchecker:suggest(word) end$/;"	f	class:spellchecker
 swap_main_anchor_caret	_HOME/core/.buffer.luadoc	/^function swap_main_anchor_caret(buffer) end$/;"	f	class:buffer
 switch_buffer	_HOME/core/ui.lua	/^function ui.switch_buffer(zorder)$/;"	f	class:ui
@@ -1061,7 +1072,7 @@ sync_buffer	_HOME/modules/lsp/init.lua	/^function Server:sync_buffer()$/;"	f	cla
 tab	_HOME/core/.buffer.luadoc	/^function tab(buffer) end$/;"	f	class:buffer
 tab_context_menu	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 tab_context_menu	_HOME/modules/textadept/menu.lua	/^local default_tab_context_menu = {$/;"	t	class:textadept.menu
-tab_draw_mode	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+tab_draw_mode	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 tab_indents	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 tab_label	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 tab_width	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -1078,10 +1089,10 @@ target_start	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 target_start_virtual_space	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 target_text	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 target_whole_document	_HOME/core/.buffer.luadoc	/^function target_whole_document(buffer) end$/;"	f	class:buffer
-text_height	_HOME/core/.buffer.luadoc	/^function text_height(buffer, line) end$/;"	f	class:buffer
+text_height	_HOME/core/.view.luadoc	/^function text_height(view, line) end$/;"	f	class:view
 text_length	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 text_range	_HOME/core/.buffer.luadoc	/^function text_range(buffer, start_pos, end_pos) end$/;"	f	class:buffer
-text_width	_HOME/core/.buffer.luadoc	/^function text_width(buffer, style_num, text) end$/;"	f	class:buffer
+text_width	_HOME/core/.view.luadoc	/^function text_width(view, style_num, text) end$/;"	f	class:view
 textadept	_HOME/modules/textadept/init.lua	/^module('textadept')]]$/;"	m	
 textadept.bookmarks	_HOME/modules/textadept/bookmarks.lua	/^module('textadept.bookmarks')]]$/;"	m	
 textadept.editing	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	m	
@@ -1096,13 +1107,14 @@ textbox	_HOME/core/.ui.dialogs.luadoc	/^function textbox(options) end$/;"	f	clas
 theme	_HOME/modules/file_diff/init.lua	/^module('file_diff')]]$/;"	F	class:file_diff
 timeout	_HOME/core/init.lua	/^local timeout$/;"	f	
 title	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
+to_eol	_HOME/lexers/lexer.lua	/^function M.to_eol(prefix, escape)$/;"	f	class:lexer
 to_html	_HOME/modules/export/init.lua	/^function M.to_html(filename, out_filename)$/;"	f	class:export
 toggle	_HOME/modules/textadept/bookmarks.lua	/^function M.toggle()$/;"	f	class:textadept.bookmarks
 toggle_block	_HOME/modules/ruby/init.lua	/^function M.toggle_block()$/;"	f	class:_M.ruby
 toggle_breakpoint	_HOME/modules/debugger/init.lua	/^function M.toggle_breakpoint(file, line)$/;"	f	class:debugger
 toggle_caret_sticky	_HOME/core/.buffer.luadoc	/^function toggle_caret_sticky(buffer) end$/;"	f	class:buffer
-toggle_fold	_HOME/core/.buffer.luadoc	/^function toggle_fold(buffer, line) end$/;"	f	class:buffer
-toggle_fold_show_text	_HOME/core/.buffer.luadoc	/^function toggle_fold_show_text(buffer, line, text) end$/;"	f	class:buffer
+toggle_fold	_HOME/core/.view.luadoc	/^function toggle_fold(view, line) end$/;"	f	class:view
+toggle_fold_show_text	_HOME/core/.view.luadoc	/^function toggle_fold_show_text(view, line, text) end$/;"	f	class:view
 token	_HOME/lexers/lexer.lua	/^function M.token(name, patt)$/;"	f	class:lexer
 transpose_chars	_HOME/modules/textadept/editing.lua	/^function M.transpose_chars()$/;"	f	class:textadept.editing
 try_to_autocomplete_end	_HOME/modules/ruby/init.lua	/^function M.try_to_autocomplete_end()$/;"	f	class:_M.ruby
@@ -1119,7 +1131,7 @@ upper	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 upper_case	_HOME/core/.buffer.luadoc	/^function upper_case(buffer) end$/;"	f	class:buffer
 use_tabs	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 user_list_show	_HOME/core/.buffer.luadoc	/^function user_list_show(buffer, id, items) end$/;"	f	class:buffer
-v_scroll_bar	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+v_scroll_bar	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 variables	_HOME/modules/debugger/init.lua	/^function M.variables()$/;"	f	class:debugger
 vc_home	_HOME/core/.buffer.luadoc	/^function vc_home(buffer) end$/;"	f	class:buffer
 vc_home_display	_HOME/core/.buffer.luadoc	/^function vc_home_display(buffer) end$/;"	f	class:buffer
@@ -1128,16 +1140,16 @@ vc_home_extend	_HOME/core/.buffer.luadoc	/^function vc_home_extend(buffer) end$/
 vc_home_rect_extend	_HOME/core/.buffer.luadoc	/^function vc_home_rect_extend(buffer) end$/;"	f	class:buffer
 vc_home_wrap	_HOME/core/.buffer.luadoc	/^function vc_home_wrap(buffer) end$/;"	f	class:buffer
 vc_home_wrap_extend	_HOME/core/.buffer.luadoc	/^function vc_home_wrap_extend(buffer) end$/;"	f	class:buffer
-vertical_centre_caret	_HOME/core/.buffer.luadoc	/^function vertical_centre_caret(buffer) end$/;"	f	class:buffer
+vertical_centre_caret	_HOME/core/.view.luadoc	/^function vertical_centre_caret(view) end$/;"	f	class:view
 view	_HOME/core/.view.luadoc	/^module('view')$/;"	m	
 view	_HOME/core/init.lua	/^local view$/;"	t	
-view_eol	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-view_ws	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+view_eol	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+view_ws	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 virtual_space_options	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-visible_from_doc_line	_HOME/core/.buffer.luadoc	/^function visible_from_doc_line(buffer, line) end$/;"	f	class:buffer
+visible_from_doc_line	_HOME/core/.view.luadoc	/^function visible_from_doc_line(view, line) end$/;"	f	class:view
 wait	_HOME/core/.os.luadoc	/^function spawn_proc:wait() end$/;"	f	class:spawn_proc
 whitespace_chars	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-whitespace_size	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+whitespace_size	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 whole_word	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 whole_word_label_text	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 word	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
@@ -1157,19 +1169,19 @@ word_right_end	_HOME/core/.buffer.luadoc	/^function word_right_end(buffer) end$/
 word_right_end_extend	_HOME/core/.buffer.luadoc	/^function word_right_end_extend(buffer) end$/;"	f	class:buffer
 word_right_extend	_HOME/core/.buffer.luadoc	/^function word_right_extend(buffer) end$/;"	f	class:buffer
 word_start_position	_HOME/core/.buffer.luadoc	/^function word_start_position(buffer, pos, only_word_chars) end$/;"	f	class:buffer
-wrap_count	_HOME/core/.buffer.luadoc	/^function wrap_count(buffer, line) end$/;"	f	class:buffer
-wrap_indent_mode	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-wrap_mode	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-wrap_start_indent	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-wrap_visual_flags	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-wrap_visual_flags_location	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+wrap_count	_HOME/core/.view.luadoc	/^function wrap_count(view, line) end$/;"	f	class:view
+wrap_indent_mode	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+wrap_mode	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+wrap_start_indent	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+wrap_visual_flags	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+wrap_visual_flags_location	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 write	_HOME/core/.os.luadoc	/^function spawn_proc:write(...) end$/;"	f	class:spawn_proc
-x_offset	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+x_offset	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 xdigit	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 yaml	_HOME/modules/yaml/init.lua	/^keys.yaml = {$/;"	t	class:keys
 yaml	_HOME/modules/yaml/init.lua	/^module('_M.yaml')]]$/;"	m	class:_M
 yaml	_HOME/modules/yaml/init.lua	/^snippets.yaml = {}$/;"	t	class:snippets
 yesno_msgbox	_HOME/core/.ui.dialogs.luadoc	/^function yesno_msgbox(options) end$/;"	f	class:ui.dialogs
-zoom	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
-zoom_in	_HOME/core/.buffer.luadoc	/^function zoom_in(buffer) end$/;"	f	class:buffer
-zoom_out	_HOME/core/.buffer.luadoc	/^function zoom_out(buffer) end$/;"	f	class:buffer
+zoom	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+zoom_in	_HOME/core/.view.luadoc	/^function zoom_in(view) end$/;"	f	class:view
+zoom_out	_HOME/core/.view.luadoc	/^function zoom_out(view) end$/;"	f	class:view

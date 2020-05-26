@@ -167,7 +167,7 @@ end
 local function reload(buffer)
   if not buffer then buffer = _G.buffer end
   if not buffer.filename then return end
-  local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
+  local pos, first_visible_line = buffer.current_pos, view.first_visible_line
   local f = assert(io.open(buffer.filename, 'rb'))
   local text = f:read('a')
   f:close()
@@ -177,14 +177,14 @@ local function reload(buffer)
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
   if buffer == _G.buffer then
     buffer:goto_pos(pos)
-    buffer.first_visible_line = first_visible_line
+    view.first_visible_line = first_visible_line
   end
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_encoding(buffer, encoding)
   assert_type(encoding, 'string/nil', 1)
-  local pos, first_visible_line = buffer.current_pos, buffer.first_visible_line
+  local pos, first_visible_line = buffer.current_pos, view.first_visible_line
   local text = buffer:get_text()
   if buffer.encoding then
     text = text:iconv(buffer.encoding, 'UTF-8')
@@ -193,7 +193,7 @@ local function set_encoding(buffer, encoding)
   if encoding then text = text:iconv('UTF-8', encoding) end
   buffer:set_text(text)
   buffer:goto_pos(pos)
-  buffer.first_visible_line = first_visible_line
+  view.first_visible_line = first_visible_line
   buffer.encoding = encoding
   buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
 end

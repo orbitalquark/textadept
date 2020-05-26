@@ -653,8 +653,8 @@ events.connect(events.UPDATE_UI, function(updated)
 end)
 
 events.connect(events.VIEW_NEW, function()
-  buffer.indic_style[INDIC_SNIPPET] = buffer.INDIC_HIDDEN
-  buffer.indic_style[INDIC_CURRENTPLACEHOLDER] = buffer.INDIC_HIDDEN
+  view.indic_style[INDIC_SNIPPET] = view.INDIC_HIDDEN
+  view.indic_style[INDIC_CURRENTPLACEHOLDER] = view.INDIC_HIDDEN
 end)
 
 -- Returns for the word behind the caret a list of snippet trigger word

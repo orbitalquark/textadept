@@ -190,8 +190,8 @@ local function check_localizations(filename, L)
   print(string.format('Processing file "%s"', filename:gsub(_HOME, '')))
   local count = 0
   for line in io.lines(filename) do
-    local id = line:match([=[_L%[['"]([^'"]+)['"]%]]=])
-    if id and assert(L[id], 'locale missing id "%s"', id) then
+    for id in line:gmatch([=[_L%[['"]([^'"]+)['"]%]]=]) do
+      assert(L[id], 'locale missing id "%s"', id)
       count = count + 1
     end
   end
@@ -208,8 +208,8 @@ local function load_extra_localizations(filename, L)
   local count = 0
   for line in io.lines(filename) do
     if line:find('_L%b[]%s*=') then
-      local id = line:match([=[_L%[['"]([^'"]+)['"]%]%s*=]=])
-      if id and assert(not L[id], 'duplicate locale id "%s"', id) then
+      for id in line:gmatch([=[_L%[['"]([^'"]+)['"]%]%s*=]=]) do
+        assert(not L[id], 'duplicate locale id "%s"', id)
         L[id], count = true, count + 1
       end
     end
@@ -1020,17 +1020,17 @@ function test_ui_buffer_switch_save_restore_properties()
   local filename = _HOME .. '/test/ui/test.lua'
   io.open_file(filename)
   buffer:goto_pos(10)
-  buffer:fold_line(
-    buffer:line_from_position(buffer.current_pos), buffer.FOLDACTION_CONTRACT)
-  buffer.view_eol = true
-  buffer.margin_width_n[INDEX(1)] = 0 -- hide line numbers
+  view:fold_line(
+    buffer:line_from_position(buffer.current_pos), view.FOLDACTION_CONTRACT)
+  view.view_eol = true
+  view.margin_width_n[INDEX(1)] = 0 -- hide line numbers
   view:goto_buffer(-1)
-  assert(buffer.margin_width_n[INDEX(1)] > 0, 'line numbers are still hidden')
+  assert(view.margin_width_n[INDEX(1)] > 0, 'line numbers are still hidden')
   view:goto_buffer(1)
   assert_equal(buffer.current_pos, 10)
-  assert_equal(buffer.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
-  assert_equal(buffer.view_eol, true)
-  assert_equal(buffer.margin_width_n[INDEX(1)], 0)
+  assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
+  assert_equal(view.view_eol, true)
+  assert_equal(view.margin_width_n[INDEX(1)], 0)
   buffer:close()
 end
 
@@ -1146,7 +1146,7 @@ function test_command_entry_run_lua_abbreviated_env()
   run_lua_command('auto_c_active')
   assert(buffer:get_text():find('false%s*$'), 'buffer:auto_c_active() result not false')
   run_lua_command('view_eol=true')
-  assert_equal(buffer.view_eol, true)
+  assert_equal(view.view_eol, true)
   -- view get/set.
   if #_VIEWS > 1 then view:unsplit() end
   run_lua_command('split')
@@ -2278,15 +2278,15 @@ function test_menu_menu_functions()
   local use_tabs = buffer.use_tabs
   textadept.menu.menubar[_L['Buffer']][_L['Indentation']][_L['Toggle Use Tabs']][2]()
   assert(buffer.use_tabs ~= use_tabs, 'use tabs not toggled')
-  local view_eol = buffer.view_eol
+  local view_eol = view.view_eol
   textadept.menu.menubar[_L['Buffer']][_L['Toggle View EOL']][2]()
-  assert(buffer.view_eol ~= view_eol, 'view EOL not toggled')
-  local wrap_mode = buffer.wrap_mode
+  assert(view.view_eol ~= view_eol, 'view EOL not toggled')
+  local wrap_mode = view.wrap_mode
   textadept.menu.menubar[_L['Buffer']][_L['Toggle Wrap Mode']][2]()
-  assert(buffer.wrap_mode ~= wrap_mode, 'wrap mode not toggled')
-  local view_whitespace = buffer.view_ws
+  assert(view.wrap_mode ~= wrap_mode, 'wrap mode not toggled')
+  local view_whitespace = view.view_ws
   textadept.menu.menubar[_L['Buffer']][_L['Toggle View Whitespace']][2]()
-  assert(buffer.view_ws ~= view_whitespace, 'view whitespace not toggled')
+  assert(view.view_ws ~= view_whitespace, 'view whitespace not toggled')
   view:split()
   ui.update()
   local size = view.size
@@ -2298,10 +2298,10 @@ function test_menu_menu_functions()
   buffer:set_text('if foo then\n  bar\nend')
   buffer:colourise(POS(1), -1)
   textadept.menu.menubar[_L['View']][_L['Toggle Current Fold']][2]()
-  assert_equal(buffer.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
-  local indentation_guides = buffer.indentation_guides
+  assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
+  local indentation_guides = view.indentation_guides
   textadept.menu.menubar[_L['View']][_L['Toggle Show Indent Guides']][2]()
-  assert(buffer.indentation_guides ~= indentation_guides, 'indentation guides not toggled')
+  assert(view.indentation_guides ~= indentation_guides, 'indentation guides not toggled')
   local virtual_space = buffer.virtual_space_options
   textadept.menu.menubar[_L['View']][_L['Toggle Virtual Space']][2]()
   assert(buffer.virtual_space_options ~= virtual_space, 'virtual space not toggled')
@@ -2947,14 +2947,64 @@ function test_view_split_resize_unsplit()
 end
 
 function test_buffer_read_write_only_properties()
-  assert_raises(function() buffer.all_lines_visible = false end, 'read-only property')
+  assert_raises(function() view.all_lines_visible = false end, 'read-only property')
   assert_raises(function() return buffer.auto_c_fill_ups end, 'write-only property')
   assert_raises(function() buffer.annotation_text = {} end, 'read-only property')
   assert_raises(function() buffer.char_at[POS(1)] = string.byte(' ') end, 'read-only property')
-  assert_raises(function() return buffer.marker_alpha[INDEX(1)] end, 'write-only property')
+  assert_raises(function() return view.marker_alpha[INDEX(1)] end, 'write-only property')
 end
 
 -- TODO: test init.lua's buffer settings
+
+-- Load buffer and view API from their respective LuaDoc files.
+local function load_buffer_view_props()
+  local buffer_props, view_props = {}, {}
+  for name, props in pairs{buffer = buffer_props, view = view_props} do
+    for line in io.lines(string.format('%s/core/.%s.luadoc', _HOME, name)) do
+      if line:find('@field') then
+        props[line:match('@field ([%w_]+)')] = true
+      elseif line:find('^function') then
+        props[line:match('^function ([%w_]+)')] = true
+      end
+    end
+  end
+  return buffer_props, view_props
+end
+
+local function check_property_usage(filename, buffer_props, view_props)
+  print(string.format('Processing file "%s"', filename:gsub(_HOME, '')))
+  local line_num, count = 1, 0
+  for line in io.lines(filename) do
+    for pos, id, prop in line:gmatch('()([%w_]+)[.:]([%w_]+)') do
+      if id == 'M' or id == 'f' or id == 'p' or id == 'lexer' or id == 'spawn_proc' then goto continue end
+      if id == 'textadept' and prop == 'MARK_BOOKMARK' then goto continue end
+      if (id == 'ui' or id == 'split') and prop == 'size' then goto continue end
+      if id == 'keys' and prop == 'home' then goto continue end
+      if id == 'Rout' and prop == 'save' then goto continue end
+      if id == 'detail' and (prop == 'filename' or prop == 'column') then goto continue end
+      if (id == 'placeholder' or id == 'ph') and prop == 'length' then goto continue end
+      if id == 'client' and prop == 'close' then goto continue end
+      if (id == 'Foo' or id == 'Array' or id == 'Server') and prop == 'new' then goto continue end
+      if buffer_props[prop] then
+        assert(id == 'buffer' or id == 'buf' or id == 'buffer1' or id == 'buffer2', 'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)
+        count = count + 1
+      elseif view_props[prop] then
+        assert(id == 'view', 'line %d:%d: "%s" should be a view property', line_num, pos, prop)
+        count = count + 1
+      end
+      ::continue::
+    end
+    line_num = line_num + 1
+  end
+  print(string.format('Checked %d buffer/view property usages.', count))
+end
+
+function test_buffer_view_usage()
+  local buffer_props, view_props = load_buffer_view_props()
+  lfs.dir_foreach(_HOME, function(filename)
+    check_property_usage(filename, buffer_props, view_props)
+  end, {'.lua', '.luadoc', '!/lexers', '!/modules/lsp/dkjson.lua', '!/modules/lua/lua.luadoc', '!/modules/debugger/lua/mobdebug.lua', '!/modules/yaml/lyaml.lua', '!/scripts', '!/src'})
+end
 
 --------------------------------------------------------------------------------
 

@@ -55,43 +55,45 @@ if not arg then view:goto_buffer(buffer) end
 
 local settings = {}
 
-local buffer_mt = getmetatable(buffer)
-local orig__index, orig__newindex = buffer_mt.__index, buffer_mt.__newindex
+local buffer_mt, view_mt = getmetatable(buffer), getmetatable(view)
 local function repr(v)
   return string.format(type(v) == 'string' and '%q' or '%s', v)
 end
-buffer_mt.__index = function(buffer, k)
-  local v = orig__index(buffer, k)
-  if type(v) == 'function' then
-    return function(...)
-      local args = {...}
-      if type(args[1]) == 'table' then table.remove(args, 1) end -- ignore self
-      for i = 1, #args do args[i] = repr(args[i]) end
-      settings[#settings + 1] = string.format(
-        'buffer:%s(%s)', k, table.concat(args, ','))
-      return v(...)
-    end
-  elseif type(v) == 'table' then
-    local property_mt = getmetatable(v)
-    setmetatable(v, {
-      __index = property_mt.__index,
-      __newindex = function(property, k2, v2)
+for _, mt in ipairs{buffer_mt, view_mt} do
+  mt.__orig_index, mt.__orig_newindex = mt.__index, mt.__newindex
+  mt.__index = function(t, k)
+    local v = mt.__orig_index(t, k)
+    if type(v) == 'function' then
+      return function(...)
+        local args = {...}
+        if type(args[1]) == 'table' then table.remove(args, 1) end -- self
+        for i = 1, #args do args[i] = repr(args[i]) end
         settings[#settings + 1] = string.format(
-          'buffer.%s[%s]=%s', k, repr(k2), repr(v2))
-        property_mt.__newindex(property, k2, v2)
+          'buffer:%s(%s)', k, table.concat(args, ','))
+        return v(...)
       end
-    })
+    elseif type(v) == 'table' then
+      local property_mt = getmetatable(v)
+      setmetatable(v, {
+        __index = property_mt.__index,
+        __newindex = function(property, k2, v2)
+          settings[#settings + 1] = string.format(
+            'buffer.%s[%s]=%s', k, repr(k2), repr(v2))
+          property_mt.__newindex(property, k2, v2)
+        end
+      })
+    end
+    return v
   end
-  return v
-end
-buffer_mt.__newindex = function(buffer, k, v)
-  settings[#settings + 1] = string.format('buffer[%s]=%s', repr(k), repr(v))
-  orig__newindex(buffer, k, v)
+  mt.__newindex = function(t, k, v)
+    settings[#settings + 1] = string.format('buffer[%s]=%s', repr(k), repr(v))
+    mt.__orig_newindex(t, k, v)
+  end
 end
 
--- Default buffer settings.
+-- Default buffer and view settings.
 
-local buffer = buffer
+local buffer, view = buffer, view
 buffer:set_theme(not CURSES and 'light' or 'term')
 
 -- Multiple Selection and Virtual Space
@@ -100,74 +102,74 @@ buffer.additional_selection_typing = true
 buffer.multi_paste = buffer.MULTIPASTE_EACH
 --buffer.virtual_space_options = buffer.VS_RECTANGULARSELECTION |
 --  buffer.VS_USERACCESSIBLE
-buffer.rectangular_selection_modifier = buffer.MOD_ALT
-buffer.mouse_selection_rectangular_switch = true
---buffer.additional_carets_blink = false
---buffer.additional_carets_visible = false
+view.rectangular_selection_modifier = view.MOD_ALT
+view.mouse_selection_rectangular_switch = true
+--view.additional_carets_blink = false
+--view.additional_carets_visible = false
 
 -- Scrolling.
-buffer:set_x_caret_policy(buffer.CARET_SLOP, 20)
-buffer:set_y_caret_policy(
-  buffer.CARET_SLOP | buffer.CARET_STRICT | buffer.CARET_EVEN, 1)
-buffer:set_visible_policy(buffer.VISIBLE_SLOP | buffer.VISIBLE_STRICT, 5)
---buffer.h_scroll_bar = CURSES
---buffer.v_scroll_bar = false
-if CURSES and not (WIN32 or LINUX or BSD) then buffer.v_scroll_bar = false end
---buffer.scroll_width =
---buffer.scroll_width_tracking = true
---buffer.end_at_last_line = false
+view:set_x_caret_policy(view.CARET_SLOP, 20)
+view:set_y_caret_policy(
+  view.CARET_SLOP | view.CARET_STRICT | view.CARET_EVEN, 1)
+view:set_visible_policy(view.VISIBLE_SLOP | view.VISIBLE_STRICT, 5)
+--view.h_scroll_bar = CURSES
+--view.v_scroll_bar = false
+if CURSES and not (WIN32 or LINUX or BSD) then view.v_scroll_bar = false end
+--view.scroll_width =
+--view.scroll_width_tracking = true
+--view.end_at_last_line = false
 
 -- Whitespace
-buffer.view_ws = buffer.WS_INVISIBLE
---buffer.whitespace_size =
---buffer.extra_ascent =
---buffer.extra_descent =
+view.view_ws = view.WS_INVISIBLE
+--view.whitespace_size =
+--view.extra_ascent =
+--view.extra_descent =
 
 -- Line Endings
-buffer.view_eol = false
+view.view_eol = false
 
 -- Styling
-if not CURSES then buffer.idle_styling = buffer.IDLESTYLING_ALL end
+if not CURSES then view.idle_styling = view.IDLESTYLING_ALL end
 
 -- Caret and Selection Styles.
---buffer.sel_eol_filled = true
-buffer.caret_line_visible = not CURSES
---buffer.caret_line_visible_always = true
---buffer.caret_period = 0
---buffer.caret_style = buffer.CARETSTYLE_BLOCK
---buffer.caret_width =
+--view.sel_eol_filled = true
+view.caret_line_visible = not CURSES
+--view.caret_line_visible_always = true
+--view.caret_period = 0
+--view.caret_style = view.CARETSTYLE_BLOCK
+--view.caret_width =
 --buffer.caret_sticky = buffer.CARETSTICKY_ON
 
 -- Margins.
---buffer.margin_left =
---buffer.margin_right =
+--view.margin_left =
+--view.margin_right =
 -- Line Number Margin.
-buffer.margin_type_n[1] = buffer.MARGIN_NUMBER
+view.margin_type_n[1] = view.MARGIN_NUMBER
 local function resize_line_number_margin()
   -- This needs to be evaluated dynamically since themes/styles can change.
-  local buffer = _G.buffer
+  local buffer, view = _G.buffer, _G.view
   local width = math.max(4, #tostring(buffer.line_count)) *
-    buffer:text_width(buffer.STYLE_LINENUMBER, '9') + (not CURSES and 4 or 0)
-  buffer.margin_width_n[1] = math.max(buffer.margin_width_n[1], width)
+    view:text_width(view.STYLE_LINENUMBER, '9') + (not CURSES and 4 or 0)
+  view.margin_width_n[1] = math.max(view.margin_width_n[1], width)
 end
 events.connect(events.BUFFER_NEW, resize_line_number_margin)
 events.connect(events.VIEW_NEW, resize_line_number_margin)
 events.connect(events.FILE_OPENED, resize_line_number_margin)
 -- Marker Margin.
-buffer.margin_width_n[2] = not CURSES and 4 or 1
+view.margin_width_n[2] = not CURSES and 4 or 1
 -- Fold Margin.
-buffer.margin_width_n[3] = not CURSES and 12 or 1
-buffer.margin_mask_n[3] = buffer.MASK_FOLDERS
+view.margin_width_n[3] = not CURSES and 12 or 1
+view.margin_mask_n[3] = view.MASK_FOLDERS
 -- Other Margins.
-for i = 2, buffer.margins do
-  buffer.margin_type_n[i] = buffer.MARGIN_SYMBOL
-  buffer.margin_sensitive_n[i] = true
-  buffer.margin_cursor_n[i] = buffer.CURSORARROW
-  if i > 3 then buffer.margin_width_n[i] = 0 end
+for i = 2, view.margins do
+  view.margin_type_n[i] = view.MARGIN_SYMBOL
+  view.margin_sensitive_n[i] = true
+  view.margin_cursor_n[i] = view.CURSORARROW
+  if i > 3 then view.margin_width_n[i] = 0 end
 end
 
 -- Annotations.
-buffer.annotation_visible = buffer.ANNOTATION_BOXED
+view.annotation_visible = view.ANNOTATION_BOXED
 
 -- Other.
 buffer.buffered_draw = not CURSES and not OSX -- Quartz buffers drawing on OSX
@@ -182,61 +184,61 @@ buffer.use_tabs = false
 --buffer.indent = 2
 buffer.tab_indents = true
 buffer.back_space_un_indents = true
-buffer.indentation_guides = not CURSES and buffer.IV_LOOKBOTH or buffer.IV_NONE
+view.indentation_guides = not CURSES and view.IV_LOOKBOTH or view.IV_NONE
 
 -- Margin Markers.
-buffer:marker_define(textadept.bookmarks.MARK_BOOKMARK, buffer.MARK_FULLRECT)
-buffer:marker_define(textadept.run.MARK_WARNING, buffer.MARK_FULLRECT)
-buffer:marker_define(textadept.run.MARK_ERROR, buffer.MARK_FULLRECT)
+view:marker_define(textadept.bookmarks.MARK_BOOKMARK, view.MARK_FULLRECT)
+view:marker_define(textadept.run.MARK_WARNING, view.MARK_FULLRECT)
+view:marker_define(textadept.run.MARK_ERROR, view.MARK_FULLRECT)
 -- Arrow Folding Symbols.
---buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_ARROWDOWN)
---buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_ARROW)
---buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_EMPTY)
---buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_EMPTY)
---buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_EMPTY)
---buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_EMPTY)
---buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDEROPEN, view.MARK_ARROWDOWN)
+--view:marker_define(buffer.MARKNUM_FOLDER, view.MARK_ARROW)
+--view:marker_define(buffer.MARKNUM_FOLDERSUB, view.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDERTAIL, view.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDEREND, view.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDEROPENMID, view.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, view.MARK_EMPTY)
 -- Plus/Minus Folding Symbols.
---buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_MINUS)
---buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_PLUS)
---buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_EMPTY)
---buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_EMPTY)
---buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_EMPTY)
---buffer:marker_define(buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_EMPTY)
---buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDEROPEN, view.MARK_MINUS)
+--view:marker_define(buffer.MARKNUM_FOLDER, view.MARK_PLUS)
+--view:marker_define(buffer.MARKNUM_FOLDERSUB, view.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDERTAIL, view.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDEREND, view.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDEROPENMID, view.MARK_EMPTY)
+--view:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, view.MARK_EMPTY)
 -- Circle Tree Folding Symbols.
---buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_CIRCLEMINUS)
---buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_CIRCLEPLUS)
---buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
---buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNERCURVE)
---buffer:marker_define(
---  buffer.MARKNUM_FOLDEREND, buffer.MARK_CIRCLEPLUSCONNECTED)
---buffer:marker_define(
---  buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_CIRCLEMINUSCONNECTED)
---buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNERCURVE)
+--view:marker_define(buffer.MARKNUM_FOLDEROPEN, view.MARK_CIRCLEMINUS)
+--view:marker_define(buffer.MARKNUM_FOLDER, view.MARK_CIRCLEPLUS)
+--view:marker_define(buffer.MARKNUM_FOLDERSUB, view.MARK_VLINE)
+--view:marker_define(buffer.MARKNUM_FOLDERTAIL, view.MARK_LCORNERCURVE)
+--view:marker_define(
+--  buffer.MARKNUM_FOLDEREND, view.MARK_CIRCLEPLUSCONNECTED)
+--view:marker_define(
+--  buffer.MARKNUM_FOLDEROPENMID, view.MARK_CIRCLEMINUSCONNECTED)
+--view:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, view.MARK_TCORNERCURVE)
 -- Box Tree Folding Symbols.
-buffer:marker_define(buffer.MARKNUM_FOLDEROPEN, buffer.MARK_BOXMINUS)
-buffer:marker_define(buffer.MARKNUM_FOLDER, buffer.MARK_BOXPLUS)
-buffer:marker_define(buffer.MARKNUM_FOLDERSUB, buffer.MARK_VLINE)
-buffer:marker_define(buffer.MARKNUM_FOLDERTAIL, buffer.MARK_LCORNER)
-buffer:marker_define(buffer.MARKNUM_FOLDEREND, buffer.MARK_BOXPLUSCONNECTED)
-buffer:marker_define(
-  buffer.MARKNUM_FOLDEROPENMID, buffer.MARK_BOXMINUSCONNECTED)
-buffer:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, buffer.MARK_TCORNER)
---buffer:marker_enable_highlight(true)
+view:marker_define(buffer.MARKNUM_FOLDEROPEN, view.MARK_BOXMINUS)
+view:marker_define(buffer.MARKNUM_FOLDER, view.MARK_BOXPLUS)
+view:marker_define(buffer.MARKNUM_FOLDERSUB, view.MARK_VLINE)
+view:marker_define(buffer.MARKNUM_FOLDERTAIL, view.MARK_LCORNER)
+view:marker_define(buffer.MARKNUM_FOLDEREND, view.MARK_BOXPLUSCONNECTED)
+view:marker_define(
+  buffer.MARKNUM_FOLDEROPENMID, view.MARK_BOXMINUSCONNECTED)
+view:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, view.MARK_TCORNER)
+--view:marker_enable_highlight(true)
 
 -- Indicators.
-buffer.indic_style[ui.find.INDIC_FIND] = buffer.INDIC_ROUNDBOX
-if not CURSES then buffer.indic_under[ui.find.INDIC_FIND] = true end
+view.indic_style[ui.find.INDIC_FIND] = view.INDIC_ROUNDBOX
+if not CURSES then view.indic_under[ui.find.INDIC_FIND] = true end
 local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
-buffer.indic_style[INDIC_BRACEMATCH] = buffer.INDIC_BOX
-buffer:brace_highlight_indicator(not CURSES, INDIC_BRACEMATCH)
+view.indic_style[INDIC_BRACEMATCH] = view.INDIC_BOX
+view:brace_highlight_indicator(not CURSES, INDIC_BRACEMATCH)
 local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
-buffer.indic_style[INDIC_HIGHLIGHT] = buffer.INDIC_ROUNDBOX
-if not CURSES then buffer.indic_under[INDIC_HIGHLIGHT] = true end
+view.indic_style[INDIC_HIGHLIGHT] = view.INDIC_ROUNDBOX
+if not CURSES then view.indic_under[INDIC_HIGHLIGHT] = true end
 local INDIC_PLACEHOLDER = textadept.snippets.INDIC_PLACEHOLDER
-buffer.indic_style[INDIC_PLACEHOLDER] = not CURSES and buffer.INDIC_DOTBOX or
-  buffer.INDIC_STRAIGHTBOX
+view.indic_style[INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
+  view.INDIC_STRAIGHTBOX
 
 -- Autocompletion.
 --buffer.auto_c_separator =
@@ -250,13 +252,13 @@ buffer.auto_c_multi = buffer.MULTIAUTOC_EACH
 --buffer.auto_c_auto_hide = false
 --buffer.auto_c_drop_rest_of_word = true
 --buffer.auto_c_type_separator =
---buffer.auto_c_max_height =
---buffer.auto_c_max_width =
+--view.auto_c_max_height =
+--view.auto_c_max_width =
 
 -- Call Tips.
-buffer.call_tip_use_style = buffer.tab_width *
-  buffer:text_width(buffer.STYLE_CALLTIP, ' ')
---buffer.call_tip_position = true
+view.call_tip_use_style = buffer.tab_width *
+  view:text_width(view.STYLE_CALLTIP, ' ')
+--view.call_tip_position = true
 
 -- Folding.
 buffer.property['fold'] = '1'
@@ -266,19 +268,19 @@ buffer.property['fold'] = '1'
 --buffer.property['fold.compact'] = '1'
 buffer.automatic_fold = buffer.AUTOMATICFOLD_SHOW | buffer.AUTOMATICFOLD_CLICK |
   buffer.AUTOMATICFOLD_CHANGE
-buffer.fold_flags = not CURSES and buffer.FOLDFLAG_LINEAFTER_CONTRACTED or 0
-buffer.fold_display_text_style = buffer.FOLDDISPLAYTEXT_BOXED
+view.fold_flags = not CURSES and view.FOLDFLAG_LINEAFTER_CONTRACTED or 0
+view.fold_display_text_style = view.FOLDDISPLAYTEXT_BOXED
 
 -- Line Wrapping.
-buffer.wrap_mode = buffer.WRAP_NONE
---buffer.wrap_visual_flags = buffer.WRAPVISUALFLAG_MARGIN
---buffer.wrap_visual_flags_location = buffer.WRAPVISUALFLAGLOC_END_BY_TEXT
---buffer.wrap_indent_mode = buffer.WRAPINDENT_SAME
---buffer.wrap_start_indent =
+view.wrap_mode = view.WRAP_NONE
+--view.wrap_visual_flags = view.WRAPVISUALFLAG_MARGIN
+--view.wrap_visual_flags_location = view.WRAPVISUALFLAGLOC_END_BY_TEXT
+--view.wrap_indent_mode = view.WRAPINDENT_SAME
+--view.wrap_start_indent =
 
 -- Long Lines.
---buffer.edge_mode = not CURSES and buffer.EDGE_LINE or buffer.EDGE_BACKGROUND
---buffer.edge_column = 80
+--view.edge_mode = not CURSES and view.EDGE_LINE or view.EDGE_BACKGROUND
+--view.edge_column = 80
 
 -- Accessibility.
 buffer.accessibility = buffer.ACCESSIBILITY_DISABLED
@@ -290,7 +292,9 @@ if lfs.attributes(user_init) then dofile(user_init) end
 -- Generate default buffer settings for subsequent buffers and remove temporary
 -- buffer metatable listener.
 local load_settings = load(table.concat(settings, '\n'))
-buffer_mt.__index, buffer_mt.__newindex = orig__index, orig__newindex
+for _, mt in ipairs{buffer_mt, view_mt} do
+  mt.__index, mt.__newindex = mt.__orig_index, mt.__orig_newindex
+end
 
 -- Sets default properties for a Scintilla document.
 events.connect(events.BUFFER_NEW, function()
@@ -308,22 +312,24 @@ events.connect(events.BUFFER_NEW, function()
   buffer:private_lexer_call(LOADLEXERLIBRARY, _HOME .. '/lexers')
   load_settings()
   buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
-  if buffer == ui.command_entry then buffer.caret_line_visible = false end
+  if buffer == ui.command_entry then
+    ui.command_entry.caret_line_visible = false
+  end
 end, 1)
 
 -- Sets default properties for a Scintilla window.
 events.connect(events.VIEW_NEW, function()
-  local buffer = _G.buffer
+  local buffer, view = _G.buffer, _G.view
   -- Allow redefinitions of these Scintilla key commands.
   local ctrl_keys = {
     '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
   }
   for _, key in ipairs(ctrl_keys) do
-    buffer:clear_cmd_key(string.byte(key) | buffer.MOD_CTRL << 16)
+    view:clear_cmd_key(string.byte(key) | view.MOD_CTRL << 16)
   end
   for _, key in ipairs{'L', 'T', 'U', 'Z'} do -- ctrl+shift keys
-    buffer:clear_cmd_key(
-      string.byte(key) | (buffer.MOD_CTRL | buffer.MOD_SHIFT) << 16)
+    view:clear_cmd_key(
+      string.byte(key) | (view.MOD_CTRL | view.MOD_SHIFT) << 16)
   end
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for
   -- subsequent views.
