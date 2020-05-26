@@ -2986,10 +2986,14 @@ local function check_property_usage(filename, buffer_props, view_props)
       if id == 'client' and prop == 'close' then goto continue end
       if (id == 'Foo' or id == 'Array' or id == 'Server') and prop == 'new' then goto continue end
       if buffer_props[prop] then
-        assert(id == 'buffer' or id == 'buf' or id == 'buffer1' or id == 'buffer2', 'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)
+        assert(
+          id == 'buffer' or id == 'buf' or id == 'buffer1' or id == 'buffer2',
+          'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)
         count = count + 1
       elseif view_props[prop] then
-        assert(id == 'view', 'line %d:%d: "%s" should be a view property', line_num, pos, prop)
+        assert(
+          id == 'view', 'line %d:%d: "%s" should be a view property', line_num,
+          pos, prop)
         count = count + 1
       end
       ::continue::
@@ -3001,9 +3005,14 @@ end
 
 function test_buffer_view_usage()
   local buffer_props, view_props = load_buffer_view_props()
+  local filter = {
+    '.lua', '.luadoc', '!/lexers', '!/modules/lsp/dkjson.lua',
+    '!/modules/lua/lua.luadoc', '!/modules/debugger/lua/mobdebug.lua',
+    '!/modules/yaml/lyaml.lua', '!/scripts', '!/src'
+  }
   lfs.dir_foreach(_HOME, function(filename)
     check_property_usage(filename, buffer_props, view_props)
-  end, {'.lua', '.luadoc', '!/lexers', '!/modules/lsp/dkjson.lua', '!/modules/lua/lua.luadoc', '!/modules/debugger/lua/mobdebug.lua', '!/modules/yaml/lyaml.lua', '!/scripts', '!/src'})
+  end, filter)
 end
 
 --------------------------------------------------------------------------------
