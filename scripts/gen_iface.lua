@@ -244,11 +244,11 @@ f:write([[
 local marker_number, indic_number, list_type, image_type = 0, 0, 0, 0
 
 ---
--- Returns a unique marker number for use with `buffer.marker_define()`.
+-- Returns a unique marker number for use with `view.marker_define()`.
 -- Use this function for custom markers in order to prevent clashes with
 -- identifiers of other custom markers.
 -- @usage local marknum = _SCINTILLA.next_marker_number()
--- @see buffer.marker_define
+-- @see view.marker_define
 -- @name next_marker_number
 function M.next_marker_number()
   assert(marker_number < M.constants.MARKER_MAX, 'too many markers in use')
@@ -261,7 +261,7 @@ end
 -- Use this function for custom indicators in order to prevent clashes with
 -- identifiers of other custom indicators.
 -- @usage local indic_num = _SCINTILLA.next_indic_number()
--- @see buffer.indic_style
+-- @see view.indic_style
 -- @name next_indic_number
 function M.next_indic_number()
   assert(indic_number < M.constants.INDICATOR_MAX, 'too many indicators in use')
@@ -284,12 +284,12 @@ end
 
 ---
 -- Returns a unique image type identier number for use with
--- `buffer.register_image()` and `buffer.register_rgba_image()`.
+-- `view.register_image()` and `view.register_rgba_image()`.
 -- Use this function for custom image types in order to prevent clashes with
 -- identifiers of other custom image types.
 -- @usage local image_type = _SCINTILLA.next_image_type()
--- @see buffer.register_image
--- @see buffer.register_rgba_image
+-- @see view.register_image
+-- @see view.register_rgba_image
 -- @name next_image_type
 function M.next_image_type()
   image_type = image_type + 1

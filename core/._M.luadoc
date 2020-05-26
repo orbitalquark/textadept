@@ -68,7 +68,7 @@
 --       if lexer ~= 'python' then return end
 --       buffer.tab_width = 4
 --       buffer.use_tabs = false
---       buffer.view_ws = buffer.WS_VISIBLEALWAYS
+--       view.view_ws = view.WS_VISIBLEALWAYS
 --     end
 --
 -- ## Autocompletion and Documentation

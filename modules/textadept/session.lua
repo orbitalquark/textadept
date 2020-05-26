@@ -62,7 +62,7 @@ function M.load(filename)
     if lfs.attributes(buf.filename) then
       io.open_file(buf.filename)
       buffer:set_sel(buf.anchor, buf.current_pos)
-      buffer:line_scroll(0, buf.top_line - buffer.first_visible_line)
+      view:line_scroll(0, buf.top_line - view.first_visible_line)
       for _, line in ipairs(buf.bookmarks) do
         buffer:marker_add(line, textadept.bookmarks.MARK_BOOKMARK)
       end
@@ -165,7 +165,7 @@ function M.save(filename)
       filename = buffer.filename or buffer._type,
       anchor = current and buffer.anchor or buffer._anchor,
       current_pos = current and buffer.current_pos or buffer._current_pos,
-      top_line = current and buffer.first_visible_line or buffer._top_line,
+      top_line = current and view.first_visible_line or buffer._top_line,
     }
     local bookmarks = {}
     local BOOKMARK_BIT = 1 << textadept.bookmarks.MARK_BOOKMARK - 1

@@ -40,27 +40,27 @@ ui.silent_print = false
 -- Helper function for printing messages to buffers.
 -- @see ui._print
 local function _print(buffer_type, ...)
-  local print_buffer
-  for _, buffer in ipairs(_BUFFERS) do
-    if buffer._type == buffer_type then print_buffer = buffer break end
+  local buffer
+  for _, buf in ipairs(_BUFFERS) do
+    if buf._type == buffer_type then buffer = buf break end
   end
-  if not print_buffer then
+  if not buffer then
     if not ui.tabs then view:split() end
-    print_buffer = buffer.new()
-    print_buffer._type = buffer_type
+    buffer = _G.buffer.new()
+    buffer._type = buffer_type
     events.emit(events.FILE_OPENED)
   elseif not ui.silent_print then
     for _, view in ipairs(_VIEWS) do
       if view.buffer._type == buffer_type then ui.goto_view(view) break end
     end
-    if view.buffer._type ~= buffer_type then view:goto_buffer(print_buffer) end
+    if view.buffer._type ~= buffer_type then view:goto_buffer(buffer) end
   end
   local args, n = {...}, select('#', ...)
   for i = 1, n do args[i] = tostring(args[i]) end
-  print_buffer:append_text(table.concat(args, '\t'))
-  print_buffer:append_text('\n')
-  print_buffer:goto_pos(buffer.length + 1)
-  print_buffer:set_save_point()
+  buffer:append_text(table.concat(args, '\t'))
+  buffer:append_text('\n')
+  buffer:goto_pos(buffer.length + 1)
+  buffer:set_save_point()
 end
 ---
 -- Prints the given string messages to the buffer of string type *buffer_type*.
@@ -342,36 +342,34 @@ end)
 
 -- Save buffer properties.
 events_connect(events.BUFFER_BEFORE_SWITCH, function()
-  local buffer = buffer
   -- Save view state.
   buffer._anchor, buffer._current_pos = buffer.anchor, buffer.current_pos
   local n = buffer.main_selection
   buffer._anchor_virtual_space = buffer.selection_n_anchor_virtual_space[n]
   buffer._caret_virtual_space = buffer.selection_n_caret_virtual_space[n]
-  buffer._top_line = buffer:doc_line_from_visible(buffer.first_visible_line)
-  buffer._x_offset = buffer.x_offset
+  buffer._top_line = view:doc_line_from_visible(view.first_visible_line)
+  buffer._x_offset = view.x_offset
   -- Save fold state.
-  local folds, i = {}, buffer:contracted_fold_next(1)
+  local folds, i = {}, view:contracted_fold_next(1)
   while i >= 1 do
-    folds[#folds + 1], i = i, buffer:contracted_fold_next(i + 1)
+    folds[#folds + 1], i = i, view:contracted_fold_next(i + 1)
   end
   buffer._folds = folds
 end)
 
 -- Restore buffer properties.
 events_connect(events.BUFFER_AFTER_SWITCH, function()
-  local buffer = buffer
   if not buffer._folds then return end
   -- Restore fold state.
-  for i = 1, #buffer._folds do buffer:toggle_fold(buffer._folds[i]) end
+  for i = 1, #buffer._folds do view:toggle_fold(buffer._folds[i]) end
   -- Restore view state.
   buffer:set_sel(buffer._anchor, buffer._current_pos)
   buffer.selection_n_anchor_virtual_space[1] = buffer._anchor_virtual_space
   buffer.selection_n_caret_virtual_space[1] = buffer._caret_virtual_space
   buffer:choose_caret_x()
-  local _top_line, top_line = buffer._top_line, buffer.first_visible_line
-  buffer:line_scroll(0, buffer:visible_from_doc_line(_top_line) - top_line)
-  buffer.x_offset = buffer._x_offset or 0
+  local _top_line, top_line = buffer._top_line, view.first_visible_line
+  view:line_scroll(0, view:visible_from_doc_line(_top_line) - top_line)
+  view.x_offset = buffer._x_offset or 0
 end)
 
 -- Updates titlebar and statusbar.
@@ -385,13 +383,12 @@ events_connect(events.VIEW_AFTER_SWITCH, update_bars)
 
 -- Save view state.
 local function save_view_state()
-  local buffer = buffer
-  buffer._view_eol, buffer._view_ws = buffer.view_eol, buffer.view_ws
-  buffer._wrap_mode = buffer.wrap_mode
+  buffer._view_eol, buffer._view_ws = view.view_eol, view.view_ws
+  buffer._wrap_mode = view.wrap_mode
   buffer._margin_type_n, buffer._margin_width_n = {}, {}
-  for i = 1, buffer.margins do
-    buffer._margin_type_n[i] = buffer.margin_type_n[i]
-    buffer._margin_width_n[i] = buffer.margin_width_n[i]
+  for i = 1, view.margins do
+    buffer._margin_type_n[i] = view.margin_type_n[i]
+    buffer._margin_width_n[i] = view.margin_width_n[i]
   end
 end
 events_connect(events.BUFFER_BEFORE_SWITCH, save_view_state)
@@ -399,13 +396,12 @@ events_connect(events.VIEW_BEFORE_SWITCH, save_view_state)
 
 -- Restore view state.
 local function restore_view_state()
-  local buffer = buffer
   if not buffer._margin_type_n then return end
-  buffer.view_eol, buffer.view_ws = buffer._view_eol, buffer._view_ws
-  buffer.wrap_mode = buffer._wrap_mode
-  for i = 1, buffer.margins do
-    buffer.margin_type_n[i] = buffer._margin_type_n[i]
-    buffer.margin_width_n[i] = buffer._margin_width_n[i]
+  view.view_eol, view.view_ws = buffer._view_eol, buffer._view_ws
+  view.wrap_mode = buffer._wrap_mode
+  for i = 1, view.margins do
+    view.margin_type_n[i] = buffer._margin_type_n[i]
+    view.margin_width_n[i] = buffer._margin_width_n[i]
   end
 end
 events_connect(events.BUFFER_AFTER_SWITCH, restore_view_state)
@@ -482,8 +478,8 @@ if CURSES then
 
   local resize
   events_connect(events.MOUSE, function(event, button, y, x)
-    if event == buffer.MOUSE_RELEASE or button ~= 1 then return end
-    if event == buffer.MOUSE_PRESS then
+    if event == view.MOUSE_RELEASE or button ~= 1 then return end
+    if event == view.MOUSE_PRESS then
       local view = get_view(ui.get_split_table(), y - 1, x) -- title is at y = 1
       if not view[1] and not view[2] then
         ui.goto_view(view)

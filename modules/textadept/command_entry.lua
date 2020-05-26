@@ -105,7 +105,7 @@ local function run_lua(code)
     end
     table.sort(items)
     result = string.format('{%s}', table.concat(items, ', '))
-    if buffer.edge_column > 0 and #result > buffer.edge_column then
+    if view.edge_column > 0 and #result > view.edge_column then
       local indent = string.rep(' ', buffer.tab_width)
       result = string.format(
         '{\n%s%s\n}', indent, table.concat(items, ',\n' .. indent))

@@ -53,7 +53,7 @@ M.XPM_IMAGES = {
 }
 events.connect(events.VIEW_NEW, function()
   for name, i in pairs(M.XPM_IMAGES) do
-    if type(name) == 'string' then buffer:register_image(i, M.XPM_IMAGES[i]) end
+    if type(name) == 'string' then view:register_image(i, M.XPM_IMAGES[i]) end
   end
 end)
 for _ = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
@@ -160,11 +160,11 @@ events.connect(events.UPDATE_UI, function(updated)
   local pos = buffer.selection_n_caret[buffer.main_selection]
   if M.brace_matches[buffer.char_at[pos]] then
     local match = buffer:brace_match(pos, 0)
-    local f = match ~= -1 and buffer.brace_highlight or buffer.brace_bad_light
+    local f = match ~= -1 and view.brace_highlight or view.brace_bad_light
     f(buffer, pos, match)
     return
   end
-  buffer:brace_bad_light(-1)
+  view:brace_bad_light(-1)
 end)
 
 -- Moves over typeover characters when typed, taking multiple selections into
@@ -364,7 +364,7 @@ function M.goto_line(line)
     line = tonumber(value)
     if button ~= 1 or not line then return end
   end
-  buffer:ensure_visible_enforce_policy(line)
+  view:ensure_visible_enforce_policy(line)
   buffer:goto_line(line)
 end
 args.register(

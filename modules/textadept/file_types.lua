@@ -70,7 +70,7 @@ local function set_lexer(buffer, lang)
   buffer._lexer = lang
   if package.searchpath(lang, package.path) then _M[lang] = require(lang) end
   if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, lang) end
-  local last_line = buffer.first_visible_line + buffer.lines_on_screen
+  local last_line = view.first_visible_line + view.lines_on_screen
   buffer:colourise(1, buffer:position_from_line(last_line + 1)) -- refresh
 end
 

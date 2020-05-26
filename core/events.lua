@@ -89,10 +89,10 @@ local M = {}
 --
 --   * _`position`_: The position double-clicked.
 --   * _`line`_: The line number of the position double-clicked.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
---     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
---     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
+--     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+--     Note: If you set `view.rectangular_selection_modifier` to
+--     `view.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK.
 -- @field CSI (string)
 --   Emitted when the terminal version receives an unrecognized CSI sequence.
@@ -112,7 +112,7 @@ local M = {}
 --   * _`x`_: The x-coordinate of the mouse in the view.
 --   * _`y`_: The y-coordinate of the mouse in the view.
 -- @field DWELL_START (string)
---   Emitted when the mouse is stationary for [`buffer.mouse_dwell_time`]()
+--   Emitted when the mouse is stationary for [`view.mouse_dwell_time`]()
 --   milliseconds.
 --   Arguments:
 --
@@ -138,10 +138,10 @@ local M = {}
 --   Arguments:
 --
 --   * _`position`_: The clicked text's position.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
---     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
---     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
+--     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+--     Note: If you set `view.rectangular_selection_modifier` to
+--     `view.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK.
 -- @field INDICATOR_RELEASE (string)
 --   Emitted when releasing the mouse after clicking on text that has an
@@ -168,10 +168,10 @@ local M = {}
 --
 --   * _`margin`_: The margin number clicked.
 --   * _`position`_: The beginning position of the clicked margin's line.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `buffer.MOD_CTRL`,
---     `buffer.MOD_SHIFT`, `buffer.MOD_ALT`, and `buffer.MOD_META`.
---     Note: If you set `buffer.rectangular_selection_modifier` to
---     `buffer.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
+--   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
+--     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+--     Note: If you set `view.rectangular_selection_modifier` to
+--     `view.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK.
 -- @field MENU_CLICKED (string)
 --   Emitted after selecting a menu item.
@@ -187,8 +187,8 @@ local M = {}
 --   has switched to.)
 --   Arguments:
 --
---   * _`event`_: The mouse event: `buffer.MOUSE_PRESS`, `buffer.MOUSE_DRAG`, or
---     `buffer.MOUSE_RELEASE`.
+--   * _`event`_: The mouse event: `view.MOUSE_PRESS`, `view.MOUSE_DRAG`, or
+--     `view.MOUSE_RELEASE`.
 --   * _`button`_: The mouse button number.
 --   * _`y`_: The y-coordinate of the mouse event, starting from 1.
 --   * _`x`_: The x-coordinate of the mouse event, starting from 1.
@@ -264,9 +264,9 @@ local M = {}
 --       Buffer contents, styling, or markers have changed.
 --     + `buffer.UPDATE_SELECTION`
 --       Buffer selection has changed (including caret movement).
---     + `buffer.UPDATE_V_SCROLL`
+--     + `view.UPDATE_V_SCROLL`
 --       Buffer has scrolled vertically.
---     + `buffer.UPDATE_H_SCROLL`
+--     + `view.UPDATE_H_SCROLL`
 --       Buffer has scrolled horizontally.
 -- @field URI_DROPPED (string)
 --   Emitted after dragging and dropping a URI into a view.
@@ -290,8 +290,8 @@ local M = {}
 --   Emitted right after switching to another view.
 --   Emitted by [`ui.goto_view()`]().
 -- @field ZOOM (string)
---   Emitted after changing [`buffer.zoom`]().
---   Emitted by [`buffer.zoom_in()`]() and [`buffer.zoom_out()`]().
+--   Emitted after changing [`view.zoom`]().
+--   Emitted by [`view.zoom_in()`]() and [`view.zoom_out()`]().
 module('events')]]
 
 -- Map of event names to tables of handler functions.

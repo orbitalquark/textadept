@@ -292,17 +292,15 @@ local default_menubar = {
       {_L['UTF-16 Encoding'], function() set_encoding('UTF-16LE') end}
     },
     SEPARATOR,
-    {_L['Toggle View EOL'], function()
-      buffer.view_eol = not buffer.view_eol
-    end},
+    {_L['Toggle View EOL'], function() view.view_eol = not view.view_eol end},
     {_L['Toggle Wrap Mode'], function()
-      local first_visible_line = buffer.first_visible_line
-      local display_line = buffer:visible_from_doc_line(first_visible_line)
-      buffer.wrap_mode = buffer.wrap_mode == 0 and buffer.WRAP_WHITESPACE or 0
-      buffer:line_scroll(0, first_visible_line - display_line)
+      local first_visible_line = view.first_visible_line
+      local display_line = view:visible_from_doc_line(first_visible_line)
+      view.wrap_mode = view.wrap_mode == 0 and view.WRAP_WHITESPACE or 0
+      view:line_scroll(0, first_visible_line - display_line)
     end},
     {_L['Toggle View Whitespace'], function()
-      buffer.view_ws = buffer.view_ws == 0 and buffer.WS_VISIBLEALWAYS or 0
+      view.view_ws = view.view_ws == 0 and view.WS_VISIBLEALWAYS or 0
     end},
     SEPARATOR,
     {_L['Select Lexer...'], textadept.file_types.select_lexer},
@@ -318,28 +316,28 @@ local default_menubar = {
     {_L['Unsplit View'], function() view:unsplit() end},
     {_L['Unsplit All Views'], function() while view:unsplit() do end end},
     {_L['Grow View'], function()
-      if view.size then view.size = view.size + buffer:text_height(1) end
+      if view.size then view.size = view.size + view:text_height(1) end
     end},
     {_L['Shrink View'], function()
-      if view.size then view.size = view.size - buffer:text_height(1) end
+      if view.size then view.size = view.size - view:text_height(1) end
     end},
     SEPARATOR,
     {_L['Toggle Current Fold'], function()
-      buffer:toggle_fold(buffer:line_from_position(buffer.current_pos))
+      view:toggle_fold(buffer:line_from_position(buffer.current_pos))
     end},
     SEPARATOR,
     {_L['Toggle Show Indent Guides'], function()
-      local off = buffer.indentation_guides == 0
-      buffer.indentation_guides = off and buffer.IV_LOOKBOTH or 0
+      local off = view.indentation_guides == 0
+      view.indentation_guides = off and view.IV_LOOKBOTH or 0
     end},
     {_L['Toggle Virtual Space'], function()
       local off = buffer.virtual_space_options == 0
       buffer.virtual_space_options = off and buffer.VS_USERACCESSIBLE or 0
     end},
     SEPARATOR,
-    {_L['Zoom In'], buffer.zoom_in},
-    {_L['Zoom Out'], buffer.zoom_out},
-    {_L['Reset Zoom'], function() buffer.zoom = 0 end}
+    {_L['Zoom In'], view.zoom_in},
+    {_L['Zoom Out'], view.zoom_out},
+    {_L['Reset Zoom'], function() view.zoom = 0 end}
   },
   {
     title = _L['Help'],
