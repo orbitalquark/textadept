@@ -141,14 +141,14 @@ diff -r 8a23edc91533 src/luaconf.h
 +  lua_State *L;
 +  int ref;
 +#if !_WIN32
-+  int pid, fstdin, fstdout, fstderr, exit_status;
++  int pid, fstdin, fstdout, fstderr;
 +#else
 +  HANDLE pid, fstdin, fstdout, fstderr;
 +#endif
 +#if (GTK && !__APPLE__)
 +  GIOChannel *cstdout, *cstderr;
 +#endif
-+  int stdout_cb, stderr_cb, exit_cb;
++  int stdout_cb, stderr_cb, exit_cb, exit_status;
 +} PStream;
 +
 +/** p:status() Lua function. */
